@@ -1053,8 +1053,18 @@ void SV_WriteViewData(VBasePlayer &player, VMessage &msg)
 	{
 		if (player.ViewStates[i].State)
 		{
+			int TimeFrac = 0;
+			if (player.ViewStates[i].StateTime < 0)
+				TimeFrac = 255;
+			else if (player.ViewStates[i].State->Time > 0)
+			{
+				TimeFrac = (int)(254.0 * player.ViewStates[i].StateTime /
+					player.ViewStates[i].State->Time);
+				TimeFrac = MID(0, TimeFrac, 254);
+			}
 			msg << (vuint16)((VClass*)player.ViewStates[i].State->Outer)->NetId
 				<< (vuint16)player.ViewStates[i].State->NetId
+				<< (vuint8)TimeFrac
 				<< (vuint16)player.ViewStates[i].SX
 				<< (vuint16)player.ViewStates[i].SY;
 		}

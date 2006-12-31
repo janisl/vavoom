@@ -40,7 +40,6 @@
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 void R_InitData();
-void R_FreeModels();
 void R_FreeSkyboxData();
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------

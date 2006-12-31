@@ -69,6 +69,7 @@ struct VModel
 {
 	char		name[128];
 	void*		data;		// only access through Mod_Extradata
+	int			type;
 };
 
 class VDrawer

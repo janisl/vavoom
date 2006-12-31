@@ -386,6 +386,14 @@ void R_LightFace(surface_t *surf, subsector_t *leaf);
 void R_PushDlights();
 vuint32 R_LightPoint(const TVec &p);
 
+//
+//	r_model
+//
+bool R_DrawAliasModel(const TVec&, const TAVec&, VModel*, int, int,
+	const char*, vuint32, int, bool, float);
+bool R_CheckAliasModelFrame(VModel*, int, float);
+void R_FreeModels();
+
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
 //

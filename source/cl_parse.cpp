@@ -334,6 +334,12 @@ static void CL_ParseViewData(VMessage& msg)
 		{
 			cl->ViewStates[i].State =
 				ClassLookup[ClsIdx]->StatesLookup[msg.ReadShort()];
+			vuint8 TimeFrac = msg.ReadByte();
+			if (TimeFrac == 255)
+				cl->ViewStates[i].StateTime = -1;
+			else
+				cl->ViewStates[i].StateTime = cl->ViewStates[i].State->Time *
+					TimeFrac / 254.0;
 			cl->ViewStates[i].SX = msg.ReadShort();
 			cl->ViewStates[i].SY = msg.ReadShort();
 		}
@@ -518,7 +524,7 @@ static void CL_AddModel(int i, const char *name)
 	if (FL_FileExists(name))
 	{
 		model_precache[i] = Mod_FindName(name);
-		if (strstr(name, "tris.md2"))
+		if (strstr(name, "player.xml"))
 		{
 			VStr wpname = VStr(name).ExtractFilePath() + "weapon.md2";
 			if (FL_FileExists(wpname))

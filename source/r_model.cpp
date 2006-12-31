@@ -34,9 +34,49 @@
 
 // MACROS ------------------------------------------------------------------
 
-#define	MAX_MOD_KNOWN	256
-
 // TYPES -------------------------------------------------------------------
+
+enum
+{
+	MODEL_Unknown,
+	MODEL_MD2,
+	MODEL_Script,
+};
+
+class VScriptSubModel
+{
+public:
+	struct VFrame
+	{
+		int		Index;
+	};
+
+	VModel*				Model;
+	TArray<VFrame>		Frames;
+};
+
+class VScriptModel
+{
+public:
+	VName						Name;
+	TArray<VScriptSubModel>		SubModels;
+};
+
+class VScriptedModelFrame
+{
+public:
+	int			Number;
+	float		Inter;
+	int			ModelIndex;
+	int			FrameIndex;
+};
+
+class VScriptedModel
+{
+public:
+	TArray<VScriptModel>		Models;
+	TArray<VScriptedModelFrame>	Frames;
+};
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
@@ -52,8 +92,7 @@ static VModel* Mod_LoadModel(VModel* mod);
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static VModel	mod_known[MAX_MOD_KNOWN];
-static int		mod_numknown;
+static TArray<VModel*>		mod_known;
 
 // CODE --------------------------------------------------------------------
 
@@ -91,31 +130,25 @@ void *Mod_Extradata(VModel* mod)
 VModel* Mod_FindName(const char *name)
 {
 	guard(Mod_FindName);
-	int		i;
-	VModel*	mod;
-
 	if (!name[0])
 		Sys_Error("Mod_ForName: NULL name");
-		
+
 	//
 	// search the currently loaded models
 	//
-	for (i=0 , mod=mod_known ; i<mod_numknown ; i++, mod++)
+	for (int i = 0; i < mod_known.Num(); i++)
 	{
-		if (!VStr::Cmp(mod->name, name))
-			break;
-	}
-			
-	if (i == mod_numknown)
-	{
-		if (mod_numknown == MAX_MOD_KNOWN)
+		if (!VStr::Cmp(mod_known[i]->name, name))
 		{
-			Sys_Error ("mod_numknown == MAX_MOD_KNOWN");
+			return mod_known[i];
 		}
-		else
-			mod_numknown++;
-		VStr::Cpy(mod->name, name);
 	}
+
+	VModel* mod = new VModel();
+	VStr::Cpy(mod->name, name);
+	mod->data = NULL;
+	mod->type = MODEL_Unknown;
+	mod_known.Append(mod);
 
 	return mod;
 	unguard;
@@ -135,7 +168,7 @@ static void Mod_SwapAliasModel(VModel* mod)
 	mstvert_t			*pstverts;
 	mtriangle_t			*ptri;
 	mframe_t			*pframe;
-	int					*pcmds;
+	vint32				*pcmds;
 
 	pmodel = (mmdl_t*)mod->data;
 
@@ -144,7 +177,7 @@ static void Mod_SwapAliasModel(VModel* mod)
 	//
 	for (i = 0; i < (int)sizeof(mmdl_t) / 4; i++)
 	{
-		((int*)pmodel)[i] = LittleLong(((int*)pmodel)[i]);
+		((vint32*)pmodel)[i] = LittleLong(((vint32*)pmodel)[i]);
 	}
 
 	if (pmodel->version != ALIAS_VERSION)
@@ -216,11 +249,89 @@ static void Mod_SwapAliasModel(VModel* mod)
 	//
 	// commands
 	//
-	pcmds = (int*)((byte*)pmodel + pmodel->ofscmds);
+	pcmds = (vint32*)((byte*)pmodel + pmodel->ofscmds);
 	for (i = 0; i < pmodel->numcmds; i++)
 	{
 		pcmds[i] = LittleLong(pcmds[i]);
 	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	ParseModelScript
+//
+//==========================================================================
+
+static void ParseModelScript(VModel* mod, VStream& Strm)
+{
+	guard(ParseModelScript);
+	//	Free loaded XML text.
+	Z_Free(mod->data);
+	mod->data = NULL;
+
+	//	Parse XML file.
+	VXmlDocument* Doc = new VXmlDocument();
+	Doc->Parse(Strm, mod->name);
+
+	//	Verify that it's a model definition file.
+	if (Doc->Root.Name != "vavoom_model_definition")
+		Sys_Error("%s is not a valid model definition file", mod->name);
+
+	VScriptedModel* Mdl = new VScriptedModel();
+	mod->data = Mdl;
+	mod->type = MODEL_Script;
+
+	//	Process model definitions.
+	for (VXmlNode* N = Doc->Root.FindChild("model"); N; N = N->FindNext())
+	{
+		VScriptModel& SMdl = Mdl->Models.Alloc();
+		SMdl.Name = *N->GetAttribute("name");
+
+		//	Process model parts.
+		for (VXmlNode* SN = N->FindChild("md2"); SN; SN = SN->FindNext())
+		{
+			VScriptSubModel& Md2 = SMdl.SubModels.Alloc();
+			Md2.Model = Mod_FindName(*SN->GetAttribute("file").ToLower().FixFileSlashes());
+
+			//	Process frames.
+			for (VXmlNode* FN = SN->FindChild("frame"); FN; FN = FN->FindNext())
+			{
+				VScriptSubModel::VFrame& F = Md2.Frames.Alloc();
+				F.Index = atoi(*FN->GetAttribute("index"));
+			}
+		}
+	}
+
+	//	Process frames
+	for (VXmlNode* N = Doc->Root.GetChild("frames")->FindChild("frame"); N; N = N->FindNext())
+	{
+		VScriptedModelFrame& F = Mdl->Frames.Alloc();
+		F.Number = atoi(*N->GetAttribute("number"));
+		F.Inter = 0.0;
+		F.ModelIndex = -1;
+		F.FrameIndex = atoi(*N->GetAttribute("frame_index"));
+		VStr MdlName = N->GetAttribute("model");
+		for (int i = 0; i < Mdl->Models.Num(); i++)
+		{
+			if (Mdl->Models[i].Name == *MdlName)
+			{
+				F.ModelIndex = i;
+				break;
+			}
+		}
+		if (F.ModelIndex == -1)
+		{
+			Sys_Error("%s has no model %s", mod->name, *MdlName);
+		}
+		if (N->HasAttribute("inter"))
+		{
+			F.Inter = atof(*N->GetAttribute("inter"));
+		}
+	}
+
+	//	We don't need the XML file anymore.
+	delete Doc;
 	unguard;
 }
 
@@ -249,13 +360,23 @@ static VModel* Mod_LoadModel(VModel* mod)
 
 	mod->data = Z_Malloc(Strm->TotalSize());
 	Strm->Serialise(mod->data, Strm->TotalSize());
-	delete Strm;
 
-	if (LittleLong(*(vuint32*)mod->data) != IDPOLY2HEADER)
+	if (LittleLong(*(vuint32*)mod->data) == IDPOLY2HEADER)
+	{
+		// swap model
+		Mod_SwapAliasModel(mod);
+		mod->type = MODEL_MD2;
+	}
+	else if (!VStr::NCmp((char*)mod->data, "<?xml", 5))
+	{
+		ParseModelScript(mod, *Strm);
+	}
+	else
+	{
 		Sys_Error("model %s is not a md2 model", mod->name);
+	}
 
-	// swap model
-	Mod_SwapAliasModel(mod);
+	delete Strm;
 
 	return mod;
 	unguard;
@@ -300,6 +421,89 @@ void R_PositionWeaponModel(VEntity* wpent, VModel* wpmodel, int InFrame)
 
 //==========================================================================
 //
+//	R_DrawAliasModel
+//
+//==========================================================================
+
+bool R_DrawAliasModel(const TVec& Org, const TAVec& Angles, VModel* Mdl,
+	int Frame, int SkinIdx, const char* Skin, vuint32 Light,
+	int Translucency, bool IsViewModel, float Inter)
+{
+	guard(R_DrawAliasModel);
+	Mod_Extradata(Mdl);
+	if (Mdl->type == MODEL_Script)
+	{
+		VScriptedModel* SMdl = (VScriptedModel*)Mdl->data;
+		int FIdx = -1;
+		for (int i = 0; i < SMdl->Frames.Num(); i++)
+		{
+			if (SMdl->Frames[i].Number == Frame &&
+				SMdl->Frames[i].Inter <= Inter)
+			{
+				FIdx = i;
+			}
+		}
+		if (FIdx == -1)
+		{
+			return false;
+		}
+
+		VScriptedModelFrame& FDef = SMdl->Frames[FIdx];
+		VScriptModel& ScMdl = SMdl->Models[FDef.ModelIndex];
+		for (int i = 0; i < ScMdl.SubModels.Num(); i++)
+		{
+			VScriptSubModel& SubMdl = ScMdl.SubModels[i];
+			if (FDef.FrameIndex >= SubMdl.Frames.Num())
+			{
+				GCon->Logf("Bad sub-model frame index %d", FDef.FrameIndex);
+				continue;
+			}
+			Drawer->DrawAliasModel(Org, Angles, SubMdl.Model,
+				SubMdl.Frames[FDef.FrameIndex].Index, SkinIdx, Skin, Light,
+				Translucency, IsViewModel);
+		}
+		return true;
+	}
+
+	Drawer->DrawAliasModel(Org, Angles, Mdl, Frame, SkinIdx, Skin, Light,
+		Translucency, IsViewModel);
+	return true;
+	unguard;
+}
+
+//==========================================================================
+//
+//	R_CheckAliasModelFrame
+//
+//==========================================================================
+
+bool R_CheckAliasModelFrame(VModel* Mdl, int Frame, float Inter)
+{
+	guard(R_CheckAliasModelFrame);
+	Mod_Extradata(Mdl);
+	if (Mdl->type == MODEL_Script)
+	{
+		VScriptedModel* SMdl = (VScriptedModel*)Mdl->data;
+		int FIdx = -1;
+		for (int i = 0; i < SMdl->Frames.Num(); i++)
+		{
+			if (SMdl->Frames[i].Number == Frame &&
+				SMdl->Frames[i].Inter <= Inter)
+			{
+				FIdx = i;
+			}
+		}
+		if (FIdx == -1)
+		{
+			return false;
+		}
+	}
+	return true;
+	unguard;
+}
+
+//==========================================================================
+//
 //	R_FreeModels
 //
 //==========================================================================
@@ -307,8 +511,21 @@ void R_PositionWeaponModel(VEntity* wpent, VModel* wpmodel, int InFrame)
 void R_FreeModels()
 {
 	guard(R_FreeModels);
-	for (int i = 0; i < mod_numknown; i++)
-		if (mod_known[i].data)
-			Z_Free(mod_known[i].data);
+	for (int i = 0; i < mod_known.Num(); i++)
+	{
+		if (mod_known[i]->data)
+		{
+			if (mod_known[i]->type == MODEL_Script)
+			{
+				delete (VScriptedModel*)mod_known[i]->data;
+			}
+			else
+			{
+				Z_Free(mod_known[i]->data);
+			}
+		}
+		delete mod_known[i];
+	}
+	mod_known.Clear();
 	unguard;
 }

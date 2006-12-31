@@ -388,9 +388,9 @@ void R_DrawTranslucentPoly(surface_t* surf, TVec* sv, int count, int lump,
 		trans_sprite_t &spr = trans_sprites[found];
 		if (spr.type == 2)
 		{
-			Drawer->DrawAliasModel(spr.dv[0], ((TAVec *)spr.dv)[1],
+			R_DrawAliasModel(spr.dv[0], ((TAVec *)spr.dv)[1],
 				(VModel*)spr.surf, spr.lump, spr.count, spr.skin,
-				spr.light, spr.translucency - 1, false);
+				spr.light, spr.translucency - 1, false, spr.pdist);
 		}
 		else if (spr.type)
 		{
@@ -670,7 +670,8 @@ static void RenderSprite(VEntity* thing)
 //
 //==========================================================================
 
-void RenderTranslucentAliasModel(VEntity* mobj, vuint32 light, bool IsWeapon)
+void RenderTranslucentAliasModel(VEntity* mobj, vuint32 light, bool IsWeapon,
+	float TimeFrac)
 {
 	guard(RenderTranslucentAliasModel);
 	int i;
@@ -696,6 +697,7 @@ void RenderTranslucentAliasModel(VEntity* mobj, vuint32 light, bool IsWeapon)
 			spr.dist = dist;
 			spr.type = 2;
 			spr.skin = *skin_list[mobj->ModelSkinNum];
+			spr.pdist = TimeFrac;
 			return;
 		}
 		if (spr.dist > best_dist)
@@ -710,9 +712,9 @@ void RenderTranslucentAliasModel(VEntity* mobj, vuint32 light, bool IsWeapon)
 		trans_sprite_t &spr = trans_sprites[found];
 		if (spr.type == 2)
 		{
-			Drawer->DrawAliasModel(spr.dv[0], ((TAVec *)spr.dv)[1],
+			R_DrawAliasModel(spr.dv[0], ((TAVec *)spr.dv)[1],
 				(VModel*)spr.surf, spr.lump, spr.count, spr.skin,
-				spr.light, spr.translucency - 1, false);
+				spr.light, spr.translucency - 1, false, spr.pdist);
 		}
 		else if (spr.type)
 		{
@@ -737,13 +739,15 @@ void RenderTranslucentAliasModel(VEntity* mobj, vuint32 light, bool IsWeapon)
 		spr.skin = *skin_list[mobj->ModelSkinNum];
 		spr.dist = dist;
 		spr.type = 2;
+		spr.pdist = TimeFrac;
 		return;
 	}
-	Drawer->DrawAliasModel(mobj->Origin, mobj->Angles,
+	R_DrawAliasModel(mobj->Origin, mobj->Angles,
 		model_precache[mobj->EntityFlags & VEntity::EF_FixedModel ?
 		mobj->FixedModelIndex : mobj->State->ModelIndex], IsWeapon ? 1 :
 		mobj->State->ModelFrame, mobj->ModelSkinIndex,
-		*skin_list[mobj->ModelSkinNum], light, mobj->Translucency, false);
+		*skin_list[mobj->ModelSkinNum], light, mobj->Translucency, false,
+		TimeFrac);
 	unguard;
 }
 
@@ -753,20 +757,20 @@ void RenderTranslucentAliasModel(VEntity* mobj, vuint32 light, bool IsWeapon)
 //
 //==========================================================================
 
-static void RenderAliasModel(VEntity* mobj, bool IsWeapon)
+static bool RenderAliasModel(VEntity* mobj, bool IsWeapon)
 {
 	guard(RenderAliasModel);
 	if (!r_chasecam && (mobj == cl_mobjs[cl->ClientNum + 1] ||
 		mobj == cl_weapon_mobjs[cl->ClientNum + 1]))
 	{
 		//	Don't draw client's mobj
-		return;
+		return true;
 	}
 
 	if (mobj->Translucency >= 95)
 	{
 		// Never make a vissprite when MF2_DONTDRAW is flagged.
-		return;
+		return true;
 	}
 
 	//	Setup lighting
@@ -781,26 +785,41 @@ static void RenderAliasModel(VEntity* mobj, bool IsWeapon)
 		light = R_LightPoint(mobj->Origin);
 	}
 
+	float TimeFrac = 0;
+	if (mobj->State->Time > 0)
+	{
+		TimeFrac = 1.0 - (mobj->StateTime / mobj->State->Time);
+		TimeFrac = MID(0.0, TimeFrac, 1.0);
+	}
+
 	//	Draw it
 	if (mobj->Translucency)
 	{
-		RenderTranslucentAliasModel(mobj, light, IsWeapon);
+		if (!R_CheckAliasModelFrame(
+			model_precache[mobj->EntityFlags & VEntity::EF_FixedModel ?
+			mobj->FixedModelIndex : mobj->State->ModelIndex],
+			IsWeapon ? 1 : mobj->State->ModelFrame, TimeFrac))
+		{
+			return false;
+		}
+		RenderTranslucentAliasModel(mobj, light, IsWeapon, TimeFrac);
+		return true;
 	}
 	else if (IsWeapon)
 	{
-		Drawer->DrawAliasModel(mobj->Origin, mobj->Angles,
+		return R_DrawAliasModel(mobj->Origin, mobj->Angles,
 			model_precache[mobj->EntityFlags & VEntity::EF_FixedModel ?
 			mobj->FixedModelIndex : mobj->State->ModelIndex], 1,
 			mobj->ModelSkinIndex, *skin_list[mobj->ModelSkinNum], light, 0,
-			false);
+			false, TimeFrac);
 	}
 	else
 	{
-		Drawer->DrawAliasModel(mobj->Origin, mobj->Angles,
+		return R_DrawAliasModel(mobj->Origin, mobj->Angles,
 			model_precache[mobj->EntityFlags & VEntity::EF_FixedModel ?
 			mobj->FixedModelIndex : mobj->State->ModelIndex],
 			mobj->State->ModelFrame, mobj->ModelSkinIndex,
-			*skin_list[mobj->ModelSkinNum], light, 0, false);
+			*skin_list[mobj->ModelSkinNum], light, 0, false, TimeFrac);
 	}
 	unguard;
 }
@@ -829,7 +848,12 @@ void R_RenderMobjs()
 				VEntity::EF_FixedModel ? cl_mobjs[i]->FixedModelIndex :
 				cl_mobjs[i]->State->ModelIndex] && r_models)
 			{
-				RenderAliasModel(cl_mobjs[i], false);
+				//	Try to draw a model. If it's a script and it doesn't
+				// specify model for this frame, draw sprite instead.
+				if (!RenderAliasModel(cl_mobjs[i], false))
+				{
+					RenderSprite(cl_mobjs[i]);
+				}
 			}
 			else
 			{
@@ -884,9 +908,9 @@ void R_DrawTranslucentPolys()
 			trans_sprite_t &spr = trans_sprites[found];
 			if (spr.type == 2)
 			{
-				Drawer->DrawAliasModel(spr.dv[0], ((TAVec *)spr.dv)[1],
+				R_DrawAliasModel(spr.dv[0], ((TAVec *)spr.dv)[1],
 					(VModel*)spr.surf, spr.lump, spr.count, spr.skin,
-					spr.light, spr.translucency - 1, false);
+					spr.light, spr.translucency - 1, false, spr.pdist);
 			}
 			else if (spr.type)
 			{
@@ -1030,9 +1054,16 @@ static void RenderViewModel(VViewState* VSt)
 		light = R_LightPoint(origin);
 	}
 
-	Drawer->DrawAliasModel(origin, cl->ViewAngles,
+	float TimeFrac = 0;
+	if (VSt->State->Time > 0)
+	{
+		TimeFrac = 1.0 - (VSt->StateTime / VSt->State->Time);
+		TimeFrac = MID(0.0, TimeFrac, 1.0);
+	}
+
+	R_DrawAliasModel(origin, cl->ViewAngles,
 		model_precache[VSt->State->ModelIndex], VSt->State->ModelFrame,
-		0, NULL, light, cl->ViewEntTranslucency, true);
+		0, NULL, light, cl->ViewEntTranslucency, true, TimeFrac);
 	unguard;
 }
 
@@ -1161,8 +1192,8 @@ void R_DrawModelFrame(const TVec &origin, float angle, VModel* model,
 	angles.yaw = angle;
 	angles.pitch = 0;
 	angles.roll = 0;
-	Drawer->DrawAliasModel(origin, angles, model, frame, 0, skin,
-		0xffffffff, 0, false);
+	R_DrawAliasModel(origin, angles, model, frame, 0, skin,
+		0xffffffff, 0, false, 0);
 
 	Drawer->EndView();
 	unguard;
