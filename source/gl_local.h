@@ -142,8 +142,8 @@ public:
 	void DrawMaskedPolygon(surface_t*, int);
 	void DrawSpritePolygon(TVec*, int, int, int, vuint32, const TVec&, float,
 		const TVec&, const TVec&, const TVec&);
-	void DrawAliasModel(const TVec&, const TAVec&, VModel*, int, int,
-		const char*, vuint32, int, bool);
+	void DrawAliasModel(const TVec&, const TAVec&, const TVec&, const TVec&,
+		mmdl_t*, int, int, vuint32, float, bool);
 
 	//	Particles
 	void StartParticles();

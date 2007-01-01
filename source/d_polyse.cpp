@@ -232,16 +232,14 @@ static const aliasspanfunc_t alias_span_drawers[4][2][3] =
 //
 //==========================================================================
 
-void VSoftwareDrawer::PolysetSetupDrawer(int translucency)
+void VSoftwareDrawer::PolysetSetupDrawer(float Alpha)
 {
 	guardSlow(VSoftwareDrawer::PolysetSetupDrawer);
 	int fuzzfunc = 0;
 
-//translucency = 30;
-//d_affinetridesc.colouredlight = 1;
-	if (translucency)
+	if (Alpha < 0.95)
 	{
-		int trindex = (translucency - 5) / 10;
+		int trindex = int(9.5 - Alpha * 10.0);
 		if (trindex < 0)
 			trindex = 0;
 		else if (trindex > 8)
@@ -257,9 +255,9 @@ void VSoftwareDrawer::PolysetSetupDrawer(int translucency)
 			fuzzfunc = 2;
 		}
 
-		trindex = translucency * 31 / 100;
-		d_dsttranstab = scaletable[trindex];
-		d_srctranstab = scaletable[31 - trindex];
+		trindex = int(Alpha * 31);
+		d_dsttranstab = scaletable[31 - trindex];
+		d_srctranstab = scaletable[trindex];
 	}
 
 	D_PolysetDrawSpans = alias_span_drawers[bppindex]

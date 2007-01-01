@@ -27,12 +27,6 @@ class BurningBarrel : Decoration
 	__mobjinfo__(70)
 	__scriptid__(149);
 
-void Tick(float DeltaTime)
-{
-	ModelSkinIndex = ftoi(Level.Game.level->time * 32.0) & 7;
-	::Tick(DeltaTime);
-}
-
 __states__
 {
 	S_BBAR1('FCAN', 0 | FF_FULLBRIGHT, 'lights/fbarrel.xml', 0, 4.0 / 35.0, S_BBAR2) { }

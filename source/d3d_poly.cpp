@@ -1063,13 +1063,11 @@ void VDirect3DDrawer::DrawSpritePolygon(TVec *cv, int lump, int translucency,
 //==========================================================================
 
 void VDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
-	VModel* model, int frame, int skin_index, const char *skin, vuint32 light,
-	int translucency, bool is_view_model)
+	const TVec& Offset, const TVec& Scale, mmdl_t* pmdl, int frame,
+	int SkinID, vuint32 light, float Alpha, bool is_view_model)
 {
 	guard(VDirect3DDrawer::DrawAliasModel);
-	mmdl_t				*pmdl;
 	mframe_t			*pframedesc;
-	mskin_t				*pskindesc;
 	float 				l;
 	int					index;
 	trivertx_t			*verts;
@@ -1108,22 +1106,12 @@ void VDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	shadelightb = (light & 0xff) / 512.0;
 	shadedots = r_avertexnormal_dots[((int)(angles.yaw * (SHADEDOT_QUANT / 360.0))) & (SHADEDOT_QUANT - 1)];
 	light &= 0x00ffffff;
-	alpha = ((100 - translucency) * 255 / 100) << 24;
+	alpha = int(Alpha * 255) << 24;
 	
-	//
-	// locate the proper data
-	//
-	pmdl = (mmdl_t *)Mod_Extradata(model);
-
 	//
 	// draw all the triangles
 	//
 
-	if ((frame >= pmdl->numframes) || (frame < 0))
-	{
-		GCon->Logf(NAME_Dev, "no such frame %d", frame);
-		frame = 0;
-	}
 	pframedesc = (mframe_t*)((byte *)pmdl + pmdl->ofsframes + frame * pmdl->framesize);
 
 	AngleVectors(angles, alias_forward, alias_right, alias_up);
@@ -1140,28 +1128,17 @@ void VDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	matWorld(3, 2) = origin.z;
 
 	matTmp = IdentityMatrix;
-	matTmp(0, 0) = pframedesc->scale[0];
-	matTmp(1, 1) = pframedesc->scale[1];
-	matTmp(2, 2) = pframedesc->scale[2];
-	matTmp(3, 0) = pframedesc->scale_origin[0];
-	matTmp(3, 1) = pframedesc->scale_origin[1];
-	matTmp(3, 2) = pframedesc->scale_origin[2];
+	matTmp(0, 0) = pframedesc->scale[0] * Scale.x;
+	matTmp(1, 1) = pframedesc->scale[1] * Scale.y;
+	matTmp(2, 2) = pframedesc->scale[2] * Scale.z;
+	matTmp(3, 0) = pframedesc->scale_origin[0] * Scale.x + Offset.x;
+	matTmp(3, 1) = pframedesc->scale_origin[1] * Scale.y + Offset.x;
+	matTmp(3, 2) = pframedesc->scale_origin[2] * Scale.z + Offset.x;
 
 	matWorld = matTmp * matWorld;
 	RenderDevice->SetTransform(D3DTRANSFORMSTATE_WORLD, &matWorld);
 
-	if (skin && *skin)
-	{
-		SetPic(GTextureManager.AddFileTexture(VName(skin), TEXTYPE_Skin));
-	}
-	else
-	{
-		pskindesc = (mskin_t *)((byte *)pmdl + pmdl->ofsskins);
-		if (skin_index < 0 || skin_index >= pmdl->numskins)
-			SetPic(GTextureManager.AddFileTexture(VName(pskindesc[0].name), TEXTYPE_Skin));
-		else
-			SetPic(GTextureManager.AddFileTexture(VName(pskindesc[skin_index].name), TEXTYPE_Skin));
-	}
+	SetPic(SkinID);
 
 	RenderDevice->SetRenderState(D3DRENDERSTATE_SHADEMODE, D3DSHADE_GOURAUD);
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, TRUE);

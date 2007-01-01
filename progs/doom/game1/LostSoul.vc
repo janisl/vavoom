@@ -64,9 +64,9 @@ __states__
 	S_SKULL_DIE1('SKUL', 5 | FF_FULLBRIGHT, 'monsters/skull/model.xml', 10, 6.0 / 35.0, S_SKULL_DIE2) { }
 	S_SKULL_DIE2('SKUL', 6 | FF_FULLBRIGHT, 'monsters/skull/model.xml', 11, 6.0 / 35.0, S_SKULL_DIE3) { A_Scream(); }
 	S_SKULL_DIE3('SKUL', 7 | FF_FULLBRIGHT, 'monsters/skull/model.xml', 12, 6.0 / 35.0, S_SKULL_DIE4) { }
-	S_SKULL_DIE4('SKUL', 8 | FF_FULLBRIGHT, 'monsters/skull/model.xml', 13, 6.0 / 35.0, S_SKULL_DIE5) { A_Fall(); Translucency = 25; }
-	S_SKULL_DIE5('SKUL', 9, 'monsters/skull/model.xml', 14, 6.0 / 35.0, S_SKULL_DIE6) { Translucency = 50; }
-	S_SKULL_DIE6('SKUL', 10, 'monsters/skull/model.xml', 15, 6.0 / 35.0, none) { Translucency = 75; }
+	S_SKULL_DIE4('SKUL', 8 | FF_FULLBRIGHT, 'monsters/skull/model.xml', 13, 6.0 / 35.0, S_SKULL_DIE5) { A_Fall(); }
+	S_SKULL_DIE5('SKUL', 9, 'monsters/skull/model.xml', 14, 6.0 / 35.0, S_SKULL_DIE6) { }
+	S_SKULL_DIE6('SKUL', 10, 'monsters/skull/model.xml', 15, 6.0 / 35.0, none) { }
 }
 
 defaultproperties

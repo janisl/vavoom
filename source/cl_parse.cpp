@@ -225,12 +225,9 @@ static void CL_ReadMobj(VMessage& msg, int bits, VEntity*& mobj, const clmobjbas
 		mobj->EntityFlags |= VEntity::EF_FixedModel;
 		mobj->FixedModelIndex = msg.ReadShort();
 	}
-	mobj->ModelSkinIndex = 0;
 	mobj->ModelSkinNum = 0;
 	if (bits & MOB_SKIN_NUM)
 		mobj->ModelSkinNum = msg.ReadByte();
-	else if (bits & MOB_SKIN_IDX)
-		mobj->ModelSkinIndex = msg.ReadByte();
 }
 
 static void CL_ParseUpdateMobj(VMessage& msg)

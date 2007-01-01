@@ -123,15 +123,17 @@ static aedge_t aedges[12] =
 //==========================================================================
 
 void VSoftwareDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
-	VModel* model, int frame, int skin_index, const char *skin, vuint32 light,
-	int translucency, bool is_view_model)
+	const TVec& Offset, const TVec& Scale, mmdl_t* Apmdl, int frame,
+	int SkinID, vuint32 light, float Alpha, bool is_view_model)
 {
 	guard(VSoftwareDrawer::DrawAliasModel);
 	modelorg = vieworg - origin;
 
+	pmdl = Apmdl;
+
 	// see if the bounding box lets us trivially reject, also sets
 	// trivial accept status
-	if (!AliasCheckBBox(model, angles, frame))
+	if (!AliasCheckBBox(pmdl, angles, Offset, Scale, frame))
 	{
 		return;
 	}
@@ -151,14 +153,12 @@ void VSoftwareDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 			(((long)&finalstverts[0] + CACHE_SIZE - 1) & ~(CACHE_SIZE - 1));
 	pauxverts = &auxverts[0];
 
-	pmdl = (mmdl_t*)Mod_Extradata(model);
-
-	AliasSetupSkin(skin_index, skin);
-	AliasSetUpTransform(angles, frame, a_trivial_accept);
+	AliasSetupSkin(SkinID);
+	AliasSetUpTransform(angles, Offset, Scale, frame, a_trivial_accept);
 	AliasSetupLighting(light);
 	AliasSetupFrame(frame);
 
-	PolysetSetupDrawer(translucency);
+	PolysetSetupDrawer(Alpha);
 
 	// hack the depth range to prevent view model from poking into walls
 	if (is_view_model)
@@ -179,7 +179,8 @@ void VSoftwareDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 //
 //==========================================================================
 
-bool VSoftwareDrawer::AliasCheckBBox(VModel* model, const TAVec &angles, int frame)
+bool VSoftwareDrawer::AliasCheckBBox(mmdl_t* pmdl, const TAVec &angles,
+	const TVec& Offset, const TVec& Scale, int frame)
 {
 	int					i, flags, numv;
 	float				zi, basepts[8][3], v0, v1, frac;
@@ -192,10 +193,9 @@ bool VSoftwareDrawer::AliasCheckBBox(VModel* model, const TAVec &angles, int fra
 // expand, rotate, and translate points into worldspace
 
 	a_trivial_accept = 0;
-	pmdl = (mmdl_t *)Mod_Extradata(model);
 
 // construct the base bounding box for this frame
-	AliasSetUpTransform(angles, frame, 0);
+	AliasSetUpTransform(angles, Offset, Scale, frame, 0);
 
 // x worldspace coordinates
 	basepts[0][0] = basepts[1][0] = basepts[2][0] = basepts[3][0] = 0;
@@ -258,7 +258,7 @@ bool VSoftwareDrawer::AliasCheckBBox(VModel* model, const TAVec &angles, int fra
 			if (pv0->flags ^ pv1->flags)
 			{
 				frac = (ALIAS_Z_CLIP_PLANE - pa0->fv[2]) /
-					   (pa1->fv[2] - pa0->fv[2]);
+					(pa1->fv[2] - pa0->fv[2]);
 				viewaux[numv].fv[0] = pa0->fv[0] +
 						(pa1->fv[0] - pa0->fv[0]) * frac;
 				viewaux[numv].fv[1] = pa0->fv[1] +
@@ -316,7 +316,8 @@ bool VSoftwareDrawer::AliasCheckBBox(VModel* model, const TAVec &angles, int fra
 //
 //==========================================================================
 
-void VSoftwareDrawer::AliasSetUpTransform(const TAVec &angles, int frame, int trivial_accept)
+void VSoftwareDrawer::AliasSetUpTransform(const TAVec &angles,
+	const TVec& Offset, const TVec& Scale, int frame, int trivial_accept)
 {
 	int				i;
 	float			rotationmatrix[3][4], t2matrix[3][4];
@@ -340,13 +341,13 @@ void VSoftwareDrawer::AliasSetUpTransform(const TAVec &angles, int frame, int tr
 	pframedesc = (mframe_t *)((byte*)pmdl + pmdl->ofsframes +
 		frame * pmdl->framesize);
 
-	tmatrix[0][0] = pframedesc->scale[0];
-	tmatrix[1][1] = pframedesc->scale[1];
-	tmatrix[2][2] = pframedesc->scale[2];
+	tmatrix[0][0] = pframedesc->scale[0] * Scale.x;
+	tmatrix[1][1] = pframedesc->scale[1] * Scale.y;
+	tmatrix[2][2] = pframedesc->scale[2] * Scale.z;
 
-	tmatrix[0][3] = pframedesc->scale_origin[0];
-	tmatrix[1][3] = pframedesc->scale_origin[1];
-	tmatrix[2][3] = pframedesc->scale_origin[2];
+	tmatrix[0][3] = pframedesc->scale_origin[0] * Scale.x + Offset.x;
+	tmatrix[1][3] = pframedesc->scale_origin[1] * Scale.y + Offset.y;
+	tmatrix[2][3] = pframedesc->scale_origin[2] * Scale.z + Offset.z;
 
 // TODO: can do this with simple matrix rearrangement
 
@@ -403,21 +404,8 @@ void VSoftwareDrawer::AliasSetUpTransform(const TAVec &angles, int frame, int tr
 //
 //==========================================================================
 
-void VSoftwareDrawer::AliasSetupSkin(int skin_index, const char *skin)
+void VSoftwareDrawer::AliasSetupSkin(int SkinID)
 {
-	int SkinID;
-	if (skin && *skin)
-	{
-		SkinID = GTextureManager.AddFileTexture(VName(skin), TEXTYPE_Skin);
-	}
-	else
-	{
-		mskin_t* pskins = (mskin_t *)((byte *)pmdl + pmdl->ofsskins);
-		if (skin_index < 0 || skin_index >= pmdl->numskins)
-			SkinID = GTextureManager.AddFileTexture(VName(pskins[0].name), TEXTYPE_Skin);
-		else
-			SkinID = GTextureManager.AddFileTexture(VName(pskins[skin_index].name), TEXTYPE_Skin);
-	}
 	d_affinetridesc.pskin = SetPic(SkinID);
 	d_affinetridesc.skinwidth = pmdl->skinwidth;
 	d_affinetridesc.skinheight = pmdl->skinheight;
@@ -575,7 +563,7 @@ void VSoftwareDrawer::AliasPreparePoints()
 		pfinalstverts[i].t = pstverts[i].t << 16;
 	}
 	d_anumverts = pmdl->numverts;
- 	fv = pfinalverts;
+	fv = pfinalverts;
 	av = pauxverts;
 
 	for (i = 0; i < d_anumverts; i++, fv++, av++, d_apverts++)
@@ -585,7 +573,7 @@ void VSoftwareDrawer::AliasPreparePoints()
 			fv->flags |= ALIAS_Z_CLIP;
 		else
 		{
-			 D_AliasProjectFinalVert (fv, av);
+			D_AliasProjectFinalVert (fv, av);
 
 			if (fv->u < 0)
 				fv->flags |= ALIAS_LEFT_CLIP;
@@ -612,7 +600,7 @@ void VSoftwareDrawer::AliasPreparePoints()
 
 		if (pfv[0]->flags & pfv[1]->flags & pfv[2]->flags)
 			continue;		// completely clipped
-		
+
 		if (!(pfv[0]->flags | pfv[1]->flags | pfv[2]->flags))
 		{	// totally unclipped
 			d_affinetridesc.pfinalverts = pfinalverts;

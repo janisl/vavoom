@@ -100,7 +100,6 @@ class VEntity : public VThinker
 	//More drawing info.
 	int				SpriteType;		//  How to draw sprite
 	int				FixedModelIndex;
-	int				ModelSkinIndex;
 	int				ModelSkinNum;
 
 	int				Translucency;

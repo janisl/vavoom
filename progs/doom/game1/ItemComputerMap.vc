@@ -42,18 +42,6 @@ bool HandlePickup(Actor Toucher)
 	return true;
 }
 
-//==========================================================================
-//
-//	Tick
-//
-//==========================================================================
-
-void Tick(float DeltaTime)
-{
-	ModelSkinIndex = ftoi(Level.Game.level->time * 4.0) & 3;
-	::Tick(DeltaTime);
-}
-
 __states__
 {
 	S_PMAP('PMAP', 0 | FF_FULLBRIGHT, 'items/map.xml', 0, 6.0 / 35.0, S_PMAP2) { }

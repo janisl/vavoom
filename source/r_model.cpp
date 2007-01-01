@@ -36,6 +36,13 @@
 
 // TYPES -------------------------------------------------------------------
 
+struct VModel
+{
+	char		name[128];
+	void*		data;		// only access through Mod_Extradata
+	int			type;
+};
+
 enum
 {
 	MODEL_Unknown,
@@ -49,9 +56,15 @@ public:
 	struct VFrame
 	{
 		int		Index;
+		float	AlphaStart;
+		float	AlphaEnd;
+		TVec	Offset;
+		TVec	Scale;
 	};
 
 	VModel*				Model;
+	int					SkinAnimSpeed;
+	int					SkinAnimRange;
 	TArray<VFrame>		Frames;
 };
 
@@ -69,6 +82,10 @@ public:
 	float		Inter;
 	int			ModelIndex;
 	int			FrameIndex;
+	float		AngleStart;
+	float		AngleEnd;
+	float		AlphaStart;
+	float		AlphaEnd;
 };
 
 class VScriptedModel
@@ -293,12 +310,105 @@ static void ParseModelScript(VModel* mod, VStream& Strm)
 		{
 			VScriptSubModel& Md2 = SMdl.SubModels.Alloc();
 			Md2.Model = Mod_FindName(*SN->GetAttribute("file").ToLower().FixFileSlashes());
+			Md2.SkinAnimSpeed = 0;
+			Md2.SkinAnimRange = 0;
+
+			//	Skin animation
+			if (SN->HasAttribute("skin_anim_speed"))
+			{
+				Md2.SkinAnimSpeed = atoi(*SN->GetAttribute("skin_anim_speed"));
+				Md2.SkinAnimRange = atoi(*SN->GetAttribute("skin_anim_range"));
+			}
+
+			//	Base offset
+			TVec Offset(0.0, 0.0, 0.0);
+			if (SN->HasAttribute("offset_x"))
+			{
+				Offset.x = atof(*SN->GetAttribute("offset_x"));
+			}
+			if (SN->HasAttribute("offset_y"))
+			{
+				Offset.y = atof(*SN->GetAttribute("offset_y"));
+			}
+			if (SN->HasAttribute("offset_z"))
+			{
+				Offset.z = atof(*SN->GetAttribute("offset_z"));
+			}
+
+			//	Base scaling
+			TVec Scale(1.0, 1.0, 1.0);
+			if (SN->HasAttribute("scale"))
+			{
+				Scale.x = atof(*SN->GetAttribute("scale"));
+				Scale.y = Scale.x;
+				Scale.z = Scale.x;
+			}
+			if (SN->HasAttribute("scale_x"))
+			{
+				Scale.x = atof(*SN->GetAttribute("scale_x"));
+			}
+			if (SN->HasAttribute("scale_y"))
+			{
+				Scale.y = atof(*SN->GetAttribute("scale_y"));
+			}
+			if (SN->HasAttribute("scale_z"))
+			{
+				Scale.z = atof(*SN->GetAttribute("scale_z"));
+			}
 
 			//	Process frames.
 			for (VXmlNode* FN = SN->FindChild("frame"); FN; FN = FN->FindNext())
 			{
 				VScriptSubModel::VFrame& F = Md2.Frames.Alloc();
 				F.Index = atoi(*FN->GetAttribute("index"));
+
+				//	Offset
+				F.Offset = Offset;
+				if (FN->HasAttribute("offset_x"))
+				{
+					F.Offset.x = atof(*FN->GetAttribute("offset_x"));
+				}
+				if (FN->HasAttribute("offset_y"))
+				{
+					F.Offset.y = atof(*FN->GetAttribute("offset_y"));
+				}
+				if (FN->HasAttribute("offset_z"))
+				{
+					F.Offset.z = atof(*FN->GetAttribute("offset_z"));
+				}
+
+				//	Scale
+				F.Scale = Scale;
+				if (FN->HasAttribute("scale"))
+				{
+					F.Scale.x = atof(*FN->GetAttribute("scale"));
+					F.Scale.y = F.Scale.x;
+					F.Scale.z = F.Scale.x;
+				}
+				if (FN->HasAttribute("scale_x"))
+				{
+					F.Scale.x = atof(*FN->GetAttribute("scale_x"));
+				}
+				if (FN->HasAttribute("scale_y"))
+				{
+					F.Scale.y = atof(*FN->GetAttribute("scale_y"));
+				}
+				if (FN->HasAttribute("scale_z"))
+				{
+					F.Scale.z = atof(*FN->GetAttribute("scale_z"));
+				}
+
+				//	Alpha
+				F.AlphaStart = 1.0;
+				F.AlphaEnd = 1.0;
+				if (FN->HasAttribute("alpha_start"))
+				{
+					F.AlphaStart = atof(*FN->GetAttribute("alpha_start"));
+				}
+				if (FN->HasAttribute("alpha_end"))
+				{
+					F.AlphaEnd = atof(*FN->GetAttribute("alpha_end"));
+				}
 			}
 		}
 	}
@@ -308,9 +418,8 @@ static void ParseModelScript(VModel* mod, VStream& Strm)
 	{
 		VScriptedModelFrame& F = Mdl->Frames.Alloc();
 		F.Number = atoi(*N->GetAttribute("number"));
-		F.Inter = 0.0;
-		F.ModelIndex = -1;
 		F.FrameIndex = atoi(*N->GetAttribute("frame_index"));
+		F.ModelIndex = -1;
 		VStr MdlName = N->GetAttribute("model");
 		for (int i = 0; i < Mdl->Models.Num(); i++)
 		{
@@ -324,9 +433,33 @@ static void ParseModelScript(VModel* mod, VStream& Strm)
 		{
 			Sys_Error("%s has no model %s", mod->name, *MdlName);
 		}
+
+		F.Inter = 0.0;
 		if (N->HasAttribute("inter"))
 		{
 			F.Inter = atof(*N->GetAttribute("inter"));
+		}
+
+		F.AngleStart = 0.0;
+		F.AngleEnd = 0.0;
+		if (N->HasAttribute("angle_start"))
+		{
+			F.AngleStart = atof(*N->GetAttribute("angle_start"));
+		}
+		if (N->HasAttribute("angle_end"))
+		{
+			F.AngleEnd = atof(*N->GetAttribute("angle_end"));
+		}
+
+		F.AlphaStart = 1.0;
+		F.AlphaEnd = 1.0;
+		if (N->HasAttribute("alpha_start"))
+		{
+			F.AlphaStart = atof(*N->GetAttribute("alpha_start"));
+		}
+		if (N->HasAttribute("alpha_end"))
+		{
+			F.AlphaEnd = atof(*N->GetAttribute("alpha_end"));
 		}
 	}
 
@@ -426,47 +559,111 @@ void R_PositionWeaponModel(VEntity* wpent, VModel* wpmodel, int InFrame)
 //==========================================================================
 
 bool R_DrawAliasModel(const TVec& Org, const TAVec& Angles, VModel* Mdl,
-	int Frame, int SkinIdx, const char* Skin, vuint32 Light,
-	int Translucency, bool IsViewModel, float Inter)
+	int Frame, const char* Skin, vuint32 Light, int Translucency,
+	bool IsViewModel, float Inter)
 {
 	guard(R_DrawAliasModel);
-	Mod_Extradata(Mdl);
-	if (Mdl->type == MODEL_Script)
-	{
-		VScriptedModel* SMdl = (VScriptedModel*)Mdl->data;
-		int FIdx = -1;
-		for (int i = 0; i < SMdl->Frames.Num(); i++)
-		{
-			if (SMdl->Frames[i].Number == Frame &&
-				SMdl->Frames[i].Inter <= Inter)
-			{
-				FIdx = i;
-			}
-		}
-		if (FIdx == -1)
-		{
-			return false;
-		}
+	void* MData = Mod_Extradata(Mdl);
+	float Alpha = (100.0 - Translucency) / 100.0;
 
-		VScriptedModelFrame& FDef = SMdl->Frames[FIdx];
-		VScriptModel& ScMdl = SMdl->Models[FDef.ModelIndex];
-		for (int i = 0; i < ScMdl.SubModels.Num(); i++)
-		{
-			VScriptSubModel& SubMdl = ScMdl.SubModels[i];
-			if (FDef.FrameIndex >= SubMdl.Frames.Num())
-			{
-				GCon->Logf("Bad sub-model frame index %d", FDef.FrameIndex);
-				continue;
-			}
-			Drawer->DrawAliasModel(Org, Angles, SubMdl.Model,
-				SubMdl.Frames[FDef.FrameIndex].Index, SkinIdx, Skin, Light,
-				Translucency, IsViewModel);
-		}
+	if (Mdl->type != MODEL_Script)
+	{
+		Sys_Error("Must use model scripts");
 		return true;
 	}
 
-	Drawer->DrawAliasModel(Org, Angles, Mdl, Frame, SkinIdx, Skin, Light,
-		Translucency, IsViewModel);
+	VScriptedModel* SMdl = (VScriptedModel*)MData;
+	int FIdx = -1;
+	for (int i = 0; i < SMdl->Frames.Num(); i++)
+	{
+		if (SMdl->Frames[i].Number == Frame &&
+			SMdl->Frames[i].Inter <= Inter)
+		{
+			FIdx = i;
+		}
+	}
+	if (FIdx == -1)
+	{
+		return false;
+	}
+
+	VScriptedModelFrame& FDef = SMdl->Frames[FIdx];
+	VScriptModel& ScMdl = SMdl->Models[FDef.ModelIndex];
+	for (int i = 0; i < ScMdl.SubModels.Num(); i++)
+	{
+		VScriptSubModel& SubMdl = ScMdl.SubModels[i];
+		if (FDef.FrameIndex >= SubMdl.Frames.Num())
+		{
+			GCon->Logf("Bad sub-model frame index %d", FDef.FrameIndex);
+			continue;
+		}
+		VScriptSubModel::VFrame& F = SubMdl.Frames[FDef.FrameIndex];
+
+		//	Locate the proper data.
+		mmdl_t* pmdl = (mmdl_t*)Mod_Extradata(SubMdl.Model);
+
+		//	Skin aniations.
+		int Md2SkinIdx = 0;
+		if (SubMdl.SkinAnimSpeed)
+		{
+			Md2SkinIdx = int(cl_level.time * SubMdl.SkinAnimSpeed) %
+				SubMdl.SkinAnimRange;
+		}
+
+		//	Get the proper skin texture ID.
+		int SkinID;
+		if (Skin && *Skin)
+		{
+			SkinID = GTextureManager.AddFileTexture(VName(Skin), TEXTYPE_Skin);
+		}
+		else
+		{
+			mskin_t* pskindesc = (mskin_t *)((byte *)pmdl + pmdl->ofsskins);
+			if (Md2SkinIdx < 0 || Md2SkinIdx >= pmdl->numskins)
+			{
+				SkinID = GTextureManager.AddFileTexture(
+					VName(pskindesc[0].name), TEXTYPE_Skin);
+			}
+			else
+			{
+				SkinID = GTextureManager.AddFileTexture(
+					VName(pskindesc[Md2SkinIdx].name), TEXTYPE_Skin);
+			}
+		}
+
+		//	Get and verify frame number.
+		int Md2Frame = F.Index;
+		if (Md2Frame >= pmdl->numframes || Md2Frame < 0)
+		{
+			GCon->Logf(NAME_Dev, "no such frame %d in %s", Md2Frame,
+				SubMdl.Model->name);
+			Md2Frame = 0;
+			//	Stop further warnings.
+			F.Index = 0;
+		}
+
+		TAVec Md2Angle = Angles;
+		if (FDef.AngleStart || FDef.AngleEnd != 1.0)
+		{
+			Md2Angle.yaw = AngleMod(Md2Angle.yaw + FDef.AngleStart +
+				(FDef.AngleEnd - FDef.AngleStart) * Inter);
+		}
+
+		//	Alpha
+		float Md2Alpha = Alpha;
+		if (FDef.AlphaStart != 1.0 || FDef.AlphaEnd != 1.0)
+		{
+			Md2Alpha *= FDef.AlphaStart + (FDef.AlphaEnd -
+				FDef.AlphaStart) * Inter;
+		}
+		if (F.AlphaStart != 1.0 || F.AlphaEnd != 1.0)
+		{
+			Md2Alpha *= F.AlphaStart + (F.AlphaEnd - F.AlphaStart) * Inter;
+		}
+
+		Drawer->DrawAliasModel(Org, Md2Angle, F.Offset, F.Scale, pmdl,
+			Md2Frame, SkinID, Light, Md2Alpha, IsViewModel);
+	}
 	return true;
 	unguard;
 }

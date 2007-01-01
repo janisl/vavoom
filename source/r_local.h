@@ -389,7 +389,7 @@ vuint32 R_LightPoint(const TVec &p);
 //
 //	r_model
 //
-bool R_DrawAliasModel(const TVec&, const TAVec&, VModel*, int, int,
+bool R_DrawAliasModel(const TVec&, const TAVec&, VModel*, int,
 	const char*, vuint32, int, bool, float);
 bool R_CheckAliasModelFrame(VModel*, int, float);
 void R_FreeModels();

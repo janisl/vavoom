@@ -983,14 +983,11 @@ void VOpenGLDrawer::DrawSpritePolygon(TVec *cv, int lump, int translucency,
 //==========================================================================
 
 void VOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
-	VModel* model, int InFrame, int skin_index, const char *skin,
-	vuint32 light, int translucency, bool is_view_model)
+	const TVec& Offset, const TVec& Scale, mmdl_t* pmdl, int frame,
+	int SkinID, vuint32 light, float Alpha, bool is_view_model)
 {
 	guard(VOpenGLDrawer::DrawAliasModel);
-	int frame = InFrame;
-	mmdl_t		*pmdl;
 	mframe_t	*framedesc;
-	mskin_t		*pskindesc;
 	float 		l;
 	int			index;
 	trivertx_t	*verts;
@@ -1000,7 +997,6 @@ void VOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	float		shadelightg;
 	float		shadelightb;
 	float		*shadedots;
-	float		alpha;
 
 	if (is_view_model)
 	{
@@ -1015,17 +1011,11 @@ void VOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	shadelightg = ((light >> 8) & 0xff) / 510.0;
 	shadelightb = (light & 0xff) / 510.0;
 	shadedots = r_avertexnormal_dots[((int)(angles.yaw * (SHADEDOT_QUANT / 360.0))) & (SHADEDOT_QUANT - 1)];
-	alpha = (100.0 - translucency) / 100.0;
 	if (!model_lighting)
 	{
-		SetColour((light & 0x00ffffff) | ((255 * (100 - translucency) / 100) << 24));
+		SetColour((light & 0x00ffffff) | (int(255 * Alpha) << 24));
 	}
 	
-	//
-	// locate the proper data
-	//
-	pmdl = (mmdl_t*)Mod_Extradata(model);
-
 	//
 	// draw all the triangles
 	//
@@ -1037,28 +1027,15 @@ void VOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	glRotatef(angles.pitch,  0, 1, 0);
 	glRotatef(angles.roll,  1, 0, 0);
 
-	if ((frame >= pmdl->numframes) || (frame < 0))
-	{
-		GCon->Logf(NAME_Dev, "no such frame %d in %s", frame, model->name);
-		frame = 0;
-	}
+	glTranslatef(Offset.x, Offset.y, Offset.z);
+	glScalef(Scale.x, Scale.y, Scale.z);
+
 	framedesc = (mframe_t*)((byte *)pmdl + pmdl->ofsframes + frame * pmdl->framesize);
 
 	glTranslatef(framedesc->scale_origin[0], framedesc->scale_origin[1], framedesc->scale_origin[2]);
 	glScalef(framedesc->scale[0], framedesc->scale[1], framedesc->scale[2]);
 
-	if (skin && *skin)
-	{
-		SetPic(GTextureManager.AddFileTexture(VName(skin), TEXTYPE_Skin));
-	}
-	else
-	{
-		pskindesc = (mskin_t *)((byte *)pmdl + pmdl->ofsskins);
-		if (skin_index < 0 || skin_index >= pmdl->numskins)
-			SetPic(GTextureManager.AddFileTexture(VName(pskindesc[0].name), TEXTYPE_Skin));
-		else
-			SetPic(GTextureManager.AddFileTexture(VName(pskindesc[skin_index].name), TEXTYPE_Skin));
-	}
+	SetPic(SkinID);
 
 	glShadeModel(GL_SMOOTH);
 	glEnable(GL_BLEND);
@@ -1091,7 +1068,7 @@ void VOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 			if (model_lighting)
 			{
 				l = shadedots[verts[index].lightnormalindex];
-				glColor4f(l * shadelightr, l * shadelightg, l * shadelightb, alpha);
+				glColor4f(l * shadelightr, l * shadelightg, l * shadelightb, Alpha);
 			}
 			glVertex3f(verts[index].v[0], verts[index].v[1], verts[index].v[2]);
 		} while (--count);

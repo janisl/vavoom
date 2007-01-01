@@ -375,8 +375,6 @@ int SV_GetMobjBits(VEntity &mobj, mobj_base_t &base)
 		bits |= MOB_MODEL;
 	if (mobj.State->ModelIndex && mobj.ModelSkinNum)
 		bits |= MOB_SKIN_NUM;
-	else if (mobj.State->ModelIndex && mobj.ModelSkinIndex)
-		bits |= MOB_SKIN_IDX;
 	if (base.Class != mobj.GetClass())
 	{
 		bits |= MOB_CLASS;
@@ -450,8 +448,6 @@ void SV_WriteMobj(int bits, VEntity &mobj, VMessage &msg)
 		msg << (vuint16)mobj.FixedModelIndex;
 	if (bits & MOB_SKIN_NUM)
 		msg << (vuint8)mobj.ModelSkinNum;
-	else if (bits & MOB_SKIN_IDX)
-		msg << (vuint8)mobj.ModelSkinIndex;
 	if (bits & MOB_WEAPON)
 		msg << (vuint16)mobj.Player->WeaponModel;
 	unguard;

@@ -142,7 +142,6 @@ enum
 #define MOB_FULL_BRIGHT	0x040000
 #define MOB_MODEL		0x080000
 #define MOB_SKIN_NUM	0x100000
-#define MOB_SKIN_IDX	0x200000
 
 #define SUB_FLOOR		0x0001
 #define SUB_CEIL		0x0002

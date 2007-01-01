@@ -26,12 +26,6 @@
 class TorchRedShort : Decoration
 	__mobjinfo__(57);
 
-void Tick(float DeltaTime)
-{
-	ModelSkinIndex = ftoi(Level.Game.level->time * 32.0) & 7;
-	::Tick(DeltaTime);
-}
-
 __states__
 {
 	S_RTORCHSHRT('SMRT', 0 | FF_FULLBRIGHT, 'lights/stickred.xml', 0, 4.0 / 35.0, S_RTORCHSHRT2) { }

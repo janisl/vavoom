@@ -27,12 +27,6 @@ class ItemKeyGreen : Key
 	__mobjinfo__(73)
 	__scriptid__(86);
 
-void Tick(float FrameTime)
-{
-	Angles.yaw = AngleMod360(Angles.yaw + FrameTime * 180.0);
-	::Tick(FrameTime);
-}
-
 __states__
 {
 	S_AKYY1('AKYY', 0 | FF_FULLBRIGHT, 'keys/green.xml', 0, 3.0 / 35.0, S_AKYY2) { }

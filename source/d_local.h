@@ -177,8 +177,8 @@ public:
 	void DrawMaskedPolygon(surface_t*, int);
 	void DrawSpritePolygon(TVec*, int, int, int, vuint32, const TVec&, float,
 		const TVec&, const TVec&, const TVec&);
-	void DrawAliasModel(const TVec&, const TAVec&, VModel*, int, int,
-		const char*, vuint32, int, bool);
+	void DrawAliasModel(const TVec&, const TAVec&, const TVec&, const TVec&,
+		mmdl_t*, int, int, vuint32, float, bool);
 
 	//	Particles
 	void StartParticles();
@@ -251,15 +251,15 @@ protected:
 		const TVec&, float, const TVec&, const TVec&, const TVec&);
 
 	//	Drawing of the aliased models, i.e. md2
-	bool AliasCheckBBox(VModel* model, const TAVec &angles, int frame);
-	void AliasSetUpTransform(const TAVec &angles, int frame, int trivial_accept);
-	void AliasSetupSkin(int skin_index, const char *skin);
-	void AliasSetupLighting(vuint32 light);
-	void AliasSetupFrame(int frame);
+	bool AliasCheckBBox(mmdl_t*, const TAVec&, const TVec&, const TVec&, int);
+	void AliasSetUpTransform(const TAVec&, const TVec&, const TVec&, int, int);
+	void AliasSetupSkin(int);
+	void AliasSetupLighting(vuint32);
+	void AliasSetupFrame(int);
 	void AliasPrepareUnclippedPoints();
 	void AliasPreparePoints();
-	void AliasClipTriangle(mtriangle_t *ptri);
-	void PolysetSetupDrawer(int);
+	void AliasClipTriangle(mtriangle_t*);
+	void PolysetSetupDrawer(float);
 	void PolysetDraw();
 
 	//	Drawing of onscreen graphics.

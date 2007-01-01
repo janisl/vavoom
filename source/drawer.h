@@ -57,20 +57,16 @@ struct particle_t
 struct refdef_t
 {
 	int			x;
- 	int			y;
- 	int			width;
- 	int			height;
- 	float		fovx;
- 	float		fovy;
+	int			y;
+	int			width;
+	int			height;
+	float		fovx;
+	float		fovy;
 	bool		drawworld;
 };
 
-struct VModel
-{
-	char		name[128];
-	void*		data;		// only access through Mod_Extradata
-	int			type;
-};
+struct VModel;
+struct mmdl_t;
 
 class VDrawer
 {
@@ -109,8 +105,8 @@ public:
 	virtual void DrawMaskedPolygon(surface_t*, int) = 0;
 	virtual void DrawSpritePolygon(TVec*, int, int, int, vuint32,
 		const TVec&, float, const TVec&, const TVec&, const TVec&) = 0;
-	virtual void DrawAliasModel(const TVec&, const TAVec&, VModel*, int, int,
-		const char*, vuint32, int, bool) = 0;
+	virtual void DrawAliasModel(const TVec&, const TAVec&, const TVec&,
+		const TVec&, mmdl_t*, int, int, vuint32, float, bool) = 0;
 
 	//	Particles
 	virtual void StartParticles() = 0;

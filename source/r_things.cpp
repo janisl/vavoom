@@ -389,8 +389,8 @@ void R_DrawTranslucentPoly(surface_t* surf, TVec* sv, int count, int lump,
 		if (spr.type == 2)
 		{
 			R_DrawAliasModel(spr.dv[0], ((TAVec *)spr.dv)[1],
-				(VModel*)spr.surf, spr.lump, spr.count, spr.skin,
-				spr.light, spr.translucency - 1, false, spr.pdist);
+				(VModel*)spr.surf, spr.lump, spr.skin, spr.light,
+				spr.translucency - 1, false, spr.pdist);
 		}
 		else if (spr.type)
 		{
@@ -691,7 +691,6 @@ void RenderTranslucentAliasModel(VEntity* mobj, vuint32 light, bool IsWeapon,
 				VEntity::EF_FixedModel ? mobj->FixedModelIndex :
 				mobj->State->ModelIndex];
 			spr.lump = IsWeapon ? 1 : mobj->State->ModelFrame;
-			spr.count = mobj->ModelSkinIndex;
 			spr.light = light;
 			spr.translucency = mobj->Translucency + 1;
 			spr.dist = dist;
@@ -713,8 +712,8 @@ void RenderTranslucentAliasModel(VEntity* mobj, vuint32 light, bool IsWeapon,
 		if (spr.type == 2)
 		{
 			R_DrawAliasModel(spr.dv[0], ((TAVec *)spr.dv)[1],
-				(VModel*)spr.surf, spr.lump, spr.count, spr.skin,
-				spr.light, spr.translucency - 1, false, spr.pdist);
+				(VModel*)spr.surf, spr.lump, spr.skin, spr.light,
+				spr.translucency - 1, false, spr.pdist);
 		}
 		else if (spr.type)
 		{
@@ -733,7 +732,6 @@ void RenderTranslucentAliasModel(VEntity* mobj, vuint32 light, bool IsWeapon,
 				VEntity::EF_FixedModel ? mobj->FixedModelIndex :
 				mobj->State->ModelIndex];
 		spr.lump = IsWeapon ? 1 : mobj->State->ModelFrame;
-		spr.count = mobj->ModelSkinIndex;
 		spr.light = light;
 		spr.translucency = mobj->Translucency + 1;
 		spr.skin = *skin_list[mobj->ModelSkinNum];
@@ -745,9 +743,8 @@ void RenderTranslucentAliasModel(VEntity* mobj, vuint32 light, bool IsWeapon,
 	R_DrawAliasModel(mobj->Origin, mobj->Angles,
 		model_precache[mobj->EntityFlags & VEntity::EF_FixedModel ?
 		mobj->FixedModelIndex : mobj->State->ModelIndex], IsWeapon ? 1 :
-		mobj->State->ModelFrame, mobj->ModelSkinIndex,
-		*skin_list[mobj->ModelSkinNum], light, mobj->Translucency, false,
-		TimeFrac);
+		mobj->State->ModelFrame, *skin_list[mobj->ModelSkinNum],
+		light, mobj->Translucency, false, TimeFrac);
 	unguard;
 }
 
@@ -810,16 +807,15 @@ static bool RenderAliasModel(VEntity* mobj, bool IsWeapon)
 		return R_DrawAliasModel(mobj->Origin, mobj->Angles,
 			model_precache[mobj->EntityFlags & VEntity::EF_FixedModel ?
 			mobj->FixedModelIndex : mobj->State->ModelIndex], 1,
-			mobj->ModelSkinIndex, *skin_list[mobj->ModelSkinNum], light, 0,
-			false, TimeFrac);
+			*skin_list[mobj->ModelSkinNum], light, 0, false, TimeFrac);
 	}
 	else
 	{
 		return R_DrawAliasModel(mobj->Origin, mobj->Angles,
 			model_precache[mobj->EntityFlags & VEntity::EF_FixedModel ?
 			mobj->FixedModelIndex : mobj->State->ModelIndex],
-			mobj->State->ModelFrame, mobj->ModelSkinIndex,
-			*skin_list[mobj->ModelSkinNum], light, 0, false, TimeFrac);
+			mobj->State->ModelFrame, *skin_list[mobj->ModelSkinNum],
+			light, 0, false, TimeFrac);
 	}
 	unguard;
 }
@@ -909,8 +905,8 @@ void R_DrawTranslucentPolys()
 			if (spr.type == 2)
 			{
 				R_DrawAliasModel(spr.dv[0], ((TAVec *)spr.dv)[1],
-					(VModel*)spr.surf, spr.lump, spr.count, spr.skin,
-					spr.light, spr.translucency - 1, false, spr.pdist);
+					(VModel*)spr.surf, spr.lump, spr.skin, spr.light,
+					spr.translucency - 1, false, spr.pdist);
 			}
 			else if (spr.type)
 			{
@@ -1063,7 +1059,7 @@ static void RenderViewModel(VViewState* VSt)
 
 	R_DrawAliasModel(origin, cl->ViewAngles,
 		model_precache[VSt->State->ModelIndex], VSt->State->ModelFrame,
-		0, NULL, light, cl->ViewEntTranslucency, true, TimeFrac);
+		NULL, light, cl->ViewEntTranslucency, true, TimeFrac);
 	unguard;
 }
 
@@ -1192,8 +1188,8 @@ void R_DrawModelFrame(const TVec &origin, float angle, VModel* model,
 	angles.yaw = angle;
 	angles.pitch = 0;
 	angles.roll = 0;
-	R_DrawAliasModel(origin, angles, model, frame, 0, skin,
-		0xffffffff, 0, false, 0);
+	R_DrawAliasModel(origin, angles, model, frame, skin, 0xffffffff,
+		0, false, 0);
 
 	Drawer->EndView();
 	unguard;
