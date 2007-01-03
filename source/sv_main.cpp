@@ -370,10 +370,9 @@ int SV_GetMobjBits(VEntity &mobj, mobj_base_t &base)
 		bits |= MOB_TRANSL;
 	if (base.Effects != mobj.Effects)
 		bits |= MOB_EFFECTS;
-	if ((mobj.EntityFlags & VEntity::EF_FixedModel) &&
-		mobj.FixedModelIndex != mobj.State->ModelIndex)
+	if (mobj.EntityFlags & VEntity::EF_FixedModel)
 		bits |= MOB_MODEL;
-	if (mobj.State->ModelIndex && mobj.ModelSkinNum)
+	if ((mobj.EntityFlags & VEntity::EF_FixedModel) && mobj.ModelSkinNum)
 		bits |= MOB_SKIN_NUM;
 	if (base.Class != mobj.GetClass())
 	{
@@ -2149,12 +2148,7 @@ int NET_SendToAll(VMessage* data, int blocktime)
 
 static void SV_InitModelLists()
 {
-	nummodels = VClass::GModelNames.Num();
-	for (int i = 1; i < nummodels; i++)
-	{
-		models[i] = VClass::GModelNames[i];
-	}
-
+	nummodels = 1;
 	numskins = 1;
 }
 
@@ -2306,7 +2300,7 @@ void SV_SendServerInfo(VBasePlayer *player)
 		}
 	}*/
 
-	for (i = VClass::GModelNames.Num(); i < nummodels; i++)
+	for (i = 1; i < nummodels; i++)
 	{
 		msg << (vuint8)svc_model
 			<< (vint16)i

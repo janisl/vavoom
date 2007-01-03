@@ -211,9 +211,6 @@ public:
 	VName		SpriteName;
 	vint32		SpriteIndex;
 	vint32		Frame;
-	VName		ModelName;
-	vint32		ModelIndex;
-	vint32		ModelFrame;
 	float		Time;
 	vint32		Misc1;
 	vint32		Misc2;
@@ -338,7 +335,6 @@ public:
 	static TArray<mobjinfo_t>	GMobjInfos;
 	static TArray<mobjinfo_t>	GScriptIds;
 	static TArray<VName>		GSpriteNames;
-	static TArray<VName>		GModelNames;
 
 	// Constructors.
 	VClass(VName AName);
@@ -363,7 +359,6 @@ public:
 	// Systemwide functions.
 	static VClass *FindClass(const char *);
 	static int FindSprite(VName);
-	static int FindModel(VName);
 
 	// Accessors.
 	vuint32 GetFlags() const

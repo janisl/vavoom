@@ -1442,20 +1442,6 @@ void VParser::ParseStates(VClass* InClass)
 		//  Frame
 		s->FrameExpr = ParseExpression();
 		Lex.Expect(TK_Comma);
-		if (Lex.Token == TK_NameLiteral)
-		{
-			//	Model
-			s->ModelName = Lex.Name;
-			Lex.NextToken();
-			Lex.Expect(TK_Comma);
-			//  Frame
-			s->ModelFrameExpr = ParseExpression();
-			if (!s->ModelFrameExpr)
-			{
-				ParseError(Lex.Location, "Model frame number expected");
-			}
-			Lex.Expect(TK_Comma);
-		}
 		//  Tics
 		s->TimeExpr = ParseExpression();
 		Lex.Expect(TK_Comma);

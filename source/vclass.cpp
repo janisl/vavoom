@@ -34,7 +34,6 @@ TArray<VPackage*>		VMemberBase::GLoadedPackages;
 TArray<mobjinfo_t>		VClass::GMobjInfos;
 TArray<mobjinfo_t>		VClass::GScriptIds;
 TArray<VName>			VClass::GSpriteNames;
-TArray<VName>			VClass::GModelNames;
 
 #define DECLARE_OPC(name, args)		{ OPCARGS_##args }
 #define OPCODE_INFO
@@ -305,7 +304,6 @@ void VMemberBase::Shutdown()
 void VMemberBase::StaticInit()
 {
 	guard(VMemberBase::StaticInit);
-	VClass::GModelNames.Append(NAME_None);
 	for (VClass* C = GClasses; C; C = C->LinkNext)
 		GMembers.Append(C);
 	GObjInitialised = true;
@@ -337,7 +335,6 @@ void VMemberBase::StaticExit()
 	VClass::GMobjInfos.Clear();
 	VClass::GScriptIds.Clear();
 	VClass::GSpriteNames.Clear();
-	VClass::GModelNames.Clear();
 	GObjInitialised = false;
 }
 
@@ -1501,9 +1498,6 @@ VState::VState(VName AName)
 , SpriteName(NAME_None)
 , SpriteIndex(0)
 , Frame(0)
-, ModelName(NAME_None)
-, ModelIndex(0)
-, ModelFrame(0)
 , Time(0)
 , Misc1(0)
 , Misc2(0)
@@ -1527,8 +1521,6 @@ void VState::Serialise(VStream& Strm)
 	VMemberBase::Serialise(Strm);
 	Strm << SpriteName
 		<< STRM_INDEX(Frame)
-		<< ModelName
-		<< STRM_INDEX(ModelFrame)
 		<< Time
 		<< STRM_INDEX(Misc1)
 		<< STRM_INDEX(Misc2)
@@ -1538,7 +1530,6 @@ void VState::Serialise(VStream& Strm)
 	if (Strm.IsLoading())
 	{
 		SpriteIndex = VClass::FindSprite(SpriteName);
-		ModelIndex = VClass::FindModel(ModelName);
 	}
 	unguard;
 }
@@ -2081,22 +2072,6 @@ int VClass::FindSprite(VName Name)
 		if (GSpriteNames[i] == Name)
 			return i;
 	return GSpriteNames.Append(Name);
-	unguard;
-}
-
-//==========================================================================
-//
-//	VClass::FindModel
-//
-//==========================================================================
-
-int VClass::FindModel(VName Name)
-{
-	guard(VClass::FindModel);
-	for (int i = 0; i < GModelNames.Num(); i++)
-		if (GModelNames[i] == Name)
-			return i;
-	return GModelNames.Append(Name);
 	unguard;
 }
 

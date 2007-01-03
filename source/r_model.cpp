@@ -101,7 +101,7 @@ class VScriptedModel
 {
 public:
 	TArray<VScriptModel>		Models;
-	VClassModelScript			Frames;
+	VClassModelScript*			DefaultClass;
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -372,7 +372,7 @@ static void ParseModelScript(VModel* mod, VStream& Strm)
 	VScriptedModel* Mdl = new VScriptedModel();
 	mod->data = Mdl;
 	mod->type = MODEL_Script;
-	Mdl->Frames.Model = Mdl;
+	Mdl->DefaultClass = NULL;
 
 	//	Process model definitions.
 	for (VXmlNode* N = Doc->Root.FindChild("model"); N; N = N->FindNext())
@@ -489,37 +489,21 @@ static void ParseModelScript(VModel* mod, VStream& Strm)
 	}
 
 	bool ClassDefined = false;
-	for (VXmlNode* CN = Doc->Root.FirstChild; CN; CN = CN->NextSibling)
+	for (VXmlNode* CN = Doc->Root.FindChild("class"); CN; CN = CN->FindNext())
 	{
-		VClassModelScript* Cls;
-		const char* FName;
-		const char* NName;
-		if (CN->Name == "frames")
-		{
-			Cls = &Mdl->Frames;
-			FName = "frame";
-			NName = "number";
-		}
-		else if (CN->Name == "class")
-		{
-			Cls = new VClassModelScript();
-			Cls->Model = Mdl;
-			Cls->Name = *CN->GetAttribute("name");
-			ClassModels.Append(Cls);
-			FName = "state";
-			NName = "index";
-		}
-		else
-		{
-			continue;
-		}
+		VClassModelScript* Cls = new VClassModelScript();
+		Cls->Model = Mdl;
+		Cls->Name = *CN->GetAttribute("name");
+		if (!Mdl->DefaultClass)
+			Mdl->DefaultClass = Cls;
+		ClassModels.Append(Cls);
 		ClassDefined = true;
 
 		//	Process frames
-		for (VXmlNode* N = CN->FindChild(FName); N; N = N->FindNext())
+		for (VXmlNode* N = CN->FindChild("state"); N; N = N->FindNext())
 		{
 			VScriptedModelFrame& F = Cls->Frames.Alloc();
-			F.Number = atoi(*N->GetAttribute(NName));
+			F.Number = atoi(*N->GetAttribute("index"));
 			F.FrameIndex = atoi(*N->GetAttribute("frame_index"));
 			F.ModelIndex = -1;
 			VStr MdlName = N->GetAttribute("model");
@@ -792,17 +776,16 @@ bool R_DrawAliasModel(const TVec& Org, const TAVec& Angles, VModel* Mdl,
 	if (Mdl->type != MODEL_Script)
 	{
 		Sys_Error("Must use model scripts");
-		return true;
 	}
 
 	VScriptedModel* SMdl = (VScriptedModel*)MData;
-	int FIdx = FindFrame(SMdl->Frames, Frame, Inter);
+	int FIdx = FindFrame(*SMdl->DefaultClass, Frame, Inter);
 	if (FIdx == -1)
 	{
 		return false;
 	}
 
-	DrawModel(Org, Angles, SMdl->Frames, FIdx, Skin, Light, Alpha,
+	DrawModel(Org, Angles, *SMdl->DefaultClass, FIdx, Skin, Light, Alpha,
 		IsViewModel, Inter);
 	return true;
 	unguard;
@@ -818,28 +801,6 @@ bool R_DrawAliasModel(const TVec& Org, const TAVec& Angles, VState* State,
 	const char* Skin, vuint32 Light, float Alpha, bool IsViewModel, float Inter)
 {
 	guard(R_DrawAliasModel);
-	VModel* Mdl = model_precache[State->ModelIndex];
-	if (Mdl)
-	{
-		void* MData = Mod_Extradata(Mdl);
-		if (Mdl->type != MODEL_Script)
-		{
-			Sys_Error("Must use model scripts");
-			return true;
-		}
-
-		VScriptedModel* SMdl = (VScriptedModel*)MData;
-		int FIdx = FindFrame(SMdl->Frames, State->ModelFrame, Inter);
-		if (FIdx == -1)
-		{
-			return false;
-		}
-
-		DrawModel(Org, Angles, SMdl->Frames, FIdx, Skin, Light, Alpha,
-			IsViewModel, Inter);
-		return true;
-	}
-
 	VClassModelScript* Cls = NULL;
 	for (int i = 0; i < ClassModels.Num(); i++)
 	{
@@ -893,8 +854,9 @@ bool R_DrawEntityModel(VEntity* Ent, bool IsWeapon, vuint32 Light,
 		{
 			return false;
 		}
+dprintf("Drawing fixed model %s\n", Mdl->name);
 		return R_DrawAliasModel(Ent->Origin, Ent->Angles, Mdl,
-			Ent->State->ModelFrame, *skin_list[Ent->ModelSkinNum], Light,
+			Ent->State->InClassIndex, *skin_list[Ent->ModelSkinNum], Light,
 			Alpha, false, Inter);
 	}
 	else
@@ -914,22 +876,53 @@ bool R_DrawEntityModel(VEntity* Ent, bool IsWeapon, vuint32 Light,
 bool R_CheckAliasModelFrame(VEntity* Ent, bool IsWeapon, float Inter)
 {
 	guard(R_CheckAliasModelFrame);
-	VModel* Mdl = model_precache[Ent->EntityFlags & VEntity::EF_FixedModel ?
-		Ent->FixedModelIndex : Ent->State->ModelIndex];
-	if (!Mdl)
+	if (IsWeapon)
 	{
-		return false;
+		check(Ent->EntityFlags & VEntity::EF_FixedModel);
+		VModel* Mdl = model_precache[Ent->FixedModelIndex];
+		if (!Mdl)
+		{
+			return false;
+		}
+		Mod_Extradata(Mdl);
+		if (Mdl->type != MODEL_Script)
+		{
+			Sys_Error("Must use model scripts");
+		}
+		VScriptedModel* SMdl = (VScriptedModel*)Mdl->data;
+		return FindFrame(*SMdl->DefaultClass, 1, Inter) != -1;
 	}
-	int Frame = IsWeapon ? 1 : Ent->State->ModelFrame;
-
-	Mod_Extradata(Mdl);
-	if (Mdl->type != MODEL_Script)
+	else if (Ent->EntityFlags & VEntity::EF_FixedModel)
 	{
-		Sys_Error("Must use model scripts");
+		VModel* Mdl = model_precache[Ent->FixedModelIndex];
+		if (!Mdl)
+		{
+			return false;
+		}
+		Mod_Extradata(Mdl);
+		if (Mdl->type != MODEL_Script)
+		{
+			Sys_Error("Must use model scripts");
+		}
+		VScriptedModel* SMdl = (VScriptedModel*)Mdl->data;
+		return FindFrame(*SMdl->DefaultClass, Ent->State->InClassIndex, Inter) != -1;
 	}
-
-	VScriptedModel* SMdl = (VScriptedModel*)Mdl->data;
-	return FindFrame(SMdl->Frames, Frame, Inter) != -1;
+	else
+	{
+		VClassModelScript* Cls = NULL;
+		for (int i = 0; i < ClassModels.Num(); i++)
+		{
+			if (ClassModels[i]->Name == Ent->State->Outer->Name)
+			{
+				Cls = ClassModels[i];
+			}
+		}
+		if (!Cls)
+		{
+			return false;
+		}
+		return FindFrame(*Cls, Ent->State->InClassIndex, Inter) != -1;
+	}
 	unguard;
 }
 
@@ -950,7 +943,7 @@ void R_DrawModelFrame(const TVec& Origin, float Angle, VModel* Model,
 	}
 
 	VScriptedModel* SMdl = (VScriptedModel*)MData;
-	int FIdx = FindFrame(SMdl->Frames, Frame, 0);
+	int FIdx = FindFrame(*SMdl->DefaultClass, Frame, 0);
 	if (FIdx == -1)
 	{
 		return;
@@ -980,8 +973,8 @@ void R_DrawModelFrame(const TVec& Origin, float Angle, VModel* Model,
 	Angles.pitch = 0;
 	Angles.roll = 0;
 
-	DrawModel(Origin, Angles, SMdl->Frames, FIdx, Skin, 0xffffffff, 1.0,
-		false, 0);
+	DrawModel(Origin, Angles, *SMdl->DefaultClass, FIdx, Skin, 0xffffffff,
+		1.0, false, 0);
 
 	Drawer->EndView();
 	unguard;

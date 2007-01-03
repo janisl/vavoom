@@ -252,12 +252,8 @@ static void CL_ParseUpdateMobj(VMessage& msg)
 	//	Marking mobj in use
 	cl_mobjs[i]->InUse = 2;
 
-	if (bits & MOB_WEAPON && model_precache[cl_mobjs[i]->EntityFlags &
-		VEntity::EF_FixedModel ? cl_mobjs[i]->FixedModelIndex :
-		cl_mobjs[i]->State->ModelIndex] &&
-		weapon_model_precache[cl_mobjs[i]->EntityFlags &
-		VEntity::EF_FixedModel ? cl_mobjs[i]->FixedModelIndex :
-		cl_mobjs[i]->State->ModelIndex])
+	if (bits & MOB_WEAPON && model_precache[cl_mobjs[i]->FixedModelIndex] &&
+		weapon_model_precache[cl_mobjs[i]->FixedModelIndex])
 	{
 		VEntity* ent = cl_mobjs[i];
 		VEntity* wpent = cl_weapon_mobjs[i];
@@ -270,9 +266,7 @@ static void CL_ParseUpdateMobj(VMessage& msg)
 		wpent->Translucency = ent->Translucency;
 		wpent->State = ent->State;
 
-		R_PositionWeaponModel(wpent, weapon_model_precache[ent->EntityFlags &
-			VEntity::EF_FixedModel ? ent->FixedModelIndex :
-			ent->State->ModelIndex], ent->State->ModelFrame);
+		R_PositionWeaponModel(wpent, weapon_model_precache[ent->FixedModelIndex], ent->State->InClassIndex);
 	}
 	else if (bits & MOB_WEAPON)
 	{
@@ -610,11 +604,6 @@ static void CL_ParseServerInfo(VMessage& msg)
 	for (int i = 0; i < VClass::GSpriteNames.Num(); i++)
 	{
 		R_InstallSprite(*VClass::GSpriteNames[i], i);
-	}
-
-	for (int i = 1; i < VClass::GModelNames.Num(); i++)
-	{
-		CL_AddModel(i, va("models/%s", *VClass::GModelNames[i]));
 	}
 
 	VMemberBase::SetUpNetClasses();
