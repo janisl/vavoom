@@ -29,6 +29,8 @@
 
 #include <macros.vc>
 
+#define DOOM2
+
 import shared;
 import svprogs;
 

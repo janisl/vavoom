@@ -447,7 +447,7 @@ void A_BFGSpray()
 		for (j = 0; j < 15; j++)
 			damage += (P_Random() & 7) + 1;
 
-		linetarget.Damage(Instigator, Instigator, damage);
+		Instigator.linetarget.Damage(Instigator, Instigator, damage);
 	}
 }
 
@@ -1633,6 +1633,11 @@ void OnMapSpawn(mthing_t *mthing)
 	if (Class == ItemInvulnerability || Class == ItemInvisibility)
 	{
 		bNoRespawn = true;
+	}
+
+	if (Class != DoomPlayer && !bCountKill && !bMissile)
+	{
+		bNoPassMobj = true;
 	}
 }
 
