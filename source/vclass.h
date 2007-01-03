@@ -221,6 +221,7 @@ public:
 	VMethod*	Function;
 	VState*		Next;
 
+	vint32		InClassIndex;
 	vint32		NetId;
 
 	VState(VName);

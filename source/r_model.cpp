@@ -22,15 +22,14 @@
 //**  GNU General Public License for more details.
 //**
 //**************************************************************************
-// models.c -- model loading and caching
-
-// models are the only shared resource between a client and server running
-// on the same machine.
 
 // HEADER FILES ------------------------------------------------------------
 
 #include "gamedefs.h"
 #include "r_local.h"
+
+extern VModel*		model_precache[1024];
+extern VStr			skin_list[256];
 
 // MACROS ------------------------------------------------------------------
 
@@ -88,11 +87,21 @@ public:
 	float		AlphaEnd;
 };
 
+class VScriptedModel;
+
+class VClassModelScript
+{
+public:
+	VName						Name;
+	VScriptedModel*				Model;
+	TArray<VScriptedModelFrame>	Frames;
+};
+
 class VScriptedModel
 {
 public:
 	TArray<VScriptModel>		Models;
-	TArray<VScriptedModelFrame>	Frames;
+	VClassModelScript			Frames;
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -109,9 +118,74 @@ static VModel* Mod_LoadModel(VModel* mod);
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static TArray<VModel*>		mod_known;
+static TArray<VModel*>				mod_known;
+static TArray<VClassModelScript*>	ClassModels;
 
 // CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//	R_InitModels
+//
+//==========================================================================
+
+void R_InitModels()
+{
+	guard(R_InitModels);
+	VStream* Strm = FL_OpenFileRead("models/models.xml");
+	if (!Strm)
+	{
+		return;
+	}
+
+	//	Parse the file.
+	VXmlDocument* Doc = new VXmlDocument();
+	Doc->Parse(*Strm, "models/models.xml");
+	delete Strm;
+
+	for (VXmlNode* N = Doc->Root.FindChild("include"); N; N = N->FindNext())
+	{
+		VModel* Mdl = Mod_FindName(*N->GetAttribute("file"));
+		Mod_Extradata(Mdl);
+	}
+
+	delete Doc;
+	unguard;
+}
+
+//==========================================================================
+//
+//	R_FreeModels
+//
+//==========================================================================
+
+void R_FreeModels()
+{
+	guard(R_FreeModels);
+	for (int i = 0; i < mod_known.Num(); i++)
+	{
+		if (mod_known[i]->data)
+		{
+			if (mod_known[i]->type == MODEL_Script)
+			{
+				delete (VScriptedModel*)mod_known[i]->data;
+			}
+			else
+			{
+				Z_Free(mod_known[i]->data);
+			}
+		}
+		delete mod_known[i];
+	}
+	mod_known.Clear();
+
+	for (int i = 0; i < ClassModels.Num(); i++)
+	{
+		delete ClassModels[i];
+	}
+	ClassModels.Clear();
+	unguard;
+}
 
 //==========================================================================
 //
@@ -298,6 +372,7 @@ static void ParseModelScript(VModel* mod, VStream& Strm)
 	VScriptedModel* Mdl = new VScriptedModel();
 	mod->data = Mdl;
 	mod->type = MODEL_Script;
+	Mdl->Frames.Model = Mdl;
 
 	//	Process model definitions.
 	for (VXmlNode* N = Doc->Root.FindChild("model"); N; N = N->FindNext())
@@ -413,54 +488,91 @@ static void ParseModelScript(VModel* mod, VStream& Strm)
 		}
 	}
 
-	//	Process frames
-	for (VXmlNode* N = Doc->Root.GetChild("frames")->FindChild("frame"); N; N = N->FindNext())
+	bool ClassDefined = false;
+	for (VXmlNode* CN = Doc->Root.FirstChild; CN; CN = CN->NextSibling)
 	{
-		VScriptedModelFrame& F = Mdl->Frames.Alloc();
-		F.Number = atoi(*N->GetAttribute("number"));
-		F.FrameIndex = atoi(*N->GetAttribute("frame_index"));
-		F.ModelIndex = -1;
-		VStr MdlName = N->GetAttribute("model");
-		for (int i = 0; i < Mdl->Models.Num(); i++)
+		VClassModelScript* Cls;
+		const char* FName;
+		const char* NName;
+		if (CN->Name == "frames")
 		{
-			if (Mdl->Models[i].Name == *MdlName)
+			Cls = &Mdl->Frames;
+			FName = "frame";
+			NName = "number";
+		}
+		else if (CN->Name == "class")
+		{
+			Cls = new VClassModelScript();
+			Cls->Model = Mdl;
+			Cls->Name = *CN->GetAttribute("name");
+			ClassModels.Append(Cls);
+			FName = "state";
+			NName = "index";
+		}
+		else
+		{
+			continue;
+		}
+		ClassDefined = true;
+
+		//	Process frames
+		for (VXmlNode* N = CN->FindChild(FName); N; N = N->FindNext())
+		{
+			VScriptedModelFrame& F = Cls->Frames.Alloc();
+			F.Number = atoi(*N->GetAttribute(NName));
+			F.FrameIndex = atoi(*N->GetAttribute("frame_index"));
+			F.ModelIndex = -1;
+			VStr MdlName = N->GetAttribute("model");
+			for (int i = 0; i < Mdl->Models.Num(); i++)
 			{
-				F.ModelIndex = i;
-				break;
+				if (Mdl->Models[i].Name == *MdlName)
+				{
+					F.ModelIndex = i;
+					break;
+				}
+			}
+			if (F.ModelIndex == -1)
+			{
+				Sys_Error("%s has no model %s", mod->name, *MdlName);
+			}
+
+			F.Inter = 0.0;
+			if (N->HasAttribute("inter"))
+			{
+				F.Inter = atof(*N->GetAttribute("inter"));
+			}
+
+			F.AngleStart = 0.0;
+			F.AngleEnd = 0.0;
+			if (N->HasAttribute("angle_start"))
+			{
+				F.AngleStart = atof(*N->GetAttribute("angle_start"));
+			}
+			if (N->HasAttribute("angle_end"))
+			{
+				F.AngleEnd = atof(*N->GetAttribute("angle_end"));
+			}
+	
+			F.AlphaStart = 1.0;
+			F.AlphaEnd = 1.0;
+			if (N->HasAttribute("alpha_start"))
+			{
+				F.AlphaStart = atof(*N->GetAttribute("alpha_start"));
+			}
+			if (N->HasAttribute("alpha_end"))
+			{
+				F.AlphaEnd = atof(*N->GetAttribute("alpha_end"));
 			}
 		}
-		if (F.ModelIndex == -1)
+		if (!Cls->Frames.Num())
 		{
-			Sys_Error("%s has no model %s", mod->name, *MdlName);
+			Sys_Error("%s class %s has no states defined",
+				mod->name, *Cls->Name);
 		}
-
-		F.Inter = 0.0;
-		if (N->HasAttribute("inter"))
-		{
-			F.Inter = atof(*N->GetAttribute("inter"));
-		}
-
-		F.AngleStart = 0.0;
-		F.AngleEnd = 0.0;
-		if (N->HasAttribute("angle_start"))
-		{
-			F.AngleStart = atof(*N->GetAttribute("angle_start"));
-		}
-		if (N->HasAttribute("angle_end"))
-		{
-			F.AngleEnd = atof(*N->GetAttribute("angle_end"));
-		}
-
-		F.AlphaStart = 1.0;
-		F.AlphaEnd = 1.0;
-		if (N->HasAttribute("alpha_start"))
-		{
-			F.AlphaStart = atof(*N->GetAttribute("alpha_start"));
-		}
-		if (N->HasAttribute("alpha_end"))
-		{
-			F.AlphaEnd = atof(*N->GetAttribute("alpha_end"));
-		}
+	}
+	if (!ClassDefined)
+	{
+		Sys_Error("%s defined no classes", mod->name);
 	}
 
 	//	We don't need the XML file anymore.
@@ -554,41 +666,38 @@ void R_PositionWeaponModel(VEntity* wpent, VModel* wpmodel, int InFrame)
 
 //==========================================================================
 //
-//	R_DrawAliasModel
+//	FindFrame
 //
 //==========================================================================
 
-bool R_DrawAliasModel(const TVec& Org, const TAVec& Angles, VModel* Mdl,
-	int Frame, const char* Skin, vuint32 Light, int Translucency,
-	bool IsViewModel, float Inter)
+static int FindFrame(const VClassModelScript& Cls, int Frame, float Inter)
 {
-	guard(R_DrawAliasModel);
-	void* MData = Mod_Extradata(Mdl);
-	float Alpha = (100.0 - Translucency) / 100.0;
-
-	if (Mdl->type != MODEL_Script)
+	guard(FindFrame);
+	int Ret = -1;
+	for (int i = 0; i < Cls.Frames.Num(); i++)
 	{
-		Sys_Error("Must use model scripts");
-		return true;
-	}
-
-	VScriptedModel* SMdl = (VScriptedModel*)MData;
-	int FIdx = -1;
-	for (int i = 0; i < SMdl->Frames.Num(); i++)
-	{
-		if (SMdl->Frames[i].Number == Frame &&
-			SMdl->Frames[i].Inter <= Inter)
+		if (Cls.Frames[i].Number == Frame && Cls.Frames[i].Inter <= Inter)
 		{
-			FIdx = i;
+			Ret = i;
 		}
 	}
-	if (FIdx == -1)
-	{
-		return false;
-	}
+	return Ret;
+	unguard;
+}
 
-	VScriptedModelFrame& FDef = SMdl->Frames[FIdx];
-	VScriptModel& ScMdl = SMdl->Models[FDef.ModelIndex];
+//==========================================================================
+//
+//	DrawModel
+//
+//==========================================================================
+
+static void DrawModel(const TVec& Org, const TAVec& Angles,
+	VClassModelScript& Cls, int FIdx, const char* Skin, vuint32 Light,
+	float Alpha, bool IsViewModel, float Inter)
+{
+	guard(DrawModel);
+	VScriptedModelFrame& FDef = Cls.Frames[FIdx];
+	VScriptModel& ScMdl = Cls.Model->Models[FDef.ModelIndex];
 	for (int i = 0; i < ScMdl.SubModels.Num(); i++)
 	{
 		VScriptSubModel& SubMdl = ScMdl.SubModels[i];
@@ -664,7 +773,135 @@ bool R_DrawAliasModel(const TVec& Org, const TAVec& Angles, VModel* Mdl,
 		Drawer->DrawAliasModel(Org, Md2Angle, F.Offset, F.Scale, pmdl,
 			Md2Frame, SkinID, Light, Md2Alpha, IsViewModel);
 	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	R_DrawAliasModel
+//
+//==========================================================================
+
+bool R_DrawAliasModel(const TVec& Org, const TAVec& Angles, VModel* Mdl,
+	int Frame, const char* Skin, vuint32 Light, float Alpha,
+	bool IsViewModel, float Inter)
+{
+	guard(R_DrawAliasModel);
+	void* MData = Mod_Extradata(Mdl);
+
+	if (Mdl->type != MODEL_Script)
+	{
+		Sys_Error("Must use model scripts");
+		return true;
+	}
+
+	VScriptedModel* SMdl = (VScriptedModel*)MData;
+	int FIdx = FindFrame(SMdl->Frames, Frame, Inter);
+	if (FIdx == -1)
+	{
+		return false;
+	}
+
+	DrawModel(Org, Angles, SMdl->Frames, FIdx, Skin, Light, Alpha,
+		IsViewModel, Inter);
 	return true;
+	unguard;
+}
+
+//==========================================================================
+//
+//	R_DrawAliasModel
+//
+//==========================================================================
+
+bool R_DrawAliasModel(const TVec& Org, const TAVec& Angles, VState* State,
+	const char* Skin, vuint32 Light, float Alpha, bool IsViewModel, float Inter)
+{
+	guard(R_DrawAliasModel);
+	VModel* Mdl = model_precache[State->ModelIndex];
+	if (Mdl)
+	{
+		void* MData = Mod_Extradata(Mdl);
+		if (Mdl->type != MODEL_Script)
+		{
+			Sys_Error("Must use model scripts");
+			return true;
+		}
+
+		VScriptedModel* SMdl = (VScriptedModel*)MData;
+		int FIdx = FindFrame(SMdl->Frames, State->ModelFrame, Inter);
+		if (FIdx == -1)
+		{
+			return false;
+		}
+
+		DrawModel(Org, Angles, SMdl->Frames, FIdx, Skin, Light, Alpha,
+			IsViewModel, Inter);
+		return true;
+	}
+
+	VClassModelScript* Cls = NULL;
+	for (int i = 0; i < ClassModels.Num(); i++)
+	{
+		if (ClassModels[i]->Name == State->Outer->Name)
+		{
+			Cls = ClassModels[i];
+		}
+	}
+	if (!Cls)
+	{
+		return false;
+	}
+
+	int FIdx = FindFrame(*Cls, State->InClassIndex, Inter);
+	if (FIdx == -1)
+	{
+		return false;
+	}
+
+	DrawModel(Org, Angles, *Cls, FIdx, Skin, Light, Alpha, IsViewModel,
+		Inter);
+	return true;
+	unguard;
+}
+
+//==========================================================================
+//
+//	R_DrawEntityModel
+//
+//==========================================================================
+
+bool R_DrawEntityModel(VEntity* Ent, bool IsWeapon, vuint32 Light,
+	float Alpha, float Inter)
+{
+	guard(R_DrawEntityModel);
+	if (IsWeapon)
+	{
+		check(Ent->EntityFlags & VEntity::EF_FixedModel);
+		VModel* Mdl = model_precache[Ent->FixedModelIndex];
+		if (!Mdl)
+		{
+			return false;
+		}
+		return R_DrawAliasModel(Ent->Origin, Ent->Angles, Mdl, 1,
+			*skin_list[Ent->ModelSkinNum], Light, Alpha, false, Inter);
+	}
+	else if (Ent->EntityFlags & VEntity::EF_FixedModel)
+	{
+		VModel* Mdl = model_precache[Ent->FixedModelIndex];
+		if (!Mdl)
+		{
+			return false;
+		}
+		return R_DrawAliasModel(Ent->Origin, Ent->Angles, Mdl,
+			Ent->State->ModelFrame, *skin_list[Ent->ModelSkinNum], Light,
+			Alpha, false, Inter);
+	}
+	else
+	{
+		return R_DrawAliasModel(Ent->Origin, Ent->Angles, Ent->State,
+			*skin_list[Ent->ModelSkinNum], Light, Alpha, false, Inter);
+	}
 	unguard;
 }
 
@@ -674,55 +911,78 @@ bool R_DrawAliasModel(const TVec& Org, const TAVec& Angles, VModel* Mdl,
 //
 //==========================================================================
 
-bool R_CheckAliasModelFrame(VModel* Mdl, int Frame, float Inter)
+bool R_CheckAliasModelFrame(VEntity* Ent, bool IsWeapon, float Inter)
 {
 	guard(R_CheckAliasModelFrame);
-	Mod_Extradata(Mdl);
-	if (Mdl->type == MODEL_Script)
+	VModel* Mdl = model_precache[Ent->EntityFlags & VEntity::EF_FixedModel ?
+		Ent->FixedModelIndex : Ent->State->ModelIndex];
+	if (!Mdl)
 	{
-		VScriptedModel* SMdl = (VScriptedModel*)Mdl->data;
-		int FIdx = -1;
-		for (int i = 0; i < SMdl->Frames.Num(); i++)
-		{
-			if (SMdl->Frames[i].Number == Frame &&
-				SMdl->Frames[i].Inter <= Inter)
-			{
-				FIdx = i;
-			}
-		}
-		if (FIdx == -1)
-		{
-			return false;
-		}
+		return false;
 	}
-	return true;
+	int Frame = IsWeapon ? 1 : Ent->State->ModelFrame;
+
+	Mod_Extradata(Mdl);
+	if (Mdl->type != MODEL_Script)
+	{
+		Sys_Error("Must use model scripts");
+	}
+
+	VScriptedModel* SMdl = (VScriptedModel*)Mdl->data;
+	return FindFrame(SMdl->Frames, Frame, Inter) != -1;
 	unguard;
 }
 
 //==========================================================================
 //
-//	R_FreeModels
+//	R_DrawModelFrame
 //
 //==========================================================================
 
-void R_FreeModels()
+void R_DrawModelFrame(const TVec& Origin, float Angle, VModel* Model,
+	int Frame, const char* Skin)
 {
-	guard(R_FreeModels);
-	for (int i = 0; i < mod_known.Num(); i++)
+	guard(R_DrawModelFrame);
+	void* MData = Mod_Extradata(Model);
+	if (Model->type != MODEL_Script)
 	{
-		if (mod_known[i]->data)
-		{
-			if (mod_known[i]->type == MODEL_Script)
-			{
-				delete (VScriptedModel*)mod_known[i]->data;
-			}
-			else
-			{
-				Z_Free(mod_known[i]->data);
-			}
-		}
-		delete mod_known[i];
+		Sys_Error("Must use model scripts");
 	}
-	mod_known.Clear();
+
+	VScriptedModel* SMdl = (VScriptedModel*)MData;
+	int FIdx = FindFrame(SMdl->Frames, Frame, 0);
+	if (FIdx == -1)
+	{
+		return;
+	}
+
+	viewangles.yaw = 180;
+	viewangles.pitch = 0;
+	viewangles.roll = 0;
+	AngleVectors(viewangles, viewforward, viewright, viewup);
+	vieworg = TVec(0, 0, 0);
+	fixedlight = 0;
+
+	refdef_t	rd;
+
+	rd.x = 0;
+	rd.y = 0;
+	rd.width = ScreenWidth;
+	rd.height = ScreenHeight;
+	rd.fovx = tan(DEG2RAD(90) / 2);
+	rd.fovy = rd.fovx * rd.height / rd.width / PixelAspect;
+	rd.drawworld = false;
+
+	Drawer->SetupView(&rd);
+
+	TAVec Angles;
+	Angles.yaw = Angle;
+	Angles.pitch = 0;
+	Angles.roll = 0;
+
+	DrawModel(Origin, Angles, SMdl->Frames, FIdx, Skin, 0xffffffff, 1.0,
+		false, 0);
+
+	Drawer->EndView();
 	unguard;
 }

@@ -146,6 +146,7 @@ void R_Init()
 	guard(R_Init);
 	R_InitSkyBoxes();
 	R_InitData();
+	R_InitModels();
 	Drawer->InitTextures();
 	Drawer->InitData();
 	R_InitParticles();

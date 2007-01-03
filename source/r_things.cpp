@@ -95,24 +95,35 @@ struct spritedef_t
 
 struct trans_sprite_t
 {
-	TVec		*dv;
-	surface_t	*surf;
-	int			count;
-	int			lump;
-	TVec		normal;
-	float		pdist;
-	TVec		saxis;
-	TVec		taxis;
-	TVec		texorg;
-	int			translucency;
+	TVec			Verts[4];
 	union
 	{
-		int			translation;
-		const char*	skin;
+		surface_t*	surf;
+		VEntity*	Ent;
 	};
-	int			type;
-	float		dist;
-	vuint32		light;
+	union
+	{
+		int			lump;
+		bool		IsWeapon;
+	};
+	TVec			normal;
+	union
+	{
+		float		pdist;
+		float		TimeFrac;
+	};
+	TVec			saxis;
+	TVec			taxis;
+	TVec			texorg;
+	union
+	{
+		int			translucency;
+		float		Alpha;
+	};
+	int				translation;
+	int				type;
+	float			dist;
+	vuint32			light;
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -124,7 +135,6 @@ struct trans_sprite_t
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
 extern VModel*		model_precache[1024];
-extern VStr			skin_list[256];
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
@@ -150,7 +160,6 @@ static VCvarI			croshair("croshair", "0", CVAR_Archive);
 static VCvarI			croshair_trans("croshair_trans", "0", CVAR_Archive);
 
 static trans_sprite_t	trans_sprites[MAX_TRANS_SPRITES];
-static TVec				trans_sprite_verts[4 * MAX_TRANS_SPRITES];
 
 // CODE --------------------------------------------------------------------
 
@@ -358,10 +367,8 @@ void R_DrawTranslucentPoly(surface_t* surf, TVec* sv, int count, int lump,
 		trans_sprite_t &spr = trans_sprites[i];
 		if (!spr.translucency)
 		{
-			spr.dv = trans_sprite_verts + 4 * i;
 			if (type)
-				memcpy(spr.dv, sv, sizeof(TVec) * count);
-			spr.count = count;
+				memcpy(spr.Verts, sv, sizeof(TVec) * 4);
 			spr.dist = dist;
 			spr.lump = lump;
 			spr.normal = normal;
@@ -388,13 +395,12 @@ void R_DrawTranslucentPoly(surface_t* surf, TVec* sv, int count, int lump,
 		trans_sprite_t &spr = trans_sprites[found];
 		if (spr.type == 2)
 		{
-			R_DrawAliasModel(spr.dv[0], ((TAVec *)spr.dv)[1],
-				(VModel*)spr.surf, spr.lump, spr.skin, spr.light,
-				spr.translucency - 1, false, spr.pdist);
+			R_DrawEntityModel(spr.Ent, spr.IsWeapon, spr.light, spr.Alpha,
+				spr.TimeFrac);
 		}
 		else if (spr.type)
 		{
-			Drawer->DrawSpritePolygon(spr.dv, spr.lump, spr.translucency - 1,
+			Drawer->DrawSpritePolygon(spr.Verts, spr.lump, spr.translucency - 1,
 				spr.translation, spr.light, spr.normal, spr.pdist, spr.saxis,
 				spr.taxis, spr.texorg);
 		}
@@ -402,10 +408,8 @@ void R_DrawTranslucentPoly(surface_t* surf, TVec* sv, int count, int lump,
 		{
 			Drawer->DrawMaskedPolygon(spr.surf, spr.translucency - 1);
 		}
-		spr.dv = trans_sprite_verts + 4 * found;
 		if (type)
-			memcpy(spr.dv, sv, sizeof(TVec) * count);
-		spr.count = count;
+			memcpy(spr.Verts, sv, sizeof(TVec) * 4);
 		spr.dist = dist;
 		spr.lump = lump;
 		spr.normal = normal;
@@ -441,21 +445,9 @@ void R_DrawTranslucentPoly(surface_t* surf, TVec* sv, int count, int lump,
 
 extern VCvarI		r_chasecam;
 
-static void RenderSprite(VEntity* thing)
+static void RenderSprite(VEntity* thing, vuint32 light)
 {
 	guard(RenderSprite);
-	if (thing == cl_mobjs[cl->ClientNum + 1] && !r_chasecam)
-	{
-		//	Don't draw client's mobj
-		return;
-	}
-
-	if (thing->Translucency >= 95)
-	{
-		// Never make a vissprite when MF2_DONTDRAW is flagged.
-		return;
-	}
-
 	int spr_type = thing->SpriteType;
 
 	TVec sprorigin = thing->Origin;
@@ -636,17 +628,6 @@ static void RenderSprite(VEntity* thing)
 	sv[2] = sprorigin + end + topdelta;
 	sv[3] = sprorigin + end + botdelta;
 
-	vuint32 light;
-	if (fixedlight || (thing->State->Frame & FF_FULLBRIGHT) ||
-		(thing->EntityFlags & VEntity::EF_FullBright))
-	{
-		light = 0xffffffff;
-	}
-	else
-	{
-		light = R_LightPoint(sprorigin);
-	}
-
 	if (thing->Translucency > 0 || r_sort_sprites)
 	{
 		R_DrawTranslucentPoly(NULL, sv, 4, lump, thing->Translucency,
@@ -684,19 +665,13 @@ void RenderTranslucentAliasModel(VEntity* mobj, vuint32 light, bool IsWeapon,
 		trans_sprite_t &spr = trans_sprites[i];
 		if (!spr.translucency)
 		{
-			spr.dv = trans_sprite_verts + 4 * i;
-			spr.dv[0] = mobj->Origin;
-			((TAVec *)spr.dv)[1] = mobj->Angles;
-			spr.surf = (surface_t*)model_precache[mobj->EntityFlags &
-				VEntity::EF_FixedModel ? mobj->FixedModelIndex :
-				mobj->State->ModelIndex];
-			spr.lump = IsWeapon ? 1 : mobj->State->ModelFrame;
+			spr.Ent = mobj;
+			spr.IsWeapon = IsWeapon;
 			spr.light = light;
-			spr.translucency = mobj->Translucency + 1;
+			spr.Alpha = (100.0 - mobj->Translucency) / 100.0;
 			spr.dist = dist;
 			spr.type = 2;
-			spr.skin = *skin_list[mobj->ModelSkinNum];
-			spr.pdist = TimeFrac;
+			spr.TimeFrac = TimeFrac;
 			return;
 		}
 		if (spr.dist > best_dist)
@@ -711,13 +686,12 @@ void RenderTranslucentAliasModel(VEntity* mobj, vuint32 light, bool IsWeapon,
 		trans_sprite_t &spr = trans_sprites[found];
 		if (spr.type == 2)
 		{
-			R_DrawAliasModel(spr.dv[0], ((TAVec *)spr.dv)[1],
-				(VModel*)spr.surf, spr.lump, spr.skin, spr.light,
-				spr.translucency - 1, false, spr.pdist);
+			R_DrawEntityModel(spr.Ent, spr.IsWeapon, spr.light,
+				spr.Alpha, spr.TimeFrac);
 		}
 		else if (spr.type)
 		{
-			Drawer->DrawSpritePolygon(spr.dv, spr.lump, spr.translucency - 1,
+			Drawer->DrawSpritePolygon(spr.Verts, spr.lump, spr.translucency - 1,
 				spr.translation, spr.light, spr.normal, spr.pdist, spr.saxis,
 				spr.taxis, spr.texorg);
 		}
@@ -725,26 +699,17 @@ void RenderTranslucentAliasModel(VEntity* mobj, vuint32 light, bool IsWeapon,
 		{
 			Drawer->DrawMaskedPolygon(spr.surf, spr.translucency - 1);
 		}
-		spr.dv = trans_sprite_verts + 4 * i;
-		spr.dv[0] = mobj->Origin;
-		((TAVec *)spr.dv)[1] = mobj->Angles;
-		spr.surf = (surface_t*)model_precache[mobj->EntityFlags &
-				VEntity::EF_FixedModel ? mobj->FixedModelIndex :
-				mobj->State->ModelIndex];
-		spr.lump = IsWeapon ? 1 : mobj->State->ModelFrame;
+		spr.Ent = mobj;
+		spr.IsWeapon = IsWeapon;
 		spr.light = light;
-		spr.translucency = mobj->Translucency + 1;
-		spr.skin = *skin_list[mobj->ModelSkinNum];
+		spr.Alpha = (100.0 - mobj->Translucency) / 100.0;
 		spr.dist = dist;
 		spr.type = 2;
-		spr.pdist = TimeFrac;
+		spr.TimeFrac = TimeFrac;
 		return;
 	}
-	R_DrawAliasModel(mobj->Origin, mobj->Angles,
-		model_precache[mobj->EntityFlags & VEntity::EF_FixedModel ?
-		mobj->FixedModelIndex : mobj->State->ModelIndex], IsWeapon ? 1 :
-		mobj->State->ModelFrame, *skin_list[mobj->ModelSkinNum],
-		light, mobj->Translucency, false, TimeFrac);
+	R_DrawEntityModel(mobj, IsWeapon, light, (100.0 - mobj->Translucency) /
+		100.0, TimeFrac);
 	unguard;
 }
 
@@ -754,32 +719,12 @@ void RenderTranslucentAliasModel(VEntity* mobj, vuint32 light, bool IsWeapon,
 //
 //==========================================================================
 
-static bool RenderAliasModel(VEntity* mobj, bool IsWeapon)
+static bool RenderAliasModel(VEntity* mobj, vuint32 light, bool IsWeapon)
 {
 	guard(RenderAliasModel);
-	if (!r_chasecam && (mobj == cl_mobjs[cl->ClientNum + 1] ||
-		mobj == cl_weapon_mobjs[cl->ClientNum + 1]))
+	if (!r_models)
 	{
-		//	Don't draw client's mobj
-		return true;
-	}
-
-	if (mobj->Translucency >= 95)
-	{
-		// Never make a vissprite when MF2_DONTDRAW is flagged.
-		return true;
-	}
-
-	//	Setup lighting
-	vuint32 light;
-	if (fixedlight || (mobj->State->Frame & FF_FULLBRIGHT) ||
-		(mobj->EntityFlags & VEntity::EF_FullBright))
-	{
-		light = 0xffffffff;
-	}
-	else
-	{
-		light = R_LightPoint(mobj->Origin);
+		return false;
 	}
 
 	float TimeFrac = 0;
@@ -792,30 +737,59 @@ static bool RenderAliasModel(VEntity* mobj, bool IsWeapon)
 	//	Draw it
 	if (mobj->Translucency)
 	{
-		if (!R_CheckAliasModelFrame(
-			model_precache[mobj->EntityFlags & VEntity::EF_FixedModel ?
-			mobj->FixedModelIndex : mobj->State->ModelIndex],
-			IsWeapon ? 1 : mobj->State->ModelFrame, TimeFrac))
+		if (!R_CheckAliasModelFrame(mobj, IsWeapon, TimeFrac))
 		{
 			return false;
 		}
 		RenderTranslucentAliasModel(mobj, light, IsWeapon, TimeFrac);
 		return true;
 	}
-	else if (IsWeapon)
+	else
 	{
-		return R_DrawAliasModel(mobj->Origin, mobj->Angles,
-			model_precache[mobj->EntityFlags & VEntity::EF_FixedModel ?
-			mobj->FixedModelIndex : mobj->State->ModelIndex], 1,
-			*skin_list[mobj->ModelSkinNum], light, 0, false, TimeFrac);
+		return R_DrawEntityModel(mobj, IsWeapon, light, 1.0, TimeFrac);
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	RenderThing
+//
+//==========================================================================
+
+static void RenderThing(VEntity* mobj, bool IsWeapon)
+{
+	guard(RenderThing);
+	if (!r_chasecam && (mobj == cl_mobjs[cl->ClientNum + 1] ||
+		mobj == cl_weapon_mobjs[cl->ClientNum + 1]))
+	{
+		//	Don't draw client's mobj
+		return;
+	}
+
+	if (mobj->Translucency >= 95)
+	{
+		// Never make a vissprite when MF2_DONTDRAW is flagged.
+		return;
+	}
+
+	//	Setup lighting
+	vuint32 light;
+	if ((mobj->State->Frame & FF_FULLBRIGHT) ||
+		(mobj->EntityFlags & VEntity::EF_FullBright))
+	{
+		light = 0xffffffff;
 	}
 	else
 	{
-		return R_DrawAliasModel(mobj->Origin, mobj->Angles,
-			model_precache[mobj->EntityFlags & VEntity::EF_FixedModel ?
-			mobj->FixedModelIndex : mobj->State->ModelIndex],
-			mobj->State->ModelFrame, *skin_list[mobj->ModelSkinNum],
-			light, 0, false, TimeFrac);
+		light = R_LightPoint(mobj->Origin);
+	}
+
+	//	Try to draw a model. If it's a script and it doesn't
+	// specify model for this frame, draw sprite instead.
+	if (!RenderAliasModel(mobj, light, IsWeapon) && !IsWeapon)
+	{
+		RenderSprite(mobj, light);
 	}
 	unguard;
 }
@@ -840,33 +814,15 @@ void R_RenderMobjs()
 	{
 		if (cl_mobjs[i]->InUse)
 		{
-			if (model_precache[cl_mobjs[i]->EntityFlags &
-				VEntity::EF_FixedModel ? cl_mobjs[i]->FixedModelIndex :
-				cl_mobjs[i]->State->ModelIndex] && r_models)
-			{
-				//	Try to draw a model. If it's a script and it doesn't
-				// specify model for this frame, draw sprite instead.
-				if (!RenderAliasModel(cl_mobjs[i], false))
-				{
-					RenderSprite(cl_mobjs[i]);
-				}
-			}
-			else
-			{
-				RenderSprite(cl_mobjs[i]);
-			}
+			RenderThing(cl_mobjs[i], false);
 		}
 	}
 
-	if (r_models)
+	for (i = 0; i < MAXPLAYERS; i++)
 	{
-		for (i = 0; i < MAXPLAYERS; i++)
+		if (cl_weapon_mobjs[i]->InUse)
 		{
-			if (cl_weapon_mobjs[i]->InUse &&
-				model_precache[cl_weapon_mobjs[i]->FixedModelIndex])
-			{
-				RenderAliasModel(cl_weapon_mobjs[i], true);
-			}
+			RenderThing(cl_weapon_mobjs[i], true);
 		}
 	}
 	unguard;
@@ -904,13 +860,12 @@ void R_DrawTranslucentPolys()
 			trans_sprite_t &spr = trans_sprites[found];
 			if (spr.type == 2)
 			{
-				R_DrawAliasModel(spr.dv[0], ((TAVec *)spr.dv)[1],
-					(VModel*)spr.surf, spr.lump, spr.skin, spr.light,
-					spr.translucency - 1, false, spr.pdist);
+				R_DrawEntityModel(spr.Ent, spr.IsWeapon, spr.light,
+					spr.Alpha, spr.TimeFrac);
 			}
 			else if (spr.type)
 			{
-				Drawer->DrawSpritePolygon(spr.dv, spr.lump,
+				Drawer->DrawSpritePolygon(spr.Verts, spr.lump,
 					spr.translucency - 1, spr.translation, spr.light,
 					spr.normal, spr.pdist, spr.saxis, spr.taxis, spr.texorg);
 			}
@@ -930,7 +885,7 @@ void R_DrawTranslucentPolys()
 //
 //==========================================================================
 
-static void RenderPSprite(VViewState* VSt, float PSP_DIST)
+static void RenderPSprite(VViewState* VSt, float PSP_DIST, vuint32 light)
 {
 	guard(RenderPSprite);
 	spritedef_t*		sprdef;
@@ -1013,16 +968,6 @@ static void RenderPSprite(VViewState* VSt, float PSP_DIST)
 	else
 		taxis = -(viewup * 100 * 4 / 3 * PSP_DISTI);
 
-	vuint32 light;
-	if (VSt->State->Frame & FF_FULLBRIGHT)
-	{
-		light = 0xffffffff;
-	}
-	else
-	{
-		light = R_LightPoint(sprorigin);
-	}
-
 	Drawer->DrawSpritePolygon(dv, lump, cl->ViewEntTranslucency, 0, light,
 		-viewforward, DotProduct(dv[0], -viewforward), saxis, taxis, texorg);
 	unguard;
@@ -1034,21 +979,16 @@ static void RenderPSprite(VViewState* VSt, float PSP_DIST)
 //
 //==========================================================================
 
-static void RenderViewModel(VViewState* VSt)
+static bool RenderViewModel(VViewState* VSt, vuint32 light)
 {
 	guard(RenderViewModel);
+	if (!r_view_models)
+	{
+		return false;
+	}
+
 	TVec origin = vieworg + (VSt->SX - 1.0) * viewright / 8.0 -
 		(VSt->SY - 32.0) * viewup / 6.0;
-
-	vuint32 light;
-	if (VSt->State->Frame & FF_FULLBRIGHT)
-	{
-		light = 0xffffffff;
-	}
-	else
-	{
-		light = R_LightPoint(origin);
-	}
 
 	float TimeFrac = 0;
 	if (VSt->State->Time > 0)
@@ -1057,9 +997,8 @@ static void RenderViewModel(VViewState* VSt)
 		TimeFrac = MID(0.0, TimeFrac, 1.0);
 	}
 
-	R_DrawAliasModel(origin, cl->ViewAngles,
-		model_precache[VSt->State->ModelIndex], VSt->State->ModelFrame,
-		NULL, light, cl->ViewEntTranslucency, true, TimeFrac);
+	return R_DrawAliasModel(origin, cl->ViewAngles, VSt->State,
+		NULL, light, (100.0 - cl->ViewEntTranslucency) / 100.0, true, TimeFrac);
 	unguard;
 }
 
@@ -1077,20 +1016,27 @@ void R_DrawPlayerSprites()
 		return;
 	}
 
-	if (r_view_models && cl->ViewStates[0].State &&
-		model_precache[cl->ViewStates[0].State->ModelIndex])
+	// add all active psprites
+	for (int i = 0; i < NUMPSPRITES; i++)
 	{
-		RenderViewModel(&cl->ViewStates[0]);
-	}
-	else
-	{
-		// add all active psprites
-		for (int i = 0; i < NUMPSPRITES; i++)
+		if (!cl->ViewStates[i].State)
 		{
-			if (cl->ViewStates[i].State)
-			{
-				RenderPSprite(&cl->ViewStates[i], 3 - i);
-			}
+			continue;
+		}
+
+		vuint32 light;
+		if (cl->ViewStates[i].State->Frame & FF_FULLBRIGHT)
+		{
+			light = 0xffffffff;
+		}
+		else
+		{
+			light = R_LightPoint(vieworg);
+		}
+
+		if (!RenderViewModel(&cl->ViewStates[i], light))
+		{
+			RenderPSprite(&cl->ViewStates[i], 3 - i, light);
 		}
 	}
 	unguard;
@@ -1152,45 +1098,5 @@ void R_DrawSpritePatch(int x, int y, int sprite, int frame, int rot, int transla
 	y2 *= fScaleY;
 
 	Drawer->DrawSpriteLump(x1, y1, x2, y2, lump, translation, flip);
-	unguard;
-}
-
-//==========================================================================
-//
-//	R_DrawModelFrame
-//
-//==========================================================================
-
-void R_DrawModelFrame(const TVec &origin, float angle, VModel* model,
-	int frame, const char *skin)
-{
-	guard(R_DrawModelFrame);
-	viewangles.yaw = 180;
-	viewangles.pitch = 0;
-	viewangles.roll = 0;
-	AngleVectors(viewangles, viewforward, viewright, viewup);
-	vieworg = TVec(0, 0, 0);
-	fixedlight = 0;
-
-	refdef_t	rd;
-
-	rd.x = 0;
-	rd.y = 0;
-	rd.width = ScreenWidth;
-	rd.height = ScreenHeight;
-	rd.fovx = tan(DEG2RAD(90) / 2);
-	rd.fovy = rd.fovx * rd.height / rd.width / PixelAspect;
-	rd.drawworld = false;
-
-	Drawer->SetupView(&rd);
-
-	TAVec angles;
-	angles.yaw = angle;
-	angles.pitch = 0;
-	angles.roll = 0;
-	R_DrawAliasModel(origin, angles, model, frame, skin, 0xffffffff,
-		0, false, 0);
-
-	Drawer->EndView();
 	unguard;
 }

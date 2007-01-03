@@ -1510,6 +1510,7 @@ VState::VState(VName AName)
 , NextState(0)
 , Function(0)
 , Next(0)
+, InClassIndex(-1)
 , NetId(-1)
 {
 }
@@ -2239,8 +2240,10 @@ void VClass::PostLoad()
 			StatesLookup.Append(GetSuperClass()->StatesLookup[i]);
 		}
 	}
+	int CurrIndex = 0;
 	for (VState* S = States; S; S = S->Next)
 	{
+		S->InClassIndex = CurrIndex++;
 		S->NetId = StatesLookup.Num();
 		StatesLookup.Append(S);
 	}
