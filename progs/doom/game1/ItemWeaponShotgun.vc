@@ -29,7 +29,7 @@ class ItemWeaponShotgun : WeaponPickup
 
 __states__
 {
-	S_SHOT('SHOT', 0, 'weapons/shotgun/ground.xml', 0, -1.0, none) { }
+	S_SHOT('SHOT', 0, -1.0, none) { }
 }
 
 defaultproperties

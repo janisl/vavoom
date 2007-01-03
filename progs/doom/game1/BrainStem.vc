@@ -29,7 +29,7 @@ class BrainStem : Decoration
 
 __states__
 {
-	S_BRAINSTEM('BRS1', 0, 'gibs/brain.xml', 0, -1.0, none) { }
+	S_BRAINSTEM('BRS1', 0, -1.0, none) { }
 }
 
 defaultproperties

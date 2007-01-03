@@ -28,7 +28,7 @@ class Stalagtite : Decoration
 
 __states__
 {
-	S_STALAGTITE('SMIT', 0, 'objects/stub.xml', 0, -1.0, none) { }
+	S_STALAGTITE('SMIT', 0, -1.0, none) { }
 }
 
 defaultproperties

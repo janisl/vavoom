@@ -28,7 +28,7 @@ class ZStalactiteMedium : Decoration
 
 __states__
 {
-	S_ZSTALACTITEMEDIUM1('SLC2', 0, 'objects/stalact2.xml', 0, -1.0, none) { }
+	S_ZSTALACTITEMEDIUM1('SLC2', 0, -1.0, none) { }
 }
 
 defaultproperties

@@ -23,13 +23,13 @@
 //**
 //**************************************************************************
 
-class ItemStimPack:HealthPickup
+class ItemStimPack : HealthPickup
 	__mobjinfo__(2011)
 	__scriptid__(23);
 
 __states__
 {
-	S_STIM('STIM', 0, 'items/stim.xml', 0, -1.0, none) { }
+	S_STIM('STIM', 0, -1.0, none) { }
 }
 
 defaultproperties

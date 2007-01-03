@@ -29,7 +29,7 @@ class ItemWeaponPhoenixRod : WeaponPickup
 
 __states__
 {
-	S_WPHX('WPHX', 0, 'weapons/phoenix/ground.xml', 0, -1.0, none) { }
+	S_WPHX('WPHX', 0, -1.0, none) { }
 }
 
 defaultproperties

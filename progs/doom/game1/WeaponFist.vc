@@ -61,14 +61,14 @@ void A_Punch()
 
 __states__
 {
-	S_PUNCH('PUNG', 0, 'weapons/fists/view.xml', 0, 1.0 / 35.0, S_PUNCH) { A_WeaponReady(); }
-	S_PUNCHDOWN('PUNG', 0, 'weapons/fists/view.xml', 1, 1.0 / 35.0, S_PUNCHDOWN) { A_Lower(); }
-	S_PUNCHUP('PUNG', 0, 'weapons/fists/view.xml', 2, 1.0 / 35.0, S_PUNCHUP) { A_Raise(); }
-	S_PUNCH1('PUNG', 1, 'weapons/fists/view.xml', 3, 4.0 / 35.0, S_PUNCH2) { }
-	S_PUNCH2('PUNG', 2, 'weapons/fists/view.xml', 4, 4.0 / 35.0, S_PUNCH3) { A_Punch(); }
-	S_PUNCH3('PUNG', 3, 'weapons/fists/view.xml', 5, 5.0 / 35.0, S_PUNCH4) { }
-	S_PUNCH4('PUNG', 2, 'weapons/fists/view.xml', 6, 4.0 / 35.0, S_PUNCH5) { }
-	S_PUNCH5('PUNG', 1, 'weapons/fists/view.xml', 7, 5.0 / 35.0, S_PUNCH) { A_ReFire(); }
+	S_PUNCH('PUNG', 0, 1.0 / 35.0, S_PUNCH) { A_WeaponReady(); }
+	S_PUNCHDOWN('PUNG', 0, 1.0 / 35.0, S_PUNCHDOWN) { A_Lower(); }
+	S_PUNCHUP('PUNG', 0, 1.0 / 35.0, S_PUNCHUP) { A_Raise(); }
+	S_PUNCH1('PUNG', 1, 4.0 / 35.0, S_PUNCH2) { }
+	S_PUNCH2('PUNG', 2, 4.0 / 35.0, S_PUNCH3) { A_Punch(); }
+	S_PUNCH3('PUNG', 3, 5.0 / 35.0, S_PUNCH4) { }
+	S_PUNCH4('PUNG', 2, 4.0 / 35.0, S_PUNCH5) { }
+	S_PUNCH5('PUNG', 1, 5.0 / 35.0, S_PUNCH) { A_ReFire(); }
 }
 
 defaultproperties

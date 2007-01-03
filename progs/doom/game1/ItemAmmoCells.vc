@@ -29,7 +29,7 @@ class ItemAmmoCells : AmmoPickup
 
 __states__
 {
-	S_CELL('CELL', 0, 'ammo/cell.xml', 0, -1.0, none) { }
+	S_CELL('CELL', 0, -1.0, none) { }
 }
 
 defaultproperties

@@ -28,7 +28,7 @@ class Meat4 : Decoration
 
 __states__
 {
-	S_MEAT4('GOR4', 0, 'bodies/legs.xml', 0, -1.0, none) { }
+	S_MEAT4('GOR4', 0, -1.0, none) { }
 }
 
 defaultproperties

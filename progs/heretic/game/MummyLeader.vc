@@ -57,12 +57,12 @@ void A_MummyAttack2()
 
 __states__
 {
-	S_MUMMYL_ATK1('MUMM', 23, 'monsters/mummy/model.xml', 9, 5.0 / 35.0, S_MUMMYL_ATK2) { A_FaceTarget(); }
-	S_MUMMYL_ATK2('MUMM', 24 | FF_FULLBRIGHT, 'monsters/mummy/model.xml', 10, 5.0 / 35.0, S_MUMMYL_ATK3) { A_FaceTarget(); }
-	S_MUMMYL_ATK3('MUMM', 23, 'monsters/mummy/model.xml', 11, 5.0 / 35.0, S_MUMMYL_ATK4) { A_FaceTarget(); }
-	S_MUMMYL_ATK4('MUMM', 24 | FF_FULLBRIGHT, 'monsters/mummy/model.xml', 12, 5.0 / 35.0, S_MUMMYL_ATK5) { A_FaceTarget(); }
-	S_MUMMYL_ATK5('MUMM', 23, 'monsters/mummy/model.xml', 13, 5.0 / 35.0, S_MUMMYL_ATK6) { A_FaceTarget(); }
-	S_MUMMYL_ATK6('MUMM', 24 | FF_FULLBRIGHT, 'monsters/mummy/model.xml', 14, 15.0 / 35.0, S_MUMMY_WALK1) { A_MummyAttack2(); }
+	S_MUMMYL_ATK1('MUMM', 23, 5.0 / 35.0, S_MUMMYL_ATK2) { A_FaceTarget(); }
+	S_MUMMYL_ATK2('MUMM', 24 | FF_FULLBRIGHT, 5.0 / 35.0, S_MUMMYL_ATK3) { A_FaceTarget(); }
+	S_MUMMYL_ATK3('MUMM', 23, 5.0 / 35.0, S_MUMMYL_ATK4) { A_FaceTarget(); }
+	S_MUMMYL_ATK4('MUMM', 24 | FF_FULLBRIGHT, 5.0 / 35.0, S_MUMMYL_ATK5) { A_FaceTarget(); }
+	S_MUMMYL_ATK5('MUMM', 23, 5.0 / 35.0, S_MUMMYL_ATK6) { A_FaceTarget(); }
+	S_MUMMYL_ATK6('MUMM', 24 | FF_FULLBRIGHT, 15.0 / 35.0, S_MUMMY_WALK1) { A_MummyAttack2(); }
 }
 
 defaultproperties

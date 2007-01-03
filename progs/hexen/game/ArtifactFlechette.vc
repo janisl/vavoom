@@ -29,7 +29,7 @@ class ArtifactFlechette : Artifact
 
 __states__
 {
-	S_ARTI_PSBG1('PSBG', 0, 'artifact/flechete.xml', 0, -1.0, none) { }
+	S_ARTI_PSBG1('PSBG', 0, -1.0, none) { }
 }
 
 defaultproperties

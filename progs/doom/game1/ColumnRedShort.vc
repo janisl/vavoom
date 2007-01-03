@@ -28,7 +28,7 @@ class ColumnRedShort : Decoration
 
 __states__
 {
-	S_SHRTREDCOL('COL4', 0, 'objects/pillarrs.xml', 0, -1.0, none) { }
+	S_SHRTREDCOL('COL4', 0, -1.0, none) { }
 }
 
 defaultproperties

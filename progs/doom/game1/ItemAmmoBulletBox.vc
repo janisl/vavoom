@@ -29,7 +29,7 @@ class ItemAmmoBulletBox : AmmoPickup
 
 __states__
 {
-	S_AMMO('AMMO', 0, 'ammo/ammo.xml', 0, -1.0, none) { }
+	S_AMMO('AMMO', 0, -1.0, none) { }
 }
 
 defaultproperties

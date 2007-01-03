@@ -79,7 +79,7 @@ void TouchSpecial(Actor Toucher)
 
 __states__
 {
-	S_ITEM_SHD2_1('SHD2', 0, 'items/shield2.xml', 0, -1.0, none) { }
+	S_ITEM_SHD2_1('SHD2', 0, -1.0, none) { }
 }
 
 defaultproperties

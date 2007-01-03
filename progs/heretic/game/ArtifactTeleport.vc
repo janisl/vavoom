@@ -29,10 +29,10 @@ class ArtifactTeleport : Artifact
 
 __states__
 {
-	S_ARTI_ATLP1('ATLP', 0, 'artifact/teleport.xml', 0, 4.0 / 35.0, S_ARTI_ATLP2) { }
-	S_ARTI_ATLP2('ATLP', 1, 'artifact/teleport.xml', 1, 4.0 / 35.0, S_ARTI_ATLP3) { }
-	S_ARTI_ATLP3('ATLP', 2, 'artifact/teleport.xml', 2, 4.0 / 35.0, S_ARTI_ATLP4) { }
-	S_ARTI_ATLP4('ATLP', 1, 'artifact/teleport.xml', 3, 4.0 / 35.0, S_ARTI_ATLP1) { }
+	S_ARTI_ATLP1('ATLP', 0, 4.0 / 35.0, S_ARTI_ATLP2) { }
+	S_ARTI_ATLP2('ATLP', 1, 4.0 / 35.0, S_ARTI_ATLP3) { }
+	S_ARTI_ATLP3('ATLP', 2, 4.0 / 35.0, S_ARTI_ATLP4) { }
+	S_ARTI_ATLP4('ATLP', 1, 4.0 / 35.0, S_ARTI_ATLP1) { }
 }
 
 defaultproperties

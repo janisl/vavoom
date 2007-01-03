@@ -28,7 +28,7 @@ class SkullHang60 : Decoration
 
 __states__
 {
-	S_SKULLHANG60_1('SKH2', 0, 'objects/skull2.xml', 0, -1.0, none) { }
+	S_SKULLHANG60_1('SKH2', 0, -1.0, none) { }
 }
 
 defaultproperties

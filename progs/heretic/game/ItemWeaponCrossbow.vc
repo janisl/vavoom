@@ -29,7 +29,7 @@ class ItemWeaponCrossbow : WeaponPickup
 
 __states__
 {
-	S_WBOW('WBOW', 0, 'weapons/bow/ground.xml', 0, -1.0, none) { }
+	S_WBOW('WBOW', 0, -1.0, none) { }
 }
 
 defaultproperties

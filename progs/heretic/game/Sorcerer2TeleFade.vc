@@ -27,12 +27,12 @@ class Sorcerer2TeleFade : Effect;
 
 __states__
 {
-	S_SOR2TELEFADE1('SOR2', 6, 'monsters/dsparil/fade.xml', 0, 8.0 / 35.0, S_SOR2TELEFADE2) { }
-	S_SOR2TELEFADE2('SOR2', 7, 'monsters/dsparil/fade.xml', 1, 6.0 / 35.0, S_SOR2TELEFADE3) { }
-	S_SOR2TELEFADE3('SOR2', 8, 'monsters/dsparil/fade.xml', 2, 6.0 / 35.0, S_SOR2TELEFADE4) { }
-	S_SOR2TELEFADE4('SOR2', 9, 'monsters/dsparil/fade.xml', 3, 6.0 / 35.0, S_SOR2TELEFADE5) { }
-	S_SOR2TELEFADE5('SOR2', 10, 'monsters/dsparil/fade.xml', 4, 6.0 / 35.0, S_SOR2TELEFADE6) { }
-	S_SOR2TELEFADE6('SOR2', 11, 'monsters/dsparil/fade.xml', 5, 6.0 / 35.0, none) { }
+	S_SOR2TELEFADE1('SOR2', 6, 8.0 / 35.0, S_SOR2TELEFADE2) { }
+	S_SOR2TELEFADE2('SOR2', 7, 6.0 / 35.0, S_SOR2TELEFADE3) { }
+	S_SOR2TELEFADE3('SOR2', 8, 6.0 / 35.0, S_SOR2TELEFADE4) { }
+	S_SOR2TELEFADE4('SOR2', 9, 6.0 / 35.0, S_SOR2TELEFADE5) { }
+	S_SOR2TELEFADE5('SOR2', 10, 6.0 / 35.0, S_SOR2TELEFADE6) { }
+	S_SOR2TELEFADE6('SOR2', 11, 6.0 / 35.0, none) { }
 }
 
 defaultproperties

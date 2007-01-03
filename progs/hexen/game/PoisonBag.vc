@@ -44,7 +44,7 @@ void A_PoisonBagInit()
 
 __states__
 {
-	S_POISONBAG1('PSBG', 0 | FF_FULLBRIGHT, 'artifact/flechete.xml', 0, 18.0 / 35.0, S_POISONBAG2) { }
+	S_POISONBAG1('PSBG', 0 | FF_FULLBRIGHT, 18.0 / 35.0, S_POISONBAG2) { }
 	S_POISONBAG2('PSBG', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_POISONBAG3) { }
 	S_POISONBAG3('PSBG', 2, 3.0 / 35.0, S_POISONBAG4) { }
 	S_POISONBAG4('PSBG', 2, 1.0 / 35.0, none) { A_PoisonBagInit(); }

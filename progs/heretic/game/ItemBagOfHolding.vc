@@ -81,7 +81,7 @@ void TouchSpecial(Actor Toucher)
 
 __states__
 {
-	S_ITEM_BAGH1('BAGH', 0, 'items/bag.xml', 0, -1.0, none) { }
+	S_ITEM_BAGH1('BAGH', 0, -1.0, none) { }
 }
 
 defaultproperties

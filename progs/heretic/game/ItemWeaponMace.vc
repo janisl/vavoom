@@ -51,7 +51,7 @@ void A_RestoreSpecialThing1()
 
 __states__
 {
-	S_WMCE('WMCE', 0, 'weapons/mace/ground.xml', 0, -1.0, none) { }
+	S_WMCE('WMCE', 0, -1.0, none) { }
 }
 
 defaultproperties

@@ -534,44 +534,44 @@ void A_SmokePuffExit()
 
 __states__
 {
-	S_MNTR_SPAWN1('MNTR', 0, 'monsters/minotaur/model.xml', 0, 15.0 / 35.0, S_MNTR_SPAWN2) { }
-	S_MNTR_SPAWN2('MNTR', 0, 'monsters/minotaur/model.xml', 0, 15.0 / 35.0, S_MNTR_SPAWN3) { A_MinotaurFade1(); }
-	S_MNTR_SPAWN3('MNTR', 0, 'monsters/minotaur/model.xml', 0, 3.0 / 35.0, S_MNTR_LOOK1) { A_MinotaurFade2(); }
-	S_MNTR_LOOK1('MNTR', 0, 'monsters/minotaur/model.xml', 0, 10.0 / 35.0, S_MNTR_LOOK2) { A_MinotaurLook(); }
-	S_MNTR_LOOK2('MNTR', 1, 'monsters/minotaur/model.xml', 1, 10.0 / 35.0, S_MNTR_LOOK1) { A_MinotaurLook(); }
-	S_MNTR_WALK1_NF('MNTR', 0, 'monsters/minotaur/model.xml', 2, 5.0 / 35.0, S_MNTR_WALK2) { }
-	S_MNTR_WALK1('MNTR', 0, 'monsters/minotaur/model.xml', 2, 5.0 / 35.0, S_MNTR_WALK2) { A_MinotaurChase(); }
-	S_MNTR_WALK2('MNTR', 1, 'monsters/minotaur/model.xml', 3, 5.0 / 35.0, S_MNTR_WALK3) { A_MinotaurChase(); }
-	S_MNTR_WALK3('MNTR', 2, 'monsters/minotaur/model.xml', 4, 5.0 / 35.0, S_MNTR_WALK4) { A_MinotaurChase(); }
-	S_MNTR_WALK4('MNTR', 3, 'monsters/minotaur/model.xml', 5, 5.0 / 35.0, S_MNTR_WALK1) { A_MinotaurChase(); }
-	S_MNTR_ROAM1_NF('MNTR', 0, 'monsters/minotaur/model.xml', 2, 5.0 / 35.0, S_MNTR_ROAM2) { }
-	S_MNTR_ROAM1('MNTR', 0, 'monsters/minotaur/model.xml', 2, 5.0 / 35.0, S_MNTR_ROAM2) { A_MinotaurRoam(); }
-	S_MNTR_ROAM2('MNTR', 1, 'monsters/minotaur/model.xml', 3, 5.0 / 35.0, S_MNTR_ROAM3) { A_MinotaurRoam(); }
-	S_MNTR_ROAM3('MNTR', 2, 'monsters/minotaur/model.xml', 4, 5.0 / 35.0, S_MNTR_ROAM4) { A_MinotaurRoam(); }
-	S_MNTR_ROAM4('MNTR', 3, 'monsters/minotaur/model.xml', 5, 5.0 / 35.0, S_MNTR_ROAM1) { A_MinotaurRoam(); }
-	S_MNTR_ATK1_1('MNTR', 6, 'monsters/minotaur/model.xml', 6, 10.0 / 35.0, S_MNTR_ATK1_2) { A_FaceTarget(); }
-	S_MNTR_ATK1_2('MNTR', 7, 'monsters/minotaur/model.xml', 7, 7.0 / 35.0, S_MNTR_ATK1_3) { A_FaceTarget(); }
-	S_MNTR_ATK1_3('MNTR', 8, 'monsters/minotaur/model.xml', 8, 12.0 / 35.0, S_MNTR_WALK1) { A_MinotaurAtk1(); }
-	S_MNTR_ATK2_1('MNTR', 6, 'monsters/minotaur/model.xml', 9, 10.0 / 35.0, S_MNTR_ATK2_2) { A_MinotaurDecide(); }
-	S_MNTR_ATK2_2('MNTR', 9, 'monsters/minotaur/model.xml', 10, 4.0 / 35.0, S_MNTR_ATK2_3) { A_FaceTarget(); }
-	S_MNTR_ATK2_3('MNTR', 10, 'monsters/minotaur/model.xml', 11, 9.0 / 35.0, S_MNTR_WALK1) { A_MinotaurAtk2(); }
-	S_MNTR_ATK3_1('MNTR', 6, 'monsters/minotaur/model.xml', 12, 10.0 / 35.0, S_MNTR_ATK3_2) { A_FaceTarget(); }
-	S_MNTR_ATK3_2('MNTR', 7, 'monsters/minotaur/model.xml', 13, 7.0 / 35.0, S_MNTR_ATK3_3) { A_FaceTarget(); }
-	S_MNTR_ATK3_3('MNTR', 8, 'monsters/minotaur/model.xml', 14, 12.0 / 35.0, S_MNTR_WALK1) { A_MinotaurAtk3(); }
-	S_MNTR_ATK3_4('MNTR', 8, 'monsters/minotaur/model.xml', 15, 12.0 / 35.0, S_MNTR_ATK3_1) { }
-	S_MNTR_ATK4_1('MNTR', 5, 'monsters/minotaur/model.xml', 16, 2.0 / 35.0, S_MNTR_ATK4_2) { }
-	S_MNTR_ATK4_2('MNTR', 5, 'monsters/minotaur/model.xml', 17, 2.0 / 35.0, S_MNTR_ATK4_2) { A_MinotaurCharge(); }
-	S_MNTR_PAIN1('MNTR', 4, 'monsters/minotaur/model.xml', 18, 3.0 / 35.0, S_MNTR_PAIN2) { }
-	S_MNTR_PAIN2('MNTR', 4, 'monsters/minotaur/model.xml', 19, 6.0 / 35.0, S_MNTR_WALK1) { A_Pain(); }
-	S_MNTR_DIE1('MNTR', 4, 'monsters/minotaur/model.xml', 20, 6.0 / 35.0, S_MNTR_DIE2) { }
-	S_MNTR_DIE2('MNTR', 4, 'monsters/minotaur/model.xml', 20, 2.0 / 35.0, S_MNTR_DIE3) { A_Scream(); }
-	S_MNTR_DIE3('MNTR', 4, 'monsters/minotaur/model.xml', 20, 5.0 / 35.0, S_MNTR_DIE4) { A_SmokePuffExit(); }
-	S_MNTR_DIE4('MNTR', 4, 'monsters/minotaur/model.xml', 20, 5.0 / 35.0, S_MNTR_DIE5) { }
-	S_MNTR_DIE5('MNTR', 4, 'monsters/minotaur/model.xml', 20, 5.0 / 35.0, S_MNTR_DIE6) { A_NoBlocking(); }
-	S_MNTR_DIE6('MNTR', 4, 'monsters/minotaur/model.xml', 20, 5.0 / 35.0, S_MNTR_DIE7) { }
-	S_MNTR_DIE7('MNTR', 4, 'monsters/minotaur/model.xml', 20, 5.0 / 35.0, S_MNTR_DIE8) { A_MinotaurFade1(); }
-	S_MNTR_DIE8('MNTR', 4, 'monsters/minotaur/model.xml', 20, 5.0 / 35.0, S_MNTR_DIE9) { A_MinotaurFade0(); }
-	S_MNTR_DIE9('MNTR', 4, 'monsters/minotaur/model.xml', 20, 10.0 / 35.0, none) { }
+	S_MNTR_SPAWN1('MNTR', 0, 15.0 / 35.0, S_MNTR_SPAWN2) { }
+	S_MNTR_SPAWN2('MNTR', 0, 15.0 / 35.0, S_MNTR_SPAWN3) { A_MinotaurFade1(); }
+	S_MNTR_SPAWN3('MNTR', 0, 3.0 / 35.0, S_MNTR_LOOK1) { A_MinotaurFade2(); }
+	S_MNTR_LOOK1('MNTR', 0, 10.0 / 35.0, S_MNTR_LOOK2) { A_MinotaurLook(); }
+	S_MNTR_LOOK2('MNTR', 1, 10.0 / 35.0, S_MNTR_LOOK1) { A_MinotaurLook(); }
+	S_MNTR_WALK1_NF('MNTR', 0, 5.0 / 35.0, S_MNTR_WALK2) { }
+	S_MNTR_WALK1('MNTR', 0, 5.0 / 35.0, S_MNTR_WALK2) { A_MinotaurChase(); }
+	S_MNTR_WALK2('MNTR', 1, 5.0 / 35.0, S_MNTR_WALK3) { A_MinotaurChase(); }
+	S_MNTR_WALK3('MNTR', 2, 5.0 / 35.0, S_MNTR_WALK4) { A_MinotaurChase(); }
+	S_MNTR_WALK4('MNTR', 3, 5.0 / 35.0, S_MNTR_WALK1) { A_MinotaurChase(); }
+	S_MNTR_ROAM1_NF('MNTR', 0, 5.0 / 35.0, S_MNTR_ROAM2) { }
+	S_MNTR_ROAM1('MNTR', 0, 5.0 / 35.0, S_MNTR_ROAM2) { A_MinotaurRoam(); }
+	S_MNTR_ROAM2('MNTR', 1, 5.0 / 35.0, S_MNTR_ROAM3) { A_MinotaurRoam(); }
+	S_MNTR_ROAM3('MNTR', 2, 5.0 / 35.0, S_MNTR_ROAM4) { A_MinotaurRoam(); }
+	S_MNTR_ROAM4('MNTR', 3, 5.0 / 35.0, S_MNTR_ROAM1) { A_MinotaurRoam(); }
+	S_MNTR_ATK1_1('MNTR', 6, 10.0 / 35.0, S_MNTR_ATK1_2) { A_FaceTarget(); }
+	S_MNTR_ATK1_2('MNTR', 7, 7.0 / 35.0, S_MNTR_ATK1_3) { A_FaceTarget(); }
+	S_MNTR_ATK1_3('MNTR', 8, 12.0 / 35.0, S_MNTR_WALK1) { A_MinotaurAtk1(); }
+	S_MNTR_ATK2_1('MNTR', 6, 10.0 / 35.0, S_MNTR_ATK2_2) { A_MinotaurDecide(); }
+	S_MNTR_ATK2_2('MNTR', 9, 4.0 / 35.0, S_MNTR_ATK2_3) { A_FaceTarget(); }
+	S_MNTR_ATK2_3('MNTR', 10, 9.0 / 35.0, S_MNTR_WALK1) { A_MinotaurAtk2(); }
+	S_MNTR_ATK3_1('MNTR', 6, 10.0 / 35.0, S_MNTR_ATK3_2) { A_FaceTarget(); }
+	S_MNTR_ATK3_2('MNTR', 7, 7.0 / 35.0, S_MNTR_ATK3_3) { A_FaceTarget(); }
+	S_MNTR_ATK3_3('MNTR', 8, 12.0 / 35.0, S_MNTR_WALK1) { A_MinotaurAtk3(); }
+	S_MNTR_ATK3_4('MNTR', 8, 12.0 / 35.0, S_MNTR_ATK3_1) { }
+	S_MNTR_ATK4_1('MNTR', 5, 2.0 / 35.0, S_MNTR_ATK4_2) { }
+	S_MNTR_ATK4_2('MNTR', 5, 2.0 / 35.0, S_MNTR_ATK4_2) { A_MinotaurCharge(); }
+	S_MNTR_PAIN1('MNTR', 4, 3.0 / 35.0, S_MNTR_PAIN2) { }
+	S_MNTR_PAIN2('MNTR', 4, 6.0 / 35.0, S_MNTR_WALK1) { A_Pain(); }
+	S_MNTR_DIE1('MNTR', 4, 6.0 / 35.0, S_MNTR_DIE2) { }
+	S_MNTR_DIE2('MNTR', 4, 2.0 / 35.0, S_MNTR_DIE3) { A_Scream(); }
+	S_MNTR_DIE3('MNTR', 4, 5.0 / 35.0, S_MNTR_DIE4) { A_SmokePuffExit(); }
+	S_MNTR_DIE4('MNTR', 4, 5.0 / 35.0, S_MNTR_DIE5) { }
+	S_MNTR_DIE5('MNTR', 4, 5.0 / 35.0, S_MNTR_DIE6) { A_NoBlocking(); }
+	S_MNTR_DIE6('MNTR', 4, 5.0 / 35.0, S_MNTR_DIE7) { }
+	S_MNTR_DIE7('MNTR', 4, 5.0 / 35.0, S_MNTR_DIE8) { A_MinotaurFade1(); }
+	S_MNTR_DIE8('MNTR', 4, 5.0 / 35.0, S_MNTR_DIE9) { A_MinotaurFade0(); }
+	S_MNTR_DIE9('MNTR', 4, 10.0 / 35.0, none) { }
 }
 
 defaultproperties

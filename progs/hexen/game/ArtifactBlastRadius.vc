@@ -29,14 +29,14 @@ class ArtifactBlastRadius : Artifact
 
 __states__
 {
-	S_ARTI_BLAST1('BLST', 0 | FF_FULLBRIGHT, 'artifact/blast.xml', 0, 4.0 / 35.0, S_ARTI_BLAST2) { }
-	S_ARTI_BLAST2('BLST', 1 | FF_FULLBRIGHT, 'artifact/blast.xml', 1, 4.0 / 35.0, S_ARTI_BLAST3) { }
-	S_ARTI_BLAST3('BLST', 2 | FF_FULLBRIGHT, 'artifact/blast.xml', 2, 4.0 / 35.0, S_ARTI_BLAST4) { }
-	S_ARTI_BLAST4('BLST', 3 | FF_FULLBRIGHT, 'artifact/blast.xml', 3, 4.0 / 35.0, S_ARTI_BLAST5) { }
-	S_ARTI_BLAST5('BLST', 4 | FF_FULLBRIGHT, 'artifact/blast.xml', 4, 4.0 / 35.0, S_ARTI_BLAST6) { }
-	S_ARTI_BLAST6('BLST', 5 | FF_FULLBRIGHT, 'artifact/blast.xml', 5, 4.0 / 35.0, S_ARTI_BLAST7) { }
-	S_ARTI_BLAST7('BLST', 6 | FF_FULLBRIGHT, 'artifact/blast.xml', 6, 4.0 / 35.0, S_ARTI_BLAST8) { }
-	S_ARTI_BLAST8('BLST', 7 | FF_FULLBRIGHT, 'artifact/blast.xml', 7, 4.0 / 35.0, S_ARTI_BLAST1) { }
+	S_ARTI_BLAST1('BLST', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_ARTI_BLAST2) { }
+	S_ARTI_BLAST2('BLST', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_ARTI_BLAST3) { }
+	S_ARTI_BLAST3('BLST', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_ARTI_BLAST4) { }
+	S_ARTI_BLAST4('BLST', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_ARTI_BLAST5) { }
+	S_ARTI_BLAST5('BLST', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_ARTI_BLAST6) { }
+	S_ARTI_BLAST6('BLST', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_ARTI_BLAST7) { }
+	S_ARTI_BLAST7('BLST', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_ARTI_BLAST8) { }
+	S_ARTI_BLAST8('BLST', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_ARTI_BLAST1) { }
 }
 
 defaultproperties

@@ -29,7 +29,7 @@ class ItemAmmoMaceWimpy : Ammo
 
 __states__
 {
-	S_AMM1('AMM1', 0, 'ammo/mace1.xml', 0, -1.0, none) { }
+	S_AMM1('AMM1', 0, -1.0, none) { }
 }
 
 defaultproperties

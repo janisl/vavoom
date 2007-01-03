@@ -28,7 +28,7 @@ class DeadDemon : Decoration
 
 __states__
 {
-	S_SARG_DEAD('SARG', 13, 'monsters/demon/model.xml', 20, -1.0, none) { }
+	S_SARG_DEAD('SARG', 13, -1.0, none) { }
 }
 
 defaultproperties

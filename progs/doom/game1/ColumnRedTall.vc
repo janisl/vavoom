@@ -28,7 +28,7 @@ class ColumnRedTall : Decoration
 
 __states__
 {
-	S_TALLREDCOL('COL3', 0, 'objects/pillarrt.xml', 0, -1.0, none) { }
+	S_TALLREDCOL('COL3', 0, -1.0, none) { }
 }
 
 defaultproperties

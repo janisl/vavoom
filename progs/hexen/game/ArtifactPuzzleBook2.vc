@@ -29,7 +29,7 @@ class ArtifactPuzzleBook2 : ArtifactPuzzle
 
 __states__
 {
-	S_ARTIPUZZBOOK2('ABK2', 0, 'puzzle/book2.xml', 0, -1.0, none) { }
+	S_ARTIPUZZBOOK2('ABK2', 0, -1.0, none) { }
 }
 
 defaultproperties

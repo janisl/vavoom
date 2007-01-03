@@ -28,7 +28,7 @@ class StalactiteSmall : Decoration
 
 __states__
 {
-	S_STALACTITESMALL('STCS', 0, 'objects/stalact2.xml', 0, -1.0, none) { }
+	S_STALACTITESMALL('STCS', 0, -1.0, none) { }
 }
 
 defaultproperties

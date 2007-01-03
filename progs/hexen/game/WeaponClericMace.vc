@@ -80,26 +80,26 @@ void A_CMaceAttack()
 
 __states__
 {
-	S_CMACEREADY('CMCE', 0, 'weapons/cmace/view.xml', 0, 1.0 / 35.0, S_CMACEREADY) { A_WeaponReady(); }
-	S_CMACEDOWN('CMCE', 0, 'weapons/cmace/view.xml', 1, 1.0 / 35.0, S_CMACEDOWN) { A_Lower(); }
-	S_CMACEUP('CMCE', 0, 'weapons/cmace/view.xml', 2, 1.0 / 35.0, S_CMACEUP) { A_Raise(); }
-	S_CMACEATK_1('CMCE', 1, 'weapons/cmace/view.xml', 3, 2.0 / 35.0, S_CMACEATK_2, 60, 20) { }
-	S_CMACEATK_2('CMCE', 1, 'weapons/cmace/view.xml', 4, 1.0 / 35.0, S_CMACEATK_3, 30, 33) { }
-	S_CMACEATK_3('CMCE', 1, 'weapons/cmace/view.xml', 5, 2.0 / 35.0, S_CMACEATK_4, 8, 45) { }
-	S_CMACEATK_4('CMCE', 2, 'weapons/cmace/view.xml', 6, 1.0 / 35.0, S_CMACEATK_5, 8, 45) { }
-	S_CMACEATK_5('CMCE', 3, 'weapons/cmace/view.xml', 7, 1.0 / 35.0, S_CMACEATK_6, 8, 45) { }
-	S_CMACEATK_6('CMCE', 4, 'weapons/cmace/view.xml', 8, 1.0 / 35.0, S_CMACEATK_7, 8, 45) { }
-	S_CMACEATK_7('CMCE', 4, 'weapons/cmace/view.xml', 9, 1.0 / 35.0, S_CMACEATK_8, -11, 58) { A_CMaceAttack(); }
-	S_CMACEATK_8('CMCE', 5, 'weapons/cmace/view.xml', 10, 1.0 / 35.0, S_CMACEATK_9, 8, 45) { }
-	S_CMACEATK_9('CMCE', 5, 'weapons/cmace/view.xml', 11, 2.0 / 35.0, S_CMACEATK_10, -8, 74) { }
-	S_CMACEATK_10('CMCE', 5, 'weapons/cmace/view.xml', 12, 1.0 / 35.0, S_CMACEATK_11, -20, 96) { }
-	S_CMACEATK_11('CMCE', 5, 'weapons/cmace/view.xml', 13, 8.0 / 35.0, S_CMACEATK_12, -33, 160) { }
-	S_CMACEATK_12('CMCE', 0, 'weapons/cmace/view.xml', 14, 2.0 / 35.0, S_CMACEATK_13, 8, 75) { A_ReFire(); }
-	S_CMACEATK_13('CMCE', 0, 'weapons/cmace/view.xml', 15, 1.0 / 35.0, S_CMACEATK_14, 8, 65) { }
-	S_CMACEATK_14('CMCE', 0, 'weapons/cmace/view.xml', 16, 2.0 / 35.0, S_CMACEATK_15, 8, 60) { }
-	S_CMACEATK_15('CMCE', 0, 'weapons/cmace/view.xml', 17, 1.0 / 35.0, S_CMACEATK_16, 8, 55) { }
-	S_CMACEATK_16('CMCE', 0, 'weapons/cmace/view.xml', 18, 2.0 / 35.0, S_CMACEATK_17, 8, 50) { }
-	S_CMACEATK_17('CMCE', 0, 'weapons/cmace/view.xml', 19, 1.0 / 35.0, S_CMACEREADY, 8, 45) { }
+	S_CMACEREADY('CMCE', 0, 1.0 / 35.0, S_CMACEREADY) { A_WeaponReady(); }
+	S_CMACEDOWN('CMCE', 0, 1.0 / 35.0, S_CMACEDOWN) { A_Lower(); }
+	S_CMACEUP('CMCE', 0, 1.0 / 35.0, S_CMACEUP) { A_Raise(); }
+	S_CMACEATK_1('CMCE', 1, 2.0 / 35.0, S_CMACEATK_2, 60, 20) { }
+	S_CMACEATK_2('CMCE', 1, 1.0 / 35.0, S_CMACEATK_3, 30, 33) { }
+	S_CMACEATK_3('CMCE', 1, 2.0 / 35.0, S_CMACEATK_4, 8, 45) { }
+	S_CMACEATK_4('CMCE', 2, 1.0 / 35.0, S_CMACEATK_5, 8, 45) { }
+	S_CMACEATK_5('CMCE', 3, 1.0 / 35.0, S_CMACEATK_6, 8, 45) { }
+	S_CMACEATK_6('CMCE', 4, 1.0 / 35.0, S_CMACEATK_7, 8, 45) { }
+	S_CMACEATK_7('CMCE', 4, 1.0 / 35.0, S_CMACEATK_8, -11, 58) { A_CMaceAttack(); }
+	S_CMACEATK_8('CMCE', 5, 1.0 / 35.0, S_CMACEATK_9, 8, 45) { }
+	S_CMACEATK_9('CMCE', 5, 2.0 / 35.0, S_CMACEATK_10, -8, 74) { }
+	S_CMACEATK_10('CMCE', 5, 1.0 / 35.0, S_CMACEATK_11, -20, 96) { }
+	S_CMACEATK_11('CMCE', 5, 8.0 / 35.0, S_CMACEATK_12, -33, 160) { }
+	S_CMACEATK_12('CMCE', 0, 2.0 / 35.0, S_CMACEATK_13, 8, 75) { A_ReFire(); }
+	S_CMACEATK_13('CMCE', 0, 1.0 / 35.0, S_CMACEATK_14, 8, 65) { }
+	S_CMACEATK_14('CMCE', 0, 2.0 / 35.0, S_CMACEATK_15, 8, 60) { }
+	S_CMACEATK_15('CMCE', 0, 1.0 / 35.0, S_CMACEATK_16, 8, 55) { }
+	S_CMACEATK_16('CMCE', 0, 2.0 / 35.0, S_CMACEATK_17, 8, 50) { }
+	S_CMACEATK_17('CMCE', 0, 1.0 / 35.0, S_CMACEREADY, 8, 45) { }
 }
 
 defaultproperties

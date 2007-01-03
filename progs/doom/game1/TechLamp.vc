@@ -28,10 +28,10 @@ class TechLamp : Decoration
 
 __states__
 {
-	S_TECHLAMP('TLMP', 0 | FF_FULLBRIGHT, 'lights/techlamp.xml', 0, 4.0 / 35.0, S_TECHLAMP2) { }
-	S_TECHLAMP2('TLMP', 1 | FF_FULLBRIGHT, 'lights/techlamp.xml', 1, 4.0 / 35.0, S_TECHLAMP3) { }
-	S_TECHLAMP3('TLMP', 2 | FF_FULLBRIGHT, 'lights/techlamp.xml', 2, 4.0 / 35.0, S_TECHLAMP4) { }
-	S_TECHLAMP4('TLMP', 3 | FF_FULLBRIGHT, 'lights/techlamp.xml', 3, 4.0 / 35.0, S_TECHLAMP) { }
+	S_TECHLAMP('TLMP', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_TECHLAMP2) { }
+	S_TECHLAMP2('TLMP', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_TECHLAMP3) { }
+	S_TECHLAMP3('TLMP', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_TECHLAMP4) { }
+	S_TECHLAMP4('TLMP', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_TECHLAMP) { }
 }
 
 defaultproperties

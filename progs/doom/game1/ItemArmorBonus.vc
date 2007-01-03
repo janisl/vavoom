@@ -47,12 +47,12 @@ bool HandlePickup(Actor Toucher)
 
 __states__
 {
-	S_BON2('BON2', 0, 'items/helmet.xml', 0, 6.0 / 35.0, S_BON2A) { }
-	S_BON2A('BON2', 1, 'items/helmet.xml', 1, 6.0 / 35.0, S_BON2B) { }
-	S_BON2B('BON2', 2, 'items/helmet.xml', 2, 6.0 / 35.0, S_BON2C) { }
-	S_BON2C('BON2', 3, 'items/helmet.xml', 3, 6.0 / 35.0, S_BON2D) { }
-	S_BON2D('BON2', 2, 'items/helmet.xml', 4, 6.0 / 35.0, S_BON2E) { }
-	S_BON2E('BON2', 1, 'items/helmet.xml', 5, 6.0 / 35.0, S_BON2) { }
+	S_BON2('BON2', 0, 6.0 / 35.0, S_BON2A) { }
+	S_BON2A('BON2', 1, 6.0 / 35.0, S_BON2B) { }
+	S_BON2B('BON2', 2, 6.0 / 35.0, S_BON2C) { }
+	S_BON2C('BON2', 3, 6.0 / 35.0, S_BON2D) { }
+	S_BON2D('BON2', 2, 6.0 / 35.0, S_BON2E) { }
+	S_BON2E('BON2', 1, 6.0 / 35.0, S_BON2) { }
 }
 
 defaultproperties

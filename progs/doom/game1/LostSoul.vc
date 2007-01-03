@@ -51,22 +51,22 @@ void A_SkullAttack()
 
 __states__
 {
-	S_SKULL_STND('SKUL', 0 | FF_FULLBRIGHT, 'monsters/skull/model.xml', 0, 10.0 / 35.0, S_SKULL_STND2) { A_Look(); }
-	S_SKULL_STND2('SKUL', 1 | FF_FULLBRIGHT, 'monsters/skull/model.xml', 1, 10.0 / 35.0, S_SKULL_STND) { A_Look(); }
-	S_SKULL_RUN1('SKUL', 0 | FF_FULLBRIGHT, 'monsters/skull/model.xml', 2, 6.0 / 35.0, S_SKULL_RUN2) { A_Chase(); }
-	S_SKULL_RUN2('SKUL', 1 | FF_FULLBRIGHT, 'monsters/skull/model.xml', 3, 6.0 / 35.0, S_SKULL_RUN1) { A_Chase(); }
-	S_SKULL_ATK1('SKUL', 2 | FF_FULLBRIGHT, 'monsters/skull/model.xml', 4, 10.0 / 35.0, S_SKULL_ATK2) { A_FaceTarget(); }
-	S_SKULL_ATK2('SKUL', 3 | FF_FULLBRIGHT, 'monsters/skull/model.xml', 5, 4.0 / 35.0, S_SKULL_ATK3) { A_SkullAttack(); }
-	S_SKULL_ATK3('SKUL', 2 | FF_FULLBRIGHT, 'monsters/skull/model.xml', 6, 4.0 / 35.0, S_SKULL_ATK4) { }
-	S_SKULL_ATK4('SKUL', 3 | FF_FULLBRIGHT, 'monsters/skull/model.xml', 7, 4.0 / 35.0, S_SKULL_ATK3) { }
-	S_SKULL_PAIN('SKUL', 4 | FF_FULLBRIGHT, 'monsters/skull/model.xml', 8, 3.0 / 35.0, S_SKULL_PAIN2) { }
-	S_SKULL_PAIN2('SKUL', 4 | FF_FULLBRIGHT, 'monsters/skull/model.xml', 9, 3.0 / 35.0, S_SKULL_RUN1) { A_Pain(); }
-	S_SKULL_DIE1('SKUL', 5 | FF_FULLBRIGHT, 'monsters/skull/model.xml', 10, 6.0 / 35.0, S_SKULL_DIE2) { }
-	S_SKULL_DIE2('SKUL', 6 | FF_FULLBRIGHT, 'monsters/skull/model.xml', 11, 6.0 / 35.0, S_SKULL_DIE3) { A_Scream(); }
-	S_SKULL_DIE3('SKUL', 7 | FF_FULLBRIGHT, 'monsters/skull/model.xml', 12, 6.0 / 35.0, S_SKULL_DIE4) { }
-	S_SKULL_DIE4('SKUL', 8 | FF_FULLBRIGHT, 'monsters/skull/model.xml', 13, 6.0 / 35.0, S_SKULL_DIE5) { A_Fall(); }
-	S_SKULL_DIE5('SKUL', 9, 'monsters/skull/model.xml', 14, 6.0 / 35.0, S_SKULL_DIE6) { }
-	S_SKULL_DIE6('SKUL', 10, 'monsters/skull/model.xml', 15, 6.0 / 35.0, none) { }
+	S_SKULL_STND('SKUL', 0 | FF_FULLBRIGHT, 10.0 / 35.0, S_SKULL_STND2) { A_Look(); }
+	S_SKULL_STND2('SKUL', 1 | FF_FULLBRIGHT, 10.0 / 35.0, S_SKULL_STND) { A_Look(); }
+	S_SKULL_RUN1('SKUL', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_SKULL_RUN2) { A_Chase(); }
+	S_SKULL_RUN2('SKUL', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_SKULL_RUN1) { A_Chase(); }
+	S_SKULL_ATK1('SKUL', 2 | FF_FULLBRIGHT, 10.0 / 35.0, S_SKULL_ATK2) { A_FaceTarget(); }
+	S_SKULL_ATK2('SKUL', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_SKULL_ATK3) { A_SkullAttack(); }
+	S_SKULL_ATK3('SKUL', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_SKULL_ATK4) { }
+	S_SKULL_ATK4('SKUL', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_SKULL_ATK3) { }
+	S_SKULL_PAIN('SKUL', 4 | FF_FULLBRIGHT, 3.0 / 35.0, S_SKULL_PAIN2) { }
+	S_SKULL_PAIN2('SKUL', 4 | FF_FULLBRIGHT, 3.0 / 35.0, S_SKULL_RUN1) { A_Pain(); }
+	S_SKULL_DIE1('SKUL', 5 | FF_FULLBRIGHT, 6.0 / 35.0, S_SKULL_DIE2) { }
+	S_SKULL_DIE2('SKUL', 6 | FF_FULLBRIGHT, 6.0 / 35.0, S_SKULL_DIE3) { A_Scream(); }
+	S_SKULL_DIE3('SKUL', 7 | FF_FULLBRIGHT, 6.0 / 35.0, S_SKULL_DIE4) { }
+	S_SKULL_DIE4('SKUL', 8 | FF_FULLBRIGHT, 6.0 / 35.0, S_SKULL_DIE5) { A_Fall(); }
+	S_SKULL_DIE5('SKUL', 9, 6.0 / 35.0, S_SKULL_DIE6) { }
+	S_SKULL_DIE6('SKUL', 10, 6.0 / 35.0, none) { }
 }
 
 defaultproperties

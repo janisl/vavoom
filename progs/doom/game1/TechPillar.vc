@@ -28,7 +28,7 @@ class TechPillar : Decoration
 
 __states__
 {
-	S_TECHPILLAR('ELEC', 0, 'objects/techpilr.xml', 0, -1.0, none) { }
+	S_TECHPILLAR('ELEC', 0, -1.0, none) { }
 }
 
 defaultproperties

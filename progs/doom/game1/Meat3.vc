@@ -28,7 +28,7 @@ class Meat3 : Decoration
 
 __states__
 {
-	S_MEAT3('GOR3', 0, 'bodies/noleg.xml', 0, -1.0, none) { }
+	S_MEAT3('GOR3', 0, -1.0, none) { }
 }
 
 defaultproperties

@@ -31,7 +31,7 @@ class WeaponGrenade : Weapon;
 //
 //===========================================================================
 
-void A_FireGrenade(void)
+void A_FireGrenade()
 {
 	Actor A;
 

@@ -29,7 +29,7 @@ class ItemWeaponRocketLauncher : WeaponPickup
 
 __states__
 {
-	S_LAUN('LAUN', 0, 'weapons/launcher/ground.xml', 0, -1.0, none) { }
+	S_LAUN('LAUN', 0, -1.0, none) { }
 }
 
 defaultproperties

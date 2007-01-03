@@ -29,7 +29,7 @@ class ItemWeaponSuperShotgun : WeaponPickup
 
 __states__
 {
-	S_SHOT2('SGN2', 0, 'weapons/sshotgun/ground.xml', 0, -1.0, none) { }
+	S_SHOT2('SGN2', 0, -1.0, none) { }
 }
 
 defaultproperties

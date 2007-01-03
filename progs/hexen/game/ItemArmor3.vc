@@ -29,7 +29,7 @@ class ItemArmor3 : Armor
 
 __states__
 {
-	S_ARMOR_3('ARM3', 0, 'items/helmet.xml', 0, -1.0, none) { }
+	S_ARMOR_3('ARM3', 0, -1.0, none) { }
 }
 
 defaultproperties

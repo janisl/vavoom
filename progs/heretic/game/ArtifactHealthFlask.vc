@@ -29,9 +29,9 @@ class ArtifactHealthFlask : Artifact
 
 __states__
 {
-	S_ARTI_PTN2_1('PTN2', 0, 'artifact/flask.xml', 0, 4.0 / 35.0, S_ARTI_PTN2_2) { }
-	S_ARTI_PTN2_2('PTN2', 1, 'artifact/flask.xml', 1, 4.0 / 35.0, S_ARTI_PTN2_3) { }
-	S_ARTI_PTN2_3('PTN2', 2, 'artifact/flask.xml', 2, 4.0 / 35.0, S_ARTI_PTN2_1) { }
+	S_ARTI_PTN2_1('PTN2', 0, 4.0 / 35.0, S_ARTI_PTN2_2) { }
+	S_ARTI_PTN2_2('PTN2', 1, 4.0 / 35.0, S_ARTI_PTN2_3) { }
+	S_ARTI_PTN2_3('PTN2', 2, 4.0 / 35.0, S_ARTI_PTN2_1) { }
 }
 
 defaultproperties

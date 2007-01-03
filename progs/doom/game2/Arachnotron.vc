@@ -125,41 +125,41 @@ void A_BossDeath()
 
 __states__
 {
-	S_BSPI_STND('BSPI', 0, 'monsters/arach/model.xml', 0, 10.0 / 35.0, S_BSPI_STND2) { A_Look(); }
-	S_BSPI_STND2('BSPI', 1, 'monsters/arach/model.xml', 1, 10.0 / 35.0, S_BSPI_STND) { A_Look(); }
-	S_BSPI_SIGHT('BSPI', 0, 'monsters/arach/model.xml', 2, 20.0 / 35.0, S_BSPI_RUN1) { }
-	S_BSPI_RUN1('BSPI', 0, 'monsters/arach/model.xml', 3, 3.0 / 35.0, S_BSPI_RUN2) { A_BabyMetal(); }
-	S_BSPI_RUN2('BSPI', 0, 'monsters/arach/model.xml', 4, 3.0 / 35.0, S_BSPI_RUN3) { A_Chase(); }
-	S_BSPI_RUN3('BSPI', 1, 'monsters/arach/model.xml', 5, 3.0 / 35.0, S_BSPI_RUN4) { A_Chase(); }
-	S_BSPI_RUN4('BSPI', 1, 'monsters/arach/model.xml', 6, 3.0 / 35.0, S_BSPI_RUN5) { A_Chase(); }
-	S_BSPI_RUN5('BSPI', 2, 'monsters/arach/model.xml', 7, 3.0 / 35.0, S_BSPI_RUN6) { A_Chase(); }
-	S_BSPI_RUN6('BSPI', 2, 'monsters/arach/model.xml', 8, 3.0 / 35.0, S_BSPI_RUN7) { A_Chase(); }
-	S_BSPI_RUN7('BSPI', 3, 'monsters/arach/model.xml', 9, 3.0 / 35.0, S_BSPI_RUN8) { A_BabyMetal(); }
-	S_BSPI_RUN8('BSPI', 3, 'monsters/arach/model.xml', 10, 3.0 / 35.0, S_BSPI_RUN9) { A_Chase(); }
-	S_BSPI_RUN9('BSPI', 4, 'monsters/arach/model.xml', 11, 3.0 / 35.0, S_BSPI_RUN10) { A_Chase(); }
-	S_BSPI_RUN10('BSPI', 4, 'monsters/arach/model.xml', 12, 3.0 / 35.0, S_BSPI_RUN11) { A_Chase(); }
-	S_BSPI_RUN11('BSPI', 5, 'monsters/arach/model.xml', 13, 3.0 / 35.0, S_BSPI_RUN12) { A_Chase(); }
-	S_BSPI_RUN12('BSPI', 5, 'monsters/arach/model.xml', 14, 3.0 / 35.0, S_BSPI_RUN1) { A_Chase(); }
-	S_BSPI_ATK1('BSPI', 0 | FF_FULLBRIGHT, 'monsters/arach/model.xml', 15, 20.0 / 35.0, S_BSPI_ATK2) { A_FaceTarget(); }
-	S_BSPI_ATK2('BSPI', 6 | FF_FULLBRIGHT, 'monsters/arach/model.xml', 16, 4.0 / 35.0, S_BSPI_ATK3) { A_BspiAttack(); }
-	S_BSPI_ATK3('BSPI', 7 | FF_FULLBRIGHT, 'monsters/arach/model.xml', 17, 4.0 / 35.0, S_BSPI_ATK4) { }
-	S_BSPI_ATK4('BSPI', 7 | FF_FULLBRIGHT, 'monsters/arach/model.xml', 18, 1.0 / 35.0, S_BSPI_ATK2) { A_SpidRefire(); }
-	S_BSPI_PAIN('BSPI', 8, 'monsters/arach/model.xml', 19, 3.0 / 35.0, S_BSPI_PAIN2) { }
-	S_BSPI_PAIN2('BSPI', 8, 'monsters/arach/model.xml', 20, 3.0 / 35.0, S_BSPI_RUN1) { A_Pain(); }
-	S_BSPI_DIE1('BSPI', 9, 'monsters/arach/model.xml', 21, 20.0 / 35.0, S_BSPI_DIE2) { A_Scream(); }
-	S_BSPI_DIE2('BSPI', 10, 'monsters/arach/model.xml', 22, 7.0 / 35.0, S_BSPI_DIE3) { A_Fall(); }
-	S_BSPI_DIE3('BSPI', 11, 'monsters/arach/model.xml', 23, 7.0 / 35.0, S_BSPI_DIE4) { }
-	S_BSPI_DIE4('BSPI', 12, 'monsters/arach/model.xml', 24, 7.0 / 35.0, S_BSPI_DIE5) { }
-	S_BSPI_DIE5('BSPI', 13, 'monsters/arach/model.xml', 25, 7.0 / 35.0, S_BSPI_DIE6) { }
-	S_BSPI_DIE6('BSPI', 14, 'monsters/arach/model.xml', 26, 7.0 / 35.0, S_BSPI_DIE7) { }
-	S_BSPI_DIE7('BSPI', 15, 'monsters/arach/model.xml', 27, -1.0, none) { A_BossDeath(); }
-	S_BSPI_RAISE1('BSPI', 15, 'monsters/arach/model.xml', 28, 5.0 / 35.0, S_BSPI_RAISE2) { }
-	S_BSPI_RAISE2('BSPI', 14, 'monsters/arach/model.xml', 29, 5.0 / 35.0, S_BSPI_RAISE3) { }
-	S_BSPI_RAISE3('BSPI', 13, 'monsters/arach/model.xml', 30, 5.0 / 35.0, S_BSPI_RAISE4) { }
-	S_BSPI_RAISE4('BSPI', 12, 'monsters/arach/model.xml', 31, 5.0 / 35.0, S_BSPI_RAISE5) { }
-	S_BSPI_RAISE5('BSPI', 11, 'monsters/arach/model.xml', 32, 5.0 / 35.0, S_BSPI_RAISE6) { }
-	S_BSPI_RAISE6('BSPI', 10, 'monsters/arach/model.xml', 33, 5.0 / 35.0, S_BSPI_RAISE7) { }
-	S_BSPI_RAISE7('BSPI', 9, 'monsters/arach/model.xml', 34, 5.0 / 35.0, S_BSPI_RUN1) { }
+	S_BSPI_STND('BSPI', 0, 10.0 / 35.0, S_BSPI_STND2) { A_Look(); }
+	S_BSPI_STND2('BSPI', 1, 10.0 / 35.0, S_BSPI_STND) { A_Look(); }
+	S_BSPI_SIGHT('BSPI', 0, 20.0 / 35.0, S_BSPI_RUN1) { }
+	S_BSPI_RUN1('BSPI', 0, 3.0 / 35.0, S_BSPI_RUN2) { A_BabyMetal(); }
+	S_BSPI_RUN2('BSPI', 0, 3.0 / 35.0, S_BSPI_RUN3) { A_Chase(); }
+	S_BSPI_RUN3('BSPI', 1, 3.0 / 35.0, S_BSPI_RUN4) { A_Chase(); }
+	S_BSPI_RUN4('BSPI', 1, 3.0 / 35.0, S_BSPI_RUN5) { A_Chase(); }
+	S_BSPI_RUN5('BSPI', 2, 3.0 / 35.0, S_BSPI_RUN6) { A_Chase(); }
+	S_BSPI_RUN6('BSPI', 2, 3.0 / 35.0, S_BSPI_RUN7) { A_Chase(); }
+	S_BSPI_RUN7('BSPI', 3, 3.0 / 35.0, S_BSPI_RUN8) { A_BabyMetal(); }
+	S_BSPI_RUN8('BSPI', 3, 3.0 / 35.0, S_BSPI_RUN9) { A_Chase(); }
+	S_BSPI_RUN9('BSPI', 4, 3.0 / 35.0, S_BSPI_RUN10) { A_Chase(); }
+	S_BSPI_RUN10('BSPI', 4, 3.0 / 35.0, S_BSPI_RUN11) { A_Chase(); }
+	S_BSPI_RUN11('BSPI', 5, 3.0 / 35.0, S_BSPI_RUN12) { A_Chase(); }
+	S_BSPI_RUN12('BSPI', 5, 3.0 / 35.0, S_BSPI_RUN1) { A_Chase(); }
+	S_BSPI_ATK1('BSPI', 0 | FF_FULLBRIGHT, 20.0 / 35.0, S_BSPI_ATK2) { A_FaceTarget(); }
+	S_BSPI_ATK2('BSPI', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_BSPI_ATK3) { A_BspiAttack(); }
+	S_BSPI_ATK3('BSPI', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_BSPI_ATK4) { }
+	S_BSPI_ATK4('BSPI', 7 | FF_FULLBRIGHT, 1.0 / 35.0, S_BSPI_ATK2) { A_SpidRefire(); }
+	S_BSPI_PAIN('BSPI', 8, 3.0 / 35.0, S_BSPI_PAIN2) { }
+	S_BSPI_PAIN2('BSPI', 8, 3.0 / 35.0, S_BSPI_RUN1) { A_Pain(); }
+	S_BSPI_DIE1('BSPI', 9, 20.0 / 35.0, S_BSPI_DIE2) { A_Scream(); }
+	S_BSPI_DIE2('BSPI', 10, 7.0 / 35.0, S_BSPI_DIE3) { A_Fall(); }
+	S_BSPI_DIE3('BSPI', 11, 7.0 / 35.0, S_BSPI_DIE4) { }
+	S_BSPI_DIE4('BSPI', 12, 7.0 / 35.0, S_BSPI_DIE5) { }
+	S_BSPI_DIE5('BSPI', 13, 7.0 / 35.0, S_BSPI_DIE6) { }
+	S_BSPI_DIE6('BSPI', 14, 7.0 / 35.0, S_BSPI_DIE7) { }
+	S_BSPI_DIE7('BSPI', 15, -1.0, none) { A_BossDeath(); }
+	S_BSPI_RAISE1('BSPI', 15, 5.0 / 35.0, S_BSPI_RAISE2) { }
+	S_BSPI_RAISE2('BSPI', 14, 5.0 / 35.0, S_BSPI_RAISE3) { }
+	S_BSPI_RAISE3('BSPI', 13, 5.0 / 35.0, S_BSPI_RAISE4) { }
+	S_BSPI_RAISE4('BSPI', 12, 5.0 / 35.0, S_BSPI_RAISE5) { }
+	S_BSPI_RAISE5('BSPI', 11, 5.0 / 35.0, S_BSPI_RAISE6) { }
+	S_BSPI_RAISE6('BSPI', 10, 5.0 / 35.0, S_BSPI_RAISE7) { }
+	S_BSPI_RAISE7('BSPI', 9, 5.0 / 35.0, S_BSPI_RUN1) { }
 }
 
 defaultproperties

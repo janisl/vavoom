@@ -28,7 +28,7 @@ class DeadImp : Decoration
 
 __states__
 {
-	S_TROO_DEAD('TROO', 12, 'monsters/imp/model.xml', 19, -1.0, none) { }
+	S_TROO_DEAD('TROO', 12, -1.0, none) { }
 }
 
 defaultproperties

@@ -28,7 +28,7 @@ class CrossbowFX3 : Projectile
 
 __states__
 {
-	S_CRBOWFX3('FX03', 0 | FF_FULLBRIGHT, 'missiles/arrow.xml', 0, 1.0 / 35.0, S_CRBOWFX3) { }
+	S_CRBOWFX3('FX03', 0 | FF_FULLBRIGHT, 1.0 / 35.0, S_CRBOWFX3) { }
 	S_CRBOWFXI3_1('FX03', 2 | FF_FULLBRIGHT, 8.0 / 35.0, S_CRBOWFXI3_2) { }
 	S_CRBOWFXI3_2('FX03', 3 | FF_FULLBRIGHT, 8.0 / 35.0, S_CRBOWFXI3_3) { }
 	S_CRBOWFXI3_3('FX03', 4 | FF_FULLBRIGHT, 8.0 / 35.0, none) { }

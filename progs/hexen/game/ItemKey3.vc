@@ -29,7 +29,7 @@ class ItemKey3 : Key
 
 __states__
 {
-	S_KEY3('KEY3', 0, 'keys/axe.xml', 0, -1.0, none) { }
+	S_KEY3('KEY3', 0, -1.0, none) { }
 }
 
 defaultproperties

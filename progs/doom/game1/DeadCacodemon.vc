@@ -23,12 +23,12 @@
 //**
 //**************************************************************************
 
-class DeadCacodemon:Decoration
+class DeadCacodemon : Decoration
 	__mobjinfo__(22);
 
 __states__
 {
-	S_HEAD_DEAD('HEAD', 11, 'monsters/caco/model.xml', 13, -1.0, none) { }
+	S_HEAD_DEAD('HEAD', 11, -1.0, none) { }
 }
 
 defaultproperties

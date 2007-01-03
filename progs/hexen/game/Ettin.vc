@@ -63,39 +63,39 @@ void A_DropMace()
 
 __states__
 {
-	S_ETTIN_LOOK1('ETTN', 0, 'monsters/ettin/model.xml', 0, 10.0 / 35.0, S_ETTIN_LOOK2) { A_Look(); }
-	S_ETTIN_LOOK2('ETTN', 0, 'monsters/ettin/model.xml', 1, 10.0 / 35.0, S_ETTIN_LOOK1) { A_Look(); }
-	S_ETTIN_CHASE1('ETTN', 0, 'monsters/ettin/model.xml', 2, 5.0 / 35.0, S_ETTIN_CHASE2) { A_Chase(); }
-	S_ETTIN_CHASE2('ETTN', 1, 'monsters/ettin/model.xml', 3, 5.0 / 35.0, S_ETTIN_CHASE3) { A_Chase(); }
-	S_ETTIN_CHASE3('ETTN', 2, 'monsters/ettin/model.xml', 4, 5.0 / 35.0, S_ETTIN_CHASE4) { A_Chase(); }
-	S_ETTIN_CHASE4('ETTN', 3, 'monsters/ettin/model.xml', 5, 5.0 / 35.0, S_ETTIN_CHASE1) { A_Chase(); }
-	S_ETTIN_PAIN1('ETTN', 7, 'monsters/ettin/model.xml', 6, 7.0 / 35.0, S_ETTIN_CHASE1) { A_Pain(); }
-	S_ETTIN_ATK1_1('ETTN', 4, 'monsters/ettin/model.xml', 7, 6.0 / 35.0, S_ETTIN_ATK1_2) { A_FaceTarget(); }
-	S_ETTIN_ATK1_2('ETTN', 5, 'monsters/ettin/model.xml', 8, 6.0 / 35.0, S_ETTIN_ATK1_3) { A_FaceTarget(); }
-	S_ETTIN_ATK1_3('ETTN', 6, 'monsters/ettin/model.xml', 9, 8.0 / 35.0, S_ETTIN_CHASE1) { A_EttinAttack(); }
-	S_ETTIN_DEATH1_1('ETTN', 8, 'monsters/ettin/model.xml', 10, 4.0 / 35.0, S_ETTIN_DEATH1_2) { }
-	S_ETTIN_DEATH1_2('ETTN', 9, 'monsters/ettin/model.xml', 11, 4.0 / 35.0, S_ETTIN_DEATH1_3) { }
-	S_ETTIN_DEATH1_3('ETTN', 10, 'monsters/ettin/model.xml', 12, 4.0 / 35.0, S_ETTIN_DEATH1_4) { A_Scream(); }
-	S_ETTIN_DEATH1_4('ETTN', 11, 'monsters/ettin/model.xml', 13, 4.0 / 35.0, S_ETTIN_DEATH1_5) { A_NoBlocking(); }
-	S_ETTIN_DEATH1_5('ETTN', 12, 'monsters/ettin/model.xml', 14, 4.0 / 35.0, S_ETTIN_DEATH1_6) { A_QueueCorpse(); }
-	S_ETTIN_DEATH1_6('ETTN', 13, 'monsters/ettin/model.xml', 15, 4.0 / 35.0, S_ETTIN_DEATH1_7) { }
-	S_ETTIN_DEATH1_7('ETTN', 14, 'monsters/ettin/model.xml', 16, 4.0 / 35.0, S_ETTIN_DEATH1_8) { }
-	S_ETTIN_DEATH1_8('ETTN', 15, 'monsters/ettin/model.xml', 17, 4.0 / 35.0, S_ETTIN_DEATH1_9) { }
-	S_ETTIN_DEATH1_9('ETTN', 16, 'monsters/ettin/model.xml', 18, -1.0, none) { }
-	S_ETTIN_DEATH2_1('ETTB', 0, 'monsters/ettin/model.xml', 19, 4.0 / 35.0, S_ETTIN_DEATH2_2) { }
-	S_ETTIN_DEATH2_2('ETTB', 1, 'monsters/ettin/model.xml', 20, 4.0 / 35.0, S_ETTIN_DEATH2_3) { A_NoBlocking(); }
-	S_ETTIN_DEATH2_3('ETTB', 2, 'monsters/ettin/model.xml', 21, 4.0 / 35.0, S_ETTIN_DEATH2_4) { A_DropMace(); }
-	S_ETTIN_DEATH2_4('ETTB', 3, 'monsters/ettin/model.xml', 22, 4.0 / 35.0, S_ETTIN_DEATH2_5) { A_Scream(); }
-	S_ETTIN_DEATH2_5('ETTB', 4, 'monsters/ettin/model.xml', 23, 4.0 / 35.0, S_ETTIN_DEATH2_6) { A_QueueCorpse(); }
-	S_ETTIN_DEATH2_6('ETTB', 5, 'monsters/ettin/model.xml', 24, 4.0 / 35.0, S_ETTIN_DEATH2_7) { }
-	S_ETTIN_DEATH2_7('ETTB', 6, 'monsters/ettin/model.xml', 25, 4.0 / 35.0, S_ETTIN_DEATH2_8) { }
-	S_ETTIN_DEATH2_8('ETTB', 7, 'monsters/ettin/model.xml', 26, 4.0 / 35.0, S_ETTIN_DEATH2_9) { }
-	S_ETTIN_DEATH2_9('ETTB', 8, 'monsters/ettin/model.xml', 27, 4.0 / 35.0, S_ETTIN_DEATH2_0) { }
-	S_ETTIN_DEATH2_0('ETTB', 9, 'monsters/ettin/model.xml', 28, 4.0 / 35.0, S_ETTIN_DEATH2_A) { }
-	S_ETTIN_DEATH2_A('ETTB', 10, 'monsters/ettin/model.xml', 29, 4.0 / 35.0, S_ETTIN_DEATH2_B) { }
-	S_ETTIN_DEATH2_B('ETTB', 11, 'monsters/ettin/model.xml', 30, -1.0, none) { }
-	S_ETTIN_ICE1('ETTN', 17, 'monsters/ettin/model.xml', 31, 5.0 / 35.0, S_ETTIN_ICE2) { A_FreezeDeath(); }
-	S_ETTIN_ICE2('ETTN', 17, 'monsters/ettin/model.xml', 31, 1.0 / 35.0, S_ETTIN_ICE2) { A_FreezeDeathChunks(); }
+	S_ETTIN_LOOK1('ETTN', 0, 10.0 / 35.0, S_ETTIN_LOOK2) { A_Look(); }
+	S_ETTIN_LOOK2('ETTN', 0, 10.0 / 35.0, S_ETTIN_LOOK1) { A_Look(); }
+	S_ETTIN_CHASE1('ETTN', 0, 5.0 / 35.0, S_ETTIN_CHASE2) { A_Chase(); }
+	S_ETTIN_CHASE2('ETTN', 1, 5.0 / 35.0, S_ETTIN_CHASE3) { A_Chase(); }
+	S_ETTIN_CHASE3('ETTN', 2, 5.0 / 35.0, S_ETTIN_CHASE4) { A_Chase(); }
+	S_ETTIN_CHASE4('ETTN', 3, 5.0 / 35.0, S_ETTIN_CHASE1) { A_Chase(); }
+	S_ETTIN_PAIN1('ETTN', 7, 7.0 / 35.0, S_ETTIN_CHASE1) { A_Pain(); }
+	S_ETTIN_ATK1_1('ETTN', 4, 6.0 / 35.0, S_ETTIN_ATK1_2) { A_FaceTarget(); }
+	S_ETTIN_ATK1_2('ETTN', 5, 6.0 / 35.0, S_ETTIN_ATK1_3) { A_FaceTarget(); }
+	S_ETTIN_ATK1_3('ETTN', 6, 8.0 / 35.0, S_ETTIN_CHASE1) { A_EttinAttack(); }
+	S_ETTIN_DEATH1_1('ETTN', 8, 4.0 / 35.0, S_ETTIN_DEATH1_2) { }
+	S_ETTIN_DEATH1_2('ETTN', 9, 4.0 / 35.0, S_ETTIN_DEATH1_3) { }
+	S_ETTIN_DEATH1_3('ETTN', 10, 4.0 / 35.0, S_ETTIN_DEATH1_4) { A_Scream(); }
+	S_ETTIN_DEATH1_4('ETTN', 11, 4.0 / 35.0, S_ETTIN_DEATH1_5) { A_NoBlocking(); }
+	S_ETTIN_DEATH1_5('ETTN', 12, 4.0 / 35.0, S_ETTIN_DEATH1_6) { A_QueueCorpse(); }
+	S_ETTIN_DEATH1_6('ETTN', 13, 4.0 / 35.0, S_ETTIN_DEATH1_7) { }
+	S_ETTIN_DEATH1_7('ETTN', 14, 4.0 / 35.0, S_ETTIN_DEATH1_8) { }
+	S_ETTIN_DEATH1_8('ETTN', 15, 4.0 / 35.0, S_ETTIN_DEATH1_9) { }
+	S_ETTIN_DEATH1_9('ETTN', 16, -1.0, none) { }
+	S_ETTIN_DEATH2_1('ETTB', 0, 4.0 / 35.0, S_ETTIN_DEATH2_2) { }
+	S_ETTIN_DEATH2_2('ETTB', 1, 4.0 / 35.0, S_ETTIN_DEATH2_3) { A_NoBlocking(); }
+	S_ETTIN_DEATH2_3('ETTB', 2, 4.0 / 35.0, S_ETTIN_DEATH2_4) { A_DropMace(); }
+	S_ETTIN_DEATH2_4('ETTB', 3, 4.0 / 35.0, S_ETTIN_DEATH2_5) { A_Scream(); }
+	S_ETTIN_DEATH2_5('ETTB', 4, 4.0 / 35.0, S_ETTIN_DEATH2_6) { A_QueueCorpse(); }
+	S_ETTIN_DEATH2_6('ETTB', 5, 4.0 / 35.0, S_ETTIN_DEATH2_7) { }
+	S_ETTIN_DEATH2_7('ETTB', 6, 4.0 / 35.0, S_ETTIN_DEATH2_8) { }
+	S_ETTIN_DEATH2_8('ETTB', 7, 4.0 / 35.0, S_ETTIN_DEATH2_9) { }
+	S_ETTIN_DEATH2_9('ETTB', 8, 4.0 / 35.0, S_ETTIN_DEATH2_0) { }
+	S_ETTIN_DEATH2_0('ETTB', 9, 4.0 / 35.0, S_ETTIN_DEATH2_A) { }
+	S_ETTIN_DEATH2_A('ETTB', 10, 4.0 / 35.0, S_ETTIN_DEATH2_B) { }
+	S_ETTIN_DEATH2_B('ETTB', 11, -1.0, none) { }
+	S_ETTIN_ICE1('ETTN', 17, 5.0 / 35.0, S_ETTIN_ICE2) { A_FreezeDeath(); }
+	S_ETTIN_ICE2('ETTN', 17, 1.0 / 35.0, S_ETTIN_ICE2) { A_FreezeDeathChunks(); }
 }
 
 defaultproperties

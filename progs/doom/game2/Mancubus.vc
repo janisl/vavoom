@@ -154,50 +154,50 @@ void A_BossDeath()
 
 __states__
 {
-	S_FATT_STND('FATT', 0, 'monsters/mancubus/model.xml', 0, 15.0 / 35.0, S_FATT_STND2) { A_Look(); }
-	S_FATT_STND2('FATT', 1, 'monsters/mancubus/model.xml', 1, 15.0 / 35.0, S_FATT_STND) { A_Look(); }
-	S_FATT_RUN1('FATT', 0, 'monsters/mancubus/model.xml', 2, 4.0 / 35.0, S_FATT_RUN2) { A_Chase(); }
-	S_FATT_RUN2('FATT', 0, 'monsters/mancubus/model.xml', 3, 4.0 / 35.0, S_FATT_RUN3) { A_Chase(); }
-	S_FATT_RUN3('FATT', 1, 'monsters/mancubus/model.xml', 4, 4.0 / 35.0, S_FATT_RUN4) { A_Chase(); }
-	S_FATT_RUN4('FATT', 1, 'monsters/mancubus/model.xml', 5, 4.0 / 35.0, S_FATT_RUN5) { A_Chase(); }
-	S_FATT_RUN5('FATT', 2, 'monsters/mancubus/model.xml', 6, 4.0 / 35.0, S_FATT_RUN6) { A_Chase(); }
-	S_FATT_RUN6('FATT', 2, 'monsters/mancubus/model.xml', 7, 4.0 / 35.0, S_FATT_RUN7) { A_Chase(); }
-	S_FATT_RUN7('FATT', 3, 'monsters/mancubus/model.xml', 8, 4.0 / 35.0, S_FATT_RUN8) { A_Chase(); }
-	S_FATT_RUN8('FATT', 3, 'monsters/mancubus/model.xml', 9, 4.0 / 35.0, S_FATT_RUN9) { A_Chase(); }
-	S_FATT_RUN9('FATT', 4, 'monsters/mancubus/model.xml', 10, 4.0 / 35.0, S_FATT_RUN10) { A_Chase(); }
-	S_FATT_RUN10('FATT', 4, 'monsters/mancubus/model.xml', 11, 4.0 / 35.0, S_FATT_RUN11) { A_Chase(); }
-	S_FATT_RUN11('FATT', 5, 'monsters/mancubus/model.xml', 12, 4.0 / 35.0, S_FATT_RUN12) { A_Chase(); }
-	S_FATT_RUN12('FATT', 5, 'monsters/mancubus/model.xml', 13, 4.0 / 35.0, S_FATT_RUN1) { A_Chase(); }
-	S_FATT_ATK1('FATT', 6, 'monsters/mancubus/model.xml', 14, 20.0 / 35.0, S_FATT_ATK2) { A_FatRaise(); }
-	S_FATT_ATK2('FATT', 7 | FF_FULLBRIGHT, 'monsters/mancubus/model.xml', 15, 10.0 / 35.0, S_FATT_ATK3) { A_FatAttack1(); }
-	S_FATT_ATK3('FATT', 8, 'monsters/mancubus/model.xml', 16, 5.0 / 35.0, S_FATT_ATK4) { A_FaceTarget(); }
-	S_FATT_ATK4('FATT', 6, 'monsters/mancubus/model.xml', 17, 5.0 / 35.0, S_FATT_ATK5) { A_FaceTarget(); }
-	S_FATT_ATK5('FATT', 7 | FF_FULLBRIGHT, 'monsters/mancubus/model.xml', 18, 10.0 / 35.0, S_FATT_ATK6) { A_FatAttack2(); }
-	S_FATT_ATK6('FATT', 8, 'monsters/mancubus/model.xml', 19, 5.0 / 35.0, S_FATT_ATK7) { A_FaceTarget(); }
-	S_FATT_ATK7('FATT', 6, 'monsters/mancubus/model.xml', 20, 5.0 / 35.0, S_FATT_ATK8) { A_FaceTarget(); }
-	S_FATT_ATK8('FATT', 7 | FF_FULLBRIGHT, 'monsters/mancubus/model.xml', 21, 10.0 / 35.0, S_FATT_ATK9) { A_FatAttack3(); }
-	S_FATT_ATK9('FATT', 8, 'monsters/mancubus/model.xml', 22, 5.0 / 35.0, S_FATT_ATK10) { A_FaceTarget(); }
-	S_FATT_ATK10('FATT', 6, 'monsters/mancubus/model.xml', 23, 5.0 / 35.0, S_FATT_RUN1) { A_FaceTarget(); }
-	S_FATT_PAIN('FATT', 9, 'monsters/mancubus/model.xml', 24, 3.0 / 35.0, S_FATT_PAIN2) { }
-	S_FATT_PAIN2('FATT', 9, 'monsters/mancubus/model.xml', 25, 3.0 / 35.0, S_FATT_RUN1) { A_Pain(); }
-	S_FATT_DIE1('FATT', 10, 'monsters/mancubus/model.xml', 26, 6.0 / 35.0, S_FATT_DIE2) { }
-	S_FATT_DIE2('FATT', 11, 'monsters/mancubus/model.xml', 27, 6.0 / 35.0, S_FATT_DIE3) { A_Scream(); }
-	S_FATT_DIE3('FATT', 12, 'monsters/mancubus/model.xml', 28, 6.0 / 35.0, S_FATT_DIE4) { A_Fall(); }
-	S_FATT_DIE4('FATT', 13, 'monsters/mancubus/model.xml', 29, 6.0 / 35.0, S_FATT_DIE5) { }
-	S_FATT_DIE5('FATT', 14, 'monsters/mancubus/model.xml', 30, 6.0 / 35.0, S_FATT_DIE6) { }
-	S_FATT_DIE6('FATT', 15, 'monsters/mancubus/model.xml', 31, 6.0 / 35.0, S_FATT_DIE7) { }
-	S_FATT_DIE7('FATT', 16, 'monsters/mancubus/model.xml', 32, 6.0 / 35.0, S_FATT_DIE8) { }
-	S_FATT_DIE8('FATT', 17, 'monsters/mancubus/model.xml', 33, 6.0 / 35.0, S_FATT_DIE9) { }
-	S_FATT_DIE9('FATT', 18, 'monsters/mancubus/model.xml', 34, 6.0 / 35.0, S_FATT_DIE10) { }
-	S_FATT_DIE10('FATT', 19, 'monsters/mancubus/model.xml', 35, -1.0, none) { A_BossDeath(); }
-	S_FATT_RAISE1('FATT', 17, 'monsters/mancubus/model.xml', 36, 5.0 / 35.0, S_FATT_RAISE2) { }
-	S_FATT_RAISE2('FATT', 16, 'monsters/mancubus/model.xml', 37, 5.0 / 35.0, S_FATT_RAISE3) { }
-	S_FATT_RAISE3('FATT', 15, 'monsters/mancubus/model.xml', 38, 5.0 / 35.0, S_FATT_RAISE4) { }
-	S_FATT_RAISE4('FATT', 14, 'monsters/mancubus/model.xml', 39, 5.0 / 35.0, S_FATT_RAISE5) { }
-	S_FATT_RAISE5('FATT', 13, 'monsters/mancubus/model.xml', 40, 5.0 / 35.0, S_FATT_RAISE6) { }
-	S_FATT_RAISE6('FATT', 12, 'monsters/mancubus/model.xml', 41, 5.0 / 35.0, S_FATT_RAISE7) { }
-	S_FATT_RAISE7('FATT', 11, 'monsters/mancubus/model.xml', 42, 5.0 / 35.0, S_FATT_RAISE8) { }
-	S_FATT_RAISE8('FATT', 10, 'monsters/mancubus/model.xml', 43, 5.0 / 35.0, S_FATT_RUN1) { }
+	S_FATT_STND('FATT', 0, 15.0 / 35.0, S_FATT_STND2) { A_Look(); }
+	S_FATT_STND2('FATT', 1, 15.0 / 35.0, S_FATT_STND) { A_Look(); }
+	S_FATT_RUN1('FATT', 0, 4.0 / 35.0, S_FATT_RUN2) { A_Chase(); }
+	S_FATT_RUN2('FATT', 0, 4.0 / 35.0, S_FATT_RUN3) { A_Chase(); }
+	S_FATT_RUN3('FATT', 1, 4.0 / 35.0, S_FATT_RUN4) { A_Chase(); }
+	S_FATT_RUN4('FATT', 1, 4.0 / 35.0, S_FATT_RUN5) { A_Chase(); }
+	S_FATT_RUN5('FATT', 2, 4.0 / 35.0, S_FATT_RUN6) { A_Chase(); }
+	S_FATT_RUN6('FATT', 2, 4.0 / 35.0, S_FATT_RUN7) { A_Chase(); }
+	S_FATT_RUN7('FATT', 3, 4.0 / 35.0, S_FATT_RUN8) { A_Chase(); }
+	S_FATT_RUN8('FATT', 3, 4.0 / 35.0, S_FATT_RUN9) { A_Chase(); }
+	S_FATT_RUN9('FATT', 4, 4.0 / 35.0, S_FATT_RUN10) { A_Chase(); }
+	S_FATT_RUN10('FATT', 4, 4.0 / 35.0, S_FATT_RUN11) { A_Chase(); }
+	S_FATT_RUN11('FATT', 5, 4.0 / 35.0, S_FATT_RUN12) { A_Chase(); }
+	S_FATT_RUN12('FATT', 5, 4.0 / 35.0, S_FATT_RUN1) { A_Chase(); }
+	S_FATT_ATK1('FATT', 6, 20.0 / 35.0, S_FATT_ATK2) { A_FatRaise(); }
+	S_FATT_ATK2('FATT', 7 | FF_FULLBRIGHT, 10.0 / 35.0, S_FATT_ATK3) { A_FatAttack1(); }
+	S_FATT_ATK3('FATT', 8, 5.0 / 35.0, S_FATT_ATK4) { A_FaceTarget(); }
+	S_FATT_ATK4('FATT', 6, 5.0 / 35.0, S_FATT_ATK5) { A_FaceTarget(); }
+	S_FATT_ATK5('FATT', 7 | FF_FULLBRIGHT, 10.0 / 35.0, S_FATT_ATK6) { A_FatAttack2(); }
+	S_FATT_ATK6('FATT', 8, 5.0 / 35.0, S_FATT_ATK7) { A_FaceTarget(); }
+	S_FATT_ATK7('FATT', 6, 5.0 / 35.0, S_FATT_ATK8) { A_FaceTarget(); }
+	S_FATT_ATK8('FATT', 7 | FF_FULLBRIGHT, 10.0 / 35.0, S_FATT_ATK9) { A_FatAttack3(); }
+	S_FATT_ATK9('FATT', 8, 5.0 / 35.0, S_FATT_ATK10) { A_FaceTarget(); }
+	S_FATT_ATK10('FATT', 6, 5.0 / 35.0, S_FATT_RUN1) { A_FaceTarget(); }
+	S_FATT_PAIN('FATT', 9, 3.0 / 35.0, S_FATT_PAIN2) { }
+	S_FATT_PAIN2('FATT', 9, 3.0 / 35.0, S_FATT_RUN1) { A_Pain(); }
+	S_FATT_DIE1('FATT', 10, 6.0 / 35.0, S_FATT_DIE2) { }
+	S_FATT_DIE2('FATT', 11, 6.0 / 35.0, S_FATT_DIE3) { A_Scream(); }
+	S_FATT_DIE3('FATT', 12, 6.0 / 35.0, S_FATT_DIE4) { A_Fall(); }
+	S_FATT_DIE4('FATT', 13, 6.0 / 35.0, S_FATT_DIE5) { }
+	S_FATT_DIE5('FATT', 14, 6.0 / 35.0, S_FATT_DIE6) { }
+	S_FATT_DIE6('FATT', 15, 6.0 / 35.0, S_FATT_DIE7) { }
+	S_FATT_DIE7('FATT', 16, 6.0 / 35.0, S_FATT_DIE8) { }
+	S_FATT_DIE8('FATT', 17, 6.0 / 35.0, S_FATT_DIE9) { }
+	S_FATT_DIE9('FATT', 18, 6.0 / 35.0, S_FATT_DIE10) { }
+	S_FATT_DIE10('FATT', 19, -1.0, none) { A_BossDeath(); }
+	S_FATT_RAISE1('FATT', 17, 5.0 / 35.0, S_FATT_RAISE2) { }
+	S_FATT_RAISE2('FATT', 16, 5.0 / 35.0, S_FATT_RAISE3) { }
+	S_FATT_RAISE3('FATT', 15, 5.0 / 35.0, S_FATT_RAISE4) { }
+	S_FATT_RAISE4('FATT', 14, 5.0 / 35.0, S_FATT_RAISE5) { }
+	S_FATT_RAISE5('FATT', 13, 5.0 / 35.0, S_FATT_RAISE6) { }
+	S_FATT_RAISE6('FATT', 12, 5.0 / 35.0, S_FATT_RAISE7) { }
+	S_FATT_RAISE7('FATT', 11, 5.0 / 35.0, S_FATT_RAISE8) { }
+	S_FATT_RAISE8('FATT', 10, 5.0 / 35.0, S_FATT_RUN1) { }
 }
 
 defaultproperties

@@ -94,42 +94,42 @@ void A_SkelMissile()
 
 __states__
 {
-	S_SKEL_STND('SKEL', 0, 'monsters/revenant/model.xml', 0, 10.0 / 35.0, S_SKEL_STND2) { A_Look(); }
-	S_SKEL_STND2('SKEL', 1, 'monsters/revenant/model.xml', 1, 10.0 / 35.0, S_SKEL_STND) { A_Look(); }
-	S_SKEL_RUN1('SKEL', 0, 'monsters/revenant/model.xml', 2, 2.0 / 35.0, S_SKEL_RUN2) { A_Chase(); }
-	S_SKEL_RUN2('SKEL', 0, 'monsters/revenant/model.xml', 3, 2.0 / 35.0, S_SKEL_RUN3) { A_Chase(); }
-	S_SKEL_RUN3('SKEL', 1, 'monsters/revenant/model.xml', 4, 2.0 / 35.0, S_SKEL_RUN4) { A_Chase(); }
-	S_SKEL_RUN4('SKEL', 1, 'monsters/revenant/model.xml', 5, 2.0 / 35.0, S_SKEL_RUN5) { A_Chase(); }
-	S_SKEL_RUN5('SKEL', 2, 'monsters/revenant/model.xml', 6, 2.0 / 35.0, S_SKEL_RUN6) { A_Chase(); }
-	S_SKEL_RUN6('SKEL', 2, 'monsters/revenant/model.xml', 7, 2.0 / 35.0, S_SKEL_RUN7) { A_Chase(); }
-	S_SKEL_RUN7('SKEL', 3, 'monsters/revenant/model.xml', 8, 2.0 / 35.0, S_SKEL_RUN8) { A_Chase(); }
-	S_SKEL_RUN8('SKEL', 3, 'monsters/revenant/model.xml', 9, 2.0 / 35.0, S_SKEL_RUN9) { A_Chase(); }
-	S_SKEL_RUN9('SKEL', 4, 'monsters/revenant/model.xml', 10, 2.0 / 35.0, S_SKEL_RUN10) { A_Chase(); }
-	S_SKEL_RUN10('SKEL', 4, 'monsters/revenant/model.xml', 11, 2.0 / 35.0, S_SKEL_RUN11) { A_Chase(); }
-	S_SKEL_RUN11('SKEL', 5, 'monsters/revenant/model.xml', 12, 2.0 / 35.0, S_SKEL_RUN12) { A_Chase(); }
-	S_SKEL_RUN12('SKEL', 5, 'monsters/revenant/model.xml', 13, 2.0 / 35.0, S_SKEL_RUN1) { A_Chase(); }
-	S_SKEL_FIST1('SKEL', 6, 'monsters/revenant/model.xml', 14, 0.0 / 35.0, S_SKEL_FIST2) { A_FaceTarget(); }
-	S_SKEL_FIST2('SKEL', 6, 'monsters/revenant/model.xml', 14, 6.0 / 35.0, S_SKEL_FIST3) { A_SkelWhoosh(); }
-	S_SKEL_FIST3('SKEL', 7, 'monsters/revenant/model.xml', 15, 6.0 / 35.0, S_SKEL_FIST4) { A_FaceTarget(); }
-	S_SKEL_FIST4('SKEL', 8, 'monsters/revenant/model.xml', 16, 6.0 / 35.0, S_SKEL_RUN1) { A_SkelFist(); }
-	S_SKEL_MISS1('SKEL', 9 | FF_FULLBRIGHT, 'monsters/revenant/model.xml', 17, 0.0 / 35.0, S_SKEL_MISS2) { A_FaceTarget(); }
-	S_SKEL_MISS2('SKEL', 9 | FF_FULLBRIGHT, 'monsters/revenant/model.xml', 17, 10.0 / 35.0, S_SKEL_MISS3) { A_FaceTarget(); }
-	S_SKEL_MISS3('SKEL', 10, 'monsters/revenant/model.xml', 18, 10.0 / 35.0, S_SKEL_MISS4) { A_SkelMissile(); }
-	S_SKEL_MISS4('SKEL', 10, 'monsters/revenant/model.xml', 19, 10.0 / 35.0, S_SKEL_RUN1) { A_FaceTarget(); }
-	S_SKEL_PAIN('SKEL', 11, 'monsters/revenant/model.xml', 20, 5.0 / 35.0, S_SKEL_PAIN2) { }
-	S_SKEL_PAIN2('SKEL', 11, 'monsters/revenant/model.xml', 21, 5.0 / 35.0, S_SKEL_RUN1) { A_Pain(); }
-	S_SKEL_DIE1('SKEL', 11, 'monsters/revenant/model.xml', 22, 7.0 / 35.0, S_SKEL_DIE2) { }
-	S_SKEL_DIE2('SKEL', 12, 'monsters/revenant/model.xml', 23, 7.0 / 35.0, S_SKEL_DIE3) { }
-	S_SKEL_DIE3('SKEL', 13, 'monsters/revenant/model.xml', 24, 7.0 / 35.0, S_SKEL_DIE4) { A_Scream(); }
-	S_SKEL_DIE4('SKEL', 14, 'monsters/revenant/model.xml', 25, 7.0 / 35.0, S_SKEL_DIE5) { A_Fall(); }
-	S_SKEL_DIE5('SKEL', 15, 'monsters/revenant/model.xml', 26, 7.0 / 35.0, S_SKEL_DIE6) { }
-	S_SKEL_DIE6('SKEL', 16, 'monsters/revenant/model.xml', 27, -1.0, none) { }
-	S_SKEL_RAISE1('SKEL', 16, 'monsters/revenant/model.xml', 28, 5.0 / 35.0, S_SKEL_RAISE2) { }
-	S_SKEL_RAISE2('SKEL', 15, 'monsters/revenant/model.xml', 29, 5.0 / 35.0, S_SKEL_RAISE3) { }
-	S_SKEL_RAISE3('SKEL', 14, 'monsters/revenant/model.xml', 30, 5.0 / 35.0, S_SKEL_RAISE4) { }
-	S_SKEL_RAISE4('SKEL', 13, 'monsters/revenant/model.xml', 31, 5.0 / 35.0, S_SKEL_RAISE5) { }
-	S_SKEL_RAISE5('SKEL', 12, 'monsters/revenant/model.xml', 32, 5.0 / 35.0, S_SKEL_RAISE6) { }
-	S_SKEL_RAISE6('SKEL', 11, 'monsters/revenant/model.xml', 33, 5.0 / 35.0, S_SKEL_RUN1) { }
+	S_SKEL_STND('SKEL', 0, 10.0 / 35.0, S_SKEL_STND2) { A_Look(); }
+	S_SKEL_STND2('SKEL', 1, 10.0 / 35.0, S_SKEL_STND) { A_Look(); }
+	S_SKEL_RUN1('SKEL', 0, 2.0 / 35.0, S_SKEL_RUN2) { A_Chase(); }
+	S_SKEL_RUN2('SKEL', 0, 2.0 / 35.0, S_SKEL_RUN3) { A_Chase(); }
+	S_SKEL_RUN3('SKEL', 1, 2.0 / 35.0, S_SKEL_RUN4) { A_Chase(); }
+	S_SKEL_RUN4('SKEL', 1, 2.0 / 35.0, S_SKEL_RUN5) { A_Chase(); }
+	S_SKEL_RUN5('SKEL', 2, 2.0 / 35.0, S_SKEL_RUN6) { A_Chase(); }
+	S_SKEL_RUN6('SKEL', 2, 2.0 / 35.0, S_SKEL_RUN7) { A_Chase(); }
+	S_SKEL_RUN7('SKEL', 3, 2.0 / 35.0, S_SKEL_RUN8) { A_Chase(); }
+	S_SKEL_RUN8('SKEL', 3, 2.0 / 35.0, S_SKEL_RUN9) { A_Chase(); }
+	S_SKEL_RUN9('SKEL', 4, 2.0 / 35.0, S_SKEL_RUN10) { A_Chase(); }
+	S_SKEL_RUN10('SKEL', 4, 2.0 / 35.0, S_SKEL_RUN11) { A_Chase(); }
+	S_SKEL_RUN11('SKEL', 5, 2.0 / 35.0, S_SKEL_RUN12) { A_Chase(); }
+	S_SKEL_RUN12('SKEL', 5, 2.0 / 35.0, S_SKEL_RUN1) { A_Chase(); }
+	S_SKEL_FIST1('SKEL', 6, 0.0 / 35.0, S_SKEL_FIST2) { A_FaceTarget(); }
+	S_SKEL_FIST2('SKEL', 6, 6.0 / 35.0, S_SKEL_FIST3) { A_SkelWhoosh(); }
+	S_SKEL_FIST3('SKEL', 7, 6.0 / 35.0, S_SKEL_FIST4) { A_FaceTarget(); }
+	S_SKEL_FIST4('SKEL', 8, 6.0 / 35.0, S_SKEL_RUN1) { A_SkelFist(); }
+	S_SKEL_MISS1('SKEL', 9 | FF_FULLBRIGHT, 0.0 / 35.0, S_SKEL_MISS2) { A_FaceTarget(); }
+	S_SKEL_MISS2('SKEL', 9 | FF_FULLBRIGHT, 10.0 / 35.0, S_SKEL_MISS3) { A_FaceTarget(); }
+	S_SKEL_MISS3('SKEL', 10, 10.0 / 35.0, S_SKEL_MISS4) { A_SkelMissile(); }
+	S_SKEL_MISS4('SKEL', 10, 10.0 / 35.0, S_SKEL_RUN1) { A_FaceTarget(); }
+	S_SKEL_PAIN('SKEL', 11, 5.0 / 35.0, S_SKEL_PAIN2) { }
+	S_SKEL_PAIN2('SKEL', 11, 5.0 / 35.0, S_SKEL_RUN1) { A_Pain(); }
+	S_SKEL_DIE1('SKEL', 11, 7.0 / 35.0, S_SKEL_DIE2) { }
+	S_SKEL_DIE2('SKEL', 12, 7.0 / 35.0, S_SKEL_DIE3) { }
+	S_SKEL_DIE3('SKEL', 13, 7.0 / 35.0, S_SKEL_DIE4) { A_Scream(); }
+	S_SKEL_DIE4('SKEL', 14, 7.0 / 35.0, S_SKEL_DIE5) { A_Fall(); }
+	S_SKEL_DIE5('SKEL', 15, 7.0 / 35.0, S_SKEL_DIE6) { }
+	S_SKEL_DIE6('SKEL', 16, -1.0, none) { }
+	S_SKEL_RAISE1('SKEL', 16, 5.0 / 35.0, S_SKEL_RAISE2) { }
+	S_SKEL_RAISE2('SKEL', 15, 5.0 / 35.0, S_SKEL_RAISE3) { }
+	S_SKEL_RAISE3('SKEL', 14, 5.0 / 35.0, S_SKEL_RAISE4) { }
+	S_SKEL_RAISE4('SKEL', 13, 5.0 / 35.0, S_SKEL_RAISE5) { }
+	S_SKEL_RAISE5('SKEL', 12, 5.0 / 35.0, S_SKEL_RAISE6) { }
+	S_SKEL_RAISE6('SKEL', 11, 5.0 / 35.0, S_SKEL_RUN1) { }
 }
 
 defaultproperties

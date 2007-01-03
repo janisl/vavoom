@@ -29,7 +29,7 @@ class ItemKey7 : Key
 
 __states__
 {
-	S_KEY7('KEY7', 0, 'keys/silver.xml', 0, -1.0, none) { }
+	S_KEY7('KEY7', 0, -1.0, none) { }
 }
 
 defaultproperties

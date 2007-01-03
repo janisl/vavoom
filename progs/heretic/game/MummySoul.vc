@@ -27,13 +27,13 @@ class MummySoul : Effect;
 
 __states__
 {
-	S_MUMMY_SOUL1('MUMM', 16, 'monsters/mummy/soul.xml', 0, 5.0 / 35.0, S_MUMMY_SOUL2) { }
-	S_MUMMY_SOUL2('MUMM', 17, 'monsters/mummy/soul.xml', 1, 5.0 / 35.0, S_MUMMY_SOUL3) { }
-	S_MUMMY_SOUL3('MUMM', 18, 'monsters/mummy/soul.xml', 2, 5.0 / 35.0, S_MUMMY_SOUL4) { }
-	S_MUMMY_SOUL4('MUMM', 19, 'monsters/mummy/soul.xml', 3, 9.0 / 35.0, S_MUMMY_SOUL5) { }
-	S_MUMMY_SOUL5('MUMM', 20, 'monsters/mummy/soul.xml', 4, 5.0 / 35.0, S_MUMMY_SOUL6) { }
-	S_MUMMY_SOUL6('MUMM', 21, 'monsters/mummy/soul.xml', 5, 5.0 / 35.0, S_MUMMY_SOUL7) { }
-	S_MUMMY_SOUL7('MUMM', 22, 'monsters/mummy/soul.xml', 6, 5.0 / 35.0, none) { }
+	S_MUMMY_SOUL1('MUMM', 16, 5.0 / 35.0, S_MUMMY_SOUL2) { }
+	S_MUMMY_SOUL2('MUMM', 17, 5.0 / 35.0, S_MUMMY_SOUL3) { }
+	S_MUMMY_SOUL3('MUMM', 18, 5.0 / 35.0, S_MUMMY_SOUL4) { }
+	S_MUMMY_SOUL4('MUMM', 19, 9.0 / 35.0, S_MUMMY_SOUL5) { }
+	S_MUMMY_SOUL5('MUMM', 20, 5.0 / 35.0, S_MUMMY_SOUL6) { }
+	S_MUMMY_SOUL6('MUMM', 21, 5.0 / 35.0, S_MUMMY_SOUL7) { }
+	S_MUMMY_SOUL7('MUMM', 22, 5.0 / 35.0, none) { }
 }
 
 defaultproperties

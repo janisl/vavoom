@@ -28,7 +28,7 @@ class StalactiteLarge : Decoration
 
 __states__
 {
-	S_STALACTITELARGE('STCL', 0, 'objects/stalact1.xml', 0, -1.0, none) { }
+	S_STALACTITELARGE('STCL', 0, -1.0, none) { }
 }
 
 defaultproperties

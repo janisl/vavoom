@@ -28,7 +28,7 @@ class StalagmiteLarge : Decoration
 
 __states__
 {
-	S_STALAGMITELARGE('STGL', 0, 'objects/stalagm1.xml', 0, -1.0, none) { }
+	S_STALAGMITELARGE('STGL', 0, -1.0, none) { }
 }
 
 defaultproperties

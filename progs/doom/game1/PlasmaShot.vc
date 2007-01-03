@@ -28,8 +28,8 @@ class PlasmaShot : Projectile
 
 __states__
 {
-	S_PLASBALL('PLSS', 0 | FF_FULLBRIGHT, 'missiles/plasma.xml', 0, 6.0 / 35.0, S_PLASBALL2) { }
-	S_PLASBALL2('PLSS', 1 | FF_FULLBRIGHT, 'missiles/plasma.xml', 1, 6.0 / 35.0, S_PLASBALL) { }
+	S_PLASBALL('PLSS', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_PLASBALL2) { }
+	S_PLASBALL2('PLSS', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_PLASBALL) { }
 	S_PLASEXP('PLSE', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLASEXP2) { }
 	S_PLASEXP2('PLSE', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLASEXP3) { }
 	S_PLASEXP3('PLSE', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLASEXP4) { }

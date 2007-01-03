@@ -47,10 +47,10 @@ bool HandlePickup(Actor Toucher)
 
 __states__
 {
-	S_MEGA('MEGA', 0 | FF_FULLBRIGHT, 'items/mega.xml', 0, 6.0 / 35.0, S_MEGA2) { }
-	S_MEGA2('MEGA', 1 | FF_FULLBRIGHT, 'items/mega.xml', 1, 6.0 / 35.0, S_MEGA3) { }
-	S_MEGA3('MEGA', 2 | FF_FULLBRIGHT, 'items/mega.xml', 2, 6.0 / 35.0, S_MEGA4) { }
-	S_MEGA4('MEGA', 3 | FF_FULLBRIGHT, 'items/mega.xml', 3, 6.0 / 35.0, S_MEGA) { }
+	S_MEGA('MEGA', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_MEGA2) { }
+	S_MEGA2('MEGA', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_MEGA3) { }
+	S_MEGA3('MEGA', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_MEGA4) { }
+	S_MEGA4('MEGA', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_MEGA) { }
 }
 
 defaultproperties

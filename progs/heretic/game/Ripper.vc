@@ -28,8 +28,8 @@ class Ripper : Projectile
 
 __states__
 {
-	S_RIPPER1('FX18', 12, 'missiles/ripper.xml', 0, 4.0 / 35.0, S_RIPPER2) { }
-	S_RIPPER2('FX18', 13, 'missiles/ripper.xml', 1, 5.0 / 35.0, S_RIPPER1) { }
+	S_RIPPER1('FX18', 12, 4.0 / 35.0, S_RIPPER2) { }
+	S_RIPPER2('FX18', 13, 5.0 / 35.0, S_RIPPER1) { }
 	S_RIPPERX1('FX18', 14 | FF_FULLBRIGHT, 4.0 / 35.0, S_RIPPERX2) { }
 	S_RIPPERX2('FX18', 15 | FF_FULLBRIGHT, 4.0 / 35.0, S_RIPPERX3) { }
 	S_RIPPERX3('FX18', 16 | FF_FULLBRIGHT, 4.0 / 35.0, S_RIPPERX4) { }

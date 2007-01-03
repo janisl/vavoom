@@ -29,7 +29,7 @@ class ArtifactBoostMana : Artifact
 
 __states__
 {
-	S_ARTI_MANA('BMAN', 0 | FF_FULLBRIGHT, 'artifact/mboost.xml', 0, -1.0, none) { }
+	S_ARTI_MANA('BMAN', 0 | FF_FULLBRIGHT, -1.0, none) { }
 }
 
 defaultproperties

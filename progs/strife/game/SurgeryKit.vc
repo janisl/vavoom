@@ -28,8 +28,8 @@ class SurgeryKit : InventoryItem
 
 __states__
 {
-	S_FULL_HEALTH('FULL', 0, 'items/surgkit.xml', 0, 35.0 / 35.0, S_FULL_HEALTH2) { }
-	S_FULL_HEALTH2('FULL', 1, 'items/surgkit.xml', 1, 35.0 / 35.0, S_FULL_HEALTH) { }
+	S_FULL_HEALTH('FULL', 0, 35.0 / 35.0, S_FULL_HEALTH2) { }
+	S_FULL_HEALTH2('FULL', 1, 35.0 / 35.0, S_FULL_HEALTH) { }
 }
 
 defaultproperties

@@ -29,15 +29,15 @@ class ItemKeyYellow : Key
 
 __states__
 {
-	S_CKYY1('CKYY', 0 | FF_FULLBRIGHT, 'keys/yellow.xml', 0, 3.0 / 35.0, S_CKYY2) { }
-	S_CKYY2('CKYY', 1 | FF_FULLBRIGHT, 'keys/yellow.xml', 1, 3.0 / 35.0, S_CKYY3) { }
-	S_CKYY3('CKYY', 2 | FF_FULLBRIGHT, 'keys/yellow.xml', 2, 3.0 / 35.0, S_CKYY4) { }
-	S_CKYY4('CKYY', 3 | FF_FULLBRIGHT, 'keys/yellow.xml', 3, 3.0 / 35.0, S_CKYY5) { }
-	S_CKYY5('CKYY', 4 | FF_FULLBRIGHT, 'keys/yellow.xml', 4, 3.0 / 35.0, S_CKYY6) { }
-	S_CKYY6('CKYY', 5 | FF_FULLBRIGHT, 'keys/yellow.xml', 5, 3.0 / 35.0, S_CKYY7) { }
-	S_CKYY7('CKYY', 6 | FF_FULLBRIGHT, 'keys/yellow.xml', 6, 3.0 / 35.0, S_CKYY8) { }
-	S_CKYY8('CKYY', 7 | FF_FULLBRIGHT, 'keys/yellow.xml', 7, 3.0 / 35.0, S_CKYY9) { }
-	S_CKYY9('CKYY', 8 | FF_FULLBRIGHT, 'keys/yellow.xml', 8, 3.0 / 35.0, S_CKYY1) { }
+	S_CKYY1('CKYY', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_CKYY2) { }
+	S_CKYY2('CKYY', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_CKYY3) { }
+	S_CKYY3('CKYY', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_CKYY4) { }
+	S_CKYY4('CKYY', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_CKYY5) { }
+	S_CKYY5('CKYY', 4 | FF_FULLBRIGHT, 3.0 / 35.0, S_CKYY6) { }
+	S_CKYY6('CKYY', 5 | FF_FULLBRIGHT, 3.0 / 35.0, S_CKYY7) { }
+	S_CKYY7('CKYY', 6 | FF_FULLBRIGHT, 3.0 / 35.0, S_CKYY8) { }
+	S_CKYY8('CKYY', 7 | FF_FULLBRIGHT, 3.0 / 35.0, S_CKYY9) { }
+	S_CKYY9('CKYY', 8 | FF_FULLBRIGHT, 3.0 / 35.0, S_CKYY1) { }
 }
 
 defaultproperties

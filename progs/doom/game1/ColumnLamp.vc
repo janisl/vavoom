@@ -28,7 +28,7 @@ class ColumnLamp : Decoration
 
 __states__
 {
-	S_COLU('COLU', 0 | FF_FULLBRIGHT, 'lights/lamp.xml', 0, -1.0, none) { }
+	S_COLU('COLU', 0 | FF_FULLBRIGHT, -1.0, none) { }
 }
 
 defaultproperties

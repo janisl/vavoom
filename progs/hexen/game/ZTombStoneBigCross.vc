@@ -28,7 +28,7 @@ class ZTombStoneBigCross : Decoration
 
 __states__
 {
-	S_ZTOMBSTONEBIGCROSS1('TMS3', 0, 'objects/tomb3.xml', 0, -1.0, none) { }
+	S_ZTOMBSTONEBIGCROSS1('TMS3', 0, -1.0, none) { }
 }
 
 defaultproperties

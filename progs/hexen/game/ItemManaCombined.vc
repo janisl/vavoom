@@ -29,22 +29,22 @@ class ItemManaCombined : Mana
 
 __states__
 {
-	S_MANA3_1('MAN3', 0 | FF_FULLBRIGHT, 'mana/combined.xml', 0, 4.0 / 35.0, S_MANA3_2) { }
-	S_MANA3_2('MAN3', 1 | FF_FULLBRIGHT, 'mana/combined.xml', 1, 4.0 / 35.0, S_MANA3_3) { }
-	S_MANA3_3('MAN3', 2 | FF_FULLBRIGHT, 'mana/combined.xml', 2, 4.0 / 35.0, S_MANA3_4) { }
-	S_MANA3_4('MAN3', 3 | FF_FULLBRIGHT, 'mana/combined.xml', 3, 4.0 / 35.0, S_MANA3_5) { }
-	S_MANA3_5('MAN3', 4 | FF_FULLBRIGHT, 'mana/combined.xml', 4, 4.0 / 35.0, S_MANA3_6) { }
-	S_MANA3_6('MAN3', 5 | FF_FULLBRIGHT, 'mana/combined.xml', 5, 4.0 / 35.0, S_MANA3_7) { }
-	S_MANA3_7('MAN3', 6 | FF_FULLBRIGHT, 'mana/combined.xml', 6, 4.0 / 35.0, S_MANA3_8) { }
-	S_MANA3_8('MAN3', 7 | FF_FULLBRIGHT, 'mana/combined.xml', 7, 4.0 / 35.0, S_MANA3_9) { }
-	S_MANA3_9('MAN3', 8 | FF_FULLBRIGHT, 'mana/combined.xml', 8, 4.0 / 35.0, S_MANA3_10) { }
-	S_MANA3_10('MAN3', 9 | FF_FULLBRIGHT, 'mana/combined.xml', 9, 4.0 / 35.0, S_MANA3_11) { }
-	S_MANA3_11('MAN3', 10 | FF_FULLBRIGHT, 'mana/combined.xml', 10, 4.0 / 35.0, S_MANA3_12) { }
-	S_MANA3_12('MAN3', 11 | FF_FULLBRIGHT, 'mana/combined.xml', 11, 4.0 / 35.0, S_MANA3_13) { }
-	S_MANA3_13('MAN3', 12 | FF_FULLBRIGHT, 'mana/combined.xml', 12, 4.0 / 35.0, S_MANA3_14) { }
-	S_MANA3_14('MAN3', 13 | FF_FULLBRIGHT, 'mana/combined.xml', 13, 4.0 / 35.0, S_MANA3_15) { }
-	S_MANA3_15('MAN3', 14 | FF_FULLBRIGHT, 'mana/combined.xml', 14, 4.0 / 35.0, S_MANA3_16) { }
-	S_MANA3_16('MAN3', 15 | FF_FULLBRIGHT, 'mana/combined.xml', 15, 4.0 / 35.0, S_MANA3_1) { }
+	S_MANA3_1('MAN3', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_MANA3_2) { }
+	S_MANA3_2('MAN3', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_MANA3_3) { }
+	S_MANA3_3('MAN3', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_MANA3_4) { }
+	S_MANA3_4('MAN3', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_MANA3_5) { }
+	S_MANA3_5('MAN3', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_MANA3_6) { }
+	S_MANA3_6('MAN3', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_MANA3_7) { }
+	S_MANA3_7('MAN3', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_MANA3_8) { }
+	S_MANA3_8('MAN3', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_MANA3_9) { }
+	S_MANA3_9('MAN3', 8 | FF_FULLBRIGHT, 4.0 / 35.0, S_MANA3_10) { }
+	S_MANA3_10('MAN3', 9 | FF_FULLBRIGHT, 4.0 / 35.0, S_MANA3_11) { }
+	S_MANA3_11('MAN3', 10 | FF_FULLBRIGHT, 4.0 / 35.0, S_MANA3_12) { }
+	S_MANA3_12('MAN3', 11 | FF_FULLBRIGHT, 4.0 / 35.0, S_MANA3_13) { }
+	S_MANA3_13('MAN3', 12 | FF_FULLBRIGHT, 4.0 / 35.0, S_MANA3_14) { }
+	S_MANA3_14('MAN3', 13 | FF_FULLBRIGHT, 4.0 / 35.0, S_MANA3_15) { }
+	S_MANA3_15('MAN3', 14 | FF_FULLBRIGHT, 4.0 / 35.0, S_MANA3_16) { }
+	S_MANA3_16('MAN3', 15 | FF_FULLBRIGHT, 4.0 / 35.0, S_MANA3_1) { }
 }
 
 defaultproperties

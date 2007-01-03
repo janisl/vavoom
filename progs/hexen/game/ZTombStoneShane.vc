@@ -28,7 +28,7 @@ class ZTombStoneShane : Decoration
 
 __states__
 {
-	S_ZTOMBSTONESHANE1('TMS2', 0, 'objects/tomb2.xml', 0, -1.0, none) { }
+	S_ZTOMBSTONESHANE1('TMS2', 0, -1.0, none) { }
 }
 
 defaultproperties

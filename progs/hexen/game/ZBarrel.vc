@@ -23,12 +23,12 @@
 //**
 //**************************************************************************
 
-class ZBarrel:Decoration
+class ZBarrel : Decoration
 	__mobjinfo__(8100);
 
 __states__
 {
-	S_ZBARREL1('BARL', 0, 'objects/barrel.xml', 0, -1.0, none) { }
+	S_ZBARREL1('BARL', 0, -1.0, none) { }
 }
 
 defaultproperties

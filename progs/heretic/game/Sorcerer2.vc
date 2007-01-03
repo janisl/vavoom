@@ -261,45 +261,45 @@ void A_BossDeath()
 
 __states__
 {
-	S_SOR2_RISE1('SOR2', 0, 'monsters/dsparil/model2.xml', 0, 4.0 / 35.0, S_SOR2_RISE2) { }
-	S_SOR2_RISE2('SOR2', 1, 'monsters/dsparil/model2.xml', 1, 4.0 / 35.0, S_SOR2_RISE3) { }
-	S_SOR2_RISE3('SOR2', 2, 'monsters/dsparil/model2.xml', 2, 4.0 / 35.0, S_SOR2_RISE4) { A_SorRise(); }
-	S_SOR2_RISE4('SOR2', 3, 'monsters/dsparil/model2.xml', 3, 4.0 / 35.0, S_SOR2_RISE5) { }
-	S_SOR2_RISE5('SOR2', 4, 'monsters/dsparil/model2.xml', 4, 4.0 / 35.0, S_SOR2_RISE6) { }
-	S_SOR2_RISE6('SOR2', 5, 'monsters/dsparil/model2.xml', 5, 4.0 / 35.0, S_SOR2_RISE7) { }
-	S_SOR2_RISE7('SOR2', 6, 'monsters/dsparil/model2.xml', 6, 12.0 / 35.0, S_SOR2_WALK1) { A_SorSightSnd(); }
-	S_SOR2_LOOK1('SOR2', 12, 'monsters/dsparil/model2.xml', 7, 10.0 / 35.0, S_SOR2_LOOK2) { A_Look(); }
-	S_SOR2_LOOK2('SOR2', 13, 'monsters/dsparil/model2.xml', 8, 10.0 / 35.0, S_SOR2_LOOK1) { A_Look(); }
-	S_SOR2_WALK1('SOR2', 12, 'monsters/dsparil/model2.xml', 9, 4.0 / 35.0, S_SOR2_WALK2) { A_Chase(); }
-	S_SOR2_WALK2('SOR2', 13, 'monsters/dsparil/model2.xml', 10, 4.0 / 35.0, S_SOR2_WALK3) { A_Chase(); }
-	S_SOR2_WALK3('SOR2', 14, 'monsters/dsparil/model2.xml', 11, 4.0 / 35.0, S_SOR2_WALK4) { A_Chase(); }
-	S_SOR2_WALK4('SOR2', 15, 'monsters/dsparil/model2.xml', 12, 4.0 / 35.0, S_SOR2_WALK1) { A_Chase(); }
-	S_SOR2_PAIN1('SOR2', 16, 'monsters/dsparil/model2.xml', 13, 3.0 / 35.0, S_SOR2_PAIN2) { }
-	S_SOR2_PAIN2('SOR2', 16, 'monsters/dsparil/model2.xml', 14, 6.0 / 35.0, S_SOR2_WALK1) { A_Pain(); }
-	S_SOR2_ATK1('SOR2', 17, 'monsters/dsparil/model2.xml', 15, 9.0 / 35.0, S_SOR2_ATK2) { A_Srcr2Decide(); }
-	S_SOR2_ATK2('SOR2', 18, 'monsters/dsparil/model2.xml', 16, 9.0 / 35.0, S_SOR2_ATK3) { A_FaceTarget(); }
-	S_SOR2_ATK3('SOR2', 19, 'monsters/dsparil/model2.xml', 17, 20.0 / 35.0, S_SOR2_WALK1) { A_Srcr2Attack(); }
-	S_SOR2_TELE1('SOR2', 11, 'monsters/dsparil/model2.xml', 18, 6.0 / 35.0, S_SOR2_TELE2) { }
-	S_SOR2_TELE2('SOR2', 10, 'monsters/dsparil/model2.xml', 19, 6.0 / 35.0, S_SOR2_TELE3) { }
-	S_SOR2_TELE3('SOR2', 9, 'monsters/dsparil/model2.xml', 20, 6.0 / 35.0, S_SOR2_TELE4) { }
-	S_SOR2_TELE4('SOR2', 8, 'monsters/dsparil/model2.xml', 21, 6.0 / 35.0, S_SOR2_TELE5) { }
-	S_SOR2_TELE5('SOR2', 7, 'monsters/dsparil/model2.xml', 22, 6.0 / 35.0, S_SOR2_TELE6) { }
-	S_SOR2_TELE6('SOR2', 6, 'monsters/dsparil/model2.xml', 23, 6.0 / 35.0, S_SOR2_WALK1) { }
-	S_SOR2_DIE1('SDTH', 0, 'monsters/dsparil/model2.xml', 24, 8.0 / 35.0, S_SOR2_DIE2) { A_Sor2DthInit(); }
-	S_SOR2_DIE2('SDTH', 1, 'monsters/dsparil/model2.xml', 25, 8.0 / 35.0, S_SOR2_DIE3) { }
-	S_SOR2_DIE3('SDTH', 2, 'monsters/dsparil/model2.xml', 26, 8.0 / 35.0, S_SOR2_DIE4) { A_SorDSph(); }
-	S_SOR2_DIE4('SDTH', 3, 'monsters/dsparil/model2.xml', 27, 7.0 / 35.0, S_SOR2_DIE5) { }
-	S_SOR2_DIE5('SDTH', 4, 'monsters/dsparil/model2.xml', 28, 7.0 / 35.0, S_SOR2_DIE6) { }
-	S_SOR2_DIE6('SDTH', 5, 'monsters/dsparil/model2.xml', 29, 7.0 / 35.0, S_SOR2_DIE7) { A_Sor2DthLoop(); }
-	S_SOR2_DIE7('SDTH', 6, 'monsters/dsparil/model2.xml', 30, 6.0 / 35.0, S_SOR2_DIE8) { A_SorDExp(); }
-	S_SOR2_DIE8('SDTH', 7, 'monsters/dsparil/model2.xml', 31, 6.0 / 35.0, S_SOR2_DIE9) { }
-	S_SOR2_DIE9('SDTH', 8, 'monsters/dsparil/model2.xml', 32, 18.0 / 35.0, S_SOR2_DIE10) { }
-	S_SOR2_DIE10('SDTH', 9, 'monsters/dsparil/model2.xml', 33, 6.0 / 35.0, S_SOR2_DIE11) { A_NoBlocking(); }
-	S_SOR2_DIE11('SDTH', 10, 'monsters/dsparil/model2.xml', 34, 6.0 / 35.0, S_SOR2_DIE12) { A_SorDBon(); }
-	S_SOR2_DIE12('SDTH', 11, 'monsters/dsparil/model2.xml', 35, 6.0 / 35.0, S_SOR2_DIE13) { }
-	S_SOR2_DIE13('SDTH', 12, 'monsters/dsparil/model2.xml', 36, 6.0 / 35.0, S_SOR2_DIE14) { }
-	S_SOR2_DIE14('SDTH', 13, 'monsters/dsparil/model2.xml', 37, 6.0 / 35.0, S_SOR2_DIE15) { }
-	S_SOR2_DIE15('SDTH', 14, 'monsters/dsparil/model2.xml', 38, -1.0, none) { A_BossDeath(); }
+	S_SOR2_RISE1('SOR2', 0, 4.0 / 35.0, S_SOR2_RISE2) { }
+	S_SOR2_RISE2('SOR2', 1, 4.0 / 35.0, S_SOR2_RISE3) { }
+	S_SOR2_RISE3('SOR2', 2, 4.0 / 35.0, S_SOR2_RISE4) { A_SorRise(); }
+	S_SOR2_RISE4('SOR2', 3, 4.0 / 35.0, S_SOR2_RISE5) { }
+	S_SOR2_RISE5('SOR2', 4, 4.0 / 35.0, S_SOR2_RISE6) { }
+	S_SOR2_RISE6('SOR2', 5, 4.0 / 35.0, S_SOR2_RISE7) { }
+	S_SOR2_RISE7('SOR2', 6, 12.0 / 35.0, S_SOR2_WALK1) { A_SorSightSnd(); }
+	S_SOR2_LOOK1('SOR2', 12, 10.0 / 35.0, S_SOR2_LOOK2) { A_Look(); }
+	S_SOR2_LOOK2('SOR2', 13, 10.0 / 35.0, S_SOR2_LOOK1) { A_Look(); }
+	S_SOR2_WALK1('SOR2', 12, 4.0 / 35.0, S_SOR2_WALK2) { A_Chase(); }
+	S_SOR2_WALK2('SOR2', 13, 4.0 / 35.0, S_SOR2_WALK3) { A_Chase(); }
+	S_SOR2_WALK3('SOR2', 14, 4.0 / 35.0, S_SOR2_WALK4) { A_Chase(); }
+	S_SOR2_WALK4('SOR2', 15, 4.0 / 35.0, S_SOR2_WALK1) { A_Chase(); }
+	S_SOR2_PAIN1('SOR2', 16, 3.0 / 35.0, S_SOR2_PAIN2) { }
+	S_SOR2_PAIN2('SOR2', 16, 6.0 / 35.0, S_SOR2_WALK1) { A_Pain(); }
+	S_SOR2_ATK1('SOR2', 17, 9.0 / 35.0, S_SOR2_ATK2) { A_Srcr2Decide(); }
+	S_SOR2_ATK2('SOR2', 18, 9.0 / 35.0, S_SOR2_ATK3) { A_FaceTarget(); }
+	S_SOR2_ATK3('SOR2', 19, 20.0 / 35.0, S_SOR2_WALK1) { A_Srcr2Attack(); }
+	S_SOR2_TELE1('SOR2', 11, 6.0 / 35.0, S_SOR2_TELE2) { }
+	S_SOR2_TELE2('SOR2', 10, 6.0 / 35.0, S_SOR2_TELE3) { }
+	S_SOR2_TELE3('SOR2', 9, 6.0 / 35.0, S_SOR2_TELE4) { }
+	S_SOR2_TELE4('SOR2', 8, 6.0 / 35.0, S_SOR2_TELE5) { }
+	S_SOR2_TELE5('SOR2', 7, 6.0 / 35.0, S_SOR2_TELE6) { }
+	S_SOR2_TELE6('SOR2', 6, 6.0 / 35.0, S_SOR2_WALK1) { }
+	S_SOR2_DIE1('SDTH', 0, 8.0 / 35.0, S_SOR2_DIE2) { A_Sor2DthInit(); }
+	S_SOR2_DIE2('SDTH', 1, 8.0 / 35.0, S_SOR2_DIE3) { }
+	S_SOR2_DIE3('SDTH', 2, 8.0 / 35.0, S_SOR2_DIE4) { A_SorDSph(); }
+	S_SOR2_DIE4('SDTH', 3, 7.0 / 35.0, S_SOR2_DIE5) { }
+	S_SOR2_DIE5('SDTH', 4, 7.0 / 35.0, S_SOR2_DIE6) { }
+	S_SOR2_DIE6('SDTH', 5, 7.0 / 35.0, S_SOR2_DIE7) { A_Sor2DthLoop(); }
+	S_SOR2_DIE7('SDTH', 6, 6.0 / 35.0, S_SOR2_DIE8) { A_SorDExp(); }
+	S_SOR2_DIE8('SDTH', 7, 6.0 / 35.0, S_SOR2_DIE9) { }
+	S_SOR2_DIE9('SDTH', 8, 18.0 / 35.0, S_SOR2_DIE10) { }
+	S_SOR2_DIE10('SDTH', 9, 6.0 / 35.0, S_SOR2_DIE11) { A_NoBlocking(); }
+	S_SOR2_DIE11('SDTH', 10, 6.0 / 35.0, S_SOR2_DIE12) { A_SorDBon(); }
+	S_SOR2_DIE12('SDTH', 11, 6.0 / 35.0, S_SOR2_DIE13) { }
+	S_SOR2_DIE13('SDTH', 12, 6.0 / 35.0, S_SOR2_DIE14) { }
+	S_SOR2_DIE14('SDTH', 13, 6.0 / 35.0, S_SOR2_DIE15) { }
+	S_SOR2_DIE15('SDTH', 14, -1.0, none) { A_BossDeath(); }
 }
 
 defaultproperties

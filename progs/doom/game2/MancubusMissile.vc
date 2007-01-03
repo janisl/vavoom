@@ -28,8 +28,8 @@ class MancubusMissile : Projectile
 
 __states__
 {
-	S_FATSHOT1('MANF', 0 | FF_FULLBRIGHT, 'missiles/mancmisl.xml', 0, 4.0 / 35.0, S_FATSHOT2) { }
-	S_FATSHOT2('MANF', 1 | FF_FULLBRIGHT, 'missiles/mancmisl.xml', 1, 4.0 / 35.0, S_FATSHOT1) { }
+	S_FATSHOT1('MANF', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_FATSHOT2) { }
+	S_FATSHOT2('MANF', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_FATSHOT1) { }
 	S_FATSHOTX1('MISL', 1 | FF_FULLBRIGHT, 8.0 / 35.0, S_FATSHOTX2) { }
 	S_FATSHOTX2('MISL', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_FATSHOTX3) { }
 	S_FATSHOTX3('MISL', 3 | FF_FULLBRIGHT, 4.0 / 35.0, none) { }

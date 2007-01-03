@@ -23,12 +23,12 @@
 //**
 //**************************************************************************
 
-class ColumnGreenTall:Decoration
+class ColumnGreenTall : Decoration
 	__mobjinfo__(30);
 
 __states__
 {
-	S_TALLGRNCOL('COL1', 0, 'objects/pillargt.xml', 0, -1.0, none) { }
+	S_TALLGRNCOL('COL1', 0, -1.0, none) { }
 }
 
 defaultproperties

@@ -29,8 +29,8 @@ class ItemKeyBlueCard : KeyPickup
 
 __states__
 {
-	S_BKEY('BKEY', 0, 'keys/bluecard.xml', 0, 10.0 / 35.0, S_BKEY2) { }
-	S_BKEY2('BKEY', 1 | FF_FULLBRIGHT, 'keys/bluecard.xml', 1, 10.0 / 35.0, S_BKEY) { }
+	S_BKEY('BKEY', 0, 10.0 / 35.0, S_BKEY2) { }
+	S_BKEY2('BKEY', 1 | FF_FULLBRIGHT, 10.0 / 35.0, S_BKEY) { }
 }
 
 defaultproperties
