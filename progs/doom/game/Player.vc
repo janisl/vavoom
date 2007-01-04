@@ -2170,7 +2170,8 @@ void SetWeapon(int NewWeapon)
 	}
 	ViewEnt = Weapon(SpawnObject(MainGameInfo(Level.Game).WeaponClasses[NewWeapon]));
 	ViewEnt.Player = self;
-	WeaponModel = GetModelIndex(Weapon(ViewEnt).ThirdPersonModel);
+	if (MO)
+		MO.ModelVersion = Weapon(ViewEnt).PlayerModelVersion;
 }
 
 //===========================================================================
@@ -2191,6 +2192,7 @@ void BringUpWeapon()
 	ViewStates[ps_weapon].SY = Weapon::WEAPONBOTTOM;
 
 	SetViewState(ps_weapon, Weapon(ViewEnt).UpState);
+	MO.ModelVersion = Weapon(ViewEnt).PlayerModelVersion;
 }
 
 //==========================================================================

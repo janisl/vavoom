@@ -253,7 +253,6 @@ void R_InstallSprite(const char*, int);
 void R_DrawModelFrame(const TVec&, float, VModel*, int, const char*);
 
 VModel* Mod_FindName(const char*);
-void R_PositionWeaponModel(VEntity*, VModel*, int);
 
 void SCR_SetVirtualScreen(int, int);
 
@@ -261,7 +260,6 @@ void SCR_SetVirtualScreen(int, int);
 
 extern VEntity**		cl_mobjs;
 extern clmobjbase_t*	cl_mo_base;
-extern VEntity*			cl_weapon_mobjs[MAXPLAYERS];
 
 extern VClientGameBase*	GClGame;
 

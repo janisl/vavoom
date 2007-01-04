@@ -67,5 +67,5 @@ defaultproperties
 	ReadyState = S_PISTOL;
 	AttackState = S_PISTOL1;
 	FlashState = S_PISTOLFLASH;
-	ThirdPersonModel = 'weapons/pistol/inhands.xml';
+	PlayerModelVersion = 2;
 }

@@ -101,11 +101,7 @@ struct trans_sprite_t
 		surface_t*	surf;
 		VEntity*	Ent;
 	};
-	union
-	{
-		int			lump;
-		bool		IsWeapon;
-	};
+	int				lump;
 	TVec			normal;
 	union
 	{
@@ -395,8 +391,7 @@ void R_DrawTranslucentPoly(surface_t* surf, TVec* sv, int count, int lump,
 		trans_sprite_t &spr = trans_sprites[found];
 		if (spr.type == 2)
 		{
-			R_DrawEntityModel(spr.Ent, spr.IsWeapon, spr.light, spr.Alpha,
-				spr.TimeFrac);
+			R_DrawEntityModel(spr.Ent, spr.light, spr.Alpha, spr.TimeFrac);
 		}
 		else if (spr.type)
 		{
@@ -651,7 +646,7 @@ static void RenderSprite(VEntity* thing, vuint32 light)
 //
 //==========================================================================
 
-void RenderTranslucentAliasModel(VEntity* mobj, vuint32 light, bool IsWeapon,
+void RenderTranslucentAliasModel(VEntity* mobj, vuint32 light,
 	float TimeFrac)
 {
 	guard(RenderTranslucentAliasModel);
@@ -666,7 +661,6 @@ void RenderTranslucentAliasModel(VEntity* mobj, vuint32 light, bool IsWeapon,
 		if (!spr.translucency)
 		{
 			spr.Ent = mobj;
-			spr.IsWeapon = IsWeapon;
 			spr.light = light;
 			spr.Alpha = (100.0 - mobj->Translucency) / 100.0;
 			spr.dist = dist;
@@ -686,8 +680,7 @@ void RenderTranslucentAliasModel(VEntity* mobj, vuint32 light, bool IsWeapon,
 		trans_sprite_t &spr = trans_sprites[found];
 		if (spr.type == 2)
 		{
-			R_DrawEntityModel(spr.Ent, spr.IsWeapon, spr.light,
-				spr.Alpha, spr.TimeFrac);
+			R_DrawEntityModel(spr.Ent, spr.light, spr.Alpha, spr.TimeFrac);
 		}
 		else if (spr.type)
 		{
@@ -700,7 +693,6 @@ void RenderTranslucentAliasModel(VEntity* mobj, vuint32 light, bool IsWeapon,
 			Drawer->DrawMaskedPolygon(spr.surf, spr.translucency - 1);
 		}
 		spr.Ent = mobj;
-		spr.IsWeapon = IsWeapon;
 		spr.light = light;
 		spr.Alpha = (100.0 - mobj->Translucency) / 100.0;
 		spr.dist = dist;
@@ -708,8 +700,8 @@ void RenderTranslucentAliasModel(VEntity* mobj, vuint32 light, bool IsWeapon,
 		spr.TimeFrac = TimeFrac;
 		return;
 	}
-	R_DrawEntityModel(mobj, IsWeapon, light, (100.0 - mobj->Translucency) /
-		100.0, TimeFrac);
+	R_DrawEntityModel(mobj, light, (100.0 - mobj->Translucency) / 100.0,
+		TimeFrac);
 	unguard;
 }
 
@@ -719,7 +711,7 @@ void RenderTranslucentAliasModel(VEntity* mobj, vuint32 light, bool IsWeapon,
 //
 //==========================================================================
 
-static bool RenderAliasModel(VEntity* mobj, vuint32 light, bool IsWeapon)
+static bool RenderAliasModel(VEntity* mobj, vuint32 light)
 {
 	guard(RenderAliasModel);
 	if (!r_models)
@@ -737,16 +729,16 @@ static bool RenderAliasModel(VEntity* mobj, vuint32 light, bool IsWeapon)
 	//	Draw it
 	if (mobj->Translucency)
 	{
-		if (!R_CheckAliasModelFrame(mobj, IsWeapon, TimeFrac))
+		if (!R_CheckAliasModelFrame(mobj, TimeFrac))
 		{
 			return false;
 		}
-		RenderTranslucentAliasModel(mobj, light, IsWeapon, TimeFrac);
+		RenderTranslucentAliasModel(mobj, light, TimeFrac);
 		return true;
 	}
 	else
 	{
-		return R_DrawEntityModel(mobj, IsWeapon, light, 1.0, TimeFrac);
+		return R_DrawEntityModel(mobj, light, 1.0, TimeFrac);
 	}
 	unguard;
 }
@@ -760,8 +752,7 @@ static bool RenderAliasModel(VEntity* mobj, vuint32 light, bool IsWeapon)
 static void RenderThing(VEntity* mobj, bool IsWeapon)
 {
 	guard(RenderThing);
-	if (!r_chasecam && (mobj == cl_mobjs[cl->ClientNum + 1] ||
-		mobj == cl_weapon_mobjs[cl->ClientNum + 1]))
+	if (!r_chasecam && mobj == cl_mobjs[cl->ClientNum + 1])
 	{
 		//	Don't draw client's mobj
 		return;
@@ -787,7 +778,7 @@ static void RenderThing(VEntity* mobj, bool IsWeapon)
 
 	//	Try to draw a model. If it's a script and it doesn't
 	// specify model for this frame, draw sprite instead.
-	if (!RenderAliasModel(mobj, light, IsWeapon) && !IsWeapon)
+	if (!RenderAliasModel(mobj, light) && !IsWeapon)
 	{
 		RenderSprite(mobj, light);
 	}
@@ -815,14 +806,6 @@ void R_RenderMobjs()
 		if (cl_mobjs[i]->InUse)
 		{
 			RenderThing(cl_mobjs[i], false);
-		}
-	}
-
-	for (i = 0; i < MAXPLAYERS; i++)
-	{
-		if (cl_weapon_mobjs[i]->InUse)
-		{
-			RenderThing(cl_weapon_mobjs[i], true);
 		}
 	}
 	unguard;
@@ -860,8 +843,8 @@ void R_DrawTranslucentPolys()
 			trans_sprite_t &spr = trans_sprites[found];
 			if (spr.type == 2)
 			{
-				R_DrawEntityModel(spr.Ent, spr.IsWeapon, spr.light,
-					spr.Alpha, spr.TimeFrac);
+				R_DrawEntityModel(spr.Ent, spr.light, spr.Alpha,
+					spr.TimeFrac);
 			}
 			else if (spr.type)
 			{
@@ -998,7 +981,7 @@ static bool RenderViewModel(VViewState* VSt, vuint32 light)
 	}
 
 	return R_DrawAliasModel(origin, cl->ViewAngles, VSt->State,
-		NULL, light, (100.0 - cl->ViewEntTranslucency) / 100.0, true, TimeFrac);
+		NULL, 0, light, (100.0 - cl->ViewEntTranslucency) / 100.0, true, TimeFrac);
 	unguard;
 }
 

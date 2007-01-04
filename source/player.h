@@ -119,9 +119,6 @@ class VBasePlayer : public VObject
 	VEntity*		MO;
 	int				PlayerState;
 
-	//	Model of current weapon
-	int				WeaponModel;
-
 	// Determine POV,
 	//  including viewpoint bobbing during movement.
 	// Focal origin above r.z

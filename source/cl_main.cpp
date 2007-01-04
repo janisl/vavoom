@@ -146,9 +146,6 @@ void CL_Shutdown()
 				cl_mobjs[i]->ConditionalDestroy();
 		delete[] cl_mobjs;
 	}
-	for (int i = 0; i < MAXPLAYERS; i++)
-		if (cl_weapon_mobjs[i])
-			cl_weapon_mobjs[i]->ConditionalDestroy();
 	delete[] cl_mo_base;
 	cls.message.Free();
 	if (GClLevel)

@@ -69,5 +69,5 @@ defaultproperties
 	ReadyState = S_BFG;
 	AttackState = S_BFG1;
 	FlashState = S_BFGFLASH1;
-	ThirdPersonModel = 'weapons/bfg/inhands.xml';
+	PlayerModelVersion = 7;
 }

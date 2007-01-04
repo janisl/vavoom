@@ -73,5 +73,5 @@ defaultproperties
 	ReadyState = S_CHAIN;
 	AttackState = S_CHAIN1;
 	FlashState = S_CHAINFLASH1;
-	ThirdPersonModel = 'weapons/chaingun/inhands.xml';
+	PlayerModelVersion = 4;
 }

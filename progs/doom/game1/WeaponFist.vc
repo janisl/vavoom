@@ -78,4 +78,5 @@ defaultproperties
 	DownState = S_PUNCHDOWN;
 	ReadyState = S_PUNCH;
 	AttackState = S_PUNCH1;
+	PlayerModelVersion = 1;
 }

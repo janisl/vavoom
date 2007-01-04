@@ -94,5 +94,5 @@ defaultproperties
 	DownState = S_SAWDOWN;
 	ReadyState = S_SAW;
 	AttackState = S_SAW1;
-	ThirdPersonModel = 'weapons/chainsaw/inhands.xml';
+	PlayerModelVersion = 8;
 }

@@ -38,7 +38,7 @@ state ReadyState;
 state AttackState;
 state HoldAttackState;
 state FlashState;
-name ThirdPersonModel;
+int PlayerModelVersion;
 
 //===========================================================================
 //

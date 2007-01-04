@@ -27,7 +27,7 @@
 
 // MACROS ------------------------------------------------------------------
 
-#define PROTOCOL_VERSION	10
+#define PROTOCOL_VERSION	11
 
 enum
 {
@@ -137,11 +137,11 @@ enum
 #define MOB_ANGLER		0x2000
 #define MOB_BIG_STATE	0x4000
 #define MOB_MORE_BITS2	0x8000
-#define MOB_WEAPON		0x010000
-#define MOB_SPRITE		0x020000
-#define MOB_FULL_BRIGHT	0x040000
-#define MOB_MODEL		0x080000
-#define MOB_SKIN_NUM	0x100000
+#define MOB_SPRITE		0x010000
+#define MOB_FULL_BRIGHT	0x020000
+#define MOB_MODEL		0x040000
+#define MOB_SKIN_NUM	0x080000
+#define MOB_MDL_VERSION	0x100000
 
 #define SUB_FLOOR		0x0001
 #define SUB_CEIL		0x0002

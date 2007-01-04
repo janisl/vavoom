@@ -55,6 +55,7 @@ public:
 	struct VFrame
 	{
 		int		Index;
+		int		PositionIndex;
 		float	AlphaStart;
 		float	AlphaEnd;
 		TVec	Offset;
@@ -62,8 +63,11 @@ public:
 	};
 
 	VModel*				Model;
+	VModel*				PositionModel;
 	int					SkinAnimSpeed;
 	int					SkinAnimRange;
+	int					Version;
+	bool				UseSkin;
 	TArray<VFrame>		Frames;
 };
 
@@ -385,10 +389,31 @@ static void ParseModelScript(VModel* mod, VStream& Strm)
 		{
 			VScriptSubModel& Md2 = SMdl.SubModels.Alloc();
 			Md2.Model = Mod_FindName(*SN->GetAttribute("file").ToLower().FixFileSlashes());
-			Md2.SkinAnimSpeed = 0;
-			Md2.SkinAnimRange = 0;
+
+			//	Version
+			Md2.Version = -1;
+			if (SN->HasAttribute("version"))
+			{
+				Md2.Version = atoi(*SN->GetAttribute("version"));
+			}
+
+			//	Enable use of the skin file
+			Md2.UseSkin = false;
+			if (SN->HasAttribute("use_skin"))
+			{
+				Md2.UseSkin = SN->GetAttribute("use_skin") == "true";
+			}
+
+			//	Position model
+			Md2.PositionModel = NULL;
+			if (SN->HasAttribute("position_file"))
+			{
+				Md2.PositionModel = Mod_FindName(*SN->GetAttribute("position_file").ToLower().FixFileSlashes());
+			}
 
 			//	Skin animation
+			Md2.SkinAnimSpeed = 0;
+			Md2.SkinAnimRange = 0;
 			if (SN->HasAttribute("skin_anim_speed"))
 			{
 				Md2.SkinAnimSpeed = atoi(*SN->GetAttribute("skin_anim_speed"));
@@ -436,6 +461,13 @@ static void ParseModelScript(VModel* mod, VStream& Strm)
 			{
 				VScriptSubModel::VFrame& F = Md2.Frames.Alloc();
 				F.Index = atoi(*FN->GetAttribute("index"));
+
+				//	Position model frame index
+				F.PositionIndex = 0;
+				if (FN->HasAttribute("position_index"))
+				{
+					F.PositionIndex = atoi(*FN->GetAttribute("position_index"));
+				}
 
 				//	Offset
 				F.Offset = Offset;
@@ -613,13 +645,14 @@ static VModel* Mod_LoadModel(VModel* mod)
 
 //==========================================================================
 //
-//	R_PositionWeaponModel
+//	PositionModel
 //
 //==========================================================================
 
-void R_PositionWeaponModel(VEntity* wpent, VModel* wpmodel, int InFrame)
+static void PositionModel(TVec& Origin, TAVec& Angles, VModel* wpmodel,
+	int InFrame)
 {
-	guard(R_PositionWeaponModel);
+	guard(PositionModel);
 	mmdl_t *pmdl = (mmdl_t*)Mod_Extradata(wpmodel);
 	int frame = InFrame;
 	if ((frame >= pmdl->numframes) || (frame < 0))
@@ -638,13 +671,13 @@ void R_PositionWeaponModel(VEntity* wpent, VModel* wpmodel, int InFrame)
 		p[vi].z = pverts[ptris[0].vertindex[vi]].v[2] * pframe->scale[2] + pframe->scale_origin[2];
 	}
 	TVec md_forward, md_left, md_up;
-	AngleVectors(wpent->Angles, md_forward, md_left, md_up);
+	AngleVectors(Angles, md_forward, md_left, md_up);
 	md_left = -md_left;
-	wpent->Origin += md_forward * p[0].x + md_left * p[0].y + md_up * p[0].z;
+	Origin += md_forward * p[0].x + md_left * p[0].y + md_up * p[0].z;
 	TAVec wangles;
 	VectorAngles(p[1] - p[0], wangles);
-	wpent->Angles.yaw = AngleMod(wpent->Angles.yaw + wangles.yaw);
-	wpent->Angles.pitch = AngleMod(wpent->Angles.pitch + wangles.pitch);
+	Angles.yaw = AngleMod(Angles.yaw + wangles.yaw);
+	Angles.pitch = AngleMod(Angles.pitch + wangles.pitch);
 	unguard;
 }
 
@@ -676,8 +709,8 @@ static int FindFrame(const VClassModelScript& Cls, int Frame, float Inter)
 //==========================================================================
 
 static void DrawModel(const TVec& Org, const TAVec& Angles,
-	VClassModelScript& Cls, int FIdx, const char* Skin, vuint32 Light,
-	float Alpha, bool IsViewModel, float Inter)
+	VClassModelScript& Cls, int FIdx, const char* Skin, int Version,
+	vuint32 Light, float Alpha, bool IsViewModel, float Inter)
 {
 	guard(DrawModel);
 	VScriptedModelFrame& FDef = Cls.Frames[FIdx];
@@ -685,6 +718,10 @@ static void DrawModel(const TVec& Org, const TAVec& Angles,
 	for (int i = 0; i < ScMdl.SubModels.Num(); i++)
 	{
 		VScriptSubModel& SubMdl = ScMdl.SubModels[i];
+		if (SubMdl.Version != -1 && SubMdl.Version != Version)
+		{
+			continue;
+		}
 		if (FDef.FrameIndex >= SubMdl.Frames.Num())
 		{
 			GCon->Logf("Bad sub-model frame index %d", FDef.FrameIndex);
@@ -705,7 +742,7 @@ static void DrawModel(const TVec& Org, const TAVec& Angles,
 
 		//	Get the proper skin texture ID.
 		int SkinID;
-		if (Skin && *Skin)
+		if (SubMdl.UseSkin && Skin && *Skin)
 		{
 			SkinID = GTextureManager.AddFileTexture(VName(Skin), TEXTYPE_Skin);
 		}
@@ -735,11 +772,21 @@ static void DrawModel(const TVec& Org, const TAVec& Angles,
 			F.Index = 0;
 		}
 
+		//	Position
+		TVec Md2Org = Org;
+
+		//	Angle
 		TAVec Md2Angle = Angles;
 		if (FDef.AngleStart || FDef.AngleEnd != 1.0)
 		{
 			Md2Angle.yaw = AngleMod(Md2Angle.yaw + FDef.AngleStart +
 				(FDef.AngleEnd - FDef.AngleStart) * Inter);
+		}
+
+		//	Position model
+		if (SubMdl.PositionModel)
+		{
+			PositionModel(Md2Org, Md2Angle, SubMdl.PositionModel, F.PositionIndex);
 		}
 
 		//	Alpha
@@ -754,7 +801,7 @@ static void DrawModel(const TVec& Org, const TAVec& Angles,
 			Md2Alpha *= F.AlphaStart + (F.AlphaEnd - F.AlphaStart) * Inter;
 		}
 
-		Drawer->DrawAliasModel(Org, Md2Angle, F.Offset, F.Scale, pmdl,
+		Drawer->DrawAliasModel(Md2Org, Md2Angle, F.Offset, F.Scale, pmdl,
 			Md2Frame, SkinID, Light, Md2Alpha, IsViewModel);
 	}
 	unguard;
@@ -767,7 +814,7 @@ static void DrawModel(const TVec& Org, const TAVec& Angles,
 //==========================================================================
 
 bool R_DrawAliasModel(const TVec& Org, const TAVec& Angles, VModel* Mdl,
-	int Frame, const char* Skin, vuint32 Light, float Alpha,
+	int Frame, const char* Skin, int Version, vuint32 Light, float Alpha,
 	bool IsViewModel, float Inter)
 {
 	guard(R_DrawAliasModel);
@@ -785,8 +832,8 @@ bool R_DrawAliasModel(const TVec& Org, const TAVec& Angles, VModel* Mdl,
 		return false;
 	}
 
-	DrawModel(Org, Angles, *SMdl->DefaultClass, FIdx, Skin, Light, Alpha,
-		IsViewModel, Inter);
+	DrawModel(Org, Angles, *SMdl->DefaultClass, FIdx, Skin, Version, Light,
+		Alpha, IsViewModel, Inter);
 	return true;
 	unguard;
 }
@@ -798,7 +845,8 @@ bool R_DrawAliasModel(const TVec& Org, const TAVec& Angles, VModel* Mdl,
 //==========================================================================
 
 bool R_DrawAliasModel(const TVec& Org, const TAVec& Angles, VState* State,
-	const char* Skin, vuint32 Light, float Alpha, bool IsViewModel, float Inter)
+	const char* Skin, int Version, vuint32 Light, float Alpha,
+	bool IsViewModel, float Inter)
 {
 	guard(R_DrawAliasModel);
 	VClassModelScript* Cls = NULL;
@@ -820,8 +868,8 @@ bool R_DrawAliasModel(const TVec& Org, const TAVec& Angles, VState* State,
 		return false;
 	}
 
-	DrawModel(Org, Angles, *Cls, FIdx, Skin, Light, Alpha, IsViewModel,
-		Inter);
+	DrawModel(Org, Angles, *Cls, FIdx, Skin, Version, Light, Alpha,
+		IsViewModel, Inter);
 	return true;
 	unguard;
 }
@@ -832,37 +880,25 @@ bool R_DrawAliasModel(const TVec& Org, const TAVec& Angles, VState* State,
 //
 //==========================================================================
 
-bool R_DrawEntityModel(VEntity* Ent, bool IsWeapon, vuint32 Light,
-	float Alpha, float Inter)
+bool R_DrawEntityModel(VEntity* Ent, vuint32 Light, float Alpha, float Inter)
 {
 	guard(R_DrawEntityModel);
-	if (IsWeapon)
-	{
-		check(Ent->EntityFlags & VEntity::EF_FixedModel);
-		VModel* Mdl = model_precache[Ent->FixedModelIndex];
-		if (!Mdl)
-		{
-			return false;
-		}
-		return R_DrawAliasModel(Ent->Origin, Ent->Angles, Mdl, 1,
-			*skin_list[Ent->ModelSkinNum], Light, Alpha, false, Inter);
-	}
-	else if (Ent->EntityFlags & VEntity::EF_FixedModel)
+	if (Ent->EntityFlags & VEntity::EF_FixedModel)
 	{
 		VModel* Mdl = model_precache[Ent->FixedModelIndex];
 		if (!Mdl)
 		{
 			return false;
 		}
-dprintf("Drawing fixed model %s\n", Mdl->name);
 		return R_DrawAliasModel(Ent->Origin, Ent->Angles, Mdl,
-			Ent->State->InClassIndex, *skin_list[Ent->ModelSkinNum], Light,
-			Alpha, false, Inter);
+			Ent->State->InClassIndex, *skin_list[Ent->ModelSkinNum],
+			Ent->ModelVersion, Light, Alpha, false, Inter);
 	}
 	else
 	{
 		return R_DrawAliasModel(Ent->Origin, Ent->Angles, Ent->State,
-			*skin_list[Ent->ModelSkinNum], Light, Alpha, false, Inter);
+			*skin_list[Ent->ModelSkinNum], Ent->ModelVersion, Light, Alpha,
+			false, Inter);
 	}
 	unguard;
 }
@@ -873,26 +909,10 @@ dprintf("Drawing fixed model %s\n", Mdl->name);
 //
 //==========================================================================
 
-bool R_CheckAliasModelFrame(VEntity* Ent, bool IsWeapon, float Inter)
+bool R_CheckAliasModelFrame(VEntity* Ent, float Inter)
 {
 	guard(R_CheckAliasModelFrame);
-	if (IsWeapon)
-	{
-		check(Ent->EntityFlags & VEntity::EF_FixedModel);
-		VModel* Mdl = model_precache[Ent->FixedModelIndex];
-		if (!Mdl)
-		{
-			return false;
-		}
-		Mod_Extradata(Mdl);
-		if (Mdl->type != MODEL_Script)
-		{
-			Sys_Error("Must use model scripts");
-		}
-		VScriptedModel* SMdl = (VScriptedModel*)Mdl->data;
-		return FindFrame(*SMdl->DefaultClass, 1, Inter) != -1;
-	}
-	else if (Ent->EntityFlags & VEntity::EF_FixedModel)
+	if (Ent->EntityFlags & VEntity::EF_FixedModel)
 	{
 		VModel* Mdl = model_precache[Ent->FixedModelIndex];
 		if (!Mdl)
@@ -973,7 +993,7 @@ void R_DrawModelFrame(const TVec& Origin, float Angle, VModel* Model,
 	Angles.pitch = 0;
 	Angles.roll = 0;
 
-	DrawModel(Origin, Angles, *SMdl->DefaultClass, FIdx, Skin, 0xffffffff,
+	DrawModel(Origin, Angles, *SMdl->DefaultClass, FIdx, Skin, 0, 0xffffffff,
 		1.0, false, 0);
 
 	Drawer->EndView();

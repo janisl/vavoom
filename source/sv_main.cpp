@@ -374,6 +374,8 @@ int SV_GetMobjBits(VEntity &mobj, mobj_base_t &base)
 		bits |= MOB_MODEL;
 	if ((mobj.EntityFlags & VEntity::EF_FixedModel) && mobj.ModelSkinNum)
 		bits |= MOB_SKIN_NUM;
+	if (mobj.ModelVersion)
+		bits |= MOB_MDL_VERSION;
 	if (base.Class != mobj.GetClass())
 	{
 		bits |= MOB_CLASS;
@@ -447,8 +449,8 @@ void SV_WriteMobj(int bits, VEntity &mobj, VMessage &msg)
 		msg << (vuint16)mobj.FixedModelIndex;
 	if (bits & MOB_SKIN_NUM)
 		msg << (vuint8)mobj.ModelSkinNum;
-	if (bits & MOB_WEAPON)
-		msg << (vuint16)mobj.Player->WeaponModel;
+	if (bits & MOB_MDL_VERSION)
+		msg << (vuint8)mobj.ModelVersion;
 	unguard;
 }
 
@@ -479,10 +481,6 @@ void SV_UpdateMobj(int i, VMessage &msg)
 	{
 		//	Clear look angles, because they must not affect model orientation
 		bits &= ~(MOB_ANGLEP | MOB_ANGLER);
-		if (sv_mobjs[i]->Player->WeaponModel)
-		{
-			bits |= MOB_WEAPON;
-		}
 	}
 	if (sendnum > 0xff)
 		bits |= MOB_BIG_NUM;

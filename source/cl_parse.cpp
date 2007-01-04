@@ -51,13 +51,11 @@ void CL_SignonReply();
 
 VEntity**		cl_mobjs;
 clmobjbase_t*	cl_mo_base;
-VEntity*		cl_weapon_mobjs[MAXPLAYERS];
 VModel*			model_precache[1024];
 VStr			skin_list[256];
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static VModel*			weapon_model_precache[1024];
 static VClass*			ClassLookup[MAX_CLASS_LOOKUP];
 
 // CODE --------------------------------------------------------------------
@@ -78,10 +76,6 @@ void CL_Clear()
 			cl_mobjs[i]->ConditionalDestroy();
 	memset(cl_mobjs, 0, sizeof(VEntity*) * GMaxEntities);
 	memset(cl_mo_base, 0, sizeof(clmobjbase_t) * GMaxEntities);
-	for (int i = 0; i < MAXPLAYERS; i++)
-		if (cl_weapon_mobjs[i])
-			cl_weapon_mobjs[i]->ConditionalDestroy();
-	memset(cl_weapon_mobjs, 0, sizeof(cl_weapon_mobjs));
 	memset(cl_dlights, 0, sizeof(cl_dlights));
 	for (int i = 0; i < MAXPLAYERS; i++)
 	{
@@ -99,8 +93,6 @@ void CL_Clear()
 	}
 	for (int i = 0; i < GMaxEntities; i++)
 		cl_mobjs[i] = Spawn<VEntity>();
-	for (int i = 0; i < MAXPLAYERS; i++)
-		cl_weapon_mobjs[i] = Spawn<VEntity>();
 	cls.signon = 0;
 	unguard;
 }
@@ -225,9 +217,14 @@ static void CL_ReadMobj(VMessage& msg, int bits, VEntity*& mobj, const clmobjbas
 		mobj->EntityFlags |= VEntity::EF_FixedModel;
 		mobj->FixedModelIndex = msg.ReadShort();
 	}
-	mobj->ModelSkinNum = 0;
 	if (bits & MOB_SKIN_NUM)
 		mobj->ModelSkinNum = msg.ReadByte();
+	else
+		mobj->ModelSkinNum = 0;
+	if (bits & MOB_MDL_VERSION)
+		mobj->ModelVersion = msg.ReadByte();
+	else
+		mobj->ModelVersion = 0;
 }
 
 static void CL_ParseUpdateMobj(VMessage& msg)
@@ -251,27 +248,6 @@ static void CL_ParseUpdateMobj(VMessage& msg)
 
 	//	Marking mobj in use
 	cl_mobjs[i]->InUse = 2;
-
-	if (bits & MOB_WEAPON && model_precache[cl_mobjs[i]->FixedModelIndex] &&
-		weapon_model_precache[cl_mobjs[i]->FixedModelIndex])
-	{
-		VEntity* ent = cl_mobjs[i];
-		VEntity* wpent = cl_weapon_mobjs[i];
-
-		wpent->InUse = true;
-		wpent->Origin = ent->Origin;
-		wpent->Angles = ent->Angles;
-		wpent->EntityFlags |= VEntity::EF_FixedModel;
-		wpent->FixedModelIndex = msg.ReadShort();
-		wpent->Translucency = ent->Translucency;
-		wpent->State = ent->State;
-
-		R_PositionWeaponModel(wpent, weapon_model_precache[ent->FixedModelIndex], ent->State->InClassIndex);
-	}
-	else if (bits & MOB_WEAPON)
-	{
-		msg.ReadShort();
-	}
 	unguard;
 }
 
@@ -476,14 +452,6 @@ static void CL_ParseTime(VMessage& msg)
 		}
 	}
 
-	for (i = 0; i < MAXPLAYERS; i++)
-	{
-		if (cl_weapon_mobjs[i]->InUse)
-		{
-			cl_weapon_mobjs[i]->InUse--;
-		}
-	}
-
 	R_AnimateSurfaces();
 	msg >> new_time;
 	cl_level.tictime = int(new_time * 35);
@@ -511,22 +479,9 @@ static void CL_ReadFromServerInfo()
 
 static void CL_AddModel(int i, const char *name)
 {
-	weapon_model_precache[i] = NULL;
 	if (FL_FileExists(name))
 	{
 		model_precache[i] = Mod_FindName(name);
-		if (strstr(name, "player.xml"))
-		{
-			VStr wpname = VStr(name).ExtractFilePath() + "weapon.md2";
-			if (FL_FileExists(wpname))
-			{
-				weapon_model_precache[i] = Mod_FindName(*wpname);
-			}
-			else
-			{
-				GCon->Logf("Can't find wepon info model %s", *wpname);
-			}
-		}
 	}
 	else if (VCvar::GetInt("r_models"))
 	{

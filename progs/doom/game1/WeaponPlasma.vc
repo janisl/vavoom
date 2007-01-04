@@ -60,5 +60,5 @@ defaultproperties
 	ReadyState = S_PLASMA;
 	AttackState = S_PLASMA1;
 	FlashState = S_PLASMAFLASH1;
-	ThirdPersonModel = 'weapons/plasma/inhands.xml';
+	PlayerModelVersion = 6;
 }

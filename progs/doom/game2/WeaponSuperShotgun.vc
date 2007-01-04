@@ -122,5 +122,5 @@ defaultproperties
 	ReadyState = S_DSGUN;
 	AttackState = S_DSGUN1;
 	FlashState = S_DSGUNFLASH1;
-	ThirdPersonModel = 'weapons/sshotgun/inhands.xml';
+	PlayerModelVersion = 9;
 }
