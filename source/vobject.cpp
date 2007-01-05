@@ -183,6 +183,24 @@ void VObject::StaticExit()
 //
 //==========================================================================
 
+static void CallDP(VObject* Obj, VClass* Class)
+{
+	guard(CallDP);
+	//	Call default properties of parent class.
+	if (Class->GetSuperClass())
+	{
+		CallDP(Obj, Class->GetSuperClass());
+	}
+
+	//	Call default properties method.
+	if (Class->DefaultProperties)
+	{
+		P_PASS_REF(Obj);
+		VObject::ExecuteFunction(Class->DefaultProperties);
+	}
+	unguard;
+}
+
 VObject* VObject::StaticSpawnObject(VClass* AClass)
 {
 	guard(VObject::StaticSpawnObject);
@@ -208,17 +226,7 @@ VObject* VObject::StaticSpawnObject(VClass* AClass)
 	Obj->vtable = AClass->ClassVTable;
 	Obj->Register();
 
-	//	Find last class having default properties.
-	VClass* DPClass = AClass;
-	while (DPClass && !DPClass->DefaultProperties)
-	{
-		DPClass = DPClass->GetSuperClass();
-	}
-
-	//	Call default properties method.
-	check(DPClass);
-	P_PASS_REF(Obj);
-	ExecuteFunction(DPClass->DefaultProperties);
+	CallDP(Obj, AClass);
 
 	//	We're done.
 	return Obj;

@@ -1439,13 +1439,6 @@ void VMethod::Emit()
 		return;
 	}
 
-	//  Call parent constructor
-	if (this == ec.SelfClass->DefaultProperties && ec.SelfClass->ParentClass)
-	{
-		ec.AddStatement(OPC_LocalValue0);
-		ec.AddStatement(OPC_Call, ec.SelfClass->ParentClass->DefaultProperties);
-	}
-
 	Statement->Emit(ec);
 
 	if (ReturnType.type == ev_void)
