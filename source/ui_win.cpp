@@ -56,8 +56,8 @@ IMPLEMENT_CLASS(V, Window);
 
 VWindow::VWindow()
 : WindowType(WIN_Normal)
-, WindowFlags(WF_IsVisible | WF_IsSensitive)
 {
+	WindowFlags |= WF_IsVisible | WF_IsSensitive;
 }
 
 //==========================================================================

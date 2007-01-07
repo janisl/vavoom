@@ -34,6 +34,12 @@ enum EClassObjectFlags
 
 enum ENativeConstructor		{EC_NativeConstructor};
 
+struct VObjectDelegate
+{
+	VObject*		Obj;
+	VMethod*		Func;
+};
+
 //==========================================================================
 //
 //	VMemberBase
@@ -145,9 +151,10 @@ public:
 
 	void Serialise(VStream&);
 
-	static void SerialiseFieldValue(VStream&, byte*, const VField::FType&);
-	static void CleanField(byte*, const VField::FType&);
-	static void DestructField(byte*, const VField::FType&);
+	static void CopyFieldValue(const vuint8*, vuint8*, const VField::FType&);
+	static void SerialiseFieldValue(VStream&, vuint8*, const VField::FType&);
+	static void CleanField(vuint8*, const VField::FType&);
+	static void DestructField(vuint8*, const VField::FType&);
 
 	friend inline VStream& operator<<(VStream& Strm, VField*& Obj)
 	{ return Strm << *(VMemberBase**)&Obj; }
@@ -241,7 +248,11 @@ class VConstant : public VMemberBase
 {
 public:
 	vuint8		Type;
-	vint32		Value;
+	union
+	{
+		vint32	Value;
+		float	FloatValue;
+	};
 
 	VConstant(VName);
 
@@ -277,9 +288,10 @@ public:
 	void CalcFieldOffsets();
 	void InitReferences();
 	void InitDestructorFields();
-	void SerialiseObject(VStream&, byte*);
-	void CleanObject(byte*);
-	void DestructObject(byte*);
+	void CopyObject(const vuint8*, vuint8*);
+	void SerialiseObject(VStream&, vuint8*);
+	void CleanObject(vuint8*);
+	void DestructObject(vuint8*);
 
 	friend inline VStream& operator<<(VStream& Strm, VStruct*& Obj)
 	{ return Strm << *(VMemberBase**)&Obj; }
@@ -328,6 +340,8 @@ public:
 	VField*			DestructorFields;
 	VState*			States;
 	VMethod*		DefaultProperties;
+
+	vuint8*			Defaults;
 
 	vint32			NetId;
 	TArray<VState*>	StatesLookup;
@@ -383,10 +397,7 @@ public:
 	int GetFunctionIndex(VName InName);
 	VState* FindState(VName InName);
 	VState* FindStateChecked(VName InName);
-	void CalcFieldOffsets();
-	void InitReferences();
-	void InitDestructorFields();
-	void CreateVTable();
+	void CopyObject(const vuint8*, vuint8*);
 	void SerialiseObject(VStream&, VObject*);
 	void CleanObject(VObject*);
 	void DestructObject(VObject*);
@@ -395,6 +406,14 @@ public:
 	void PostLoad();
 	void Shutdown();
 
+private:
+	void CalcFieldOffsets();
+	void InitReferences();
+	void InitDestructorFields();
+	void CreateVTable();
+	void CreateDefaults();
+
+public:
 	friend inline VStream& operator<<(VStream& Strm, VClass*& Obj)
 	{ return Strm << *(VMemberBase**)&Obj; }
 };

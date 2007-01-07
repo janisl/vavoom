@@ -99,6 +99,10 @@ class VClientGameBase : public VObject
 	float				time;
 	float				oldtime;
 
+	VClientGameBase()
+	: serverinfo(E_NoInit)
+	{}
+
 	void eventRootWindowCreated()
 	{
 		P_PASS_SELF;

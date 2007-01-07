@@ -78,7 +78,6 @@ struct VViewState
 class VBasePlayer : public VObject
 {
 	DECLARE_CLASS(VBasePlayer, VObject, 0)
-	NO_DEFAULT_CONSTRUCTOR(VBasePlayer)
 
 	VLevelInfo*		Level;
 
@@ -162,6 +161,11 @@ class VBasePlayer : public VObject
 	int				ClientNum;		// cl_mobjs[cl.clientnum] = player
 
 	float			ViewEntAlpha;
+
+	VBasePlayer()
+	: UserInfo(E_NoInit)
+	, PlayerName(E_NoInit)
+	{}
 
 	void SetViewState(int, VState*);
 	void AdvanceViewStates(float);

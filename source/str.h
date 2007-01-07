@@ -38,8 +38,9 @@ public:
 	//	Constructors.
 	VStr()
 	: Str(NULL)
-	{
-	}
+	{}
+	VStr(ENoInit)
+	{}
 	VStr(const char* InStr)
 	: Str(NULL)
 	{

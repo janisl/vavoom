@@ -183,30 +183,16 @@ void VObject::StaticExit()
 //
 //==========================================================================
 
-static void CallDP(VObject* Obj, VClass* Class)
-{
-	guard(CallDP);
-	//	Call default properties of parent class.
-	if (Class->GetSuperClass())
-	{
-		CallDP(Obj, Class->GetSuperClass());
-	}
-
-	//	Call default properties method.
-	if (Class->DefaultProperties)
-	{
-		P_PASS_REF(Obj);
-		VObject::ExecuteFunction(Class->DefaultProperties);
-	}
-	unguard;
-}
-
 VObject* VObject::StaticSpawnObject(VClass* AClass)
 {
 	guard(VObject::StaticSpawnObject);
 	check(AClass);
 	//	Allocate memory.
 	VObject* Obj = (VObject*)Z_Calloc(AClass->ClassSize);
+
+	//	Copy values from the default object.
+	check(AClass->Defaults);
+	AClass->CopyObject(AClass->Defaults, (vuint8*)Obj);
 
 	//	Find native class.
 	VClass* NativeClass = AClass;
@@ -225,8 +211,6 @@ VObject* VObject::StaticSpawnObject(VClass* AClass)
 	Obj->Class = AClass;
 	Obj->vtable = AClass->ClassVTable;
 	Obj->Register();
-
-	CallDP(Obj, AClass);
 
 	//	We're done.
 	return Obj;

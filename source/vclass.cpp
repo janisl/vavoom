@@ -373,10 +373,10 @@ VPackage* VMemberBase::StaticLoadPackage(VName InName)
 	crc.Init();
 	for (i = 0; i < Reader->TotalSize(); i++)
 	{
-		crc + Streamer<byte>(*Reader);
+		crc + Streamer<vuint8>(*Reader);
 	}
 
-	// byte swap the header
+	// Read the header
 	Reader->Seek(0);
 	Reader->Serialise(Progs.magic, 4);
 	for (i = 1; i < (int)sizeof(Progs) / 4; i++)
@@ -483,6 +483,28 @@ VPackage* VMemberBase::StaticLoadPackage(VName InName)
 	for (i = 0; i < Progs.num_exports; i++)
 	{
 		Exports[i].Obj->PostLoad();
+	}
+
+	//	Create default objects.
+	for (i = 0; i < Progs.num_exports; i++)
+	{
+		if (Exports[i].Obj->MemberType == MEMBER_Class)
+		{
+			((VClass*)Exports[i].Obj)->CreateDefaults();
+		}
+	}
+
+	if (InName == "engine")
+	{
+		for (VClass* Cls = GClasses; Cls; Cls = Cls->LinkNext)
+		{
+			if (!Cls->Outer)
+			{
+				Cls->PostLoad();
+				Cls->CreateDefaults();
+				Cls->Outer = Pkg;
+			}
+		}
 	}
 
 	delete Reader;
@@ -620,7 +642,7 @@ VStream& operator<<(VStream& Strm, VField::FType& T)
 {
 	guard(operator VStream << FType);
 	Strm << T.Type;
-	byte RealType = T.Type;
+	vuint8 RealType = T.Type;
 	if (RealType == ev_array)
 	{
 		Strm << T.ArrayInnerType
@@ -647,13 +669,91 @@ VStream& operator<<(VStream& Strm, VField::FType& T)
 
 //==========================================================================
 //
+//	VField::CopyFieldValue
+//
+//==========================================================================
+
+void VField::CopyFieldValue(const vuint8* Src, vuint8* Dst,
+	const VField::FType& Type)
+{
+	guard(VField::CopyFieldValue);
+	VField::FType IntType;
+	int InnerSize;
+	switch (Type.Type)
+	{
+	case ev_int:
+		*(vint32*)Dst = *(const vint32*)Src;
+		break;
+
+	case ev_float:
+		*(float*)Dst = *(const float*)Src;
+		break;
+
+	case ev_bool:
+		if (*(const vuint32*)Src & Type.BitMask)
+			*(vuint32*)Dst |= Type.BitMask;
+		else
+			*(vuint32*)Dst &= ~Type.BitMask;
+		break;
+
+	case ev_vector:
+		*(TVec*)Dst = *(const TVec*)Src;
+		break;
+
+	case ev_name:
+		*(VName*)Dst = *(const VName*)Src;
+		break;
+
+	case ev_string:
+		*(VStr*)Dst = *(const VStr*)Src;
+		break;
+
+	case ev_pointer:
+		*(void**)Dst = *(void*const*)Src;
+		break;
+
+	case ev_reference:
+		*(VObject**)Dst = *(VObject*const*)Src;
+		break;
+
+	case ev_class:
+		*(VClass**)Dst = *(VClass*const*)Src;
+		break;
+
+	case ev_state:
+		*(VState**)Dst = *(VState*const*)Src;
+		break;
+
+	case ev_delegate:
+		*(VObjectDelegate*)Dst = *(const VObjectDelegate*)Src;
+		break;
+
+	case ev_struct:
+		Type.Struct->CopyObject(Src, Dst);
+		break;
+
+	case ev_array:
+		IntType = Type;
+		IntType.Type = Type.ArrayInnerType;
+		InnerSize = IntType.GetSize();
+		for (int i = 0; i < Type.ArrayDim; i++)
+		{
+			CopyFieldValue(Src + i * InnerSize, Dst + i * InnerSize, IntType);
+		}
+		break;
+	}
+	unguard;
+}
+
+//==========================================================================
+//
 //	VField::SerialiseFieldValue
 //
 //==========================================================================
 
-void VField::SerialiseFieldValue(VStream& Strm, byte* Data, const VField::FType& Type)
+void VField::SerialiseFieldValue(VStream& Strm, vuint8* Data, const VField::FType& Type)
 {
-	guard(SerialiseFieldValue);
+	guard(VField::SerialiseFieldValue);
 	VField::FType IntType;
 	int InnerSize;
 	switch (Type.Type)
@@ -751,19 +851,19 @@ void VField::SerialiseFieldValue(VStream& Strm, byte* Data, const VField::FType&
 		break;
 
 	case ev_delegate:
-		Strm << *(VObject**)Data;
+		Strm << ((VObjectDelegate*)Data)->Obj;
 		if (Strm.IsLoading())
 		{
 			VName FuncName;
 			Strm << FuncName;
-			if (*(VObject**)Data)
-				((VMethod**)Data)[1] = (*(VObject**)Data)->GetVFunction(FuncName);
+			if (((VObjectDelegate*)Data)->Obj)
+				((VObjectDelegate*)Data)->Func = ((VObjectDelegate*)Data)->Obj->GetVFunction(FuncName);
 		}
 		else
 		{
 			VName FuncName = NAME_None;
-			if (*(VObject**)Data)
-				FuncName = ((VMethod**)Data)[1]->Name;
+			if (((VObjectDelegate*)Data)->Obj)
+				FuncName = ((VObjectDelegate*)Data)->Func->Name;
 			Strm << FuncName;
 		}
 		break;
@@ -791,7 +891,7 @@ void VField::SerialiseFieldValue(VStream& Strm, byte* Data, const VField::FType&
 //
 //==========================================================================
 
-void VField::CleanField(byte* Data, const VField::FType& Type)
+void VField::CleanField(vuint8* Data, const VField::FType& Type)
 {
 	guard(CleanField);
 	VField::FType IntType;
@@ -806,10 +906,10 @@ void VField::CleanField(byte* Data, const VField::FType& Type)
 		break;
 
 	case ev_delegate:
-		if (*(VObject**)Data && (*(VObject**)Data)->GetFlags() & _OF_CleanupRef)
+		if (((VObjectDelegate*)Data)->Obj && (((VObjectDelegate*)Data)->Obj->GetFlags() & _OF_CleanupRef))
 		{
-			*(VObject**)Data = NULL;
-			((VMethod**)Data)[1] = NULL;
+			((VObjectDelegate*)Data)->Obj = NULL;
+			((VObjectDelegate*)Data)->Func = NULL;
 		}
 		break;
 
@@ -836,7 +936,7 @@ void VField::CleanField(byte* Data, const VField::FType& Type)
 //
 //==========================================================================
 
-void VField::DestructField(byte* Data, const VField::FType& Type)
+void VField::DestructField(vuint8* Data, const VField::FType& Type)
 {
 	guard(DestructField);
 	VField::FType IntType;
@@ -887,7 +987,7 @@ int VField::FType::GetSize() const
 	case ev_class:		return sizeof(VClass*);
 	case ev_state:		return sizeof(VState*);
 	case ev_bool:		return sizeof(vuint32);
-	case ev_delegate:	return sizeof(VObject*) + sizeof(VMethod*);
+	case ev_delegate:	return sizeof(VObjectDelegate);
 	}
 	return 0;
 	unguard;
@@ -1584,7 +1684,7 @@ void VConstant::Serialise(VStream& Strm)
 	switch (Type)
 	{
 	case ev_float:
-		Strm << *(float*)&Value;
+		Strm << FloatValue;
 		break;
 
 	case ev_name:
@@ -1826,11 +1926,33 @@ void VStruct::InitDestructorFields()
 
 //==========================================================================
 //
+//	VStruct::CopyObject
+//
+//==========================================================================
+
+void VStruct::CopyObject(const vuint8* Src, vuint8* Dst)
+{
+	guard(VStruct::CopyObject);
+	//	Copy parent struct's fields.
+	if (ParentStruct)
+	{
+		ParentStruct->CopyObject(Src, Dst);
+	}
+	//	Copy fields.
+	for (VField* F = Fields; F; F = F->Next)
+	{
+		VField::CopyFieldValue(Src + F->Ofs, Dst + F->Ofs, F->Type);
+	}
+	unguardf(("(%s)", *Name));
+}
+
+//==========================================================================
+//
 //	VStruct::SerialiseObject
 //
 //==========================================================================
 
-void VStruct::SerialiseObject(VStream& Strm, byte* Data)
+void VStruct::SerialiseObject(VStream& Strm, vuint8* Data)
 {
 	guard(VStruct::SerialiseObject);
 	//	Serialise parent struct's fields.
@@ -1857,7 +1979,7 @@ void VStruct::SerialiseObject(VStream& Strm, byte* Data)
 //
 //==========================================================================
 
-void VStruct::CleanObject(byte* Data)
+void VStruct::CleanObject(vuint8* Data)
 {
 	guard(VStruct::CleanObject);
 	for (VField* F = ReferenceFields; F; F = F->NextReference)
@@ -1873,7 +1995,7 @@ void VStruct::CleanObject(byte* Data)
 //
 //==========================================================================
 
-void VStruct::DestructObject(byte* Data)
+void VStruct::DestructObject(vuint8* Data)
 {
 	guard(VStruct::DestructObject);
 	for (VField* F = DestructorFields; F; F = F->DestructorLink)
@@ -1915,6 +2037,7 @@ VClass::VClass(VName AName)
 , ReferenceFields(0)
 , States(0)
 , DefaultProperties(0)
+, Defaults(0)
 , NetId(-1)
 {
 	guard(VClass::VClass);
@@ -1944,6 +2067,7 @@ VClass::VClass(ENativeConstructor, size_t ASize, vuint32 AClassFlags,
 , ReferenceFields(0)
 , States(0)
 , DefaultProperties(0)
+, Defaults(0)
 , NetId(-1)
 {
 	guard(native VClass::VClass);
@@ -1964,6 +2088,11 @@ VClass::~VClass()
 	if (ClassVTable)
 	{
 		delete[] ClassVTable;
+	}
+	if (Defaults)
+	{
+		DestructObject((VObject*)Defaults);
+		delete[] Defaults;
 	}
 
 	if (!GObjInitialised)
@@ -2007,6 +2136,12 @@ void VClass::Shutdown()
 	{
 		delete[] ClassVTable;
 		ClassVTable = NULL;
+	}
+	if (Defaults)
+	{
+		DestructObject((VObject*)Defaults);
+		delete[] Defaults;
+		Defaults = NULL;
 	}
 	unguard;
 }
@@ -2235,6 +2370,13 @@ void VClass::PostLoad()
 void VClass::CalcFieldOffsets()
 {
 	guard(VClass::CalcFieldOffsets);
+	//	Skip this for C++ only classes.
+	if (!Outer && (ObjectFlags & CLASSOF_Native))
+	{
+		ClassNumMethods = ParentClass ? ParentClass->ClassNumMethods : 0;
+		return;
+	}
+
 	int PrevSize = ClassSize;
 	int size = ParentClass ? ParentClass->ClassSize : 0;
 	int numMethods = ParentClass ? ParentClass->ClassNumMethods : 0;
@@ -2445,6 +2587,66 @@ void VClass::CreateVTable()
 
 //==========================================================================
 //
+//	VClass::CreateDefaults
+//
+//==========================================================================
+
+void VClass::CreateDefaults()
+{
+	guard(VClass::CreateDefaults);
+	if (Defaults)
+	{
+		return;
+	}
+
+	if (ParentClass && !ParentClass->Defaults)
+	{
+		ParentClass->CreateDefaults();
+	}
+
+	//	Allocate memory.
+	Defaults = new vuint8[ClassSize];
+	memset(Defaults, 0, ClassSize);
+
+	//	Copy default properties from the parent class.
+	if (ParentClass)
+	{
+		ParentClass->CopyObject(ParentClass->Defaults, Defaults);
+	}
+
+	//	Call default properties method.
+	if (DefaultProperties)
+	{
+		P_PASS_REF((VObject*)Defaults);
+		VObject::ExecuteFunction(DefaultProperties);
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VClass::CopyObject
+//
+//==========================================================================
+
+void VClass::CopyObject(const vuint8* Src, vuint8* Dst)
+{
+	guard(VClass::CopyObject);
+	//	Copy parent class fields.
+	if (GetSuperClass())
+	{
+		GetSuperClass()->CopyObject(Src, Dst);
+	}
+	//	Copy fields.
+	for (VField* F = Fields; F; F = F->Next)
+	{
+		VField::CopyFieldValue(Src + F->Ofs, Dst + F->Ofs, F->Type);
+	}
+	unguardf(("(%s)", GetName()));
+}
+
+//==========================================================================
+//
 //	VClass::SerialiseObject
 //
 //==========================================================================
@@ -2465,7 +2667,7 @@ void VClass::SerialiseObject(VStream& Strm, VObject* Obj)
 		{
 			continue;
 		}
-		VField::SerialiseFieldValue(Strm, (byte*)Obj + F->Ofs, F->Type);
+		VField::SerialiseFieldValue(Strm, (vuint8*)Obj + F->Ofs, F->Type);
 	}
 	unguardf(("(%s)", GetName()));
 }
@@ -2481,7 +2683,7 @@ void VClass::CleanObject(VObject* Obj)
 	guard(VClass::CleanObject);
 	for (VField* F = ReferenceFields; F; F = F->NextReference)
 	{
-		VField::CleanField((byte*)Obj + F->Ofs, F->Type);
+		VField::CleanField((vuint8*)Obj + F->Ofs, F->Type);
 	}
 	unguardf(("(%s)", GetName()));
 }
@@ -2497,7 +2699,7 @@ void VClass::DestructObject(VObject* Obj)
 	guard(VClass::DestructObject);
 	for (VField* F = DestructorFields; F; F = F->DestructorLink)
 	{
-		VField::DestructField((byte*)Obj + F->Ofs, F->Type);
+		VField::DestructField((vuint8*)Obj + F->Ofs, F->Type);
 	}
 	unguardf(("(%s)", GetName()));
 }
