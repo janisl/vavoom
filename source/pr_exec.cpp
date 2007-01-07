@@ -1533,6 +1533,24 @@ func_loop:
 			ip += 1 + sizeof(void*);
 			PR_VM_BREAK;
 
+		PR_VM_CASE(OPC_GetDefaultObj)
+			ip++;
+			if (!sp[-1].p)
+			{
+				Sys_Error("Reference not set to an instance of an object");
+			}
+			sp[-1].p = ((VObject*)sp[-1].p)->GetClass()->Defaults;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_GetClassDefaultObj)
+			ip++;
+			if (!sp[-1].p)
+			{
+				Sys_Error("Reference not set to an instance of an object");
+			}
+			sp[-1].p = ((VClass*)sp[-1].p)->Defaults;
+			PR_VM_BREAK;
+
 		PR_VM_DEFAULT
 			Sys_Error("Invalid opcode %d", *ip);
 		}

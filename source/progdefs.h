@@ -342,6 +342,10 @@ enum
 	DECLARE_OPC(DynamicCast, Member),
 	DECLARE_OPC(DynamicClassCast, Member),
 
+	//	Access to the default object
+	DECLARE_OPC(GetDefaultObj, None),
+	DECLARE_OPC(GetClassDefaultObj, None),
+
 #undef DECLARE_OPC
 #ifndef OPCODE_INFO
 	NUM_OPCODES

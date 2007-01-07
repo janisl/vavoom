@@ -54,6 +54,7 @@ public:
 	virtual bool IsFloatConst() const;
 	virtual vint32 GetIntConst() const;
 	virtual float GetFloatConst() const;
+	virtual bool IsDefaultObject() const;
 	virtual VExpression* CreateTypeExprCopy();
 	virtual bool AddDropResult();
 };
@@ -260,6 +261,24 @@ public:
 	~VDotField();
 	VExpression* DoResolve(VEmitContext&);
 	void Emit(VEmitContext&);
+};
+
+//==========================================================================
+//
+//	VDefaultObject
+//
+//==========================================================================
+
+class VDefaultObject : public VExpression
+{
+public:
+	VExpression*		op;
+
+	VDefaultObject(VExpression*, const TLocation&);
+	~VDefaultObject();
+	VExpression* DoResolve(VEmitContext&);
+	void Emit(VEmitContext&);
+	bool IsDefaultObject() const;
 };
 
 //==========================================================================

@@ -302,6 +302,25 @@ VExpression* VParser::ParseExpressionPriority0()
 		return new VSingleName(Name, l);
 	}
 
+	case TK_Default:
+	{
+		VExpression* Expr = new VDefaultObject(new VSelf(l), l);
+		Lex.NextToken();
+		Lex.Expect(TK_Dot);
+		if (Lex.Token != TK_Identifier)
+		{
+			ParseError(Lex.Location, "Invalid identifier, field name expacted");
+		}
+		VName FieldName = Lex.Name;
+		TLocation Loc = Lex.Location;
+		Lex.NextToken();
+		if (Lex.Check(TK_LParen))
+		{
+			ParseError(Lex.Location, "Tried to call method on a default object");
+		}
+		return new VDotField(Expr, FieldName, Loc);
+	}
+
 	case TK_Class:
 	{
 		Lex.NextToken();
@@ -361,6 +380,11 @@ VExpression* VParser::ParseExpressionPriority1()
 		}
 		else if (Lex.Check(TK_Dot))
 		{
+			if (Lex.Check(TK_Default))
+			{
+				Lex.Expect(TK_Dot);
+				op = new VDefaultObject(op, l);
+			}
 			if (Lex.Token != TK_Identifier)
 			{
 				ParseError(Lex.Location, "Invalid identifier, field name expacted");
@@ -372,6 +396,10 @@ VExpression* VParser::ParseExpressionPriority1()
 				Lex.NextToken();
 				if (Lex.Check(TK_LParen))
 				{
+					if (op->IsDefaultObject())
+					{
+						ParseError(Lex.Location, "Tried to call method on a default object");
+					}
 					op = ParseDotMethodCall(op, FieldName, Loc);
 				}
 				else

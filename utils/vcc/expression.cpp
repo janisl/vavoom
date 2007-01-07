@@ -484,6 +484,17 @@ float VExpression::GetFloatConst() const
 
 //==========================================================================
 //
+//	VExpression::IsDefaultObject
+//
+//==========================================================================
+
+bool VExpression::IsDefaultObject() const
+{
+	return false;
+}
+
+//==========================================================================
+//
 //	VExpression::CreateTypeExprCopy
 //
 //==========================================================================
@@ -1331,7 +1342,8 @@ VExpression* VDotField::DoResolve(VEmitContext& ec)
 				delete this;
 				return NULL;
 			}
-			VExpression* e = new VFieldAccess(op, field, Loc, 0);
+			VExpression* e = new VFieldAccess(op, field, Loc,
+				op->IsDefaultObject() ? FIELD_ReadOnly : 0);
 			op = NULL;
 			delete this;
 			return e->Resolve(ec);
@@ -1355,7 +1367,7 @@ VExpression* VDotField::DoResolve(VEmitContext& ec)
 		delete this;
 		return e->Resolve(ec);
 	}
-	ParseError(Loc, "Reference, struc or vector expected on left side of .");
+	ParseError(Loc, "Reference, struct or vector expected on left side of .");
 	delete this;
 	return NULL;
 }
@@ -1369,6 +1381,102 @@ VExpression* VDotField::DoResolve(VEmitContext& ec)
 void VDotField::Emit(VEmitContext&)
 {
 	ParseError(Loc, "Should not happen");
+}
+
+//END
+
+//BEGIN VDefaultObject
+
+//==========================================================================
+//
+//	VDefaultObject::VDefaultObject
+//
+//==========================================================================
+
+VDefaultObject::VDefaultObject(VExpression* AOp, const TLocation& ALoc)
+: VExpression(ALoc)
+, op(AOp)
+{
+}
+
+//==========================================================================
+//
+//	VDefaultObject::~VDefaultObject
+//
+//==========================================================================
+
+VDefaultObject::~VDefaultObject()
+{
+	if (op)
+		delete op;
+}
+
+//==========================================================================
+//
+//	VDefaultObject::DoResolve
+//
+//==========================================================================
+
+VExpression* VDefaultObject::DoResolve(VEmitContext& ec)
+{
+	if (op)
+		op = op->Resolve(ec);
+	if (!op)
+	{
+		delete this;
+		return NULL;
+	}
+
+	if (op->Type.type == ev_reference)
+	{
+		Type = op->Type;
+		return this;
+	}
+	else if (op->Type.type == ev_class)
+	{
+		if (!op->Type.Class)
+		{
+			ParseError(Loc, "A typed class value required");
+			delete this;
+			return NULL;
+		}
+		Type = TType(op->Type.Class);
+		return this;
+	}
+
+	ParseError(Loc, "Reference or class expected on left side of default");
+	delete this;
+	return NULL;
+}
+
+//==========================================================================
+//
+//	VDefaultObject::Emit
+//
+//==========================================================================
+
+void VDefaultObject::Emit(VEmitContext& ec)
+{
+	op->Emit(ec);
+	if (op->Type.type == ev_reference)
+	{
+		ec.AddStatement(OPC_GetDefaultObj);
+	}
+	else if (op->Type.type == ev_class)
+	{
+		ec.AddStatement(OPC_GetClassDefaultObj);
+	}
+}
+
+//==========================================================================
+//
+//	VDefaultObject::IsDefaultObject
+//
+//==========================================================================
+
+bool VDefaultObject::IsDefaultObject() const
+{
+	return true;
 }
 
 //END
