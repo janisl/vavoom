@@ -111,7 +111,7 @@ static void CL_ReadMobjBase(VMessage& msg, clmobjbase_t &mobj)
 	mobj.angles.pitch = ByteToAngle(msg.ReadByte());
 	mobj.angles.roll = ByteToAngle(msg.ReadByte());
 	mobj.spritetype = msg.ReadByte();
-	mobj.translucency = msg.ReadByte();
+	mobj.Alpha = (float)msg.ReadByte() / 255.0;
 	mobj.translation = msg.ReadByte();
 	mobj.effects = msg.ReadByte();
 	unguard;
@@ -200,9 +200,9 @@ static void CL_ReadMobj(VMessage& msg, int bits, VEntity*& mobj, const clmobjbas
 	else
 		mobj->EntityFlags &= ~VEntity::EF_FullBright;
 	if (bits & MOB_TRANSLUC)
-		mobj->Translucency = msg.ReadByte();
+		mobj->Alpha = (float)msg.ReadByte() / 255.0;
 	else
-		mobj->Translucency = base.translucency;
+		mobj->Alpha = base.Alpha;
 	if (bits & MOB_TRANSL)
 		mobj->Translation = msg.ReadByte();
 	else
@@ -291,7 +291,7 @@ static void CL_ParseViewData(VMessage& msg)
 		>> cl->ViewOrg.z;
 	cl->ExtraLight = msg.ReadByte();
 	cl->FixedColourmap = msg.ReadByte();
-	cl->ViewEntTranslucency = msg.ReadByte();
+	cl->ViewEntAlpha = (float)msg.ReadByte() / 255.0;
 	cl->PSpriteSY = msg.ReadShort();
 
 	for (i = 0; i < NUMPSPRITES; i++)
@@ -765,11 +765,11 @@ static void CL_ReadFromUserInfo(int)
 //
 //==========================================================================
 
-static void CL_ParseLineTransuc(VMessage& msg)
+static void CL_ParseLineAlpha(VMessage& msg)
 {
 	int i = msg.ReadShort();
 	int fuzz = msg.ReadByte();
-	GClLevel->Lines[i].translucency = fuzz;
+	GClLevel->Lines[i].alpha = fuzz / 255.0;
 }
 
 //==========================================================================
@@ -869,7 +869,7 @@ void CL_ParseServerMessage(VMessage& msg)
 	TVec		origin;
 	float		radius;
 	vuint32		colour;
-	int			trans;
+	float		alpha;
 	sector_t*	sec;
 
 	msg.BeginReading();
@@ -1132,18 +1132,18 @@ void CL_ParseServerMessage(VMessage& msg)
 			break;
 
 		case svc_line_transluc:
-			CL_ParseLineTransuc(msg);
+			CL_ParseLineAlpha(msg);
 			break;
 
 		case svc_sec_transluc:
 			i = msg.ReadShort();
-			trans = msg.ReadByte();
+			alpha = msg.ReadByte() / 255.0;
 			sec = &GClLevel->Sectors[i];
-			sec->floor.translucency = trans;
-			sec->ceiling.translucency = trans;
+			sec->floor.Alpha = alpha;
+			sec->ceiling.Alpha = alpha;
 			for (i = 0; i < sec->linecount; i++)
 			{
-				sec->lines[i]->translucency = trans;
+				sec->lines[i]->alpha = alpha;
 			}
 			break;
 

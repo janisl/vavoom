@@ -103,7 +103,7 @@ class VEntity : public VThinker
 	int				ModelSkinNum;
 	int				ModelVersion;
 
-	int				Translucency;
+	float			Alpha;
 	int				Translation;
 
 	float			FloorClip;		// value to use for floor clipping

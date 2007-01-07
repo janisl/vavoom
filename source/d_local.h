@@ -174,9 +174,9 @@ public:
 	void BeginSky();
 	void DrawSkyPolygon(surface_t*, bool, int, float, int, float);
 	void EndSky();
-	void DrawMaskedPolygon(surface_t*, int);
-	void DrawSpritePolygon(TVec*, int, int, int, vuint32, const TVec&, float,
-		const TVec&, const TVec&, const TVec&);
+	void DrawMaskedPolygon(surface_t*, float);
+	void DrawSpritePolygon(TVec*, int, float, int, vuint32, const TVec&,
+		float, const TVec&, const TVec&, const TVec&);
 	void DrawAliasModel(const TVec&, const TAVec&, const TVec&, const TVec&,
 		mmdl_t*, int, int, vuint32, float, bool);
 
@@ -186,11 +186,11 @@ public:
 	void EndParticles();
 
 	//	Drawing
-	void DrawPic(float, float, float, float, float, float, float, float, int, int);
-	void DrawPicShadow(float, float, float, float, float, float, float, float, int, int);
+	void DrawPic(float, float, float, float, float, float, float, float, int, float);
+	void DrawPicShadow(float, float, float, float, float, float, float, float, int, float);
 	void FillRectWithFlat(float, float, float, float, float, float, float, float, const char*);
 	void FillRect(float, float, float, float, vuint32);
-	void ShadeRect(int, int, int, int, int);
+	void ShadeRect(int, int, int, int, float);
 	void DrawConsoleBackground(int);
 	void DrawSpriteLump(float, float, float, float, int, int, bool);
 
@@ -247,7 +247,7 @@ protected:
 	void SpriteCaclulateGradients(int, const TVec&, float, const TVec&,
 		const TVec&, const TVec&);
 	void MaskedSurfCaclulateGradients(surface_t*);
-	void SpriteDrawPolygon(TVec*, int, surface_t*, int, int, int, vuint32,
+	void SpriteDrawPolygon(TVec*, int, surface_t*, int, int, float, vuint32,
 		const TVec&, float, const TVec&, const TVec&, const TVec&);
 
 	//	Drawing of the aliased models, i.e. md2
@@ -269,7 +269,7 @@ protected:
 	static void DrawPicSpanShadow_8(fixed_t, fixed_t, fixed_t, int, byte*, void*);
 	static void DrawFlatSpan_8(fixed_t, fixed_t, fixed_t, int, byte*, void*);
 	static void FillRect_8(float, float, float, float, vuint32);
-	static void ShadeRect_8(int, int, int, int, int);
+	static void ShadeRect_8(int, int, int, int, float);
 	static void DrawConsoleBackground_8(int);
 	static void PutDot_8(int, int, vuint32);
 	static void DrawPicSpan_16(fixed_t, fixed_t, fixed_t, int, byte*, void*);
@@ -278,7 +278,7 @@ protected:
 	static void DrawPicSpanShadow_16(fixed_t, fixed_t, fixed_t, int, byte*, void*);
 	static void DrawFlatSpan_16(fixed_t, fixed_t, fixed_t, int, byte*, void*);
 	static void FillRect_16(float, float, float, float, vuint32);
-	static void ShadeRect_16(int, int, int, int, int);
+	static void ShadeRect_16(int, int, int, int, float);
 	static void DrawConsoleBackground_16(int);
 	static void PutDot_16(int, int, vuint32);
 	static void DrawPicSpan_32(fixed_t, fixed_t, fixed_t, int, byte*, void*);
@@ -287,7 +287,7 @@ protected:
 	static void DrawPicSpanShadow_32(fixed_t, fixed_t, fixed_t, int, byte*, void*);
 	static void DrawFlatSpan_32(fixed_t, fixed_t, fixed_t, int, byte*, void*);
 	static void FillRect_32(float, float, float, float, vuint32);
-	static void ShadeRect_32(int, int, int, int, int);
+	static void ShadeRect_32(int, int, int, int, float);
 	static void DrawConsoleBackground_32(int);
 	static void PutDot_32(int, int, vuint32);
 	static void DrawPic(float, float, float, float, float, float, float, float);

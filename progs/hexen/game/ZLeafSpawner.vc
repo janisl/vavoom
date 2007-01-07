@@ -62,7 +62,7 @@ defaultproperties
 	Radius = 20.0;
 	Height = 16.0;
 	Mass = 100.0;
-	Translucency = 100;
+	Alpha = 0.0;
 	bHidden = true;
 	bNoBlockmap = true;
 	bNoPassMobj = true;

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class IceGuyMissilePuff:Effect;
+class IceGuyMissilePuff : Effect;
 
 __states__
 {
@@ -38,7 +38,7 @@ defaultproperties
 {
 	Radius = 1.0;
 	Height = 1.0;
-	Translucency = 66;
+	Alpha = 0.333;
 	bDropOff = true;
 	bNoTeleport = true;
 	IdleState = S_ICEFX_PUFF1;

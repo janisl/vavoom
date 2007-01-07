@@ -904,7 +904,7 @@ bool ChickenMorph()
 	chicken = Spawn(Chicken, Origin);
 	chicken.SpecialCID = class<Actor>(Class);
 	chicken.Special1 = ftoi(Player::CHICKENTIME * 35.0) + P_Random();
-	chicken.Translucency = Translucency;
+	chicken.Alpha = Alpha;
 	chicken.Enemy = Enemy;
 	chicken.Angles.yaw = Angles.yaw;
 	chicken.TID = TID;
@@ -1501,7 +1501,7 @@ bool Touch(Entity InOther)
 	if (bMissile)
 	{
 		// Check for passing through a ghost
-		if (Other.Translucency && bThruGhost)
+		if (Other.Alpha < 1.0 && bThruGhost)
 		{
 			return true;
 		}
@@ -2586,7 +2586,7 @@ Actor SpawnMissile(Actor dest, class<Actor> type)
 	}
 	A.Instigator = self;	// Originator
 	dir = dest.Origin - Origin;
-	if (dest.Translucency)
+	if (dest.Alpha < 1.0)
 	{
 		// Invisible target
 		VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0);
@@ -3141,7 +3141,7 @@ bool LookForPlayers(bool allaround)
 					continue;	// behind back
 			}
 		}
-		if (P.MO.Translucency)
+		if (P.MO.Alpha < 1.0)
 		{
 			// Player is invisible
 			if ((DistTo(P.MO) > 2.0 * MELEERANGE) &&
@@ -3888,7 +3888,7 @@ bool PTR_ShootTraverse(intercept_t * in)
 	hit_point -= 10.0 * shoot_dir;
 
 	//  check for physical attacks on a ghost
-	if (th.Translucency && Player(Player).ReadyWeapon == wp_staff)
+	if (th.Alpha < 1.0 && Player(Player).ReadyWeapon == wp_staff)
 	{
 		return true;
 	}
@@ -4028,7 +4028,7 @@ void A_Explode()
 	{
 		// Time Bombs
 		Origin.z += 32.0;
-		Translucency = 0;
+		Alpha = 1.0;
 	}
 	else if (Class == MinotaurFloorFire)
 	{

@@ -102,8 +102,8 @@ public:
 	virtual void BeginSky() = 0;
 	virtual void DrawSkyPolygon(surface_t*, bool, int, float, int, float) = 0;
 	virtual void EndSky() = 0;
-	virtual void DrawMaskedPolygon(surface_t*, int) = 0;
-	virtual void DrawSpritePolygon(TVec*, int, int, int, vuint32,
+	virtual void DrawMaskedPolygon(surface_t*, float) = 0;
+	virtual void DrawSpritePolygon(TVec*, int, float, int, vuint32,
 		const TVec&, float, const TVec&, const TVec&, const TVec&) = 0;
 	virtual void DrawAliasModel(const TVec&, const TAVec&, const TVec&,
 		const TVec&, mmdl_t*, int, int, vuint32, float, bool) = 0;
@@ -115,13 +115,13 @@ public:
 
 	//	Drawing
 	virtual void DrawPic(float, float, float, float, float, float, float,
-		float, int, int) = 0;
+		float, int, float) = 0;
 	virtual void DrawPicShadow(float, float, float, float, float, float,
-		float, float, int, int) = 0;
+		float, float, int, float) = 0;
 	virtual void FillRectWithFlat(float, float, float, float, float, float,
 		float, float, const char*) = 0;
 	virtual void FillRect(float, float, float, float, vuint32) = 0;
-	virtual void ShadeRect(int, int, int, int, int) = 0;
+	virtual void ShadeRect(int, int, int, int, float) = 0;
 	virtual void DrawConsoleBackground(int) = 0;
 	virtual void DrawSpriteLump(float, float, float, float, int, int, bool) = 0;
 

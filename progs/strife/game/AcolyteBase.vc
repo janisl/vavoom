@@ -38,7 +38,7 @@ void A_AcolyteDeath()
 	Actor Other;
 
 	//	Remove any shadowy effects on the Acolyte.
-	Translucency = 0;
+	Alpha = 1.0;
 
 	//	Only the Blue Acolyte does extra stuff on death.
 	if (Class != Acolyte8)

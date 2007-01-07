@@ -36,6 +36,6 @@ __states__
 
 defaultproperties
 {
-	Translucency = 33;
+	Alpha = 0.666;
 	IdleState = S_PUFF1;
 }

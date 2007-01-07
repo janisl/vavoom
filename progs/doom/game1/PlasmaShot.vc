@@ -43,7 +43,7 @@ defaultproperties
 	Height = 8.0;
 	Speed = 875.0;
 	MissileDamage = 5;
-	Translucency = 33;
+	Alpha = 0.666;
 	bActivateImpact = true;
 	IdleState = S_PLASBALL;
 	DeathState = S_PLASEXP;

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class DragonFX2:Effect;
+class DragonFX2 : Effect;
 
 __states__
 {
@@ -44,7 +44,7 @@ defaultproperties
 {
 	Radius = 8.0;
 	Height = 8.0;
-	Translucency = 100;
+	Alpha = 0.0;
 	bNoTeleport = true;
 	bFireDamage = true;
 	bNoGravity = false;

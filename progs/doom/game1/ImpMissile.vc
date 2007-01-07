@@ -48,7 +48,7 @@ defaultproperties
 	Height = 8.0;
 	Speed = 350.0;
 	MissileDamage = 3;
-	Translucency = 33;
+	Alpha = 0.666;
 	IdleState = S_TBALL1;
 	DeathState = S_TBALLX1;
 	SightSound = 'imp/attack';

@@ -154,7 +154,7 @@ defaultproperties
 	Height = 8.0;
 	Speed = 7000.0;
 	MissileDamage = 8;
-	Translucency = 100;
+	Alpha = 0.0;
 	bFireDamage = true;
 	bBlaster = true;
 	IdleState = S_CFLAME_MISSILE1;

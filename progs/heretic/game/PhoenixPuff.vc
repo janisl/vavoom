@@ -36,7 +36,7 @@ __states__
 
 defaultproperties
 {
-	Translucency = 33;
+	Alpha = 0.666;
 	bNoTeleport = true;
 	bCannotPush = true;
 	IdleState = S_PHOENIXPUFF1;

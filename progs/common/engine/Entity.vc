@@ -96,7 +96,7 @@ int FixedModelIndex;
 int ModelSkinNum;
 int ModelVersion;
 
-int Translucency;
+float Alpha;
 int Translation;
 
 float FloorClip;	// value to use for floor clipping
@@ -523,6 +523,7 @@ float DistTo2(Entity Other)
 
 defaultproperties
 {
+	Alpha = 1.0;
 	bColideWithThings = true;
 	bColideWithWorld = true;
 	MaxDropoffHeight = 24.0;

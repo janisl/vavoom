@@ -76,7 +76,7 @@ defaultproperties
 	Mass = 1000.0;
 	StepSpeed = 12.0;
 	PainChance = 0.9765625;
-	Translucency = 66;
+	Alpha = 0.333;
 	bSpecial = true;
 	bNoGravity = true;
 	bLookAllAround = true;

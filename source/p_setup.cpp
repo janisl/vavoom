@@ -426,6 +426,7 @@ void VLevel::LoadSectors(int Lump)
 		ss->floor.yoffs = 0;
 		ss->floor.minz = floorheight;
 		ss->floor.maxz = floorheight;
+		ss->floor.Alpha = 1.0;
 		ss->floor.LightSourceSector = -1;
 
 		//	Ceiling
@@ -436,6 +437,7 @@ void VLevel::LoadSectors(int Lump)
 		ss->ceiling.yoffs = 0;
 		ss->ceiling.minz = ceilingheight;
 		ss->ceiling.maxz = ceilingheight;
+		ss->ceiling.Alpha = 1.0;
 		ss->ceiling.LightSourceSector = -1;
 
 		//	Params
@@ -681,6 +683,8 @@ void VLevel::LoadLineDefs2(int Lump, int NumBaseVerts)
 
 void VLevel::SetupLineSides(line_t* ld) const
 {
+	ld->alpha = 1.0;
+
 	CalcLine(ld);
 	if (ld->sidenum[0] == -1)
 	{

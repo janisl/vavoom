@@ -153,7 +153,7 @@ Actor SpawnMissile(Actor dest, class<Actor> type)
 	}
 	th.Instigator = self;	// Originator
 	dir = dest.Origin - Origin;
-	if (dest.Translucency)
+	if (dest.Alpha < 1.0)
 	{
 		// Invisible target
 		VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0);
@@ -186,7 +186,7 @@ Actor SpawnMissileXYZ(TVec org, Actor dest, class<Actor> type)
 	}
 	th.Instigator = self;	// Originator
 	dir = dest.Origin - Origin;
-	if (dest.Translucency)
+	if (dest.Alpha < 1.0)
 	{
 		// Invisible target
 		VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0);
@@ -461,7 +461,7 @@ bool LookForPlayers(bool allaround)
 					continue;	// behind back
 			}
 		}
-		if (P.MO.Translucency)
+		if (P.MO.Alpha < 1.0)
 		{
 			// Player is invisible
 			if (DistTo(P.MO) > 2.0 * MELEERANGE &&
@@ -1009,7 +1009,7 @@ void A_FaceTarget()
 	Angles.yaw = atan2(Enemy.Origin.y - Origin.y,
 		Enemy.Origin.x - Origin.x);
 
-	if (Enemy.Translucency)
+	if (Enemy.Alpha < 1.0)
 	{
 		Angles.yaw = AngleMod360(Angles.yaw + (Random() - Random()) * 45.0);
 	}

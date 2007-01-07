@@ -859,13 +859,13 @@ void VOpenGLDrawer::EndSky()
 //
 //==========================================================================
 
-void VOpenGLDrawer::DrawMaskedPolygon(surface_t* surf, int translucency)
+void VOpenGLDrawer::DrawMaskedPolygon(surface_t* surf, float Alpha)
 {
 	guard(VOpenGLDrawer::DrawMaskedPolygon);
 	texinfo_t* tex = surf->texinfo;
 	SetTexture(tex->pic);
 	glEnable(GL_ALPHA_TEST);
-	if (blend_sprites || translucency)
+	if (blend_sprites || Alpha < 1.0)
 	{
 		glAlphaFunc(GL_GREATER, 0.0);
 		glEnable(GL_BLEND);
@@ -887,17 +887,15 @@ void VOpenGLDrawer::DrawMaskedPolygon(surface_t* surf, int translucency)
 			g += 255 * 256 - blocklightsg[i];
 			b += 255 * 256 - blocklightsb[i];
 		}
-		float alpha = (100.0 - translucency) / 100.0;
 		double iscale = 1.0 / (size * 255 * 256);
-		glColor4f(r * iscale, g * iscale, b * iscale, alpha);
+		glColor4f(r * iscale, g * iscale, b * iscale, Alpha);
 	}
 	else
 	{
 		float lev = float(surf->Light >> 24) / 255.0;
-		float alpha = (100.0 - translucency) / 100.0;
 		glColor4f(((surf->Light >> 16) & 255) * lev / 255.0,
 			((surf->Light >> 8) & 255) * lev / 255.0,
-			(surf->Light & 255) * lev / 255.0, alpha);
+			(surf->Light & 255) * lev / 255.0, Alpha);
 	}
 
 	glBegin(GL_POLYGON);
@@ -909,7 +907,7 @@ void VOpenGLDrawer::DrawMaskedPolygon(surface_t* surf, int translucency)
 	}
 	glEnd();
 
-	if (blend_sprites || translucency)
+	if (blend_sprites || Alpha < 1.0)
 	{
 		glAlphaFunc(GL_GREATER, 0.666);
 		glDisable(GL_BLEND);
@@ -924,7 +922,7 @@ void VOpenGLDrawer::DrawMaskedPolygon(surface_t* surf, int translucency)
 //
 //==========================================================================
 
-void VOpenGLDrawer::DrawSpritePolygon(TVec *cv, int lump, int translucency,
+void VOpenGLDrawer::DrawSpritePolygon(TVec *cv, int lump, float Alpha,
 	int translation, vuint32 light, const TVec&, float, const TVec& saxis,
 	const TVec& taxis, const TVec& texorg)
 {
@@ -933,14 +931,14 @@ void VOpenGLDrawer::DrawSpritePolygon(TVec *cv, int lump, int translucency,
 
 	SetSpriteLump(lump, translation);
 
-	if (blend_sprites || translucency)
+	if (blend_sprites || Alpha < 1.0)
 	{
 		glAlphaFunc(GL_GREATER, 0.0);
 		glEnable(GL_BLEND);
 	}
 	glEnable(GL_ALPHA_TEST);
 
-	vuint32 alpha = 255 * (100 - translucency) / 100;
+	vuint32 alpha = (int)(255 * Alpha);
 	SetColour((light & 0x00ffffff) | (alpha << 24));
 
 	glBegin(GL_QUADS);
@@ -967,7 +965,7 @@ void VOpenGLDrawer::DrawSpritePolygon(TVec *cv, int lump, int translucency,
 
 	glEnd();
 
-	if (blend_sprites || translucency)
+	if (blend_sprites || Alpha < 1.0)
 	{
 		glAlphaFunc(GL_GREATER, 0.666);
 		glDisable(GL_BLEND);

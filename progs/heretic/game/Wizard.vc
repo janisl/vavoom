@@ -48,7 +48,7 @@ void DropStuff()
 void A_WizAtk1()
 {
 	A_FaceTarget();
-	Translucency = 0;
+	Alpha = 1.0;
 }
 
 //==========================================================================
@@ -60,7 +60,7 @@ void A_WizAtk1()
 void A_WizAtk2()
 {
 	A_FaceTarget();
-	Translucency = 33;
+	Alpha = 0.666;
 }
 
 //==========================================================================
@@ -75,7 +75,7 @@ void A_WizAtk3()
 	float angle;
 	TAVec ang;
 
-	Translucency = 0;
+	Alpha = 1.0;
 	if (!Enemy)
 	{
 		return;
@@ -106,7 +106,7 @@ void A_WizAtk3()
 
 void A_GhostOff()
 {
-	Translucency = 0;
+	Alpha = 1.0;
 }
 
 __states__

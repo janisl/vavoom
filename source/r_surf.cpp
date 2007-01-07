@@ -432,7 +432,7 @@ static sec_surface_t *CreateSecSurface(subsector_t* sub, sec_plane_t* InSplane)
 	ssurf->texinfo.soffs = splane->xoffs;
 	ssurf->texinfo.toffs = splane->yoffs;
 	ssurf->texinfo.pic = splane->pic;
-	ssurf->texinfo.translucency = splane->translucency ? splane->translucency + 1 : 0;
+	ssurf->texinfo.Alpha = splane->Alpha < 1.0 ? splane->Alpha : 1.1;
 
 	surf->count = sub->numlines;
 	seg_t *line = &GClLevel->Segs[sub->firstline];
@@ -841,6 +841,7 @@ static void CreateSegParts(drawseg_t* dseg, seg_t *seg)
 			seg->offset * TextureSScale(sidedef->midtexture) +
 			sidedef->textureoffset * TextureOffsetSScale(sidedef->midtexture);
 		sp->texinfo.pic = sidedef->midtexture;
+		sp->texinfo.Alpha = 1.1;
 
 		hdelta = topz2 - topz1;
 		offshdelta = hdelta * seg->offset / seg->length;
@@ -889,6 +890,7 @@ static void CreateSegParts(drawseg_t* dseg, seg_t *seg)
 			sp = dseg->topsky;
 
 			sp->texinfo.pic = skyflatnum;
+			sp->texinfo.Alpha = 1.1;
 
 			wv[0].x = wv[1].x = seg->v1->x;
 			wv[0].y = wv[1].y = seg->v1->y;
@@ -934,6 +936,7 @@ static void CreateSegParts(drawseg_t* dseg, seg_t *seg)
 			seg->offset * TextureSScale(sidedef->toptexture) +
 			sidedef->textureoffset * TextureOffsetSScale(sidedef->toptexture);
 		sp->texinfo.pic = sidedef->toptexture;
+		sp->texinfo.Alpha = 1.1;
 
 		hdelta = topz2 - topz1;
 		offshdelta = hdelta * seg->offset / seg->length;
@@ -979,6 +982,7 @@ static void CreateSegParts(drawseg_t* dseg, seg_t *seg)
 			sp = dseg->topsky;
 
 			sp->texinfo.pic = skyflatnum;
+			sp->texinfo.Alpha = 1.1;
 
 			wv[0].x = wv[1].x = seg->v1->x;
 			wv[0].y = wv[1].y = seg->v1->y;
@@ -1004,6 +1008,7 @@ static void CreateSegParts(drawseg_t* dseg, seg_t *seg)
 			seg->offset * TextureSScale(sidedef->bottomtexture) +
 			sidedef->textureoffset * TextureOffsetSScale(sidedef->bottomtexture);
 		sp->texinfo.pic = sidedef->bottomtexture;
+		sp->texinfo.Alpha = 1.1;
 
 		hdelta = back_botz2 - back_botz1;
 		offshdelta = hdelta * seg->offset / seg->length;
@@ -1063,7 +1068,7 @@ static void CreateSegParts(drawseg_t* dseg, seg_t *seg)
 			sp->texinfo.soffs = -DotProduct(*seg->v1, sp->texinfo.saxis) +
 				seg->offset * TextureSScale(sidedef->midtexture) +
 				sidedef->textureoffset * TextureOffsetSScale(sidedef->midtexture);
-			sp->texinfo.translucency = linedef->translucency + 1;
+			sp->texinfo.Alpha = linedef->alpha;
 
 			if (linedef->flags & ML_DONTPEGBOTTOM)
 			{
@@ -1130,7 +1135,8 @@ static void CreateSegParts(drawseg_t* dseg, seg_t *seg)
 				TextureTScale(extraside->midtexture) + sidedef->rowoffset *
 				TextureOffsetTScale(extraside->midtexture);
 			sp->texinfo.pic = extraside->midtexture;
-			sp->texinfo.translucency = reg->prev->extraline->translucency ? reg->prev->extraline->translucency + 1 : 0;
+			sp->texinfo.Alpha = reg->prev->extraline->alpha < 1.0 ?
+				reg->prev->extraline->alpha : 1.1;
 
 			wv[0].x = wv[1].x = seg->v1->x;
 			wv[0].y = wv[1].y = seg->v1->y;
@@ -1527,7 +1533,7 @@ static void UpdateDrawSeg(drawseg_t* dseg)
 				sp->texinfo.soffs = -DotProduct(*seg->v1, sp->texinfo.saxis) +
 					seg->offset * TextureSScale(sidedef->midtexture) +
 					sidedef->textureoffset * TextureOffsetSScale(sidedef->midtexture);
-				sp->texinfo.translucency = linedef->translucency + 1;
+				sp->texinfo.Alpha = linedef->alpha;
 
 				if (linedef->flags & ML_DONTPEGBOTTOM)
 				{
@@ -1558,7 +1564,7 @@ static void UpdateDrawSeg(drawseg_t* dseg)
 			}
 			else
 			{
-				sp->texinfo.translucency = 0;
+				sp->texinfo.Alpha = 1.1;
 			}
 
 			sp->frontTopDist = r_ceiling->dist;

@@ -701,7 +701,7 @@ Actor SpawnMissile(Actor dest, class<Actor> type)
 	{
 		dir = dest.Origin - Origin;
 		// fuzzy player
-		if (dest.Translucency)
+		if (dest.Alpha < 1.0)
 		{
 			VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0 / 2.0);
 		}
@@ -3404,7 +3404,7 @@ void A_FaceTarget()
 
 	Angles.yaw = atan2(Enemy.Origin.y - Origin.y, Enemy.Origin.x - Origin.x);
 
-	if (Enemy.Translucency)
+	if (Enemy.Alpha < 1.0)
 	{
 		Angles.yaw = AngleMod360(Angles.yaw + (Random() - Random()) * 45.0);
 	}
@@ -3440,7 +3440,7 @@ void A_Pain()
 
 void A_Explode()
 {
-	Translucency = 50;
+	Alpha = 0.5;
 	RadiusAttack(128, 0, 0);
 
 	//  Spawn explosion effects - dynamic light and particles

@@ -188,7 +188,7 @@ Actor SpawnKoraxMissile(TVec org, Actor dest, class<Actor> type)
 	}
 	th.Instigator = self;	// Originator
 	dir = dest.Origin - org;
-	if (dest.Translucency)
+	if (dest.Alpha < 1.0)
 	{
 		// Invisible target
 		VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0);

@@ -631,14 +631,14 @@ static void DrawSurfaces(surface_t* InSurfs, texinfo_t *texinfo, int clipflags,
 		surfs->dlightframe = r_sub->dlightframe;
 		surfs->dlightbits = r_sub->dlightbits;
 
-		if (!texinfo->translucency)
+		if (texinfo->Alpha > 1.0)
 		{
 			Drawer->DrawPolygon(surfs, clipflags);
 		}
 		else
 		{
 			R_DrawTranslucentPoly(surfs, surfs->verts, surfs->count,
-				texinfo->pic, texinfo->translucency - 1, 0, false, 0,
+				texinfo->pic, texinfo->Alpha, 0, false, 0,
 				TVec(), 0, TVec(), TVec(), TVec());
 		}
 		surfs = surfs->next;

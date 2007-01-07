@@ -74,7 +74,7 @@ void A_FogMove()
 defaultproperties
 {
 	Speed = 35.0;
-	Translucency = 66;
+	Alpha = 0.333;
 	bColideWithWorld = false;
 	bColideWithThings = false;
 	bFloat = true;

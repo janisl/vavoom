@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class SorcererFX2_T1:Effect;
+class SorcererFX2_T1 : Effect;
 
 __states__
 {
@@ -32,7 +32,7 @@ __states__
 
 defaultproperties
 {
-	Translucency = 33;
+	Alpha = 0.666;
 	bNoTeleport = true;
 	IdleState = S_SORCFX2T1;
 }

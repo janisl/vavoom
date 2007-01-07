@@ -127,7 +127,7 @@ struct line_t : public TPlane
 	// if == validcount, already checked
 	int			validcount;
 
-	int			translucency;
+	float		alpha;
 
 	int			special;
 	int			arg1;
@@ -214,7 +214,7 @@ struct sec_plane_t : public TPlane
 	float		yoffs;
 
 	int			flags;
-	int			translucency;
+	float		Alpha;
 
 	int			LightSourceSector;
 };
@@ -681,7 +681,7 @@ private:
 	DECLARE_FUNCTION(SetFloorPic)
 	DECLARE_FUNCTION(SetCeilPic)
 	DECLARE_FUNCTION(SetLineTexture)
-	DECLARE_FUNCTION(SetLineTransluc)
+	DECLARE_FUNCTION(SetLineAlpha)
 	DECLARE_FUNCTION(SetFloorLightSector)
 	DECLARE_FUNCTION(SetCeilingLightSector)
 	DECLARE_FUNCTION(SetHeightSector)

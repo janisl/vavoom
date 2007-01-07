@@ -111,11 +111,7 @@ struct trans_sprite_t
 	TVec			saxis;
 	TVec			taxis;
 	TVec			texorg;
-	union
-	{
-		int			translucency;
-		float		Alpha;
-	};
+	float			Alpha;
 	int				translation;
 	int				type;
 	float			dist;
@@ -153,7 +149,7 @@ static VCvarI			r_sort_sprites("r_sort_sprites", "0");
 static VCvarI			r_fix_sprite_offsets("r_fix_sprite_offsets", "1", CVAR_Archive);
 static VCvarI			r_sprite_fix_delta("r_sprite_fix_delta", "-3", CVAR_Archive);
 static VCvarI			croshair("croshair", "0", CVAR_Archive);
-static VCvarI			croshair_trans("croshair_trans", "0", CVAR_Archive);
+static VCvarF			croshair_alpha("croshair_alpha", "1", CVAR_Archive);
 
 static trans_sprite_t	trans_sprites[MAX_TRANS_SPRITES];
 
@@ -341,7 +337,7 @@ void R_FreeSpriteData()
 //==========================================================================
 
 void R_DrawTranslucentPoly(surface_t* surf, TVec* sv, int count, int lump,
-	int translucency, int translation, bool type, vuint32 light,
+	float Alpha, int translation, bool type, vuint32 light,
 	const TVec& normal, float pdist, const TVec& saxis, const TVec& taxis,
 	const TVec& texorg)
 {
@@ -361,7 +357,7 @@ void R_DrawTranslucentPoly(surface_t* surf, TVec* sv, int count, int lump,
 	for (i = 0; i < MAX_TRANS_SPRITES; i++)
 	{
 		trans_sprite_t &spr = trans_sprites[i];
-		if (!spr.translucency)
+		if (!spr.Alpha)
 		{
 			if (type)
 				memcpy(spr.Verts, sv, sizeof(TVec) * 4);
@@ -373,7 +369,7 @@ void R_DrawTranslucentPoly(surface_t* surf, TVec* sv, int count, int lump,
 			spr.taxis = taxis;
 			spr.texorg = texorg;
 			spr.surf = surf;
-			spr.translucency = translucency + 1;
+			spr.Alpha = Alpha;
 			spr.translation = translation;
 			spr.type = type;
 			spr.light = light;
@@ -395,13 +391,13 @@ void R_DrawTranslucentPoly(surface_t* surf, TVec* sv, int count, int lump,
 		}
 		else if (spr.type)
 		{
-			Drawer->DrawSpritePolygon(spr.Verts, spr.lump, spr.translucency - 1,
+			Drawer->DrawSpritePolygon(spr.Verts, spr.lump, spr.Alpha,
 				spr.translation, spr.light, spr.normal, spr.pdist, spr.saxis,
 				spr.taxis, spr.texorg);
 		}
 		else
 		{
-			Drawer->DrawMaskedPolygon(spr.surf, spr.translucency - 1);
+			Drawer->DrawMaskedPolygon(spr.surf, spr.Alpha);
 		}
 		if (type)
 			memcpy(spr.Verts, sv, sizeof(TVec) * 4);
@@ -413,7 +409,7 @@ void R_DrawTranslucentPoly(surface_t* surf, TVec* sv, int count, int lump,
 		spr.taxis = taxis;
 		spr.texorg = texorg;
 		spr.surf = surf;
-		spr.translucency = translucency + 1;
+		spr.Alpha = Alpha;
 		spr.translation = translation;
 		spr.light = light;
 		return;
@@ -422,12 +418,12 @@ void R_DrawTranslucentPoly(surface_t* surf, TVec* sv, int count, int lump,
 	//	All slots are full and are nearer to current sprite so draw it
 	if (type)
 	{
-		Drawer->DrawSpritePolygon(sv, lump, translucency, translation,
-			light, normal, pdist, saxis, taxis, texorg);
+		Drawer->DrawSpritePolygon(sv, lump, Alpha, translation, light,
+			normal, pdist, saxis, taxis, texorg);
 	}
 	else
 	{
-		Drawer->DrawMaskedPolygon(surf, translucency);
+		Drawer->DrawMaskedPolygon(surf, Alpha);
 	}
 	unguard;
 }
@@ -623,19 +619,18 @@ static void RenderSprite(VEntity* thing, vuint32 light)
 	sv[2] = sprorigin + end + topdelta;
 	sv[3] = sprorigin + end + botdelta;
 
-	if (thing->Translucency > 0 || r_sort_sprites)
+	if (thing->Alpha < 1.0 || r_sort_sprites)
 	{
-		R_DrawTranslucentPoly(NULL, sv, 4, lump, thing->Translucency,
+		R_DrawTranslucentPoly(NULL, sv, 4, lump, thing->Alpha,
 			thing->Translation, true, light, -sprforward, DotProduct(
 			sprorigin, -sprforward), flip ? -sprright : sprright, -sprup,
 			flip ? sv[2] : sv[1]);
 	}
 	else
 	{
-		Drawer->DrawSpritePolygon(sv, lump, thing->Translucency,
-			thing->Translation, light, -sprforward, DotProduct(sprorigin,
-			-sprforward), flip ? -sprright : sprright, -sprup,
-			flip ? sv[2] : sv[1]);
+		Drawer->DrawSpritePolygon(sv, lump, thing->Alpha, thing->Translation,
+			light, -sprforward, DotProduct(sprorigin, -sprforward),
+			flip ? -sprright : sprright, -sprup, flip ? sv[2] : sv[1]);
 	}
 	unguard;
 }
@@ -658,11 +653,11 @@ void RenderTranslucentAliasModel(VEntity* mobj, vuint32 light,
 	for (i = 0; i < MAX_TRANS_SPRITES; i++)
 	{
 		trans_sprite_t &spr = trans_sprites[i];
-		if (!spr.translucency)
+		if (!spr.Alpha)
 		{
 			spr.Ent = mobj;
 			spr.light = light;
-			spr.Alpha = (100.0 - mobj->Translucency) / 100.0;
+			spr.Alpha = mobj->Alpha;
 			spr.dist = dist;
 			spr.type = 2;
 			spr.TimeFrac = TimeFrac;
@@ -684,24 +679,23 @@ void RenderTranslucentAliasModel(VEntity* mobj, vuint32 light,
 		}
 		else if (spr.type)
 		{
-			Drawer->DrawSpritePolygon(spr.Verts, spr.lump, spr.translucency - 1,
+			Drawer->DrawSpritePolygon(spr.Verts, spr.lump, spr.Alpha,
 				spr.translation, spr.light, spr.normal, spr.pdist, spr.saxis,
 				spr.taxis, spr.texorg);
 		}
 		else
 		{
-			Drawer->DrawMaskedPolygon(spr.surf, spr.translucency - 1);
+			Drawer->DrawMaskedPolygon(spr.surf, spr.Alpha);
 		}
 		spr.Ent = mobj;
 		spr.light = light;
-		spr.Alpha = (100.0 - mobj->Translucency) / 100.0;
+		spr.Alpha = mobj->Alpha;
 		spr.dist = dist;
 		spr.type = 2;
 		spr.TimeFrac = TimeFrac;
 		return;
 	}
-	R_DrawEntityModel(mobj, light, (100.0 - mobj->Translucency) / 100.0,
-		TimeFrac);
+	R_DrawEntityModel(mobj, light, mobj->Alpha, TimeFrac);
 	unguard;
 }
 
@@ -727,7 +721,7 @@ static bool RenderAliasModel(VEntity* mobj, vuint32 light)
 	}
 
 	//	Draw it
-	if (mobj->Translucency)
+	if (mobj->Alpha < 1.0)
 	{
 		if (!R_CheckAliasModelFrame(mobj, TimeFrac))
 		{
@@ -758,7 +752,7 @@ static void RenderThing(VEntity* mobj, bool IsWeapon)
 		return;
 	}
 
-	if (mobj->Translucency >= 95)
+	if (!mobj->Alpha)
 	{
 		// Never make a vissprite when MF2_DONTDRAW is flagged.
 		return;
@@ -828,7 +822,7 @@ void R_DrawTranslucentPolys()
 		for (i = 0; i < MAX_TRANS_SPRITES; i++)
 		{
 			trans_sprite_t &spr = trans_sprites[i];
-			if (!spr.translucency)
+			if (!spr.Alpha)
 			{
 				continue;
 			}
@@ -848,15 +842,15 @@ void R_DrawTranslucentPolys()
 			}
 			else if (spr.type)
 			{
-				Drawer->DrawSpritePolygon(spr.Verts, spr.lump,
-					spr.translucency - 1, spr.translation, spr.light,
-					spr.normal, spr.pdist, spr.saxis, spr.taxis, spr.texorg);
+				Drawer->DrawSpritePolygon(spr.Verts, spr.lump, spr.Alpha,
+					spr.translation, spr.light, spr.normal, spr.pdist,
+					spr.saxis, spr.taxis, spr.texorg);
 			}
 			else
 			{
-				Drawer->DrawMaskedPolygon(spr.surf, spr.translucency - 1);
+				Drawer->DrawMaskedPolygon(spr.surf, spr.Alpha);
 			}
-			spr.translucency = 0;
+			spr.Alpha = 0;
 		}
 	} while (found != -1);
 	unguard;
@@ -951,7 +945,7 @@ static void RenderPSprite(VViewState* VSt, float PSP_DIST, vuint32 light)
 	else
 		taxis = -(viewup * 100 * 4 / 3 * PSP_DISTI);
 
-	Drawer->DrawSpritePolygon(dv, lump, cl->ViewEntTranslucency, 0, light,
+	Drawer->DrawSpritePolygon(dv, lump, cl->ViewEntAlpha, 0, light,
 		-viewforward, DotProduct(dv[0], -viewforward), saxis, taxis, texorg);
 	unguard;
 }
@@ -981,7 +975,7 @@ static bool RenderViewModel(VViewState* VSt, vuint32 light)
 	}
 
 	return R_DrawAliasModel(origin, cl->ViewAngles, VSt->State,
-		NULL, 0, light, (100.0 - cl->ViewEntTranslucency) / 100.0, true, TimeFrac);
+		NULL, 0, light, cl->ViewEntAlpha, true, TimeFrac);
 	unguard;
 }
 
@@ -1036,8 +1030,8 @@ void R_DrawCroshair()
 	guard(R_DrawCroshair);
 	if (croshair)
 	{
-		if (croshair_trans < 0)		croshair_trans = 0;
-		if (croshair_trans > 100)	croshair_trans = 100;
+		if (croshair_alpha < 0.0)	croshair_alpha = 0.0;
+		if (croshair_alpha > 1.0)	croshair_alpha = 1.0;
 
 		int			cy;
 		if (screenblocks < 11)
@@ -1046,7 +1040,7 @@ void R_DrawCroshair()
 			cy = 240;
 		int handle = GTextureManager.AddPatch(VName(va("CROSHAI%i",
 			(int)croshair), VName::AddLower8), TEXTYPE_Pic);
-		R_DrawPic(320, cy, handle, croshair_trans);
+		R_DrawPic(320, cy, handle, croshair_alpha);
 	}
 	unguard;
 }

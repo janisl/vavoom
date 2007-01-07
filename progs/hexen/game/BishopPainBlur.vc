@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class BishopPainBlur:Effect;
+class BishopPainBlur : Effect;
 
 __states__
 {
@@ -32,6 +32,6 @@ __states__
 
 defaultproperties
 {
-	Translucency = 66;
+	Alpha = 0.333;
 	IdleState = S_BISHOPPAINBLUR1;
 }

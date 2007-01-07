@@ -172,7 +172,7 @@ struct mobj_base_t
 	TVec		Origin;			// position
 	TAVec		Angles;			// orientation
 	int			SpriteType;		// sprite orientation type
-	int			Translucency;	// translucency, in percents
+	float		Alpha;			// alpha
 	int			Translation;	// player colour translation
 	int			Effects;		// dynamic lights, trails
 };
@@ -205,7 +205,6 @@ void SV_ClientCentrePrintf(VBasePlayer*, const char*, ...);
 void SV_SetFloorPic(int, int);
 void SV_SetCeilPic(int, int);
 void SV_SetLineTexture(int, int, int);
-void SV_SetLineTransluc(line_t*, int);
 int SV_FindModel(const char*);
 int SV_GetModelIndex(const VName&);
 int SV_FindSkin(const char*);

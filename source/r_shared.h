@@ -57,9 +57,9 @@ struct texinfo_t
 	TVec			taxis;
 	float			toffs;
 	int				pic;
-	//	0 for solid surfaces
-	// translucency + 1 for masked surfaces
-	int				translucency;
+	//	1.1 for solid surfaces
+	// Alpha for masked surfaces
+	float			Alpha;
 };
 
 struct surface_t

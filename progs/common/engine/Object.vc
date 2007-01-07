@@ -681,7 +681,7 @@ struct line_t : TPlane
 	// if == validcount, already checked
 	int validcount;
 
-	int translucency;
+	float alpha;
 
 	int special;
 	int arg1;
@@ -733,7 +733,7 @@ struct sec_plane_t : TPlane
 	float yoffs;
 
 	int flags;
-	int translucency;
+	float Alpha;
 
 	int LightSourceSector;
 };
@@ -1649,7 +1649,7 @@ native static final void R_GetPicInfo(int handle, picinfo_t * info);
 //  Draws a pic
 native static final void R_DrawPic(int x, int y, int handle);
 //  Draws a translucent pic
-native static final void R_DrawPic2(int x, int y, int handle, int trans);
+native static final void R_DrawPic2(int x, int y, int handle, float alpha);
 //  Draws a shadowed pic
 native static final void R_DrawShadowedPic(int x, int y, int handle);
 //  Installs a sprite model
@@ -1666,7 +1666,7 @@ native static final void R_DrawModelFrame(TVec origin, float angle, void* model,
 native static final void R_FillRectWithFlat(int x, int y, int width, int height,
 	name Name);
 //  Darkens a screen region
-native static final void R_ShadeRect(int x, int y, int w, int h, int shade);
+native static final void R_ShadeRect(int x, int y, int w, int h, float shade);
 //  Draws a coloured rectangle
 native static final void R_FillRect(int x, int y, int w, int h, int colour);
 

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class HolyMissilePuff:Effect;
+class HolyMissilePuff : Effect;
 
 __states__
 {
@@ -38,7 +38,7 @@ defaultproperties
 {
 	Radius = 4.0;
 	Height = 8.0;
-	Translucency = 33;
+	Alpha = 0.666;
 	bDropOff = true;
 	bNoTeleport = true;
 	IdleState = S_HOLY_MISSILE_P1;

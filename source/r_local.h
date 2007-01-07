@@ -355,7 +355,7 @@ void R_FreeSpriteData();
 void R_RenderMobjs();
 void R_DrawPlayerSprites();
 void R_DrawCroshair();
-void R_DrawTranslucentPoly(surface_t*, TVec*, int, int, int, int, bool,
+void R_DrawTranslucentPoly(surface_t*, TVec*, int, int, float, int, bool,
 	vuint32, const TVec&, float, const TVec&, const TVec&, const TVec&);
 void R_DrawTranslucentPolys();
 

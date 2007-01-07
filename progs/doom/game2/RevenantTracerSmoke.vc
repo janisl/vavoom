@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class RevenantTracerSmoke:Effect;
+class RevenantTracerSmoke : Effect;
 
 __states__
 {
@@ -36,6 +36,6 @@ __states__
 
 defaultproperties
 {
-	Translucency = 33;
+	Alpha = 0.666;
 	IdleState = S_SMOKE1;
 }

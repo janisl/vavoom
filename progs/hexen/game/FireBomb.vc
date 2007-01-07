@@ -46,7 +46,7 @@ defaultproperties
 	Radius = 20.0;
 	Height = 16.0;
 	Mass = 100.0;
-	Translucency = 33;
+	Alpha = 0.666;
 	bNoGravity = true;
 	bNoPassMobj = true;
 	bFireDamage = true;

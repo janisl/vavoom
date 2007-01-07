@@ -309,8 +309,8 @@ void SB_DrawMainBar()
 	R_DrawPic(BAR_X + 276, BAR_Y + 32, pic_rtface);
 	for (i = 0; i < 16; i++)
 	{
-		R_ShadeRect(BAR_X + 277 + i, BAR_Y + 32, 1, 10, 9 + i);
-		R_ShadeRect(BAR_X + 19 + i, BAR_Y + 32, 1, 10, 9 + 15 - i);
+		R_ShadeRect(BAR_X + 277 + i, BAR_Y + 32, 1, 10, itof(9 + i) / 32.0);
+		R_ShadeRect(BAR_X + 19 + i, BAR_Y + 32, 1, 10, itof(9 + 15 - i) / 32.0);
 	}
 
 	if (!(cl.SBFlags & HereticDefs::SBF_INVENTORY_OPEN))
@@ -444,7 +444,7 @@ void SB_DrawFullscreenStats()
 		x = cl.InvPtr - cl.InvCurPos;
 		for (i = 0; i < 7; i++)
 		{
-			R_DrawPic2(210 + i * 31, 448, pic_artibox, 40);
+			R_DrawPic2(210 + i * 31, 448, pic_artibox, 0.6);
 			if (cl.InventorySlotNum > x + i &&
 				cl.Inventory[x + i].type != HereticDefs::arti_none)
 			{
@@ -466,7 +466,7 @@ void SB_DrawFullscreenStats()
 	else if (cl.ReadyArtifact > 0)
 	{
 		//  Ready artifact
-		R_DrawPic2(546, 440, pic_artibox, 40);
+		R_DrawPic2(546, 440, pic_artibox, 0.6);
 		R_DrawPic(546, 440, pic_arti[cl.ReadyArtifact - 1]);
 		SB_DrawINumber(567, 462, cl.Inventory[cl.InvPtr].count);
 	}

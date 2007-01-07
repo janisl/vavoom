@@ -161,7 +161,7 @@ class VBasePlayer : public VObject
 
 	int				ClientNum;		// cl_mobjs[cl.clientnum] = player
 
-	int				ViewEntTranslucency;
+	float			ViewEntAlpha;
 
 	void SetViewState(int, VState*);
 	void AdvanceViewStates(float);

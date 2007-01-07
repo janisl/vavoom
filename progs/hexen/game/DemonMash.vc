@@ -29,7 +29,7 @@ class DemonMash : Demon
 defaultproperties
 {
 	GibsHealth = 0;
-	Translucency = 33;
+	Alpha = 0.666;
 	bNoBlood = true;
 	bBlasted = true;
 	bTelestomp = false;

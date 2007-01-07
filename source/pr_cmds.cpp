@@ -790,11 +790,11 @@ IMPLEMENT_FUNCTION(VObject, R_DrawPic)
 
 IMPLEMENT_FUNCTION(VObject, R_DrawPic2)
 {
-	P_GET_INT(trans);
+	P_GET_FLOAT(alpha);
 	P_GET_INT(handle);
 	P_GET_INT(y);
 	P_GET_INT(x);
-	R_DrawPic(x, y, handle, trans);
+	R_DrawPic(x, y, handle, alpha);
 }
 
 //==========================================================================
@@ -898,11 +898,11 @@ IMPLEMENT_FUNCTION(VObject, R_FillRectWithFlat)
 //
 //==========================================================================
 
-void R_ShadeRect(int x, int y, int width, int height, int shade);
+void R_ShadeRect(int x, int y, int width, int height, float shade);
 
 IMPLEMENT_FUNCTION(VObject, R_ShadeRect)
 {
-	P_GET_INT(shade);
+	P_GET_FLOAT(shade);
 	P_GET_INT(height);
 	P_GET_INT(width);
 	P_GET_INT(y);

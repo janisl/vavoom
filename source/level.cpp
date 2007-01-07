@@ -728,12 +728,12 @@ IMPLEMENT_FUNCTION(VLevel, SetLineTexture)
 	SV_SetLineTexture(side, position, texture);
 }
 
-IMPLEMENT_FUNCTION(VLevel, SetLineTransluc)
+IMPLEMENT_FUNCTION(VLevel, SetLineAlpha)
 {
-	P_GET_INT(trans);
+	P_GET_FLOAT(alpha);
 	P_GET_PTR(line_t, line);
 	P_GET_SELF;
-	SV_SetLineTransluc(line, trans);
+	line->alpha = alpha;
 }
 
 IMPLEMENT_FUNCTION(VLevel, SetFloorLightSector)

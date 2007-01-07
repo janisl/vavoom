@@ -327,7 +327,7 @@ defaultproperties
 	Height = 6.0;
 	Speed = 420.0;
 	MissileDamage = 3;
-	Translucency = 33;
+	Alpha = 0.666;
 	bRip = true;
 	bSeekerMissile = true;
 	bDamageInvulnerable = true;

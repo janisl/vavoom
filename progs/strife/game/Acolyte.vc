@@ -36,7 +36,7 @@ void A_AcolyteBits()
 {
 	if (bSpawnFlag8)
 	{
-		Translucency = 66;
+		Alpha = 0.333;
 	}
 	if (bSpawnFlag9)
 	{

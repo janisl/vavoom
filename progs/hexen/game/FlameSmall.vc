@@ -71,7 +71,7 @@ bool Deactivate()
 
 defaultproperties
 {
-	Translucency = 100;
+	Alpha = 0.0;
 	bNoTeleport = true;
 	IdleState = S_FLAME_SMALL1;
 	bStaticLight = true;

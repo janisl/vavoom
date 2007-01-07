@@ -1090,7 +1090,7 @@ bool MorphMonster()
 	monster = Spawn(Pig, Origin);
 	monster.SpecialCID = class<Actor>(Class);
 	monster._Special1 = ftoi(MORPHTIME * 35.0) + P_Random();
-	monster.Translucency = Translucency;
+	monster.Alpha = Alpha;
 	monster.Enemy = Enemy;
 	monster.Angles.yaw = Angles.yaw;
 	monster.TID = TID;
@@ -4104,9 +4104,9 @@ void SpawnPuff(TVec org, class<Actor> PuffType)
 
 void A_HideThing()
 {
-	if (Translucency < 100)
+	if (Alpha > 0.0)
 	{
-		Translucency += 100;
+		Alpha -= 1.0;
 	}
 }
 
@@ -4118,9 +4118,9 @@ void A_HideThing()
 
 void A_UnHideThing()
 {
-	if (Translucency >= 100)
+	if (Alpha <= 0.0)
 	{
-		Translucency -= 100;
+		Alpha += 1.0;
 	}
 }
 
@@ -4209,7 +4209,7 @@ void A_FreeTargMobj()
 	bNoGravity = true;
 	bCorpse = true;
 	bNoPassMobj = true;
-	Translucency = 100;
+	Alpha = 0.0;
 	Player = none;
 	bIsPlayer = false;
 	Health = -1000;	// Don't resurrect
@@ -4275,7 +4275,7 @@ void A_Explode()
 	{
 		// Time Bombs
 		Origin.z += 32.0;
-		Translucency = 0;
+		Alpha = 1.0;
 	}
 	else if (Class == MinotaurFloorFire1)
 	{

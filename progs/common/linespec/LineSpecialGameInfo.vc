@@ -44,7 +44,7 @@ enum
 };
 
 int				terrain_contents[9];
-int				contents_transluc[9];
+float			contents_alpha[9];
 
 bool			bUseHexenPolyobjTypes;
 
@@ -502,10 +502,10 @@ void MakeContents(line_t * line)
 		line->frontsector->params.contents = contents;
 		if (line->frontsector->floor.dist == -line->frontsector->ceiling.dist)
 		{
-			line->frontsector->floor.translucency =
-				contents_transluc[contents];
-			line->frontsector->ceiling.translucency =
-				contents_transluc[contents];
+			line->frontsector->floor.Alpha =
+				contents_alpha[contents];
+			line->frontsector->ceiling.Alpha =
+				contents_alpha[contents];
 			line->frontsector->ceiling.flags |=
 				SPF_NOBLOCKING | SPF_NOBLOCKSIGHT | SPF_NOBLOCKSHOOT;
 			line->frontsector->floor.flags |=
@@ -516,8 +516,8 @@ void MakeContents(line_t * line)
 	{
 		line->frontsector->params.contents = line->arg1;
 
-		line->frontsector->floor.translucency = line->arg2;
-		line->frontsector->ceiling.translucency = line->arg2;
+		line->frontsector->floor.Alpha = (100.0 - itof(line->arg2)) / 100.0;
+		line->frontsector->ceiling.Alpha = (100.0 - itof(line->arg2)) / 100.0;
 
 		line->frontsector->ceiling.flags = line->arg3;
 		line->frontsector->floor.flags = line->arg3;
@@ -653,7 +653,7 @@ void SpawnWorld(Level InLevel)
 	int			j;
 	int			length;
 	int			SecNum;
-	int			trans;
+	float		alpha;
 	mthing_t*	mthing;
 	line_t*		line;
 
@@ -756,28 +756,27 @@ void SpawnWorld(Level InLevel)
 		switch (line->special)
 		{
 		case LNSPEC_LineTranslucent:
-			trans = (255 - line->arg2) * 100 / 255;
+			alpha = itof(line->arg2) / 255.0;
 			if (line->arg1)
 			{
 				for (j = 0; j < InLevel.NumLines; j++)
 				{
 					if (InLevel.Lines[j].LineTag == line->arg1)
 					{
-						InLevel.SetLineTransluc(&InLevel.Lines[j], trans);
+						InLevel.SetLineAlpha(&InLevel.Lines[j], alpha);
 					}
 				}
 			}
 			else
 			{
-				InLevel.SetLineTransluc(line, trans);
+				InLevel.SetLineAlpha(line, alpha);
 			}
 			line->special = 0;
 			break;
 		case 49:
 			if (line->arg2 != 255)
 			{
-				trans = (255 - line->arg2) * 100 / 255;
-				InLevel.SetLineTransluc(line, trans);
+				InLevel.SetLineAlpha(line, itof(line->arg2) / 255.0);
 			}
 			break;
 		}
@@ -820,13 +819,13 @@ void SpawnWorld(Level InLevel)
 
 defaultproperties
 {
-	contents_transluc[0] = 0;
-	contents_transluc[1] = 50;
-	contents_transluc[2] = 20;
-	contents_transluc[3] = 40;
-	contents_transluc[4] = 45;
-	contents_transluc[5] = 30;
-	contents_transluc[6] = 15;
-	contents_transluc[7] = 30;
-	contents_transluc[8] = 30;
+	contents_alpha[0] = 1.0;
+	contents_alpha[1] = 0.5;
+	contents_alpha[2] = 0.8;
+	contents_alpha[3] = 0.6;
+	contents_alpha[4] = 0.55;
+	contents_alpha[5] = 0.7;
+	contents_alpha[6] = 0.85;
+	contents_alpha[7] = 0.7;
+	contents_alpha[8] = 0.7;
 }

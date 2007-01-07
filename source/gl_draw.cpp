@@ -56,15 +56,15 @@
 //==========================================================================
 
 void VOpenGLDrawer::DrawPic(float x1, float y1, float x2, float y2,
-	float s1, float t1, float s2, float t2, int handle, int trans)
+	float s1, float t1, float s2, float t2, int handle, float Alpha)
 {
 	guard(VOpenGLDrawer::DrawPic);
 	SetPic(handle);
-	if (trans)
+	if (Alpha < 1.0)
 	{
 		glDisable(GL_ALPHA_TEST);
 		glEnable(GL_BLEND);
-		glColor4f(1, 1, 1, (100.0 - trans) / 100.0);
+		glColor4f(1, 1, 1, Alpha);
 	}
 	else
 	{
@@ -80,7 +80,7 @@ void VOpenGLDrawer::DrawPic(float x1, float y1, float x2, float y2,
 	glTexCoord2f(s1 * tex_iw, t2 * tex_ih);
 	glVertex2f(x1, y2);
 	glEnd();
-	if (trans)
+	if (Alpha < 1.0)
 	{
 		glDisable(GL_BLEND);
 		glEnable(GL_ALPHA_TEST);
@@ -95,13 +95,13 @@ void VOpenGLDrawer::DrawPic(float x1, float y1, float x2, float y2,
 //==========================================================================
 
 void VOpenGLDrawer::DrawPicShadow(float x1, float y1, float x2, float y2,
-	float s1, float t1, float s2, float t2, int handle, int shade)
+	float s1, float t1, float s2, float t2, int handle, float shade)
 {
 	guard(VOpenGLDrawer::DrawPicShadow);
 	SetPic(handle);
 	glDisable(GL_ALPHA_TEST);
 	glEnable(GL_BLEND);
-	glColor4f(0, 0, 0, (float)shade / 255.0);
+	glColor4f(0, 0, 0, shade);
 	glBegin(GL_QUADS);
 	glTexCoord2f(s1 * tex_iw, t1 * tex_ih);
 	glVertex2f(x1, y1);
@@ -179,14 +179,14 @@ void VOpenGLDrawer::FillRect(float x1, float y1, float x2, float y2,
 //
 //==========================================================================
 
-void VOpenGLDrawer::ShadeRect(int x, int y, int w, int h, int darkening)
+void VOpenGLDrawer::ShadeRect(int x, int y, int w, int h, float darkening)
 {
 	guard(VOpenGLDrawer::ShadeRect);
 	glDisable(GL_ALPHA_TEST);
 	glDisable(GL_TEXTURE_2D);
 	glEnable(GL_BLEND);
 
-	glColor4f(0, 0, 0, darkening / 32.0);
+	glColor4f(0, 0, 0, darkening);
 	glBegin(GL_QUADS);
 	glVertex2f(x, y);
 	glVertex2f(x + w, y);

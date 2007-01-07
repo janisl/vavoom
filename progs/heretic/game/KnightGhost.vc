@@ -52,5 +52,5 @@ void A_KnightAttack()
 
 defaultproperties
 {
-	Translucency = 33;
+	Alpha = 0.666;
 }

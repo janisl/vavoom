@@ -27,17 +27,17 @@ class MenuChoice_CroshairTrans : MenuChoiceSlider;
 
 float GetInitialValue()
 {
-	return itof(GetCvar('croshair_trans'));
+	return GetCvarF('croshair_trans');
 }
 
 bool SetNewValue(float newValue)
 {
-	SetCvar('croshair_trans', ftoi(newValue));
+	SetCvarF('croshair_trans', newValue);
 	return true;
 }
 
 defaultproperties
 {
 	Text = "Croshair Transparency";
-	MaxValue = 100.0;
+	ValueDelta = 0.1;
 }

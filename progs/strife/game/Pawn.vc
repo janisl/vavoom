@@ -1,4 +1,4 @@
-﻿//**************************************************************************
+//**************************************************************************
 //**
 //**    ##   ##    ##    ##   ##   ####     ####   ###     ###
 //**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
@@ -103,7 +103,7 @@ Actor SpawnMissile(Actor dest, class<Actor> type)
 
 	dir = dest.Origin - Origin;
 	// fuzzy player
-	if (dest.Translucency)
+	if (dest.Alpha < 1.0)
 	{
 		VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0 / 2.0);
 	}
@@ -137,7 +137,7 @@ Actor SpawnMissileZ(float z, Actor dest, class<Actor> type)
 
 	dir = dest.Origin - Origin;
 	// fuzzy player
-	if (dest.Translucency)
+	if (dest.Alpha < 1.0)
 	{
 		VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0 / 2.0);
 	}
@@ -175,7 +175,7 @@ Actor SpawnMissileZAimed(float z, Actor dest, class<Actor> type)
 	dir.y = sin(Angles.yaw);
 	dir.z = dist != 0.0 ? (dest.Origin.z - Origin.z) / dist : A.Speed;
 	// fuzzy player
-	if (dest.Translucency)
+	if (dest.Alpha < 1.0)
 	{
 		VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0 / 2.0);
 	}
@@ -912,7 +912,7 @@ void A_FaceTarget()
 	Angles.yaw = atan2(Enemy.Origin.y - Origin.y,
 		Enemy.Origin.x - Origin.x);
 
-	if (Enemy.Translucency)
+	if (Enemy.Alpha < 1.0)
 	{
 		Angles.yaw = AngleMod360(Angles.yaw + (Random() - Random()) * 45.0);
 	}

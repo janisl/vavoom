@@ -48,7 +48,7 @@ defaultproperties
 	Height = 8.0;
 	Speed = 525.0;
 	MissileDamage = 8;
-	Translucency = 33;
+	Alpha = 0.666;
 	IdleState = S_BRBALL1;
 	DeathState = S_BRBALLX1;
 	SightSound = 'baron/attack';

@@ -56,7 +56,7 @@ struct clmobjbase_t
 	TVec		origin;	// position
 	TAVec		angles;	// orientation
 	int			spritetype;
-	int			translucency;
+	float		Alpha;
 	int			translation;
 	int			effects;
 };

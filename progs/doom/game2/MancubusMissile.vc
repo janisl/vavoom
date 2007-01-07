@@ -41,7 +41,7 @@ defaultproperties
 	Height = 8.0;
 	Speed = 700.0;
 	MissileDamage = 8;
-	Translucency = 33;
+	Alpha = 0.666;
 	IdleState = S_FATSHOT1;
 	DeathState = S_FATSHOTX1;
 	SightSound = 'fatso/attack';

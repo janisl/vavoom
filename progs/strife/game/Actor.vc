@@ -3471,7 +3471,7 @@ void A_Fall()
 void A_SetShadow()
 {
 	bUnknown2 = true;
-	Translucency = 66;
+	Alpha = 0.333;
 }
 
 //==========================================================================
@@ -3483,7 +3483,7 @@ void A_SetShadow()
 void A_ClearShadow()
 {
 	bUnknown2 = false;
-	Translucency = 0;
+	Alpha = 1.0;
 }
 
 //==========================================================================
@@ -3494,7 +3494,7 @@ void A_ClearShadow()
 
 void A_BeShadowyFoe()
 {
-	Translucency = 66;
+	Alpha = 0.333;
 	bFriendly = false;
 }
 

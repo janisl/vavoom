@@ -35,7 +35,7 @@ class WraithBuried : Wraith
 
 void A_WraithRaiseInit()
 {
-	Translucency = 0;
+	Alpha = 1.0;
 	bNonShootable = false;
 	bShootable = true;
 	bSolid = true;
@@ -102,7 +102,7 @@ defaultproperties
 {
 	Height = 68.0;
 	bSolid = false;
-	Translucency = 100;
+	Alpha = 0.0;
 	bShootable = false;
 	IdleState = S_WRAITH_LOOK1;
 	SeeState = S_WRAITH_RAISE1;

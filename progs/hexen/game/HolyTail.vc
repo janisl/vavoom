@@ -126,7 +126,7 @@ defaultproperties
 {
 	Radius = 1.0;
 	Height = 1.0;
-	Translucency = 33;
+	Alpha = 0.666;
 	bDropOff = true;
 	bColideWithWorld = false;
 	bColideWithThings = false;

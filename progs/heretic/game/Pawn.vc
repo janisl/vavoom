@@ -283,7 +283,7 @@ void A_FaceTarget()
 
 	Angles.yaw = atan2(Enemy.Origin.y - Origin.y, Enemy.Origin.x - Origin.x);
 
-	if (Enemy.Translucency)
+	if (Enemy.Alpha < 1.0)
 	{
 		Angles.yaw = AngleMod360(Angles.yaw + (Random() - Random()) * 45.0);
 	}

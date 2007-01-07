@@ -151,7 +151,7 @@ void R_ForceLightning();
 void R_SkyChanged();
 
 //	2D graphics
-void R_DrawPic(int x, int y, int handle, int trans = 0);
+void R_DrawPic(int x, int y, int handle, float Aplha = 1.0);
 void R_DrawShadowedPic(int x, int y, int handle);
 void R_FillRectWithFlat(int DestX,int DestY,int width,int height,const char* fname);
 

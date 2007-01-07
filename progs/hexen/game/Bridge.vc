@@ -89,7 +89,7 @@ defaultproperties
 	Radius = 32.0;
 	Height = 2.0;
 	Mass = 100.0;
-	Translucency = 100;
+	Alpha = 0.0;
 	bSolid = true;
 	bNoGravity = true;
 	bNoPassMobj = true;

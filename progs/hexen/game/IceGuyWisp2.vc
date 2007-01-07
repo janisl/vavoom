@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class IceGuyWisp2:Fragment;
+class IceGuyWisp2 : Fragment;
 
 __states__
 {
@@ -40,6 +40,6 @@ __states__
 
 defaultproperties
 {
-	Translucency = 33;
+	Alpha = 0.666;
 	IdleState = S_ICEGUY_WISP2_1;
 }

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class PunchPuff:Effect;
+class PunchPuff : Effect;
 
 __states__
 {
@@ -37,7 +37,7 @@ __states__
 defaultproperties
 {
 	SpriteType = SPR_VP_PARALLEL;
-	Translucency = 66;
+	Alpha = 0.333;
 	IdleState = S_PUNCHPUFF1;
 	SightSound = 'FighterPunchHitThing';
 	AttackSound = 'FighterPunchHitWall';

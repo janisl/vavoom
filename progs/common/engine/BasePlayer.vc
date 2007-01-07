@@ -118,7 +118,7 @@ native readonly private int* OldStats;
 
 native readonly int ClientNum;
 
-native readonly int ViewEntTranslucency;
+native readonly float ViewEntAlpha;
 
 //  Print to client
 native final void cprint(string format, ...);

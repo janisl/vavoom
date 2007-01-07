@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class BlastEffect:Effect;
+class BlastEffect : Effect;
 
 __states__
 {
@@ -40,7 +40,7 @@ __states__
 
 defaultproperties
 {
-	Translucency = 33;
+	Alpha = 0.666;
 	bColideWithWorld = false;
 	bColideWithThings = false;
 	bNoTeleport = true;

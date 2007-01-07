@@ -33,7 +33,7 @@ class PlayerSpeed : Effect;
 
 void A_SpeedFade()
 {
-	Translucency = 66;
+	Alpha = 0.333;
 }
 
 __states__
@@ -54,6 +54,6 @@ __states__
 
 defaultproperties
 {
-	Translucency = 33;
+	Alpha = 0.666;
 	IdleState = S_PLAYER_F_SPEED1;
 }

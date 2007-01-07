@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class HolyPuff:Effect;
+class HolyPuff : Effect;
 
 __states__
 {
@@ -36,6 +36,6 @@ __states__
 
 defaultproperties
 {
-	Translucency = 66;
+	Alpha = 0.333;
 	IdleState = S_HOLY_PUFF1;
 }

@@ -114,7 +114,7 @@ __states__
 
 defaultproperties
 {
-	Translucency = 33;
+	Alpha = 0.666;
 	IdleState = S_FIRE1;
 	Effects = DoomDefs::EF_DL_MISSILE;
 }

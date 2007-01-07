@@ -159,7 +159,7 @@ static int		setwidth;
 static int		setheight;
 static int		setbpp;
 
-static VCvarI	menu_darkening("menu_darkening", "16", CVAR_Archive);
+static VCvarF	menu_darkening("menu_darkening", "0.5", CVAR_Archive);
 static VCvarI	draw_pause("draw_pause", "1");
 
 static VCvarI	screen_width("screen_width", "0", CVAR_Archive);

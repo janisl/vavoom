@@ -27,17 +27,17 @@ class MenuChoice_Darkening : MenuChoiceSlider;
 
 float GetInitialValue()
 {
-	return itof(GetCvar('menu_darkening'));
+	return GetCvarF('menu_darkening');
 }
 
 bool SetNewValue(float newValue)
 {
-	SetCvar('menu_darkening', ftoi(newValue));
+	SetCvarF('menu_darkening', newValue);
 	return true;
 }
 
 defaultproperties
 {
 	Text = "Menu darkness";
-	MaxValue = 31.0;
+	ValueDelta = 0.1;
 }

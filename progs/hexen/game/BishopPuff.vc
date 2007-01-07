@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class BishopPuff:Effect;
+class BishopPuff : Effect;
 
 __states__
 {
@@ -38,6 +38,6 @@ __states__
 
 defaultproperties
 {
-	Translucency = 66;
+	Alpha = 0.333;
 	IdleState = S_BISHOP_PUFF1;
 }

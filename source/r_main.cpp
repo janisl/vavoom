@@ -641,7 +641,7 @@ void R_RenderPlayerView()
 //
 //==========================================================================
 
-void R_DrawPic(int x, int y, int handle, int trans)
+void R_DrawPic(int x, int y, int handle, float Alpha)
 {
 	guard(R_DrawPic);
 	picinfo_t	info;
@@ -657,7 +657,7 @@ void R_DrawPic(int x, int y, int handle, int trans)
 	GTextureManager.Textures[handle]->GetPixels();
 	Drawer->DrawPic(fScaleX * x, fScaleY * y,
 		fScaleX * (x + info.width), fScaleY * (y + info.height),
-		0, 0, info.width, info.height, handle, trans);
+		0, 0, info.width, info.height, handle, Alpha);
 	unguard;
 }
 
@@ -682,10 +682,10 @@ void R_DrawShadowedPic(int x, int y, int handle)
 	y -= info.yoffset;
 	Drawer->DrawPicShadow(fScaleX * (x + 2), fScaleY * (y + 2),
 		fScaleX * (x + 2 + info.width), fScaleY * (y + 2 + info.height),
-		0, 0, info.width, info.height, handle, 160);
+		0, 0, info.width, info.height, handle, 0.625);
 	Drawer->DrawPic(fScaleX * x, fScaleY * y,
 		fScaleX * (x + info.width), fScaleY * (y + info.height),
-		0, 0, info.width, info.height, handle, 0);
+		0, 0, info.width, info.height, handle, 1.0);
 	unguard;
 }
 
@@ -712,7 +712,7 @@ void R_FillRectWithFlat(int DestX, int DestY, int width, int height, const char*
 //
 //==========================================================================
 
-void R_ShadeRect(int x, int y, int width, int height, int shade)
+void R_ShadeRect(int x, int y, int width, int height, float shade)
 {
 	guard(R_ShadeRect);
 	Drawer->ShadeRect((int)(x * fScaleX), (int)(y * fScaleY),

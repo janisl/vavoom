@@ -195,9 +195,9 @@ public:
 	void BeginSky();
 	void DrawSkyPolygon(surface_t*, bool, int, float, int, float);
 	void EndSky();
-	void DrawMaskedPolygon(surface_t*, int);
-	void DrawSpritePolygon(TVec*, int, int, int, vuint32, const TVec&, float,
-		const TVec&, const TVec&, const TVec&);
+	void DrawMaskedPolygon(surface_t*, float);
+	void DrawSpritePolygon(TVec*, int, float, int, vuint32, const TVec&,
+		float, const TVec&, const TVec&, const TVec&);
 	void DrawAliasModel(const TVec&, const TAVec&, const TVec&, const TVec&,
 		mmdl_t*, int, int, vuint32, float, bool);
 
@@ -207,11 +207,11 @@ public:
 	void EndParticles();
 
 	//	Drawing
-	void DrawPic(float, float, float, float, float, float, float, float, int, int);
-	void DrawPicShadow(float, float, float, float, float, float, float, float, int, int);
+	void DrawPic(float, float, float, float, float, float, float, float, int, float);
+	void DrawPicShadow(float, float, float, float, float, float, float, float, int, float);
 	void FillRectWithFlat(float, float, float, float, float, float, float, float, const char*);
 	void FillRect(float, float, float, float, vuint32);
-	void ShadeRect(int, int, int, int, int);
+	void ShadeRect(int, int, int, int, float);
 	void DrawConsoleBackground(int);
 	void DrawSpriteLump(float, float, float, float, int, int, bool);
 

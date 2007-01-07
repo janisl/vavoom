@@ -513,8 +513,8 @@ void SB_DrawMainBar()
 	R_DrawPic(BAR_X + 110, BAR_Y + 3, pic_manadim2[sb_mana2]);
 	R_DrawPic(BAR_X + 94, BAR_Y + 3, pic_manavial1[sb_manaVial1]);
 	R_DrawPic(BAR_X + 102, BAR_Y + 3, pic_manavial2[sb_manaVial2]);
-	R_ShadeRect(BAR_X + 95, BAR_Y + 4, 3, 22 - (22 * cl.Mana[0]) / HexenDefs::MAX_MANA, 31);
-	R_ShadeRect(BAR_X + 103, BAR_Y + 4, 3, 22 - (22 * cl.Mana[1]) / HexenDefs::MAX_MANA, 31);
+	R_ShadeRect(BAR_X + 95, BAR_Y + 4, 3, 22 - (22 * cl.Mana[0]) / HexenDefs::MAX_MANA, 0.99);
+	R_ShadeRect(BAR_X + 103, BAR_Y + 4, 3, 22 - (22 * cl.Mana[1]) / HexenDefs::MAX_MANA, 0.99);
 
 	// Ready artifact
 	if (cl.ArtifactFlash)
@@ -580,7 +580,8 @@ void SB_DrawKeyBar()
 	//  Armor
 	for (i = 0; i < HexenDefs::NUMARMOR; i++)
 	{
-		R_DrawPic2(BAR_X + 150 + 31 * i, BAR_Y + 3, pic_armor[i], cl.ArmorPerc[i]);
+		R_DrawPic2(BAR_X + 150 + 31 * i, BAR_Y + 3, pic_armor[i],
+			1.0 - itof(cl.ArmorPerc[i]) / 100.0);
 	}
 }
 
@@ -655,7 +656,7 @@ void SB_DrawFullscreenStats()
 		x = cl.InvPtr - cl.InvCurPos;
 		for (i = 0; i < 7; i++)
 		{
-			R_DrawPic2(210 + i * 31, 448, pic_arti[0], 40);
+			R_DrawPic2(210 + i * 31, 448, pic_arti[0], 0.6);
 			if (cl.InventorySlotNum > x + i &&
 				cl.Inventory[x + i].type != HexenDefs::arti_none)
 			{
@@ -677,7 +678,7 @@ void SB_DrawFullscreenStats()
 	else if (cl.ReadyArtifact > 0)
 	{
 		//  Ready artifact
-		R_DrawPic2(546, 440, pic_arti[0], 40);
+		R_DrawPic2(546, 440, pic_arti[0], 0.6);
 		R_DrawPic(544, 440, pic_arti[cl.ReadyArtifact]);
 		SB_DrawINumber(567, 462, cl.Inventory[cl.InvPtr].count);
 	}

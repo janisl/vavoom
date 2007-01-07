@@ -36,6 +36,6 @@ defaultproperties
 {
 	ArtifactType = HereticDefs::arti_invisibility;
 	bCanRespawn = false;
-	Translucency = 33;
+	Alpha = 0.666;
 	IdleState = S_ARTI_INVS1;
 }

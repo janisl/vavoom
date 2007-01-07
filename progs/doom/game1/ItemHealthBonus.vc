@@ -56,7 +56,7 @@ __states__
 
 defaultproperties
 {
-	Translucency = 10;
+	Alpha = 0.9;
 	bCountItem = true;
 	IdleState = S_BON1;
 	PickupMessage = "Picked up a health bonus.";

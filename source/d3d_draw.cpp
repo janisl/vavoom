@@ -56,11 +56,11 @@
 //==========================================================================
 
 void VDirect3DDrawer::DrawPic(float x1, float y1, float x2, float y2,
-	float s1, float t1, float s2, float t2, int handle, int trans)
+	float s1, float t1, float s2, float t2, int handle, float Alpha)
 {
 	guard(VDirect3DDrawer::DrawPic);
 	MyD3DVertex	dv[4];
-	int l = (((100 - trans) * 255 / 100) << 24) | 0xffffff;
+	int l = ((int)(Alpha * 255) << 24) | 0xffffff;
 
 	SetPic(handle);
 
@@ -96,11 +96,11 @@ void VDirect3DDrawer::DrawPic(float x1, float y1, float x2, float y2,
 //==========================================================================
 
 void VDirect3DDrawer::DrawPicShadow(float x1, float y1, float x2, float y2,
-	float s1, float t1, float s2, float t2, int handle, int shade)
+	float s1, float t1, float s2, float t2, int handle, float shade)
 {
 	guard(VDirect3DDrawer::DrawPicShadow);
 	MyD3DVertex	dv[4];
-	int l = shade << 24;
+	int l = (int)(shade * 255) << 24;
 
 	SetPic(handle);
 
@@ -185,18 +185,18 @@ void VDirect3DDrawer::FillRect(float x1, float y1, float x2, float y2,
 
 //==========================================================================
 //
-//	VDirect3DDrawer::DarkenScreen
+//	VDirect3DDrawer::ShadeRect
 //
 //  Fade all the screen buffer, so that the menu is more readable,
 // especially now that we use the small hufont in the menus...
 //
 //==========================================================================
 
-void VDirect3DDrawer::ShadeRect(int x, int y, int w, int h, int darkening)
+void VDirect3DDrawer::ShadeRect(int x, int y, int w, int h, float darkening)
 {
 	guard(VDirect3DDrawer::ShadeRect);
 	MyD3DVertex	dv[4];
-	int l = darkening << 27;
+	int l = (int)(darkening * 255) << 24;
 
 	RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_DISABLE);
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, TRUE);

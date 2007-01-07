@@ -444,7 +444,7 @@ void PlayerExitMap(bool clusterChange)
 
 	Items = 0;
 	MO.Angles.pitch = 0.0;
-//	MO.Translucency = 0;		// cancel invisibility
+//	MO.Alpha = 1.0;	// cancel invisibility
 	ExtraLight = 0;			// cancel gun flashes
 	FixedColourmap = 0;		// cancel ir gogles
 	DamageFlash = 0.0;		// no palette changes
@@ -1009,7 +1009,7 @@ bool GivePower(int power)
 	if (power == pw_invisibility)
 	{
 		Powers[power] = INVISTIME;
-		MO.Translucency = 90;
+		MO.Alpha = 0.1;
 		return true;
 	}
 
@@ -1927,7 +1927,7 @@ void PlayerTick(float deltaTime)
 		if (Powers[pw_invisibility] <= 0.0)
 		{
 			Powers[pw_invisibility] = 0.0;
-			MO.Translucency = 0;
+			MO.Alpha = 1.0;
 		}
 	}
 

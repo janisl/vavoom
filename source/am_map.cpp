@@ -948,7 +948,7 @@ static void AM_clearFB()
 	{
 		for (int x = mapxstart - AM_W; x < AM_W; x += 320)
 		{
-			R_DrawPic(x, y, mappic, 0);
+			R_DrawPic(x, y, mappic);
 		}
 	}
 }

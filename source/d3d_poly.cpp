@@ -940,7 +940,7 @@ void VDirect3DDrawer::EndSky()
 //
 //==========================================================================
 
-void VDirect3DDrawer::DrawMaskedPolygon(surface_t* surf, int translucency)
+void VDirect3DDrawer::DrawMaskedPolygon(surface_t* surf, float Alpha)
 {
 	guard(VDirect3DDrawer::DrawMaskedPolygon);
 	MyD3DVertex	out[256];
@@ -968,7 +968,7 @@ void VDirect3DDrawer::DrawMaskedPolygon(surface_t* surf, int translucency)
 		r = r / (size * 256);
 		g = g / (size * 256);
 		b = b / (size * 256);
-		int alpha = (100 - translucency) * 255 / 100;
+		int alpha = (int)(Alpha * 255);
 		l = (alpha << 24) | (r << 16) | (g << 8) | b;
 	}
 	else
@@ -977,7 +977,7 @@ void VDirect3DDrawer::DrawMaskedPolygon(surface_t* surf, int translucency)
 		int lR = ((surf->Light >> 16) & 255) * lev / 255;
 		int lG = ((surf->Light >> 8) & 255) * lev / 255;
 		int lB = (surf->Light & 255) * lev / 255;
-		int alpha = (100 - translucency) * 255 / 100;
+		int alpha = (int)(Alpha * 255);
 		l = (alpha << 24) | (lR << 16) | (lG << 8) | lB;
 	}
 
@@ -989,7 +989,7 @@ void VDirect3DDrawer::DrawMaskedPolygon(surface_t* surf, int translucency)
 	}
 
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, TRUE);
-	if (blend_sprites || translucency)
+	if (blend_sprites || Alpha < 1.0)
 	{
 		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, TRUE);
 		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHAREF, 0);
@@ -1002,7 +1002,7 @@ void VDirect3DDrawer::DrawMaskedPolygon(surface_t* surf, int translucency)
 #endif
 
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, FALSE);
-	if (blend_sprites || translucency)
+	if (blend_sprites || Alpha < 1.0)
 	{
 		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, FALSE);
 		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHAREF, 170);
@@ -1016,7 +1016,7 @@ void VDirect3DDrawer::DrawMaskedPolygon(surface_t* surf, int translucency)
 //
 //==========================================================================
 
-void VDirect3DDrawer::DrawSpritePolygon(TVec *cv, int lump, int translucency,
+void VDirect3DDrawer::DrawSpritePolygon(TVec *cv, int lump, float Alpha,
 	int translation, vuint32 light, const TVec&, float, const TVec& saxis,
 	const TVec& taxis, const TVec& texorg)
 {
@@ -1025,7 +1025,7 @@ void VDirect3DDrawer::DrawSpritePolygon(TVec *cv, int lump, int translucency,
 
 	SetSpriteLump(lump, translation);
 
-	int l = (((100 - translucency) * 255 / 100) << 24) | (light & 0x00ffffff);
+	int l = ((int)(Alpha * 255) << 24) | (light & 0x00ffffff);
 	for (int i = 0; i < 4; i++)
 	{
 		TVec texpt = cv[i] - texorg;
@@ -1034,7 +1034,7 @@ void VDirect3DDrawer::DrawSpritePolygon(TVec *cv, int lump, int translucency,
 			DotProduct(texpt, taxis) * tex_ih);
 	}
 
-	if (blend_sprites || translucency)
+	if (blend_sprites || Aplha < 1.0)
 	{
 		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, TRUE);
 		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHAREF, 0);
@@ -1047,7 +1047,7 @@ void VDirect3DDrawer::DrawSpritePolygon(TVec *cv, int lump, int translucency,
 	RenderDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, MYD3D_VERTEX_FORMAT, out, 4, 0);
 #endif
 
-	if (blend_sprites || translucency)
+	if (blend_sprites || Alpha < 1.0)
 	{
 		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, FALSE);
 		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHAREF, 170);

@@ -204,7 +204,7 @@ void VSoftwareDrawer::FillRect_8(float x1, float y1, float x2, float y2,
 //
 //==========================================================================
 
-void VSoftwareDrawer::ShadeRect_8(int xx, int yy, int ww, int hh, int darkening)
+void VSoftwareDrawer::ShadeRect_8(int xx, int yy, int ww, int hh, float darkening)
 {
 	int x1 = xx;
 	int y1 = yy;
@@ -213,7 +213,7 @@ void VSoftwareDrawer::ShadeRect_8(int xx, int yy, int ww, int hh, int darkening)
 	if (x2 > ScreenWidth) x2 = ScreenWidth;
 	if (y2 > ScreenHeight) y2 = ScreenHeight;
 
-    byte* shades = colourmaps + darkening * 256;
+    byte* shades = colourmaps + (int)(darkening * 31) * 256;
 	for (int y = y1; y < y2; y++)
 	{
 		byte *dest = scrn + x1 + ScreenWidth * y;
@@ -443,7 +443,7 @@ void VSoftwareDrawer::FillRect_16(float x1, float y1, float x2, float y2,
 //
 //==========================================================================
 
-void VSoftwareDrawer::ShadeRect_16(int xx, int yy, int ww, int hh, int darkening)
+void VSoftwareDrawer::ShadeRect_16(int xx, int yy, int ww, int hh, float darkening)
 {
 	int x1 = xx;
 	int y1 = yy;
@@ -452,7 +452,7 @@ void VSoftwareDrawer::ShadeRect_16(int xx, int yy, int ww, int hh, int darkening
 	if (x2 > ScreenWidth) x2 = ScreenWidth;
 	if (y2 > ScreenHeight) y2 = ScreenHeight;
 
-	darkening = 32 - darkening;
+	darkening = 1.0 - darkening;
 	for (int y = y1; y < y2; y++)
 	{
 		word *dest = (word*)scrn + x1 + ScreenWidth * y;
@@ -461,7 +461,8 @@ void VSoftwareDrawer::ShadeRect_16(int xx, int yy, int ww, int hh, int darkening
 			byte r = GetColR(*dest);
 			byte g = GetColG(*dest);
 			byte b = GetColB(*dest);
-			*dest = MakeCol(r * darkening / 32, g * darkening / 32, b * darkening / 32);
+			*dest = MakeCol((int)(r * darkening), (int)(g * darkening),
+				(int)(b * darkening));
 			dest++;
 		}
 	}
@@ -665,7 +666,7 @@ void VSoftwareDrawer::FillRect_32(float x1, float y1, float x2, float y2,
 //
 //==========================================================================
 
-void VSoftwareDrawer::ShadeRect_32(int xx, int yy, int ww, int hh, int darkening)
+void VSoftwareDrawer::ShadeRect_32(int xx, int yy, int ww, int hh, float darkening)
 {
 	int x1 = xx;
 	int y1 = yy;
@@ -674,7 +675,7 @@ void VSoftwareDrawer::ShadeRect_32(int xx, int yy, int ww, int hh, int darkening
 	if (x2 > ScreenWidth) x2 = ScreenWidth;
 	if (y2 > ScreenHeight) y2 = ScreenHeight;
 
-	darkening = 32 - darkening;
+	darkening = 1.0 - darkening;
 	for (int y = y1; y < y2; y++)
 	{
 		vuint32 *dest = (vuint32*)scrn + x1 + ScreenWidth * y;
@@ -683,7 +684,8 @@ void VSoftwareDrawer::ShadeRect_32(int xx, int yy, int ww, int hh, int darkening
 			byte r = GetCol32R(*dest);
 			byte g = GetCol32G(*dest);
 			byte b = GetCol32B(*dest);
-			*dest = MakeCol32(r * darkening / 32, g * darkening / 32, b * darkening / 32);
+			*dest = MakeCol32((int)(r * darkening), (int)(g * darkening),
+				(int)(b * darkening));
 			dest++;
 		}
 	}
@@ -794,10 +796,11 @@ void VSoftwareDrawer::DrawPic(float x1, float y1, float x2, float y2,
 //==========================================================================
 
 void VSoftwareDrawer::DrawPic(float x1, float y1, float x2, float y2,
-	float s1, float t1, float s2, float t2, int handle, int trans)
+	float s1, float t1, float s2, float t2, int handle, float Alpha)
 {
 	guard(VSoftwareDrawer::DrawPic);
 	picsource = SetPic(handle);
+	int trans = (int)((1.0 - Alpha) * 100.0);
 	if (ScreenBPP == 8)
 	{
 		if (trans < 5)
@@ -866,11 +869,11 @@ void VSoftwareDrawer::DrawPic(float x1, float y1, float x2, float y2,
 //==========================================================================
 
 void VSoftwareDrawer::DrawPicShadow(float x1, float y1, float x2, float y2,
-	float s1, float t1, float s2, float t2, int handle, int shade)
+	float s1, float t1, float s2, float t2, int handle, float shade)
 {
 	guard(VSoftwareDrawer::DrawPicShadow);
 	picsource = SetPic(handle);
-	ds_shade = shade;
+	ds_shade = (int)(shade * 255);
 	if (ScreenBPP == 8)
 	{
 		picspanfunc = DrawPicSpanShadow_8;
@@ -954,7 +957,7 @@ void VSoftwareDrawer::FillRect(float x1, float y1, float x2, float y2,
 //
 //==========================================================================
 
-void VSoftwareDrawer::ShadeRect(int x, int y, int w, int h, int darkening)
+void VSoftwareDrawer::ShadeRect(int x, int y, int w, int h, float darkening)
 {
 	guard(VSoftwareDrawer::ShadeRect);
 	if (ScreenBPP == 8)

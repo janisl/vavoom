@@ -29,7 +29,7 @@ class Shadows : Demon
 
 defaultproperties
 {
-	Translucency = 90;
+	Alpha = 0.1;
 	SightSound = 'spectre/sight';
 	ActiveSound = 'spectre/active';
 	AttackSound = 'spectre/melee';

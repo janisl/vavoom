@@ -364,7 +364,7 @@ int SV_GetMobjBits(VEntity &mobj, mobj_base_t &base)
 		bits |= MOB_SPRITE;
 	if (mobj.EntityFlags & VEntity::EF_FullBright)
 		bits |= MOB_FULL_BRIGHT;
-	if (base.Translucency != mobj.Translucency)
+	if (base.Alpha != mobj.Alpha)
 		bits |= MOB_TRANSLUC;
 	if (base.Translation != mobj.Translation)
 		bits |= MOB_TRANSL;
@@ -440,7 +440,7 @@ void SV_WriteMobj(int bits, VEntity &mobj, VMessage &msg)
 	if (bits & MOB_SPRITE)
 		msg << (vuint8)mobj.SpriteType;
 	if (bits & MOB_TRANSLUC)
-		msg << (vuint8)mobj.Translucency;
+		msg << (vuint8)(mobj.Alpha * 255);
 	if (bits & MOB_TRANSL)
 		msg << (vuint8)mobj.Translation;
 	if (bits & MOB_EFFECTS)
@@ -573,7 +573,7 @@ void SV_CreateBaseline()
 		base.Angles.pitch = mobj.Angles.pitch;
 		base.Angles.roll = mobj.Angles.roll;
 		base.SpriteType = mobj.SpriteType;
-		base.Translucency = mobj.Translucency;
+		base.Alpha = mobj.Alpha;
 		base.Translation = mobj.Translation;
 		base.Effects = mobj.Effects;
 
@@ -588,7 +588,7 @@ void SV_CreateBaseline()
 					<< (vuint8)(AngleToByte(mobj.Angles.pitch))
 					<< (vuint8)(AngleToByte(mobj.Angles.roll))
 					<< (vuint8)mobj.SpriteType
-					<< (vuint8)mobj.Translucency
+					<< (vuint8)(mobj.Alpha * 255)
 					<< (vuint8)mobj.Translation
 					<< (vuint8)mobj.Effects;
 	}
@@ -1040,7 +1040,7 @@ void SV_WriteViewData(VBasePlayer &player, VMessage &msg)
 		<< player.ViewOrg.z
 		<< (vuint8)player.ExtraLight
 		<< (vuint8)player.FixedColourmap
-		<< (vuint8)player.MO->Translucency
+		<< (vuint8)(player.MO->Alpha * 255)
 		<< (vuint16)player.PSpriteSY;
 	for (i = 0; i < NUMPSPRITES; i++)
 	{
@@ -1747,19 +1747,6 @@ void SV_SetLineTexture(int side, int position, int texture)
 					<< (vuint16)side
 					<< (vuint16)GLevel->Sides[side].toptexture;
 	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	SV_SetLineTransluc
-//
-//==========================================================================
-
-void SV_SetLineTransluc(line_t *line, int trans)
-{
-	guard(SV_SetLineTransluc);
-	line->translucency = trans;
 	unguard;
 }
 

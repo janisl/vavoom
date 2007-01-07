@@ -643,7 +643,7 @@ void PlayerExitMap(bool clusterChange)
 		MorphTime = 0.0;
 	}
 	MO.Angles.pitch = 0.0;
-	MO.Translucency = 0;	// Remove invisibility
+	MO.Alpha = 1.0;	// Remove invisibility
 	ExtraLight = 0;	// Remove weapon flashes
 	FixedColourmap = 0;	// Remove torch
 	DamageFlash = 0.0;	// No palette changes
@@ -2372,19 +2372,19 @@ void PlayerTick(float deltaTime)
 			}
 			if (bDontDraw)
 			{
-				MO.Translucency = 100;
+				MO.Alpha = 0.0;
 			}
 			else if (bShadow)
 			{
-				MO.Translucency = 66;
+				MO.Alpha = 0.333;
 			}
 			else if (bAltShadow)
 			{
-				MO.Translucency = 33;
+				MO.Alpha = 0.666;
 			}
 			else
 			{
-				MO.Translucency = 0;
+				MO.Alpha = 1.0;
 			}
 		}
 		Powers[pw_invulnerability] -= deltaTime;
@@ -2396,7 +2396,7 @@ void PlayerTick(float deltaTime)
 			if (PClass == HexenDefs::PCLASS_CLERIC)
 			{
 				Actor(MO).bNonShootable = false;
-				MO.Translucency = 0;
+				MO.Alpha = 1.0;
 			}
 		}
 	}

@@ -218,12 +218,12 @@ void F_TextWrite()
 
 void F_FadeOut()
 {
-	int fade = ftoi(FinaleTime * 32.0 / FinaleEndTime);
+	float fade = FinaleTime / FinaleEndTime;
 
-	if (fade < 0)
-		fade = 0;
-	if (fade > 31)
-		fade = 31;
+	if (fade < 0.0)
+		fade = 0.0;
+	if (fade > 0.99)
+		fade = 0.99;
 	R_ShadeRect(0, 0, 640, 480, fade);
 }
 
@@ -235,12 +235,12 @@ void F_FadeOut()
 
 void F_FadeIn()
 {
-	int fade = 31 - ftoi(FinaleTime * 32.0 / FinaleEndTime);
+	float fade = 1.0 - FinaleTime / FinaleEndTime;
 
-	if (fade < 0)
-		fade = 0;
-	if (fade > 31)
-		fade = 31;
+	if (fade < 0.0)
+		fade = 0.0;
+	if (fade > 0.99)
+		fade = 0.99;
 	R_ShadeRect(0, 0, 640, 480, fade);
 }
 

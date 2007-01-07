@@ -33,7 +33,7 @@ class BishopBlur : Effect;
 
 void A_SetAltShadow()
 {
-	Translucency = 33;
+	Alpha = 0.666;
 }
 
 __states__
@@ -44,6 +44,6 @@ __states__
 
 defaultproperties
 {
-	Translucency = 66;
+	Alpha = 0.333;
 	IdleState = S_BISHOPBLUR1;
 }

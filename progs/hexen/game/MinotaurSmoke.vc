@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MinotaurSmoke:Effect;
+class MinotaurSmoke : Effect;
 
 __states__
 {
@@ -48,7 +48,7 @@ __states__
 
 defaultproperties
 {
-	Translucency = 66;
+	Alpha = 0.333;
 	bNoTeleport = true;
 	IdleState = S_MINOSMOKE1;
 }

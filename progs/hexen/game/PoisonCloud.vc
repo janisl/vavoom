@@ -144,7 +144,7 @@ defaultproperties
 	Radius = 1.0;
 	Height = 1.0;
 	Mass = 99999.0;
-	Translucency = 66;
+	Alpha = 0.333;
 	bDropOff = true;
 	bColideWithWorld = false;
 	bColideWithThings = false;

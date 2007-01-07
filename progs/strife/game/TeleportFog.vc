@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class TeleportFog:Effect;
+class TeleportFog : Effect;
 
 //==========================================================================
 //
@@ -65,7 +65,7 @@ __states__
 
 defaultproperties
 {
-	Translucency = 66;
+	Alpha = 0.333;
 	IdleState = S_TFOG1;
 	Effects = StrifeDefs::EF_DL_MISSILE;
 }

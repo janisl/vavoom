@@ -147,7 +147,7 @@ bool RoughCheckThing(Entity Other)
 
 void A_MinotaurFade0()
 {
-	Translucency = 66;
+	Alpha = 0.333;
 }
 
 //============================================================================
@@ -159,7 +159,7 @@ void A_MinotaurFade0()
 void A_MinotaurFade1()
 {
 	// Second level of transparency
-	Translucency = 33;
+	Alpha = 0.666;
 }
 
 //============================================================================
@@ -171,7 +171,7 @@ void A_MinotaurFade1()
 void A_MinotaurFade2()
 {
 	// Make fully visible
-	Translucency = 0;
+	Alpha = 1.0;
 }
 
 //============================================================================
@@ -259,7 +259,7 @@ void A_MinotaurChase()
 {
 	int starttime = Args[0];
 
-	Translucency = 0;	// In case pain caused him to skip his fade in.
+	Alpha = 1.0;	// In case pain caused him to skip his fade in.
 
 	if ((Level.Game.level->tictime - starttime) >= ftoi(MAULATORTIME * 35.0))
 	{
@@ -322,7 +322,7 @@ void A_MinotaurRoam()
 {
 	int starttime = Args[0];
 
-	Translucency = 0;	// In case pain caused him to skip his fade in.
+	Alpha = 1.0;	// In case pain caused him to skip his fade in.
 
 	if ((Level.Game.level->tictime - starttime) >= ftoi(MAULATORTIME * 35.0))
 	{
@@ -583,7 +583,7 @@ defaultproperties
 	StepSpeed = 16.0;
 	PainChance = 0.09765625;
 	MissileDamage = 7;
-	Translucency = 66;
+	Alpha = 0.333;
 	ChargeSpeed = 805.0;
 	MinotaurLookDist = 16.0 * 54.0;
 	IdleState = S_MNTR_SPAWN1;

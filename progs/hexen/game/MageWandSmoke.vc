@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MageWandSmoke:Effect;
+class MageWandSmoke : Effect;
 
 __states__
 {
@@ -35,7 +35,7 @@ __states__
 
 defaultproperties
 {
-	Translucency = 66;
+	Alpha = 0.333;
 	bNoTeleport = true;
 	bCannotPush = true;
 	bNoDamageThrust = true;

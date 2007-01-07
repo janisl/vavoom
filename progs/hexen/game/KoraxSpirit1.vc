@@ -194,7 +194,7 @@ defaultproperties
 	Radius = 20.0;
 	Height = 16.0;
 	Speed = 280.0;
-	Translucency = 33;
+	Alpha = 0.666;
 	bColideWithWorld = false;
 	bColideWithThings = false;
 	bActivateImpact = false;

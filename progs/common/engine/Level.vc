@@ -124,7 +124,7 @@ native final void SwapPlanes(sector_t *s);
 native final void SetFloorPic(sector_t * sec, int texture);
 native final void SetCeilPic(sector_t * sec, int texture);
 native final void SetLineTexture(int side, int position, int texture);
-native final void SetLineTransluc(line_t * line, int trans);
+native final void SetLineAlpha(line_t * line, float alpha);
 native final void SetFloorLightSector(sector_t* Sector, sector_t* SrcSector);
 native final void SetCeilingLightSector(sector_t* Sector, sector_t* SrcSector);
 native final void SetHeightSector(sector_t* Sector, sector_t* SrcSector, int Flags);

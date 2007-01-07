@@ -1727,7 +1727,7 @@ void VSoftwareDrawer::MaskedSurfCaclulateGradients(surface_t *surf)
 //==========================================================================
 
 void VSoftwareDrawer::SpriteDrawPolygon(TVec *cv, int count, surface_t *surf,
-	int lump, int translation, int translucency, vuint32 light,
+	int lump, int translation, float Alpha, vuint32 light,
 	const TVec& normal, float dist, const TVec& saxis, const TVec& taxis,
 	const TVec& texorg)
 {
@@ -1793,13 +1793,13 @@ void VSoftwareDrawer::SpriteDrawPolygon(TVec *cv, int count, surface_t *surf,
 		return;
 	}
 
-	if (!translucency)
+	if (Alpha >= 1.0)
 	{
 		spritespanfunc = D_DrawSpriteSpans;
 	}
 	else
 	{
-		int trindex = (translucency - 5) / 10;
+		int trindex = (int)((1 - Alpha) * 10 - 0.5);
 		if (trindex < 0)
 			trindex = 0;
 		else if (trindex > 8)
@@ -1815,9 +1815,9 @@ void VSoftwareDrawer::SpriteDrawPolygon(TVec *cv, int count, surface_t *surf,
 			spritespanfunc = D_DrawAltFuzzSpriteSpans;
 		}
 
-		trindex = translucency * 31 / 100;
-		d_dsttranstab = scaletable[trindex];
-		d_srctranstab = scaletable[31 - trindex];
+		trindex = (int)(Alpha * 31);
+		d_dsttranstab = scaletable[31 - trindex];
+		d_srctranstab = scaletable[trindex];
 	}
 
 	if (surf)
@@ -1840,10 +1840,10 @@ void VSoftwareDrawer::SpriteDrawPolygon(TVec *cv, int count, surface_t *surf,
 //
 //==========================================================================
 
-void VSoftwareDrawer::DrawMaskedPolygon(surface_t* surf, int translucency)
+void VSoftwareDrawer::DrawMaskedPolygon(surface_t* surf, float Alpha)
 {
 	guard(VSoftwareDrawer::DrawMaskedPolygon);
-	SpriteDrawPolygon(surf->verts, surf->count, surf, 0, 0, translucency, 0,
+	SpriteDrawPolygon(surf->verts, surf->count, surf, 0, 0, Alpha, 0,
 		TVec(), 0, TVec(), TVec(), TVec());
 	unguard;
 }
@@ -1854,12 +1854,12 @@ void VSoftwareDrawer::DrawMaskedPolygon(surface_t* surf, int translucency)
 //
 //==========================================================================
 
-void VSoftwareDrawer::DrawSpritePolygon(TVec* cv, int lump, int translucency,
+void VSoftwareDrawer::DrawSpritePolygon(TVec* cv, int lump, float Alpha,
 	int translation, vuint32 light, const TVec& normal, float dist,
 	const TVec& saxis, const TVec& taxis, const TVec& texorg)
 {
 	guard(VSoftwareDrawer::DrawSpritePolygon);
-	SpriteDrawPolygon(cv, 4, NULL, lump, translation, translucency, light,
+	SpriteDrawPolygon(cv, 4, NULL, lump, translation, Alpha, light,
 		normal, dist, saxis, taxis, texorg);
 	unguard;
 }

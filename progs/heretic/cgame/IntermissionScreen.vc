@@ -693,8 +693,8 @@ void IM_DrawDMStats()
 			}
 			else
 			{
-				R_DrawPic2(200, ypos, patchFaceOkay[i], 60);
-				R_DrawPic2(xpos, 158, patchFaceDead[i], 60);
+				R_DrawPic2(200, ypos, patchFaceOkay[i], 0.4);
+				R_DrawPic2(xpos, 158, patchFaceDead[i], 0.4);
 			}
 			kpos = 246;
 //          for (j = 0; j < MAXPLAYERS; j++)
