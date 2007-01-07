@@ -46,7 +46,6 @@ struct spec_trans_t
 spec_trans_t spec_trans_tab[NUM_SPECIALS];
 
 class<Weapon> WeaponClasses[DoomDefs::NUMWEAPONS];
-int weapon_ammo_type[DoomDefs::NUMWEAPONS];
 int WeaponOrder[DoomDefs::NUMWEAPONS];
 
 #ifndef NO_BOTS
@@ -1277,21 +1276,6 @@ defaultproperties
 #endif
 #ifdef GRENADE_LAUNCHER
 	WeaponClasses[9] = WeaponGrenade;
-#endif
-
-	weapon_ammo_type[0] = DoomDefs::am_noammo;
-	weapon_ammo_type[1] = DoomDefs::am_clip;
-	weapon_ammo_type[2] = DoomDefs::am_shell;
-	weapon_ammo_type[3] = DoomDefs::am_clip;
-	weapon_ammo_type[4] = DoomDefs::am_misl;
-	weapon_ammo_type[5] = DoomDefs::am_cell;
-	weapon_ammo_type[6] = DoomDefs::am_cell;
-	weapon_ammo_type[7] = DoomDefs::am_noammo;
-#ifdef DOOM2
-	weapon_ammo_type[8] = DoomDefs::am_shell;
-#endif
-#ifdef GRENADE_LAUNCHER
-	weapon_ammo_type[9] = DoomDefs::am_misl;
 #endif
 
 	WeaponOrder[0] = DoomDefs::wp_fist;

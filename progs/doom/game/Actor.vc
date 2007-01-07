@@ -86,8 +86,6 @@ bool bSkullFly;		// skull in flight
 bool bNoDeathmatch;
 bool bMonster;
 bool bTelestomp;
-bool bDefaultFloat;
-bool bDefaultNoGravity;
 bool bTriggerHappy;
 bool bNeverTarget;
 bool bNoGrudge;
@@ -102,7 +100,6 @@ bool bStaticLight;	// Static light source.
 float Speed;
 float StepSpeed;
 float PainChance;
-int SpawnHealth;
 int GibsHealth;
 
 // Thing being chased/attacked (or NULL).
@@ -516,7 +513,6 @@ void OnMapSpawn(mthing_t * mthing)
 		return;
 	}
 
-	SpawnHealth = Health;
 	bCheckLineBlocking = false;
 	bCheckLineBlockMonsters = false;
 	if (!bMissile)
@@ -531,9 +527,6 @@ void OnMapSpawn(mthing_t * mthing)
 	{
 		MaxStepHeight = 4.0;
 	}
-
-	bDefaultFloat = bFloat;
-	bDefaultNoGravity = bNoGravity;
 
 	if (Level.Game.gameskill == sk_nightmare)
 	{
@@ -3588,9 +3581,13 @@ bool PIT_VileCheck(Entity Other)
 	CorpseHit = Actor(Other);
 	CorpseHit.Velocity.x = 0.0;
 	CorpseHit.Velocity.y = 0.0;
-	CorpseHit.Height *= 4.0;
+	float OldHeight = CorpseHit.Height;
+	bool OldSolid = CorpseHit.bSolid;
+	CorpseHit.bSolid = true;
+	CorpseHit.Height = CorpseHit.default.Height;
 	check = CorpseHit.CheckPosition(CorpseHit.Origin);
-	CorpseHit.Height /= 4.0;
+	CorpseHit.bSolid = OldSolid;
+	CorpseHit.Height = OldHeight;
 
 	if (!check)
 		return true;	// doesn't fit here

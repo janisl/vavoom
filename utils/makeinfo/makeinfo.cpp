@@ -497,10 +497,6 @@ static void WriteMisc()
 
 	if (numammo)
 	{
-		for (i = 0; i < NUM_WEAPONS; i++)
-		{
-			fprintf(f, "\tweapon_ammo_type[%d] = DoomDefs::%s;\n", i, ammo_names[weaponinfo[i].ammo]);
-		}
 		for (i = 0; i < numammo; i++)
 		{
 			fprintf(f, "\tmaxammo[%d] = %d;\n", i, maxammo[i]);

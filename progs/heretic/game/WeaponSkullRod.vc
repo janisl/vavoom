@@ -105,6 +105,9 @@ __states__
 defaultproperties
 {
 	Ammo = am_skullrod;
+	GetAmmoCount = 50;
+	AmmoUsePL1 = USE_SKRD_AMMO_1;
+	AmmoUsePL2 = USE_SKRD_AMMO_2;
 	UpState = S_HORNRODUP;
 	DownState = S_HORNRODDOWN;
 	ReadyState = S_HORNRODREADY;
@@ -116,4 +119,5 @@ defaultproperties
 	AttackState2 = S_HORNRODATK2_1;
 	HoldAttackState2 = S_HORNRODATK2_1;
 	PSpriteSY = 15.0;
+	bInShareware = false;
 }

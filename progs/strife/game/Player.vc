@@ -546,10 +546,14 @@ bool GiveAmmo(int ammo, int num)
 
 bool GiveWeapon(int weapon, int weapon2, bool dropped, int ammo1, int ammo2)
 {
+	int AmmoType;
+	int Ammo2Type;
 	bool gaveammo;
 	bool gaveammo2;
 	bool gaveweapon;
 
+	AmmoType = MainGameInfo(Level.Game).WeaponClasses[weapon].default.Ammo;
+	Ammo2Type = MainGameInfo(Level.Game).WeaponClasses[weapon].default.Ammo;
 	if (Level.Game.netgame && (Level.Game.deathmatch < 2) && !dropped)
 	{
 		// leave placed weapons forever on net games
@@ -560,20 +564,20 @@ bool GiveWeapon(int weapon, int weapon2, bool dropped, int ammo1, int ammo2)
 		WeaponOwned[weapon] = true;
 
 		if (Level.Game.deathmatch)
-			GiveAmmo(MainGameInfo(Level.Game).weapon_ammo_type[weapon], ammo1 * 2);
+			GiveAmmo(AmmoType, ammo1 * 2);
 		else
-			GiveAmmo(MainGameInfo(Level.Game).weapon_ammo_type[weapon], ammo1);
+			GiveAmmo(AmmoType, ammo1);
 		PendingWeapon = weapon;
 
 		if (weapon2 != -1)
 		{
 			WeaponOwned[weapon2] = true;
-			if (MainGameInfo(Level.Game).weapon_ammo_type[weapon] != MainGameInfo(Level.Game).weapon_ammo_type[weapon2])
+			if (AmmoType != Ammo2Type)
 			{
 				if (Level.Game.deathmatch)
-					GiveAmmo(MainGameInfo(Level.Game).weapon_ammo_type[weapon], ammo2 * 2);
+					GiveAmmo(Ammo2Type, ammo2 * 2);
 				else
-					GiveAmmo(MainGameInfo(Level.Game).weapon_ammo_type[weapon], ammo2);
+					GiveAmmo(Ammo2Type, ammo2);
 			}
 		}
 
@@ -581,27 +585,27 @@ bool GiveWeapon(int weapon, int weapon2, bool dropped, int ammo1, int ammo2)
 		return false;
 	}
 
-	if (MainGameInfo(Level.Game).weapon_ammo_type[weapon] != StrifeDefs::am_noammo)
+	if (AmmoType != StrifeDefs::am_noammo)
 	{
 		// give one clip with a dropped weapon,
 		// two clips with a found weapon
 		if (dropped)
-			gaveammo = GiveAmmo(MainGameInfo(Level.Game).weapon_ammo_type[weapon], ammo1 / 2);
+			gaveammo = GiveAmmo(AmmoType, ammo1 / 2);
 		else
-			gaveammo = GiveAmmo(MainGameInfo(Level.Game).weapon_ammo_type[weapon], ammo1);
+			gaveammo = GiveAmmo(AmmoType, ammo1);
 	}
 	else
 		gaveammo = false;
 
-	if (weapon2 != -1 && MainGameInfo(Level.Game).weapon_ammo_type[weapon2] != StrifeDefs::am_noammo &&
-		MainGameInfo(Level.Game).weapon_ammo_type[weapon] != MainGameInfo(Level.Game).weapon_ammo_type[weapon2] && ammo2)
+	if (weapon2 != -1 && Ammo2Type != StrifeDefs::am_noammo &&
+		AmmoType != Ammo2Type && ammo2)
 	{
 		// give one clip with a dropped weapon,
 		// two clips with a found weapon
 		if (dropped)
-			gaveammo2 = GiveAmmo(MainGameInfo(Level.Game).weapon_ammo_type[weapon2], ammo2 / 2);
+			gaveammo2 = GiveAmmo(Ammo2Type, ammo2 / 2);
 		else
-			gaveammo2 = GiveAmmo(MainGameInfo(Level.Game).weapon_ammo_type[weapon2], ammo2);
+			gaveammo2 = GiveAmmo(Ammo2Type, ammo2);
 	}
 	else
 		gaveammo2 = false;
@@ -2250,7 +2254,7 @@ void ChangeWeapon(int newweapon)
 	}
 
 	//	Check if we have ammo.
-	ammo = MainGameInfo(Level.Game).weapon_ammo_type[newweapon];
+	ammo = MainGameInfo(Level.Game).WeaponClasses[newweapon].default.Ammo;
 	if (newweapon == StrifeDefs::wp_blaster)
 		count = 20;
 	else if (newweapon == StrifeDefs::wp_blaster2)

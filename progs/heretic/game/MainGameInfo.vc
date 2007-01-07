@@ -45,19 +45,14 @@ struct spec_trans_t
 spec_trans_t spec_trans_tab[NUM_SPECIALS];
 
 class<Weapon> WeaponClasses[NUMWEAPONS];
-int weapon_ammo_type[NUMWEAPONS];
 int WeaponOrder[NUMWEAPONS];
 
 BotPlayer::botinfo_t botinfo[NUMTOTALBOTS];
 int botskill;
 
 int GetAmmoChange[NUMAMMO];
-int GetWeaponAmmo[NUMWEAPONS];
 int WeaponValue[NUMWEAPONS];
 int maxammo[NUMAMMO];
-bool WeaponInShareware[NUMWEAPONS];
-int WeaponAmmoUsePL1[NUMWEAPONS];
-int WeaponAmmoUsePL2[NUMWEAPONS];
 
 string ArtifactText[HereticDefs::NUMARTIFACTS];
 string WeaponText[NUMWEAPONS];
@@ -558,16 +553,6 @@ defaultproperties
 	WeaponClasses[7] = WeaponGauntlets;
 	WeaponClasses[8] = WeaponBeak;
 
-	weapon_ammo_type[0] = am_noammo;
-	weapon_ammo_type[1] = am_goldwand;
-	weapon_ammo_type[2] = am_crossbow;
-	weapon_ammo_type[3] = am_blaster;
-	weapon_ammo_type[4] = am_skullrod;
-	weapon_ammo_type[5] = am_phoenixrod;
-	weapon_ammo_type[6] = am_mace;
-	weapon_ammo_type[7] = am_noammo;
-	weapon_ammo_type[8] = am_noammo;
-
 	WeaponOrder[0] = wp_staff;
 	WeaponOrder[1] = wp_gauntlets;
 	WeaponOrder[2] = wp_goldwand;
@@ -590,16 +575,6 @@ defaultproperties
 	GetAmmoChange[4] = wp_phoenixrod;
 	GetAmmoChange[5] = wp_mace;
 
-	GetWeaponAmmo[0] = 0;	// staff
-	GetWeaponAmmo[1] = 25;	// gold wand
-	GetWeaponAmmo[2] = 10;	// crossbow
-	GetWeaponAmmo[3] = 30;	// blaster
-	GetWeaponAmmo[4] = 50;	// skull rod
-	GetWeaponAmmo[5] = 2;	// phoenix rod
-	GetWeaponAmmo[6] = 50;	// mace
-	GetWeaponAmmo[7] = 0;	// gauntlets
-	GetWeaponAmmo[8] = 0;	// beak
-
 	WeaponValue[0] = 1;	// staff
 	WeaponValue[1] = 3;	// goldwand
 	WeaponValue[2] = 4;	// crossbow
@@ -616,36 +591,6 @@ defaultproperties
 	maxammo[3] = 200;	// skull rod
 	maxammo[4] = 20;	// phoenix rod
 	maxammo[5] = 150;	// mace
-
-	WeaponInShareware[0] = true;	// Staff
-	WeaponInShareware[1] = true;	// Gold wand
-	WeaponInShareware[2] = true;	// Crossbow
-	WeaponInShareware[3] = true;	// Blaster
-	WeaponInShareware[4] = false;	// Skull rod
-	WeaponInShareware[5] = false;	// Phoenix rod
-	WeaponInShareware[6] = false;	// Mace
-	WeaponInShareware[7] = true;	// Gauntlets
-	WeaponInShareware[8] = true;	// Beak
-
-	WeaponAmmoUsePL1[0] = 0;	// staff
-	WeaponAmmoUsePL1[1] = Weapon::USE_GWND_AMMO_1;	// gold wand
-	WeaponAmmoUsePL1[2] = Weapon::USE_CBOW_AMMO_1;	// crossbow
-	WeaponAmmoUsePL1[3] = Weapon::USE_BLSR_AMMO_1;	// blaster
-	WeaponAmmoUsePL1[4] = Weapon::USE_SKRD_AMMO_1;	// skull rod
-	WeaponAmmoUsePL1[5] = Weapon::USE_PHRD_AMMO_1;	// phoenix rod
-	WeaponAmmoUsePL1[6] = Weapon::USE_MACE_AMMO_1;	// mace
-	WeaponAmmoUsePL1[7] = 0;	// gauntlets
-	WeaponAmmoUsePL1[8] = 0;	// beak
-
-	WeaponAmmoUsePL2[0] = 0;	// staff
-	WeaponAmmoUsePL2[1] = Weapon::USE_GWND_AMMO_2;	// gold wand
-	WeaponAmmoUsePL2[2] = Weapon::USE_CBOW_AMMO_2;	// crossbow
-	WeaponAmmoUsePL2[3] = Weapon::USE_BLSR_AMMO_2;	// blaster
-	WeaponAmmoUsePL2[4] = Weapon::USE_SKRD_AMMO_2;	// skull rod
-	WeaponAmmoUsePL2[5] = Weapon::USE_PHRD_AMMO_2;	// phoenix rod
-	WeaponAmmoUsePL2[6] = Weapon::USE_MACE_AMMO_2;	// mace
-	WeaponAmmoUsePL2[7] = 0;	// gauntlets
-	WeaponAmmoUsePL2[8] = 0;	// beak
 
 	ArtifactText[0] = "";
 	ArtifactText[1] = "RING OF INVINCIBILITY";

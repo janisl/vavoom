@@ -42,7 +42,6 @@ struct spec_trans_t
 spec_trans_t spec_trans_tab[NUM_SPECIALS];
 
 class<Weapon> WeaponClasses[StrifeDefs::NUMWEAPONS];
-int weapon_ammo_type[StrifeDefs::NUMWEAPONS];
 int WeaponOrder[StrifeDefs::NUMWEAPONS];
 
 class<InventoryItem> InvItemCID[StrifeDefs::NUMINVITEMS];
@@ -633,18 +632,6 @@ defaultproperties
 	WeaponClasses[8] = WeaponCrossbow2;
 	WeaponClasses[9] = WeaponGrenadeLauncher2;
 	WeaponClasses[10] = WeaponMauler2;
-
-	weapon_ammo_type[0] = StrifeDefs::am_noammo;
-	weapon_ammo_type[1] = StrifeDefs::am_electric_arrow;
-	weapon_ammo_type[2] = StrifeDefs::am_clip;
-	weapon_ammo_type[3] = StrifeDefs::am_misl;
-	weapon_ammo_type[4] = StrifeDefs::am_grenade1;
-	weapon_ammo_type[5] = StrifeDefs::am_cell;
-	weapon_ammo_type[6] = StrifeDefs::am_cell;
-	weapon_ammo_type[7] = StrifeDefs::am_noammo;
-	weapon_ammo_type[8] = StrifeDefs::am_poison_arrow;
-	weapon_ammo_type[9] = StrifeDefs::am_grenade2;
-	weapon_ammo_type[10] = StrifeDefs::am_cell;
 
 	WeaponOrder[0] = StrifeDefs::wp_fist;
 	WeaponOrder[1] = StrifeDefs::wp_crossbow;

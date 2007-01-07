@@ -97,6 +97,9 @@ __states__
 defaultproperties
 {
 	Ammo = am_goldwand;
+	GetAmmoCount = 25;
+	AmmoUsePL1 = USE_GWND_AMMO_1;
+	AmmoUsePL2 = USE_GWND_AMMO_2;
 	UpState = S_GOLDWANDUP;
 	DownState = S_GOLDWANDDOWN;
 	ReadyState = S_GOLDWANDREADY;

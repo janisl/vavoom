@@ -1109,12 +1109,12 @@ void A_VileChase()
 					CorpseHit.SetState(CorpseHit.RaiseState);
 					CorpseHit.Height *= 4.0;
 					CorpseHit.bShootable = true;
-					CorpseHit.bFloat = CorpseHit.bDefaultFloat;
-					CorpseHit.bNoGravity = CorpseHit.bDefaultNoGravity;
+					CorpseHit.bFloat = CorpseHit.default.bFloat;
+					CorpseHit.bNoGravity = CorpseHit.default.bNoGravity;
 					CorpseHit.bDropOff = false;
 					CorpseHit.bSolid = true;
 					CorpseHit.bCorpse = false;
-					CorpseHit.Health = CorpseHit.SpawnHealth;
+					CorpseHit.Health = CorpseHit.default.Health;
 					CorpseHit.Enemy = none;
 				}
 			}

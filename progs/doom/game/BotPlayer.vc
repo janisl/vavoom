@@ -300,8 +300,8 @@ bool CheckItem(Actor item)
 			return true;
 
 		// If we have no more room for the ammo it gives
-		if (player.Ammo[MainGameInfo(player.Level.Game).weapon_ammo_type[weapon]] ==
-				MainGameInfo(player.Level.Game).maxammo[MainGameInfo(player.Level.Game).weapon_ammo_type[weapon]])
+		if (player.Ammo[MainGameInfo(player.Level.Game).WeaponClasses[weapon].default.Ammo] ==
+				MainGameInfo(player.Level.Game).maxammo[MainGameInfo(player.Level.Game).WeaponClasses[weapon].default.Ammo])
 			return false;
 
 		// Can't pick it up because we have it and it's not a dropped weapon

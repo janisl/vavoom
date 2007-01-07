@@ -571,12 +571,14 @@ bool GiveWeapon(int weapon)
 		}
 		BonusFlash += Actor::BONUSADD;
 		WeaponOwned[weapon] = true;
-		GiveAmmo(MainGameInfo(Level.Game).weapon_ammo_type[weapon], MainGameInfo(Level.Game).GetWeaponAmmo[weapon]);
+		GiveAmmo(MainGameInfo(Level.Game).WeaponClasses[weapon].default.Ammo,
+			MainGameInfo(Level.Game).WeaponClasses[weapon].default.GetAmmoCount);
 		PendingWeapon = weapon;
 		MO.PlaySound('misc/w_pkup', CHAN_ITEM);
 		return false;
 	}
-	gaveAmmo = GiveAmmo(MainGameInfo(Level.Game).weapon_ammo_type[weapon], MainGameInfo(Level.Game).GetWeaponAmmo[weapon]);
+	gaveAmmo = GiveAmmo(MainGameInfo(Level.Game).WeaponClasses[weapon].default.Ammo,
+		MainGameInfo(Level.Game).WeaponClasses[weapon].default.GetAmmoCount);
 	if (WeaponOwned[weapon])
 	{
 		gaveWeapon = false;
@@ -1582,7 +1584,9 @@ void NextWeapon()
 	for (i = 1; i < NUMWEAPONS; i++)
 	{
 		NewWeap = MainGameInfo(Level.Game).WeaponOrder[(CurIdx + i) % NUMWEAPONS];
-		if (WeaponOwned[NewWeap] && (MainGameInfo(Level.Game).WeaponInShareware[NewWeap] || !MainGameInfo(Level.Game).shareware))
+		if (WeaponOwned[NewWeap] &&
+			(MainGameInfo(Level.Game).WeaponClasses[NewWeap].default.bInShareware ||
+			!MainGameInfo(Level.Game).shareware))
 		{
 			PendingWeapon = NewWeap;
 			return;
@@ -1620,7 +1624,8 @@ void PlayerImpulse()
 		if (WeaponOwned[newweapon] &&
 			newweapon != ReadyWeapon)
 		{
-			if (MainGameInfo(Level.Game).WeaponInShareware[newweapon] || !MainGameInfo(Level.Game).shareware)
+			if (MainGameInfo(Level.Game).WeaponClasses[newweapon].default.bInShareware ||
+				!MainGameInfo(Level.Game).shareware)
 			{
 				PendingWeapon = newweapon;
 			}
@@ -2663,22 +2668,34 @@ void MovePsprites(float deltaTime)
 //
 //===========================================================================
 
-bool CheckAmmo()
+int GetAmmoUse(int Weapon)
 {
-	int ammo;
-	int *ammoUse;
-	int count;
-
-	ammo = Weapon(ViewEnt).Ammo;
 	if (Powers[pw_weaponlevel2] && !Level.Game.deathmatch)
 	{
-		ammoUse = &MainGameInfo(Level.Game).WeaponAmmoUsePL2[0];
+		return MainGameInfo(Level.Game).WeaponClasses[Weapon].default.AmmoUsePL2;
 	}
 	else
 	{
-		ammoUse = &MainGameInfo(Level.Game).WeaponAmmoUsePL1[0];
+		return MainGameInfo(Level.Game).WeaponClasses[Weapon].default.AmmoUsePL1;
 	}
-	count = ammoUse[ReadyWeapon];
+}
+
+//===========================================================================
+//
+//  CheckAmmo
+//
+//  Returns true if there is enough ammo to shoot.  If not, selects the
+// next weapon to use.
+//
+//===========================================================================
+
+bool CheckAmmo()
+{
+	int ammo;
+	int count;
+
+	ammo = Weapon(ViewEnt).Ammo;
+	count = GetAmmoUse(ReadyWeapon);
 	if (ammo == am_noammo || Ammo[ammo] >= count)
 	{
 		return true;
@@ -2686,27 +2703,27 @@ bool CheckAmmo()
 	// out of ammo, pick a weapon to change to
 	do
 	{
-		if (WeaponOwned[wp_skullrod]
-			&& Ammo[am_skullrod] > ammoUse[wp_skullrod])
+		if (WeaponOwned[wp_skullrod] &&
+			Ammo[am_skullrod] > GetAmmoUse(wp_skullrod))
 		{
 			PendingWeapon = wp_skullrod;
 		}
-		else if (WeaponOwned[wp_blaster]
-			&& Ammo[am_blaster] > ammoUse[wp_blaster])
+		else if (WeaponOwned[wp_blaster] &&
+			Ammo[am_blaster] > GetAmmoUse(wp_blaster))
 		{
 			PendingWeapon = wp_blaster;
 		}
-		else if (WeaponOwned[wp_crossbow]
-			&& Ammo[am_crossbow] > ammoUse[wp_crossbow])
+		else if (WeaponOwned[wp_crossbow] &&
+			Ammo[am_crossbow] > GetAmmoUse(wp_crossbow))
 		{
 			PendingWeapon = wp_crossbow;
 		}
-		else if (WeaponOwned[wp_mace]
-			&& Ammo[am_mace] > ammoUse[wp_mace])
+		else if (WeaponOwned[wp_mace] &&
+			Ammo[am_mace] > GetAmmoUse(wp_mace))
 		{
 			PendingWeapon = wp_mace;
 		}
-		else if (Ammo[am_goldwand] > ammoUse[wp_goldwand])
+		else if (Ammo[am_goldwand] > GetAmmoUse(wp_goldwand))
 		{
 			PendingWeapon = wp_goldwand;
 		}
@@ -2714,8 +2731,8 @@ bool CheckAmmo()
 		{
 			PendingWeapon = wp_gauntlets;
 		}
-		else if (WeaponOwned[wp_phoenixrod]
-			&& Ammo[am_phoenixrod] > ammoUse[wp_phoenixrod])
+		else if (WeaponOwned[wp_phoenixrod] &&
+			Ammo[am_phoenixrod] > GetAmmoUse(wp_phoenixrod))
 		{
 			PendingWeapon = wp_phoenixrod;
 		}

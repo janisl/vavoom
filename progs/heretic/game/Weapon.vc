@@ -50,6 +50,10 @@ const int
 	USE_MACE_AMMO_2 = 5;
 
 int Ammo;
+int GetAmmoCount;
+int AmmoUsePL1;
+int AmmoUsePL2;
+
 state UpState;
 state DownState;
 state ReadyState;
@@ -60,7 +64,9 @@ state DownState2;
 state ReadyState2;
 state AttackState2;
 state HoldAttackState2;
+
 float PSpriteSY;
+bool bInShareware;
 
 void WeaponLevel2Init() { }
 void WeaponLevel2Fade() { }
@@ -256,4 +262,5 @@ __states__
 
 defaultproperties
 {
+	bInShareware = true;
 }

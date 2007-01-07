@@ -90,6 +90,9 @@ __states__
 defaultproperties
 {
 	Ammo = am_blaster;
+	GetAmmoCount = 30;
+	AmmoUsePL1 = USE_BLSR_AMMO_1;
+	AmmoUsePL2 = USE_BLSR_AMMO_2;
 	UpState = S_BLASTERUP;
 	DownState = S_BLASTERDOWN;
 	ReadyState = S_BLASTERREADY;

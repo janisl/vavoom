@@ -141,6 +141,9 @@ __states__
 defaultproperties
 {
 	Ammo = am_phoenixrod;
+	GetAmmoCount = 2;
+	AmmoUsePL1 = USE_PHRD_AMMO_1;
+	AmmoUsePL2 = USE_PHRD_AMMO_2;
 	UpState = S_PHOENIXUP;
 	DownState = S_PHOENIXDOWN;
 	ReadyState = S_PHOENIXREADY;
@@ -153,4 +156,5 @@ defaultproperties
 	HoldAttackState2 = S_PHOENIXATK2_2;
 	Attack2ShutdownState = S_PHOENIXATK2_4;
 	PSpriteSY = 15.0;
+	bInShareware = false;
 }
