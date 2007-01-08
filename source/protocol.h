@@ -23,10 +23,6 @@
 //**
 //**************************************************************************
 
-// HEADER FILES ------------------------------------------------------------
-
-// MACROS ------------------------------------------------------------------
-
 #define PROTOCOL_VERSION	11
 
 enum
@@ -68,8 +64,6 @@ enum
 	svc_start_seq,
 	svc_stop_seq,
 
-	svc_poly_spawn,
-	svc_poly_translate,
 	svc_poly_update,
 	svc_force_lightning,
 
@@ -77,32 +71,18 @@ enum
 	svc_skip_intermission,
 	svc_finale,
 
-	svc_sec_floor_plane,
-	svc_sec_ceil_plane,
-
 	svc_serverinfo,
 	svc_userinfo,
 	svc_setinfo,
 
-	svc_sprites,
 	svc_model,
 	svc_skin,
 
-	svc_line_transluc,
-	svc_sec_transluc,
-	svc_extra_floor,
-	svc_swap_planes,
-
 	svc_static_light,
 	svc_static_light_rgb,
-	svc_sec_light_colour,
 
 	svc_change_sky,
 	svc_change_music,
-	svc_set_floor_light_sec,
-	svc_set_ceil_light_sec,
-
-	svc_set_heightsec,
 
 	svc_class_name,
 	svc_stats_string,
@@ -151,9 +131,3 @@ enum
 #define SUB_CEIL_X		0x0020
 #define SUB_CEIL_Y		0x0040
 #define SUB_BIG_NUM		0x0080
-
-// TYPES -------------------------------------------------------------------
-
-// PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
-
-// PUBLIC DATA DECLARATIONS ------------------------------------------------

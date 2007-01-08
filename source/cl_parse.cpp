@@ -711,21 +711,6 @@ static void CL_ParseClassName(VMessage& msg)
 
 //==========================================================================
 //
-//	CL_ParseSpriteList
-//
-//==========================================================================
-
-static void CL_ParseSpriteList(VMessage& msg)
-{
-	int count = msg.ReadShort();
-	for (int i = 0; i < count; i++)
-	{
-		R_InstallSprite(msg.ReadString(), i);
-	}
-}
-
-//==========================================================================
-//
 //	CL_ParseModel
 //
 //==========================================================================
@@ -757,68 +742,6 @@ static void CL_ParseSkin(VMessage& msg)
 
 static void CL_ReadFromUserInfo(int)
 {
-}
-
-//==========================================================================
-//
-//	CL_ParseLineTransuc
-//
-//==========================================================================
-
-static void CL_ParseLineAlpha(VMessage& msg)
-{
-	int i = msg.ReadShort();
-	int fuzz = msg.ReadByte();
-	GClLevel->Lines[i].alpha = fuzz / 255.0;
-}
-
-//==========================================================================
-//
-//	CL_ParseExtraFloor
-//
-//==========================================================================
-
-static void CL_ParseExtraFloor(VMessage& msg)
-{
-	int i = msg.ReadShort();
-	int j = msg.ReadShort();
-	AddExtraFloor(&GClLevel->Lines[i], &GClLevel->Sectors[j]);
-}
-
-//==========================================================================
-//
-//	CL_ParseHeightSec
-//
-//==========================================================================
-
-static void CL_ParseHeightSec(VMessage& msg)
-{
-	sector_t* ToSec = &GClLevel->Sectors[(word)msg.ReadShort()];
-	sector_t* HeightSec = &GClLevel->Sectors[(word)msg.ReadShort()];
-	int flags = msg.ReadByte();
-
-	ToSec->heightsec = HeightSec;
-	if (flags & 2)
-	{
-		HeightSec->SectorFlags |= sector_t::SF_FakeFloorOnly;
-	}
-	if (flags & 4)
-	{
-		HeightSec->SectorFlags |= sector_t::SF_ClipFakePlanes;
-	}
-	if (flags & 8)
-	{
-		HeightSec->SectorFlags |= sector_t::SF_UnderWater;
-	}
-	if (flags & 16)
-	{
-		HeightSec->SectorFlags |= sector_t::SF_IgnoreHeightSec;
-	}
-	if (flags & 32)
-	{
-		HeightSec->SectorFlags |= sector_t::SF_NoFakeLight;
-	}
-	R_SetupFakeFloors(ToSec);
 }
 
 //==========================================================================
@@ -991,20 +914,6 @@ void CL_ParseServerMessage(VMessage& msg)
 			CL_ParseTime(msg);
 			break;
 
-		case svc_poly_spawn:
-			x = msg.ReadShort();
-			y = msg.ReadShort();
-			tag = msg.ReadByte();
-			GClLevel->SpawnPolyobj(x, y, tag, 0);
-			break;
-
-		case svc_poly_translate:
-			x = msg.ReadShort();
-			y = msg.ReadShort();
-			tag = msg.ReadByte();
-			GClLevel->AddPolyAnchorPoint(x, y, tag);
-			break;
-
 		case svc_poly_update:
 			i = msg.ReadByte();
 			x = msg.ReadShort();
@@ -1078,26 +987,6 @@ void CL_ParseServerMessage(VMessage& msg)
 			F_StartFinale(msg.ReadString());
 			break;
 
-		case svc_sec_floor_plane:
-			i = msg.ReadShort();
-			msg >> GClLevel->Sectors[i].floor.normal.x
-				>> GClLevel->Sectors[i].floor.normal.y
-				>> GClLevel->Sectors[i].floor.normal.z
-				>> GClLevel->Sectors[i].floor.dist;
-			GClLevel->Sectors[i].base_floorheight = GClLevel->Sectors[i].floor.dist;
-			CalcSecMinMaxs(&GClLevel->Sectors[i]);
-			break;
-
-		case svc_sec_ceil_plane:
-			i = msg.ReadShort();
-			msg >> GClLevel->Sectors[i].ceiling.normal.x
-				>> GClLevel->Sectors[i].ceiling.normal.y
-				>> GClLevel->Sectors[i].ceiling.normal.z
-				>> GClLevel->Sectors[i].ceiling.dist;
-			GClLevel->Sectors[i].base_ceilingheight  = GClLevel->Sectors[i].ceiling.dist;
-			CalcSecMinMaxs(&GClLevel->Sectors[i]);
-			break;
-
 		case svc_serverinfo:
 			name = msg.ReadString();
 			string = msg.ReadString();
@@ -1119,41 +1008,12 @@ void CL_ParseServerMessage(VMessage& msg)
 			CL_ReadFromUserInfo(i);
 			break;
 
-		case svc_sprites:
-			CL_ParseSpriteList(msg);
-			break;
-
 		case svc_model:
 			CL_ParseModel(msg);
 			break;
 
 		case svc_skin:
 			CL_ParseSkin(msg);
-			break;
-
-		case svc_line_transluc:
-			CL_ParseLineAlpha(msg);
-			break;
-
-		case svc_sec_transluc:
-			i = msg.ReadShort();
-			alpha = msg.ReadByte() / 255.0;
-			sec = &GClLevel->Sectors[i];
-			sec->floor.Alpha = alpha;
-			sec->ceiling.Alpha = alpha;
-			for (i = 0; i < sec->linecount; i++)
-			{
-				sec->lines[i]->alpha = alpha;
-			}
-			break;
-
-		case svc_extra_floor:
-			CL_ParseExtraFloor(msg);
-			break;
-
-		case svc_swap_planes:
-			i = msg.ReadShort();
-			SwapPlanes(&GClLevel->Sectors[i]);
 			break;
 
 		case svc_static_light:
@@ -1173,12 +1033,6 @@ void CL_ParseServerMessage(VMessage& msg)
 			R_AddStaticLight(origin, radius, colour);
 			break;
 
-		case svc_sec_light_colour:
-			sec = &GClLevel->Sectors[msg.ReadShort()];
-			sec->params.LightColour = (msg.ReadByte() << 16) |
-				(msg.ReadByte() << 8) | msg.ReadByte();
-			break;
-
 		case svc_change_sky:
 			cl_level.sky1Texture = (word)msg.ReadShort();
 			cl_level.sky2Texture = (word)msg.ReadShort();
@@ -1189,20 +1043,6 @@ void CL_ParseServerMessage(VMessage& msg)
 			cl_level.SongLump = msg.ReadString();
 			cl_level.cdTrack = msg.ReadByte();
 			GAudio->MusicChanged();
-			break;
-
-		case svc_set_floor_light_sec:
-			i = (word)msg.ReadShort();
-			GClLevel->Sectors[i].floor.LightSourceSector = msg.ReadShort();
-			break;
-
-		case svc_set_ceil_light_sec:
-			i = (word)msg.ReadShort();
-			GClLevel->Sectors[i].ceiling.LightSourceSector = msg.ReadShort();
-			break;
-
-		case svc_set_heightsec:
-			CL_ParseHeightSec(msg);
 			break;
 
 		case svc_class_name:
