@@ -201,8 +201,11 @@ bool VEntity::SetState(VState* InState)
 
 		// Modified handling.
 		// Call action functions when the state is set
-		P_PASS_SELF;
-		ExecuteFunction(st->Function);
+		if (st->Function)
+		{
+			P_PASS_SELF;
+			ExecuteFunction(st->Function);
+		}
 
 		if (!State)
 		{
@@ -2357,11 +2360,14 @@ void VBasePlayer::SetViewState(int position, VState* stnum)
 			VSt.SY = state->Misc2;
 		}
 		// Call action routine.
-		P_PASS_REF(ViewEnt);
-		ExecuteFunction(state->Function);
-		if (!VSt.State)
+		if (state->Function)
 		{
-			break;
+			P_PASS_REF(ViewEnt);
+			ExecuteFunction(state->Function);
+			if (!VSt.State)
+			{
+				break;
+			}
 		}
 		state = VSt.State->NextState;
 	}

@@ -1859,6 +1859,7 @@ VState::VState(VName InName, VMemberBase* InOuter, TLocation InLoc)
 , Misc1Expr(NULL)
 , Misc2Expr(NULL)
 , NextStateName(NAME_None)
+, FunctionName(NAME_None)
 {
 }
 
@@ -1909,7 +1910,7 @@ bool VState::Define()
 {
 	bool Ret = true;
 
-	if (!Function->Define())
+	if (Function && !Function->Define())
 	{
 		Ret = false;
 	}
@@ -1975,7 +1976,34 @@ void VState::Emit()
 		}
 	}
 
-	Function->Emit();
+	if (Function)
+	{
+		Function->Emit();
+	}
+	else if (FunctionName != NAME_None)
+	{
+		Function = ((VClass*)Outer)->CheckForMethod(FunctionName);
+		if (Function->ReturnType.type != ev_void)
+		{
+			ParseError(Loc, "State method must not return a value");
+		}
+		if (Function->NumParams)
+		{
+			ParseError(Loc, "State method must not take any arguments");
+		}
+		if (Function->Flags & FUNC_Static)
+		{
+			ParseError(Loc, "State method must not be static");
+		}
+		if (Function->Flags & FUNC_VarArgs)
+		{
+			ParseError(Loc, "State method must not have varargs");
+		}
+		if (!(Function->Flags & FUNC_Final))
+		{
+			ParseError(Loc, "State method must be final");
+		}
+	}
 }
 
 //END

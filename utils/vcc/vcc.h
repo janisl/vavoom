@@ -407,6 +407,7 @@ public:
 	VExpression*	Misc1Expr;
 	VExpression*	Misc2Expr;
 	VName			NextStateName;
+	VName			FunctionName;
 
 	VState(VName, VMemberBase*, TLocation);
 	~VState();

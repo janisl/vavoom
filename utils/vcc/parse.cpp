@@ -1493,11 +1493,32 @@ void VParser::ParseStates(VClass* InClass)
 		}
 		Lex.Expect(TK_RParen, ERR_NONE);
 		//	Code
-		s->Function = new VMethod(NAME_None, s, s->Loc);
-		s->Function->ReturnTypeExpr = new VTypeExpr(ev_void, Lex.Location);
-		s->Function->ReturnType = TType(ev_void);
-		Lex.Expect(TK_LBrace, ERR_MISSING_LBRACE);
-		s->Function->Statement = ParseCompoundStatement();
+		if (Lex.Check(TK_LBrace))
+		{
+			s->Function = new VMethod(NAME_None, s, s->Loc);
+			s->Function->ReturnTypeExpr = new VTypeExpr(ev_void, Lex.Location);
+			s->Function->ReturnType = TType(ev_void);
+			s->Function->Statement = ParseCompoundStatement();
+		}
+		else if (Lex.Check(TK_Assign))
+		{
+			if (!Lex.Check(TK_None))
+			{
+				if (Lex.Token != TK_Identifier)
+				{
+					ParseError(Lex.Location, "State method name expected");
+				}
+				else
+				{
+					s->FunctionName = Lex.Name;
+					Lex.NextToken();
+				}
+			}
+		}
+		else
+		{
+			ParseError(Lex.Location, "State method declaration expected");
+		}
 	}
 }
 
