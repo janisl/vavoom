@@ -72,6 +72,25 @@ struct VViewState
 	float			SY;
 };
 
+struct VPlayerNetInfo
+{
+	VSocketPublic*	NetCon;
+	VMessage		Message;
+	vuint8			MsgBuf[MAX_MSGLEN];
+	int				MobjUpdateStart;
+	double			LastMessage;
+	bool			NeedsUpdate;
+	int*			OldStats;
+
+	VPlayerNetInfo()
+	: NetCon(NULL)
+	, MobjUpdateStart(0)
+	, LastMessage(0)
+	, NeedsUpdate(false)
+	, OldStats(NULL)
+	{}
+};
+
 //
 // Extended player object info: player_t
 //
@@ -90,16 +109,11 @@ class VBasePlayer : public VObject
 		PF_AttackDown	= 0x0010,	// True if button down last tic.
 		PF_UseDown		= 0x0020,
 		PF_DidSecret	= 0x0040,	// True if secret level has been done.
-		PF_NeedsUpdate	= 0x0080,
-		PF_Centreing	= 0x0100,
+		PF_Centreing	= 0x0080,
 	};
 	vuint32			PlayerFlags;
 
-	VSocketPublic*	NetCon;
-	VMessage		Message;
-	byte			MsgBuf[MAX_MSGLEN];
-	int				MobjUpdateStart;
-	float			LastMessage;
+	VPlayerNetInfo*	Net;
 
 	VStr			UserInfo;
 
@@ -155,8 +169,6 @@ class VBasePlayer : public VObject
 	float			PSpriteSY;
 
 	vuint32			WorldTimer;				// total time the player's been playing
-
-	int*			OldStats;
 
 	int				ClientNum;		// cl_mobjs[cl.clientnum] = player
 

@@ -195,11 +195,12 @@ void SV_Init()
 	{
 		GPlayersBase[i] = (VBasePlayer*)VObject::StaticSpawnObject(
 			PlayerClass);
+		GPlayersBase[i]->Net = new VPlayerNetInfo();
 		if (num_string_stats && sizeof(VStr) > 4)
 			num_stats = (num_stats + 1) & ~1;
 		int TotalStats = num_stats + num_string_stats * (sizeof(VStr) / 4);
-		GPlayersBase[i]->OldStats = new vint32[TotalStats];
-		memset(GPlayersBase[i]->OldStats, 0, sizeof(vint32) * TotalStats);
+		GPlayersBase[i]->Net->OldStats = new vint32[TotalStats];
+		memset(GPlayersBase[i]->Net->OldStats, 0, sizeof(vint32) * TotalStats);
 	}
 
 	GGameInfo->validcount = &validcount;
@@ -230,9 +231,10 @@ void SV_Shutdown()
 		{
 			for (int j = 0; j < num_string_stats; j++)
 			{
-				((VStr*)(GPlayersBase[i]->OldStats + num_stats))[j].Clean();
+				((VStr*)(GPlayersBase[i]->Net->OldStats + num_stats))[j].Clean();
 			}
-			delete[] GPlayersBase[i]->OldStats;
+			delete[] GPlayersBase[i]->Net->OldStats;
+			delete GPlayersBase[i]->Net;
 			GPlayersBase[i]->ConditionalDestroy();
 		}
 	}
@@ -695,11 +697,11 @@ void SV_StartLocalSound(const VEntity* Ent, int SoundId, int Channel,
 	guard(SV_StartSound);
 	if (Ent && Ent->Player)
 	{
-		Ent->Player->Message << (vuint8)svc_start_sound
-							<< (vuint16)SoundId
-							<< (vuint16)(Channel << 13)
-							<< (vuint8)(Volume * 127)
-							<< (vuint8)(Attenuation * 64);
+		Ent->Player->Net->Message << (vuint8)svc_start_sound
+								<< (vuint16)SoundId
+								<< (vuint16)(Channel << 13)
+								<< (vuint8)(Volume * 127)
+								<< (vuint8)(Attenuation * 64);
 	}
 	unguard;
 }
@@ -955,7 +957,7 @@ void SV_ClientPrintf(VBasePlayer *player, const char *s, ...)
 	vsprintf(buf, s, v);
 	va_end(v);
 
-	player->Message << (vuint8)svc_print << buf;
+	player->Net->Message << (vuint8)svc_print << buf;
 	unguard;
 }
 
@@ -975,7 +977,7 @@ void SV_ClientCentrePrintf(VBasePlayer *player, const char *s, ...)
 	vsprintf(buf, s, v);
 	va_end(v);
 
-	player->Message << (vuint8)svc_centre_print << buf;
+	player->Net->Message << (vuint8)svc_centre_print << buf;
 	unguard;
 }
 
@@ -997,7 +999,7 @@ void SV_BroadcastPrintf(const char *s, ...)
 
 	for (int i = 0; i < svs.max_clients; i++)
 		if (GGameInfo->Players[i])
-			GGameInfo->Players[i]->Message << (vuint8)svc_print << buf;
+			GGameInfo->Players[i]->Net->Message << (vuint8)svc_print << buf;
 	unguard;
 }
 
@@ -1019,7 +1021,7 @@ void SV_BroadcastCentrePrintf(const char *s, ...)
 
 	for (int i = 0; i < svs.max_clients; i++)
 		if (GGameInfo->Players[i])
-			GGameInfo->Players[i]->Message << (vuint8)svc_centre_print << buf;
+			GGameInfo->Players[i]->Net->Message << (vuint8)svc_centre_print << buf;
 	unguard;
 }
 
@@ -1269,7 +1271,7 @@ int NumObjs = 0;
 	}
 
 	//	Then update non-player mobjs in sight
-	int starti = sv_player->MobjUpdateStart;
+	int starti = sv_player->Net->MobjUpdateStart;
 	for (i = 0; i < GMaxEntities; i++)
 	{
 		int index = (i + starti) % GMaxEntities;
@@ -1285,7 +1287,7 @@ int NumObjs = 0;
 			continue;
 		if (!msg.CheckSpace(29))
 		{
-			if (sv_player->MobjUpdateStart && show_mobj_overflow)
+			if (sv_player->Net->MobjUpdateStart && show_mobj_overflow)
 			{
 				GCon->Log(NAME_Dev, "UpdateLevel: mobj overflow 2");
 			}
@@ -1294,7 +1296,7 @@ int NumObjs = 0;
 				GCon->Log(NAME_Dev, "UpdateLevel: mobj overflow");
 			}
 			//	Next update starts here
-			sv_player->MobjUpdateStart = index;
+			sv_player->Net->MobjUpdateStart = index;
 if (show_update_stats)
 dprintf("Update size %d (%d) for %d, aver %f big %d %d\n", msg.CurSize, msg.CurSize -
 		StartSize, NumObjs, float(msg.CurSize - StartSize) / NumObjs, c_bigClass, c_bigState);
@@ -1303,7 +1305,7 @@ dprintf("Update size %d (%d) for %d, aver %f big %d %d\n", msg.CurSize, msg.CurS
 		SV_UpdateMobj(index, msg);
 		NumObjs++;
 	}
-	sv_player->MobjUpdateStart = 0;
+	sv_player->Net->MobjUpdateStart = 0;
 if (show_update_stats)
 dprintf("Update size %d (%d) for %d, aver %f big %d %d\n", msg.CurSize, msg.CurSize -
 		StartSize, NumObjs, float(msg.CurSize - StartSize) / NumObjs, c_bigClass, c_bigState);
@@ -1331,9 +1333,9 @@ void SV_SendNop(VBasePlayer *client)
 
 	msg << (vuint8)svc_nop;
 
-	if (client->NetCon->SendUnreliableMessage(&msg) == -1)
+	if (client->Net->NetCon->SendUnreliableMessage(&msg) == -1)
 		SV_DropClient(true);	// if the message couldn't send, kick off
-	client->LastMessage = realtime;
+	client->Net->LastMessage = realtime;
 	unguard;
 }
 
@@ -1371,14 +1373,14 @@ void SV_SendClientDatagram()
 			// send a full message when the next signon stage has been requested
 			// some other message data (name changes, etc) may accumulate
 			// between signon stages
-			if (realtime - sv_player->LastMessage > 5)
+			if (realtime - sv_player->Net->LastMessage > 5)
 			{
 				SV_SendNop(sv_player);
 			}
 			continue;
 		}
 
-		if (!(sv_player->PlayerFlags & VBasePlayer::PF_NeedsUpdate))
+		if (!sv_player->Net->NeedsUpdate)
 			continue;
 
 		msg.Clear();
@@ -1393,7 +1395,7 @@ void SV_SendClientDatagram()
 
 		SV_UpdateLevel(msg);
 
-		if (sv_player->NetCon->SendUnreliableMessage(&msg) == -1)
+		if (sv_player->Net->NetCon->SendUnreliableMessage(&msg) == -1)
 		{
 			SV_DropClient(true);
 		}
@@ -1418,7 +1420,7 @@ void SV_SendReliable()
 		if (!GGameInfo->Players[i])
 			continue;
 
-		GGameInfo->Players[i]->Message << sv_reliable;
+		GGameInfo->Players[i]->Net->Message << sv_reliable;
 
 		if (!(GGameInfo->Players[i]->PlayerFlags & VBasePlayer::PF_Spawned))
 			continue;
@@ -1426,37 +1428,37 @@ void SV_SendReliable()
 		Stats = (vint32*)((vuint8*)GGameInfo->Players[i] + sizeof(VBasePlayer));
 		for (j = 0; j < num_stats; j++)
 		{
-			if (Stats[j] == GGameInfo->Players[i]->OldStats[j])
+			if (Stats[j] == GGameInfo->Players[i]->Net->OldStats[j])
 			{
 				continue;
 			}
 			int sval = Stats[j];
 			if (sval >= 0 && sval < 256)
 			{
-				GGameInfo->Players[i]->Message << (vuint8)svc_stats_byte
+				GGameInfo->Players[i]->Net->Message << (vuint8)svc_stats_byte
 					<< (vuint8)j << (vuint8)sval;
 			}
 			else if (sval >= MIN_VINT16 && sval <= MAX_VINT16)
 			{
-				GGameInfo->Players[i]->Message << (vuint8)svc_stats_short
+				GGameInfo->Players[i]->Net->Message << (vuint8)svc_stats_short
 					<< (vuint8)j << (vint16)sval;
 			}
 			else
 			{
-				GGameInfo->Players[i]->Message << (vuint8)svc_stats_long
+				GGameInfo->Players[i]->Net->Message << (vuint8)svc_stats_long
 					<< (vuint8)j << sval;
 			}
-			GGameInfo->Players[i]->OldStats[j] = sval;
+			GGameInfo->Players[i]->Net->OldStats[j] = sval;
 		}
 		VStr* StrStats = (VStr*)(Stats + num_stats);
-		VStr* OldStrStats = (VStr*)(GGameInfo->Players[i]->OldStats + num_stats);
+		VStr* OldStrStats = (VStr*)(GGameInfo->Players[i]->Net->OldStats + num_stats);
 		for (j = 0; j < num_string_stats; j++)
 		{
 			if (StrStats[j] == OldStrStats[j])
 			{
 				continue;
 			}
-			GGameInfo->Players[i]->Message << (vuint8)svc_stats_string
+			GGameInfo->Players[i]->Net->Message << (vuint8)svc_stats_string
 				<< (vuint8)(num_stats + j) << StrStats[j];
 			OldStrStats[j] = StrStats[j];
 		}
@@ -1471,31 +1473,31 @@ void SV_SendReliable()
 			continue;
 		}
 
-		if (GGameInfo->Players[i]->Message.Overflowed)
+		if (GGameInfo->Players[i]->Net->Message.Overflowed)
 		{
 			SV_DropClient(true);
 			GCon->Log(NAME_Dev, "Client message overflowed");
 			continue;
 		}
 
-		if (!GGameInfo->Players[i]->Message.CurSize)
+		if (!GGameInfo->Players[i]->Net->Message.CurSize)
 		{
 			continue;
 		}
 
-		if (!GGameInfo->Players[i]->NetCon->CanSendMessage())
+		if (!GGameInfo->Players[i]->Net->NetCon->CanSendMessage())
 		{
 			continue;
 		}
 
-		if (GGameInfo->Players[i]->NetCon->SendMessage(
-			&GGameInfo->Players[i]->Message) == -1)
+		if (GGameInfo->Players[i]->Net->NetCon->SendMessage(
+			&GGameInfo->Players[i]->Net->Message) == -1)
 		{
 			SV_DropClient(true);
 			continue;
 		}
-		GGameInfo->Players[i]->Message.Clear();
-		GGameInfo->Players[i]->LastMessage = realtime;
+		GGameInfo->Players[i]->Net->Message.Clear();
+		GGameInfo->Players[i]->Net->LastMessage = realtime;
 	}
 	unguard;
 }
@@ -1826,9 +1828,9 @@ void SV_ChangeMusic(const char* SongName)
 void SV_ChangeLocalMusic(VBasePlayer *player, const char* SongName)
 {
 	guard(SV_ChangeLocalMusic);
-	player->Message << (vuint8)svc_change_music
-					<< SongName
-					<< (vuint8)0;
+	player->Net->Message << (vuint8)svc_change_music
+						<< SongName
+						<< (vuint8)0;
 	unguard;
 }
 
@@ -2062,11 +2064,11 @@ int NET_SendToAll(VMessage* data, int blocktime)
 	for (i = 0; i < svs.max_clients; i++)
 	{
 		sv_player = GGameInfo->Players[i];
-		if (sv_player && sv_player->NetCon)
+		if (sv_player && sv_player->Net->NetCon)
 		{
-			if (sv_player->NetCon->IsLocalConnection())
+			if (sv_player->Net->NetCon->IsLocalConnection())
 			{
-				sv_player->NetCon->SendMessage(data);
+				sv_player->Net->NetCon->SendMessage(data);
 				state1[i] = true;
 				state2[i] = true;
 				continue;
@@ -2091,14 +2093,14 @@ int NET_SendToAll(VMessage* data, int blocktime)
 			sv_player = GGameInfo->Players[i];
 			if (!state1[i])
 			{
-				if (sv_player->NetCon->CanSendMessage())
+				if (sv_player->Net->NetCon->CanSendMessage())
 				{
 					state1[i] = true;
-					sv_player->NetCon->SendMessage(data);
+					sv_player->Net->NetCon->SendMessage(data);
 				}
 				else
 				{
-					sv_player->NetCon->GetMessage();
+					sv_player->Net->NetCon->GetMessage();
 				}
 				count++;
 				continue;
@@ -2106,13 +2108,13 @@ int NET_SendToAll(VMessage* data, int blocktime)
 
 			if (!state2[i])
 			{
-				if (sv_player->NetCon->CanSendMessage())
+				if (sv_player->Net->NetCon->CanSendMessage())
 				{
 					state2[i] = true;
 				}
 				else
 				{
-					sv_player->NetCon->GetMessage();
+					sv_player->Net->NetCon->GetMessage();
 				}
 				count++;
 				continue;
@@ -2240,7 +2242,7 @@ void SV_SendServerInfo(VBasePlayer *player)
 {
 	guard(SV_SendServerInfo);
 	int			i;
-	VMessage	&msg = player->Message;
+	VMessage	&msg = player->Net->Message;
 
 	msg << (vuint8)svc_server_info
 		<< (vuint8)PROTOCOL_VERSION
@@ -2364,7 +2366,7 @@ void SV_SpawnServer(const char *mapname, bool spawn_thinkers)
 			memset(GGameInfo->Players[i]->FragsStats, 0, sizeof(GGameInfo->Players[i]->FragsStats));
 			if (GGameInfo->Players[i]->PlayerState == PST_DEAD)
 				GGameInfo->Players[i]->PlayerState = PST_REBORN;
-			GGameInfo->Players[i]->Message.Clear();
+			GGameInfo->Players[i]->Net->Message.Clear();
 		}
 	}
 	else if (!sv_loading)
@@ -2583,8 +2585,8 @@ COMMAND(PreSpawn)
 		return;
 	}
 
-	sv_player->Message << sv_signon;
-	sv_player->Message << (vuint8)svc_signonnum << (vuint8)2;
+	sv_player->Net->Message << sv_signon;
+	sv_player->Net->Message << (vuint8)svc_signonnum << (vuint8)2;
 	unguard;
 }
 
@@ -2616,7 +2618,7 @@ COMMAND(Spawn)
 		sv_player->eventSpawnClient();
 		for (int i = 0; i < sv_ActiveSequences.Num(); i++)
 		{
-			sv_player->Message << (vuint8)svc_start_seq
+			sv_player->Net->Message << (vuint8)svc_start_seq
 				<< (vuint16)sv_ActiveSequences[i].OriginId
 				<< (vuint16)sv_ActiveSequences[i].Origin.x
 				<< (vuint16)sv_ActiveSequences[i].Origin.y
@@ -2625,7 +2627,7 @@ COMMAND(Spawn)
 				<< (vuint8)sv_ActiveSequences[i].ModeNum;
 			for (int j = 0; j < sv_ActiveSequences[i].Choices.Num(); j++)
 			{
-				sv_player->Message << (vuint8)svc_add_seq_choice
+				sv_player->Net->Message << (vuint8)svc_add_seq_choice
 					<< (vuint16)sv_ActiveSequences[i].OriginId
 					<< *sv_ActiveSequences[i].Choices[j];
 			}
@@ -2638,14 +2640,14 @@ COMMAND(Spawn)
 			Host_Error("Player without Mobj\n");
 		}
 	}
-	SV_WriteChangedTextures(sv_player->Message);
-	sv_player->Message << (vuint8)svc_set_angles
+	SV_WriteChangedTextures(sv_player->Net->Message);
+	sv_player->Net->Message << (vuint8)svc_set_angles
 						<< (vuint8)(AngleToByte(sv_player->ViewAngles.pitch))
 						<< (vuint8)(AngleToByte(sv_player->ViewAngles.yaw))
 						<< (vuint8)0;
-	sv_player->Message << (vuint8)svc_signonnum << (vuint8)3;
+	sv_player->Net->Message << (vuint8)svc_signonnum << (vuint8)3;
 	sv_player->PlayerFlags &= ~VBasePlayer::PF_FixAngle;
-	memset(sv_player->OldStats, 0, num_stats * 4);
+	memset(sv_player->Net->OldStats, 0, num_stats * 4);
 	unguard;
 }
 
@@ -2695,11 +2697,11 @@ void SV_DropClient(bool)
 	sv_player->PlayerFlags &= ~VBasePlayer::PF_Active;
 	GGameInfo->Players[SV_GetPlayerNum(sv_player)] = NULL;
 	sv_player->PlayerFlags &= ~VBasePlayer::PF_Spawned;
-	if (sv_player->NetCon)
+	if (sv_player->Net->NetCon)
 	{
-		sv_player->NetCon->Close();
+		sv_player->Net->NetCon->Close();
 	}
-	sv_player->NetCon = NULL;
+	sv_player->Net->NetCon = NULL;
 	svs.num_connected--;
 	sv_player->UserInfo = VStr();
 	sv_reliable << (vuint8)svc_userinfo
@@ -2788,13 +2790,13 @@ void SV_ShutdownServer(bool crash)
 	}
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
-		//	Save old stats pointer
-		int* OldStats = GPlayersBase[i]->OldStats;
+		//	Save net pointer
+		VPlayerNetInfo* OldNet = GPlayersBase[i]->Net;
 		GPlayersBase[i]->GetClass()->DestructObject(GPlayersBase[i]);
 		memset((vuint8*)GPlayersBase[i] + sizeof(VObject), 0,
 			GPlayersBase[i]->GetClass()->ClassSize - sizeof(VObject));
 		//	Restore pointer
-		GPlayersBase[i]->OldStats = OldStats;
+		GPlayersBase[i]->Net = OldNet;
 	}
 	memset(GGameInfo->Players, 0, sizeof(GGameInfo->Players));
 	memset(&sv, 0, sizeof(sv));
@@ -2890,16 +2892,16 @@ COMMAND(Stats)
 void SV_ConnectClient(VBasePlayer *player)
 {
 	guard(SV_ConnectClient);
-	GCon->Logf(NAME_Dev, "Client %s connected", *player->NetCon->Address);
+	GCon->Logf(NAME_Dev, "Client %s connected", *player->Net->NetCon->Address);
 
 	GGameInfo->Players[SV_GetPlayerNum(player)] = player;
 	player->PlayerFlags |= VBasePlayer::PF_Active;
 
-	player->Message.Data = player->MsgBuf;
-	player->Message.MaxSize = MAX_MSGLEN;
-	player->Message.CurSize = 0;
-	player->Message.AllowOverflow = true;		// we can catch it
-	player->Message.Overflowed = false;
+	player->Net->Message.Data = player->Net->MsgBuf;
+	player->Net->Message.MaxSize = MAX_MSGLEN;
+	player->Net->Message.CurSize = 0;
+	player->Net->Message.AllowOverflow = true;		// we can catch it
+	player->Net->Message.Overflowed = false;
 	player->PlayerFlags &= ~VBasePlayer::PF_Spawned;
 	player->Level = GLevelInfo;
 	if (!sv_loading)
@@ -2945,7 +2947,7 @@ void SV_CheckForNewClients()
 		if (i == svs.max_clients)
 			Sys_Error("Host_CheckForNewClients: no free clients");
 
-		GPlayersBase[i]->NetCon = sock;
+		GPlayersBase[i]->Net->NetCon = sock;
 		SV_ConnectClient(GPlayersBase[i]);
 		svs.num_connected++;
 	}
@@ -2980,21 +2982,21 @@ void SV_ConnectBot(const char *name)
 	if (i == svs.max_clients)
 		Sys_Error("SV_ConnectBot: no free clients");
 
-	GPlayersBase[i]->NetCon = sock;
+	GPlayersBase[i]->Net->NetCon = sock;
 	GPlayersBase[i]->PlayerFlags |= VBasePlayer::PF_IsBot;
 	GPlayersBase[i]->PlayerName = name;
 	SV_ConnectClient(GPlayersBase[i]);
 	svs.num_connected++;
 
 	sv_player = GGameInfo->Players[i];
-	sv_player->Message.Clear();
+	sv_player->Net->Message.Clear();
 	SV_RunClientCommand("PreSpawn\n");
-	sv_player->Message.Clear();
+	sv_player->Net->Message.Clear();
 	SV_SetUserInfo(sv_player->UserInfo);
 	SV_RunClientCommand("Spawn\n");
-	sv_player->Message.Clear();
+	sv_player->Net->Message.Clear();
 	SV_RunClientCommand("Begin\n");
-	sv_player->Message.Clear();
+	sv_player->Net->Message.Clear();
 	unguard;
 }
 

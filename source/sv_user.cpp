@@ -164,10 +164,10 @@ bool SV_ReadClientMessages(int clientnum)
 	byte		cmd_type;
 
 	sv_player = GGameInfo->Players[clientnum];
-	sv_player->PlayerFlags &= ~VBasePlayer::PF_NeedsUpdate;
+	sv_player->Net->NeedsUpdate = false;
 	do
 	{
-		ret = sv_player->NetCon->GetMessage();
+		ret = sv_player->Net->NetCon->GetMessage();
 		if (ret == -1)
 		{
 			GCon->Log(NAME_DevNet, "Bad read");
@@ -177,7 +177,7 @@ bool SV_ReadClientMessages(int clientnum)
 		if (ret == 0)
 			return true;
 
-		sv_player->PlayerFlags |= VBasePlayer::PF_NeedsUpdate;
+		sv_player->Net->NeedsUpdate = true;
 
 		VMessage& msg = GNet->NetMsg;
 
@@ -315,7 +315,7 @@ IMPLEMENT_FUNCTION(VBasePlayer, SelectClientMsg)
 	switch (msgtype)
 	{
 	case MSG_SV_CLIENT:
-		pr_msg = &Self->Message;
+		pr_msg = &Self->Net->Message;
 		break;
 	}
 }
