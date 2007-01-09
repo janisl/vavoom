@@ -32,7 +32,7 @@ class Sentinel : Pawn
 //
 //==========================================================================
 
-void A_SentinelAttack()
+final void A_SentinelAttack()
 {
 	int i;
 	Actor missile;
@@ -60,20 +60,20 @@ void A_SentinelAttack()
 
 __states__
 {
-	S_SENTINEL_LOOK('SEWR', 0, 10.0 / 35.0, S_SENTINEL_LOOK) { A_Look(); }
-	S_SENTINEL_RUN1('SEWR', 0, 6.0 / 35.0, S_SENTINEL_RUN2) { A_FlightChase(); }
-	S_SENTINEL_RUN2('SEWR', 0, 6.0 / 35.0, S_SENTINEL_RUN1) { A_Chase(); }
-	S_SENTINEL_ATK1('SEWR', 1, 4.0 / 35.0, S_SENTINEL_ATK2) { A_FaceTarget(); }
-	S_SENTINEL_ATK2('SEWR', 2 | FF_FULLBRIGHT, 8.0 / 35.0, S_SENTINEL_ATK3) { A_SentinelAttack(); }
-	S_SENTINEL_ATK3('SEWR', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_SENTINEL_ATK2) { A_CheckRefire(); }
-	S_SENTINEL_PAIN('SEWR', 3, 5.0 / 35.0, S_SENTINEL_ATK3) { A_Pain(); }
-	S_SENTINEL_DIE1('SEWR', 3, 7.0 / 35.0, S_SENTINEL_DIE2) { A_Fall(); }
-	S_SENTINEL_DIE2('SEWR', 4 | FF_FULLBRIGHT, 8.0 / 35.0, S_SENTINEL_DIE3) { A_XDying(); }
-	S_SENTINEL_DIE3('SEWR', 5 | FF_FULLBRIGHT, 5.0 / 35.0, S_SENTINEL_DIE4) { A_Scream(); }
-	S_SENTINEL_DIE4('SEWR', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_SENTINEL_DIE5) { A_XDying(); }
-	S_SENTINEL_DIE5('SEWR', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_SENTINEL_DIE6) { A_XDying(); }
-	S_SENTINEL_DIE6('SEWR', 8, 4.0 / 35.0, S_SENTINEL_DIE7) { }
-	S_SENTINEL_DIE7('SEWR', 9, 5.0 / 35.0, none) { }
+	S_SENTINEL_LOOK('SEWR', 0, 10.0 / 35.0, S_SENTINEL_LOOK) = A_Look
+	S_SENTINEL_RUN1('SEWR', 0, 6.0 / 35.0, S_SENTINEL_RUN2) = A_FlightChase
+	S_SENTINEL_RUN2('SEWR', 0, 6.0 / 35.0, S_SENTINEL_RUN1) = A_Chase
+	S_SENTINEL_ATK1('SEWR', 1, 4.0 / 35.0, S_SENTINEL_ATK2) = A_FaceTarget
+	S_SENTINEL_ATK2('SEWR', 2 | FF_FULLBRIGHT, 8.0 / 35.0, S_SENTINEL_ATK3) = A_SentinelAttack
+	S_SENTINEL_ATK3('SEWR', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_SENTINEL_ATK2) = A_CheckRefire
+	S_SENTINEL_PAIN('SEWR', 3, 5.0 / 35.0, S_SENTINEL_ATK3) = A_Pain
+	S_SENTINEL_DIE1('SEWR', 3, 7.0 / 35.0, S_SENTINEL_DIE2) = A_Fall
+	S_SENTINEL_DIE2('SEWR', 4 | FF_FULLBRIGHT, 8.0 / 35.0, S_SENTINEL_DIE3) = A_XDying
+	S_SENTINEL_DIE3('SEWR', 5 | FF_FULLBRIGHT, 5.0 / 35.0, S_SENTINEL_DIE4) = A_Scream
+	S_SENTINEL_DIE4('SEWR', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_SENTINEL_DIE5) = A_XDying
+	S_SENTINEL_DIE5('SEWR', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_SENTINEL_DIE6) = A_XDying
+	S_SENTINEL_DIE6('SEWR', 8, 4.0 / 35.0, S_SENTINEL_DIE7) = none
+	S_SENTINEL_DIE7('SEWR', 9, 5.0 / 35.0, none) = none
 }
 
 defaultproperties

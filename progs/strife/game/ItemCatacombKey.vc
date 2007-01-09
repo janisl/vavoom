@@ -27,7 +27,7 @@ class ItemCatacombKey : KeyPickup;
 
 __states__
 {
-	S_CATACOMB_KEY('TUNL', 0, -1.0, none) { }
+	S_CATACOMB_KEY('TUNL', 0, -1.0, none) = none
 }
 
 defaultproperties

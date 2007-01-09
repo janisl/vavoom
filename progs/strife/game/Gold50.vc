@@ -28,7 +28,7 @@ class Gold50 : MoneyPickup
 
 __states__
 {
-	S_GOLD50('CHST', 0, -1.0, none) { }
+	S_GOLD50('CHST', 0, -1.0, none) = none
 }
 
 defaultproperties

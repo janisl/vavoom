@@ -28,7 +28,7 @@ class ItemWeaponMiniMissileLauncher : WeaponPickup
 
 __states__
 {
-	S_MISSILE_LAUNCHER('MMSL', 0, -1.0, none) { }
+	S_MISSILE_LAUNCHER('MMSL', 0, -1.0, none) = none
 }
 
 defaultproperties

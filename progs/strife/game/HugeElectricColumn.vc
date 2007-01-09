@@ -28,10 +28,10 @@ class HugeElectricColumn : Decoration
 
 __states__
 {
-	S_HUGE_COLUMN_1('HUGE', 0, 4.0 / 35.0, S_HUGE_COLUMN_2) { }
-	S_HUGE_COLUMN_2('HUGE', 1, 5.0 / 35.0, S_HUGE_COLUMN_3) { }
-	S_HUGE_COLUMN_3('HUGE', 2, 5.0 / 35.0, S_HUGE_COLUMN_4) { }
-	S_HUGE_COLUMN_4('HUGE', 3, 5.0 / 35.0, S_HUGE_COLUMN_1) { }
+	S_HUGE_COLUMN_1('HUGE', 0, 4.0 / 35.0, S_HUGE_COLUMN_2) = none
+	S_HUGE_COLUMN_2('HUGE', 1, 5.0 / 35.0, S_HUGE_COLUMN_3) = none
+	S_HUGE_COLUMN_3('HUGE', 2, 5.0 / 35.0, S_HUGE_COLUMN_4) = none
+	S_HUGE_COLUMN_4('HUGE', 3, 5.0 / 35.0, S_HUGE_COLUMN_1) = none
 }
 
 defaultproperties

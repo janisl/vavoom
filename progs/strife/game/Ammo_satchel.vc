@@ -48,7 +48,7 @@ bool HandlePickup(Actor Toucher)
 
 __states__
 {
-	S_BACKPACK('BKPK', 0, -1.0, none) { }
+	S_BACKPACK('BKPK', 0, -1.0, none) = none
 }
 
 defaultproperties

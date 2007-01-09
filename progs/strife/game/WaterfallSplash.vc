@@ -28,14 +28,14 @@ class WaterfallSplash : Decoration
 
 __states__
 {
-	S_WFALL_1('SPLH', 0, 4.0 / 35.0, S_WFALL_2) { }
-	S_WFALL_2('SPLH', 1, 4.0 / 35.0, S_WFALL_3) { }
-	S_WFALL_3('SPLH', 2, 4.0 / 35.0, S_WFALL_4) { }
-	S_WFALL_4('SPLH', 3, 8.0 / 35.0, S_WFALL_5) { }
-	S_WFALL_5('SPLH', 4, 4.0 / 35.0, S_WFALL_6) { }
-	S_WFALL_6('SPLH', 5, 4.0 / 35.0, S_WFALL_7) { }
-	S_WFALL_7('SPLH', 6, 4.0 / 35.0, S_WFALL_8) { }
-	S_WFALL_8('SPLH', 7, 4.0 / 35.0, S_WFALL_1) { A_ActiveSound(); }
+	S_WFALL_1('SPLH', 0, 4.0 / 35.0, S_WFALL_2) = none
+	S_WFALL_2('SPLH', 1, 4.0 / 35.0, S_WFALL_3) = none
+	S_WFALL_3('SPLH', 2, 4.0 / 35.0, S_WFALL_4) = none
+	S_WFALL_4('SPLH', 3, 8.0 / 35.0, S_WFALL_5) = none
+	S_WFALL_5('SPLH', 4, 4.0 / 35.0, S_WFALL_6) = none
+	S_WFALL_6('SPLH', 5, 4.0 / 35.0, S_WFALL_7) = none
+	S_WFALL_7('SPLH', 6, 4.0 / 35.0, S_WFALL_8) = none
+	S_WFALL_8('SPLH', 7, 4.0 / 35.0, S_WFALL_1) = A_ActiveSound
 }
 
 defaultproperties

@@ -29,8 +29,8 @@ class ItemAmmoEnergyPack : AmmoPickup
 
 __states__
 {
-	S_ENERGY_PACK_1('CPAC', 0, 6.0 / 35.0, S_ENERGY_PACK_2) { }
-	S_ENERGY_PACK_2('CPAC', 1, 6.0 / 35.0, S_ENERGY_PACK_1) { }
+	S_ENERGY_PACK_1('CPAC', 0, 6.0 / 35.0, S_ENERGY_PACK_2) = none
+	S_ENERGY_PACK_2('CPAC', 1, 6.0 / 35.0, S_ENERGY_PACK_1) = none
 }
 
 defaultproperties

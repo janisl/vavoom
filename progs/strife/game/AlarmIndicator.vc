@@ -32,7 +32,7 @@ class AlarmIndicator : Decoration
 //
 //==========================================================================
 
-void A_AlarmActive()
+final void A_AlarmActive()
 {
 	ReactionCount--;
 	if (ReactionCount <= 0)

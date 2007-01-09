@@ -34,7 +34,7 @@ class PlayerPawn : Pawn
 //
 //==========================================================================
 
-void A_PlayerScream()
+final void A_PlayerScream()
 {
 	// Default death sound.
 	name sound = '*death';

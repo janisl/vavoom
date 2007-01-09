@@ -28,7 +28,7 @@ class Coin : MoneyPickup
 
 __states__
 {
-	S_COIN('COIN', 0, -1.0, none) { }
+	S_COIN('COIN', 0, -1.0, none) = none
 }
 
 defaultproperties

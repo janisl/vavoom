@@ -28,7 +28,7 @@ class ItemWarehouseKey : KeyPickup
 
 __states__
 {
-	S_WAREHOUSE_KEY('WARE', 0, -1.0, none) { }
+	S_WAREHOUSE_KEY('WARE', 0, -1.0, none) = none
 }
 
 defaultproperties

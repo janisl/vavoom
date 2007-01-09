@@ -27,7 +27,7 @@ class RobotMissile : MiniMissile;
 
 __states__
 {
-	S_MISSILE_NO_EXPLODE('MISL', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_MISSILE_X2) { }
+	S_MISSILE_NO_EXPLODE('MISL', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_MISSILE_X2) = none
 }
 
 defaultproperties

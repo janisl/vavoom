@@ -28,7 +28,7 @@ class ItemOrderKey : KeyPickup
 
 __states__
 {
-	S_ORDER_KEY('FUBR', 0, -1.0, none) { }
+	S_ORDER_KEY('FUBR', 0, -1.0, none) = none
 }
 
 defaultproperties

@@ -28,7 +28,7 @@ class AlnBoublesColumn : Decoration
 
 __states__
 {
-	S_BUBB('BUBB', 0, 4.0 / 35.0, S_BUBB) { A_ActiveSound(); }
+	S_BUBB('BUBB', 0, 4.0 / 35.0, S_BUBB) = A_ActiveSound
 }
 
 defaultproperties

@@ -28,7 +28,7 @@ class ItemBlueCrystalKey : KeyPickup
 
 __states__
 {
-	S_BLUE_CRYSTAL_KEY('BCRY', 0 | FF_FULLBRIGHT, -1.0, none) { }
+	S_BLUE_CRYSTAL_KEY('BCRY', 0 | FF_FULLBRIGHT, -1.0, none) = none
 }
 
 defaultproperties

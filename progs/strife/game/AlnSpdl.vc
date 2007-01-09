@@ -28,9 +28,9 @@ class AlnSpdl : Decoration
 
 __states__
 {
-	S_SPDL_1('SPDL', 0, 5.0 / 35.0, S_SPDL_2) { A_ActiveSound(); }
-	S_SPDL_2('SPDL', 1, 5.0 / 35.0, S_SPDL_3) { A_ActiveSound(); }
-	S_SPDL_3('SPDL', 2, 5.0 / 35.0, S_SPDL_1) { A_ActiveSound(); }
+	S_SPDL_1('SPDL', 0, 5.0 / 35.0, S_SPDL_2) = A_ActiveSound
+	S_SPDL_2('SPDL', 1, 5.0 / 35.0, S_SPDL_3) = A_ActiveSound
+	S_SPDL_3('SPDL', 2, 5.0 / 35.0, S_SPDL_1) = A_ActiveSound
 }
 
 defaultproperties

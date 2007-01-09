@@ -28,7 +28,7 @@ class ItemCoreKey : KeyPickup
 
 __states__
 {
-	S_CORE_KEY('GOID', 0, -1.0, none) { }
+	S_CORE_KEY('GOID', 0, -1.0, none) = none
 }
 
 defaultproperties

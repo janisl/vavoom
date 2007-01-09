@@ -28,7 +28,7 @@ class SurgeryCrab:Decoration
 
 __states__
 {
-	S_CRAB('CRAB', 0, -1.0, none) { }
+	S_CRAB('CRAB', 0, -1.0, none) = none
 }
 
 defaultproperties

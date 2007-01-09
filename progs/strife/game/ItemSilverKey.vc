@@ -28,7 +28,7 @@ class ItemSilverKey : KeyPickup
 
 __states__
 {
-	S_SILVER_KEY('KY2S', 0, -1.0, none) { }
+	S_SILVER_KEY('KY2S', 0, -1.0, none) = none
 }
 
 defaultproperties

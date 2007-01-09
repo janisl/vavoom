@@ -27,8 +27,8 @@ class PoisonArrow : Projectile;
 
 __states__
 {
-	S_ARROW2('ARWP', 0, 10.0 / 35.0, S_ARROW2) { A_ActiveSound(); }
-	S_ARROW2_X('AROW', 0, 1.0 / 35.0, none) { }
+	S_ARROW2('ARWP', 0, 10.0 / 35.0, S_ARROW2) = A_ActiveSound
+	S_ARROW2_X('AROW', 0, 1.0 / 35.0, none) = none
 }
 
 defaultproperties

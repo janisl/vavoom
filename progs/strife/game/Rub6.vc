@@ -28,7 +28,7 @@ class Rub6:Decoration
 
 __states__
 {
-	S_RUB6('RUB6', 0, -1.0, none) { }
+	S_RUB6('RUB6', 0, -1.0, none) = none
 }
 
 defaultproperties

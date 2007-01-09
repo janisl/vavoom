@@ -28,10 +28,10 @@ class Bowl : Decoration
 
 __states__
 {
-	S_BOWL_1('BOWL', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_BOWL_2) { }
-	S_BOWL_2('BOWL', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_BOWL_3) { }
-	S_BOWL_3('BOWL', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_BOWL_4) { }
-	S_BOWL_4('BOWL', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_BOWL_1) { }
+	S_BOWL_1('BOWL', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_BOWL_2) = none
+	S_BOWL_2('BOWL', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_BOWL_3) = none
+	S_BOWL_3('BOWL', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_BOWL_4) = none
+	S_BOWL_4('BOWL', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_BOWL_1) = none
 }
 
 defaultproperties

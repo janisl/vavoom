@@ -28,7 +28,7 @@ class Anvil:Decoration
 
 __states__
 {
-	S_ANVIL('ANVL', 0, -1.0, none) { }
+	S_ANVIL('ANVL', 0, -1.0, none) = none
 }
 
 defaultproperties

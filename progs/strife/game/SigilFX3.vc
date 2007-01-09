@@ -31,7 +31,7 @@ class SigilFX3 : Projectile;
 //
 //==========================================================================
 
-void A_Unknown91()
+final void A_Unknown91()
 {
 	float angle;
 	Actor A;
@@ -77,11 +77,11 @@ void A_Unknown91()
 
 __states__
 {
-	S_SIGIL_FX3_1('ZAP7', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_SIGIL_FX3_2) { A_Unknown91(); }
-	S_SIGIL_FX3_2('ZAP7', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_SIGIL_FX3_3) { A_Unknown91(); }
-	S_SIGIL_FX3_3('ZAP7', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_SIGIL_FX3_4) { A_Unknown91(); }
-	S_SIGIL_FX3_4('ZAP7', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_SIGIL_FX3_5) { A_Unknown91(); }
-	S_SIGIL_FX3_5('ZAP7', 4 | FF_FULLBRIGHT, 6.0 / 35.0, S_SIGIL_FX3_1) { A_Unknown91(); }
+	S_SIGIL_FX3_1('ZAP7', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_SIGIL_FX3_2) = A_Unknown91
+	S_SIGIL_FX3_2('ZAP7', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_SIGIL_FX3_3) = A_Unknown91
+	S_SIGIL_FX3_3('ZAP7', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_SIGIL_FX3_4) = A_Unknown91
+	S_SIGIL_FX3_4('ZAP7', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_SIGIL_FX3_5) = A_Unknown91
+	S_SIGIL_FX3_5('ZAP7', 4 | FF_FULLBRIGHT, 6.0 / 35.0, S_SIGIL_FX3_1) = A_Unknown91
 }
 
 defaultproperties

@@ -28,7 +28,7 @@ class Mug:Decoration
 
 __states__
 {
-	S_MUGG('MUGG', 0, -1.0, none) { }
+	S_MUGG('MUGG', 0, -1.0, none) = none
 }
 
 defaultproperties

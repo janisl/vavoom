@@ -29,7 +29,7 @@ class BrokenPowerCoupling : InventoryItem
 __states__
 {
 	// FIXME
-	S_BROKEN_POWER_COUPLING('COUP', 2, -1.0, none) { }
+	S_BROKEN_POWER_COUPLING('COUP', 2, -1.0, none) = none
 }
 
 defaultproperties

@@ -27,13 +27,13 @@ class MaulerPuff:Effect;
 
 __states__
 {
-	S_MAULER_FX_1('SHT2', 0, 5.0 / 35.0, S_MAULER_FX_2) { }
-	S_MAULER_FX_2('SHT2', 1, 5.0 / 35.0, S_POW1_1) { }
-	S_POW1_1('POW1', 0, 4.0 / 35.0, S_POW1_2) { }
-	S_POW1_2('POW1', 1, 4.0 / 35.0, S_POW1_3) { }
-	S_POW1_3('POW1', 2, 4.0 / 35.0, S_POW1_4) { }
-	S_POW1_4('POW1', 3, 4.0 / 35.0, S_POW1_5) { }
-	S_POW1_5('POW1', 4, 4.0 / 35.0, none) { }
+	S_MAULER_FX_1('SHT2', 0, 5.0 / 35.0, S_MAULER_FX_2) = none
+	S_MAULER_FX_2('SHT2', 1, 5.0 / 35.0, S_POW1_1) = none
+	S_POW1_1('POW1', 0, 4.0 / 35.0, S_POW1_2) = none
+	S_POW1_2('POW1', 1, 4.0 / 35.0, S_POW1_3) = none
+	S_POW1_3('POW1', 2, 4.0 / 35.0, S_POW1_4) = none
+	S_POW1_4('POW1', 3, 4.0 / 35.0, S_POW1_5) = none
+	S_POW1_5('POW1', 4, 4.0 / 35.0, none) = none
 }
 
 defaultproperties

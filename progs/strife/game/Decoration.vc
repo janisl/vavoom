@@ -35,7 +35,7 @@ int QuestID;
 //
 //==========================================================================
 
-void A_QuestObjectDeath()
+final void A_QuestObjectDeath()
 {
 	// This function does a lot more than just this
 	if (DeathSound)

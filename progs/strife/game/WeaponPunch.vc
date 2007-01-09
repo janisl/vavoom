@@ -31,7 +31,7 @@ class WeaponPunch : Weapon;
 //
 //==========================================================================
 
-void A_Punch()
+final void A_Punch()
 {
 	int power;
 	int damage;
@@ -73,14 +73,14 @@ void A_Punch()
 
 __states__
 {
-	S_PUNCH('PNCH', 0, 1.0 / 35.0, S_PUNCH) { A_WeaponReady(); }
-	S_PUNCHDOWN('PNCH', 0, 1.0 / 35.0, S_PUNCHDOWN) { A_Lower(); }
-	S_PUNCHUP('PNCH', 0, 1.0 / 35.0, S_PUNCHUP) { A_Raise(); }
-	S_PUNCH1('PNCH', 1, 4.0 / 35.0, S_PUNCH2) { }
-	S_PUNCH2('PNCH', 2, 4.0 / 35.0, S_PUNCH3) { A_Punch(); }
-	S_PUNCH3('PNCH', 3, 5.0 / 35.0, S_PUNCH4) { }
-	S_PUNCH4('PNCH', 2, 4.0 / 35.0, S_PUNCH5) { }
-	S_PUNCH5('PNCH', 1, 5.0 / 35.0, S_PUNCH) { A_ReFire(); }
+	S_PUNCH('PNCH', 0, 1.0 / 35.0, S_PUNCH) = A_WeaponReady
+	S_PUNCHDOWN('PNCH', 0, 1.0 / 35.0, S_PUNCHDOWN) = A_Lower
+	S_PUNCHUP('PNCH', 0, 1.0 / 35.0, S_PUNCHUP) = A_Raise
+	S_PUNCH1('PNCH', 1, 4.0 / 35.0, S_PUNCH2) = none
+	S_PUNCH2('PNCH', 2, 4.0 / 35.0, S_PUNCH3) = A_Punch
+	S_PUNCH3('PNCH', 3, 5.0 / 35.0, S_PUNCH4) = none
+	S_PUNCH4('PNCH', 2, 4.0 / 35.0, S_PUNCH5) = none
+	S_PUNCH5('PNCH', 1, 5.0 / 35.0, S_PUNCH) = A_ReFire
 }
 
 defaultproperties

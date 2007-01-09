@@ -31,7 +31,7 @@ class WeaponMauler : Weapon;
 //
 //==========================================================================
 
-void A_FireBlaster1()
+final void A_FireBlaster1()
 {
 	int i;
 	int damage;
@@ -64,7 +64,7 @@ void A_FireBlaster1()
 //
 //==========================================================================
 
-void A_FireBlasterSound()
+final void A_FireBlasterSound()
 {
 	Player.MO.PlaySound('weapons/mauler2charge', CHAN_WEAPON);
 	Player.ViewStates[ps_weapon].SX += (Random() - Random()) * 4.0;
@@ -77,7 +77,7 @@ void A_FireBlasterSound()
 //
 //==========================================================================
 
-void A_FireBlaster2()
+final void A_FireBlaster2()
 {
 	Player.MO.SetState(Actor(Player.MO).MissileState);
 	Player(Player).Ammo[Ammo] -= 30;
@@ -88,33 +88,33 @@ void A_FireBlaster2()
 
 __states__
 {
-	S_BLASTER('BLST', 5, 6.0 / 35.0, S_BLASTER01) { A_WeaponReady(); }
-	S_BLASTER01('BLST', 6, 6.0 / 35.0, S_BLASTER02) { A_WeaponReady(); }
-	S_BLASTER02('BLST', 7, 6.0 / 35.0, S_BLASTER03) { A_WeaponReady(); }
-	S_BLASTER03('BLST', 0, 6.0 / 35.0, S_BLASTER) { A_WeaponReady(); }
-	S_BLASTERDOWN('BLST', 0, 1.0 / 35.0, S_BLASTERDOWN) { A_Lower(); }
-	S_BLASTERUP('BLST', 0, 1.0 / 35.0, S_BLASTERUP) { A_Raise(); }
-	S_BLASTER1('BLSF', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_BLASTER2) { A_FireBlaster1(); }
-	S_BLASTER2('BLST', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_BLASTER3) { A_Light1(); }
-	S_BLASTER3('BLST', 2, 2.0 / 35.0, S_BLASTER4) { A_Light2(); }
-	S_BLASTER4('BLST', 3, 2.0 / 35.0, S_BLASTER5) { }
-	S_BLASTER5('BLST', 4, 2.0 / 35.0, S_BLASTER6) { }
-	S_BLASTER6('BLST', 0, 7.0 / 35.0, S_BLASTER7) { A_Light0(); }
-	S_BLASTER7('BLST', 7, 7.0 / 35.0, S_BLASTER8) { }
-	S_BLASTER8('BLST', 6, 7.0 / 35.0, S_BLASTER) { A_CheckReload(); }
-	S_BLASTERTORPEDO('BLST', 8, 7.0 / 35.0, S_BLASTERTORPEDO01) { A_WeaponReady(); }
-	S_BLASTERTORPEDO01('BLST', 9, 7.0 / 35.0, S_BLASTERTORPEDO02) { A_WeaponReady(); }
-	S_BLASTERTORPEDO02('BLST', 10, 7.0 / 35.0, S_BLASTERTORPEDO03) { A_WeaponReady(); }
-	S_BLASTERTORPEDO03('BLST', 11, 7.0 / 35.0, S_BLASTERTORPEDO) { A_WeaponReady(); }
-	S_BLASTERTORPEDODOWN('BLST', 8, 1.0 / 35.0, S_BLASTERTORPEDODOWN) { A_Lower(); }
-	S_BLASTERTORPEDOUP('BLST', 8, 1.0 / 35.0, S_BLASTERTORPEDOUP) { A_Raise(); }
-	S_BLASTERTORPEDO1('BLST', 8, 20.0 / 35.0, S_BLASTERTORPEDO2) { A_FireBlasterSound(); }
-	S_BLASTERTORPEDO2('BLST', 9, 10.0 / 35.0, S_BLASTERTORPEDO3) { A_Light1(); }
-	S_BLASTERTORPEDO3('BLSF', 0 | FF_FULLBRIGHT, 10.0 / 35.0, S_BLASTERTORPEDO4) { A_FireBlaster2(); }
-	S_BLASTERTORPEDO4('BLST', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_BLASTERTORPEDO5) { A_Light2(); }
-	S_BLASTERTORPEDO5('BLST', 2, 2.0 / 35.0, S_BLASTERTORPEDO6) { }
-	S_BLASTERTORPEDO6('BLST', 3, 2.0 / 35.0, S_BLASTERTORPEDO7) { A_Light0(); }
-	S_BLASTERTORPEDO7('BLST', 4, 2.0 / 35.0, S_BLASTERTORPEDO) { A_ReFire(); }
+	S_BLASTER('BLST', 5, 6.0 / 35.0, S_BLASTER01) = A_WeaponReady
+	S_BLASTER01('BLST', 6, 6.0 / 35.0, S_BLASTER02) = A_WeaponReady
+	S_BLASTER02('BLST', 7, 6.0 / 35.0, S_BLASTER03) = A_WeaponReady
+	S_BLASTER03('BLST', 0, 6.0 / 35.0, S_BLASTER) = A_WeaponReady
+	S_BLASTERDOWN('BLST', 0, 1.0 / 35.0, S_BLASTERDOWN) = A_Lower
+	S_BLASTERUP('BLST', 0, 1.0 / 35.0, S_BLASTERUP) = A_Raise
+	S_BLASTER1('BLSF', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_BLASTER2) = A_FireBlaster1
+	S_BLASTER2('BLST', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_BLASTER3) = A_Light1
+	S_BLASTER3('BLST', 2, 2.0 / 35.0, S_BLASTER4) = A_Light2
+	S_BLASTER4('BLST', 3, 2.0 / 35.0, S_BLASTER5) = none
+	S_BLASTER5('BLST', 4, 2.0 / 35.0, S_BLASTER6) = none
+	S_BLASTER6('BLST', 0, 7.0 / 35.0, S_BLASTER7) = A_Light0
+	S_BLASTER7('BLST', 7, 7.0 / 35.0, S_BLASTER8) = none
+	S_BLASTER8('BLST', 6, 7.0 / 35.0, S_BLASTER) = A_CheckReload
+	S_BLASTERTORPEDO('BLST', 8, 7.0 / 35.0, S_BLASTERTORPEDO01) = A_WeaponReady
+	S_BLASTERTORPEDO01('BLST', 9, 7.0 / 35.0, S_BLASTERTORPEDO02) = A_WeaponReady
+	S_BLASTERTORPEDO02('BLST', 10, 7.0 / 35.0, S_BLASTERTORPEDO03) = A_WeaponReady
+	S_BLASTERTORPEDO03('BLST', 11, 7.0 / 35.0, S_BLASTERTORPEDO) = A_WeaponReady
+	S_BLASTERTORPEDODOWN('BLST', 8, 1.0 / 35.0, S_BLASTERTORPEDODOWN) = A_Lower
+	S_BLASTERTORPEDOUP('BLST', 8, 1.0 / 35.0, S_BLASTERTORPEDOUP) = A_Raise
+	S_BLASTERTORPEDO1('BLST', 8, 20.0 / 35.0, S_BLASTERTORPEDO2) = A_FireBlasterSound
+	S_BLASTERTORPEDO2('BLST', 9, 10.0 / 35.0, S_BLASTERTORPEDO3) = A_Light1
+	S_BLASTERTORPEDO3('BLSF', 0 | FF_FULLBRIGHT, 10.0 / 35.0, S_BLASTERTORPEDO4) = A_FireBlaster2
+	S_BLASTERTORPEDO4('BLST', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_BLASTERTORPEDO5) = A_Light2
+	S_BLASTERTORPEDO5('BLST', 2, 2.0 / 35.0, S_BLASTERTORPEDO6) = none
+	S_BLASTERTORPEDO6('BLST', 3, 2.0 / 35.0, S_BLASTERTORPEDO7) = A_Light0
+	S_BLASTERTORPEDO7('BLST', 4, 2.0 / 35.0, S_BLASTERTORPEDO) = A_ReFire
 }
 
 defaultproperties

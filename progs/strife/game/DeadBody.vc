@@ -29,7 +29,7 @@ class DeadBody:Decoration
 
 __states__
 {
-	S_DEAD_BODY('SACR', 0, -1.0, none) { }
+	S_DEAD_BODY('SACR', 0, -1.0, none) = none
 }
 
 defaultproperties

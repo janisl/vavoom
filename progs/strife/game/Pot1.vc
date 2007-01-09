@@ -28,7 +28,7 @@ class Pot1:Decoration
 
 __states__
 {
-	S_POT1('POT1', 0, -1.0, none) { }
+	S_POT1('POT1', 0, -1.0, none) = none
 }
 
 defaultproperties

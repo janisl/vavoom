@@ -39,7 +39,7 @@ float JumpSpeed;
 //
 //==========================================================================
 
-void A_InquisitorChase()
+final void A_InquisitorChase()
 {
 	float		ZSpeed;
 
@@ -98,7 +98,7 @@ void A_InquisitorChase()
 //
 //==========================================================================
 
-void A_InquisitorChase2()
+final void A_InquisitorChase2()
 {
 	if (!Enemy || Origin.z != FloorZ)
 		return;
@@ -119,7 +119,7 @@ void A_InquisitorChase2()
 //
 //==========================================================================
 
-void A_InquisitorGrenade()
+final void A_InquisitorGrenade()
 {
 	Actor A;
 	float an;
@@ -148,7 +148,7 @@ void A_InquisitorGrenade()
 //
 //==========================================================================
 
-void A_InquisitorInitJump()
+final void A_InquisitorInitJump()
 {
 	float an;
 	float dist;
@@ -178,7 +178,7 @@ void A_InquisitorInitJump()
 //
 //==========================================================================
 
-void A_InquisitorJump()
+final void A_InquisitorJump()
 {
 	ReactionCount--;
 	if (ReactionCount < 0 || Velocity.x == 0.0 || Velocity.y == 0.0 ||
@@ -200,7 +200,7 @@ void A_InquisitorJump()
 //
 //==========================================================================
 
-void A_InquisitorDropArms()
+final void A_InquisitorDropArms()
 {
 	TossUpObject(InquisitorArm);
 	TossUpObject(InquisitorArm);
@@ -208,49 +208,49 @@ void A_InquisitorDropArms()
 
 __states__
 {
-	S_INQUISITOR_LOOK1('ROB3', 0, 10.0 / 35.0, S_INQUISITOR_LOOK2) { A_Look(); }
-	S_INQUISITOR_LOOK2('ROB3', 1, 10.0 / 35.0, S_INQUISITOR_LOOK1) { A_Look(); }
-	S_INQUISITOR_RUN1('ROB3', 1, 3.0 / 35.0, S_INQUISITOR_RUN2) { A_InquisitorChase(); }
-	S_INQUISITOR_RUN2('ROB3', 1, 3.0 / 35.0, S_INQUISITOR_RUN3) { A_Chase(); }
-	S_INQUISITOR_RUN3('ROB3', 2, 4.0 / 35.0, S_INQUISITOR_RUN4) { A_Chase(); }
-	S_INQUISITOR_RUN4('ROB3', 2, 4.0 / 35.0, S_INQUISITOR_RUN5) { A_Chase(); }
-	S_INQUISITOR_RUN5('ROB3', 3, 4.0 / 35.0, S_INQUISITOR_RUN6) { A_Chase(); }
-	S_INQUISITOR_RUN6('ROB3', 3, 4.0 / 35.0, S_INQUISITOR_RUN7) { A_Chase(); }
-	S_INQUISITOR_RUN7('ROB3', 4, 3.0 / 35.0, S_INQUISITOR_RUN8) { A_InquisitorChase(); }
-	S_INQUISITOR_RUN8('ROB3', 4, 3.0 / 35.0, S_INQUISITOR_RUN1) { A_InquisitorChase2(); }
-	S_INQUISITOR_ATK1_1('ROB3', 0, 2.0 / 35.0, S_INQUISITOR_ATK1_2) { A_InquisitorChase2(); }
-	S_INQUISITOR_ATK1_2('ROB3', 5, 6.0 / 35.0, S_INQUISITOR_ATK1_3) { A_FaceTarget(); }
-	S_INQUISITOR_ATK1_3('ROB3', 6 | FF_FULLBRIGHT, 8.0 / 35.0, S_INQUISITOR_ATK1_4) { A_RobotMissile(); }
-	S_INQUISITOR_ATK1_4('ROB3', 6, 8.0 / 35.0, S_INQUISITOR_RUN1) { A_RobotMissile(); }
-	S_INQUISITOR_ATK2_1('ROB3', 10, 12.0 / 35.0, S_INQUISITOR_ATK2_2) { A_FaceTarget(); }
-	S_INQUISITOR_ATK2_2('ROB3', 9 | FF_FULLBRIGHT, 6.0 / 35.0, S_INQUISITOR_ATK2_3) { A_InquisitorGrenade(); }
-	S_INQUISITOR_ATK2_3('ROB3', 10, 12.0 / 35.0, S_INQUISITOR_RUN1) { }
-	S_INQUISITOR_JUMP1('ROB3', 7 | FF_FULLBRIGHT, 8.0 / 35.0, S_INQUISITOR_JUMP2) { A_InquisitorInitJump(); }
-	S_INQUISITOR_JUMP2('ROB3', 8 | FF_FULLBRIGHT, 4.0 / 35.0, S_INQUISITOR_JUMP3) { A_InquisitorJump(); }
-	S_INQUISITOR_JUMP3('ROB3', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_INQUISITOR_JUMP2) { A_InquisitorJump(); }
-	S_INQUISITOR_DIE1('ROB3', 11, 4.0 / 35.0, S_INQUISITOR_DIE2) { A_XDying(); }
-	S_INQUISITOR_DIE2('ROB3', 12, 4.0 / 35.0, S_INQUISITOR_DIE3) { A_Scream(); }
-	S_INQUISITOR_DIE3('ROB3', 13, 4.0 / 35.0, S_INQUISITOR_DIE4) { A_XDying(); }
-	S_INQUISITOR_DIE4('ROB3', 14 | FF_FULLBRIGHT, 4.0 / 35.0, S_INQUISITOR_DIE5) { A_Explode2(); }
-	S_INQUISITOR_DIE5('ROB3', 15 | FF_FULLBRIGHT, 4.0 / 35.0, S_INQUISITOR_DIE6) { A_XDying(); }
-	S_INQUISITOR_DIE6('ROB3', 16 | FF_FULLBRIGHT, 4.0 / 35.0, S_INQUISITOR_DIE7) { A_Fall(); }
-	S_INQUISITOR_DIE7('ROB3', 17, 4.0 / 35.0, S_INQUISITOR_DIE8) { A_XDying(); }
-	S_INQUISITOR_DIE8('ROB3', 18, 4.0 / 35.0, S_INQUISITOR_DIE9) { A_XDying(); }
-	S_INQUISITOR_DIE9('ROB3', 19, 4.0 / 35.0, S_INQUISITOR_DIE10) { A_XDying(); }
-	S_INQUISITOR_DIE10('ROB3', 20, 4.0 / 35.0, S_INQUISITOR_DIE11) { A_XDying(); }
-	S_INQUISITOR_DIE11('ROB3', 21, 4.0 / 35.0, S_INQUISITOR_DIE12) { A_XDying(); }
-	S_INQUISITOR_DIE12('ROB3', 22 | FF_FULLBRIGHT, 4.0 / 35.0, S_INQUISITOR_DIE13) { A_Explode2(); }
-	S_INQUISITOR_DIE13('ROB3', 23 | FF_FULLBRIGHT, 4.0 / 35.0, S_INQUISITOR_DIE14) { A_XDying(); }
-	S_INQUISITOR_DIE14('ROB3', 24 | FF_FULLBRIGHT, 4.0 / 35.0, S_INQUISITOR_DIE15) { A_XDying(); }
-	S_INQUISITOR_DIE15('ROB3', 25, 4.0 / 35.0, S_INQUISITOR_DIE16) { A_XDying(); }
-	S_INQUISITOR_DIE16('ROB3', 26, 4.0 / 35.0, S_INQUISITOR_DIE17) { A_XDying(); }
-	S_INQUISITOR_DIE17('ROB3', 27, 3.0 / 35.0, S_INQUISITOR_DIE18) { A_XDying(); }
-	S_INQUISITOR_DIE18('ROB3', 28 | FF_FULLBRIGHT, 3.0 / 35.0, S_INQUISITOR_DIE19) { A_Explode2(); }
-	S_INQUISITOR_DIE19('RBB3', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_INQUISITOR_DIE20) { A_InquisitorDropArms(); }
-	S_INQUISITOR_DIE20('RBB3', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_INQUISITOR_DIE21) { A_XDying(); }
-	S_INQUISITOR_DIE21('RBB3', 2, 3.0 / 35.0, S_INQUISITOR_DIE22) { A_XDying(); }
-	S_INQUISITOR_DIE22('RBB3', 3, 3.0 / 35.0, S_INQUISITOR_DIE23) { A_XDying(); }
-	S_INQUISITOR_DIE23('RBB3', 4, -1.0, none) { A_BossDeath(); }
+	S_INQUISITOR_LOOK1('ROB3', 0, 10.0 / 35.0, S_INQUISITOR_LOOK2) = A_Look
+	S_INQUISITOR_LOOK2('ROB3', 1, 10.0 / 35.0, S_INQUISITOR_LOOK1) = A_Look
+	S_INQUISITOR_RUN1('ROB3', 1, 3.0 / 35.0, S_INQUISITOR_RUN2) = A_InquisitorChase
+	S_INQUISITOR_RUN2('ROB3', 1, 3.0 / 35.0, S_INQUISITOR_RUN3) = A_Chase
+	S_INQUISITOR_RUN3('ROB3', 2, 4.0 / 35.0, S_INQUISITOR_RUN4) = A_Chase
+	S_INQUISITOR_RUN4('ROB3', 2, 4.0 / 35.0, S_INQUISITOR_RUN5) = A_Chase
+	S_INQUISITOR_RUN5('ROB3', 3, 4.0 / 35.0, S_INQUISITOR_RUN6) = A_Chase
+	S_INQUISITOR_RUN6('ROB3', 3, 4.0 / 35.0, S_INQUISITOR_RUN7) = A_Chase
+	S_INQUISITOR_RUN7('ROB3', 4, 3.0 / 35.0, S_INQUISITOR_RUN8) = A_InquisitorChase
+	S_INQUISITOR_RUN8('ROB3', 4, 3.0 / 35.0, S_INQUISITOR_RUN1) = A_InquisitorChase2
+	S_INQUISITOR_ATK1_1('ROB3', 0, 2.0 / 35.0, S_INQUISITOR_ATK1_2) = A_InquisitorChase2
+	S_INQUISITOR_ATK1_2('ROB3', 5, 6.0 / 35.0, S_INQUISITOR_ATK1_3) = A_FaceTarget
+	S_INQUISITOR_ATK1_3('ROB3', 6 | FF_FULLBRIGHT, 8.0 / 35.0, S_INQUISITOR_ATK1_4) = A_RobotMissile
+	S_INQUISITOR_ATK1_4('ROB3', 6, 8.0 / 35.0, S_INQUISITOR_RUN1) = A_RobotMissile
+	S_INQUISITOR_ATK2_1('ROB3', 10, 12.0 / 35.0, S_INQUISITOR_ATK2_2) = A_FaceTarget
+	S_INQUISITOR_ATK2_2('ROB3', 9 | FF_FULLBRIGHT, 6.0 / 35.0, S_INQUISITOR_ATK2_3) = A_InquisitorGrenade
+	S_INQUISITOR_ATK2_3('ROB3', 10, 12.0 / 35.0, S_INQUISITOR_RUN1) = none
+	S_INQUISITOR_JUMP1('ROB3', 7 | FF_FULLBRIGHT, 8.0 / 35.0, S_INQUISITOR_JUMP2) = A_InquisitorInitJump
+	S_INQUISITOR_JUMP2('ROB3', 8 | FF_FULLBRIGHT, 4.0 / 35.0, S_INQUISITOR_JUMP3) = A_InquisitorJump
+	S_INQUISITOR_JUMP3('ROB3', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_INQUISITOR_JUMP2) = A_InquisitorJump
+	S_INQUISITOR_DIE1('ROB3', 11, 4.0 / 35.0, S_INQUISITOR_DIE2) = A_XDying
+	S_INQUISITOR_DIE2('ROB3', 12, 4.0 / 35.0, S_INQUISITOR_DIE3) = A_Scream
+	S_INQUISITOR_DIE3('ROB3', 13, 4.0 / 35.0, S_INQUISITOR_DIE4) = A_XDying
+	S_INQUISITOR_DIE4('ROB3', 14 | FF_FULLBRIGHT, 4.0 / 35.0, S_INQUISITOR_DIE5) = A_Explode2
+	S_INQUISITOR_DIE5('ROB3', 15 | FF_FULLBRIGHT, 4.0 / 35.0, S_INQUISITOR_DIE6) = A_XDying
+	S_INQUISITOR_DIE6('ROB3', 16 | FF_FULLBRIGHT, 4.0 / 35.0, S_INQUISITOR_DIE7) = A_Fall
+	S_INQUISITOR_DIE7('ROB3', 17, 4.0 / 35.0, S_INQUISITOR_DIE8) = A_XDying
+	S_INQUISITOR_DIE8('ROB3', 18, 4.0 / 35.0, S_INQUISITOR_DIE9) = A_XDying
+	S_INQUISITOR_DIE9('ROB3', 19, 4.0 / 35.0, S_INQUISITOR_DIE10) = A_XDying
+	S_INQUISITOR_DIE10('ROB3', 20, 4.0 / 35.0, S_INQUISITOR_DIE11) = A_XDying
+	S_INQUISITOR_DIE11('ROB3', 21, 4.0 / 35.0, S_INQUISITOR_DIE12) = A_XDying
+	S_INQUISITOR_DIE12('ROB3', 22 | FF_FULLBRIGHT, 4.0 / 35.0, S_INQUISITOR_DIE13) = A_Explode2
+	S_INQUISITOR_DIE13('ROB3', 23 | FF_FULLBRIGHT, 4.0 / 35.0, S_INQUISITOR_DIE14) = A_XDying
+	S_INQUISITOR_DIE14('ROB3', 24 | FF_FULLBRIGHT, 4.0 / 35.0, S_INQUISITOR_DIE15) = A_XDying
+	S_INQUISITOR_DIE15('ROB3', 25, 4.0 / 35.0, S_INQUISITOR_DIE16) = A_XDying
+	S_INQUISITOR_DIE16('ROB3', 26, 4.0 / 35.0, S_INQUISITOR_DIE17) = A_XDying
+	S_INQUISITOR_DIE17('ROB3', 27, 3.0 / 35.0, S_INQUISITOR_DIE18) = A_XDying
+	S_INQUISITOR_DIE18('ROB3', 28 | FF_FULLBRIGHT, 3.0 / 35.0, S_INQUISITOR_DIE19) = A_Explode2
+	S_INQUISITOR_DIE19('RBB3', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_INQUISITOR_DIE20) = A_InquisitorDropArms
+	S_INQUISITOR_DIE20('RBB3', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_INQUISITOR_DIE21) = A_XDying
+	S_INQUISITOR_DIE21('RBB3', 2, 3.0 / 35.0, S_INQUISITOR_DIE22) = A_XDying
+	S_INQUISITOR_DIE22('RBB3', 3, 3.0 / 35.0, S_INQUISITOR_DIE23) = A_XDying
+	S_INQUISITOR_DIE23('RBB3', 4, -1.0, none) = A_BossDeath
 }
 
 defaultproperties

@@ -28,7 +28,7 @@ class ItemAmmoPoisonBolts : AmmoPickup
 
 __states__
 {
-	S_ARROWS_POISON('PQRL', 0, -1.0, none) { }
+	S_ARROWS_POISON('PQRL', 0, -1.0, none) = none
 }
 
 defaultproperties

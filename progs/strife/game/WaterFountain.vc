@@ -28,10 +28,10 @@ class WaterFountain : Decoration
 
 __states__
 {
-	S_FOUNTAIN_1('WTFT', 0, 4.0 / 35.0, S_FOUNTAIN_2) { }
-	S_FOUNTAIN_2('WTFT', 1, 4.0 / 35.0, S_FOUNTAIN_3) { }
-	S_FOUNTAIN_3('WTFT', 2, 4.0 / 35.0, S_FOUNTAIN_4) { }
-	S_FOUNTAIN_4('WTFT', 3, 4.0 / 35.0, S_FOUNTAIN_1) { A_ActiveSound(); }
+	S_FOUNTAIN_1('WTFT', 0, 4.0 / 35.0, S_FOUNTAIN_2) = none
+	S_FOUNTAIN_2('WTFT', 1, 4.0 / 35.0, S_FOUNTAIN_3) = none
+	S_FOUNTAIN_3('WTFT', 2, 4.0 / 35.0, S_FOUNTAIN_4) = none
+	S_FOUNTAIN_4('WTFT', 3, 4.0 / 35.0, S_FOUNTAIN_1) = A_ActiveSound
 }
 
 defaultproperties

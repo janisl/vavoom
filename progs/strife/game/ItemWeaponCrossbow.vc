@@ -28,7 +28,7 @@ class ItemWeaponCrossbow : WeaponPickup
 
 __states__
 {
-	S_CROSSBOW('CBOW', 0, -1.0, none) { }
+	S_CROSSBOW('CBOW', 0, -1.0, none) = none
 }
 
 defaultproperties

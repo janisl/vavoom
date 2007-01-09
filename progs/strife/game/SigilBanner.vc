@@ -28,7 +28,7 @@ class SigilBanner:Decoration
 
 __states__
 {
-	S_SIGIL_BANNER('SBAN', 0, -1.0, none) { }
+	S_SIGIL_BANNER('SBAN', 0, -1.0, none) = none
 }
 
 defaultproperties

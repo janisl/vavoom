@@ -28,7 +28,7 @@ class ItemAmmoPhosphorusGrenadeRounds : AmmoPickup
 
 __states__
 {
-	S_GRENADE_FIRE('GRN2', 0, -1.0, none) { }
+	S_GRENADE_FIRE('GRN2', 0, -1.0, none) = none
 }
 
 defaultproperties

@@ -27,7 +27,7 @@ class LoremasterChainTrail : Effect;
 
 __states__
 {
-	S_LOREMASTER_FX_TRAIL('TEND', 0, 20.0 / 35.0, none) { }
+	S_LOREMASTER_FX_TRAIL('TEND', 0, 20.0 / 35.0, none) = none
 }
 
 defaultproperties

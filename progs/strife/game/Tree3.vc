@@ -28,7 +28,7 @@ class Tree3:Decoration
 
 __states__
 {
-	S_TREE_3('TREE', 2, -1.0, none) { }
+	S_TREE_3('TREE', 2, -1.0, none) = none
 }
 
 defaultproperties

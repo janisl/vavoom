@@ -29,7 +29,7 @@ class ItemAmmoCrateOfMissiles : AmmoPickup
 
 __states__
 {
-	S_CRATE_OF_MISSILES('ROKT', 0, -1.0, none) { }
+	S_CRATE_OF_MISSILES('ROKT', 0, -1.0, none) = none
 }
 
 defaultproperties

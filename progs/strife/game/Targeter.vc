@@ -28,7 +28,7 @@ class Targeter : InventoryItem
 
 __states__
 {
-	S_TARGETER('TARG', 0, -1.0, none) { }
+	S_TARGETER('TARG', 0, -1.0, none) = none
 }
 
 defaultproperties

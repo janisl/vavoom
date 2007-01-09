@@ -32,14 +32,14 @@ class PeasantSpawner : Actor
 //
 //==========================================================================
 
-void A_SpawnZombie()
+final void A_SpawnZombie()
 {
 	Spawn(PeasantDummy, Origin);
 }
 
 __states__
 {
-	S_PEASANT_SPAWNER('', 0, 175.0 / 35.0, S_PEASANT_SPAWNER) { A_SpawnZombie(); }
+	S_PEASANT_SPAWNER('', 0, 175.0 / 35.0, S_PEASANT_SPAWNER) = A_SpawnZombie
 }
 
 defaultproperties

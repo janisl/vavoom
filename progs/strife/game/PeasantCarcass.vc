@@ -28,9 +28,9 @@ class PeasantCarcass:Decoration
 
 __states__
 {
-	S_DEAD_PEASANT('PEAS', 13, 1400.0 / 35.0, S_DEAD_PEASANT_2) { }
-	S_DEAD_PEASANT_2('GIBS', 20, 5.0 / 35.0, S_DEAD_PEASANT_3) { }
-	S_DEAD_PEASANT_3('GIBS', 21, 1400.0 / 35.0, none) { }
+	S_DEAD_PEASANT('PEAS', 13, 1400.0 / 35.0, S_DEAD_PEASANT_2) = none
+	S_DEAD_PEASANT_2('GIBS', 20, 5.0 / 35.0, S_DEAD_PEASANT_3) = none
+	S_DEAD_PEASANT_3('GIBS', 21, 1400.0 / 35.0, none) = none
 }
 
 defaultproperties

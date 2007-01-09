@@ -28,14 +28,14 @@ class Rat : Pawn
 
 __states__
 {
-	S_RAT_LOOK('RATT', 0, 10.0 / 35.0, S_RAT_LOOK) { A_Look(); }
-	S_RAT_RUN1('RATT', 0, 4.0 / 35.0, S_RAT_RUN2) { A_Chase(); }
-	S_RAT_RUN2('RATT', 0, 4.0 / 35.0, S_RAT_RUN3) { A_Chase(); }
-	S_RAT_RUN3('RATT', 1, 4.0 / 35.0, S_RAT_RUN4) { A_Chase(); }
-	S_RAT_RUN4('RATT', 1, 4.0 / 35.0, S_RAT_RUN1) { A_Chase(); }
-	S_RAT_WALK1('RATT', 0, 8.0 / 35.0, S_RAT_WALK2) { A_Walk(); }
-	S_RAT_WALK2('RATT', 1, 4.0 / 35.0, S_RAT_RUN1) { A_Walk(); }
-	S_RAT_DIE('MEAT', 16, 700.0 / 35.0, none) { }
+	S_RAT_LOOK('RATT', 0, 10.0 / 35.0, S_RAT_LOOK) = A_Look
+	S_RAT_RUN1('RATT', 0, 4.0 / 35.0, S_RAT_RUN2) = A_Chase
+	S_RAT_RUN2('RATT', 0, 4.0 / 35.0, S_RAT_RUN3) = A_Chase
+	S_RAT_RUN3('RATT', 1, 4.0 / 35.0, S_RAT_RUN4) = A_Chase
+	S_RAT_RUN4('RATT', 1, 4.0 / 35.0, S_RAT_RUN1) = A_Chase
+	S_RAT_WALK1('RATT', 0, 8.0 / 35.0, S_RAT_WALK2) = A_Walk
+	S_RAT_WALK2('RATT', 1, 4.0 / 35.0, S_RAT_RUN1) = A_Walk
+	S_RAT_DIE('MEAT', 16, 700.0 / 35.0, none) = none
 }
 
 defaultproperties

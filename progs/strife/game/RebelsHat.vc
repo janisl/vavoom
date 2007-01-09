@@ -28,7 +28,7 @@ class RebelsHat:Decoration
 
 __states__
 {
-	S_REBELS_HAT('HATR', 0, -1.0, none) { }
+	S_REBELS_HAT('HATR', 0, -1.0, none) = none
 }
 
 defaultproperties

@@ -27,7 +27,7 @@ class ItemPower2Key : KeyPickup;
 
 __states__
 {
-	S_POWER2_KEY('PWR2', 0, -1.0, none) { }
+	S_POWER2_KEY('PWR2', 0, -1.0, none) = none
 }
 
 defaultproperties

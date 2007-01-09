@@ -28,7 +28,7 @@ class StealColumnBroken2:Decoration
 
 __states__
 {
-	S_STEAL_COLUMN_BRK2('STLE', 0, -1.0, none) { }
+	S_STEAL_COLUMN_BRK2('STLE', 0, -1.0, none) = none
 }
 
 defaultproperties

@@ -28,7 +28,7 @@ class TorchUnlit:Decoration
 
 __states__
 {
-	S_TORCH_UNLIT('TRHO', 0, -1.0, none) { }
+	S_TORCH_UNLIT('TRHO', 0, -1.0, none) = none
 }
 
 defaultproperties

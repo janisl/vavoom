@@ -42,8 +42,8 @@ bool HandlePickup(Actor Toucher)
 
 __states__
 {
-	S_ENERGY_POD_1('BRY1', 0, 6.0 / 35.0, S_ENERGY_POD_2) { }
-	S_ENERGY_POD_2('BRY1', 1, 6.0 / 35.0, S_ENERGY_POD_1) { }
+	S_ENERGY_POD_1('BRY1', 0, 6.0 / 35.0, S_ENERGY_POD_2) = none
+	S_ENERGY_POD_2('BRY1', 1, 6.0 / 35.0, S_ENERGY_POD_1) = none
 }
 
 defaultproperties

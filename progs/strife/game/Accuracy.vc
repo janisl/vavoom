@@ -27,7 +27,7 @@ class Accuracy : InventoryItem;
 
 __states__
 {
-	S_ACCURACY('GUNT', 0, -1.0, none) { }
+	S_ACCURACY('GUNT', 0, -1.0, none) = none
 }
 
 defaultproperties

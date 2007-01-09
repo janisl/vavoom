@@ -28,7 +28,7 @@ class Cage : Decoration
 
 __states__
 {
-	S_CAGE('CAGE', 0, -1.0, none) { }
+	S_CAGE('CAGE', 0, -1.0, none) = none
 }
 
 defaultproperties

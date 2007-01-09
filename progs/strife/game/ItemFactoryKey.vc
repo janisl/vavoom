@@ -28,7 +28,7 @@ class ItemFactoryKey : KeyPickup
 
 __states__
 {
-	S_FACTORY_KEY('PROC', 0, -1.0, none) { }
+	S_FACTORY_KEY('PROC', 0, -1.0, none) = none
 }
 
 defaultproperties

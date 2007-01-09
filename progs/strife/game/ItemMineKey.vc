@@ -28,7 +28,7 @@ class ItemMineKey : KeyPickup
 
 __states__
 {
-	S_MINE_KEY('MINE', 0, -1.0, none) { }
+	S_MINE_KEY('MINE', 0, -1.0, none) = none
 }
 
 defaultproperties

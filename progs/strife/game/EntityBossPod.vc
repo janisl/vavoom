@@ -32,7 +32,7 @@ class EntityBossPod : Decoration
 //
 //==========================================================================
 
-void A_EntityBossRaise()
+final void A_EntityBossRaise()
 {
 	Actor entity;
 
@@ -47,12 +47,12 @@ void A_EntityBossRaise()
 
 __states__
 {
-	S_ENT_POD('PODD', 0, 60.0 / 35.0, S_ENT_POD) { A_Look(); }
-	S_ENT_POD_OPEN1('PODD', 0, 360.0 / 35.0, S_ENT_POD_OPEN2) { }
-	S_ENT_POD_OPEN2('PODD', 1, 9.0 / 35.0, S_ENT_POD_OPEN3) { A_Fall(); }
-	S_ENT_POD_OPEN3('PODD', 2, 9.0 / 35.0, S_ENT_POD_OPEN4) { }
-	S_ENT_POD_OPEN4('PODD', 3, 9.0 / 35.0, S_ENT_POD_OPEN5) { A_EntityBossRaise(); }
-	S_ENT_POD_OPEN5('PODD', 4, -1.0, none) { }
+	S_ENT_POD('PODD', 0, 60.0 / 35.0, S_ENT_POD) = A_Look
+	S_ENT_POD_OPEN1('PODD', 0, 360.0 / 35.0, S_ENT_POD_OPEN2) = none
+	S_ENT_POD_OPEN2('PODD', 1, 9.0 / 35.0, S_ENT_POD_OPEN3) = A_Fall
+	S_ENT_POD_OPEN3('PODD', 2, 9.0 / 35.0, S_ENT_POD_OPEN4) = none
+	S_ENT_POD_OPEN4('PODD', 3, 9.0 / 35.0, S_ENT_POD_OPEN5) = A_EntityBossRaise
+	S_ENT_POD_OPEN5('PODD', 4, -1.0, none) = none
 }
 
 defaultproperties

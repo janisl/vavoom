@@ -29,7 +29,7 @@ class ItemAmmoMiniMissiles : AmmoPickup
 
 __states__
 {
-	S_MINI_MISSILES('MSSL', 0, -1.0, none) { }
+	S_MINI_MISSILES('MSSL', 0, -1.0, none) = none
 }
 
 defaultproperties

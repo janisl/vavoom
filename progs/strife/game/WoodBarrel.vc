@@ -28,14 +28,14 @@ class WoodBarrel : Decoration
 
 __states__
 {
-	S_WOOD_BARREL('BARW', 0, -1.0, none) { }
-	S_WOOD_BARREL_X1('BARW', 1, 2.0 / 35.0, S_WOOD_BARREL_X2) { A_Scream(); }
-	S_WOOD_BARREL_X2('BARW', 2, 2.0 / 35.0, S_WOOD_BARREL_X3) { }
-	S_WOOD_BARREL_X3('BARW', 3, 2.0 / 35.0, S_WOOD_BARREL_X4) { A_Fall(); }
-	S_WOOD_BARREL_X4('BARW', 4, 2.0 / 35.0, S_WOOD_BARREL_X5) { }
-	S_WOOD_BARREL_X5('BARW', 5, 2.0 / 35.0, S_WOOD_BARREL_X6) { }
-	S_WOOD_BARREL_X6('BARW', 6, 2.0 / 35.0, S_WOOD_BARREL_X7) { }
-	S_WOOD_BARREL_X7('BARW', 7, -1.0, none) { }
+	S_WOOD_BARREL('BARW', 0, -1.0, none) = none
+	S_WOOD_BARREL_X1('BARW', 1, 2.0 / 35.0, S_WOOD_BARREL_X2) = A_Scream
+	S_WOOD_BARREL_X2('BARW', 2, 2.0 / 35.0, S_WOOD_BARREL_X3) = none
+	S_WOOD_BARREL_X3('BARW', 3, 2.0 / 35.0, S_WOOD_BARREL_X4) = A_Fall
+	S_WOOD_BARREL_X4('BARW', 4, 2.0 / 35.0, S_WOOD_BARREL_X5) = none
+	S_WOOD_BARREL_X5('BARW', 5, 2.0 / 35.0, S_WOOD_BARREL_X6) = none
+	S_WOOD_BARREL_X6('BARW', 6, 2.0 / 35.0, S_WOOD_BARREL_X7) = none
+	S_WOOD_BARREL_X7('BARW', 7, -1.0, none) = none
 }
 
 defaultproperties

@@ -28,7 +28,7 @@ class ItemBaseKey : KeyPickup
 
 __states__
 {
-	S_BASE_KEY('FUSL', 0, -1.0, none) { }
+	S_BASE_KEY('FUSL', 0, -1.0, none) = none
 }
 
 defaultproperties

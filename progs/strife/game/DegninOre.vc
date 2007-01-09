@@ -28,16 +28,16 @@ class DegninOre : InventoryItem
 
 __states__
 {
-	S_ORE('XPRK', 0, -1.0, none) { }
-	S_ORE_X('XPRK', 0, 1.0 / 35.0, S_ORE_X1) { A_RemoveForceField(); }
-	S_ORE_X1('BNG3', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_ORE_X2) { A_Explode192(); }
-	S_ORE_X2('BNG3', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_ORE_X3) { }
-	S_ORE_X3('BNG3', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_ORE_X4) { }
-	S_ORE_X4('BNG3', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_ORE_X5) { }
-	S_ORE_X5('BNG3', 4 | FF_FULLBRIGHT, 3.0 / 35.0, S_ORE_X6) { }
-	S_ORE_X6('BNG3', 5 | FF_FULLBRIGHT, 3.0 / 35.0, S_ORE_X7) { }
-	S_ORE_X7('BNG3', 6 | FF_FULLBRIGHT, 3.0 / 35.0, S_ORE_X8) { }
-	S_ORE_X8('BNG3', 7 | FF_FULLBRIGHT, 3.0 / 35.0, none) { }
+	S_ORE('XPRK', 0, -1.0, none) = none
+	S_ORE_X('XPRK', 0, 1.0 / 35.0, S_ORE_X1) = A_RemoveForceField
+	S_ORE_X1('BNG3', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_ORE_X2) = A_Explode192
+	S_ORE_X2('BNG3', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_ORE_X3) = none
+	S_ORE_X3('BNG3', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_ORE_X4) = none
+	S_ORE_X4('BNG3', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_ORE_X5) = none
+	S_ORE_X5('BNG3', 4 | FF_FULLBRIGHT, 3.0 / 35.0, S_ORE_X6) = none
+	S_ORE_X6('BNG3', 5 | FF_FULLBRIGHT, 3.0 / 35.0, S_ORE_X7) = none
+	S_ORE_X7('BNG3', 6 | FF_FULLBRIGHT, 3.0 / 35.0, S_ORE_X8) = none
+	S_ORE_X8('BNG3', 7 | FF_FULLBRIGHT, 3.0 / 35.0, none) = none
 }
 
 defaultproperties

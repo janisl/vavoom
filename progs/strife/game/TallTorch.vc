@@ -28,10 +28,10 @@ class TallTorch : Decoration
 
 __states__
 {
-	S_LOGS_1('LOGS', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_LOGS_2) { }
-	S_LOGS_2('LOGS', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_LOGS_3) { }
-	S_LOGS_3('LOGS', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_LOGS_4) { }
-	S_LOGS_4('LOGS', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_LOGS_1) { }
+	S_LOGS_1('LOGS', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_LOGS_2) = none
+	S_LOGS_2('LOGS', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_LOGS_3) = none
+	S_LOGS_3('LOGS', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_LOGS_4) = none
+	S_LOGS_4('LOGS', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_LOGS_1) = none
 	// NOTE Wad has 5 frames of animation
 }
 

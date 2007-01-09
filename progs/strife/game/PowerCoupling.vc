@@ -68,8 +68,8 @@ void Died(Actor source)
 
 __states__
 {
-	S_COUPLING_1('COUP', 0, 5.0 / 35.0, S_COUPLING_2) { }
-	S_COUPLING_2('COUP', 1, 5.0 / 35.0, S_COUPLING_1) { }
+	S_COUPLING_1('COUP', 0, 5.0 / 35.0, S_COUPLING_2) = none
+	S_COUPLING_2('COUP', 1, 5.0 / 35.0, S_COUPLING_1) = none
 }
 
 defaultproperties

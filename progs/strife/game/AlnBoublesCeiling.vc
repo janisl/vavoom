@@ -28,9 +28,9 @@ class AlnBoublesCeiling:Decoration
 
 __states__
 {
-	S_BUBC('BUBC', 0, 4.0 / 35.0, S_BUBC) { A_ActiveSound(); }
+	S_BUBC('BUBC', 0, 4.0 / 35.0, S_BUBC) = A_ActiveSound
 	//FIXME
-	S_BUBF('BUBF', 0, 4.0 / 35.0, S_BUBF) { A_ActiveSound(); }
+	S_BUBF('BUBF', 0, 4.0 / 35.0, S_BUBF) = A_ActiveSound
 }
 
 defaultproperties

@@ -28,7 +28,7 @@ class ForceFieldGuardian : Actor
 
 __states__
 {
-	S_REMOVE_FORCE_FIELD('', 0, 1.0 / 35.0, none) { A_RemoveForceField(); }
+	S_REMOVE_FORCE_FIELD('', 0, 1.0 / 35.0, none) = A_RemoveForceField
 }
 
 defaultproperties

@@ -31,7 +31,7 @@ class WeaponMissileLauncher : Weapon;
 //
 //==========================================================================
 
-void A_FireMissile()
+final void A_FireMissile()
 {
 	float savedangle;
 
@@ -46,16 +46,16 @@ void A_FireMissile()
 
 __states__
 {
-	S_MISSILE('MMIS', 0, 1.0 / 35.0, S_MISSILE) { A_WeaponReady(); }
-	S_MISSILEDOWN('MMIS', 0, 1.0 / 35.0, S_MISSILEDOWN) { A_Lower(); }
-	S_MISSILEUP('MMIS', 0, 1.0 / 35.0, S_MISSILEUP) { A_Raise(); }
-	S_MISSILE1('MMIS', 0, 4.0 / 35.0, S_MISSILE2) { A_FireMissile(); }
-	S_MISSILE2('MMIS', 1, 4.0 / 35.0, S_MISSILE3) { A_Light1(); }
-	S_MISSILE3('MMIS', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_MISSILE4) { }
-	S_MISSILE4('MMIS', 3 | FF_FULLBRIGHT, 2.0 / 35.0, S_MISSILE5) { A_Light2(); }
-	S_MISSILE5('MMIS', 4 | FF_FULLBRIGHT, 2.0 / 35.0, S_MISSILE6) { }
-	S_MISSILE6('MMIS', 5 | FF_FULLBRIGHT, 2.0 / 35.0, S_MISSILE7) { A_Light0(); }
-	S_MISSILE7('MMIS', 5, 0.0 / 35.0, S_MISSILE) { A_ReFire(); }
+	S_MISSILE('MMIS', 0, 1.0 / 35.0, S_MISSILE) = A_WeaponReady
+	S_MISSILEDOWN('MMIS', 0, 1.0 / 35.0, S_MISSILEDOWN) = A_Lower
+	S_MISSILEUP('MMIS', 0, 1.0 / 35.0, S_MISSILEUP) = A_Raise
+	S_MISSILE1('MMIS', 0, 4.0 / 35.0, S_MISSILE2) = A_FireMissile
+	S_MISSILE2('MMIS', 1, 4.0 / 35.0, S_MISSILE3) = A_Light1
+	S_MISSILE3('MMIS', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_MISSILE4) = none
+	S_MISSILE4('MMIS', 3 | FF_FULLBRIGHT, 2.0 / 35.0, S_MISSILE5) = A_Light2
+	S_MISSILE5('MMIS', 4 | FF_FULLBRIGHT, 2.0 / 35.0, S_MISSILE6) = none
+	S_MISSILE6('MMIS', 5 | FF_FULLBRIGHT, 2.0 / 35.0, S_MISSILE7) = A_Light0
+	S_MISSILE7('MMIS', 5, 0.0 / 35.0, S_MISSILE) = A_ReFire
 }
 
 defaultproperties

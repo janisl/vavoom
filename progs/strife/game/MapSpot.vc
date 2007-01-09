@@ -28,7 +28,7 @@ class MapSpot : Actor
 
 __states__
 {
-	S_MAPSPOT('TLGL', 0, -1.0, none) { }
+	S_MAPSPOT('TLGL', 0, -1.0, none) = none
 }
 
 defaultproperties

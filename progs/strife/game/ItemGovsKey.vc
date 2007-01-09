@@ -27,7 +27,7 @@ class ItemGovsKey : KeyPickup;
 
 __states__
 {
-	S_GOVS_KEY('REBL', 0, -1.0, none) { }
+	S_GOVS_KEY('REBL', 0, -1.0, none) = none
 }
 
 defaultproperties

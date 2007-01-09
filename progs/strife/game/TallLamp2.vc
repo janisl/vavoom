@@ -28,7 +28,7 @@ class TallLamp2 : Decoration
 
 __states__
 {
-	S_TLAMP_2('TLMP', 1, -1.0, none) { }
+	S_TLAMP_2('TLMP', 1, -1.0, none) = none
 }
 
 defaultproperties

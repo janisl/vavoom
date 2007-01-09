@@ -28,7 +28,7 @@ class RebelCarcass:Decoration
 
 __states__
 {
-	S_DEAD_REBEL('HMN1', 13, -1.0, none) { }
+	S_DEAD_REBEL('HMN1', 13, -1.0, none) = none
 }
 
 defaultproperties

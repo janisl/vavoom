@@ -47,7 +47,7 @@ int TakeSpecialDamage(Actor inflictor, Actor source, int damage)
 //
 //==========================================================================
 
-void A_MacilDeath()
+final void A_MacilDeath()
 {
 	Actor A;
 
@@ -58,27 +58,27 @@ void A_MacilDeath()
 
 __states__
 {
-	S_MACIL_ATK2_1('LEAD', 4, 4.0 / 35.0, S_MACIL_ATK2_2) { A_FaceTarget(); }
-	S_MACIL_ATK2_2('LEAD', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_MACIL_ATK2_3) { A_RiffleAttack(); }
-	S_MACIL_ATK2_3('LEAD', 4, 2.0 / 35.0, S_MACIL_ATK2_1) { A_CheckRefire(); }
-	S_MACIL_DIE1('LEAD', 6, 5.0 / 35.0, S_MACIL_DIE2) { }
-	S_MACIL_DIE2('LEAD', 7, 5.0 / 35.0, S_MACIL_DIE3) { A_Scream(); }
-	S_MACIL_DIE3('LEAD', 8, 4.0 / 35.0, S_MACIL_DIE4) { }
-	S_MACIL_DIE4('LEAD', 9, 4.0 / 35.0, S_MACIL_DIE5) { }
-	S_MACIL_DIE5('LEAD', 10, 3.0 / 35.0, S_MACIL_DIE6) { }
-	S_MACIL_DIE6('LEAD', 11, 3.0 / 35.0, S_MACIL_DIE7) { A_Fall(); }
-	S_MACIL_DIE7('LEAD', 12, 3.0 / 35.0, S_MACIL_DIE8) { }
-	S_MACIL_DIE8('LEAD', 13, 3.0 / 35.0, S_MACIL_DIE9) { }
-	S_MACIL_DIE9('LEAD', 14, 3.0 / 35.0, S_MACIL_DIE10) { }
-	S_MACIL_DIE10('LEAD', 15, 3.0 / 35.0, S_MACIL_DIE11) { }
-	S_MACIL_DIE11('LEAD', 16, 3.0 / 35.0, S_MACIL_DIE12) { }
-	S_MACIL_DIE12('LEAD', 17, 3.0 / 35.0, S_MACIL_DIE13) { }
-	S_MACIL_DIE13('LEAD', 18, 3.0 / 35.0, S_MACIL_DIE14) { }
-	S_MACIL_DIE14('LEAD', 19, 3.0 / 35.0, S_MACIL_DIE15) { }
-	S_MACIL_DIE15('LEAD', 20, 3.0 / 35.0, S_MACIL_DIE16) { }
-	S_MACIL_DIE16('LEAD', 21, 3.0 / 35.0, S_MACIL_DIE17) { }
-	S_MACIL_DIE17('LEAD', 22, 3.0 / 35.0, S_MACIL_DIE18) { A_MacilDeath(); }
-	S_MACIL_DIE18('LEAD', 23, -1.0, none) { }
+	S_MACIL_ATK2_1('LEAD', 4, 4.0 / 35.0, S_MACIL_ATK2_2) = A_FaceTarget
+	S_MACIL_ATK2_2('LEAD', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_MACIL_ATK2_3) = A_RiffleAttack
+	S_MACIL_ATK2_3('LEAD', 4, 2.0 / 35.0, S_MACIL_ATK2_1) = A_CheckRefire
+	S_MACIL_DIE1('LEAD', 6, 5.0 / 35.0, S_MACIL_DIE2) = none
+	S_MACIL_DIE2('LEAD', 7, 5.0 / 35.0, S_MACIL_DIE3) = A_Scream
+	S_MACIL_DIE3('LEAD', 8, 4.0 / 35.0, S_MACIL_DIE4) = none
+	S_MACIL_DIE4('LEAD', 9, 4.0 / 35.0, S_MACIL_DIE5) = none
+	S_MACIL_DIE5('LEAD', 10, 3.0 / 35.0, S_MACIL_DIE6) = none
+	S_MACIL_DIE6('LEAD', 11, 3.0 / 35.0, S_MACIL_DIE7) = A_Fall
+	S_MACIL_DIE7('LEAD', 12, 3.0 / 35.0, S_MACIL_DIE8) = none
+	S_MACIL_DIE8('LEAD', 13, 3.0 / 35.0, S_MACIL_DIE9) = none
+	S_MACIL_DIE9('LEAD', 14, 3.0 / 35.0, S_MACIL_DIE10) = none
+	S_MACIL_DIE10('LEAD', 15, 3.0 / 35.0, S_MACIL_DIE11) = none
+	S_MACIL_DIE11('LEAD', 16, 3.0 / 35.0, S_MACIL_DIE12) = none
+	S_MACIL_DIE12('LEAD', 17, 3.0 / 35.0, S_MACIL_DIE13) = none
+	S_MACIL_DIE13('LEAD', 18, 3.0 / 35.0, S_MACIL_DIE14) = none
+	S_MACIL_DIE14('LEAD', 19, 3.0 / 35.0, S_MACIL_DIE15) = none
+	S_MACIL_DIE15('LEAD', 20, 3.0 / 35.0, S_MACIL_DIE16) = none
+	S_MACIL_DIE16('LEAD', 21, 3.0 / 35.0, S_MACIL_DIE17) = none
+	S_MACIL_DIE17('LEAD', 22, 3.0 / 35.0, S_MACIL_DIE18) = A_MacilDeath
+	S_MACIL_DIE18('LEAD', 23, -1.0, none) = none
 }
 
 defaultproperties

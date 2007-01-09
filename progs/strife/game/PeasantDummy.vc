@@ -28,8 +28,8 @@ class PeasantDummy : PeasantBase
 
 __states__
 {
-	S_PEASANT2_STAND('PEAS', 0, 5.0 / 35.0, S_PEASANT2_STAND) { A_ScrollOrDie(); }
-	S_PEASANT2_PAIN('AGRD', 0, 5.0 / 35.0, S_PEASANT2_PAIN) { A_ScrollOrDie(); }
+	S_PEASANT2_STAND('PEAS', 0, 5.0 / 35.0, S_PEASANT2_STAND) = A_ScrollOrDie
+	S_PEASANT2_PAIN('AGRD', 0, 5.0 / 35.0, S_PEASANT2_PAIN) = A_ScrollOrDie
 }
 
 defaultproperties

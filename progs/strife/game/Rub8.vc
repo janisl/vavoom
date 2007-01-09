@@ -28,7 +28,7 @@ class Rub8:Decoration
 
 __states__
 {
-	S_RUB8('RUB8', 0, -1.0, none) { }
+	S_RUB8('RUB8', 0, -1.0, none) = none
 }
 
 defaultproperties

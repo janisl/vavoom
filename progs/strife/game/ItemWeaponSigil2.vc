@@ -28,7 +28,7 @@ class ItemWeaponSigil2 : WeaponPickup
 
 __states__
 {
-	S_SIGIL_2('SIGL', 1, -1.0, none) { }
+	S_SIGIL_2('SIGL', 1, -1.0, none) = none
 }
 
 defaultproperties

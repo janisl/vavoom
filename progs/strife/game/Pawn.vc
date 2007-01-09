@@ -683,7 +683,7 @@ bool CheckRobotRange()
 //
 //==========================================================================
 
-void A_Stand()
+final void A_Stand()
 {
 	Actor targ;
 
@@ -731,7 +731,7 @@ void A_Stand()
 //
 //==========================================================================
 
-void A_Walk()
+final void A_Walk()
 {
 	float delta;
 
@@ -782,7 +782,7 @@ void A_Walk()
 //
 //==========================================================================
 
-void A_Chase()
+final void A_Chase()
 {
 	float delta;
 
@@ -904,7 +904,7 @@ void A_Chase()
 //
 //==========================================================================
 
-void A_FaceTarget()
+final void A_FaceTarget()
 {
 	if (!Enemy)
 		return;
@@ -926,7 +926,7 @@ void A_FaceTarget()
 //
 //==========================================================================
 
-void A_XScream()
+final void A_XScream()
 {
 	//  Remove muzzle flash
 	if ((Effects & StrifeDefs::EF_DLIGHT_MASK) == StrifeDefs::EF_DL_MUZZLEFLASH)
@@ -950,7 +950,7 @@ void A_XScream()
 //
 //==========================================================================
 
-void A_RiffleAttack()
+final void A_RiffleAttack()
 {
 	int damage;
 	TVec dir;
@@ -973,7 +973,7 @@ void A_RiffleAttack()
 //
 //==========================================================================
 
-void A_CheckRefire()
+final void A_CheckRefire()
 {
 	// keep firing unless target got out of sight
 	A_FaceTarget();
@@ -993,7 +993,7 @@ void A_CheckRefire()
 //
 //==========================================================================
 
-void A_Dying()
+final void A_Dying()
 {
 	bInCombat = true;
 	if ((P_Random() % 5) == 0)
@@ -1013,7 +1013,7 @@ void A_Dying()
 //
 //==========================================================================
 
-void A_RobotMelee()
+final void A_RobotMelee()
 {
 	int damage;
 
@@ -1035,7 +1035,7 @@ void A_RobotMelee()
 //
 //==========================================================================
 
-void A_RobotMissile()
+final void A_RobotMissile()
 {
 	int i;
 	int damage;
@@ -1064,7 +1064,7 @@ void A_RobotMissile()
 //
 //==========================================================================
 
-void A_FlightChase()
+final void A_FlightChase()
 {
 	float minz, maxz;
 
@@ -1109,7 +1109,7 @@ void A_FlightChase()
 //
 //==========================================================================
 
-void A_BurnScream()
+final void A_BurnScream()
 {
 	DeathSound = 'human/imonfire';
 	A_Scream();
@@ -1121,7 +1121,7 @@ void A_BurnScream()
 //
 //==========================================================================
 
-void A_Burn()
+final void A_Burn()
 {
 	Actor A = Spawn(FireFoot, Origin + vector(0.0, 0.0, 24.0));
 	A.Velocity.z = -35.0;
@@ -1136,7 +1136,7 @@ void A_Burn()
 //
 //==========================================================================
 
-void A_BossDeath()
+final void A_BossDeath()
 {
 	int i;
 	Actor Other;
@@ -1306,7 +1306,7 @@ void A_BossDeath()
 //
 //==========================================================================
 
-void A_SpecterMelee()
+final void A_SpecterMelee()
 {
 	if (!Enemy)
 		return;
@@ -1327,7 +1327,7 @@ void A_SpecterMelee()
 //
 //==========================================================================
 
-void A_SpecterAttack()
+final void A_SpecterAttack()
 {
 	Actor		A;
 
@@ -1352,7 +1352,7 @@ void A_SpecterAttack()
 //
 //==========================================================================
 
-void A_Specter2Attack()
+final void A_Specter2Attack()
 {
 	Actor A;
 
@@ -1371,7 +1371,7 @@ void A_Specter2Attack()
 //
 //==========================================================================
 
-void A_Specter3Attack()
+final void A_Specter3Attack()
 {
 	Actor spread;
 	int i;
@@ -1405,7 +1405,7 @@ void A_Specter3Attack()
 //
 //==========================================================================
 
-void A_Specter4Attack()
+final void A_Specter4Attack()
 {
 	Actor A;
 
@@ -1424,7 +1424,7 @@ void A_Specter4Attack()
 //
 //==========================================================================
 
-void A_Specter5Attack()
+final void A_Specter5Attack()
 {
 	Actor A;
 
@@ -1443,7 +1443,7 @@ void A_Specter5Attack()
 //
 //==========================================================================
 
-void A_SpecterTossChunk()
+final void A_SpecterTossChunk()
 {
 	TossUpObject(SpecterChunk);
 }
@@ -1454,49 +1454,49 @@ void A_SpecterTossChunk()
 //
 //==========================================================================
 
-void A_SpecterTossHead()
+final void A_SpecterTossHead()
 {
 	TossUpObject(SpecterHead);
 }
 
 __states__
 {
-	S_BURN1('BURN', 0, 3.0 / 35.0, S_BURN2) { A_BurnScream(); }
-	S_BURN2('BURN', 1, 3.0 / 35.0, S_BURN3) { A_Burn(); }
-	S_BURN3('BURN', 2, 3.0 / 35.0, S_BURN4) { A_Walk(); }
-	S_BURN4('BURN', 3, 3.0 / 35.0, S_BURN5) { A_Fall(); }
-	S_BURN5('BURN', 4, 5.0 / 35.0, S_BURN6) { A_Burn(); }
-	S_BURN6('BURN', 5, 5.0 / 35.0, S_BURN7) { A_Walk(); }
-	S_BURN7('BURN', 6, 5.0 / 35.0, S_BURN8) { A_Walk(); }
-	S_BURN8('BURN', 7, 5.0 / 35.0, S_BURN9) { A_Walk(); }
-	S_BURN9('BURN', 8, 5.0 / 35.0, S_BURN10) { A_Burn(); }
-	S_BURN10('BURN', 9, 5.0 / 35.0, S_BURN11) { A_Walk(); }
-	S_BURN11('BURN', 10, 5.0 / 35.0, S_BURN12) { A_Walk(); }
-	S_BURN12('BURN', 11, 5.0 / 35.0, S_BURN13) { A_Walk(); }
-	S_BURN13('BURN', 12, 3.0 / 35.0, S_BURN14) { A_Burn(); }
-	S_BURN14('BURN', 13, 3.0 / 35.0, S_BURN15) { }
-	S_BURN15('BURN', 14, 5.0 / 35.0, S_BURN16) { }
-	S_BURN16('BURN', 15, 5.0 / 35.0, S_BURN17) { }
-	S_BURN17('BURN', 16, 5.0 / 35.0, S_BURN18) { }
-	S_BURN18('BURN', 15, 5.0 / 35.0, S_BURN19) { }
-	S_BURN19('BURN', 16, 5.0 / 35.0, S_BURN20) { }
-	S_BURN20('BURN', 17, 7.0 / 35.0, S_BURN21) { }
-	S_BURN21('BURN', 18, 7.0 / 35.0, S_BURN22) { }
-	S_BURN22('BURN', 19, 7.0 / 35.0, S_BURN23) { }
-	S_BURN23('BURN', 20, 7.0 / 35.0, S_BURN24) { }
+	S_BURN1('BURN', 0, 3.0 / 35.0, S_BURN2) = A_BurnScream
+	S_BURN2('BURN', 1, 3.0 / 35.0, S_BURN3) = A_Burn
+	S_BURN3('BURN', 2, 3.0 / 35.0, S_BURN4) = A_Walk
+	S_BURN4('BURN', 3, 3.0 / 35.0, S_BURN5) = A_Fall
+	S_BURN5('BURN', 4, 5.0 / 35.0, S_BURN6) = A_Burn
+	S_BURN6('BURN', 5, 5.0 / 35.0, S_BURN7) = A_Walk
+	S_BURN7('BURN', 6, 5.0 / 35.0, S_BURN8) = A_Walk
+	S_BURN8('BURN', 7, 5.0 / 35.0, S_BURN9) = A_Walk
+	S_BURN9('BURN', 8, 5.0 / 35.0, S_BURN10) = A_Burn
+	S_BURN10('BURN', 9, 5.0 / 35.0, S_BURN11) = A_Walk
+	S_BURN11('BURN', 10, 5.0 / 35.0, S_BURN12) = A_Walk
+	S_BURN12('BURN', 11, 5.0 / 35.0, S_BURN13) = A_Walk
+	S_BURN13('BURN', 12, 3.0 / 35.0, S_BURN14) = A_Burn
+	S_BURN14('BURN', 13, 3.0 / 35.0, S_BURN15) = none
+	S_BURN15('BURN', 14, 5.0 / 35.0, S_BURN16) = none
+	S_BURN16('BURN', 15, 5.0 / 35.0, S_BURN17) = none
+	S_BURN17('BURN', 16, 5.0 / 35.0, S_BURN18) = none
+	S_BURN18('BURN', 15, 5.0 / 35.0, S_BURN19) = none
+	S_BURN19('BURN', 16, 5.0 / 35.0, S_BURN20) = none
+	S_BURN20('BURN', 17, 7.0 / 35.0, S_BURN21) = none
+	S_BURN21('BURN', 18, 7.0 / 35.0, S_BURN22) = none
+	S_BURN22('BURN', 19, 7.0 / 35.0, S_BURN23) = none
+	S_BURN23('BURN', 20, 7.0 / 35.0, S_BURN24) = none
 	S_BURN24('BURN', 21, 700.0 / 35.0, none) { /*FIXME A_Dying();*/ }
 
-	S_DISRUPT1('DISR', 0, 5.0 / 35.0, S_DISRUPT2) { }
-	S_DISRUPT2('DISR', 1, 5.0 / 35.0, S_DISRUPT3) { }
-	S_DISRUPT3('DISR', 2, 5.0 / 35.0, S_DISRUPT4) { }
-	S_DISRUPT4('DISR', 3, 5.0 / 35.0, S_DISRUPT5) { A_Fall(); }
-	S_DISRUPT5('DISR', 4, 5.0 / 35.0, S_DISRUPT6) { }
-	S_DISRUPT6('DISR', 5, 5.0 / 35.0, S_DISRUPT7) { }
-	S_DISRUPT7('DISR', 6, 4.0 / 35.0, S_DISRUPT8) { }
-	S_DISRUPT8('DISR', 7, 4.0 / 35.0, S_DISRUPT9) { }
-	S_DISRUPT9('DISR', 8, 4.0 / 35.0, S_DISRUPT10) { }
-	S_DISRUPT10('DISR', 9, 4.0 / 35.0, S_DISRUPT11) { }
-	S_DISRUPT11('MEAT', 3, 700.0 / 35.0, none) { }
+	S_DISRUPT1('DISR', 0, 5.0 / 35.0, S_DISRUPT2) = none
+	S_DISRUPT2('DISR', 1, 5.0 / 35.0, S_DISRUPT3) = none
+	S_DISRUPT3('DISR', 2, 5.0 / 35.0, S_DISRUPT4) = none
+	S_DISRUPT4('DISR', 3, 5.0 / 35.0, S_DISRUPT5) = A_Fall
+	S_DISRUPT5('DISR', 4, 5.0 / 35.0, S_DISRUPT6) = none
+	S_DISRUPT6('DISR', 5, 5.0 / 35.0, S_DISRUPT7) = none
+	S_DISRUPT7('DISR', 6, 4.0 / 35.0, S_DISRUPT8) = none
+	S_DISRUPT8('DISR', 7, 4.0 / 35.0, S_DISRUPT9) = none
+	S_DISRUPT9('DISR', 8, 4.0 / 35.0, S_DISRUPT10) = none
+	S_DISRUPT10('DISR', 9, 4.0 / 35.0, S_DISRUPT11) = none
+	S_DISRUPT11('MEAT', 3, 700.0 / 35.0, none) = none
 }
 
 defaultproperties

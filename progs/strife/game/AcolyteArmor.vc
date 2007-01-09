@@ -40,7 +40,7 @@ class AcolyteArmor : AcolyteBase
 //
 //============================================================================
 
-void A_HideDecepticon()
+final void A_HideDecepticon()
 {
 	StrifeLevelInfo(Level).EV_DoDoor(999, 64, 0, 0, 0,
 		VerticalDoor::DOOREV_Close, NULL, none);
@@ -52,8 +52,8 @@ void A_HideDecepticon()
 
 __states__
 {
-	S_ACOLYTEARM_STAND('ARMR', 0, -1.0, none) { }
-	S_ACOLYTEARM_PAIN('ARMR', 0, -1.0, none) { A_HideDecepticon(); }
+	S_ACOLYTEARM_STAND('ARMR', 0, -1.0, none) = none
+	S_ACOLYTEARM_PAIN('ARMR', 0, -1.0, none) = A_HideDecepticon
 }
 
 defaultproperties

@@ -27,11 +27,11 @@ class ReactorPuff : Effect;
 
 __states__
 {
-	S_R_PUFF_1('PUFY', 1, 4.0 / 35.0, S_R_PUFF_2) { }
-	S_R_PUFF_2('PUFY', 2, 4.0 / 35.0, S_R_PUFF_3) { }
-	S_R_PUFF_3('PUFY', 1, 4.0 / 35.0, S_R_PUFF_4) { }
-	S_R_PUFF_4('PUFY', 2, 4.0 / 35.0, S_R_PUFF_5) { }
-	S_R_PUFF_5('PUFY', 3, 4.0 / 35.0, none) { }
+	S_R_PUFF_1('PUFY', 1, 4.0 / 35.0, S_R_PUFF_2) = none
+	S_R_PUFF_2('PUFY', 2, 4.0 / 35.0, S_R_PUFF_3) = none
+	S_R_PUFF_3('PUFY', 1, 4.0 / 35.0, S_R_PUFF_4) = none
+	S_R_PUFF_4('PUFY', 2, 4.0 / 35.0, S_R_PUFF_5) = none
+	S_R_PUFF_5('PUFY', 3, 4.0 / 35.0, none) = none
 }
 
 defaultproperties

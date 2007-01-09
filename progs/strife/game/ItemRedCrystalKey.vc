@@ -28,7 +28,7 @@ class ItemRedCrystalKey : KeyPickup
 
 __states__
 {
-	S_RED_CRYSTAL_KEY('RCRY', 0 | FF_FULLBRIGHT, -1.0, none) { }
+	S_RED_CRYSTAL_KEY('RCRY', 0 | FF_FULLBRIGHT, -1.0, none) = none
 }
 
 defaultproperties

@@ -28,7 +28,7 @@ class Guard_Uniform : InventoryItem
 
 __states__
 {
-	S_GUARD_UNIFORM('UNIF', 0, -1.0, none) { }
+	S_GUARD_UNIFORM('UNIF', 0, -1.0, none) = none
 }
 
 defaultproperties

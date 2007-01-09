@@ -27,7 +27,7 @@ class ItemPrisonKey : KeyPickup;
 
 __states__
 {
-	S_PRISON_KEY('PRIS', 0, -1.0, none) { }
+	S_PRISON_KEY('PRIS', 0, -1.0, none) = none
 }
 
 defaultproperties

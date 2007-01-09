@@ -58,7 +58,7 @@ bool bRaiseNoiseAlert;
 //
 //===========================================================================
 
-void A_WeaponReady()
+final void A_WeaponReady()
 {
 	float angle;
 
@@ -117,7 +117,7 @@ void A_WeaponReady()
 //
 //===========================================================================
 
-void A_Lower()
+final void A_Lower()
 {
 	//	FIXME!!
 	if (Player.Level.Game.frametime < 1.0 / 35.0)
@@ -160,7 +160,7 @@ void A_Lower()
 //
 //===========================================================================
 
-void A_Raise()
+final void A_Raise()
 {
 	//	FIXME!!
 	if (Player.Level.Game.frametime < 1.0 / 35.0)
@@ -188,7 +188,7 @@ void A_Raise()
 //
 //===========================================================================
 
-void A_ReFire()
+final void A_ReFire()
 {
 	// check for fire
 	//  (if a weaponchange is pending, let it go through instead)
@@ -211,7 +211,7 @@ void A_ReFire()
 //
 //===========================================================================
 
-void A_CheckReload()
+final void A_CheckReload()
 {
 	Player(Player).CheckAmmo();
 }
@@ -222,7 +222,7 @@ void A_CheckReload()
 //
 //===========================================================================
 
-void A_GunFlash()
+final void A_GunFlash()
 {
 	Player.MO.SetState(Actor(Player.MO).MissileState);
 	Player.SetViewState(ps_flash, FlashState);
@@ -234,7 +234,7 @@ void A_GunFlash()
 //
 //===========================================================================
 
-void A_Light0()
+final void A_Light0()
 {
 	Player.ExtraLight = 0;
 	Player.MO.Effects &= ~StrifeDefs::EF_DLIGHT_MASK;
@@ -246,7 +246,7 @@ void A_Light0()
 //
 //===========================================================================
 
-void A_Light1()
+final void A_Light1()
 {
 	Player.ExtraLight = 1;
 }
@@ -257,7 +257,7 @@ void A_Light1()
 //
 //===========================================================================
 
-void A_Light2()
+final void A_Light2()
 {
 	Player.ExtraLight = 2;
 }
@@ -268,25 +268,25 @@ void A_Light2()
 //
 //==========================================================================
 
-void A_ClearFlash()
+final void A_ClearFlash()
 {
 	Player.SetViewState(ps_flash, none);
 }
 
 __states__
 {
-	S_LIGHTDONE('', 0, 0.0 / 35.0, none) { A_Light0(); }
-	S_WAVE1('WAVE', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_WAVE2) { }
-	S_WAVE2('WAVE', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_WAVE3) { }
-	S_WAVE3('WAVE', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_WAVE4) { }
-	S_WAVE4('WAVE', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_WAVE1) { }
-	S_RBPY_1('RBPY', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_RBPY_2) { }
-	S_RBPY_2('RBPY', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_RBPY_3) { }
-	S_RBPY_3('RBPY', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_RBPY_4) { }
-	S_RBPY_4('RBPY', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_RBPY_1) { }
-	S_TARGETER1('TRGT', 0, -1.0, none) { }
-	S_TARGETER2('TRGT', 1, -1.0, none) { }
-	S_TARGETER3('TRGT', 2, -1.0, none) { }
+	S_LIGHTDONE('', 0, 0.0 / 35.0, none) = A_Light0
+	S_WAVE1('WAVE', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_WAVE2) = none
+	S_WAVE2('WAVE', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_WAVE3) = none
+	S_WAVE3('WAVE', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_WAVE4) = none
+	S_WAVE4('WAVE', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_WAVE1) = none
+	S_RBPY_1('RBPY', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_RBPY_2) = none
+	S_RBPY_2('RBPY', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_RBPY_3) = none
+	S_RBPY_3('RBPY', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_RBPY_4) = none
+	S_RBPY_4('RBPY', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_RBPY_1) = none
+	S_TARGETER1('TRGT', 0, -1.0, none) = none
+	S_TARGETER2('TRGT', 1, -1.0, none) = none
+	S_TARGETER3('TRGT', 2, -1.0, none) = none
 }
 
 defaultproperties

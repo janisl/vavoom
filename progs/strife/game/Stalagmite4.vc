@@ -28,7 +28,7 @@ class Stalagmite4:Decoration
 
 __states__
 {
-	S_STALAG_4('STLG', 3, -1.0, none) { }
+	S_STALAG_4('STLG', 3, -1.0, none) = none
 }
 
 defaultproperties

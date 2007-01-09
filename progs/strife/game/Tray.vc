@@ -28,7 +28,7 @@ class Tray:Decoration
 
 __states__
 {
-	S_TRAY('TRAY', 0, -1.0, none) { }
+	S_TRAY('TRAY', 0, -1.0, none) = none
 }
 
 defaultproperties

@@ -28,7 +28,7 @@ class Officers_Uniform : InventoryItem
 
 __states__
 {
-	S_OFFICERS_UNIFORM('OFIC', 0, -1.0, none) { }
+	S_OFFICERS_UNIFORM('OFIC', 0, -1.0, none) = none
 }
 
 defaultproperties

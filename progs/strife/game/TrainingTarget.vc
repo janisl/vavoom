@@ -28,9 +28,9 @@ class TrainingTarget : Decoration
 
 __states__
 {
-	S_TRAIN_TARGET('HOGN', 0, 2.0 / 35.0, S_TRAIN_TARGET) { A_ScrollOrDie(); }
-	S_TRAIN_TARGET_P1('HOGN', 1, 1.0 / 35.0, S_TRAIN_TARGET_P2) { A_ScrollOrDie(); }
-	S_TRAIN_TARGET_P2('HOGN', 2, 1.0 / 35.0, S_TRAIN_TARGET) { A_Pain(); }
+	S_TRAIN_TARGET('HOGN', 0, 2.0 / 35.0, S_TRAIN_TARGET) = A_ScrollOrDie
+	S_TRAIN_TARGET_P1('HOGN', 1, 1.0 / 35.0, S_TRAIN_TARGET_P2) = A_ScrollOrDie
+	S_TRAIN_TARGET_P2('HOGN', 2, 1.0 / 35.0, S_TRAIN_TARGET) = A_Pain
 }
 
 defaultproperties

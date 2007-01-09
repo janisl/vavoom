@@ -28,7 +28,7 @@ class ItemWeaponAssaultGun : WeaponPickup
 
 __states__
 {
-	S_ASSAULT_GUN1('RIFL', 0, -1.0, none) { }
+	S_ASSAULT_GUN1('RIFL', 0, -1.0, none) = none
 }
 
 defaultproperties

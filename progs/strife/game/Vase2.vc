@@ -28,7 +28,7 @@ class Vase2:Decoration
 
 __states__
 {
-	S_VASE_2('VASE', 1, -1.0, none) { }
+	S_VASE_2('VASE', 1, -1.0, none) = none
 }
 
 defaultproperties

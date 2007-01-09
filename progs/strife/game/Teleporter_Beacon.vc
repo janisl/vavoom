@@ -50,7 +50,7 @@ bool HandlePickup(Actor Toucher)
 //
 //==========================================================================
 
-void A_SummonRebel()
+final void A_SummonRebel()
 {
 	Actor	A;
 	Actor	TFog;
@@ -111,9 +111,9 @@ void A_SummonRebel()
 
 __states__
 {
-	S_BEACON('BEAC', 0, -1.0, none) { }
-	S_BEACON_1('BEAC', 0, 30.0 / 35.0, S_BEACON_2) { }
-	S_BEACON_2('BEAC', 0, 160.0 / 35.0, S_BEACON_1) { A_SummonRebel(); }
+	S_BEACON('BEAC', 0, -1.0, none) = none
+	S_BEACON_1('BEAC', 0, 30.0 / 35.0, S_BEACON_2) = none
+	S_BEACON_2('BEAC', 0, 160.0 / 35.0, S_BEACON_1) = A_SummonRebel
 }
 
 defaultproperties

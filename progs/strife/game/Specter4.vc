@@ -28,9 +28,9 @@ class Specter4 : Specter1
 
 __states__
 {
-	S_SPECTER4_ATK1('ALN1', 5, 4.0 / 35.0, S_SPECTER4_ATK2) { A_FaceTarget(); }
-	S_SPECTER4_ATK2('ALN1', 8, 4.0 / 35.0, S_SPECTER4_ATK3) { A_Specter4Attack(); }
-	S_SPECTER4_ATK3('ALN1', 4, 4.0 / 35.0, S_SPECTER_RUN11) { }
+	S_SPECTER4_ATK1('ALN1', 5, 4.0 / 35.0, S_SPECTER4_ATK2) = A_FaceTarget
+	S_SPECTER4_ATK2('ALN1', 8, 4.0 / 35.0, S_SPECTER4_ATK3) = A_Specter4Attack
+	S_SPECTER4_ATK3('ALN1', 4, 4.0 / 35.0, S_SPECTER_RUN11) = none
 }
 
 defaultproperties

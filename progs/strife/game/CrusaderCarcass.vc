@@ -28,7 +28,7 @@ class CrusaderCarcass:Decoration
 
 __states__
 {
-	S_DEAD_CRUSADER('ROB2', 15, -1.0, none) { }
+	S_DEAD_CRUSADER('ROB2', 15, -1.0, none) = none
 }
 
 defaultproperties

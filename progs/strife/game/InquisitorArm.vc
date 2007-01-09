@@ -27,9 +27,9 @@ class InquisitorArm:Effect;
 
 __states__
 {
-	S_INQUISITOR_ARM_1('RBB3', 5 | FF_FULLBRIGHT, 5.0 / 35.0, S_INQUISITOR_ARM_2) { }
-	S_INQUISITOR_ARM_2('RBB3', 6 | FF_FULLBRIGHT, 5.0 / 35.0, S_INQUISITOR_ARM_3) { }
-	S_INQUISITOR_ARM_3('RBB3', 7, -1.0, none) { }
+	S_INQUISITOR_ARM_1('RBB3', 5 | FF_FULLBRIGHT, 5.0 / 35.0, S_INQUISITOR_ARM_2) = none
+	S_INQUISITOR_ARM_2('RBB3', 6 | FF_FULLBRIGHT, 5.0 / 35.0, S_INQUISITOR_ARM_3) = none
+	S_INQUISITOR_ARM_3('RBB3', 7, -1.0, none) = none
 }
 
 defaultproperties

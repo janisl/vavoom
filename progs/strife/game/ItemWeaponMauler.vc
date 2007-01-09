@@ -28,7 +28,7 @@ class ItemWeaponMauler : WeaponPickup
 
 __states__
 {
-	S_MAULER('TRPD', 0, -1.0, none) { }
+	S_MAULER('TRPD', 0, -1.0, none) = none
 }
 
 defaultproperties

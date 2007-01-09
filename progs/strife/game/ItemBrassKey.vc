@@ -28,7 +28,7 @@ class ItemBrassKey : KeyPickup
 
 __states__
 {
-	S_BRASS_KEY('KY3B', 0, -1.0, none) { }
+	S_BRASS_KEY('KY3B', 0, -1.0, none) = none
 }
 
 defaultproperties

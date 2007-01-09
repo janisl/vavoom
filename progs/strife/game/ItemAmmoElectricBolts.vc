@@ -28,7 +28,7 @@ class ItemAmmoElectricBolts : AmmoPickup
 
 __states__
 {
-	S_ARROWS_ELECTRIC('XQRL', 0, -1.0, none) { }
+	S_ARROWS_ELECTRIC('XQRL', 0, -1.0, none) = none
 }
 
 defaultproperties

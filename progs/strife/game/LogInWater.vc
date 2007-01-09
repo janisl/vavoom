@@ -28,10 +28,10 @@ class LogInWater : Decoration
 
 __states__
 {
-	S_LOGG_1('LOGG', 0, 5.0 / 35.0, S_LOGG_2) { A_ActiveSound(); }
-	S_LOGG_2('LOGG', 1, 5.0 / 35.0, S_LOGG_3) { A_ActiveSound(); }
-	S_LOGG_3('LOGG', 2, 5.0 / 35.0, S_LOGG_4) { A_ActiveSound(); }
-	S_LOGG_4('LOGG', 3, 5.0 / 35.0, S_LOGG_1) { A_ActiveSound(); }
+	S_LOGG_1('LOGG', 0, 5.0 / 35.0, S_LOGG_2) = A_ActiveSound
+	S_LOGG_2('LOGG', 1, 5.0 / 35.0, S_LOGG_3) = A_ActiveSound
+	S_LOGG_3('LOGG', 2, 5.0 / 35.0, S_LOGG_4) = A_ActiveSound
+	S_LOGG_4('LOGG', 3, 5.0 / 35.0, S_LOGG_1) = A_ActiveSound
 }
 
 defaultproperties

@@ -28,9 +28,9 @@ class AcolyteShadow : Acolyte
 
 __states__
 {
-	S_ACOLYTE_RUN_B('AGRD', 0, 6.0 / 35.0, S_ACOLYTE_RUN2) { A_BeShadowyFoe(); }
-	S_ACOLYTE_PAIN_B1('AGRD', 14, 0.0 / 35.0, S_ACOLYTE_PAIN_B2) { A_SetShadow(); }
-	S_ACOLYTE_PAIN_B2('AGRD', 14, 8.0 / 35.0, S_ACOLYTE_RUN_B) { A_Pain(); }
+	S_ACOLYTE_RUN_B('AGRD', 0, 6.0 / 35.0, S_ACOLYTE_RUN2) = A_BeShadowyFoe
+	S_ACOLYTE_PAIN_B1('AGRD', 14, 0.0 / 35.0, S_ACOLYTE_PAIN_B2) = A_SetShadow
+	S_ACOLYTE_PAIN_B2('AGRD', 14, 8.0 / 35.0, S_ACOLYTE_RUN_B) = A_Pain
 }
 
 defaultproperties

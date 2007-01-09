@@ -31,7 +31,7 @@ class SigilFloor : Effect;
 //
 //==========================================================================
 
-void A_SigilFloorAttack()
+final void A_SigilFloorAttack()
 {
 	Actor	lightning1;
 	Actor	lightning2;
@@ -72,10 +72,10 @@ void A_SigilFloorAttack()
 
 __states__
 {
-	S_SIGIL_FLOOR_1('ZAP5', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_SIGIL_FLOOR_2) { A_DecReactionCount(); }
-	S_SIGIL_FLOOR_2('ZAP5', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_SIGIL_FLOOR_3) { A_SigilFloorAttack(); }
-	S_SIGIL_FLOOR_3('ZAP5', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_SIGIL_FLOOR_4) { A_DecReactionCount(); }
-	S_SIGIL_FLOOR_4('ZAP5', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_SIGIL_FLOOR_1) { A_DecReactionCount(); }
+	S_SIGIL_FLOOR_1('ZAP5', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_SIGIL_FLOOR_2) = A_DecReactionCount
+	S_SIGIL_FLOOR_2('ZAP5', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_SIGIL_FLOOR_3) = A_SigilFloorAttack
+	S_SIGIL_FLOOR_3('ZAP5', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_SIGIL_FLOOR_4) = A_DecReactionCount
+	S_SIGIL_FLOOR_4('ZAP5', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_SIGIL_FLOOR_1) = A_DecReactionCount
 }
 
 defaultproperties

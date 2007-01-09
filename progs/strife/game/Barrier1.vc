@@ -28,7 +28,7 @@ class Barrier1:Decoration
 
 __states__
 {
-	S_BARRIER('BAR1', 0, -1.0, none) { }
+	S_BARRIER('BAR1', 0, -1.0, none) = none
 }
 
 defaultproperties

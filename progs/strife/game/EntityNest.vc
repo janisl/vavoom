@@ -28,7 +28,7 @@ class EntityNest:Decoration
 
 __states__
 {
-	S_ENTITY_NEST('NEST', 0, -1.0, none) { }
+	S_ENTITY_NEST('NEST', 0, -1.0, none) = none
 }
 
 defaultproperties

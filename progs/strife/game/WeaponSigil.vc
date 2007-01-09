@@ -56,7 +56,7 @@ void SetSigilSprite()
 //
 //==========================================================================
 
-void A_SigilSound()
+final void A_SigilSound()
 {
 	Player.MO.PlaySound('weapons/sigil', CHAN_WEAPON);
 	SetSigilSprite();
@@ -68,7 +68,7 @@ void A_SigilSound()
 //
 //==========================================================================
 
-void A_SigilShowFlash()
+final void A_SigilShowFlash()
 {
 	Player.SetViewState(ps_flash, FlashState);
 }
@@ -79,7 +79,7 @@ void A_SigilShowFlash()
 //
 //==========================================================================
 
-void A_FireSigil()
+final void A_FireSigil()
 {
 	Actor sigil;
 	float angle;
@@ -144,7 +144,7 @@ void A_FireSigil()
 //
 //==========================================================================
 
-void A_SigilFlash()
+final void A_SigilFlash()
 {
 	//Player.MiscTime = 10;
 	Actor(Player.MO).Damage(none, none, 5);
@@ -158,10 +158,10 @@ __states__
 		A_WeaponReady();
 		SetSigilSprite();
 	}
-	S_SIGIL01('SIGH', 1 | FF_FULLBRIGHT, -1.0, none) { }
-	S_SIGIL02('SIGH', 2 | FF_FULLBRIGHT, -1.0, none) { }
-	S_SIGIL03('SIGH', 3 | FF_FULLBRIGHT, -1.0, none) { }
-	S_SIGIL04('SIGH', 4 | FF_FULLBRIGHT, -1.0, none) { }
+	S_SIGIL01('SIGH', 1 | FF_FULLBRIGHT, -1.0, none) = none
+	S_SIGIL02('SIGH', 2 | FF_FULLBRIGHT, -1.0, none) = none
+	S_SIGIL03('SIGH', 3 | FF_FULLBRIGHT, -1.0, none) = none
+	S_SIGIL04('SIGH', 4 | FF_FULLBRIGHT, -1.0, none) = none
 	S_SIGILDOWN('SIGH', 0 | FF_FULLBRIGHT, 1.0 / 35.0, S_SIGILDOWN)
 	{
 		SetSigilSprite();
@@ -172,16 +172,16 @@ __states__
 		A_Raise();
 		SetSigilSprite();
 	}
-	S_SIGIL1('SIGH', 0 | FF_FULLBRIGHT, 18.0 / 35.0, S_SIGIL2) { A_SigilSound(); }
-	S_SIGIL2('SIGH', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_SIGIL3) { A_SigilShowFlash(); }
-	S_SIGIL3('SIGH', 0, 10.0 / 35.0, S_SIGIL4) { A_FireSigil(); }
+	S_SIGIL1('SIGH', 0 | FF_FULLBRIGHT, 18.0 / 35.0, S_SIGIL2) = A_SigilSound
+	S_SIGIL2('SIGH', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_SIGIL3) = A_SigilShowFlash
+	S_SIGIL3('SIGH', 0, 10.0 / 35.0, S_SIGIL4) = A_FireSigil
 	S_SIGIL4('SIGH', 0, 5.0 / 35.0, S_SIGIL)
 	{
 		A_ClearFlash();
 		SetSigilSprite();
 	}
-	S_SIGILFLASH1('SIGF', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_SIGILFLASH2) { A_Light2(); }
-	S_SIGILFLASH2('SIGF', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_SIGILFLASH3) { A_SigilFlash(); }
+	S_SIGILFLASH1('SIGF', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_SIGILFLASH2) = A_Light2
+	S_SIGILFLASH2('SIGF', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_SIGILFLASH3) = A_SigilFlash
 	S_SIGILFLASH3('SIGF', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_LIGHTDONE)
 	{
 		A_Light1();

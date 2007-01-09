@@ -28,7 +28,7 @@ class ItemMaulerKey : KeyPickup
 
 __states__
 {
-	S_MAULER_KEY('BLTK', 0, -1.0, none) { }
+	S_MAULER_KEY('BLTK', 0, -1.0, none) = none
 }
 
 defaultproperties

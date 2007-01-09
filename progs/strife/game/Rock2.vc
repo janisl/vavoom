@@ -28,7 +28,7 @@ class Rock2:Decoration
 
 __states__
 {
-	S_ROCK2('ROK2', 0, -1.0, none) { }
+	S_ROCK2('ROK2', 0, -1.0, none) = none
 }
 
 defaultproperties

@@ -28,7 +28,7 @@ class Lamp : Decoration
 
 __states__
 {
-	S_LAMP('LAMP', 0, -1.0, none) { }
+	S_LAMP('LAMP', 0, -1.0, none) = none
 }
 
 defaultproperties

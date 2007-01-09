@@ -28,7 +28,7 @@ class ReaverCarcass:Decoration
 
 __states__
 {
-	S_DEAD_REAVER('ROB1', 17, -1.0, none) { }
+	S_DEAD_REAVER('ROB1', 17, -1.0, none) = none
 }
 
 defaultproperties

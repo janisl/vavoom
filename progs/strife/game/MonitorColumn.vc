@@ -28,7 +28,7 @@ class MonitorColumn:Decoration
 
 __states__
 {
-	S_MONITOR_COLUMN('MONI', 0, -1.0, none) { }
+	S_MONITOR_COLUMN('MONI', 0, -1.0, none) = none
 }
 
 defaultproperties

@@ -28,7 +28,7 @@ class ItemIDCard : KeyPickup
 
 __states__
 {
-	S_ID_CARD('CRD2', 0, -1.0, none) { }
+	S_ID_CARD('CRD2', 0, -1.0, none) = none
 }
 
 defaultproperties

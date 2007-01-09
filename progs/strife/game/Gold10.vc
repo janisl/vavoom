@@ -28,7 +28,7 @@ class Gold10 : MoneyPickup
 
 __states__
 {
-	S_GOLD10('CRED', 0, -1.0, none) { }
+	S_GOLD10('CRED', 0, -1.0, none) = none
 }
 
 defaultproperties

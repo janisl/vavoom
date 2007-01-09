@@ -29,7 +29,7 @@ class ItemAmmoBoxOfBullets : AmmoPickup
 
 __states__
 {
-	S_AMMO('BBOX', 0, -1.0, none) { }
+	S_AMMO('BBOX', 0, -1.0, none) = none
 }
 
 defaultproperties

@@ -28,7 +28,7 @@ class ItemWeaponGrenadeLauncher : WeaponPickup
 
 __states__
 {
-	S_GRENADE_LAUNCHER('GRND', 0, -1.0, none) { }
+	S_GRENADE_LAUNCHER('GRND', 0, -1.0, none) = none
 }
 
 defaultproperties

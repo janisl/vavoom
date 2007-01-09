@@ -28,9 +28,9 @@ class Tanker4:Decoration
 
 __states__
 {
-	S_TANKER4_1('TNK4', 0, 15.0 / 35.0, S_TANKER4_2) { }
-	S_TANKER4_2('TNK4', 1, 11.0 / 35.0, S_TANKER4_3) { }
-	S_TANKER4_3('TNK4', 2, 40.0 / 35.0, S_TANKER4_1) { }
+	S_TANKER4_1('TNK4', 0, 15.0 / 35.0, S_TANKER4_2) = none
+	S_TANKER4_2('TNK4', 1, 11.0 / 35.0, S_TANKER4_3) = none
+	S_TANKER4_3('TNK4', 2, 40.0 / 35.0, S_TANKER4_1) = none
 }
 
 defaultproperties

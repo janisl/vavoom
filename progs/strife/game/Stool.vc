@@ -28,7 +28,7 @@ class Stool:Decoration
 
 __states__
 {
-	S_STOOL('STOL', 0, -1.0, none) { }
+	S_STOOL('STOL', 0, -1.0, none) = none
 }
 
 defaultproperties

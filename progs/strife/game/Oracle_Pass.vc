@@ -27,7 +27,7 @@ class Oracle_Pass : InventoryItem;
 
 __states__
 {
-	S_ORACLE_PASS('OTOK', 0, -1.0, none) { }
+	S_ORACLE_PASS('OTOK', 0, -1.0, none) = none
 }
 
 defaultproperties

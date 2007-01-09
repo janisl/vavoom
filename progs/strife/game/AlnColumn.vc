@@ -28,7 +28,7 @@ class AlnColumn:Decoration
 
 __states__
 {
-	S_ASPR('ASPR', 0, 4.0 / 35.0, S_ASPR) { A_ActiveSound(); }
+	S_ASPR('ASPR', 0, 4.0 / 35.0, S_ASPR) = A_ActiveSound
 }
 
 defaultproperties

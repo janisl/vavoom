@@ -28,7 +28,7 @@ class StoneStatue:Decoration
 
 __states__
 {
-	S_STATUE('STAT', 0, -1.0, none) { }
+	S_STATUE('STAT', 0, -1.0, none) = none
 }
 
 defaultproperties

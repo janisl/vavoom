@@ -28,7 +28,7 @@ class Stake:Decoration
 
 __states__
 {
-	S_STAKE('STAK', 0, -1.0, none) { }
+	S_STAKE('STAK', 0, -1.0, none) = none
 }
 
 defaultproperties

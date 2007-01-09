@@ -28,7 +28,7 @@ class Gold25 : MoneyPickup
 
 __states__
 {
-	S_GOLD25('SACK', 0, -1.0, none) { }
+	S_GOLD25('SACK', 0, -1.0, none) = none
 }
 
 defaultproperties

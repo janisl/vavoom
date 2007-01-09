@@ -55,7 +55,7 @@ bool Physics(float DeltaTime)
 //
 //==========================================================================
 
-void A_FlameFXExplode()
+final void A_FlameFXExplode()
 {
 	bNoGravity = true;
 	Velocity.z = Random() * 4.0 * 35.0 / 10.0;
@@ -63,15 +63,15 @@ void A_FlameFXExplode()
 
 __states__
 {
-	S_FLAMEFX_1('FRBL', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_FLAMEFX_2) { }
-	S_FLAMEFX_2('FRBL', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_FLAMEFX_3) { }
-	S_FLAMEFX_3('FRBL', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_FLAMEFX_1) { A_DecReactionCount(); }
-	S_FLAMEFX_X1('FRBL', 3 | FF_FULLBRIGHT, 5.0 / 35.0, S_FLAMEFX_X2) { A_FlameFXExplode(); }
-	S_FLAMEFX_X2('FRBL', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_FLAMEFX_X3) { }
-	S_FLAMEFX_X3('FRBL', 5 | FF_FULLBRIGHT, 5.0 / 35.0, S_FLAMEFX_X4) { }
-	S_FLAMEFX_X4('FRBL', 6 | FF_FULLBRIGHT, 5.0 / 35.0, S_FLAMEFX_X5) { }
-	S_FLAMEFX_X5('FRBL', 7 | FF_FULLBRIGHT, 5.0 / 35.0, S_FLAMEFX_X6) { }
-	S_FLAMEFX_X6('FRBL', 8 | FF_FULLBRIGHT, 5.0 / 35.0, none) { }
+	S_FLAMEFX_1('FRBL', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_FLAMEFX_2) = none
+	S_FLAMEFX_2('FRBL', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_FLAMEFX_3) = none
+	S_FLAMEFX_3('FRBL', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_FLAMEFX_1) = A_DecReactionCount
+	S_FLAMEFX_X1('FRBL', 3 | FF_FULLBRIGHT, 5.0 / 35.0, S_FLAMEFX_X2) = A_FlameFXExplode
+	S_FLAMEFX_X2('FRBL', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_FLAMEFX_X3) = none
+	S_FLAMEFX_X3('FRBL', 5 | FF_FULLBRIGHT, 5.0 / 35.0, S_FLAMEFX_X4) = none
+	S_FLAMEFX_X4('FRBL', 6 | FF_FULLBRIGHT, 5.0 / 35.0, S_FLAMEFX_X5) = none
+	S_FLAMEFX_X5('FRBL', 7 | FF_FULLBRIGHT, 5.0 / 35.0, S_FLAMEFX_X6) = none
+	S_FLAMEFX_X6('FRBL', 8 | FF_FULLBRIGHT, 5.0 / 35.0, none) = none
 }
 
 defaultproperties

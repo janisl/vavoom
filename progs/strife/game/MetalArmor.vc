@@ -29,7 +29,7 @@ class MetalArmor : InventoryItem
 
 __states__
 {
-	S_METAL_ARMOR('ARM1', 0, -1.0, none) { }
+	S_METAL_ARMOR('ARM1', 0, -1.0, none) = none
 }
 
 defaultproperties

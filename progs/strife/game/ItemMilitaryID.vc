@@ -27,7 +27,7 @@ class ItemMilitaryID : KeyPickup;
 
 __states__
 {
-	S_MILITARY_ID('GYID', 0, -1.0, none) { }
+	S_MILITARY_ID('GYID', 0, -1.0, none) = none
 }
 
 defaultproperties

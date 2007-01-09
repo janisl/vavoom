@@ -29,7 +29,7 @@ class ItemAmmoClipOfBullets : AmmoPickup
 
 __states__
 {
-	S_BULLETS('BLIT', 0, -1.0, none) { }
+	S_BULLETS('BLIT', 0, -1.0, none) = none
 }
 
 defaultproperties

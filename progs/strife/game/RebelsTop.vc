@@ -28,7 +28,7 @@ class RebelsTop:Decoration
 
 __states__
 {
-	S_REBELS_TOP('TOPR', 0, -1.0, none) { }
+	S_REBELS_TOP('TOPR', 0, -1.0, none) = none
 }
 
 defaultproperties

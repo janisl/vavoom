@@ -28,7 +28,7 @@ class Candle : Decoration
 
 __states__
 {
-	S_CANDLE('CNDL', 0 | FF_FULLBRIGHT, -1.0, none) { }
+	S_CANDLE('CNDL', 0 | FF_FULLBRIGHT, -1.0, none) = none
 }
 
 defaultproperties

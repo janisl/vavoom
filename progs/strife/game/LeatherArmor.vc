@@ -29,7 +29,7 @@ class LeatherArmor : InventoryItem
 
 __states__
 {
-	S_LEATHER_ARMOR('ARM2', 0, -1.0, none) { }
+	S_LEATHER_ARMOR('ARM2', 0, -1.0, none) = none
 }
 
 defaultproperties

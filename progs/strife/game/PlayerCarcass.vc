@@ -29,8 +29,8 @@ class PlayerCarcass:Decoration
 __states__
 {
 	// FIXME should it really remove self?
-	S_DEAD_PLAYER('PLAY', 15, 700.0 / 35.0, S_DEAD_PLAYER_2) { }
-	S_DEAD_PLAYER_2('RGIB', 7, 1400.0 / 35.0, none) { }
+	S_DEAD_PLAYER('PLAY', 15, 700.0 / 35.0, S_DEAD_PLAYER_2) = none
+	S_DEAD_PLAYER_2('RGIB', 7, 1400.0 / 35.0, none) = none
 }
 
 defaultproperties

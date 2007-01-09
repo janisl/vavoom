@@ -27,7 +27,7 @@ class ItemSecurityKey : KeyPickup;
 
 __states__
 {
-	S_SECURITY_KEY('SECK', 0, -1.0, none) { }
+	S_SECURITY_KEY('SECK', 0, -1.0, none) = none
 }
 
 defaultproperties

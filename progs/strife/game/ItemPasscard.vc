@@ -28,7 +28,7 @@ class ItemPasscard : KeyPickup
 
 __states__
 {
-	S_PASSCARD('TPAS', 0, -1.0, none) { }
+	S_PASSCARD('TPAS', 0, -1.0, none) = none
 }
 
 defaultproperties

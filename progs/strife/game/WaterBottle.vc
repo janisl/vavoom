@@ -28,7 +28,7 @@ class WaterBottle:Decoration
 
 __states__
 {
-	S_WATER_BOTTLE('WATR', 0, -1.0, none) { }
+	S_WATER_BOTTLE('WATR', 0, -1.0, none) = none
 }
 
 defaultproperties

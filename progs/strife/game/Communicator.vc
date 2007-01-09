@@ -40,7 +40,7 @@ bool HandlePickup(Actor Toucher)
 
 __states__
 {
-	S_COMMUNICATOR('COMM', 0, -1.0, none) { }
+	S_COMMUNICATOR('COMM', 0, -1.0, none) = none
 }
 
 defaultproperties

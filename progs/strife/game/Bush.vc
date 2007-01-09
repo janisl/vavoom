@@ -28,7 +28,7 @@ class Bush:Decoration
 
 __states__
 {
-	S_BUSH('BUSH', 0, -1.0, none) { }
+	S_BUSH('BUSH', 0, -1.0, none) = none
 }
 
 defaultproperties

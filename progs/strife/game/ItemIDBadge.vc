@@ -28,7 +28,7 @@ class ItemIDBadge : KeyPickup
 
 __states__
 {
-	S_ID_BADGE('CRD1', 0, -1.0, none) { }
+	S_ID_BADGE('CRD1', 0, -1.0, none) = none
 }
 
 defaultproperties

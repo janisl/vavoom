@@ -28,7 +28,7 @@ class ItemGoldKey : KeyPickup
 
 __states__
 {
-	S_GOLD_KEY('KY1G', 0, -1.0, none) { }
+	S_GOLD_KEY('KY1G', 0, -1.0, none) = none
 }
 
 defaultproperties

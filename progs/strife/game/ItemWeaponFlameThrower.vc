@@ -28,7 +28,7 @@ class ItemWeaponFlameThrower : WeaponPickup
 
 __states__
 {
-	S_FLAME_THROWER('FLAM', 0, -1.0, none) { }
+	S_FLAME_THROWER('FLAM', 0, -1.0, none) = none
 }
 
 defaultproperties

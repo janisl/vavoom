@@ -29,7 +29,7 @@ class Environmental_Suit : InventoryItem
 
 __states__
 {
-	S_ENV_SUIT('MASK', 0, -1.0, none) { }
+	S_ENV_SUIT('MASK', 0, -1.0, none) = none
 }
 
 defaultproperties

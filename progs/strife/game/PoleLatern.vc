@@ -28,7 +28,7 @@ class PoleLatern:Decoration
 
 __states__
 {
-	S_LANT('LANT', 0, -1.0, none) { }
+	S_LANT('LANT', 0, -1.0, none) = none
 }
 
 defaultproperties

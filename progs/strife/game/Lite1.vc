@@ -28,7 +28,7 @@ class Lite1 : Decoration
 
 __states__
 {
-	S_LITE_4('LITE', 0 | FF_FULLBRIGHT, -1.0, none) { }
+	S_LITE_4('LITE', 0 | FF_FULLBRIGHT, -1.0, none) = none
 }
 
 defaultproperties

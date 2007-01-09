@@ -28,10 +28,10 @@ class Latern : Decoration
 
 __states__
 {
-	S_LATERN_1('LTRH', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_LATERN_2) { }
-	S_LATERN_2('LTRH', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_LATERN_3) { }
-	S_LATERN_3('LTRH', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_LATERN_4) { }
-	S_LATERN_4('LTRH', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_LATERN_1) { }
+	S_LATERN_1('LTRH', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_LATERN_2) = none
+	S_LATERN_2('LTRH', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_LATERN_3) = none
+	S_LATERN_3('LTRH', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_LATERN_4) = none
+	S_LATERN_4('LTRH', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_LATERN_1) = none
 }
 
 defaultproperties

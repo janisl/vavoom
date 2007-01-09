@@ -28,7 +28,7 @@ class WallLight3 : Decoration
 
 __states__
 {
-	S_LITE_3('LITG', 0 | FF_FULLBRIGHT, -1.0, none) { }
+	S_LITE_3('LITG', 0 | FF_FULLBRIGHT, -1.0, none) = none
 }
 
 defaultproperties

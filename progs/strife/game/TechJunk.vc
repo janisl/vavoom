@@ -61,26 +61,26 @@ void OnMapSpawn(mthing_t* mthing)
 
 __states__
 {
-	S_JUNK_1('JUNK', 0, 700.0 / 35.0, none) { }
-	S_JUNK_2('JUNK', 1, 700.0 / 35.0, none) { }
-	S_JUNK_3('JUNK', 2, 700.0 / 35.0, none) { }
-	S_JUNK_4('JUNK', 3, 700.0 / 35.0, none) { }
-	S_JUNK_5('JUNK', 4, 700.0 / 35.0, none) { }
-	S_JUNK_6('JUNK', 5, 700.0 / 35.0, none) { }
-	S_JUNK_7('JUNK', 6, 700.0 / 35.0, none) { }
-	S_JUNK_8('JUNK', 7, 700.0 / 35.0, none) { }
-	S_JUNK_9('JUNK', 8, 700.0 / 35.0, none) { }
-	S_JUNK_10('JUNK', 9, 700.0 / 35.0, none) { }
-	S_JUNK_11('JUNK', 10, 700.0 / 35.0, none) { }
-	S_JUNK_12('JUNK', 11, 700.0 / 35.0, none) { }
-	S_JUNK_13('JUNK', 12, 700.0 / 35.0, none) { }
-	S_JUNK_14('JUNK', 13, 700.0 / 35.0, none) { }
-	S_JUNK_15('JUNK', 14, 700.0 / 35.0, none) { }
-	S_JUNK_16('JUNK', 15, 700.0 / 35.0, none) { }
-	S_JUNK_17('JUNK', 16, 700.0 / 35.0, none) { }
-	S_JUNK_18('JUNK', 17, 700.0 / 35.0, none) { }
-	S_JUNK_19('JUNK', 18, 700.0 / 35.0, none) { }
-	S_JUNK_20('JUNK', 19, 700.0 / 35.0, none) { }
+	S_JUNK_1('JUNK', 0, 700.0 / 35.0, none) = none
+	S_JUNK_2('JUNK', 1, 700.0 / 35.0, none) = none
+	S_JUNK_3('JUNK', 2, 700.0 / 35.0, none) = none
+	S_JUNK_4('JUNK', 3, 700.0 / 35.0, none) = none
+	S_JUNK_5('JUNK', 4, 700.0 / 35.0, none) = none
+	S_JUNK_6('JUNK', 5, 700.0 / 35.0, none) = none
+	S_JUNK_7('JUNK', 6, 700.0 / 35.0, none) = none
+	S_JUNK_8('JUNK', 7, 700.0 / 35.0, none) = none
+	S_JUNK_9('JUNK', 8, 700.0 / 35.0, none) = none
+	S_JUNK_10('JUNK', 9, 700.0 / 35.0, none) = none
+	S_JUNK_11('JUNK', 10, 700.0 / 35.0, none) = none
+	S_JUNK_12('JUNK', 11, 700.0 / 35.0, none) = none
+	S_JUNK_13('JUNK', 12, 700.0 / 35.0, none) = none
+	S_JUNK_14('JUNK', 13, 700.0 / 35.0, none) = none
+	S_JUNK_15('JUNK', 14, 700.0 / 35.0, none) = none
+	S_JUNK_16('JUNK', 15, 700.0 / 35.0, none) = none
+	S_JUNK_17('JUNK', 16, 700.0 / 35.0, none) = none
+	S_JUNK_18('JUNK', 17, 700.0 / 35.0, none) = none
+	S_JUNK_19('JUNK', 18, 700.0 / 35.0, none) = none
+	S_JUNK_20('JUNK', 19, 700.0 / 35.0, none) = none
 }
 
 defaultproperties

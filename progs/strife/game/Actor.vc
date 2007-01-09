@@ -3309,7 +3309,7 @@ void SpawnBlood(float x, float y, float z, int damage)
 //
 //==========================================================================
 
-void A_Look()
+final void A_Look()
 {
 	Actor targ;
 	int sound;
@@ -3342,7 +3342,7 @@ void A_Look()
 //
 //==========================================================================
 
-void A_ActiveSound()
+final void A_ActiveSound()
 {
 	if (ActiveSound && !GetSoundPlayingInfo(self, GetSoundID(ActiveSound)))
 	{
@@ -3356,7 +3356,7 @@ void A_ActiveSound()
 //
 //==========================================================================
 
-void A_Pain()
+final void A_Pain()
 {
 	if (PainSound)
 	{
@@ -3372,7 +3372,7 @@ void A_Pain()
 //
 //==========================================================================
 
-void A_Explode()
+final void A_Explode()
 {
 	RadiusAttack(64, 0, 0);
 	if (Instigator && Instigator.bIsPlayer)
@@ -3402,7 +3402,7 @@ void A_Explode()
 //
 //==========================================================================
 
-void A_Explode2()
+final void A_Explode2()
 {
 	RadiusAttack(128, 0, 0);
 
@@ -3428,7 +3428,7 @@ void A_Explode2()
 //
 //==========================================================================
 
-void A_Scream()
+final void A_Scream()
 {
 	//  Remove muzzle flash & other light effects
 	if (Effects & StrifeDefs::EF_DLIGHT_MASK)
@@ -3450,7 +3450,7 @@ void A_Scream()
 //
 //==========================================================================
 
-void A_Fall()
+final void A_Fall()
 {
 	//  Remove muzzle flash
 	if ((Effects & StrifeDefs::EF_DLIGHT_MASK) == StrifeDefs::EF_DL_MUZZLEFLASH)
@@ -3468,7 +3468,7 @@ void A_Fall()
 //
 //==========================================================================
 
-void A_SetShadow()
+final void A_SetShadow()
 {
 	bUnknown2 = true;
 	Alpha = 0.333;
@@ -3480,7 +3480,7 @@ void A_SetShadow()
 //
 //==========================================================================
 
-void A_ClearShadow()
+final void A_ClearShadow()
 {
 	bUnknown2 = false;
 	Alpha = 1.0;
@@ -3492,7 +3492,7 @@ void A_ClearShadow()
 //
 //==========================================================================
 
-void A_BeShadowyFoe()
+final void A_BeShadowyFoe()
 {
 	Alpha = 0.333;
 	bFriendly = false;
@@ -3506,7 +3506,7 @@ void A_BeShadowyFoe()
 
 const float TRACEANGLE	= (7.0 * 45.0 / 16.0);
 
-void A_Tracer()
+final void A_Tracer()
 {
 	Actor dest;
 	float exact;
@@ -3566,7 +3566,7 @@ void A_Tracer()
 //
 //==========================================================================
 
-void A_SpawnPuff()
+final void A_SpawnPuff()
 {
 	Actor A;
 
@@ -3596,7 +3596,7 @@ void A_SpawnPuff()
 //
 //==========================================================================
 
-void A_ScrollOrDie()
+final void A_ScrollOrDie()
 {
 	int anglespeed;
 	float speed;
@@ -3625,7 +3625,7 @@ void A_ScrollOrDie()
 //
 //==========================================================================
 
-void A_XDying()
+final void A_XDying()
 {
 	Actor gib;
 	float an;
@@ -3656,7 +3656,7 @@ void A_XDying()
 //
 //==========================================================================
 
-void A_DecReactionCount()
+final void A_DecReactionCount()
 {
 	if (--ReactionCount <= 0)
 	{
@@ -3671,7 +3671,7 @@ void A_DecReactionCount()
 //
 //==========================================================================
 
-void A_AlertMonsters()
+final void A_AlertMonsters()
 {
 	if (Instigator && Instigator.bIsPlayer)
 	{
@@ -3687,7 +3687,7 @@ void A_AlertMonsters()
 //
 //==========================================================================
 
-void A_CheckAlarm()
+final void A_CheckAlarm()
 {
 	Actor targ;
 	int sound;
@@ -3713,7 +3713,7 @@ void A_CheckAlarm()
 //
 //==========================================================================
 
-void A_Explode32()
+final void A_Explode32()
 {
 	RadiusAttack(32, 32, false);
 	if (DeathSound)
@@ -3739,7 +3739,7 @@ void A_Explode32()
 //
 //==========================================================================
 
-void A_Explode192()
+final void A_Explode192()
 {
 	RadiusAttack(192, 192, false);
 	if (DeathSound)
@@ -3765,7 +3765,7 @@ void A_Explode192()
 //
 //==========================================================================
 
-void A_RemoveForceField()
+final void A_RemoveForceField()
 {
 	int i;
 	line_t* line;
@@ -3836,38 +3836,38 @@ int GetSpeech()
 
 __states__
 {
-	S_ZAP1_1('ZAP1', 1, 3.0 / 35.0, S_ZAP1_2) { A_Explode32(); }
-	S_ZAP1_0('ZAP1', 0, 3.0 / 35.0, S_ZAP1_2) { A_AlertMonsters(); }
-	S_ZAP1_2('ZAP1', 1, 3.0 / 35.0, S_ZAP1_3) { }
-	S_ZAP1_3('ZAP1', 2, 3.0 / 35.0, S_ZAP1_4) { }
-	S_ZAP1_4('ZAP1', 3, 3.0 / 35.0, S_ZAP1_5) { }
-	S_ZAP1_5('ZAP1', 4, 3.0 / 35.0, S_ZAP1_6) { }
-	S_ZAP1_6('ZAP1', 5, 3.0 / 35.0, S_ZAP1_7) { }
-	S_ZAP1_7('ZAP1', 4, 3.0 / 35.0, S_ZAP1_8) { }
-	S_ZAP1_8('ZAP1', 3, 2.0 / 35.0, S_ZAP1_9) { }
-	S_ZAP1_9('ZAP1', 2, 2.0 / 35.0, S_ZAP1_10) { }
-	S_ZAP1_10('ZAP1', 1, 2.0 / 35.0, S_ZAP1_11) { }
-	S_ZAP1_11('ZAP1', 0, 1.0 / 35.0, none) { }
+	S_ZAP1_1('ZAP1', 1, 3.0 / 35.0, S_ZAP1_2) = A_Explode32
+	S_ZAP1_0('ZAP1', 0, 3.0 / 35.0, S_ZAP1_2) = A_AlertMonsters
+	S_ZAP1_2('ZAP1', 1, 3.0 / 35.0, S_ZAP1_3) = none
+	S_ZAP1_3('ZAP1', 2, 3.0 / 35.0, S_ZAP1_4) = none
+	S_ZAP1_4('ZAP1', 3, 3.0 / 35.0, S_ZAP1_5) = none
+	S_ZAP1_5('ZAP1', 4, 3.0 / 35.0, S_ZAP1_6) = none
+	S_ZAP1_6('ZAP1', 5, 3.0 / 35.0, S_ZAP1_7) = none
+	S_ZAP1_7('ZAP1', 4, 3.0 / 35.0, S_ZAP1_8) = none
+	S_ZAP1_8('ZAP1', 3, 2.0 / 35.0, S_ZAP1_9) = none
+	S_ZAP1_9('ZAP1', 2, 2.0 / 35.0, S_ZAP1_10) = none
+	S_ZAP1_10('ZAP1', 1, 2.0 / 35.0, S_ZAP1_11) = none
+	S_ZAP1_11('ZAP1', 0, 1.0 / 35.0, none) = none
 
-	S_BLOOD1('BLOD', 2, 8.0 / 35.0, S_BLOOD2) { }
-	S_BLOOD2('BLOD', 1, 8.0 / 35.0, S_BLOOD3) { }
-	S_BLOOD3('BLOD', 0, 8.0 / 35.0, none) { }
+	S_BLOOD1('BLOD', 2, 8.0 / 35.0, S_BLOOD2) = none
+	S_BLOOD2('BLOD', 1, 8.0 / 35.0, S_BLOOD3) = none
+	S_BLOOD3('BLOD', 0, 8.0 / 35.0, none) = none
 
-	S_SHARD_1('SHRD', 0, 128.0 / 35.0, none) { }
-	S_SHARD_2('SHRD', 1, 128.0 / 35.0, none) { }
-	S_SHARD_3('SHRD', 2, 128.0 / 35.0, none) { }
-	S_SHARD_4('SHRD', 3, 128.0 / 35.0, none) { }
-	S_SHARD_5('SHRD', 4, 128.0 / 35.0, none) { }
-	S_SHARD_6('SHRD', 5, 128.0 / 35.0, none) { }
+	S_SHARD_1('SHRD', 0, 128.0 / 35.0, none) = none
+	S_SHARD_2('SHRD', 1, 128.0 / 35.0, none) = none
+	S_SHARD_3('SHRD', 2, 128.0 / 35.0, none) = none
+	S_SHARD_4('SHRD', 3, 128.0 / 35.0, none) = none
+	S_SHARD_5('SHRD', 4, 128.0 / 35.0, none) = none
+	S_SHARD_6('SHRD', 5, 128.0 / 35.0, none) = none
 
-	S_MINI_MISSILE2_1('MICR', 0 | FF_FULLBRIGHT, 2.0 / 35.0, S_MINI_MISSILE2_2) { A_Tracer(); }
-	S_MINI_MISSILE2_2('MICR', 0 | FF_FULLBRIGHT, 2.0 / 35.0, S_MINI_MISSILE2_1) { A_Tracer(); }
+	S_MINI_MISSILE2_1('MICR', 0 | FF_FULLBRIGHT, 2.0 / 35.0, S_MINI_MISSILE2_2) = A_Tracer
+	S_MINI_MISSILE2_2('MICR', 0 | FF_FULLBRIGHT, 2.0 / 35.0, S_MINI_MISSILE2_1) = A_Tracer
 
-	S_TOKENS('TOKN', 0, -1.0, none) { }
+	S_TOKENS('TOKN', 0, -1.0, none) = none
 
-	S_GIBS('DIE1', 0, -1.0, none) { }
+	S_GIBS('DIE1', 0, -1.0, none) = none
 
-	S_ANKH('ANKH', 0, -1.0, none) { }
+	S_ANKH('ANKH', 0, -1.0, none) = none
 }
 
 defaultproperties

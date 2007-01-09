@@ -30,7 +30,7 @@ class DeadBody2 : Decoration;
 
 __states__
 {
-	S_DEAD_BODY_2('DEAD', 0, -1.0, none) { }
+	S_DEAD_BODY_2('DEAD', 0, -1.0, none) = none
 }
 
 defaultproperties

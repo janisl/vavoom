@@ -27,9 +27,9 @@ class MaulerTorpedoWav : Projectile;
 
 __states__
 {
-	S_TORPEDO_WAV1('TWAV', 0 | FF_FULLBRIGHT, 9.0 / 35.0, S_TORPEDO_WAV2) { }
-	S_TORPEDO_WAV2('TWAV', 1 | FF_FULLBRIGHT, 9.0 / 35.0, S_TORPEDO_WAV3) { }
-	S_TORPEDO_WAV3('TWAV', 2 | FF_FULLBRIGHT, 9.0 / 35.0, none) { }
+	S_TORPEDO_WAV1('TWAV', 0 | FF_FULLBRIGHT, 9.0 / 35.0, S_TORPEDO_WAV2) = none
+	S_TORPEDO_WAV2('TWAV', 1 | FF_FULLBRIGHT, 9.0 / 35.0, S_TORPEDO_WAV3) = none
+	S_TORPEDO_WAV3('TWAV', 2 | FF_FULLBRIGHT, 9.0 / 35.0, none) = none
 }
 
 defaultproperties

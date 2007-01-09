@@ -28,7 +28,7 @@ class DamagedStoneStatue:Decoration
 
 __states__
 {
-	S_DAMAGED_STATUE('DSTA', 0, -1.0, none) { }
+	S_DAMAGED_STATUE('DSTA', 0, -1.0, none) = none
 }
 
 defaultproperties

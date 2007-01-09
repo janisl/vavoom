@@ -28,7 +28,7 @@ class RebelsBoots:Decoration
 
 __states__
 {
-	S_REBELS_BOOTS('BOTR', 0, -1.0, none) { }
+	S_REBELS_BOOTS('BOTR', 0, -1.0, none) = none
 }
 
 defaultproperties
