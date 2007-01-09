@@ -69,7 +69,7 @@ void VDirect3DDrawer::DrawPic(float x1, float y1, float x2, float y2,
 	dv[2] = MyD3DVertex(x2, y2, l, s2 * tex_iw, t2 * tex_ih);
 	dv[3] = MyD3DVertex(x1, y2, l, s1 * tex_iw, t2 * tex_ih);
 
-	if (trans)
+	if (Alpha < 1.0)
 	{
 		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, TRUE);
 		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, FALSE);
@@ -81,7 +81,7 @@ void VDirect3DDrawer::DrawPic(float x1, float y1, float x2, float y2,
 	RenderDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, MYD3D_VERTEX_FORMAT, dv, 4, 0);
 #endif
 
-	if (trans)
+	if (Alpha < 1.0)
 	{
 		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, FALSE);
 		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, TRUE);

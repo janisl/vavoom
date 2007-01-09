@@ -1034,7 +1034,7 @@ void VDirect3DDrawer::DrawSpritePolygon(TVec *cv, int lump, float Alpha,
 			DotProduct(texpt, taxis) * tex_ih);
 	}
 
-	if (blend_sprites || Aplha < 1.0)
+	if (blend_sprites || Alpha < 1.0)
 	{
 		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, TRUE);
 		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHAREF, 0);
