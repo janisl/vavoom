@@ -27,11 +27,11 @@ class RevenantTracerSmoke : Effect;
 
 __states__
 {
-	S_SMOKE1('PUFF', 1, 4.0 / 35.0, S_SMOKE2) { }
-	S_SMOKE2('PUFF', 2, 4.0 / 35.0, S_SMOKE3) { }
-	S_SMOKE3('PUFF', 1, 4.0 / 35.0, S_SMOKE4) { }
-	S_SMOKE4('PUFF', 2, 4.0 / 35.0, S_SMOKE5) { }
-	S_SMOKE5('PUFF', 3, 4.0 / 35.0, none) { }
+	S_SMOKE1('PUFF', 1, 4.0 / 35.0, S_SMOKE2) = none
+	S_SMOKE2('PUFF', 2, 4.0 / 35.0, S_SMOKE3) = none
+	S_SMOKE3('PUFF', 1, 4.0 / 35.0, S_SMOKE4) = none
+	S_SMOKE4('PUFF', 2, 4.0 / 35.0, S_SMOKE5) = none
+	S_SMOKE5('PUFF', 3, 4.0 / 35.0, none) = none
 }
 
 defaultproperties

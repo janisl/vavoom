@@ -29,7 +29,7 @@ class ItemWeaponPlasmaGun : WeaponPickup
 
 __states__
 {
-	S_PLAS('PLAS', 0, -1.0, none) { }
+	S_PLAS('PLAS', 0, -1.0, none) = none
 }
 
 defaultproperties

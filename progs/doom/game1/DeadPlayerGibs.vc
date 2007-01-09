@@ -29,7 +29,7 @@ class DeadPlayerGibs : Decoration
 
 __states__
 {
-	S_DEADBOTTOM('PLAY', 22, -1.0, none) { }
+	S_DEADBOTTOM('PLAY', 22, -1.0, none) = none
 }
 
 defaultproperties

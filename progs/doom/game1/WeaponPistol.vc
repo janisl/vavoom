@@ -31,7 +31,7 @@ class WeaponPistol : Weapon;
 //
 //===========================================================================
 
-void A_FirePistol()
+final void A_FirePistol()
 {
 	TVec dir;
 
@@ -49,14 +49,14 @@ void A_FirePistol()
 
 __states__
 {
-	S_PISTOL('PISG', 0, 1.0 / 35.0, S_PISTOL) { A_WeaponReady(); }
-	S_PISTOLDOWN('PISG', 0, 1.0 / 35.0, S_PISTOLDOWN) { A_Lower(); }
-	S_PISTOLUP('PISG', 0, 1.0 / 35.0, S_PISTOLUP) { A_Raise(); }
-	S_PISTOL1('PISG', 0, 4.0 / 35.0, S_PISTOL2) { }
-	S_PISTOL2('PISG', 1, 6.0 / 35.0, S_PISTOL3) { A_FirePistol(); }
-	S_PISTOL3('PISG', 2, 4.0 / 35.0, S_PISTOL4) { }
-	S_PISTOL4('PISG', 1, 5.0 / 35.0, S_PISTOL) { A_ReFire(); }
-	S_PISTOLFLASH('PISF', 0 | FF_FULLBRIGHT, 7.0 / 35.0, S_LIGHTDONE) { A_Light1(); }
+	S_PISTOL('PISG', 0, 1.0 / 35.0, S_PISTOL) = A_WeaponReady
+	S_PISTOLDOWN('PISG', 0, 1.0 / 35.0, S_PISTOLDOWN) = A_Lower
+	S_PISTOLUP('PISG', 0, 1.0 / 35.0, S_PISTOLUP) = A_Raise
+	S_PISTOL1('PISG', 0, 4.0 / 35.0, S_PISTOL2) = none
+	S_PISTOL2('PISG', 1, 6.0 / 35.0, S_PISTOL3) = A_FirePistol
+	S_PISTOL3('PISG', 2, 4.0 / 35.0, S_PISTOL4) = none
+	S_PISTOL4('PISG', 1, 5.0 / 35.0, S_PISTOL) = A_ReFire
+	S_PISTOLFLASH('PISF', 0 | FF_FULLBRIGHT, 7.0 / 35.0, S_LIGHTDONE) = A_Light1
 }
 
 defaultproperties

@@ -28,7 +28,7 @@ class DeadCacodemon : Decoration
 
 __states__
 {
-	S_HEAD_DEAD('HEAD', 11, -1.0, none) { }
+	S_HEAD_DEAD('HEAD', 11, -1.0, none) = none
 }
 
 defaultproperties

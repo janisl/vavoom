@@ -29,8 +29,8 @@ class ItemKeyRedSkull : KeyPickup
 
 __states__
 {
-	S_RSKULL('RSKU', 0, 10.0 / 35.0, S_RSKULL2) { }
-	S_RSKULL2('RSKU', 1 | FF_FULLBRIGHT, 10.0 / 35.0, S_RSKULL) { }
+	S_RSKULL('RSKU', 0, 10.0 / 35.0, S_RSKULL2) = none
+	S_RSKULL2('RSKU', 1 | FF_FULLBRIGHT, 10.0 / 35.0, S_RSKULL) = none
 }
 
 defaultproperties

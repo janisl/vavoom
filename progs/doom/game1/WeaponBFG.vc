@@ -31,7 +31,7 @@ class WeaponBFG : Weapon;
 //
 //===========================================================================
 
-void A_BFGsound()
+final void A_BFGsound()
 {
 	Player.MO.PlaySound('weapons/bfgf', CHAN_WEAPON);
 }
@@ -42,7 +42,7 @@ void A_BFGsound()
 //
 //===========================================================================
 
-void A_FireBFG()
+final void A_FireBFG()
 {
 	Player(Player).Ammo[Ammo] -= MainGameInfo(Player.Level.Game).BFGCELLS;
 	Player(Player).SpawnPlayerMissile(BFGShot);
@@ -50,15 +50,15 @@ void A_FireBFG()
 
 __states__
 {
-	S_BFG('BFGG', 0, 1.0 / 35.0, S_BFG) { A_WeaponReady(); }
-	S_BFGDOWN('BFGG', 0, 1.0 / 35.0, S_BFGDOWN) { A_Lower(); }
-	S_BFGUP('BFGG', 0, 1.0 / 35.0, S_BFGUP) { A_Raise(); }
-	S_BFG1('BFGG', 0, 20.0 / 35.0, S_BFG2) { A_BFGsound(); }
-	S_BFG2('BFGG', 1, 10.0 / 35.0, S_BFG3) { A_GunFlash(); }
-	S_BFG3('BFGG', 1, 10.0 / 35.0, S_BFG4) { A_FireBFG(); }
-	S_BFG4('BFGG', 1, 20.0 / 35.0, S_BFG) { A_ReFire(); }
-	S_BFGFLASH1('BFGF', 0 | FF_FULLBRIGHT, 11.0 / 35.0, S_BFGFLASH2) { A_Light1(); }
-	S_BFGFLASH2('BFGF', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_LIGHTDONE) { A_Light2(); }
+	S_BFG('BFGG', 0, 1.0 / 35.0, S_BFG) = A_WeaponReady
+	S_BFGDOWN('BFGG', 0, 1.0 / 35.0, S_BFGDOWN) = A_Lower
+	S_BFGUP('BFGG', 0, 1.0 / 35.0, S_BFGUP) = A_Raise
+	S_BFG1('BFGG', 0, 20.0 / 35.0, S_BFG2) = A_BFGsound
+	S_BFG2('BFGG', 1, 10.0 / 35.0, S_BFG3) = A_GunFlash
+	S_BFG3('BFGG', 1, 10.0 / 35.0, S_BFG4) = A_FireBFG
+	S_BFG4('BFGG', 1, 20.0 / 35.0, S_BFG) = A_ReFire
+	S_BFGFLASH1('BFGF', 0 | FF_FULLBRIGHT, 11.0 / 35.0, S_BFGFLASH2) = A_Light1
+	S_BFGFLASH2('BFGF', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_LIGHTDONE) = A_Light2
 }
 
 defaultproperties

@@ -29,7 +29,7 @@ class ItemWeaponChainsaw : WeaponPickup
 
 __states__
 {
-	S_CSAW('CSAW', 0, -1.0, none) { }
+	S_CSAW('CSAW', 0, -1.0, none) = none
 }
 
 defaultproperties

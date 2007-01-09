@@ -29,7 +29,7 @@ class ColonGibs : Decoration
 
 __states__
 {
-	S_COLONGIBS('POB1', 0, -1.0, none) { }
+	S_COLONGIBS('POB1', 0, -1.0, none) = none
 }
 
 defaultproperties

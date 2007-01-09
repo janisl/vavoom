@@ -29,7 +29,7 @@ class ItemAmmoRocket : AmmoPickup
 
 __states__
 {
-	S_ROCK('ROCK', 0, -1.0, none) { }
+	S_ROCK('ROCK', 0, -1.0, none) = none
 }
 
 defaultproperties

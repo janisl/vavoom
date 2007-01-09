@@ -29,7 +29,7 @@ class ItemWeaponGrenadeLauncher:WeaponPickup
 __states__
 {
 	//  Weapon on ground
-	S_GLAUNCH('GLAU', 0, -1.0, none) { }
+	S_GLAUNCH('GLAU', 0, -1.0, none) = none
 }
 
 defaultproperties

@@ -49,7 +49,7 @@ int PlayerModelVersion;
 //
 //===========================================================================
 
-void A_WeaponReady()
+final void A_WeaponReady()
 {
 	float angle;
 
@@ -109,7 +109,7 @@ void A_WeaponReady()
 //
 //===========================================================================
 
-void A_Lower()
+final void A_Lower()
 {
 	//	FIXME!!
 	if (Player.Level.Game.frametime < 1.0 / 35.0)
@@ -150,7 +150,7 @@ void A_Lower()
 //
 //===========================================================================
 
-void A_Raise()
+final void A_Raise()
 {
 	//	FIXME!!
 	if (Player.Level.Game.frametime < 1.0 / 35.0)
@@ -178,7 +178,7 @@ void A_Raise()
 //
 //===========================================================================
 
-void A_ReFire()
+final void A_ReFire()
 {
 	// check for fire
 	//  (if a weaponchange is pending, let it go through instead)
@@ -201,7 +201,7 @@ void A_ReFire()
 //
 //===========================================================================
 
-void A_CheckReload()
+final void A_CheckReload()
 {
 	Player(Player).CheckAmmo();
 }
@@ -212,7 +212,7 @@ void A_CheckReload()
 //
 //===========================================================================
 
-void A_GunFlash()
+final void A_GunFlash()
 {
 	Player.MO.SetState(Actor(Player.MO).MissileState);
 	Player.SetViewState(ps_flash, FlashState);
@@ -224,7 +224,7 @@ void A_GunFlash()
 //
 //===========================================================================
 
-void A_Light0()
+final void A_Light0()
 {
 	Player.ExtraLight = 0;
 	Player.MO.Effects &= ~DoomDefs::EF_DLIGHT_MASK;
@@ -236,7 +236,7 @@ void A_Light0()
 //
 //===========================================================================
 
-void A_Light1()
+final void A_Light1()
 {
 	Player.ExtraLight = 1;
 }
@@ -247,7 +247,7 @@ void A_Light1()
 //
 //===========================================================================
 
-void A_Light2()
+final void A_Light2()
 {
 	Player.ExtraLight = 2;
 }
@@ -258,7 +258,7 @@ void A_Light2()
 //
 //===========================================================================
 
-void GunShot(Actor A, int accurate, TVec dir)
+final void GunShot(Actor A, int accurate, TVec dir)
 {
 	int damage;
 
@@ -281,7 +281,7 @@ void GunShot(Actor A, int accurate, TVec dir)
 #ifndef NO_BOTS
 __states__
 {
-	S_LIGHTDONE('SHTG', 4, 0.0 / 35.0, none) { A_Light0(); }
+	S_LIGHTDONE('SHTG', 4, 0.0 / 35.0, none) = A_Light0
 }
 #endif
 

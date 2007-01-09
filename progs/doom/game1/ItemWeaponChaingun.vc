@@ -29,7 +29,7 @@ class ItemWeaponChaingun : WeaponPickup
 
 __states__
 {
-	S_MGUN('MGUN', 0, -1.0, none) { }
+	S_MGUN('MGUN', 0, -1.0, none) = none
 }
 
 defaultproperties

@@ -28,7 +28,7 @@ class HeadsOnStick : Decoration
 
 __states__
 {
-	S_HEADSONSTICK('POL2', 0, -1.0, none) { }
+	S_HEADSONSTICK('POL2', 0, -1.0, none) = none
 }
 
 defaultproperties

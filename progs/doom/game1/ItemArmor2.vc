@@ -29,8 +29,8 @@ class ItemArmor2 : ArmorPickup
 
 __states__
 {
-	S_ARM2('ARM2', 0, 6.0 / 35.0, S_ARM2A) { }
-	S_ARM2A('ARM2', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_ARM2) { }
+	S_ARM2('ARM2', 0, 6.0 / 35.0, S_ARM2A) = none
+	S_ARM2A('ARM2', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_ARM2) = none
 }
 
 defaultproperties

@@ -29,7 +29,7 @@ class ItemWeaponBFG : WeaponPickup
 
 __states__
 {
-	S_BFUG('BFUG', 0, -1.0, none) { }
+	S_BFUG('BFUG', 0, -1.0, none) = none
 }
 
 defaultproperties

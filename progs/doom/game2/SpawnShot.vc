@@ -33,7 +33,7 @@ class SpawnShot : Projectile;
 //
 //==========================================================================
 
-void A_SpawnFly()
+final void A_SpawnFly()
 {
 	Actor newmobj;
 	Actor fog;
@@ -95,7 +95,7 @@ void A_SpawnFly()
 //
 //==========================================================================
 
-void A_SpawnSound()
+final void A_SpawnSound()
 {
 	PlaySound('brain/cube', CHAN_VOICE);
 	A_SpawnFly();
@@ -103,10 +103,10 @@ void A_SpawnSound()
 
 __states__
 {
-	S_SPAWN1('BOSF', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_SPAWN2) { A_SpawnSound(); }
-	S_SPAWN2('BOSF', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_SPAWN3) { A_SpawnFly(); }
-	S_SPAWN3('BOSF', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_SPAWN4) { A_SpawnFly(); }
-	S_SPAWN4('BOSF', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_SPAWN1) { A_SpawnFly(); }
+	S_SPAWN1('BOSF', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_SPAWN2) = A_SpawnSound
+	S_SPAWN2('BOSF', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_SPAWN3) = A_SpawnFly
+	S_SPAWN3('BOSF', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_SPAWN4) = A_SpawnFly
+	S_SPAWN4('BOSF', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_SPAWN1) = A_SpawnFly
 }
 
 defaultproperties

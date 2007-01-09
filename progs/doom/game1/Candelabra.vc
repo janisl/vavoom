@@ -28,7 +28,7 @@ class Candelabra : Decoration
 
 __states__
 {
-	S_CANDELABRA('CBRA', 0 | FF_FULLBRIGHT, -1.0, none) { }
+	S_CANDELABRA('CBRA', 0 | FF_FULLBRIGHT, -1.0, none) = none
 }
 
 defaultproperties

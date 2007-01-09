@@ -28,9 +28,9 @@ class Blood : Effect
 
 __states__
 {
-	S_BLOOD1('BLUD', 2, 8.0 / 35.0, S_BLOOD2) { }
-	S_BLOOD2('BLUD', 1, 8.0 / 35.0, S_BLOOD3) { }
-	S_BLOOD3('BLUD', 0, 8.0 / 35.0, none) { }
+	S_BLOOD1('BLUD', 2, 8.0 / 35.0, S_BLOOD2) = none
+	S_BLOOD2('BLUD', 1, 8.0 / 35.0, S_BLOOD3) = none
+	S_BLOOD3('BLUD', 0, 8.0 / 35.0, none) = none
 }
 
 defaultproperties

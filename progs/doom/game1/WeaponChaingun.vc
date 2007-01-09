@@ -31,7 +31,7 @@ class WeaponChaingun : Weapon;
 //
 //===========================================================================
 
-void A_FireCGun()
+final void A_FireCGun()
 {
 	TVec dir;
 
@@ -55,14 +55,14 @@ void A_FireCGun()
 
 __states__
 {
-	S_CHAIN('CHGG', 0, 1.0 / 35.0, S_CHAIN) { A_WeaponReady(); }
-	S_CHAINDOWN('CHGG', 0, 1.0 / 35.0, S_CHAINDOWN) { A_Lower(); }
-	S_CHAINUP('CHGG', 0, 1.0 / 35.0, S_CHAINUP) { A_Raise(); }
-	S_CHAIN1('CHGG', 0, 4.0 / 35.0, S_CHAIN2) { A_FireCGun(); }
-	S_CHAIN2('CHGG', 1, 4.0 / 35.0, S_CHAIN3) { A_FireCGun(); }
-	S_CHAIN3('CHGG', 1, 0.0 / 35.0, S_CHAIN) { A_ReFire(); }
-	S_CHAINFLASH1('CHGF', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_LIGHTDONE) { A_Light1(); }
-	S_CHAINFLASH2('CHGF', 1 | FF_FULLBRIGHT, 5.0 / 35.0, S_LIGHTDONE) { A_Light2(); }
+	S_CHAIN('CHGG', 0, 1.0 / 35.0, S_CHAIN) = A_WeaponReady
+	S_CHAINDOWN('CHGG', 0, 1.0 / 35.0, S_CHAINDOWN) = A_Lower
+	S_CHAINUP('CHGG', 0, 1.0 / 35.0, S_CHAINUP) = A_Raise
+	S_CHAIN1('CHGG', 0, 4.0 / 35.0, S_CHAIN2) = A_FireCGun
+	S_CHAIN2('CHGG', 1, 4.0 / 35.0, S_CHAIN3) = A_FireCGun
+	S_CHAIN3('CHGG', 1, 0.0 / 35.0, S_CHAIN) = A_ReFire
+	S_CHAINFLASH1('CHGF', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_LIGHTDONE) = A_Light1
+	S_CHAINFLASH2('CHGF', 1 | FF_FULLBRIGHT, 5.0 / 35.0, S_LIGHTDONE) = A_Light2
 }
 
 defaultproperties

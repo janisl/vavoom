@@ -28,7 +28,7 @@ class HangingTorsoNoBrain : Decoration
 
 __states__
 {
-	S_HANGTNOBRAIN('HDB6', 0, -1.0, none) { }
+	S_HANGTNOBRAIN('HDB6', 0, -1.0, none) = none
 }
 
 defaultproperties

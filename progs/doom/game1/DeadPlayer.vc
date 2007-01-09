@@ -28,7 +28,7 @@ class DeadPlayer : Decoration
 
 __states__
 {
-	S_DEADTORSO('PLAY', 13, -1.0, none) { }
+	S_DEADTORSO('PLAY', 13, -1.0, none) = none
 }
 
 defaultproperties

@@ -28,7 +28,7 @@ class DeadZombieman : Decoration
 
 __states__
 {
-	S_POSS_DEAD('POSS', 11, -1.0, none) { }
+	S_POSS_DEAD('POSS', 11, -1.0, none) = none
 }
 
 defaultproperties

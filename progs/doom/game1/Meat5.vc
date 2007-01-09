@@ -28,7 +28,7 @@ class Meat5 : Decoration
 
 __states__
 {
-	S_MEAT5('GOR5', 0, -1.0, none) { }
+	S_MEAT5('GOR5', 0, -1.0, none) = none
 }
 
 defaultproperties

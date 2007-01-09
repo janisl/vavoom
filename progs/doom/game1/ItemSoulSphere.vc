@@ -49,12 +49,12 @@ bool HandlePickup(Actor Toucher)
 
 __states__
 {
-	S_SOUL('SOUL', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_SOUL2) { }
-	S_SOUL2('SOUL', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_SOUL3) { }
-	S_SOUL3('SOUL', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_SOUL4) { }
-	S_SOUL4('SOUL', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_SOUL5) { }
-	S_SOUL5('SOUL', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_SOUL6) { }
-	S_SOUL6('SOUL', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_SOUL) { }
+	S_SOUL('SOUL', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_SOUL2) = none
+	S_SOUL2('SOUL', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_SOUL3) = none
+	S_SOUL3('SOUL', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_SOUL4) = none
+	S_SOUL4('SOUL', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_SOUL5) = none
+	S_SOUL5('SOUL', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_SOUL6) = none
+	S_SOUL6('SOUL', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_SOUL) = none
 }
 
 defaultproperties

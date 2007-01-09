@@ -28,7 +28,7 @@ class DeadShotgunGuy : Decoration
 
 __states__
 {
-	S_SPOS_DEAD('SPOS', 11, -1.0, none) { }
+	S_SPOS_DEAD('SPOS', 11, -1.0, none) = none
 }
 
 defaultproperties

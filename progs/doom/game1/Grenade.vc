@@ -23,12 +23,12 @@
 //**
 //**************************************************************************
 
-class Grenade:Rocket;
+class Grenade : Rocket;
 
 __states__
 {
 	//  Flying grenade
-	S_GRENADE('GREN', 0 | FF_FULLBRIGHT, 3.0, S_GRENADE_EXPLODE) { }
+	S_GRENADE('GREN', 0 | FF_FULLBRIGHT, 3.0, S_GRENADE_EXPLODE) = none
 	S_GRENADE_EXPLODE('GREN', 0 | FF_FULLBRIGHT, 0.0, S_EXPLODE1)
 	{
 		ExplodeMissile();

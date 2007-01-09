@@ -28,7 +28,7 @@ class HangingTorsoLookUp : Decoration
 
 __states__
 {
-	S_HANGTLOOKUP('HDB5', 0, -1.0, none) { }
+	S_HANGTLOOKUP('HDB5', 0, -1.0, none) = none
 }
 
 defaultproperties

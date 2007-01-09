@@ -28,7 +28,7 @@ class HangingNoBrain : Decoration
 
 __states__
 {
-	S_HANGBNOBRAIN('HDB2', 0, -1.0, none) { }
+	S_HANGBNOBRAIN('HDB2', 0, -1.0, none) = none
 }
 
 defaultproperties

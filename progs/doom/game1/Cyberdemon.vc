@@ -35,7 +35,7 @@ class Cyberdemon : Pawn
 //
 //==========================================================================
 
-void A_Hoof()
+final void A_Hoof()
 {
 	PlaySound('cyber/hoof', CHAN_BODY);
 	A_Chase();
@@ -49,7 +49,7 @@ void A_Hoof()
 //
 //==========================================================================
 
-void A_Metal()
+final void A_Metal()
 {
 	PlaySound('cyber/walk', CHAN_BODY);
 	A_Chase();
@@ -63,7 +63,7 @@ void A_Metal()
 //
 //==========================================================================
 
-void A_CyberAttack()
+final void A_CyberAttack()
 {
 	if (!Enemy)
 		return;
@@ -80,7 +80,7 @@ void A_CyberAttack()
 //
 //==========================================================================
 
-void A_BossDeath()
+final void A_BossDeath()
 {
 	if (!XLevel.bCyberDemonSpecial)
 	{
@@ -92,33 +92,33 @@ void A_BossDeath()
 
 __states__
 {
-	S_CYBER_STND('CYBR', 0, 10.0 / 35.0, S_CYBER_STND2) { A_Look(); }
-	S_CYBER_STND2('CYBR', 1, 10.0 / 35.0, S_CYBER_STND) { A_Look(); }
-	S_CYBER_RUN1('CYBR', 0, 3.0 / 35.0, S_CYBER_RUN2) { A_Hoof(); }
-	S_CYBER_RUN2('CYBR', 0, 3.0 / 35.0, S_CYBER_RUN3) { A_Chase(); }
-	S_CYBER_RUN3('CYBR', 1, 3.0 / 35.0, S_CYBER_RUN4) { A_Chase(); }
-	S_CYBER_RUN4('CYBR', 1, 3.0 / 35.0, S_CYBER_RUN5) { A_Chase(); }
-	S_CYBER_RUN5('CYBR', 2, 3.0 / 35.0, S_CYBER_RUN6) { A_Chase(); }
-	S_CYBER_RUN6('CYBR', 2, 3.0 / 35.0, S_CYBER_RUN7) { A_Chase(); }
-	S_CYBER_RUN7('CYBR', 3, 3.0 / 35.0, S_CYBER_RUN8) { A_Metal(); }
-	S_CYBER_RUN8('CYBR', 3, 3.0 / 35.0, S_CYBER_RUN1) { A_Chase(); }
-	S_CYBER_ATK1('CYBR', 4, 6.0 / 35.0, S_CYBER_ATK2) { A_FaceTarget(); }
-	S_CYBER_ATK2('CYBR', 5, 12.0 / 35.0, S_CYBER_ATK3) { A_CyberAttack(); }
-	S_CYBER_ATK3('CYBR', 4, 12.0 / 35.0, S_CYBER_ATK4) { A_FaceTarget(); }
-	S_CYBER_ATK4('CYBR', 5, 12.0 / 35.0, S_CYBER_ATK5) { A_CyberAttack(); }
-	S_CYBER_ATK5('CYBR', 4, 12.0 / 35.0, S_CYBER_ATK6) { A_FaceTarget(); }
-	S_CYBER_ATK6('CYBR', 5, 12.0 / 35.0, S_CYBER_RUN1) { A_CyberAttack(); }
-	S_CYBER_PAIN('CYBR', 6, 10.0 / 35.0, S_CYBER_RUN1) { A_Pain(); }
-	S_CYBER_DIE1('CYBR', 7, 10.0 / 35.0, S_CYBER_DIE2) { }
-	S_CYBER_DIE2('CYBR', 8, 10.0 / 35.0, S_CYBER_DIE3) { A_Scream(); }
-	S_CYBER_DIE3('CYBR', 9, 10.0 / 35.0, S_CYBER_DIE4) { }
-	S_CYBER_DIE4('CYBR', 10, 10.0 / 35.0, S_CYBER_DIE5) { }
-	S_CYBER_DIE5('CYBR', 11, 10.0 / 35.0, S_CYBER_DIE6) { }
-	S_CYBER_DIE6('CYBR', 12, 10.0 / 35.0, S_CYBER_DIE7) { A_Fall(); }
-	S_CYBER_DIE7('CYBR', 13, 10.0 / 35.0, S_CYBER_DIE8) { }
-	S_CYBER_DIE8('CYBR', 14, 10.0 / 35.0, S_CYBER_DIE9) { }
-	S_CYBER_DIE9('CYBR', 15, 30.0 / 35.0, S_CYBER_DIE10) { }
-	S_CYBER_DIE10('CYBR', 15, -1.0, none) { A_BossDeath(); }
+	S_CYBER_STND('CYBR', 0, 10.0 / 35.0, S_CYBER_STND2) = A_Look
+	S_CYBER_STND2('CYBR', 1, 10.0 / 35.0, S_CYBER_STND) = A_Look
+	S_CYBER_RUN1('CYBR', 0, 3.0 / 35.0, S_CYBER_RUN2) = A_Hoof
+	S_CYBER_RUN2('CYBR', 0, 3.0 / 35.0, S_CYBER_RUN3) = A_Chase
+	S_CYBER_RUN3('CYBR', 1, 3.0 / 35.0, S_CYBER_RUN4) = A_Chase
+	S_CYBER_RUN4('CYBR', 1, 3.0 / 35.0, S_CYBER_RUN5) = A_Chase
+	S_CYBER_RUN5('CYBR', 2, 3.0 / 35.0, S_CYBER_RUN6) = A_Chase
+	S_CYBER_RUN6('CYBR', 2, 3.0 / 35.0, S_CYBER_RUN7) = A_Chase
+	S_CYBER_RUN7('CYBR', 3, 3.0 / 35.0, S_CYBER_RUN8) = A_Metal
+	S_CYBER_RUN8('CYBR', 3, 3.0 / 35.0, S_CYBER_RUN1) = A_Chase
+	S_CYBER_ATK1('CYBR', 4, 6.0 / 35.0, S_CYBER_ATK2) = A_FaceTarget
+	S_CYBER_ATK2('CYBR', 5, 12.0 / 35.0, S_CYBER_ATK3) = A_CyberAttack
+	S_CYBER_ATK3('CYBR', 4, 12.0 / 35.0, S_CYBER_ATK4) = A_FaceTarget
+	S_CYBER_ATK4('CYBR', 5, 12.0 / 35.0, S_CYBER_ATK5) = A_CyberAttack
+	S_CYBER_ATK5('CYBR', 4, 12.0 / 35.0, S_CYBER_ATK6) = A_FaceTarget
+	S_CYBER_ATK6('CYBR', 5, 12.0 / 35.0, S_CYBER_RUN1) = A_CyberAttack
+	S_CYBER_PAIN('CYBR', 6, 10.0 / 35.0, S_CYBER_RUN1) = A_Pain
+	S_CYBER_DIE1('CYBR', 7, 10.0 / 35.0, S_CYBER_DIE2) = none
+	S_CYBER_DIE2('CYBR', 8, 10.0 / 35.0, S_CYBER_DIE3) = A_Scream
+	S_CYBER_DIE3('CYBR', 9, 10.0 / 35.0, S_CYBER_DIE4) = none
+	S_CYBER_DIE4('CYBR', 10, 10.0 / 35.0, S_CYBER_DIE5) = none
+	S_CYBER_DIE5('CYBR', 11, 10.0 / 35.0, S_CYBER_DIE6) = none
+	S_CYBER_DIE6('CYBR', 12, 10.0 / 35.0, S_CYBER_DIE7) = A_Fall
+	S_CYBER_DIE7('CYBR', 13, 10.0 / 35.0, S_CYBER_DIE8) = none
+	S_CYBER_DIE8('CYBR', 14, 10.0 / 35.0, S_CYBER_DIE9) = none
+	S_CYBER_DIE9('CYBR', 15, 30.0 / 35.0, S_CYBER_DIE10) = none
+	S_CYBER_DIE10('CYBR', 15, -1.0, none) = A_BossDeath
 }
 
 defaultproperties

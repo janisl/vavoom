@@ -3215,7 +3215,7 @@ int LineAttack(TVec dir, float distance, int damage)
 //
 //==========================================================================
 
-void A_Look()
+final void A_Look()
 {
 	Actor targ;
 
@@ -3258,7 +3258,7 @@ void A_Look()
 //
 //==========================================================================
 
-void A_Chase()
+final void A_Chase()
 {
 	float delta;
 
@@ -3388,7 +3388,7 @@ void A_Chase()
 //
 //==========================================================================
 
-void A_FaceTarget()
+final void A_FaceTarget()
 {
 	if (!Enemy)
 		return;
@@ -3409,7 +3409,7 @@ void A_FaceTarget()
 //
 //==========================================================================
 
-void A_Pain()
+final void A_Pain()
 {
 	//  Remove muzzle flash
 	if ((Effects & DoomDefs::EF_DLIGHT_MASK) == DoomDefs::EF_DL_MUZZLEFLASH)
@@ -3431,7 +3431,7 @@ void A_Pain()
 //
 //==========================================================================
 
-void A_Explode()
+final void A_Explode()
 {
 	Alpha = 0.5;
 	RadiusAttack(128, 0, 0);
@@ -3458,7 +3458,7 @@ void A_Explode()
 //
 //==========================================================================
 
-void A_Scream()
+final void A_Scream()
 {
 	//  Remove muzzle flash
 	if ((Effects & DoomDefs::EF_DLIGHT_MASK) == DoomDefs::EF_DL_MUZZLEFLASH)
@@ -3481,7 +3481,7 @@ void A_Scream()
 //
 //==========================================================================
 
-void A_XScream()
+final void A_XScream()
 {
 	//  Remove muzzle flash
 	if ((Effects & DoomDefs::EF_DLIGHT_MASK) == DoomDefs::EF_DL_MUZZLEFLASH)
@@ -3507,7 +3507,7 @@ void A_XScream()
 //
 //==========================================================================
 
-void A_Fall()
+final void A_Fall()
 {
 	//  Remove muzzle flash
 	if ((Effects & DoomDefs::EF_DLIGHT_MASK) == DoomDefs::EF_DL_MUZZLEFLASH)
@@ -3530,7 +3530,7 @@ void A_Fall()
 //
 //==========================================================================
 
-void A_PlayerScream()
+final void A_PlayerScream()
 {
 	// Default death sound.
 	name sound = '*death';
@@ -3665,7 +3665,7 @@ void P_SpawnBlood(TVec Org, int damage)
 #ifndef NO_BOTS
 __states__
 {
-	S_GIBS('POL5', 0, -1.0, none) { }
+	S_GIBS('POL5', 0, -1.0, none) = none
 }
 #endif
 

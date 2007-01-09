@@ -33,7 +33,7 @@ class BrainExplosion : Rocket;
 //
 //==========================================================================
 
-void A_BrainExplode()
+final void A_BrainExplode()
 {
 	TVec org;
 	Actor A;
@@ -53,9 +53,9 @@ void A_BrainExplode()
 
 __states__
 {
-	S_BRAINEXPLODE1('MISL', 1 | FF_FULLBRIGHT, 10.0 / 35.0, S_BRAINEXPLODE2) { }
-	S_BRAINEXPLODE2('MISL', 2 | FF_FULLBRIGHT, 10.0 / 35.0, S_BRAINEXPLODE3) { }
-	S_BRAINEXPLODE3('MISL', 3 | FF_FULLBRIGHT, 10.0 / 35.0, none) { A_BrainExplode(); }
+	S_BRAINEXPLODE1('MISL', 1 | FF_FULLBRIGHT, 10.0 / 35.0, S_BRAINEXPLODE2) = none
+	S_BRAINEXPLODE2('MISL', 2 | FF_FULLBRIGHT, 10.0 / 35.0, S_BRAINEXPLODE3) = none
+	S_BRAINEXPLODE3('MISL', 3 | FF_FULLBRIGHT, 10.0 / 35.0, none) = A_BrainExplode
 }
 
 defaultproperties

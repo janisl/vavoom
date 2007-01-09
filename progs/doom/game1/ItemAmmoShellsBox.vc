@@ -29,7 +29,7 @@ class ItemAmmoShellsBox : AmmoPickup
 
 __states__
 {
-	S_SBOX('SBOX', 0, -1.0, none) { }
+	S_SBOX('SBOX', 0, -1.0, none) = none
 }
 
 defaultproperties

@@ -29,7 +29,7 @@ class ItemMedikit : HealthPickup
 
 __states__
 {
-	S_MEDI('MEDI', 0, -1.0, none) { }
+	S_MEDI('MEDI', 0, -1.0, none) = none
 }
 
 defaultproperties

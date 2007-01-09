@@ -31,7 +31,7 @@ class WeaponGrenade : Weapon;
 //
 //===========================================================================
 
-void A_FireGrenade()
+final void A_FireGrenade()
 {
 	Actor A;
 
@@ -69,16 +69,16 @@ void A_FireGrenade()
 __states__
 {
 	//  Weapon in player view
-	S_GRENLAUNCH('GRLG', 0, 1.0 / 35.0, S_GRENLAUNCH) { A_WeaponReady(); }
-	S_GRENLAUNCHDOWN('GRLG', 0, 1.0 / 35.0, S_GRENLAUNCHDOWN) {	A_Lower(); }
-	S_GRENLAUNCHUP('GRLG', 0, 1.0 / 35.0, S_GRENLAUNCHUP) {	A_Raise(); }
-	S_GRENLAUNCH1('GRLG', 1, 8.0 / 35.0, S_GRENLAUNCH2) { A_GunFlash(); }
-	S_GRENLAUNCH2('GRLG', 1, 12.0 / 35.0, S_GRENLAUNCH3) { A_FireGrenade(); }
-	S_GRENLAUNCH3('GRLG', 1, 0.0 / 35.0, S_GRENLAUNCH) { A_ReFire(); }
-	S_GRENLAUNCHFLASH1('GRLF', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_GRENLAUNCHFLASH2) { A_Light1();	}
-	S_GRENLAUNCHFLASH2('GRLF', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_GRENLAUNCHFLASH3) { }
-	S_GRENLAUNCHFLASH3('GRLF', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_GRENLAUNCHFLASH4) {	A_Light2(); }
-	S_GRENLAUNCHFLASH4('GRLF', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_LIGHTDONE) { A_Light2(); }
+	S_GRENLAUNCH('GRLG', 0, 1.0 / 35.0, S_GRENLAUNCH) = A_WeaponReady
+	S_GRENLAUNCHDOWN('GRLG', 0, 1.0 / 35.0, S_GRENLAUNCHDOWN) = A_Lower
+	S_GRENLAUNCHUP('GRLG', 0, 1.0 / 35.0, S_GRENLAUNCHUP) = A_Raise
+	S_GRENLAUNCH1('GRLG', 1, 8.0 / 35.0, S_GRENLAUNCH2) = A_GunFlash
+	S_GRENLAUNCH2('GRLG', 1, 12.0 / 35.0, S_GRENLAUNCH3) = A_FireGrenade
+	S_GRENLAUNCH3('GRLG', 1, 0.0 / 35.0, S_GRENLAUNCH) = A_ReFire
+	S_GRENLAUNCHFLASH1('GRLF', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_GRENLAUNCHFLASH2) = A_Light1
+	S_GRENLAUNCHFLASH2('GRLF', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_GRENLAUNCHFLASH3) = none
+	S_GRENLAUNCHFLASH3('GRLF', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_GRENLAUNCHFLASH4) = A_Light2
+	S_GRENLAUNCHFLASH4('GRLF', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_LIGHTDONE) = A_Light2
 }
 
 defaultproperties
