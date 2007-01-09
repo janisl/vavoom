@@ -31,7 +31,7 @@ class WeaponBeak : Weapon;
 //
 //===========================================================================
 
-void A_BeakRaise()
+final void A_BeakRaise()
 {
 	Player.ViewStates[ps_weapon].SY = WEAPONTOP;
 	Player.SetViewState(ps_weapon, ReadyState);
@@ -43,7 +43,7 @@ void A_BeakRaise()
 //
 //===========================================================================
 
-void A_BeakReady()
+final void A_BeakReady()
 {
 	if (Player.Buttons & BT_ATTACK)
 	{
@@ -77,7 +77,7 @@ void A_BeakReady()
 //
 //===========================================================================
 
-void A_BeakAttackPL1()
+final void A_BeakAttackPL1()
 {
 	int damage;
 	TVec dir;
@@ -103,7 +103,7 @@ void A_BeakAttackPL1()
 //
 //===========================================================================
 
-void A_BeakAttackPL2()
+final void A_BeakAttackPL2()
 {
 	int damage;
 	TVec dir;
@@ -125,11 +125,11 @@ void A_BeakAttackPL2()
 
 __states__
 {
-	S_BEAKREADY('BEAK', 0, 1.0 / 35.0, S_BEAKREADY) { A_BeakReady(); }
-	S_BEAKDOWN('BEAK', 0, 1.0 / 35.0, S_BEAKDOWN) { A_Lower(); }
-	S_BEAKUP('BEAK', 0, 1.0 / 35.0, S_BEAKUP) { A_BeakRaise(); }
-	S_BEAKATK1_1('BEAK', 0, 18.0 / 35.0, S_BEAKREADY) { A_BeakAttackPL1(); }
-	S_BEAKATK2_1('BEAK', 0, 12.0 / 35.0, S_BEAKREADY) { A_BeakAttackPL2(); }
+	S_BEAKREADY('BEAK', 0, 1.0 / 35.0, S_BEAKREADY) = A_BeakReady
+	S_BEAKDOWN('BEAK', 0, 1.0 / 35.0, S_BEAKDOWN) = A_Lower
+	S_BEAKUP('BEAK', 0, 1.0 / 35.0, S_BEAKUP) = A_BeakRaise
+	S_BEAKATK1_1('BEAK', 0, 18.0 / 35.0, S_BEAKREADY) = A_BeakAttackPL1
+	S_BEAKATK2_1('BEAK', 0, 12.0 / 35.0, S_BEAKREADY) = A_BeakAttackPL2
 }
 
 defaultproperties

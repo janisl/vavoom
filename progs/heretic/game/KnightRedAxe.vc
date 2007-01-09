@@ -45,7 +45,7 @@ void OnMapSpawn(mthing_t* mthing)
 //
 //==========================================================================
 
-void A_DripBlood()
+final void A_DripBlood()
 {
 	Actor mo;
 
@@ -58,11 +58,11 @@ void A_DripBlood()
 
 __states__
 {
-	S_REDAXE1('RAXE', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_REDAXE2) { A_DripBlood(); }
-	S_REDAXE2('RAXE', 1 | FF_FULLBRIGHT, 5.0 / 35.0, S_REDAXE1) { A_DripBlood(); }
-	S_REDAXEX1('RAXE', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_REDAXEX2) { }
-	S_REDAXEX2('RAXE', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_REDAXEX3) { }
-	S_REDAXEX3('RAXE', 4 | FF_FULLBRIGHT, 6.0 / 35.0, none) { }
+	S_REDAXE1('RAXE', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_REDAXE2) = A_DripBlood
+	S_REDAXE2('RAXE', 1 | FF_FULLBRIGHT, 5.0 / 35.0, S_REDAXE1) = A_DripBlood
+	S_REDAXEX1('RAXE', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_REDAXEX2) = none
+	S_REDAXEX2('RAXE', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_REDAXEX3) = none
+	S_REDAXEX3('RAXE', 4 | FF_FULLBRIGHT, 6.0 / 35.0, none) = none
 }
 
 defaultproperties

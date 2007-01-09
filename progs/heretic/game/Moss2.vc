@@ -28,7 +28,7 @@ class Moss2:Decoration
 
 __states__
 {
-	S_MOSS2('MOS2', 0, -1.0, none) { }
+	S_MOSS2('MOS2', 0, -1.0, none) = none
 }
 
 defaultproperties

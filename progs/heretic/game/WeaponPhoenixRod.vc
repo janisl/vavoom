@@ -52,7 +52,7 @@ void WeaponLevel2Fade()
 //
 //===========================================================================
 
-void A_FirePhoenixPL1()
+final void A_FirePhoenixPL1()
 {
 	TVec vforward;
 
@@ -68,7 +68,7 @@ void A_FirePhoenixPL1()
 //
 //===========================================================================
 
-void A_InitPhoenixPL2()
+final void A_InitPhoenixPL2()
 {
 	FlameCount = 10 * 35;
 }
@@ -81,7 +81,7 @@ void A_InitPhoenixPL2()
 //
 //===========================================================================
 
-void A_FirePhoenixPL2()
+final void A_FirePhoenixPL2()
 {
 	Actor A;
 	TVec dir;
@@ -117,25 +117,25 @@ void A_FirePhoenixPL2()
 //
 //===========================================================================
 
-void A_ShutdownPhoenixPL2()
+final void A_ShutdownPhoenixPL2()
 {
 	Player(Player).Ammo[am_phoenixrod] -= USE_PHRD_AMMO_2;
 }
 
 __states__
 {
-	S_PHOENIXREADY('PHNX', 0, 1.0 / 35.0, S_PHOENIXREADY) { A_WeaponReady(); }
-	S_PHOENIXDOWN('PHNX', 0, 1.0 / 35.0, S_PHOENIXDOWN) { A_Lower(); }
-	S_PHOENIXUP('PHNX', 0, 1.0 / 35.0, S_PHOENIXUP) { A_Raise(); }
-	S_PHOENIXATK1_1('PHNX', 1, 5.0 / 35.0, S_PHOENIXATK1_2) { }
-	S_PHOENIXATK1_2('PHNX', 2, 7.0 / 35.0, S_PHOENIXATK1_3) { A_FirePhoenixPL1(); }
-	S_PHOENIXATK1_3('PHNX', 3, 4.0 / 35.0, S_PHOENIXATK1_4) { }
-	S_PHOENIXATK1_4('PHNX', 1, 4.0 / 35.0, S_PHOENIXATK1_5) { }
-	S_PHOENIXATK1_5('PHNX', 1, 0.0 / 35.0, S_PHOENIXREADY) { A_ReFire(); }
-	S_PHOENIXATK2_1('PHNX', 1, 3.0 / 35.0, S_PHOENIXATK2_2) { A_InitPhoenixPL2(); }
-	S_PHOENIXATK2_2('PHNX', 2 | FF_FULLBRIGHT, 1.0 / 35.0, S_PHOENIXATK2_3) { A_FirePhoenixPL2(); }
-	S_PHOENIXATK2_3('PHNX', 1, 4.0 / 35.0, S_PHOENIXATK2_4) { A_ReFire(); }
-	S_PHOENIXATK2_4('PHNX', 1, 4.0 / 35.0, S_PHOENIXREADY) { A_ShutdownPhoenixPL2(); }
+	S_PHOENIXREADY('PHNX', 0, 1.0 / 35.0, S_PHOENIXREADY) = A_WeaponReady
+	S_PHOENIXDOWN('PHNX', 0, 1.0 / 35.0, S_PHOENIXDOWN) = A_Lower
+	S_PHOENIXUP('PHNX', 0, 1.0 / 35.0, S_PHOENIXUP) = A_Raise
+	S_PHOENIXATK1_1('PHNX', 1, 5.0 / 35.0, S_PHOENIXATK1_2) = none
+	S_PHOENIXATK1_2('PHNX', 2, 7.0 / 35.0, S_PHOENIXATK1_3) = A_FirePhoenixPL1
+	S_PHOENIXATK1_3('PHNX', 3, 4.0 / 35.0, S_PHOENIXATK1_4) = none
+	S_PHOENIXATK1_4('PHNX', 1, 4.0 / 35.0, S_PHOENIXATK1_5) = none
+	S_PHOENIXATK1_5('PHNX', 1, 0.0 / 35.0, S_PHOENIXREADY) = A_ReFire
+	S_PHOENIXATK2_1('PHNX', 1, 3.0 / 35.0, S_PHOENIXATK2_2) = A_InitPhoenixPL2
+	S_PHOENIXATK2_2('PHNX', 2 | FF_FULLBRIGHT, 1.0 / 35.0, S_PHOENIXATK2_3) = A_FirePhoenixPL2
+	S_PHOENIXATK2_3('PHNX', 1, 4.0 / 35.0, S_PHOENIXATK2_4) = A_ReFire
+	S_PHOENIXATK2_4('PHNX', 1, 4.0 / 35.0, S_PHOENIXREADY) = A_ShutdownPhoenixPL2
 }
 
 defaultproperties

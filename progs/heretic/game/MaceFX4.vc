@@ -32,7 +32,7 @@ class MaceFX4 : MaceFX3
 //
 //===========================================================================
 
-void A_DeathBallImpact()
+final void A_DeathBallImpact()
 {
 	int i;
 	float angle;
@@ -103,8 +103,8 @@ void A_DeathBallImpact()
 
 __states__
 {
-	S_MACEFX4_1('FX02', 4, 99.0 / 35.0, S_MACEFX4_1) { }
-	S_MACEFXI4_1('FX02', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_MACEFXI1_2) { A_DeathBallImpact(); }
+	S_MACEFX4_1('FX02', 4, 99.0 / 35.0, S_MACEFX4_1) = none
+	S_MACEFXI4_1('FX02', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_MACEFXI1_2) = A_DeathBallImpact
 }
 
 defaultproperties

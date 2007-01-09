@@ -28,9 +28,9 @@ class Chandelier : Decoration
 
 __states__
 {
-	S_CHANDELIER1('CHDL', 0, 4.0 / 35.0, S_CHANDELIER2) { }
-	S_CHANDELIER2('CHDL', 1, 4.0 / 35.0, S_CHANDELIER3) { }
-	S_CHANDELIER3('CHDL', 2, 4.0 / 35.0, S_CHANDELIER1) { }
+	S_CHANDELIER1('CHDL', 0, 4.0 / 35.0, S_CHANDELIER2) = none
+	S_CHANDELIER2('CHDL', 1, 4.0 / 35.0, S_CHANDELIER3) = none
+	S_CHANDELIER3('CHDL', 2, 4.0 / 35.0, S_CHANDELIER1) = none
 }
 
 defaultproperties

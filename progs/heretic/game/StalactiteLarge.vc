@@ -28,7 +28,7 @@ class StalactiteLarge : Decoration
 
 __states__
 {
-	S_STALACTITELARGE('STCL', 0, -1.0, none) { }
+	S_STALACTITELARGE('STCL', 0, -1.0, none) = none
 }
 
 defaultproperties

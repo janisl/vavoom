@@ -34,7 +34,7 @@ state GizmoFloatState;
 //
 //==========================================================================
 
-void A_InitKeyGizmo()
+final void A_InitKeyGizmo()
 {
 	Actor A;
 
@@ -44,9 +44,9 @@ void A_InitKeyGizmo()
 
 __states__
 {
-	S_KEYGIZMO1('KGZ1', 0, 1.0 / 35.0, S_KEYGIZMO2) { }
-	S_KEYGIZMO2('KGZ1', 0, 1.0 / 35.0, S_KEYGIZMO3) { A_InitKeyGizmo(); }
-	S_KEYGIZMO3('KGZ1', 0, -1.0, none) { }
+	S_KEYGIZMO1('KGZ1', 0, 1.0 / 35.0, S_KEYGIZMO2) = none
+	S_KEYGIZMO2('KGZ1', 0, 1.0 / 35.0, S_KEYGIZMO3) = A_InitKeyGizmo
+	S_KEYGIZMO3('KGZ1', 0, -1.0, none) = none
 }
 
 defaultproperties

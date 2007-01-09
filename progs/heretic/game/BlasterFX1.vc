@@ -31,7 +31,7 @@ class BlasterFX1 : Projectile;
 //
 //===========================================================================
 
-void A_SpawnRippers()
+final void A_SpawnRippers()
 {
 	int i;
 	float angle;
@@ -51,14 +51,14 @@ void A_SpawnRippers()
 
 __states__
 {
-	S_BLASTERFX1_1('ACLO', 4, 200.0 / 35.0, S_BLASTERFX1_1) { }
-	S_BLASTERFXI1_1('FX18', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_BLASTERFXI1_2) { A_SpawnRippers(); }
-	S_BLASTERFXI1_2('FX18', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_BLASTERFXI1_3) { }
-	S_BLASTERFXI1_3('FX18', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_BLASTERFXI1_4) { }
-	S_BLASTERFXI1_4('FX18', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_BLASTERFXI1_5) { }
-	S_BLASTERFXI1_5('FX18', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_BLASTERFXI1_6) { }
-	S_BLASTERFXI1_6('FX18', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_BLASTERFXI1_7) { }
-	S_BLASTERFXI1_7('FX18', 6 | FF_FULLBRIGHT, 4.0 / 35.0, none) { }
+	S_BLASTERFX1_1('ACLO', 4, 200.0 / 35.0, S_BLASTERFX1_1) = none
+	S_BLASTERFXI1_1('FX18', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_BLASTERFXI1_2) = A_SpawnRippers
+	S_BLASTERFXI1_2('FX18', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_BLASTERFXI1_3) = none
+	S_BLASTERFXI1_3('FX18', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_BLASTERFXI1_4) = none
+	S_BLASTERFXI1_4('FX18', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_BLASTERFXI1_5) = none
+	S_BLASTERFXI1_5('FX18', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_BLASTERFXI1_6) = none
+	S_BLASTERFXI1_6('FX18', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_BLASTERFXI1_7) = none
+	S_BLASTERFXI1_7('FX18', 6 | FF_FULLBRIGHT, 4.0 / 35.0, none) = none
 }
 
 defaultproperties

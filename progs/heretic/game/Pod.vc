@@ -35,7 +35,7 @@ Actor Generator;
 //
 //==========================================================================
 
-void A_PodPain()
+final void A_PodPain()
 {
 	int i;
 	int count;
@@ -64,7 +64,7 @@ void A_PodPain()
 //
 //==========================================================================
 
-void A_RemovePod()
+final void A_RemovePod()
 {
 	if (Generator && Generator.Special1 > 0)
 	{
@@ -74,20 +74,20 @@ void A_RemovePod()
 
 __states__
 {
-	S_POD_WAIT1('PPOD', 0, 10.0 / 35.0, S_POD_WAIT1) { }
-	S_POD_PAIN1('PPOD', 1, 14.0 / 35.0, S_POD_WAIT1) { A_PodPain(); }
-	S_POD_DIE1('PPOD', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_POD_DIE2) { A_RemovePod(); }
-	S_POD_DIE2('PPOD', 3 | FF_FULLBRIGHT, 5.0 / 35.0, S_POD_DIE3) { A_Scream(); }
-	S_POD_DIE3('PPOD', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_POD_DIE4) { A_Explode(); }
-	S_POD_DIE4('PPOD', 5 | FF_FULLBRIGHT, 10.0 / 35.0, S_FREETARGMOBJ) { }
-	S_POD_GROW1('PPOD', 8, 3.0 / 35.0, S_POD_GROW2) { }
-	S_POD_GROW2('PPOD', 9, 3.0 / 35.0, S_POD_GROW3) { }
-	S_POD_GROW3('PPOD', 10, 3.0 / 35.0, S_POD_GROW4) { }
-	S_POD_GROW4('PPOD', 11, 3.0 / 35.0, S_POD_GROW5) { }
-	S_POD_GROW5('PPOD', 12, 3.0 / 35.0, S_POD_GROW6) { }
-	S_POD_GROW6('PPOD', 13, 3.0 / 35.0, S_POD_GROW7) { }
-	S_POD_GROW7('PPOD', 14, 3.0 / 35.0, S_POD_GROW8) { }
-	S_POD_GROW8('PPOD', 15, 3.0 / 35.0, S_POD_WAIT1) { }
+	S_POD_WAIT1('PPOD', 0, 10.0 / 35.0, S_POD_WAIT1) = none
+	S_POD_PAIN1('PPOD', 1, 14.0 / 35.0, S_POD_WAIT1) = A_PodPain
+	S_POD_DIE1('PPOD', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_POD_DIE2) = A_RemovePod
+	S_POD_DIE2('PPOD', 3 | FF_FULLBRIGHT, 5.0 / 35.0, S_POD_DIE3) = A_Scream
+	S_POD_DIE3('PPOD', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_POD_DIE4) = A_Explode
+	S_POD_DIE4('PPOD', 5 | FF_FULLBRIGHT, 10.0 / 35.0, S_FREETARGMOBJ) = none
+	S_POD_GROW1('PPOD', 8, 3.0 / 35.0, S_POD_GROW2) = none
+	S_POD_GROW2('PPOD', 9, 3.0 / 35.0, S_POD_GROW3) = none
+	S_POD_GROW3('PPOD', 10, 3.0 / 35.0, S_POD_GROW4) = none
+	S_POD_GROW4('PPOD', 11, 3.0 / 35.0, S_POD_GROW5) = none
+	S_POD_GROW5('PPOD', 12, 3.0 / 35.0, S_POD_GROW6) = none
+	S_POD_GROW6('PPOD', 13, 3.0 / 35.0, S_POD_GROW7) = none
+	S_POD_GROW7('PPOD', 14, 3.0 / 35.0, S_POD_GROW8) = none
+	S_POD_GROW8('PPOD', 15, 3.0 / 35.0, S_POD_WAIT1) = none
 }
 
 defaultproperties

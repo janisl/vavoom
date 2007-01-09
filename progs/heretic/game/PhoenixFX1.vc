@@ -32,7 +32,7 @@ class PhoenixFX1 : Projectile
 //
 //===========================================================================
 
-void A_PhoenixPuff()
+final void A_PhoenixPuff()
 {
 	Actor puff;
 	float angle;
@@ -52,15 +52,15 @@ void A_PhoenixPuff()
 
 __states__
 {
-	S_PHOENIXFX1_1('FX04', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_PHOENIXFX1_1) { A_PhoenixPuff(); }
-	S_PHOENIXFXI1_1('FX08', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_PHOENIXFXI1_2) { A_Explode(); }
-	S_PHOENIXFXI1_2('FX08', 1 | FF_FULLBRIGHT, 5.0 / 35.0, S_PHOENIXFXI1_3) { }
-	S_PHOENIXFXI1_3('FX08', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_PHOENIXFXI1_4) { }
-	S_PHOENIXFXI1_4('FX08', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_PHOENIXFXI1_5) { }
-	S_PHOENIXFXI1_5('FX08', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_PHOENIXFXI1_6) { }
-	S_PHOENIXFXI1_6('FX08', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_PHOENIXFXI1_7) { }
-	S_PHOENIXFXI1_7('FX08', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_PHOENIXFXI1_8) { }
-	S_PHOENIXFXI1_8('FX08', 7 | FF_FULLBRIGHT, 4.0 / 35.0, none) { }
+	S_PHOENIXFX1_1('FX04', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_PHOENIXFX1_1) = A_PhoenixPuff
+	S_PHOENIXFXI1_1('FX08', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_PHOENIXFXI1_2) = A_Explode
+	S_PHOENIXFXI1_2('FX08', 1 | FF_FULLBRIGHT, 5.0 / 35.0, S_PHOENIXFXI1_3) = none
+	S_PHOENIXFXI1_3('FX08', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_PHOENIXFXI1_4) = none
+	S_PHOENIXFXI1_4('FX08', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_PHOENIXFXI1_5) = none
+	S_PHOENIXFXI1_5('FX08', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_PHOENIXFXI1_6) = none
+	S_PHOENIXFXI1_6('FX08', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_PHOENIXFXI1_7) = none
+	S_PHOENIXFXI1_7('FX08', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_PHOENIXFXI1_8) = none
+	S_PHOENIXFXI1_8('FX08', 7 | FF_FULLBRIGHT, 4.0 / 35.0, none) = none
 }
 
 defaultproperties

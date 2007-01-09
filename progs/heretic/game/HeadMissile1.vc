@@ -45,7 +45,7 @@ void OnMapSpawn(mthing_t* mthing)
 //
 //==========================================================================
 
-void A_HeadIceImpact()
+final void A_HeadIceImpact()
 {
 	int i;
 	float angle;
@@ -66,13 +66,13 @@ void A_HeadIceImpact()
 
 __states__
 {
-	S_HEADFX1_1('FX05', 0, 6.0 / 35.0, S_HEADFX1_2) { }
-	S_HEADFX1_2('FX05', 1, 6.0 / 35.0, S_HEADFX1_3) { }
-	S_HEADFX1_3('FX05', 2, 6.0 / 35.0, S_HEADFX1_1) { }
-	S_HEADFXI1_1('FX05', 3, 5.0 / 35.0, S_HEADFXI1_2) { A_HeadIceImpact(); }
-	S_HEADFXI1_2('FX05', 4, 5.0 / 35.0, S_HEADFXI1_3) { }
-	S_HEADFXI1_3('FX05', 5, 5.0 / 35.0, S_HEADFXI1_4) { }
-	S_HEADFXI1_4('FX05', 6, 5.0 / 35.0, none) { }
+	S_HEADFX1_1('FX05', 0, 6.0 / 35.0, S_HEADFX1_2) = none
+	S_HEADFX1_2('FX05', 1, 6.0 / 35.0, S_HEADFX1_3) = none
+	S_HEADFX1_3('FX05', 2, 6.0 / 35.0, S_HEADFX1_1) = none
+	S_HEADFXI1_1('FX05', 3, 5.0 / 35.0, S_HEADFXI1_2) = A_HeadIceImpact
+	S_HEADFXI1_2('FX05', 4, 5.0 / 35.0, S_HEADFXI1_3) = none
+	S_HEADFXI1_3('FX05', 5, 5.0 / 35.0, S_HEADFXI1_4) = none
+	S_HEADFXI1_4('FX05', 6, 5.0 / 35.0, none) = none
 }
 
 defaultproperties

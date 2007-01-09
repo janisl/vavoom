@@ -28,15 +28,15 @@ class EggMissile : Projectile
 
 __states__
 {
-	S_EGGFX1('EGGM', 0, 4.0 / 35.0, S_EGGFX2) { }
-	S_EGGFX2('EGGM', 1, 4.0 / 35.0, S_EGGFX3) { }
-	S_EGGFX3('EGGM', 2, 4.0 / 35.0, S_EGGFX4) { }
-	S_EGGFX4('EGGM', 3, 4.0 / 35.0, S_EGGFX5) { }
-	S_EGGFX5('EGGM', 4, 4.0 / 35.0, S_EGGFX1) { }
-	S_EGGFXI1_1('FX01', 4 | FF_FULLBRIGHT, 3.0 / 35.0, S_EGGFXI1_2) { }
-	S_EGGFXI1_2('FX01', 5 | FF_FULLBRIGHT, 3.0 / 35.0, S_EGGFXI1_3) { }
-	S_EGGFXI1_3('FX01', 6 | FF_FULLBRIGHT, 3.0 / 35.0, S_EGGFXI1_4) { }
-	S_EGGFXI1_4('FX01', 7 | FF_FULLBRIGHT, 3.0 / 35.0, none) { }
+	S_EGGFX1('EGGM', 0, 4.0 / 35.0, S_EGGFX2) = none
+	S_EGGFX2('EGGM', 1, 4.0 / 35.0, S_EGGFX3) = none
+	S_EGGFX3('EGGM', 2, 4.0 / 35.0, S_EGGFX4) = none
+	S_EGGFX4('EGGM', 3, 4.0 / 35.0, S_EGGFX5) = none
+	S_EGGFX5('EGGM', 4, 4.0 / 35.0, S_EGGFX1) = none
+	S_EGGFXI1_1('FX01', 4 | FF_FULLBRIGHT, 3.0 / 35.0, S_EGGFXI1_2) = none
+	S_EGGFXI1_2('FX01', 5 | FF_FULLBRIGHT, 3.0 / 35.0, S_EGGFXI1_3) = none
+	S_EGGFXI1_3('FX01', 6 | FF_FULLBRIGHT, 3.0 / 35.0, S_EGGFXI1_4) = none
+	S_EGGFXI1_4('FX01', 7 | FF_FULLBRIGHT, 3.0 / 35.0, none) = none
 }
 
 defaultproperties

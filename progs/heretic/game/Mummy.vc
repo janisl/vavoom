@@ -44,7 +44,7 @@ void DropStuff()
 //
 //==========================================================================
 
-void A_MummyAttack()
+final void A_MummyAttack()
 {
 	if (!Enemy)
 	{
@@ -66,7 +66,7 @@ void A_MummyAttack()
 //
 //==========================================================================
 
-void A_MummySoul()
+final void A_MummySoul()
 {
 	Actor mo;
 
@@ -76,25 +76,25 @@ void A_MummySoul()
 
 __states__
 {
-	S_MUMMY_LOOK1('MUMM', 0, 10.0 / 35.0, S_MUMMY_LOOK2) { A_Look(); }
-	S_MUMMY_LOOK2('MUMM', 1, 10.0 / 35.0, S_MUMMY_LOOK1) { A_Look(); }
-	S_MUMMY_WALK1('MUMM', 0, 4.0 / 35.0, S_MUMMY_WALK2) { A_Chase(); }
-	S_MUMMY_WALK2('MUMM', 1, 4.0 / 35.0, S_MUMMY_WALK3) { A_Chase(); }
-	S_MUMMY_WALK3('MUMM', 2, 4.0 / 35.0, S_MUMMY_WALK4) { A_Chase(); }
-	S_MUMMY_WALK4('MUMM', 3, 4.0 / 35.0, S_MUMMY_WALK1) { A_Chase(); }
-	S_MUMMY_ATK1('MUMM', 4, 6.0 / 35.0, S_MUMMY_ATK2) { A_FaceTarget(); }
-	S_MUMMY_ATK2('MUMM', 5, 6.0 / 35.0, S_MUMMY_ATK3) { A_MummyAttack(); }
-	S_MUMMY_ATK3('MUMM', 6, 6.0 / 35.0, S_MUMMY_WALK1) { A_FaceTarget(); }
-	S_MUMMY_PAIN1('MUMM', 7, 4.0 / 35.0, S_MUMMY_PAIN2) { }
-	S_MUMMY_PAIN2('MUMM', 7, 4.0 / 35.0, S_MUMMY_WALK1) { A_Pain(); }
-	S_MUMMY_DIE1('MUMM', 8, 5.0 / 35.0, S_MUMMY_DIE2) { }
-	S_MUMMY_DIE2('MUMM', 9, 5.0 / 35.0, S_MUMMY_DIE3) { A_Scream(); }
-	S_MUMMY_DIE3('MUMM', 10, 5.0 / 35.0, S_MUMMY_DIE4) { A_MummySoul(); }
-	S_MUMMY_DIE4('MUMM', 11, 5.0 / 35.0, S_MUMMY_DIE5) { }
-	S_MUMMY_DIE5('MUMM', 12, 5.0 / 35.0, S_MUMMY_DIE6) { A_NoBlocking(); }
-	S_MUMMY_DIE6('MUMM', 13, 5.0 / 35.0, S_MUMMY_DIE7) { }
-	S_MUMMY_DIE7('MUMM', 14, 5.0 / 35.0, S_MUMMY_DIE8) { }
-	S_MUMMY_DIE8('MUMM', 15, -1.0, none) { }
+	S_MUMMY_LOOK1('MUMM', 0, 10.0 / 35.0, S_MUMMY_LOOK2) = A_Look
+	S_MUMMY_LOOK2('MUMM', 1, 10.0 / 35.0, S_MUMMY_LOOK1) = A_Look
+	S_MUMMY_WALK1('MUMM', 0, 4.0 / 35.0, S_MUMMY_WALK2) = A_Chase
+	S_MUMMY_WALK2('MUMM', 1, 4.0 / 35.0, S_MUMMY_WALK3) = A_Chase
+	S_MUMMY_WALK3('MUMM', 2, 4.0 / 35.0, S_MUMMY_WALK4) = A_Chase
+	S_MUMMY_WALK4('MUMM', 3, 4.0 / 35.0, S_MUMMY_WALK1) = A_Chase
+	S_MUMMY_ATK1('MUMM', 4, 6.0 / 35.0, S_MUMMY_ATK2) = A_FaceTarget
+	S_MUMMY_ATK2('MUMM', 5, 6.0 / 35.0, S_MUMMY_ATK3) = A_MummyAttack
+	S_MUMMY_ATK3('MUMM', 6, 6.0 / 35.0, S_MUMMY_WALK1) = A_FaceTarget
+	S_MUMMY_PAIN1('MUMM', 7, 4.0 / 35.0, S_MUMMY_PAIN2) = none
+	S_MUMMY_PAIN2('MUMM', 7, 4.0 / 35.0, S_MUMMY_WALK1) = A_Pain
+	S_MUMMY_DIE1('MUMM', 8, 5.0 / 35.0, S_MUMMY_DIE2) = none
+	S_MUMMY_DIE2('MUMM', 9, 5.0 / 35.0, S_MUMMY_DIE3) = A_Scream
+	S_MUMMY_DIE3('MUMM', 10, 5.0 / 35.0, S_MUMMY_DIE4) = A_MummySoul
+	S_MUMMY_DIE4('MUMM', 11, 5.0 / 35.0, S_MUMMY_DIE5) = none
+	S_MUMMY_DIE5('MUMM', 12, 5.0 / 35.0, S_MUMMY_DIE6) = A_NoBlocking
+	S_MUMMY_DIE6('MUMM', 13, 5.0 / 35.0, S_MUMMY_DIE7) = none
+	S_MUMMY_DIE7('MUMM', 14, 5.0 / 35.0, S_MUMMY_DIE8) = none
+	S_MUMMY_DIE8('MUMM', 15, -1.0, none) = none
 }
 
 defaultproperties

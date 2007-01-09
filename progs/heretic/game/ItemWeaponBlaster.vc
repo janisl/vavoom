@@ -29,7 +29,7 @@ class ItemWeaponBlaster : WeaponPickup
 
 __states__
 {
-	S_BLSR('WBLS', 0, -1.0, none) { }
+	S_BLSR('WBLS', 0, -1.0, none) = none
 }
 
 defaultproperties

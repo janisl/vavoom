@@ -29,9 +29,9 @@ class ItemAmmoPhoenixHefty : Ammo
 
 __states__
 {
-	S_AMP2_1('AMP2', 0, 4.0 / 35.0, S_AMP2_2) { }
-	S_AMP2_2('AMP2', 1, 4.0 / 35.0, S_AMP2_3) { }
-	S_AMP2_3('AMP2', 2, 4.0 / 35.0, S_AMP2_1) { }
+	S_AMP2_1('AMP2', 0, 4.0 / 35.0, S_AMP2_2) = none
+	S_AMP2_2('AMP2', 1, 4.0 / 35.0, S_AMP2_3) = none
+	S_AMP2_3('AMP2', 2, 4.0 / 35.0, S_AMP2_1) = none
 }
 
 defaultproperties

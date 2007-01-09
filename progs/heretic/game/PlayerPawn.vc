@@ -37,7 +37,7 @@ bool bSafeToRemove;
 //
 //==========================================================================
 
-void A_AddPlayerCorpse()
+final void A_AddPlayerCorpse()
 {
 	if (HereticLevelInfo(Level).bodyqueslot >= HereticLevelInfo::BODYQUESIZE)
 	{

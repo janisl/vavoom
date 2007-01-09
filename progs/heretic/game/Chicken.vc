@@ -94,7 +94,7 @@ bool UpdateChicken(int tics)
 //
 //==========================================================================
 
-void A_ChicLook()
+final void A_ChicLook()
 {
 	if (UpdateChicken(10))
 	{
@@ -109,7 +109,7 @@ void A_ChicLook()
 //
 //==========================================================================
 
-void A_ChicChase()
+final void A_ChicChase()
 {
 	if (UpdateChicken(3))
 	{
@@ -124,7 +124,7 @@ void A_ChicChase()
 //
 //==========================================================================
 
-void A_ChicAttack()
+final void A_ChicAttack()
 {
 	if (UpdateChicken(18))
 	{
@@ -146,7 +146,7 @@ void A_ChicAttack()
 //
 //==========================================================================
 
-void A_ChicPain()
+final void A_ChicPain()
 {
 	if (UpdateChicken(10))
 	{
@@ -157,25 +157,25 @@ void A_ChicPain()
 
 __states__
 {
-	S_CHICKEN_LOOK1('CHKN', 0, 10.0 / 35.0, S_CHICKEN_LOOK2) { A_ChicLook(); }
-	S_CHICKEN_LOOK2('CHKN', 1, 10.0 / 35.0, S_CHICKEN_LOOK1) { A_ChicLook(); }
-	S_CHICKEN_WALK1('CHKN', 0, 3.0 / 35.0, S_CHICKEN_WALK2) { A_ChicChase(); }
-	S_CHICKEN_WALK2('CHKN', 1, 3.0 / 35.0, S_CHICKEN_WALK3) { A_ChicChase(); }
-	S_CHICKEN_WALK3('CHKN', 0, 3.0 / 35.0, S_CHICKEN_WALK4) { A_ChicChase(); }
-	S_CHICKEN_WALK4('CHKN', 1, 3.0 / 35.0, S_CHICKEN_WALK1) { A_ChicChase(); }
-	S_CHICKEN_ATK1('CHKN', 0, 8.0 / 35.0, S_CHICKEN_ATK2) { A_FaceTarget(); }
-	S_CHICKEN_ATK2('CHKN', 2, 5.0 / 35.0, S_CHICKEN_ATK3) { A_ChicAttack(); }
-	S_CHICKEN_ATK3('CHKN', 2, 5.0 / 35.0, S_CHICKEN_WALK1) { }
-	S_CHICKEN_PAIN1('CHKN', 3, 5.0 / 35.0, S_CHICKEN_PAIN2) { A_Feathers(); }
-	S_CHICKEN_PAIN2('CHKN', 2, 5.0 / 35.0, S_CHICKEN_WALK1) { A_ChicPain(); }
-	S_CHICKEN_DIE1('CHKN', 4, 6.0 / 35.0, S_CHICKEN_DIE2) { A_Scream(); }
-	S_CHICKEN_DIE2('CHKN', 5, 6.0 / 35.0, S_CHICKEN_DIE3) { A_Feathers(); }
-	S_CHICKEN_DIE3('CHKN', 6, 6.0 / 35.0, S_CHICKEN_DIE4) { }
-	S_CHICKEN_DIE4('CHKN', 7, 6.0 / 35.0, S_CHICKEN_DIE5) { A_NoBlocking(); }
-	S_CHICKEN_DIE5('CHKN', 8, 6.0 / 35.0, S_CHICKEN_DIE6) { }
-	S_CHICKEN_DIE6('CHKN', 9, 6.0 / 35.0, S_CHICKEN_DIE7) { }
-	S_CHICKEN_DIE7('CHKN', 10, 6.0 / 35.0, S_CHICKEN_DIE8) { }
-	S_CHICKEN_DIE8('CHKN', 11, -1.0, none) { }
+	S_CHICKEN_LOOK1('CHKN', 0, 10.0 / 35.0, S_CHICKEN_LOOK2) = A_ChicLook
+	S_CHICKEN_LOOK2('CHKN', 1, 10.0 / 35.0, S_CHICKEN_LOOK1) = A_ChicLook
+	S_CHICKEN_WALK1('CHKN', 0, 3.0 / 35.0, S_CHICKEN_WALK2) = A_ChicChase
+	S_CHICKEN_WALK2('CHKN', 1, 3.0 / 35.0, S_CHICKEN_WALK3) = A_ChicChase
+	S_CHICKEN_WALK3('CHKN', 0, 3.0 / 35.0, S_CHICKEN_WALK4) = A_ChicChase
+	S_CHICKEN_WALK4('CHKN', 1, 3.0 / 35.0, S_CHICKEN_WALK1) = A_ChicChase
+	S_CHICKEN_ATK1('CHKN', 0, 8.0 / 35.0, S_CHICKEN_ATK2) = A_FaceTarget
+	S_CHICKEN_ATK2('CHKN', 2, 5.0 / 35.0, S_CHICKEN_ATK3) = A_ChicAttack
+	S_CHICKEN_ATK3('CHKN', 2, 5.0 / 35.0, S_CHICKEN_WALK1) = none
+	S_CHICKEN_PAIN1('CHKN', 3, 5.0 / 35.0, S_CHICKEN_PAIN2) = A_Feathers
+	S_CHICKEN_PAIN2('CHKN', 2, 5.0 / 35.0, S_CHICKEN_WALK1) = A_ChicPain
+	S_CHICKEN_DIE1('CHKN', 4, 6.0 / 35.0, S_CHICKEN_DIE2) = A_Scream
+	S_CHICKEN_DIE2('CHKN', 5, 6.0 / 35.0, S_CHICKEN_DIE3) = A_Feathers
+	S_CHICKEN_DIE3('CHKN', 6, 6.0 / 35.0, S_CHICKEN_DIE4) = none
+	S_CHICKEN_DIE4('CHKN', 7, 6.0 / 35.0, S_CHICKEN_DIE5) = A_NoBlocking
+	S_CHICKEN_DIE5('CHKN', 8, 6.0 / 35.0, S_CHICKEN_DIE6) = none
+	S_CHICKEN_DIE6('CHKN', 9, 6.0 / 35.0, S_CHICKEN_DIE7) = none
+	S_CHICKEN_DIE7('CHKN', 10, 6.0 / 35.0, S_CHICKEN_DIE8) = none
+	S_CHICKEN_DIE8('CHKN', 11, -1.0, none) = none
 }
 
 defaultproperties

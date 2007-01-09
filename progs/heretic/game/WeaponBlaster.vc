@@ -31,7 +31,7 @@ class WeaponBlaster : Weapon;
 //
 //===========================================================================
 
-void A_FireBlasterPL1()
+final void A_FireBlasterPL1()
 {
 	int damage;
 	float bulletslope;
@@ -54,7 +54,7 @@ void A_FireBlasterPL1()
 //
 //===========================================================================
 
-void A_FireBlasterPL2()
+final void A_FireBlasterPL2()
 {
 	Actor A;
 
@@ -70,21 +70,21 @@ void A_FireBlasterPL2()
 
 __states__
 {
-	S_BLASTERREADY('BLSR', 0, 1.0 / 35.0, S_BLASTERREADY) { A_WeaponReady(); }
-	S_BLASTERDOWN('BLSR', 0, 1.0 / 35.0, S_BLASTERDOWN) { A_Lower(); }
-	S_BLASTERUP('BLSR', 0, 1.0 / 35.0, S_BLASTERUP) { A_Raise(); }
-	S_BLASTERATK1_1('BLSR', 1, 3.0 / 35.0, S_BLASTERATK1_2) { }
-	S_BLASTERATK1_2('BLSR', 2, 3.0 / 35.0, S_BLASTERATK1_3) { }
-	S_BLASTERATK1_3('BLSR', 3, 2.0 / 35.0, S_BLASTERATK1_4) { A_FireBlasterPL1(); }
-	S_BLASTERATK1_4('BLSR', 2, 2.0 / 35.0, S_BLASTERATK1_5) { }
-	S_BLASTERATK1_5('BLSR', 1, 2.0 / 35.0, S_BLASTERATK1_6) { }
-	S_BLASTERATK1_6('BLSR', 0, 0.0 / 35.0, S_BLASTERREADY) { A_ReFire(); }
-	S_BLASTERATK2_1('BLSR', 1, 0.0 / 35.0, S_BLASTERATK2_2) { }
-	S_BLASTERATK2_2('BLSR', 2, 0.0 / 35.0, S_BLASTERATK2_3) { }
-	S_BLASTERATK2_3('BLSR', 3, 3.0 / 35.0, S_BLASTERATK2_4) { A_FireBlasterPL2(); }
-	S_BLASTERATK2_4('BLSR', 2, 4.0 / 35.0, S_BLASTERATK2_5) { }
-	S_BLASTERATK2_5('BLSR', 1, 4.0 / 35.0, S_BLASTERATK2_6) { }
-	S_BLASTERATK2_6('BLSR', 0, 0.0 / 35.0, S_BLASTERREADY) { A_ReFire(); }
+	S_BLASTERREADY('BLSR', 0, 1.0 / 35.0, S_BLASTERREADY) = A_WeaponReady
+	S_BLASTERDOWN('BLSR', 0, 1.0 / 35.0, S_BLASTERDOWN) = A_Lower
+	S_BLASTERUP('BLSR', 0, 1.0 / 35.0, S_BLASTERUP) = A_Raise
+	S_BLASTERATK1_1('BLSR', 1, 3.0 / 35.0, S_BLASTERATK1_2) = none
+	S_BLASTERATK1_2('BLSR', 2, 3.0 / 35.0, S_BLASTERATK1_3) = none
+	S_BLASTERATK1_3('BLSR', 3, 2.0 / 35.0, S_BLASTERATK1_4) = A_FireBlasterPL1
+	S_BLASTERATK1_4('BLSR', 2, 2.0 / 35.0, S_BLASTERATK1_5) = none
+	S_BLASTERATK1_5('BLSR', 1, 2.0 / 35.0, S_BLASTERATK1_6) = none
+	S_BLASTERATK1_6('BLSR', 0, 0.0 / 35.0, S_BLASTERREADY) = A_ReFire
+	S_BLASTERATK2_1('BLSR', 1, 0.0 / 35.0, S_BLASTERATK2_2) = none
+	S_BLASTERATK2_2('BLSR', 2, 0.0 / 35.0, S_BLASTERATK2_3) = none
+	S_BLASTERATK2_3('BLSR', 3, 3.0 / 35.0, S_BLASTERATK2_4) = A_FireBlasterPL2
+	S_BLASTERATK2_4('BLSR', 2, 4.0 / 35.0, S_BLASTERATK2_5) = none
+	S_BLASTERATK2_5('BLSR', 1, 4.0 / 35.0, S_BLASTERATK2_6) = none
+	S_BLASTERATK2_6('BLSR', 0, 0.0 / 35.0, S_BLASTERREADY) = A_ReFire
 }
 
 defaultproperties

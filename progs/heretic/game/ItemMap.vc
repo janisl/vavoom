@@ -79,7 +79,7 @@ void TouchSpecial(Actor Toucher)
 
 __states__
 {
-	S_ITEM_SPMP1('SPMP', 0, -1.0, none) { }
+	S_ITEM_SPMP1('SPMP', 0, -1.0, none) = none
 }
 
 defaultproperties

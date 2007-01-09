@@ -31,7 +31,7 @@ class WeaponSkullRod : Weapon;
 //
 //===========================================================================
 
-void A_FireSkullRodPL1()
+final void A_FireSkullRodPL1()
 {
 	Actor A;
 
@@ -58,7 +58,7 @@ void A_FireSkullRodPL1()
 //
 //===========================================================================
 
-void A_FireSkullRodPL2()
+final void A_FireSkullRodPL2()
 {
 	Player(Player).Ammo[am_skullrod] -=
 		Player.Level.Game.deathmatch ? USE_SKRD_AMMO_1 : USE_SKRD_AMMO_2;
@@ -85,21 +85,21 @@ void A_FireSkullRodPL2()
 
 __states__
 {
-	S_HORNRODREADY('HROD', 0, 1.0 / 35.0, S_HORNRODREADY) { A_WeaponReady(); }
-	S_HORNRODDOWN('HROD', 0, 1.0 / 35.0, S_HORNRODDOWN) { A_Lower(); }
-	S_HORNRODUP('HROD', 0, 1.0 / 35.0, S_HORNRODUP) { A_Raise(); }
-	S_HORNRODATK1_1('HROD', 0, 4.0 / 35.0, S_HORNRODATK1_2) { A_FireSkullRodPL1(); }
-	S_HORNRODATK1_2('HROD', 1, 4.0 / 35.0, S_HORNRODATK1_3) { A_FireSkullRodPL1(); }
-	S_HORNRODATK1_3('HROD', 1, 0.0 / 35.0, S_HORNRODREADY) { A_ReFire(); }
-	S_HORNRODATK2_1('HROD', 2, 2.0 / 35.0, S_HORNRODATK2_2) { }
-	S_HORNRODATK2_2('HROD', 3, 3.0 / 35.0, S_HORNRODATK2_3) { }
-	S_HORNRODATK2_3('HROD', 4, 2.0 / 35.0, S_HORNRODATK2_4) { }
-	S_HORNRODATK2_4('HROD', 5, 3.0 / 35.0, S_HORNRODATK2_5) { }
-	S_HORNRODATK2_5('HROD', 6, 4.0 / 35.0, S_HORNRODATK2_6) { A_FireSkullRodPL2(); }
-	S_HORNRODATK2_6('HROD', 5, 2.0 / 35.0, S_HORNRODATK2_7) { }
-	S_HORNRODATK2_7('HROD', 4, 3.0 / 35.0, S_HORNRODATK2_8) { }
-	S_HORNRODATK2_8('HROD', 3, 2.0 / 35.0, S_HORNRODATK2_9) { }
-	S_HORNRODATK2_9('HROD', 2, 2.0 / 35.0, S_HORNRODREADY) { A_ReFire(); }
+	S_HORNRODREADY('HROD', 0, 1.0 / 35.0, S_HORNRODREADY) = A_WeaponReady
+	S_HORNRODDOWN('HROD', 0, 1.0 / 35.0, S_HORNRODDOWN) = A_Lower
+	S_HORNRODUP('HROD', 0, 1.0 / 35.0, S_HORNRODUP) = A_Raise
+	S_HORNRODATK1_1('HROD', 0, 4.0 / 35.0, S_HORNRODATK1_2) = A_FireSkullRodPL1
+	S_HORNRODATK1_2('HROD', 1, 4.0 / 35.0, S_HORNRODATK1_3) = A_FireSkullRodPL1
+	S_HORNRODATK1_3('HROD', 1, 0.0 / 35.0, S_HORNRODREADY) = A_ReFire
+	S_HORNRODATK2_1('HROD', 2, 2.0 / 35.0, S_HORNRODATK2_2) = none
+	S_HORNRODATK2_2('HROD', 3, 3.0 / 35.0, S_HORNRODATK2_3) = none
+	S_HORNRODATK2_3('HROD', 4, 2.0 / 35.0, S_HORNRODATK2_4) = none
+	S_HORNRODATK2_4('HROD', 5, 3.0 / 35.0, S_HORNRODATK2_5) = none
+	S_HORNRODATK2_5('HROD', 6, 4.0 / 35.0, S_HORNRODATK2_6) = A_FireSkullRodPL2
+	S_HORNRODATK2_6('HROD', 5, 2.0 / 35.0, S_HORNRODATK2_7) = none
+	S_HORNRODATK2_7('HROD', 4, 3.0 / 35.0, S_HORNRODATK2_8) = none
+	S_HORNRODATK2_8('HROD', 3, 2.0 / 35.0, S_HORNRODATK2_9) = none
+	S_HORNRODATK2_9('HROD', 2, 2.0 / 35.0, S_HORNRODREADY) = A_ReFire
 }
 
 defaultproperties

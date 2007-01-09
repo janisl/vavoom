@@ -27,10 +27,10 @@ class SludgeSplash:Effect;
 
 __states__
 {
-	S_SLUDGESPLASH1('SLDG', 4, 5.0 / 35.0, S_SLUDGESPLASH2) { }
-	S_SLUDGESPLASH2('SLDG', 5, 5.0 / 35.0, S_SLUDGESPLASH3) { }
-	S_SLUDGESPLASH3('SLDG', 6, 5.0 / 35.0, S_SLUDGESPLASH4) { }
-	S_SLUDGESPLASH4('SLDG', 7, 5.0 / 35.0, none) { }
+	S_SLUDGESPLASH1('SLDG', 4, 5.0 / 35.0, S_SLUDGESPLASH2) = none
+	S_SLUDGESPLASH2('SLDG', 5, 5.0 / 35.0, S_SLUDGESPLASH3) = none
+	S_SLUDGESPLASH3('SLDG', 6, 5.0 / 35.0, S_SLUDGESPLASH4) = none
+	S_SLUDGESPLASH4('SLDG', 7, 5.0 / 35.0, none) = none
 }
 
 defaultproperties

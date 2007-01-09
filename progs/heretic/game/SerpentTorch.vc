@@ -28,9 +28,9 @@ class SerpentTorch : Decoration
 
 __states__
 {
-	S_SERPTORCH1('SRTC', 0, 4.0 / 35.0, S_SERPTORCH2) { }
-	S_SERPTORCH2('SRTC', 1, 4.0 / 35.0, S_SERPTORCH3) { }
-	S_SERPTORCH3('SRTC', 2, 4.0 / 35.0, S_SERPTORCH1) { }
+	S_SERPTORCH1('SRTC', 0, 4.0 / 35.0, S_SERPTORCH2) = none
+	S_SERPTORCH2('SRTC', 1, 4.0 / 35.0, S_SERPTORCH3) = none
+	S_SERPTORCH3('SRTC', 2, 4.0 / 35.0, S_SERPTORCH1) = none
 }
 
 defaultproperties

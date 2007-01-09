@@ -27,29 +27,6 @@ class KnightGhost : Knight
 	__mobjinfo__(65)
 	__scriptid__(129);
 
-//==========================================================================
-//
-//  A_KnightAttack
-//
-//==========================================================================
-
-void A_KnightAttack()
-{
-	if (!Enemy)
-	{
-		return;
-	}
-	if (CheckMeleeRange())
-	{
-		Enemy.Damage(self, self, HITDICE(3));
-		PlaySound('hknight/melee', CHAN_WEAPON);
-		return;
-	}
-	// Throw axe
-	PlaySound(AttackSound, CHAN_WEAPON);
-	SpawnMissile(Enemy, KnightRedAxe);
-}
-
 defaultproperties
 {
 	Alpha = 0.666;

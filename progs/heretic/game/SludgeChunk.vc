@@ -27,11 +27,11 @@ class SludgeChunk:ProjEffect;
 
 __states__
 {
-	S_SLUDGECHUNK1('SLDG', 0, 8.0 / 35.0, S_SLUDGECHUNK2) { }
-	S_SLUDGECHUNK2('SLDG', 1, 8.0 / 35.0, S_SLUDGECHUNK3) { }
-	S_SLUDGECHUNK3('SLDG', 2, 8.0 / 35.0, S_SLUDGECHUNK4) { }
-	S_SLUDGECHUNK4('SLDG', 3, 8.0 / 35.0, none) { }
-	S_SLUDGECHUNKX('SLDG', 3, 6.0 / 35.0, none) { }
+	S_SLUDGECHUNK1('SLDG', 0, 8.0 / 35.0, S_SLUDGECHUNK2) = none
+	S_SLUDGECHUNK2('SLDG', 1, 8.0 / 35.0, S_SLUDGECHUNK3) = none
+	S_SLUDGECHUNK3('SLDG', 2, 8.0 / 35.0, S_SLUDGECHUNK4) = none
+	S_SLUDGECHUNK4('SLDG', 3, 8.0 / 35.0, none) = none
+	S_SLUDGECHUNKX('SLDG', 3, 6.0 / 35.0, none) = none
 }
 
 defaultproperties

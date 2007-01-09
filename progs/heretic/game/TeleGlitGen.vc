@@ -32,7 +32,7 @@ class TeleGlitGen : Actor
 //
 //==========================================================================
 
-void A_SpawnTeleGlitter()
+final void A_SpawnTeleGlitter()
 {
 	Actor mo;
 
@@ -43,7 +43,7 @@ void A_SpawnTeleGlitter()
 
 __states__
 {
-	S_TELEGLITGEN1('TGLT', 0, 8.0 / 35.0, S_TELEGLITGEN1) { A_SpawnTeleGlitter(); }
+	S_TELEGLITGEN1('TGLT', 0, 8.0 / 35.0, S_TELEGLITGEN1) = A_SpawnTeleGlitter
 }
 
 defaultproperties

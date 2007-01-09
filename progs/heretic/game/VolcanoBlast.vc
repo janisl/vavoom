@@ -32,7 +32,7 @@ class VolcanoBlast : Projectile
 //
 //==========================================================================
 
-void A_BeastPuff()
+final void A_BeastPuff()
 {
 	TVec org;
 
@@ -51,7 +51,7 @@ void A_BeastPuff()
 //
 //==========================================================================
 
-void A_VolcBallImpact()
+final void A_VolcBallImpact()
 {
 	int i;
 	Actor tiny;
@@ -78,14 +78,14 @@ void A_VolcBallImpact()
 
 __states__
 {
-	S_VOLCANOBALL1('VFBL', 0, 4.0 / 35.0, S_VOLCANOBALL2) { A_BeastPuff(); }
-	S_VOLCANOBALL2('VFBL', 1, 4.0 / 35.0, S_VOLCANOBALL1) { A_BeastPuff(); }
-	S_VOLCANOBALLX1('XPL1', 0, 4.0 / 35.0, S_VOLCANOBALLX2) { A_VolcBallImpact(); }
-	S_VOLCANOBALLX2('XPL1', 1, 4.0 / 35.0, S_VOLCANOBALLX3) { }
-	S_VOLCANOBALLX3('XPL1', 2, 4.0 / 35.0, S_VOLCANOBALLX4) { }
-	S_VOLCANOBALLX4('XPL1', 3, 4.0 / 35.0, S_VOLCANOBALLX5) { }
-	S_VOLCANOBALLX5('XPL1', 4, 4.0 / 35.0, S_VOLCANOBALLX6) { }
-	S_VOLCANOBALLX6('XPL1', 5, 4.0 / 35.0, none) { }
+	S_VOLCANOBALL1('VFBL', 0, 4.0 / 35.0, S_VOLCANOBALL2) = A_BeastPuff
+	S_VOLCANOBALL2('VFBL', 1, 4.0 / 35.0, S_VOLCANOBALL1) = A_BeastPuff
+	S_VOLCANOBALLX1('XPL1', 0, 4.0 / 35.0, S_VOLCANOBALLX2) = A_VolcBallImpact
+	S_VOLCANOBALLX2('XPL1', 1, 4.0 / 35.0, S_VOLCANOBALLX3) = none
+	S_VOLCANOBALLX3('XPL1', 2, 4.0 / 35.0, S_VOLCANOBALLX4) = none
+	S_VOLCANOBALLX4('XPL1', 3, 4.0 / 35.0, S_VOLCANOBALLX5) = none
+	S_VOLCANOBALLX5('XPL1', 4, 4.0 / 35.0, S_VOLCANOBALLX6) = none
+	S_VOLCANOBALLX6('XPL1', 5, 4.0 / 35.0, none) = none
 }
 
 defaultproperties

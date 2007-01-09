@@ -29,9 +29,9 @@ class ItemAmmoBlasterWimpy : Ammo
 
 __states__
 {
-	S_AMB1_1('AMB1', 0, 4.0 / 35.0, S_AMB1_2) { }
-	S_AMB1_2('AMB1', 1, 4.0 / 35.0, S_AMB1_3) { }
-	S_AMB1_3('AMB1', 2, 4.0 / 35.0, S_AMB1_1) { }
+	S_AMB1_1('AMB1', 0, 4.0 / 35.0, S_AMB1_2) = none
+	S_AMB1_2('AMB1', 1, 4.0 / 35.0, S_AMB1_3) = none
+	S_AMB1_3('AMB1', 2, 4.0 / 35.0, S_AMB1_1) = none
 }
 
 defaultproperties

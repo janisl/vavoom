@@ -28,7 +28,7 @@ class SkullHang35 : Decoration
 
 __states__
 {
-	S_SKULLHANG35_1('SKH4', 0, -1.0, none) { }
+	S_SKULLHANG35_1('SKH4', 0, -1.0, none) = none
 }
 
 defaultproperties

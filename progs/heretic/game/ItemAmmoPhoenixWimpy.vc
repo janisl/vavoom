@@ -29,9 +29,9 @@ class ItemAmmoPhoenixWimpy : Ammo
 
 __states__
 {
-	S_AMP1_1('AMP1', 0, 4.0 / 35.0, S_AMP1_2) { }
-	S_AMP1_2('AMP1', 1, 4.0 / 35.0, S_AMP1_3) { }
-	S_AMP1_3('AMP1', 2, 4.0 / 35.0, S_AMP1_1) { }
+	S_AMP1_1('AMP1', 0, 4.0 / 35.0, S_AMP1_2) = none
+	S_AMP1_2('AMP1', 1, 4.0 / 35.0, S_AMP1_3) = none
+	S_AMP1_3('AMP1', 2, 4.0 / 35.0, S_AMP1_1) = none
 }
 
 defaultproperties

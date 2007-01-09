@@ -45,7 +45,7 @@ void OnMapSpawn(mthing_t* mthing)
 //
 //==========================================================================
 
-void A_ContMobjSound()
+final void A_ContMobjSound()
 {
 	PlaySound('mummy/head', CHAN_VOICE);
 }
@@ -56,21 +56,21 @@ void A_ContMobjSound()
 //
 //==========================================================================
 
-void A_MummyFX1Seek()
+final void A_MummyFX1Seek()
 {
 	SeekerMissile(10.0, 20.0);
 }
 
 __states__
 {
-	S_MUMMYFX1_1('FX15', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_MUMMYFX1_2) { A_ContMobjSound(); }
-	S_MUMMYFX1_2('FX15', 1 | FF_FULLBRIGHT, 5.0 / 35.0, S_MUMMYFX1_3) { A_MummyFX1Seek(); }
-	S_MUMMYFX1_3('FX15', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_MUMMYFX1_4) { }
-	S_MUMMYFX1_4('FX15', 1 | FF_FULLBRIGHT, 5.0 / 35.0, S_MUMMYFX1_1) { A_MummyFX1Seek(); }
-	S_MUMMYFXI1_1('FX15', 3 | FF_FULLBRIGHT, 5.0 / 35.0, S_MUMMYFXI1_2) { }
-	S_MUMMYFXI1_2('FX15', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_MUMMYFXI1_3) { }
-	S_MUMMYFXI1_3('FX15', 5 | FF_FULLBRIGHT, 5.0 / 35.0, S_MUMMYFXI1_4) { }
-	S_MUMMYFXI1_4('FX15', 6 | FF_FULLBRIGHT, 5.0 / 35.0, none) { }
+	S_MUMMYFX1_1('FX15', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_MUMMYFX1_2) = A_ContMobjSound
+	S_MUMMYFX1_2('FX15', 1 | FF_FULLBRIGHT, 5.0 / 35.0, S_MUMMYFX1_3) = A_MummyFX1Seek
+	S_MUMMYFX1_3('FX15', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_MUMMYFX1_4) = none
+	S_MUMMYFX1_4('FX15', 1 | FF_FULLBRIGHT, 5.0 / 35.0, S_MUMMYFX1_1) = A_MummyFX1Seek
+	S_MUMMYFXI1_1('FX15', 3 | FF_FULLBRIGHT, 5.0 / 35.0, S_MUMMYFXI1_2) = none
+	S_MUMMYFXI1_2('FX15', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_MUMMYFXI1_3) = none
+	S_MUMMYFXI1_3('FX15', 5 | FF_FULLBRIGHT, 5.0 / 35.0, S_MUMMYFXI1_4) = none
+	S_MUMMYFXI1_4('FX15', 6 | FF_FULLBRIGHT, 5.0 / 35.0, none) = none
 }
 
 defaultproperties

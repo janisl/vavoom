@@ -35,7 +35,7 @@ state XCrashState;
 //
 //==========================================================================
 
-void A_ImpMeAttack()
+final void A_ImpMeAttack()
 {
 	if (!Enemy)
 	{
@@ -54,7 +54,7 @@ void A_ImpMeAttack()
 //
 //==========================================================================
 
-void A_ImpMsAttack()
+final void A_ImpMsAttack()
 {
 	if (!Enemy || Random() > 0.25)
 	{
@@ -73,7 +73,7 @@ void A_ImpMsAttack()
 //
 //==========================================================================
 
-void A_ImpDeath()
+final void A_ImpDeath()
 {
 	bSolid = false;
 	bFloorClip = true;
@@ -89,7 +89,7 @@ void A_ImpDeath()
 //
 //==========================================================================
 
-void A_ImpXDeath1()
+final void A_ImpXDeath1()
 {
 	bSolid = false;
 	bNoGravity = true;
@@ -103,7 +103,7 @@ void A_ImpXDeath1()
 //
 //==========================================================================
 
-void A_ImpXDeath2()
+final void A_ImpXDeath2()
 {
 	bNoGravity = false;
 	if (Origin.z <= FloorZ)
@@ -118,7 +118,7 @@ void A_ImpXDeath2()
 //
 //==========================================================================
 
-void A_ImpExplode()
+final void A_ImpExplode()
 {
 	Actor mo;
 
@@ -139,43 +139,43 @@ void A_ImpExplode()
 
 __states__
 {
-	S_IMP_LOOK1('IMPX', 0, 10.0 / 35.0, S_IMP_LOOK2) { A_Look(); }
-	S_IMP_LOOK2('IMPX', 1, 10.0 / 35.0, S_IMP_LOOK3) { A_Look(); }
-	S_IMP_LOOK3('IMPX', 2, 10.0 / 35.0, S_IMP_LOOK4) { A_Look(); }
-	S_IMP_LOOK4('IMPX', 1, 10.0 / 35.0, S_IMP_LOOK1) { A_Look(); }
-	S_IMP_FLY1('IMPX', 0, 3.0 /35.0, S_IMP_FLY2) { A_Chase(); }
-	S_IMP_FLY2('IMPX', 0, 3.0 /35.0, S_IMP_FLY3) { A_Chase(); }
-	S_IMP_FLY3('IMPX', 1, 3.0 /35.0, S_IMP_FLY4) { A_Chase(); }
-	S_IMP_FLY4('IMPX', 1, 3.0 /35.0, S_IMP_FLY5) { A_Chase(); }
-	S_IMP_FLY5('IMPX', 2, 3.0 /35.0, S_IMP_FLY6) { A_Chase(); }
-	S_IMP_FLY6('IMPX', 2, 3.0 /35.0, S_IMP_FLY7) { A_Chase(); }
-	S_IMP_FLY7('IMPX', 1, 3.0 /35.0, S_IMP_FLY8) { A_Chase(); }
-	S_IMP_FLY8('IMPX', 1, 3.0 /35.0, S_IMP_FLY1) { A_Chase(); }
-	S_IMP_MEATK1('IMPX', 3, 6.0 /35.0, S_IMP_MEATK2) { A_FaceTarget(); }
-	S_IMP_MEATK2('IMPX', 4, 6.0 /35.0, S_IMP_MEATK3) { A_FaceTarget(); }
-	S_IMP_MEATK3('IMPX', 5, 3.0 /35.0, S_IMP_FLY1) { A_ImpMeAttack(); }
-	S_IMP_MSATK1_1('IMPX', 0, 10.0 /35.0, S_IMP_MSATK1_2) { A_FaceTarget(); }
-	S_IMP_MSATK1_2('IMPX', 1, 6.0 /35.0, S_IMP_MSATK1_3) { A_ImpMsAttack(); }
-	S_IMP_MSATK1_3('IMPX', 2, 6.0 /35.0, S_IMP_MSATK1_4) { }
-	S_IMP_MSATK1_4('IMPX', 1, 6.0 /35.0, S_IMP_MSATK1_5) { }
-	S_IMP_MSATK1_5('IMPX', 0, 6.0 /35.0, S_IMP_MSATK1_6) { }
-	S_IMP_MSATK1_6('IMPX', 1, 6.0 /35.0, S_IMP_MSATK1_3) { }
-	S_IMP_PAIN1('IMPX', 6, 3.0 /35.0, S_IMP_PAIN2) { }
-	S_IMP_PAIN2('IMPX', 6, 3.0 /35.0, S_IMP_FLY1) { A_Pain(); }
-	S_IMP_DIE1('IMPX', 6, 4.0 / 35.0, S_IMP_DIE2) { A_ImpDeath(); }
-	S_IMP_DIE2('IMPX', 7, 5.0 / 35.0, S_IMP_DIE2) { }
-	S_IMP_XDIE1('IMPX', 18, 5.0 / 35.0, S_IMP_XDIE2) { A_ImpXDeath1(); }
-	S_IMP_XDIE2('IMPX', 19, 5.0 / 35.0, S_IMP_XDIE3) { }
-	S_IMP_XDIE3('IMPX', 20, 5.0 / 35.0, S_IMP_XDIE4) { }
-	S_IMP_XDIE4('IMPX', 21, 5.0 / 35.0, S_IMP_XDIE5) { A_ImpXDeath2(); }
-	S_IMP_XDIE5('IMPX', 22, 5.0 / 35.0, S_IMP_XDIE5) { }
-	S_IMP_CRASH1('IMPX', 8, 7.0 / 35.0, S_IMP_CRASH2) { A_ImpExplode(); }
-	S_IMP_CRASH2('IMPX', 9, 7.0 / 35.0, S_IMP_CRASH3) { A_Scream(); }
-	S_IMP_CRASH3('IMPX', 10, 7.0 / 35.0, S_IMP_CRASH4) { }
-	S_IMP_CRASH4('IMPX', 11, -1.0, none) { }
-	S_IMP_XCRASH1('IMPX', 23, 7.0 / 35.0, S_IMP_XCRASH2) { }
-	S_IMP_XCRASH2('IMPX', 24, 7.0 / 35.0, S_IMP_XCRASH3) { }
-	S_IMP_XCRASH3('IMPX', 25, -1.0, none) { }
+	S_IMP_LOOK1('IMPX', 0, 10.0 / 35.0, S_IMP_LOOK2) = A_Look
+	S_IMP_LOOK2('IMPX', 1, 10.0 / 35.0, S_IMP_LOOK3) = A_Look
+	S_IMP_LOOK3('IMPX', 2, 10.0 / 35.0, S_IMP_LOOK4) = A_Look
+	S_IMP_LOOK4('IMPX', 1, 10.0 / 35.0, S_IMP_LOOK1) = A_Look
+	S_IMP_FLY1('IMPX', 0, 3.0 /35.0, S_IMP_FLY2) = A_Chase
+	S_IMP_FLY2('IMPX', 0, 3.0 /35.0, S_IMP_FLY3) = A_Chase
+	S_IMP_FLY3('IMPX', 1, 3.0 /35.0, S_IMP_FLY4) = A_Chase
+	S_IMP_FLY4('IMPX', 1, 3.0 /35.0, S_IMP_FLY5) = A_Chase
+	S_IMP_FLY5('IMPX', 2, 3.0 /35.0, S_IMP_FLY6) = A_Chase
+	S_IMP_FLY6('IMPX', 2, 3.0 /35.0, S_IMP_FLY7) = A_Chase
+	S_IMP_FLY7('IMPX', 1, 3.0 /35.0, S_IMP_FLY8) = A_Chase
+	S_IMP_FLY8('IMPX', 1, 3.0 /35.0, S_IMP_FLY1) = A_Chase
+	S_IMP_MEATK1('IMPX', 3, 6.0 /35.0, S_IMP_MEATK2) = A_FaceTarget
+	S_IMP_MEATK2('IMPX', 4, 6.0 /35.0, S_IMP_MEATK3) = A_FaceTarget
+	S_IMP_MEATK3('IMPX', 5, 3.0 /35.0, S_IMP_FLY1) = A_ImpMeAttack
+	S_IMP_MSATK1_1('IMPX', 0, 10.0 /35.0, S_IMP_MSATK1_2) = A_FaceTarget
+	S_IMP_MSATK1_2('IMPX', 1, 6.0 /35.0, S_IMP_MSATK1_3) = A_ImpMsAttack
+	S_IMP_MSATK1_3('IMPX', 2, 6.0 /35.0, S_IMP_MSATK1_4) = none
+	S_IMP_MSATK1_4('IMPX', 1, 6.0 /35.0, S_IMP_MSATK1_5) = none
+	S_IMP_MSATK1_5('IMPX', 0, 6.0 /35.0, S_IMP_MSATK1_6) = none
+	S_IMP_MSATK1_6('IMPX', 1, 6.0 /35.0, S_IMP_MSATK1_3) = none
+	S_IMP_PAIN1('IMPX', 6, 3.0 /35.0, S_IMP_PAIN2) = none
+	S_IMP_PAIN2('IMPX', 6, 3.0 /35.0, S_IMP_FLY1) = A_Pain
+	S_IMP_DIE1('IMPX', 6, 4.0 / 35.0, S_IMP_DIE2) = A_ImpDeath
+	S_IMP_DIE2('IMPX', 7, 5.0 / 35.0, S_IMP_DIE2) = none
+	S_IMP_XDIE1('IMPX', 18, 5.0 / 35.0, S_IMP_XDIE2) = A_ImpXDeath1
+	S_IMP_XDIE2('IMPX', 19, 5.0 / 35.0, S_IMP_XDIE3) = none
+	S_IMP_XDIE3('IMPX', 20, 5.0 / 35.0, S_IMP_XDIE4) = none
+	S_IMP_XDIE4('IMPX', 21, 5.0 / 35.0, S_IMP_XDIE5) = A_ImpXDeath2
+	S_IMP_XDIE5('IMPX', 22, 5.0 / 35.0, S_IMP_XDIE5) = none
+	S_IMP_CRASH1('IMPX', 8, 7.0 / 35.0, S_IMP_CRASH2) = A_ImpExplode
+	S_IMP_CRASH2('IMPX', 9, 7.0 / 35.0, S_IMP_CRASH3) = A_Scream
+	S_IMP_CRASH3('IMPX', 10, 7.0 / 35.0, S_IMP_CRASH4) = none
+	S_IMP_CRASH4('IMPX', 11, -1.0, none) = none
+	S_IMP_XCRASH1('IMPX', 23, 7.0 / 35.0, S_IMP_XCRASH2) = none
+	S_IMP_XCRASH2('IMPX', 24, 7.0 / 35.0, S_IMP_XCRASH3) = none
+	S_IMP_XCRASH3('IMPX', 25, -1.0, none) = none
 }
 
 defaultproperties

@@ -35,7 +35,7 @@ class ImpLeader : Imp
 //
 //==========================================================================
 
-void A_ImpMsAttack2()
+final void A_ImpMsAttack2()
 {
 	if (!Enemy)
 	{
@@ -53,9 +53,9 @@ void A_ImpMsAttack2()
 __states__
 {
 	//	Missile attack
-	S_IMP_MSATK2_1('IMPX', 3, 6.0 /35.0, S_IMP_MSATK2_2) { A_FaceTarget(); }
-	S_IMP_MSATK2_2('IMPX', 4, 6.0 /35.0, S_IMP_MSATK2_3) { A_FaceTarget(); }
-	S_IMP_MSATK2_3('IMPX', 5, 6.0 /35.0, S_IMP_FLY1) { A_ImpMsAttack2(); }
+	S_IMP_MSATK2_1('IMPX', 3, 6.0 /35.0, S_IMP_MSATK2_2) = A_FaceTarget
+	S_IMP_MSATK2_2('IMPX', 4, 6.0 /35.0, S_IMP_MSATK2_3) = A_FaceTarget
+	S_IMP_MSATK2_3('IMPX', 5, 6.0 /35.0, S_IMP_FLY1) = A_ImpMsAttack2
 }
 
 defaultproperties

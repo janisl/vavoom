@@ -27,42 +27,11 @@ class HereticPlayer : PlayerPawn;
 
 //==========================================================================
 //
-//  A_Scream
-//
-//==========================================================================
-
-void A_Scream()
-{
-	// Handle the different player death screams
-	if (Special1 < 10)
-	{
-		// Wimpy death sound
-		PlaySound('*wimpydeath', CHAN_VOICE);
-	}
-	else if (Health > -50)
-	{
-		// Normal death sound
-		PlaySound(DeathSound, CHAN_VOICE);
-	}
-	else if (Health > -100)
-	{
-		// Crazy death sound
-		PlaySound('*crazydeath', CHAN_VOICE);
-	}
-	else
-	{
-		// Extreme death sound
-		PlaySound('*gibbed', CHAN_VOICE);
-	}
-}
-
-//==========================================================================
-//
 //  A_SkullPop
 //
 //==========================================================================
 
-void A_SkullPop()
+final void A_SkullPop()
 {
 	Actor A;
 
@@ -93,7 +62,7 @@ void A_SkullPop()
 //
 //==========================================================================
 
-void A_FlameSnd()
+final void A_FlameSnd()
 {
 	PlaySound('misc/burn', CHAN_WEAPON);	// Burn sound
 }
@@ -104,7 +73,7 @@ void A_FlameSnd()
 //
 //==========================================================================
 
-void A_CheckBurnGone()
+final void A_CheckBurnGone()
 {
 	if (bSafeToRemove)
 	{
@@ -114,53 +83,53 @@ void A_CheckBurnGone()
 
 __states__
 {
-	S_PLAY('PLAY', 0, -1.0, none) { }
-	S_PLAY_RUN1('PLAY', 0, 4.0 / 35.0, S_PLAY_RUN2) { }
-	S_PLAY_RUN2('PLAY', 1, 4.0 / 35.0, S_PLAY_RUN3) { }
-	S_PLAY_RUN3('PLAY', 2, 4.0 / 35.0, S_PLAY_RUN4) { }
-	S_PLAY_RUN4('PLAY', 3, 4.0 / 35.0, S_PLAY_RUN1) { }
-	S_PLAY_ATK1('PLAY', 4, 12.0 / 35.0, S_PLAY) { }
-	S_PLAY_ATK2('PLAY', 5 | FF_FULLBRIGHT, 6.0 / 35.0, S_PLAY_ATK1) { }
-	S_PLAY_PAIN('PLAY', 6, 4.0 / 35.0, S_PLAY_PAIN2) { }
-	S_PLAY_PAIN2('PLAY', 6, 4.0 / 35.0, S_PLAY) { A_Pain(); }
-	S_PLAY_DIE1('PLAY', 7, 6.0 / 35.0, S_PLAY_DIE2) { }
-	S_PLAY_DIE2('PLAY', 8, 6.0 / 35.0, S_PLAY_DIE3) { A_Scream(); }
-	S_PLAY_DIE3('PLAY', 9, 6.0 / 35.0, S_PLAY_DIE4) { }
-	S_PLAY_DIE4('PLAY', 10, 6.0 / 35.0, S_PLAY_DIE5) { }
-	S_PLAY_DIE5('PLAY', 11, 6.0 / 35.0, S_PLAY_DIE6) { A_NoBlocking(); }
-	S_PLAY_DIE6('PLAY', 12, 6.0 / 35.0, S_PLAY_DIE7) { }
-	S_PLAY_DIE7('PLAY', 13, 6.0 / 35.0, S_PLAY_DIE8) { }
-	S_PLAY_DIE8('PLAY', 14, 6.0 / 35.0, S_PLAY_DIE9) { }
-	S_PLAY_DIE9('PLAY', 15, -1.0, none) { A_AddPlayerCorpse(); }
-	S_PLAY_XDIE1('PLAY', 16, 5.0 / 35.0, S_PLAY_XDIE2) { A_Scream(); }
-	S_PLAY_XDIE2('PLAY', 17, 5.0 / 35.0, S_PLAY_XDIE3) { A_SkullPop(); }
-	S_PLAY_XDIE3('PLAY', 18, 5.0 / 35.0, S_PLAY_XDIE4) { A_NoBlocking(); }
-	S_PLAY_XDIE4('PLAY', 19, 5.0 / 35.0, S_PLAY_XDIE5) { }
-	S_PLAY_XDIE5('PLAY', 20, 5.0 / 35.0, S_PLAY_XDIE6) { }
-	S_PLAY_XDIE6('PLAY', 21, 5.0 / 35.0, S_PLAY_XDIE7) { }
-	S_PLAY_XDIE7('PLAY', 22, 5.0 / 35.0, S_PLAY_XDIE8) { }
-	S_PLAY_XDIE8('PLAY', 23, 5.0 / 35.0, S_PLAY_XDIE9) { }
-	S_PLAY_XDIE9('PLAY', 24, -1.0, none) { A_AddPlayerCorpse(); }
-	S_PLAY_FDTH1('FDTH', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH2) { A_FlameSnd(); }
-	S_PLAY_FDTH2('FDTH', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH3) { }
-	S_PLAY_FDTH3('FDTH', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH4) { }
-	S_PLAY_FDTH4('FDTH', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH5) { A_Scream(); }
-	S_PLAY_FDTH5('FDTH', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH6) { }
-	S_PLAY_FDTH6('FDTH', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH7) { }
-	S_PLAY_FDTH7('FDTH', 6 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH8) { A_FlameSnd(); }
-	S_PLAY_FDTH8('FDTH', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH9) { }
-	S_PLAY_FDTH9('FDTH', 8 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH10) { }
-	S_PLAY_FDTH10('FDTH', 9 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH11) { }
-	S_PLAY_FDTH11('FDTH', 10 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH12) { }
-	S_PLAY_FDTH12('FDTH', 11 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH13) { }
-	S_PLAY_FDTH13('FDTH', 12 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH14) { }
-	S_PLAY_FDTH14('FDTH', 13 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH15) { }
-	S_PLAY_FDTH15('FDTH', 14 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH16) { A_NoBlocking(); }
-	S_PLAY_FDTH16('FDTH', 15 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH17) { }
-	S_PLAY_FDTH17('FDTH', 16 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH18) { }
-	S_PLAY_FDTH18('FDTH', 17 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH19) { }
-	S_PLAY_FDTH19('ACLO', 4, 35.0 / 35.0, S_PLAY_FDTH19) { A_CheckBurnGone(); }
-	S_PLAY_FDTH20('ACLO', 4, 8.0 / 35.0, none) { }
+	S_PLAY('PLAY', 0, -1.0, none) = none
+	S_PLAY_RUN1('PLAY', 0, 4.0 / 35.0, S_PLAY_RUN2) = none
+	S_PLAY_RUN2('PLAY', 1, 4.0 / 35.0, S_PLAY_RUN3) = none
+	S_PLAY_RUN3('PLAY', 2, 4.0 / 35.0, S_PLAY_RUN4) = none
+	S_PLAY_RUN4('PLAY', 3, 4.0 / 35.0, S_PLAY_RUN1) = none
+	S_PLAY_ATK1('PLAY', 4, 12.0 / 35.0, S_PLAY) = none
+	S_PLAY_ATK2('PLAY', 5 | FF_FULLBRIGHT, 6.0 / 35.0, S_PLAY_ATK1) = none
+	S_PLAY_PAIN('PLAY', 6, 4.0 / 35.0, S_PLAY_PAIN2) = none
+	S_PLAY_PAIN2('PLAY', 6, 4.0 / 35.0, S_PLAY) = A_Pain
+	S_PLAY_DIE1('PLAY', 7, 6.0 / 35.0, S_PLAY_DIE2) = none
+	S_PLAY_DIE2('PLAY', 8, 6.0 / 35.0, S_PLAY_DIE3) = A_Scream
+	S_PLAY_DIE3('PLAY', 9, 6.0 / 35.0, S_PLAY_DIE4) = none
+	S_PLAY_DIE4('PLAY', 10, 6.0 / 35.0, S_PLAY_DIE5) = none
+	S_PLAY_DIE5('PLAY', 11, 6.0 / 35.0, S_PLAY_DIE6) = A_NoBlocking
+	S_PLAY_DIE6('PLAY', 12, 6.0 / 35.0, S_PLAY_DIE7) = none
+	S_PLAY_DIE7('PLAY', 13, 6.0 / 35.0, S_PLAY_DIE8) = none
+	S_PLAY_DIE8('PLAY', 14, 6.0 / 35.0, S_PLAY_DIE9) = none
+	S_PLAY_DIE9('PLAY', 15, -1.0, none) = A_AddPlayerCorpse
+	S_PLAY_XDIE1('PLAY', 16, 5.0 / 35.0, S_PLAY_XDIE2) = A_Scream
+	S_PLAY_XDIE2('PLAY', 17, 5.0 / 35.0, S_PLAY_XDIE3) = A_SkullPop
+	S_PLAY_XDIE3('PLAY', 18, 5.0 / 35.0, S_PLAY_XDIE4) = A_NoBlocking
+	S_PLAY_XDIE4('PLAY', 19, 5.0 / 35.0, S_PLAY_XDIE5) = none
+	S_PLAY_XDIE5('PLAY', 20, 5.0 / 35.0, S_PLAY_XDIE6) = none
+	S_PLAY_XDIE6('PLAY', 21, 5.0 / 35.0, S_PLAY_XDIE7) = none
+	S_PLAY_XDIE7('PLAY', 22, 5.0 / 35.0, S_PLAY_XDIE8) = none
+	S_PLAY_XDIE8('PLAY', 23, 5.0 / 35.0, S_PLAY_XDIE9) = none
+	S_PLAY_XDIE9('PLAY', 24, -1.0, none) = A_AddPlayerCorpse
+	S_PLAY_FDTH1('FDTH', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH2) = A_FlameSnd
+	S_PLAY_FDTH2('FDTH', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH3) = none
+	S_PLAY_FDTH3('FDTH', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH4) = none
+	S_PLAY_FDTH4('FDTH', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH5) = A_Scream
+	S_PLAY_FDTH5('FDTH', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH6) = none
+	S_PLAY_FDTH6('FDTH', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH7) = none
+	S_PLAY_FDTH7('FDTH', 6 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH8) = A_FlameSnd
+	S_PLAY_FDTH8('FDTH', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH9) = none
+	S_PLAY_FDTH9('FDTH', 8 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH10) = none
+	S_PLAY_FDTH10('FDTH', 9 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH11) = none
+	S_PLAY_FDTH11('FDTH', 10 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH12) = none
+	S_PLAY_FDTH12('FDTH', 11 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH13) = none
+	S_PLAY_FDTH13('FDTH', 12 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH14) = none
+	S_PLAY_FDTH14('FDTH', 13 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH15) = none
+	S_PLAY_FDTH15('FDTH', 14 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH16) = A_NoBlocking
+	S_PLAY_FDTH16('FDTH', 15 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH17) = none
+	S_PLAY_FDTH17('FDTH', 16 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH18) = none
+	S_PLAY_FDTH18('FDTH', 17 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH19) = none
+	S_PLAY_FDTH19('ACLO', 4, 35.0 / 35.0, S_PLAY_FDTH19) = A_CheckBurnGone
+	S_PLAY_FDTH20('ACLO', 4, 8.0 / 35.0, none) = none
 }
 
 defaultproperties

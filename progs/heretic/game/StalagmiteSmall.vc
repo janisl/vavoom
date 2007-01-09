@@ -28,7 +28,7 @@ class StalagmiteSmall : Decoration
 
 __states__
 {
-	S_STALAGMITESMALL('STGS', 0, -1.0, none) { }
+	S_STALAGMITESMALL('STGS', 0, -1.0, none) = none
 }
 
 defaultproperties

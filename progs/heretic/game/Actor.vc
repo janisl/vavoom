@@ -3976,7 +3976,7 @@ int LineAttack(TVec dir, float distance, int damage, class<Actor> PuffType)
 //
 //==========================================================================
 
-void A_FreeTargMobj()
+final void A_FreeTargMobj()
 {
 	Velocity = vector(0.0, 0.0, 0.0);
 	Origin.z = CeilingZ + 4.0;
@@ -3998,9 +3998,33 @@ void A_FreeTargMobj()
 //
 //==========================================================================
 
-void A_Scream()
+final void A_Scream()
 {
-	if (Class == ChickenPlayer || Class == Sorcerer1 || Class == Minotaur)
+	if (bIsPlayer)
+	{
+		// Handle the different player death screams
+		if (Special1 < 10)
+		{
+			// Wimpy death sound
+			PlaySound('*wimpydeath', CHAN_VOICE);
+		}
+		else if (Health > -50)
+		{
+			// Normal death sound
+			PlaySound(DeathSound, CHAN_VOICE);
+		}
+		else if (Health > -100)
+		{
+			// Crazy death sound
+			PlaySound('*crazydeath', CHAN_VOICE);
+		}
+		else
+		{
+			// Extreme death sound
+			PlaySound('*gibbed', CHAN_VOICE);
+		}
+	}
+	else if (Class == ChickenPlayer || Class == Sorcerer1 || Class == Minotaur)
 	{
 		// Make boss death sounds full volume
 		PlaySound(DeathSound, CHAN_VOICE, 1.0, ATTN_NONE);
@@ -4019,7 +4043,7 @@ void A_Scream()
 //
 //==========================================================================
 
-void A_Explode()
+final void A_Explode()
 {
 	int damage;
 
@@ -4132,7 +4156,7 @@ void SpawnPuff(TVec org, class<Actor> PuffType)
 
 __states__
 {
-	S_FREETARGMOBJ('ACLO', 4, 30.0, none) { A_FreeTargMobj(); }
+	S_FREETARGMOBJ('ACLO', 4, 30.0, none) = A_FreeTargMobj
 }
 
 defaultproperties

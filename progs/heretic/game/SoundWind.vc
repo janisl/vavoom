@@ -33,14 +33,14 @@ class SoundWind : Actor
 //
 //==========================================================================
 
-void A_ESound()
+final void A_ESound()
 {
 	PlaySound('world/wind', CHAN_VOICE);
 }
 
 __states__
 {
-	S_SND_WIND('AMG1', 0, 100.0 / 35.0, S_SND_WIND) { A_ESound(); }
+	S_SND_WIND('AMG1', 0, 100.0 / 35.0, S_SND_WIND) = A_ESound
 }
 
 defaultproperties

@@ -32,7 +32,7 @@ class TeleGlitter : ProjEffect
 //
 //==========================================================================
 
-void A_AccTeleGlitter()
+final void A_AccTeleGlitter()
 {
 	if (++Health > 35)
 	{
@@ -42,11 +42,11 @@ void A_AccTeleGlitter()
 
 __states__
 {
-	S_TELEGLITTER1_1('TGLT', 0 | FF_FULLBRIGHT, 2.0 / 35.0, S_TELEGLITTER1_2) { }
-	S_TELEGLITTER1_2('TGLT', 1 | FF_FULLBRIGHT, 2.0 / 35.0, S_TELEGLITTER1_3) { A_AccTeleGlitter(); }
-	S_TELEGLITTER1_3('TGLT', 2 | FF_FULLBRIGHT, 2.0 / 35.0, S_TELEGLITTER1_4) { }
-	S_TELEGLITTER1_4('TGLT', 3 | FF_FULLBRIGHT, 2.0 / 35.0, S_TELEGLITTER1_5) { A_AccTeleGlitter(); }
-	S_TELEGLITTER1_5('TGLT', 4 | FF_FULLBRIGHT, 2.0 / 35.0, S_TELEGLITTER1_1) { }
+	S_TELEGLITTER1_1('TGLT', 0 | FF_FULLBRIGHT, 2.0 / 35.0, S_TELEGLITTER1_2) = none
+	S_TELEGLITTER1_2('TGLT', 1 | FF_FULLBRIGHT, 2.0 / 35.0, S_TELEGLITTER1_3) = A_AccTeleGlitter
+	S_TELEGLITTER1_3('TGLT', 2 | FF_FULLBRIGHT, 2.0 / 35.0, S_TELEGLITTER1_4) = none
+	S_TELEGLITTER1_4('TGLT', 3 | FF_FULLBRIGHT, 2.0 / 35.0, S_TELEGLITTER1_5) = A_AccTeleGlitter
+	S_TELEGLITTER1_5('TGLT', 4 | FF_FULLBRIGHT, 2.0 / 35.0, S_TELEGLITTER1_1) = none
 }
 
 defaultproperties

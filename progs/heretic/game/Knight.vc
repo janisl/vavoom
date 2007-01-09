@@ -44,7 +44,7 @@ void DropStuff()
 //
 //==========================================================================
 
-void A_KnightAttack()
+final void A_KnightAttack()
 {
 	if (!Enemy)
 	{
@@ -58,7 +58,7 @@ void A_KnightAttack()
 	}
 	// Throw axe
 	PlaySound(AttackSound, CHAN_WEAPON);
-	if (Random() < 0.15625)
+	if (Class == KnightGhost || Random() < 0.15625)
 	{
 		// Red axe
 		SpawnMissile(Enemy, KnightRedAxe);
@@ -70,27 +70,27 @@ void A_KnightAttack()
 
 __states__
 {
-	S_KNIGHT_STND1('KNIG', 0, 10.0 / 35.0, S_KNIGHT_STND2) { A_Look(); }
-	S_KNIGHT_STND2('KNIG', 1, 10.0 / 35.0, S_KNIGHT_STND1) { A_Look(); }
-	S_KNIGHT_WALK1('KNIG', 0, 4.0 / 35.0, S_KNIGHT_WALK2) { A_Chase(); }
-	S_KNIGHT_WALK2('KNIG', 1, 4.0 / 35.0, S_KNIGHT_WALK3) { A_Chase(); }
-	S_KNIGHT_WALK3('KNIG', 2, 4.0 / 35.0, S_KNIGHT_WALK4) { A_Chase(); }
-	S_KNIGHT_WALK4('KNIG', 3, 4.0 / 35.0, S_KNIGHT_WALK1) { A_Chase(); }
-	S_KNIGHT_ATK1('KNIG', 4, 10.0 / 35.0, S_KNIGHT_ATK2) { A_FaceTarget(); }
-	S_KNIGHT_ATK2('KNIG', 5, 8.0 / 35.0, S_KNIGHT_ATK3) { A_FaceTarget(); }
-	S_KNIGHT_ATK3('KNIG', 6, 8.0 / 35.0, S_KNIGHT_ATK4) { A_KnightAttack(); }
-	S_KNIGHT_ATK4('KNIG', 4, 10.0 / 35.0, S_KNIGHT_ATK5) { A_FaceTarget(); }
-	S_KNIGHT_ATK5('KNIG', 5, 8.0 / 35.0, S_KNIGHT_ATK6) { A_FaceTarget(); }
-	S_KNIGHT_ATK6('KNIG', 6, 8.0 / 35.0, S_KNIGHT_WALK1) { A_KnightAttack(); }
-	S_KNIGHT_PAIN1('KNIG', 7, 3.0 / 35.0, S_KNIGHT_PAIN2) { }
-	S_KNIGHT_PAIN2('KNIG', 7, 3.0 / 35.0, S_KNIGHT_WALK1) { A_Pain(); }
-	S_KNIGHT_DIE1('KNIG', 8, 6.0 / 35.0, S_KNIGHT_DIE2) { }
-	S_KNIGHT_DIE2('KNIG', 9, 6.0 / 35.0, S_KNIGHT_DIE3) { A_Scream(); }
-	S_KNIGHT_DIE3('KNIG', 10, 6.0 / 35.0, S_KNIGHT_DIE4) { }
-	S_KNIGHT_DIE4('KNIG', 11, 6.0 / 35.0, S_KNIGHT_DIE5) { A_NoBlocking(); }
-	S_KNIGHT_DIE5('KNIG', 12, 6.0 / 35.0, S_KNIGHT_DIE6) { }
-	S_KNIGHT_DIE6('KNIG', 13, 6.0 / 35.0, S_KNIGHT_DIE7) { }
-	S_KNIGHT_DIE7('KNIG', 14, -1.0, none) { }
+	S_KNIGHT_STND1('KNIG', 0, 10.0 / 35.0, S_KNIGHT_STND2) = A_Look
+	S_KNIGHT_STND2('KNIG', 1, 10.0 / 35.0, S_KNIGHT_STND1) = A_Look
+	S_KNIGHT_WALK1('KNIG', 0, 4.0 / 35.0, S_KNIGHT_WALK2) = A_Chase
+	S_KNIGHT_WALK2('KNIG', 1, 4.0 / 35.0, S_KNIGHT_WALK3) = A_Chase
+	S_KNIGHT_WALK3('KNIG', 2, 4.0 / 35.0, S_KNIGHT_WALK4) = A_Chase
+	S_KNIGHT_WALK4('KNIG', 3, 4.0 / 35.0, S_KNIGHT_WALK1) = A_Chase
+	S_KNIGHT_ATK1('KNIG', 4, 10.0 / 35.0, S_KNIGHT_ATK2) = A_FaceTarget
+	S_KNIGHT_ATK2('KNIG', 5, 8.0 / 35.0, S_KNIGHT_ATK3) = A_FaceTarget
+	S_KNIGHT_ATK3('KNIG', 6, 8.0 / 35.0, S_KNIGHT_ATK4) = A_KnightAttack
+	S_KNIGHT_ATK4('KNIG', 4, 10.0 / 35.0, S_KNIGHT_ATK5) = A_FaceTarget
+	S_KNIGHT_ATK5('KNIG', 5, 8.0 / 35.0, S_KNIGHT_ATK6) = A_FaceTarget
+	S_KNIGHT_ATK6('KNIG', 6, 8.0 / 35.0, S_KNIGHT_WALK1) = A_KnightAttack
+	S_KNIGHT_PAIN1('KNIG', 7, 3.0 / 35.0, S_KNIGHT_PAIN2) = none
+	S_KNIGHT_PAIN2('KNIG', 7, 3.0 / 35.0, S_KNIGHT_WALK1) = A_Pain
+	S_KNIGHT_DIE1('KNIG', 8, 6.0 / 35.0, S_KNIGHT_DIE2) = none
+	S_KNIGHT_DIE2('KNIG', 9, 6.0 / 35.0, S_KNIGHT_DIE3) = A_Scream
+	S_KNIGHT_DIE3('KNIG', 10, 6.0 / 35.0, S_KNIGHT_DIE4) = none
+	S_KNIGHT_DIE4('KNIG', 11, 6.0 / 35.0, S_KNIGHT_DIE5) = A_NoBlocking
+	S_KNIGHT_DIE5('KNIG', 12, 6.0 / 35.0, S_KNIGHT_DIE6) = none
+	S_KNIGHT_DIE6('KNIG', 13, 6.0 / 35.0, S_KNIGHT_DIE7) = none
+	S_KNIGHT_DIE7('KNIG', 14, -1.0, none) = none
 }
 
 defaultproperties

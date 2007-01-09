@@ -45,7 +45,7 @@ void DropStuff()
 //
 //==========================================================================
 
-void A_HeadAttack()
+final void A_HeadAttack()
 {
 	int i;
 	Actor fire;
@@ -122,7 +122,7 @@ void A_HeadAttack()
 //
 //==========================================================================
 
-void A_BossDeath()
+final void A_BossDeath()
 {
 	if (!XLevel.bIronLichSpecial)
 	{
@@ -133,19 +133,19 @@ void A_BossDeath()
 
 __states__
 {
-	S_HEAD_LOOK('HEAD', 0, 10.0 / 35.0, S_HEAD_LOOK) { A_Look(); }
-	S_HEAD_FLOAT('HEAD', 0, 4.0 / 35.0, S_HEAD_FLOAT) { A_Chase(); }
-	S_HEAD_ATK1('HEAD', 0, 5.0 / 35.0, S_HEAD_ATK2) { A_FaceTarget(); }
-	S_HEAD_ATK2('HEAD', 1, 20.0 / 35.0, S_HEAD_FLOAT) { A_HeadAttack(); }
-	S_HEAD_PAIN1('HEAD', 0, 4.0 / 35.0, S_HEAD_PAIN2) { }
-	S_HEAD_PAIN2('HEAD', 0, 4.0 / 35.0, S_HEAD_FLOAT) { A_Pain(); }
-	S_HEAD_DIE1('HEAD', 2, 7.0 / 35.0, S_HEAD_DIE2) { }
-	S_HEAD_DIE2('HEAD', 3, 7.0 / 35.0, S_HEAD_DIE3) { A_Scream(); }
-	S_HEAD_DIE3('HEAD', 4, 7.0 / 35.0, S_HEAD_DIE4) { }
-	S_HEAD_DIE4('HEAD', 5, 7.0 / 35.0, S_HEAD_DIE5) { }
-	S_HEAD_DIE5('HEAD', 6, 7.0 / 35.0, S_HEAD_DIE6) { A_NoBlocking(); }
-	S_HEAD_DIE6('HEAD', 7, 7.0 / 35.0, S_HEAD_DIE7) { }
-	S_HEAD_DIE7('HEAD', 8, -1.0, none) { A_BossDeath(); }
+	S_HEAD_LOOK('HEAD', 0, 10.0 / 35.0, S_HEAD_LOOK) = A_Look
+	S_HEAD_FLOAT('HEAD', 0, 4.0 / 35.0, S_HEAD_FLOAT) = A_Chase
+	S_HEAD_ATK1('HEAD', 0, 5.0 / 35.0, S_HEAD_ATK2) = A_FaceTarget
+	S_HEAD_ATK2('HEAD', 1, 20.0 / 35.0, S_HEAD_FLOAT) = A_HeadAttack
+	S_HEAD_PAIN1('HEAD', 0, 4.0 / 35.0, S_HEAD_PAIN2) = none
+	S_HEAD_PAIN2('HEAD', 0, 4.0 / 35.0, S_HEAD_FLOAT) = A_Pain
+	S_HEAD_DIE1('HEAD', 2, 7.0 / 35.0, S_HEAD_DIE2) = none
+	S_HEAD_DIE2('HEAD', 3, 7.0 / 35.0, S_HEAD_DIE3) = A_Scream
+	S_HEAD_DIE3('HEAD', 4, 7.0 / 35.0, S_HEAD_DIE4) = none
+	S_HEAD_DIE4('HEAD', 5, 7.0 / 35.0, S_HEAD_DIE5) = none
+	S_HEAD_DIE5('HEAD', 6, 7.0 / 35.0, S_HEAD_DIE6) = A_NoBlocking
+	S_HEAD_DIE6('HEAD', 7, 7.0 / 35.0, S_HEAD_DIE7) = none
+	S_HEAD_DIE7('HEAD', 8, -1.0, none) = A_BossDeath
 }
 
 defaultproperties

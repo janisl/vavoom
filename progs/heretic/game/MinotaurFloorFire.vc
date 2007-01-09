@@ -44,7 +44,7 @@ void OnMapSpawn(mthing_t* mthing)
 //
 //==========================================================================
 
-void A_MntrFloorFire()
+final void A_MntrFloorFire()
 {
 	Actor mo;
 	float i1;
@@ -61,7 +61,7 @@ void A_MntrFloorFire()
 
 __states__
 {
-	S_MNTRFX2_1('FX13', 0, 2.0 / 35.0, S_MNTRFX2_1) { A_MntrFloorFire(); }
+	S_MNTRFX2_1('FX13', 0, 2.0 / 35.0, S_MNTRFX2_1) = A_MntrFloorFire
 }
 
 defaultproperties

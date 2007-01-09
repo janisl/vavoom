@@ -23,19 +23,19 @@
 //**
 //**************************************************************************
 
-class RainPlayer2:RainPlayer1;
+class RainPlayer2 : RainPlayer1;
 
 __states__
 {
-	S_RAINPLR2_1('FX21', 0 | FF_FULLBRIGHT, -1.0, none) { }
-	S_RAINPLR2X_1('FX21', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_RAINPLR2X_2) { A_RainImpact(); }
-	S_RAINPLR2X_2('FX21', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_RAINPLR2X_3) { }
-	S_RAINPLR2X_3('FX21', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_RAINPLR2X_4) { }
-	S_RAINPLR2X_4('FX21', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_RAINPLR2X_5) { }
-	S_RAINPLR2X_5('FX21', 5 | FF_FULLBRIGHT, 4.0 / 35.0, none) { }
-	S_RAINAIRXPLR2_1('FX21', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_RAINAIRXPLR2_2) { }
-	S_RAINAIRXPLR2_2('FX21', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_RAINAIRXPLR2_3) { }
-	S_RAINAIRXPLR2_3('FX21', 8 | FF_FULLBRIGHT, 4.0 / 35.0, none) { }
+	S_RAINPLR2_1('FX21', 0 | FF_FULLBRIGHT, -1.0, none) = none
+	S_RAINPLR2X_1('FX21', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_RAINPLR2X_2) = A_RainImpact
+	S_RAINPLR2X_2('FX21', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_RAINPLR2X_3) = none
+	S_RAINPLR2X_3('FX21', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_RAINPLR2X_4) = none
+	S_RAINPLR2X_4('FX21', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_RAINPLR2X_5) = none
+	S_RAINPLR2X_5('FX21', 5 | FF_FULLBRIGHT, 4.0 / 35.0, none) = none
+	S_RAINAIRXPLR2_1('FX21', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_RAINAIRXPLR2_2) = none
+	S_RAINAIRXPLR2_2('FX21', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_RAINAIRXPLR2_3) = none
+	S_RAINAIRXPLR2_3('FX21', 8 | FF_FULLBRIGHT, 4.0 / 35.0, none) = none
 }
 
 defaultproperties

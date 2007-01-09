@@ -53,7 +53,7 @@ void WeaponLevel2Fade()
 //
 //===========================================================================
 
-void A_StaffAttackPL1()
+final void A_StaffAttackPL1()
 {
 	TAVec angles;
 	int damage;
@@ -81,7 +81,7 @@ void A_StaffAttackPL1()
 //
 //===========================================================================
 
-void A_StaffAttackPL2()
+final void A_StaffAttackPL2()
 {
 	TAVec angles;
 	int damage;
@@ -107,9 +107,9 @@ void A_StaffAttackPL2()
 
 __states__
 {
-	S_STAFFREADY('STFF', 0, 1.0 / 35.0, S_STAFFREADY) { A_WeaponReady(); }
-	S_STAFFDOWN('STFF', 0, 1.0 / 35.0, S_STAFFDOWN) { A_Lower(); }
-	S_STAFFUP('STFF', 0, 1.0 / 35.0, S_STAFFUP) { A_Raise(); }
+	S_STAFFREADY('STFF', 0, 1.0 / 35.0, S_STAFFREADY) = A_WeaponReady
+	S_STAFFDOWN('STFF', 0, 1.0 / 35.0, S_STAFFDOWN) = A_Lower
+	S_STAFFUP('STFF', 0, 1.0 / 35.0, S_STAFFUP) = A_Raise
 	S_STAFFREADY2_1('STFF', 3, 4.0 / 35.0, S_STAFFREADY2_2)
 	{
 		// Check for staff PL2 active sound
@@ -119,16 +119,16 @@ __states__
 		}
 		A_WeaponReady();
 	}
-	S_STAFFREADY2_2('STFF', 4, 4.0 / 35.0, S_STAFFREADY2_3) { A_WeaponReady(); }
-	S_STAFFREADY2_3('STFF', 5, 4.0 / 35.0, S_STAFFREADY2_1) { A_WeaponReady(); }
-	S_STAFFDOWN2('STFF', 3, 1.0 / 35.0, S_STAFFDOWN2) { A_Lower(); }
-	S_STAFFUP2('STFF', 3, 1.0 / 35.0, S_STAFFUP2) { A_Raise(); }
-	S_STAFFATK1_1('STFF', 1, 6.0 / 35.0, S_STAFFATK1_2) { }
-	S_STAFFATK1_2('STFF', 2, 8.0 / 35.0, S_STAFFATK1_3) { A_StaffAttackPL1(); }
-	S_STAFFATK1_3('STFF', 1, 8.0 / 35.0, S_STAFFREADY) { A_ReFire(); }
-	S_STAFFATK2_1('STFF', 6, 6.0 / 35.0, S_STAFFATK2_2) { }
-	S_STAFFATK2_2('STFF', 7, 8.0 / 35.0, S_STAFFATK2_3) { A_StaffAttackPL2(); }
-	S_STAFFATK2_3('STFF', 6, 8.0 / 35.0, S_STAFFREADY2_1) { A_ReFire(); }
+	S_STAFFREADY2_2('STFF', 4, 4.0 / 35.0, S_STAFFREADY2_3) = A_WeaponReady
+	S_STAFFREADY2_3('STFF', 5, 4.0 / 35.0, S_STAFFREADY2_1) = A_WeaponReady
+	S_STAFFDOWN2('STFF', 3, 1.0 / 35.0, S_STAFFDOWN2) = A_Lower
+	S_STAFFUP2('STFF', 3, 1.0 / 35.0, S_STAFFUP2) = A_Raise
+	S_STAFFATK1_1('STFF', 1, 6.0 / 35.0, S_STAFFATK1_2) = none
+	S_STAFFATK1_2('STFF', 2, 8.0 / 35.0, S_STAFFATK1_3) = A_StaffAttackPL1
+	S_STAFFATK1_3('STFF', 1, 8.0 / 35.0, S_STAFFREADY) = A_ReFire
+	S_STAFFATK2_1('STFF', 6, 6.0 / 35.0, S_STAFFATK2_2) = none
+	S_STAFFATK2_2('STFF', 7, 8.0 / 35.0, S_STAFFATK2_3) = A_StaffAttackPL2
+	S_STAFFATK2_3('STFF', 6, 8.0 / 35.0, S_STAFFREADY2_1) = A_ReFire
 }
 
 defaultproperties

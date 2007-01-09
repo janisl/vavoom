@@ -29,9 +29,9 @@ class ArtifactTorch : Artifact
 
 __states__
 {
-	S_ARTI_TRCH1('TRCH', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_ARTI_TRCH2) { }
-	S_ARTI_TRCH2('TRCH', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_ARTI_TRCH3) { }
-	S_ARTI_TRCH3('TRCH', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_ARTI_TRCH1) { }
+	S_ARTI_TRCH1('TRCH', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_ARTI_TRCH2) = none
+	S_ARTI_TRCH2('TRCH', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_ARTI_TRCH3) = none
+	S_ARTI_TRCH3('TRCH', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_ARTI_TRCH1) = none
 }
 
 defaultproperties

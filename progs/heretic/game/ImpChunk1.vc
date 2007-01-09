@@ -27,9 +27,9 @@ class ImpChunk1:Effect;
 
 __states__
 {
-	S_IMP_CHUNKA1('IMPX', 12, 5.0 / 35.0, S_IMP_CHUNKA2) { }
-	S_IMP_CHUNKA2('IMPX', 13, 700.0 / 35.0, S_IMP_CHUNKA3) { }
-	S_IMP_CHUNKA3('IMPX', 14, 700.0 / 35.0, none) { }
+	S_IMP_CHUNKA1('IMPX', 12, 5.0 / 35.0, S_IMP_CHUNKA2) = none
+	S_IMP_CHUNKA2('IMPX', 13, 700.0 / 35.0, S_IMP_CHUNKA3) = none
+	S_IMP_CHUNKA3('IMPX', 14, 700.0 / 35.0, none) = none
 }
 
 defaultproperties

@@ -44,7 +44,7 @@ void DropStuff()
 //
 //==========================================================================
 
-void A_SnakeAttack()
+final void A_SnakeAttack()
 {
 	if (!Enemy)
 	{
@@ -62,7 +62,7 @@ void A_SnakeAttack()
 //
 //==========================================================================
 
-void A_SnakeAttack2()
+final void A_SnakeAttack2()
 {
 	if (!Enemy)
 	{
@@ -76,33 +76,33 @@ void A_SnakeAttack2()
 
 __states__
 {
-	S_SNAKE_LOOK1('SNKE', 0, 10.0 / 35.0, S_SNAKE_LOOK2) { A_Look(); }
-	S_SNAKE_LOOK2('SNKE', 1, 10.0 / 35.0, S_SNAKE_LOOK1) { A_Look(); }
-	S_SNAKE_WALK1('SNKE', 0, 4.0 / 35.0, S_SNAKE_WALK2) { A_Chase(); }
-	S_SNAKE_WALK2('SNKE', 1, 4.0 / 35.0, S_SNAKE_WALK3) { A_Chase(); }
-	S_SNAKE_WALK3('SNKE', 2, 4.0 / 35.0, S_SNAKE_WALK4) { A_Chase(); }
-	S_SNAKE_WALK4('SNKE', 3, 4.0 / 35.0, S_SNAKE_WALK1) { A_Chase(); }
-	S_SNAKE_ATK1('SNKE', 5, 5.0 / 35.0, S_SNAKE_ATK2) { A_FaceTarget(); }
-	S_SNAKE_ATK2('SNKE', 5, 5.0 / 35.0, S_SNAKE_ATK3) { A_FaceTarget(); }
-	S_SNAKE_ATK3('SNKE', 5, 4.0 / 35.0, S_SNAKE_ATK4) { A_SnakeAttack(); }
-	S_SNAKE_ATK4('SNKE', 5, 4.0 / 35.0, S_SNAKE_ATK5) { A_SnakeAttack(); }
-	S_SNAKE_ATK5('SNKE', 5, 4.0 / 35.0, S_SNAKE_ATK6) { A_SnakeAttack(); }
-	S_SNAKE_ATK6('SNKE', 5, 5.0 / 35.0, S_SNAKE_ATK7) { A_FaceTarget(); }
-	S_SNAKE_ATK7('SNKE', 5, 5.0 / 35.0, S_SNAKE_ATK8) { A_FaceTarget(); }
-	S_SNAKE_ATK8('SNKE', 5, 5.0 / 35.0, S_SNAKE_ATK9) { A_FaceTarget(); }
-	S_SNAKE_ATK9('SNKE', 5, 4.0 / 35.0, S_SNAKE_WALK1) { A_SnakeAttack2(); }
-	S_SNAKE_PAIN1('SNKE', 4, 3.0 / 35.0, S_SNAKE_PAIN2) { }
-	S_SNAKE_PAIN2('SNKE', 4, 3.0 / 35.0, S_SNAKE_WALK1) { A_Pain(); }
-	S_SNAKE_DIE1('SNKE', 6, 5.0 / 35.0, S_SNAKE_DIE2) { }
-	S_SNAKE_DIE2('SNKE', 7, 5.0 / 35.0, S_SNAKE_DIE3) { A_Scream(); }
-	S_SNAKE_DIE3('SNKE', 8, 5.0 / 35.0, S_SNAKE_DIE4) { }
-	S_SNAKE_DIE4('SNKE', 9, 5.0 / 35.0, S_SNAKE_DIE5) { }
-	S_SNAKE_DIE5('SNKE', 10, 5.0 / 35.0, S_SNAKE_DIE6) { }
-	S_SNAKE_DIE6('SNKE', 11, 5.0 / 35.0, S_SNAKE_DIE7) { }
-	S_SNAKE_DIE7('SNKE', 12, 5.0 / 35.0, S_SNAKE_DIE8) { A_NoBlocking(); }
-	S_SNAKE_DIE8('SNKE', 13, 5.0 / 35.0, S_SNAKE_DIE9) { }
-	S_SNAKE_DIE9('SNKE', 14, 5.0 / 35.0, S_SNAKE_DIE10) { }
-	S_SNAKE_DIE10('SNKE', 15, -1.0, none) { }
+	S_SNAKE_LOOK1('SNKE', 0, 10.0 / 35.0, S_SNAKE_LOOK2) = A_Look
+	S_SNAKE_LOOK2('SNKE', 1, 10.0 / 35.0, S_SNAKE_LOOK1) = A_Look
+	S_SNAKE_WALK1('SNKE', 0, 4.0 / 35.0, S_SNAKE_WALK2) = A_Chase
+	S_SNAKE_WALK2('SNKE', 1, 4.0 / 35.0, S_SNAKE_WALK3) = A_Chase
+	S_SNAKE_WALK3('SNKE', 2, 4.0 / 35.0, S_SNAKE_WALK4) = A_Chase
+	S_SNAKE_WALK4('SNKE', 3, 4.0 / 35.0, S_SNAKE_WALK1) = A_Chase
+	S_SNAKE_ATK1('SNKE', 5, 5.0 / 35.0, S_SNAKE_ATK2) = A_FaceTarget
+	S_SNAKE_ATK2('SNKE', 5, 5.0 / 35.0, S_SNAKE_ATK3) = A_FaceTarget
+	S_SNAKE_ATK3('SNKE', 5, 4.0 / 35.0, S_SNAKE_ATK4) = A_SnakeAttack
+	S_SNAKE_ATK4('SNKE', 5, 4.0 / 35.0, S_SNAKE_ATK5) = A_SnakeAttack
+	S_SNAKE_ATK5('SNKE', 5, 4.0 / 35.0, S_SNAKE_ATK6) = A_SnakeAttack
+	S_SNAKE_ATK6('SNKE', 5, 5.0 / 35.0, S_SNAKE_ATK7) = A_FaceTarget
+	S_SNAKE_ATK7('SNKE', 5, 5.0 / 35.0, S_SNAKE_ATK8) = A_FaceTarget
+	S_SNAKE_ATK8('SNKE', 5, 5.0 / 35.0, S_SNAKE_ATK9) = A_FaceTarget
+	S_SNAKE_ATK9('SNKE', 5, 4.0 / 35.0, S_SNAKE_WALK1) = A_SnakeAttack2
+	S_SNAKE_PAIN1('SNKE', 4, 3.0 / 35.0, S_SNAKE_PAIN2) = none
+	S_SNAKE_PAIN2('SNKE', 4, 3.0 / 35.0, S_SNAKE_WALK1) = A_Pain
+	S_SNAKE_DIE1('SNKE', 6, 5.0 / 35.0, S_SNAKE_DIE2) = none
+	S_SNAKE_DIE2('SNKE', 7, 5.0 / 35.0, S_SNAKE_DIE3) = A_Scream
+	S_SNAKE_DIE3('SNKE', 8, 5.0 / 35.0, S_SNAKE_DIE4) = none
+	S_SNAKE_DIE4('SNKE', 9, 5.0 / 35.0, S_SNAKE_DIE5) = none
+	S_SNAKE_DIE5('SNKE', 10, 5.0 / 35.0, S_SNAKE_DIE6) = none
+	S_SNAKE_DIE6('SNKE', 11, 5.0 / 35.0, S_SNAKE_DIE7) = none
+	S_SNAKE_DIE7('SNKE', 12, 5.0 / 35.0, S_SNAKE_DIE8) = A_NoBlocking
+	S_SNAKE_DIE8('SNKE', 13, 5.0 / 35.0, S_SNAKE_DIE9) = none
+	S_SNAKE_DIE9('SNKE', 14, 5.0 / 35.0, S_SNAKE_DIE10) = none
+	S_SNAKE_DIE10('SNKE', 15, -1.0, none) = none
 }
 
 defaultproperties

@@ -29,7 +29,7 @@ class ItemAmmoMaceHefty : Ammo
 
 __states__
 {
-	S_AMM2('AMM2', 0, -1.0, none) { }
+	S_AMM2('AMM2', 0, -1.0, none) = none
 }
 
 defaultproperties

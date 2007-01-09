@@ -29,7 +29,7 @@ class ItemWeaponSkullRod : WeaponPickup
 
 __states__
 {
-	S_WSKL('WSKL', 0, -1.0, none) { }
+	S_WSKL('WSKL', 0, -1.0, none) = none
 }
 
 defaultproperties

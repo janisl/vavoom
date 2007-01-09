@@ -32,7 +32,7 @@ class CrossbowFX2 : CrossbowFX1
 //
 //===========================================================================
 
-void A_BoltSpark()
+final void A_BoltSpark()
 {
 	Actor spark;
 
@@ -46,7 +46,7 @@ void A_BoltSpark()
 
 __states__
 {
-	S_CRBOWFX2('FX03', 1 | FF_FULLBRIGHT, 1.0 / 35.0, S_CRBOWFX2) { A_BoltSpark(); }
+	S_CRBOWFX2('FX03', 1 | FF_FULLBRIGHT, 1.0 / 35.0, S_CRBOWFX2) = A_BoltSpark
 }
 
 defaultproperties

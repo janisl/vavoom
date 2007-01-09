@@ -27,13 +27,13 @@ class HeadMissile2:Projectile;
 
 __states__
 {
-	S_HEADFX2_1('FX05', 7, 6.0 / 35.0, S_HEADFX2_2) { }
-	S_HEADFX2_2('FX05', 8, 6.0 / 35.0, S_HEADFX2_3) { }
-	S_HEADFX2_3('FX05', 9, 6.0 / 35.0, S_HEADFX2_1) { }
-	S_HEADFXI2_1('FX05', 3, 5.0 / 35.0, S_HEADFXI2_2) { }
-	S_HEADFXI2_2('FX05', 4, 5.0 / 35.0, S_HEADFXI2_3) { }
-	S_HEADFXI2_3('FX05', 5, 5.0 / 35.0, S_HEADFXI2_4) { }
-	S_HEADFXI2_4('FX05', 6, 5.0 / 35.0, none) { }
+	S_HEADFX2_1('FX05', 7, 6.0 / 35.0, S_HEADFX2_2) = none
+	S_HEADFX2_2('FX05', 8, 6.0 / 35.0, S_HEADFX2_3) = none
+	S_HEADFX2_3('FX05', 9, 6.0 / 35.0, S_HEADFX2_1) = none
+	S_HEADFXI2_1('FX05', 3, 5.0 / 35.0, S_HEADFXI2_2) = none
+	S_HEADFXI2_2('FX05', 4, 5.0 / 35.0, S_HEADFXI2_3) = none
+	S_HEADFXI2_3('FX05', 5, 5.0 / 35.0, S_HEADFXI2_4) = none
+	S_HEADFXI2_4('FX05', 6, 5.0 / 35.0, none) = none
 }
 
 defaultproperties

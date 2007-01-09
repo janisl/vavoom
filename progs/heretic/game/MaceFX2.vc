@@ -32,7 +32,7 @@ class MaceFX2 : MaceFX3
 //
 //===========================================================================
 
-void A_MaceBallImpact2()
+final void A_MaceBallImpact2()
 {
 	Actor tiny;
 	float angle;
@@ -82,9 +82,9 @@ void A_MaceBallImpact2()
 
 __states__
 {
-	S_MACEFX2_1('FX02', 2, 4.0 / 35.0, S_MACEFX2_2) { }
-	S_MACEFX2_2('FX02', 3, 4.0 / 35.0, S_MACEFX2_1) { }
-	S_MACEFXI2_1('FX02', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_MACEFXI1_2) { A_MaceBallImpact2(); }
+	S_MACEFX2_1('FX02', 2, 4.0 / 35.0, S_MACEFX2_2) = none
+	S_MACEFX2_2('FX02', 3, 4.0 / 35.0, S_MACEFX2_1) = none
+	S_MACEFXI2_1('FX02', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_MACEFXI1_2) = A_MaceBallImpact2
 }
 
 defaultproperties

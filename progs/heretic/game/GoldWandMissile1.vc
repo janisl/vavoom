@@ -32,8 +32,8 @@ class GoldWandMissile1 : GoldWandMissile2
 
 __states__
 {
-	S_GWANDFX1_1('FX01', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_GWANDFX1_2) { }
-	S_GWANDFX1_2('FX01', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_GWANDFX1_1) { }
+	S_GWANDFX1_1('FX01', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_GWANDFX1_2) = none
+	S_GWANDFX1_2('FX01', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_GWANDFX1_1) = none
 }
 
 defaultproperties

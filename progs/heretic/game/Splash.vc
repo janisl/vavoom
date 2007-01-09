@@ -27,11 +27,11 @@ class Splash:ProjEffect;
 
 __states__
 {
-	S_SPLASH1('SPSH', 0, 8.0 / 35.0, S_SPLASH2) { }
-	S_SPLASH2('SPSH', 1, 8.0 / 35.0, S_SPLASH3) { }
-	S_SPLASH3('SPSH', 2, 8.0 / 35.0, S_SPLASH4) { }
-	S_SPLASH4('SPSH', 3, 16.0 / 35.0, none) { }
-	S_SPLASHX('SPSH', 3, 10.0 / 35.0, none) { }
+	S_SPLASH1('SPSH', 0, 8.0 / 35.0, S_SPLASH2) = none
+	S_SPLASH2('SPSH', 1, 8.0 / 35.0, S_SPLASH3) = none
+	S_SPLASH3('SPSH', 2, 8.0 / 35.0, S_SPLASH4) = none
+	S_SPLASH4('SPSH', 3, 16.0 / 35.0, none) = none
+	S_SPLASHX('SPSH', 3, 10.0 / 35.0, none) = none
 }
 
 defaultproperties

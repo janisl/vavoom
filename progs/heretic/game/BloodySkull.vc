@@ -34,7 +34,7 @@ state Done2State;
 //
 //==========================================================================
 
-void A_CheckSkullFloor()
+final void A_CheckSkullFloor()
 {
 	if (Origin.z <= FloorZ)
 	{
@@ -48,7 +48,7 @@ void A_CheckSkullFloor()
 //
 //==========================================================================
 
-void A_CheckSkullDone()
+final void A_CheckSkullDone()
 {
 	if (bSafeToRemove)
 	{
@@ -58,13 +58,13 @@ void A_CheckSkullDone()
 
 __states__
 {
-	S_BLOODYSKULL1('BSKL', 0, 5.0 / 35.0, S_BLOODYSKULL2) { A_CheckSkullFloor(); }
-	S_BLOODYSKULL2('BSKL', 1, 5.0 / 35.0, S_BLOODYSKULL3) { A_CheckSkullFloor(); }
-	S_BLOODYSKULL3('BSKL', 2, 5.0 / 35.0, S_BLOODYSKULL4) { A_CheckSkullFloor(); }
-	S_BLOODYSKULL4('BSKL', 3, 5.0 / 35.0, S_BLOODYSKULL5) { A_CheckSkullFloor(); }
-	S_BLOODYSKULL5('BSKL', 4, 5.0 / 35.0, S_BLOODYSKULL1) { A_CheckSkullFloor(); }
-	S_BLOODYSKULLX1('BSKL', 5, 16.0 / 35.0, S_BLOODYSKULLX1) { A_CheckSkullDone(); }
-	S_BLOODYSKULLX2('BSKL', 5, 1050.0 / 35.0, none) { }
+	S_BLOODYSKULL1('BSKL', 0, 5.0 / 35.0, S_BLOODYSKULL2) = A_CheckSkullFloor
+	S_BLOODYSKULL2('BSKL', 1, 5.0 / 35.0, S_BLOODYSKULL3) = A_CheckSkullFloor
+	S_BLOODYSKULL3('BSKL', 2, 5.0 / 35.0, S_BLOODYSKULL4) = A_CheckSkullFloor
+	S_BLOODYSKULL4('BSKL', 3, 5.0 / 35.0, S_BLOODYSKULL5) = A_CheckSkullFloor
+	S_BLOODYSKULL5('BSKL', 4, 5.0 / 35.0, S_BLOODYSKULL1) = A_CheckSkullFloor
+	S_BLOODYSKULLX1('BSKL', 5, 16.0 / 35.0, S_BLOODYSKULLX1) = A_CheckSkullDone
+	S_BLOODYSKULLX2('BSKL', 5, 1050.0 / 35.0, none) = none
 }
 
 defaultproperties

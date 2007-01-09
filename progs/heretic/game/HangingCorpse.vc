@@ -28,7 +28,7 @@ class HangingCorpse:Decoration
 
 __states__
 {
-	S_HANGINGCORPSE('HCOR', 0, -1.0, none) { }
+	S_HANGINGCORPSE('HCOR', 0, -1.0, none) = none
 }
 
 defaultproperties

@@ -88,7 +88,7 @@ bool Deactivate()
 //
 //==========================================================================
 
-void A_Look()
+final void A_Look()
 {
 	Actor targ;
 
@@ -139,7 +139,7 @@ void A_Look()
 //
 //==========================================================================
 
-void A_Chase()
+final void A_Chase()
 {
 	float delta;
 
@@ -274,7 +274,7 @@ void A_Chase()
 //
 //==========================================================================
 
-void A_FaceTarget()
+final void A_FaceTarget()
 {
 	if (!Enemy)
 		return;
@@ -295,7 +295,7 @@ void A_FaceTarget()
 //
 //==========================================================================
 
-void A_Pain()
+final void A_Pain()
 {
 	if (PainSound)
 	{
@@ -344,7 +344,7 @@ void DropItem(class<Actor> type, int amount, float chance)
 //
 //==========================================================================
 
-void A_NoBlocking()
+final void A_NoBlocking()
 {
 	bSolid = false;
 	// Check for monsters dropping things
@@ -357,7 +357,7 @@ void A_NoBlocking()
 //
 //==========================================================================
 
-void A_Feathers()
+final void A_Feathers()
 {
 	int i;
 	int count;

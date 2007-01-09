@@ -29,10 +29,10 @@ class ArtifactEgg : Artifact
 
 __states__
 {
-	S_ARTI_EGGC1('EGGC', 0, 6.0 / 35.0, S_ARTI_EGGC2) { }
-	S_ARTI_EGGC2('EGGC', 1, 6.0 / 35.0, S_ARTI_EGGC3) { }
-	S_ARTI_EGGC3('EGGC', 2, 6.0 / 35.0, S_ARTI_EGGC4) { }
-	S_ARTI_EGGC4('EGGC', 1, 6.0 / 35.0, S_ARTI_EGGC1) { }
+	S_ARTI_EGGC1('EGGC', 0, 6.0 / 35.0, S_ARTI_EGGC2) = none
+	S_ARTI_EGGC2('EGGC', 1, 6.0 / 35.0, S_ARTI_EGGC3) = none
+	S_ARTI_EGGC3('EGGC', 2, 6.0 / 35.0, S_ARTI_EGGC4) = none
+	S_ARTI_EGGC4('EGGC', 1, 6.0 / 35.0, S_ARTI_EGGC1) = none
 }
 
 defaultproperties

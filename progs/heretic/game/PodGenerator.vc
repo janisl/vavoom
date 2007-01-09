@@ -33,7 +33,7 @@ class PodGenerator : Actor
 //
 //==========================================================================
 
-void A_MakePod()
+final void A_MakePod()
 {
 	Actor A;
 	float x;
@@ -64,7 +64,7 @@ void A_MakePod()
 
 __states__
 {
-	S_PODGENERATOR('AMG1', 0, 35.0 / 35.0, S_PODGENERATOR) { A_MakePod(); }
+	S_PODGENERATOR('AMG1', 0, 35.0 / 35.0, S_PODGENERATOR) = A_MakePod
 }
 
 defaultproperties
