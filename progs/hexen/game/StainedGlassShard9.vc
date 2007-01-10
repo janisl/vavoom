@@ -28,8 +28,8 @@ class StainedGlassShard9 : StainedGlassShard1
 
 __states__
 {
-	S_SGSHARD9_1('SGSB', 3, 4.0 / 35.0, S_SGSHARD9_1) { }
-	S_SGSHARD9_D('SGSB', 3, 30.0 / 35.0, none) { }
+	S_SGSHARD9_1('SGSB', 3, 4.0 / 35.0, S_SGSHARD9_1) = none
+	S_SGSHARD9_D('SGSB', 3, 30.0 / 35.0, none) = none
 }
 
 defaultproperties

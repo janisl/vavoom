@@ -28,7 +28,7 @@ class ZStatueGargoyleGreenShort:Decoration
 
 __states__
 {
-	S_ZSTATUEGARGOYLEGREENSHORT_1('STT4', 0, -1.0, none) { }
+	S_ZSTATUEGARGOYLEGREENSHORT_1('STT4', 0, -1.0, none) = none
 }
 
 defaultproperties

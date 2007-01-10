@@ -28,7 +28,7 @@ class ZCorpseLynched:Decoration
 
 __states__
 {
-	S_ZCORPSELYNCHED1('CPS4', 0, -1.0, none) { }
+	S_ZCORPSELYNCHED1('CPS4', 0, -1.0, none) = none
 }
 
 defaultproperties

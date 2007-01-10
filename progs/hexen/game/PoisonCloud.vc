@@ -74,24 +74,13 @@ void InitCloud(Actor InstigatedBy)
 	bColideWithWorld = true;
 }
 
-//============================================================================
-//
-//  A_Explode
-//
-//============================================================================
-
-void A_Explode()
-{
-	P_RadiusAttack(4, 40.0, true);
-}
-
 //===========================================================================
 //
 //  A_PoisonBagDamage
 //
 //===========================================================================
 
-void A_PoisonBagDamage()
+final void A_PoisonBagDamage()
 {
 	A_Explode();
 
@@ -105,7 +94,7 @@ void A_PoisonBagDamage()
 //
 //===========================================================================
 
-void A_PoisonBagCheck()
+final void A_PoisonBagCheck()
 {
 	if (!--LifeCount)
 	{
@@ -115,28 +104,28 @@ void A_PoisonBagCheck()
 
 __states__
 {
-	S_POISONCLOUD1('PSBG', 3, 1.0 / 35.0, S_POISONCLOUD2) { }
-	S_POISONCLOUD2('PSBG', 3, 1.0 / 35.0, S_POISONCLOUD3) { A_Scream(); }
-	S_POISONCLOUD3('PSBG', 3, 2.0 / 35.0, S_POISONCLOUD4) { A_PoisonBagDamage(); }
-	S_POISONCLOUD4('PSBG', 4, 2.0 / 35.0, S_POISONCLOUD5) { A_PoisonBagDamage(); }
-	S_POISONCLOUD5('PSBG', 4, 2.0 / 35.0, S_POISONCLOUD6) { A_PoisonBagDamage(); }
-	S_POISONCLOUD6('PSBG', 4, 2.0 / 35.0, S_POISONCLOUD7) { A_PoisonBagDamage(); }
-	S_POISONCLOUD7('PSBG', 5, 2.0 / 35.0, S_POISONCLOUD8) { A_PoisonBagDamage(); }
-	S_POISONCLOUD8('PSBG', 5, 2.0 / 35.0, S_POISONCLOUD9) { A_PoisonBagDamage(); }
-	S_POISONCLOUD9('PSBG', 5, 2.0 / 35.0, S_POISONCLOUD10) { A_PoisonBagDamage(); }
-	S_POISONCLOUD10('PSBG', 6, 2.0 / 35.0, S_POISONCLOUD11) { A_PoisonBagDamage(); }
-	S_POISONCLOUD11('PSBG', 6, 2.0 / 35.0, S_POISONCLOUD12) { A_PoisonBagDamage(); }
-	S_POISONCLOUD12('PSBG', 6, 2.0 / 35.0, S_POISONCLOUD13) { A_PoisonBagDamage(); }
-	S_POISONCLOUD13('PSBG', 7, 2.0 / 35.0, S_POISONCLOUD14) { A_PoisonBagDamage(); }
-	S_POISONCLOUD14('PSBG', 7, 2.0 / 35.0, S_POISONCLOUD15) { A_PoisonBagDamage(); }
-	S_POISONCLOUD15('PSBG', 7, 2.0 / 35.0, S_POISONCLOUD16) { A_PoisonBagDamage(); }
-	S_POISONCLOUD16('PSBG', 8, 2.0 / 35.0, S_POISONCLOUD17) { A_PoisonBagDamage(); }
-	S_POISONCLOUD17('PSBG', 8, 1.0 / 35.0, S_POISONCLOUD18) { A_PoisonBagDamage(); }
-	S_POISONCLOUD18('PSBG', 8, 1.0 / 35.0, S_POISONCLOUD4) { A_PoisonBagCheck(); }
-	S_POISONCLOUD_X1('PSBG', 7, 7.0 / 35.0, S_POISONCLOUD_X2) { }
-	S_POISONCLOUD_X2('PSBG', 6, 7.0 / 35.0, S_POISONCLOUD_X3) { }
-	S_POISONCLOUD_X3('PSBG', 5, 6.0 / 35.0, S_POISONCLOUD_X4) { }
-	S_POISONCLOUD_X4('PSBG', 3, 6.0 / 35.0, none) { }
+	S_POISONCLOUD1('PSBG', 3, 1.0 / 35.0, S_POISONCLOUD2) = none
+	S_POISONCLOUD2('PSBG', 3, 1.0 / 35.0, S_POISONCLOUD3) = A_Scream
+	S_POISONCLOUD3('PSBG', 3, 2.0 / 35.0, S_POISONCLOUD4) = A_PoisonBagDamage
+	S_POISONCLOUD4('PSBG', 4, 2.0 / 35.0, S_POISONCLOUD5) = A_PoisonBagDamage
+	S_POISONCLOUD5('PSBG', 4, 2.0 / 35.0, S_POISONCLOUD6) = A_PoisonBagDamage
+	S_POISONCLOUD6('PSBG', 4, 2.0 / 35.0, S_POISONCLOUD7) = A_PoisonBagDamage
+	S_POISONCLOUD7('PSBG', 5, 2.0 / 35.0, S_POISONCLOUD8) = A_PoisonBagDamage
+	S_POISONCLOUD8('PSBG', 5, 2.0 / 35.0, S_POISONCLOUD9) = A_PoisonBagDamage
+	S_POISONCLOUD9('PSBG', 5, 2.0 / 35.0, S_POISONCLOUD10) = A_PoisonBagDamage
+	S_POISONCLOUD10('PSBG', 6, 2.0 / 35.0, S_POISONCLOUD11) = A_PoisonBagDamage
+	S_POISONCLOUD11('PSBG', 6, 2.0 / 35.0, S_POISONCLOUD12) = A_PoisonBagDamage
+	S_POISONCLOUD12('PSBG', 6, 2.0 / 35.0, S_POISONCLOUD13) = A_PoisonBagDamage
+	S_POISONCLOUD13('PSBG', 7, 2.0 / 35.0, S_POISONCLOUD14) = A_PoisonBagDamage
+	S_POISONCLOUD14('PSBG', 7, 2.0 / 35.0, S_POISONCLOUD15) = A_PoisonBagDamage
+	S_POISONCLOUD15('PSBG', 7, 2.0 / 35.0, S_POISONCLOUD16) = A_PoisonBagDamage
+	S_POISONCLOUD16('PSBG', 8, 2.0 / 35.0, S_POISONCLOUD17) = A_PoisonBagDamage
+	S_POISONCLOUD17('PSBG', 8, 1.0 / 35.0, S_POISONCLOUD18) = A_PoisonBagDamage
+	S_POISONCLOUD18('PSBG', 8, 1.0 / 35.0, S_POISONCLOUD4) = A_PoisonBagCheck
+	S_POISONCLOUD_X1('PSBG', 7, 7.0 / 35.0, S_POISONCLOUD_X2) = none
+	S_POISONCLOUD_X2('PSBG', 6, 7.0 / 35.0, S_POISONCLOUD_X3) = none
+	S_POISONCLOUD_X3('PSBG', 5, 6.0 / 35.0, S_POISONCLOUD_X4) = none
+	S_POISONCLOUD_X4('PSBG', 3, 6.0 / 35.0, none) = none
 }
 
 defaultproperties

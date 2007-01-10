@@ -28,7 +28,7 @@ class ZStalactiteIceLarge : Decoration
 
 __states__
 {
-	S_ZSTALACTITEICELARGE('ICT1', 0, -1.0, none) { }
+	S_ZSTALACTITEICELARGE('ICT1', 0, -1.0, none) = none
 }
 
 defaultproperties

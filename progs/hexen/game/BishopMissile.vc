@@ -46,7 +46,7 @@ int InflictorModifyDamage(Actor victim, Actor source, int damage)
 //
 //==========================================================================
 
-void A_BishopMissileWeave()
+final void A_BishopMissileWeave()
 {
 	float newX, newY;
 	float angle;
@@ -69,24 +69,24 @@ void A_BishopMissileWeave()
 //
 //==========================================================================
 
-void A_BishopMissileSeek()
+final void A_BishopMissileSeek()
 {
 	SeekerMissile(2.0, 3.0);
 }
 
 __states__
 {
-	S_BISHFX1_1('BPFX', 0 | FF_FULLBRIGHT, 1.0 / 35.0, S_BISHFX1_2) { A_BishopMissileWeave(); }
-	S_BISHFX1_2('BPFX', 1 | FF_FULLBRIGHT, 1.0 / 35.0, S_BISHFX1_3) { A_BishopMissileWeave(); }
-	S_BISHFX1_3('BPFX', 0 | FF_FULLBRIGHT, 1.0 / 35.0, S_BISHFX1_4) { A_BishopMissileWeave(); }
-	S_BISHFX1_4('BPFX', 1 | FF_FULLBRIGHT, 1.0 / 35.0, S_BISHFX1_5) { A_BishopMissileWeave(); }
-	S_BISHFX1_5('BPFX', 1 | FF_FULLBRIGHT, 0.0 / 35.0, S_BISHFX1_1) { A_BishopMissileSeek(); }
-	S_BISHFXI1_1('BPFX', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_BISHFXI1_2) { }
-	S_BISHFXI1_2('BPFX', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_BISHFXI1_3) { }
-	S_BISHFXI1_3('BPFX', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_BISHFXI1_4) { }
-	S_BISHFXI1_4('BPFX', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_BISHFXI1_5) { }
-	S_BISHFXI1_5('BPFX', 6 | FF_FULLBRIGHT, 3.0 / 35.0, S_BISHFXI1_6) { }
-	S_BISHFXI1_6('BPFX', 7 | FF_FULLBRIGHT, 3.0 / 35.0, none) { }
+	S_BISHFX1_1('BPFX', 0 | FF_FULLBRIGHT, 1.0 / 35.0, S_BISHFX1_2) = A_BishopMissileWeave
+	S_BISHFX1_2('BPFX', 1 | FF_FULLBRIGHT, 1.0 / 35.0, S_BISHFX1_3) = A_BishopMissileWeave
+	S_BISHFX1_3('BPFX', 0 | FF_FULLBRIGHT, 1.0 / 35.0, S_BISHFX1_4) = A_BishopMissileWeave
+	S_BISHFX1_4('BPFX', 1 | FF_FULLBRIGHT, 1.0 / 35.0, S_BISHFX1_5) = A_BishopMissileWeave
+	S_BISHFX1_5('BPFX', 1 | FF_FULLBRIGHT, 0.0 / 35.0, S_BISHFX1_1) = A_BishopMissileSeek
+	S_BISHFXI1_1('BPFX', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_BISHFXI1_2) = none
+	S_BISHFXI1_2('BPFX', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_BISHFXI1_3) = none
+	S_BISHFXI1_3('BPFX', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_BISHFXI1_4) = none
+	S_BISHFXI1_4('BPFX', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_BISHFXI1_5) = none
+	S_BISHFXI1_5('BPFX', 6 | FF_FULLBRIGHT, 3.0 / 35.0, S_BISHFXI1_6) = none
+	S_BISHFXI1_6('BPFX', 7 | FF_FULLBRIGHT, 3.0 / 35.0, none) = none
 }
 
 defaultproperties

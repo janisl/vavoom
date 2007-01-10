@@ -28,7 +28,7 @@ class WaterDrip : Fragment
 
 __states__
 {
-	S_WATERDRIP1('WATR', 0, 5.0 / 35.0, S_WATERDRIP1) { }
+	S_WATERDRIP1('WATR', 0, 5.0 / 35.0, S_WATERDRIP1) = none
 }
 
 defaultproperties

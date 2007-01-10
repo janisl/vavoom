@@ -28,8 +28,8 @@ class Rock2 : Fragment
 
 __states__
 {
-	S_ROCK2_1('ROCK', 1, 20.0 / 35.0, S_ROCK2_1) { }
-	S_ROCK2_D('ROCK', 1, 10.0 / 35.0, none) { }
+	S_ROCK2_1('ROCK', 1, 20.0 / 35.0, S_ROCK2_1) = none
+	S_ROCK2_D('ROCK', 1, 10.0 / 35.0, none) = none
 }
 
 defaultproperties

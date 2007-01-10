@@ -28,7 +28,7 @@ class ZChandelierUnlit:Decoration
 
 __states__
 {
-	S_ZCHANDELIER_U('CDLR', 3, -1.0, none) { }
+	S_ZCHANDELIER_U('CDLR', 3, -1.0, none) = none
 }
 
 defaultproperties

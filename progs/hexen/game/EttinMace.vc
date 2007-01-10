@@ -33,7 +33,7 @@ class EttinMace : Carcas;
 //
 //==========================================================================
 
-void A_CheckFloor()
+final void A_CheckFloor()
 {
 	if (Origin.z <= FloorZ)
 	{
@@ -45,13 +45,13 @@ void A_CheckFloor()
 
 __states__
 {
-	S_ETTIN_MACE1('ETTB', 12, 5.0 / 35.0, S_ETTIN_MACE2) { A_CheckFloor(); }
-	S_ETTIN_MACE2('ETTB', 13, 5.0 / 35.0, S_ETTIN_MACE3) { A_CheckFloor(); }
-	S_ETTIN_MACE3('ETTB', 14, 5.0 / 35.0, S_ETTIN_MACE4) { A_CheckFloor(); }
-	S_ETTIN_MACE4('ETTB', 15, 5.0 / 35.0, S_ETTIN_MACE1) { A_CheckFloor(); }
-	S_ETTIN_MACE5('ETTB', 16, 5.0 / 35.0, S_ETTIN_MACE6) { }
-	S_ETTIN_MACE6('ETTB', 17, 5.0 / 35.0, S_ETTIN_MACE7) { A_QueueCorpse(); }
-	S_ETTIN_MACE7('ETTB', 18, -1.0, none) { }
+	S_ETTIN_MACE1('ETTB', 12, 5.0 / 35.0, S_ETTIN_MACE2) = A_CheckFloor
+	S_ETTIN_MACE2('ETTB', 13, 5.0 / 35.0, S_ETTIN_MACE3) = A_CheckFloor
+	S_ETTIN_MACE3('ETTB', 14, 5.0 / 35.0, S_ETTIN_MACE4) = A_CheckFloor
+	S_ETTIN_MACE4('ETTB', 15, 5.0 / 35.0, S_ETTIN_MACE1) = A_CheckFloor
+	S_ETTIN_MACE5('ETTB', 16, 5.0 / 35.0, S_ETTIN_MACE6) = none
+	S_ETTIN_MACE6('ETTB', 17, 5.0 / 35.0, S_ETTIN_MACE7) = A_QueueCorpse
+	S_ETTIN_MACE7('ETTB', 18, -1.0, none) = none
 }
 
 defaultproperties

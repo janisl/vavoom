@@ -36,7 +36,7 @@ float TurnAngle;	// turn amount per move (in degrees)
 //
 //===========================================================================
 
-void A_BatMove()
+final void A_BatMove()
 {
 	float newangle;
 	float newSpeed;
@@ -71,10 +71,10 @@ void A_BatMove()
 
 __states__
 {
-	S_BAT1('ABAT', 0, 2.0 / 35.0, S_BAT2) { A_BatMove(); }
-	S_BAT2('ABAT', 1, 2.0 / 35.0, S_BAT3) { A_BatMove(); }
-	S_BAT3('ABAT', 2, 2.0 / 35.0, S_BAT1) { A_BatMove(); }
-	S_BAT_DEATH('ABAT', 0, 2.0 / 35.0, none) { }
+	S_BAT1('ABAT', 0, 2.0 / 35.0, S_BAT2) = A_BatMove
+	S_BAT2('ABAT', 1, 2.0 / 35.0, S_BAT3) = A_BatMove
+	S_BAT3('ABAT', 2, 2.0 / 35.0, S_BAT1) = A_BatMove
+	S_BAT_DEATH('ABAT', 0, 2.0 / 35.0, none) = none
 }
 
 defaultproperties

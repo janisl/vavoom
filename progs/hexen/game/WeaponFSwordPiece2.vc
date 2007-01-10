@@ -29,7 +29,7 @@ class WeaponFSwordPiece2 : WeaponPiece
 
 __states__
 {
-	S_FSWORD2('WFR2', 0 | FF_FULLBRIGHT, -1.0, none) { }
+	S_FSWORD2('WFR2', 0 | FF_FULLBRIGHT, -1.0, none) = none
 }
 
 defaultproperties

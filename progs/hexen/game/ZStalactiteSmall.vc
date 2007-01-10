@@ -28,7 +28,7 @@ class ZStalactiteSmall : Decoration
 
 __states__
 {
-	S_ZSTALACTITESMALL1('SLC3', 0, -1.0, none) { }
+	S_ZSTALACTITESMALL1('SLC3', 0, -1.0, none) = none
 }
 
 defaultproperties

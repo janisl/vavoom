@@ -46,7 +46,7 @@ int InflictorModifyDamage(Actor victim, Actor source, int damage)
 //
 //==========================================================================
 
-void A_TeloSpawnA()
+final void A_TeloSpawnA()
 {
 	Actor A;
 
@@ -65,7 +65,7 @@ void A_TeloSpawnA()
 //
 //==========================================================================
 
-void A_TeloSpawnB()
+final void A_TeloSpawnB()
 {
 	Actor A;
 
@@ -84,7 +84,7 @@ void A_TeloSpawnB()
 //
 //==========================================================================
 
-void A_TeloSpawnC()
+final void A_TeloSpawnC()
 {
 	Actor A;
 
@@ -103,7 +103,7 @@ void A_TeloSpawnC()
 //
 //==========================================================================
 
-void A_TeloSpawnD()
+final void A_TeloSpawnD()
 {
 	Actor A;
 
@@ -118,15 +118,15 @@ void A_TeloSpawnD()
 
 __states__
 {
-	S_TELO_FX1('TRNG', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_TELO_FX2) { }
-	S_TELO_FX2('TRNG', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_TELO_FX3) { }
-	S_TELO_FX3('TRNG', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_TELO_FX4) { A_TeloSpawnC(); }
-	S_TELO_FX4('TRNG', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_TELO_FX5) { A_TeloSpawnB(); }
-	S_TELO_FX5('TRNG', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_TELO_FX6) { A_TeloSpawnA(); }
-	S_TELO_FX6('TRNG', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_TELO_FX7) { A_TeloSpawnB(); }
-	S_TELO_FX7('TRNG', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_TELO_FX8) { A_TeloSpawnC(); }
-	S_TELO_FX8('TRNG', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_TELO_FX3) { A_TeloSpawnD(); }
-	S_TELO_FX9('TRNG', 4 | FF_FULLBRIGHT, 3.0 / 35.0, none) { }
+	S_TELO_FX1('TRNG', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_TELO_FX2) = none
+	S_TELO_FX2('TRNG', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_TELO_FX3) = none
+	S_TELO_FX3('TRNG', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_TELO_FX4) = A_TeloSpawnC
+	S_TELO_FX4('TRNG', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_TELO_FX5) = A_TeloSpawnB
+	S_TELO_FX5('TRNG', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_TELO_FX6) = A_TeloSpawnA
+	S_TELO_FX6('TRNG', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_TELO_FX7) = A_TeloSpawnB
+	S_TELO_FX7('TRNG', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_TELO_FX8) = A_TeloSpawnC
+	S_TELO_FX8('TRNG', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_TELO_FX3) = A_TeloSpawnD
+	S_TELO_FX9('TRNG', 4 | FF_FULLBRIGHT, 3.0 / 35.0, none) = none
 }
 
 defaultproperties

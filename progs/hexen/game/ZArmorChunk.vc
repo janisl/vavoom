@@ -29,16 +29,16 @@ state ChunkStates[10];
 
 __states__
 {
-	S_ZARMORCHUNK1('SUIT', 1, -1.0, none) { }
-	S_ZARMORCHUNK2('SUIT', 2, -1.0, none) { }
-	S_ZARMORCHUNK3('SUIT', 3, -1.0, none) { }
-	S_ZARMORCHUNK4('SUIT', 4, -1.0, none) { }
-	S_ZARMORCHUNK5('SUIT', 5, -1.0, none) { }
-	S_ZARMORCHUNK6('SUIT', 6, -1.0, none) { }
-	S_ZARMORCHUNK7('SUIT', 7, -1.0, none) { }
-	S_ZARMORCHUNK8('SUIT', 8, -1.0, none) { }
-	S_ZARMORCHUNK9('SUIT', 9, -1.0, none) { }
-	S_ZARMORCHUNK10('SUIT', 10, -1.0, none) { }
+	S_ZARMORCHUNK1('SUIT', 1, -1.0, none) = none
+	S_ZARMORCHUNK2('SUIT', 2, -1.0, none) = none
+	S_ZARMORCHUNK3('SUIT', 3, -1.0, none) = none
+	S_ZARMORCHUNK4('SUIT', 4, -1.0, none) = none
+	S_ZARMORCHUNK5('SUIT', 5, -1.0, none) = none
+	S_ZARMORCHUNK6('SUIT', 6, -1.0, none) = none
+	S_ZARMORCHUNK7('SUIT', 7, -1.0, none) = none
+	S_ZARMORCHUNK8('SUIT', 8, -1.0, none) = none
+	S_ZARMORCHUNK9('SUIT', 9, -1.0, none) = none
+	S_ZARMORCHUNK10('SUIT', 10, -1.0, none) = none
 }
 
 defaultproperties

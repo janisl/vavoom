@@ -808,7 +808,7 @@ void NewChaseDir()
 //
 //==========================================================================
 
-void A_Look()
+final void A_Look()
 {
 	Actor targ;
 
@@ -859,7 +859,7 @@ void A_Look()
 //
 //==========================================================================
 
-void A_Chase()
+final void A_Chase()
 {
 	float delta;
 
@@ -999,7 +999,7 @@ void A_Chase()
 //
 //==========================================================================
 
-void A_FaceTarget()
+final void A_FaceTarget()
 {
 	if (!Enemy)
 		return;
@@ -1021,7 +1021,7 @@ void A_FaceTarget()
 //
 //============================================================================
 
-void A_FreezeDeath()
+final void A_FreezeDeath()
 {
 	StateTime = 2.0 + Random() * 8.0 + Random() * 8.0;
 	bSolid = true;
@@ -1057,7 +1057,7 @@ void A_FreezeDeath()
 //
 //============================================================================
 
-void A_FreezeDeathChunks()
+final void A_FreezeDeathChunks()
 {
 	int i;
 	Actor A;

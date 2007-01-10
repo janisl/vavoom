@@ -31,7 +31,7 @@ class IceGuyMissile : Projectile;
 //
 //==========================================================================
 
-void A_IceGuyMissilePuff()
+final void A_IceGuyMissilePuff()
 {
 	Spawn(IceGuyMissilePuff, Origin + vector(0.0, 0.0, 2.0));
 }
@@ -42,7 +42,7 @@ void A_IceGuyMissilePuff()
 //
 //==========================================================================
 
-void A_IceGuyMissileExplode()
+final void A_IceGuyMissileExplode()
 {
 	Actor mo;
 	int i;
@@ -59,14 +59,14 @@ void A_IceGuyMissileExplode()
 
 __states__
 {
-	S_ICEGUY_FX1('ICPR', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_ICEGUY_FX2) { A_IceGuyMissilePuff(); }
-	S_ICEGUY_FX2('ICPR', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_ICEGUY_FX3) { A_IceGuyMissilePuff(); }
-	S_ICEGUY_FX3('ICPR', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_ICEGUY_FX1) { A_IceGuyMissilePuff(); }
-	S_ICEGUY_FX_X1('ICPR', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_ICEGUY_FX_X2) { }
-	S_ICEGUY_FX_X2('ICPR', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_ICEGUY_FX_X3) { A_IceGuyMissileExplode(); }
-	S_ICEGUY_FX_X3('ICPR', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_ICEGUY_FX_X4) { }
-	S_ICEGUY_FX_X4('ICPR', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_ICEGUY_FX_X5) { }
-	S_ICEGUY_FX_X5('ICPR', 7 | FF_FULLBRIGHT, 3.0 / 35.0, none) { }
+	S_ICEGUY_FX1('ICPR', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_ICEGUY_FX2) = A_IceGuyMissilePuff
+	S_ICEGUY_FX2('ICPR', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_ICEGUY_FX3) = A_IceGuyMissilePuff
+	S_ICEGUY_FX3('ICPR', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_ICEGUY_FX1) = A_IceGuyMissilePuff
+	S_ICEGUY_FX_X1('ICPR', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_ICEGUY_FX_X2) = none
+	S_ICEGUY_FX_X2('ICPR', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_ICEGUY_FX_X3) = A_IceGuyMissileExplode
+	S_ICEGUY_FX_X3('ICPR', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_ICEGUY_FX_X4) = none
+	S_ICEGUY_FX_X4('ICPR', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_ICEGUY_FX_X5) = none
+	S_ICEGUY_FX_X5('ICPR', 7 | FF_FULLBRIGHT, 3.0 / 35.0, none) = none
 }
 
 defaultproperties

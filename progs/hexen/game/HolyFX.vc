@@ -264,7 +264,7 @@ void CHolyWeave()
 //
 //============================================================================
 
-void A_CHolySeek()
+final void A_CHolySeek()
 {
 	Health--;
 	if (Health <= 0)
@@ -293,7 +293,7 @@ void A_CHolySeek()
 //
 //============================================================================
 
-void A_CHolyCheckScream()
+final void A_CHolyCheckScream()
 {
 	A_CHolySeek();
 	if (P_Random() < 20)
@@ -308,16 +308,16 @@ void A_CHolyCheckScream()
 
 __states__
 {
-	S_HOLY_FX1('SPIR', 0, 2.0 / 35.0, S_HOLY_FX2) { A_CHolySeek(); }
-	S_HOLY_FX2('SPIR', 0, 2.0 / 35.0, S_HOLY_FX3) { A_CHolySeek(); }
-	S_HOLY_FX3('SPIR', 1, 2.0 / 35.0, S_HOLY_FX4) { A_CHolySeek(); }
-	S_HOLY_FX4('SPIR', 1, 2.0 / 35.0, S_HOLY_FX1) { A_CHolyCheckScream(); }
-	S_HOLY_FX_X1('SPIR', 3, 4.0 / 35.0, S_HOLY_FX_X2) { }
-	S_HOLY_FX_X2('SPIR', 4, 4.0 / 35.0, S_HOLY_FX_X3) { A_Scream(); }
-	S_HOLY_FX_X3('SPIR', 5, 4.0 / 35.0, S_HOLY_FX_X4) { }
-	S_HOLY_FX_X4('SPIR', 6, 4.0 / 35.0, S_HOLY_FX_X5) { }
-	S_HOLY_FX_X5('SPIR', 7, 4.0 / 35.0, S_HOLY_FX_X6) { }
-	S_HOLY_FX_X6('SPIR', 8, 4.0 / 35.0, none) { }
+	S_HOLY_FX1('SPIR', 0, 2.0 / 35.0, S_HOLY_FX2) = A_CHolySeek
+	S_HOLY_FX2('SPIR', 0, 2.0 / 35.0, S_HOLY_FX3) = A_CHolySeek
+	S_HOLY_FX3('SPIR', 1, 2.0 / 35.0, S_HOLY_FX4) = A_CHolySeek
+	S_HOLY_FX4('SPIR', 1, 2.0 / 35.0, S_HOLY_FX1) = A_CHolyCheckScream
+	S_HOLY_FX_X1('SPIR', 3, 4.0 / 35.0, S_HOLY_FX_X2) = none
+	S_HOLY_FX_X2('SPIR', 4, 4.0 / 35.0, S_HOLY_FX_X3) = A_Scream
+	S_HOLY_FX_X3('SPIR', 5, 4.0 / 35.0, S_HOLY_FX_X4) = none
+	S_HOLY_FX_X4('SPIR', 6, 4.0 / 35.0, S_HOLY_FX_X5) = none
+	S_HOLY_FX_X5('SPIR', 7, 4.0 / 35.0, S_HOLY_FX_X6) = none
+	S_HOLY_FX_X6('SPIR', 8, 4.0 / 35.0, none) = none
 }
 
 defaultproperties

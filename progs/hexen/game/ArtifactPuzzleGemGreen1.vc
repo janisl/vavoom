@@ -29,7 +29,7 @@ class ArtifactPuzzleGemGreen1 : ArtifactPuzzle
 
 __states__
 {
-	S_ARTIPUZZGEMGREEN1('AGMG', 0, -1.0, none) { }
+	S_ARTIPUZZGEMGREEN1('AGMG', 0, -1.0, none) = none
 }
 
 defaultproperties

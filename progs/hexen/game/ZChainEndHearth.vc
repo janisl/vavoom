@@ -28,7 +28,7 @@ class ZChainEndHearth:Decoration
 
 __states__
 {
-	S_ZCHAINEND_HEART('CHNS', 2, -1.0, none) { }
+	S_ZCHAINEND_HEART('CHNS', 2, -1.0, none) = none
 }
 
 defaultproperties

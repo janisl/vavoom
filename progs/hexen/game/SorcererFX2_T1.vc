@@ -27,7 +27,7 @@ class SorcererFX2_T1 : Effect;
 
 __states__
 {
-	S_SORCFX2T1('SBS2', 0, 10.0 / 35.0, none) { }
+	S_SORCFX2T1('SBS2', 0, 10.0 / 35.0, none) = none
 }
 
 defaultproperties

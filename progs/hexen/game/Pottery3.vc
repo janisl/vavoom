@@ -28,7 +28,7 @@ class Pottery3:Pottery1
 
 __states__
 {
-	S_ZPOTTERY3('POT3', 0, -1.0, none) { }
+	S_ZPOTTERY3('POT3', 0, -1.0, none) = none
 }
 
 defaultproperties

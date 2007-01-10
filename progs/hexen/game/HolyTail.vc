@@ -92,7 +92,7 @@ void CHolyTailRemove()
 //
 //============================================================================
 
-void A_CHolyTail()
+final void A_CHolyTail()
 {
 	Actor parent;
 
@@ -118,8 +118,8 @@ void A_CHolyTail()
 
 __states__
 {
-	S_HOLY_TAIL1('SPIR', 2, 1.0 / 35.0, S_HOLY_TAIL1) { A_CHolyTail(); }
-	S_HOLY_TAIL2('SPIR', 3, -1.0, none) { }
+	S_HOLY_TAIL1('SPIR', 2, 1.0 / 35.0, S_HOLY_TAIL1) = A_CHolyTail
+	S_HOLY_TAIL2('SPIR', 3, -1.0, none) = none
 }
 
 defaultproperties

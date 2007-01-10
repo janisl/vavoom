@@ -30,16 +30,16 @@ class FlameSmall : Decoration
 
 __states__
 {
-	S_FLAME_SDORM1('FFSM', 0, 2.0 / 35.0, S_FLAME_SDORM2) { }
-	S_FLAME_SDORM2('FFSM', 1, 2.0 / 35.0, S_FLAME_SDORM3) { A_HideThing(); }
-	S_FLAME_SDORM3('FFSM', 2, 200.0 / 35.0, S_FLAME_SDORM3) { }
-	S_FLAME_SMALL1('FFSM', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_FLAME_SMALL2) { }
-	S_FLAME_SMALL2('FFSM', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_FLAME_SMALL3) { A_UnHideThing(); }
-	S_FLAME_SMALL3('FFSM', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_FLAME_SMALL4) { }
-	S_FLAME_SMALL4('FFSM', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_FLAME_SMALL5) { }
-	S_FLAME_SMALL5('FFSM', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_FLAME_SMALL6) { }
-	S_FLAME_SMALL6('FFSM', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_FLAME_SMALL7) { }
-	S_FLAME_SMALL7('FFSM', 4 | FF_FULLBRIGHT, 3.0 / 35.0, S_FLAME_SMALL3) { }
+	S_FLAME_SDORM1('FFSM', 0, 2.0 / 35.0, S_FLAME_SDORM2) = none
+	S_FLAME_SDORM2('FFSM', 1, 2.0 / 35.0, S_FLAME_SDORM3) = A_HideThing
+	S_FLAME_SDORM3('FFSM', 2, 200.0 / 35.0, S_FLAME_SDORM3) = none
+	S_FLAME_SMALL1('FFSM', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_FLAME_SMALL2) = none
+	S_FLAME_SMALL2('FFSM', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_FLAME_SMALL3) = A_UnHideThing
+	S_FLAME_SMALL3('FFSM', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_FLAME_SMALL4) = none
+	S_FLAME_SMALL4('FFSM', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_FLAME_SMALL5) = none
+	S_FLAME_SMALL5('FFSM', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_FLAME_SMALL6) = none
+	S_FLAME_SMALL6('FFSM', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_FLAME_SMALL7) = none
+	S_FLAME_SMALL7('FFSM', 4 | FF_FULLBRIGHT, 3.0 / 35.0, S_FLAME_SMALL3) = none
 }
 
 //==========================================================================
@@ -71,7 +71,7 @@ bool Deactivate()
 
 defaultproperties
 {
-	Alpha = 0.0;
+	bHidden = true;
 	bNoTeleport = true;
 	IdleState = S_FLAME_SMALL1;
 	bStaticLight = true;

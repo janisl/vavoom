@@ -33,7 +33,7 @@ class FlameSmallTemp : Decoration
 //
 //===========================================================================
 
-void A_FlameCheck()
+final void A_FlameCheck()
 {
 	if (!Args[0]--)	// Called every 8 tics
 	{
@@ -43,12 +43,12 @@ void A_FlameCheck()
 
 __states__
 {
-	S_FLAME_TSMALL1('FFSM', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_FLAME_TSMALL2) { }
-	S_FLAME_TSMALL2('FFSM', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_FLAME_TSMALL3) { }
-	S_FLAME_TSMALL3('FFSM', 2 | FF_FULLBRIGHT, 2.0 / 35.0, S_FLAME_TSMALL4) { A_FlameCheck(); }
-	S_FLAME_TSMALL4('FFSM', 2 | FF_FULLBRIGHT, 2.0 / 35.0, S_FLAME_TSMALL5) { }
-	S_FLAME_TSMALL5('FFSM', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_FLAME_TSMALL6) { }
-	S_FLAME_TSMALL6('FFSM', 4 | FF_FULLBRIGHT, 3.0 / 35.0, S_FLAME_TSMALL1) { A_FlameCheck(); }
+	S_FLAME_TSMALL1('FFSM', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_FLAME_TSMALL2) = none
+	S_FLAME_TSMALL2('FFSM', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_FLAME_TSMALL3) = none
+	S_FLAME_TSMALL3('FFSM', 2 | FF_FULLBRIGHT, 2.0 / 35.0, S_FLAME_TSMALL4) = A_FlameCheck
+	S_FLAME_TSMALL4('FFSM', 2 | FF_FULLBRIGHT, 2.0 / 35.0, S_FLAME_TSMALL5) = none
+	S_FLAME_TSMALL5('FFSM', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_FLAME_TSMALL6) = none
+	S_FLAME_TSMALL6('FFSM', 4 | FF_FULLBRIGHT, 3.0 / 35.0, S_FLAME_TSMALL1) = A_FlameCheck
 }
 
 defaultproperties

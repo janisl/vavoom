@@ -32,7 +32,7 @@ class ZCorpseLynchedNoHeart : Decoration
 //
 //============================================================================
 
-void A_CorpseBloodDrip()
+final void A_CorpseBloodDrip()
 {
 	if (Random() > 0.5)
 	{
@@ -43,7 +43,7 @@ void A_CorpseBloodDrip()
 
 __states__
 {
-	S_ZCORPSELYNCHED2('CPS5', 0, 140.0 / 35.0, S_ZCORPSELYNCHED2) { A_CorpseBloodDrip(); }
+	S_ZCORPSELYNCHED2('CPS5', 0, 140.0 / 35.0, S_ZCORPSELYNCHED2) = A_CorpseBloodDrip
 }
 
 defaultproperties

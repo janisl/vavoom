@@ -28,9 +28,9 @@ class ZChandelier : Decoration
 
 __states__
 {
-	S_ZCHANDELIER1('CDLR', 0, 4.0 / 35.0, S_ZCHANDELIER2) { }
-	S_ZCHANDELIER2('CDLR', 1, 4.0 / 35.0, S_ZCHANDELIER3) { }
-	S_ZCHANDELIER3('CDLR', 2, 4.0 / 35.0, S_ZCHANDELIER1) { }
+	S_ZCHANDELIER1('CDLR', 0, 4.0 / 35.0, S_ZCHANDELIER2) = none
+	S_ZCHANDELIER2('CDLR', 1, 4.0 / 35.0, S_ZCHANDELIER3) = none
+	S_ZCHANDELIER3('CDLR', 2, 4.0 / 35.0, S_ZCHANDELIER1) = none
 }
 
 defaultproperties

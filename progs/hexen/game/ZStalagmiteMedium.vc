@@ -28,7 +28,7 @@ class ZStalagmiteMedium : Decoration
 
 __states__
 {
-	S_ZSTALAGMITEMEDIUM1('SGM2', 0, -1.0, none) { }
+	S_ZSTALAGMITEMEDIUM1('SGM2', 0, -1.0, none) = none
 }
 
 defaultproperties

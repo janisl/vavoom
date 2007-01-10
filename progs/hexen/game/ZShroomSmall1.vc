@@ -28,7 +28,7 @@ class ZShroomSmall1:Decoration
 
 __states__
 {
-	S_ZSHROOMSMALL1_1('MSH4', 0, -1.0, none) { }
+	S_ZSHROOMSMALL1_1('MSH4', 0, -1.0, none) = none
 }
 
 defaultproperties

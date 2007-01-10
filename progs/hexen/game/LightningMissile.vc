@@ -135,7 +135,7 @@ bool Touch(Entity InOther)
 //
 //==========================================================================
 
-void A_LightningClip()
+final void A_LightningClip()
 {
 	Actor targ;
 	int zigZag;
@@ -205,7 +205,7 @@ void A_LightningClip()
 //
 //==========================================================================
 
-void A_LightningZap()
+final void A_LightningZap()
 {
 	LightningZap Zap;
 	float deltaZ;
@@ -256,7 +256,7 @@ void A_LightningZap()
 //
 //==========================================================================
 
-void A_LightningRemove()
+final void A_LightningRemove()
 {
 	if (LightningLink)
 	{

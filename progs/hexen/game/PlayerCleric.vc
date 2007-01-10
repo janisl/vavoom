@@ -27,37 +27,37 @@ class PlayerCleric : PlayerPawn;
 
 __states__
 {
-	S_CPLAY('CLER', 0, -1.0, none) { }
-	S_CPLAY_RUN1('CLER', 0, 4.0 / 35.0, S_CPLAY_RUN2) { }
-	S_CPLAY_RUN2('CLER', 1, 4.0 / 35.0, S_CPLAY_RUN3) { }
-	S_CPLAY_RUN3('CLER', 2, 4.0 / 35.0, S_CPLAY_RUN4) { }
-	S_CPLAY_RUN4('CLER', 3, 4.0 / 35.0, S_CPLAY_RUN1) { }
-	S_CPLAY_ATK1('CLER', 4, 6.0 / 35.0, S_CPLAY_ATK2) { }
-	S_CPLAY_ATK2('CLER', 5, 6.0 / 35.0, S_CPLAY_ATK3) { }
-	S_CPLAY_ATK3('CLER', 6, 6.0 / 35.0, S_CPLAY) { }
-	S_CPLAY_PAIN('CLER', 7, 4.0 / 35.0, S_CPLAY_PAIN2) { }
-	S_CPLAY_PAIN2('CLER', 7, 4.0 / 35.0, S_CPLAY) { A_Pain(); }
-	S_CPLAY_DIE1('CLER', 8, 6.0 / 35.0, S_CPLAY_DIE2) { }
-	S_CPLAY_DIE2('CLER', 10, 6.0 / 35.0, S_CPLAY_DIE3) { A_Scream(); }
-	S_CPLAY_DIE3('CLER', 11, 6.0 / 35.0, S_CPLAY_DIE4) { }
-	S_CPLAY_DIE4('CLER', 11, 6.0 / 35.0, S_CPLAY_DIE5) { }
-	S_CPLAY_DIE5('CLER', 12, 6.0 / 35.0, S_CPLAY_DIE6) { A_NoBlocking(); }
-	S_CPLAY_DIE6('CLER', 13, 6.0 / 35.0, S_CPLAY_DIE7) { }
-	S_CPLAY_DIE7('CLER', 14, 6.0 / 35.0, S_CPLAY_DIE8) { }
-	S_CPLAY_DIE8('CLER', 15, 6.0 / 35.0, S_CPLAY_DIE9) { }
-	S_CPLAY_DIE9('CLER', 16, -1.0, none) { A_AddPlayerCorpse(); }
-	S_CPLAY_XDIE1('CLER', 17, 5.0 / 35.0, S_CPLAY_XDIE2) { A_Scream(); }
-	S_CPLAY_XDIE2('CLER', 18, 5.0 / 35.0, S_CPLAY_XDIE3) { }
-	S_CPLAY_XDIE3('CLER', 19, 5.0 / 35.0, S_CPLAY_XDIE4) { A_NoBlocking(); }
-	S_CPLAY_XDIE4('CLER', 20, 5.0 / 35.0, S_CPLAY_XDIE5) { }
-	S_CPLAY_XDIE5('CLER', 21, 5.0 / 35.0, S_CPLAY_XDIE6) { }
-	S_CPLAY_XDIE6('CLER', 22, 5.0 / 35.0, S_CPLAY_XDIE7) { }
-	S_CPLAY_XDIE7('CLER', 23, 5.0 / 35.0, S_CPLAY_XDIE8) { }
-	S_CPLAY_XDIE8('CLER', 24, 5.0 / 35.0, S_CPLAY_XDIE9) { }
-	S_CPLAY_XDIE9('CLER', 25, 5.0 / 35.0, S_CPLAY_XDIE10) { }
-	S_CPLAY_XDIE10('CLER', 26, -1.0, none) { A_AddPlayerCorpse(); }
-	S_CPLAY_ICE('CLER', 27, 5.0 / 35.0, S_CPLAY_ICE2) { A_FreezeDeath(); }
-	S_CPLAY_ICE2('CLER', 27, 1.0 / 35.0, S_CPLAY_ICE2) { A_FreezeDeathChunks(); }
+	S_CPLAY('CLER', 0, -1.0, none) = none
+	S_CPLAY_RUN1('CLER', 0, 4.0 / 35.0, S_CPLAY_RUN2) = none
+	S_CPLAY_RUN2('CLER', 1, 4.0 / 35.0, S_CPLAY_RUN3) = none
+	S_CPLAY_RUN3('CLER', 2, 4.0 / 35.0, S_CPLAY_RUN4) = none
+	S_CPLAY_RUN4('CLER', 3, 4.0 / 35.0, S_CPLAY_RUN1) = none
+	S_CPLAY_ATK1('CLER', 4, 6.0 / 35.0, S_CPLAY_ATK2) = none
+	S_CPLAY_ATK2('CLER', 5, 6.0 / 35.0, S_CPLAY_ATK3) = none
+	S_CPLAY_ATK3('CLER', 6, 6.0 / 35.0, S_CPLAY) = none
+	S_CPLAY_PAIN('CLER', 7, 4.0 / 35.0, S_CPLAY_PAIN2) = none
+	S_CPLAY_PAIN2('CLER', 7, 4.0 / 35.0, S_CPLAY) = A_Pain
+	S_CPLAY_DIE1('CLER', 8, 6.0 / 35.0, S_CPLAY_DIE2) = none
+	S_CPLAY_DIE2('CLER', 10, 6.0 / 35.0, S_CPLAY_DIE3) = A_Scream
+	S_CPLAY_DIE3('CLER', 11, 6.0 / 35.0, S_CPLAY_DIE4) = none
+	S_CPLAY_DIE4('CLER', 11, 6.0 / 35.0, S_CPLAY_DIE5) = none
+	S_CPLAY_DIE5('CLER', 12, 6.0 / 35.0, S_CPLAY_DIE6) = A_NoBlocking
+	S_CPLAY_DIE6('CLER', 13, 6.0 / 35.0, S_CPLAY_DIE7) = none
+	S_CPLAY_DIE7('CLER', 14, 6.0 / 35.0, S_CPLAY_DIE8) = none
+	S_CPLAY_DIE8('CLER', 15, 6.0 / 35.0, S_CPLAY_DIE9) = none
+	S_CPLAY_DIE9('CLER', 16, -1.0, none) = A_AddPlayerCorpse
+	S_CPLAY_XDIE1('CLER', 17, 5.0 / 35.0, S_CPLAY_XDIE2) = A_Scream
+	S_CPLAY_XDIE2('CLER', 18, 5.0 / 35.0, S_CPLAY_XDIE3) = none
+	S_CPLAY_XDIE3('CLER', 19, 5.0 / 35.0, S_CPLAY_XDIE4) = A_NoBlocking
+	S_CPLAY_XDIE4('CLER', 20, 5.0 / 35.0, S_CPLAY_XDIE5) = none
+	S_CPLAY_XDIE5('CLER', 21, 5.0 / 35.0, S_CPLAY_XDIE6) = none
+	S_CPLAY_XDIE6('CLER', 22, 5.0 / 35.0, S_CPLAY_XDIE7) = none
+	S_CPLAY_XDIE7('CLER', 23, 5.0 / 35.0, S_CPLAY_XDIE8) = none
+	S_CPLAY_XDIE8('CLER', 24, 5.0 / 35.0, S_CPLAY_XDIE9) = none
+	S_CPLAY_XDIE9('CLER', 25, 5.0 / 35.0, S_CPLAY_XDIE10) = none
+	S_CPLAY_XDIE10('CLER', 26, -1.0, none) = A_AddPlayerCorpse
+	S_CPLAY_ICE('CLER', 27, 5.0 / 35.0, S_CPLAY_ICE2) = A_FreezeDeath
+	S_CPLAY_ICE2('CLER', 27, 1.0 / 35.0, S_CPLAY_ICE2) = A_FreezeDeathChunks
 }
 
 defaultproperties

@@ -33,7 +33,7 @@ class SorcererBall1 : SorcererBall;
 //
 //============================================================================
 
-void A_SorcOffense1()
+final void A_SorcOffense1()
 {
 	Actor mo;
 	float ang1, ang2;
@@ -88,29 +88,29 @@ void A_CastSorcererSpell()
 
 __states__
 {
-	S_SORCBALL1_1('SBMP', 0, 2.0 / 35.0, S_SORCBALL1_2) { A_SorcBallOrbit(); }
-	S_SORCBALL1_2('SBMP', 1, 2.0 / 35.0, S_SORCBALL1_3) { A_SorcBallOrbit(); }
-	S_SORCBALL1_3('SBMP', 2, 2.0 / 35.0, S_SORCBALL1_4) { A_SorcBallOrbit(); }
-	S_SORCBALL1_4('SBMP', 3, 2.0 / 35.0, S_SORCBALL1_5) { A_SorcBallOrbit(); }
-	S_SORCBALL1_5('SBMP', 4, 2.0 / 35.0, S_SORCBALL1_6) { A_SorcBallOrbit(); }
-	S_SORCBALL1_6('SBMP', 5, 2.0 / 35.0, S_SORCBALL1_7) { A_SorcBallOrbit(); }
-	S_SORCBALL1_7('SBMP', 6, 2.0 / 35.0, S_SORCBALL1_8) { A_SorcBallOrbit(); }
-	S_SORCBALL1_8('SBMP', 7, 2.0 / 35.0, S_SORCBALL1_9) { A_SorcBallOrbit(); }
-	S_SORCBALL1_9('SBMP', 8, 2.0 / 35.0, S_SORCBALL1_0) { A_SorcBallOrbit(); }
-	S_SORCBALL1_0('SBMP', 9, 2.0 / 35.0, S_SORCBALL1_A) { A_SorcBallOrbit(); }
-	S_SORCBALL1_A('SBMP', 10, 2.0 / 35.0, S_SORCBALL1_B) { A_SorcBallOrbit(); }
-	S_SORCBALL1_B('SBMP', 11, 2.0 / 35.0, S_SORCBALL1_C) { A_SorcBallOrbit(); }
-	S_SORCBALL1_C('SBMP', 12, 2.0 / 35.0, S_SORCBALL1_D) { A_SorcBallOrbit(); }
-	S_SORCBALL1_D('SBMP', 13, 2.0 / 35.0, S_SORCBALL1_E) { A_SorcBallOrbit(); }
-	S_SORCBALL1_E('SBMP', 14, 2.0 / 35.0, S_SORCBALL1_F) { A_SorcBallOrbit(); }
-	S_SORCBALL1_F('SBMP', 15, 2.0 / 35.0, S_SORCBALL1_1) { A_SorcBallOrbit(); }
-	S_SORCBALL1_D1('SBMP', 0, 5.0 / 35.0, S_SORCBALL1_D2) { A_SorcBallPop(); }
-	S_SORCBALL1_D2('SBMP', 1, 2.0 / 35.0, S_SORCBALL1_D2) { A_BounceCheck(); }
-	S_SORCBALL1_D5('SBS4', 3, 5.0 / 35.0, S_SORCBALL1_D6) { A_Explode(); }
-	S_SORCBALL1_D6('SBS4', 4, 5.0 / 35.0, S_SORCBALL1_D7) { }
-	S_SORCBALL1_D7('SBS4', 5, 6.0 / 35.0, S_SORCBALL1_D8) { }
-	S_SORCBALL1_D8('SBS4', 6, 6.0 / 35.0, S_SORCBALL1_D9) { }
-	S_SORCBALL1_D9('SBS4', 7, 6.0 / 35.0, none) { }
+	S_SORCBALL1_1('SBMP', 0, 2.0 / 35.0, S_SORCBALL1_2) = A_SorcBallOrbit
+	S_SORCBALL1_2('SBMP', 1, 2.0 / 35.0, S_SORCBALL1_3) = A_SorcBallOrbit
+	S_SORCBALL1_3('SBMP', 2, 2.0 / 35.0, S_SORCBALL1_4) = A_SorcBallOrbit
+	S_SORCBALL1_4('SBMP', 3, 2.0 / 35.0, S_SORCBALL1_5) = A_SorcBallOrbit
+	S_SORCBALL1_5('SBMP', 4, 2.0 / 35.0, S_SORCBALL1_6) = A_SorcBallOrbit
+	S_SORCBALL1_6('SBMP', 5, 2.0 / 35.0, S_SORCBALL1_7) = A_SorcBallOrbit
+	S_SORCBALL1_7('SBMP', 6, 2.0 / 35.0, S_SORCBALL1_8) = A_SorcBallOrbit
+	S_SORCBALL1_8('SBMP', 7, 2.0 / 35.0, S_SORCBALL1_9) = A_SorcBallOrbit
+	S_SORCBALL1_9('SBMP', 8, 2.0 / 35.0, S_SORCBALL1_0) = A_SorcBallOrbit
+	S_SORCBALL1_0('SBMP', 9, 2.0 / 35.0, S_SORCBALL1_A) = A_SorcBallOrbit
+	S_SORCBALL1_A('SBMP', 10, 2.0 / 35.0, S_SORCBALL1_B) = A_SorcBallOrbit
+	S_SORCBALL1_B('SBMP', 11, 2.0 / 35.0, S_SORCBALL1_C) = A_SorcBallOrbit
+	S_SORCBALL1_C('SBMP', 12, 2.0 / 35.0, S_SORCBALL1_D) = A_SorcBallOrbit
+	S_SORCBALL1_D('SBMP', 13, 2.0 / 35.0, S_SORCBALL1_E) = A_SorcBallOrbit
+	S_SORCBALL1_E('SBMP', 14, 2.0 / 35.0, S_SORCBALL1_F) = A_SorcBallOrbit
+	S_SORCBALL1_F('SBMP', 15, 2.0 / 35.0, S_SORCBALL1_1) = A_SorcBallOrbit
+	S_SORCBALL1_D1('SBMP', 0, 5.0 / 35.0, S_SORCBALL1_D2) = A_SorcBallPop
+	S_SORCBALL1_D2('SBMP', 1, 2.0 / 35.0, S_SORCBALL1_D2) = A_BounceCheck
+	S_SORCBALL1_D5('SBS4', 3, 5.0 / 35.0, S_SORCBALL1_D6) = A_Explode
+	S_SORCBALL1_D6('SBS4', 4, 5.0 / 35.0, S_SORCBALL1_D7) = none
+	S_SORCBALL1_D7('SBS4', 5, 6.0 / 35.0, S_SORCBALL1_D8) = none
+	S_SORCBALL1_D8('SBS4', 6, 6.0 / 35.0, S_SORCBALL1_D9) = none
+	S_SORCBALL1_D9('SBS4', 7, 6.0 / 35.0, none) = none
 }
 
 defaultproperties

@@ -38,9 +38,9 @@ int InflictorModifyDamage(Actor victim, Actor source, int damage)
 
 __states__
 {
-	S_ICEGUY_FX2_1('ICPR', 13 | FF_FULLBRIGHT, 3.0 / 35.0, S_ICEGUY_FX2_2) { }
-	S_ICEGUY_FX2_2('ICPR', 14 | FF_FULLBRIGHT, 3.0 / 35.0, S_ICEGUY_FX2_3) { }
-	S_ICEGUY_FX2_3('ICPR', 15 | FF_FULLBRIGHT, 3.0 / 35.0, S_ICEGUY_FX2_1) { }
+	S_ICEGUY_FX2_1('ICPR', 13 | FF_FULLBRIGHT, 3.0 / 35.0, S_ICEGUY_FX2_2) = none
+	S_ICEGUY_FX2_2('ICPR', 14 | FF_FULLBRIGHT, 3.0 / 35.0, S_ICEGUY_FX2_3) = none
+	S_ICEGUY_FX2_3('ICPR', 15 | FF_FULLBRIGHT, 3.0 / 35.0, S_ICEGUY_FX2_1) = none
 }
 
 defaultproperties

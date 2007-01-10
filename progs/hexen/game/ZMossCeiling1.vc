@@ -28,7 +28,7 @@ class ZMossCeiling1:Decoration
 
 __states__
 {
-	S_ZMOSSCEILING1_1('MSS1', 0, -1.0, none) { }
+	S_ZMOSSCEILING1_1('MSS1', 0, -1.0, none) = none
 }
 
 defaultproperties

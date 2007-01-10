@@ -28,7 +28,7 @@ class ZTreeLarge1:Decoration
 
 __states__
 {
-	S_ZTREELARGE1('TRE4', 0, -1.0, none) { }
+	S_ZTREELARGE1('TRE4', 0, -1.0, none) = none
 }
 
 defaultproperties

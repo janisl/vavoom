@@ -28,7 +28,7 @@ class BloodPool:Decoration
 
 __states__
 {
-	S_BLOODPOOL('BDPL', 0, -1.0, none) { }
+	S_BLOODPOOL('BDPL', 0, -1.0, none) = none
 }
 
 defaultproperties

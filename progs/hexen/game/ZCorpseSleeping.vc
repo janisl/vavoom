@@ -28,7 +28,7 @@ class ZCorpseSleeping:Decoration
 
 __states__
 {
-	S_ZCORPSESLEEPING1('CPS2', 0, -1.0, none) { }
+	S_ZCORPSESLEEPING1('CPS2', 0, -1.0, none) = none
 }
 
 defaultproperties

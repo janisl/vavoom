@@ -33,7 +33,7 @@ class Bridge : Actor
 //
 //==========================================================================
 
-void A_BridgeInit()
+final void A_BridgeInit()
 {
 	float StartAngle;
 	BridgeBall ball1;
@@ -63,11 +63,11 @@ void A_BridgeInit()
 
 __states__
 {
-	S_BRIDGE1('TLGL', 0, 2.0 / 35.0, S_BRIDGE2) { }
-	S_BRIDGE2('TLGL', 0, 2.0 / 35.0, S_BRIDGE3) { A_BridgeInit(); }
-	S_BRIDGE3('TLGL', 0, -1.0, none) { }
-	S_FREE_BRIDGE1('TLGL', 0, 2.0 / 35.0, S_FREE_BRIDGE2) { }
-	S_FREE_BRIDGE2('TLGL', 0, 300.0 / 35.0, none) { }
+	S_BRIDGE1('TLGL', 0, 2.0 / 35.0, S_BRIDGE2) = none
+	S_BRIDGE2('TLGL', 0, 2.0 / 35.0, S_BRIDGE3) = A_BridgeInit
+	S_BRIDGE3('TLGL', 0, -1.0, none) = none
+	S_FREE_BRIDGE1('TLGL', 0, 2.0 / 35.0, S_FREE_BRIDGE2) = none
+	S_FREE_BRIDGE2('TLGL', 0, 300.0 / 35.0, none) = none
 }
 
 //==========================================================================

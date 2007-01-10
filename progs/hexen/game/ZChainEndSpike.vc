@@ -28,7 +28,7 @@ class ZChainEndSpike:Decoration
 
 __states__
 {
-	S_ZCHAINEND_SPIKE('CHNS', 5, -1.0, none) { }
+	S_ZCHAINEND_SPIKE('CHNS', 5, -1.0, none) = none
 }
 
 defaultproperties

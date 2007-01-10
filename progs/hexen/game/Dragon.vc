@@ -35,7 +35,7 @@ Actor FlightTarget;
 //
 //============================================================================
 
-void A_DragonInitFlight()
+final void A_DragonInitFlight()
 {
 	int search;
 
@@ -60,7 +60,7 @@ void A_DragonInitFlight()
 //
 //============================================================================
 
-void DragonSeek(float thresh, float turnMax)
+final void DragonSeek(float thresh, float turnMax)
 {
 	int dir;
 	float dist;
@@ -190,7 +190,7 @@ void DragonSeek(float thresh, float turnMax)
 //
 //============================================================================
 
-void A_DragonFlight()
+final void A_DragonFlight()
 {
 	float angle;
 
@@ -228,7 +228,7 @@ void A_DragonFlight()
 //
 //============================================================================
 
-void A_DragonFlap()
+final void A_DragonFlap()
 {
 	A_DragonFlight();
 	if (P_Random() < 240)
@@ -247,7 +247,7 @@ void A_DragonFlap()
 //
 //============================================================================
 
-void A_DragonAttack()
+final void A_DragonAttack()
 {
 	SpawnMissile(Enemy, DragonMissile);
 }
@@ -258,7 +258,7 @@ void A_DragonAttack()
 //
 //============================================================================
 
-void A_DragonPain()
+final void A_DragonPain()
 {
 	A_Pain();
 	if (!FlightTarget)
@@ -274,7 +274,7 @@ void A_DragonPain()
 //
 //============================================================================
 
-void A_DragonCheckCrash()
+final void A_DragonCheckCrash()
 {
 	if (Origin.z <= FloorZ)
 	{
@@ -284,31 +284,31 @@ void A_DragonCheckCrash()
 
 __states__
 {
-	S_DRAGON_LOOK1('DRAG', 3, 10.0 / 35.0, S_DRAGON_LOOK1) { A_Look(); }
-	S_DRAGON_INIT('DRAG', 2, 5.0 / 35.0, S_DRAGON_INIT2) { }
-	S_DRAGON_INIT2('DRAG', 1, 5.0 / 35.0, S_DRAGON_INIT3) { }
-	S_DRAGON_INIT3('DRAG', 0, 5.0 / 35.0, S_DRAGON_WALK1) { A_DragonInitFlight(); }
-	S_DRAGON_WALK1('DRAG', 1, 3.0 / 35.0, S_DRAGON_WALK2) { A_DragonFlap(); }
-	S_DRAGON_WALK2('DRAG', 1, 3.0 / 35.0, S_DRAGON_WALK3) { A_DragonFlight(); }
-	S_DRAGON_WALK3('DRAG', 2, 3.0 / 35.0, S_DRAGON_WALK4) { A_DragonFlight(); }
-	S_DRAGON_WALK4('DRAG', 2, 3.0 / 35.0, S_DRAGON_WALK5) { A_DragonFlight(); }
-	S_DRAGON_WALK5('DRAG', 3, 3.0 / 35.0, S_DRAGON_WALK6) { A_DragonFlight(); }
-	S_DRAGON_WALK6('DRAG', 3, 3.0 / 35.0, S_DRAGON_WALK7) { A_DragonFlight(); }
-	S_DRAGON_WALK7('DRAG', 2, 3.0 / 35.0, S_DRAGON_WALK8) { A_DragonFlight(); }
-	S_DRAGON_WALK8('DRAG', 2, 3.0 / 35.0, S_DRAGON_WALK9) { A_DragonFlight(); }
-	S_DRAGON_WALK9('DRAG', 1, 3.0 / 35.0, S_DRAGON_WALK10) { A_DragonFlight(); }
-	S_DRAGON_WALK10('DRAG', 1, 3.0 / 35.0, S_DRAGON_WALK11) { A_DragonFlight(); }
-	S_DRAGON_WALK11('DRAG', 0, 3.0 / 35.0, S_DRAGON_WALK12) { A_DragonFlight(); }
-	S_DRAGON_WALK12('DRAG', 0, 3.0 / 35.0, S_DRAGON_WALK1) { A_DragonFlight(); }
-	S_DRAGON_ATK1('DRAG', 4, 8.0 / 35.0, S_DRAGON_WALK1) { A_DragonAttack(); }
-	S_DRAGON_PAIN1('DRAG', 5, 10.0 / 35.0, S_DRAGON_WALK1) { A_DragonPain(); }
-	S_DRAGON_DEATH1('DRAG', 6, 5.0 / 35.0, S_DRAGON_DEATH2) { A_Scream(); }
-	S_DRAGON_DEATH2('DRAG', 7, 4.0 / 35.0, S_DRAGON_DEATH3) { A_NoBlocking(); }
-	S_DRAGON_DEATH3('DRAG', 8, 4.0 / 35.0, S_DRAGON_DEATH4) { }
-	S_DRAGON_DEATH4('DRAG', 9, 4.0 / 35.0, S_DRAGON_DEATH4) { A_DragonCheckCrash(); }
-	S_DRAGON_CRASH1('DRAG', 10, 5.0 / 35.0, S_DRAGON_CRASH2) { }
-	S_DRAGON_CRASH2('DRAG', 11, 5.0 / 35.0, S_DRAGON_CRASH3) { }
-	S_DRAGON_CRASH3('DRAG', 12, -1.0, none) { }
+	S_DRAGON_LOOK1('DRAG', 3, 10.0 / 35.0, S_DRAGON_LOOK1) = A_Look
+	S_DRAGON_INIT('DRAG', 2, 5.0 / 35.0, S_DRAGON_INIT2) = none
+	S_DRAGON_INIT2('DRAG', 1, 5.0 / 35.0, S_DRAGON_INIT3) = none
+	S_DRAGON_INIT3('DRAG', 0, 5.0 / 35.0, S_DRAGON_WALK1) = A_DragonInitFlight
+	S_DRAGON_WALK1('DRAG', 1, 3.0 / 35.0, S_DRAGON_WALK2) = A_DragonFlap
+	S_DRAGON_WALK2('DRAG', 1, 3.0 / 35.0, S_DRAGON_WALK3) = A_DragonFlight
+	S_DRAGON_WALK3('DRAG', 2, 3.0 / 35.0, S_DRAGON_WALK4) = A_DragonFlight
+	S_DRAGON_WALK4('DRAG', 2, 3.0 / 35.0, S_DRAGON_WALK5) = A_DragonFlight
+	S_DRAGON_WALK5('DRAG', 3, 3.0 / 35.0, S_DRAGON_WALK6) = A_DragonFlight
+	S_DRAGON_WALK6('DRAG', 3, 3.0 / 35.0, S_DRAGON_WALK7) = A_DragonFlight
+	S_DRAGON_WALK7('DRAG', 2, 3.0 / 35.0, S_DRAGON_WALK8) = A_DragonFlight
+	S_DRAGON_WALK8('DRAG', 2, 3.0 / 35.0, S_DRAGON_WALK9) = A_DragonFlight
+	S_DRAGON_WALK9('DRAG', 1, 3.0 / 35.0, S_DRAGON_WALK10) = A_DragonFlight
+	S_DRAGON_WALK10('DRAG', 1, 3.0 / 35.0, S_DRAGON_WALK11) = A_DragonFlight
+	S_DRAGON_WALK11('DRAG', 0, 3.0 / 35.0, S_DRAGON_WALK12) = A_DragonFlight
+	S_DRAGON_WALK12('DRAG', 0, 3.0 / 35.0, S_DRAGON_WALK1) = A_DragonFlight
+	S_DRAGON_ATK1('DRAG', 4, 8.0 / 35.0, S_DRAGON_WALK1) = A_DragonAttack
+	S_DRAGON_PAIN1('DRAG', 5, 10.0 / 35.0, S_DRAGON_WALK1) = A_DragonPain
+	S_DRAGON_DEATH1('DRAG', 6, 5.0 / 35.0, S_DRAGON_DEATH2) = A_Scream
+	S_DRAGON_DEATH2('DRAG', 7, 4.0 / 35.0, S_DRAGON_DEATH3) = A_NoBlocking
+	S_DRAGON_DEATH3('DRAG', 8, 4.0 / 35.0, S_DRAGON_DEATH4) = none
+	S_DRAGON_DEATH4('DRAG', 9, 4.0 / 35.0, S_DRAGON_DEATH4) = A_DragonCheckCrash
+	S_DRAGON_CRASH1('DRAG', 10, 5.0 / 35.0, S_DRAGON_CRASH2) = none
+	S_DRAGON_CRASH2('DRAG', 11, 5.0 / 35.0, S_DRAGON_CRASH3) = none
+	S_DRAGON_CRASH3('DRAG', 12, -1.0, none) = none
 }
 
 defaultproperties

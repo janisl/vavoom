@@ -44,8 +44,8 @@ int InflictorModifyDamage(Actor victim, Actor source, int damage)
 
 __states__
 {
-	S_POISONDART_1('DART', 0, -1.0, none) { }
-	S_POISONDART_X1('DART', 0, 1.0 / 35.0, none) { }
+	S_POISONDART_1('DART', 0, -1.0, none) = none
+	S_POISONDART_X1('DART', 0, 1.0 / 35.0, none) = none
 }
 
 defaultproperties

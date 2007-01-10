@@ -28,7 +28,7 @@ class ZStalagmitePillar:Decoration
 
 __states__
 {
-	S_ZSTALAGMITEPILLAR1('SGMP', 0, -1.0, none) { }
+	S_ZSTALAGMITEPILLAR1('SGMP', 0, -1.0, none) = none
 }
 
 defaultproperties

@@ -28,7 +28,7 @@ class ZChainEndHook1:Decoration
 
 __states__
 {
-	S_ZCHAINEND_HOOK1('CHNS', 3, -1.0, none) { }
+	S_ZCHAINEND_HOOK1('CHNS', 3, -1.0, none) = none
 }
 
 defaultproperties

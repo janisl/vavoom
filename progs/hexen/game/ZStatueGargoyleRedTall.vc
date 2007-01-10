@@ -28,7 +28,7 @@ class ZStatueGargoyleRedTall:Decoration
 
 __states__
 {
-	S_ZSTATUEGARGOYLEREDTALL_1('GAR3', 0, -1.0, none) { }
+	S_ZSTATUEGARGOYLEREDTALL_1('GAR3', 0, -1.0, none) = none
 }
 
 defaultproperties

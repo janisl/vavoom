@@ -28,8 +28,8 @@ class Dirt6 : Fragment
 
 __states__
 {
-	S_DIRT6_1('ROCK', 8, 20.0 / 35.0, S_DIRT6_1) { }
-	S_DIRT6_D('ROCK', 8, 10.0 / 35.0, none) { }
+	S_DIRT6_1('ROCK', 8, 20.0 / 35.0, S_DIRT6_1) = none
+	S_DIRT6_D('ROCK', 8, 10.0 / 35.0, none) = none
 }
 
 defaultproperties

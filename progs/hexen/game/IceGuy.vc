@@ -33,7 +33,7 @@ class IceGuy : Pawn
 //
 //==========================================================================
 
-void A_IceGuyLook()
+final void A_IceGuyLook()
 {
 	float dist;
 	float an;
@@ -59,7 +59,7 @@ void A_IceGuyLook()
 //
 //==========================================================================
 
-void A_IceGuyChase()
+final void A_IceGuyChase()
 {
 	float dist;
 	float an;
@@ -91,7 +91,7 @@ void A_IceGuyChase()
 //
 //==========================================================================
 
-void A_IceGuyAttack()
+final void A_IceGuyAttack()
 {
 	float an;
 
@@ -116,7 +116,7 @@ void A_IceGuyAttack()
 //
 //==========================================================================
 
-void A_IceGuyDie()
+final void A_IceGuyDie()
 {
 	Velocity = vector(0.0, 0.0, 0.0);
 	Height *= 4.0;
@@ -125,18 +125,18 @@ void A_IceGuyDie()
 
 __states__
 {
-	S_ICEGUY_LOOK('ICEY', 0, 10.0 / 35.0, S_ICEGUY_LOOK) { A_IceGuyLook(); }
-	S_ICEGUY_DORMANT('ICEY', 0, -1.0, S_ICEGUY_LOOK) { }
-	S_ICEGUY_WALK1('ICEY', 0, 4.0 / 35.0, S_ICEGUY_WALK2) { A_Chase(); }
-	S_ICEGUY_WALK2('ICEY', 1, 4.0 / 35.0, S_ICEGUY_WALK3) { A_IceGuyChase(); }
-	S_ICEGUY_WALK3('ICEY', 2, 4.0 / 35.0, S_ICEGUY_WALK4) { A_Chase(); }
-	S_ICEGUY_WALK4('ICEY', 3, 4.0 / 35.0, S_ICEGUY_WALK1) { A_Chase(); }
-	S_ICEGUY_ATK1('ICEY', 4, 3.0 / 35.0, S_ICEGUY_ATK2) { A_FaceTarget(); }
-	S_ICEGUY_ATK2('ICEY', 5, 3.0 / 35.0, S_ICEGUY_ATK3) { A_FaceTarget(); }
-	S_ICEGUY_ATK3('ICEY', 6 | FF_FULLBRIGHT, 8.0 / 35.0, S_ICEGUY_ATK4) { A_IceGuyAttack(); }
-	S_ICEGUY_ATK4('ICEY', 5, 4.0 / 35.0, S_ICEGUY_WALK1) { A_FaceTarget(); }
-	S_ICEGUY_PAIN1('ICEY', 0, 1.0 / 35.0, S_ICEGUY_WALK1) { A_Pain(); }
-	S_ICEGUY_DEATH('ICEY', 0, 1.0 / 35.0, none) { A_IceGuyDie(); }
+	S_ICEGUY_LOOK('ICEY', 0, 10.0 / 35.0, S_ICEGUY_LOOK) = A_IceGuyLook
+	S_ICEGUY_DORMANT('ICEY', 0, -1.0, S_ICEGUY_LOOK) = none
+	S_ICEGUY_WALK1('ICEY', 0, 4.0 / 35.0, S_ICEGUY_WALK2) = A_Chase
+	S_ICEGUY_WALK2('ICEY', 1, 4.0 / 35.0, S_ICEGUY_WALK3) = A_IceGuyChase
+	S_ICEGUY_WALK3('ICEY', 2, 4.0 / 35.0, S_ICEGUY_WALK4) = A_Chase
+	S_ICEGUY_WALK4('ICEY', 3, 4.0 / 35.0, S_ICEGUY_WALK1) = A_Chase
+	S_ICEGUY_ATK1('ICEY', 4, 3.0 / 35.0, S_ICEGUY_ATK2) = A_FaceTarget
+	S_ICEGUY_ATK2('ICEY', 5, 3.0 / 35.0, S_ICEGUY_ATK3) = A_FaceTarget
+	S_ICEGUY_ATK3('ICEY', 6 | FF_FULLBRIGHT, 8.0 / 35.0, S_ICEGUY_ATK4) = A_IceGuyAttack
+	S_ICEGUY_ATK4('ICEY', 5, 4.0 / 35.0, S_ICEGUY_WALK1) = A_FaceTarget
+	S_ICEGUY_PAIN1('ICEY', 0, 1.0 / 35.0, S_ICEGUY_WALK1) = A_Pain
+	S_ICEGUY_DEATH('ICEY', 0, 1.0 / 35.0, none) = A_IceGuyDie
 }
 
 //==========================================================================

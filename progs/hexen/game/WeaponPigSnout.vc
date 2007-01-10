@@ -33,7 +33,7 @@ state SniffState;
 //
 //============================================================================
 
-void A_SnoutAttack()
+final void A_SnoutAttack()
 {
 	int damage;
 	TAVec angles;
@@ -71,12 +71,12 @@ void SnoutSniff()
 
 __states__
 {
-	S_SNOUTREADY('WPIG', 0, 1.0 / 35.0, S_SNOUTREADY) { A_WeaponReady(); }
-	S_SNOUTDOWN('WPIG', 0, 1.0 / 35.0, S_SNOUTDOWN) { A_Lower(); }
-	S_SNOUTUP('WPIG', 0, 1.0 / 35.0, S_SNOUTUP) { A_Raise(); }
-	S_SNOUTATK1('WPIG', 0, 4.0 / 35.0, S_SNOUTATK2) { A_SnoutAttack(); }
-	S_SNOUTATK2('WPIG', 1, 8.0 / 35.0, S_SNOUTREADY) { A_SnoutAttack(); }
-	S_SNOUTSNIFF('WPIG', 1, 8.0 / 35.0, S_SNOUTREADY) { }
+	S_SNOUTREADY('WPIG', 0, 1.0 / 35.0, S_SNOUTREADY) = A_WeaponReady
+	S_SNOUTDOWN('WPIG', 0, 1.0 / 35.0, S_SNOUTDOWN) = A_Lower
+	S_SNOUTUP('WPIG', 0, 1.0 / 35.0, S_SNOUTUP) = A_Raise
+	S_SNOUTATK1('WPIG', 0, 4.0 / 35.0, S_SNOUTATK2) = A_SnoutAttack
+	S_SNOUTATK2('WPIG', 1, 8.0 / 35.0, S_SNOUTREADY) = A_SnoutAttack
+	S_SNOUTSNIFF('WPIG', 1, 8.0 / 35.0, S_SNOUTREADY) = none
 }
 
 defaultproperties

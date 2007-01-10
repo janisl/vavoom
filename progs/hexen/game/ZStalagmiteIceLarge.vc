@@ -28,7 +28,7 @@ class ZStalagmiteIceLarge:Decoration
 
 __states__
 {
-	S_ZSTALAGMITEICELARGE('ICM1', 0, -1.0, none) { }
+	S_ZSTALAGMITEICELARGE('ICM1', 0, -1.0, none) = none
 }
 
 defaultproperties

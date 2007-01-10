@@ -35,7 +35,7 @@ state Attack2State;
 //
 //============================================================================
 
-void A_CStaffInitBlink()
+final void A_CStaffInitBlink()
 {
 	BlinkCount = (P_Random() >> 1) + 20;
 }
@@ -46,7 +46,7 @@ void A_CStaffInitBlink()
 //
 //============================================================================
 
-void A_CStaffCheckBlink()
+final void A_CStaffCheckBlink()
 {
 	if (!--BlinkCount)
 	{
@@ -61,7 +61,7 @@ void A_CStaffCheckBlink()
 //
 //============================================================================
 
-void A_CStaffCheck()
+final void A_CStaffCheck()
 {
 	Actor pmo;
 	int damage;
@@ -126,7 +126,7 @@ void A_CStaffCheck()
 //
 //============================================================================
 
-void A_CStaffAttack()
+final void A_CStaffAttack()
 {
 	Actor mo;
 	PlayerPawn playPawn;
@@ -151,38 +151,38 @@ void A_CStaffAttack()
 
 __states__
 {
-	S_CSTAFFREADY('CSSF', 2, 4.0 / 35.0, S_CSTAFFREADY1) { }
-	S_CSTAFFREADY1('CSSF', 1, 3.0 / 35.0, S_CSTAFFREADY2) { A_CStaffInitBlink(); }
-	S_CSTAFFREADY2('CSSF', 0, 1.0 / 35.0, S_CSTAFFREADY3) { A_WeaponReady(); }
-	S_CSTAFFREADY3('CSSF', 0, 1.0 / 35.0, S_CSTAFFREADY4) { A_WeaponReady(); }
-	S_CSTAFFREADY4('CSSF', 0, 1.0 / 35.0, S_CSTAFFREADY5) { A_WeaponReady(); }
-	S_CSTAFFREADY5('CSSF', 0, 1.0 / 35.0, S_CSTAFFREADY6) { A_WeaponReady(); }
-	S_CSTAFFREADY6('CSSF', 0, 1.0 / 35.0, S_CSTAFFREADY7) { A_WeaponReady(); }
-	S_CSTAFFREADY7('CSSF', 0, 1.0 / 35.0, S_CSTAFFREADY8) { A_WeaponReady(); }
-	S_CSTAFFREADY8('CSSF', 0, 1.0 / 35.0, S_CSTAFFREADY9) { A_WeaponReady(); }
-	S_CSTAFFREADY9('CSSF', 0, 1.0 / 35.0, S_CSTAFFREADY2) { A_CStaffCheckBlink(); }
-	S_CSTAFFBLINK1('CSSF', 1, 1.0 / 35.0, S_CSTAFFBLINK2) { A_WeaponReady(); }
-	S_CSTAFFBLINK2('CSSF', 1, 1.0 / 35.0, S_CSTAFFBLINK3) { A_WeaponReady(); }
-	S_CSTAFFBLINK3('CSSF', 1, 1.0 / 35.0, S_CSTAFFBLINK4) { A_WeaponReady(); }
-	S_CSTAFFBLINK4('CSSF', 2, 1.0 / 35.0, S_CSTAFFBLINK5) { A_WeaponReady(); }
-	S_CSTAFFBLINK5('CSSF', 2, 1.0 / 35.0, S_CSTAFFBLINK6) { A_WeaponReady(); }
-	S_CSTAFFBLINK6('CSSF', 2, 1.0 / 35.0, S_CSTAFFBLINK7) { A_WeaponReady(); }
-	S_CSTAFFBLINK7('CSSF', 2, 1.0 / 35.0, S_CSTAFFBLINK8) { A_WeaponReady(); }
-	S_CSTAFFBLINK8('CSSF', 2, 1.0 / 35.0, S_CSTAFFBLINK9) { A_WeaponReady(); }
-	S_CSTAFFBLINK9('CSSF', 1, 1.0 / 35.0, S_CSTAFFBLINK10) { A_WeaponReady(); }
-	S_CSTAFFBLINK10('CSSF', 1, 1.0 / 35.0, S_CSTAFFBLINK11) { A_WeaponReady(); }
-	S_CSTAFFBLINK11('CSSF', 1, 1.0 / 35.0, S_CSTAFFREADY2) { A_WeaponReady(); }
-	S_CSTAFFDOWN('CSSF', 1, 3.0 / 35.0, S_CSTAFFDOWN2) { }
-	S_CSTAFFDOWN2('CSSF', 2, 4.0 / 35.0, S_CSTAFFDOWN3) { }
-	S_CSTAFFDOWN3('CSSF', 2, 1.0 / 35.0, S_CSTAFFDOWN3) { A_Lower(); }
-	S_CSTAFFUP('CSSF', 2, 1.0 / 35.0, S_CSTAFFUP) { A_Raise(); }
-	S_CSTAFFATK_1('CSSF', 0, 1.0 / 35.0, S_CSTAFFATK_2, 0, 45) { A_CStaffCheck(); }
-	S_CSTAFFATK_2('CSSF', 9, 1.0 / 35.0, S_CSTAFFATK_3, 0, 50) { A_CStaffAttack(); }
-	S_CSTAFFATK_3('CSSF', 9, 2.0 / 35.0, S_CSTAFFATK_4, 0, 50) { }
-	S_CSTAFFATK_4('CSSF', 9, 2.0 / 35.0, S_CSTAFFATK_5, 0, 45) { }
-	S_CSTAFFATK_5('CSSF', 0, 2.0 / 35.0, S_CSTAFFATK_6, 0, 40) { }
-	S_CSTAFFATK_6('CSSF', 0, 2.0 / 35.0, S_CSTAFFREADY2, 0, 36) { }
-	S_CSTAFFATK2_1('CSSF', 10, 10.0 / 35.0, S_CSTAFFREADY2, 0, 36) { }
+	S_CSTAFFREADY('CSSF', 2, 4.0 / 35.0, S_CSTAFFREADY1) = none
+	S_CSTAFFREADY1('CSSF', 1, 3.0 / 35.0, S_CSTAFFREADY2) = A_CStaffInitBlink
+	S_CSTAFFREADY2('CSSF', 0, 1.0 / 35.0, S_CSTAFFREADY3) = A_WeaponReady
+	S_CSTAFFREADY3('CSSF', 0, 1.0 / 35.0, S_CSTAFFREADY4) = A_WeaponReady
+	S_CSTAFFREADY4('CSSF', 0, 1.0 / 35.0, S_CSTAFFREADY5) = A_WeaponReady
+	S_CSTAFFREADY5('CSSF', 0, 1.0 / 35.0, S_CSTAFFREADY6) = A_WeaponReady
+	S_CSTAFFREADY6('CSSF', 0, 1.0 / 35.0, S_CSTAFFREADY7) = A_WeaponReady
+	S_CSTAFFREADY7('CSSF', 0, 1.0 / 35.0, S_CSTAFFREADY8) = A_WeaponReady
+	S_CSTAFFREADY8('CSSF', 0, 1.0 / 35.0, S_CSTAFFREADY9) = A_WeaponReady
+	S_CSTAFFREADY9('CSSF', 0, 1.0 / 35.0, S_CSTAFFREADY2) = A_CStaffCheckBlink
+	S_CSTAFFBLINK1('CSSF', 1, 1.0 / 35.0, S_CSTAFFBLINK2) = A_WeaponReady
+	S_CSTAFFBLINK2('CSSF', 1, 1.0 / 35.0, S_CSTAFFBLINK3) = A_WeaponReady
+	S_CSTAFFBLINK3('CSSF', 1, 1.0 / 35.0, S_CSTAFFBLINK4) = A_WeaponReady
+	S_CSTAFFBLINK4('CSSF', 2, 1.0 / 35.0, S_CSTAFFBLINK5) = A_WeaponReady
+	S_CSTAFFBLINK5('CSSF', 2, 1.0 / 35.0, S_CSTAFFBLINK6) = A_WeaponReady
+	S_CSTAFFBLINK6('CSSF', 2, 1.0 / 35.0, S_CSTAFFBLINK7) = A_WeaponReady
+	S_CSTAFFBLINK7('CSSF', 2, 1.0 / 35.0, S_CSTAFFBLINK8) = A_WeaponReady
+	S_CSTAFFBLINK8('CSSF', 2, 1.0 / 35.0, S_CSTAFFBLINK9) = A_WeaponReady
+	S_CSTAFFBLINK9('CSSF', 1, 1.0 / 35.0, S_CSTAFFBLINK10) = A_WeaponReady
+	S_CSTAFFBLINK10('CSSF', 1, 1.0 / 35.0, S_CSTAFFBLINK11) = A_WeaponReady
+	S_CSTAFFBLINK11('CSSF', 1, 1.0 / 35.0, S_CSTAFFREADY2) = A_WeaponReady
+	S_CSTAFFDOWN('CSSF', 1, 3.0 / 35.0, S_CSTAFFDOWN2) = none
+	S_CSTAFFDOWN2('CSSF', 2, 4.0 / 35.0, S_CSTAFFDOWN3) = none
+	S_CSTAFFDOWN3('CSSF', 2, 1.0 / 35.0, S_CSTAFFDOWN3) = A_Lower
+	S_CSTAFFUP('CSSF', 2, 1.0 / 35.0, S_CSTAFFUP) = A_Raise
+	S_CSTAFFATK_1('CSSF', 0, 1.0 / 35.0, S_CSTAFFATK_2, 0, 45) = A_CStaffCheck
+	S_CSTAFFATK_2('CSSF', 9, 1.0 / 35.0, S_CSTAFFATK_3, 0, 50) = A_CStaffAttack
+	S_CSTAFFATK_3('CSSF', 9, 2.0 / 35.0, S_CSTAFFATK_4, 0, 50) = none
+	S_CSTAFFATK_4('CSSF', 9, 2.0 / 35.0, S_CSTAFFATK_5, 0, 45) = none
+	S_CSTAFFATK_5('CSSF', 0, 2.0 / 35.0, S_CSTAFFATK_6, 0, 40) = none
+	S_CSTAFFATK_6('CSSF', 0, 2.0 / 35.0, S_CSTAFFREADY2, 0, 36) = none
+	S_CSTAFFATK2_1('CSSF', 10, 10.0 / 35.0, S_CSTAFFREADY2, 0, 36) = none
 }
 
 defaultproperties

@@ -28,7 +28,7 @@ class ZStumpBare:Decoration
 
 __states__
 {
-	S_ZSTUMPBARE1('STM2', 0, -1.0, none) { }
+	S_ZSTUMPBARE1('STM2', 0, -1.0, none) = none
 }
 
 defaultproperties

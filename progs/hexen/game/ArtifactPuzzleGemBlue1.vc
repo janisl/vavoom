@@ -29,7 +29,7 @@ class ArtifactPuzzleGemBlue1 : ArtifactPuzzle
 
 __states__
 {
-	S_ARTIPUZZGEMBLUE1('AGMB', 0, -1.0, none) { }
+	S_ARTIPUZZGEMBLUE1('AGMB', 0, -1.0, none) = none
 }
 
 defaultproperties

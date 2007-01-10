@@ -32,7 +32,7 @@ class ZLeafSpawner : Actor
 //
 //==========================================================================
 
-void A_LeafSpawn()
+final void A_LeafSpawn()
 {
 	Actor A;
 	int i;
@@ -53,7 +53,7 @@ void A_LeafSpawn()
 
 __states__
 {
-	S_ZLEAFSPAWNER('MAN1', 0, 20.0 / 35.0, S_ZLEAFSPAWNER) { A_LeafSpawn(); }
+	S_ZLEAFSPAWNER('MAN1', 0, 20.0 / 35.0, S_ZLEAFSPAWNER) = A_LeafSpawn
 }
 
 defaultproperties

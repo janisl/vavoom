@@ -45,7 +45,7 @@ int FrequencyCount;		// frequency counter
 //
 //===========================================================================
 
-void A_BatSpawnInit()
+final void A_BatSpawnInit()
 {
 	FrequencyCount = 0;	// Frequency count
 }
@@ -56,7 +56,7 @@ void A_BatSpawnInit()
 //
 //===========================================================================
 
-void A_BatSpawn()
+final void A_BatSpawn()
 {
 	Bat mo;
 	float delta;
@@ -84,10 +84,10 @@ void A_BatSpawn()
 
 __states__
 {
-	S_SPAWNBATS1('', 0, 2.0 / 35.0, S_SPAWNBATS2) { }
-	S_SPAWNBATS2('', 0, 2.0 / 35.0, S_SPAWNBATS3) { A_BatSpawnInit(); }
-	S_SPAWNBATS3('', 0, 2.0 / 35.0, S_SPAWNBATS3) { A_BatSpawn(); }
-	S_SPAWNBATS_OFF('', 0, -1.0, none) { }
+	S_SPAWNBATS1('', 0, 2.0 / 35.0, S_SPAWNBATS2) = none
+	S_SPAWNBATS2('', 0, 2.0 / 35.0, S_SPAWNBATS3) = A_BatSpawnInit
+	S_SPAWNBATS3('', 0, 2.0 / 35.0, S_SPAWNBATS3) = A_BatSpawn
+	S_SPAWNBATS_OFF('', 0, -1.0, none) = none
 }
 
 //==========================================================================

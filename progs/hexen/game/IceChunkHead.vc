@@ -33,7 +33,7 @@ state RemoveState;
 //
 //============================================================================
 
-void A_IceCheckHeadDone()
+final void A_IceCheckHeadDone()
 {
 	if (_Special2 == 666)
 	{
@@ -43,8 +43,8 @@ void A_IceCheckHeadDone()
 
 __states__
 {
-	S_ICECHUNK_HEAD('ICEC', 0, 10.0 / 35.0, S_ICECHUNK_HEAD) { A_IceCheckHeadDone(); }
-	S_ICECHUNK_HEAD2('ICEC', 0, 1050.0 / 35.0, none) { }
+	S_ICECHUNK_HEAD('ICEC', 0, 10.0 / 35.0, S_ICECHUNK_HEAD) = A_IceCheckHeadDone
+	S_ICECHUNK_HEAD2('ICEC', 0, 1050.0 / 35.0, none) = none
 }
 
 defaultproperties

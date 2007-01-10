@@ -28,7 +28,7 @@ class ZStatueGargoyleTanShort:Decoration
 
 __states__
 {
-	S_ZSTATUEGARGOYLETANSHORT_1('GAR8', 0, -1.0, none) { }
+	S_ZSTATUEGARGOYLETANSHORT_1('GAR8', 0, -1.0, none) = none
 }
 
 defaultproperties

@@ -28,7 +28,7 @@ class ZShroomLarge3:Decoration
 
 __states__
 {
-	S_ZSHROOMLARGE3_1('MSH3', 0, -1.0, none) { }
+	S_ZSHROOMLARGE3_1('MSH3', 0, -1.0, none) = none
 }
 
 defaultproperties

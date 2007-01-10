@@ -34,7 +34,7 @@ float AxeRange;
 //
 //==========================================================================
 
-void A_FAxeAttack()
+final void A_FAxeAttack()
 {
 	Actor Owner = Actor(Player.MO);
 	float power;
@@ -123,43 +123,43 @@ void A_FAxeAttack()
 
 __states__
 {
-	S_FAXEREADY('FAXE', 0, 1.0 / 35.0, S_FAXEREADY) { A_WeaponReady(); }
-	S_FAXEDOWN('FAXE', 0, 1.0 / 35.0, S_FAXEDOWN) { A_Lower(); }
-	S_FAXEUP('FAXE', 0, 1.0 / 35.0, S_FAXEUP) { A_Raise(); }
-	S_FAXEATK_1('FAXE', 1, 4.0 / 35.0, S_FAXEATK_2, 15, 32) { }
-	S_FAXEATK_2('FAXE', 2, 3.0 / 35.0, S_FAXEATK_3, 15, 32) { }
-	S_FAXEATK_3('FAXE', 3, 2.0 / 35.0, S_FAXEATK_4, 15, 32) { }
-	S_FAXEATK_4('FAXE', 3, 1.0 / 35.0, S_FAXEATK_5, -5, 70) { A_FAxeAttack(); }
-	S_FAXEATK_5('FAXE', 3, 2.0 / 35.0, S_FAXEATK_6, -25, 90) { }
-	S_FAXEATK_6('FAXE', 4, 1.0 / 35.0, S_FAXEATK_7, 15, 32) { }
-	S_FAXEATK_7('FAXE', 4, 2.0 / 35.0, S_FAXEATK_8, 10, 54) { }
-	S_FAXEATK_8('FAXE', 4, 7.0 / 35.0, S_FAXEATK_9, 10, 150) { }
-	S_FAXEATK_9('FAXE', 0, 1.0 / 35.0, S_FAXEATK_10, 0, 60) { A_ReFire(); }
-	S_FAXEATK_10('FAXE', 0, 1.0 / 35.0, S_FAXEATK_11, 0, 52) { }
-	S_FAXEATK_11('FAXE', 0, 1.0 / 35.0, S_FAXEATK_12, 0, 44) { }
-	S_FAXEATK_12('FAXE', 0, 1.0 / 35.0, S_FAXEATK_13, 0, 36) { }
-	S_FAXEATK_13('FAXE', 0, 1.0 / 35.0, S_FAXEREADY) { }
-	S_FAXEREADY_G('FAXE', 11, 1.0 / 35.0, S_FAXEREADY_G1) { A_WeaponReady(); }
-	S_FAXEREADY_G1('FAXE', 11, 1.0 / 35.0, S_FAXEREADY_G2) { A_WeaponReady(); }
-	S_FAXEREADY_G2('FAXE', 11, 1.0 / 35.0, S_FAXEREADY_G3) { A_WeaponReady(); }
-	S_FAXEREADY_G3('FAXE', 12, 1.0 / 35.0, S_FAXEREADY_G4) { A_WeaponReady(); }
-	S_FAXEREADY_G4('FAXE', 12, 1.0 / 35.0, S_FAXEREADY_G5) { A_WeaponReady(); }
-	S_FAXEREADY_G5('FAXE', 12, 1.0 / 35.0, S_FAXEREADY_G) { A_WeaponReady(); }
-	S_FAXEDOWN_G('FAXE', 11, 1.0 / 35.0, S_FAXEDOWN_G) { A_Lower(); }
-	S_FAXEUP_G('FAXE', 11, 1.0 / 35.0, S_FAXEUP_G) { A_Raise(); }
-	S_FAXEATK_G1('FAXE', 13, 4.0 / 35.0, S_FAXEATK_G2, 15, 32) { }
-	S_FAXEATK_G2('FAXE', 14, 3.0 / 35.0, S_FAXEATK_G3, 15, 32) { }
-	S_FAXEATK_G3('FAXE', 15, 2.0 / 35.0, S_FAXEATK_G4, 15, 32) { }
-	S_FAXEATK_G4('FAXE', 15, 1.0 / 35.0, S_FAXEATK_G5, -5, 70) { A_FAxeAttack(); }
-	S_FAXEATK_G5('FAXE', 15, 2.0 / 35.0, S_FAXEATK_G6, -25, 90) { }
-	S_FAXEATK_G6('FAXE', 16, 1.0 / 35.0, S_FAXEATK_G7, 15, 32) { }
-	S_FAXEATK_G7('FAXE', 16, 2.0 / 35.0, S_FAXEATK_G8, 10, 54) { }
-	S_FAXEATK_G8('FAXE', 16, 7.0 / 35.0, S_FAXEATK_G9, 10, 150) { }
-	S_FAXEATK_G9('FAXE', 0, 1.0 / 35.0, S_FAXEATK_G10, 0, 60) { A_ReFire(); }
-	S_FAXEATK_G10('FAXE', 0, 1.0 / 35.0, S_FAXEATK_G11, 0, 52) { }
-	S_FAXEATK_G11('FAXE', 0, 1.0 / 35.0, S_FAXEATK_G12, 0, 44) { }
-	S_FAXEATK_G12('FAXE', 0, 1.0 / 35.0, S_FAXEATK_G13, 0, 36) { }
-	S_FAXEATK_G13('FAXE', 0, 1.0 / 35.0, S_FAXEREADY_G) { }
+	S_FAXEREADY('FAXE', 0, 1.0 / 35.0, S_FAXEREADY) = A_WeaponReady
+	S_FAXEDOWN('FAXE', 0, 1.0 / 35.0, S_FAXEDOWN) = A_Lower
+	S_FAXEUP('FAXE', 0, 1.0 / 35.0, S_FAXEUP) = A_Raise
+	S_FAXEATK_1('FAXE', 1, 4.0 / 35.0, S_FAXEATK_2, 15, 32) = none
+	S_FAXEATK_2('FAXE', 2, 3.0 / 35.0, S_FAXEATK_3, 15, 32) = none
+	S_FAXEATK_3('FAXE', 3, 2.0 / 35.0, S_FAXEATK_4, 15, 32) = none
+	S_FAXEATK_4('FAXE', 3, 1.0 / 35.0, S_FAXEATK_5, -5, 70) = A_FAxeAttack
+	S_FAXEATK_5('FAXE', 3, 2.0 / 35.0, S_FAXEATK_6, -25, 90) = none
+	S_FAXEATK_6('FAXE', 4, 1.0 / 35.0, S_FAXEATK_7, 15, 32) = none
+	S_FAXEATK_7('FAXE', 4, 2.0 / 35.0, S_FAXEATK_8, 10, 54) = none
+	S_FAXEATK_8('FAXE', 4, 7.0 / 35.0, S_FAXEATK_9, 10, 150) = none
+	S_FAXEATK_9('FAXE', 0, 1.0 / 35.0, S_FAXEATK_10, 0, 60) = A_ReFire
+	S_FAXEATK_10('FAXE', 0, 1.0 / 35.0, S_FAXEATK_11, 0, 52) = none
+	S_FAXEATK_11('FAXE', 0, 1.0 / 35.0, S_FAXEATK_12, 0, 44) = none
+	S_FAXEATK_12('FAXE', 0, 1.0 / 35.0, S_FAXEATK_13, 0, 36) = none
+	S_FAXEATK_13('FAXE', 0, 1.0 / 35.0, S_FAXEREADY) = none
+	S_FAXEREADY_G('FAXE', 11, 1.0 / 35.0, S_FAXEREADY_G1) = A_WeaponReady
+	S_FAXEREADY_G1('FAXE', 11, 1.0 / 35.0, S_FAXEREADY_G2) = A_WeaponReady
+	S_FAXEREADY_G2('FAXE', 11, 1.0 / 35.0, S_FAXEREADY_G3) = A_WeaponReady
+	S_FAXEREADY_G3('FAXE', 12, 1.0 / 35.0, S_FAXEREADY_G4) = A_WeaponReady
+	S_FAXEREADY_G4('FAXE', 12, 1.0 / 35.0, S_FAXEREADY_G5) = A_WeaponReady
+	S_FAXEREADY_G5('FAXE', 12, 1.0 / 35.0, S_FAXEREADY_G) = A_WeaponReady
+	S_FAXEDOWN_G('FAXE', 11, 1.0 / 35.0, S_FAXEDOWN_G) = A_Lower
+	S_FAXEUP_G('FAXE', 11, 1.0 / 35.0, S_FAXEUP_G) = A_Raise
+	S_FAXEATK_G1('FAXE', 13, 4.0 / 35.0, S_FAXEATK_G2, 15, 32) = none
+	S_FAXEATK_G2('FAXE', 14, 3.0 / 35.0, S_FAXEATK_G3, 15, 32) = none
+	S_FAXEATK_G3('FAXE', 15, 2.0 / 35.0, S_FAXEATK_G4, 15, 32) = none
+	S_FAXEATK_G4('FAXE', 15, 1.0 / 35.0, S_FAXEATK_G5, -5, 70) = A_FAxeAttack
+	S_FAXEATK_G5('FAXE', 15, 2.0 / 35.0, S_FAXEATK_G6, -25, 90) = none
+	S_FAXEATK_G6('FAXE', 16, 1.0 / 35.0, S_FAXEATK_G7, 15, 32) = none
+	S_FAXEATK_G7('FAXE', 16, 2.0 / 35.0, S_FAXEATK_G8, 10, 54) = none
+	S_FAXEATK_G8('FAXE', 16, 7.0 / 35.0, S_FAXEATK_G9, 10, 150) = none
+	S_FAXEATK_G9('FAXE', 0, 1.0 / 35.0, S_FAXEATK_G10, 0, 60) = A_ReFire
+	S_FAXEATK_G10('FAXE', 0, 1.0 / 35.0, S_FAXEATK_G11, 0, 52) = none
+	S_FAXEATK_G11('FAXE', 0, 1.0 / 35.0, S_FAXEATK_G12, 0, 44) = none
+	S_FAXEATK_G12('FAXE', 0, 1.0 / 35.0, S_FAXEATK_G13, 0, 36) = none
+	S_FAXEATK_G13('FAXE', 0, 1.0 / 35.0, S_FAXEREADY_G) = none
 }
 
 //==========================================================================

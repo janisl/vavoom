@@ -27,10 +27,10 @@ class DemonChunk2:DemonChunk1;
 
 __states__
 {
-	S_DEMONCHUNK2_1('DEMB', 0, 4.0 / 35.0, S_DEMONCHUNK2_2) { }
-	S_DEMONCHUNK2_2('DEMB', 0, 10.0 / 35.0, S_DEMONCHUNK2_3) { A_QueueCorpse(); }
-	S_DEMONCHUNK2_3('DEMB', 0, 20.0 / 35.0, S_DEMONCHUNK2_3) { }
-	S_DEMONCHUNK2_4('DEMB', 0, -1.0, none) { }
+	S_DEMONCHUNK2_1('DEMB', 0, 4.0 / 35.0, S_DEMONCHUNK2_2) = none
+	S_DEMONCHUNK2_2('DEMB', 0, 10.0 / 35.0, S_DEMONCHUNK2_3) = A_QueueCorpse
+	S_DEMONCHUNK2_3('DEMB', 0, 20.0 / 35.0, S_DEMONCHUNK2_3) = none
+	S_DEMONCHUNK2_4('DEMB', 0, -1.0, none) = none
 }
 
 defaultproperties

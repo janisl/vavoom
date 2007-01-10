@@ -59,7 +59,7 @@ int InflictorModifyDamage(Actor victim, Actor source, int damage)
 //
 //==========================================================================
 
-void A_ShedShard()
+final void A_ShedShard()
 {
 	ShardMissile mo;
 	int spermcount = _Special2;
@@ -138,15 +138,15 @@ void A_ShedShard()
 
 __states__
 {
-	S_SHARDFX1_1('SHRD', 0 | FF_FULLBRIGHT, 2.0 / 35.0, S_SHARDFX1_2) { }
-	S_SHARDFX1_2('SHRD', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_SHARDFX1_3) { A_ShedShard(); }
-	S_SHARDFX1_3('SHRD', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_SHARDFX1_4) { }
-	S_SHARDFX1_4('SHRD', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_SHARDFX1_1) { }
-	S_SHARDFXE1_1('SHEX', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_SHARDFXE1_2) { }
-	S_SHARDFXE1_2('SHEX', 1 | FF_FULLBRIGHT, 5.0 / 35.0, S_SHARDFXE1_3) { }
-	S_SHARDFXE1_3('SHEX', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_SHARDFXE1_4) { }
-	S_SHARDFXE1_4('SHEX', 3 | FF_FULLBRIGHT, 5.0 / 35.0, S_SHARDFXE1_5) { }
-	S_SHARDFXE1_5('SHEX', 4 | FF_FULLBRIGHT, 5.0 / 35.0, none) { }
+	S_SHARDFX1_1('SHRD', 0 | FF_FULLBRIGHT, 2.0 / 35.0, S_SHARDFX1_2) = none
+	S_SHARDFX1_2('SHRD', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_SHARDFX1_3) = A_ShedShard
+	S_SHARDFX1_3('SHRD', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_SHARDFX1_4) = none
+	S_SHARDFX1_4('SHRD', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_SHARDFX1_1) = none
+	S_SHARDFXE1_1('SHEX', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_SHARDFXE1_2) = none
+	S_SHARDFXE1_2('SHEX', 1 | FF_FULLBRIGHT, 5.0 / 35.0, S_SHARDFXE1_3) = none
+	S_SHARDFXE1_3('SHEX', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_SHARDFXE1_4) = none
+	S_SHARDFXE1_4('SHEX', 3 | FF_FULLBRIGHT, 5.0 / 35.0, S_SHARDFXE1_5) = none
+	S_SHARDFXE1_5('SHEX', 4 | FF_FULLBRIGHT, 5.0 / 35.0, none) = none
 }
 
 defaultproperties

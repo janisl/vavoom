@@ -4096,41 +4096,13 @@ void SpawnPuff(TVec org, class<Actor> PuffType)
 	MainGameInfo(Level.Game).PuffSpawned = puff;
 }
 
-//==========================================================================
-//
-//  A_HideThing
-//
-//==========================================================================
-
-void A_HideThing()
-{
-	if (Alpha > 0.0)
-	{
-		Alpha -= 1.0;
-	}
-}
-
-//==========================================================================
-//
-//  A_UnHideThing
-//
-//==========================================================================
-
-void A_UnHideThing()
-{
-	if (Alpha <= 0.0)
-	{
-		Alpha += 1.0;
-	}
-}
-
 //===========================================================================
 //
 //  A_NoGravity
 //
 //===========================================================================
 
-void A_NoGravity()
+final void A_NoGravity()
 {
 	bNoGravity = true;
 }
@@ -4141,7 +4113,7 @@ void A_NoGravity()
 //
 //============================================================================
 
-void A_SetInvulnerable()
+final void A_SetInvulnerable()
 {
 	bInvulnerable = true;
 }
@@ -4152,9 +4124,31 @@ void A_SetInvulnerable()
 //
 //============================================================================
 
-void A_UnSetInvulnerable()
+final void A_UnSetInvulnerable()
 {
 	bInvulnerable = false;
+}
+
+//==========================================================================
+//
+//  A_HideThing
+//
+//==========================================================================
+
+final void A_HideThing()
+{
+	bHidden = true;
+}
+
+//==========================================================================
+//
+//  A_UnHideThing
+//
+//==========================================================================
+
+final void A_UnHideThing()
+{
+	bHidden = false;
 }
 
 //==========================================================================
@@ -4163,7 +4157,7 @@ void A_UnSetInvulnerable()
 //
 //==========================================================================
 
-void A_Pain()
+final void A_Pain()
 {
 	if (bIsPlayer && !Player(Player).MorphTime)
 	{
@@ -4196,7 +4190,7 @@ void A_Pain()
 //
 //============================================================================
 
-void A_FreeTargMobj()
+final void A_FreeTargMobj()
 {
 	Velocity = vector(0.0, 0.0, 0.0);
 	Origin.z = CeilingZ + 4.0;
@@ -4221,7 +4215,7 @@ void A_FreeTargMobj()
 //
 //============================================================================
 
-void A_Scream()
+final void A_Scream()
 {
 	StopSound(CHAN_AUTO);
 	if (bIsPlayer && !Player(Player).MorphTime)
@@ -4262,7 +4256,7 @@ void A_Scream()
 //
 //============================================================================
 
-void A_Explode()
+final void A_Explode()
 {
 	int damage;
 	float distance;
@@ -4348,8 +4342,13 @@ void A_Explode()
 		damage = 30;
 		distance = 64.0;
 	}
+	else if (Class == PoisonCloud)
+	{
+		damage = 4;
+		distance = 40.0;
+	}
 	P_RadiusAttack(damage, distance, damageSelf);
-	if (Origin.z <= FloorZ + distance)
+	if (Class != PoisonCloud && Origin.z <= FloorZ + distance)
 	{
 		HitFloorType();
 	}
@@ -4374,7 +4373,7 @@ void A_Explode()
 //
 //============================================================================
 
-void A_NoBlocking()
+final void A_NoBlocking()
 {
 	bSolid = false;
 }
@@ -4385,7 +4384,7 @@ void A_NoBlocking()
 //
 //============================================================================
 
-void A_AddPlayerCorpse()
+final void A_AddPlayerCorpse()
 {
 	if (HexenLevelInfo(Level).bodyqueslot >= HexenLevelInfo::BODYQUESIZE)
 	{
@@ -4402,7 +4401,7 @@ void A_AddPlayerCorpse()
 //
 //============================================================================
 
-void A_CheckBurnGone()
+final void A_CheckBurnGone()
 {
 	if (_Special2 == 666)
 	{
@@ -4418,7 +4417,7 @@ void A_CheckBurnGone()
 //
 //============================================================================
 
-void A_QueueCorpse()
+final void A_QueueCorpse()
 {
 	Actor corpse;
 
@@ -4441,7 +4440,7 @@ void A_QueueCorpse()
 //
 //============================================================================
 
-void A_DeQueueCorpse()
+final void A_DeQueueCorpse()
 {
 	int slot;
 
@@ -4461,7 +4460,7 @@ void A_DeQueueCorpse()
 //
 //============================================================================
 
-void A_PigPain()
+final void A_PigPain()
 {
 	A_Pain();
 	if (Origin.z <= FloorZ)
@@ -4472,42 +4471,42 @@ void A_PigPain()
 
 __states__
 {
-	S_FREETARGMOBJ('ACLO', 4, 1050.0 / 35.0, none) { A_FreeTargMobj(); }
-	S_ZTREEDES_X1('TRDT', 7 | FF_FULLBRIGHT, 5.0 / 35.0, S_ZTREEDES_X2) { }
-	S_ZTREEDES_X2('TRDT', 8 | FF_FULLBRIGHT, 5.0 / 35.0, S_ZTREEDES_X3) { }
-	S_ZTREEDES_X3('TRDT', 9 | FF_FULLBRIGHT, 5.0 / 35.0, S_ZTREEDES_X4) { }
-	S_ZTREEDES_X4('TRDT', 10 | FF_FULLBRIGHT, 5.0 / 35.0, S_ZTREEDES_X5) { }
-	S_ZTREEDES_X5('TRDT', 11 | FF_FULLBRIGHT, 5.0 / 35.0, S_ZTREEDES_X6) { }
-	S_ZTREEDES_X6('TRDT', 12 | FF_FULLBRIGHT, 5.0 / 35.0, S_ZTREEDES_X7) { A_Explode(); }
-	S_ZTREEDES_X7('TRDT', 13 | FF_FULLBRIGHT, 5.0 / 35.0, S_ZTREEDES_X8) { }
-	S_ZTREEDES_X8('TRDT', 14, 5.0 / 35.0, S_ZTREEDES_X9) { }
-	S_ZTREEDES_X9('TRDT', 15, 5.0 / 35.0, S_ZTREEDES_X10) { }
-	S_ZTREEDES_X10('TRDT', 16, -1.0, none) { }
-	S_GIBS1('GIBS', 0, -1.0, none) { }
-	S_PLAY_F_FDTH1('FDTH', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_F_FDTH2) { }
-	S_PLAY_F_FDTH2('FDTH', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH3) { }
-	S_PLAY_C_FDTH1('FDTH', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_C_FDTH2) { }
-	S_PLAY_C_FDTH2('FDTH', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH3) { }
-	S_PLAY_M_FDTH1('FDTH', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_M_FDTH2) { }
-	S_PLAY_M_FDTH2('FDTH', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH3) { }
-	S_PLAY_FDTH3('FDTH', 6 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH4) { }
-	S_PLAY_FDTH4('FDTH', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH5) { A_Scream(); }
-	S_PLAY_FDTH5('FDTH', 8 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH6) { }
-	S_PLAY_FDTH6('FDTH', 9 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH7) { }
-	S_PLAY_FDTH7('FDTH', 10 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH8) { }
-	S_PLAY_FDTH8('FDTH', 11 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH9) { }
-	S_PLAY_FDTH9('FDTH', 12 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH10) { }
-	S_PLAY_FDTH10('FDTH', 13 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH11) { }
-	S_PLAY_FDTH11('FDTH', 14 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH12) { }
-	S_PLAY_FDTH12('FDTH', 15 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH13) { }
-	S_PLAY_FDTH13('FDTH', 16 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH14) { }
-	S_PLAY_FDTH14('FDTH', 17 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH15) { }
-	S_PLAY_FDTH15('FDTH', 18 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH16) { A_NoBlocking(); }
-	S_PLAY_FDTH16('FDTH', 19 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH17) { }
-	S_PLAY_FDTH17('FDTH', 20 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH18) { }
-	S_PLAY_FDTH18('FDTH', 21 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH19) { }
-	S_PLAY_FDTH19('ACLO', 4, 35.0 / 35.0, S_PLAY_FDTH19) { A_CheckBurnGone(); }
-	S_PLAY_FDTH20('ACLO', 4, 8.0 / 35.0, none) { }
+	S_FREETARGMOBJ('ACLO', 4, 1050.0 / 35.0, none) = A_FreeTargMobj
+	S_ZTREEDES_X1('TRDT', 7 | FF_FULLBRIGHT, 5.0 / 35.0, S_ZTREEDES_X2) = none
+	S_ZTREEDES_X2('TRDT', 8 | FF_FULLBRIGHT, 5.0 / 35.0, S_ZTREEDES_X3) = none
+	S_ZTREEDES_X3('TRDT', 9 | FF_FULLBRIGHT, 5.0 / 35.0, S_ZTREEDES_X4) = none
+	S_ZTREEDES_X4('TRDT', 10 | FF_FULLBRIGHT, 5.0 / 35.0, S_ZTREEDES_X5) = none
+	S_ZTREEDES_X5('TRDT', 11 | FF_FULLBRIGHT, 5.0 / 35.0, S_ZTREEDES_X6) = none
+	S_ZTREEDES_X6('TRDT', 12 | FF_FULLBRIGHT, 5.0 / 35.0, S_ZTREEDES_X7) = A_Explode
+	S_ZTREEDES_X7('TRDT', 13 | FF_FULLBRIGHT, 5.0 / 35.0, S_ZTREEDES_X8) = none
+	S_ZTREEDES_X8('TRDT', 14, 5.0 / 35.0, S_ZTREEDES_X9) = none
+	S_ZTREEDES_X9('TRDT', 15, 5.0 / 35.0, S_ZTREEDES_X10) = none
+	S_ZTREEDES_X10('TRDT', 16, -1.0, none) = none
+	S_GIBS1('GIBS', 0, -1.0, none) = none
+	S_PLAY_F_FDTH1('FDTH', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_F_FDTH2) = none
+	S_PLAY_F_FDTH2('FDTH', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH3) = none
+	S_PLAY_C_FDTH1('FDTH', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_C_FDTH2) = none
+	S_PLAY_C_FDTH2('FDTH', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH3) = none
+	S_PLAY_M_FDTH1('FDTH', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_M_FDTH2) = none
+	S_PLAY_M_FDTH2('FDTH', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH3) = none
+	S_PLAY_FDTH3('FDTH', 6 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH4) = none
+	S_PLAY_FDTH4('FDTH', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH5) = A_Scream
+	S_PLAY_FDTH5('FDTH', 8 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH6) = none
+	S_PLAY_FDTH6('FDTH', 9 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH7) = none
+	S_PLAY_FDTH7('FDTH', 10 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH8) = none
+	S_PLAY_FDTH8('FDTH', 11 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH9) = none
+	S_PLAY_FDTH9('FDTH', 12 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH10) = none
+	S_PLAY_FDTH10('FDTH', 13 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH11) = none
+	S_PLAY_FDTH11('FDTH', 14 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH12) = none
+	S_PLAY_FDTH12('FDTH', 15 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH13) = none
+	S_PLAY_FDTH13('FDTH', 16 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH14) = none
+	S_PLAY_FDTH14('FDTH', 17 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH15) = none
+	S_PLAY_FDTH15('FDTH', 18 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH16) = A_NoBlocking
+	S_PLAY_FDTH16('FDTH', 19 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH17) = none
+	S_PLAY_FDTH17('FDTH', 20 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH18) = none
+	S_PLAY_FDTH18('FDTH', 21 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH19) = none
+	S_PLAY_FDTH19('ACLO', 4, 35.0 / 35.0, S_PLAY_FDTH19) = A_CheckBurnGone
+	S_PLAY_FDTH20('ACLO', 4, 8.0 / 35.0, none) = none
 }
 
 defaultproperties

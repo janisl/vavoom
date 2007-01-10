@@ -29,7 +29,7 @@ class ItemArmor2 : Armor
 
 __states__
 {
-	S_ARMOR_2('ARM2', 0, -1.0, none) { }
+	S_ARMOR_2('ARM2', 0, -1.0, none) = none
 }
 
 defaultproperties

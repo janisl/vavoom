@@ -28,8 +28,8 @@ class Arrow : Projectile
 
 __states__
 {
-	S_ARROW_1('ARRW', 0, -1.0, none) { }
-	S_ARROW_X1('ARRW', 0, 1.0 / 35.0, none) { }
+	S_ARROW_1('ARRW', 0, -1.0, none) = none
+	S_ARROW_X1('ARRW', 0, 1.0 / 35.0, none) = none
 }
 
 defaultproperties

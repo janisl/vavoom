@@ -31,7 +31,7 @@ class WeaponClericFire : Weapon;
 //
 //============================================================================
 
-void A_CFlameAttack()
+final void A_CFlameAttack()
 {
 	Actor mo;
 
@@ -48,28 +48,28 @@ void A_CFlameAttack()
 
 __states__
 {
-	S_CFLAMEREADY1('CFLM', 0, 1.0 / 35.0, S_CFLAMEREADY2) { A_WeaponReady(); }
-	S_CFLAMEREADY2('CFLM', 0, 1.0 / 35.0, S_CFLAMEREADY3) { A_WeaponReady(); }
-	S_CFLAMEREADY3('CFLM', 0, 1.0 / 35.0, S_CFLAMEREADY4) { A_WeaponReady(); }
-	S_CFLAMEREADY4('CFLM', 0, 1.0 / 35.0, S_CFLAMEREADY5) { A_WeaponReady(); }
-	S_CFLAMEREADY5('CFLM', 1, 1.0 / 35.0, S_CFLAMEREADY6) { A_WeaponReady(); }
-	S_CFLAMEREADY6('CFLM', 1, 1.0 / 35.0, S_CFLAMEREADY7) { A_WeaponReady(); }
-	S_CFLAMEREADY7('CFLM', 1, 1.0 / 35.0, S_CFLAMEREADY8) { A_WeaponReady(); }
-	S_CFLAMEREADY8('CFLM', 1, 1.0 / 35.0, S_CFLAMEREADY9) { A_WeaponReady(); }
-	S_CFLAMEREADY9('CFLM', 2, 1.0 / 35.0, S_CFLAMEREADY10) { A_WeaponReady(); }
-	S_CFLAMEREADY10('CFLM', 2, 1.0 / 35.0, S_CFLAMEREADY11) { A_WeaponReady(); }
-	S_CFLAMEREADY11('CFLM', 2, 1.0 / 35.0, S_CFLAMEREADY12) { A_WeaponReady(); }
-	S_CFLAMEREADY12('CFLM', 2, 1.0 / 35.0, S_CFLAMEREADY1) { A_WeaponReady(); }
-	S_CFLAMEDOWN('CFLM', 0, 1.0 / 35.0, S_CFLAMEDOWN) { A_Lower(); }
-	S_CFLAMEUP('CFLM', 0, 1.0 / 35.0, S_CFLAMEUP) { A_Raise(); }
-	S_CFLAMEATK_1('CFLM', 0, 2.0 / 35.0, S_CFLAMEATK_2, 0, 40) { }
-	S_CFLAMEATK_2('CFLM', 3, 2.0 / 35.0, S_CFLAMEATK_3, 0, 50) { }
-	S_CFLAMEATK_3('CFLM', 3, 2.0 / 35.0, S_CFLAMEATK_4, 0, 36) { }
-	S_CFLAMEATK_4('CFLM', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_CFLAMEATK_5) { }
-	S_CFLAMEATK_5('CFLM', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_CFLAMEATK_6) { A_CFlameAttack(); }
-	S_CFLAMEATK_6('CFLM', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_CFLAMEATK_7) { }
-	S_CFLAMEATK_7('CFLM', 6, 2.0 / 35.0, S_CFLAMEATK_8, 0, 40) { }
-	S_CFLAMEATK_8('CFLM', 6, 2.0 / 35.0, S_CFLAMEREADY1) { }
+	S_CFLAMEREADY1('CFLM', 0, 1.0 / 35.0, S_CFLAMEREADY2) = A_WeaponReady
+	S_CFLAMEREADY2('CFLM', 0, 1.0 / 35.0, S_CFLAMEREADY3) = A_WeaponReady
+	S_CFLAMEREADY3('CFLM', 0, 1.0 / 35.0, S_CFLAMEREADY4) = A_WeaponReady
+	S_CFLAMEREADY4('CFLM', 0, 1.0 / 35.0, S_CFLAMEREADY5) = A_WeaponReady
+	S_CFLAMEREADY5('CFLM', 1, 1.0 / 35.0, S_CFLAMEREADY6) = A_WeaponReady
+	S_CFLAMEREADY6('CFLM', 1, 1.0 / 35.0, S_CFLAMEREADY7) = A_WeaponReady
+	S_CFLAMEREADY7('CFLM', 1, 1.0 / 35.0, S_CFLAMEREADY8) = A_WeaponReady
+	S_CFLAMEREADY8('CFLM', 1, 1.0 / 35.0, S_CFLAMEREADY9) = A_WeaponReady
+	S_CFLAMEREADY9('CFLM', 2, 1.0 / 35.0, S_CFLAMEREADY10) = A_WeaponReady
+	S_CFLAMEREADY10('CFLM', 2, 1.0 / 35.0, S_CFLAMEREADY11) = A_WeaponReady
+	S_CFLAMEREADY11('CFLM', 2, 1.0 / 35.0, S_CFLAMEREADY12) = A_WeaponReady
+	S_CFLAMEREADY12('CFLM', 2, 1.0 / 35.0, S_CFLAMEREADY1) = A_WeaponReady
+	S_CFLAMEDOWN('CFLM', 0, 1.0 / 35.0, S_CFLAMEDOWN) = A_Lower
+	S_CFLAMEUP('CFLM', 0, 1.0 / 35.0, S_CFLAMEUP) = A_Raise
+	S_CFLAMEATK_1('CFLM', 0, 2.0 / 35.0, S_CFLAMEATK_2, 0, 40) = none
+	S_CFLAMEATK_2('CFLM', 3, 2.0 / 35.0, S_CFLAMEATK_3, 0, 50) = none
+	S_CFLAMEATK_3('CFLM', 3, 2.0 / 35.0, S_CFLAMEATK_4, 0, 36) = none
+	S_CFLAMEATK_4('CFLM', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_CFLAMEATK_5) = none
+	S_CFLAMEATK_5('CFLM', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_CFLAMEATK_6) = A_CFlameAttack
+	S_CFLAMEATK_6('CFLM', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_CFLAMEATK_7) = none
+	S_CFLAMEATK_7('CFLM', 6, 2.0 / 35.0, S_CFLAMEATK_8, 0, 40) = none
+	S_CFLAMEATK_8('CFLM', 6, 2.0 / 35.0, S_CFLAMEREADY1) = none
 }
 
 defaultproperties

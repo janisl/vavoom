@@ -28,7 +28,7 @@ class ZBannerTattered:Decoration
 
 __states__
 {
-	S_ZBANNERTATTERED_1('BNR1', 0, -1.0, none) { }
+	S_ZBANNERTATTERED_1('BNR1', 0, -1.0, none) = none
 }
 
 defaultproperties

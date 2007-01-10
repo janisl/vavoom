@@ -28,7 +28,7 @@ class ZStumpBurned:Decoration
 
 __states__
 {
-	S_ZSTUMPBURNED1('STM1', 0, -1.0, none) { }
+	S_ZSTUMPBURNED1('STM1', 0, -1.0, none) = none
 }
 
 defaultproperties

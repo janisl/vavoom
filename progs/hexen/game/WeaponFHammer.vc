@@ -29,7 +29,7 @@ class WeaponFHammer : WeaponPickup
 
 __states__
 {
-	S_HAMM('WFHM', 0, -1.0, none) { }
+	S_HAMM('WFHM', 0, -1.0, none) = none
 }
 
 defaultproperties

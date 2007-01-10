@@ -28,7 +28,7 @@ class ZRock2:Decoration
 
 __states__
 {
-	S_ZROCK2_1('RCK2', 0, -1.0, none) { }
+	S_ZROCK2_1('RCK2', 0, -1.0, none) = none
 }
 
 defaultproperties

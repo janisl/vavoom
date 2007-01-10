@@ -28,7 +28,7 @@ class ZLog:Decoration
 
 __states__
 {
-	S_ZLOG('LOGG', 0, -1.0, none) { }
+	S_ZLOG('LOGG', 0, -1.0, none) = none
 }
 
 defaultproperties

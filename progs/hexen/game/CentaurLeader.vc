@@ -33,7 +33,7 @@ class CentaurLeader : Centaur
 //
 //==========================================================================
 
-void A_CentaurAttack2()
+final void A_CentaurAttack2()
 {
 	if (!Enemy)
 	{
@@ -45,10 +45,10 @@ void A_CentaurAttack2()
 
 __states__
 {
-	S_CENTAUR_MISSILE1('CENT', 4, 10.0 / 35.0, S_CENTAUR_MISSILE2) { A_FaceTarget(); }
-	S_CENTAUR_MISSILE2('CENT', 5 | FF_FULLBRIGHT, 8.0 / 35.0, S_CENTAUR_MISSILE3) { A_CentaurAttack2(); }
-	S_CENTAUR_MISSILE3('CENT', 4, 10.0 / 35.0, S_CENTAUR_MISSILE4) { A_FaceTarget(); }
-	S_CENTAUR_MISSILE4('CENT', 5 | FF_FULLBRIGHT, 8.0 / 35.0, S_CENTAUR_WALK1) { A_CentaurAttack2(); }
+	S_CENTAUR_MISSILE1('CENT', 4, 10.0 / 35.0, S_CENTAUR_MISSILE2) = A_FaceTarget
+	S_CENTAUR_MISSILE2('CENT', 5 | FF_FULLBRIGHT, 8.0 / 35.0, S_CENTAUR_MISSILE3) = A_CentaurAttack2
+	S_CENTAUR_MISSILE3('CENT', 4, 10.0 / 35.0, S_CENTAUR_MISSILE4) = A_FaceTarget
+	S_CENTAUR_MISSILE4('CENT', 5 | FF_FULLBRIGHT, 8.0 / 35.0, S_CENTAUR_WALK1) = A_CentaurAttack2
 }
 
 defaultproperties

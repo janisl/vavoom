@@ -28,8 +28,8 @@ class Dart : Projectile
 
 __states__
 {
-	S_DART_1('DART', 0, -1.0, none) { }
-	S_DART_X1('DART', 0, 1.0 / 35.0, none) { }
+	S_DART_1('DART', 0, -1.0, none) = none
+	S_DART_X1('DART', 0, 1.0 / 35.0, none) = none
 }
 
 defaultproperties

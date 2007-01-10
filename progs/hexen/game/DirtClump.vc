@@ -27,7 +27,7 @@ class DirtClump:Decoration;
 
 __states__
 {
-	S_DIRTCLUMP1('TSPK', 2, 20.0 / 35.0, S_DIRTCLUMP1) { }
+	S_DIRTCLUMP1('TSPK', 2, 20.0 / 35.0, S_DIRTCLUMP1) = none
 }
 
 defaultproperties

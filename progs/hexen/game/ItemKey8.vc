@@ -29,7 +29,7 @@ class ItemKey8 : Key
 
 __states__
 {
-	S_KEY8('KEY8', 0, -1.0, none) { }
+	S_KEY8('KEY8', 0, -1.0, none) = none
 }
 
 defaultproperties

@@ -92,7 +92,7 @@ void SnoutSniff()
 //
 //==========================================================================
 
-void A_Light0()
+final void A_Light0()
 {
 	Player.ExtraLight = 0;
 }
@@ -105,7 +105,7 @@ void A_Light0()
 //
 //==========================================================================
 
-void A_WeaponReady()
+final void A_WeaponReady()
 {
 	float angle;
 
@@ -153,7 +153,7 @@ void A_WeaponReady()
 //
 //==========================================================================
 
-void A_Lower()
+final void A_Lower()
 {
 	if (Player(Player).MorphTime)
 	{
@@ -194,7 +194,7 @@ void A_Lower()
 //
 //==========================================================================
 
-void A_Raise()
+final void A_Raise()
 {
 	//	FIXME!!
 	if (Player.Level.Game.frametime < 1.0 / 35.0)
@@ -218,7 +218,7 @@ void A_Raise()
 //
 //==========================================================================
 
-void A_ReFire()
+final void A_ReFire()
 {
 	if ((Player.Buttons & BT_ATTACK) &&
 		Player(Player).PendingWeapon == HexenDefs::wp_nochange && Player.Health)
@@ -236,7 +236,7 @@ void A_ReFire()
 // UNUSED
 __states__
 {
-	S_LIGHTDONE('FPCH', 0, 0.0 / 35.0, none) { A_Light0(); }
+	S_LIGHTDONE('FPCH', 0, 0.0 / 35.0, none) = A_Light0
 }
 
 defaultproperties

@@ -33,7 +33,7 @@ class Ettin : Pawn
 //
 //============================================================================
 
-void A_EttinAttack()
+final void A_EttinAttack()
 {
 	if (CheckMeleeRange())
 	{
@@ -47,7 +47,7 @@ void A_EttinAttack()
 //
 //============================================================================
 
-void A_DropMace()
+final void A_DropMace()
 {
 	Actor mace;
 
@@ -63,39 +63,39 @@ void A_DropMace()
 
 __states__
 {
-	S_ETTIN_LOOK1('ETTN', 0, 10.0 / 35.0, S_ETTIN_LOOK2) { A_Look(); }
-	S_ETTIN_LOOK2('ETTN', 0, 10.0 / 35.0, S_ETTIN_LOOK1) { A_Look(); }
-	S_ETTIN_CHASE1('ETTN', 0, 5.0 / 35.0, S_ETTIN_CHASE2) { A_Chase(); }
-	S_ETTIN_CHASE2('ETTN', 1, 5.0 / 35.0, S_ETTIN_CHASE3) { A_Chase(); }
-	S_ETTIN_CHASE3('ETTN', 2, 5.0 / 35.0, S_ETTIN_CHASE4) { A_Chase(); }
-	S_ETTIN_CHASE4('ETTN', 3, 5.0 / 35.0, S_ETTIN_CHASE1) { A_Chase(); }
-	S_ETTIN_PAIN1('ETTN', 7, 7.0 / 35.0, S_ETTIN_CHASE1) { A_Pain(); }
-	S_ETTIN_ATK1_1('ETTN', 4, 6.0 / 35.0, S_ETTIN_ATK1_2) { A_FaceTarget(); }
-	S_ETTIN_ATK1_2('ETTN', 5, 6.0 / 35.0, S_ETTIN_ATK1_3) { A_FaceTarget(); }
-	S_ETTIN_ATK1_3('ETTN', 6, 8.0 / 35.0, S_ETTIN_CHASE1) { A_EttinAttack(); }
-	S_ETTIN_DEATH1_1('ETTN', 8, 4.0 / 35.0, S_ETTIN_DEATH1_2) { }
-	S_ETTIN_DEATH1_2('ETTN', 9, 4.0 / 35.0, S_ETTIN_DEATH1_3) { }
-	S_ETTIN_DEATH1_3('ETTN', 10, 4.0 / 35.0, S_ETTIN_DEATH1_4) { A_Scream(); }
-	S_ETTIN_DEATH1_4('ETTN', 11, 4.0 / 35.0, S_ETTIN_DEATH1_5) { A_NoBlocking(); }
-	S_ETTIN_DEATH1_5('ETTN', 12, 4.0 / 35.0, S_ETTIN_DEATH1_6) { A_QueueCorpse(); }
-	S_ETTIN_DEATH1_6('ETTN', 13, 4.0 / 35.0, S_ETTIN_DEATH1_7) { }
-	S_ETTIN_DEATH1_7('ETTN', 14, 4.0 / 35.0, S_ETTIN_DEATH1_8) { }
-	S_ETTIN_DEATH1_8('ETTN', 15, 4.0 / 35.0, S_ETTIN_DEATH1_9) { }
-	S_ETTIN_DEATH1_9('ETTN', 16, -1.0, none) { }
-	S_ETTIN_DEATH2_1('ETTB', 0, 4.0 / 35.0, S_ETTIN_DEATH2_2) { }
-	S_ETTIN_DEATH2_2('ETTB', 1, 4.0 / 35.0, S_ETTIN_DEATH2_3) { A_NoBlocking(); }
-	S_ETTIN_DEATH2_3('ETTB', 2, 4.0 / 35.0, S_ETTIN_DEATH2_4) { A_DropMace(); }
-	S_ETTIN_DEATH2_4('ETTB', 3, 4.0 / 35.0, S_ETTIN_DEATH2_5) { A_Scream(); }
-	S_ETTIN_DEATH2_5('ETTB', 4, 4.0 / 35.0, S_ETTIN_DEATH2_6) { A_QueueCorpse(); }
-	S_ETTIN_DEATH2_6('ETTB', 5, 4.0 / 35.0, S_ETTIN_DEATH2_7) { }
-	S_ETTIN_DEATH2_7('ETTB', 6, 4.0 / 35.0, S_ETTIN_DEATH2_8) { }
-	S_ETTIN_DEATH2_8('ETTB', 7, 4.0 / 35.0, S_ETTIN_DEATH2_9) { }
-	S_ETTIN_DEATH2_9('ETTB', 8, 4.0 / 35.0, S_ETTIN_DEATH2_0) { }
-	S_ETTIN_DEATH2_0('ETTB', 9, 4.0 / 35.0, S_ETTIN_DEATH2_A) { }
-	S_ETTIN_DEATH2_A('ETTB', 10, 4.0 / 35.0, S_ETTIN_DEATH2_B) { }
-	S_ETTIN_DEATH2_B('ETTB', 11, -1.0, none) { }
-	S_ETTIN_ICE1('ETTN', 17, 5.0 / 35.0, S_ETTIN_ICE2) { A_FreezeDeath(); }
-	S_ETTIN_ICE2('ETTN', 17, 1.0 / 35.0, S_ETTIN_ICE2) { A_FreezeDeathChunks(); }
+	S_ETTIN_LOOK1('ETTN', 0, 10.0 / 35.0, S_ETTIN_LOOK2) = A_Look
+	S_ETTIN_LOOK2('ETTN', 0, 10.0 / 35.0, S_ETTIN_LOOK1) = A_Look
+	S_ETTIN_CHASE1('ETTN', 0, 5.0 / 35.0, S_ETTIN_CHASE2) = A_Chase
+	S_ETTIN_CHASE2('ETTN', 1, 5.0 / 35.0, S_ETTIN_CHASE3) = A_Chase
+	S_ETTIN_CHASE3('ETTN', 2, 5.0 / 35.0, S_ETTIN_CHASE4) = A_Chase
+	S_ETTIN_CHASE4('ETTN', 3, 5.0 / 35.0, S_ETTIN_CHASE1) = A_Chase
+	S_ETTIN_PAIN1('ETTN', 7, 7.0 / 35.0, S_ETTIN_CHASE1) = A_Pain
+	S_ETTIN_ATK1_1('ETTN', 4, 6.0 / 35.0, S_ETTIN_ATK1_2) = A_FaceTarget
+	S_ETTIN_ATK1_2('ETTN', 5, 6.0 / 35.0, S_ETTIN_ATK1_3) = A_FaceTarget
+	S_ETTIN_ATK1_3('ETTN', 6, 8.0 / 35.0, S_ETTIN_CHASE1) = A_EttinAttack
+	S_ETTIN_DEATH1_1('ETTN', 8, 4.0 / 35.0, S_ETTIN_DEATH1_2) = none
+	S_ETTIN_DEATH1_2('ETTN', 9, 4.0 / 35.0, S_ETTIN_DEATH1_3) = none
+	S_ETTIN_DEATH1_3('ETTN', 10, 4.0 / 35.0, S_ETTIN_DEATH1_4) = A_Scream
+	S_ETTIN_DEATH1_4('ETTN', 11, 4.0 / 35.0, S_ETTIN_DEATH1_5) = A_NoBlocking
+	S_ETTIN_DEATH1_5('ETTN', 12, 4.0 / 35.0, S_ETTIN_DEATH1_6) = A_QueueCorpse
+	S_ETTIN_DEATH1_6('ETTN', 13, 4.0 / 35.0, S_ETTIN_DEATH1_7) = none
+	S_ETTIN_DEATH1_7('ETTN', 14, 4.0 / 35.0, S_ETTIN_DEATH1_8) = none
+	S_ETTIN_DEATH1_8('ETTN', 15, 4.0 / 35.0, S_ETTIN_DEATH1_9) = none
+	S_ETTIN_DEATH1_9('ETTN', 16, -1.0, none) = none
+	S_ETTIN_DEATH2_1('ETTB', 0, 4.0 / 35.0, S_ETTIN_DEATH2_2) = none
+	S_ETTIN_DEATH2_2('ETTB', 1, 4.0 / 35.0, S_ETTIN_DEATH2_3) = A_NoBlocking
+	S_ETTIN_DEATH2_3('ETTB', 2, 4.0 / 35.0, S_ETTIN_DEATH2_4) = A_DropMace
+	S_ETTIN_DEATH2_4('ETTB', 3, 4.0 / 35.0, S_ETTIN_DEATH2_5) = A_Scream
+	S_ETTIN_DEATH2_5('ETTB', 4, 4.0 / 35.0, S_ETTIN_DEATH2_6) = A_QueueCorpse
+	S_ETTIN_DEATH2_6('ETTB', 5, 4.0 / 35.0, S_ETTIN_DEATH2_7) = none
+	S_ETTIN_DEATH2_7('ETTB', 6, 4.0 / 35.0, S_ETTIN_DEATH2_8) = none
+	S_ETTIN_DEATH2_8('ETTB', 7, 4.0 / 35.0, S_ETTIN_DEATH2_9) = none
+	S_ETTIN_DEATH2_9('ETTB', 8, 4.0 / 35.0, S_ETTIN_DEATH2_0) = none
+	S_ETTIN_DEATH2_0('ETTB', 9, 4.0 / 35.0, S_ETTIN_DEATH2_A) = none
+	S_ETTIN_DEATH2_A('ETTB', 10, 4.0 / 35.0, S_ETTIN_DEATH2_B) = none
+	S_ETTIN_DEATH2_B('ETTB', 11, -1.0, none) = none
+	S_ETTIN_ICE1('ETTN', 17, 5.0 / 35.0, S_ETTIN_ICE2) = A_FreezeDeath
+	S_ETTIN_ICE2('ETTN', 17, 1.0 / 35.0, S_ETTIN_ICE2) = A_FreezeDeathChunks
 }
 
 defaultproperties

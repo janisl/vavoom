@@ -35,7 +35,7 @@ class<Actor> FireBallType;
 //
 //============================================================================
 
-void A_DemonAttack1()
+final void A_DemonAttack1()
 {
 	if (CheckMeleeRange())
 	{
@@ -49,7 +49,7 @@ void A_DemonAttack1()
 //
 //============================================================================
 
-void A_DemonAttack2()
+final void A_DemonAttack2()
 {
 	Actor M;
 
@@ -67,7 +67,7 @@ void A_DemonAttack2()
 //
 //============================================================================
 
-void A_DemonDeath()
+final void A_DemonDeath()
 {
 	Actor A;
 	float angle;
@@ -121,40 +121,40 @@ void A_DemonDeath()
 
 __states__
 {
-	S_DEMN_LOOK1('DEMN', 0, 10.0 / 35.0, S_DEMN_LOOK2) { A_Look(); }
-	S_DEMN_LOOK2('DEMN', 0, 10.0 / 35.0, S_DEMN_LOOK1) { A_Look(); }
-	S_DEMN_CHASE1('DEMN', 0, 4.0 / 35.0, S_DEMN_CHASE2) { A_Chase(); }
-	S_DEMN_CHASE2('DEMN', 1, 4.0 / 35.0, S_DEMN_CHASE3) { A_Chase(); }
-	S_DEMN_CHASE3('DEMN', 2, 4.0 / 35.0, S_DEMN_CHASE4) { A_Chase(); }
-	S_DEMN_CHASE4('DEMN', 3, 4.0 / 35.0, S_DEMN_CHASE1) { A_Chase(); }
-	S_DEMN_ATK1_1('DEMN', 4, 6.0 / 35.0, S_DEMN_ATK1_2) { A_FaceTarget(); }
-	S_DEMN_ATK1_2('DEMN', 5, 8.0 / 35.0, S_DEMN_ATK1_3) { A_FaceTarget(); }
-	S_DEMN_ATK1_3('DEMN', 6, 6.0 / 35.0, S_DEMN_CHASE1) { A_DemonAttack1(); }
-	S_DEMN_ATK2_1('DEMN', 4, 5.0 / 35.0, S_DEMN_ATK2_2) { A_FaceTarget(); }
-	S_DEMN_ATK2_2('DEMN', 5, 6.0 / 35.0, S_DEMN_ATK2_3) { A_FaceTarget(); }
-	S_DEMN_ATK2_3('DEMN', 6, 5.0 / 35.0, S_DEMN_CHASE1) { A_DemonAttack2(); }
-	S_DEMN_PAIN1('DEMN', 4, 4.0 / 35.0, S_DEMN_PAIN2) { }
-	S_DEMN_PAIN2('DEMN', 4, 4.0 / 35.0, S_DEMN_CHASE1) { A_Pain(); }
-	S_DEMN_DEATH1('DEMN', 7, 6.0 / 35.0, S_DEMN_DEATH2) { }
-	S_DEMN_DEATH2('DEMN', 8, 6.0 / 35.0, S_DEMN_DEATH3) { }
-	S_DEMN_DEATH3('DEMN', 9, 6.0 / 35.0, S_DEMN_DEATH4) { A_Scream(); }
-	S_DEMN_DEATH4('DEMN', 10, 6.0 / 35.0, S_DEMN_DEATH5) { A_NoBlocking(); }
-	S_DEMN_DEATH5('DEMN', 11, 6.0 / 35.0, S_DEMN_DEATH6) { A_QueueCorpse(); }
-	S_DEMN_DEATH6('DEMN', 12, 6.0 / 35.0, S_DEMN_DEATH7) { }
-	S_DEMN_DEATH7('DEMN', 13, 6.0 / 35.0, S_DEMN_DEATH8) { }
-	S_DEMN_DEATH8('DEMN', 14, 6.0 / 35.0, S_DEMN_DEATH9) { }
-	S_DEMN_DEATH9('DEMN', 15, -1.0, none) { }
-	S_DEMN_XDEATH1('DEMN', 7, 6.0 / 35.0, S_DEMN_XDEATH2) { }
-	S_DEMN_XDEATH2('DEMN', 8, 6.0 / 35.0, S_DEMN_XDEATH3) { A_DemonDeath(); }
-	S_DEMN_XDEATH3('DEMN', 9, 6.0 / 35.0, S_DEMN_XDEATH4) { A_Scream(); }
-	S_DEMN_XDEATH4('DEMN', 10, 6.0 / 35.0, S_DEMN_XDEATH5) { A_NoBlocking(); }
-	S_DEMN_XDEATH5('DEMN', 11, 6.0 / 35.0, S_DEMN_XDEATH6) { A_QueueCorpse(); }
-	S_DEMN_XDEATH6('DEMN', 12, 6.0 / 35.0, S_DEMN_XDEATH7) { }
-	S_DEMN_XDEATH7('DEMN', 13, 6.0 / 35.0, S_DEMN_XDEATH8) { }
-	S_DEMN_XDEATH8('DEMN', 14, 6.0 / 35.0, S_DEMN_XDEATH9) { }
-	S_DEMN_XDEATH9('DEMN', 15, -1.0, none) { }
-	S_DEMON_ICE('DEMN', 16, 5.0 / 35.0, S_DEMON_ICE2) { A_FreezeDeath(); }
-	S_DEMON_ICE2('DEMN', 16, 1.0 / 35.0, S_DEMON_ICE2) { A_FreezeDeathChunks(); }
+	S_DEMN_LOOK1('DEMN', 0, 10.0 / 35.0, S_DEMN_LOOK2) = A_Look
+	S_DEMN_LOOK2('DEMN', 0, 10.0 / 35.0, S_DEMN_LOOK1) = A_Look
+	S_DEMN_CHASE1('DEMN', 0, 4.0 / 35.0, S_DEMN_CHASE2) = A_Chase
+	S_DEMN_CHASE2('DEMN', 1, 4.0 / 35.0, S_DEMN_CHASE3) = A_Chase
+	S_DEMN_CHASE3('DEMN', 2, 4.0 / 35.0, S_DEMN_CHASE4) = A_Chase
+	S_DEMN_CHASE4('DEMN', 3, 4.0 / 35.0, S_DEMN_CHASE1) = A_Chase
+	S_DEMN_ATK1_1('DEMN', 4, 6.0 / 35.0, S_DEMN_ATK1_2) = A_FaceTarget
+	S_DEMN_ATK1_2('DEMN', 5, 8.0 / 35.0, S_DEMN_ATK1_3) = A_FaceTarget
+	S_DEMN_ATK1_3('DEMN', 6, 6.0 / 35.0, S_DEMN_CHASE1) = A_DemonAttack1
+	S_DEMN_ATK2_1('DEMN', 4, 5.0 / 35.0, S_DEMN_ATK2_2) = A_FaceTarget
+	S_DEMN_ATK2_2('DEMN', 5, 6.0 / 35.0, S_DEMN_ATK2_3) = A_FaceTarget
+	S_DEMN_ATK2_3('DEMN', 6, 5.0 / 35.0, S_DEMN_CHASE1) = A_DemonAttack2
+	S_DEMN_PAIN1('DEMN', 4, 4.0 / 35.0, S_DEMN_PAIN2) = none
+	S_DEMN_PAIN2('DEMN', 4, 4.0 / 35.0, S_DEMN_CHASE1) = A_Pain
+	S_DEMN_DEATH1('DEMN', 7, 6.0 / 35.0, S_DEMN_DEATH2) = none
+	S_DEMN_DEATH2('DEMN', 8, 6.0 / 35.0, S_DEMN_DEATH3) = none
+	S_DEMN_DEATH3('DEMN', 9, 6.0 / 35.0, S_DEMN_DEATH4) = A_Scream
+	S_DEMN_DEATH4('DEMN', 10, 6.0 / 35.0, S_DEMN_DEATH5) = A_NoBlocking
+	S_DEMN_DEATH5('DEMN', 11, 6.0 / 35.0, S_DEMN_DEATH6) = A_QueueCorpse
+	S_DEMN_DEATH6('DEMN', 12, 6.0 / 35.0, S_DEMN_DEATH7) = none
+	S_DEMN_DEATH7('DEMN', 13, 6.0 / 35.0, S_DEMN_DEATH8) = none
+	S_DEMN_DEATH8('DEMN', 14, 6.0 / 35.0, S_DEMN_DEATH9) = none
+	S_DEMN_DEATH9('DEMN', 15, -1.0, none) = none
+	S_DEMN_XDEATH1('DEMN', 7, 6.0 / 35.0, S_DEMN_XDEATH2) = none
+	S_DEMN_XDEATH2('DEMN', 8, 6.0 / 35.0, S_DEMN_XDEATH3) = A_DemonDeath
+	S_DEMN_XDEATH3('DEMN', 9, 6.0 / 35.0, S_DEMN_XDEATH4) = A_Scream
+	S_DEMN_XDEATH4('DEMN', 10, 6.0 / 35.0, S_DEMN_XDEATH5) = A_NoBlocking
+	S_DEMN_XDEATH5('DEMN', 11, 6.0 / 35.0, S_DEMN_XDEATH6) = A_QueueCorpse
+	S_DEMN_XDEATH6('DEMN', 12, 6.0 / 35.0, S_DEMN_XDEATH7) = none
+	S_DEMN_XDEATH7('DEMN', 13, 6.0 / 35.0, S_DEMN_XDEATH8) = none
+	S_DEMN_XDEATH8('DEMN', 14, 6.0 / 35.0, S_DEMN_XDEATH9) = none
+	S_DEMN_XDEATH9('DEMN', 15, -1.0, none) = none
+	S_DEMON_ICE('DEMN', 16, 5.0 / 35.0, S_DEMON_ICE2) = A_FreezeDeath
+	S_DEMON_ICE2('DEMN', 16, 1.0 / 35.0, S_DEMON_ICE2) = A_FreezeDeathChunks
 }
 
 defaultproperties

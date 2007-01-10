@@ -46,7 +46,7 @@ int SpawnFrequencyCount;	// Counter for spawn frequency
 //
 //==========================================================================
 
-void A_FogSpawn()
+final void A_FogSpawn()
 {
 	Actor A;
 	float delta;
@@ -88,7 +88,7 @@ void A_FogSpawn()
 
 __states__
 {
-	S_SPAWNFOG1('', 0, 20.0 / 35.0, S_SPAWNFOG1) { A_FogSpawn(); }
+	S_SPAWNFOG1('', 0, 20.0 / 35.0, S_SPAWNFOG1) = A_FogSpawn
 }
 
 defaultproperties

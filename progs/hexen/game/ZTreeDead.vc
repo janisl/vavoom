@@ -28,7 +28,7 @@ class ZTreeDead:Decoration
 
 __states__
 {
-	S_ZTREEDEAD1('TRE1', 0, -1.0, none) { }
+	S_ZTREEDEAD1('TRE1', 0, -1.0, none) = none
 }
 
 defaultproperties

@@ -28,7 +28,7 @@ class ZWingedStatue:Decoration
 
 __states__
 {
-	S_ZWINGEDSTATUE1('STTW', 0, -1.0, none) { }
+	S_ZWINGEDSTATUE1('STTW', 0, -1.0, none) = none
 }
 
 defaultproperties

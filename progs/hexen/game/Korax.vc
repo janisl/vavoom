@@ -83,7 +83,7 @@ state KoraxCommandState;
 //
 //============================================================================
 
-void A_KoraxStep()
+final void A_KoraxStep()
 {
 	A_Chase();
 }
@@ -94,7 +94,7 @@ void A_KoraxStep()
 //
 //============================================================================
 
-void A_KoraxStep2()
+final void A_KoraxStep2()
 {
 	PlaySound('KoraxStep', CHAN_BODY, 1.0, ATTN_NONE);
 	A_Chase();
@@ -106,7 +106,7 @@ void A_KoraxStep2()
 //
 //============================================================================
 
-void A_KoraxChase()
+final void A_KoraxChase()
 {
 	Actor spot;
 	int search;
@@ -157,7 +157,7 @@ void A_KoraxChase()
 //
 //============================================================================
 
-void A_KoraxDecide()
+final void A_KoraxDecide()
 {
 	if (Random() < 0.859375)
 	{
@@ -175,7 +175,7 @@ void A_KoraxDecide()
 //
 //============================================================================
 
-Actor SpawnKoraxMissile(TVec org, Actor dest, class<Actor> type)
+final Actor SpawnKoraxMissile(TVec org, Actor dest, class<Actor> type)
 {
 	TVec dir;
 	Actor th;
@@ -203,7 +203,7 @@ Actor SpawnKoraxMissile(TVec org, Actor dest, class<Actor> type)
 // Arm 1 projectile
 //============================================================================
 
-void KoraxFire1(class<Actor> type)
+final void KoraxFire1(class<Actor> type)
 {
 	float ang;
 	float x, y, z;
@@ -219,7 +219,7 @@ void KoraxFire1(class<Actor> type)
 // Arm 2 projectile
 //============================================================================
 
-void KoraxFire2(class<Actor> type)
+final void KoraxFire2(class<Actor> type)
 {
 	float ang;
 	float x, y, z;
@@ -235,7 +235,7 @@ void KoraxFire2(class<Actor> type)
 // Arm 3 projectile
 //============================================================================
 
-void KoraxFire3(class<Actor> type)
+final void KoraxFire3(class<Actor> type)
 {
 	float ang;
 	float x, y, z;
@@ -251,7 +251,7 @@ void KoraxFire3(class<Actor> type)
 // Arm 4 projectile
 //============================================================================
 
-void KoraxFire4(class<Actor> type)
+final void KoraxFire4(class<Actor> type)
 {
 	float ang;
 	float x, y, z;
@@ -267,7 +267,7 @@ void KoraxFire4(class<Actor> type)
 // Arm 5 projectile
 //============================================================================
 
-void KoraxFire5(class<Actor> type)
+final void KoraxFire5(class<Actor> type)
 {
 	float ang;
 	float x, y, z;
@@ -283,7 +283,7 @@ void KoraxFire5(class<Actor> type)
 // Arm 6 projectile
 //============================================================================
 
-void KoraxFire6(class<Actor> type)
+final void KoraxFire6(class<Actor> type)
 {
 	float ang;
 	float x, y, z;
@@ -301,7 +301,7 @@ void KoraxFire6(class<Actor> type)
 //
 //============================================================================
 
-void A_KoraxMissile()
+final void A_KoraxMissile()
 {
 	class<Actor> mtype;
 	name sound;
@@ -350,7 +350,7 @@ void A_KoraxMissile()
 // Call action code scripts (250-254)
 //============================================================================
 
-void A_KoraxCommand()
+final void A_KoraxCommand()
 {
 	float x, y, z;
 	float ang;
@@ -400,7 +400,7 @@ void A_KoraxCommand()
 //
 //============================================================================
 
-void A_KoraxBonePop()
+final void A_KoraxBonePop()
 {
 	Actor mo;
 
@@ -429,49 +429,49 @@ void A_KoraxBonePop()
 
 __states__
 {
-	S_KORAX_LOOK1('KORX', 0, 5.0 / 35.0, S_KORAX_LOOK1) { A_Look(); }
-	S_KORAX_CHASE1('KORX', 0, 3.0 / 35.0, S_KORAX_CHASE2) { A_KoraxStep2(); }
-	S_KORAX_CHASE2('KORX', 0, 3.0 / 35.0, S_KORAX_CHASE3) { A_KoraxChase(); }
-	S_KORAX_CHASE3('KORX', 0, 3.0 / 35.0, S_KORAX_CHASE4) { A_KoraxChase(); }
-	S_KORAX_CHASE4('KORX', 0, 3.0 / 35.0, S_KORAX_CHASE5) { A_KoraxChase(); }
-	S_KORAX_CHASE5('KORX', 1, 3.0 / 35.0, S_KORAX_CHASE6) { A_KoraxStep(); }
-	S_KORAX_CHASE6('KORX', 1, 3.0 / 35.0, S_KORAX_CHASE7) { A_KoraxChase(); }
-	S_KORAX_CHASE7('KORX', 1, 3.0 / 35.0, S_KORAX_CHASE8) { A_KoraxChase(); }
-	S_KORAX_CHASE8('KORX', 1, 3.0 / 35.0, S_KORAX_CHASE9) { A_KoraxChase(); }
-	S_KORAX_CHASE9('KORX', 2, 3.0 / 35.0, S_KORAX_CHASE0) { A_KoraxStep2(); }
-	S_KORAX_CHASE0('KORX', 2, 3.0 / 35.0, S_KORAX_CHASEA) { A_KoraxChase(); }
-	S_KORAX_CHASEA('KORX', 2, 3.0 / 35.0, S_KORAX_CHASEB) { A_KoraxChase(); }
-	S_KORAX_CHASEB('KORX', 2, 3.0 / 35.0, S_KORAX_CHASEC) { A_KoraxChase(); }
-	S_KORAX_CHASEC('KORX', 3, 3.0 / 35.0, S_KORAX_CHASED) { A_KoraxStep(); }
-	S_KORAX_CHASED('KORX', 3, 3.0 / 35.0, S_KORAX_CHASEE) { A_KoraxChase(); }
-	S_KORAX_CHASEE('KORX', 3, 3.0 / 35.0, S_KORAX_CHASEF) { A_KoraxChase(); }
-	S_KORAX_CHASEF('KORX', 3, 3.0 / 35.0, S_KORAX_CHASE1) { A_KoraxChase(); }
-	S_KORAX_PAIN1('KORX', 7, 5.0 / 35.0, S_KORAX_PAIN2) { A_Pain(); }
-	S_KORAX_PAIN2('KORX', 7, 5.0 / 35.0, S_KORAX_CHASE2) { }
-	S_KORAX_ATTACK1('KORX', 4 | FF_FULLBRIGHT, 2.0 / 35.0, S_KORAX_ATTACK2) { A_FaceTarget(); }
-	S_KORAX_ATTACK2('KORX', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_KORAX_ATTACK2) { A_KoraxDecide(); }
-	S_KORAX_MISSILE1('KORX', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_KORAX_MISSILE2) { A_FaceTarget(); }
-	S_KORAX_MISSILE2('KORX', 5 | FF_FULLBRIGHT, 8.0 / 35.0, S_KORAX_MISSILE3) { A_KoraxMissile(); }
-	S_KORAX_MISSILE3('KORX', 4 | FF_FULLBRIGHT, 8.0 / 35.0, S_KORAX_CHASE2) { }
-	S_KORAX_COMMAND1('KORX', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_KORAX_COMMAND2) { A_FaceTarget(); }
-	S_KORAX_COMMAND2('KORX', 22 | FF_FULLBRIGHT, 10.0 / 35.0, S_KORAX_COMMAND3) { A_FaceTarget(); }
-	S_KORAX_COMMAND3('KORX', 6 | FF_FULLBRIGHT, 15.0 / 35.0, S_KORAX_COMMAND4) { A_KoraxCommand(); }
-	S_KORAX_COMMAND4('KORX', 22 | FF_FULLBRIGHT, 10.0 / 35.0, S_KORAX_COMMAND5) { }
-	S_KORAX_COMMAND5('KORX', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_KORAX_CHASE2) { }
-	S_KORAX_DEATH1('KORX', 8, 5.0 / 35.0, S_KORAX_DEATH2) { }
-	S_KORAX_DEATH2('KORX', 9, 5.0 / 35.0, S_KORAX_DEATH3) { A_FaceTarget(); }
-	S_KORAX_DEATH3('KORX', 10, 5.0 / 35.0, S_KORAX_DEATH4) { A_Scream(); }
-	S_KORAX_DEATH4('KORX', 11, 5.0 / 35.0, S_KORAX_DEATH5) { }
-	S_KORAX_DEATH5('KORX', 12, 5.0 / 35.0, S_KORAX_DEATH6) { }
-	S_KORAX_DEATH6('KORX', 13, 5.0 / 35.0, S_KORAX_DEATH7) { }
-	S_KORAX_DEATH7('KORX', 14, 5.0 / 35.0, S_KORAX_DEATH8) { }
-	S_KORAX_DEATH8('KORX', 15, 5.0 / 35.0, S_KORAX_DEATH9) { }
-	S_KORAX_DEATH9('KORX', 16, 10.0 / 35.0, S_KORAX_DEATH0) { }
-	S_KORAX_DEATH0('KORX', 17, 5.0 / 35.0, S_KORAX_DEATHA) { A_KoraxBonePop(); }
-	S_KORAX_DEATHA('KORX', 18, 5.0 / 35.0, S_KORAX_DEATHB) { A_NoBlocking(); }
-	S_KORAX_DEATHB('KORX', 19, 5.0 / 35.0, S_KORAX_DEATHC) { }
-	S_KORAX_DEATHC('KORX', 20, 5.0 / 35.0, S_KORAX_DEATHD) { }
-	S_KORAX_DEATHD('KORX', 21, -1.0, none) { }
+	S_KORAX_LOOK1('KORX', 0, 5.0 / 35.0, S_KORAX_LOOK1) = A_Look
+	S_KORAX_CHASE1('KORX', 0, 3.0 / 35.0, S_KORAX_CHASE2) = A_KoraxStep2
+	S_KORAX_CHASE2('KORX', 0, 3.0 / 35.0, S_KORAX_CHASE3) = A_KoraxChase
+	S_KORAX_CHASE3('KORX', 0, 3.0 / 35.0, S_KORAX_CHASE4) = A_KoraxChase
+	S_KORAX_CHASE4('KORX', 0, 3.0 / 35.0, S_KORAX_CHASE5) = A_KoraxChase
+	S_KORAX_CHASE5('KORX', 1, 3.0 / 35.0, S_KORAX_CHASE6) = A_KoraxStep
+	S_KORAX_CHASE6('KORX', 1, 3.0 / 35.0, S_KORAX_CHASE7) = A_KoraxChase
+	S_KORAX_CHASE7('KORX', 1, 3.0 / 35.0, S_KORAX_CHASE8) = A_KoraxChase
+	S_KORAX_CHASE8('KORX', 1, 3.0 / 35.0, S_KORAX_CHASE9) = A_KoraxChase
+	S_KORAX_CHASE9('KORX', 2, 3.0 / 35.0, S_KORAX_CHASE0) = A_KoraxStep2
+	S_KORAX_CHASE0('KORX', 2, 3.0 / 35.0, S_KORAX_CHASEA) = A_KoraxChase
+	S_KORAX_CHASEA('KORX', 2, 3.0 / 35.0, S_KORAX_CHASEB) = A_KoraxChase
+	S_KORAX_CHASEB('KORX', 2, 3.0 / 35.0, S_KORAX_CHASEC) = A_KoraxChase
+	S_KORAX_CHASEC('KORX', 3, 3.0 / 35.0, S_KORAX_CHASED) = A_KoraxStep
+	S_KORAX_CHASED('KORX', 3, 3.0 / 35.0, S_KORAX_CHASEE) = A_KoraxChase
+	S_KORAX_CHASEE('KORX', 3, 3.0 / 35.0, S_KORAX_CHASEF) = A_KoraxChase
+	S_KORAX_CHASEF('KORX', 3, 3.0 / 35.0, S_KORAX_CHASE1) = A_KoraxChase
+	S_KORAX_PAIN1('KORX', 7, 5.0 / 35.0, S_KORAX_PAIN2) = A_Pain
+	S_KORAX_PAIN2('KORX', 7, 5.0 / 35.0, S_KORAX_CHASE2) = none
+	S_KORAX_ATTACK1('KORX', 4 | FF_FULLBRIGHT, 2.0 / 35.0, S_KORAX_ATTACK2) = A_FaceTarget
+	S_KORAX_ATTACK2('KORX', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_KORAX_ATTACK2) = A_KoraxDecide
+	S_KORAX_MISSILE1('KORX', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_KORAX_MISSILE2) = A_FaceTarget
+	S_KORAX_MISSILE2('KORX', 5 | FF_FULLBRIGHT, 8.0 / 35.0, S_KORAX_MISSILE3) = A_KoraxMissile
+	S_KORAX_MISSILE3('KORX', 4 | FF_FULLBRIGHT, 8.0 / 35.0, S_KORAX_CHASE2) = none
+	S_KORAX_COMMAND1('KORX', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_KORAX_COMMAND2) = A_FaceTarget
+	S_KORAX_COMMAND2('KORX', 22 | FF_FULLBRIGHT, 10.0 / 35.0, S_KORAX_COMMAND3) = A_FaceTarget
+	S_KORAX_COMMAND3('KORX', 6 | FF_FULLBRIGHT, 15.0 / 35.0, S_KORAX_COMMAND4) = A_KoraxCommand
+	S_KORAX_COMMAND4('KORX', 22 | FF_FULLBRIGHT, 10.0 / 35.0, S_KORAX_COMMAND5) = none
+	S_KORAX_COMMAND5('KORX', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_KORAX_CHASE2) = none
+	S_KORAX_DEATH1('KORX', 8, 5.0 / 35.0, S_KORAX_DEATH2) = none
+	S_KORAX_DEATH2('KORX', 9, 5.0 / 35.0, S_KORAX_DEATH3) = A_FaceTarget
+	S_KORAX_DEATH3('KORX', 10, 5.0 / 35.0, S_KORAX_DEATH4) = A_Scream
+	S_KORAX_DEATH4('KORX', 11, 5.0 / 35.0, S_KORAX_DEATH5) = none
+	S_KORAX_DEATH5('KORX', 12, 5.0 / 35.0, S_KORAX_DEATH6) = none
+	S_KORAX_DEATH6('KORX', 13, 5.0 / 35.0, S_KORAX_DEATH7) = none
+	S_KORAX_DEATH7('KORX', 14, 5.0 / 35.0, S_KORAX_DEATH8) = none
+	S_KORAX_DEATH8('KORX', 15, 5.0 / 35.0, S_KORAX_DEATH9) = none
+	S_KORAX_DEATH9('KORX', 16, 10.0 / 35.0, S_KORAX_DEATH0) = none
+	S_KORAX_DEATH0('KORX', 17, 5.0 / 35.0, S_KORAX_DEATHA) = A_KoraxBonePop
+	S_KORAX_DEATHA('KORX', 18, 5.0 / 35.0, S_KORAX_DEATHB) = A_NoBlocking
+	S_KORAX_DEATHB('KORX', 19, 5.0 / 35.0, S_KORAX_DEATHC) = none
+	S_KORAX_DEATHC('KORX', 20, 5.0 / 35.0, S_KORAX_DEATHD) = none
+	S_KORAX_DEATHD('KORX', 21, -1.0, none) = none
 }
 
 defaultproperties

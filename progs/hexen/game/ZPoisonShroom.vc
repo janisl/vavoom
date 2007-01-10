@@ -32,7 +32,7 @@ class ZPoisonShroom : Decoration
 //
 //===========================================================================
 
-void A_PoisonShroom()
+final void A_PoisonShroom()
 {
 	StateTime = 4.0 + Random() * 16.0;
 }
@@ -43,7 +43,7 @@ void A_PoisonShroom()
 //
 //===========================================================================
 
-void A_PoisonBagInit()
+final void A_PoisonBagInit()
 {
 	Actor A;
 
@@ -56,13 +56,13 @@ void A_PoisonBagInit()
 
 __states__
 {
-	S_ZPOISONSHROOM1('SHRM', 0, 5.0 / 35.0, S_ZPOISONSHROOM_P2) { A_PoisonShroom(); }
-	S_ZPOISONSHROOM_P1('SHRM', 0, 6.0 / 35.0, S_ZPOISONSHROOM_P2) { }
-	S_ZPOISONSHROOM_P2('SHRM', 1, 8.0 / 35.0, S_ZPOISONSHROOM1) { A_Pain(); }
-	S_ZPOISONSHROOM_X1('SHRM', 2, 5.0 / 35.0, S_ZPOISONSHROOM_X2) { }
-	S_ZPOISONSHROOM_X2('SHRM', 3, 5.0 / 35.0, S_ZPOISONSHROOM_X3) { }
-	S_ZPOISONSHROOM_X3('SHRM', 4, 5.0 / 35.0, S_ZPOISONSHROOM_X4) { A_PoisonBagInit(); }
-	S_ZPOISONSHROOM_X4('SHRM', 5, -1.0, none) { }
+	S_ZPOISONSHROOM1('SHRM', 0, 5.0 / 35.0, S_ZPOISONSHROOM_P2) = A_PoisonShroom
+	S_ZPOISONSHROOM_P1('SHRM', 0, 6.0 / 35.0, S_ZPOISONSHROOM_P2) = none
+	S_ZPOISONSHROOM_P2('SHRM', 1, 8.0 / 35.0, S_ZPOISONSHROOM1) = A_Pain
+	S_ZPOISONSHROOM_X1('SHRM', 2, 5.0 / 35.0, S_ZPOISONSHROOM_X2) = none
+	S_ZPOISONSHROOM_X2('SHRM', 3, 5.0 / 35.0, S_ZPOISONSHROOM_X3) = none
+	S_ZPOISONSHROOM_X3('SHRM', 4, 5.0 / 35.0, S_ZPOISONSHROOM_X4) = A_PoisonBagInit
+	S_ZPOISONSHROOM_X4('SHRM', 5, -1.0, none) = none
 }
 
 defaultproperties

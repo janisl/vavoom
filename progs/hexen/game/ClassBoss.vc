@@ -37,7 +37,7 @@ float StrafeRange;
 //
 //============================================================================
 
-void A_ClassBossHealth()
+final void A_ClassBossHealth()
 {
 	if (Level.Game.netgame && !Level.Game.deathmatch)	// co-op only
 	{
@@ -55,7 +55,7 @@ void A_ClassBossHealth()
 //
 //============================================================================
 
-void A_FastChase()
+final void A_FastChase()
 {
 	float delta;
 	float dist;

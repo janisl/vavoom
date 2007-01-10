@@ -28,7 +28,7 @@ class ZRubble2:Decoration
 
 __states__
 {
-	S_ZRUBBLE2('RBL2', 0, -1.0, none) { }
+	S_ZRUBBLE2('RBL2', 0, -1.0, none) = none
 }
 
 defaultproperties

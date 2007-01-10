@@ -28,7 +28,7 @@ class ZStatueGargoyleStripeTall:Decoration
 
 __states__
 {
-	S_ZSTATUEGARGOYLESTRIPETALL_1('GAR1', 0, -1.0, none) { }
+	S_ZSTATUEGARGOYLESTRIPETALL_1('GAR1', 0, -1.0, none) = none
 }
 
 defaultproperties

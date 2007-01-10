@@ -44,7 +44,7 @@ int WeaveIndex;		// Index into floatbob table
 //
 //==========================================================================
 
-void A_FogMove()
+final void A_FogMove()
 {
 	float speed;
 	float angle;

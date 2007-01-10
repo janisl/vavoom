@@ -27,9 +27,9 @@ class FireDemonSplotch1:Carcas;
 
 __states__
 {
-	S_FIRED_CORPSE1('FDMN', 15, 3.0 / 35.0, S_FIRED_CORPSE2) { }
-	S_FIRED_CORPSE2('FDMN', 15, 6.0 / 35.0, S_FIRED_CORPSE3) { A_QueueCorpse(); }
-	S_FIRED_CORPSE3('FDMN', 24, -1.0, none) { }
+	S_FIRED_CORPSE1('FDMN', 15, 3.0 / 35.0, S_FIRED_CORPSE2) = none
+	S_FIRED_CORPSE2('FDMN', 15, 6.0 / 35.0, S_FIRED_CORPSE3) = A_QueueCorpse
+	S_FIRED_CORPSE3('FDMN', 24, -1.0, none) = none
 }
 
 defaultproperties

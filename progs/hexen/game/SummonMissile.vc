@@ -33,7 +33,7 @@ class SummonMissile : Projectile;
 //
 //==========================================================================
 
-void A_Summon()
+final void A_Summon()
 {
 	Actor A;
 
@@ -66,10 +66,10 @@ void A_Summon()
 
 __states__
 {
-	S_SUMMON_FX1_1('SUMN', 0, 4.0 / 35.0, S_SUMMON_FX1_1) { }
-	S_SUMMON_FX2_1('SUMN', 0, 4.0 / 35.0, S_SUMMON_FX2_2) { }
-	S_SUMMON_FX2_2('SUMN', 0, 4.0 / 35.0, S_SUMMON_FX2_3) { }
-	S_SUMMON_FX2_3('SUMN', 0, 4.0 / 35.0, none) { A_Summon(); }
+	S_SUMMON_FX1_1('SUMN', 0, 4.0 / 35.0, S_SUMMON_FX1_1) = none
+	S_SUMMON_FX2_1('SUMN', 0, 4.0 / 35.0, S_SUMMON_FX2_2) = none
+	S_SUMMON_FX2_2('SUMN', 0, 4.0 / 35.0, S_SUMMON_FX2_3) = none
+	S_SUMMON_FX2_3('SUMN', 0, 4.0 / 35.0, none) = A_Summon
 }
 
 defaultproperties

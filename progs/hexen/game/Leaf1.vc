@@ -34,7 +34,7 @@ int RestartCount;
 //
 //============================================================================
 
-void A_LeafThrust()
+final void A_LeafThrust()
 {
 	if (Random() > 0.375)
 	{
@@ -49,7 +49,7 @@ void A_LeafThrust()
 //
 //============================================================================
 
-void A_LeafCheck()
+final void A_LeafCheck()
 {
 	RestartCount++;
 	if (RestartCount >= 20)
@@ -73,25 +73,25 @@ void A_LeafCheck()
 
 __states__
 {
-	S_LEAF1_1('LEF1', 0, 4.0 / 35.0, S_LEAF1_2) { }
-	S_LEAF1_2('LEF1', 1, 4.0 / 35.0, S_LEAF1_3) { }
-	S_LEAF1_3('LEF1', 2, 4.0 / 35.0, S_LEAF1_4) { }
-	S_LEAF1_4('LEF1', 3, 4.0 / 35.0, S_LEAF1_5) { A_LeafThrust(); }
-	S_LEAF1_5('LEF1', 4, 4.0 / 35.0, S_LEAF1_6) { }
-	S_LEAF1_6('LEF1', 5, 4.0 / 35.0, S_LEAF1_7) { }
-	S_LEAF1_7('LEF1', 6, 4.0 / 35.0, S_LEAF1_8) { }
-	S_LEAF1_8('LEF1', 7, 4.0 / 35.0, S_LEAF1_9) { A_LeafThrust(); }
-	S_LEAF1_9('LEF1', 8, 4.0 / 35.0, S_LEAF1_10) { }
-	S_LEAF1_10('LEF1', 0, 4.0 / 35.0, S_LEAF1_11) { }
-	S_LEAF1_11('LEF1', 1, 4.0 / 35.0, S_LEAF1_12) { }
-	S_LEAF1_12('LEF1', 2, 4.0 / 35.0, S_LEAF1_13) { A_LeafThrust(); }
-	S_LEAF1_13('LEF1', 3, 4.0 / 35.0, S_LEAF1_14) { }
-	S_LEAF1_14('LEF1', 4, 4.0 / 35.0, S_LEAF1_15) { }
-	S_LEAF1_15('LEF1', 5, 4.0 / 35.0, S_LEAF1_16) { }
-	S_LEAF1_16('LEF1', 6, 4.0 / 35.0, S_LEAF1_17) { A_LeafThrust(); }
-	S_LEAF1_17('LEF1', 7, 4.0 / 35.0, S_LEAF1_18) { }
-	S_LEAF1_18('LEF1', 8, 4.0 / 35.0, none) { }
-	S_LEAF_X1('LEF3', 3, 10.0 / 35.0, S_LEAF_X1) { A_LeafCheck(); }
+	S_LEAF1_1('LEF1', 0, 4.0 / 35.0, S_LEAF1_2) = none
+	S_LEAF1_2('LEF1', 1, 4.0 / 35.0, S_LEAF1_3) = none
+	S_LEAF1_3('LEF1', 2, 4.0 / 35.0, S_LEAF1_4) = none
+	S_LEAF1_4('LEF1', 3, 4.0 / 35.0, S_LEAF1_5) = A_LeafThrust
+	S_LEAF1_5('LEF1', 4, 4.0 / 35.0, S_LEAF1_6) = none
+	S_LEAF1_6('LEF1', 5, 4.0 / 35.0, S_LEAF1_7) = none
+	S_LEAF1_7('LEF1', 6, 4.0 / 35.0, S_LEAF1_8) = none
+	S_LEAF1_8('LEF1', 7, 4.0 / 35.0, S_LEAF1_9) = A_LeafThrust
+	S_LEAF1_9('LEF1', 8, 4.0 / 35.0, S_LEAF1_10) = none
+	S_LEAF1_10('LEF1', 0, 4.0 / 35.0, S_LEAF1_11) = none
+	S_LEAF1_11('LEF1', 1, 4.0 / 35.0, S_LEAF1_12) = none
+	S_LEAF1_12('LEF1', 2, 4.0 / 35.0, S_LEAF1_13) = A_LeafThrust
+	S_LEAF1_13('LEF1', 3, 4.0 / 35.0, S_LEAF1_14) = none
+	S_LEAF1_14('LEF1', 4, 4.0 / 35.0, S_LEAF1_15) = none
+	S_LEAF1_15('LEF1', 5, 4.0 / 35.0, S_LEAF1_16) = none
+	S_LEAF1_16('LEF1', 6, 4.0 / 35.0, S_LEAF1_17) = A_LeafThrust
+	S_LEAF1_17('LEF1', 7, 4.0 / 35.0, S_LEAF1_18) = none
+	S_LEAF1_18('LEF1', 8, 4.0 / 35.0, none) = none
+	S_LEAF_X1('LEF3', 3, 10.0 / 35.0, S_LEAF_X1) = A_LeafCheck
 }
 
 defaultproperties

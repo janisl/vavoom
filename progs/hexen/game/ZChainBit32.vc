@@ -28,7 +28,7 @@ class ZChainBit32:Decoration
 
 __states__
 {
-	S_ZCHAINBIT32('CHNS', 0, -1.0, none) { }
+	S_ZCHAINBIT32('CHNS', 0, -1.0, none) = none
 }
 
 defaultproperties

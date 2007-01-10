@@ -28,7 +28,7 @@ class ArtifactPuzzleSkull2 : ArtifactPuzzle
 
 __states__
 {
-	S_ARTIPUZZSKULL2('ASK2', 0, -1.0, none) { }
+	S_ARTIPUZZSKULL2('ASK2', 0, -1.0, none) = none
 }
 
 defaultproperties

@@ -27,10 +27,10 @@ class CorpseBit:Effect;
 
 __states__
 {
-	S_CORPSEBIT_1('CPB1', 0, -1.0, none) { }
-	S_CORPSEBIT_2('CPB2', 0, -1.0, none) { }
-	S_CORPSEBIT_3('CPB3', 0, -1.0, none) { }
-	S_CORPSEBIT_4('CPB4', 0, -1.0, none) { }
+	S_CORPSEBIT_1('CPB1', 0, -1.0, none) = none
+	S_CORPSEBIT_2('CPB2', 0, -1.0, none) = none
+	S_CORPSEBIT_3('CPB3', 0, -1.0, none) = none
+	S_CORPSEBIT_4('CPB4', 0, -1.0, none) = none
 }
 
 defaultproperties

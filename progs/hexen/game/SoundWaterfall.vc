@@ -32,14 +32,14 @@ class SoundWaterfall : Actor
 //
 //==========================================================================
 
-void A_ESound()
+final void A_ESound()
 {
 	// Waterfall seams to be silent, in other words UNUSED
 }
 
 __states__
 {
-	S_SND_WATERFALL('', 0, 85.0 / 35.0, S_SND_WATERFALL) { A_ESound(); }
+	S_SND_WATERFALL('', 0, 85.0 / 35.0, S_SND_WATERFALL) = A_ESound
 }
 
 defaultproperties

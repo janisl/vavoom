@@ -29,7 +29,7 @@ class WeaponMStaffPiece1 : WeaponPiece
 
 __states__
 {
-	S_MSTAFF1('WMS1', 0 | FF_FULLBRIGHT, -1.0, none) { }
+	S_MSTAFF1('WMS1', 0 | FF_FULLBRIGHT, -1.0, none) = none
 }
 
 defaultproperties

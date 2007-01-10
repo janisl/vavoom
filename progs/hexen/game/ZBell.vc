@@ -32,7 +32,7 @@ class ZBell : Decoration
 //
 //==========================================================================
 
-void A_BellReset1()
+final void A_BellReset1()
 {
 	bNoGravity = true;
 	Height *= 4.0;
@@ -59,7 +59,7 @@ bool Activate()
 //
 //==========================================================================
 
-void A_BellReset2()
+final void A_BellReset2()
 {
 	bShootable = true;
 	bCorpse = false;
@@ -68,54 +68,54 @@ void A_BellReset2()
 
 __states__
 {
-	S_ZBELL('BBLL', 5, -1.0, none) { }
-	S_ZBELL_X1('BBLL', 0, 4.0 / 35.0, S_ZBELL_X2) { A_BellReset1(); }
-	S_ZBELL_X2('BBLL', 1, 4.0 / 35.0, S_ZBELL_X3) { }
-	S_ZBELL_X3('BBLL', 2, 4.0 / 35.0, S_ZBELL_X4) { }
-	S_ZBELL_X4('BBLL', 3, 5.0 / 35.0, S_ZBELL_X5) { A_Scream(); }
-	S_ZBELL_X5('BBLL', 2, 4.0 / 35.0, S_ZBELL_X6) { }
-	S_ZBELL_X6('BBLL', 1, 4.0 / 35.0, S_ZBELL_X7) { }
-	S_ZBELL_X7('BBLL', 0, 3.0 / 35.0, S_ZBELL_X8) { }
-	S_ZBELL_X8('BBLL', 4, 4.0 / 35.0, S_ZBELL_X9) { }
-	S_ZBELL_X9('BBLL', 5, 5.0 / 35.0, S_ZBELL_X10) { }
-	S_ZBELL_X10('BBLL', 6, 6.0 / 35.0, S_ZBELL_X11) { A_Scream(); }
-	S_ZBELL_X11('BBLL', 5, 5.0 / 35.0, S_ZBELL_X12) { }
-	S_ZBELL_X12('BBLL', 4, 4.0 / 35.0, S_ZBELL_X13) { }
-	S_ZBELL_X13('BBLL', 0, 4.0 / 35.0, S_ZBELL_X14) { }
-	S_ZBELL_X14('BBLL', 1, 5.0 / 35.0, S_ZBELL_X15) { }
-	S_ZBELL_X15('BBLL', 2, 5.0 / 35.0, S_ZBELL_X16) { }
-	S_ZBELL_X16('BBLL', 3, 6.0 / 35.0, S_ZBELL_X17) { A_Scream(); }
-	S_ZBELL_X17('BBLL', 2, 5.0 / 35.0, S_ZBELL_X18) { }
-	S_ZBELL_X18('BBLL', 1, 5.0 / 35.0, S_ZBELL_X19) { }
-	S_ZBELL_X19('BBLL', 0, 4.0 / 35.0, S_ZBELL_X20) { }
-	S_ZBELL_X20('BBLL', 4, 5.0 / 35.0, S_ZBELL_X21) { }
-	S_ZBELL_X21('BBLL', 5, 5.0 / 35.0, S_ZBELL_X22) { }
-	S_ZBELL_X22('BBLL', 6, 7.0 / 35.0, S_ZBELL_X23) { A_Scream(); }
-	S_ZBELL_X23('BBLL', 5, 5.0 / 35.0, S_ZBELL_X24) { }
-	S_ZBELL_X24('BBLL', 4, 5.0 / 35.0, S_ZBELL_X25) { }
-	S_ZBELL_X25('BBLL', 0, 5.0 / 35.0, S_ZBELL_X26) { }
-	S_ZBELL_X26('BBLL', 1, 6.0 / 35.0, S_ZBELL_X27) { }
-	S_ZBELL_X27('BBLL', 2, 6.0 / 35.0, S_ZBELL_X28) { }
-	S_ZBELL_X28('BBLL', 3, 7.0 / 35.0, S_ZBELL_X29) { A_Scream(); }
-	S_ZBELL_X29('BBLL', 2, 6.0 / 35.0, S_ZBELL_X30) { }
-	S_ZBELL_X30('BBLL', 1, 6.0 / 35.0, S_ZBELL_X31) { }
-	S_ZBELL_X31('BBLL', 0, 5.0 / 35.0, S_ZBELL_X32) { }
-	S_ZBELL_X32('BBLL', 4, 6.0 / 35.0, S_ZBELL_X33) { }
-	S_ZBELL_X33('BBLL', 5, 6.0 / 35.0, S_ZBELL_X34) { }
-	S_ZBELL_X34('BBLL', 6, 7.0 / 35.0, S_ZBELL_X35) { A_Scream(); }
-	S_ZBELL_X35('BBLL', 5, 6.0 / 35.0, S_ZBELL_X36) { }
-	S_ZBELL_X36('BBLL', 4, 6.0 / 35.0, S_ZBELL_X37) { }
-	S_ZBELL_X37('BBLL', 0, 6.0 / 35.0, S_ZBELL_X38) { }
-	S_ZBELL_X38('BBLL', 1, 6.0 / 35.0, S_ZBELL_X39) { }
-	S_ZBELL_X39('BBLL', 2, 6.0 / 35.0, S_ZBELL_X40) { }
-	S_ZBELL_X40('BBLL', 1, 7.0 / 35.0, S_ZBELL_X41) { }
-	S_ZBELL_X41('BBLL', 0, 8.0 / 35.0, S_ZBELL_X42) { }
-	S_ZBELL_X42('BBLL', 4, 12.0 / 35.0, S_ZBELL_X43) { }
-	S_ZBELL_X43('BBLL', 0, 10.0 / 35.0, S_ZBELL_X44) { }
-	S_ZBELL_X44('BBLL', 1, 12.0 / 35.0, S_ZBELL_X45) { }
-	S_ZBELL_X45('BBLL', 0, 12.0 / 35.0, S_ZBELL_X46) { }
-	S_ZBELL_X46('BBLL', 4, 14.0 / 35.0, S_ZBELL_X47) { }
-	S_ZBELL_X47('BBLL', 0, 1.0 / 35.0, S_ZBELL) { A_BellReset2(); }
+	S_ZBELL('BBLL', 5, -1.0, none) = none
+	S_ZBELL_X1('BBLL', 0, 4.0 / 35.0, S_ZBELL_X2) = A_BellReset1
+	S_ZBELL_X2('BBLL', 1, 4.0 / 35.0, S_ZBELL_X3) = none
+	S_ZBELL_X3('BBLL', 2, 4.0 / 35.0, S_ZBELL_X4) = none
+	S_ZBELL_X4('BBLL', 3, 5.0 / 35.0, S_ZBELL_X5) = A_Scream
+	S_ZBELL_X5('BBLL', 2, 4.0 / 35.0, S_ZBELL_X6) = none
+	S_ZBELL_X6('BBLL', 1, 4.0 / 35.0, S_ZBELL_X7) = none
+	S_ZBELL_X7('BBLL', 0, 3.0 / 35.0, S_ZBELL_X8) = none
+	S_ZBELL_X8('BBLL', 4, 4.0 / 35.0, S_ZBELL_X9) = none
+	S_ZBELL_X9('BBLL', 5, 5.0 / 35.0, S_ZBELL_X10) = none
+	S_ZBELL_X10('BBLL', 6, 6.0 / 35.0, S_ZBELL_X11) = A_Scream
+	S_ZBELL_X11('BBLL', 5, 5.0 / 35.0, S_ZBELL_X12) = none
+	S_ZBELL_X12('BBLL', 4, 4.0 / 35.0, S_ZBELL_X13) = none
+	S_ZBELL_X13('BBLL', 0, 4.0 / 35.0, S_ZBELL_X14) = none
+	S_ZBELL_X14('BBLL', 1, 5.0 / 35.0, S_ZBELL_X15) = none
+	S_ZBELL_X15('BBLL', 2, 5.0 / 35.0, S_ZBELL_X16) = none
+	S_ZBELL_X16('BBLL', 3, 6.0 / 35.0, S_ZBELL_X17) = A_Scream
+	S_ZBELL_X17('BBLL', 2, 5.0 / 35.0, S_ZBELL_X18) = none
+	S_ZBELL_X18('BBLL', 1, 5.0 / 35.0, S_ZBELL_X19) = none
+	S_ZBELL_X19('BBLL', 0, 4.0 / 35.0, S_ZBELL_X20) = none
+	S_ZBELL_X20('BBLL', 4, 5.0 / 35.0, S_ZBELL_X21) = none
+	S_ZBELL_X21('BBLL', 5, 5.0 / 35.0, S_ZBELL_X22) = none
+	S_ZBELL_X22('BBLL', 6, 7.0 / 35.0, S_ZBELL_X23) = A_Scream
+	S_ZBELL_X23('BBLL', 5, 5.0 / 35.0, S_ZBELL_X24) = none
+	S_ZBELL_X24('BBLL', 4, 5.0 / 35.0, S_ZBELL_X25) = none
+	S_ZBELL_X25('BBLL', 0, 5.0 / 35.0, S_ZBELL_X26) = none
+	S_ZBELL_X26('BBLL', 1, 6.0 / 35.0, S_ZBELL_X27) = none
+	S_ZBELL_X27('BBLL', 2, 6.0 / 35.0, S_ZBELL_X28) = none
+	S_ZBELL_X28('BBLL', 3, 7.0 / 35.0, S_ZBELL_X29) = A_Scream
+	S_ZBELL_X29('BBLL', 2, 6.0 / 35.0, S_ZBELL_X30) = none
+	S_ZBELL_X30('BBLL', 1, 6.0 / 35.0, S_ZBELL_X31) = none
+	S_ZBELL_X31('BBLL', 0, 5.0 / 35.0, S_ZBELL_X32) = none
+	S_ZBELL_X32('BBLL', 4, 6.0 / 35.0, S_ZBELL_X33) = none
+	S_ZBELL_X33('BBLL', 5, 6.0 / 35.0, S_ZBELL_X34) = none
+	S_ZBELL_X34('BBLL', 6, 7.0 / 35.0, S_ZBELL_X35) = A_Scream
+	S_ZBELL_X35('BBLL', 5, 6.0 / 35.0, S_ZBELL_X36) = none
+	S_ZBELL_X36('BBLL', 4, 6.0 / 35.0, S_ZBELL_X37) = none
+	S_ZBELL_X37('BBLL', 0, 6.0 / 35.0, S_ZBELL_X38) = none
+	S_ZBELL_X38('BBLL', 1, 6.0 / 35.0, S_ZBELL_X39) = none
+	S_ZBELL_X39('BBLL', 2, 6.0 / 35.0, S_ZBELL_X40) = none
+	S_ZBELL_X40('BBLL', 1, 7.0 / 35.0, S_ZBELL_X41) = none
+	S_ZBELL_X41('BBLL', 0, 8.0 / 35.0, S_ZBELL_X42) = none
+	S_ZBELL_X42('BBLL', 4, 12.0 / 35.0, S_ZBELL_X43) = none
+	S_ZBELL_X43('BBLL', 0, 10.0 / 35.0, S_ZBELL_X44) = none
+	S_ZBELL_X44('BBLL', 1, 12.0 / 35.0, S_ZBELL_X45) = none
+	S_ZBELL_X45('BBLL', 0, 12.0 / 35.0, S_ZBELL_X46) = none
+	S_ZBELL_X46('BBLL', 4, 14.0 / 35.0, S_ZBELL_X47) = none
+	S_ZBELL_X47('BBLL', 0, 1.0 / 35.0, S_ZBELL) = A_BellReset2
 }
 
 defaultproperties

@@ -32,7 +32,7 @@ class BurnableTree : Decoration
 //
 //===========================================================================
 
-void A_TreeDeath()
+final void A_TreeDeath()
 {
 	if (!bFireDamage)
 	{

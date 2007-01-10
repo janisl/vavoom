@@ -31,7 +31,7 @@ class HolyMissile : Projectile;
 //
 //============================================================================
 
-void A_CHolySpawnPuff()
+final void A_CHolySpawnPuff()
 {
 	Spawn(HolyMissilePuff, Origin);
 }
@@ -44,7 +44,7 @@ void A_CHolySpawnPuff()
 //
 //============================================================================
 
-void A_CHolyAttack2()
+final void A_CHolyAttack2()
 {
 	int j;
 	int i;
@@ -109,11 +109,11 @@ void A_CHolyAttack2()
 
 __states__
 {
-	S_HOLY_MISSILE1('SPIR', 15 | FF_FULLBRIGHT, 3.0 / 35.0, S_HOLY_MISSILE2) { A_CHolySpawnPuff(); }
-	S_HOLY_MISSILE2('SPIR', 15 | FF_FULLBRIGHT, 3.0 / 35.0, S_HOLY_MISSILE3) { A_CHolySpawnPuff(); }
-	S_HOLY_MISSILE3('SPIR', 15 | FF_FULLBRIGHT, 3.0 / 35.0, S_HOLY_MISSILE4) { A_CHolySpawnPuff(); }
-	S_HOLY_MISSILE4('SPIR', 15 | FF_FULLBRIGHT, 3.0 / 35.0, S_HOLY_MISSILE_X) { A_CHolySpawnPuff(); }
-	S_HOLY_MISSILE_X('SPIR', 15 | FF_FULLBRIGHT, 1.0 / 35.0, none) { A_CHolyAttack2(); }
+	S_HOLY_MISSILE1('SPIR', 15 | FF_FULLBRIGHT, 3.0 / 35.0, S_HOLY_MISSILE2) = A_CHolySpawnPuff
+	S_HOLY_MISSILE2('SPIR', 15 | FF_FULLBRIGHT, 3.0 / 35.0, S_HOLY_MISSILE3) = A_CHolySpawnPuff
+	S_HOLY_MISSILE3('SPIR', 15 | FF_FULLBRIGHT, 3.0 / 35.0, S_HOLY_MISSILE4) = A_CHolySpawnPuff
+	S_HOLY_MISSILE4('SPIR', 15 | FF_FULLBRIGHT, 3.0 / 35.0, S_HOLY_MISSILE_X) = A_CHolySpawnPuff
+	S_HOLY_MISSILE_X('SPIR', 15 | FF_FULLBRIGHT, 1.0 / 35.0, none) = A_CHolyAttack2
 }
 
 defaultproperties

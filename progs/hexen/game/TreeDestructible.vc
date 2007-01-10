@@ -28,13 +28,13 @@ class TreeDestructible:Decoration
 
 __states__
 {
-	S_ZTREEDESTRUCTIBLE1('TRDT', 0, -1.0, none) { }
-	S_ZTREEDES_D1('TRDT', 1, 5.0 / 35.0, S_ZTREEDES_D2) { }
-	S_ZTREEDES_D2('TRDT', 2, 5.0 / 35.0, S_ZTREEDES_D3) { A_Scream(); }
-	S_ZTREEDES_D3('TRDT', 3, 5.0 / 35.0, S_ZTREEDES_D4) { }
-	S_ZTREEDES_D4('TRDT', 4, 5.0 / 35.0, S_ZTREEDES_D5) { }
-	S_ZTREEDES_D5('TRDT', 5, 5.0 / 35.0, S_ZTREEDES_D6) { }
-	S_ZTREEDES_D6('TRDT', 6, -1.0, none) { }
+	S_ZTREEDESTRUCTIBLE1('TRDT', 0, -1.0, none) = none
+	S_ZTREEDES_D1('TRDT', 1, 5.0 / 35.0, S_ZTREEDES_D2) = none
+	S_ZTREEDES_D2('TRDT', 2, 5.0 / 35.0, S_ZTREEDES_D3) = A_Scream
+	S_ZTREEDES_D3('TRDT', 3, 5.0 / 35.0, S_ZTREEDES_D4) = none
+	S_ZTREEDES_D4('TRDT', 4, 5.0 / 35.0, S_ZTREEDES_D5) = none
+	S_ZTREEDES_D5('TRDT', 5, 5.0 / 35.0, S_ZTREEDES_D6) = none
+	S_ZTREEDES_D6('TRDT', 6, -1.0, none) = none
 }
 
 defaultproperties

@@ -32,7 +32,7 @@ class Pottery1 : Decoration
 //
 //==========================================================================
 
-void A_PotteryExplode()
+final void A_PotteryExplode()
 {
 	Actor A;
 	int i;
@@ -65,8 +65,8 @@ void A_PotteryExplode()
 
 __states__
 {
-	S_ZPOTTERY1('POT1', 0, -1.0, none) { }
-	S_ZPOTTERY_EXPLODE('POT1', 0, 0.0 / 35.0, none) { A_PotteryExplode(); }
+	S_ZPOTTERY1('POT1', 0, -1.0, none) = none
+	S_ZPOTTERY_EXPLODE('POT1', 0, 0.0 / 35.0, none) = A_PotteryExplode
 }
 
 defaultproperties

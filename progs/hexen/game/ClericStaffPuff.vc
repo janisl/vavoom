@@ -27,11 +27,11 @@ class ClericStaffPuff : Effect;
 
 __states__
 {
-	S_CSTAFFPUFF1('FHFX', 18, 4.0 / 35.0, S_CSTAFFPUFF2) { }
-	S_CSTAFFPUFF2('FHFX', 19, 4.0 / 35.0, S_CSTAFFPUFF3) { }
-	S_CSTAFFPUFF3('FHFX', 20, 4.0 / 35.0, S_CSTAFFPUFF4) { }
-	S_CSTAFFPUFF4('FHFX', 21, 4.0 / 35.0, S_CSTAFFPUFF5) { }
-	S_CSTAFFPUFF5('FHFX', 22, 4.0 / 35.0, none) { }
+	S_CSTAFFPUFF1('FHFX', 18, 4.0 / 35.0, S_CSTAFFPUFF2) = none
+	S_CSTAFFPUFF2('FHFX', 19, 4.0 / 35.0, S_CSTAFFPUFF3) = none
+	S_CSTAFFPUFF3('FHFX', 20, 4.0 / 35.0, S_CSTAFFPUFF4) = none
+	S_CSTAFFPUFF4('FHFX', 21, 4.0 / 35.0, S_CSTAFFPUFF5) = none
+	S_CSTAFFPUFF5('FHFX', 22, 4.0 / 35.0, none) = none
 }
 
 defaultproperties

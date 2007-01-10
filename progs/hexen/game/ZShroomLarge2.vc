@@ -28,7 +28,7 @@ class ZShroomLarge2:Decoration
 
 __states__
 {
-	S_ZSHROOMLARGE2_1('MSH2', 0, -1.0, none) { }
+	S_ZSHROOMLARGE2_1('MSH2', 0, -1.0, none) = none
 }
 
 defaultproperties

@@ -31,15 +31,15 @@ class BishopBlur : Effect;
 //
 //==========================================================================
 
-void A_SetAltShadow()
+final void A_SetAltShadow()
 {
 	Alpha = 0.666;
 }
 
 __states__
 {
-	S_BISHOPBLUR1('BISH', 0, 16.0 / 35.0, S_BISHOPBLUR2) { }
-	S_BISHOPBLUR2('BISH', 0, 8.0 / 35.0, none) { A_SetAltShadow(); }
+	S_BISHOPBLUR1('BISH', 0, 16.0 / 35.0, S_BISHOPBLUR2) = none
+	S_BISHOPBLUR2('BISH', 0, 8.0 / 35.0, none) = A_SetAltShadow
 }
 
 defaultproperties

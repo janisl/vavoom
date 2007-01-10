@@ -28,7 +28,7 @@ class ZChainEndSkull:Decoration
 
 __states__
 {
-	S_ZCHAINEND_SKULL('CHNS', 6, -1.0, none) { }
+	S_ZCHAINEND_SKULL('CHNS', 6, -1.0, none) = none
 }
 
 defaultproperties

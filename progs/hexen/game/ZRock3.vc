@@ -28,7 +28,7 @@ class ZRock3:Decoration
 
 __states__
 {
-	S_ZROCK3_1('RCK3', 0, -1.0, none) { }
+	S_ZROCK3_1('RCK3', 0, -1.0, none) = none
 }
 
 defaultproperties

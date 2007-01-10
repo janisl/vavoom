@@ -28,7 +28,7 @@ class ZStalagmiteIceMedium:Decoration
 
 __states__
 {
-	S_ZSTALAGMITEICEMEDIUM('ICM2', 0, -1.0, none) { }
+	S_ZSTALAGMITEICEMEDIUM('ICM2', 0, -1.0, none) = none
 }
 
 defaultproperties

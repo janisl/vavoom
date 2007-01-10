@@ -31,7 +31,7 @@ class FireDemonRock1 : Fragment;
 //
 //============================================================================
 
-void A_SmBounce()
+final void A_SmBounce()
 {
 	// give some more momentum (x,y,&z)
 	Origin.z = FloorZ + 1.0;
@@ -42,9 +42,9 @@ void A_SmBounce()
 
 __states__
 {
-	S_FIRED_RDROP1('FDMN', 18, 4.0 / 35.0, S_FIRED_RDROP1) { }
-	S_FIRED_RDEAD1_1('FDMN', 18, 5.0 / 35.0, S_FIRED_RDEAD1_2) { A_SmBounce(); }
-	S_FIRED_RDEAD1_2('FDMN', 18, 200.0 / 35.0, none) { }
+	S_FIRED_RDROP1('FDMN', 18, 4.0 / 35.0, S_FIRED_RDROP1) = none
+	S_FIRED_RDEAD1_1('FDMN', 18, 5.0 / 35.0, S_FIRED_RDEAD1_2) = A_SmBounce
+	S_FIRED_RDEAD1_2('FDMN', 18, 200.0 / 35.0, none) = none
 }
 
 defaultproperties

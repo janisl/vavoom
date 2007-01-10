@@ -28,7 +28,7 @@ class ZVasePillar:Decoration
 
 __states__
 {
-	S_ZVASEPILLAR('VASE', 0, -1.0, none) { }
+	S_ZVASEPILLAR('VASE', 0, -1.0, none) = none
 }
 
 defaultproperties

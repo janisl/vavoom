@@ -28,8 +28,8 @@ class ProjectileBlade : Projectile
 
 __states__
 {
-	S_PRJ_BLADE1('BLAD', 0, -1.0, none) { }
-	S_PRJ_BLADE_X1('BLAD', 0, 1.0 / 35.0, none) { }
+	S_PRJ_BLADE1('BLAD', 0, -1.0, none) = none
+	S_PRJ_BLADE_X1('BLAD', 0, 1.0 / 35.0, none) = none
 }
 
 defaultproperties

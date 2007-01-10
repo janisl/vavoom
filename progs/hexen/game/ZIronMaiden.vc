@@ -28,7 +28,7 @@ class ZIronMaiden:Decoration
 
 __states__
 {
-	S_ZIRON_MAIDEN('IRON', 0, -1.0, none) { }
+	S_ZIRON_MAIDEN('IRON', 0, -1.0, none) = none
 }
 
 defaultproperties

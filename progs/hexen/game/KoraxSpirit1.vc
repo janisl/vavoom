@@ -62,7 +62,7 @@ void KSpiritInit(Actor korax)
 //
 //============================================================================
 
-void A_KSpiritSeeker(float thresh, float turnMax)
+final void A_KSpiritSeeker(float thresh, float turnMax)
 {
 	int dir;
 	float dist;
@@ -132,7 +132,7 @@ void A_KSpiritSeeker(float thresh, float turnMax)
 //
 //============================================================================
 
-void A_KSpiritWeave()
+final void A_KSpiritWeave()
 {
 	float newX, newY;
 	float angle;
@@ -155,7 +155,7 @@ void A_KSpiritWeave()
 //
 //============================================================================
 
-void A_KSpiritRoam()
+final void A_KSpiritRoam()
 {
 	if (LifeTime-- <= 0)
 	{
@@ -178,14 +178,14 @@ void A_KSpiritRoam()
 
 __states__
 {
-	S_KSPIRIT_ROAM1('SPIR', 0, 5.0 / 35.0, S_KSPIRIT_ROAM2) { A_KSpiritRoam(); }
-	S_KSPIRIT_ROAM2('SPIR', 1, 5.0 / 35.0, S_KSPIRIT_ROAM1) { A_KSpiritRoam(); }
-	S_KSPIRIT_DEATH1('SPIR', 3, 5.0 / 35.0, S_KSPIRIT_DEATH2) { }
-	S_KSPIRIT_DEATH2('SPIR', 4, 5.0 / 35.0, S_KSPIRIT_DEATH3) { }
-	S_KSPIRIT_DEATH3('SPIR', 5, 5.0 / 35.0, S_KSPIRIT_DEATH4) { }
-	S_KSPIRIT_DEATH4('SPIR', 6, 5.0 / 35.0, S_KSPIRIT_DEATH5) { }
-	S_KSPIRIT_DEATH5('SPIR', 7, 5.0 / 35.0, S_KSPIRIT_DEATH6) { }
-	S_KSPIRIT_DEATH6('SPIR', 8, 5.0 / 35.0, none) { }
+	S_KSPIRIT_ROAM1('SPIR', 0, 5.0 / 35.0, S_KSPIRIT_ROAM2) = A_KSpiritRoam
+	S_KSPIRIT_ROAM2('SPIR', 1, 5.0 / 35.0, S_KSPIRIT_ROAM1) = A_KSpiritRoam
+	S_KSPIRIT_DEATH1('SPIR', 3, 5.0 / 35.0, S_KSPIRIT_DEATH2) = none
+	S_KSPIRIT_DEATH2('SPIR', 4, 5.0 / 35.0, S_KSPIRIT_DEATH3) = none
+	S_KSPIRIT_DEATH3('SPIR', 5, 5.0 / 35.0, S_KSPIRIT_DEATH4) = none
+	S_KSPIRIT_DEATH4('SPIR', 6, 5.0 / 35.0, S_KSPIRIT_DEATH5) = none
+	S_KSPIRIT_DEATH5('SPIR', 7, 5.0 / 35.0, S_KSPIRIT_DEATH6) = none
+	S_KSPIRIT_DEATH6('SPIR', 8, 5.0 / 35.0, none) = none
 }
 
 defaultproperties

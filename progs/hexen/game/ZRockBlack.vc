@@ -28,7 +28,7 @@ class ZRockBlack:Decoration
 
 __states__
 {
-	S_ZROCKBLACK('RKBK', 0, -1.0, none) { }
+	S_ZROCKBLACK('RKBK', 0, -1.0, none) = none
 }
 
 defaultproperties

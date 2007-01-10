@@ -47,7 +47,7 @@ bool bBloody;		//	Bloody spike.
 //
 //==========================================================================
 
-void A_ThrustInitUp()
+final void A_ThrustInitUp()
 {
 	RaiseSpeed = 5.0;	// Raise speed
 	bRaised = true;		// Mark as up
@@ -62,7 +62,7 @@ void A_ThrustInitUp()
 //
 //==========================================================================
 
-void A_ThrustInitDn()
+final void A_ThrustInitDn()
 {
 	RaiseSpeed = 5.0;	// Raise speed
 	bRaised = false;	// Mark as down
@@ -80,7 +80,7 @@ void A_ThrustInitDn()
 // 
 //==========================================================================
 
-void A_ThrustRaise()
+final void A_ThrustRaise()
 {
 	// Raise spike from the ground
 	FloorClip -= RaiseSpeed;
@@ -116,7 +116,7 @@ void A_ThrustRaise()
 //
 //==========================================================================
 
-void A_ThrustLower()
+final void A_ThrustLower()
 {
 	if (FloorClip < Height)
 	{
@@ -138,7 +138,7 @@ void A_ThrustLower()
 //
 //==========================================================================
 
-void A_ThrustBlock()
+final void A_ThrustBlock()
 {
 	bSolid = true;
 }
@@ -179,7 +179,7 @@ bool PIT_ThrustStompThing(Entity Other)
 //
 //==========================================================================
 
-void A_ThrustImpale()
+final void A_ThrustImpale()
 {
 	int xl, xh, yl, yh, bx, by;
 	float x0, x2, y0, y2;
@@ -203,32 +203,32 @@ void A_ThrustImpale()
 
 __states__
 {
-	S_THRUSTINIT2_1('TSPK', 0, 3.0 / 35.0, S_THRUSTINIT2_2) { }
-	S_THRUSTINIT2_2('TSPK', 0, 4.0 / 35.0, S_THRUSTBLOCK) { A_ThrustInitUp(); }
-	S_BTHRUSTINIT2_1('TSPK', 1, 3.0 / 35.0, S_BTHRUSTINIT2_2) { }
-	S_BTHRUSTINIT2_2('TSPK', 1, 4.0 / 35.0, S_BTHRUSTBLOCK) { A_ThrustInitUp(); }
-	S_THRUSTINIT1_1('TSPK', 0, 3.0 / 35.0, S_THRUSTINIT1_2) { }
-	S_THRUSTINIT1_2('TSPK', 0, 4.0 / 35.0, S_THRUSTSTAY) { A_ThrustInitDn(); }
-	S_BTHRUSTINIT1_1('TSPK', 1, 3.0 / 35.0, S_BTHRUSTINIT1_2) { }
-	S_BTHRUSTINIT1_2('TSPK', 1, 4.0 / 35.0, S_BTHRUSTSTAY) { A_ThrustInitDn(); }
-	S_THRUSTRAISE1('TSPK', 0, 8.0 / 35.0, S_THRUSTRAISE2) { A_ThrustRaise(); }
-	S_THRUSTRAISE2('TSPK', 0, 6.0 / 35.0, S_THRUSTRAISE3) { A_ThrustRaise(); }
-	S_THRUSTRAISE3('TSPK', 0, 4.0 / 35.0, S_THRUSTRAISE4) { A_ThrustRaise(); }
-	S_THRUSTRAISE4('TSPK', 0, 3.0 / 35.0, S_THRUSTIMPALE) { A_ThrustBlock(); }
-	S_BTHRUSTRAISE1('TSPK', 1, 8.0 / 35.0, S_BTHRUSTRAISE2) { A_ThrustRaise(); }
-	S_BTHRUSTRAISE2('TSPK', 1, 6.0 / 35.0, S_BTHRUSTRAISE3) { A_ThrustRaise(); }
-	S_BTHRUSTRAISE3('TSPK', 1, 4.0 / 35.0, S_BTHRUSTRAISE4) { A_ThrustRaise(); }
-	S_BTHRUSTRAISE4('TSPK', 1, 3.0 / 35.0, S_BTHRUSTIMPALE) { A_ThrustBlock(); }
-	S_THRUSTIMPALE('TSPK', 0, 2.0 / 35.0, S_THRUSTRAISE) { A_ThrustImpale(); }
-	S_BTHRUSTIMPALE('TSPK', 1, 2.0 / 35.0, S_BTHRUSTRAISE) { A_ThrustImpale(); }
-	S_THRUSTRAISE('TSPK', 0, 2.0 / 35.0, S_THRUSTRAISE) { A_ThrustRaise(); }
-	S_BTHRUSTRAISE('TSPK', 1, 2.0 / 35.0, S_BTHRUSTRAISE) { A_ThrustRaise(); }
-	S_THRUSTBLOCK('TSPK', 0, 10.0 / 35.0, S_THRUSTBLOCK) { }
-	S_BTHRUSTBLOCK('TSPK', 1, 10.0 / 35.0, S_BTHRUSTBLOCK) { }
-	S_THRUSTLOWER('TSPK', 0, 2.0 / 35.0, S_THRUSTLOWER) { A_ThrustLower(); }
-	S_BTHRUSTLOWER('TSPK', 1, 2.0 / 35.0, S_BTHRUSTLOWER) { A_ThrustLower(); }
-	S_THRUSTSTAY('TSPK', 0, -1.0, S_THRUSTSTAY) { }
-	S_BTHRUSTSTAY('TSPK', 1, -1.0, S_BTHRUSTSTAY) { }
+	S_THRUSTINIT2_1('TSPK', 0, 3.0 / 35.0, S_THRUSTINIT2_2) = none
+	S_THRUSTINIT2_2('TSPK', 0, 4.0 / 35.0, S_THRUSTBLOCK) = A_ThrustInitUp
+	S_BTHRUSTINIT2_1('TSPK', 1, 3.0 / 35.0, S_BTHRUSTINIT2_2) = none
+	S_BTHRUSTINIT2_2('TSPK', 1, 4.0 / 35.0, S_BTHRUSTBLOCK) = A_ThrustInitUp
+	S_THRUSTINIT1_1('TSPK', 0, 3.0 / 35.0, S_THRUSTINIT1_2) = none
+	S_THRUSTINIT1_2('TSPK', 0, 4.0 / 35.0, S_THRUSTSTAY) = A_ThrustInitDn
+	S_BTHRUSTINIT1_1('TSPK', 1, 3.0 / 35.0, S_BTHRUSTINIT1_2) = none
+	S_BTHRUSTINIT1_2('TSPK', 1, 4.0 / 35.0, S_BTHRUSTSTAY) = A_ThrustInitDn
+	S_THRUSTRAISE1('TSPK', 0, 8.0 / 35.0, S_THRUSTRAISE2) = A_ThrustRaise
+	S_THRUSTRAISE2('TSPK', 0, 6.0 / 35.0, S_THRUSTRAISE3) = A_ThrustRaise
+	S_THRUSTRAISE3('TSPK', 0, 4.0 / 35.0, S_THRUSTRAISE4) = A_ThrustRaise
+	S_THRUSTRAISE4('TSPK', 0, 3.0 / 35.0, S_THRUSTIMPALE) = A_ThrustBlock
+	S_BTHRUSTRAISE1('TSPK', 1, 8.0 / 35.0, S_BTHRUSTRAISE2) = A_ThrustRaise
+	S_BTHRUSTRAISE2('TSPK', 1, 6.0 / 35.0, S_BTHRUSTRAISE3) = A_ThrustRaise
+	S_BTHRUSTRAISE3('TSPK', 1, 4.0 / 35.0, S_BTHRUSTRAISE4) = A_ThrustRaise
+	S_BTHRUSTRAISE4('TSPK', 1, 3.0 / 35.0, S_BTHRUSTIMPALE) = A_ThrustBlock
+	S_THRUSTIMPALE('TSPK', 0, 2.0 / 35.0, S_THRUSTRAISE) = A_ThrustImpale
+	S_BTHRUSTIMPALE('TSPK', 1, 2.0 / 35.0, S_BTHRUSTRAISE) = A_ThrustImpale
+	S_THRUSTRAISE('TSPK', 0, 2.0 / 35.0, S_THRUSTRAISE) = A_ThrustRaise
+	S_BTHRUSTRAISE('TSPK', 1, 2.0 / 35.0, S_BTHRUSTRAISE) = A_ThrustRaise
+	S_THRUSTBLOCK('TSPK', 0, 10.0 / 35.0, S_THRUSTBLOCK) = none
+	S_BTHRUSTBLOCK('TSPK', 1, 10.0 / 35.0, S_BTHRUSTBLOCK) = none
+	S_THRUSTLOWER('TSPK', 0, 2.0 / 35.0, S_THRUSTLOWER) = A_ThrustLower
+	S_BTHRUSTLOWER('TSPK', 1, 2.0 / 35.0, S_BTHRUSTLOWER) = A_ThrustLower
+	S_THRUSTSTAY('TSPK', 0, -1.0, S_THRUSTSTAY) = none
+	S_BTHRUSTSTAY('TSPK', 1, -1.0, S_BTHRUSTSTAY) = none
 }
 
 //==========================================================================

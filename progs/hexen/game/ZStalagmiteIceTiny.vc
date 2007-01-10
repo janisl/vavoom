@@ -28,7 +28,7 @@ class ZStalagmiteIceTiny:Decoration
 
 __states__
 {
-	S_ZSTALAGMITEICETINY('ICM4', 0, -1.0, none) { }
+	S_ZSTALAGMITEICETINY('ICM4', 0, -1.0, none) = none
 }
 
 defaultproperties

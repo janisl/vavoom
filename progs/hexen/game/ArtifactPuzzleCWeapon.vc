@@ -28,7 +28,7 @@ class ArtifactPuzzleCWeapon : ArtifactPuzzle
 
 __states__
 {
-	S_ARTIPUZZCWEAPON('ACWP', 0, -1.0, none) { }
+	S_ARTIPUZZCWEAPON('ACWP', 0, -1.0, none) = none
 }
 
 defaultproperties

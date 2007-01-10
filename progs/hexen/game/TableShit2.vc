@@ -28,7 +28,7 @@ class TableShit2:Decoration
 
 __states__
 {
-	S_TABLE_SHIT2('TST2', 0, -1.0, none) { }
+	S_TABLE_SHIT2('TST2', 0, -1.0, none) = none
 }
 
 defaultproperties

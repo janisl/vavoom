@@ -31,7 +31,7 @@ class WeaponClericHoly : Weapon;
 //
 //============================================================================
 
-void A_CHolyAttack()
+final void A_CHolyAttack()
 {
 	Player(Player).Mana[HexenDefs::MANA_1] -=
 		WeaponManaUse(Player.PClass, Player(Player).ReadyWeapon);
@@ -50,7 +50,7 @@ void A_CHolyAttack()
 //
 //============================================================================
 
-void A_CHolyPalette1()
+final void A_CHolyPalette1()
 {
 	Player(Player).WeaponCShift = CSHIFT(255, 255, 255, 51);
 }
@@ -61,7 +61,7 @@ void A_CHolyPalette1()
 //
 //============================================================================
 
-void A_CHolyPalette2()
+final void A_CHolyPalette2()
 {
 	Player(Player).WeaponCShift = CSHIFT(255, 255, 255, 36);
 }
@@ -72,7 +72,7 @@ void A_CHolyPalette2()
 //
 //============================================================================
 
-void A_CHolyPalette3()
+final void A_CHolyPalette3()
 {
 	// reset back to original playpal
 	Player(Player).WeaponCShift = 0;
@@ -80,18 +80,18 @@ void A_CHolyPalette3()
 
 __states__
 {
-	S_CHOLYREADY('CHLY', 0, 1.0 / 35.0, S_CHOLYREADY) { A_WeaponReady(); }
-	S_CHOLYDOWN('CHLY', 0, 1.0 / 35.0, S_CHOLYDOWN) { A_Lower(); }
-	S_CHOLYUP('CHLY', 0, 1.0 / 35.0, S_CHOLYUP) { A_Raise(); }
-	S_CHOLYATK_1('CHLY', 0 | FF_FULLBRIGHT, 1.0 / 35.0, S_CHOLYATK_2, 0, 40) { }
-	S_CHOLYATK_2('CHLY', 1 | FF_FULLBRIGHT, 1.0 / 35.0, S_CHOLYATK_3, 0, 40) { }
-	S_CHOLYATK_3('CHLY', 2 | FF_FULLBRIGHT, 2.0 / 35.0, S_CHOLYATK_4, 0, 43) { }
-	S_CHOLYATK_4('CHLY', 3 | FF_FULLBRIGHT, 2.0 / 35.0, S_CHOLYATK_5, 0, 43) { }
-	S_CHOLYATK_5('CHLY', 4 | FF_FULLBRIGHT, 2.0 / 35.0, S_CHOLYATK_6, 0, 45) { }
-	S_CHOLYATK_6('CHLY', 5 | FF_FULLBRIGHT, 6.0 / 35.0, S_CHOLYATK_7, 0, 48) { A_CHolyAttack(); }
-	S_CHOLYATK_7('CHLY', 6 | FF_FULLBRIGHT, 2.0 / 35.0, S_CHOLYATK_8, 0, 40) { A_CHolyPalette1(); }
-	S_CHOLYATK_8('CHLY', 6 | FF_FULLBRIGHT, 2.0 / 35.0, S_CHOLYATK_9, 0, 40) { A_CHolyPalette2(); }
-	S_CHOLYATK_9('CHLY', 6 | FF_FULLBRIGHT, 2.0 / 35.0, S_CHOLYREADY, 0, 36) { A_CHolyPalette3(); }
+	S_CHOLYREADY('CHLY', 0, 1.0 / 35.0, S_CHOLYREADY) = A_WeaponReady
+	S_CHOLYDOWN('CHLY', 0, 1.0 / 35.0, S_CHOLYDOWN) = A_Lower
+	S_CHOLYUP('CHLY', 0, 1.0 / 35.0, S_CHOLYUP) = A_Raise
+	S_CHOLYATK_1('CHLY', 0 | FF_FULLBRIGHT, 1.0 / 35.0, S_CHOLYATK_2, 0, 40) = none
+	S_CHOLYATK_2('CHLY', 1 | FF_FULLBRIGHT, 1.0 / 35.0, S_CHOLYATK_3, 0, 40) = none
+	S_CHOLYATK_3('CHLY', 2 | FF_FULLBRIGHT, 2.0 / 35.0, S_CHOLYATK_4, 0, 43) = none
+	S_CHOLYATK_4('CHLY', 3 | FF_FULLBRIGHT, 2.0 / 35.0, S_CHOLYATK_5, 0, 43) = none
+	S_CHOLYATK_5('CHLY', 4 | FF_FULLBRIGHT, 2.0 / 35.0, S_CHOLYATK_6, 0, 45) = none
+	S_CHOLYATK_6('CHLY', 5 | FF_FULLBRIGHT, 6.0 / 35.0, S_CHOLYATK_7, 0, 48) = A_CHolyAttack
+	S_CHOLYATK_7('CHLY', 6 | FF_FULLBRIGHT, 2.0 / 35.0, S_CHOLYATK_8, 0, 40) = A_CHolyPalette1
+	S_CHOLYATK_8('CHLY', 6 | FF_FULLBRIGHT, 2.0 / 35.0, S_CHOLYATK_9, 0, 40) = A_CHolyPalette2
+	S_CHOLYATK_9('CHLY', 6 | FF_FULLBRIGHT, 2.0 / 35.0, S_CHOLYREADY, 0, 36) = A_CHolyPalette3
 }
 
 defaultproperties

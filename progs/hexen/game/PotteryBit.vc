@@ -33,7 +33,7 @@ state BitState;
 //
 //==========================================================================
 
-void A_PotteryChooseBit()
+final void A_PotteryChooseBit()
 {
 	switch (P_Random() % 5)
 	{
@@ -53,7 +53,7 @@ void A_PotteryChooseBit()
 //
 //==========================================================================
 
-void A_PotteryCheck()
+final void A_PotteryCheck()
 {
 	int i;
 	Actor pmo;
@@ -77,22 +77,22 @@ void A_PotteryCheck()
 
 __states__
 {
-	S_POTTERYBIT_1('PBIT', 0, -1.0, none) { }
-	S_POTTERYBIT_2('PBIT', 1, -1.0, none) { }
-	S_POTTERYBIT_3('PBIT', 2, -1.0, none) { }
-	S_POTTERYBIT_4('PBIT', 3, -1.0, none) { }
-	S_POTTERYBIT_5('PBIT', 4, -1.0, none) { }
-	S_POTTERYBIT_EX0('PBIT', 5, 0.0 / 35.0, none) { A_PotteryChooseBit(); }
-	S_POTTERYBIT_EX1('PBIT', 5, 140.0 / 35.0, S_POTTERYBIT_EX1_2) { }
-	S_POTTERYBIT_EX1_2('PBIT', 5, 1.0 / 35.0, none) { A_PotteryCheck(); }
-	S_POTTERYBIT_EX2('PBIT', 6, 140.0 / 35.0, S_POTTERYBIT_EX2_2) { }
-	S_POTTERYBIT_EX2_2('PBIT', 6, 1.0 / 35.0, none) { A_PotteryCheck(); }
-	S_POTTERYBIT_EX3('PBIT', 7, 140.0 / 35.0, S_POTTERYBIT_EX3_2) { }
-	S_POTTERYBIT_EX3_2('PBIT', 7, 1.0 / 35.0, none) { A_PotteryCheck(); }
-	S_POTTERYBIT_EX4('PBIT', 8, 140.0 / 35.0, S_POTTERYBIT_EX4_2) { }
-	S_POTTERYBIT_EX4_2('PBIT', 8, 1.0 / 35.0, none) { A_PotteryCheck(); }
-	S_POTTERYBIT_EX5('PBIT', 9, 140.0 / 35.0, S_POTTERYBIT_EX5_2) { }
-	S_POTTERYBIT_EX5_2('PBIT', 9, 1.0 / 35.0, none) { A_PotteryCheck(); }
+	S_POTTERYBIT_1('PBIT', 0, -1.0, none) = none
+	S_POTTERYBIT_2('PBIT', 1, -1.0, none) = none
+	S_POTTERYBIT_3('PBIT', 2, -1.0, none) = none
+	S_POTTERYBIT_4('PBIT', 3, -1.0, none) = none
+	S_POTTERYBIT_5('PBIT', 4, -1.0, none) = none
+	S_POTTERYBIT_EX0('PBIT', 5, 0.0 / 35.0, none) = A_PotteryChooseBit
+	S_POTTERYBIT_EX1('PBIT', 5, 140.0 / 35.0, S_POTTERYBIT_EX1_2) = none
+	S_POTTERYBIT_EX1_2('PBIT', 5, 1.0 / 35.0, none) = A_PotteryCheck
+	S_POTTERYBIT_EX2('PBIT', 6, 140.0 / 35.0, S_POTTERYBIT_EX2_2) = none
+	S_POTTERYBIT_EX2_2('PBIT', 6, 1.0 / 35.0, none) = A_PotteryCheck
+	S_POTTERYBIT_EX3('PBIT', 7, 140.0 / 35.0, S_POTTERYBIT_EX3_2) = none
+	S_POTTERYBIT_EX3_2('PBIT', 7, 1.0 / 35.0, none) = A_PotteryCheck
+	S_POTTERYBIT_EX4('PBIT', 8, 140.0 / 35.0, S_POTTERYBIT_EX4_2) = none
+	S_POTTERYBIT_EX4_2('PBIT', 8, 1.0 / 35.0, none) = A_PotteryCheck
+	S_POTTERYBIT_EX5('PBIT', 9, 140.0 / 35.0, S_POTTERYBIT_EX5_2) = none
+	S_POTTERYBIT_EX5_2('PBIT', 9, 1.0 / 35.0, none) = A_PotteryCheck
 }
 
 defaultproperties

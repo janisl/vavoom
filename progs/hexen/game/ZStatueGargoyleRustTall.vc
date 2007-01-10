@@ -28,7 +28,7 @@ class ZStatueGargoyleRustTall:Decoration
 
 __states__
 {
-	S_ZSTATUEGARGOYLERUSTTALL_1('GAR5', 0, -1.0, none) { }
+	S_ZSTATUEGARGOYLERUSTTALL_1('GAR5', 0, -1.0, none) = none
 }
 
 defaultproperties

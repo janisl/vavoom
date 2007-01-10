@@ -28,7 +28,7 @@ class ZTreeSwamp2:Decoration
 
 __states__
 {
-	S_ZTREESWAMP172_1('TRE3', 0, -1.0, none) { }
+	S_ZTREESWAMP172_1('TRE3', 0, -1.0, none) = none
 }
 
 defaultproperties

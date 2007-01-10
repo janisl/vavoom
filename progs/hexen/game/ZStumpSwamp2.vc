@@ -28,7 +28,7 @@ class ZStumpSwamp2:Decoration
 
 __states__
 {
-	S_ZSTUMPSWAMP2_1('STM4', 0, -1.0, none) { }
+	S_ZSTUMPSWAMP2_1('STM4', 0, -1.0, none) = none
 }
 
 defaultproperties

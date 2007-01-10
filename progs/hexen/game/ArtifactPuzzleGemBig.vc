@@ -29,7 +29,7 @@ class ArtifactPuzzleGemBig : ArtifactPuzzle
 
 __states__
 {
-	S_ARTIPUZZGEMBIG('ABGM', 0, -1.0, none) { }
+	S_ARTIPUZZGEMBIG('ABGM', 0, -1.0, none) = none
 }
 
 defaultproperties

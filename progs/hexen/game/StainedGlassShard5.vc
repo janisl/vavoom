@@ -28,12 +28,12 @@ class StainedGlassShard5 : StainedGlassShard1
 
 __states__
 {
-	S_SGSHARD5_1('SGSA', 20, 4.0 / 35.0, S_SGSHARD5_2) { }
-	S_SGSHARD5_2('SGSA', 21, 4.0 / 35.0, S_SGSHARD5_3) { }
-	S_SGSHARD5_3('SGSA', 22, 4.0 / 35.0, S_SGSHARD5_4) { }
-	S_SGSHARD5_4('SGSA', 23, 4.0 / 35.0, S_SGSHARD5_5) { }
-	S_SGSHARD5_5('SGSA', 24, 4.0 / 35.0, S_SGSHARD5_1) { }
-	S_SGSHARD5_D('SGSA', 24, 30.0 / 35.0, none) { }
+	S_SGSHARD5_1('SGSA', 20, 4.0 / 35.0, S_SGSHARD5_2) = none
+	S_SGSHARD5_2('SGSA', 21, 4.0 / 35.0, S_SGSHARD5_3) = none
+	S_SGSHARD5_3('SGSA', 22, 4.0 / 35.0, S_SGSHARD5_4) = none
+	S_SGSHARD5_4('SGSA', 23, 4.0 / 35.0, S_SGSHARD5_5) = none
+	S_SGSHARD5_5('SGSA', 24, 4.0 / 35.0, S_SGSHARD5_1) = none
+	S_SGSHARD5_D('SGSA', 24, 30.0 / 35.0, none) = none
 }
 
 defaultproperties

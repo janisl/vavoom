@@ -34,7 +34,7 @@ float HammerRange;
 //
 //============================================================================
 
-void A_FHammerAttack()
+final void A_FHammerAttack()
 {
 	Actor Owner = Actor(Player.MO);
 	int damage;
@@ -120,7 +120,7 @@ void A_FHammerAttack()
 //
 //============================================================================
 
-void A_FHammerThrow()
+final void A_FHammerThrow()
 {
 	if (!bThrowHammer)
 	{
@@ -133,21 +133,21 @@ void A_FHammerThrow()
 
 __states__
 {
-	S_FHAMMERREADY('FHMR', 0, 1.0 / 35.0, S_FHAMMERREADY) { A_WeaponReady(); }
-	S_FHAMMERDOWN('FHMR', 0, 1.0 / 35.0, S_FHAMMERDOWN) { A_Lower(); }
-	S_FHAMMERUP('FHMR', 0, 1.0 / 35.0, S_FHAMMERUP) { A_Raise(); }
-	S_FHAMMERATK_1('FHMR', 1, 6.0 / 35.0, S_FHAMMERATK_2, 5, 0) { }
-	S_FHAMMERATK_2('FHMR', 2, 3.0 / 35.0, S_FHAMMERATK_3, 5, 0) { A_FHammerAttack(); }
-	S_FHAMMERATK_3('FHMR', 3, 3.0 / 35.0, S_FHAMMERATK_4, 5, 0) { }
-	S_FHAMMERATK_4('FHMR', 4, 2.0 / 35.0, S_FHAMMERATK_5, 5, 0) { }
-	S_FHAMMERATK_5('FHMR', 4, 10.0 / 35.0, S_FHAMMERATK_6, 5, 150) { A_FHammerThrow(); }
-	S_FHAMMERATK_6('FHMR', 0, 1.0 / 35.0, S_FHAMMERATK_7, 0, 60) { }
-	S_FHAMMERATK_7('FHMR', 0, 1.0 / 35.0, S_FHAMMERATK_8, 0, 55) { }
-	S_FHAMMERATK_8('FHMR', 0, 1.0 / 35.0, S_FHAMMERATK_9, 0, 50) { }
-	S_FHAMMERATK_9('FHMR', 0, 1.0 / 35.0, S_FHAMMERATK_10, 0, 45) { }
-	S_FHAMMERATK_10('FHMR', 0, 1.0 / 35.0, S_FHAMMERATK_11, 0, 40) { }
-	S_FHAMMERATK_11('FHMR', 0, 1.0 / 35.0, S_FHAMMERATK_12, 0, 35) { }
-	S_FHAMMERATK_12('FHMR', 0, 1.0 / 35.0, S_FHAMMERREADY) { }
+	S_FHAMMERREADY('FHMR', 0, 1.0 / 35.0, S_FHAMMERREADY) = A_WeaponReady
+	S_FHAMMERDOWN('FHMR', 0, 1.0 / 35.0, S_FHAMMERDOWN) = A_Lower
+	S_FHAMMERUP('FHMR', 0, 1.0 / 35.0, S_FHAMMERUP) = A_Raise
+	S_FHAMMERATK_1('FHMR', 1, 6.0 / 35.0, S_FHAMMERATK_2, 5, 0) = none
+	S_FHAMMERATK_2('FHMR', 2, 3.0 / 35.0, S_FHAMMERATK_3, 5, 0) = A_FHammerAttack
+	S_FHAMMERATK_3('FHMR', 3, 3.0 / 35.0, S_FHAMMERATK_4, 5, 0) = none
+	S_FHAMMERATK_4('FHMR', 4, 2.0 / 35.0, S_FHAMMERATK_5, 5, 0) = none
+	S_FHAMMERATK_5('FHMR', 4, 10.0 / 35.0, S_FHAMMERATK_6, 5, 150) = A_FHammerThrow
+	S_FHAMMERATK_6('FHMR', 0, 1.0 / 35.0, S_FHAMMERATK_7, 0, 60) = none
+	S_FHAMMERATK_7('FHMR', 0, 1.0 / 35.0, S_FHAMMERATK_8, 0, 55) = none
+	S_FHAMMERATK_8('FHMR', 0, 1.0 / 35.0, S_FHAMMERATK_9, 0, 50) = none
+	S_FHAMMERATK_9('FHMR', 0, 1.0 / 35.0, S_FHAMMERATK_10, 0, 45) = none
+	S_FHAMMERATK_10('FHMR', 0, 1.0 / 35.0, S_FHAMMERATK_11, 0, 40) = none
+	S_FHAMMERATK_11('FHMR', 0, 1.0 / 35.0, S_FHAMMERATK_12, 0, 35) = none
+	S_FHAMMERATK_12('FHMR', 0, 1.0 / 35.0, S_FHAMMERREADY) = none
 }
 
 defaultproperties

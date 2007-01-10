@@ -27,9 +27,9 @@ class FireDemonRock2:FireDemonRock1;
 
 __states__
 {
-	S_FIRED_RDROP2('FDMN', 19, 4.0 / 35.0, S_FIRED_RDROP2) { }
-	S_FIRED_RDEAD2_1('FDMN', 19, 5.0 / 35.0, S_FIRED_RDEAD2_2) { A_SmBounce(); }
-	S_FIRED_RDEAD2_2('FDMN', 19, 200.0 / 35.0, none) { }
+	S_FIRED_RDROP2('FDMN', 19, 4.0 / 35.0, S_FIRED_RDROP2) = none
+	S_FIRED_RDEAD2_1('FDMN', 19, 5.0 / 35.0, S_FIRED_RDEAD2_2) = A_SmBounce
+	S_FIRED_RDEAD2_2('FDMN', 19, 200.0 / 35.0, none) = none
 }
 
 defaultproperties

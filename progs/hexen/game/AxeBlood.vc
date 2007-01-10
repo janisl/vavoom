@@ -27,12 +27,12 @@ class AxeBlood:Effect;
 
 __states__
 {
-	S_AXEBLOOD1('FAXE', 5, 3.0 / 35.0, S_AXEBLOOD2) { }
-	S_AXEBLOOD2('FAXE', 6, 3.0 / 35.0, S_AXEBLOOD3) { }
-	S_AXEBLOOD3('FAXE', 7, 3.0 / 35.0, S_AXEBLOOD4) { }
-	S_AXEBLOOD4('FAXE', 8, 3.0 / 35.0, S_AXEBLOOD5) { }
-	S_AXEBLOOD5('FAXE', 9, 3.0 / 35.0, S_AXEBLOOD6) { }
-	S_AXEBLOOD6('FAXE', 10, 3.0 / 35.0, none) { }
+	S_AXEBLOOD1('FAXE', 5, 3.0 / 35.0, S_AXEBLOOD2) = none
+	S_AXEBLOOD2('FAXE', 6, 3.0 / 35.0, S_AXEBLOOD3) = none
+	S_AXEBLOOD3('FAXE', 7, 3.0 / 35.0, S_AXEBLOOD4) = none
+	S_AXEBLOOD4('FAXE', 8, 3.0 / 35.0, S_AXEBLOOD5) = none
+	S_AXEBLOOD5('FAXE', 9, 3.0 / 35.0, S_AXEBLOOD6) = none
+	S_AXEBLOOD6('FAXE', 10, 3.0 / 35.0, none) = none
 }
 
 defaultproperties

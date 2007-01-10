@@ -28,7 +28,7 @@ class CorpseHanging:Decoration
 
 __states__
 {
-	S_CORPSEHANGING_1('CPS3', 0, -1.0, none) { }
+	S_CORPSEHANGING_1('CPS3', 0, -1.0, none) = none
 }
 
 defaultproperties

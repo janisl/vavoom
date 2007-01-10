@@ -28,7 +28,7 @@ class ZBucket:Decoration
 
 __states__
 {
-	S_ZBUCKET1('BCKT', 0, -1.0, none) { }
+	S_ZBUCKET1('BCKT', 0, -1.0, none) = none
 }
 
 defaultproperties

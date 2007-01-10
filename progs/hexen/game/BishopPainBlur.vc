@@ -27,7 +27,7 @@ class BishopPainBlur : Effect;
 
 __states__
 {
-	S_BISHOPPAINBLUR1('BISH', 2, 8.0 / 35.0, none) { }
+	S_BISHOPPAINBLUR1('BISH', 2, 8.0 / 35.0, none) = none
 }
 
 defaultproperties

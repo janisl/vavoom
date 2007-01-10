@@ -28,7 +28,7 @@ class ZCorpseKabob:Decoration
 
 __states__
 {
-	S_ZCORPSEKABOB1('CPS1', 0, -1.0, none) { }
+	S_ZCORPSEKABOB1('CPS1', 0, -1.0, none) = none
 }
 
 defaultproperties

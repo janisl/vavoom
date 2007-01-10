@@ -29,7 +29,7 @@ class ArtifactSummonMaulator : Artifact
 
 __states__
 {
-	S_ARTI_SUMMON('SUMN', 0, 350.0 / 35.0, S_ARTI_SUMMON) { }
+	S_ARTI_SUMMON('SUMN', 0, 350.0 / 35.0, S_ARTI_SUMMON) = none
 }
 
 defaultproperties

@@ -28,7 +28,7 @@ class ZTreeGnarled1:Decoration
 
 __states__
 {
-	S_ZTREEGNARLED1('TRE6', 0, -1.0, none) { }
+	S_ZTREEGNARLED1('TRE6', 0, -1.0, none) = none
 }
 
 defaultproperties

@@ -28,7 +28,7 @@ class ZSwampVine:Decoration
 
 __states__
 {
-	S_ZSWAMPVINE1('SWMV', 0, -1.0, none) { }
+	S_ZSWAMPVINE1('SWMV', 0, -1.0, none) = none
 }
 
 defaultproperties

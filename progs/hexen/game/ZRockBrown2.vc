@@ -28,7 +28,7 @@ class ZRockBrown2:Decoration
 
 __states__
 {
-	S_ZROCKBROWN2('RKBS', 0, -1.0, none) { }
+	S_ZROCKBROWN2('RKBS', 0, -1.0, none) = none
 }
 
 defaultproperties

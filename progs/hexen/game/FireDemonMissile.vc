@@ -27,11 +27,11 @@ class FireDemonMissile:Projectile;
 
 __states__
 {
-	S_FIRED_FX6_1('FDMB', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_FIRED_FX6_1) { }
-	S_FIRED_FX6_2('FDMB', 1 | FF_FULLBRIGHT, 5.0 / 35.0, S_FIRED_FX6_3) { }
-	S_FIRED_FX6_3('FDMB', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_FIRED_FX6_4) { }
-	S_FIRED_FX6_4('FDMB', 3 | FF_FULLBRIGHT, 5.0 / 35.0, S_FIRED_FX6_5) { }
-	S_FIRED_FX6_5('FDMB', 4 | FF_FULLBRIGHT, 5.0 / 35.0, none) { }
+	S_FIRED_FX6_1('FDMB', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_FIRED_FX6_1) = none
+	S_FIRED_FX6_2('FDMB', 1 | FF_FULLBRIGHT, 5.0 / 35.0, S_FIRED_FX6_3) = none
+	S_FIRED_FX6_3('FDMB', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_FIRED_FX6_4) = none
+	S_FIRED_FX6_4('FDMB', 3 | FF_FULLBRIGHT, 5.0 / 35.0, S_FIRED_FX6_5) = none
+	S_FIRED_FX6_5('FDMB', 4 | FF_FULLBRIGHT, 5.0 / 35.0, none) = none
 }
 
 defaultproperties

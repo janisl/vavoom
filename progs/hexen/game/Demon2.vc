@@ -32,7 +32,7 @@ class Demon2 : Demon
 //
 //===========================================================================
 
-void A_Demon2Death()
+final void A_Demon2Death()
 {
 	Actor A;
 	float angle;
@@ -86,38 +86,38 @@ void A_Demon2Death()
 
 __states__
 {
-	S_DEMN2_LOOK1('DEM2', 0, 10.0 / 35.0, S_DEMN2_LOOK2) { A_Look(); }
-	S_DEMN2_LOOK2('DEM2', 0, 10.0 / 35.0, S_DEMN2_LOOK1) { A_Look(); }
-	S_DEMN2_CHASE1('DEM2', 0, 4.0 / 35.0, S_DEMN2_CHASE2) { A_Chase(); }
-	S_DEMN2_CHASE2('DEM2', 1, 4.0 / 35.0, S_DEMN2_CHASE3) { A_Chase(); }
-	S_DEMN2_CHASE3('DEM2', 2, 4.0 / 35.0, S_DEMN2_CHASE4) { A_Chase(); }
-	S_DEMN2_CHASE4('DEM2', 3, 4.0 / 35.0, S_DEMN2_CHASE1) { A_Chase(); }
-	S_DEMN2_ATK1_1('DEM2', 4, 6.0 / 35.0, S_DEMN2_ATK1_2) { A_FaceTarget(); }
-	S_DEMN2_ATK1_2('DEM2', 5, 8.0 / 35.0, S_DEMN2_ATK1_3) { A_FaceTarget(); }
-	S_DEMN2_ATK1_3('DEM2', 6, 6.0 / 35.0, S_DEMN2_CHASE1) { A_DemonAttack1(); }
-	S_DEMN2_ATK2_1('DEM2', 4, 5.0 / 35.0, S_DEMN2_ATK2_2) { A_FaceTarget(); }
-	S_DEMN2_ATK2_2('DEM2', 5, 6.0 / 35.0, S_DEMN2_ATK2_3) { A_FaceTarget(); }
-	S_DEMN2_ATK2_3('DEM2', 6, 5.0 / 35.0, S_DEMN2_CHASE1) { A_DemonAttack2(); }
-	S_DEMN2_PAIN1('DEM2', 4, 4.0 / 35.0, S_DEMN2_PAIN2) { }
-	S_DEMN2_PAIN2('DEM2', 4, 4.0 / 35.0, S_DEMN2_CHASE1) { A_Pain(); }
-	S_DEMN2_DEATH1('DEM2', 7, 6.0 / 35.0, S_DEMN2_DEATH2) { }
-	S_DEMN2_DEATH2('DEM2', 8, 6.0 / 35.0, S_DEMN2_DEATH3) { }
-	S_DEMN2_DEATH3('DEM2', 9, 6.0 / 35.0, S_DEMN2_DEATH4) { A_Scream(); }
-	S_DEMN2_DEATH4('DEM2', 10, 6.0 / 35.0, S_DEMN2_DEATH5) { A_NoBlocking(); }
-	S_DEMN2_DEATH5('DEM2', 11, 6.0 / 35.0, S_DEMN2_DEATH6) { A_QueueCorpse(); }
-	S_DEMN2_DEATH6('DEM2', 12, 6.0 / 35.0, S_DEMN2_DEATH7) { }
-	S_DEMN2_DEATH7('DEM2', 13, 6.0 / 35.0, S_DEMN2_DEATH8) { }
-	S_DEMN2_DEATH8('DEM2', 14, 6.0 / 35.0, S_DEMN2_DEATH9) { }
-	S_DEMN2_DEATH9('DEM2', 15, -1.0, none) { }
-	S_DEMN2_XDEATH1('DEM2', 7, 6.0 / 35.0, S_DEMN2_XDEATH2) { }
-	S_DEMN2_XDEATH2('DEM2', 8, 6.0 / 35.0, S_DEMN2_XDEATH3) { A_Demon2Death(); }
-	S_DEMN2_XDEATH3('DEM2', 9, 6.0 / 35.0, S_DEMN2_XDEATH4) { A_Scream(); }
-	S_DEMN2_XDEATH4('DEM2', 10, 6.0 / 35.0, S_DEMN2_XDEATH5) { A_NoBlocking(); }
-	S_DEMN2_XDEATH5('DEM2', 11, 6.0 / 35.0, S_DEMN2_XDEATH6) { A_QueueCorpse(); }
-	S_DEMN2_XDEATH6('DEM2', 12, 6.0 / 35.0, S_DEMN2_XDEATH7) { }
-	S_DEMN2_XDEATH7('DEM2', 13, 6.0 / 35.0, S_DEMN2_XDEATH8) { }
-	S_DEMN2_XDEATH8('DEM2', 14, 6.0 / 35.0, S_DEMN2_XDEATH9) { }
-	S_DEMN2_XDEATH9('DEM2', 15, -1.0, none) { }
+	S_DEMN2_LOOK1('DEM2', 0, 10.0 / 35.0, S_DEMN2_LOOK2) = A_Look
+	S_DEMN2_LOOK2('DEM2', 0, 10.0 / 35.0, S_DEMN2_LOOK1) = A_Look
+	S_DEMN2_CHASE1('DEM2', 0, 4.0 / 35.0, S_DEMN2_CHASE2) = A_Chase
+	S_DEMN2_CHASE2('DEM2', 1, 4.0 / 35.0, S_DEMN2_CHASE3) = A_Chase
+	S_DEMN2_CHASE3('DEM2', 2, 4.0 / 35.0, S_DEMN2_CHASE4) = A_Chase
+	S_DEMN2_CHASE4('DEM2', 3, 4.0 / 35.0, S_DEMN2_CHASE1) = A_Chase
+	S_DEMN2_ATK1_1('DEM2', 4, 6.0 / 35.0, S_DEMN2_ATK1_2) = A_FaceTarget
+	S_DEMN2_ATK1_2('DEM2', 5, 8.0 / 35.0, S_DEMN2_ATK1_3) = A_FaceTarget
+	S_DEMN2_ATK1_3('DEM2', 6, 6.0 / 35.0, S_DEMN2_CHASE1) = A_DemonAttack1
+	S_DEMN2_ATK2_1('DEM2', 4, 5.0 / 35.0, S_DEMN2_ATK2_2) = A_FaceTarget
+	S_DEMN2_ATK2_2('DEM2', 5, 6.0 / 35.0, S_DEMN2_ATK2_3) = A_FaceTarget
+	S_DEMN2_ATK2_3('DEM2', 6, 5.0 / 35.0, S_DEMN2_CHASE1) = A_DemonAttack2
+	S_DEMN2_PAIN1('DEM2', 4, 4.0 / 35.0, S_DEMN2_PAIN2) = none
+	S_DEMN2_PAIN2('DEM2', 4, 4.0 / 35.0, S_DEMN2_CHASE1) = A_Pain
+	S_DEMN2_DEATH1('DEM2', 7, 6.0 / 35.0, S_DEMN2_DEATH2) = none
+	S_DEMN2_DEATH2('DEM2', 8, 6.0 / 35.0, S_DEMN2_DEATH3) = none
+	S_DEMN2_DEATH3('DEM2', 9, 6.0 / 35.0, S_DEMN2_DEATH4) = A_Scream
+	S_DEMN2_DEATH4('DEM2', 10, 6.0 / 35.0, S_DEMN2_DEATH5) = A_NoBlocking
+	S_DEMN2_DEATH5('DEM2', 11, 6.0 / 35.0, S_DEMN2_DEATH6) = A_QueueCorpse
+	S_DEMN2_DEATH6('DEM2', 12, 6.0 / 35.0, S_DEMN2_DEATH7) = none
+	S_DEMN2_DEATH7('DEM2', 13, 6.0 / 35.0, S_DEMN2_DEATH8) = none
+	S_DEMN2_DEATH8('DEM2', 14, 6.0 / 35.0, S_DEMN2_DEATH9) = none
+	S_DEMN2_DEATH9('DEM2', 15, -1.0, none) = none
+	S_DEMN2_XDEATH1('DEM2', 7, 6.0 / 35.0, S_DEMN2_XDEATH2) = none
+	S_DEMN2_XDEATH2('DEM2', 8, 6.0 / 35.0, S_DEMN2_XDEATH3) = A_Demon2Death
+	S_DEMN2_XDEATH3('DEM2', 9, 6.0 / 35.0, S_DEMN2_XDEATH4) = A_Scream
+	S_DEMN2_XDEATH4('DEM2', 10, 6.0 / 35.0, S_DEMN2_XDEATH5) = A_NoBlocking
+	S_DEMN2_XDEATH5('DEM2', 11, 6.0 / 35.0, S_DEMN2_XDEATH6) = A_QueueCorpse
+	S_DEMN2_XDEATH6('DEM2', 12, 6.0 / 35.0, S_DEMN2_XDEATH7) = none
+	S_DEMN2_XDEATH7('DEM2', 13, 6.0 / 35.0, S_DEMN2_XDEATH8) = none
+	S_DEMN2_XDEATH8('DEM2', 14, 6.0 / 35.0, S_DEMN2_XDEATH9) = none
+	S_DEMN2_XDEATH9('DEM2', 15, -1.0, none) = none
 }
 
 defaultproperties

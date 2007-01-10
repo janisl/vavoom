@@ -29,7 +29,7 @@ class ArtifactPuzzleGemRed : ArtifactPuzzle
 
 __states__
 {
-	S_ARTIPUZZGEMRED('AGMR', 0, -1.0, none) { }
+	S_ARTIPUZZGEMRED('AGMR', 0, -1.0, none) = none
 }
 
 defaultproperties

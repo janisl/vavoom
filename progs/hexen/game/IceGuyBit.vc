@@ -31,8 +31,8 @@ class IceGuyBit:Effect;
 
 __states__
 {
-	S_ICEGUY_BIT1('ICPR', 16 | FF_FULLBRIGHT, 50.0 / 35.0, none) { }
-	S_ICEGUY_BIT2('ICPR', 17 | FF_FULLBRIGHT, 50.0 / 35.0, none) { }
+	S_ICEGUY_BIT1('ICPR', 16 | FF_FULLBRIGHT, 50.0 / 35.0, none) = none
+	S_ICEGUY_BIT2('ICPR', 17 | FF_FULLBRIGHT, 50.0 / 35.0, none) = none
 }
 
 defaultproperties

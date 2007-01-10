@@ -47,15 +47,15 @@ int InflictorModifyDamage(Actor victim, Actor source, int damage)
 
 __states__
 {
-	S_EGGFX1('EGGM', 0, 4.0 / 35.0, S_EGGFX2) { }
-	S_EGGFX2('EGGM', 1, 4.0 / 35.0, S_EGGFX3) { }
-	S_EGGFX3('EGGM', 2, 4.0 / 35.0, S_EGGFX4) { }
-	S_EGGFX4('EGGM', 3, 4.0 / 35.0, S_EGGFX5) { }
-	S_EGGFX5('EGGM', 4, 4.0 / 35.0, S_EGGFX1) { }
-	S_EGGFXI1_1('FHFX', 8 | FF_FULLBRIGHT, 3.0 / 35.0, S_EGGFXI1_2) { }
-	S_EGGFXI1_2('FHFX', 9 | FF_FULLBRIGHT, 3.0 / 35.0, S_EGGFXI1_3) { }
-	S_EGGFXI1_3('FHFX', 10 | FF_FULLBRIGHT, 3.0 / 35.0, S_EGGFXI1_4) { }
-	S_EGGFXI1_4('FHFX', 11 | FF_FULLBRIGHT, 3.0 / 35.0, none) { }
+	S_EGGFX1('EGGM', 0, 4.0 / 35.0, S_EGGFX2) = none
+	S_EGGFX2('EGGM', 1, 4.0 / 35.0, S_EGGFX3) = none
+	S_EGGFX3('EGGM', 2, 4.0 / 35.0, S_EGGFX4) = none
+	S_EGGFX4('EGGM', 3, 4.0 / 35.0, S_EGGFX5) = none
+	S_EGGFX5('EGGM', 4, 4.0 / 35.0, S_EGGFX1) = none
+	S_EGGFXI1_1('FHFX', 8 | FF_FULLBRIGHT, 3.0 / 35.0, S_EGGFXI1_2) = none
+	S_EGGFXI1_2('FHFX', 9 | FF_FULLBRIGHT, 3.0 / 35.0, S_EGGFXI1_3) = none
+	S_EGGFXI1_3('FHFX', 10 | FF_FULLBRIGHT, 3.0 / 35.0, S_EGGFXI1_4) = none
+	S_EGGFXI1_4('FHFX', 11 | FF_FULLBRIGHT, 3.0 / 35.0, none) = none
 }
 
 defaultproperties

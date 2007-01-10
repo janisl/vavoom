@@ -28,7 +28,7 @@ class ItemKeyB:Key
 
 __states__
 {
-	S_KEYB('KEYB', 0, -1.0, none) { }
+	S_KEYB('KEYB', 0, -1.0, none) = none
 }
 
 defaultproperties

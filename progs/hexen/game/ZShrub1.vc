@@ -28,11 +28,11 @@ class ZShrub1:BurnableTree
 
 __states__
 {
-	S_ZSHRUB1('SHB1', 0, -1.0, none) { }
-	S_ZSHRUB1_DIE('SHB1', 0, 1.0 / 35.0, S_ZSHRUB1) { A_TreeDeath(); }
-	S_ZSHRUB1_X1('SHB1', 1 | FF_FULLBRIGHT, 7.0 / 35.0, S_ZSHRUB1_X2) { }
-	S_ZSHRUB1_X2('SHB1', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_ZSHRUB1_X3) { A_Scream(); }
-	S_ZSHRUB1_X3('SHB1', 3 | FF_FULLBRIGHT, 5.0 / 35.0, none) { }
+	S_ZSHRUB1('SHB1', 0, -1.0, none) = none
+	S_ZSHRUB1_DIE('SHB1', 0, 1.0 / 35.0, S_ZSHRUB1) = A_TreeDeath
+	S_ZSHRUB1_X1('SHB1', 1 | FF_FULLBRIGHT, 7.0 / 35.0, S_ZSHRUB1_X2) = none
+	S_ZSHRUB1_X2('SHB1', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_ZSHRUB1_X3) = A_Scream
+	S_ZSHRUB1_X3('SHB1', 3 | FF_FULLBRIGHT, 5.0 / 35.0, none) = none
 }
 
 defaultproperties

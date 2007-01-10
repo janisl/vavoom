@@ -33,7 +33,7 @@ class WraithBuried : Wraith
 //
 //==========================================================================
 
-void A_WraithRaiseInit()
+final void A_WraithRaiseInit()
 {
 	Alpha = 1.0;
 	bNonShootable = false;
@@ -78,7 +78,7 @@ bool RaiseFromFloor()
 //
 //==========================================================================
 
-void A_WraithRaise()
+final void A_WraithRaise()
 {
 	if (RaiseFromFloor())
 	{
@@ -91,11 +91,11 @@ void A_WraithRaise()
 
 __states__
 {
-	S_WRAITH_RAISE1('WRTH', 0, 2.0 / 35.0, S_WRAITH_RAISE2) { A_WraithRaiseInit(); }
-	S_WRAITH_RAISE2('WRTH', 0, 2.0 / 35.0, S_WRAITH_RAISE3) { A_WraithRaise(); }
-	S_WRAITH_RAISE3('WRTH', 0, 2.0 / 35.0, S_WRAITH_RAISE4) { A_FaceTarget(); }
-	S_WRAITH_RAISE4('WRTH', 1, 2.0 / 35.0, S_WRAITH_RAISE5) { A_WraithRaise(); }
-	S_WRAITH_RAISE5('WRTH', 1, 2.0 / 35.0, S_WRAITH_RAISE2) { A_WraithRaise(); }
+	S_WRAITH_RAISE1('WRTH', 0, 2.0 / 35.0, S_WRAITH_RAISE2) = A_WraithRaiseInit
+	S_WRAITH_RAISE2('WRTH', 0, 2.0 / 35.0, S_WRAITH_RAISE3) = A_WraithRaise
+	S_WRAITH_RAISE3('WRTH', 0, 2.0 / 35.0, S_WRAITH_RAISE4) = A_FaceTarget
+	S_WRAITH_RAISE4('WRTH', 1, 2.0 / 35.0, S_WRAITH_RAISE5) = A_WraithRaise
+	S_WRAITH_RAISE5('WRTH', 1, 2.0 / 35.0, S_WRAITH_RAISE2) = A_WraithRaise
 }
 
 defaultproperties

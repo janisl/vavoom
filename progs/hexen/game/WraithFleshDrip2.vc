@@ -28,10 +28,10 @@ class WraithFleshDrip2 : Fragment
 
 __states__
 {
-	S_WRTHFX_BDROP1('WRBL', 23, 7.0 / 35.0, S_WRTHFX_BDROP2) { }
-	S_WRTHFX_BDROP2('WRBL', 24, 7.0 / 35.0, S_WRTHFX_BDROP3) { }
-	S_WRTHFX_BDROP3('WRBL', 25, 7.0 / 35.0, S_WRTHFX_BDROP1) { }
-	S_WRTHFX_BDEAD1('WRBL', 25, 35.0 / 35.0, none) { }
+	S_WRTHFX_BDROP1('WRBL', 23, 7.0 / 35.0, S_WRTHFX_BDROP2) = none
+	S_WRTHFX_BDROP2('WRBL', 24, 7.0 / 35.0, S_WRTHFX_BDROP3) = none
+	S_WRTHFX_BDROP3('WRBL', 25, 7.0 / 35.0, S_WRTHFX_BDROP1) = none
+	S_WRTHFX_BDEAD1('WRBL', 25, 35.0 / 35.0, none) = none
 }
 
 defaultproperties

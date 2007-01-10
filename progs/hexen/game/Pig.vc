@@ -105,7 +105,7 @@ int UpdateMorphedMonster(int tics)
 //
 //============================================================================
 
-void A_PigLook()
+final void A_PigLook()
 {
 	if (UpdateMorphedMonster(10))
 	{
@@ -120,7 +120,7 @@ void A_PigLook()
 //
 //============================================================================
 
-void A_PigChase()
+final void A_PigChase()
 {
 	if (UpdateMorphedMonster(3))
 	{
@@ -135,7 +135,7 @@ void A_PigChase()
 //
 //============================================================================
 
-void A_PigAttack()
+final void A_PigAttack()
 {
 	if (UpdateMorphedMonster(18))
 	{
@@ -154,24 +154,24 @@ void A_PigAttack()
 
 __states__
 {
-	S_PIG_LOOK1('PIGY', 1, 10.0 / 35.0, S_PIG_LOOK1) { A_PigLook(); }
-	S_PIG_WALK1('PIGY', 0, 3.0 / 35.0, S_PIG_WALK2) { A_PigChase(); }
-	S_PIG_WALK2('PIGY', 1, 3.0 / 35.0, S_PIG_WALK3) { A_PigChase(); }
-	S_PIG_WALK3('PIGY', 2, 3.0 / 35.0, S_PIG_WALK4) { A_PigChase(); }
-	S_PIG_WALK4('PIGY', 3, 3.0 / 35.0, S_PIG_WALK1) { A_PigChase(); }
-	S_PIG_PAIN('PIGY', 3, 4.0 / 35.0, S_PIG_WALK1) { A_PigPain(); }
-	S_PIG_ATK1('PIGY', 0, 5.0 / 35.0, S_PIG_ATK2) { A_FaceTarget(); }
-	S_PIG_ATK2('PIGY', 0, 10.0 / 35.0, S_PIG_WALK1) { A_PigAttack(); }
-	S_PIG_DIE1('PIGY', 4, 4.0 / 35.0, S_PIG_DIE2) { A_Scream(); }
-	S_PIG_DIE2('PIGY', 5, 3.0 / 35.0, S_PIG_DIE3) { A_NoBlocking(); }
-	S_PIG_DIE3('PIGY', 6, 4.0 / 35.0, S_PIG_DIE4) { A_QueueCorpse(); }
-	S_PIG_DIE4('PIGY', 7, 3.0 / 35.0, S_PIG_DIE5) { }
-	S_PIG_DIE5('PIGY', 8, 4.0 / 35.0, S_PIG_DIE6) { }
-	S_PIG_DIE6('PIGY', 9, 4.0 / 35.0, S_PIG_DIE7) { }
-	S_PIG_DIE7('PIGY', 10, 4.0 / 35.0, S_PIG_DIE8) { }
-	S_PIG_DIE8('PIGY', 11, -1.0, none) { }
-	S_PIG_ICE('PIGY', 12, 5.0 / 35.0, S_PIG_ICE2) { A_FreezeDeath(); }
-	S_PIG_ICE2('PIGY', 12, 1.0 / 35.0, S_PIG_ICE2) { A_FreezeDeathChunks(); }
+	S_PIG_LOOK1('PIGY', 1, 10.0 / 35.0, S_PIG_LOOK1) = A_PigLook
+	S_PIG_WALK1('PIGY', 0, 3.0 / 35.0, S_PIG_WALK2) = A_PigChase
+	S_PIG_WALK2('PIGY', 1, 3.0 / 35.0, S_PIG_WALK3) = A_PigChase
+	S_PIG_WALK3('PIGY', 2, 3.0 / 35.0, S_PIG_WALK4) = A_PigChase
+	S_PIG_WALK4('PIGY', 3, 3.0 / 35.0, S_PIG_WALK1) = A_PigChase
+	S_PIG_PAIN('PIGY', 3, 4.0 / 35.0, S_PIG_WALK1) = A_PigPain
+	S_PIG_ATK1('PIGY', 0, 5.0 / 35.0, S_PIG_ATK2) = A_FaceTarget
+	S_PIG_ATK2('PIGY', 0, 10.0 / 35.0, S_PIG_WALK1) = A_PigAttack
+	S_PIG_DIE1('PIGY', 4, 4.0 / 35.0, S_PIG_DIE2) = A_Scream
+	S_PIG_DIE2('PIGY', 5, 3.0 / 35.0, S_PIG_DIE3) = A_NoBlocking
+	S_PIG_DIE3('PIGY', 6, 4.0 / 35.0, S_PIG_DIE4) = A_QueueCorpse
+	S_PIG_DIE4('PIGY', 7, 3.0 / 35.0, S_PIG_DIE5) = none
+	S_PIG_DIE5('PIGY', 8, 4.0 / 35.0, S_PIG_DIE6) = none
+	S_PIG_DIE6('PIGY', 9, 4.0 / 35.0, S_PIG_DIE7) = none
+	S_PIG_DIE7('PIGY', 10, 4.0 / 35.0, S_PIG_DIE8) = none
+	S_PIG_DIE8('PIGY', 11, -1.0, none) = none
+	S_PIG_ICE('PIGY', 12, 5.0 / 35.0, S_PIG_ICE2) = A_FreezeDeath
+	S_PIG_ICE2('PIGY', 12, 1.0 / 35.0, S_PIG_ICE2) = A_FreezeDeathChunks
 }
 
 defaultproperties

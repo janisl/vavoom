@@ -42,7 +42,7 @@ int StrafeCount;	//	Whether strafing or not
 //
 //============================================================================
 
-void A_FiredSpawnRock()
+final void A_FiredSpawnRock()
 {
 	Actor mo;
 	TVec rockOrg;
@@ -91,7 +91,7 @@ void A_FiredSpawnRock()
 //
 //============================================================================
 
-void A_FiredRocks()
+final void A_FiredRocks()
 {
 	A_FiredSpawnRock();
 	A_FiredSpawnRock();
@@ -106,7 +106,7 @@ void A_FiredRocks()
 //
 //============================================================================
 
-void A_FiredChase()
+final void A_FiredChase()
 {
 	float ang;
 	float dist;
@@ -207,7 +207,7 @@ void A_FiredChase()
 //
 //============================================================================
 
-void A_FiredAttack()
+final void A_FiredAttack()
 {
 	Actor mo;
 
@@ -224,7 +224,7 @@ void A_FiredAttack()
 //
 //============================================================================
 
-void A_FiredSplotch()
+final void A_FiredSplotch()
 {
 	Actor A;
 
@@ -246,36 +246,36 @@ void A_FiredSplotch()
 
 __states__
 {
-	S_FIRED_SPAWN1('FDMN', 23 | FF_FULLBRIGHT, 5.0 / 35.0, S_FIRED_LOOK1) { }
-	S_FIRED_LOOK1('FDMN', 4 | FF_FULLBRIGHT, 10.0 / 35.0, S_FIRED_LOOK2) { A_Look(); }
-	S_FIRED_LOOK2('FDMN', 5 | FF_FULLBRIGHT, 10.0 / 35.0, S_FIRED_LOOK3) { A_Look(); }
-	S_FIRED_LOOK3('FDMN', 6 | FF_FULLBRIGHT, 10.0 / 35.0, S_FIRED_LOOK1) { A_Look(); }
-	S_FIRED_LOOK4('FDMN', 4 | FF_FULLBRIGHT, 8.0 / 35.0, S_FIRED_LOOK5) { }
-	S_FIRED_LOOK5('FDMN', 5 | FF_FULLBRIGHT, 6.0 / 35.0, S_FIRED_LOOK6) { }
-	S_FIRED_LOOK6('FDMN', 6 | FF_FULLBRIGHT, 5.0 / 35.0, S_FIRED_LOOK7) { }
-	S_FIRED_LOOK7('FDMN', 5 | FF_FULLBRIGHT, 8.0 / 35.0, S_FIRED_LOOK8) { }
-	S_FIRED_LOOK8('FDMN', 4 | FF_FULLBRIGHT, 6.0 / 35.0, S_FIRED_LOOK9) { }
-	S_FIRED_LOOK9('FDMN', 5 | FF_FULLBRIGHT, 7.0 / 35.0, S_FIRED_LOOK0) { A_FiredRocks(); }
-	S_FIRED_LOOK0('FDMN', 7 | FF_FULLBRIGHT, 5.0 / 35.0, S_FIRED_LOOKA) { }
-	S_FIRED_LOOKA('FDMN', 8 | FF_FULLBRIGHT, 5.0 / 35.0, S_FIRED_LOOKB) { }
-	S_FIRED_LOOKB('FDMN', 9 | FF_FULLBRIGHT, 5.0 / 35.0, S_FIRED_WALK1) { A_UnSetInvulnerable(); }
-	S_FIRED_WALK1('FDMN', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_FIRED_WALK2) { A_FiredChase(); }
-	S_FIRED_WALK2('FDMN', 1 | FF_FULLBRIGHT, 5.0 / 35.0, S_FIRED_WALK3) { A_FiredChase(); }
-	S_FIRED_WALK3('FDMN', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_FIRED_WALK1) { A_FiredChase(); }
-	S_FIRED_PAIN1('FDMN', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_FIRED_WALK1) { A_Pain(); }
-	S_FIRED_ATTACK1('FDMN', 10 | FF_FULLBRIGHT, 3.0 / 35.0, S_FIRED_ATTACK2) { A_FaceTarget(); }
-	S_FIRED_ATTACK2('FDMN', 10 | FF_FULLBRIGHT, 5.0 / 35.0, S_FIRED_ATTACK3) { A_FiredAttack(); }
-	S_FIRED_ATTACK3('FDMN', 10 | FF_FULLBRIGHT, 5.0 / 35.0, S_FIRED_ATTACK4) { A_FiredAttack(); }
-	S_FIRED_ATTACK4('FDMN', 10 | FF_FULLBRIGHT, 5.0 / 35.0, S_FIRED_WALK1) { A_FiredAttack(); }
-	S_FIRED_DEATH1('FDMN', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_FIRED_DEATH2) { A_FaceTarget(); }
-	S_FIRED_DEATH2('FDMN', 11 | FF_FULLBRIGHT, 4.0 / 35.0, S_FIRED_DEATH3) { A_Scream(); }
-	S_FIRED_DEATH3('FDMN', 11 | FF_FULLBRIGHT, 4.0 / 35.0, S_FIRED_DEATH4) { A_NoBlocking(); }
-	S_FIRED_DEATH4('FDMN', 11 | FF_FULLBRIGHT, 200.0 / 35.0, none) { }
-	S_FIRED_XDEATH1('FDMN', 12, 5.0 / 35.0, S_FIRED_XDEATH2) { A_FaceTarget(); }
-	S_FIRED_XDEATH2('FDMN', 13, 5.0 / 35.0, S_FIRED_XDEATH3) { A_NoBlocking(); }
-	S_FIRED_XDEATH3('FDMN', 14, 5.0 / 35.0, none) { A_FiredSplotch(); }
-	S_FIRED_ICE1('FDMN', 17, 5.0 / 35.0, S_FIRED_ICE2) { A_FreezeDeath(); }
-	S_FIRED_ICE2('FDMN', 17, 1.0 / 35.0, S_FIRED_ICE2) { A_FreezeDeathChunks(); }
+	S_FIRED_SPAWN1('FDMN', 23 | FF_FULLBRIGHT, 5.0 / 35.0, S_FIRED_LOOK1) = none
+	S_FIRED_LOOK1('FDMN', 4 | FF_FULLBRIGHT, 10.0 / 35.0, S_FIRED_LOOK2) = A_Look
+	S_FIRED_LOOK2('FDMN', 5 | FF_FULLBRIGHT, 10.0 / 35.0, S_FIRED_LOOK3) = A_Look
+	S_FIRED_LOOK3('FDMN', 6 | FF_FULLBRIGHT, 10.0 / 35.0, S_FIRED_LOOK1) = A_Look
+	S_FIRED_LOOK4('FDMN', 4 | FF_FULLBRIGHT, 8.0 / 35.0, S_FIRED_LOOK5) = none
+	S_FIRED_LOOK5('FDMN', 5 | FF_FULLBRIGHT, 6.0 / 35.0, S_FIRED_LOOK6) = none
+	S_FIRED_LOOK6('FDMN', 6 | FF_FULLBRIGHT, 5.0 / 35.0, S_FIRED_LOOK7) = none
+	S_FIRED_LOOK7('FDMN', 5 | FF_FULLBRIGHT, 8.0 / 35.0, S_FIRED_LOOK8) = none
+	S_FIRED_LOOK8('FDMN', 4 | FF_FULLBRIGHT, 6.0 / 35.0, S_FIRED_LOOK9) = none
+	S_FIRED_LOOK9('FDMN', 5 | FF_FULLBRIGHT, 7.0 / 35.0, S_FIRED_LOOK0) = A_FiredRocks
+	S_FIRED_LOOK0('FDMN', 7 | FF_FULLBRIGHT, 5.0 / 35.0, S_FIRED_LOOKA) = none
+	S_FIRED_LOOKA('FDMN', 8 | FF_FULLBRIGHT, 5.0 / 35.0, S_FIRED_LOOKB) = none
+	S_FIRED_LOOKB('FDMN', 9 | FF_FULLBRIGHT, 5.0 / 35.0, S_FIRED_WALK1) = A_UnSetInvulnerable
+	S_FIRED_WALK1('FDMN', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_FIRED_WALK2) = A_FiredChase
+	S_FIRED_WALK2('FDMN', 1 | FF_FULLBRIGHT, 5.0 / 35.0, S_FIRED_WALK3) = A_FiredChase
+	S_FIRED_WALK3('FDMN', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_FIRED_WALK1) = A_FiredChase
+	S_FIRED_PAIN1('FDMN', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_FIRED_WALK1) = A_Pain
+	S_FIRED_ATTACK1('FDMN', 10 | FF_FULLBRIGHT, 3.0 / 35.0, S_FIRED_ATTACK2) = A_FaceTarget
+	S_FIRED_ATTACK2('FDMN', 10 | FF_FULLBRIGHT, 5.0 / 35.0, S_FIRED_ATTACK3) = A_FiredAttack
+	S_FIRED_ATTACK3('FDMN', 10 | FF_FULLBRIGHT, 5.0 / 35.0, S_FIRED_ATTACK4) = A_FiredAttack
+	S_FIRED_ATTACK4('FDMN', 10 | FF_FULLBRIGHT, 5.0 / 35.0, S_FIRED_WALK1) = A_FiredAttack
+	S_FIRED_DEATH1('FDMN', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_FIRED_DEATH2) = A_FaceTarget
+	S_FIRED_DEATH2('FDMN', 11 | FF_FULLBRIGHT, 4.0 / 35.0, S_FIRED_DEATH3) = A_Scream
+	S_FIRED_DEATH3('FDMN', 11 | FF_FULLBRIGHT, 4.0 / 35.0, S_FIRED_DEATH4) = A_NoBlocking
+	S_FIRED_DEATH4('FDMN', 11 | FF_FULLBRIGHT, 200.0 / 35.0, none) = none
+	S_FIRED_XDEATH1('FDMN', 12, 5.0 / 35.0, S_FIRED_XDEATH2) = A_FaceTarget
+	S_FIRED_XDEATH2('FDMN', 13, 5.0 / 35.0, S_FIRED_XDEATH3) = A_NoBlocking
+	S_FIRED_XDEATH3('FDMN', 14, 5.0 / 35.0, none) = A_FiredSplotch
+	S_FIRED_ICE1('FDMN', 17, 5.0 / 35.0, S_FIRED_ICE2) = A_FreezeDeath
+	S_FIRED_ICE2('FDMN', 17, 1.0 / 35.0, S_FIRED_ICE2) = A_FreezeDeathChunks
 }
 
 defaultproperties

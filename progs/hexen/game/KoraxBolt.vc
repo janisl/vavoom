@@ -35,7 +35,7 @@ int LifeTime;
 //
 //============================================================================
 
-void A_KBoltRaise()
+final void A_KBoltRaise()
 {
 	float z;
 
@@ -58,7 +58,7 @@ void A_KBoltRaise()
 //
 //============================================================================
 
-void A_KBolt()
+final void A_KBolt()
 {
 	// Countdown lifetime
 	if (LifeTime-- <= 0)
@@ -69,13 +69,13 @@ void A_KBolt()
 
 __states__
 {
-	S_KBOLT1('MLFX', 8 | FF_FULLBRIGHT, 2.0 / 35.0, S_KBOLT2) { }
-	S_KBOLT2('MLFX', 9 | FF_FULLBRIGHT, 2.0 / 35.0, S_KBOLT3) { A_KBoltRaise(); }
-	S_KBOLT3('MLFX', 8 | FF_FULLBRIGHT, 2.0 / 35.0, S_KBOLT4) { A_KBolt(); }
-	S_KBOLT4('MLFX', 9 | FF_FULLBRIGHT, 2.0 / 35.0, S_KBOLT5) { A_KBolt(); }
-	S_KBOLT5('MLFX', 10 | FF_FULLBRIGHT, 2.0 / 35.0, S_KBOLT6) { A_KBolt(); }
-	S_KBOLT6('MLFX', 11 | FF_FULLBRIGHT, 2.0 / 35.0, S_KBOLT7) { A_KBolt(); }
-	S_KBOLT7('MLFX', 12 | FF_FULLBRIGHT, 2.0 / 35.0, S_KBOLT3) { A_KBolt(); }
+	S_KBOLT1('MLFX', 8 | FF_FULLBRIGHT, 2.0 / 35.0, S_KBOLT2) = none
+	S_KBOLT2('MLFX', 9 | FF_FULLBRIGHT, 2.0 / 35.0, S_KBOLT3) = A_KBoltRaise
+	S_KBOLT3('MLFX', 8 | FF_FULLBRIGHT, 2.0 / 35.0, S_KBOLT4) = A_KBolt
+	S_KBOLT4('MLFX', 9 | FF_FULLBRIGHT, 2.0 / 35.0, S_KBOLT5) = A_KBolt
+	S_KBOLT5('MLFX', 10 | FF_FULLBRIGHT, 2.0 / 35.0, S_KBOLT6) = A_KBolt
+	S_KBOLT6('MLFX', 11 | FF_FULLBRIGHT, 2.0 / 35.0, S_KBOLT7) = A_KBolt
+	S_KBOLT7('MLFX', 12 | FF_FULLBRIGHT, 2.0 / 35.0, S_KBOLT3) = A_KBolt
 }
 
 defaultproperties

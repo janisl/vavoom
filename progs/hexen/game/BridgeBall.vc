@@ -45,7 +45,7 @@ float OrbitAngle;		// Angle of ball
 //
 //==========================================================================
 
-void A_BridgeOrbit()
+final void A_BridgeOrbit()
 {
 	if (Instigator._Special1)
 	{
@@ -60,8 +60,8 @@ void A_BridgeOrbit()
 
 __states__
 {
-	S_BBALL1('TLGL', 0, 2.0 / 35.0, S_BBALL2) { }
-	S_BBALL2('TLGL', 0, 5.0 / 35.0, S_BBALL2) { A_BridgeOrbit(); }
+	S_BBALL1('TLGL', 0, 2.0 / 35.0, S_BBALL2) = none
+	S_BBALL2('TLGL', 0, 5.0 / 35.0, S_BBALL2) = A_BridgeOrbit
 }
 
 defaultproperties

@@ -28,7 +28,7 @@ class ZStalactiteLarge : Decoration
 
 __states__
 {
-	S_ZSTALACTITELARGE1('SLC1', 0, -1.0, none) { }
+	S_ZSTALACTITELARGE1('SLC1', 0, -1.0, none) = none
 }
 
 defaultproperties

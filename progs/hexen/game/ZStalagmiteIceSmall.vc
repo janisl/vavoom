@@ -28,7 +28,7 @@ class ZStalagmiteIceSmall:Decoration
 
 __states__
 {
-	S_ZSTALAGMITEICESMALL('ICM3', 0, -1.0, none) { }
+	S_ZSTALAGMITEICESMALL('ICM3', 0, -1.0, none) = none
 }
 
 defaultproperties

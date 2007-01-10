@@ -28,7 +28,7 @@ class ZStalactiteIceMedium : Decoration
 
 __states__
 {
-	S_ZSTALACTITEICEMEDIUM('ICT2', 0, -1.0, none) { }
+	S_ZSTALACTITEICEMEDIUM('ICT2', 0, -1.0, none) = none
 }
 
 defaultproperties

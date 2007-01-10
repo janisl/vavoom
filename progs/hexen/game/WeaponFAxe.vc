@@ -29,7 +29,7 @@ class WeaponFAxe : WeaponPickup
 
 __states__
 {
-	S_AXE('WFAX', 0, -1.0, none) { }
+	S_AXE('WFAX', 0, -1.0, none) = none
 }
 
 defaultproperties
