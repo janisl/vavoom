@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-#if defined __i386__ && !defined __BEOS__
+#if defined __i386__
 
 #define USEASM
 
@@ -237,22 +237,22 @@
 .extern	C(d_pix_max)
 .extern	C(d_pix_shift)
 .extern	C(d_y_aspect_shift)
-.extern	C(d_rgbtable)
+.extern	C(r_rgbtable)
 .extern	C(rshift)
 .extern	C(gshift)
 .extern	C(bshift)
 .extern	C(roffs)
 .extern	C(goffs)
 .extern	C(boffs)
-.extern	C(fadetable)
-.extern	C(fadetable16)
-.extern	C(fadetable16r)
-.extern	C(fadetable16g)
-.extern	C(fadetable16b)
-.extern	C(fadetable32)
-.extern	C(fadetable32r)
-.extern	C(fadetable32g)
-.extern	C(fadetable32b)
+.extern	C(d_fadetable)
+.extern	C(d_fadetable16)
+.extern	C(d_fadetable16r)
+.extern	C(d_fadetable16g)
+.extern	C(d_fadetable16b)
+.extern	C(d_fadetable32)
+.extern	C(d_fadetable32r)
+.extern	C(d_fadetable32g)
+.extern	C(d_fadetable32b)
 .extern	C(viewwidth)
 .extern	C(viewheight)
 

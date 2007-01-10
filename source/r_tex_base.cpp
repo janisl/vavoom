@@ -187,7 +187,6 @@ vuint8* VTexture::GetPixels8()
 	if (Format == TEXFMT_8Pal)
 	{
 		//	Remap to game palette
-		vuint8* RGBTable = GTextureManager.GetRgbTable();
 		int NumPixels = Width * Height;
 		rgba_t* Pal = GetPalette();
 		vuint8 Remap[256];
@@ -195,7 +194,7 @@ vuint8* VTexture::GetPixels8()
 		int i;
 		for (i = 1; i < 256; i++)
 		{
-			Remap[i] = RGBTable[((Pal[i].r << 7) & 0x7c00) +
+			Remap[i] = r_rgbtable[((Pal[i].r << 7) & 0x7c00) +
 				((Pal[i].g << 2) & 0x3e0) + ((Pal[i].b >> 3) & 0x1f)];
 		}
 
@@ -214,7 +213,6 @@ vuint8* VTexture::GetPixels8()
 	}
 	else if (Format == TEXFMT_RGBA)
 	{
-		vuint8* RGBTable = GTextureManager.GetRgbTable();
 		int NumPixels = Width * Height;
 		if (!Pixels8Bit)
 		{
@@ -227,7 +225,7 @@ vuint8* VTexture::GetPixels8()
 			if (pSrc->a < 128)
 				*pDst = 0;
 			else
-				*pDst = RGBTable[((pSrc->r << 7) & 0x7c00) +
+				*pDst = r_rgbtable[((pSrc->r << 7) & 0x7c00) +
 					((pSrc->g << 2) & 0x3e0) + ((pSrc->b >> 3) & 0x1f)];
 		}
 		Pixels8BitValid = true;

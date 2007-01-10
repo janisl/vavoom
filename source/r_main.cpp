@@ -824,6 +824,7 @@ void R_InitData()
 	//	Strife uses colour 0 as transparent. I already had problems with fact
 	// that colour 255 is normal colour, now there shouldn't be any problems.
 	VStream* Strm = W_CreateLumpReaderName(NAME_playpal);
+	check(Strm);
 	rgba_t* pal = r_palette;
 	int best_dist = 0x10000;
 	for (int i = 0; i < 256; i++)
@@ -847,6 +848,13 @@ void R_InitData()
 			}
 		}
 	}
+	delete Strm;
+
+	//	Load RGB table.
+	Strm = W_CreateLumpReaderName(NAME_rgbtable);
+	check(Strm);
+	check(Strm->TotalSize() == 0x8001);
+	Strm->Serialise(r_rgbtable, 0x8001);
 	delete Strm;
 
 	InitTranslationTables();

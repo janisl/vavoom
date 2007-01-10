@@ -35,31 +35,6 @@
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
-#ifdef USEASM
-extern "C"
-{
-void D_Surf8Start();
-void D_Surf8End();
-void D_Surf8Patch();
-void D_Surf16Start();
-void D_Surf16End();
-void D_Surf16Patch();
-void D_Surf32Start();
-void D_Surf32End();
-void D_Surf32Patch();
-
-void D_PolysetAff8Start();
-void D_PolysetAff8End();
-void D_Aff8Patch();
-void D_PolysetAff16Start();
-void D_PolysetAff16End();
-void D_Aff16Patch();
-void D_PolysetAff32Start();
-void D_PolysetAff32End();
-void D_Aff32Patch();
-}
-#endif
-
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
@@ -218,14 +193,6 @@ void VSoftwareDrawer::InitResolution()
 		D_DrawFuzzSpriteSpans = D_DrawFuzzSpriteSpans_8;
 		D_DrawAltFuzzSpriteSpans = D_DrawAltFuzzSpriteSpans_8;
 		D_DrawParticle = D_DrawParticle_8;
-#ifdef USEASM
-		Sys_MakeCodeWriteable((long)D_Surf8Start,
-			(long)D_Surf8End - (long)D_Surf8Start);
-		D_Surf8Patch();
-		Sys_MakeCodeWriteable((long)D_PolysetAff8Start,
-			(long)D_PolysetAff8End - (long)D_PolysetAff8Start);
-		D_Aff8Patch();
-#endif
 	}
 	else if (ScreenBPP == 15)
 	{
@@ -236,14 +203,6 @@ void VSoftwareDrawer::InitResolution()
 		D_DrawFuzzSpriteSpans = D_DrawFuzzSpriteSpans_15;
 		D_DrawAltFuzzSpriteSpans = D_DrawFuzzSpriteSpans_15;
 		D_DrawParticle = D_DrawParticle_15;
-#ifdef USEASM
-		Sys_MakeCodeWriteable((long)D_Surf16Start,
-			(long)D_Surf16End - (long)D_Surf16Start);
-		D_Surf16Patch();
-		Sys_MakeCodeWriteable((long)D_PolysetAff16Start,
-			(long)D_PolysetAff16End - (long)D_PolysetAff16Start);
-		D_Aff16Patch();
-#endif
 	}
 	else if (ScreenBPP == 16)
 	{
@@ -254,14 +213,6 @@ void VSoftwareDrawer::InitResolution()
 		D_DrawFuzzSpriteSpans = D_DrawFuzzSpriteSpans_16;
 		D_DrawAltFuzzSpriteSpans = D_DrawFuzzSpriteSpans_16;
 		D_DrawParticle = D_DrawParticle_16;
-#ifdef USEASM
-		Sys_MakeCodeWriteable((long)D_Surf16Start,
-			(long)D_Surf16End - (long)D_Surf16Start);
-		D_Surf16Patch();
-		Sys_MakeCodeWriteable((long)D_PolysetAff16Start,
-			(long)D_PolysetAff16End - (long)D_PolysetAff16Start);
-		D_Aff16Patch();
-#endif
 	}
 	else if (ScreenBPP == 32)
 	{
@@ -275,14 +226,6 @@ void VSoftwareDrawer::InitResolution()
 		D_DrawFuzzSpriteSpans = D_DrawFuzzSpriteSpans_32;
 		D_DrawAltFuzzSpriteSpans = D_DrawFuzzSpriteSpans_32;
 		D_DrawParticle = D_DrawParticle_32;
-#ifdef USEASM
-		Sys_MakeCodeWriteable((long)D_Surf32Start,
-			(long)D_Surf32End - (long)D_Surf32Start);
-		D_Surf32Patch();
-		Sys_MakeCodeWriteable((long)D_PolysetAff32Start,
-			(long)D_PolysetAff32End - (long)D_PolysetAff32Start);
-		D_Aff32Patch();
-#endif
 	}
 	else
 	{
@@ -642,14 +585,6 @@ void VSoftwareDrawer::FreeAllMemory()
 	}
 
 	Z_Free(colourmaps);
-	Z_Free(fadetable16);
-	Z_Free(fadetable16r);
-	Z_Free(fadetable16g);
-	Z_Free(fadetable16b);
-	Z_Free(fadetable32);
-	Z_Free(fadetable32r);
-	Z_Free(fadetable32g);
-	Z_Free(fadetable32b);
 
 	delete[] tinttables[0];
 	delete[] tinttables[1];

@@ -33,10 +33,6 @@
 #define SERVER
 #endif
 
-#ifdef __BEOS__
-#define NOASM
-#endif
-
 #if (defined __i386__ || defined _M_IX86) && !defined NOASM
 #define USEASM
 #endif

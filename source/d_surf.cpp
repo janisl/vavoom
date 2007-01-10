@@ -42,37 +42,37 @@
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
 extern "C" {
-void D_DrawSurfaceBlock8_mip0(void);
-void D_DrawSurfaceBlock8_mip1(void);
-void D_DrawSurfaceBlock8_mip2(void);
-void D_DrawSurfaceBlock8_mip3(void);
-void D_DrawSurfaceBlock16_mip0(void);
-void D_DrawSurfaceBlock16_mip1(void);
-void D_DrawSurfaceBlock16_mip2(void);
-void D_DrawSurfaceBlock16_mip3(void);
-void D_DrawSurfaceBlock32_mip0(void);
-void D_DrawSurfaceBlock32_mip1(void);
-void D_DrawSurfaceBlock32_mip2(void);
-void D_DrawSurfaceBlock32_mip3(void);
-void D_DrawSurfaceBlock8RGB_mip0(void);
-void D_DrawSurfaceBlock8RGB_mip1(void);
-void D_DrawSurfaceBlock8RGB_mip2(void);
-void D_DrawSurfaceBlock8RGB_mip3(void);
-void D_DrawSurfaceBlock16RGB_mip0(void);
-void D_DrawSurfaceBlock16RGB_mip1(void);
-void D_DrawSurfaceBlock16RGB_mip2(void);
-void D_DrawSurfaceBlock16RGB_mip3(void);
-void D_DrawSurfaceBlock32RGB_mip0(void);
-void D_DrawSurfaceBlock32RGB_mip1(void);
-void D_DrawSurfaceBlock32RGB_mip2(void);
-void D_DrawSurfaceBlock32RGB_mip3(void);
+void D_DrawSurfaceBlock8_mip0();
+void D_DrawSurfaceBlock8_mip1();
+void D_DrawSurfaceBlock8_mip2();
+void D_DrawSurfaceBlock8_mip3();
+void D_DrawSurfaceBlock16_mip0();
+void D_DrawSurfaceBlock16_mip1();
+void D_DrawSurfaceBlock16_mip2();
+void D_DrawSurfaceBlock16_mip3();
+void D_DrawSurfaceBlock32_mip0();
+void D_DrawSurfaceBlock32_mip1();
+void D_DrawSurfaceBlock32_mip2();
+void D_DrawSurfaceBlock32_mip3();
+void D_DrawSurfaceBlock8RGB_mip0();
+void D_DrawSurfaceBlock8RGB_mip1();
+void D_DrawSurfaceBlock8RGB_mip2();
+void D_DrawSurfaceBlock8RGB_mip3();
+void D_DrawSurfaceBlock16RGB_mip0();
+void D_DrawSurfaceBlock16RGB_mip1();
+void D_DrawSurfaceBlock16RGB_mip2();
+void D_DrawSurfaceBlock16RGB_mip3();
+void D_DrawSurfaceBlock32RGB_mip0();
+void D_DrawSurfaceBlock32RGB_mip1();
+void D_DrawSurfaceBlock32RGB_mip2();
+void D_DrawSurfaceBlock32RGB_mip3();
 
-void D_DrawSkySurf_8(void);
-void D_DrawSkySurf_16(void);
-void D_DrawSkySurf_32(void);
-void D_DrawDoubleSkySurf_8(void);
-void D_DrawDoubleSkySurf_16(void);
-void D_DrawDoubleSkySurf_32(void);
+void D_DrawSkySurf_8();
+void D_DrawSkySurf_16();
+void D_DrawSkySurf_32();
+void D_DrawDoubleSkySurf_8();
+void D_DrawDoubleSkySurf_16();
+void D_DrawDoubleSkySurf_32();
 }
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
@@ -111,42 +111,42 @@ int				dsky_cachewidth;
 int				dsky_cacheheight;
 byte			*dsky_cachedest;
 
-static void	(*surfmiptable8[4])(void) =
+static void	(*surfmiptable8[4])() =
 {
 	D_DrawSurfaceBlock8_mip0,
 	D_DrawSurfaceBlock8_mip1,
 	D_DrawSurfaceBlock8_mip2,
 	D_DrawSurfaceBlock8_mip3
 };
-static void	(*surfmiptable16[4])(void) =
+static void	(*surfmiptable16[4])() =
 {
 	D_DrawSurfaceBlock16_mip0,
 	D_DrawSurfaceBlock16_mip1,
 	D_DrawSurfaceBlock16_mip2,
 	D_DrawSurfaceBlock16_mip3
 };
-static void	(*surfmiptable32[4])(void) =
+static void	(*surfmiptable32[4])() =
 {
 	D_DrawSurfaceBlock32_mip0,
 	D_DrawSurfaceBlock32_mip1,
 	D_DrawSurfaceBlock32_mip2,
 	D_DrawSurfaceBlock32_mip3
 };
-static void	(*surfmiptable8RGB[4])(void) =
+static void	(*surfmiptable8RGB[4])() =
 {
 	D_DrawSurfaceBlock8RGB_mip0,
 	D_DrawSurfaceBlock8RGB_mip1,
 	D_DrawSurfaceBlock8RGB_mip2,
 	D_DrawSurfaceBlock8RGB_mip3
 };
-static void	(*surfmiptable16RGB[4])(void) =
+static void	(*surfmiptable16RGB[4])() =
 {
 	D_DrawSurfaceBlock16RGB_mip0,
 	D_DrawSurfaceBlock16RGB_mip1,
 	D_DrawSurfaceBlock16RGB_mip2,
 	D_DrawSurfaceBlock16RGB_mip3
 };
-static void	(*surfmiptable32RGB[4])(void) =
+static void	(*surfmiptable32RGB[4])() =
 {
 	D_DrawSurfaceBlock32RGB_mip0,
 	D_DrawSurfaceBlock32RGB_mip1,
@@ -234,7 +234,7 @@ surfcache_t *VSoftwareDrawer::CacheSurface(surface_t *surface, int miplevel)
 	int				soffset, basetoffset, texwidth;
 	int				horzblockstep;
 	byte			*pcolumndest;
-	void			(*pblockdrawer)(void);
+	void			(*pblockdrawer)();
 	miptexture_t	*mt;
 	bool			coloured;
 
@@ -451,7 +451,7 @@ surfcache_t *VSoftwareDrawer::CacheSkySurface(surface_t *surface, int texture1,
 //
 //==========================================================================
 
-void D_DrawSurfaceBlock8_mip0(void)
+void D_DrawSurfaceBlock8_mip0()
 {
 	int			v, i, b, lightstep, lighttemp, light;
 	byte		pix, *psource, *prowdest;
@@ -479,7 +479,7 @@ void D_DrawSurfaceBlock8_mip0(void)
 			for (b = 15; b >= 0; b--)
 			{
 				pix = psource[b];
-				prowdest[b] = fadetable[(light & 0xFF00) + pix];
+				prowdest[b] = d_fadetable[(light & 0xFF00) + pix];
 				light += lightstep;
 			}
 	
@@ -500,7 +500,7 @@ void D_DrawSurfaceBlock8_mip0(void)
 //
 //==========================================================================
 
-void D_DrawSurfaceBlock8_mip1(void)
+void D_DrawSurfaceBlock8_mip1()
 {
 	int			v, i, b, lightstep, lighttemp, light;
 	byte		pix, *psource, *prowdest;
@@ -528,7 +528,7 @@ void D_DrawSurfaceBlock8_mip1(void)
 			for (b = 7; b >= 0; b--)
 			{
 				pix = psource[b];
-				prowdest[b] = fadetable[(light & 0xFF00) + pix];
+				prowdest[b] = d_fadetable[(light & 0xFF00) + pix];
 				light += lightstep;
 			}
 	
@@ -549,7 +549,7 @@ void D_DrawSurfaceBlock8_mip1(void)
 //
 //==========================================================================
 
-void D_DrawSurfaceBlock8_mip2(void)
+void D_DrawSurfaceBlock8_mip2()
 {
 	int			v, i, b, lightstep, lighttemp, light;
 	byte		pix, *psource, *prowdest;
@@ -577,7 +577,7 @@ void D_DrawSurfaceBlock8_mip2(void)
 			for (b = 3; b >= 0; b--)
 			{
 				pix = psource[b];
-				prowdest[b] = fadetable[(light & 0xFF00) + pix];
+				prowdest[b] = d_fadetable[(light & 0xFF00) + pix];
 				light += lightstep;
 			}
 	
@@ -598,7 +598,7 @@ void D_DrawSurfaceBlock8_mip2(void)
 //
 //==========================================================================
 
-void D_DrawSurfaceBlock8_mip3(void)
+void D_DrawSurfaceBlock8_mip3()
 {
 	int			v, i, b, lightstep, lighttemp, light;
 	byte		pix, *psource, *prowdest;
@@ -626,7 +626,7 @@ void D_DrawSurfaceBlock8_mip3(void)
 			for (b = 1; b >= 0; b--)
 			{
 				pix = psource[b];
-				prowdest[b] = fadetable[(light & 0xFF00) + pix];
+				prowdest[b] = d_fadetable[(light & 0xFF00) + pix];
 				light += lightstep;
 			}
 	
@@ -647,7 +647,7 @@ void D_DrawSurfaceBlock8_mip3(void)
 //
 //==========================================================================
 
-void D_DrawSurfaceBlock16_mip0(void)
+void D_DrawSurfaceBlock16_mip0()
 {
 	int			v, i, b, lightstep, lighttemp, light;
 	byte		pix, *psource;
@@ -676,7 +676,7 @@ void D_DrawSurfaceBlock16_mip0(void)
 			for (b = 15; b >= 0; b--)
 			{
 				pix = psource[b];
-				prowdest[b] = fadetable16[(light & 0xFF00) + pix];
+				prowdest[b] = d_fadetable16[(light & 0xFF00) + pix];
 				light += lightstep;
 			}
 	
@@ -697,7 +697,7 @@ void D_DrawSurfaceBlock16_mip0(void)
 //
 //==========================================================================
 
-void D_DrawSurfaceBlock16_mip1(void)
+void D_DrawSurfaceBlock16_mip1()
 {
 	int			v, i, b, lightstep, lighttemp, light;
 	byte		pix, *psource;
@@ -726,7 +726,7 @@ void D_DrawSurfaceBlock16_mip1(void)
 			for (b = 7; b >= 0; b--)
 			{
 				pix = psource[b];
-				prowdest[b] = fadetable16[(light & 0xFF00) + pix];
+				prowdest[b] = d_fadetable16[(light & 0xFF00) + pix];
 				light += lightstep;
 			}
 	
@@ -747,7 +747,7 @@ void D_DrawSurfaceBlock16_mip1(void)
 //
 //==========================================================================
 
-void D_DrawSurfaceBlock16_mip2(void)
+void D_DrawSurfaceBlock16_mip2()
 {
 	int			v, i, b, lightstep, lighttemp, light;
 	byte		pix, *psource;
@@ -776,7 +776,7 @@ void D_DrawSurfaceBlock16_mip2(void)
 			for (b = 3; b >= 0; b--)
 			{
 				pix = psource[b];
-				prowdest[b] = fadetable16[(light & 0xFF00) + pix];
+				prowdest[b] = d_fadetable16[(light & 0xFF00) + pix];
 				light += lightstep;
 			}
 	
@@ -797,7 +797,7 @@ void D_DrawSurfaceBlock16_mip2(void)
 //
 //==========================================================================
 
-void D_DrawSurfaceBlock16_mip3(void)
+void D_DrawSurfaceBlock16_mip3()
 {
 	int			v, i, b, lightstep, lighttemp, light;
 	byte		pix, *psource;
@@ -826,7 +826,7 @@ void D_DrawSurfaceBlock16_mip3(void)
 			for (b = 1; b >= 0; b--)
 			{
 				pix = psource[b];
-				prowdest[b] = fadetable16[(light & 0xFF00) + pix];
+				prowdest[b] = d_fadetable16[(light & 0xFF00) + pix];
 				light += lightstep;
 			}
 	
@@ -847,7 +847,7 @@ void D_DrawSurfaceBlock16_mip3(void)
 //
 //==========================================================================
 
-void D_DrawSurfaceBlock32_mip0(void)
+void D_DrawSurfaceBlock32_mip0()
 {
 	int			v, i, b, lightstep, lighttemp, light;
 	byte		pix, *psource;
@@ -876,7 +876,7 @@ void D_DrawSurfaceBlock32_mip0(void)
 			for (b = 15; b >= 0; b--)
 			{
 				pix = psource[b];
-				prowdest[b] = fadetable32[(light & 0xFF00) + pix];
+				prowdest[b] = d_fadetable32[(light & 0xFF00) + pix];
 				light += lightstep;
 			}
 	
@@ -897,7 +897,7 @@ void D_DrawSurfaceBlock32_mip0(void)
 //
 //==========================================================================
 
-void D_DrawSurfaceBlock32_mip1(void)
+void D_DrawSurfaceBlock32_mip1()
 {
 	int			v, i, b, lightstep, lighttemp, light;
 	byte		pix, *psource;
@@ -926,7 +926,7 @@ void D_DrawSurfaceBlock32_mip1(void)
 			for (b = 7; b >= 0; b--)
 			{
 				pix = psource[b];
-				prowdest[b] = fadetable32[(light & 0xFF00) + pix];
+				prowdest[b] = d_fadetable32[(light & 0xFF00) + pix];
 				light += lightstep;
 			}
 	
@@ -947,7 +947,7 @@ void D_DrawSurfaceBlock32_mip1(void)
 //
 //==========================================================================
 
-void D_DrawSurfaceBlock32_mip2(void)
+void D_DrawSurfaceBlock32_mip2()
 {
 	int			v, i, b, lightstep, lighttemp, light;
 	byte		pix, *psource;
@@ -976,7 +976,7 @@ void D_DrawSurfaceBlock32_mip2(void)
 			for (b = 3; b >= 0; b--)
 			{
 				pix = psource[b];
-				prowdest[b] = fadetable32[(light & 0xFF00) + pix];
+				prowdest[b] = d_fadetable32[(light & 0xFF00) + pix];
 				light += lightstep;
 			}
 	
@@ -997,7 +997,7 @@ void D_DrawSurfaceBlock32_mip2(void)
 //
 //==========================================================================
 
-void D_DrawSurfaceBlock32_mip3(void)
+void D_DrawSurfaceBlock32_mip3()
 {
 	int			v, i, b, lightstep, lighttemp, light;
 	byte		pix, *psource;
@@ -1026,7 +1026,7 @@ void D_DrawSurfaceBlock32_mip3(void)
 			for (b = 1; b >= 0; b--)
 			{
 				pix = psource[b];
-				prowdest[b] = fadetable32[(light & 0xFF00) + pix];
+				prowdest[b] = d_fadetable32[(light & 0xFF00) + pix];
 				light += lightstep;
 			}
 	
@@ -1047,7 +1047,7 @@ void D_DrawSurfaceBlock32_mip3(void)
 //
 //==========================================================================
 
-void D_DrawSurfaceBlock8RGB_mip0(void)
+void D_DrawSurfaceBlock8RGB_mip0()
 {
 	int			v, i, b;
 	int			lightrstep, lightrtemp, lightr;
@@ -1096,10 +1096,10 @@ void D_DrawSurfaceBlock8RGB_mip0(void)
 			for (b = 15; b >= 0; b--)
 			{
 				pix = psource[b];
-				prowdest[b] = d_rgbtable[
-					fadetable16r[(lightr & 0xFF00) + pix] |
-					fadetable16g[(lightg & 0xFF00) + pix] |
-					fadetable16b[(lightb & 0xFF00) + pix]];
+				prowdest[b] = r_rgbtable[
+					d_fadetable16r[(lightr & 0xFF00) + pix] |
+					d_fadetable16g[(lightg & 0xFF00) + pix] |
+					d_fadetable16b[(lightb & 0xFF00) + pix]];
 				lightr += lightrstep;
 				lightg += lightgstep;
 				lightb += lightbstep;
@@ -1126,7 +1126,7 @@ void D_DrawSurfaceBlock8RGB_mip0(void)
 //
 //==========================================================================
 
-void D_DrawSurfaceBlock8RGB_mip1(void)
+void D_DrawSurfaceBlock8RGB_mip1()
 {
 	int			v, i, b;
 	int			lightrstep, lightrtemp, lightr;
@@ -1175,10 +1175,10 @@ void D_DrawSurfaceBlock8RGB_mip1(void)
 			for (b = 7; b >= 0; b--)
 			{
 				pix = psource[b];
-				prowdest[b] = d_rgbtable[
-					fadetable16r[(lightr & 0xFF00) + pix] |
-					fadetable16g[(lightg & 0xFF00) + pix] |
-					fadetable16b[(lightb & 0xFF00) + pix]];
+				prowdest[b] = r_rgbtable[
+					d_fadetable16r[(lightr & 0xFF00) + pix] |
+					d_fadetable16g[(lightg & 0xFF00) + pix] |
+					d_fadetable16b[(lightb & 0xFF00) + pix]];
 				lightr += lightrstep;
 				lightg += lightgstep;
 				lightb += lightbstep;
@@ -1205,7 +1205,7 @@ void D_DrawSurfaceBlock8RGB_mip1(void)
 //
 //==========================================================================
 
-void D_DrawSurfaceBlock8RGB_mip2(void)
+void D_DrawSurfaceBlock8RGB_mip2()
 {
 	int			v, i, b;
 	int			lightrstep, lightrtemp, lightr;
@@ -1254,10 +1254,10 @@ void D_DrawSurfaceBlock8RGB_mip2(void)
 			for (b = 3; b >= 0; b--)
 			{
 				pix = psource[b];
-				prowdest[b] = d_rgbtable[
-					fadetable16r[(lightr & 0xFF00) + pix] |
-					fadetable16g[(lightg & 0xFF00) + pix] |
-					fadetable16b[(lightb & 0xFF00) + pix]];
+				prowdest[b] = r_rgbtable[
+					d_fadetable16r[(lightr & 0xFF00) + pix] |
+					d_fadetable16g[(lightg & 0xFF00) + pix] |
+					d_fadetable16b[(lightb & 0xFF00) + pix]];
 				lightr += lightrstep;
 				lightg += lightgstep;
 				lightb += lightbstep;
@@ -1284,7 +1284,7 @@ void D_DrawSurfaceBlock8RGB_mip2(void)
 //
 //==========================================================================
 
-void D_DrawSurfaceBlock8RGB_mip3(void)
+void D_DrawSurfaceBlock8RGB_mip3()
 {
 	int			v, i, b;
 	int			lightrstep, lightrtemp, lightr;
@@ -1333,10 +1333,10 @@ void D_DrawSurfaceBlock8RGB_mip3(void)
 			for (b = 1; b >= 0; b--)
 			{
 				pix = psource[b];
-				prowdest[b] = d_rgbtable[
-					fadetable16r[(lightr & 0xFF00) + pix] |
-					fadetable16g[(lightg & 0xFF00) + pix] |
-					fadetable16b[(lightb & 0xFF00) + pix]];
+				prowdest[b] = r_rgbtable[
+					d_fadetable16r[(lightr & 0xFF00) + pix] |
+					d_fadetable16g[(lightg & 0xFF00) + pix] |
+					d_fadetable16b[(lightb & 0xFF00) + pix]];
 				lightr += lightrstep;
 				lightg += lightgstep;
 				lightb += lightbstep;
@@ -1363,7 +1363,7 @@ void D_DrawSurfaceBlock8RGB_mip3(void)
 //
 //==========================================================================
 
-void D_DrawSurfaceBlock16RGB_mip0(void)
+void D_DrawSurfaceBlock16RGB_mip0()
 {
 	int			v, i, b;
 	int			lightrstep, lightrtemp, lightr;
@@ -1413,9 +1413,9 @@ void D_DrawSurfaceBlock16RGB_mip0(void)
 			for (b = 15; b >= 0; b--)
 			{
 				pix = psource[b];
-				prowdest[b] = fadetable16r[(lightr & 0xFF00) + pix] |
-					fadetable16g[(lightg & 0xFF00) + pix] |
-					fadetable16b[(lightb & 0xFF00) + pix];
+				prowdest[b] = d_fadetable16r[(lightr & 0xFF00) + pix] |
+					d_fadetable16g[(lightg & 0xFF00) + pix] |
+					d_fadetable16b[(lightb & 0xFF00) + pix];
 				lightr += lightrstep;
 				lightg += lightgstep;
 				lightb += lightbstep;
@@ -1442,7 +1442,7 @@ void D_DrawSurfaceBlock16RGB_mip0(void)
 //
 //==========================================================================
 
-void D_DrawSurfaceBlock16RGB_mip1(void)
+void D_DrawSurfaceBlock16RGB_mip1()
 {
 	int			v, i, b;
 	int			lightrstep, lightrtemp, lightr;
@@ -1492,9 +1492,9 @@ void D_DrawSurfaceBlock16RGB_mip1(void)
 			for (b = 7; b >= 0; b--)
 			{
 				pix = psource[b];
-				prowdest[b] = fadetable16r[(lightr & 0xFF00) + pix] |
-					fadetable16g[(lightg & 0xFF00) + pix] |
-					fadetable16b[(lightb & 0xFF00) + pix];
+				prowdest[b] = d_fadetable16r[(lightr & 0xFF00) + pix] |
+					d_fadetable16g[(lightg & 0xFF00) + pix] |
+					d_fadetable16b[(lightb & 0xFF00) + pix];
 				lightr += lightrstep;
 				lightg += lightgstep;
 				lightb += lightbstep;
@@ -1521,7 +1521,7 @@ void D_DrawSurfaceBlock16RGB_mip1(void)
 //
 //==========================================================================
 
-void D_DrawSurfaceBlock16RGB_mip2(void)
+void D_DrawSurfaceBlock16RGB_mip2()
 {
 	int			v, i, b;
 	int			lightrstep, lightrtemp, lightr;
@@ -1571,9 +1571,9 @@ void D_DrawSurfaceBlock16RGB_mip2(void)
 			for (b = 3; b >= 0; b--)
 			{
 				pix = psource[b];
-				prowdest[b] = fadetable16r[(lightr & 0xFF00) + pix] |
-					fadetable16g[(lightg & 0xFF00) + pix] |
-					fadetable16b[(lightb & 0xFF00) + pix];
+				prowdest[b] = d_fadetable16r[(lightr & 0xFF00) + pix] |
+					d_fadetable16g[(lightg & 0xFF00) + pix] |
+					d_fadetable16b[(lightb & 0xFF00) + pix];
 				lightr += lightrstep;
 				lightg += lightgstep;
 				lightb += lightbstep;
@@ -1600,7 +1600,7 @@ void D_DrawSurfaceBlock16RGB_mip2(void)
 //
 //==========================================================================
 
-void D_DrawSurfaceBlock16RGB_mip3(void)
+void D_DrawSurfaceBlock16RGB_mip3()
 {
 	int			v, i, b;
 	int			lightrstep, lightrtemp, lightr;
@@ -1650,9 +1650,9 @@ void D_DrawSurfaceBlock16RGB_mip3(void)
 			for (b = 1; b >= 0; b--)
 			{
 				pix = psource[b];
-				prowdest[b] = fadetable16r[(lightr & 0xFF00) + pix] |
-					fadetable16g[(lightg & 0xFF00) + pix] |
-					fadetable16b[(lightb & 0xFF00) + pix];
+				prowdest[b] = d_fadetable16r[(lightr & 0xFF00) + pix] |
+					d_fadetable16g[(lightg & 0xFF00) + pix] |
+					d_fadetable16b[(lightb & 0xFF00) + pix];
 				lightr += lightrstep;
 				lightg += lightgstep;
 				lightb += lightbstep;
@@ -1679,7 +1679,7 @@ void D_DrawSurfaceBlock16RGB_mip3(void)
 //
 //==========================================================================
 
-void D_DrawSurfaceBlock32RGB_mip0(void)
+void D_DrawSurfaceBlock32RGB_mip0()
 {
 	int			v, i, b;
 	int			lightrstep, lightrtemp, lightr;
@@ -1730,9 +1730,9 @@ void D_DrawSurfaceBlock32RGB_mip0(void)
 			{
 				pix = psource[b];
 				prowdest[b] = MakeCol32(
-					fadetable32r[(lightr & 0xFF00) + pix],
-					fadetable32g[(lightg & 0xFF00) + pix],
-					fadetable32b[(lightb & 0xFF00) + pix]);
+					d_fadetable32r[(lightr & 0xFF00) + pix],
+					d_fadetable32g[(lightg & 0xFF00) + pix],
+					d_fadetable32b[(lightb & 0xFF00) + pix]);
 				lightr += lightrstep;
 				lightg += lightgstep;
 				lightb += lightbstep;
@@ -1759,7 +1759,7 @@ void D_DrawSurfaceBlock32RGB_mip0(void)
 //
 //==========================================================================
 
-void D_DrawSurfaceBlock32RGB_mip1(void)
+void D_DrawSurfaceBlock32RGB_mip1()
 {
 	int			v, i, b;
 	int			lightrstep, lightrtemp, lightr;
@@ -1810,9 +1810,9 @@ void D_DrawSurfaceBlock32RGB_mip1(void)
 			{
 				pix = psource[b];
 				prowdest[b] = MakeCol32(
-					fadetable32r[(lightr & 0xFF00) + pix],
-					fadetable32g[(lightg & 0xFF00) + pix],
-					fadetable32b[(lightb & 0xFF00) + pix]);
+					d_fadetable32r[(lightr & 0xFF00) + pix],
+					d_fadetable32g[(lightg & 0xFF00) + pix],
+					d_fadetable32b[(lightb & 0xFF00) + pix]);
 				lightr += lightrstep;
 				lightg += lightgstep;
 				lightb += lightbstep;
@@ -1839,7 +1839,7 @@ void D_DrawSurfaceBlock32RGB_mip1(void)
 //
 //==========================================================================
 
-void D_DrawSurfaceBlock32RGB_mip2(void)
+void D_DrawSurfaceBlock32RGB_mip2()
 {
 	int			v, i, b;
 	int			lightrstep, lightrtemp, lightr;
@@ -1890,9 +1890,9 @@ void D_DrawSurfaceBlock32RGB_mip2(void)
 			{
 				pix = psource[b];
 				prowdest[b] = MakeCol32(
-					fadetable32r[(lightr & 0xFF00) + pix],
-					fadetable32g[(lightg & 0xFF00) + pix],
-					fadetable32b[(lightb & 0xFF00) + pix]);
+					d_fadetable32r[(lightr & 0xFF00) + pix],
+					d_fadetable32g[(lightg & 0xFF00) + pix],
+					d_fadetable32b[(lightb & 0xFF00) + pix]);
 				lightr += lightrstep;
 				lightg += lightgstep;
 				lightb += lightbstep;
@@ -1919,7 +1919,7 @@ void D_DrawSurfaceBlock32RGB_mip2(void)
 //
 //==========================================================================
 
-void D_DrawSurfaceBlock32RGB_mip3(void)
+void D_DrawSurfaceBlock32RGB_mip3()
 {
 	int			v, i, b;
 	int			lightrstep, lightrtemp, lightr;
@@ -1970,9 +1970,9 @@ void D_DrawSurfaceBlock32RGB_mip3(void)
 			{
 				pix = psource[b];
 				prowdest[b] = MakeCol32(
-					fadetable32r[(lightr & 0xFF00) + pix],
-					fadetable32g[(lightg & 0xFF00) + pix],
-					fadetable32b[(lightb & 0xFF00) + pix]);
+					d_fadetable32r[(lightr & 0xFF00) + pix],
+					d_fadetable32g[(lightg & 0xFF00) + pix],
+					d_fadetable32b[(lightb & 0xFF00) + pix]);
 				lightr += lightrstep;
 				lightg += lightgstep;
 				lightb += lightbstep;
@@ -2001,7 +2001,7 @@ void D_DrawSurfaceBlock32RGB_mip3(void)
 //
 //==========================================================================
 
-void D_DrawSkySurf_8(void)
+void D_DrawSkySurf_8()
 {
 	byte	*basesrc, *src;
 	byte	*dst;
@@ -2036,7 +2036,7 @@ void D_DrawSkySurf_8(void)
 //
 //==========================================================================
 
-void D_DrawSkySurf_16(void)
+void D_DrawSkySurf_16()
 {
 	byte	*basesrc, *src;
 	word	*dst;
@@ -2071,7 +2071,7 @@ void D_DrawSkySurf_16(void)
 //
 //==========================================================================
 
-void D_DrawSkySurf_32(void)
+void D_DrawSkySurf_32()
 {
 	byte	*basesrc, *src;
 	vuint32	*dst;
@@ -2106,7 +2106,7 @@ void D_DrawSkySurf_32(void)
 //
 //==========================================================================
 
-void D_DrawDoubleSkySurf_8(void)
+void D_DrawDoubleSkySurf_8()
 {
 	byte	*basesrc1, *basesrc2, *src1, *src2;
 	byte	*dst;
@@ -2158,7 +2158,7 @@ void D_DrawDoubleSkySurf_8(void)
 //
 //==========================================================================
 
-void D_DrawDoubleSkySurf_16(void)
+void D_DrawDoubleSkySurf_16()
 {
 	byte	*basesrc1, *basesrc2, *src1, *src2;
 	word	*dst;
@@ -2210,7 +2210,7 @@ void D_DrawDoubleSkySurf_16(void)
 //
 //==========================================================================
 
-void D_DrawDoubleSkySurf_32(void)
+void D_DrawDoubleSkySurf_32()
 {
 	byte	*basesrc1, *basesrc2, *src1, *src2;
 	vuint32	*dst;

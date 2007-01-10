@@ -277,22 +277,6 @@ bool Sys_DirExists(const VStr& path)
 	return !!(s.st_mode & S_IFDIR);
 }
 
-//==========================================================================
-//
-//	Sys_MakeCodeWriteable
-//
-//==========================================================================
-
-void Sys_MakeCodeWriteable(unsigned long startaddr, unsigned long length)
-{
-	guard(Sys_MakeCodeWriteable);
-	DWORD  flOldProtect;
-
-	if (!VirtualProtect((LPVOID)startaddr, length, PAGE_READWRITE, &flOldProtect))
-   		Sys_Error("Protection change failed\n");
-	unguard;
-}
-
 //**************************************************************************
 //**
 //**	TIME

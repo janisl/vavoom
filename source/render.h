@@ -111,11 +111,8 @@ public:
 	int AddPatch(VName Name, int Type, bool Silent = false);
 	int AddRawWithPal(VName Name, VName PalName);
 	int AddFileTexture(VName Name, int Type);
-	vuint8* GetRgbTable();
 
 private:
-	vuint8*		RgbTable;
-
 	void AddTextures();
 	void AddTexturesLump(int, int, int, bool);
 	void AddGroup(int, EWadNamespace);

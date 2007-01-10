@@ -343,7 +343,7 @@ void VSoftwareDrawer::MakeMips(miptexture_t *mip)
 				}
 				else
 				{
-					*pdst = d_rgbtable[((r << 5) & 0x7c00) +
+					*pdst = r_rgbtable[((r << 5) & 0x7c00) +
 						(g & 0x3e0) + ((b >> 5) & 0x1f)];
 				}
 
@@ -496,24 +496,24 @@ void VSoftwareDrawer::GenerateSprite(int lump, int slot, vuint32 light,
 	int cmapnum = (31 - (light >> 27));
 	if (ScreenBPP == 8)
 	{
-		cmap = fadetable + cmapnum * 256;
-		cmapr = fadetable16r + (31 - lightr) * 256;
-		cmapg = fadetable16g + (31 - lightg) * 256;
-		cmapb = fadetable16b + (31 - lightb) * 256;
+		cmap = d_fadetable + cmapnum * 256;
+		cmapr = d_fadetable16r + (31 - lightr) * 256;
+		cmapg = d_fadetable16g + (31 - lightg) * 256;
+		cmapb = d_fadetable16b + (31 - lightb) * 256;
 	}
 	else if (PixelBytes == 2)
 	{
-		cmap = fadetable16 + cmapnum * 256;
-		cmapr = fadetable16r + (31 - lightr) * 256;
-		cmapg = fadetable16g + (31 - lightg) * 256;
-		cmapb = fadetable16b + (31 - lightb) * 256;
+		cmap = d_fadetable16 + cmapnum * 256;
+		cmapr = d_fadetable16r + (31 - lightr) * 256;
+		cmapg = d_fadetable16g + (31 - lightg) * 256;
+		cmapb = d_fadetable16b + (31 - lightb) * 256;
 	}
 	else
 	{
-		cmap = fadetable32 + cmapnum * 256;
-		cmapr = fadetable32r + (31 - lightr) * 256;
-		cmapg = fadetable32g + (31 - lightg) * 256;
-		cmapb = fadetable32b + (31 - lightb) * 256;
+		cmap = d_fadetable32 + cmapnum * 256;
+		cmapr = d_fadetable32r + (31 - lightr) * 256;
+		cmapg = d_fadetable32g + (31 - lightg) * 256;
+		cmapb = d_fadetable32b + (31 - lightb) * 256;
 	}
 
 	byte *trtab = translationtables + translation * 256;
@@ -528,7 +528,7 @@ void VSoftwareDrawer::GenerateSprite(int lump, int slot, vuint32 light,
 			if (*source)
 			{
 				int itmp = trtab[*source];
-				*dest = d_rgbtable[(((word*)cmapr)[itmp]) |
+				*dest = r_rgbtable[(((word*)cmapr)[itmp]) |
 					(((word*)cmapg)[itmp]) | (((word*)cmapb)[itmp])];
 			}
 			source++;

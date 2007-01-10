@@ -55,8 +55,3 @@ void Sys_LowFPPrecision();
 void Sys_HighFPPrecision();
 
 }
-
-//
-// memory protection
-//
-void Sys_MakeCodeWriteable(unsigned long, unsigned long);

@@ -222,7 +222,7 @@ vuint8* VMultiPatchTexture::GetPixels()
 		for (int i = 0; i < PatchCount; i++, patch++)
 		{
 			VTexture* PatchTex = patch->Tex;
-			vuint8* PatchPixels = PatchTex->GetPixels8();
+			vuint8* PatchPixels = PatchTex->GetPixels();
 			int x1 = patch->XOrigin;
 			int x2 = x1 + PatchTex->GetWidth();
 			if (x2 > Width)

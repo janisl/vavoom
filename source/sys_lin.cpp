@@ -28,7 +28,6 @@
 #include <sys/time.h>
 #include <fcntl.h>
 #include <sys/stat.h>
-#include <sys/mman.h>
 #include <unistd.h>
 #include <signal.h>
 #include <dirent.h>
@@ -247,28 +246,6 @@ bool Sys_DirExists(const VStr& path)
 		return false;
 	
 	return !!S_ISDIR(s.st_mode);
-}
-
-//==========================================================================
-//
-//	Sys_MakeCodeWriteable
-//
-//==========================================================================
-
-void Sys_MakeCodeWriteable(unsigned long startaddr, unsigned long length)
-{
-	int r;
-	unsigned long addr;
-	int psize = getpagesize();
-
-	addr = (startaddr & ~(psize-1)) - psize;
-
-	r = mprotect((char*)addr, length + startaddr - addr + psize, 7);
-
-	if (r < 0)
-	{
-   		Sys_Error("Protection change failed\n");
-	}
 }
 
 //**************************************************************************

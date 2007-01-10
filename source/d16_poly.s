@@ -33,9 +33,6 @@
 
 #define pspans	4+8
 
-.globl C(D_PolysetAff16Start)
-C(D_PolysetAff16Start):
-
 //==========================================================================
 //
 //	D_PolysetDrawSpans_16
@@ -180,8 +177,7 @@ LDraw8:
 	movb	%dh,%ah
 	movb	(%esi),%al
 	movw	%bp,(%ecx)
-	movw	0x12345678(,%eax,2),%ax
-LPatch8:
+	movw	C(d_fadetable16)(,%eax,2),%ax
 	movw	%ax,(%edi)
 Lp1:
 	addl	tstep,%edx
@@ -198,8 +194,7 @@ LDraw7:
 	movb	%dh,%ah
 	movb	(%esi),%al
 	movw	%bp,2(%ecx)
-	movw	0x12345678(,%eax,2),%ax
-LPatch7:
+	movw	C(d_fadetable16)(,%eax,2),%ax
 	movw	%ax,2(%edi)
 Lp2:
 	addl	tstep,%edx
@@ -216,8 +211,7 @@ LDraw6:
 	movb	%dh,%ah
 	movb	(%esi),%al
 	movw	%bp,4(%ecx)
-	movw	0x12345678(,%eax,2),%ax
-LPatch6:
+	movw	C(d_fadetable16)(,%eax,2),%ax
 	movw	%ax,4(%edi)
 Lp3:
 	addl	tstep,%edx
@@ -234,8 +228,7 @@ LDraw5:
 	movb	%dh,%ah
 	movb	(%esi),%al
 	movw	%bp,6(%ecx)
-	movw	0x12345678(,%eax,2),%ax
-LPatch5:
+	movw	C(d_fadetable16)(,%eax,2),%ax
 	movw	%ax,6(%edi)
 Lp4:
 	addl	tstep,%edx
@@ -252,8 +245,7 @@ LDraw4:
 	movb	%dh,%ah
 	movb	(%esi),%al
 	movw	%bp,8(%ecx)
-	movw	0x12345678(,%eax,2),%ax
-LPatch4:
+	movw	C(d_fadetable16)(,%eax,2),%ax
 	movw	%ax,8(%edi)
 Lp5:
 	addl	tstep,%edx
@@ -270,8 +262,7 @@ LDraw3:
 	movb	%dh,%ah
 	movb	(%esi),%al
 	movw	%bp,10(%ecx)
-	movw	0x12345678(,%eax,2),%ax
-LPatch3:
+	movw	C(d_fadetable16)(,%eax,2),%ax
 	movw	%ax,10(%edi)
 Lp6:
 	addl	tstep,%edx
@@ -288,8 +279,7 @@ LDraw2:
 	movb	%dh,%ah
 	movb	(%esi),%al
 	movw	%bp,12(%ecx)
-	movw	0x12345678(,%eax,2),%ax
-LPatch2:
+	movw	C(d_fadetable16)(,%eax,2),%ax
 	movw	%ax,12(%edi)
 Lp7:
 	addl	tstep,%edx
@@ -306,8 +296,7 @@ LDraw1:
 	movb	%dh,%ah
 	movb	(%esi),%al
 	movw	%bp,14(%ecx)
-	movw	0x12345678(,%eax,2),%ax
-LPatch1:
+	movw	C(d_fadetable16)(,%eax,2),%ax
 	movw	%ax,14(%edi)
 Lp8:
 	addl	tstep,%edx
@@ -356,8 +345,7 @@ LExactlyOneLong:
 	addl	$(spanpackage_t_size),%esi	// point to next span
 	movb	(%ebx),%al
 	movw	%bp,(%ecx)
-	movw	0x12345678(,%eax,2),%ax
-LPatch9:
+	movw	C(d_fadetable16)(,%eax,2),%ax
 	movw	%ax,(%edi)
 
 	jmp		LNextSpanESISet
@@ -513,18 +501,15 @@ LRGBDraw8:
 	movb	%dh,%ah
 	movb	(%esi),%al
 	movw	%bp,(%ecx)
-	movw	0x12345678(,%eax,2),%ax
-LRPatch8:
+	movw	C(d_fadetable16r)(,%eax,2),%ax
 	movw	%ax,(%edi)
 	movb	gb+1,%ah
 	movb	(%esi),%al
-	movw	0x12345678(,%eax,2),%ax
-LGPatch8:
+	movw	C(d_fadetable16g)(,%eax,2),%ax
 	orw		%ax,(%edi)
 	movb	gb+3,%ah
 	movb	(%esi),%al
-	movw	0x12345678(,%eax,2),%ax
-LBPatch8:
+	movw	C(d_fadetable16b)(,%eax,2),%ax
 	orw		%ax,(%edi)
 LRGBp1:
 	movl	gbstep,%eax
@@ -543,18 +528,15 @@ LRGBDraw7:
 	movb	%dh,%ah
 	movb	(%esi),%al
 	movw	%bp,2(%ecx)
-	movw	0x12345678(,%eax,2),%ax
-LRPatch7:
+	movw	C(d_fadetable16r)(,%eax,2),%ax
 	movw	%ax,2(%edi)
 	movb	gb+1,%ah
 	movb	(%esi),%al
-	movw	0x12345678(,%eax,2),%ax
-LGPatch7:
+	movw	C(d_fadetable16g)(,%eax,2),%ax
 	orw		%ax,2(%edi)
 	movb	gb+3,%ah
 	movb	(%esi),%al
-	movw	0x12345678(,%eax,2),%ax
-LBPatch7:
+	movw	C(d_fadetable16b)(,%eax,2),%ax
 	orw		%ax,2(%edi)
 LRGBp2:
 	movl	gbstep,%eax
@@ -573,18 +555,15 @@ LRGBDraw6:
 	movb	%dh,%ah
 	movb	(%esi),%al
 	movw	%bp,4(%ecx)
-	movw	0x12345678(,%eax,2),%ax
-LRPatch6:
+	movw	C(d_fadetable16r)(,%eax,2),%ax
 	movw	%ax,4(%edi)
 	movb	gb+1,%ah
 	movb	(%esi),%al
-	movw	0x12345678(,%eax,2),%ax
-LGPatch6:
+	movw	C(d_fadetable16g)(,%eax,2),%ax
 	orw		%ax,4(%edi)
 	movb	gb+3,%ah
 	movb	(%esi),%al
-	movw	0x12345678(,%eax,2),%ax
-LBPatch6:
+	movw	C(d_fadetable16b)(,%eax,2),%ax
 	orw		%ax,4(%edi)
 LRGBp3:
 	movl	gbstep,%eax
@@ -603,18 +582,15 @@ LRGBDraw5:
 	movb	%dh,%ah
 	movb	(%esi),%al
 	movw	%bp,6(%ecx)
-	movw	0x12345678(,%eax,2),%ax
-LRPatch5:
+	movw	C(d_fadetable16r)(,%eax,2),%ax
 	movw	%ax,6(%edi)
 	movb	gb+1,%ah
 	movb	(%esi),%al
-	movw	0x12345678(,%eax,2),%ax
-LGPatch5:
+	movw	C(d_fadetable16g)(,%eax,2),%ax
 	orw		%ax,6(%edi)
 	movb	gb+3,%ah
 	movb	(%esi),%al
-	movw	0x12345678(,%eax,2),%ax
-LBPatch5:
+	movw	C(d_fadetable16b)(,%eax,2),%ax
 	orw		%ax,6(%edi)
 LRGBp4:
 	movl	gbstep,%eax
@@ -633,18 +609,15 @@ LRGBDraw4:
 	movb	%dh,%ah
 	movb	(%esi),%al
 	movw	%bp,8(%ecx)
-	movw	0x12345678(,%eax,2),%ax
-LRPatch4:
+	movw	C(d_fadetable16r)(,%eax,2),%ax
 	movw	%ax,8(%edi)
 	movb	gb+1,%ah
 	movb	(%esi),%al
-	movw	0x12345678(,%eax,2),%ax
-LGPatch4:
+	movw	C(d_fadetable16g)(,%eax,2),%ax
 	orw		%ax,8(%edi)
 	movb	gb+3,%ah
 	movb	(%esi),%al
-	movw	0x12345678(,%eax,2),%ax
-LBPatch4:
+	movw	C(d_fadetable16b)(,%eax,2),%ax
 	orw		%ax,8(%edi)
 LRGBp5:
 	movl	gbstep,%eax
@@ -663,18 +636,15 @@ LRGBDraw3:
 	movb	%dh,%ah
 	movb	(%esi),%al
 	movw	%bp,10(%ecx)
-	movw	0x12345678(,%eax,2),%ax
-LRPatch3:
+	movw	C(d_fadetable16r)(,%eax,2),%ax
 	movw	%ax,10(%edi)
 	movb	gb+1,%ah
 	movb	(%esi),%al
-	movw	0x12345678(,%eax,2),%ax
-LGPatch3:
+	movw	C(d_fadetable16g)(,%eax,2),%ax
 	orw		%ax,10(%edi)
 	movb	gb+3,%ah
 	movb	(%esi),%al
-	movw	0x12345678(,%eax,2),%ax
-LBPatch3:
+	movw	C(d_fadetable16b)(,%eax,2),%ax
 	orw		%ax,10(%edi)
 LRGBp6:
 	movl	gbstep,%eax
@@ -693,18 +663,15 @@ LRGBDraw2:
 	movb	%dh,%ah
 	movb	(%esi),%al
 	movw	%bp,12(%ecx)
-	movw	0x12345678(,%eax,2),%ax
-LRPatch2:
+	movw	C(d_fadetable16r)(,%eax,2),%ax
 	movw	%ax,12(%edi)
 	movb	gb+1,%ah
 	movb	(%esi),%al
-	movw	0x12345678(,%eax,2),%ax
-LGPatch2:
+	movw	C(d_fadetable16g)(,%eax,2),%ax
 	orw		%ax,12(%edi)
 	movb	gb+3,%ah
 	movb	(%esi),%al
-	movw	0x12345678(,%eax,2),%ax
-LBPatch2:
+	movw	C(d_fadetable16b)(,%eax,2),%ax
 	orw		%ax,12(%edi)
 LRGBp7:
 	movl	gbstep,%eax
@@ -723,18 +690,15 @@ LRGBDraw1:
 	movb	%dh,%ah
 	movb	(%esi),%al
 	movw	%bp,14(%ecx)
-	movw	0x12345678(,%eax,2),%ax
-LRPatch1:
+	movw	C(d_fadetable16r)(,%eax,2),%ax
 	movw	%ax,14(%edi)
 	movb	gb+1,%ah
 	movb	(%esi),%al
-	movw	0x12345678(,%eax,2),%ax
-LGPatch1:
+	movw	C(d_fadetable16g)(,%eax,2),%ax
 	orw		%ax,14(%edi)
 	movb	gb+3,%ah
 	movb	(%esi),%al
-	movw	0x12345678(,%eax,2),%ax
-LBPatch1:
+	movw	C(d_fadetable16b)(,%eax,2),%ax
 	orw		%ax,14(%edi)
 LRGBp8:
 	movl	gbstep,%eax
@@ -784,74 +748,18 @@ LRGBExactlyOneLong:
 	movb	spanpackage_t_r+1(%esi),%ah
 	movb	(%ebx),%al
 	movw	%bp,(%ecx)
-	movw	0x12345678(,%eax,2),%ax
-LRPatch9:
+	movw	C(d_fadetable16r)(,%eax,2),%ax
 	movw	%ax,(%edi)
 	movb	spanpackage_t_g+1(%esi),%ah
 	movb	(%ebx),%al
-	movw	0x12345678(,%eax,2),%ax
-LGPatch9:
+	movw	C(d_fadetable16g)(,%eax,2),%ax
 	orw		%ax,(%edi)
 	movb	spanpackage_t_b+1(%esi),%ah
 	addl	$(spanpackage_t_size),%esi	// point to next span
 	movb	(%ebx),%al
-	movw	0x12345678(,%eax,2),%ax
-LBPatch9:
+	movw	C(d_fadetable16b)(,%eax,2),%ax
 	orw		%ax,(%edi)
 
 	jmp		LRGBNextSpanESISet
-
-
-.globl C(D_PolysetAff16End)
-C(D_PolysetAff16End):
-
-
-.globl C(D_Aff16Patch)
-C(D_Aff16Patch):
-	movl	C(fadetable16),%eax
-	movl	%eax,LPatch1-4
-	movl	%eax,LPatch2-4
-	movl	%eax,LPatch3-4
-	movl	%eax,LPatch4-4
-	movl	%eax,LPatch5-4
-	movl	%eax,LPatch6-4
-	movl	%eax,LPatch7-4
-	movl	%eax,LPatch8-4
-	movl	%eax,LPatch9-4
-
-	movl	C(fadetable16r),%eax
-	movl	%eax,LRPatch1-4
-	movl	%eax,LRPatch2-4
-	movl	%eax,LRPatch3-4
-	movl	%eax,LRPatch4-4
-	movl	%eax,LRPatch5-4
-	movl	%eax,LRPatch6-4
-	movl	%eax,LRPatch7-4
-	movl	%eax,LRPatch8-4
-	movl	%eax,LRPatch9-4
-
-	movl	C(fadetable16g),%eax
-	movl	%eax,LGPatch1-4
-	movl	%eax,LGPatch2-4
-	movl	%eax,LGPatch3-4
-	movl	%eax,LGPatch4-4
-	movl	%eax,LGPatch5-4
-	movl	%eax,LGPatch6-4
-	movl	%eax,LGPatch7-4
-	movl	%eax,LGPatch8-4
-	movl	%eax,LGPatch9-4
-
-	movl	C(fadetable16b),%eax
-	movl	%eax,LBPatch1-4
-	movl	%eax,LBPatch2-4
-	movl	%eax,LBPatch3-4
-	movl	%eax,LBPatch4-4
-	movl	%eax,LBPatch5-4
-	movl	%eax,LBPatch6-4
-	movl	%eax,LBPatch7-4
-	movl	%eax,LBPatch8-4
-	movl	%eax,LBPatch9-4
-
-	ret
 
 #endif

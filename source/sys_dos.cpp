@@ -243,17 +243,6 @@ bool Sys_DirExists(const VStr& path)
 	return !!S_ISDIR(s.st_mode);
 }
 
-//==========================================================================
-//
-//	Sys_MakeCodeWriteable
-//
-//==========================================================================
-
-void Sys_MakeCodeWriteable(unsigned long, unsigned long)
-{
-	// it's always writeable
-}
-
 //**************************************************************************
 //**
 //**	TIME

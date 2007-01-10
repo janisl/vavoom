@@ -121,6 +121,10 @@ int					skyflatnum;			// sky mapping
 rgba_t				r_palette[256];
 vuint8				r_black_colour;
 
+extern "C" {
+vuint8				r_rgbtable[32 * 32 * 32 + 4];
+};
+
 //	Switches
 TArray<TSwitch*>	Switches;
 
@@ -142,7 +146,6 @@ static TArray<VAnimDoorDef>	AnimDoorDefs;
 
 VTextureManager::VTextureManager()
 : DefaultTexture(-1)
-, RgbTable(NULL)
 {
 }
 
@@ -203,8 +206,6 @@ void VTextureManager::Shutdown()
 	for (int i = 0; i < Textures.Num(); i++)
 		delete Textures[i];
 	Textures.Clear();
-	if (RgbTable)
-		delete[] RgbTable;
 	unguard;
 }
 
@@ -796,26 +797,6 @@ void VTextureManager::AddHiResTextures()
 		delete sc;
 	}
 	unguard;
-}
-
-//==========================================================================
-//
-//	VTextureManager::GetRgbTable
-//
-//==========================================================================
-
-vuint8* VTextureManager::GetRgbTable()
-{
-	if (!RgbTable)
-	{
-		VStream* Strm = W_CreateLumpReaderName(NAME_rgbtable);
-		check(Strm);
-		check(Strm->TotalSize() == 0x8001);
-		RgbTable = new vuint8[0x8001];
-		Strm->Serialise(RgbTable, 0x8001);
-		delete Strm;
-	}
-	return RgbTable;
 }
 
 //==========================================================================

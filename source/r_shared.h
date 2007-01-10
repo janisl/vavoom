@@ -182,10 +182,14 @@ extern vuint32			blockaddlightsg[18 * 18];
 extern vuint32			blockaddlightsb[18 * 18];
 
 extern rgba_t			r_palette[256];
-extern byte				r_black_colour;
+extern vuint8			r_black_colour;
+
+extern "C" {
+extern vuint8			r_rgbtable[32 * 32 * 32 + 4];
+};
 
 extern int				usegamma;
-extern byte				gammatable[5][256];
+extern vuint8			gammatable[5][256];
 
 extern float			PixelAspect;
 

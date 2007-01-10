@@ -184,9 +184,8 @@ C(D_DrawParticle_8):
 	andl	$992,%ebp
 	andl	$31,%ebx
 	addl	%ebp,%ecx
-	movl	C(d_rgbtable),%ebp
 	addl	%ecx,%ebx
-	movb	(%ebp,%ebx),%cl
+	movb	C(r_rgbtable)(%ebx),%cl
 	movb	%cl,DP_Colour
 
 	movl	C(scrn),%ebx

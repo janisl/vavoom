@@ -495,7 +495,7 @@ extern "C" void D_RasterizeAliasPolySmooth(void)
 	else
 	{
 		D_PolysetSetUpForLineScan(plefttop[0], plefttop[1],
-							  pleftbottom[0], pleftbottom[1]);
+							pleftbottom[0], pleftbottom[1]);
 
 		d_pzbasestep = (ScreenWidth + ubasestep) << 1;
 		d_pzextrastep = d_pzbasestep + 2;
@@ -604,7 +604,7 @@ extern "C" void D_RasterizeAliasPolySmooth(void)
 		else
 		{
 			D_PolysetSetUpForLineScan(plefttop[0], plefttop[1],
-								  pleftbottom[0], pleftbottom[1]);
+								pleftbottom[0], pleftbottom[1]);
 
 			d_pdestbasestep = (ScreenWidth + ubasestep) * PixelBytes;
 			d_pdestextrastep = d_pdestbasestep + PixelBytes;
@@ -665,7 +665,7 @@ extern "C" void D_RasterizeAliasPolySmooth(void)
 	d_pedgespanpackage = a_spans;
 
 	D_PolysetSetUpForLineScan(prighttop[0], prighttop[1],
-						  prightbottom[0], prightbottom[1]);
+						prightbottom[0], prightbottom[1]);
 	d_aspancount = 0;
 	d_countextrastep = ubasestep + 1;
 	originalcount = a_spans[initialrightheight].count;
@@ -689,7 +689,7 @@ extern "C" void D_RasterizeAliasPolySmooth(void)
 		height = -(prightbottom[1] - prighttop[1]);
 
 		D_PolysetSetUpForLineScan(prighttop[0], prighttop[1],
-							  prightbottom[0], prightbottom[1]);
+							prightbottom[0], prightbottom[1]);
 
 		d_countextrastep = ubasestep + 1;
 		a_spans[initialrightheight + height].count = DPS_SPAN_LIST_END;
@@ -961,7 +961,7 @@ extern "C" void D_PolysetDrawSpans_8(spanpackage_t *pspanpackage)
 			{
 				if ((lzi >> 16) >= *lpz)
 				{
-					*lpdest = fadetable[*lptex + (llight & 0xFF00)];
+					*lpdest = d_fadetable[*lptex + (llight & 0xFF00)];
 					*lpz = lzi >> 16;
 				}
 				lpdest++;
@@ -1030,7 +1030,7 @@ extern "C" void D_PolysetDrawSpans_16(spanpackage_t *pspanpackage)
 			{
 				if ((lzi >> 16) >= *lpz)
 				{
-					*lpdest = fadetable16[*lptex + (llight & 0xFF00)];
+					*lpdest = d_fadetable16[*lptex + (llight & 0xFF00)];
 					*lpz = lzi >> 16;
 				}
 				lpdest++;
@@ -1099,7 +1099,7 @@ extern "C" void D_PolysetDrawSpans_32(spanpackage_t *pspanpackage)
 			{
 				if ((lzi >> 16) >= *lpz)
 				{
-					*lpdest = fadetable32[*lptex + (llight & 0xFF00)];
+					*lpdest = d_fadetable32[*lptex + (llight & 0xFF00)];
 					*lpz = lzi >> 16;
 				}
 				lpdest++;
@@ -1169,7 +1169,7 @@ extern "C" void D_PolysetDrawSpansFuzz_8(spanpackage_t *pspanpackage)
 				if ((lzi >> 16) >= *lpz)
 				{
 					*lpdest = d_transluc[*lpdest +
-						(fadetable[*lptex + (llight & 0xFF00)] << 8)];
+						(d_fadetable[*lptex + (llight & 0xFF00)] << 8)];
 					*lpz = lzi >> 16;
 				}
 				lpdest++;
@@ -1239,7 +1239,7 @@ extern "C" void D_PolysetDrawSpansAltFuzz_8(spanpackage_t *pspanpackage)
 				if ((lzi >> 16) >= *lpz)
 				{
 					*lpdest = d_transluc[(*lpdest << 8) +
-						fadetable[*lptex + (llight & 0xFF00)]];
+						d_fadetable[*lptex + (llight & 0xFF00)]];
 					*lpz = lzi >> 16;
 				}
 				lpdest++;
@@ -1315,7 +1315,7 @@ extern "C" void D_PolysetDrawSpansFuzz_15(spanpackage_t *pspanpackage)
 			{
 				if ((lzi >> 16) >= *lpz)
 				{
-					int btemp = fadetable16[*lptex + (llight & 0xFF00)];
+					int btemp = d_fadetable16[*lptex + (llight & 0xFF00)];
 					byte r1 = GetCol15R(*lpdest);
 					byte g1 = GetCol15G(*lpdest);
 					byte b1 = GetCol15B(*lpdest);
@@ -1407,7 +1407,7 @@ extern "C" void D_PolysetDrawSpansFuzz_16(spanpackage_t *pspanpackage)
 			{
 				if ((lzi >> 16) >= *lpz)
 				{
-					vuint32 btemp = fadetable16[*lptex + (llight & 0xFF00)];
+					vuint32 btemp = d_fadetable16[*lptex + (llight & 0xFF00)];
 					byte r1 = GetCol16R(*lpdest);
 					byte g1 = GetCol16G(*lpdest);
 					byte b1 = GetCol16B(*lpdest);
@@ -1496,7 +1496,7 @@ extern "C" void D_PolysetDrawSpansFuzz_32(spanpackage_t *pspanpackage)
 			{
 				if ((lzi >> 16) >= *lpz)
 				{
-					vuint32 btemp = fadetable32[*lptex + (llight & 0xFF00)];
+					vuint32 btemp = d_fadetable32[*lptex + (llight & 0xFF00)];
 					byte r1 = GetCol32R(*lpdest);
 					byte g1 = GetCol32G(*lpdest);
 					byte b1 = GetCol32B(*lpdest);
@@ -1580,10 +1580,10 @@ extern "C" void D_PolysetDrawSpansRGB_8(spanpackage_t *pspanpackage)
 				if ((lzi >> 16) >= *lpz)
 				{
 					int pix = *lptex;
-					*lpdest = d_rgbtable[
-						fadetable16r[pix + (lr & 0xFF00)] |
-						fadetable16g[pix + (lg & 0xFF00)] |
-						fadetable16b[pix + (lb & 0xFF00)]];
+					*lpdest = r_rgbtable[
+						d_fadetable16r[pix + (lr & 0xFF00)] |
+						d_fadetable16g[pix + (lg & 0xFF00)] |
+						d_fadetable16b[pix + (lb & 0xFF00)]];
 					*lpz = lzi >> 16;
 				}
 				lpdest++;
@@ -1659,9 +1659,9 @@ extern "C" void D_PolysetDrawSpansRGB_16(spanpackage_t *pspanpackage)
 				if ((lzi >> 16) >= *lpz)
 				{
 					int pix = *lptex;
-					*lpdest = fadetable16r[pix + (lr & 0xFF00)] |
-						fadetable16g[pix + (lg & 0xFF00)] |
-						fadetable16b[pix + (lb & 0xFF00)];
+					*lpdest = d_fadetable16r[pix + (lr & 0xFF00)] |
+						d_fadetable16g[pix + (lg & 0xFF00)] |
+						d_fadetable16b[pix + (lb & 0xFF00)];
 					*lpz = lzi >> 16;
 				}
 				lpdest++;
@@ -1738,9 +1738,9 @@ extern "C" void D_PolysetDrawSpansRGB_32(spanpackage_t *pspanpackage)
 				{
 					int pix = *lptex;
 					*lpdest = MakeCol32(
-						fadetable32r[pix + (lr & 0xFF00)],
-						fadetable32g[pix + (lg & 0xFF00)],
-						fadetable32b[pix + (lb & 0xFF00)]);
+						d_fadetable32r[pix + (lr & 0xFF00)],
+						d_fadetable32g[pix + (lg & 0xFF00)],
+						d_fadetable32b[pix + (lb & 0xFF00)]);
 					*lpz = lzi >> 16;
 				}
 				lpdest++;
@@ -1816,10 +1816,10 @@ extern "C" void D_PolysetDrawSpansRGBFuzz_8(spanpackage_t *pspanpackage)
 				if ((lzi >> 16) >= *lpz)
 				{
 					int pix = *lptex;
-					*lpdest = d_transluc[*lpdest + (d_rgbtable[
-						fadetable16r[pix + (lr & 0xFF00)] |
-						fadetable16g[pix + (lg & 0xFF00)] |
-						fadetable16b[pix + (lb & 0xFF00)]] << 8)];
+					*lpdest = d_transluc[*lpdest + (r_rgbtable[
+						d_fadetable16r[pix + (lr & 0xFF00)] |
+						d_fadetable16g[pix + (lg & 0xFF00)] |
+						d_fadetable16b[pix + (lb & 0xFF00)]] << 8)];
 				}
 				lpdest++;
 				lzi += r_zistepx;
@@ -1894,10 +1894,10 @@ extern "C" void D_PolysetDrawSpansRGBAltFuzz_8(spanpackage_t *pspanpackage)
 				if ((lzi >> 16) >= *lpz)
 				{
 					int pix = *lptex;
-					*lpdest = d_transluc[(*lpdest << 8) + d_rgbtable[
-						fadetable16r[pix + (lr & 0xFF00)] |
-						fadetable16g[pix + (lg & 0xFF00)] |
-						fadetable16b[pix + (lb & 0xFF00)]]];
+					*lpdest = d_transluc[(*lpdest << 8) + r_rgbtable[
+						d_fadetable16r[pix + (lr & 0xFF00)] |
+						d_fadetable16g[pix + (lg & 0xFF00)] |
+						d_fadetable16b[pix + (lb & 0xFF00)]]];
 					*lpz = lzi >> 16;
 				}
 				lpdest++;
@@ -1980,9 +1980,9 @@ extern "C" void D_PolysetDrawSpansRGBFuzz_15(spanpackage_t *pspanpackage)
 				if ((lzi >> 16) >= *lpz)
 				{
 					int pix = *lptex;
-					int btemp = fadetable16r[pix + (lr & 0xFF00)] |
-						fadetable16g[pix + (lg & 0xFF00)] |
-						fadetable16b[pix + (lb & 0xFF00)];
+					int btemp = d_fadetable16r[pix + (lr & 0xFF00)] |
+						d_fadetable16g[pix + (lg & 0xFF00)] |
+						d_fadetable16b[pix + (lb & 0xFF00)];
 					byte r1 = GetCol15R(*lpdest);
 					byte g1 = GetCol15G(*lpdest);
 					byte b1 = GetCol15B(*lpdest);
@@ -2081,9 +2081,9 @@ extern "C" void D_PolysetDrawSpansRGBFuzz_16(spanpackage_t *pspanpackage)
 				if ((lzi >> 16) >= *lpz)
 				{
 					int pix = *lptex;
-					vuint32 btemp = fadetable16r[pix + (lr & 0xFF00)] |
-						fadetable16g[pix + (lg & 0xFF00)] |
-						fadetable16b[pix + (lb & 0xFF00)];
+					vuint32 btemp = d_fadetable16r[pix + (lr & 0xFF00)] |
+						d_fadetable16g[pix + (lg & 0xFF00)] |
+						d_fadetable16b[pix + (lb & 0xFF00)];
 					byte r1 = GetCol16R(*lpdest);
 					byte g1 = GetCol16G(*lpdest);
 					byte b1 = GetCol16B(*lpdest);
@@ -2182,9 +2182,9 @@ extern "C" void D_PolysetDrawSpansRGBFuzz_32(spanpackage_t *pspanpackage)
 					byte r1 = GetCol32R(*lpdest);
 					byte g1 = GetCol32G(*lpdest);
 					byte b1 = GetCol32B(*lpdest);
-					byte r2 = fadetable32r[pix + (lr & 0xFF00)];
-					byte g2 = fadetable32g[pix + (lg & 0xFF00)];
-					byte b2 = fadetable32b[pix + (lb & 0xFF00)];
+					byte r2 = d_fadetable32r[pix + (lr & 0xFF00)];
+					byte g2 = d_fadetable32g[pix + (lg & 0xFF00)];
+					byte b2 = d_fadetable32b[pix + (lb & 0xFF00)];
 					byte r = (d_dsttranstab[r1] + d_srctranstab[r2]) >> 8;
 					byte g = (d_dsttranstab[g1] + d_srctranstab[g2]) >> 8;
 					byte b = (d_dsttranstab[b1] + d_srctranstab[b2]) >> 8;

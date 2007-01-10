@@ -32,12 +32,7 @@ Ltemp:	.long	0
 
 	.text
 
-	Align4
-
 #define pspans	4+8
-
-.globl C(D_PolysetAff32Start)
-C(D_PolysetAff32Start):
 
 //==========================================================================
 //
@@ -48,6 +43,7 @@ C(D_PolysetAff32Start):
 //
 //==========================================================================
 
+	Align4
 .globl C(D_PolysetDrawSpans_32)
 C(D_PolysetDrawSpans_32):
 	pushl	%esi				// preserve register variables
@@ -185,8 +181,7 @@ LDraw8:
 	movb	%dh,%ah
 	movb	(%esi),%al
 	movw	%bp,(%ecx)
-	movl	0x12345678(,%eax,4),%eax
-LPatch8:
+	movl	C(d_fadetable32)(,%eax,4),%eax
 	movl	%eax,(%edi)
 Lp1:
 	addl	tstep,%edx
@@ -203,8 +198,7 @@ LDraw7:
 	movb	%dh,%ah
 	movb	(%esi),%al
 	movw	%bp,2(%ecx)
-	movl	0x12345678(,%eax,4),%eax
-LPatch7:
+	movl	C(d_fadetable32)(,%eax,4),%eax
 	movl	%eax,4(%edi)
 Lp2:
 	addl	tstep,%edx
@@ -221,8 +215,7 @@ LDraw6:
 	movb	%dh,%ah
 	movb	(%esi),%al
 	movw	%bp,4(%ecx)
-	movl	0x12345678(,%eax,4),%eax
-LPatch6:
+	movl	C(d_fadetable32)(,%eax,4),%eax
 	movl	%eax,8(%edi)
 Lp3:
 	addl	tstep,%edx
@@ -239,8 +232,7 @@ LDraw5:
 	movb	%dh,%ah
 	movb	(%esi),%al
 	movw	%bp,6(%ecx)
-	movl	0x12345678(,%eax,4),%eax
-LPatch5:
+	movl	C(d_fadetable32)(,%eax,4),%eax
 	movl	%eax,12(%edi)
 Lp4:
 	addl	tstep,%edx
@@ -257,8 +249,7 @@ LDraw4:
 	movb	%dh,%ah
 	movb	(%esi),%al
 	movw	%bp,8(%ecx)
-	movl	0x12345678(,%eax,4),%eax
-LPatch4:
+	movl	C(d_fadetable32)(,%eax,4),%eax
 	movl	%eax,16(%edi)
 Lp5:
 	addl	tstep,%edx
@@ -275,8 +266,7 @@ LDraw3:
 	movb	%dh,%ah
 	movb	(%esi),%al
 	movw	%bp,10(%ecx)
-	movl	0x12345678(,%eax,4),%eax
-LPatch3:
+	movl	C(d_fadetable32)(,%eax,4),%eax
 	movl	%eax,20(%edi)
 Lp6:
 	addl	tstep,%edx
@@ -293,8 +283,7 @@ LDraw2:
 	movb	%dh,%ah
 	movb	(%esi),%al
 	movw	%bp,12(%ecx)
-	movl	0x12345678(,%eax,4),%eax
-LPatch2:
+	movl	C(d_fadetable32)(,%eax,4),%eax
 	movl	%eax,24(%edi)
 Lp7:
 	addl	tstep,%edx
@@ -311,8 +300,7 @@ LDraw1:
 	movb	%dh,%ah
 	movb	(%esi),%al
 	movw	%bp,14(%ecx)
-	movl	0x12345678(,%eax,4),%eax
-LPatch1:
+	movl	C(d_fadetable32)(,%eax,4),%eax
 	movl	%eax,28(%edi)
 Lp8:
 	addl	tstep,%edx
@@ -361,8 +349,7 @@ LExactlyOneLong:
 	addl	$(spanpackage_t_size),%esi	// point to next span
 	movb	(%ebx),%al
 	movw	%bp,(%ecx)
-	movl	0x12345678(,%eax,4),%eax
-LPatch9:
+	movl	C(d_fadetable32)(,%eax,4),%eax
 	movl	%eax,(%edi)
 
 	jmp		LNextSpanESISet
@@ -513,8 +500,7 @@ LFuzzDraw8:
 	movb	%dh,%ah
 	movb	(%esi),%al
 	movw	%bp,(%ecx)
-	movl	0x12345678(,%eax,4),%eax
-LFuzzPatch8:
+	movl	C(d_fadetable32)(,%eax,4),%eax
 	pushl	%ebx
 	pushl	%ecx
 	pushl	%edx
@@ -558,8 +544,7 @@ LFuzzDraw7:
 	movb	%dh,%ah
 	movb	(%esi),%al
 	movw	%bp,2(%ecx)
-	movl	0x12345678(,%eax,4),%eax
-LFuzzPatch7:
+	movl	C(d_fadetable32)(,%eax,4),%eax
 	pushl	%ebx
 	pushl	%ecx
 	pushl	%edx
@@ -603,8 +588,7 @@ LFuzzDraw6:
 	movb	%dh,%ah
 	movb	(%esi),%al
 	movw	%bp,4(%ecx)
-	movl	0x12345678(,%eax,4),%eax
-LFuzzPatch6:
+	movl	C(d_fadetable32)(,%eax,4),%eax
 	pushl	%ebx
 	pushl	%ecx
 	pushl	%edx
@@ -648,8 +632,7 @@ LFuzzDraw5:
 	movb	%dh,%ah
 	movb	(%esi),%al
 	movw	%bp,6(%ecx)
-	movl	0x12345678(,%eax,4),%eax
-LFuzzPatch5:
+	movl	C(d_fadetable32)(,%eax,4),%eax
 	pushl	%ebx
 	pushl	%ecx
 	pushl	%edx
@@ -693,8 +676,7 @@ LFuzzDraw4:
 	movb	%dh,%ah
 	movb	(%esi),%al
 	movw	%bp,8(%ecx)
-	movl	0x12345678(,%eax,4),%eax
-LFuzzPatch4:
+	movl	C(d_fadetable32)(,%eax,4),%eax
 	pushl	%ebx
 	pushl	%ecx
 	pushl	%edx
@@ -738,8 +720,7 @@ LFuzzDraw3:
 	movb	%dh,%ah
 	movb	(%esi),%al
 	movw	%bp,10(%ecx)
-	movl	0x12345678(,%eax,4),%eax
-LFuzzPatch3:
+	movl	C(d_fadetable32)(,%eax,4),%eax
 	pushl	%ebx
 	pushl	%ecx
 	pushl	%edx
@@ -783,8 +764,7 @@ LFuzzDraw2:
 	movb	%dh,%ah
 	movb	(%esi),%al
 	movw	%bp,12(%ecx)
-	movl	0x12345678(,%eax,4),%eax
-LFuzzPatch2:
+	movl	C(d_fadetable32)(,%eax,4),%eax
 	pushl	%ebx
 	pushl	%ecx
 	pushl	%edx
@@ -828,8 +808,7 @@ LFuzzDraw1:
 	movb	%dh,%ah
 	movb	(%esi),%al
 	movw	%bp,14(%ecx)
-	movl	0x12345678(,%eax,4),%eax
-LFuzzPatch1:
+	movl	C(d_fadetable32)(,%eax,4),%eax
 	pushl	%ebx
 	pushl	%ecx
 	pushl	%edx
@@ -905,8 +884,7 @@ LFuzzExactlyOneLong:
 	addl	$(spanpackage_t_size),%esi	// point to next span
 	movb	(%ebx),%al
 	movw	%bp,(%ecx)
-	movl	0x12345678(,%eax,4),%eax
-LFuzzPatch9:
+	movl	C(d_fadetable32)(,%eax,4),%eax
 	pushl	%ebx
 	pushl	%ecx
 	pushl	%edx
@@ -1088,25 +1066,25 @@ LRGBDraw8:
 	cmpw	(%ecx),%bp
 	jl		LRGBp1
 	xorl	%eax,%eax
+	addl	C(roffs), %edi
 	movb	%dh,%ah
 	movb	(%esi),%al
 	movw	%bp,(%ecx)
-	movb	0x12345678(%eax),%al
-LRPatch8:
-	movb	%al,31(%edi)
-LROffsPatch8:
+	movb	C(d_fadetable32r)(%eax),%al
+	movb	%al,(%edi)
 	movb	gb+1,%ah
+	subl	C(roffs), %edi
 	movb	(%esi),%al
-	movb	0x12345678(%eax),%al
-LGPatch8:
-	movb	%al,31(%edi)
-LGOffsPatch8:
+	addl	C(goffs), %edi
+	movb	C(d_fadetable32g)(%eax),%al
+	movb	%al,(%edi)
 	movb	gb+3,%ah
+	subl	C(goffs), %edi
 	movb	(%esi),%al
-	movb	0x12345678(%eax),%al
-LBPatch8:
-	movb	%al,31(%edi)
-LBOffsPatch8:
+	addl	C(boffs), %edi
+	movb	C(d_fadetable32b)(%eax),%al
+	movb	%al,(%edi)
+	subl	C(boffs), %edi
 LRGBp1:
 	movl	gbstep,%eax
 	addl	%eax,gb
@@ -1121,25 +1099,25 @@ LRGBDraw7:
 	cmpw	2(%ecx),%bp
 	jl		LRGBp2
 	xorl	%eax,%eax
+	addl	C(roffs), %edi
 	movb	%dh,%ah
 	movb	(%esi),%al
 	movw	%bp,2(%ecx)
-	movb	0x12345678(%eax),%al
-LRPatch7:
-	movb	%al,31(%edi)
-LROffsPatch7:
+	movb	C(d_fadetable32r)(%eax),%al
+	movb	%al,4(%edi)
 	movb	gb+1,%ah
+	subl	C(roffs), %edi
 	movb	(%esi),%al
-	movb	0x12345678(%eax),%al
-LGPatch7:
-	movb	%al,31(%edi)
-LGOffsPatch7:
+	addl	C(goffs), %edi
+	movb	C(d_fadetable32g)(%eax),%al
+	movb	%al,4(%edi)
 	movb	gb+3,%ah
+	subl	C(goffs), %edi
 	movb	(%esi),%al
-	movb	0x12345678(%eax),%al
-LBPatch7:
-	movb	%al,31(%edi)
-LBOffsPatch7:
+	addl	C(boffs), %edi
+	movb	C(d_fadetable32b)(%eax),%al
+	movb	%al,4(%edi)
+	subl	C(boffs), %edi
 LRGBp2:
 	movl	gbstep,%eax
 	addl	%eax,gb
@@ -1154,25 +1132,25 @@ LRGBDraw6:
 	cmpw	4(%ecx),%bp
 	jl		LRGBp3
 	xorl	%eax,%eax
+	addl	C(roffs), %edi
 	movb	%dh,%ah
 	movb	(%esi),%al
 	movw	%bp,4(%ecx)
-	movb	0x12345678(%eax),%al
-LRPatch6:
-	movb	%al,31(%edi)
-LROffsPatch6:
+	movb	C(d_fadetable32r)(%eax),%al
+	movb	%al,8(%edi)
 	movb	gb+1,%ah
+	subl	C(roffs), %edi
 	movb	(%esi),%al
-	movb	0x12345678(%eax),%al
-LGPatch6:
-	movb	%al,31(%edi)
-LGOffsPatch6:
+	addl	C(goffs), %edi
+	movb	C(d_fadetable32g)(%eax),%al
+	movb	%al,8(%edi)
 	movb	gb+3,%ah
+	subl	C(goffs), %edi
 	movb	(%esi),%al
-	movb	0x12345678(%eax),%al
-LBPatch6:
-	movb	%al,31(%edi)
-LBOffsPatch6:
+	addl	C(boffs), %edi
+	movb	C(d_fadetable32b)(%eax),%al
+	movb	%al,8(%edi)
+	subl	C(boffs), %edi
 LRGBp3:
 	movl	gbstep,%eax
 	addl	%eax,gb
@@ -1187,25 +1165,25 @@ LRGBDraw5:
 	cmpw	6(%ecx),%bp
 	jl		LRGBp4
 	xorl	%eax,%eax
+	addl	C(roffs), %edi
 	movb	%dh,%ah
 	movb	(%esi),%al
 	movw	%bp,6(%ecx)
-	movb	0x12345678(%eax),%al
-LRPatch5:
-	movb	%al,31(%edi)
-LROffsPatch5:
+	movb	C(d_fadetable32r)(%eax),%al
+	movb	%al,12(%edi)
 	movb	gb+1,%ah
+	subl	C(roffs), %edi
 	movb	(%esi),%al
-	movb	0x12345678(%eax),%al
-LGPatch5:
-	movb	%al,31(%edi)
-LGOffsPatch5:
+	addl	C(goffs), %edi
+	movb	C(d_fadetable32g)(%eax),%al
+	movb	%al,12(%edi)
 	movb	gb+3,%ah
+	subl	C(goffs), %edi
 	movb	(%esi),%al
-	movb	0x12345678(%eax),%al
-LBPatch5:
-	movb	%al,31(%edi)
-LBOffsPatch5:
+	addl	C(boffs), %edi
+	movb	C(d_fadetable32b)(%eax),%al
+	movb	%al,12(%edi)
+	subl	C(boffs), %edi
 LRGBp4:
 	movl	gbstep,%eax
 	addl	%eax,gb
@@ -1220,25 +1198,25 @@ LRGBDraw4:
 	cmpw	8(%ecx),%bp
 	jl		LRGBp5
 	xorl	%eax,%eax
+	addl	C(roffs), %edi
 	movb	%dh,%ah
 	movb	(%esi),%al
 	movw	%bp,8(%ecx)
-	movb	0x12345678(%eax),%al
-LRPatch4:
-	movb	%al,31(%edi)
-LROffsPatch4:
+	movb	C(d_fadetable32r)(%eax),%al
+	movb	%al,16(%edi)
 	movb	gb+1,%ah
+	subl	C(roffs), %edi
 	movb	(%esi),%al
-	movb	0x12345678(%eax),%al
-LGPatch4:
-	movb	%al,31(%edi)
-LGOffsPatch4:
+	addl	C(goffs), %edi
+	movb	C(d_fadetable32g)(%eax),%al
+	movb	%al,16(%edi)
 	movb	gb+3,%ah
+	subl	C(goffs), %edi
 	movb	(%esi),%al
-	movb	0x12345678(%eax),%al
-LBPatch4:
-	movb	%al,31(%edi)
-LBOffsPatch4:
+	addl	C(boffs), %edi
+	movb	C(d_fadetable32b)(%eax),%al
+	movb	%al,16(%edi)
+	subl	C(boffs), %edi
 LRGBp5:
 	movl	gbstep,%eax
 	addl	%eax,gb
@@ -1253,25 +1231,25 @@ LRGBDraw3:
 	cmpw	10(%ecx),%bp
 	jl		LRGBp6
 	xorl	%eax,%eax
+	addl	C(roffs), %edi
 	movb	%dh,%ah
 	movb	(%esi),%al
 	movw	%bp,10(%ecx)
-	movb	0x12345678(%eax),%al
-LRPatch3:
-	movb	%al,31(%edi)
-LROffsPatch3:
+	movb	C(d_fadetable32r)(%eax),%al
+	movb	%al,20(%edi)
 	movb	gb+1,%ah
+	subl	C(roffs), %edi
 	movb	(%esi),%al
-	movb	0x12345678(%eax),%al
-LGPatch3:
-	movb	%al,31(%edi)
-LGOffsPatch3:
+	addl	C(goffs), %edi
+	movb	C(d_fadetable32g)(%eax),%al
+	movb	%al,20(%edi)
 	movb	gb+3,%ah
+	subl	C(goffs), %edi
 	movb	(%esi),%al
-	movb	0x12345678(%eax),%al
-LBPatch3:
-	movb	%al,31(%edi)
-LBOffsPatch3:
+	addl	C(boffs), %edi
+	movb	C(d_fadetable32b)(%eax),%al
+	movb	%al,20(%edi)
+	subl	C(boffs), %edi
 LRGBp6:
 	movl	gbstep,%eax
 	addl	%eax,gb
@@ -1286,25 +1264,25 @@ LRGBDraw2:
 	cmpw	12(%ecx),%bp
 	jl		LRGBp7
 	xorl	%eax,%eax
+	addl	C(roffs), %edi
 	movb	%dh,%ah
 	movb	(%esi),%al
 	movw	%bp,12(%ecx)
-	movb	0x12345678(%eax),%al
-LRPatch2:
-	movb	%al,31(%edi)
-LROffsPatch2:
+	movb	C(d_fadetable32r)(%eax),%al
+	movb	%al,24(%edi)
 	movb	gb+1,%ah
+	subl	C(roffs), %edi
 	movb	(%esi),%al
-	movb	0x12345678(%eax),%al
-LGPatch2:
-	movb	%al,31(%edi)
-LGOffsPatch2:
+	addl	C(goffs), %edi
+	movb	C(d_fadetable32g)(%eax),%al
+	movb	%al,24(%edi)
 	movb	gb+3,%ah
+	subl	C(goffs), %edi
 	movb	(%esi),%al
-	movb	0x12345678(%eax),%al
-LBPatch2:
-	movb	%al,31(%edi)
-LBOffsPatch2:
+	addl	C(boffs), %edi
+	movb	C(d_fadetable32b)(%eax),%al
+	movb	%al,24(%edi)
+	subl	C(boffs), %edi
 LRGBp7:
 	movl	gbstep,%eax
 	addl	%eax,gb
@@ -1319,25 +1297,25 @@ LRGBDraw1:
 	cmpw	14(%ecx),%bp
 	jl		LRGBp8
 	xorl	%eax,%eax
+	addl	C(roffs), %edi
 	movb	%dh,%ah
 	movb	(%esi),%al
 	movw	%bp,14(%ecx)
-	movb	0x12345678(%eax),%al
-LRPatch1:
-	movb	%al,31(%edi)
-LROffsPatch1:
+	movb	C(d_fadetable32r)(%eax),%al
+	movb	%al,28(%edi)
 	movb	gb+1,%ah
+	subl	C(roffs), %edi
 	movb	(%esi),%al
-	movb	0x12345678(%eax),%al
-LGPatch1:
-	movb	%al,31(%edi)
-LGOffsPatch1:
+	addl	C(goffs), %edi
+	movb	C(d_fadetable32g)(%eax),%al
+	movb	%al,28(%edi)
 	movb	gb+3,%ah
+	subl	C(goffs), %edi
 	movb	(%esi),%al
-	movb	0x12345678(%eax),%al
-LBPatch1:
-	movb	%al,31(%edi)
-LBOffsPatch1:
+	addl	C(boffs), %edi
+	movb	C(d_fadetable32b)(%eax),%al
+	movb	%al,28(%edi)
+	subl	C(boffs), %edi
 LRGBp8:
 	movl	gbstep,%eax
 	addl	%eax,gb
@@ -1384,25 +1362,25 @@ LRGBExactlyOneLong:
 	xorl	%eax,%eax
 	movl	spanpackage_t_pdest(%esi),%edi
 	movb	spanpackage_t_r+1(%esi),%ah
+	addl	C(roffs), %edi
 	movb	(%ebx),%al
 	movw	%bp,(%ecx)
-	movb	0x12345678(%eax),%al
-LRPatch9:
-	movb	%al,31(%edi)
-LROffsPatch9:
+	movb	C(d_fadetable32r)(%eax),%al
+	movb	%al,(%edi)
 	movb	spanpackage_t_g+1(%esi),%ah
+	subl	C(roffs), %edi
 	movb	(%ebx),%al
-	movb	0x12345678(%eax),%al
-LGPatch9:
-	movb	%al,31(%edi)
-LGOffsPatch9:
+	addl	C(goffs), %edi
+	movb	C(d_fadetable32g)(%eax),%al
+	movb	%al,(%edi)
 	movb	spanpackage_t_b+1(%esi),%ah
+	subl	C(goffs), %edi
 	movb	(%ebx),%al
+	addl	C(boffs), %edi
 	addl	$(spanpackage_t_size),%esi	// point to next span
-	movb	0x12345678(%eax),%al
-LBPatch9:
-	movb	%al,31(%edi)
-LBOffsPatch9:
+	movb	C(d_fadetable32b)(%eax),%al
+	movb	%al,(%edi)
+	subl	C(boffs), %edi
 
 	jmp		LRGBNextSpanESISet
 
@@ -1541,52 +1519,49 @@ LRGBFuzzDraw1:
 	movb	%dh,%ah
 	movb	(%esi),%al
 	movw	%bp,14(%ecx)
-	movb	0x12345678(%eax),%al
-LRFuzzPatch1:
+	movb	C(d_fadetable32r)(%eax),%al
 	movb	%al,Ltemp
 	movb	gb+1,%ah
 	movb	(%esi),%al
-	movb	0x12345678(%eax),%al
-LGFuzzPatch1:
+	movb	C(d_fadetable32g)(%eax),%al
 	movb	%al,Ltemp+1
 	movb	gb+3,%ah
 	movb	(%esi),%al
-	movb	0x12345678(%eax),%al
-LBFuzzPatch1:
+	movb	C(d_fadetable32b)(%eax),%al
 	movb	%al,Ltemp+2
 	xorl	%eax,%eax
 	pushl	%ebx
 	pushl	%ecx
 	pushl	%edx
 	pushl	%esi
+	addl	C(roffs), %edi
 	movl	C(d_srctranstab),%esi
 	movl	C(d_dsttranstab),%edx
 	movb	Ltemp,%al
 	xorl	%ecx,%ecx
-	movb	31(%edi),%cl
-LRFuzzOffsPatch1:
+	movb	(%edi),%cl
 	movl	(%esi,%eax,2),%ebx
 	movb	Ltemp+1,%al
 	addl	(%edx,%ecx,2),%ebx
-	movb	31(%edi),%cl
-LGFuzzOffsPatch1:
-	movb	%bh,31(%edi)
-LRFuzzOffsPatch2:
+	movb	%bh,(%edi)
+	subl	C(roffs), %edi
+	addl	C(goffs), %edi
+	movb	(%edi),%cl
 	movl	(%esi,%eax,2),%ebx
 	movb	Ltemp+2,%al
 	addl	(%edx,%ecx,2),%ebx
-	movb	31(%edi),%cl
-LBFuzzOffsPatch1:
-	movb	%bh,31(%edi)
-LGFuzzOffsPatch2:
+	movb	%bh,(%edi)
+	subl	C(goffs), %edi
+	addl	C(boffs), %edi
+	movb	(%edi),%cl
 	movl	(%esi,%eax,2),%ebx
 	popl	%esi
 	addl	(%edx,%ecx,2),%ebx
 	popl	%edx
 	popl	%ecx
-	movb	%bh,31(%edi)
-LBFuzzOffsPatch2:
+	movb	%bh,(%edi)
 	popl	%ebx
+	subl	C(boffs), %edi
 LRGBFuzzp1:
 	movl	gbstep,%eax
 	addl	%eax,gb
@@ -1635,207 +1610,51 @@ LRGBFuzzExactlyOneLong:
 	movb	spanpackage_t_r+1(%esi),%ah
 	movb	(%ebx),%al
 	movw	%bp,(%ecx)
-	movb	0x12345678(%eax),%al
-LRFuzzPatch2:
+	movb	C(d_fadetable32r)(%eax),%al
 	movb	%al,Ltemp
 	movb	spanpackage_t_g+1(%esi),%ah
 	movb	(%ebx),%al
-	movb	0x12345678(%eax),%al
-LGFuzzPatch2:
+	movb	C(d_fadetable32g)(%eax),%al
 	movb	%al,Ltemp+1
 	movb	spanpackage_t_b+1(%esi),%ah
 	movb	(%ebx),%al
 	addl	$(spanpackage_t_size),%esi	// point to next span
-	movb	0x12345678(%eax),%al
-LBFuzzPatch2:
+	movb	C(d_fadetable32b)(%eax),%al
 	movb	%al,Ltemp+2
 	xorl	%eax,%eax
 	pushl	%ebx
 	pushl	%ecx
 	pushl	%edx
 	pushl	%esi
+	addl	C(roffs), %edi
 	movl	C(d_srctranstab),%esi
 	movl	C(d_dsttranstab),%edx
 	movb	Ltemp,%al
 	xorl	%ecx,%ecx
-	movb	31(%edi),%cl
-LRFuzzOffsPatch3:
+	movb	(%edi),%cl
 	movl	(%esi,%eax,2),%ebx
 	movb	Ltemp+1,%al
 	addl	(%edx,%ecx,2),%ebx
-	movb	31(%edi),%cl
-LGFuzzOffsPatch3:
-	movb	%bh,31(%edi)
-LRFuzzOffsPatch4:
+	movb	%bh,(%edi)
+	subl	C(roffs), %edi
+	addl	C(goffs), %edi
+	movb	(%edi),%cl
 	movl	(%esi,%eax,2),%ebx
 	movb	Ltemp+2,%al
 	addl	(%edx,%ecx,2),%ebx
-	movb	31(%edi),%cl
-LBFuzzOffsPatch3:
-	movb	%bh,31(%edi)
-LGFuzzOffsPatch4:
+	movb	%bh,(%edi)
+	subl	C(goffs), %edi
+	addl	C(boffs), %edi
+	movb	(%edi),%cl
 	movl	(%esi,%eax,2),%ebx
 	popl	%esi
 	addl	(%edx,%ecx,2),%ebx
 	popl	%edx
 	popl	%ecx
-	movb	%bh,31(%edi)
-LBFuzzOffsPatch4:
+	movb	%bh,(%edi)
 	popl	%ebx
+	subl	C(boffs), %edi
 
 	jmp		LRGBFuzzNextSpanESISet
-
-
-.globl C(D_PolysetAff32End)
-C(D_PolysetAff32End):
-
-LROffsPatchTable:
-	.long	LROffsPatch1-1, 28
-	.long	LROffsPatch2-1, 24
-	.long	LROffsPatch3-1, 20
-	.long	LROffsPatch4-1, 16
-	.long	LROffsPatch5-1, 12
-	.long	LROffsPatch6-1, 8
-	.long	LROffsPatch7-1, 4
-	.long	LROffsPatch8-1, 0
-	.long	LROffsPatch9-1, 0
-	.long	LRFuzzOffsPatch1-1, 0
-	.long	LRFuzzOffsPatch2-1, 0
-	.long	LRFuzzOffsPatch3-1, 0
-	.long	LRFuzzOffsPatch4-1, 0
-
-LGOffsPatchTable:
-	.long	LGOffsPatch1-1, 28
-	.long	LGOffsPatch2-1, 24
-	.long	LGOffsPatch3-1, 20
-	.long	LGOffsPatch4-1, 16
-	.long	LGOffsPatch5-1, 12
-	.long	LGOffsPatch6-1, 8
-	.long	LGOffsPatch7-1, 4
-	.long	LGOffsPatch8-1, 0
-	.long	LGOffsPatch9-1, 0
-	.long	LGFuzzOffsPatch1-1, 0
-	.long	LGFuzzOffsPatch2-1, 0
-	.long	LGFuzzOffsPatch3-1, 0
-	.long	LGFuzzOffsPatch4-1, 0
-
-LBOffsPatchTable:
-	.long	LBOffsPatch1-1, 28
-	.long	LBOffsPatch2-1, 24
-	.long	LBOffsPatch3-1, 20
-	.long	LBOffsPatch4-1, 16
-	.long	LBOffsPatch5-1, 12
-	.long	LBOffsPatch6-1, 8
-	.long	LBOffsPatch7-1, 4
-	.long	LBOffsPatch8-1, 0
-	.long	LBOffsPatch9-1, 0
-	.long	LBFuzzOffsPatch1-1, 0
-	.long	LBFuzzOffsPatch2-1, 0
-	.long	LBFuzzOffsPatch3-1, 0
-	.long	LBFuzzOffsPatch4-1, 0
-
-.globl C(D_Aff32Patch)
-C(D_Aff32Patch):
-	movl	C(fadetable32),%eax
-	movl	%eax,LPatch1-4
-	movl	%eax,LPatch2-4
-	movl	%eax,LPatch3-4
-	movl	%eax,LPatch4-4
-	movl	%eax,LPatch5-4
-	movl	%eax,LPatch6-4
-	movl	%eax,LPatch7-4
-	movl	%eax,LPatch8-4
-	movl	%eax,LPatch9-4
-
-	movl	%eax,LFuzzPatch1-4
-	movl	%eax,LFuzzPatch2-4
-	movl	%eax,LFuzzPatch3-4
-	movl	%eax,LFuzzPatch4-4
-	movl	%eax,LFuzzPatch5-4
-	movl	%eax,LFuzzPatch6-4
-	movl	%eax,LFuzzPatch7-4
-	movl	%eax,LFuzzPatch8-4
-	movl	%eax,LFuzzPatch9-4
-
-	movl	C(fadetable32r),%eax
-	movl	%eax,LRPatch1-4
-	movl	%eax,LRPatch2-4
-	movl	%eax,LRPatch3-4
-	movl	%eax,LRPatch4-4
-	movl	%eax,LRPatch5-4
-	movl	%eax,LRPatch6-4
-	movl	%eax,LRPatch7-4
-	movl	%eax,LRPatch8-4
-	movl	%eax,LRPatch9-4
-
-	movl	%eax,LRFuzzPatch1-4
-	movl	%eax,LRFuzzPatch2-4
-
-	movl	C(fadetable32g),%eax
-	movl	%eax,LGPatch1-4
-	movl	%eax,LGPatch2-4
-	movl	%eax,LGPatch3-4
-	movl	%eax,LGPatch4-4
-	movl	%eax,LGPatch5-4
-	movl	%eax,LGPatch6-4
-	movl	%eax,LGPatch7-4
-	movl	%eax,LGPatch8-4
-	movl	%eax,LGPatch9-4
-
-	movl	%eax,LGFuzzPatch1-4
-	movl	%eax,LGFuzzPatch2-4
-
-	movl	C(fadetable32b),%eax
-	movl	%eax,LBPatch1-4
-	movl	%eax,LBPatch2-4
-	movl	%eax,LBPatch3-4
-	movl	%eax,LBPatch4-4
-	movl	%eax,LBPatch5-4
-	movl	%eax,LBPatch6-4
-	movl	%eax,LBPatch7-4
-	movl	%eax,LBPatch8-4
-	movl	%eax,LBPatch9-4
-
-	movl	%eax,LBFuzzPatch1-4
-	movl	%eax,LBFuzzPatch2-4
-
-	pushl	%ebx
-
-	movl	$LROffsPatchTable,%ebx
-	movl	$13,%ecx
-LROffsPatchLoop:
-	movl	(%ebx),%edx
-	movl	C(roffs),%eax
-	addl	4(%ebx),%eax
-	addl	$8,%ebx
-	movb	%al,(%edx)
-	decl	%ecx
-	jnz		LROffsPatchLoop
-
-	movl	$LGOffsPatchTable,%ebx
-	movl	$13,%ecx
-LGOffsPatchLoop:
-	movl	(%ebx),%edx
-	movl	C(goffs),%eax
-	addl	4(%ebx),%eax
-	addl	$8,%ebx
-	movb	%al,(%edx)
-	decl	%ecx
-	jnz		LGOffsPatchLoop
-
-	movl	$LBOffsPatchTable,%ebx
-	movl	$13,%ecx
-LBOffsPatchLoop:
-	movl	(%ebx),%edx
-	movl	C(boffs),%eax
-	addl	4(%ebx),%eax
-	addl	$8,%ebx
-	movb	%al,(%edx)
-	decl	%ecx
-	jnz		LBOffsPatchLoop
-
-	popl	%ebx
-
-	ret
 
 #endif

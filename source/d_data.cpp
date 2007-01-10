@@ -47,23 +47,21 @@ extern vuint8	gammatable[5][256];
 //	Colourmaps
 //
 vuint8*			colourmaps;	// Standard colourmap
-vuint8*			fadetable;	// Current level's colourmap
-vuint16*		fadetable16;
-vuint32*		fadetable32;
-vuint16*		fadetable16r;
-vuint16*		fadetable16g;
-vuint16*		fadetable16b;
-vuint8*			fadetable32r;
-vuint8*			fadetable32g;
-vuint8*			fadetable32b;
+vuint8			d_fadetable[32 * 256];	// Current colourmap
+vuint16			d_fadetable16[32 * 256];
+vuint16			d_fadetable16r[32 * 256];
+vuint16			d_fadetable16g[32 * 256];
+vuint16			d_fadetable16b[32 * 256];
+vuint32			d_fadetable32[32 * 256];
+vuint8			d_fadetable32r[32 * 256];
+vuint8			d_fadetable32g[32 * 256];
+vuint8			d_fadetable32b[32 * 256];
 
 //
 //	Translucency tables
 //
 vuint8*			tinttables[5];
 vuint16			scaletable[32][256];
-
-vuint8*			d_rgbtable;
 
 vuint8*			consbgmap = NULL;
 
@@ -91,17 +89,17 @@ static void CalcRGBTable8()
 		{
 			if (!(i & 0xff))
 			{
-				fadetable16r[i] = 0x8000;
-				fadetable16g[i] = 0x8000;
-				fadetable16b[i] = 0x8000;
+				d_fadetable16r[i] = 0x8000;
+				d_fadetable16g[i] = 0x8000;
+				d_fadetable16b[i] = 0x8000;
 				continue;
 			}
 			int r = (int)(r_palette[ci].r * frac + 0.5) + fog;
 			int g = (int)(r_palette[ci].g * frac + 0.5) + fog;
 			int b = (int)(r_palette[ci].b * frac + 0.5) + fog;
-			fadetable16r[i] = (r << 7) & 0x7c00;
-			fadetable16g[i] = (g << 2) & 0x03e0;
-			fadetable16b[i] = (b >> 3) & 0x001f;
+			d_fadetable16r[i] = (r << 7) & 0x7c00;
+			d_fadetable16g[i] = (g << 2) & 0x03e0;
+			d_fadetable16b[i] = (b >> 3) & 0x001f;
 		}
 	}
 	unguard;
@@ -144,27 +142,27 @@ static void CalcFadetable16(rgb_t *pal)
 		{
 			if (!(i & 0xff))
 			{
-				fadetable16[i] = 0;
-				fadetable16r[i] = 0;
-				fadetable16g[i] = 0;
-				fadetable16b[i] = 0;
+				d_fadetable16[i] = 0;
+				d_fadetable16r[i] = 0;
+				d_fadetable16g[i] = 0;
+				d_fadetable16b[i] = 0;
 				continue;
 			}
 			int r = gt[pal[ci].r] * colm / 32 + fog;
 			int g = gt[pal[ci].g] * colm / 32 + fog;
 			int b = gt[pal[ci].b] * colm / 32 + fog;
-			fadetable16[i] = MakeCol(r, g, b);
-			fadetable16r[i] = MakeCol(r, 0, 0);
-			fadetable16g[i] = MakeCol(0, g, 0);
-			fadetable16b[i] = MakeCol(0, 0, b);
+			d_fadetable16[i] = MakeCol(r, g, b);
+			d_fadetable16r[i] = MakeCol(r, 0, 0);
+			d_fadetable16g[i] = MakeCol(0, g, 0);
+			d_fadetable16b[i] = MakeCol(0, 0, b);
 			//	For 16 bit we use colour 0 as transparent
-			if (!fadetable16[i])
+			if (!d_fadetable16[i])
 			{
-				fadetable16[i] = 1;
+				d_fadetable16[i] = 1;
 			}
-			if (!fadetable16b[i])
+			if (!d_fadetable16b[i])
 			{
-				fadetable16b[i] = MakeCol(0, 0, 1);
+				d_fadetable16b[i] = MakeCol(0, 0, 1);
 			}
 		}
 	}
@@ -208,27 +206,27 @@ static void CalcFadetable32(rgb_t *pal)
 		{
 			if (!(i & 0xff))
 			{
-				fadetable32[i] = 0;
-				fadetable32r[i] = 0;
-				fadetable32g[i] = 0;
-				fadetable32b[i] = 0;
+				d_fadetable32[i] = 0;
+				d_fadetable32r[i] = 0;
+				d_fadetable32g[i] = 0;
+				d_fadetable32b[i] = 0;
 				continue;
 			}
 			int r = gt[pal[ci].r] * colm / 32 + fog;
 			int g = gt[pal[ci].g] * colm / 32 + fog;
 			int b = gt[pal[ci].b] * colm / 32 + fog;
-			fadetable32[i] = MakeCol32(r, g, b);
-			fadetable32r[i] = r;
-			fadetable32g[i] = g;
-			fadetable32b[i] = b;
+			d_fadetable32[i] = MakeCol32(r, g, b);
+			d_fadetable32r[i] = r;
+			d_fadetable32g[i] = g;
+			d_fadetable32b[i] = b;
 			//	For 32 bit we use colour 0 as transparent
-			if (!fadetable32[i])
+			if (!d_fadetable32[i])
 			{
-				fadetable32[i] = 1;
+				d_fadetable32[i] = 1;
 			}
-			if (!fadetable32b[i])
+			if (!d_fadetable32b[i])
 			{
-				fadetable32b[i] = 1;
+				d_fadetable32b[i] = 1;
 			}
 		}
 	}
@@ -249,15 +247,7 @@ static void InitColourmaps()
 	colourmaps = new vuint8[Strm->TotalSize()];
 	Strm->Serialise(colourmaps, Strm->TotalSize());
 	delete Strm;
-	fadetable = colourmaps;
-	fadetable16 = (word*)Z_Malloc(32 * 256 * 2);
-	fadetable16r = (word*)Z_Malloc(32 * 256 * 2);
-	fadetable16g = (word*)Z_Malloc(32 * 256 * 2);
-	fadetable16b = (word*)Z_Malloc(32 * 256 * 2);
-	fadetable32 = (vuint32*)Z_Malloc(32 * 256 * 4);
-	fadetable32r = (byte*)Z_Malloc(32 * 256);
-	fadetable32g = (byte*)Z_Malloc(32 * 256);
-	fadetable32b = (byte*)Z_Malloc(32 * 256);
+	memcpy(d_fadetable, colourmaps, 32 * 256);
 	unguard;
 }
 
@@ -329,7 +319,6 @@ static void InitTranslucencyTables()
 void VSoftwareDrawer::InitData()
 {
 	guard(VSoftwareDrawer::InitData);
-	d_rgbtable = GTextureManager.GetRgbTable();
 	InitColourmaps();
 	InitTranslucencyTables();
 	unguard;
@@ -425,21 +414,15 @@ void VSoftwareDrawer::UpdatePalette()
 void VSoftwareDrawer::NewMap()
 {
 	guard(VSoftwareDrawer::NewMap);
-	if (fadetable != colourmaps)
-	{
-		Z_Free(fadetable);
-	}
-
 	if (r_fog)
 	{
 		VStream* Strm = W_CreateLumpReaderName(NAME_fogmap);
-		fadetable = new vuint8[Strm->TotalSize()];
-		Strm->Serialise(fadetable, Strm->TotalSize());
+		Strm->Serialise(d_fadetable, Strm->TotalSize());
 		delete Strm;
 	}
 	else
 	{
-		fadetable = colourmaps;
+		memcpy(d_fadetable, colourmaps, 32 * 256);
 	}
 
 	//	Remap colour 0 to alternate balck colour
@@ -447,11 +430,11 @@ void VSoftwareDrawer::NewMap()
 	{
 		if (!(i & 0xff))
 		{
-			fadetable[i] = 0;
+			d_fadetable[i] = 0;
 		}
 		else if (!colourmaps[i])
 		{
-			fadetable[i] = r_black_colour;
+			d_fadetable[i] = r_black_colour;
 		}
 	}
 

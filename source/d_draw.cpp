@@ -185,7 +185,7 @@ void VSoftwareDrawer::FillRect_8(float x1, float y1, float x2, float y2,
 
 	int iWid = ix2 - ix1;
 
-	byte bColour = colour = d_rgbtable[((colour >> 9) & 0x7c00) | 
+	byte bColour = colour = r_rgbtable[((colour >> 9) & 0x7c00) | 
 		((colour >> 6) & 0x03e0) | ((colour >> 3) & 0x1f)];
 
 	byte *dest = (byte*)scrn + ix1 + ScreenWidth * iy1;
@@ -1252,7 +1252,7 @@ void VSoftwareDrawer::DrawLine(int x1, int y1, vuint32 colour, int x2, int y2,
 #endif
 
 	if (ScreenBPP == 8)
-		colour = d_rgbtable[((colour >> 9) & 0x7c00) | ((colour >> 6) & 0x03e0) | ((colour >> 3) & 0x1f)];
+		colour = r_rgbtable[((colour >> 9) & 0x7c00) | ((colour >> 6) & 0x03e0) | ((colour >> 3) & 0x1f)];
 	else if (ScreenBPP == 15)
 		colour = MakeCol15((colour >> 16) & 0xff, (colour >> 8) & 0xff, colour & 0xff);
 	else if (ScreenBPP == 16)

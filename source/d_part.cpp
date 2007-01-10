@@ -110,7 +110,7 @@ extern "C" void D_DrawParticle_8(particle_t *pparticle)
 		return;
 	}
 
-	colour =	d_rgbtable[((pparticle->colour >> 9) & 0x7c00) +
+	colour = r_rgbtable[((pparticle->colour >> 9) & 0x7c00) +
 		((pparticle->colour >> 6) & 0x3e0) +
 		((pparticle->colour >> 3) & 0x1f)];
 

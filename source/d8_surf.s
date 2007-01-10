@@ -43,10 +43,6 @@ sb_v:		.long	0
 
 	.text
 
-	Align4
-.globl C(D_Surf8Start)
-C(D_Surf8Start):
-
 //----------------------------------------------------------------------
 // Surface block drawer for mip level 0
 //----------------------------------------------------------------------
@@ -127,12 +123,10 @@ Lblockloop8_mip0:
 	movb	%dh,%ch
 	addl	%ebp,%edx
 
-	movb	0x12345678(%ebx),%ah
-LPatch0:
+	movb	C(d_fadetable)(%ebx),%ah
 	movb	13(%esi),%bl
 
-	movb	0x12345678(%ecx),%al
-LPatch1:
+	movb	C(d_fadetable)(%ecx),%al
 	movb	12(%esi),%cl
 
 	movb	%dh,%bh
@@ -142,12 +136,10 @@ LPatch1:
 	movb	%dh,%ch
 
 	addl	%ebp,%edx
-	movb	0x12345678(%ebx),%ah
-LPatch2:
+	movb	C(d_fadetable)(%ebx),%ah
 
 	movb	11(%esi),%bl
-	movb	0x12345678(%ecx),%al
-LPatch3:
+	movb	C(d_fadetable)(%ecx),%al
 
 	movb	10(%esi),%cl
 	movl	%eax,12(%edi)
@@ -158,12 +150,10 @@ LPatch3:
 	movb	%dh,%ch
 	addl	%ebp,%edx
 
-	movb	0x12345678(%ebx),%ah
-LPatch4:
+	movb	C(d_fadetable)(%ebx),%ah
 	movb	9(%esi),%bl
 
-	movb	0x12345678(%ecx),%al
-LPatch5:
+	movb	C(d_fadetable)(%ecx),%al
 	movb	8(%esi),%cl
 
 	movb	%dh,%bh
@@ -173,12 +163,10 @@ LPatch5:
 	movb	%dh,%ch
 
 	addl	%ebp,%edx
-	movb	0x12345678(%ebx),%ah
-LPatch6:
+	movb	C(d_fadetable)(%ebx),%ah
 
 	movb	7(%esi),%bl
-	movb	0x12345678(%ecx),%al
-LPatch7:
+	movb	C(d_fadetable)(%ecx),%al
 
 	movb	6(%esi),%cl
 	movl	%eax,8(%edi)
@@ -189,12 +177,10 @@ LPatch7:
 	movb	%dh,%ch
 	addl	%ebp,%edx
 
-	movb	0x12345678(%ebx),%ah
-LPatch8:
+	movb	C(d_fadetable)(%ebx),%ah
 	movb	5(%esi),%bl
 
-	movb	0x12345678(%ecx),%al
-LPatch9:
+	movb	C(d_fadetable)(%ecx),%al
 	movb	4(%esi),%cl
 
 	movb	%dh,%bh
@@ -204,12 +190,10 @@ LPatch9:
 	movb	%dh,%ch
 
 	addl	%ebp,%edx
-	movb	0x12345678(%ebx),%ah
-LPatch10:
+	movb	C(d_fadetable)(%ebx),%ah
 
 	movb	3(%esi),%bl
-	movb	0x12345678(%ecx),%al
-LPatch11:
+	movb	C(d_fadetable)(%ecx),%al
 
 	movb	2(%esi),%cl
 	movl	%eax,4(%edi)
@@ -220,12 +204,10 @@ LPatch11:
 	movb	%dh,%ch
 	addl	%ebp,%edx
 
-	movb	0x12345678(%ebx),%ah
-LPatch12:
+	movb	C(d_fadetable)(%ebx),%ah
 	movb	1(%esi),%bl
 
-	movb	0x12345678(%ecx),%al
-LPatch13:
+	movb	C(d_fadetable)(%ecx),%al
 	movb	(%esi),%cl
 
 	movb	%dh,%bh
@@ -234,12 +216,10 @@ LPatch13:
 	rorl	$16,%eax
 	movb	%dh,%ch
 
-	movb	0x12345678(%ebx),%ah
-LPatch14:
+	movb	C(d_fadetable)(%ebx),%ah
 	movl	C(lightright),%edx
 
-	movb	0x12345678(%ecx),%al
-LPatch15:
+	movb	C(d_fadetable)(%ecx),%al
 	movl	C(lightdelta),%ebp
 
 	movl	%eax,(%edi)
@@ -353,12 +333,10 @@ Lblockloop8_mip1:
 	movb	%dh,%ch
 	addl	%ebp,%edx
 
-	movb	0x12345678(%ebx),%ah
-LPatch22:
+	movb	C(d_fadetable)(%ebx),%ah
 	movb	5(%esi),%bl
 
-	movb	0x12345678(%ecx),%al
-LPatch23:
+	movb	C(d_fadetable)(%ecx),%al
 	movb	4(%esi),%cl
 
 	movb	%dh,%bh
@@ -368,12 +346,10 @@ LPatch23:
 	movb	%dh,%ch
 
 	addl	%ebp,%edx
-	movb	0x12345678(%ebx),%ah
-LPatch24:
+	movb	C(d_fadetable)(%ebx),%ah
 
 	movb	3(%esi),%bl
-	movb	0x12345678(%ecx),%al
-LPatch25:
+	movb	C(d_fadetable)(%ecx),%al
 
 	movb	2(%esi),%cl
 	movl	%eax,4(%edi)
@@ -384,12 +360,10 @@ LPatch25:
 	movb	%dh,%ch
 	addl	%ebp,%edx
 
-	movb	0x12345678(%ebx),%ah
-LPatch26:
+	movb	C(d_fadetable)(%ebx),%ah
 	movb	1(%esi),%bl
 
-	movb	0x12345678(%ecx),%al
-LPatch27:
+	movb	C(d_fadetable)(%ecx),%al
 	movb	(%esi),%cl
 
 	movb	%dh,%bh
@@ -398,12 +372,10 @@ LPatch27:
 	rorl	$16,%eax
 	movb	%dh,%ch
 
-	movb	0x12345678(%ebx),%ah
-LPatch28:
+	movb	C(d_fadetable)(%ebx),%ah
 	movl	C(lightright),%edx
 
-	movb	0x12345678(%ecx),%al
-LPatch29:
+	movb	C(d_fadetable)(%ecx),%al
 	movl	C(lightdelta),%ebp
 
 	movl	%eax,(%edi)
@@ -524,12 +496,10 @@ Lblockloop8_mip2:
 	movb	%dh,%ch
 	addl	%ebp,%edx
 
-	movb	0x12345678(%ebx),%ah
-LPatch18:
+	movb	C(d_fadetable)(%ebx),%ah
 	movb	1(%esi),%bl
 
-	movb	0x12345678(%ecx),%al
-LPatch19:
+	movb	C(d_fadetable)(%ecx),%al
 	movb	(%esi),%cl
 
 	movb	%dh,%bh
@@ -538,12 +508,10 @@ LPatch19:
 	rorl	$16,%eax
 	movb	%dh,%ch
 
-	movb	0x12345678(%ebx),%ah
-LPatch20:
+	movb	C(d_fadetable)(%ebx),%ah
 	movl	C(lightright),%edx
 
-	movb	0x12345678(%ecx),%al
-LPatch21:
+	movb	C(d_fadetable)(%ecx),%al
 	movl	C(lightdelta),%ebp
 
 	movl	%eax,(%edi)
@@ -659,13 +627,11 @@ Lv_loop_mip3:
 	addl	%ebp,%edx
 	movb	%dh,%ch
 
-	movb	0x12345678(%ebx),%al
-LPatch16:
+	movb	C(d_fadetable)(%ebx),%al
 	movl	C(lightright),%edx
 
 	movb	%al,1(%edi)
-	movb	0x12345678(%ecx),%al
-LPatch17:
+	movb	C(d_fadetable)(%ecx),%al
 
 	movb	%al,(%edi)
 	movl	C(sourcetstep),%eax
@@ -691,13 +657,11 @@ LPatch17:
 	addl	%ebp,%edx
 	movb	%dh,%ch
 
-	movb	0x12345678(%ebx),%al
-LPatch30:
+	movb	C(d_fadetable)(%ebx),%al
 	movl	C(sourcetstep),%edx
 
 	movb	%al,1(%edi)
-	movb	0x12345678(%ecx),%al
-LPatch31:
+	movb	C(d_fadetable)(%ecx),%al
 
 	movb	%al,(%edi)
 	movl	C(surfrowbytes),%ebp
@@ -839,19 +803,15 @@ L1008:
 	addl	%ebx,%ecx
 	andl	$65280,%eax
 	addl	%ebx,%eax
-	movw	0x12345678(,%ecx,2),%cx
-LRPatch0:
-	orw		0x12345678(,%eax,2),%cx
-LGPatch0:
+	movw	C(d_fadetable16r)(,%ecx,2),%cx
+	orw		C(d_fadetable16g)(,%eax,2),%cx
 	movl	%ebp,%eax
 	andl	$65280,%eax
 	addl	%ebx,%eax
-	orw		0x12345678(,%eax,2),%cx
-LBPatch0:
+	orw		C(d_fadetable16b)(,%eax,2),%cx
 	andl	$65535,%ecx
 	movl	32(%esp),%edx
-	movb	0x12345678(%ecx),%al
-LTPatch0:
+	movb	C(r_rgbtable)(%ecx),%al
 	movl	60(%esp),%ecx
 	movb	%al,(%ecx,%edx)
 	movl	56(%esp),%ebx
@@ -870,19 +830,15 @@ LTPatch0:
 	addl	%ebx,%ecx
 	andl	$65280,%eax
 	addl	%ebx,%eax
-	movw	0x12345678(,%ecx,2),%cx
-LRPatch1:
-	orw		0x12345678(,%eax,2),%cx
-LGPatch1:
+	movw	C(d_fadetable16r)(,%ecx,2),%cx
+	orw		C(d_fadetable16g)(,%eax,2),%cx
 	movl	%ebp,%eax
 	andl	$65280,%eax
 	addl	%ebx,%eax
-	orw		0x12345678(,%eax,2),%cx
-LBPatch1:
+	orw		C(d_fadetable16b)(,%eax,2),%cx
 	andl	$65535,%ecx
 	movl	32(%esp),%edx
-	movb	0x12345678(%ecx),%al
-LTPatch1:
+	movb	C(r_rgbtable)(%ecx),%al
 	movb	%al,(%edi,%edx)
 	movl	56(%esp),%ecx
 	movl	48(%esp),%ebx
@@ -1026,9 +982,9 @@ L1026:
 	incl	%ebx
 	movl	%ebx,24(%esp)
 L1030:
-	movl 52(%esp),%ecx
-	movl 36(%esp),%edi
-	movl 60(%esp),%eax
+	movl	52(%esp),%ecx
+	movl	36(%esp),%edi
+	movl	60(%esp),%eax
 	andl	$65280,%ecx
 	xorl	%ebx,%ebx
 	movb	(%eax,%edi),%bl
@@ -1036,27 +992,23 @@ L1030:
 	addl	%ebx,%ecx
 	andl	$65280,%eax
 	addl	%ebx,%eax
-	movw	0x12345678(,%ecx,2),%cx
-LRPatch2:
-	orw		0x12345678(,%eax,2),%cx
-LGPatch2:
+	movw	C(d_fadetable16r)(,%ecx,2),%cx
+	orw		C(d_fadetable16g)(,%eax,2),%cx
 	movl	%ebp,%eax
 	andl	$65280,%eax
 	addl	%ebx,%eax
-	orw		0x12345678(,%eax,2),%cx
-LBPatch2:
+	orw		C(d_fadetable16b)(,%eax,2),%cx
 	andl	$65535,%ecx
-	movl 32(%esp),%edx
-	movb	0x12345678(%ecx),%al
-LTPatch2:
-	movl 60(%esp),%ecx
+	movl	32(%esp),%edx
+	movb	C(r_rgbtable)(%ecx),%al
+	movl	60(%esp),%ecx
 	movb	%al,(%ecx,%edx)
-	movl 56(%esp),%ebx
+	movl	56(%esp),%ebx
 	movl	48(%esp),%esi
 	addl	%ebx,52(%esp)
 	movl	%ecx,%edi
-	movl 52(%esp),%ecx
-	movl 36(%esp),%eax
+	movl	52(%esp),%ecx
+	movl	36(%esp),%eax
 	addl	%esi,44(%esp)
 	addl	40(%esp),%ebp
 	decl	%edi
@@ -1067,27 +1019,23 @@ LTPatch2:
 	addl	%ebx,%ecx
 	andl	$65280,%eax
 	addl	%ebx,%eax
-	movw	0x12345678(,%ecx,2),%cx
-LRPatch3:
-	orw		0x12345678(,%eax,2),%cx
-LGPatch3:
+	movw	C(d_fadetable16r)(,%ecx,2),%cx
+	orw		C(d_fadetable16g)(,%eax,2),%cx
 	movl	%ebp,%eax
 	andl	$65280,%eax
 	addl	%ebx,%eax
-	orw		(,%eax,2),%cx
-LBPatch3:
+	orw		C(d_fadetable16b)(,%eax,2),%cx
 	andl	$65535,%ecx
-	movl 32(%esp),%edx
-	movb	0x12345678(%ecx),%al
-LTPatch3:
+	movl	32(%esp),%edx
+	movb	C(r_rgbtable)(%ecx),%al
 	movb	%al,(%edi,%edx)
-	movl 56(%esp),%ecx
+	movl	56(%esp),%ecx
 	movl	48(%esp),%ebx
 	addl	%ecx,52(%esp)
 	addl	%ebx,44(%esp)
 	addl	40(%esp),%ebp
 	addl	$-2,60(%esp)
-	jns L1030
+	jns		L1030
 	movl	C(sourcetstep),%esi
 	movl	C(lightrrightstep),%eax
 	addl	%eax,C(lightrright)
@@ -1101,7 +1049,7 @@ LTPatch3:
 	addl	%eax,C(lightbright)
 	movl	C(lightbleftstep),%eax
 	movl	C(surfrowbytes),%edi
-	movl 24(%esp),%ebx
+	movl	24(%esp),%ebx
 	addl	%esi,36(%esp)
 	addl	%eax,C(lightbleft)
 	addl	%edi,%edx
@@ -1232,27 +1180,23 @@ L1052:
 	addl	%ebx,%ecx
 	andl	$65280,%eax
 	addl	%ebx,%eax
-	movw	0x12345678(,%ecx,2),%cx
-LRPatch4:
-	orw		0x12345678(,%eax,2),%cx
-LGPatch4:
+	movw	C(d_fadetable16r)(,%ecx,2),%cx
+	orw		C(d_fadetable16g)(,%eax,2),%cx
 	movl	%ebp,%eax
 	andl	$65280,%eax
 	addl	%ebx,%eax
-	orw		(,%eax,2),%cx
-LBPatch4:
+	orw		C(d_fadetable16b)(,%eax,2),%cx
 	andl	$65535,%ecx
-	movl 32(%esp),%edx
-	movb	0x12345678(%ecx),%al
-LTPatch4:
-	movl 60(%esp),%ecx
+	movl	32(%esp),%edx
+	movb	C(r_rgbtable)(%ecx),%al
+	movl	60(%esp),%ecx
 	movb	%al,(%ecx,%edx)
-	movl 56(%esp),%ebx
+	movl	56(%esp),%ebx
 	movl	48(%esp),%esi
 	addl	%ebx,52(%esp)
 	movl	%ecx,%edi
-	movl 52(%esp),%ecx
-	movl 36(%esp),%eax
+	movl	52(%esp),%ecx
+	movl	36(%esp),%eax
 	addl	%esi,44(%esp)
 	addl	40(%esp),%ebp
 	decl	%edi
@@ -1263,27 +1207,23 @@ LTPatch4:
 	addl	%ebx,%ecx
 	andl	$65280,%eax
 	addl	%ebx,%eax
-	movw	0x12345678(,%ecx,2),%cx
-LRPatch5:
-	orw		0x12345678(,%eax,2),%cx
-LGPatch5:
+	movw	C(d_fadetable16r)(,%ecx,2),%cx
+	orw		C(d_fadetable16g)(,%eax,2),%cx
 	movl	%ebp,%eax
 	andl	$65280,%eax
 	addl	%ebx,%eax
-	orw		0x12345678(,%eax,2),%cx
-LBPatch5:
+	orw		C(d_fadetable16b)(,%eax,2),%cx
 	andl	$65535,%ecx
-	movl 32(%esp),%edx
-	movb	0x12345678(%ecx),%al
-LTPatch5:
+	movl	32(%esp),%edx
+	movb	C(r_rgbtable)(%ecx),%al
 	movb	%al,(%edi,%edx)
-	movl 56(%esp),%ecx
+	movl	56(%esp),%ecx
 	movl	48(%esp),%ebx
 	addl	%ecx,52(%esp)
 	addl	%ebx,44(%esp)
 	addl	40(%esp),%ebp
 	addl	$-2,60(%esp)
-	jns L1052
+	jns		L1052
 	movl	C(sourcetstep),%esi
 	movl	C(lightrrightstep),%eax
 	addl	%eax,C(lightrright)
@@ -1297,23 +1237,23 @@ LTPatch5:
 	addl	%eax,C(lightbright)
 	movl	C(lightbleftstep),%eax
 	movl	C(surfrowbytes),%edi
-	movl 24(%esp),%ebx
+	movl	24(%esp),%ebx
 	addl	%esi,36(%esp)
 	addl	%eax,C(lightbleft)
 	addl	%edi,%edx
 	movl	%edx,32(%esp)
 	cmpl	$3,%ebx
-	jle L1048
-	movl 36(%esp),%eax
+	jle		L1048
+	movl	36(%esp),%eax
 	cmpl	C(r_sourcemax),%eax
-	jb L1043
+	jb		L1043
 	movl	C(r_stepback),%edx
 	subl	%edx,%eax
 	movl	%eax,36(%esp)
 L1043:
-	movl 28(%esp),%esi
+	movl	28(%esp),%esi
 	cmpl	C(r_numvblocks),%esi
-	jl L1044
+	jl		L1044
 L1057:
 	popl	%ebx
 	popl	%esi
@@ -1340,7 +1280,7 @@ C(D_DrawSurfaceBlock8RGB_mip3):
 	movl	%eax,28(%esp)
 	movl	%edx,24(%esp)
 	cmpl	C(r_numvblocks),%esi
-	jge L1079
+	jge		L1079
 L1066:
 	movl	C(r_lightptrr),%edx
 	movl	C(r_lightwidth),%ebx
@@ -1412,28 +1352,24 @@ L1070:
 	subl	%edi,%ebx
 	sarl	$1,%ebx
 	movl	%ebx,32(%esp)
-	movl 20(%esp),%ecx
-	movl 28(%esp),%eax
+	movl	20(%esp),%ecx
+	movl	28(%esp),%eax
 	andl	$65280,%ecx
 	xorl	%ebx,%ebx
-	movb 1(%eax),%bl
+	movb	1(%eax),%bl
 	addl	%ebx,%ecx
 	movl	%esi,%eax
 	andl	$65280,%eax
 	addl	%ebx,%eax
-	movw	0x12345678(,%ecx,2),%cx
-LRPatch6:
-	orw		0x12345678(,%eax,2),%cx
-LGPatch6:
+	movw	C(d_fadetable16r)(,%ecx,2),%cx
+	orw		C(d_fadetable16g)(,%eax,2),%cx
 	movl	%edi,%eax
 	andl	$65280,%eax
 	addl	%ebx,%eax
-	orw		0x12345678(,%eax,2),%cx
-LBPatch6:
+	orw		C(d_fadetable16b)(,%eax,2),%cx
 	andl	$65535,%ecx
 	movl	24(%esp),%edx
-	movb	0x12345678(%ecx),%al
-LTPatch6:
+	movb	C(r_rgbtable)(%ecx),%al
 	movb	%al,1(%edx)
 	movl	20(%esp),%eax
 	movl	28(%esp),%ebx
@@ -1448,16 +1384,12 @@ LTPatch6:
 	leal	(%ecx,%eax),%ebx
 	addl	%ecx,%esi
 	addl	%ecx,%edi
-	movw	0x12345678(,%ebx,2),%dx
-LRPatch7:
-	orw		0x12345678(,%esi,2),%dx
-LGPatch7:
-	orw		0x12345678(,%edi,2),%dx
-LBPatch7:
+	movw	C(d_fadetable16r)(,%ebx,2),%dx
+	orw		C(d_fadetable16g)(,%esi,2),%dx
+	orw		C(d_fadetable16b)(,%edi,2),%dx
 	andl	$65535,%edx
 	movl	24(%esp),%edi
-	movb	0x12345678(%edx),%al
-LTPatch7:
+	movb	C(r_rgbtable)(%edx),%al
 	movb	%al,(%edi)
 	movl	C(sourcetstep),%eax
 	addl	%eax,28(%esp)
@@ -1478,172 +1410,23 @@ LTPatch7:
 	movl	%edi,24(%esp)
 	incl	44(%esp)
 	cmpl	$1,44(%esp)
-	jle L1070
-	movl 28(%esp),%ebx
+	jle		L1070
+	movl	28(%esp),%ebx
 	cmpl	C(r_sourcemax),%ebx
-	jb L1065
+	jb		L1065
 	movl	C(r_stepback),%edi
 	subl	%edi,%ebx
 	movl	%ebx,28(%esp)
 L1065:
-	movl 16(%esp),%esi
+	movl	16(%esp),%esi
 	cmpl	C(r_numvblocks),%esi
-	jl L1066
+	jl		L1066
 L1079:
 	popl	%ebx
 	popl	%esi
 	popl	%edi
 	popl	%ebp
 	addl	$44,%esp
-	ret
-
-
-.globl C(D_Surf8End)
-C(D_Surf8End):
-
-//----------------------------------------------------------------------
-// Code patching routines
-//----------------------------------------------------------------------
-	.data
-
-	Align4
-LPatchTable:
-	.long	LPatch0-4
-	.long	LPatch1-4
-	.long	LPatch2-4
-	.long	LPatch3-4
-	.long	LPatch4-4
-	.long	LPatch5-4
-	.long	LPatch6-4
-	.long	LPatch7-4
-	.long	LPatch8-4
-	.long	LPatch9-4
-	.long	LPatch10-4
-	.long	LPatch11-4
-	.long	LPatch12-4
-	.long	LPatch13-4
-	.long	LPatch14-4
-	.long	LPatch15-4
-	.long	LPatch16-4
-	.long	LPatch17-4
-	.long	LPatch18-4
-	.long	LPatch19-4
-	.long	LPatch20-4
-	.long	LPatch21-4
-	.long	LPatch22-4
-	.long	LPatch23-4
-	.long	LPatch24-4
-	.long	LPatch25-4
-	.long	LPatch26-4
-	.long	LPatch27-4
-	.long	LPatch28-4
-	.long	LPatch29-4
-	.long	LPatch30-4
-	.long	LPatch31-4
-
-	Align4
-LTPatchTable:
-	.long	LTPatch0-4
-	.long	LTPatch1-4
-	.long	LTPatch2-4
-	.long	LTPatch3-4
-	.long	LTPatch4-4
-	.long	LTPatch5-4
-	.long	LTPatch6-4
-	.long	LTPatch7-4
-
-	Align4
-LRPatchTable:
-	.long	LRPatch0-4
-	.long	LRPatch1-4
-	.long	LRPatch2-4
-	.long	LRPatch3-4
-	.long	LRPatch4-4
-	.long	LRPatch5-4
-	.long	LRPatch6-4
-	.long	LRPatch7-4
-
-	Align4
-LGPatchTable:
-	.long	LGPatch0-4
-	.long	LGPatch1-4
-	.long	LGPatch2-4
-	.long	LGPatch3-4
-	.long	LGPatch4-4
-	.long	LGPatch5-4
-	.long	LGPatch6-4
-	.long	LGPatch7-4
-
-	Align4
-LBPatchTable:
-	.long	LBPatch0-4
-	.long	LBPatch1-4
-	.long	LBPatch2-4
-	.long	LBPatch3-4
-	.long	LBPatch4-4
-	.long	LBPatch5-4
-	.long	LBPatch6-4
-	.long	LBPatch7-4
-
-	.text
-
-	Align4
-.globl C(D_Surf8Patch)
-C(D_Surf8Patch):
-	pushl	%ebx
-
-	movl	C(fadetable),%eax
-	movl	$LPatchTable,%ebx
-	movl	$32,%ecx
-LPatchLoop:
-	movl	(%ebx),%edx
-	addl	$4,%ebx
-	movl	%eax,(%edx)
-	decl	%ecx
-	jnz		LPatchLoop
-
-	movl	C(d_rgbtable),%eax
-	movl	$LTPatchTable,%ebx
-	movl	$8,%ecx
-LTPatchLoop:
-	movl	(%ebx),%edx
-	addl	$4,%ebx
-	movl	%eax,(%edx)
-	decl	%ecx
-	jnz		LTPatchLoop
-
-	movl	C(fadetable16r),%eax
-	movl	$LRPatchTable,%ebx
-	movl	$8,%ecx
-LRPatchLoop:
-	movl	(%ebx),%edx
-	addl	$4,%ebx
-	movl	%eax,(%edx)
-	decl	%ecx
-	jnz		LRPatchLoop
-
-	movl	C(fadetable16g),%eax
-	movl	$LGPatchTable,%ebx
-	movl	$8,%ecx
-LGPatchLoop:
-	movl	(%ebx),%edx
-	addl	$4,%ebx
-	movl	%eax,(%edx)
-	decl	%ecx
-	jnz		LGPatchLoop
-
-	movl	C(fadetable16b),%eax
-	movl	$LBPatchTable,%ebx
-	movl	$8,%ecx
-LBPatchLoop:
-	movl	(%ebx),%edx
-	addl	$4,%ebx
-	movl	%eax,(%edx)
-	decl	%ecx
-	jnz		LBPatchLoop
-
-	popl	%ebx
-
 	ret
 
 #endif
