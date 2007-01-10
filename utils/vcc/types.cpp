@@ -825,6 +825,8 @@ VPackage* VMemberBase::LoadPackage(VName InName, TLocation l)
 		if (LoadedPackages[i]->Name == InName)
 			return LoadedPackages[i];
 
+	dprintf("Loading package %s\n", *InName);
+
 	//	Load PROGS from a specified file
 	FILE* f = fopen(va("%s.dat", *InName), "rb");
 	if (!f)
@@ -1983,25 +1985,32 @@ void VState::Emit()
 	else if (FunctionName != NAME_None)
 	{
 		Function = ((VClass*)Outer)->CheckForMethod(FunctionName);
-		if (Function->ReturnType.type != ev_void)
+		if (!Function)
 		{
-			ParseError(Loc, "State method must not return a value");
+			ParseError(Loc, "No such method %s", *FunctionName);
 		}
-		if (Function->NumParams)
+		else
 		{
-			ParseError(Loc, "State method must not take any arguments");
-		}
-		if (Function->Flags & FUNC_Static)
-		{
-			ParseError(Loc, "State method must not be static");
-		}
-		if (Function->Flags & FUNC_VarArgs)
-		{
-			ParseError(Loc, "State method must not have varargs");
-		}
-		if (!(Function->Flags & FUNC_Final))
-		{
-			ParseError(Loc, "State method must be final");
+			if (Function->ReturnType.type != ev_void)
+			{
+				ParseError(Loc, "State method must not return a value");
+			}
+			if (Function->NumParams)
+			{
+				ParseError(Loc, "State method must not take any arguments");
+			}
+			if (Function->Flags & FUNC_Static)
+			{
+				ParseError(Loc, "State method must not be static");
+			}
+			if (Function->Flags & FUNC_VarArgs)
+			{
+				ParseError(Loc, "State method must not have varargs");
+			}
+			if (!(Function->Flags & FUNC_Final))
+			{
+				ParseError(Loc, "State method must be final");
+			}
 		}
 	}
 }
@@ -2500,6 +2509,8 @@ VConstant* VPackage::CheckForConstant(VName Name)
 
 void VPackage::Emit()
 {
+	dprintf("Importing packages\n");
+
 	for (int i = 0; i < PackagesToLoad.Num(); i++)
 	{
 		PackagesToLoad[i].Pkg = LoadPackage(PackagesToLoad[i].Name,
@@ -2511,15 +2522,21 @@ void VPackage::Emit()
 		BailOut();
 	}
 
+	dprintf("Defining constants\n");
+
 	for (int i = 0; i < ParsedConstants.Num(); i++)
 	{
 		ParsedConstants[i]->Define();
 	}
 
+	dprintf("Defining structs\n");
+
 	for (int i = 0; i < ParsedStructs.Num(); i++)
 	{
 		ParsedStructs[i]->Define();
 	}
+
+	dprintf("Defining classes\n");
 
 	for (int i = 0; i < ParsedClasses.Num(); i++)
 	{
@@ -2531,10 +2548,14 @@ void VPackage::Emit()
 		BailOut();
 	}
 
+	dprintf("Defining struct members\n");
+
 	for (int i = 0; i < ParsedStructs.Num(); i++)
 	{
 		ParsedStructs[i]->DefineMembers();
 	}
+
+	dprintf("Defining class members\n");
 
 	for (int i = 0; i < ParsedClasses.Num(); i++)
 	{
@@ -2545,6 +2566,8 @@ void VPackage::Emit()
 	{
 		BailOut();
 	}
+
+	dprintf("Emiting classes\n");
 
 	for (int i = 0; i < ParsedClasses.Num(); i++)
 	{

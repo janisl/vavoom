@@ -101,7 +101,7 @@ int main(int argc, char **argv)
 	VParser Parser(Lex, CurrentPackage);
 	Parser.Parse();
 	int parsetime = time(0);
-	dprintf("Compiled in %02d:%02d\n",
+	dprintf("Parsed in %02d:%02d\n",
 		(parsetime - preptime) / 60, (parsetime - preptime) % 60);
 	CurrentPackage->Emit();
 	int compiletime = time(0);
