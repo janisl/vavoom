@@ -615,7 +615,7 @@ void VSoftwareDrawer::AliasPreparePoints()
 	}
 }
 
-#ifndef USEASM
+#if !USE_ASM_I386
 
 //==========================================================================
 //

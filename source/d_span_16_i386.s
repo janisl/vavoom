@@ -7,7 +7,7 @@
 //**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
 //**	   #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id$
+//**	$Id: d16_span.s 1583 2006-06-27 19:05:42Z dj_jl $
 //**
 //**	Copyright (C) 1999-2006 Jānis Legzdiņš
 //**
@@ -22,28 +22,23 @@
 //**  GNU General Public License for more details.
 //**
 //**************************************************************************
-//
-// d_draw16.s
-// x86 assembly-language horizontal 8-bpp span-drawing code, with 16-pixel
-// subdivision.
-//
+//**
+//**	x86 assembly-language horizontal 16-bpp span-drawing code.
+//**
+//**************************************************************************
 
 #include "asm_i386.h"
 
-#ifdef USEASM
-
 //==========================================================================
 //
-// 8-bpp horizontal span drawing code for polygons, with no transparency and
-// 16-pixel subdivision.
+//	D_DrawSpans8_16
 //
-// Assumes there is at least one span in pspans, and that every span
+//	16-bpp horizontal span drawing code for polygons, with no transparency.
+//
+//	Assumes there is at least one span in pspans, and that every span
 // contains at least one pixel
 //
 //==========================================================================
-
-
-	.data
 
 	.text
 
@@ -66,28 +61,28 @@ LClampHighOrLow1:
 	jmp		LClampReentry1
 
 LClampLow2:
-	movl	$4096,%ebp
+	movl	$2048,%ebp
 	jmp		LClampReentry2
 LClampHigh2:
 	movl	C(bbextents),%ebp
 	jmp		LClampReentry2
 
 LClampLow3:
-	movl	$4096,%ecx
+	movl	$2048,%ecx
 	jmp		LClampReentry3
 LClampHigh3:
 	movl	C(bbextentt),%ecx
 	jmp		LClampReentry3
 
 LClampLow4:
-	movl	$4096,%eax
+	movl	$2048,%eax
 	jmp		LClampReentry4
 LClampHigh4:
 	movl	C(bbextents),%eax
 	jmp		LClampReentry4
 
 LClampLow5:
-	movl	$4096,%ebx
+	movl	$2048,%ebx
 	jmp		LClampReentry5
 LClampHigh5:
 	movl	C(bbextentt),%ebx
@@ -97,30 +92,30 @@ LClampHigh5:
 #define pspans	4+16
 
 	Align4
-.globl C(D_DrawSpans16_8)
-C(D_DrawSpans16_8):
+.globl C(D_DrawSpans8_16)
+C(D_DrawSpans8_16):
 	pushl	%ebp				// preserve caller's stack frame
 	pushl	%edi
 	pushl	%esi				// preserve register variables
 	pushl	%ebx
 
 //
-// set up scaled-by-16 steps, for 16-long segments; also set up cacheblock
+// set up scaled-by-8 steps, for 8-long segments; also set up cacheblock
 // and span list pointers
 //
 // TODO: any overlap from rearranging?
 	flds	C(d_sdivzstepu)
-	fmuls	fp_16
+	fmuls	fp_8
 	movl	C(cacheblock),%edx
 	flds	C(d_tdivzstepu)
-	fmuls	fp_16
+	fmuls	fp_8
 	movl	pspans(%esp),%ebx	// point to the first span descriptor
 	flds	C(d_zistepu)
-	fmuls	fp_16
+	fmuls	fp_8
 	movl	%edx,pbase			// pbase = cacheblock
-	fstps	zi16stepu
-	fstps	tdivz16stepu
-	fstps	sdivz16stepu
+	fstps	zi8stepu
+	fstps	tdivz8stepu
+	fstps	sdivz8stepu
 
 LSpanLoop:
 //
@@ -186,22 +181,22 @@ LSpanLoop:
 //
 // point %edi to the first pixel in the span
 //
-	movl	C(scrn),%ecx
+	movl	C(scrn),%edi
 	movl	espan_t_v(%ebx),%eax
 	movl	%ebx,pspantemp	// preserve spans pointer
 
 	movl	C(tadjust),%edx
 	movl	C(sadjust),%esi
-	movl	C(ylookup)(,%eax,4),%edi	// v * screenwidth
-	addl	%ecx,%edi
-	movl	espan_t_u(%ebx),%ecx
+	movl	C(ylookup)(,%eax,4),%ecx	// v * screenwidth
+	addl	espan_t_u(%ebx),%ecx
+	addl	%ecx,%ecx
 	addl	%ecx,%edi				// pdest = &pdestspan[scans->u];
 	movl	espan_t_count(%ebx),%ecx
 
 //
 // now start the FDIV for the end of the span
 //
-	cmpl	$16,%ecx
+	cmpl	$8,%ecx
 	ja		LSetupNotLast1
 
 	decl	%ecx
@@ -267,11 +262,11 @@ LSetupNotLast1:
 	fistpl	s				// 1/z | t | t/z | s/z
 	fistpl	t				// 1/z | t/z | s/z
 
-	fadds	zi16stepu
+	fadds	zi8stepu
 	fxch	%st(2)
-	fadds	sdivz16stepu
+	fadds	sdivz8stepu
 	fxch	%st(2)
-	flds	tdivz16stepu
+	flds	tdivz8stepu
 	faddp	%st(0),%st(2)
 	flds	fp_64k
 	fdiv	%st(1),%st(0)	// z = 1/1/z
@@ -306,17 +301,18 @@ LClampReentry1:
 	sarl	$16,%eax
 	movl	C(cachewidth),%edx
 	imull	%edx,%eax				// (tfrac >> 16) * cachewidth
-	addl	%ebx,%esi
-	addl	%eax,%esi				// psource = pbase + (sfrac >> 16) +
+	addl	%eax,%esi
+	leal	(%ebx,%esi,2),%esi		// psource = pbase + (sfrac >> 16) +
 									//           ((tfrac >> 16) * cachewidth);
+
 //
 // determine whether last span or not
 //
-	cmpl	$16,%ecx
+	cmpl	$8,%ecx
 	jna		LLastSegment
 
 //
-// not the last segment; do full 16-wide segment
+// not the last segment; do full 8-wide segment
 //
 LNotLastSegment:
 
@@ -337,13 +333,13 @@ LNotLastSegment:
 	movl	snext,%eax
 	movl	tnext,%edx
 
-	movb	(%esi),%bl	// get first source texel
-	subl	$16,%ecx		// count off this segments' pixels
+	movw	(%esi),%bx	// get first source texel
+	subl	$8,%ecx		// count off this segments' pixels
 	movl	C(sadjust),%ebp
 	movl	%ecx,counttemp	// remember count of remaining pixels
 
+	movw	%bx,(%edi)	// store first dest pixel
 	movl	C(tadjust),%ecx
-	movb	%bl,(%edi)	// store first dest pixel
 
 	addl	%eax,%ebp
 	addl	%edx,%ecx
@@ -351,13 +347,13 @@ LNotLastSegment:
 	movl	C(bbextents),%eax
 	movl	C(bbextentt),%edx
 
-	cmpl	$4096,%ebp
+	cmpl	$2048,%ebp
 	jl		LClampLow2
 	cmpl	%eax,%ebp
 	ja		LClampHigh2
 LClampReentry2:
 
-	cmpl	$4096,%ecx
+	cmpl	$2048,%ecx
 	jl		LClampLow3
 	cmpl	%edx,%ecx
 	ja		LClampHigh3
@@ -374,98 +370,90 @@ LClampReentry3:
 //
 	movl	%ecx,%eax
 	movl	%ebp,%edx
-	sarl	$20,%eax			// tstep >>= 16;
+	sarl	$19,%eax			// tstep >>= 16;
 	jz		LZero
-	sarl	$20,%edx			// sstep >>= 16;
+	sarl	$19,%edx			// sstep >>= 16;
 	movl	C(cachewidth),%ebx
+	addl	%ebx,%ebx
 	imull	%ebx,%eax
 	jmp		LSetUp1
 
 LZero:
-	sarl	$20,%edx			// sstep >>= 16;
+	sarl	$19,%edx			// sstep >>= 16;
 	movl	C(cachewidth),%ebx
+	addl	%ebx,%ebx
 
 LSetUp1:
 
+	addl	%edx,%edx
 	addl	%edx,%eax			// add in sstep
 								// (tstep >> 16) * cachewidth + (sstep >> 16);
 	movl	tfracf,%edx
-	movl	%eax,advancetable+4	// advance base in t
+	movl	%eax,advancetable+8	// advance base in t
+	movl	%eax,advancetable+12
 	addl	%ebx,%eax			// ((tstep >> 16) + 1) * cachewidth +
 								//  (sstep >> 16);
-	shll	$12,%ebp			// left-justify sstep fractional part
+	shll	$13,%ebp			// left-justify sstep fractional part
 	movl	sfracf,%ebx
-	shll	$12,%ecx			// left-justify tstep fractional part
+	shll	$13,%ecx			// left-justify tstep fractional part
 	movl	%eax,advancetable	// advance extra in t
+	movl	%eax,advancetable+4
+
+	addl	$2,advancetable+4
+	addl	$2,advancetable+12
 
 	movl	%ecx,tstep
 	addl	%ecx,%edx			// advance tfrac fractional part by tstep frac
 
 	sbbl	%ecx,%ecx			// turn tstep carry into -1 (0 if none)
 	addl	%ebp,%ebx			// advance sfrac fractional part by sstep frac
-	adcl	advancetable+4(,%ecx,4),%esi	// point to next source texel
-
-	addl	tstep,%edx
-	sbbl	%ecx,%ecx
-	movb	(%esi),%al
-	addl	%ebp,%ebx
-	movb	%al,1(%edi)
-	adcl	advancetable+4(,%ecx,4),%esi
+	adcl	%ecx,%ecx
+	addl	advancetable+8(,%ecx,4),%esi	// point to next source texel
 
 	addl	tstep,%edx
 	sbbl	%ecx,%ecx
 	addl	%ebp,%ebx
+	adcl	%ecx,%ecx
 	movb	(%esi),%al
-	adcl	advancetable+4(,%ecx,4),%esi
+	movb	1(%esi),%ah
+	addl	advancetable+8(,%ecx,4),%esi
 
 	addl	tstep,%edx
 	sbbl	%ecx,%ecx
+	addl	%ebp,%ebx
+	adcl	%ecx,%ecx
 	movb	%al,2(%edi)
-	addl	%ebp,%ebx
+	movb	%ah,3(%edi)
 	movb	(%esi),%al
-	adcl	advancetable+4(,%ecx,4),%esi
+	movb	1(%esi),%ah
+	addl	advancetable+8(,%ecx,4),%esi
 
 	addl	tstep,%edx
 	sbbl	%ecx,%ecx
-	movb	%al,3(%edi)
 	addl	%ebp,%ebx
-	movb	(%esi),%al
-	adcl	advancetable+4(,%ecx,4),%esi
-
-	addl	tstep,%edx
-	sbbl	%ecx,%ecx
+	adcl	%ecx,%ecx
 	movb	%al,4(%edi)
-	addl	%ebp,%ebx
+	movb	%ah,5(%edi)
 	movb	(%esi),%al
-	adcl	advancetable+4(,%ecx,4),%esi
+	movb	1(%esi),%ah
+	addl	advancetable+8(,%ecx,4),%esi
 
 	addl	tstep,%edx
 	sbbl	%ecx,%ecx
-	movb	%al,5(%edi)
 	addl	%ebp,%ebx
-	movb	(%esi),%al
-	adcl	advancetable+4(,%ecx,4),%esi
-
-	addl	tstep,%edx
-	sbbl	%ecx,%ecx
+	adcl	%ecx,%ecx
 	movb	%al,6(%edi)
-	addl	%ebp,%ebx
+	movb	%ah,7(%edi)
 	movb	(%esi),%al
-	adcl	advancetable+4(,%ecx,4),%esi
-
-	addl	tstep,%edx
-	sbbl	%ecx,%ecx
-	movb	%al,7(%edi)
-	addl	%ebp,%ebx
-	movb	(%esi),%al
-	adcl	advancetable+4(,%ecx,4),%esi
+	movb	1(%esi),%ah
+	addl	advancetable+8(,%ecx,4),%esi
 
 
 //
 // start FDIV for end of next segment in flight, so it can overlap
 //
 	movl	counttemp,%ecx
-	cmpl	$16,%ecx			// more than one segment after this?
+	cmpl	$8,%ecx			// more than one segment after this?
 	ja		LSetupNotLast2	// yes
 
 	decl	%ecx
@@ -493,11 +481,11 @@ LSetUp1:
 
 	Align4
 LSetupNotLast2:
-	fadds	zi16stepu
+	fadds	zi8stepu
 	fxch	%st(2)
-	fadds	sdivz16stepu
+	fadds	sdivz8stepu
 	fxch	%st(2)
-	flds	tdivz16stepu
+	flds	tdivz8stepu
 	faddp	%st(0),%st(2)
 	flds	fp_64k
 	fdiv	%st(1),%st(0)	// z = 1/1/z
@@ -508,52 +496,33 @@ LFDIVInFlight2:
 
 	addl	tstep,%edx
 	sbbl	%ecx,%ecx
+	addl	%ebp,%ebx
+	adcl	%ecx,%ecx
 	movb	%al,8(%edi)
-	addl	%ebp,%ebx
+	movb	%ah,9(%edi)
 	movb	(%esi),%al
-	adcl	advancetable+4(,%ecx,4),%esi
+	movb	1(%esi),%ah
+	addl	advancetable+8(,%ecx,4),%esi
 
 	addl	tstep,%edx
 	sbbl	%ecx,%ecx
-	movb	%al,9(%edi)
 	addl	%ebp,%ebx
-	movb	(%esi),%al
-	adcl	advancetable+4(,%ecx,4),%esi
-
-	addl	tstep,%edx
-	sbbl	%ecx,%ecx
+	adcl	%ecx,%ecx
 	movb	%al,10(%edi)
-	addl	%ebp,%ebx
+	movb	%ah,11(%edi)
 	movb	(%esi),%al
-	adcl	advancetable+4(,%ecx,4),%esi
+	movb	1(%esi),%ah
+	addl	advancetable+8(,%ecx,4),%esi
 
 	addl	tstep,%edx
 	sbbl	%ecx,%ecx
-	movb	%al,11(%edi)
 	addl	%ebp,%ebx
-	movb	(%esi),%al
-	adcl	advancetable+4(,%ecx,4),%esi
-
-	addl	tstep,%edx
-	sbbl	%ecx,%ecx
+	adcl	%ecx,%ecx
 	movb	%al,12(%edi)
-	addl	%ebp,%ebx
+	movb	%ah,13(%edi)
 	movb	(%esi),%al
-	adcl	advancetable+4(,%ecx,4),%esi
-
-	addl	tstep,%edx
-	sbbl	%ecx,%ecx
-	movb	%al,13(%edi)
-	addl	%ebp,%ebx
-	movb	(%esi),%al
-	adcl	advancetable+4(,%ecx,4),%esi
-
-	addl	tstep,%edx
-	sbbl	%ecx,%ecx
-	movb	%al,14(%edi)
-	addl	%ebp,%ebx
-	movb	(%esi),%al
-	adcl	advancetable+4(,%ecx,4),%esi
+	movb	1(%esi),%ah
+	addl	advancetable+8(,%ecx,4),%esi
 
 	addl	$16,%edi
 	movl	%edx,tfracf
@@ -568,8 +537,9 @@ LFDIVInFlight2:
 //
 // determine whether last span or not
 //
-	cmpl	$16,%ecx				// are there multiple segments remaining?
-	movb	%al,-1(%edi)
+	cmpl	$8,%ecx				// are there multiple segments remaining?
+	movb	%al,-2(%edi)
+	movb	%ah,-1(%edi)
 	ja		LNotLastSegment		// yes
 
 //
@@ -596,9 +566,9 @@ LLastSegment:
 	fistpl	snext
 	fistpl	tnext
 
-	movb	(%esi),%al		// load first texel in segment
+	movw	(%esi),%ax		// load first texel in segment
 	movl	C(tadjust),%ebx
-	movb	%al,(%edi)		// store first pixel in segment
+	movw	%ax,(%edi)		// store first pixel in segment
 	movl	C(sadjust),%eax
 
 	addl	snext,%eax
@@ -607,14 +577,14 @@ LLastSegment:
 	movl	C(bbextents),%ebp
 	movl	C(bbextentt),%edx
 
-	cmpl	$4096,%eax
+	cmpl	$2048,%eax
 	jl		LClampLow4
 	cmpl	%ebp,%eax
 	ja		LClampHigh4
 LClampReentry4:
 	movl	%eax,snext
 
-	cmpl	$4096,%ebx
+	cmpl	$2048,%ebx
 	jl		LClampLow5
 	cmpl	%edx,%ebx
 	ja		LClampHigh5
@@ -629,51 +599,69 @@ LClampReentry5:
 	addl	%eax,%eax		// convert to 15.17 format so multiply by 1.31
 	addl	%ebx,%ebx		//  reciprocal yields 16.48
 
-	imull	reciprocal_table-8(,%ecx,4)	// sstep = (snext - s) /
-											//  (spancount-1)
+	imull	reciprocal_table-8(,%ecx,4) // sstep = (snext - s) / (spancount-1)
 	movl	%edx,%ebp
 
 	movl	%ebx,%eax
-	imull	reciprocal_table-8(,%ecx,4)	// tstep = (tnext - t) /
-											//  (spancount-1)
+	imull	reciprocal_table-8(,%ecx,4) // tstep = (tnext - t) / (spancount-1)
+
 LSetEntryvec:
 //
 // set up advancetable
 //
-	movl	entryvec_table_16(,%ecx,4),%ebx
+	movl	Lentryvec_table(,%ecx,4),%ebx
 	movl	%edx,%eax
 	movl	%ebx,jumptemp		// entry point into code for RET later
 	movl	%ebp,%ecx
 	sarl	$16,%edx			// tstep >>= 16;
 	movl	C(cachewidth),%ebx
 	sarl	$16,%ecx			// sstep >>= 16;
+	sall	$1,%ecx
+	addl	%ebx,%ebx
 	imull	%ebx,%edx
 
 	addl	%ecx,%edx			// add in sstep
 								// (tstep >> 16) * cachewidth + (sstep >> 16);
 	movl	tfracf,%ecx
-	movl	%edx,advancetable+4	// advance base in t
+	movl	%edx,advancetable+8	// advance base in t
+	movl	%edx,advancetable+12
 	addl	%ebx,%edx			// ((tstep >> 16) + 1) * cachewidth +
 								//  (sstep >> 16);
 	shll	$16,%ebp			// left-justify sstep fractional part
 	movl	sfracf,%ebx
 	shll	$16,%eax			// left-justify tstep fractional part
 	movl	%edx,advancetable	// advance extra in t
+	movl	%edx,advancetable+4
+
+	addl	$2,advancetable+4
+	addl	$2,advancetable+12
 
 	movl	%eax,tstep
 	movl	%ecx,%edx
 	addl	%eax,%edx
 	sbbl	%ecx,%ecx
 	addl	%ebp,%ebx
-	adcl	advancetable+4(,%ecx,4),%esi
+	adcl	%ecx,%ecx
+	addl	advancetable+8(,%ecx,4),%esi
 
 	jmp		*jumptemp			// jump to the number-of-pixels handler
+
+	Align4
+Lentryvec_table:
+	.long	0
+	.long	LEntry2_8
+	.long	LEntry3_8
+	.long	LEntry4_8
+	.long	LEntry5_8
+	.long	LEntry6_8
+	.long	LEntry7_8
+	.long	LEntry8_8
 
 //----------------------------------------
 
 LNoSteps:
-	movb	(%esi),%al		// load first texel in segment
-	subl	$15,%edi			// adjust for hardwired offset
+	movw	(%esi),%ax		// load first texel in segment
+	subl	$14,%edi			// adjust for hardwired offset
 	jmp		LEndSpan
 
 
@@ -686,274 +674,147 @@ LOnlyOneStep:
 
 //----------------------------------------
 
-entryvec_table_16:	.long	0, Entry2_16, Entry3_16, Entry4_16
-					.long	Entry5_16, Entry6_16, Entry7_16, Entry8_16
-					.long	Entry9_16, Entry10_16, Entry11_16, Entry12_16
-					.long	Entry13_16, Entry14_16, Entry15_16, Entry16_16
-
-Entry2_16:
-	subl	$14,%edi		// adjust for hardwired offsets
-	movb	(%esi),%al
-	jmp		LEntry2_16
-
-//----------------------------------------
-
-Entry3_16:
-	subl	$13,%edi		// adjust for hardwired offsets
-	addl	%eax,%edx
-	movb	(%esi),%al
-	sbbl	%ecx,%ecx
-	addl	%ebp,%ebx
-	adcl	advancetable+4(,%ecx,4),%esi
-	jmp		LEntry3_16
-
-//----------------------------------------
-
-Entry4_16:
+LEntry2_8:
 	subl	$12,%edi		// adjust for hardwired offsets
-	addl	%eax,%edx
 	movb	(%esi),%al
-	sbbl	%ecx,%ecx
-	addl	%ebp,%ebx
-	adcl	advancetable+4(,%ecx,4),%esi
-	addl	tstep,%edx
-	jmp		LEntry4_16
+	movb	1(%esi),%ah
+	jmp		LLEntry2_8
 
 //----------------------------------------
 
-Entry5_16:
-	subl	$11,%edi		// adjust for hardwired offsets
-	addl	%eax,%edx
-	movb	(%esi),%al
-	sbbl	%ecx,%ecx
-	addl	%ebp,%ebx
-	adcl	advancetable+4(,%ecx,4),%esi
-	addl	tstep,%edx
-	jmp		LEntry5_16
-
-//----------------------------------------
-
-Entry6_16:
+LEntry3_8:
 	subl	$10,%edi		// adjust for hardwired offsets
 	addl	%eax,%edx
-	movb	(%esi),%al
 	sbbl	%ecx,%ecx
 	addl	%ebp,%ebx
-	adcl	advancetable+4(,%ecx,4),%esi
-	addl	tstep,%edx
-	jmp		LEntry6_16
+	adcl	%ecx,%ecx
+	movb	(%esi),%al
+	movb	1(%esi),%ah
+	addl	advancetable+8(,%ecx,4),%esi
+	jmp		LLEntry3_8
 
 //----------------------------------------
 
-Entry7_16:
-	subl	$9,%edi		// adjust for hardwired offsets
-	addl	%eax,%edx
-	movb	(%esi),%al
-	sbbl	%ecx,%ecx
-	addl	%ebp,%ebx
-	adcl	advancetable+4(,%ecx,4),%esi
-	addl	tstep,%edx
-	jmp		LEntry7_16
-
-//----------------------------------------
-
-Entry8_16:
+LEntry4_8:
 	subl	$8,%edi		// adjust for hardwired offsets
 	addl	%eax,%edx
-	movb	(%esi),%al
 	sbbl	%ecx,%ecx
 	addl	%ebp,%ebx
-	adcl	advancetable+4(,%ecx,4),%esi
+	adcl	%ecx,%ecx
+	movb	(%esi),%al
+	movb	1(%esi),%ah
+	addl	advancetable+8(,%ecx,4),%esi
 	addl	tstep,%edx
-	jmp		LEntry8_16
+	jmp		LLEntry4_8
 
 //----------------------------------------
 
-Entry9_16:
-	subl	$7,%edi		// adjust for hardwired offsets
-	addl	%eax,%edx
-	movb	(%esi),%al
-	sbbl	%ecx,%ecx
-	addl	%ebp,%ebx
-	adcl	advancetable+4(,%ecx,4),%esi
-	addl	tstep,%edx
-	jmp		LEntry9_16
-
-//----------------------------------------
-
-Entry10_16:
+LEntry5_8:
 	subl	$6,%edi		// adjust for hardwired offsets
 	addl	%eax,%edx
-	movb	(%esi),%al
 	sbbl	%ecx,%ecx
 	addl	%ebp,%ebx
-	adcl	advancetable+4(,%ecx,4),%esi
+	adcl	%ecx,%ecx
+	movb	(%esi),%al
+	movb	1(%esi),%ah
+	addl	advancetable+8(,%ecx,4),%esi
 	addl	tstep,%edx
-	jmp		LEntry10_16
+	jmp		LLEntry5_8
 
 //----------------------------------------
 
-Entry11_16:
-	subl	$5,%edi		// adjust for hardwired offsets
-	addl	%eax,%edx
-	movb	(%esi),%al
-	sbbl	%ecx,%ecx
-	addl	%ebp,%ebx
-	adcl	advancetable+4(,%ecx,4),%esi
-	addl	tstep,%edx
-	jmp		LEntry11_16
-
-//----------------------------------------
-
-Entry12_16:
+LEntry6_8:
 	subl	$4,%edi		// adjust for hardwired offsets
 	addl	%eax,%edx
-	movb	(%esi),%al
 	sbbl	%ecx,%ecx
 	addl	%ebp,%ebx
-	adcl	advancetable+4(,%ecx,4),%esi
+	adcl	%ecx,%ecx
+	movb	(%esi),%al
+	movb	1(%esi),%ah
+	addl	advancetable+8(,%ecx,4),%esi
 	addl	tstep,%edx
-	jmp		LEntry12_16
+	jmp		LLEntry6_8
 
 //----------------------------------------
 
-Entry13_16:
-	subl	$3,%edi		// adjust for hardwired offsets
-	addl	%eax,%edx
-	movb	(%esi),%al
-	sbbl	%ecx,%ecx
-	addl	%ebp,%ebx
-	adcl	advancetable+4(,%ecx,4),%esi
-	addl	tstep,%edx
-	jmp		LEntry13_16
-
-//----------------------------------------
-
-Entry14_16:
+LEntry7_8:
 	subl	$2,%edi		// adjust for hardwired offsets
 	addl	%eax,%edx
-	movb	(%esi),%al
 	sbbl	%ecx,%ecx
 	addl	%ebp,%ebx
-	adcl	advancetable+4(,%ecx,4),%esi
+	adcl	%ecx,%ecx
+	movb	(%esi),%al
+	movb	1(%esi),%ah
+	addl	advancetable+8(,%ecx,4),%esi
 	addl	tstep,%edx
-	jmp		LEntry14_16
+	jmp		LLEntry7_8
 
 //----------------------------------------
 
-Entry15_16:
-	decl	%edi		// adjust for hardwired offsets
+LEntry8_8:
 	addl	%eax,%edx
-	movb	(%esi),%al
 	sbbl	%ecx,%ecx
 	addl	%ebp,%ebx
-	adcl	advancetable+4(,%ecx,4),%esi
-	addl	tstep,%edx
-	jmp		LEntry15_16
-
-//----------------------------------------
-
-Entry16_16:
-	addl	%eax,%edx
+	adcl	%ecx,%ecx
 	movb	(%esi),%al
-	sbbl	%ecx,%ecx
-	addl	%ebp,%ebx
-	adcl	advancetable+4(,%ecx,4),%esi
+	movb	1(%esi),%ah
+	addl	advancetable+8(,%ecx,4),%esi
 
 	addl	tstep,%edx
 	sbbl	%ecx,%ecx
-	movb	%al,1(%edi)
 	addl	%ebp,%ebx
-	movb	(%esi),%al
-	adcl	advancetable+4(,%ecx,4),%esi
-	addl	tstep,%edx
-LEntry15_16:
-	sbbl	%ecx,%ecx
+	adcl	%ecx,%ecx
 	movb	%al,2(%edi)
-	addl	%ebp,%ebx
+	movb	%ah,3(%edi)
 	movb	(%esi),%al
-	adcl	advancetable+4(,%ecx,4),%esi
+	movb	1(%esi),%ah
+	addl	advancetable+8(,%ecx,4),%esi
 	addl	tstep,%edx
-LEntry14_16:
+LLEntry7_8:
 	sbbl	%ecx,%ecx
-	movb	%al,3(%edi)
 	addl	%ebp,%ebx
-	movb	(%esi),%al
-	adcl	advancetable+4(,%ecx,4),%esi
-	addl	tstep,%edx
-LEntry13_16:
-	sbbl	%ecx,%ecx
+	adcl	%ecx,%ecx
 	movb	%al,4(%edi)
-	addl	%ebp,%ebx
+	movb	%ah,5(%edi)
 	movb	(%esi),%al
-	adcl	advancetable+4(,%ecx,4),%esi
+	movb	1(%esi),%ah
+	addl	advancetable+8(,%ecx,4),%esi
 	addl	tstep,%edx
-LEntry12_16:
+LLEntry6_8:
 	sbbl	%ecx,%ecx
-	movb	%al,5(%edi)
 	addl	%ebp,%ebx
-	movb	(%esi),%al
-	adcl	advancetable+4(,%ecx,4),%esi
-	addl	tstep,%edx
-LEntry11_16:
-	sbbl	%ecx,%ecx
+	adcl	%ecx,%ecx
 	movb	%al,6(%edi)
-	addl	%ebp,%ebx
+	movb	%ah,7(%edi)
 	movb	(%esi),%al
-	adcl	advancetable+4(,%ecx,4),%esi
+	movb	1(%esi),%ah
+	addl	advancetable+8(,%ecx,4),%esi
 	addl	tstep,%edx
-LEntry10_16:
+LLEntry5_8:
 	sbbl	%ecx,%ecx
-	movb	%al,7(%edi)
 	addl	%ebp,%ebx
-	movb	(%esi),%al
-	adcl	advancetable+4(,%ecx,4),%esi
-	addl	tstep,%edx
-LEntry9_16:
-	sbbl	%ecx,%ecx
+	adcl	%ecx,%ecx
 	movb	%al,8(%edi)
-	addl	%ebp,%ebx
+	movb	%ah,9(%edi)
 	movb	(%esi),%al
-	adcl	advancetable+4(,%ecx,4),%esi
+	movb	1(%esi),%ah
+	addl	advancetable+8(,%ecx,4),%esi
 	addl	tstep,%edx
-LEntry8_16:
+LLEntry4_8:
 	sbbl	%ecx,%ecx
-	movb	%al,9(%edi)
 	addl	%ebp,%ebx
-	movb	(%esi),%al
-	adcl	advancetable+4(,%ecx,4),%esi
-	addl	tstep,%edx
-LEntry7_16:
-	sbbl	%ecx,%ecx
+	adcl	%ecx,%ecx
 	movb	%al,10(%edi)
-	addl	%ebp,%ebx
+	movb	%ah,11(%edi)
 	movb	(%esi),%al
-	adcl	advancetable+4(,%ecx,4),%esi
-	addl	tstep,%edx
-LEntry6_16:
-	sbbl	%ecx,%ecx
-	movb	%al,11(%edi)
-	addl	%ebp,%ebx
-	movb	(%esi),%al
-	adcl	advancetable+4(,%ecx,4),%esi
-	addl	tstep,%edx
-LEntry5_16:
-	sbbl	%ecx,%ecx
+	movb	1(%esi),%ah
+	addl	advancetable+8(,%ecx,4),%esi
+LLEntry3_8:
 	movb	%al,12(%edi)
-	addl	%ebp,%ebx
+	movb	%ah,13(%edi)
 	movb	(%esi),%al
-	adcl	advancetable+4(,%ecx,4),%esi
-	addl	tstep,%edx
-LEntry4_16:
-	sbbl	%ecx,%ecx
-	movb	%al,13(%edi)
-	addl	%ebp,%ebx
-	movb	(%esi),%al
-	adcl	advancetable+4(,%ecx,4),%esi
-LEntry3_16:
-	movb	%al,14(%edi)
-	movb	(%esi),%al
-LEntry2_16:
+	movb	1(%esi),%ah
+LLEntry2_8:
 
 LEndSpan:
 
@@ -967,7 +828,8 @@ LEndSpan:
 	movl	pspantemp,%ebx				// restore spans pointer
 	movl	espan_t_pnext(%ebx),%ebx	// point to next span
 	testl	%ebx,%ebx			// any more spans?
-	movb	%al,15(%edi)
+	movb	%al,14(%edi)
+	movb	%ah,15(%edi)
 	jnz		LSpanLoop			// more spans
 
 	popl	%ebx				// restore register variables
@@ -975,5 +837,3 @@ LEndSpan:
 	popl	%edi
 	popl	%ebp				// restore the caller's stack frame
 	ret
-
-#endif	// id386

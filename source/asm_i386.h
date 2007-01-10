@@ -23,9 +23,9 @@
 //**
 //**************************************************************************
 
-#if defined __i386__
-
-#define USEASM
+#ifndef __i386__
+#error Wrong platform
+#endif
 
 #ifdef ASM_PREFIX
 //	This doesn't work
@@ -385,5 +385,3 @@
 .extern	C(adivtab)
 
 .extern	C(D_DrawZSpan)
-
-#endif

@@ -45,7 +45,7 @@
 
 // CODE --------------------------------------------------------------------
 
-#ifndef USEASM
+#if !USE_ASM_I386
 
 //==========================================================================
 //
@@ -508,4 +508,4 @@ extern "C" void D_DrawZSpans(espan_t *pspan)
 	} while ((pspan = pspan->pnext) != NULL);
 }
 
-#endif	//	USEASM
+#endif

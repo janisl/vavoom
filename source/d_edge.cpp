@@ -103,7 +103,7 @@ extern int		d_minmip;
 
 extern "C" {
 
-#ifndef USEASM
+#if !USE_ASM_I386
 float			d_zistepu;
 float			d_zistepv;
 float			d_ziorigin;
@@ -193,7 +193,7 @@ void VSoftwareDrawer::BeginEdgeFrame()
 	unguard;
 }
 
-#ifndef USEASM
+#if !USE_ASM_I386
 
 //==========================================================================
 //
@@ -686,7 +686,7 @@ static void D_StepActiveU(edge_t *pedge, edge_t *tail)
 	}
 }
 
-#ifndef USEASM
+#if !USE_ASM_I386
 
 //==========================================================================
 //

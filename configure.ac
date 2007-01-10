@@ -32,6 +32,7 @@ AC_ARG_ENABLE([debug], AS_HELP_STRING([--enable-debug], [Enable debuging]))
 AC_ARG_ENABLE([zone-debug], AS_HELP_STRING([--enable-zone-debug], [Enable memory allocation debuging]))
 AC_ARG_ENABLE([client], AS_HELP_STRING([--disable-client], [Don't build client executable]))
 AC_ARG_ENABLE([server], AS_HELP_STRING([--disable-server], [Don't build dedicated server executable]))
+AC_ARG_ENABLE([asm], AS_HELP_STRING([--disable-asm], [Disable assembly-language code]))
 
 dnl
 dnl  **** Basic checks ****
@@ -431,6 +432,19 @@ dnl ---------------- Other *NIX platforms ----------------
 esac
 
 dnl
+dnl  **** Assembly-language files ****
+dnl
+
+if test "x$enable_asm" != "xno"; then
+	case $host in
+	i?86-*-*)
+		MAIN_ASM_I386=TRUE
+		CPPFLAGS="$CPPFLAGS -DUSE_ASM_I386=1"
+		;;
+	esac
+fi
+
+dnl
 dnl  **** Check for libpng ****
 dnl
 
@@ -546,6 +560,7 @@ AM_CONDITIONAL(MAIN_PLATFORM_DJGPP, test x$MAIN_PLATFORM = xDJGPP)
 AM_CONDITIONAL(MAIN_PLATFORM_WIN32, test x$MAIN_PLATFORM = xWIN32)
 AM_CONDITIONAL(MAIN_PLATFORM_UNIX_ALLEGRO, test x$MAIN_PLATFORM = xUNIX_ALLEGRO)
 AM_CONDITIONAL(MAIN_PLATFORM_UNIX_SDL, test x$MAIN_PLATFORM = xUNIX_SDL)
+AM_CONDITIONAL(MAIN_ASM_I386, test x$MAIN_ASM_I386 = xTRUE)
 AM_CONDITIONAL(MAIN_OPENGL, test x$MAIN_OPENGL = xTRUE)
 AM_CONDITIONAL(MAIN_OPENGL_DJGPP, test x$MAIN_OPENGL_DJGPP = xTRUE)
 AM_CONDITIONAL(MAIN_OPENGL_WIN32, test x$MAIN_OPENGL_WIN32 = xTRUE)

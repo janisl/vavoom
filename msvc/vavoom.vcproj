@@ -49,7 +49,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="3"
 				InlineFunctionExpansion="1"
-				PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;FLAC__NO_DLL;_CRT_SECURE_NO_DEPRECATE"
+				PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;FLAC__NO_DLL;_CRT_SECURE_NO_DEPRECATE;USE_ASM_I386=1"
 				StringPooling="true"
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
@@ -137,7 +137,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;FLAC__NO_DLL;_CRT_SECURE_NO_DEPRECATE"
+				PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;FLAC__NO_DLL;_CRT_SECURE_NO_DEPRECATE;USE_ASM_I386=1"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
@@ -517,15 +517,6 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="Assembler Files"
-			Filter="s"
-			>
-			<File
-				RelativePath="..\source\template.s"
-				>
-			</File>
-		</Filter>
-		<Filter
 			Name="Rendering"
 			>
 			<File
@@ -604,7 +595,7 @@
 				Name="Software"
 				>
 				<File
-					RelativePath="..\source\d16_part.s"
+					RelativePath="..\source\d_part_16_i386.s"
 					>
 					<FileConfiguration
 						Name="Release|Win32"
@@ -630,7 +621,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\source\d16_poly.s"
+					RelativePath="..\source\d_polyset_16_i386.s"
 					>
 					<FileConfiguration
 						Name="Release|Win32"
@@ -656,7 +647,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\source\d16_s16.s"
+					RelativePath="..\source\d_span16_16_i386.s"
 					>
 					<FileConfiguration
 						Name="Release|Win32"
@@ -682,7 +673,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\source\d16_span.s"
+					RelativePath="..\source\d_span_16_i386.s"
 					>
 					<FileConfiguration
 						Name="Release|Win32"
@@ -708,7 +699,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\source\d16_spr.s"
+					RelativePath="..\source\d_sprite_16_i386.s"
 					>
 					<FileConfiguration
 						Name="Release|Win32"
@@ -734,7 +725,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\source\d16_surf.s"
+					RelativePath="..\source\d_surf_16_i386.s"
 					>
 					<FileConfiguration
 						Name="Release|Win32"
@@ -760,7 +751,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\source\d32_part.s"
+					RelativePath="..\source\d_part_32_i386.s"
 					>
 					<FileConfiguration
 						Name="Release|Win32"
@@ -786,7 +777,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\source\d32_poly.s"
+					RelativePath="..\source\d_polyset_32_i386.s"
 					>
 					<FileConfiguration
 						Name="Release|Win32"
@@ -812,7 +803,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\source\d32_s16.s"
+					RelativePath="..\source\d_span16_32_i386.s"
 					>
 					<FileConfiguration
 						Name="Release|Win32"
@@ -838,7 +829,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\source\d32_span.s"
+					RelativePath="..\source\d_span_32_i386.s"
 					>
 					<FileConfiguration
 						Name="Release|Win32"
@@ -864,7 +855,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\source\d32_spr.s"
+					RelativePath="..\source\d_sprite_32_i386.s"
 					>
 					<FileConfiguration
 						Name="Release|Win32"
@@ -890,7 +881,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\source\d32_surf.s"
+					RelativePath="..\source\d_surf_32_i386.s"
 					>
 					<FileConfiguration
 						Name="Release|Win32"
@@ -916,7 +907,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\source\d8_part.s"
+					RelativePath="..\source\d_part_8_i386.s"
 					>
 					<FileConfiguration
 						Name="Release|Win32"
@@ -942,7 +933,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\source\d8_poly.s"
+					RelativePath="..\source\d_polyset_8_i386.s"
 					>
 					<FileConfiguration
 						Name="Release|Win32"
@@ -968,7 +959,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\source\d8_s16.s"
+					RelativePath="..\source\d_span16_8_i386.s"
 					>
 					<FileConfiguration
 						Name="Release|Win32"
@@ -994,7 +985,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\source\d8_span.s"
+					RelativePath="..\source\d_span_8_i386.s"
 					>
 					<FileConfiguration
 						Name="Release|Win32"
@@ -1020,7 +1011,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\source\d8_spr.s"
+					RelativePath="..\source\d_sprite_8_i386.s"
 					>
 					<FileConfiguration
 						Name="Release|Win32"
@@ -1046,7 +1037,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\source\d8_surf.s"
+					RelativePath="..\source\d_surf_8_i386.s"
 					>
 					<FileConfiguration
 						Name="Release|Win32"
@@ -1076,7 +1067,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\source\d_aclipa.s"
+					RelativePath="..\source\d_aclip_i386.s"
 					>
 					<FileConfiguration
 						Name="Release|Win32"
@@ -1106,7 +1097,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\source\d_aliasa.s"
+					RelativePath="..\source\d_alias_i386.s"
 					>
 					<FileConfiguration
 						Name="Release|Win32"
@@ -1164,7 +1155,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\source\d_edgea.s"
+					RelativePath="..\source\d_edge_i386.s"
 					>
 					<FileConfiguration
 						Name="Release|Win32"
@@ -1202,7 +1193,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\source\d_polysa.s"
+					RelativePath="..\source\d_polyset_i386.s"
 					>
 					<FileConfiguration
 						Name="Release|Win32"
@@ -1272,7 +1263,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\source\d_varsa.s"
+					RelativePath="..\source\d_vars_i386.s"
 					>
 					<FileConfiguration
 						Name="Release|Win32"
@@ -1302,7 +1293,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\source\d_zspan.s"
+					RelativePath="..\source\d_zspan_i386.s"
 					>
 					<FileConfiguration
 						Name="Release|Win32"

@@ -41,7 +41,7 @@
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
-#ifdef USEASM
+#if USE_ASM_I386
 extern "C" {
 extern int				d_rowbytes;
 extern int				d_zrowbytes;
@@ -232,7 +232,7 @@ void VSoftwareDrawer::InitResolution()
 		Sys_Error("Invalid BPP");
 	}
 
-#ifdef USEASM
+#if USE_ASM_I386
 	d_rowbytes = -ScreenWidth * PixelBytes;
 	d_zrowbytes = -ScreenWidth * 2;
 #endif
@@ -445,7 +445,7 @@ void VSoftwareDrawer::SetupView(const refdef_t* rd)
 		EraseViewBorder(rd);
 	}
 
-#ifdef USEASM
+#if USE_ASM_I386
 	if (ScreenBPP == 8)
 	{
 		if (d_subdiv == 2)

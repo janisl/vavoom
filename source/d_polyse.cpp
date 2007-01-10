@@ -83,9 +83,9 @@ typedef void (*aliasspanfunc_t)(spanpackage_t*);
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 extern "C" {
-void D_DrawNonSubdiv(void);
-void D_PolysetSetEdgeTable(void);
-void D_RasterizeAliasPolySmooth(void);
+void D_DrawNonSubdiv();
+void D_PolysetSetEdgeTable();
+void D_RasterizeAliasPolySmooth();
 void D_PolysetCalcGradients(int);
 void D_PolysetSetUpForLineScan(fixed_t, fixed_t, fixed_t, fixed_t);
 void D_PolysetScanLeftEdge(int);
@@ -271,7 +271,7 @@ void VSoftwareDrawer::PolysetSetupDrawer(float Alpha)
 //
 //==========================================================================
 
-void VSoftwareDrawer::PolysetDraw(void)
+void VSoftwareDrawer::PolysetDraw()
 {
 	spanpackage_t	spans[DPS_MAXSPANS + 1 +
 			((CACHE_SIZE - 1) / sizeof(spanpackage_t)) + 1];
@@ -289,9 +289,9 @@ void VSoftwareDrawer::PolysetDraw(void)
 //
 //==========================================================================
 
-#ifndef USEASM
+#if !USE_ASM_I386
 
-extern "C" void D_DrawNonSubdiv(void)
+extern "C" void D_DrawNonSubdiv()
 {
 	mtriangle_t		*ptri;
 	finalvert_t		*pfv, *index0, *index1, *index2;
@@ -362,7 +362,7 @@ extern "C" void D_DrawNonSubdiv(void)
 //
 //==========================================================================
 
-extern "C" void D_PolysetSetEdgeTable(void)
+extern "C" void D_PolysetSetEdgeTable()
 {
 	int			edgetableindex;
 
@@ -424,7 +424,7 @@ extern "C" void D_PolysetSetEdgeTable(void)
 //
 //==========================================================================
 
-extern "C" void D_RasterizeAliasPolySmooth(void)
+extern "C" void D_RasterizeAliasPolySmooth()
 {
 	int				initialleftheight, initialrightheight;
 	int				*plefttop, *prighttop, *pleftbottom, *prightbottom;
@@ -459,7 +459,7 @@ extern "C" void D_RasterizeAliasPolySmooth(void)
 
 	d_ptex = (byte *)d_affinetridesc.pskin + (plefttop[2] >> 16) +
 			(plefttop[3] >> 16) * d_affinetridesc.skinwidth;
-#ifdef USEASM
+#if USE_ASM_I386
 	d_sfrac = (plefttop[2] & 0xFFFF) << 16;
 	d_tfrac = (plefttop[3] & 0xFFFF) << 16;
 #else
@@ -525,7 +525,7 @@ extern "C" void D_RasterizeAliasPolySmooth(void)
 		d_ptexbasestep = ((r_sstepy + r_sstepx * ubasestep) >> 16) +
 				((r_tstepy + r_tstepx * ubasestep) >> 16) *
 				d_affinetridesc.skinwidth;
-#ifdef USEASM
+#if USE_ASM_I386
 		d_sfracbasestep = (r_sstepy + r_sstepx * ubasestep) << 16;
 		d_tfracbasestep = (r_tstepy + r_tstepx * ubasestep) << 16;
 #else
@@ -540,7 +540,7 @@ extern "C" void D_RasterizeAliasPolySmooth(void)
 		d_ptexextrastep = ((r_sstepy + r_sstepx * d_countextrastep) >> 16) +
 				((r_tstepy + r_tstepx * d_countextrastep) >> 16) *
 				d_affinetridesc.skinwidth;
-#ifdef USEASM
+#if USE_ASM_I386
 		d_sfracextrastep = (r_sstepy + r_sstepx*d_countextrastep) << 16;
 		d_tfracextrastep = (r_tstepy + r_tstepx*d_countextrastep) << 16;
 #else
@@ -629,7 +629,7 @@ extern "C" void D_RasterizeAliasPolySmooth(void)
 			d_ptexbasestep = ((r_sstepy + r_sstepx * ubasestep) >> 16) +
 					((r_tstepy + r_tstepx * ubasestep) >> 16) *
 					d_affinetridesc.skinwidth;
-#ifdef USEASM
+#if USE_ASM_I386
 			d_sfracbasestep = (r_sstepy + r_sstepx * ubasestep) << 16;
 			d_tfracbasestep = (r_tstepy + r_tstepx * ubasestep) << 16;
 #else
@@ -644,7 +644,7 @@ extern "C" void D_RasterizeAliasPolySmooth(void)
 			d_ptexextrastep = ((r_sstepy + r_sstepx * d_countextrastep) >> 16) +
 					((r_tstepy + r_tstepx * d_countextrastep) >> 16) *
 					d_affinetridesc.skinwidth;
-#ifdef USEASM
+#if USE_ASM_I386
 			d_sfracextrastep = ((r_sstepy+r_sstepx*d_countextrastep) & 0xFFFF)<<16;
 			d_tfracextrastep = ((r_tstepy+r_tstepx*d_countextrastep) & 0xFFFF)<<16;
 #else
@@ -698,7 +698,7 @@ extern "C" void D_RasterizeAliasPolySmooth(void)
 	}
 }
 
-#ifndef USEASM
+#if !USE_ASM_I386
 
 //==========================================================================
 //
@@ -1301,7 +1301,7 @@ extern "C" void D_PolysetDrawSpansFuzz_15(spanpackage_t *pspanpackage)
 			lpdest = (word*)pspanpackage->pdest;
 			lptex = pspanpackage->ptex;
 			lpz = pspanpackage->pz;
-#ifdef USEASM
+#if USE_ASM_I386
 			lsfrac = (vuint32)pspanpackage->sfrac >> 16;
 			ltfrac = (vuint32)pspanpackage->tfrac >> 16;
 #else
@@ -1333,14 +1333,14 @@ extern "C" void D_PolysetDrawSpansFuzz_15(spanpackage_t *pspanpackage)
 				lpz++;
 				llight += r_rstepx;
 				lptex += a_ststepxwhole;
-#ifdef USEASM
+#if USE_ASM_I386
 				lsfrac += (vuint32)a_sstepxfrac >> 16;
 #else
 				lsfrac += a_sstepxfrac;
 #endif
 				lptex += lsfrac >> 16;
 				lsfrac &= 0xFFFF;
-#ifdef USEASM
+#if USE_ASM_I386
 				ltfrac += (vuint32)a_tstepxfrac >> 16;
 #else
 				ltfrac += a_tstepxfrac;
@@ -1393,7 +1393,7 @@ extern "C" void D_PolysetDrawSpansFuzz_16(spanpackage_t *pspanpackage)
 			lpdest = (word*)pspanpackage->pdest;
 			lptex = pspanpackage->ptex;
 			lpz = pspanpackage->pz;
-#ifdef USEASM
+#if USE_ASM_I386
 			lsfrac = (vuint32)pspanpackage->sfrac >> 16;
 			ltfrac = (vuint32)pspanpackage->tfrac >> 16;
 #else
@@ -1425,14 +1425,14 @@ extern "C" void D_PolysetDrawSpansFuzz_16(spanpackage_t *pspanpackage)
 				lpz++;
 				llight += r_rstepx;
 				lptex += a_ststepxwhole;
-#ifdef USEASM
+#if USE_ASM_I386
 				lsfrac += (vuint32)a_sstepxfrac >> 16;
 #else
 				lsfrac += a_sstepxfrac;
 #endif
 				lptex += lsfrac >> 16;
 				lsfrac &= 0xFFFF;
-#ifdef USEASM
+#if USE_ASM_I386
 				ltfrac += (vuint32)a_tstepxfrac >> 16;
 #else
 				ltfrac += a_tstepxfrac;
@@ -1449,7 +1449,7 @@ extern "C" void D_PolysetDrawSpansFuzz_16(spanpackage_t *pspanpackage)
 	} while (pspanpackage->count != DPS_SPAN_LIST_END);
 }
 
-#ifndef USEASM
+#if !USE_ASM_I386
 
 //==========================================================================
 //
@@ -1963,7 +1963,7 @@ extern "C" void D_PolysetDrawSpansRGBFuzz_15(spanpackage_t *pspanpackage)
 			lpdest = (word*)pspanpackage->pdest;
 			lptex = pspanpackage->ptex;
 			lpz = pspanpackage->pz;
-#ifdef USEASM
+#if USE_ASM_I386
 			lsfrac = (vuint32)pspanpackage->sfrac >> 16;
 			ltfrac = (vuint32)pspanpackage->tfrac >> 16;
 #else
@@ -2002,14 +2002,14 @@ extern "C" void D_PolysetDrawSpansRGBFuzz_15(spanpackage_t *pspanpackage)
 				lg += r_gstepx;
 				lb += r_bstepx;
 				lptex += a_ststepxwhole;
-#ifdef USEASM
+#if USE_ASM_I386
 				lsfrac += (vuint32)a_sstepxfrac >> 16;
 #else
 				lsfrac += a_sstepxfrac;
 #endif
 				lptex += lsfrac >> 16;
 				lsfrac &= 0xFFFF;
-#ifdef USEASM
+#if USE_ASM_I386
 				ltfrac += (vuint32)a_tstepxfrac >> 16;
 #else
 				ltfrac += a_tstepxfrac;
@@ -2064,7 +2064,7 @@ extern "C" void D_PolysetDrawSpansRGBFuzz_16(spanpackage_t *pspanpackage)
 			lpdest = (word*)pspanpackage->pdest;
 			lptex = pspanpackage->ptex;
 			lpz = pspanpackage->pz;
-#ifdef USEASM
+#if USE_ASM_I386
 			lsfrac = (vuint32)pspanpackage->sfrac >> 16;
 			ltfrac = (vuint32)pspanpackage->tfrac >> 16;
 #else
@@ -2103,14 +2103,14 @@ extern "C" void D_PolysetDrawSpansRGBFuzz_16(spanpackage_t *pspanpackage)
 				lg += r_gstepx;
 				lb += r_bstepx;
 				lptex += a_ststepxwhole;
-#ifdef USEASM
+#if USE_ASM_I386
 				lsfrac += (vuint32)a_sstepxfrac >> 16;
 #else
 				lsfrac += a_sstepxfrac;
 #endif
 				lptex += lsfrac >> 16;
 				lsfrac &= 0xFFFF;
-#ifdef USEASM
+#if USE_ASM_I386
 				ltfrac += (vuint32)a_tstepxfrac >> 16;
 #else
 				ltfrac += a_tstepxfrac;
@@ -2127,7 +2127,7 @@ extern "C" void D_PolysetDrawSpansRGBFuzz_16(spanpackage_t *pspanpackage)
 	} while (pspanpackage->count != DPS_SPAN_LIST_END);
 }
 
-#ifndef USEASM
+#if !USE_ASM_I386
 
 //==========================================================================
 //

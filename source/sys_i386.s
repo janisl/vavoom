@@ -23,13 +23,11 @@
 //**
 //**************************************************************************
 //**
-//**	x86 assembly-language DOS-dependent routines.
+//**	x86 assembly-language system routines.
 //**	
 //**************************************************************************
 
 #include "asm_i386.h"
-
-#ifdef USEASM
 
 	.data
 
@@ -114,5 +112,3 @@ C(Sys_PushFPCW_SetHigh):
 C(Sys_PopFPCW):
 	fldcw	pushed_cw
 	ret
-
-#endif

@@ -7,7 +7,7 @@
 //**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
 //**	   #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id$
+//**	$Id: d_aclipa.s 1583 2006-06-27 19:05:42Z dj_jl $
 //**
 //**	Copyright (C) 1999-2006 Jānis Legzdiņš
 //**
@@ -24,8 +24,6 @@
 //**************************************************************************
 
 #include "asm_i386.h"
-
-#ifdef USEASM
 
 #define pfv0		20+0
 #define pfv1		20+4
@@ -285,5 +283,3 @@ C(D_Alias_clip_bottom):
 	movl	$fv_v,%eax		// Clip v
 	fildl	C(viewheight)	// against viewheight
 	jmp		LDoForwardOrBackward
-
-#endif

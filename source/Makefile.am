@@ -78,30 +78,6 @@ _____MAIN_EXE__SOURCES = \
 	d_sprite.cpp \
 	d_surf.cpp \
 	d_tex.cpp \
-	d_aclipa.s \
-	d_aliasa.s \
-	d_edgea.s \
-	d_polysa.s \
-	d_varsa.s \
-	d_zspan.s \
-	d8_part.s \
-	d8_poly.s \
-	d8_s16.s \
-	d8_span.s \
-	d8_spr.s \
-	d8_surf.s \
-	d16_part.s \
-	d16_poly.s \
-	d16_s16.s \
-	d16_span.s \
-	d16_spr.s \
-	d16_surf.s \
-	d32_part.s \
-	d32_poly.s \
-	d32_s16.s \
-	d32_span.s \
-	d32_spr.s \
-	d32_surf.s \
 	debug.cpp \
 	debug.h \
 	drawer.h \
@@ -245,6 +221,36 @@ _____MAIN_EXE__SOURCES = \
 	zone.cpp \
 	zone.h
 
+#-- i386 assembler files --
+if MAIN_ASM_I386
+_____MAIN_EXE__SOURCES += \
+	d_aclip_i386.s \
+	d_alias_i386.s \
+	d_edge_i386.s \
+	d_polyset_i386.s \
+	d_vars_i386.s \
+	d_zspan_i386.s \
+	d_part_8_i386.s \
+	d_polyset_8_i386.s \
+	d_span16_8_i386.s \
+	d_span_8_i386.s \
+	d_sprite_8_i386.s \
+	d_surf_8_i386.s \
+	d_part_16_i386.s \
+	d_polyset_16_i386.s \
+	d_span16_16_i386.s \
+	d_span_16_i386.s \
+	d_sprite_16_i386.s \
+	d_surf_16_i386.s \
+	d_part_32_i386.s \
+	d_polyset_32_i386.s \
+	d_span16_32_i386.s \
+	d_span_32_i386.s \
+	d_sprite_32_i386.s \
+	d_surf_32_i386.s \
+	sys_i386.s
+endif
+
 #-- Common OpenGL files --
 if MAIN_OPENGL
 _____MAIN_EXE__SOURCES += \
@@ -300,7 +306,6 @@ _____MAIN_EXE__SOURCES += \
 	npxsetup.c \
 	s_alleg.cpp \
 	s_allegm.cpp \
-	sys_i386.s \
 	sys_dos.cpp
 endif
 if MAIN_OPENGL_DJGPP
@@ -316,7 +321,6 @@ _____MAIN_EXE__SOURCES += \
 	net_udp.cpp \
 	s_alleg.cpp \
 	s_allegm.cpp \
-	sys_i386.s \
 	sys_lin.cpp
 endif
 if MAIN_OPENGL_UNIX_ALLEGRO
@@ -332,7 +336,6 @@ _____MAIN_EXE__SOURCES += \
 	net_udp.cpp \
 	s_sdl.cpp \
 	s_sdlm.cpp \
-	sys_i386.s \
 	sys_sdl.cpp
 endif
 if MAIN_OPENGL_UNIX_SDL
@@ -367,7 +370,6 @@ _____MAIN_EXE__SOURCES += \
 	net_wipx.cpp \
 	s_win32.cpp \
 	s_win32m.cpp \
-	sys_i386.s \
 	sys_win.cpp \
 	vavoom.ico \
 	vavoom_2.ico \
@@ -524,5 +526,4 @@ EXTRA_DIST = \
 	gas2tasm.c \
 	gl_x.cpp \
 	template.cpp \
-	template.h \
-	template.s
+	template.h

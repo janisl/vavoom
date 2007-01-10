@@ -33,14 +33,12 @@
 #define SERVER
 #endif
 
-#if (defined __i386__ || defined _M_IX86) && !defined NOASM
-#define USEASM
+#if USE_ASM_I386
+#if defined __GNUC__
+#define INLINE_ASM_I386_GAS		1
+#elif (defined _MSC_VER || defined __BORLANDC__)
+#define INLINE_ASM_I386_INTEL	1
 #endif
-
-#if defined __GNUC__ && defined __i386__
-#define INLINE_ASM_GAS		1
-#elif (defined _MSC_VER || defined __BORLANDC__) && defined _M_IX86
-#define INLINE_ASM_INTEL	1
 #endif
 
 // if rangecheck is undefined, most parameter validation debugging code

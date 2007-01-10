@@ -7,7 +7,7 @@
 //**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
 //**	   #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id$
+//**	$Id: d16_part.s 1741 2006-09-26 23:26:48Z dj_jl $
 //**
 //**	Copyright (C) 1999-2006 Jānis Legzdiņš
 //**
@@ -23,12 +23,10 @@
 //**
 //**************************************************************************
 //
-// x86 assembly-language 32-bpp particle-drawing code.
+// x86 assembly-language 16-bpp particle-drawing code.
 //
 
 #include "asm_i386.h"
-
-#ifdef USEASM
 
 	.text
 
@@ -38,20 +36,79 @@
 
 //==========================================================================
 //
-//	D_DrawParticle_32
+//	D_DrawParticle_15
 //
-//	32-bpp particle queueing code.
+//	15-bpp particle queueing code.
 //
 //==========================================================================
 
 	Align16
-.globl C(D_DrawParticle_32)
-C(D_DrawParticle_32):
+.globl C(D_DrawParticle_15)
+C(D_DrawParticle_15):
 	pushl	%ebp				// preserve caller's stack frame
 	pushl	%edi				// preserve register variables
 	pushl	%ebx
 
 	movl	P(%esp),%edi
+
+	//	Convert color from RBG format into 16-bpp color
+	movl	pt_colour(%edi),%ebx
+	movb	C(rshift),%cl
+	movl	%ebx,%ebp
+	shrl	$19,%ebp
+	movl	%ebx,%eax
+	shrl	$11,%eax
+	andl	$31,%ebp
+	sall	%cl,%ebp
+	shrl	$3,%ebx
+	movb	C(gshift),%cl
+	andl	$31,%eax
+	andl	$31,%ebx
+	sall	%cl,%eax
+	movb	C(bshift),%cl
+	orl		%eax,%ebp
+	sall	%cl,%ebx
+	orl		%ebx,%ebp
+	movl	%ebp,DP_Colour
+
+	jmp		L15bppEntry
+
+//==========================================================================
+//
+//	D_DrawParticle_16
+//
+//	16-bpp particle queueing code.
+//
+//==========================================================================
+
+	Align16
+.globl C(D_DrawParticle_16)
+C(D_DrawParticle_16):
+	pushl	%ebp				// preserve caller's stack frame
+	pushl	%edi				// preserve register variables
+	pushl	%ebx
+
+	movl	P(%esp),%edi
+
+	//	Convert color from RBG format into 16-bpp color
+	movl	pt_colour(%edi),%ebx
+	movb	C(rshift),%cl
+	movl	%ebx,%ebp
+	shrl	$19,%ebp
+	movl	%ebx,%eax
+	shrl	$10,%eax
+	andl	$31,%ebp
+	sall	%cl,%ebp
+	shrl	$3,%ebx
+	movb	C(gshift),%cl
+	andl	$63,%eax
+	andl	$31,%ebx
+	sall	%cl,%eax
+	movb	C(bshift),%cl
+	orl		%eax,%ebp
+	sall	%cl,%ebx
+	orl		%ebx,%ebp
+	movl	%ebp,DP_Colour
 
 L15bppEntry:
 
@@ -167,29 +224,19 @@ L15bppEntry:
 	cmpl	%ecx,%eax
 	jg		LPop1AndDone
 
-	//	Convert color if needed
-	movl	pt_colour(%edi),%ebp
-	movl	C(rshift),%ecx
-	cmpl	$16,%ecx		//	Check for ARGB format
-	je		LColourDone
-	//	ABGR format
-	bswap	%ebp			// !!! 486 and abowe !!!
-	rorl	$8,%ebp
-LColourDone:
-	movl	%ebp,DP_Colour
-
 	movl	C(scrn),%ebx
 
 	movl	C(ylookup)(,%edx,4),%edi		// point to the pixel
 	addl	%eax,%edi
+	shll	$1,%edi
 
 	movl	%edi,%edx		// point to the z pixel
 	movl	C(zbuffer),%eax
 
 	fistpl	izi
 
-	leal	(%ebx,%edi,4),%edi
-	leal	(%eax,%edx,2),%edx
+	addl	%ebx,%edi
+	addl	%eax,%edx
 
 // pix = izi >> d_pix_shift;
 
@@ -223,7 +270,7 @@ LTestDone:
 	cmpl	$4,%eax
 	ja		LDefault
 
-	movl	DP_Colour,%ecx
+	movw	DP_Colour,%cx
 
 	jmp		*DP_EntryTable-4(,%eax,4)
 
@@ -240,7 +287,7 @@ LDP_1x1:
 	cmpw	%bp,(%edx)		// just one pixel to do
 	jg		LDone
 	movw	%bp,(%edx)
-	movl	%ecx,(%edi)
+	movw	%cx,(%edi)
 	jmp		LDone
 
 	Align4
@@ -253,22 +300,22 @@ LDP_2x2:
 	cmpw	%bp,(%edx)
 	jg		L2x2_1
 	movw	%bp,(%edx)
-	movl	%ecx,(%edi)
+	movw	%cx,(%edi)
 L2x2_1:
 	cmpw	%bp,2(%edx)
 	jg		L2x2_2
 	movw	%bp,2(%edx)
-	movl	%ecx,4(%edi)
+	movw	%cx,2(%edi)
 L2x2_2:
 	cmpw	%bp,(%edx,%esi,1)
 	jg		L2x2_3
 	movw	%bp,(%edx,%esi,1)
-	movl	%ecx,(%edi,%ebx,1)
+	movw	%cx,(%edi,%ebx,1)
 L2x2_3:
 	cmpw	%bp,2(%edx,%esi,1)
 	jg		L2x2_4
 	movw	%bp,2(%edx,%esi,1)
-	movl	%ecx,4(%edi,%ebx,1)
+	movw	%cx,2(%edi,%ebx,1)
 L2x2_4:
 
 	popl	%esi
@@ -284,49 +331,49 @@ LDP_3x3:
 	cmpw	%bp,(%edx)
 	jg		L3x3_1
 	movw	%bp,(%edx)
-	movl	%ecx,(%edi)
+	movw	%cx,(%edi)
 L3x3_1:
 	cmpw	%bp,2(%edx)
 	jg		L3x3_2
 	movw	%bp,2(%edx)
-	movl	%ecx,4(%edi)
+	movw	%cx,2(%edi)
 L3x3_2:
 	cmpw	%bp,4(%edx)
 	jg		L3x3_3
 	movw	%bp,4(%edx)
-	movl	%ecx,8(%edi)
+	movw	%cx,4(%edi)
 L3x3_3:
 
 	cmpw	%bp,(%edx,%esi,1)
 	jg		L3x3_4
 	movw	%bp,(%edx,%esi,1)
-	movl	%ecx,(%edi,%ebx,1)
+	movw	%cx,(%edi,%ebx,1)
 L3x3_4:
 	cmpw	%bp,2(%edx,%esi,1)
 	jg		L3x3_5
 	movw	%bp,2(%edx,%esi,1)
-	movl	%ecx,4(%edi,%ebx,1)
+	movw	%cx,2(%edi,%ebx,1)
 L3x3_5:
 	cmpw	%bp,4(%edx,%esi,1)
 	jg		L3x3_6
 	movw	%bp,4(%edx,%esi,1)
-	movl	%ecx,8(%edi,%ebx,1)
+	movw	%cx,4(%edi,%ebx,1)
 L3x3_6:
 
 	cmpw	%bp,(%edx,%esi,2)
 	jg		L3x3_7
 	movw	%bp,(%edx,%esi,2)
-	movl	%ecx,(%edi,%ebx,2)
+	movw	%cx,(%edi,%ebx,2)
 L3x3_7:
 	cmpw	%bp,2(%edx,%esi,2)
 	jg		L3x3_8
 	movw	%bp,2(%edx,%esi,2)
-	movl	%ecx,4(%edi,%ebx,2)
+	movw	%cx,2(%edi,%ebx,2)
 L3x3_8:
 	cmpw	%bp,4(%edx,%esi,2)
 	jg		L3x3_9
 	movw	%bp,4(%edx,%esi,2)
-	movl	%ecx,8(%edi,%ebx,2)
+	movw	%cx,4(%edi,%ebx,2)
 L3x3_9:
 
 	popl	%esi
@@ -343,43 +390,43 @@ LDP_4x4:
 	cmpw	%bp,(%edx)
 	jg		L4x4_1
 	movw	%bp,(%edx)
-	movl	%ecx,(%edi)
+	movw	%cx,(%edi)
 L4x4_1:
 	cmpw	%bp,2(%edx)
 	jg		L4x4_2
 	movw	%bp,2(%edx)
-	movl	%ecx,4(%edi)
+	movw	%cx,2(%edi)
 L4x4_2:
 	cmpw	%bp,4(%edx)
 	jg		L4x4_3
 	movw	%bp,4(%edx)
-	movl	%ecx,8(%edi)
+	movw	%cx,4(%edi)
 L4x4_3:
 	cmpw	%bp,6(%edx)
 	jg		L4x4_4
 	movw	%bp,6(%edx)
-	movl	%ecx,12(%edi)
+	movw	%cx,6(%edi)
 L4x4_4:
 
 	cmpw	%bp,(%edx,%esi,1)
 	jg		L4x4_5
 	movw	%bp,(%edx,%esi,1)
-	movl	%ecx,(%edi,%ebx,1)
+	movw	%cx,(%edi,%ebx,1)
 L4x4_5:
 	cmpw	%bp,2(%edx,%esi,1)
 	jg		L4x4_6
 	movw	%bp,2(%edx,%esi,1)
-	movl	%ecx,4(%edi,%ebx,1)
+	movw	%cx,2(%edi,%ebx,1)
 L4x4_6:
 	cmpw	%bp,4(%edx,%esi,1)
 	jg		L4x4_7
 	movw	%bp,4(%edx,%esi,1)
-	movl	%ecx,8(%edi,%ebx,1)
+	movw	%cx,4(%edi,%ebx,1)
 L4x4_7:
 	cmpw	%bp,6(%edx,%esi,1)
 	jg		L4x4_8
 	movw	%bp,6(%edx,%esi,1)
-	movl	%ecx,12(%edi,%ebx,1)
+	movw	%cx,6(%edi,%ebx,1)
 L4x4_8:
 
 	leal	(%edx,%esi,2),%edx
@@ -388,43 +435,43 @@ L4x4_8:
 	cmpw	%bp,(%edx)
 	jg		L4x4_9
 	movw	%bp,(%edx)
-	movl	%ecx,(%edi)
+	movw	%cx,(%edi)
 L4x4_9:
 	cmpw	%bp,2(%edx)
 	jg		L4x4_10
 	movw	%bp,2(%edx)
-	movl	%ecx,4(%edi)
+	movw	%cx,2(%edi)
 L4x4_10:
 	cmpw	%bp,4(%edx)
 	jg		L4x4_11
 	movw	%bp,4(%edx)
-	movl	%ecx,8(%edi)
+	movw	%cx,4(%edi)
 L4x4_11:
 	cmpw	%bp,6(%edx)
 	jg		L4x4_12
 	movw	%bp,6(%edx)
-	movl	%ecx,12(%edi)
+	movw	%cx,6(%edi)
 L4x4_12:
 
 	cmpw	%bp,(%edx,%esi,1)
 	jg		L4x4_13
 	movw	%bp,(%edx,%esi,1)
-	movl	%ecx,(%edi,%ebx,1)
+	movw	%cx,(%edi,%ebx,1)
 L4x4_13:
 	cmpw	%bp,2(%edx,%esi,1)
 	jg		L4x4_14
 	movw	%bp,2(%edx,%esi,1)
-	movl	%ecx,4(%edi,%ebx,1)
+	movw	%cx,2(%edi,%ebx,1)
 L4x4_14:
 	cmpw	%bp,4(%edx,%esi,1)
 	jg		L4x4_15
 	movw	%bp,4(%edx,%esi,1)
-	movl	%ecx,8(%edi,%ebx,1)
+	movw	%cx,4(%edi,%ebx,1)
 L4x4_15:
 	cmpw	%bp,6(%edx,%esi,1)
 	jg		L4x4_16
 	movw	%bp,6(%edx,%esi,1)
-	movl	%ecx,12(%edi,%ebx,1)
+	movw	%cx,6(%edi,%ebx,1)
 L4x4_16:
 
 	popl	%esi
@@ -441,7 +488,7 @@ LDefault:
 	movb	C(d_y_aspect_shift),%cl
 	shll	%cl,%ebx
 
-	movl	DP_Colour,%ecx
+	movw	DP_Colour,%cx
 
 // for ( ; count ; count--, pz += d_zwidth, pdest += screenwidth)
 // {
@@ -462,7 +509,7 @@ LGenColLoop:
 	cmpw	%bp,-2(%edx,%eax,2)
 	jg		LGSkip
 	movw	%bp,-2(%edx,%eax,2)
-	movl	%ecx,-4(%edi,%eax,4)
+	movw	%cx,-2(%edi,%eax,2)
 LGSkip:
 	decl	%eax			// --pix
 	jnz		LGenColLoop
@@ -488,5 +535,3 @@ LPop6AndDone:
 LPop1AndDone:
 	fstp	%st(0)
 	jmp		LDone
-
-#endif

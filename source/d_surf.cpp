@@ -443,7 +443,7 @@ surfcache_t *VSoftwareDrawer::CacheSkySurface(surface_t *surface, int texture1,
 	unguard;
 }
 
-#ifndef USEASM
+#if !USE_ASM_I386
 
 //==========================================================================
 //
@@ -1993,7 +1993,7 @@ void D_DrawSurfaceBlock32RGB_mip3()
 	}
 }
 
-#endif // USEASM
+#endif
 
 //==========================================================================
 //

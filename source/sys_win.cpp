@@ -580,7 +580,13 @@ void SleepUntilInput(int time)
 	MsgWaitForMultipleObjects(1, &tevent, FALSE, time, QS_ALLINPUT);
 }
 
-#ifndef USEASM
+//==========================================================================
+//
+//	Floating point precision dummies for nonintel procesors
+//
+//==========================================================================
+
+#if !USE_ASM_I386
 
 void MaskExceptions()
 {

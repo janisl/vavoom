@@ -7,7 +7,7 @@
 //**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
 //**	   #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id$
+//**	$Id: d_polysa.s 1583 2006-06-27 19:05:42Z dj_jl $
 //**
 //**	Copyright (C) 1999-2006 Jānis Legzdiņš
 //**
@@ -24,8 +24,6 @@
 //**************************************************************************
 
 #include "asm_i386.h"
-
-#ifdef USEASM
 
 .extern	C(D_PolysetSetEdgeTable)
 .extern	C(D_RasterizeAliasPolySmooth)
@@ -765,5 +763,3 @@ LSkip2:
 	popl	%esi
 	popl	%ebp
 	ret
-
-#endif

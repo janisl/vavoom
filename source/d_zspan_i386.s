@@ -7,7 +7,7 @@
 //**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
 //**	   #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id$
+//**	$Id: d_zspan.s 1583 2006-06-27 19:05:42Z dj_jl $
 //**
 //**	Copyright (C) 1999-2006 Jānis Legzdiņš
 //**
@@ -24,8 +24,6 @@
 //**************************************************************************
 
 #include "asm_i386.h"
-
-#ifdef USEASM
 
 .text
 
@@ -398,5 +396,3 @@ LFDone:
 	popl	%edi
 	popl	%ebp				// restore the caller's stack frame
 	ret
-
-#endif

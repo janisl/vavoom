@@ -43,13 +43,14 @@
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
-#ifdef __i386__
 extern "C" {
 
-  void Sys_SetFPCW();
+void MaskExceptions();
+void Sys_SetFPCW();
+void Sys_PushFPCW_SetHigh();
+void Sys_PopFPCW();
 
-}
-#endif
+} // extern "C"
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
@@ -607,13 +608,30 @@ static void signal_handler(int s)
 //
 //==========================================================================
 
-#ifndef USEASM
+#if !USE_ASM_I386
 
-extern "C" {
+void MaskExceptions()
+{
+}
 
-void Sys_LowFPPrecision(){}
-void Sys_HighFPPrecision(){}
+void Sys_SetFPCW()
+{
+}
 
+void Sys_PushFPCW_SetHigh()
+{
+}
+
+void Sys_PopFPCW()
+{
+}
+
+void Sys_LowFPPrecision()
+{
+}
+
+void Sys_HighFPPrecision()
+{
 }
 
 #endif
@@ -632,9 +650,7 @@ int main(int argc,char** argv)
 	{
 		GArgs.Init(argc, argv);
 
-#ifdef USEASM
 		Sys_SetFPCW();
-#endif
 
 		// if( SDL_InitSubSystem(SDL_INIT_VIDEO) < 0 )
 		if (SDL_Init(SDL_INIT_VIDEO) < 0)

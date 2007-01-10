@@ -124,7 +124,7 @@ static void D_Alias_clip_z(finalvert_t *pfv0, finalvert_t *pfv1, finalvert_t *ou
 		out->flags |= ALIAS_BOTTOM_CLIP;
 }
 
-#ifndef USEASM
+#if !USE_ASM_I386
 
 //==========================================================================
 //

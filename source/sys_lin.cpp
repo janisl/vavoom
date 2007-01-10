@@ -43,13 +43,14 @@
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
-#ifdef __i386__
 extern "C" {
 
+void MaskExceptions();
 void Sys_SetFPCW();
+void Sys_PushFPCW_SetHigh();
+void Sys_PopFPCW();
 
-}
-#endif
+} // extern "C"
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
@@ -600,13 +601,30 @@ static void signal_handler(int s)
 //
 //==========================================================================
 
-#ifndef __i386__
+#if !USE_ASM_I386
 
-extern "C" {
+void MaskExceptions()
+{
+}
 
-void Sys_LowFPPrecision(){}
-void Sys_HighFPPrecision(){}
+void Sys_SetFPCW()
+{
+}
 
+void Sys_PushFPCW_SetHigh()
+{
+}
+
+void Sys_PopFPCW()
+{
+}
+
+void Sys_LowFPPrecision()
+{
+}
+
+void Sys_HighFPPrecision()
+{
 }
 
 #endif
@@ -625,9 +643,7 @@ int main(int argc,char** argv)
 	{
 		GArgs.Init(argc, argv);
 
-#ifdef __i386__
 		Sys_SetFPCW();
-#endif
 
 		allegro_init();
 

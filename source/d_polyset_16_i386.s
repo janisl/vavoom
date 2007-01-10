@@ -7,7 +7,7 @@
 //**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
 //**	   #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id$
+//**	$Id: d16_poly.s 1954 2007-01-10 18:33:13Z dj_jl $
 //**
 //**	Copyright (C) 1999-2006 Jānis Legzdiņš
 //**
@@ -24,8 +24,6 @@
 //**************************************************************************
 
 #include "asm_i386.h"
-
-#ifdef USEASM
 
 	.text
 
@@ -761,5 +759,3 @@ LRGBExactlyOneLong:
 	orw		%ax,(%edi)
 
 	jmp		LRGBNextSpanESISet
-
-#endif
