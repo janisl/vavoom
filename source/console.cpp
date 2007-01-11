@@ -38,10 +38,10 @@
 
 enum cons_state_t
 {
- 	cons_closed,
-    cons_opening,
-    cons_open,
-    cons_closing
+	cons_closed,
+	cons_opening,
+	cons_open,
+	cons_closing
 };
 
 class FConsoleDevice : public FOutputDevice
@@ -103,8 +103,8 @@ static VStr				c_autocompleteString;
 
 void C_Init()
 {
-    c_history_last = 0;
-    c_history_size = 0;
+	c_history_last = 0;
+	c_history_size = 0;
 }
 
 //==========================================================================
@@ -131,8 +131,8 @@ void C_Start()
 	MN_DeactivateMenu();
 	if (consolestate == cons_closed)
 	{
-       	c_iline.Init();
-        last_line = num_lines;
+		c_iline.Init();
+		last_line = num_lines;
 	}
 	consolestate = cons_opening;
 	c_history_current = -1;
@@ -593,11 +593,18 @@ void C_ClearNotify()
 //
 //==========================================================================
 
-void C_NotifyMessage(const char *str)
+void C_NotifyMessage(const char* AStr)
 {
+	VStr Str(AStr);
+
+	if (Str[0] == '$')
+	{
+		Str = GLanguage[*VStr(Str.ToLower(), 1, Str.Length() - 1)];
+	}
+
 	if (msg_echo)
 	{
-		GCon->Log(str);
+		GCon->Log(Str);
 	}
 
 	if (num_notify >= NUM_NOTIFY_LINES)
@@ -606,7 +613,7 @@ void C_NotifyMessage(const char *str)
 		first_notify++;
 	}
 	VStr::NCpy(notify_lines[(num_notify + first_notify) % NUM_NOTIFY_LINES],
-		str, MAX_NOTIFY_LINE_LENGTH - 1);
+		*Str, MAX_NOTIFY_LINE_LENGTH - 1);
 	notify_lines[(num_notify + first_notify) % NUM_NOTIFY_LINES][
 		MAX_NOTIFY_LINE_LENGTH - 1] = 0;
 	notify_times[(num_notify + first_notify) % NUM_NOTIFY_LINES] =
@@ -657,9 +664,16 @@ static VCvarF			centre_msg_time("centre_message_time", "7", CVAR_Archive);
 //
 //==========================================================================
 
-void C_CentreMessage(const char *msg)
+void C_CentreMessage(const char* AMsg)
 {
-	VStr::Cpy(centre_message, msg);
+	VStr Msg(AMsg);
+
+	if (Msg[0] == '$')
+	{
+		Msg = GLanguage[*VStr(Msg.ToLower(), 1, Msg.Length() - 1)];
+	}
+
+	VStr::Cpy(centre_message, *Msg);
 	centre_time = centre_msg_time;
 }
 
@@ -674,7 +688,7 @@ void C_DrawCentreMessage()
 	if (centre_time)
 	{
 		T_SetFont(font_small);
-	    T_SetAlign(hcentre, vcentre);
+		T_SetAlign(hcentre, vcentre);
 		T_DrawTextW(320, 360, centre_message, 600);
 		centre_time -= host_frametime;
 		if (centre_time < 0.0)
