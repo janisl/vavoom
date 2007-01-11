@@ -37,5 +37,5 @@ defaultproperties
 	bCountItem = true;
 	IdleState = S_PSTR;
 	PowerType = pw_strength;
-	PickupMessage = "Berserk!";
+	PickupMessage = "$gotberserk";
 }

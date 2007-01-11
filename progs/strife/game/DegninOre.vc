@@ -43,7 +43,7 @@ __states__
 defaultproperties
 {
 	ConversationID = 128;
-	PickupString = "Degnin Ore";
+	PickupString = "$txt_degninore";
 	Health = 10;
 	Radius = 16.0;
 	Height = 8.0;

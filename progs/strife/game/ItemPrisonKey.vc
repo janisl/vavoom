@@ -33,7 +33,7 @@ __states__
 defaultproperties
 {
 	ConversationID = 137;
-	PickupString = "Prison Key";
+	PickupString = "$txt_prisonkey";
 	IdleState = S_PRISON_KEY;
 	KeyType = StrifeDefs::KEY_PrisonKey;
 	bGiveQuest = true;

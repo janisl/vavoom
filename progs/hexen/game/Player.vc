@@ -2937,7 +2937,7 @@ bool UseArtifact(int arti)
 		}
 		else
 		{
-			centreprint("YOU CANNOT USE THIS HERE");
+			centreprint("$txt_usepuzzlefailed");
 			return false;
 		}
 		break;

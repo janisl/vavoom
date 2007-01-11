@@ -1,5 +1,57 @@
 [en default]
 
+//	Keys
+txt_gotyellowkey = "YELLOW KEY";
+txt_gotgreenkey = "GREEN KEY";
+txt_gotbluekey = "BLUE KEY";
+
+//	Artifacts
+txt_artihealth = "QUARTZ FLASK";
+txt_artifly = "WINGS OF WRATH";
+txt_artiinvulnerability = "RING OF INVINCIBILITY";
+txt_artitomeofpower = "TOME OF POWER";
+txt_artiinvisibility = "SHADOWSPHERE";
+txt_artiegg = "MORPH OVUM";
+txt_artisuperhealth = "MYSTIC URN";
+txt_artitorch = "TORCH";
+txt_artifirebomb = "TIME BOMB OF THE ANCIENTS";
+txt_artiteleport = "CHAOS DEVICE";
+
+//	Items
+txt_itemhealth = "CRYSTAL VIAL";
+txt_itembagofholding = "BAG OF HOLDING";
+txt_itemshield1 = "SILVER SHIELD";
+txt_itemshield2 = "ENCHANTED SHIELD";
+txt_itemsupermap = "MAP SCROLL";
+
+//	Ammo
+txt_ammogoldwand1 = "WAND CRYSTAL";
+txt_ammogoldwand2 = "CRYSTAL GEODE";
+txt_ammomace1 = "MACE SPHERES";
+txt_ammomace2 = "PILE OF MACE SPHERES";
+txt_ammocrossbow1 = "ETHEREAL ARROWS";
+txt_ammocrossbow2 = "QUIVER OF ETHEREAL ARROWS";
+txt_ammoblaster1 = "CLAW ORB";
+txt_ammoblaster2 = "ENERGY ORB";
+txt_ammoskullrod1 = "LESSER RUNES";
+txt_ammoskullrod2 = "GREATER RUNES";
+txt_ammophoenixrod1 = "FLAME ORB";
+txt_ammophoenixrod2 = "INFERNO ORB";
+
+//	Weapons
+txt_wpncrossbow = "ETHEREAL CROSSBOW";
+txt_wpnblaster = "DRAGON CLAW";
+txt_wpnskullrod = "HELLSTAFF";
+txt_wpnphoenixrod = "PHOENIX ROD";
+txt_wpnmace = "FIREMACE";
+txt_wpngauntlets = "GAUNTLETS OF THE NECROMANCER";
+
+//	Locked door messages.
+txt_needyellowkey = "YOU NEED A YELLOW KEY TO OPEN THIS DOOR";
+txt_needgreenkey = "YOU NEED A GREEN KEY TO OPEN THIS DOOR";
+txt_needbluekey = "YOU NEED A BLUE KEY TO OPEN THIS DOOR";
+
+//	Level names
 hhustr_e1m1 = "THE DOCKS";
 hhustr_e1m2 = "THE DUNGEONS";
 hhustr_e1m3 = "THE GATEHOUSE";
@@ -46,6 +98,7 @@ hhustr_e5m7 = "FOETID MANSE";
 hhustr_e5m8 = "FIELD OF JUDGEMENT";
 hhustr_e5m9 = "SKEIN OF D'SPARIL";
 
+//	Finale texts
 he1text =
 	"with the destruction of the iron\n"
 	"liches and their minions, the last\n"

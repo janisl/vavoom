@@ -28,6 +28,6 @@ class Quest27 : QuestInfo;
 defaultproperties
 {
 	ConversationID = 338;
-	QuestMessage = "You've Blown Up the Computer";
+	QuestMessage = "$txt_quest_27";
 	QuestID = QUEST_BlownUpComputer;
 }

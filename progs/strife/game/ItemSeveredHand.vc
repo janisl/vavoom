@@ -34,7 +34,7 @@ __states__
 defaultproperties
 {
 	ConversationID = 138;
-	PickupString = "Severed Hand";
+	PickupString = "$txt_severedhand";
 	bNoDeathmatch = true;
 	IdleState = S_SEVERED_HAND;
 	KeyType = StrifeDefs::KEY_SeveredHand;

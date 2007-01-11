@@ -58,5 +58,5 @@ defaultproperties
 	Alpha = 0.666;
 	bCountItem = true;
 	IdleState = S_MEGA;
-	PickupMessage = "MegaSphere!";
+	PickupMessage = "$gotmsphere";
 }

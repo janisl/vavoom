@@ -36,5 +36,5 @@ defaultproperties
 {
 	IdleState = S_PLAS;
 	WeaponType = DoomDefs::wp_plasma;
-	PickupMessage = "You got the plasma gun!";
+	PickupMessage = "$gotplasma";
 }

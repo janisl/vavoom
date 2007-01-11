@@ -34,7 +34,7 @@ __states__
 defaultproperties
 {
 	ConversationID = 167;
-	PickupString = "Targeter";
+	PickupString = "$txt_targeter";
 	Mass = 5.0;
 	IdleState = S_TARGETER;
 	ItemType = StrifeDefs::ITEM_Targeter;

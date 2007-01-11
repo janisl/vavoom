@@ -28,6 +28,6 @@ class Quest21 : QuestInfo;
 defaultproperties
 {
 	ConversationID = 332;
-	QuestMessage = "You Killed the Bishop!";
+	QuestMessage = "$txt_killed_bishop";
 	QuestID = QUEST_KilledBishop;
 }

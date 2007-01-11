@@ -326,7 +326,7 @@ bool ActivateLine(line_t* Line, Actor A, int Side, int ActivationType)
 //
 //==========================================================================
 
-bool CheckLock(Entity user, int lock)
+bool CheckLock(Entity user, int lock, bool door)
 {
 	int		Keys;
 
@@ -345,7 +345,7 @@ bool CheckLock(Entity user, int lock)
 	case 2:	// Blue Lock
 		if (!(Keys & (1 << it_bluecard)))
 		{
-			user.Player.centreprint("You need a blue keycard");
+			user.Player.centreprint(door ? "$pd_bluec" : "$pd_blueco");
 			user.PlaySound('*grunt', CHAN_VOICE);
 			return false;
 		}
@@ -354,7 +354,7 @@ bool CheckLock(Entity user, int lock)
 	case 1:	// Red Lock
 		if (!(Keys & (1 << it_redcard)))
 		{
-			user.Player.centreprint("You need a red keycard");
+			user.Player.centreprint(door ? "$pd_redc" : "$pd_redco");
 			user.PlaySound('*grunt', CHAN_VOICE);
 			return false;
 		}
@@ -363,7 +363,7 @@ bool CheckLock(Entity user, int lock)
 	case 3:	// Yellow Lock
 		if (!(Keys & (1 << it_yellowcard)))
 		{
-			user.Player.centreprint("You need a yellow keycard");
+			user.Player.centreprint(door ? "$pd_yellowc" : "$pd_yellowco");
 			user.PlaySound('*grunt', CHAN_VOICE);
 			return false;
 		}
@@ -372,7 +372,7 @@ bool CheckLock(Entity user, int lock)
 	case 5:	// Blue Lock
 		if (!(Keys & (1 << it_blueskull)))
 		{
-			user.Player.centreprint("You need a blue skullkey");
+			user.Player.centreprint(door ? "$pd_blues" : "$pd_blueso");
 			user.PlaySound('*grunt', CHAN_VOICE);
 			return false;
 		}
@@ -381,7 +381,7 @@ bool CheckLock(Entity user, int lock)
 	case 4:	// Red Lock
 		if (!(Keys & (1 << it_redskull)))
 		{
-			user.Player.centreprint("You need a red skullkey");
+			user.Player.centreprint(door ? "$pd_reds" : "$pd_redso");
 			user.PlaySound('*grunt', CHAN_VOICE);
 			return false;
 		}
@@ -390,7 +390,7 @@ bool CheckLock(Entity user, int lock)
 	case 6:	// Yellow Lock
 		if (!(Keys & (1 << it_yellowskull)))
 		{
-			user.Player.centreprint("You need a yellow skullkey");
+			user.Player.centreprint(door ? "$pd_yellows" : "$pd_yellowso");
 			user.PlaySound('*grunt', CHAN_VOICE);
 			return false;
 		}
@@ -400,7 +400,7 @@ bool CheckLock(Entity user, int lock)
 	case 128 + 100:	// Any key
 		if (!Keys)
 		{
-			user.Player.centreprint("You need any key");
+			user.Player.centreprint(door ? "$pd_any" : "$pd_anyobj");
 			user.PlaySound('*grunt', CHAN_VOICE);
 			return false;
 		}
@@ -409,7 +409,7 @@ bool CheckLock(Entity user, int lock)
 	case 101:	// All keys
 		if (Keys != 0x3f)
 		{
-			user.Player.centreprint("You need all keycards and skullkeys");
+			user.Player.centreprint(door ? "$pd_all6" : "$pd_all6o");
 			user.PlaySound('*grunt', CHAN_VOICE);
 			return false;
 		}
@@ -418,7 +418,7 @@ bool CheckLock(Entity user, int lock)
 	case 128 + 2:	// Blue Lock
 		if (!(Keys & ((1 << it_bluecard) | (1 << it_blueskull))))
 		{
-			user.Player.centreprint("You need a blue key");
+			user.Player.centreprint(door ? "$pd_bluek" : "$pd_blueo");
 			user.PlaySound('*grunt', CHAN_VOICE);
 			return false;
 		}
@@ -427,7 +427,7 @@ bool CheckLock(Entity user, int lock)
 	case 128 + 1:	// Red Lock
 		if (!(Keys & ((1 << it_redcard) | (1 << it_redskull))))
 		{
-			user.Player.centreprint("You need a red key");
+			user.Player.centreprint(door ? "$pd_redk" : "$pd_redo");
 			user.PlaySound('*grunt', CHAN_VOICE);
 			return false;
 		}
@@ -436,7 +436,7 @@ bool CheckLock(Entity user, int lock)
 	case 128 + 3:	// Yellow Lock
 		if (!(Keys & ((1 << it_yellowcard) | (1 << it_yellowskull))))
 		{
-			user.Player.centreprint("You need a yellow key");
+			user.Player.centreprint(door ? "$pd_yellowk" : "$pd_yellowo");
 			user.PlaySound('*grunt', CHAN_VOICE);
 			return false;
 		}
@@ -447,7 +447,7 @@ bool CheckLock(Entity user, int lock)
 			!(Keys & ((1 << it_redcard) | (1 << it_redskull))) ||
 			!(Keys & ((1 << it_yellowcard) | (1 << it_yellowskull))))
 		{
-			user.Player.centreprint("You need all keys");
+			user.Player.centreprint(door ? "$pd_all3" : "$pd_all3o");
 			user.PlaySound('*grunt', CHAN_VOICE);
 			return false;
 		}

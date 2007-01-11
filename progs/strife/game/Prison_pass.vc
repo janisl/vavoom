@@ -42,7 +42,7 @@ bool HandlePickup(Actor Toucher)
 defaultproperties
 {
 	ConversationID = 304;
-	PickupString = "Prison pass";
+	PickupString = "$txt_prisonpass";
 	IdleState = S_TOKENS;
 	ItemType = StrifeDefs::ITEM_PrisonPass;
 	bGiveQuest = true;

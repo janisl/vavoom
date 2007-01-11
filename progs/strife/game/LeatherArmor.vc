@@ -35,7 +35,7 @@ __states__
 defaultproperties
 {
 	ConversationID = 130;
-	PickupString = "Leather Armor";
+	PickupString = "$txt_leatherarmor";
 	Mass = 5.0;
 	IdleState = S_LEATHER_ARMOR;
 	ItemType = StrifeDefs::ITEM_LeatherArmor;

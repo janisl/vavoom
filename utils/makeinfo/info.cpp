@@ -5159,62 +5159,57 @@ sfxinfo_t sfx[] =
 
 int			num_sfx = sizeof(sfx) / sizeof(sfx[0]);
 
-string_def_t	strings[] =
-{
-//	{ "PD_BLUEO", "You need a blue key to activate this object", NULL },
-//	{ "PD_REDO", "You need a red key to activate this object", NULL },
-//	{ "PD_YELLOWO", "You need a yellow key to activate this object", NULL },
-//	{ "PD_BLUEK", "You need a blue key to open this door", NULL },
-//	{ "PD_REDK", "You need a red key to open this door", NULL },
-//	{ "PD_YELLOWK", "You need a yellow key to open this door", NULL },
-
-	{ "GOTARMOR", "Picked up the armor.", NULL },
-	{ "GOTMEGA", "Picked up the MegaArmor!", NULL },
-	{ "GOTHTHBONUS", "Picked up a health bonus.", NULL },
-	{ "GOTARMBONUS", "Picked up an armor bonus.", NULL },
-	{ "GOTSTIM", "Picked up a stimpack.", NULL },
-	{ "GOTMEDINEED", "Picked up a medikit that you REALLY need!", NULL },
-	{ "GOTMEDIKIT", "Picked up a medikit.", NULL },
-	{ "GOTSUPER", "Supercharge!", NULL },
-
-	{ "GOTBLUECARD", "Picked up a blue keycard.", NULL },
-	{ "GOTYELWCARD", "Picked up a yellow keycard.", NULL },
-	{ "GOTREDCARD", "Picked up a red keycard.", NULL },
-	{ "GOTBLUESKUL", "Picked up a blue skull key.", NULL },
-	{ "GOTYELWSKUL", "Picked up a yellow skull key.", NULL },
-	{ "GOTREDSKULL", "Picked up a red skull key.", NULL },
-
-	{ "GOTINVUL", "Invulnerability!", NULL },
-	{ "GOTBERSERK", "Berserk!", NULL },
-	{ "GOTINVIS", "Partial Invisibility", NULL },
-	{ "GOTSUIT", "Radiation Shielding Suit", NULL },
-	{ "GOTMAP", "Computer Area Map", NULL },
-	{ "GOTVISOR", "Light Amplification Visor", NULL },
-	{ "GOTMSPHERE", "MegaSphere!", NULL },
-
-	{ "GOTCLIP", "Picked up a clip.", NULL },
-	{ "GOTCLIPBOX", "Picked up a box of bullets.", NULL },
-	{ "GOTROCKET", "Picked up a rocket.", NULL },
-	{ "GOTROCKBOX", "Picked up a box of rockets.", NULL },
-	{ "GOTCELL", "Picked up an energy cell.", NULL },
-	{ "GOTCELLBOX", "Picked up an energy cell pack.", NULL },
-	{ "GOTSHELLS", "Picked up 4 shotgun shells.", NULL },
-	{ "GOTSHELLBOX", "Picked up a box of shotgun shells.", NULL },
-	{ "GOTBACKPACK", "Picked up a backpack full of ammo!", NULL },
-
-	{ "GOTBFG9000", "You got the BFG9000!  Oh, yes.", NULL },
-	{ "GOTCHAINGUN", "You got the chaingun!", NULL },
-	{ "GOTCHAINSAW", "A chainsaw!  Find some meat!", NULL },
-	{ "GOTLAUNCHER", "You got the rocket launcher!", NULL },
-	{ "GOTPLASMA", "You got the plasma gun!", NULL },
-	{ "GOTSHOTGUN", "You got the shotgun!", NULL },
-	{ "GOTSHOTGUN2", "You got the super shotgun!", NULL },
-
-	{NULL, NULL, NULL}
-};
-
 string_def_t	Strings[] =
 {
+	{ "pd_blueo", "You need a blue key to activate this object", NULL },
+	{ "pd_redo", "You need a red key to activate this object", NULL },
+	{ "pd_yellowo", "You need a yellow key to activate this object", NULL },
+	{ "pd_bluek", "You need a blue key to open this door", NULL },
+	{ "pd_redk", "You need a red key to open this door", NULL },
+	{ "pd_yellowk", "You need a yellow key to open this door", NULL },
+
+	{ "gotarmor", "Picked up the armor.", NULL },
+	{ "gotmega", "Picked up the MegaArmor!", NULL },
+	{ "goththbonus", "Picked up a health bonus.", NULL },
+	{ "gotarmbonus", "Picked up an armor bonus.", NULL },
+	{ "gotstim", "Picked up a stimpack.", NULL },
+	{ "gotmedineed", "Picked up a medikit that you REALLY need!", NULL },
+	{ "gotmedikit", "Picked up a medikit.", NULL },
+	{ "gotsuper", "Supercharge!", NULL },
+
+	{ "gotbluecard", "Picked up a blue keycard.", NULL },
+	{ "gotyelwcard", "Picked up a yellow keycard.", NULL },
+	{ "gotredcard", "Picked up a red keycard.", NULL },
+	{ "gotblueskul", "Picked up a blue skull key.", NULL },
+	{ "gotyelwskul", "Picked up a yellow skull key.", NULL },
+	{ "gotredskull", "Picked up a red skull key.", NULL },
+
+	{ "gotinvul", "Invulnerability!", NULL },
+	{ "gotberserk", "Berserk!", NULL },
+	{ "gotinvis", "Partial Invisibility", NULL },
+	{ "gotsuit", "Radiation Shielding Suit", NULL },
+	{ "gotmap", "Computer Area Map", NULL },
+	{ "gotvisor", "Light Amplification Visor", NULL },
+	{ "gotmsphere", "MegaSphere!", NULL },
+
+	{ "gotclip", "Picked up a clip.", NULL },
+	{ "gotclipbox", "Picked up a box of bullets.", NULL },
+	{ "gotrocket", "Picked up a rocket.", NULL },
+	{ "gotrockbox", "Picked up a box of rockets.", NULL },
+	{ "gotcell", "Picked up an energy cell.", NULL },
+	{ "gotcellbox", "Picked up an energy cell pack.", NULL },
+	{ "gotshells", "Picked up 4 shotgun shells.", NULL },
+	{ "gotshellbox", "Picked up a box of shotgun shells.", NULL },
+	{ "gotbackpack", "Picked up a backpack full of ammo!", NULL },
+
+	{ "gotbfg9000", "You got the BFG9000!  Oh, yes.", NULL },
+	{ "gotchaingun", "You got the chaingun!", NULL },
+	{ "gotchainsaw", "A chainsaw!  Find some meat!", NULL },
+	{ "gotlauncher", "You got the rocket launcher!", NULL },
+	{ "gotplasma", "You got the plasma gun!", NULL },
+	{ "gotshotgun", "You got the shotgun!", NULL },
+	{ "gotshotgun2", "You got the super shotgun!", NULL },
+
 	{ "hustr_e1m1", "E1M1: Hangar", NULL },
 	{ "hustr_e1m2", "E1M2: Nuclear Plant", NULL },
 	{ "hustr_e1m3", "E1M3: Toxin Refinery", NULL },

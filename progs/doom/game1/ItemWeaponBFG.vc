@@ -36,5 +36,5 @@ defaultproperties
 {
 	IdleState = S_BFUG;
 	WeaponType = DoomDefs::wp_bfg;
-	PickupMessage = "You got the BFG9000!  Oh, yes.";
+	PickupMessage = "$gotbfg9000";
 }

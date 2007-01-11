@@ -33,7 +33,7 @@ __states__
 defaultproperties
 {
 	ConversationID = 146;
-	PickupString = "Military ID";
+	PickupString = "$txt_militaryid";
 	IdleState = S_MILITARY_ID;
 	KeyType = StrifeDefs::KEY_MilitaryID;
 }

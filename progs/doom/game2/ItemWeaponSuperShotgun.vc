@@ -36,5 +36,5 @@ defaultproperties
 {
 	IdleState = S_SHOT2;
 	WeaponType = DoomDefs::wp_supershotgun;
-	PickupMessage = "You got the super shotgun!";
+	PickupMessage = "$gotshotgun2";
 }

@@ -276,7 +276,7 @@ bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 			VerticalDoor::DOOREV_Raise, Line, A);
 		break;
 	case LNSPEC_DoorLockedRaise:
-		if (CheckLock(A, Arg4))
+		if (CheckLock(A, Arg4, true))
 		{
 			buttonSuccess = EV_DoDoor(Arg1, Arg2, Arg3, Arg4, Arg5,
 				VerticalDoor::DOOREV_RaiseLocked, Line, A);
@@ -516,7 +516,7 @@ bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 		buttonSuccess = TerminateACS(Arg1, Arg2);
 		break;
 	case LNSPEC_ACSLockedExecute:
-		if (CheckLock(A, Arg5))
+		if (CheckLock(A, Arg5, false))
 		{
 			buttonSuccess = StartACS(Arg1, Arg2, Arg3, Arg4, 0, A, Line, Side,
 				false, false);
@@ -945,7 +945,7 @@ int EV_GenericDoor(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 	int			LightTag;
 
 	//	Check for locked door.
-	if (Arg5 && !CheckLock(Thing, Arg5))
+	if (Arg5 && !CheckLock(Thing, Arg5, true))
 	{
 		return false;
 	}
@@ -3844,7 +3844,7 @@ void SpawnTeleportFog(TVec Org)
 //
 //==========================================================================
 
-bool CheckLock(Entity user, int lock)
+bool CheckLock(Entity user, int lock, bool door)
 {
 }
 

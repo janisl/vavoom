@@ -35,44 +35,6 @@ int braintargeton;
 int brain_easy;
 Actor braintargets[32];
 
-string GOTARMOR;
-string GOTMEGA;
-string GOTHTHBONUS;
-string GOTARMBONUS;
-string GOTSTIM;
-string GOTMEDINEED;
-string GOTMEDIKIT;
-string GOTSUPER;
-string GOTBLUECARD;
-string GOTYELWCARD;
-string GOTREDCARD;
-string GOTBLUESKUL;
-string GOTYELWSKUL;
-string GOTREDSKULL;
-string GOTINVUL;
-string GOTBERSERK;
-string GOTINVIS;
-string GOTSUIT;
-string GOTMAP;
-string GOTVISOR;
-string GOTMSPHERE;
-string GOTCLIP;
-string GOTCLIPBOX;
-string GOTROCKET;
-string GOTROCKBOX;
-string GOTCELL;
-string GOTCELLBOX;
-string GOTSHELLS;
-string GOTSHELLBOX;
-string GOTBACKPACK;
-string GOTBFG9000;
-string GOTCHAINGUN;
-string GOTCHAINSAW;
-string GOTLAUNCHER;
-string GOTPLASMA;
-string GOTSHOTGUN;
-string GOTSHOTGUN2;
-
 //==========================================================================
 //
 //	DropStuff
@@ -127,13 +89,13 @@ bool HandlePickup(Actor Toucher)
 	{
 		if (!Player(Toucher.Player).GiveArmor(1))
 			return false;
-		Toucher.Player.cprint(GOTARMOR);
+		Toucher.Player.cprint("$gotarmor");
 	}
 	else if (SpriteName == 'ARM2')
 	{
 		if (!Player(Toucher.Player).GiveArmor(2))
 			return false;
-		Toucher.Player.cprint(GOTMEGA);
+		Toucher.Player.cprint("$gotmega");
 	}
 		// bonus items
 	else if (SpriteName == 'BON1')
@@ -142,7 +104,7 @@ bool HandlePickup(Actor Toucher)
 		if (Toucher.Player.Health > 200)
 			Toucher.Player.Health = 200;
 		Toucher.Health = Toucher.Player.Health;
-		Toucher.Player.cprint(GOTHTHBONUS);
+		Toucher.Player.cprint("$goththbonus");
 	}
 	else if (SpriteName == 'BON2')
 	{
@@ -151,7 +113,7 @@ bool HandlePickup(Actor Toucher)
 			Player(Toucher.Player).ArmorPoints = 200;
 		if (!Player(Toucher.Player).ArmorType)
 			Player(Toucher.Player).ArmorType = 1;
-		Toucher.Player.cprint(GOTARMBONUS);
+		Toucher.Player.cprint("$gotarmbonus");
 	}
 	else if (SpriteName == 'SOUL')
 	{
@@ -159,7 +121,7 @@ bool HandlePickup(Actor Toucher)
 		if (Toucher.Player.Health > SOULSPHERE_MAX)
 			Toucher.Player.Health = SOULSPHERE_MAX;
 		Toucher.Player.MO.Health = Toucher.Player.Health;
-		Toucher.Player.cprint(GOTSUPER);
+		Toucher.Player.cprint("$gotsuper");
 		sound = 'misc/p_pkup';
 	}
 	else if (SpriteName == 'MEGA')
@@ -167,7 +129,7 @@ bool HandlePickup(Actor Toucher)
 		Toucher.Player.Health = MEGASPHERE_HEALTH;
 		Toucher.Health = Toucher.Player.Health;
 		Player(Toucher.Player).GiveArmor(2);
-		Toucher.Player.cprint(GOTMSPHERE);
+		Toucher.Player.cprint("$gotmsphere");
 		sound = 'misc/p_pkup';
 	}
 		// cards
@@ -175,42 +137,42 @@ bool HandlePickup(Actor Toucher)
 	else if (SpriteName == 'BKEY')
 	{
 		if (Player(Toucher.Player).GiveCard(it_bluecard))
-			Toucher.Player.cprint(GOTBLUECARD);
+			Toucher.Player.cprint("$gotbluecard");
 		if (Level.Game.netgame)
 			return false;
 	}
 	else if (SpriteName == 'YKEY')
 	{
 		if (Player(Toucher.Player).GiveCard(it_yellowcard))
-			Toucher.Player.cprint(GOTYELWCARD);
+			Toucher.Player.cprint("$gotyelwcard");
 		if (Level.Game.netgame)
 			return false;
 	}
 	else if (SpriteName == 'RKEY')
 	{
 		if (Player(Toucher.Player).GiveCard(it_redcard))
-			Toucher.Player.cprint(GOTREDCARD);
+			Toucher.Player.cprint("$gotredcard");
 		if (Level.Game.netgame)
 			return false;
 	}
 	else if (SpriteName == 'BSKU')
 	{
 		if (Player(Toucher.Player).GiveCard(it_blueskull))
-			Toucher.Player.cprint(GOTBLUESKUL);
+			Toucher.Player.cprint("$gotblueskul");
 		if (Level.Game.netgame)
 			return false;
 	}
 	else if (SpriteName == 'YSKU')
 	{
 		if (Player(Toucher.Player).GiveCard(it_yellowskull))
-			Toucher.Player.cprint(GOTYELWSKUL);
+			Toucher.Player.cprint("$gotyelwskul");
 		if (Level.Game.netgame)
 			return false;
 	}
 	else if (SpriteName == 'RSKU')
 	{
 		if (Player(Toucher.Player).GiveCard(it_redskull))
-			Toucher.Player.cprint(GOTREDSKULL);
+			Toucher.Player.cprint("$gotredskull");
 		if (Level.Game.netgame)
 			return false;
 	}
@@ -219,7 +181,7 @@ bool HandlePickup(Actor Toucher)
 	{
 		if (!Player(Toucher.Player).GiveBody(10, Player::MAXHEALTH))
 			return false;
-		Toucher.Player.cprint(GOTSTIM);
+		Toucher.Player.cprint("$gotstim");
 	}
 	else if (SpriteName == 'MEDI')
 	{
@@ -227,44 +189,44 @@ bool HandlePickup(Actor Toucher)
 			return false;
 
 		if (Toucher.Player.Health < 25)
-			Toucher.Player.cprint(GOTMEDINEED);
+			Toucher.Player.cprint("$gotmedineed");
 		else
-			Toucher.Player.cprint(GOTMEDIKIT);
+			Toucher.Player.cprint("$gotmedikit");
 	}
 		// power ups
 	else if (SpriteName == 'PINV')
 	{
 		if (!Player(Toucher.Player).GivePower(pw_invulnerability))
 			return false;
-		Toucher.Player.cprint(GOTINVUL);
+		Toucher.Player.cprint("$gotinvul");
 		sound = 'misc/p_pkup';
 	}
 	else if (SpriteName == 'PSTR')
 	{
 		if (!Player(Toucher.Player).GivePower(pw_strength))
 			return false;
-		Toucher.Player.cprint(GOTBERSERK);
+		Toucher.Player.cprint("$gotberserk");
 		sound = 'misc/p_pkup';
 	}
 	else if (SpriteName == 'PINS')
 	{
 		if (!Player(Toucher.Player).GivePower(pw_invisibility))
 			return false;
-		Toucher.Player.cprint(GOTINVIS);
+		Toucher.Player.cprint("$gotinvis");
 		sound = 'misc/p_pkup';
 	}
 	else if (SpriteName == 'SUIT')
 	{
 		if (!Player(Toucher.Player).GivePower(pw_ironfeet))
 			return false;
-		Toucher.Player.cprint(GOTSUIT);
+		Toucher.Player.cprint("$gotsuit");
 		sound = 'misc/p_pkup';
 	}
 	else if (SpriteName == 'PVIS')
 	{
 		if (!Player(Toucher.Player).GivePower(pw_infrared))
 			return false;
-		Toucher.Player.cprint(GOTVISOR);
+		Toucher.Player.cprint("$gotvisor");
 		sound = 'misc/p_pkup';
 	}
 		//  Items
@@ -272,7 +234,7 @@ bool HandlePickup(Actor Toucher)
 	{
 		if (!Player(Toucher.Player).GiveItem(IT_ALL_MAP))
 			return false;
-		Toucher.Player.cprint(GOTMAP);
+		Toucher.Player.cprint("$gotmap");
 		sound = 'misc/p_pkup';
 	}
 		// ammo
@@ -288,49 +250,49 @@ bool HandlePickup(Actor Toucher)
 			if (!Player(Toucher.Player).GiveAmmo(DoomDefs::am_clip, MainGameInfo(Level.Game).clipammo[DoomDefs::am_clip]))
 				return false;
 		}
-		Toucher.Player.cprint(GOTCLIP);
+		Toucher.Player.cprint("$gotclip");
 	}
 	else if (SpriteName == 'AMMO')
 	{
 		if (!Player(Toucher.Player).GiveAmmo(DoomDefs::am_clip, 5 * MainGameInfo(Level.Game).clipammo[DoomDefs::am_clip]))
 			return false;
-		Toucher.Player.cprint(GOTCLIPBOX);
+		Toucher.Player.cprint("$gotclipbox");
 	}
 	else if (SpriteName == 'ROCK')
 	{
 		if (!Player(Toucher.Player).GiveAmmo(DoomDefs::am_misl, MainGameInfo(Level.Game).clipammo[DoomDefs::am_misl]))
 			return false;
-		Toucher.Player.cprint(GOTROCKET);
+		Toucher.Player.cprint("$gotrocket");
 	}
 	else if (SpriteName == 'BROK')
 	{
 		if (!Player(Toucher.Player).GiveAmmo(DoomDefs::am_misl, 5 * MainGameInfo(Level.Game).clipammo[DoomDefs::am_misl]))
 			return false;
-		Toucher.Player.cprint(GOTROCKBOX);
+		Toucher.Player.cprint("$gotrockbox");
 	}
 	else if (SpriteName == 'CELL')
 	{
 		if (!Player(Toucher.Player).GiveAmmo(DoomDefs::am_cell, MainGameInfo(Level.Game).clipammo[DoomDefs::am_cell]))
 			return false;
-		Toucher.Player.cprint(GOTCELL);
+		Toucher.Player.cprint("$gotcell");
 	}
 	else if (SpriteName == 'CELP')
 	{
 		if (!Player(Toucher.Player).GiveAmmo(DoomDefs::am_cell, 5 * MainGameInfo(Level.Game).clipammo[DoomDefs::am_cell]))
 			return false;
-		Toucher.Player.cprint(GOTCELLBOX);
+		Toucher.Player.cprint("$gotcellbox");
 	}
 	else if (SpriteName == 'SHEL')
 	{
 		if (!Player(Toucher.Player).GiveAmmo(DoomDefs::am_shell, MainGameInfo(Level.Game).clipammo[DoomDefs::am_shell]))
 			return false;
-		Toucher.Player.cprint(GOTSHELLS);
+		Toucher.Player.cprint("$gotshells");
 	}
 	else if (SpriteName == 'SBOX')
 	{
 		if (!Player(Toucher.Player).GiveAmmo(DoomDefs::am_shell, 5 * MainGameInfo(Level.Game).clipammo[DoomDefs::am_shell]))
 			return false;
-		Toucher.Player.cprint(GOTSHELLBOX);
+		Toucher.Player.cprint("$gotshellbox");
 	}
 	else if (SpriteName == 'BPAK')
 	{
@@ -344,56 +306,56 @@ bool HandlePickup(Actor Toucher)
 		{
 			Player(Toucher.Player).GiveAmmo(i, MainGameInfo(Level.Game).clipammo[i]);
 		}
-		Toucher.Player.cprint(GOTBACKPACK);
+		Toucher.Player.cprint("$gotbackpack");
 	}
 		// weapons
 	else if (SpriteName == 'BFUG')
 	{
 		if (!Player(Toucher.Player).GiveWeapon(DoomDefs::wp_bfg, false))
 			return false;
-		Toucher.Player.cprint(GOTBFG9000);
+		Toucher.Player.cprint("$gotbfg9000");
 		sound = 'misc/w_pkup';
 	}
 	else if (SpriteName == 'MGUN')
 	{
 		if (!Player(Toucher.Player).GiveWeapon(DoomDefs::wp_chaingun, bDropped))
 			return false;
-		Toucher.Player.cprint(GOTCHAINGUN);
+		Toucher.Player.cprint("$gotchaingun");
 		sound = 'misc/w_pkup';
 	}
 	else if (SpriteName == 'CSAW')
 	{
 		if (!Player(Toucher.Player).GiveWeapon(DoomDefs::wp_chainsaw, false))
 			return false;
-		Toucher.Player.cprint(GOTCHAINSAW);
+		Toucher.Player.cprint("$gotchainsaw");
 		sound = 'misc/w_pkup';
 	}
 	else if (SpriteName == 'LAUN')
 	{
 		if (!Player(Toucher.Player).GiveWeapon(DoomDefs::wp_missile, false))
 			return false;
-		Toucher.Player.cprint(GOTLAUNCHER);
+		Toucher.Player.cprint("$gotlauncher");
 		sound = 'misc/w_pkup';
 	}
 	else if (SpriteName == 'PLAS')
 	{
 		if (!Player(Toucher.Player).GiveWeapon(DoomDefs::wp_plasma, false))
 			return false;
-		Toucher.Player.cprint(GOTPLASMA);
+		Toucher.Player.cprint("$gotplasma");
 		sound = 'misc/w_pkup';
 	}
 	else if (SpriteName == 'SHOT')
 	{
 		if (!Player(Toucher.Player).GiveWeapon(DoomDefs::wp_shotgun, bDropped))
 			return false;
-		Toucher.Player.cprint(GOTSHOTGUN);
+		Toucher.Player.cprint("$gotshotgun");
 		sound = 'misc/w_pkup';
 	}
 	else if (SpriteName == 'SGN2')
 	{
 		if (!Player(Toucher.Player).GiveWeapon(DoomDefs::wp_supershotgun, bDropped))
 			return false;
-		Toucher.Player.cprint(GOTSHOTGUN2);
+		Toucher.Player.cprint("$gotshotgun2");
 		sound = 'misc/w_pkup';
 	}
 	Toucher.PlaySound(sound, CHAN_ITEM);
@@ -1674,41 +1636,4 @@ defaultproperties
 	SOULSPHERE_MAX = 200;
 	SOULSPHERE_HEALTH = 100;
 	MEGASPHERE_HEALTH = 200;
-	GOTARMOR = "Picked up the armor.";
-	GOTMEGA = "Picked up the MegaArmor!";
-	GOTHTHBONUS = "Picked up a health bonus.";
-	GOTARMBONUS = "Picked up an armor bonus.";
-	GOTSTIM = "Picked up a stimpack.";
-	GOTMEDINEED = "Picked up a medikit that you REALLY need!";
-	GOTMEDIKIT = "Picked up a medikit.";
-	GOTSUPER = "Supercharge!";
-	GOTBLUECARD = "Picked up a blue keycard.";
-	GOTYELWCARD = "Picked up a yellow keycard.";
-	GOTREDCARD = "Picked up a red keycard.";
-	GOTBLUESKUL = "Picked up a blue skull key.";
-	GOTYELWSKUL = "Picked up a yellow skull key.";
-	GOTREDSKULL = "Picked up a red skull key.";
-	GOTINVUL = "Invulnerability!";
-	GOTBERSERK = "Berserk!";
-	GOTINVIS = "Partial Invisibility";
-	GOTSUIT = "Radiation Shielding Suit";
-	GOTMAP = "Computer Area Map";
-	GOTVISOR = "Light Amplification Visor";
-	GOTMSPHERE = "MegaSphere!";
-	GOTCLIP = "Picked up a clip.";
-	GOTCLIPBOX = "Picked up a box of bullets.";
-	GOTROCKET = "Picked up a rocket.";
-	GOTROCKBOX = "Picked up a box of rockets.";
-	GOTCELL = "Picked up an energy cell.";
-	GOTCELLBOX = "Picked up an energy cell pack.";
-	GOTSHELLS = "Picked up 4 shotgun shells.";
-	GOTSHELLBOX = "Picked up a box of shotgun shells.";
-	GOTBACKPACK = "Picked up a backpack full of ammo!";
-	GOTBFG9000 = "You got the BFG9000!  Oh, yes.";
-	GOTCHAINGUN = "You got the chaingun!";
-	GOTCHAINSAW = "A chainsaw!  Find some meat!";
-	GOTLAUNCHER = "You got the rocket launcher!";
-	GOTPLASMA = "You got the plasma gun!";
-	GOTSHOTGUN = "You got the shotgun!";
-	GOTSHOTGUN2 = "You got the super shotgun!";
 }

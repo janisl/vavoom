@@ -36,5 +36,5 @@ defaultproperties
 {
 	IdleState = S_LAUN;
 	WeaponType = DoomDefs::wp_missile;
-	PickupMessage = "You got the rocket launcher!";
+	PickupMessage = "$gotlauncher";
 }

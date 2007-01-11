@@ -36,6 +36,6 @@ defaultproperties
 {
 	IdleState = S_MEDI;
 	HealthAmount = 25;
-	PickupMessage = "Picked up a medikit.";
-	//"Picked up a medikit that you REALLY need!"
+	PickupMessage = "$gotmedikit";
+	//"$gotmedineed"
 }

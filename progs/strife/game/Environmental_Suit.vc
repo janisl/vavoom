@@ -35,7 +35,7 @@ __states__
 defaultproperties
 {
 	ConversationID = 161;
-	PickupString = "Environmental Suit";
+	PickupString = "$txt_envsuit";
 	Mass = 5.0;
 	IdleState = S_ENV_SUIT;
 	ItemType = StrifeDefs::ITEM_EnvironmentalSuit;

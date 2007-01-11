@@ -34,7 +34,7 @@ __states__
 defaultproperties
 {
 	ConversationID = 148;
-	PickupString = "Warehouse Key";
+	PickupString = "$txt_warehousekey";
 	bNoDeathmatch = true;
 	IdleState = S_WAREHOUSE_KEY;
 	KeyType = StrifeDefs::KEY_WarehouseKey;

@@ -324,7 +324,7 @@ bool ActivateLine(line_t* Line, Actor A, int Side, int ActivationType)
 //
 //============================================================================
 
-bool CheckLock(Entity A, int lock)
+bool CheckLock(Entity A, int lock, bool door)
 {
 	if (!A.bIsPlayer)
 	{
@@ -336,7 +336,7 @@ bool CheckLock(Entity A, int lock)
 	}
 	if (!(Player(A.Player).Keys & (1 << (lock - 1))))
 	{
-		A.Player.centreprint("YOU NEED THE %s", MainGameInfo(Game).TextKeyMessages[lock - 1]);
+		A.Player.centreprint(MainGameInfo(Game).TextKeyLockedMessages[lock - 1]);
 		A.PlaySound('DoorLocked', CHAN_ITEM);
 		return false;
 	}

@@ -28,7 +28,7 @@ class ItemNewKey5 : ItemMaulerKey;
 defaultproperties
 {
 	ConversationID = 159;
-	PickupString = "New Key5";
+	PickupString = "$txt_newkey5";
 	IdleState = S_MAULER_KEY;
 	KeyType = StrifeDefs::KEY_NewKey5;
 }

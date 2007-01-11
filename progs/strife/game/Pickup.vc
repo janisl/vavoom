@@ -110,7 +110,7 @@ void TouchSpecial(Actor Toucher)
 		Player(Toucher.Player).GiveQuest(QuestID);
 	}
 
-	Toucher.Player.cprint("You picked up the %s.", PickupString);
+	Toucher.Player.cprint(PickupString);
 	if (Special)
 	{
 		Level.ExecuteActionSpecial(Special, Args[0], Args[1], Args[2], Args[3],

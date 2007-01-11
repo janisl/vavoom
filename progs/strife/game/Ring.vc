@@ -33,7 +33,7 @@ __states__
 defaultproperties
 {
 	ConversationID = 173;
-	PickupString = "ring";
+	PickupString = "$txt_beldinsring";
 	IdleState = S_RING;
 	ItemType = StrifeDefs::ITEM_Ring;
 	bGiveQuest = true;

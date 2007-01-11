@@ -46,7 +46,7 @@ __states__
 defaultproperties
 {
 	ConversationID = 176;
-	PickupString = "Communicator";
+	PickupString = "$txt_communicator";
 	bNoDeathmatch = true;
 	IdleState = S_COMMUNICATOR;
 }

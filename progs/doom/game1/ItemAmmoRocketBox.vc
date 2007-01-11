@@ -37,5 +37,5 @@ defaultproperties
 	IdleState = S_BROK;
 	AmmoType = DoomDefs::am_misl;
 	AmmoCount = 5;
-	PickupMessage = "Picked up a box of rockets.";
+	PickupMessage = "$gotrockbox";
 }

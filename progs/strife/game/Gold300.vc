@@ -28,7 +28,7 @@ class Gold300 : MoneyPickup;
 defaultproperties
 {
 	ConversationID = 172;
-	PickupString = "300 gold";
+	PickupString = "$txt_300gold";
 	bDropped = true;
 	IdleState = S_TOKENS;
 	ItemType = StrifeDefs::ITEM_Coin;

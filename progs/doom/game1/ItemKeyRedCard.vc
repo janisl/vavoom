@@ -37,5 +37,5 @@ defaultproperties
 {
 	IdleState = S_RKEY;
 	KeyType = it_redcard;
-	PickupMessage = "Picked up a red keycard.";
+	PickupMessage = "$gotredcard";
 }

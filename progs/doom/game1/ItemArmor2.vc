@@ -37,5 +37,5 @@ defaultproperties
 {
 	IdleState = S_ARM2;
 	ArmorClass = 2;
-	PickupMessage = "Picked up the MegaArmor!";
+	PickupMessage = "$gotmega";
 }

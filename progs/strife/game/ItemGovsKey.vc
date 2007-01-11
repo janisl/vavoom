@@ -33,7 +33,7 @@ __states__
 defaultproperties
 {
 	ConversationID = 134;
-	PickupString = "Govs Key";
+	PickupString = "$txt_govskey";
 	IdleState = S_GOVS_KEY;
 	KeyType = StrifeDefs::KEY_GovsKey;
 }

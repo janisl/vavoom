@@ -34,7 +34,7 @@ __states__
 defaultproperties
 {
 	ConversationID = 186;
-	PickupString = "electric bolts";
+	PickupString = "$txt_electricbolts";
 	IdleState = S_ARROWS_ELECTRIC;
 	AmmoType = StrifeDefs::am_electric_arrow;
 	AmmoCount = 20;

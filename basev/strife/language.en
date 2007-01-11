@@ -1,5 +1,100 @@
 [en default]
 
+txt_needkey = "You don't have the key";
+
+//	Quest messages
+txt_quest_14 = "You've Blown Up the Crystal";
+txt_quest_16 = "You've Blown Up the Gates";
+txt_quest_27 = "You've Blown Up the Computer";
+
+txt_killed_bishop = "You Killed The Bishop!";
+txt_killed_oracle = "You've Killed The Oracle!";
+txt_killed_macil = "You Killed Macil!";
+txt_killed_loremaster = "You've Killed the Loremaster!";
+
+//	Inventory items
+txt_metalarmor = "You picked up the Metal Armor.";
+txt_leatherarmor = "You picked up the Leather Armor.";
+txt_medpatch = "You picked up the Med patch.";
+txt_medicalkit = "You picked up the Medical kit.";
+txt_surgerykit = "You picked up the Surgery Kit.";
+txt_strifemap = "You picked up the map";
+txt_beldinsring = "You picked up the ring.";
+txt_offeringchalice = "You picked up the Offering Chalice.";
+txt_ear = "You picked up the ear.";
+txt_brokencoupling = "You picked up the broken power coupling.";
+txt_shadowarmor = "You picked up the Shadow armor.";
+txt_envsuit = "You picked up the Environmental Suit.";
+txt_guarduniform = "You picked up the Guard Uniform.";
+txt_officersuniform = "You picked up the Officer's Uniform.";
+txt_fthrowerparts = "You picked up the flame thrower parts.";
+txt_report = "You picked up the report.";
+txt_info = "You picked up the info.";
+txt_targeter = "You picked up the Targeter.";
+txt_beacon = "You picked up the Teleporter Beacon.";
+txt_degninore = "You picked up the Degnin Ore.";
+txt_scanner = "You picked up the scanner.";
+txt_prisonpass = "You picked up the Prison pass.";
+txt_oraclepass = "You picked up the Oracle Pass.";
+txt_coin = "You picked up the coin.";
+txt_10gold = "You picked up 10 gold.";
+txt_25gold = "You picked up 25 gold.";
+txt_50gold = "You picked up 50 gold.";
+txt_300gold = "You picked up 300 gold.";
+txt_communicator = "You picked up the Communicator";
+
+//	Weapons
+txt_strifecrossbow = "You picked up the crossbow";
+txt_assaultgun = "You picked up the assault gun";
+txt_mmlauncher = "You picked up the mini missile launcher";
+txt_flamer = "You picked up the flame thrower";
+txt_mauler = "You picked up the mauler";
+txt_glauncher = "You picked up the Grenade launcher";
+txt_sigil = "You picked up the SIGIL.";
+
+//	Keys
+txt_basekey = "You picked up the Base Key.";
+txt_govskey = "You picked up the Govs Key.";
+txt_passcard = "You picked up the Passcard.";
+txt_idbadge = "You picked up the ID Badge.";
+txt_prisonkey = "You picked up the Prison Key.";
+txt_severedhand = "You picked up the Severed Hand.";
+txt_power1key = "You picked up the Power1 Key.";
+txt_power2key = "You picked up the Power2 Key.";
+txt_power3key = "You picked up the Power3 Key.";
+txt_goldkey = "You picked up the Gold Key.";
+txt_idcard = "You picked up the ID Card.";
+txt_silverkey = "You picked up the Silver Key.";
+txt_oraclekey = "You picked up the Oracle Key.";
+txt_militaryid = "You picked up the Military ID.";
+txt_orderkey = "You picked up the Order Key.";
+txt_warehousekey = "You picked up the Warehouse Key.";
+txt_brasskey = "You picked up the Brass Key.";
+txt_redcrystal = "You picked up the Red Crystal Key.";
+txt_bluecrystal = "You picked up the Blue Crystal Key.";
+txt_chapelkey = "You picked up the Chapel Key.";
+txt_catacombkey = "You picked up the Catacomb Key.";
+txt_securitykey = "You picked up the Security Key.";
+txt_corekey = "You picked up the Core Key.";
+txt_maulerkey = "You picked up the Mauler Key.";
+txt_factorykey = "You picked up the Factory Key.";
+txt_minekey = "You picked up the Mine Key.";
+txt_newkey5 = "You picked up the New Key5.";
+
+//	Ammo
+txt_electricbolts = "You picked up the electric bolts.";
+txt_poisonbolts = "You picked up the poison bolts.";
+txt_clipofbullets = "You picked up the clip of bullets.";
+txt_boxofbullets = "You picked up the box of bullets.";
+txt_minimissiles = "You picked up the mini missiles.";
+txt_crateofmissiles = "You picked up the crate of missiles.";
+txt_hegrenades = "You picked up the HE-Grenade Rounds.";
+txt_phgrenades = "You picked up the Phoshorus-Grenade Rounds.";
+txt_energypod = "You picked up the energy pod.";
+txt_energypack = "You picked up the energy pack.";
+txt_ammosatchel = "You picked up the ammo satchel";
+
+//	Level names
 shustr_1 = "AREA  1: sanctuary";
 shustr_2 = "AREA  2: town";
 shustr_3 = "AREA  3: front base";

@@ -34,7 +34,7 @@ __states__
 defaultproperties
 {
 	ConversationID = 149;
-	PickupString = "Brass Key";
+	PickupString = "$txt_brasskey";
 	bNoDeathmatch = true;
 	IdleState = S_BRASS_KEY;
 	KeyType = StrifeDefs::KEY_BrassKey;

@@ -36,5 +36,5 @@ defaultproperties
 {
 	IdleState = S_STIM;
 	HealthAmount = 10;
-	PickupMessage = "Picked up a stimpack.";
+	PickupMessage = "$gotstim";
 }

@@ -37,5 +37,5 @@ defaultproperties
 	IdleState = S_SHEL;
 	AmmoType = DoomDefs::am_shell;
 	AmmoCount = 4;
-	PickupMessage = "Picked up 4 shotgun shells.";
+	PickupMessage = "$gotshells";
 }

@@ -36,5 +36,5 @@ defaultproperties
 {
 	IdleState = S_CSAW;
 	WeaponType = DoomDefs::wp_chainsaw;
-	PickupMessage = "A chainsaw!  Find some meat!";
+	PickupMessage = "$gotchainsaw";
 }

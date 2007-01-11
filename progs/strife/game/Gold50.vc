@@ -34,7 +34,7 @@ __states__
 defaultproperties
 {
 	ConversationID = 171;
-	PickupString = "50 gold";
+	PickupString = "$txt_50gold";
 	bDropped = true;
 	bNoDeathmatch = true;
 	IdleState = S_GOLD50;

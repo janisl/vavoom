@@ -33,7 +33,7 @@ __states__
 defaultproperties
 {
 	ConversationID = 175;
-	PickupString = "ear";
+	PickupString = "$txt_ear";
 	IdleState = S_EAR;
 	ItemType = StrifeDefs::ITEM_Ear;
 	bGiveQuest = true;

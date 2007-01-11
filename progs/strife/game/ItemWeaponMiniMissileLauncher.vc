@@ -34,7 +34,7 @@ __states__
 defaultproperties
 {
 	ConversationID = 192;
-	PickupString = "mini missile launcher";
+	PickupString = "$txt_mmlauncher";
 	IdleState = S_MISSILE_LAUNCHER;
 	WeaponType = StrifeDefs::wp_missile;
 	Ammo1Count = 8;

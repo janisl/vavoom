@@ -34,7 +34,7 @@ __states__
 defaultproperties
 {
 	ConversationID = 195;
-	PickupString = "Grenade launcher";
+	PickupString = "$txt_glauncher";
 	IdleState = S_GRENADE_LAUNCHER;
 	WeaponType = StrifeDefs::wp_grenade;
 	Weapon2Type = StrifeDefs::wp_grenade2;

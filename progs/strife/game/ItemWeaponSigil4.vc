@@ -34,7 +34,7 @@ __states__
 defaultproperties
 {
 	ConversationID = 199;
-	PickupString = "SIGIL";
+	PickupString = "$txt_sigil";
 	IdleState = S_SIGIL_4;
 	WeaponType = StrifeDefs::wp_sigil;
 }

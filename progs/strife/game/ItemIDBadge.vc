@@ -34,7 +34,7 @@ __states__
 defaultproperties
 {
 	ConversationID = 136;
-	PickupString = "ID Badge";
+	PickupString = "$txt_idbadge";
 	bNoDeathmatch = true;
 	IdleState = S_ID_BADGE;
 	KeyType = StrifeDefs::KEY_IDBadge;

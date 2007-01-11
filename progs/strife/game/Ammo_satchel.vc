@@ -54,6 +54,6 @@ __states__
 defaultproperties
 {
 	ConversationID = 187;
-	PickupString = "ammo satchel";
+	PickupString = "$txt_ammosatchel";
 	IdleState = S_BACKPACK;
 }

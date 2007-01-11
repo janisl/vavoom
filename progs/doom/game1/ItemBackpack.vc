@@ -60,5 +60,5 @@ __states__
 defaultproperties
 {
 	IdleState = S_BPAK;
-	PickupMessage = "Picked up a backpack full of ammo!";
+	PickupMessage = "$gotbackpack";
 }

@@ -28,6 +28,6 @@ class Quest14 : QuestInfo;
 defaultproperties
 {
 	ConversationID = 325;
-	QuestMessage = "You've Blown Up the Crystal";
+	QuestMessage = "$txt_quest_14";
 	QuestID = QUEST_BlownUpCrystal;
 }

@@ -35,7 +35,7 @@ __states__
 defaultproperties
 {
 	ConversationID = 165;
-	PickupString = "scanner";
+	PickupString = "$txt_scanner";
 	Mass = 1.0;
 	IdleState = S_SCANNER_1;
 	ItemType = StrifeDefs::ITEM_Scanner;

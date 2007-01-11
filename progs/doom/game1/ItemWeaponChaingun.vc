@@ -36,5 +36,5 @@ defaultproperties
 {
 	IdleState = S_MGUN;
 	WeaponType = DoomDefs::wp_chaingun;
-	PickupMessage = "You got the chaingun!";
+	PickupMessage = "$gotchaingun";
 }

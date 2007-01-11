@@ -28,6 +28,6 @@ class Info1 : Pickup;
 defaultproperties
 {
 	ConversationID = 300;
-	PickupString = "info";
+	PickupString = "$txt_info";
 	IdleState = S_TOKENS;
 }

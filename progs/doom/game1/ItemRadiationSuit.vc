@@ -36,5 +36,5 @@ defaultproperties
 {
 	IdleState = S_SUIT;
 	PowerType = pw_ironfeet;
-	PickupMessage = "Radiation Shielding Suit";
+	PickupMessage = "$gotsuit";
 }

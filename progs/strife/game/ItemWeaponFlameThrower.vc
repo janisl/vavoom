@@ -34,7 +34,7 @@ __states__
 defaultproperties
 {
 	ConversationID = 190;
-	PickupString = "flame thrower";
+	PickupString = "$txt_flamer";
 	IdleState = S_FLAME_THROWER;
 	WeaponType = StrifeDefs::wp_flame;
 	Ammo1Count = 100;

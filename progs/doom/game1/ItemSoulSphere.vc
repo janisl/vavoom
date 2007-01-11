@@ -62,5 +62,5 @@ defaultproperties
 	Alpha = 0.666;
 	bCountItem = true;
 	IdleState = S_SOUL;
-	PickupMessage = "Supercharge!";
+	PickupMessage = "$gotsuper";
 }

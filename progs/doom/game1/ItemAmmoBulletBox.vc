@@ -37,5 +37,5 @@ defaultproperties
 	IdleState = S_AMMO;
 	AmmoType = DoomDefs::am_clip;
 	AmmoCount = 50;
-	PickupMessage = "Picked up a box of bullets.";
+	PickupMessage = "$gotclipbox";
 }

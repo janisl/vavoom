@@ -38,5 +38,5 @@ defaultproperties
 	bCountItem = true;
 	IdleState = S_PVIS;
 	PowerType = pw_infrared;
-	PickupMessage = "Light Amplification Visor";
+	PickupMessage = "$gotvisor";
 }

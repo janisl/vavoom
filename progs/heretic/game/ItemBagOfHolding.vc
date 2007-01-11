@@ -55,7 +55,7 @@ void TouchSpecial(Actor Toucher)
 	Player(Toucher.Player).GiveAmmo(am_crossbow, 5);
 	Player(Toucher.Player).GiveAmmo(am_skullrod, 20);
 	Player(Toucher.Player).GiveAmmo(am_phoenixrod, 1);
-	Toucher.Player.cprint("BAG OF HOLDING");
+	Toucher.Player.cprint("$txt_itembagofholding");
 	if (Special)
 	{
 		Level.ExecuteActionSpecial(Special, Args[0], Args[1], Args[2], Args[3],

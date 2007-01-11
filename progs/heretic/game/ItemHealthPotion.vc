@@ -53,7 +53,7 @@ void TouchSpecial(Actor Toucher)
 	{
 		return;
 	}
-	Toucher.Player.cprint("CRYSTAL VIAL");
+	Toucher.Player.cprint("$txt_itemhealth");
 	if (Special)
 	{
 		Level.ExecuteActionSpecial(Special, Args[0], Args[1], Args[2], Args[3],

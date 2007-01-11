@@ -34,7 +34,7 @@ __states__
 defaultproperties
 {
 	ConversationID = 163;
-	PickupString = "Officer's Uniform";
+	PickupString = "$txt_officersuniform";
 	bNoDeathmatch = true;
 	IdleState = S_OFFICERS_UNIFORM;
 	ItemType = StrifeDefs::ITEM_OfficersUniform;

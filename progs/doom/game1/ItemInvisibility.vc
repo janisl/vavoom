@@ -42,5 +42,5 @@ defaultproperties
 	bNoRespawn = true;
 	IdleState = S_PINS;
 	PowerType = pw_invisibility;
-	PickupMessage = "Partial Invisibility";
+	PickupMessage = "$gotinvis";
 }

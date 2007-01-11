@@ -28,6 +28,6 @@ class Quest26 : QuestInfo;
 defaultproperties
 {
 	ConversationID = 337;
-	QuestMessage = "You've Killed The Loremaster!";
+	QuestMessage = "$txt_killed_loremaster";
 	QuestID = QUEST_KilledLoremaster;
 }

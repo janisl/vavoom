@@ -37,5 +37,5 @@ defaultproperties
 {
 	IdleState = S_ARM1;
 	ArmorClass = 1;
-	PickupMessage = "Picked up the armor.";
+	PickupMessage = "$gotarmor";
 }

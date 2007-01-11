@@ -35,7 +35,7 @@ __states__
 defaultproperties
 {
 	ConversationID = 181;
-	PickupString = "mini missiles";
+	PickupString = "$txt_minimissiles";
 	IdleState = S_MINI_MISSILES;
 	AmmoType = StrifeDefs::am_misl;
 	AmmoCount = 4;

@@ -35,7 +35,7 @@ __states__
 defaultproperties
 {
 	ConversationID = 179;
-	PickupString = "clip of bullets";
+	PickupString = "$txt_clipofbullets";
 	IdleState = S_BULLETS;
 	AmmoType = StrifeDefs::am_clip;
 	AmmoCount = 10;

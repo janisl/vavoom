@@ -37,5 +37,5 @@ defaultproperties
 {
 	IdleState = S_RSKULL;
 	KeyType = it_redskull;
-	PickupMessage = "Picked up a red skull key.";
+	PickupMessage = "$gotredskull";
 }

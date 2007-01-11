@@ -37,5 +37,5 @@ defaultproperties
 	IdleState = S_CELP;
 	AmmoType = DoomDefs::am_cell;
 	AmmoCount = 100;
-	PickupMessage = "Picked up an energy cell pack.";
+	PickupMessage = "$gotcellbox";
 }

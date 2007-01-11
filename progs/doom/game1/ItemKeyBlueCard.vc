@@ -37,5 +37,5 @@ defaultproperties
 {
 	IdleState = S_BKEY;
 	KeyType = it_bluecard;
-	PickupMessage = "Picked up a blue keycard.";
+	PickupMessage = "$gotbluecard";
 }

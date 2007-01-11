@@ -49,7 +49,7 @@ __states__
 defaultproperties
 {
 	ConversationID = 183;
-	PickupString = "energy pod";
+	PickupString = "$txt_energypod";
 	IdleState = S_ENERGY_POD_1;
 	AmmoType = StrifeDefs::am_cell;
 	AmmoCount = 20;

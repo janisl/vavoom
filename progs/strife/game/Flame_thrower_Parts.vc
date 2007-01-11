@@ -33,7 +33,7 @@ __states__
 defaultproperties
 {
 	ConversationID = 191;
-	PickupString = "flame thrower parts";
+	PickupString = "$txt_fthrowerparts";
 	IdleState = S_FLAME_THROWER_PARTS;
 	ItemType = StrifeDefs::ITEM_FlameThrowerParts;
 }

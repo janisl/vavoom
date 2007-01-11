@@ -56,5 +56,5 @@ defaultproperties
 {
 	bCountItem = true;
 	IdleState = S_PMAP;
-	PickupMessage = "Computer Area Map";
+	PickupMessage = "$gotmap";
 }

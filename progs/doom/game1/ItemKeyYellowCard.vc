@@ -37,5 +37,5 @@ defaultproperties
 {
 	IdleState = S_YKEY;
 	KeyType = it_yellowcard;
-	PickupMessage = "Picked up a yellow keycard.";
+	PickupMessage = "$gotyelwcard";
 }

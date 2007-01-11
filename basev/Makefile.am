@@ -77,7 +77,7 @@ common/basepak.pk3: common/basepak.ls $(VLUMPY) \
 		common/progs/engine.dat common/progs/linespec.dat
 	$(VLUMPY) $<
 
-doom/basepak.pk3: doom/basepak.ls $(VLUMPY)
+doom/basepak.pk3: doom/basepak.ls doom/language.en $(VLUMPY)
 	@mkdir -p doom
 	$(VLUMPY) $<
 

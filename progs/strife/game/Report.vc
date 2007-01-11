@@ -28,7 +28,7 @@ class Report : InventoryItem;
 defaultproperties
 {
 	ConversationID = 308;
-	PickupString = "report";
+	PickupString = "$txt_report";
 	IdleState = S_TOKENS;
 	ItemType = StrifeDefs::ITEM_Report;
 }

@@ -119,7 +119,7 @@ __states__
 defaultproperties
 {
 	ConversationID = 166;
-	PickupString = "Teleporter Beacon";
+	PickupString = "$txt_beacon";
 	Health = 5;
 	Radius = 16.0;
 	Height = 8.0;

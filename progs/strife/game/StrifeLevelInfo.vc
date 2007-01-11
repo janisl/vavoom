@@ -357,7 +357,7 @@ bool ActivateLine(line_t* Line, Actor A, int Side, int ActivationType)
 //
 //==========================================================================
 
-bool CheckLock(Entity user, int lock)
+bool CheckLock(Entity user, int lock, bool door)
 {
 	if (!user.bIsPlayer)
 	{
@@ -373,7 +373,7 @@ bool CheckLock(Entity user, int lock)
 		//	Regular keys.
 		if (!(Player(user.Player).Keys & (1 << (lock - 1))))
 		{
-			user.Player.centreprint("You need a key");
+			user.Player.centreprint("$txt_needkey");
 			user.PlaySound('*grunt', CHAN_VOICE);
 			return false;
 		}

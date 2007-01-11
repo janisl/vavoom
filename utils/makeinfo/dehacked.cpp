@@ -62,7 +62,6 @@ extern state_t				states[];
 extern mobjinfo_t			mobjinfo[];
 extern weaponinfo_t			weaponinfo[];
 extern sfxinfo_t			sfx[];
-extern string_def_t			strings[];
 extern string_def_t			Strings[];
 extern map_info_t			map_info1[];
 extern map_info_t			map_info2[];
@@ -443,19 +442,6 @@ static void FindString(char *oldStr, char *newStr)
 			char* NewName = new char[8];
 			strcpy(NewName, newStr);
 			sprnames[i] = NewName;
-			return;
-		}
-	}
-
-	for (i = 0; strings[i].macro; i++)
-	{
-		if (!strcmp(strings[i].def_val, oldStr))
-		{
-//			printf("String %s, old \"%s\" new \"%s\"\n", strings[i].macro, oldStr, newStr);
-			if (strings[i].new_val)
-				free(strings[i].new_val);
-			strings[i].new_val = (char*)malloc(strlen(newStr) + 1);
-			strcpy(strings[i].new_val, newStr);
 			return;
 		}
 	}

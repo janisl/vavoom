@@ -366,7 +366,7 @@ bool ActivateLine(line_t* Line, Actor A, int Side, int ActivationType)
 //
 //==========================================================================
 
-bool CheckLock(Entity user, int lock)
+bool CheckLock(Entity user, int lock, bool door)
 {
 	if (!user.bIsPlayer)
 	{

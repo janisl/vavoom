@@ -28,6 +28,6 @@ class Quest16 : QuestInfo;
 defaultproperties
 {
 	ConversationID = 327;
-	QuestMessage = "You've Blown Up the Gates";
+	QuestMessage = "$txt_quest_16";
 	QuestID = QUEST_BlownUpGates;
 }

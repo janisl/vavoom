@@ -43,7 +43,6 @@ extern state_t				states[];
 extern mobjinfo_t			mobjinfo[];
 extern weaponinfo_t			weaponinfo[];
 extern sfxinfo_t			sfx[];
-extern string_def_t			strings[];
 extern string_def_t			Strings[];
 extern map_info_t			map_info1[];
 extern map_info_t			map_info2[];
@@ -213,11 +212,6 @@ void WriteStates()
 	fprintf(f, "\tSOULSPHERE_MAX = %d;\n", soulsphere_max);
 	fprintf(f, "\tSOULSPHERE_HEALTH = %d;\n", soulsphere_health);
 	fprintf(f, "\tMEGASPHERE_HEALTH = %d;\n", megasphere_health);
-	for (int i = 0; strings[i].macro; i++)
-	{
-		fprintf(f, "\t%s = \"%s\";\n", strings[i].macro,
-			strings[i].new_val ? strings[i].new_val : strings[i].def_val);
-	}
 	fprintf(f, "}\n\n");
 
 	fprintf(f, "class DehWeapon : HackedWeapon;\n\n");
