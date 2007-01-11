@@ -595,474 +595,6 @@
 				Name="Software"
 				>
 				<File
-					RelativePath="..\source\d_part_16_i386.s"
-					>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Assembling $(InputPath)..."
-							CommandLine="gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_&#x0D;&#x0A;"
-							AdditionalDependencies="../../source/asm_i386.h;"
-							Outputs="$(IntDir)\$(InputName).obj"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Assembling $(InputPath)..."
-							CommandLine="gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_&#x0D;&#x0A;"
-							AdditionalDependencies="../../source/asm_i386.h;"
-							Outputs="$(IntDir)\$(InputName).obj"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\source\d_polyset_16_i386.s"
-					>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Assembling $(InputPath)..."
-							CommandLine="gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_&#x0D;&#x0A;"
-							AdditionalDependencies="../../source/asm_i386.h;"
-							Outputs="$(IntDir)\$(InputName).obj"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Assembling $(InputPath)..."
-							CommandLine="gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_&#x0D;&#x0A;"
-							AdditionalDependencies="../../source/asm_i386.h;"
-							Outputs="$(IntDir)\$(InputName).obj"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\source\d_span16_16_i386.s"
-					>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Assembling $(InputPath)..."
-							CommandLine="gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_&#x0D;&#x0A;"
-							AdditionalDependencies="../../source/asm_i386.h;"
-							Outputs="$(IntDir)\$(InputName).obj"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Assembling $(InputPath)..."
-							CommandLine="gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_&#x0D;&#x0A;"
-							AdditionalDependencies="../../source/asm_i386.h;"
-							Outputs="$(IntDir)\$(InputName).obj"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\source\d_span_16_i386.s"
-					>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Assembling $(InputPath)..."
-							CommandLine="gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_&#x0D;&#x0A;"
-							AdditionalDependencies="../../source/asm_i386.h;"
-							Outputs="$(IntDir)\$(InputName).obj"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Assembling $(InputPath)..."
-							CommandLine="gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_&#x0D;&#x0A;"
-							AdditionalDependencies="../../source/asm_i386.h;"
-							Outputs="$(IntDir)\$(InputName).obj"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\source\d_sprite_16_i386.s"
-					>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Assembling $(InputPath)..."
-							CommandLine="gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_&#x0D;&#x0A;"
-							AdditionalDependencies="../../source/asm_i386.h;"
-							Outputs="$(IntDir)\$(InputName).obj"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Assembling $(InputPath)..."
-							CommandLine="gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_&#x0D;&#x0A;"
-							AdditionalDependencies="../../source/asm_i386.h;"
-							Outputs="$(IntDir)\$(InputName).obj"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\source\d_surf_16_i386.s"
-					>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Assembling $(InputPath)..."
-							CommandLine="gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_&#x0D;&#x0A;"
-							AdditionalDependencies="../../source/asm_i386.h;"
-							Outputs="$(IntDir)\$(InputName).obj"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Assembling $(InputPath)..."
-							CommandLine="gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_&#x0D;&#x0A;"
-							AdditionalDependencies="../../source/asm_i386.h;"
-							Outputs="$(IntDir)\$(InputName).obj"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\source\d_part_32_i386.s"
-					>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Assembling $(InputPath)..."
-							CommandLine="gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_&#x0D;&#x0A;"
-							AdditionalDependencies="../../source/asm_i386.h;"
-							Outputs="$(IntDir)\$(InputName).obj"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Assembling $(InputPath)..."
-							CommandLine="gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_&#x0D;&#x0A;"
-							AdditionalDependencies="../../source/asm_i386.h;"
-							Outputs="$(IntDir)\$(InputName).obj"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\source\d_polyset_32_i386.s"
-					>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Assembling $(InputPath)..."
-							CommandLine="gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_&#x0D;&#x0A;"
-							AdditionalDependencies="../../source/asm_i386.h;"
-							Outputs="$(IntDir)\$(InputName).obj"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Assembling $(InputPath)..."
-							CommandLine="gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_&#x0D;&#x0A;"
-							AdditionalDependencies="../../source/asm_i386.h;"
-							Outputs="$(IntDir)\$(InputName).obj"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\source\d_span16_32_i386.s"
-					>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Assembling $(InputPath)..."
-							CommandLine="gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_&#x0D;&#x0A;"
-							AdditionalDependencies="../../source/asm_i386.h;"
-							Outputs="$(IntDir)\$(InputName).obj"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Assembling $(InputPath)..."
-							CommandLine="gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_&#x0D;&#x0A;"
-							AdditionalDependencies="../../source/asm_i386.h;"
-							Outputs="$(IntDir)\$(InputName).obj"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\source\d_span_32_i386.s"
-					>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Assembling $(InputPath)..."
-							CommandLine="gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_&#x0D;&#x0A;"
-							AdditionalDependencies="../../source/asm_i386.h;"
-							Outputs="$(IntDir)\$(InputName).obj"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Assembling $(InputPath)..."
-							CommandLine="gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_&#x0D;&#x0A;"
-							AdditionalDependencies="../../source/asm_i386.h;"
-							Outputs="$(IntDir)\$(InputName).obj"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\source\d_sprite_32_i386.s"
-					>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Assembling $(InputPath)..."
-							CommandLine="gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_&#x0D;&#x0A;"
-							AdditionalDependencies="../../source/asm_i386.h;"
-							Outputs="$(IntDir)\$(InputName).obj"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Assembling $(InputPath)..."
-							CommandLine="gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_&#x0D;&#x0A;"
-							AdditionalDependencies="../../source/asm_i386.h;"
-							Outputs="$(IntDir)\$(InputName).obj"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\source\d_surf_32_i386.s"
-					>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Assembling $(InputPath)..."
-							CommandLine="gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_&#x0D;&#x0A;"
-							AdditionalDependencies="../../source/asm_i386.h;"
-							Outputs="$(IntDir)\$(InputName).obj"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Assembling $(InputPath)..."
-							CommandLine="gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_&#x0D;&#x0A;"
-							AdditionalDependencies="../../source/asm_i386.h;"
-							Outputs="$(IntDir)\$(InputName).obj"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\source\d_part_8_i386.s"
-					>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Assembling $(InputPath)..."
-							CommandLine="gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_&#x0D;&#x0A;"
-							AdditionalDependencies="../../source/asm_i386.h;"
-							Outputs="$(IntDir)\$(InputName).obj"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Assembling $(InputPath)..."
-							CommandLine="gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_&#x0D;&#x0A;"
-							AdditionalDependencies="../../source/asm_i386.h;"
-							Outputs="$(IntDir)\$(InputName).obj"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\source\d_polyset_8_i386.s"
-					>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Assembling $(InputPath)..."
-							CommandLine="gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_&#x0D;&#x0A;"
-							AdditionalDependencies="../../source/asm_i386.h;"
-							Outputs="$(IntDir)\$(InputName).obj"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Assembling $(InputPath)..."
-							CommandLine="gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_&#x0D;&#x0A;"
-							AdditionalDependencies="../../source/asm_i386.h;"
-							Outputs="$(IntDir)\$(InputName).obj"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\source\d_span16_8_i386.s"
-					>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Assembling $(InputPath)..."
-							CommandLine="gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_&#x0D;&#x0A;"
-							AdditionalDependencies="../../source/asm_i386.h;"
-							Outputs="$(IntDir)\$(InputName).obj"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Assembling $(InputPath)..."
-							CommandLine="gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_&#x0D;&#x0A;"
-							AdditionalDependencies="../../source/asm_i386.h;"
-							Outputs="$(IntDir)\$(InputName).obj"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\source\d_span_8_i386.s"
-					>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Assembling $(InputPath)..."
-							CommandLine="gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_&#x0D;&#x0A;"
-							AdditionalDependencies="../../source/asm_i386.h;"
-							Outputs="$(IntDir)\$(InputName).obj"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Assembling $(InputPath)..."
-							CommandLine="gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_&#x0D;&#x0A;"
-							AdditionalDependencies="../../source/asm_i386.h;"
-							Outputs="$(IntDir)\$(InputName).obj"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\source\d_sprite_8_i386.s"
-					>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Assembling $(InputPath)..."
-							CommandLine="gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_&#x0D;&#x0A;"
-							AdditionalDependencies="../../source/asm_i386.h;"
-							Outputs="$(IntDir)\$(InputName).obj"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Assembling $(InputPath)..."
-							CommandLine="gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_&#x0D;&#x0A;"
-							AdditionalDependencies="../../source/asm_i386.h;"
-							Outputs="$(IntDir)\$(InputName).obj"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\source\d_surf_8_i386.s"
-					>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Assembling $(InputPath)..."
-							CommandLine="gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_&#x0D;&#x0A;"
-							AdditionalDependencies="../../source/asm_i386.h;"
-							Outputs="$(IntDir)\$(InputName).obj"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Assembling $(InputPath)..."
-							CommandLine="gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_&#x0D;&#x0A;"
-							AdditionalDependencies="../../source/asm_i386.h;"
-							Outputs="$(IntDir)\$(InputName).obj"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
 					RelativePath="..\source\d_aclip.cpp"
 					>
 				</File>
@@ -1193,7 +725,59 @@
 					>
 				</File>
 				<File
-					RelativePath="..\source\d_polyset_i386.s"
+					RelativePath="..\source\d_part_16_i386.s"
+					>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Assembling $(InputPath)..."
+							CommandLine="gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_&#x0D;&#x0A;"
+							AdditionalDependencies="../../source/asm_i386.h;"
+							Outputs="$(IntDir)\$(InputName).obj"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Assembling $(InputPath)..."
+							CommandLine="gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_&#x0D;&#x0A;"
+							AdditionalDependencies="../../source/asm_i386.h;"
+							Outputs="$(IntDir)\$(InputName).obj"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\source\d_part_32_i386.s"
+					>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Assembling $(InputPath)..."
+							CommandLine="gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_&#x0D;&#x0A;"
+							AdditionalDependencies="../../source/asm_i386.h;"
+							Outputs="$(IntDir)\$(InputName).obj"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Assembling $(InputPath)..."
+							CommandLine="gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_&#x0D;&#x0A;"
+							AdditionalDependencies="../../source/asm_i386.h;"
+							Outputs="$(IntDir)\$(InputName).obj"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\source\d_part_8_i386.s"
 					>
 					<FileConfiguration
 						Name="Release|Win32"
@@ -1221,6 +805,110 @@
 				<File
 					RelativePath="..\source\d_polyse.cpp"
 					>
+				</File>
+				<File
+					RelativePath="..\source\d_polyset_16_i386.s"
+					>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Assembling $(InputPath)..."
+							CommandLine="gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_&#x0D;&#x0A;"
+							AdditionalDependencies="../../source/asm_i386.h;"
+							Outputs="$(IntDir)\$(InputName).obj"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Assembling $(InputPath)..."
+							CommandLine="echo gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_&#x0D;&#x0A;gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_&#x0D;&#x0A;"
+							AdditionalDependencies="../../source/asm_i386.h;"
+							Outputs="$(IntDir)\$(InputName).obj"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\source\d_polyset_32_i386.s"
+					>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Assembling $(InputPath)..."
+							CommandLine="gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_&#x0D;&#x0A;"
+							AdditionalDependencies="../../source/asm_i386.h;"
+							Outputs="$(IntDir)\$(InputName).obj"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Assembling $(InputPath)..."
+							CommandLine="gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_&#x0D;&#x0A;"
+							AdditionalDependencies="../../source/asm_i386.h;"
+							Outputs="$(IntDir)\$(InputName).obj"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\source\d_polyset_8_i386.s"
+					>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Assembling $(InputPath)..."
+							CommandLine="gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_&#x0D;&#x0A;"
+							AdditionalDependencies="../../source/asm_i386.h;"
+							Outputs="$(IntDir)\$(InputName).obj"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Assembling $(InputPath)..."
+							CommandLine="gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_&#x0D;&#x0A;"
+							AdditionalDependencies="../../source/asm_i386.h;"
+							Outputs="$(IntDir)\$(InputName).obj"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\source\d_polyset_i386.s"
+					>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Assembling $(InputPath)..."
+							CommandLine="gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_&#x0D;&#x0A;"
+							AdditionalDependencies="../../source/asm_i386.h;"
+							Outputs="$(IntDir)\$(InputName).obj"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Assembling $(InputPath)..."
+							CommandLine="gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_&#x0D;&#x0A;"
+							AdditionalDependencies="../../source/asm_i386.h;"
+							Outputs="$(IntDir)\$(InputName).obj"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\source\d_scache.cpp"
@@ -1251,12 +939,324 @@
 					>
 				</File>
 				<File
+					RelativePath="..\source\d_span16_16_i386.s"
+					>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Assembling $(InputPath)..."
+							CommandLine="gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_&#x0D;&#x0A;"
+							AdditionalDependencies="../../source/asm_i386.h;"
+							Outputs="$(IntDir)\$(InputName).obj"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Assembling $(InputPath)..."
+							CommandLine="gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_&#x0D;&#x0A;"
+							AdditionalDependencies="../../source/asm_i386.h;"
+							Outputs="$(IntDir)\$(InputName).obj"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\source\d_span16_32_i386.s"
+					>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Assembling $(InputPath)..."
+							CommandLine="gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_&#x0D;&#x0A;"
+							AdditionalDependencies="../../source/asm_i386.h;"
+							Outputs="$(IntDir)\$(InputName).obj"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Assembling $(InputPath)..."
+							CommandLine="gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_&#x0D;&#x0A;"
+							AdditionalDependencies="../../source/asm_i386.h;"
+							Outputs="$(IntDir)\$(InputName).obj"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\source\d_span16_8_i386.s"
+					>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Assembling $(InputPath)..."
+							CommandLine="gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_&#x0D;&#x0A;"
+							AdditionalDependencies="../../source/asm_i386.h;"
+							Outputs="$(IntDir)\$(InputName).obj"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Assembling $(InputPath)..."
+							CommandLine="gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_&#x0D;&#x0A;"
+							AdditionalDependencies="../../source/asm_i386.h;"
+							Outputs="$(IntDir)\$(InputName).obj"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\source\d_span_16_i386.s"
+					>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Assembling $(InputPath)..."
+							CommandLine="gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_&#x0D;&#x0A;"
+							AdditionalDependencies="../../source/asm_i386.h;"
+							Outputs="$(IntDir)\$(InputName).obj"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Assembling $(InputPath)..."
+							CommandLine="gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_&#x0D;&#x0A;"
+							AdditionalDependencies="../../source/asm_i386.h;"
+							Outputs="$(IntDir)\$(InputName).obj"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\source\d_span_32_i386.s"
+					>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Assembling $(InputPath)..."
+							CommandLine="gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_&#x0D;&#x0A;"
+							AdditionalDependencies="../../source/asm_i386.h;"
+							Outputs="$(IntDir)\$(InputName).obj"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Assembling $(InputPath)..."
+							CommandLine="gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_&#x0D;&#x0A;"
+							AdditionalDependencies="../../source/asm_i386.h;"
+							Outputs="$(IntDir)\$(InputName).obj"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\source\d_span_8_i386.s"
+					>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Assembling $(InputPath)..."
+							CommandLine="gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_&#x0D;&#x0A;"
+							AdditionalDependencies="../../source/asm_i386.h;"
+							Outputs="$(IntDir)\$(InputName).obj"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Assembling $(InputPath)..."
+							CommandLine="gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_&#x0D;&#x0A;"
+							AdditionalDependencies="../../source/asm_i386.h;"
+							Outputs="$(IntDir)\$(InputName).obj"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
 					RelativePath="..\source\d_sprite.cpp"
 					>
 				</File>
 				<File
+					RelativePath="..\source\d_sprite_16_i386.s"
+					>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Assembling $(InputPath)..."
+							CommandLine="gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_&#x0D;&#x0A;"
+							AdditionalDependencies="../../source/asm_i386.h;"
+							Outputs="$(IntDir)\$(InputName).obj"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Assembling $(InputPath)..."
+							CommandLine="gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_&#x0D;&#x0A;"
+							AdditionalDependencies="../../source/asm_i386.h;"
+							Outputs="$(IntDir)\$(InputName).obj"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\source\d_sprite_32_i386.s"
+					>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Assembling $(InputPath)..."
+							CommandLine="gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_&#x0D;&#x0A;"
+							AdditionalDependencies="../../source/asm_i386.h;"
+							Outputs="$(IntDir)\$(InputName).obj"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Assembling $(InputPath)..."
+							CommandLine="gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_&#x0D;&#x0A;"
+							AdditionalDependencies="../../source/asm_i386.h;"
+							Outputs="$(IntDir)\$(InputName).obj"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\source\d_sprite_8_i386.s"
+					>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Assembling $(InputPath)..."
+							CommandLine="gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_&#x0D;&#x0A;"
+							AdditionalDependencies="../../source/asm_i386.h;"
+							Outputs="$(IntDir)\$(InputName).obj"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Assembling $(InputPath)..."
+							CommandLine="gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_&#x0D;&#x0A;"
+							AdditionalDependencies="../../source/asm_i386.h;"
+							Outputs="$(IntDir)\$(InputName).obj"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
 					RelativePath="..\source\d_surf.cpp"
 					>
+				</File>
+				<File
+					RelativePath="..\source\d_surf_16_i386.s"
+					>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Assembling $(InputPath)..."
+							CommandLine="gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_&#x0D;&#x0A;"
+							AdditionalDependencies="../../source/asm_i386.h;"
+							Outputs="$(IntDir)\$(InputName).obj"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Assembling $(InputPath)..."
+							CommandLine="gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_&#x0D;&#x0A;"
+							AdditionalDependencies="../../source/asm_i386.h;"
+							Outputs="$(IntDir)\$(InputName).obj"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\source\d_surf_32_i386.s"
+					>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Assembling $(InputPath)..."
+							CommandLine="gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_&#x0D;&#x0A;"
+							AdditionalDependencies="../../source/asm_i386.h;"
+							Outputs="$(IntDir)\$(InputName).obj"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Assembling $(InputPath)..."
+							CommandLine="gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_&#x0D;&#x0A;"
+							AdditionalDependencies="../../source/asm_i386.h;"
+							Outputs="$(IntDir)\$(InputName).obj"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\source\d_surf_8_i386.s"
+					>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Assembling $(InputPath)..."
+							CommandLine="gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_&#x0D;&#x0A;"
+							AdditionalDependencies="../../source/asm_i386.h;"
+							Outputs="$(IntDir)\$(InputName).obj"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Assembling $(InputPath)..."
+							CommandLine="gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_&#x0D;&#x0A;"
+							AdditionalDependencies="../../source/asm_i386.h;"
+							Outputs="$(IntDir)\$(InputName).obj"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\source\d_tex.cpp"
