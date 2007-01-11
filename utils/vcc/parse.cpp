@@ -1813,7 +1813,7 @@ void VParser::Parse()
 {
 	bool		done;
 
-	dprintf("Compiling pass 1\n");
+	dprintf("Parsing\n");
 
 	Lex.NextToken();
 	done = false;
