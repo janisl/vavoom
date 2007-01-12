@@ -753,6 +753,14 @@ IMPLEMENT_FUNCTION(VObject, StrEndsWith)
 	RET_BOOL(Str.EndsWith(Check));
 }
 
+IMPLEMENT_FUNCTION(VObject, StrReplace)
+{
+	P_GET_STR(Replacement);
+	P_GET_STR(Search);
+	P_GET_STR(Str);
+	RET_STR(Str.Replace(Search, Replacement));
+}
+
 //**************************************************************************
 //
 //	Random numbers

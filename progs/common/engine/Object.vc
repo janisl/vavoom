@@ -1540,6 +1540,8 @@ native static final float atof(string str);
 native static final bool StrStartsWith(string Str, string Check);
 //  Checks if string ends with given string
 native static final bool StrEndsWith(string Str, string Check);
+//  Replaces substrings with another string
+native static final string StrReplace(string Search, string Replacement);
 
 //
 //  Printing to console

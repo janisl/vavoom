@@ -329,6 +329,9 @@ public:
 	int LastIndexOf(const char*) const;
 	int LastIndexOf(const VStr&) const;
 
+	VStr Replace(const char*, const char*) const;
+	VStr Replace(const VStr&, const VStr&) const;
+
 	VStr Utf8Substring(int, int) const;
 
 	void Split(char, TArray<VStr>&) const;

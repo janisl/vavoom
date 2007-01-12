@@ -274,6 +274,7 @@ public:
 	DECLARE_FUNCTION(atof)
 	DECLARE_FUNCTION(StrStartsWith)
 	DECLARE_FUNCTION(StrEndsWith)
+	DECLARE_FUNCTION(StrReplace)
 
 	//	Random numbers
 	DECLARE_FUNCTION(Random)

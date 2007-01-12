@@ -383,6 +383,108 @@ int VStr::LastIndexOf(const VStr& S) const
 
 //==========================================================================
 //
+//	VStr::Replace
+//
+//==========================================================================
+
+VStr VStr::Replace(const char* Search, const char* Replacement) const
+{
+	guard(VStr::Replace);
+	if (!Length())
+	{
+		//	Nothing to replace in an empty string.
+		return *this;
+	}
+
+	size_t SLen = Length(Search);
+	size_t RLen = Length(Replacement);
+	if (!SLen)
+	{
+		//	Nothing to search for.
+		return *this;
+	}
+
+	VStr Ret = *this;
+	size_t i = 0;
+	while (i <= Ret.Length() - SLen)
+	{
+		if (!NCmp(Ret.Str + i, Search, SLen))
+		{
+			//	If search and replace strings are of the same size, we can
+			// just copy the data and avoid memory allocations.
+			if (SLen == RLen)
+			{
+				memcpy(Ret.Str + i, Replacement, RLen);
+			}
+			else
+			{
+				Ret = VStr(Ret, 0, i) + Replacement +
+					VStr(Ret, i + SLen, Ret.Length() - i - SLen);
+			}
+			i += RLen;
+		}
+		else
+		{
+			i++;
+		}
+	}
+	return Ret;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VStr::Replace
+//
+//==========================================================================
+
+VStr VStr::Replace(const VStr& Search, const VStr& Replacement) const
+{
+	guard(VStr::Replace);
+	if (!Length())
+	{
+		//	Nothing to replace in an empty string.
+		return *this;
+	}
+
+	size_t SLen = Search.Length();
+	size_t RLen = Replacement.Length();
+	if (!SLen)
+	{
+		//	Nothing to search for.
+		return *this;
+	}
+
+	VStr Ret = *this;
+	size_t i = 0;
+	while (i <= Ret.Length() - SLen)
+	{
+		if (!NCmp(Ret.Str + i, *Search, SLen))
+		{
+			//	If search and replace strings are of the same size, we can
+			// just copy the data and avoid memory allocations.
+			if (SLen == RLen)
+			{
+				memcpy(Ret.Str + i, *Replacement, RLen);
+			}
+			else
+			{
+				Ret = VStr(Ret, 0, i) + Replacement +
+					VStr(Ret, i + SLen, Ret.Length() - i - SLen);
+			}
+			i += RLen;
+		}
+		else
+		{
+			i++;
+		}
+	}
+	return Ret;
+	unguard;
+}
+
+//==========================================================================
+//
 //	VStr::Utf8Substring
 //
 //==========================================================================
