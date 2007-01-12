@@ -1114,6 +1114,111 @@ bool VField::Define()
 
 //END
 
+//BEGIN VProperty
+
+//==========================================================================
+//
+//	VProperty::VProperty
+//
+//==========================================================================
+
+VProperty::VProperty(VName AName, VMemberBase* AOuter, TLocation ALoc)
+: VMemberBase(MEMBER_Property, AName, AOuter, ALoc)
+, Type(ev_void)
+, GetFunc(NULL)
+, SetFunc(NULL)
+, DefaultField(NULL)
+, Flags(0)
+, Modifiers(0)
+, TypeExpr(NULL)
+, DefaultFieldName(NAME_None)
+{
+}
+
+//==========================================================================
+//
+//	VProperty::~VProperty
+//
+//==========================================================================
+
+VProperty::~VProperty()
+{
+	if (TypeExpr)
+		delete TypeExpr;
+}
+
+//==========================================================================
+//
+//	VProperty::Serialise
+//
+//==========================================================================
+
+void VProperty::Serialise(VStream& Strm)
+{
+	VMemberBase::Serialise(Strm);
+	Strm << Type << GetFunc << SetFunc << DefaultField << Flags;
+}
+
+//==========================================================================
+//
+//	VProperty::Define
+//
+//==========================================================================
+
+bool VProperty::Define()
+{
+	if (TypeExpr)
+	{
+		VEmitContext ec(this);
+		TypeExpr = TypeExpr->ResolveAsType(ec);
+	}
+	if (!TypeExpr)
+	{
+		return false;
+	}
+
+	if (TypeExpr->Type.type == ev_void)
+	{
+		ParseError(TypeExpr->Loc, "Property cannot have void type.");
+		return false;
+	}
+	Type = TypeExpr->Type;
+
+	Modifiers = TModifiers::Check(Modifiers, AllowedModifiers, Loc);
+	Flags = TModifiers::PropAttr(Modifiers);
+
+	if (DefaultFieldName != NAME_None)
+	{
+		DefaultField = ((VClass*)Outer)->CheckForField(Loc, DefaultFieldName,
+			(VClass*)Outer, true);
+		if (!DefaultField)
+		{
+			ParseError(Loc, "No such field %s", *DefaultFieldName);
+			return false;
+		}
+	}
+
+	VProperty* BaseProp = NULL;
+	if (((VClass*)Outer)->ParentClass)
+	{
+		BaseProp = ((VClass*)Outer)->ParentClass->CheckForProperty(Name);
+	}
+	if (BaseProp)
+	{
+		if (BaseProp->Flags & PROP_Final)
+		{
+			ParseError(Loc, "Property alaready has been declared final and cannot be overriden");
+		}
+		if (!Type.Equals(BaseProp->Type))
+		{
+			ParseError(Loc, "Property redeclared with a different type");
+		}
+	}
+	return true;
+}
+
+//END
+
 //BEGIN VMethod
 
 //==========================================================================
@@ -1395,6 +1500,11 @@ void VMethod::Emit()
 
 	ec.LocalDefs.Clear();
 	ec.localsofs = 1;
+	if (Outer->MemberType == MEMBER_Class &&
+		this == ((VClass*)Outer)->DefaultProperties)
+	{
+		ec.InDefaultProperties = true;
+	}
 
 	for (int i = 0; i < NumParams; i++)
 	{
@@ -2101,6 +2211,17 @@ void VClass::AddField(VField* f)
 
 //==========================================================================
 //
+//	VClass::AddProperty
+//
+//==========================================================================
+
+void VClass::AddProperty(VProperty* p)
+{
+	Properties.Append(p);
+}
+
+//==========================================================================
+//
 //	VClass::AddState
 //
 //==========================================================================
@@ -2216,6 +2337,30 @@ VField* VClass::CheckForField(TLocation l, VName Name, VClass* SelfClass, bool C
 	if (ParentClass)
 	{
 		return ParentClass->CheckForField(l, Name, SelfClass, CheckPrivate);
+	}
+	return NULL;
+}
+
+//==========================================================================
+//
+//	VClass::CheckForProperty
+//
+//==========================================================================
+
+VProperty* VClass::CheckForProperty(VName Name)
+{
+	if (Name == NAME_None)
+	{
+		return NULL;
+	}
+	VProperty* P = (VProperty*)StaticFindMember(Name, this, MEMBER_Property);
+	if (P)
+	{
+		return P;
+	}
+	if (ParentClass)
+	{
+		return ParentClass->CheckForProperty(Name);
 	}
 	return NULL;
 }
@@ -2347,6 +2492,14 @@ bool VClass::DefineMembers()
 			fi->type.bit_mask = PrevBool->type.bit_mask << 1;
 		}
 		PrevBool = fi->type.type == ev_bool ? fi : NULL;
+	}
+
+	for (int i = 0; i < Properties.Num(); i++)
+	{
+		if (!Properties[i]->Define())
+		{
+			Ret = false;
+		}
 	}
 
 	for (int i = 0; i < Methods.Num(); i++)

@@ -162,6 +162,29 @@ public:
 
 //==========================================================================
 //
+//	VProperty
+//
+//==========================================================================
+
+class VProperty : public VMemberBase
+{
+public:
+	VField::FType	Type;
+	VMethod*		GetFunc;
+	VMethod*		SetFunc;
+	VField*			DefaultField;
+	vuint32			Flags;
+
+	VProperty(VName);
+
+	void Serialise(VStream&);
+
+	friend VStream& operator<<(VStream& Strm, VProperty*& Obj)
+	{ return Strm << *(VMemberBase**)&Obj; }
+};
+
+//==========================================================================
+//
 //	VMethod
 //
 //==========================================================================

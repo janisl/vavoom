@@ -432,6 +432,9 @@ VPackage* VMemberBase::StaticLoadPackage(VName InName)
 		case MEMBER_Field:
 			Exports[i].Obj = new VField(Exports[i].Name);
 			break;
+		case MEMBER_Property:
+			Exports[i].Obj = new VProperty(Exports[i].Name);
+			break;
 		case MEMBER_Method:
 			Exports[i].Obj = new VMethod(Exports[i].Name);
 			break;
@@ -1041,6 +1044,35 @@ VField::FType VField::FType::GetArrayInnerType() const
 	ret.ArrayInnerType = ev_void;
 	ret.ArrayDim = 0;
 	return ret;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VProperty::VProperty
+//
+//==========================================================================
+
+VProperty::VProperty(VName AName)
+: VMemberBase(MEMBER_Field, AName)
+, GetFunc(NULL)
+, SetFunc(NULL)
+, DefaultField(NULL)
+, Flags(0)
+{
+}
+
+//==========================================================================
+//
+//	VProperty::Serialise
+//
+//==========================================================================
+
+void VProperty::Serialise(VStream& Strm)
+{
+	guard(VProperty::Serialise);
+	VMemberBase::Serialise(Strm);
+	Strm << Type << GetFunc << SetFunc << DefaultField << Flags;
 	unguard;
 }
 

@@ -61,6 +61,12 @@ enum
 
 enum
 {
+	PROP_Native		= 0x0001,	// Native get and set methods
+	PROP_Final		= 0x0002,	// Final version of a proeprty
+};
+
+enum
+{
 	FUNC_Native		= 0x0001,	// Native method
 	FUNC_Static		= 0x0002,	// Static method
 	FUNC_VarArgs	= 0x0004,	// Variable argument count
@@ -77,6 +83,7 @@ enum
 {
 	MEMBER_Package,
 	MEMBER_Field,
+	MEMBER_Property,
 	MEMBER_Method,
 	MEMBER_State,
 	MEMBER_Const,

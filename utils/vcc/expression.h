@@ -45,6 +45,7 @@ public:
 	VExpression* Resolve(VEmitContext&);
 	VExpression* ResolveBoolean(VEmitContext&);
 	virtual VTypeExpr* ResolveAsType(VEmitContext&);
+	virtual VExpression* ResolveAssignmentTarget(VEmitContext&);
 	virtual void RequestAddressOf();
 	virtual void Emit(VEmitContext&) = 0;
 	virtual void EmitBranchable(VEmitContext&, VLabel, bool);
@@ -55,6 +56,7 @@ public:
 	virtual vint32 GetIntConst() const;
 	virtual float GetFloatConst() const;
 	virtual bool IsDefaultObject() const;
+	virtual bool IsPropertyAssign() const;
 	virtual VExpression* CreateTypeExprCopy();
 	virtual bool AddDropResult();
 };
@@ -200,7 +202,9 @@ public:
 	VName			Name;
 
 	VSingleName(VName, const TLocation&);
+	VExpression* IntResolve(VEmitContext&, bool);
 	VExpression* DoResolve(VEmitContext&);
+	VExpression* ResolveAssignmentTarget(VEmitContext&);
 	VTypeExpr* ResolveAsType(VEmitContext&);
 	void Emit(VEmitContext&);
 	bool IsValidTypeExpression();
@@ -259,7 +263,9 @@ public:
 
 	VDotField(VExpression*, VName, const TLocation&);
 	~VDotField();
+	VExpression* IntResolve(VEmitContext&, bool);
 	VExpression* DoResolve(VEmitContext&);
+	VExpression* ResolveAssignmentTarget(VEmitContext&);
 	void Emit(VEmitContext&);
 };
 

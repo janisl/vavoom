@@ -1771,6 +1771,103 @@ void VParser::ParseClass()
 				continue;
 			}
 
+			if (Lex.Check(TK_LBrace))
+			{
+				VProperty* Prop = new VProperty(FieldName, Class, FieldLoc);
+				Prop->TypeExpr = FieldType;
+				Prop->Modifiers = Modifiers;
+				do
+				{
+					if (Lex.Check(TK_Get))
+					{
+						char TmpName[NAME_SIZE];
+						sprintf(TmpName, "get_%s", *FieldName);
+						VMethod* Func = new VMethod(TmpName, Class, Lex.Location);
+						Func->Modifiers = Modifiers;
+						Func->ReturnTypeExpr = FieldType->CreateTypeExprCopy();
+
+						if (Modifiers & TModifiers::Native)
+						{
+							Lex.Expect(TK_Semicolon, ERR_MISSING_SEMICOLON);
+							Package->numbuiltins++;
+						}
+						else
+						{
+							Lex.Expect(TK_LBrace, ERR_MISSING_LBRACE);
+							Func->Statement = ParseCompoundStatement();
+						}
+
+						if (Prop->GetFunc)
+						{
+							ParseError(FieldLoc, "Property already has a get method");
+							ParseError(Prop->GetFunc->Loc, "Previous get method here");
+						}
+						Prop->GetFunc = Func;
+						Class->AddMethod(Func);
+					}
+					else if (Lex.Check(TK_Set))
+					{
+						char TmpName[NAME_SIZE];
+						sprintf(TmpName, "set_%s", *FieldName);
+						VMethod* Func = new VMethod(TmpName, Class, Lex.Location);
+						Func->Modifiers = Modifiers;
+						Func->ReturnTypeExpr = new VTypeExpr(ev_void, Lex.Location);
+
+						VMethodParam& P = Func->Params[Func->NumParams];
+						P.Modifiers = 0;
+						P.TypeExpr = FieldType->CreateTypeExprCopy();
+						P.Name = "value";
+						P.Loc = Lex.Location;
+						Func->NumParams++;
+
+						if (Modifiers & TModifiers::Native)
+						{
+							Lex.Expect(TK_Semicolon, ERR_MISSING_SEMICOLON);
+							Package->numbuiltins++;
+						}
+						else
+						{
+							Lex.Expect(TK_LBrace, ERR_MISSING_LBRACE);
+							Func->Statement = ParseCompoundStatement();
+						}
+
+						if (Prop->SetFunc)
+						{
+							ParseError(FieldLoc, "Property already has a set method");
+							ParseError(Prop->SetFunc->Loc, "Previous set method here");
+						}
+						Prop->SetFunc = Func;
+						Class->AddMethod(Func);
+					}
+					else if (Lex.Check(TK_Default))
+					{
+						if (Lex.Token != TK_Identifier)
+						{
+							ParseError(Lex.Location, "Default field name expected");
+						}
+						else
+						{
+							if (Prop->DefaultFieldName != NAME_None)
+							{
+								ParseError(Lex.Location, "Property already has default field defined");
+							}
+							Prop->DefaultFieldName = Lex.Name;
+							Lex.NextToken();
+						}
+						Lex.Expect(TK_Semicolon, ERR_MISSING_SEMICOLON);
+					}
+					else
+					{
+						ParseError(Lex.Location, "Invalid declaration");
+						Lex.NextToken();
+					}
+				}
+				while (!Lex.Check(TK_RBrace));
+				Class->AddProperty(Prop);
+				need_semicolon = false;
+				break;
+			}
+
 			if (Lex.Check(TK_LParen))
 			{
 				ParseMethodDef(FieldType, FieldName, FieldLoc, Class, Modifiers);

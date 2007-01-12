@@ -211,6 +211,24 @@ int TModifiers::FieldAttr(int Modifiers)
 
 //==========================================================================
 //
+//	TModifiers::PropAttr
+//
+//	Convert modifiers to property attributes.
+//
+//==========================================================================
+
+int TModifiers::PropAttr(int Modifiers)
+{
+	int Attributes = 0;
+	if (Modifiers & Native)
+		Attributes |= PROP_Native;
+	if (Modifiers & Final)
+		Attributes |= PROP_Final;
+	return Attributes;
+}
+
+//==========================================================================
+//
 //	TModifiers::ParmAttr
 //
 //	Convert modifiers to method parameter attributes.

@@ -70,6 +70,7 @@ const char*			VLexer::TokenNames[] =
 	"final",
 	"float",
 	"for",
+	"get",
 	"if",
 	"import",
 	"int",
@@ -83,6 +84,7 @@ const char*			VLexer::TokenNames[] =
 	"readonly",
 	"return",
 	"self",
+	"set",
 	"state",
 	"static",
 	"string",
@@ -629,6 +631,12 @@ void VLexer::ProcessLetterToken()
 		}
 		break;
 
+	case 'g':
+		if (s[1] == 'e' && s[2] == 't' && s[3] == 0)
+		{
+			Token = TK_Get;
+		}
+
 	case 'i':
 		if (s[1] == 'f' && s[2] == 0)
 		{
@@ -707,9 +715,16 @@ void VLexer::ProcessLetterToken()
 		break;
 
 	case 's':
-		if (s[1] == 'e' && s[2] == 'l' && s[3] == 'f' && s[4] == 0)
+		if (s[1] == 'e')
 		{
-			Token = TK_Self;
+			if (s[2] == 'l' && s[3] == 'f' && s[4] == 0)
+			{
+				Token = TK_Self;
+			}
+			else if (s[2] == 't' && s[3] == 0)
+			{
+				Token = TK_Set;
+			}
 		}
 		else if (s[1] == 't')
 		{

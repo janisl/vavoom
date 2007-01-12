@@ -186,6 +186,20 @@ public:
 
 //==========================================================================
 //
+//	VPropertyAssign
+//
+//==========================================================================
+
+class VPropertyAssign : public VInvocation
+{
+public:
+	VPropertyAssign(VExpression* ASelfExpr, VMethod* AFunc, bool AHaveSelf,
+		const TLocation& ALoc);
+	bool IsPropertyAssign() const;
+};
+
+//==========================================================================
+//
 //	VDelegateToBool
 //
 //==========================================================================
@@ -347,6 +361,17 @@ VTypeExpr* VExpression::ResolveAsType(VEmitContext&)
 
 //==========================================================================
 //
+//	VExpression::ResolveAssignmentTarget
+//
+//==========================================================================
+
+VExpression* VExpression::ResolveAssignmentTarget(VEmitContext& ec)
+{
+	return Resolve(ec);
+}
+
+//==========================================================================
+//
 //	VExpression::RequestAddressOf
 //
 //==========================================================================
@@ -489,6 +514,17 @@ float VExpression::GetFloatConst() const
 //==========================================================================
 
 bool VExpression::IsDefaultObject() const
+{
+	return false;
+}
+
+//==========================================================================
+//
+//	VExpression::IsPropertyAssign
+//
+//==========================================================================
+
+bool VExpression::IsPropertyAssign() const
 {
 	return false;
 }
@@ -956,11 +992,11 @@ VSingleName::VSingleName(VName AName, const TLocation& ALoc)
 
 //==========================================================================
 //
-//	VSingleName::DoResolve
+//	VSingleName::IntResolve
 //
 //==========================================================================
 
-VExpression* VSingleName::DoResolve(VEmitContext& ec)
+VExpression* VSingleName::IntResolve(VEmitContext& ec, bool AssignTarget)
 {
 	int num = ec.CheckForLocalVar(Name);
 	if (num != -1)
@@ -996,6 +1032,53 @@ VExpression* VSingleName::DoResolve(VEmitContext& ec)
 			return e->Resolve(ec);
 		}
 
+		VProperty* Prop = ec.SelfClass->CheckForProperty(Name);
+		if (Prop)
+		{
+			if (AssignTarget)
+			{
+				if (ec.InDefaultProperties)
+				{
+					if (!Prop->DefaultField)
+					{
+						ParseError(Loc, "Property %s has no default field set", *Name);
+						delete this;
+						return NULL;
+					}
+					VExpression* e = new VFieldAccess((new VSelf(Loc))->Resolve(ec),
+						Prop->DefaultField, Loc, 0);
+					delete this;
+					return e->Resolve(ec);
+				}
+				else
+				{
+					if (!Prop->SetFunc)
+					{
+						ParseError(Loc, "Property %s cannot be set", *Name);
+						delete this;
+						return NULL;
+					}
+					VExpression* e = new VPropertyAssign(NULL, Prop->SetFunc, false, Loc);
+					delete this;
+					//	Assignment will call resolve.
+					return e;
+				}
+			}
+			else
+			{
+				if (!Prop->GetFunc)
+				{
+					ParseError(Loc, "Property %s cannot be read", *Name);
+					delete this;
+					return NULL;
+				}
+				VExpression* e = new VInvocation(NULL, Prop->GetFunc, NULL,
+					false, false, Loc, 0, NULL);
+				delete this;
+				return e->Resolve(ec);
+			}
+		}
+
 		VState* State = ec.SelfClass->CheckForState(Name);
 		if (State)
 		{
@@ -1024,6 +1107,28 @@ VExpression* VSingleName::DoResolve(VEmitContext& ec)
 	ParseError(Loc, "Illegal expression identifier %s", *Name);
 	delete this;
 	return NULL;
+}
+
+//==========================================================================
+//
+//	VSingleName::DoResolve
+//
+//==========================================================================
+
+VExpression* VSingleName::DoResolve(VEmitContext& ec)
+{
+	return IntResolve(ec, false);
+}
+
+//==========================================================================
+//
+//	VSingleName::ResolveAssignmentTarget
+//
+//==========================================================================
+
+VExpression* VSingleName::ResolveAssignmentTarget(VEmitContext& ec)
+{
+	return IntResolve(ec, true);
 }
 
 //==========================================================================
@@ -1309,11 +1414,11 @@ VDotField::~VDotField()
 
 //==========================================================================
 //
-//	VDotField::DoResolve
+//	VDotField::IntResolve
 //
 //==========================================================================
 
-VExpression* VDotField::DoResolve(VEmitContext& ec)
+VExpression* VDotField::IntResolve(VEmitContext& ec, bool AssignTarget)
 {
 	if (op)
 		op = op->Resolve(ec);
@@ -1333,21 +1438,70 @@ VExpression* VDotField::DoResolve(VEmitContext& ec)
 			delete this;
 			return e->Resolve(ec);
 		}
-		else
+
+		VField* field = op->Type.Class->CheckForField(Loc, FieldName, ec.SelfClass);
+		if (field)
 		{
-			VField* field = op->Type.Class->CheckForField(Loc, FieldName, ec.SelfClass);
-			if (!field)
-			{
-				ParseError(Loc, "No such field %s", *FieldName);
-				delete this;
-				return NULL;
-			}
 			VExpression* e = new VFieldAccess(op, field, Loc,
 				op->IsDefaultObject() ? FIELD_ReadOnly : 0);
 			op = NULL;
 			delete this;
 			return e->Resolve(ec);
 		}
+
+		VProperty* Prop = op->Type.Class->CheckForProperty(FieldName);
+		if (Prop)
+		{
+			if (AssignTarget)
+			{
+				if (!Prop->SetFunc)
+				{
+					ParseError(Loc, "Property %s cannot be set", *FieldName);
+					delete this;
+					return NULL;
+				}
+				VExpression* e = new VPropertyAssign(op, Prop->SetFunc, true, Loc);
+				op = NULL;
+				delete this;
+				//	Assignment will call resolve.
+				return e;
+			}
+			else
+			{
+				if (op->IsDefaultObject())
+				{
+					if (!Prop->DefaultField)
+					{
+						ParseError(Loc, "Property %s has no default field set", *FieldName);
+						delete this;
+						return NULL;
+					}
+					VExpression* e = new VFieldAccess(op, Prop->DefaultField,
+						Loc, FIELD_ReadOnly);
+					op = NULL;
+					delete this;
+					return e->Resolve(ec);
+				}
+				else
+				{
+					if (!Prop->GetFunc)
+					{
+						ParseError(Loc, "Property %s cannot be read", *FieldName);
+						delete this;
+						return NULL;
+					}
+					VExpression* e = new VInvocation(op, Prop->GetFunc, NULL,
+						true, false, Loc, 0, NULL);
+					op = NULL;
+					delete this;
+					return e->Resolve(ec);
+				}
+			}
+		}
+
+		ParseError(Loc, "No such field %s", *FieldName);
+		delete this;
+		return NULL;
 	}
 	else if (op->Type.type == ev_struct || op->Type.type == ev_vector)
 	{
@@ -1370,6 +1524,28 @@ VExpression* VDotField::DoResolve(VEmitContext& ec)
 	ParseError(Loc, "Reference, struct or vector expected on left side of .");
 	delete this;
 	return NULL;
+}
+
+//==========================================================================
+//
+//	VDotField::DoResolve
+//
+//==========================================================================
+
+VExpression* VDotField::DoResolve(VEmitContext& ec)
+{
+	return IntResolve(ec, false);
+}
+
+//==========================================================================
+//
+//	VDotField::ResolveAssignmentTarget
+//
+//==========================================================================
+
+VExpression* VDotField::ResolveAssignmentTarget(VEmitContext& ec)
+{
+	return IntResolve(ec, true);
 }
 
 //==========================================================================
@@ -3142,13 +3318,30 @@ VAssignment::~VAssignment()
 VExpression* VAssignment::DoResolve(VEmitContext& ec)
 {
 	if (op1)
-		op1 = op1->Resolve(ec);
+		op1 = op1->ResolveAssignmentTarget(ec);
 	if (op2)
 		op2 = op2->Resolve(ec);
 	if (!op1 || !op2)
 	{
 		delete this;
 		return NULL;
+	}
+
+	if (op1->IsPropertyAssign())
+	{
+		if (Oper != Assign)
+		{
+			ParseError(Loc, "Only = can be used to assign to a property");
+			delete this;
+			return NULL;
+		}
+		VPropertyAssign* e = (VPropertyAssign*)op1;
+		e->NumArgs = 1;
+		e->Args[0] = op2;
+		op1 = NULL;
+		op2 = NULL;
+		delete this;
+		return e->Resolve(ec);
 	}
 
 	op2->Type.CheckMatch(Loc, op1->RealType);
@@ -4276,6 +4469,33 @@ void VInvocation::CheckParams()
 	{
 		Args[NumArgs++] = new VIntLiteral(argsize / 4 - num_needed_params, Loc);
 	}
+}
+
+//END
+
+//BEGIN VPropertyAssign
+
+//==========================================================================
+//
+//	VPropertyAssign::VPropertyAssign
+//
+//==========================================================================
+
+VPropertyAssign::VPropertyAssign(VExpression* ASelfExpr, VMethod* AFunc,
+	bool AHaveSelf, const TLocation& ALoc)
+: VInvocation(ASelfExpr, AFunc, NULL, AHaveSelf, false, ALoc, 0, NULL)
+{
+}
+
+//==========================================================================
+//
+//	VPropertyAssign::IsPropertyAssign
+//
+//==========================================================================
+
+bool VPropertyAssign::IsPropertyAssign() const
+{
+	return true;
 }
 
 //END

@@ -54,9 +54,6 @@ class VMemberBase;
 //	Number of elements in an array.
 #define ARRAY_COUNT(array)				((int)(sizeof(array) / sizeof((array)[0])))
 
-//	Offset of a struct member.
-#define STRUCT_OFFSET(struc, member)	((int)&((struc *)NULL)->member)
-
 #define MAX_FILE_NAME_LENGTH	512
 #define MAX_QUOTED_LENGTH		256
 #define MAX_IDENTIFIER_LENGTH	64
@@ -128,6 +125,7 @@ public:
 	static int MethodAttr(int);
 	static int ClassAttr(int);
 	static int FieldAttr(int);
+	static int PropAttr(int);
 	static int ParmAttr(int);
 };
 
@@ -257,6 +255,31 @@ public:
 	bool Define();
 
 	friend VStream& operator<<(VStream& Strm, VField*& Obj)
+	{ return Strm << *(VMemberBase**)&Obj; }
+};
+
+class VProperty : public VMemberBase
+{
+public:
+	enum { AllowedModifiers = TModifiers::Native | TModifiers::Final };
+
+	TType			Type;
+	VMethod*		GetFunc;
+	VMethod*		SetFunc;
+	VField*			DefaultField;
+	vuint32			Flags;
+
+	vuint32 		Modifiers;
+	VExpression*	TypeExpr;
+	VName			DefaultFieldName;
+
+	VProperty(VName, VMemberBase*, TLocation);
+	~VProperty();
+
+	void Serialise(VStream&);
+	bool Define();
+
+	friend VStream& operator<<(VStream& Strm, VProperty*& Obj)
 	{ return Strm << *(VMemberBase**)&Obj; }
 };
 
@@ -443,6 +466,7 @@ public:
 	TArray<VExpression*>	ScriptIdExpressions;
 	TArray<VStruct*>		Structs;
 	TArray<VConstant*>		Constants;
+	TArray<VProperty*>		Properties;
 	TArray<VMethod*>		Methods;
 	bool					Defined;
 
@@ -453,6 +477,7 @@ public:
 
 	void AddConstant(VConstant*);
 	void AddField(VField*);
+	void AddProperty(VProperty*);
 	void AddState(VState*);
 	void AddMethod(VMethod*);
 
@@ -460,6 +485,7 @@ public:
 	VMethod* CheckForMethod(VName);
 	VConstant* CheckForConstant(VName);
 	VField* CheckForField(TLocation, VName, VClass*, bool = true);
+	VProperty* CheckForProperty(VName);
 	VState* CheckForState(VName);
 
 	bool Define();
@@ -587,6 +613,8 @@ public:
 
 	VLabel					LoopStart;
 	VLabel					LoopEnd;
+
+	bool					InDefaultProperties;
 
 	VEmitContext(VMemberBase*);
 	void EndCode();

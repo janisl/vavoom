@@ -62,6 +62,7 @@ VEmitContext::VEmitContext(VMemberBase* Member)
 : CurrentFunc(NULL)
 , FuncRetType(ev_unknown)
 , localsofs(0)
+, InDefaultProperties(false)
 {
 	//	Find the class.
 	VMemberBase* CM = Member;
