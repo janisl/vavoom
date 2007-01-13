@@ -27,108 +27,12 @@
 //**
 //**************************************************************************
 
-#include <macros.vc>
-
-import shared;
-import linespec;
-
-#define DOOM2
+#define DEHACKED
 #define NO_BOTS
 
-//
-// Map things flags
-//
-enum
-{
-	MTF_EASY		= 0x0001,	// Skill flags.
-	MTF_NORMAL		= 0x0002,
-	MTF_HARD		= 0x0004,
-	MTF_AMBUSH		= 0x0008,	// Deaf monsters/do not react to sound.
-	MTF_DORMANT		= 0x0010,	// The thing is dormant
-	MTF_FIGHTER		= 0x0020,	// Thing appearing in player classes
-	MTF_CLERIC		= 0x0040,
-	MTF_MAGE		= 0x0080,
-	MTF_GSINGLE		= 0x0100,	// Appearing in game modes
-	MTF_GCOOP		= 0x0200,
-	MTF_GDEATHMATCH	= 0x0400
-};
-
-// CONSTANTS ---------------------------------------------------------------
-
-enum
-{
-	FLOOR_SOLID,
-	FLOOR_WATER,
-	FLOOR_BLOOD,
-	FLOOR_NUKAGE,
-	FLOOR_SLIME,
-	FLOOR_LAVA
-};
-
-enum
-{
-	CONTENTS_EMPTY,
-	CONTENTS_WATER,
-	CONTENTS_LAVA,
-	CONTENTS_NUKAGE,
-	CONTENTS_SLIME,
-	CONTENTS_HELLSLIME,
-	CONTENTS_BLOOD,
-	CONTENTS_SLUDGE,
-	CONTENTS_HAZARD,
-
-	CONTENTS_SOLID = -1
-};
-
-enum
-{
-	CSHIFT_Contents,
-	CSHIFT_Damage,
-	CSHIFT_Bonus,
-	CSHIFT_Berserk,
-	CSHIFT_Power
-};
-
-enum
-{
-	it_bluecard,
-	it_yellowcard,
-	it_redcard,
-	it_blueskull,
-	it_yellowskull,
-	it_redskull,
-
-	NUMCARDS
-};
-
-// Power up artifacts.
-enum
-{
-	pw_invulnerability,
-	pw_strength,
-	pw_invisibility,
-	pw_ironfeet,
-	pw_infrared,
-	NUMPOWERS
-};
-
-enum
-{
-	CHAN_AUTO,
-	CHAN_VOICE,
-	CHAN_WEAPON,
-	CHAN_ITEM,
-	CHAN_BODY
-};
-
-#define S_GIBS		FindState('S_GIBS')
-#include "game/classes.vc"
-#undef S_GIBS
-#include "game/HackedActor.vc"
-#include "game/HackedWeapon.vc"
+#include "../doom2/svprogs.vc"
 
 #include "gendefs.vc"
-
 #include "states.vc"
 #include "mobjinfo.vc"
 #include "weapons.vc"

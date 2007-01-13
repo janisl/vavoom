@@ -25,28 +25,6 @@
 
 class WeaponPistol : Weapon;
 
-//===========================================================================
-//
-//  A_FirePistol
-//
-//===========================================================================
-
-final void A_FirePistol()
-{
-	TVec dir;
-
-	Player.MO.PlaySound('weapons/pistol', CHAN_WEAPON);
-
-	Player.MO.SetState(Actor(Player.MO).MissileState);
-	Player(Player).Ammo[Ammo]--;
-
-	Player.SetViewState(ps_flash, FlashState);
-
-	dir = Actor(Player.MO).Aim(16.0 * 64.0);
-	GunShot(Actor(Player.MO), !Player(Player).Refire, dir);
-	Player.MO.Effects |= DoomDefs::EF_DL_MUZZLEFLASH;
-}
-
 __states__
 {
 	S_PISTOL('PISG', 0, 1.0 / 35.0, S_PISTOL) = A_WeaponReady

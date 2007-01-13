@@ -48,6 +48,7 @@ state MissileState;
 state DeathState;
 state GibsDeathState;
 state RaiseState;
+state GibsState;
 
 //	Sounds
 name SightSound;
@@ -431,7 +432,291 @@ void HideSpecial()
 
 bool HandlePickup(Actor Toucher)
 {
+#ifdef DEHACKED
+	int i;
+	name sound = 'misc/i_pkup';
+
+	// Identify by sprite.
+	// armor
+	name SpriteName = GetStateSpriteName(State);
+	if (SpriteName == 'ARM1')
+	{
+		if (!Player(Toucher.Player).GiveArmor(1))
+			return false;
+		Toucher.Player.cprint("$gotarmor");
+	}
+	else if (SpriteName == 'ARM2')
+	{
+		if (!Player(Toucher.Player).GiveArmor(2))
+			return false;
+		Toucher.Player.cprint("$gotmega");
+	}
+		// bonus items
+	else if (SpriteName == 'BON1')
+	{
+		Toucher.Player.Health++;	// can go over 100%
+		if (Toucher.Player.Health > 200)
+			Toucher.Player.Health = 200;
+		Toucher.Health = Toucher.Player.Health;
+		Toucher.Player.cprint("$goththbonus");
+	}
+	else if (SpriteName == 'BON2')
+	{
+		Player(Toucher.Player).ArmorPoints++;	// can go over 100%
+		if (Player(Toucher.Player).ArmorPoints > 200)
+			Player(Toucher.Player).ArmorPoints = 200;
+		if (!Player(Toucher.Player).ArmorType)
+			Player(Toucher.Player).ArmorType = 1;
+		Toucher.Player.cprint("$gotarmbonus");
+	}
+	else if (SpriteName == 'SOUL')
+	{
+		Toucher.Player.Health += MainGameInfo(Level.Game).SOULSPHERE_HEALTH;
+		if (Toucher.Player.Health > MainGameInfo(Level.Game).SOULSPHERE_MAX)
+			Toucher.Player.Health = MainGameInfo(Level.Game).SOULSPHERE_MAX;
+		Toucher.Player.MO.Health = Toucher.Player.Health;
+		Toucher.Player.cprint("$gotsuper");
+		sound = 'misc/p_pkup';
+	}
+	else if (SpriteName == 'MEGA')
+	{
+		Toucher.Player.Health = MainGameInfo(Level.Game).MEGASPHERE_HEALTH;
+		Toucher.Health = Toucher.Player.Health;
+		Player(Toucher.Player).GiveArmor(2);
+		Toucher.Player.cprint("$gotmsphere");
+		sound = 'misc/p_pkup';
+	}
+		// cards
+		// leave cards for everyone
+	else if (SpriteName == 'BKEY')
+	{
+		if (Player(Toucher.Player).GiveCard(it_bluecard))
+			Toucher.Player.cprint("$gotbluecard");
+		if (Level.Game.netgame)
+			return false;
+	}
+	else if (SpriteName == 'YKEY')
+	{
+		if (Player(Toucher.Player).GiveCard(it_yellowcard))
+			Toucher.Player.cprint("$gotyelwcard");
+		if (Level.Game.netgame)
+			return false;
+	}
+	else if (SpriteName == 'RKEY')
+	{
+		if (Player(Toucher.Player).GiveCard(it_redcard))
+			Toucher.Player.cprint("$gotredcard");
+		if (Level.Game.netgame)
+			return false;
+	}
+	else if (SpriteName == 'BSKU')
+	{
+		if (Player(Toucher.Player).GiveCard(it_blueskull))
+			Toucher.Player.cprint("$gotblueskul");
+		if (Level.Game.netgame)
+			return false;
+	}
+	else if (SpriteName == 'YSKU')
+	{
+		if (Player(Toucher.Player).GiveCard(it_yellowskull))
+			Toucher.Player.cprint("$gotyelwskul");
+		if (Level.Game.netgame)
+			return false;
+	}
+	else if (SpriteName == 'RSKU')
+	{
+		if (Player(Toucher.Player).GiveCard(it_redskull))
+			Toucher.Player.cprint("$gotredskull");
+		if (Level.Game.netgame)
+			return false;
+	}
+		// medikits, heals
+	else if (SpriteName == 'STIM')
+	{
+		if (!Player(Toucher.Player).GiveBody(10, Player::MAXHEALTH))
+			return false;
+		Toucher.Player.cprint("$gotstim");
+	}
+	else if (SpriteName == 'MEDI')
+	{
+		if (!Player(Toucher.Player).GiveBody(25, Player::MAXHEALTH))
+			return false;
+
+		if (Toucher.Player.Health < 25)
+			Toucher.Player.cprint("$gotmedineed");
+		else
+			Toucher.Player.cprint("$gotmedikit");
+	}
+		// power ups
+	else if (SpriteName == 'PINV')
+	{
+		if (!Player(Toucher.Player).GivePower(pw_invulnerability))
+			return false;
+		Toucher.Player.cprint("$gotinvul");
+		sound = 'misc/p_pkup';
+	}
+	else if (SpriteName == 'PSTR')
+	{
+		if (!Player(Toucher.Player).GivePower(pw_strength))
+			return false;
+		Toucher.Player.cprint("$gotberserk");
+		sound = 'misc/p_pkup';
+	}
+	else if (SpriteName == 'PINS')
+	{
+		if (!Player(Toucher.Player).GivePower(pw_invisibility))
+			return false;
+		Toucher.Player.cprint("$gotinvis");
+		sound = 'misc/p_pkup';
+	}
+	else if (SpriteName == 'SUIT')
+	{
+		if (!Player(Toucher.Player).GivePower(pw_ironfeet))
+			return false;
+		Toucher.Player.cprint("$gotsuit");
+		sound = 'misc/p_pkup';
+	}
+	else if (SpriteName == 'PVIS')
+	{
+		if (!Player(Toucher.Player).GivePower(pw_infrared))
+			return false;
+		Toucher.Player.cprint("$gotvisor");
+		sound = 'misc/p_pkup';
+	}
+		//  Items
+	else if (SpriteName == 'PMAP')
+	{
+		if (!Player(Toucher.Player).GiveItem(IT_ALL_MAP))
+			return false;
+		Toucher.Player.cprint("$gotmap");
+		sound = 'misc/p_pkup';
+	}
+		// ammo
+	else if (SpriteName == 'CLIP')
+	{
+		if (bDropped)
+		{
+			if (!Player(Toucher.Player).GiveAmmo(DoomDefs::am_clip, MainGameInfo(Level.Game).clipammo[DoomDefs::am_clip] / 2))
+				return false;
+		}
+		else
+		{
+			if (!Player(Toucher.Player).GiveAmmo(DoomDefs::am_clip, MainGameInfo(Level.Game).clipammo[DoomDefs::am_clip]))
+				return false;
+		}
+		Toucher.Player.cprint("$gotclip");
+	}
+	else if (SpriteName == 'AMMO')
+	{
+		if (!Player(Toucher.Player).GiveAmmo(DoomDefs::am_clip, 5 * MainGameInfo(Level.Game).clipammo[DoomDefs::am_clip]))
+			return false;
+		Toucher.Player.cprint("$gotclipbox");
+	}
+	else if (SpriteName == 'ROCK')
+	{
+		if (!Player(Toucher.Player).GiveAmmo(DoomDefs::am_misl, MainGameInfo(Level.Game).clipammo[DoomDefs::am_misl]))
+			return false;
+		Toucher.Player.cprint("$gotrocket");
+	}
+	else if (SpriteName == 'BROK')
+	{
+		if (!Player(Toucher.Player).GiveAmmo(DoomDefs::am_misl, 5 * MainGameInfo(Level.Game).clipammo[DoomDefs::am_misl]))
+			return false;
+		Toucher.Player.cprint("$gotrockbox");
+	}
+	else if (SpriteName == 'CELL')
+	{
+		if (!Player(Toucher.Player).GiveAmmo(DoomDefs::am_cell, MainGameInfo(Level.Game).clipammo[DoomDefs::am_cell]))
+			return false;
+		Toucher.Player.cprint("$gotcell");
+	}
+	else if (SpriteName == 'CELP')
+	{
+		if (!Player(Toucher.Player).GiveAmmo(DoomDefs::am_cell, 5 * MainGameInfo(Level.Game).clipammo[DoomDefs::am_cell]))
+			return false;
+		Toucher.Player.cprint("$gotcellbox");
+	}
+	else if (SpriteName == 'SHEL')
+	{
+		if (!Player(Toucher.Player).GiveAmmo(DoomDefs::am_shell, MainGameInfo(Level.Game).clipammo[DoomDefs::am_shell]))
+			return false;
+		Toucher.Player.cprint("$gotshells");
+	}
+	else if (SpriteName == 'SBOX')
+	{
+		if (!Player(Toucher.Player).GiveAmmo(DoomDefs::am_shell, 5 * MainGameInfo(Level.Game).clipammo[DoomDefs::am_shell]))
+			return false;
+		Toucher.Player.cprint("$gotshellbox");
+	}
+	else if (SpriteName == 'BPAK')
+	{
+		if (!Player(Toucher.Player).Backpack)
+		{
+			Player(Toucher.Player).Backpack = true;
+			for (i = 0; i < DoomDefs::NUMAMMO; i++)
+				Player(Toucher.Player).MaxAmmo[i] *= 2;
+		}
+		for (i = 0; i < DoomDefs::NUMAMMO; i++)
+		{
+			Player(Toucher.Player).GiveAmmo(i, MainGameInfo(Level.Game).clipammo[i]);
+		}
+		Toucher.Player.cprint("$gotbackpack");
+	}
+		// weapons
+	else if (SpriteName == 'BFUG')
+	{
+		if (!Player(Toucher.Player).GiveWeapon(DoomDefs::wp_bfg, false))
+			return false;
+		Toucher.Player.cprint("$gotbfg9000");
+		sound = 'misc/w_pkup';
+	}
+	else if (SpriteName == 'MGUN')
+	{
+		if (!Player(Toucher.Player).GiveWeapon(DoomDefs::wp_chaingun, bDropped))
+			return false;
+		Toucher.Player.cprint("$gotchaingun");
+		sound = 'misc/w_pkup';
+	}
+	else if (SpriteName == 'CSAW')
+	{
+		if (!Player(Toucher.Player).GiveWeapon(DoomDefs::wp_chainsaw, false))
+			return false;
+		Toucher.Player.cprint("$gotchainsaw");
+		sound = 'misc/w_pkup';
+	}
+	else if (SpriteName == 'LAUN')
+	{
+		if (!Player(Toucher.Player).GiveWeapon(DoomDefs::wp_missile, false))
+			return false;
+		Toucher.Player.cprint("$gotlauncher");
+		sound = 'misc/w_pkup';
+	}
+	else if (SpriteName == 'PLAS')
+	{
+		if (!Player(Toucher.Player).GiveWeapon(DoomDefs::wp_plasma, false))
+			return false;
+		Toucher.Player.cprint("$gotplasma");
+		sound = 'misc/w_pkup';
+	}
+	else if (SpriteName == 'SHOT')
+	{
+		if (!Player(Toucher.Player).GiveWeapon(DoomDefs::wp_shotgun, bDropped))
+			return false;
+		Toucher.Player.cprint("$gotshotgun");
+		sound = 'misc/w_pkup';
+	}
+	else if (SpriteName == 'SGN2')
+	{
+		if (!Player(Toucher.Player).GiveWeapon(DoomDefs::wp_supershotgun, bDropped))
+			return false;
+		Toucher.Player.cprint("$gotshotgun2");
+		sound = 'misc/w_pkup';
+	}
+	Toucher.PlaySound(sound, CHAN_ITEM);
+	return true;
+#else
 	return false;
+#endif
 }
 
 //==========================================================================
@@ -502,6 +787,50 @@ void SetOrigin2(TVec origin)
 
 void OnMapSpawn(mthing_t * mthing)
 {
+#ifdef DEHACKED
+	if (Class == LostSoul)
+	{
+		bNoGravKill = true;
+		bTriggerHappy = true;
+	}
+	if (Class == BaronOfHell || Class == HellKnight)
+	{
+		ImuneMissileType = BruiserShot;
+	}
+	if (Class == Cyberdemon)
+	{
+		MissileChance = 160.0;
+		bTriggerHappy = true;
+		bBoss = true;
+	}
+	if (Class == SpiderMastermind)
+ 	{
+		bTriggerHappy = true;
+		bBoss = true;
+	}
+	if (Class == Revenant)
+	{
+		bTriggerHappy = true;
+		MissileMinRange = 196.0;
+	}
+	if (Class == ArchVile)
+	{
+		bNoGrudge = true;
+		bNeverTarget = true;
+		MissileMaxRange = 14.0 * 64.0;
+	}
+
+	if (Class == ItemInvulnerability || Class == ItemInvisibility)
+	{
+		bNoRespawn = true;
+	}
+
+	if (Class != DoomPlayer && !bCountKill && !bMissile)
+	{
+		bNoPassMobj = true;
+	}
+#endif
+
 	if (bNoDeathmatch && Level.Game.deathmatch)
 	{
 		Remove();
@@ -830,6 +1159,34 @@ void Died(Actor source)
 
 void DropStuff()
 {
+#ifdef DEHACKED
+	class<Actor> item;
+	Actor A;
+
+	// Drop stuff.
+	// This determines the kind of object spawned
+	// during the death frame of a thing.
+	if (Class == WolfSS ||
+		Class == Zombieman)
+	{
+		item = ItemAmmoBulletClip;
+	}
+	else if (Class == ShotgunGuy)
+	{
+		item = ItemWeaponShotgun;
+	}
+	else if (Class == ChaingunGuy)
+	{
+		item = ItemWeaponChaingun;
+	}
+	else
+	{
+		return;
+	}
+
+	A = Spawn(item, vector(Origin.x, Origin.y, FloorZ));
+	A.bDropped = true;	// special versions of items
+#endif
 }
 
 //==========================================================================
@@ -1901,7 +2258,7 @@ bool SectorChanged(int CrushChange)
 	//	Crunch bodies to giblets
 	if (Health <= 0)
 	{
-		SetState(S_GIBS);
+		SetState(GibsState);
 		bSolid;
 		Height = 0.0;
 		Radius = 0.0;
@@ -3662,20 +4019,1320 @@ void P_SpawnBlood(TVec Org, int damage)
 		A.SetState(Blood::S_BLOOD3);
 }
 
-#ifndef NO_BOTS
+//**************************************************************************
+//**************************************************************************
+//**************************************************************************
+//**************************************************************************
+//**************************************************************************
+
+//===========================================================================
+//
+//  A_BFGSpray
+//
+//  Spawn a BFG explosion on every monster in view
+//
+//===========================================================================
+
+final void A_BFGSpray()
+{
+	int i;
+	int j;
+	int damage;
+	TAVec aimAng;
+	Actor emo;
+
+	// offset angles from its attack angle
+	for (i = 0; i < 40; i++)
+	{
+		aimAng = Angles;
+		aimAng.yaw = AngleMod360(aimAng.yaw - 45.0 + 90.0 / 40.0 * itof(i));
+
+		// target is the originator (player)
+		//  of the missile
+		Instigator.AimLineAttack(aimAng, 16.0 * 64.0);
+		if (!Instigator.linetarget)
+		{
+			continue;
+		}
+
+		emo = Spawn(ExtraBFG, Instigator.linetarget.Origin +
+			vector(0.0, 0.0, Instigator.linetarget.Height / 4.0));
+
+		MSG_Select(MSG_SV_DATAGRAM);
+		if (MSG_CheckSpace(8))
+		{
+			MSG_WriteByte(DoomDefs::svc_explosion2);
+			MSG_WriteByte(DoomDefs::EF_DL_GBALL);
+			MSG_WriteShort(ftoi(emo.Origin.x));
+			MSG_WriteShort(ftoi(emo.Origin.y));
+			MSG_WriteShort(ftoi(emo.Origin.z));
+		}
+
+		damage = 0;
+		for (j = 0; j < 15; j++)
+			damage += (P_Random() & 7) + 1;
+
+		Instigator.linetarget.Damage(Instigator, Instigator, damage);
+	}
+}
+
+//==========================================================================
+//
+//  A_PosAttack
+//
+//  Zombieman attack.
+//
+//==========================================================================
+
+final void A_PosAttack()
+{
+	int damage;
+	TVec dir;
+
+	if (!Enemy)
+		return;
+
+	A_FaceTarget();
+
+	dir = AimLineAttack(Angles, MISSILERANGE);
+	VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0 / 2.0);
+
+	PlaySound('grunt/attack', CHAN_WEAPON);
+
+	damage = ((P_Random() % 5) + 1) * 3;
+
+	LineAttack(dir, MISSILERANGE, damage);
+
+	Effects |= DoomDefs::EF_DL_MUZZLEFLASH;
+}
+
+//==========================================================================
+//
+//  A_SPosAttack
+//
+//  Shotgun guy, Spider mastermind attack.
+//
+//==========================================================================
+
+final void A_SPosAttack()
+{
+	int i;
+	int damage;
+	TVec aimDir;
+	TVec dir;
+
+	if (!Enemy)
+		return;
+
+	PlaySound('shotguy/attack', CHAN_WEAPON);
+//FIXME	PlaySound('spider/attack', CHAN_WEAPON);
+	A_FaceTarget();
+	aimDir = AimLineAttack(Angles, MISSILERANGE);
+	for (i = 0; i < 3; i++)
+	{
+		dir = aimDir;
+		VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0 / 2.0);
+		damage = ((P_Random() % 5) + 1) * 3;
+		LineAttack(dir, MISSILERANGE, damage);
+	}
+
+	Effects |= DoomDefs::EF_DL_MUZZLEFLASH;
+}
+
+//==========================================================================
+//
+//  A_TroopAttack
+//
+//  Imp attack.
+//
+//==========================================================================
+
+final void A_TroopAttack()
+{
+	int damage;
+
+	if (!Enemy)
+		return;
+
+	A_FaceTarget();
+	if (CheckMeleeRange())
+	{
+		PlaySound('imp/melee', CHAN_WEAPON);
+		damage = (P_Random() % 8 + 1) * 3;
+		Enemy.Damage(self, self, damage);
+		return;
+	}
+
+	// launch a missile
+	SpawnMissile(Enemy, ImpMissile);
+}
+
+//==========================================================================
+//
+//  A_SargAttack
+//
+//  Demon, Spectre attack.
+//
+//==========================================================================
+
+void A_SargAttack()
+{
+	int damage;
+
+	if (!Enemy)
+		return;
+
+	A_FaceTarget();
+	if (CheckMeleeRange())
+	{
+		damage = ((P_Random() % 10) + 1) * 4;
+		Enemy.Damage(self, self, damage);
+	}
+}
+
+//==========================================================================
+//
+//  A_HeadAttack
+//
+//  Cacodemon attack.
+//
+//==========================================================================
+
+final void A_HeadAttack()
+{
+	int damage;
+
+	if (!Enemy)
+		return;
+
+	A_FaceTarget();
+	if (CheckMeleeRange())
+	{
+		damage = (P_Random() % 6 + 1) * 10;
+		Enemy.Damage(self, self, damage);
+		return;
+	}
+
+	// launch a missile
+	SpawnMissile(Enemy, CacodemonMissile);
+}
+
+//==========================================================================
+//
+//  A_BruisAttack
+//
+//  Hell knight, Baron of hell attack.
+//
+//==========================================================================
+
+final void A_BruisAttack()
+{
+	int damage;
+
+	if (!Enemy)
+		return;
+
+	if (CheckMeleeRange())
+	{
+		PlaySound('baron/melee', CHAN_WEAPON);
+		damage = (P_Random() % 8 + 1) * 10;
+		Enemy.Damage(self, self, damage);
+		return;
+	}
+
+	// launch a missile
+	SpawnMissile(Enemy, BruiserShot);
+}
+
+//==========================================================================
+//
+//  A_SkullAttack
+//
+//  Lost soul attack. Fly at the player like a missile.
+//
+//==========================================================================
+
+const float SKULLSPEED = 700.0;
+
+final void A_SkullAttack()
+{
+	if (!Enemy)
+		return;
+
+	bSkullFly = true;
+
+	PlaySound(AttackSound, CHAN_VOICE);
+	A_FaceTarget();
+	Velocity = Normalise(MobjCentre(Enemy) - Origin) * SKULLSPEED;
+}
+
+//==========================================================================
+//
+//  A_Hoof
+//
+//  Cyberdemon move with hoof sound.
+//
+//==========================================================================
+
+final void A_Hoof()
+{
+	PlaySound('cyber/hoof', CHAN_BODY);
+	A_Chase();
+}
+
+//==========================================================================
+//
+//  A_Metal
+//
+//  Cyberdemon move with metal sound.
+//
+//==========================================================================
+
+final void A_Metal()
+{
+	PlaySound('spider/walk', CHAN_BODY);
+	A_Chase();
+}
+
+//==========================================================================
+//
+//  A_CyberAttack
+//
+//  Cyberdemon attack.
+//
+//==========================================================================
+
+final void A_CyberAttack()
+{
+	if (!Enemy)
+		return;
+
+	A_FaceTarget();
+	SpawnMissile(Enemy, Rocket);
+}
+
+//==========================================================================
+//
+//  A_SpidRefire
+//
+//  Spider mastermind refire.
+//
+//==========================================================================
+
+final void A_SpidRefire()
+{
+	// keep firing unless target got out of sight
+	A_FaceTarget();
+
+	if (P_Random() < 10)
+		return;
+
+	if (!Enemy || Enemy.Health <= 0 || !CanSee(Enemy))
+	{
+		SetState(SeeState);
+	}
+}
+
+//==========================================================================
+//
+//  A_CPosAttack
+//
+//  Heavy weapon dude attack.
+//
+//==========================================================================
+
+final void A_CPosAttack()
+{
+	int damage;
+	TVec dir;
+
+	if (!Enemy)
+		return;
+
+	//FIXME
+	PlaySound('chainguy/attack', CHAN_WEAPON);
+	A_FaceTarget();
+	dir = AimLineAttack(Angles, MISSILERANGE);
+	VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0 / 2.0);
+	damage = ((P_Random() % 5) + 1) * 3;
+	LineAttack(dir, MISSILERANGE, damage);
+
+	Effects |= DoomDefs::EF_DL_MUZZLEFLASH;
+}
+
+//==========================================================================
+//
+//  A_CPosRefire
+//
+//  Heavy weapon dude refire.
+//
+//==========================================================================
+
+final void A_CPosRefire()
+{
+	// keep firing unless target got out of sight
+	A_FaceTarget();
+
+	if (P_Random() < 40)
+		return;
+
+	if (!Enemy || Enemy.Health <= 0 || !CanSee(Enemy))
+	{
+		SetState(SeeState);
+	}
+}
+
+//==========================================================================
+//
+//  A_BabyMetal
+//
+//  Arachnotron move with metal sound.
+//
+//==========================================================================
+
+final void A_BabyMetal()
+{
+	PlaySound('baby/walk', CHAN_BODY);
+	A_Chase();
+}
+
+//==========================================================================
+//
+//  A_BspiAttack
+//
+//  Arachnotron attack.
+//
+//==========================================================================
+
+final void A_BspiAttack()
+{
+	if (!Enemy)
+		return;
+
+	A_FaceTarget();
+
+	// launch a missile
+	SpawnMissile(Enemy, ArachnotronPlasma);
+}
+
+//==========================================================================
+//
+//  A_PainShootSkull
+//
+//  Spawn a lost soul and launch it at the target
+//
+//==========================================================================
+
+final void A_PainShootSkull(float angle)
+{
+	Actor mo;
+	LostSoul newSkull;
+	float prestep;
+	int count;
+
+	// count total number of skull currently on the level
+	count = 0;
+	FOREACH(LostSoul, mo)
+	{
+		count++;
+	}
+
+	// if there are allready 20 skulls on the level,
+	// don't spit another one
+	if (count > 20)
+		return;
+
+	// okay, there's place for another one
+	prestep = 4.0 + 3.0 * (Radius + LostSoul.default.Radius) / 2.0;
+
+	// Check whether the Lost Soul is being fired through a 1-sided
+	// wall or an impassible line, or a "monsters can't cross" line.
+	// If it is, then we don't allow the spawn.
+	if (CheckSides(Origin + vector(
+	    prestep * cos(angle), prestep * sin(angle), 8.0)))
+	{
+		return;
+	}
+
+	newSkull = LostSoul(Spawn(LostSoul, Origin));
+
+	// Check to see if the new Lost Soul's z value is above the
+	// ceiling of its new sector, or below the floor. If so, kill it.
+	if ((newSkull.Origin.z > (newSkull.CeilingZ - newSkull.Height)) ||
+        (newSkull.Origin.z < newSkull.FloorZ))
+	{
+		// kill it immediately
+		newSkull.Damage(self, self, 10000);
+		return;
+	}
+
+	// Check for movements.
+	if (!newSkull.TryMove(newSkull.Origin + vector(
+	    prestep * cos(angle), prestep * sin(angle), 8.0)))
+	{
+		// kill it immediately
+		newSkull.Damage(self, self, 10000);
+		return;
+	}
+
+	newSkull.Enemy = Enemy;
+	newSkull.A_SkullAttack();
+}
+
+//==========================================================================
+//
+//  A_PainAttack
+//
+//  Pain elemental attack. Spawn a lost soul and launch it at the target.
+// 
+//==========================================================================
+
+final void A_PainAttack()
+{
+	if (!Enemy)
+		return;
+
+	A_FaceTarget();
+	A_PainShootSkull(Angles.yaw);
+}
+
+//==========================================================================
+//
+//  A_PainDie
+//
+//  Pain elemental death.
+//
+//==========================================================================
+
+final void A_PainDie()
+{
+	A_Fall();
+	A_PainShootSkull(Angles.yaw + 90.0);
+	A_PainShootSkull(Angles.yaw + 180.0);
+	A_PainShootSkull(Angles.yaw + 270.0);
+}
+
+//==========================================================================
+//
+//  A_SkelWhosh
+//
+//  Ravenant attack sound.
+//
+//==========================================================================
+
+final void A_SkelWhoosh()
+{
+	if (!Enemy)
+		return;
+	A_FaceTarget();
+	PlaySound('skeleton/swing', CHAN_WEAPON);
+}
+
+//==========================================================================
+//
+//  A_SkelFist
+//
+//  Ravenant close attack.
+//
+//==========================================================================
+
+final void A_SkelFist()
+{
+	int damage;
+
+	if (!Enemy)
+		return;
+
+	A_FaceTarget();
+
+	if (CheckMeleeRange())
+	{
+		damage = ((P_Random() % 10) + 1) * 6;
+		PlaySound('skeleton/melee', CHAN_WEAPON);
+		Enemy.Damage(self, self, damage);
+	}
+}
+
+//==========================================================================
+//
+//  A_SkelMissile
+//
+//  Ravenant far attack.
+//
+//==========================================================================
+
+final void A_SkelMissile()
+{
+	Actor A;
+
+	if (!Enemy)
+		return;
+
+	A_FaceTarget();
+	Origin.z += 16.0;	// so missile spawns higher
+	A = SpawnMissile(Enemy, RevenantTracer);
+	Origin.z -= 16.0;	// back to normal
+
+	A.Origin = A.Origin + A.Velocity * 0.03;
+	A.Enemy = Enemy;
+}
+
+//==========================================================================
+//
+//  A_Tracer
+//
+//  Ravenant missile tracer.
+//
+//==========================================================================
+
+const float TRACEADJUST = 0.2865921825;
+
+final void A_Tracer()
+{
+	Actor A;
+	TVec wishdir;
+	TVec currdir;
+	TVec delta;
+	float adjustlen;
+
+	if (Level.Game.level->tictime & 3)
+		return;
+
+	// spawn a puff of smoke behind the rocket      
+	SpawnPuff(Origin, MISSILERANGE);
+
+	A = Spawn(RevenantTracerSmoke, Origin - Velocity * Level.Game.frametime);
+
+	A.Velocity.z = 1.0 * 35.0;
+	A.StateTime -= Random() * 0.1;
+	if (A.StateTime < 0.1)
+		A.StateTime = 0.1;
+
+	// adjust direction
+	if (!Enemy || Enemy.Health <= 0)
+		return;
+
+	wishdir = Normalise(MobjCentre(Enemy) - Origin);
+	currdir = Normalise(Velocity);
+	delta = wishdir - currdir;
+	adjustlen = Length(delta);
+	if (adjustlen > TRACEADJUST)
+		adjustlen = TRACEADJUST;
+	wishdir = currdir + delta * adjustlen;
+	Velocity = wishdir * Speed;
+	VectorAngles(&wishdir, &Angles);
+}
+
+//==========================================================================
+//
+//  A_FatRaise
+//
+//  Mancubus attack sound.
+//
+//==========================================================================
+
+final void A_FatRaise()
+{
+	A_FaceTarget();
+	PlaySound('fatso/raiseguns', CHAN_WEAPON);
+}
+
+//==========================================================================
+//
+//  A_FatAttack1
+//
+//  Mancubus attack, firing three missiles (bruisers) in three different
+// directions? Doesn't look like it.
+//
+//==========================================================================
+
+const float SpreadAngle = 90.0 / 8.0;
+
+final void A_FatAttack1()
+{
+	Actor A;
+
+	A_FaceTarget();
+	// Change direction  to ...
+	Angles.yaw = AngleMod360(Angles.yaw + SpreadAngle);
+	SpawnMissile(Enemy, MancubusMissile);
+
+	A = SpawnMissile(Enemy, MancubusMissile);
+	A.Angles.yaw = AngleMod360(A.Angles.yaw + SpreadAngle);
+	VectorRotateAroundZ(&A.Velocity, SpreadAngle);
+}
+
+//==========================================================================
+//
+//  A_FatAttack2
+//
+//  Mancubus attack, second direction.
+//
+//==========================================================================
+
+final void A_FatAttack2()
+{
+	Actor A;
+
+	A_FaceTarget();
+	// Now here choose opposite deviation.
+	Angles.yaw = AngleMod360(Angles.yaw - SpreadAngle);
+	SpawnMissile(Enemy, MancubusMissile);
+
+	A = SpawnMissile(Enemy, MancubusMissile);
+	A.Angles.yaw = AngleMod360(A.Angles.yaw - SpreadAngle * 2.0);
+	VectorRotateAroundZ(&A.Velocity, -SpreadAngle * 2.0);
+}
+
+//==========================================================================
+//
+//  A_FatAttack3
+//
+//  Mancubus attack, third direction.
+//
+//==========================================================================
+
+final void A_FatAttack3()
+{
+	Actor A;
+
+	A_FaceTarget();
+
+	A = SpawnMissile(Enemy, MancubusMissile);
+	A.Angles.yaw = AngleMod360(A.Angles.yaw - SpreadAngle / 2.0);
+	VectorRotateAroundZ(&A.Velocity, -SpreadAngle / 2.0);
+
+	A = SpawnMissile(Enemy, MancubusMissile);
+	A.Angles.yaw = AngleMod360(A.Angles.yaw + SpreadAngle / 2.0);
+	VectorRotateAroundZ(&A.Velocity, SpreadAngle / 2.0);
+}
+
+//==========================================================================
+//
+//  A_VileChase
+//
+//  Arch-vile check for ressurecting a body.
+//
+//==========================================================================
+
+final void A_VileChase()
+{
+	int xl;
+	int xh;
+	int yl;
+	int yh;
+
+	int bx;
+	int by;
+
+	Actor temp;
+
+	if (MoveDir != DI_NODIR)
+	{
+		// check for corpses to raise
+		viletryx = Origin.x + StepSpeed * MainGameInfo(Level.Game).xspeed[MoveDir];
+		viletryy = Origin.y + StepSpeed * MainGameInfo(Level.Game).yspeed[MoveDir];
+
+		xl = MapBlock(viletryx - XLevel.BlockMapOrgX - MAXRADIUS * 2.0);
+		xh = MapBlock(viletryx - XLevel.BlockMapOrgX + MAXRADIUS * 2.0);
+		yl = MapBlock(viletryy - XLevel.BlockMapOrgY - MAXRADIUS * 2.0);
+		yh = MapBlock(viletryy - XLevel.BlockMapOrgY + MAXRADIUS * 2.0);
+
+		for (bx = xl; bx <= xh; bx++)
+		{
+			for (by = yl; by <= yh; by++)
+			{
+				// Call PIT_VileCheck to check whether object is a corpse
+				// that canbe raised.
+				if (!XLevel.BlockThingsIterator(bx, by, self, 'PIT_VileCheck'))
+				{
+					// got one!
+					temp = Enemy;
+					Enemy = CorpseHit;
+					A_FaceTarget();
+					Enemy = temp;
+
+					SetState(ArchVile::S_VILE_HEAL1);
+					CorpseHit.PlaySound('vile/raise', CHAN_BODY);
+
+					CorpseHit.SetState(CorpseHit.RaiseState);
+					CorpseHit.Height = CorpseHit.default.Height;
+					CorpseHit.bShootable = true;
+					CorpseHit.bFloat = CorpseHit.default.bFloat;
+					CorpseHit.bNoGravity = CorpseHit.default.bNoGravity;
+					CorpseHit.bDropOff = false;
+					CorpseHit.bSolid = true;
+					CorpseHit.bCorpse = false;
+					CorpseHit.Health = CorpseHit.default.Health;
+					CorpseHit.Enemy = none;
+				}
+			}
+		}
+	}
+
+
+	// Return to normal attack.
+	A_Chase();
+}
+
+//==========================================================================
+//
+//  A_VileStart
+//
+//  Arch-vile attack start sound.
+//
+//==========================================================================
+
+final void A_VileStart()
+{
+	PlaySound('vile/start', CHAN_WEAPON);
+}
+
+//==========================================================================
+//
+//  A_VileTarget
+//
+//  Spawn the hellfire.
+//
+//==========================================================================
+
+final void A_VileTarget()
+{
+	Actor fog;
+
+	if (!Enemy)
+		return;
+
+	A_FaceTarget();
+
+	fog = Spawn(ArchvileFire, Enemy.Origin);
+
+	Instigator = fog;//FIXME!!!!!!!
+	fog.Instigator = self;
+	fog.Enemy = Enemy;
+	fog.SetState(fog.IdleState);
+}
+
+//==========================================================================
+//
+//  A_VileAttack
+//
+//  Arch-vile attack.
+//
+//==========================================================================
+
+final void A_VileAttack()
+{
+	Actor fire;
+
+	if (!Enemy)
+		return;
+
+	A_FaceTarget();
+
+	if (!CanSee(Enemy))
+		return;
+
+	PlaySound('vile/stop', CHAN_WEAPON);
+	Enemy.Damage(self, self, 20);
+	Enemy.Velocity.z = 1000.0 / Enemy.Mass * 35.0;
+
+	fire = Instigator;//FIXME!!!!!!
+
+	if (!fire)
+		return;
+
+	// move the fire between the vile and the player
+	fire.Origin.x = Enemy.Origin.x - 24.0 * cos(Angles.yaw);
+	fire.Origin.y = Enemy.Origin.y - 24.0 * sin(Angles.yaw);
+	fire.RadiusAttack(70, 0, 0);
+}
+
+//==========================================================================
+//
+//  A_Fire
+//
+//  Keep fire in front of player unless out of sight.
+//
+//==========================================================================
+
+final void A_Fire()
+{
+	if (!Enemy)
+		return;
+
+	// don't move it if the vile lost sight
+	if (!Instigator.CanSee(Enemy))
+		return;
+
+	UnlinkFromWorld();
+	Origin.x = Enemy.Origin.x + 24.0 * cos(Enemy.Angles.yaw);
+	Origin.y = Enemy.Origin.y + 24.0 * sin(Enemy.Angles.yaw);
+	Origin.z = Enemy.Origin.z;
+	LinkToWorld();
+}
+
+//==========================================================================
+//
+//  A_StartFire
+//
+//  Make fire start sound.
+//
+//==========================================================================
+
+final void A_StartFire()
+{
+	PlaySound('vile/firestrt', CHAN_VOICE);
+	A_Fire();
+}
+
+//==========================================================================
+//
+//  A_FireCrackle
+//
+//  Fire sound.
+//
+//==========================================================================
+
+final void A_FireCrackle()
+{
+	PlaySound('vile/firecrkl', CHAN_VOICE);
+	A_Fire();
+}
+
+//==========================================================================
+//
+//  A_BrainPain
+//
+//  Brain pain sound.
+//
+//==========================================================================
+
+final void A_BrainPain()
+{
+	PlaySound('brain/pain', CHAN_VOICE, 1.0, ATTN_NONE);
+}
+
+//==========================================================================
+//
+//  A_BrainScream
+//
+//  Brain death sound, make explosions.
+//
+//==========================================================================
+
+final void A_BrainScream()
+{
+	TVec org;
+	Actor A;
+
+	for (org.x = Origin.x - 196.0; org.x < Origin.x + 320.0; org.x += 8.0)
+	{
+		org.y = Origin.y - 320.0;
+		org.z = 1.0 / 512.0 + Random() * 512.0;
+		A = Spawn(Rocket, org);
+		A.Velocity.z = Random() * 2.0 * 35.0;
+
+		A.SetState(Rocket::S_BRAINEXPLODE1);
+
+		A.StateTime -= Random() * 0.2;
+		if (A.StateTime < 0.1)
+			A.StateTime = 0.1;
+	}
+
+	PlaySound('brain/death', CHAN_VOICE, 1.0, ATTN_NONE);
+}
+
+//==========================================================================
+//
+//  A_BrainExplode
+//
+//  Brain explosions.
+//
+//==========================================================================
+
+final void A_BrainExplode()
+{
+	TVec org;
+	Actor A;
+
+	org.x = Origin.x + (Random() - Random()) * 8.0;
+	org.y = Origin.y;
+	org.z = 1.0 / 512.0 + Random() * 512.0;
+	A = Spawn(Rocket, org);
+	A.Velocity.z = Random() * 2.0 * 35.0;
+
+	A.SetState(Rocket::S_BRAINEXPLODE1);
+
+	A.StateTime -= Random() * 0.2;
+	if (A.StateTime < 0.1)
+		A.StateTime = 0.1;
+}
+
+//==========================================================================
+//
+//  A_BrainDie
+//
+//  Killed brain, exit level.
+//
+//==========================================================================
+
+final void A_BrainDie()
+{
+	G_ExitLevel(0);
+}
+
+//==========================================================================
+//
+//  A_BrainAwake
+//
+//  Init boss spawner.
+//
+//==========================================================================
+
+final void A_BrainAwake()
+{
+	Actor m;
+
+	// find all the target spots
+	DoomLevelInfo(Level).NumBrainTargets = 0;
+	FOREACH(Actor, m)
+	{
+		if (m.Class == BossTarget)
+		{
+			DoomLevelInfo(Level).BrainTargets[DoomLevelInfo(Level).NumBrainTargets] = m;
+			DoomLevelInfo(Level).NumBrainTargets++;
+		}
+	}
+	DoomLevelInfo(Level).BrainTargetOn = 0;
+
+	PlaySound('brain/sight', CHAN_VOICE, 1.0, ATTN_NONE);
+}
+
+//==========================================================================
+//
+//  A_BrainSpit
+//
+//  Spawn a cube.
+//
+//==========================================================================
+
+final void A_BrainSpit()
+{
+	Actor targ;
+	Actor A;
+
+	DoomLevelInfo(Level).bBrainEasy = !DoomLevelInfo(Level).bBrainEasy;
+	if (Level.Game.gameskill <= sk_easy && !DoomLevelInfo(Level).bBrainEasy)
+		return;
+
+	// shoot a cube at current target
+	targ = DoomLevelInfo(Level).BrainTargets[DoomLevelInfo(Level).BrainTargetOn];
+	DoomLevelInfo(Level).BrainTargetOn = (DoomLevelInfo(Level).BrainTargetOn + 1) % DoomLevelInfo(Level).NumBrainTargets;
+
+	// spawn brain missile
+	A = SpawnMissile(targ, SpawnShot);
+	A.Enemy = targ;
+	A.ReactionCount = ftoi((targ.Origin.y - Origin.y) /
+		A.Velocity.y / A.StateTime);
+
+	PlaySound('brain/spit', CHAN_WEAPON, 1.0, ATTN_NONE);
+}
+
+//==========================================================================
+//
+//  A_SpawnFly
+//
+//  Cube flying, spawn monster, when finished.
+//
+//==========================================================================
+
+final void A_SpawnFly()
+{
+	Actor newmobj;
+	Actor fog;
+	int r;
+	class<Actor> type;
+
+	if (--ReactionCount)
+		return;	// still flying
+
+	// First spawn teleport fog.
+	fog = Spawn(SpawnFire, Enemy.Origin);
+	fog.PlaySound('brain/spawn', CHAN_VOICE);
+
+	// Randomly select monster to spawn.
+	r = P_Random();
+
+	// Probability distribution (kind of :),
+	// decreasing likelihood.
+	if (r < 50)
+		type = Imp;
+	else if (r < 90)
+		type = Demon;
+	else if (r < 120)
+		type = Shadows;
+	else if (r < 130)
+		type = PainElemental;
+	else if (r < 160)
+		type = Cacodemon;
+	else if (r < 162)
+		type = ArchVile;
+	else if (r < 172)
+		type = Revenant;
+	else if (r < 192)
+		type = Arachnotron;
+	else if (r < 222)
+		type = Mancubus;
+	else if (r < 246)
+		type = HellKnight;
+	else
+		type = BaronOfHell;
+
+	newmobj = Spawn(type, Enemy.Origin);
+	if (newmobj.LookForPlayers(true))
+		newmobj.SetState(newmobj.SeeState);
+
+	// telefrag anything in this spot
+	newmobj.bTelestomp = true;
+	newmobj.TeleportMove(newmobj.Origin);
+
+	// remove self (i.e., cube).
+	Remove();
+}
+
+//==========================================================================
+//
+//  A_SpawnSound
+//
+//  Travelling cube sound.
+//
+//==========================================================================
+
+final void A_SpawnSound()
+{
+	PlaySound('brain/cube', CHAN_VOICE);
+	A_SpawnFly();
+}
+
+//==========================================================================
+//
+//  A_KeenDie
+//
+//  DOOM II special, map 32. Uses special tag 666.
+//
+//==========================================================================
+
+final void A_KeenDie()
+{
+	A_Fall();
+
+	// scan the remaining thinkers to see if all Keens are dead
+	if (FindOther())
+	{
+		return;
+	}
+	Level.ExecuteActionSpecial(LNSPEC_DoorOpen, 666, 16, 150, 0, 0, NULL, 0, none);
+}
+
+//==========================================================================
+//
+//	BossDeathSpecialAction
+//
+//==========================================================================
+
+void BossDeathSpecialAction()
+{
+	// make sure there is a player alive for victory
+	int i;
+	for (i = 0; i < MAXPLAYERS; i++)
+		if (Level.Game.Players[i] && Level.Game.Players[i].bSpawned && Level.Game.Players[i].Health > 0)
+			break;
+
+	if (i == MAXPLAYERS)
+		return;	// no one left alive, so do not end game
+
+	// scan the remaining thinkers to see if all bosses are dead
+	Actor Other;
+	FOREACH(Actor, Other)
+	{
+		if (Other != self && Other.Class == Class && Other.Health > 0)
+		{
+			// other boss not dead
+			return;
+		}
+	}
+
+	// victory!
+	if (XLevel.bSpecialActionKillMonsters)
+	{
+		// Kill any remaining monsters
+		DoomLevelInfo(Level).P_Massacre();
+	}
+
+	if (XLevel.bSpecialActionOpenDoor)
+	{
+		Level.ExecuteActionSpecial(LNSPEC_DoorOpen, 666, 64, 150, 0, 0,
+			NULL, 0, none);
+	}
+	else if (XLevel.bSpecialActionLowerFloor)
+	{
+		Level.ExecuteActionSpecial(LNSPEC_FloorLowerToLowest, 666, 8, 0, 0,
+			0, NULL, 0, none);
+	}
+	else
+	{
+		G_ExitLevel(0);
+	}
+}
+
+//==========================================================================
+//
+//  A_BossDeath
+//
+//  Possibly trigger special effects if on first boss level
+//
+//==========================================================================
+
+final void A_BossDeath()
+{
+	if (Class == BaronOfHell)
+	{
+		if (!XLevel.bBaronSpecial)
+		{
+			//  Not a boss level
+			return;
+		}
+		BossDeathSpecialAction();
+	}
+	else if (Class == Cyberdemon)
+	{
+		if (!XLevel.bCyberDemonSpecial)
+		{
+			//  Not a boss level
+			return;
+		}
+		BossDeathSpecialAction();
+	}
+	else if (Class == SpiderMastermind)
+	{
+		if (!XLevel.bSpiderMastermindSpecial)
+		{
+			//  Not a boss level
+			return;
+		}
+		BossDeathSpecialAction();
+	}
+	else if (Class == Arachnotron)
+	{
+		int i;
+		Actor Other;
+
+		if (!XLevel.bMap07Special)
+		{
+			//  Not a boss level
+			return;
+		}
+
+		// make sure there is a player alive for victory
+		for (i = 0; i < MAXPLAYERS; i++)
+			if (Level.Game.Players[i] && Level.Game.Players[i].bSpawned && Level.Game.Players[i].Health > 0)
+				break;
+
+		if (i == MAXPLAYERS)
+			return;	// no one left alive, so do not end game
+
+		// scan the remaining thinkers to see if all bosses are dead
+		FOREACH(Arachnotron, Other)
+		{
+			if (Other != self && Other.Health > 0)
+			{
+				// other boss not dead
+				return;
+			}
+		}
+
+		// victory!
+		Level.ExecuteActionSpecial(LNSPEC_FloorRaiseByTexture, 667, 8, 0, 0, 0, NULL, 0, none);
+	}
+	else if (Class == Mancubus)
+	{
+		int i;
+		Mancubus Other;
+
+		if (!XLevel.bMap07Special)
+		{
+			//  Not a boss level
+			return;
+		}
+
+		// make sure there is a player alive for victory
+		for (i = 0; i < MAXPLAYERS; i++)
+			if (Level.Game.Players[i] && Level.Game.Players[i].bSpawned && Level.Game.Players[i].Health > 0)
+				break;
+
+		if (i == MAXPLAYERS)
+			return;	// no one left alive, so do not end game
+
+		// scan the remaining thinkers to see if all bosses are dead
+		FOREACH(Mancubus, Other)
+		{
+			if (Other != self && Other.Health > 0)
+			{
+				// other boss not dead
+				return;
+			}
+		}
+
+		// victory!
+		Level.ExecuteActionSpecial(LNSPEC_FloorLowerToLowest, 666, 8, 0, 0, 0, NULL, 0, none);
+	}
+}
+
+//	Since many dehacked patches are mixing weapon and actor states we export
+// them all and provide empty action functions.
+final void A_WeaponReady(){}
+final void A_Lower(){}
+final void A_Raise(){}
+final void A_ReFire(){}
+final void A_CheckReload(){}
+final void A_GunFlash(){}
+final void A_Light0(){}
+final void A_Light1(){}
+final void A_Light2(){}
+final void A_Punch(){}
+final void A_Saw(){}
+final void A_FirePistol(){}
+final void A_FireShotgun(){}
+final void A_FireShotgun2(){}
+final void A_OpenShotgun2(){}
+final void A_LoadShotgun2(){}
+final void A_CloseShotgun2(){}
+final void A_FireCGun(){}
+final void A_FireMissile(){}
+final void A_FirePlasma(){}
+final void A_BFGsound(){}
+final void A_FireBFG(){}
+
 __states__
 {
-	S_GIBS('POL5', 0, -1.0, none) = none
+	S_REAL_GIBS('POL5', 0, -1.0, none) = none
 }
-#endif
 
 defaultproperties
 {
+	GibsState = S_REAL_GIBS;
 	MaxStepHeight = 24.0;
 	MissileChance = 200.0;
+#ifdef DEHACKED
+	Health = 0;
+	GibsHealth = 0;
+	Mass = 0.0;
+#else
 	Health = 1000;
 	GibsHealth = -1000;
 	Mass = 100.0;
+#endif
 	LightOffset = vector(0.0, 0.0, 0.0);
 	LightColour = 0xffffffff;
 	LightRadius = 128.0;

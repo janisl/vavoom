@@ -206,15 +206,13 @@ void WriteStates()
 	fprintf(f, "//**************************************************************************\n");
 	fprintf(f, "\n");
 
-	fprintf(f, "class DehActor : HackedActor;\n\n");
+	fprintf(f, "class DehActor : Actor;\n\n");
 	WriteStates(f);
 	fprintf(f, "defaultproperties\n{\n");
-	fprintf(f, "\tSOULSPHERE_MAX = %d;\n", soulsphere_max);
-	fprintf(f, "\tSOULSPHERE_HEALTH = %d;\n", soulsphere_health);
-	fprintf(f, "\tMEGASPHERE_HEALTH = %d;\n", megasphere_health);
+	fprintf(f, "\tGibsState = S_GIBS;\n");
 	fprintf(f, "}\n\n");
 
-	fprintf(f, "class DehWeapon : HackedWeapon;\n\n");
+	fprintf(f, "class DehWeapon : Weapon;\n\n");
 	WriteStates(f);
 	fprintf(f, "defaultproperties\n{\n}\n\n");
 
@@ -318,11 +316,11 @@ void WriteMobjInfo()
 
 		//	Translucency
 		if (flags2 & MF2_DONTDRAW)
-			fprintf(f, "\t\tTranslucency = 100;\n");
+			fprintf(f, "\t\tbHidden = true;\n");
 		else if (flags & MF_SHADOW)
-			fprintf(f, "\t\tTranslucency = 90;\n");
+			fprintf(f, "\t\tAlpha = 0.1;\n");
 		else if (flags & MF_TRANSLUCENT)
-			fprintf(f, "\t\tTranslucency = 33;\n");
+			fprintf(f, "\t\tAlpha = 0.666;\n");
 
 		//	Translation
 		if (flags & MF_TRANSLATION)
@@ -488,6 +486,9 @@ static void WriteMisc()
 	fprintf(f, "\tINITIAL_AMMO = %d;\n", initial_ammo);
 	fprintf(f, "\tBFGCELLS = %d;\n", bfg_cells);
 	fprintf(f, "\tGOD_HEALTH = %d;\n", god_health);
+	fprintf(f, "\tSOULSPHERE_MAX = %d;\n", soulsphere_max);
+	fprintf(f, "\tSOULSPHERE_HEALTH = %d;\n", soulsphere_health);
+	fprintf(f, "\tMEGASPHERE_HEALTH = %d;\n", megasphere_health);
 
 	if (numammo)
 	{

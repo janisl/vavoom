@@ -27,52 +27,6 @@ class BaronOfHell : Pawn
 	__mobjinfo__(3003)
 	__scriptid__(3);
 
-//==========================================================================
-//
-//  A_BruisAttack
-//
-//  Hell knight, Baron of hell attack.
-//
-//==========================================================================
-
-final void A_BruisAttack()
-{
-	int damage;
-
-	if (!Enemy)
-		return;
-
-	if (CheckMeleeRange())
-	{
-		PlaySound('baron/melee', CHAN_WEAPON);
-		damage = (P_Random() % 8 + 1) * 10;
-		Enemy.Damage(self, self, damage);
-		return;
-	}
-
-	// launch a missile
-	SpawnMissile(Enemy, BruiserShot);
-}
-
-//==========================================================================
-//
-//  A_BossDeath
-//
-//  Possibly trigger special effects if on first boss level
-//
-//==========================================================================
-
-final void A_BossDeath()
-{
-	if (!XLevel.bBaronSpecial)
-	{
-		//  Not a boss level
-		return;
-	}
-
-	BossDeathSpecialAction();
-}
-
 __states__
 {
 	S_BOSS_STND('BOSS', 0, 10.0 / 35.0, S_BOSS_STND2) = A_Look

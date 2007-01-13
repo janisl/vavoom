@@ -26,57 +26,6 @@
 class BFGShot : Projectile
 	__scriptid__(128);
 
-//===========================================================================
-//
-//  A_BFGSpray
-//
-//  Spawn a BFG explosion on every monster in view
-//
-//===========================================================================
-
-final void A_BFGSpray()
-{
-	int i;
-	int j;
-	int damage;
-	TAVec aimAng;
-	Actor emo;
-
-	// offset angles from its attack angle
-	for (i = 0; i < 40; i++)
-	{
-		aimAng = Angles;
-		aimAng.yaw = AngleMod360(aimAng.yaw - 45.0 + 90.0 / 40.0 * itof(i));
-
-		// target is the originator (player)
-		//  of the missile
-		Instigator.AimLineAttack(aimAng, 16.0 * 64.0);
-		if (!Instigator.linetarget)
-		{
-			continue;
-		}
-
-		emo = Spawn(ExtraBFG, Instigator.linetarget.Origin +
-			vector(0.0, 0.0, Instigator.linetarget.Height / 4.0));
-
-		MSG_Select(MSG_SV_DATAGRAM);
-		if (MSG_CheckSpace(8))
-		{
-			MSG_WriteByte(DoomDefs::svc_explosion2);
-			MSG_WriteByte(DoomDefs::EF_DL_GBALL);
-			MSG_WriteShort(ftoi(emo.Origin.x));
-			MSG_WriteShort(ftoi(emo.Origin.y));
-			MSG_WriteShort(ftoi(emo.Origin.z));
-		}
-
-		damage = 0;
-		for (j = 0; j < 15; j++)
-			damage += (P_Random() & 7) + 1;
-
-		Instigator.linetarget.Damage(Instigator, Instigator, damage);
-	}
-}
-
 __states__
 {
 	S_BFGSHOT('BFS1', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_BFGSHOT2) = none

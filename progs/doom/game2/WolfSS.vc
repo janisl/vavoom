@@ -95,7 +95,6 @@ defaultproperties
 	RaiseState = S_SSWV_RAISE1;
 	SightSound = 'wolfss/sight';
 	ActiveSound = 'wolfss/active';
-	FireSound = 'wolfss/attack';
 	PainSound = 'wolfss/pain';
 	DeathSound = 'wolfss/death';
 }

@@ -120,12 +120,8 @@ enum
 
 #include "game/classes.vc"
 
+#ifndef DEHACKED
 #include "game1/classes.vc"
 
-#ifdef DOOM2
 #include "game2/classes.vc"
-
-//	Test only with Doom2 because attack functions need Doom2 types.
-#include "game/HackedWeapon.vc"
-#include "game/HackedActor.vc"
 #endif

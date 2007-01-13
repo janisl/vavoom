@@ -44,7 +44,6 @@
 #include "BossTarget.vc"
 #include "SpawnFire.vc"
 #include "SpawnShot.vc"
-#include "BrainExplosion.vc"
 #include "BossBrain.vc"
 #include "BossEye.vc"
 #include "CommanderKeen.vc"

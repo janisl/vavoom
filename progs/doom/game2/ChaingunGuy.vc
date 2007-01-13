@@ -27,56 +27,6 @@ class ChaingunGuy : Pawn
 	__mobjinfo__(65)
 	__scriptid__(2);
 
-name FireSound;
-
-//==========================================================================
-//
-//  A_CPosAttack
-//
-//  Heavy weapon dude attack.
-//
-//==========================================================================
-
-final void A_CPosAttack()
-{
-	int damage;
-	TVec dir;
-
-	if (!Enemy)
-		return;
-
-	PlaySound(FireSound, CHAN_WEAPON);
-	A_FaceTarget();
-	dir = AimLineAttack(Angles, MISSILERANGE);
-	VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0 / 2.0);
-	damage = ((P_Random() % 5) + 1) * 3;
-	LineAttack(dir, MISSILERANGE, damage);
-
-	Effects |= DoomDefs::EF_DL_MUZZLEFLASH;
-}
-
-//==========================================================================
-//
-//  A_CPosRefire
-//
-//  Heavy weapon dude refire.
-//
-//==========================================================================
-
-final void A_CPosRefire()
-{
-	// keep firing unless target got out of sight
-	A_FaceTarget();
-
-	if (P_Random() < 40)
-		return;
-
-	if (!Enemy || Enemy.Health <= 0 || !CanSee(Enemy))
-	{
-		SetState(SeeState);
-	}
-}
-
 //==========================================================================
 //
 //	DropStuff
@@ -154,5 +104,4 @@ defaultproperties
 	ActiveSound = 'chainguy/active';
 	PainSound = 'chainguy/pain';
 	DeathSound = 'chainguy/death';
-	FireSound = 'chainguy/attack';
 }

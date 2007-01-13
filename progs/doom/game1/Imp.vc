@@ -27,34 +27,6 @@ class Imp : Pawn
 	__mobjinfo__(3001)
 	__scriptid__(5);
 
-//==========================================================================
-//
-//  A_TroopAttack
-//
-//  Imp attack.
-//
-//==========================================================================
-
-final void A_TroopAttack()
-{
-	int damage;
-
-	if (!Enemy)
-		return;
-
-	A_FaceTarget();
-	if (CheckMeleeRange())
-	{
-		PlaySound('imp/melee', CHAN_WEAPON);
-		damage = (P_Random() % 8 + 1) * 3;
-		Enemy.Damage(self, self, damage);
-		return;
-	}
-
-	// launch a missile
-	SpawnMissile(Enemy, ImpMissile);
-}
-
 __states__
 {
 	S_TROO_STND('TROO', 0, 10.0 / 35.0, S_TROO_STND2) = A_Look

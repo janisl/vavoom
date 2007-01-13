@@ -25,29 +25,6 @@
 
 class WeaponBFG : Weapon;
 
-//===========================================================================
-//
-//  A_BFGsound
-//
-//===========================================================================
-
-final void A_BFGsound()
-{
-	Player.MO.PlaySound('weapons/bfgf', CHAN_WEAPON);
-}
-
-//===========================================================================
-//
-//  A_FireBFG
-//
-//===========================================================================
-
-final void A_FireBFG()
-{
-	Player(Player).Ammo[Ammo] -= MainGameInfo(Player.Level.Game).BFGCELLS;
-	Player(Player).SpawnPlayerMissile(BFGShot);
-}
-
 __states__
 {
 	S_BFG('BFGG', 0, 1.0 / 35.0, S_BFG) = A_WeaponReady

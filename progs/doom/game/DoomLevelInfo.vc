@@ -30,6 +30,11 @@ const int BODYQUESIZE				= 32;
 Actor bodyque[BODYQUESIZE];
 int bodyqueslot;
 
+int NumBrainTargets;
+int BrainTargetOn;
+bool bBrainEasy;
+Actor BrainTargets[32];
+
 //==========================================================================
 //
 //  PolyThrustMobj

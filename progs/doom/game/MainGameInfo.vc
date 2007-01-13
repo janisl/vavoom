@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-#ifndef NO_BOTS
+#ifndef DEHACKED
 class MainGameInfo : LineSpecialGameInfo;
 #else
 class MainGameInfoBase : LineSpecialGameInfo;
@@ -76,6 +76,9 @@ int INITIAL_HEALTH;
 int INITIAL_AMMO;
 int GOD_HEALTH;
 int BFGCELLS;
+int SOULSPHERE_MAX;
+int SOULSPHERE_HEALTH;
+int MEGASPHERE_HEALTH;
 
 //==========================================================================
 //
@@ -1363,4 +1366,7 @@ defaultproperties
 	INITIAL_AMMO = 50;
 	GOD_HEALTH = 100;
 	BFGCELLS = 40;
+	SOULSPHERE_MAX = 200;
+	SOULSPHERE_HEALTH = 100;
+	MEGASPHERE_HEALTH = 200;
 }

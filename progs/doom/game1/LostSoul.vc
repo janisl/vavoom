@@ -27,28 +27,6 @@ class LostSoul : Pawn
 	__mobjinfo__(3006)
 	__scriptid__(110);
 
-float SkullSpeed;
-
-//==========================================================================
-//
-//  A_SkullAttack
-//
-//  Lost soul attack. Fly at the player like a missile.
-//
-//==========================================================================
-
-final void A_SkullAttack()
-{
-	if (!Enemy)
-		return;
-
-	bSkullFly = true;
-
-	PlaySound(AttackSound, CHAN_VOICE);
-	A_FaceTarget();
-	Velocity = Normalise(MobjCentre(Enemy) - Origin) * SkullSpeed;
-}
-
 __states__
 {
 	S_SKULL_STND('SKUL', 0 | FF_FULLBRIGHT, 10.0 / 35.0, S_SKULL_STND2) = A_Look
@@ -78,7 +56,6 @@ defaultproperties
 	StepSpeed = 8.0;
 	PainChance = 1.0;
 	MissileDamage = 3;
-	SkullSpeed = 700.0;
 	bCountKill = false;
 	bNoGravity = true;
 	bFloat = true;

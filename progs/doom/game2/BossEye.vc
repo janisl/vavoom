@@ -23,70 +23,8 @@
 //**
 //**************************************************************************
 
-class BossEye:Actor
+class BossEye : Actor
 	__mobjinfo__(89);
-
-int NumBrainTargets;
-int BrainTargetOn;
-bool bBrainEasy;
-Actor BrainTargets[32];
-
-//==========================================================================
-//
-//  A_BrainAwake
-//
-//  Init boss spawner.
-//
-//==========================================================================
-
-final void A_BrainAwake()
-{
-	Actor m;
-
-	// find all the target spots
-	NumBrainTargets = 0;
-	FOREACH(Actor, m)
-	{
-		if (m.Class == BossTarget)
-		{
-			BrainTargets[NumBrainTargets] = m;
-			NumBrainTargets++;
-		}
-	}
-	BrainTargetOn = 0;
-
-	PlaySound('brain/sight', CHAN_VOICE, 1.0, ATTN_NONE);
-}
-
-//==========================================================================
-//
-//  A_BrainSpit
-//
-//  Spawn a cube.
-//
-//==========================================================================
-
-final void A_BrainSpit()
-{
-	Actor targ;
-	Actor A;
-
-	bBrainEasy = !bBrainEasy;
-	if (Level.Game.gameskill <= sk_easy && !bBrainEasy)
-		return;
-
-	// shoot a cube at current target
-	targ = BrainTargets[BrainTargetOn];
-	BrainTargetOn = (BrainTargetOn + 1) % NumBrainTargets;
-
-	// spawn brain missile
-	A = SpawnMissile(targ, SpawnShot);
-	A.Enemy = targ;
-	A.ReactionCount = ftoi((targ.Origin.y - Origin.y) /
-		A.Velocity.y / A.StateTime);
-
-	PlaySound('brain/spit', CHAN_WEAPON, 1.0, ATTN_NONE);
-}
 
 __states__
 {

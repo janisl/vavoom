@@ -27,69 +27,6 @@ class Cyberdemon : Pawn
 	__mobjinfo__(16)
 	__scriptid__(114);
 
-//==========================================================================
-//
-//  A_Hoof
-//
-//  Cyberdemon move with hoof sound.
-//
-//==========================================================================
-
-final void A_Hoof()
-{
-	PlaySound('cyber/hoof', CHAN_BODY);
-	A_Chase();
-}
-
-//==========================================================================
-//
-//  A_Metal
-//
-//  Cyberdemon move with metal sound.
-//
-//==========================================================================
-
-final void A_Metal()
-{
-	PlaySound('cyber/walk', CHAN_BODY);
-	A_Chase();
-}
-
-//==========================================================================
-//
-//  A_CyberAttack
-//
-//  Cyberdemon attack.
-//
-//==========================================================================
-
-final void A_CyberAttack()
-{
-	if (!Enemy)
-		return;
-
-	A_FaceTarget();
-	SpawnMissile(Enemy, Rocket);
-}
-
-//==========================================================================
-//
-//  A_BossDeath
-//
-//  Possibly trigger special effects if on first boss level
-//
-//==========================================================================
-
-final void A_BossDeath()
-{
-	if (!XLevel.bCyberDemonSpecial)
-	{
-		//  Not a boss level
-		return;
-	}
-	BossDeathSpecialAction();
-}
-
 __states__
 {
 	S_CYBER_STND('CYBR', 0, 10.0 / 35.0, S_CYBER_STND2) = A_Look

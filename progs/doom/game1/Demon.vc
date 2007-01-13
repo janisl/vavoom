@@ -27,29 +27,6 @@ class Demon : Pawn
 	__mobjinfo__(3002)
 	__scriptid__(8);
 
-//==========================================================================
-//
-//  A_SargAttack
-//
-//  Demon, Spectre attack.
-//
-//==========================================================================
-
-void A_SargAttack()
-{
-	int damage;
-
-	if (!Enemy)
-		return;
-
-	A_FaceTarget();
-	if (CheckMeleeRange())
-	{
-		damage = ((P_Random() % 10) + 1) * 4;
-		Enemy.Damage(self, self, damage);
-	}
-}
-
 __states__
 {
 	S_SARG_STND('SARG', 0, 10.0 / 35.0, S_SARG_STND2) = A_Look
