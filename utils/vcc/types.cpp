@@ -905,6 +905,9 @@ VPackage* VMemberBase::LoadPackage(VName InName, TLocation l)
 		case MEMBER_Field:
 			Exports[i].Obj = new VField(Exports[i].Name, NULL, TLocation());
 			break;
+		case MEMBER_Property:
+			Exports[i].Obj = new VProperty(Exports[i].Name, NULL, TLocation());
+			break;
 		case MEMBER_Method:
 			Exports[i].Obj = new VMethod(Exports[i].Name, NULL, TLocation());
 			break;
