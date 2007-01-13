@@ -175,7 +175,6 @@ baron/death						dsbrsdth
 cyber/sight						dscybsit
 cyber/active					dsdmact
 cyber/hoof						dshoof
-cyber/walk						dsmetal
 cyber/pain						dsdmpain
 cyber/death						dscybdth
 
