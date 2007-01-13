@@ -36,7 +36,6 @@ float AxeRange;
 
 final void A_FAxeAttack()
 {
-	Actor Owner = Actor(Player.MO);
 	float power;
 	int damage;
 	int i;
@@ -47,7 +46,7 @@ final void A_FAxeAttack()
 
 	damage = 40 + (P_Random() & 15) + (P_Random() & 7);
 	power = 0.0;
-	if (Player(Player).Mana[HexenDefs::MANA_1] > 0)
+	if (Player(Owner.Player).Mana[HexenDefs::MANA_1] > 0)
 	{
 		damage <<= 1;
 		power = 6.0;
@@ -63,37 +62,37 @@ final void A_FAxeAttack()
 	{
 		angles = Owner.Angles;
 		angles.yaw = AngleMod360(angles.yaw + itof(i) * (45.0 / 16.0));
-		Owner.AimLineAttack(&angles, AxeRange);
-		if (Owner.linetarget)
+		Actor(Owner).AimLineAttack(&angles, AxeRange);
+		if (Actor(Owner).linetarget)
 		{
 			AngleVector(&angles, &vforward);
-			if (Owner.LineAttack(vforward, AxeRange, damage, PuffType))
+			if (Actor(Owner).LineAttack(vforward, AxeRange, damage, PuffType))
 			{
 				Owner.PlaySound('FighterHammerMiss', CHAN_WEAPON);
 			}
-			if (Owner.linetarget.bCountKill || Owner.linetarget.bIsPlayer)
+			if (Actor(Owner).linetarget.bCountKill || Actor(Owner).linetarget.bIsPlayer)
 			{
-				Owner.linetarget.Thrust(angles.yaw, power);
+				Actor(Owner).linetarget.Thrust(angles.yaw, power);
 			}
-			Player(Player).AdjustPlayerAngle();
+			Player(Owner.Player).AdjustPlayerAngle();
 			useMana++;
 			break;
 		}
 		angles = Owner.Angles;
 		angles.yaw = AngleMod360(angles.yaw - itof(i) * (45.0 / 16.0));
-		Owner.AimLineAttack(&angles, AxeRange);
-		if (Owner.linetarget)
+		Actor(Owner).AimLineAttack(&angles, AxeRange);
+		if (Actor(Owner).linetarget)
 		{
 			AngleVector(&angles, &vforward);
-			if (Owner.LineAttack(vforward, AxeRange, damage, PuffType))
+			if (Actor(Owner).LineAttack(vforward, AxeRange, damage, PuffType))
 			{
 				Owner.PlaySound('FighterHammerMiss', CHAN_WEAPON);
 			}
-			if (Owner.linetarget.bCountKill || Owner.linetarget.bIsPlayer)
+			if (Actor(Owner).linetarget.bCountKill || Actor(Owner).linetarget.bIsPlayer)
 			{
-				Owner.linetarget.Thrust(angles.yaw, power);
+				Actor(Owner).linetarget.Thrust(angles.yaw, power);
 			}
-			Player(Player).AdjustPlayerAngle();
+			Player(Owner.Player).AdjustPlayerAngle();
 			useMana++;
 			break;
 		}
@@ -102,9 +101,9 @@ final void A_FAxeAttack()
 	{
 		// didn't find any creatures, so try to strike any walls
 		angles = Owner.Angles;
-		Owner.AimLineAttack(&angles, Actor::MELEERANGE);
+		Actor(Owner).AimLineAttack(&angles, Actor::MELEERANGE);
 		AngleVector(&angles, &vforward);
-		if (Owner.LineAttack(vforward, Actor::MELEERANGE, damage, PuffType))
+		if (Actor(Owner).LineAttack(vforward, Actor::MELEERANGE, damage, PuffType))
 		{
 			Owner.PlaySound('FighterHammerMiss', CHAN_WEAPON);
 		}
@@ -112,11 +111,11 @@ final void A_FAxeAttack()
 
 	if (useMana == 2)
 	{
-		Player(Player).Mana[HexenDefs::MANA_1] -=
-			WeaponManaUse(Player.PClass, Player(Player).ReadyWeapon);
-		if (Player(Player).Mana[HexenDefs::MANA_1] <= 0)
+		Player(Owner.Player).Mana[HexenDefs::MANA_1] -=
+			WeaponManaUse(Owner.Player.PClass, Player(Owner.Player).ReadyWeapon);
+		if (Player(Owner.Player).Mana[HexenDefs::MANA_1] <= 0)
 		{
-			Player.SetViewState(ps_weapon, NoMoreManaState);
+			Owner.Player.SetViewState(ps_weapon, NoMoreManaState);
 		}
 	}
 }
@@ -170,7 +169,7 @@ __states__
 
 state GetUpState()
 {
-	if (Player(Player).Mana[HexenDefs::MANA_1])
+	if (Player(Owner.Player).Mana[HexenDefs::MANA_1])
 	{
 		return S_FAXEUP_G;
 	}
@@ -188,7 +187,7 @@ state GetUpState()
 
 state GetDownState()
 {
-	if (Player(Player).Mana[HexenDefs::MANA_1])
+	if (Player(Owner.Player).Mana[HexenDefs::MANA_1])
 	{
 		return S_FAXEDOWN_G;
 	}
@@ -206,7 +205,7 @@ state GetDownState()
 
 state GetReadyState()
 {
-	if (Player(Player).Mana[HexenDefs::MANA_1])
+	if (Player(Owner.Player).Mana[HexenDefs::MANA_1])
 	{
 		return S_FAXEREADY_G;
 	}
@@ -224,14 +223,14 @@ state GetReadyState()
 
 state GetAttackState()
 {
-	if (Player(Player).Mana[HexenDefs::MANA_1] > 0)
+	if (Player(Owner.Player).Mana[HexenDefs::MANA_1] > 0)
 	{
 		// Glowing axe
 		return S_FAXEATK_G1;
 	}
 	else
 	{
-		return Player(Player).Refire ? HoldAttackState : AttackState;
+		return Player(Owner.Player).Refire ? HoldAttackState : AttackState;
 	}
 }
 
@@ -245,7 +244,7 @@ void GotMana(int InMana)
 {
 	if (InMana == HexenDefs::MANA_1)
 	{
-		Player.SetViewState(ps_weapon, S_FAXEREADY_G);
+		Owner.Player.SetViewState(ps_weapon, S_FAXEREADY_G);
 	}
 }
 

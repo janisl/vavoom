@@ -33,7 +33,7 @@ class WeaponStaff : Weapon;
 
 void WeaponLevel2Init()
 {
-	Player.SetViewState(ps_weapon, ReadyState2);
+	Owner.Player.SetViewState(ps_weapon, ReadyState2);
 }
 
 //==========================================================================
@@ -44,7 +44,7 @@ void WeaponLevel2Init()
 
 void WeaponLevel2Fade()
 {
-	Player(Player).PendingWeapon = Player(Player).ReadyWeapon;
+	Player(Owner.Player).PendingWeapon = Player(Owner.Player).ReadyWeapon;
 }
 
 //===========================================================================
@@ -60,18 +60,18 @@ final void A_StaffAttackPL1()
 	TVec dir;
 
 	damage = 5 + (P_Random() & 15);
-	angles = Player.MO.Angles;
+	angles = Owner.Angles;
 	angles.yaw = AngleMod360(angles.yaw +
 		(Random() - Random()) * 45.0 / 8.0);
-	dir = Actor(Player.MO).AimLineAttack(angles, MELEERANGE);
-	Actor(Player.MO).LineAttack(dir, MELEERANGE, damage, StaffPuff);
-	if (Actor(Player.MO).linetarget)
+	dir = Actor(Owner).AimLineAttack(angles, MELEERANGE);
+	Actor(Owner).LineAttack(dir, MELEERANGE, damage, StaffPuff);
+	if (Actor(Owner).linetarget)
 	{
 		// turn to face target
-		Player.MO.Angles.yaw =
-			atan2(Actor(Player.MO).linetarget.Origin.y - Player.MO.Origin.y,
-			Actor(Player.MO).linetarget.Origin.x - Player.MO.Origin.x);
-		Player.bFixAngle = true;
+		Owner.Angles.yaw =
+			atan2(Actor(Owner).linetarget.Origin.y - Owner.Origin.y,
+			Actor(Owner).linetarget.Origin.x - Owner.Origin.x);
+		Owner.Player.bFixAngle = true;
 	}
 }
 
@@ -90,18 +90,18 @@ final void A_StaffAttackPL2()
 	// P_inter.c:DamageMobj() handles target momentums
 	damage = 18 + (P_Random() & 63);
 
-	angles = Player.MO.Angles;
+	angles = Owner.Angles;
 	angles.yaw = AngleMod360(angles.yaw +
 		(Random() - Random()) * 45.0 / 8.0);
-	dir = Actor(Player.MO).AimLineAttack(angles, MELEERANGE);
-	Actor(Player.MO).LineAttack(dir, MELEERANGE, damage, StaffPuff2);
-	if (Actor(Player.MO).linetarget)
+	dir = Actor(Owner).AimLineAttack(angles, MELEERANGE);
+	Actor(Owner).LineAttack(dir, MELEERANGE, damage, StaffPuff2);
+	if (Actor(Owner).linetarget)
 	{
 		// turn to face target
-		Player.MO.Angles.yaw =
-			atan2(Actor(Player.MO).linetarget.Origin.y - Player.MO.Origin.y,
-			Actor(Player.MO).linetarget.Origin.x - Player.MO.Origin.x);
-		Player.bFixAngle = true;
+		Owner.Angles.yaw =
+			atan2(Actor(Owner).linetarget.Origin.y - Owner.Origin.y,
+			Actor(Owner).linetarget.Origin.x - Owner.Origin.x);
+		Owner.Player.bFixAngle = true;
 	}
 }
 
@@ -115,7 +115,7 @@ __states__
 		// Check for staff PL2 active sound
 		if (Random() < 0.5)
 		{
-			Player.MO.PlaySound('weapons/staffcrackle', CHAN_WEAPON);
+			Owner.PlaySound('weapons/staffcrackle', CHAN_WEAPON);
 		}
 		A_WeaponReady();
 	}

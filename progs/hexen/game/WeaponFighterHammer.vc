@@ -36,7 +36,6 @@ float HammerRange;
 
 final void A_FHammerAttack()
 {
-	Actor Owner = Actor(Player.MO);
 	int damage;
 	float power;
 	int i;
@@ -49,36 +48,36 @@ final void A_FHammerAttack()
 	{
 		angles = Owner.Angles;
 		angles.yaw = AngleMod360(angles.yaw + itof(i) * (45.0 / 32.0));
-		Owner.AimLineAttack(&angles, HammerRange);
-		if (Owner.linetarget)
+		Actor(Owner).AimLineAttack(&angles, HammerRange);
+		if (Actor(Owner).linetarget)
 		{
 			AngleVector(&angles, &vforward);
-			if (Owner.LineAttack(vforward, HammerRange, damage, HammerPuff))
+			if (Actor(Owner).LineAttack(vforward, HammerRange, damage, HammerPuff))
 			{
 				Owner.PlaySound('FighterHammerMiss', CHAN_WEAPON);
 			}
-			Player(Player).AdjustPlayerAngle();
-			if (Owner.linetarget.bCountKill || Owner.linetarget.bIsPlayer)
+			Player(Owner.Player).AdjustPlayerAngle();
+			if (Actor(Owner).linetarget.bCountKill || Actor(Owner).linetarget.bIsPlayer)
 			{
-				Owner.linetarget.Thrust(angles.yaw, power);
+				Actor(Owner).linetarget.Thrust(angles.yaw, power);
 			}
 			bThrowHammer = false;	// Don't throw a hammer
 			break;
 		}
 		angles = Owner.Angles;
 		angles.yaw = AngleMod360(angles.yaw - itof(i) * (45.0 / 32.0));
-		Owner.AimLineAttack(&angles, HammerRange);
-		if (Owner.linetarget)
+		Actor(Owner).AimLineAttack(&angles, HammerRange);
+		if (Actor(Owner).linetarget)
 		{
 			AngleVector(&angles, &vforward);
-			if (Owner.LineAttack(vforward, HammerRange, damage, HammerPuff))
+			if (Actor(Owner).LineAttack(vforward, HammerRange, damage, HammerPuff))
 			{
 				Owner.PlaySound('FighterHammerMiss', CHAN_WEAPON);
 			}
-			Player(Player).AdjustPlayerAngle();
-			if (Owner.linetarget.bCountKill || Owner.linetarget.bIsPlayer)
+			Player(Owner.Player).AdjustPlayerAngle();
+			if (Actor(Owner).linetarget.bCountKill || Actor(Owner).linetarget.bIsPlayer)
 			{
-				Owner.linetarget.Thrust(angles.yaw, power);
+				Actor(Owner).linetarget.Thrust(angles.yaw, power);
 			}
 			bThrowHammer = false;	// Don't throw a hammer
 			break;
@@ -87,15 +86,15 @@ final void A_FHammerAttack()
 	if (i == 16)
 	{
 		// didn't find any targets in meleerange, so set to throw out a hammer
-		MainGameInfo(Player.Level.Game).PuffSpawned = none;
+		MainGameInfo(Level.Game).PuffSpawned = none;
 		angles = Owner.Angles;
-		Owner.AimLineAttack(&angles, HammerRange);
+		Actor(Owner).AimLineAttack(&angles, HammerRange);
 		AngleVector(&angles, &vforward);
-		if (Owner.LineAttack(vforward, HammerRange, damage, HammerPuff))
+		if (Actor(Owner).LineAttack(vforward, HammerRange, damage, HammerPuff))
 		{
 			Owner.PlaySound('FighterHammerMiss', CHAN_WEAPON);
 		}
-		if (MainGameInfo(Player.Level.Game).PuffSpawned)
+		if (MainGameInfo(Level.Game).PuffSpawned)
 		{
 			bThrowHammer = false;
 		}
@@ -105,8 +104,8 @@ final void A_FHammerAttack()
 		}
 	}
 
-	if (Player(Player).Mana[HexenDefs::MANA_2] <
-		WeaponManaUse(Player.PClass, Player(Player).ReadyWeapon))
+	if (Player(Owner.Player).Mana[HexenDefs::MANA_2] <
+		WeaponManaUse(Owner.Player.PClass, Player(Owner.Player).ReadyWeapon))
 	{
 		// Don't spawn a hammer if the player doesn't have enough mana
 		bThrowHammer = false;
@@ -126,9 +125,9 @@ final void A_FHammerThrow()
 	{
 		return;
 	}
-	Player(Player).Mana[HexenDefs::MANA_2] -=
-		WeaponManaUse(Player.PClass, Player(Player).ReadyWeapon);
-	Player(Player).SpawnPlayerMissile(HammerMissile);
+	Player(Owner.Player).Mana[HexenDefs::MANA_2] -=
+		WeaponManaUse(Owner.Player.PClass, Player(Owner.Player).ReadyWeapon);
+	Player(Owner.Player).SpawnPlayerMissile(HammerMissile);
 }
 
 __states__

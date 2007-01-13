@@ -33,7 +33,7 @@ class WeaponGauntlets : Weapon;
 
 void WeaponLevel2Init()
 {
-	Player.SetViewState(ps_weapon, ReadyState2);
+	Owner.Player.SetViewState(ps_weapon, ReadyState2);
 }
 
 //==========================================================================
@@ -44,7 +44,7 @@ void WeaponLevel2Init()
 
 void WeaponLevel2Fade()
 {
-	Player(Player).PendingWeapon = Player(Player).ReadyWeapon;
+	Player(Owner.Player).PendingWeapon = Player(Owner.Player).ReadyWeapon;
 }
 
 //===========================================================================
@@ -64,10 +64,10 @@ final void A_GauntletAttack()
 	TVec dir;
 	class<Actor> PuffType;
 
-	Player.ViewStates[ps_weapon].SX = Random() * 4.0 - 2.0;
-	Player.ViewStates[ps_weapon].SY = WEAPONTOP + Random() * 4.0;
-	angles = Player.MO.Angles;
-	if (Player(Player).Powers[pw_weaponlevel2])
+	Owner.Player.ViewStates[ps_weapon].SX = Random() * 4.0 - 2.0;
+	Owner.Player.ViewStates[ps_weapon].SY = WEAPONTOP + Random() * 4.0;
+	angles = Owner.Angles;
+	if (Player(Owner.Player).Powers[pw_weaponlevel2])
 	{
 		damage = HITDICE(2);
 		dist = 4.0 * MELEERANGE;
@@ -83,57 +83,57 @@ final void A_GauntletAttack()
 			(Random() - Random()) * 45.0 / 8.0);
 		PuffType = GauntletPuff1;
 	}
-	dir = Actor(Player.MO).AimLineAttack(angles, dist);
-	Actor(Player.MO).LineAttack(dir, dist, damage, PuffType);
-	if (!Actor(Player.MO).linetarget)
+	dir = Actor(Owner).AimLineAttack(angles, dist);
+	Actor(Owner).LineAttack(dir, dist, damage, PuffType);
+	if (!Actor(Owner).linetarget)
 	{
 		if (P_Random() > 64)
 		{
-			Player.ExtraLight = !Player.ExtraLight;
+			Owner.Player.ExtraLight = !Owner.Player.ExtraLight;
 		}
-		Player.MO.PlaySound('weapons/gauntletson', CHAN_WEAPON);
+		Owner.PlaySound('weapons/gauntletson', CHAN_WEAPON);
 		return;
 	}
 	randVal = P_Random();
 	if (randVal < 64)
 	{
-		Player.ExtraLight = 0;
+		Owner.Player.ExtraLight = 0;
 	}
 	else if (randVal < 160)
 	{
-		Player.ExtraLight = 1;
+		Owner.Player.ExtraLight = 1;
 	}
 	else
 	{
-		Player.ExtraLight = 2;
+		Owner.Player.ExtraLight = 2;
 	}
-	if (Player(Player).Powers[pw_weaponlevel2])
+	if (Player(Owner.Player).Powers[pw_weaponlevel2])
 	{
-		Player(Player).GiveBody(damage >> 1);
-		Player.MO.PlaySound('weapons/gauntletspowhit', CHAN_WEAPON);
+		Player(Owner.Player).GiveBody(damage >> 1);
+		Owner.PlaySound('weapons/gauntletspowhit', CHAN_WEAPON);
 	}
 	else
 	{
-		Player.MO.PlaySound('weapons/gauntletshit', CHAN_WEAPON);
+		Owner.PlaySound('weapons/gauntletshit', CHAN_WEAPON);
 	}
 	// turn to face target
-	angle = atan2(Actor(Player.MO).linetarget.Origin.y - Player.MO.Origin.y,
-		Actor(Player.MO).linetarget.Origin.x - Player.MO.Origin.x);
-	if (AngleMod360(angle - Player.MO.Angles.yaw) > 180.0)
+	angle = atan2(Actor(Owner).linetarget.Origin.y - Owner.Origin.y,
+		Actor(Owner).linetarget.Origin.x - Owner.Origin.x);
+	if (AngleMod360(angle - Owner.Angles.yaw) > 180.0)
 	{
-		if (AngleMod360(angle - Player.MO.Angles.yaw) < 360.0 - 90.0 / 20.0)
-			Player.MO.Angles.yaw = AngleMod360(angle + 90.0 / 21.0);
+		if (AngleMod360(angle - Owner.Angles.yaw) < 360.0 - 90.0 / 20.0)
+			Owner.Angles.yaw = AngleMod360(angle + 90.0 / 21.0);
 		else
-			Player.MO.Angles.yaw = AngleMod360(Player.MO.Angles.yaw - 90.0 / 20.0);
+			Owner.Angles.yaw = AngleMod360(Owner.Angles.yaw - 90.0 / 20.0);
 	}
 	else
 	{
-		if (AngleMod360(angle - Player.MO.Angles.yaw) > 90.0 / 20.0)
-			Player.MO.Angles.yaw = AngleMod360(angle - 90.0 / 21.0);
+		if (AngleMod360(angle - Owner.Angles.yaw) > 90.0 / 20.0)
+			Owner.Angles.yaw = AngleMod360(angle - 90.0 / 21.0);
 		else
-			Player.MO.Angles.yaw = AngleMod360(Player.MO.Angles.yaw + 90.0 / 20.0);
+			Owner.Angles.yaw = AngleMod360(Owner.Angles.yaw + 90.0 / 20.0);
 	}
-	Actor(Player.MO).bJustAttacked = true;
+	Actor(Owner).bJustAttacked = true;
 }
 
 __states__

@@ -37,12 +37,12 @@ state Attack2ShutdownState;
 
 void WeaponLevel2Fade()
 {
-	if (Player.ViewStates[ps_weapon].State != ReadyState2 &&
-		Player.ViewStates[ps_weapon].State != UpState2)
+	if (Owner.Player.ViewStates[ps_weapon].State != ReadyState2 &&
+		Owner.Player.ViewStates[ps_weapon].State != UpState2)
 	{
-		Player.SetViewState(ps_weapon, ReadyState);
-		Player(Player).Ammo[am_phoenixrod] -= USE_PHRD_AMMO_2;
-		Player(Player).Refire = 0;
+		Owner.Player.SetViewState(ps_weapon, ReadyState);
+		Player(Owner.Player).Ammo[am_phoenixrod] -= USE_PHRD_AMMO_2;
+		Player(Owner.Player).Refire = 0;
 	}
 }
 
@@ -56,10 +56,10 @@ final void A_FirePhoenixPL1()
 {
 	TVec vforward;
 
-	Player(Player).Ammo[am_phoenixrod] -= USE_PHRD_AMMO_1;
-	Actor(Player.MO).SpawnPlayerMissile(PhoenixFX1);
-	AngleVector(&Player.MO.Angles, &vforward);
-	Player.MO.Velocity -= vforward * 140.0;
+	Player(Owner.Player).Ammo[am_phoenixrod] -= USE_PHRD_AMMO_1;
+	Actor(Owner).SpawnPlayerMissile(PhoenixFX1);
+	AngleVector(&Owner.Angles, &vforward);
+	Owner.Velocity -= vforward * 140.0;
 }
 
 //===========================================================================
@@ -90,23 +90,23 @@ final void A_FirePhoenixPL2()
 	if (--FlameCount == 0)
 	{
 		// Out of flame
-		Player.SetViewState(ps_weapon, Attack2ShutdownState);
-		Player(Player).Refire = 0;
+		Owner.Player.SetViewState(ps_weapon, Attack2ShutdownState);
+		Player(Owner.Player).Refire = 0;
 		return;
 	}
-	org.x = Player.MO.Origin.x + (Random() - Random()) * 2.0;
-	org.y = Player.MO.Origin.y + (Random() - Random()) * 2.0;
-	org.z = Player.MO.Origin.z + 26.0 - sin(Player.MO.Angles.pitch);
-	org.z -= Player.MO.FloorClip;
-	A = HereticLevelInfo(Player.Level).Spawn(PhoenixFX2, org);
-	A.Instigator = Actor(Player.MO);
-	A.Angles.yaw = Player.MO.Angles.yaw;
-	A.Angles.pitch = Player.MO.Angles.pitch;
+	org.x = Owner.Origin.x + (Random() - Random()) * 2.0;
+	org.y = Owner.Origin.y + (Random() - Random()) * 2.0;
+	org.z = Owner.Origin.z + 26.0 - sin(Owner.Angles.pitch);
+	org.z -= Owner.FloorClip;
+	A = HereticLevelInfo(Level).Spawn(PhoenixFX2, org);
+	A.Instigator = Actor(Owner);
+	A.Angles.yaw = Owner.Angles.yaw;
+	A.Angles.pitch = Owner.Angles.pitch;
 	AngleVector(&A.Angles, &dir);
-	A.Velocity = Player.MO.Velocity + A.Speed * dir;
-	if (!Player(Player).Refire || !(Player.Level.Game.level->tictime % 38))
+	A.Velocity = Owner.Velocity + A.Speed * dir;
+	if (!Player(Owner.Player).Refire || !(Level.Game.level->tictime % 38))
 	{
-		Player.MO.PlaySound('weapons/phoenixpowshoot', CHAN_WEAPON);
+		Owner.PlaySound('weapons/phoenixpowshoot', CHAN_WEAPON);
 	}
 	A.CheckMissileSpawn();
 }
@@ -119,7 +119,7 @@ final void A_FirePhoenixPL2()
 
 final void A_ShutdownPhoenixPL2()
 {
-	Player(Player).Ammo[am_phoenixrod] -= USE_PHRD_AMMO_2;
+	Player(Owner.Player).Ammo[am_phoenixrod] -= USE_PHRD_AMMO_2;
 }
 
 __states__

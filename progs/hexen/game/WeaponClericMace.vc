@@ -41,40 +41,40 @@ final void A_CMaceAttack()
 	damage = 25 + (P_Random() & 15);
 	for (i = 0; i < 16; i++)
 	{
-		angles = Player.MO.Angles;
+		angles = Owner.Angles;
 		angles.yaw = AngleMod360(angles.yaw + itof(i) * (45.0 / 16.0));
-		Actor(Player.MO).AimLineAttack(&angles, 2.0 * Actor::MELEERANGE);
-		if (Actor(Player.MO).linetarget)
+		Actor(Owner).AimLineAttack(&angles, 2.0 * Actor::MELEERANGE);
+		if (Actor(Owner).linetarget)
 		{
 			AngleVector(&angles, &vforward);
-			if (Actor(Player.MO).LineAttack(vforward, 2.0 * Actor::MELEERANGE, damage, HammerPuff))
+			if (Actor(Owner).LineAttack(vforward, 2.0 * Actor::MELEERANGE, damage, HammerPuff))
 			{
-				Player.MO.PlaySound('FighterHammerMiss', CHAN_WEAPON);
+				Owner.PlaySound('FighterHammerMiss', CHAN_WEAPON);
 			}
-			Player(Player).AdjustPlayerAngle();
+			Player(Owner.Player).AdjustPlayerAngle();
 			return;
 		}
-		angles = Player.MO.Angles;
+		angles = Owner.Angles;
 		angles.yaw = AngleMod360(angles.yaw - itof(i) * (45.0 / 16.0));
-		Actor(Player.MO).AimLineAttack(&angles, 2.0 * Actor::MELEERANGE);
-		if (Actor(Player.MO).linetarget)
+		Actor(Owner).AimLineAttack(&angles, 2.0 * Actor::MELEERANGE);
+		if (Actor(Owner).linetarget)
 		{
 			AngleVector(&angles, &vforward);
-			if (Actor(Player.MO).LineAttack(vforward, 2.0 * Actor::MELEERANGE, damage, HammerPuff))
+			if (Actor(Owner).LineAttack(vforward, 2.0 * Actor::MELEERANGE, damage, HammerPuff))
 			{
-				Player.MO.PlaySound('FighterHammerMiss', CHAN_WEAPON);
+				Owner.PlaySound('FighterHammerMiss', CHAN_WEAPON);
 			}
-			Player(Player).AdjustPlayerAngle();
+			Player(Owner.Player).AdjustPlayerAngle();
 			return;
 		}
 	}
 	// didn't find any creatures, so try to strike any walls
-	angles = Player.MO.Angles;
-	Actor(Player.MO).AimLineAttack(&angles, Actor::MELEERANGE);
+	angles = Owner.Angles;
+	Actor(Owner).AimLineAttack(&angles, Actor::MELEERANGE);
 	AngleVector(&angles, &vforward);
-	if (Actor(Player.MO).LineAttack(vforward, Actor::MELEERANGE, damage, HammerPuff))
+	if (Actor(Owner).LineAttack(vforward, Actor::MELEERANGE, damage, HammerPuff))
 	{
-		Player.MO.PlaySound('FighterHammerMiss', CHAN_WEAPON);
+		Owner.PlaySound('FighterHammerMiss', CHAN_WEAPON);
 	}
 }
 

@@ -33,8 +33,8 @@ class WeaponBeak : Weapon;
 
 final void A_BeakRaise()
 {
-	Player.ViewStates[ps_weapon].SY = WEAPONTOP;
-	Player.SetViewState(ps_weapon, ReadyState);
+	Owner.Player.ViewStates[ps_weapon].SY = WEAPONTOP;
+	Owner.Player.SetViewState(ps_weapon, ReadyState);
 }
 
 //===========================================================================
@@ -45,29 +45,29 @@ final void A_BeakRaise()
 
 final void A_BeakReady()
 {
-	if (Player.Buttons & BT_ATTACK)
+	if (Owner.Player.Buttons & BT_ATTACK)
 	{
 		// Chicken beak attack
-		Player.bAttackDown = true;
-		Player.MO.SetState(Actor(Player.MO).MissileState);
-		if (Player(Player).Powers[pw_weaponlevel2])
+		Owner.Player.bAttackDown = true;
+		Owner.SetState(Actor(Owner).MissileState);
+		if (Player(Owner.Player).Powers[pw_weaponlevel2])
 		{
-			Player.SetViewState(ps_weapon, AttackState2);
+			Owner.Player.SetViewState(ps_weapon, AttackState2);
 		}
 		else
 		{
-			Player.SetViewState(ps_weapon, AttackState);
+			Owner.Player.SetViewState(ps_weapon, AttackState);
 		}
-		HereticLevelInfo(Player.MO.Level).NoiseAlert(Actor(Player.MO), Actor(Player.MO));
+		HereticLevelInfo(Level).NoiseAlert(Actor(Owner), Actor(Owner));
 	}
 	else
 	{
-		if (Player.MO.State == Actor(Player.MO).MissileState)
+		if (Owner.State == Actor(Owner).MissileState)
 		{
 			// Take out of attack state
-			Player.MO.SetState(Actor(Player.MO).IdleState);
+			Owner.SetState(Actor(Owner).IdleState);
 		}
-		Player.bAttackDown = false;
+		Owner.Player.bAttackDown = false;
 	}
 }
 
@@ -83,18 +83,18 @@ final void A_BeakAttackPL1()
 	TVec dir;
 
 	damage = 1 + (P_Random() & 3);
-	dir = Actor(Player.MO).AimLineAttack(Player.MO.Angles, MELEERANGE);
-	Actor(Player.MO).LineAttack(dir, MELEERANGE, damage, BeakPuff);
-	if (Actor(Player.MO).linetarget)
+	dir = Actor(Owner).AimLineAttack(Owner.Angles, MELEERANGE);
+	Actor(Owner).LineAttack(dir, MELEERANGE, damage, BeakPuff);
+	if (Actor(Owner).linetarget)
 	{
-		Player.MO.Angles.yaw =
-			atan2(Actor(Player.MO).linetarget.Origin.y - Player.MO.Origin.y,
-			Actor(Player.MO).linetarget.Origin.x - Player.MO.Origin.x);
-		Player.bFixAngle = true;
+		Owner.Angles.yaw =
+			atan2(Actor(Owner).linetarget.Origin.y - Owner.Origin.y,
+			Actor(Owner).linetarget.Origin.x - Owner.Origin.x);
+		Owner.Player.bFixAngle = true;
 	}
-	Player.MO.PlaySound('chicken/peck', CHAN_VOICE);
-	Player(Player).ChickenPeck = 12;
-	Player.ViewStates[ps_weapon].StateTime -= Random() * 0.25;
+	Owner.PlaySound('chicken/peck', CHAN_VOICE);
+	Player(Owner.Player).ChickenPeck = 12;
+	Owner.Player.ViewStates[ps_weapon].StateTime -= Random() * 0.25;
 }
 
 //===========================================================================
@@ -109,18 +109,18 @@ final void A_BeakAttackPL2()
 	TVec dir;
 
 	damage = HITDICE(4);
-	dir = Actor(Player.MO).AimLineAttack(Player.MO.Angles, MELEERANGE);
-	Actor(Player.MO).LineAttack(dir, MELEERANGE, damage, BeakPuff);
-	if (Actor(Player.MO).linetarget)
+	dir = Actor(Owner).AimLineAttack(Owner.Angles, MELEERANGE);
+	Actor(Owner).LineAttack(dir, MELEERANGE, damage, BeakPuff);
+	if (Actor(Owner).linetarget)
 	{
-		Player.MO.Angles.yaw =
-			atan2(Actor(Player.MO).linetarget.Origin.y - Player.MO.Origin.y,
-			Actor(Player.MO).linetarget.Origin.x - Player.MO.Origin.x);
-		Player.bFixAngle = true;
+		Owner.Angles.yaw =
+			atan2(Actor(Owner).linetarget.Origin.y - Owner.Origin.y,
+			Actor(Owner).linetarget.Origin.x - Owner.Origin.x);
+		Owner.Player.bFixAngle = true;
 	}
-	Player.MO.PlaySound('chicken/peck', CHAN_VOICE);
-	Player(Player).ChickenPeck = 12;
-	Player.ViewStates[ps_weapon].StateTime -= Random() * 0.125;
+	Owner.PlaySound('chicken/peck', CHAN_VOICE);
+	Player(Owner.Player).ChickenPeck = 12;
+	Owner.Player.ViewStates[ps_weapon].StateTime -= Random() * 0.125;
 }
 
 __states__

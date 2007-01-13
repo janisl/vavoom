@@ -50,7 +50,7 @@ final void A_CStaffCheckBlink()
 {
 	if (!--BlinkCount)
 	{
-		Player.SetViewState(ps_weapon, BlinkState);
+		Owner.Player.SetViewState(ps_weapon, BlinkState);
 		BlinkCount = (P_Random() + 50) >> 2;
 	}
 }
@@ -70,7 +70,7 @@ final void A_CStaffCheck()
 	TAVec angles;
 	TVec vforward;
 
-	pmo = Actor(Player.MO);
+	pmo = Actor(Owner);
 	damage = 20 + (P_Random() & 15);
 	for (i = 0; i < 3; i++)
 	{
@@ -86,14 +86,14 @@ final void A_CStaffCheck()
 			if ((pmo.linetarget.bIsPlayer || pmo.linetarget.bCountKill) &&
 				!pmo.linetarget.bDormant && !pmo.linetarget.bInvulnerable)
 			{
-				newLife = Player.Health + (damage >> 3);
+				newLife = Owner.Player.Health + (damage >> 3);
 				newLife = newLife > 100 ? 100 : newLife;
 				pmo.Health = newLife;
-				Player.Health = newLife;
-				Player.SetViewState(ps_weapon, Attack2State);
+				Owner.Player.Health = newLife;
+				Owner.Player.SetViewState(ps_weapon, Attack2State);
 			}
-			Player(Player).Mana[HexenDefs::MANA_1] -=
-				WeaponManaUse(Player.PClass, Player(Player).ReadyWeapon);
+			Player(Owner.Player).Mana[HexenDefs::MANA_1] -=
+				WeaponManaUse(Owner.Player.PClass, Player(Owner.Player).ReadyWeapon);
 			break;
 		}
 		angles = pmo.Angles;
@@ -107,14 +107,14 @@ final void A_CStaffCheck()
 				pmo.linetarget.Origin.x - pmo.Origin.x);
 			if (pmo.linetarget.bIsPlayer || pmo.linetarget.bCountKill)
 			{
-				newLife = Player.Health + (damage >> 4);
+				newLife = Owner.Player.Health + (damage >> 4);
 				newLife = newLife > 100 ? 100 : newLife;
 				pmo.Health = newLife;
-				Player.Health = pmo.Health;
-				Player.SetViewState(ps_weapon, Attack2State);
+				Owner.Player.Health = pmo.Health;
+				Owner.Player.SetViewState(ps_weapon, Attack2State);
 			}
-			Player(Player).Mana[HexenDefs::MANA_1] -=
-				WeaponManaUse(Player.PClass, Player(Player).ReadyWeapon);
+			Player(Owner.Player).Mana[HexenDefs::MANA_1] -=
+				WeaponManaUse(Owner.Player.PClass, Player(Owner.Player).ReadyWeapon);
 			break;
 		}
 	}
@@ -131,16 +131,16 @@ final void A_CStaffAttack()
 	Actor mo;
 	PlayerPawn playPawn;
 
-	Player(Player).Mana[HexenDefs::MANA_1] -=
-		WeaponManaUse(Player.PClass, Player(Player).ReadyWeapon);
-	playPawn = PlayerPawn(Player.MO);
-	mo = Player(Player).SpawnPlayerMissileAngle(ClericStaffMissile,
+	Player(Owner.Player).Mana[HexenDefs::MANA_1] -=
+		WeaponManaUse(Owner.Player.PClass, Player(Owner.Player).ReadyWeapon);
+	playPawn = PlayerPawn(Owner);
+	mo = Player(Owner.Player).SpawnPlayerMissileAngle(ClericStaffMissile,
 		playPawn.Angles.yaw - (45.0 / 15.0));
 	if (mo)
 	{
 		ClericStaffMissile(mo).WeaveXY = 32;
 	}
-	mo = Player(Player).SpawnPlayerMissileAngle(ClericStaffMissile,
+	mo = Player(Owner.Player).SpawnPlayerMissileAngle(ClericStaffMissile,
 		playPawn.Angles.yaw + (45.0 / 15.0));
 	if (mo)
 	{

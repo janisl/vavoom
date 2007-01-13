@@ -68,6 +68,11 @@ state HoldAttackState2;
 float PSpriteSY;
 bool bInShareware;
 
+LevelInfo Level
+{
+	get { return Owner.Level; }
+}
+
 void WeaponLevel2Init() { }
 void WeaponLevel2Fade() { }
 
@@ -96,56 +101,56 @@ final void A_WeaponReady()
 {
 	float angle;
 
-	if (Player(Player).ChickenTime)
+	if (Player(Owner.Player).ChickenTime)
 	{
 		// Change to the chicken beak
-		Player(Player).ActivateBeak();
+		Player(Owner.Player).ActivateBeak();
 		return;
 	}
 	// Change player from attack state
-	if (Player.MO.State == Actor(Player.MO).MissileState ||
-		Player.MO.State == PlayerPawn(Player.MO).Attack2State)
+	if (Owner.State == Actor(Owner).MissileState ||
+		Owner.State == PlayerPawn(Owner).Attack2State)
 	{
-		Player.MO.SetState(Actor(Player.MO).IdleState);
+		Owner.SetState(Actor(Owner).IdleState);
 	}
 	// Put the weapon away if the player has a pending weapon or has
 	// died.
-	if (Player(Player).PendingWeapon != wp_nochange || !Player.Health)
+	if (Player(Owner.Player).PendingWeapon != wp_nochange || !Owner.Player.Health)
 	{
-		if (Player(Player).Powers[pw_weaponlevel2])
+		if (Player(Owner.Player).Powers[pw_weaponlevel2])
 		{
-			Player.SetViewState(ps_weapon, DownState2);
+			Owner.Player.SetViewState(ps_weapon, DownState2);
 		}
 		else
 		{
-			Player.SetViewState(ps_weapon, DownState);
+			Owner.Player.SetViewState(ps_weapon, DownState);
 		}
 		return;
 	}
 
 	// Check for fire.  The phoenix rod does not auto fire.
-	if (Player.Buttons & BT_ATTACK)
+	if (Owner.Player.Buttons & BT_ATTACK)
 	{
-		if (!Player.bAttackDown || (Player(Player).ReadyWeapon != wp_phoenixrod))
+		if (!Owner.Player.bAttackDown || (Player(Owner.Player).ReadyWeapon != wp_phoenixrod))
 		{
-			Player.bAttackDown = true;
-			Player(Player).FireWeapon();
+			Owner.Player.bAttackDown = true;
+			Player(Owner.Player).FireWeapon();
 			return;
 		}
 	}
 	else
 	{
-		Player.bAttackDown = false;
+		Owner.Player.bAttackDown = false;
 	}
 
 	// Bob the weapon based on movement speed.
-	angle = AngleMod360(180.0 * Player.Level.Game.level->time);
-	Player.ViewStates[ps_weapon].SX = 1.0 + Player(Player).Bob * cos(angle);
+	angle = AngleMod360(180.0 * Level.Game.level->time);
+	Owner.Player.ViewStates[ps_weapon].SX = 1.0 + Player(Owner.Player).Bob * cos(angle);
 	if (angle >= 180.0)
 	{
 		angle -= 180.0;
 	}
-	Player.ViewStates[ps_weapon].SY = WEAPONTOP + Player(Player).Bob * sin(angle);
+	Owner.Player.ViewStates[ps_weapon].SY = WEAPONTOP + Player(Owner.Player).Bob * sin(angle);
 }
 
 //===========================================================================
@@ -156,37 +161,37 @@ final void A_WeaponReady()
 
 final void A_Lower()
 {
-	if (Player(Player).ChickenTime)
+	if (Player(Owner.Player).ChickenTime)
 	{
-		Player.ViewStates[ps_weapon].SY = WEAPONBOTTOM;
+		Owner.Player.ViewStates[ps_weapon].SY = WEAPONBOTTOM;
 	}
 	else
 	{
 		// FIXME!!
-		if (Player.Level.Game.frametime < 1.0 / 35.0)
-			Player.ViewStates[ps_weapon].SY += LOWERSPEED;
+		if (Level.Game.frametime < 1.0 / 35.0)
+			Owner.Player.ViewStates[ps_weapon].SY += LOWERSPEED;
 		else
-			Player.ViewStates[ps_weapon].SY += LOWERSPEED * 35.0 * Player.Level.Game.frametime;
+			Owner.Player.ViewStates[ps_weapon].SY += LOWERSPEED * 35.0 * Level.Game.frametime;
 	}
-	if (Player.ViewStates[ps_weapon].SY < WEAPONBOTTOM)
+	if (Owner.Player.ViewStates[ps_weapon].SY < WEAPONBOTTOM)
 	{
 		// Not lowered all the way yet
 		return;
 	}
-	if (Player.PlayerState == PST_DEAD)
+	if (Owner.Player.PlayerState == PST_DEAD)
 	{
 		// Player is dead, so don't bring up a pending weapon
-		Player.ViewStates[ps_weapon].SY = WEAPONBOTTOM;
+		Owner.Player.ViewStates[ps_weapon].SY = WEAPONBOTTOM;
 		return;
 	}
-	if (!Player.Health)
+	if (!Owner.Player.Health)
 	{
 		// Player is dead, so keep the weapon off screen
-		Player.SetViewState(ps_weapon, none);
+		Owner.Player.SetViewState(ps_weapon, none);
 		return;
 	}
-	Player(Player).ReadyWeapon = Player(Player).PendingWeapon;
-	Player(Player).BringUpWeapon();
+	Player(Owner.Player).ReadyWeapon = Player(Owner.Player).PendingWeapon;
+	Player(Owner.Player).BringUpWeapon();
 }
 
 //===========================================================================
@@ -198,23 +203,23 @@ final void A_Lower()
 final void A_Raise()
 {
 	//	FIXME!!
-	if (Player.Level.Game.frametime < 1.0 / 35.0)
-		Player.ViewStates[ps_weapon].SY -= RAISESPEED;
+	if (Level.Game.frametime < 1.0 / 35.0)
+		Owner.Player.ViewStates[ps_weapon].SY -= RAISESPEED;
 	else
-		Player.ViewStates[ps_weapon].SY -= RAISESPEED * 35.0 * Player.Level.Game.frametime;
-	if (Player.ViewStates[ps_weapon].SY > WEAPONTOP)
+		Owner.Player.ViewStates[ps_weapon].SY -= RAISESPEED * 35.0 * Level.Game.frametime;
+	if (Owner.Player.ViewStates[ps_weapon].SY > WEAPONTOP)
 	{
 		// Not raised all the way yet
 		return;
 	}
-	Player.ViewStates[ps_weapon].SY = WEAPONTOP;
-	if (Player(Player).Powers[pw_weaponlevel2])
+	Owner.Player.ViewStates[ps_weapon].SY = WEAPONTOP;
+	if (Player(Owner.Player).Powers[pw_weaponlevel2])
 	{
-		Player.SetViewState(ps_weapon, ReadyState2);
+		Owner.Player.SetViewState(ps_weapon, ReadyState2);
 	}
 	else
 	{
-		Player.SetViewState(ps_weapon, ReadyState);
+		Owner.Player.SetViewState(ps_weapon, ReadyState);
 	}
 }
 
@@ -228,16 +233,16 @@ final void A_Raise()
 
 final void A_ReFire()
 {
-	if ((Player.Buttons & BT_ATTACK)
-		&& Player(Player).PendingWeapon == wp_nochange && Player.Health)
+	if ((Owner.Player.Buttons & BT_ATTACK)
+		&& Player(Owner.Player).PendingWeapon == wp_nochange && Owner.Player.Health)
 	{
-		Player(Player).Refire++;
-		Player(Player).FireWeapon();
+		Player(Owner.Player).Refire++;
+		Player(Owner.Player).FireWeapon();
 	}
 	else
 	{
-		Player(Player).Refire = 0;
-		Player(Player).CheckAmmo();
+		Player(Owner.Player).Refire = 0;
+		Player(Owner.Player).CheckAmmo();
 	}
 }
 
@@ -249,7 +254,7 @@ final void A_ReFire()
 
 final void A_Light0()
 {
-	Player.ExtraLight = 0;
+	Owner.Player.ExtraLight = 0;
 }
 
 //

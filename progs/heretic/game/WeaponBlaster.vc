@@ -37,15 +37,15 @@ final void A_FireBlasterPL1()
 	float bulletslope;
 	TVec dir;
 
-	Player(Player).Ammo[am_blaster] -= USE_BLSR_AMMO_1;
-	dir = Actor(Player.MO).Aim(Player.MO.Angles.yaw, 16.0 * 64.0);
+	Player(Owner.Player).Ammo[am_blaster] -= USE_BLSR_AMMO_1;
+	dir = Actor(Owner).Aim(Owner.Angles.yaw, 16.0 * 64.0);
 	damage = HITDICE(4);
-	if (Player(Player).Refire)
+	if (Player(Owner.Player).Refire)
 	{
 		VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0 / 8.0);
 	}
-	Actor(Player.MO).LineAttack(dir, MISSILERANGE, damage, BlasterPuff1);
-	Player.MO.PlaySound('weapons/blastershoot', CHAN_WEAPON);
+	Actor(Owner).LineAttack(dir, MISSILERANGE, damage, BlasterPuff1);
+	Owner.PlaySound('weapons/blastershoot', CHAN_WEAPON);
 }
 
 //===========================================================================
@@ -58,14 +58,14 @@ final void A_FireBlasterPL2()
 {
 	Actor A;
 
-	Player(Player).Ammo[am_blaster] -=
-		Player.Level.Game.deathmatch ? USE_BLSR_AMMO_1 : USE_BLSR_AMMO_2;
-	A = Actor(Player.MO).SpawnPlayerMissile(BlasterFX1);
+	Player(Owner.Player).Ammo[am_blaster] -=
+		Level.Game.deathmatch ? USE_BLSR_AMMO_1 : USE_BLSR_AMMO_2;
+	A = Actor(Owner).SpawnPlayerMissile(BlasterFX1);
 	if (A)
 	{
 		A.bBlaster = true;
 	}
-	Player.MO.PlaySound('weapons/blastershoot', CHAN_WEAPON);
+	Owner.PlaySound('weapons/blastershoot', CHAN_WEAPON);
 }
 
 __states__

@@ -49,6 +49,11 @@ state FireDeathWaveState;
 
 bool bRaiseNoiseAlert;
 
+LevelInfo Level
+{
+	get { return Owner.Level; }
+}
+
 //===========================================================================
 //
 //  A_WeaponReady
@@ -63,50 +68,50 @@ final void A_WeaponReady()
 	float angle;
 
 	// get out of attack state
-	if (Player.MO.State == Actor(Player.MO).MeleeState ||
-		Player.MO.State == Actor(Player.MO).MissileState)
+	if (Owner.State == Actor(Owner).MeleeState ||
+		Owner.State == Actor(Owner).MissileState)
 	{
-		Player.MO.SetState(Actor(Player.MO).IdleState);
+		Owner.SetState(Actor(Owner).IdleState);
 	}
 
-	if (Player(Player).ReadyWeapon == StrifeDefs::wp_flame &&
-		Player.ViewStates[ps_weapon].State == ReadyState)
+	if (Player(Owner.Player).ReadyWeapon == StrifeDefs::wp_flame &&
+		Owner.Player.ViewStates[ps_weapon].State == ReadyState)
 	{
-		Player.MO.PlaySound('weapons/flameidle', CHAN_WEAPON);
+		Owner.PlaySound('weapons/flameidle', CHAN_WEAPON);
 	}
 
 	// check for change
 	//  if player is dead, put the weapon away
-	if (Player(Player).PendingWeapon != StrifeDefs::wp_nochange || !Player.Health)
+	if (Player(Owner.Player).PendingWeapon != StrifeDefs::wp_nochange || !Owner.Player.Health)
 	{
 		// change weapon
 		//  (pending weapon should allready be validated)
-		Player.SetViewState(ps_weapon, DownState);
+		Owner.Player.SetViewState(ps_weapon, DownState);
 		return;
 	}
 
 	// check for fire
 	//  the missile launcher and bfg do not auto fire
-	if (Player.Buttons & BT_ATTACK)
+	if (Owner.Player.Buttons & BT_ATTACK)
 	{
-		if (!Player.bAttackDown || (Player(Player).ReadyWeapon != StrifeDefs::wp_missile))
+		if (!Owner.Player.bAttackDown || (Player(Owner.Player).ReadyWeapon != StrifeDefs::wp_missile))
 		{
-			Player.bAttackDown = true;
-			Player(Player).FireWeapon();
+			Owner.Player.bAttackDown = true;
+			Player(Owner.Player).FireWeapon();
 			return;
 		}
 	}
 	else
-		Player.bAttackDown = false;
+		Owner.Player.bAttackDown = false;
 
 	// bob the weapon based on movement speed
-	angle = AngleMod360(180.0 * Player.Level.Game.level->time);
-	Player.ViewStates[ps_weapon].SX = 1.0 + Player(Player).Bob * cos(angle);
+	angle = AngleMod360(180.0 * Level.Game.level->time);
+	Owner.Player.ViewStates[ps_weapon].SX = 1.0 + Player(Owner.Player).Bob * cos(angle);
 	if (angle >= 180.0)
 	{
 		angle -= 180.0;
 	}
-	Player.ViewStates[ps_weapon].SY = WEAPONTOP + Player(Player).Bob * sin(angle);
+	Owner.Player.ViewStates[ps_weapon].SY = WEAPONTOP + Player(Owner.Player).Bob * sin(angle);
 }
 
 //===========================================================================
@@ -120,38 +125,38 @@ final void A_WeaponReady()
 final void A_Lower()
 {
 	//	FIXME!!
-	if (Player.Level.Game.frametime < 1.0 / 35.0)
-		Player.ViewStates[ps_weapon].SY += LOWERSPEED;
+	if (Level.Game.frametime < 1.0 / 35.0)
+		Owner.Player.ViewStates[ps_weapon].SY += LOWERSPEED;
 	else
-		Player.ViewStates[ps_weapon].SY += LOWERSPEED * 35.0 * Player.Level.Game.frametime;
+		Owner.Player.ViewStates[ps_weapon].SY += LOWERSPEED * 35.0 * Level.Game.frametime;
 
 	// Is already down.
-	if (Player.ViewStates[ps_weapon].SY < WEAPONBOTTOM)
+	if (Owner.Player.ViewStates[ps_weapon].SY < WEAPONBOTTOM)
 		return;
 
 	// Player is dead.
-	if (Player.PlayerState == PST_DEAD)
+	if (Owner.Player.PlayerState == PST_DEAD)
 	{
-		Player.ViewStates[ps_weapon].SY = WEAPONBOTTOM;
+		Owner.Player.ViewStates[ps_weapon].SY = WEAPONBOTTOM;
 
 		// don't bring weapon back up
 		return;
 	}
 
-	Player.SetViewState(ps_flash, none);
+	Owner.Player.SetViewState(ps_flash, none);
 
 	// The old weapon has been lowered off the screen,
 	// so change the weapon and start raising it
-	if (!Player.Health)
+	if (!Owner.Player.Health)
 	{
 		// Player is dead, so keep the weapon off screen.
-		Player.SetViewState(ps_weapon, none);
+		Owner.Player.SetViewState(ps_weapon, none);
 		return;
 	}
 
-	Player(Player).SetWeapon(Player(Player).PendingWeapon);
+	Player(Owner.Player).SetWeapon(Player(Owner.Player).PendingWeapon);
 
-	Player(Player).BringUpWeapon();
+	Player(Owner.Player).BringUpWeapon();
 }
 
 //===========================================================================
@@ -163,21 +168,21 @@ final void A_Lower()
 final void A_Raise()
 {
 	//	FIXME!!
-	if (Player.Level.Game.frametime < 1.0 / 35.0)
-		Player.ViewStates[ps_weapon].SY -= RAISESPEED;
+	if (Level.Game.frametime < 1.0 / 35.0)
+		Owner.Player.ViewStates[ps_weapon].SY -= RAISESPEED;
 	else
-		Player.ViewStates[ps_weapon].SY -= RAISESPEED * 35.0 * Player.Level.Game.frametime;
+		Owner.Player.ViewStates[ps_weapon].SY -= RAISESPEED * 35.0 * Level.Game.frametime;
 
-	if (Player.ViewStates[ps_weapon].SY > WEAPONTOP)
+	if (Owner.Player.ViewStates[ps_weapon].SY > WEAPONTOP)
 	{
 		return;
 	}
 
-	Player.ViewStates[ps_weapon].SY = WEAPONTOP;
+	Owner.Player.ViewStates[ps_weapon].SY = WEAPONTOP;
 
 	// The weapon has been raised all the way,
 	//  so change to the ready state.
-	Player.SetViewState(ps_weapon, ReadyState);
+	Owner.Player.SetViewState(ps_weapon, ReadyState);
 }
 
 //===========================================================================
@@ -192,16 +197,16 @@ final void A_ReFire()
 {
 	// check for fire
 	//  (if a weaponchange is pending, let it go through instead)
-	if ((Player.Buttons & BT_ATTACK)
-		&& Player(Player).PendingWeapon == StrifeDefs::wp_nochange && Player.Health)
+	if ((Owner.Player.Buttons & BT_ATTACK)
+		&& Player(Owner.Player).PendingWeapon == StrifeDefs::wp_nochange && Owner.Player.Health)
 	{
-		Player(Player).Refire++;
-		Player(Player).FireWeapon();
+		Player(Owner.Player).Refire++;
+		Player(Owner.Player).FireWeapon();
 	}
 	else
 	{
-		Player(Player).Refire = 0;
-		Player(Player).CheckAmmo();
+		Player(Owner.Player).Refire = 0;
+		Player(Owner.Player).CheckAmmo();
 	}
 }
 
@@ -213,7 +218,7 @@ final void A_ReFire()
 
 final void A_CheckReload()
 {
-	Player(Player).CheckAmmo();
+	Player(Owner.Player).CheckAmmo();
 }
 
 //===========================================================================
@@ -224,8 +229,8 @@ final void A_CheckReload()
 
 final void A_GunFlash()
 {
-	Player.MO.SetState(Actor(Player.MO).MissileState);
-	Player.SetViewState(ps_flash, FlashState);
+	Owner.SetState(Actor(Owner).MissileState);
+	Owner.Player.SetViewState(ps_flash, FlashState);
 }
 
 //===========================================================================
@@ -236,8 +241,8 @@ final void A_GunFlash()
 
 final void A_Light0()
 {
-	Player.ExtraLight = 0;
-	Player.MO.Effects &= ~StrifeDefs::EF_DLIGHT_MASK;
+	Owner.Player.ExtraLight = 0;
+	Owner.Effects &= ~StrifeDefs::EF_DLIGHT_MASK;
 }
 
 //===========================================================================
@@ -248,7 +253,7 @@ final void A_Light0()
 
 final void A_Light1()
 {
-	Player.ExtraLight = 1;
+	Owner.Player.ExtraLight = 1;
 }
 
 //===========================================================================
@@ -259,7 +264,7 @@ final void A_Light1()
 
 final void A_Light2()
 {
-	Player.ExtraLight = 2;
+	Owner.Player.ExtraLight = 2;
 }
 
 //==========================================================================
@@ -270,7 +275,7 @@ final void A_Light2()
 
 final void A_ClearFlash()
 {
-	Player.SetViewState(ps_flash, none);
+	Owner.Player.SetViewState(ps_flash, none);
 }
 
 __states__

@@ -38,36 +38,35 @@ final void A_Punch()
 	TAVec angles;
 	TVec dir;
 
-	power = Player(Player).Stamina / 10;
+	power = Player(Owner.Player).Stamina / 10;
 	damage = (P_Random() % (power + 8)) * (power + 2);
 
-	angles = Player.MO.Angles;
+	angles = Owner.Angles;
 	angles.yaw = AngleMod360(angles.yaw +
 		(Random() - Random()) * 45.0 / 8.0);
-	dir = Actor(Player.MO).AimLineAttack(angles, PUNCHRANGE);
-	Actor(Player.MO).LineAttack(dir, PUNCHRANGE, damage, PuffPow3);
+	dir = Actor(Owner).AimLineAttack(angles, PUNCHRANGE);
+	Actor(Owner).LineAttack(dir, PUNCHRANGE, damage, PuffPow3);
 
 	// turn to face target
-	if (Actor(Player.MO).linetarget)
+	if (Actor(Owner).linetarget)
 	{
-		if (Actor(Player.MO).linetarget.bNoBlood)
+		if (Actor(Owner).linetarget.bNoBlood)
 		{
-			Player.MO.PlaySound('misc/metalhit', CHAN_WEAPON);
+			Owner.PlaySound('misc/metalhit', CHAN_WEAPON);
 		}
 		else
 		{
-			Player.MO.PlaySound('misc/meathit', CHAN_WEAPON);
+			Owner.PlaySound('misc/meathit', CHAN_WEAPON);
 		}
-		Player.MO.Angles.yaw =
-			atan2(Actor(Player.MO).linetarget.Origin.y - Player.MO.Origin.y,
-			Actor(Player.MO).linetarget.Origin.x - Player.MO.Origin.x);
-		Player.bFixAngle = true;
-		Actor(Player.MO).bJustAttacked = true;
+		Owner.Angles.yaw = atan2(Actor(Owner).linetarget.Origin.y - Owner.Origin.y,
+			Actor(Owner).linetarget.Origin.x - Owner.Origin.x);
+		Owner.Player.bFixAngle = true;
+		Actor(Owner).bJustAttacked = true;
 		// Sys1eae0 (actor->player, linetarget);
 	}
 	else
 	{
-		Player.MO.PlaySound('misc/swish', CHAN_WEAPON);
+		Owner.PlaySound('misc/swish', CHAN_WEAPON);
 	}
 }
 

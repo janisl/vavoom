@@ -35,10 +35,10 @@ void MStaffSpawn(float angle)
 {
 	Actor mo;
 
-	mo = Player(Player).SpawnPlayerMissileAngle(MageStaffFX2, angle);
+	mo = Player(Owner.Player).SpawnPlayerMissileAngle(MageStaffFX2, angle);
 	if (mo)
 	{
-		mo.Instigator = Actor(Player.MO);
+		mo.Instigator = Actor(Owner);
 		mo.Enemy = Actor(mo.RoughMonsterSearch(10));
 	}
 }
@@ -53,19 +53,19 @@ final void A_MStaffAttack()
 {
 	float angle;
 
-	Player(Player).Mana[HexenDefs::MANA_1] -=
-		WeaponManaUse(Player.PClass, Player(Player).ReadyWeapon);
-	Player(Player).Mana[HexenDefs::MANA_2] -=
-		WeaponManaUse(Player.PClass, Player(Player).ReadyWeapon);
-	angle = Player.MO.Angles.yaw;
+	Player(Owner.Player).Mana[HexenDefs::MANA_1] -=
+		WeaponManaUse(Owner.Player.PClass, Player(Owner.Player).ReadyWeapon);
+	Player(Owner.Player).Mana[HexenDefs::MANA_2] -=
+		WeaponManaUse(Owner.Player.PClass, Player(Owner.Player).ReadyWeapon);
+	angle = Owner.Angles.yaw;
 
 	MStaffSpawn(angle);
 	MStaffSpawn(angle - 5.0);
 	MStaffSpawn(angle + 5.0);
-	Player.MO.PlaySound('MageStaffFire', CHAN_WEAPON);
-	Player(Player).DamageFlash = 0.0;
-	Player(Player).BonusFlash = 0.0;
-	Player(Player).WeaponCShift = CSHIFT(255, 187, 4, 76);
+	Owner.PlaySound('MageStaffFire', CHAN_WEAPON);
+	Player(Owner.Player).DamageFlash = 0.0;
+	Player(Owner.Player).BonusFlash = 0.0;
+	Player(Owner.Player).WeaponCShift = CSHIFT(255, 187, 4, 76);
 }
 
 //==========================================================================
@@ -76,7 +76,7 @@ final void A_MStaffAttack()
 
 final void A_MStaffPalette1()
 {
-	Player(Player).WeaponCShift = CSHIFT(255, 187, 4, 63);
+	Player(Owner.Player).WeaponCShift = CSHIFT(255, 187, 4, 63);
 }
 
 //==========================================================================
@@ -87,7 +87,7 @@ final void A_MStaffPalette1()
 
 final void A_MStaffPalette2()
 {
-	Player(Player).WeaponCShift = CSHIFT(255, 187, 4, 51);
+	Player(Owner.Player).WeaponCShift = CSHIFT(255, 187, 4, 51);
 }
 
 //==========================================================================
@@ -99,7 +99,7 @@ final void A_MStaffPalette2()
 final void A_MStaffPalette3()
 {
 	// reset back to original playpal
-	Player(Player).WeaponCShift = 0;
+	Player(Owner.Player).WeaponCShift = 0;
 }
 
 __states__

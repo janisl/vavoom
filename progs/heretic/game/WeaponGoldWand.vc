@@ -36,15 +36,15 @@ final void A_FireGoldWandPL1()
 	int damage;
 	TVec dir;
 
-	Player(Player).Ammo[am_goldwand] -= USE_GWND_AMMO_1;
+	Player(Owner.Player).Ammo[am_goldwand] -= USE_GWND_AMMO_1;
 	damage = 7 + (P_Random() & 7);
-	dir = Actor(Player.MO).Aim(Player.MO.Angles.yaw, 16.0 * 64.0);
-	if (Player(Player).Refire)
+	dir = Actor(Owner).Aim(Owner.Angles.yaw, 16.0 * 64.0);
+	if (Player(Owner.Player).Refire)
 	{
 		VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0 / 8.0);
 	}
-	Actor(Player.MO).LineAttack(dir, MISSILERANGE, damage, GoldWandPuff1);
-	Player.MO.PlaySound('weapons/wandhit', CHAN_WEAPON);
+	Actor(Owner).LineAttack(dir, MISSILERANGE, damage, GoldWandPuff1);
+	Owner.PlaySound('weapons/wandhit', CHAN_WEAPON);
 }
 
 //===========================================================================
@@ -61,22 +61,22 @@ final void A_FireGoldWandPL2()
 	TAVec angles;
 	TVec dir;
 
-	Player(Player).Ammo[am_goldwand] -=
-		Player.Level.Game.deathmatch ? USE_GWND_AMMO_1 : USE_GWND_AMMO_2;
-	dir = Actor(Player.MO).Aim(Player.MO.Angles.yaw, 16.0 * 64.0);
+	Player(Owner.Player).Ammo[am_goldwand] -=
+		Level.Game.deathmatch ? USE_GWND_AMMO_1 : USE_GWND_AMMO_2;
+	dir = Actor(Owner).Aim(Owner.Angles.yaw, 16.0 * 64.0);
 	VectorAngles(&dir, &angles);
-	Actor(Player.MO).SpawnMissileAngles(GoldWandMissile2,
+	Actor(Owner).SpawnMissileAngles(GoldWandMissile2,
 		AngleMod360(angles.yaw - (45.0 / 8.0)), angles.pitch);
-	Actor(Player.MO).SpawnMissileAngles(GoldWandMissile2,
+	Actor(Owner).SpawnMissileAngles(GoldWandMissile2,
 		AngleMod360(angles.yaw + (45.0 / 8.0)), angles.pitch);
 	VectorRotateAroundZ(&dir, -45.0 / 8.0);
 	for (i = 0; i < 5; i++)
 	{
 		damage = 1 + (P_Random() & 7);
-		Actor(Player.MO).LineAttack(dir, MISSILERANGE, damage, GoldWandPuff2);
+		Actor(Owner).LineAttack(dir, MISSILERANGE, damage, GoldWandPuff2);
 		VectorRotateAroundZ(&dir, (45.0 / 8.0) / 2.0);
 	}
-	Player.MO.PlaySound('weapons/wandhit', CHAN_WEAPON);
+	Owner.PlaySound('weapons/wandhit', CHAN_WEAPON);
 }
 
 __states__

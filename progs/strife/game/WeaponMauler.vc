@@ -39,11 +39,11 @@ final void A_FireBlaster1()
 	TVec aimDir;
 	TVec dir;
 
-	Player.MO.PlaySound('weapons/mauler1', CHAN_WEAPON);
+	Owner.PlaySound('weapons/mauler1', CHAN_WEAPON);
 
-	Player(Player).Ammo[Ammo] -= 20;
+	Player(Owner.Player).Ammo[Ammo] -= 20;
 
-	aimDir = Actor(Player.MO).Aim(16.0 * 64.0);
+	aimDir = Actor(Owner).Aim(16.0 * 64.0);
 	for (i = 0; i < 20; i++)
 	{
 		rot.pitch = (Random() - Random()) * 45.0 / 8.0;
@@ -51,11 +51,11 @@ final void A_FireBlaster1()
 		rot.roll = 0.0;
 		dir = RotateDirectionVector(aimDir, rot);
 		damage = 5 * (P_Random() % 3 + 1);
-		Actor(Player.MO).bDisruptDamage = true;
-		Actor(Player.MO).LineAttack(dir, MAULERRANGE, damage, MaulerPuff);
-		Actor(Player.MO).bDisruptDamage = false;
+		Actor(Owner).bDisruptDamage = true;
+		Actor(Owner).LineAttack(dir, MAULERRANGE, damage, MaulerPuff);
+		Actor(Owner).bDisruptDamage = false;
 	}
-	Player.MO.Effects |= StrifeDefs::EF_DL_MUZZLEFLASH;
+	Owner.Effects |= StrifeDefs::EF_DL_MUZZLEFLASH;
 }
 
 //==========================================================================
@@ -66,9 +66,9 @@ final void A_FireBlaster1()
 
 final void A_FireBlasterSound()
 {
-	Player.MO.PlaySound('weapons/mauler2charge', CHAN_WEAPON);
-	Player.ViewStates[ps_weapon].SX += (Random() - Random()) * 4.0;
-	Player.ViewStates[ps_weapon].SY += (Random() - Random()) * 4.0;
+	Owner.PlaySound('weapons/mauler2charge', CHAN_WEAPON);
+	Owner.Player.ViewStates[ps_weapon].SX += (Random() - Random()) * 4.0;
+	Owner.Player.ViewStates[ps_weapon].SY += (Random() - Random()) * 4.0;
 }
 
 //==========================================================================
@@ -79,11 +79,11 @@ final void A_FireBlasterSound()
 
 final void A_FireBlaster2()
 {
-	Player.MO.SetState(Actor(Player.MO).MissileState);
-	Player(Player).Ammo[Ammo] -= 30;
-	Player(Player).SpawnPlayerMissile(MaulerTorpedoMissile);
-	Actor(Player.MO).Damage(none, Actor(Player.MO), 20);
-	Actor(Player.MO).Thrust(Player.MO.Angles.yaw + 180.0, 125.0 / 16.0);
+	Owner.SetState(Actor(Owner).MissileState);
+	Player(Owner.Player).Ammo[Ammo] -= 30;
+	Player(Owner.Player).SpawnPlayerMissile(MaulerTorpedoMissile);
+	Actor(Owner).Damage(none, Actor(Owner), 20);
+	Actor(Owner).Thrust(Owner.Angles.yaw + 180.0, 125.0 / 16.0);
 }
 
 __states__

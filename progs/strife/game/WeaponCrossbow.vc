@@ -35,14 +35,14 @@ final void A_FireElectricArrow()
 {
 	float savedangle;
 
-	savedangle = Player.MO.Angles.yaw;
-	Player.MO.Angles.yaw = AngleMod360(Player.MO.Angles.yaw +
-		(Random() - Random()) * 45.0 / 8.0 / itof(1 << (Player(Player).Accuracy * 5 / 100)));
-	Player(Player).Ammo[Ammo]--;
-	Player.MO.SetState(Actor(Player.MO).MissileState);
-	Player(Player).SpawnPlayerMissile(ElectricArrow);
-	Player.MO.Angles.yaw = savedangle;
-	Player.MO.PlaySound('weapons/xbowshoot', CHAN_WEAPON);
+	savedangle = Owner.Angles.yaw;
+	Owner.Angles.yaw = AngleMod360(Owner.Angles.yaw +
+		(Random() - Random()) * 45.0 / 8.0 / itof(1 << (Player(Owner.Player).Accuracy * 5 / 100)));
+	Player(Owner.Player).Ammo[Ammo]--;
+	Owner.SetState(Actor(Owner).MissileState);
+	Player(Owner.Player).SpawnPlayerMissile(ElectricArrow);
+	Owner.Angles.yaw = savedangle;
+	Owner.PlaySound('weapons/xbowshoot', CHAN_WEAPON);
 }
 
 //==========================================================================
@@ -55,21 +55,21 @@ final void A_FirePoisonArrow()
 {
 	float savedangle;
 
-	savedangle = Player.MO.Angles.yaw;
-	Player.MO.Angles.yaw = AngleMod360(Player.MO.Angles.yaw +
-		(Random() - Random()) * 45.0 / 8.0 / itof(1 << (Player(Player).Accuracy * 5 / 100)));
-	Player(Player).Ammo[Ammo]--;
-	Player.MO.SetState(Actor(Player.MO).MissileState);
-	Player(Player).SpawnPlayerMissile(PoisonArrow);
-	Player.MO.Angles.yaw = savedangle;
-	Player.MO.PlaySound('weapons/xbowshoot', CHAN_WEAPON);
+	savedangle = Owner.Angles.yaw;
+	Owner.Angles.yaw = AngleMod360(Owner.Angles.yaw +
+		(Random() - Random()) * 45.0 / 8.0 / itof(1 << (Player(Owner.Player).Accuracy * 5 / 100)));
+	Player(Owner.Player).Ammo[Ammo]--;
+	Owner.SetState(Actor(Owner).MissileState);
+	Player(Owner.Player).SpawnPlayerMissile(PoisonArrow);
+	Owner.Angles.yaw = savedangle;
+	Owner.PlaySound('weapons/xbowshoot', CHAN_WEAPON);
 }
 
 __states__
 {
 	S_XBOW('XBOW', 0, 1.0 / 35.0, S_XBOW_2)
 	{
-		Player.SetViewState(ps_flash, S_XBOWFLASH1);
+		Owner.Player.SetViewState(ps_flash, S_XBOWFLASH1);
 		A_WeaponReady();
 	}
 	S_XBOW_2('XBOW', 0, 1.0 / 35.0, S_XBOW_2) = A_WeaponReady

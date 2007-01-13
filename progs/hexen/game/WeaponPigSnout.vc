@@ -40,20 +40,20 @@ final void A_SnoutAttack()
 	TVec vforward;
 
 	damage = 3 + (P_Random() & 3);
-	angles = Player.MO.Angles;
-	Actor(Player.MO).AimLineAttack(&angles, Actor::MELEERANGE);
-	MainGameInfo(Player.Level.Game).PuffSpawned = none;
+	angles = Owner.Angles;
+	Actor(Owner).AimLineAttack(&angles, Actor::MELEERANGE);
+	MainGameInfo(Level.Game).PuffSpawned = none;
 	AngleVector(&angles, &vforward);
-	Actor(Player.MO).LineAttack(vforward, Actor::MELEERANGE, damage, SnoutPuff);
-	Player.MO.PlaySound((P_Random() & 1) ? 'PigActive2' : 'PigActive1',
+	Actor(Owner).LineAttack(vforward, Actor::MELEERANGE, damage, SnoutPuff);
+	Owner.PlaySound((P_Random() & 1) ? 'PigActive2' : 'PigActive1',
 		CHAN_VOICE);
-	if (Actor(Player.MO).linetarget)
+	if (Actor(Owner).linetarget)
 	{
-		Player(Player).AdjustPlayerAngle();
-		if (MainGameInfo(Player.Level.Game).PuffSpawned)
+		Player(Owner.Player).AdjustPlayerAngle();
+		if (MainGameInfo(Level.Game).PuffSpawned)
 		{
 			// Bit something
-			Player.MO.PlaySound('PigAttack', CHAN_VOICE);
+			Owner.PlaySound('PigAttack', CHAN_VOICE);
 		}
 	}
 }
@@ -66,7 +66,7 @@ final void A_SnoutAttack()
 
 void SnoutSniff()
 {
-	Player.SetViewState(ps_weapon, SniffState);
+	Owner.Player.SetViewState(ps_weapon, SniffState);
 }
 
 __states__

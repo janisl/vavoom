@@ -35,13 +35,13 @@ final void A_FireMissile()
 {
 	float savedangle;
 
-	savedangle = Player.MO.Angles.yaw;
-	Player.MO.Angles.yaw = AngleMod360(Player.MO.Angles.yaw +
-		(Random() - Random()) * 45.0 / 4.0 / itof(1 << (Player(Player).Accuracy * 5 / 100)));
-	Player(Player).Ammo[Ammo]--;
-	Player.MO.SetState(Actor(Player.MO).MissileState);
-	Player(Player).SpawnPlayerMissile(MiniMissile);
-	Player.MO.Angles.yaw = savedangle;
+	savedangle = Owner.Angles.yaw;
+	Owner.Angles.yaw = AngleMod360(Owner.Angles.yaw +
+		(Random() - Random()) * 45.0 / 4.0 / itof(1 << (Player(Owner.Player).Accuracy * 5 / 100)));
+	Player(Owner.Player).Ammo[Ammo]--;
+	Owner.SetState(Actor(Owner).MissileState);
+	Player(Owner.Player).SpawnPlayerMissile(MiniMissile);
+	Owner.Angles.yaw = savedangle;
 }
 
 __states__

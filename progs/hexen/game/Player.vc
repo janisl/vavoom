@@ -164,8 +164,6 @@ bool onground;
 
 void PutClientIntoServer()
 {
-	ViewEnt = Weapon(SpawnObject(Weapon));
-	ViewEnt.Player = self;
 	if (bIsBot)
 	{
 		Bot = BotPlayer(SpawnObject(BotPlayer));
@@ -496,10 +494,12 @@ void SpawnPlayer(mthing_t * mthing)
 {
 	float x, y, z;
 	PlayerPawn pp;
+	bool ResetInventory = false;
 
 	if (PlayerState == PST_REBORN)
 	{
 		PlayerReborn();
+		ResetInventory = true;
 	}
 	if (MainGameInfo(Level.Game).randomclass && Level.Game.deathmatch)
 	{
@@ -554,6 +554,14 @@ void SpawnPlayer(mthing_t * mthing)
 	ViewHeight = VIEWHEIGHT;
 	ViewAngles = pp.Angles;
 	bFixAngle = true;
+	if (ResetInventory)
+	{
+		SetWeapon(HexenDefs::WP_FIRST);
+	}
+	else
+	{
+		ViewEnt.Owner = MO;
+	}
 	SetupPsprites();
 	if (Level.Game.deathmatch)
 	{
@@ -592,7 +600,6 @@ void PlayerReborn()
 	PlayerState = PST_LIVE;
 	Health = MAXHEALTH;
 	WeaponOwned[HexenDefs::WP_FIRST] = true;
-	SetWeapon(HexenDefs::WP_FIRST);
 	LocalQuakeHappening = 0;
 }
 
@@ -3420,7 +3427,7 @@ void SetWeapon(int NewWeapon)
 	}
 	ViewEnt = Weapon(SpawnObject(MainGameInfo(Level.Game).WeaponClasses[
 		NewWeapon * HexenDefs::NUMCLASSES + PClass]));
-	ViewEnt.Player = self;
+	ViewEnt.Owner = MO;
 	PSpriteSY = Weapon(ViewEnt).PSpriteSY;
 }
 

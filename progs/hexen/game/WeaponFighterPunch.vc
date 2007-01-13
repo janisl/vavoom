@@ -36,7 +36,6 @@ int PunchCount;
 
 final void A_FPunchAttack()
 {
-	Actor Owner = Actor(Player.MO);
 	int damage;
 	float power;
 	int i;
@@ -51,8 +50,8 @@ final void A_FPunchAttack()
 	{
 		angles = Owner.Angles;
 		angles.yaw = AngleMod360(angles.yaw + itof(i) * (45.0 / 16.0));
-		Owner.AimLineAttack(&angles, 2.0 * Actor::MELEERANGE);
-		if (Owner.linetarget)
+		Actor(Owner).AimLineAttack(&angles, 2.0 * Actor::MELEERANGE);
+		if (Actor(Owner).linetarget)
 		{
 			PunchCount++;
 			if (PunchCount == 3)
@@ -62,7 +61,7 @@ final void A_FPunchAttack()
 				PuffType = HammerPuff;
 			}
 			AngleVector(&angles, &vforward);
-			if (Owner.LineAttack(vforward, 2.0 * Actor::MELEERANGE, damage, PuffType))
+			if (Actor(Owner).LineAttack(vforward, 2.0 * Actor::MELEERANGE, damage, PuffType))
 			{
 				if (PuffType == HammerPuff)
 				{
@@ -73,17 +72,17 @@ final void A_FPunchAttack()
 					Owner.PlaySound('FighterPunchMiss', CHAN_WEAPON);
 				}
 			}
-			if (Owner.linetarget.bCountKill || Owner.linetarget.bIsPlayer)
+			if (Actor(Owner).linetarget.bCountKill || Actor(Owner).linetarget.bIsPlayer)
 			{
-				Owner.linetarget.Thrust(angles.yaw, power);
+				Actor(Owner).linetarget.Thrust(angles.yaw, power);
 			}
-			Player(Player).AdjustPlayerAngle();
+			Player(Owner.Player).AdjustPlayerAngle();
 			break;
 		}
 		angles = Owner.Angles;
 		angles.yaw = AngleMod360(angles.yaw - itof(i) * (45.0 / 16.0));
-		Owner.AimLineAttack(&angles, 2.0 * Actor::MELEERANGE);
-		if (Owner.linetarget)
+		Actor(Owner).AimLineAttack(&angles, 2.0 * Actor::MELEERANGE);
+		if (Actor(Owner).linetarget)
 		{
 			PunchCount++;
 			if (PunchCount == 3)
@@ -93,7 +92,7 @@ final void A_FPunchAttack()
 				PuffType = HammerPuff;
 			}
 			AngleVector(&angles, &vforward);
-			if (Owner.LineAttack(vforward, 2.0 * Actor::MELEERANGE, damage, PuffType))
+			if (Actor(Owner).LineAttack(vforward, 2.0 * Actor::MELEERANGE, damage, PuffType))
 			{
 				if (PuffType == HammerPuff)
 				{
@@ -104,11 +103,11 @@ final void A_FPunchAttack()
 					Owner.PlaySound('FighterPunchMiss', CHAN_WEAPON);
 				}
 			}
-			if (Owner.linetarget.bCountKill || Owner.linetarget.bIsPlayer)
+			if (Actor(Owner).linetarget.bCountKill || Actor(Owner).linetarget.bIsPlayer)
 			{
-				Owner.linetarget.Thrust(angles.yaw, power);
+				Actor(Owner).linetarget.Thrust(angles.yaw, power);
 			}
-			Player(Player).AdjustPlayerAngle();
+			Player(Owner.Player).AdjustPlayerAngle();
 			break;
 		}
 	}
@@ -118,9 +117,9 @@ final void A_FPunchAttack()
 		PunchCount = 0;
 
 		angles = Owner.Angles;
-		Owner.AimLineAttack(&angles, Actor::MELEERANGE);
+		Actor(Owner).AimLineAttack(&angles, Actor::MELEERANGE);
 		AngleVector(&angles, &vforward);
-		if (Owner.LineAttack(vforward, Actor::MELEERANGE, damage, PuffType))
+		if (Actor(Owner).LineAttack(vforward, Actor::MELEERANGE, damage, PuffType))
 		{
 			Owner.PlaySound('FighterPunchMiss', CHAN_WEAPON);
 		}
@@ -129,7 +128,7 @@ final void A_FPunchAttack()
 	if (PunchCount == 3)
 	{
 		PunchCount = 0;
-		Player.SetViewState(ps_weapon, Attack2State);
+		Owner.Player.SetViewState(ps_weapon, Attack2State);
 		Owner.PlaySound('*fistgrunt', CHAN_VOICE);
 	}
 }

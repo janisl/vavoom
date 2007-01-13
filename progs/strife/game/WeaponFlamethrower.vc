@@ -35,12 +35,12 @@ final void A_FireFlamethrower()
 {
 	Actor A;
 
-	Player.MO.SetState(Actor(Player.MO).MissileState);
-	Player(Player).Ammo[Ammo]--;
-	Player.MO.Angles.yaw = AngleMod360(Player.MO.Angles.yaw +
+	Owner.SetState(Actor(Owner).MissileState);
+	Player(Owner.Player).Ammo[Ammo]--;
+	Owner.Angles.yaw = AngleMod360(Owner.Angles.yaw +
 		(Random() - Random()) * 45.0 / 8.0);
-	Player.bFixAngle = true;
-	A = Player(Player).SpawnPlayerMissile(FlameFX1);
+	Owner.Player.bFixAngle = true;
+	A = Player(Owner.Player).SpawnPlayerMissile(FlameFX1);
 	if (A)
 	{
 		A.Velocity.z += 20.0 * 35.0 / 5.0;

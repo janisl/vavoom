@@ -37,25 +37,25 @@ final void A_FireRiffle()
 	TAVec angles;
 	int damage;
 
-	Player.MO.PlaySound('weapons/assaultgun', CHAN_WEAPON);
+	Owner.PlaySound('weapons/assaultgun', CHAN_WEAPON);
 
-	if (!Player(Player).Ammo[Ammo])
+	if (!Player(Owner.Player).Ammo[Ammo])
 		return;
 
-	Player.MO.SetState(Actor(Player.MO).MissileState);
-	Player(Player).Ammo[Ammo]--;
+	Owner.SetState(Actor(Owner).MissileState);
+	Player(Owner.Player).Ammo[Ammo]--;
 
-	dir = Actor(Player.MO).Aim(16.0 * 64.0);
-	if (Player(Player).Refire)
+	dir = Actor(Owner).Aim(16.0 * 64.0);
+	if (Player(Owner.Player).Refire)
 	{
 		VectorAngles(&dir, &angles);
 		angles.yaw = AngleMod360(angles.yaw +
-			(Random() - Random()) * 45.0 / 2.0 / itof(1 << (Player(Player).Accuracy * 5 / 100)));
+			(Random() - Random()) * 45.0 / 2.0 / itof(1 << (Player(Owner.Player).Accuracy * 5 / 100)));
 		AngleVector(&angles, &dir);
 	}
 	damage = 4 * (P_Random() % 3 + 1);
-	Actor(Player.MO).LineAttack(dir, MISSILERANGE, damage, Puff);
-	Player.MO.Effects |= StrifeDefs::EF_DL_MUZZLEFLASH;
+	Actor(Owner).LineAttack(dir, MISSILERANGE, damage, Puff);
+	Owner.Effects |= StrifeDefs::EF_DL_MUZZLEFLASH;
 }
 
 __states__

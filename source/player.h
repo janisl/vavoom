@@ -61,7 +61,7 @@ class VViewEntity : public VObject
 	DECLARE_CLASS(VViewEntity, VObject, 0)
 	NO_DEFAULT_CONSTRUCTOR(VViewEntity)
 
-	VBasePlayer*	Player;
+	VEntity*		Owner;
 };
 
 struct VViewState

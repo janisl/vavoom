@@ -27,7 +27,7 @@ class ViewEntity : Object
 	native
 	abstract;
 
-BasePlayer Player;
+Entity Owner;
 
 defaultproperties
 {

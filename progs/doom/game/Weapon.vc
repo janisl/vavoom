@@ -40,6 +40,11 @@ state HoldAttackState;
 state FlashState;
 int PlayerModelVersion;
 
+LevelInfo Level
+{
+	get { return Owner.Level; }
+}
+
 //===========================================================================
 //
 //  A_WeaponReady
@@ -54,51 +59,51 @@ final void A_WeaponReady()
 	float angle;
 
 	// get out of attack state
-	if (Player.MO.State == Actor(Player.MO).MeleeState ||
-		Player.MO.State == Actor(Player.MO).MissileState)
+	if (Owner.State == Actor(Owner).MeleeState ||
+		Owner.State == Actor(Owner).MissileState)
 	{
-		Player.MO.SetState(Actor(Player.MO).IdleState);
+		Owner.SetState(Actor(Owner).IdleState);
 	}
 
-	if (Player(Player).ReadyWeapon == DoomDefs::wp_chainsaw &&
-		Player.ViewStates[ps_weapon].State == ReadyState)
+	if (Player(Owner.Player).ReadyWeapon == DoomDefs::wp_chainsaw &&
+		Owner.Player.ViewStates[ps_weapon].State == ReadyState)
 	{
-		Player.MO.PlaySound('weapons/sawidle', CHAN_WEAPON);
+		Owner.PlaySound('weapons/sawidle', CHAN_WEAPON);
 	}
 
 	// check for change
 	//  if player is dead, put the weapon away
-	if (Player(Player).PendingWeapon != DoomDefs::wp_nochange || !Player.Health)
+	if (Player(Owner.Player).PendingWeapon != DoomDefs::wp_nochange || !Owner.Player.Health)
 	{
 		// change weapon
 		//  (pending weapon should allready be validated)
-		Player.SetViewState(ps_weapon, DownState);
+		Owner.Player.SetViewState(ps_weapon, DownState);
 		return;
 	}
 
 	// check for fire
 	//  the missile launcher and bfg do not auto fire
-	if (Player.Buttons & BT_ATTACK)
+	if (Owner.Player.Buttons & BT_ATTACK)
 	{
-		if (!Player.bAttackDown || (Player(Player).ReadyWeapon != DoomDefs::wp_missile &&
-			Player(Player).ReadyWeapon != DoomDefs::wp_bfg))
+		if (!Owner.Player.bAttackDown || (Player(Owner.Player).ReadyWeapon != DoomDefs::wp_missile &&
+			Player(Owner.Player).ReadyWeapon != DoomDefs::wp_bfg))
 		{
-			Player.bAttackDown = true;
-			Player(Player).FireWeapon();
+			Owner.Player.bAttackDown = true;
+			Player(Owner.Player).FireWeapon();
 			return;
 		}
 	}
 	else
-		Player.bAttackDown = false;
+		Owner.Player.bAttackDown = false;
 
 	// bob the weapon based on movement speed
-	angle = AngleMod360(180.0 * Player.Level.Game.level->time);
-	Player.ViewStates[ps_weapon].SX = 1.0 + Player(Player).Bob * cos(angle);
+	angle = AngleMod360(180.0 * Level.Game.level->time);
+	Owner.Player.ViewStates[ps_weapon].SX = 1.0 + Player(Owner.Player).Bob * cos(angle);
 	if (angle >= 180.0)
 	{
 		angle -= 180.0;
 	}
-	Player.ViewStates[ps_weapon].SY = WEAPONTOP + Player(Player).Bob * sin(angle);
+	Owner.Player.ViewStates[ps_weapon].SY = WEAPONTOP + Player(Owner.Player).Bob * sin(angle);
 }
 
 //===========================================================================
@@ -112,19 +117,19 @@ final void A_WeaponReady()
 final void A_Lower()
 {
 	//	FIXME!!
-	if (Player.Level.Game.frametime < 1.0 / 35.0)
-		Player.ViewStates[ps_weapon].SY += LOWERSPEED;
+	if (Level.Game.frametime < 1.0 / 35.0)
+		Owner.Player.ViewStates[ps_weapon].SY += LOWERSPEED;
 	else
-		Player.ViewStates[ps_weapon].SY += LOWERSPEED * 35.0 * Player.Level.Game.frametime;
+		Owner.Player.ViewStates[ps_weapon].SY += LOWERSPEED * 35.0 * Level.Game.frametime;
 
 	// Is already down.
-	if (Player.ViewStates[ps_weapon].SY < WEAPONBOTTOM)
+	if (Owner.Player.ViewStates[ps_weapon].SY < WEAPONBOTTOM)
 		return;
 
 	// Player is dead.
-	if (Player.PlayerState == PST_DEAD)
+	if (Owner.Player.PlayerState == PST_DEAD)
 	{
-		Player.ViewStates[ps_weapon].SY = WEAPONBOTTOM;
+		Owner.Player.ViewStates[ps_weapon].SY = WEAPONBOTTOM;
 
 		// don't bring weapon back up
 		return;
@@ -132,16 +137,16 @@ final void A_Lower()
 
 	// The old weapon has been lowered off the screen,
 	// so change the weapon and start raising it
-	if (!Player.Health)
+	if (!Owner.Player.Health)
 	{
 		// Player is dead, so keep the weapon off screen.
-		Player.SetViewState(ps_weapon, none);
+		Owner.Player.SetViewState(ps_weapon, none);
 		return;
 	}
 
-	Player(Player).SetWeapon(Player(Player).PendingWeapon);
+	Player(Owner.Player).SetWeapon(Player(Owner.Player).PendingWeapon);
 
-	Player(Player).BringUpWeapon();
+	Player(Owner.Player).BringUpWeapon();
 }
 
 //===========================================================================
@@ -153,21 +158,21 @@ final void A_Lower()
 final void A_Raise()
 {
 	//	FIXME!!
-	if (Player.Level.Game.frametime < 1.0 / 35.0)
-		Player.ViewStates[ps_weapon].SY -= RAISESPEED;
+	if (Level.Game.frametime < 1.0 / 35.0)
+		Owner.Player.ViewStates[ps_weapon].SY -= RAISESPEED;
 	else
-		Player.ViewStates[ps_weapon].SY -= RAISESPEED * 35.0 * Player.Level.Game.frametime;
+		Owner.Player.ViewStates[ps_weapon].SY -= RAISESPEED * 35.0 * Level.Game.frametime;
 
-	if (Player.ViewStates[ps_weapon].SY > WEAPONTOP)
+	if (Owner.Player.ViewStates[ps_weapon].SY > WEAPONTOP)
 	{
 		return;
 	}
 
-	Player.ViewStates[ps_weapon].SY = WEAPONTOP;
+	Owner.Player.ViewStates[ps_weapon].SY = WEAPONTOP;
 
 	// The weapon has been raised all the way,
 	//  so change to the ready state.
-	Player.SetViewState(ps_weapon, ReadyState);
+	Owner.Player.SetViewState(ps_weapon, ReadyState);
 }
 
 //===========================================================================
@@ -182,16 +187,16 @@ final void A_ReFire()
 {
 	// check for fire
 	//  (if a weaponchange is pending, let it go through instead)
-	if ((Player.Buttons & BT_ATTACK)
-		&& Player(Player).PendingWeapon == DoomDefs::wp_nochange && Player.Health)
+	if ((Owner.Player.Buttons & BT_ATTACK)
+		&& Player(Owner.Player).PendingWeapon == DoomDefs::wp_nochange && Owner.Player.Health)
 	{
-		Player(Player).Refire++;
-		Player(Player).FireWeapon();
+		Player(Owner.Player).Refire++;
+		Player(Owner.Player).FireWeapon();
 	}
 	else
 	{
-		Player(Player).Refire = 0;
-		Player(Player).CheckAmmo();
+		Player(Owner.Player).Refire = 0;
+		Player(Owner.Player).CheckAmmo();
 	}
 }
 
@@ -203,7 +208,7 @@ final void A_ReFire()
 
 final void A_CheckReload()
 {
-	Player(Player).CheckAmmo();
+	Player(Owner.Player).CheckAmmo();
 }
 
 //===========================================================================
@@ -214,8 +219,8 @@ final void A_CheckReload()
 
 final void A_GunFlash()
 {
-	Player.MO.SetState(Actor(Player.MO).MissileState);
-	Player.SetViewState(ps_flash, FlashState);
+	Owner.SetState(Actor(Owner).MissileState);
+	Owner.Player.SetViewState(ps_flash, FlashState);
 }
 
 //===========================================================================
@@ -226,8 +231,8 @@ final void A_GunFlash()
 
 final void A_Light0()
 {
-	Player.ExtraLight = 0;
-	Player.MO.Effects &= ~DoomDefs::EF_DLIGHT_MASK;
+	Owner.Player.ExtraLight = 0;
+	Owner.Effects &= ~DoomDefs::EF_DLIGHT_MASK;
 }
 
 //===========================================================================
@@ -238,7 +243,7 @@ final void A_Light0()
 
 final void A_Light1()
 {
-	Player.ExtraLight = 1;
+	Owner.Player.ExtraLight = 1;
 }
 
 //===========================================================================
@@ -249,7 +254,7 @@ final void A_Light1()
 
 final void A_Light2()
 {
-	Player.ExtraLight = 2;
+	Owner.Player.ExtraLight = 2;
 }
 
 //===========================================================================
@@ -298,23 +303,23 @@ final void A_Punch()
 
 	damage = (P_Random() % 10 + 1) << 1;
 
-	if (Player(Player).Powers[pw_strength])
+	if (Player(Owner.Player).Powers[pw_strength])
 		damage *= 10;
 
-	aimAngles = Player.MO.Angles;
+	aimAngles = Owner.Angles;
 	aimAngles.yaw = AngleMod360(aimAngles.yaw + (Random() -
 		Random()) * 45.0 / 8.0);
-	dir = Actor(Player.MO).AimLineAttack(aimAngles, Actor::MELEERANGE);
-	Actor(Player.MO).LineAttack(dir, Actor::MELEERANGE, damage);
+	dir = Actor(Owner).AimLineAttack(aimAngles, Actor::MELEERANGE);
+	Actor(Owner).LineAttack(dir, Actor::MELEERANGE, damage);
 
 	// turn to face target
-	if (Actor(Player.MO).linetarget)
+	if (Actor(Owner).linetarget)
 	{
-		Player.MO.PlaySound('*fist', CHAN_WEAPON);
-		Player.MO.Angles.yaw = atan2(
-			Actor(Player.MO).linetarget.Origin.y - Player.MO.Origin.y,
-			Actor(Player.MO).linetarget.Origin.x - Player.MO.Origin.x);
-		Player.bFixAngle = true;
+		Owner.PlaySound('*fist', CHAN_WEAPON);
+		Owner.Angles.yaw = atan2(
+			Actor(Owner).linetarget.Origin.y - Owner.Origin.y,
+			Actor(Owner).linetarget.Origin.x - Owner.Origin.x);
+		Owner.Player.bFixAngle = true;
 	}
 }
 
@@ -332,41 +337,41 @@ final void A_Saw()
 	TVec dir;
 
 	damage = 2 * (P_Random() % 10 + 1);
-	aimAng = Player.MO.Angles;
+	aimAng = Owner.Angles;
 	aimAng.yaw = AngleMod360(aimAng.yaw + (Random() -
 		Random()) * 45.0 / 8.0);
 
 	// use meleerange + 1 se the puff doesn't skip the flash
-	dir = Actor(Player.MO).AimLineAttack(aimAng, Actor::MELEERANGE + 0.00001);
-	Actor(Player.MO).LineAttack(dir, Actor::MELEERANGE + 0.00001, damage);
+	dir = Actor(Owner).AimLineAttack(aimAng, Actor::MELEERANGE + 0.00001);
+	Actor(Owner).LineAttack(dir, Actor::MELEERANGE + 0.00001, damage);
 
-	if (!Actor(Player.MO).linetarget)
+	if (!Actor(Owner).linetarget)
 	{
-		Player.MO.PlaySound('weapons/sawfull', CHAN_WEAPON);
+		Owner.PlaySound('weapons/sawfull', CHAN_WEAPON);
 		return;
 	}
-	Player.MO.PlaySound('weapons/sawhit', CHAN_WEAPON);
+	Owner.PlaySound('weapons/sawhit', CHAN_WEAPON);
 
 	// turn to face target
-	angle = atan2(Actor(Player.MO).linetarget.Origin.y - Player.MO.Origin.y,
-		Actor(Player.MO).linetarget.Origin.x - Player.MO.Origin.x);
-	if (AngleMod360(angle - Player.MO.Angles.yaw) > 180.0)
+	angle = atan2(Actor(Owner).linetarget.Origin.y - Owner.Origin.y,
+		Actor(Owner).linetarget.Origin.x - Owner.Origin.x);
+	if (AngleMod360(angle - Owner.Angles.yaw) > 180.0)
 	{
-		if (AngleMod360(angle - Player.MO.Angles.yaw) < -90.0 / 20.0)
-			Player.MO.Angles.yaw = angle + 90.0 / 21.0;
+		if (AngleMod360(angle - Owner.Angles.yaw) < -90.0 / 20.0)
+			Owner.Angles.yaw = angle + 90.0 / 21.0;
 		else
-			Player.MO.Angles.yaw = Player.MO.Angles.yaw - 90.0 / 20.0;
+			Owner.Angles.yaw = Owner.Angles.yaw - 90.0 / 20.0;
 	}
 	else
 	{
-		if (AngleMod360(angle - Player.MO.Angles.yaw) > 90.0 / 20.0)
-			Player.MO.Angles.yaw = angle - 90.0 / 21.0;
+		if (AngleMod360(angle - Owner.Angles.yaw) > 90.0 / 20.0)
+			Owner.Angles.yaw = angle - 90.0 / 21.0;
 		else
-			Player.MO.Angles.yaw += 90.0 / 20.0;
+			Owner.Angles.yaw += 90.0 / 20.0;
 	}
-	Player.MO.Angles.yaw = AngleMod360(Player.MO.Angles.yaw);
-	Actor(Player.MO).bJustAttacked = true;
-	Player.bFixAngle = true;
+	Owner.Angles.yaw = AngleMod360(Owner.Angles.yaw);
+	Actor(Owner).bJustAttacked = true;
+	Owner.Player.bFixAngle = true;
 }
 
 //===========================================================================
@@ -379,16 +384,16 @@ final void A_FirePistol()
 {
 	TVec dir;
 
-	Player.MO.PlaySound('weapons/pistol', CHAN_WEAPON);
+	Owner.PlaySound('weapons/pistol', CHAN_WEAPON);
 
-	Player.MO.SetState(Actor(Player.MO).MissileState);
-	Player(Player).Ammo[Ammo]--;
+	Owner.SetState(Actor(Owner).MissileState);
+	Player(Owner.Player).Ammo[Ammo]--;
 
-	Player.SetViewState(ps_flash, FlashState);
+	Owner.Player.SetViewState(ps_flash, FlashState);
 
-	dir = Actor(Player.MO).Aim(16.0 * 64.0);
-	GunShot(Actor(Player.MO), !Player(Player).Refire, dir);
-	Player.MO.Effects |= DoomDefs::EF_DL_MUZZLEFLASH;
+	dir = Actor(Owner).Aim(16.0 * 64.0);
+	GunShot(Actor(Owner), !Player(Owner.Player).Refire, dir);
+	Owner.Effects |= DoomDefs::EF_DL_MUZZLEFLASH;
 }
 
 //===========================================================================
@@ -402,19 +407,19 @@ final void A_FireShotgun()
 	int i;
 	TVec dir;
 
-	Player.MO.PlaySound('weapons/shotgf', CHAN_WEAPON);
-	Player.MO.SetState(Actor(Player.MO).MissileState);
+	Owner.PlaySound('weapons/shotgf', CHAN_WEAPON);
+	Owner.SetState(Actor(Owner).MissileState);
 
-	Player(Player).Ammo[Ammo]--;
+	Player(Owner.Player).Ammo[Ammo]--;
 
-	Player.SetViewState(ps_flash, FlashState);
+	Owner.Player.SetViewState(ps_flash, FlashState);
 
-	dir = Actor(Player.MO).Aim(16.0 * 64.0);
+	dir = Actor(Owner).Aim(16.0 * 64.0);
 	for (i = 0; i < 7; i++)
 	{
-		GunShot(Actor(Player.MO), false, dir);
+		GunShot(Actor(Owner), false, dir);
 	}
-	Player.MO.Effects |= DoomDefs::EF_DL_MUZZLEFLASH;
+	Owner.Effects |= DoomDefs::EF_DL_MUZZLEFLASH;
 }
 
 //===========================================================================
@@ -431,14 +436,14 @@ final void A_FireShotgun2()
 	TVec aimDir;
 	TVec dir;
 
-	Player.MO.PlaySound('weapons/sshotf', CHAN_WEAPON);
-	Player.MO.SetState(Actor(Player.MO).MissileState);
+	Owner.PlaySound('weapons/sshotf', CHAN_WEAPON);
+	Owner.SetState(Actor(Owner).MissileState);
 
-	Player(Player).Ammo[Ammo] -= 2;
+	Player(Owner.Player).Ammo[Ammo] -= 2;
 
-	Player.SetViewState(ps_flash, FlashState);
+	Owner.Player.SetViewState(ps_flash, FlashState);
 
-	aimDir = Actor(Player.MO).Aim(16.0 * 64.0);
+	aimDir = Actor(Owner).Aim(16.0 * 64.0);
 	for (i = 0; i < 20; i++)
 	{
 		rot.pitch = (Random() - Random()) * 45.0 / 8.0;
@@ -446,9 +451,9 @@ final void A_FireShotgun2()
 		rot.roll = 0.0;
 		dir = RotateDirectionVector(aimDir, rot);
 		damage = 5 * (P_Random() % 3 + 1);
-		Actor(Player.MO).LineAttack(dir, Actor::MISSILERANGE, damage);
+		Actor(Owner).LineAttack(dir, Actor::MISSILERANGE, damage);
 	}
-	Player.MO.Effects |= DoomDefs::EF_DL_MUZZLEFLASH;
+	Owner.Effects |= DoomDefs::EF_DL_MUZZLEFLASH;
 }
 
 //===========================================================================
@@ -459,7 +464,7 @@ final void A_FireShotgun2()
 
 final void A_OpenShotgun2()
 {
-	Player.MO.PlaySound('weapons/sshoto', CHAN_WEAPON);
+	Owner.PlaySound('weapons/sshoto', CHAN_WEAPON);
 }
 
 //===========================================================================
@@ -470,7 +475,7 @@ final void A_OpenShotgun2()
 
 final void A_LoadShotgun2()
 {
-	Player.MO.PlaySound('weapons/sshotl', CHAN_WEAPON);
+	Owner.PlaySound('weapons/sshotl', CHAN_WEAPON);
 }
 
 //===========================================================================
@@ -481,7 +486,7 @@ final void A_LoadShotgun2()
 
 final void A_CloseShotgun2()
 {
-	Player.MO.PlaySound('weapons/sshotc', CHAN_WEAPON);
+	Owner.PlaySound('weapons/sshotc', CHAN_WEAPON);
 	A_ReFire();
 }
 
@@ -495,22 +500,22 @@ final void A_FireCGun()
 {
 	TVec dir;
 
-	Player.MO.PlaySound('weapons/chngun', CHAN_WEAPON);
+	Owner.PlaySound('weapons/chngun', CHAN_WEAPON);
 
-	if (!Player(Player).Ammo[Ammo])
+	if (!Player(Owner.Player).Ammo[Ammo])
 		return;
 
-	Player.MO.SetState(Actor(Player.MO).MissileState);
-	Player(Player).Ammo[Ammo]--;
+	Owner.SetState(Actor(Owner).MissileState);
+	Player(Owner.Player).Ammo[Ammo]--;
 
-	if (Player.ViewStates[ps_weapon].State == AttackState)
-		Player.SetViewState(ps_flash, FlashState);
+	if (Owner.Player.ViewStates[ps_weapon].State == AttackState)
+		Owner.Player.SetViewState(ps_flash, FlashState);
 	else
-		Player.SetViewState(ps_flash, WeaponChaingun::S_CHAINFLASH2);
+		Owner.Player.SetViewState(ps_flash, WeaponChaingun::S_CHAINFLASH2);
 
-	dir = Actor(Player.MO).Aim(16.0 * 64.0);
-	GunShot(Actor(Player.MO), !Player(Player).Refire, dir);
-	Player.MO.Effects |= DoomDefs::EF_DL_MUZZLEFLASH;
+	dir = Actor(Owner).Aim(16.0 * 64.0);
+	GunShot(Actor(Owner), !Player(Owner.Player).Refire, dir);
+	Owner.Effects |= DoomDefs::EF_DL_MUZZLEFLASH;
 }
 
 //===========================================================================
@@ -521,8 +526,8 @@ final void A_FireCGun()
 
 final void A_FireMissile()
 {
-	Player(Player).Ammo[Ammo]--;
-	Player(Player).SpawnPlayerMissile(Rocket);
+	Player(Owner.Player).Ammo[Ammo]--;
+	Player(Owner.Player).SpawnPlayerMissile(Rocket);
 }
 
 //===========================================================================
@@ -533,12 +538,12 @@ final void A_FireMissile()
 
 final void A_FirePlasma()
 {
-	Player(Player).Ammo[Ammo]--;
+	Player(Owner.Player).Ammo[Ammo]--;
 	if (!(P_Random() & 1))
-		Player.SetViewState(ps_flash, FlashState);
+		Owner.Player.SetViewState(ps_flash, FlashState);
 	else
-		Player.SetViewState(ps_flash, WeaponPlasma::S_PLASMAFLASH2);
-	Player(Player).SpawnPlayerMissile(PlasmaShot);
+		Owner.Player.SetViewState(ps_flash, WeaponPlasma::S_PLASMAFLASH2);
+	Player(Owner.Player).SpawnPlayerMissile(PlasmaShot);
 }
 
 //===========================================================================
@@ -549,7 +554,7 @@ final void A_FirePlasma()
 
 final void A_BFGsound()
 {
-	Player.MO.PlaySound('weapons/bfgf', CHAN_WEAPON);
+	Owner.PlaySound('weapons/bfgf', CHAN_WEAPON);
 }
 
 //===========================================================================
@@ -560,8 +565,8 @@ final void A_BFGsound()
 
 final void A_FireBFG()
 {
-	Player(Player).Ammo[Ammo] -= MainGameInfo(Player.Level.Game).BFGCELLS;
-	Player(Player).SpawnPlayerMissile(BFGShot);
+	Player(Owner.Player).Ammo[Ammo] -= MainGameInfo(Level.Game).BFGCELLS;
+	Player(Owner.Player).SpawnPlayerMissile(BFGShot);
 }
 
 final void A_Look(){}

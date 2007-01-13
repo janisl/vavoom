@@ -40,9 +40,9 @@ final void A_FireConePL1()
 	ShardMissile mo;
 	int conedone = false;
 
-	pmo = Actor(Player.MO);
-	Player(Player).Mana[HexenDefs::MANA_1] -=
-		WeaponManaUse(Player.PClass, Player(Player).ReadyWeapon);
+	pmo = Actor(Owner);
+	Player(Owner.Player).Mana[HexenDefs::MANA_1] -=
+		WeaponManaUse(Owner.Player.PClass, Player(Owner.Player).ReadyWeapon);
 	pmo.PlaySound('MageShardsFire', CHAN_WEAPON);
 
 	damage = 90 + (P_Random() & 15);
@@ -64,7 +64,7 @@ final void A_FireConePL1()
 	// didn't find any creatures, so fire projectiles
 	if (!conedone)
 	{
-		mo = ShardMissile(Player(Player).SpawnPlayerMissile(ShardMissile));
+		mo = ShardMissile(Player(Owner.Player).SpawnPlayerMissile(ShardMissile));
 		if (mo)
 		{
 			mo.bShardSpawnLeft = true;

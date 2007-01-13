@@ -36,21 +36,20 @@ final void A_FireMacePL1B()
 	Actor ball;
 	float angle;
 
-	if (Player(Player).Ammo[am_mace] < USE_MACE_AMMO_1)
+	if (Player(Owner.Player).Ammo[am_mace] < USE_MACE_AMMO_1)
 	{
 		return;
 	}
-	Player(Player).Ammo[am_mace] -= USE_MACE_AMMO_1;
-	ball = HereticLevelInfo(Player.Level).Spawn(MaceFX2, Player.MO.Origin +
-		vector(0.0, 0.0, 28.0 - Player.MO.FloorClip));
-	ball.Velocity.z =
-		(2.0 + 173.0 * -tan(Player.MO.Angles.pitch) / 32.0) * 35.0;
-	angle = Player.MO.Angles.yaw;
-	ball.Instigator = Actor(Player.MO);
+	Player(Owner.Player).Ammo[am_mace] -= USE_MACE_AMMO_1;
+	ball = HereticLevelInfo(Level).Spawn(MaceFX2, Owner.Origin +
+		vector(0.0, 0.0, 28.0 - Owner.FloorClip));
+	ball.Velocity.z = (2.0 + 173.0 * -tan(Owner.Angles.pitch) / 32.0) * 35.0;
+	angle = Owner.Angles.yaw;
+	ball.Instigator = Actor(Owner);
 	ball.Angles.yaw = angle;
-	ball.Origin.z += 173.0 * -tan(Player.MO.Angles.pitch) / 16.0;
-	ball.Velocity.x = Player.MO.Velocity.x / 2.0 + ball.Speed * cos(angle);
-	ball.Velocity.y = Player.MO.Velocity.y / 2.0 + ball.Speed * sin(angle);
+	ball.Origin.z += 173.0 * -tan(Owner.Angles.pitch) / 16.0;
+	ball.Velocity.x = Owner.Velocity.x / 2.0 + ball.Speed * cos(angle);
+	ball.Velocity.y = Owner.Velocity.y / 2.0 + ball.Speed * sin(angle);
 	ball.PlaySound('weapons/maceshoot', CHAN_WEAPON);
 	ball.CheckMissileSpawn();
 }
@@ -70,15 +69,15 @@ final void A_FireMacePL1()
 		A_FireMacePL1B();
 		return;
 	}
-	if (Player(Player).Ammo[am_mace] < USE_MACE_AMMO_1)
+	if (Player(Owner.Player).Ammo[am_mace] < USE_MACE_AMMO_1)
 	{
 		return;
 	}
-	Player(Player).Ammo[am_mace] -= USE_MACE_AMMO_1;
-	Player.ViewStates[ps_weapon].SX = Random() * 4.0 - 2.0;
-	Player.ViewStates[ps_weapon].SY = WEAPONTOP + Random() * 4.0;
-	ball = Actor(Player.MO).SpawnPlayerMissileAngle(MaceFX1,
-		AngleMod360(Player.MO.Angles.yaw + (Random() - 0.5) * 45.0 / 4.0));
+	Player(Owner.Player).Ammo[am_mace] -= USE_MACE_AMMO_1;
+	Owner.Player.ViewStates[ps_weapon].SX = Random() * 4.0 - 2.0;
+	Owner.Player.ViewStates[ps_weapon].SY = WEAPONTOP + Random() * 4.0;
+	ball = Actor(Owner).SpawnPlayerMissileAngle(MaceFX1,
+		AngleMod360(Owner.Angles.yaw + (Random() - 0.5) * 45.0 / 4.0));
 	if (ball)
 	{
 		ball.Special1 = 16;	// tics till dropoff
@@ -95,20 +94,19 @@ final void A_FireMacePL2()
 {
 	Actor A;
 
-	Player(Player).Ammo[am_mace] -= Player.Level.Game.deathmatch ? USE_MACE_AMMO_1 : USE_MACE_AMMO_2;
-	A = Actor(Player.MO).SpawnPlayerMissile(MaceFX4);
+	Player(Owner.Player).Ammo[am_mace] -= Level.Game.deathmatch ? USE_MACE_AMMO_1 : USE_MACE_AMMO_2;
+	A = Actor(Owner).SpawnPlayerMissile(MaceFX4);
 	if (A)
 	{
-		A.Velocity.x += Player.MO.Velocity.x;
-		A.Velocity.y += Player.MO.Velocity.y;
-		A.Velocity.z =
-			(2.0 + 173.0 * -tan(Player.MO.Angles.pitch) / 32.0) * 35.0;
-		if (Actor(Player.MO).linetarget)
+		A.Velocity.x += Owner.Velocity.x;
+		A.Velocity.y += Owner.Velocity.y;
+		A.Velocity.z = (2.0 + 173.0 * -tan(Owner.Angles.pitch) / 32.0) * 35.0;
+		if (Actor(Owner).linetarget)
 		{
-			A.Enemy = Actor(Player.MO).linetarget;
+			A.Enemy = Actor(Owner).linetarget;
 		}
 	}
-	Player.MO.PlaySound('weapons/maceshoot', CHAN_WEAPON);
+	Owner.PlaySound('weapons/maceshoot', CHAN_WEAPON);
 }
 
 __states__

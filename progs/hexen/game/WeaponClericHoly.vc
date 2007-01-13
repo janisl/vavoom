@@ -33,15 +33,15 @@ class WeaponClericHoly : Weapon;
 
 final void A_CHolyAttack()
 {
-	Player(Player).Mana[HexenDefs::MANA_1] -=
-		WeaponManaUse(Player.PClass, Player(Player).ReadyWeapon);
-	Player(Player).Mana[HexenDefs::MANA_2] -=
-		WeaponManaUse(Player.PClass, Player(Player).ReadyWeapon);
-	Player(Player).SpawnPlayerMissile(HolyMissile);
-	Player(Player).DamageFlash = 0.0;
-	Player(Player).BonusFlash = 0.0;
-	Player(Player).WeaponCShift = CSHIFT(255, 255, 255, 66);
-	Player.MO.PlaySound('HolySymbolFire', CHAN_WEAPON);
+	Player(Owner.Player).Mana[HexenDefs::MANA_1] -=
+		WeaponManaUse(Owner.Player.PClass, Player(Owner.Player).ReadyWeapon);
+	Player(Owner.Player).Mana[HexenDefs::MANA_2] -=
+		WeaponManaUse(Owner.Player.PClass, Player(Owner.Player).ReadyWeapon);
+	Player(Owner.Player).SpawnPlayerMissile(HolyMissile);
+	Player(Owner.Player).DamageFlash = 0.0;
+	Player(Owner.Player).BonusFlash = 0.0;
+	Player(Owner.Player).WeaponCShift = CSHIFT(255, 255, 255, 66);
+	Owner.PlaySound('HolySymbolFire', CHAN_WEAPON);
 }
 
 //============================================================================
@@ -52,7 +52,7 @@ final void A_CHolyAttack()
 
 final void A_CHolyPalette1()
 {
-	Player(Player).WeaponCShift = CSHIFT(255, 255, 255, 51);
+	Player(Owner.Player).WeaponCShift = CSHIFT(255, 255, 255, 51);
 }
 
 //============================================================================
@@ -63,7 +63,7 @@ final void A_CHolyPalette1()
 
 final void A_CHolyPalette2()
 {
-	Player(Player).WeaponCShift = CSHIFT(255, 255, 255, 36);
+	Player(Owner.Player).WeaponCShift = CSHIFT(255, 255, 255, 36);
 }
 
 //============================================================================
@@ -75,7 +75,7 @@ final void A_CHolyPalette2()
 final void A_CHolyPalette3()
 {
 	// reset back to original playpal
-	Player(Player).WeaponCShift = 0;
+	Player(Owner.Player).WeaponCShift = 0;
 }
 
 __states__

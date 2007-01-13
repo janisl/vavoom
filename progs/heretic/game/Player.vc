@@ -160,8 +160,6 @@ bool onground;
 
 void PutClientIntoServer()
 {
-	ViewEnt = Weapon(SpawnObject(Weapon));
-	ViewEnt.Player = self;
 	if (bIsBot)
 	{
 		Bot = BotPlayer(SpawnObject(BotPlayer));
@@ -374,10 +372,12 @@ void SpawnPlayer(mthing_t * mthing)
 {
 	float x, y, z;
 	Actor A;
+	bool ResetInventory = false;
 
 	if (PlayerState == PST_REBORN)
 	{
 		PlayerReborn();
+		ResetInventory = true;
 	}
 	x = mthing->x;
 	y = mthing->y;
@@ -408,6 +408,14 @@ void SpawnPlayer(mthing_t * mthing)
 	ViewHeight = VIEWHEIGHT;
 	ViewAngles = A.Angles;
 	bFixAngle = true;
+	if (ResetInventory)
+	{
+		SetWeapon(wp_goldwand);
+	}
+	else
+	{
+		ViewEnt.Owner = MO;
+	}
 	SetupPsprites();	// setup gun psprite
 	if (Level.Game.deathmatch)
 	{
@@ -443,7 +451,6 @@ void PlayerReborn()
 	WeaponOwned[wp_staff] = true;
 	WeaponOwned[wp_goldwand] = true;
 	Ammo[am_goldwand] = 50;
-	SetWeapon(wp_goldwand);
 	LocalQuakeHappening = 0;
 }
 
@@ -2573,7 +2580,7 @@ void SetWeapon(int NewWeapon)
 		ViewEnt.Destroy();
 	}
 	ViewEnt = Weapon(SpawnObject(MainGameInfo(Level.Game).WeaponClasses[NewWeapon]));
-	ViewEnt.Player = self;
+	ViewEnt.Owner = MO;
 	PSpriteSY = Weapon(ViewEnt).PSpriteSY;
 }
 

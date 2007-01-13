@@ -40,7 +40,7 @@ final void A_FireGrenade()
 	float an;
 	float tworadii;
 
-	if (Player(Player).ReadyWeapon == StrifeDefs::wp_grenade)
+	if (Player(Owner.Player).ReadyWeapon == StrifeDefs::wp_grenade)
 	{
 		grenadetype = HEGrenade;
 	}
@@ -48,19 +48,19 @@ final void A_FireGrenade()
 	{
 		grenadetype = FireGrenade;
 	}
-	if (Player(Player).Ammo[Ammo] < 1)
+	if (Player(Owner.Player).Ammo[Ammo] < 1)
 		return;
-	Player(Player).Ammo[Ammo]--;
+	Player(Owner.Player).Ammo[Ammo]--;
 
 	// Make it flash
-	if (Player.ViewStates[ps_weapon].State == AttackState)
-		Player.SetViewState(ps_flash, FlashState);
+	if (Owner.Player.ViewStates[ps_weapon].State == AttackState)
+		Owner.Player.SetViewState(ps_flash, FlashState);
 	else
-		Player.SetViewState(ps_flash, FlashState2);
+		Owner.Player.SetViewState(ps_flash, FlashState2);
 
-	Player.MO.Origin.z += 32.0;
-	grenade = Actor(Player.MO).SpawnSubMissile(grenadetype, Actor(Player.MO));
-	Player.MO.Origin.z -= 32.0;
+	Owner.Origin.z += 32.0;
+	grenade = Actor(Owner).SpawnSubMissile(grenadetype, Actor(Owner));
+	Owner.Origin.z -= 32.0;
 	if (!grenade)
 		return;
 
@@ -69,20 +69,20 @@ final void A_FireGrenade()
 		grenade.PlaySound(grenade.SightSound, CHAN_VOICE);
 	}
 
-	grenade.Velocity.z = (tan(-Player.MO.Angles.pitch) * grenade.Speed + 12.0 * 35.0) / 1.5;
+	grenade.Velocity.z = (tan(-Owner.Angles.pitch) * grenade.Speed + 12.0 * 35.0) / 1.5;
 
-	an = Player.MO.Angles.yaw;
-	tworadii = Player.MO.Radius + grenade.Radius;
+	an = Owner.Angles.yaw;
+	tworadii = Owner.Radius + grenade.Radius;
 	grenade.Origin.x += cos(an) * tworadii;
 	grenade.Origin.y += sin(an) * tworadii;
 
-	if (AttackState == Player.ViewStates[ps_weapon].State)
+	if (AttackState == Owner.Player.ViewStates[ps_weapon].State)
 	{
-		an = Player.MO.Angles.yaw - 90.0;
+		an = Owner.Angles.yaw - 90.0;
 	}
 	else
 	{
-		an = Player.MO.Angles.yaw + 90.0;
+		an = Owner.Angles.yaw + 90.0;
 	}
 	grenade.Origin.x += cos(an) * 15.0;
 	grenade.Origin.y += sin(an) * 15.0;
