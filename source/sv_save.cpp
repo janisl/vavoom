@@ -1170,6 +1170,7 @@ void SV_MapTeleport(VName mapname)
 	{
 		GLevel->AddThinker(TravelObjs[i]);
 		SV_AddEntity(TravelObjs[i]);
+		TravelObjs[i]->LinkToWorld();
 	}
 
 	// Launch waiting scripts

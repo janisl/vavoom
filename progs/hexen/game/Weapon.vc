@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Weapon : Entity
+class Weapon : Actor
 	abstract;
 
 const float LOWERSPEED		= 6.0;

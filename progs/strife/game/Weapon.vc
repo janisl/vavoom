@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Weapon : Entity;
+class Weapon : Actor;
 
 const float
 	MELEERANGE		= 64.0,

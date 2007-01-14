@@ -3425,8 +3425,9 @@ void SetWeapon(int NewWeapon)
 	{
 		ViewEnt.Remove();
 	}
-	ViewEnt = Weapon(NewMobjThinker(MainGameInfo(Level.Game).WeaponClasses[
-		NewWeapon * HexenDefs::NUMCLASSES + PClass]));
+	ViewEnt = Weapon(HexenLevelInfo(Level).Spawn(
+		MainGameInfo(Level.Game).WeaponClasses[
+		NewWeapon * HexenDefs::NUMCLASSES + PClass], vector(0.0, 0.0, 0.0)));
 	ViewEnt.Owner = MO;
 	PSpriteSY = Weapon(ViewEnt).PSpriteSY;
 }

@@ -2212,7 +2212,8 @@ void SetWeapon(int NewWeapon)
 	{
 		ViewEnt.Remove();
 	}
-	ViewEnt = Weapon(NewMobjThinker(MainGameInfo(Level.Game).WeaponClasses[NewWeapon]));
+	ViewEnt = Weapon(StrifeLevelInfo(Level).Spawn(
+		MainGameInfo(Level.Game).WeaponClasses[NewWeapon], vector(0.0, 0.0, 0.0)));
 	ViewEnt.Owner = MO;
 }
 

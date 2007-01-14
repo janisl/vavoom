@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Weapon : Entity;
+class Weapon : Actor;
 
 const float LOWERSPEED		= 6.0;
 const float RAISESPEED		= 6.0;
@@ -563,59 +563,6 @@ final void A_FireBFG()
 	Player(Owner.Player).Ammo[Ammo] -= MainGameInfo(Level.Game).BFGCELLS;
 	Player(Owner.Player).SpawnPlayerMissile(BFGShot);
 }
-
-final void A_Look(){}
-final void A_Chase(){}
-final void A_FaceTarget(){}
-final void A_Pain(){}
-final void A_Explode(){}
-final void A_Scream(){}
-final void A_XScream(){}
-final void A_Fall(){}
-final void A_PlayerScream(){}
-final void A_BFGSpray(){}
-final void A_PosAttack(){}
-final void A_SPosAttack(){}
-final void A_TroopAttack(){}
-final void A_SargAttack(){}
-final void A_HeadAttack(){}
-final void A_BruisAttack(){}
-final void A_SkullAttack(){}
-final void A_Hoof(){}
-final void A_Metal(){}
-final void A_CyberAttack(){}
-final void A_SpidRefire(){}
-final void A_CPosAttack(){}
-final void A_CPosRefire(){}
-final void A_BabyMetal(){}
-final void A_BspiAttack(){}
-final void A_PainAttack(){}
-final void A_PainDie(){}
-final void A_SkelWhoosh(){}
-final void A_SkelFist(){}
-final void A_SkelMissile(){}
-final void A_Tracer(){}
-final void A_FatRaise(){}
-final void A_FatAttack1(){}
-final void A_FatAttack2(){}
-final void A_FatAttack3(){}
-final void A_VileChase(){}
-final void A_VileStart(){}
-final void A_VileTarget(){}
-final void A_VileAttack(){}
-final void A_Fire(){}
-final void A_StartFire(){}
-final void A_FireCrackle(){}
-final void A_BrainPain(){}
-final void A_BrainScream(){}
-final void A_BrainExplode(){}
-final void A_BrainDie(){}
-final void A_BrainAwake(){}
-final void A_BrainSpit(){}
-final void A_SpawnFly(){}
-final void A_SpawnSound(){}
-final void A_KeenDie(){}
-final void A_BossDeath(){}
 
 #ifndef DEHACKED
 __states__
