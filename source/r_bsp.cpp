@@ -557,6 +557,30 @@ static void ClipAddSubsectorSegs(subsector_t* Sub)
 		AddClipRange(PointToClipAngle(*line->v2),
 			PointToClipAngle(*line->v1));
 	}
+
+	if (Sub->poly)
+	{
+		seg_t** polySeg = Sub->poly->segs;
+		for (int polyCount = Sub->poly->numsegs; polyCount--; polySeg++)
+		{
+			seg_t* line = *polySeg;
+			if (line->backsector || !line->linedef)
+			{
+				//	Miniseg or two-sided line.
+				continue;
+			}
+
+			float dist = DotProduct(vieworg, line->normal) - line->dist;
+			if (dist <= 0)
+			{
+				//	Viewer is in back side or on plane
+				continue;
+			}
+
+			AddClipRange(PointToClipAngle(*line->v2),
+				PointToClipAngle(*line->v1));
+		}
+	}
 	unguard;
 }
 
