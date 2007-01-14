@@ -5289,7 +5289,7 @@ final void A_BossDeath()
 	}
 }
 
-#ifdef DEHACKED
+//#ifdef DEHACKED
 //	Since many dehacked patches are mixing weapon and actor states we export
 // them all and provide empty action functions.
 void A_WeaponReady(){}
@@ -5314,16 +5314,20 @@ void A_FireMissile(){}
 void A_FirePlasma(){}
 void A_BFGsound(){}
 void A_FireBFG(){}
-#endif
+//#endif
 
+#ifdef DEHACKED
+#include "states.vc"
+#else
 __states__
 {
-	S_REAL_GIBS('POL5', 0, -1.0, none) = none
+	S_GIBS('POL5', 0, -1.0, none) = none
 }
+#endif
 
 defaultproperties
 {
-	GibsState = S_REAL_GIBS;
+	GibsState = S_GIBS;
 	MaxStepHeight = 24.0;
 	MissileChance = 200.0;
 #ifdef DEHACKED

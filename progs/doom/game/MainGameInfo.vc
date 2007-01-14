@@ -23,11 +23,7 @@
 //**
 //**************************************************************************
 
-#ifndef DEHACKED
 class MainGameInfo : LineSpecialGameInfo;
-#else
-class MainGameInfoBase : LineSpecialGameInfo;
-#endif
 
 const int NUM_SPECIALS = 273;
 
@@ -1347,6 +1343,13 @@ defaultproperties
 	yspeed[6] = -1.0;
 	yspeed[7] = -0.7171630859;
 
+	air_control = 1.0 / 256.0;
+
+#ifdef DEHACKED
+#include "gendefs.vc"
+#else
+	botskill = 2;
+
 	maxammo[0] = 200;
 	maxammo[1] = 50;
 	maxammo[2] = 300;
@@ -1357,16 +1360,12 @@ defaultproperties
 	clipammo[2] = 20;
 	clipammo[3] = 1;
 
-	air_control = 1.0 / 256.0;
-
-#ifndef NO_BOTS
-	botskill = 2;
-#endif
 	INITIAL_HEALTH = 100;
 	INITIAL_AMMO = 50;
-	GOD_HEALTH = 100;
 	BFGCELLS = 40;
+	GOD_HEALTH = 100;
 	SOULSPHERE_MAX = 200;
 	SOULSPHERE_HEALTH = 100;
 	MEGASPHERE_HEALTH = 200;
+#endif
 }

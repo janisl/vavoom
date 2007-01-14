@@ -32,9 +32,6 @@
 
 #include "../doom/svprogs.vc"
 
-#include "gendefs.vc"
-#include "states.vc"
-#include "mobjinfo.vc"
-#include "weapons.vc"
+#include "deh_game/classes.vc"
 
 #include "game1/TeleportSpot2.vc"

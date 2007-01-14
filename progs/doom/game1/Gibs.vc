@@ -33,5 +33,5 @@ __states__
 
 defaultproperties
 {
-	IdleState = S_REAL_GIBS;
+	IdleState = S_GIBS;
 }
