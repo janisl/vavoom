@@ -143,6 +143,7 @@ int VEntity::FIndex_TakeInventory;
 int VEntity::FIndex_CheckInventory;
 int VEntity::FIndex_GetSigilPieces;
 int VEntity::FIndex_MoveThing;
+int VEntity::FIndex_GetStateTime;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -196,7 +197,7 @@ bool VEntity::SetState(VState* InState)
 		}
 
 		State = st;
-		StateTime = st->Time;
+		StateTime = eventGetStateTime(st, st->Time);
 		EntityFlags &= ~EF_FullBright;
 
 		// Modified handling.
@@ -232,7 +233,7 @@ void VEntity::SetInitialState(VState* InState)
 	State = InState;
 	if (InState)
 	{
-		StateTime = InState->Time;
+		StateTime = eventGetStateTime(InState, InState->Time);
 	}
 	else
 	{
@@ -2315,6 +2316,7 @@ void VEntity::InitFuncIndexes()
 	FIndex_CheckInventory = StaticClass()->GetFunctionIndex("CheckInventory");
 	FIndex_GetSigilPieces = StaticClass()->GetFunctionIndex("GetSigilPieces");
 	FIndex_MoveThing = StaticClass()->GetFunctionIndex("MoveThing");
+	FIndex_GetStateTime = StaticClass()->GetFunctionIndex("GetStateTime");
 	unguard;
 }
 

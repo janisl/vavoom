@@ -96,6 +96,8 @@ bool bNoRespawn;
 bool bWindThrust;
 bool bNoTeleport;
 bool bStaticLight;	// Static light source.
+bool bFaster;
+bool bFastMelee;
 
 //  Params
 float Speed;
@@ -403,6 +405,28 @@ bool MoveThing(TVec Pos, bool Fog)
 		LinkToWorld();
 		return false;
 	}
+}
+
+//==========================================================================
+//
+//	GetStateTime
+//
+//==========================================================================
+
+float GetStateTime(state AState, float AStateTime)
+{
+	if (Level.Game.fastparm)
+	{
+		if (bFaster && StateIsInRange(AState, SeeState, none, 8))
+		{
+			AStateTime /= 2.0;
+		}
+		if (bFastMelee && StateIsInRange(AState, MeleeState, none, 3))
+		{
+			AStateTime /= 2.0;
+		}
+	}
+	return AStateTime;
 }
 
 //==========================================================================
@@ -788,6 +812,11 @@ void SetOrigin2(TVec origin)
 void OnMapSpawn(mthing_t * mthing)
 {
 #ifdef DEHACKED
+	if (Class == Demon || Class == Shadows)
+	{
+		bFaster = true;
+		bFastMelee = true;
+	}
 	if (Class == LostSoul)
 	{
 		bNoGravKill = true;
@@ -4175,7 +4204,7 @@ final void A_TroopAttack()
 //
 //==========================================================================
 
-void A_SargAttack()
+final void A_SargAttack()
 {
 	int damage;
 

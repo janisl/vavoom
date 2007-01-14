@@ -31,55 +31,19 @@ __states__
 {
 	S_SARG_STND('SARG', 0, 10.0 / 35.0, S_SARG_STND2) = A_Look
 	S_SARG_STND2('SARG', 1, 10.0 / 35.0, S_SARG_STND) = A_Look
-	S_SARG_RUN1('SARG', 0, 2.0 / 35.0, S_SARG_RUN2)
-	{
-		A_Chase();
-		if (Level.Game.fastparm)
-			StateTime /= 2.0;
-	}
-	S_SARG_RUN2('SARG', 0, 2.0 / 35.0, S_SARG_RUN3) { A_Chase(); 	if (Level.Game.fastparm)
-		StateTime /= 2.0;}
-	S_SARG_RUN3('SARG', 1, 2.0 / 35.0, S_SARG_RUN4) { A_Chase(); 	if (Level.Game.fastparm)
-		StateTime /= 2.0;}
-	S_SARG_RUN4('SARG', 1, 2.0 / 35.0, S_SARG_RUN5) { A_Chase(); 	if (Level.Game.fastparm)
-		StateTime /= 2.0;}
-	S_SARG_RUN5('SARG', 2, 2.0 / 35.0, S_SARG_RUN6) { A_Chase(); 	if (Level.Game.fastparm)
-		StateTime /= 2.0;}
-	S_SARG_RUN6('SARG', 2, 2.0 / 35.0, S_SARG_RUN7) { A_Chase(); 	if (Level.Game.fastparm)
-		StateTime /= 2.0;}
-	S_SARG_RUN7('SARG', 3, 2.0 / 35.0, S_SARG_RUN8) { A_Chase(); 	if (Level.Game.fastparm)
-		StateTime /= 2.0;}
-	S_SARG_RUN8('SARG', 3, 2.0 / 35.0, S_SARG_RUN1) { A_Chase(); 	if (Level.Game.fastparm)
-		StateTime /= 2.0;}
-	S_SARG_ATK1('SARG', 4, 8.0 / 35.0, S_SARG_ATK2)
-	{
-		A_FaceTarget();
-		if (Level.Game.fastparm)
-			StateTime /= 2.0;
-	}
-	S_SARG_ATK2('SARG', 5, 8.0 / 35.0, S_SARG_ATK3)
-	{
-		A_FaceTarget();
-		if (Level.Game.fastparm)
-			StateTime /= 2.0;
-	}
-	S_SARG_ATK3('SARG', 6, 8.0 / 35.0, S_SARG_RUN1)
-	{
-		A_SargAttack();
-		if (Level.Game.fastparm)
-			StateTime /= 2.0;
-	}
-	S_SARG_PAIN('SARG', 7, 2.0 / 35.0, S_SARG_PAIN2)
-	{
-		if (Level.Game.fastparm)
-			StateTime /= 2.0;
-	}
-	S_SARG_PAIN2('SARG', 7, 2.0 / 35.0, S_SARG_RUN1)
-	{
-		A_Pain();
-		if (Level.Game.fastparm)
-			StateTime /= 2.0;
-	}
+	S_SARG_RUN1('SARG', 0, 2.0 / 35.0, S_SARG_RUN2) = A_Chase
+	S_SARG_RUN2('SARG', 0, 2.0 / 35.0, S_SARG_RUN3) = A_Chase
+	S_SARG_RUN3('SARG', 1, 2.0 / 35.0, S_SARG_RUN4) = A_Chase
+	S_SARG_RUN4('SARG', 1, 2.0 / 35.0, S_SARG_RUN5) = A_Chase
+	S_SARG_RUN5('SARG', 2, 2.0 / 35.0, S_SARG_RUN6) = A_Chase
+	S_SARG_RUN6('SARG', 2, 2.0 / 35.0, S_SARG_RUN7) = A_Chase
+	S_SARG_RUN7('SARG', 3, 2.0 / 35.0, S_SARG_RUN8) = A_Chase
+	S_SARG_RUN8('SARG', 3, 2.0 / 35.0, S_SARG_RUN1) = A_Chase
+	S_SARG_ATK1('SARG', 4, 8.0 / 35.0, S_SARG_ATK2) = A_FaceTarget
+	S_SARG_ATK2('SARG', 5, 8.0 / 35.0, S_SARG_ATK3) = A_FaceTarget
+	S_SARG_ATK3('SARG', 6, 8.0 / 35.0, S_SARG_RUN1) = A_SargAttack
+	S_SARG_PAIN('SARG', 7, 2.0 / 35.0, S_SARG_PAIN2) = none
+	S_SARG_PAIN2('SARG', 7, 2.0 / 35.0, S_SARG_RUN1) = A_Pain
 	S_SARG_DIE1('SARG', 8, 8.0 / 35.0, S_SARG_DIE2) = none
 	S_SARG_DIE2('SARG', 9, 8.0 / 35.0, S_SARG_DIE3) = A_Scream
 	S_SARG_DIE3('SARG', 10, 4.0 / 35.0, S_SARG_DIE4) = none
@@ -113,4 +77,6 @@ defaultproperties
 	AttackSound = 'demon/melee';
 	PainSound = 'demon/pain';
 	DeathSound = 'demon/death';
+	bFaster = true;
+	bFastMelee = true;
 }
