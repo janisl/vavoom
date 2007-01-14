@@ -66,7 +66,7 @@ void CL_Clear()
 	GClGame->serverinfo.Clean();
 	GClGame->intermission = 0;
 	GClGame->time = 0;
-	VViewEntity* PrevVEnt = cl->ViewEnt;
+	VEntity* PrevVEnt = cl->ViewEnt;
 	memset((byte*)cl + sizeof(VObject), 0, cl->GetClass()->ClassSize - sizeof(VObject));
 	cl->ViewEnt = PrevVEnt;
 	cl_level.LevelName.Clean();
@@ -567,8 +567,7 @@ static void CL_ParseServerInfo(VMessage& msg)
 		if (VMemberBase::GMembers[i]->MemberType == MEMBER_Class)
 		{
 			VClass* C = static_cast<VClass*>(VMemberBase::GMembers[i]);
-			if (C->IsChildOf(VThinker::StaticClass()) ||
-				C->IsChildOf(VViewEntity::StaticClass()))
+			if (C->IsChildOf(VThinker::StaticClass()))
 			{
 				check(C->NetId >= 0);
 				ClassLookup[C->NetId] = C;
@@ -785,15 +784,12 @@ void CL_ParseServerMessage(VMessage& msg)
 	byte		cmd_type;
 	float		x;
 	float		y;
-	int			tag;
 	float		angle;
 	VStr		name;
 	VStr		string;
 	TVec		origin;
 	float		radius;
 	vuint32		colour;
-	float		alpha;
-	sector_t*	sec;
 
 	msg.BeginReading();
 

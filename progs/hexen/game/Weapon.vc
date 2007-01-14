@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Weapon : ViewEntity
+class Weapon : Entity
 	abstract;
 
 const float LOWERSPEED		= 6.0;
@@ -39,11 +39,6 @@ state ReadyState;
 state AttackState;
 state HoldAttackState;
 float PSpriteSY;		// Y-adjustment value for full screen
-
-LevelInfo Level
-{
-	get { return Owner.Level; }
-}
 
 //==========================================================================
 //
@@ -247,4 +242,6 @@ __states__
 
 defaultproperties
 {
+	bHidden = true;
+	bNoBlockmap = true;
 }

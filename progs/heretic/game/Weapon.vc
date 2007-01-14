@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Weapon : ViewEntity
+class Weapon : Entity
 	abstract;
 
 const float MELEERANGE		= 64.0;
@@ -67,11 +67,6 @@ state HoldAttackState2;
 
 float PSpriteSY;
 bool bInShareware;
-
-LevelInfo Level
-{
-	get { return Owner.Level; }
-}
 
 void WeaponLevel2Init() { }
 void WeaponLevel2Fade() { }
@@ -267,5 +262,7 @@ __states__
 
 defaultproperties
 {
+	bHidden = true;
+	bNoBlockmap = true;
 	bInShareware = true;
 }

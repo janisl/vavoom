@@ -181,6 +181,9 @@ int WaterType;
 name SoundClass;
 name SoundGender;
 
+	//	Owner entity of inventory item
+Entity Owner;
+
 //
 //	Natives
 //

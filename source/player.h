@@ -56,14 +56,6 @@ enum playerstate_t
 	PST_REBORN		
 };
 
-class VViewEntity : public VObject
-{
-	DECLARE_CLASS(VViewEntity, VObject, 0)
-	NO_DEFAULT_CONSTRUCTOR(VViewEntity)
-
-	VEntity*		Owner;
-};
-
 struct VViewState
 {
 	VState*			State;
@@ -165,7 +157,7 @@ class VBasePlayer : public VObject
 
 	// Overlay view sprites (gun, etc).
 	VViewState		ViewStates[NUMPSPRITES];
-	VViewEntity*	ViewEnt;
+	VEntity*		ViewEnt;
 	float			PSpriteSY;
 
 	vuint32			WorldTimer;				// total time the player's been playing

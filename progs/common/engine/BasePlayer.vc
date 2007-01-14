@@ -100,7 +100,7 @@ int CShifts[NUM_CSHIFTS];
 
 // Overlay view sprites (gun, etc).
 VViewState		ViewStates[NUMPSPRITES];
-ViewEntity		ViewEnt;
+Entity			ViewEnt;
 float			PSpriteSY;
 
 int WorldTimer;	// total time the player's been playing

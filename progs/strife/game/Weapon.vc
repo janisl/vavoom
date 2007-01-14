@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Weapon : ViewEntity;
+class Weapon : Entity;
 
 const float
 	MELEERANGE		= 64.0,
@@ -48,11 +48,6 @@ state FlashState;
 state FireDeathWaveState;
 
 bool bRaiseNoiseAlert;
-
-LevelInfo Level
-{
-	get { return Owner.Level; }
-}
 
 //===========================================================================
 //
@@ -296,6 +291,8 @@ __states__
 
 defaultproperties
 {
+	bHidden = true;
+	bNoBlockmap = true;
 	bRaiseNoiseAlert = true;
 	FireDeathWaveState = S_WAVE1;
 }

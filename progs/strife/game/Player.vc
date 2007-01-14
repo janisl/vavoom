@@ -2210,9 +2210,9 @@ void SetWeapon(int NewWeapon)
 	PendingWeapon = StrifeDefs::wp_nochange;
 	if (ViewEnt)
 	{
-		ViewEnt.Destroy();
+		ViewEnt.Remove();
 	}
-	ViewEnt = Weapon(SpawnObject(MainGameInfo(Level.Game).WeaponClasses[NewWeapon]));
+	ViewEnt = Weapon(NewMobjThinker(MainGameInfo(Level.Game).WeaponClasses[NewWeapon]));
 	ViewEnt.Owner = MO;
 }
 

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Weapon : ViewEntity;
+class Weapon : Entity;
 
 const float LOWERSPEED		= 6.0;
 const float RAISESPEED		= 6.0;
@@ -39,11 +39,6 @@ state AttackState;
 state HoldAttackState;
 state FlashState;
 int PlayerModelVersion;
-
-LevelInfo Level
-{
-	get { return Owner.Level; }
-}
 
 //===========================================================================
 //
@@ -631,5 +626,7 @@ __states__
 
 defaultproperties
 {
+	bHidden = true;
+	bNoBlockmap = true;
 	Ammo = DoomDefs::am_noammo;
 }

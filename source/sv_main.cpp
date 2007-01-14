@@ -70,7 +70,6 @@ static void G_DoCompleted();
 IMPLEMENT_CLASS(V, LevelInfo)
 IMPLEMENT_CLASS(V, GameInfo)
 IMPLEMENT_CLASS(V, BasePlayer)
-IMPLEMENT_CLASS(V, ViewEntity)
 
 VCvarI			real_time("real_time", "1");
 
@@ -298,18 +297,13 @@ void SV_ClearDatagram()
 
 //==========================================================================
 //
-//	SV_SpawnMobj
+//	SV_AddEntity
 //
 //==========================================================================
 
-VEntity *SV_SpawnMobj(VClass *Class)
+void SV_AddEntity(VEntity* Ent)
 {
-	guard(SV_SpawnMobj);
-	VEntity *Ent;
 	int i;
-
-	Ent = (VEntity*)VObject::StaticSpawnObject(Class);
-	GLevel->AddThinker(Ent);
 
 	//	Client treats first objects as player objects and will use
 	// models and skins from player info
@@ -327,6 +321,21 @@ VEntity *SV_SpawnMobj(VClass *Class)
 	}
 	sv_mobjs[i] = Ent;
 	Ent->NetID = i;
+}
+
+//==========================================================================
+//
+//	SV_SpawnMobj
+//
+//==========================================================================
+
+VEntity *SV_SpawnMobj(VClass *Class)
+{
+	guard(SV_SpawnMobj);
+	VEntity* Ent = (VEntity*)VObject::StaticSpawnObject(Class);
+	GLevel->AddThinker(Ent);
+
+	SV_AddEntity(Ent);
 
 	if (GLevelInfo->LevelInfoFlags & VLevelInfo::LIF_BegunPlay)
 	{
@@ -2902,6 +2911,9 @@ void SV_ConnectClient(VBasePlayer *player)
 	player->Net->Message.CurSize = 0;
 	player->Net->Message.AllowOverflow = true;		// we can catch it
 	player->Net->Message.Overflowed = false;
+	player->Net->MobjUpdateStart = 0;
+	player->Net->LastMessage = 0;
+	player->Net->NeedsUpdate = false;
 	player->PlayerFlags &= ~VBasePlayer::PF_Spawned;
 	player->Level = GLevelInfo;
 	if (!sv_loading)

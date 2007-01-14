@@ -96,8 +96,7 @@ void CL_Init()
 		VClass::FindClass("ClientGame"));
 	cl = (VBasePlayer*)VObject::StaticSpawnObject(
 		VClass::FindClass("Player"));
-	cl->ViewEnt = (VViewEntity*)VObject::StaticSpawnObject(
-		VViewEntity::StaticClass());
+	cl->ViewEnt = Spawn<VEntity>();
 	GClGame->cl = cl;
 	GClGame->level = &cl_level;
 	unguard;

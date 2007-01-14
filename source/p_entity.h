@@ -193,6 +193,9 @@ class VEntity : public VThinker
 	VName			SoundClass;
 	VName			SoundGender;
 
+	//	Owner entity of inventory item
+	VEntity*		Owner;
+
 	static int FIndex_BeginPlay;
 	static int FIndex_Destroyed;
 	static int FIndex_Touch;

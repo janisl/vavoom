@@ -31,7 +31,6 @@
 #include "LevelInfo.vc"
 #include "Entity.vc"
 #include "BasePlayer.vc"
-#include "ViewEntity.vc"
 #include "GameInfo.vc"
 #include "GC.vc"
 #include "Window.vc"

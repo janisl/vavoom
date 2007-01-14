@@ -74,6 +74,7 @@ void SV_SpawnServer(const char *mapname, bool spawn_thinkers);
 void SV_SendServerInfoToClients();
 void SV_ShutdownServer(bool);
 void CL_Disconnect();
+void SV_AddEntity(VEntity* Ent);
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
@@ -532,21 +533,6 @@ static void ArchiveThinkers()
 
 		Saver->Exports.Append(Th);
 		Saver->ObjectsMap[Th->GetIndex()] = Saver->Exports.Num();
-	}
-
-	//	Add player weapon objects.
-	for (int i = 0; i < MAXPLAYERS; i++)
-	{
-		if (!SavingPlayers || !GGameInfo->Players[i])
-		{
-			continue;
-		}
-
-		if (GGameInfo->Players[i]->ViewEnt)
-		{
-			Saver->Exports.Append(GGameInfo->Players[i]->ViewEnt);
-			Saver->ObjectsMap[GGameInfo->Players[i]->ViewEnt->GetIndex()] = Saver->Exports.Num();
-		}
 	}
 
 	vint32 NumObjects = Saver->Exports.Num() - ThinkersStart;
@@ -1134,6 +1120,22 @@ void SV_ClearRebornSlot()
 void SV_MapTeleport(VName mapname)
 {
 	guard(SV_MapTeleport);
+	TArray<VEntity*>		TravelObjs;
+
+	//	Coolect list of thinkers that will go to the new level.
+	for (VThinker* Th = GLevel->ThinkerHead; Th; Th = Th->Next)
+	{
+		VEntity *vent = Cast<VEntity>(Th);
+		if (vent && vent->Owner && (vent->Owner->EntityFlags & VEntity::EF_IsPlayer))
+		{
+			TravelObjs.Append(vent);
+			GLevel->RemoveThinker(vent);
+			vent->UnlinkFromWorld();
+			SV_StopSound(vent, 0);
+			sv_mobjs[vent->NetID] = NULL;
+		}
+	}
+
 	if (!deathmatch)
 	{
 		const mapInfo_t& old_info = P_GetMapInfo(level.MapName);
@@ -1161,6 +1163,13 @@ void SV_MapTeleport(VName mapname)
 	{
 		// New map
 		SV_SpawnServer(*mapname, true);
+	}
+
+	//	Add traveling thinkers to the new level.
+	for (int i = 0; i < TravelObjs.Num(); i++)
+	{
+		GLevel->AddThinker(TravelObjs[i]);
+		SV_AddEntity(TravelObjs[i]);
 	}
 
 	// Launch waiting scripts

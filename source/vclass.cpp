@@ -549,8 +549,7 @@ void VMemberBase::SetUpNetClasses()
 		if (GMembers[i]->MemberType == MEMBER_Class)
 		{
 			VClass* C = static_cast<VClass*>(GMembers[i]);
-			if (C->IsChildOf(VThinker::StaticClass()) ||
-				C->IsChildOf(VViewEntity::StaticClass()))
+			if (C->IsChildOf(VThinker::StaticClass()))
 			{
 				C->NetId = CurId++;
 			}

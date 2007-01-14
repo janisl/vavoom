@@ -2577,9 +2577,9 @@ void SetWeapon(int NewWeapon)
 
 	if (ViewEnt)
 	{
-		ViewEnt.Destroy();
+		ViewEnt.Remove();
 	}
-	ViewEnt = Weapon(SpawnObject(MainGameInfo(Level.Game).WeaponClasses[NewWeapon]));
+	ViewEnt = Weapon(NewMobjThinker(MainGameInfo(Level.Game).WeaponClasses[NewWeapon]));
 	ViewEnt.Owner = MO;
 	PSpriteSY = Weapon(ViewEnt).PSpriteSY;
 }
