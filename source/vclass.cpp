@@ -1053,7 +1053,7 @@ VField::FType VField::FType::GetArrayInnerType() const
 //==========================================================================
 
 VProperty::VProperty(VName AName)
-: VMemberBase(MEMBER_Field, AName)
+: VMemberBase(MEMBER_Property, AName)
 , GetFunc(NULL)
 , SetFunc(NULL)
 , DefaultField(NULL)
