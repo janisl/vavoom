@@ -23,8 +23,8 @@
 //**
 //**************************************************************************
 
-#include "makeinfo.h"
 #include "info.h"
+#include "makeinfo.h"
 
 void ProcessDehackedFiles(int argc, char** argv);
 
@@ -37,14 +37,9 @@ extern char* 				flagnames2[32];
 extern char*				weapon_names[];
 extern char*				ammo_names[];
 extern state_action_info_t	StateActionInfo[];
-extern int					num_sfx;
 extern state_t				states[];
 extern mobjinfo_t			mobjinfo[];
 extern weaponinfo_t			weaponinfo[];
-extern sfxinfo_t			sfx[];
-extern string_def_t			Strings[];
-extern map_info_t			map_info1[];
-extern map_info_t			map_info2[];
 
 int		maxammo[] = {200, 50, 300, 50};
 int		perammo[] = {10, 4, 20, 1};
@@ -362,15 +357,15 @@ void WriteClasses()
 
 		//	Sounds
 		if (mobjinfo[i].seesound)
-			fprintf(f, "\tSightSound = \'%s\';\n", sfx[mobjinfo[i].seesound].tagName);
+			fprintf(f, "\tSightSound = \'%s\';\n", sfx[mobjinfo[i].seesound]);
 		if (mobjinfo[i].activesound)
-			fprintf(f, "\tActiveSound = \'%s\';\n", sfx[mobjinfo[i].activesound].tagName);
+			fprintf(f, "\tActiveSound = \'%s\';\n", sfx[mobjinfo[i].activesound]);
 		if (mobjinfo[i].attacksound)
-			fprintf(f, "\tAttackSound = \'%s\';\n", sfx[mobjinfo[i].attacksound].tagName);
+			fprintf(f, "\tAttackSound = \'%s\';\n", sfx[mobjinfo[i].attacksound]);
 		if (mobjinfo[i].painsound)
-			fprintf(f, "\tPainSound = \'%s\';\n", sfx[mobjinfo[i].painsound].tagName);
+			fprintf(f, "\tPainSound = \'%s\';\n", sfx[mobjinfo[i].painsound]);
 		if (mobjinfo[i].deathsound)
-			fprintf(f, "\tDeathSound = \'%s\';\n", sfx[mobjinfo[i].deathsound].tagName);
+			fprintf(f, "\tDeathSound = \'%s\';\n", sfx[mobjinfo[i].deathsound]);
 
 		fprintf(f, "}\n");
 		fclose(f);
@@ -448,80 +443,6 @@ static void WriteMisc()
 
 //==========================================================================
 //
-//  WriteTxtLumps
-//
-//==========================================================================
-
-static void WriteTxtLumps()
-{
-	int			i;
-	FILE		*f;
-
-	if (Doom2)
-	{
-		strcpy(sfx[sfx1_tink].tagName, "misc/chat2");
-		strcpy(sfx[sfx1_radio].tagName, "misc/chat");
-	}
-
-	f = fopen("sndinfo.txt", "w");
-	for (i = 1; i < num_sfx; i++)
-	{
-		fprintf(f, "%-32s%-12s\n", sfx[i].tagName,
-			sfx[i].lumpname[0] ? sfx[i].lumpname : "?");
-	}
-	fclose(f);
-
-	f = fopen("mapinfo.txt", "w");
-	if (Doom2)
-	{
-		for (i = 0; i < 32; i++)
-		{
-			fprintf(f, "map map%02d %s\nnext map%02d\nsky1 sky%d 0\nmusic %s\n\n",
-				i + 1, map_info2[i].Name, (i == 29 || i == 31) ? 1 : i + 2,
-				i < 11 ? 1 : i < 20 ? 2 : 3, map_info2[i].song);
-		}
-	}
-	else
-	{
-		for (i = 0; i < 36; i++)
-		{
-			fprintf(f, "map e%dm%d %s\nnext e%dm%d\nsky1 sky%d 0\nmusic %s\n\n",
-				(i / 9) + 1, (i % 9) + 1, map_info1[i].Name,
-				(i / 9) + 1, (i % 9) > 6 ? 1 : (i % 9) + 2,
-				i < 11 ? 1 : i < 20 ? 2 : 3, map_info1[i].song);
-		}
-	}
-	fclose(f);
-
-	f = fopen("language.txt", "w");
-	fprintf(f, "[en default]\n");
-	for (i = 0; Strings[i].macro; i++)
-	{
-		fprintf(f, "%s = \"", Strings[i].macro);
-		const char* c = Strings[i].new_val ? Strings[i].new_val : Strings[i].def_val;
-		while (*c)
-		{
-			if (*c == '\"')
-				fprintf(f, "\\\"");
-			else if (*c == '\t')
-				fprintf(f, "\\t");
-			else if (*c == '\n' && c[1])
-				fprintf(f, "\\n\"\n\t\"");
-			else if (*c == '\n')
-				fprintf(f, "\\n");
-			else if (*c == '\r')
-				fprintf(f, "\\r");
-			else
-				fprintf(f, "%c", *c);
-			c++;
-		}
-		fprintf(f, "\";\n");
-	}
-	fclose(f);
-}
-
-//==========================================================================
-//
 //	main
 //
 //==========================================================================
@@ -541,7 +462,6 @@ int main(int argc, char** argv)
 	WriteStates();
 	WriteClasses();
 	WriteMisc();
-	WriteTxtLumps();
 
 	return 0;
 }

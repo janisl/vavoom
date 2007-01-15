@@ -29,11 +29,14 @@ public:
 	VLanguage();
 	~VLanguage();
 
-	void LoadStrings(const char*);
 	void FreeData();
+	void LoadStrings(const char*);
 
 	VStr Find(VName) const;
 	VStr operator[](VName) const;
+
+	VName GetStringId(const VStr&);
+	void ReplaceString(VName, const VStr&);
 
 private:
 	struct VLangEntry;
@@ -42,6 +45,7 @@ private:
 
 	VLangEntry*		HashTable[HASH_SIZE];
 
+	void FreeNonDehackedStrings();
 	void ParseLanguageScript(vint32, const char*, bool, vint32);
 	VStr HandleEscapes(VStr);
 };

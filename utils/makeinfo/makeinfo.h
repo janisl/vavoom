@@ -176,29 +176,6 @@ typedef struct
 	int 		flashstate;
 } weaponinfo_t;
 
-//
-// SoundFX struct.
-//
-typedef struct 
-{
-	char	tagName[32];	// Name, by whitch sound is recognised in script
-	char	lumpname[12];	// Only need 9 bytes, but padded out to be dword aligned
-	int		priority;		// Higher priority takes precendence
-	int 	numchannels;	// total number of channels a sound type may occupy
-	int		changePitch;
-} sfxinfo_t;
+extern bool					Doom2;
 
-struct string_def_t
-{
-	char	*macro;
-	char	*def_val;
-	char	*new_val;
-};
-
-struct map_info_t
-{
-	char	Name[32];
-	char	song[12];
-};
-
-extern bool						Doom2;
+extern const char*			sfx[NUMSFX];

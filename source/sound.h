@@ -61,6 +61,9 @@ public:
 	VName GetSeqSlot(VName);
 	int FindSequence(VName);
 
+	void GetSoundLumpNames(TArray<FReplacedString>&);
+	void ReplaceSoundLumpNames(TArray<FReplacedString>&);
+
 private:
 	struct FPlayerSound
 	{

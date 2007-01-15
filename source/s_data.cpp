@@ -1265,6 +1265,54 @@ int VSoundManager::FindSequence(VName Name)
 	unguard;
 }
 
+//==========================================================================
+//
+//	VSoundManager::GetSoundLumpNames
+//
+//==========================================================================
+
+void VSoundManager::GetSoundLumpNames(TArray<FReplacedString>& List)
+{
+	guard(VSoundManager::GetSoundLumpNames);
+	for (int i = 1; i < S_sfx.Num(); i++)
+	{
+		if (S_sfx[i].LumpNum < 0)
+		{
+			continue;
+		}
+		const char* LName = *W_LumpName(S_sfx[i].LumpNum);
+		if (LName[0] == 'd' && LName[1] == 's')
+		{
+			FReplacedString& R = List.Alloc();
+			R.Index = i;
+			R.Replaced = false;
+			R.Old = LName + 2;
+		}
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VSoundManager::ReplaceSoundLumpNames
+//
+//==========================================================================
+
+void VSoundManager::ReplaceSoundLumpNames(TArray<FReplacedString>& List)
+{
+	guard(VSoundManager::ReplaceSoundLumpNames);
+	for (int i = 0; i < List.Num(); i++)
+	{
+		if (!List[i].Replaced)
+		{
+			continue;
+		}
+		S_sfx[List[i].Index].LumpNum = W_CheckNumForName(VName(
+			*(VStr("ds") + List[i].New), VName::AddLower8));
+	}
+	unguard;
+}
+
 #ifdef CLIENT
 
 //==========================================================================

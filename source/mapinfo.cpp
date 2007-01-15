@@ -1002,6 +1002,49 @@ VEpisodeDef* P_GetEpisodeDef(int Index)
 
 //==========================================================================
 //
+//	P_GetMusicLumpNames
+//
+//==========================================================================
+
+void P_GetMusicLumpNames(TArray<FReplacedString>& List)
+{
+	guard(P_GetMusicLumpNames);
+	for (int i = 0; i < MapInfo.Num(); i++)
+	{
+		const char* MName = *MapInfo[i].SongLump;
+		if (MName[0] == 'd' && MName[1] == '_')
+		{
+			FReplacedString& R = List.Alloc();
+			R.Index = i;
+			R.Replaced = false;
+			R.Old = MName + 2;
+		}
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	P_ReplaceMusicLumpNames
+//
+//==========================================================================
+
+void P_ReplaceMusicLumpNames(TArray<FReplacedString>& List)
+{
+	guard(P_ReplaceMusicLumpNames);
+	for (int i = 0; i < List.Num(); i++)
+	{
+		if (List[i].Replaced)
+		{
+			MapInfo[List[i].Index].SongLump = VName(*(VStr("d_") +
+				List[i].New), VName::AddLower8);
+		}
+	}
+	unguard;
+}
+
+//==========================================================================
+//
 // P_GetCDStartTrack
 //
 //==========================================================================

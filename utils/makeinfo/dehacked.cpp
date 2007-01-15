@@ -31,8 +31,8 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include "makeinfo.h"
 #include "info.h"
+#include "makeinfo.h"
 
 // MACROS ------------------------------------------------------------------
 
@@ -49,22 +49,10 @@ void FixupHeights();
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
 extern char*				sprnames[];
-//extern char* 				statename[];
-//extern char*				mt_names[];
 extern char*				mobj_names[];
-//extern char*				snd_names[];
-//extern char* 				flagnames1[32];
-//extern char* 				flagnames2[32];
-//extern char*				ammo_names[];
-//extern state_action_info_t	StateActionInfo[];
-extern int					num_sfx;
 extern state_t				states[];
 extern mobjinfo_t			mobjinfo[];
 extern weaponinfo_t			weaponinfo[];
-extern sfxinfo_t			sfx[];
-extern string_def_t			Strings[];
-extern map_info_t			map_info1[];
-extern map_info_t			map_info2[];
 extern int					maxammo[];
 extern int					perammo[];
 extern int					numammo;
@@ -223,19 +211,7 @@ static void ReadThing(int num)
 
 static void ReadSound(int num)
 {
-	while (ParseParam())
-	{
-		if (!strcmp(String, "Offset"));				//Lump name offset - can't handle
-		else if (!strcmp(String, "Zero/One"));		//Singularity - removed
-		else if (!strcmp(String, "Value"))			sfx[num].priority = value;
-		else if (!strcmp(String, "Zero 1"));        //Lump num - can't be set
-		else if (!strcmp(String, "Zero 2"));        //Data pointer - can't be set
-		else if (!strcmp(String, "Zero 3"));		//Usefulness - removed
-		else if (!strcmp(String, "Zero 4"));        //Link - removed
-		else if (!strcmp(String, "Neg. One 1"));    //Link pitch - removed
-		else if (!strcmp(String, "Neg. One 2"));    //Link volume - removed
-		else printf("WARNING! Invalid sound param %s\n", String);
-	}
+	while (ParseParam());
 }
 
 //==========================================================================
@@ -401,94 +377,6 @@ static void ReadMisc(int)
 
 //==========================================================================
 //
-//	FindString
-//
-//==========================================================================
-
-static void FindString(char *oldStr, char *newStr)
-{
-	bool	SoundFound = false;
-	int		i;
-
-	for (i = 0; i < num_sfx; i++)
-	{
-		if (!strcmp(sfx[i].lumpname + 2, oldStr))
-		{
-//			printf("Sound name, old \"%s\" new \"%s\"\n", oldStr, newStr);
-			strcpy(sfx[i].lumpname + 2, newStr);
-			SoundFound = true;	//Continue, because other sounds can use the same sound
-		}
-	}
-	if (SoundFound)
-	{
-		return;
-	}
-
-/*	for (i = 0; mobj_names[i]; i++)
-	{
-		if (!strcmp(mobj_names[i], oldStr))
-		{
-//			printf("Mobj name, old \"%s\" new \"%s\"\n", oldStr, newStr);
-			strcpy(mobj_names[i], newStr);
-			return;
-		}
-	}*/
-
-	for (i = 0; sprnames[i]; i++)
-	{
-		if (!strcmp(sprnames[i], oldStr))
-		{
-//			printf("Sprite name, old \"%s\" new \"%s\"\n", oldStr, newStr);
-			char* NewName = new char[8];
-			strcpy(NewName, newStr);
-			sprnames[i] = NewName;
-			return;
-		}
-	}
-
-	for (i = 0; Strings[i].macro; i++)
-	{
-		if (!strcmp(Strings[i].def_val, oldStr))
-		{
-//			printf("String %s, old \"%s\" new \"%s\"\n", strings[i].macro, oldStr, newStr);
-			if (Strings[i].new_val)
-				free(Strings[i].new_val);
-			Strings[i].new_val = (char*)malloc(strlen(newStr) + 1);
-			strcpy(Strings[i].new_val, newStr);
-			return;
-		}
-	}
-
-	if (Doom2)
-	{
-		for (i = 0; i < 32; i++)
-		{
-			if (!strcmp(map_info2[i].song + 2, oldStr))
-			{
-//				printf("Song name, old \"%s\" new \"%s\"\n", oldStr, newStr);
-				strcpy(map_info2[i].song + 2, newStr);
-				return;
-			}
-		}
-	}
-	else
-	{
-		for (i = 0; i < 32; i++)
-		{
-			if (!strcmp(map_info1[i].song + 2, oldStr))
-			{
-//				printf("Song name, old \"%s\" new \"%s\"\n", oldStr, newStr);
-				strcpy(map_info1[i].song + 2, newStr);
-				return;
-			}
-		}
-	}
-
-	printf("Not found old \"%s\" new \"%s\"\n", oldStr, newStr);
-}
-
-//==========================================================================
-//
 //  ReadText
 //
 //==========================================================================
@@ -497,8 +385,6 @@ static void ReadText(int oldSize)
 {
 	char	*lenPtr;
 	int		newSize;
-	char	*oldStr;
-	char	*newStr;
 	int		len;
 
 	lenPtr = strtok(NULL, " ");
@@ -508,9 +394,6 @@ static void ReadText(int oldSize)
 	}
 	newSize = atoi(lenPtr);
 
-	oldStr = (char*)calloc(oldSize + 1, 1);
-	newStr = (char*)calloc(newSize + 1, 1);
-
 	len = 0;
 	while (*PatchPtr && len < oldSize)
 	{
@@ -519,7 +402,6 @@ static void ReadText(int oldSize)
 			PatchPtr++;
 			continue;
 		}
-		oldStr[len] = *PatchPtr;
 		PatchPtr++;
 		len++;
 	}
@@ -532,15 +414,9 @@ static void ReadText(int oldSize)
 			PatchPtr++;
 			continue;
 		}
-		newStr[len] = *PatchPtr;
 		PatchPtr++;
 		len++;
 	}
-
-	FindString(oldStr, newStr);
-
-	free(oldStr);
-	free(newStr);
 
 	GetLine();
 }

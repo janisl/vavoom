@@ -23,8 +23,8 @@
 //**
 //**************************************************************************
 
-#include "makeinfo.h"
 #include "info.h"
+#include "makeinfo.h"
 
 state_action_info_t StateActionInfo[] =
 {
@@ -5027,472 +5027,126 @@ weaponinfo_t weaponinfo[NUM_WEAPONS] =
 	},	
 };
 
-sfxinfo_t sfx[] =
+const char* sfx[NUMSFX] =
 {
 	// tagname, lumpname, priority, numchannels, pitchshift,
 // S_sfx[0] needs to be a dummy for odd reasons.
-{ "", "", 	0, 2, 1 },
-{ "weapons/pistol", "dspistol",	64, 2, 1 },
-{ "weapons/shotgf", "dsshotgn",	64, 2, 1 },
-{ "weapons/shotgr", "dssgcock",	64, 2, 1 },
-{ "weapons/sshotf", "dsdshtgn",	64, 2, 1 },
-{ "weapons/sshoto", "dsdbopn", 	64, 2, 1 },
-{ "weapons/sshotc", "dsdbcls", 	64, 2, 1 },
-{ "weapons/sshotl", "dsdbload",	64, 2, 1 },
-{ "weapons/plasmaf", "dsplasma",	64, 2, 1 },
-{ "weapons/bfgf", "dsbfg", 	64, 2, 1 },
-{ "weapons/sawup", "dssawup", 	64, 2, 1 },
-{ "weapons/sawidle", "dssawidl",	118, 2, 1 },
-{ "weapons/sawfull", "dssawful",	64, 2, 1 },
-{ "weapons/sawhit", "dssawhit",	64, 2, 1 },
-{ "weapons/rocklf", "dsrlaunc",	64, 2, 1 },
-{ "weapons/bfgx", "dsrxplod",	70, 2, 1 },
-{ "imp/attack", "dsfirsht",	70, 2, 1 },
-{ "imp/shotx", "dsfirxpl",	70, 2, 1 },
-{ "plats/pt1_strt", "dspstart",	100, 2, 1 },
-{ "plats/pt1_stop", "dspstop", 	100, 2, 1 },
-{ "doors/dr1_open", "dsdoropn",	100, 2, 1 },
-{ "doors/dr1_clos", "dsdorcls",	100, 2, 1 },
-{ "plats/pt1_mid", "dsstnmov",	119, 2, 1 },
-{ "switches/normbutn", "dsswtchn",	78, 2, 1 },
-{ "switches/exitbutn", "dsswtchx",	78, 2, 1 },
+"",
+"weapons/pistol",
+"weapons/shotgf",
+"weapons/shotgr",
+"weapons/sshotf",
+"weapons/sshoto",
+"weapons/sshotc",
+"weapons/sshotl",
+"weapons/plasmaf",
+"weapons/bfgf",
+"weapons/sawup",
+"weapons/sawidle",
+"weapons/sawfull",
+"weapons/sawhit",
+"weapons/rocklf",
+"weapons/bfgx",
+"imp/attack",
+"imp/shotx",
+"plats/pt1_strt",
+"plats/pt1_stop",
+"doors/dr1_open",
+"doors/dr1_clos",
+"plats/pt1_mid",
+"switches/normbutn",
+"switches/exitbutn",
 
-{ "*pain100", "dsplpain",	96, 2, 1 },
-{ "demon/pain", "dsdmpain",	96, 2, 1 },
-{ "grunt/pain", "dspopain",	96, 2, 1 },
-{ "vile/pain", "dsvipain",	96, 2, 1 },
-{ "fatso/pain", "dsmnpain",	96, 2, 1 },
-{ "pain/pain", "dspepain",	96, 2, 1 },
+"*pain100",
+"demon/pain",
+"grunt/pain",
+"vile/pain",
+"fatso/pain",
+"pain/pain",
 
-{ "misc/gibbed", "dsslop", 	78, 2, 1 },
-{ "misc/i_pkup", "dsitemup",	78, 2, 0 },
-{ "misc/w_pkup", "dswpnup", 	78, 2, 1 },
-{ "*grunt", "dsoof", 	96, 2, 1 },
-{ "misc/teleport", "dstelept",	32, 2, 1 },
+"misc/gibbed",
+"misc/i_pkup",
+"misc/w_pkup",
+"*grunt",
+"misc/teleport",
 
-{ "grunt/sight1", "dsposit1",	98, 2, 1 },
-{ "grunt/sight2", "dsposit2",	98, 2, 1 },
-{ "grunt/sight3", "dsposit3",	98, 2, 1 },
-{ "imp/sight1", "dsbgsit1",	98, 2, 1 },
-{ "imp/sight2", "dsbgsit2",	98, 2, 1 },
-{ "demon/sight", "dssgtsit",	98, 2, 1 },
-{ "caco/sight", "dscacsit",	98, 2, 1 },
-{ "baron/sight", "dsbrssit",	94, 2, 1 },
-{ "cyber/sight", "dscybsit",	92, 2, 1 },
-{ "spider/sight", "dsspisit",	90, 2, 1 },
-{ "baby/sight", "dsbspsit",	90, 2, 1 },
-{ "knight/sight", "dskntsit",	90, 2, 1 },
-{ "vile/sight", "dsvilsit",	90, 2, 1 },
-{ "fatso/sight", "dsmansit",	90, 2, 1 },
-{ "pain/sight", "dspesit", 	90, 2, 1 },
+"grunt/sight1",
+"grunt/sight2",
+"grunt/sight3",
+"imp/sight1",
+"imp/sight2",
+"demon/sight",
+"caco/sight",
+"baron/sight",
+"cyber/sight",
+"spider/sight",
+"baby/sight",
+"knight/sight",
+"vile/sight",
+"fatso/sight",
+"pain/sight",
 
-{ "skull/melee", "dssklatk",	70, 2, 1 },
-{ "demon/melee", "dssgtatk",	70, 2, 1 },
-{ "skeleton/melee", "dsskepch",	70, 2, 1 },
-{ "vile/start", "dsvilatk",	70, 2, 1 },
-{ "imp/melee", "dsclaw", 	70, 2, 1 },
-{ "skeleton/swing", "dsskeswg",	70, 2, 1 },
+"skull/melee",
+"demon/melee",
+"skeleton/melee",
+"vile/start",
+"imp/melee",
+"skeleton/swing",
 
-{ "*death", "dspldeth",	32, 2, 1 },
-{ "*xdeath", "dspdiehi",	32, 2, 1 },
-{ "grunt/death1", "dspodth1",	70, 2, 1 },
-{ "grunt/death2", "dspodth2",	70, 2, 1 },
-{ "grunt/death3", "dspodth3",	70, 2, 1 },
-{ "imp/death1", "dsbgdth1",	70, 2, 1 },
-{ "imp/death2", "dsbgdth2",	70, 2, 1 },
-{ "demon/death", "dssgtdth",	70, 2, 1 },
-{ "caco/death", "dscacdth",	70, 2, 1 },
+"*death",
+"*xdeath",
+"grunt/death1",
+"grunt/death2",
+"grunt/death3",
+"imp/death1",
+"imp/death2",
+"demon/death",
+"caco/death",
 
-{ "misc/unused", "dsskldth",	70, 2, 1 },
+"misc/unused",
 
-{ "baron/death", "dsbrsdth",	32, 2, 1 },
-{ "cyber/death", "dscybdth",	32, 2, 1 },
-{ "spider/death", "dsspidth",	32, 2, 1 },
-{ "baby/death", "dsbspdth",	32, 2, 1 },
-{ "vile/death", "dsvildth",	32, 2, 1 },
-{ "knight/death", "dskntdth",	32, 2, 1 },
-{ "pain/death", "dspedth", 	32, 2, 1 },
-{ "skeleton/death", "dsskedth",	32, 2, 1 },
+"baron/death",
+"cyber/death",
+"spider/death",
+"baby/death",
+"vile/death",
+"knight/death",
+"pain/death",
+"skeleton/death",
 
-{ "grunt/active", "dsposact",	120, 2, 1 },
-{ "imp/active", "dsbgact", 	120, 2, 1 },
-{ "demon/active", "dsdmact", 	120, 2, 1 },
-{ "baby/active", "dsbspact",	100, 2, 1 },
-{ "baby/walk", "dsbspwlk",	100, 2, 1 },
-{ "vile/active", "dsvilact",	100, 2, 1 },
+"grunt/active",
+"imp/active",
+"demon/active",
+"baby/active",
+"baby/walk",
+"vile/active",
 
-{ "*usefail", "dsnoway", 	78, 2, 1 },
-{ "world/barrelx", "dsbarexp",	60, 2, 1 },
-{ "*fist", "dspunch", 	64, 2, 1 },
-{ "cyber/hoof", "dshoof", 	70, 2, 1 },
-{ "spider/walk", "dsmetal", 	70, 2, 1 },
-{ "weapons/chngun", "dspistol", 	64, 2, 1 },
-{ "misc/chat", "dstink", 	60, 2, 0 },
-{ "doors/dr2_open", "dsbdopn", 	100, 2, 1 },
-{ "doors/dr2_clos", "dsbdcls", 	100, 2, 1 },
-{ "misc/spawn", "dsitmbk", 	100, 2, 1 },
-{ "vile/firecrkl", "dsflame", 	32, 2, 1 },
-{ "vile/firestrt", "dsflamst",	32, 2, 1 },
-{ "misc/p_pkup", "dsgetpow",	60, 2, 1 },
-{ "brain/spit", "dsbospit",	70, 2, 1 },
-{ "brain/cube", "dsboscub",	70, 2, 1 },
-{ "brain/sight", "dsbossit",	70, 2, 1 },
-{ "brain/pain", "dsbospn", 	70, 2, 1 },
-{ "brain/death", "dsbosdth",	70, 2, 1 },
-{ "fatso/raiseguns", "dsmanatk",	70, 2, 1 },
-{ "fatso/death", "dsmandth",	70, 2, 1 },
-{ "wolfss/sight", "dssssit", 	70, 2, 1 },
-{ "wolfss/death", "dsssdth", 	70, 2, 1 },
-{ "keen/pain", "dskeenpn",	70, 2, 1 },
-{ "keen/death", "dskeendt",	70, 2, 1 },
-{ "skeleton/active", "dsskeact",	70, 2, 1 },
-{ "skeleton/sight", "dsskesit",	70, 2, 1 },
-{ "skeleton/attack", "dsskeatk",	70, 2, 1 },
-{ "misc/chat2", "dsradio", 	60, 2, 1 },
-{ "menu/activate", "dsswtchn", 32, 2, 1 },
-{ "menu/cursor", "dspstop", 		32, 2, 1 },
-{ "menu/choose", "dspistol", 	32, 2, 1 },
-{ "menu/change", "dsstnmov", 	32, 2, 1 },
-{ "menu/backup", "dsswtchn", 32, 2, 1 },
-{ "menu/clear", "dsswtchx", 	32, 2, 1 },
-};
-
-int			num_sfx = sizeof(sfx) / sizeof(sfx[0]);
-
-string_def_t	Strings[] =
-{
-	{ "pd_blueo", "You need a blue key to activate this object", NULL },
-	{ "pd_redo", "You need a red key to activate this object", NULL },
-	{ "pd_yellowo", "You need a yellow key to activate this object", NULL },
-	{ "pd_bluek", "You need a blue key to open this door", NULL },
-	{ "pd_redk", "You need a red key to open this door", NULL },
-	{ "pd_yellowk", "You need a yellow key to open this door", NULL },
-
-	{ "gotarmor", "Picked up the armor.", NULL },
-	{ "gotmega", "Picked up the MegaArmor!", NULL },
-	{ "goththbonus", "Picked up a health bonus.", NULL },
-	{ "gotarmbonus", "Picked up an armor bonus.", NULL },
-	{ "gotstim", "Picked up a stimpack.", NULL },
-	{ "gotmedineed", "Picked up a medikit that you REALLY need!", NULL },
-	{ "gotmedikit", "Picked up a medikit.", NULL },
-	{ "gotsuper", "Supercharge!", NULL },
-
-	{ "gotbluecard", "Picked up a blue keycard.", NULL },
-	{ "gotyelwcard", "Picked up a yellow keycard.", NULL },
-	{ "gotredcard", "Picked up a red keycard.", NULL },
-	{ "gotblueskul", "Picked up a blue skull key.", NULL },
-	{ "gotyelwskul", "Picked up a yellow skull key.", NULL },
-	{ "gotredskull", "Picked up a red skull key.", NULL },
-
-	{ "gotinvul", "Invulnerability!", NULL },
-	{ "gotberserk", "Berserk!", NULL },
-	{ "gotinvis", "Partial Invisibility", NULL },
-	{ "gotsuit", "Radiation Shielding Suit", NULL },
-	{ "gotmap", "Computer Area Map", NULL },
-	{ "gotvisor", "Light Amplification Visor", NULL },
-	{ "gotmsphere", "MegaSphere!", NULL },
-
-	{ "gotclip", "Picked up a clip.", NULL },
-	{ "gotclipbox", "Picked up a box of bullets.", NULL },
-	{ "gotrocket", "Picked up a rocket.", NULL },
-	{ "gotrockbox", "Picked up a box of rockets.", NULL },
-	{ "gotcell", "Picked up an energy cell.", NULL },
-	{ "gotcellbox", "Picked up an energy cell pack.", NULL },
-	{ "gotshells", "Picked up 4 shotgun shells.", NULL },
-	{ "gotshellbox", "Picked up a box of shotgun shells.", NULL },
-	{ "gotbackpack", "Picked up a backpack full of ammo!", NULL },
-
-	{ "gotbfg9000", "You got the BFG9000!  Oh, yes.", NULL },
-	{ "gotchaingun", "You got the chaingun!", NULL },
-	{ "gotchainsaw", "A chainsaw!  Find some meat!", NULL },
-	{ "gotlauncher", "You got the rocket launcher!", NULL },
-	{ "gotplasma", "You got the plasma gun!", NULL },
-	{ "gotshotgun", "You got the shotgun!", NULL },
-	{ "gotshotgun2", "You got the super shotgun!", NULL },
-
-	{ "hustr_e1m1", "E1M1: Hangar", NULL },
-	{ "hustr_e1m2", "E1M2: Nuclear Plant", NULL },
-	{ "hustr_e1m3", "E1M3: Toxin Refinery", NULL },
-	{ "hustr_e1m4", "E1M4: Command Control", NULL },
-	{ "hustr_e1m5", "E1M5: Phobos Lab", NULL },
-	{ "hustr_e1m6", "E1M6: Central Processing", NULL },
-	{ "hustr_e1m7", "E1M7: Computer Station", NULL },
-	{ "hustr_e1m8", "E1M8: Phobos Anomaly", NULL },
-	{ "hustr_e1m9", "E1M9: Military Base", NULL },
-	{ "hustr_e2m1", "E2M1: Deimos Anomaly", NULL },
-	{ "hustr_e2m2", "E2M2: Containment Area", NULL },
-	{ "hustr_e2m3", "E2M3: Refinery", NULL },
-	{ "hustr_e2m4", "E2M4: Deimos Lab", NULL },
-	{ "hustr_e2m5", "E2M5: Command Center", NULL },
-	{ "hustr_e2m6", "E2M6: Halls of the Damned", NULL },
-	{ "hustr_e2m7", "E2M7: Spawning Vats", NULL },
-	{ "hustr_e2m8", "E2M8: Tower of Babel", NULL },
-	{ "hustr_e2m9", "E2M9: Fortress of Mystery", NULL },
-	{ "hustr_e3m1", "E3M1: Hell Keep", NULL },
-	{ "hustr_e3m2", "E3M2: Slough of Despair", NULL },
-	{ "hustr_e3m3", "E3M3: Pandemonium", NULL },
-	{ "hustr_e3m4", "E3M4: House of Pain", NULL },
-	{ "hustr_e3m5", "E3M5: Unholy Cathedral", NULL },
-	{ "hustr_e3m6", "E3M6: Mt. Erebus", NULL },
-	{ "hustr_e3m7", "E3M7: Limbo", NULL },
-	{ "hustr_e3m8", "E3M8: Dis", NULL },
-	{ "hustr_e3m9", "E3M9: Warrens", NULL },
-	{ "hustr_e4m1", "E4M1: Hell Beneath", NULL },
-	{ "hustr_e4m2", "E4M2: Perfect Hatred", NULL },
-	{ "hustr_e4m3", "E4M3: Sever the Wicked", NULL },
-	{ "hustr_e4m4", "E4M4: Unruly Evil", NULL },
-	{ "hustr_e4m5", "E4M5: They Will Repent", NULL },
-	{ "hustr_e4m6", "E4M6: Against thee Wickedly", NULL },
-	{ "hustr_e4m7", "E4M7: And Hell Followed", NULL },
-	{ "hustr_e4m8", "E4M8: Unto the Cruel", NULL },
-	{ "hustr_e4m9", "E4M9: Fear", NULL },
-
-	{ "hustr_1", "level 1: entryway", NULL },
-	{ "hustr_2", "level 2: underhalls", NULL },
-	{ "hustr_3", "level 3: the gantlet", NULL },
-	{ "hustr_4", "level 4: the focus", NULL },
-	{ "hustr_5", "level 5: the waste tunnels", NULL },
-	{ "hustr_6", "level 6: the crusher", NULL },
-	{ "hustr_7", "level 7: dead simple", NULL },
-	{ "hustr_8", "level 8: tricks and traps", NULL },
-	{ "hustr_9", "level 9: the pit", NULL },
-	{ "hustr_10", "level 10: refueling base", NULL },
-	{ "hustr_11", "level 11: 'o' of destruction!", NULL },
-	{ "hustr_12", "level 12: the factory", NULL },
-	{ "hustr_13", "level 13: downtown", NULL },
-	{ "hustr_14", "level 14: the inmost dens", NULL },
-	{ "hustr_15", "level 15: industrial zone", NULL },
-	{ "hustr_16", "level 16: suburbs", NULL },
-	{ "hustr_17", "level 17: tenements", NULL },
-	{ "hustr_18", "level 18: the courtyard", NULL },
-	{ "hustr_19", "level 19: the citadel", NULL },
-	{ "hustr_20", "level 20: gotcha!", NULL },
-	{ "hustr_21", "level 21: nirvana", NULL },
-	{ "hustr_22", "level 22: the catacombs", NULL },
-	{ "hustr_23", "level 23: barrels o' fun", NULL },
-	{ "hustr_24", "level 24: the chasm", NULL },
-	{ "hustr_25", "level 25: bloodfalls", NULL },
-	{ "hustr_26", "level 26: the abandoned mines", NULL },
-	{ "hustr_27", "level 27: monster condo", NULL },
-	{ "hustr_28", "level 28: the spirit world", NULL },
-	{ "hustr_29", "level 29: the living end", NULL },
-	{ "hustr_30", "level 30: icon of sin", NULL },
-	{ "hustr_31", "level 31: wolfenstein", NULL },
-	{ "hustr_32", "level 32: grosse", NULL },
-
-	{ "e1text",
-		"Once you beat the big badasses and\n"
-		"clean out the moon base you're supposed\n"
-		"to win, aren't you? Aren't you? Where's\n"
-		"your fat reward and ticket home? What\n"
-		"the hell is this? It's not supposed to\n"
-		"end this way!\n"
-		"\n"
-		"It stinks like rotten meat, but looks\n"
-		"like the lost Deimos base.  Looks like\n"
-		"you're stuck on The Shores of Hell.\n"
-		"The only way out is through.\n"
-		"\n"
-		"To continue the DOOM experience, play\n"
-		"The Shores of Hell and its amazing\n"
-		"sequel, Inferno!\n", NULL },
-	{ "e2text",
-		"You've done it! The hideous cyber-\n"
-		"demon lord that ruled the lost Deimos\n"
-		"moon base has been slain and you\n"
-		"are triumphant! But ... where are\n"
-		"you? You clamber to the edge of the\n"
-		"moon and look down to see the awful\n"
-		"truth.\n"
-		"\n"
-		"Deimos floats above Hell itself!\n"
-		"You've never heard of anyone escaping\n"
-		"from Hell, but you'll make the bastards\n"
-		"sorry they ever heard of you! Quickly,\n"
-		"you rappel down to  the surface of\n"
-		"Hell.\n"
-		"\n"
-		"Now, it's on to the final chapter of\n"
-		"DOOM! -- Inferno.", NULL },
-	{ "e3text",
-		"The loathsome spiderdemon that\n"
-		"masterminded the invasion of the moon\n"
-		"bases and caused so much death has had\n"
-		"its ass kicked for all time.\n"
-		"\n"
-		"A hidden doorway opens and you enter.\n"
-		"You've proven too tough for Hell to\n"
-		"contain, and now Hell at last plays\n"
-		"fair -- for you emerge from the door\n"
-		"to see the green fields of Earth!\n"
-		"Home at last.\n"
-		"\n"
-		"You wonder what's been happening on\n"
-		"Earth while you were battling evil\n"
-		"unleashed. It's good that no Hell-\n"
-		"spawn could have come through that\n"
-		"door with you ...", NULL },
-	{ "e4text",
-		"the spider mastermind must have sent forth\n"
-		"its legions of hellspawn before your\n"
-		"final confrontation with that terrible\n"
-		"east from hell.  but you stepped forward\n"
-		"and brought forth eternal damnation and\n"
-		"suffering upon the horde as a true hero\n"
-		"would in the face of something so evil.\n"
-		"\n"
-		"besides, someone was gonna pay for what\n"
-		"happened to daisy, your pet rabbit.\n"
-		"\n"
-		"but now, you see spread before you more\n"
-		"potential pain and gibbitude as a nation\n"
-		"of demons run amok among our cities.\n"
-		"\n"
-		"next stop, hell on earth!", NULL },
-
-	{ "c1text",
-		"YOU HAVE ENTERED DEEPLY INTO THE INFESTED\n"
-		"STARPORT. BUT SOMETHING IS WRONG. THE\n"
-		"MONSTERS HAVE BROUGHT THEIR OWN REALITY\n"
-		"WITH THEM, AND THE STARPORT'S TECHNOLOGY\n"
-		"IS BEING SUBVERTED BY THEIR PRESENCE.\n"
-		"\n"
-		"AHEAD, YOU SEE AN OUTPOST OF HELL, A\n"
-		"FORTIFIED ZONE. IF YOU CAN GET PAST IT,\n"
-		"YOU CAN PENETRATE INTO THE HAUNTED HEART\n"
-		"OF THE STARBASE AND FIND THE CONTROLLING\n"
-		"SWITCH WHICH HOLDS EARTH'S POPULATION\n"
-		"HOSTAGE.", NULL },
-	{ "c2text",
-		"YOU HAVE WON! YOUR VICTORY HAS ENABLED\n"
-		"HUMANKIND TO EVACUATE EARTH AND ESCAPE\n"
-		"THE NIGHTMARE.  NOW YOU ARE THE ONLY\n"
-		"HUMAN LEFT ON THE FACE OF THE PLANET.\n"
-		"CANNIBAL MUTATIONS, CARNIVOROUS ALIENS,\n"
-		"AND EVIL SPIRITS ARE YOUR ONLY NEIGHBORS.\n"
-		"YOU SIT BACK AND WAIT FOR DEATH, CONTENT\n"
-		"THAT YOU HAVE SAVED YOUR SPECIES.\n"
-		"\n"
-		"BUT THEN, EARTH CONTROL BEAMS DOWN A\n"
-		"MESSAGE FROM SPACE: \"SENSORS HAVE LOCATED\n"
-		"THE SOURCE OF THE ALIEN INVASION. IF YOU\n"
-		"GO THERE, YOU MAY BE ABLE TO BLOCK THEIR\n"
-		"ENTRY.  THE ALIEN BASE IS IN THE HEART OF\n"
-		"YOUR OWN HOME CITY, NOT FAR FROM THE\n"
-		"STARPORT.\" SLOWLY AND PAINFULLY YOU GET\n"
-		"UP AND RETURN TO THE FRAY.", NULL },
-	{ "c3text",
-		"YOU ARE AT THE CORRUPT HEART OF THE CITY,\n"
-		"SURROUNDED BY THE CORPSES OF YOUR ENEMIES.\n"
-		"YOU SEE NO WAY TO DESTROY THE CREATURES'\n"
-		"ENTRYWAY ON THIS SIDE, SO YOU CLENCH YOUR\n"
-		"TEETH AND PLUNGE THROUGH IT.\n"
-		"\n"
-		"THERE MUST BE A WAY TO CLOSE IT ON THE\n"
-		"OTHER SIDE. WHAT DO YOU CARE IF YOU'VE\n"
-		"GOT TO GO THROUGH HELL TO GET TO IT?", NULL },
-	{ "c4text",
-		"THE HORRENDOUS VISAGE OF THE BIGGEST\n"
-		"DEMON YOU'VE EVER SEEN CRUMBLES BEFORE\n"
-		"YOU, AFTER YOU PUMP YOUR ROCKETS INTO\n"
-		"HIS EXPOSED BRAIN. THE MONSTER SHRIVELS\n"
-		"UP AND DIES, ITS THRASHING LIMBS\n"
-		"DEVASTATING UNTOLD MILES OF HELL'S\n"
-		"SURFACE.\n"
-		"\n"
-		"YOU'VE DONE IT. THE INVASION IS OVER.\n"
-		"EARTH IS SAVED. HELL IS A WRECK. YOU\n"
-		"WONDER WHERE BAD FOLKS WILL GO WHEN THEY\n"
-		"DIE, NOW. WIPING THE SWEAT FROM YOUR\n"
-		"FOREHEAD YOU BEGIN THE LONG TREK BACK\n"
-		"HOME. REBUILDING EARTH OUGHT TO BE A\n"
-		"LOT MORE FUN THAN RUINING IT WAS.\n", NULL },
-	{ "c5text",
-		"CONGRATULATIONS, YOU'VE FOUND THE SECRET\n"
-		"LEVEL! LOOKS LIKE IT'S BEEN BUILT BY\n"
-		"HUMANS, RATHER THAN DEMONS. YOU WONDER\n"
-		"WHO THE INMATES OF THIS CORNER OF HELL\n"
-		"WILL BE.", NULL },
-	{ "c6text",
-		"CONGRATULATIONS, YOU'VE FOUND THE\n"
-		"SUPER SECRET LEVEL!  YOU'D BETTER\n"
-		"BLAZE THROUGH THIS ONE!\n", NULL },
-
-	{NULL, NULL, NULL}
-};
-
-map_info_t		map_info2[] =
-{
-	{ "lookup hustr_1", "d_runnin" },
-	{ "lookup hustr_2", "d_stalks" },
-	{ "lookup hustr_3", "d_countd" },
-	{ "lookup hustr_4", "d_betwee" },
-	{ "lookup hustr_5", "d_doom" },
-	{ "lookup hustr_6", "d_the_da" },
-	{ "lookup hustr_7", "d_shawn" },
-	{ "lookup hustr_8", "d_ddtblu" },
-	{ "lookup hustr_9", "d_in_cit" },
-	{ "lookup hustr_10", "d_dead" },
-	{ "lookup hustr_11", "d_stlks2" },
-	{ "lookup hustr_12", "d_theda2" },
-	{ "lookup hustr_13", "d_doom2" },
-	{ "lookup hustr_14", "d_ddtbl2" },
-	{ "lookup hustr_15", "d_runni2" },
-	{ "lookup hustr_16", "d_dead2" },
-	{ "lookup hustr_17", "d_stlks3" },
-	{ "lookup hustr_18", "d_romero" },
-	{ "lookup hustr_19", "d_shawn2" },
-	{ "lookup hustr_20", "d_messag" },
-	{ "lookup hustr_21", "d_count2" },
-	{ "lookup hustr_22", "d_ddtbl3" },
-	{ "lookup hustr_23", "d_ampie" },
-	{ "lookup hustr_24", "d_theda3" },
-	{ "lookup hustr_25", "d_adrian" },
-	{ "lookup hustr_26", "d_messg2" },
-	{ "lookup hustr_27", "d_romer2" },
-	{ "lookup hustr_28", "d_tense" },
-	{ "lookup hustr_29", "d_shawn3" },
-	{ "lookup hustr_30", "d_openin" },
-	{ "lookup hustr_31", "d_evil" },
-	{ "lookup hustr_32", "d_ultima" },
-};
-
-map_info_t		map_info1[] =
-{
-	{ "lookup hustr_e1m1", "d_e1m1" },
-	{ "lookup hustr_e1m2", "d_e1m2" },
-	{ "lookup hustr_e1m3", "d_e1m3" },
-	{ "lookup hustr_e1m4", "d_e1m4" },
-	{ "lookup hustr_e1m5", "d_e1m5" },
-	{ "lookup hustr_e1m6", "d_e1m6" },
-	{ "lookup hustr_e1m7", "d_e1m7" },
-	{ "lookup hustr_e1m8", "d_e1m8" },
-	{ "lookup hustr_e1m9", "d_e1m9" },
-	{ "lookup hustr_e2m1", "d_e2m1" },
-	{ "lookup hustr_e2m2", "d_e2m2" },
-	{ "lookup hustr_e2m3", "d_e2m3" },
-	{ "lookup hustr_e2m4", "d_e2m4" },
-	{ "lookup hustr_e2m5", "d_e2m5" },
-	{ "lookup hustr_e2m6", "d_e2m6" },
-	{ "lookup hustr_e2m7", "d_e2m7" },
-	{ "lookup hustr_e2m8", "d_e2m8" },
-	{ "lookup hustr_e2m9", "d_e2m9" },
-	{ "lookup hustr_e3m1", "d_e3m1" },
-	{ "lookup hustr_e3m2", "d_e3m2" },
-	{ "lookup hustr_e3m3", "d_e3m3" },
-	{ "lookup hustr_e3m4", "d_e3m4" },
-	{ "lookup hustr_e3m5", "d_e3m5" },
-	{ "lookup hustr_e3m6", "d_e3m6" },
-	{ "lookup hustr_e3m7", "d_e3m7" },
-	{ "lookup hustr_e3m8", "d_e3m8" },
-	{ "lookup hustr_e3m9", "d_e3m9" },
-	{ "lookup hustr_e4m1", "d_e3m4" },
-	{ "lookup hustr_e4m2", "d_e3m2" },
-	{ "lookup hustr_e4m3", "d_e3m3" },
-	{ "lookup hustr_e4m4", "d_e1m5" },
-	{ "lookup hustr_e4m5", "d_e2m7" },
-	{ "lookup hustr_e4m6", "d_e2m4" },
-	{ "lookup hustr_e4m7", "d_e2m6" },
-	{ "lookup hustr_e4m8", "d_e2m5" },
-	{ "lookup hustr_e4m9", "d_e1m9" },
+"*usefail",
+"world/barrelx",
+"*fist",
+"cyber/hoof",
+"spider/walk",
+"weapons/chngun",
+"misc/chat",
+"doors/dr2_open",
+"doors/dr2_clos",
+"misc/spawn",
+"vile/firecrkl",
+"vile/firestrt",
+"misc/p_pkup",
+"brain/spit",
+"brain/cube",
+"brain/sight",
+"brain/pain",
+"brain/death",
+"fatso/raiseguns",
+"fatso/death",
+"wolfss/sight",
+"wolfss/death",
+"keen/pain",
+"keen/death",
+"skeleton/active",
+"skeleton/sight",
+"skeleton/attack",
+"misc/chat2",
 };

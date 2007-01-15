@@ -103,6 +103,35 @@ void VLanguage::FreeData()
 
 //==========================================================================
 //
+//	VLanguage::FreeNonDehackedStrings
+//
+//==========================================================================
+
+void VLanguage::FreeNonDehackedStrings()
+{
+	guard(VLanguage::FreeNonDehackedStrings);
+	for (int i = 0; i < HASH_SIZE; i++)
+	{
+		VLangEntry** pEntry = &HashTable[i];
+		while (*pEntry)
+		{
+			if ((*pEntry)->PassNum == 0)
+			{
+				pEntry = &(*pEntry)->Next;
+			}
+			else
+			{
+				VLangEntry* Next = (*pEntry)->Next;
+				delete *pEntry;
+				*pEntry = Next;
+			}
+		}
+	}
+	unguard;
+}
+
+//==========================================================================
+//
 //	VLanguage::LoadStrings
 //
 //==========================================================================
@@ -110,7 +139,7 @@ void VLanguage::FreeData()
 void VLanguage::LoadStrings(const char* LangId)
 {
 	guard(VLanguage::LoadStrings);
-	FreeData();
+	FreeNonDehackedStrings();
 
 	for (int Lump = W_IterateNS(-1, WADNS_Global); Lump >= 0;
 		Lump = W_IterateNS(Lump, WADNS_Global))
@@ -170,6 +199,7 @@ void VLanguage::ParseLanguageScript(vint32 Lump, const char* InCode,
 					{
 						CurCode[0] = '*';
 						CurCode[1] = 0;
+						CurCode[2] = 0;
 					}
 					else if (Len == 7 && !sc->String.ICmp("default"))
 					{
@@ -180,8 +210,12 @@ void VLanguage::ParseLanguageScript(vint32 Lump, const char* InCode,
 					else
 					{
 						sc->Error(va("Language code must be 2 or 3 "
-							"characters long, %s is &d characters long",
+							"characters long, %s is %d characters long",
 							*sc->String, Len));
+						//	Shut up compiler
+						CurCode[0] = 0;
+						CurCode[1] = 0;
+						CurCode[2] = 0;
 					}
 				}
 				else
@@ -189,7 +223,7 @@ void VLanguage::ParseLanguageScript(vint32 Lump, const char* InCode,
 					CurCode[0] = VStr::ToLower(sc->String[0]);
 					CurCode[1] = VStr::ToLower(sc->String[1]);
 					CurCode[2] = ExactMatch ? VStr::ToLower(sc->String[2]) : 0;
-					CurCode[3] = VStr::ToLower(sc->String[3]);
+					CurCode[3] = 0;
 				}
 				if (Code[0] == CurCode[0] && Code[1] == CurCode[1] &&
 					Code[2] == CurCode[2])
@@ -331,5 +365,58 @@ VStr VLanguage::operator[](VName Key) const
 		Ret = VStr(Key);
 	}
 	return Ret;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VLanguage::GetStringId
+//
+//==========================================================================
+
+VName VLanguage::GetStringId(const VStr& Str)
+{
+	guard(VLanguage::GetStringId);
+	for (int i = 0; i < HASH_SIZE; i++)
+	{
+		for (VLangEntry* Entry = HashTable[i]; Entry; Entry = Entry->Next)
+		{
+			if (Entry->Value == Str)
+			{
+				return Entry->Name;
+			}
+		}
+	}
+	return NAME_None;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VLanguage::ReplaceString
+//
+//==========================================================================
+
+void VLanguage::ReplaceString(VName Key, const VStr& Value)
+{
+	guard(VLanguage::ReplaceString);
+	int HashIndex = GetTypeHash(Key) & (HASH_SIZE - 1);
+	VLangEntry* Entry;
+	for (Entry = HashTable[HashIndex]; Entry; Entry = Entry->Next)
+	{
+		if (Entry->Name == Key)
+		{
+			break;
+		}
+	}
+	if (!Entry)
+	{
+		Entry = new VLangEntry;
+		Entry->Next = HashTable[HashIndex];
+		HashTable[HashIndex] = Entry;
+		Entry->Name = Key;
+	}
+	Entry->Value = Value;
+	Entry->PassNum = 0;
 	unguard;
 }

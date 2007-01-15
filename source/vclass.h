@@ -396,6 +396,8 @@ public:
 	// Systemwide functions.
 	static VClass *FindClass(const char *);
 	static int FindSprite(VName);
+	static void GetSpriteNames(TArray<FReplacedString>&);
+	static void ReplaceSpriteNames(TArray<FReplacedString>&);
 
 	// Accessors.
 	vuint32 GetFlags() const

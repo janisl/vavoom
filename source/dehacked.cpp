@@ -77,6 +77,9 @@ static char 	*String;
 static int 		value;
 
 static TArray<FReplacedString>	SfxNames;
+static TArray<FReplacedString>	MusicNames;
+static TArray<FReplacedString>	SpriteNames;
+static VLanguage*				EngStrings;
 
 // CODE --------------------------------------------------------------------
 
@@ -393,12 +396,12 @@ static void ReadMisc(int)
 
 static void FindString(const char* oldStr, const char* newStr)
 {
+	//	Sounds
 	bool SoundFound = false;
 	for (int i = 0; i < SfxNames.Num(); i++)
 	{
 		if (SfxNames[i].Old == oldStr)
 		{
-			dprintf("Sound name, old \"%s\" new \"%s\"\n", oldStr, newStr);
 			SfxNames[i].New = newStr;
 			SfxNames[i].Replaced = true;
 			//	Continue, because other sounds can use the same sound
@@ -410,57 +413,40 @@ static void FindString(const char* oldStr, const char* newStr)
 		return;
 	}
 
-#if 0
-	for (i = 0; sprnames[i]; i++)
+	//	Music
+	bool SongFound = false;
+	for (int i = 0; i < MusicNames.Num(); i++)
 	{
-		if (!strcmp(sprnames[i], oldStr))
+		if (MusicNames[i].Old == oldStr)
 		{
-//			dprintf("Sprite name, old \"%s\" new \"%s\"\n", oldStr, newStr);
-			char* NewName = new char[8];
-			strcpy(NewName, newStr);
-			sprnames[i] = NewName;
+			MusicNames[i].New = newStr;
+			MusicNames[i].Replaced = true;
+			//	There could be duplicates
+			SongFound = true;
+		}
+	}
+	if (SongFound)
+	{
+		return;
+	}
+
+	//	Sprite names
+	for (int i = 0; i < SpriteNames.Num(); i++)
+	{
+		if (SpriteNames[i].Old == oldStr)
+		{
+			SpriteNames[i].New = newStr;
+			SpriteNames[i].Replaced = true;
 			return;
 		}
 	}
 
-	for (i = 0; Strings[i].macro; i++)
+	VName Id = EngStrings->GetStringId(oldStr);
+	if (Id != NAME_None)
 	{
-		if (!strcmp(Strings[i].def_val, oldStr))
-		{
-//			dprintf("String %s, old \"%s\" new \"%s\"\n", strings[i].macro, oldStr, newStr);
-			if (Strings[i].new_val)
-				free(Strings[i].new_val);
-			Strings[i].new_val = (char*)malloc(strlen(newStr) + 1);
-			strcpy(Strings[i].new_val, newStr);
-			return;
-		}
+		GLanguage.ReplaceString(Id, newStr);
+		return;
 	}
-
-	if (Doom2)
-	{
-		for (i = 0; i < 32; i++)
-		{
-			if (!strcmp(map_info2[i].song + 2, oldStr))
-			{
-//				dprintf("Song name, old \"%s\" new \"%s\"\n", oldStr, newStr);
-				strcpy(map_info2[i].song + 2, newStr);
-				return;
-			}
-		}
-	}
-	else
-	{
-		for (i = 0; i < 32; i++)
-		{
-			if (!strcmp(map_info1[i].song + 2, oldStr))
-			{
-//				dprintf("Song name, old \"%s\" new \"%s\"\n", oldStr, newStr);
-				strcpy(map_info1[i].song + 2, newStr);
-				return;
-			}
-		}
-	}
-#endif
 
 	dprintf("Not found old \"%s\" new \"%s\"\n", oldStr, newStr);
 }
@@ -628,7 +614,11 @@ void ProcessDehackedFiles()
 		return;
 	}
 
-//	GSoundManager->GetSoundLumpNames(SfxNames);
+	GSoundManager->GetSoundLumpNames(SfxNames);
+	P_GetMusicLumpNames(MusicNames);
+	VClass::GetSpriteNames(SpriteNames);
+	EngStrings = new VLanguage();
+	EngStrings->LoadStrings("en");
 
 	Hacked = true;
 
@@ -641,7 +631,14 @@ void ProcessDehackedFiles()
 		LoadDehackedFile(GArgs[p]);
 	}
 
-//	GSoundManager->ReplaceSoundLumpNames(SfxNames);
+	GSoundManager->ReplaceSoundLumpNames(SfxNames);
+	P_ReplaceMusicLumpNames(MusicNames);
+	VClass::ReplaceSpriteNames(SpriteNames);
+
+	SfxNames.Clear();
+	MusicNames.Clear();
+	SpriteNames.Clear();
+	delete EngStrings;
 
 //	free(functions);
 }

@@ -2243,6 +2243,55 @@ int VClass::FindSprite(VName Name)
 
 //==========================================================================
 //
+//	VClass::GetSpriteNames
+//
+//==========================================================================
+
+void VClass::GetSpriteNames(TArray<FReplacedString>& List)
+{
+	guard(VClass::GetSpriteNames);
+	for (int i = 0; i < GSpriteNames.Num(); i++)
+	{
+		FReplacedString&R = List.Alloc();
+		R.Index = i;
+		R.Replaced = false;
+		R.Old = VStr(*GSpriteNames[i]).ToUpper();
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VClass::ReplaceSpriteNames
+//
+//==========================================================================
+
+void VClass::ReplaceSpriteNames(TArray<FReplacedString>& List)
+{
+	guard(VClass::ReplaceSpriteNames);
+	for (int i = 0; i < List.Num(); i++)
+	{
+		if (!List[i].Replaced)
+		{
+			continue;
+		}
+		GSpriteNames[List[i].Index] = *List[i].New.ToLower();
+	}
+
+	//	Update sprite names in states.
+	for (int i = 0; i < VMemberBase::GMembers.Num(); i++)
+	{
+		if (GMembers[i] && GMembers[i]->MemberType == MEMBER_State)
+		{
+			VState* S = (VState*)GMembers[i];
+			S->SpriteName = GSpriteNames[S->SpriteIndex];
+		}
+	}
+	unguard;
+}
+
+//==========================================================================
+//
 //	VClass::FindFunction
 //
 //==========================================================================
