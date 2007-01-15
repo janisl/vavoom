@@ -189,10 +189,11 @@ static void WriteStates()
 		{
 			fprintf(f, ", %d, %d", states[i].misc1, states[i].misc2);
 		}
-		fprintf(f, ") { ");
+		fprintf(f, ") = ");
 		if (states[i].action_num)
-			fprintf(f, "%s(); ", StateActionInfo[states[i].action_num].fname);
-		fprintf(f, "}\n");
+			fprintf(f, "%s\n", StateActionInfo[states[i].action_num].fname);
+		else
+			fprintf(f, "none\n");
 	}
 	fprintf(f, "}\n\n");
 
