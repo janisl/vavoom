@@ -182,6 +182,8 @@ void SV_Init()
 
 	VMemberBase::StaticLoadPackage(NAME_svprogs);
 
+	ProcessDehackedFiles();
+
 	GGameInfo = (VGameInfo*)VObject::StaticSpawnObject(
 		VClass::FindClass("MainGameInfo"));
 	GGameInfo->eventInit();

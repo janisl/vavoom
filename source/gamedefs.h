@@ -70,6 +70,7 @@
 #include "screen.h"
 #include "automap.h"
 #include "level.h"		//	Level data
+#include "dehacked.h"
 #include "mapinfo.h"
 #include "host.h"
 #include "render.h"
