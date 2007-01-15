@@ -180,14 +180,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\doom\game\HackedActor.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game\HackedWeapon.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\doom\game\MainGameInfo.vc"
 				>
 			</File>
@@ -1397,10 +1389,6 @@
 			</File>
 			<File
 				RelativePath="..\progs\doom\game2\BossTarget.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game2\BrainExplosion.vc"
 				>
 			</File>
 			<File
