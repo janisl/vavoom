@@ -7,7 +7,7 @@
 //**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
 //**	   #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id$
+//**	$Id:$
 //**
 //**	Copyright (C) 1999-2006 Jānis Legzdiņš
 //**
@@ -49,17 +49,6 @@ void FixupHeights();
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
 extern mobjinfo_t			mobjinfo[];
-extern weaponinfo_t			weaponinfo[];
-extern int					maxammo[];
-extern int					perammo[];
-extern int					numammo;
-extern int					initial_health;
-extern int					initial_ammo;
-extern int					bfg_cells;
-extern int					soulsphere_max;
-extern int					soulsphere_health;
-extern int					megasphere_health;
-extern int					god_health;
 
 extern bool					Hacked;
 
@@ -197,73 +186,6 @@ static void ReadThing(int num)
 
 //==========================================================================
 //
-//  ReadAmmo
-//
-//==========================================================================
-
-static void ReadAmmo(int num)
-{
-	while (ParseParam())
-	{
-		if (!stricmp(String, "Max ammo"))		maxammo[num] = value;
-		else if (!stricmp(String, "Per ammo"))	perammo[num] = value;
-		else printf("WARNING! Invalid ammo param %s\n", String);
-	}
-}
-
-//==========================================================================
-//
-//  ReadWeapon
-//
-//==========================================================================
-
-static void ReadWeapon(int num)
-{
-	while (ParseParam())
-	{
-		if (!stricmp(String, "Ammo type"))				weaponinfo[num].ammo 		= value;
-		else if (!stricmp(String, "Deselect frame"))	weaponinfo[num].upstate		= value;
-		else if (!stricmp(String, "Select frame"))  	weaponinfo[num].downstate 	= value;
-		else if (!stricmp(String, "Bobbing frame")) 	weaponinfo[num].readystate	= value;
-		else if (!stricmp(String, "Shooting frame"))	weaponinfo[num].atkstate 	= value;
-		else if (!stricmp(String, "Firing frame"))  	weaponinfo[num].flashstate	= value;
-		else printf("WARNING! Invalid weapon param %s\n", String);
-	}
-}
-
-//==========================================================================
-//
-//  ReadMisc
-//
-//==========================================================================
-
-static void ReadMisc(int)
-{
-	//	Not handled yet
-	while (ParseParam())
-	{
-		if (!stricmp(String, "Initial Health"))			initial_health = value;
-		else if (!stricmp(String, "Initial Bullets"))	initial_ammo = value;
-		else if (!stricmp(String, "Max Health"));
-		else if (!stricmp(String, "Max Armor"));
-		else if (!stricmp(String, "Green Armor Class"));
-		else if (!stricmp(String, "Blue Armor Class"));
-		else if (!stricmp(String, "Max Soulsphere"))	soulsphere_max = value;
-		else if (!stricmp(String, "Soulsphere Health"))	soulsphere_health = value;
-		else if (!stricmp(String, "Megasphere Health"))	megasphere_health = value;
-		else if (!stricmp(String, "God Mode Health"))   god_health = value;
-		else if (!stricmp(String, "IDFA Armor"));		//	Cheat removed
-		else if (!stricmp(String, "IDFA Armor Class"));	//	Cheat removed
-		else if (!stricmp(String, "IDKFA Armor"));		//	Cheat removed
-		else if (!stricmp(String, "IDKFA Armor Class"));//	Cheat removed
-		else if (!stricmp(String, "BFG Cells/Shot"))	bfg_cells = value;
-		else if (!stricmp(String, "Monsters Infight"));	//	What's that?
-		else printf("WARNING! Invalid misc %s\n", String);
-	}
-}
-
-//==========================================================================
-//
 //  ReadText
 //
 //==========================================================================
@@ -363,11 +285,11 @@ static void LoadDehackedFile(char *filename)
 		}
 		else if (!strcmp(Section, "Ammo"))
 		{
-			ReadAmmo(i);
+			while (ParseParam());
 		}
 		else if (!strcmp(Section, "Weapon"))
 		{
-			ReadWeapon(i);
+			while (ParseParam());
 		}
 		else if (!strcmp(Section, "Pointer"))
 		{
@@ -380,7 +302,7 @@ static void LoadDehackedFile(char *filename)
 		}
 		else if (!strcmp(Section, "Misc"))
 		{
-			ReadMisc(i);
+			while (ParseParam());
 		}
 		else if (!strcmp(Section, "Text"))
 		{

@@ -2292,6 +2292,48 @@ void VClass::ReplaceSpriteNames(TArray<FReplacedString>& List)
 
 //==========================================================================
 //
+//	VClass::FindField
+//
+//==========================================================================
+
+VField* VClass::FindField(VName AName)
+{
+	guard(VClass::FindField);
+	for (VField* F = Fields; F; F = F->Next)
+	{
+		if (F->Name == AName)
+		{
+			return F;
+		}
+	}
+	if (ParentClass)
+	{
+		return ParentClass->FindField(AName);
+	}
+	return NULL;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VClass::FindFieldChecked
+//
+//==========================================================================
+
+VField* VClass::FindFieldChecked(VName AName)
+{
+	guard(VClass::FindFieldChecked);
+	VField* F = FindField(AName);
+	if (!F)
+	{
+		Sys_Error("Field %s not found", *AName);
+	}
+	return F;
+	unguard;
+}
+
+//==========================================================================
+//
 //	VClass::FindFunction
 //
 //==========================================================================

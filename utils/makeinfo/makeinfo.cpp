@@ -32,22 +32,7 @@ extern char* 				statename[];
 extern char*				mt_names[];
 extern char* 				flagnames1[32];
 extern char* 				flagnames2[32];
-extern char*				weapon_names[];
-extern char*				ammo_names[];
 extern mobjinfo_t			mobjinfo[];
-extern weaponinfo_t			weaponinfo[];
-
-int		maxammo[] = {200, 50, 300, 50};
-int		perammo[] = {10, 4, 20, 1};
-int		numammo = 4;
-
-int		initial_health = 100;
-int		initial_ammo = 50;
-int		bfg_cells = 40;
-int		soulsphere_max = 200;
-int		soulsphere_health = 100;
-int		megasphere_health = 200;
-int		god_health = 100;
 
 bool						Hacked;
 bool						Doom2;
@@ -312,75 +297,7 @@ void WriteClasses()
 		fprintf(f, "}\n");
 		fclose(f);
 	}
-
-	for (i=0; i<NUM_WEAPONS; i++)
-	{
-		fprintf(cf, "#include \"%s.vc\"\n", weapon_names[i]);
-
-		char fname[256];
-		sprintf(fname, "deh_game/%s.vc", weapon_names[i]);
-		f = fopen(fname, "w");
-
-		WriteHeader(f);
-		fprintf(f, "\n");
-
-		fprintf(f, "class %s : Weapon;\n\n", weapon_names[i]);
-		fprintf(f, "defaultproperties\n");
-		fprintf(f, "{\n");
-
-		fprintf(f, "\tAmmo = DoomDefs::%s;\n", ammo_names[weaponinfo[i].ammo]);
-		fprintf(f, "\tUpState = %s;\n", statename[weaponinfo[i].upstate]);
-		fprintf(f, "\tDownState = %s;\n", statename[weaponinfo[i].downstate]);
-		fprintf(f, "\tReadyState = %s;\n", statename[weaponinfo[i].readystate]);
-		fprintf(f, "\tAttackState = %s;\n", statename[weaponinfo[i].atkstate]);
-		fprintf(f, "\tHoldAttackState = %s;\n", statename[weaponinfo[i].holdatkstate]);
-		fprintf(f, "\tFlashState = %s;\n", statename[weaponinfo[i].flashstate]);
-
-		fprintf(f, "}\n");
-		fclose(f);
-	}
 	fclose(cf);
-}
-
-//==========================================================================
-//
-//	WriteMisc
-//
-//==========================================================================
-
-static void WriteMisc()
-{
-	FILE		*f;
-	int			i;
-
-	f = fopen("gendefs.vc", "w");
-
-	WriteHeader(f);
-	fprintf(f, "\n");
-	fprintf(f, "\tINITIAL_HEALTH = %d;\n", initial_health);
-	fprintf(f, "\tINITIAL_AMMO = %d;\n", initial_ammo);
-	fprintf(f, "\tBFGCELLS = %d;\n", bfg_cells);
-	fprintf(f, "\tGOD_HEALTH = %d;\n", god_health);
-	fprintf(f, "\tSOULSPHERE_MAX = %d;\n", soulsphere_max);
-	fprintf(f, "\tSOULSPHERE_HEALTH = %d;\n", soulsphere_health);
-	fprintf(f, "\tMEGASPHERE_HEALTH = %d;\n", megasphere_health);
-
-	if (numammo)
-	{
-		for (i = 0; i < numammo; i++)
-		{
-			fprintf(f, "\tmaxammo[%d] = %d;\n", i, maxammo[i]);
-		}
-
-		for (i = 0; i < numammo; i++)
-		{
-			fprintf(f, "\tclipammo[%d] = %d;\n", i, perammo[i]);
-		}
-	}
-
-	fprintf(f, "\n");
-	WriteFooter(f);
-	fclose(f);
 }
 
 //==========================================================================
@@ -402,7 +319,6 @@ int main(int argc, char** argv)
 
 	ProcessDehackedFiles(argc, argv);
 	WriteClasses();
-	WriteMisc();
 
 	return 0;
 }

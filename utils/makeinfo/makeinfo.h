@@ -98,18 +98,6 @@ typedef struct
 	int	raisestate;
 } mobjinfo_t;
 
-// Weapon info: sprite frames, ammunition use.
-typedef struct
-{
-	int			ammo;
-	int			upstate;
-	int 		downstate;
-	int 		readystate;
-	int 		atkstate;
-	int 		holdatkstate;
-	int 		flashstate;
-} weaponinfo_t;
-
 extern bool					Doom2;
 
 extern const char*			sfx[NUMSFX];

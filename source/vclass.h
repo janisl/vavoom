@@ -417,6 +417,8 @@ public:
 		return ParentClass;
 	}
 
+	VField* FindField(VName InName);
+	VField* FindFieldChecked(VName InName);
 	VMethod* FindFunction(VName InName);
 	VMethod* FindFunctionChecked(VName InName);
 	int GetFunctionIndex(VName InName);

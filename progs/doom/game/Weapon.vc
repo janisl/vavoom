@@ -30,7 +30,6 @@ state UpState;
 state DownState;
 state ReadyState;
 state AttackState;
-state HoldAttackState;
 state FlashState;
 int PlayerModelVersion;
 

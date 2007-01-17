@@ -13,7 +13,7 @@ shared.dat: ../doom/doomdefs.vc
 clprogs.dat: clprogs.vc ../doom/*.vc ../doom/cgame/*.vc ../common/*.vc
 	$(VCC) -I../common -I../doom clprogs -P../../basev/common/progs
 
-svprogs.dat: svprogs.vc ../doom/*.vc ../doom/game/*.vc ../common/*.vc *.vc
+svprogs.dat: svprogs.vc ../doom/*.vc ../doom/game/*.vc ../common/*.vc *.vc deh_game/*.vc
 	$(VCC) -I../common -I../doom svprogs -P../../basev/common/progs
 
 info:

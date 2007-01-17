@@ -7,7 +7,7 @@
 //**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
 //**	   #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id: dehacked.cpp 1962 2007-01-11 23:29:44Z dj_jl $
+//**	$Id:$
 //**
 //**	Copyright (C) 1999-2006 Jānis Legzdiņš
 //**
@@ -43,10 +43,6 @@
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
-/*extern mobjinfo_t			mobjinfo[];
-extern weaponinfo_t			weaponinfo[];*/
-int					maxammo[4];
-int					perammo[4];
 int					initial_health;
 int					initial_ammo;
 int					bfg_cells;
@@ -61,14 +57,16 @@ bool					Hacked;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static char		*Patch;
-static char		*PatchPtr;
-static char 	*String;
-static int 		value;
+static char*					Patch;
+static char*					PatchPtr;
+static char*					String;
+static int						value;
 
 static TArray<VState*>			States;
 static TArray<VState*>			CodePtrStates;
 static TArray<VMethod*>			StateActions;
+
+static VClass*					GameInfoClass;
 
 static TArray<FReplacedString>	SfxNames;
 static TArray<FReplacedString>	MusicNames;
@@ -96,12 +94,13 @@ static const char* OrigSpriteNames[] = {
 
 //==========================================================================
 //
-//  GetLine
+//	GetLine
 //
 //==========================================================================
 
 static bool GetLine()
 {
+	guard(GetLine);
 	do
 	{
 		if (!*PatchPtr)
@@ -134,16 +133,18 @@ static bool GetLine()
 	} while (!*String);
 
 	return true;
+	unguard;
 }
 
 //==========================================================================
 //
-//  ParseParam
+//	ParseParam
 //
 //==========================================================================
 
 static bool ParseParam()
 {
+	guard(ParseParam);
 	char	*val;
 
 	if (!GetLine())
@@ -168,11 +169,91 @@ static bool ParseParam()
 	while (val >= String && *val <= ' ');
 
 	return true;
+	unguard;
 }
 
 //==========================================================================
 //
-//  ReadThing
+//	GetClassFieldInt
+//
+//==========================================================================
+
+static int GetClassFieldInt(VClass* Class, const char* FieldName, int Idx = 0)
+{
+	guard(GetClassFieldInt);
+	VField* F = Class->FindFieldChecked(FieldName);
+	vint32* Ptr = (vint32*)(Class->Defaults + F->Ofs);
+	return Ptr[Idx];
+	unguard;
+}
+
+//==========================================================================
+//
+//	SetClassFieldInt
+//
+//==========================================================================
+
+static void SetClassFieldInt(VClass* Class, const char* FieldName,
+	int Value, int Idx = 0)
+{
+	guard(SetClassFieldInt);
+	VField* F = Class->FindFieldChecked(FieldName);
+	vint32* Ptr = (vint32*)(Class->Defaults + F->Ofs);
+	Ptr[Idx] = Value;
+	unguard;
+}
+
+//==========================================================================
+//
+//	GetClassFieldState
+//
+//==========================================================================
+
+static VState* GetClassFieldState(VClass* Class, const char* FieldName,
+	int Idx = 0)
+{
+	guard(GetClassFieldState);
+	VField* F = Class->FindFieldChecked(FieldName);
+	VState** Ptr = (VState**)(Class->Defaults + F->Ofs);
+	return Ptr[Idx];
+	unguard;
+}
+
+//==========================================================================
+//
+//	SetClassFieldState
+//
+//==========================================================================
+
+static void SetClassFieldState(VClass* Class, const char* FieldName,
+	VState* Value, int Idx = 0)
+{
+	guard(SetClassFieldInt);
+	VField* F = Class->FindFieldChecked(FieldName);
+	VState** Ptr = (VState**)(Class->Defaults + F->Ofs);
+	Ptr[Idx] = Value;
+	unguard;
+}
+
+//==========================================================================
+//
+//	GetClassFieldClass
+//
+//==========================================================================
+
+static VClass* GetClassFieldClass(VClass* Class, const char* FieldName,
+	int Idx = 0)
+{
+	guard(GetClassFieldClass);
+	VField* F = Class->FindFieldChecked(FieldName);
+	VClass** Ptr = (VClass**)(Class->Defaults + F->Ofs);
+	return Ptr[Idx];
+	unguard;
+}
+
+//==========================================================================
+//
+//	ReadThing
 //
 //==========================================================================
 
@@ -217,35 +298,38 @@ static void ReadThing(int num)
 
 //==========================================================================
 //
-//  ReadSound
+//	ReadSound
 //
 //==========================================================================
 
-static void ReadSound(int num)
+static void ReadSound(int)
 {
+	guard(ReadSound);
 	while (ParseParam())
 	{
-/*		if (!strcmp(String, "Offset"));				//Lump name offset - can't handle
+		if (!strcmp(String, "Offset"));				//Lump name offset - can't handle
 		else if (!strcmp(String, "Zero/One"));		//Singularity - removed
-		else if (!strcmp(String, "Value"))			sfx[num].priority = value;
-		else if (!strcmp(String, "Zero 1"));        //Lump num - can't be set
-		else if (!strcmp(String, "Zero 2"));        //Data pointer - can't be set
+		else if (!strcmp(String, "Value"));			//Priority
+		else if (!strcmp(String, "Zero 1"));		//Lump num - can't be set
+		else if (!strcmp(String, "Zero 2"));		//Data pointer - can't be set
 		else if (!strcmp(String, "Zero 3"));		//Usefulness - removed
-		else if (!strcmp(String, "Zero 4"));        //Link - removed
-		else if (!strcmp(String, "Neg. One 1"));    //Link pitch - removed
-		else if (!strcmp(String, "Neg. One 2"));    //Link volume - removed
-		else */dprintf("WARNING! Invalid sound param %s\n", String);
+		else if (!strcmp(String, "Zero 4"));		//Link - removed
+		else if (!strcmp(String, "Neg. One 1"));	//Link pitch - removed
+		else if (!strcmp(String, "Neg. One 2"));	//Link volume - removed
+		else dprintf("WARNING! Invalid sound param %s\n", String);
 	}
+	unguard;
 }
 
 //==========================================================================
 //
-//  ReadState
+//	ReadState
 //
 //==========================================================================
 
 static void ReadState(int num)
 {
+	guard(ReadState);
 	//	Check index.
 	if (num >= States.Num() || num < 0)
 	{
@@ -261,7 +345,6 @@ static void ReadState(int num)
 		return;
 	}
 
-//dprintf("---- State %d (%s)\n", num, *States[num]->Name);
 	while (ParseParam())
 	{
 		if (!strcmp(String, "Sprite number"))
@@ -310,67 +393,157 @@ static void ReadState(int num)
 			dprintf("WARNING! Invalid state param %s\n", String);
 		}
 	}
+	unguard;
 }
 
 //==========================================================================
 //
-//  ReadSpriteName
+//	ReadSpriteName
 //
 //==========================================================================
 
 static void ReadSpriteName(int)
 {
+	guard(ReadSpriteName);
 	while (ParseParam())
 	{
 		if (!VStr::ICmp(String, "Offset"));	//	Can't handle
 		else dprintf("WARNING! Invalid sprite name param %s\n", String);
 	}
+	unguard;
 }
 
 //==========================================================================
 //
-//  ReadAmmo
+//	ReadAmmo
 //
 //==========================================================================
 
 static void ReadAmmo(int num)
 {
+	guard(ReadAmmo);
+	//	Check index.
+	if (num >= 4 || num < 0)
+	{
+		dprintf("WARNING! Invalid ammo num %d\n", num);
+		while (ParseParam());
+		return;
+	}
+
 	while (ParseParam())
 	{
-		if (!VStr::ICmp(String, "Max ammo"))		maxammo[num] = value;
-		else if (!VStr::ICmp(String, "Per ammo"))	perammo[num] = value;
-		else dprintf("WARNING! Invalid ammo param %s\n", String);
+		if (!VStr::ICmp(String, "Max ammo"))
+		{
+			SetClassFieldInt(GameInfoClass, "maxammo", value, num);
+		}
+		else if (!VStr::ICmp(String, "Per ammo"))
+		{
+			SetClassFieldInt(GameInfoClass, "clipammo", value, num);
+		}
+		else
+		{
+			dprintf("WARNING! Invalid ammo param %s\n", String);
+		}
 	}
+	unguard;
 }
 
 //==========================================================================
 //
-//  ReadWeapon
+//	ReadWeapon
 //
 //==========================================================================
 
 static void ReadWeapon(int num)
 {
+	guard(ReadWeapon);
+	//	Check index.
+	if (num < 0 || num > 8)
+	{
+		dprintf("WARNING! Invalid weapon num %d\n", num);
+		while (ParseParam());
+		return;
+	}
+
+	VClass* Weapon = GetClassFieldClass(GameInfoClass, "WeaponClasses", num);
 	while (ParseParam())
 	{
-/*		if (!VStr::ICmp(String, "Ammo type"))				weaponinfo[num].ammo 		= value;
-		else if (!VStr::ICmp(String, "Deselect frame"))	weaponinfo[num].upstate		= value;
-		else if (!VStr::ICmp(String, "Select frame"))  	weaponinfo[num].downstate 	= value;
-		else if (!VStr::ICmp(String, "Bobbing frame")) 	weaponinfo[num].readystate	= value;
-		else if (!VStr::ICmp(String, "Shooting frame"))	weaponinfo[num].atkstate 	= value;
-		else if (!VStr::ICmp(String, "Firing frame"))  	weaponinfo[num].flashstate	= value;
-		else */dprintf("WARNING! Invalid weapon param %s\n", String);
+		if (!VStr::ICmp(String, "Ammo type"))
+		{
+			SetClassFieldInt(Weapon, "Ammo", value);
+		}
+		else if (!VStr::ICmp(String, "Deselect frame"))
+		{
+			if (value < 0 || value >= States.Num())
+			{
+				dprintf("WARNING! Invalid weapon state %d\n", value);
+			}
+			else
+			{
+				SetClassFieldState(Weapon, "UpState", States[value]);
+			}
+		}
+		else if (!VStr::ICmp(String, "Select frame"))
+		{
+			if (value < 0 || value >= States.Num())
+			{
+				dprintf("WARNING! Invalid weapon state %d\n", value);
+			}
+			else
+			{
+				SetClassFieldState(Weapon, "DownState", States[value]);
+			}
+		}
+		else if (!VStr::ICmp(String, "Bobbing frame"))
+		{
+			if (value < 0 || value >= States.Num())
+			{
+				dprintf("WARNING! Invalid weapon state %d\n", value);
+			}
+			else
+			{
+				SetClassFieldState(Weapon, "ReadyState", States[value]);
+			}
+		}
+		else if (!VStr::ICmp(String, "Shooting frame"))
+		{
+			if (value < 0 || value >= States.Num())
+			{
+				dprintf("WARNING! Invalid weapon state %d\n", value);
+			}
+			else
+			{
+				SetClassFieldState(Weapon, "AttackState", States[value]);
+			}
+		}
+		else if (!VStr::ICmp(String, "Firing frame"))
+		{
+			if (value < 0 || value >= States.Num())
+			{
+				dprintf("WARNING! Invalid weapon state %d\n", value);
+			}
+			else
+			{
+				SetClassFieldState(Weapon, "FlashState", States[value]);
+			}
+		}
+		else
+		{
+			dprintf("WARNING! Invalid weapon param %s\n", String);
+		}
 	}
+	unguard;
 }
 
 //==========================================================================
 //
-//  ReadPointer
+//	ReadPointer
 //
 //==========================================================================
 
 static void ReadPointer(int num)
 {
+	guard(ReadPointer);
 	if (num < 0 || num >= CodePtrStates.Num())
 	{
 		dprintf("WARNING! Invalid pointer\n");
@@ -382,56 +555,88 @@ static void ReadPointer(int num)
 	{
 		if (!VStr::ICmp(String, "Codep Frame"))
 		{
-			CodePtrStates[num]->Function = StateActions[value];
+			if (value < 0 || value >= States.Num())
+			{
+				dprintf("WARNING! Invalid source state %d\n", value);
+			}
+			else
+			{
+				CodePtrStates[num]->Function = StateActions[value];
+			}
 		}
 		else
 		{
 			dprintf("WARNING! Invalid pointer param %s\n", String);
 		}
 	}
+	unguard;
 }
 
 //==========================================================================
 //
-//  ReadCheats
+//	ReadCheats
 //
 //==========================================================================
 
 static void ReadCheats(int)
 {
+	guard(ReadCheats);
 	//	Old cheat handling is removed
 	while (ParseParam());
+	unguard;
 }
 
 //==========================================================================
 //
-//  ReadMisc
+//	ReadMisc
 //
 //==========================================================================
 
 static void ReadMisc(int)
 {
-	//	Not handled yet
+	guard(ReadMisc);
 	while (ParseParam())
 	{
-		if (!VStr::ICmp(String, "Initial Health"))			initial_health = value;
-		else if (!VStr::ICmp(String, "Initial Bullets"))	initial_ammo = value;
+		if (!VStr::ICmp(String, "Initial Health"))
+		{
+			SetClassFieldInt(GameInfoClass, "INITIAL_HEALTH", value);
+		}
+		else if (!VStr::ICmp(String, "Initial Bullets"))
+		{
+			SetClassFieldInt(GameInfoClass, "INITIAL_AMMO", value);
+		}
 		else if (!VStr::ICmp(String, "Max Health"));
 		else if (!VStr::ICmp(String, "Max Armor"));
 		else if (!VStr::ICmp(String, "Green Armor Class"));
 		else if (!VStr::ICmp(String, "Blue Armor Class"));
-		else if (!VStr::ICmp(String, "Max Soulsphere"))	soulsphere_max = value;
-		else if (!VStr::ICmp(String, "Soulsphere Health"))	soulsphere_health = value;
-		else if (!VStr::ICmp(String, "Megasphere Health"))	megasphere_health = value;
-		else if (!VStr::ICmp(String, "God Mode Health"))   god_health = value;
+		else if (!VStr::ICmp(String, "Max Soulsphere"))
+		{
+			SetClassFieldInt(GameInfoClass, "SOULSPHERE_MAX", value);
+		}
+		else if (!VStr::ICmp(String, "Soulsphere Health"))
+		{
+			SetClassFieldInt(GameInfoClass, "SOULSPHERE_HEALTH", value);
+		}
+		else if (!VStr::ICmp(String, "Megasphere Health"))
+		{
+			SetClassFieldInt(GameInfoClass, "MEGASPHERE_HEALTH", value);
+		}
+		else if (!VStr::ICmp(String, "God Mode Health"))
+		{
+			SetClassFieldInt(GameInfoClass, "GOD_HEALTH", value);
+		}
 		else if (!VStr::ICmp(String, "IDFA Armor"));		//	Cheat removed
 		else if (!VStr::ICmp(String, "IDFA Armor Class"));	//	Cheat removed
 		else if (!VStr::ICmp(String, "IDKFA Armor"));		//	Cheat removed
 		else if (!VStr::ICmp(String, "IDKFA Armor Class"));//	Cheat removed
-		else if (!VStr::ICmp(String, "BFG Cells/Shot"))	bfg_cells = value;
+		else if (!VStr::ICmp(String, "BFG Cells/Shot"))
+		{
+			SetClassFieldInt(GameInfoClass, "BFGCELLS", value);
+		}
 		else if (!VStr::ICmp(String, "Monsters Infight"));	//	What's that?
 		else dprintf("WARNING! Invalid misc %s\n", String);
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -442,6 +647,7 @@ static void ReadMisc(int)
 
 static void FindString(const char* oldStr, const char* newStr)
 {
+	guard(FindString);
 	//	Sounds
 	bool SoundFound = false;
 	for (int i = 0; i < SfxNames.Num(); i++)
@@ -495,16 +701,18 @@ static void FindString(const char* oldStr, const char* newStr)
 	}
 
 	dprintf("Not found old \"%s\" new \"%s\"\n", oldStr, newStr);
+	unguard;
 }
 
 //==========================================================================
 //
-//  ReadText
+//	ReadText
 //
 //==========================================================================
 
 static void ReadText(int oldSize)
 {
+	guard(ReadText);
 	char	*lenPtr;
 	int		newSize;
 	char	*oldStr;
@@ -555,16 +763,18 @@ static void ReadText(int oldSize)
 	delete[] newStr;
 
 	GetLine();
+	unguard;
 }
 
 //==========================================================================
 //
-//  LoadDehackedFile
+//	LoadDehackedFile
 //
 //==========================================================================
 
 static void LoadDehackedFile(const char *filename)
 {
+	guard(LoadDehackedFile);
 	char*	Section;
 	char*	numStr;
 	int		i = 0;
@@ -641,16 +851,18 @@ static void LoadDehackedFile(const char *filename)
 		}
 	}
 	delete[] Patch;
+	unguard;
 }
 
 //==========================================================================
 //
-//  ProcessDehackedFiles
+//	ProcessDehackedFiles
 //
 //==========================================================================
 
 void ProcessDehackedFiles()
 {
+	guard(ProcessDehackedFiles);
 	int p = GArgs.CheckParm("-deh");
 	if (!p)
 	{
@@ -665,11 +877,12 @@ void ProcessDehackedFiles()
 		States.Append(S);
 		if (S->Function || S->InClassIndex + 1 == 738)
 		{
-dprintf("Code ptr %d, state %d %s\n", CodePtrStates.Num(), S->InClassIndex + 1, *S->Name);
 			CodePtrStates.Append(S);
 		}
 		StateActions.Append(S->Function);
 	}
+
+	GameInfoClass = VClass::FindClass("MainGameInfo");
 
 	GSoundManager->GetSoundLumpNames(SfxNames);
 	P_GetMusicLumpNames(MusicNames);
@@ -695,4 +908,5 @@ dprintf("Code ptr %d, state %d %s\n", CodePtrStates.Num(), S->InClassIndex + 1, 
 	MusicNames.Clear();
 	SpriteNames.Clear();
 	delete EngStrings;
+	unguard;
 }

@@ -120,8 +120,6 @@ enum
 
 #include "game/classes.vc"
 
-#ifndef DEHACKED
 #include "game1/classes.vc"
 
 #include "game2/classes.vc"
-#endif

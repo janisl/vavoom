@@ -1211,26 +1211,3 @@ char* flagnames2[32] =
     "MF2_SEEKERMISSILE",
     "MF2_REFLECTIVE",
 };
-
-char* ammo_names[] =
-{
-    "am_clip",	// Pistol / chaingun ammo.
-    "am_shell",	// Shotgun / double barreled shotgun.
-    "am_cell",	// Plasma rifle, BFG.
-    "am_misl",	// Missile launcher.
-    "NUMAMMO",
-    "am_noammo"	// Unlimited for chainsaw / fist.
-};
-
-char* weapon_names[] =
-{
-    "WeaponFist",
-    "WeaponPistol",
-    "WeaponShotgun",
-    "WeaponChaingun",
-    "WeaponMissile",
-    "WeaponPlasma",
-    "WeaponBFG",
-    "WeaponChainsaw",
-    "WeaponSuperShotgun",
-};

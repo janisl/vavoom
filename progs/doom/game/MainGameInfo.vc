@@ -44,8 +44,8 @@ spec_trans_t spec_trans_tab[NUM_SPECIALS];
 class<Weapon> WeaponClasses[DoomDefs::NUMWEAPONS];
 int WeaponOrder[DoomDefs::NUMWEAPONS];
 
-#ifndef NO_BOTS
 int botskill;
+#ifndef NO_BOTS
 BotPlayer::botinfo_t botinfo[30];
 #endif
 
@@ -1345,9 +1345,6 @@ defaultproperties
 
 	air_control = 1.0 / 256.0;
 
-#ifdef DEHACKED
-#include "gendefs.vc"
-#else
 	botskill = 2;
 
 	maxammo[0] = 200;
@@ -1367,5 +1364,4 @@ defaultproperties
 	SOULSPHERE_MAX = 200;
 	SOULSPHERE_HEALTH = 100;
 	MEGASPHERE_HEALTH = 200;
-#endif
 }
