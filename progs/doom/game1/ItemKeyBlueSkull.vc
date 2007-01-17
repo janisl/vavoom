@@ -27,14 +27,11 @@ class ItemKeyBlueSkull : KeyPickup
 	__mobjinfo__(40)
 	__scriptid__(90);
 
-__states__
-{
-	S_BSKULL('BSKU', 0, 10.0 / 35.0, S_BSKULL2) = none
-	S_BSKULL2('BSKU', 1 | FF_FULLBRIGHT, 10.0 / 35.0, S_BSKULL) = none
-}
-
 defaultproperties
 {
+	bSpecial = true;
+	bNoPassMobj = true;
+	bNoDeathmatch = true;
 	IdleState = S_BSKULL;
 	KeyType = it_blueskull;
 	PickupMessage = "$gotblueskul";

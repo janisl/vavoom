@@ -23,13 +23,8 @@
 //**
 //**************************************************************************
 
-class BurnedTree : Decoration
+class BurnedTree : Actor
 	__mobjinfo__(43);
-
-__states__
-{
-	S_TORCHTREE('TRE1', 0, -1.0, none) = none
-}
 
 defaultproperties
 {

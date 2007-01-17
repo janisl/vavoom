@@ -25,27 +25,6 @@
 
 class WeaponSuperShotgun : Weapon;
 
-__states__
-{
-	S_DSGUN('SHT2', 0, 1.0 / 35.0, S_DSGUN) = A_WeaponReady
-	S_DSGUNDOWN('SHT2', 0, 1.0 / 35.0, S_DSGUNDOWN) = A_Lower
-	S_DSGUNUP('SHT2', 0, 1.0 / 35.0, S_DSGUNUP) = A_Raise
-	S_DSGUN1('SHT2', 0, 3.0 / 35.0, S_DSGUN2) = none
-	S_DSGUN2('SHT2', 0, 7.0 / 35.0, S_DSGUN3) = A_FireShotgun2
-	S_DSGUN3('SHT2', 1, 7.0 / 35.0, S_DSGUN4) = none
-	S_DSGUN4('SHT2', 2, 7.0 / 35.0, S_DSGUN5) = A_CheckReload
-	S_DSGUN5('SHT2', 3, 7.0 / 35.0, S_DSGUN6) = A_OpenShotgun2
-	S_DSGUN6('SHT2', 4, 7.0 / 35.0, S_DSGUN7) = none
-	S_DSGUN7('SHT2', 5, 7.0 / 35.0, S_DSGUN8) = A_LoadShotgun2
-	S_DSGUN8('SHT2', 6, 6.0 / 35.0, S_DSGUN9) = none
-	S_DSGUN9('SHT2', 7, 6.0 / 35.0, S_DSGUN10) = A_CloseShotgun2
-	S_DSGUN10('SHT2', 0, 5.0 / 35.0, S_DSGUN) = A_ReFire
-	S_DSNR1('SHT2', 1, 7.0 / 35.0, S_DSNR2) = none
-	S_DSNR2('SHT2', 0, 3.0 / 35.0, S_DSGUNDOWN) = none
-	S_DSGUNFLASH1('SHT2', 8 | FF_FULLBRIGHT, 5.0 / 35.0, S_DSGUNFLASH2) = A_Light1
-	S_DSGUNFLASH2('SHT2', 9 | FF_FULLBRIGHT, 4.0 / 35.0, S_LIGHTDONE) = A_Light2
-}
-
 defaultproperties
 {
 	Ammo = DoomDefs::am_shell;

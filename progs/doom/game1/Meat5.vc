@@ -23,13 +23,8 @@
 //**
 //**************************************************************************
 
-class Meat5 : Decoration
+class Meat5 : Actor
 	__mobjinfo__(53);
-
-__states__
-{
-	S_MEAT5('GOR5', 0, -1.0, none) = none
-}
 
 defaultproperties
 {

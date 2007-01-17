@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ArmorPickup : Pickup
+class ArmorPickup : Actor
 	abstract;
 
 int ArmorClass;

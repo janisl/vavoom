@@ -23,13 +23,9 @@
 //**
 //**************************************************************************
 
-class Gibs : Decoration
+class Gibs : Actor
 	__mobjinfo__(24)
 	__scriptid__(146);
-
-__states__
-{
-}
 
 defaultproperties
 {

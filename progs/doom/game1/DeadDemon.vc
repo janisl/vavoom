@@ -23,15 +23,10 @@
 //**
 //**************************************************************************
 
-class DeadDemon : Decoration
+class DeadDemon : Actor
 	__mobjinfo__(21);
-
-__states__
-{
-	S_SARG_DEAD('SARG', 13, -1.0, none) = none
-}
 
 defaultproperties
 {
-	IdleState = S_SARG_DEAD;
+	IdleState = S_SARG_DIE6;
 }

@@ -23,29 +23,9 @@
 //**
 //**************************************************************************
 
-class LostSoul : Pawn
+class LostSoul : Actor
 	__mobjinfo__(3006)
 	__scriptid__(110);
-
-__states__
-{
-	S_SKULL_STND('SKUL', 0 | FF_FULLBRIGHT, 10.0 / 35.0, S_SKULL_STND2) = A_Look
-	S_SKULL_STND2('SKUL', 1 | FF_FULLBRIGHT, 10.0 / 35.0, S_SKULL_STND) = A_Look
-	S_SKULL_RUN1('SKUL', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_SKULL_RUN2) = A_Chase
-	S_SKULL_RUN2('SKUL', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_SKULL_RUN1) = A_Chase
-	S_SKULL_ATK1('SKUL', 2 | FF_FULLBRIGHT, 10.0 / 35.0, S_SKULL_ATK2) = A_FaceTarget
-	S_SKULL_ATK2('SKUL', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_SKULL_ATK3) = A_SkullAttack
-	S_SKULL_ATK3('SKUL', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_SKULL_ATK4) = none
-	S_SKULL_ATK4('SKUL', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_SKULL_ATK3) = none
-	S_SKULL_PAIN('SKUL', 4 | FF_FULLBRIGHT, 3.0 / 35.0, S_SKULL_PAIN2) = none
-	S_SKULL_PAIN2('SKUL', 4 | FF_FULLBRIGHT, 3.0 / 35.0, S_SKULL_RUN1) = A_Pain
-	S_SKULL_DIE1('SKUL', 5 | FF_FULLBRIGHT, 6.0 / 35.0, S_SKULL_DIE2) = none
-	S_SKULL_DIE2('SKUL', 6 | FF_FULLBRIGHT, 6.0 / 35.0, S_SKULL_DIE3) = A_Scream
-	S_SKULL_DIE3('SKUL', 7 | FF_FULLBRIGHT, 6.0 / 35.0, S_SKULL_DIE4) = none
-	S_SKULL_DIE4('SKUL', 8 | FF_FULLBRIGHT, 6.0 / 35.0, S_SKULL_DIE5) = A_Fall
-	S_SKULL_DIE5('SKUL', 9, 6.0 / 35.0, S_SKULL_DIE6) = none
-	S_SKULL_DIE6('SKUL', 10, 6.0 / 35.0, none) = none
-}
 
 defaultproperties
 {
@@ -56,7 +36,11 @@ defaultproperties
 	StepSpeed = 8.0;
 	PainChance = 1.0;
 	MissileDamage = 3;
-	bCountKill = false;
+	bSolid = true;
+	bShootable = true;
+	bMonster = true;
+	bActivateMCross = true;
+	bActivatePushWall = true;
 	bNoGravity = true;
 	bFloat = true;
 	bTriggerHappy = true;

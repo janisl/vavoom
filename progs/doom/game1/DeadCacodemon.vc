@@ -23,15 +23,10 @@
 //**
 //**************************************************************************
 
-class DeadCacodemon : Decoration
+class DeadCacodemon : Actor
 	__mobjinfo__(22);
-
-__states__
-{
-	S_HEAD_DEAD('HEAD', 11, -1.0, none) = none
-}
 
 defaultproperties
 {
-	IdleState = S_HEAD_DEAD;
+	IdleState = S_HEAD_DIE6;
 }

@@ -23,46 +23,9 @@
 //**
 //**************************************************************************
 
-class Imp : Pawn
+class Imp : Actor
 	__mobjinfo__(3001)
 	__scriptid__(5);
-
-__states__
-{
-	S_TROO_STND('TROO', 0, 10.0 / 35.0, S_TROO_STND2) = A_Look
-	S_TROO_STND2('TROO', 1, 10.0 / 35.0, S_TROO_STND) = A_Look
-	S_TROO_RUN1('TROO', 0, 3.0 / 35.0, S_TROO_RUN2) = A_Chase
-	S_TROO_RUN2('TROO', 0, 3.0 / 35.0, S_TROO_RUN3) = A_Chase
-	S_TROO_RUN3('TROO', 1, 3.0 / 35.0, S_TROO_RUN4) = A_Chase
-	S_TROO_RUN4('TROO', 1, 3.0 / 35.0, S_TROO_RUN5) = A_Chase
-	S_TROO_RUN5('TROO', 2, 3.0 / 35.0, S_TROO_RUN6) = A_Chase
-	S_TROO_RUN6('TROO', 2, 3.0 / 35.0, S_TROO_RUN7) = A_Chase
-	S_TROO_RUN7('TROO', 3, 3.0 / 35.0, S_TROO_RUN8) = A_Chase
-	S_TROO_RUN8('TROO', 3, 3.0 / 35.0, S_TROO_RUN1) = A_Chase
-	S_TROO_ATK1('TROO', 4, 8.0 / 35.0, S_TROO_ATK2) = A_FaceTarget
-	S_TROO_ATK2('TROO', 5, 8.0 / 35.0, S_TROO_ATK3) = A_FaceTarget
-	S_TROO_ATK3('TROO', 6, 6.0 / 35.0, S_TROO_RUN1) = A_TroopAttack
-	S_TROO_PAIN('TROO', 7, 2.0 / 35.0, S_TROO_PAIN2) = none
-	S_TROO_PAIN2('TROO', 7, 2.0 / 35.0, S_TROO_RUN1) = A_Pain
-	S_TROO_DIE1('TROO', 8, 8.0 / 35.0, S_TROO_DIE2) = none
-	S_TROO_DIE2('TROO', 9, 8.0 / 35.0, S_TROO_DIE3) = A_Scream
-	S_TROO_DIE3('TROO', 10, 6.0 / 35.0, S_TROO_DIE4) = none
-	S_TROO_DIE4('TROO', 11, 6.0 / 35.0, S_TROO_DIE5) = A_Fall
-	S_TROO_DIE5('TROO', 12, -1.0, none) = none
-	S_TROO_XDIE1('TROO', 13, 5.0 / 35.0, S_TROO_XDIE2) = none
-	S_TROO_XDIE2('TROO', 14, 5.0 / 35.0, S_TROO_XDIE3) = A_XScream
-	S_TROO_XDIE3('TROO', 15, 5.0 / 35.0, S_TROO_XDIE4) = none
-	S_TROO_XDIE4('TROO', 16, 5.0 / 35.0, S_TROO_XDIE5) = A_Fall
-	S_TROO_XDIE5('TROO', 17, 5.0 / 35.0, S_TROO_XDIE6) = none
-	S_TROO_XDIE6('TROO', 18, 5.0 / 35.0, S_TROO_XDIE7) = none
-	S_TROO_XDIE7('TROO', 19, 5.0 / 35.0, S_TROO_XDIE8) = none
-	S_TROO_XDIE8('TROO', 20, -1.0, none) = none
-	S_TROO_RAISE1('TROO', 12, 8.0 / 35.0, S_TROO_RAISE2) = none
-	S_TROO_RAISE2('TROO', 11, 8.0 / 35.0, S_TROO_RAISE3) = none
-	S_TROO_RAISE3('TROO', 10, 6.0 / 35.0, S_TROO_RAISE4) = none
-	S_TROO_RAISE4('TROO', 9, 6.0 / 35.0, S_TROO_RAISE5) = none
-	S_TROO_RAISE5('TROO', 8, 6.0 / 35.0, S_TROO_RUN1) = none
-}
 
 defaultproperties
 {
@@ -73,6 +36,12 @@ defaultproperties
 	Mass = 100.0;
 	StepSpeed = 8.0;
 	PainChance = 0.78125;
+	bSolid = true;
+	bShootable = true;
+	bCountKill = true;
+	bMonster = true;
+	bActivateMCross = true;
+	bActivatePushWall = true;
 	IdleState = S_TROO_STND;
 	SeeState = S_TROO_RUN1;
 	MeleeState = S_TROO_ATK1;

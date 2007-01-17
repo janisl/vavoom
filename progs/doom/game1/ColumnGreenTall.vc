@@ -23,13 +23,8 @@
 //**
 //**************************************************************************
 
-class ColumnGreenTall : Decoration
+class ColumnGreenTall : Actor
 	__mobjinfo__(30);
-
-__states__
-{
-	S_TALLGRNCOL('COL1', 0, -1.0, none) = none
-}
 
 defaultproperties
 {

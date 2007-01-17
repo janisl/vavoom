@@ -23,16 +23,8 @@
 //**
 //**************************************************************************
 
-class TorchBlue : Decoration
+class TorchBlue : Actor
 	__mobjinfo__(44);
-
-__states__
-{
-	S_BLUETORCH('TBLU', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_BLUETORCH2) = none
-	S_BLUETORCH2('TBLU', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_BLUETORCH3) = none
-	S_BLUETORCH3('TBLU', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_BLUETORCH4) = none
-	S_BLUETORCH4('TBLU', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_BLUETORCH) = none
-}
 
 defaultproperties
 {

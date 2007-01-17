@@ -23,13 +23,8 @@
 //**
 //**************************************************************************
 
-class ColumnWithSkull : Decoration
+class ColumnWithSkull : Actor
 	__mobjinfo__(37);
-
-__states__
-{
-	S_SKULLCOL('COL6', 0, -1.0, none) = none
-}
 
 defaultproperties
 {

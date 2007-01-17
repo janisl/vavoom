@@ -27,13 +27,10 @@ class ItemWeaponRocketLauncher : WeaponPickup
 	__mobjinfo__(2003)
 	__scriptid__(29);
 
-__states__
-{
-	S_LAUN('LAUN', 0, -1.0, none) = none
-}
-
 defaultproperties
 {
+	bSpecial = true;
+	bNoPassMobj = true;
 	IdleState = S_LAUN;
 	WeaponType = DoomDefs::wp_missile;
 	PickupMessage = "$gotlauncher";

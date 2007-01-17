@@ -27,14 +27,10 @@ class ItemArmor1 : ArmorPickup
 	__mobjinfo__(2018)
 	__scriptid__(68);
 
-__states__
-{
-	S_ARM1('ARM1', 0, 6.0 / 35.0, S_ARM1A) = none
-	S_ARM1A('ARM1', 1 | FF_FULLBRIGHT, 7.0 / 35.0, S_ARM1) = none
-}
-
 defaultproperties
 {
+	bSpecial = true;
+	bNoPassMobj = true;
 	IdleState = S_ARM1;
 	ArmorClass = 1;
 	PickupMessage = "$gotarmor";

@@ -23,10 +23,11 @@
 //**
 //**************************************************************************
 
-class BloodyTwitchNoBlock:BloodyTwitch
+class BloodyTwitchNoBlock : BloodyTwitch
 	__mobjinfo__(63);
 
 defaultproperties
 {
+	Radius = 20.0;
 	bSolid = false;
 }

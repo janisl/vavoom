@@ -23,10 +23,11 @@
 //**
 //**************************************************************************
 
-class Meat4NoBlock:Meat4
+class Meat4NoBlock : Meat4
 	__mobjinfo__(60);
 
 defaultproperties
 {
+	Radius = 20.0;
 	bSolid = false;
 }

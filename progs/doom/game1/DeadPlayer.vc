@@ -23,15 +23,10 @@
 //**
 //**************************************************************************
 
-class DeadPlayer : Decoration
+class DeadPlayer : Actor
 	__mobjinfo__(15);
-
-__states__
-{
-	S_DEADTORSO('PLAY', 13, -1.0, none) = none
-}
 
 defaultproperties
 {
-	IdleState = S_DEADTORSO;
+	IdleState = S_PLAY_DIE7;
 }

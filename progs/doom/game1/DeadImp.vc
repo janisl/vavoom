@@ -23,15 +23,10 @@
 //**
 //**************************************************************************
 
-class DeadImp : Decoration
+class DeadImp : Actor
 	__mobjinfo__(20);
-
-__states__
-{
-	S_TROO_DEAD('TROO', 12, -1.0, none) = none
-}
 
 defaultproperties
 {
-	IdleState = S_TROO_DEAD;
+	IdleState = S_TROO_DIE5;
 }

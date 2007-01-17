@@ -23,19 +23,14 @@
 //**
 //**************************************************************************
 
-class Puff : Effect
+class Puff : Actor
 	__scriptid__(131);
-
-__states__
-{
-	S_PUFF1('PUFF', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_PUFF2) = none
-	S_PUFF2('PUFF', 1, 4.0 / 35.0, S_PUFF3) = none
-	S_PUFF3('PUFF', 2, 4.0 / 35.0, S_PUFF4) = none
-	S_PUFF4('PUFF', 3, 4.0 / 35.0, none) = none
-}
 
 defaultproperties
 {
 	Alpha = 0.666;
+	bNoBlockmap = true;
+	bNoGravity = true;
+	bNoPassMobj = true;
 	IdleState = S_PUFF1;
 }

@@ -23,18 +23,13 @@
 //**
 //**************************************************************************
 
-class ExtraBFG : Effect;
-
-__states__
-{
-	S_BFGEXP('BFE2', 0 | FF_FULLBRIGHT, 8.0 / 35.0, S_BFGEXP2) = none
-	S_BFGEXP2('BFE2', 1 | FF_FULLBRIGHT, 8.0 / 35.0, S_BFGEXP3) = none
-	S_BFGEXP3('BFE2', 2 | FF_FULLBRIGHT, 8.0 / 35.0, S_BFGEXP4) = none
-	S_BFGEXP4('BFE2', 3 | FF_FULLBRIGHT, 8.0 / 35.0, none) = none
-}
+class ExtraBFG : Actor;
 
 defaultproperties
 {
 	Alpha = 0.666;
+	bNoBlockmap = true;
+	bNoGravity = true;
+	bNoPassMobj = true;
 	IdleState = S_BFGEXP;
 }

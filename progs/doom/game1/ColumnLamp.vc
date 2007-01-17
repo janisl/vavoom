@@ -23,13 +23,8 @@
 //**
 //**************************************************************************
 
-class ColumnLamp : Decoration
+class ColumnLamp : Actor
 	__mobjinfo__(2028);
-
-__states__
-{
-	S_COLU('COLU', 0 | FF_FULLBRIGHT, -1.0, none) = none
-}
 
 defaultproperties
 {

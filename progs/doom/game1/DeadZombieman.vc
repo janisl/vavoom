@@ -23,15 +23,10 @@
 //**
 //**************************************************************************
 
-class DeadZombieman : Decoration
+class DeadZombieman : Actor
 	__mobjinfo__(18);
-
-__states__
-{
-	S_POSS_DEAD('POSS', 11, -1.0, none) = none
-}
 
 defaultproperties
 {
-	IdleState = S_POSS_DEAD;
+	IdleState = S_POSS_DIE5;
 }

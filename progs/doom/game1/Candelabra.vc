@@ -23,13 +23,8 @@
 //**
 //**************************************************************************
 
-class Candelabra : Decoration
+class Candelabra : Actor
 	__mobjinfo__(35);
-
-__states__
-{
-	S_CANDELABRA('CBRA', 0 | FF_FULLBRIGHT, -1.0, none) = none
-}
 
 defaultproperties
 {

@@ -23,14 +23,12 @@
 //**
 //**************************************************************************
 
-class BossTarget:Actor
+class BossTarget : Actor
 	__mobjinfo__(87);
 
 defaultproperties
 {
-	Radius = 20.0;
 	Height = 32.0;
-	ReactionCount = 8;
 	bHidden = true;
 	bNoBlockmap = true;
 }

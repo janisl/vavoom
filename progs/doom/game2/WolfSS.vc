@@ -41,47 +41,6 @@ void DropStuff()
 	A.bDropped = true;	// special versions of items
 }
 
-__states__
-{
-	S_SSWV_STND('SSWV', 0, 10.0 / 35.0, S_SSWV_STND2) = A_Look
-	S_SSWV_STND2('SSWV', 1, 10.0 / 35.0, S_SSWV_STND) = A_Look
-	S_SSWV_RUN1('SSWV', 0, 3.0 / 35.0, S_SSWV_RUN2) = A_Chase
-	S_SSWV_RUN2('SSWV', 0, 3.0 / 35.0, S_SSWV_RUN3) = A_Chase
-	S_SSWV_RUN3('SSWV', 1, 3.0 / 35.0, S_SSWV_RUN4) = A_Chase
-	S_SSWV_RUN4('SSWV', 1, 3.0 / 35.0, S_SSWV_RUN5) = A_Chase
-	S_SSWV_RUN5('SSWV', 2, 3.0 / 35.0, S_SSWV_RUN6) = A_Chase
-	S_SSWV_RUN6('SSWV', 2, 3.0 / 35.0, S_SSWV_RUN7) = A_Chase
-	S_SSWV_RUN7('SSWV', 3, 3.0 / 35.0, S_SSWV_RUN8) = A_Chase
-	S_SSWV_RUN8('SSWV', 3, 3.0 / 35.0, S_SSWV_RUN1) = A_Chase
-	S_SSWV_ATK1('SSWV', 4, 10.0 / 35.0, S_SSWV_ATK2) = A_FaceTarget
-	S_SSWV_ATK2('SSWV', 5, 10.0 / 35.0, S_SSWV_ATK3) = A_FaceTarget
-	S_SSWV_ATK3('SSWV', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_SSWV_ATK4) = A_CPosAttack
-	S_SSWV_ATK4('SSWV', 5, 6.0 / 35.0, S_SSWV_ATK5) = A_FaceTarget
-	S_SSWV_ATK5('SSWV', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_SSWV_ATK6) = A_CPosAttack
-	S_SSWV_ATK6('SSWV', 5, 1.0 / 35.0, S_SSWV_ATK2) = A_CPosRefire
-	S_SSWV_PAIN('SSWV', 7, 3.0 / 35.0, S_SSWV_PAIN2) = none
-	S_SSWV_PAIN2('SSWV', 7, 3.0 / 35.0, S_SSWV_RUN1) = A_Pain
-	S_SSWV_DIE1('SSWV', 8, 5.0 / 35.0, S_SSWV_DIE2) = none
-	S_SSWV_DIE2('SSWV', 9, 5.0 / 35.0, S_SSWV_DIE3) = A_Scream
-	S_SSWV_DIE3('SSWV', 10, 5.0 / 35.0, S_SSWV_DIE4) = A_Fall
-	S_SSWV_DIE4('SSWV', 11, 5.0 / 35.0, S_SSWV_DIE5) = none
-	S_SSWV_DIE5('SSWV', 12, -1.0, none) = none
-	S_SSWV_XDIE1('SSWV', 13, 5.0 / 35.0, S_SSWV_XDIE2) = none
-	S_SSWV_XDIE2('SSWV', 14, 5.0 / 35.0, S_SSWV_XDIE3) = A_XScream
-	S_SSWV_XDIE3('SSWV', 15, 5.0 / 35.0, S_SSWV_XDIE4) = A_Fall
-	S_SSWV_XDIE4('SSWV', 16, 5.0 / 35.0, S_SSWV_XDIE5) = none
-	S_SSWV_XDIE5('SSWV', 17, 5.0 / 35.0, S_SSWV_XDIE6) = none
-	S_SSWV_XDIE6('SSWV', 18, 5.0 / 35.0, S_SSWV_XDIE7) = none
-	S_SSWV_XDIE7('SSWV', 19, 5.0 / 35.0, S_SSWV_XDIE8) = none
-	S_SSWV_XDIE8('SSWV', 20, 5.0 / 35.0, S_SSWV_XDIE9) = none
-	S_SSWV_XDIE9('SSWV', 21, -1.0, none) = none
-	S_SSWV_RAISE1('SSWV', 12, 5.0 / 35.0, S_SSWV_RAISE2) = none
-	S_SSWV_RAISE2('SSWV', 11, 5.0 / 35.0, S_SSWV_RAISE3) = none
-	S_SSWV_RAISE3('SSWV', 10, 5.0 / 35.0, S_SSWV_RAISE4) = none
-	S_SSWV_RAISE4('SSWV', 9, 5.0 / 35.0, S_SSWV_RAISE5) = none
-	S_SSWV_RAISE5('SSWV', 8, 5.0 / 35.0, S_SSWV_RUN1) = none
-}
-
 defaultproperties
 {
 	Health = 50;

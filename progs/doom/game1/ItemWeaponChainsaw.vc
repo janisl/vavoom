@@ -27,13 +27,10 @@ class ItemWeaponChainsaw : WeaponPickup
 	__mobjinfo__(2005)
 	__scriptid__(32);
 
-__states__
-{
-	S_CSAW('CSAW', 0, -1.0, none) = none
-}
-
 defaultproperties
 {
+	bSpecial = true;
+	bNoPassMobj = true;
 	IdleState = S_CSAW;
 	WeaponType = DoomDefs::wp_chainsaw;
 	PickupMessage = "$gotchainsaw";

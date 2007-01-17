@@ -23,53 +23,9 @@
 //**
 //**************************************************************************
 
-class ArchVile : Pawn
+class ArchVile : Actor
 	__mobjinfo__(64)
 	__scriptid__(111);
-
-__states__
-{
-	S_VILE_STND('VILE', 0, 10.0 / 35.0, S_VILE_STND2) = A_Look
-	S_VILE_STND2('VILE', 1, 10.0 / 35.0, S_VILE_STND) = A_Look
-	S_VILE_RUN1('VILE', 0, 2.0 / 35.0, S_VILE_RUN2) = A_VileChase
-	S_VILE_RUN2('VILE', 0, 2.0 / 35.0, S_VILE_RUN3) = A_VileChase
-	S_VILE_RUN3('VILE', 1, 2.0 / 35.0, S_VILE_RUN4) = A_VileChase
-	S_VILE_RUN4('VILE', 1, 2.0 / 35.0, S_VILE_RUN5) = A_VileChase
-	S_VILE_RUN5('VILE', 2, 2.0 / 35.0, S_VILE_RUN6) = A_VileChase
-	S_VILE_RUN6('VILE', 2, 2.0 / 35.0, S_VILE_RUN7) = A_VileChase
-	S_VILE_RUN7('VILE', 3, 2.0 / 35.0, S_VILE_RUN8) = A_VileChase
-	S_VILE_RUN8('VILE', 3, 2.0 / 35.0, S_VILE_RUN9) = A_VileChase
-	S_VILE_RUN9('VILE', 4, 2.0 / 35.0, S_VILE_RUN10) = A_VileChase
-	S_VILE_RUN10('VILE', 4, 2.0 / 35.0, S_VILE_RUN11) = A_VileChase
-	S_VILE_RUN11('VILE', 5, 2.0 / 35.0, S_VILE_RUN12) = A_VileChase
-	S_VILE_RUN12('VILE', 5, 2.0 / 35.0, S_VILE_RUN1) = A_VileChase
-	S_VILE_ATK1('VILE', 6 | FF_FULLBRIGHT, 0.0 / 35.0, S_VILE_ATK2) = A_VileStart
-	S_VILE_ATK2('VILE', 6 | FF_FULLBRIGHT, 10.0 / 35.0, S_VILE_ATK3) = A_FaceTarget
-	S_VILE_ATK3('VILE', 7 | FF_FULLBRIGHT, 8.0 / 35.0, S_VILE_ATK4) = A_VileTarget
-	S_VILE_ATK4('VILE', 8 | FF_FULLBRIGHT, 8.0 / 35.0, S_VILE_ATK5) = A_FaceTarget
-	S_VILE_ATK5('VILE', 9 | FF_FULLBRIGHT, 8.0 / 35.0, S_VILE_ATK6) = A_FaceTarget
-	S_VILE_ATK6('VILE', 10 | FF_FULLBRIGHT, 8.0 / 35.0, S_VILE_ATK7) = A_FaceTarget
-	S_VILE_ATK7('VILE', 11 | FF_FULLBRIGHT, 8.0 / 35.0, S_VILE_ATK8) = A_FaceTarget
-	S_VILE_ATK8('VILE', 12 | FF_FULLBRIGHT, 8.0 / 35.0, S_VILE_ATK9) = A_FaceTarget
-	S_VILE_ATK9('VILE', 13 | FF_FULLBRIGHT, 8.0 / 35.0, S_VILE_ATK10) = A_FaceTarget
-	S_VILE_ATK10('VILE', 14 | FF_FULLBRIGHT, 8.0 / 35.0, S_VILE_ATK11) = A_VileAttack
-	S_VILE_ATK11('VILE', 15 | FF_FULLBRIGHT, 20.0 / 35.0, S_VILE_RUN1) = none
-	S_VILE_HEAL1('VILE', 26 | FF_FULLBRIGHT, 10.0 / 35.0, S_VILE_HEAL2) = none
-	S_VILE_HEAL2('VILE', 27 | FF_FULLBRIGHT, 10.0 / 35.0, S_VILE_HEAL3) = none
-	S_VILE_HEAL3('VILE', 28 | FF_FULLBRIGHT, 10.0 / 35.0, S_VILE_RUN1) = none
-	S_VILE_PAIN('VILE', 16, 5.0 / 35.0, S_VILE_PAIN2) = none
-	S_VILE_PAIN2('VILE', 16, 5.0 / 35.0, S_VILE_RUN1) = A_Pain
-	S_VILE_DIE1('VILE', 16, 7.0 / 35.0, S_VILE_DIE2) = none
-	S_VILE_DIE2('VILE', 17, 7.0 / 35.0, S_VILE_DIE3) = A_Scream
-	S_VILE_DIE3('VILE', 18, 7.0 / 35.0, S_VILE_DIE4) = A_Fall
-	S_VILE_DIE4('VILE', 19, 7.0 / 35.0, S_VILE_DIE5) = none
-	S_VILE_DIE5('VILE', 20, 7.0 / 35.0, S_VILE_DIE6) = none
-	S_VILE_DIE6('VILE', 21, 7.0 / 35.0, S_VILE_DIE7) = none
-	S_VILE_DIE7('VILE', 22, 7.0 / 35.0, S_VILE_DIE8) = none
-	S_VILE_DIE8('VILE', 23, 5.0 / 35.0, S_VILE_DIE9) = none
-	S_VILE_DIE9('VILE', 24, 5.0 / 35.0, S_VILE_DIE10) = none
-	S_VILE_DIE10('VILE', 25, -1.0, none) = none
-}
 
 defaultproperties
 {
@@ -80,6 +36,12 @@ defaultproperties
 	StepSpeed = 15.0;
 	PainChance = 0.0390625;
 	MissileMaxRange = 14.0 * 64.0;
+	bSolid = true;
+	bShootable = true;
+	bCountKill = true;
+	bMonster = true;
+	bActivateMCross = true;
+	bActivatePushWall = true;
 	bNoGrudge = true;
 	bNeverTarget = true;
 	IdleState = S_VILE_STND;

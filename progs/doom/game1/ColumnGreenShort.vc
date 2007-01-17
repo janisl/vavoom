@@ -23,13 +23,8 @@
 //**
 //**************************************************************************
 
-class ColumnGreenShort : Decoration
+class ColumnGreenShort : Actor
 	__mobjinfo__(31);
-
-__states__
-{
-	S_SHRTGRNCOL('COL2', 0, -1.0, none) = none
-}
 
 defaultproperties
 {

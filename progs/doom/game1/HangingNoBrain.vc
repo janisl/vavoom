@@ -23,13 +23,8 @@
 //**
 //**************************************************************************
 
-class HangingNoBrain : Decoration
+class HangingNoBrain : Actor
 	__mobjinfo__(74);
-
-__states__
-{
-	S_HANGBNOBRAIN('HDB2', 0, -1.0, none) = none
-}
 
 defaultproperties
 {

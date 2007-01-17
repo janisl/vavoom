@@ -26,18 +26,11 @@
 #include "Actor.vc"
 #include "MainGameInfo.vc"
 #include "DoomLevelInfo.vc"
-#include "Pawn.vc"
-#include "PlayerPawn.vc"
 #include "Weapon.vc"
 #include "Player.vc"
 #ifndef NO_BOTS
 #include "BotPlayer.vc"
 #endif
-
-#include "Projectile.vc"
-#include "Effect.vc"
-#include "Pickup.vc"
-#include "Decoration.vc"
 
 #include "MapSpot.vc"
 #include "MapSpotGravity.vc"

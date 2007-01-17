@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ItemBackpack : Pickup
+class ItemBackpack : Actor
 	__mobjinfo__(8)
 	__scriptid__(144);
 
@@ -52,13 +52,10 @@ bool HandlePickup(Actor Toucher)
 	return true;
 }
 
-__states__
-{
-	S_BPAK('BPAK', 0, -1.0, none) = none
-}
-
 defaultproperties
 {
+	bSpecial = true;
+	bNoPassMobj = true;
 	IdleState = S_BPAK;
 	PickupMessage = "$gotbackpack";
 }

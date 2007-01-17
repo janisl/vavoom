@@ -23,13 +23,8 @@
 //**
 //**************************************************************************
 
-class CandleStick : Decoration
+class CandleStick : Actor
 	__mobjinfo__(34);
-
-__states__
-{
-	S_CANDLESTIK('CAND', 0 | FF_FULLBRIGHT, -1.0, none) = none
-}
 
 defaultproperties
 {

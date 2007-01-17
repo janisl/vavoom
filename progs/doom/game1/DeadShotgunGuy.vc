@@ -23,15 +23,10 @@
 //**
 //**************************************************************************
 
-class DeadShotgunGuy : Decoration
+class DeadShotgunGuy : Actor
 	__mobjinfo__(19);
-
-__states__
-{
-	S_SPOS_DEAD('SPOS', 11, -1.0, none) = none
-}
 
 defaultproperties
 {
-	IdleState = S_SPOS_DEAD;
+	IdleState = S_SPOS_DIE5;
 }

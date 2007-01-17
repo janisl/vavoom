@@ -25,17 +25,6 @@
 
 class WeaponChainsaw : Weapon;
 
-__states__
-{
-	S_SAW('SAWG', 2, 4.0 / 35.0, S_SAWB) = A_WeaponReady
-	S_SAWB('SAWG', 3, 4.0 / 35.0, S_SAW) = A_WeaponReady
-	S_SAWDOWN('SAWG', 2, 1.0 / 35.0, S_SAWDOWN) = A_Lower
-	S_SAWUP('SAWG', 2, 1.0 / 35.0, S_SAWUP) = A_Raise
-	S_SAW1('SAWG', 0, 4.0 / 35.0, S_SAW2) = A_Saw
-	S_SAW2('SAWG', 1, 4.0 / 35.0, S_SAW3) = A_Saw
-	S_SAW3('SAWG', 1, 0.0 / 35.0, S_SAW) = A_ReFire
-}
-
 defaultproperties
 {
 	Ammo = DoomDefs::am_noammo;

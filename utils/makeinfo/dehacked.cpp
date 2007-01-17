@@ -48,9 +48,6 @@ void FixupHeights();
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
-extern char*				sprnames[];
-extern char*				mobj_names[];
-extern state_t				states[];
 extern mobjinfo_t			mobjinfo[];
 extern weaponinfo_t			weaponinfo[];
 extern int					maxammo[];
@@ -69,11 +66,6 @@ extern bool					Hacked;
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
-
-//static int		maxammo;
-//static int		clipammo;
-//static int		num_states;
-static int*		functions;
 
 static char		*Patch;
 static char		*PatchPtr;
@@ -205,60 +197,6 @@ static void ReadThing(int num)
 
 //==========================================================================
 //
-//  ReadSound
-//
-//==========================================================================
-
-static void ReadSound(int num)
-{
-	while (ParseParam());
-}
-
-//==========================================================================
-//
-//  ReadState
-//
-//==========================================================================
-
-static void ReadState(int num)
-{
-	if (num >= NUMSTATES || num < 0)
-	{
-		printf("WARNING! Invalid state num %d\n", num);
-		while (ParseParam());
-		return;
-	}
-
-	while (ParseParam())
-	{
-		if (!strcmp(String, "Sprite number"))     		states[num].sprite    = value;
-		else if (!strcmp(String, "Sprite subnumber"))	states[num].frame	  = value;
-		else if (!strcmp(String, "Duration"))    		states[num].tics	  = value;
-		else if (!strcmp(String, "Next frame"))    		states[num].nextstate = value;
-		else if (!strcmp(String, "Unknown 1"))    		states[num].misc1 	  = value;
-		else if (!strcmp(String, "Unknown 2"))    		states[num].misc2 	  = value;
-		else if (!strcmp(String, "Action pointer"))     printf("WARNING! Tried to set action pointer.\n");
-		else printf("WARNING! Invalid state param %s\n", String);
-	}
-}
-
-//==========================================================================
-//
-//  ReadSpriteName
-//
-//==========================================================================
-
-static void ReadSpriteName(int)
-{
-	while (ParseParam())
-	{
-		if (!stricmp(String, "Offset"));	//	Can't handle
-		else printf("WARNING! Invalid sprite name param %s\n", String);
-	}
-}
-
-//==========================================================================
-//
 //  ReadAmmo
 //
 //==========================================================================
@@ -291,57 +229,6 @@ static void ReadWeapon(int num)
 		else if (!stricmp(String, "Firing frame"))  	weaponinfo[num].flashstate	= value;
 		else printf("WARNING! Invalid weapon param %s\n", String);
 	}
-}
-
-//==========================================================================
-//
-//  ReadPointer
-//
-//==========================================================================
-
-static void ReadPointer(int num)
-{
-	int		statenum = -1;
-	int		i;
-	int		j;
-
-	for (i=0, j=0; i < NUMSTATES; i++)
-	{
-		if (functions[i])
-		{
-			if (j == num)
-			{
-				statenum = i;
-				break;
-			}
-			j++;
-		}
-	}
-
-	if (statenum == -1)
-	{
-		printf("WARNING! Invalid pointer\n");
-		while (ParseParam());
-		return;
-	}
-
-	while (ParseParam())
-	{
-		if (!stricmp(String, "Codep Frame"))	states[statenum].action_num = functions[value];
-		else printf("WARNING! Invalid pointer param %s\n", String);
-	}
-}
-
-//==========================================================================
-//
-//  ReadCheats
-//
-//==========================================================================
-
-static void ReadCheats(int)
-{
-	//	Old cheat handling is removed
-	while (ParseParam());
 }
 
 //==========================================================================
@@ -464,15 +351,15 @@ static void LoadDehackedFile(char *filename)
 		}
 		else if (!strcmp(Section, "Sound"))
 		{
-			ReadSound(i);
+			while (ParseParam());
 		}
 		else if (!strcmp(Section, "Frame"))
 		{
-			ReadState(i);
+			while (ParseParam());
 		}
 		else if (!strcmp(Section, "Sprite"))
 		{
-			ReadSpriteName(i);
+			while (ParseParam());
 		}
 		else if (!strcmp(Section, "Ammo"))
 		{
@@ -484,11 +371,12 @@ static void LoadDehackedFile(char *filename)
 		}
 		else if (!strcmp(Section, "Pointer"))
 		{
-			ReadPointer(i);
+			while (ParseParam());
 		}
 		else if (!strcmp(Section, "Cheat"))
 		{
-			ReadCheats(i);
+			//	Old cheat handling is removed
+			while (ParseParam());
 		}
 		else if (!strcmp(Section, "Misc"))
 		{
@@ -516,7 +404,6 @@ static void LoadDehackedFile(char *filename)
 void ProcessDehackedFiles(int argc, char **argv)
 {
 	int		p;
-	int		i;
 
 	for (p = 1; p < argc; p++)
 		if (!stricmp(argv[p], "-deh"))
@@ -529,14 +416,8 @@ void ProcessDehackedFiles(int argc, char **argv)
 
 	Hacked = true;
 
-	functions = (int*)malloc(NUMSTATES * 4);
-	for (i = 0; i < NUMSTATES; i++)
-		functions[i] = states[i].action_num;
-
 	while (++p != argc && argv[p][0] != '-')
 	{
 		LoadDehackedFile(argv[p]);
 	}
-
-	free(functions);
 }

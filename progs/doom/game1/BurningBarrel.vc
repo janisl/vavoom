@@ -23,16 +23,9 @@
 //**
 //**************************************************************************
 
-class BurningBarrel : Decoration
+class BurningBarrel : Actor
 	__mobjinfo__(70)
 	__scriptid__(149);
-
-__states__
-{
-	S_BBAR1('FCAN', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_BBAR2) = none
-	S_BBAR2('FCAN', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_BBAR3) = none
-	S_BBAR3('FCAN', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_BBAR1) = none
-}
 
 defaultproperties
 {

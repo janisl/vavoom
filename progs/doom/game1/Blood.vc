@@ -23,19 +23,13 @@
 //**
 //**************************************************************************
 
-class Blood : Effect
+class Blood : Actor
 	__scriptid__(130);
-
-__states__
-{
-	S_BLOOD1('BLUD', 2, 8.0 / 35.0, S_BLOOD2) = none
-	S_BLOOD2('BLUD', 1, 8.0 / 35.0, S_BLOOD3) = none
-	S_BLOOD3('BLUD', 0, 8.0 / 35.0, none) = none
-}
 
 defaultproperties
 {
 	Alpha = 0.666;
-	bNoGravity = false;
+	bNoBlockmap = true;
+	bNoPassMobj = true;
 	IdleState = S_BLOOD1;
 }

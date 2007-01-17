@@ -23,46 +23,15 @@
 //**
 //**************************************************************************
 
-class ArchvileFire : Effect
+class ArchvileFire : Actor
 	__scriptid__(98);
-
-__states__
-{
-	S_FIRE1('FIRE', 0 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE2) = A_StartFire
-	S_FIRE2('FIRE', 1 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE3) = A_Fire
-	S_FIRE3('FIRE', 0 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE4) = A_Fire
-	S_FIRE4('FIRE', 1 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE5) = A_Fire
-	S_FIRE5('FIRE', 2 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE6) = A_FireCrackle
-	S_FIRE6('FIRE', 1 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE7) = A_Fire
-	S_FIRE7('FIRE', 2 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE8) = A_Fire
-	S_FIRE8('FIRE', 1 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE9) = A_Fire
-	S_FIRE9('FIRE', 2 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE10) = A_Fire
-	S_FIRE10('FIRE', 3 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE11) = A_Fire
-	S_FIRE11('FIRE', 2 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE12) = A_Fire
-	S_FIRE12('FIRE', 3 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE13) = A_Fire
-	S_FIRE13('FIRE', 2 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE14) = A_Fire
-	S_FIRE14('FIRE', 3 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE15) = A_Fire
-	S_FIRE15('FIRE', 4 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE16) = A_Fire
-	S_FIRE16('FIRE', 3 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE17) = A_Fire
-	S_FIRE17('FIRE', 4 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE18) = A_Fire
-	S_FIRE18('FIRE', 3 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE19) = A_Fire
-	S_FIRE19('FIRE', 4 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE20) = A_FireCrackle
-	S_FIRE20('FIRE', 5 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE21) = A_Fire
-	S_FIRE21('FIRE', 4 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE22) = A_Fire
-	S_FIRE22('FIRE', 5 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE23) = A_Fire
-	S_FIRE23('FIRE', 4 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE24) = A_Fire
-	S_FIRE24('FIRE', 5 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE25) = A_Fire
-	S_FIRE25('FIRE', 6 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE26) = A_Fire
-	S_FIRE26('FIRE', 7 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE27) = A_Fire
-	S_FIRE27('FIRE', 6 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE28) = A_Fire
-	S_FIRE28('FIRE', 7 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE29) = A_Fire
-	S_FIRE29('FIRE', 6 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE30) = A_Fire
-	S_FIRE30('FIRE', 7 | FF_FULLBRIGHT, 2.0 / 35.0, none) = A_Fire
-}
 
 defaultproperties
 {
 	Alpha = 0.666;
+	bNoBlockmap = true;
+	bNoGravity = true;
+	bNoPassMobj = true;
 	IdleState = S_FIRE1;
 	Effects = DoomDefs::EF_DL_MISSILE;
 }

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class KeyPickup : Pickup
+class KeyPickup : Actor
 	abstract;
 
 int KeyType;
@@ -46,5 +46,4 @@ bool HandlePickup(Actor Toucher)
 
 defaultproperties
 {
-	bNoDeathmatch = true;
 }

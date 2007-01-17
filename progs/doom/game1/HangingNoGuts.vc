@@ -23,13 +23,8 @@
 //**
 //**************************************************************************
 
-class HangingNoGuts : Decoration
+class HangingNoGuts : Actor
 	__mobjinfo__(73);
-
-__states__
-{
-	S_HANGNOGUTS('HDB1', 0, -1.0, none) = none
-}
 
 defaultproperties
 {

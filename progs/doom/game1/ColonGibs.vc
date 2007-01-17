@@ -23,14 +23,9 @@
 //**
 //**************************************************************************
 
-class ColonGibs : Decoration
+class ColonGibs : Actor
 	__mobjinfo__(79)
 	__scriptid__(147);
-
-__states__
-{
-	S_COLONGIBS('POB1', 0, -1.0, none) = none
-}
 
 defaultproperties
 {

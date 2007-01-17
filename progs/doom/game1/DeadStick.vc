@@ -23,13 +23,8 @@
 //**
 //**************************************************************************
 
-class DeadStick : Decoration
+class DeadStick : Actor
 	__mobjinfo__(25);
-
-__states__
-{
-	S_DEADSTICK('POL1', 0, -1.0, none) = none
-}
 
 defaultproperties
 {

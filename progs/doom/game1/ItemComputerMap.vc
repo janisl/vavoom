@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ItemComputerMap : Pickup
+class ItemComputerMap : Actor
 	__mobjinfo__(2026)
 	__scriptid__(137);
 
@@ -42,18 +42,10 @@ bool HandlePickup(Actor Toucher)
 	return true;
 }
 
-__states__
-{
-	S_PMAP('PMAP', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_PMAP2) = none
-	S_PMAP2('PMAP', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_PMAP3) = none
-	S_PMAP3('PMAP', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_PMAP4) = none
-	S_PMAP4('PMAP', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_PMAP5) = none
-	S_PMAP5('PMAP', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_PMAP6) = none
-	S_PMAP6('PMAP', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_PMAP) = none
-}
-
 defaultproperties
 {
+	bSpecial = true;
+	bNoPassMobj = true;
 	bCountItem = true;
 	IdleState = S_PMAP;
 	PickupMessage = "$gotmap";

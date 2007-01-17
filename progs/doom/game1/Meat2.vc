@@ -23,13 +23,8 @@
 //**
 //**************************************************************************
 
-class Meat2 : Decoration
+class Meat2 : Actor
 	__mobjinfo__(50);
-
-__states__
-{
-	S_MEAT2('GOR2', 0, -1.0, none) = none
-}
 
 defaultproperties
 {

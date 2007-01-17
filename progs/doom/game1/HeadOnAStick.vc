@@ -23,13 +23,8 @@
 //**
 //**************************************************************************
 
-class HeadOnAStick : Decoration
+class HeadOnAStick : Actor
 	__mobjinfo__(27);
-
-__states__
-{
-	S_HEADONASTICK('POL4', 0, -1.0, none) = none
-}
 
 defaultproperties
 {

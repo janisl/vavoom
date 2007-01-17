@@ -27,14 +27,11 @@ class ItemKeyYellowSkull : KeyPickup
 	__mobjinfo__(39)
 	__scriptid__(88);
 
-__states__
-{
-	S_YSKULL('YSKU', 0, 10.0 / 35.0, S_YSKULL2) = none
-	S_YSKULL2('YSKU', 1 | FF_FULLBRIGHT, 10.0 / 35.0, S_YSKULL) = none
-}
-
 defaultproperties
 {
+	bSpecial = true;
+	bNoPassMobj = true;
+	bNoDeathmatch = true;
 	IdleState = S_YSKULL;
 	KeyType = it_yellowskull;
 	PickupMessage = "$gotyelwskul";

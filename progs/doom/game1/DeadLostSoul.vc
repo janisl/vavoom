@@ -23,15 +23,10 @@
 //**
 //**************************************************************************
 
-class DeadLostSoul:Decoration
+class DeadLostSoul : Actor
 	__mobjinfo__(23);
-
-__states__
-{
-	S_SKULL_DEAD('SKUL', 10, 6.0 / 35.0, none) = none
-}
 
 defaultproperties
 {
-	IdleState = S_SKULL_DEAD;
+	IdleState = S_SKULL_DIE6;
 }

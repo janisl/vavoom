@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ItemHealthBonus : Pickup
+class ItemHealthBonus : Actor
 	__mobjinfo__(2014)
 	__scriptid__(152);
 
@@ -44,19 +44,11 @@ bool HandlePickup(Actor Toucher)
 	return true;
 }
 
-__states__
-{
-	S_BON1('BON1', 0, 6.0 / 35.0, S_BON1A) = none
-	S_BON1A('BON1', 1, 6.0 / 35.0, S_BON1B) = none
-	S_BON1B('BON1', 2, 6.0 / 35.0, S_BON1C) = none
-	S_BON1C('BON1', 3, 6.0 / 35.0, S_BON1D) = none
-	S_BON1D('BON1', 2, 6.0 / 35.0, S_BON1E) = none
-	S_BON1E('BON1', 1, 6.0 / 35.0, S_BON1) = none
-}
-
 defaultproperties
 {
 	Alpha = 0.9;
+	bSpecial = true;
+	bNoPassMobj = true;
 	bCountItem = true;
 	IdleState = S_BON1;
 	PickupMessage = "$goththbonus";

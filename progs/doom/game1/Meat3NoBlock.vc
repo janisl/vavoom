@@ -23,10 +23,12 @@
 //**
 //**************************************************************************
 
-class Meat3NoBlock:Meat3
+class Meat3NoBlock : Meat3
 	__mobjinfo__(61);
 
 defaultproperties
 {
+	Radius = 20.0;
+	Height = 52.0;
 	bSolid = false;
 }

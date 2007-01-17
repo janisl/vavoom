@@ -43,16 +43,8 @@
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
-extern char*				sprnames[];
-extern char*				mobj_names[];
-extern int					num_sfx;
-/*extern state_t				states[];
-extern mobjinfo_t			mobjinfo[];
-extern weaponinfo_t			weaponinfo[];
-extern sfxinfo_t			sfx[];
-extern string_def_t			Strings[];
-extern map_info_t			map_info1[];
-extern map_info_t			map_info2[];*/
+/*extern mobjinfo_t			mobjinfo[];
+extern weaponinfo_t			weaponinfo[];*/
 int					maxammo[4];
 int					perammo[4];
 int					initial_health;
@@ -69,17 +61,36 @@ bool					Hacked;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static int*		functions;
-
 static char		*Patch;
 static char		*PatchPtr;
 static char 	*String;
 static int 		value;
 
+static TArray<VState*>			States;
+static TArray<VState*>			CodePtrStates;
+static TArray<VMethod*>			StateActions;
+
 static TArray<FReplacedString>	SfxNames;
 static TArray<FReplacedString>	MusicNames;
 static TArray<FReplacedString>	SpriteNames;
 static VLanguage*				EngStrings;
+
+static const char* OrigSpriteNames[] = {
+	"TROO","SHTG","PUNG","PISG","PISF","SHTF","SHT2","CHGG","CHGF","MISG",
+	"MISF","SAWG","PLSG","PLSF","BFGG","BFGF","BLUD","PUFF","BAL1","BAL2",
+	"PLSS","PLSE","MISL","BFS1","BFE1","BFE2","TFOG","IFOG","PLAY","POSS",
+	"SPOS","VILE","FIRE","FATB","FBXP","SKEL","MANF","FATT","CPOS","SARG",
+	"HEAD","BAL7","BOSS","BOS2","SKUL","SPID","BSPI","APLS","APBX","CYBR",
+	"PAIN","SSWV","KEEN","BBRN","BOSF","ARM1","ARM2","BAR1","BEXP","FCAN",
+	"BON1","BON2","BKEY","RKEY","YKEY","BSKU","RSKU","YSKU","STIM","MEDI",
+	"SOUL","PINV","PSTR","PINS","MEGA","SUIT","PMAP","PVIS","CLIP","AMMO",
+	"ROCK","BROK","CELL","CELP","SHEL","SBOX","BPAK","BFUG","MGUN","CSAW",
+	"LAUN","PLAS","SHOT","SGN2","COLU","SMT2","GOR1","POL2","POL5","POL4",
+	"POL3","POL1","POL6","GOR2","GOR3","GOR4","GOR5","SMIT","COL1","COL2",
+	"COL3","COL4","CAND","CBRA","COL6","TRE1","TRE2","ELEC","CEYE","FSKU",
+	"COL5","TBLU","TGRN","TRED","SMBT","SMGT","SMRT","HDB1","HDB2","HDB3",
+	"HDB4","HDB5","HDB6","POB1","POB2","BRS1","TLMP","TLP2", 0
+};
 
 // CODE --------------------------------------------------------------------
 
@@ -235,23 +246,69 @@ static void ReadSound(int num)
 
 static void ReadState(int num)
 {
-/*	if (num >= NUMSTATES || num < 0)
+	//	Check index.
+	if (num >= States.Num() || num < 0)
 	{
 		dprintf("WARNING! Invalid state num %d\n", num);
 		while (ParseParam());
 		return;
-	}*/
+	}
 
+	//	State 0 is a special state.
+	if (num == 0)
+	{
+		while (ParseParam());
+		return;
+	}
+
+//dprintf("---- State %d (%s)\n", num, *States[num]->Name);
 	while (ParseParam())
 	{
-/*		if (!strcmp(String, "Sprite number"))     		states[num].sprite    = value;
-		else if (!strcmp(String, "Sprite subnumber"))	states[num].frame	  = value;
-		else if (!strcmp(String, "Duration"))    		states[num].tics	  = value;
-		else if (!strcmp(String, "Next frame"))    		states[num].nextstate = value;
-		else if (!strcmp(String, "Unknown 1"))    		states[num].misc1 	  = value;
-		else if (!strcmp(String, "Unknown 2"))    		states[num].misc2 	  = value;
-		else if (!strcmp(String, "Action pointer"))     dprintf("WARNING! Tried to set action pointer.\n");
-		else */dprintf("WARNING! Invalid state param %s\n", String);
+		if (!strcmp(String, "Sprite number"))
+		{
+			States[num]->SpriteName = OrigSpriteNames[value];
+			States[num]->SpriteIndex = VClass::FindSprite(OrigSpriteNames[value]);
+		}
+		else if (!strcmp(String, "Sprite subnumber"))
+		{
+			if (value & 0x8000)
+			{
+				value &= 0x7fff;
+				value |= FF_FULLBRIGHT;
+			}
+			States[num]->Frame = value;
+		}
+		else if (!strcmp(String, "Duration"))
+		{
+			States[num]->Time = value < 0 ? value : value / 35.0;
+		}
+		else if (!strcmp(String, "Next frame"))
+		{
+			if (value >= States.Num() || value < 0)
+			{
+				dprintf("WARNING! Invalid next state %d\n", value);
+			}
+			else
+			{
+				States[num]->NextState = States[value];
+			}
+		}
+		else if (!strcmp(String, "Unknown 1"))
+		{
+			States[num]->Misc1 = value;
+		}
+		else if (!strcmp(String, "Unknown 2"))
+		{
+			States[num]->Misc2 = value;
+		}
+		else if (!strcmp(String, "Action pointer"))
+		{
+			dprintf("WARNING! Tried to set action pointer.\n");
+		}
+		else
+		{
+			dprintf("WARNING! Invalid state param %s\n", String);
+		}
 	}
 }
 
@@ -314,24 +371,7 @@ static void ReadWeapon(int num)
 
 static void ReadPointer(int num)
 {
-	int		statenum = -1;
-	int		i;
-	int		j;
-
-/*	for (i=0, j=0; i < NUMSTATES; i++)
-	{
-		if (functions[i])
-		{
-			if (j == num)
-			{
-				statenum = i;
-				break;
-			}
-			j++;
-		}
-	}*/
-
-	if (statenum == -1)
+	if (num < 0 || num >= CodePtrStates.Num())
 	{
 		dprintf("WARNING! Invalid pointer\n");
 		while (ParseParam());
@@ -340,8 +380,14 @@ static void ReadPointer(int num)
 
 	while (ParseParam())
 	{
-/*		if (!VStr::ICmp(String, "Codep Frame"))	states[statenum].action_num = functions[value];
-		else */dprintf("WARNING! Invalid pointer param %s\n", String);
+		if (!VStr::ICmp(String, "Codep Frame"))
+		{
+			CodePtrStates[num]->Function = StateActions[value];
+		}
+		else
+		{
+			dprintf("WARNING! Invalid pointer param %s\n", String);
+		}
 	}
 }
 
@@ -605,13 +651,24 @@ static void LoadDehackedFile(const char *filename)
 
 void ProcessDehackedFiles()
 {
-	int		p;
-	int		i;
-
-	p = GArgs.CheckParm("-deh");
+	int p = GArgs.CheckParm("-deh");
 	if (!p)
 	{
 		return;
+	}
+
+	VClass* ActorClass = VClass::FindClass("Actor");
+	States.Append(NULL);
+	StateActions.Append(NULL);
+	for (VState* S = ActorClass->States; S; S = S->Next)
+	{
+		States.Append(S);
+		if (S->Function || S->InClassIndex + 1 == 738)
+		{
+dprintf("Code ptr %d, state %d %s\n", CodePtrStates.Num(), S->InClassIndex + 1, *S->Name);
+			CodePtrStates.Append(S);
+		}
+		StateActions.Append(S->Function);
 	}
 
 	GSoundManager->GetSoundLumpNames(SfxNames);
@@ -622,10 +679,6 @@ void ProcessDehackedFiles()
 
 	Hacked = true;
 
-/*	functions = (int*)malloc(NUMSTATES * 4);
-	for (i = 0; i < NUMSTATES; i++)
-		functions[i] = states[i].action_num;*/
-
 	while (++p != GArgs.Count() && GArgs[p][0] != '-')
 	{
 		LoadDehackedFile(GArgs[p]);
@@ -635,10 +688,11 @@ void ProcessDehackedFiles()
 	P_ReplaceMusicLumpNames(MusicNames);
 	VClass::ReplaceSpriteNames(SpriteNames);
 
+	States.Clear();
+	CodePtrStates.Clear();
+	StateActions.Clear();
 	SfxNames.Clear();
 	MusicNames.Clear();
 	SpriteNames.Clear();
 	delete EngStrings;
-
-//	free(functions);
 }
