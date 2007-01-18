@@ -144,9 +144,7 @@ int sb_cpo_oldhealth;
 
 float sb_face_lastattackdown;
 
-#ifndef	NO_BOTS
 BotPlayer Bot;
-#endif
 
 //==========================================================================
 //
@@ -156,14 +154,12 @@ BotPlayer Bot;
 
 void PutClientIntoServer()
 {
-#ifndef	NO_BOTS
 	if (bIsBot)
 	{
 		Bot = BotPlayer(SpawnObject(BotPlayer));
 		Bot.player = self;
 		Bot.OnBeginPlay();
 	}
-#endif
 }
 
 //==========================================================================
@@ -244,13 +240,11 @@ void DisconnectClient()
 {
 	int i;
 
-#ifndef	NO_BOTS
 	if (Bot != none)
 	{
 		Bot.Destroy();
 		Bot = none;
 	}
-#endif
 	if (MO)
 	{
 		MO.Player = none;
@@ -476,12 +470,10 @@ void SpawnPlayer(mthing_t * mthing)
 	// wake up the status bar
 	SB_Start();
 
-#ifndef	NO_BOTS
 	if (bIsBot)
 	{
 		Bot.OnSpawn();
 	}
-#endif
 
 	SetClientModel();
 }
@@ -496,18 +488,12 @@ void SpawnPlayer(mthing_t * mthing)
 
 void PlayerReborn()
 {
-#ifndef	NO_BOTS
 	BotPlayer b;
-#endif
 
 	//  Clear player struct
-#ifndef	NO_BOTS
 	b = Bot;
-#endif
 	ClearPlayer();
-#ifndef	NO_BOTS
 	Bot = b;
-#endif
 
 	//  Set initial data
 	bUseDown = true;	// don't do anything immediately
@@ -1617,12 +1603,10 @@ void PlayerImpulse()
 
 void PlayerTick(float deltaTime)
 {
-#ifndef	NO_BOTS
 	if (bIsBot)
 	{
 		Bot.BotTick(deltaTime);
 	}
-#endif
 
 	// fixme: do this in the cheat code
 	if (Cheats & CF_NOCLIP)

@@ -98,6 +98,7 @@ bool bNoTeleport;
 bool bStaticLight;	// Static light source.
 bool bFaster;
 bool bFastMelee;
+bool bDehackedSpecial;	// Old style special handling
 
 //  Params
 float Speed;
@@ -435,7 +436,17 @@ void HideSpecial()
 
 bool HandlePickup(Actor Toucher)
 {
-#ifdef DEHACKED
+	return false;
+}
+
+//==========================================================================
+//
+//	HandleDehackedPickup
+//
+//==========================================================================
+
+bool HandleDehackedPickup(Actor Toucher)
+{
 	int i;
 	name sound = 'misc/i_pkup';
 
@@ -717,9 +728,6 @@ bool HandlePickup(Actor Toucher)
 	}
 	Toucher.PlaySound(sound, CHAN_ITEM);
 	return true;
-#else
-	return false;
-#endif
 }
 
 //==========================================================================
@@ -740,9 +748,19 @@ void TouchSpecial(Actor Toucher)
 	if (Toucher.Health <= 0)
 		return;
 
-	if (!HandlePickup(Toucher))
+	if (bDehackedSpecial)
 	{
-		return;
+		if (!HandleDehackedPickup(Toucher))
+		{
+			return;
+		}
+	}
+	else
+	{
+		if (!HandlePickup(Toucher))
+		{
+			return;
+		}
 	}
 	if (Special)
 	{
@@ -790,65 +808,6 @@ void SetOrigin2(TVec origin)
 
 void OnMapSpawn(mthing_t * mthing)
 {
-#ifdef DEHACKED
-	if (Class == DoomPlayer)
-	{
-		bActivatePushWall = true;
-		bTelestomp = true;
-		bWindThrust = true;
-	}
-	if (Class == BFGShot || Class == PlasmaShot || Class == Rocket)
-	{
-		bActivateImpact = true;
-	}
-	if (Class == Demon || Class == Shadows)
-	{
-		bFaster = true;
-		bFastMelee = true;
-	}
-	if (Class == LostSoul)
-	{
-		bNoGravKill = true;
-		bTriggerHappy = true;
-	}
-	if (Class == BaronOfHell || Class == HellKnight)
-	{
-		ImuneMissileType = BruiserShot;
-	}
-	if (Class == Cyberdemon)
-	{
-		MissileChance = 160.0;
-		bTriggerHappy = true;
-		bBoss = true;
-	}
-	if (Class == SpiderMastermind)
- 	{
-		bTriggerHappy = true;
-		bBoss = true;
-	}
-	if (Class == Revenant)
-	{
-		bTriggerHappy = true;
-		MissileMinRange = 196.0;
-	}
-	if (Class == ArchVile)
-	{
-		bNoGrudge = true;
-		bNeverTarget = true;
-		MissileMaxRange = 14.0 * 64.0;
-	}
-
-	if (Class == ItemInvulnerability || Class == ItemInvisibility)
-	{
-		bNoRespawn = true;
-	}
-
-	if (Class != DoomPlayer && !bCountKill && !bMissile)
-	{
-		bNoPassMobj = true;
-	}
-#endif
-
 	if (bNoDeathmatch && Level.Game.deathmatch)
 	{
 		Remove();
@@ -1136,7 +1095,6 @@ void Died(Actor source)
 
 		if (bIsPlayer)
 		{
-#ifndef	NO_BOTS
 			if (source.Player.bIsBot)
 			{
 				Player(source.Player).Bot.Killed(self);
@@ -1146,7 +1104,6 @@ void Died(Actor source)
 			{
 				Player(Player).Bot.Died(source);
 			}
-#endif
 
 			source.Player.FragsStats[Player.GetPlayerNum()]++;
 			if (source == self)
@@ -1219,34 +1176,6 @@ void Died(Actor source)
 
 void DropStuff()
 {
-#ifdef DEHACKED
-	class<Actor> item;
-	Actor A;
-
-	// Drop stuff.
-	// This determines the kind of object spawned
-	// during the death frame of a thing.
-	if (Class == WolfSS ||
-		Class == Zombieman)
-	{
-		item = ItemAmmoBulletClip;
-	}
-	else if (Class == ShotgunGuy)
-	{
-		item = ItemWeaponShotgun;
-	}
-	else if (Class == ChaingunGuy)
-	{
-		item = ItemWeaponChaingun;
-	}
-	else
-	{
-		return;
-	}
-
-	A = Spawn(item, vector(Origin.x, Origin.y, FloorZ));
-	A.bDropped = true;	// special versions of items
-#endif
 }
 
 //==========================================================================
@@ -5376,8 +5305,8 @@ final void A_WeaponReady()
 	float angle;
 
 	// get out of attack state
-	if (Owner.State == Actor(Owner).MeleeState ||
-		Owner.State == Actor(Owner).MissileState)
+	if (Owner.State == Actor(Owner).MissileState ||
+		Owner.State == DoomPlayer::S_PLAY_ATK2)
 	{
 		Owner.SetState(Actor(Owner).IdleState);
 	}
@@ -5536,7 +5465,7 @@ final void A_CheckReload()
 
 final void A_GunFlash()
 {
-	Owner.SetState(Actor(Owner).MissileState);
+	Owner.SetState(DoomPlayer::S_PLAY_ATK2);
 	Owner.Player.SetViewState(ps_flash, Weapon(self).FlashState);
 }
 
@@ -5703,7 +5632,7 @@ final void A_FirePistol()
 
 	Owner.PlaySound('weapons/pistol', CHAN_WEAPON);
 
-	Owner.SetState(Actor(Owner).MissileState);
+	Owner.SetState(DoomPlayer::S_PLAY_ATK2);
 	Player(Owner.Player).Ammo[Weapon(self).Ammo]--;
 
 	Owner.Player.SetViewState(ps_flash, Weapon(self).FlashState);
@@ -5725,7 +5654,7 @@ final void A_FireShotgun()
 	TVec dir;
 
 	Owner.PlaySound('weapons/shotgf', CHAN_WEAPON);
-	Owner.SetState(Actor(Owner).MissileState);
+	Owner.SetState(DoomPlayer::S_PLAY_ATK2);
 
 	Player(Owner.Player).Ammo[Weapon(self).Ammo]--;
 
@@ -5754,7 +5683,7 @@ final void A_FireShotgun2()
 	TVec dir;
 
 	Owner.PlaySound('weapons/sshotf', CHAN_WEAPON);
-	Owner.SetState(Actor(Owner).MissileState);
+	Owner.SetState(DoomPlayer::S_PLAY_ATK2);
 
 	Player(Owner.Player).Ammo[Weapon(self).Ammo] -= 2;
 
@@ -5822,7 +5751,7 @@ final void A_FireCGun()
 	if (!Player(Owner.Player).Ammo[Weapon(self).Ammo])
 		return;
 
-	Owner.SetState(Actor(Owner).MissileState);
+	Owner.SetState(DoomPlayer::S_PLAY_ATK2);
 	Player(Owner.Player).Ammo[Weapon(self).Ammo]--;
 
 	if (Owner.Player.ViewStates[ps_weapon].State == Weapon(self).AttackState)

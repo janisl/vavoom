@@ -1,4 +1,4 @@
-SUBDIRS = acc fixmd2 glbsp glvis makeinfo vcc vlumpy
+SUBDIRS = acc fixmd2 glbsp glvis vcc vlumpy
 EXTRA_DIST = \
 	editing/acs/strfhelp.acs \
 	editing/acs/stspec.acs \

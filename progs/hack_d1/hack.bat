@@ -1,1 +1,0 @@
-makeinfo -deh hack.deh > hack.log

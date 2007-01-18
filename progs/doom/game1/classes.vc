@@ -23,7 +23,6 @@
 //**
 //**************************************************************************
 
-#ifndef DEHACKED
 #include "Puff.vc"
 #include "Blood.vc"
 #include "TeleportFog.vc"
@@ -132,24 +131,17 @@
 #include "ColonGibs.vc"
 #include "SmallPool.vc"
 #include "BrainStem.vc"
-#endif
 
 #include "WeaponFist.vc"
 #include "WeaponPistol.vc"
 #include "WeaponShotgun.vc"
 #include "WeaponChaingun.vc"
-#ifndef DEHACKED
 #include "Rocket.vc"
-#endif
 #include "WeaponMissile.vc"
-#ifndef DEHACKED
 #include "PlasmaShot.vc"
-#endif
 #include "WeaponPlasma.vc"
-#ifndef DEHACKED
 #include "ExtraBFG.vc"
 #include "BFGShot.vc"
-#endif
 #include "WeaponBFG.vc"
 #include "WeaponChainsaw.vc"
 #ifdef GRENADE_LAUNCHER
@@ -158,7 +150,6 @@
 #include "WeaponGrenade.vc"
 #endif
 
-#ifndef DEHACKED
 #include "DoomPlayer.vc"
 #include "Zombieman.vc"
 #include "ShotgunGuy.vc"
@@ -173,4 +164,3 @@
 #include "LostSoul.vc"
 #include "Cyberdemon.vc"
 #include "SpiderMastermind.vc"
-#endif

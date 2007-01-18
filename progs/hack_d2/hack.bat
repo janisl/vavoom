@@ -1,1 +1,0 @@
-makeinfo -doom2 -deh hack.deh > hack.log

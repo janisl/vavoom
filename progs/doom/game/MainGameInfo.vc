@@ -45,9 +45,7 @@ class<Weapon> WeaponClasses[DoomDefs::NUMWEAPONS];
 int WeaponOrder[DoomDefs::NUMWEAPONS];
 
 int botskill;
-#ifndef NO_BOTS
 BotPlayer::botinfo_t botinfo[30];
-#endif
 
 float windTab[3];
 float pushTab[5];
@@ -88,9 +86,7 @@ void Init()
 	shareware = !WadLumpPresent('e2m1');
 #endif
 	InitTranslationTables();
-#ifndef NO_BOTS
 	InitBotTypes();
-#endif
 }
 
 //==========================================================================
@@ -123,7 +119,6 @@ LevelInfo CreateLevelInfo()
 //
 //==========================================================================
 
-#ifndef NO_BOTS
 void InitBotTypes()
 {
 	SetBotType(0,
@@ -415,7 +410,6 @@ void SetBotType(int i, string Name, int accuracy, int intelect, int evade,
 	botinfo[i].reaction = reaction;
 	botinfo[i].userinfo = userinfo;
 }
-#endif
 
 //==========================================================================
 //

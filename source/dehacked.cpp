@@ -7,7 +7,7 @@
 //**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
 //**	   #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id:$
+//**	$Id$
 //**
 //**	Copyright (C) 1999-2006 Jānis Legzdiņš
 //**
@@ -62,6 +62,7 @@ static char*					PatchPtr;
 static char*					String;
 static int						value;
 
+static TArray<VClass*>			EntClasses;
 static TArray<VState*>			States;
 static TArray<VState*>			CodePtrStates;
 static TArray<VMethod*>			StateActions;
@@ -72,6 +73,147 @@ static TArray<FReplacedString>	SfxNames;
 static TArray<FReplacedString>	MusicNames;
 static TArray<FReplacedString>	SpriteNames;
 static VLanguage*				EngStrings;
+
+static const char* EntClassNames[] =
+{
+	"DoomPlayer",
+	"Zombieman",
+	"ShotgunGuy",
+	"ArchVile",
+	"ArchvileFire",
+	"Revenant",
+	"RevenantTracer",
+	"RevenantTracerSmoke",
+	"Mancubus",
+	"MancubusMissile",
+	"ChaingunGuy",
+	"Imp",
+	"Demon",
+	"Shadows",
+	"Cacodemon",
+	"BaronOfHell",
+	"BruiserShot",
+	"HellKnight",
+	"LostSoul",
+	"SpiderMastermind",
+	"Arachnotron",
+	"Cyberdemon",
+	"PainElemental",
+	"WolfSS",
+	"CommanderKeen",
+	"BossBrain",
+	"BossEye",
+	"BossTarget",
+	"SpawnShot",
+	"SpawnFire",
+	"Barrel",
+	"ImpMissile",
+	"CacodemonMissile",
+	"Rocket",
+	"PlasmaShot",
+	"BFGShot",
+	"ArachnotronPlasma",
+	"Puff",
+	"Blood",
+	"TeleportFog",
+	"ItemRespawnFog",
+	"TeleportSpot",
+	"ExtraBFG",
+	"ItemArmor1",
+	"ItemArmor2",
+	"ItemHealthBonus",
+	"ItemArmorBonus",
+	"ItemKeyBlueCard",
+	"ItemKeyRedCard",
+	"ItemKeyYellowCard",
+	"ItemKeyYellowSkull",
+	"ItemKeyRedSkull",
+	"ItemKeyBlueSkull",
+	"ItemStimPack",
+	"ItemMedikit",
+	"ItemSoulSphere",
+	"ItemInvulnerability",
+	"ItemBerserk",
+	"ItemInvisibility",
+	"ItemRadiationSuit",
+	"ItemComputerMap",
+	"ItemInfrared",
+	"ItemMegaSphere",
+	"ItemAmmoBulletClip",
+	"ItemAmmoBulletBox",
+	"ItemAmmoRocket",
+	"ItemAmmoRocketBox",
+	"ItemAmmoCells",
+	"ItemAmmoCellsPack",
+	"ItemAmmoShells",
+	"ItemAmmoShellsBox",
+	"ItemBackpack",
+	"ItemWeaponBFG",
+	"ItemWeaponChaingun",
+	"ItemWeaponChainsaw",
+	"ItemWeaponRocketLauncher",
+	"ItemWeaponPlasmaGun",
+	"ItemWeaponShotgun",
+	"ItemWeaponSuperShotgun",
+	"TechLamp",
+	"TechLamp2",
+	"ColumnLamp",
+	"ColumnGreenTall",
+	"ColumnGreenShort",
+	"ColumnRedTall",
+	"ColumnRedShort",
+	"ColumnWithSkull",
+	"ColumnWithHearth",
+	"EvilEye",
+	"FloatingSkull",
+	"BurnedTree",
+	"TorchBlue",
+	"TorchGreen",
+	"TorchRed",
+	"TorchBlueShort",
+	"TorchGreenShort",
+	"TorchRedShort",
+	"Stalagtite",
+	"TechPillar",
+	"CandleStick",
+	"Candelabra",
+	"BloodyTwitch",
+	"Meat2",
+	"Meat3",
+	"Meat4",
+	"Meat5",
+	"Meat2NoBlock",
+	"Meat4NoBlock",
+	"Meat3NoBlock",
+	"Meat5NoBlock",
+	"BloodyTwitchNoBlock",
+	"DeadCacodemon",
+	"DeadPlayer",
+	"DeadZombieman",
+	"DeadDemon",
+	"DeadLostSoul",
+	"DeadImp",
+	"DeadShotgunGuy",
+	"DeadPlayerGibs",
+	"DeadPlayerGibs2",
+	"HeadsOnStick",
+	"Gibs",
+	"HeadOnAStick",
+	"HeadCandles",
+	"DeadStick",
+	"LiveStick",
+	"BigTree",
+	"BurningBarrel",
+	"HangingNoGuts",
+	"HangingNoBrain",
+	"HangingTorsoLookDown",
+	"HangingTorsoSkull",
+	"HangingTorsoLookUp",
+	"HangingTorsoNoBrain",
+	"ColonGibs",
+	"SmallPool",
+	"BrainStem",
+};
 
 static const char* OrigSpriteNames[] = {
 	"TROO","SHTG","PUNG","PISG","PISF","SHTF","SHT2","CHGG","CHGF","MISG",
@@ -87,7 +229,120 @@ static const char* OrigSpriteNames[] = {
 	"POL3","POL1","POL6","GOR2","GOR3","GOR4","GOR5","SMIT","COL1","COL2",
 	"COL3","COL4","CAND","CBRA","COL6","TRE1","TRE2","ELEC","CEYE","FSKU",
 	"COL5","TBLU","TGRN","TRED","SMBT","SMGT","SMRT","HDB1","HDB2","HDB3",
-	"HDB4","HDB5","HDB6","POB1","POB2","BRS1","TLMP","TLP2", 0
+	"HDB4","HDB5","HDB6","POB1","POB2","BRS1","TLMP","TLP2"
+};
+
+static const char* OrigSoundNames[] =
+{
+"",
+"weapons/pistol",
+"weapons/shotgf",
+"weapons/shotgr",
+"weapons/sshotf",
+"weapons/sshoto",
+"weapons/sshotc",
+"weapons/sshotl",
+"weapons/plasmaf",
+"weapons/bfgf",
+"weapons/sawup",
+"weapons/sawidle",
+"weapons/sawfull",
+"weapons/sawhit",
+"weapons/rocklf",
+"weapons/bfgx",
+"imp/attack",
+"imp/shotx",
+"plats/pt1_strt",
+"plats/pt1_stop",
+"doors/dr1_open",
+"doors/dr1_clos",
+"plats/pt1_mid",
+"switches/normbutn",
+"switches/exitbutn",
+"*pain100",
+"demon/pain",
+"grunt/pain",
+"vile/pain",
+"fatso/pain",
+"pain/pain",
+"misc/gibbed",
+"misc/i_pkup",
+"misc/w_pkup",
+"*grunt",
+"misc/teleport",
+"grunt/sight1",
+"grunt/sight2",
+"grunt/sight3",
+"imp/sight1",
+"imp/sight2",
+"demon/sight",
+"caco/sight",
+"baron/sight",
+"cyber/sight",
+"spider/sight",
+"baby/sight",
+"knight/sight",
+"vile/sight",
+"fatso/sight",
+"pain/sight",
+"skull/melee",
+"demon/melee",
+"skeleton/melee",
+"vile/start",
+"imp/melee",
+"skeleton/swing",
+"*death",
+"*xdeath",
+"grunt/death1",
+"grunt/death2",
+"grunt/death3",
+"imp/death1",
+"imp/death2",
+"demon/death",
+"caco/death",
+"misc/unused",
+"baron/death",
+"cyber/death",
+"spider/death",
+"baby/death",
+"vile/death",
+"knight/death",
+"pain/death",
+"skeleton/death",
+"grunt/active",
+"imp/active",
+"demon/active",
+"baby/active",
+"baby/walk",
+"vile/active",
+"*usefail",
+"world/barrelx",
+"*fist",
+"cyber/hoof",
+"spider/walk",
+"weapons/chngun",
+"misc/chat",
+"doors/dr2_open",
+"doors/dr2_clos",
+"misc/spawn",
+"vile/firecrkl",
+"vile/firestrt",
+"misc/p_pkup",
+"brain/spit",
+"brain/cube",
+"brain/sight",
+"brain/pain",
+"brain/death",
+"fatso/raiseguns",
+"fatso/death",
+"wolfss/sight",
+"wolfss/death",
+"keen/pain",
+"keen/death",
+"skeleton/active",
+"skeleton/sight",
+"skeleton/attack",
+"misc/chat2",
 };
 
 // CODE --------------------------------------------------------------------
@@ -174,21 +429,6 @@ static bool ParseParam()
 
 //==========================================================================
 //
-//	GetClassFieldInt
-//
-//==========================================================================
-
-static int GetClassFieldInt(VClass* Class, const char* FieldName, int Idx = 0)
-{
-	guard(GetClassFieldInt);
-	VField* F = Class->FindFieldChecked(FieldName);
-	vint32* Ptr = (vint32*)(Class->Defaults + F->Ofs);
-	return Ptr[Idx];
-	unguard;
-}
-
-//==========================================================================
-//
 //	SetClassFieldInt
 //
 //==========================================================================
@@ -205,17 +445,33 @@ static void SetClassFieldInt(VClass* Class, const char* FieldName,
 
 //==========================================================================
 //
-//	GetClassFieldState
+//	SetClassFieldFloat
 //
 //==========================================================================
 
-static VState* GetClassFieldState(VClass* Class, const char* FieldName,
-	int Idx = 0)
+static void SetClassFieldFloat(VClass* Class, const char* FieldName,
+	float Value)
 {
-	guard(GetClassFieldState);
+	guard(SetClassFieldFloat);
 	VField* F = Class->FindFieldChecked(FieldName);
-	VState** Ptr = (VState**)(Class->Defaults + F->Ofs);
-	return Ptr[Idx];
+	float* Ptr = (float*)(Class->Defaults + F->Ofs);
+	*Ptr = Value;
+	unguard;
+}
+
+//==========================================================================
+//
+//	SetClassFieldName
+//
+//==========================================================================
+
+static void SetClassFieldName(VClass* Class, const char* FieldName,
+	VName Value)
+{
+	guard(SetClassFieldInt);
+	VField* F = Class->FindFieldChecked(FieldName);
+	VName* Ptr = (VName*)(Class->Defaults + F->Ofs);
+	*Ptr = Value;
 	unguard;
 }
 
@@ -226,12 +482,12 @@ static VState* GetClassFieldState(VClass* Class, const char* FieldName,
 //==========================================================================
 
 static void SetClassFieldState(VClass* Class, const char* FieldName,
-	VState* Value, int Idx = 0)
+	VState* Value)
 {
 	guard(SetClassFieldInt);
 	VField* F = Class->FindFieldChecked(FieldName);
 	VState** Ptr = (VState**)(Class->Defaults + F->Ofs);
-	Ptr[Idx] = Value;
+	*Ptr = Value;
 	unguard;
 }
 
@@ -253,47 +509,273 @@ static VClass* GetClassFieldClass(VClass* Class, const char* FieldName,
 
 //==========================================================================
 //
+//	SetClassFieldBool
+//
+//==========================================================================
+
+static void SetClassFieldBool(VClass* Class, const char* FieldName, int Value)
+{
+	guard(SetClassFieldBool);
+	VField* F = Class->FindFieldChecked(FieldName);
+	vuint32* Ptr = (vuint32*)(Class->Defaults + F->Ofs);
+	if (Value)
+		*Ptr |= F->Type.BitMask;
+	else
+		*Ptr &= ~F->Type.BitMask;
+	unguard;
+}
+
+//==========================================================================
+//
 //	ReadThing
 //
 //==========================================================================
 
 static void ReadThing(int num)
 {
+	guard(ReadThing);
 	num--; // begin at 0 not 1;
-/*	if (num >= NUMMOBJTYPES || num < 0)
+	if (num < 0 || num >= EntClasses.Num())
 	{
 		dprintf("WARNING! Invalid thing num %d\n", num);
 		while (ParseParam());
 		return;
-	}*/
+	}
 
+	VClass* Ent = EntClasses[num];
 	while (ParseParam())
 	{
-/*		if (!strcmp(String ,"ID #"))	    			mobjinfo[num].doomednum   =value;
-		else if (!strcmp(String, "Initial frame"))		mobjinfo[num].spawnstate  =value;
-		else if (!strcmp(String, "Hit points"))	    	mobjinfo[num].spawnhealth =value;
-		else if (!strcmp(String, "First moving frame"))	mobjinfo[num].seestate    =value;
-		else if (!strcmp(String, "Alert sound"))	    mobjinfo[num].seesound    =value;
-		else if (!strcmp(String, "Reaction time"))   	mobjinfo[num].reactiontime=value;
-		else if (!strcmp(String, "Attack sound"))	    mobjinfo[num].attacksound =value;
-		else if (!strcmp(String, "Injury frame"))	    mobjinfo[num].painstate   =value;
-		else if (!strcmp(String, "Pain chance"))     	mobjinfo[num].painchance  =value;
-		else if (!strcmp(String, "Pain sound")) 		mobjinfo[num].painsound   =value;
-		else if (!strcmp(String, "Close attack frame"))	mobjinfo[num].meleestate  =value;
-		else if (!strcmp(String, "Far attack frame"))	mobjinfo[num].missilestate=value;
-		else if (!strcmp(String, "Death frame"))	    mobjinfo[num].deathstate  =value;
-		else if (!strcmp(String, "Exploding frame"))	mobjinfo[num].xdeathstate =value;
-		else if (!strcmp(String, "Death sound")) 		mobjinfo[num].deathsound  =value;
-		else if (!strcmp(String, "Speed"))	    		mobjinfo[num].speed       =value;
-		else if (!strcmp(String, "Width"))	    		mobjinfo[num].radius      =value;
-		else if (!strcmp(String, "Height"))	    		mobjinfo[num].height      =value;
-		else if (!strcmp(String, "Mass"))	    		mobjinfo[num].mass	      =value;
-		else if (!strcmp(String, "Missile damage"))		mobjinfo[num].damage      =value;
-		else if (!strcmp(String, "Action sound"))		mobjinfo[num].activesound =value;
-		else if (!strcmp(String, "Bits"))	    		mobjinfo[num].flags       =value;
-		else if (!strcmp(String, "Respawn frame"))		mobjinfo[num].raisestate  =value;
-		else */dprintf("WARNING! Invalid mobj param %s\n", String);
+		if (!strcmp(String ,"ID #"))
+		{
+			int Idx = -1;
+			for (int i = 0; i < VClass::GMobjInfos.Num(); i++)
+			{
+				if (VClass::GMobjInfos[i].class_id == Ent)
+				{
+					Idx = i;
+					break;
+				}
+			}
+			if (value)
+			{
+				if (Idx < 0)
+				{
+					Idx = VClass::GMobjInfos.Num();
+					VClass::GMobjInfos.Alloc().class_id = Ent;
+				}
+				VClass::GMobjInfos[Idx].doomednum = value;
+			}
+			else if (Idx)
+			{
+				VClass::GMobjInfos.RemoveIndex(Idx);
+			}
+		}
+		else if (!strcmp(String, "Hit points"))
+		{
+			SetClassFieldInt(Ent, "Health", value);
+			SetClassFieldInt(Ent, "GibsHealth", -value);
+		}
+		else if (!strcmp(String, "Reaction time"))
+		{
+			SetClassFieldInt(Ent, "ReactionCount", value);
+		}
+		else if (!strcmp(String, "Missile damage"))
+		{
+			SetClassFieldInt(Ent, "MissileDamage", value);
+		}
+		else if (!strcmp(String, "Width"))
+		{
+			SetClassFieldFloat(Ent, "Radius", value / 65536.0);
+		}
+		else if (!strcmp(String, "Height"))
+		{
+			SetClassFieldFloat(Ent, "Height", value / 65536.0);
+		}
+		else if (!strcmp(String, "Mass"))
+		{
+			SetClassFieldFloat(Ent, "Mass", value == 0x7fffffff ? 99999.0 : value);
+		}
+		else if (!strcmp(String, "Speed"))
+		{
+			if (value < 100)
+			{
+				SetClassFieldFloat(Ent, "Speed", 0.0);
+				SetClassFieldFloat(Ent, "StepSpeed", value);
+			}
+			else
+			{
+				SetClassFieldFloat(Ent, "Speed", 35.0 * value / 65536.0);
+				SetClassFieldFloat(Ent, "StepSpeed", 0.0);
+			}
+		}
+		else if (!strcmp(String, "Pain chance"))
+		{
+			SetClassFieldFloat(Ent, "PainChance", value / 256.0);
+		}
+		else if (!strcmp(String, "Bits"))
+		{
+			SetClassFieldBool(Ent, "bSpecial", value & 0x00000001);
+			SetClassFieldBool(Ent, "bSolid", value & 0x00000002);
+			SetClassFieldBool(Ent, "bShootable", value & 0x00000004);
+			SetClassFieldBool(Ent, "bHidden", value & 0x00000008);
+			SetClassFieldBool(Ent, "bNoBlockmap", value & 0x00000010);
+			SetClassFieldBool(Ent, "bAmbush", value & 0x00000020);
+			SetClassFieldBool(Ent, "bJustHit", value & 0x00000040);
+			SetClassFieldBool(Ent, "bJustAttacked", value & 0x00000080);
+			SetClassFieldBool(Ent, "bSpawnCeiling", value & 0x00000100);
+			SetClassFieldBool(Ent, "bNoGravity", value & 0x00000200);
+			SetClassFieldBool(Ent, "bDropOff", value & 0x00000400);
+			SetClassFieldBool(Ent, "bPickUp", value & 0x00000800);
+			SetClassFieldBool(Ent, "bColideWithThings", !(value & 0x00001000));
+			SetClassFieldBool(Ent, "bColideWithWorld", !(value & 0x00001000));
+			SetClassFieldBool(Ent, "bSlide", value & 0x00002000);
+			SetClassFieldBool(Ent, "bFloat", value & 0x00004000);
+			SetClassFieldBool(Ent, "bTeleport", value & 0x00008000);
+			SetClassFieldBool(Ent, "bMissile", value & 0x00010000);
+			SetClassFieldBool(Ent, "bActivatePCross", value & 0x00010000);
+			SetClassFieldBool(Ent, "bNoTeleport", value & 0x00010000);
+			SetClassFieldBool(Ent, "bDropped", value & 0x00020000);
+			SetClassFieldBool(Ent, "bNoBlood", value & 0x00080000);
+			SetClassFieldBool(Ent, "bCorpse", value & 0x00100000);
+			SetClassFieldBool(Ent, "bInFloat", value & 0x00200000);
+			SetClassFieldBool(Ent, "bCountKill", value & 0x00400000);
+			SetClassFieldBool(Ent, "bMonster", value & 0x00400000);
+			SetClassFieldBool(Ent, "bActivateMCross", value & 0x00400000);
+			SetClassFieldBool(Ent, "bActivatePushWall", (value & 0x00400000) || num == 0);
+			SetClassFieldBool(Ent, "bCountItem", value & 0x00800000);
+			SetClassFieldBool(Ent, "bSkullFly", value & 0x01000000);
+			SetClassFieldBool(Ent, "bNoDeathmatch", value & 0x02000000);
+			SetClassFieldBool(Ent, "bNoPassMobj", num != 0 && !(value & 0x00400000) && !(value & 0x00010000));
+			//	Translation
+			SetClassFieldInt(Ent, "Translation", (value & 0x0c000000) >> 26);
+			//	Alpha
+			SetClassFieldFloat(Ent, "Alpha", (value & 0x00040000) ? 0.1 : 1.0);
+			//	The following fields were not used
+			//value & 0x10000000);
+			//value & 0x20000000);
+			//value & 0x40000000);
+			//value & 0x80000000);
+		}
+		//
+		//	States
+		//
+		else if (!strcmp(String, "Initial frame"))
+		{
+			if (value < 0 || value >= States.Num())
+			{
+				dprintf("WARNING! Bad thing state %d\n", value);
+			}
+			else
+			{
+				SetClassFieldState(Ent, "IdleState", States[value]);
+			}
+		}
+		else if (!strcmp(String, "First moving frame"))
+		{
+			if (value < 0 || value >= States.Num())
+			{
+				dprintf("WARNING! Bad thing state %d\n", value);
+			}
+			else
+			{
+				SetClassFieldState(Ent, "SeeState", States[value]);
+			}
+		}
+		else if (!strcmp(String, "Close attack frame"))
+		{
+			if (value < 0 || value >= States.Num())
+			{
+				dprintf("WARNING! Bad thing state %d\n", value);
+			}
+			else
+			{
+				SetClassFieldState(Ent, "MeleeState", States[value]);
+			}
+		}
+		else if (!strcmp(String, "Far attack frame"))
+		{
+			if (value < 0 || value >= States.Num())
+			{
+				dprintf("WARNING! Bad thing state %d\n", value);
+			}
+			else
+			{
+				SetClassFieldState(Ent, "MissileState", States[value]);
+			}
+		}
+		else if (!strcmp(String, "Injury frame"))
+		{
+			if (value < 0 || value >= States.Num())
+			{
+				dprintf("WARNING! Bad thing state %d\n", value);
+			}
+			else
+			{
+				SetClassFieldState(Ent, "PainState", States[value]);
+			}
+		}
+		else if (!strcmp(String, "Death frame"))
+		{
+			if (value < 0 || value >= States.Num())
+			{
+				dprintf("WARNING! Bad thing state %d\n", value);
+			}
+			else
+			{
+				SetClassFieldState(Ent, "DeathState", States[value]);
+			}
+		}
+		else if (!strcmp(String, "Exploding frame"))
+		{
+			if (value < 0 || value >= States.Num())
+			{
+				dprintf("WARNING! Bad thing state %d\n", value);
+			}
+			else
+			{
+				SetClassFieldState(Ent, "GibsDeathState", States[value]);
+			}
+		}
+		else if (!strcmp(String, "Respawn frame"))
+		{
+			if (value < 0 || value >= States.Num())
+			{
+				dprintf("WARNING! Bad thing state %d\n", value);
+			}
+			else
+			{
+				SetClassFieldState(Ent, "RaiseState", States[value]);
+			}
+		}
+		//
+		//	Sounds
+		//
+		else if (!strcmp(String, "Alert sound"))
+		{
+			SetClassFieldName(Ent, "SightSound", OrigSoundNames[value]);
+		}
+		else if (!strcmp(String, "Action sound"))
+		{
+			SetClassFieldName(Ent, "ActiveSound", OrigSoundNames[value]);
+		}
+		else if (!strcmp(String, "Attack sound"))
+		{
+			SetClassFieldName(Ent, "AttackSound", OrigSoundNames[value]);
+		}
+		else if (!strcmp(String, "Pain sound"))
+		{
+			SetClassFieldName(Ent, "PainSound", OrigSoundNames[value]);
+		}
+		else if (!strcmp(String, "Death sound"))
+		{
+			SetClassFieldName(Ent, "DeathSound", OrigSoundNames[value]);
+		}
+		else
+		{
+			dprintf("WARNING! Invalid mobj param %s\n", String);
+		}
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -869,6 +1351,11 @@ void ProcessDehackedFiles()
 		return;
 	}
 
+	for (size_t i = 0; i < ARRAY_COUNT(EntClassNames); i++)
+	{
+		EntClasses.Append(VClass::FindClass(EntClassNames[i]));
+	}
+
 	VClass* ActorClass = VClass::FindClass("Actor");
 	States.Append(NULL);
 	StateActions.Append(NULL);
@@ -897,10 +1384,17 @@ void ProcessDehackedFiles()
 		LoadDehackedFile(GArgs[p]);
 	}
 
+	for (int i = 0; i < EntClasses.Num(); i++)
+	{
+		//	Set all classes to use old style pickup handling.
+		SetClassFieldBool(EntClasses[i], "bDehackedSpecial", true);
+	}
+
 	GSoundManager->ReplaceSoundLumpNames(SfxNames);
 	P_ReplaceMusicLumpNames(MusicNames);
 	VClass::ReplaceSpriteNames(SpriteNames);
 
+	EntClasses.Clear();
 	States.Clear();
 	CodePtrStates.Clear();
 	StateActions.Clear();

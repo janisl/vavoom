@@ -28,9 +28,7 @@
 #include "DoomLevelInfo.vc"
 #include "Weapon.vc"
 #include "Player.vc"
-#ifndef NO_BOTS
 #include "BotPlayer.vc"
-#endif
 
 #include "MapSpot.vc"
 #include "MapSpotGravity.vc"
