@@ -27,6 +27,7 @@ EXTRA_DIST = \
 	doom/language.en \
 	doom/animated.lmp \
 	doom/animdefs.txt \
+	doom/dehinfo.txt \
 	doom/skyboxes.txt \
 	doom/sndinfo.txt \
 	doom/sndseq.txt \

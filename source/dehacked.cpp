@@ -43,16 +43,6 @@
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
-int					initial_health;
-int					initial_ammo;
-int					bfg_cells;
-int					soulsphere_max;
-int					soulsphere_health;
-int					megasphere_health;
-int					god_health;
-
-bool					Hacked;
-
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
@@ -62,10 +52,13 @@ static char*					PatchPtr;
 static char*					String;
 static int						value;
 
+static TArray<VName>			Sprites;
 static TArray<VClass*>			EntClasses;
+static TArray<VClass*>			WeaponClasses;
 static TArray<VState*>			States;
 static TArray<VState*>			CodePtrStates;
 static TArray<VMethod*>			StateActions;
+static TArray<VName>			Sounds;
 
 static VClass*					GameInfoClass;
 
@@ -73,277 +66,6 @@ static TArray<FReplacedString>	SfxNames;
 static TArray<FReplacedString>	MusicNames;
 static TArray<FReplacedString>	SpriteNames;
 static VLanguage*				EngStrings;
-
-static const char* EntClassNames[] =
-{
-	"DoomPlayer",
-	"Zombieman",
-	"ShotgunGuy",
-	"ArchVile",
-	"ArchvileFire",
-	"Revenant",
-	"RevenantTracer",
-	"RevenantTracerSmoke",
-	"Mancubus",
-	"MancubusMissile",
-	"ChaingunGuy",
-	"Imp",
-	"Demon",
-	"Shadows",
-	"Cacodemon",
-	"BaronOfHell",
-	"BruiserShot",
-	"HellKnight",
-	"LostSoul",
-	"SpiderMastermind",
-	"Arachnotron",
-	"Cyberdemon",
-	"PainElemental",
-	"WolfSS",
-	"CommanderKeen",
-	"BossBrain",
-	"BossEye",
-	"BossTarget",
-	"SpawnShot",
-	"SpawnFire",
-	"Barrel",
-	"ImpMissile",
-	"CacodemonMissile",
-	"Rocket",
-	"PlasmaShot",
-	"BFGShot",
-	"ArachnotronPlasma",
-	"Puff",
-	"Blood",
-	"TeleportFog",
-	"ItemRespawnFog",
-	"TeleportSpot",
-	"ExtraBFG",
-	"ItemArmor1",
-	"ItemArmor2",
-	"ItemHealthBonus",
-	"ItemArmorBonus",
-	"ItemKeyBlueCard",
-	"ItemKeyRedCard",
-	"ItemKeyYellowCard",
-	"ItemKeyYellowSkull",
-	"ItemKeyRedSkull",
-	"ItemKeyBlueSkull",
-	"ItemStimPack",
-	"ItemMedikit",
-	"ItemSoulSphere",
-	"ItemInvulnerability",
-	"ItemBerserk",
-	"ItemInvisibility",
-	"ItemRadiationSuit",
-	"ItemComputerMap",
-	"ItemInfrared",
-	"ItemMegaSphere",
-	"ItemAmmoBulletClip",
-	"ItemAmmoBulletBox",
-	"ItemAmmoRocket",
-	"ItemAmmoRocketBox",
-	"ItemAmmoCells",
-	"ItemAmmoCellsPack",
-	"ItemAmmoShells",
-	"ItemAmmoShellsBox",
-	"ItemBackpack",
-	"ItemWeaponBFG",
-	"ItemWeaponChaingun",
-	"ItemWeaponChainsaw",
-	"ItemWeaponRocketLauncher",
-	"ItemWeaponPlasmaGun",
-	"ItemWeaponShotgun",
-	"ItemWeaponSuperShotgun",
-	"TechLamp",
-	"TechLamp2",
-	"ColumnLamp",
-	"ColumnGreenTall",
-	"ColumnGreenShort",
-	"ColumnRedTall",
-	"ColumnRedShort",
-	"ColumnWithSkull",
-	"ColumnWithHearth",
-	"EvilEye",
-	"FloatingSkull",
-	"BurnedTree",
-	"TorchBlue",
-	"TorchGreen",
-	"TorchRed",
-	"TorchBlueShort",
-	"TorchGreenShort",
-	"TorchRedShort",
-	"Stalagtite",
-	"TechPillar",
-	"CandleStick",
-	"Candelabra",
-	"BloodyTwitch",
-	"Meat2",
-	"Meat3",
-	"Meat4",
-	"Meat5",
-	"Meat2NoBlock",
-	"Meat4NoBlock",
-	"Meat3NoBlock",
-	"Meat5NoBlock",
-	"BloodyTwitchNoBlock",
-	"DeadCacodemon",
-	"DeadPlayer",
-	"DeadZombieman",
-	"DeadDemon",
-	"DeadLostSoul",
-	"DeadImp",
-	"DeadShotgunGuy",
-	"DeadPlayerGibs",
-	"DeadPlayerGibs2",
-	"HeadsOnStick",
-	"Gibs",
-	"HeadOnAStick",
-	"HeadCandles",
-	"DeadStick",
-	"LiveStick",
-	"BigTree",
-	"BurningBarrel",
-	"HangingNoGuts",
-	"HangingNoBrain",
-	"HangingTorsoLookDown",
-	"HangingTorsoSkull",
-	"HangingTorsoLookUp",
-	"HangingTorsoNoBrain",
-	"ColonGibs",
-	"SmallPool",
-	"BrainStem",
-};
-
-static const char* OrigSpriteNames[] = {
-	"TROO","SHTG","PUNG","PISG","PISF","SHTF","SHT2","CHGG","CHGF","MISG",
-	"MISF","SAWG","PLSG","PLSF","BFGG","BFGF","BLUD","PUFF","BAL1","BAL2",
-	"PLSS","PLSE","MISL","BFS1","BFE1","BFE2","TFOG","IFOG","PLAY","POSS",
-	"SPOS","VILE","FIRE","FATB","FBXP","SKEL","MANF","FATT","CPOS","SARG",
-	"HEAD","BAL7","BOSS","BOS2","SKUL","SPID","BSPI","APLS","APBX","CYBR",
-	"PAIN","SSWV","KEEN","BBRN","BOSF","ARM1","ARM2","BAR1","BEXP","FCAN",
-	"BON1","BON2","BKEY","RKEY","YKEY","BSKU","RSKU","YSKU","STIM","MEDI",
-	"SOUL","PINV","PSTR","PINS","MEGA","SUIT","PMAP","PVIS","CLIP","AMMO",
-	"ROCK","BROK","CELL","CELP","SHEL","SBOX","BPAK","BFUG","MGUN","CSAW",
-	"LAUN","PLAS","SHOT","SGN2","COLU","SMT2","GOR1","POL2","POL5","POL4",
-	"POL3","POL1","POL6","GOR2","GOR3","GOR4","GOR5","SMIT","COL1","COL2",
-	"COL3","COL4","CAND","CBRA","COL6","TRE1","TRE2","ELEC","CEYE","FSKU",
-	"COL5","TBLU","TGRN","TRED","SMBT","SMGT","SMRT","HDB1","HDB2","HDB3",
-	"HDB4","HDB5","HDB6","POB1","POB2","BRS1","TLMP","TLP2"
-};
-
-static const char* OrigSoundNames[] =
-{
-"",
-"weapons/pistol",
-"weapons/shotgf",
-"weapons/shotgr",
-"weapons/sshotf",
-"weapons/sshoto",
-"weapons/sshotc",
-"weapons/sshotl",
-"weapons/plasmaf",
-"weapons/bfgf",
-"weapons/sawup",
-"weapons/sawidle",
-"weapons/sawfull",
-"weapons/sawhit",
-"weapons/rocklf",
-"weapons/bfgx",
-"imp/attack",
-"imp/shotx",
-"plats/pt1_strt",
-"plats/pt1_stop",
-"doors/dr1_open",
-"doors/dr1_clos",
-"plats/pt1_mid",
-"switches/normbutn",
-"switches/exitbutn",
-"*pain100",
-"demon/pain",
-"grunt/pain",
-"vile/pain",
-"fatso/pain",
-"pain/pain",
-"misc/gibbed",
-"misc/i_pkup",
-"misc/w_pkup",
-"*grunt",
-"misc/teleport",
-"grunt/sight1",
-"grunt/sight2",
-"grunt/sight3",
-"imp/sight1",
-"imp/sight2",
-"demon/sight",
-"caco/sight",
-"baron/sight",
-"cyber/sight",
-"spider/sight",
-"baby/sight",
-"knight/sight",
-"vile/sight",
-"fatso/sight",
-"pain/sight",
-"skull/melee",
-"demon/melee",
-"skeleton/melee",
-"vile/start",
-"imp/melee",
-"skeleton/swing",
-"*death",
-"*xdeath",
-"grunt/death1",
-"grunt/death2",
-"grunt/death3",
-"imp/death1",
-"imp/death2",
-"demon/death",
-"caco/death",
-"misc/unused",
-"baron/death",
-"cyber/death",
-"spider/death",
-"baby/death",
-"vile/death",
-"knight/death",
-"pain/death",
-"skeleton/death",
-"grunt/active",
-"imp/active",
-"demon/active",
-"baby/active",
-"baby/walk",
-"vile/active",
-"*usefail",
-"world/barrelx",
-"*fist",
-"cyber/hoof",
-"spider/walk",
-"weapons/chngun",
-"misc/chat",
-"doors/dr2_open",
-"doors/dr2_clos",
-"misc/spawn",
-"vile/firecrkl",
-"vile/firestrt",
-"misc/p_pkup",
-"brain/spit",
-"brain/cube",
-"brain/sight",
-"brain/pain",
-"brain/death",
-"fatso/raiseguns",
-"fatso/death",
-"wolfss/sight",
-"wolfss/death",
-"keen/pain",
-"keen/death",
-"skeleton/active",
-"skeleton/sight",
-"skeleton/attack",
-"misc/chat2",
-};
 
 // CODE --------------------------------------------------------------------
 
@@ -429,6 +151,21 @@ static bool ParseParam()
 
 //==========================================================================
 //
+//	GetClassFieldState
+//
+//==========================================================================
+
+static VState* GetClassFieldState(VClass* Class, const char* FieldName)
+{
+	guard(GetClassFieldInt);
+	VField* F = Class->FindFieldChecked(FieldName);
+	VState** Ptr = (VState**)(Class->Defaults + F->Ofs);
+	return *Ptr;
+	unguard;
+}
+
+//==========================================================================
+//
 //	SetClassFieldInt
 //
 //==========================================================================
@@ -488,22 +225,6 @@ static void SetClassFieldState(VClass* Class, const char* FieldName,
 	VField* F = Class->FindFieldChecked(FieldName);
 	VState** Ptr = (VState**)(Class->Defaults + F->Ofs);
 	*Ptr = Value;
-	unguard;
-}
-
-//==========================================================================
-//
-//	GetClassFieldClass
-//
-//==========================================================================
-
-static VClass* GetClassFieldClass(VClass* Class, const char* FieldName,
-	int Idx = 0)
-{
-	guard(GetClassFieldClass);
-	VField* F = Class->FindFieldChecked(FieldName);
-	VClass** Ptr = (VClass**)(Class->Defaults + F->Ofs);
-	return Ptr[Idx];
 	unguard;
 }
 
@@ -752,23 +473,58 @@ static void ReadThing(int num)
 		//
 		else if (!strcmp(String, "Alert sound"))
 		{
-			SetClassFieldName(Ent, "SightSound", OrigSoundNames[value]);
+			if (value < 0 || value >= Sounds.Num())
+			{
+				dprintf("WARNING! Bad sound index %d\n", value);
+			}
+			else
+			{
+				SetClassFieldName(Ent, "SightSound", Sounds[value]);
+			}
 		}
 		else if (!strcmp(String, "Action sound"))
 		{
-			SetClassFieldName(Ent, "ActiveSound", OrigSoundNames[value]);
+			if (value < 0 || value >= Sounds.Num())
+			{
+				dprintf("WARNING! Bad sound index %d\n", value);
+			}
+			else
+			{
+				SetClassFieldName(Ent, "ActiveSound", Sounds[value]);
+			}
 		}
 		else if (!strcmp(String, "Attack sound"))
 		{
-			SetClassFieldName(Ent, "AttackSound", OrigSoundNames[value]);
+			if (value < 0 || value >= Sounds.Num())
+			{
+				dprintf("WARNING! Bad sound index %d\n", value);
+			}
+			else
+			{
+				SetClassFieldName(Ent, "AttackSound", Sounds[value]);
+			}
 		}
 		else if (!strcmp(String, "Pain sound"))
 		{
-			SetClassFieldName(Ent, "PainSound", OrigSoundNames[value]);
+			if (value < 0 || value >= Sounds.Num())
+			{
+				dprintf("WARNING! Bad sound index %d\n", value);
+			}
+			else
+			{
+				SetClassFieldName(Ent, "PainSound", Sounds[value]);
+			}
 		}
 		else if (!strcmp(String, "Death sound"))
 		{
-			SetClassFieldName(Ent, "DeathSound", OrigSoundNames[value]);
+			if (value < 0 || value >= Sounds.Num())
+			{
+				dprintf("WARNING! Bad sound index %d\n", value);
+			}
+			else
+			{
+				SetClassFieldName(Ent, "DeathSound", Sounds[value]);
+			}
 		}
 		else
 		{
@@ -831,8 +587,15 @@ static void ReadState(int num)
 	{
 		if (!strcmp(String, "Sprite number"))
 		{
-			States[num]->SpriteName = OrigSpriteNames[value];
-			States[num]->SpriteIndex = VClass::FindSprite(OrigSpriteNames[value]);
+			if (value < 0 || value >= Sprites.Num())
+			{
+				dprintf("WARNING! Bad sprite index %d\n", value);
+			}
+			else
+			{
+				States[num]->SpriteName = Sprites[value];
+				States[num]->SpriteIndex = VClass::FindSprite(Sprites[value]);
+			}
 		}
 		else if (!strcmp(String, "Sprite subnumber"))
 		{
@@ -940,14 +703,14 @@ static void ReadWeapon(int num)
 {
 	guard(ReadWeapon);
 	//	Check index.
-	if (num < 0 || num > 8)
+	if (num < 0 || num >= WeaponClasses.Num())
 	{
 		dprintf("WARNING! Invalid weapon num %d\n", num);
 		while (ParseParam());
 		return;
 	}
 
-	VClass* Weapon = GetClassFieldClass(GameInfoClass, "WeaponClasses", num);
+	VClass* Weapon = WeaponClasses[num];
 	while (ParseParam())
 	{
 		if (!VStr::ICmp(String, "Ammo type"))
@@ -1254,33 +1017,24 @@ static void ReadText(int oldSize)
 //
 //==========================================================================
 
-static void LoadDehackedFile(const char *filename)
+static void LoadDehackedFile(VStream* Strm)
 {
 	guard(LoadDehackedFile);
-	char*	Section;
-	char*	numStr;
-	int		i = 0;
-
-	dprintf("Hacking %s\n", filename);
-
-	FILE* f = fopen(filename, "rb");
-	fseek(f, 0, SEEK_END);
-	size_t len = ftell(f);
-	fseek(f, 0, SEEK_SET);
-	Patch = new char[len + 1];
-	fread(Patch, 1, len, f);
-	Patch[len] = 0;
-	fclose(f);
+	Patch = new char[Strm->TotalSize() + 1];
+	Strm->Serialise(Patch, Strm->TotalSize());
+	Patch[Strm->TotalSize()] = 0;
+	delete Strm;
 	PatchPtr = Patch;
 
 	GetLine();
 	while (*PatchPtr)
 	{
-		Section = strtok(String, " ");
+		char* Section = strtok(String, " ");
 		if (!Section)
 			continue;
 
-		numStr = strtok(NULL, " ");
+		char* numStr = strtok(NULL, " ");
+		int i = 0;
 		if (numStr)
 		{
 			i = atoi(numStr);
@@ -1346,42 +1100,154 @@ void ProcessDehackedFiles()
 {
 	guard(ProcessDehackedFiles);
 	int p = GArgs.CheckParm("-deh");
-	if (!p)
+	int LumpNum = W_CheckNumForName("dehacked");
+	if (!p && LumpNum < 0)
 	{
 		return;
 	}
 
-	for (size_t i = 0; i < ARRAY_COUNT(EntClassNames); i++)
+	//	Open dehinfo script.
+	VStream* Strm = FL_OpenFileRead("dehinfo.txt");
+	if (!Strm)
 	{
-		EntClasses.Append(VClass::FindClass(EntClassNames[i]));
+		Sys_Error("dehinfo.txt is required to parse dehacked patches");
+	}
+	VScriptParser* sc = new VScriptParser("dehinfo.txt", Strm);
+
+	//	Read sprite names.
+	sc->Expect("sprites");
+	sc->Expect("{");
+	while (!sc->Check("}"))
+	{
+		sc->ExpectString();
+		if (sc->String.Length() != 4)
+		{
+			sc->Error("Sprite name must be 4 characters long");
+		}
+		Sprites.Append(*sc->String.ToUpper());
 	}
 
-	VClass* ActorClass = VClass::FindClass("Actor");
+	//	Read states.
+	sc->Expect("states");
+	sc->Expect("{");
 	States.Append(NULL);
 	StateActions.Append(NULL);
-	for (VState* S = ActorClass->States; S; S = S->Next)
+	while (!sc->Check("}"))
 	{
-		States.Append(S);
-		if (S->Function || S->InClassIndex + 1 == 738)
+		//	Class name
+		sc->ExpectString();
+		VClass* StatesClass = VClass::FindClass(*sc->String);
+		//	Starting state specifier
+		VState* S = NULL;
+		if (sc->Check("First"))
 		{
-			CodePtrStates.Append(S);
+			S = StatesClass->States;
 		}
-		StateActions.Append(S->Function);
+		else if (sc->Check("Death"))
+		{
+			S = GetClassFieldState(StatesClass, "DeathState");
+		}
+		else
+		{
+			sc->Error("Expected First or Death");
+		}
+		//	Number of states
+		sc->ExpectNumber();
+		for (int i = 0; i < sc->Number; i++)
+		{
+			if (!S)
+			{
+				sc->Error("Given class doen't have that many states");
+			}
+			States.Append(S);
+			StateActions.Append(S->Function);
+			S = S->Next;
+		}
+	}
+	dprintf("%d states\n", States.Num());
+
+	//	Read code pointer state mapping.
+	sc->Expect("code_pointer_states");
+	sc->Expect("{");
+	while (!sc->Check("}"))
+	{
+		sc->ExpectNumber();
+		if (sc->Number < 0 || sc->Number >= States.Num())
+		{
+			sc->Error(va("Bad state index %d", sc->Number));
+		}
+		CodePtrStates.Append(States[sc->Number]);
+	}
+
+	//	Read sound names.
+	sc->Expect("sounds");
+	sc->Expect("{");
+	Sounds.Append(NAME_None);
+	while (!sc->Check("}"))
+	{
+		sc->ExpectString();
+		Sounds.Append(*sc->String);
+	}
+
+	//	Create list of thing classes.
+	sc->Expect("things");
+	sc->Expect("{");
+	while (!sc->Check("}"))
+	{
+		sc->ExpectString();
+		VClass* C = VClass::FindClass(*sc->String);
+		if (!C)
+		{
+			sc->Error(va("No such class %s", *sc->String));
+		}
+		EntClasses.Append(C);
+	}
+
+	//	Create list of weapon classes.
+	sc->Expect("weapons");
+	sc->Expect("{");
+	while (!sc->Check("}"))
+	{
+		sc->ExpectString();
+		VClass* C = VClass::FindClass(*sc->String);
+		if (!C)
+		{
+			sc->Error(va("No such class %s", *sc->String));
+		}
+		WeaponClasses.Append(C);
 	}
 
 	GameInfoClass = VClass::FindClass("MainGameInfo");
 
+	delete sc;
+
+	//	Get lists of strings to replace.
 	GSoundManager->GetSoundLumpNames(SfxNames);
 	P_GetMusicLumpNames(MusicNames);
 	VClass::GetSpriteNames(SpriteNames);
 	EngStrings = new VLanguage();
 	EngStrings->LoadStrings("en");
 
-	Hacked = true;
-
-	while (++p != GArgs.Count() && GArgs[p][0] != '-')
+	//	Parse dehacked patches.
+	if (p)
 	{
-		LoadDehackedFile(GArgs[p]);
+		while (++p != GArgs.Count() && GArgs[p][0] != '-')
+		{
+			GCon->Logf("Processing dehacked patch %s", GArgs[p]);
+
+			VStream* Strm = FL_OpenSysFileRead(GArgs[p]);
+			if (!Strm)
+			{
+				GCon->Logf("No such file");
+				continue;
+			}
+			LoadDehackedFile(Strm);
+		}
+	}
+	if (LumpNum >= 0)
+	{
+		GCon->Logf("Processing dehacked patch lump");
+		LoadDehackedFile(W_CreateLumpReaderNum(LumpNum));
 	}
 
 	for (int i = 0; i < EntClasses.Num(); i++)
@@ -1390,14 +1256,19 @@ void ProcessDehackedFiles()
 		SetClassFieldBool(EntClasses[i], "bDehackedSpecial", true);
 	}
 
+	//	Do string replacement.
 	GSoundManager->ReplaceSoundLumpNames(SfxNames);
 	P_ReplaceMusicLumpNames(MusicNames);
 	VClass::ReplaceSpriteNames(SpriteNames);
 
+	//	Clean up.
+	Sprites.Clear();
 	EntClasses.Clear();
+	WeaponClasses.Clear();
 	States.Clear();
 	CodePtrStates.Clear();
 	StateActions.Clear();
+	Sounds.Clear();
 	SfxNames.Clear();
 	MusicNames.Clear();
 	SpriteNames.Clear();

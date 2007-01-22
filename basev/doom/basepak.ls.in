@@ -110,6 +110,7 @@ animated.lmp			@srcdir@/animated.lmp
 
 //	Scripts
 animdefs.txt			@srcdir@/animdefs.txt
+dehinfo.txt				@srcdir@/dehinfo.txt
 sndinfo.txt				@srcdir@/sndinfo.txt
 sndseq.txt				@srcdir@/sndseq.txt
 terrains.txt			@srcdir@/terrains.txt
