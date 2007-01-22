@@ -1132,6 +1132,11 @@ void ProcessDehackedFiles()
 	sc->Expect("{");
 	States.Append(NULL);
 	StateActions.Append(NULL);
+	VState** StatesTail = &VClass::FindClass("Actor")->NetStates;
+	while (*StatesTail)
+	{
+		StatesTail = &(*StatesTail)->NetNext;
+	}
 	while (!sc->Check("}"))
 	{
 		//	Class name
@@ -1139,13 +1144,24 @@ void ProcessDehackedFiles()
 		VClass* StatesClass = VClass::FindClass(*sc->String);
 		//	Starting state specifier
 		VState* S = NULL;
+		VState** pState = NULL;
 		if (sc->Check("First"))
 		{
-			S = StatesClass->States;
+			S = StatesClass->NetStates;
+			pState = &StatesClass->NetStates;
 		}
 		else if (sc->Check("Death"))
 		{
 			S = GetClassFieldState(StatesClass, "DeathState");
+			pState = &StatesClass->NetStates;
+			while (*pState && *pState != S)
+			{
+				pState = &(*pState)->NetNext;
+			}
+			if (!pState)
+			{
+				sc->Error("Bad state");
+			}
 		}
 		else
 		{
@@ -1161,6 +1177,11 @@ void ProcessDehackedFiles()
 			}
 			States.Append(S);
 			StateActions.Append(S->Function);
+			//	Move net links to actor class.
+			*StatesTail = S;
+			StatesTail = &S->NetNext;
+			*pState = S->NetNext;
+			S->NetNext = NULL;
 			S = S->Next;
 		}
 	}
@@ -1260,6 +1281,8 @@ void ProcessDehackedFiles()
 	GSoundManager->ReplaceSoundLumpNames(SfxNames);
 	P_ReplaceMusicLumpNames(MusicNames);
 	VClass::ReplaceSpriteNames(SpriteNames);
+
+	VClass::StaticReinitStatesLookup();
 
 	//	Clean up.
 	Sprites.Clear();

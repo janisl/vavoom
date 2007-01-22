@@ -1637,6 +1637,7 @@ VState::VState(VName AName)
 , Next(0)
 , InClassIndex(-1)
 , NetId(-1)
+, NetNext(0)
 {
 }
 
@@ -1661,6 +1662,7 @@ void VState::Serialise(VStream& Strm)
 	if (Strm.IsLoading())
 	{
 		SpriteIndex = VClass::FindSprite(SpriteName);
+		NetNext = Next;
 	}
 	unguard;
 }
@@ -2070,6 +2072,7 @@ VClass::VClass(VName AName)
 , DefaultProperties(0)
 , Defaults(0)
 , NetId(-1)
+, NetStates(0)
 {
 	guard(VClass::VClass);
 	LinkNext = GClasses;
@@ -2100,6 +2103,7 @@ VClass::VClass(ENativeConstructor, size_t ASize, vuint32 AClassFlags,
 , DefaultProperties(0)
 , Defaults(0)
 , NetId(-1)
+, NetStates(0)
 {
 	guard(native VClass::VClass);
 	LinkNext = GClasses;
@@ -2198,6 +2202,10 @@ void VClass::Serialise(VStream& Strm)
 			GetName(), PrevParent ? PrevParent->GetName() : "(none)",
 			ParentClass ? ParentClass->GetName() : "(none)");
 	}
+	if (Strm.IsLoading())
+	{
+		NetStates = States;
+	}
 	unguard;
 }
 
@@ -2286,6 +2294,29 @@ void VClass::ReplaceSpriteNames(TArray<FReplacedString>& List)
 			VState* S = (VState*)GMembers[i];
 			S->SpriteName = GSpriteNames[S->SpriteIndex];
 		}
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VClass::StaticReinitStatesLookup
+//
+//==========================================================================
+
+void VClass::StaticReinitStatesLookup()
+{
+	guard(VClass::StaticReinitStatesLookup);
+	//	Clear states lookup tables.
+	for (VClass* C = GClasses; C; C = C->LinkNext)
+	{
+		C->StatesLookup.Clear();
+	}
+
+	//	Now init states lookup tables again.
+	for (VClass* C = GClasses; C; C = C->LinkNext)
+	{
+		C->InitStatesLookup();
 	}
 	unguard;
 }
@@ -2464,20 +2495,14 @@ void VClass::PostLoad()
 	//	Create virtual table.
 	CreateVTable();
 
-	//	Create states lookup table.
-	if (GetSuperClass())
-	{
-		for (int i = 0; i < GetSuperClass()->StatesLookup.Num(); i++)
-		{
-			StatesLookup.Append(GetSuperClass()->StatesLookup[i]);
-		}
-	}
+	//	Set up states lookup table.
+	InitStatesLookup();
+
+	//	Set state in-class indexes.
 	int CurrIndex = 0;
-	for (VState* S = States; S; S = S->Next)
+	for (VState* S = NetStates; S; S = S->NetNext)
 	{
 		S->InClassIndex = CurrIndex++;
-		S->NetId = StatesLookup.Num();
-		StatesLookup.Append(S);
 	}
 
 	ObjectFlags |= CLASSOF_PostLoaded;
@@ -2703,6 +2728,38 @@ void VClass::CreateVTable()
 			continue;
 		}
 		ClassVTable[M->VTableIndex] = M;
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VClass::InitStatesLookup
+//
+//==========================================================================
+
+void VClass::InitStatesLookup()
+{
+	guard(VClass::InitStatesLookup);
+	//	This is also called from dehacked parser, so we must do this check.
+	if (StatesLookup.Num())
+	{
+		return;
+	}
+
+	//	Create states lookup table.
+	if (GetSuperClass())
+	{
+		GetSuperClass()->InitStatesLookup();
+		for (int i = 0; i < GetSuperClass()->StatesLookup.Num(); i++)
+		{
+			StatesLookup.Append(GetSuperClass()->StatesLookup[i]);
+		}
+	}
+	for (VState* S = NetStates; S; S = S->NetNext)
+	{
+		S->NetId = StatesLookup.Num();
+		StatesLookup.Append(S);
 	}
 	unguard;
 }

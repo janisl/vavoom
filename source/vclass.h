@@ -250,6 +250,7 @@ public:
 
 	vint32		InClassIndex;
 	vint32		NetId;
+	VState*		NetNext;
 
 	VState(VName);
 
@@ -367,6 +368,7 @@ public:
 	vuint8*			Defaults;
 
 	vint32			NetId;
+	VState*			NetStates;
 	TArray<VState*>	StatesLookup;
 
 	static TArray<mobjinfo_t>	GMobjInfos;
@@ -398,6 +400,7 @@ public:
 	static int FindSprite(VName);
 	static void GetSpriteNames(TArray<FReplacedString>&);
 	static void ReplaceSpriteNames(TArray<FReplacedString>&);
+	static void StaticReinitStatesLookup();
 
 	// Accessors.
 	vuint32 GetFlags() const
@@ -438,6 +441,7 @@ private:
 	void InitReferences();
 	void InitDestructorFields();
 	void CreateVTable();
+	void InitStatesLookup();
 	void CreateDefaults();
 
 public:
