@@ -623,6 +623,5 @@ AC_OUTPUT([
 	utils/fixmd2/Makefile
 	utils/glbsp/Makefile
 	utils/glvis/Makefile
-	utils/makeinfo/Makefile
 	utils/vcc/Makefile
 	utils/vlumpy/Makefile])
