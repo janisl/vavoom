@@ -197,7 +197,7 @@ vuint8* VPatchTexture::GetPixels()
 		//	Get offset of the column.
 		Strm->Seek(8 + x * 4);
 		vint32 Offset = Streamer<vint32>(*Strm);
-		if (Offset < 8 + Width * 4 || Offset >= Strm->TotalSize() - 1)
+		if (Offset < 8 + Width * 4 || Offset > Strm->TotalSize() - 1)
 		{
 			GCon->Logf("Bad offset in patch %s", *Name);
 			continue;
