@@ -277,6 +277,7 @@ void SV_Clear()
 	sv_signon.Clear();
 	sv_reliable.Clear();
 	sv_datagram.Clear();
+	sv_ActiveSequences.Clear();
 #ifdef CLIENT
 	// Make sure all sounds are stopped.
 	GAudio->StopAllSound();
@@ -2811,6 +2812,7 @@ void SV_ShutdownServer(bool crash)
 	}
 	memset(GGameInfo->Players, 0, sizeof(GGameInfo->Players));
 	memset(&sv, 0, sizeof(sv));
+	sv_ActiveSequences.Clear();
 	unguard;
 }
 
