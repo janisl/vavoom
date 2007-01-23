@@ -1251,6 +1251,21 @@ void ProcessDehackedFiles()
 		WeaponClasses.Append(C);
 	}
 
+	//	Set original thing heights.
+	sc->Expect("heights");
+	sc->Expect("{");
+	int HIdx = 0;
+	while (!sc->Check("}"))
+	{
+		if (HIdx >= EntClasses.Num())
+		{
+			sc->Error("Too many heights");
+		}
+		sc->ExpectNumber();
+		((VEntity*)EntClasses[HIdx]->Defaults)->Height = sc->Number;
+		HIdx++;
+	}
+
 	GameInfoClass = VClass::FindClass("MainGameInfo");
 
 	delete sc;
