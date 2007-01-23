@@ -26,6 +26,11 @@
 class ColumnRedTall : Actor
 	__mobjinfo__(32);
 
+__states__
+{
+	S_TALLREDCOL('COL3', 0, -1.0, none) = none
+}
+
 defaultproperties
 {
 	Radius = 16.0;

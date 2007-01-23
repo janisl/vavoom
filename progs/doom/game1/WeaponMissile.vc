@@ -25,6 +25,20 @@
 
 class WeaponMissile : Weapon;
 
+__states__
+{
+	S_MISSILE('MISG', 0, 1.0 / 35.0, S_MISSILE) = A_WeaponReady
+	S_MISSILEDOWN('MISG', 0, 1.0 / 35.0, S_MISSILEDOWN) = A_Lower
+	S_MISSILEUP('MISG', 0, 1.0 / 35.0, S_MISSILEUP) = A_Raise
+	S_MISSILE1('MISG', 1, 8.0 / 35.0, S_MISSILE2) = A_GunFlash
+	S_MISSILE2('MISG', 1, 12.0 / 35.0, S_MISSILE3) = A_FireMissile
+	S_MISSILE3('MISG', 1, 0.0 / 35.0, S_MISSILE) = A_ReFire
+	S_MISSILEFLASH1('MISF', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_MISSILEFLASH2) = A_Light1
+	S_MISSILEFLASH2('MISF', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_MISSILEFLASH3) = none
+	S_MISSILEFLASH3('MISF', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_MISSILEFLASH4) = A_Light2
+	S_MISSILEFLASH4('MISF', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_LIGHTDONE) = A_Light2
+}
+
 defaultproperties
 {
 	Ammo = DoomDefs::am_misl;

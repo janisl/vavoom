@@ -26,6 +26,14 @@
 class BloodyTwitch : Actor
 	__mobjinfo__(49);
 
+__states__
+{
+	S_BLOODYTWITCH('GOR1', 0, 10.0 / 35.0, S_BLOODYTWITCH2) = none
+	S_BLOODYTWITCH2('GOR1', 1, 15.0 / 35.0, S_BLOODYTWITCH3) = none
+	S_BLOODYTWITCH3('GOR1', 2, 8.0 / 35.0, S_BLOODYTWITCH4) = none
+	S_BLOODYTWITCH4('GOR1', 1, 6.0 / 35.0, S_BLOODYTWITCH) = none
+}
+
 defaultproperties
 {
 	Radius = 16.0;

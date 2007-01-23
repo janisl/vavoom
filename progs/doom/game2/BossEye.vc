@@ -26,6 +26,13 @@
 class BossEye : Actor
 	__mobjinfo__(89);
 
+__states__
+{
+	S_BRAINEYE('SSWV', 0, 10.0 / 35.0, S_BRAINEYE) = A_Look
+	S_BRAINEYESEE('SSWV', 0, 181.0 / 35.0, S_BRAINEYE1) = A_BrainAwake
+	S_BRAINEYE1('SSWV', 0, 150.0 / 35.0, S_BRAINEYE1) = A_BrainSpit
+}
+
 defaultproperties
 {
 	Height = 32.0;

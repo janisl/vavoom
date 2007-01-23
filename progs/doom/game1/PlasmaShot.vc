@@ -26,6 +26,17 @@
 class PlasmaShot : Actor
 	__scriptid__(51);
 
+__states__
+{
+	S_PLASBALL('PLSS', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_PLASBALL2) = none
+	S_PLASBALL2('PLSS', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_PLASBALL) = none
+	S_PLASEXP('PLSE', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLASEXP2) = none
+	S_PLASEXP2('PLSE', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLASEXP3) = none
+	S_PLASEXP3('PLSE', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLASEXP4) = none
+	S_PLASEXP4('PLSE', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLASEXP5) = none
+	S_PLASEXP5('PLSE', 4 | FF_FULLBRIGHT, 4.0 / 35.0, none) = none
+}
+
 defaultproperties
 {
 	Radius = 13.0;

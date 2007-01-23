@@ -27,6 +27,11 @@ class ItemAmmoShellsBox : AmmoPickup
 	__mobjinfo__(2049)
 	__scriptid__(143);
 
+__states__
+{
+	S_SBOX('SBOX', 0, -1.0, none) = none
+}
+
 defaultproperties
 {
 	bSpecial = true;

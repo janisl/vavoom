@@ -26,6 +26,11 @@
 class Stalagtite : Actor
 	__mobjinfo__(47);
 
+__states__
+{
+	S_STALAGTITE('SMIT', 0, -1.0, none) = none
+}
+
 defaultproperties
 {
 	Radius = 16.0;

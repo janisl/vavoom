@@ -27,6 +27,11 @@ class SmallPool : Actor
 	__mobjinfo__(80)
 	__scriptid__(148);
 
+__states__
+{
+	S_SMALLPOOL('POB2', 0, -1.0, none) = none
+}
+
 defaultproperties
 {
 	bNoBlockmap = true;

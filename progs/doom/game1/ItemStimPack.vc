@@ -27,6 +27,11 @@ class ItemStimPack : HealthPickup
 	__mobjinfo__(2011)
 	__scriptid__(23);
 
+__states__
+{
+	S_STIM('STIM', 0, -1.0, none) = none
+}
+
 defaultproperties
 {
 	bSpecial = true;

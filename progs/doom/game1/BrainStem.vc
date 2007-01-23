@@ -27,6 +27,11 @@ class BrainStem : Actor
 	__mobjinfo__(81)
 	__scriptid__(150);
 
+__states__
+{
+	S_BRAINSTEM('BRS1', 0, -1.0, none) = none
+}
+
 defaultproperties
 {
 	bNoBlockmap = true;

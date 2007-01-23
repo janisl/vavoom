@@ -27,6 +27,11 @@ class ItemAmmoCells : AmmoPickup
 	__mobjinfo__(2047)
 	__scriptid__(75);
 
+__states__
+{
+	S_CELL('CELL', 0, -1.0, none) = none
+}
+
 defaultproperties
 {
 	bSpecial = true;

@@ -23,10 +23,33 @@
 //**
 //**************************************************************************
 
-class DeadPlayer : Actor
+class DeadPlayer : DoomPlayer
 	__mobjinfo__(15);
 
 defaultproperties
 {
+	Health = 1000;
+	GibsHealth = -1000;
+	ReactionCount = 8;
+	Radius = 20.0;
+	Height = 16.0;
+	Mass = 100.0;
+	PainChance = 0.0;
+	bSolid = false;
+	bShootable = false;
+	bActivatePushWall = false;
+	bTelestomp = false;
+	bWindThrust = false;
+	bDropOff = false;
+	bPickUp = false;
+	SeeState = none;
+	MeleeState = none;
+	MissileState = none;
+	PainState = none;
+	DeathState = none;
+	GibsDeathState = none;
+	PainSound = '';
+	DeathSound = '';
+
 	IdleState = S_PLAY_DIE7;
 }

@@ -27,6 +27,54 @@ class Mancubus : Actor
 	__mobjinfo__(67)
 	__scriptid__(112);
 
+__states__
+{
+	S_FATT_STND('FATT', 0, 15.0 / 35.0, S_FATT_STND2) = A_Look
+	S_FATT_STND2('FATT', 1, 15.0 / 35.0, S_FATT_STND) = A_Look
+	S_FATT_RUN1('FATT', 0, 4.0 / 35.0, S_FATT_RUN2) = A_Chase
+	S_FATT_RUN2('FATT', 0, 4.0 / 35.0, S_FATT_RUN3) = A_Chase
+	S_FATT_RUN3('FATT', 1, 4.0 / 35.0, S_FATT_RUN4) = A_Chase
+	S_FATT_RUN4('FATT', 1, 4.0 / 35.0, S_FATT_RUN5) = A_Chase
+	S_FATT_RUN5('FATT', 2, 4.0 / 35.0, S_FATT_RUN6) = A_Chase
+	S_FATT_RUN6('FATT', 2, 4.0 / 35.0, S_FATT_RUN7) = A_Chase
+	S_FATT_RUN7('FATT', 3, 4.0 / 35.0, S_FATT_RUN8) = A_Chase
+	S_FATT_RUN8('FATT', 3, 4.0 / 35.0, S_FATT_RUN9) = A_Chase
+	S_FATT_RUN9('FATT', 4, 4.0 / 35.0, S_FATT_RUN10) = A_Chase
+	S_FATT_RUN10('FATT', 4, 4.0 / 35.0, S_FATT_RUN11) = A_Chase
+	S_FATT_RUN11('FATT', 5, 4.0 / 35.0, S_FATT_RUN12) = A_Chase
+	S_FATT_RUN12('FATT', 5, 4.0 / 35.0, S_FATT_RUN1) = A_Chase
+	S_FATT_ATK1('FATT', 6, 20.0 / 35.0, S_FATT_ATK2) = A_FatRaise
+	S_FATT_ATK2('FATT', 7 | FF_FULLBRIGHT, 10.0 / 35.0, S_FATT_ATK3) = A_FatAttack1
+	S_FATT_ATK3('FATT', 8, 5.0 / 35.0, S_FATT_ATK4) = A_FaceTarget
+	S_FATT_ATK4('FATT', 6, 5.0 / 35.0, S_FATT_ATK5) = A_FaceTarget
+	S_FATT_ATK5('FATT', 7 | FF_FULLBRIGHT, 10.0 / 35.0, S_FATT_ATK6) = A_FatAttack2
+	S_FATT_ATK6('FATT', 8, 5.0 / 35.0, S_FATT_ATK7) = A_FaceTarget
+	S_FATT_ATK7('FATT', 6, 5.0 / 35.0, S_FATT_ATK8) = A_FaceTarget
+	S_FATT_ATK8('FATT', 7 | FF_FULLBRIGHT, 10.0 / 35.0, S_FATT_ATK9) = A_FatAttack3
+	S_FATT_ATK9('FATT', 8, 5.0 / 35.0, S_FATT_ATK10) = A_FaceTarget
+	S_FATT_ATK10('FATT', 6, 5.0 / 35.0, S_FATT_RUN1) = A_FaceTarget
+	S_FATT_PAIN('FATT', 9, 3.0 / 35.0, S_FATT_PAIN2) = none
+	S_FATT_PAIN2('FATT', 9, 3.0 / 35.0, S_FATT_RUN1) = A_Pain
+	S_FATT_DIE1('FATT', 10, 6.0 / 35.0, S_FATT_DIE2) = none
+	S_FATT_DIE2('FATT', 11, 6.0 / 35.0, S_FATT_DIE3) = A_Scream
+	S_FATT_DIE3('FATT', 12, 6.0 / 35.0, S_FATT_DIE4) = A_Fall
+	S_FATT_DIE4('FATT', 13, 6.0 / 35.0, S_FATT_DIE5) = none
+	S_FATT_DIE5('FATT', 14, 6.0 / 35.0, S_FATT_DIE6) = none
+	S_FATT_DIE6('FATT', 15, 6.0 / 35.0, S_FATT_DIE7) = none
+	S_FATT_DIE7('FATT', 16, 6.0 / 35.0, S_FATT_DIE8) = none
+	S_FATT_DIE8('FATT', 17, 6.0 / 35.0, S_FATT_DIE9) = none
+	S_FATT_DIE9('FATT', 18, 6.0 / 35.0, S_FATT_DIE10) = none
+	S_FATT_DIE10('FATT', 19, -1.0, none) = A_BossDeath
+	S_FATT_RAISE1('FATT', 17, 5.0 / 35.0, S_FATT_RAISE2) = none
+	S_FATT_RAISE2('FATT', 16, 5.0 / 35.0, S_FATT_RAISE3) = none
+	S_FATT_RAISE3('FATT', 15, 5.0 / 35.0, S_FATT_RAISE4) = none
+	S_FATT_RAISE4('FATT', 14, 5.0 / 35.0, S_FATT_RAISE5) = none
+	S_FATT_RAISE5('FATT', 13, 5.0 / 35.0, S_FATT_RAISE6) = none
+	S_FATT_RAISE6('FATT', 12, 5.0 / 35.0, S_FATT_RAISE7) = none
+	S_FATT_RAISE7('FATT', 11, 5.0 / 35.0, S_FATT_RAISE8) = none
+	S_FATT_RAISE8('FATT', 10, 5.0 / 35.0, S_FATT_RUN1) = none
+}
+
 defaultproperties
 {
 	Health = 600;

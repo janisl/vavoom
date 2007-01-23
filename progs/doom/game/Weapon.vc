@@ -33,6 +33,11 @@ state AttackState;
 state FlashState;
 int PlayerModelVersion;
 
+__states__
+{
+	S_LIGHTDONE('SHTG', 4, 0.0 / 35.0, none) = A_Light0
+}
+
 defaultproperties
 {
 	bHidden = true;

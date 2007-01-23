@@ -27,6 +27,11 @@ class ItemAmmoBulletBox : AmmoPickup
 	__mobjinfo__(2048)
 	__scriptid__(139);
 
+__states__
+{
+	S_AMMO('AMMO', 0, -1.0, none) = none
+}
+
 defaultproperties
 {
 	bSpecial = true;

@@ -27,6 +27,12 @@ class ItemKeyRedCard : KeyPickup
 	__mobjinfo__(13)
 	__scriptid__(86);
 
+__states__
+{
+	S_RKEY('RKEY', 0, 10.0 / 35.0, S_RKEY2) = none
+	S_RKEY2('RKEY', 1 | FF_FULLBRIGHT, 10.0 / 35.0, S_RKEY) = none
+}
+
 defaultproperties
 {
 	bSpecial = true;

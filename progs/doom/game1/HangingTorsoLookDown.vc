@@ -26,6 +26,11 @@
 class HangingTorsoLookDown : Actor
 	__mobjinfo__(75);
 
+__states__
+{
+	S_HANGTLOOKDN('HDB3', 0, -1.0, none) = none
+}
+
 defaultproperties
 {
 	Radius = 16.0;

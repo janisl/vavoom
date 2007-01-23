@@ -1163,6 +1163,19 @@ void ProcessDehackedFiles()
 				sc->Error("Bad state");
 			}
 		}
+		else if (sc->Check("Extra"))
+		{
+			S = GetClassFieldState(StatesClass, "ExtraState");
+			pState = &StatesClass->NetStates;
+			while (*pState && *pState != S)
+			{
+				pState = &(*pState)->NetNext;
+			}
+			if (!pState)
+			{
+				sc->Error("Bad state");
+			}
+		}
 		else
 		{
 			sc->Error("Expected First or Death");

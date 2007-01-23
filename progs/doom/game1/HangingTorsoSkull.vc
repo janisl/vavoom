@@ -26,6 +26,11 @@
 class HangingTorsoSkull : Actor
 	__mobjinfo__(76);
 
+__states__
+{
+	S_HANGTSKULL('HDB4', 0, -1.0, none) = none
+}
+
 defaultproperties
 {
 	Radius = 16.0;

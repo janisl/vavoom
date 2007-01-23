@@ -23,10 +23,34 @@
 //**
 //**************************************************************************
 
-class DeadCacodemon : Actor
+class DeadCacodemon : Cacodemon
 	__mobjinfo__(22);
 
 defaultproperties
 {
+	Health = 1000;
+	Radius = 20.0;
+	Height = 16.0;
+	Mass = 100.0;
+	StepSpeed = 0.0;
+	PainChance = 0.0;
+	bSolid = false;
+	bShootable = false;
+	bCountKill = false;
+	bMonster = false;
+	bActivateMCross = false;
+	bActivatePushWall = false;
+	bNoGravity = false;
+	bFloat = false;
+	SeeState = none;
+	MissileState = none;
+	PainState = none;
+	DeathState = none;
+	RaiseState = none;
+	SightSound = '';
+	ActiveSound = '';
+	PainSound = '';
+	DeathSound = '';
+
 	IdleState = S_HEAD_DIE6;
 }

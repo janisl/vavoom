@@ -26,6 +26,11 @@
 class Meat4 : Actor
 	__mobjinfo__(52);
 
+__states__
+{
+	S_MEAT4('GOR4', 0, -1.0, none) = none
+}
+
 defaultproperties
 {
 	Radius = 16.0;

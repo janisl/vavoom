@@ -26,6 +26,11 @@
 class HeadsOnStick : Actor
 	__mobjinfo__(28);
 
+__states__
+{
+	S_HEADSONSTICK('POL2', 0, -1.0, none) = none
+}
+
 defaultproperties
 {
 	Radius = 16.0;

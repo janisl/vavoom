@@ -27,6 +27,11 @@ class ItemWeaponPlasmaGun : WeaponPickup
 	__mobjinfo__(2004)
 	__scriptid__(30);
 
+__states__
+{
+	S_PLAS('PLAS', 0, -1.0, none) = none
+}
+
 defaultproperties
 {
 	bSpecial = true;

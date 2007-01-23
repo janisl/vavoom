@@ -25,6 +25,17 @@
 
 class WeaponPlasma : Weapon;
 
+__states__
+{
+	S_PLASMA('PLSG', 0, 1.0 / 35.0, S_PLASMA) = A_WeaponReady
+	S_PLASMADOWN('PLSG', 0, 1.0 / 35.0, S_PLASMADOWN) = A_Lower
+	S_PLASMAUP('PLSG', 0, 1.0 / 35.0, S_PLASMAUP) = A_Raise
+	S_PLASMA1('PLSG', 0, 3.0 / 35.0, S_PLASMA2) = A_FirePlasma
+	S_PLASMA2('PLSG', 1, 20.0 / 35.0, S_PLASMA) = A_ReFire
+	S_PLASMAFLASH1('PLSF', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_LIGHTDONE) = A_Light1
+	S_PLASMAFLASH2('PLSF', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_LIGHTDONE) = A_Light1
+}
+
 defaultproperties
 {
 	Ammo = DoomDefs::am_cell;

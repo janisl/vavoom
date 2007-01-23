@@ -23,10 +23,35 @@
 //**
 //**************************************************************************
 
-class DeadImp : Actor
+class DeadImp : Imp
 	__mobjinfo__(20);
 
 defaultproperties
 {
+	Health = 1000;
+	GibsHealth = -1000;
+	Radius = 20.0;
+	Height = 16.0;
+	Mass = 100.0;
+	StepSpeed = 0.0;
+	PainChance = 0.0;
+	bSolid = false;
+	bShootable = false;
+	bCountKill = false;
+	bMonster = false;
+	bActivateMCross = false;
+	bActivatePushWall = false;
+	SeeState = none;
+	MeleeState = none;
+	MissileState = none;
+	PainState = none;
+	DeathState = none;
+	GibsDeathState = none;
+	RaiseState = none;
+	SightSound = '';
+	ActiveSound = '';
+	PainSound = '';
+	DeathSound = '';
+
 	IdleState = S_TROO_DIE5;
 }

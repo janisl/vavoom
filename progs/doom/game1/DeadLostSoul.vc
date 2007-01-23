@@ -23,10 +23,36 @@
 //**
 //**************************************************************************
 
-class DeadLostSoul : Actor
+class DeadLostSoul : LostSoul
 	__mobjinfo__(23);
 
 defaultproperties
 {
+	Health = 1000;
+	Radius = 20.0;
+	Height = 16.0;
+	Mass = 100.0;
+	StepSpeed = 0.0;
+	PainChance = 0.0;
+	MissileDamage = 0;
+	bSolid = false;
+	bShootable = false;
+	bMonster = false;
+	bActivateMCross = false;
+	bActivatePushWall = false;
+	bNoGravity = false;
+	bFloat = false;
+	bTriggerHappy = false;
+	bNoGravKill = false;
+	SeeState = none;
+	MissileState = none;
+	PainState = none;
+	DeathState = none;
+	ActiveSound = '';
+	AttackSound = '';
+	PainSound = '';
+	DeathSound = '';
+	Effects = 0;
+
 	IdleState = S_SKULL_DIE6;
 }

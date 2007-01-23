@@ -26,6 +26,11 @@
 class TechPillar : Actor
 	__mobjinfo__(48);
 
+__states__
+{
+	S_TECHPILLAR('ELEC', 0, -1.0, none) = none
+}
+
 defaultproperties
 {
 	Radius = 16.0;

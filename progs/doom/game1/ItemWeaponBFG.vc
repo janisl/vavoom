@@ -27,6 +27,11 @@ class ItemWeaponBFG : WeaponPickup
 	__mobjinfo__(2006)
 	__scriptid__(31);
 
+__states__
+{
+	S_BFUG('BFUG', 0, -1.0, none) = none
+}
+
 defaultproperties
 {
 	bSpecial = true;

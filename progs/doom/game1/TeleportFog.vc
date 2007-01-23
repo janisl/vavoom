@@ -49,6 +49,22 @@ final void A_Lights()
 	Effects &= ~DoomDefs::EF_DLIGHT_MASK;
 }
 
+__states__
+{
+	S_TFOG('TFOG', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG01) = none
+	S_TFOG01('TFOG', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG02) = none
+	S_TFOG02('TFOG', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG2) = none
+	S_TFOG2('TFOG', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG3) = none
+	S_TFOG3('TFOG', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG4) = none
+	S_TFOG4('TFOG', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG5) = none
+	S_TFOG5('TFOG', 4 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG6) = none
+	S_TFOG6('TFOG', 5 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG7) = none
+	S_TFOG7('TFOG', 6 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG8) = none
+	S_TFOG8('TFOG', 7 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG9) = none
+	S_TFOG9('TFOG', 8 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG10) = none
+	S_TFOG10('TFOG', 9 | FF_FULLBRIGHT, 6.0 / 35.0, none) = none
+}
+
 defaultproperties
 {
 	Alpha = 0.666;

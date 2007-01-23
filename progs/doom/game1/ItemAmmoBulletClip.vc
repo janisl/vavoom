@@ -27,6 +27,11 @@ class ItemAmmoBulletClip : AmmoPickup
 	__mobjinfo__(2007)
 	__scriptid__(11);
 
+__states__
+{
+	S_CLIP('CLIP', 0, -1.0, none) = none
+}
+
 defaultproperties
 {
 	bSpecial = true;

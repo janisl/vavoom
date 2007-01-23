@@ -26,6 +26,14 @@
 class EvilEye : Actor
 	__mobjinfo__(41);
 
+__states__
+{
+	S_EVILEYE('CEYE', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_EVILEYE2) = none
+	S_EVILEYE2('CEYE', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_EVILEYE3) = none
+	S_EVILEYE3('CEYE', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_EVILEYE4) = none
+	S_EVILEYE4('CEYE', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_EVILEYE) = none
+}
+
 defaultproperties
 {
 	Radius = 16.0;

@@ -27,6 +27,11 @@ class ItemWeaponShotgun : WeaponPickup
 	__mobjinfo__(2001)
 	__scriptid__(27);
 
+__states__
+{
+	S_SHOT('SHOT', 0, -1.0, none) = none
+}
+
 defaultproperties
 {
 	bSpecial = true;

@@ -26,6 +26,17 @@
 class ArachnotronPlasma : Actor
 	__scriptid__(129);
 
+__states__
+{
+	S_ARACH_PLAZ('APLS', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_ARACH_PLAZ2) = none
+	S_ARACH_PLAZ2('APLS', 1 | FF_FULLBRIGHT, 5.0 / 35.0, S_ARACH_PLAZ) = none
+	S_ARACH_PLEX('APBX', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_ARACH_PLEX2) = none
+	S_ARACH_PLEX2('APBX', 1 | FF_FULLBRIGHT, 5.0 / 35.0, S_ARACH_PLEX3) = none
+	S_ARACH_PLEX3('APBX', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_ARACH_PLEX4) = none
+	S_ARACH_PLEX4('APBX', 3 | FF_FULLBRIGHT, 5.0 / 35.0, S_ARACH_PLEX5) = none
+	S_ARACH_PLEX5('APBX', 4 | FF_FULLBRIGHT, 5.0 / 35.0, none) = none
+}
+
 defaultproperties
 {
 	Radius = 13.0;

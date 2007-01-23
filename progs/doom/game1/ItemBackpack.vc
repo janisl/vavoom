@@ -52,6 +52,11 @@ bool HandlePickup(Actor Toucher)
 	return true;
 }
 
+__states__
+{
+	S_BPAK('BPAK', 0, -1.0, none) = none
+}
+
 defaultproperties
 {
 	bSpecial = true;

@@ -26,6 +26,16 @@
 class BossBrain : Actor
 	__mobjinfo__(88);
 
+__states__
+{
+	S_BRAIN('BBRN', 0, -1.0, none) = none
+	S_BRAIN_PAIN('BBRN', 1, 36.0 / 35.0, S_BRAIN) = A_BrainPain
+	S_BRAIN_DIE1('BBRN', 0, 100.0 / 35.0, S_BRAIN_DIE2) = A_BrainScream
+	S_BRAIN_DIE2('BBRN', 0, 10.0 / 35.0, S_BRAIN_DIE3) = none
+	S_BRAIN_DIE3('BBRN', 0, 10.0 / 35.0, S_BRAIN_DIE4) = none
+	S_BRAIN_DIE4('BBRN', 0, -1.0, none) = A_BrainDie
+}
+
 defaultproperties
 {
 	Health = 250;

@@ -27,6 +27,11 @@ class ItemWeaponChaingun : WeaponPickup
 	__mobjinfo__(2002)
 	__scriptid__(28);
 
+__states__
+{
+	S_MGUN('MGUN', 0, -1.0, none) = none
+}
+
 defaultproperties
 {
 	bSpecial = true;

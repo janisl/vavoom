@@ -27,6 +27,11 @@ class ItemAmmoCellsPack : AmmoPickup
 	__mobjinfo__(17)
 	__scriptid__(142);
 
+__states__
+{
+	S_CELP('CELP', 0, -1.0, none) = none
+}
+
 defaultproperties
 {
 	bSpecial = true;
