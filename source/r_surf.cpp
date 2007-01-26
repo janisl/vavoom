@@ -1081,10 +1081,11 @@ static void CreateSegParts(drawseg_t* dseg, seg_t *seg)
 				// top of texture at top
 				z_org = MAX(midtopz1, midtopz2);
 			}
-			z_org -= offshdelta;
+//			z_org -= offshdelta;
+			z_org += sidedef->rowoffset * (!GTextureManager.Textures[sidedef->midtexture]->bWorldPanning ?
+				1.0 : 1.0 / GTextureManager.Textures[sidedef->midtexture]->TScale) - offshdelta;
 
-			sp->texinfo.toffs = z_org * TextureTScale(sidedef->midtexture) +
-				sidedef->rowoffset * TextureOffsetTScale(sidedef->midtexture);
+			sp->texinfo.toffs = z_org * TextureTScale(sidedef->midtexture);
 			sp->texinfo.pic = sidedef->midtexture;
 
 			wv[0].x = wv[1].x = seg->v1->x;
@@ -1546,7 +1547,8 @@ static void UpdateDrawSeg(drawseg_t* dseg)
 					// top of texture at top
 					z_org = MAX(midtopz1, midtopz2);
 				}
-				z_org += sidedef->rowoffset - offshdelta;
+				z_org += sidedef->rowoffset * (!GTextureManager.Textures[sidedef->midtexture]->bWorldPanning ?
+					1.0 : 1.0 / GTextureManager.Textures[sidedef->midtexture]->TScale) - offshdelta;
 
 				sp->texinfo.toffs = z_org * TextureTScale(sidedef->midtexture);
 
