@@ -35,6 +35,12 @@
 
 // TYPES -------------------------------------------------------------------
 
+struct VCodePtrInfo
+{
+	VStr		Name;
+	VMethod*	Method;
+};
+
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -50,6 +56,7 @@
 static char*					Patch;
 static char*					PatchPtr;
 static char*					String;
+static char*					ValueString;
 static int						value;
 
 static TArray<VName>			Sprites;
@@ -58,6 +65,7 @@ static TArray<VClass*>			WeaponClasses;
 static TArray<VState*>			States;
 static TArray<VState*>			CodePtrStates;
 static TArray<VMethod*>			StateActions;
+static TArray<VCodePtrInfo>		CodePtrs;
 static TArray<VName>			Sounds;
 
 static VClass*					GameInfoClass;
@@ -136,14 +144,19 @@ static bool ParseParam()
 		return false;
 	}
 
-	value = atoi(val + 1);
+	ValueString = val + 1;
+	while (*ValueString && (vuint8)*ValueString <= ' ')
+	{
+		ValueString++;
+	}
+	value = atoi(ValueString);
 
 	do
 	{
 		*val = 0;
 		val--;
 	}
-	while (val >= String && *val <= ' ');
+	while (val >= String && (vuint8)*val <= ' ');
 
 	return true;
 	unguard;
@@ -248,6 +261,93 @@ static void SetClassFieldBool(VClass* Class, const char* FieldName, int Value)
 
 //==========================================================================
 //
+//	ParseFlags
+//
+//==========================================================================
+
+static int ParseFlags()
+{
+	guard(ParseFlags);
+	VStr FlagsStr = VStr(ValueString).Replace(" ", "");
+	TArray<VStr> FlagsArray;
+	FlagsStr.Split('+', FlagsArray);
+	int Flags = 0;
+	for (int i = 0; i < FlagsArray.Num(); i++)
+	{
+		VStr Flag(FlagsArray[i].ToUpper());
+		if (Flag == "SPECIAL")
+			Flags |= 0x00000001;
+		else if (Flag == "SOLID")
+			Flags |= 0x00000002;
+		else if (Flag == "SHOOTABLE")
+			Flags |= 0x00000004;
+		else if (Flag == "NOSECTOR")
+			Flags |= 0x00000008;
+		else if (Flag == "NOBLOCKMAP")
+			Flags |= 0x00000010;
+		else if (Flag == "AMBUSH")
+			Flags |= 0x00000020;
+		else if (Flag == "JUSTHIT")
+			Flags |= 0x00000040;
+		else if (Flag == "JUSTATTACKED")
+			Flags |= 0x00000080;
+		else if (Flag == "SPAWNCEILING")
+			Flags |= 0x00000100;
+		else if (Flag == "NOGRAVITY")
+			Flags |= 0x00000200;
+		else if (Flag == "DROPOFF")
+			Flags |= 0x00000400;
+		else if (Flag == "PICKUP")
+			Flags |= 0x00000800;
+		else if (Flag == "NOCLIP")
+			Flags |= 0x00001000;
+		else if (Flag == "SLIDE")
+			Flags |= 0x00002000;
+		else if (Flag == "FLOAT")
+			Flags |= 0x00004000;
+		else if (Flag == "TELEPORT")
+			Flags |= 0x00008000;
+		else if (Flag == "MISSILE")
+			Flags |= 0x00010000;
+		else if (Flag == "DROPPED")
+			Flags |= 0x00020000;
+		else if (Flag == "SHADOW")
+			Flags |= 0x00040000;
+		else if (Flag == "NOBLOOD")
+			Flags |= 0x00080000;
+		else if (Flag == "CORPSE")
+			Flags |= 0x00100000;
+		else if (Flag == "INFLOAT")
+			Flags |= 0x00200000;
+		else if (Flag == "COUNTKILL")
+			Flags |= 0x00400000;
+		else if (Flag == "COUNTITEM")
+			Flags |= 0x00800000;
+		else if (Flag == "SKULLFLY")
+			Flags |= 0x01000000;
+		else if (Flag == "NOTDMATCH")
+			Flags |= 0x02000000;
+		else if (Flag == "TRANSLATION1" || Flag == "TRANSLATION")
+			Flags |= 0x04000000;
+		else if (Flag == "TRANSLATION2" || Flag == "UNUSED1")
+			Flags |= 0x08000000;
+		else if (Flag == "UNUSED2")
+			Flags |= 0x10000000;
+		else if (Flag == "UNUSED3")
+			Flags |= 0x20000000;
+		else if (Flag == "UNUSED4")
+			Flags |= 0x40000000;
+		else if (Flag == "TRANSLUCENT")
+			Flags |= 0x80000000;
+		else
+			dprintf("WARINIG! Unknown flag %s\n", *Flag);
+	}
+	return Flags;
+	unguard;
+}
+
+//==========================================================================
+//
 //	ReadThing
 //
 //==========================================================================
@@ -255,18 +355,17 @@ static void SetClassFieldBool(VClass* Class, const char* FieldName, int Value)
 static void ReadThing(int num)
 {
 	guard(ReadThing);
-	num--; // begin at 0 not 1;
-	if (num < 0 || num >= EntClasses.Num())
+	if (num < 1 || num > EntClasses.Num())
 	{
 		dprintf("WARNING! Invalid thing num %d\n", num);
 		while (ParseParam());
 		return;
 	}
 
-	VClass* Ent = EntClasses[num];
+	VClass* Ent = EntClasses[num - 1];
 	while (ParseParam())
 	{
-		if (!strcmp(String ,"ID #"))
+		if (!VStr::ICmp(String ,"ID #"))
 		{
 			int Idx = -1;
 			for (int i = 0; i < VClass::GMobjInfos.Num(); i++)
@@ -291,32 +390,32 @@ static void ReadThing(int num)
 				VClass::GMobjInfos.RemoveIndex(Idx);
 			}
 		}
-		else if (!strcmp(String, "Hit points"))
+		else if (!VStr::ICmp(String, "Hit points"))
 		{
 			SetClassFieldInt(Ent, "Health", value);
 			SetClassFieldInt(Ent, "GibsHealth", -value);
 		}
-		else if (!strcmp(String, "Reaction time"))
+		else if (!VStr::ICmp(String, "Reaction time"))
 		{
 			SetClassFieldInt(Ent, "ReactionCount", value);
 		}
-		else if (!strcmp(String, "Missile damage"))
+		else if (!VStr::ICmp(String, "Missile damage"))
 		{
 			SetClassFieldInt(Ent, "MissileDamage", value);
 		}
-		else if (!strcmp(String, "Width"))
+		else if (!VStr::ICmp(String, "Width"))
 		{
 			SetClassFieldFloat(Ent, "Radius", value / 65536.0);
 		}
-		else if (!strcmp(String, "Height"))
+		else if (!VStr::ICmp(String, "Height"))
 		{
 			SetClassFieldFloat(Ent, "Height", value / 65536.0);
 		}
-		else if (!strcmp(String, "Mass"))
+		else if (!VStr::ICmp(String, "Mass"))
 		{
 			SetClassFieldFloat(Ent, "Mass", value == 0x7fffffff ? 99999.0 : value);
 		}
-		else if (!strcmp(String, "Speed"))
+		else if (!VStr::ICmp(String, "Speed"))
 		{
 			if (value < 100)
 			{
@@ -329,12 +428,16 @@ static void ReadThing(int num)
 				SetClassFieldFloat(Ent, "StepSpeed", 0.0);
 			}
 		}
-		else if (!strcmp(String, "Pain chance"))
+		else if (!VStr::ICmp(String, "Pain chance"))
 		{
 			SetClassFieldFloat(Ent, "PainChance", value / 256.0);
 		}
-		else if (!strcmp(String, "Bits"))
+		else if (!VStr::ICmp(String, "Bits"))
 		{
+			if (*ValueString < '0' || *ValueString > '9')
+			{
+				value = ParseFlags();
+			}
 			SetClassFieldBool(Ent, "bSpecial", value & 0x00000001);
 			SetClassFieldBool(Ent, "bSolid", value & 0x00000002);
 			SetClassFieldBool(Ent, "bShootable", value & 0x00000004);
@@ -362,25 +465,24 @@ static void ReadThing(int num)
 			SetClassFieldBool(Ent, "bCountKill", value & 0x00400000);
 			SetClassFieldBool(Ent, "bMonster", value & 0x00400000);
 			SetClassFieldBool(Ent, "bActivateMCross", value & 0x00400000);
-			SetClassFieldBool(Ent, "bActivatePushWall", (value & 0x00400000) || num == 0);
+			SetClassFieldBool(Ent, "bActivatePushWall", (value & 0x00400000) || num == 1);
 			SetClassFieldBool(Ent, "bCountItem", value & 0x00800000);
 			SetClassFieldBool(Ent, "bSkullFly", value & 0x01000000);
 			SetClassFieldBool(Ent, "bNoDeathmatch", value & 0x02000000);
-			SetClassFieldBool(Ent, "bNoPassMobj", num != 0 && !(value & 0x00400000) && !(value & 0x00010000));
+			SetClassFieldBool(Ent, "bNoPassMobj", num != 1 && !(value & 0x00400000) && !(value & 0x00010000));
 			//	Translation
 			SetClassFieldInt(Ent, "Translation", (value & 0x0c000000) >> 26);
 			//	Alpha
-			SetClassFieldFloat(Ent, "Alpha", (value & 0x00040000) ? 0.1 : 1.0);
+			SetClassFieldFloat(Ent, "Alpha", (value & 0x00040000) ? 0.1 : (value & 0x80000000) ? 0.5 : 1.0);
 			//	The following fields were not used
 			//value & 0x10000000);
 			//value & 0x20000000);
 			//value & 0x40000000);
-			//value & 0x80000000);
 		}
 		//
 		//	States
 		//
-		else if (!strcmp(String, "Initial frame"))
+		else if (!VStr::ICmp(String, "Initial frame"))
 		{
 			if (value < 0 || value >= States.Num())
 			{
@@ -391,7 +493,7 @@ static void ReadThing(int num)
 				SetClassFieldState(Ent, "IdleState", States[value]);
 			}
 		}
-		else if (!strcmp(String, "First moving frame"))
+		else if (!VStr::ICmp(String, "First moving frame"))
 		{
 			if (value < 0 || value >= States.Num())
 			{
@@ -402,7 +504,7 @@ static void ReadThing(int num)
 				SetClassFieldState(Ent, "SeeState", States[value]);
 			}
 		}
-		else if (!strcmp(String, "Close attack frame"))
+		else if (!VStr::ICmp(String, "Close attack frame"))
 		{
 			if (value < 0 || value >= States.Num())
 			{
@@ -413,7 +515,7 @@ static void ReadThing(int num)
 				SetClassFieldState(Ent, "MeleeState", States[value]);
 			}
 		}
-		else if (!strcmp(String, "Far attack frame"))
+		else if (!VStr::ICmp(String, "Far attack frame"))
 		{
 			if (value < 0 || value >= States.Num())
 			{
@@ -424,7 +526,7 @@ static void ReadThing(int num)
 				SetClassFieldState(Ent, "MissileState", States[value]);
 			}
 		}
-		else if (!strcmp(String, "Injury frame"))
+		else if (!VStr::ICmp(String, "Injury frame"))
 		{
 			if (value < 0 || value >= States.Num())
 			{
@@ -435,7 +537,7 @@ static void ReadThing(int num)
 				SetClassFieldState(Ent, "PainState", States[value]);
 			}
 		}
-		else if (!strcmp(String, "Death frame"))
+		else if (!VStr::ICmp(String, "Death frame"))
 		{
 			if (value < 0 || value >= States.Num())
 			{
@@ -446,7 +548,7 @@ static void ReadThing(int num)
 				SetClassFieldState(Ent, "DeathState", States[value]);
 			}
 		}
-		else if (!strcmp(String, "Exploding frame"))
+		else if (!VStr::ICmp(String, "Exploding frame"))
 		{
 			if (value < 0 || value >= States.Num())
 			{
@@ -457,7 +559,7 @@ static void ReadThing(int num)
 				SetClassFieldState(Ent, "GibsDeathState", States[value]);
 			}
 		}
-		else if (!strcmp(String, "Respawn frame"))
+		else if (!VStr::ICmp(String, "Respawn frame"))
 		{
 			if (value < 0 || value >= States.Num())
 			{
@@ -471,7 +573,7 @@ static void ReadThing(int num)
 		//
 		//	Sounds
 		//
-		else if (!strcmp(String, "Alert sound"))
+		else if (!VStr::ICmp(String, "Alert sound"))
 		{
 			if (value < 0 || value >= Sounds.Num())
 			{
@@ -482,7 +584,7 @@ static void ReadThing(int num)
 				SetClassFieldName(Ent, "SightSound", Sounds[value]);
 			}
 		}
-		else if (!strcmp(String, "Action sound"))
+		else if (!VStr::ICmp(String, "Action sound"))
 		{
 			if (value < 0 || value >= Sounds.Num())
 			{
@@ -493,7 +595,7 @@ static void ReadThing(int num)
 				SetClassFieldName(Ent, "ActiveSound", Sounds[value]);
 			}
 		}
-		else if (!strcmp(String, "Attack sound"))
+		else if (!VStr::ICmp(String, "Attack sound"))
 		{
 			if (value < 0 || value >= Sounds.Num())
 			{
@@ -504,7 +606,7 @@ static void ReadThing(int num)
 				SetClassFieldName(Ent, "AttackSound", Sounds[value]);
 			}
 		}
-		else if (!strcmp(String, "Pain sound"))
+		else if (!VStr::ICmp(String, "Pain sound"))
 		{
 			if (value < 0 || value >= Sounds.Num())
 			{
@@ -515,7 +617,7 @@ static void ReadThing(int num)
 				SetClassFieldName(Ent, "PainSound", Sounds[value]);
 			}
 		}
-		else if (!strcmp(String, "Death sound"))
+		else if (!VStr::ICmp(String, "Death sound"))
 		{
 			if (value < 0 || value >= Sounds.Num())
 			{
@@ -545,15 +647,15 @@ static void ReadSound(int)
 	guard(ReadSound);
 	while (ParseParam())
 	{
-		if (!strcmp(String, "Offset"));				//Lump name offset - can't handle
-		else if (!strcmp(String, "Zero/One"));		//Singularity - removed
-		else if (!strcmp(String, "Value"));			//Priority
-		else if (!strcmp(String, "Zero 1"));		//Lump num - can't be set
-		else if (!strcmp(String, "Zero 2"));		//Data pointer - can't be set
-		else if (!strcmp(String, "Zero 3"));		//Usefulness - removed
-		else if (!strcmp(String, "Zero 4"));		//Link - removed
-		else if (!strcmp(String, "Neg. One 1"));	//Link pitch - removed
-		else if (!strcmp(String, "Neg. One 2"));	//Link volume - removed
+		if (!VStr::ICmp(String, "Offset"));				//Lump name offset - can't handle
+		else if (!VStr::ICmp(String, "Zero/One"));		//Singularity - removed
+		else if (!VStr::ICmp(String, "Value"));			//Priority
+		else if (!VStr::ICmp(String, "Zero 1"));		//Lump num - can't be set
+		else if (!VStr::ICmp(String, "Zero 2"));		//Data pointer - can't be set
+		else if (!VStr::ICmp(String, "Zero 3"));		//Usefulness - removed
+		else if (!VStr::ICmp(String, "Zero 4"));		//Link - removed
+		else if (!VStr::ICmp(String, "Neg. One 1"));	//Link pitch - removed
+		else if (!VStr::ICmp(String, "Neg. One 2"));	//Link volume - removed
 		else dprintf("WARNING! Invalid sound param %s\n", String);
 	}
 	unguard;
@@ -585,7 +687,7 @@ static void ReadState(int num)
 
 	while (ParseParam())
 	{
-		if (!strcmp(String, "Sprite number"))
+		if (!VStr::ICmp(String, "Sprite number"))
 		{
 			if (value < 0 || value >= Sprites.Num())
 			{
@@ -597,7 +699,7 @@ static void ReadState(int num)
 				States[num]->SpriteIndex = VClass::FindSprite(Sprites[value]);
 			}
 		}
-		else if (!strcmp(String, "Sprite subnumber"))
+		else if (!VStr::ICmp(String, "Sprite subnumber"))
 		{
 			if (value & 0x8000)
 			{
@@ -606,11 +708,11 @@ static void ReadState(int num)
 			}
 			States[num]->Frame = value;
 		}
-		else if (!strcmp(String, "Duration"))
+		else if (!VStr::ICmp(String, "Duration"))
 		{
 			States[num]->Time = value < 0 ? value : value / 35.0;
 		}
-		else if (!strcmp(String, "Next frame"))
+		else if (!VStr::ICmp(String, "Next frame"))
 		{
 			if (value >= States.Num() || value < 0)
 			{
@@ -621,15 +723,15 @@ static void ReadState(int num)
 				States[num]->NextState = States[value];
 			}
 		}
-		else if (!strcmp(String, "Unknown 1"))
+		else if (!VStr::ICmp(String, "Unknown 1"))
 		{
 			States[num]->Misc1 = value;
 		}
-		else if (!strcmp(String, "Unknown 2"))
+		else if (!VStr::ICmp(String, "Unknown 2"))
 		{
 			States[num]->Misc2 = value;
 		}
-		else if (!strcmp(String, "Action pointer"))
+		else if (!VStr::ICmp(String, "Action pointer"))
 		{
 			dprintf("WARNING! Tried to set action pointer.\n");
 		}
@@ -819,6 +921,56 @@ static void ReadPointer(int num)
 
 //==========================================================================
 //
+//	ReadCodePtr
+//
+//==========================================================================
+
+static void ReadCodePtr(int)
+{
+	guard(ReadCodePtr);
+	while (ParseParam())
+	{
+		if (!VStr::NICmp(String, "Frame", 5) && (vuint8)String[5] <= ' ')
+		{
+			int Index = atoi(String + 5);
+			if (Index < 0 || Index >= States.Num())
+			{
+				dprintf("Bad frame index %d", Index);
+				continue;
+			}
+			VState* State = States[Index];
+
+			if ((ValueString[0] == 'A' || ValueString[0] == 'a') &&
+				ValueString[1] == '_')
+			{
+				ValueString += 2;
+			}
+
+			bool Found = false;
+			for (int i = 0; i < CodePtrs.Num(); i++)
+			{
+				if (!CodePtrs[i].Name.ICmp(ValueString))
+				{
+					State->Function = CodePtrs[i].Method;
+					Found = true;
+					break;
+				}
+			}
+			if (!Found)
+			{
+				dprintf("WARNING! Invalid code pointer %s\n", ValueString);
+			}
+		}
+		else
+		{
+			dprintf("WARNING! Invalid code pointer param %s\n", String);
+		}
+	}
+	unguard;
+}
+
+//==========================================================================
+//
 //	ReadCheats
 //
 //==========================================================================
@@ -880,6 +1032,52 @@ static void ReadMisc(int)
 		}
 		else if (!VStr::ICmp(String, "Monsters Infight"));	//	What's that?
 		else dprintf("WARNING! Invalid misc %s\n", String);
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	ReadPars
+//
+//==========================================================================
+
+static void ReadPars(int)
+{
+	guard(ReadPars);
+	while (GetLine())
+	{
+		if (strchr(String, '='))
+		{
+			dprintf("WARNING! Unknown key in Pars section.\n");
+			continue;
+		}
+		if (VStr::NICmp(String, "par", 3) || (vuint8)String[3] > ' ')
+		{
+			return;
+		}
+		strtok(String, " ");
+		char* Num1 = strtok(NULL, " ");
+		char* Num2 = strtok(NULL, " ");
+		char* Num3 = strtok(NULL, " ");
+		if (!Num1 || !Num2)
+		{
+			dprintf("WARNING! Bad par time\n");
+			continue;
+		}
+		VName MapName;
+		int Par;
+		if (Num3)
+		{
+			MapName = va("e%cm%c", Num1[0], Num2[0]);
+			Par = atoi(Num3);
+		}
+		else
+		{
+			MapName = va("map%02d", atoi(Num1) % 100);
+			Par = atoi(Num2);
+		}
+		P_SetParTime(MapName, Par);
 	}
 	unguard;
 }
@@ -1013,6 +1211,143 @@ static void ReadText(int oldSize)
 
 //==========================================================================
 //
+//	ReplaceSpecialChars
+//
+//==========================================================================
+
+static VStr ReplaceSpecialChars(VStr& In)
+{
+	guard(ReplaceSpecialChars);
+	VStr Ret;
+	const char* pStr = *In;
+	while (*pStr)
+	{
+		char c = *pStr++;
+		if (c != '\\')
+		{
+			Ret += c;
+		}
+		else
+		{
+			switch (*pStr)
+			{
+			case 'n':
+			case 'N':
+				Ret += '\n';
+				break;
+			case 't':
+			case 'T':
+				Ret += '\t';
+				break;
+			case 'r':
+			case 'R':
+				Ret += '\r';
+				break;
+			case 'x':
+			case 'X':
+				c = 0;
+				pStr++;
+				for (int i = 0; i < 2; i++)
+				{
+					c <<= 4;
+					if (*pStr >= '0' && *pStr <= '9')
+						c += *pStr - '0';
+					else if (*pStr >= 'a' && *pStr <= 'f')
+						c += 10 + *pStr - 'a';
+					else if (*pStr >= 'A' && *pStr <= 'F')
+						c += 10 + *pStr - 'A';
+					else
+						break;
+					pStr++;
+				}
+				Ret += c;
+				break;
+			case '0':
+			case '1':
+			case '2':
+			case '3':
+			case '4':
+			case '5':
+			case '6':
+			case '7':
+				c = 0;
+				for (int i = 0; i < 3; i++)
+				{
+					c <<= 3;
+					if (*pStr >= '0' && *pStr <= '7')
+						c += *pStr - '0';
+					else
+						break;
+					pStr++;
+				}
+				Ret += c;
+				break;
+			default:
+				Ret += *pStr;
+				break;
+			}
+			pStr++;
+		}
+	}
+	return Ret;
+	unguard;
+}
+
+//==========================================================================
+//
+//	ReadStrings
+//
+//==========================================================================
+
+static void ReadStrings(int)
+{
+	guard(ReadStrings);
+	while (ParseParam())
+	{
+		VName Id = *VStr(String).ToLower();
+		VStr Val;
+		do
+		{
+			char* End = ValueString + VStr::Length(ValueString) - 1;
+			while (End >= ValueString && (vuint8)*End <= ' ')
+			{
+				End--;
+			}
+			End[1] = 0;
+			if (End >= ValueString && *End == '\\')
+			{
+				*End = 0;
+				Val += ValueString;
+				ValueString = PatchPtr;
+				while (*PatchPtr && *PatchPtr != '\n')
+				{
+					PatchPtr++;
+				}
+				if (*PatchPtr == '\n')
+				{
+					*PatchPtr = 0;
+					PatchPtr++;
+				}
+				while (*ValueString && *ValueString <= ' ')
+				{
+					ValueString++;
+				}
+			}
+			else
+			{
+				Val += ValueString;
+				ValueString = NULL;
+			}
+		}
+		while (ValueString && *ValueString);
+		Val = ReplaceSpecialChars(Val);
+		GLanguage.ReplaceString(Id, Val);
+	}
+	unguard;
+}
+
+//==========================================================================
+//
 //	LoadDehackedFile
 //
 //==========================================================================
@@ -1040,45 +1375,57 @@ static void LoadDehackedFile(VStream* Strm)
 			i = atoi(numStr);
 		}
 
-		if (!strcmp(Section, "Thing"))
+		if (!VStr::ICmp(Section, "Thing"))
 		{
 			ReadThing(i);
 		}
-		else if (!strcmp(Section, "Sound"))
+		else if (!VStr::ICmp(Section, "Sound"))
 		{
 			ReadSound(i);
 		}
-		else if (!strcmp(Section, "Frame"))
+		else if (!VStr::ICmp(Section, "Frame"))
 		{
 			ReadState(i);
 		}
-		else if (!strcmp(Section, "Sprite"))
+		else if (!VStr::ICmp(Section, "Sprite"))
 		{
 			ReadSpriteName(i);
 		}
-		else if (!strcmp(Section, "Ammo"))
+		else if (!VStr::ICmp(Section, "Ammo"))
 		{
 			ReadAmmo(i);
 		}
-		else if (!strcmp(Section, "Weapon"))
+		else if (!VStr::ICmp(Section, "Weapon"))
 		{
 			ReadWeapon(i);
 		}
-		else if (!strcmp(Section, "Pointer"))
+		else if (!VStr::ICmp(Section, "Pointer"))
 		{
 			ReadPointer(i);
 		}
-		else if (!strcmp(Section, "Cheat"))
+		else if (!VStr::ICmp(Section, "Cheat"))
 		{
 			ReadCheats(i);
 		}
-		else if (!strcmp(Section, "Misc"))
+		else if (!VStr::ICmp(Section, "Misc"))
 		{
 			ReadMisc(i);
 		}
-		else if (!strcmp(Section, "Text"))
+		else if (!VStr::ICmp(Section, "Text"))
 		{
 			ReadText(i);
+		}
+		else if (!VStr::ICmp(Section, "[Strings]"))
+		{
+			ReadStrings(i);
+		}
+		else if (!VStr::ICmp(Section, "[Pars]"))
+		{
+			ReadPars(i);
+		}
+		else if (!VStr::ICmp(Section, "[CodePtr]"))
+		{
+			ReadCodePtr(i);
 		}
 		else
 		{
@@ -1213,6 +1560,35 @@ void ProcessDehackedFiles()
 		CodePtrStates.Append(States[sc->Number]);
 	}
 
+	//	Read code pointers.
+	sc->Expect("code_pointers");
+	sc->Expect("{");
+	VCodePtrInfo& ANull = CodePtrs.Alloc();
+	ANull.Name = "NULL";
+	ANull.Method = NULL;
+	while (!sc->Check("}"))
+	{
+		sc->ExpectString();
+		VStr Name = sc->String;
+		sc->ExpectString();
+		VStr ClassName = sc->String;
+		sc->ExpectString();
+		VStr MethodName = sc->String;
+		VClass* Class = VClass::FindClass(*ClassName);
+		if (!Class)
+		{
+			sc->Error("No such class");
+		}
+		VMethod* Method = Class->FindFunction(*MethodName);
+		if (!Method)
+		{
+			sc->Error(va("No such method %s", *MethodName));
+		}
+		VCodePtrInfo& P = CodePtrs.Alloc();
+		P.Name = Name;
+		P.Method = Method;
+	}
+
 	//	Read sound names.
 	sc->Expect("sounds");
 	sc->Expect("{");
@@ -1319,6 +1695,7 @@ void ProcessDehackedFiles()
 	States.Clear();
 	CodePtrStates.Clear();
 	StateActions.Clear();
+	CodePtrs.Clear();
 	Sounds.Clear();
 	SfxNames.Clear();
 	MusicNames.Clear();

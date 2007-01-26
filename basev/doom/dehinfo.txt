@@ -20,9 +20,9 @@ sprites
 	HDB4 HDB5 HDB6 POB1 POB2 BRS1 TLMP TLP2
 }
 
-//967
 states
 {
+	//	S_NULL is implicit
 	Weapon					First	1
 	WeaponFist				First	8
 	WeaponPistol			First	8
@@ -207,6 +207,85 @@ code_pointer_states
 	745 746 750 751 766 774 777 779 780 783
 	784 785 786 787 788 789 790 791 792 793
 	794 795 796 797 798 801 809 811
+}
+
+code_pointers
+{
+	//	NULL is implicit
+	Light0			Actor	A_Light0
+	Light1			Actor	A_Light1
+	Light2			Actor	A_Light2
+	WeaponReady		Actor	A_WeaponReady
+	Lower			Actor	A_Lower
+	Raise			Actor	A_Raise
+	ReFire			Actor	A_ReFire
+	Punch			Actor	A_Punch
+	FirePistol		Actor	A_FirePistol
+	FireShotgun		Actor	A_FireShotgun
+	FireShotgun2	Actor	A_FireShotgun2
+	CheckReload		Actor	A_CheckReload
+	OpenShotgun2	Actor	A_OpenShotgun2
+	LoadShotgun2	Actor	A_LoadShotgun2
+	CloseShotgun2	Actor	A_CloseShotgun2
+	FireCGun		Actor	A_FireCGun
+	GunFlash		Actor	A_GunFlash
+	FireMissile		Actor	A_FireMissile
+	Saw				Actor	A_Saw
+	FirePlasma		Actor	A_FirePlasma
+	BFGsound		Actor	A_BFGsound
+	FireBFG			Actor	A_FireBFG
+	BFGSpray		Actor	A_BFGSpray
+	Explode			Actor	A_Explode
+	Pain			Actor	A_Pain
+	PlayerScream	Actor	A_PlayerScream
+	Fall			Actor	A_Fall
+	XScream			Actor	A_XScream
+	Look			Actor	A_Look
+	Chase			Actor	A_Chase
+	FaceTarget		Actor	A_FaceTarget
+	PosAttack		Actor	A_PosAttack
+	Scream			Actor	A_Scream
+	SPosAttack		Actor	A_SPosAttack
+	VileChase		Actor	A_VileChase
+	VileStart		Actor	A_VileStart
+	VileTarget		Actor	A_VileTarget
+	VileAttack		Actor	A_VileAttack
+	StartFire		Actor	A_StartFire
+	Fire			Actor	A_Fire
+	FireCrackle		Actor	A_FireCrackle
+	Tracer			Actor	A_Tracer
+	SkelWhoosh		Actor	A_SkelWhoosh
+	SkelFist		Actor	A_SkelFist
+	SkelMissile		Actor	A_SkelMissile
+	FatRaise		Actor	A_FatRaise
+	FatAttack1		Actor	A_FatAttack1
+	FatAttack2		Actor	A_FatAttack2
+	FatAttack3		Actor	A_FatAttack3
+	BossDeath		Actor	A_BossDeath
+	CPosAttack		Actor	A_CPosAttack
+	CPosRefire		Actor	A_CPosRefire
+	TroopAttack		Actor	A_TroopAttack
+	SargAttack		Actor	A_SargAttack
+	HeadAttack		Actor	A_HeadAttack
+	BruisAttack		Actor	A_BruisAttack
+	SkullAttack		Actor	A_SkullAttack
+	Metal			Actor	A_Metal
+	SpidRefire		Actor	A_SpidRefire
+	BabyMetal		Actor	A_BabyMetal
+	BspiAttack		Actor	A_BspiAttack
+	Hoof			Actor	A_Hoof
+	CyberAttack		Actor	A_CyberAttack
+	PainAttack		Actor	A_PainAttack
+	PainDie			Actor	A_PainDie
+	KeenDie			Actor	A_KeenDie
+	BrainPain		Actor	A_BrainPain
+	BrainScream		Actor	A_BrainScream
+	BrainDie		Actor	A_BrainDie
+	BrainAwake		Actor	A_BrainAwake
+	BrainSpit		Actor	A_BrainSpit
+	SpawnSound		Actor	A_SpawnSound
+	SpawnFly		Actor	A_SpawnFly
+	BrainExplode	Actor	A_BrainExplode
 }
 
 //	Names of the sounds to be used when changing sounds

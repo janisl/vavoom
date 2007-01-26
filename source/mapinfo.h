@@ -126,6 +126,7 @@ int P_GetNumEpisodes();
 VEpisodeDef* P_GetEpisodeDef(int);
 void P_GetMusicLumpNames(TArray<FReplacedString>&);
 void P_ReplaceMusicLumpNames(TArray<FReplacedString>&);
+void P_SetParTime(VName, int);
 int P_GetCDStartTrack();
 int P_GetCDEnd1Track();
 int P_GetCDEnd2Track();

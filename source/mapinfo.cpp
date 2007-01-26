@@ -1045,6 +1045,27 @@ void P_ReplaceMusicLumpNames(TArray<FReplacedString>& List)
 
 //==========================================================================
 //
+//	P_SetParTime
+//
+//==========================================================================
+
+void P_SetParTime(VName Map, int Par)
+{
+	guard(P_SetParTime);
+	for (int i = 0; i < MapInfo.Num(); i++)
+	{
+		if (MapInfo[i].LumpName == Map)
+		{
+			MapInfo[i].ParTime = Par;
+			return;
+		}
+	}
+	GCon->Logf("WARNING! No such map %s", *Map);
+	unguard;
+}
+
+//==========================================================================
+//
 // P_GetCDStartTrack
 //
 //==========================================================================

@@ -2372,12 +2372,14 @@ VField* VClass::FindFieldChecked(VName AName)
 VMethod *VClass::FindFunction(VName AName)
 {
 	guard(VClass::FindFunction);
-	for (int i = 0; i < ClassNumMethods; i++)
+	VMethod* M = (VMethod*)StaticFindMember(AName, this, MEMBER_Method);
+	if (M)
 	{
-		if (ClassVTable[i]->Name == AName)
-		{
-			return ClassVTable[i];
-		}
+		return M;
+	}
+	if (ParentClass)
+	{
+		return ParentClass->FindFunction(AName);
 	}
 	return NULL;
 	unguard;
