@@ -453,20 +453,20 @@ bool HandleDehackedPickup(Actor Toucher)
 	// Identify by sprite.
 	// armor
 	name SpriteName = GetStateSpriteName(State);
-	if (SpriteName == 'ARM1')
+	if (SpriteName == 'arm1')
 	{
 		if (!Player(Toucher.Player).GiveArmor(1))
 			return false;
 		Toucher.Player.cprint("$gotarmor");
 	}
-	else if (SpriteName == 'ARM2')
+	else if (SpriteName == 'arm2')
 	{
 		if (!Player(Toucher.Player).GiveArmor(2))
 			return false;
 		Toucher.Player.cprint("$gotmega");
 	}
 		// bonus items
-	else if (SpriteName == 'BON1')
+	else if (SpriteName == 'bon1')
 	{
 		Toucher.Player.Health++;	// can go over 100%
 		if (Toucher.Player.Health > 200)
@@ -474,7 +474,7 @@ bool HandleDehackedPickup(Actor Toucher)
 		Toucher.Health = Toucher.Player.Health;
 		Toucher.Player.cprint("$goththbonus");
 	}
-	else if (SpriteName == 'BON2')
+	else if (SpriteName == 'bon2')
 	{
 		Player(Toucher.Player).ArmorPoints++;	// can go over 100%
 		if (Player(Toucher.Player).ArmorPoints > 200)
@@ -483,7 +483,7 @@ bool HandleDehackedPickup(Actor Toucher)
 			Player(Toucher.Player).ArmorType = 1;
 		Toucher.Player.cprint("$gotarmbonus");
 	}
-	else if (SpriteName == 'SOUL')
+	else if (SpriteName == 'soul')
 	{
 		Toucher.Player.Health += MainGameInfo(Level.Game).SOULSPHERE_HEALTH;
 		if (Toucher.Player.Health > MainGameInfo(Level.Game).SOULSPHERE_MAX)
@@ -492,7 +492,7 @@ bool HandleDehackedPickup(Actor Toucher)
 		Toucher.Player.cprint("$gotsuper");
 		sound = 'misc/p_pkup';
 	}
-	else if (SpriteName == 'MEGA')
+	else if (SpriteName == 'mega')
 	{
 		Toucher.Player.Health = MainGameInfo(Level.Game).MEGASPHERE_HEALTH;
 		Toucher.Health = Toucher.Player.Health;
@@ -502,42 +502,42 @@ bool HandleDehackedPickup(Actor Toucher)
 	}
 		// cards
 		// leave cards for everyone
-	else if (SpriteName == 'BKEY')
+	else if (SpriteName == 'bkey')
 	{
 		if (Player(Toucher.Player).GiveCard(it_bluecard))
 			Toucher.Player.cprint("$gotbluecard");
 		if (Level.Game.netgame)
 			return false;
 	}
-	else if (SpriteName == 'YKEY')
+	else if (SpriteName == 'ykey')
 	{
 		if (Player(Toucher.Player).GiveCard(it_yellowcard))
 			Toucher.Player.cprint("$gotyelwcard");
 		if (Level.Game.netgame)
 			return false;
 	}
-	else if (SpriteName == 'RKEY')
+	else if (SpriteName == 'rkey')
 	{
 		if (Player(Toucher.Player).GiveCard(it_redcard))
 			Toucher.Player.cprint("$gotredcard");
 		if (Level.Game.netgame)
 			return false;
 	}
-	else if (SpriteName == 'BSKU')
+	else if (SpriteName == 'bsku')
 	{
 		if (Player(Toucher.Player).GiveCard(it_blueskull))
 			Toucher.Player.cprint("$gotblueskul");
 		if (Level.Game.netgame)
 			return false;
 	}
-	else if (SpriteName == 'YSKU')
+	else if (SpriteName == 'ysku')
 	{
 		if (Player(Toucher.Player).GiveCard(it_yellowskull))
 			Toucher.Player.cprint("$gotyelwskul");
 		if (Level.Game.netgame)
 			return false;
 	}
-	else if (SpriteName == 'RSKU')
+	else if (SpriteName == 'rsku')
 	{
 		if (Player(Toucher.Player).GiveCard(it_redskull))
 			Toucher.Player.cprint("$gotredskull");
@@ -545,13 +545,13 @@ bool HandleDehackedPickup(Actor Toucher)
 			return false;
 	}
 		// medikits, heals
-	else if (SpriteName == 'STIM')
+	else if (SpriteName == 'stim')
 	{
 		if (!Player(Toucher.Player).GiveBody(10, Player::MAXHEALTH))
 			return false;
 		Toucher.Player.cprint("$gotstim");
 	}
-	else if (SpriteName == 'MEDI')
+	else if (SpriteName == 'medi')
 	{
 		if (!Player(Toucher.Player).GiveBody(25, Player::MAXHEALTH))
 			return false;
@@ -562,35 +562,35 @@ bool HandleDehackedPickup(Actor Toucher)
 			Toucher.Player.cprint("$gotmedikit");
 	}
 		// power ups
-	else if (SpriteName == 'PINV')
+	else if (SpriteName == 'pinv')
 	{
 		if (!Player(Toucher.Player).GivePower(pw_invulnerability))
 			return false;
 		Toucher.Player.cprint("$gotinvul");
 		sound = 'misc/p_pkup';
 	}
-	else if (SpriteName == 'PSTR')
+	else if (SpriteName == 'pstr')
 	{
 		if (!Player(Toucher.Player).GivePower(pw_strength))
 			return false;
 		Toucher.Player.cprint("$gotberserk");
 		sound = 'misc/p_pkup';
 	}
-	else if (SpriteName == 'PINS')
+	else if (SpriteName == 'pins')
 	{
 		if (!Player(Toucher.Player).GivePower(pw_invisibility))
 			return false;
 		Toucher.Player.cprint("$gotinvis");
 		sound = 'misc/p_pkup';
 	}
-	else if (SpriteName == 'SUIT')
+	else if (SpriteName == 'suit')
 	{
 		if (!Player(Toucher.Player).GivePower(pw_ironfeet))
 			return false;
 		Toucher.Player.cprint("$gotsuit");
 		sound = 'misc/p_pkup';
 	}
-	else if (SpriteName == 'PVIS')
+	else if (SpriteName == 'pvis')
 	{
 		if (!Player(Toucher.Player).GivePower(pw_infrared))
 			return false;
@@ -598,7 +598,7 @@ bool HandleDehackedPickup(Actor Toucher)
 		sound = 'misc/p_pkup';
 	}
 		//  Items
-	else if (SpriteName == 'PMAP')
+	else if (SpriteName == 'pmap')
 	{
 		if (!Player(Toucher.Player).GiveItem(IT_ALL_MAP))
 			return false;
@@ -606,7 +606,7 @@ bool HandleDehackedPickup(Actor Toucher)
 		sound = 'misc/p_pkup';
 	}
 		// ammo
-	else if (SpriteName == 'CLIP')
+	else if (SpriteName == 'clip')
 	{
 		if (bDropped)
 		{
@@ -620,49 +620,49 @@ bool HandleDehackedPickup(Actor Toucher)
 		}
 		Toucher.Player.cprint("$gotclip");
 	}
-	else if (SpriteName == 'AMMO')
+	else if (SpriteName == 'ammo')
 	{
 		if (!Player(Toucher.Player).GiveAmmo(DoomDefs::am_clip, 5 * MainGameInfo(Level.Game).clipammo[DoomDefs::am_clip]))
 			return false;
 		Toucher.Player.cprint("$gotclipbox");
 	}
-	else if (SpriteName == 'ROCK')
+	else if (SpriteName == 'rock')
 	{
 		if (!Player(Toucher.Player).GiveAmmo(DoomDefs::am_misl, MainGameInfo(Level.Game).clipammo[DoomDefs::am_misl]))
 			return false;
 		Toucher.Player.cprint("$gotrocket");
 	}
-	else if (SpriteName == 'BROK')
+	else if (SpriteName == 'brok')
 	{
 		if (!Player(Toucher.Player).GiveAmmo(DoomDefs::am_misl, 5 * MainGameInfo(Level.Game).clipammo[DoomDefs::am_misl]))
 			return false;
 		Toucher.Player.cprint("$gotrockbox");
 	}
-	else if (SpriteName == 'CELL')
+	else if (SpriteName == 'cell')
 	{
 		if (!Player(Toucher.Player).GiveAmmo(DoomDefs::am_cell, MainGameInfo(Level.Game).clipammo[DoomDefs::am_cell]))
 			return false;
 		Toucher.Player.cprint("$gotcell");
 	}
-	else if (SpriteName == 'CELP')
+	else if (SpriteName == 'celp')
 	{
 		if (!Player(Toucher.Player).GiveAmmo(DoomDefs::am_cell, 5 * MainGameInfo(Level.Game).clipammo[DoomDefs::am_cell]))
 			return false;
 		Toucher.Player.cprint("$gotcellbox");
 	}
-	else if (SpriteName == 'SHEL')
+	else if (SpriteName == 'shel')
 	{
 		if (!Player(Toucher.Player).GiveAmmo(DoomDefs::am_shell, MainGameInfo(Level.Game).clipammo[DoomDefs::am_shell]))
 			return false;
 		Toucher.Player.cprint("$gotshells");
 	}
-	else if (SpriteName == 'SBOX')
+	else if (SpriteName == 'sbox')
 	{
 		if (!Player(Toucher.Player).GiveAmmo(DoomDefs::am_shell, 5 * MainGameInfo(Level.Game).clipammo[DoomDefs::am_shell]))
 			return false;
 		Toucher.Player.cprint("$gotshellbox");
 	}
-	else if (SpriteName == 'BPAK')
+	else if (SpriteName == 'bpak')
 	{
 		if (!Player(Toucher.Player).Backpack)
 		{
@@ -677,49 +677,49 @@ bool HandleDehackedPickup(Actor Toucher)
 		Toucher.Player.cprint("$gotbackpack");
 	}
 		// weapons
-	else if (SpriteName == 'BFUG')
+	else if (SpriteName == 'bfug')
 	{
 		if (!Player(Toucher.Player).GiveWeapon(DoomDefs::wp_bfg, false))
 			return false;
 		Toucher.Player.cprint("$gotbfg9000");
 		sound = 'misc/w_pkup';
 	}
-	else if (SpriteName == 'MGUN')
+	else if (SpriteName == 'mgun')
 	{
 		if (!Player(Toucher.Player).GiveWeapon(DoomDefs::wp_chaingun, bDropped))
 			return false;
 		Toucher.Player.cprint("$gotchaingun");
 		sound = 'misc/w_pkup';
 	}
-	else if (SpriteName == 'CSAW')
+	else if (SpriteName == 'csaw')
 	{
 		if (!Player(Toucher.Player).GiveWeapon(DoomDefs::wp_chainsaw, false))
 			return false;
 		Toucher.Player.cprint("$gotchainsaw");
 		sound = 'misc/w_pkup';
 	}
-	else if (SpriteName == 'LAUN')
+	else if (SpriteName == 'laun')
 	{
 		if (!Player(Toucher.Player).GiveWeapon(DoomDefs::wp_missile, false))
 			return false;
 		Toucher.Player.cprint("$gotlauncher");
 		sound = 'misc/w_pkup';
 	}
-	else if (SpriteName == 'PLAS')
+	else if (SpriteName == 'plas')
 	{
 		if (!Player(Toucher.Player).GiveWeapon(DoomDefs::wp_plasma, false))
 			return false;
 		Toucher.Player.cprint("$gotplasma");
 		sound = 'misc/w_pkup';
 	}
-	else if (SpriteName == 'SHOT')
+	else if (SpriteName == 'shot')
 	{
 		if (!Player(Toucher.Player).GiveWeapon(DoomDefs::wp_shotgun, bDropped))
 			return false;
 		Toucher.Player.cprint("$gotshotgun");
 		sound = 'misc/w_pkup';
 	}
-	else if (SpriteName == 'SGN2')
+	else if (SpriteName == 'sgn2')
 	{
 		if (!Player(Toucher.Player).GiveWeapon(DoomDefs::wp_supershotgun, bDropped))
 			return false;
