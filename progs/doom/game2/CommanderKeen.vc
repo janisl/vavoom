@@ -26,6 +26,26 @@
 class CommanderKeen : Actor
 	__mobjinfo__(72);
 
+//==========================================================================
+//
+//  A_KeenDie
+//
+//  DOOM II special, map 32. Uses special tag 666.
+//
+//==========================================================================
+
+final void A_KeenDie()
+{
+	A_Fall();
+
+	// scan the remaining thinkers to see if all Keens are dead
+	if (FindOther())
+	{
+		return;
+	}
+	Level.ExecuteActionSpecial(LNSPEC_DoorOpen, 666, 16, 150, 0, 0, NULL, 0, none);
+}
+
 __states__
 {
 	S_KEENSTND('KEEN', 0, -1.0, S_KEENSTND) = none

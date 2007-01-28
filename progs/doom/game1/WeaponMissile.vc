@@ -25,6 +25,18 @@
 
 class WeaponMissile : Weapon;
 
+//===========================================================================
+//
+//  A_FireMissile
+//
+//===========================================================================
+
+final void A_FireMissile()
+{
+	Player(Owner.Player).Ammo[Weapon(self).Ammo]--;
+	Player(Owner.Player).SpawnPlayerMissile(Rocket);
+}
+
 __states__
 {
 	S_MISSILE('MISG', 0, 1.0 / 35.0, S_MISSILE) = A_WeaponReady

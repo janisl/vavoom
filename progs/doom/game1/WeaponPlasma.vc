@@ -25,6 +25,22 @@
 
 class WeaponPlasma : Weapon;
 
+//===========================================================================
+//
+//  A_FirePlasma
+//
+//===========================================================================
+
+final void A_FirePlasma()
+{
+	Player(Owner.Player).Ammo[Weapon(self).Ammo]--;
+	if (!(P_Random() & 1))
+		Owner.Player.SetViewState(ps_flash, Weapon(self).FlashState);
+	else
+		Owner.Player.SetViewState(ps_flash, WeaponPlasma::S_PLASMAFLASH2);
+	Player(Owner.Player).SpawnPlayerMissile(PlasmaShot);
+}
+
 __states__
 {
 	S_PLASMA('PLSG', 0, 1.0 / 35.0, S_PLASMA) = A_WeaponReady

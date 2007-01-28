@@ -27,6 +27,90 @@ class Mancubus : Actor
 	__mobjinfo__(67)
 	__scriptid__(112);
 
+//==========================================================================
+//
+//  A_FatRaise
+//
+//  Mancubus attack sound.
+//
+//==========================================================================
+
+final void A_FatRaise()
+{
+	A_FaceTarget();
+	PlaySound('fatso/raiseguns', CHAN_WEAPON);
+}
+
+//==========================================================================
+//
+//  A_FatAttack1
+//
+//  Mancubus attack, firing three missiles (bruisers) in three different
+// directions? Doesn't look like it.
+//
+//==========================================================================
+
+const float SpreadAngle = 90.0 / 8.0;
+
+final void A_FatAttack1()
+{
+	Actor A;
+
+	A_FaceTarget();
+	// Change direction  to ...
+	Angles.yaw = AngleMod360(Angles.yaw + SpreadAngle);
+	SpawnMissile(Enemy, MancubusMissile);
+
+	A = SpawnMissile(Enemy, MancubusMissile);
+	A.Angles.yaw = AngleMod360(A.Angles.yaw + SpreadAngle);
+	VectorRotateAroundZ(&A.Velocity, SpreadAngle);
+}
+
+//==========================================================================
+//
+//  A_FatAttack2
+//
+//  Mancubus attack, second direction.
+//
+//==========================================================================
+
+final void A_FatAttack2()
+{
+	Actor A;
+
+	A_FaceTarget();
+	// Now here choose opposite deviation.
+	Angles.yaw = AngleMod360(Angles.yaw - SpreadAngle);
+	SpawnMissile(Enemy, MancubusMissile);
+
+	A = SpawnMissile(Enemy, MancubusMissile);
+	A.Angles.yaw = AngleMod360(A.Angles.yaw - SpreadAngle * 2.0);
+	VectorRotateAroundZ(&A.Velocity, -SpreadAngle * 2.0);
+}
+
+//==========================================================================
+//
+//  A_FatAttack3
+//
+//  Mancubus attack, third direction.
+//
+//==========================================================================
+
+final void A_FatAttack3()
+{
+	Actor A;
+
+	A_FaceTarget();
+
+	A = SpawnMissile(Enemy, MancubusMissile);
+	A.Angles.yaw = AngleMod360(A.Angles.yaw - SpreadAngle / 2.0);
+	VectorRotateAroundZ(&A.Velocity, -SpreadAngle / 2.0);
+
+	A = SpawnMissile(Enemy, MancubusMissile);
+	A.Angles.yaw = AngleMod360(A.Angles.yaw + SpreadAngle / 2.0);
+	VectorRotateAroundZ(&A.Velocity, SpreadAngle / 2.0);
+}
+
 __states__
 {
 	S_FATT_STND('FATT', 0, 15.0 / 35.0, S_FATT_STND2) = A_Look

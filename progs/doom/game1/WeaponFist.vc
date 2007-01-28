@@ -25,6 +25,40 @@
 
 class WeaponFist : Weapon;
 
+//===========================================================================
+//
+//  A_Punch
+//
+//===========================================================================
+
+final void A_Punch()
+{
+	int damage;
+	TAVec aimAngles;
+	TVec dir;
+
+	damage = (P_Random() % 10 + 1) << 1;
+
+	if (Player(Owner.Player).Powers[pw_strength])
+		damage *= 10;
+
+	aimAngles = Owner.Angles;
+	aimAngles.yaw = AngleMod360(aimAngles.yaw + (Random() -
+		Random()) * 45.0 / 8.0);
+	dir = Actor(Owner).AimLineAttack(aimAngles, Actor::MELEERANGE);
+	Actor(Owner).LineAttack(dir, Actor::MELEERANGE, damage);
+
+	// turn to face target
+	if (Actor(Owner).linetarget)
+	{
+		Owner.PlaySound('*fist', CHAN_WEAPON);
+		Owner.Angles.yaw = atan2(
+			Actor(Owner).linetarget.Origin.y - Owner.Origin.y,
+			Actor(Owner).linetarget.Origin.x - Owner.Origin.x);
+		Owner.Player.bFixAngle = true;
+	}
+}
+
 __states__
 {
 	S_PUNCH('PUNG', 0, 1.0 / 35.0, S_PUNCH) = A_WeaponReady

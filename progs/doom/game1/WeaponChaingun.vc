@@ -25,6 +25,34 @@
 
 class WeaponChaingun : Weapon;
 
+//===========================================================================
+//
+//  A_FireCGun
+//
+//===========================================================================
+
+final void A_FireCGun()
+{
+	TVec dir;
+
+	Owner.PlaySound('weapons/chngun', CHAN_WEAPON);
+
+	if (!Player(Owner.Player).Ammo[Weapon(self).Ammo])
+		return;
+
+	Owner.SetState(DoomPlayer::S_PLAY_ATK2);
+	Player(Owner.Player).Ammo[Weapon(self).Ammo]--;
+
+	if (Owner.Player.ViewStates[ps_weapon].State == Weapon(self).AttackState)
+		Owner.Player.SetViewState(ps_flash, Weapon(self).FlashState);
+	else
+		Owner.Player.SetViewState(ps_flash, WeaponChaingun::S_CHAINFLASH2);
+
+	dir = Actor(Owner).Aim(16.0 * 64.0);
+	GunShot(Actor(Owner), !Player(Owner.Player).Refire, dir);
+	Owner.Effects |= DoomDefs::EF_DL_MUZZLEFLASH;
+}
+
 __states__
 {
 	S_CHAIN('CHGG', 0, 1.0 / 35.0, S_CHAIN) = A_WeaponReady

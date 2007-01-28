@@ -25,6 +25,12 @@
 
 class Weapon : Actor;
 
+const float LOWERSPEED		= 6.0;
+const float RAISESPEED		= 6.0;
+
+const float WEAPONBOTTOM	= 128.0;
+const float WEAPONTOP		= 32.0;
+
 int Ammo;
 state UpState;
 state DownState;
@@ -32,6 +38,244 @@ state ReadyState;
 state AttackState;
 state FlashState;
 int PlayerModelVersion;
+
+//===========================================================================
+//
+//  GunShot
+//
+//===========================================================================
+
+final void GunShot(Actor A, int accurate, TVec dir)
+{
+	int damage;
+
+	//  Make a copy of angles because inacurate shoot will modify them
+	if (!accurate)
+	{
+		TAVec angles;
+
+		VectorAngles(&dir, &angles);
+		angles.yaw = AngleMod360(angles.yaw +
+			(Random() - Random()) * 45.0 / 8.0);
+		AngleVector(&angles, &dir);
+	}
+
+	damage = 5 * (P_Random() % 3 + 1);
+
+	A.LineAttack(dir, MISSILERANGE, damage);
+}
+
+//===========================================================================
+//
+//  A_WeaponReady
+//
+//  The player can fire the weapon or change to another weapon at this time.
+// Follows after getting weapon up, or after previous attack/fire sequence.
+//
+//===========================================================================
+
+final void A_WeaponReady()
+{
+	float angle;
+
+	// get out of attack state
+	if (Owner.State == Actor(Owner).MissileState ||
+		Owner.State == DoomPlayer::S_PLAY_ATK2)
+	{
+		Owner.SetState(Actor(Owner).IdleState);
+	}
+
+	if (Player(Owner.Player).ReadyWeapon == DoomDefs::wp_chainsaw &&
+		Owner.Player.ViewStates[ps_weapon].State == Weapon(self).ReadyState)
+	{
+		Owner.PlaySound('weapons/sawidle', CHAN_WEAPON);
+	}
+
+	// check for change
+	//  if player is dead, put the weapon away
+	if (Player(Owner.Player).PendingWeapon != DoomDefs::wp_nochange || !Owner.Player.Health)
+	{
+		// change weapon
+		//  (pending weapon should allready be validated)
+		Owner.Player.SetViewState(ps_weapon, Weapon(self).DownState);
+		return;
+	}
+
+	// check for fire
+	//  the missile launcher and bfg do not auto fire
+	if (Owner.Player.Buttons & BT_ATTACK)
+	{
+		if (!Owner.Player.bAttackDown || (Player(Owner.Player).ReadyWeapon != DoomDefs::wp_missile &&
+			Player(Owner.Player).ReadyWeapon != DoomDefs::wp_bfg))
+		{
+			Owner.Player.bAttackDown = true;
+			Player(Owner.Player).FireWeapon();
+			return;
+		}
+	}
+	else
+		Owner.Player.bAttackDown = false;
+
+	// bob the weapon based on movement speed
+	angle = AngleMod360(180.0 * Level.Game.level->time);
+	Owner.Player.ViewStates[ps_weapon].SX = 1.0 + Player(Owner.Player).Bob * cos(angle);
+	if (angle >= 180.0)
+	{
+		angle -= 180.0;
+	}
+	Owner.Player.ViewStates[ps_weapon].SY = WEAPONTOP + Player(Owner.Player).Bob * sin(angle);
+}
+
+//===========================================================================
+//
+//  A_Lower
+//
+//  Lowers current weapon, and changes weapon at bottom.
+//
+//===========================================================================
+
+final void A_Lower()
+{
+	//	FIXME!!
+	if (Level.Game.frametime < 1.0 / 35.0)
+		Owner.Player.ViewStates[ps_weapon].SY += LOWERSPEED;
+	else
+		Owner.Player.ViewStates[ps_weapon].SY += LOWERSPEED * 35.0 * Level.Game.frametime;
+
+	// Is already down.
+	if (Owner.Player.ViewStates[ps_weapon].SY < WEAPONBOTTOM)
+		return;
+
+	// Player is dead.
+	if (Owner.Player.PlayerState == PST_DEAD)
+	{
+		Owner.Player.ViewStates[ps_weapon].SY = WEAPONBOTTOM;
+
+		// don't bring weapon back up
+		return;
+	}
+
+	// The old weapon has been lowered off the screen,
+	// so change the weapon and start raising it
+	if (!Owner.Player.Health)
+	{
+		// Player is dead, so keep the weapon off screen.
+		Owner.Player.SetViewState(ps_weapon, none);
+		return;
+	}
+
+	Player(Owner.Player).SetWeapon(Player(Owner.Player).PendingWeapon);
+
+	Player(Owner.Player).BringUpWeapon();
+}
+
+//===========================================================================
+//
+//  A_Raise
+//
+//===========================================================================
+
+final void A_Raise()
+{
+	//	FIXME!!
+	if (Level.Game.frametime < 1.0 / 35.0)
+		Owner.Player.ViewStates[ps_weapon].SY -= RAISESPEED;
+	else
+		Owner.Player.ViewStates[ps_weapon].SY -= RAISESPEED * 35.0 * Level.Game.frametime;
+
+	if (Owner.Player.ViewStates[ps_weapon].SY > WEAPONTOP)
+	{
+		return;
+	}
+
+	Owner.Player.ViewStates[ps_weapon].SY = WEAPONTOP;
+
+	// The weapon has been raised all the way,
+	//  so change to the ready state.
+	Owner.Player.SetViewState(ps_weapon, Weapon(self).ReadyState);
+}
+
+//===========================================================================
+//
+//  A_ReFire
+//
+//  The player can re-fire the weapon without lowering it entirely.
+//
+//===========================================================================
+
+final void A_ReFire()
+{
+	// check for fire
+	//  (if a weaponchange is pending, let it go through instead)
+	if ((Owner.Player.Buttons & BT_ATTACK)
+		&& Player(Owner.Player).PendingWeapon == DoomDefs::wp_nochange && Owner.Player.Health)
+	{
+		Player(Owner.Player).Refire++;
+		Player(Owner.Player).FireWeapon();
+	}
+	else
+	{
+		Player(Owner.Player).Refire = 0;
+		Player(Owner.Player).CheckAmmo();
+	}
+}
+
+//===========================================================================
+//
+//  A_CheckReload
+//
+//===========================================================================
+
+final void A_CheckReload()
+{
+	Player(Owner.Player).CheckAmmo();
+}
+
+//===========================================================================
+//
+//  A_GunFlash
+//
+//===========================================================================
+
+final void A_GunFlash()
+{
+	Owner.SetState(DoomPlayer::S_PLAY_ATK2);
+	Owner.Player.SetViewState(ps_flash, Weapon(self).FlashState);
+}
+
+//===========================================================================
+//
+//  A_Light0
+//
+//===========================================================================
+
+final void A_Light0()
+{
+	Owner.Player.ExtraLight = 0;
+	Owner.Effects &= ~DoomDefs::EF_DLIGHT_MASK;
+}
+
+//===========================================================================
+//
+//  A_Light1
+//
+//===========================================================================
+
+final void A_Light1()
+{
+	Owner.Player.ExtraLight = 1;
+}
+
+//===========================================================================
+//
+//  A_Light2
+//
+//===========================================================================
+
+final void A_Light2()
+{
+	Owner.Player.ExtraLight = 2;
+}
 
 __states__
 {

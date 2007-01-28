@@ -28,6 +28,32 @@ class Rocket : Actor
 
 state ExtraState;
 
+//==========================================================================
+//
+//  A_BrainExplode
+//
+//  Brain explosions.
+//
+//==========================================================================
+
+final void A_BrainExplode()
+{
+	TVec org;
+	Actor A;
+
+	org.x = Origin.x + (Random() - Random()) * 8.0;
+	org.y = Origin.y;
+	org.z = 1.0 / 512.0 + Random() * 512.0;
+	A = Spawn(Rocket, org);
+	A.Velocity.z = Random() * 2.0 * 35.0;
+
+	A.SetState(S_BRAINEXPLODE1);
+
+	A.StateTime -= Random() * 0.2;
+	if (A.StateTime < 0.1)
+		A.StateTime = 0.1;
+}
+
 __states__
 {
 	S_ROCKET('MISL', 0 | FF_FULLBRIGHT, 1.0 / 35.0, S_ROCKET) = none

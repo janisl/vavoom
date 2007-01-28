@@ -27,6 +27,147 @@ class ArchVile : Actor
 	__mobjinfo__(64)
 	__scriptid__(111);
 
+//==========================================================================
+//
+//  A_VileChase
+//
+//  Arch-vile check for ressurecting a body.
+//
+//==========================================================================
+
+final void A_VileChase()
+{
+	int xl;
+	int xh;
+	int yl;
+	int yh;
+
+	int bx;
+	int by;
+
+	Actor temp;
+
+	if (MoveDir != DI_NODIR)
+	{
+		// check for corpses to raise
+		viletryx = Origin.x + StepSpeed * MainGameInfo(Level.Game).xspeed[MoveDir];
+		viletryy = Origin.y + StepSpeed * MainGameInfo(Level.Game).yspeed[MoveDir];
+
+		xl = MapBlock(viletryx - XLevel.BlockMapOrgX - MAXRADIUS * 2.0);
+		xh = MapBlock(viletryx - XLevel.BlockMapOrgX + MAXRADIUS * 2.0);
+		yl = MapBlock(viletryy - XLevel.BlockMapOrgY - MAXRADIUS * 2.0);
+		yh = MapBlock(viletryy - XLevel.BlockMapOrgY + MAXRADIUS * 2.0);
+
+		for (bx = xl; bx <= xh; bx++)
+		{
+			for (by = yl; by <= yh; by++)
+			{
+				// Call PIT_VileCheck to check whether object is a corpse
+				// that canbe raised.
+				if (!XLevel.BlockThingsIterator(bx, by, self, 'PIT_VileCheck'))
+				{
+					// got one!
+					temp = Enemy;
+					Enemy = CorpseHit;
+					A_FaceTarget();
+					Enemy = temp;
+
+					SetState(ArchVile::S_VILE_HEAL1);
+					CorpseHit.PlaySound('vile/raise', CHAN_BODY);
+
+					CorpseHit.SetState(CorpseHit.RaiseState);
+					CorpseHit.Height = CorpseHit.default.Height;
+					CorpseHit.bShootable = true;
+					CorpseHit.bFloat = CorpseHit.default.bFloat;
+					CorpseHit.bNoGravity = CorpseHit.default.bNoGravity;
+					CorpseHit.bDropOff = false;
+					CorpseHit.bSolid = true;
+					CorpseHit.bCorpse = false;
+					CorpseHit.Health = CorpseHit.default.Health;
+					CorpseHit.Enemy = none;
+				}
+			}
+		}
+	}
+
+
+	// Return to normal attack.
+	A_Chase();
+}
+
+//==========================================================================
+//
+//  A_VileStart
+//
+//  Arch-vile attack start sound.
+//
+//==========================================================================
+
+final void A_VileStart()
+{
+	PlaySound('vile/start', CHAN_WEAPON);
+}
+
+//==========================================================================
+//
+//  A_VileTarget
+//
+//  Spawn the hellfire.
+//
+//==========================================================================
+
+final void A_VileTarget()
+{
+	Actor fog;
+
+	if (!Enemy)
+		return;
+
+	A_FaceTarget();
+
+	fog = Spawn(ArchvileFire, Enemy.Origin);
+
+	Instigator = fog;//FIXME!!!!!!!
+	fog.Instigator = self;
+	fog.Enemy = Enemy;
+	fog.SetState(fog.IdleState);
+}
+
+//==========================================================================
+//
+//  A_VileAttack
+//
+//  Arch-vile attack.
+//
+//==========================================================================
+
+final void A_VileAttack()
+{
+	Actor fire;
+
+	if (!Enemy)
+		return;
+
+	A_FaceTarget();
+
+	if (!CanSee(Enemy))
+		return;
+
+	PlaySound('vile/stop', CHAN_WEAPON);
+	Enemy.Damage(self, self, 20);
+	Enemy.Velocity.z = 1000.0 / Enemy.Mass * 35.0;
+
+	fire = Instigator;//FIXME!!!!!!
+
+	if (!fire)
+		return;
+
+	// move the fire between the vile and the player
+	fire.Origin.x = Enemy.Origin.x - 24.0 * cos(Angles.yaw);
+	fire.Origin.y = Enemy.Origin.y - 24.0 * sin(Angles.yaw);
+	fire.RadiusAttack(70, 0, 0);
+}
+
 __states__
 {
 	S_VILE_STND('VILE', 0, 10.0 / 35.0, S_VILE_STND2) = A_Look

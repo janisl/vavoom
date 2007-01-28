@@ -26,6 +26,58 @@
 class ArchvileFire : Actor
 	__scriptid__(98);
 
+//==========================================================================
+//
+//  A_Fire
+//
+//  Keep fire in front of player unless out of sight.
+//
+//==========================================================================
+
+final void A_Fire()
+{
+	if (!Enemy || !Instigator)
+		return;
+
+	// don't move it if the vile lost sight
+	if (!Instigator.CanSee(Enemy))
+		return;
+
+	UnlinkFromWorld();
+	Origin.x = Enemy.Origin.x + 24.0 * cos(Enemy.Angles.yaw);
+	Origin.y = Enemy.Origin.y + 24.0 * sin(Enemy.Angles.yaw);
+	Origin.z = Enemy.Origin.z;
+	LinkToWorld();
+}
+
+//==========================================================================
+//
+//  A_StartFire
+//
+//  Make fire start sound.
+//
+//==========================================================================
+
+final void A_StartFire()
+{
+	PlaySound('vile/firestrt', CHAN_VOICE);
+	A_Fire();
+}
+
+//==========================================================================
+//
+//  A_FireCrackle
+//
+//  Fire sound.
+//
+//==========================================================================
+
+final void A_FireCrackle()
+{
+	PlaySound('vile/firecrkl', CHAN_VOICE);
+	A_Fire();
+}
+
 __states__
 {
 	S_FIRE1('FIRE', 0 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE2) = A_StartFire

@@ -27,6 +27,71 @@ class Revenant : Actor
 	__mobjinfo__(66)
 	__scriptid__(20);
 
+//==========================================================================
+//
+//  A_SkelWhosh
+//
+//  Ravenant attack sound.
+//
+//==========================================================================
+
+final void A_SkelWhoosh()
+{
+	if (!Enemy)
+		return;
+	A_FaceTarget();
+	PlaySound('skeleton/swing', CHAN_WEAPON);
+}
+
+//==========================================================================
+//
+//  A_SkelFist
+//
+//  Ravenant close attack.
+//
+//==========================================================================
+
+final void A_SkelFist()
+{
+	int damage;
+
+	if (!Enemy)
+		return;
+
+	A_FaceTarget();
+
+	if (CheckMeleeRange())
+	{
+		damage = ((P_Random() % 10) + 1) * 6;
+		PlaySound('skeleton/melee', CHAN_WEAPON);
+		Enemy.Damage(self, self, damage);
+	}
+}
+
+//==========================================================================
+//
+//  A_SkelMissile
+//
+//  Ravenant far attack.
+//
+//==========================================================================
+
+final void A_SkelMissile()
+{
+	Actor A;
+
+	if (!Enemy)
+		return;
+
+	A_FaceTarget();
+	Origin.z += 16.0;	// so missile spawns higher
+	A = SpawnMissile(Enemy, RevenantTracer);
+	Origin.z -= 16.0;	// back to normal
+
+	A.Origin = A.Origin + A.Velocity * 0.03;
+	A.Enemy = Enemy;
+}
+
 __states__
 {
 	S_SKEL_STND('SKEL', 0, 10.0 / 35.0, S_SKEL_STND2) = A_Look

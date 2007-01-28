@@ -25,6 +25,57 @@
 
 class WeaponChainsaw : Weapon;
 
+//===========================================================================
+//
+//  A_Saw
+//
+//===========================================================================
+
+final void A_Saw()
+{
+	float angle;
+	int damage;
+	TAVec aimAng;
+	TVec dir;
+
+	damage = 2 * (P_Random() % 10 + 1);
+	aimAng = Owner.Angles;
+	aimAng.yaw = AngleMod360(aimAng.yaw + (Random() -
+		Random()) * 45.0 / 8.0);
+
+	// use meleerange + 1 se the puff doesn't skip the flash
+	dir = Actor(Owner).AimLineAttack(aimAng, Actor::MELEERANGE + 0.00001);
+	Actor(Owner).LineAttack(dir, Actor::MELEERANGE + 0.00001, damage);
+
+	if (!Actor(Owner).linetarget)
+	{
+		Owner.PlaySound('weapons/sawfull', CHAN_WEAPON);
+		return;
+	}
+	Owner.PlaySound('weapons/sawhit', CHAN_WEAPON);
+
+	// turn to face target
+	angle = atan2(Actor(Owner).linetarget.Origin.y - Owner.Origin.y,
+		Actor(Owner).linetarget.Origin.x - Owner.Origin.x);
+	if (AngleMod360(angle - Owner.Angles.yaw) > 180.0)
+	{
+		if (AngleMod360(angle - Owner.Angles.yaw) < -90.0 / 20.0)
+			Owner.Angles.yaw = angle + 90.0 / 21.0;
+		else
+			Owner.Angles.yaw = Owner.Angles.yaw - 90.0 / 20.0;
+	}
+	else
+	{
+		if (AngleMod360(angle - Owner.Angles.yaw) > 90.0 / 20.0)
+			Owner.Angles.yaw = angle - 90.0 / 21.0;
+		else
+			Owner.Angles.yaw += 90.0 / 20.0;
+	}
+	Owner.Angles.yaw = AngleMod360(Owner.Angles.yaw);
+	Actor(Owner).bJustAttacked = true;
+	Owner.Player.bFixAngle = true;
+}
+
 __states__
 {
 	S_SAW('SAWG', 2, 4.0 / 35.0, S_SAWB) = A_WeaponReady

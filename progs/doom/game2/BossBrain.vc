@@ -26,6 +26,62 @@
 class BossBrain : Actor
 	__mobjinfo__(88);
 
+//==========================================================================
+//
+//  A_BrainPain
+//
+//  Brain pain sound.
+//
+//==========================================================================
+
+final void A_BrainPain()
+{
+	PlaySound('brain/pain', CHAN_VOICE, 1.0, ATTN_NONE);
+}
+
+//==========================================================================
+//
+//  A_BrainScream
+//
+//  Brain death sound, make explosions.
+//
+//==========================================================================
+
+final void A_BrainScream()
+{
+	TVec org;
+	Actor A;
+
+	for (org.x = Origin.x - 196.0; org.x < Origin.x + 320.0; org.x += 8.0)
+	{
+		org.y = Origin.y - 320.0;
+		org.z = 1.0 / 512.0 + Random() * 512.0;
+		A = Spawn(Rocket, org);
+		A.Velocity.z = Random() * 2.0 * 35.0;
+
+		A.SetState(Rocket::S_BRAINEXPLODE1);
+
+		A.StateTime -= Random() * 0.2;
+		if (A.StateTime < 0.1)
+			A.StateTime = 0.1;
+	}
+
+	PlaySound('brain/death', CHAN_VOICE, 1.0, ATTN_NONE);
+}
+
+//==========================================================================
+//
+//  A_BrainDie
+//
+//  Killed brain, exit level.
+//
+//==========================================================================
+
+final void A_BrainDie()
+{
+	G_ExitLevel(0);
+}
+
 __states__
 {
 	S_BRAIN('BBRN', 0, -1.0, none) = none

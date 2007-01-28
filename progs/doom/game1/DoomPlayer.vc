@@ -25,6 +25,31 @@
 
 class DoomPlayer : Actor;
 
+//==========================================================================
+//
+//  A_PlayerScream
+//
+//  Player death sound
+//
+//==========================================================================
+
+final void A_PlayerScream()
+{
+	// Default death sound.
+	name sound = '*death';
+
+#ifdef DOOM2
+	if (Health < -50)
+	{
+		// IF THE PLAYER DIES
+		// LESS THAN -50% WITHOUT GIBBING
+		sound = '*xdeath';
+	}
+#endif
+
+	PlaySound(sound, CHAN_VOICE);
+}
+
 __states__
 {
 	S_PLAY('PLAY', 0, -1.0, none) = none
