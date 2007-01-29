@@ -1650,7 +1650,7 @@ void R_AnimateSurfaces()
 		}
 	}
 
-	R_AnimateSky();
+	((VLevelRenderData*)GClLevel->RenderData)->AnimateSky(host_frametime);
 	unguard;
 }
 #endif

@@ -551,7 +551,7 @@ static void CL_ParseServerInfo(VMessage& msg)
 	}
 #endif
 
-	R_Start();
+	R_Start(GClLevel);
 	GAudio->Start();
 
 	SB_Start();
@@ -919,7 +919,7 @@ void CL_ParseServerMessage(VMessage& msg)
 			break;
 
 		case svc_force_lightning:
-			R_ForceLightning();
+			GClLevel->RenderData->ForceLightning();
 			break;
 
 		case svc_intermission:
@@ -1017,7 +1017,7 @@ void CL_ParseServerMessage(VMessage& msg)
 			origin.y = msg.ReadShort();
 			origin.z = msg.ReadShort();
 			radius = (byte)msg.ReadByte() * 8;
-			R_AddStaticLight(origin, radius, 0xffffffff);
+			GClLevel->RenderData->AddStaticLight(origin, radius, 0xffffffff);
 			break;
 
 		case svc_static_light_rgb:
@@ -1026,13 +1026,13 @@ void CL_ParseServerMessage(VMessage& msg)
 			origin.z = msg.ReadShort();
 			radius = (byte)msg.ReadByte() * 8;
 			msg >> colour;
-			R_AddStaticLight(origin, radius, colour);
+			GClLevel->RenderData->AddStaticLight(origin, radius, colour);
 			break;
 
 		case svc_change_sky:
 			cl_level.sky1Texture = (word)msg.ReadShort();
 			cl_level.sky2Texture = (word)msg.ReadShort();
-			R_SkyChanged();
+			GClLevel->RenderData->SkyChanged();
 			break;
 
 		case svc_change_music:

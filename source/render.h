@@ -87,6 +87,19 @@ struct VAnimDoorDef
 	vint32*		Frames;
 };
 
+class VLevelRenderDataPublic : public VVirtualObjectBase
+{
+public:
+	virtual void PreRender() = 0;
+	virtual void SegMoved(seg_t*) = 0;
+	virtual void SetupFakeFloors(sector_t*) = 0;
+
+	virtual void SkyChanged() = 0;
+	virtual void ForceLightning() = 0;
+
+	virtual void AddStaticLight(const TVec&, float, vuint32) = 0;
+};
+
 class VTexture;
 
 class VTextureManager
@@ -123,7 +136,7 @@ private:
 
 // r_main
 void R_Init(); // Called by startup code.
-void R_Start();
+void R_Start(VLevel*);
 void R_SetViewSize(int blocks);
 void R_RenderPlayerView();
 
@@ -133,19 +146,9 @@ void R_ShutdownTexture();
 VAnimDoorDef* R_FindAnimDoor(vint32);
 void R_AnimateSurfaces();
 
-// r_surf
-void R_PreRender();
-void R_SegMoved(seg_t *seg);
-void R_SetupFakeFloors(sector_t* Sec);
-void R_FreeLevelData();
-
 // r_things
 void R_DrawSpritePatch(int x, int y, int sprite, int frame, int rot, int = 0);
 void R_InitSprites();
-
-// r_sky
-void R_ForceLightning();
-void R_SkyChanged();
 
 //	2D graphics
 void R_DrawPic(int x, int y, int handle, float Aplha = 1.0);

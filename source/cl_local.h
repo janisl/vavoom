@@ -251,7 +251,6 @@ void CL_KeepaliveMessage();
 bool CL_TraceLine(const TVec&, const TVec&);
 
 particle_t *R_NewParticle();
-void R_AddStaticLight(const TVec&, float, vuint32);
 
 void R_InstallSprite(const char*, int);
 void R_DrawModelFrame(const TVec&, float, VModel*, int, const char*);

@@ -264,12 +264,10 @@ void VLevel::Destroy()
 	DestroyAllThinkers();
 
 	//	Free level data.
-#ifdef CLIENT
-	if (this == GClLevel)
+	if (RenderData)
 	{
-		R_FreeLevelData();
+		delete RenderData;
 	}
-#endif
 
 	for (int i = 0; i < NumPolyObjs; i++)
 	{
@@ -758,12 +756,10 @@ IMPLEMENT_FUNCTION(VLevel, SetHeightSector)
 	P_GET_PTR(sector_t, SrcSector);
 	P_GET_PTR(sector_t, Sector);
 	P_GET_SELF;
-#ifdef CLIENT
-	if (Self->IsForClient())
+	if (Self->RenderData)
 	{
-		R_SetupFakeFloors(Sector);
+		Self->RenderData->SetupFakeFloors(Sector);
 	}
-#endif
 }
 
 IMPLEMENT_FUNCTION(VLevel, FindSectorFromTag)

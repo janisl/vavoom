@@ -337,7 +337,7 @@ void CL_SignonReply()
 
 	case 2:
 		GClLevel->InitPolyobjs();
-		R_PreRender();
+		GClLevel->RenderData->PreRender();
 		if (!UserInfoSent)
 		{
 			cls.message << (byte)clc_player_info << cls.userinfo;

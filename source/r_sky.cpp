@@ -41,8 +41,6 @@
 #define LIGHTNING_SPECIAL2	199
 #define SKYCHANGE_SPECIAL	200
 
-#define VDIVS		8
-#define HDIVS		16
 #define RADIUS		128.0
 
 // TYPES -------------------------------------------------------------------
@@ -58,33 +56,11 @@ struct skyboxinfo_t
 	skyboxsurf_t	surfs[6];
 };
 
-struct skysurface_t : surface_t
-{
-	TVec			__verts[3];
-};
-
-struct sky_t
-{
-	int 			texture1;
-	int 			texture2;
-	int 			baseTexture1;
-	int 			baseTexture2;
-	float			columnOffset1;
-	float			columnOffset2;
-	float			scrollDelta1;
-	float			scrollDelta2;
-	skysurface_t	surf;
-	TPlane			plane;
-	texinfo_t		texinfo;
-};
-
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
-
-static void R_LightningFlash();
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
@@ -93,15 +69,6 @@ static void R_LightningFlash();
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static TArray<skyboxinfo_t>		skyboxinfo;
-
-static bool			LevelHasLightning;
-static int			NextLightningFlash;
-static int			LightningFlash;
-static int*			LightningLightLevels;
-
-static sky_t		sky[HDIVS * VDIVS];
-static int			NumSkySurfs;
-static bool			bIsSkyBox;
 
 static VCvarI		r_skyboxes("r_skyboxes", "1", CVAR_Archive);
 
@@ -186,13 +153,26 @@ static int CheckSkyboxNumForName(VName Name)
 
 //==========================================================================
 //
-//	R_InitOldSky
+//	R_FreeSkyboxData
 //
 //==========================================================================
 
-static void R_InitOldSky()
+void R_FreeSkyboxData()
 {
-	guard(R_InitOldSky);
+	guard(R_FreeSkyboxData);
+	skyboxinfo.Clear();
+	unguard;
+}
+
+//==========================================================================
+//
+//	VLevelRenderData::InitOldSky
+//
+//==========================================================================
+
+void VLevelRenderData::InitOldSky()
+{
+	guard(VLevelRenderData::InitOldSky);
 	memset(sky, 0, sizeof(sky));
 	bIsSkyBox = false;
 
@@ -204,12 +184,12 @@ static void R_InitOldSky()
 	if (cl_level.lightning)
 	{
 		int secCount = 0;
-		for (int i = 0; i < GClLevel->NumSectors; i++)
+		for (int i = 0; i < Level->NumSectors; i++)
 		{
-			if (GClLevel->Sectors[i].ceiling.pic == skyflatnum ||
-				GClLevel->Sectors[i].special == LIGHTNING_OUTDOOR ||
-				GClLevel->Sectors[i].special == LIGHTNING_SPECIAL ||
-				GClLevel->Sectors[i].special == LIGHTNING_SPECIAL2)
+			if (Level->Sectors[i].ceiling.pic == skyflatnum ||
+				Level->Sectors[i].special == LIGHTNING_OUTDOOR ||
+				Level->Sectors[i].special == LIGHTNING_SPECIAL ||
+				Level->Sectors[i].special == LIGHTNING_SPECIAL2)
 			{
 				secCount++;
 			}
@@ -340,13 +320,13 @@ float tk = skyh / RADIUS;
 
 //==========================================================================
 //
-//	R_InitSkyBox
+//	VLevelRenderData::InitSkyBox
 //
 //==========================================================================
 
-static void R_InitSkyBox(VName Name1, VName Name2)
+void VLevelRenderData::InitSkyBox(VName Name1, VName Name2)
 {
-	guard(R_InitSkyBox);
+	guard(VLevelRenderData::InitSkyBox);
 	int num = CheckSkyboxNumForName(Name1);
 	if (num == -1)
 	{
@@ -371,12 +351,12 @@ static void R_InitSkyBox(VName Name1, VName Name2)
 	if (cl_level.lightning)
 	{
 		int secCount = 0;
-		for (int i = 0; i < GClLevel->NumSectors; i++)
+		for (int i = 0; i < Level->NumSectors; i++)
 		{
-			if (GClLevel->Sectors[i].ceiling.pic == skyflatnum ||
-				GClLevel->Sectors[i].special == LIGHTNING_OUTDOOR ||
-				GClLevel->Sectors[i].special == LIGHTNING_SPECIAL ||
-				GClLevel->Sectors[i].special == LIGHTNING_SPECIAL2)
+			if (Level->Sectors[i].ceiling.pic == skyflatnum ||
+				Level->Sectors[i].special == LIGHTNING_OUTDOOR ||
+				Level->Sectors[i].special == LIGHTNING_SPECIAL ||
+				Level->Sectors[i].special == LIGHTNING_SPECIAL2)
 			{
 				secCount++;
 			}
@@ -484,18 +464,18 @@ static void R_InitSkyBox(VName Name1, VName Name2)
 
 //==========================================================================
 //
-//	R_InitSky
+//	VLevelRenderData::InitSky
 //
 //	Called at level load.
 //
 //==========================================================================
 
-void R_InitSky()
+void VLevelRenderData::InitSky()
 {
-	guard(R_InitSky);
+	guard(VLevelRenderData::InitSky);
 	if (cl_level.SkyBox != NAME_None)
 	{
-		R_InitSkyBox(cl_level.SkyBox, NAME_None);
+		InitSkyBox(cl_level.SkyBox, NAME_None);
 	}
 	else
 	{
@@ -515,11 +495,11 @@ void R_InitSky()
 		}
 		if (Num1 != -1 && Num2 != -1)
 		{
-			R_InitSkyBox(Name1, Name2);
+			InitSkyBox(Name1, Name2);
 		}
 		else
 		{
-			R_InitOldSky();
+			InitOldSky();
 		}
 	}
 	unguard;
@@ -527,13 +507,13 @@ void R_InitSky()
 
 //==========================================================================
 //
-//	R_SkyChanged
+//	VLevelRenderData::SkyChanged
 //
 //==========================================================================
 
-void R_SkyChanged()
+void VLevelRenderData::SkyChanged()
 {
-	guard(R_SkyChanged);
+	guard(VLevelRenderData::SkyChanged);
 	if (bIsSkyBox)
 	{
 		return;
@@ -562,18 +542,18 @@ void R_SkyChanged()
 
 //==========================================================================
 //
-//	R_AnimateSky
+//	VLevelRenderData::AnimateSky
 //
 //==========================================================================
 
-void R_AnimateSky()
+void VLevelRenderData::AnimateSky(float frametime)
 {
-	guard(R_AnimateSky);
+	guard(VLevelRenderData::AnimateSky);
 	//	Update sky column offsets
 	for (int i = 0; i < NumSkySurfs; i++)
 	{
-		sky[i].columnOffset1 += sky[i].scrollDelta1 * host_frametime;
-		sky[i].columnOffset2 += sky[i].scrollDelta2 * host_frametime;
+		sky[i].columnOffset1 += sky[i].scrollDelta1 * frametime;
+		sky[i].columnOffset2 += sky[i].scrollDelta2 * frametime;
 	}
 
 	//	Update lightning
@@ -581,7 +561,7 @@ void R_AnimateSky()
 	{
 		if (!NextLightningFlash || LightningFlash)
 		{
-			R_LightningFlash();
+			DoLightningFlash();
 		}
 		else
 		{
@@ -593,13 +573,13 @@ void R_AnimateSky()
 
 //==========================================================================
 //
-//	R_LightningFlash
+//	VLevelRenderData::DoLightningFlash
 //
 //==========================================================================
 
-static void R_LightningFlash()
+void VLevelRenderData::DoLightningFlash()
 {
-	guard(R_LightningFlash);
+	guard(VLevelRenderData::DoLightningFlash);
 	int 		i;
 	sector_t 	*tempSec;
 	int 		*tempLight;
@@ -612,8 +592,8 @@ static void R_LightningFlash()
 		if (LightningFlash)
 		{
 			tempLight = LightningLightLevels;
-			tempSec = GClLevel->Sectors;
-			for (i = 0; i < GClLevel->NumSectors; i++, tempSec++)
+			tempSec = Level->Sectors;
+			for (i = 0; i < Level->NumSectors; i++, tempSec++)
 			{
 				if (tempSec->ceiling.pic == skyflatnum ||
 					tempSec->special == LIGHTNING_OUTDOOR ||
@@ -631,8 +611,8 @@ static void R_LightningFlash()
 		else
 		{ // remove the alternate lightning flash special
 			tempLight = LightningLightLevels;
-			tempSec = GClLevel->Sectors;
-			for (i = 0; i < GClLevel->NumSectors; i++, tempSec++)
+			tempSec = Level->Sectors;
+			for (i = 0; i < Level->NumSectors; i++, tempSec++)
 			{
 				if (tempSec->ceiling.pic == skyflatnum ||
 					tempSec->special == LIGHTNING_OUTDOOR ||
@@ -653,10 +633,10 @@ static void R_LightningFlash()
 
 	LightningFlash = (rand() & 7) + 8;
 	flashLight = 200 + (rand() & 31);
-	tempSec = GClLevel->Sectors;
+	tempSec = Level->Sectors;
 	tempLight = LightningLightLevels;
 	foundSec = false;
-	for (i = 0; i < GClLevel->NumSectors; i++, tempSec++)
+	for (i = 0; i < Level->NumSectors; i++, tempSec++)
 	{
 		if (tempSec->ceiling.pic == skyflatnum ||
 			tempSec->special == LIGHTNING_OUTDOOR ||
@@ -726,26 +706,26 @@ static void R_LightningFlash()
 
 //==========================================================================
 //
-//	R_ForceLightning
+//	VLevelRenderData::ForceLightning
 //
 //==========================================================================
 
-void R_ForceLightning()
+void VLevelRenderData::ForceLightning()
 {
-	guard(R_ForceLightning);
+	guard(VLevelRenderData::ForceLightning);
 	NextLightningFlash = 0;
 	unguard;
 }
 
 //==========================================================================
 //
-//	R_DrawSky
+//	VLevelRenderData::DrawSky
 //
 //==========================================================================
 
-void R_DrawSky()
+void VLevelRenderData::DrawSky()
 {
-	guard(R_DrawSky);
+	guard(VLevelRenderData::DrawSky);
 	Drawer->BeginSky();
 
 	for (int i = 0; i < NumSkySurfs; i++)
@@ -755,35 +735,5 @@ void R_DrawSky()
 	}
 
 	Drawer->EndSky();
-	unguard;
-}
-
-//==========================================================================
-//
-//	R_FreeLevelSkyData
-//
-//==========================================================================
-
-void R_FreeLevelSkyData()
-{
-	guard(R_FreeLevelSkyData);
-	if (LightningLightLevels)
-	{
-		delete[] LightningLightLevels;
-		LightningLightLevels = NULL;
-	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	R_FreeSkyboxData
-//
-//==========================================================================
-
-void R_FreeSkyboxData()
-{
-	guard(R_FreeSkyboxData);
-	skyboxinfo.Clear();
 	unguard;
 }

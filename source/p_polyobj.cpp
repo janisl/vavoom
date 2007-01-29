@@ -399,12 +399,10 @@ void VLevel::UpdatePolySegs(polyobj_t* po)
 		}
 		//	Recalc seg's normal and dist
 		CalcSeg(*segList);
-#ifdef CLIENT
-		if (IsForClient())
+		if (RenderData)
 		{
-			R_SegMoved(*segList);
+			RenderData->SegMoved(*segList);
 		}
-#endif
 	}
 	unguard;
 }

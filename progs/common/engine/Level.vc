@@ -106,6 +106,8 @@ native readonly private void*	__PolyAnchorPoints;
 native readonly private Thinker	__ThinkerHead;
 native readonly private Thinker	__ThinkerTail;
 
+native readonly private void*	RenderData;
+
 //
 //	Natives
 //

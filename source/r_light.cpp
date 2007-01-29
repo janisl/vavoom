@@ -30,17 +30,7 @@
 
 // MACROS ------------------------------------------------------------------
 
-#define MAX_STATIC_LIGHTS	256
-
 // TYPES -------------------------------------------------------------------
-
-struct light_t
-{
-	TVec		origin;
-	float		radius;
-	vuint32		colour;
-	int			leafnum;
-};
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
@@ -76,9 +66,6 @@ VCvarF				r_specular("r_specular", "0.1", CVAR_Archive);
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static int			num_lights;
-static light_t		lights[MAX_STATIC_LIGHTS];
-
 static TVec			smins, smaxs;
 static TVec			worldtotex[2];
 static TVec			textoworld[2];
@@ -100,54 +87,31 @@ static int			c_bad;
 
 //==========================================================================
 //
-//	R_ClearLights
+//	VLevelRenderData::AddStaticLight
 //
 //==========================================================================
 
-void R_ClearLights(void)
+void VLevelRenderData::AddStaticLight(const TVec &origin, float radius,
+	vuint32 colour)
 {
-	guard(R_ClearLights);
-	num_lights = 0;
-
-	for (int i = 0; i < 256; i++)
-	{
-		light_remap[i] = byte(i * i / 255);
-	}
+	guard(VLevelRenderData::AddStaticLight);
+	light_t& L = Lights.Alloc();
+	L.origin = origin;
+	L.radius = radius;
+	L.colour = colour;
+	L.leafnum = Level->PointInSubsector(origin) - Level->Subsectors;
 	unguard;
 }
 
 //==========================================================================
 //
-//	R_AddStaticLight
+//	VLevelRenderData::CalcMinMaxs
 //
 //==========================================================================
 
-void R_AddStaticLight(const TVec &origin, float radius, vuint32 colour)
+void VLevelRenderData::CalcMinMaxs(surface_t *surf)
 {
-	guard(R_AddStaticLight);
-	if (num_lights == MAX_STATIC_LIGHTS)
-	{
-		GCon->Log("Too many static lights");
-		return;
-	}
-	lights[num_lights].origin = origin;
-	lights[num_lights].radius = radius;
-	lights[num_lights].colour = colour;
-	lights[num_lights].leafnum = CL_PointInSubsector(origin.x, origin.y) -
-		GClLevel->Subsectors;
-	num_lights++;
-	unguard;
-}
-
-//==========================================================================
-//
-//	CalcMinMaxs
-//
-//==========================================================================
-
-static void CalcMinMaxs(surface_t *surf)
-{
-	guard(CalcMinMaxs);
+	guard(VLevelRenderData::CalcMinMaxs);
 	smins = TVec(99999.0, 99999.0, 99999.0);
 	smaxs = TVec(-999999.0, -999999.0, -999999.0);
 
@@ -172,15 +136,16 @@ static void CalcMinMaxs(surface_t *surf)
 
 //==========================================================================
 //
-//	CastRay
+//	VLevelRenderData::CastRay
 //
 //	Returns the distance between the points, or -1 if blocked
 //
 //==========================================================================
 
-static float CastRay(const TVec &p1, const TVec &p2, float squaredist)
+float VLevelRenderData::CastRay(const TVec &p1, const TVec &p2,
+	float squaredist)
 {
-	guard(CastRay);
+	guard(VLevelRenderData::CastRay);
 	float	t;
 	bool	trace;
 	TVec	delta;
@@ -202,15 +167,15 @@ static float CastRay(const TVec &p1, const TVec &p2, float squaredist)
 
 //==========================================================================
 //
-//	CalcFaceVectors
+//	VLevelRenderData::CalcFaceVectors
 //
 //	Fills in texorg, worldtotex. and textoworld
 //
 //==========================================================================
 
-static void CalcFaceVectors(surface_t *surf)
+void VLevelRenderData::CalcFaceVectors(surface_t *surf)
 {
-	guard(CalcFaceVectors);
+	guard(VLevelRenderData::CalcFaceVectors);
 	texinfo_t	*tex;
 	int			i;
 	TVec		texnormal;
@@ -269,16 +234,16 @@ static void CalcFaceVectors(surface_t *surf)
 
 //==========================================================================
 //
-//	CalcPoints
+//	VLevelRenderData::CalcPoints
 //
 //	For each texture aligned grid point, back project onto the plane
 // to get the world xyz value of the sample point
 //
 //==========================================================================
 
-static void CalcPoints(surface_t *surf)
+void VLevelRenderData::CalcPoints(surface_t *surf)
 {
-	guard(CalcPoints);
+	guard(VLevelRenderData::CalcPoints);
 	int		i;
 	int		s, t;
 	int		w, h;
@@ -377,13 +342,13 @@ static void CalcPoints(surface_t *surf)
 
 //==========================================================================
 //
-//	SingleLightFace
+//	VLevelRenderData::SingleLightFace
 //
 //==========================================================================
 
-static void SingleLightFace(light_t *light, surface_t *surf)
+void VLevelRenderData::SingleLightFace(light_t *light, surface_t *surf)
 {
-	guard(SingleLightFace);
+	guard(VLevelRenderData::SingleLightFace);
 	float	dist;
 	TVec	incoming;
 	float	angle;
@@ -471,17 +436,17 @@ static void SingleLightFace(light_t *light, surface_t *surf)
 
 //==========================================================================
 //
-//	R_LightFace
+//	VLevelRenderData::LightFace
 //
 //==========================================================================
 
-void R_LightFace(surface_t *surf, subsector_t *leaf)
+void VLevelRenderData::LightFace(surface_t *surf, subsector_t *leaf)
 {
-	guard(R_LightFace);
+	guard(VLevelRenderData::LightFace);
 	int			i, s, t, w, h;
 	float		total;
 
-	facevis = GClLevel->LeafPVS(leaf);
+	facevis = Level->LeafPVS(leaf);
 	points_calculated = false;
 	light_hit = false;
 	is_coloured = false;
@@ -492,9 +457,9 @@ void R_LightFace(surface_t *surf, subsector_t *leaf)
 	CalcMinMaxs(surf);
 	if (r_static_lights)
 	{
-		for (i = 0; i < num_lights; i++)
+		for (i = 0; i < Lights.Num(); i++)
 		{
-			SingleLightFace(&lights[i], surf);
+			SingleLightFace(&Lights[i], surf);
 		}
 	}
 
@@ -636,14 +601,13 @@ void R_LightFace(surface_t *surf, subsector_t *leaf)
 
 //==========================================================================
 //
-//	R_MarkLights
+//	VLevelRenderData::MarkLights
 //
 //==========================================================================
 
-void R_MarkLights(dlight_t *light, int bit, int bspnum)
+void VLevelRenderData::MarkLights(dlight_t *light, int bit, int bspnum)
 {
-	guard(R_MarkLights);
-	static byte	*dyn_facevis;
+	guard(VLevelRenderData::MarkLights);
 	int leafnum;
 
     if (bspnum & NF_SUBSECTOR)
@@ -654,13 +618,13 @@ void R_MarkLights(dlight_t *light, int bit, int bspnum)
 		    num = 0;
 		else
 		    num = bspnum & (~NF_SUBSECTOR);
-		subsector_t *ss = &GClLevel->Subsectors[num];
+		subsector_t *ss = &Level->Subsectors[num];
 
 		if (r_dynamic_clip)
 		{
-			dyn_facevis = GClLevel->LeafPVS(ss);
-			leafnum = CL_PointInSubsector(light->origin.x, light->origin.y)
-							- GClLevel->Subsectors;
+			vuint8* dyn_facevis = Level->LeafPVS(ss);
+			leafnum = Level->PointInSubsector(light->origin) -
+				Level->Subsectors;
 
 			// Check potential visibility
 			if (!(dyn_facevis[leafnum >> 3] & (1 << (leafnum & 7))))
@@ -676,16 +640,16 @@ void R_MarkLights(dlight_t *light, int bit, int bspnum)
 	}
 	else
 	{
-		node_t* node = &GClLevel->Nodes[bspnum];
+		node_t* node = &Level->Nodes[bspnum];
 		float dist = DotProduct(light->origin, node->normal) - node->dist;
 
 		if (dist > -light->radius + light->minlight)
 		{
-			R_MarkLights(light, bit, node->children[0]);
+			MarkLights(light, bit, node->children[0]);
 		}
 		if (dist < light->radius - light->minlight)
 		{
-			R_MarkLights(light, bit, node->children[1]);
+			MarkLights(light, bit, node->children[1]);
 		}
 	}
 	unguard;
@@ -693,16 +657,13 @@ void R_MarkLights(dlight_t *light, int bit, int bspnum)
 
 //==========================================================================
 //
-//	R_PushDlights
+//	VLevelRenderData::PushDlights
 //
 //==========================================================================
 
-void R_PushDlights(void)
+void VLevelRenderData::PushDlights()
 {
-	guard(R_PushDlights);
-	int			i;
-	dlight_t	*l;
-
+	guard(VLevelRenderData::PushDlights);
 	r_dlightframecount++;
 
 	if (!r_dynamic)
@@ -710,25 +671,25 @@ void R_PushDlights(void)
 		return;
 	}
 
-	l = cl_dlights;
-	for (i = 0; i < MAX_DLIGHTS; i++, l++)
+	dlight_t* l = cl_dlights;
+	for (int i = 0; i < MAX_DLIGHTS; i++, l++)
 	{
 		if (l->die < GClGame->time || !l->radius)
 			continue;
-		R_MarkLights(l, 1 << i, GClLevel->NumNodes - 1);
+		MarkLights(l, 1 << i, Level->NumNodes - 1);
 	}
 	unguard;
 }
 
 //==========================================================================
 //
-//	R_LightPoint
+//	VLevelRenderData::LightPoint
 //
 //==========================================================================
 
-vuint32 R_LightPoint(const TVec &p)
+vuint32 VLevelRenderData::LightPoint(const TVec &p)
 {
-	guard(R_LightPoint);
+	guard(VLevelRenderData::LightPoint);
 	subsector_t		*sub;
 	subregion_t		*reg;
 	float			l, lr, lg, lb, d, add;
@@ -736,7 +697,6 @@ vuint32 R_LightPoint(const TVec &p)
 	surface_t		*surf;
 	int				ltmp;
 	rgb_t			*rgbtmp;
-	static byte		*dyn_facevis;
 	int				leafnum;
 
 
@@ -745,7 +705,7 @@ vuint32 R_LightPoint(const TVec &p)
 		return fixedlight | (fixedlight << 8) | (fixedlight << 16) | (fixedlight << 24);
 	}
 
-	sub = CL_PointInSubsector(p.x, p.y);
+	sub = Level->PointInSubsector(p);
 	reg = sub->regions;
 	while (reg->next)
 	{
@@ -818,9 +778,9 @@ vuint32 R_LightPoint(const TVec &p)
 		{
 			if (r_dynamic_clip)
 			{
-				dyn_facevis = GClLevel->LeafPVS(sub);
-				leafnum = CL_PointInSubsector(cl_dlights[i].origin.x, cl_dlights[i].origin.y)
-								- GClLevel->Subsectors;
+				vuint8* dyn_facevis = Level->LeafPVS(sub);
+				leafnum = Level->PointInSubsector(cl_dlights[i].origin) -
+					Level->Subsectors;
 
 				// Check potential visibility
 				if (!(dyn_facevis[leafnum >> 3] & (1 << (leafnum & 7))))
@@ -856,13 +816,13 @@ vuint32 R_LightPoint(const TVec &p)
 
 //==========================================================================
 //
-//	R_AddDynamicLights
+//	VLevelRenderData::AddDynamicLights
 //
 //==========================================================================
 
-void R_AddDynamicLights(surface_t *surf)
+void VLevelRenderData::AddDynamicLights(surface_t *surf)
 {
-	guard(R_AddDynamicLights);
+	guard(VLevelRenderData::AddDynamicLights);
 	int			lnum;
 	int			sd, td;
 	float		dist, rad, minlight, rmul, gmul, bmul;
@@ -871,7 +831,6 @@ void R_AddDynamicLights(surface_t *surf)
 	int			smax, tmax;
 	texinfo_t	*tex;
 	subsector_t *sub;
-	static byte	*dyn_facevis;
 	int			leafnum;
 
 
@@ -903,10 +862,10 @@ void R_AddDynamicLights(surface_t *surf)
 
 		if (r_dynamic_clip)
 		{
-			sub = CL_PointInSubsector(surf->verts->x, surf->verts->y);
-			dyn_facevis = GClLevel->LeafPVS(sub);
-			leafnum = CL_PointInSubsector(cl_dlights[lnum].origin.x, cl_dlights[lnum].origin.y)
-							- GClLevel->Subsectors;
+			sub = Level->PointInSubsector(*surf->verts);
+			vuint8* dyn_facevis = Level->LeafPVS(sub);
+			leafnum = Level->PointInSubsector(cl_dlights[lnum].origin) -
+				Level->Subsectors;
 
 			// Check potential visibility
 			if (!(dyn_facevis[leafnum >> 3] & (1 << (leafnum & 7))))
@@ -956,15 +915,15 @@ void R_AddDynamicLights(surface_t *surf)
 
 //==========================================================================
 //
-//	R_BuildLightMap
+//	VLevelRenderData::BuildLightMap
 //
 //	Combine and scale multiple lightmaps into the 8.8 format in blocklights
 //
 //==========================================================================
 
-bool R_BuildLightMap(surface_t *surf, int shift)
+bool VLevelRenderData::BuildLightMap(surface_t *surf, int shift)
 {
-	guard(R_BuildLightMap);
+	guard(VLevelRenderData::BuildLightMap);
 	int			smax, tmax;
 	int			t;
 	int			i, size;
@@ -1047,7 +1006,7 @@ bool R_BuildLightMap(surface_t *surf, int shift)
 
 	// add all the dynamic lights
 	if (surf->dlightframe == r_dlightframecount)
-		R_AddDynamicLights(surf);
+		AddDynamicLights(surf);
 
 	//  Calc additive light. This must be done before lightmap procesing
 	// because it will clamp all lights

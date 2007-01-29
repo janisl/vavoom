@@ -56,6 +56,8 @@
 //
 //==========================================================================
 
+class VLevelRenderDataPublic;
+
 struct sector_t;
 
 class	VThinker;
@@ -591,6 +593,8 @@ class VLevel : public VObject
 
 	VThinker*			ThinkerHead;
 	VThinker*			ThinkerTail;
+
+	VLevelRenderDataPublic*	RenderData;
 
 	void Serialise(VStream& Strm);
 	void ClearReferences();

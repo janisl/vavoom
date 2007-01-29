@@ -955,7 +955,7 @@ void R_RenderWorld()
 
 	if (sky_is_visible)
 	{
-		R_DrawSky();
+		((VLevelRenderData*)GClLevel->RenderData)->DrawSky();
 	}
 
 	Drawer->WorldDrawing();

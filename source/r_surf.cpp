@@ -56,26 +56,11 @@ extern int			light_mem;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static sector_t*	frontsector;
-static sector_t*	backsector;
+static subsector_t*	r_sub;
+static sec_plane_t*	r_floor;
+static sec_plane_t*	r_ceiling;
 
-static subsector_t	*r_sub;
-static sec_plane_t	*r_floor;
-static sec_plane_t	*r_ceiling;
-static sec_plane_t	*r_back_floor;
-static sec_plane_t	*r_back_ceiling;
-
-static sec_plane_t	sky_plane;
-static float		skyheight;
-
-static int			c_subdivides;
-
-static surface_t*	free_wsurfs;
-static int			c_seg_div;
-static void*		AllocatedWSurfBlocks;
-static subregion_t*	AllocatedSubRegions;
-static drawseg_t*	AllocatedDrawSegs;
-static segpart_t*	AllocatedSegParts;
+static segpart_t*	pspart;
 
 // CODE --------------------------------------------------------------------
 
@@ -141,20 +126,20 @@ inline float TextureOffsetTScale(int pic)
 
 //==========================================================================
 //
-//	SetupSky
+//	VLevelRenderData::SetupSky
 //
 //==========================================================================
 
-static void	SetupSky()
+void VLevelRenderData::SetupSky()
 {
-	guard(SetupSky);
+	guard(VLevelRenderData::SetupSky);
 	skyheight = -99999.0;
-	for (int i = 0; i < GClLevel->NumSectors; i++)
+	for (int i = 0; i < Level->NumSectors; i++)
 	{
-		if (GClLevel->Sectors[i].ceiling.pic == skyflatnum &&
-			GClLevel->Sectors[i].ceiling.maxz > skyheight)
+		if (Level->Sectors[i].ceiling.pic == skyflatnum &&
+			Level->Sectors[i].ceiling.maxz > skyheight)
 		{
-			skyheight = GClLevel->Sectors[i].ceiling.maxz;
+			skyheight = Level->Sectors[i].ceiling.maxz;
 		}
 	}
 	//	Make it a bit higher to avoid clipping of the sprites.
@@ -166,14 +151,15 @@ static void	SetupSky()
 
 //==========================================================================
 //
-//	InitSurfs
+//	VLevelRenderData::InitSurfs
 //
 //==========================================================================
 
-static void InitSurfs(surface_t* InSurfs, texinfo_t *texinfo, TPlane *plane)
+void VLevelRenderData::InitSurfs(surface_t* ASurfs, texinfo_t *texinfo,
+	TPlane *plane, subsector_t* sub)
 {
-	guard(InitSurfs);
-	surface_t* surfs = InSurfs;
+	guard(VLevelRenderData::InitSurfs);
+	surface_t* surfs = ASurfs;
 	int i;
 	float dot;
 	float mins;
@@ -227,7 +213,7 @@ static void InitSurfs(surface_t* InSurfs, texinfo_t *texinfo, TPlane *plane)
 			Sys_Error("Bad extents");
 		}
 
-		R_LightFace(surfs, r_sub);
+		LightFace(surfs, sub);
 
 		surfs = surfs->next;
 	}
@@ -236,13 +222,13 @@ static void InitSurfs(surface_t* InSurfs, texinfo_t *texinfo, TPlane *plane)
 
 //==========================================================================
 //
-//	FlushSurfCaches
+//	VLevelRenderData::FlushSurfCaches
 //
 //==========================================================================
 
-static void FlushSurfCaches(surface_t* InSurfs)
+void VLevelRenderData::FlushSurfCaches(surface_t* InSurfs)
 {
-	guard(FlushSurfCaches);
+	guard(VLevelRenderData::FlushSurfCaches);
 	surface_t* surfs = InSurfs;
 	while (surfs)
 	{
@@ -260,14 +246,14 @@ static void FlushSurfCaches(surface_t* InSurfs)
 
 //==========================================================================
 //
-//	SubdivideFace
+//	VLevelRenderData::SubdivideFace
 //
 //==========================================================================
 
-static surface_t* SubdivideFace(surface_t* InF, const TVec &axis,
+surface_t* VLevelRenderData::SubdivideFace(surface_t* InF, const TVec &axis,
 	const TVec *nextaxis)
 {
-	guard(SubdivideFace);
+	guard(VLevelRenderData::SubdivideFace);
 	surface_t* f = InF;
 	int i;
 	float dot;
@@ -395,13 +381,14 @@ static surface_t* SubdivideFace(surface_t* InF, const TVec &axis,
 
 //==========================================================================
 //
-//	CreateSecSurface
+//	VLevelRenderData::CreateSecSurface
 //
 //==========================================================================
 
-static sec_surface_t *CreateSecSurface(subsector_t* sub, sec_plane_t* InSplane)
+sec_surface_t* VLevelRenderData::CreateSecSurface(subsector_t* sub,
+	sec_plane_t* InSplane)
 {
-	guard(CreateSecSurface);
+	guard(VLevelRenderData::CreateSecSurface);
 	sec_plane_t* splane = InSplane;
 	sec_surface_t	*ssurf;
 	surface_t		*surf;
@@ -435,7 +422,7 @@ static sec_surface_t *CreateSecSurface(subsector_t* sub, sec_plane_t* InSplane)
 	ssurf->texinfo.Alpha = splane->Alpha < 1.0 ? splane->Alpha : 1.1;
 
 	surf->count = sub->numlines;
-	seg_t *line = &GClLevel->Segs[sub->firstline];
+	seg_t *line = &Level->Segs[sub->firstline];
 	int vlindex = (splane->normal.z < 0);
 	for (int i = 0; i < surf->count; i++)
 	{
@@ -454,8 +441,9 @@ static sec_surface_t *CreateSecSurface(subsector_t* sub, sec_plane_t* InSplane)
 	}
 	else
 	{
-		ssurf->surfs = SubdivideFace(surf, ssurf->texinfo.saxis, &ssurf->texinfo.taxis);
-		InitSurfs(ssurf->surfs, &ssurf->texinfo, splane);
+		ssurf->surfs = SubdivideFace(surf, ssurf->texinfo.saxis,
+			&ssurf->texinfo.taxis);
+		InitSurfs(ssurf->surfs, &ssurf->texinfo, splane, sub);
 	}
 
 	return ssurf;
@@ -464,13 +452,14 @@ static sec_surface_t *CreateSecSurface(subsector_t* sub, sec_plane_t* InSplane)
 
 //==========================================================================
 //
-//	UpdateSecSurface
+//	VLevelRenderData::UpdateSecSurface
 //
 //==========================================================================
 
-static void UpdateSecSurface(sec_surface_t *ssurf, sec_plane_t* RealPlane)
+void VLevelRenderData::UpdateSecSurface(sec_surface_t *ssurf,
+	sec_plane_t* RealPlane, subsector_t* sub)
 {
-	guard(UpdateSecSurface);
+	guard(VLevelRenderData::UpdateSecSurface);
 	sec_plane_t		*plane = ssurf->secplane;
 
 	if (!plane->pic)
@@ -489,7 +478,7 @@ static void UpdateSecSurface(sec_surface_t *ssurf, sec_plane_t* RealPlane)
 			{
 				ssurf->surfs = SubdivideFace(ssurf->surfs,
 					ssurf->texinfo.saxis, &ssurf->texinfo.taxis);
-				InitSurfs(ssurf->surfs, &ssurf->texinfo, plane);
+				InitSurfs(ssurf->surfs, &ssurf->texinfo, plane, sub);
 			}
 		}
 		else if (plane->pic != skyflatnum && RealPlane->pic == skyflatnum)
@@ -510,7 +499,7 @@ static void UpdateSecSurface(sec_surface_t *ssurf, sec_plane_t* RealPlane)
 			}
 		}
 		FlushSurfCaches(ssurf->surfs);
-		InitSurfs(ssurf->surfs, &ssurf->texinfo, NULL);
+		InitSurfs(ssurf->surfs, &ssurf->texinfo, NULL, sub);
 	}
 	if (FASI(ssurf->texinfo.soffs) != FASI(plane->xoffs) ||
 		FASI(ssurf->texinfo.toffs) != FASI(plane->yoffs))
@@ -518,7 +507,7 @@ static void UpdateSecSurface(sec_surface_t *ssurf, sec_plane_t* RealPlane)
 		ssurf->texinfo.soffs = plane->xoffs;
 		ssurf->texinfo.toffs = plane->yoffs;
 		FlushSurfCaches(ssurf->surfs);
-		InitSurfs(ssurf->surfs, &ssurf->texinfo, NULL);
+		InitSurfs(ssurf->surfs, &ssurf->texinfo, NULL, sub);
 	}
 	if (ssurf->texinfo.pic != plane->pic)
 	{
@@ -535,13 +524,13 @@ static void UpdateSecSurface(sec_surface_t *ssurf, sec_plane_t* RealPlane)
 
 //==========================================================================
 //
-//	NewWSurf
+//	VLevelRenderData::NewWSurf
 //
 //==========================================================================
 
-static surface_t *NewWSurf()
+surface_t* VLevelRenderData::NewWSurf()
 {
-	guard(NewWSurf);
+	guard(VLevelRenderData::NewWSurf);
 	if (!free_wsurfs)
 	{
 		//	Allocate some more surfs
@@ -567,13 +556,13 @@ static surface_t *NewWSurf()
 
 //==========================================================================
 //
-//	FreeWSurfs
+//	VLevelRenderData::FreeWSurfs
 //
 //==========================================================================
 
-static void	FreeWSurfs(surface_t* InSurfs)
+void VLevelRenderData::FreeWSurfs(surface_t* InSurfs)
 {
-	guard(FreeWSurfs);
+	guard(VLevelRenderData::FreeWSurfs);
 	surface_t* surfs = InSurfs;
 	FlushSurfCaches(surfs);
 	while (surfs)
@@ -596,13 +585,14 @@ static void	FreeWSurfs(surface_t* InSurfs)
 
 //==========================================================================
 //
-//	SubdivideSeg
+//	VLevelRenderData::SubdivideSeg
 //
 //==========================================================================
 
-static surface_t *SubdivideSeg(surface_t* InSurf, const TVec &axis, const TVec *nextaxis)
+surface_t* VLevelRenderData::SubdivideSeg(surface_t* InSurf,
+	const TVec &axis, const TVec *nextaxis)
 {
-	guard(SubdivideSeg);
+	guard(VLevelRenderData::SubdivideSeg);
 	surface_t* surf = InSurf;
 	int i;
 	float dot;
@@ -719,13 +709,14 @@ static surface_t *SubdivideSeg(surface_t* InSurf, const TVec &axis, const TVec *
 
 //==========================================================================
 //
-//	CreateWSurfs
+//	VLevelRenderData::CreateWSurfs
 //
 //==========================================================================
 
-static surface_t *CreateWSurfs(TVec *wv, texinfo_t *texinfo, seg_t *seg)
+surface_t* VLevelRenderData::CreateWSurfs(TVec* wv, texinfo_t* texinfo,
+	seg_t* seg, subsector_t* sub)
 {
-	guard(CreateWSurfs);
+	guard(VLevelRenderData::CreateWSurfs);
 	if (wv[1].z <= wv[0].z && wv[2].z <= wv[3].z)
 	{
 		return NULL;
@@ -755,20 +746,20 @@ static surface_t *CreateWSurfs(TVec *wv, texinfo_t *texinfo, seg_t *seg)
 	surf->count = 4;
 	memcpy(surf->verts, wv, 4 * sizeof(TVec));
 	surf = SubdivideSeg(surf, texinfo->saxis, &texinfo->taxis);
-	InitSurfs(surf, texinfo, seg);
+	InitSurfs(surf, texinfo, seg, sub);
 	return surf;
 	unguard;
 }
 
 //==========================================================================
 //
-//	CountSegParts
+//	VLevelRenderData::CountSegParts
 //
 //==========================================================================
 
-static int CountSegParts(seg_t *seg)
+int VLevelRenderData::CountSegParts(seg_t* seg)
 {
-	guard(CountSegParts);
+	guard(VLevelRenderData::CountSegParts);
 	if (!seg->linedef)
 	{
 		//	Miniseg
@@ -794,15 +785,13 @@ static int CountSegParts(seg_t *seg)
 
 //==========================================================================
 //
-//	CreateSegParts
+//	VLevelRenderData::CreateSegParts
 //
 //==========================================================================
 
-static segpart_t	*pspart;
-
-static void CreateSegParts(drawseg_t* dseg, seg_t *seg)
+void VLevelRenderData::CreateSegParts(drawseg_t* dseg, seg_t *seg)
 {
-	guard(CreateSegParts);
+	guard(VLevelRenderData::CreateSegParts);
 	TVec		wv[4];
 	segpart_t	*sp;
 	float		hdelta;
@@ -818,8 +807,6 @@ static void CreateSegParts(drawseg_t* dseg, seg_t *seg)
 		return;
 	}
 
-	backsector = seg->backsector;
-
 	side_t *sidedef = seg->sidedef;
 	line_t *linedef = seg->linedef;
 
@@ -830,7 +817,7 @@ static void CreateSegParts(drawseg_t* dseg, seg_t *seg)
 	float botz1 = r_floor->GetPointZ(*seg->v1);
 	float botz2 = r_floor->GetPointZ(*seg->v2);
 
-	if (!backsector)
+	if (!seg->backsector)
 	{
 		dseg->mid = pspart++;
 		sp = dseg->mid;
@@ -877,7 +864,7 @@ static void CreateSegParts(drawseg_t* dseg, seg_t *seg)
 		wv[2].z = topz2;
 		wv[3].z = botz2;
 
-		sp->surfs = CreateWSurfs(wv, &sp->texinfo, seg);
+		sp->surfs = CreateWSurfs(wv, &sp->texinfo, seg, r_sub);
 
 		sp->frontTopDist = r_ceiling->dist;
 		sp->frontBotDist = r_floor->dist;
@@ -901,7 +888,7 @@ static void CreateSegParts(drawseg_t* dseg, seg_t *seg)
 			wv[1].z = wv[2].z = skyheight;
 			wv[3].z = topz2;
 
-			sp->surfs = CreateWSurfs(wv, &sp->texinfo, seg);
+			sp->surfs = CreateWSurfs(wv, &sp->texinfo, seg, r_sub);
 
 			sp->frontTopDist = r_ceiling->dist;
 		}
@@ -910,17 +897,17 @@ static void CreateSegParts(drawseg_t* dseg, seg_t *seg)
 	{
 		// two sided line
 
-		r_back_floor = &backsector->floor;
-		r_back_ceiling = &backsector->ceiling;
+		sec_plane_t* back_floor = &seg->backsector->floor;
+		sec_plane_t* back_ceiling = &seg->backsector->ceiling;
 
-		float back_topz1 = r_back_ceiling->GetPointZ(*seg->v1);
-		float back_topz2 = r_back_ceiling->GetPointZ(*seg->v2);
-		float back_botz1 = r_back_floor->GetPointZ(*seg->v1);
-		float back_botz2 = r_back_floor->GetPointZ(*seg->v2);
+		float back_topz1 = back_ceiling->GetPointZ(*seg->v1);
+		float back_topz2 = back_ceiling->GetPointZ(*seg->v2);
+		float back_botz1 = back_floor->GetPointZ(*seg->v1);
+		float back_botz2 = back_floor->GetPointZ(*seg->v2);
 
 		// hack to allow height changes in outdoor areas
 		if (r_ceiling->pic == skyflatnum &&
-			r_back_ceiling->pic == skyflatnum)
+			back_ceiling->pic == skyflatnum)
 		{
 			topz1 = back_topz1;
 			topz2 = back_topz2;
@@ -965,19 +952,19 @@ static void CreateSegParts(drawseg_t* dseg, seg_t *seg)
 		wv[2].z = topz2;
 		wv[3].z = MAX(back_topz2, botz2);
 
-		sp->surfs = CreateWSurfs(wv, &sp->texinfo, seg);
+		sp->surfs = CreateWSurfs(wv, &sp->texinfo, seg, r_sub);
 
 		sp->frontTopDist = r_ceiling->dist;
 		sp->frontBotDist = r_floor->dist;
-		sp->backTopDist = r_back_ceiling->dist;
-		sp->backBotDist = r_back_floor->dist;
+		sp->backTopDist = back_ceiling->dist;
+		sp->backBotDist = back_floor->dist;
 		sp->textureoffset = sidedef->textureoffset;
 		sp->rowoffset = sidedef->rowoffset;
 
 		//	Sky abowe top
 		dseg->topsky = pspart++;
 		if (r_ceiling->pic == skyflatnum &&
-			r_back_ceiling->pic != skyflatnum)
+			back_ceiling->pic != skyflatnum)
 		{
 			sp = dseg->topsky;
 
@@ -993,7 +980,7 @@ static void CreateSegParts(drawseg_t* dseg, seg_t *seg)
 			wv[1].z = wv[2].z = skyheight;
 			wv[3].z = topz2;
 
-			sp->surfs = CreateWSurfs(wv, &sp->texinfo, seg);
+			sp->surfs = CreateWSurfs(wv, &sp->texinfo, seg, r_sub);
 
 			sp->frontTopDist = r_ceiling->dist;
 		}
@@ -1037,12 +1024,12 @@ static void CreateSegParts(drawseg_t* dseg, seg_t *seg)
 		wv[2].z = MIN(back_botz2, topz2);
 		wv[3].z = botz2;
 
-		sp->surfs = CreateWSurfs(wv, &sp->texinfo, seg);
+		sp->surfs = CreateWSurfs(wv, &sp->texinfo, seg, r_sub);
 
 		sp->frontTopDist = r_ceiling->dist;
 		sp->frontBotDist = r_floor->dist;
-		sp->backTopDist = r_back_ceiling->dist;
-		sp->backBotDist = r_back_floor->dist;
+		sp->backTopDist = back_ceiling->dist;
+		sp->backBotDist = back_floor->dist;
 		sp->textureoffset = sidedef->textureoffset;
 		sp->rowoffset = sidedef->rowoffset;
 
@@ -1081,7 +1068,6 @@ static void CreateSegParts(drawseg_t* dseg, seg_t *seg)
 				// top of texture at top
 				z_org = MAX(midtopz1, midtopz2);
 			}
-//			z_org -= offshdelta;
 			z_org += sidedef->rowoffset * (!GTextureManager.Textures[sidedef->midtexture]->bWorldPanning ?
 				1.0 : 1.0 / GTextureManager.Textures[sidedef->midtexture]->TScale) - offshdelta;
 
@@ -1098,18 +1084,18 @@ static void CreateSegParts(drawseg_t* dseg, seg_t *seg)
 			wv[2].z = MIN(midtopz2, z_org);
 			wv[3].z = MAX(midbotz2, z_org - texh);
 
-			sp->surfs = CreateWSurfs(wv, &sp->texinfo, seg);
+			sp->surfs = CreateWSurfs(wv, &sp->texinfo, seg, r_sub);
 		}
 
 		sp->frontTopDist = r_ceiling->dist;
 		sp->frontBotDist = r_floor->dist;
-		sp->backTopDist = r_back_ceiling->dist;
-		sp->backBotDist = r_back_floor->dist;
+		sp->backTopDist = back_ceiling->dist;
+		sp->backBotDist = back_floor->dist;
 		sp->textureoffset = sidedef->textureoffset;
 		sp->rowoffset = sidedef->rowoffset;
 
 		sec_region_t *reg;
-		for (reg = backsector->topregion; reg->prev; reg = reg->prev)
+		for (reg = seg->backsector->topregion; reg->prev; reg = reg->prev)
 		{
 			sp = pspart++;
 			sp->next = dseg->extra;
@@ -1117,7 +1103,7 @@ static void CreateSegParts(drawseg_t* dseg, seg_t *seg)
 
 			TPlane *extratop = reg->floor;
 			TPlane *extrabot = reg->prev->ceiling;
-			side_t *extraside = &GClLevel->Sides[reg->prev->extraline->sidenum[0]];
+			side_t *extraside = &Level->Sides[reg->prev->extraline->sidenum[0]];
 
 			float extratopz1 = extratop->GetPointZ(*seg->v1);
 			float extratopz2 = extratop->GetPointZ(*seg->v2);
@@ -1149,7 +1135,7 @@ static void CreateSegParts(drawseg_t* dseg, seg_t *seg)
 			wv[2].z = MIN(extratopz2, topz2);
 			wv[3].z = MAX(extrabotz2, botz2);
 
-			sp->surfs = CreateWSurfs(wv, &sp->texinfo, seg);
+			sp->surfs = CreateWSurfs(wv, &sp->texinfo, seg, r_sub);
 
 			sp->frontTopDist = r_ceiling->dist;
 			sp->frontBotDist = r_floor->dist;
@@ -1164,47 +1150,47 @@ static void CreateSegParts(drawseg_t* dseg, seg_t *seg)
 
 //==========================================================================
 //
-//	UpdateRowOffset
+//	VLevelRenderData::UpdateRowOffset
 //
 //==========================================================================
 
-static void	UpdateRowOffset(segpart_t *sp, float rowoffset)
+void VLevelRenderData::UpdateRowOffset(segpart_t *sp, float rowoffset)
 {
-	guard(UpdateRowOffset);
+	guard(VLevelRenderData::UpdateRowOffset);
 	sp->texinfo.toffs += (rowoffset - sp->rowoffset) *
 		TextureOffsetTScale(sp->texinfo.pic);
 	sp->rowoffset = rowoffset;
 	FlushSurfCaches(sp->surfs);
-	InitSurfs(sp->surfs, &sp->texinfo, NULL);
+	InitSurfs(sp->surfs, &sp->texinfo, NULL, r_sub);
 	unguard;
 }
 
 //==========================================================================
 //
-//	UpdateTextureOffset
+//	VLevelRenderData::UpdateTextureOffset
 //
 //==========================================================================
 
-static void UpdateTextureOffset(segpart_t *sp, float textureoffset)
+void VLevelRenderData::UpdateTextureOffset(segpart_t* sp, float textureoffset)
 {
-	guard(UpdateTextureOffset);
+	guard(VLevelRenderData::UpdateTextureOffset);
 	sp->texinfo.soffs += (textureoffset - sp->textureoffset) *
 		TextureOffsetSScale(sp->texinfo.pic);
 	sp->textureoffset = textureoffset;
 	FlushSurfCaches(sp->surfs);
-	InitSurfs(sp->surfs, &sp->texinfo, NULL);
+	InitSurfs(sp->surfs, &sp->texinfo, NULL, r_sub);
 	unguard;
 }
 
 //==========================================================================
 //
-//	UpdateDrawSeg
+//	VLevelRenderData::UpdateDrawSeg
 //
 //==========================================================================
 
-static void UpdateDrawSeg(drawseg_t* dseg)
+void VLevelRenderData::UpdateDrawSeg(drawseg_t* dseg)
 {
-	guard(UpdateDrawSeg);
+	guard(VLevelRenderData::UpdateDrawSeg);
 	seg_t *seg = dseg->seg;
 	segpart_t *sp;
 	TVec wv[4];
@@ -1215,12 +1201,10 @@ static void UpdateDrawSeg(drawseg_t* dseg)
 		return;
 	}
 
-	backsector = seg->backsector;
+	side_t* sidedef = seg->sidedef;
+	line_t* linedef = seg->linedef;
 
-	side_t *sidedef = seg->sidedef;
-	line_t *linedef = seg->linedef;
-
-	if (!backsector)
+	if (!seg->backsector)
 	{
 		sp = dseg->mid;
 		if (FASI(sp->frontTopDist) != FASI(r_ceiling->dist) ||
@@ -1270,7 +1254,7 @@ static void UpdateDrawSeg(drawseg_t* dseg)
 			wv[2].z = topz2;
 			wv[3].z = botz2;
 
-			sp->surfs = CreateWSurfs(wv, &sp->texinfo, seg);
+			sp->surfs = CreateWSurfs(wv, &sp->texinfo, seg, r_sub);
 
 			sp->frontTopDist = r_ceiling->dist;
 			sp->frontBotDist = r_floor->dist;
@@ -1304,21 +1288,21 @@ static void UpdateDrawSeg(drawseg_t* dseg)
 			wv[1].z = wv[2].z = skyheight;
 			wv[3].z = topz2;
 
-			sp->surfs = CreateWSurfs(wv, &sp->texinfo, seg);
+			sp->surfs = CreateWSurfs(wv, &sp->texinfo, seg, r_sub);
 
 			sp->frontTopDist = r_ceiling->dist;
 		}
 	}
 	else
 	{
-		r_back_floor = &backsector->floor;
-		r_back_ceiling = &backsector->ceiling;
+		sec_plane_t* back_floor = &seg->backsector->floor;
+		sec_plane_t* back_ceiling = &seg->backsector->ceiling;
 
 		// top wall
 		sp = dseg->top;
 		if (FASI(sp->frontTopDist) != FASI(r_ceiling->dist) ||
 			FASI(sp->frontBotDist) != FASI(r_floor->dist) ||
-			FASI(sp->backTopDist) != FASI(r_back_ceiling->dist) ||
+			FASI(sp->backTopDist) != FASI(back_ceiling->dist) ||
 			sp->texinfo.pic != sidedef->toptexture)
 		{
 			float topz1 = r_ceiling->GetPointZ(*seg->v1);
@@ -1326,12 +1310,12 @@ static void UpdateDrawSeg(drawseg_t* dseg)
 			float botz1 = r_floor->GetPointZ(*seg->v1);
 			float botz2 = r_floor->GetPointZ(*seg->v2);
 
-			float back_topz1 = r_back_ceiling->GetPointZ(*seg->v1);
-			float back_topz2 = r_back_ceiling->GetPointZ(*seg->v2);
+			float back_topz1 = back_ceiling->GetPointZ(*seg->v1);
+			float back_topz2 = back_ceiling->GetPointZ(*seg->v2);
 
 			// hack to allow height changes in outdoor areas
 			if (r_ceiling->pic == skyflatnum &&
-				r_back_ceiling->pic == skyflatnum)
+				back_ceiling->pic == skyflatnum)
 			{
 				topz1 = back_topz1;
 				topz2 = back_topz2;
@@ -1368,11 +1352,11 @@ static void UpdateDrawSeg(drawseg_t* dseg)
 			wv[2].z = topz2;
 			wv[3].z = MAX(back_topz2, botz2);
 
-			sp->surfs = CreateWSurfs(wv, &sp->texinfo, seg);
+			sp->surfs = CreateWSurfs(wv, &sp->texinfo, seg, r_sub);
 
 			sp->frontTopDist = r_ceiling->dist;
 			sp->frontBotDist = r_floor->dist;
-			sp->backTopDist = r_back_ceiling->dist;
+			sp->backTopDist = back_ceiling->dist;
 			sp->rowoffset = sidedef->rowoffset;
 		}
 		else if (FASI(sp->rowoffset) != FASI(sidedef->rowoffset))
@@ -1387,7 +1371,7 @@ static void UpdateDrawSeg(drawseg_t* dseg)
 		//	Sky abowe top
 		sp = dseg->topsky;
 		if (r_ceiling->pic == skyflatnum &&
-			r_back_ceiling->pic != skyflatnum &&
+			back_ceiling->pic != skyflatnum &&
 			FASI(sp->frontTopDist) != FASI(r_ceiling->dist))
 		{
 			float topz1 = r_ceiling->GetPointZ(*seg->v1);
@@ -1405,7 +1389,7 @@ static void UpdateDrawSeg(drawseg_t* dseg)
 			wv[1].z = wv[2].z = skyheight;
 			wv[3].z = topz2;
 
-			sp->surfs = CreateWSurfs(wv, &sp->texinfo, seg);
+			sp->surfs = CreateWSurfs(wv, &sp->texinfo, seg, r_sub);
 
 			sp->frontTopDist = r_ceiling->dist;
 		}
@@ -1414,22 +1398,22 @@ static void UpdateDrawSeg(drawseg_t* dseg)
 		sp = dseg->bot;
 		if (FASI(sp->frontTopDist) != FASI(r_ceiling->dist) ||
 			FASI(sp->frontBotDist) != FASI(r_floor->dist) ||
-			FASI(sp->backBotDist) != FASI(r_back_floor->dist))
+			FASI(sp->backBotDist) != FASI(back_floor->dist))
 		{
 			float topz1 = r_ceiling->GetPointZ(*seg->v1);
 			float topz2 = r_ceiling->GetPointZ(*seg->v2);
 			float botz1 = r_floor->GetPointZ(*seg->v1);
 			float botz2 = r_floor->GetPointZ(*seg->v2);
 
-			float back_botz1 = r_back_floor->GetPointZ(*seg->v1);
-			float back_botz2 = r_back_floor->GetPointZ(*seg->v2);
+			float back_botz1 = back_floor->GetPointZ(*seg->v1);
+			float back_botz2 = back_floor->GetPointZ(*seg->v2);
 
 			// hack to allow height changes in outdoor areas
 			if (r_ceiling->pic == skyflatnum &&
-				r_back_ceiling->pic == skyflatnum)
+				back_ceiling->pic == skyflatnum)
 			{
-				topz1 = r_back_ceiling->GetPointZ(*seg->v1);
-				topz2 = r_back_ceiling->GetPointZ(*seg->v2);
+				topz1 = back_ceiling->GetPointZ(*seg->v1);
+				topz2 = back_ceiling->GetPointZ(*seg->v2);
 			}
 
 			FreeWSurfs(sp->surfs);
@@ -1463,11 +1447,11 @@ static void UpdateDrawSeg(drawseg_t* dseg)
 			wv[2].z = MIN(back_botz2, topz2);
 			wv[3].z = botz2;
 
-			sp->surfs = CreateWSurfs(wv, &sp->texinfo, seg);
+			sp->surfs = CreateWSurfs(wv, &sp->texinfo, seg, r_sub);
 
 			sp->frontTopDist = r_ceiling->dist;
 			sp->frontBotDist = r_floor->dist;
-			sp->backBotDist = r_back_floor->dist;
+			sp->backBotDist = back_floor->dist;
 			sp->rowoffset = sidedef->rowoffset;
 		}
 		else if (FASI(sp->rowoffset) != FASI(sidedef->rowoffset))
@@ -1487,8 +1471,8 @@ static void UpdateDrawSeg(drawseg_t* dseg)
 		sp = dseg->mid;
 		if (FASI(sp->frontTopDist) != FASI(r_ceiling->dist) ||
 			FASI(sp->frontBotDist) != FASI(r_floor->dist) ||
-			FASI(sp->backTopDist) != FASI(r_back_ceiling->dist) ||
-			FASI(sp->backBotDist) != FASI(r_back_floor->dist) ||
+			FASI(sp->backTopDist) != FASI(back_ceiling->dist) ||
+			FASI(sp->backBotDist) != FASI(back_floor->dist) ||
 			FASI(sp->rowoffset) != FASI(sidedef->rowoffset) ||
 			sp->texinfo.pic != sidedef->midtexture)
 		{
@@ -1503,14 +1487,14 @@ static void UpdateDrawSeg(drawseg_t* dseg)
 				float botz1 = r_floor->GetPointZ(*seg->v1);
 				float botz2 = r_floor->GetPointZ(*seg->v2);
 
-				float back_topz1 = r_back_ceiling->GetPointZ(*seg->v1);
-				float back_topz2 = r_back_ceiling->GetPointZ(*seg->v2);
-				float back_botz1 = r_back_floor->GetPointZ(*seg->v1);
-				float back_botz2 = r_back_floor->GetPointZ(*seg->v2);
+				float back_topz1 = back_ceiling->GetPointZ(*seg->v1);
+				float back_topz2 = back_ceiling->GetPointZ(*seg->v2);
+				float back_botz1 = back_floor->GetPointZ(*seg->v1);
+				float back_botz2 = back_floor->GetPointZ(*seg->v2);
 
 				// hack to allow height changes in outdoor areas
 				if (r_ceiling->pic == skyflatnum &&
-					r_back_ceiling->pic == skyflatnum)
+					back_ceiling->pic == skyflatnum)
 				{
 					topz1 = back_topz1;
 					topz2 = back_topz2;
@@ -1562,7 +1546,7 @@ static void UpdateDrawSeg(drawseg_t* dseg)
 				wv[2].z = MIN(midtopz2, z_org);
 				wv[3].z = MAX(midbotz2, z_org - texh);
 
-				sp->surfs = CreateWSurfs(wv, &sp->texinfo, seg);
+				sp->surfs = CreateWSurfs(wv, &sp->texinfo, seg, r_sub);
 			}
 			else
 			{
@@ -1571,8 +1555,8 @@ static void UpdateDrawSeg(drawseg_t* dseg)
 
 			sp->frontTopDist = r_ceiling->dist;
 			sp->frontBotDist = r_floor->dist;
-			sp->backTopDist = r_back_ceiling->dist;
-			sp->backBotDist = r_back_floor->dist;
+			sp->backTopDist = back_ceiling->dist;
+			sp->backBotDist = back_floor->dist;
 			sp->rowoffset = sidedef->rowoffset;
 		}
 		if (FASI(sp->textureoffset) != FASI(sidedef->textureoffset))
@@ -1582,11 +1566,11 @@ static void UpdateDrawSeg(drawseg_t* dseg)
 
 		sec_region_t *reg;
 		segpart_t *sp = dseg->extra;
-		for (reg = backsector->botregion; reg->next; reg = reg->next)
+		for (reg = seg->backsector->botregion; reg->next; reg = reg->next)
 		{
 			TPlane *extratop = reg->next->floor;
 			TPlane *extrabot = reg->ceiling;
-			side_t *extraside = &GClLevel->Sides[reg->extraline->sidenum[0]];
+			side_t *extraside = &Level->Sides[reg->extraline->sidenum[0]];
 
 			sp->texinfo.pic = extraside->midtexture;
 			if (FASI(sp->frontTopDist) != FASI(r_ceiling->dist) ||
@@ -1623,7 +1607,7 @@ static void UpdateDrawSeg(drawseg_t* dseg)
 				wv[2].z = MIN(extratopz2, topz2);
 				wv[3].z = MAX(extrabotz2, botz2);
 
-				sp->surfs = CreateWSurfs(wv, &sp->texinfo, seg);
+				sp->surfs = CreateWSurfs(wv, &sp->texinfo, seg, r_sub);
 
 				sp->frontTopDist = r_ceiling->dist;
 				sp->frontBotDist = r_floor->dist;
@@ -1647,13 +1631,13 @@ static void UpdateDrawSeg(drawseg_t* dseg)
 
 //==========================================================================
 //
-//	R_SegMoved
+//	VLevelRenderData::SegMoved
 //
 //==========================================================================
 
-void R_SegMoved(seg_t *seg)
+void VLevelRenderData::SegMoved(seg_t* seg)
 {
-	guard(R_SegMoved);
+	guard(VLevelRenderData::SegMoved);
 	if (!seg->drawsegs)
 	{
 		//	Drawsegs not created yet
@@ -1682,13 +1666,13 @@ void R_SegMoved(seg_t *seg)
 
 //==========================================================================
 //
-//	R_PreRender
+//	VLevelRenderData::PreRender
 //
 //==========================================================================
 
-void R_PreRender()
+void VLevelRenderData::PreRender()
 {
-	guard(R_PreRender);
+	guard(VLevelRenderData::PreRender);
 	int				i, j;
 	int				count, dscount, spcount;
 	subregion_t		*sreg;
@@ -1706,9 +1690,9 @@ void R_PreRender()
 	count = 0;
 	dscount = 0;
 	spcount = 0;
-	for (i = 0; i < GClLevel->NumSubsectors; i++)
+	for (i = 0; i < Level->NumSubsectors; i++)
 	{
-		sub = &GClLevel->Subsectors[i];
+		sub = &Level->Subsectors[i];
 		if (!sub->sector->linecount)
 		{
 			//	Skip sectors containing original polyobjs
@@ -1725,7 +1709,7 @@ void R_PreRender()
 			}
 			for (j = 0; j < sub->numlines; j++)
 			{
-				spcount += CountSegParts(&GClLevel->Segs[sub->firstline + j]);
+				spcount += CountSegParts(&Level->Segs[sub->firstline + j]);
 			}
 			if (sub->poly)
 			{
@@ -1746,13 +1730,13 @@ void R_PreRender()
 	AllocatedSegParts = pspart;
 
 	//	Add dplanes
-	for (i = 0; i < GClLevel->NumSubsectors; i++)
+	for (i = 0; i < Level->NumSubsectors; i++)
 	{
 		if (!(i & 7))
 		{
 			CL_KeepaliveMessage();
 		}
-		sub = &GClLevel->Subsectors[i];
+		sub = &Level->Subsectors[i];
 		if (!sub->sector->linecount)
 		{
 			//	Skip sectors containing original polyobjs
@@ -1775,12 +1759,11 @@ void R_PreRender()
 			}
 			sreg->lines = pds;
 			pds += sreg->count;
-			frontsector = sub->sector;
 			r_floor = reg->floor;
 			r_ceiling = reg->ceiling;
 			for (j = 0; j < sub->numlines; j++)
 			{
-				CreateSegParts(&sreg->lines[j], &GClLevel->Segs[sub->firstline + j]);
+				CreateSegParts(&sreg->lines[j], &Level->Segs[sub->firstline + j]);
 			}
 			if (sub->poly)
 			{
@@ -1809,13 +1792,13 @@ void R_PreRender()
 
 //==========================================================================
 //
-//	UpdateSubRegion
+//	VLevelRenderData::UpdateSubRegion
 //
 //==========================================================================
 
-static void UpdateSubRegion(subregion_t *region)
+void VLevelRenderData::UpdateSubRegion(subregion_t* region)
 {
-	guard(UpdateSubRegion);
+	guard(VLevelRenderData::UpdateSubRegion);
 	int				count;
 	int 			polyCount;
 	seg_t**			polySeg;
@@ -1831,8 +1814,8 @@ static void UpdateSubRegion(subregion_t *region)
 		ds++;
 	}
 
-	UpdateSecSurface(region->floor, region->floorplane);
-	UpdateSecSurface(region->ceil, region->ceilplane);
+	UpdateSecSurface(region->floor, region->floorplane, r_sub);
+	UpdateSecSurface(region->ceil, region->ceilplane, r_sub);
 
 	if (r_sub->poly)
 	{
@@ -1855,32 +1838,31 @@ static void UpdateSubRegion(subregion_t *region)
 
 //==========================================================================
 //
-//	UpdateSubsector
+//	VLevelRenderData::UpdateSubsector
 //
 //==========================================================================
 
-static void UpdateSubsector(int num, float *bbox)
+void VLevelRenderData::UpdateSubsector(int num, float *bbox)
 {
-	guard(UpdateSubsector);
-	r_sub = &GClLevel->Subsectors[num];
-	frontsector = r_sub->sector;
+	guard(VLevelRenderData::UpdateSubsector);
+	r_sub = &Level->Subsectors[num];
 
 	if (r_sub->VisFrame != r_visframecount)
 	{
 		return;
 	}
 
-	if (!frontsector->linecount)
+	if (!r_sub->sector->linecount)
 	{
 		//	Skip sectors containing original polyobjs
 		return;
 	}
 
-	bbox[2] = frontsector->floor.minz;
-	if (frontsector->ceiling.pic == skyflatnum)
+	bbox[2] = r_sub->sector->floor.minz;
+	if (r_sub->sector->ceiling.pic == skyflatnum)
 		bbox[5] = skyheight;
 	else
-		bbox[5] = frontsector->ceiling.maxz;
+		bbox[5] = r_sub->sector->ceiling.maxz;
 
 	UpdateSubRegion(r_sub->regions);
 	unguard;
@@ -1888,13 +1870,13 @@ static void UpdateSubsector(int num, float *bbox)
 
 //==========================================================================
 //
-//	UpdateBSPNode
+//	VLevelRenderData::UpdateBSPNode
 //
 //==========================================================================
 
-static void UpdateBSPNode(int bspnum, float *bbox)
+void VLevelRenderData::UpdateBSPNode(int bspnum, float* bbox)
 {
-	guard(UpdateBSPNode);
+	guard(VLevelRenderData::UpdateBSPNode);
 	// Found a subsector?
 	if (bspnum & NF_SUBSECTOR)
 	{
@@ -1905,7 +1887,7 @@ static void UpdateBSPNode(int bspnum, float *bbox)
 		return;
 	}
 
-	node_t* bsp = &GClLevel->Nodes[bspnum];
+	node_t* bsp = &Level->Nodes[bspnum];
 
 	if (bsp->VisFrame != r_visframecount)
 	{
@@ -1921,12 +1903,12 @@ static void UpdateBSPNode(int bspnum, float *bbox)
 
 //==========================================================================
 //
-//	CopyPlaneIfValid
+//	VLevelRenderData::CopyPlaneIfValid
 //
 //==========================================================================
 
-static bool CopyPlaneIfValid(sec_plane_t* dest, const sec_plane_t* source,
-	const sec_plane_t* opp)
+bool VLevelRenderData::CopyPlaneIfValid(sec_plane_t* dest,
+	const sec_plane_t* source, const sec_plane_t* opp)
 {
 	guard(CopyPlaneIfValid);
 	bool copy = false;
@@ -1960,7 +1942,7 @@ static bool CopyPlaneIfValid(sec_plane_t* dest, const sec_plane_t* source,
 
 //==========================================================================
 //
-//	UpdateFakeFlats
+//	VLevelRenderData::UpdateFakeFlats
 //
 // killough 3/7/98: Hack floor/ceiling heights for deep water etc.
 //
@@ -1975,9 +1957,9 @@ static bool CopyPlaneIfValid(sec_plane_t* dest, const sec_plane_t* source,
 //
 //==========================================================================
 
-void UpdateFakeFlats(sector_t* sec)
+void VLevelRenderData::UpdateFakeFlats(sector_t* sec)
 {
-	guard(UpdateFakeFlats);
+	guard(VLevelRenderData::UpdateFakeFlats);
 	const sector_t *s = sec->heightsec;
 	sector_t *heightsec = r_viewleaf->sector->heightsec;
 	bool underwater = /*r_fakingunderwater ||*/
@@ -2190,37 +2172,38 @@ void UpdateFakeFlats(sector_t* sec)
 
 //==========================================================================
 //
-//	R_UpdateWorld
+//	VLevelRenderData::UpdateWorld
 //
 //==========================================================================
 
-void R_UpdateWorld()
+void VLevelRenderData::UpdateWorld()
 {
-	guard(R_UpdateWorld);
+	guard(VLevelRenderData::UpdateWorld);
 	float	dummy_bbox[6] = {-99999, -99999, -99999, 99999, 9999, 99999};
 
 	//	Update fake sectors.
-	for (int i = 0; i < GClLevel->NumSectors; i++)
+	for (int i = 0; i < Level->NumSectors; i++)
 	{
-		if (GClLevel->Sectors[i].heightsec &&
-			!(GClLevel->Sectors[i].heightsec->SectorFlags & sector_t::SF_IgnoreHeightSec))
+		if (Level->Sectors[i].heightsec &&
+			!(Level->Sectors[i].heightsec->SectorFlags & sector_t::SF_IgnoreHeightSec))
 		{
-			UpdateFakeFlats(&GClLevel->Sectors[i]);
+			UpdateFakeFlats(&Level->Sectors[i]);
 		}
 	}
 
-	UpdateBSPNode(GClLevel->NumNodes - 1, dummy_bbox);	// head node is the last node output
+	UpdateBSPNode(Level->NumNodes - 1, dummy_bbox);	// head node is the last node output
 	unguard;
 }
 
 //==========================================================================
 //
-//	R_SetupFakeFloors
+//	VLevelRenderData::SetupFakeFloors
 //
 //==========================================================================
 
-void R_SetupFakeFloors(sector_t* Sec)
+void VLevelRenderData::SetupFakeFloors(sector_t* Sec)
 {
+	guard(VLevelRenderData::SetupFakeFloors);
 	sector_t* HeightSec = Sec->heightsec;
 
 	if (HeightSec->SectorFlags & sector_t::SF_IgnoreHeightSec)
@@ -2237,17 +2220,18 @@ void R_SetupFakeFloors(sector_t* Sec)
 	Sec->botregion->floor = &Sec->fakefloors->floorplane;
 	Sec->topregion->ceiling = &Sec->fakefloors->ceilplane;
 	Sec->topregion->params = &Sec->fakefloors->params;
+	unguard;
 }
 
 //==========================================================================
 //
-//	FreeSurfaces
+//	VLevelRenderData::FreeSurfaces
 //
 //==========================================================================
 
-static void FreeSurfaces(surface_t* InSurf)
+void VLevelRenderData::FreeSurfaces(surface_t* InSurf)
 {
-	guard(FreeSurfaces);
+	guard(VLevelRenderData::FreeSurfaces);
 	surface_t* next;
 	for (surface_t* s = InSurf; s; s = next)
 	{
@@ -2274,75 +2258,16 @@ static void FreeSurfaces(surface_t* InSurf)
 
 //==========================================================================
 //
-//	FreeSegParts
+//	VLevelRenderData::FreeSegParts
 //
 //==========================================================================
 
-static void FreeSegParts(segpart_t* InSP)
+void VLevelRenderData::FreeSegParts(segpart_t* ASP)
 {
-	guard(FreeSegParts);
-	for (segpart_t* sp = InSP; sp; sp = sp->next)
+	guard(VLevelRenderData::FreeSegParts);
+	for (segpart_t* sp = ASP; sp; sp = sp->next)
 	{
 		FreeWSurfs(sp->surfs);
 	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	R_FreeLevelData
-//
-//==========================================================================
-
-void R_FreeLevelData()
-{
-	guard(R_FreeLevelData);
-	//	Free fake floor data.
-	for (int i = 0; i < GClLevel->NumSectors; i++)
-	{
-		if (GClLevel->Sectors[i].fakefloors)
-		{
-			delete GClLevel->Sectors[i].fakefloors;
-		}
-	}
-
-	for (int i = 0; i < GClLevel->NumSubsectors; i++)
-	{
-		for (subregion_t* r = GClLevel->Subsectors[i].regions; r; r = r->next)
-		{
-			FreeSurfaces(r->floor->surfs);
-			delete r->floor;
-			FreeSurfaces(r->ceil->surfs);
-			delete r->ceil;
-		}
-	}
-
-	//	Free seg parts.
-	for (int i = 0; i < GClLevel->NumSegs; i++)
-	{
-		for (drawseg_t* ds = GClLevel->Segs[i].drawsegs; ds; ds = ds->next)
-		{
-			FreeSegParts(ds->top);
-			FreeSegParts(ds->mid);
-			FreeSegParts(ds->bot);
-			FreeSegParts(ds->topsky);
-			FreeSegParts(ds->extra);
-		}
-	}
-	//	Free allocated wall surface blocks.
-	for (void* Block = AllocatedWSurfBlocks; Block;)
-	{
-		void* Next = *(void**)Block;
-		Z_Free(Block);
-		Block = Next;
-	}
-	AllocatedWSurfBlocks = NULL;
-
-	//	Free big blocks.
-	delete[] AllocatedSubRegions;
-	delete[] AllocatedDrawSegs;
-	delete[] AllocatedSegParts;
-
-	R_FreeLevelSkyData();
 	unguard;
 }

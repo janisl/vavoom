@@ -150,6 +150,11 @@ void R_Init()
 	Drawer->InitTextures();
 	Drawer->InitData();
 	R_InitParticles();
+
+	for (int i = 0; i < 256; i++)
+	{
+		light_remap[i] = byte(i * i / 255);
+	}
 	unguard;
 }
 
@@ -159,14 +164,35 @@ void R_Init()
 //
 //==========================================================================
 
-void R_Start()
+void R_Start(VLevel* ALevel)
 {
 	guard(R_Start);
+	ALevel->RenderData = new VLevelRenderData(ALevel);
+	unguard;
+}
+
+//==========================================================================
+//
+//	VLevelRenderData::VLevelRenderData
+//
+//==========================================================================
+
+VLevelRenderData::VLevelRenderData(VLevel* ALevel)
+: Level(ALevel)
+, c_subdivides(0)
+, free_wsurfs(0)
+, c_seg_div(0)
+, AllocatedWSurfBlocks(0)
+, AllocatedSubRegions(0)
+, AllocatedDrawSegs(0)
+, AllocatedSegParts(0)
+, LightningLightLevels(0)
+{
+	guard(VLevelRenderData::VLevelRenderData);
 	r_oldviewleaf = NULL;
 
-	R_ClearLights();
 	R_ClearParticles();
-	R_InitSky();
+	InitSky();
 
 	r_fog = cl_level.FadeTable == NAME_fogmap;
 
@@ -178,6 +204,69 @@ void R_Start()
 	if (precache)
 	{
 		R_PrecacheLevel();
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VLevelRenderData::~VLevelRenderData
+//
+//==========================================================================
+
+VLevelRenderData::~VLevelRenderData()
+{
+	guard(VLevelRenderData::~VLevelRenderData);
+	//	Free fake floor data.
+	for (int i = 0; i < Level->NumSectors; i++)
+	{
+		if (Level->Sectors[i].fakefloors)
+		{
+			delete Level->Sectors[i].fakefloors;
+		}
+	}
+
+	for (int i = 0; i < Level->NumSubsectors; i++)
+	{
+		for (subregion_t* r = Level->Subsectors[i].regions; r; r = r->next)
+		{
+			FreeSurfaces(r->floor->surfs);
+			delete r->floor;
+			FreeSurfaces(r->ceil->surfs);
+			delete r->ceil;
+		}
+	}
+
+	//	Free seg parts.
+	for (int i = 0; i < Level->NumSegs; i++)
+	{
+		for (drawseg_t* ds = Level->Segs[i].drawsegs; ds; ds = ds->next)
+		{
+			FreeSegParts(ds->top);
+			FreeSegParts(ds->mid);
+			FreeSegParts(ds->bot);
+			FreeSegParts(ds->topsky);
+			FreeSegParts(ds->extra);
+		}
+	}
+	//	Free allocated wall surface blocks.
+	for (void* Block = AllocatedWSurfBlocks; Block;)
+	{
+		void* Next = *(void**)Block;
+		Z_Free(Block);
+		Block = Next;
+	}
+	AllocatedWSurfBlocks = NULL;
+
+	//	Free big blocks.
+	delete[] AllocatedSubRegions;
+	delete[] AllocatedDrawSegs;
+	delete[] AllocatedSegParts;
+
+	if (LightningLightLevels)
+	{
+		delete[] LightningLightLevels;
+		LightningLightLevels = NULL;
 	}
 	unguard;
 }
@@ -397,7 +486,7 @@ static void R_SetupFrame()
 		fixedlight = 0;
 	}
 
-	r_viewleaf = CL_PointInSubsector(cl->ViewOrg.x, cl->ViewOrg.y);
+	r_viewleaf = GClLevel->PointInSubsector(cl->ViewOrg);
 
 	Drawer->SetupView(&refdef);
 	unguard;
@@ -610,9 +699,9 @@ void R_RenderPlayerView()
 
 	R_MarkLeaves();
 
-	R_PushDlights();
+	((VLevelRenderData*)GClLevel->RenderData)->PushDlights();
 
-	R_UpdateWorld();
+	((VLevelRenderData*)GClLevel->RenderData)->UpdateWorld();
 
 	R_RenderWorld();
 
@@ -962,5 +1051,18 @@ void V_Shutdown()
 	}
 	R_FreeSkyboxData();
 	R_ClipShutdown();
+	unguard;
+}
+
+//==========================================================================
+//
+//	R_BuildLightMap
+//
+//==========================================================================
+
+bool R_BuildLightMap(surface_t *surf, int shift)
+{
+	guard(R_BuildLightMap);
+	return ((VLevelRenderData*)GClLevel->RenderData)->BuildLightMap(surf, shift);
 	unguard;
 }

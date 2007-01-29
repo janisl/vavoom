@@ -87,6 +87,132 @@ struct fakefloor_t
 	sec_params_t	params;
 };
 
+class VLevelRenderData : public VLevelRenderDataPublic
+{
+private:
+	struct skysurface_t : surface_t
+	{
+		TVec			__verts[3];
+	};
+
+	struct sky_t
+	{
+		int 			texture1;
+		int 			texture2;
+		int 			baseTexture1;
+		int 			baseTexture2;
+		float			columnOffset1;
+		float			columnOffset2;
+		float			scrollDelta1;
+		float			scrollDelta2;
+		skysurface_t	surf;
+		TPlane			plane;
+		texinfo_t		texinfo;
+	};
+
+	enum
+	{
+		VDIVS			= 8,
+		HDIVS			= 16
+	};
+
+	struct light_t
+	{
+		TVec			origin;
+		float			radius;
+		vuint32			colour;
+		int				leafnum;
+	};
+
+	VLevel*			Level;
+
+	//	Surf variables
+	sec_plane_t		sky_plane;
+	float			skyheight;
+
+	int				c_subdivides;
+
+	surface_t*		free_wsurfs;
+	int				c_seg_div;
+	void*			AllocatedWSurfBlocks;
+	subregion_t*	AllocatedSubRegions;
+	drawseg_t*		AllocatedDrawSegs;
+	segpart_t*		AllocatedSegParts;
+
+	//	Sky variables
+	bool			LevelHasLightning;
+	int				NextLightningFlash;
+	int				LightningFlash;
+	int*			LightningLightLevels;
+
+	sky_t			sky[HDIVS * VDIVS];
+	int				NumSkySurfs;
+	bool			bIsSkyBox;
+
+	//	Light variables
+	TArray<light_t>	Lights;
+
+	//	Surf methods
+	void SetupSky();
+	void InitSurfs(surface_t*, texinfo_t*, TPlane*, subsector_t*);
+	void FlushSurfCaches(surface_t*);
+	surface_t* SubdivideFace(surface_t*, const TVec&, const TVec*);
+	sec_surface_t* CreateSecSurface(subsector_t*, sec_plane_t*);
+	void UpdateSecSurface(sec_surface_t*, sec_plane_t*, subsector_t*);
+	surface_t* NewWSurf();
+	void FreeWSurfs(surface_t*);
+	surface_t* SubdivideSeg(surface_t*, const TVec&, const TVec*);
+	surface_t* CreateWSurfs(TVec*, texinfo_t*, seg_t*, subsector_t*);
+	int CountSegParts(seg_t*);
+	void CreateSegParts(drawseg_t*, seg_t*);
+	void UpdateRowOffset(segpart_t*, float);
+	void UpdateTextureOffset(segpart_t*, float);
+	void UpdateDrawSeg(drawseg_t*);
+	void UpdateSubRegion(subregion_t*);
+	void UpdateSubsector(int, float*);
+	void UpdateBSPNode(int, float*);
+	bool CopyPlaneIfValid(sec_plane_t*, const sec_plane_t*,
+		const sec_plane_t*);
+	void UpdateFakeFlats(sector_t*);
+	void FreeSurfaces(surface_t*);
+	void FreeSegParts(segpart_t*);
+
+	//	Sky methods
+	void InitOldSky();
+	void InitSkyBox(VName, VName);
+	void InitSky();
+	void DoLightningFlash();
+
+	//	Light methods
+	static void CalcMinMaxs(surface_t*);
+	float CastRay(const TVec&, const TVec&, float);
+	static void CalcFaceVectors(surface_t*);
+	void CalcPoints(surface_t*);
+	void SingleLightFace(light_t*, surface_t*);
+	void LightFace(surface_t*, subsector_t*);
+	void MarkLights(dlight_t*, int, int);
+	void AddDynamicLights(surface_t*);
+
+public:
+	VLevelRenderData(VLevel*);
+	~VLevelRenderData();
+
+	void PreRender();
+	void SegMoved(seg_t*);
+	void UpdateWorld();
+	void SetupFakeFloors(sector_t*);
+
+	void SkyChanged();
+	void AnimateSky(float);
+	void ForceLightning();
+	void DrawSky();
+
+	void AddStaticLight(const TVec&, float, vuint32);
+	void PushDlights();
+	vuint32 LightPoint(const TVec &p);
+	bool BuildLightMap(surface_t*, int);
+};
+
 //
 //	A dummy texture.
 //
@@ -363,10 +489,6 @@ void R_DrawTranslucentPolys();
 // R_Sky
 //
 void R_InitSkyBoxes();
-void R_InitSky();
-void R_AnimateSky();
-void R_DrawSky();
-void R_FreeLevelSkyData();
 
 //
 //	R_Tex
@@ -376,15 +498,10 @@ void R_PrecacheLevel();
 //
 //	R_Surf
 //
-void R_UpdateWorld();
 
 //
 //	R_Light
 //
-void R_ClearLights();
-void R_LightFace(surface_t *surf, subsector_t *leaf);
-void R_PushDlights();
-vuint32 R_LightPoint(const TVec &p);
 
 //
 //	r_model
