@@ -27,12 +27,12 @@ class MenuChoice_CroshairTrans : MenuChoiceSlider;
 
 float GetInitialValue()
 {
-	return GetCvarF('croshair_trans');
+	return GetCvarF('croshair_alpha');
 }
 
 bool SetNewValue(float newValue)
 {
-	SetCvarF('croshair_trans', newValue);
+	SetCvarF('croshair_alpha', newValue);
 	return true;
 }
 
