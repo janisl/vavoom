@@ -1872,13 +1872,13 @@ static void G_DoCompleted()
 
 	const mapInfo_t& old_info = P_GetMapInfo(level.MapName);
 	const mapInfo_t& new_info = P_GetMapInfo(sv_next_map);
+	const VClusterDef* ClusterD = P_GetClusterDef(old_info.Cluster);
 
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
 		if (GGameInfo->Players[i])
 		{
-			GGameInfo->Players[i]->eventPlayerExitMap(!old_info.Cluster ||
-				old_info.Cluster != new_info.Cluster);
+			GGameInfo->Players[i]->eventPlayerExitMap(!old_info.Cluster || !(ClusterD->Flags & CLUSTERF_Hub) || old_info.Cluster != new_info.Cluster);
 		}
 	}
 
