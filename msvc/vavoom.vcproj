@@ -226,6 +226,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\dehacked.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\source\files.cpp"
 				>
 			</File>
@@ -376,6 +380,10 @@
 			</File>
 			<File
 				RelativePath="..\source\debug.h"
+				>
+			</File>
+			<File
+				RelativePath="..\source\dehacked.h"
 				>
 			</File>
 			<File
