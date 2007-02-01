@@ -274,11 +274,6 @@ extern float fScaleY;
 extern float fScaleXI;
 extern float fScaleYI;
 
-inline subsector_t* CL_PointInSubsector(float x, float y)
-{
-	return GClLevel->PointInSubsector(TVec(x, y, 0));
-}
-
 extern dlight_t			cl_dlights[MAX_DLIGHTS];
 
 #endif

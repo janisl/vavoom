@@ -376,7 +376,7 @@ float VEaxTrace::TraceLine(const TVec &start, const TVec &end)
 	if (CrossBSPNode(GClLevel->NumNodes - 1))
 	{
 		LineEnd = TraceEnd;
-		CheckPlanes(CL_PointInSubsector(end.x, end.y)->sector);
+		CheckPlanes(GClLevel->PointInSubsector(end)->sector);
 	}
 	return Length(LineEnd - start);
 }

@@ -46,13 +46,13 @@ int					cl_validcount;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static TVec			trace_start;
-static TVec			trace_end;
-static TVec			trace_delta;
-static TPlane		trace;			// from t1 to t2
+static TVec			TraceStart;
+static TVec			TraceEnd;
+static TVec			TraceDelta;
+static TPlane		TracePlane;			// from t1 to t2
 
-static TVec			linestart;
-static TVec			lineend;
+static TVec			LineStart;
+static TVec			LineEnd;
 
 // CODE --------------------------------------------------------------------
 
@@ -67,7 +67,7 @@ static TVec			lineend;
 static int PlaneSide2(const TVec &point, const TPlane* plane)
 {
 	float dot = DotProduct(point, plane->normal) - plane->dist;
-    return dot < -0.1 ? 1 : dot > 0.1 ? 0 : 2;
+	return dot < -0.1 ? 1 : dot > 0.1 ? 0 : 2;
 }
 
 //==========================================================================
@@ -87,13 +87,13 @@ static bool CheckPlane(const sec_plane_t *plane)
 		//	Plane doesn't block sight
 		return true;
 	}
-	org_dist = DotProduct(linestart, plane->normal) - plane->dist;
+	org_dist = DotProduct(LineStart, plane->normal) - plane->dist;
 	if (org_dist < -0.1)
 	{
 		//	Ignore back side
 		return true;
 	}
-	hit_dist = DotProduct(lineend, plane->normal) - plane->dist;
+	hit_dist = DotProduct(LineEnd, plane->normal) - plane->dist;
 	if (hit_dist >= -0.1)
 	{
 		//	Didn't cross plane
@@ -142,13 +142,13 @@ static bool CheckPlanes(sector_t *sec)
 static bool CheckLine(seg_t* seg)
 {
 	guard(CheckLine);
-    line_t*			line;
-    int				s1;
-    int				s2;
-    sector_t*		front;
-    float			opentop;
-    float			openbottom;
-    float			frac;
+	line_t*			line;
+	int				s1;
+	int				s2;
+	sector_t*		front;
+	float			opentop;
+	float			openbottom;
+	float			frac;
 	float			num;
 	float			den;
 	TVec			hit_point;
@@ -159,27 +159,27 @@ static bool CheckLine(seg_t* seg)
 
 	// allready checked other side?
 	if (line->validcount == cl_validcount)
-	    return true;
+		return true;
 	
 	line->validcount = cl_validcount;
 
-	s1 = PlaneSide2(*line->v1, &trace);
-	s2 = PlaneSide2(*line->v2, &trace);
+	s1 = PlaneSide2(*line->v1, &TracePlane);
+	s2 = PlaneSide2(*line->v2, &TracePlane);
 
 	// line isn't crossed?
 	if (s1 == s2)
-	    return true;
+		return true;
 
-	s1 = PlaneSide2(trace_start, line);
-	s2 = PlaneSide2(trace_end, line);
+	s1 = PlaneSide2(TraceStart, line);
+	s2 = PlaneSide2(TraceEnd, line);
 
 	// line isn't crossed?
 	if (s1 == s2 || (s1 == 2 && s2 == 0))
-    	return true;
+		return true;
 
 	// stop because it is not two sided anyway
 	if (!(line->flags & ML_TWOSIDED))
-	    return false;
+		return false;
 	
 	// crosses a two sided line
 	if (s1 == 0)
@@ -194,17 +194,17 @@ static bool CheckLine(seg_t* seg)
 	// Intercept vector.
 	// Don't need to check if den == 0, because then planes are paralel
 	// (they will never cross) or it's the same plane (also rejected)
-    den = DotProduct(trace_delta, line->normal);
-	num = line->dist - DotProduct(trace_start, line->normal);
+	den = DotProduct(TraceDelta, line->normal);
+	num = line->dist - DotProduct(TraceStart, line->normal);
 	frac = num / den;
-	hit_point = trace_start + frac * trace_delta;
+	hit_point = TraceStart + frac * TraceDelta;
 
-	lineend = hit_point;
+	LineEnd = hit_point;
 	if (!CheckPlanes(front))
 	{
 		return false;
 	}
-	linestart = lineend;
+	LineStart = LineEnd;
 
 	sec_region_t	*frontreg;
 	sec_region_t	*backreg;
@@ -257,7 +257,7 @@ static bool CheckLine(seg_t* seg)
 		}
 	}
 
-    return false;		// stop
+	return false;		// stop
 	unguard;
 }
 
@@ -265,21 +265,21 @@ static bool CheckLine(seg_t* seg)
 //
 //	CrossSubsector
 //
-//	Returns true if trace crosses the given subsector successfully.
+//	Returns true if TracePlane crosses the given subsector successfully.
 //
 //==========================================================================
 
 static bool CrossSubsector(int num)
 {
 	guard(CrossSubsector);
-    subsector_t*	sub;
-    int				count;
-    seg_t*			seg;
+	subsector_t*	sub;
+	int				count;
+	seg_t*			seg;
 	int 			polyCount;
 	seg_t**			polySeg;
 
-    sub = &GClLevel->Subsectors[num];
-    
+	sub = &GClLevel->Subsectors[num];
+	
 	if (sub->poly)
 	{
 		// Check the polyobj in the subsector first
@@ -288,25 +288,25 @@ static bool CrossSubsector(int num)
 		while (polyCount--)
 		{
 			if (!CheckLine(*polySeg++))
-            {
-            	return false;
-            }
+			{
+				return false;
+			}
 		}
 	}
 
-    // check lines
-    count = sub->numlines;
-    seg = &GClLevel->Segs[sub->firstline];
+	// check lines
+	count = sub->numlines;
+	seg = &GClLevel->Segs[sub->firstline];
 
-    for ( ; count ; seg++, count--)
-    {
-    	if (!CheckLine(seg))
-        {
-        	return false;
-        }
-    }
-    // passed the subsector ok
-    return true;
+	for ( ; count ; seg++, count--)
+	{
+		if (!CheckLine(seg))
+		{
+			return false;
+		}
+	}
+	// passed the subsector ok
+	return true;
 	unguard;
 }
 
@@ -314,44 +314,44 @@ static bool CrossSubsector(int num)
 //
 //	CrossBSPNode
 //
-//	Returns true if trace crosses the given node successfully.
+//	Returns true if TracePlane crosses the given node successfully.
 //
 //==========================================================================
 
 static bool CrossBSPNode(int bspnum)
 {
 	guard(CrossBSPNode);
-    node_t*	bsp;
-    int		side;
+	node_t*	bsp;
+	int		side;
 
-    if (bspnum & NF_SUBSECTOR)
-    {
+	if (bspnum & NF_SUBSECTOR)
+	{
 		if (bspnum == -1)
-		    return CrossSubsector(0);
+			return CrossSubsector(0);
 		else
-		    return CrossSubsector(bspnum & (~NF_SUBSECTOR));
-    }
-		
-    bsp = &GClLevel->Nodes[bspnum];
-    
-    // decide which side the start point is on
-    side = PlaneSide2(trace_start, bsp);
-    if (side == 2)
+			return CrossSubsector(bspnum & (~NF_SUBSECTOR));
+	}
+
+	bsp = &GClLevel->Nodes[bspnum];
+	
+	// decide which side the start point is on
+	side = PlaneSide2(TraceStart, bsp);
+	if (side == 2)
 		side = 0;	// an "on" should cross both sides
 
-    // cross the starting side
-    if (!CrossBSPNode(bsp->children[side]))
+	// cross the starting side
+	if (!CrossBSPNode(bsp->children[side]))
 		return false;
 	
-    // the partition plane is crossed here
-    if (side == PlaneSide2(trace_end, bsp))
-    {
+	// the partition plane is crossed here
+	if (side == PlaneSide2(TraceEnd, bsp))
+	{
 		// the line doesn't touch the other side
 		return true;
-    }
-    
-    // cross the ending side		
-    return CrossBSPNode(bsp->children[side^1]);
+	}
+
+	// cross the ending side		
+	return CrossBSPNode(bsp->children[side^1]);
 	unguard;
 }
 
@@ -366,19 +366,19 @@ bool CL_TraceLine(const TVec &start, const TVec &end)
 	guard(CL_TraceLine);
 	cl_validcount++;
 
-	trace_start = start;
-	trace_end = end;
+	TraceStart = start;
+	TraceEnd = end;
 
-	trace_delta = trace_end - trace_start;
-	trace.SetPointDir(start, trace_delta);
+	TraceDelta = TraceEnd - TraceStart;
+	TracePlane.SetPointDir(start, TraceDelta);
 
-	linestart = trace_start;
+	LineStart = TraceStart;
 
-    // the head node is the last node output
-    if (CrossBSPNode(GClLevel->NumNodes - 1))
+	// the head node is the last node output
+	if (CrossBSPNode(GClLevel->NumNodes - 1))
 	{
-		lineend = trace_end;
-	    return CheckPlanes(CL_PointInSubsector(end.x, end.y)->sector);
+		LineEnd = TraceEnd;
+		return CheckPlanes(GClLevel->PointInSubsector(end)->sector);
 	}
 	return false;
 	unguard;
