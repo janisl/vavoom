@@ -42,12 +42,6 @@ extern VLevelInfo*		GLevelInfo;
 //
 //==========================================================================
 
-#define MAX_ACS_SCRIPT_VARS	20
-#define MAX_ACS_MAP_VARS	128
-#define MAX_ACS_WORLD_VARS	256
-#define MAX_ACS_GLOBAL_VARS	64
-#define MAX_ACS_STORE		20
-
 //	Script types
 enum
 {
@@ -65,42 +59,16 @@ enum
 	SCRIPT_Disconnect	= 14,
 };
 
-class FACSGrowingArray
-{
-private:
-	int		Size;
-	int*	Data;
-public:
-	void Redim(int NewSize);
-	void SetElemVal(int Index, int Value);
-	int GetElemVal(int Index);
-	void Serialise(VStream& Strm);
-};
-
-struct acsstore_t
-{
-	char	map[12];	// Target map
-	int 	script;		// Script number on target map
-	int 	args[4];	// Padded to 4 for alignment
-};
-
-void P_LoadACScripts(int Lump);
+void P_LoadACScripts(int);
 void P_UnloadACScripts();
-void P_StartTypedACScripts(int Type);
-bool P_StartACS(int number, int map, int arg1, int arg2, int arg3,
-	VEntity* activator, line_t* line, int side, bool Always,
-	bool WantResult);
-bool P_TerminateACS(int number, int map);
-bool P_SuspendACS(int number, int map);
+void P_StartTypedACScripts(int);
+bool P_StartACS(int, int, int, int, int, VEntity*, line_t*, int, bool, bool);
+bool P_TerminateACS(int, int);
+bool P_SuspendACS(int, int);
 void P_ACSInitNewGame();
 void P_CheckACSStore();
-void P_SerialiseScripts(VStream& Strm);
-
-extern int				WorldVars[MAX_ACS_WORLD_VARS];
-extern int				GlobalVars[MAX_ACS_GLOBAL_VARS];
-extern FACSGrowingArray	WorldArrays[MAX_ACS_WORLD_VARS];
-extern FACSGrowingArray	GlobalArrays[MAX_ACS_GLOBAL_VARS];
-extern acsstore_t		ACSStore[MAX_ACS_STORE + 1]; // +1 for termination marker
+void P_SerialiseScripts(VStream&);
+void P_SerialiseAcsGlobal(VStream&);
 
 //==========================================================================
 //
@@ -240,9 +208,6 @@ void G_TeleportNewMap(int map, int position);
 void G_WorldDone();
 void G_PlayerReborn(int player);
 void G_StartNewInit();
-
-int GetMobjNum(VEntity *mobj);
-VEntity* SetMobjPtr(int archiveNum);
 
 extern VBasePlayer*		GPlayersBase[MAXPLAYERS]; // Bookkeeping on players - state.
 

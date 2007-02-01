@@ -59,6 +59,11 @@
 
 // MACROS ------------------------------------------------------------------
 
+#define MAX_ACS_SCRIPT_VARS	20
+#define MAX_ACS_MAP_VARS	128
+#define MAX_ACS_WORLD_VARS	256
+#define MAX_ACS_GLOBAL_VARS	64
+#define MAX_ACS_STORE		20
 #define ACS_STACK_DEPTH		4096
 
 // TYPES -------------------------------------------------------------------
@@ -168,6 +173,25 @@ struct FACScriptFunction
 	vuint8		HasReturnValue;
 	vuint8		ImportNum;
 	vuint32		Address;
+};
+
+struct acsstore_t
+{
+	char	map[12];	// Target map
+	int 	script;		// Script number on target map
+	int 	args[4];	// Padded to 4 for alignment
+};
+
+class FACSGrowingArray
+{
+private:
+	int		Size;
+	int*	Data;
+public:
+	void Redim(int NewSize);
+	void SetElemVal(int Index, int Value);
+	int GetElemVal(int Index);
+	void Serialise(VStream& Strm);
 };
 
 //
@@ -337,11 +361,11 @@ static VACS* SpawnScript(acsInfo_t* Info, FACScriptsObject* Object,
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-int WorldVars[MAX_ACS_WORLD_VARS];
-int GlobalVars[MAX_ACS_GLOBAL_VARS];
-FACSGrowingArray WorldArrays[MAX_ACS_WORLD_VARS];
-FACSGrowingArray GlobalArrays[MAX_ACS_GLOBAL_VARS];
-acsstore_t ACSStore[MAX_ACS_STORE+1]; // +1 for termination marker
+static int WorldVars[MAX_ACS_WORLD_VARS];
+static int GlobalVars[MAX_ACS_GLOBAL_VARS];
+static FACSGrowingArray WorldArrays[MAX_ACS_WORLD_VARS];
+static FACSGrowingArray GlobalArrays[MAX_ACS_GLOBAL_VARS];
+static acsstore_t ACSStore[MAX_ACS_STORE+1]; // +1 for termination marker
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -4595,4 +4619,63 @@ static VACS* SpawnScript(acsInfo_t* Info, FACScriptsObject* Object,
 	}
 	Info->state = ASTE_RUNNING;
 	return script;
+}
+
+//==========================================================================
+//
+//	P_SerialiseAcsGlobal
+//
+//==========================================================================
+
+void P_SerialiseAcsGlobal(VStream& Strm)
+{
+	guard(P_SerialiseAcsGlobal);
+	for (int i = 0; i < MAX_ACS_WORLD_VARS; i++)
+	{
+		Strm << STRM_INDEX(WorldVars[i]);
+	}
+	for (int i = 0; i < MAX_ACS_GLOBAL_VARS; i++)
+	{
+		Strm << STRM_INDEX(GlobalVars[i]);
+	}
+	for (int i = 0; i < MAX_ACS_WORLD_VARS; i++)
+	{
+		WorldArrays[i].Serialise(Strm);
+	}
+	for (int i = 0; i < MAX_ACS_GLOBAL_VARS; i++)
+	{
+		GlobalArrays[i].Serialise(Strm);
+	}
+	if (Strm.IsSaving())
+	{
+		vint32 NumAcsStore = 0;
+		for (acsstore_t* store = ACSStore; store->map[0] != 0; store++)
+			if (store->map[0] != '-')
+				NumAcsStore++;
+		Strm << STRM_INDEX(NumAcsStore);
+		for (acsstore_t* store = ACSStore; store->map[0] != 0; store++)
+			if (store->map[0] != '-')
+			{
+				Strm.Serialise(store->map, 9);
+				Strm << STRM_INDEX(store->script)
+					<< STRM_INDEX(store->args[0])
+					<< STRM_INDEX(store->args[1])
+					<< STRM_INDEX(store->args[2]);
+			}
+	}
+	else
+	{
+		memset(ACSStore, 0, sizeof(ACSStore));
+		vint32 NumAcsStore = 0;
+		Strm << STRM_INDEX(NumAcsStore);
+		for (int i = 0; i < NumAcsStore; i++)
+		{
+			Strm.Serialise(ACSStore[i].map, 9);
+			Strm << STRM_INDEX(ACSStore[i].script)
+				<< STRM_INDEX(ACSStore[i].args[0])
+				<< STRM_INDEX(ACSStore[i].args[1])
+				<< STRM_INDEX(ACSStore[i].args[2]);
+		}
+	}
+	unguard;;
 }

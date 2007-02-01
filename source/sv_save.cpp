@@ -866,7 +866,6 @@ void SV_SaveGame(int slot, const char* description)
 {
 	guard(SV_SaveGame);
 	char versionText[SAVE_VERSION_TEXT_LENGTH];
-	int i;
 
 	// Open the output file
 	Saver = new VSaveWriterStream(FL_OpenFileWrite(*SAVE_NAME(BASE_SLOT)));
@@ -895,36 +894,7 @@ void SV_SaveGame(int slot, const char* description)
 	*Saver << level.MapName;
 
 	// Write global script info
-	for (i = 0; i < MAX_ACS_WORLD_VARS; i++)
-	{
-		*Saver << STRM_INDEX(WorldVars[i]);
-	}
-	for (i = 0; i < MAX_ACS_GLOBAL_VARS; i++)
-	{
-		*Saver << STRM_INDEX(GlobalVars[i]);
-	}
-	for (i = 0; i < MAX_ACS_WORLD_VARS; i++)
-	{
-		WorldArrays[i].Serialise(*Saver);
-	}
-	for (i = 0; i < MAX_ACS_GLOBAL_VARS; i++)
-	{
-		GlobalArrays[i].Serialise(*Saver);
-	}
-	vint32 NumAcsStore = 0;
-	for (acsstore_t* store = ACSStore; store->map[0] != 0; store++)
-		if (store->map[0] != '-')
-			NumAcsStore++;
-	*Saver << STRM_INDEX(NumAcsStore);
-	for (acsstore_t* store = ACSStore; store->map[0] != 0; store++)
-		if (store->map[0] != '-')
-		{
-			Saver->Serialise(ACSStore[i].map, 9);
-			*Saver << STRM_INDEX(ACSStore[i].script)
-				<< STRM_INDEX(ACSStore[i].args[0])
-				<< STRM_INDEX(ACSStore[i].args[1])
-				<< STRM_INDEX(ACSStore[i].args[2]);
-		}
+	P_SerialiseAcsGlobal(*Saver);
 
 	// Place a termination marker
 	Seg = ASEG_END;
@@ -961,7 +931,6 @@ void SV_LoadGame(int slot)
 {
 	guard(SV_LoadGame);
 	VName		mapname;
-	int			i;
 
 	SV_ShutdownServer(false);
 #ifdef CLIENT
@@ -1006,33 +975,7 @@ void SV_LoadGame(int slot)
 	GGameInfo->eventInitNewGame(gameskill);
 
 	// Read global script info
-	for (i = 0; i < MAX_ACS_WORLD_VARS; i++)
-	{
-		*Loader << STRM_INDEX(WorldVars[i]);
-	}
-	for (i = 0; i < MAX_ACS_GLOBAL_VARS; i++)
-	{
-		*Loader << STRM_INDEX(GlobalVars[i]);
-	}
-	for (i = 0; i < MAX_ACS_WORLD_VARS; i++)
-	{
-		WorldArrays[i].Serialise(*Loader);
-	}
-	for (i = 0; i < MAX_ACS_GLOBAL_VARS; i++)
-	{
-		GlobalArrays[i].Serialise(*Loader);
-	}
-	memset(ACSStore, 0, sizeof(ACSStore));
-	vint32 NumAcsStore = 0;
-	*Loader << STRM_INDEX(NumAcsStore);
-	for (i = 0; i < NumAcsStore; i++)
-	{
-		Loader->Serialise(ACSStore[i].map, 9);
-		*Loader << STRM_INDEX(ACSStore[i].script)
-			<< STRM_INDEX(ACSStore[i].args[0])
-			<< STRM_INDEX(ACSStore[i].args[1])
-			<< STRM_INDEX(ACSStore[i].args[2]);
-	}
+	P_SerialiseAcsGlobal(*Loader);
 
 	AssertSegment(ASEG_END);
 
