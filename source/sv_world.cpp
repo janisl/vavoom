@@ -1115,3 +1115,183 @@ bool VLevel::ChangeSector(sector_t* sector, int crunch)
 	return ret;
 	unguard;
 }
+
+static TVec			TraceStart;
+static TVec			TraceEnd;
+static TVec			TracePlaneNormal;
+
+static TVec			LineStart;
+static TVec			LineEnd;
+
+//==========================================================================
+//
+//  TraceHitPlane
+//
+//==========================================================================
+
+bool TraceHitPlane(sec_plane_t * plane)
+{
+	float org_dist;
+	float hit_dist;
+
+	if (plane->flags & SPF_NOBLOCKING)
+	{
+		//  Doesn't block
+		return true;
+	}
+	org_dist = DotProduct(LineStart, plane->normal) - plane->dist;
+	if (org_dist < 0.0)
+	{
+		//  Back side
+		return true;
+	}
+	hit_dist = DotProduct(LineEnd, plane->normal) - plane->dist;
+	if (hit_dist >= 0.0)
+	{
+		//  Didn't hit plane
+		return true;
+	}
+
+	//  Hit plane
+	LineEnd -= (LineEnd - LineStart) * hit_dist / (hit_dist - org_dist);
+	TracePlaneNormal = plane->normal;
+
+	// don't go any farther
+	return false;
+}
+
+//==========================================================================
+//
+//  TraceCheckPlanes
+//
+//==========================================================================
+
+bool TraceCheckPlanes(sector_t * sec)
+{
+	sec_region_t *reg;
+	sec_region_t *startreg;
+
+	startreg = SV_PointInRegion(sec, LineStart);
+	for (reg = startreg; reg; reg = reg->next)
+	{
+		if (!TraceHitPlane(reg->floor))
+		{
+			//  Hit floor
+			return false;
+		}
+		if (!TraceHitPlane(reg->ceiling))
+		{
+			//  Hit ceiling
+			return false;
+		}
+	}
+	for (reg = startreg->prev; reg; reg = reg->prev)
+	{
+		if (!TraceHitPlane(reg->floor))
+		{
+			//  Hit floor
+			return false;
+		}
+		if (!TraceHitPlane(reg->ceiling))
+		{
+			//  Hit ceiling
+			return false;
+		}
+	}
+	return true;
+}
+
+//==========================================================================
+//
+//  TraceTraverse
+//
+//==========================================================================
+
+bool TraceTraverse(void*, intercept_t* in)
+{
+	TVec		hit_point;
+	line_t*		li;
+	sector_t*	sec;
+
+	if (!(in->Flags & intercept_t::IF_IsALine))
+	{
+		Host_Error("TraceLine: Not a line?");
+	}
+
+	li = in->line;
+	hit_point = TraceStart + in->frac * (TraceEnd - TraceStart);
+	if (li->flags & ML_TWOSIDED && li->PointOnSide(TraceStart))
+	{
+		sec = li->backsector;
+	}
+	else
+	{
+		sec = li->frontsector;
+	}
+
+	LineEnd = hit_point;
+	if (!TraceCheckPlanes(sec))
+	{
+		return false;
+	}
+	LineStart = LineEnd;
+
+	if (li->flags & ML_TWOSIDED)
+	{
+		// crosses a two sided line
+		opening_t *open;
+
+		open = SV_LineOpenings(li, hit_point);
+		while (open)
+		{
+			if (open->bottom <= hit_point.z && open->top >= hit_point.z)
+			{
+				return true;
+			}
+			open = open->next;
+		}
+	}
+	//  Hit line
+	if (li->PointOnSide(TraceStart))
+	{
+		TracePlaneNormal = -li->normal;
+	}
+	else
+	{
+		TracePlaneNormal = li->normal;
+	}
+	return false;
+}
+
+//==========================================================================
+//
+//  TraceLine
+//
+//==========================================================================
+
+bool TraceLine(TVec start, TVec end, TVec& HitPoint, TVec& HitNormal)
+{
+	TraceStart = start;
+	TraceEnd = end;
+
+	LineStart = TraceStart;
+	bool Ret = false;
+	if (GLevel->PathTraverse(start.x, start.y, end.x, end.y, PT_ADDLINES,
+		TraceTraverse, NULL, NULL, NULL))
+	{
+		LineEnd = end;
+		Ret = TraceCheckPlanes(GLevel->PointInSubsector(end)->sector);
+	}
+	HitPoint = LineEnd;
+	HitNormal = TracePlaneNormal;
+	return Ret;
+}
+
+IMPLEMENT_FUNCTION(VLevel, TraceLine)
+{
+	P_GET_PTR(TVec, HitNormal);
+	P_GET_PTR(TVec, HitPoint);
+	P_GET_VEC(end);
+	P_GET_VEC(start);
+	RET_BOOL(TraceLine(start, end, *HitPoint, *HitNormal));
+}

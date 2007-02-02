@@ -1234,6 +1234,8 @@ void CheckWaterJump()
 	TVec start;
 	TVec end;
 	TVec vforward;
+	TVec HitPoint;
+	TVec HitNormal;
 
 	// check for a jump-out-of-water
 	AngleVector(&MO.Angles, &vforward);
@@ -1242,13 +1244,13 @@ void CheckWaterJump()
 	vforward.z = 0.0;
 	vforward = Normalise(vforward);
 	end = start + vforward * 24.0;
-	if (!Level.TraceLine(start, end))
+	if (!Level.XLevel.TraceLine(start, end, HitPoint, HitNormal))
 	{
 		// solid at waist
 		start.z = MO.Origin.z + MO.Height;
 		end = start + vforward * 24.0;
-		MoveDir = Level.trace_plane_normal * -50.0;
-		if (Level.TraceLine(start, end))
+		MoveDir = HitNormal * -50.0;
+		if (Level.XLevel.TraceLine(start, end, HitPoint, HitNormal))
 		{
 			// open at eye level
 			Actor(MO).bWaterJump = true;

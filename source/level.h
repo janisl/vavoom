@@ -678,6 +678,7 @@ private:
 	DECLARE_FUNCTION(PointInSector)
 	DECLARE_FUNCTION(BlockThingsIterator)
 	DECLARE_FUNCTION(PathTraverse)
+	DECLARE_FUNCTION(TraceLine)
 	DECLARE_FUNCTION(ChangeSector)
 	DECLARE_FUNCTION(AddExtraFloor)
 	DECLARE_FUNCTION(SwapPlanes)

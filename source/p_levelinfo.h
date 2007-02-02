@@ -45,13 +45,6 @@ class VLevelInfo : public VThinker
 	int				TIDList[MAX_TID_COUNT + 1];	// +1 for termination marker
 	VEntity*		TIDMobj[MAX_TID_COUNT];
 
-	TVec			trace_start;
-	TVec			trace_end;
-	TVec			trace_plane_normal;
-
-	TVec			linestart;
-	TVec			lineend;
-
 	float			Gravity;								// Level Gravity
 
 	VLevelInfo();
