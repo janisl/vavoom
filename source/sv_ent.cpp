@@ -546,7 +546,7 @@ static bool PIT_CheckLine(void* arg, line_t * ld)
 	// set openrange, opentop, openbottom
 	hit_point = cptrace.Pos - (DotProduct(cptrace.Pos, ld->normal) -
 		ld->dist) * ld->normal;
-	open = SV_LineOpenings(ld, hit_point);
+	open = SV_LineOpenings(ld, hit_point, SPF_NOBLOCKING);
 	open = SV_FindOpening(open, cptrace.Pos.z, 
 		cptrace.Pos.z + cptrace.Thing->Height);
 
@@ -921,7 +921,7 @@ static bool PIT_CheckRelLine(void* arg, line_t * ld)
 	// set openrange, opentop, openbottom
 	hit_point = tmtrace.End - (DotProduct(tmtrace.End, ld->normal) -
 		ld->dist) * ld->normal;
-	open = SV_LineOpenings(ld, hit_point);
+	open = SV_LineOpenings(ld, hit_point, SPF_NOBLOCKING);
 	open = SV_FindOpening(open, tmtrace.End.z,
 		tmtrace.End.z + tmtrace.Thing->Height);
 
@@ -1309,7 +1309,7 @@ static bool PTR_SlideTraverse(void* arg, intercept_t* in)
 
 	// set openrange, opentop, openbottom
 	hit_point = trace.slideorg + in->frac * trace.slidedir;
-	open = SV_LineOpenings(li, hit_point);
+	open = SV_LineOpenings(li, hit_point, SPF_NOBLOCKING);
 	open = SV_FindOpening(open, trace.slidemo->Origin.z,
 		trace.slidemo->Origin.z + trace.slidemo->Height);
 
@@ -1317,7 +1317,7 @@ static bool PTR_SlideTraverse(void* arg, intercept_t* in)
 	{
 		// set openrange, opentop, openbottom
 		hit_point = trace.slideorg + in->frac * trace.slidedir;
-		open = SV_LineOpenings(li, hit_point);
+		open = SV_LineOpenings(li, hit_point, SPF_NOBLOCKING);
 		open = SV_FindOpening(open, trace.slidemo->Origin.z,
 			trace.slidemo->Origin.z + trace.slidemo->Height);
 
@@ -1512,7 +1512,7 @@ static bool PTR_BounceTraverse(void* arg, intercept_t* in)
 	if (li->flags & ML_TWOSIDED)
 	{
 		hit_point = trace.slideorg + in->frac * trace.slidedir;
-		open = SV_LineOpenings(li, hit_point);	// set openrange, opentop, openbottom
+		open = SV_LineOpenings(li, hit_point, SPF_NOBLOCKING);	// set openrange, opentop, openbottom
 		open = SV_FindOpening(open, trace.slidemo->Origin.z,
 			trace.slidemo->Origin.z + trace.slidemo->Height);
 		if (open && open->range >= trace.slidemo->Height &&	// fits
@@ -1962,6 +1962,88 @@ VEntity* VEntity::RoughMonsterSearch(int distance)
 		}
 	}
 	return NULL;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VEntity::CanSee
+//
+//	LineOfSight/Visibility checks, uses REJECT Lookup Table. This uses
+// specialised forms of the maputils routines for optimized performance
+//	Returns true if a straight line between t1 and t2 is unobstructed.
+//
+//==========================================================================
+
+bool VEntity::CanSee(VEntity* Other)
+{
+	guard(P_CheckSight);
+	int			s1;
+	int			s2;
+	int			pnum;
+	linetrace_t	Trace;
+
+	if (!Other)
+	{
+		return false;
+	}
+	if ((GetFlags() & _OF_Destroyed) || (Other->GetFlags() & _OF_Destroyed))
+	{
+		return false;
+	}
+
+	//	Determine subsector entries in GL_PVS table.
+	//	First check for trivial rejection.
+	byte *vis = XLevel->LeafPVS(SubSector);
+	s2 = Other->SubSector - XLevel->Subsectors;
+	if (!(vis[s2 >> 3] & (1 << (s2 & 7))))
+	{
+		// can't possibly be connected
+		return false;
+	}
+
+	//	Determine subsector entries in REJECT table.
+	//	We must do this because REJECT can have some special effects like
+	// "safe sectors"
+	s1 = Sector - XLevel->Sectors;
+	s2 = Other->Sector - XLevel->Sectors;
+	pnum = s1 * XLevel->NumSectors + s2;
+	// Check in REJECT table.
+	if (XLevel->RejectMatrix[pnum >> 3] & (1 << (pnum & 7)))
+	{
+		// can't possibly be connected
+		return false;
+	}
+
+	// An unobstructed LOS is possible.
+	// Now look from eyes of t1 to any part of t2.
+	Trace.Start = Origin;
+	Trace.Start.z += Height * 0.75;
+	Trace.End = Other->Origin;
+	Trace.End.z += Other->Height * 0.5;
+
+	//	Check middle
+	if (XLevel->TraceLine(Trace, Trace.Start, Trace.End, SPF_NOBLOCKSIGHT))
+	{
+		return true;
+	}
+	if (Trace.SightEarlyOut)
+	{
+		return false;
+	}
+
+	//	Check head
+	Trace.End = Other->Origin;
+	Trace.End.z += Other->Height;
+	if (XLevel->TraceLine(Trace, Trace.Start, Trace.End, SPF_NOBLOCKSIGHT))
+	{
+		return true;
+	}
+
+	//	Check feats
+	Trace.End = Other->Origin;
+	Trace.End.z -= Other->FloorClip;
+	return XLevel->TraceLine(Trace, Trace.Start, Trace.End, SPF_NOBLOCKSIGHT);
 	unguard;
 }
 

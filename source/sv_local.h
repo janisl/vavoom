@@ -89,7 +89,7 @@ struct opening_t
 	opening_t	*next;
 };
 
-opening_t *SV_LineOpenings(const line_t* linedef, const TVec& point);
+opening_t *SV_LineOpenings(const line_t* linedef, const TVec& point, int NoBlockFlags);
 
 int P_BoxOnLineSide(float* tmbox, line_t* ld);
 

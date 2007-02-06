@@ -124,7 +124,7 @@ class TPlane
 	int			reserved1;
 	int			reserved2;
 
-	void CalcBits(void)
+	void CalcBits()
 	{
 		if (normal.x == 1.0)
 			type = PLANE_X;
@@ -184,8 +184,15 @@ class TPlane
 	}
 
 	//	Returns side 0 (front) or 1 (back).
-	int PointOnSide(const TVec &point) const
+	int PointOnSide(const TVec& point) const
 	{
 		return DotProduct(point, normal) - dist < 0;
+	}
+
+	//	Returns side 0 (front), 1 (back), or 2 (on).
+	int PointOnSide2(const TVec& point) const
+	{
+		float dot = DotProduct(point, normal) - dist;
+		return dot < -0.1 ? 1 : dot > 0.1 ? 0 : 2;
 	}
 };

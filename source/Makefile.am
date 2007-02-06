@@ -54,7 +54,6 @@ _____MAIN_EXE__SOURCES = \
 	cl_local.h \
 	cl_main.cpp \
 	cl_parse.cpp \
-	cl_trace.cpp \
 	cmd.cpp \
 	cmd.h \
 	common.h \
@@ -136,6 +135,7 @@ _____MAIN_EXE__SOURCES = \
 	p_setup.cpp \
 	p_thinker.cpp \
 	p_thinker.h \
+	p_trace.cpp \
 	player.h \
 	pr_cmds.cpp \
 	pr_exec.cpp \
@@ -166,7 +166,6 @@ _____MAIN_EXE__SOURCES = \
 	r_things.cpp \
 	render.h \
 	s_data.cpp \
-	s_eaxutl.cpp \
 	s_local.h \
 	s_qmus2mid.cpp \
 	s_sound.cpp \
@@ -191,7 +190,6 @@ _____MAIN_EXE__SOURCES = \
 	sv_local.h \
 	sv_main.cpp \
 	sv_save.cpp \
-	sv_sight.cpp \
 	sv_swtch.cpp \
 	sv_tick.cpp \
 	sv_user.cpp \
@@ -437,6 +435,7 @@ _____SERVER_EXE__SOURCES = \
 	p_polyobj.cpp \
 	p_setup.cpp \
 	p_thinker.cpp \
+	p_trace.cpp \
 	pr_cmds.cpp \
 	pr_exec.cpp \
 	r_tex.cpp \
@@ -460,7 +459,6 @@ _____SERVER_EXE__SOURCES = \
 	sv_ent.cpp \
 	sv_main.cpp \
 	sv_save.cpp \
-	sv_sight.cpp \
 	sv_swtch.cpp \
 	sv_tick.cpp \
 	sv_user.cpp \

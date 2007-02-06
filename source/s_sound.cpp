@@ -166,6 +166,7 @@ private:
 	static VCvarI		s_channels;
 	static VCvarI		cd_music;
 	static VCvarI		s_external_music;
+	static VCvarF		eax_distance_unit;
 
 	//	Friends
 	friend class TCmdMusic;
@@ -183,6 +184,8 @@ private:
 	//	Execution of console commands
 	void CmdMusic(const TArray<VStr>&);
 	void CmdCD(const TArray<VStr>&);
+
+	float CalcDirSize(const TVec&);
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -205,6 +208,7 @@ VCvarI				VAudio::swap_stereo("swap_stereo", "0", CVAR_Archive);
 VCvarI				VAudio::s_channels("s_channels", "16", CVAR_Archive);
 VCvarI				VAudio::cd_music("use_cd_music", "0", CVAR_Archive);
 VCvarI				VAudio::s_external_music("s_external_music", "1", CVAR_Archive);
+VCvarF				VAudio::eax_distance_unit("eax_distance_unit", "32.0", CVAR_Archive);
 
 FAudioCodecDesc*	FAudioCodecDesc::List;
 
@@ -1532,11 +1536,33 @@ float VAudio::EAX_CalcEnvSize()
 	}
 
 	float len = 0;
-	VEaxTrace Trace;
-	len += Trace.CalcDirSize(TVec(3200, 0, 0));
-	len += Trace.CalcDirSize(TVec(0, 3200, 0));
-	len += Trace.CalcDirSize(TVec(0, 0, 3200));
+	len += CalcDirSize(TVec(3200, 0, 0));
+	len += CalcDirSize(TVec(0, 3200, 0));
+	len += CalcDirSize(TVec(0, 0, 3200));
 	return len / 3.0;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VAudio::CalcDirSize
+//
+//==========================================================================
+
+float VAudio::CalcDirSize(const TVec &dir)
+{
+	guard(VAudio::CalcDirSize);
+	linetrace_t Trace;
+	GClLevel->TraceLine(Trace, cl->ViewOrg, cl->ViewOrg + dir, SPF_NOBLOCKSIGHT);
+	float len = Length(Trace.LineEnd - cl->ViewOrg);
+	GClLevel->TraceLine(Trace, cl->ViewOrg, cl->ViewOrg - dir, SPF_NOBLOCKSIGHT);
+	len += Length(Trace.LineEnd - cl->ViewOrg);
+	len /= eax_distance_unit;
+	if (len > 100)
+		len = 100;
+	if (len < 1)
+		len = 1;
+	return len;
 	unguard;
 }
 

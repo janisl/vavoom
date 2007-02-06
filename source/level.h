@@ -483,6 +483,19 @@ struct intercept_t
 	line_t*		line;
 };
 
+struct linetrace_t
+{
+	TVec		Start;
+	TVec		End;
+	TVec		Delta;
+	TPlane		Plane;			// from t1 to t2
+	TVec		LineStart;
+	TVec		LineEnd;
+	vuint32		PlaneNoBlockFlags;
+	TVec		HitPlaneNormal;
+	bool		SightEarlyOut;
+};
+
 //==========================================================================
 //
 //									LEVEL
@@ -626,6 +639,8 @@ class VLevel : public VObject
 		bool(*trav)(void*, intercept_t *), void*, VObject*, VMethod*);
 	bool ChangeSector(sector_t*, int);
 
+	bool TraceLine(linetrace_t&, const TVec&, const TVec&, int) const;
+
 	bool IsForServer() const
 	{
 		return !!(LevelFlags & LF_ForServer);
@@ -674,6 +689,13 @@ private:
 	void LinkPolyobj(polyobj_t*);
 	void UnLinkPolyobj(polyobj_t*);
 	bool PolyCheckMobjBlocking(seg_t*, polyobj_t*);
+
+	//	Internal TraceLine methods
+	bool CheckPlane(linetrace_t&, const sec_plane_t*) const;
+	bool CheckPlanes(linetrace_t&, sector_t*) const;
+	bool CheckLine(linetrace_t&, seg_t*) const;
+	bool CrossSubsector(linetrace_t&, int) const;
+	bool CrossBSPNode(linetrace_t&, int) const;
 
 	DECLARE_FUNCTION(PointInSector)
 	DECLARE_FUNCTION(BlockThingsIterator)

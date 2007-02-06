@@ -402,27 +402,6 @@ public:
 	bool IsPlaying();
 };
 
-class VEaxTrace
-{
-public:
-	TVec			TraceStart;
-	TVec			TraceEnd;
-	TVec			TraceDelta;
-	TPlane			TracePlane;		// from t1 to t2
-
-	TVec			LineStart;
-	TVec			LineEnd;
-
-	int PlaneSide2(const TVec&, const TPlane*);
-	bool CheckPlane(const sec_plane_t*);
-	bool CheckPlanes(sector_t*);
-	bool CheckLine(seg_t*);
-	bool CrossSubsector(int);
-	bool CrossBSPNode(int);
-	float TraceLine(const TVec&, const TVec&);
-	float CalcDirSize(const TVec&);
-};
-
 //**************************************************************************
 //
 //  MIDI and MUS file header structures.

@@ -146,17 +146,14 @@ float VLevelRenderData::CastRay(const TVec &p1, const TVec &p2,
 	float squaredist)
 {
 	guard(VLevelRenderData::CastRay);
-	float	t;
-	bool	trace;
-	TVec	delta;
+	linetrace_t		Trace;
 
-	delta =	p2 - p1;
-	t = DotProduct(delta, delta);
-	if (t >	squaredist)
+	TVec delta = p2 - p1;
+	float t = DotProduct(delta, delta);
+	if (t > squaredist)
 		return -1;		// too far away
 		
-	trace = CL_TraceLine(p1, p2);
-	if (!trace)
+	if (!Level->TraceLine(Trace, p1, p2, SPF_NOBLOCKSIGHT))
 		return -1;		// ray was blocked
 		
 	if (t == 0)
@@ -244,14 +241,16 @@ void VLevelRenderData::CalcFaceVectors(surface_t *surf)
 void VLevelRenderData::CalcPoints(surface_t *surf)
 {
 	guard(VLevelRenderData::CalcPoints);
-	int		i;
-	int		s, t;
-	int		w, h;
-	int		step;
-	float	starts, startt, us, ut;
-	float	mids, midt;
-	TVec	*spt;
-	TVec	facemid;
+	int			i;
+	int			s, t;
+	int			w, h;
+	int			step;
+	float		starts, startt, us, ut;
+	float		mids, midt;
+	TVec*		spt;
+	TVec		facemid;
+	linetrace_t	Trace;
+
 
 	//
 	// fill in surforg
@@ -295,7 +294,7 @@ void VLevelRenderData::CalcPoints(surface_t *surf)
 			{
 				// calculate texture point
 				*spt = texorg + textoworld[0] * us + textoworld[1] * ut;
-				if (CL_TraceLine(facemid, *spt))
+				if (Level->TraceLine(Trace, facemid, *spt, SPF_NOBLOCKSIGHT))
 				{
 					break;	// got it
 				}
