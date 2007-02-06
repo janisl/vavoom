@@ -1015,6 +1015,9 @@ struct tmtrace_t
 	// keep track of the line that lowers the ceiling,
 	// so missiles don't explode against sky hack walls
 	line_t *CeilingLine;
+	// also keep track of the blocking line, for checking
+	// against doortracks
+	line_t *BlockingLine;
 
 	// keep track of special lines as they are hit,
 	// but don't process them until the move is proven valid
