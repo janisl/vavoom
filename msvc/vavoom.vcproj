@@ -1788,10 +1788,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\source\s_eaxutl.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\source\s_flac.cpp"
 				>
 			</File>
@@ -2127,6 +2123,10 @@
 				RelativePath="..\source\p_thinker.h"
 				>
 			</File>
+			<File
+				RelativePath="..\source\p_trace.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Client"
@@ -2149,10 +2149,6 @@
 			</File>
 			<File
 				RelativePath="..\source\cl_parse.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\source\cl_trace.cpp"
 				>
 			</File>
 			<File
@@ -2189,10 +2185,6 @@
 			</File>
 			<File
 				RelativePath="..\source\sv_save.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\source\sv_sight.cpp"
 				>
 			</File>
 			<File
