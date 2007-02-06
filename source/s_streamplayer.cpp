@@ -86,6 +86,12 @@ void VStreamMusicPlayer::Tick(float)
 		Stop();
 		return;
 	}
+	if (Paused)
+	{
+		//	Pause playback.
+		Pause();
+		return;
+	}
 	for (int Len = SoundDevice->GetStreamAvailable(); Len;
 		Len = SoundDevice->GetStreamAvailable())
 	{
@@ -160,6 +166,7 @@ void VStreamMusicPlayer::Pause()
 	if (!StrmOpened)
 		return;
 	SoundDevice->PauseStream();
+	Paused = true;
 	unguard;
 }
 
@@ -175,6 +182,7 @@ void VStreamMusicPlayer::Resume()
 	if (!StrmOpened)
 		return;
 	SoundDevice->ResumeStream();
+	Paused = false;
 	unguard;
 }
 
@@ -207,6 +215,6 @@ bool VStreamMusicPlayer::IsPlaying()
 	guard(VStreamMusicPlayer::IsPlaying);
 	if (!StrmOpened)
 		return false;
-	return false;
+	return true;
 	unguard;
 }

@@ -378,6 +378,7 @@ public:
 	bool			CurrLoop;
 	VName			CurrSong;
 	bool			Stopping;
+	bool			Paused;
 	double			FinishTime;
 	VSoundDevice*	SoundDevice;
 
