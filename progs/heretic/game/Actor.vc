@@ -1965,7 +1965,7 @@ void ZMovement(float DeltaTime)
 				FloorBounceMissile();
 				return;
 			}
-			else if (Class == MinotaurFloorFire)
+			else if (bIgnoreFloorStep)
 			{
 				// Minotaur floor fire can go up steps
 				return;
@@ -3182,7 +3182,7 @@ bool StepMove()
 	bool try_ok;
 
 	line_t *ld;
-	bool good;
+	int good;
 
 	if (MoveDir == DI_NODIR)
 		return false;
@@ -3275,19 +3275,37 @@ bool StepMove()
 			return false;
 
 		MoveDir = DI_NODIR;
-		good = false;
+
+		// if the special is not a door that can be opened, return false
+		//
+		// killough 8/9/98: this is what caused monsters to get stuck in
+		// doortracks, because it thought that the monster freed itself
+		// by opening a door, even if it was moving towards the doortrack,
+		// and not the door itself.
+		//
+		// killough 9/9/98: If a line blocking the monster is activated,
+		// return true 90% of the time. If a line blocking the monster is
+		// not activated, but some other line is, return false 90% of the
+		// time. A bit of randomness is needed to ensure it's free from
+		// lockups, but for most cases, it returns the correct result.
+		//
+		// Do NOT simply return false 1/4th of the time (causes monsters to
+		// back out when they shouldn't, and creates secondary stickiness).
+
+		good = 0;
 		while (tmtrace.NumSpecHit--)
 		{
 			ld = tmtrace.SpecHit[tmtrace.NumSpecHit];
 			// if the special is not a door
 			// that can be opened,
 			// return false
-			if (HereticLevelInfo(Level).ActivateLine(ld, self, 0, SPAC_USE))
+			if (HereticLevelInfo(Level).ActivateLine(ld, self, 0, SPAC_USE) ||
+			    (bActivatePushWall && HereticLevelInfo(Level).ActivateLine(ld, self, 0, SPAC_PUSH)))
 			{
-				good = true;
+				good |= ld == tmtrace.BlockingLine ? 1 : 2;//true;
 			}
 		}
-		return good;
+		return good && ((Random() >= 203.0) ^ (good & 1));
 	}
 	else
 	{

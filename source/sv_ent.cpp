@@ -75,6 +75,9 @@ struct tmtrace_t
 	// keep track of the line that lowers the ceiling,
 	// so missiles don't explode against sky hack walls
 	line_t *CeilingLine;
+	// also keep track of the blocking line, for checking
+	// against doortracks
+	line_t *BlockingLine;
 
 	// keep track of special lines as they are hit,
 	// but don't process them until the move is proven valid
@@ -879,6 +882,8 @@ static bool PIT_CheckRelLine(void* arg, line_t * ld)
 	{
 		// One sided line
 		tmtrace.Thing->eventBlockedByLine(ld);
+		// mark the line as blocking line
+		tmtrace.BlockingLine = ld;
 		return false;
 	}
 
@@ -1152,7 +1157,7 @@ bool VEntity::TryMove(tmtrace_t& tmtrace, TVec newPos)
 				return false;
 			}
 		}
-		if (tmtrace.FloorZ - Origin.z > MaxStepHeight)
+		if (tmtrace.FloorZ - Origin.z > MaxStepHeight && !(EntityFlags & EF_IgnoreFloorStep))
 		{
 			// Too big a step up
 			eventPushLine(&tmtrace);
