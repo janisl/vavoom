@@ -75,4 +75,5 @@ defaultproperties
 	IdleState = S_LIGHTNING_FLOOR1;
 	DeathState = S_LIGHTNING_F_X1;
 	MaxStepHeight = 99999.0;
+	bIgnoreFloorStep = true;
 }

@@ -57,4 +57,5 @@ defaultproperties
 	IdleState = S_MNTRFX2_1;
 	// The Minotaur floor fire can step up any amount
 	MaxStepHeight = 99999.0;
+	bIgnoreFloorStep = true;
 }

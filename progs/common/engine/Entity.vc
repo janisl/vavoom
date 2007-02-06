@@ -145,6 +145,7 @@ bool bBlasted;			// missile will pass through ghosts
 bool bCantLeaveFloorpic;// stay within a certain floor type
 bool bFloorClip;		// if feet are allowed to be clipped
 bool bIgnoreCeilingStep;// continue walk without lowering itself
+bool bIgnoreFloorStep;// continue walk ignoring floor height changes
 bool bAvoidingDropoff;	// used to move monsters away from dropoffs
 bool bOnMobj;			// mobj is resting on top of another mobj
 bool bCorpse;			// don't stop moving halfway off a step

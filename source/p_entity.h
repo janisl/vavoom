@@ -155,10 +155,11 @@ class VEntity : public VThinker
 		EF_CantLeaveFloorpic	= 0x00008000,	// stay within a certain floor type
 		EF_FloorClip			= 0x00010000,	// if feet are allowed to be clipped
 		EF_IgnoreCeilingStep	= 0x00020000,	// continue walk without lowering itself
-		EF_AvoidingDropoff		= 0x00040000,	// used to move monsters away from dropoffs
-		EF_OnMobj				= 0x00080000,	// mobj is resting on top of another mobj
-		EF_Corpse				= 0x00100000,	// don't stop moving halfway off a step
-		EF_FullBright			= 0x00200000,	// make current state full bright
+		EF_IgnoreFloorStep		= 0x00040000,	// continue walk ignoring floor height changes
+		EF_AvoidingDropoff		= 0x00080000,	// used to move monsters away from dropoffs
+		EF_OnMobj				= 0x00100000,	// mobj is resting on top of another mobj
+		EF_Corpse				= 0x00200000,	// don't stop moving halfway off a step
+		EF_FullBright			= 0x00400000,	// make current state full bright
 	};
 	vuint32			EntityFlags;
 

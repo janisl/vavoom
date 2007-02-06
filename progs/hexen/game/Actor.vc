@@ -2454,7 +2454,7 @@ bool HitFloor()
 			HitFloorType();
 			return true;
 		}
-		else if (Class == MinotaurFloorFire1 || Class == LightningFloor)
+		else if (bIgnoreFloorStep)
 		{
 			// Minotaur floor fire can go up steps
 			return true;
