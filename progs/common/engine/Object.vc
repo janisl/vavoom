@@ -1646,6 +1646,9 @@ native static final void R_DrawSpritePatch(int x, int y, int sprite, int frame, 
 	int translation);
 //  Installs model
 native static final void* InstallModel(string Name);
+//  Returns name and description of a skin
+native static final bool GetModelSkinInfo(void* Model, int Index,
+	out name SkinName, out string SkinDesc);
 //  Draws a model
 native static final void R_DrawModelFrame(TVec origin, float angle, void* model,
 	int frame, string skin);

@@ -351,6 +351,7 @@ public:
 	DECLARE_FUNCTION(R_InstallSprite)
 	DECLARE_FUNCTION(R_DrawSpritePatch)
 	DECLARE_FUNCTION(InstallModel)
+	DECLARE_FUNCTION(GetModelSkinInfo)
 	DECLARE_FUNCTION(R_DrawModelFrame)
 	DECLARE_FUNCTION(R_FillRectWithFlat)
 	DECLARE_FUNCTION(R_ShadeRect)

@@ -216,7 +216,7 @@ IMPLEMENT_FUNCTION(VObject, LineOpenings)
 {
 	P_GET_VEC(point);
 	P_GET_PTR(line_t, linedef);
-	RET_PTR(SV_LineOpenings(linedef, point));
+	RET_PTR(SV_LineOpenings(linedef, point, 0xffffffff));
 }
 
 //==========================================================================
@@ -858,6 +858,21 @@ IMPLEMENT_FUNCTION(VObject, InstallModel)
 	{
 		RET_PTR(0);
 	}
+}
+
+//==========================================================================
+//
+//	PF_GetModelSkinInfo
+//
+//==========================================================================
+
+IMPLEMENT_FUNCTION(VObject, GetModelSkinInfo)
+{
+	P_GET_PTR(VStr, SkinDesc);
+	P_GET_PTR(VName, SkinName);
+	P_GET_INT(Index);
+	P_GET_PTR(VModel, Model);
+	RET_BOOL(R_GetModelSkinInfo(Model, Index, *SkinName, *SkinDesc));
 }
 
 //==========================================================================

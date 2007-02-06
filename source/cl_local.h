@@ -248,14 +248,13 @@ void CL_DecayLights();
 
 void CL_KeepaliveMessage();
 
-bool CL_TraceLine(const TVec&, const TVec&);
-
 particle_t *R_NewParticle();
 
 void R_InstallSprite(const char*, int);
 void R_DrawModelFrame(const TVec&, float, VModel*, int, const char*);
 
 VModel* Mod_FindName(const char*);
+bool R_GetModelSkinInfo(VModel*, int, VName&, VStr&);
 
 void SCR_SetVirtualScreen(int, int);
 

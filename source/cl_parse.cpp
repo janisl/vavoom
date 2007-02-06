@@ -730,7 +730,7 @@ static void CL_ParseModel(VMessage& msg)
 static void CL_ParseSkin(VMessage& msg)
 {
 	int i = msg.ReadByte();
-	skin_list[i] = VStr("models/") + msg.ReadString();
+	skin_list[i] = msg.ReadString();
 }
 
 //==========================================================================

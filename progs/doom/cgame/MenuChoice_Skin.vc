@@ -26,11 +26,32 @@
 class MenuChoice_Skin : MenuChoiceEnum;
 
 MenuModel Mdl;
+name SkinNames[MAX_ENUM_CHOICES];
+
+void InitWindow()
+{
+	void* model;
+	name SkinName;
+	string SkinDesc;
+	int i;
+
+	model = InstallModel("models/players/doomguy/player.xml");
+	for (i = 0; i < MAX_ENUM_CHOICES; i++)
+	{
+		if (!GetModelSkinInfo(model, i, SkinName, SkinDesc))
+		{
+			break;
+		}
+		SkinNames[i] = SkinName;
+		EnumNames[i] = SkinDesc;
+	}
+
+	::InitWindow();
+}
 
 void SetSkin(int skinNum)
 {
-	Mdl.Skin = va("models/players/%s/%s", GetCvarS('model'),
-		EnumNames[skinNum]);
+	Mdl.Skin = va("%n", SkinNames[skinNum]);
 }
 
 int GetInitialValue()
@@ -41,7 +62,7 @@ int GetInitialValue()
 	curskin = GetCvarS('skin');
 	for (i = 0; i < MaxValue; i++)
 	{
-		if (!strcmp(curskin, EnumNames[i]))
+		if (!stricmp(curskin, va("%n", SkinNames[i])))
 		{
 			break;
 		}
@@ -49,14 +70,14 @@ int GetInitialValue()
 	if (i == MaxValue)
 	{
 		i = 0;
-		SetCvarS('skin', EnumNames[0]);
+		SetCvarS('skin', va("%n", SkinNames[0]));
 	}
 	return i;
 }
 
 bool SetNewValue(int newValue)
 {
-	SetCvarS('skin', EnumNames[newValue]);
+	SetCvarS('skin', va("%n", SkinNames[newValue]));
 	SetSkin(newValue);
 	return true;
 }
@@ -65,35 +86,4 @@ defaultproperties
 {
 	Text = "Skin";
 	bLeftAlign = true;
-	//  FIXME FIXME FIXME
-	EnumNames[0] = "black.pcx";
-	EnumNames[1] = "blackf.pcx";
-	EnumNames[2] = "blue.pcx";
-	EnumNames[3] = "bluef.pcx";
-	EnumNames[4] = "brown.pcx";
-	EnumNames[5] = "brownf.pcx";
-	EnumNames[6] = "camo.pcx";
-	EnumNames[7] = "camof.pcx";
-	EnumNames[8] = "green.pcx";
-	EnumNames[9] = "greenf.pcx";
-	EnumNames[10] = "indigo.pcx";
-	EnumNames[11] = "indigof.pcx";
-	EnumNames[12] = "lgtblue.pcx";
-	EnumNames[13] = "lgtbluef.pcx";
-	EnumNames[14] = "navy.pcx";
-	EnumNames[15] = "navyf.pcx";
-	EnumNames[16] = "orange.pcx";
-	EnumNames[17] = "orangef.pcx";
-	EnumNames[18] = "pink.pcx";
-	EnumNames[19] = "pinkf.pcx";
-	EnumNames[20] = "purple.pcx";
-	EnumNames[21] = "purplef.pcx";
-	EnumNames[22] = "red.pcx";
-	EnumNames[23] = "redf.pcx";
-	EnumNames[24] = "violet.pcx";
-	EnumNames[25] = "violetf.pcx";
-	EnumNames[26] = "white.pcx";
-	EnumNames[27] = "whitef.pcx";
-	EnumNames[28] = "yellow.pcx";
-	EnumNames[29] = "yellowf.pcx";
 }

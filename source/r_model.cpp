@@ -49,6 +49,12 @@ enum
 	MODEL_Script,
 };
 
+struct VSkinInfo
+{
+	VName				Name;
+	VStr				Desc;
+};
+
 class VScriptSubModel
 {
 public:
@@ -62,13 +68,19 @@ public:
 		TVec	Scale;
 	};
 
+	struct VSkin
+	{
+		VName			Name;
+		VStr			File;
+	};
+
 	VModel*				Model;
 	VModel*				PositionModel;
 	int					SkinAnimSpeed;
 	int					SkinAnimRange;
 	int					Version;
-	bool				UseSkin;
 	TArray<VFrame>		Frames;
+	TArray<VSkin>		Skins;
 };
 
 class VScriptModel
@@ -105,6 +117,7 @@ class VScriptedModel
 {
 public:
 	TArray<VScriptModel>		Models;
+	TArray<VSkinInfo>			Skins;
 	VClassModelScript*			DefaultClass;
 };
 
@@ -397,18 +410,12 @@ static void ParseModelScript(VModel* mod, VStream& Strm)
 				Md2.Version = atoi(*SN->GetAttribute("version"));
 			}
 
-			//	Enable use of the skin file
-			Md2.UseSkin = false;
-			if (SN->HasAttribute("use_skin"))
-			{
-				Md2.UseSkin = SN->GetAttribute("use_skin") == "true";
-			}
-
 			//	Position model
 			Md2.PositionModel = NULL;
 			if (SN->HasAttribute("position_file"))
 			{
-				Md2.PositionModel = Mod_FindName(*SN->GetAttribute("position_file").ToLower().FixFileSlashes());
+				Md2.PositionModel = Mod_FindName(*SN->GetAttribute(
+					"position_file").ToLower().FixFileSlashes());
 			}
 
 			//	Skin animation
@@ -517,7 +524,23 @@ static void ParseModelScript(VModel* mod, VStream& Strm)
 					F.AlphaEnd = atof(*FN->GetAttribute("alpha_end"));
 				}
 			}
+
+			//	Process skins.
+			for (VXmlNode* SkN = SN->FindChild("skin"); SkN; SkN = SkN->FindNext())
+			{
+				VScriptSubModel::VSkin& S = Md2.Skins.Alloc();
+				S.Name = *SkN->GetAttribute("name").ToLower();
+				S.File = SkN->GetAttribute("file").ToLower().FixFileSlashes();
+			}
 		}
+	}
+
+	//	Process skin definitions.
+	for (VXmlNode* SkN = Doc->Root.FindChild("skin"); SkN; SkN = SkN->FindNext())
+	{
+		VSkinInfo& S = Mdl->Skins.Alloc();
+		S.Name = *SkN->GetAttribute("name").ToLower();
+		S.Desc = SkN->GetAttribute("desc");
 	}
 
 	bool ClassDefined = false;
@@ -742,22 +765,28 @@ static void DrawModel(const TVec& Org, const TAVec& Angles,
 
 		//	Get the proper skin texture ID.
 		int SkinID;
-		if (SubMdl.UseSkin && Skin && *Skin)
+		mskin_t* pskindesc = (mskin_t *)((byte *)pmdl + pmdl->ofsskins);
+		if (Md2SkinIdx < 0 || Md2SkinIdx >= pmdl->numskins)
 		{
-			SkinID = GTextureManager.AddFileTexture(VName(Skin), TEXTYPE_Skin);
+			SkinID = GTextureManager.AddFileTexture(
+				VName(pskindesc[0].name), TEXTYPE_Skin);
 		}
 		else
 		{
-			mskin_t* pskindesc = (mskin_t *)((byte *)pmdl + pmdl->ofsskins);
-			if (Md2SkinIdx < 0 || Md2SkinIdx >= pmdl->numskins)
+			SkinID = GTextureManager.AddFileTexture(
+				VName(pskindesc[Md2SkinIdx].name), TEXTYPE_Skin);
+		}
+		if (Skin && *Skin)
+		{
+			VName Search = *VStr(Skin).ToLower();
+			for (int si = 0; si < SubMdl.Skins.Num(); si++)
 			{
-				SkinID = GTextureManager.AddFileTexture(
-					VName(pskindesc[0].name), TEXTYPE_Skin);
-			}
-			else
-			{
-				SkinID = GTextureManager.AddFileTexture(
-					VName(pskindesc[Md2SkinIdx].name), TEXTYPE_Skin);
+dprintf("check %s %s\n", *SubMdl.Skins[si].Name, *Search);
+				if (SubMdl.Skins[si].Name == Search)
+				{
+					SkinID = GTextureManager.AddFileTexture(
+						*SubMdl.Skins[si].File, TEXTYPE_Skin);
+				}
 			}
 		}
 
@@ -997,5 +1026,32 @@ void R_DrawModelFrame(const TVec& Origin, float Angle, VModel* Model,
 		1.0, false, 0);
 
 	Drawer->EndView();
+	unguard;
+}
+
+//==========================================================================
+//
+//	R_GetModelSkinInfo
+//
+//==========================================================================
+
+bool R_GetModelSkinInfo(VModel* Model, int Index, VName& Name, VStr& Desc)
+{
+	guard(R_GetModelSkinInfo);
+	void* MData = Mod_Extradata(Model);
+	if (Model->type != MODEL_Script)
+	{
+		Sys_Error("Must use model scripts");
+	}
+
+	VScriptedModel* SMdl = (VScriptedModel*)MData;
+	if (Index < 0 || Index >= SMdl->Skins.Num())
+	{
+		Name = NAME_None;
+		Desc = "";
+		return false;
+	}
+	Name = SMdl->Skins[Index].Name;
+	Desc = SMdl->Skins[Index].Desc;
 	unguard;
 }
