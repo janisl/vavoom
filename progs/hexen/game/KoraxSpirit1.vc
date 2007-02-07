@@ -191,8 +191,6 @@ __states__
 defaultproperties
 {
 	LifeTime = 5 * 35 / 5;	// 5 seconds
-	Radius = 20.0;
-	Height = 16.0;
 	Speed = 280.0;
 	Alpha = 0.666;
 	bColideWithWorld = false;

@@ -35,7 +35,6 @@ __states__
 
 defaultproperties
 {
-	Radius = 20.0;
 	Height = 60.0;
 	bSpawnCeiling = true;
 	bNoGravity = true;

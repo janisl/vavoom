@@ -167,7 +167,6 @@ __states__
 
 defaultproperties
 {
-	Height = 8.0;
 	bSpecial = true;
 	bFloorClip = true;
 	bNoPassMobj = true;

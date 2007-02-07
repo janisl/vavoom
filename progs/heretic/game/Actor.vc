@@ -489,7 +489,17 @@ void OnMapSpawn(mthing_t * mthing)
 
 	LastLook = P_Random() % MAXPLAYERS;
 
-	if (bMissile)
+	bCheckLineBlocking = false;
+	bCheckLineBlockMonsters = false;
+	if (!bMissile)
+	{
+		bCheckLineBlocking = true;
+		if (Class != HereticPlayer)
+		{
+			bCheckLineBlockMonsters = true;
+		}
+	}
+	else
 	{
 		MaxStepHeight = 4.0;
 	}
@@ -4179,9 +4189,13 @@ __states__
 
 defaultproperties
 {
+	Health = 1000;
+	GibsHealth = -1000;
+	ReactionCount = 8;
+	Radius = 20.0;
+	Height = 16.0;
+	Mass = 100.0;
 	MaxStepHeight = 24.0;
-	bCheckLineBlocking = true;
-	bCheckLineBlockMonsters = false;
 	LightOffset = vector(0.0, 0.0, 0.0);
 	LightColour = 0xffffffff;
 	LightRadius = 128.0;

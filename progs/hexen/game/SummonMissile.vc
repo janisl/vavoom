@@ -74,8 +74,6 @@ __states__
 
 defaultproperties
 {
-	Radius = 20.0;
-	Height = 16.0;
 	Speed = 700.0;
 	bNoGravity = false;
 	bActivateImpact = false;

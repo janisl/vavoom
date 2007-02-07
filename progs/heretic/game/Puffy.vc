@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Puffy:Projectile;
+class Puffy : Projectile;
 
 __states__
 {

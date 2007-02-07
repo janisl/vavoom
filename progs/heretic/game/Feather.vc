@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Feather : ProjEffect
+class Feather : Actor
 	__scriptid__(121);
 
 __states__
@@ -44,9 +44,13 @@ defaultproperties
 	Radius = 2.0;
 	Height = 4.0;
 	Mass = 12.5;
+	bMissile = true;
+	bNoBlockmap = true;
+	bDropOff = true;
+	bNoTeleport = true;
+	bActivatePCross = true;
 	bWindThrust = true;
 	bCannotPush = true;
-	bNoGravity = false;
 	IdleState = S_FEATHER1;
 	DeathState = S_FEATHERX;
 }

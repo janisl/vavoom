@@ -23,13 +23,11 @@
 //**
 //**************************************************************************
 
-class Fragment:Projectile
+class Fragment : Projectile
 	abstract;
 
 defaultproperties
 {
-	Radius = 20.0;
-	Height = 16.0;
 	bActivateImpact = false;
 	bActivatePCross = false;
 }

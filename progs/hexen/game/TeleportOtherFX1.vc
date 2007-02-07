@@ -132,7 +132,6 @@ __states__
 defaultproperties
 {
 	Radius = 16.0;
-	Height = 16.0;
 	Speed = 700.0;
 	MissileDamage = 10001;
 	bActivateImpact = false;

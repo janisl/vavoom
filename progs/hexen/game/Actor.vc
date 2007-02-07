@@ -137,6 +137,9 @@ class<Actor> SpecialCID;
 
 int MissileDamage;	// For missiles
 
+// Reaction time: if non 0, don't attack yet.
+int ReactionCount;
+
 // Used by player to freeze a bit after teleporting.
 float ReactionTime;
 
@@ -4511,6 +4514,12 @@ __states__
 
 defaultproperties
 {
+	Health = 1000;
+	GibsHealth = -1000;
+	ReactionCount = 8;
+	Radius = 20.0;
+	Height = 16.0;
+	Mass = 100.0;
 	MaxStepHeight = 24.0;
 	SoundClass = 'fighter';
 	LightOffset = vector(0.0, 0.0, 0.0);

@@ -35,8 +35,6 @@ __states__
 
 defaultproperties
 {
-	Radius = 20.0;
-	Height = 16.0;
 	bNoGravity = true;
 	IdleState = S_WALLTORCH1;
 	bStaticLight = true;

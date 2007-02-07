@@ -34,7 +34,6 @@
 
 #include "Projectile.vc"
 #include "Effect.vc"
-#include "ProjEffect.vc"
 #include "Decoration.vc"
 
 #include "MapSpot.vc"

@@ -23,13 +23,10 @@
 //**
 //**************************************************************************
 
-class Decoration:Actor
+class Decoration : Actor
 	abstract;
 
 defaultproperties
 {
-	Health = 1000;
-	Mass = 100.0;
-	ReactionCount = 8;
 	bNoPassMobj = true;
 }

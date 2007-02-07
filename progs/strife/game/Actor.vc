@@ -3873,12 +3873,13 @@ __states__
 defaultproperties
 {
 	Health = 1000;
+	GibsHealth = -1000;
+	ReactionCount = 8;
 	Radius = 20.0;
 	Height = 16.0;
 	Mass = 100.0;
 	MaxStepHeight = 16.0;
 	MaxDropoffHeight = 32.0;
-	ReactionCount = 8;
 	LightOffset = vector(0.0, 0.0, 0.0);
 	LightColour = 0xffffffff;
 	LightRadius = 128.0;

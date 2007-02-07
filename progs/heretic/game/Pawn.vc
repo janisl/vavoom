@@ -447,7 +447,6 @@ void BossDeathSpecialAction()
 
 defaultproperties
 {
-	ReactionCount = 8;
 	bSolid = true;
 	bShootable = true;
 	bCountKill = true;
@@ -455,5 +454,4 @@ defaultproperties
 	bActivateMCross = true;
 	bActivatePushWall = true;
 	bCheckNoMonsters = true;
-	bCheckLineBlockMonsters = true;
 }

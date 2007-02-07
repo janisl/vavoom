@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class TeleGlitter : ProjEffect
+class TeleGlitter : Actor
 	__scriptid__(166);
 
 //==========================================================================
@@ -53,8 +53,8 @@ defaultproperties
 {
 	Radius = 20.0;
 	Height = 16.0;
-	bDropOff = false;
-	bNoTeleport = false;
-	bActivatePCross = false;
+	bMissile = true;
+	bNoBlockmap = true;
+	bNoGravity = true;
 	IdleState = S_TELEGLITTER1_1;
 }

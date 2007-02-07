@@ -23,15 +23,11 @@
 //**
 //**************************************************************************
 
-class Effect:Actor
+class Effect : Actor
 	abstract;
 
 defaultproperties
 {
-	Health = 1000;
-	Radius = 20.0;
-	Height = 16.0;
-	Mass = 100.0;
 	bNoBlockmap = true;
 	bNoGravity = true;
 	bNoPassMobj = true;

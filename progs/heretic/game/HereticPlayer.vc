@@ -136,9 +136,9 @@ defaultproperties
 {
 	Health = 100;
 	GibsHealth = -50;
+	ReactionCount = 0;
 	Radius = 16.0;
 	Height = 56.0;
-	Mass = 100.0;
 	PainChance = 1.0;
 	bPickUp = true;
 	bWindThrust = true;

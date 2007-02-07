@@ -30,9 +30,6 @@ bool bCheckNoMonsters;		// Don't spawn if monsters are disabled
 
 float StepSpeed;
 
-// Reaction time: if non 0, don't attack yet.
-int ReactionCount;
-
 // If >0, the target will be chased
 // no matter what (even if shot)
 int Threshold;
@@ -1150,7 +1147,6 @@ final void A_FreezeDeathChunks()
 
 defaultproperties
 {
-	ReactionCount = 8;
 	bSolid = true;
 	bShootable = true;
 	bCountKill = true;

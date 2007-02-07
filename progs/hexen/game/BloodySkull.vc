@@ -72,7 +72,6 @@ __states__
 
 defaultproperties
 {
-	Health = 1000;
 	Radius = 4.0;
 	Height = 4.0;
 	Mass = 12.5;

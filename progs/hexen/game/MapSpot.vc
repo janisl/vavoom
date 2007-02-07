@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MapSpot:Actor
+class MapSpot : Actor
 	__mobjinfo__(9001);
 
 __states__
@@ -33,10 +33,6 @@ __states__
 
 defaultproperties
 {
-	Health = 1000;
-	Radius = 20.0;
-	Height = 16.0;
-	Mass = 100.0;
 	bHidden = true;
 	bNoBlockmap = true;
 	bNoGravity = true;

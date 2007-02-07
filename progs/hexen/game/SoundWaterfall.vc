@@ -44,10 +44,6 @@ __states__
 
 defaultproperties
 {
-	Health = 1000;
-	Radius = 20.0;
-	Height = 16.0;
-	Mass = 100.0;
 	bHidden = true;
 	bNoBlockmap = true;
 	bNoPassMobj = true;

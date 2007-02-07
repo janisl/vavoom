@@ -51,7 +51,6 @@ defaultproperties
 	Health = 100;
 	Radius = 16.0;
 	Height = 24.0;
-	Mass = 100.0;
 	PainChance = 1.0;
 	IdleState = S_PIGPLAY;
 	SeeState = S_PIGPLAY_RUN1;

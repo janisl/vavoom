@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class HeadMissile2:Projectile;
+class HeadMissile2 : Projectile;
 
 __states__
 {

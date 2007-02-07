@@ -48,4 +48,3 @@ void OnMapSpawn(mthing_t * mthing)
 defaultproperties
 {
 }
-    

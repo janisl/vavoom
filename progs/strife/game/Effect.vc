@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Effect:Actor;
+class Effect : Actor;
 
 defaultproperties
 {

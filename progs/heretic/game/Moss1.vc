@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Moss1:Decoration
+class Moss1 : Decoration
 	__mobjinfo__(48);
 
 __states__
@@ -33,7 +33,6 @@ __states__
 
 defaultproperties
 {
-	Radius = 20.0;
 	Height = 23.0;
 	bSpawnCeiling = true;
 	bNoGravity = true;

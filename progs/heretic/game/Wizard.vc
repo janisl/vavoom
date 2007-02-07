@@ -147,7 +147,6 @@ defaultproperties
 	Health = 180;
 	Radius = 16.0;
 	Height = 68.0;
-	Mass = 100.0;
 	StepSpeed = 12.0;
 	PainChance = 0.25;
 	bNoGravity = true;

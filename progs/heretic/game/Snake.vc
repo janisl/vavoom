@@ -110,7 +110,6 @@ defaultproperties
 	Health = 280;
 	Radius = 22.0;
 	Height = 70.0;
-	Mass = 100.0;
 	StepSpeed = 10.0;
 	PainChance = 0.1875;
 	IdleState = S_SNAKE_LOOK1;

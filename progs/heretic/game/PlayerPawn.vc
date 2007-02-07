@@ -50,10 +50,8 @@ final void A_AddPlayerCorpse()
 
 defaultproperties
 {
-	ReactionCount = 0;
 	bCountKill = false;
 	bActivateMCross = false;
 	bCheckNoMonsters = false;
-	bCheckLineBlockMonsters = false;
 	bDropOff = true;
 }

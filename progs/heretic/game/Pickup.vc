@@ -92,10 +92,7 @@ void TouchSpecial(Actor Toucher)
 
 defaultproperties
 {
-	Health = 1000;
-	Radius = 20.0;
 	Height = 32.0;
-	Mass = 100.0;
 	bSpecial = true;
 	bNoPassMobj = true;
 }

@@ -66,7 +66,6 @@ defaultproperties
 	GibsHealth = -50;
 	Radius = 16.0;
 	Height = 64.0;
-	Mass = 100.0;
 	PainChance = 1.0;
 	bPickUp = true;
 	IdleState = S_CPLAY;

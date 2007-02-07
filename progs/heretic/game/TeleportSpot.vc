@@ -23,16 +23,11 @@
 //**
 //**************************************************************************
 
-class TeleportSpot:Actor
+class TeleportSpot : Actor
 	__mobjinfo__(14);
 
 defaultproperties
 {
-	Health = 1000;
-	Radius = 20.0;
-	Height = 16.0;
-	Mass = 100.0;
-	ReactionCount = 8;
 	bHidden = true;
 	bNoBlockmap = true;
 	bNoPassMobj = true;

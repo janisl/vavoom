@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class BloodSplatter:ProjEffect;
+class BloodSplatter : Actor;
 
 __states__
 {
@@ -37,8 +37,12 @@ defaultproperties
 {
 	Radius = 2.0;
 	Height = 4.0;
+	bMissile = true;
+	bNoBlockmap = true;
+	bDropOff = true;
+	bNoTeleport = true;
+	bActivatePCross = true;
 	bCannotPush = true;
-	bNoGravity = false;
 	IdleState = S_BLOODSPLATTER1;
 	DeathState = S_BLOODSPLATTERX;
 }
