@@ -49,6 +49,7 @@ IMPLEMENT_CLASS(V, Level);
 
 VLevel*			GLevel;
 VLevel*			GClLevel;
+VLevel*			GClPrevLevel;
 
 int			GMaxEntities = 4096;
 
@@ -454,6 +455,12 @@ void SV_LoadLevel(VName MapName)
 	GLevel->LevelFlags |= VLevel::LF_ForServer;
 
 	GLevel->LoadMap(MapName);
+#if 0
+#ifdef CLIENT
+	R_Start(GLevel);
+	GLevel->RenderData->PreRender();
+#endif
+#endif
 	unguard;
 }
 
@@ -469,11 +476,20 @@ void SV_LoadLevel(VName MapName)
 void CL_LoadLevel(VName MapName)
 {
 	guard(CL_LoadLevel);
+#if 0
+	if (GClPrevLevel)
+	{
+		delete GClPrevLevel;
+		GClPrevLevel = NULL;
+	}
+	GClPrevLevel = GClLevel;
+#else
 	if (GClLevel)
 	{
 		delete GClLevel;
 		GClLevel = NULL;
 	}
+#endif
 
 	GClLevel = Spawn<VLevel>();
 	GClGame->GLevel = GClLevel;

@@ -510,7 +510,7 @@ static bool ClipCheckSubsector(subsector_t* Sub)
 	}
 	for (int i = 0; i < Sub->numlines; i++)
 	{
-		seg_t* line = &GClLevel->Segs[Sub->firstline + i];
+		seg_t* line = &r_Level->Segs[Sub->firstline + i];
 
 		float dist = DotProduct(vieworg, line->normal) - line->dist;
 		if (dist <= 0)
@@ -540,7 +540,7 @@ static void ClipAddSubsectorSegs(subsector_t* Sub)
 	guard(ClipAddSubsectorSegs);
 	for (int i = 0; i < Sub->numlines; i++)
 	{
-		seg_t* line = &GClLevel->Segs[Sub->firstline + i];
+		seg_t* line = &r_Level->Segs[Sub->firstline + i];
 		if (line->backsector || !line->linedef)
 		{
 			//	Miniseg or two-sided line.
@@ -642,7 +642,7 @@ static void DrawSurfaces(surface_t* InSurfs, texinfo_t *texinfo, int clipflags,
 	}
 
 	sec_params_t* LightParams = LightSourceSector == -1 ? r_region->params :
-		&GClLevel->Sectors[LightSourceSector].params;
+		&r_Level->Sectors[LightSourceSector].params;
 	int lLev = fixedlight ? fixedlight :
 			MIN(255, LightParams->lightlevel);
 	if (r_darken)
@@ -822,7 +822,7 @@ static void RenderSubRegion(subregion_t *region, int clipflags)
 static void RenderSubsector(int num, int clipflags)
 {
 	guard(RenderSubsector);
-	r_sub = &GClLevel->Subsectors[num];
+	r_sub = &r_Level->Subsectors[num];
 
 	if (r_sub->VisFrame != r_visframecount)
 	{
@@ -916,7 +916,7 @@ static void RenderBSPNode(int bspnum, float *bbox, int InClipflags)
 		return;
 	}
 
-	node_t* bsp = &GClLevel->Nodes[bspnum];
+	node_t* bsp = &r_Level->Nodes[bspnum];
 
 	if (bsp->VisFrame != r_visframecount)
 	{
@@ -951,11 +951,11 @@ void R_RenderWorld()
 
 	sky_is_visible = false;
 
-	RenderBSPNode(GClLevel->NumNodes - 1, dummy_bbox, 15);	// head node is the last node output
+	RenderBSPNode(r_Level->NumNodes - 1, dummy_bbox, 15);	// head node is the last node output
 
 	if (sky_is_visible)
 	{
-		((VLevelRenderData*)GClLevel->RenderData)->DrawSky();
+		((VLevelRenderData*)r_Level->RenderData)->DrawSky();
 	}
 
 	Drawer->WorldDrawing();

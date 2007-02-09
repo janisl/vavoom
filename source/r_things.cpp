@@ -767,7 +767,7 @@ static void RenderThing(VEntity* mobj, bool IsWeapon)
 	}
 	else
 	{
-		light = ((VLevelRenderData*)GClLevel->RenderData)->LightPoint(mobj->Origin);
+		light = ((VLevelRenderData*)r_Level->RenderData)->LightPoint(mobj->Origin);
 	}
 
 	//	Try to draw a model. If it's a script and it doesn't
@@ -1008,7 +1008,7 @@ void R_DrawPlayerSprites()
 		}
 		else
 		{
-			light = ((VLevelRenderData*)GClLevel->RenderData)->LightPoint(vieworg);
+			light = ((VLevelRenderData*)r_Level->RenderData)->LightPoint(vieworg);
 		}
 
 		if (!RenderViewModel(&cl->ViewStates[i], light))

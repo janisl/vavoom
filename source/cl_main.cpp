@@ -50,6 +50,7 @@ void CL_StopRecording();
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
 extern VStr			skin_list[256];
+extern VLevel*		GClPrevLevel;
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
@@ -149,6 +150,8 @@ void CL_Shutdown()
 	cls.message.Free();
 	if (GClLevel)
 		GClLevel->ConditionalDestroy();
+	if (GClPrevLevel)
+		GClPrevLevel->ConditionalDestroy();
 	if (GClGame)
 		GClGame->ConditionalDestroy();
 	if (cl)

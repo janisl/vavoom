@@ -193,6 +193,8 @@ private:
 	void MarkLights(dlight_t*, int, int);
 	void AddDynamicLights(surface_t*);
 
+	void PrecacheLevel();
+
 public:
 	VLevelRenderData(VLevel*);
 	~VLevelRenderData();
@@ -493,7 +495,6 @@ void R_InitSkyBoxes();
 //
 //	R_Tex
 //
-void R_PrecacheLevel();
 
 //
 //	R_Surf
@@ -529,5 +530,7 @@ extern refdef_t			refdef;
 
 extern VCvarI			old_aspect;
 extern VCvarI			r_hirestex;
+
+extern VLevel*			r_Level;
 
 #endif

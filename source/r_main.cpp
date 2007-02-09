@@ -92,6 +92,8 @@ float					PixelAspect;
 //
 vuint8*					translationtables;
 
+VLevel*					r_Level;
+
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static FDrawerDesc		*DrawerList[DRAWER_MAX];
@@ -114,6 +116,10 @@ subsector_t				*r_oldviewleaf;
 static VCvarI			precache("precache", "1", CVAR_Archive);
 
 static VCvarI			_driver("_driver", "0", CVAR_Rom);
+
+VCvarI					lev_test_srv("lev_test_srv", "0");
+VCvarI					lev_test_prev("lev_test_prev", "0");
+extern VLevel*			GClPrevLevel;
 
 // CODE --------------------------------------------------------------------
 
@@ -189,6 +195,12 @@ VLevelRenderData::VLevelRenderData(VLevel* ALevel)
 , LightningLightLevels(0)
 {
 	guard(VLevelRenderData::VLevelRenderData);
+	if (Level == GLevel)
+	{
+		cl_level.MapName = level.MapName;
+		cl_level.sky1Texture = level.sky1Texture;
+		cl_level.sky2Texture = level.sky2Texture;
+	}
 	r_oldviewleaf = NULL;
 
 	R_ClearParticles();
@@ -203,7 +215,7 @@ VLevelRenderData::VLevelRenderData(VLevel* ALevel)
 	// preload graphics
 	if (precache)
 	{
-		R_PrecacheLevel();
+		PrecacheLevel();
 	}
 	unguard;
 }
@@ -486,7 +498,7 @@ static void R_SetupFrame()
 		fixedlight = 0;
 	}
 
-	r_viewleaf = GClLevel->PointInSubsector(cl->ViewOrg);
+	r_viewleaf = r_Level->PointInSubsector(cl->ViewOrg);
 
 	Drawer->SetupView(&refdef);
 	unguard;
@@ -511,13 +523,13 @@ static void R_MarkLeaves()
 	r_visframecount++;
 	r_oldviewleaf = r_viewleaf;
 
-	vis = GClLevel->LeafPVS(r_viewleaf);
+	vis = r_Level->LeafPVS(r_viewleaf);
 
-	for (i = 0; i < GClLevel->NumSubsectors; i++)
+	for (i = 0; i < r_Level->NumSubsectors; i++)
 	{
 		if (vis[i >> 3] & (1 << (i & 7)))
 		{
-			subsector_t *sub = &GClLevel->Subsectors[i];
+			subsector_t *sub = &r_Level->Subsectors[i];
 			sub->VisFrame = r_visframecount;
 			node = sub->parent;
 			while (node)
@@ -693,15 +705,22 @@ void R_DrawParticles()
 void R_RenderPlayerView()
 {
 	guard(R_RenderPlayerView);
+	if (lev_test_srv && GLevel)
+		r_Level = GLevel;
+	else if (lev_test_prev && GClPrevLevel)
+		r_Level = GClPrevLevel;
+	else
+		r_Level = GClLevel;
+
 	R_UpdateParticles();
 
 	R_SetupFrame();
 
 	R_MarkLeaves();
 
-	((VLevelRenderData*)GClLevel->RenderData)->PushDlights();
+	((VLevelRenderData*)r_Level->RenderData)->PushDlights();
 
-	((VLevelRenderData*)GClLevel->RenderData)->UpdateWorld();
+	((VLevelRenderData*)r_Level->RenderData)->UpdateWorld();
 
 	R_RenderWorld();
 
@@ -812,15 +831,15 @@ void R_ShadeRect(int x, int y, int width, int height, float shade)
 
 //==========================================================================
 //
-// 	R_PrecacheLevel
+// 	VLevelRenderData::PrecacheLevel
 //
 // 	Preloads all relevant graphics for the level.
 //
 //==========================================================================
 
-void R_PrecacheLevel()
+void VLevelRenderData::PrecacheLevel()
 {
-	guard(R_PrecacheLevel);
+	guard(VLevelRenderData::PrecacheLevel);
 	int			i;
 
 	if (cls.demoplayback)
@@ -833,17 +852,17 @@ void R_PrecacheLevel()
 #endif
 	memset(texturepresent, 0, GTextureManager.Textures.Num());
 
-	for (i = 0; i < GClLevel->NumSectors; i++)
+	for (i = 0; i < Level->NumSectors; i++)
 	{
-		texturepresent[GClLevel->Sectors[i].floor.pic] = true;
-		texturepresent[GClLevel->Sectors[i].ceiling.pic] = true;
+		texturepresent[Level->Sectors[i].floor.pic] = true;
+		texturepresent[Level->Sectors[i].ceiling.pic] = true;
 	}
 	
-	for (i = 0; i < GClLevel->NumSides; i++)
+	for (i = 0; i < Level->NumSides; i++)
 	{
-		texturepresent[GClLevel->Sides[i].toptexture] = true;
-		texturepresent[GClLevel->Sides[i].midtexture] = true;
-		texturepresent[GClLevel->Sides[i].bottomtexture] = true;
+		texturepresent[Level->Sides[i].toptexture] = true;
+		texturepresent[Level->Sides[i].midtexture] = true;
+		texturepresent[Level->Sides[i].bottomtexture] = true;
 	}
 
 	// Precache textures.
@@ -1063,6 +1082,6 @@ void V_Shutdown()
 bool R_BuildLightMap(surface_t *surf, int shift)
 {
 	guard(R_BuildLightMap);
-	return ((VLevelRenderData*)GClLevel->RenderData)->BuildLightMap(surf, shift);
+	return ((VLevelRenderData*)r_Level->RenderData)->BuildLightMap(surf, shift);
 	unguard;
 }

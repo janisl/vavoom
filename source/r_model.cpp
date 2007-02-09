@@ -781,7 +781,6 @@ static void DrawModel(const TVec& Org, const TAVec& Angles,
 			VName Search = *VStr(Skin).ToLower();
 			for (int si = 0; si < SubMdl.Skins.Num(); si++)
 			{
-dprintf("check %s %s\n", *SubMdl.Skins[si].Name, *Search);
 				if (SubMdl.Skins[si].Name == Search)
 				{
 					SkinID = GTextureManager.AddFileTexture(
