@@ -120,7 +120,7 @@ final void A_KoraxChase()
 			Teleport(spot.Origin, spot.Angles.yaw, true, true, false);
 		}
 
-		StartACS(249, 0, 0, 0, 0, self, NULL, 0, false, false);
+		XLevel.StartACS(249, 0, 0, 0, 0, self, NULL, 0, false, false);
 		bDidBelowHalfHealth = true;	// Don't run again
 
 		return;
@@ -377,19 +377,19 @@ final void A_KoraxCommand()
 	switch (P_Random() % numcommands)
 	{
 	case 0:
-		StartACS(250, 0, 0, 0, 0, self, NULL, 0, false, false);
+		XLevel.StartACS(250, 0, 0, 0, 0, self, NULL, 0, false, false);
 		break;
 	case 1:
-		StartACS(251, 0, 0, 0, 0, self, NULL, 0, false, false);
+		XLevel.StartACS(251, 0, 0, 0, 0, self, NULL, 0, false, false);
 		break;
 	case 2:
-		StartACS(252, 0, 0, 0, 0, self, NULL, 0, false, false);
+		XLevel.StartACS(252, 0, 0, 0, 0, self, NULL, 0, false, false);
 		break;
 	case 3:
-		StartACS(253, 0, 0, 0, 0, self, NULL, 0, false, false);
+		XLevel.StartACS(253, 0, 0, 0, 0, self, NULL, 0, false, false);
 		break;
 	case 4:
-		StartACS(254, 0, 0, 0, 0, self, NULL, 0, false, false);
+		XLevel.StartACS(254, 0, 0, 0, 0, self, NULL, 0, false, false);
 		break;
 	}
 }
@@ -424,7 +424,7 @@ final void A_KoraxBonePop()
 	if (mo)
 		KoraxSpirit6(mo).KSpiritInit(self);
 
-	StartACS(255, 0, 0, 0, 0, self, NULL, 0, false, false);	// Death script
+	XLevel.StartACS(255, 0, 0, 0, 0, self, NULL, 0, false, false);	// Death script
 }
 
 __states__

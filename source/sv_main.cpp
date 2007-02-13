@@ -224,6 +224,7 @@ void SV_Shutdown()
 {
 	guard(SV_Shutdown);
 	SV_ShutdownServer(false);
+	P_ACSInitNewGame();
 	if (GGameInfo)
 		GGameInfo->ConditionalDestroy();
 	for (int i = 0; i < MAXPLAYERS; i++)
@@ -2519,7 +2520,7 @@ void SV_SpawnServer(const char *mapname, bool spawn_thinkers)
 	GLevelInfo->LevelInfoFlags |= VLevelInfo::LIF_BegunPlay;
 
 	//	Start open scripts.
-	P_StartTypedACScripts(SCRIPT_Open);
+	GLevel->Acs->StartTypedACScripts(SCRIPT_Open);
 
 	P_Ticker();
 	P_Ticker();

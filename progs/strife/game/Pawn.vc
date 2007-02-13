@@ -1192,7 +1192,7 @@ final void A_BossDeath()
 	else if (Class == Programmer)
 	{
 		//	Call death script.
-		StartACS(250, 0, 0, 0, 0, self, NULL, 0, false, false);
+		XLevel.StartACS(250, 0, 0, 0, 0, self, NULL, 0, false, false);
 	}
 	else if (Class == Specter1)
 	{

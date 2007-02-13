@@ -59,16 +59,20 @@
 
 // MACROS ------------------------------------------------------------------
 
-#define MAX_ACS_SCRIPT_VARS	20
-#define MAX_ACS_MAP_VARS	128
-#define MAX_ACS_WORLD_VARS	256
-#define MAX_ACS_GLOBAL_VARS	64
-#define MAX_ACS_STORE		20
-#define ACS_STACK_DEPTH		4096
-
 // TYPES -------------------------------------------------------------------
 
-enum EACSFormat
+//
+//	Internal engine limits
+//
+enum
+{
+	MAX_ACS_SCRIPT_VARS	= 20,
+	MAX_ACS_MAP_VARS	= 128,
+	MAX_ACS_WORLD_VARS	= 256,
+	MAX_ACS_GLOBAL_VARS	= 64,
+};
+
+enum EAcsFormat
 {
 	ACS_Old,
 	ACS_Enhanced,
@@ -82,91 +86,25 @@ enum
 	SCRIPTF_Net = 0x0001	//	Safe to "puke" in multiplayer.
 };
 
-enum EScriptAction
+struct VAcsHeader
 {
-	SCRIPT_CONTINUE,
-	SCRIPT_STOP,
-	SCRIPT_TERMINATE,
+	char		Marker[4];
+	vint32		InfoOffset;
+	vint32		Code;
 };
 
-enum aste_t
+struct VAcsInfo
 {
-	ASTE_INACTIVE,
-	ASTE_RUNNING,
-	ASTE_SUSPENDED,
-	ASTE_WAITINGFORTAG,
-	ASTE_WAITINGFORPOLY,
-	ASTE_WAITINGFORSCRIPT,
-	ASTE_TERMINATING
-};
-
-enum EGameMode
-{
-	GAME_SINGLE_PLAYER,
-	GAME_NET_COOPERATIVE,
-	GAME_NET_DEATHMATCH,
-	GAME_TITLE_MAP
-};
-
-enum ETexturePosition
-{
-	TEXTURE_TOP,
-	TEXTURE_MIDDLE,
-	TEXTURE_BOTTOM
-};
-
-enum
-{
-	BLOCK_NOTHING,
-	BLOCK_CREATURES,
-	BLOCK_EVERYTHING,
-	BLOCK_RAILING
-};
-
-enum
-{
-	LEVELINFO_PAR_TIME,
-	LEVELINFO_CLUSTERNUM,
-	LEVELINFO_LEVELNUM,
-	LEVELINFO_TOTAL_SECRETS,
-	LEVELINFO_FOUND_SECRETS,
-	LEVELINFO_TOTAL_ITEMS,
-	LEVELINFO_FOUND_ITEMS,
-	LEVELINFO_TOTAL_MONSTERS,
-	LEVELINFO_KILLED_MONSTERS,
-	LEVELINFO_SUCK_TIME
-};
-
-//	Flags for ReplaceTextures
-enum
-{
-	NOT_BOTTOM			= 1,
-	NOT_MIDDLE			= 2,
-	NOT_TOP				= 4,
-	NOT_FLOOR			= 8,
-	NOT_CEILING			= 16,
-};
-
-struct acsHeader_t
-{
-	char	marker[4];
-	int		infoOffset;
-	int		code;
-};
-
-struct acsInfo_t
-{
-	vuint16		number;
-	vuint8		type;
-	vuint8		argCount;
+	vuint16		Number;
+	vuint8		Type;
+	vuint8		ArgCount;
 	vuint8*		Address;
 	vuint16		Flags;
 	vuint16		VarCount;
-	vuint8		state;
-	vint32		waitValue;
+	VAcs*		RunningScript;
 };
 
-struct FACScriptFunction
+struct VAcsFunction
 {
 	vuint8		ArgCount;
 	vuint8		LocalCount;
@@ -175,18 +113,28 @@ struct FACScriptFunction
 	vuint32		Address;
 };
 
-struct acsstore_t
+struct VAcsStore
 {
-	char	map[12];	// Target map
-	int 	script;		// Script number on target map
-	int 	args[4];	// Padded to 4 for alignment
+	enum
+	{
+		Start,
+		StartAlways,
+		Terminate,
+		Suspend
+	};
+
+	VName		Map;		//	Target map
+	vuint8		Type;		//	Type of action
+	vint8		PlayerNum;	//	Player who executes this script
+	vint32		Script;		//	Script number on target map
+	vint32		Args[3];	//	Arguments
 };
 
-class FACSGrowingArray
+class VAcsGrowingArray
 {
 private:
-	int		Size;
-	int*	Data;
+	vint32		Size;
+	vint32*		Data;
 public:
 	void Redim(int NewSize);
 	void SetElemVal(int Index, int Value);
@@ -197,44 +145,44 @@ public:
 //
 //	A action code scripts object module - level's BEHAVIOR lump or library.
 //
-class FACScriptsObject
+class VAcsObject
 {
 private:
-	struct FArrayInfo
+	friend class VAcsLevel;
+
+	struct VArrayInfo
 	{
 		vint32		Size;
 		vint32*		Data;
 	};
 
-	EACSFormat			Format;
+	EAcsFormat			Format;
 
-	int					LumpNum;
-	int					LibraryID;
+	vint32				LumpNum;
+	vint32				LibraryID;
 
-	int					DataSize;
-	byte*				Data;
+	vint32				DataSize;
+	vuint8*				Data;
 
-	byte*				Chunks;
+	vuint8*				Chunks;
 
-	int					NumScripts;
-	acsInfo_t*			Scripts;
+	vint32				NumScripts;
+	VAcsInfo*			Scripts;
 
-	FACScriptFunction*	Functions;
-	int					NumFunctions;
+	VAcsFunction*		Functions;
+	vint32				NumFunctions;
 
-	int					NumStrings;
+	vint32				NumStrings;
 	char**				Strings;
 
-	int					MapVarStore[MAX_ACS_MAP_VARS];
+	vint32				MapVarStore[MAX_ACS_MAP_VARS];
 
-	int					NumArrays;
-	FArrayInfo*			ArrayStore;
-	int					NumTotalArrays;
-	FArrayInfo**		Arrays;
+	vint32				NumArrays;
+	VArrayInfo*			ArrayStore;
+	vint32				NumTotalArrays;
+	VArrayInfo**		Arrays;
 
-	TArray<FACScriptsObject*>	Imports;
-
-	static TArray<FACScriptsObject*>	LoadedObjects;
+	TArray<VAcsObject*>	Imports;
 
 	void LoadOldObject();
 	void LoadEnhancedObject();
@@ -242,22 +190,22 @@ private:
 	int FindFunctionName(const char* Name) const;
 	int FindMapVarName(const char* Name) const;
 	int FindMapArray(const char* Name) const;
-	int FindStringInChunk(byte* Chunk, const char* Name) const;
-	byte* FindChunk(const char* id) const;
-	byte* NextChunk(byte* prev) const;
+	int FindStringInChunk(vuint8* Chunk, const char* Name) const;
+	vuint8* FindChunk(const char* id) const;
+	vuint8* NextChunk(vuint8* prev) const;
 	void Serialise(VStream& Strm);
 	void StartTypedACScripts(int Type);
-	void ScriptFinished(int number);
 
 public:
-	int*				MapVars[MAX_ACS_MAP_VARS];
+	VAcsLevel*			Level;
+	vint32*				MapVars[MAX_ACS_MAP_VARS];
 
-	FACScriptsObject(int Lump);
-	~FACScriptsObject();
+	VAcsObject(VAcsLevel* ALevel, int Lump);
+	~VAcsObject();
 
 	vuint8* OffsetToPtr(int);
 	int PtrToOffset(vuint8*);
-	EACSFormat GetFormat() const
+	EAcsFormat GetFormat() const
 	{
 		return Format;
 	}
@@ -265,7 +213,7 @@ public:
 	{
 		return NumScripts;
 	}
-	acsInfo_t& GetScriptInfo(int i)
+	VAcsInfo& GetScriptInfo(int i)
 	{
 		return Scripts[i];
 	}
@@ -277,44 +225,48 @@ public:
 	{
 		return LibraryID;
 	}
-	acsInfo_t* FindScript(int Number) const;
-	FACScriptFunction* GetFunction(int funcnum, FACScriptsObject*& Object);
+	VAcsInfo* FindScript(int Number) const;
+	VAcsFunction* GetFunction(int funcnum, VAcsObject*& Object);
 	int GetArrayVal(int ArrayIdx, int Index);
 	void SetArrayVal(int ArrayIdx, int Index, int Value);
-
-	static FACScriptsObject* StaticLoadObject(int Lump);
-	static void StaticUnloadObjects();
-	static acsInfo_t* StaticFindScript(int Number, FACScriptsObject*& Object);
-	static const char* StaticGetString(int Index);
-	static FACScriptsObject* StaticGetObject(int Index);
-	static void StaticStartTypedACScripts(int Type);
-	static void StaticSerialise(VStream& Strm);
-	static void StaticScriptFinished(int number);
 };
 
-struct CallReturn
+struct VAcsCallReturn
 {
-	int					ReturnAddress;
-	FACScriptFunction*	ReturnFunction;
-	FACScriptsObject*	ReturnObject;
-	byte				bDiscardResult;
-	byte				Pad[3];
+	int				ReturnAddress;
+	VAcsFunction*	ReturnFunction;
+	VAcsObject*		ReturnObject;
+	vuint8			bDiscardResult;
+	vuint8			Pad[3];
 };
 
-class VACS : public VThinker
+class VAcs : public VThinker
 {
-	DECLARE_CLASS(VACS, VThinker, 0)
-	NO_DEFAULT_CONSTRUCTOR(VACS)
+	DECLARE_CLASS(VAcs, VThinker, 0)
+	NO_DEFAULT_CONSTRUCTOR(VAcs)
 
-	VEntity*			Activator;
-	line_t*				line;
-	vint32 				side;
-	vint32 				number;
-	acsInfo_t*			info;
-	float				DelayTime;
-	vint32*				LocalVars;
-	vuint8*				InstructionPointer;
-	FACScriptsObject*	ActiveObject;
+	enum
+	{
+		ASTE_Running,
+		ASTE_Suspended,
+		ASTE_WaitingForTag,
+		ASTE_WaitingForPoly,
+		ASTE_WaitingForScriptStart,
+		ASTE_WaitingForScript,
+		ASTE_Terminating
+	};
+
+	VEntity*		Activator;
+	line_t*			line;
+	vint32 			side;
+	vint32 			number;
+	VAcsInfo*		info;
+	vuint8			State;
+	float			DelayTime;
+	vint32			WaitValue;
+	vint32*			LocalVars;
+	vuint8*			InstructionPointer;
+	VAcsObject*		ActiveObject;
 
 	void Destroy();
 	void Serialise(VStream&);
@@ -322,9 +274,69 @@ class VACS : public VThinker
 	void Tick(float);
 
 private:
+	enum { ACS_STACK_DEPTH		= 4096 };
+
+	enum EScriptAction
+	{
+		SCRIPT_Continue,
+		SCRIPT_Stop,
+		SCRIPT_Terminate,
+	};
+
+	//
+	//	Constants used by scripts.
+	//
+
+	enum EGameMode
+	{
+		GAME_SINGLE_PLAYER,
+		GAME_NET_COOPERATIVE,
+		GAME_NET_DEATHMATCH,
+		GAME_TITLE_MAP
+	};
+
+	enum ETexturePosition
+	{
+		TEXTURE_TOP,
+		TEXTURE_MIDDLE,
+		TEXTURE_BOTTOM
+	};
+
+	enum
+	{
+		BLOCK_NOTHING,
+		BLOCK_CREATURES,
+		BLOCK_EVERYTHING,
+		BLOCK_RAILING
+	};
+
+	enum
+	{
+		LEVELINFO_PAR_TIME,
+		LEVELINFO_CLUSTERNUM,
+		LEVELINFO_LEVELNUM,
+		LEVELINFO_TOTAL_SECRETS,
+		LEVELINFO_FOUND_SECRETS,
+		LEVELINFO_TOTAL_ITEMS,
+		LEVELINFO_FOUND_ITEMS,
+		LEVELINFO_TOTAL_MONSTERS,
+		LEVELINFO_KILLED_MONSTERS,
+		LEVELINFO_SUCK_TIME
+	};
+
+	//	Flags for ReplaceTextures
+	enum
+	{
+		NOT_BOTTOM			= 1,
+		NOT_MIDDLE			= 2,
+		NOT_TOP				= 4,
+		NOT_FLOOR			= 8,
+		NOT_CEILING			= 16,
+	};
+
 	const char* GetStr(int Index)
 	{
-		return FACScriptsObject::StaticGetString(Index);
+		return ActiveObject->Level->GetString(Index);
 	}
 
 	VEntity* EntityFromTID(int TID, VEntity* Default)
@@ -345,45 +357,48 @@ private:
 	int CheckInventory(VEntity*, const char*);
 };
 
+class VAcsGlobal
+{
+public:
+	int					WorldVars[MAX_ACS_WORLD_VARS];
+	int					GlobalVars[MAX_ACS_GLOBAL_VARS];
+	VAcsGrowingArray	WorldArrays[MAX_ACS_WORLD_VARS];
+	VAcsGrowingArray	GlobalArrays[MAX_ACS_GLOBAL_VARS];
+	TArray<VAcsStore>	Store;
+
+	VAcsGlobal();
+
+	void Serialise(VStream& Strm);
+};
+
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
-static bool AddToACSStore(const char* map, int number, int arg1, int arg2,
-	int arg3);
-static VACS* SpawnScript(acsInfo_t* Info, FACScriptsObject* Object,
-	VEntity* Activator, line_t* Line, int Side, int Arg1, int Arg2, int Arg3,
-	bool Delayed);
-
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-static int WorldVars[MAX_ACS_WORLD_VARS];
-static int GlobalVars[MAX_ACS_GLOBAL_VARS];
-static FACSGrowingArray WorldArrays[MAX_ACS_WORLD_VARS];
-static FACSGrowingArray GlobalArrays[MAX_ACS_GLOBAL_VARS];
-static acsstore_t ACSStore[MAX_ACS_STORE+1]; // +1 for termination marker
-
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-IMPLEMENT_CLASS(V, ACS)
+IMPLEMENT_CLASS(V, Acs)
 
-TArray<FACScriptsObject*>	FACScriptsObject::LoadedObjects;
+VAcsGlobal					AcsGlobal;
 
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
 //
-//	FACScriptsObject::FACScriptsObject
+//	VAcsObject::VAcsObject
 //
 //==========================================================================
 
-FACScriptsObject::FACScriptsObject(int Lump)
+VAcsObject::VAcsObject(VAcsLevel* ALevel, int Lump)
+: Level(ALevel)
 {
-	guard(FACScriptsObject::FACScriptsObject);
+	guard(VAcsObject::VAcsObject);
 	Format = ACS_Unknown;
 	LumpNum = Lump;
 	LibraryID = 0;
@@ -406,7 +421,7 @@ FACScriptsObject::FACScriptsObject(int Lump)
     {
 		return;
     }
-	if (W_LumpLength(Lump) < (int)sizeof(acsHeader_t))
+	if (W_LumpLength(Lump) < (int)sizeof(VAcsHeader))
     {
 		GCon->Log("Behavior lump too small");
 		return;
@@ -416,16 +431,16 @@ FACScriptsObject::FACScriptsObject(int Lump)
 	Data = new vuint8[Strm->TotalSize()];
 	Strm->Serialise(Data, Strm->TotalSize());
 	delete Strm;
-	acsHeader_t* header = (acsHeader_t*)Data;
+	VAcsHeader* header = (VAcsHeader*)Data;
 
 	//	Check header.
-	if (header->marker[0] != 'A' || header->marker[1] != 'C' ||
-		header->marker[2] != 'S')
+	if (header->Marker[0] != 'A' || header->Marker[1] != 'C' ||
+		header->Marker[2] != 'S')
 	{
 		return;
 	}
 	//	Determine format.
-	switch (header->marker[3])
+	switch (header->Marker[3])
 	{
 	case 0:
 		Format = ACS_Old;
@@ -444,7 +459,7 @@ FACScriptsObject::FACScriptsObject(int Lump)
 
 	if (Format == ACS_Old)
 	{
-		vuint32 dirofs = LittleLong(header->infoOffset);
+		vuint32 dirofs = LittleLong(header->InfoOffset);
 		vuint8* pretag = Data + dirofs - 4;
 
 		Chunks = Data + DataSize;
@@ -461,7 +476,7 @@ FACScriptsObject::FACScriptsObject(int Lump)
 	}
 	else
 	{
-		Chunks = Data + LittleLong(header->infoOffset);
+		Chunks = Data + LittleLong(header->InfoOffset);
 	}
 
 	if (Format == ACS_Old)
@@ -477,13 +492,13 @@ FACScriptsObject::FACScriptsObject(int Lump)
 
 //==========================================================================
 //
-//	FACScriptsObject::~FACScriptsObject
+//	VAcsObject::~VAcsObject
 //
 //==========================================================================
 
-FACScriptsObject::~FACScriptsObject()
+VAcsObject::~VAcsObject()
 {
-	guard(FACScriptsObject::~FACScriptsObject);
+	guard(VAcsObject::~VAcsObject);
 	delete[] Scripts;
 	delete[] Strings;
 	for (int i = 0; i < NumArrays; i++)
@@ -492,46 +507,45 @@ FACScriptsObject::~FACScriptsObject()
 		delete[] ArrayStore;
 	if (Arrays)
 		delete[] Arrays;
-	Z_Free(Data);
+	delete[] Data;
 	unguard;
 }
 
 //==========================================================================
 //
-//	FACScriptsObject::LoadOldObject
+//	VAcsObject::LoadOldObject
 //
 //==========================================================================
 
-void FACScriptsObject::LoadOldObject()
+void VAcsObject::LoadOldObject()
 {
-	guard(FACScriptsObject::LoadOldObject);
+	guard(VAcsObject::LoadOldObject);
 	int i;
 	int *buffer;
-	acsInfo_t *info;
-	acsHeader_t *header;
+	VAcsInfo *info;
+	VAcsHeader *header;
 
-	header = (acsHeader_t*)Data;
+	header = (VAcsHeader*)Data;
 
 	//	Load script info.
-	buffer = (int*)(Data + LittleLong(header->infoOffset));
+	buffer = (int*)(Data + LittleLong(header->InfoOffset));
 	NumScripts = LittleLong(*buffer++);
 	if (NumScripts == 0)
 	{
 		//	Empty behavior lump
 		return;
 	}
-	Scripts = new acsInfo_t[NumScripts];
-	memset(Scripts, 0, NumScripts * sizeof(acsInfo_t));
+	Scripts = new VAcsInfo[NumScripts];
+	memset(Scripts, 0, NumScripts * sizeof(VAcsInfo));
 	for (i = 0, info = Scripts; i < NumScripts; i++, info++)
 	{
-		info->number = LittleLong(*buffer) % 1000;
-		info->type = LittleLong(*buffer) / 1000;
+		info->Number = LittleLong(*buffer) % 1000;
+		info->Type = LittleLong(*buffer) / 1000;
 		buffer++;
 		info->Address = OffsetToPtr(LittleLong(*buffer++));
-		info->argCount = LittleLong(*buffer++);
+		info->ArgCount = LittleLong(*buffer++);
 		info->Flags = 0;
 		info->VarCount = MAX_ACS_SCRIPT_VARS;
-		info->state = ASTE_INACTIVE;
 	}
 
 	//	Load strings.
@@ -550,61 +564,59 @@ void FACScriptsObject::LoadOldObject()
 	}
 
 	//	Add to loaded objects.
-	LibraryID = LoadedObjects.Append(this) << 16;
+	LibraryID = Level->LoadedObjects.Append(this) << 16;
 	unguard;
 }
 
 //==========================================================================
 //
-//	FACScriptsObject::LoadEnhancedObject
+//	VAcsObject::LoadEnhancedObject
 //
 //==========================================================================
 
-void FACScriptsObject::LoadEnhancedObject()
+void VAcsObject::LoadEnhancedObject()
 {
-	guard(FACScriptsObject::LoadEnhancedObject);
+	guard(VAcsObject::LoadEnhancedObject);
 	int i;
 	int *buffer;
-	acsInfo_t *info;
+	VAcsInfo *info;
 
 	//	Load scripts.
 	buffer = (int*)FindChunk("SPTR");
 	if (Data[3] != 0)
 	{
 		NumScripts = LittleLong(buffer[1]) / 12;
-		Scripts = new acsInfo_t[NumScripts];
-		memset(Scripts, 0, NumScripts * sizeof(acsInfo_t));
+		Scripts = new VAcsInfo[NumScripts];
+		memset(Scripts, 0, NumScripts * sizeof(VAcsInfo));
 		buffer += 2;
 
 		for (i = 0, info = Scripts; i < NumScripts; i++, info++)
 		{
-			info->number = LittleShort(*(short*)buffer);
-			info->type = LittleShort(((short*)buffer)[1]);
+			info->Number = LittleShort(*(short*)buffer);
+			info->Type = LittleShort(((short*)buffer)[1]);
 			buffer++;
 			info->Address = OffsetToPtr(LittleLong(*buffer++));
-			info->argCount = LittleLong(*buffer++);
+			info->ArgCount = LittleLong(*buffer++);
 			info->Flags = 0;
 			info->VarCount = MAX_ACS_SCRIPT_VARS;
-			info->state = ASTE_INACTIVE;
 		}
 	}
 	else
 	{
 		NumScripts = LittleLong(buffer[1]) / 8;
-		Scripts = new acsInfo_t[NumScripts];
-		memset(Scripts, 0, NumScripts * sizeof(acsInfo_t));
+		Scripts = new VAcsInfo[NumScripts];
+		memset(Scripts, 0, NumScripts * sizeof(VAcsInfo));
 		buffer += 2;
 
 		for (i = 0, info = Scripts; i < NumScripts; i++, info++)
 		{
-			info->number = LittleShort(*(short*)buffer);
-			info->type = ((byte*)buffer)[2];
-			info->argCount = ((byte*)buffer)[3];
+			info->Number = LittleShort(*(short*)buffer);
+			info->Type = ((vuint8*)buffer)[2];
+			info->ArgCount = ((vuint8*)buffer)[3];
 			buffer++;
 			info->Address = OffsetToPtr(LittleLong(*buffer++));
 			info->Flags = 0;
 			info->VarCount = MAX_ACS_SCRIPT_VARS;
-			info->state = ASTE_INACTIVE;
 		}
 	}
 
@@ -616,7 +628,7 @@ void FACScriptsObject::LoadEnhancedObject()
 		buffer += 2;
 		for (int i = 0; i < count; i++, buffer++)
 		{
-			acsInfo_t* info = FindScript(LittleShort(((word*)buffer)[0]));
+			VAcsInfo* info = FindScript(LittleShort(((word*)buffer)[0]));
 			if (info)
 			{
 				info->Flags = LittleShort(((word*)buffer)[1]);
@@ -632,7 +644,7 @@ void FACScriptsObject::LoadEnhancedObject()
 		buffer += 2;
 		for (i = 0; i < count; i++, buffer++)
 		{
-			acsInfo_t* info = FindScript(LittleShort(((word*)buffer)[0]));
+			VAcsInfo* info = FindScript(LittleShort(((word*)buffer)[0]));
 			if (info)
 			{
 				info->VarCount = LittleShort(((word*)buffer)[1]);
@@ -649,7 +661,7 @@ void FACScriptsObject::LoadEnhancedObject()
 	if (buffer)
 	{
 		NumFunctions = LittleLong(buffer[1]) / 8;
-		Functions = (FACScriptFunction*)(buffer + 2);
+		Functions = (VAcsFunction*)(buffer + 2);
 		for (i = 0; i < NumFunctions; i++)
 			Functions[i].Address = LittleLong(Functions[i].Address);
 	}
@@ -688,7 +700,7 @@ void FACScriptsObject::LoadEnhancedObject()
 		{
 			MapVarStore[firstvar + i] = LittleLong(buffer[3 + i]);
 		}
-		buffer = (int*)NextChunk((byte*)buffer);
+		buffer = (int*)NextChunk((vuint8*)buffer);
 	}
 
 	//	Create arrays.
@@ -696,7 +708,7 @@ void FACScriptsObject::LoadEnhancedObject()
 	if (buffer)
 	{
 		NumArrays = LittleLong(buffer[1]) / 8;
-		ArrayStore = new FArrayInfo[NumArrays];
+		ArrayStore = new VArrayInfo[NumArrays];
 		memset(ArrayStore, 0, sizeof(*ArrayStore) * NumArrays);
 		for (i = 0; i < NumArrays; ++i)
 		{
@@ -723,7 +735,7 @@ void FACScriptsObject::LoadEnhancedObject()
 				elems[i] = LittleLong(buffer[3 + i]);
 			}
 		}
-		buffer = (int*)NextChunk((byte*)buffer);
+		buffer = (int*)NextChunk((vuint8*)buffer);
 	}
 
 	//	Start setting up array pointers.
@@ -735,7 +747,7 @@ void FACScriptsObject::LoadEnhancedObject()
 	}
 	if (NumTotalArrays)
 	{
-		Arrays = new FArrayInfo*[NumTotalArrays];
+		Arrays = new VArrayInfo*[NumTotalArrays];
 		for (i = 0; i < NumArrays; ++i)
 		{
 			Arrays[i] = &ArrayStore[i];
@@ -748,7 +760,7 @@ void FACScriptsObject::LoadEnhancedObject()
 	// module. The only things that can be exported are functions and map
 	// variables, which must already be present if they're exported, so this
 	// is okay.
-	LibraryID = LoadedObjects.Append(this) << 16;
+	LibraryID = Level->LoadedObjects.Append(this) << 16;
 
 	//	Tag the library ID to any map variables that are initialised with
 	// strings.
@@ -790,7 +802,7 @@ void FACScriptsObject::LoadEnhancedObject()
 		{
 			if (parse[i])
 			{
-				FACScriptsObject* Object = NULL;
+				VAcsObject* Object = NULL;
 				int Lump = W_CheckNumForName(VName(&parse[i],
 					VName::AddLower8), WADNS_ACSLibrary);
 				if (Lump < 0)
@@ -799,7 +811,7 @@ void FACScriptsObject::LoadEnhancedObject()
 				}
 				else
 				{
-					Object = StaticLoadObject(Lump);
+					Object = Level->LoadObject(Lump);
 				}
 				Imports.Append(Object);
 				do ; while (parse[++i]);
@@ -810,7 +822,7 @@ void FACScriptsObject::LoadEnhancedObject()
 		// imported functions and map variables.
 		for (i = 0; i < Imports.Num(); i++)
 		{
-			FACScriptsObject* lib = Imports[i];
+			VAcsObject* lib = Imports[i];
 			int j;
 
 			if (!lib)
@@ -820,7 +832,7 @@ void FACScriptsObject::LoadEnhancedObject()
 			buffer = (int*)FindChunk("FNAM");
 			for (j = 0; j < NumFunctions; j++)
 			{
-				FACScriptFunction *func = &Functions[j];
+				VAcsFunction *func = &Functions[j];
 				if (func->Address != 0 || func->ImportNum != 0)
 					continue;
 
@@ -829,7 +841,7 @@ void FACScriptsObject::LoadEnhancedObject()
 				if (libfunc < 0)
 					continue;
 
-				FACScriptFunction* realfunc = &lib->Functions[libfunc];
+				VAcsFunction* realfunc = &lib->Functions[libfunc];
 				//	Make sure that the library really defines this
 				// function. It might simply be importing it itself.
 				if (realfunc->Address == 0 || realfunc->ImportNum != 0)
@@ -909,31 +921,31 @@ void FACScriptsObject::LoadEnhancedObject()
 
 //==========================================================================
 //
-//	FACScriptsObject::UnencryptStrings
+//	VAcsObject::UnencryptStrings
 //
 //==========================================================================
 
-void FACScriptsObject::UnencryptStrings()
+void VAcsObject::UnencryptStrings()
 {
-	guard(FACScriptsObject::UnencryptStrings);
-	byte *prevchunk = NULL;
+	guard(VAcsObject::UnencryptStrings);
+	vuint8 *prevchunk = NULL;
 	vuint32* chunk = (vuint32*)FindChunk("STRE");
 	while (chunk)
 	{
 		for (int strnum = 0; strnum < LittleLong(chunk[3]); strnum++)
 		{
 			int ofs = LittleLong(chunk[5 + strnum]);
-			byte* data = (byte*)chunk + ofs + 8;
-			byte last;
-			int p = (byte)(ofs * 157135);
+			vuint8* data = (vuint8*)chunk + ofs + 8;
+			vuint8 last;
+			int p = (vuint8)(ofs * 157135);
 			int i = 0;
 			do
 			{
-				last = (data[i] ^= (byte)(p + (i >> 1)));
+				last = (data[i] ^= (vuint8)(p + (i >> 1)));
 				i++;
 			} while (last != 0);
 		}
-		prevchunk = (byte*)chunk;
+		prevchunk = (vuint8*)chunk;
 		chunk = (vuint32*)NextChunk((vuint8*)chunk);
 		prevchunk[3] = 'L';
 	}
@@ -946,39 +958,39 @@ void FACScriptsObject::UnencryptStrings()
 
 //==========================================================================
 //
-//	FACScriptsObject::FindFunctionName
+//	VAcsObject::FindFunctionName
 //
 //==========================================================================
 
-int FACScriptsObject::FindFunctionName(const char* Name) const
+int VAcsObject::FindFunctionName(const char* Name) const
 {
-	guard(FACScriptsObject::FindFunctionName);
+	guard(VAcsObject::FindFunctionName);
 	return FindStringInChunk(FindChunk("FNAM"), Name);
 	unguard;
 }
 
 //==========================================================================
 //
-//	FACScriptsObject::FindMapVarName
+//	VAcsObject::FindMapVarName
 //
 //==========================================================================
 
-int FACScriptsObject::FindMapVarName(const char* Name) const
+int VAcsObject::FindMapVarName(const char* Name) const
 {
-	guard(FACScriptsObject::FindMapVarName);
+	guard(VAcsObject::FindMapVarName);
 	return FindStringInChunk(FindChunk("MEXP"), Name);
 	unguard;
 }
 
 //==========================================================================
 //
-//	FACScriptsObject::FindMapArray
+//	VAcsObject::FindMapArray
 //
 //==========================================================================
 
-int FACScriptsObject::FindMapArray(const char* Name) const
+int VAcsObject::FindMapArray(const char* Name) const
 {
-	guard(FACScriptsObject::FindMapArray);
+	guard(VAcsObject::FindMapArray);
 	int var = FindMapVarName(Name);
 	if (var >= 0)
 	{
@@ -990,13 +1002,13 @@ int FACScriptsObject::FindMapArray(const char* Name) const
 
 //==========================================================================
 //
-//	FACScriptsObject::FindStringInChunk
+//	VAcsObject::FindStringInChunk
 //
 //==========================================================================
 
-int FACScriptsObject::FindStringInChunk(byte* Chunk, const char* Name) const
+int VAcsObject::FindStringInChunk(vuint8* Chunk, const char* Name) const
 {
-	guard(FACScriptsObject::FindStringInChunk);
+	guard(VAcsObject::FindStringInChunk);
 	if (Chunk)
 	{
 		int count = LittleLong(((int*)Chunk)[2]);
@@ -1015,14 +1027,14 @@ int FACScriptsObject::FindStringInChunk(byte* Chunk, const char* Name) const
 
 //==========================================================================
 //
-//	FACScriptsObject::FindChunk
+//	VAcsObject::FindChunk
 //
 //==========================================================================
 
-byte* FACScriptsObject::FindChunk(const char* id) const
+vuint8* VAcsObject::FindChunk(const char* id) const
 {
-	guard(FACScriptsObject::FindChunk);
-	byte* chunk = Chunks;
+	guard(VAcsObject::FindChunk);
+	vuint8* chunk = Chunks;
 	while (chunk && chunk < Data + DataSize)
 	{
 		if (*(int*)chunk == *(int*)id)
@@ -1037,15 +1049,15 @@ byte* FACScriptsObject::FindChunk(const char* id) const
 
 //==========================================================================
 //
-//	FACScriptsObject::NextChunk
+//	VAcsObject::NextChunk
 //
 //==========================================================================
 
-byte* FACScriptsObject::NextChunk(byte* prev) const
+vuint8* VAcsObject::NextChunk(vuint8* prev) const
 {
-	guard(FACScriptsObject::NextChunk);
+	guard(VAcsObject::NextChunk);
 	int id = *(int*)prev;
-	byte* chunk = prev + LittleLong(((int*)prev)[1]) + 8;
+	vuint8* chunk = prev + LittleLong(((int*)prev)[1]) + 8;
 	while (chunk && chunk < Data + DataSize)
 	{
 		if (*(int*)chunk == id)
@@ -1060,17 +1072,16 @@ byte* FACScriptsObject::NextChunk(byte* prev) const
 
 //==========================================================================
 //
-//	FACScriptsObject::Serialise
+//	VAcsObject::Serialise
 //
 //==========================================================================
 
-void FACScriptsObject::Serialise(VStream& Strm)
+void VAcsObject::Serialise(VStream& Strm)
 {
-	guard(FACScriptsObject::Serialise);
+	guard(VAcsObject::Serialise);
 	for (int i = 0; i < NumScripts; i++)
 	{
-		Strm << Scripts[i].state;
-		Strm << STRM_INDEX(Scripts[i].waitValue);
+		Strm << Scripts[i].RunningScript;
 	}
 	for (int i = 0; i < MAX_ACS_MAP_VARS; i++)
 	{
@@ -1081,11 +1092,11 @@ void FACScriptsObject::Serialise(VStream& Strm)
 
 //==========================================================================
 //
-//	FACScriptsObject::OffsetToPtr
+//	VAcsObject::OffsetToPtr
 //
 //==========================================================================
 
-vuint8* FACScriptsObject::OffsetToPtr(int Offs)
+vuint8* VAcsObject::OffsetToPtr(int Offs)
 {
 	if (Offs < 0 || Offs >= DataSize)
 		Host_Error("Bad offset in ACS file");
@@ -1094,27 +1105,27 @@ vuint8* FACScriptsObject::OffsetToPtr(int Offs)
 
 //==========================================================================
 //
-//	FACScriptsObject::PtrToOffset
+//	VAcsObject::PtrToOffset
 //
 //==========================================================================
 
-int FACScriptsObject::PtrToOffset(vuint8* Ptr)
+int VAcsObject::PtrToOffset(vuint8* Ptr)
 {
 	return Ptr - Data;
 }
 
 //==========================================================================
 //
-//	FACScriptsObject::FindScript
+//	VAcsObject::FindScript
 //
 //==========================================================================
 
-acsInfo_t* FACScriptsObject::FindScript(int Number) const
+VAcsInfo* VAcsObject::FindScript(int Number) const
 {
-	guard(FACScriptsObject::FindScript);
+	guard(VAcsObject::FindScript);
 	for (int i = 0; i < NumScripts; i++)
 	{
-		if (Scripts[i].number == Number)
+		if (Scripts[i].Number == Number)
 		{
 			return Scripts + i;
 		}
@@ -1125,19 +1136,19 @@ acsInfo_t* FACScriptsObject::FindScript(int Number) const
 
 //==========================================================================
 //
-//	FACScriptsObject::GetFunction
+//	VAcsObject::GetFunction
 //
 //==========================================================================
 
-FACScriptFunction* FACScriptsObject::GetFunction(int funcnum,
-	FACScriptsObject*& Object)
+VAcsFunction* VAcsObject::GetFunction(int funcnum,
+	VAcsObject*& Object)
 {
-	guard(FACScriptsObject::GetFunction);
+	guard(VAcsObject::GetFunction);
 	if ((unsigned)funcnum >= (unsigned)NumFunctions)
 	{
 		return NULL;
 	}
-	FACScriptFunction* Func = Functions + funcnum;
+	VAcsFunction* Func = Functions + funcnum;
 	if (Func->ImportNum)
 	{
 		return Imports[Func->ImportNum - 1]->GetFunction(Func->Address,
@@ -1150,13 +1161,13 @@ FACScriptFunction* FACScriptsObject::GetFunction(int funcnum,
 
 //==========================================================================
 //
-//	FACScriptsObject::GetArrayVal
+//	VAcsObject::GetArrayVal
 //
 //==========================================================================
 
-int FACScriptsObject::GetArrayVal(int ArrayIdx, int Index)
+int VAcsObject::GetArrayVal(int ArrayIdx, int Index)
 {
-	guard(FACScriptsObject::GetArrayVal);
+	guard(VAcsObject::GetArrayVal);
 	if ((unsigned)ArrayIdx >= (unsigned)NumTotalArrays)
 		return 0;
 	if ((unsigned)Index >= (unsigned)Arrays[ArrayIdx]->Size)
@@ -1167,13 +1178,13 @@ int FACScriptsObject::GetArrayVal(int ArrayIdx, int Index)
 
 //==========================================================================
 //
-//	FACScriptsObject::SetArrayVal
+//	VAcsObject::SetArrayVal
 //
 //==========================================================================
 
-void FACScriptsObject::SetArrayVal(int ArrayIdx, int Index, int Value)
+void VAcsObject::SetArrayVal(int ArrayIdx, int Index, int Value)
 {
-	guard(FACScriptsObject::SetArrayVal);
+	guard(VAcsObject::SetArrayVal);
 	if ((unsigned)ArrayIdx >= (unsigned)NumTotalArrays)
 		return;
 	if ((unsigned)Index >= (unsigned)Arrays[ArrayIdx]->Size)
@@ -1184,19 +1195,20 @@ void FACScriptsObject::SetArrayVal(int ArrayIdx, int Index, int Value)
 
 //==========================================================================
 //
-//	FACScriptsObject::StartTypedACScripts
+//	VAcsObject::StartTypedACScripts
 //
 //==========================================================================
 
-void FACScriptsObject::StartTypedACScripts(int Type)
+void VAcsObject::StartTypedACScripts(int Type)
 {
-	guard(FACScriptsObject::StartTypedACScripts);
+	guard(VAcsObject::StartTypedACScripts);
 	for (int i = 0; i < NumScripts; i++)
 	{
-		if (Scripts[i].type == Type)
+		if (Scripts[i].Type == Type)
 		{
 			// Auto-activate
-			SpawnScript(&Scripts[i], this, NULL, NULL, 0, 0, 0, 0, true);
+			Level->SpawnScript(&Scripts[i], this, NULL, NULL, 0, 0, 0, 0,
+				true, true);
 		}
 	}
 	unguard;
@@ -1204,13 +1216,41 @@ void FACScriptsObject::StartTypedACScripts(int Type)
 
 //==========================================================================
 //
-//	FACScriptsObject::StaticLoadObject
+//	VAcsLevel::VAcsLevel
 //
 //==========================================================================
 
-FACScriptsObject* FACScriptsObject::StaticLoadObject(int Lump)
+VAcsLevel::VAcsLevel(VLevel* ALevel)
+: XLevel(ALevel)
 {
-	guard(FACScriptsObject::StaticLoadObject);
+}
+
+//==========================================================================
+//
+//	VAcsLevel::~VAcsLevel
+//
+//==========================================================================
+
+VAcsLevel::~VAcsLevel()
+{
+	guard(VAcsLevel::~VAcsLevel);
+	for (int i = 0; i < LoadedObjects.Num(); i++)
+	{
+		delete LoadedObjects[i];
+	}
+	LoadedObjects.Clear();
+	unguard;
+}
+
+//==========================================================================
+//
+//	VAcsLevel::LoadObject
+//
+//==========================================================================
+
+VAcsObject* VAcsLevel::LoadObject(int Lump)
+{
+	guard(VAcsLevel::LoadObject);
 	for (int i = 0; i < LoadedObjects.Num(); i++)
 	{
 		if (LoadedObjects[i]->LumpNum == Lump)
@@ -1218,37 +1258,22 @@ FACScriptsObject* FACScriptsObject::StaticLoadObject(int Lump)
 			return LoadedObjects[i];
 		}
 	}
-	return new FACScriptsObject(Lump);
+	return new VAcsObject(this, Lump);
 	unguard;
 }
 
 //==========================================================================
 //
-//	FACScriptsObject::StaticUnloadObjects
+//	VAcsLevel::FindScript
 //
 //==========================================================================
 
-void FACScriptsObject::StaticUnloadObjects()
+VAcsInfo* VAcsLevel::FindScript(int Number, VAcsObject*& Object)
 {
-	guard(FACScriptsObject::StaticUnloadObjects);
-	for (int i = 0; i < LoadedObjects.Num(); i++)
-		delete LoadedObjects[i];
-	LoadedObjects.Clear();
-	unguard;
-}
-
-//==========================================================================
-//
-//	FACScriptsObject::StaticFindScript
-//
-//==========================================================================
-
-acsInfo_t* FACScriptsObject::StaticFindScript(int Number, FACScriptsObject*& Object)
-{
-	guard(FACScriptsObject::StaticFindScript);
+	guard(VAcsLevel::FindScript);
 	for (int i = 0; i < LoadedObjects.Num(); i++)
 	{
-		acsInfo_t* Found = LoadedObjects[i]->FindScript(Number);
+		VAcsInfo* Found = LoadedObjects[i]->FindScript(Number);
 		if (Found)
 		{
 			Object = LoadedObjects[i];
@@ -1261,13 +1286,13 @@ acsInfo_t* FACScriptsObject::StaticFindScript(int Number, FACScriptsObject*& Obj
 
 //==========================================================================
 //
-//	FACScriptsObject::StaticGetString
+//	VAcsLevel::GetString
 //
 //==========================================================================
 
-const char* FACScriptsObject::StaticGetString(int Index)
+const char* VAcsLevel::GetString(int Index)
 {
-	guard(FACScriptsObject::StaticGetString);
+	guard(VAcsLevel::GetString);
 	int ObjIdx = Index >> 16;
 	if (ObjIdx >= LoadedObjects.Num())
 	{
@@ -1279,13 +1304,13 @@ const char* FACScriptsObject::StaticGetString(int Index)
 
 //==========================================================================
 //
-//	FACScriptsObject::StaticGetObject
+//	VAcsLevel::GetObject
 //
 //==========================================================================
 
-FACScriptsObject* FACScriptsObject::StaticGetObject(int Index)
+VAcsObject* VAcsLevel::GetObject(int Index)
 {
-	guard(FACScriptsObject::StaticGetObject);
+	guard(VAcsLevel::GetObject);
 	if ((unsigned)Index >= (unsigned)LoadedObjects.Num())
 	{
 		return NULL;
@@ -1296,13 +1321,13 @@ FACScriptsObject* FACScriptsObject::StaticGetObject(int Index)
 
 //==========================================================================
 //
-//	FACScriptsObject::StaticStartTypedACScripts
+//	VAcsLevel::StartTypedACScripts
 //
 //==========================================================================
 
-void FACScriptsObject::StaticStartTypedACScripts(int Type)
+void VAcsLevel::StartTypedACScripts(int Type)
 {
-	guard(FACScriptsObject::StaticStartTypedACScripts);
+	guard(VAcsLevel::StartTypedACScripts);
 	for (int i = 0; i < LoadedObjects.Num(); i++)
 	{
 		LoadedObjects[i]->StartTypedACScripts(Type);
@@ -1312,13 +1337,13 @@ void FACScriptsObject::StaticStartTypedACScripts(int Type)
 
 //==========================================================================
 //
-//	FACScriptsObject::StaticSerialise
+//	VAcsLevel::Serialise
 //
 //==========================================================================
 
-void FACScriptsObject::StaticSerialise(VStream& Strm)
+void VAcsLevel::Serialise(VStream& Strm)
 {
-	guard(FACScriptsObject::StaticSerialise);
+	guard(VAcsLevel::Serialise);
 	for (int i = 0; i < LoadedObjects.Num(); i++)
 	{
 		LoadedObjects[i]->Serialise(Strm);
@@ -1328,49 +1353,270 @@ void FACScriptsObject::StaticSerialise(VStream& Strm)
 
 //==========================================================================
 //
-//	FACScriptsObject::ScriptFinished
+//	VAcsLevel::AddToACSStore
 //
 //==========================================================================
 
-void FACScriptsObject::ScriptFinished(int number)
+bool VAcsLevel::AddToACSStore(int Type, VName Map, int Number, int Arg1,
+	int Arg2, int Arg3, VEntity* Activator)
 {
-	guard(FACScriptsObject::ScriptFinished);
-	for (int i = 0; i < NumScripts; i++)
+	guard(VAcsLevel::AddToACSStore);
+	VAcsStore& S = AcsGlobal.Store.Alloc();
+	S.Map = Map;
+	S.Type = Type;
+	S.PlayerNum = Activator && Activator->Player ?
+		SV_GetPlayerNum(Activator->Player) : -1;
+	S.Script = Number;
+	S.Args[0] = Arg1;
+	S.Args[1] = Arg2;
+	S.Args[2] = Arg3;
+	return true;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VAcsLevel::CheckAcsStore
+//
+//	Scans the ACS store and executes all scripts belonging to the current
+// map.
+//
+//==========================================================================
+
+void VAcsLevel::CheckAcsStore()
+{
+	guard(VAcsLevel::CheckAcsStore);
+	for (int i = AcsGlobal.Store.Num() - 1; i >= 0; i--)
 	{
-		if (Scripts[i].state == ASTE_WAITINGFORSCRIPT &&
-			Scripts[i].waitValue == number)
+		VAcsStore* store = &AcsGlobal.Store[i];
+		if (store->Map != level.MapName)
 		{
-			Scripts[i].state = ASTE_RUNNING;
+			continue;
+		}
+
+		VAcsObject* Object;
+		VAcsInfo* Info = FindScript(store->Script, Object);
+		if (!Info)
+		{
+			//	Script not found
+			GCon->Logf(NAME_Dev, "Start ACS ERROR: Unknown script %d", store->Script);
+		}
+		else
+		{
+			switch (store->Type)
+			{
+			case VAcsStore::Start:
+			case VAcsStore::StartAlways:
+				SpawnScript(Info, Object, store->PlayerNum >= 0 &&
+					GGameInfo->Players[store->PlayerNum] &&
+					(GGameInfo->Players[store->PlayerNum]->PlayerFlags &
+					VBasePlayer::PF_Spawned) ?
+					GGameInfo->Players[store->PlayerNum]->MO : NULL, NULL, 0,
+					store->Args[0], store->Args[1], store->Args[2],
+					store->Type == VAcsStore::StartAlways, true);
+				break;
+
+			case VAcsStore::Terminate:
+				if (!Info->RunningScript ||
+					Info->RunningScript->State == VAcs::ASTE_Terminating)
+				{
+					//	States that disallow termination
+					break;
+				}
+				Info->RunningScript->State = VAcs::ASTE_Terminating;
+				break;
+
+			case VAcsStore::Suspend:
+				if (!Info->RunningScript ||
+					Info->RunningScript->State == VAcs::ASTE_Suspended ||
+					Info->RunningScript->State == VAcs::ASTE_Terminating)
+				{
+					// States that disallow suspension
+					break;
+				}
+				Info->RunningScript->State = VAcs::ASTE_Suspended;
+				break;
+			}
+		}
+		AcsGlobal.Store.RemoveIndex(i);
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VAcsLevel::Start
+//
+//==========================================================================
+
+bool VAcsLevel::Start(int Number, int MapNum, int Arg1, int Arg2, int Arg3,
+	VEntity* Activator, line_t* Line, int Side, bool Always, bool WantResult)
+{
+	guard(VAcsLevel::Start);
+	if (MapNum)
+	{
+		VName Map = P_GetMapNameByLevelNum(MapNum);
+		if (Map != NAME_None && Map != level.MapName)
+		{
+			// Add to the script store
+			return AddToACSStore(Always ? VAcsStore::StartAlways :
+				VAcsStore::Start, Map, Number, Arg1, Arg2, Arg3, Activator);
 		}
 	}
-	unguard;
-}
 
-//==========================================================================
-//
-//	FACScriptsObject::StaticScriptFinished
-//
-//==========================================================================
-
-void FACScriptsObject::StaticScriptFinished(int number)
-{
-	guard(FACScriptsObject::StaticScriptFinished);
-	for (int i = 0; i < LoadedObjects.Num(); i++)
+	VAcsObject* Object;
+	VAcsInfo* Info = FindScript(Number, Object);
+	if (!Info)
 	{
-		LoadedObjects[i]->ScriptFinished(number);
+		//	Script not found
+		GCon->Logf(NAME_Dev, "Start ACS ERROR: Unknown script %d", Number);
+		return false;
 	}
+	VAcs* script = SpawnScript(Info, Object, Activator, Line, Side, Arg1,
+		Arg2, Arg3, Always, false);
+	if (WantResult)
+	{
+		return !!script->RunScript(host_frametime);
+	}
+	return true;
 	unguard;
 }
 
 //==========================================================================
 //
-//	FACSGrowingArray::Redim
+//	VAcsLevel::Terminate
 //
 //==========================================================================
 
-void FACSGrowingArray::Redim(int NewSize)
+bool VAcsLevel::Terminate(int Number, int MapNum)
 {
-	guard(FACSGrowingArray::Redim);
+	guard(VAcsLevel::Terminate);
+	if (MapNum)
+	{
+		VName Map = P_GetMapNameByLevelNum(MapNum);
+		if (Map != NAME_None && Map != level.MapName)
+		{
+			// Add to the script store
+			return AddToACSStore(VAcsStore::Terminate, Map, Number, 0, 0, 0, 0);
+		}
+	}
+
+	VAcsObject* Object;
+	VAcsInfo* Info = FindScript(Number, Object);
+	if (!Info)
+	{
+		//	Script not found
+		return false;
+	}
+	if (!Info->RunningScript ||
+		Info->RunningScript->State == VAcs::ASTE_Terminating)
+	{
+		//	States that disallow termination
+		return false;
+	}
+	Info->RunningScript->State = VAcs::ASTE_Terminating;
+	return true;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VAcsLevel::Suspend
+//
+//==========================================================================
+
+bool VAcsLevel::Suspend(int Number, int MapNum)
+{
+	guard(VAcsLevel::Suspend);
+	if (MapNum)
+	{
+		VName Map = P_GetMapNameByLevelNum(MapNum);
+		if (Map != NAME_None && Map != level.MapName)
+		{
+			// Add to the script store
+			return AddToACSStore(VAcsStore::Suspend, Map, Number, 0, 0, 0, 0);
+		}
+	}
+
+	VAcsObject* Object;
+	VAcsInfo* Info = FindScript(Number, Object);
+	if (!Info)
+	{
+		//	Script not found.
+		return false;
+	}
+	if (!Info->RunningScript ||
+		Info->RunningScript->State == VAcs::ASTE_Suspended ||
+		Info->RunningScript->State == VAcs::ASTE_Terminating)
+	{
+		// States that disallow suspension
+		return false;
+	}
+	Info->RunningScript->State = VAcs::ASTE_Suspended;
+	return true;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VAcsLevel::SpawnScript
+//
+//==========================================================================
+
+VAcs* VAcsLevel::SpawnScript(VAcsInfo* Info, VAcsObject* Object,
+	VEntity* Activator, line_t* Line, int Side, int Arg1, int Arg2, int Arg3,
+	bool Always, bool Delayed)
+{
+	guard(VAcsLevel::SpawnScript);
+	if (!Always && Info->RunningScript)
+	{
+		if (Info->RunningScript->State == VAcs::ASTE_Suspended)
+		{
+			//	Resume a suspended script
+			Info->RunningScript->State = VAcs::ASTE_Running;
+		}
+		//	Script is already executing
+		return Info->RunningScript;
+	}
+
+	VAcs* script = Spawn<VAcs>();
+	XLevel->AddThinker(script);
+	script->info = Info;
+	script->number = Info->Number;
+	script->InstructionPointer = Info->Address;
+	script->State = VAcs::ASTE_Running;
+	script->ActiveObject = Object;
+	script->Activator = Activator;
+	script->line = Line;
+	script->side = Side;
+	script->LocalVars = new vint32[Info->VarCount];
+	script->LocalVars[0] = Arg1;
+	script->LocalVars[1] = Arg2;
+	script->LocalVars[2] = Arg3;
+	memset(script->LocalVars + Info->ArgCount, 0,
+		(Info->VarCount - Info->ArgCount) * 4);
+	if (Delayed)
+	{
+		//	World objects are allotted 1 second for initialization.
+		script->DelayTime = 1.0;
+	}
+	if (!Always)
+	{
+		Info->RunningScript = script;
+	}
+	return script;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VAcsGrowingArray::Redim
+//
+//==========================================================================
+
+void VAcsGrowingArray::Redim(int NewSize)
+{
+	guard(VAcsGrowingArray::Redim);
 	if (!NewSize && Data)
 	{
 		delete[] Data;
@@ -1397,13 +1643,13 @@ void FACSGrowingArray::Redim(int NewSize)
 
 //==========================================================================
 //
-//	FACSGrowingArray::SetElemVal
+//	VAcsGrowingArray::SetElemVal
 //
 //==========================================================================
 
-void FACSGrowingArray::SetElemVal(int Index, int Value)
+void VAcsGrowingArray::SetElemVal(int Index, int Value)
 {
-	guard(FACSGrowingArray::SetElemVal);
+	guard(VAcsGrowingArray::SetElemVal);
 	if (Index >= Size)
 	{
 		Redim(Index + 1);
@@ -1414,13 +1660,13 @@ void FACSGrowingArray::SetElemVal(int Index, int Value)
 
 //==========================================================================
 //
-//	FACSGrowingArray::GetElemVal
+//	VAcsGrowingArray::GetElemVal
 //
 //==========================================================================
 
-int FACSGrowingArray::GetElemVal(int Index)
+int VAcsGrowingArray::GetElemVal(int Index)
 {
-	guard(FACSGrowingArray::GetElemVal);
+	guard(VAcsGrowingArray::GetElemVal);
 	if ((unsigned)Index >= (unsigned)Size)
 		return 0;
 	return Data[Index];
@@ -1429,13 +1675,13 @@ int FACSGrowingArray::GetElemVal(int Index)
 
 //==========================================================================
 //
-//	FACSGrowingArray::Serialise
+//	VAcsGrowingArray::Serialise
 //
 //==========================================================================
 
-void FACSGrowingArray::Serialise(VStream& Strm)
+void VAcsGrowingArray::Serialise(VStream& Strm)
 {
-	guard(FACSGrowingArray::Serialise);
+	guard(VAcsGrowingArray::Serialise);
 	if (Strm.IsLoading())
 	{
 		int NewSize;
@@ -1455,13 +1701,13 @@ void FACSGrowingArray::Serialise(VStream& Strm)
 
 //==========================================================================
 //
-//	VACS::Destroy
+//	VAcs::Destroy
 //
 //==========================================================================
 
-void VACS::Destroy()
+void VAcs::Destroy()
 {
-	guard(VACS::Destroy);
+	guard(VAcs::Destroy);
 	if (LocalVars)
 	{
 		delete[] LocalVars;
@@ -1471,13 +1717,13 @@ void VACS::Destroy()
 
 //==========================================================================
 //
-//	VACS::Serialise
+//	VAcs::Serialise
 //
 //==========================================================================
 
-void VACS::Serialise(VStream& Strm)
+void VAcs::Serialise(VStream& Strm)
 {
-	guard(VACS::Serialise);
+	guard(VAcs::Serialise);
 	vint32 TmpInt;
 
 	Super::Serialise(Strm);
@@ -1494,11 +1740,13 @@ void VACS::Serialise(VStream& Strm)
 	}
 	Strm << side
 		<< number
-		<< DelayTime;
+		<< State
+		<< DelayTime
+		<< STRM_INDEX(WaitValue);
 	if (Strm.IsLoading())
 	{
 		Strm << STRM_INDEX(TmpInt);
-		ActiveObject = FACScriptsObject::StaticGetObject(TmpInt);
+		ActiveObject = XLevel->Acs->GetObject(TmpInt);
 		Strm << STRM_INDEX(TmpInt);
 		InstructionPointer = ActiveObject->OffsetToPtr(TmpInt);
 		info = ActiveObject->FindScript(number);
@@ -1524,16 +1772,16 @@ void VACS::Serialise(VStream& Strm)
 //
 //==========================================================================
 
-void VACS::Tick(float DeltaTime)
+void VAcs::Tick(float DeltaTime)
 {
-	guard(VACS::Tick);
+	guard(VAcs::Tick);
 	RunScript(DeltaTime);
 	unguard;
 }
 
 //==========================================================================
 //
-//	VACS::RunScript
+//	VAcs::RunScript
 //
 //==========================================================================
 
@@ -1584,27 +1832,39 @@ void VACS::Tick(float DeltaTime)
 #define READ_BYTE_OR_INT32	(fmt == ACS_LittleEnhanced ? *ip : READ_INT32(ip))
 #define INC_BYTE_OR_INT32	if (fmt == ACS_LittleEnhanced) ip++; else ip += 4
 
-int VACS::RunScript(float DeltaTime)
+int VAcs::RunScript(float DeltaTime)
 {
-	guard(VACS::RunScript);
-	if (info->state == ASTE_TERMINATING)
+	guard(VAcs::RunScript);
+	VAcsObject* WaitObject;
+	if (State == ASTE_Terminating)
 	{
-		info->state = ASTE_INACTIVE;
-		FACScriptsObject::StaticScriptFinished(number);
+		if (info->RunningScript == this)
+		{
+			info->RunningScript = NULL;
+		}
 		SetFlags(_OF_DelayedDestroy);
 		return 1;
 	}
-	if (info->state == ASTE_WAITINGFORTAG &&
-		!Level->eventTagBusy(info->waitValue))
+	if (State == ASTE_WaitingForTag && !Level->eventTagBusy(WaitValue))
 	{
-		info->state = ASTE_RUNNING;
+		State = ASTE_Running;
 	}
-	if (info->state == ASTE_WAITINGFORPOLY &&
-		!Level->eventPolyBusy(info->waitValue))
+	if (State == ASTE_WaitingForPoly && !Level->eventPolyBusy(WaitValue))
 	{
-		info->state = ASTE_RUNNING;
+		State = ASTE_Running;
 	}
-	if (info->state != ASTE_RUNNING)
+	if (State == ASTE_WaitingForScriptStart &&
+		XLevel->Acs->FindScript(WaitValue, WaitObject) &&
+		XLevel->Acs->FindScript(WaitValue, WaitObject)->RunningScript)
+	{
+		State = ASTE_WaitingForScript;
+	}
+	if (State == ASTE_WaitingForScript &&
+		!XLevel->Acs->FindScript(WaitValue, WaitObject)->RunningScript)
+	{
+		State = ASTE_Running;
+	}
+	if (State != ASTE_Running)
 	{
 		return 1;
 	}
@@ -1616,14 +1876,20 @@ int VACS::RunScript(float DeltaTime)
 		return 1;
 	}
 
+	//	Shortcuts
+	int* WorldVars = AcsGlobal.WorldVars;
+	int* GlobalVars = AcsGlobal.GlobalVars;
+	VAcsGrowingArray* WorldArrays = AcsGlobal.WorldArrays;
+	VAcsGrowingArray* GlobalArrays = AcsGlobal.GlobalArrays;
+
 	VStr PrintStr;
 	vint32 resultValue = 1;
 	vint32 stack[ACS_STACK_DEPTH];
 	vint32* optstart = NULL;
 	vint32* locals = LocalVars;
-	FACScriptFunction* activeFunction = NULL;
-	EACSFormat fmt = ActiveObject->GetFormat();
-	int action = SCRIPT_CONTINUE;
+	VAcsFunction* activeFunction = NULL;
+	EAcsFormat fmt = ActiveObject->GetFormat();
+	int action = SCRIPT_Continue;
 	vuint8* ip = InstructionPointer;
 	vint32* sp = stack;
 	do
@@ -1663,12 +1929,12 @@ int VACS::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_Terminate)
-			action = SCRIPT_TERMINATE;
+			action = SCRIPT_Terminate;
 			ACSVM_BREAK_STOP;
 
 		ACSVM_CASE(PCD_Suspend)
-			info->state = ASTE_SUSPENDED;
-			action = SCRIPT_STOP;
+			State = ASTE_Suspended;
+			action = SCRIPT_Stop;
 			ACSVM_BREAK_STOP;
 
 		ACSVM_CASE(PCD_PushNumber)
@@ -2015,13 +2281,13 @@ int VACS::RunScript(float DeltaTime)
 		ACSVM_CASE(PCD_Delay)
 			DelayTime = float(sp[-1]) / 35.0;
 			sp--;
-			action = SCRIPT_STOP;
+			action = SCRIPT_Stop;
 			ACSVM_BREAK_STOP;
 
 		ACSVM_CASE(PCD_DelayDirect)
 			DelayTime = float(READ_INT32(ip)) / 35.0;
 			ip += 4;
-			action = SCRIPT_STOP;
+			action = SCRIPT_Stop;
 			ACSVM_BREAK_STOP;
 
 		ACSVM_CASE(PCD_Random)
@@ -2048,31 +2314,31 @@ int VACS::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_TagWait)
-			info->waitValue = sp[-1];
-			info->state = ASTE_WAITINGFORTAG;
+			WaitValue = sp[-1];
+			State = ASTE_WaitingForTag;
 			sp--;
-			action = SCRIPT_STOP;
+			action = SCRIPT_Stop;
 			ACSVM_BREAK_STOP;
 
 		ACSVM_CASE(PCD_TagWaitDirect)
-			info->waitValue = READ_INT32(ip);
-			info->state = ASTE_WAITINGFORTAG;
+			WaitValue = READ_INT32(ip);
+			State = ASTE_WaitingForTag;
 			ip += 4;
-			action = SCRIPT_STOP;
+			action = SCRIPT_Stop;
 			ACSVM_BREAK_STOP;
 
 		ACSVM_CASE(PCD_PolyWait)
-			info->waitValue = sp[-1];
-			info->state = ASTE_WAITINGFORPOLY;
+			WaitValue = sp[-1];
+			State = ASTE_WaitingForPoly;
 			sp--;
-			action = SCRIPT_STOP;
+			action = SCRIPT_Stop;
 			ACSVM_BREAK_STOP;
 
 		ACSVM_CASE(PCD_PolyWaitDirect)
-			info->waitValue = READ_INT32(ip);
-			info->state = ASTE_WAITINGFORPOLY;
+			WaitValue = READ_INT32(ip);
+			State = ASTE_WaitingForPoly;
 			ip += 4;
-			action = SCRIPT_STOP;
+			action = SCRIPT_Stop;
 			ACSVM_BREAK_STOP;
 
 		ACSVM_CASE(PCD_ChangeFloor)
@@ -2196,17 +2462,33 @@ int VACS::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_ScriptWait)
-			info->waitValue = sp[-1];
-			info->state = ASTE_WAITINGFORSCRIPT;
+			WaitValue = sp[-1];
+			if (!XLevel->Acs->FindScript(WaitValue, WaitObject) ||
+				!XLevel->Acs->FindScript(WaitValue, WaitObject)->RunningScript)
+			{
+				State = ASTE_WaitingForScriptStart;
+			}
+			else
+			{
+				State = ASTE_WaitingForScript;
+			}
 			sp--;
-			action = SCRIPT_STOP;
+			action = SCRIPT_Stop;
 			ACSVM_BREAK_STOP;
 
 		ACSVM_CASE(PCD_ScriptWaitDirect)
-			info->waitValue = READ_INT32(ip);
-			info->state = ASTE_WAITINGFORSCRIPT;
+			WaitValue = READ_INT32(ip);
+			if (!XLevel->Acs->FindScript(WaitValue, WaitObject) ||
+				!XLevel->Acs->FindScript(WaitValue, WaitObject)->RunningScript)
+			{
+				State = ASTE_WaitingForScriptStart;
+			}
+			else
+			{
+				State = ASTE_WaitingForScript;
+			}
 			ip += 4;
-			action = SCRIPT_STOP;
+			action = SCRIPT_Stop;
 			ACSVM_BREAK_STOP;
 
 		ACSVM_CASE(PCD_ClearLineSpecial)
@@ -2263,7 +2545,7 @@ int VACS::RunScript(float DeltaTime)
 			sp[0] = 0;
 			for (int i = 0; i < MAXPLAYERS; i++)
 			{
-				if (GGameInfo->Players[i])
+				if (Level->Game->Players[i])
 					sp[0]++;
 			}
 			sp++;
@@ -2468,7 +2750,7 @@ int VACS::RunScript(float DeltaTime)
 				}
 				else
 				{
-					Plr = GGameInfo->Players[sp[-1] - 1];
+					Plr = Level->Game->Players[sp[-1] - 1];
 				}
 				if (Plr && (Plr->PlayerFlags & VBasePlayer::PF_Spawned))
 				{
@@ -2763,7 +3045,7 @@ int VACS::RunScript(float DeltaTime)
 		ACSVM_CASE(PCD_DelayDirectB)
 			DelayTime = float(*ip) / 35.0;
 			ip++;
-			action = SCRIPT_STOP;
+			action = SCRIPT_Stop;
 			ACSVM_BREAK_STOP;
 
 		ACSVM_CASE(PCD_RandomDirectB)
@@ -3018,24 +3300,24 @@ int VACS::RunScript(float DeltaTime)
 			{
 				int funcnum;
 				int i;
-				FACScriptsObject* object = ActiveObject;
+				VAcsObject* object = ActiveObject;
 
 				funcnum = READ_BYTE_OR_INT32;
 				INC_BYTE_OR_INT32;
-				FACScriptFunction* func = ActiveObject->GetFunction(funcnum,
+				VAcsFunction* func = ActiveObject->GetFunction(funcnum,
 					object);
 				if (!func)
 				{
 					GCon->Logf("Function %d in script %d out of range",
 						funcnum, number);
-					action = SCRIPT_TERMINATE;
+					action = SCRIPT_Terminate;
 					ACSVM_BREAK_STOP;
 				}
 				if ((sp - stack) + func->LocalCount + 64 > ACS_STACK_DEPTH)
 				{
 					// 64 is the margin for the function's working space
 					GCon->Logf("Out of stack space in script %d", number);
-					action = SCRIPT_TERMINATE;
+					action = SCRIPT_Terminate;
 					ACSVM_BREAK_STOP;
 				}
 				//	The function's first argument is also its first local
@@ -3048,12 +3330,12 @@ int VACS::RunScript(float DeltaTime)
 					sp[i] = 0;
 				}
 				sp += i;
-				((CallReturn*)sp)->ReturnAddress =
+				((VAcsCallReturn*)sp)->ReturnAddress =
 					ActiveObject->PtrToOffset(ip);
-				((CallReturn*)sp)->ReturnFunction = activeFunction;
-				((CallReturn*)sp)->ReturnObject = ActiveObject;
-				((CallReturn*)sp)->bDiscardResult = (cmd == PCD_CallDiscard);
-				sp += sizeof(CallReturn) / sizeof(vint32);
+				((VAcsCallReturn*)sp)->ReturnFunction = activeFunction;
+				((VAcsCallReturn*)sp)->ReturnObject = ActiveObject;
+				((VAcsCallReturn*)sp)->bDiscardResult = (cmd == PCD_CallDiscard);
+				sp += sizeof(VAcsCallReturn) / sizeof(vint32);
 				ip = ActiveObject->OffsetToPtr(func->Address);
 				ActiveObject = object;
 				activeFunction = func;
@@ -3064,7 +3346,7 @@ int VACS::RunScript(float DeltaTime)
 		ACSVM_CASE(PCD_ReturnVal)
 			{
 				int value;
-				CallReturn* retState;
+				VAcsCallReturn* retState;
 
 				if (cmd == PCD_ReturnVal)
 				{
@@ -3075,8 +3357,8 @@ int VACS::RunScript(float DeltaTime)
 				{
 					value = 0;
 				}
-				sp -= sizeof(CallReturn) / sizeof(vint32);
-				retState = (CallReturn*)sp;
+				sp -= sizeof(VAcsCallReturn) / sizeof(vint32);
+				retState = (VAcsCallReturn*)sp;
 				ip = ActiveObject->OffsetToPtr(retState->ReturnAddress);
 				sp -= activeFunction->ArgCount + activeFunction->LocalCount;
 				activeFunction = retState->ReturnFunction;
@@ -3089,7 +3371,7 @@ int VACS::RunScript(float DeltaTime)
 				else
 				{
 					locals = sp - activeFunction->ArgCount -
-						activeFunction->LocalCount - sizeof(CallReturn) /
+						activeFunction->LocalCount - sizeof(VAcsCallReturn) /
 						sizeof(vint32);
 				}
 				if (!retState->bDiscardResult)
@@ -3609,15 +3891,15 @@ int VACS::RunScript(float DeltaTime)
 
 		ACSVM_CASE(PCD_PlayerInGame)
 			sp[-1] = (sp[-1] < 0 || sp[-1] >= MAXPLAYERS) ? false :
-				(GGameInfo->Players[sp[-1]] && (GGameInfo->Players[
+				(Level->Game->Players[sp[-1]] && (Level->Game->Players[
 				sp[-1]]->PlayerFlags & VBasePlayer::PF_Spawned));
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_PlayerIsBot)
 			sp[-1] = (sp[-1] < 0 || sp[-1] >= MAXPLAYERS) ? false :
-				GGameInfo->Players[sp[-1]] && GGameInfo->Players[
+				Level->Game->Players[sp[-1]] && Level->Game->Players[
 				sp[-1]]->PlayerFlags & VBasePlayer::PF_Spawned &&
-				GGameInfo->Players[sp[-1]]->PlayerFlags &
+				Level->Game->Players[sp[-1]]->PlayerFlags &
 				VBasePlayer::PF_IsBot;
 			ACSVM_BREAK;
 
@@ -3789,14 +4071,14 @@ int VACS::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_PlayerClass)
-			if (sp[-1] < 0 || sp[-1] >= MAXPLAYERS || !GGameInfo->Players[sp[-1]] ||
-				!(GGameInfo->Players[sp[-1]]->PlayerFlags & VBasePlayer::PF_Spawned))
+			if (sp[-1] < 0 || sp[-1] >= MAXPLAYERS || !Level->Game->Players[sp[-1]] ||
+				!(Level->Game->Players[sp[-1]]->PlayerFlags & VBasePlayer::PF_Spawned))
 			{
 				sp[-1] = -1;
 			}
 			else
 			{
-				sp[-1] = GGameInfo->Players[sp[-1]]->PClass;
+				sp[-1] = Level->Game->Players[sp[-1]]->PClass;
 			}
 			ACSVM_BREAK;
 
@@ -4181,21 +4463,23 @@ int VACS::RunScript(float DeltaTime)
 		ACSVM_CASE(PCD_SetMousePointer)
 		ACSVM_CASE(PCD_MoveMousePointer)
 			GCon->Logf(NAME_Dev, "Unsupported ACS p-code %d", cmd);
-			action = SCRIPT_TERMINATE;
+			action = SCRIPT_Terminate;
 			ACSVM_BREAK_STOP;
 
 		ACSVM_DEFAULT
 			Host_Error("Illegal ACS opcode %d", cmd);
 		}
-	} while  (action == SCRIPT_CONTINUE);
+	} while  (action == SCRIPT_Continue);
 #if USE_COMPUTED_GOTO
 LblFuncStop:
 #endif
 	InstructionPointer = ip;
-	if (action == SCRIPT_TERMINATE)
+	if (action == SCRIPT_Terminate)
 	{
-		info->state = ASTE_INACTIVE;
-		FACScriptsObject::StaticScriptFinished(number);
+		if (info->RunningScript == this)
+		{
+			info->RunningScript = NULL;
+		}
 		SetFlags(_OF_DelayedDestroy);
 	}
 	return resultValue;
@@ -4210,9 +4494,9 @@ LblFuncStop:
 //
 //==========================================================================
 
-int VACS::FindSectorFromTag(int tag, int start)
+int VAcs::FindSectorFromTag(int tag, int start)
 {
-	guard(VACS::FindSectorFromTag);
+	guard(VAcs::FindSectorFromTag);
 	for (int i = start + 1; i < XLevel->NumSectors; i++)
 		if (XLevel->Sectors[i].tag == tag)
 			return i;
@@ -4222,13 +4506,13 @@ int VACS::FindSectorFromTag(int tag, int start)
 
 //============================================================================
 //
-//	VACS::GiveInventory
+//	VAcs::GiveInventory
 //
 //============================================================================
 
-void VACS::GiveInventory(VEntity* Activator, const char* AType, int Amount)
+void VAcs::GiveInventory(VEntity* Activator, const char* AType, int Amount)
 {
-	guard(VACS::GiveInventory);
+	guard(VAcs::GiveInventory);
 	if (Amount <= 0)
 	{
 		return;
@@ -4238,7 +4522,7 @@ void VACS::GiveInventory(VEntity* Activator, const char* AType, int Amount)
 	{
 		Type = "BasicArmor";
 	}
-	else if (Activator)
+	if (Activator)
 	{
 		Activator->eventGiveInventory(Type, Amount);
 	}
@@ -4246,9 +4530,9 @@ void VACS::GiveInventory(VEntity* Activator, const char* AType, int Amount)
 	{
 		for (int i = 0; i < MAXPLAYERS; i++)
 		{
-			if (GGameInfo->Players[i] &&
-				GGameInfo->Players[i]->PlayerFlags & VBasePlayer::PF_Spawned)
-				GGameInfo->Players[i]->MO->eventGiveInventory(Type, Amount);
+			if (Level->Game->Players[i] &&
+				Level->Game->Players[i]->PlayerFlags & VBasePlayer::PF_Spawned)
+				Level->Game->Players[i]->MO->eventGiveInventory(Type, Amount);
 		}
 	}
 	return;
@@ -4257,13 +4541,13 @@ void VACS::GiveInventory(VEntity* Activator, const char* AType, int Amount)
 
 //============================================================================
 //
-//	VACS::TakeInventory
+//	VAcs::TakeInventory
 //
 //============================================================================
 
-void VACS::TakeInventory(VEntity* Activator, const char* AType, int Amount)
+void VAcs::TakeInventory(VEntity* Activator, const char* AType, int Amount)
 {
-	guard(VACS::TakeInventory);
+	guard(VAcs::TakeInventory);
 	if (Amount <= 0)
 	{
 		return;
@@ -4281,9 +4565,9 @@ void VACS::TakeInventory(VEntity* Activator, const char* AType, int Amount)
 	{
 		for (int i = 0; i < MAXPLAYERS; i++)
 		{
-			if (GGameInfo->Players[i] &&
-				GGameInfo->Players[i]->PlayerFlags & VBasePlayer::PF_Spawned)
-				GGameInfo->Players[i]->MO->eventTakeInventory(Type, Amount);
+			if (Level->Game->Players[i] &&
+				Level->Game->Players[i]->PlayerFlags & VBasePlayer::PF_Spawned)
+				Level->Game->Players[i]->MO->eventTakeInventory(Type, Amount);
 		}
 	}
 	unguard;
@@ -4291,13 +4575,13 @@ void VACS::TakeInventory(VEntity* Activator, const char* AType, int Amount)
 
 //============================================================================
 //
-//	VACS::CheckInventory
+//	VAcs::CheckInventory
 //
 //============================================================================
 
-int VACS::CheckInventory(VEntity* Activator, const char* AType)
+int VAcs::CheckInventory(VEntity* Activator, const char* AType)
 {
-	guard(VACS::CheckInventory);
+	guard(VAcs::CheckInventory);
 	if (!Activator)
 		return 0;
 
@@ -4316,320 +4600,25 @@ int VACS::CheckInventory(VEntity* Activator, const char* AType)
 
 //==========================================================================
 //
-// P_LoadACScripts
+//	VAcsGlobal::VAcsGlobal
 //
 //==========================================================================
 
-void P_LoadACScripts(int Lump)
+VAcsGlobal::VAcsGlobal()
 {
-	guard(P_LoadACScripts);
-	if (Lump < 0)
-	{
-		return;
-	}
-
-	FACScriptsObject::StaticLoadObject(Lump);
-	unguard;
-}
-
-//==========================================================================
-//
-//	P_UnloadACScripts
-//
-//==========================================================================
-
-void P_UnloadACScripts()
-{
-	guard(P_UnloadACScripts);
-	FACScriptsObject::StaticUnloadObjects();
-	unguard;
-}
-
-//==========================================================================
-//
-//	P_StartTypedACScripts
-//
-//==========================================================================
-
-void P_StartTypedACScripts(int Type)
-{
-	FACScriptsObject::StaticStartTypedACScripts(Type);
-}
-
-//==========================================================================
-//
-// P_CheckACSStore
-//
-// Scans the ACS store and executes all scripts belonging to the current
-// map.
-//
-//==========================================================================
-
-void P_CheckACSStore()
-{
-	guard(P_CheckACSStore);
-	acsstore_t *store;
-
-	for (store = ACSStore; store->map[0] != 0; store++)
-	{
-		if (!VStr::ICmp(store->map, *level.MapName))
-		{
-			FACScriptsObject* Object;
-			acsInfo_t* info = FACScriptsObject::StaticFindScript(store->script, Object);
-			if (info)
-			{
-				if (info->state == ASTE_SUSPENDED)
-				{
-					//	Resume a suspended script
-					info->state = ASTE_RUNNING;
-				}
-				else if (info->state == ASTE_INACTIVE)
-				{
-					SpawnScript(info, Object, NULL, NULL, 0, store->args[0],
-						store->args[1], store->args[2], true);
-				}
-			}
-			else
-			{
-				//	Script not found.
-				GCon->Logf(NAME_Dev, "P_CheckACSStore: Unknown script %d",
-					store->script);
-			}
-			VStr::Cpy(store->map, "-");
-		}
-	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	P_StartACS
-//
-//==========================================================================
-
-bool P_StartACS(int number, int map_num, int arg1, int arg2, int arg3,
-	VEntity *activator, line_t *line, int side, bool Always, bool WantResult)
-{
-	guard(P_StartACS);
-	char map[12] = "";
-	FACScriptsObject* Object;
-
-	if (map_num)
-	{
-		VStr::Cpy(map, *P_GetMapNameByLevelNum(map_num));
-	}
-
-	if (map[0] && VStr::ICmp(map, *level.MapName))
-	{
-		// Add to the script store
-		return AddToACSStore(map, number, arg1, arg2, arg3);
-	}
-	acsInfo_t* info = FACScriptsObject::StaticFindScript(number, Object);
-	if (!info)
-	{
-		//	Script not found
-		GCon->Logf(NAME_Dev, "P_StartACS ERROR: Unknown script %d", number);
-		return false;
-	}
-	if (!Always)
-	{
-		if (info->state == ASTE_SUSPENDED)
-		{
-			//	Resume a suspended script
-			info->state = ASTE_RUNNING;
-			return true;
-		}
-		if (info->state != ASTE_INACTIVE)
-		{
-			//	Script is already executing
-			return false;
-		}
-	}
-	VACS* script = SpawnScript(info, Object, activator, line, side, arg1,
-		arg2, arg3, false);
-	if (WantResult)
-	{
-		return !!script->RunScript(host_frametime);
-	}
-	return true;
-	unguard;
-}
-
-//==========================================================================
-//
-// AddToACSStore
-//
-//==========================================================================
-
-static bool AddToACSStore(const char *map, int number, int arg1, int arg2,
-	int arg3)
-{
-	int i;
-	int index;
-
-	index = -1;
-	for (i = 0; ACSStore[i].map[0]; i++)
-	{
-		if (ACSStore[i].script == number && !VStr::Cmp(ACSStore[i].map, map))
-		{
-			// Don't allow duplicates
-			return false;
-		}
-		if (index == -1 && ACSStore[i].map[0] == '-')
-		{
-			// Remember first empty slot
-			index = i;
-		}
-	}
-	if (index == -1)
-	{
-		// Append required
-		if (i == MAX_ACS_STORE)
-		{
-			Sys_Error("AddToACSStore: MAX_ACS_STORE (%d) exceeded.",
-				MAX_ACS_STORE);
-		}
-		index = i;
-		ACSStore[index + 1].map[0] = 0;
-	}
-	VStr::Cpy(ACSStore[index].map, map);
-	ACSStore[index].script = number;
-	ACSStore[index].args[0] = arg1;
-	ACSStore[index].args[1] = arg2;
-	ACSStore[index].args[2] = arg3;
-	return true;
-}
-
-//==========================================================================
-//
-// P_TerminateACS
-//
-//==========================================================================
-
-bool P_TerminateACS(int number, int)
-{
-	guard(P_TerminateACS);
-	acsInfo_t* info;
-	FACScriptsObject* Object;
-
-	info = FACScriptsObject::StaticFindScript(number, Object);
-	if (!info)
-	{
-		//	Script not found
-		return false;
-	}
-	if (info->state == ASTE_INACTIVE || info->state == ASTE_TERMINATING)
-	{
-		//	States that disallow termination
-		return false;
-	}
-	info->state = ASTE_TERMINATING;
-	return true;
-	unguard;
-}
-
-//==========================================================================
-//
-// P_SuspendACS
-//
-//==========================================================================
-
-bool P_SuspendACS(int number, int)
-{
-	guard(P_SuspendACS);
-	acsInfo_t* info;
-	FACScriptsObject* Object;
-
-	info = FACScriptsObject::StaticFindScript(number, Object);
-	if (!info)
-	{
-		//	Script not found.
-		return false;
-	}
-	if (info->state == ASTE_INACTIVE || info->state == ASTE_SUSPENDED ||
-		info->state == ASTE_TERMINATING)
-	{
-		// States that disallow suspension
-		return false;
-	}
-	info->state = ASTE_SUSPENDED;
-	return true;
-	unguard;
-}
-
-//==========================================================================
-//
-//	P_ACSInitNewGame
-//
-//==========================================================================
-
-void P_ACSInitNewGame()
-{
-	guard(P_ACSInitNewGame);
 	memset(WorldVars, 0, sizeof(WorldVars));
 	memset(GlobalVars, 0, sizeof(GlobalVars));
-	memset(ACSStore, 0, sizeof(ACSStore));
-	for (int i = 0; i < MAX_ACS_WORLD_VARS; i++)
-		WorldArrays[i].Redim(0);
-	for (int i = 0; i < MAX_ACS_GLOBAL_VARS; i++)
-		GlobalArrays[i].Redim(0);
-	unguard;
 }
 
 //==========================================================================
 //
-//	P_SerialiseScripts
+//	VAcsGlobal::Serialise
 //
 //==========================================================================
 
-void P_SerialiseScripts(VStream& Strm)
+void VAcsGlobal::Serialise(VStream& Strm)
 {
-	FACScriptsObject::StaticSerialise(Strm);
-}
-
-//==========================================================================
-//
-//	SpawnScript
-//
-//==========================================================================
-
-static VACS* SpawnScript(acsInfo_t* Info, FACScriptsObject* Object,
-	VEntity* Activator, line_t* Line, int Side, int Arg1, int Arg2, int Arg3,
-	bool Delayed)
-{
-	VACS* script = Spawn<VACS>();
-	GLevel->AddThinker(script);
-	script->info = Info;
-	script->number = Info->number;
-	script->InstructionPointer = Info->Address;
-	script->ActiveObject = Object;
-	script->Activator = Activator;
-	script->line = Line;
-	script->side = Side;
-	script->LocalVars = new vint32[Info->VarCount];
-	script->LocalVars[0] = Arg1;
-	script->LocalVars[1] = Arg2;
-	script->LocalVars[2] = Arg3;
-	memset(script->LocalVars + Info->argCount, 0,
-		(Info->VarCount - Info->argCount) * 4);
-	if (Delayed)
-	{
-		//	World objects are allotted 1 second for initialization.
-		script->DelayTime = 1.0;
-	}
-	Info->state = ASTE_RUNNING;
-	return script;
-}
-
-//==========================================================================
-//
-//	P_SerialiseAcsGlobal
-//
-//==========================================================================
-
-void P_SerialiseAcsGlobal(VStream& Strm)
-{
-	guard(P_SerialiseAcsGlobal);
+	guard(VAcsGlobal::Serialise);
 	for (int i = 0; i < MAX_ACS_WORLD_VARS; i++)
 	{
 		Strm << STRM_INDEX(WorldVars[i]);
@@ -4646,36 +4635,97 @@ void P_SerialiseAcsGlobal(VStream& Strm)
 	{
 		GlobalArrays[i].Serialise(Strm);
 	}
-	if (Strm.IsSaving())
+
+	vint32 NumAcsStore = Store.Num();
+	Strm << STRM_INDEX(NumAcsStore);
+	if (Strm.IsLoading())
 	{
-		vint32 NumAcsStore = 0;
-		for (acsstore_t* store = ACSStore; store->map[0] != 0; store++)
-			if (store->map[0] != '-')
-				NumAcsStore++;
-		Strm << STRM_INDEX(NumAcsStore);
-		for (acsstore_t* store = ACSStore; store->map[0] != 0; store++)
-			if (store->map[0] != '-')
-			{
-				Strm.Serialise(store->map, 9);
-				Strm << STRM_INDEX(store->script)
-					<< STRM_INDEX(store->args[0])
-					<< STRM_INDEX(store->args[1])
-					<< STRM_INDEX(store->args[2]);
-			}
+		Store.SetNum(NumAcsStore);
 	}
-	else
+	for (int i = 0; i < NumAcsStore; i++)
 	{
-		memset(ACSStore, 0, sizeof(ACSStore));
-		vint32 NumAcsStore = 0;
-		Strm << STRM_INDEX(NumAcsStore);
-		for (int i = 0; i < NumAcsStore; i++)
-		{
-			Strm.Serialise(ACSStore[i].map, 9);
-			Strm << STRM_INDEX(ACSStore[i].script)
-				<< STRM_INDEX(ACSStore[i].args[0])
-				<< STRM_INDEX(ACSStore[i].args[1])
-				<< STRM_INDEX(ACSStore[i].args[2]);
-		}
+		Strm << Store[i].Map
+			<< Store[i].Type
+			<< Store[i].PlayerNum
+			<< STRM_INDEX(Store[i].Script)
+			<< STRM_INDEX(Store[i].Args[0])
+			<< STRM_INDEX(Store[i].Args[1])
+			<< STRM_INDEX(Store[i].Args[2]);
 	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	P_ACSInitNewGame
+//
+//==========================================================================
+
+void P_ACSInitNewGame()
+{
+	guard(P_ACSInitNewGame);
+	memset(AcsGlobal.WorldVars, 0, sizeof(AcsGlobal.WorldVars));
+	memset(AcsGlobal.GlobalVars, 0, sizeof(AcsGlobal.GlobalVars));
+	for (int i = 0; i < MAX_ACS_WORLD_VARS; i++)
+	{
+		AcsGlobal.WorldArrays[i].Redim(0);
+	}
+	for (int i = 0; i < MAX_ACS_GLOBAL_VARS; i++)
+	{
+		AcsGlobal.GlobalArrays[i].Redim(0);
+	}
+	AcsGlobal.Store.Clear();
+	unguard;
+}
+
+//==========================================================================
+//
+//	P_SerialiseAcsGlobal
+//
+//==========================================================================
+
+void P_SerialiseAcsGlobal(VStream& Strm)
+{
+	guard(P_SerialiseAcsGlobal);
+	AcsGlobal.Serialise(Strm);
 	unguard;;
+}
+
+//==========================================================================
+//
+//	Script ACS methods
+//
+//==========================================================================
+
+IMPLEMENT_FUNCTION(VLevel, StartACS)
+{
+	P_GET_BOOL(WantResult);
+	P_GET_BOOL(Always);
+	P_GET_INT(side);
+	P_GET_PTR(line_t, line);
+	P_GET_REF(VEntity, activator);
+	P_GET_INT(arg3);
+	P_GET_INT(arg2);
+	P_GET_INT(arg1);
+	P_GET_INT(map);
+	P_GET_INT(num);
+	P_GET_SELF;
+	RET_BOOL(Self->Acs->Start(num, map, arg1, arg2, arg3, activator, line,
+		side, Always, WantResult));
+}
+
+IMPLEMENT_FUNCTION(VLevel, SuspendACS)
+{
+	P_GET_INT(map);
+	P_GET_INT(number);
+	P_GET_SELF;
+	RET_BOOL(Self->Acs->Suspend(number, map));
+}
+
+IMPLEMENT_FUNCTION(VLevel, TerminateACS)
+{
+	P_GET_INT(map);
+	P_GET_INT(number);
+	P_GET_SELF;
+	RET_BOOL(Self->Acs->Terminate(number, map));
 }

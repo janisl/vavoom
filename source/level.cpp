@@ -344,12 +344,10 @@ void VLevel::Destroy()
 		delete[] Things;
 	}
 
-#ifdef SERVER
-	if (this == GLevel)
+	if (Acs)
 	{
-		P_UnloadACScripts();
+		delete Acs;
 	}
-#endif
 	if (GenericSpeeches)
 	{
 		delete[] GenericSpeeches;

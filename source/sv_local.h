@@ -59,15 +59,42 @@ enum
 	SCRIPT_Disconnect	= 14,
 };
 
-void P_LoadACScripts(int);
-void P_UnloadACScripts();
-void P_StartTypedACScripts(int);
-bool P_StartACS(int, int, int, int, int, VEntity*, line_t*, int, bool, bool);
-bool P_TerminateACS(int, int);
-bool P_SuspendACS(int, int);
+class VAcs;
+class VAcsObject;
+struct VAcsInfo;
+
+class VAcsLevel
+{
+private:
+	bool AddToACSStore(int Type, VName Map, int Number, int Arg1, int Arg2,
+		int Arg3, VEntity* Activator);
+
+public:
+	VLevel*				XLevel;
+
+	TArray<VAcsObject*>	LoadedObjects;
+
+	VAcsLevel(VLevel* ALevel);
+	~VAcsLevel();
+
+	VAcsObject* LoadObject(int Lump);
+	VAcsInfo* FindScript(int Number, VAcsObject*& Object);
+	const char* GetString(int Index);
+	VAcsObject* GetObject(int Index);
+	void StartTypedACScripts(int Type);
+	void Serialise(VStream& Strm);
+	void CheckAcsStore();
+	bool Start(int Number, int MapNum, int Arg1, int Arg2, int Arg3,
+		VEntity* Activator, line_t* Line, int Side, bool Always,
+		bool WantResult);
+	bool Terminate(int Number, int MapNum);
+	bool Suspend(int Number, int MapNum);
+	VAcs* SpawnScript(VAcsInfo* Info, VAcsObject* Object, VEntity* Activator,
+		line_t* Line, int Side, int Arg1, int Arg2, int Arg3, bool Always,
+		bool Delayed);
+};
+
 void P_ACSInitNewGame();
-void P_CheckACSStore();
-void P_SerialiseScripts(VStream&);
 void P_SerialiseAcsGlobal(VStream&);
 
 //==========================================================================

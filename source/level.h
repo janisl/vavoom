@@ -57,6 +57,7 @@
 //==========================================================================
 
 class VLevelRenderDataPublic;
+class VAcsLevel;
 
 struct sector_t;
 
@@ -607,6 +608,8 @@ class VLevel : public VObject
 	VThinker*			ThinkerHead;
 	VThinker*			ThinkerTail;
 
+	VAcsLevel*			Acs;
+
 	VLevelRenderDataPublic*	RenderData;
 
 	void Serialise(VStream& Strm);
@@ -666,6 +669,7 @@ private:
 	void LoadReject(int);
 	void LoadThings1(int);
 	void LoadThings2(int);
+	void LoadACScripts(int);
 
 	//	Map loading helpers.
 	int FindGLNodes(VName) const;
@@ -722,6 +726,11 @@ private:
 	DECLARE_FUNCTION(GetPolyobjMirror)
 	DECLARE_FUNCTION(MovePolyobj)
 	DECLARE_FUNCTION(RotatePolyobj)
+
+	//	ACS functions
+	DECLARE_FUNCTION(StartACS)
+	DECLARE_FUNCTION(SuspendACS)
+	DECLARE_FUNCTION(TerminateACS)
 };
 
 struct level_t

@@ -2092,6 +2092,10 @@
 			Name="Play"
 			>
 			<File
+				RelativePath="..\source\p_acs.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\source\p_acs.h"
 				>
 			</File>
@@ -2165,10 +2169,6 @@
 			</File>
 			<File
 				RelativePath="..\source\server.h"
-				>
-			</File>
-			<File
-				RelativePath="..\source\sv_acs.cpp"
 				>
 			</File>
 			<File

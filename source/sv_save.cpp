@@ -626,7 +626,7 @@ static void ArchiveScripts()
 {
 	vint32 Seg = ASEG_SCRIPTS;
 	*Saver << Seg;
-	P_SerialiseScripts(*Saver);
+	GLevel->Acs->Serialise(*Saver);
 }
 
 //==========================================================================
@@ -638,7 +638,7 @@ static void ArchiveScripts()
 static void UnarchiveScripts()
 {
 	AssertSegment(ASEG_SCRIPTS);
-	P_SerialiseScripts(*Loader);
+	GLevel->Acs->Serialise(*Loader);
 }
 
 //==========================================================================
@@ -1119,7 +1119,7 @@ void SV_MapTeleport(VName mapname)
 	// Launch waiting scripts
 	if (!deathmatch)
 	{
-		P_CheckACSStore();
+		GLevel->Acs->CheckAcsStore();
 	}
 	unguard;
 }

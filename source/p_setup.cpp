@@ -210,29 +210,15 @@ void VLevel::LoadMap(VName MapName)
 	{
 		LoadThings2(lumpnum + ML_THINGS);
 	}
-#ifdef SERVER
-	if (LevelFlags & LF_ForServer)
+	//	ACS object code
+	if (LevelFlags & LF_Extended)
 	{
-		if (LevelFlags & LF_Extended)
-		{
-			//	ACS object code
-			P_LoadACScripts(lumpnum + ML_BEHAVIOR);
-		}
-		else
-		{
-			if (GGameInfo->AcsHelper != NAME_None)
-			{
-				//	ACS object code
-				P_LoadACScripts(W_GetNumForName(GGameInfo->AcsHelper, WADNS_ACSLibrary));
-			}
-			else
-			{
-				//	Inform ACS, that we don't have scripts
-				P_LoadACScripts(-1);
-			}
-		}
+		LoadACScripts(lumpnum + ML_BEHAVIOR);
 	}
-#endif
+	else
+	{
+		LoadACScripts(-1);
+	}
 
 	if (!(LevelFlags & LF_Extended))
 	{
@@ -1163,6 +1149,31 @@ void VLevel::LoadThings2(int Lump)
 		th->arg5 = arg5;
 	}
 	delete Strm;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VLevel::LoadACScripts
+//
+//==========================================================================
+
+void VLevel::LoadACScripts(int Lump)
+{
+	guard(VLevel::LoadACScripts);
+	Acs = new VAcsLevel(this);
+
+	if (GGameInfo->AcsHelper != NAME_None)
+	{
+		//	Load ACS helper scripts
+		Acs->LoadObject(W_GetNumForName(GGameInfo->AcsHelper,
+			WADNS_ACSLibrary));
+	}
+
+	if (Lump >= 0)
+	{
+		Acs->LoadObject(Lump);
+	}
 	unguard;
 }
 

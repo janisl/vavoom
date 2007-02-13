@@ -35,7 +35,6 @@
 
 #include "gamedefs.h"
 #include "sv_local.h"
-extern VLevelInfo*		GLevelInfo;
 
 // MACROS ------------------------------------------------------------------
 

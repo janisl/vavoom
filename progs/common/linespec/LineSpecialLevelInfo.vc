@@ -506,25 +506,25 @@ bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 		buttonSuccess = EV_TeleportSector(Arg1, Arg2, Arg3, Arg4, Arg5);
 		break;
 	case LNSPEC_ACSExecute:
-		buttonSuccess = StartACS(Arg1, Arg2, Arg3, Arg4, Arg5, A, Line, Side,
-			false, false);
+		buttonSuccess = XLevel.StartACS(Arg1, Arg2, Arg3, Arg4, Arg5, A, Line,
+			Side, false, false);
 		break;
 	case LNSPEC_ACSSuspend:
-		buttonSuccess = SuspendACS(Arg1, Arg2);
+		buttonSuccess = XLevel.SuspendACS(Arg1, Arg2);
 		break;
 	case LNSPEC_ACSTerminate:
-		buttonSuccess = TerminateACS(Arg1, Arg2);
+		buttonSuccess = XLevel.TerminateACS(Arg1, Arg2);
 		break;
 	case LNSPEC_ACSLockedExecute:
 		if (CheckLock(A, Arg5, false))
 		{
-			buttonSuccess = StartACS(Arg1, Arg2, Arg3, Arg4, 0, A, Line, Side,
-				false, false);
+			buttonSuccess = XLevel.StartACS(Arg1, Arg2, Arg3, Arg4, 0, A,
+				Line, Side, false, false);
 		}
 		break;
 	case LNSPEC_ACSExecuteWithResult:
-		buttonSuccess = StartACS(Arg1, 0, Arg2, Arg3, Arg4, A, Line, Side,
-			true, true);
+		buttonSuccess = XLevel.StartACS(Arg1, 0, Arg2, Arg3, Arg4, A, Line,
+			Side, true, true);
 		break;
 	case LNSPEC_PolyRotateLeftOverride:
 		buttonSuccess = EV_RotatePoly(Line, Arg1, Arg2, Arg3, Arg4, Arg5, 1,
@@ -712,8 +712,8 @@ bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 		buttonSuccess = EV_SectorSetGravity(Arg1, Arg2, Arg3, Arg4, Arg5);
 		break;
 	case LNSPEC_ACSExecuteAlways:
-		buttonSuccess = StartACS(Arg1, Arg2, Arg3, Arg4, Arg5, A, Line, Side,
-			true, false);
+		buttonSuccess = XLevel.StartACS(Arg1, Arg2, Arg3, Arg4, Arg5, A,
+			Line, Side, true, false);
 		break;
 	case LNSPEC_FloorRaiseToNearestChange:
 		buttonSuccess = EV_DoFloor(Arg1, Arg2, Arg3, Arg4, Arg5,

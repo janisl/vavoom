@@ -396,11 +396,6 @@ public:
 	DECLARE_FUNCTION(P_ChangeSwitchTexture)
 	DECLARE_FUNCTION(NextThinker)
 
-	//	ACS functions
-	DECLARE_FUNCTION(StartACS)
-	DECLARE_FUNCTION(SuspendACS)
-	DECLARE_FUNCTION(TerminateACS)
-
 	//	Sound functions
 	DECLARE_FUNCTION(SectorStopSound)
 	DECLARE_FUNCTION(GetSoundPlayingInfo)

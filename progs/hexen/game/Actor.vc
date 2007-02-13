@@ -854,7 +854,7 @@ void Died(Actor source)
 		// Initiate monster death actions
 		if (Class == Sorcerer)
 		{
-			StartACS(Special, 0, 0, 0, 0, self, NULL, 0, false, false);
+			XLevel.StartACS(Special, 0, 0, 0, 0, self, NULL, 0, false, false);
 		}
 		else
 		{

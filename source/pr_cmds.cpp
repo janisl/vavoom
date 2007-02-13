@@ -384,60 +384,6 @@ IMPLEMENT_FUNCTION(VObject, NextThinker)
 
 //**************************************************************************
 //
-//	ACS functions
-//
-//**************************************************************************
-
-//==========================================================================
-//
-//  PF_StartACS
-//
-//==========================================================================
-
-IMPLEMENT_FUNCTION(VObject, StartACS)
-{
-	P_GET_BOOL(WantResult);
-	P_GET_BOOL(Always);
-	P_GET_INT(side);
-	P_GET_PTR(line_t, line);
-	P_GET_REF(VEntity, activator);
-	P_GET_INT(arg3);
-	P_GET_INT(arg2);
-	P_GET_INT(arg1);
-	P_GET_INT(map);
-	P_GET_INT(num);
-	RET_BOOL(P_StartACS(num, map, arg1, arg2, arg3, activator, line, side,
-		Always, WantResult));
-}
-
-//==========================================================================
-//
-//  PF_SuspendACS
-//
-//==========================================================================
-
-IMPLEMENT_FUNCTION(VObject, SuspendACS)
-{
-	P_GET_INT(map);
-	P_GET_INT(number);
-	RET_BOOL(P_SuspendACS(number, map));
-}
-
-//==========================================================================
-//
-//  PF_TerminateACS
-//
-//==========================================================================
-
-IMPLEMENT_FUNCTION(VObject, TerminateACS)
-{
-	P_GET_INT(map);
-	P_GET_INT(number);
-	RET_BOOL(P_TerminateACS(number, map));
-}
-
-//**************************************************************************
-//
 //  Sound functions
 //
 //**************************************************************************

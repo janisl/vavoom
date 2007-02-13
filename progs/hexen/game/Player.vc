@@ -3736,7 +3736,7 @@ bool PTR_PuzzleItemTraverse(intercept_t * in)
 			// Item type doesn't match
 			return false;
 		}
-		StartACS(in->line->arg2, 0, in->line->arg3, in->line->arg4,
+		MO.XLevel.StartACS(in->line->arg2, 0, in->line->arg3, in->line->arg4,
 			in->line->arg5, MO, in->line, 0, false, false);
 		in->line->special = 0;
 		PuzzleActivated = true;
@@ -3754,7 +3754,7 @@ bool PTR_PuzzleItemTraverse(intercept_t * in)
 		// Item type doesn't match
 		return true;
 	}
-	StartACS(mobj.Args[1], 0, mobj.Args[2], mobj.Args[3], mobj.Args[4],
+	MO.XLevel.StartACS(mobj.Args[1], 0, mobj.Args[2], mobj.Args[3], mobj.Args[4],
 		MO, NULL, 0, false, false);
 	mobj.Special = 0;
 	PuzzleActivated = true;

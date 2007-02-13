@@ -202,8 +202,8 @@ COMMAND(Script)
 		if (script > 99)
 			return;
 
-		if (P_StartACS(script, 0, 0, 0, 0, GGameInfo->Players[0]->MO, NULL, 0,
-			false, false))
+		if (GLevel->Acs->Start(script, 0, 0, 0, 0, GGameInfo->Players[0]->MO,
+			NULL, 0, false, false))
 		{
 			GCon->Logf("Running script %d", script);
 		}

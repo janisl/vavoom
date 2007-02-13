@@ -127,6 +127,7 @@ _____MAIN_EXE__SOURCES = \
 	net_main.cpp \
 	net_null.cpp \
 	network.h \
+	p_acs.cpp \
 	p_acs.h \
 	p_entity.h \
 	p_gameinfo.h \
@@ -185,7 +186,6 @@ _____MAIN_EXE__SOURCES = \
 	str.h \
 	stream.cpp \
 	stream.h \
-	sv_acs.cpp \
 	sv_ent.cpp \
 	sv_local.h \
 	sv_main.cpp \
@@ -432,6 +432,7 @@ _____SERVER_EXE__SOURCES = \
 	net_loop.cpp \
 	net_main.cpp \
 	net_null.cpp \
+	p_acs.cpp \
 	p_polyobj.cpp \
 	p_setup.cpp \
 	p_thinker.cpp \
@@ -455,7 +456,6 @@ _____SERVER_EXE__SOURCES = \
 	sc_man.cpp \
 	str.cpp \
 	stream.cpp \
-	sv_acs.cpp \
 	sv_ent.cpp \
 	sv_main.cpp \
 	sv_save.cpp \
