@@ -113,7 +113,6 @@ animdefs.txt			@srcdir@/animdefs.txt
 dehinfo.txt				@srcdir@/dehinfo.txt
 sndinfo.txt				@srcdir@/sndinfo.txt
 sndseq.txt				@srcdir@/sndseq.txt
-terrains.txt			@srcdir@/terrains.txt
 skyboxes.txt			@srcdir@/skyboxes.txt
 
 //	Language strings

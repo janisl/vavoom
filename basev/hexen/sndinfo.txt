@@ -143,6 +143,10 @@ $pitchshift WeaponBuild			0
 
 $pitchshift BellRing			0
 
+$alias world/drip				Ambient10
+$alias world/watersplash		WaterSplash
+$alias world/lavasizzle			LavaSizzle
+$alias world/sludgegloop		SludgeGloop
 $alias world/quake				Earthquake
 $alias world/thunder			ThunderCrash
 $alias misc/chat				Chat

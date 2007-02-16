@@ -103,6 +103,7 @@ bool bDisruptDamage;		// Disrupts enemies.
 bool bInCombat;			// Actors in combat won't talk
 bool bLookAllAround;		// Actor can see all around.
 bool bStaticLight;		// Static light source.
+bool bCannotPush;	// cannot push other pushable mobjs
 
 //  Params
 float Speed;
@@ -423,9 +424,10 @@ void SetOrigin2(TVec origin)
 		Origin.z = CeilingZ - Height;
 	}
 
-	if (bFloorClip && TerrainType(Floor->pic) == 3 && Origin.z == FloorZ)
+	VTerrainInfo* TInfo = GetFloorType();
+	if (bFloorClip && TInfo->bLiquid && Origin.z == FloorZ)
 	{
-		FloorClip = 12.0;
+		FloorClip = TInfo->FootClip;
 	}
 	else
 	{
@@ -1057,6 +1059,101 @@ int DoSpecialDamage(Actor Victim, int damage)
 int TakeSpecialDamage(Actor inflictor, Actor source, int damage)
 {
 	return damage;
+}
+
+//===========================================================================
+//
+//  GetFloorType
+//
+//===========================================================================
+
+VTerrainInfo* GetFloorType()
+{
+	return TerrainType(Floor->pic);
+}
+
+//==========================================================================
+//
+//  HitFloorType
+//
+//==========================================================================
+
+bool HitFloorType()
+{
+	Actor A;
+	int smallsplash = false;
+	VTerrainInfo* TInfo;
+	VSplashInfo* SInfo;
+
+	if (FloorZ != GetPlanePointZ(&Sector->floor, Origin))
+	{
+		// don't splash if landing on the edge above water/lava/etc....
+		return false;
+	}
+
+	TInfo = GetFloorType();
+
+	// Small splash for small masses
+	if (Mass < 10.0)
+		smallsplash = true;
+
+	if (TInfo->DamageAmount && bIsPlayer &&
+		Level.Game.level->tictime & TInfo->DamageTimeMask)
+	{
+		Damage(none, none, TInfo->DamageAmount);
+	}
+
+	SInfo = GetSplashInfo(TInfo->Splash);
+	if (!SInfo)
+	{
+		return TInfo->bLiquid;
+	}
+
+	if (smallsplash)
+	{
+		if (SInfo->SmallClass)
+		{
+			A = Spawn(class<Actor>(SInfo->SmallClass), Origin);
+			A.FloorClip += SInfo->SmallClip;
+			if (SInfo->SmallSound)
+			{
+				A.PlaySound(SInfo->SmallSound, CHAN_VOICE);
+			}
+		}
+	}
+	else
+	{
+		if (SInfo->BaseClass)
+		{
+			Spawn(class<Actor>(SInfo->BaseClass), Origin);
+			if (SInfo->Sound && !SInfo->ChunkClass)
+			{
+				A.PlaySound(SInfo->Sound, CHAN_VOICE);
+			}
+		}
+		if (SInfo->ChunkClass)
+		{
+			A = Spawn(class<Actor>(SInfo->ChunkClass), Origin);
+			A.Instigator = self;
+			A.Velocity.x = (Random() - Random()) * SInfo->ChunkXVelMul * 35.0;
+			A.Velocity.y = (Random() - Random()) * SInfo->ChunkYVelMul * 35.0;
+			A.Velocity.z = (SInfo->ChunkBaseZVel + Random() *
+				SInfo->ChunkZVelMul) * 35.0;
+			if (SInfo->Sound)
+			{
+				A.PlaySound(SInfo->Sound, CHAN_VOICE);
+			}
+		}
+		if (SInfo->Sound && !SInfo->BaseClass && !SInfo->ChunkClass)
+		{
+			PlaySound(SInfo->Sound, CHAN_BODY);
+		}
+		if (!SInfo->bNoAlert && bIsPlayer)
+		{
+			StrifeLevelInfo(Level).NoiseAlert(self, self);
+		}
+	}
+	return TInfo->bLiquid;
 }
 
 //==========================================================================
@@ -1878,6 +1975,11 @@ void ZMovement(float DeltaTime)
 				PlaySound('*land', CHAN_VOICE);
 			}
 		}
+		if (Origin.z - Velocity.z * DeltaTime > FloorZ)
+		{
+			// Spawn splashes, etc.
+			HitFloorType();
+		}
 		Origin.z = FloorZ;
 
 		if (bMissile)
@@ -1890,7 +1992,8 @@ void ZMovement(float DeltaTime)
 			if (bFloorBounce)
 			{
 				// Bouncing Missiles explode on water surfaces
-				if(TerrainType(Floor->pic) == 3)
+				VTerrainInfo* TInfo = GetFloorType();
+				if (TInfo->bLiquid)
 				{
 					ExplodeMissile();
 					return;
@@ -1905,9 +2008,6 @@ void ZMovement(float DeltaTime)
 				A_DecReactionCount();
 			}
 		}
-
-		if(TerrainType(Floor->pic) == 3 && Origin.z - Velocity.z * DeltaTime > FloorZ)
-			PlaySound('world/watersplash', CHAN_VOICE);
 	}
 
 	if (Origin.z + Height > CeilingZ)
@@ -2024,6 +2124,11 @@ float GetFriction()
 	if ((Sector->special & SECSPEC_BASE_MASK) == SECSPEC_FrictionLow)
 	{
 		return FRICTION_LOW;
+	}
+	VTerrainInfo* TInfo = GetFloorType();
+	if (TInfo->Friction)
+	{
+		return TInfo->Friction;
 	}
 	if (Sector->special & SECSPEC_FRICTION_MASK)
 	{
@@ -3375,6 +3480,7 @@ final void A_Pain()
 final void A_Explode()
 {
 	RadiusAttack(64, 0, 0);
+	HitFloorType();
 	if (Instigator && Instigator.bIsPlayer)
 	{
 		StrifeLevelInfo(Level).NoiseAlert(Instigator, self);
@@ -3405,6 +3511,7 @@ final void A_Explode()
 final void A_Explode2()
 {
 	RadiusAttack(128, 0, 0);
+	HitFloorType();
 
 	if (ExplodeEffect)
 	{

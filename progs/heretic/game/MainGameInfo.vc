@@ -563,11 +563,6 @@ defaultproperties
 	WeaponOrder[7] = wp_mace;
 	WeaponOrder[8] = wp_beak;
 
-	terrain_contents[0] = CONTENTS_EMPTY;
-	terrain_contents[1] = CONTENTS_WATER;
-	terrain_contents[2] = CONTENTS_SLUDGE;
-	terrain_contents[3] = CONTENTS_LAVA;
-
 	GetAmmoChange[0] = wp_goldwand;
 	GetAmmoChange[1] = wp_crossbow;
 	GetAmmoChange[2] = wp_blaster;

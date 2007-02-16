@@ -23,21 +23,22 @@
 //**
 //**************************************************************************
 
-class SplashBase:Effect;
+class BloodSplashBase : Actor;
 
 __states__
 {
-	S_SPLASHBASE1('SPSH', 4, 5.0 / 35.0, S_SPLASHBASE2) = none
-	S_SPLASHBASE2('SPSH', 5, 5.0 / 35.0, S_SPLASHBASE3) = none
-	S_SPLASHBASE3('SPSH', 6, 5.0 / 35.0, S_SPLASHBASE4) = none
-	S_SPLASHBASE4('SPSH', 7, 5.0 / 35.0, S_SPLASHBASE5) = none
-	S_SPLASHBASE5('SPSH', 8, 5.0 / 35.0, S_SPLASHBASE6) = none
-	S_SPLASHBASE6('SPSH', 9, 5.0 / 35.0, S_SPLASHBASE7) = none
-	S_SPLASHBASE7('SPSH', 10, 5.0 / 35.0, none) = none
+	S_SPLASHBASE1('BSPH', 4, 5.0 / 35.0, S_SPLASHBASE2) = none
+	S_SPLASHBASE2('BSPH', 5, 5.0 / 35.0, S_SPLASHBASE3) = none
+	S_SPLASHBASE3('BSPH', 6, 5.0 / 35.0, S_SPLASHBASE4) = none
+	S_SPLASHBASE4('BSPH', 7, 5.0 / 35.0, S_SPLASHBASE5) = none
+	S_SPLASHBASE5('BSPH', 8, 5.0 / 35.0, S_SPLASHBASE6) = none
+	S_SPLASHBASE6('BSPH', 9, 5.0 / 35.0, S_SPLASHBASE7) = none
+	S_SPLASHBASE7('BSPH', 10, 5.0 / 35.0, none) = none
 }
 
 defaultproperties
 {
-	bNoGravity = false;
+	bNoBlockmap = true;
+	bNoPassMobj = true;
 	IdleState = S_SPLASHBASE1;
 }

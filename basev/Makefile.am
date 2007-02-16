@@ -20,6 +20,7 @@ EXTRA_DIST = \
 	common/basepak.ls.in \
 	common/default.cfg \
 	common/startup.vs \
+	common/terrain.txt \
 	common/textures/-noflat-.png \
 	doom/graphics/*.lmp \
 	doom/palette.pcx \
@@ -31,7 +32,6 @@ EXTRA_DIST = \
 	doom/skyboxes.txt \
 	doom/sndinfo.txt \
 	doom/sndseq.txt \
-	doom/terrains.txt \
 	doom1/basepak.ls.in \
 	doom1/mapinfo.txt \
 	doom1/sndinfo.txt \
@@ -46,7 +46,7 @@ EXTRA_DIST = \
 	heretic/skyboxes.txt \
 	heretic/sndinfo.txt \
 	heretic/sndseq.txt \
-	heretic/terrains.txt \
+	heretic/terrain.txt \
 	hexen/graphics/*.lmp \
 	hexen/palette.pcx \
 	hexen/basepak.ls.in \
@@ -55,7 +55,7 @@ EXTRA_DIST = \
 	hexen/mapinfo.txt \
 	hexen/skyboxes.txt \
 	hexen/sndinfo.txt \
-	hexen/terrains.txt \
+	hexen/terrain.txt \
 	plutonia/basepak.ls.in \
 	plutonia/mapinfo.txt \
 	strife/palette.pcx \
@@ -67,7 +67,7 @@ EXTRA_DIST = \
 	strife/skyboxes.txt \
 	strife/sndinfo.txt \
 	strife/sndseq.txt \
-	strife/terrains.txt \
+	strife/terrain.txt \
 	tnt/basepak.ls.in \
 	tnt/mapinfo.txt
 

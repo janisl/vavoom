@@ -19,7 +19,7 @@ animdefs.txt			@srcdir@/animdefs.txt
 mapinfo.txt				@srcdir@/mapinfo.txt
 sndinfo.txt				@srcdir@/sndinfo.txt
 skyboxes.txt			@srcdir@/skyboxes.txt
-terrains.txt			@srcdir@/terrains.txt
+terrain.txt				@srcdir@/terrain.txt
 
 //	Language strings
 language.en				@srcdir@/language.en

@@ -41,7 +41,7 @@ final void A_RainImpact()
 	}
 	else if (P_Random() < 40)
 	{
-		HitFloorEffect();
+		HitFloorType();
 	}
 }
 

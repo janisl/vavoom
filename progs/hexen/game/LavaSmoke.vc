@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class LavaSmoke:Effect;
+class LavaSmoke : Actor;
 
 __states__
 {
@@ -37,5 +37,8 @@ __states__
 defaultproperties
 {
 	Alpha = 0.333;
+	bNoBlockmap = true;
+	bNoGravity = true;
+	bNoPassMobj = true;
 	IdleState = S_LAVASMOKE1;
 }

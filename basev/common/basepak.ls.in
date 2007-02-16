@@ -10,3 +10,6 @@ progs/linespec.dat		progs/linespec.dat
 
 //	Default texture
 textures/-noflat-.png	@srcdir@/textures/-noflat-.png
+
+//	Base scripts
+terrain.txt				@srcdir@/terrain.txt

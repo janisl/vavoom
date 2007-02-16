@@ -1,0 +1,14 @@
+// Floor -> terrain mappings -----------------------------------------------
+
+floor f_watr03 JustASound
+floor f_watr02 JustASound
+floor f_watr01 JustASound
+floor f_vwatr3 JustASound
+floor f_vwatr2 JustASound
+floor p_vwatr1 JustASound
+floor f_hwatr3 JustASound
+floor f_hwatr2 JustASound
+floor f_hwatr1 JustASound
+floor f_pwatr3 JustASound
+floor f_pwatr2 JustASound
+floor f_pwatr1 JustASound

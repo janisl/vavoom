@@ -395,13 +395,6 @@ defaultproperties
 	WeaponClasses[14] = WeaponMageStaff;
 	WeaponClasses[15] = WeaponPigSnout;
 
-	terrain_contents[0] = CONTENTS_EMPTY;
-	terrain_contents[1] = CONTENTS_EMPTY;
-	terrain_contents[2] = CONTENTS_WATER;
-	terrain_contents[3] = CONTENTS_WATER;
-	terrain_contents[4] = CONTENTS_LAVA;
-	terrain_contents[5] = CONTENTS_SLUDGE;
-
 	AutoArmorSave[0] = 15.0;
 	AutoArmorSave[1] = 10.0;
 	AutoArmorSave[2] = 5.0;

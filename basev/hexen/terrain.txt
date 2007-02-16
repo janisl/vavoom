@@ -1,0 +1,28 @@
+// Terrain types -----------------------------------------------------------
+
+terrain Lava
+{
+	splash			Lava
+	footclip		10
+	liquid
+	damageamount	5
+	damagetype		lava
+	damagetimemask	31
+}
+
+terrain Ice
+{
+	// A friction > 1 is actually less friction
+	friction 1.70824008138
+
+	// Ice doesn't actually do any damage. This is just so that things
+	// that freeze to death take longer to melt on this terrain.
+	damagetype ice
+}
+
+// Floor -> terrain mappings -----------------------------------------------
+
+floor x_005 Water
+floor x_001 Lava
+floor x_009 Sludge
+floor f_033 Ice

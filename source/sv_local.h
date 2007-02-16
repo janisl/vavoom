@@ -137,7 +137,7 @@ void P_InitSwitchList();
 void P_ChangeSwitchTexture(line_t* line, bool useAgain, VName DefaultSound);
 
 void P_InitTerrainTypes();
-int SV_TerrainType(int pic);
+struct VTerrainInfo* SV_TerrainType(int pic);
 void P_FreeTerrainTypes();
 
 //==========================================================================

@@ -99,6 +99,7 @@ bool bStaticLight;	// Static light source.
 bool bFaster;
 bool bFastMelee;
 bool bDehackedSpecial;	// Old style special handling
+bool bCannotPush;	// cannot push other pushable mobjs
 
 //  Params
 float Speed;
@@ -798,6 +799,16 @@ void SetOrigin2(TVec origin)
 	{
 		Origin.z = CeilingZ - Height;
 	}
+
+	VTerrainInfo* TInfo = GetFloorType();
+	if (bFloorClip && TInfo->bLiquid && Origin.z == FloorZ)
+	{
+		FloorClip = TInfo->FootClip;
+	}
+	else
+	{
+		FloorClip = 0.0;
+	}
 }
 
 //==========================================================================
@@ -1300,6 +1311,101 @@ void Damage(Actor inflictor, Actor source, int damage)
 		}
 	}
 
+}
+
+//===========================================================================
+//
+//  GetFloorType
+//
+//===========================================================================
+
+VTerrainInfo* GetFloorType()
+{
+	return TerrainType(Floor->pic);
+}
+
+//==========================================================================
+//
+//  HitFloorType
+//
+//==========================================================================
+
+bool HitFloorType()
+{
+	Actor A;
+	int smallsplash = false;
+	VTerrainInfo* TInfo;
+	VSplashInfo* SInfo;
+
+	if (FloorZ != GetPlanePointZ(&Sector->floor, Origin))
+	{
+		// don't splash if landing on the edge above water/lava/etc....
+		return false;
+	}
+
+	TInfo = GetFloorType();
+
+	// Small splash for small masses
+	if (Mass < 10.0)
+		smallsplash = true;
+
+	if (TInfo->DamageAmount && bIsPlayer &&
+		Level.Game.level->tictime & TInfo->DamageTimeMask)
+	{
+		Damage(none, none, TInfo->DamageAmount);
+	}
+
+	SInfo = GetSplashInfo(TInfo->Splash);
+	if (!SInfo)
+	{
+		return TInfo->bLiquid;
+	}
+
+	if (smallsplash)
+	{
+		if (SInfo->SmallClass)
+		{
+			A = Spawn(class<Actor>(SInfo->SmallClass), Origin);
+			A.FloorClip += SInfo->SmallClip;
+			if (SInfo->SmallSound)
+			{
+				A.PlaySound(SInfo->SmallSound, CHAN_VOICE);
+			}
+		}
+	}
+	else
+	{
+		if (SInfo->BaseClass)
+		{
+			Spawn(class<Actor>(SInfo->BaseClass), Origin);
+			if (SInfo->Sound && !SInfo->ChunkClass)
+			{
+				A.PlaySound(SInfo->Sound, CHAN_VOICE);
+			}
+		}
+		if (SInfo->ChunkClass)
+		{
+			A = Spawn(class<Actor>(SInfo->ChunkClass), Origin);
+			A.Instigator = self;
+			A.Velocity.x = (Random() - Random()) * SInfo->ChunkXVelMul * 35.0;
+			A.Velocity.y = (Random() - Random()) * SInfo->ChunkYVelMul * 35.0;
+			A.Velocity.z = (SInfo->ChunkBaseZVel + Random() *
+				SInfo->ChunkZVelMul) * 35.0;
+			if (SInfo->Sound)
+			{
+				A.PlaySound(SInfo->Sound, CHAN_VOICE);
+			}
+		}
+		if (SInfo->Sound && !SInfo->BaseClass && !SInfo->ChunkClass)
+		{
+			PlaySound(SInfo->Sound, CHAN_BODY);
+		}
+		if (!SInfo->bNoAlert && bIsPlayer)
+		{
+			DoomLevelInfo(Level).NoiseAlert(self, self);
+		}
+	}
+	return TInfo->bLiquid;
 }
 
 //==========================================================================
@@ -1830,6 +1936,11 @@ void ZMovement(float DeltaTime)
 				PlaySound('*land', CHAN_VOICE);
 			}
 		}
+		if (Origin.z - Velocity.z * DeltaTime > FloorZ)
+		{
+			// Spawn splashes, etc.
+			HitFloorType();
+		}
 		Origin.z = FloorZ;
 
 		if (bMissile)
@@ -1953,6 +2064,11 @@ float GetFriction()
 	if ((Sector->special & SECSPEC_BASE_MASK) == SECSPEC_FrictionLow)
 	{
 		return FRICTION_LOW;
+	}
+	VTerrainInfo* TInfo = GetFloorType();
+	if (TInfo->Friction)
+	{
+		return TInfo->Friction;
 	}
 	if (Sector->special & SECSPEC_FRICTION_MASK)
 	{
@@ -2935,6 +3051,10 @@ bool StepMove()
 
 	if (!bFloat)
 	{
+		if (Origin.z > FloorZ)
+		{
+			HitFloorType();
+		}
 		Origin.z = FloorZ;
 	}
 	return true;
@@ -3799,6 +3919,7 @@ final void A_Explode()
 {
 	Alpha = 0.5;
 	RadiusAttack(128, 0, 0);
+	HitFloorType();
 
 	//  Spawn explosion effects - dynamic light and particles
 	MSG_Select(MSG_SV_DATAGRAM);

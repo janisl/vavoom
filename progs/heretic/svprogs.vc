@@ -36,14 +36,6 @@ import linespec;
 
 enum
 {
-	FLOOR_SOLID,
-	FLOOR_WATER,
-	FLOOR_LAVA,
-	FLOOR_SLUDGE
-};
-
-enum
-{
 	CONTENTS_EMPTY,
 	CONTENTS_WATER,
 	CONTENTS_LAVA,

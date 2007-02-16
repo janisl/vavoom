@@ -33,15 +33,15 @@ class IceChunk : Effect;
 
 final void A_IceSetTics()
 {
-	int floor;
+	VTerrainInfo* floor;
 
 	StateTime = 2.0 + Random() * 2.0;
 	floor = GetFloorType();
-	if (floor == FLOOR_LAVA)
+	if (floor->DamageType == 'lava')
 	{
 		StateTime /= 4.0;
 	}
-	else if (floor == FLOOR_ICE)
+	else if (floor->DamageType == 'ice')
 	{
 		StateTime *= 2.0;
 	}

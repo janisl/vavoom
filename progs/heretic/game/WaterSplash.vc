@@ -1,0 +1,49 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class WaterSplash : Actor;
+
+__states__
+{
+	S_SPLASH1('SPSH', 0, 8.0 / 35.0, S_SPLASH2) = none
+	S_SPLASH2('SPSH', 1, 8.0 / 35.0, S_SPLASH3) = none
+	S_SPLASH3('SPSH', 2, 8.0 / 35.0, S_SPLASH4) = none
+	S_SPLASH4('SPSH', 3, 16.0 / 35.0, none) = none
+	S_SPLASHX('SPSH', 3, 10.0 / 35.0, none) = none
+}
+
+defaultproperties
+{
+	Radius = 2.0;
+	Height = 4.0;
+	bMissile = true;
+	bNoBlockmap = true;
+	bDropOff = true;
+	bNoTeleport = true;
+	bActivatePCross = true;
+	bCannotPush = true;
+	IdleState = S_SPLASH1;
+	DeathState = S_SPLASHX;
+}

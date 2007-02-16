@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class SludgeSplash:Effect;
+class SludgeSplash : Actor;
 
 __states__
 {
@@ -35,6 +35,7 @@ __states__
 
 defaultproperties
 {
-	bNoGravity = false;
+	bNoBlockmap = true;
+	bNoPassMobj = true;
 	IdleState = S_SLUDGESPLASH1;
 }

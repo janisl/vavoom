@@ -20,7 +20,7 @@ mapinfo.txt				@srcdir@/mapinfo.txt
 skyboxes.txt			@srcdir@/skyboxes.txt
 sndinfo.txt				@srcdir@/sndinfo.txt
 sndseq.txt				@srcdir@/sndseq.txt
-terrains.txt			@srcdir@/terrains.txt
+terrain.txt				@srcdir@/terrain.txt
 
 //	Language strings
 language.en				@srcdir@/language.en

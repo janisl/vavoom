@@ -34,7 +34,7 @@ class StainedGlassShard1 : Fragment
 
 void FloorBounceMissile()
 {
-	if (HitFloorType() >= FLOOR_LIQUID)
+	if (HitFloorType())
 	{
 		Remove();
 		return;

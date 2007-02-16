@@ -1,0 +1,41 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class SlimeSplash : Actor;
+
+__states__
+{
+	S_SLUDGESPLASH1('SLIM', 4, 5.0 / 35.0, S_SLUDGESPLASH2) = none
+	S_SLUDGESPLASH2('SLIM', 5, 5.0 / 35.0, S_SLUDGESPLASH3) = none
+	S_SLUDGESPLASH3('SLIM', 6, 5.0 / 35.0, S_SLUDGESPLASH4) = none
+	S_SLUDGESPLASH4('SLIM', 7, 5.0 / 35.0, none) = none
+}
+
+defaultproperties
+{
+	bNoBlockmap = true;
+	bNoPassMobj = true;
+	IdleState = S_SLUDGESPLASH1;
+}

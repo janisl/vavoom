@@ -1300,7 +1300,7 @@ void PlayerInSpecialSector(float deltaTime)
 			{
 				LastSectorDamageTime = Level.Game.level->time;
 				Actor(MO).Damage(HereticLevelInfo(Level).GLavaInflictor, none, 5);
-				Actor(MO).HitFloorEffect();
+				Actor(MO).HitFloorType();
 			}
 			break;
 		case SECSPEC_DamageLavaHefty:
@@ -1308,7 +1308,7 @@ void PlayerInSpecialSector(float deltaTime)
 			{
 				LastSectorDamageTime = Level.Game.level->time;
 				Actor(MO).Damage(HereticLevelInfo(Level).GLavaInflictor, none, 8);
-				Actor(MO).HitFloorEffect();
+				Actor(MO).HitFloorType();
 			}
 			break;
 		case SECSPEC_ScrollEastLavaDamage:
@@ -1317,7 +1317,7 @@ void PlayerInSpecialSector(float deltaTime)
 			{
 				LastSectorDamageTime = Level.Game.level->time;
 				Actor(MO).Damage(HereticLevelInfo(Level).GLavaInflictor, none, 5);
-				Actor(MO).HitFloorEffect();
+				Actor(MO).HitFloorType();
 			}
 			break;
 		case SECSPEC_DamageHazard:

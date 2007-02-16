@@ -1105,7 +1105,7 @@ void MovePlayer(float deltaTime)
 		side *= 1.5;
 	}
 	if ((!Powers[pw_flight] || MO.Origin.z <= MO.FloorZ) &&
-		(Actor(MO).GetFloorType() == FLOOR_ICE ||
+		(Actor(MO).GetFloorType()->Friction < Actor::FRICTION_NORMAL ||
 		(MO.Sector->special & SECSPEC_BASE_MASK) == SECSPEC_FrictionLow))
 	{
 		forward *= 0.5;
@@ -1333,7 +1333,7 @@ void WaterJump()
 void ThrustPlayer(float angle, float move, float deltaTime)
 {
 	if (!(Powers[pw_flight] && !(MO.Origin.z <= MO.FloorZ)) &&
-		(Actor(MO).GetFloorType() == FLOOR_ICE ||
+		(Actor(MO).GetFloorType()->Friction < Actor::FRICTION_NORMAL ||
 		(MO.Sector->special & SECSPEC_BASE_MASK) == SECSPEC_FrictionLow))
 	{
 		move *= 0.5;
@@ -1503,7 +1503,7 @@ void PlayerInSpecialSector(float deltaTime)
 			{
 				LastSectorDamageTime = Level.Game.level->time;
 				Actor(MO).Damage(HexenLevelInfo(Level).GLavaInflictor, none, 5);
-				//MO.HitFloorEffect();
+				Actor(MO).HitFloorType();
 				MO.PlaySound('LavaSizzle', CHAN_BODY);
 			}
 			break;
@@ -1512,7 +1512,7 @@ void PlayerInSpecialSector(float deltaTime)
 			{
 				LastSectorDamageTime = Level.Game.level->time;
 				Actor(MO).Damage(HexenLevelInfo(Level).GLavaInflictor, none, 8);
-				//MO.HitFloorEffect();
+				Actor(MO).HitFloorType();
 				MO.PlaySound('LavaSizzle', CHAN_BODY);
 			}
 			break;
@@ -1522,7 +1522,7 @@ void PlayerInSpecialSector(float deltaTime)
 			{
 				LastSectorDamageTime = Level.Game.level->time;
 				Actor(MO).Damage(HexenLevelInfo(Level).GLavaInflictor, none, 5);
-				//MO.HitFloorEffect();
+				Actor(MO).HitFloorType();
 				MO.PlaySound('LavaSizzle', CHAN_BODY);
 			}
 			break;
@@ -1689,25 +1689,19 @@ void PlayerInSpecialSector(float deltaTime)
 //
 //============================================================================
 
-void PlayerOnSpecialFlat(int floorType)
+void PlayerOnSpecialFlat(VTerrainInfo* floorType)
 {
 	if (MO.Origin.z != MO.FloorZ)
 	{
 		// Player is not touching the floor
 		return;
 	}
-	switch (floorType)
+	if (floorType->DamageAmount && Level.Game.level->time - LastSectorDamageTime >=
+		itof(floorType->DamageTimeMask + 1) / 35.0)
 	{
-	case FLOOR_LAVA:
-		if (Level.Game.level->time - LastSectorDamageTime >= 32.0 / 35.0)
-		{
-			LastSectorDamageTime = Level.Game.level->time;
-			Actor(MO).Damage(HexenLevelInfo(Level).GLavaInflictor, none, 10);
-			MO.PlaySound('LavaSizzle', CHAN_BODY);
-		}
-		break;
-	default:
-		break;
+		LastSectorDamageTime = Level.Game.level->time;
+		Actor(MO).Damage(HexenLevelInfo(Level).GLavaInflictor, none, 10);
+		MO.PlaySound('LavaSizzle', CHAN_BODY);
 	}
 }
 
@@ -2182,7 +2176,6 @@ void DeathPlayerTick(float deltaTime)
 
 void PlayerTick(float deltaTime)
 {
-	int floorType;
 	int newweapon;
 	Actor speedA;
 
@@ -2295,11 +2288,7 @@ void PlayerTick(float deltaTime)
 	{
 		PlayerInSpecialSector(deltaTime);
 	}
-	floorType = Actor(MO).GetFloorType();
-	if (floorType != FLOOR_SOLID)
-	{
-		PlayerOnSpecialFlat(floorType);
-	}
+	PlayerOnSpecialFlat(Actor(MO).GetFloorType());
 	PlayerInContents(deltaTime);
 
 	if (MO.Velocity.z <= -35.0 * 35.0 && MO.Velocity.z >= -40.0 * 35.0 &&
@@ -3135,7 +3124,7 @@ void UseArtiBlastRadius()
 		{
 			continue;	// no underground wraiths
 		}
-		if ((mo.Class == SplashBase) || (mo.Class == Splash))
+		if ((mo.Class == WaterSplashBase) || (mo.Class == WaterSplash))
 		{
 			continue;
 		}

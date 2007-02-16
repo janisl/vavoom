@@ -35,7 +35,7 @@ final void A_SerpentHeadCheck()
 {
 	if (Origin.z <= FloorZ)
 	{
-		if (GetFloorType() >= FLOOR_LIQUID)
+		if (GetFloorType()->bLiquid)
 		{
 			HitFloorType();
 			SetState(none);

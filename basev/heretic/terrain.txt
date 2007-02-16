@@ -1,0 +1,16 @@
+// Terrain types -----------------------------------------------------------
+
+terrain Lava
+{
+	splash			Lava
+	footclip		10
+	liquid
+}
+
+// Floor -> terrain mappings -----------------------------------------------
+
+floor fltwawa1 Water
+floor fltflww1 Water
+floor fltlava1 Lava
+floor flathuh1 Lava
+floor fltslud1 Sludge

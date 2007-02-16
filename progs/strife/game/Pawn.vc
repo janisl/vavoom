@@ -406,6 +406,10 @@ bool StepMove()
 
 	if (!bFloat && !bNoGravity)
 	{
+		if (Origin.z > FloorZ)
+		{
+			HitFloorType();
+		}
 		Origin.z = FloorZ;
 	}
 	return true;

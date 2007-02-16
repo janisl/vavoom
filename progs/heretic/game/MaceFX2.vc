@@ -37,7 +37,7 @@ final void A_MaceBallImpact2()
 	Actor tiny;
 	float angle;
 
-	if ((Origin.z <= FloorZ) && (HitFloorEffect() != FLOOR_SOLID))
+	if (Origin.z <= FloorZ && HitFloorType())
 	{
 		// Landed in some sort of liquid
 		Remove();

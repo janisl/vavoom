@@ -645,11 +645,6 @@ defaultproperties
 	WeaponOrder[9] = StrifeDefs::wp_blaster2;
 	WeaponOrder[10] = StrifeDefs::wp_sigil;
 
-	terrain_contents[0] = CONTENTS_EMPTY;
-	terrain_contents[1] = CONTENTS_WATER;
-	terrain_contents[2] = CONTENTS_SLUDGE;
-	terrain_contents[3] = CONTENTS_LAVA;
-
 	InvItemCID[0] = MedPatch;
 	InvItemCID[1] = MedicalKit;
 	InvItemCID[2] = SurgeryKit;

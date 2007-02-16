@@ -555,7 +555,7 @@ IMPLEMENT_FUNCTION(VObject, G_Completed)
 IMPLEMENT_FUNCTION(VObject, TerrainType)
 {
 	P_GET_INT(pic);
-	RET_INT(SV_TerrainType(pic));
+	RET_PTR(SV_TerrainType(pic));
 }
 
 //==========================================================================

@@ -43,7 +43,6 @@ enum
 	PO_SPAWNCRUSH_TYPE
 };
 
-int				terrain_contents[9];
 float			contents_alpha[9];
 
 bool			bUseHexenPolyobjTypes;
@@ -497,8 +496,7 @@ void MakeContents(line_t * line)
 
 	if (!line->arg1 && !line->arg2 && !line->arg3)
 	{
-		contents =
-			terrain_contents[TerrainType(line->frontsector->floor.pic)];
+		contents = 1;//CONTENTS_WATER;
 		line->frontsector->params.contents = contents;
 		if (line->frontsector->floor.dist == -line->frontsector->ceiling.dist)
 		{

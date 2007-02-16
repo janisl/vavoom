@@ -30,17 +30,6 @@ import linespec;
 
 // CONSTANTS ---------------------------------------------------------------
 
-// Any floor type >= FLOOR_LIQUID will floorclip sprites
-enum
-{
-	FLOOR_SOLID,
-	FLOOR_ICE,
-	FLOOR_LIQUID,
-	FLOOR_WATER,
-	FLOOR_LAVA,
-	FLOOR_SLUDGE
-};
-
 enum
 {
 	CONTENTS_EMPTY,

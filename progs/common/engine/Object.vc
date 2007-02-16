@@ -1048,6 +1048,42 @@ struct VAnimDoorDef
 	int*		Frames;
 };
 
+struct VSplashInfo
+{
+	name		Name;
+
+	class		SmallClass;
+	float		SmallClip;
+	name		SmallSound;
+
+	class		BaseClass;
+	class		ChunkClass;
+	float		ChunkXVelMul;
+	float		ChunkYVelMul;
+	float		ChunkZVelMul;
+	float		ChunkBaseZVel;
+	name		Sound;
+	bool		bNoAlert;
+};
+
+struct VTerrainInfo
+{
+	name		Name;
+	name		Splash;
+	bool		bLiquid;
+	float		FootClip;
+	int			DamageTimeMask;
+	int			DamageAmount;
+	name		DamageType;
+	float		Friction;
+	float		MoveFactor;
+	float		StepVolume;
+	float		WalkingStepTime;
+	float		RunningStepTime;
+	name		LeftStepSounds;
+	name		RightStepSounds;
+};
+
 //**************************************************************************
 //
 //  Client types
@@ -1776,7 +1812,9 @@ native static final void G_ExitLevel(int Position);
 native static final void G_SecretExitLevel(int Position);
 
 native static final void G_Completed(int Map, int Position, int SaveAngle);
-native static final int TerrainType(int pic);
+native static final VTerrainInfo* TerrainType(int pic);
+native static final VSplashInfo* GetSplashInfo(name Name);
+native static final VTerrainInfo* GetTerrainInfo(name Name);
 native static final void P_ForceLightning();
 native static final void SB_Start();
 native static final int FindModel(string Name);

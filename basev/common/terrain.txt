@@ -1,0 +1,78 @@
+// Splashes ----------------------------------------------------------------
+
+splash Water
+{
+	smallclass		WaterSplashBase
+	smallclip		12
+	smallsound		world/drip
+
+	baseclass		WaterSplashBase
+	chunkclass		WaterSplash
+	chunkxvelshift	8
+	chunkyvelshift	8
+	chunkzvelshift	8
+	chunkbasezvel	2
+	sound			world/watersplash
+}
+
+splash Sludge
+{
+	smallclass		SludgeSplash
+	smallclip		12
+	smallsound		world/sludgegloop
+
+	baseclass		SludgeSplash
+	chunkclass		SludgeChunk
+	chunkxvelshift	8
+	chunkyvelshift	8
+	chunkzvelshift	8
+	chunkbasezvel	1
+	sound			world/sludgegloop
+}
+
+splash Lava
+{
+	smallclass		LavaSplash
+	smallclip		12
+	smallsound		world/lavasizzle
+
+	baseclass		LavaSplash
+	chunkclass		LavaSmoke
+	chunkxvelshift	-1
+	chunkyvelshift	-1
+	chunkzvelshift	7
+	chunkbasezvel	1
+	sound			world/lavasizzle
+}
+
+splash WaterSound
+{
+	smallclass		None
+	baseclass		None
+	chunkclass		None
+	sound			world/watersplash
+	noalert
+}
+
+// Terrain types -----------------------------------------------------------
+
+terrain Water
+{
+	splash			Water
+	footclip		10
+	liquid
+}
+
+terrain Sludge
+{
+	splash			Sludge
+	footclip		10
+	liquid
+}
+
+terrain JustASound
+{
+	splash			WaterSound
+	liquid
+	footclip		12
+}

@@ -46,8 +46,6 @@ const float STOPSPEED		= 2.1875;
 
 const float BONUSADD		= 0.2;
 
-const float SMALLSPLASHCLIP		= 12.0;
-
 const float MONS_LOOK_RANGE 	= (16.0 * 64.0);
 const int MONS_LOOK_LIMIT 		= 64;
 
@@ -406,7 +404,7 @@ int HITDICE(int a)
 //
 //===========================================================================
 
-int GetFloorType()
+VTerrainInfo* GetFloorType()
 {
 	return TerrainType(Floor->pic);
 }
@@ -450,9 +448,10 @@ void SetOrigin2(TVec origin)
 		origin.z = FloorZ + origin.z;	// artifact z passed in as height
 	}
 	SetOrigin(origin);
-	if (bFloorClip && GetFloorType() >= FLOOR_LIQUID && Origin.z == FloorZ)
+	VTerrainInfo* TInfo = GetFloorType();
+	if (bFloorClip && TInfo->bLiquid && Origin.z == FloorZ)
 	{
-		FloorClip = 10.0;
+		FloorClip = TInfo->FootClip;
 	}
 	else
 	{
@@ -607,93 +606,89 @@ void Destroyed()
 //
 //==========================================================================
 
-int HitFloorType()
+bool HitFloorType()
 {
 	Actor A;
 	int smallsplash = false;
+	VTerrainInfo* TInfo;
+	VSplashInfo* SInfo;
 
-	if (FloorZ != Sector->floorheight)
+	if (FloorZ != GetPlanePointZ(&Sector->floor, Origin))
 	{
 		// don't splash if landing on the edge above water/lava/etc....
-		return FLOOR_SOLID;
+		return false;
 	}
 
 	// Things that don't splash go here
 	if (bNoSplash)
 	{
-		return FLOOR_SOLID;
+		return false;
 	}
+
+	TInfo = GetFloorType();
 
 	// Small splash for small masses
 	if (Mass < 10.0)
 		smallsplash = true;
 
-	switch (GetFloorType())
+	if (TInfo->DamageAmount && bIsPlayer &&
+		Level.Game.level->tictime & TInfo->DamageTimeMask)
 	{
-	case FLOOR_WATER:
-		if (smallsplash)
-		{
-			A = Spawn(SplashBase, vector(Origin.x, Origin.y, ONFLOORZ));
-			if (A)
-				A.FloorClip += SMALLSPLASHCLIP;
-			A.PlaySound('Ambient10', CHAN_VOICE);	// small drip
-		}
-		else
-		{
-			A = Spawn(Splash, vector(Origin.x, Origin.y, ONFLOORZ));
-			A.Instigator = self;
-			A.Velocity.x = (Random() - Random()) * 35.0;
-			A.Velocity.y = (Random() - Random()) * 35.0;
-			A.Velocity.z = (2.0 + Random()) * 35.0;
-			A = Spawn(SplashBase, vector(Origin.x, Origin.y, ONFLOORZ));
-			if (bIsPlayer)
-				HexenLevelInfo(Level).NoiseAlert(self, self);
-			A.PlaySound('WaterSplash', CHAN_VOICE);
-		}
-		return FLOOR_WATER;
-	case FLOOR_LAVA:
-		if (smallsplash)
-		{
-			A = Spawn(LavaSplash, vector(Origin.x, Origin.y, ONFLOORZ));
-			if (A)
-				A.FloorClip += SMALLSPLASHCLIP;
-		}
-		else
-		{
-			A = Spawn(LavaSmoke, vector(Origin.x, Origin.y, ONFLOORZ));
-			A.Velocity.z = (1.0 + Random() / 2.0) * 35.0;
-			A = Spawn(LavaSplash, vector(Origin.x, Origin.y, ONFLOORZ));
-			if (bIsPlayer)
-				HexenLevelInfo(Level).NoiseAlert(self, self);
-		}
-		A.PlaySound('LavaSizzle', CHAN_VOICE);
-		if (bIsPlayer && Level.Game.level->tictime & 31)
-		{
-			Damage(HexenLevelInfo(Level).GLavaInflictor, none, 5);
-		}
-		return FLOOR_LAVA;
-	case FLOOR_SLUDGE:
-		if (smallsplash)
-		{
-			A = Spawn(SludgeSplash, vector(Origin.x, Origin.y, ONFLOORZ));
-			if (A)
-				A.FloorClip += SMALLSPLASHCLIP;
-		}
-		else
-		{
-			A = Spawn(SludgeChunk, vector(Origin.x, Origin.y, ONFLOORZ));
-			A.Instigator = self;
-			A.Velocity.x = (Random() - Random()) * 35.0;
-			A.Velocity.y = (Random() - Random()) * 35.0;
-			A.Velocity.z = (1.0 + Random()) * 35.0;
-			A = Spawn(SludgeSplash, vector(Origin.x, Origin.y, ONFLOORZ));
-			if (bIsPlayer)
-				HexenLevelInfo(Level).NoiseAlert(self, self);
-		}
-		A.PlaySound('SludgeGloop', CHAN_VOICE);
-		return FLOOR_SLUDGE;
+		Damage(TInfo->DamageType == 'lava' ? HexenLevelInfo(
+			Level).GLavaInflictor : none, none, TInfo->DamageAmount);
 	}
-	return FLOOR_SOLID;
+
+	SInfo = GetSplashInfo(TInfo->Splash);
+	if (!SInfo)
+	{
+		return TInfo->bLiquid;
+	}
+
+	if (smallsplash)
+	{
+		if (SInfo->SmallClass)
+		{
+			A = Spawn(class<Actor>(SInfo->SmallClass), Origin);
+			A.FloorClip += SInfo->SmallClip;
+			if (SInfo->SmallSound)
+			{
+				A.PlaySound(SInfo->SmallSound, CHAN_VOICE);
+			}
+		}
+	}
+	else
+	{
+		if (SInfo->BaseClass)
+		{
+			Spawn(class<Actor>(SInfo->BaseClass), Origin);
+			if (SInfo->Sound && !SInfo->ChunkClass)
+			{
+				A.PlaySound(SInfo->Sound, CHAN_VOICE);
+			}
+		}
+		if (SInfo->ChunkClass)
+		{
+			A = Spawn(class<Actor>(SInfo->ChunkClass), Origin);
+			A.Instigator = self;
+			A.Velocity.x = (Random() - Random()) * SInfo->ChunkXVelMul * 35.0;
+			A.Velocity.y = (Random() - Random()) * SInfo->ChunkYVelMul * 35.0;
+			A.Velocity.z = (SInfo->ChunkBaseZVel + Random() *
+				SInfo->ChunkZVelMul) * 35.0;
+			if (SInfo->Sound)
+			{
+				A.PlaySound(SInfo->Sound, CHAN_VOICE);
+			}
+		}
+		if (SInfo->Sound && !SInfo->BaseClass && !SInfo->ChunkClass)
+		{
+			PlaySound(SInfo->Sound, CHAN_BODY);
+		}
+		if (!SInfo->bNoAlert && bIsPlayer)
+		{
+			HexenLevelInfo(Level).NoiseAlert(self, self);
+		}
+	}
+	return TInfo->bLiquid;
 }
 
 //==========================================================================
@@ -704,7 +699,7 @@ int HitFloorType()
 
 void FloorBounceMissile()
 {
-	if (HitFloorType() >= FLOOR_LIQUID)
+	if (HitFloorType())
 	{
 		Remove();
 		return;
@@ -2053,10 +2048,10 @@ void HandleFloorclip()
 {
 	if (bFloorClip)
 	{
-		if (Origin.z == Sector->floorheight &&
-			GetFloorType() >= FLOOR_LIQUID)
+		VTerrainInfo* TInfo = GetFloorType();
+		if (Origin.z == Sector->floorheight && TInfo->bLiquid)
 		{
-			FloorClip = 10.0;
+			FloorClip = TInfo->FootClip;
 		}
 		else
 		{
@@ -2150,10 +2145,14 @@ float GetFriction()
 	{
 		return FRICTION_FLY;
 	}
-	if (GetFloorType() == FLOOR_ICE ||
-		(Sector->special & SECSPEC_BASE_MASK) == SECSPEC_FrictionLow)
+	if ((Sector->special & SECSPEC_BASE_MASK) == SECSPEC_FrictionLow)
 	{
 		return FRICTION_LOW;
+	}
+	VTerrainInfo* TInfo = GetFloorType();
+	if (TInfo->Friction)
+	{
+		return TInfo->Friction;
 	}
 	if (Sector->special & SECSPEC_FRICTION_MASK)
 	{
@@ -2508,7 +2507,7 @@ bool HitFloor()
 					PlaySound('*land', CHAN_BODY);
 					PlaySound('*grunt', CHAN_VOICE);
 				}
-				else if (GetFloorType() < FLOOR_LIQUID && !Player(Player).MorphTime)
+				else if (!GetFloorType()->bLiquid && !Player(Player).MorphTime)
 				{
 					PlaySound('*land', CHAN_BODY);
 				}
@@ -3233,17 +3232,7 @@ bool Teleport(TVec pos, float angle, bool DstFog, bool SrcFog, bool KeepDir)
 		if (bIsPlayer)
 			Player.bFixAngle = true;
 	}
-	if (bFloorClip)
-	{
-		if (Origin.z == FloorZ && GetFloorType() > FLOOR_SOLID)
-		{
-			FloorClip = 10.0;
-		}
-		else
-		{
-			FloorClip = 0.0;
-		}
-	}
+	HandleFloorclip();
 	if (bMissile)
 	{
 		Velocity.x = Speed * cos(angle);
