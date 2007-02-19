@@ -1461,10 +1461,10 @@ void VParser::ParseStates(VClass* InClass)
 			ParseError(Lex.Location, "Sprite name expected");
 		}
 		char SprName[8];
+		SprName[0] = 0;
 		if (Lex.Name != NAME_None && strlen(Lex.String) != 4)
 		{
 			ParseError(Lex.Location, "Invalid sprite name");
-			SprName[0] = 0;
 		}
 		else if (Lex.Name != NAME_None)
 		{
