@@ -562,7 +562,7 @@ static void ParseTerrainScript(VScriptParser* sc)
 					sc->ExpectString();
 					TInfo->LeftStepSounds = *sc->String;
 				}
-				if (sc->Check("rightstepsounds"))
+				else if (sc->Check("rightstepsounds"))
 				{
 					sc->ExpectString();
 					TInfo->RightStepSounds = *sc->String;
