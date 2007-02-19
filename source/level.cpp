@@ -217,6 +217,11 @@ void VLevel::Serialise(VStream& Strm)
 		}
 		Strm << PolyObjs[i].SpecialData;
 	}
+
+	//
+	//	ACS
+	//
+	Acs->Serialise(Strm);
 	unguard;
 }
 

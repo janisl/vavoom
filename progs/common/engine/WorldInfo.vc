@@ -23,18 +23,12 @@
 //**
 //**************************************************************************
 
-#include "../macros.vc"
+class WorldInfo : Object
+	native
+	abstract;
 
-#include "Object.vc"
-#include "Level.vc"
-#include "Thinker.vc"
-#include "LevelInfo.vc"
-#include "Entity.vc"
-#include "BasePlayer.vc"
-#include "WorldInfo.vc"
-#include "GameInfo.vc"
-#include "GC.vc"
-#include "Window.vc"
-#include "ModalWindow.vc"
-#include "RootWindow.vc"
-#include "ClientGameBase.vc"
+native private readonly void*		Acs;
+
+defaultproperties
+{
+}

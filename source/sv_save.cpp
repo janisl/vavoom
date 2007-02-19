@@ -506,6 +506,15 @@ static void ArchiveThinkers()
 	Saver->Exports.Append(GLevel);
 	Saver->ObjectsMap[GLevel->GetIndex()] = Saver->Exports.Num();
 
+	//	Agg world info
+	vuint8 WorldInfoSaved = (byte)SavingPlayers;
+	*Saver << WorldInfoSaved;
+	if (WorldInfoSaved)
+	{
+		Saver->Exports.Append(GWorldInfo);
+		Saver->ObjectsMap[GWorldInfo->GetIndex()] = Saver->Exports.Num();
+	}
+
 	//	Add players.
 	for (int i = 0; i < MAXPLAYERS; i++)
 	{
@@ -567,6 +576,14 @@ static void UnarchiveThinkers()
 	//	Add level.
 	Loader->Exports.Append(GLevel);
 
+	//	Add world info
+	vuint8 WorldInfoSaved;
+	*Saver << WorldInfoSaved;
+	if (WorldInfoSaved)
+	{
+		Loader->Exports.Append(GWorldInfo);
+	}
+
 	//	Add players.
 	sv_load_num_players = 0;
 	for (int i = 0; i < MAXPLAYERS; i++)
@@ -606,6 +623,7 @@ static void UnarchiveThinkers()
 	}
 
 	GLevelInfo->Game = GGameInfo;
+	GLevelInfo->World = GWorldInfo;
 
 	for (int i = 0; i < Loader->Exports.Num(); i++)
 	{
@@ -614,31 +632,6 @@ static void UnarchiveThinkers()
 
 	GLevelInfo->eventAfterUnarchiveThinkers();
 	unguard;
-}
-
-//==========================================================================
-//
-// ArchiveScripts
-//
-//==========================================================================
-
-static void ArchiveScripts()
-{
-	vint32 Seg = ASEG_SCRIPTS;
-	*Saver << Seg;
-	GLevel->Acs->Serialise(*Saver);
-}
-
-//==========================================================================
-//
-// UnarchiveScripts
-//
-//==========================================================================
-
-static void UnarchiveScripts()
-{
-	AssertSegment(ASEG_SCRIPTS);
-	GLevel->Acs->Serialise(*Loader);
 }
 
 //==========================================================================
@@ -760,7 +753,6 @@ static void SV_SaveMap(int slot, bool savePlayers)
 	*Saver << STRM_INDEX(Term);
 
 	ArchiveThinkers();
-	ArchiveScripts();
 	ArchiveSounds();
 
 	// Place a termination marker
@@ -842,7 +834,6 @@ static void SV_LoadMap(VName MapName, int slot)
 	}
 
 	UnarchiveThinkers();
-	UnarchiveScripts();
 	UnarchiveSounds();
 
 	AssertSegment(ASEG_END);
@@ -892,9 +883,6 @@ void SV_SaveGame(int slot, const char* description)
 	byte Skill = (byte)gameskill;
 	*Saver << Skill;
 	*Saver << level.MapName;
-
-	// Write global script info
-	P_SerialiseAcsGlobal(*Saver);
 
 	// Place a termination marker
 	Seg = ASEG_END;
@@ -973,9 +961,6 @@ void SV_LoadGame(int slot)
 
 	//	Init skill hacks
 	GGameInfo->eventInitNewGame(gameskill);
-
-	// Read global script info
-	P_SerialiseAcsGlobal(*Loader);
 
 	AssertSegment(ASEG_END);
 

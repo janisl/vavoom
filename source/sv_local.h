@@ -32,6 +32,7 @@
 struct tmtrace_t;
 
 extern VGameInfo*		GGameInfo;
+extern VWorldInfo*		GWorldInfo;
 extern VLevelInfo*		GLevelInfo;
 
 //==========================================================================
@@ -94,8 +95,55 @@ public:
 		bool Delayed);
 };
 
-void P_ACSInitNewGame();
-void P_SerialiseAcsGlobal(VStream&);
+class VAcsGrowingArray
+{
+private:
+	vint32		Size;
+	vint32*		Data;
+public:
+	VAcsGrowingArray();
+	void Redim(int NewSize);
+	void SetElemVal(int Index, int Value);
+	int GetElemVal(int Index);
+	void Serialise(VStream& Strm);
+};
+
+struct VAcsStore
+{
+	enum
+	{
+		Start,
+		StartAlways,
+		Terminate,
+		Suspend
+	};
+
+	VName		Map;		//	Target map
+	vuint8		Type;		//	Type of action
+	vint8		PlayerNum;	//	Player who executes this script
+	vint32		Script;		//	Script number on target map
+	vint32		Args[3];	//	Arguments
+};
+
+class VAcsGlobal
+{
+public:
+	enum
+	{
+		MAX_ACS_WORLD_VARS	= 256,
+		MAX_ACS_GLOBAL_VARS	= 64,
+	};
+
+	int					WorldVars[MAX_ACS_WORLD_VARS];
+	int					GlobalVars[MAX_ACS_GLOBAL_VARS];
+	VAcsGrowingArray	WorldArrays[MAX_ACS_WORLD_VARS];
+	VAcsGrowingArray	GlobalArrays[MAX_ACS_GLOBAL_VARS];
+	TArray<VAcsStore>	Store;
+
+	VAcsGlobal();
+
+	void Serialise(VStream& Strm);
+};
 
 //==========================================================================
 //

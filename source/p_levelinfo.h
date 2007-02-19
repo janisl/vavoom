@@ -30,6 +30,7 @@ class VLevelInfo : public VThinker
 	enum { MAX_TID_COUNT = 200 };
 
 	VGameInfo*		Game;
+	VWorldInfo*		World;
 
 	enum
 	{

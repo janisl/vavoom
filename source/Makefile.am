@@ -137,6 +137,7 @@ _____MAIN_EXE__SOURCES = \
 	p_thinker.cpp \
 	p_thinker.h \
 	p_trace.cpp \
+	p_worldinfo.h \
 	player.h \
 	pr_cmds.cpp \
 	pr_exec.cpp \

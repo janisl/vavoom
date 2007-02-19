@@ -68,8 +68,6 @@ enum
 {
 	MAX_ACS_SCRIPT_VARS	= 20,
 	MAX_ACS_MAP_VARS	= 128,
-	MAX_ACS_WORLD_VARS	= 256,
-	MAX_ACS_GLOBAL_VARS	= 64,
 };
 
 enum EAcsFormat
@@ -111,35 +109,6 @@ struct VAcsFunction
 	vuint8		HasReturnValue;
 	vuint8		ImportNum;
 	vuint32		Address;
-};
-
-struct VAcsStore
-{
-	enum
-	{
-		Start,
-		StartAlways,
-		Terminate,
-		Suspend
-	};
-
-	VName		Map;		//	Target map
-	vuint8		Type;		//	Type of action
-	vint8		PlayerNum;	//	Player who executes this script
-	vint32		Script;		//	Script number on target map
-	vint32		Args[3];	//	Arguments
-};
-
-class VAcsGrowingArray
-{
-private:
-	vint32		Size;
-	vint32*		Data;
-public:
-	void Redim(int NewSize);
-	void SetElemVal(int Index, int Value);
-	int GetElemVal(int Index);
-	void Serialise(VStream& Strm);
 };
 
 //
@@ -357,20 +326,6 @@ private:
 	int CheckInventory(VEntity*, const char*);
 };
 
-class VAcsGlobal
-{
-public:
-	int					WorldVars[MAX_ACS_WORLD_VARS];
-	int					GlobalVars[MAX_ACS_GLOBAL_VARS];
-	VAcsGrowingArray	WorldArrays[MAX_ACS_WORLD_VARS];
-	VAcsGrowingArray	GlobalArrays[MAX_ACS_GLOBAL_VARS];
-	TArray<VAcsStore>	Store;
-
-	VAcsGlobal();
-
-	void Serialise(VStream& Strm);
-};
-
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -384,8 +339,6 @@ public:
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 IMPLEMENT_CLASS(V, Acs)
-
-VAcsGlobal					AcsGlobal;
 
 // CODE --------------------------------------------------------------------
 
@@ -1361,7 +1314,7 @@ bool VAcsLevel::AddToACSStore(int Type, VName Map, int Number, int Arg1,
 	int Arg2, int Arg3, VEntity* Activator)
 {
 	guard(VAcsLevel::AddToACSStore);
-	VAcsStore& S = AcsGlobal.Store.Alloc();
+	VAcsStore& S = GWorldInfo->Acs->Store.Alloc();
 	S.Map = Map;
 	S.Type = Type;
 	S.PlayerNum = Activator && Activator->Player ?
@@ -1386,9 +1339,9 @@ bool VAcsLevel::AddToACSStore(int Type, VName Map, int Number, int Arg1,
 void VAcsLevel::CheckAcsStore()
 {
 	guard(VAcsLevel::CheckAcsStore);
-	for (int i = AcsGlobal.Store.Num() - 1; i >= 0; i--)
+	for (int i = GWorldInfo->Acs->Store.Num() - 1; i >= 0; i--)
 	{
-		VAcsStore* store = &AcsGlobal.Store[i];
+		VAcsStore* store = &GWorldInfo->Acs->Store[i];
 		if (store->Map != level.MapName)
 		{
 			continue;
@@ -1438,7 +1391,7 @@ void VAcsLevel::CheckAcsStore()
 				break;
 			}
 		}
-		AcsGlobal.Store.RemoveIndex(i);
+		GWorldInfo->Acs->Store.RemoveIndex(i);
 	}
 	unguard;
 }
@@ -1606,6 +1559,18 @@ VAcs* VAcsLevel::SpawnScript(VAcsInfo* Info, VAcsObject* Object,
 	}
 	return script;
 	unguard;
+}
+
+//==========================================================================
+//
+//	VAcsGrowingArray::VAcsGrowingArray
+//
+//==========================================================================
+
+VAcsGrowingArray::VAcsGrowingArray()
+: Size(0)
+, Data(NULL)
+{
 }
 
 //==========================================================================
@@ -1877,10 +1842,10 @@ int VAcs::RunScript(float DeltaTime)
 	}
 
 	//	Shortcuts
-	int* WorldVars = AcsGlobal.WorldVars;
-	int* GlobalVars = AcsGlobal.GlobalVars;
-	VAcsGrowingArray* WorldArrays = AcsGlobal.WorldArrays;
-	VAcsGrowingArray* GlobalArrays = AcsGlobal.GlobalArrays;
+	int* WorldVars = Level->World->Acs->WorldVars;
+	int* GlobalVars = Level->World->Acs->GlobalVars;
+	VAcsGrowingArray* WorldArrays = Level->World->Acs->WorldArrays;
+	VAcsGrowingArray* GlobalArrays = Level->World->Acs->GlobalArrays;
 
 	VStr PrintStr;
 	vint32 resultValue = 1;
@@ -4653,42 +4618,6 @@ void VAcsGlobal::Serialise(VStream& Strm)
 			<< STRM_INDEX(Store[i].Args[2]);
 	}
 	unguard;
-}
-
-//==========================================================================
-//
-//	P_ACSInitNewGame
-//
-//==========================================================================
-
-void P_ACSInitNewGame()
-{
-	guard(P_ACSInitNewGame);
-	memset(AcsGlobal.WorldVars, 0, sizeof(AcsGlobal.WorldVars));
-	memset(AcsGlobal.GlobalVars, 0, sizeof(AcsGlobal.GlobalVars));
-	for (int i = 0; i < MAX_ACS_WORLD_VARS; i++)
-	{
-		AcsGlobal.WorldArrays[i].Redim(0);
-	}
-	for (int i = 0; i < MAX_ACS_GLOBAL_VARS; i++)
-	{
-		AcsGlobal.GlobalArrays[i].Redim(0);
-	}
-	AcsGlobal.Store.Clear();
-	unguard;
-}
-
-//==========================================================================
-//
-//	P_SerialiseAcsGlobal
-//
-//==========================================================================
-
-void P_SerialiseAcsGlobal(VStream& Strm)
-{
-	guard(P_SerialiseAcsGlobal);
-	AcsGlobal.Serialise(Strm);
-	unguard;;
 }
 
 //==========================================================================

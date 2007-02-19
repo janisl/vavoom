@@ -68,6 +68,7 @@ static void G_DoCompleted();
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
 IMPLEMENT_CLASS(V, LevelInfo)
+IMPLEMENT_CLASS(V, WorldInfo)
 IMPLEMENT_CLASS(V, GameInfo)
 IMPLEMENT_CLASS(V, BasePlayer)
 
@@ -110,6 +111,7 @@ VName			sv_secret_map;
 int 			TimerGame;
 
 VGameInfo*		GGameInfo;
+VWorldInfo*		GWorldInfo;
 VLevelInfo*		GLevelInfo;
 
 TArray<VSndSeqInfo>	sv_ActiveSequences;
@@ -158,6 +160,49 @@ VLevelInfo::VLevelInfo()
 {
 	Level = this;
 	Game = GGameInfo;
+	World = GWorldInfo;
+}
+
+//==========================================================================
+//
+//	VWorldInfo::VWorldInfo
+//
+//==========================================================================
+
+VWorldInfo::VWorldInfo()
+{
+	Acs = new VAcsGlobal;
+}
+
+//==========================================================================
+//
+//	VWorldInfo::Serialise
+//
+//==========================================================================
+
+void VWorldInfo::Serialise(VStream& Strm)
+{
+	guard(VWorldInfo::Serialise);
+	//	Serialise global script info.
+	Acs->Serialise(Strm);
+
+	Super::Serialise(Strm);
+	unguard;
+}
+
+//==========================================================================
+//
+//	VWorldInfo::Destroy
+//
+//==========================================================================
+
+void VWorldInfo::Destroy()
+{
+	guard(VWorldInfo::Destroy);
+	delete Acs;
+
+	Super::Destroy();
+	unguard;
 }
 
 //==========================================================================
@@ -224,7 +269,6 @@ void SV_Shutdown()
 {
 	guard(SV_Shutdown);
 	SV_ShutdownServer(false);
-	P_ACSInitNewGame();
 	if (GGameInfo)
 		GGameInfo->ConditionalDestroy();
 	for (int i = 0; i < MAXPLAYERS; i++)
@@ -2382,9 +2426,10 @@ void SV_SpawnServer(const char *mapname, bool spawn_thinkers)
 			GGameInfo->Players[i]->Net->Message.Clear();
 		}
 	}
-	else if (!sv_loading)
+	else
 	{
 		//	New game
+		GWorldInfo = GGameInfo->eventCreateWorldInfo();
 	}
 
 	SV_Clear();
@@ -2801,6 +2846,11 @@ void SV_ShutdownServer(bool crash)
 		delete GLevel;
 		GLevel = NULL;
 	}
+	if (GWorldInfo)
+	{
+		delete GWorldInfo;
+		GWorldInfo = NULL;
+	}
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
 		//	Save net pointer
@@ -3053,7 +3103,6 @@ COMMAND(Map)
 
 	SV_InitBaseSlot();
 	SV_ClearRebornSlot();
-	P_ACSInitNewGame();
 	// Default the player start spot group to 0
 	RebornPosition = 0;
 	GGameInfo->RebornPosition = RebornPosition;

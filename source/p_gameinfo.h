@@ -68,6 +68,11 @@ class VGameInfo : public VObject
 		P_PASS_INT(skill);
 		EV_RET_VOID("InitNewGame");
 	}
+	VWorldInfo* eventCreateWorldInfo()
+	{
+		P_PASS_SELF;
+		EV_RET_REF(VWorldInfo, "CreateWorldInfo");
+	}
 	VLevelInfo* eventCreateLevelInfo()
 	{
 		P_PASS_SELF;

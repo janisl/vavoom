@@ -26,6 +26,7 @@
 #include "Actor.vc"
 #include "MainGameInfo.vc"
 #include "DoomLevelInfo.vc"
+#include "DoomWorldInfo.vc"
 #include "Weapon.vc"
 #include "Player.vc"
 #include "BotPlayer.vc"

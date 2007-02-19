@@ -28,6 +28,7 @@ class LevelInfo : Thinker
 	abstract;
 
 native readonly GameInfo	Game;
+native readonly WorldInfo	World;
 
 readonly bool	bBegunPlay;
 

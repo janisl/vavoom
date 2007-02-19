@@ -26,6 +26,7 @@
 #include "Actor.vc"
 #include "MainGameInfo.vc"
 #include "HexenLevelInfo.vc"
+#include "HexenWorldInfo.vc"
 #include "Pawn.vc"
 #include "PlayerPawn.vc"
 #include "Weapon.vc"
