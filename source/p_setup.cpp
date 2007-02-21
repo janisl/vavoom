@@ -1163,16 +1163,44 @@ void VLevel::LoadACScripts(int Lump)
 	guard(VLevel::LoadACScripts);
 	Acs = new VAcsLevel(this);
 
+	//	Load level's BEHAVIOR lump if it has one.
+	if (Lump >= 0)
+	{
+		Acs->LoadObject(Lump);
+	}
+
+	//	Load ACS helper scripts if needed (for Strife).
 	if (GGameInfo->AcsHelper != NAME_None)
 	{
-		//	Load ACS helper scripts
 		Acs->LoadObject(W_GetNumForName(GGameInfo->AcsHelper,
 			WADNS_ACSLibrary));
 	}
 
-	if (Lump >= 0)
+	//	Load user-specified default ACS libraries.
+	for (int ScLump = W_IterateNS(-1, WADNS_Global); ScLump >= 0;
+		ScLump = W_IterateNS(ScLump, WADNS_Global))
 	{
-		Acs->LoadObject(Lump);
+		if (W_LumpName(ScLump) != NAME_loadacs)
+		{
+			continue;
+		}
+
+		VScriptParser* sc = new VScriptParser(*W_LumpName(ScLump),
+			W_CreateLumpReaderNum(ScLump));
+		while (!sc->AtEnd())
+		{
+			sc->ExpectName8();
+			int AcsLump = W_CheckNumForName(sc->Name8);
+			if (AcsLump >= 0)
+			{
+				Acs->LoadObject(AcsLump);
+			}
+			else
+			{
+				GCon->Logf("No such autoloaded ACS library %s", *sc->String);
+			}
+		}
+		delete sc;
 	}
 	unguard;
 }
