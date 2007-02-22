@@ -617,6 +617,7 @@ static void UnarchiveThinkers()
 		if (Obj->IsA(VLevelInfo::StaticClass()))
 		{
 			GLevelInfo = (VLevelInfo*)Obj;
+			GLevel->LevelInfo = GLevelInfo;
 		}
 
 		Loader->Exports.Append(Obj);

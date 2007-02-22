@@ -1314,7 +1314,7 @@ bool VAcsLevel::AddToACSStore(int Type, VName Map, int Number, int Arg1,
 	int Arg2, int Arg3, VEntity* Activator)
 {
 	guard(VAcsLevel::AddToACSStore);
-	VAcsStore& S = GWorldInfo->Acs->Store.Alloc();
+	VAcsStore& S = XLevel->WorldInfo->Acs->Store.Alloc();
 	S.Map = Map;
 	S.Type = Type;
 	S.PlayerNum = Activator && Activator->Player ?
@@ -1339,9 +1339,9 @@ bool VAcsLevel::AddToACSStore(int Type, VName Map, int Number, int Arg1,
 void VAcsLevel::CheckAcsStore()
 {
 	guard(VAcsLevel::CheckAcsStore);
-	for (int i = GWorldInfo->Acs->Store.Num() - 1; i >= 0; i--)
+	for (int i = XLevel->WorldInfo->Acs->Store.Num() - 1; i >= 0; i--)
 	{
-		VAcsStore* store = &GWorldInfo->Acs->Store[i];
+		VAcsStore* store = &XLevel->WorldInfo->Acs->Store[i];
 		if (store->Map != level.MapName)
 		{
 			continue;
@@ -1391,7 +1391,7 @@ void VAcsLevel::CheckAcsStore()
 				break;
 			}
 		}
-		GWorldInfo->Acs->Store.RemoveIndex(i);
+		XLevel->WorldInfo->Acs->Store.RemoveIndex(i);
 	}
 	unguard;
 }

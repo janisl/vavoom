@@ -2470,6 +2470,7 @@ void SV_SpawnServer(const char *mapname, bool spawn_thinkers)
 
 	//	Load it
 	SV_LoadLevel(level.MapName);
+	GLevel->WorldInfo = GWorldInfo;
 
 	//	Copy special action flags from mapinfo.
 	if (info.Flags & MAPINFOF_Map07Special)
@@ -2505,6 +2506,7 @@ void SV_SpawnServer(const char *mapname, bool spawn_thinkers)
 	{
 		GLevelInfo = GGameInfo->eventCreateLevelInfo();
 		GLevelInfo->Level = GLevelInfo;
+		GLevel->LevelInfo = GLevelInfo;
 		if (info.Gravity)
 			GLevelInfo->Gravity = info.Gravity * DEFAULT_GRAVITY / 800.0;
 		else

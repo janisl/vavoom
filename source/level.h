@@ -65,6 +65,7 @@ class	VThinker;
 class		VLevelInfo;
 class		VEntity;
 class	VBasePlayer;
+class	VWorldInfo;
 class	VGameInfo;
 
 //
@@ -607,6 +608,9 @@ class VLevel : public VObject
 
 	VThinker*			ThinkerHead;
 	VThinker*			ThinkerTail;
+
+	VLevelInfo*			LevelInfo;
+	VWorldInfo*			WorldInfo;
 
 	VAcsLevel*			Acs;
 

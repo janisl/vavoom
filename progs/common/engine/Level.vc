@@ -106,6 +106,9 @@ native readonly private void*	__PolyAnchorPoints;
 native readonly private Thinker	__ThinkerHead;
 native readonly private Thinker	__ThinkerTail;
 
+native readonly LevelInfo		LevelInfo;
+native readonly WorldInfo		WorldInfo;
+
 native readonly private void*	Acs;
 
 native readonly private void*	RenderData;
