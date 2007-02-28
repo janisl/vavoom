@@ -79,6 +79,11 @@ class Entity : Thinker
 	native
 	abstract;
 
+//replication
+//{
+//	Alpha, Translation, Effects;
+//}
+
 // Info for drawing: position.
 TVec Origin;
 
@@ -96,12 +101,12 @@ int FixedModelIndex;
 int ModelSkinNum;
 int ModelVersion;
 
-net float Alpha;
-net int Translation;
+float Alpha;
+int Translation;
 
 float FloorClip;	// value to use for floor clipping
 
-net int Effects;
+int Effects;
 
 native readonly subsector_t* SubSector;
 native readonly sector_t* Sector;

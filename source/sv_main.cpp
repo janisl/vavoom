@@ -523,12 +523,12 @@ int SV_GetMobjBits(VEntity &mobj, mobj_base_t &base)
 		bits |= MOB_SPRITE;
 	if (mobj.EntityFlags & VEntity::EF_FullBright)
 		bits |= MOB_FULL_BRIGHT;
-//	if (base.Alpha != mobj.Alpha)
-//		bits |= MOB_TRANSLUC;
+	if (base.Alpha != mobj.Alpha)
+		bits |= MOB_TRANSLUC;
 	if (base.Translation != mobj.Translation)
 		bits |= MOB_TRANSL;
-//	if (base.Effects != mobj.Effects)
-//		bits |= MOB_EFFECTS;
+	if (base.Effects != mobj.Effects)
+		bits |= MOB_EFFECTS;
 	if (mobj.EntityFlags & VEntity::EF_FixedModel)
 		bits |= MOB_MODEL;
 	if ((mobj.EntityFlags & VEntity::EF_FixedModel) && mobj.ModelSkinNum)

@@ -199,18 +199,18 @@ static void CL_ReadMobj(VMessage& msg, int bits, VEntity*& mobj, const clmobjbas
 		mobj->EntityFlags |= VEntity::EF_FullBright;
 	else
 		mobj->EntityFlags &= ~VEntity::EF_FullBright;
-//	if (bits & MOB_TRANSLUC)
-//		mobj->Alpha = (float)msg.ReadByte() / 255.0;
-//	else
-//		mobj->Alpha = base.Alpha;
+	if (bits & MOB_TRANSLUC)
+		mobj->Alpha = (float)msg.ReadByte() / 255.0;
+	else
+		mobj->Alpha = base.Alpha;
 	if (bits & MOB_TRANSL)
 		mobj->Translation = msg.ReadByte();
 	else
 		mobj->Translation = base.translation;
-//	if (bits & MOB_EFFECTS)
-//		mobj->Effects = msg.ReadByte();
-//	else
-//		mobj->Effects = base.effects;
+	if (bits & MOB_EFFECTS)
+		mobj->Effects = msg.ReadByte();
+	else
+		mobj->Effects = base.effects;
 	mobj->EntityFlags &= ~VEntity::EF_FixedModel;
 	if (bits & MOB_MODEL)
 	{

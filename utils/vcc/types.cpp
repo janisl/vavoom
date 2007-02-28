@@ -2526,6 +2526,31 @@ bool VClass::DefineMembers()
 		}
 	}
 
+	for (int i = 0; i < RepFields.Num(); i++)
+	{
+		VField* RepField = NULL;
+		for (VField* F = Fields; F; F = F->Next)
+		{
+			if (F->Name == RepFields[i].Name)
+			{
+				RepField = F;
+				break;
+			}
+		}
+		if (!RepField)
+		{
+			ParseError(RepFields[i].Loc, "No such field %s", *RepFields[i].Name);
+			continue;
+		}
+		if (RepField->flags & FIELD_Net)
+		{
+			ParseError(RepFields[i].Loc, "Field %s has multiple replication statements",
+				*RepFields[i].Name);
+			continue;
+		}
+		RepField->flags |= FIELD_Net;
+	}
+
 	return Ret;
 }
 

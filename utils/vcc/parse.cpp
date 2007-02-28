@@ -1746,6 +1746,29 @@ void VParser::ParseClass()
 			continue;
 		}
 
+		if (Lex.Check(TK_Replication))
+		{
+			Lex.Expect(TK_LBrace);
+			do
+			{
+				if (Lex.Token != TK_Identifier)
+				{
+					ParseError(Lex.Location, "Field name expected");
+				}
+				else
+				{
+					VClass::VRepField& F = Class->RepFields.Alloc();
+					F.Name = Lex.Name;
+					F.Loc = Lex.Location;
+					Lex.NextToken();
+				}
+			}
+			while (Lex.Check(TK_Comma));
+			Lex.Expect(TK_Semicolon);
+			Lex.Expect(TK_RBrace);
+			continue;
+		}
+
 		int Modifiers = TModifiers::Parse(Lex);
 
 		VExpression* Type = ParseType();

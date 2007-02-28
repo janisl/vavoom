@@ -117,7 +117,6 @@ public:
 		Final			= 0x0040,
 		Optional		= 0x0080,
 		Out				= 0x0100,
-		Net				= 0x0200,
 	};
 
 	static int Parse(VLexer&);
@@ -239,7 +238,7 @@ class VField : public VMemberBase
 {
 public:
 	enum { AllowedModifiers = TModifiers::Native | TModifiers::Private |
-		TModifiers::ReadOnly | TModifiers::Transient | TModifiers::Net };
+		TModifiers::ReadOnly | TModifiers::Transient };
 
 	VField*			Next;
 	TType			type;
@@ -455,6 +454,12 @@ class VClass : public VMemberBase
 public:
 	enum { AllowedModifiers = TModifiers::Native | TModifiers::Abstract };
 
+	struct VRepField
+	{
+		VName		Name;
+		TLocation	Loc;
+	};
+
 	VClass*		ParentClass;
 	VField*		Fields;
 	VState*		States;
@@ -470,6 +475,7 @@ public:
 	TArray<VProperty*>		Properties;
 	TArray<VMethod*>		Methods;
 	bool					Defined;
+	TArray<VRepField>		RepFields;
 
 	VClass(VName, VMemberBase*, TLocation);
 	~VClass();

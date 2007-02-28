@@ -95,10 +95,6 @@ int TModifiers::Parse(VLexer& Lex)
 		{
 			Modifiers |= Out;
 		}
-		else if (Lex.Check(TK_Net))
-		{
-			Modifiers |= Net;
-		}
 		else
 		{
 			done = true;
@@ -128,7 +124,6 @@ const char* TModifiers::Name(int Modifier)
 	case Final:		return "final";
 	case Optional:	return "optional";
 	case Out:		return "out";
-	case Net:		return "net";
 	}
 	return "";
 }
@@ -211,8 +206,6 @@ int TModifiers::FieldAttr(int Modifiers)
 		Attributes |= FIELD_Private;
 	if (Modifiers & ReadOnly)
 		Attributes |= FIELD_ReadOnly;
-	if (Modifiers & Net)
-		Attributes |= FIELD_Net;
 	return Attributes;
 }
 

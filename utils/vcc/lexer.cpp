@@ -76,13 +76,13 @@ const char*			VLexer::TokenNames[] =
 	"int",
 	"name",
 	"native",
-	"net",
 	"none",
 	"NULL",
 	"optional",
 	"out",
 	"private",
 	"readonly",
+	"replication",
 	"return",
 	"self",
 	"set",
@@ -667,10 +667,6 @@ void VLexer::ProcessLetterToken()
 				Token = TK_Native;
 			}
 		}
-		else if (s[1] == 'e' && s[2] == 't' && s[3] == 0)
-		{
-			Token = TK_Net;
-		}
 		else if (s[1] == 'o' && s[2] == 'n' && s[3] == 'e' && s[4] == 0)
 		{
 			Token = TK_None;
@@ -713,6 +709,12 @@ void VLexer::ProcessLetterToken()
 				s[6] == 'l' && s[7] == 'y' && s[8] == 0)
 			{
 				Token = TK_ReadOnly;
+			}
+			else if (s[2] == 'p' && s[3] == 'l' && s[4] == 'i' &&
+				s[5] == 'c' && s[6] == 'a' && s[7] == 't' && s[8] == 'i' &&
+				s[9] == 'o' && s[10] == 'n' && s[11] == 0)
+			{
+				Token = TK_Replication;
 			}
 			else if (s[2] == 't' && s[3] == 'u' && s[4] == 'r' &&
 				s[5] == 'n' && s[6] == 0)
