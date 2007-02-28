@@ -433,7 +433,7 @@ void VEntityChannel::SetEntity(VEntity* AEnt)
 	{
 		for (VField* F = Ent->GetClass()->NetFields; F; F = F->NextNetField)
 		{
-			VField::CleanField(OldData + F->NetReplicationOffset, F->Type);
+			VField::CleanField(OldData + F->Ofs, F->Type);
 		}
 		if (OldData)
 		{
@@ -447,12 +447,12 @@ void VEntityChannel::SetEntity(VEntity* AEnt)
 	if (Ent)
 	{
 		VEntity* Def = (VEntity*)Ent->GetClass()->Defaults;
-		OldData = new vuint8[Ent->GetClass()->NetReplicationSize];
-		memset(OldData, 0, Ent->GetClass()->NetReplicationSize);
+		OldData = new vuint8[Ent->GetClass()->ClassSize];
+		memset(OldData, 0, Ent->GetClass()->ClassSize);
 		for (VField* F = Ent->GetClass()->NetFields; F; F = F->NextNetField)
 		{
-			VField::CopyFieldValue((vuint8*)Def + F->Ofs,
-				OldData + F->NetReplicationOffset, F->Type);
+			VField::CopyFieldValue((vuint8*)Def + F->Ofs, OldData + F->Ofs,
+				F->Type);
 		}
 		NewObj = true;
 	}
@@ -472,8 +472,7 @@ void VEntityChannel::Update(int SendId)
 	vuint8* Data = (vuint8*)Ent;
 	for (VField* F = Ent->GetClass()->NetFields; F; F = F->NextNetField)
 	{
-		if (!VField::IdenticalValue(Data + F->Ofs, OldData +
-			F->NetReplicationOffset, F->Type))
+		if (!VField::IdenticalValue(Data + F->Ofs, OldData + F->Ofs, F->Type))
 		{
 			Msg << (vuint8)svc_set_prop;
 			if (SendId < 0x80)
@@ -485,10 +484,9 @@ void VEntityChannel::Update(int SendId)
 				Msg << (vuint8)(SendId & 0x7f | 0x80)
 					<< (vuint8)(SendId >> 7);
 			}
-			Msg << (vuint8)F->NetReplicationId;
+			Msg << (vuint8)F->NetIndex;
 			VField::NetWriteValue(Msg, Data + F->Ofs, F->Type);
-			VField::CopyFieldValue(Data + F->Ofs, OldData +
-				F->NetReplicationOffset, F->Type);
+			VField::CopyFieldValue(Data + F->Ofs, OldData + F->Ofs, F->Type);
 		}
 	}
 	unguard;

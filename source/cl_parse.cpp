@@ -722,11 +722,11 @@ static void CL_ParseSetProp(VMessage& Msg)
 		Id = (Id & 0x7f) | (Msg.ReadByte() << 7);
 	}
 	VEntity* Ent = cl_mobjs[Id];
-	int FldId = Msg.ReadByte();
+	int FldIdx = Msg.ReadByte();
 	VField* F = NULL;
 	for (VField* CF = Ent->GetClass()->NetFields; CF; CF = CF->NextNetField)
 	{
-		if (CF->NetReplicationId == FldId)
+		if (CF->NetIndex == FldIdx)
 		{
 			F = CF;
 			break;
@@ -734,7 +734,7 @@ static void CL_ParseSetProp(VMessage& Msg)
 	}
 	if (!F)
 	{
-		Sys_Error("Bad net field %d", FldId);
+		Sys_Error("Bad net field %d", FldIdx);
 	}
 	VField::NetReadValue(Msg, (vuint8*)Ent + F->Ofs, F->Type);
 	unguard;

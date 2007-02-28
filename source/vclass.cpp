@@ -614,8 +614,7 @@ VField::VField(VName AName)
 , Ofs(0)
 , Func(0)
 , Flags(0)
-, NetReplicationOffset(0)
-, NetReplicationId(-1)
+, NetIndex(-1)
 {
 	memset(&Type, 0, sizeof(Type));
 }
@@ -2304,7 +2303,6 @@ VClass::VClass(VName AName)
 , Defaults(0)
 , NetId(-1)
 , NetStates(0)
-, NetReplicationSize(0)
 , NumNetFields(0)
 {
 	guard(VClass::VClass);
@@ -2339,7 +2337,6 @@ VClass::VClass(ENativeConstructor, size_t ASize, vuint32 AClassFlags,
 , Defaults(0)
 , NetId(-1)
 , NetStates(0)
-, NetReplicationSize(0)
 , NumNetFields(0)
 {
 	guard(native VClass::VClass);
@@ -2844,7 +2841,6 @@ void VClass::InitNetFields()
 	if (ParentClass)
 	{
 		NetFields = ParentClass->NetFields;
-		NetReplicationSize = ParentClass->NetReplicationSize;
 		NumNetFields = ParentClass->NumNetFields;
 	}
 
@@ -2854,22 +2850,10 @@ void VClass::InitNetFields()
 		{
 			continue;
 		}
-
-		if (fi->Type.Type == ev_struct ||
-			(fi->Type.Type == ev_array && fi->Type.ArrayInnerType == ev_struct))
-		{
-			//	Make sure struct size has been calculated.
-			fi->Type.Struct->PostLoad();
-		}
-		int FldAlign = fi->Type.GetAlignment();
-		NetReplicationSize = (NetReplicationSize + FldAlign - 1) & ~(FldAlign - 1);
-		fi->NetReplicationOffset = NetReplicationSize;
-		NetReplicationSize += fi->Type.GetSize();
-		fi->NetReplicationId = NumNetFields++;
+		fi->NetIndex = NumNetFields++;
 		fi->NextNetField = NetFields;
 		NetFields = fi;
 	}
-	NetReplicationSize = (NetReplicationSize + sizeof(void*) - 1) & ~(sizeof(void*) - 1);
 	unguard;
 }
 

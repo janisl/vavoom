@@ -147,8 +147,7 @@ public:
 	FType		Type;
 	VMethod*	Func;
 	vint32		Flags;
-	vint32		NetReplicationOffset;
-	vint32		NetReplicationId;
+	vint32		NetIndex;
 
 	VField(VName);
 
@@ -380,7 +379,6 @@ public:
 	vint32			NetId;
 	VState*			NetStates;
 	TArray<VState*>	StatesLookup;
-	vint32			NetReplicationSize;
 	vint32			NumNetFields;
 
 	static TArray<mobjinfo_t>	GMobjInfos;
