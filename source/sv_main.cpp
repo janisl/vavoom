@@ -519,22 +519,12 @@ int SV_GetMobjBits(VEntity &mobj, mobj_base_t &base)
 		bits |= MOB_ANGLEP;
 	if (AngleToByte(base.Angles.roll) != AngleToByte(mobj.Angles.roll))
 		bits |= MOB_ANGLER;
-	if (base.SpriteType != mobj.SpriteType)
-		bits |= MOB_SPRITE;
 	if (mobj.EntityFlags & VEntity::EF_FullBright)
 		bits |= MOB_FULL_BRIGHT;
-	if (base.Alpha != mobj.Alpha)
-		bits |= MOB_TRANSLUC;
-	if (base.Translation != mobj.Translation)
-		bits |= MOB_TRANSL;
-	if (base.Effects != mobj.Effects)
-		bits |= MOB_EFFECTS;
 	if (mobj.EntityFlags & VEntity::EF_FixedModel)
 		bits |= MOB_MODEL;
 	if ((mobj.EntityFlags & VEntity::EF_FixedModel) && mobj.ModelSkinNum)
 		bits |= MOB_SKIN_NUM;
-	if (mobj.ModelVersion)
-		bits |= MOB_MDL_VERSION;
 	if (base.Class != mobj.GetClass())
 	{
 		bits |= MOB_CLASS;
@@ -596,20 +586,10 @@ void SV_WriteMobj(int bits, VEntity &mobj, VMessage &msg)
 		msg << (vuint8)(AngleToByte(mobj.Angles.pitch));
 	if (bits & MOB_ANGLER)
 		msg << (vuint8)(AngleToByte(mobj.Angles.roll));
-	if (bits & MOB_SPRITE)
-		msg << (vuint8)mobj.SpriteType;
-	if (bits & MOB_TRANSLUC)
-		msg << (vuint8)(mobj.Alpha * 255);
-	if (bits & MOB_TRANSL)
-		msg << (vuint8)mobj.Translation;
-	if (bits & MOB_EFFECTS)
-		msg << (vuint8)mobj.Effects;
 	if (bits & MOB_MODEL)
 		msg << (vuint16)mobj.FixedModelIndex;
 	if (bits & MOB_SKIN_NUM)
 		msg << (vuint8)mobj.ModelSkinNum;
-	if (bits & MOB_MDL_VERSION)
-		msg << (vuint8)mobj.ModelVersion;
 	unguard;
 }
 
@@ -670,16 +650,12 @@ void SV_UpdateMobj(int i, VMessage &msg)
 		bits |= MOB_BIG_NUM;
 	if (bits > 0xff)
 		bits |= MOB_MORE_BITS;
-	if (bits > 0xffff)
-		bits |= MOB_MORE_BITS2;
 
 	msg << (vuint8)svc_update_mobj;
 	if (bits & MOB_MORE_BITS)
 		msg << (vuint16)bits;
 	else
 		msg << (vuint8)bits;
-	if (bits & MOB_MORE_BITS2)
-		msg << (vuint8)(bits >> 16);
 	if (bits & MOB_BIG_NUM)
 		msg << (vuint16)sendnum;
 	else
@@ -760,10 +736,6 @@ void SV_CreateBaseline()
 		base.Angles.yaw = mobj.Angles.yaw;
 		base.Angles.pitch = mobj.Angles.pitch;
 		base.Angles.roll = mobj.Angles.roll;
-		base.SpriteType = mobj.SpriteType;
-		base.Alpha = mobj.Alpha;
-		base.Translation = mobj.Translation;
-		base.Effects = mobj.Effects;
 
 		sv_signon << (vuint8)svc_spawn_baseline
 					<< (vuint16)i
@@ -774,11 +746,7 @@ void SV_CreateBaseline()
 					<< (vuint16)(mobj.Origin.z - mobj.FloorClip)
 					<< (vuint8)(AngleToByte(mobj.Angles.yaw))
 					<< (vuint8)(AngleToByte(mobj.Angles.pitch))
-					<< (vuint8)(AngleToByte(mobj.Angles.roll))
-					<< (vuint8)mobj.SpriteType
-					<< (vuint8)(mobj.Alpha * 255)
-					<< (vuint8)mobj.Translation
-					<< (vuint8)mobj.Effects;
+					<< (vuint8)(AngleToByte(mobj.Angles.roll));
 	}
 	unguard;
 }

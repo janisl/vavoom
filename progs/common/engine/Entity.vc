@@ -79,10 +79,10 @@ class Entity : Thinker
 	native
 	abstract;
 
-//replication
-//{
-//	Alpha, Translation, Effects;
-//}
+replication
+{
+	SpriteType, ModelVersion, Alpha, Translation, Effects;
+}
 
 // Info for drawing: position.
 TVec Origin;

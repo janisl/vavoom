@@ -733,21 +733,13 @@ static void SV_SaveMap(int slot, bool savePlayers)
 			sv_mo_base[i].Origin.z ||
 			sv_mo_base[i].Angles.pitch ||
 			sv_mo_base[i].Angles.yaw ||
-			sv_mo_base[i].Angles.roll ||
-			sv_mo_base[i].SpriteType ||
-			sv_mo_base[i].Alpha ||
-			sv_mo_base[i].Translation ||
-			sv_mo_base[i].Effects)
+			sv_mo_base[i].Angles.roll)
 		{
 			*Saver << STRM_INDEX(i)
 				<< sv_mo_base[i].Class
 				<< sv_mo_base[i].State
 				<< sv_mo_base[i].Origin
-				<< sv_mo_base[i].Angles
-				<< STRM_INDEX(sv_mo_base[i].SpriteType)
-				<< sv_mo_base[i].Alpha
-				<< STRM_INDEX(sv_mo_base[i].Translation)
-				<< STRM_INDEX(sv_mo_base[i].Effects);
+				<< sv_mo_base[i].Angles;
 		}
 	}
 	int Term = -1;
@@ -827,10 +819,6 @@ static void SV_LoadMap(VName MapName, int slot)
 			<< sv_mo_base[Idx].State
 			<< sv_mo_base[Idx].Origin
 			<< sv_mo_base[Idx].Angles
-			<< STRM_INDEX(sv_mo_base[Idx].SpriteType)
-			<< sv_mo_base[Idx].Alpha
-			<< STRM_INDEX(sv_mo_base[Idx].Translation)
-			<< STRM_INDEX(sv_mo_base[Idx].Effects)
 			<< STRM_INDEX(Idx);
 	}
 

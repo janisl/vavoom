@@ -55,10 +55,6 @@ struct clmobjbase_t
 	VState*		State;
 	TVec		origin;	// position
 	TAVec		angles;	// orientation
-	int			spritetype;
-	float		Alpha;
-	int			translation;
-	int			effects;
 };
 
 class VRootWindow;

@@ -214,10 +214,6 @@ struct mobj_base_t
 	VState*		State;			// state
 	TVec		Origin;			// position
 	TAVec		Angles;			// orientation
-	int			SpriteType;		// sprite orientation type
-	float		Alpha;			// alpha
-	int			Translation;	// player colour translation
-	int			Effects;		// dynamic lights, trails
 };
 
 struct VSndSeqInfo

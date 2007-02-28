@@ -110,10 +110,6 @@ static void CL_ReadMobjBase(VMessage& msg, clmobjbase_t &mobj)
 	mobj.angles.yaw = ByteToAngle(msg.ReadByte());
 	mobj.angles.pitch = ByteToAngle(msg.ReadByte());
 	mobj.angles.roll = ByteToAngle(msg.ReadByte());
-	mobj.spritetype = msg.ReadByte();
-	mobj.Alpha = (float)msg.ReadByte() / 255.0;
-	mobj.translation = msg.ReadByte();
-	mobj.effects = msg.ReadByte();
 	unguard;
 }
 
@@ -191,26 +187,10 @@ static void CL_ReadMobj(VMessage& msg, int bits, VEntity*& mobj, const clmobjbas
 		mobj->Angles.roll = ByteToAngle(msg.ReadByte());
 	else
 		mobj->Angles.roll = base.angles.roll;
-	if (bits & MOB_SPRITE)
-		mobj->SpriteType = msg.ReadByte();
-	else
-		mobj->SpriteType = base.spritetype;
 	if (bits & MOB_FULL_BRIGHT)
 		mobj->EntityFlags |= VEntity::EF_FullBright;
 	else
 		mobj->EntityFlags &= ~VEntity::EF_FullBright;
-	if (bits & MOB_TRANSLUC)
-		mobj->Alpha = (float)msg.ReadByte() / 255.0;
-	else
-		mobj->Alpha = base.Alpha;
-	if (bits & MOB_TRANSL)
-		mobj->Translation = msg.ReadByte();
-	else
-		mobj->Translation = base.translation;
-	if (bits & MOB_EFFECTS)
-		mobj->Effects = msg.ReadByte();
-	else
-		mobj->Effects = base.effects;
 	mobj->EntityFlags &= ~VEntity::EF_FixedModel;
 	if (bits & MOB_MODEL)
 	{
@@ -221,10 +201,6 @@ static void CL_ReadMobj(VMessage& msg, int bits, VEntity*& mobj, const clmobjbas
 		mobj->ModelSkinNum = msg.ReadByte();
 	else
 		mobj->ModelSkinNum = 0;
-	if (bits & MOB_MDL_VERSION)
-		mobj->ModelVersion = msg.ReadByte();
-	else
-		mobj->ModelVersion = 0;
 }
 
 static void CL_ParseUpdateMobj(VMessage& msg)
@@ -236,8 +212,6 @@ static void CL_ParseUpdateMobj(VMessage& msg)
 	bits = msg.ReadByte();
 	if (bits & MOB_MORE_BITS)
 		bits |= msg.ReadByte() << 8;
-	if (bits & MOB_MORE_BITS2)
-		bits |= msg.ReadByte() << 16;
 
 	if (bits & MOB_BIG_NUM)
 		i = msg.ReadShort();
