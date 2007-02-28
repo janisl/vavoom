@@ -465,54 +465,32 @@ void VEntityChannel::SetEntity(VEntity* AEnt)
 //
 //==========================================================================
 
-static void WriteFieldValue(const VField::FType& Type, VMessage& Msg, vuint8* Data)
-{
-	switch (Type.Type)
-	{
-	case ev_int:
-		Msg << *(vuint32*)Data;
-		break;
-
-	case ev_float:
-		Msg << *(float*)Data;
-		break;
-	}
-}
-
-static void UpdateFieldValue(const VField::FType& Type, int FldId, VMessage& Msg, int SendId,
-	vuint8* Data, vuint8* OldData)
-{
-	if (!VField::IdenticalValue(Data, OldData, Type))
-	{
-		Msg << (vuint8)svc_set_prop;
-		if (SendId < 0x80)
-		{
-			Msg << (vuint8)SendId;
-		}
-		else
-		{
-			Msg << (vuint8)(SendId & 0x7f | 0x80)
-				<< (vuint8)(SendId >> 7);
-		}
-		Msg << (vuint8)FldId;
-		WriteFieldValue(Type, Msg, Data);
-		VField::CopyFieldValue(Data, OldData, Type);
-	}
-}
-
-static void UpdateField(VField* F, VMessage& Msg, int SendId,
-	vuint8* Data, vuint8* OldData)
-{
-	UpdateFieldValue(F->Type, F->NetReplicationId, Msg, SendId, Data + F->Ofs,
-		OldData + F->NetReplicationOffset);
-}
-
 void VEntityChannel::Update(int SendId)
 {
 	guard(VEntityChannel::Update);
 	VMessage& Msg = sv_player->Net->Message;
+	vuint8* Data = (vuint8*)Ent;
 	for (VField* F = Ent->GetClass()->NetFields; F; F = F->NextNetField)
-		UpdateField(F, Msg, SendId, (vuint8*)Ent, OldData);
+	{
+		if (!VField::IdenticalValue(Data + F->Ofs, OldData +
+			F->NetReplicationOffset, F->Type))
+		{
+			Msg << (vuint8)svc_set_prop;
+			if (SendId < 0x80)
+			{
+				Msg << (vuint8)SendId;
+			}
+			else
+			{
+				Msg << (vuint8)(SendId & 0x7f | 0x80)
+					<< (vuint8)(SendId >> 7);
+			}
+			Msg << (vuint8)F->NetReplicationId;
+			VField::NetWriteValue(Msg, Data + F->Ofs, F->Type);
+			VField::CopyFieldValue(Data + F->Ofs, OldData +
+				F->NetReplicationOffset, F->Type);
+		}
+	}
 	unguard;
 }
 

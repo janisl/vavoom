@@ -1042,6 +1042,88 @@ bool VField::IdenticalValue(const vuint8* Val1, const vuint8* Val2,
 
 //==========================================================================
 //
+//	VField::NetReadValue
+//
+//==========================================================================
+
+void VField::NetReadValue(VMessage& Msg, vuint8* Data, const VField::FType& Type)
+{
+	guard(VField::NetReadValue);
+	VField::FType IntType;
+	int InnerSize;
+	switch (Type.Type)
+	{
+	case ev_int:
+		Msg >> *(vuint32*)Data;
+		break;
+
+	case ev_float:
+		Msg >> *(float*)Data;
+		break;
+
+	case ev_struct:
+		Type.Struct->NetReadObject(Msg, Data);
+		break;
+
+	case ev_array:
+		IntType = Type;
+		IntType.Type = Type.ArrayInnerType;
+		InnerSize = IntType.GetSize();
+		for (int i = 0; i < Type.ArrayDim; i++)
+		{
+			NetReadValue(Msg, Data + i * InnerSize, IntType);
+		}
+		break;
+
+	default:
+		Sys_Error("Replication of field type %d is not supported", Type.Type);
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VField::NetReadValue
+//
+//==========================================================================
+
+void VField::NetWriteValue(VMessage& Msg, vuint8* Data, const VField::FType& Type)
+{
+	guard(VField::NetWriteValue);
+	VField::FType IntType;
+	int InnerSize;
+	switch (Type.Type)
+	{
+	case ev_int:
+		Msg << *(vuint32*)Data;
+		break;
+
+	case ev_float:
+		Msg << *(float*)Data;
+		break;
+
+	case ev_struct:
+		Type.Struct->NetWriteObject(Msg, Data);
+		break;
+
+	case ev_array:
+		IntType = Type;
+		IntType.Type = Type.ArrayInnerType;
+		InnerSize = IntType.GetSize();
+		for (int i = 0; i < Type.ArrayDim; i++)
+		{
+			NetWriteValue(Msg, Data + i * InnerSize, IntType);
+		}
+		break;
+
+	default:
+		Sys_Error("Replication of field type %d is not supported", Type.Type);
+	}
+	unguard;
+}
+
+//==========================================================================
+//
 //	VField::FType::GetSize
 //
 //==========================================================================
@@ -2129,7 +2211,7 @@ bool VStruct::IdenticalObject(const vuint8* Val1, const vuint8* Val2)
 			return false;
 		}
 	}
-	//	Serialise fields.
+	//	Compare fields.
 	for (VField* F = Fields; F; F = F->Next)
 	{
 		if (!VField::IdenticalValue(Val1 + F->Ofs, Val2 + F->Ofs, F->Type))
@@ -2138,6 +2220,50 @@ bool VStruct::IdenticalObject(const vuint8* Val1, const vuint8* Val2)
 		}
 	}
 	return true;
+	unguardf(("(%s)", *Name));
+}
+
+//==========================================================================
+//
+//	VStruct::NetReadObject
+//
+//==========================================================================
+
+void VStruct::NetReadObject(VMessage& Msg, vuint8* Data)
+{
+	guard(VStruct::NetReadObject);
+	//	Read parent struct's fields.
+	if (ParentStruct)
+	{
+		ParentStruct->NetReadObject(Msg, Data);
+	}
+	//	Read fields.
+	for (VField* F = Fields; F; F = F->Next)
+	{
+		VField::NetReadValue(Msg, Data + F->Ofs, F->Type);
+	}
+	unguardf(("(%s)", *Name));
+}
+
+//==========================================================================
+//
+//	VStruct::NetWriteObject
+//
+//==========================================================================
+
+void VStruct::NetWriteObject(VMessage& Msg, vuint8* Data)
+{
+	guard(VStruct::NetWriteObject);
+	//	Write parent struct's fields.
+	if (ParentStruct)
+	{
+		ParentStruct->NetWriteObject(Msg, Data);
+	}
+	//	Write fields.
+	for (VField* F = Fields; F; F = F->Next)
+	{
+		VField::NetWriteValue(Msg, Data + F->Ofs, F->Type);
+	}
 	unguardf(("(%s)", *Name));
 }
 

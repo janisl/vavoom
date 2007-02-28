@@ -159,6 +159,8 @@ public:
 	static void CleanField(vuint8*, const FType&);
 	static void DestructField(vuint8*, const FType&);
 	static bool IdenticalValue(const vuint8*, const vuint8*, const FType&);
+	static void NetReadValue(VMessage&, vuint8*, const FType&);
+	static void NetWriteValue(VMessage&, vuint8*, const FType&);
 
 	friend inline VStream& operator<<(VStream& Strm, VField*& Obj)
 	{ return Strm << *(VMemberBase**)&Obj; }
@@ -321,6 +323,8 @@ public:
 	void CleanObject(vuint8*);
 	void DestructObject(vuint8*);
 	bool IdenticalObject(const vuint8*, const vuint8*);
+	void NetReadObject(VMessage&, vuint8*);
+	void NetWriteObject(VMessage&, vuint8*);
 
 	friend inline VStream& operator<<(VStream& Strm, VStruct*& Obj)
 	{ return Strm << *(VMemberBase**)&Obj; }

@@ -739,34 +739,6 @@ static void CL_ParseSkin(VMessage& msg)
 //
 //==========================================================================
 
-static void ReadFieldValue(const VField::FType& Type, VMessage& Msg, vuint8* Data)
-{
-	switch (Type.Type)
-	{
-	case ev_int:
-		Msg >> *(vuint32*)Data;
-		break;
-
-	case ev_float:
-		Msg >> *(float*)Data;
-		break;
-	}
-}
-
-static void ReadField(VField* F, VMessage& Msg, vuint8* Data)
-{
-	ReadFieldValue(F->Type, Msg, Data + F->Ofs);
-}
-
-static VField* FindNetField(VClass* Cls, int Id)
-{
-	for (VField* F = Cls->NetFields; F; F = F->NextNetField)
-		if (F->NetReplicationId == Id)
-			return F;
-	Sys_Error("Bad net field %d", Id);
-	return NULL;
-}
-
 static void CL_ParseSetProp(VMessage& Msg)
 {
 	guard(CL_ParseSetProp);
@@ -777,8 +749,20 @@ static void CL_ParseSetProp(VMessage& Msg)
 	}
 	VEntity* Ent = cl_mobjs[Id];
 	int FldId = Msg.ReadByte();
-	VField* F = FindNetField(Ent->GetClass(), FldId);
-	ReadField(F, Msg, (vuint8*)Ent);
+	VField* F = NULL;
+	for (VField* CF = Ent->GetClass()->NetFields; CF; CF = CF->NextNetField)
+	{
+		if (CF->NetReplicationId == FldId)
+		{
+			F = CF;
+			break;
+		}
+	}
+	if (!F)
+	{
+		Sys_Error("Bad net field %d", FldId);
+	}
+	VField::NetReadValue(Msg, (vuint8*)Ent + F->Ofs, F->Type);
 	unguard;
 }
 
