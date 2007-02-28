@@ -971,6 +971,77 @@ void VField::DestructField(vuint8* Data, const VField::FType& Type)
 
 //==========================================================================
 //
+//	VField::IdenticalValue
+//
+//==========================================================================
+
+bool VField::IdenticalValue(const vuint8* Val1, const vuint8* Val2,
+	const VField::FType& Type)
+{
+	guard(VField::IdenticalValue);
+	VField::FType IntType;
+	int InnerSize;
+	switch (Type.Type)
+	{
+	case ev_int:
+		return *(const vuint32*)Val1 == *(const vuint32*)Val2;
+
+	case ev_float:
+		return *(const float*)Val1 == *(const float*)Val2;
+
+	case ev_bool:
+		return (*(const vuint32*)Val1 & Type.BitMask) ==
+			(*(const vuint32*)Val2 & Type.BitMask);
+
+	case ev_vector:
+		return *(const TVec*)Val1 == *(const TVec*)Val2;
+
+	case ev_name:
+		return *(const VName*)Val1 == *(const VName*)Val2;
+
+	case ev_string:
+		return *(const VStr*)Val1 == *(const VStr*)Val2;
+
+	case ev_pointer:
+		return *(void*const*)Val1 == *(void*const*)Val2;
+
+	case ev_reference:
+		return *(VObject*const*)Val1 == *(VObject*const*)Val2;
+
+	case ev_class:
+		return *(VClass*const*)Val1 == *(VClass*const*)Val2;
+
+	case ev_state:
+		return *(VState*const*)Val1 == *(VState*const*)Val2;
+
+	case ev_delegate:
+		return ((const VObjectDelegate*)Val1)->Obj == ((const VObjectDelegate*)Val2)->Obj &&
+			((const VObjectDelegate*)Val1)->Func == ((const VObjectDelegate*)Val2)->Func;
+
+	case ev_struct:
+		return Type.Struct->IdenticalObject(Val1, Val2);
+
+	case ev_array:
+		IntType = Type;
+		IntType.Type = Type.ArrayInnerType;
+		InnerSize = IntType.GetSize();
+		for (int i = 0; i < Type.ArrayDim; i++)
+		{
+			if (!IdenticalValue(Val1 + i * InnerSize, Val2 + i * InnerSize,
+				IntType))
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+	Sys_Error("Bad field type");
+	return false;
+	unguard;
+}
+
+//==========================================================================
+//
 //	VField::FType::GetSize
 //
 //==========================================================================
@@ -2038,6 +2109,35 @@ void VStruct::DestructObject(vuint8* Data)
 	{
 		VField::DestructField(Data + F->Ofs, F->Type);
 	}
+	unguardf(("(%s)", *Name));
+}
+
+//==========================================================================
+//
+//	VStruct::IdenticalObject
+//
+//==========================================================================
+
+bool VStruct::IdenticalObject(const vuint8* Val1, const vuint8* Val2)
+{
+	guard(VStruct::IdenticalObject);
+	//	Compare parent struct's fields.
+	if (ParentStruct)
+	{
+		if (!ParentStruct->IdenticalObject(Val1, Val2))
+		{
+			return false;
+		}
+	}
+	//	Serialise fields.
+	for (VField* F = Fields; F; F = F->Next)
+	{
+		if (!VField::IdenticalValue(Val1 + F->Ofs, Val2 + F->Ofs, F->Type))
+		{
+			return false;
+		}
+	}
+	return true;
 	unguardf(("(%s)", *Name));
 }
 

@@ -479,23 +479,10 @@ static void WriteFieldValue(const VField::FType& Type, VMessage& Msg, vuint8* Da
 	}
 }
 
-static bool CmpFieldValue(const VField::FType& Type, vuint8* Val1, vuint8* Val2)
-{
-	switch (Type.Type)
-	{
-	case ev_int:
-		return *(vuint32*)Val1 == *(vuint32*)Val2;
-
-	case ev_float:
-		return *(float*)Val1 == *(float*)Val2;
-	}
-	return false;
-}
-
 static void UpdateFieldValue(const VField::FType& Type, int FldId, VMessage& Msg, int SendId,
 	vuint8* Data, vuint8* OldData)
 {
-	if (!CmpFieldValue(Type, Data, OldData))
+	if (!VField::IdenticalValue(Data, OldData, Type))
 	{
 		Msg << (vuint8)svc_set_prop;
 		if (SendId < 0x80)

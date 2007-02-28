@@ -154,10 +154,11 @@ public:
 
 	void Serialise(VStream&);
 
-	static void CopyFieldValue(const vuint8*, vuint8*, const VField::FType&);
-	static void SerialiseFieldValue(VStream&, vuint8*, const VField::FType&);
-	static void CleanField(vuint8*, const VField::FType&);
-	static void DestructField(vuint8*, const VField::FType&);
+	static void CopyFieldValue(const vuint8*, vuint8*, const FType&);
+	static void SerialiseFieldValue(VStream&, vuint8*, const FType&);
+	static void CleanField(vuint8*, const FType&);
+	static void DestructField(vuint8*, const FType&);
+	static bool IdenticalValue(const vuint8*, const vuint8*, const FType&);
 
 	friend inline VStream& operator<<(VStream& Strm, VField*& Obj)
 	{ return Strm << *(VMemberBase**)&Obj; }
@@ -319,6 +320,7 @@ public:
 	void SerialiseObject(VStream&, vuint8*);
 	void CleanObject(vuint8*);
 	void DestructObject(vuint8*);
+	bool IdenticalObject(const vuint8*, const vuint8*);
 
 	friend inline VStream& operator<<(VStream& Strm, VStruct*& Obj)
 	{ return Strm << *(VMemberBase**)&Obj; }
