@@ -117,6 +117,7 @@ public:
 		Final			= 0x0040,
 		Optional		= 0x0080,
 		Out				= 0x0100,
+		Net				= 0x0200,
 	};
 
 	static int Parse(VLexer&);
@@ -238,7 +239,7 @@ class VField : public VMemberBase
 {
 public:
 	enum { AllowedModifiers = TModifiers::Native | TModifiers::Private |
-		TModifiers::ReadOnly | TModifiers::Transient };
+		TModifiers::ReadOnly | TModifiers::Transient | TModifiers::Net };
 
 	VField*			Next;
 	TType			type;

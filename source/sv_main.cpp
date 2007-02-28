@@ -45,6 +45,27 @@
 
 // TYPES -------------------------------------------------------------------
 
+class VEntityChannel
+{
+public:
+	VEntity*		Ent;
+	vuint8*			OldData;
+	bool			NewObj;
+
+	VEntityChannel()
+	: Ent(NULL)
+	, OldData(NULL)
+	, NewObj(false)
+	{
+	}
+	~VEntityChannel()
+	{
+	}
+
+	void SetEntity(VEntity*);
+	void Update(int);
+};
+
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 void Draw_TeleportIcon();
@@ -93,6 +114,7 @@ bool			deathmatch = false;   	// only if started as net death
 bool			netgame;                // only true if packets are broadcast
 
 VEntity**		sv_mobjs;
+VEntityChannel*	EntChan;
 mobj_base_t*	sv_mo_base;
 double*			sv_mo_free_time;
 
@@ -219,6 +241,7 @@ void SV_Init()
 	svs.max_clients = 1;
 
 	sv_mobjs = new VEntity*[GMaxEntities];
+	EntChan = new VEntityChannel[GMaxEntities];
 	sv_mo_base = new mobj_base_t[GMaxEntities];
 	sv_mo_free_time = new double[GMaxEntities];
 	memset(sv_mobjs, 0, sizeof(VEntity*) * GMaxEntities);
@@ -285,6 +308,7 @@ void SV_Shutdown()
 		}
 	}
 	delete[] sv_mobjs;
+	delete[] EntChan;
 	delete[] sv_mo_base;
 	delete[] sv_mo_free_time;
 	level.LevelName.Clean();
@@ -369,6 +393,8 @@ void SV_AddEntity(VEntity* Ent)
 	}
 	sv_mobjs[i] = Ent;
 	Ent->NetID = i;
+
+	EntChan[i].SetEntity(Ent);
 }
 
 //==========================================================================
@@ -391,6 +417,115 @@ VEntity *SV_SpawnMobj(VClass *Class)
 	}
 
 	return Ent;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VEntityChannel::SetEntity
+//
+//==========================================================================
+
+void VEntityChannel::SetEntity(VEntity* AEnt)
+{
+	guard(VEntityChannel::SetEntity);
+	if (Ent)
+	{
+		for (VField* F = Ent->GetClass()->NetFields; F; F = F->NextNetField)
+		{
+			VField::CleanField(OldData + F->NetReplicationOffset, F->Type);
+		}
+		if (OldData)
+		{
+			delete[] OldData;
+			OldData = NULL;
+		}
+	}
+
+	Ent = AEnt;
+
+	if (Ent)
+	{
+		VEntity* Def = (VEntity*)Ent->GetClass()->Defaults;
+		OldData = new vuint8[Ent->GetClass()->NetReplicationSize];
+		memset(OldData, 0, Ent->GetClass()->NetReplicationSize);
+		for (VField* F = Ent->GetClass()->NetFields; F; F = F->NextNetField)
+		{
+			VField::CopyFieldValue((vuint8*)Def + F->Ofs,
+				OldData + F->NetReplicationOffset, F->Type);
+		}
+		NewObj = true;
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VEntityChannel::Update
+//
+//==========================================================================
+
+static void WriteFieldValue(const VField::FType& Type, VMessage& Msg, vuint8* Data)
+{
+	switch (Type.Type)
+	{
+	case ev_int:
+		Msg << *(vuint32*)Data;
+		break;
+
+	case ev_float:
+		Msg << *(float*)Data;
+		break;
+	}
+}
+
+static bool CmpFieldValue(const VField::FType& Type, vuint8* Val1, vuint8* Val2)
+{
+	switch (Type.Type)
+	{
+	case ev_int:
+		return *(vuint32*)Val1 == *(vuint32*)Val2;
+
+	case ev_float:
+		return *(float*)Val1 == *(float*)Val2;
+	}
+	return false;
+}
+
+static void UpdateFieldValue(const VField::FType& Type, int FldId, VMessage& Msg, int SendId,
+	vuint8* Data, vuint8* OldData)
+{
+	if (!CmpFieldValue(Type, Data, OldData))
+	{
+		Msg << (vuint8)svc_set_prop;
+		if (SendId < 0x80)
+		{
+			Msg << (vuint8)SendId;
+		}
+		else
+		{
+			Msg << (vuint8)(SendId & 0x7f | 0x80)
+				<< (vuint8)(SendId >> 7);
+		}
+		Msg << (vuint8)FldId;
+		WriteFieldValue(Type, Msg, Data);
+		VField::CopyFieldValue(Data, OldData, Type);
+	}
+}
+
+static void UpdateField(VField* F, VMessage& Msg, int SendId,
+	vuint8* Data, vuint8* OldData)
+{
+	UpdateFieldValue(F->Type, F->NetReplicationId, Msg, SendId, Data + F->Ofs,
+		OldData + F->NetReplicationOffset);
+}
+
+void VEntityChannel::Update(int SendId)
+{
+	guard(VEntityChannel::Update);
+	VMessage& Msg = sv_player->Net->Message;
+	for (VField* F = Ent->GetClass()->NetFields; F; F = F->NextNetField)
+		UpdateField(F, Msg, SendId, (vuint8*)Ent, OldData);
 	unguard;
 }
 
@@ -423,12 +558,12 @@ int SV_GetMobjBits(VEntity &mobj, mobj_base_t &base)
 		bits |= MOB_SPRITE;
 	if (mobj.EntityFlags & VEntity::EF_FullBright)
 		bits |= MOB_FULL_BRIGHT;
-	if (base.Alpha != mobj.Alpha)
-		bits |= MOB_TRANSLUC;
+//	if (base.Alpha != mobj.Alpha)
+//		bits |= MOB_TRANSLUC;
 	if (base.Translation != mobj.Translation)
 		bits |= MOB_TRANSL;
-	if (base.Effects != mobj.Effects)
-		bits |= MOB_EFFECTS;
+//	if (base.Effects != mobj.Effects)
+//		bits |= MOB_EFFECTS;
 	if (mobj.EntityFlags & VEntity::EF_FixedModel)
 		bits |= MOB_MODEL;
 	if ((mobj.EntityFlags & VEntity::EF_FixedModel) && mobj.ModelSkinNum)
@@ -534,6 +669,31 @@ void SV_UpdateMobj(int i, VMessage &msg)
 		sendnum = i;
 	}
 
+	if (EntChan[i].NewObj)
+	{
+		msg << (vuint8)svc_new_obj;
+		if (sendnum < 0x80)
+		{
+			msg << (vuint8)sendnum;
+		}
+		else
+		{
+			msg << (vuint8)(sendnum & 0x7f | 0x80)
+				<< (vuint8)(sendnum >> 7);
+		}
+		int ClsId = EntChan[i].Ent->GetClass()->NetId;
+		if (ClsId < 0x80)
+		{
+			msg << (vuint8)ClsId;
+		}
+		else
+		{
+			msg << (vuint8)(ClsId & 0x7f | 0x80)
+				<< (vuint8)(ClsId >> 7);
+		}
+		EntChan[i].NewObj = false;
+	}
+
 	bits = SV_GetMobjBits(*sv_mobjs[i], sv_mo_base[sendnum]);
 
 	if (sv_mobjs[i]->EntityFlags & VEntity::EF_IsPlayer)
@@ -561,6 +721,8 @@ void SV_UpdateMobj(int i, VMessage &msg)
 		msg << (vuint8)sendnum;
 
 	SV_WriteMobj(bits, *sv_mobjs[i], msg);
+
+	EntChan[i].Update(sendnum);
 	return;
 	unguard;
 }
@@ -586,6 +748,8 @@ void VEntity::Destroy()
 
 		// stop any playing sound
 		SV_StopSound(this, 0);
+
+		EntChan[NetID].SetEntity(NULL);
 
 		sv_mobjs[NetID] = NULL;
 		sv_mo_free_time[NetID] = level.time;
@@ -2767,6 +2931,11 @@ void SV_DropClient(bool)
 	sv_reliable << (vuint8)svc_userinfo
 				<< (vuint8)SV_GetPlayerNum(sv_player)
 				<< "";
+
+	for (int i = 0; i < GMaxEntities; i++)
+	{
+		EntChan[i].SetEntity(NULL);
+	}
 	unguard;
 }
 

@@ -96,12 +96,12 @@ int FixedModelIndex;
 int ModelSkinNum;
 int ModelVersion;
 
-float Alpha;
-int Translation;
+net float Alpha;
+net int Translation;
 
 float FloorClip;	// value to use for floor clipping
 
-int Effects;
+net int Effects;
 
 native readonly subsector_t* SubSector;
 native readonly sector_t* Sector;

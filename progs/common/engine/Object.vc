@@ -1279,6 +1279,9 @@ enum
 	svc_stats_string,
 	svc_add_seq_choice,
 
+	svc_set_prop,
+	svc_new_obj,
+
 	USER_PROTOCOL_START = 128
 };
 

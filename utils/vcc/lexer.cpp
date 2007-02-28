@@ -76,6 +76,7 @@ const char*			VLexer::TokenNames[] =
 	"int",
 	"name",
 	"native",
+	"net",
 	"none",
 	"NULL",
 	"optional",
@@ -654,18 +655,25 @@ void VLexer::ProcessLetterToken()
 		break;
 
 	case 'n':
-		if (s[1] == 'a' && s[2] == 'm' && s[3] == 'e' && s[4] == 0)
+		if (s[1] == 'a')
 		{
-			Token = TK_Name;
+			if (s[2] == 'm' && s[3] == 'e' && s[4] == 0)
+			{
+				Token = TK_Name;
+			}
+			if (s[2] == 't' && s[3] == 'i' && s[4] == 'v' && s[5] == 'e' &&
+				s[6] == 0)
+			{
+				Token = TK_Native;
+			}
+		}
+		else if (s[1] == 'e' && s[2] == 't' && s[3] == 0)
+		{
+			Token = TK_Net;
 		}
 		else if (s[1] == 'o' && s[2] == 'n' && s[3] == 'e' && s[4] == 0)
 		{
 			Token = TK_None;
-		}
-		else if (s[1] == 'a' && s[2] == 't' && s[3] == 'i' && s[4] == 'v' &&
-			s[5] == 'e' && s[6] == 0)
-		{
-			Token = TK_Native;
 		}
 		break;
 

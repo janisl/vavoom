@@ -57,6 +57,7 @@ enum
 	FIELD_Transient	= 0x0002,	//	Not to be saved
 	FIELD_Private	= 0x0004,	//	Private field
 	FIELD_ReadOnly	= 0x0008,	//	Read-only field
+	FIELD_Net		= 0x0010,	//	Network replicated field
 };
 
 enum

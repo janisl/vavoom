@@ -199,18 +199,18 @@ static void CL_ReadMobj(VMessage& msg, int bits, VEntity*& mobj, const clmobjbas
 		mobj->EntityFlags |= VEntity::EF_FullBright;
 	else
 		mobj->EntityFlags &= ~VEntity::EF_FullBright;
-	if (bits & MOB_TRANSLUC)
-		mobj->Alpha = (float)msg.ReadByte() / 255.0;
-	else
-		mobj->Alpha = base.Alpha;
+//	if (bits & MOB_TRANSLUC)
+//		mobj->Alpha = (float)msg.ReadByte() / 255.0;
+//	else
+//		mobj->Alpha = base.Alpha;
 	if (bits & MOB_TRANSL)
 		mobj->Translation = msg.ReadByte();
 	else
 		mobj->Translation = base.translation;
-	if (bits & MOB_EFFECTS)
-		mobj->Effects = msg.ReadByte();
-	else
-		mobj->Effects = base.effects;
+//	if (bits & MOB_EFFECTS)
+//		mobj->Effects = msg.ReadByte();
+//	else
+//		mobj->Effects = base.effects;
 	mobj->EntityFlags &= ~VEntity::EF_FixedModel;
 	if (bits & MOB_MODEL)
 	{
@@ -735,6 +735,81 @@ static void CL_ParseSkin(VMessage& msg)
 
 //==========================================================================
 //
+//	CL_ParseSetProp
+//
+//==========================================================================
+
+static void ReadFieldValue(const VField::FType& Type, VMessage& Msg, vuint8* Data)
+{
+	switch (Type.Type)
+	{
+	case ev_int:
+		Msg >> *(vuint32*)Data;
+		break;
+
+	case ev_float:
+		Msg >> *(float*)Data;
+		break;
+	}
+}
+
+static void ReadField(VField* F, VMessage& Msg, vuint8* Data)
+{
+	ReadFieldValue(F->Type, Msg, Data + F->Ofs);
+}
+
+static VField* FindNetField(VClass* Cls, int Id)
+{
+	for (VField* F = Cls->NetFields; F; F = F->NextNetField)
+		if (F->NetReplicationId == Id)
+			return F;
+	Sys_Error("Bad net field %d", Id);
+	return NULL;
+}
+
+static void CL_ParseSetProp(VMessage& Msg)
+{
+	guard(CL_ParseSetProp);
+	int Id = Msg.ReadByte();
+	if (Id & 0x80)
+	{
+		Id = (Id & 0x7f) | (Msg.ReadByte() << 7);
+	}
+	VEntity* Ent = cl_mobjs[Id];
+	int FldId = Msg.ReadByte();
+	VField* F = FindNetField(Ent->GetClass(), FldId);
+	ReadField(F, Msg, (vuint8*)Ent);
+	unguard;
+}
+
+//==========================================================================
+//
+//	CL_ParseNewObj
+//
+//==========================================================================
+
+static void CL_ParseNewObj(VMessage& msg)
+{
+	guard(CL_ParseNewObj);
+	int i = msg.ReadByte();
+	if (i & 0x80)
+		i = (i & 0x7f) | (msg.ReadByte() << 7);
+
+	int ci = msg.ReadByte();
+	if (ci & 0x80)
+		ci = (ci & 0x7f) | (msg.ReadByte() << 7);
+	VClass* C = ClassLookup[ci];
+
+	if (cl_mobjs[i]->GetClass() != VEntity::StaticClass())
+		GClLevel->RemoveThinker(cl_mobjs[i]);
+	cl_mobjs[i]->ConditionalDestroy();
+	cl_mobjs[i] = (VEntity*)VObject::StaticSpawnObject(C);
+	GClLevel->AddThinker(cl_mobjs[i]);
+	unguard;
+}
+
+//==========================================================================
+//
 //	CL_ReadFromUserInfo
 //
 //==========================================================================
@@ -1043,6 +1118,14 @@ void CL_ParseServerMessage(VMessage& msg)
 
 		case svc_class_name:
 			CL_ParseClassName(msg);
+			break;
+
+		case svc_set_prop:
+			CL_ParseSetProp(msg);
+			break;
+
+		case svc_new_obj:
+			CL_ParseNewObj(msg);
 			break;
 
 		default:

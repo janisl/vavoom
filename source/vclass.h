@@ -142,10 +142,13 @@ public:
 	VField*		Next;
 	VField*		NextReference;	//	Linked list of reference fields.
 	VField*		DestructorLink;
+	VField*		NextNetField;
 	vint32		Ofs;
 	FType		Type;
 	VMethod*	Func;
 	vint32		Flags;
+	vint32		NetReplicationOffset;
+	vint32		NetReplicationId;
 
 	VField(VName);
 
@@ -362,6 +365,7 @@ public:
 	VField*			Fields;
 	VField*			ReferenceFields;
 	VField*			DestructorFields;
+	VField*			NetFields;
 	VState*			States;
 	VMethod*		DefaultProperties;
 
@@ -370,6 +374,8 @@ public:
 	vint32			NetId;
 	VState*			NetStates;
 	TArray<VState*>	StatesLookup;
+	vint32			NetReplicationSize;
+	vint32			NumNetFields;
 
 	static TArray<mobjinfo_t>	GMobjInfos;
 	static TArray<mobjinfo_t>	GScriptIds;
@@ -438,6 +444,7 @@ public:
 
 private:
 	void CalcFieldOffsets();
+	void InitNetFields();
 	void InitReferences();
 	void InitDestructorFields();
 	void CreateVTable();

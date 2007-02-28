@@ -65,6 +65,7 @@ enum EToken
 	TK_Int,
 	TK_Name,
 	TK_Native,
+	TK_Net,
 	TK_None,
 	TK_Null,
 	TK_Optional,

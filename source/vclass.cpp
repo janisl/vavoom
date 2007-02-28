@@ -610,9 +610,12 @@ VField::VField(VName AName)
 , Next(0)
 , NextReference(0)
 , DestructorLink(0)
+, NextNetField(0)
 , Ofs(0)
 , Func(0)
 , Flags(0)
+, NetReplicationOffset(0)
+, NetReplicationId(-1)
 {
 	memset(&Type, 0, sizeof(Type));
 }
@@ -2068,11 +2071,15 @@ VClass::VClass(VName AName)
 , ClassNumMethods(0)
 , Fields(0)
 , ReferenceFields(0)
+, DestructorFields(0)
+, NetFields(0)
 , States(0)
 , DefaultProperties(0)
 , Defaults(0)
 , NetId(-1)
 , NetStates(0)
+, NetReplicationSize(0)
+, NumNetFields(0)
 {
 	guard(VClass::VClass);
 	LinkNext = GClasses;
@@ -2099,11 +2106,15 @@ VClass::VClass(ENativeConstructor, size_t ASize, vuint32 AClassFlags,
 , ClassNumMethods(0)
 , Fields(0)
 , ReferenceFields(0)
+, DestructorFields(0)
+, NetFields(0)
 , States(0)
 , DefaultProperties(0)
 , Defaults(0)
 , NetId(-1)
 , NetStates(0)
+, NetReplicationSize(0)
+, NumNetFields(0)
 {
 	guard(native VClass::VClass);
 	LinkNext = GClasses;
@@ -2494,6 +2505,9 @@ void VClass::PostLoad()
 	//	Initialise destructor fields.
 	InitDestructorFields();
 
+	//	Initialise net fields.
+	InitNetFields();
+
 	//	Create virtual table.
 	CreateVTable();
 
@@ -2589,6 +2603,47 @@ void VClass::CalcFieldOffsets()
 		Sys_Error("Bad class size, class %s, C++ %d, VavoomC %d)",
 			GetName(), PrevSize, ClassSize);
 	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VClass::InitNetFields
+//
+//==========================================================================
+
+void VClass::InitNetFields()
+{
+	guard(VClass::InitNetFields);
+	if (ParentClass)
+	{
+		NetFields = ParentClass->NetFields;
+		NetReplicationSize = ParentClass->NetReplicationSize;
+		NumNetFields = ParentClass->NumNetFields;
+	}
+
+	for (VField* fi = Fields; fi; fi = fi->Next)
+	{
+		if (!(fi->Flags & FIELD_Net))
+		{
+			continue;
+		}
+
+		if (fi->Type.Type == ev_struct ||
+			(fi->Type.Type == ev_array && fi->Type.ArrayInnerType == ev_struct))
+		{
+			//	Make sure struct size has been calculated.
+			fi->Type.Struct->PostLoad();
+		}
+		int FldAlign = fi->Type.GetAlignment();
+		NetReplicationSize = (NetReplicationSize + FldAlign - 1) & ~(FldAlign - 1);
+		fi->NetReplicationOffset = NetReplicationSize;
+		NetReplicationSize += fi->Type.GetSize();
+		fi->NetReplicationId = NumNetFields++;
+		fi->NextNetField = NetFields;
+		NetFields = fi;
+	}
+	NetReplicationSize = (NetReplicationSize + sizeof(void*) - 1) & ~(sizeof(void*) - 1);
 	unguard;
 }
 
