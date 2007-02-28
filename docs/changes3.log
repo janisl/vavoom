@@ -1689,3 +1689,176 @@
 ******************************************************************************
                             VERSION 1.22.1
 ******************************************************************************
+
+19.12.2006
+  Fixed duplicate loading of last TEXTURE2 lump.
+24.12.2006
+  Fixed rendering of third person player weapon models.
+  Fixed wrong wad markers for high-resolution textures.
+  Implemented switching of the game language.
+25.12.2006
+  Moved methods that advance actor states to engine, removed NextState field
+ from Entity class.
+  In linespec package added a common game info class, moved most of the wold
+ spawning methods to this class, they are now called also when loading level
+ on the client side. This means that there's no need to send commands to spawn
+ them over the network that added some limitations to them.
+  Fixed rendering of translucent mid-textures in OpenGL and Direct3D.
+  Fixed memory leak in XML parser.
+26.12.2006
+  Changed player's current view states to be an array of structures in player
+ class. View entities array changed to be a single reference to weapon. Also
+ changed setting SX and SY values to be misc variables in state, added compiler
+ support for this.
+28.12.2006
+  In compiler implemented support for restricted class types. Keyword classid
+ changed to be just class.
+  Removed all DDF related code and files.
+  Fixed compiling progs generaed from dehacked patch.
+29.12.2006
+  Send fractional state time to client so that I can implement interpolation
+ of model frames.
+  Removed old Borland specific assembly language files.
+  Started to implement model script files. Added support for intermediate state
+ frames to be able to change actor's states to be like in original version.
+30.12 2006
+  Created model scripts for a lot of models.
+31.12.2006
+  Created model scripts for the rest of the models.
+  Implemented sending of fractional state time for player's view states.
+01.01.2007
+  In model scripts added support for animated skins, gradual translucency and
+ rotation to remove some model specific code from progs. Also added offset and
+ scaling, but currently it's not used.
+02.01.2007
+  Some dehacked fixes.
+  Implemented support for specifying model replacements completely in model
+ script. Removed most of the model definitions from progs.
+03.01.2007
+  Removed remaining models definitions from progs. Support for this has been
+ removed from the compiler.
+  Moved repositioning of player's third person weapon model to model script.
+04.01.2007
+  Implemented support for different model versions. This is now used to handle
+ player's third person weapon models.
+06.01.2007
+  Changed usage of translucency percentage to alpha value.
+  Changed the way object's default properties methods are called.
+07.01.2007
+  For each class I now create a default object. When a new object is spawned,
+ field values are copied from the default object. In compiler I implemented
+ support for accessing default values of an object or class.
+08.01.2007
+  I moved player's network related variables into an internal structure so that
+ in progs I don't have to have these fields.
+  I cleaned up network protocol commands from unused commands.
+  In compiler I implemented support for specifying state methods to be called
+ directly and also to have no method at all. I changed most of the Doom states
+ to use this.
+09.01.2007
+  I added direct state method calls in Heretic and Strife.
+  In software renderer I changed pointers to the fade tables and RGB colour
+ lookup to be static arrays so that I don't have to do code patching anymore.
+ This should enable usage of assembly language files on BeOS.
+10.01.2007
+  I added direct state method calls in Hexen.
+  I changed assembly language files to be conditionally included depending on
+ target platform. I also renamed software renderer's assembly language files.
+11.01.2007
+  On the client side I implemented automatic localisation of notify and centre
+ messages that start with a dollar sign.
+  I moved pickup strings and locked door messages to the language script.
+12.01.2007
+  In VavoomC I implemented support for C# style properties. They are basicly
+ wrappers around set and get methods.
+13.01.2007
+  In view entity class I changed reference to the player object to be reference
+ to the entity.
+  Today I started to work on adding dehacked support to the engine. As a first
+ step I moved all actor state methods to the Actor class. After that I merged
+ remaining stuff from HackedActor class to actor class that allowed me to get
+ rid of HackedActor class. Similarly moved weapon state methods to Weapon class
+ and got rid of HackedWeapon class.
+14.01.2007
+  In progs I added a string replace method.
+  I changed view entity to be a Thinker and then an Entity. After that I moved
+ Owner field to Entity class and I could get rid of ViewEntity class. Then I
+ changed Weapon classes to be inherited from Actor class. After that I could
+ move weapon state action methods to Actor class. With this dehacked progs have
+ just a single copy of states.
+  I also implemented a more generalised way of making Doom demons faster in
+ nightmare mode.
+  Then I added dehacked parser to the engine. Currently it just parses patches
+ and does nothing else.
+  I also fixed angle based clipping to add polyobject segs of a subsector.
+15.01.2007
+  I implemented dehacked string replacements in engine.
+16.01.2007
+  In Doom progs I removed some of the abstract Actor classes. To simplify
+ implementation of dehacked parser in engine I need to make progs to be similar
+ to the dehacked progs. This means that I had to move all states to Actor class.
+ After that I could implement handling of dehacked changes of states in engine.
+17.01.2007
+  Today I finished implementing dehacked changes of states, implemented changes
+ of ammo counts, weapons, misceleanous values and started on things.
+18.01.2007
+  Today I finished implementing dehacked parser in engine. I removed makeinfo
+ utility.
+21.01.2007
+  I started moving of info tables that dehacked parser uses to a dehinfo.txt
+ script file.
+22.01.2007
+  I started moving states of Doom actors back to their classes. This required
+ some changes in order to make it work over the network.
+23.01.2007
+  I finished moving states of Doom actors back to their classes.
+  In dehinfo script I added original thing heights that are set when using a
+ dehacked patch.
+  I also fixed missing cleaning of active sequences list.
+25.01.2007
+  I implemented support for Dehacked patch support extensions for specifying
+ flags with names and for strings block.
+26.01.2007
+  I changed sprite names internally to be in lower case.
+  Then I implemented support for Dehacked patch extensions for code pointer and
+ par time blocks.
+  I also fixed rendering of mid-textures with an offset.
+28.01.2007
+  I moved Doom state action methods back to their classes.
+  I removed limit on static lights.
+  I created render data class. I moved most of the surface and sky rendering
+ methods to this class.
+29.01.2007
+  I added pointer to the render data class to the level class.
+  I moved light rendering methods to render data class.
+01.02.2007
+  I moved line tracing method from level info class to the engine.
+  I created a method to serialise global ACS data, made global ACS data static.
+03.02.2007
+  I merged line tracing methods into a one that's in the level class.
+04.02.2007
+  I did some tests with rendering server and previous client level.
+05.02.2007
+  I fixed a crash in line tracing method.
+07.02.2007
+  In model definition files I added support for defining model skins.
+  Firebrand added fixes from Boom to keep monsters stuck in the doors.
+  I changed Actor classes in all games to have the same default values.
+09.02.2007
+  I created a class with ACS per-level data.
+10.02.1007
+  In level class I added poiunter to the per-level ACS data class. I implemented
+ support for suspending and terminating scripts in other maps.
+11.02.2007
+  I moved ACS native methods to the Level class.
+13.02.2007
+  I implemented propper support for execute always ACS scripts.
+  I created a class for global ACS data.
+  I started to implement support for terrain script.
+15.02.2007
+  I finished implementing support for tarrain script.
+16.02.2007
+  I did some cleanup after implementing terrain script.
+18.02.2007
+  I created a WorldInfo class that exists during the whole game session. I added
+ pointer to the global ACS data class to this class.
