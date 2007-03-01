@@ -92,7 +92,11 @@ void CL_Clear()
 		GAudio->StopAllSound();
 	}
 	for (int i = 0; i < GMaxEntities; i++)
+	{
 		cl_mobjs[i] = Spawn<VEntity>();
+		cl_mobjs[i]->Role = ROLE_Authority;
+		cl_mobjs[i]->RemoteRole = ROLE_None;
+	}
 	cls.signon = 0;
 	unguard;
 }
@@ -145,6 +149,8 @@ static void CL_ReadMobj(VMessage& msg, int bits, VEntity*& mobj, const clmobjbas
 			GClLevel->RemoveThinker(mobj);
 		mobj->ConditionalDestroy();
 		mobj = (VEntity*)VObject::StaticSpawnObject(C);
+		mobj->Role = ROLE_DumbProxy;
+		mobj->RemoteRole = ROLE_Authority;
 		GClLevel->AddThinker(mobj);
 	}
 	if (bits & MOB_STATE)
@@ -761,6 +767,8 @@ static void CL_ParseNewObj(VMessage& msg)
 	if (cl_mobjs[i]->GetClass() != VEntity::StaticClass())
 		GClLevel->RemoveThinker(cl_mobjs[i]);
 	cl_mobjs[i]->ConditionalDestroy();
+	cl_mobjs[i]->Role = ROLE_DumbProxy;
+	cl_mobjs[i]->RemoteRole = ROLE_Authority;
 	cl_mobjs[i] = (VEntity*)VObject::StaticSpawnObject(C);
 	GClLevel->AddThinker(cl_mobjs[i]);
 	unguard;

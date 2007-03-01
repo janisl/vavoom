@@ -81,10 +81,20 @@ struct tztrace_t;
 struct tmtrace_t;
 struct avoiddropoff_t;
 
+enum
+{
+	ROLE_None,
+	ROLE_DumbProxy,
+	ROLE_Authority
+};
+
 class VEntity : public VThinker
 {
 	DECLARE_CLASS(VEntity, VThinker, 0)
 	NO_DEFAULT_CONSTRUCTOR(VEntity)
+
+	vint32			Role;
+	vint32			RemoteRole;
 
 	// Info for drawing: position.
 	TVec			Origin;

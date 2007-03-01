@@ -79,10 +79,15 @@ class Entity : Thinker
 	native
 	abstract;
 
-replication
+enum
 {
-	SpriteType, ModelVersion, Alpha, Translation, Effects;
-}
+	ROLE_None,
+	ROLE_DumbProxy,
+	ROLE_Authority
+};
+
+int Role;
+int RemoteRole;
 
 // Info for drawing: position.
 TVec Origin;
@@ -189,6 +194,11 @@ name SoundGender;
 
 	//	Owner entity of inventory item
 Entity Owner;
+
+replication
+{
+	SpriteType, ModelVersion, Alpha, Translation, Effects;
+}
 
 //
 //	Natives
@@ -543,6 +553,8 @@ float DistTo2(Entity Other)
 
 defaultproperties
 {
+	Role = ROLE_Authority;
+	RemoteRole = ROLE_DumbProxy;
 	Alpha = 1.0;
 	bColideWithThings = true;
 	bColideWithWorld = true;
