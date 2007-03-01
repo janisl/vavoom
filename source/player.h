@@ -31,6 +31,8 @@
 
 // TYPES -------------------------------------------------------------------
 
+class VEntityChannel;
+
 //
 // Overlay psprites are scaled shapes
 // drawn directly on the view screen,
@@ -64,6 +66,19 @@ struct VViewState
 	float			SY;
 };
 
+class VPlayerChannel
+{
+public:
+	VBasePlayer*	Plr;
+	vuint8*			OldData;
+	bool			NewObj;
+
+	VPlayerChannel();
+	~VPlayerChannel();
+	void SetPlayer(VBasePlayer*);
+	void Update();
+};
+
 struct VPlayerNetInfo
 {
 	VSocketPublic*	NetCon;
@@ -73,6 +88,8 @@ struct VPlayerNetInfo
 	double			LastMessage;
 	bool			NeedsUpdate;
 	int*			OldStats;
+	VEntityChannel*	EntChan;
+	VPlayerChannel	Chan;
 
 	VPlayerNetInfo()
 	: NetCon(NULL)
@@ -80,6 +97,7 @@ struct VPlayerNetInfo
 	, LastMessage(0)
 	, NeedsUpdate(false)
 	, OldStats(NULL)
+	, EntChan(NULL)
 	{}
 };
 

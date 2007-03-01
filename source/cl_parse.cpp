@@ -776,6 +776,33 @@ static void CL_ParseNewObj(VMessage& msg)
 
 //==========================================================================
 //
+//	CL_ParseSetPlayerProp
+//
+//==========================================================================
+
+static void CL_ParseSetPlayerProp(VMessage& Msg)
+{
+	guard(CL_ParseSetPlayerProp);
+	int FldIdx = Msg.ReadByte();
+	VField* F = NULL;
+	for (VField* CF = cl->GetClass()->NetFields; CF; CF = CF->NextNetField)
+	{
+		if (CF->NetIndex == FldIdx)
+		{
+			F = CF;
+			break;
+		}
+	}
+	if (!F)
+	{
+		Sys_Error("Bad net field %d", FldIdx);
+	}
+	VField::NetReadValue(Msg, (vuint8*)cl + F->Ofs, F->Type);
+	unguard;
+}
+
+//==========================================================================
+//
 //	CL_ReadFromUserInfo
 //
 //==========================================================================
@@ -1092,6 +1119,10 @@ void CL_ParseServerMessage(VMessage& msg)
 
 		case svc_new_obj:
 			CL_ParseNewObj(msg);
+			break;
+
+		case svc_set_player_prop:
+			CL_ParseSetPlayerProp(msg);
 			break;
 
 		default:

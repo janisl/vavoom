@@ -90,6 +90,7 @@ enum
 
 	svc_set_prop,
 	svc_new_obj,
+	svc_set_player_prop,
 
 	USER_PROTOCOL_START = 128
 };
