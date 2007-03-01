@@ -630,7 +630,6 @@ defaultproperties
 {
 	AcsHelper = 'strfhelp';
 	GenericConScript = 'script00';
-	num_stats = 2 * StrifeDefs::NUMAMMO + StrifeDefs::NUMWEAPONS + StrifeDefs::NUMINVITEMS + 12;
 
 	WeaponClasses[0] = WeaponPunch;
 	WeaponClasses[1] = WeaponCrossbow;

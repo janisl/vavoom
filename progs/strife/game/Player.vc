@@ -51,28 +51,7 @@ const int INVERSECOLOURMAP	= 32;
 const float USERANGE		= 64.0;
 const float USETHINGRANGE	= 128.0;
 
-//
-//  FIRST FIELDS ARE STATS THAT ARE SENT TO CLIENT FOR STATUS BAR
-//
-
-int Ammo[StrifeDefs::NUMAMMO];
-int MaxAmmo[StrifeDefs::NUMAMMO];
-int ReadyAmmo;
-
-bool WeaponOwned[StrifeDefs::NUMWEAPONS];
-int Sigil;
-
-bool Backpack;
-bool Communicator;
-
-int Accuracy;
-int Stamina;
-
-int Keys;
-
-int Inventory[StrifeDefs::NUMINVITEMS];
-int InvFirst;
-int InvCursor;
+int Quests;
 
 int Objectives;
 
@@ -80,21 +59,29 @@ int Objectives;
 int ArmorType;
 int ArmorPoints;
 
+bool Backpack;
+bool Communicator;
+
 // Bit flags, for cheats and debug.
 // See cheat_t, above.
 int Cheats;
 
-//
-//  ----------
-//
-
-int Quests;
-
-int ReadyWeapon;
+int Ammo[StrifeDefs::NUMAMMO];
+int MaxAmmo[StrifeDefs::NUMAMMO];
+int ReadyAmmo;
 
 // For screen flashing (red or bright).
 float DamageFlash;
 float BonusFlash;
+
+int Accuracy;
+int Stamina;
+
+int Keys;
+
+int InvFirst;
+int InvCursor;
+int Inventory[StrifeDefs::NUMINVITEMS];
 
 // Power ups. invinc and invis are timers.
 float Powers[NUMPOWERS];
@@ -108,6 +95,11 @@ float Bob;
 
 // Refired shots are less accurate.
 int Refire;
+
+bool WeaponOwned[StrifeDefs::NUMWEAPONS];
+
+int ReadyWeapon;
+int Sigil;
 
 // Is wp_nochange if not changing.
 int PendingWeapon;
@@ -124,6 +116,13 @@ float HazardTime;
 float LastHazardTime;
 
 TVec MoveDir;
+
+replication
+{
+	ReadyAmmo, Sigil, Accuracy, Stamina, Keys, InvFirst, InvCursor,
+	Objectives, ArmorType, ArmorPoints, Cheats, Ammo, MaxAmmo,
+	WeaponOwned, Inventory, Backpack, Communicator;
+}
 
 //==========================================================================
 //

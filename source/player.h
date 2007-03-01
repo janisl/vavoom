@@ -87,7 +87,6 @@ struct VPlayerNetInfo
 	int				MobjUpdateStart;
 	double			LastMessage;
 	bool			NeedsUpdate;
-	int*			OldStats;
 	VEntityChannel*	EntChan;
 	VPlayerChannel	Chan;
 
@@ -96,7 +95,6 @@ struct VPlayerNetInfo
 	, MobjUpdateStart(0)
 	, LastMessage(0)
 	, NeedsUpdate(false)
-	, OldStats(NULL)
 	, EntChan(NULL)
 	{}
 };

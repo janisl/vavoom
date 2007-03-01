@@ -1007,30 +1007,6 @@ void CL_ParseServerMessage(VMessage& msg)
 			}
 			break;
 
-		case svc_stats_long:
-			i = msg.ReadByte();
-			check(i < (int)(cl->GetClass()->ClassSize - sizeof(VBasePlayer)) / 4);
-			msg >> ((int*)((byte*)cl + sizeof(VBasePlayer)))[i];
-			break;
-
-		case svc_stats_short:
-			i = msg.ReadByte();
-			check(i < (int)(cl->GetClass()->ClassSize - sizeof(VBasePlayer)) / 4);
-			((int*)((byte*)cl + sizeof(VBasePlayer)))[i] = msg.ReadShort();
-			break;
-
-		case svc_stats_byte:
-			i = msg.ReadByte();
-			check(i < (int)(cl->GetClass()->ClassSize - sizeof(VBasePlayer)) / 4);
-			((int*)((byte*)cl + sizeof(VBasePlayer)))[i] = msg.ReadByte();
-			break;
-
-		case svc_stats_string:
-			i = msg.ReadByte();
-			check(i < (int)(cl->GetClass()->ClassSize - sizeof(VBasePlayer)) / 4);
-			*(VStr*)((byte*)cl + sizeof(VBasePlayer) + i * 4) = msg.ReadString();
-			break;
-
 		case svc_stringcmd:
 			GCmdBuf << msg.ReadString();
 			break;

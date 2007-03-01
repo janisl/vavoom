@@ -1265,8 +1265,6 @@ void TranslateLevel(Level InLevel)
 
 defaultproperties
 {
-	num_stats = 2 * DoomDefs::NUMAMMO + DoomDefs::NUMWEAPONS + 5;
-
 	WeaponClasses[0] = WeaponFist;
 	WeaponClasses[1] = WeaponPistol;
 	WeaponClasses[2] = WeaponShotgun;

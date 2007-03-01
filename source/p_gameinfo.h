@@ -48,9 +48,6 @@ class VGameInfo : public VObject
 
 	float			frametime;
 
-	vint32			num_stats;
-	vint32			num_string_stats;
-
 	float			FloatBobOffsets[64];
 	vint32			PhaseTable[64];
 

@@ -386,7 +386,6 @@ void SetBotType(int i, string Name, int accuracy, int intelect, int evade,
 
 defaultproperties
 {
-	num_stats = HexenDefs::NUMARMOR + HexenDefs::NUMMANA + 8 + HexenDefs::NUMARTIFACTS * 2;
 	bUseHexenPolyobjTypes = true;
 
 	WeaponClasses[0] = WeaponFighterPunch;

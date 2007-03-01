@@ -145,9 +145,6 @@ static int		RebornPosition;	// Position indicator for cooperative net-play rebor
 
 static bool		completed;
 
-static int		num_stats;
-static int		num_string_stats;
-
 static VCvarI	TimeLimit("TimeLimit", "0");
 static VCvarI	DeathMatch("DeathMatch", "0", CVAR_ServerInfo);
 static VCvarI  	NoMonsters("NoMonsters", "0");
@@ -254,20 +251,12 @@ void SV_Init()
 		VClass::FindClass("MainGameInfo"));
 	GGameInfo->eventInit();
 
-	num_stats = GGameInfo->num_stats;
-	num_string_stats = GGameInfo->num_string_stats;
-
 	VClass* PlayerClass = VClass::FindClass("Player");
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
 		GPlayersBase[i] = (VBasePlayer*)VObject::StaticSpawnObject(
 			PlayerClass);
 		GPlayersBase[i]->Net = new VPlayerNetInfo();
-		if (num_string_stats && sizeof(VStr) > 4)
-			num_stats = (num_stats + 1) & ~1;
-		int TotalStats = num_stats + num_string_stats * (sizeof(VStr) / 4);
-		GPlayersBase[i]->Net->OldStats = new vint32[TotalStats];
-		memset(GPlayersBase[i]->Net->OldStats, 0, sizeof(vint32) * TotalStats);
 		GPlayersBase[i]->Net->EntChan = new VEntityChannel[GMaxEntities];
 		GPlayersBase[i]->Net->Chan.SetPlayer(GPlayersBase[i]);
 	}
@@ -298,11 +287,6 @@ void SV_Shutdown()
 	{
 		if (GPlayersBase[i])
 		{
-			for (int j = 0; j < num_string_stats; j++)
-			{
-				((VStr*)(GPlayersBase[i]->Net->OldStats + num_stats))[j].Clean();
-			}
-			delete[] GPlayersBase[i]->Net->OldStats;
 			delete[] GPlayersBase[i]->Net->EntChan;
 			GPlayersBase[i]->Net->Chan.SetPlayer(NULL);
 			delete GPlayersBase[i]->Net;
@@ -1660,10 +1644,7 @@ void SV_SendClientDatagram()
 void SV_SendReliable()
 {
 	guard(SV_SendReliable);
-	int		i, j;
-	int		*Stats;
-
-	for (i = 0; i < svs.max_clients; i++)
+	for (int i = 0; i < svs.max_clients; i++)
 	{
 		if (!GGameInfo->Players[i])
 			continue;
@@ -1673,51 +1654,13 @@ void SV_SendReliable()
 		if (!(GGameInfo->Players[i]->PlayerFlags & VBasePlayer::PF_Spawned))
 			continue;
 
-		Stats = (vint32*)((vuint8*)GGameInfo->Players[i] + sizeof(VBasePlayer));
-		for (j = 0; j < num_stats; j++)
-		{
-			if (Stats[j] == GGameInfo->Players[i]->Net->OldStats[j])
-			{
-				continue;
-			}
-			int sval = Stats[j];
-			if (sval >= 0 && sval < 256)
-			{
-				GGameInfo->Players[i]->Net->Message << (vuint8)svc_stats_byte
-					<< (vuint8)j << (vuint8)sval;
-			}
-			else if (sval >= MIN_VINT16 && sval <= MAX_VINT16)
-			{
-				GGameInfo->Players[i]->Net->Message << (vuint8)svc_stats_short
-					<< (vuint8)j << (vint16)sval;
-			}
-			else
-			{
-				GGameInfo->Players[i]->Net->Message << (vuint8)svc_stats_long
-					<< (vuint8)j << sval;
-			}
-			GGameInfo->Players[i]->Net->OldStats[j] = sval;
-		}
-		VStr* StrStats = (VStr*)(Stats + num_stats);
-		VStr* OldStrStats = (VStr*)(GGameInfo->Players[i]->Net->OldStats + num_stats);
-		for (j = 0; j < num_string_stats; j++)
-		{
-			if (StrStats[j] == OldStrStats[j])
-			{
-				continue;
-			}
-			GGameInfo->Players[i]->Net->Message << (vuint8)svc_stats_string
-				<< (vuint8)(num_stats + j) << StrStats[j];
-			OldStrStats[j] = StrStats[j];
-		}
-
 		sv_player = GGameInfo->Players[i];
 		GGameInfo->Players[i]->Net->Chan.Update();
 	}
 
 	sv_reliable.Clear();
 
-	for (i = 0; i < svs.max_clients; i++)
+	for (int i = 0; i < svs.max_clients; i++)
 	{
 		if (!GGameInfo->Players[i])
 		{
@@ -2901,7 +2844,8 @@ COMMAND(Spawn)
 						<< (vuint8)0;
 	sv_player->Net->Message << (vuint8)svc_signonnum << (vuint8)3;
 	sv_player->PlayerFlags &= ~VBasePlayer::PF_FixAngle;
-	memset(sv_player->Net->OldStats, 0, num_stats * 4);
+	sv_player->Net->Chan.SetPlayer(NULL);
+	sv_player->Net->Chan.SetPlayer(sv_player);
 	unguard;
 }
 

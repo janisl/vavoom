@@ -56,28 +56,7 @@ const int ST_MUCHPAIN				= 20;
 
 const int MAXHEALTH					= 100;
 
-//
-//  FIRST FIELDS ARE STATS THAT ARE SENT TO CLIENT FOR STATUS BAR
-//
-
-int SBFlags;
-
-int Ammo[DoomDefs::NUMAMMO];
-int MaxAmmo[DoomDefs::NUMAMMO];
-int ReadyAmmo;
-
-bool WeaponOwned[DoomDefs::NUMWEAPONS];
-
 int ArmorPoints;
-
-int ReadyWeapon;
-
-// current face index, used by w_faces
-int sb_faceindex;
-
-//
-//  ----------
-//
 
 bool Backpack;
 
@@ -104,8 +83,16 @@ float Bob;
 // Refired shots are less accurate.
 int Refire;
 
+bool WeaponOwned[DoomDefs::NUMWEAPONS];
+
+int ReadyWeapon;
+
 // Is wp_nochange if not changing.
 int PendingWeapon;
+
+int Ammo[DoomDefs::NUMAMMO];
+int MaxAmmo[DoomDefs::NUMAMMO];
+int ReadyAmmo;
 
 // Who did damage (NULL for floors/ceilings).
 Actor Attacker;
@@ -127,6 +114,8 @@ float LastHazardTime;
 //  FACE WIDGET DATA
 //
 
+int SBFlags;
+
 // count until face changes
 float sb_facetime;
 
@@ -144,7 +133,16 @@ int sb_cpo_oldhealth;
 
 float sb_face_lastattackdown;
 
+// current face index, used by w_faces
+int sb_faceindex;
+
 BotPlayer Bot;
+
+replication
+{
+	ArmorPoints, SBFlags, sb_faceindex, ReadyWeapon, ReadyAmmo,
+	Ammo, MaxAmmo, WeaponOwned;
+}
 
 //==========================================================================
 //

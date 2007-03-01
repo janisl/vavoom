@@ -551,7 +551,6 @@ void TranslateLevel(Level InLevel)
 
 defaultproperties
 {
-	num_stats = 9 + 2 * HereticDefs::NUMARTIFACTS;
 	bUseHexenPolyobjTypes = true;
 
 	WeaponClasses[0] = WeaponStaff;

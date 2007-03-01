@@ -40,9 +40,6 @@ enum
 	svc_set_angles,
 	svc_centre_look,
 	svc_view_data,
-	svc_stats_long,
-	svc_stats_short,
-	svc_stats_byte,
 
 	svc_time,
 	svc_pause,
@@ -85,7 +82,6 @@ enum
 	svc_change_music,
 
 	svc_class_name,
-	svc_stats_string,
 	svc_add_seq_choice,
 
 	svc_set_prop,

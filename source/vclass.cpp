@@ -1053,11 +1053,22 @@ void VField::NetReadValue(VMessage& Msg, vuint8* Data, const VField::FType& Type
 	switch (Type.Type)
 	{
 	case ev_int:
-		Msg >> *(vuint32*)Data;
+		Msg >> *(vint32*)Data;
 		break;
 
 	case ev_float:
 		Msg >> *(float*)Data;
+		break;
+
+	case ev_bool:
+		if (Msg.ReadByte())
+			*(vuint32*)Data |= Type.BitMask;
+		else
+			*(vuint32*)Data &= ~Type.BitMask;
+		break;
+
+	case ev_string:
+		Msg >> *(VStr*)Data;
 		break;
 
 	case ev_struct:
@@ -1099,6 +1110,14 @@ void VField::NetWriteValue(VMessage& Msg, vuint8* Data, const VField::FType& Typ
 
 	case ev_float:
 		Msg << *(float*)Data;
+		break;
+
+	case ev_bool:
+		Msg << (vuint8)!!(*(vuint32*)Data & Type.BitMask);
+		break;
+
+	case ev_string:
+		Msg << *(VStr*)Data;
 		break;
 
 	case ev_struct:

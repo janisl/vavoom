@@ -61,30 +61,12 @@ struct inventory_t
 	int count;
 };
 
-//
-//  FIRST FIELDS ARE STATS THAT ARE SENT TO CLIENT FOR STATUS BAR
-//
-
 int SBFlags;
-int ReadyAmmo;
-
-int ArtifactFlash;
-int InvPtr;
-int InvCurPos;
 
 int ArmorPoints;
 
-int ReadyArtifact;
-inventory_t Inventory[HereticDefs::NUMARTIFACTS];
-int InventorySlotNum;
-
-int ReadyWeapon;
-
-//
-//  ----------
-//
-
 int Ammo[NUMAMMO];
+int ReadyAmmo;
 
 float ChickenTime;	// player is a chicken if > 0
 
@@ -93,6 +75,13 @@ float Powers[NUMPOWERS];
 
 int Keys;
 
+int ArtifactFlash;
+int InvPtr;
+int InvCurPos;
+inventory_t Inventory[HereticDefs::NUMARTIFACTS];
+
+int ReadyArtifact;
+int InventorySlotNum;
 int Arti;	// artitype_t to use
 
 // Base height above floor for viewz.
@@ -120,6 +109,7 @@ int Cheats;
 int PendingWeapon;
 
 bool WeaponOwned[NUMWEAPONS];
+int ReadyWeapon;
 
 // Who did damage (NULL for floors/ceilings).
 Actor Attacker;
@@ -151,6 +141,12 @@ float LastHazardTime;
 BotPlayer Bot;
 
 bool onground;
+
+replication
+{
+	SBFlags, ArmorPoints, ReadyAmmo, ArtifactFlash, InvPtr, InvCurPos,
+	ReadyArtifact, InventorySlotNum, ReadyWeapon, Inventory;
+}
 
 //==========================================================================
 //

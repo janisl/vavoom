@@ -59,14 +59,18 @@ struct inventory_t
 	int count;
 };
 
-//
-//  FIRST FIELDS ARE STATS THAT ARE SENT TO CLIENT FOR STATUS BAR
-//
-
 int SBFlags;
 
 int TotalArmorPoints;
+float ArmorPoints[HexenDefs::NUMARMOR];
 int ArmorPerc[HexenDefs::NUMARMOR];
+
+int Mana[HexenDefs::NUMMANA];
+
+int Keys;
+
+// Power ups. invinc and invis are tic counters.
+float Powers[NUMPOWERS];
 
 float InventoryTime;
 
@@ -76,20 +80,6 @@ int InvPtr;
 int InvCurPos;
 int InventorySlotNum;
 inventory_t Inventory[HexenDefs::NUMARTIFACTS];
-
-int Mana[HexenDefs::NUMMANA];
-
-//
-//  ----------
-//
-
-float ArmorPoints[HexenDefs::NUMARMOR];
-
-int Keys;
-
-// Power ups. invinc and invis are tic counters.
-float Powers[NUMPOWERS];
-
 int Arti;	// artitype_t to use
 
 // Base height above floor for viewz.
@@ -155,6 +145,12 @@ BotPlayer Bot;
 TVec useDir;
 
 bool onground;
+
+replication
+{
+	SBFlags, TotalArmorPoints, InventoryTime, ArtifactFlash, ReadyArtifact,
+	InvPtr, InvCurPos, InventorySlotNum, ArmorPerc, Mana, Inventory;
+}
 
 //==========================================================================
 //
