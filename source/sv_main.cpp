@@ -51,11 +51,13 @@ public:
 	VEntity*		Ent;
 	vuint8*			OldData;
 	bool			NewObj;
+	vuint8*			FieldCondValues;
 
 	VEntityChannel()
 	: Ent(NULL)
 	, OldData(NULL)
 	, NewObj(false)
+	, FieldCondValues(NULL)
 	{
 	}
 	~VEntityChannel()
@@ -423,6 +425,11 @@ void VEntityChannel::SetEntity(VEntity* AEnt)
 			delete[] OldData;
 			OldData = NULL;
 		}
+		if (FieldCondValues)
+		{
+			delete[] FieldCondValues;
+			FieldCondValues = NULL;
+		}
 	}
 
 	Ent = AEnt;
@@ -437,7 +444,33 @@ void VEntityChannel::SetEntity(VEntity* AEnt)
 			VField::CopyFieldValue((vuint8*)Def + F->Ofs, OldData + F->Ofs,
 				F->Type);
 		}
+		FieldCondValues = new vuint8[Ent->GetClass()->NumNetFields];
 		NewObj = true;
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	EvalCondValues
+//
+//==========================================================================
+
+static void EvalCondValues(VObject* Obj, VClass* Class, vuint8* Values)
+{
+	guard(EvalCondValues);
+	if (Class->GetSuperClass())
+	{
+		EvalCondValues(Obj, Class->GetSuperClass(), Values);
+	}
+	for (int i = 0; i < Class->RepInfos.Num(); i++)
+	{
+		P_PASS_REF(Obj);
+		bool Val = !!VObject::ExecuteFunction(Class->RepInfos[i].Cond).i;
+		for (int j = 0; j < Class->RepInfos[i].RepFields.Num(); j++)
+		{
+			Values[Class->RepInfos[i].RepFields[j]->NetIndex] = Val;
+		}
 	}
 	unguard;
 }
@@ -451,10 +484,15 @@ void VEntityChannel::SetEntity(VEntity* AEnt)
 void VEntityChannel::Update(int SendId)
 {
 	guard(VEntityChannel::Update);
+	EvalCondValues(Ent, Ent->GetClass(), FieldCondValues);
 	VMessage& Msg = sv_player->Net->Message;
 	vuint8* Data = (vuint8*)Ent;
 	for (VField* F = Ent->GetClass()->NetFields; F; F = F->NextNetField)
 	{
+		if (!FieldCondValues[F->NetIndex])
+		{
+			continue;
+		}
 		if (!VField::IdenticalValue(Data + F->Ofs, OldData + F->Ofs, F->Type))
 		{
 			Msg << (vuint8)svc_set_prop;
@@ -485,6 +523,7 @@ VPlayerChannel::VPlayerChannel()
 : Plr(NULL)
 , OldData(NULL)
 , NewObj(false)
+, FieldCondValues(NULL)
 {
 }
 
@@ -518,6 +557,11 @@ void VPlayerChannel::SetPlayer(VBasePlayer* APlr)
 			delete[] OldData;
 			OldData = NULL;
 		}
+		if (FieldCondValues)
+		{
+			delete[] FieldCondValues;
+			FieldCondValues = NULL;
+		}
 	}
 
 	Plr = APlr;
@@ -532,6 +576,7 @@ void VPlayerChannel::SetPlayer(VBasePlayer* APlr)
 			VField::CopyFieldValue((vuint8*)Def + F->Ofs, OldData + F->Ofs,
 				F->Type);
 		}
+		FieldCondValues = new vuint8[Plr->GetClass()->NumNetFields];
 		NewObj = true;
 	}
 	unguard;
@@ -546,10 +591,15 @@ void VPlayerChannel::SetPlayer(VBasePlayer* APlr)
 void VPlayerChannel::Update()
 {
 	guard(VPlayerChannel::Update);
+	EvalCondValues(Plr, Plr->GetClass(), FieldCondValues);
 	VMessage& Msg = sv_player->Net->Message;
 	vuint8* Data = (vuint8*)Plr;
 	for (VField* F = Plr->GetClass()->NetFields; F; F = F->NextNetField)
 	{
+		if (!FieldCondValues[F->NetIndex])
+		{
+			continue;
+		}
 		if (!VField::IdenticalValue(Data + F->Ofs, OldData + F->Ofs, F->Type))
 		{
 			Msg << (vuint8)svc_set_player_prop;
@@ -586,12 +636,6 @@ int SV_GetMobjBits(VEntity &mobj, mobj_base_t &base)
 		bits |= MOB_ANGLEP;
 	if (AngleToByte(base.Angles.roll) != AngleToByte(mobj.Angles.roll))
 		bits |= MOB_ANGLER;
-	if (mobj.EntityFlags & VEntity::EF_FullBright)
-		bits |= MOB_FULL_BRIGHT;
-	if (mobj.EntityFlags & VEntity::EF_FixedModel)
-		bits |= MOB_MODEL;
-	if ((mobj.EntityFlags & VEntity::EF_FixedModel) && mobj.ModelSkinNum)
-		bits |= MOB_SKIN_NUM;
 	if (base.Class != mobj.GetClass())
 	{
 		bits |= MOB_CLASS;
@@ -653,10 +697,6 @@ void SV_WriteMobj(int bits, VEntity &mobj, VMessage &msg)
 		msg << (vuint8)(AngleToByte(mobj.Angles.pitch));
 	if (bits & MOB_ANGLER)
 		msg << (vuint8)(AngleToByte(mobj.Angles.roll));
-	if (bits & MOB_MODEL)
-		msg << (vuint16)mobj.FixedModelIndex;
-	if (bits & MOB_SKIN_NUM)
-		msg << (vuint8)mobj.ModelSkinNum;
 	unguard;
 }
 
@@ -797,7 +837,7 @@ void SV_CreateBaseline()
 			continue;
 
 		//NOTE Do we really need 10 bytes extra?
-		if (!sv_signon.CheckSpace(30))
+		if (!sv_signon.CheckSpace(26))
 		{
 			GCon->Log(NAME_Dev, "SV_CreateBaseline: Overflow");
 			return;
@@ -1272,10 +1312,7 @@ void SV_WriteViewData(VBasePlayer &player, VMessage &msg)
 		<< player.ViewOrg.x
 		<< player.ViewOrg.y
 		<< player.ViewOrg.z
-		<< (vuint8)player.ExtraLight
-		<< (vuint8)player.FixedColourmap
-		<< (vuint8)(player.MO->Alpha * 255)
-		<< (vuint16)player.PSpriteSY;
+		<< (vuint8)(player.MO->Alpha * 255);
 	for (i = 0; i < NUMPSPRITES; i++)
 	{
 		if (player.ViewStates[i].State)
@@ -1300,19 +1337,6 @@ void SV_WriteViewData(VBasePlayer &player, VMessage &msg)
 			msg << (vint16)-1;
 		}
 	}
-
-	msg << (vuint8)player.Health
-		<< player.Items
-		<< (vint16)player.Frags;
-
-	int bits = 0;
-	for (i = 0; i < NUM_CSHIFTS; i++)
-		if (player.CShifts[i] & 0xff000000)
-			bits |= (1 << i);
-	msg << (vuint8)bits;
-	for (i = 0; i < NUM_CSHIFTS; i++)
-		if (player.CShifts[i] & 0xff000000)
-			msg << player.CShifts[i];
 
 	//	Update bam_angles (after teleportation)
 	if (player.PlayerFlags & VBasePlayer::PF_FixAngle)

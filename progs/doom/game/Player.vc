@@ -140,8 +140,9 @@ BotPlayer Bot;
 
 replication
 {
-	ArmorPoints, SBFlags, sb_faceindex, ReadyWeapon, ReadyAmmo,
-	Ammo, MaxAmmo, WeaponOwned;
+	reliable if (true)
+		ArmorPoints, SBFlags, sb_faceindex, ReadyWeapon, ReadyAmmo,
+		Ammo, MaxAmmo, WeaponOwned;
 }
 
 //==========================================================================

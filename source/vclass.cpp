@@ -2459,6 +2459,27 @@ void VClass::Serialise(VStream& Strm)
 	{
 		NetStates = States;
 	}
+
+	int NumRepInfos = RepInfos.Num();
+	Strm << STRM_INDEX(NumRepInfos);
+	if (Strm.IsLoading())
+	{
+		RepInfos.SetNum(NumRepInfos);
+	}
+	for (int i = 0; i < RepInfos.Num(); i++)
+	{
+		Strm << RepInfos[i].Cond;
+		int NumRepFields = RepInfos[i].RepFields.Num();
+		Strm << STRM_INDEX(NumRepFields);
+		if (Strm.IsLoading())
+		{
+			RepInfos[i].RepFields.SetNum(NumRepFields);
+		}
+		for (int j = 0; j < RepInfos[i].RepFields.Num(); j++)
+		{
+			Strm << RepInfos[i].RepFields[j];
+		}
+	}
 	unguard;
 }
 

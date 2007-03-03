@@ -144,8 +144,9 @@ bool onground;
 
 replication
 {
-	SBFlags, ArmorPoints, ReadyAmmo, ArtifactFlash, InvPtr, InvCurPos,
-	ReadyArtifact, InventorySlotNum, ReadyWeapon, Inventory;
+	reliable if (true)
+		SBFlags, ArmorPoints, ReadyAmmo, ArtifactFlash, InvPtr, InvCurPos,
+		ReadyArtifact, InventorySlotNum, ReadyWeapon, Inventory;
 }
 
 //==========================================================================

@@ -119,9 +119,10 @@ TVec MoveDir;
 
 replication
 {
-	ReadyAmmo, Sigil, Accuracy, Stamina, Keys, InvFirst, InvCursor,
-	Objectives, ArmorType, ArmorPoints, Cheats, Ammo, MaxAmmo,
-	WeaponOwned, Inventory, Backpack, Communicator;
+	reliable if (true)
+		ReadyAmmo, Sigil, Accuracy, Stamina, Keys, InvFirst, InvCursor,
+		Objectives, ArmorType, ArmorPoints, Cheats, Ammo, MaxAmmo,
+		WeaponOwned, Inventory, Backpack, Communicator;
 }
 
 //==========================================================================

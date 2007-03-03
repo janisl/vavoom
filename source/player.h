@@ -72,6 +72,7 @@ public:
 	VBasePlayer*	Plr;
 	vuint8*			OldData;
 	bool			NewObj;
+	vuint8*			FieldCondValues;
 
 	VPlayerChannel();
 	~VPlayerChannel();

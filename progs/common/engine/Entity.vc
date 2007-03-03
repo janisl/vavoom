@@ -197,7 +197,11 @@ Entity Owner;
 
 replication
 {
-	SpriteType, ModelVersion, Alpha, Translation, Effects;
+	reliable if (Role == ROLE_Authority)
+		SpriteType, ModelVersion, Alpha, Translation, Effects, bFullBright,
+		bFixedModel;
+	reliable if (Role == ROLE_Authority && bFixedModel)
+		FixedModelIndex, ModelSkinNum;
 }
 
 //

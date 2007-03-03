@@ -2179,6 +2179,27 @@ void VClass::Serialise(VStream& Strm)
 		<< Fields
 		<< States
 		<< DefaultProperties;
+
+	int NumRepInfos = RepInfos.Num();
+	Strm << STRM_INDEX(NumRepInfos);
+	if (Strm.IsLoading())
+	{
+		RepInfos.SetNum(NumRepInfos);
+	}
+	for (int i = 0; i < RepInfos.Num(); i++)
+	{
+		Strm << RepInfos[i].Cond;
+		int NumRepFields = RepInfos[i].RepFields.Num();
+		Strm << STRM_INDEX(NumRepFields);
+		if (Strm.IsLoading())
+		{
+			RepInfos[i].RepFields.SetNum(NumRepFields);
+		}
+		for (int j = 0; j < RepInfos[i].RepFields.Num(); j++)
+		{
+			Strm << RepInfos[i].RepFields[j].Field;
+		}
+	}
 }
 
 //==========================================================================
@@ -2526,29 +2547,38 @@ bool VClass::DefineMembers()
 		}
 	}
 
-	for (int i = 0; i < RepFields.Num(); i++)
+	for (int ri = 0; ri < RepInfos.Num(); ri++)
 	{
-		VField* RepField = NULL;
-		for (VField* F = Fields; F; F = F->Next)
+		if (!RepInfos[ri].Cond->Define())
 		{
-			if (F->Name == RepFields[i].Name)
+			Ret = false;
+		}
+		TArray<VRepField>& RepFields = RepInfos[ri].RepFields;
+		for (int i = 0; i < RepFields.Num(); i++)
+		{
+			VField* RepField = NULL;
+			for (VField* F = Fields; F; F = F->Next)
 			{
-				RepField = F;
-				break;
+				if (F->Name == RepFields[i].Name)
+				{
+					RepField = F;
+					break;
+				}
 			}
+			if (!RepField)
+			{
+				ParseError(RepFields[i].Loc, "No such field %s", *RepFields[i].Name);
+				continue;
+			}
+			if (RepField->flags & FIELD_Net)
+			{
+				ParseError(RepFields[i].Loc, "Field %s has multiple replication statements",
+					*RepFields[i].Name);
+				continue;
+			}
+			RepField->flags |= FIELD_Net;
+			RepFields[i].Field = RepField;
 		}
-		if (!RepField)
-		{
-			ParseError(RepFields[i].Loc, "No such field %s", *RepFields[i].Name);
-			continue;
-		}
-		if (RepField->flags & FIELD_Net)
-		{
-			ParseError(RepFields[i].Loc, "Field %s has multiple replication statements",
-				*RepFields[i].Name);
-			continue;
-		}
-		RepField->flags |= FIELD_Net;
 	}
 
 	return Ret;
@@ -2572,6 +2602,12 @@ void VClass::Emit()
 	for (VState* s = States; s; s = s->Next)
 	{
 		s->Emit();
+	}
+
+	//	Emit code of the network replication conditions.
+	for (int ri = 0; ri < RepInfos.Num(); ri++)
+	{
+		RepInfos[ri].Cond->Emit();
 	}
 
 	DefaultProperties->Emit();

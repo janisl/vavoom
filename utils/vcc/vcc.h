@@ -449,16 +449,23 @@ struct mobjinfo_t
 	VClass*	class_id;
 };
 
+struct VRepField
+{
+	VName		Name;
+	TLocation	Loc;
+	VField*		Field;
+};
+
+struct VRepInfo
+{
+	VMethod*			Cond;
+	TArray<VRepField>	RepFields;
+};
+
 class VClass : public VMemberBase
 {
 public:
 	enum { AllowedModifiers = TModifiers::Native | TModifiers::Abstract };
-
-	struct VRepField
-	{
-		VName		Name;
-		TLocation	Loc;
-	};
 
 	VClass*		ParentClass;
 	VField*		Fields;
@@ -475,7 +482,7 @@ public:
 	TArray<VProperty*>		Properties;
 	TArray<VMethod*>		Methods;
 	bool					Defined;
-	TArray<VRepField>		RepFields;
+	TArray<VRepInfo>		RepInfos;
 
 	VClass(VName, VMemberBase*, TLocation);
 	~VClass();
@@ -584,6 +591,7 @@ private:
 	void ParseDefaultProperties(VClass*);
 	void ParseStruct(VClass*, bool);
 	void ParseStates(VClass*);
+	void ParseReplication(VClass*);
 	void ParseClass();
 
 public:

@@ -193,20 +193,6 @@ static void CL_ReadMobj(VMessage& msg, int bits, VEntity*& mobj, const clmobjbas
 		mobj->Angles.roll = ByteToAngle(msg.ReadByte());
 	else
 		mobj->Angles.roll = base.angles.roll;
-	if (bits & MOB_FULL_BRIGHT)
-		mobj->EntityFlags |= VEntity::EF_FullBright;
-	else
-		mobj->EntityFlags &= ~VEntity::EF_FullBright;
-	mobj->EntityFlags &= ~VEntity::EF_FixedModel;
-	if (bits & MOB_MODEL)
-	{
-		mobj->EntityFlags |= VEntity::EF_FixedModel;
-		mobj->FixedModelIndex = msg.ReadShort();
-	}
-	if (bits & MOB_SKIN_NUM)
-		mobj->ModelSkinNum = msg.ReadByte();
-	else
-		mobj->ModelSkinNum = 0;
 }
 
 static void CL_ParseUpdateMobj(VMessage& msg)
@@ -264,15 +250,11 @@ static void CL_ParseViewData(VMessage& msg)
 {
 	guard(CL_ParseViewData);
 	int		i;
-	int		bits;
 
 	msg >> cl->ViewOrg.x
 		>> cl->ViewOrg.y
 		>> cl->ViewOrg.z;
-	cl->ExtraLight = msg.ReadByte();
-	cl->FixedColourmap = msg.ReadByte();
 	cl->ViewEntAlpha = (float)msg.ReadByte() / 255.0;
-	cl->PSpriteSY = msg.ReadShort();
 
 	for (i = 0; i < NUMPSPRITES; i++)
 	{
@@ -294,19 +276,6 @@ static void CL_ParseViewData(VMessage& msg)
 		{
 			cl->ViewStates[i].State = NULL;
 		}
-	}
-
-	cl->Health = msg.ReadByte();
-	msg >> cl->Items;
-	cl->Frags = msg.ReadShort();
-
-	bits = msg.ReadByte();
-	for (i = 0; i < NUM_CSHIFTS; i++)
-	{
-		if (bits & (1 << i))
-			msg >> cl->CShifts[i];
-		else
-			cl->CShifts[i] = 0;
 	}
 	unguard;
 }

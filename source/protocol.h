@@ -109,13 +109,10 @@ enum
 #define MOB_CLASS		0x0020
 #define MOB_BIG_NUM		0x0040
 #define MOB_MORE_BITS	0x0080
-#define MOB_FULL_BRIGHT	0x0100
+#define MOB_BIG_STATE	0x0100
 #define MOB_BIG_CLASS	0x0200
-#define MOB_MODEL		0x0400
-#define MOB_SKIN_NUM	0x0800
 #define MOB_ANGLEP		0x1000
 #define MOB_ANGLER		0x2000
-#define MOB_BIG_STATE	0x4000
 
 #define SUB_FLOOR		0x0001
 #define SUB_CEIL		0x0002

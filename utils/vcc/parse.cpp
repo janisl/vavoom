@@ -1534,6 +1534,67 @@ void VParser::ParseStates(VClass* InClass)
 
 //==========================================================================
 //
+//	VParser::ParseReplication
+//
+//==========================================================================
+
+void VParser::ParseReplication(VClass* Class)
+{
+	Lex.Expect(TK_LBrace);
+	while (!Lex.Check(TK_RBrace))
+	{
+		VRepInfo& RI = Class->RepInfos.Alloc();
+
+		//	Reliable or unreliable flag, currently unused.
+		if (Lex.Check(TK_Reliable))
+		{
+		}
+		else if (Lex.Check(TK_Unreliable))
+		{
+		}
+		else
+		{
+		}
+
+		//	Replication condition.
+		RI.Cond = new VMethod(NAME_None, Class, Lex.Location);
+		RI.Cond->ReturnType = TType(ev_bool);
+		RI.Cond->ReturnType.bit_mask = 1;
+		RI.Cond->ReturnTypeExpr = new VTypeExpr(RI.Cond->ReturnType,
+			Lex.Location);
+		Lex.Expect(TK_If);
+		Lex.Expect(TK_LParen, ERR_MISSING_LPAREN);
+		VExpression* e = ParseExpression();
+		if (!e)
+		{
+			ParseError(Lex.Location, "If expression expected");
+		}
+		Lex.Expect(TK_RParen, ERR_MISSING_RPAREN);
+		RI.Cond->Statement = new VReturn(e, RI.Cond->Loc);
+
+		//	Fields
+		do
+		{
+			if (Lex.Token != TK_Identifier)
+			{
+				ParseError(Lex.Location, "Field name expected");
+			}
+			else
+			{
+				VRepField& F = RI.RepFields.Alloc();
+				F.Name = Lex.Name;
+				F.Loc = Lex.Location;
+				F.Field = NULL;
+				Lex.NextToken();
+			}
+		}
+		while (Lex.Check(TK_Comma));
+		Lex.Expect(TK_Semicolon);
+	}
+}
+
+//==========================================================================
+//
 //	VParser::ParseClass
 //
 //==========================================================================
@@ -1748,24 +1809,7 @@ void VParser::ParseClass()
 
 		if (Lex.Check(TK_Replication))
 		{
-			Lex.Expect(TK_LBrace);
-			do
-			{
-				if (Lex.Token != TK_Identifier)
-				{
-					ParseError(Lex.Location, "Field name expected");
-				}
-				else
-				{
-					VClass::VRepField& F = Class->RepFields.Alloc();
-					F.Name = Lex.Name;
-					F.Loc = Lex.Location;
-					Lex.NextToken();
-				}
-			}
-			while (Lex.Check(TK_Comma));
-			Lex.Expect(TK_Semicolon);
-			Lex.Expect(TK_RBrace);
+			ParseReplication(Class);
 			continue;
 		}
 

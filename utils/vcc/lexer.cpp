@@ -82,6 +82,7 @@ const char*			VLexer::TokenNames[] =
 	"out",
 	"private",
 	"readonly",
+	"reliable",
 	"replication",
 	"return",
 	"self",
@@ -93,6 +94,7 @@ const char*			VLexer::TokenNames[] =
 	"switch",
 	"transient",
 	"true",
+	"unreliable",
 	"vector",
 	"void",
 	"while",
@@ -710,6 +712,11 @@ void VLexer::ProcessLetterToken()
 			{
 				Token = TK_ReadOnly;
 			}
+			else if (s[2] == 'l' && s[3] == 'i' && s[4] == 'a' &&
+				s[5] == 'b' && s[6] == 'l' && s[7] == 'e' && s[8] == 0)
+			{
+				Token = TK_Reliable;
+			}
 			else if (s[2] == 'p' && s[3] == 'l' && s[4] == 'i' &&
 				s[5] == 'c' && s[6] == 'a' && s[7] == 't' && s[8] == 'i' &&
 				s[9] == 'o' && s[10] == 'n' && s[11] == 0)
@@ -781,6 +788,15 @@ void VLexer::ProcessLetterToken()
 			{
 				Token = TK_True;
 			}
+		}
+		break;
+
+	case 'u':
+		if (s[1] == 'n' && s[2] == 'r' && s[3] == 'e' && s[4] == 'l' &&
+			s[5] == 'i' && s[6] == 'a' && s[7] == 'b' && s[8] == 'l' &&
+			s[9] == 'e' && s[10] == 0)
+		{
+			Token = TK_Unreliable;
 		}
 		break;
 

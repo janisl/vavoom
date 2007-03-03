@@ -148,8 +148,9 @@ bool onground;
 
 replication
 {
-	SBFlags, TotalArmorPoints, InventoryTime, ArtifactFlash, ReadyArtifact,
-	InvPtr, InvCurPos, InventorySlotNum, ArmorPerc, Mana, Inventory;
+	reliable if (true)
+		SBFlags, TotalArmorPoints, InventoryTime, ArtifactFlash, ReadyArtifact,
+		InvPtr, InvCurPos, InventorySlotNum, ArmorPerc, Mana, Inventory;
 }
 
 //==========================================================================

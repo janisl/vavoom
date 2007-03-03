@@ -109,6 +109,12 @@ native readonly int ClientNum;
 
 native readonly float ViewEntAlpha;
 
+replication
+{
+	reliable if (true)
+		Health, Items, Frags, ExtraLight, FixedColourmap, CShifts, PSpriteSY;
+}
+
 //  Print to client
 native final void cprint(string format, ...);
 //  Client's centre message

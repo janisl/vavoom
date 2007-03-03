@@ -349,6 +349,12 @@ struct mobjinfo_t
 //
 //==========================================================================
 
+struct VRepInfo
+{
+	VMethod*			Cond;
+	TArray<VField*>		RepFields;
+};
+
 class VClass : public VMemberBase
 {
 private:
@@ -376,10 +382,11 @@ public:
 
 	vuint8*			Defaults;
 
-	vint32			NetId;
-	VState*			NetStates;
-	TArray<VState*>	StatesLookup;
-	vint32			NumNetFields;
+	vint32				NetId;
+	VState*				NetStates;
+	TArray<VState*>		StatesLookup;
+	vint32				NumNetFields;
+	TArray<VRepInfo>	RepInfos;
 
 	static TArray<mobjinfo_t>	GMobjInfos;
 	static TArray<mobjinfo_t>	GScriptIds;
