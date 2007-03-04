@@ -244,8 +244,6 @@ void CL_DecayLights();
 
 void CL_KeepaliveMessage();
 
-particle_t *R_NewParticle();
-
 void R_InstallSprite(const char*, int);
 void R_DrawModelFrame(const TVec&, float, VModel*, int, const char*);
 

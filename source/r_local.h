@@ -152,6 +152,11 @@ private:
 	//	Light variables
 	TArray<light_t>	Lights;
 
+	int				NumParticles;
+	particle_t*		Particles;
+	particle_t*		ActiveParticles;
+	particle_t*		FreeParticles;
+
 	//	Surf methods
 	void SetupSky();
 	void InitSurfs(surface_t*, texinfo_t*, TPlane*, subsector_t*);
@@ -195,6 +200,9 @@ private:
 
 	void PrecacheLevel();
 
+	void InitParticles();
+	void ClearParticles();
+
 public:
 	VLevelRenderData(VLevel*);
 	~VLevelRenderData();
@@ -213,6 +221,10 @@ public:
 	void PushDlights();
 	vuint32 LightPoint(const TVec &p);
 	bool BuildLightMap(surface_t*, int);
+
+	particle_t* NewParticle();
+	void UpdateParticles(float);
+	void DrawParticles();
 };
 
 //

@@ -23,11 +23,8 @@
 //**
 //**************************************************************************
 
-// HEADER FILES ------------------------------------------------------------
-
-// MACROS ------------------------------------------------------------------
-
-// TYPES -------------------------------------------------------------------
+struct particle_t;
+class VTexture;
 
 enum
 {
@@ -98,9 +95,9 @@ public:
 	virtual void ForceLightning() = 0;
 
 	virtual void AddStaticLight(const TVec&, float, vuint32) = 0;
-};
 
-class VTexture;
+	virtual particle_t* NewParticle() = 0;
+};
 
 class VTextureManager
 {
@@ -132,8 +129,6 @@ private:
 	void AddHiResTextures();
 };
 
-// PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
-
 // r_main
 void R_Init(); // Called by startup code.
 void R_Start(VLevel*);
@@ -154,8 +149,6 @@ void R_InitSprites();
 void R_DrawPic(int x, int y, int handle, float Aplha = 1.0);
 void R_DrawShadowedPic(int x, int y, int handle);
 void R_FillRectWithFlat(int DestX,int DestY,int width,int height,const char* fname);
-
-// PUBLIC DATA DECLARATIONS ------------------------------------------------
 
 extern VTextureManager	GTextureManager;
 

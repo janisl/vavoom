@@ -35,6 +35,11 @@
 
 // MACROS ------------------------------------------------------------------
 
+#define MAX_PARTICLES			2048	// default max # of particles at one
+										//  time
+#define ABSOLUTE_MIN_PARTICLES	512		// no fewer than this no matter what's
+										//  on the command line
+
 // TYPES -------------------------------------------------------------------
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -45,9 +50,6 @@ void R_FreeSkyboxData();
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
-
-void R_InitParticles();
-void R_ClearParticles();
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
@@ -155,7 +157,6 @@ void R_Init()
 	R_InitModels();
 	Drawer->InitTextures();
 	Drawer->InitData();
-	R_InitParticles();
 
 	for (int i = 0; i < 256; i++)
 	{
@@ -193,6 +194,9 @@ VLevelRenderData::VLevelRenderData(VLevel* ALevel)
 , AllocatedDrawSegs(0)
 , AllocatedSegParts(0)
 , LightningLightLevels(0)
+, Particles(0)
+, ActiveParticles(0)
+, FreeParticles(0)
 {
 	guard(VLevelRenderData::VLevelRenderData);
 	if (Level == GLevel)
@@ -203,7 +207,8 @@ VLevelRenderData::VLevelRenderData(VLevel* ALevel)
 	}
 	r_oldviewleaf = NULL;
 
-	R_ClearParticles();
+	InitParticles();
+	ClearParticles();
 	InitSky();
 
 	r_fog = cl_level.FadeTable == NAME_fogmap;
@@ -280,6 +285,8 @@ VLevelRenderData::~VLevelRenderData()
 		delete[] LightningLightLevels;
 		LightningLightLevels = NULL;
 	}
+
+	delete[] Particles;
 	unguard;
 }
 
@@ -550,120 +557,104 @@ static void R_MarkLeaves()
 //**
 //**************************************************************************
 
-#define MAX_PARTICLES			2048	// default max # of particles at one
-										//  time
-#define ABSOLUTE_MIN_PARTICLES	512		// no fewer than this no matter what's
-										//  on the command line
-
-particle_t	*active_particles, *free_particles;
-
-particle_t	*particles;
-int			r_numparticles;
-
 //==========================================================================
 //
-//	R_InitParticles
+//	VLevelRenderData::InitParticles
 //
 //==========================================================================
 
-void R_InitParticles()
+void VLevelRenderData::InitParticles()
 {
-	guard(R_InitParticles);
+	guard(VLevelRenderData::InitParticles);
 	const char* p = GArgs.CheckValue("-particles");
 
 	if (p)
 	{
-		r_numparticles = atoi(p);
-		if (r_numparticles < ABSOLUTE_MIN_PARTICLES)
-			r_numparticles = ABSOLUTE_MIN_PARTICLES;
+		NumParticles = atoi(p);
+		if (NumParticles < ABSOLUTE_MIN_PARTICLES)
+			NumParticles = ABSOLUTE_MIN_PARTICLES;
 	}
 	else
 	{
-		r_numparticles = MAX_PARTICLES;
+		NumParticles = MAX_PARTICLES;
 	}
 
-	particles = new particle_t[r_numparticles];
+	Particles = new particle_t[NumParticles];
 	unguard;
 }
 
 //==========================================================================
 //
-//	R_ClearParticles
+//	VLevelRenderData::ClearParticles
 //
 //==========================================================================
 
-void R_ClearParticles()
+void VLevelRenderData::ClearParticles()
 {
-	guard(R_ClearParticles);
-	int		i;
-	
-	free_particles = &particles[0];
-	active_particles = NULL;
+	guard(VLevelRenderData::ClearParticles);
+	FreeParticles = &Particles[0];
+	ActiveParticles = NULL;
 
-	for (i = 0; i < r_numparticles; i++)
-		particles[i].next = &particles[i + 1];
-	particles[r_numparticles - 1].next = NULL;
+	for (int i = 0; i < NumParticles; i++)
+		Particles[i].next = &Particles[i + 1];
+	Particles[NumParticles - 1].next = NULL;
 	unguard;
 }
 
 //==========================================================================
 //
-//	R_NewParticle
+//	VLevelRenderData::NewParticle
 //
 //==========================================================================
 
-particle_t *R_NewParticle()
+particle_t* VLevelRenderData::NewParticle()
 {
-	guard(R_NewParticle);
-	if (!free_particles)
+	guard(VLevelRenderData::NewParticle);
+	if (!FreeParticles)
 	{
 		//	No free particles
 		return NULL;
 	}
 	//	Remove from list of free particles
-	particle_t *p = free_particles;
-	free_particles = p->next;
+	particle_t* p = FreeParticles;
+	FreeParticles = p->next;
 	//	Clean
 	memset(p, 0, sizeof(*p));
 	//	Add to active particles
-	p->next = active_particles;
-	active_particles = p;
+	p->next = ActiveParticles;
+	ActiveParticles = p;
 	return p;
 	unguard;
 }
 
 //==========================================================================
 //
-//	R_UpdateParticles
+//	VLevelRenderData::UpdateParticles
 //
 //==========================================================================
 
-void R_UpdateParticles()
+void VLevelRenderData::UpdateParticles(float frametime)
 {
-	guard(R_UpdateParticles);
+	guard(VLevelRenderData::UpdateParticles);
 	particle_t		*p, *kill;
-	float			frametime;
 
-//	frametime = cl->time - cl->oldtime;
-	frametime = host_frametime;
-	
-	kill = active_particles;
+	kill = ActiveParticles;
 	while (kill && kill->die < GClGame->time)
 	{
-		active_particles = kill->next;
-		kill->next = free_particles;
-		free_particles = kill;
-		kill = active_particles;
+		ActiveParticles = kill->next;
+		kill->next = FreeParticles;
+		FreeParticles = kill;
+		kill = ActiveParticles;
 	}
 
-	for (p = active_particles; p; p = p->next)
+	for (p = ActiveParticles; p; p = p->next)
 	{
 		kill = p->next;
 		while (kill && kill->die < GClGame->time)
 		{
 			p->next = kill->next;
-			kill->next = free_particles;
-			free_particles = kill;
+			kill->next = FreeParticles;
+			FreeParticles = kill;
 			kill = p->next;
 		}
 
@@ -676,19 +667,19 @@ void R_UpdateParticles()
 
 //==========================================================================
 //
-//	R_DrawParticles
+//	VLevelRenderData::DrawParticles
 //
 //==========================================================================
 
-void R_DrawParticles()
+void VLevelRenderData::DrawParticles()
 {
-	guard(R_DrawParticles);
+	guard(VLevelRenderData::DrawParticles);
 	if (!r_draw_particles)
 	{
 		return;
 	}
 	Drawer->StartParticles();
-	for (particle_t* p = active_particles; p; p = p->next)
+	for (particle_t* p = ActiveParticles; p; p = p->next)
 	{
 		Drawer->DrawParticle(p);
 	}
@@ -712,7 +703,7 @@ void R_RenderPlayerView()
 	else
 		r_Level = GClLevel;
 
-	R_UpdateParticles();
+	((VLevelRenderData*)r_Level->RenderData)->UpdateParticles(host_frametime);
 
 	R_SetupFrame();
 
@@ -726,7 +717,7 @@ void R_RenderPlayerView()
 
 	R_RenderMobjs();
 
-	R_DrawParticles();
+	((VLevelRenderData*)r_Level->RenderData)->DrawParticles();
 
 	R_DrawTranslucentPolys();
 
@@ -1060,10 +1051,6 @@ void V_Shutdown()
 	}
 	R_FreeSpriteData();
 	R_FreeModels();
-	if (particles)
-	{
-		delete[] particles;
-	}
 	if (translationtables)
 	{
 		Z_Free(translationtables);

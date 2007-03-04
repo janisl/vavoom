@@ -1140,7 +1140,7 @@ IMPLEMENT_FUNCTION(VObject, AllocDlight)
 
 IMPLEMENT_FUNCTION(VObject, NewParticle)
 {
-	RET_PTR(R_NewParticle());
+	RET_PTR(GClLevel->RenderData->NewParticle());
 }
 
 IMPLEMENT_FUNCTION(VObject, StartSearch)
