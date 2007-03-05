@@ -124,6 +124,16 @@ private:
 		int				leafnum;
 	};
 
+	enum { MAX_DLIGHTS	= 32 };
+
+	enum
+	{
+		MAX_PARTICLES			= 2048,	// default max # of particles at one
+										//  time
+		ABSOLUTE_MIN_PARTICLES	= 512,	// no fewer than this no matter what's
+										//  on the command line
+	};
+	
 	VLevel*			Level;
 
 	//	Surf variables
@@ -151,6 +161,7 @@ private:
 
 	//	Light variables
 	TArray<light_t>	Lights;
+	dlight_t		DLights[MAX_DLIGHTS];
 
 	int				NumParticles;
 	particle_t*		Particles;
@@ -218,6 +229,8 @@ public:
 	void DrawSky();
 
 	void AddStaticLight(const TVec&, float, vuint32);
+	dlight_t* AllocDlight(int);
+	void DecayLights(float);
 	void PushDlights();
 	vuint32 LightPoint(const TVec &p);
 	bool BuildLightMap(surface_t*, int);

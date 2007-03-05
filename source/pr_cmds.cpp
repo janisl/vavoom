@@ -1135,7 +1135,7 @@ IMPLEMENT_FUNCTION(VObject, LoadTextLump)
 IMPLEMENT_FUNCTION(VObject, AllocDlight)
 {
 	P_GET_INT(key);
-	RET_PTR(CL_AllocDlight(key));
+	RET_PTR(GClLevel->RenderData->AllocDlight(key));
 }
 
 IMPLEMENT_FUNCTION(VObject, NewParticle)

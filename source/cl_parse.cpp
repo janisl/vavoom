@@ -76,7 +76,6 @@ void CL_Clear()
 			cl_mobjs[i]->ConditionalDestroy();
 	memset(cl_mobjs, 0, sizeof(VEntity*) * GMaxEntities);
 	memset(cl_mo_base, 0, sizeof(clmobjbase_t) * GMaxEntities);
-	memset(cl_dlights, 0, sizeof(cl_dlights));
 	for (int i = 0; i < MAXPLAYERS; i++)
 	{
 		scores[i].name.Clean();

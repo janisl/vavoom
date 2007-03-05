@@ -600,6 +600,85 @@ void VLevelRenderData::LightFace(surface_t *surf, subsector_t *leaf)
 
 //==========================================================================
 //
+//	VLevelRenderData::AllocDlight
+//
+//==========================================================================
+
+dlight_t* VLevelRenderData::AllocDlight(int key)
+{
+	guard(VLevelRenderData::AllocDlight);
+	int			i;
+	dlight_t*	dl;
+
+	// first look for an exact key match
+	if (key)
+	{
+		dl = DLights;
+		for (i = 0; i < MAX_DLIGHTS; i++, dl++)
+		{
+			if (dl->key == key)
+			{
+				memset(dl, 0, sizeof(*dl));
+				dl->key = key;
+				return dl;
+			}
+		}
+	}
+
+	// then look for anything else
+	dl = DLights;
+	for (i = 0; i < MAX_DLIGHTS; i++, dl++)
+	{
+		if (dl->die < GClGame->time)
+		{
+			memset(dl, 0, sizeof(*dl));
+			dl->key = key;
+			return dl;
+		}
+	}
+
+	int bestnum = 0;
+	float bestdist = 0.0;
+	for (i = 0; i < MAX_DLIGHTS; i++, dl++)
+	{
+		float dist = Length(dl->origin - cl->ViewOrg);
+		if (dist > bestdist)
+		{
+			bestnum = i;
+			bestdist = dist;
+		}
+	}
+	dl = &DLights[bestnum];
+	memset(dl, 0, sizeof(*dl));
+	dl->key = key;
+	return dl;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VLevelRenderData::DecayLights
+//
+//==========================================================================
+
+void VLevelRenderData::DecayLights(float time)
+{
+	guard(VLevelRenderData::DecayLights);
+	dlight_t* dl = DLights;
+	for (int i = 0; i < MAX_DLIGHTS; i++, dl++)
+	{
+		if (dl->die < GClGame->time || !dl->radius)
+			continue;
+
+		dl->radius -= time * dl->decay;
+		if (dl->radius < 0)
+			dl->radius = 0;
+	}
+	unguard;
+}
+
+//==========================================================================
+//
 //	VLevelRenderData::MarkLights
 //
 //==========================================================================
@@ -670,7 +749,7 @@ void VLevelRenderData::PushDlights()
 		return;
 	}
 
-	dlight_t* l = cl_dlights;
+	dlight_t* l = DLights;
 	for (int i = 0; i < MAX_DLIGHTS; i++, l++)
 	{
 		if (l->die < GClGame->time || !l->radius)
@@ -778,7 +857,7 @@ vuint32 VLevelRenderData::LightPoint(const TVec &p)
 			if (r_dynamic_clip)
 			{
 				vuint8* dyn_facevis = Level->LeafPVS(sub);
-				leafnum = Level->PointInSubsector(cl_dlights[i].origin) -
+				leafnum = Level->PointInSubsector(DLights[i].origin) -
 					Level->Subsectors;
 
 				// Check potential visibility
@@ -788,14 +867,14 @@ vuint32 VLevelRenderData::LightPoint(const TVec &p)
 			if (!(sub->dlightbits & (1 << i)))
 				continue;
 
-			add = (cl_dlights[i].radius - cl_dlights[i].minlight) - Length(p - cl_dlights[i].origin);
+			add = (DLights[i].radius - DLights[i].minlight) - Length(p - DLights[i].origin);
 	
 			if (add > 0)
 			{
 				l += add;
-				lr += add * ((cl_dlights[i].colour >> 16) & 0xff) / 255.0;
-				lg += add * ((cl_dlights[i].colour >> 8) & 0xff) / 255.0;
-				lb += add * (cl_dlights[i].colour & 0xff) / 255.0;
+				lr += add * ((DLights[i].colour >> 16) & 0xff) / 255.0;
+				lg += add * ((DLights[i].colour >> 8) & 0xff) / 255.0;
+				lb += add * (DLights[i].colour & 0xff) / 255.0;
 			}
 		}
 	}
@@ -842,8 +921,8 @@ void VLevelRenderData::AddDynamicLights(surface_t *surf)
 		if (!(surf->dlightbits & (1<<lnum)))
 			continue;		// not lit by this light
 
-		rad = cl_dlights[lnum].radius;
-		dist = DotProduct(cl_dlights[lnum].origin, surf->plane->normal) -
+		rad = DLights[lnum].radius;
+		dist = DotProduct(DLights[lnum].origin, surf->plane->normal) -
 				surf->plane->dist;
 		if (r_dynamic_clip)
 		{
@@ -852,18 +931,18 @@ void VLevelRenderData::AddDynamicLights(surface_t *surf)
 		}
 		
 		rad -= fabs(dist);
-		minlight = cl_dlights[lnum].minlight;
+		minlight = DLights[lnum].minlight;
 		if (rad < minlight)
 			continue;
 		minlight = rad - minlight;
 
-		impact = cl_dlights[lnum].origin - surf->plane->normal * dist;
+		impact = DLights[lnum].origin - surf->plane->normal * dist;
 
 		if (r_dynamic_clip)
 		{
 			sub = Level->PointInSubsector(*surf->verts);
 			vuint8* dyn_facevis = Level->LeafPVS(sub);
-			leafnum = Level->PointInSubsector(cl_dlights[lnum].origin) -
+			leafnum = Level->PointInSubsector(DLights[lnum].origin) -
 				Level->Subsectors;
 
 			// Check potential visibility
@@ -871,9 +950,9 @@ void VLevelRenderData::AddDynamicLights(surface_t *surf)
 				continue;
 		}
 
-		rmul = (cl_dlights[lnum].colour >> 16) & 0xff;
-		gmul = (cl_dlights[lnum].colour >> 8) & 0xff;
-		bmul = cl_dlights[lnum].colour & 0xff;
+		rmul = (DLights[lnum].colour >> 16) & 0xff;
+		gmul = (DLights[lnum].colour >> 8) & 0xff;
+		bmul = DLights[lnum].colour & 0xff;
 
 		local.x = DotProduct(impact, tex->saxis) + tex->soffs;
 		local.y = DotProduct(impact, tex->taxis) + tex->toffs;
@@ -903,7 +982,7 @@ void VLevelRenderData::AddDynamicLights(surface_t *surf)
 					blocklightsr[i] += (vuint32)((rad - dist) * rmul);
 					blocklightsg[i] += (vuint32)((rad - dist) * gmul);
 					blocklightsb[i] += (vuint32)((rad - dist) * bmul);
-					if (cl_dlights[lnum].colour != 0xffffffff)
+					if (DLights[lnum].colour != 0xffffffff)
 						is_coloured = true;
 				}
 			}

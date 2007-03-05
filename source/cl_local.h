@@ -33,8 +33,6 @@
 
 // MACROS ------------------------------------------------------------------
 
-#define	MAX_DLIGHTS		32
-
 // TYPES -------------------------------------------------------------------
 
 struct dlight_t
@@ -239,7 +237,6 @@ class VClientGameBase : public VObject
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
-dlight_t *CL_AllocDlight(int);
 void CL_DecayLights();
 
 void CL_KeepaliveMessage();
@@ -266,7 +263,5 @@ extern float fScaleX;
 extern float fScaleY;
 extern float fScaleXI;
 extern float fScaleYI;
-
-extern dlight_t			cl_dlights[MAX_DLIGHTS];
 
 #endif

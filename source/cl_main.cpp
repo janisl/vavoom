@@ -65,8 +65,6 @@ VCvarI			cl_class("class", "0", CVAR_Archive | CVAR_UserInfo);
 VCvarS			cl_model("model", "", CVAR_Archive | CVAR_UserInfo);
 VCvarS			cl_skin("skin", "", CVAR_Archive | CVAR_UserInfo);
 
-dlight_t		cl_dlights[MAX_DLIGHTS];
-
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 IMPLEMENT_CLASS(V, ClientGameBase);
@@ -180,63 +178,6 @@ void CL_Shutdown()
 
 //==========================================================================
 //
-//	CL_AllocDlight
-//
-//==========================================================================
-
-dlight_t *CL_AllocDlight(int key)
-{
-	guard(CL_AllocDlight);
-	int			i;
-	dlight_t	*dl;
-
-	// first look for an exact key match
-	if (key)
-	{
-		dl = cl_dlights;
-		for (i = 0; i < MAX_DLIGHTS; i++, dl++)
-		{
-			if (dl->key == key)
-			{
-				memset(dl, 0, sizeof(*dl));
-				dl->key = key;
-				return dl;
-			}
-		}
-	}
-
-	// then look for anything else
-	dl = cl_dlights;
-	for (i = 0; i < MAX_DLIGHTS; i++, dl++)
-	{
-		if (dl->die < GClGame->time)
-		{
-			memset(dl, 0, sizeof(*dl));
-			dl->key = key;
-			return dl;
-		}
-	}
-
-	int bestnum = 0;
-	float bestdist = 0.0;
-	for (i = 0; i < MAX_DLIGHTS; i++, dl++)
-	{
-		float dist = Length(dl->origin - cl->ViewOrg);
-		if (dist > bestdist)
-		{
-			bestnum = i;
-			bestdist = dist;
-		}
-	}
-	dl = &cl_dlights[bestnum];
-	memset(dl, 0, sizeof(*dl));
-	dl->key = key;
-	return dl;
-	unguard;
-}
-
-//==========================================================================
-//
 //	CL_DecayLights
 //
 //==========================================================================
@@ -244,21 +185,9 @@ dlight_t *CL_AllocDlight(int key)
 void CL_DecayLights()
 {
 	guard(CL_DecayLights);
-	int			i;
-	dlight_t	*dl;
-	float		time;
-
-	time = GClGame->time - GClGame->oldtime;
-
-	dl = cl_dlights;
-	for (i = 0; i < MAX_DLIGHTS; i++, dl++)
+	if (GClLevel)
 	{
-		if (dl->die < GClGame->time || !dl->radius)
-			continue;
-
-		dl->radius -= time * dl->decay;
-		if (dl->radius < 0)
-			dl->radius = 0;
+		GClLevel->RenderData->DecayLights(GClGame->time - GClGame->oldtime);
 	}
 	unguard;
 }

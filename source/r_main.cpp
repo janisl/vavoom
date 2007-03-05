@@ -35,11 +35,6 @@
 
 // MACROS ------------------------------------------------------------------
 
-#define MAX_PARTICLES			2048	// default max # of particles at one
-										//  time
-#define ABSOLUTE_MIN_PARTICLES	512		// no fewer than this no matter what's
-										//  on the command line
-
 // TYPES -------------------------------------------------------------------
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -206,6 +201,8 @@ VLevelRenderData::VLevelRenderData(VLevel* ALevel)
 		cl_level.sky2Texture = level.sky2Texture;
 	}
 	r_oldviewleaf = NULL;
+
+	memset(DLights, 0, sizeof(DLights));
 
 	InitParticles();
 	ClearParticles();

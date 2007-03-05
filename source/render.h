@@ -24,6 +24,7 @@
 //**************************************************************************
 
 struct particle_t;
+struct dlight_t;
 class VTexture;
 
 enum
@@ -95,6 +96,8 @@ public:
 	virtual void ForceLightning() = 0;
 
 	virtual void AddStaticLight(const TVec&, float, vuint32) = 0;
+	virtual dlight_t* AllocDlight(int) = 0;
+	virtual void DecayLights(float) = 0;
 
 	virtual particle_t* NewParticle() = 0;
 };
