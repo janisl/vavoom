@@ -129,6 +129,8 @@ _____MAIN_EXE__SOURCES = \
 	network.h \
 	p_acs.cpp \
 	p_acs.h \
+	p_clip.cpp \
+	p_clip.h \
 	p_entity.h \
 	p_gameinfo.h \
 	p_levelinfo.h \
@@ -434,6 +436,7 @@ _____SERVER_EXE__SOURCES = \
 	net_main.cpp \
 	net_null.cpp \
 	p_acs.cpp \
+	p_clip.cpp \
 	p_polyobj.cpp \
 	p_setup.cpp \
 	p_thinker.cpp \

@@ -86,6 +86,7 @@
 #include "server.h"
 #include "protocol.h"
 #include "imission.h"
+#include "p_clip.h"
 #include "p_worldinfo.h"
 #include "p_thinker.h"
 #include "p_levelinfo.h"

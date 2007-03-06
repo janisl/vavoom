@@ -2100,6 +2100,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\p_clip.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\source\p_clip.h"
+				>
+			</File>
+			<File
 				RelativePath="..\source\p_entity.h"
 				>
 			</File>
