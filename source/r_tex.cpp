@@ -63,7 +63,7 @@
 // HEADER FILES ------------------------------------------------------------
 
 #include "gamedefs.h"
-#include "r_local.h"
+#include "r_tex.h"
 
 // MACROS ------------------------------------------------------------------
 
@@ -1649,8 +1649,6 @@ void R_AnimateSurfaces()
 			}
 		}
 	}
-
-	((VRenderLevel*)GClLevel->RenderData)->AnimateSky(host_frametime);
 	unguard;
 }
 #endif

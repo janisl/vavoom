@@ -26,7 +26,7 @@
 // HEADER FILES ------------------------------------------------------------
 
 #include "gamedefs.h"
-#include "r_local.h"
+#include "r_tex.h"
 
 #ifdef CLIENT
 extern "C"

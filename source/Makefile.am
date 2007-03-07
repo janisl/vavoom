@@ -156,6 +156,7 @@ _____MAIN_EXE__SOURCES = \
 	r_sky.cpp \
 	r_surf.cpp \
 	r_tex.cpp \
+	r_tex.h \
 	r_tex_automap.cpp \
 	r_tex_base.cpp \
 	r_tex_flat.cpp \

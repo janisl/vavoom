@@ -700,6 +700,8 @@ void R_RenderPlayerView()
 	else
 		r_Level = GClLevel;
 
+	((VRenderLevel*)r_Level->RenderData)->AnimateSky(host_frametime);
+
 	((VRenderLevel*)r_Level->RenderData)->UpdateParticles(host_frametime);
 
 	R_SetupFrame();
