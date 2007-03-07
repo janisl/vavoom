@@ -166,13 +166,13 @@ void R_FreeSkyboxData()
 
 //==========================================================================
 //
-//	VLevelRenderData::InitOldSky
+//	VRenderLevel::InitOldSky
 //
 //==========================================================================
 
-void VLevelRenderData::InitOldSky()
+void VRenderLevel::InitOldSky()
 {
-	guard(VLevelRenderData::InitOldSky);
+	guard(VRenderLevel::InitOldSky);
 	memset(sky, 0, sizeof(sky));
 	bIsSkyBox = false;
 
@@ -320,13 +320,13 @@ float tk = skyh / RADIUS;
 
 //==========================================================================
 //
-//	VLevelRenderData::InitSkyBox
+//	VRenderLevel::InitSkyBox
 //
 //==========================================================================
 
-void VLevelRenderData::InitSkyBox(VName Name1, VName Name2)
+void VRenderLevel::InitSkyBox(VName Name1, VName Name2)
 {
-	guard(VLevelRenderData::InitSkyBox);
+	guard(VRenderLevel::InitSkyBox);
 	int num = CheckSkyboxNumForName(Name1);
 	if (num == -1)
 	{
@@ -464,15 +464,15 @@ void VLevelRenderData::InitSkyBox(VName Name1, VName Name2)
 
 //==========================================================================
 //
-//	VLevelRenderData::InitSky
+//	VRenderLevel::InitSky
 //
 //	Called at level load.
 //
 //==========================================================================
 
-void VLevelRenderData::InitSky()
+void VRenderLevel::InitSky()
 {
-	guard(VLevelRenderData::InitSky);
+	guard(VRenderLevel::InitSky);
 	if (cl_level.SkyBox != NAME_None)
 	{
 		InitSkyBox(cl_level.SkyBox, NAME_None);
@@ -507,13 +507,13 @@ void VLevelRenderData::InitSky()
 
 //==========================================================================
 //
-//	VLevelRenderData::SkyChanged
+//	VRenderLevel::SkyChanged
 //
 //==========================================================================
 
-void VLevelRenderData::SkyChanged()
+void VRenderLevel::SkyChanged()
 {
-	guard(VLevelRenderData::SkyChanged);
+	guard(VRenderLevel::SkyChanged);
 	if (bIsSkyBox)
 	{
 		return;
@@ -542,13 +542,13 @@ void VLevelRenderData::SkyChanged()
 
 //==========================================================================
 //
-//	VLevelRenderData::AnimateSky
+//	VRenderLevel::AnimateSky
 //
 //==========================================================================
 
-void VLevelRenderData::AnimateSky(float frametime)
+void VRenderLevel::AnimateSky(float frametime)
 {
-	guard(VLevelRenderData::AnimateSky);
+	guard(VRenderLevel::AnimateSky);
 	//	Update sky column offsets
 	for (int i = 0; i < NumSkySurfs; i++)
 	{
@@ -573,13 +573,13 @@ void VLevelRenderData::AnimateSky(float frametime)
 
 //==========================================================================
 //
-//	VLevelRenderData::DoLightningFlash
+//	VRenderLevel::DoLightningFlash
 //
 //==========================================================================
 
-void VLevelRenderData::DoLightningFlash()
+void VRenderLevel::DoLightningFlash()
 {
-	guard(VLevelRenderData::DoLightningFlash);
+	guard(VRenderLevel::DoLightningFlash);
 	int 		i;
 	sector_t 	*tempSec;
 	int 		*tempLight;
@@ -706,26 +706,26 @@ void VLevelRenderData::DoLightningFlash()
 
 //==========================================================================
 //
-//	VLevelRenderData::ForceLightning
+//	VRenderLevel::ForceLightning
 //
 //==========================================================================
 
-void VLevelRenderData::ForceLightning()
+void VRenderLevel::ForceLightning()
 {
-	guard(VLevelRenderData::ForceLightning);
+	guard(VRenderLevel::ForceLightning);
 	NextLightningFlash = 0;
 	unguard;
 }
 
 //==========================================================================
 //
-//	VLevelRenderData::DrawSky
+//	VRenderLevel::DrawSky
 //
 //==========================================================================
 
-void VLevelRenderData::DrawSky()
+void VRenderLevel::DrawSky()
 {
-	guard(VLevelRenderData::DrawSky);
+	guard(VRenderLevel::DrawSky);
 	Drawer->BeginSky();
 
 	for (int i = 0; i < NumSkySurfs; i++)

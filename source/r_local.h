@@ -87,7 +87,7 @@ struct fakefloor_t
 	sec_params_t	params;
 };
 
-class VLevelRenderData : public VLevelRenderDataPublic
+class VRenderLevel : public VRenderLevelPublic
 {
 private:
 	struct skysurface_t : surface_t
@@ -215,8 +215,8 @@ private:
 	void ClearParticles();
 
 public:
-	VLevelRenderData(VLevel*);
-	~VLevelRenderData();
+	VRenderLevel(VLevel*);
+	~VRenderLevel();
 
 	void PreRender();
 	void SegMoved(seg_t*);

@@ -433,7 +433,7 @@ void R_RenderWorld()
 
 	if (sky_is_visible)
 	{
-		((VLevelRenderData*)r_Level->RenderData)->DrawSky();
+		((VRenderLevel*)r_Level->RenderData)->DrawSky();
 	}
 
 	Drawer->WorldDrawing();

@@ -56,7 +56,7 @@
 //
 //==========================================================================
 
-class VLevelRenderDataPublic;
+class VRenderLevelPublic;
 class VAcsLevel;
 
 struct sector_t;
@@ -614,7 +614,7 @@ class VLevel : public VObject
 
 	VAcsLevel*			Acs;
 
-	VLevelRenderDataPublic*	RenderData;
+	VRenderLevelPublic*	RenderData;
 
 	void Serialise(VStream& Strm);
 	void ClearReferences();

@@ -169,17 +169,17 @@ void R_Init()
 void R_Start(VLevel* ALevel)
 {
 	guard(R_Start);
-	ALevel->RenderData = new VLevelRenderData(ALevel);
+	ALevel->RenderData = new VRenderLevel(ALevel);
 	unguard;
 }
 
 //==========================================================================
 //
-//	VLevelRenderData::VLevelRenderData
+//	VRenderLevel::VRenderLevel
 //
 //==========================================================================
 
-VLevelRenderData::VLevelRenderData(VLevel* ALevel)
+VRenderLevel::VRenderLevel(VLevel* ALevel)
 : Level(ALevel)
 , c_subdivides(0)
 , free_wsurfs(0)
@@ -193,7 +193,7 @@ VLevelRenderData::VLevelRenderData(VLevel* ALevel)
 , ActiveParticles(0)
 , FreeParticles(0)
 {
-	guard(VLevelRenderData::VLevelRenderData);
+	guard(VRenderLevel::VRenderLevel);
 	if (Level == GLevel)
 	{
 		cl_level.MapName = level.MapName;
@@ -224,13 +224,13 @@ VLevelRenderData::VLevelRenderData(VLevel* ALevel)
 
 //==========================================================================
 //
-//	VLevelRenderData::~VLevelRenderData
+//	VRenderLevel::~VRenderLevel
 //
 //==========================================================================
 
-VLevelRenderData::~VLevelRenderData()
+VRenderLevel::~VRenderLevel()
 {
-	guard(VLevelRenderData::~VLevelRenderData);
+	guard(VRenderLevel::~VRenderLevel);
 	//	Free fake floor data.
 	for (int i = 0; i < Level->NumSectors; i++)
 	{
@@ -556,13 +556,13 @@ static void R_MarkLeaves()
 
 //==========================================================================
 //
-//	VLevelRenderData::InitParticles
+//	VRenderLevel::InitParticles
 //
 //==========================================================================
 
-void VLevelRenderData::InitParticles()
+void VRenderLevel::InitParticles()
 {
-	guard(VLevelRenderData::InitParticles);
+	guard(VRenderLevel::InitParticles);
 	const char* p = GArgs.CheckValue("-particles");
 
 	if (p)
@@ -582,13 +582,13 @@ void VLevelRenderData::InitParticles()
 
 //==========================================================================
 //
-//	VLevelRenderData::ClearParticles
+//	VRenderLevel::ClearParticles
 //
 //==========================================================================
 
-void VLevelRenderData::ClearParticles()
+void VRenderLevel::ClearParticles()
 {
-	guard(VLevelRenderData::ClearParticles);
+	guard(VRenderLevel::ClearParticles);
 	FreeParticles = &Particles[0];
 	ActiveParticles = NULL;
 
@@ -600,13 +600,13 @@ void VLevelRenderData::ClearParticles()
 
 //==========================================================================
 //
-//	VLevelRenderData::NewParticle
+//	VRenderLevel::NewParticle
 //
 //==========================================================================
 
-particle_t* VLevelRenderData::NewParticle()
+particle_t* VRenderLevel::NewParticle()
 {
-	guard(VLevelRenderData::NewParticle);
+	guard(VRenderLevel::NewParticle);
 	if (!FreeParticles)
 	{
 		//	No free particles
@@ -626,13 +626,13 @@ particle_t* VLevelRenderData::NewParticle()
 
 //==========================================================================
 //
-//	VLevelRenderData::UpdateParticles
+//	VRenderLevel::UpdateParticles
 //
 //==========================================================================
 
-void VLevelRenderData::UpdateParticles(float frametime)
+void VRenderLevel::UpdateParticles(float frametime)
 {
-	guard(VLevelRenderData::UpdateParticles);
+	guard(VRenderLevel::UpdateParticles);
 	particle_t		*p, *kill;
 
 	kill = ActiveParticles;
@@ -664,13 +664,13 @@ void VLevelRenderData::UpdateParticles(float frametime)
 
 //==========================================================================
 //
-//	VLevelRenderData::DrawParticles
+//	VRenderLevel::DrawParticles
 //
 //==========================================================================
 
-void VLevelRenderData::DrawParticles()
+void VRenderLevel::DrawParticles()
 {
-	guard(VLevelRenderData::DrawParticles);
+	guard(VRenderLevel::DrawParticles);
 	if (!r_draw_particles)
 	{
 		return;
@@ -700,21 +700,21 @@ void R_RenderPlayerView()
 	else
 		r_Level = GClLevel;
 
-	((VLevelRenderData*)r_Level->RenderData)->UpdateParticles(host_frametime);
+	((VRenderLevel*)r_Level->RenderData)->UpdateParticles(host_frametime);
 
 	R_SetupFrame();
 
 	R_MarkLeaves();
 
-	((VLevelRenderData*)r_Level->RenderData)->PushDlights();
+	((VRenderLevel*)r_Level->RenderData)->PushDlights();
 
-	((VLevelRenderData*)r_Level->RenderData)->UpdateWorld();
+	((VRenderLevel*)r_Level->RenderData)->UpdateWorld();
 
 	R_RenderWorld();
 
 	R_RenderMobjs();
 
-	((VLevelRenderData*)r_Level->RenderData)->DrawParticles();
+	((VRenderLevel*)r_Level->RenderData)->DrawParticles();
 
 	R_DrawTranslucentPolys();
 
@@ -819,15 +819,15 @@ void R_ShadeRect(int x, int y, int width, int height, float shade)
 
 //==========================================================================
 //
-// 	VLevelRenderData::PrecacheLevel
+// 	VRenderLevel::PrecacheLevel
 //
 // 	Preloads all relevant graphics for the level.
 //
 //==========================================================================
 
-void VLevelRenderData::PrecacheLevel()
+void VRenderLevel::PrecacheLevel()
 {
-	guard(VLevelRenderData::PrecacheLevel);
+	guard(VRenderLevel::PrecacheLevel);
 	int			i;
 
 	if (cls.demoplayback)
@@ -1066,6 +1066,6 @@ void V_Shutdown()
 bool R_BuildLightMap(surface_t *surf, int shift)
 {
 	guard(R_BuildLightMap);
-	return ((VLevelRenderData*)r_Level->RenderData)->BuildLightMap(surf, shift);
+	return ((VRenderLevel*)r_Level->RenderData)->BuildLightMap(surf, shift);
 	unguard;
 }

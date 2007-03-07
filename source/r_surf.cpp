@@ -126,13 +126,13 @@ inline float TextureOffsetTScale(int pic)
 
 //==========================================================================
 //
-//	VLevelRenderData::SetupSky
+//	VRenderLevel::SetupSky
 //
 //==========================================================================
 
-void VLevelRenderData::SetupSky()
+void VRenderLevel::SetupSky()
 {
-	guard(VLevelRenderData::SetupSky);
+	guard(VRenderLevel::SetupSky);
 	skyheight = -99999.0;
 	for (int i = 0; i < Level->NumSectors; i++)
 	{
@@ -151,14 +151,14 @@ void VLevelRenderData::SetupSky()
 
 //==========================================================================
 //
-//	VLevelRenderData::InitSurfs
+//	VRenderLevel::InitSurfs
 //
 //==========================================================================
 
-void VLevelRenderData::InitSurfs(surface_t* ASurfs, texinfo_t *texinfo,
+void VRenderLevel::InitSurfs(surface_t* ASurfs, texinfo_t *texinfo,
 	TPlane *plane, subsector_t* sub)
 {
-	guard(VLevelRenderData::InitSurfs);
+	guard(VRenderLevel::InitSurfs);
 	surface_t* surfs = ASurfs;
 	int i;
 	float dot;
@@ -222,13 +222,13 @@ void VLevelRenderData::InitSurfs(surface_t* ASurfs, texinfo_t *texinfo,
 
 //==========================================================================
 //
-//	VLevelRenderData::FlushSurfCaches
+//	VRenderLevel::FlushSurfCaches
 //
 //==========================================================================
 
-void VLevelRenderData::FlushSurfCaches(surface_t* InSurfs)
+void VRenderLevel::FlushSurfCaches(surface_t* InSurfs)
 {
-	guard(VLevelRenderData::FlushSurfCaches);
+	guard(VRenderLevel::FlushSurfCaches);
 	surface_t* surfs = InSurfs;
 	while (surfs)
 	{
@@ -246,14 +246,14 @@ void VLevelRenderData::FlushSurfCaches(surface_t* InSurfs)
 
 //==========================================================================
 //
-//	VLevelRenderData::SubdivideFace
+//	VRenderLevel::SubdivideFace
 //
 //==========================================================================
 
-surface_t* VLevelRenderData::SubdivideFace(surface_t* InF, const TVec &axis,
+surface_t* VRenderLevel::SubdivideFace(surface_t* InF, const TVec &axis,
 	const TVec *nextaxis)
 {
-	guard(VLevelRenderData::SubdivideFace);
+	guard(VRenderLevel::SubdivideFace);
 	surface_t* f = InF;
 	int i;
 	float dot;
@@ -381,14 +381,14 @@ surface_t* VLevelRenderData::SubdivideFace(surface_t* InF, const TVec &axis,
 
 //==========================================================================
 //
-//	VLevelRenderData::CreateSecSurface
+//	VRenderLevel::CreateSecSurface
 //
 //==========================================================================
 
-sec_surface_t* VLevelRenderData::CreateSecSurface(subsector_t* sub,
+sec_surface_t* VRenderLevel::CreateSecSurface(subsector_t* sub,
 	sec_plane_t* InSplane)
 {
-	guard(VLevelRenderData::CreateSecSurface);
+	guard(VRenderLevel::CreateSecSurface);
 	sec_plane_t* splane = InSplane;
 	sec_surface_t	*ssurf;
 	surface_t		*surf;
@@ -452,14 +452,14 @@ sec_surface_t* VLevelRenderData::CreateSecSurface(subsector_t* sub,
 
 //==========================================================================
 //
-//	VLevelRenderData::UpdateSecSurface
+//	VRenderLevel::UpdateSecSurface
 //
 //==========================================================================
 
-void VLevelRenderData::UpdateSecSurface(sec_surface_t *ssurf,
+void VRenderLevel::UpdateSecSurface(sec_surface_t *ssurf,
 	sec_plane_t* RealPlane, subsector_t* sub)
 {
-	guard(VLevelRenderData::UpdateSecSurface);
+	guard(VRenderLevel::UpdateSecSurface);
 	sec_plane_t		*plane = ssurf->secplane;
 
 	if (!plane->pic)
@@ -524,13 +524,13 @@ void VLevelRenderData::UpdateSecSurface(sec_surface_t *ssurf,
 
 //==========================================================================
 //
-//	VLevelRenderData::NewWSurf
+//	VRenderLevel::NewWSurf
 //
 //==========================================================================
 
-surface_t* VLevelRenderData::NewWSurf()
+surface_t* VRenderLevel::NewWSurf()
 {
-	guard(VLevelRenderData::NewWSurf);
+	guard(VRenderLevel::NewWSurf);
 	if (!free_wsurfs)
 	{
 		//	Allocate some more surfs
@@ -556,13 +556,13 @@ surface_t* VLevelRenderData::NewWSurf()
 
 //==========================================================================
 //
-//	VLevelRenderData::FreeWSurfs
+//	VRenderLevel::FreeWSurfs
 //
 //==========================================================================
 
-void VLevelRenderData::FreeWSurfs(surface_t* InSurfs)
+void VRenderLevel::FreeWSurfs(surface_t* InSurfs)
 {
-	guard(VLevelRenderData::FreeWSurfs);
+	guard(VRenderLevel::FreeWSurfs);
 	surface_t* surfs = InSurfs;
 	FlushSurfCaches(surfs);
 	while (surfs)
@@ -585,14 +585,14 @@ void VLevelRenderData::FreeWSurfs(surface_t* InSurfs)
 
 //==========================================================================
 //
-//	VLevelRenderData::SubdivideSeg
+//	VRenderLevel::SubdivideSeg
 //
 //==========================================================================
 
-surface_t* VLevelRenderData::SubdivideSeg(surface_t* InSurf,
+surface_t* VRenderLevel::SubdivideSeg(surface_t* InSurf,
 	const TVec &axis, const TVec *nextaxis)
 {
-	guard(VLevelRenderData::SubdivideSeg);
+	guard(VRenderLevel::SubdivideSeg);
 	surface_t* surf = InSurf;
 	int i;
 	float dot;
@@ -709,14 +709,14 @@ surface_t* VLevelRenderData::SubdivideSeg(surface_t* InSurf,
 
 //==========================================================================
 //
-//	VLevelRenderData::CreateWSurfs
+//	VRenderLevel::CreateWSurfs
 //
 //==========================================================================
 
-surface_t* VLevelRenderData::CreateWSurfs(TVec* wv, texinfo_t* texinfo,
+surface_t* VRenderLevel::CreateWSurfs(TVec* wv, texinfo_t* texinfo,
 	seg_t* seg, subsector_t* sub)
 {
-	guard(VLevelRenderData::CreateWSurfs);
+	guard(VRenderLevel::CreateWSurfs);
 	if (wv[1].z <= wv[0].z && wv[2].z <= wv[3].z)
 	{
 		return NULL;
@@ -753,13 +753,13 @@ surface_t* VLevelRenderData::CreateWSurfs(TVec* wv, texinfo_t* texinfo,
 
 //==========================================================================
 //
-//	VLevelRenderData::CountSegParts
+//	VRenderLevel::CountSegParts
 //
 //==========================================================================
 
-int VLevelRenderData::CountSegParts(seg_t* seg)
+int VRenderLevel::CountSegParts(seg_t* seg)
 {
-	guard(VLevelRenderData::CountSegParts);
+	guard(VRenderLevel::CountSegParts);
 	if (!seg->linedef)
 	{
 		//	Miniseg
@@ -785,13 +785,13 @@ int VLevelRenderData::CountSegParts(seg_t* seg)
 
 //==========================================================================
 //
-//	VLevelRenderData::CreateSegParts
+//	VRenderLevel::CreateSegParts
 //
 //==========================================================================
 
-void VLevelRenderData::CreateSegParts(drawseg_t* dseg, seg_t *seg)
+void VRenderLevel::CreateSegParts(drawseg_t* dseg, seg_t *seg)
 {
-	guard(VLevelRenderData::CreateSegParts);
+	guard(VRenderLevel::CreateSegParts);
 	TVec		wv[4];
 	segpart_t	*sp;
 	float		hdelta;
@@ -1150,13 +1150,13 @@ void VLevelRenderData::CreateSegParts(drawseg_t* dseg, seg_t *seg)
 
 //==========================================================================
 //
-//	VLevelRenderData::UpdateRowOffset
+//	VRenderLevel::UpdateRowOffset
 //
 //==========================================================================
 
-void VLevelRenderData::UpdateRowOffset(segpart_t *sp, float rowoffset)
+void VRenderLevel::UpdateRowOffset(segpart_t *sp, float rowoffset)
 {
-	guard(VLevelRenderData::UpdateRowOffset);
+	guard(VRenderLevel::UpdateRowOffset);
 	sp->texinfo.toffs += (rowoffset - sp->rowoffset) *
 		TextureOffsetTScale(sp->texinfo.pic);
 	sp->rowoffset = rowoffset;
@@ -1167,13 +1167,13 @@ void VLevelRenderData::UpdateRowOffset(segpart_t *sp, float rowoffset)
 
 //==========================================================================
 //
-//	VLevelRenderData::UpdateTextureOffset
+//	VRenderLevel::UpdateTextureOffset
 //
 //==========================================================================
 
-void VLevelRenderData::UpdateTextureOffset(segpart_t* sp, float textureoffset)
+void VRenderLevel::UpdateTextureOffset(segpart_t* sp, float textureoffset)
 {
-	guard(VLevelRenderData::UpdateTextureOffset);
+	guard(VRenderLevel::UpdateTextureOffset);
 	sp->texinfo.soffs += (textureoffset - sp->textureoffset) *
 		TextureOffsetSScale(sp->texinfo.pic);
 	sp->textureoffset = textureoffset;
@@ -1184,13 +1184,13 @@ void VLevelRenderData::UpdateTextureOffset(segpart_t* sp, float textureoffset)
 
 //==========================================================================
 //
-//	VLevelRenderData::UpdateDrawSeg
+//	VRenderLevel::UpdateDrawSeg
 //
 //==========================================================================
 
-void VLevelRenderData::UpdateDrawSeg(drawseg_t* dseg)
+void VRenderLevel::UpdateDrawSeg(drawseg_t* dseg)
 {
-	guard(VLevelRenderData::UpdateDrawSeg);
+	guard(VRenderLevel::UpdateDrawSeg);
 	seg_t *seg = dseg->seg;
 	segpart_t *sp;
 	TVec wv[4];
@@ -1631,13 +1631,13 @@ void VLevelRenderData::UpdateDrawSeg(drawseg_t* dseg)
 
 //==========================================================================
 //
-//	VLevelRenderData::SegMoved
+//	VRenderLevel::SegMoved
 //
 //==========================================================================
 
-void VLevelRenderData::SegMoved(seg_t* seg)
+void VRenderLevel::SegMoved(seg_t* seg)
 {
-	guard(VLevelRenderData::SegMoved);
+	guard(VRenderLevel::SegMoved);
 	if (!seg->drawsegs)
 	{
 		//	Drawsegs not created yet
@@ -1666,13 +1666,13 @@ void VLevelRenderData::SegMoved(seg_t* seg)
 
 //==========================================================================
 //
-//	VLevelRenderData::PreRender
+//	VRenderLevel::PreRender
 //
 //==========================================================================
 
-void VLevelRenderData::PreRender()
+void VRenderLevel::PreRender()
 {
-	guard(VLevelRenderData::PreRender);
+	guard(VRenderLevel::PreRender);
 	int				i, j;
 	int				count, dscount, spcount;
 	subregion_t		*sreg;
@@ -1792,13 +1792,13 @@ void VLevelRenderData::PreRender()
 
 //==========================================================================
 //
-//	VLevelRenderData::UpdateSubRegion
+//	VRenderLevel::UpdateSubRegion
 //
 //==========================================================================
 
-void VLevelRenderData::UpdateSubRegion(subregion_t* region)
+void VRenderLevel::UpdateSubRegion(subregion_t* region)
 {
-	guard(VLevelRenderData::UpdateSubRegion);
+	guard(VRenderLevel::UpdateSubRegion);
 	int				count;
 	int 			polyCount;
 	seg_t**			polySeg;
@@ -1838,13 +1838,13 @@ void VLevelRenderData::UpdateSubRegion(subregion_t* region)
 
 //==========================================================================
 //
-//	VLevelRenderData::UpdateSubsector
+//	VRenderLevel::UpdateSubsector
 //
 //==========================================================================
 
-void VLevelRenderData::UpdateSubsector(int num, float *bbox)
+void VRenderLevel::UpdateSubsector(int num, float *bbox)
 {
-	guard(VLevelRenderData::UpdateSubsector);
+	guard(VRenderLevel::UpdateSubsector);
 	r_sub = &Level->Subsectors[num];
 
 	if (r_sub->VisFrame != r_visframecount)
@@ -1870,13 +1870,13 @@ void VLevelRenderData::UpdateSubsector(int num, float *bbox)
 
 //==========================================================================
 //
-//	VLevelRenderData::UpdateBSPNode
+//	VRenderLevel::UpdateBSPNode
 //
 //==========================================================================
 
-void VLevelRenderData::UpdateBSPNode(int bspnum, float* bbox)
+void VRenderLevel::UpdateBSPNode(int bspnum, float* bbox)
 {
-	guard(VLevelRenderData::UpdateBSPNode);
+	guard(VRenderLevel::UpdateBSPNode);
 	// Found a subsector?
 	if (bspnum & NF_SUBSECTOR)
 	{
@@ -1903,11 +1903,11 @@ void VLevelRenderData::UpdateBSPNode(int bspnum, float* bbox)
 
 //==========================================================================
 //
-//	VLevelRenderData::CopyPlaneIfValid
+//	VRenderLevel::CopyPlaneIfValid
 //
 //==========================================================================
 
-bool VLevelRenderData::CopyPlaneIfValid(sec_plane_t* dest,
+bool VRenderLevel::CopyPlaneIfValid(sec_plane_t* dest,
 	const sec_plane_t* source, const sec_plane_t* opp)
 {
 	guard(CopyPlaneIfValid);
@@ -1942,7 +1942,7 @@ bool VLevelRenderData::CopyPlaneIfValid(sec_plane_t* dest,
 
 //==========================================================================
 //
-//	VLevelRenderData::UpdateFakeFlats
+//	VRenderLevel::UpdateFakeFlats
 //
 // killough 3/7/98: Hack floor/ceiling heights for deep water etc.
 //
@@ -1957,9 +1957,9 @@ bool VLevelRenderData::CopyPlaneIfValid(sec_plane_t* dest,
 //
 //==========================================================================
 
-void VLevelRenderData::UpdateFakeFlats(sector_t* sec)
+void VRenderLevel::UpdateFakeFlats(sector_t* sec)
 {
-	guard(VLevelRenderData::UpdateFakeFlats);
+	guard(VRenderLevel::UpdateFakeFlats);
 	const sector_t *s = sec->heightsec;
 	sector_t *heightsec = r_viewleaf->sector->heightsec;
 	bool underwater = /*r_fakingunderwater ||*/
@@ -2172,13 +2172,13 @@ void VLevelRenderData::UpdateFakeFlats(sector_t* sec)
 
 //==========================================================================
 //
-//	VLevelRenderData::UpdateWorld
+//	VRenderLevel::UpdateWorld
 //
 //==========================================================================
 
-void VLevelRenderData::UpdateWorld()
+void VRenderLevel::UpdateWorld()
 {
-	guard(VLevelRenderData::UpdateWorld);
+	guard(VRenderLevel::UpdateWorld);
 	float	dummy_bbox[6] = {-99999, -99999, -99999, 99999, 9999, 99999};
 
 	//	Update fake sectors.
@@ -2197,13 +2197,13 @@ void VLevelRenderData::UpdateWorld()
 
 //==========================================================================
 //
-//	VLevelRenderData::SetupFakeFloors
+//	VRenderLevel::SetupFakeFloors
 //
 //==========================================================================
 
-void VLevelRenderData::SetupFakeFloors(sector_t* Sec)
+void VRenderLevel::SetupFakeFloors(sector_t* Sec)
 {
-	guard(VLevelRenderData::SetupFakeFloors);
+	guard(VRenderLevel::SetupFakeFloors);
 	sector_t* HeightSec = Sec->heightsec;
 
 	if (HeightSec->SectorFlags & sector_t::SF_IgnoreHeightSec)
@@ -2225,13 +2225,13 @@ void VLevelRenderData::SetupFakeFloors(sector_t* Sec)
 
 //==========================================================================
 //
-//	VLevelRenderData::FreeSurfaces
+//	VRenderLevel::FreeSurfaces
 //
 //==========================================================================
 
-void VLevelRenderData::FreeSurfaces(surface_t* InSurf)
+void VRenderLevel::FreeSurfaces(surface_t* InSurf)
 {
-	guard(VLevelRenderData::FreeSurfaces);
+	guard(VRenderLevel::FreeSurfaces);
 	surface_t* next;
 	for (surface_t* s = InSurf; s; s = next)
 	{
@@ -2258,13 +2258,13 @@ void VLevelRenderData::FreeSurfaces(surface_t* InSurf)
 
 //==========================================================================
 //
-//	VLevelRenderData::FreeSegParts
+//	VRenderLevel::FreeSegParts
 //
 //==========================================================================
 
-void VLevelRenderData::FreeSegParts(segpart_t* ASP)
+void VRenderLevel::FreeSegParts(segpart_t* ASP)
 {
-	guard(VLevelRenderData::FreeSegParts);
+	guard(VRenderLevel::FreeSegParts);
 	for (segpart_t* sp = ASP; sp; sp = sp->next)
 	{
 		FreeWSurfs(sp->surfs);

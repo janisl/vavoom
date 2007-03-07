@@ -87,14 +87,14 @@ static int			c_bad;
 
 //==========================================================================
 //
-//	VLevelRenderData::AddStaticLight
+//	VRenderLevel::AddStaticLight
 //
 //==========================================================================
 
-void VLevelRenderData::AddStaticLight(const TVec &origin, float radius,
+void VRenderLevel::AddStaticLight(const TVec &origin, float radius,
 	vuint32 colour)
 {
-	guard(VLevelRenderData::AddStaticLight);
+	guard(VRenderLevel::AddStaticLight);
 	light_t& L = Lights.Alloc();
 	L.origin = origin;
 	L.radius = radius;
@@ -105,13 +105,13 @@ void VLevelRenderData::AddStaticLight(const TVec &origin, float radius,
 
 //==========================================================================
 //
-//	VLevelRenderData::CalcMinMaxs
+//	VRenderLevel::CalcMinMaxs
 //
 //==========================================================================
 
-void VLevelRenderData::CalcMinMaxs(surface_t *surf)
+void VRenderLevel::CalcMinMaxs(surface_t *surf)
 {
-	guard(VLevelRenderData::CalcMinMaxs);
+	guard(VRenderLevel::CalcMinMaxs);
 	smins = TVec(99999.0, 99999.0, 99999.0);
 	smaxs = TVec(-999999.0, -999999.0, -999999.0);
 
@@ -136,16 +136,16 @@ void VLevelRenderData::CalcMinMaxs(surface_t *surf)
 
 //==========================================================================
 //
-//	VLevelRenderData::CastRay
+//	VRenderLevel::CastRay
 //
 //	Returns the distance between the points, or -1 if blocked
 //
 //==========================================================================
 
-float VLevelRenderData::CastRay(const TVec &p1, const TVec &p2,
+float VRenderLevel::CastRay(const TVec &p1, const TVec &p2,
 	float squaredist)
 {
-	guard(VLevelRenderData::CastRay);
+	guard(VRenderLevel::CastRay);
 	linetrace_t		Trace;
 
 	TVec delta = p2 - p1;
@@ -164,15 +164,15 @@ float VLevelRenderData::CastRay(const TVec &p1, const TVec &p2,
 
 //==========================================================================
 //
-//	VLevelRenderData::CalcFaceVectors
+//	VRenderLevel::CalcFaceVectors
 //
 //	Fills in texorg, worldtotex. and textoworld
 //
 //==========================================================================
 
-void VLevelRenderData::CalcFaceVectors(surface_t *surf)
+void VRenderLevel::CalcFaceVectors(surface_t *surf)
 {
-	guard(VLevelRenderData::CalcFaceVectors);
+	guard(VRenderLevel::CalcFaceVectors);
 	texinfo_t	*tex;
 	int			i;
 	TVec		texnormal;
@@ -231,16 +231,16 @@ void VLevelRenderData::CalcFaceVectors(surface_t *surf)
 
 //==========================================================================
 //
-//	VLevelRenderData::CalcPoints
+//	VRenderLevel::CalcPoints
 //
 //	For each texture aligned grid point, back project onto the plane
 // to get the world xyz value of the sample point
 //
 //==========================================================================
 
-void VLevelRenderData::CalcPoints(surface_t *surf)
+void VRenderLevel::CalcPoints(surface_t *surf)
 {
-	guard(VLevelRenderData::CalcPoints);
+	guard(VRenderLevel::CalcPoints);
 	int			i;
 	int			s, t;
 	int			w, h;
@@ -341,13 +341,13 @@ void VLevelRenderData::CalcPoints(surface_t *surf)
 
 //==========================================================================
 //
-//	VLevelRenderData::SingleLightFace
+//	VRenderLevel::SingleLightFace
 //
 //==========================================================================
 
-void VLevelRenderData::SingleLightFace(light_t *light, surface_t *surf)
+void VRenderLevel::SingleLightFace(light_t *light, surface_t *surf)
 {
-	guard(VLevelRenderData::SingleLightFace);
+	guard(VRenderLevel::SingleLightFace);
 	float	dist;
 	TVec	incoming;
 	float	angle;
@@ -435,13 +435,13 @@ void VLevelRenderData::SingleLightFace(light_t *light, surface_t *surf)
 
 //==========================================================================
 //
-//	VLevelRenderData::LightFace
+//	VRenderLevel::LightFace
 //
 //==========================================================================
 
-void VLevelRenderData::LightFace(surface_t *surf, subsector_t *leaf)
+void VRenderLevel::LightFace(surface_t *surf, subsector_t *leaf)
 {
-	guard(VLevelRenderData::LightFace);
+	guard(VRenderLevel::LightFace);
 	int			i, s, t, w, h;
 	float		total;
 
@@ -600,13 +600,13 @@ void VLevelRenderData::LightFace(surface_t *surf, subsector_t *leaf)
 
 //==========================================================================
 //
-//	VLevelRenderData::AllocDlight
+//	VRenderLevel::AllocDlight
 //
 //==========================================================================
 
-dlight_t* VLevelRenderData::AllocDlight(int key)
+dlight_t* VRenderLevel::AllocDlight(int key)
 {
-	guard(VLevelRenderData::AllocDlight);
+	guard(VRenderLevel::AllocDlight);
 	int			i;
 	dlight_t*	dl;
 
@@ -657,13 +657,13 @@ dlight_t* VLevelRenderData::AllocDlight(int key)
 
 //==========================================================================
 //
-//	VLevelRenderData::DecayLights
+//	VRenderLevel::DecayLights
 //
 //==========================================================================
 
-void VLevelRenderData::DecayLights(float time)
+void VRenderLevel::DecayLights(float time)
 {
-	guard(VLevelRenderData::DecayLights);
+	guard(VRenderLevel::DecayLights);
 	dlight_t* dl = DLights;
 	for (int i = 0; i < MAX_DLIGHTS; i++, dl++)
 	{
@@ -679,13 +679,13 @@ void VLevelRenderData::DecayLights(float time)
 
 //==========================================================================
 //
-//	VLevelRenderData::MarkLights
+//	VRenderLevel::MarkLights
 //
 //==========================================================================
 
-void VLevelRenderData::MarkLights(dlight_t *light, int bit, int bspnum)
+void VRenderLevel::MarkLights(dlight_t *light, int bit, int bspnum)
 {
-	guard(VLevelRenderData::MarkLights);
+	guard(VRenderLevel::MarkLights);
 	int leafnum;
 
     if (bspnum & NF_SUBSECTOR)
@@ -735,13 +735,13 @@ void VLevelRenderData::MarkLights(dlight_t *light, int bit, int bspnum)
 
 //==========================================================================
 //
-//	VLevelRenderData::PushDlights
+//	VRenderLevel::PushDlights
 //
 //==========================================================================
 
-void VLevelRenderData::PushDlights()
+void VRenderLevel::PushDlights()
 {
-	guard(VLevelRenderData::PushDlights);
+	guard(VRenderLevel::PushDlights);
 	r_dlightframecount++;
 
 	if (!r_dynamic)
@@ -761,13 +761,13 @@ void VLevelRenderData::PushDlights()
 
 //==========================================================================
 //
-//	VLevelRenderData::LightPoint
+//	VRenderLevel::LightPoint
 //
 //==========================================================================
 
-vuint32 VLevelRenderData::LightPoint(const TVec &p)
+vuint32 VRenderLevel::LightPoint(const TVec &p)
 {
-	guard(VLevelRenderData::LightPoint);
+	guard(VRenderLevel::LightPoint);
 	subsector_t		*sub;
 	subregion_t		*reg;
 	float			l, lr, lg, lb, d, add;
@@ -894,13 +894,13 @@ vuint32 VLevelRenderData::LightPoint(const TVec &p)
 
 //==========================================================================
 //
-//	VLevelRenderData::AddDynamicLights
+//	VRenderLevel::AddDynamicLights
 //
 //==========================================================================
 
-void VLevelRenderData::AddDynamicLights(surface_t *surf)
+void VRenderLevel::AddDynamicLights(surface_t *surf)
 {
-	guard(VLevelRenderData::AddDynamicLights);
+	guard(VRenderLevel::AddDynamicLights);
 	int			lnum;
 	int			sd, td;
 	float		dist, rad, minlight, rmul, gmul, bmul;
@@ -993,15 +993,15 @@ void VLevelRenderData::AddDynamicLights(surface_t *surf)
 
 //==========================================================================
 //
-//	VLevelRenderData::BuildLightMap
+//	VRenderLevel::BuildLightMap
 //
 //	Combine and scale multiple lightmaps into the 8.8 format in blocklights
 //
 //==========================================================================
 
-bool VLevelRenderData::BuildLightMap(surface_t *surf, int shift)
+bool VRenderLevel::BuildLightMap(surface_t *surf, int shift)
 {
-	guard(VLevelRenderData::BuildLightMap);
+	guard(VRenderLevel::BuildLightMap);
 	int			smax, tmax;
 	int			t;
 	int			i, size;
