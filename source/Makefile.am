@@ -151,6 +151,7 @@ _____MAIN_EXE__SOURCES = \
 	r_local.h \
 	r_main.cpp \
 	r_model.cpp \
+	r_public.h \
 	r_shared.h \
 	r_sky.cpp \
 	r_surf.cpp \
@@ -168,7 +169,6 @@ _____MAIN_EXE__SOURCES = \
 	r_tex_tga.cpp \
 	r_tex_warp.cpp \
 	r_things.cpp \
-	render.h \
 	s_data.cpp \
 	s_local.h \
 	s_qmus2mid.cpp \
