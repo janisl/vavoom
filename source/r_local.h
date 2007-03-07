@@ -168,6 +168,11 @@ private:
 	particle_t*		ActiveParticles;
 	particle_t*		FreeParticles;
 
+	//	World render variables
+	VViewClipper	ViewClip;
+	int				FrustumIndexes[4][6];
+	bool			SkyIsVisible;
+
 	//	Surf methods
 	void SetupSky();
 	void InitSurfs(surface_t*, texinfo_t*, TPlane*, subsector_t*);
@@ -214,6 +219,15 @@ private:
 	void InitParticles();
 	void ClearParticles();
 
+	//	World BSP rendering
+	void SetUpFrustumIndexes();
+	void DrawSurfaces(surface_t*, texinfo_t*, int clipflags, int = -1);
+	void RenderLine(drawseg_t*, int);
+	void RenderSecSurface(sec_surface_t*, int);
+	void RenderSubRegion(subregion_t*, int);
+	void RenderSubsector(int, int);
+	void RenderBSPNode(int, float*, int);
+
 public:
 	VRenderLevel(VLevel*);
 	~VRenderLevel();
@@ -238,6 +252,8 @@ public:
 	particle_t* NewParticle();
 	void UpdateParticles(float);
 	void DrawParticles();
+
+	void RenderWorld();
 };
 
 //
@@ -492,16 +508,6 @@ public:
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 //
-// R_Main
-//
-
-//
-// R_BSP
-//
-void R_RenderWorld();
-void R_ClipShutdown();
-
-//
 // R_Things
 //
 void R_FreeSpriteData();
@@ -516,18 +522,6 @@ void R_DrawTranslucentPolys();
 // R_Sky
 //
 void R_InitSkyBoxes();
-
-//
-//	R_Tex
-//
-
-//
-//	R_Surf
-//
-
-//
-//	R_Light
-//
 
 //
 //	r_model

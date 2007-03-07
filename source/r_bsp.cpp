@@ -48,29 +48,23 @@
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static int				r_frustum_indexes[4][6];
-
 static subsector_t*		r_sub;
 static sec_region_t*	r_region;
-
-static bool				sky_is_visible;
-
-static VViewClipper*	ViewClip;
 
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
 //
-//	R_SetUpFrustumIndexes
+//	VRenderLevel::SetUpFrustumIndexes
 //
 //==========================================================================
 
-static void R_SetUpFrustumIndexes()
+void VRenderLevel::SetUpFrustumIndexes()
 {
-	guard(R_SetUpFrustumIndexes);
+	guard(VRenderLevel::SetUpFrustumIndexes);
 	for (int i = 0; i < 4; i++)
 	{
-		int *pindex = r_frustum_indexes[i];
+		int *pindex = FrustumIndexes[i];
 		for (int j = 0; j < 3; j++)
 		{
 			if (view_clipplanes[i].normal[j] < 0)
@@ -90,14 +84,14 @@ static void R_SetUpFrustumIndexes()
 
 //==========================================================================
 //
-//	DrawSurfaces
+//	VRenderLevel::DrawSurfaces
 //
 //==========================================================================
 
-static void DrawSurfaces(surface_t* InSurfs, texinfo_t *texinfo, int clipflags,
-	int LightSourceSector = -1)
+void VRenderLevel::DrawSurfaces(surface_t* InSurfs, texinfo_t *texinfo,
+	int clipflags, int LightSourceSector)
 {
-	guard(DrawSurfaces);
+	guard(VRenderLevel::DrawSurfaces);
 	surface_t* surfs = InSurfs;
 	if (!surfs)
 	{
@@ -111,13 +105,13 @@ static void DrawSurfaces(surface_t* InSurfs, texinfo_t *texinfo, int clipflags,
 
 	if (texinfo->pic == skyflatnum)
 	{
-		sky_is_visible = true;
+		SkyIsVisible = true;
 		Drawer->DrawSkyPortal(surfs, clipflags);
 		return;
 	}
 
 	sec_params_t* LightParams = LightSourceSector == -1 ? r_region->params :
-		&r_Level->Sectors[LightSourceSector].params;
+		&Level->Sectors[LightSourceSector].params;
 	int lLev = fixedlight ? fixedlight :
 			MIN(255, LightParams->lightlevel);
 	if (r_darken)
@@ -147,15 +141,15 @@ static void DrawSurfaces(surface_t* InSurfs, texinfo_t *texinfo, int clipflags,
 
 //==========================================================================
 //
-//	RenderLine
+//	VRenderLevel::RenderLine
 //
 // 	Clips the given segment and adds any visible pieces to the line list.
 //
 //==========================================================================
 
-static void RenderLine(drawseg_t* dseg, int clipflags)
+void VRenderLevel::RenderLine(drawseg_t* dseg, int clipflags)
 {
-	guard(RenderLine);
+	guard(VRenderLevel::RenderLine);
 	seg_t *line = dseg->seg;
 
 	if (!line->linedef)
@@ -171,9 +165,9 @@ static void RenderLine(drawseg_t* dseg, int clipflags)
 		return;
 	}
 
-	float a1 = ViewClip->PointToClipAngle(*line->v2);
-	float a2 = ViewClip->PointToClipAngle(*line->v1);
-	if (!ViewClip->IsRangeVisible(a1, a2))
+	float a1 = ViewClip.PointToClipAngle(*line->v2);
+	float a2 = ViewClip.PointToClipAngle(*line->v1);
+	if (!ViewClip.IsRangeVisible(a1, a2))
 	{
 		return;
 	}
@@ -207,14 +201,14 @@ static void RenderLine(drawseg_t* dseg, int clipflags)
 
 //==========================================================================
 //
-//	RenderSecSurface
+//	VRenderLevel::RenderSecSurface
 //
 //==========================================================================
 
-static void	RenderSecSurface(sec_surface_t *ssurf, int clipflags)
+void VRenderLevel::RenderSecSurface(sec_surface_t* ssurf, int clipflags)
 {
-	guard(RenderSecSurface);
-	sec_plane_t &plane = *ssurf->secplane;
+	guard(VRenderLevel::RenderSecSurface);
+	sec_plane_t& plane = *ssurf->secplane;
 
 	if (!plane.pic)
 	{
@@ -235,22 +229,23 @@ static void	RenderSecSurface(sec_surface_t *ssurf, int clipflags)
 
 //==========================================================================
 //
-//	RenderSubRegion
+//	VRenderLevel::RenderSubRegion
 //
 // 	Determine floor/ceiling planes.
 // 	Draw one or more line segments.
 //
 //==========================================================================
 
-static void RenderSubRegion(subregion_t *region, int clipflags)
+void VRenderLevel::RenderSubRegion(subregion_t* region, int clipflags)
 {
-	guard(RenderSubRegion);
+	guard(VRenderLevel::RenderSubRegion);
 	int				count;
 	int 			polyCount;
 	seg_t**			polySeg;
 	float			d;
 
-	d = DotProduct(vieworg, region->floor->secplane->normal) - region->floor->secplane->dist;
+	d = DotProduct(vieworg, region->floor->secplane->normal) -
+		region->floor->secplane->dist;
 	if (region->next && d <= 0.0)
 	{
 		RenderSubRegion(region->next, clipflags);
@@ -290,52 +285,53 @@ static void RenderSubRegion(subregion_t *region, int clipflags)
 
 //==========================================================================
 //
-//	RenderSubsector
+//	VRenderLevel::RenderSubsector
 //
 //==========================================================================
 
-static void RenderSubsector(int num, int clipflags)
+void VRenderLevel::RenderSubsector(int num, int clipflags)
 {
-	guard(RenderSubsector);
-	r_sub = &r_Level->Subsectors[num];
+	guard(VRenderLevel::RenderSubsector);
+	subsector_t* Sub = &Level->Subsectors[num];
+	r_sub = Sub;
 
-	if (r_sub->VisFrame != r_visframecount)
+	if (Sub->VisFrame != r_visframecount)
 	{
 		return;
 	}
 
-	if (!r_sub->sector->linecount)
+	if (!Sub->sector->linecount)
 	{
 		//	Skip sectors containing original polyobjs
 		return;
 	}
 
-	if (!ViewClip->ClipCheckSubsector(r_sub))
+	if (!ViewClip.ClipCheckSubsector(Sub))
 	{
 		return;
 	}
 
-	RenderSubRegion(r_sub->regions, clipflags);
+	RenderSubRegion(Sub->regions, clipflags);
 
-	ViewClip->ClipAddSubsectorSegs(r_sub);
+	ViewClip.ClipAddSubsectorSegs(Sub);
 	unguard;
 }
 
 //==========================================================================
 //
-//	RenderBSPNode
+//	VRenderLevel::RenderBSPNode
 //
 //	Renders all subsectors below a given node, traversing subtree
 // recursively. Just call with BSP root.
 //
 //==========================================================================
 
-static void RenderBSPNode(int bspnum, float *bbox, int InClipflags)
+void VRenderLevel::RenderBSPNode(int bspnum, float* bbox, int AClipflags)
 {
-	guard(RenderBSPNode);
-	if (ViewClip->ClipIsFull())
+	guard(VRenderLevel::RenderBSPNode);
+	if (ViewClip.ClipIsFull())
 		return;
-	int clipflags = InClipflags;
+	int clipflags = AClipflags;
 	// cull the clipping planes if not trivial accept
 	if (clipflags)
 	{
@@ -346,7 +342,7 @@ static void RenderBSPNode(int bspnum, float *bbox, int InClipflags)
 
 			// generate accept and reject points
 
-			int *pindex = r_frustum_indexes[i];
+			int *pindex = FrustumIndexes[i];
 
 			TVec rejectpt;
 
@@ -376,7 +372,7 @@ static void RenderBSPNode(int bspnum, float *bbox, int InClipflags)
 		}
 	}
 
-	if (!ViewClip->ClipIsBBoxVisible(bbox))
+	if (!ViewClip.ClipIsBBoxVisible(bbox))
 	{
 		return;
 	}
@@ -391,7 +387,7 @@ static void RenderBSPNode(int bspnum, float *bbox, int InClipflags)
 		return;
 	}
 
-	node_t* bsp = &r_Level->Nodes[bspnum];
+	node_t* bsp = &Level->Nodes[bspnum];
 
 	if (bsp->VisFrame != r_visframecount)
 	{
@@ -411,43 +407,29 @@ static void RenderBSPNode(int bspnum, float *bbox, int InClipflags)
 
 //==========================================================================
 //
-//	R_RenderWorld
+//	VRenderLevel::RenderWorld
 //
 //==========================================================================
 
-void R_RenderWorld()
+void VRenderLevel::RenderWorld()
 {
-	guard(R_RenderWorld);
+	guard(VRenderLevel::RenderWorld);
 	float	dummy_bbox[6] = {-99999, -99999, -99999, 99999, 9999, 99999};
 
-	if (!ViewClip)
-		ViewClip = new VViewClipper();
-	R_SetUpFrustumIndexes();
-	ViewClip->ClearClipNodes(vieworg, r_Level);
-	ViewClip->ClipInitFrustrumRange(viewangles, viewforward, viewright, viewup,
+	SetUpFrustumIndexes();
+	ViewClip.ClearClipNodes(vieworg, Level);
+	ViewClip.ClipInitFrustrumRange(viewangles, viewforward, viewright, viewup,
 		refdef.fovx, refdef.fovy);
 
-	sky_is_visible = false;
+	SkyIsVisible = false;
 
-	RenderBSPNode(r_Level->NumNodes - 1, dummy_bbox, 15);	// head node is the last node output
+	RenderBSPNode(Level->NumNodes - 1, dummy_bbox, 15);	// head node is the last node output
 
-	if (sky_is_visible)
+	if (SkyIsVisible)
 	{
-		((VRenderLevel*)r_Level->RenderData)->DrawSky();
+		DrawSky();
 	}
 
 	Drawer->WorldDrawing();
 	unguard;
-}
-
-//==========================================================================
-//
-//	R_ClipShutdown
-//
-//==========================================================================
-
-void R_ClipShutdown()
-{
-	if (ViewClip)
-		delete ViewClip;
 }
