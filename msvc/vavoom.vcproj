@@ -576,6 +576,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\r_public.h"
+				>
+			</File>
+			<File
 				RelativePath="..\source\r_shared.h"
 				>
 			</File>
@@ -593,10 +597,6 @@
 			</File>
 			<File
 				RelativePath="..\source\r_things.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\source\render.h"
 				>
 			</File>
 			<Filter

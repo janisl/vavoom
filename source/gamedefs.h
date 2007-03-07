@@ -43,24 +43,24 @@
 #include "zone.h"		//	Zone memory allocation
 #include "array.h"		//	Dynamic arrays
 #include "stream.h"		//	Streams
-#include "names.h"
-#include "name.h"
+#include "names.h"		//	Built-in names
+#include "name.h"		//	Names
 #include "str.h"		//	Strings
-#include "language.h"
+#include "language.h"	//	Localisation
 #include "misc.h"		//	Misc utilites
-#include "vector.h"
-#include "maths.h"
-#include "message.h"
-#include "cvar.h"
-#include "crc.h"
-#include "infostr.h"
+#include "vector.h"		//	Vector math
+#include "maths.h"		//	Misc math methods
+#include "message.h"	//	Network message class
+#include "cvar.h"		//	Console variables
+#include "crc.h"		//	CRC calcuation
+#include "infostr.h"	//	Info strings
 #include "debug.h"		//	Debug file
 #include "system.h"		//	System specific routines
-#include "files.h"
+#include "files.h"		//	File I/O routines
 #include "wad.h"		//	WAD file I/O routines
 #include "scripts.h"	//	Script parsing
 #include "xml.h"		//	XML file parsing
-#include "dehacked.h"
+#include "dehacked.h"	//	DeHackEd support
 #include "progs.h"		//	Progs
 #include "vclass.h"
 #include "vobject.h"
@@ -73,7 +73,7 @@
 #include "level.h"		//	Level data
 #include "mapinfo.h"
 #include "host.h"
-#include "render.h"
+#include "r_public.h"
 #include "text.h"
 #include "sound.h"
 #include "menu.h"
