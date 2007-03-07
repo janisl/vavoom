@@ -40,7 +40,6 @@
 // MACROS ------------------------------------------------------------------
 
 #define MAX_SPRITE_MODELS	512
-#define MAX_TRANS_SPRITES	256
 
 // TYPES -------------------------------------------------------------------
 
@@ -93,31 +92,6 @@ struct spritedef_t
 	spriteframe_t		*spriteframes;
 };
 
-struct trans_sprite_t
-{
-	TVec			Verts[4];
-	union
-	{
-		surface_t*	surf;
-		VEntity*	Ent;
-	};
-	int				lump;
-	TVec			normal;
-	union
-	{
-		float		pdist;
-		float		TimeFrac;
-	};
-	TVec			saxis;
-	TVec			taxis;
-	TVec			texorg;
-	float			Alpha;
-	int				translation;
-	int				type;
-	float			dist;
-	vuint32			light;
-};
-
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -127,6 +101,8 @@ struct trans_sprite_t
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
 extern VModel*		model_precache[1024];
+
+extern VCvarI		r_chasecam;
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
@@ -150,8 +126,6 @@ static VCvarI			r_fix_sprite_offsets("r_fix_sprite_offsets", "1", CVAR_Archive);
 static VCvarI			r_sprite_fix_delta("r_sprite_fix_delta", "-3", CVAR_Archive);
 static VCvarI			croshair("croshair", "0", CVAR_Archive);
 static VCvarF			croshair_alpha("croshair_alpha", "1", CVAR_Archive);
-
-static trans_sprite_t	trans_sprites[MAX_TRANS_SPRITES];
 
 // CODE --------------------------------------------------------------------
 
@@ -332,16 +306,16 @@ void R_FreeSpriteData()
 
 //==========================================================================
 //
-//	R_AddTranslucentPoly
+//	VRenderLevel::DrawTranslucentPoly
 //
 //==========================================================================
 
-void R_DrawTranslucentPoly(surface_t* surf, TVec* sv, int count, int lump,
-	float Alpha, int translation, bool type, vuint32 light,
+void VRenderLevel::DrawTranslucentPoly(surface_t* surf, TVec* sv, int count,
+	int lump, float Alpha, int translation, bool type, vuint32 light,
 	const TVec& normal, float pdist, const TVec& saxis, const TVec& taxis,
 	const TVec& texorg)
 {
-	guard(R_DrawTranslucentPoly);
+	guard(VRenderLevel::DrawTranslucentPoly);
 	int i;
 
 	TVec mid(0, 0, 0);
@@ -387,7 +361,7 @@ void R_DrawTranslucentPoly(surface_t* surf, TVec* sv, int count, int lump,
 		trans_sprite_t &spr = trans_sprites[found];
 		if (spr.type == 2)
 		{
-			R_DrawEntityModel(spr.Ent, spr.light, spr.Alpha, spr.TimeFrac);
+			DrawEntityModel(spr.Ent, spr.light, spr.Alpha, spr.TimeFrac);
 		}
 		else if (spr.type)
 		{
@@ -430,15 +404,13 @@ void R_DrawTranslucentPoly(surface_t* surf, TVec* sv, int count, int lump,
 
 //==========================================================================
 //
-//	RenderSprite
+//	VRenderLevel::RenderSprite
 //
 //==========================================================================
 
-extern VCvarI		r_chasecam;
-
-static void RenderSprite(VEntity* thing, vuint32 light)
+void VRenderLevel::RenderSprite(VEntity* thing, vuint32 light)
 {
-	guard(RenderSprite);
+	guard(VRenderLevel::RenderSprite);
 	int spr_type = thing->SpriteType;
 
 	TVec sprorigin = thing->Origin;
@@ -621,7 +593,7 @@ static void RenderSprite(VEntity* thing, vuint32 light)
 
 	if (thing->Alpha < 1.0 || r_sort_sprites)
 	{
-		R_DrawTranslucentPoly(NULL, sv, 4, lump, thing->Alpha,
+		DrawTranslucentPoly(NULL, sv, 4, lump, thing->Alpha,
 			thing->Translation, true, light, -sprforward, DotProduct(
 			sprorigin, -sprforward), flip ? -sprright : sprright, -sprup,
 			flip ? sv[2] : sv[1]);
@@ -637,14 +609,14 @@ static void RenderSprite(VEntity* thing, vuint32 light)
 
 //==========================================================================
 //
-//	RenderTranslucentAliasModel
+//	VRenderLevel::RenderTranslucentAliasModel
 //
 //==========================================================================
 
-void RenderTranslucentAliasModel(VEntity* mobj, vuint32 light,
+void VRenderLevel::RenderTranslucentAliasModel(VEntity* mobj, vuint32 light,
 	float TimeFrac)
 {
-	guard(RenderTranslucentAliasModel);
+	guard(VRenderLevel::RenderTranslucentAliasModel);
 	int i;
 
 	float dist = fabs(DotProduct(mobj->Origin - vieworg, viewforward));
@@ -675,7 +647,7 @@ void RenderTranslucentAliasModel(VEntity* mobj, vuint32 light,
 		trans_sprite_t &spr = trans_sprites[found];
 		if (spr.type == 2)
 		{
-			R_DrawEntityModel(spr.Ent, spr.light, spr.Alpha, spr.TimeFrac);
+			DrawEntityModel(spr.Ent, spr.light, spr.Alpha, spr.TimeFrac);
 		}
 		else if (spr.type)
 		{
@@ -695,19 +667,19 @@ void RenderTranslucentAliasModel(VEntity* mobj, vuint32 light,
 		spr.TimeFrac = TimeFrac;
 		return;
 	}
-	R_DrawEntityModel(mobj, light, mobj->Alpha, TimeFrac);
+	DrawEntityModel(mobj, light, mobj->Alpha, TimeFrac);
 	unguard;
 }
 
 //==========================================================================
 //
-//	RenderAliasModel
+//	VRenderLevel::RenderAliasModel
 //
 //==========================================================================
 
-static bool RenderAliasModel(VEntity* mobj, vuint32 light)
+bool VRenderLevel::RenderAliasModel(VEntity* mobj, vuint32 light)
 {
-	guard(RenderAliasModel);
+	guard(VRenderLevel::RenderAliasModel);
 	if (!r_models)
 	{
 		return false;
@@ -723,7 +695,7 @@ static bool RenderAliasModel(VEntity* mobj, vuint32 light)
 	//	Draw it
 	if (mobj->Alpha < 1.0)
 	{
-		if (!R_CheckAliasModelFrame(mobj, TimeFrac))
+		if (!CheckAliasModelFrame(mobj, TimeFrac))
 		{
 			return false;
 		}
@@ -732,20 +704,20 @@ static bool RenderAliasModel(VEntity* mobj, vuint32 light)
 	}
 	else
 	{
-		return R_DrawEntityModel(mobj, light, 1.0, TimeFrac);
+		return DrawEntityModel(mobj, light, 1.0, TimeFrac);
 	}
 	unguard;
 }
 
 //==========================================================================
 //
-//	RenderThing
+//	VRenderLevel::RenderThing
 //
 //==========================================================================
 
-static void RenderThing(VEntity* mobj, bool IsWeapon)
+void VRenderLevel::RenderThing(VEntity* mobj)
 {
-	guard(RenderThing);
+	guard(VRenderLevel::RenderThing);
 	if (!r_chasecam && mobj == cl_mobjs[cl->ClientNum + 1])
 	{
 		//	Don't draw client's mobj
@@ -767,12 +739,12 @@ static void RenderThing(VEntity* mobj, bool IsWeapon)
 	}
 	else
 	{
-		light = ((VRenderLevel*)r_Level->RenderData)->LightPoint(mobj->Origin);
+		light = LightPoint(mobj->Origin);
 	}
 
 	//	Try to draw a model. If it's a script and it doesn't
 	// specify model for this frame, draw sprite instead.
-	if (!RenderAliasModel(mobj, light) && !IsWeapon)
+	if (!RenderAliasModel(mobj, light))
 	{
 		RenderSprite(mobj, light);
 	}
@@ -781,25 +753,23 @@ static void RenderThing(VEntity* mobj, bool IsWeapon)
 
 //==========================================================================
 //
-//	R_RenderMobjs
+//	VRenderLevel::RenderMobjs
 //
 //==========================================================================
 
-void R_RenderMobjs()
+void VRenderLevel::RenderMobjs()
 {
-	guard(R_RenderMobjs);
-	int i;
-
+	guard(VRenderLevel::RenderMobjs);
 	if (!r_draw_mobjs)
 	{
 		return;
 	}
 
-	for (i = 0; i < GMaxEntities; i++)
+	for (VThinker* Th = Level->ThinkerHead; Th; Th = Th->Next)
 	{
-		if (cl_mobjs[i]->InUse)
+		if (Th->IsA(VEntity::StaticClass()) && ((VEntity*)Th)->InUse)
 		{
-			RenderThing(cl_mobjs[i], false);
+			RenderThing((VEntity*)Th);
 		}
 	}
 	unguard;
@@ -807,13 +777,13 @@ void R_RenderMobjs()
 
 //==========================================================================
 //
-//	R_DrawTranslucentPolys
+//	VRenderLevel::DrawTranslucentPolys
 //
 //==========================================================================
 
-void R_DrawTranslucentPolys()
+void VRenderLevel::DrawTranslucentPolys()
 {
-	guard(R_DrawTranslucentPolys);
+	guard(VRenderLevel::DrawTranslucentPolys);
 	int i, found;
 	do
 	{
@@ -837,7 +807,7 @@ void R_DrawTranslucentPolys()
 			trans_sprite_t &spr = trans_sprites[found];
 			if (spr.type == 2)
 			{
-				R_DrawEntityModel(spr.Ent, spr.light, spr.Alpha,
+				DrawEntityModel(spr.Ent, spr.light, spr.Alpha,
 					spr.TimeFrac);
 			}
 			else if (spr.type)
@@ -858,13 +828,13 @@ void R_DrawTranslucentPolys()
 
 //==========================================================================
 //
-//	RenderPSprite
+//	VRenderLevel::RenderPSprite
 //
 //==========================================================================
 
-static void RenderPSprite(VViewState* VSt, float PSP_DIST, vuint32 light)
+void VRenderLevel::RenderPSprite(VViewState* VSt, float PSP_DIST, vuint32 light)
 {
-	guard(RenderPSprite);
+	guard(VRenderLevel::RenderPSprite);
 	spritedef_t*		sprdef;
 	spriteframe_t*		sprframe;
 	int					lump;
@@ -952,13 +922,13 @@ static void RenderPSprite(VViewState* VSt, float PSP_DIST, vuint32 light)
 
 //==========================================================================
 //
-//	RenderViewModel
+//	VRenderLevel::RenderViewModel
 //
 //==========================================================================
 
-static bool RenderViewModel(VViewState* VSt, vuint32 light)
+bool VRenderLevel::RenderViewModel(VViewState* VSt, vuint32 light)
 {
-	guard(RenderViewModel);
+	guard(VRenderLevel::RenderViewModel);
 	if (!r_view_models)
 	{
 		return false;
@@ -974,20 +944,20 @@ static bool RenderViewModel(VViewState* VSt, vuint32 light)
 		TimeFrac = MID(0.0, TimeFrac, 1.0);
 	}
 
-	return R_DrawAliasModel(origin, cl->ViewAngles, VSt->State,
+	return DrawAliasModel(origin, cl->ViewAngles, VSt->State,
 		NULL, 0, light, cl->ViewEntAlpha, true, TimeFrac);
 	unguard;
 }
 
 //==========================================================================
 //
-// 	R_DrawPlayerSprites
+//	VRenderLevel::DrawPlayerSprites
 //
 //==========================================================================
 
-void R_DrawPlayerSprites()
+void VRenderLevel::DrawPlayerSprites()
 {
-	guard(R_DrawPlayerSprites);
+	guard(VRenderLevel::DrawPlayerSprites);
 	if (!r_draw_psprites || r_chasecam)
 	{
 		return;
@@ -1008,7 +978,7 @@ void R_DrawPlayerSprites()
 		}
 		else
 		{
-			light = ((VRenderLevel*)r_Level->RenderData)->LightPoint(vieworg);
+			light = LightPoint(vieworg);
 		}
 
 		if (!RenderViewModel(&cl->ViewStates[i], light))
@@ -1021,13 +991,13 @@ void R_DrawPlayerSprites()
 
 //==========================================================================
 //
-//	R_DrawCroshair
+//	VRenderLevel::DrawCroshair
 //
 //==========================================================================
 
-void R_DrawCroshair()
+void VRenderLevel::DrawCroshair()
 {
-	guard(R_DrawCroshair);
+	guard(VRenderLevel::DrawCroshair);
 	if (croshair)
 	{
 		if (croshair_alpha < 0.0)	croshair_alpha = 0.0;

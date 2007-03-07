@@ -89,7 +89,7 @@ float					PixelAspect;
 //
 vuint8*					translationtables;
 
-VLevel*					r_Level;
+static VLevel*					r_Level;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -203,6 +203,7 @@ VRenderLevel::VRenderLevel(VLevel* ALevel)
 	r_oldviewleaf = NULL;
 
 	memset(DLights, 0, sizeof(DLights));
+	memset(trans_sprites, 0, sizeof(trans_sprites));
 
 	InitParticles();
 	ClearParticles();
@@ -700,36 +701,49 @@ void R_RenderPlayerView()
 	else
 		r_Level = GClLevel;
 
-	((VRenderLevel*)r_Level->RenderData)->AnimateSky(host_frametime);
+	((VRenderLevel*)r_Level->RenderData)->RenderPlayerView();
+	unguard;
+}
 
-	((VRenderLevel*)r_Level->RenderData)->UpdateParticles(host_frametime);
+//==========================================================================
+//
+//  VRenderLevel::RenderPlayerView
+//
+//==========================================================================
+
+void VRenderLevel::RenderPlayerView()
+{
+	guard(VRenderLevel::RenderPlayerView);
+	AnimateSky(host_frametime);
+
+	UpdateParticles(host_frametime);
 
 	R_SetupFrame();
 
 	R_MarkLeaves();
 
-	((VRenderLevel*)r_Level->RenderData)->PushDlights();
+	PushDlights();
 
-	((VRenderLevel*)r_Level->RenderData)->UpdateWorld();
+	UpdateWorld();
 
-	((VRenderLevel*)r_Level->RenderData)->RenderWorld();
+	RenderWorld();
 
-	R_RenderMobjs();
+	RenderMobjs();
 
-	((VRenderLevel*)r_Level->RenderData)->DrawParticles();
+	DrawParticles();
 
-	R_DrawTranslucentPolys();
+	DrawTranslucentPolys();
 
 	// draw the psprites on top of everything
 	if (fov <= 90.0)
 	{
-		R_DrawPlayerSprites();
+		DrawPlayerSprites();
 	}
 
 	Drawer->EndView();
 
 	// Draw croshair
-	R_DrawCroshair();
+	DrawCroshair();
 	unguard;
 }
 

@@ -837,15 +837,15 @@ static void DrawModel(const TVec& Org, const TAVec& Angles,
 
 //==========================================================================
 //
-//	R_DrawAliasModel
+//	VRenderLevel::DrawAliasModel
 //
 //==========================================================================
 
-bool R_DrawAliasModel(const TVec& Org, const TAVec& Angles, VModel* Mdl,
-	int Frame, const char* Skin, int Version, vuint32 Light, float Alpha,
-	bool IsViewModel, float Inter)
+bool VRenderLevel::DrawAliasModel(const TVec& Org, const TAVec& Angles,
+	VModel* Mdl, int Frame, const char* Skin, int Version, vuint32 Light,
+	float Alpha, bool IsViewModel, float Inter)
 {
-	guard(R_DrawAliasModel);
+	guard(VRenderLevel::DrawAliasModel);
 	void* MData = Mod_Extradata(Mdl);
 
 	if (Mdl->type != MODEL_Script)
@@ -868,15 +868,15 @@ bool R_DrawAliasModel(const TVec& Org, const TAVec& Angles, VModel* Mdl,
 
 //==========================================================================
 //
-//	R_DrawAliasModel
+//	VRenderLevel::DrawAliasModel
 //
 //==========================================================================
 
-bool R_DrawAliasModel(const TVec& Org, const TAVec& Angles, VState* State,
-	const char* Skin, int Version, vuint32 Light, float Alpha,
+bool VRenderLevel::DrawAliasModel(const TVec& Org, const TAVec& Angles,
+	VState* State, const char* Skin, int Version, vuint32 Light, float Alpha,
 	bool IsViewModel, float Inter)
 {
-	guard(R_DrawAliasModel);
+	guard(VRenderLevel::DrawAliasModel);
 	VClassModelScript* Cls = NULL;
 	for (int i = 0; i < ClassModels.Num(); i++)
 	{
@@ -904,13 +904,13 @@ bool R_DrawAliasModel(const TVec& Org, const TAVec& Angles, VState* State,
 
 //==========================================================================
 //
-//	R_DrawEntityModel
+//	VRenderLevel::DrawEntityModel
 //
 //==========================================================================
 
-bool R_DrawEntityModel(VEntity* Ent, vuint32 Light, float Alpha, float Inter)
+bool VRenderLevel::DrawEntityModel(VEntity* Ent, vuint32 Light, float Alpha, float Inter)
 {
-	guard(R_DrawEntityModel);
+	guard(VRenderLevel::DrawEntityModel);
 	if (Ent->EntityFlags & VEntity::EF_FixedModel)
 	{
 		VModel* Mdl = model_precache[Ent->FixedModelIndex];
@@ -918,13 +918,13 @@ bool R_DrawEntityModel(VEntity* Ent, vuint32 Light, float Alpha, float Inter)
 		{
 			return false;
 		}
-		return R_DrawAliasModel(Ent->Origin, Ent->Angles, Mdl,
+		return DrawAliasModel(Ent->Origin, Ent->Angles, Mdl,
 			Ent->State->InClassIndex, *skin_list[Ent->ModelSkinNum],
 			Ent->ModelVersion, Light, Alpha, false, Inter);
 	}
 	else
 	{
-		return R_DrawAliasModel(Ent->Origin, Ent->Angles, Ent->State,
+		return DrawAliasModel(Ent->Origin, Ent->Angles, Ent->State,
 			*skin_list[Ent->ModelSkinNum], Ent->ModelVersion, Light, Alpha,
 			false, Inter);
 	}
@@ -933,13 +933,13 @@ bool R_DrawEntityModel(VEntity* Ent, vuint32 Light, float Alpha, float Inter)
 
 //==========================================================================
 //
-//	R_CheckAliasModelFrame
+//	VRenderLevel::CheckAliasModelFrame
 //
 //==========================================================================
 
-bool R_CheckAliasModelFrame(VEntity* Ent, float Inter)
+bool VRenderLevel::CheckAliasModelFrame(VEntity* Ent, float Inter)
 {
-	guard(R_CheckAliasModelFrame);
+	guard(VRenderLevel::CheckAliasModelFrame);
 	if (Ent->EntityFlags & VEntity::EF_FixedModel)
 	{
 		VModel* Mdl = model_precache[Ent->FixedModelIndex];
@@ -1052,5 +1052,6 @@ bool R_GetModelSkinInfo(VModel* Model, int Index, VName& Name, VStr& Desc)
 	}
 	Name = SMdl->Skins[Index].Name;
 	Desc = SMdl->Skins[Index].Desc;
+	return true;
 	unguard;
 }

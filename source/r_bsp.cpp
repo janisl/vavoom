@@ -130,7 +130,7 @@ void VRenderLevel::DrawSurfaces(surface_t* InSurfs, texinfo_t *texinfo,
 		}
 		else
 		{
-			R_DrawTranslucentPoly(surfs, surfs->verts, surfs->count,
+			DrawTranslucentPoly(surfs, surfs->verts, surfs->count,
 				texinfo->pic, texinfo->Alpha, 0, false, 0,
 				TVec(), 0, TVec(), TVec(), TVec());
 		}

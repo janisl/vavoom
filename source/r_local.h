@@ -133,7 +133,34 @@ private:
 		ABSOLUTE_MIN_PARTICLES	= 512,	// no fewer than this no matter what's
 										//  on the command line
 	};
-	
+
+	struct trans_sprite_t
+	{
+		TVec			Verts[4];
+		union
+		{
+			surface_t*	surf;
+			VEntity*	Ent;
+		};
+		int				lump;
+		TVec			normal;
+		union
+		{
+			float		pdist;
+			float		TimeFrac;
+		};
+		TVec			saxis;
+		TVec			taxis;
+		TVec			texorg;
+		float			Alpha;
+		int				translation;
+		int				type;
+		float			dist;
+		vuint32			light;
+	};
+
+	enum { MAX_TRANS_SPRITES	= 256 };
+
 	VLevel*			Level;
 
 	//	Surf variables
@@ -173,6 +200,8 @@ private:
 	int				FrustumIndexes[4][6];
 	bool			SkyIsVisible;
 
+	trans_sprite_t	trans_sprites[MAX_TRANS_SPRITES];
+
 	//	Surf methods
 	void SetupSky();
 	void InitSurfs(surface_t*, texinfo_t*, TPlane*, subsector_t*);
@@ -202,7 +231,9 @@ private:
 	void InitOldSky();
 	void InitSkyBox(VName, VName);
 	void InitSky();
+	void AnimateSky(float);
 	void DoLightningFlash();
+	void DrawSky();
 
 	//	Light methods
 	static void CalcMinMaxs(surface_t*);
@@ -218,6 +249,8 @@ private:
 
 	void InitParticles();
 	void ClearParticles();
+	void UpdateParticles(float);
+	void DrawParticles();
 
 	//	World BSP rendering
 	void SetUpFrustumIndexes();
@@ -227,10 +260,35 @@ private:
 	void RenderSubRegion(subregion_t*, int);
 	void RenderSubsector(int, int);
 	void RenderBSPNode(int, float*, int);
+	void RenderWorld();
+
+	//	Things
+	void DrawTranslucentPoly(surface_t*, TVec*, int, int, float, int, bool,
+		vuint32, const TVec&, float, const TVec&, const TVec&, const TVec&);
+	void RenderSprite(VEntity*, vuint32);
+	void RenderTranslucentAliasModel(VEntity*, vuint32, float);
+	bool RenderAliasModel(VEntity*, vuint32);
+	void RenderThing(VEntity*);
+	void RenderMobjs();
+	void DrawTranslucentPolys();
+	void RenderPSprite(VViewState*, float, vuint32);
+	bool RenderViewModel(VViewState*, vuint32);
+	void DrawPlayerSprites();
+	void DrawCroshair();
+
+	//	Models
+	bool DrawAliasModel(const TVec&, const TAVec&, VModel*, int, const char*,
+		int, vuint32, float, bool, float);
+	bool DrawAliasModel(const TVec&, const TAVec&, VState*, const char*,
+		int, vuint32, float, bool, float);
+	bool DrawEntityModel(VEntity*, vuint32, float, float);
+	bool CheckAliasModelFrame(VEntity*, float);
 
 public:
 	VRenderLevel(VLevel*);
 	~VRenderLevel();
+
+	void RenderPlayerView();
 
 	void PreRender();
 	void SegMoved(seg_t*);
@@ -238,9 +296,7 @@ public:
 	void SetupFakeFloors(sector_t*);
 
 	void SkyChanged();
-	void AnimateSky(float);
 	void ForceLightning();
-	void DrawSky();
 
 	void AddStaticLight(const TVec&, float, vuint32);
 	dlight_t* AllocDlight(int);
@@ -250,10 +306,6 @@ public:
 	bool BuildLightMap(surface_t*, int);
 
 	particle_t* NewParticle();
-	void UpdateParticles(float);
-	void DrawParticles();
-
-	void RenderWorld();
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -262,12 +314,6 @@ public:
 // R_Things
 //
 void R_FreeSpriteData();
-void R_RenderMobjs();
-void R_DrawPlayerSprites();
-void R_DrawCroshair();
-void R_DrawTranslucentPoly(surface_t*, TVec*, int, int, float, int, bool,
-	vuint32, const TVec&, float, const TVec&, const TVec&, const TVec&);
-void R_DrawTranslucentPolys();
 
 //
 // R_Sky
@@ -279,10 +325,6 @@ void R_InitSkyBoxes();
 //
 void R_InitModels();
 void R_FreeModels();
-bool R_DrawAliasModel(const TVec&, const TAVec&, VState*, const char*,
-	int, vuint32, float, bool, float);
-bool R_DrawEntityModel(VEntity*, vuint32, float, float);
-bool R_CheckAliasModelFrame(VEntity*, float);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
@@ -299,7 +341,5 @@ extern VCvarI			r_darken;
 extern refdef_t			refdef;
 
 extern VCvarI			old_aspect;
-
-extern VLevel*			r_Level;
 
 #endif
