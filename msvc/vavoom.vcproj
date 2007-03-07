@@ -543,16 +543,9 @@
 				RelativePath="..\source\drawer.h"
 				>
 			</File>
-			<File
-				RelativePath="..\source\fgfxdefs.h"
-				>
 			</File>
 			<File
 				RelativePath="..\source\fmd2defs.h"
-				>
-			</File>
-			<File
-				RelativePath="..\source\ftexdefs.h"
 				>
 			</File>
 			<File
