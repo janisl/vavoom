@@ -202,6 +202,13 @@ private:
 
 	trans_sprite_t	trans_sprites[MAX_TRANS_SPRITES];
 
+	//	General
+	void PrecacheLevel();
+	void ExecuteSetViewSize();
+	void TransformFrustum();
+	void SetupFrame();
+	void MarkLeaves();
+
 	//	Surf methods
 	void SetupSky();
 	void InitSurfs(surface_t*, texinfo_t*, TPlane*, subsector_t*);
@@ -245,8 +252,7 @@ private:
 	void MarkLights(dlight_t*, int, int);
 	void AddDynamicLights(surface_t*);
 
-	void PrecacheLevel();
-
+	//	Particles
 	void InitParticles();
 	void ClearParticles();
 	void UpdateParticles(float);

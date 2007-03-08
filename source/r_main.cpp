@@ -89,8 +89,6 @@ float					PixelAspect;
 //
 vuint8*					translationtables;
 
-static VLevel*					r_Level;
-
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static FDrawerDesc		*DrawerList[DRAWER_MAX];
@@ -336,13 +334,13 @@ COMMAND(SizeUp)
 
 //==========================================================================
 //
-// 	R_ExecuteSetViewSize
+//	VRenderLevel::ExecuteSetViewSize
 //
 //==========================================================================
 
-static void R_ExecuteSetViewSize()
+void VRenderLevel::ExecuteSetViewSize()
 {
-	guard(R_ExecuteSetViewSize);
+	guard(VRenderLevel::ExecuteSetViewSize);
 	set_resolutioon_needed = false;
 	if (screen_size < 3)
 	{
@@ -420,13 +418,13 @@ void R_DrawViewBorder()
 
 //==========================================================================
 //
-//	R_TransformFrustum
+//	VRenderLevel::TransformFrustum
 //
 //==========================================================================
 
-static void R_TransformFrustum()
+void VRenderLevel::TransformFrustum()
 {
-	guard(R_TransformFrustum);
+	guard(VRenderLevel::TransformFrustum);
 	for (int i = 0; i < 4; i++)
 	{
 		TVec &v = clip_base[i];
@@ -446,7 +444,7 @@ static void R_TransformFrustum()
 
 //==========================================================================
 //
-//  R_SetupFrame
+//	VRenderLevel::SetupFrame
 //
 //==========================================================================
 
@@ -456,15 +454,15 @@ VCvarF			r_chase_up("r_chase_up", "32.0", CVAR_Archive);
 VCvarF			r_chase_right("r_chase_right", "0", CVAR_Archive);
 VCvarI			r_chase_front("r_chase_front", "0", CVAR_Archive);
 
-static void R_SetupFrame()
+void VRenderLevel::SetupFrame()
 {
-	guard(R_SetupFrame);
+	guard(VRenderLevel::SetupFrame);
 	// change the view size if needed
 	if (screen_size != screenblocks || !screenblocks ||
 		set_resolutioon_needed || old_fov != fov ||
 		old_aspect != prev_old_aspect)
 	{
-		R_ExecuteSetViewSize();
+		ExecuteSetViewSize();
 	}
 
 	viewangles = cl->ViewAngles;
@@ -487,7 +485,7 @@ static void R_SetupFrame()
 		vieworg = cl->ViewOrg;
 	}
 
-	R_TransformFrustum();
+	TransformFrustum();
 
 	extralight = cl->ExtraLight;
 	if (cl->FixedColourmap >= 32)
@@ -503,21 +501,21 @@ static void R_SetupFrame()
 		fixedlight = 0;
 	}
 
-	r_viewleaf = r_Level->PointInSubsector(cl->ViewOrg);
+	r_viewleaf = Level->PointInSubsector(cl->ViewOrg);
 
-	Drawer->SetupView((VRenderLevel*)r_Level->RenderData, &refdef);
+	Drawer->SetupView(this, &refdef);
 	unguard;
 }
 
 //==========================================================================
 //
-//	R_MarkLeaves
+//	VRenderLevel::MarkLeaves
 //
 //==========================================================================
 
-static void R_MarkLeaves()
+void VRenderLevel::MarkLeaves()
 {
-	guard(R_MarkLeaves);
+	guard(VRenderLevel::MarkLeaves);
 	byte	*vis;
 	node_t	*node;
 	int		i;
@@ -528,13 +526,13 @@ static void R_MarkLeaves()
 	r_visframecount++;
 	r_oldviewleaf = r_viewleaf;
 
-	vis = r_Level->LeafPVS(r_viewleaf);
+	vis = Level->LeafPVS(r_viewleaf);
 
-	for (i = 0; i < r_Level->NumSubsectors; i++)
+	for (i = 0; i < Level->NumSubsectors; i++)
 	{
 		if (vis[i >> 3] & (1 << (i & 7)))
 		{
-			subsector_t *sub = &r_Level->Subsectors[i];
+			subsector_t *sub = &Level->Subsectors[i];
 			sub->VisFrame = r_visframecount;
 			node = sub->parent;
 			while (node)
@@ -694,6 +692,7 @@ void VRenderLevel::DrawParticles()
 void R_RenderPlayerView()
 {
 	guard(R_RenderPlayerView);
+	VLevel* r_Level;
 	if (lev_test_srv && GLevel)
 		r_Level = GLevel;
 	else if (lev_test_prev && GClPrevLevel)
@@ -718,9 +717,9 @@ void VRenderLevel::RenderPlayerView()
 
 	UpdateParticles(host_frametime);
 
-	R_SetupFrame();
+	SetupFrame();
 
-	R_MarkLeaves();
+	MarkLeaves();
 
 	PushDlights();
 
