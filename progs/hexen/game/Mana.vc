@@ -64,7 +64,7 @@ void TouchSpecial(Actor Toucher)
 	}
 	else
 	{
-		Remove();
+		Destroy();
 	}
 	Player(Toucher.Player).BonusFlash += BONUSADD;
 	Toucher.PlaySound('PickupItem', CHAN_ITEM);

@@ -63,7 +63,7 @@ void Tick(float deltaTime)
 				poly->SpecialData = none;
 			}
 			PolyobjStopSequence(poly);
-			RemoveSpecialThinker(self);
+			Destroy();
 			return;
 		}
 	}

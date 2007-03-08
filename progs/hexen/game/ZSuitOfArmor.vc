@@ -57,7 +57,7 @@ final void A_SoAExplode()
 		Spawn(class<Actor>(FindClassFromScriptId(Args[0])), Origin);
 	}
 	A.PlaySound('SuitofArmorBreak', CHAN_VOICE);
-	Remove();
+	Destroy();
 }
 
 __states__

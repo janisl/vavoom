@@ -1807,7 +1807,7 @@ int VAcs::RunScript(float DeltaTime)
 		{
 			info->RunningScript = NULL;
 		}
-		SetFlags(_OF_DelayedDestroy);
+		DestroyThinker();
 		return 1;
 	}
 	if (State == ASTE_WaitingForTag && !Level->eventTagBusy(WaitValue))
@@ -4445,7 +4445,7 @@ LblFuncStop:
 		{
 			info->RunningScript = NULL;
 		}
-		SetFlags(_OF_DelayedDestroy);
+		DestroyThinker();
 	}
 	return resultValue;
 	unguard;

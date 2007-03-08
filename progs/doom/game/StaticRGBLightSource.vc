@@ -30,7 +30,7 @@ void OnMapSpawn(mthing_t * mthing)
 {
 	float l;
 
-	Remove();
+	Destroy();
 	if (!mthing->arg1)
 		l = 200.0;
 	else

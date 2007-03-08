@@ -230,6 +230,9 @@ class VEntity : public VThinker
 	void Destroy();
 	void Serialise(VStream&);
 
+	//	VThinker interface.
+	void DestroyThinker();
+
 	void eventBeginPlay()
 	{
 		P_PASS_SELF;
@@ -327,12 +330,6 @@ class VEntity : public VThinker
 		EV_RET_FLOAT(FIndex_GetStateTime);
 	}
 
-	void Remove()
-	{
-		UnlinkFromWorld();
-		SetFlags(_OF_DelayedDestroy);
-	}
-
 	bool SetState(VState*);
 	void SetInitialState(VState*);
 	bool AdvanceState(float);
@@ -358,7 +355,6 @@ class VEntity : public VThinker
 	void UnlinkFromWorld();
 	bool CanSee(VEntity*);
 
-	DECLARE_FUNCTION(Remove)
 	DECLARE_FUNCTION(SetState)
 	DECLARE_FUNCTION(SetInitialState)
 	DECLARE_FUNCTION(AdvanceState)

@@ -284,7 +284,7 @@ void VButton::Tick(float DeltaTime)
 		SV_SetLineTexture(Side, Where, Def->Frames[Frame].Texture);
 		if (KillMe)
 		{
-			SetFlags(_OF_DelayedDestroy);
+			DestroyThinker();
 		}
 	}
 	unguard;

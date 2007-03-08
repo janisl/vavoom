@@ -310,7 +310,7 @@ bool CheckSpot(mthing_t * mthing)
 
 	// flush an old corpse if needed 
 	if (StrifeLevelInfo(Level).bodyqueslot >= StrifeLevelInfo::BODYQUESIZE)
-		StrifeLevelInfo(Level).bodyque[StrifeLevelInfo(Level).bodyqueslot % StrifeLevelInfo::BODYQUESIZE].Remove();
+		StrifeLevelInfo(Level).bodyque[StrifeLevelInfo(Level).bodyqueslot % StrifeLevelInfo::BODYQUESIZE].Destroy();
 	StrifeLevelInfo(Level).bodyque[StrifeLevelInfo(Level).bodyqueslot % StrifeLevelInfo::BODYQUESIZE] = Actor(MO);
 	StrifeLevelInfo(Level).bodyqueslot++;
 
@@ -1065,7 +1065,7 @@ void GiveQuest(int QuestID)
 	QInfo = QuestInfo(StrifeLevelInfo(Level).Spawn(QClass, vector(0.0, 0.0, 0.0)));
 	if (QInfo.QuestMessage)
 		cprint(QInfo.QuestMessage);
-	QInfo.Remove();
+	QInfo.Destroy();
 }
 
 //==========================================================================
@@ -2212,7 +2212,7 @@ void SetWeapon(int NewWeapon)
 	PendingWeapon = StrifeDefs::wp_nochange;
 	if (ViewEnt)
 	{
-		ViewEnt.Remove();
+		ViewEnt.Destroy();
 	}
 	ViewEnt = Weapon(StrifeLevelInfo(Level).Spawn(
 		MainGameInfo(Level.Game).WeaponClasses[NewWeapon], vector(0.0, 0.0, 0.0)));

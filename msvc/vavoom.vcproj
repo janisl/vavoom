@@ -2104,6 +2104,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\p_entity.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\source\p_entity.h"
 				>
 			</File>

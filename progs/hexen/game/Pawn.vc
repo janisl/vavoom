@@ -51,7 +51,7 @@ void OnMapSpawn(mthing_t * mthing)
 {
 	if (bCheckNoMonsters && Level.Game.nomonsters)
 	{
-		Remove();
+		Destroy();
 		return;
 	}
 	if (Level.Game.gameskill == sk_nightmare)

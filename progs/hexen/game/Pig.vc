@@ -76,7 +76,7 @@ int UpdateMorphedMonster(int tics)
 	if (!mo.TestLocation())
 	{
 		// Didn't fit
-		mo.Remove();
+		mo.Destroy();
 		LinkToWorld();
 		mo._Special1 = 5 * 35;	// Next try in 5 seconds
 		return false;

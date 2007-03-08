@@ -40,7 +40,7 @@ void Finished()
 	if (Sector->LightingData == self)
 		Sector->LightingData = none;
 	RemoveAffector();
-	RemoveSpecialThinker(self);
+	Destroy();
 }
 
 //**************************************************************************

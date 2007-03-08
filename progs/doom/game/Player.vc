@@ -376,7 +376,7 @@ bool CheckSpot(mthing_t * mthing)
 
 	// flush an old corpse if needed 
 	if (DoomLevelInfo(Level).bodyqueslot >= DoomLevelInfo::BODYQUESIZE)
-		DoomLevelInfo(Level).bodyque[DoomLevelInfo(Level).bodyqueslot % DoomLevelInfo::BODYQUESIZE].Remove();
+		DoomLevelInfo(Level).bodyque[DoomLevelInfo(Level).bodyqueslot % DoomLevelInfo::BODYQUESIZE].Destroy();
 	DoomLevelInfo(Level).bodyque[DoomLevelInfo(Level).bodyqueslot % DoomLevelInfo::BODYQUESIZE] = Actor(MO);
 	DoomLevelInfo(Level).bodyqueslot++;
 
@@ -2163,7 +2163,7 @@ void SetWeapon(int NewWeapon)
 	PendingWeapon = DoomDefs::wp_nochange;
 	if (ViewEnt)
 	{
-		ViewEnt.Remove();
+		ViewEnt.Destroy();
 	}
 	ViewEnt = Weapon(DoomLevelInfo(Level).Spawn(
 		MainGameInfo(Level.Game).WeaponClasses[NewWeapon], vector(0.0, 0.0, 0.0)));

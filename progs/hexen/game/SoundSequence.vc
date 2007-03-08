@@ -131,7 +131,7 @@ void BeginPlay()
 			master.StartSoundSequence(slot, 0);
 		}
 		master.AddSoundSequenceChoice(SName);
-		Remove();
+		Destroy();
 	}
 }
 

@@ -63,7 +63,7 @@ final void A_CorpseExplode()
 		A.Velocity.z = (Random() * 8.0 + 5.0) * (3.0 / 4.0) * 35.0;
 		A.PlaySound('FireDemonDeath', CHAN_VOICE);
 	}
-	Remove();
+	Destroy();
 }
 
 __states__

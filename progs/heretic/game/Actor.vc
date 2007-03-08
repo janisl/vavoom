@@ -1490,7 +1490,7 @@ void NightmareRespawn()
 	A.ReactionCount = 18;
 
 	// remove the old monster
-	Remove();
+	Destroy();
 }
 
 //===========================================================================
@@ -1941,7 +1941,7 @@ void XYMovement(float DeltaTime)
 					}
 					else
 					{
-						Remove();
+						Destroy();
 					}
 					return;
 				}
@@ -2081,7 +2081,7 @@ void ZMovement(float DeltaTime)
 				}
 				else
 				{
-					Remove();
+					Destroy();
 				}
 				return;
 			}
@@ -2473,7 +2473,7 @@ bool SectorChanged(int CrushChange)
 	//	Crunch dropped items
 	if (bDropped)
 	{
-		Remove();
+		Destroy();
 		return true;	//fit
 	}
 

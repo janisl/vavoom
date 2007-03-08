@@ -36,7 +36,7 @@ void FloorBounceMissile()
 {
 	if (HitFloorType())
 	{
-		Remove();
+		Destroy();
 		return;
 	}
 	Velocity.z = Velocity.z * -0.3;

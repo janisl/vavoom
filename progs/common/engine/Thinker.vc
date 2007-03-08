@@ -33,6 +33,14 @@ readonly LevelInfo		Level;		//	Level info object.
 native readonly private Thinker	Prev;
 native readonly private Thinker	Next;
 
+native void Destroy();
+
+//==========================================================================
+//
+//	Tick
+//
+//==========================================================================
+
 void Tick(float deltaTime)
 {
 }

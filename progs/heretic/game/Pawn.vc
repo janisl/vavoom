@@ -38,7 +38,7 @@ void OnMapSpawn(mthing_t *mthing)
 {
 	if (bCheckNoMonsters && Level.Game.nomonsters)
 	{
-		Remove();
+		Destroy();
 		return;
 	}
 	::OnMapSpawn(mthing);

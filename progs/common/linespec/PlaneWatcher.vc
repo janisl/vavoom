@@ -94,7 +94,7 @@ void Tick(float DeltaTime)
 
 	if (Sector == NULL)
 	{
-		RemoveSpecialThinker(self);
+		Destroy();
 		return;
 	}
 
@@ -112,7 +112,7 @@ void Tick(float DeltaTime)
 	{
 		Level.ExecuteActionSpecial(Special, Args[0], Args[1], Args[2],
 			Args[3], Args[4], Line, LineSide, Activator);
-		RemoveSpecialThinker(self);
+		Destroy();
 	}
 
 }

@@ -208,8 +208,6 @@ replication
 //	Natives
 //
 
-native final void Remove();
-
 native final bool SetState(state State);
 native final void SetInitialState(state State);
 native final bool AdvanceState(float deltaTime);
@@ -520,7 +518,7 @@ bool Deactivate()
 
 void RemoveThing()
 {
-	Remove();
+	Destroy();
 }
 
 //==========================================================================

@@ -2437,7 +2437,7 @@ bool EV_LightStop(int Tag)
 		{
 			if (L.Sector->LightingData == L)
 				L.Sector->LightingData = none;
-			RemoveSpecialThinker(L);
+			L.Destroy();
 		}
 	}
 	return true;
@@ -2904,7 +2904,7 @@ bool EV_ThingSpawn(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5, bool fog)
 		if (newAct.TestLocation() == false)
 		{
 			// Didn't fit
-			newAct.Remove();
+			newAct.Destroy();
 		}
 		else
 		{

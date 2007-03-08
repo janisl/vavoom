@@ -425,7 +425,7 @@ void HideSpecial()
 	}
 	else
 	{
-		Remove();
+		Destroy();
 	}
 }
 
@@ -821,12 +821,12 @@ void OnMapSpawn(mthing_t * mthing)
 {
 	if (bNoDeathmatch && Level.Game.deathmatch)
 	{
-		Remove();
+		Destroy();
 		return;
 	}
 	if (bMonster && Level.Game.nomonsters)
 	{
-		Remove();
+		Destroy();
 		return;
 	}
 
@@ -1463,7 +1463,7 @@ void NightmareRespawn()
 	A.ReactionCount = 18;
 
 	// remove the old monster,
-	Remove();
+	Destroy();
 }
 
 //==========================================================================
@@ -1856,7 +1856,7 @@ void XYMovement(float DeltaTime)
 					// Hack to prevent missiles exploding
 					// against the sky.
 					// Does not handle sky floors.
-					Remove();
+					Destroy();
 					return;
 				}
 				ExplodeMissile();
@@ -2246,7 +2246,7 @@ void Tick(float deltaTime)
 		MoveCount++;
 		if (MoveCount >= 30 * 35)
 		{
-			Remove();
+			Destroy();
 			return;
 		}
 	}
@@ -2373,7 +2373,7 @@ bool SectorChanged(int CrushChange)
 	//	Crunch dropped items
 	if (bDropped)
 	{
-		Remove();
+		Destroy();
 		return true;
 	}
 

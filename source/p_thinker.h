@@ -45,5 +45,8 @@ class VThinker : public VObject
 	void Serialise(VStream&);
 
 	//	VThinker interface.
-	virtual void Tick(float DeltaTime);
+	virtual void Tick(float);
+	virtual void DestroyThinker();
+
+	DECLARE_FUNCTION(Destroy)
 };

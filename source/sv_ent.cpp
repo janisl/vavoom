@@ -129,8 +129,6 @@ extern VEntity**	sv_mobjs;
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-IMPLEMENT_CLASS(V, Entity);
-
 int VEntity::FIndex_BeginPlay;
 int VEntity::FIndex_Destroyed;
 int VEntity::FIndex_Touch;
@@ -195,7 +193,7 @@ bool VEntity::SetState(VState* InState)
 			// Remove mobj
 			State = NULL;
 			StateTime = -1;
-			Remove();
+			DestroyThinker();
 			return false;
 		}
 
@@ -2045,18 +2043,6 @@ bool VEntity::CanSee(VEntity* Other)
 	Trace.End.z -= Other->FloorClip;
 	return XLevel->TraceLine(Trace, Trace.Start, Trace.End, SPF_NOBLOCKSIGHT);
 	unguard;
-}
-
-//==========================================================================
-//
-//	Entity.Remove
-//
-//==========================================================================
-
-IMPLEMENT_FUNCTION(VEntity, Remove)
-{
-	P_GET_SELF;
-	Self->Remove();
 }
 
 //==========================================================================

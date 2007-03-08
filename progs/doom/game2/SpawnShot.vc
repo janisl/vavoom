@@ -84,7 +84,7 @@ final void A_SpawnFly()
 	newmobj.TeleportMove(newmobj.Origin);
 
 	// remove self (i.e., cube).
-	Remove();
+	Destroy();
 }
 
 //==========================================================================

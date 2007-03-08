@@ -83,7 +83,7 @@ void CHolyTailRemove()
 	{
 		NextTail.CHolyTailRemove();
 	}
-	Remove();
+	Destroy();
 }
 
 //============================================================================

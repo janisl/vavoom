@@ -392,7 +392,6 @@ public:
 
 	//	Special thinker utilites
 	DECLARE_FUNCTION(NewSpecialThinker)
-	DECLARE_FUNCTION(RemoveSpecialThinker)
 	DECLARE_FUNCTION(P_ChangeSwitchTexture)
 	DECLARE_FUNCTION(NextThinker)
 

@@ -1788,7 +1788,6 @@ native static final Entity NewMobjThinker(class<Entity> cid);
 //
 
 native static final Thinker NewSpecialThinker(class<Thinker>);
-native static final void RemoveSpecialThinker(Thinker spec);
 native static final void P_ChangeSwitchTexture(line_t * line, int useAgain, name DefaultSound);
 native static final Thinker NextThinker(Thinker last, class<Thinker> id);
 

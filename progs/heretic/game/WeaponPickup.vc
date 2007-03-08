@@ -67,7 +67,7 @@ void TouchSpecial(Actor Toucher)
 	}
 	else
 	{
-		Remove();
+		Destroy();
 	}
 	Player(Toucher.Player).BonusFlash += BONUSADD;
 	Toucher.PlaySound('misc/w_pkup', CHAN_ITEM);

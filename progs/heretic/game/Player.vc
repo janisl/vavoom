@@ -1731,7 +1731,7 @@ bool UndoPlayerChicken()
 	if (!A.TestLocation())
 	{
 		// Didn't fit
-		A.Remove();
+		A.Destroy();
 		MO.LinkToWorld();
 		ChickenTime = 2.0;
 		return false;
@@ -2576,7 +2576,7 @@ void SetWeapon(int NewWeapon)
 
 	if (ViewEnt)
 	{
-		ViewEnt.Remove();
+		ViewEnt.Destroy();
 	}
 	ViewEnt = Weapon(HereticLevelInfo(Level).Spawn(
 		MainGameInfo(Level.Game).WeaponClasses[NewWeapon], vector(0.0, 0.0, 0.0)));

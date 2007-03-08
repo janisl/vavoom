@@ -22,14 +22,6 @@
 //**  GNU General Public License for more details.
 //**
 //**************************************************************************
-//**	
-//**	THINKERS
-//**
-//**	All thinkers should be allocated by Z_Malloc so they can be operated
-//**  on uniformly. The actual structures will vary in size, but the first
-//**  element must be VThinker.
-//**	
-//**************************************************************************
 
 // HEADER FILES ------------------------------------------------------------
 
@@ -50,77 +42,23 @@
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-int			VThinker::FIndex_Tick;
+IMPLEMENT_CLASS(V, Entity);
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
-
-IMPLEMENT_CLASS(V, Thinker)
 
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
 //
-//	VThinker::VThinker
+//	VEntity::DestroyThinker
 //
 //==========================================================================
 
-VThinker::VThinker()
+void VEntity::DestroyThinker()
 {
-}
+	guard(VEntity::DestroyThinker)
+	UnlinkFromWorld();
 
-//==========================================================================
-//
-//	VThinker::Serialise
-//
-//==========================================================================
-
-void VThinker::Serialise(VStream& Strm)
-{
-	guard(VThinker::Serialise);
-	Super::Serialise(Strm);
-	if (Strm.IsLoading())
-	{
-		XLevel->AddThinker(this);
-	}
+	Super::DestroyThinker();
 	unguard;
-}
-
-//==========================================================================
-//
-//	VThinker::Tick
-//
-//==========================================================================
-
-void VThinker::Tick(float DeltaTime)
-{
-	guard(VThinker::Tick);
-	P_PASS_SELF;
-	P_PASS_FLOAT(DeltaTime);
-	EV_RET_VOID(FIndex_Tick);
-	unguard;
-}
-
-//==========================================================================
-//
-//	VThinker::DestroyThinker
-//
-//==========================================================================
-
-void VThinker::DestroyThinker()
-{
-	guard(VThinker::DestroyThinker);
-	SetFlags(_OF_DelayedDestroy);
-	unguard;
-}
-
-//==========================================================================
-//
-//	Script natives
-//
-//==========================================================================
-
-IMPLEMENT_FUNCTION(VThinker, Destroy)
-{
-	P_GET_SELF;
-	Self->DestroyThinker();
 }

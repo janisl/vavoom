@@ -1978,7 +1978,7 @@ bool UndoPlayerMorph()
 	if (!A.TestLocation())
 	{
 		// Didn't fit
-		A.Remove();
+		A.Destroy();
 		MO.LinkToWorld();
 		MorphTime = 2.0;
 		return false;
@@ -3411,7 +3411,7 @@ void SetWeapon(int NewWeapon)
 
 	if (ViewEnt)
 	{
-		ViewEnt.Remove();
+		ViewEnt.Destroy();
 	}
 	ViewEnt = Weapon(HexenLevelInfo(Level).Spawn(
 		MainGameInfo(Level.Game).WeaponClasses[

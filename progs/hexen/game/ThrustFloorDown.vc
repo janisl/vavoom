@@ -98,7 +98,7 @@ final void A_ThrustRaise()
 	// Lose the dirt clump
 	if ((FloorClip < Height) && SpawnedDirt)
 	{
-		SpawnedDirt.Remove();
+		SpawnedDirt.Destroy();
 		SpawnedDirt = none;
 	}
 

@@ -40,7 +40,7 @@ final void A_MaceBallImpact2()
 	if (Origin.z <= FloorZ && HitFloorType())
 	{
 		// Landed in some sort of liquid
-		Remove();
+		Destroy();
 		return;
 	}
 	if ((Origin.z != FloorZ) || (Velocity.z < 2.0 * 35.0))

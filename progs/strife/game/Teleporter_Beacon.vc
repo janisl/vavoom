@@ -59,7 +59,7 @@ final void A_SummonRebel()
 		(Random() - 0.5) * 64.0, 0.0));
 	if (!A.TryMove(A.Origin))
 	{
-		A.Remove();
+		A.Destroy();
 		return;
 	}
 	//	Once the rebels start teleporting in, you can't pick up the beacon
@@ -105,7 +105,7 @@ final void A_SummonRebel()
 	Health--;
 	if (Health < 0)
 	{
-		Remove();
+		Destroy();
 	}
 }
 

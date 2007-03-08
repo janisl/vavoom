@@ -65,7 +65,7 @@ bool UpdateChicken(int tics)
 	if (A.TestLocation() == false)
 	{
 		// Didn't fit
-		A.Remove();
+		A.Destroy();
 		LinkToWorld();
 		Special1 = 5 * 35;	// Next try in 5 seconds
 		return false;

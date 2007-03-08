@@ -328,18 +328,6 @@ IMPLEMENT_FUNCTION(VObject, NewSpecialThinker)
 
 //==========================================================================
 //
-//  PF_RemoveSpecialThinker
-//
-//==========================================================================
-
-IMPLEMENT_FUNCTION(VObject, RemoveSpecialThinker)
-{
-	P_GET_REF(VThinker, spec);
-	spec->SetFlags(_OF_DelayedDestroy);
-}
-
-//==========================================================================
-//
 //  PF_P_ChangeSwitchTexture
 //
 //==========================================================================

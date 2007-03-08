@@ -119,7 +119,7 @@ void TouchSpecial(Actor Toucher)
 		}
 		else
 		{
-			Remove();
+			Destroy();
 		}
 	}
 	Player(Toucher.Player).BonusFlash += BONUSADD;

@@ -1032,7 +1032,7 @@ void ConChoiceImpulse(int ChoiceNum)
 		{
 			Item = Pickup(Spawn(ItemType, vector(0.0, 0.0, 0.0)));
 			GaveItem = Item.GiveItemTo(CurrentSpeakingTo);
-			Item.Remove();
+			Item.Destroy();
 		}
 	}
 	if (GaveItem)

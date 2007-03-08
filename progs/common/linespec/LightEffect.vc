@@ -136,15 +136,15 @@ void Tick(float DeltaTime)
 				Sector->params.lightlevel = Value1;
 				if (Sector->LightingData == self)
 					Sector->LightingData = none;
-				RemoveSpecialThinker(self);
+				Destroy();
 			}
 		}
 		else if (Sector->params.lightlevel <= Value1)
 		{
 			Sector->params.lightlevel = Value1;
-				if (Sector->LightingData == self)
-					Sector->LightingData = none;
-			RemoveSpecialThinker(self);
+			if (Sector->LightingData == self)
+				Sector->LightingData = none;
+			Destroy();
 		}
 		break;
 

@@ -42,7 +42,7 @@ final void A_GenWizard()
 	if (!A.TestLocation())
 	{
 		// Didn't fit
-		A.Remove();
+		A.Destroy();
 		return;
 	}
 	Velocity = vector(0.0, 0.0, 0.0);

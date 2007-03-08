@@ -701,7 +701,7 @@ void FloorBounceMissile()
 {
 	if (HitFloorType())
 	{
-		Remove();
+		Destroy();
 		return;
 	}
 	Velocity.z = Velocity.z * -0.7;
@@ -2305,7 +2305,7 @@ void HitLine(tmtrace_t* tmtrace)
 			}
 			else
 			{
-				Remove();
+				Destroy();
 			}
 			return;
 		}
@@ -2584,7 +2584,7 @@ bool HitCeiling()
 			}
 			else
 			{
-				Remove();
+				Destroy();
 				return false;
 			}
 			return true;
@@ -3035,7 +3035,7 @@ bool SectorChanged(int CrushChange)
 	{
 		if (bNoBlood)
 		{
-			Remove();
+			Destroy();
 		}
 		else
 		{
@@ -3053,7 +3053,7 @@ bool SectorChanged(int CrushChange)
 	//	Crunch dropped items
 	if (bDropped)
 	{
-		Remove();
+		Destroy();
 		return true;
 	}
 
@@ -4381,7 +4381,7 @@ final void A_AddPlayerCorpse()
 	if (HexenLevelInfo(Level).bodyqueslot >= HexenLevelInfo::BODYQUESIZE)
 	{
 		// Too many player corpses - remove an old one
-		HexenLevelInfo(Level).bodyque[HexenLevelInfo(Level).bodyqueslot % HexenLevelInfo::BODYQUESIZE].Remove();
+		HexenLevelInfo(Level).bodyque[HexenLevelInfo(Level).bodyqueslot % HexenLevelInfo::BODYQUESIZE].Destroy();
 	}
 	HexenLevelInfo(Level).bodyque[HexenLevelInfo(Level).bodyqueslot % HexenLevelInfo::BODYQUESIZE] = self;
 	HexenLevelInfo(Level).bodyqueslot++;
@@ -4418,7 +4418,7 @@ final void A_QueueCorpse()
 		// Too many corpses - remove an old one
 		corpse = HexenLevelInfo(Level).corpseQueue[HexenLevelInfo(Level).corpseQueueSlot % HexenLevelInfo::CORPSEQUEUESIZE];
 		if (corpse)
-			corpse.Remove();
+			corpse.Destroy();
 	}
 	HexenLevelInfo(Level).corpseQueue[HexenLevelInfo(Level).corpseQueueSlot % HexenLevelInfo::CORPSEQUEUESIZE] = self;
 	HexenLevelInfo(Level).corpseQueueSlot++;

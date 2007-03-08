@@ -52,7 +52,7 @@ final void A_MakePod()
 	if (!A.CheckPosition(A.Origin))
 	{
 		// Didn't fit
-		A.Remove();
+		A.Destroy();
 		return;
 	}
 	A.SetState(Pod::S_POD_GROW1);

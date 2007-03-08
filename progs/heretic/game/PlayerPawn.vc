@@ -42,7 +42,7 @@ final void A_AddPlayerCorpse()
 	if (HereticLevelInfo(Level).bodyqueslot >= HereticLevelInfo::BODYQUESIZE)
 	{
 		// Too many player corpses - remove an old one
-		HereticLevelInfo(Level).bodyque[HereticLevelInfo(Level).bodyqueslot % HereticLevelInfo::BODYQUESIZE].Remove();
+		HereticLevelInfo(Level).bodyque[HereticLevelInfo(Level).bodyqueslot % HereticLevelInfo::BODYQUESIZE].Destroy();
 	}
 	HereticLevelInfo(Level).bodyque[HereticLevelInfo(Level).bodyqueslot % HereticLevelInfo::BODYQUESIZE] = self;
 	HereticLevelInfo(Level).bodyqueslot++;

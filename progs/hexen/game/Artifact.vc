@@ -188,7 +188,7 @@ void TouchSpecial(Actor Toucher)
 			if (!Level.Game.netgame || Level.Game.deathmatch)
 			{
 				// Remove puzzle items if not cooperative netplay
-				Remove();
+				Destroy();
 			}
 		}
 	}

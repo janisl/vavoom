@@ -32,7 +32,7 @@ void OnMapSpawn(mthing_t *mthing)
 {
 	if (Level.Game.deathmatch)
 	{
-		Remove();
+		Destroy();
 		return;
 	}
 	::OnMapSpawn(mthing);
@@ -74,7 +74,7 @@ void TouchSpecial(Actor Toucher)
 	{
 		Toucher.Player.ItemCount++;
 	}
-	Remove();
+	Destroy();
 	Player(Toucher.Player).BonusFlash += BONUSADD;
 	Toucher.PlaySound('misc/k_pkup', CHAN_ITEM);
 }
