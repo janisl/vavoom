@@ -303,15 +303,18 @@ func_loop:
 			PR_VM_BREAK;
 
 		PR_VM_CASE(OPC_Return)
+			checkSlow(sp == local_vars + func->NumLocals);
 			pr_stackPtr = local_vars;
 			return;
 
 		PR_VM_CASE(OPC_ReturnL)
+			checkSlow(sp == local_vars + func->NumLocals + 1);
 			((VStack*)local_vars)[0] = sp[-1];
 			pr_stackPtr = local_vars + 1;
 			return;
 
 		PR_VM_CASE(OPC_ReturnV)
+			checkSlow(sp == local_vars + func->NumLocals + 3);
 			((VStack*)local_vars)[0] = sp[-3];
 			((VStack*)local_vars)[1] = sp[-2];
 			((VStack*)local_vars)[2] = sp[-1];

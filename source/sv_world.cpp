@@ -1122,8 +1122,9 @@ IMPLEMENT_FUNCTION(VLevel, TraceLine)
 	P_GET_PTR(TVec, HitPoint);
 	P_GET_VEC(End);
 	P_GET_VEC(Start);
+	P_GET_SELF;
 	linetrace_t Trace;
-	bool Ret = GLevel->TraceLine(Trace, Start, End, SPF_NOBLOCKING);
+	bool Ret = Self->TraceLine(Trace, Start, End, SPF_NOBLOCKING);
 	*HitPoint = Trace.LineEnd;
 	*HitNormal = Trace.HitPlaneNormal;
 	RET_BOOL(Ret);
