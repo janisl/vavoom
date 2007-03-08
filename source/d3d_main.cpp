@@ -795,9 +795,11 @@ void VDirect3DDrawer::Setup2D()
 //
 //==========================================================================
 
-void VDirect3DDrawer::SetupView(const refdef_t *rd)
+void VDirect3DDrawer::SetupView(VRenderLevelDrawer* ARLev, const refdef_t *rd)
 {
 	guard(VDirect3DDrawer::SetupView);
+	RendLev = ARLev;
+
 	if (rd->drawworld && rd->width != ScreenWidth)
 	{
 		R_DrawViewBorder();

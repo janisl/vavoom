@@ -1014,7 +1014,7 @@ void R_DrawModelFrame(const TVec& Origin, float Angle, VModel* Model,
 	rd.fovy = rd.fovx * rd.height / rd.width / PixelAspect;
 	rd.drawworld = false;
 
-	Drawer->SetupView(&rd);
+	Drawer->SetupView(NULL, &rd);
 
 	TAVec Angles;
 	Angles.yaw = Angle;

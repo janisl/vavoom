@@ -125,7 +125,7 @@ public:
 	void FreeSurfCache(surfcache_t*);
 
 	//	Rendering stuff
-	void SetupView(const refdef_t*);
+	void SetupView(VRenderLevelDrawer*, const refdef_t*);
 	void WorldDrawing();
 	void EndView();
 
@@ -174,6 +174,8 @@ protected:
 	int			trspr_tnum[MAX_TRANSLATED_SPRITES];
 
 	GLuint		particle_texture;
+
+	VRenderLevelDrawer*	RendLev;
 
 	surface_t*	SimpleSurfsHead;
 	surface_t*	SimpleSurfsTail;

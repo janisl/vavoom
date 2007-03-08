@@ -239,7 +239,7 @@ surfcache_t *VSoftwareDrawer::CacheSurface(surface_t *surface, int miplevel)
 	bool			coloured;
 
 	// calculate the lightings
-	coloured = R_BuildLightMap(surface, 3);
+	coloured = RendLev->BuildLightMap(surface, 3);
 	if (!d_coloured_lights)
 	{
 		coloured = false;

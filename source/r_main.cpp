@@ -505,7 +505,7 @@ static void R_SetupFrame()
 
 	r_viewleaf = r_Level->PointInSubsector(cl->ViewOrg);
 
-	Drawer->SetupView(&refdef);
+	Drawer->SetupView((VRenderLevel*)r_Level->RenderData, &refdef);
 	unguard;
 }
 
@@ -1069,18 +1069,5 @@ void V_Shutdown()
 		Z_Free(translationtables);
 	}
 	R_FreeSkyboxData();
-	unguard;
-}
-
-//==========================================================================
-//
-//	R_BuildLightMap
-//
-//==========================================================================
-
-bool R_BuildLightMap(surface_t *surf, int shift)
-{
-	guard(R_BuildLightMap);
-	return ((VRenderLevel*)r_Level->RenderData)->BuildLightMap(surf, shift);
 	unguard;
 }

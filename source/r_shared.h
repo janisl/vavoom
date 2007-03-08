@@ -135,9 +135,7 @@ protected:
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
-void R_DrawViewBorder(void);
-
-bool R_BuildLightMap(surface_t*, int);
+void R_DrawViewBorder();
 
 void *Mod_Extradata(VModel* mod);	// handles caching
 

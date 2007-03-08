@@ -364,10 +364,12 @@ void VSoftwareDrawer::EndDirectUpdate()
 //
 //==========================================================================
 
-void VSoftwareDrawer::SetupView(const refdef_t* rd)
+void VSoftwareDrawer::SetupView(VRenderLevelDrawer* ARLev, const refdef_t* rd)
 {
 	guard(VSoftwareDrawer::SetupView);
 	int i;
+
+	RendLev = ARLev;
 
 	viewx = rd->x;
 	viewy = rd->y;

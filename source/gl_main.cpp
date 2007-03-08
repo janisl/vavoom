@@ -341,9 +341,11 @@ void VOpenGLDrawer::EndDirectUpdate()
 //
 //==========================================================================
 
-void VOpenGLDrawer::SetupView(const refdef_t *rd)
+void VOpenGLDrawer::SetupView(VRenderLevelDrawer* ARLev, const refdef_t *rd)
 {
 	guard(VOpenGLDrawer::SetupView);
+	RendLev = ARLev;
+
 	if (rd->drawworld && rd->width != ScreenWidth)
 	{
 		// 	Draws the border around the view for different size windows

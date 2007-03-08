@@ -68,6 +68,12 @@ struct refdef_t
 struct VModel;
 struct mmdl_t;
 
+class VRenderLevelDrawer : public VRenderLevelPublic
+{
+public:
+	virtual bool BuildLightMap(surface_t*, int) = 0;
+};
+
 class VDrawer
 {
 public:
@@ -88,7 +94,7 @@ public:
 	virtual void FreeSurfCache(surfcache_t*) = 0;
 
 	//	Rendring stuff
-	virtual void SetupView(const refdef_t*) = 0;
+	virtual void SetupView(VRenderLevelDrawer*, const refdef_t*) = 0;
 	virtual void WorldDrawing() = 0;
 	virtual void EndView() = 0;
 

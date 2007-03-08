@@ -160,7 +160,7 @@ public:
 	void FreeSurfCache(surfcache_t*);
 
 	//	Rendering stuff
-	void SetupView(const refdef_t*);
+	void SetupView(VRenderLevelDrawer*, const refdef_t*);
 	void WorldDrawing();
 	void EndView();
 
@@ -200,6 +200,8 @@ public:
 	void EndAutomap();
 
 protected:
+	VRenderLevelDrawer*		RendLev;
+
 	//	Main.
 	bool AllocMemory(int, int, int);
 	void FreeMemory();

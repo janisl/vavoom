@@ -412,7 +412,7 @@ void VDirect3DDrawer::CacheSurface(surface_t *surface)
 	cache->Light = surface->Light;
 
 	// calculate the lightings
-	R_BuildLightMap(surface, 0);
+	RendLev->BuildLightMap(surface, 0);
 	bnum = cache->blocknum;
 	block_changed[bnum] = true;
 
@@ -952,7 +952,7 @@ void VDirect3DDrawer::DrawMaskedPolygon(surface_t* surf, float Alpha)
 	if (surf->lightmap != NULL ||
 		surf->dlightframe == r_dlightframecount)
 	{
-		R_BuildLightMap(surf, 0);
+		RendLev->BuildLightMap(surf, 0);
 		int w = (surf->extents[0] >> 4) + 1;
 		int h = (surf->extents[1] >> 4) + 1;
 		int size = w * h;

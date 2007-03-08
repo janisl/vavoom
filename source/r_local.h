@@ -87,7 +87,7 @@ struct fakefloor_t
 	sec_params_t	params;
 };
 
-class VRenderLevel : public VRenderLevelPublic
+class VRenderLevel : public VRenderLevelDrawer
 {
 private:
 	struct skysurface_t : surface_t

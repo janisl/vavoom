@@ -966,7 +966,7 @@ void VSoftwareDrawer::DrawSurfaces()
 		{
 			miplevel = D_MipLevelForScale(surf->nearzi * scale_for_mip);
 			D_CalcGradients(surf->surf, miplevel, vieworg);
-			cache =	CacheSurface(surf->surf, miplevel);
+			cache = CacheSurface(surf->surf, miplevel);
 			cachewidth = cache->width;
 			cacheblock = cache->data;
 			D_DrawSpans(surf->spans);

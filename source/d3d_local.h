@@ -180,7 +180,7 @@ public:
 	void FreeSurfCache(surfcache_t*);
 
 	//	Rendering stuff
-	void SetupView(const refdef_t*);
+	void SetupView(VRenderLevelDrawer*, const refdef_t*);
 	void WorldDrawing();
 	void EndView();
 
@@ -358,6 +358,8 @@ private:
 	int							trsprlump[MAX_TRANSLATED_SPRITES];
 	int							trsprtnum[MAX_TRANSLATED_SPRITES];
 	int							tscount;
+
+	VRenderLevelDrawer*			RendLev;
 
 	surface_t*					SimpleSurfsHead;
 	surface_t*					SimpleSurfsTail;
