@@ -194,7 +194,7 @@ void VCommand::AddToAutoComplete(const char* string)
 #ifdef PARANOID
 	for (int i = 0; i < AutoCompleteTable.Num(); i++)
 	{
-		if (!AutoCompleteTable[i].ICmp(string))
+		if (!VStr::ICmp(AutoCompleteTable[i], string))
 			Sys_Error("C_AddToAutoComplete: %s is allready registered.", string);
 	}
 #endif
