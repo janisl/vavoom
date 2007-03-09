@@ -87,6 +87,7 @@ const char*			VLexer::TokenNames[] =
 	"return",
 	"self",
 	"set",
+	"spawner",
 	"state",
 	"static",
 	"string",
@@ -742,6 +743,11 @@ void VLexer::ProcessLetterToken()
 			{
 				Token = TK_Set;
 			}
+		}
+		else if (s[1] == 'p' && s[2] == 'a' && s[3] == 'w' && s[4] == 'n' &&
+			s[5] == 'e' && s[6] == 'r' && s[7] == 0)
+		{
+			Token = TK_Spawner;
 		}
 		else if (s[1] == 't')
 		{

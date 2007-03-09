@@ -4296,6 +4296,8 @@ VExpression* VInvocation::DoResolve(VEmitContext& ec)
 	Type  = Func->ReturnType;
 	if (Type.type == ev_bool)
 		Type = TType(ev_int);
+	if (Func->Flags & FUNC_Spawner)
+		Type.Class = Args[0]->Type.Class;
 	return this;
 }
 

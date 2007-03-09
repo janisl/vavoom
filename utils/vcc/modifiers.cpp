@@ -95,6 +95,10 @@ int TModifiers::Parse(VLexer& Lex)
 		{
 			Modifiers |= Out;
 		}
+		else if (Lex.Check(TK_Spawner))
+		{
+			Modifiers |= Spawner;
+		}
 		else
 		{
 			done = true;
@@ -124,6 +128,7 @@ const char* TModifiers::Name(int Modifier)
 	case Final:		return "final";
 	case Optional:	return "optional";
 	case Out:		return "out";
+	case Spawner:	return "spawner";
 	}
 	return "";
 }
@@ -166,6 +171,8 @@ int TModifiers::MethodAttr(int Modifiers)
 		Attributes |= FUNC_Static;
 	if (Modifiers & Final)
 		Attributes |= FUNC_Final;
+	if (Modifiers & Spawner)
+		Attributes |= FUNC_Spawner;
 	return Attributes;
 }
 

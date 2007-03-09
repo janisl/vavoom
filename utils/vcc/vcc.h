@@ -117,6 +117,7 @@ public:
 		Final			= 0x0040,
 		Optional		= 0x0080,
 		Out				= 0x0100,
+		Spawner			= 0x0200,
 	};
 
 	static int Parse(VLexer&);
@@ -332,7 +333,7 @@ class VMethod : public VMemberBase
 {
 public:
 	enum { AllowedModifiers = TModifiers::Native | TModifiers::Static |
-		TModifiers::Final };
+		TModifiers::Final | TModifiers::Spawner };
 	enum { AllowedParmModifiers = TModifiers::Optional  | TModifiers::Out };
 
 	int						NumLocals;

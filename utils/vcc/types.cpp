@@ -1467,6 +1467,27 @@ bool VMethod::Define()
 			}
 	}
 
+	if (Flags & FUNC_Spawner)
+	{
+		//	Verify that it's a valid spawner method
+		if (NumParams < 1)
+		{
+			ParseError(Loc, "Spawner method must have at least 1 argument");
+		}
+		else if (ParamTypes[0].type != ev_class)
+		{
+			ParseError(Loc, "Spawner method must have class as it's first argument");
+		}
+		else if (ReturnType.type != ev_reference)
+		{
+			ParseError(Loc, "Spawner method must return an object reference");
+		}
+		else if (ReturnType.Class != ParamTypes[0].Class)
+		{
+			ParseError(Loc, "Spawner method must return an object of the same type as class");
+		}
+	}
+
 	return Ret;
 }
 

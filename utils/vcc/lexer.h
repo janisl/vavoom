@@ -76,6 +76,7 @@ enum EToken
 	TK_Return,
 	TK_Self,
 	TK_Set,
+	TK_Spawner,
 	TK_State,
 	TK_Static,
 	TK_String,
