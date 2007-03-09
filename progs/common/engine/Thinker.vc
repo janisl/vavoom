@@ -43,13 +43,7 @@ native void Destroy();
 
 spawner Entity Spawn(class<Entity> type, optional TVec AOrigin, optional mthing_t* mthing)
 {
-	Entity A;
-
-	A = NewSpecialThinker(type);
-
-	A.Origin = AOrigin;
-	A.OnMapSpawn(mthing);
-	return A;
+	return NewSpecialThinker(type, AOrigin, mthing);
 }
 
 //==========================================================================

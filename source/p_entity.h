@@ -207,6 +207,7 @@ class VEntity : public VThinker
 	//	Owner entity of inventory item
 	VEntity*		Owner;
 
+	static int FIndex_OnMapSpawn;
 	static int FIndex_BeginPlay;
 	static int FIndex_Destroyed;
 	static int FIndex_Touch;
@@ -233,6 +234,12 @@ class VEntity : public VThinker
 	//	VThinker interface.
 	void DestroyThinker();
 
+	void eventOnMapSpawn(mthing_t* mthing)
+	{
+		P_PASS_SELF;
+		P_PASS_PTR(mthing);
+		EV_RET_VOID(FIndex_OnMapSpawn);
+	}
 	void eventBeginPlay()
 	{
 		P_PASS_SELF;

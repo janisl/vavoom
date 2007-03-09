@@ -129,6 +129,7 @@ extern VEntity**	sv_mobjs;
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
+int VEntity::FIndex_OnMapSpawn;
 int VEntity::FIndex_BeginPlay;
 int VEntity::FIndex_Destroyed;
 int VEntity::FIndex_Touch;
@@ -2374,6 +2375,7 @@ IMPLEMENT_FUNCTION(VEntity, RoughMonsterSearch)
 void VEntity::InitFuncIndexes()
 {
 	guard(VEntity::InitFuncIndexes);
+	FIndex_OnMapSpawn = StaticClass()->GetFunctionIndex("OnMapSpawn");
 	FIndex_BeginPlay = StaticClass()->GetFunctionIndex("BeginPlay");
 	FIndex_Destroyed = StaticClass()->GetFunctionIndex("Destroyed");
 	FIndex_Touch = StaticClass()->GetFunctionIndex("Touch");
