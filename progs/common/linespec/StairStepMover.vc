@@ -175,7 +175,7 @@ void QueueStairSector(sector_t* sec, float height)
 {
 	StairStepMover	Other;
 
-	Other = StairStepMover(NewSpecialThinker(StairStepMover));
+	Other = Spawn(StairStepMover);
 	Other.QueueInit(sec, QueueType ^ 1, height, StairsType,
 		StairStepDelta, Direction, StairSpeed, StairTexture,
 		StairStartHeight, DelayTotal, ResetDelay);

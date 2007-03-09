@@ -41,7 +41,7 @@ native void Destroy();
 //
 //===========================================================================
 
-spawner Entity Spawn(class<Entity> type, optional TVec AOrigin, optional mthing_t* mthing)
+spawner Thinker Spawn(class<Thinker> type, optional TVec AOrigin, optional mthing_t* mthing)
 {
 	return NewSpecialThinker(type, AOrigin, mthing);
 }
