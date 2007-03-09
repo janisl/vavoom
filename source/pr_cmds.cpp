@@ -288,24 +288,6 @@ IMPLEMENT_FUNCTION(VObject, MapBlock)
 
 //**************************************************************************
 //
-//	Mobj utilites
-//
-//**************************************************************************
-
-//==========================================================================
-//
-//  PF_NewMobjThiker
-//
-//==========================================================================
-
-IMPLEMENT_FUNCTION(VObject, NewMobjThinker)
-{
-	P_GET_PTR(VClass, Class);
-	RET_REF(SV_SpawnMobj(Class));
-}
-
-//**************************************************************************
-//
 //	Special thinker utilites
 //
 //**************************************************************************
@@ -318,12 +300,18 @@ IMPLEMENT_FUNCTION(VObject, NewMobjThinker)
 
 IMPLEMENT_FUNCTION(VObject, NewSpecialThinker)
 {
-	VThinker	*spec;
-
 	P_GET_PTR(VClass, Class);
-	spec = (VThinker*)VObject::StaticSpawnObject(Class);
-	GLevel->AddThinker(spec);
-	RET_REF(spec);
+	VThinker* Ret;
+	if (Class->IsChildOf(VEntity::StaticClass()))
+	{
+		Ret = SV_SpawnMobj(Class);
+	}
+	else
+	{
+		Ret = (VThinker*)VObject::StaticSpawnObject(Class);
+		GLevel->AddThinker(Ret);
+	}
+	RET_REF(Ret);
 }
 
 //==========================================================================

@@ -387,9 +387,6 @@ public:
 	DECLARE_FUNCTION(PointInRegion)
 	DECLARE_FUNCTION(MapBlock)
 
-	//	Mobj utilites
-	DECLARE_FUNCTION(NewMobjThinker)
-
 	//	Special thinker utilites
 	DECLARE_FUNCTION(NewSpecialThinker)
 	DECLARE_FUNCTION(P_ChangeSwitchTexture)

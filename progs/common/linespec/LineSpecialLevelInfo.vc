@@ -2848,7 +2848,7 @@ bool EV_ThingProjectile(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 	for (A = FindMobjFromTID(tid, &searcher); A;
 		A = FindMobjFromTID(tid, &searcher))
 	{
-		newA = SpawnEntity(moType, A.Origin);
+		newA = Spawn(moType, A.Origin);
 		newA.PlaySightSound();
 		newA.SetInstigator(A);	// Originator
 		newA.Angles.yaw = angle;
@@ -2899,7 +2899,7 @@ bool EV_ThingSpawn(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5, bool fog)
 	for (A = FindMobjFromTID(tid, &searcher); A;
 		A = FindMobjFromTID(tid, &searcher))
 	{
-		newAct = SpawnEntity(moType, A.Origin);
+		newAct = Spawn(moType, A.Origin);
 		newAct.StartFloatBob(A);
 		if (newAct.TestLocation() == false)
 		{
@@ -3809,23 +3809,6 @@ line_t* FindLine(int lineTag, int *searchPosition)
 	}
 	*searchPosition = -1;
 	return NULL;
-}
-
-//===========================================================================
-//
-//  SpawnEntity
-//
-//===========================================================================
-
-EntityEx SpawnEntity(class<EntityEx> type, TVec AOrigin)
-{
-	EntityEx A;
-
-	A = EntityEx(NewMobjThinker(type));
-
-	A.Origin = AOrigin;
-	A.OnMapSpawn(NULL);
-	return A;
 }
 
 //==========================================================================

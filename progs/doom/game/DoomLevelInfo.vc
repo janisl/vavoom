@@ -611,31 +611,13 @@ void SpawnMapThing(mthing_t * mthing)
 	if (moClass)
 	{
 		// spawn it
-		A = Actor(NewMobjThinker(moClass));
-		A.OnMapSpawn(mthing);
+		A = Spawn(moClass,, mthing);
 	}
 	else
 	{
 		dprint("SpawnMapThing: Unknown type %d at (%f, %f)",
 			mthing->type, mthing->x, mthing->y);
 	}
-}
-
-//===========================================================================
-//
-//  Spawn
-//
-//===========================================================================
-
-Actor Spawn(class<Actor> type, TVec AOrigin)
-{
-	Actor A;
-
-	A = Actor(NewMobjThinker(type));
-
-	A.Origin = AOrigin;
-	A.OnMapSpawn(NULL);
-	return A;
 }
 
 //==========================================================================

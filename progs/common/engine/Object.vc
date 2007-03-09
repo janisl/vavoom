@@ -1778,16 +1778,10 @@ native static final sec_region_t *PointInRegion(sector_t * sector, TVec p);
 native static final int MapBlock(float val);
 
 //
-//  Mobj utilites
-//
-
-native static final Entity NewMobjThinker(class<Entity> cid);
-
-//
 //  Special thinker utilites
 //
 
-native static final Thinker NewSpecialThinker(class<Thinker>);
+native static final spawner Thinker NewSpecialThinker(class<Thinker>);
 native static final void P_ChangeSwitchTexture(line_t * line, int useAgain, name DefaultSound);
 native static final Thinker NextThinker(Thinker last, class<Thinker> id);
 

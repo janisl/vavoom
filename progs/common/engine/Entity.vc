@@ -246,6 +246,16 @@ native final bool CanSee(Entity Other);
 
 native final Entity RoughMonsterSearch(int distance);
 
+//===========================================================================
+//
+//  OnMapSpawn
+//
+//===========================================================================
+
+void OnMapSpawn(mthing_t* mthing)
+{
+}
+
 //==========================================================================
 //
 //	BeginPlay

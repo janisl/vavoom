@@ -35,6 +35,23 @@ native readonly private Thinker	Next;
 
 native void Destroy();
 
+//===========================================================================
+//
+//  Spawn
+//
+//===========================================================================
+
+spawner Entity Spawn(class<Entity> type, optional TVec AOrigin, optional mthing_t* mthing)
+{
+	Entity A;
+
+	A = NewSpecialThinker(type);
+
+	A.Origin = AOrigin;
+	A.OnMapSpawn(mthing);
+	return A;
+}
+
 //==========================================================================
 //
 //	Tick

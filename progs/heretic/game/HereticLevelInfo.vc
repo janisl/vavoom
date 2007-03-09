@@ -573,8 +573,7 @@ void SpawnMapThing(mthing_t * mthing)
 		return;
 	}
 
-	A = Actor(NewMobjThinker(moClass));
-	A.OnMapSpawn(mthing);
+	A = Spawn(moClass,, mthing);
 }
 
 //===========================================================================
@@ -640,23 +639,6 @@ void AddBossSpot(float x, float y, float angle)
 	BossSpotCount++;
 }
 
-//===========================================================================
-//
-//  Spawn
-//
-//===========================================================================
-
-Actor Spawn(class<Actor> type, TVec AOrigin)
-{
-	Actor A;
-
-	A = Actor(NewMobjThinker(type));
-
-	A.Origin = AOrigin;
-	A.OnMapSpawn(NULL);
-	return A;
-}
-
 //==========================================================================
 //
 //  InitLava
@@ -665,7 +647,7 @@ Actor Spawn(class<Actor> type, TVec AOrigin)
 
 void InitLava()
 {
-	GLavaInflictor = LavaInflictor(NewMobjThinker(LavaInflictor));
+	GLavaInflictor = Spawn(LavaInflictor, vector(0.0, 0.0, 0.0));
 }
 
 //==========================================================================
