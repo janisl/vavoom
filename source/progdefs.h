@@ -72,6 +72,7 @@ enum
 	FUNC_Static		= 0x0002,	// Static method
 	FUNC_VarArgs	= 0x0004,	// Variable argument count
 	FUNC_Final		= 0x0008,	// Final version of a method
+	FUNC_Spawner	= 0x0010,	// Automatic cast of return value
 };
 
 enum

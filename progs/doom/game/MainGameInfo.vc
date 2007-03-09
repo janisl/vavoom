@@ -115,17 +115,6 @@ WorldInfo CreateWorldInfo()
 
 //==========================================================================
 //
-//  CreateLevelInfo
-//
-//==========================================================================
-
-LevelInfo CreateLevelInfo()
-{
-	return LevelInfo(NewSpecialThinker(DoomLevelInfo));
-}
-
-//==========================================================================
-//
 //  InitBotTypes
 //
 //==========================================================================
@@ -1265,6 +1254,8 @@ void TranslateLevel(Level InLevel)
 
 defaultproperties
 {
+	LevelInfoClass = DoomLevelInfo;
+
 	WeaponClasses[0] = WeaponFist;
 	WeaponClasses[1] = WeaponPistol;
 	WeaponClasses[2] = WeaponShotgun;

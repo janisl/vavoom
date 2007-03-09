@@ -114,17 +114,6 @@ WorldInfo CreateWorldInfo()
 
 //==========================================================================
 //
-//  CreateLevelInfo
-//
-//==========================================================================
-
-LevelInfo CreateLevelInfo()
-{
-	return LevelInfo(NewSpecialThinker(HereticLevelInfo));
-}
-
-//==========================================================================
-//
 //  InitBotTypes
 //
 //==========================================================================
@@ -551,6 +540,7 @@ void TranslateLevel(Level InLevel)
 
 defaultproperties
 {
+	LevelInfoClass = HereticLevelInfo;
 	bUseHexenPolyobjTypes = true;
 
 	WeaponClasses[0] = WeaponStaff;

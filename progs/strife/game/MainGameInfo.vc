@@ -102,17 +102,6 @@ WorldInfo CreateWorldInfo()
 
 //==========================================================================
 //
-//  CreateLevelInfo
-//
-//==========================================================================
-
-LevelInfo CreateLevelInfo()
-{
-	return StrifeLevelInfo(NewSpecialThinker(StrifeLevelInfo));
-}
-
-//==========================================================================
-//
 //	InitTranslationTables
 //
 //==========================================================================
@@ -628,6 +617,7 @@ name GetConScriptName(name LevelName)
 
 defaultproperties
 {
+	LevelInfoClass = StrifeLevelInfo;
 	AcsHelper = 'strfhelp';
 	GenericConScript = 'script00';
 

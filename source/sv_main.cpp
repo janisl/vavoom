@@ -2665,7 +2665,9 @@ void SV_SpawnServer(const char *mapname, bool spawn_thinkers)
 
 	if (spawn_thinkers)
 	{
-		GLevelInfo = GGameInfo->eventCreateLevelInfo();
+		GLevelInfo = (VLevelInfo*)VObject::StaticSpawnObject(
+			GGameInfo->LevelInfoClass);
+		GLevel->AddThinker(GLevelInfo);
 		GLevelInfo->Level = GLevelInfo;
 		GLevel->LevelInfo = GLevelInfo;
 		if (info.Gravity)

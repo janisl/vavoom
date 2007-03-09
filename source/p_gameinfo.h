@@ -51,6 +51,8 @@ class VGameInfo : public VObject
 	float			FloatBobOffsets[64];
 	vint32			PhaseTable[64];
 
+	VClass*			LevelInfoClass;
+
 	VGameInfo()
 	{}
 
@@ -69,11 +71,6 @@ class VGameInfo : public VObject
 	{
 		P_PASS_SELF;
 		EV_RET_REF(VWorldInfo, "CreateWorldInfo");
-	}
-	VLevelInfo* eventCreateLevelInfo()
-	{
-		P_PASS_SELF;
-		EV_RET_REF(VLevelInfo, "CreateLevelInfo");
 	}
 	void eventTranslateLevel(VLevel* InLevel)
 	{

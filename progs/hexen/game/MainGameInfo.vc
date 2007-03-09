@@ -131,17 +131,6 @@ WorldInfo CreateWorldInfo()
 
 //==========================================================================
 //
-//  CreateLevelInfo
-//
-//==========================================================================
-
-LevelInfo CreateLevelInfo()
-{
-	return LevelInfo(NewSpecialThinker(HexenLevelInfo));
-}
-
-//==========================================================================
-//
 //  InitBotTypes
 //
 //==========================================================================
@@ -386,6 +375,7 @@ void SetBotType(int i, string Name, int accuracy, int intelect, int evade,
 
 defaultproperties
 {
+	LevelInfoClass = HexenLevelInfo;
 	bUseHexenPolyobjTypes = true;
 
 	WeaponClasses[0] = WeaponFighterPunch;
