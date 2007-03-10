@@ -259,3 +259,5 @@ class	VClass;
 struct	mobjinfo_t;
 
 class	VObject;
+
+void Host_CoreDump(const char *fmt, ...);

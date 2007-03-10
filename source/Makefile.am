@@ -108,6 +108,7 @@ _____MAIN_EXE__SOURCES = \
 	language.h \
 	level.cpp \
 	level.h \
+	map.h \
 	mapinfo.cpp \
 	mapinfo.h \
 	maths.cpp \

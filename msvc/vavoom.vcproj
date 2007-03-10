@@ -419,6 +419,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\map.h"
+				>
+			</File>
+			<File
 				RelativePath="..\source\mapinfo.h"
 				>
 			</File>

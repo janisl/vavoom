@@ -42,6 +42,7 @@
 #include "args.h"		//	Command line arguments.
 #include "zone.h"		//	Zone memory allocation
 #include "array.h"		//	Dynamic arrays
+#include "map.h"		//	Mapping of keys to values
 #include "stream.h"		//	Streams
 #include "names.h"		//	Built-in names
 #include "name.h"		//	Names

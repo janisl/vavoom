@@ -38,7 +38,6 @@ void __attribute__((noreturn, format(printf, 1, 2))) __declspec(noreturn)
 	Host_EndGame(const char *message, ...);
 void __attribute__((noreturn, format(printf, 1, 2))) __declspec(noreturn)
 	Host_Error(const char *error, ...);
-void Host_CoreDump(const char *fmt, ...);
 const char *Host_GetCoreDump(void);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
