@@ -41,9 +41,7 @@ public:
 private:
 	struct VLangEntry;
 
-	enum { HASH_SIZE = 256 };
-
-	VLangEntry*		HashTable[HASH_SIZE];
+	TMap<VName, VLangEntry>*	Table;
 
 	void FreeNonDehackedStrings();
 	void ParseLanguageScript(vint32, const char*, bool, vint32);

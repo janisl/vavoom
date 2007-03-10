@@ -33,10 +33,8 @@
 
 struct VLanguage::VLangEntry
 {
-	VLanguage::VLangEntry*	Next;
-	vint32					PassNum;
-	VName					Name;
-	VStr					Value;
+	vint32			PassNum;
+	VStr			Value;
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -62,9 +60,8 @@ VLanguage		GLanguage;
 //==========================================================================
 
 VLanguage::VLanguage()
+: Table(NULL)
 {
-	for (int i = 0; i < HASH_SIZE; i++)
-		HashTable[i] = NULL;
 }
 
 //==========================================================================
@@ -87,16 +84,10 @@ VLanguage::~VLanguage()
 void VLanguage::FreeData()
 {
 	guard(VLanguage::FreeData);
-	for (int i = 0; i < HASH_SIZE; i++)
+	if (Table)
 	{
-		VLangEntry* Entry = HashTable[i];
-		while (Entry)
-		{
-			VLangEntry* Next = Entry->Next;
-			delete Entry;
-			Entry = Next;
-		}
-		HashTable[i] = NULL;
+		delete Table;
+		Table = NULL;
 	}
 	unguard;
 }
@@ -110,23 +101,9 @@ void VLanguage::FreeData()
 void VLanguage::FreeNonDehackedStrings()
 {
 	guard(VLanguage::FreeNonDehackedStrings);
-	for (int i = 0; i < HASH_SIZE; i++)
-	{
-		VLangEntry** pEntry = &HashTable[i];
-		while (*pEntry)
-		{
-			if ((*pEntry)->PassNum == 0)
-			{
-				pEntry = &(*pEntry)->Next;
-			}
-			else
-			{
-				VLangEntry* Next = (*pEntry)->Next;
-				delete *pEntry;
-				*pEntry = Next;
-			}
-		}
-	}
+	for (TMap<VName, VLangEntry>::TIterator It(*Table); It; ++It)
+		if (It.GetValue().PassNum != 0)
+			It.RemoveCurrent();
 	unguard;
 }
 
@@ -139,6 +116,9 @@ void VLanguage::FreeNonDehackedStrings()
 void VLanguage::LoadStrings(const char* LangId)
 {
 	guard(VLanguage::LoadStrings);
+	if (!Table)
+		Table = new TMap<VName, VLangEntry>();
+
 	FreeNonDehackedStrings();
 
 	for (int Lump = W_IterateNS(-1, WADNS_Global); Lump >= 0;
@@ -266,28 +246,13 @@ void VLanguage::ParseLanguageScript(vint32 Lump, const char* InCode,
 			}
 
 			//	Check for replacement.
-			int HashIndex = GetTypeHash(Key) & (HASH_SIZE - 1);
-			VLangEntry* Entry;
-			for (Entry = HashTable[HashIndex]; Entry; Entry = Entry->Next)
+			VLangEntry* Found = Table->Find(Key);
+			if (!Found || Found->PassNum >= PassNum)
 			{
-				if (Entry->Name == Key)
-				{
-					break;
-				}
-			}
-			if (Entry && Entry->PassNum >= PassNum)
-			{
-				Entry->Value = Value;
-				Entry->PassNum = PassNum;
-			}
-			else if (!Entry)
-			{
-				Entry = new VLangEntry;
-				Entry->Next = HashTable[HashIndex];
-				HashTable[HashIndex] = Entry;
-				Entry->Name = Key;
-				Entry->Value = Value;
-				Entry->PassNum = PassNum;
+				VLangEntry Entry;
+				Entry.Value = Value;
+				Entry.PassNum = PassNum;
+				Table->Set(Key, Entry);
 			}
 		}
 	}
@@ -338,15 +303,8 @@ VStr VLanguage::HandleEscapes(VStr Src)
 VStr VLanguage::Find(VName Key) const
 {
 	guard(VLanguage::Find);
-	int HashIndex = GetTypeHash(Key) & (HASH_SIZE - 1);
-	for (VLangEntry* E = HashTable[HashIndex]; E; E = E->Next)
-	{
-		if (E->Name == Key)
-		{
-			return E->Value;
-		}
-	}
-	return VStr();
+	VLangEntry* Found = Table->Find(Key);
+	return Found ? Found->Value : VStr();
 	unguard;
 }
 
@@ -359,12 +317,8 @@ VStr VLanguage::Find(VName Key) const
 VStr VLanguage::operator[](VName Key) const
 {
 	guard(VLanguage::operator[]);
-	VStr Ret = Find(Key);
-	if (!Ret)
-	{
-		Ret = VStr(Key);
-	}
-	return Ret;
+	VLangEntry* Found = Table->Find(Key);
+	return Found ? Found->Value : VStr(Key);
 	unguard;
 }
 
@@ -377,14 +331,11 @@ VStr VLanguage::operator[](VName Key) const
 VName VLanguage::GetStringId(const VStr& Str)
 {
 	guard(VLanguage::GetStringId);
-	for (int i = 0; i < HASH_SIZE; i++)
+	for (TMap<VName, VLangEntry>::TIterator It(*Table); It; ++It)
 	{
-		for (VLangEntry* Entry = HashTable[i]; Entry; Entry = Entry->Next)
+		if (It.GetValue().Value == Str)
 		{
-			if (Entry->Value == Str)
-			{
-				return Entry->Name;
-			}
+			return It.GetKey();
 		}
 	}
 	return NAME_None;
@@ -400,23 +351,9 @@ VName VLanguage::GetStringId(const VStr& Str)
 void VLanguage::ReplaceString(VName Key, const VStr& Value)
 {
 	guard(VLanguage::ReplaceString);
-	int HashIndex = GetTypeHash(Key) & (HASH_SIZE - 1);
-	VLangEntry* Entry;
-	for (Entry = HashTable[HashIndex]; Entry; Entry = Entry->Next)
-	{
-		if (Entry->Name == Key)
-		{
-			break;
-		}
-	}
-	if (!Entry)
-	{
-		Entry = new VLangEntry;
-		Entry->Next = HashTable[HashIndex];
-		HashTable[HashIndex] = Entry;
-		Entry->Name = Key;
-	}
-	Entry->Value = Value;
-	Entry->PassNum = 0;
+	VLangEntry Entry;
+	Entry.Value = Value;
+	Entry.PassNum = 0;
+	Table->Set(Key, Entry);
 	unguard;
 }
