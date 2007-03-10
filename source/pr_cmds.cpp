@@ -305,36 +305,6 @@ IMPLEMENT_FUNCTION(VObject, P_ChangeSwitchTexture)
 	P_ChangeSwitchTexture(line, useAgain, DefaultSound);
 }
 
-//==========================================================================
-//
-//	PF_NextThinker
-//
-//==========================================================================
-
-IMPLEMENT_FUNCTION(VObject, NextThinker)
-{
-	P_GET_PTR(VClass, Class);
-	P_GET_REF(VThinker, th);
-	if (!th)
-	{
-		th = GLevel->ThinkerHead;
-	}
-	else
-	{
-		th = th->Next;
-	}
-	while (th)
-	{
-		if (th->IsA(Class) && !(th->GetFlags() & _OF_DelayedDestroy))
-		{
-			RET_REF(th);
-			return;
-		}
-		th = th->Next;
-	}
-	RET_REF(0);
-}
-
 //**************************************************************************
 //
 //  Sound functions

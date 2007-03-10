@@ -32,3 +32,6 @@
 #define FOREACH(type, var) \
 	for (var = type(NextThinker(none, type)); var; \
 		var = type(NextThinker(var, type)))
+#define FOREACH_EX(ctx, type, var) \
+	for (var = type(ctx.NextThinker(none, type)); var; \
+		var = type(ctx.NextThinker(var, type)))

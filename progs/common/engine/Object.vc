@@ -1782,7 +1782,6 @@ native static final int MapBlock(float val);
 //
 
 native static final void P_ChangeSwitchTexture(line_t * line, int useAgain, name DefaultSound);
-native static final Thinker NextThinker(Thinker last, class<Thinker> id);
 
 //
 //  Sound functions

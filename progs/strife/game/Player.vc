@@ -2651,7 +2651,7 @@ int P_Massacre()
 	Actor mo;
 
 	count = 0;
-	FOREACH(Actor, mo)
+	FOREACH_EX(MO, Actor, mo)
 	{
 		if (mo.bCountKill && (mo.Health > 0))
 		{

@@ -50,4 +50,5 @@ class VThinker : public VObject
 
 	DECLARE_FUNCTION(Spawn)
 	DECLARE_FUNCTION(Destroy)
+	DECLARE_FUNCTION(NextThinker)
 };

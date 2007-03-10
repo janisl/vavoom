@@ -143,3 +143,29 @@ IMPLEMENT_FUNCTION(VThinker, Destroy)
 	P_GET_SELF;
 	Self->DestroyThinker();
 }
+
+IMPLEMENT_FUNCTION(VThinker, NextThinker)
+{
+	P_GET_PTR(VClass, Class);
+	P_GET_REF(VThinker, th);
+	P_GET_SELF;
+	if (!th)
+	{
+		th = Self->XLevel->ThinkerHead;
+	}
+	else
+	{
+		th = th->Next;
+	}
+	VThinker* Ret = NULL;
+	while (th)
+	{
+		if (th->IsA(Class) && !(th->GetFlags() & _OF_DelayedDestroy))
+		{
+			Ret = th;
+			break;
+		}
+		th = th->Next;
+	}
+	RET_REF(Ret);
+}

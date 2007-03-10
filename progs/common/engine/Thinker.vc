@@ -36,6 +36,7 @@ native readonly private Thinker	Next;
 native final spawner Thinker Spawn(class<Thinker> Type, optional TVec AOrigin,
 	optional TAVec AAngles, optional mthing_t* mthing);
 native void Destroy();
+native final Thinker NextThinker(Thinker last, class<Thinker> id);
 
 //==========================================================================
 //

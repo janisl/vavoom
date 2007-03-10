@@ -389,7 +389,6 @@ public:
 
 	//	Special thinker utilites
 	DECLARE_FUNCTION(P_ChangeSwitchTexture)
-	DECLARE_FUNCTION(NextThinker)
 
 	//	Sound functions
 	DECLARE_FUNCTION(SectorStopSound)
