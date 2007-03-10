@@ -571,7 +571,7 @@ void SpawnMapThing(mthing_t * mthing)
 	if (moClass)
 	{
 		// spawn it
-		A = Spawn(moClass,, mthing);
+		A = Spawn(moClass,,, mthing);
 	}
 	else
 	{

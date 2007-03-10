@@ -53,6 +53,13 @@ public:
 	float yaw;
 	float roll;
 
+	TAVec()
+	{}
+	TAVec(float APitch, float AYaw, float ARoll)
+	: pitch(APitch)
+	, yaw(AYaw)
+	, roll(ARoll)
+	{}
 	friend VStream& operator << (VStream &Strm, TAVec &v)
 	{
 		return Strm << v.pitch << v.yaw << v.roll;

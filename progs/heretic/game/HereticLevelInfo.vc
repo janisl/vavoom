@@ -573,7 +573,7 @@ void SpawnMapThing(mthing_t * mthing)
 		return;
 	}
 
-	A = Spawn(moClass,, mthing);
+	A = Spawn(moClass,,, mthing);
 }
 
 //===========================================================================

@@ -1781,8 +1781,6 @@ native static final int MapBlock(float val);
 //  Special thinker utilites
 //
 
-native static final spawner Thinker NewSpecialThinker(class<Thinker>,
-	optional TVec AOrigin, optional mthing_t* mthing);
 native static final void P_ChangeSwitchTexture(line_t * line, int useAgain, name DefaultSound);
 native static final Thinker NextThinker(Thinker last, class<Thinker> id);
 

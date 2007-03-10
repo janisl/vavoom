@@ -119,6 +119,40 @@ void VThinker::DestroyThinker()
 //
 //==========================================================================
 
+VEntity *SV_SpawnMobj(VClass *Class);
+IMPLEMENT_FUNCTION(VThinker, Spawn)
+{
+	P_GET_PTR_OPT(mthing_t, mthing, NULL);
+	P_GET_AVEC_OPT(AAngles, TAVec(0, 0, 0));
+	P_GET_VEC_OPT(AOrigin, TVec(0, 0, 0));
+	P_GET_PTR(VClass, Class);
+	P_GET_SELF;
+	VEntity* SelfEnt = Cast<VEntity>(Self);
+	//	If spawner is entity, default to it's origin and angles.
+	if (SelfEnt)
+	{
+		if (!specified_AOrigin)
+			AOrigin = SelfEnt->Origin;
+		if (!specified_AAngles)
+			AAngles = SelfEnt->Angles;
+	}
+	VThinker* Ret;
+	if (Class->IsChildOf(VEntity::StaticClass()))
+	{
+		Ret = SV_SpawnMobj(Class);
+		((VEntity*)Ret)->Origin = AOrigin;
+		((VEntity*)Ret)->Angles = AAngles;
+		((VEntity*)Ret)->eventOnMapSpawn(mthing);
+	}
+	else
+	{
+		Ret = (VThinker*)VObject::StaticSpawnObject(Class);
+		Self->XLevel->AddThinker(Ret);
+	}
+	RET_REF(Ret);
+//	RET_REF(Self->XLevel->SpawnThinker(Class, AOrigin, AAngles, mthing);
+}
+
 IMPLEMENT_FUNCTION(VThinker, Destroy)
 {
 	P_GET_SELF;

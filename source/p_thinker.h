@@ -48,5 +48,6 @@ class VThinker : public VObject
 	virtual void Tick(float);
 	virtual void DestroyThinker();
 
+	DECLARE_FUNCTION(Spawn)
 	DECLARE_FUNCTION(Destroy)
 };

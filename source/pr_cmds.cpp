@@ -39,7 +39,6 @@
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
-VEntity *SV_SpawnMobj(VClass *Class);
 void SV_ForceLightning();
 VClass* SV_FindClassFromEditorId(int Id);
 VClass* SV_FindClassFromScriptId(int Id);
@@ -291,32 +290,6 @@ IMPLEMENT_FUNCTION(VObject, MapBlock)
 //	Special thinker utilites
 //
 //**************************************************************************
-
-//==========================================================================
-//
-//  PF_NewSpecialThinker
-//
-//==========================================================================
-
-IMPLEMENT_FUNCTION(VObject, NewSpecialThinker)
-{
-	P_GET_PTR_OPT(mthing_t, mthing, NULL);
-	P_GET_VEC_OPT(AOrigin, TVec(0, 0, 0));
-	P_GET_PTR(VClass, Class);
-	VThinker* Ret;
-	if (Class->IsChildOf(VEntity::StaticClass()))
-	{
-		Ret = SV_SpawnMobj(Class);
-		((VEntity*)Ret)->Origin = AOrigin;
-		((VEntity*)Ret)->eventOnMapSpawn(mthing);
-	}
-	else
-	{
-		Ret = (VThinker*)VObject::StaticSpawnObject(Class);
-		GLevel->AddThinker(Ret);
-	}
-	RET_REF(Ret);
-}
 
 //==========================================================================
 //
