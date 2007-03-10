@@ -168,8 +168,7 @@ static bool P_StartButton(int sidenum, EBWhere w, int SwitchDef,
 		}
 	}
 
-	VButton* But = Spawn<VButton>();
-	GLevel->AddThinker(But);
+	VButton* But = (VButton*)GLevel->SpawnThinker(VButton::StaticClass());
 	But->Side = sidenum;
 	But->Where = w;
 	But->SwitchDef = SwitchDef;

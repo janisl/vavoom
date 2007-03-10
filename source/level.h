@@ -626,6 +626,8 @@ class VLevel : public VObject
 	subsector_t* PointInSubsector(const TVec& point) const;
 	vuint8* LeafPVS(const subsector_t* ss) const;
 
+	VThinker* SpawnThinker(VClass*, const TVec& = TVec(0, 0, 0),
+		const TAVec& = TAVec(0, 0, 0), mthing_t* = NULL);
 	void AddThinker(VThinker*);
 	void RemoveThinker(VThinker*);
 	void DestroyAllThinkers();

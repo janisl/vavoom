@@ -119,7 +119,6 @@ void VThinker::DestroyThinker()
 //
 //==========================================================================
 
-VEntity *SV_SpawnMobj(VClass *Class);
 IMPLEMENT_FUNCTION(VThinker, Spawn)
 {
 	P_GET_PTR_OPT(mthing_t, mthing, NULL);
@@ -136,21 +135,7 @@ IMPLEMENT_FUNCTION(VThinker, Spawn)
 		if (!specified_AAngles)
 			AAngles = SelfEnt->Angles;
 	}
-	VThinker* Ret;
-	if (Class->IsChildOf(VEntity::StaticClass()))
-	{
-		Ret = SV_SpawnMobj(Class);
-		((VEntity*)Ret)->Origin = AOrigin;
-		((VEntity*)Ret)->Angles = AAngles;
-		((VEntity*)Ret)->eventOnMapSpawn(mthing);
-	}
-	else
-	{
-		Ret = (VThinker*)VObject::StaticSpawnObject(Class);
-		Self->XLevel->AddThinker(Ret);
-	}
-	RET_REF(Ret);
-//	RET_REF(Self->XLevel->SpawnThinker(Class, AOrigin, AAngles, mthing);
+	RET_REF(Self->XLevel->SpawnThinker(Class, AOrigin, AAngles, mthing));
 }
 
 IMPLEMENT_FUNCTION(VThinker, Destroy)

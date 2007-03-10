@@ -384,24 +384,30 @@ void SV_AddEntity(VEntity* Ent)
 
 //==========================================================================
 //
-//	SV_SpawnMobj
+//	VLevel::SpawnThinker
 //
 //==========================================================================
 
-VEntity *SV_SpawnMobj(VClass *Class)
+VThinker* VLevel::SpawnThinker(VClass* Class, const TVec& AOrigin,
+	const TAVec& AAngles, mthing_t* mthing)
 {
-	guard(SV_SpawnMobj);
-	VEntity* Ent = (VEntity*)VObject::StaticSpawnObject(Class);
-	GLevel->AddThinker(Ent);
+	guard(VLevel::SpawnThinker);
+	VThinker* Ret = (VThinker*)StaticSpawnObject(Class);
+	AddThinker(Ret);
 
-	SV_AddEntity(Ent);
-
-	if (GLevelInfo->LevelInfoFlags & VLevelInfo::LIF_BegunPlay)
+	if (this == GLevel && Class->IsChildOf(VEntity::StaticClass()))
 	{
-		Ent->eventBeginPlay();
+		SV_AddEntity((VEntity*)Ret);
+		if (GLevelInfo->LevelInfoFlags & VLevelInfo::LIF_BegunPlay)
+		{
+			((VEntity*)Ret)->eventBeginPlay();
+		}
+		((VEntity*)Ret)->Origin = AOrigin;
+		((VEntity*)Ret)->Angles = AAngles;
+		((VEntity*)Ret)->eventOnMapSpawn(mthing);
 	}
 
-	return Ent;
+	return Ret;
 	unguard;
 }
 
@@ -2665,9 +2671,8 @@ void SV_SpawnServer(const char *mapname, bool spawn_thinkers)
 
 	if (spawn_thinkers)
 	{
-		GLevelInfo = (VLevelInfo*)VObject::StaticSpawnObject(
+		GLevelInfo = (VLevelInfo*)GLevel->SpawnThinker(
 			GGameInfo->LevelInfoClass);
-		GLevel->AddThinker(GLevelInfo);
 		GLevelInfo->Level = GLevelInfo;
 		GLevel->LevelInfo = GLevelInfo;
 		if (info.Gravity)

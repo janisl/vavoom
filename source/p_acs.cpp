@@ -1532,8 +1532,7 @@ VAcs* VAcsLevel::SpawnScript(VAcsInfo* Info, VAcsObject* Object,
 		return Info->RunningScript;
 	}
 
-	VAcs* script = Spawn<VAcs>();
-	XLevel->AddThinker(script);
+	VAcs* script = (VAcs*)XLevel->SpawnThinker(VAcs::StaticClass());
 	script->info = Info;
 	script->number = Info->Number;
 	script->InstructionPointer = Info->Address;
