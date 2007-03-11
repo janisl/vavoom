@@ -443,6 +443,7 @@ void VSoftwareDrawer::NewMap()
 		CalcRGBTable8();
 	}
 
+	ForcePaletteUpdate = true;
 	FlushCaches(false);
 	unguard;
 }
