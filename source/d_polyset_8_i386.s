@@ -1192,7 +1192,7 @@ LRGBDraw8:
 	movb	(%esi),%al
 	movw	C(d_fadetable16b)(,%eax,2),%ax
 	orw		Ltemp,%ax
-	movb	C(r_rgbtable)(,%eax,2),%al
+	movb	C(r_rgbtable)(%eax),%al
 	movb	%al,(%edi)
 LRGBp1:
 	movl	gbstep,%eax
@@ -1221,7 +1221,7 @@ LRGBDraw7:
 	movb	(%esi),%al
 	movw	C(d_fadetable16b)(,%eax,2),%ax
 	orw		Ltemp,%ax
-	movb	C(r_rgbtable)(,%eax,2),%al
+	movb	C(r_rgbtable)(%eax),%al
 	movb	%al,1(%edi)
 LRGBp2:
 	movl	gbstep,%eax
@@ -1250,7 +1250,7 @@ LRGBDraw6:
 	movb	(%esi),%al
 	movw	C(d_fadetable16b)(,%eax,2),%ax
 	orw		Ltemp,%ax
-	movb	C(r_rgbtable)(,%eax,2),%al
+	movb	C(r_rgbtable)(%eax),%al
 	movb	%al,2(%edi)
 LRGBp3:
 	movl	gbstep,%eax
@@ -1279,7 +1279,7 @@ LRGBDraw5:
 	movb	(%esi),%al
 	movw	C(d_fadetable16b)(,%eax,2),%ax
 	orw		Ltemp,%ax
-	movb	C(r_rgbtable)(,%eax,2),%al
+	movb	C(r_rgbtable)(%eax),%al
 	movb	%al,3(%edi)
 LRGBp4:
 	movl	gbstep,%eax
@@ -1308,7 +1308,7 @@ LRGBDraw4:
 	movb	(%esi),%al
 	movw	C(d_fadetable16b)(,%eax,2),%ax
 	orw		Ltemp,%ax
-	movb	C(r_rgbtable)(,%eax,2),%al
+	movb	C(r_rgbtable)(%eax),%al
 	movb	%al,4(%edi)
 LRGBp5:
 	movl	gbstep,%eax
@@ -1337,7 +1337,7 @@ LRGBDraw3:
 	movb	(%esi),%al
 	movw	C(d_fadetable16b)(,%eax,2),%ax
 	orw		Ltemp,%ax
-	movb	C(r_rgbtable)(,%eax,2),%al
+	movb	C(r_rgbtable)(%eax),%al
 	movb	%al,5(%edi)
 LRGBp6:
 	movl	gbstep,%eax
@@ -1366,7 +1366,7 @@ LRGBDraw2:
 	movb	(%esi),%al
 	movw	C(d_fadetable16b)(,%eax,2),%ax
 	orw		Ltemp,%ax
-	movb	C(r_rgbtable)(,%eax,2),%al
+	movb	C(r_rgbtable)(%eax),%al
 	movb	%al,6(%edi)
 LRGBp7:
 	movl	gbstep,%eax
@@ -1395,7 +1395,7 @@ LRGBDraw1:
 	movb	(%esi),%al
 	movw	C(d_fadetable16b)(,%eax,2),%ax
 	orw		Ltemp,%ax
-	movb	C(r_rgbtable)(,%eax,2),%al
+	movb	C(r_rgbtable)(%eax),%al
 	movb	%al,7(%edi)
 LRGBp8:
 	movl	gbstep,%eax
@@ -1456,7 +1456,7 @@ LRGBExactlyOneLong:
 	movb	(%ebx),%al
 	movw	C(d_fadetable16b)(,%eax,2),%ax
 	orw		Ltemp,%ax
-	movb	C(r_rgbtable)(,%eax,2),%al
+	movb	C(r_rgbtable)(%eax),%al
 	movb	%al,(%edi)
 
 	jmp		LRGBNextSpanESISet
@@ -1620,7 +1620,7 @@ LRGBFuzzDraw8:
 	movb	(%esi),%al
 	movw	C(d_fadetable16b)(,%eax,2),%ax
 	orw		Ltemp,%ax
-	movb	C(r_rgbtable)(,%eax,2),%ah
+	movb	C(r_rgbtable)(%eax),%ah
 	movb	(%edi),%al
 	addl	C(d_transluc),%eax
 	movb	(%eax),%al
@@ -1652,7 +1652,7 @@ LRGBFuzzDraw7:
 	movb	(%esi),%al
 	movw	C(d_fadetable16b)(,%eax,2),%ax
 	orw		Ltemp,%ax
-	movb	C(r_rgbtable)(,%eax,2),%ah
+	movb	C(r_rgbtable)(%eax),%ah
 	movb	1(%edi),%al
 	addl	C(d_transluc),%eax
 	movb	(%eax),%al
@@ -1684,7 +1684,7 @@ LRGBFuzzDraw6:
 	movb	(%esi),%al
 	movw	C(d_fadetable16b)(,%eax,2),%ax
 	orw		Ltemp,%ax
-	movb	C(r_rgbtable)(,%eax,2),%ah
+	movb	C(r_rgbtable)(%eax),%ah
 	movb	2(%edi),%al
 	addl	C(d_transluc),%eax
 	movb	(%eax),%al
@@ -1716,7 +1716,7 @@ LRGBFuzzDraw5:
 	movb	(%esi),%al
 	movw	C(d_fadetable16b)(,%eax,2),%ax
 	orw		Ltemp,%ax
-	movb	C(r_rgbtable)(,%eax,2),%ah
+	movb	C(r_rgbtable)(%eax),%ah
 	movb	3(%edi),%al
 	addl	C(d_transluc),%eax
 	movb	(%eax),%al
@@ -1748,7 +1748,7 @@ LRGBFuzzDraw4:
 	movb	(%esi),%al
 	movw	C(d_fadetable16b)(,%eax,2),%ax
 	orw		Ltemp,%ax
-	movb	C(r_rgbtable)(,%eax,2),%ah
+	movb	C(r_rgbtable)(%eax),%ah
 	movb	4(%edi),%al
 	addl	C(d_transluc),%eax
 	movb	(%eax),%al
@@ -1780,7 +1780,7 @@ LRGBFuzzDraw3:
 	movb	(%esi),%al
 	movw	C(d_fadetable16b)(,%eax,2),%ax
 	orw		Ltemp,%ax
-	movb	C(r_rgbtable)(,%eax,2),%ah
+	movb	C(r_rgbtable)(%eax),%ah
 	movb	5(%edi),%al
 	addl	C(d_transluc),%eax
 	movb	(%eax),%al
@@ -1812,7 +1812,7 @@ LRGBFuzzDraw2:
 	movb	(%esi),%al
 	movw	C(d_fadetable16b)(,%eax,2),%ax
 	orw		Ltemp,%ax
-	movb	C(r_rgbtable)(,%eax,2),%ah
+	movb	C(r_rgbtable)(%eax),%ah
 	movb	6(%edi),%al
 	addl	C(d_transluc),%eax
 	movb	(%eax),%al
@@ -1844,7 +1844,7 @@ LRGBFuzzDraw1:
 	movb	(%esi),%al
 	movw	C(d_fadetable16b)(,%eax,2),%ax
 	orw		Ltemp,%ax
-	movb	C(r_rgbtable)(,%eax,2),%ah
+	movb	C(r_rgbtable)(%eax),%ah
 	movb	7(%edi),%al
 	addl	C(d_transluc),%eax
 	movb	(%eax),%al
@@ -1908,7 +1908,7 @@ LRGBFuzzExactlyOneLong:
 	movb	(%ebx),%al
 	movw	C(d_fadetable16b)(,%eax,2),%ax
 	orw		Ltemp,%ax
-	movb	C(r_rgbtable)(,%eax,2),%ah
+	movb	C(r_rgbtable)(%eax),%ah
 	movb	(%edi),%al
 	addl	C(d_transluc),%eax
 	movb	(%eax),%al
@@ -2075,7 +2075,7 @@ LRGBAltFuzzDraw8:
 	movb	(%esi),%al
 	movw	C(d_fadetable16b)(,%eax,2),%ax
 	orw		Ltemp,%ax
-	movb	C(r_rgbtable)(,%eax,2),%al
+	movb	C(r_rgbtable)(%eax),%al
 	movb	(%edi),%ah
 	addl	C(d_transluc),%eax
 	movb	(%eax),%al
@@ -2107,7 +2107,7 @@ LRGBAltFuzzDraw7:
 	movb	(%esi),%al
 	movw	C(d_fadetable16b)(,%eax,2),%ax
 	orw		Ltemp,%ax
-	movb	C(r_rgbtable)(,%eax,2),%al
+	movb	C(r_rgbtable)(%eax),%al
 	movb	1(%edi),%ah
 	addl	C(d_transluc),%eax
 	movb	(%eax),%al
@@ -2139,7 +2139,7 @@ LRGBAltFuzzDraw6:
 	movb	(%esi),%al
 	movw	C(d_fadetable16b)(,%eax,2),%ax
 	orw		Ltemp,%ax
-	movb	C(r_rgbtable)(,%eax,2),%al
+	movb	C(r_rgbtable)(%eax),%al
 	movb	2(%edi),%ah
 	addl	C(d_transluc),%eax
 	movb	(%eax),%al
@@ -2171,7 +2171,7 @@ LRGBAltFuzzDraw5:
 	movb	(%esi),%al
 	movw	C(d_fadetable16b)(,%eax,2),%ax
 	orw		Ltemp,%ax
-	movb	C(r_rgbtable)(,%eax,2),%al
+	movb	C(r_rgbtable)(%eax),%al
 	movb	3(%edi),%ah
 	addl	C(d_transluc),%eax
 	movb	(%eax),%al
@@ -2203,7 +2203,7 @@ LRGBAltFuzzDraw4:
 	movb	(%esi),%al
 	movw	C(d_fadetable16b)(,%eax,2),%ax
 	orw		Ltemp,%ax
-	movb	C(r_rgbtable)(,%eax,2),%al
+	movb	C(r_rgbtable)(%eax),%al
 	movb	4(%edi),%ah
 	addl	C(d_transluc),%eax
 	movb	(%eax),%al
@@ -2235,7 +2235,7 @@ LRGBAltFuzzDraw3:
 	movb	(%esi),%al
 	movw	C(d_fadetable16b)(,%eax,2),%ax
 	orw		Ltemp,%ax
-	movb	C(r_rgbtable)(,%eax,2),%al
+	movb	C(r_rgbtable)(%eax),%al
 	movb	5(%edi),%ah
 	addl	C(d_transluc),%eax
 	movb	(%eax),%al
@@ -2267,7 +2267,7 @@ LRGBAltFuzzDraw2:
 	movb	(%esi),%al
 	movw	C(d_fadetable16b)(,%eax,2),%ax
 	orw		Ltemp,%ax
-	movb	C(r_rgbtable)(,%eax,2),%al
+	movb	C(r_rgbtable)(%eax),%al
 	movb	6(%edi),%ah
 	addl	C(d_transluc),%eax
 	movb	(%eax),%al
@@ -2299,7 +2299,7 @@ LRGBAltFuzzDraw1:
 	movb	(%esi),%al
 	movw	C(d_fadetable16b)(,%eax,2),%ax
 	orw		Ltemp,%ax
-	movb	C(r_rgbtable)(,%eax,2),%al
+	movb	C(r_rgbtable)(%eax),%al
 	movb	7(%edi),%ah
 	addl	C(d_transluc),%eax
 	movb	(%eax),%al
@@ -2363,7 +2363,7 @@ LRGBAltFuzzExactlyOneLong:
 	movb	(%ebx),%al
 	movw	C(d_fadetable16b)(,%eax,2),%ax
 	orw		Ltemp,%ax
-	movb	C(r_rgbtable)(,%eax,2),%al
+	movb	C(r_rgbtable)(%eax),%al
 	movb	(%edi),%ah
 	addl	C(d_transluc),%eax
 	movb	(%eax),%al
