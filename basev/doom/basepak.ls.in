@@ -120,5 +120,4 @@ language.en				@srcdir@/language.en
 
 //	Generated data
 $load @srcdir@/palette.pcx
-rgbtable.dat			rgbtable
 translat.dat			raw 0 0 256 8

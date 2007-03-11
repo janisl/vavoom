@@ -885,7 +885,7 @@ void VRenderLevel::PrecacheLevel()
 
 //==========================================================================
 //
-// 	InitTranslationTables
+//	InitTranslationTables
 //
 //==========================================================================
 
@@ -961,12 +961,36 @@ void R_InitData()
 	}
 	delete Strm;
 
-	//	Load RGB table.
-	Strm = W_CreateLumpReaderName(NAME_rgbtable);
-	check(Strm);
-	check(Strm->TotalSize() == 0x8001);
-	Strm->Serialise(r_rgbtable, 0x8001);
-	delete Strm;
+	//	Calculate RGB table.
+	for (int ir = 0; ir < 32; ir++)
+	{
+		for (int ig = 0; ig < 32; ig++)
+		{
+			for (int ib = 0; ib < 32; ib++)
+			{
+				int r = (int)(ir * 255.0 / 31.0 + 0.5);
+				int g = (int)(ig * 255.0 / 31.0 + 0.5);
+				int b = (int)(ib * 255.0 / 31.0 + 0.5);
+				int best_colour = 0;
+				int best_dist = 0x1000000;
+				for (int i = 1; i < 256; i++)
+				{
+					int dist = (r_palette[i].r - r) * (r_palette[i].r - r) +
+						(r_palette[i].g - g) * (r_palette[i].g - g) +
+						(r_palette[i].b - b) * (r_palette[i].b - b);
+					if (dist < best_dist)
+					{
+						best_colour = i;
+						best_dist = dist;
+						if (!dist)
+							break;
+					}
+				}
+				r_rgbtable[(ir << 10) + (ig << 5) + ib] = best_colour;
+			}
+		}
+	}
+	r_rgbtable[32 * 32 * 32] = 0;
 
 	InitTranslationTables();
 	unguard;
