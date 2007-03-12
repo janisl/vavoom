@@ -29,7 +29,7 @@
 //**
 //**************************************************************************
 
-class VMessageIn
+class VMessageIn : public VStream
 {
 public:
 	VMessageIn()
@@ -60,23 +60,23 @@ public:
 	//	reading functions
 	//
 	void BeginReading();
-	VMessageIn& operator >> (vint8& c);
+	VMessageIn& operator >> (vint8& c) { *this << c; return *this; }
 	VMessageIn& operator >> (vuint8& c)  { return operator >> ((vint8&)c); }
-	VMessageIn& operator >> (vint16& c);
+	VMessageIn& operator >> (vint16& c) { *this << c; return *this; }
 	VMessageIn& operator >> (vuint16& c)  { return operator >> ((vint16&)c); }
-	VMessageIn& operator >> (vint32& c);
+	VMessageIn& operator >> (vint32& c) { *this << c; return *this; }
 	VMessageIn& operator >> (vuint32& c) { return operator >> ((vint32&)c); }
-	VMessageIn& operator >> (float& f);
-	VMessageIn& operator >> (const char*& s);
-	VMessageIn& operator >> (VStr& s);
+	VMessageIn& operator >> (float& f) { *this << f; return *this; }
+	VMessageIn& operator >> (const char*& s) { s = ReadString(); return *this; }
+	VMessageIn& operator >> (VStr& s) { *this << s; return *this; }
 	VMessageIn& operator >> (VMessageIn& msg);
 
-	vuint8 ReadByte();
-	vint16 ReadShort();
+	vuint8 ReadByte() { vuint8 c; *this << c; return c; }
+	vint16 ReadShort() { vint16	c; *this << c; return c; }
 	const char* ReadString();
 };
 
-class VMessageOut
+class VMessageOut : public VStream
 {
 public:
 	VMessageOut()
@@ -113,17 +113,83 @@ public:
 	//
 	//	writing functions
 	//
-	VMessageOut& operator << (vint8 c);
-	VMessageOut& operator << (vuint8 c)  { return operator << ((vint8)c); }
-	VMessageOut& operator << (vint16 c);
-	VMessageOut& operator << (vuint16 c)  { return operator << ((vint16)c); }
-	VMessageOut& operator << (vint32 c);
-	VMessageOut& operator << (vuint32 c) { return operator << ((vint32)c); }
-	VMessageOut& operator << (float c);
-	VMessageOut& operator << (const char* c);
-	VMessageOut& operator << (const VStr& c);
 	VMessageOut& operator << (const VMessageOut& msg);
 };
+
+inline VMessageOut& operator << (VMessageOut& Msg, const vuint8& Val)
+{
+	((VStream&)Msg) << const_cast<vuint8&>(Val);
+	return Msg;
+}
+inline VMessageOut& operator << (VMessageOut& Msg, vuint8& Val)
+{
+	((VStream&)Msg) << Val;
+	return Msg;
+}
+inline VMessageOut& operator << (VMessageOut& Msg, const vuint16& Val)
+{
+	((VStream&)Msg) << const_cast<vuint16&>(Val);
+	return Msg;
+}
+inline VMessageOut& operator << (VMessageOut& Msg, vuint16& Val)
+{
+	((VStream&)Msg) << Val;
+	return Msg;
+}
+inline VMessageOut& operator << (VMessageOut& Msg, const vint16& Val)
+{
+	((VStream&)Msg) << const_cast<vint16&>(Val);
+	return Msg;
+}
+inline VMessageOut& operator << (VMessageOut& Msg, vint16& Val)
+{
+	((VStream&)Msg) << Val;
+	return Msg;
+}
+inline VMessageOut& operator << (VMessageOut& Msg, const vint32& Val)
+{
+	((VStream&)Msg) << const_cast<vint32&>(Val);
+	return Msg;
+}
+inline VMessageOut& operator << (VMessageOut& Msg, vint32& Val)
+{
+	((VStream&)Msg) << Val;
+	return Msg;
+}
+inline VMessageOut& operator << (VMessageOut& Msg, const vuint32& Val)
+{
+	((VStream&)Msg) << const_cast<vuint32&>(Val);
+	return Msg;
+}
+inline VMessageOut& operator << (VMessageOut& Msg, vuint32& Val)
+{
+	((VStream&)Msg) << Val;
+	return Msg;
+}
+inline VMessageOut& operator << (VMessageOut& Msg, const float& Val)
+{
+	((VStream&)Msg) << const_cast<float&>(Val);
+	return Msg;
+}
+inline VMessageOut& operator << (VMessageOut& Msg, float& Val)
+{
+	((VStream&)Msg) << Val;
+	return Msg;
+}
+inline VMessageOut& operator << (VMessageOut& Msg, const VStr& Val)
+{
+	((VStream&)Msg) << const_cast<VStr&>(Val);
+	return Msg;
+}
+inline VMessageOut& operator << (VMessageOut& Msg, VStr& Val)
+{
+	((VStream&)Msg) << Val;
+	return Msg;
+}
+inline VMessageOut& operator << (VMessageOut& Msg, const char* s)
+{
+	return Msg << VStr(s);
+}
 
 inline float ByteToAngle(vuint8 angle)
 {
