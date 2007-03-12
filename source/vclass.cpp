@@ -1045,7 +1045,7 @@ bool VField::IdenticalValue(const vuint8* Val1, const vuint8* Val2,
 //
 //==========================================================================
 
-void VField::NetReadValue(VMessage& Msg, vuint8* Data, const VField::FType& Type)
+void VField::NetReadValue(VMessageIn& Msg, vuint8* Data, const VField::FType& Type)
 {
 	guard(VField::NetReadValue);
 	VField::FType IntType;
@@ -1097,7 +1097,7 @@ void VField::NetReadValue(VMessage& Msg, vuint8* Data, const VField::FType& Type
 //
 //==========================================================================
 
-void VField::NetWriteValue(VMessage& Msg, vuint8* Data, const VField::FType& Type)
+void VField::NetWriteValue(VMessageOut& Msg, vuint8* Data, const VField::FType& Type)
 {
 	guard(VField::NetWriteValue);
 	VField::FType IntType;
@@ -2247,7 +2247,7 @@ bool VStruct::IdenticalObject(const vuint8* Val1, const vuint8* Val2)
 //
 //==========================================================================
 
-void VStruct::NetReadObject(VMessage& Msg, vuint8* Data)
+void VStruct::NetReadObject(VMessageIn& Msg, vuint8* Data)
 {
 	guard(VStruct::NetReadObject);
 	//	Read parent struct's fields.
@@ -2269,7 +2269,7 @@ void VStruct::NetReadObject(VMessage& Msg, vuint8* Data)
 //
 //==========================================================================
 
-void VStruct::NetWriteObject(VMessage& Msg, vuint8* Data)
+void VStruct::NetWriteObject(VMessageOut& Msg, vuint8* Data)
 {
 	guard(VStruct::NetWriteObject);
 	//	Write parent struct's fields.

@@ -29,10 +29,57 @@
 //**
 //**************************************************************************
 
-class VMessage
+class VMessageIn
 {
 public:
-	VMessage()
+	VMessageIn()
+	{
+		Data = NULL;
+		MaxSize = 0;
+		CurSize = 0;
+	}
+	~VMessageIn()
+	{
+		Free();
+	}
+
+	vint8	BadRead;
+	vuint8*	Data;
+	vint32	MaxSize;
+	vint32	CurSize;
+	vint32	ReadCount;
+
+	//	VStream interface
+	void Serialise(void*, int);
+
+	void Alloc(vint32 startsize);
+	void Free();
+	void SetData(const void* data, vint32 length);
+
+	//
+	//	reading functions
+	//
+	void BeginReading();
+	VMessageIn& operator >> (vint8& c);
+	VMessageIn& operator >> (vuint8& c)  { return operator >> ((vint8&)c); }
+	VMessageIn& operator >> (vint16& c);
+	VMessageIn& operator >> (vuint16& c)  { return operator >> ((vint16&)c); }
+	VMessageIn& operator >> (vint32& c);
+	VMessageIn& operator >> (vuint32& c) { return operator >> ((vint32&)c); }
+	VMessageIn& operator >> (float& f);
+	VMessageIn& operator >> (const char*& s);
+	VMessageIn& operator >> (VStr& s);
+	VMessageIn& operator >> (VMessageIn& msg);
+
+	vuint8 ReadByte();
+	vint16 ReadShort();
+	const char* ReadString();
+};
+
+class VMessageOut
+{
+public:
+	VMessageOut()
 	{
 		AllowOverflow = false;
 		Overflowed = false;
@@ -40,20 +87,24 @@ public:
 		MaxSize = 0;
 		CurSize = 0;
 	}
-	VMessage(vuint8* AData, vint32 ASize)
+	~VMessageOut()
 	{
-		AllowOverflow = false;
-		Overflowed = false;
-		Data = AData;
-		MaxSize = ASize;
-		CurSize = 0;
+		Free();
 	}
+
+	vint8	AllowOverflow;	// if false, do a Sys_Error
+	vint8	Overflowed;		// set to true if the buffer size failed
+	vuint8*	Data;
+	vint32	MaxSize;
+	vint32	CurSize;
+
+	//	VStream interface
+	void Serialise(void*, int);
 
 	void Alloc(vint32 startsize);
 	void Free();
 	void Clear();
 	void* GetSpace(vint32 length);
-	void Write(const void* data, vint32 length);
 	bool CheckSpace(vint32 length) const
 	{
 		return CurSize + length <= MaxSize;
@@ -62,43 +113,16 @@ public:
 	//
 	//	writing functions
 	//
-	VMessage& operator << (vint8 c);
-	VMessage& operator << (vuint8 c)  { return operator << ((vint8)c); }
-	VMessage& operator << (vint16 c);
-	VMessage& operator << (vuint16 c)  { return operator << ((vint16)c); }
-	VMessage& operator << (vint32 c);
-	VMessage& operator << (vuint32 c) { return operator << ((vint32)c); }
-	VMessage& operator << (float c);
-	VMessage& operator << (const char* c);
-	VMessage& operator << (const VStr& c);
-	VMessage& operator << (const VMessage& msg);
-
-	//
-	//	reading functions
-	//
-	void BeginReading();
-	VMessage& operator >> (vint8& c);
-	VMessage& operator >> (vuint8& c)  { return operator >> ((vint8&)c); }
-	VMessage& operator >> (vint16& c);
-	VMessage& operator >> (vuint16& c)  { return operator >> ((vint16&)c); }
-	VMessage& operator >> (vint32& c);
-	VMessage& operator >> (vuint32& c) { return operator >> ((vint32&)c); }
-	VMessage& operator >> (float& f);
-	VMessage& operator >> (const char*& s);
-	VMessage& operator >> (VStr& s);
-	VMessage& operator >> (VMessage& msg);
-
-	vuint8 ReadByte();
-	vint16 ReadShort();
-	const char* ReadString();
-
-	vint8	AllowOverflow;	// if false, do a Sys_Error
-	vint8	Overflowed;		// set to true if the buffer size failed
-	vint8	BadRead;
-	vuint8*	Data;
-	vint32	MaxSize;
-	vint32	CurSize;
-	vint32	ReadCount;
+	VMessageOut& operator << (vint8 c);
+	VMessageOut& operator << (vuint8 c)  { return operator << ((vint8)c); }
+	VMessageOut& operator << (vint16 c);
+	VMessageOut& operator << (vuint16 c)  { return operator << ((vint16)c); }
+	VMessageOut& operator << (vint32 c);
+	VMessageOut& operator << (vuint32 c) { return operator << ((vint32)c); }
+	VMessageOut& operator << (float c);
+	VMessageOut& operator << (const char* c);
+	VMessageOut& operator << (const VStr& c);
+	VMessageOut& operator << (const VMessageOut& msg);
 };
 
 inline float ByteToAngle(vuint8 angle)

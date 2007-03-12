@@ -118,7 +118,7 @@ void CL_StopPlayback()
 //
 //==========================================================================
 
-void CL_WriteDemoMessage(VMessage& msg)
+void CL_WriteDemoMessage(VMessageIn& msg)
 {
 	guard(CL_WriteDemoMessage);
 	*cls.demofile << msg.CurSize;
@@ -218,8 +218,8 @@ void CL_StopRecording()
 {
 	guard(CL_StopRecording);
 	// write a disconnect message to the demo file
-	GNet->NetMsg.Clear();
-	GNet->NetMsg << (byte)svc_disconnect;
+	vuint8 EndMsg[1] = { (vuint8)svc_disconnect };
+	GNet->NetMsg.SetData(EndMsg, 1);
 	CL_WriteDemoMessage(GNet->NetMsg);
 
 	// finish up

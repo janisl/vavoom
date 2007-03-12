@@ -599,8 +599,6 @@ static void BuildTiccmd(ticcmd_t* cmd)
 void CL_SendMove()
 {
 	guard(CL_SendMove);
-	byte		buf[MAX_DATAGRAM];
-	VMessage	msg(buf, MAX_DATAGRAM);
 	ticcmd_t	cmd;
 
 	if (cls.state != ca_connected)
@@ -619,7 +617,9 @@ void CL_SendMove()
 		AdjustAngles();
 		BuildTiccmd(&cmd);
 		mousex = mousey = 0;
-		msg.Clear();
+
+		VMessageOut msg;
+		msg.Alloc(MAX_DATAGRAM);
 		msg << (byte)clc_move
 			<< (byte)(AngleToByte(cl->ViewAngles.yaw))
 			<< (byte)(AngleToByte(cl->ViewAngles.pitch))
@@ -629,7 +629,6 @@ void CL_SendMove()
 			<< cmd.flymove
 			<< cmd.buttons
 			<< cmd.impulse;
-
 		cls.netcon->SendUnreliableMessage(&msg);
 	}
 

@@ -43,8 +43,8 @@ public:
 
 	virtual bool IsLocalConnection() = 0;
 	virtual int GetMessage() = 0;
-	virtual int SendMessage(VMessage*) = 0;
-	virtual int SendUnreliableMessage(VMessage*) = 0;
+	virtual int SendMessage(VMessageOut*) = 0;
+	virtual int SendUnreliableMessage(VMessageOut*) = 0;
 	virtual bool CanSendMessage() = 0;
 	virtual void Close() = 0;
 };
@@ -90,7 +90,7 @@ class VNetworkPublic : public VVirtualObjectBase
 {
 public:
 	//	Public API
-	VMessage		NetMsg;
+	VMessageIn		NetMsg;
 
 	bool			ConnectBot;
 

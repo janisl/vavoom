@@ -47,13 +47,15 @@
 
 //==========================================================================
 //
-//  VMessage::Alloc
+//  VMessageOut::Alloc
 //
 //==========================================================================
 
-void VMessage::Alloc(vint32 startsize)
+void VMessageOut::Alloc(vint32 startsize)
 {
-	guard(VMessage::Alloc);
+	guard(VMessageOut::Alloc);
+	if (Data)
+		Z_Free(Data);
 	int AllocSize = startsize;
 	if (AllocSize < 256)
 		AllocSize = 256;
@@ -66,13 +68,13 @@ void VMessage::Alloc(vint32 startsize)
 
 //==========================================================================
 //
-//  VMessage::Free
+//  VMessageOut::Free
 //
 //==========================================================================
 
-void VMessage::Free()
+void VMessageOut::Free()
 {
-	guard(VMessage::Free);
+	guard(VMessageOut::Free);
 	Z_Free(Data);
 	Data = NULL;
 	MaxSize = 0;
@@ -82,24 +84,24 @@ void VMessage::Free()
 
 //==========================================================================
 //
-//  VMessage::Clear
+//  VMessageOut::Clear
 //
 //==========================================================================
 
-void VMessage::Clear()
+void VMessageOut::Clear()
 {
 	CurSize = 0;
 }
 
 //==========================================================================
 //
-//  VMessage::GetSpace
+//  VMessageOut::GetSpace
 //
 //==========================================================================
 
-void* VMessage::GetSpace(vint32 length)
+void* VMessageOut::GetSpace(vint32 length)
 {
-	guard(VMessage::GetSpace);
+	guard(VMessageOut::GetSpace);
 	if (CurSize + length > MaxSize)
 	{
 		if (!AllowOverflow)
@@ -122,26 +124,26 @@ void* VMessage::GetSpace(vint32 length)
 
 //==========================================================================
 //
-//  VMessage::Write
+//  VMessageOut::Serialise
 //
 //==========================================================================
 
-void VMessage::Write(const void* data, vint32 length)
+void VMessageOut::Serialise(void* data, vint32 length)
 {
-	guard(VMessage::Write);
+	guard(VMessageOut::Serialise);
 	memcpy(GetSpace(length), data, length);
 	unguard;
 }
 
 //==========================================================================
 //
-//  VMessage::operator << vint8
+//  VMessageOut::operator << vint8
 //
 //==========================================================================
 
-VMessage& VMessage::operator << (vint8 c)
+VMessageOut& VMessageOut::operator << (vint8 c)
 {
-	guard(VMessage::operator << vint8);
+	guard(VMessageOut::operator << vint8);
 	vuint8* buf = (vuint8*)GetSpace(1);
 	buf[0] = c;
 
@@ -151,13 +153,13 @@ VMessage& VMessage::operator << (vint8 c)
 
 //==========================================================================
 //
-//  VMessage::operator << vint16
+//  VMessageOut::operator << vint16
 //
 //==========================================================================
 
-VMessage& VMessage::operator << (vint16 c)
+VMessageOut& VMessageOut::operator << (vint16 c)
 {
-	guard(VMessage::operator << vint16);
+	guard(VMessageOut::operator << vint16);
 	vuint8* buf = (vuint8*)GetSpace(2);
 	buf[0] = c & 0xff;
 	buf[1] = (c >> 8) & 0xff;
@@ -168,13 +170,13 @@ VMessage& VMessage::operator << (vint16 c)
 
 //==========================================================================
 //
-//  VMessage::operator << vint32
+//  VMessageOut::operator << vint32
 //
 //==========================================================================
 
-VMessage& VMessage::operator << (vint32 c)
+VMessageOut& VMessageOut::operator << (vint32 c)
 {
-	guard(VMessage::operator << vint32);
+	guard(VMessageOut::operator << vint32);
 	vuint8* buf = (vuint8*)GetSpace(4);
 	buf[0] =  c        & 0xff;
 	buf[1] = (c >>  8) & 0xff;
@@ -187,13 +189,13 @@ VMessage& VMessage::operator << (vint32 c)
 
 //==========================================================================
 //
-//  VMessage::operator << float
+//  VMessageOut::operator << float
 //
 //==========================================================================
 
-VMessage& VMessage::operator << (float f)
+VMessageOut& VMessageOut::operator << (float f)
 {
-	guard(VMessage::operator << float);
+	guard(VMessageOut::operator << float);
 	union
 	{
 		vuint8	b[4];
@@ -212,17 +214,17 @@ VMessage& VMessage::operator << (float f)
 
 //==========================================================================
 //
-//  VMessage::operator << const char*
+//  VMessageOut::operator << const char*
 //
 //==========================================================================
 
-VMessage& VMessage::operator << (const char* s)
+VMessageOut& VMessageOut::operator << (const char* s)
 {
-	guard(VMessage::operator << const char*);
+	guard(VMessageOut::operator << const char*);
 	if (!s)
-		Write("", 1);
+		Serialise(const_cast<char*>(""), 1);
 	else
-		Write(s, VStr::Length(s) + 1);
+		Serialise(const_cast<char*>(s), VStr::Length(s) + 1);
 
 	return *this;
 	unguard;
@@ -230,38 +232,88 @@ VMessage& VMessage::operator << (const char* s)
 
 //==========================================================================
 //
-//  VMessage::operator << VStr
+//  VMessageOut::operator << VStr
 //
 //==========================================================================
 
-VMessage& VMessage::operator << (const VStr& s)
+VMessageOut& VMessageOut::operator << (const VStr& s)
 {
-	guard(VMessage::operator << VStr);
+	guard(VMessageOut::operator << VStr);
 	return *this << *s;
 	unguard;
 }
 
 //==========================================================================
 //
-//	VMessage::operator << VMessage
+//	VMessageOut::operator << VMessageOut
 //
 //==========================================================================
 
-VMessage& VMessage::operator << (const VMessage &msg)
+VMessageOut& VMessageOut::operator << (const VMessageOut &msg)
 {
-	guard(VMessage::operator << VMessage);
-	Write(msg.Data, msg.CurSize);
+	guard(VMessageOut::operator << VMessageOut);
+	Serialise(msg.Data, msg.CurSize);
 	return *this;
 	unguard;
 }
 
 //==========================================================================
 //
-//  VMessage::BeginReading
+//  VMessageIn::Alloc
 //
 //==========================================================================
 
-void VMessage::BeginReading()
+void VMessageIn::Alloc(vint32 startsize)
+{
+	guard(VMessageIn::Alloc);
+	int AllocSize = startsize;
+	if (AllocSize < 256)
+		AllocSize = 256;
+	Data = (vuint8*)Z_Malloc(AllocSize);
+	MaxSize = AllocSize;
+	CurSize = 0;
+	unguard;
+}
+
+//==========================================================================
+//
+//  VMessageIn::Free
+//
+//==========================================================================
+
+void VMessageIn::Free()
+{
+	guard(VMessageIn::Free);
+	Z_Free(Data);
+	Data = NULL;
+	MaxSize = 0;
+	CurSize = 0;
+	unguard;
+}
+
+//==========================================================================
+//
+//  VMessageIn::SetData
+//
+//==========================================================================
+
+void VMessageIn::SetData(const void* AData, vint32 ALength)
+{
+	guard(VMessageIn::SetData);
+	if (ALength > MaxSize)
+		Sys_Error("TSizeBuf::GetSpace: %i is > full buffer size", ALength);
+	memcpy(Data, AData, ALength);
+	CurSize = ALength;
+	unguard;
+}
+
+//==========================================================================
+//
+//  VMessageIn::BeginReading
+//
+//==========================================================================
+
+void VMessageIn::BeginReading()
 {
 	ReadCount = 0;
 	BadRead = false;
@@ -269,15 +321,37 @@ void VMessage::BeginReading()
 
 //==========================================================================
 //
-//  VMessage::operator >> vint8
+//  VMessageIn::Serialise
+//
+//==========================================================================
+
+void VMessageIn::Serialise(void* AData, int ALen)
+{
+	guard(VMessageIn::Serialise);
+	if (ReadCount + ALen > CurSize)
+	{
+		BadRead = true;
+		memset(AData, 0, ALen);
+	}
+	else
+	{
+		memcpy(AData, Data + ReadCount, ALen);
+		ReadCount += ALen;
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//  VMessageIn::operator >> vint8
 //
 //	Returns -1 and sets msg_badread if no more characters are available.
 //
 //==========================================================================
 
-VMessage& VMessage::operator >> (vint8& c)
+VMessageIn& VMessageIn::operator >> (vint8& c)
 {
-	guard(VMessage::operator >> vint8);
+	guard(VMessageIn::operator >> vint8);
 	if (ReadCount + 1 > CurSize)
 	{
 		BadRead = true;
@@ -294,13 +368,13 @@ VMessage& VMessage::operator >> (vint8& c)
 
 //==========================================================================
 //
-//  VMessage::operator >> vint16
+//  VMessageIn::operator >> vint16
 //
 //==========================================================================
 
-VMessage& VMessage::operator >> (vint16& c)
+VMessageIn& VMessageIn::operator >> (vint16& c)
 {
-	guard(VMessage::operator >> vint16);
+	guard(VMessageIn::operator >> vint16);
 	if (ReadCount + 2 > CurSize)
 	{
 		BadRead = true;
@@ -317,13 +391,13 @@ VMessage& VMessage::operator >> (vint16& c)
 
 //==========================================================================
 //
-//  VMessage::operator >> vint32
+//  VMessageIn::operator >> vint32
 //
 //==========================================================================
 
-VMessage& VMessage::operator >> (vint32& c)
+VMessageIn& VMessageIn::operator >> (vint32& c)
 {
-	guard(VMessage::operator >> vint32);
+	guard(VMessageIn::operator >> vint32);
 	if (ReadCount + 4 > CurSize)
 	{
 		BadRead = true;
@@ -343,13 +417,13 @@ VMessage& VMessage::operator >> (vint32& c)
 
 //==========================================================================
 //
-//  VMessage::operator >> float
+//  VMessageIn::operator >> float
 //
 //==========================================================================
 
-VMessage& VMessage::operator >> (float& f)
+VMessageIn& VMessageIn::operator >> (float& f)
 {
-	guard(VMessage::operator >> float);
+	guard(VMessageIn::operator >> float);
 	if (ReadCount + 4 > CurSize)
 	{
 		BadRead = true;
@@ -375,13 +449,13 @@ VMessage& VMessage::operator >> (float& f)
 
 //==========================================================================
 //
-//  VMessage::operator >> const char*
+//  VMessageIn::operator >> const char*
 //
 //==========================================================================
 
-VMessage& VMessage::operator >> (const char*& s)
+VMessageIn& VMessageIn::operator >> (const char*& s)
 {
-	guard(VMessage::operator >> const char*);
+	guard(VMessageIn::operator >> const char*);
 	s = ReadString();
 	return *this;
 	unguard;
@@ -389,11 +463,11 @@ VMessage& VMessage::operator >> (const char*& s)
 
 //==========================================================================
 //
-//  VMessage::operator >> VStr
+//  VMessageIn::operator >> VStr
 //
 //==========================================================================
 
-VMessage& VMessage::operator >> (VStr& s)
+VMessageIn& VMessageIn::operator >> (VStr& s)
 {
 	guard(VMessage::operator >> VStr);
 	s = ReadString();
@@ -403,11 +477,11 @@ VMessage& VMessage::operator >> (VStr& s)
 
 //==========================================================================
 //
-//  VMessage::ReadString
+//  VMessageIn::ReadString
 //
 //==========================================================================
 
-const char* VMessage::ReadString()
+const char* VMessageIn::ReadString()
 {
 	guard(VMessage::ReadString);
 	static char		string[2048];
@@ -440,17 +514,17 @@ const char* VMessage::ReadString()
 
 //==========================================================================
 //
-//  VMessage::operator >> VMessage
+//  VMessageIn::operator >> VMessageIn
 //
 //==========================================================================
 
-VMessage& VMessage::operator >> (VMessage& msg)
+VMessageIn& VMessageIn::operator >> (VMessageIn& msg)
 {
-	guard(VMessage::operator >> VMessage);
-	msg.Clear();
+	guard(VMessageIn::operator >> VMessageIn);
+	msg.CurSize = 0;
 	if (!BadRead)
 	{
-		msg.Write(Data + ReadCount, CurSize - ReadCount);
+		msg.SetData(Data + ReadCount, CurSize - ReadCount);
 		ReadCount = CurSize;
 	}
 	return *this;
@@ -459,15 +533,15 @@ VMessage& VMessage::operator >> (VMessage& msg)
 
 //==========================================================================
 //
-//  VMessage::ReadChar
+//  VMessageIn::ReadChar
 //
 //	Returns -1 and sets msg_badread if no more characters are available.
 //
 //==========================================================================
 
-vuint8 VMessage::ReadByte()
+vuint8 VMessageIn::ReadByte()
 {
-	guard(VMessage::ReadByte);
+	guard(VMessageIn::ReadByte);
 	vuint8	c;
 
 	if (ReadCount + 1 > CurSize)
@@ -486,13 +560,13 @@ vuint8 VMessage::ReadByte()
 
 //==========================================================================
 //
-//  VMessage::ReadShort
+//  VMessageIn::ReadShort
 //
 //==========================================================================
 
-vint16 VMessage::ReadShort()
+vint16 VMessageIn::ReadShort()
 {
-	guard(VMessage::ReadShort);
+	guard(VMessageIn::ReadShort);
 	vint16	c;
 
 	if (ReadCount + 2 > CurSize)

@@ -38,7 +38,7 @@
 void SV_ShutdownServer(bool crash);
 void CL_Disconnect();
 
-void CL_ParseServerMessage(VMessage&);
+void CL_ParseServerMessage(VMessageIn&);
 int CL_GetMessage();
 void CL_StopPlayback();
 void CL_StopRecording();
@@ -300,7 +300,7 @@ void CL_KeepaliveMessage()
 	float			time;
 	static float	lastmsg;
 	int				ret;
-	VMessage		old;
+	VMessageIn		old;
 	byte			olddata[8192];
 
 #ifdef SERVER

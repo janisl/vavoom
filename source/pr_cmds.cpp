@@ -53,7 +53,7 @@ VClass* SV_FindClassFromScriptId(int Id);
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-VMessage			*pr_msg;
+VMessageOut			*pr_msg;
 
 // CODE --------------------------------------------------------------------
 

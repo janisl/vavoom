@@ -86,7 +86,6 @@ extern VEntity		**sv_mobjs;
 extern mobj_base_t	*sv_mo_base;
 extern bool			sv_loading;
 extern int			sv_load_num_players;
-extern VMessage		sv_signon;
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
@@ -808,7 +807,7 @@ static void SV_LoadMap(VName MapName, int slot)
 	sv_signon.Clear();
 	void *tmp = Z_Malloc(len);
 	Loader->Serialise(tmp, len);
-	sv_signon.Write(tmp, len);
+	sv_signon.Serialise(tmp, len);
 	Z_Free(tmp);
 	memset(sv_mo_base, 0, sizeof(mobj_base_t) * GMaxEntities);
 	int Idx;

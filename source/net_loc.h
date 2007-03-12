@@ -76,8 +76,8 @@ public:
 
 	bool IsLocalConnection();
 	int GetMessage();
-	int SendMessage(VMessage*);
-	int SendUnreliableMessage(VMessage*);
+	int SendMessage(VMessageOut*);
+	int SendUnreliableMessage(VMessageOut*);
 	bool CanSendMessage();
 	void Close();
 };
@@ -164,8 +164,8 @@ public:
 	virtual VSocket* Connect(const char*) = 0;
 	virtual VSocket* CheckNewConnections() = 0;
 	virtual int GetMessage(VSocket*) = 0;
-	virtual int SendMessage(VSocket*, VMessage*) = 0;
-	virtual int SendUnreliableMessage(VSocket*, VMessage*) = 0;
+	virtual int SendMessage(VSocket*, VMessageOut*) = 0;
+	virtual int SendUnreliableMessage(VSocket*, VMessageOut*) = 0;
 	virtual bool CanSendMessage(VSocket*) = 0;
 	virtual bool CanSendUnreliableMessage(VSocket*) = 0;
 	virtual void Close(VSocket*) = 0;

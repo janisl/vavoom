@@ -46,8 +46,8 @@ public:
 	VSocket* Connect(const char*);
 	VSocket* CheckNewConnections();
 	int GetMessage(VSocket*);
-	int SendMessage(VSocket*, VMessage*);
-	int SendUnreliableMessage(VSocket*, VMessage*);
+	int SendMessage(VSocket*, VMessageOut*);
+	int SendUnreliableMessage(VSocket*, VMessageOut*);
 	bool CanSendMessage(VSocket*);
 	bool CanSendUnreliableMessage(VSocket*);
 	void Close(VSocket*);
@@ -240,8 +240,7 @@ int VLoopbackDriver::GetMessage(VSocket* sock)
 	ret = sock->ReceiveMessageData[0];
 	length = sock->ReceiveMessageData[1] + (sock->ReceiveMessageData[2] << 8);
 	// alignment byte skipped here
-	Net->NetMsg.Clear();
-	Net->NetMsg.Write(sock->ReceiveMessageData + 4,	length);
+	Net->NetMsg.SetData(sock->ReceiveMessageData + 4, length);
 
 	length = IntAlign(length + 4);
 	sock->ReceiveMessageLength -= length;
@@ -263,7 +262,7 @@ int VLoopbackDriver::GetMessage(VSocket* sock)
 //
 //==========================================================================
 
-int VLoopbackDriver::SendMessage(VSocket* sock, VMessage* data)
+int VLoopbackDriver::SendMessage(VSocket* sock, VMessageOut* data)
 {
 	guard(VLoopbackDriver::SendMessage);
 	vuint8*		buffer;
@@ -304,7 +303,7 @@ int VLoopbackDriver::SendMessage(VSocket* sock, VMessage* data)
 //
 //==========================================================================
 
-int VLoopbackDriver::SendUnreliableMessage(VSocket* sock, VMessage* data)
+int VLoopbackDriver::SendUnreliableMessage(VSocket* sock, VMessageOut* data)
 {
 	guard(VLoopbackDriver::SendUnreliableMessage);
 	vuint8*		buffer;

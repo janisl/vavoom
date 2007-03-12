@@ -100,7 +100,7 @@ void CL_Clear()
 	unguard;
 }
 
-static void CL_ReadMobjBase(VMessage& msg, clmobjbase_t &mobj)
+static void CL_ReadMobjBase(VMessageIn& msg, clmobjbase_t &mobj)
 {
 	guard(CL_ReadMobjBase);
 	vuint16 CIdx = (vuint16)msg.ReadShort();
@@ -116,7 +116,7 @@ static void CL_ReadMobjBase(VMessage& msg, clmobjbase_t &mobj)
 	unguard;
 }
 
-static void CL_ParseBaseline(VMessage& msg)
+static void CL_ParseBaseline(VMessageIn& msg)
 {
 	guard(CL_ParseBaseline);
 	int		i;
@@ -127,7 +127,7 @@ static void CL_ParseBaseline(VMessage& msg)
 	unguard;
 }
 
-static void CL_ReadMobj(VMessage& msg, int bits, VEntity*& mobj, const clmobjbase_t &base)
+static void CL_ReadMobj(VMessageIn& msg, int bits, VEntity*& mobj, const clmobjbase_t &base)
 {
 	VClass* C;
 	if (bits & MOB_CLASS)
@@ -193,7 +193,7 @@ static void CL_ReadMobj(VMessage& msg, int bits, VEntity*& mobj, const clmobjbas
 		mobj->Angles.roll = base.angles.roll;
 }
 
-static void CL_ParseUpdateMobj(VMessage& msg)
+static void CL_ParseUpdateMobj(VMessageIn& msg)
 {
 	guard(CL_ParseUpdateMobj);
 	int		i;
@@ -215,7 +215,7 @@ static void CL_ParseUpdateMobj(VMessage& msg)
 	unguard;
 }
 
-static void CL_ParseSecUpdate(VMessage& msg)
+static void CL_ParseSecUpdate(VMessageIn& msg)
 {
 	int			bits;
 	int			i;
@@ -244,7 +244,7 @@ static void CL_ParseSecUpdate(VMessage& msg)
 		CalcSecMinMaxs(&GClLevel->Sectors[i]);
 }
 
-static void CL_ParseViewData(VMessage& msg)
+static void CL_ParseViewData(VMessageIn& msg)
 {
 	guard(CL_ParseViewData);
 	int		i;
@@ -278,7 +278,7 @@ static void CL_ParseViewData(VMessage& msg)
 	unguard;
 }
 
-static void CL_ParseStartSound(VMessage& msg)
+static void CL_ParseStartSound(VMessageIn& msg)
 {
 	vuint16		sound_id;
 	vuint16		origin_id;
@@ -308,7 +308,7 @@ static void CL_ParseStartSound(VMessage& msg)
 		channel, volume / 127.0, attenuation / 64.0);
 }
 
-static void CL_ParseStopSound(VMessage& msg)
+static void CL_ParseStopSound(VMessageIn& msg)
 {
 	word	origin_id;
 	int		channel;
@@ -321,7 +321,7 @@ static void CL_ParseStopSound(VMessage& msg)
 	GAudio->StopSound(origin_id, channel);
 }
 
-static void CL_ParseStartSeq(VMessage& msg)
+static void CL_ParseStartSeq(VMessageIn& msg)
 {
 	int OriginId = msg.ReadShort();
 	float x = msg.ReadShort();
@@ -333,7 +333,7 @@ static void CL_ParseStartSeq(VMessage& msg)
 	GAudio->StartSequence(OriginId, TVec(x, y, z), Name, ModeNum);
 }
 
-static void CL_ParseAddSeqChoice(VMessage& msg)
+static void CL_ParseAddSeqChoice(VMessageIn& msg)
 {
 	vuint16	origin_id;
 
@@ -343,7 +343,7 @@ static void CL_ParseAddSeqChoice(VMessage& msg)
 	GAudio->AddSeqChoice(origin_id, Choice);
 }
 
-static void CL_ParseStopSeq(VMessage& msg)
+static void CL_ParseStopSeq(VMessageIn& msg)
 {
 	word	origin_id;
 
@@ -352,7 +352,7 @@ static void CL_ParseStopSeq(VMessage& msg)
 	GAudio->StopSequence(origin_id);
 }
 
-static void CL_ParseTime(VMessage& msg)
+static void CL_ParseTime(VMessageIn& msg)
 {
 	guard(CL_ParseTime);
 	float	new_time;
@@ -444,7 +444,7 @@ static void CL_AddModel(int i, const char *name)
 
 void CL_SetupLevel();
 
-static void CL_ParseServerInfo(VMessage& msg)
+static void CL_ParseServerInfo(VMessageIn& msg)
 {
 	guard(CL_ParseServerInfo);
 	byte		ver;
@@ -532,7 +532,7 @@ static void CL_ParseServerInfo(VMessage& msg)
 //
 //==========================================================================
 
-static void CL_ParseIntermission(VMessage& msg)
+static void CL_ParseIntermission(VMessageIn& msg)
 {
 	VName nextmap = msg.ReadString();
 
@@ -648,7 +648,7 @@ static void CL_ParseIntermission(VMessage& msg)
 //
 //==========================================================================
 
-static void CL_ParseClassName(VMessage& msg)
+static void CL_ParseClassName(VMessageIn& msg)
 {
 	vint32 i = msg.ReadShort();
 	const char* Name = msg.ReadString();
@@ -661,7 +661,7 @@ static void CL_ParseClassName(VMessage& msg)
 //
 //==========================================================================
 
-static void CL_ParseModel(VMessage& msg)
+static void CL_ParseModel(VMessageIn& msg)
 {
 	int i = msg.ReadShort();
 	char *name = va("models/%s", msg.ReadString());
@@ -674,7 +674,7 @@ static void CL_ParseModel(VMessage& msg)
 //
 //==========================================================================
 
-static void CL_ParseSkin(VMessage& msg)
+static void CL_ParseSkin(VMessageIn& msg)
 {
 	int i = msg.ReadByte();
 	skin_list[i] = msg.ReadString();
@@ -686,7 +686,7 @@ static void CL_ParseSkin(VMessage& msg)
 //
 //==========================================================================
 
-static void CL_ParseSetProp(VMessage& Msg)
+static void CL_ParseSetProp(VMessageIn& Msg)
 {
 	guard(CL_ParseSetProp);
 	int Id = Msg.ReadByte();
@@ -719,7 +719,7 @@ static void CL_ParseSetProp(VMessage& Msg)
 //
 //==========================================================================
 
-static void CL_ParseNewObj(VMessage& msg)
+static void CL_ParseNewObj(VMessageIn& msg)
 {
 	guard(CL_ParseNewObj);
 	int i = msg.ReadByte();
@@ -746,7 +746,7 @@ static void CL_ParseNewObj(VMessage& msg)
 //
 //==========================================================================
 
-static void CL_ParseSetPlayerProp(VMessage& Msg)
+static void CL_ParseSetPlayerProp(VMessageIn& Msg)
 {
 	guard(CL_ParseSetPlayerProp);
 	int FldIdx = Msg.ReadByte();
@@ -811,7 +811,7 @@ void CL_PO_Update(int i, float x, float y, float angle)
 //
 //==========================================================================
 
-void CL_ParseServerMessage(VMessage& msg)
+void CL_ParseServerMessage(VMessageIn& msg)
 {
 	guard(CL_ParseServerMessage);
 	int			i;

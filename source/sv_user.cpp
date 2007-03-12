@@ -56,7 +56,7 @@ static VCvarI		sv_maxmove("sv_maxmove", "400", CVAR_Archive);
 //
 //==========================================================================
 
-void SV_ReadMove(VMessage& msg)
+void SV_ReadMove(VMessageIn& msg)
 {
 	guard(SV_ReadMove);
     ticcmd_t	cmd;
@@ -179,7 +179,7 @@ bool SV_ReadClientMessages(int clientnum)
 
 		sv_player->Net->NeedsUpdate = true;
 
-		VMessage& msg = GNet->NetMsg;
+		VMessageIn& msg = GNet->NetMsg;
 
 		msg.BeginReading();
 

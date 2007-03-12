@@ -131,8 +131,8 @@ public:
 	VSocket* Connect(const char*);
 	VSocket* CheckNewConnections();
 	int GetMessage(VSocket*);
-	int SendMessage(VSocket*, VMessage*);
-	int SendUnreliableMessage(VSocket*, VMessage*);
+	int SendMessage(VSocket*, VMessageOut*);
+	int SendUnreliableMessage(VSocket*, VMessageOut*);
 	bool CanSendMessage(VSocket*);
 	bool CanSendUnreliableMessage(VSocket*);
 	void Close(VSocket*);
@@ -266,20 +266,21 @@ void VDatagramDriver::SearchForHosts(VNetLanDriver* Drv, bool xmit)
 	int			n;
 	int			i;
 
-	VMessage& msg = Net->NetMsg;
+	VMessageIn& msg = Net->NetMsg;
 
 	Drv->GetSocketAddr(Drv->controlSock, &myaddr);
 	if (xmit)
 	{
-		msg.Clear();
+		VMessageOut Reply;
+		Reply.Alloc(256);
 		// save space for the header, filled in later
-		msg << 0
+		Reply << 0
 			<< (byte)CCREQ_SERVER_INFO
 			<< "VAVOOM"
 			<< (byte)NET_PROTOCOL_VERSION;
-		*((vint32*)msg.Data) = BigLong(NETFLAG_CTL | (msg.CurSize << 16));
-		Drv->Broadcast(Drv->controlSock, msg.Data, msg.CurSize);
-		msg.Clear();
+		*((vint32*)Reply.Data) = BigLong(NETFLAG_CTL | (Reply.CurSize << 16));
+		Drv->Broadcast(Drv->controlSock, Reply.Data, Reply.CurSize);
+		Reply.Free();
 	}
 
 	while ((len = Drv->Read(Drv->controlSock, msg.Data, msg.MaxSize, &readaddr)) > 0)
@@ -409,7 +410,7 @@ VSocket* VDatagramDriver::Connect(VNetLanDriver* Drv, const char* host)
 	byte			msgtype;
 	int				newport;
 
-	VMessage& msg = Net->NetMsg;
+	VMessageIn& msg = Net->NetMsg;
 
 	// see if we can resolve the host name
 	if (Drv->GetAddrFromName(host, &sendaddr) == -1)
@@ -435,15 +436,16 @@ VSocket* VDatagramDriver::Connect(VNetLanDriver* Drv, const char* host)
 
 	for (reps = 0; reps < 3; reps++)
 	{
-		msg.Clear();
+		VMessageOut MsgOut;
+		MsgOut.Alloc(256);
 		// save space for the header, filled in later
-		msg << 0
+		MsgOut << 0
 			<< (byte)CCREQ_CONNECT
 			<< "VAVOOM"
 			<< (byte)NET_PROTOCOL_VERSION;
-		*((vint32*)msg.Data) = BigLong(NETFLAG_CTL | (msg.CurSize << 16));
-		Drv->Write(newsock, msg.Data, msg.CurSize, &sendaddr);
-		msg.Clear();
+		*((vint32*)MsgOut.Data) = BigLong(NETFLAG_CTL | (MsgOut.CurSize << 16));
+		Drv->Write(newsock, MsgOut.Data, MsgOut.CurSize, &sendaddr);
+		MsgOut.Free();
 
 		do
 		{
@@ -609,13 +611,11 @@ VSocket* VDatagramDriver::CheckNewConnections(VNetLanDriver* Drv)
 	int			ret;
 	VStr		gamename;
 
-	VMessage& msg = Net->NetMsg;
+	VMessageIn& msg = Net->NetMsg;
 
 	acceptsock = Drv->CheckNewConnections();
 	if (acceptsock == -1)
 		return NULL;
-
-	msg.Clear();
 
 	len = Drv->Read(acceptsock, msg.Data, msg.MaxSize, &clientaddr);
 	if (len < (int)sizeof(vint32))
@@ -639,9 +639,10 @@ VSocket* VDatagramDriver::CheckNewConnections(VNetLanDriver* Drv)
 		if (gamename != "VAVOOM")
 			return NULL;
 
-		msg.Clear();
+		VMessageOut MsgOut;
+		MsgOut.Alloc(MAX_DATAGRAM);
 		// save space for the header, filled in later
-		msg << 0
+		MsgOut << 0
 			<< (byte)CCREP_SERVER_INFO
 			<< (const char*)VNetworkLocal::HostName
 			<< *level.MapName
@@ -649,12 +650,12 @@ VSocket* VDatagramDriver::CheckNewConnections(VNetLanDriver* Drv)
 			<< (byte)svs.max_clients
 			<< (byte)NET_PROTOCOL_VERSION;
 		for (int i = 0; i < wadfiles.Num(); i++)
-			msg << *wadfiles[i];
-		msg << "";
+			MsgOut << *wadfiles[i];
+		MsgOut << "";
 
-		*((vint32*)msg.Data) = BigLong(NETFLAG_CTL | (msg.CurSize << 16));
-		Drv->Write(acceptsock, msg.Data, msg.CurSize, &clientaddr);
-		msg.Clear();
+		*((vint32*)MsgOut.Data) = BigLong(NETFLAG_CTL | (MsgOut.CurSize << 16));
+		Drv->Write(acceptsock, MsgOut.Data, MsgOut.CurSize, &clientaddr);
+		MsgOut.Free();
 		return NULL;
 	}
 
@@ -690,15 +691,16 @@ VSocket* VDatagramDriver::CheckNewConnections(VNetLanDriver* Drv)
 			if (ret == 0 && Net->NetTime - s->ConnectTime < 2.0)
 			{
 				// yes, so send a duplicate reply
-				msg.Clear();
+				VMessageOut MsgOut;
+				MsgOut.Alloc(32);
 				Drv->GetSocketAddr(s->LanSocket, &newaddr);
 				// save space for the header, filled in later
-				msg << 0
+				MsgOut << 0
 					<< (byte)CCREP_ACCEPT
 					<< (vint32)Drv->GetSocketPort(&newaddr);
-				*((vint32*)msg.Data) = BigLong(NETFLAG_CTL | (msg.CurSize << 16));
-				Drv->Write(acceptsock, msg.Data, msg.CurSize, &clientaddr);
-				msg.Clear();
+				*((vint32*)MsgOut.Data) = BigLong(NETFLAG_CTL | (MsgOut.CurSize << 16));
+				Drv->Write(acceptsock, MsgOut.Data, MsgOut.CurSize, &clientaddr);
+				MsgOut.Free();
 				return NULL;
 			}
 			// it's somebody coming back in from a crash/disconnect
@@ -713,14 +715,15 @@ VSocket* VDatagramDriver::CheckNewConnections(VNetLanDriver* Drv)
 	if (sock == NULL)
 	{
 		// no room; try to let him know
-		msg.Clear();
+		VMessageOut MsgOut;
+		MsgOut.Alloc(256);
 		// save space for the header, filled in later
-		msg << 0
+		MsgOut << 0
 			<< (byte)CCREP_REJECT
 			<< "Server is full.\n";
-		*((vint32*)msg.Data) = BigLong(NETFLAG_CTL | (msg.CurSize << 16));
-		Drv->Write(acceptsock, msg.Data, msg.CurSize, &clientaddr);
-		msg.Clear();
+		*((vint32*)MsgOut.Data) = BigLong(NETFLAG_CTL | (MsgOut.CurSize << 16));
+		Drv->Write(acceptsock, MsgOut.Data, MsgOut.CurSize, &clientaddr);
+		MsgOut.Clear();
 		return NULL;
 	}
 
@@ -749,14 +752,15 @@ VSocket* VDatagramDriver::CheckNewConnections(VNetLanDriver* Drv)
 	Drv->GetSocketAddr(newsock, &newaddr);
 
 	// send him back the info about the server connection he has been allocated
-	msg.Clear();
+	VMessageOut MsgOut;
+	MsgOut.Alloc(32);
 	// save space for the header, filled in later
-	msg << 0
+	MsgOut << 0
 		<< (byte)CCREP_ACCEPT
 		<< (vint32)Drv->GetSocketPort(&newaddr);
-	*((vint32*)msg.Data) = BigLong(NETFLAG_CTL | (msg.CurSize << 16));
-	Drv->Write(acceptsock, msg.Data, msg.CurSize, &clientaddr);
-	msg.Clear();
+	*((vint32*)MsgOut.Data) = BigLong(NETFLAG_CTL | (MsgOut.CurSize << 16));
+	Drv->Write(acceptsock, MsgOut.Data, MsgOut.CurSize, &clientaddr);
+	MsgOut.Free();
 
 	return sock;
 #else
@@ -906,8 +910,7 @@ int VDatagramDriver::GetMessage(VSocket* sock)
 
 			length -= NET_HEADERSIZE;
 
-			Net->NetMsg.Clear();
-			Net->NetMsg.Write(packetBuffer.data, length);
+			Net->NetMsg.SetData(packetBuffer.data, length);
 
 			ret = 2;
 			break;
@@ -965,21 +968,19 @@ int VDatagramDriver::GetMessage(VSocket* sock)
 
 			length -= NET_HEADERSIZE;
 
+			memcpy(sock->ReceiveMessageData + sock->ReceiveMessageLength,
+				packetBuffer.data, length);
+			sock->ReceiveMessageLength += length;
+
 			if (flags & NETFLAG_EOM)
 			{
-				Net->NetMsg.Clear();
-				Net->NetMsg.Write(sock->ReceiveMessageData,
+				Net->NetMsg.SetData(sock->ReceiveMessageData,
 					sock->ReceiveMessageLength);
-				Net->NetMsg.Write(packetBuffer.data, length);
 				sock->ReceiveMessageLength = 0;
 
 				ret = 1;
 				break;
 			}
-
-			memcpy(sock->ReceiveMessageData + sock->ReceiveMessageLength,
-				packetBuffer.data, length);
-			sock->ReceiveMessageLength += length;
 			continue;
 		}
 	}
@@ -1037,7 +1038,7 @@ int VDatagramDriver::BuildNetPacket(vuint32 Flags, vuint32 Sequence,
 //
 //==========================================================================
 
-int VDatagramDriver::SendMessage(VSocket* sock, VMessage* data)
+int VDatagramDriver::SendMessage(VSocket* sock, VMessageOut* data)
 {
 	guard(VDatagramDriver::SendMessage);
 	vuint32		packetLen;
@@ -1173,7 +1174,7 @@ int VDatagramDriver::ReSendMessage(VSocket* sock)
 //
 //==========================================================================
 
-int VDatagramDriver::SendUnreliableMessage(VSocket* sock, VMessage* data)
+int VDatagramDriver::SendUnreliableMessage(VSocket* sock, VMessageOut* data)
 {
 	guard(VDatagramDriver::SendUnreliableMessage);
 	vuint32		packetLen;

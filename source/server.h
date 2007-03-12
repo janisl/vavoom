@@ -52,6 +52,6 @@ struct server_static_t
 extern server_t			sv;
 extern server_static_t	svs;
 
-extern VMessage			sv_reliable;
-extern VMessage			sv_datagram;
-extern VMessage			sv_signon;
+extern VMessageOut		sv_reliable;
+extern VMessageOut		sv_datagram;
+extern VMessageOut		sv_signon;

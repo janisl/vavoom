@@ -856,7 +856,7 @@ int	VSocket::GetMessage()
 //
 //==========================================================================
 
-int VSocket::SendMessage(VMessage* data)
+int VSocket::SendMessage(VMessageOut* data)
 {
 	guard(VSocket::SendMessage);
 	int		r;
@@ -882,7 +882,7 @@ int VSocket::SendMessage(VMessage* data)
 //
 //==========================================================================
 
-int VSocket::SendUnreliableMessage(VMessage* data)
+int VSocket::SendUnreliableMessage(VMessageOut* data)
 {
 	guard(VSocket::SendUnreliableMessage);
 	int		r;

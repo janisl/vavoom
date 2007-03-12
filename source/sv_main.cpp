@@ -119,12 +119,9 @@ VEntity**		sv_mobjs;
 mobj_base_t*	sv_mo_base;
 double*			sv_mo_free_time;
 
-vuint8			sv_reliable_buf[MAX_MSGLEN];
-VMessage		sv_reliable(sv_reliable_buf, MAX_MSGLEN);
-vuint8			sv_datagram_buf[MAX_DATAGRAM];
-VMessage		sv_datagram(sv_datagram_buf, MAX_DATAGRAM);
-vuint8			sv_signon_buf[MAX_MSGLEN];
-VMessage		sv_signon(sv_signon_buf, MAX_MSGLEN);
+VMessageOut		sv_reliable;
+VMessageOut		sv_datagram;
+VMessageOut		sv_signon;
 
 VBasePlayer*	sv_player;
 
@@ -236,6 +233,10 @@ void SV_Init()
 	guard(SV_Init);
 	int		i;
 
+	sv_reliable.Alloc(MAX_MSGLEN);
+	sv_datagram.Alloc(MAX_DATAGRAM);
+	sv_signon.Alloc(MAX_MSGLEN);
+
 	svs.max_clients = 1;
 
 	sv_mobjs = new VEntity*[GMaxEntities];
@@ -306,6 +307,10 @@ void SV_Shutdown()
 	{
 		skins[i].Clean();
 	}
+
+	sv_reliable.Free();
+	sv_datagram.Free();
+	sv_signon.Free();
 	unguard;
 }
 
@@ -491,7 +496,7 @@ void VEntityChannel::Update(int SendId)
 {
 	guard(VEntityChannel::Update);
 	EvalCondValues(Ent, Ent->GetClass(), FieldCondValues);
-	VMessage& Msg = sv_player->Net->Message;
+	VMessageOut& Msg = sv_player->Net->Message;
 	vuint8* Data = (vuint8*)Ent;
 	for (VField* F = Ent->GetClass()->NetFields; F; F = F->NextNetField)
 	{
@@ -598,7 +603,7 @@ void VPlayerChannel::Update()
 {
 	guard(VPlayerChannel::Update);
 	EvalCondValues(Plr, Plr->GetClass(), FieldCondValues);
-	VMessage& Msg = sv_player->Net->Message;
+	VMessageOut& Msg = sv_player->Net->Message;
 	vuint8* Data = (vuint8*)Plr;
 	for (VField* F = Plr->GetClass()->NetFields; F; F = F->NextNetField)
 	{
@@ -671,7 +676,7 @@ int SV_GetMobjBits(VEntity &mobj, mobj_base_t &base)
 //
 //==========================================================================
 
-void SV_WriteMobj(int bits, VEntity &mobj, VMessage &msg)
+void SV_WriteMobj(int bits, VEntity &mobj, VMessageOut& msg)
 {
 	guard(SV_WriteMobj);
 	if (bits & MOB_BIG_CLASS)
@@ -712,7 +717,7 @@ void SV_WriteMobj(int bits, VEntity &mobj, VMessage &msg)
 //
 //==========================================================================
 
-void SV_UpdateMobj(int i, VMessage &msg)
+void SV_UpdateMobj(int i, VMessageOut& msg)
 {
 	guard(SV_UpdateMobj);
 	int bits;
@@ -1309,7 +1314,7 @@ void SV_BroadcastCentrePrintf(const char *s, ...)
 //
 //==========================================================================
 
-void SV_WriteViewData(VBasePlayer &player, VMessage &msg)
+void SV_WriteViewData(VBasePlayer &player, VMessageOut& msg)
 {
 	guard(SV_WriteViewData);
 	int		i;
@@ -1392,7 +1397,7 @@ bool SV_SecCheckFatPVS(sector_t *sec)
 //
 //==========================================================================
 
-void SV_UpdateLevel(VMessage &msg)
+void SV_UpdateLevel(VMessageOut& msg)
 {
 	guard(SV_UpdateLevel);
 	int		i;
@@ -1586,7 +1591,7 @@ dprintf("Update size %d (%d) for %d, aver %f big %d %d\n", msg.CurSize, msg.CurS
 void SV_SendNop(VBasePlayer *client)
 {
 	guard(SV_SendNop);
-	VMessage	msg;
+	VMessageOut	msg;
 	vuint8		buf[4];
 
 	msg.Data = buf;
@@ -1610,14 +1615,17 @@ void SV_SendNop(VBasePlayer *client)
 void SV_SendClientDatagram()
 {
 	guard(SV_SendClientDatagram);
-	vuint8		buf[4096];
-	VMessage	msg(buf, MAX_DATAGRAM);
+	VMessageOut	msg;
 
 	if (!netgame)
 	{
 		//	HACK!!!!!
 		//	Make a bigger buffer for single player.
-		msg.MaxSize = 4096;
+		msg.Alloc(4096);
+	}
+	else
+	{
+		msg.Alloc(MAX_DATAGRAM);
 	}
 	for (int i = 0; i < svs.max_clients; i++)
 	{
@@ -2276,7 +2284,7 @@ static void G_DoReborn(int playernum)
 //
 //==========================================================================
 
-int NET_SendToAll(VMessage* data, int blocktime)
+int NET_SendToAll(VMessageOut* data, int blocktime)
 {
 	guard(NET_SendToAll);
 	double		start;
@@ -2465,8 +2473,8 @@ int SV_FindSkin(const char *name)
 void SV_SendServerInfo(VBasePlayer *player)
 {
 	guard(SV_SendServerInfo);
-	int			i;
-	VMessage	&msg = player->Net->Message;
+	int				i;
+	VMessageOut&	msg = player->Net->Message;
 
 	msg << (vuint8)svc_server_info
 		<< (vuint8)PROTOCOL_VERSION
@@ -2753,7 +2761,7 @@ void SV_SpawnServer(const char *mapname, bool spawn_thinkers)
 //
 //==========================================================================
 
-static void SV_WriteChangedTextures(VMessage &msg)
+static void SV_WriteChangedTextures(VMessageOut& msg)
 {
 	int			i;
 
@@ -2955,8 +2963,7 @@ void SV_DropClient(bool)
 void SV_ShutdownServer(bool crash)
 {
 	guard(SV_ShutdownServer);
-	vuint8		buf[128];
-	VMessage	msg(buf, 128);
+	VMessageOut	msg;
 	int			i;
 	int			count;
 
@@ -3002,6 +3009,7 @@ void SV_ShutdownServer(bool crash)
 #endif
 
 	// make sure all the clients know we're disconnecting
+	msg.Alloc(128);
 	msg << (vuint8)svc_disconnect;
 	count = NET_SendToAll(&msg, 5);
 	if (count)
@@ -3137,8 +3145,7 @@ void SV_ConnectClient(VBasePlayer *player)
 	GGameInfo->Players[SV_GetPlayerNum(player)] = player;
 	player->PlayerFlags |= VBasePlayer::PF_Active;
 
-	player->Net->Message.Data = player->Net->MsgBuf;
-	player->Net->Message.MaxSize = MAX_MSGLEN;
+	player->Net->Message.Alloc(MAX_MSGLEN);
 	player->Net->Message.CurSize = 0;
 	player->Net->Message.AllowOverflow = true;		// we can catch it
 	player->Net->Message.Overflowed = false;

@@ -85,7 +85,7 @@ struct client_static_t
 	// connection information
 	int				signon;			// 0 to SIGNONS
 	VSocketPublic*	netcon;
-	VMessage		message;		// writing buffer to send to server
+	VMessageOut		message;		// writing buffer to send to server
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------

@@ -42,8 +42,8 @@ public:
 	VSocket* Connect(const char*);
 	VSocket* CheckNewConnections();
 	int GetMessage(VSocket*);
-	int SendMessage(VSocket*, VMessage*);
-	int SendUnreliableMessage(VSocket*, VMessage*);
+	int SendMessage(VSocket*, VMessageOut*);
+	int SendUnreliableMessage(VSocket*, VMessageOut*);
 	bool CanSendMessage(VSocket*);
 	bool CanSendUnreliableMessage(VSocket*);
 	void Close(VSocket*);
@@ -160,7 +160,7 @@ int VNullNetDriver::GetMessage(VSocket*)
 //
 //==========================================================================
 
-int VNullNetDriver::SendMessage(VSocket*, VMessage*)
+int VNullNetDriver::SendMessage(VSocket*, VMessageOut*)
 {
 	return 1;
 }
@@ -171,7 +171,7 @@ int VNullNetDriver::SendMessage(VSocket*, VMessage*)
 //
 //==========================================================================
 
-int VNullNetDriver::SendUnreliableMessage(VSocket*, VMessage*)
+int VNullNetDriver::SendUnreliableMessage(VSocket*, VMessageOut*)
 {
 	return 1;
 }

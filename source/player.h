@@ -83,8 +83,7 @@ public:
 struct VPlayerNetInfo
 {
 	VSocketPublic*	NetCon;
-	VMessage		Message;
-	vuint8			MsgBuf[MAX_MSGLEN];
+	VMessageOut		Message;
 	int				MobjUpdateStart;
 	double			LastMessage;
 	bool			NeedsUpdate;
