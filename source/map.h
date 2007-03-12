@@ -70,7 +70,7 @@ protected:
 			HashSize >>= 1;
 		}
 		Rehash();
-		unguard;
+		unguardSlow;
 	}
 
 public:
