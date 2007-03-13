@@ -64,11 +64,11 @@ void SV_ReadMove(VMessageIn& msg)
 	sv_player->ViewAngles.yaw = ByteToAngle(msg.ReadByte());
 	sv_player->ViewAngles.pitch = ByteToAngle(msg.ReadByte());
 	sv_player->ViewAngles.roll = ByteToAngle(msg.ReadByte());
-	msg >> cmd.forwardmove
-		>> cmd.sidemove
-		>> cmd.flymove
-		>> cmd.buttons
-		>> cmd.impulse;
+	msg << cmd.forwardmove
+		<< cmd.sidemove
+		<< cmd.flymove
+		<< cmd.buttons
+		<< cmd.impulse;
 
 	// Don't move faster than maxmove
 	if (cmd.forwardmove > sv_maxmove)
@@ -105,7 +105,7 @@ void SV_ReadMove(VMessageIn& msg)
 //
 //==========================================================================
 
-void SV_RunClientCommand(const char *cmd)
+void SV_RunClientCommand(const VStr& cmd)
 {
 	guard(SV_RunClientCommand);
 	VCommand::ExecuteString(cmd, VCommand::SRC_Client);
@@ -191,7 +191,7 @@ bool SV_ReadClientMessages(int clientnum)
 				return false;
 			}
 
-			msg >> cmd_type;
+			msg << cmd_type;
 
 			if (msg.BadRead)
 				break; // Here this means end of packet

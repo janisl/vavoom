@@ -249,9 +249,9 @@ static void CL_ParseViewData(VMessageIn& msg)
 	guard(CL_ParseViewData);
 	int		i;
 
-	msg >> cl->ViewOrg.x
-		>> cl->ViewOrg.y
-		>> cl->ViewOrg.z;
+	msg << cl->ViewOrg.x
+		<< cl->ViewOrg.y
+		<< cl->ViewOrg.z;
 	cl->ViewEntAlpha = (float)msg.ReadByte() / 255.0;
 
 	for (i = 0; i < NUMPSPRITES; i++)
@@ -289,8 +289,8 @@ static void CL_ParseStartSound(VMessageIn& msg)
 	vuint8		attenuation;
 	int			channel;
 
-	msg >> sound_id
-		>> origin_id;
+	msg << sound_id
+		<< origin_id;
 
 	channel = origin_id >> 13;
 	origin_id &= 0x1fff;
@@ -301,8 +301,8 @@ static void CL_ParseStartSound(VMessageIn& msg)
 		y = msg.ReadShort();
 		z = msg.ReadShort();
 	}
-	msg >> volume
-		>> attenuation;
+	msg << volume
+		<< attenuation;
 
 	GAudio->PlaySound(sound_id, TVec(x, y, z), TVec(0, 0, 0), origin_id,
 		channel, volume / 127.0, attenuation / 64.0);
@@ -313,7 +313,7 @@ static void CL_ParseStopSound(VMessageIn& msg)
 	word	origin_id;
 	int		channel;
 
-	msg >> origin_id;
+	msg << origin_id;
 
 	channel = origin_id >> 13;
 	origin_id &= 0x1fff;
@@ -327,18 +327,18 @@ static void CL_ParseStartSeq(VMessageIn& msg)
 	float x = msg.ReadShort();
 	float y = msg.ReadShort();
 	float z = msg.ReadShort();
-	const char* Name = msg.ReadString();
+	VStr Name = msg.ReadString();
 	int ModeNum = msg.ReadByte();
 
-	GAudio->StartSequence(OriginId, TVec(x, y, z), Name, ModeNum);
+	GAudio->StartSequence(OriginId, TVec(x, y, z), *Name, ModeNum);
 }
 
 static void CL_ParseAddSeqChoice(VMessageIn& msg)
 {
 	vuint16	origin_id;
 
-	msg >> origin_id;
-	VName Choice = msg.ReadString();
+	msg << origin_id;
+	VName Choice = *msg.ReadString();
 
 	GAudio->AddSeqChoice(origin_id, Choice);
 }
@@ -347,7 +347,7 @@ static void CL_ParseStopSeq(VMessageIn& msg)
 {
 	word	origin_id;
 
-	msg >> origin_id;
+	msg << origin_id;
 
 	GAudio->StopSequence(origin_id);
 }
@@ -400,7 +400,7 @@ static void CL_ParseTime(VMessageIn& msg)
 	}
 
 	R_AnimateSurfaces();
-	msg >> new_time;
+	msg << new_time;
 	cl_level.tictime = int(new_time * 35);
 	cl_level.time = new_time;
 	cl->WorldTimer = cl_level.tictime;
@@ -449,35 +449,35 @@ static void CL_ParseServerInfo(VMessageIn& msg)
 	guard(CL_ParseServerInfo);
 	byte		ver;
 
-	msg >> ver;
+	msg << ver;
 	if (ver != PROTOCOL_VERSION)
 		Host_Error("Server runs protocol %d, not %d", ver, PROTOCOL_VERSION);
 
 	CL_Clear();
 
-	GClGame->serverinfo = msg.ReadString();
+	msg << GClGame->serverinfo;
 	CL_ReadFromServerInfo();
 
-	cl_level.MapName = msg.ReadString();
+	cl_level.MapName = *msg.ReadString();
 	cl_level.LevelName = msg.ReadString();
 
 	cl->ClientNum = msg.ReadByte();
 	GClGame->maxclients = msg.ReadByte();
 	GClGame->deathmatch = msg.ReadByte();
 
-	msg >> cl_level.totalkills
-		>> cl_level.totalitems
-		>> cl_level.totalsecret;
+	msg << cl_level.totalkills
+		<< cl_level.totalitems
+		<< cl_level.totalsecret;
 	cl_level.sky1Texture = (word)msg.ReadShort();
 	cl_level.sky2Texture = (word)msg.ReadShort();
-	msg >> cl_level.sky1ScrollDelta
-		>> cl_level.sky2ScrollDelta;
+	msg << cl_level.sky1ScrollDelta
+		<< cl_level.sky2ScrollDelta;
 	cl_level.doubleSky = msg.ReadByte();
 	cl_level.lightning = msg.ReadByte();
-	cl_level.SkyBox = msg.ReadString();
-	cl_level.FadeTable = msg.ReadString();
+	cl_level.SkyBox = *msg.ReadString();
+	cl_level.FadeTable = *msg.ReadString();
 
-	cl_level.SongLump = msg.ReadString();
+	cl_level.SongLump = *msg.ReadString();
 	cl_level.cdTrack = msg.ReadByte();
 
 	GCon->Log("---------------------------------------");
@@ -534,7 +534,7 @@ static void CL_ParseServerInfo(VMessageIn& msg)
 
 static void CL_ParseIntermission(VMessageIn& msg)
 {
-	VName nextmap = msg.ReadString();
+	VName nextmap = *msg.ReadString();
 
 	im.Text.Clean();
 	im.IMFlags = 0;
@@ -651,8 +651,8 @@ static void CL_ParseIntermission(VMessageIn& msg)
 static void CL_ParseClassName(VMessageIn& msg)
 {
 	vint32 i = msg.ReadShort();
-	const char* Name = msg.ReadString();
-	ClassLookup[i] = VClass::FindClass(Name);
+	VStr Name = msg.ReadString();
+	ClassLookup[i] = VClass::FindClass(*Name);
 }
 
 //==========================================================================
@@ -664,8 +664,8 @@ static void CL_ParseClassName(VMessageIn& msg)
 static void CL_ParseModel(VMessageIn& msg)
 {
 	int i = msg.ReadShort();
-	char *name = va("models/%s", msg.ReadString());
-	CL_AddModel(i, name);
+	VStr name = VStr("models/") + msg.ReadString();
+	CL_AddModel(i, *name);
 }
 
 //==========================================================================
@@ -677,7 +677,7 @@ static void CL_ParseModel(VMessageIn& msg)
 static void CL_ParseSkin(VMessageIn& msg)
 {
 	int i = msg.ReadByte();
-	skin_list[i] = msg.ReadString();
+	msg << skin_list[i];
 }
 
 //==========================================================================
@@ -838,7 +838,7 @@ void CL_ParseServerMessage(VMessageIn& msg)
 			Host_Error("Packet corupted");
 		}
 
-		msg >> cmd_type;
+		msg << cmd_type;
 
 		if (msg.BadRead)
 			break; // Here this means end of packet
@@ -933,11 +933,11 @@ void CL_ParseServerMessage(VMessageIn& msg)
 			break;
 
 		case svc_print:
-			C_NotifyMessage(msg.ReadString());
+			C_NotifyMessage(*msg.ReadString());
 			break;
 
 		case svc_centre_print:
-			C_CentreMessage(msg.ReadString());
+			C_CentreMessage(*msg.ReadString());
 			break;
 
 		case svc_time:
@@ -990,26 +990,26 @@ void CL_ParseServerMessage(VMessageIn& msg)
 			break;
 
 		case svc_finale:
-			F_StartFinale(msg.ReadString());
+			F_StartFinale(*msg.ReadString());
 			break;
 
 		case svc_serverinfo:
-			name = msg.ReadString();
-			string = msg.ReadString();
+			msg << name
+				<< string;
 			Info_SetValueForKey(GClGame->serverinfo, name, string);
 			CL_ReadFromServerInfo();
 			break;
 
 		case svc_userinfo:
 			i = msg.ReadByte();
-			scores[i].userinfo = msg.ReadString();
+			msg << scores[i].userinfo;
 			CL_ReadFromUserInfo(i);
 			break;
 
 		case svc_setinfo:
 			i = msg.ReadByte();
-			name = msg.ReadString();
-			string = msg.ReadString();
+			msg << name
+				<< string;
 			Info_SetValueForKey(scores[i].userinfo, name, string);
 			CL_ReadFromUserInfo(i);
 			break;
@@ -1035,7 +1035,7 @@ void CL_ParseServerMessage(VMessageIn& msg)
 			origin.y = msg.ReadShort();
 			origin.z = msg.ReadShort();
 			radius = (byte)msg.ReadByte() * 8;
-			msg >> colour;
+			msg << colour;
 			GClLevel->RenderData->AddStaticLight(origin, radius, colour);
 			break;
 
@@ -1046,7 +1046,7 @@ void CL_ParseServerMessage(VMessageIn& msg)
 			break;
 
 		case svc_change_music:
-			cl_level.SongLump = msg.ReadString();
+			cl_level.SongLump = *msg.ReadString();
 			cl_level.cdTrack = msg.ReadByte();
 			GAudio->MusicChanged();
 			break;

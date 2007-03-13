@@ -1053,11 +1053,11 @@ void VField::NetReadValue(VMessageIn& Msg, vuint8* Data, const VField::FType& Ty
 	switch (Type.Type)
 	{
 	case ev_int:
-		Msg >> *(vint32*)Data;
+		Msg << *(vint32*)Data;
 		break;
 
 	case ev_float:
-		Msg >> *(float*)Data;
+		Msg << *(float*)Data;
 		break;
 
 	case ev_bool:
@@ -1068,7 +1068,7 @@ void VField::NetReadValue(VMessageIn& Msg, vuint8* Data, const VField::FType& Ty
 		break;
 
 	case ev_string:
-		Msg >> *(VStr*)Data;
+		Msg << *(VStr*)Data;
 		break;
 
 	case ev_struct:

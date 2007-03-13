@@ -878,7 +878,7 @@ IMPLEMENT_FUNCTION(VObject, MSG_ReadWord)
 IMPLEMENT_FUNCTION(VObject, MSG_ReadLong)
 {
 	vint32 l;
-	GNet->NetMsg >> l;
+	GNet->NetMsg << l;
 	RET_INT(l);
 }
 

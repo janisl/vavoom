@@ -73,7 +73,7 @@ public:
 void Draw_TeleportIcon();
 void CL_Disconnect();
 bool SV_ReadClientMessages(int i);
-void SV_RunClientCommand(const char *cmd);
+void SV_RunClientCommand(const VStr& cmd);
 void EntInit();
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------

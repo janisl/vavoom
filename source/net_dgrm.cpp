@@ -299,7 +299,7 @@ void VDatagramDriver::SearchForHosts(VNetLanDriver* Drv, bool xmit)
 
 		msg.BeginReading();
 
-		msg >> control;
+		msg << control;
 		control = BigLong(*((vint32*)msg.Data));
 		if (control == -1)
 			continue;
@@ -308,12 +308,12 @@ void VDatagramDriver::SearchForHosts(VNetLanDriver* Drv, bool xmit)
 		if (((vint32)(control & NETFLAG_LENGTH_MASK) >> 16) != len)
 			continue;
 
-		msg >> msgtype;
+		msg << msgtype;
 		if (msgtype != CCREP_SERVER_INFO)
 			continue;
 
 		char*			addr;
-		const char*		str;
+		VStr			str;
 
 		addr = Drv->AddrToString(&readaddr);
 
@@ -328,9 +328,9 @@ void VDatagramDriver::SearchForHosts(VNetLanDriver* Drv, bool xmit)
 
 		// add it
 		Net->HostCacheCount++;
-		msg >> str;
+		msg << str;
 		Net->HostCache[n].Name = str;
-		msg >> str;
+		msg << str;
 		Net->HostCache[n].Map = str;
 		Net->HostCache[n].Users = msg.ReadByte();
 		Net->HostCache[n].MaxUsers = msg.ReadByte();
@@ -342,7 +342,7 @@ void VDatagramDriver::SearchForHosts(VNetLanDriver* Drv, bool xmit)
 		i = 0;
 		do
 		{
-			msg >> str;
+			msg << str;
 			Net->HostCache[n].WadFiles[i++] = str;
 		}  while (*str);
 
@@ -406,7 +406,7 @@ VSocket* VDatagramDriver::Connect(VNetLanDriver* Drv, const char* host)
 	int				reps;
 	int				ret;
 	int				control;
-	const char*		reason;
+	VStr			reason;
 	byte			msgtype;
 	int				newport;
 
@@ -469,7 +469,7 @@ VSocket* VDatagramDriver::Connect(VNetLanDriver* Drv, const char* host)
 				msg.CurSize = ret;
 				msg.BeginReading();
 
-				msg >> control;
+				msg << control;
 				control = BigLong(*((vint32*)msg.Data));
 				if (control == -1)
 				{
@@ -499,7 +499,7 @@ VSocket* VDatagramDriver::Connect(VNetLanDriver* Drv, const char* host)
 	{
 		reason = "No Response";
 		GCon->Log(reason);
-		VStr::Cpy(Net->ReturnReason, reason);
+		VStr::Cpy(Net->ReturnReason, *reason);
 		goto ErrorReturn;
 	}
 
@@ -507,16 +507,16 @@ VSocket* VDatagramDriver::Connect(VNetLanDriver* Drv, const char* host)
 	{
 		reason = "Network Error";
 		GCon->Log(reason);
-		VStr::Cpy(Net->ReturnReason, reason);
+		VStr::Cpy(Net->ReturnReason, *reason);
 		goto ErrorReturn;
 	}
 
-	msg >> msgtype;
+	msg << msgtype;
 	if (msgtype == CCREP_REJECT)
 	{
-		msg >> reason;
+		msg << reason;
 		GCon->Log(reason);
-		VStr::NCpy(Net->ReturnReason, reason, 31);
+		VStr::NCpy(Net->ReturnReason, *reason, 31);
 		goto ErrorReturn;
 	}
 
@@ -524,11 +524,11 @@ VSocket* VDatagramDriver::Connect(VNetLanDriver* Drv, const char* host)
 	{
 		reason = "Bad Response";
 		GCon->Log(reason);
-		VStr::Cpy(Net->ReturnReason, reason);
+		VStr::Cpy(Net->ReturnReason, *reason);
 		goto ErrorReturn;
 	}
 
-	msg >> newport;
+	msg << newport;
 
 	memcpy(&sock->Addr, &readaddr, sizeof(sockaddr_t));
 	Drv->SetSocketPort(&sock->Addr, newport);
@@ -543,7 +543,7 @@ VSocket* VDatagramDriver::Connect(VNetLanDriver* Drv, const char* host)
 	{
 		reason = "Connect to Game failed";
 		GCon->Log(reason);
-		VStr::Cpy(Net->ReturnReason, reason);
+		VStr::Cpy(Net->ReturnReason, *reason);
 		goto ErrorReturn;
 	}
 
@@ -623,7 +623,7 @@ VSocket* VDatagramDriver::CheckNewConnections(VNetLanDriver* Drv)
 	msg.CurSize = len;
 
 	msg.BeginReading();
-	msg >> control;
+	msg << control;
 	control = BigLong(*((vint32*)msg.Data));
 	if (control == -1)
 		return NULL;
@@ -632,10 +632,10 @@ VSocket* VDatagramDriver::CheckNewConnections(VNetLanDriver* Drv)
 	if (((vint32)(control & NETFLAG_LENGTH_MASK) >> 16) != len)
 		return NULL;
 
-	msg >> command;
+	msg << command;
 	if (command == CCREQ_SERVER_INFO)
 	{
-		msg >> gamename;
+		msg << gamename;
 		if (gamename != "VAVOOM")
 			return NULL;
 
@@ -662,7 +662,7 @@ VSocket* VDatagramDriver::CheckNewConnections(VNetLanDriver* Drv)
 	if (command != CCREQ_CONNECT)
 		return NULL;
 
-	msg >> gamename;
+	msg << gamename;
 	if (gamename != "VAVOOM")
 		return NULL;
 

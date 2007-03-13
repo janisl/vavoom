@@ -56,24 +56,10 @@ public:
 	void Free();
 	void SetData(const void* data, vint32 length);
 
-	//
-	//	reading functions
-	//
 	void BeginReading();
-	VMessageIn& operator >> (vint8& c) { *this << c; return *this; }
-	VMessageIn& operator >> (vuint8& c)  { return operator >> ((vint8&)c); }
-	VMessageIn& operator >> (vint16& c) { *this << c; return *this; }
-	VMessageIn& operator >> (vuint16& c)  { return operator >> ((vint16&)c); }
-	VMessageIn& operator >> (vint32& c) { *this << c; return *this; }
-	VMessageIn& operator >> (vuint32& c) { return operator >> ((vint32&)c); }
-	VMessageIn& operator >> (float& f) { *this << f; return *this; }
-	VMessageIn& operator >> (const char*& s) { s = ReadString(); return *this; }
-	VMessageIn& operator >> (VStr& s) { *this << s; return *this; }
-	VMessageIn& operator >> (VMessageIn& msg);
-
 	vuint8 ReadByte() { vuint8 c; *this << c; return c; }
 	vint16 ReadShort() { vint16	c; *this << c; return c; }
-	const char* ReadString();
+	VStr ReadString() { VStr S; *this << S; return S; }
 };
 
 class VMessageOut : public VStream
