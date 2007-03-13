@@ -721,8 +721,9 @@ static void SV_SaveMap(int slot, bool savePlayers)
 	//	Save baseline
 	Seg = ASEG_BASELINE;
 	*Saver << Seg;
-	*Saver << STRM_INDEX(sv_signon.CurSize);
-	Saver->Serialise(sv_signon.Data, sv_signon.CurSize);
+	int SignonSize = sv_signon.GetCurSize();
+	*Saver << STRM_INDEX(SignonSize);
+	Saver->Serialise(sv_signon.Data, sv_signon.GetCurSize());
 	for (int i = 0; i < GMaxEntities; i++)
 	{
 		if (sv_mo_base[i].Class ||

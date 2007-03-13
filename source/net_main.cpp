@@ -211,7 +211,7 @@ void VNetwork::Init()
 	}
 
 	// allocate space for network message buffer
-	NetMsg.Alloc(NET_MAXMESSAGE);
+	NetMsg.AllocBits(NET_MAXMESSAGE << 3);
 
 	// Initialise all the drivers
 	for (i = 0; i < NumDrivers; i++)

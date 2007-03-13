@@ -233,9 +233,9 @@ void SV_Init()
 	guard(SV_Init);
 	int		i;
 
-	sv_reliable.Alloc(MAX_MSGLEN);
-	sv_datagram.Alloc(MAX_DATAGRAM);
-	sv_signon.Alloc(MAX_MSGLEN);
+	sv_reliable.AllocBits(MAX_MSGLEN << 3);
+	sv_datagram.AllocBits(MAX_DATAGRAM << 3);
+	sv_signon.AllocBits(MAX_MSGLEN << 3);
 
 	svs.max_clients = 1;
 
@@ -848,7 +848,7 @@ void SV_CreateBaseline()
 			continue;
 
 		//NOTE Do we really need 10 bytes extra?
-		if (!sv_signon.CheckSpace(26))
+		if (!sv_signon.CheckSpaceBits(26 << 3))
 		{
 			GCon->Log(NAME_Dev, "SV_CreateBaseline: Overflow");
 			return;
@@ -911,7 +911,7 @@ void SV_StartSound(const TVec &origin, int origin_id, int sound_id,
 	int channel, float volume, float Attenuation)
 {
 	guard(SV_StartSound);
-	if (!sv_datagram.CheckSpace(12))
+	if (!sv_datagram.CheckSpaceBits(12 << 3))
 		return;
 
 	sv_datagram << (vuint8)svc_start_sound
@@ -937,7 +937,7 @@ void SV_StartSound(const TVec &origin, int origin_id, int sound_id,
 void SV_StopSound(int origin_id, int channel)
 {
 	guard(SV_StopSound);
-	if (!sv_datagram.CheckSpace(3))
+	if (!sv_datagram.CheckSpaceBits(3 << 3))
 		return;
 
 	sv_datagram << (vuint8)svc_stop_sound
@@ -1433,7 +1433,7 @@ void SV_UpdateLevel(VMessageOut& msg)
 		if (!bits)
 			continue;
 
-		if (!msg.CheckSpace(14))
+		if (!msg.CheckSpaceBits(14 << 3))
 		{
 			GCon->Log(NAME_Dev, "UpdateLevel: secs overflow");
 			return;
@@ -1474,7 +1474,7 @@ void SV_UpdateLevel(VMessageOut& msg)
 			side->base_rowoffset == side->rowoffset)
 			continue;
 
-		if (!msg.CheckSpace(7))
+		if (!msg.CheckSpaceBits(7 << 3))
 		{
 			GCon->Log(NAME_Dev, "UpdateLevel: sides overflow");
 			return;
@@ -1502,7 +1502,7 @@ void SV_UpdateLevel(VMessageOut& msg)
 		if (!po->changed)
 			continue;
 
-		if (!msg.CheckSpace(7))
+		if (!msg.CheckSpaceBits(7 << 3))
 		{
 			GCon->Log(NAME_Dev, "UpdateLevel: poly overflow");
 			return;
@@ -1515,7 +1515,7 @@ void SV_UpdateLevel(VMessageOut& msg)
 			<< (vuint8)(AngleToByte(po->angle));
 	}
 
-int StartSize = msg.CurSize;
+int StartSize = msg.GetCurSize();
 int NumObjs = 0;
 	//	First update players
 	for (i = 0; i < GMaxEntities; i++)
@@ -1528,7 +1528,7 @@ int NumObjs = 0;
 			continue;
 		if (!(sv_mobjs[i]->EntityFlags & VEntity::EF_IsPlayer))
 			continue;
-		if (!msg.CheckSpace(29))
+		if (!msg.CheckSpaceBits(29 << 3))
 		{
 			GCon->Log(NAME_Dev, "UpdateLevel: player overflow");
 			return;
@@ -1552,7 +1552,7 @@ int NumObjs = 0;
 			continue;
 		if (!SV_CheckFatPVS(sv_mobjs[index]->SubSector))
 			continue;
-		if (!msg.CheckSpace(29))
+		if (!msg.CheckSpaceBits(29 << 3))
 		{
 			if (sv_player->Net->MobjUpdateStart && show_mobj_overflow)
 			{
@@ -1565,8 +1565,8 @@ int NumObjs = 0;
 			//	Next update starts here
 			sv_player->Net->MobjUpdateStart = index;
 if (show_update_stats)
-dprintf("Update size %d (%d) for %d, aver %f big %d %d\n", msg.CurSize, msg.CurSize -
-		StartSize, NumObjs, float(msg.CurSize - StartSize) / NumObjs, c_bigClass, c_bigState);
+dprintf("Update size %d (%d) for %d, aver %f big %d %d\n", msg.GetCurSize(), msg.GetCurSize() -
+		StartSize, NumObjs, float(msg.GetCurSize() - StartSize) / NumObjs, c_bigClass, c_bigState);
 			return;
 		}
 		SV_UpdateMobj(index, msg);
@@ -1574,8 +1574,8 @@ dprintf("Update size %d (%d) for %d, aver %f big %d %d\n", msg.CurSize, msg.CurS
 	}
 	sv_player->Net->MobjUpdateStart = 0;
 if (show_update_stats)
-dprintf("Update size %d (%d) for %d, aver %f big %d %d\n", msg.CurSize, msg.CurSize -
-		StartSize, NumObjs, float(msg.CurSize - StartSize) / NumObjs, c_bigClass, c_bigState);
+dprintf("Update size %d (%d) for %d, aver %f big %d %d\n", msg.GetCurSize(), msg.GetCurSize() -
+		StartSize, NumObjs, float(msg.GetCurSize() - StartSize) / NumObjs, c_bigClass, c_bigState);
 	unguard;
 }
 
@@ -1592,11 +1592,8 @@ void SV_SendNop(VBasePlayer *client)
 {
 	guard(SV_SendNop);
 	VMessageOut	msg;
-	vuint8		buf[4];
 
-	msg.Data = buf;
-	msg.MaxSize = sizeof(buf);
-	msg.CurSize = 0;
+	msg.AllocBits(4 << 3);
 
 	msg << (vuint8)svc_nop;
 
@@ -1621,11 +1618,11 @@ void SV_SendClientDatagram()
 	{
 		//	HACK!!!!!
 		//	Make a bigger buffer for single player.
-		msg.Alloc(4096);
+		msg.AllocBits(4096 << 3);
 	}
 	else
 	{
-		msg.Alloc(MAX_DATAGRAM);
+		msg.AllocBits(MAX_DATAGRAM << 3);
 	}
 	for (int i = 0; i < svs.max_clients; i++)
 	{
@@ -1660,7 +1657,7 @@ void SV_SendClientDatagram()
 
 		SV_WriteViewData(*sv_player, msg);
 
-		if (msg.CheckSpace(sv_datagram.CurSize))
+		if (msg.CheckSpaceBits(sv_datagram.GetCurSize() << 3))
 			msg << sv_datagram;
 
 		SV_UpdateLevel(msg);
@@ -1712,7 +1709,7 @@ void SV_SendReliable()
 			continue;
 		}
 
-		if (!GGameInfo->Players[i]->Net->Message.CurSize)
+		if (!GGameInfo->Players[i]->Net->Message.GetCurSize())
 		{
 			continue;
 		}
@@ -3009,7 +3006,7 @@ void SV_ShutdownServer(bool crash)
 #endif
 
 	// make sure all the clients know we're disconnecting
-	msg.Alloc(128);
+	msg.AllocBits(128 << 3);
 	msg << (vuint8)svc_disconnect;
 	count = NET_SendToAll(&msg, 5);
 	if (count)
@@ -3145,8 +3142,7 @@ void SV_ConnectClient(VBasePlayer *player)
 	GGameInfo->Players[SV_GetPlayerNum(player)] = player;
 	player->PlayerFlags |= VBasePlayer::PF_Active;
 
-	player->Net->Message.Alloc(MAX_MSGLEN);
-	player->Net->Message.CurSize = 0;
+	player->Net->Message.AllocBits(MAX_MSGLEN << 3);
 	player->Net->Message.AllowOverflow = true;		// we can catch it
 	player->Net->Message.Overflowed = false;
 	player->Net->MobjUpdateStart = 0;

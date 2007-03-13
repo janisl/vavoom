@@ -35,8 +35,8 @@ public:
 	VMessageIn()
 	{
 		Data = NULL;
-		MaxSize = 0;
-		CurSize = 0;
+		MaxSizeBits = 0;
+		CurSizeBits = 0;
 	}
 	~VMessageIn()
 	{
@@ -45,21 +45,34 @@ public:
 
 	vint8	BadRead;
 	vuint8*	Data;
-	vint32	MaxSize;
-	vint32	CurSize;
-	vint32	ReadCount;
+	vint32	MaxSizeBits;
+	vint32	CurSizeBits;
+	vint32	ReadCountBits;
 
 	//	VStream interface
 	void Serialise(void*, int);
 
-	void Alloc(vint32 startsize);
+	void AllocBits(vint32 startsize);
 	void Free();
-	void SetData(const void* data, vint32 length);
+	void SetDataBits(const void* data, vint32 length);
 
 	void BeginReading();
 	vuint8 ReadByte() { vuint8 c; *this << c; return c; }
 	vint16 ReadShort() { vint16	c; *this << c; return c; }
 	VStr ReadString() { VStr S; *this << S; return S; }
+
+	int GetReadCount() const
+	{
+		return (ReadCountBits + 7) >> 3;
+	}
+	int GetCurSize() const
+	{
+		return (CurSizeBits + 7) >> 3;
+	}
+	int GetMaxSize() const
+	{
+		return (MaxSizeBits + 7) >> 3;
+	}
 };
 
 class VMessageOut : public VStream
@@ -70,8 +83,8 @@ public:
 		AllowOverflow = false;
 		Overflowed = false;
 		Data = NULL;
-		MaxSize = 0;
-		CurSize = 0;
+		MaxSizeBits = 0;
+		CurSizeBits = 0;
 	}
 	~VMessageOut()
 	{
@@ -81,25 +94,34 @@ public:
 	vint8	AllowOverflow;	// if false, do a Sys_Error
 	vint8	Overflowed;		// set to true if the buffer size failed
 	vuint8*	Data;
-	vint32	MaxSize;
-	vint32	CurSize;
+	vint32	MaxSizeBits;
+	vint32	CurSizeBits;
 
 	//	VStream interface
 	void Serialise(void*, int);
 
-	void Alloc(vint32 startsize);
+	void AllocBits(vint32 startsize);
 	void Free();
 	void Clear();
-	void* GetSpace(vint32 length);
-	bool CheckSpace(vint32 length) const
+	void* GetSpaceBits(vint32 length);
+	bool CheckSpaceBits(vint32 length) const
 	{
-		return CurSize + length <= MaxSize;
+		return CurSizeBits + length <= MaxSizeBits;
 	}
 
 	//
 	//	writing functions
 	//
 	VMessageOut& operator << (const VMessageOut& msg);
+
+	int GetCurSize() const
+	{
+		return (CurSizeBits + 7) >> 3;
+	}
+	int GetMaxSize() const
+	{
+		return (MaxSizeBits + 7) >> 3;
+	}
 };
 
 inline VMessageOut& operator << (VMessageOut& Msg, const vuint8& Val)

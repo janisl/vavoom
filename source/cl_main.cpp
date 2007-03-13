@@ -89,7 +89,7 @@ void CL_Init()
 	memset(cl_mobjs, 0, sizeof(VEntity*) * GMaxEntities);
 	memset(cl_mo_base, 0, sizeof(clmobjbase_t) * GMaxEntities);
 
-	cls.message.Alloc(NET_MAXMESSAGE);
+	cls.message.AllocBits(NET_MAXMESSAGE << 3);
 
 	GClGame = (VClientGameBase*)VObject::StaticSpawnObject(
 		VClass::FindClass("ClientGame"));
@@ -312,7 +312,7 @@ void CL_KeepaliveMessage()
 
 	// read messages from server, should just be nops
 	old = GNet->NetMsg;
-	memcpy(olddata, GNet->NetMsg.Data, GNet->NetMsg.CurSize);
+	memcpy(olddata, GNet->NetMsg.Data, GNet->NetMsg.GetCurSize());
 	
 	do
 	{
@@ -334,7 +334,7 @@ void CL_KeepaliveMessage()
 	} while (ret);
 
 	GNet->NetMsg = old;
-	memcpy(GNet->NetMsg.Data, olddata, GNet->NetMsg.CurSize);
+	memcpy(GNet->NetMsg.Data, olddata, GNet->NetMsg.GetCurSize());
 
 	// check time
 	time = Sys_Time();
@@ -385,7 +385,7 @@ void CL_Disconnect()
 		}
 
 		GCon->Log(NAME_Dev, "Sending clc_disconnect");
-		if (cls.message.CurSize)
+		if (cls.message.GetCurSize())
 		{
 			GCon->Log(NAME_Dev, "Buffer contains data");
 		}

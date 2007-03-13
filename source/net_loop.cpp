@@ -240,7 +240,7 @@ int VLoopbackDriver::GetMessage(VSocket* sock)
 	ret = sock->ReceiveMessageData[0];
 	length = sock->ReceiveMessageData[1] + (sock->ReceiveMessageData[2] << 8);
 	// alignment byte skipped here
-	Net->NetMsg.SetData(sock->ReceiveMessageData + 4, length);
+	Net->NetMsg.SetDataBits(sock->ReceiveMessageData + 4, length << 3);
 
 	length = IntAlign(length + 4);
 	sock->ReceiveMessageLength -= length;
@@ -273,7 +273,7 @@ int VLoopbackDriver::SendMessage(VSocket* sock, VMessageOut* data)
 
 	bufferLength = &((VSocket*)sock->DriverData)->ReceiveMessageLength;
 
-	if ((*bufferLength + data->CurSize + 4) > NET_MAXMESSAGE)
+	if ((*bufferLength + data->GetCurSize() + 4) > NET_MAXMESSAGE)
 		Sys_Error("Loop_SendMessage: overflow\n");
 
 	buffer = ((VSocket*)sock->DriverData)->ReceiveMessageData + *bufferLength;
@@ -282,15 +282,15 @@ int VLoopbackDriver::SendMessage(VSocket* sock, VMessageOut* data)
 	*buffer++ = 1;
 
 	// length
-	*buffer++ = data->CurSize & 0xff;
-	*buffer++ = data->CurSize >> 8;
+	*buffer++ = data->GetCurSize() & 0xff;
+	*buffer++ = data->GetCurSize() >> 8;
 
 	// align
 	buffer++;
 
 	// message
-	memcpy(buffer, data->Data, data->CurSize);
-	*bufferLength = IntAlign(*bufferLength + data->CurSize + 4);
+	memcpy(buffer, data->Data, data->GetCurSize());
+	*bufferLength = IntAlign(*bufferLength + data->GetCurSize() + 4);
 
 	sock->CanSend = false;
 	return 1;
@@ -314,7 +314,7 @@ int VLoopbackDriver::SendUnreliableMessage(VSocket* sock, VMessageOut* data)
 
 	bufferLength = &((VSocket*)sock->DriverData)->ReceiveMessageLength;
 
-	if ((*bufferLength + data->CurSize + sizeof(byte) + sizeof(short)) > NET_MAXMESSAGE)
+	if ((*bufferLength + data->GetCurSize() + sizeof(byte) + sizeof(short)) > NET_MAXMESSAGE)
 		return 0;
 
 	buffer = ((VSocket*)sock->DriverData)->ReceiveMessageData + *bufferLength;
@@ -323,15 +323,15 @@ int VLoopbackDriver::SendUnreliableMessage(VSocket* sock, VMessageOut* data)
 	*buffer++ = 2;
 
 	// length
-	*buffer++ = data->CurSize & 0xff;
-	*buffer++ = data->CurSize >> 8;
+	*buffer++ = data->GetCurSize() & 0xff;
+	*buffer++ = data->GetCurSize() >> 8;
 
 	// align
 	buffer++;
 
 	// message
-	memcpy(buffer, data->Data, data->CurSize);
-	*bufferLength = IntAlign(*bufferLength + data->CurSize + 4);
+	memcpy(buffer, data->Data, data->GetCurSize());
+	*bufferLength = IntAlign(*bufferLength + data->GetCurSize() + 4);
 	return 1;
 	unguard;
 }

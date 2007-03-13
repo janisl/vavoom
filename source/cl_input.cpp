@@ -619,7 +619,7 @@ void CL_SendMove()
 		mousex = mousey = 0;
 
 		VMessageOut msg;
-		msg.Alloc(MAX_DATAGRAM);
+		msg.AllocBits(MAX_DATAGRAM << 3);
 		msg << (byte)clc_move
 			<< (byte)(AngleToByte(cl->ViewAngles.yaw))
 			<< (byte)(AngleToByte(cl->ViewAngles.pitch))
@@ -633,7 +633,7 @@ void CL_SendMove()
 	}
 
 	// send the reliable message
-	if (!cls.message.CurSize)
+	if (!cls.message.GetCurSize())
 	{
 		return;		// no message at all
 	}

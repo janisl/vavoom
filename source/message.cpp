@@ -51,17 +51,14 @@
 //
 //==========================================================================
 
-void VMessageOut::Alloc(vint32 startsize)
+void VMessageOut::AllocBits(vint32 startsize)
 {
 	guard(VMessageOut::Alloc);
 	if (Data)
 		Z_Free(Data);
-	int AllocSize = startsize;
-	if (AllocSize < 256)
-		AllocSize = 256;
-	Data = (vuint8*)Z_Malloc(AllocSize);
-	MaxSize = AllocSize;
-	CurSize = 0;
+	Data = (vuint8*)Z_Malloc((startsize + 7) >> 3);
+	MaxSizeBits = startsize;
+	CurSizeBits = 0;
 	Overflowed = false;
 	unguard;
 }
@@ -77,8 +74,8 @@ void VMessageOut::Free()
 	guard(VMessageOut::Free);
 	Z_Free(Data);
 	Data = NULL;
-	MaxSize = 0;
-	CurSize = 0;
+	MaxSizeBits = 0;
+	CurSizeBits = 0;
 	unguard;
 }
 
@@ -90,7 +87,7 @@ void VMessageOut::Free()
 
 void VMessageOut::Clear()
 {
-	CurSize = 0;
+	CurSizeBits = 0;
 }
 
 //==========================================================================
@@ -99,15 +96,15 @@ void VMessageOut::Clear()
 //
 //==========================================================================
 
-void* VMessageOut::GetSpace(vint32 length)
+void* VMessageOut::GetSpaceBits(vint32 length)
 {
 	guard(VMessageOut::GetSpace);
-	if (CurSize + length > MaxSize)
+	if (CurSizeBits + length > MaxSizeBits)
 	{
 		if (!AllowOverflow)
 			Sys_Error("TSizeBuf::GetSpace: overflow without allowoverflow set");
 
-		if (length > MaxSize)
+		if (length > MaxSizeBits)
 			Sys_Error("TSizeBuf::GetSpace: %i is > full buffer size", length);
 
 		Overflowed = true;
@@ -115,8 +112,8 @@ void* VMessageOut::GetSpace(vint32 length)
 		Clear();
 	}
 
-	void* data = Data + CurSize;
-	CurSize += length;
+	void* data = Data + ((CurSizeBits + 7) >> 3);
+	CurSizeBits += length;
 
 	return data;
 	unguard;
@@ -131,7 +128,7 @@ void* VMessageOut::GetSpace(vint32 length)
 void VMessageOut::Serialise(void* data, vint32 length)
 {
 	guard(VMessageOut::Serialise);
-	memcpy(GetSpace(length), data, length);
+	memcpy(GetSpaceBits(length << 3), data, length);
 	unguard;
 }
 
@@ -144,26 +141,23 @@ void VMessageOut::Serialise(void* data, vint32 length)
 VMessageOut& VMessageOut::operator << (const VMessageOut &msg)
 {
 	guard(VMessageOut::operator << VMessageOut);
-	Serialise(msg.Data, msg.CurSize);
+	Serialise(msg.Data, msg.GetCurSize());
 	return *this;
 	unguard;
 }
 
 //==========================================================================
 //
-//  VMessageIn::Alloc
+//  VMessageIn::AllocBits
 //
 //==========================================================================
 
-void VMessageIn::Alloc(vint32 startsize)
+void VMessageIn::AllocBits(vint32 startsize)
 {
-	guard(VMessageIn::Alloc);
-	int AllocSize = startsize;
-	if (AllocSize < 256)
-		AllocSize = 256;
-	Data = (vuint8*)Z_Malloc(AllocSize);
-	MaxSize = AllocSize;
-	CurSize = 0;
+	guard(VMessageIn::AllocBits);
+	Data = (vuint8*)Z_Malloc((startsize + 7) >> 3);
+	MaxSizeBits = startsize;
+	CurSizeBits = 0;
 	bLoading = true;
 	unguard;
 }
@@ -179,24 +173,24 @@ void VMessageIn::Free()
 	guard(VMessageIn::Free);
 	Z_Free(Data);
 	Data = NULL;
-	MaxSize = 0;
-	CurSize = 0;
+	MaxSizeBits = 0;
+	CurSizeBits = 0;
 	unguard;
 }
 
 //==========================================================================
 //
-//  VMessageIn::SetData
+//  VMessageIn::SetDataBits
 //
 //==========================================================================
 
-void VMessageIn::SetData(const void* AData, vint32 ALength)
+void VMessageIn::SetDataBits(const void* AData, vint32 ALength)
 {
-	guard(VMessageIn::SetData);
-	if (ALength > MaxSize)
+	guard(VMessageIn::SetDataBits);
+	if (ALength > MaxSizeBits)
 		Sys_Error("TSizeBuf::GetSpace: %i is > full buffer size", ALength);
-	memcpy(Data, AData, ALength);
-	CurSize = ALength;
+	memcpy(Data, AData, (ALength + 7) >> 3);
+	CurSizeBits = ALength;
 	unguard;
 }
 
@@ -208,7 +202,7 @@ void VMessageIn::SetData(const void* AData, vint32 ALength)
 
 void VMessageIn::BeginReading()
 {
-	ReadCount = 0;
+	ReadCountBits = 0;
 	BadRead = false;
 }
 
@@ -221,15 +215,15 @@ void VMessageIn::BeginReading()
 void VMessageIn::Serialise(void* AData, int ALen)
 {
 	guard(VMessageIn::Serialise);
-	if (ReadCount + ALen > CurSize)
+	if (ReadCountBits + (ALen << 3) > CurSizeBits)
 	{
 		BadRead = true;
-		memset(AData, -1, ALen);
+		memset(AData, 0, ALen);
 	}
 	else
 	{
-		memcpy(AData, Data + ReadCount, ALen);
-		ReadCount += ALen;
+		memcpy(AData, Data + ((ReadCountBits + 7) >> 3), ALen);
+		ReadCountBits += ALen << 3;
 	}
 	unguard;
 }

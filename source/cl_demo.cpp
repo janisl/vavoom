@@ -121,9 +121,10 @@ void CL_StopPlayback()
 void CL_WriteDemoMessage(VMessageIn& msg)
 {
 	guard(CL_WriteDemoMessage);
-	*cls.demofile << msg.CurSize;
+	vint32 MsgSize = msg.GetCurSize();
+	*cls.demofile << MsgSize;
 	*cls.demofile << cl->ViewAngles;
-	cls.demofile->Serialise(msg.Data, msg.CurSize);
+	cls.demofile->Serialise(msg.Data, msg.GetCurSize());
 	cls.demofile->Flush();
 	unguard;
 }
@@ -167,13 +168,15 @@ int CL_GetMessage()
 		}
 
 		// get the next message
-		*cls.demofile << GNet->NetMsg.CurSize;
+		vint32 MsgSize;
+		*cls.demofile << MsgSize;
+		GNet->NetMsg.CurSizeBits = MsgSize << 3;
 //		VectorCopy (cl->mviewangles[0], cl->mviewangles[1]);
 		*cls.demofile << cl->ViewAngles;
 
-		if (GNet->NetMsg.CurSize > MAX_MSGLEN)
+		if (GNet->NetMsg.GetCurSize() > MAX_MSGLEN)
 			Sys_Error("Demo message > MAX_MSGLEN");
-		cls.demofile->Serialise(GNet->NetMsg.Data, GNet->NetMsg.CurSize);
+		cls.demofile->Serialise(GNet->NetMsg.Data, GNet->NetMsg.GetCurSize());
 		if (cls.demofile->IsError())
 		{
 			CL_StopPlayback();
@@ -192,7 +195,7 @@ int CL_GetMessage()
 			return r;
 	
 		// discard nop keepalive message
-		if (GNet->NetMsg.CurSize == 1 && GNet->NetMsg.Data[0] == svc_nop)
+		if (GNet->NetMsg.GetCurSize() == 1 && GNet->NetMsg.Data[0] == svc_nop)
 			GCon->Log("<-- server to client keepalive");
 		else
 			break;
@@ -219,7 +222,7 @@ void CL_StopRecording()
 	guard(CL_StopRecording);
 	// write a disconnect message to the demo file
 	vuint8 EndMsg[1] = { (vuint8)svc_disconnect };
-	GNet->NetMsg.SetData(EndMsg, 1);
+	GNet->NetMsg.SetDataBits(EndMsg, 8);
 	CL_WriteDemoMessage(GNet->NetMsg);
 
 	// finish up

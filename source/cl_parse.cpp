@@ -832,8 +832,8 @@ void CL_ParseServerMessage(VMessageIn& msg)
 	{
 		if (msg.BadRead)
 		{
-			GCon->Logf(NAME_Dev, "Length %d", msg.CurSize);
-			for (i = 0; i < msg.CurSize; i++)
+			GCon->Logf(NAME_Dev, "Length %d", msg.GetCurSize());
+			for (i = 0; i < msg.GetCurSize(); i++)
 				GCon->Logf(NAME_Dev, "  %d", (int)msg.Data[i]);
 			Host_Error("Packet corupted");
 		}
@@ -1072,12 +1072,12 @@ void CL_ParseServerMessage(VMessageIn& msg)
 			{
 				break;
 			}
-			GCon->Logf(NAME_Dev, "Length %d", msg.CurSize);
-			for (i = 0; i < msg.CurSize; i++)
+			GCon->Logf(NAME_Dev, "Length %d", msg.GetCurSize());
+			for (i = 0; i < msg.GetCurSize(); i++)
 			{
 				GCon->Logf(NAME_Dev, "  %d", (int)msg.Data[i]);
 			}
-			GCon->Logf(NAME_Dev, "ReadCount %d", msg.ReadCount);
+			GCon->Logf(NAME_Dev, "ReadCount %d", msg.GetReadCount());
 			Host_Error("Invalid packet %d", cmd_type);
 			break;
 		}

@@ -834,7 +834,7 @@ IMPLEMENT_FUNCTION(VObject, MSG_Select)
 IMPLEMENT_FUNCTION(VObject, MSG_CheckSpace)
 {
 	P_GET_INT(len);
-	RET_BOOL(pr_msg->CheckSpace(len));
+	RET_BOOL(pr_msg->CheckSpaceBits(len << 3));
 }
 
 IMPLEMENT_FUNCTION(VObject, MSG_WriteByte)
