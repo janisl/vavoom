@@ -301,7 +301,6 @@ void CL_KeepaliveMessage()
 	static float	lastmsg;
 	int				ret;
 	VMessageIn		old;
-	byte			olddata[8192];
 
 #ifdef SERVER
 	if (sv.active)
@@ -312,7 +311,6 @@ void CL_KeepaliveMessage()
 
 	// read messages from server, should just be nops
 	old = GNet->NetMsg;
-	memcpy(olddata, GNet->NetMsg.Data, GNet->NetMsg.GetCurSize());
 	
 	do
 	{
@@ -334,7 +332,6 @@ void CL_KeepaliveMessage()
 	} while (ret);
 
 	GNet->NetMsg = old;
-	memcpy(GNet->NetMsg.Data, olddata, GNet->NetMsg.GetCurSize());
 
 	// check time
 	time = Sys_Time();

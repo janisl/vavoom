@@ -1041,87 +1041,48 @@ bool VField::IdenticalValue(const vuint8* Val1, const vuint8* Val2,
 
 //==========================================================================
 //
-//	VField::NetReadValue
+//	VField::NetSerialiseValue
 //
 //==========================================================================
 
-void VField::NetReadValue(VMessageIn& Msg, vuint8* Data, const VField::FType& Type)
+void VField::NetSerialiseValue(VStream& Strm, vuint8* Data, const VField::FType& Type)
 {
-	guard(VField::NetReadValue);
+	guard(VField::NetSerialiseValue);
 	VField::FType IntType;
 	int InnerSize;
 	switch (Type.Type)
 	{
 	case ev_int:
-		Msg << *(vint32*)Data;
+		Strm << *(vint32*)Data;
 		break;
 
 	case ev_float:
-		Msg << *(float*)Data;
+		Strm << *(float*)Data;
 		break;
 
 	case ev_bool:
-		if (Msg.ReadByte())
-			*(vuint32*)Data |= Type.BitMask;
-		else
-			*(vuint32*)Data &= ~Type.BitMask;
-		break;
-
-	case ev_string:
-		Msg << *(VStr*)Data;
-		break;
-
-	case ev_struct:
-		Type.Struct->NetReadObject(Msg, Data);
-		break;
-
-	case ev_array:
-		IntType = Type;
-		IntType.Type = Type.ArrayInnerType;
-		InnerSize = IntType.GetSize();
-		for (int i = 0; i < Type.ArrayDim; i++)
+		if (Strm.IsLoading())
 		{
-			NetReadValue(Msg, Data + i * InnerSize, IntType);
+			vuint8 Val;
+			Strm << Val;
+			if (Val)
+				*(vuint32*)Data |= Type.BitMask;
+			else
+				*(vuint32*)Data &= ~Type.BitMask;
+		}
+		else
+		{
+			vuint8 Val = (vuint8)!!(*(vuint32*)Data & Type.BitMask);
+			Strm << Val;
 		}
 		break;
 
-	default:
-		Sys_Error("Replication of field type %d is not supported", Type.Type);
-	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	VField::NetReadValue
-//
-//==========================================================================
-
-void VField::NetWriteValue(VMessageOut& Msg, vuint8* Data, const VField::FType& Type)
-{
-	guard(VField::NetWriteValue);
-	VField::FType IntType;
-	int InnerSize;
-	switch (Type.Type)
-	{
-	case ev_int:
-		Msg << *(vuint32*)Data;
-		break;
-
-	case ev_float:
-		Msg << *(float*)Data;
-		break;
-
-	case ev_bool:
-		Msg << (vuint8)!!(*(vuint32*)Data & Type.BitMask);
-		break;
-
 	case ev_string:
-		Msg << *(VStr*)Data;
+		Strm << *(VStr*)Data;
 		break;
 
 	case ev_struct:
-		Type.Struct->NetWriteObject(Msg, Data);
+		Type.Struct->NetSerialiseObject(Strm, Data);
 		break;
 
 	case ev_array:
@@ -1130,7 +1091,7 @@ void VField::NetWriteValue(VMessageOut& Msg, vuint8* Data, const VField::FType& 
 		InnerSize = IntType.GetSize();
 		for (int i = 0; i < Type.ArrayDim; i++)
 		{
-			NetWriteValue(Msg, Data + i * InnerSize, IntType);
+			NetSerialiseValue(Strm, Data + i * InnerSize, IntType);
 		}
 		break;
 
@@ -2243,44 +2204,22 @@ bool VStruct::IdenticalObject(const vuint8* Val1, const vuint8* Val2)
 
 //==========================================================================
 //
-//	VStruct::NetReadObject
+//	VStruct::NetSerialiseObject
 //
 //==========================================================================
 
-void VStruct::NetReadObject(VMessageIn& Msg, vuint8* Data)
+void VStruct::NetSerialiseObject(VStream& Strm, vuint8* Data)
 {
-	guard(VStruct::NetReadObject);
-	//	Read parent struct's fields.
+	guard(VStruct::NetSerialiseObject);
+	//	Serialise parent struct's fields.
 	if (ParentStruct)
 	{
-		ParentStruct->NetReadObject(Msg, Data);
+		ParentStruct->NetSerialiseObject(Strm, Data);
 	}
-	//	Read fields.
+	//	Serialise fields.
 	for (VField* F = Fields; F; F = F->Next)
 	{
-		VField::NetReadValue(Msg, Data + F->Ofs, F->Type);
-	}
-	unguardf(("(%s)", *Name));
-}
-
-//==========================================================================
-//
-//	VStruct::NetWriteObject
-//
-//==========================================================================
-
-void VStruct::NetWriteObject(VMessageOut& Msg, vuint8* Data)
-{
-	guard(VStruct::NetWriteObject);
-	//	Write parent struct's fields.
-	if (ParentStruct)
-	{
-		ParentStruct->NetWriteObject(Msg, Data);
-	}
-	//	Write fields.
-	for (VField* F = Fields; F; F = F->Next)
-	{
-		VField::NetWriteValue(Msg, Data + F->Ofs, F->Type);
+		VField::NetSerialiseValue(Strm, Data + F->Ofs, F->Type);
 	}
 	unguardf(("(%s)", *Name));
 }

@@ -54,9 +54,7 @@
 void VMessageOut::AllocBits(vint32 startsize)
 {
 	guard(VMessageOut::Alloc);
-	if (Data)
-		Z_Free(Data);
-	Data = (vuint8*)Z_Malloc((startsize + 7) >> 3);
+	ArrData.SetNum((startsize + 7) >> 3);
 	MaxSizeBits = startsize;
 	CurSizeBits = 0;
 	Overflowed = false;
@@ -72,8 +70,7 @@ void VMessageOut::AllocBits(vint32 startsize)
 void VMessageOut::Free()
 {
 	guard(VMessageOut::Free);
-	Z_Free(Data);
-	Data = NULL;
+	ArrData.Clear();
 	MaxSizeBits = 0;
 	CurSizeBits = 0;
 	unguard;
@@ -92,35 +89,6 @@ void VMessageOut::Clear()
 
 //==========================================================================
 //
-//  VMessageOut::GetSpace
-//
-//==========================================================================
-
-void* VMessageOut::GetSpaceBits(vint32 length)
-{
-	guard(VMessageOut::GetSpace);
-	if (CurSizeBits + length > MaxSizeBits)
-	{
-		if (!AllowOverflow)
-			Sys_Error("TSizeBuf::GetSpace: overflow without allowoverflow set");
-
-		if (length > MaxSizeBits)
-			Sys_Error("TSizeBuf::GetSpace: %i is > full buffer size", length);
-
-		Overflowed = true;
-		GCon->Log("TSizeBuf::GetSpace: overflow");
-		Clear();
-	}
-
-	void* data = Data + ((CurSizeBits + 7) >> 3);
-	CurSizeBits += length;
-
-	return data;
-	unguard;
-}
-
-//==========================================================================
-//
 //  VMessageOut::Serialise
 //
 //==========================================================================
@@ -128,7 +96,21 @@ void* VMessageOut::GetSpaceBits(vint32 length)
 void VMessageOut::Serialise(void* data, vint32 length)
 {
 	guard(VMessageOut::Serialise);
-	memcpy(GetSpaceBits(length << 3), data, length);
+	if (CurSizeBits + (length << 3) > MaxSizeBits)
+	{
+		if (!AllowOverflow)
+			Sys_Error("TSizeBuf::GetSpace: overflow without allowoverflow set");
+
+		if ((length << 3) > MaxSizeBits)
+			Sys_Error("TSizeBuf::GetSpace: %i is > full buffer size", length << 3);
+
+		Overflowed = true;
+		GCon->Log("TSizeBuf::GetSpace: overflow");
+		Clear();
+	}
+
+	memcpy(ArrData.Ptr() + ((CurSizeBits + 7) >> 3), data, length);
+	CurSizeBits += length << 3;
 	unguard;
 }
 
@@ -141,7 +123,7 @@ void VMessageOut::Serialise(void* data, vint32 length)
 VMessageOut& VMessageOut::operator << (const VMessageOut &msg)
 {
 	guard(VMessageOut::operator << VMessageOut);
-	Serialise(msg.Data, msg.GetCurSize());
+	Serialise(const_cast<VMessageOut&>(msg).GetData(), msg.GetCurSize());
 	return *this;
 	unguard;
 }
@@ -155,7 +137,7 @@ VMessageOut& VMessageOut::operator << (const VMessageOut &msg)
 void VMessageIn::AllocBits(vint32 startsize)
 {
 	guard(VMessageIn::AllocBits);
-	Data = (vuint8*)Z_Malloc((startsize + 7) >> 3);
+	ArrData.SetNum((startsize + 7) >> 3);
 	MaxSizeBits = startsize;
 	CurSizeBits = 0;
 	bLoading = true;
@@ -171,8 +153,7 @@ void VMessageIn::AllocBits(vint32 startsize)
 void VMessageIn::Free()
 {
 	guard(VMessageIn::Free);
-	Z_Free(Data);
-	Data = NULL;
+	ArrData.Clear();
 	MaxSizeBits = 0;
 	CurSizeBits = 0;
 	unguard;
@@ -189,7 +170,7 @@ void VMessageIn::SetDataBits(const void* AData, vint32 ALength)
 	guard(VMessageIn::SetDataBits);
 	if (ALength > MaxSizeBits)
 		Sys_Error("TSizeBuf::GetSpace: %i is > full buffer size", ALength);
-	memcpy(Data, AData, (ALength + 7) >> 3);
+	memcpy(ArrData.Ptr(), AData, (ALength + 7) >> 3);
 	CurSizeBits = ALength;
 	unguard;
 }
@@ -222,7 +203,7 @@ void VMessageIn::Serialise(void* AData, int ALen)
 	}
 	else
 	{
-		memcpy(AData, Data + ((ReadCountBits + 7) >> 3), ALen);
+		memcpy(AData, ArrData.Ptr() + ((ReadCountBits + 7) >> 3), ALen);
 		ReadCountBits += ALen << 3;
 	}
 	unguard;

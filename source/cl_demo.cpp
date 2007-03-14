@@ -124,7 +124,7 @@ void CL_WriteDemoMessage(VMessageIn& msg)
 	vint32 MsgSize = msg.GetCurSize();
 	*cls.demofile << MsgSize;
 	*cls.demofile << cl->ViewAngles;
-	cls.demofile->Serialise(msg.Data, msg.GetCurSize());
+	cls.demofile->Serialise(msg.GetData(), msg.GetCurSize());
 	cls.demofile->Flush();
 	unguard;
 }
@@ -176,7 +176,7 @@ int CL_GetMessage()
 
 		if (GNet->NetMsg.GetCurSize() > MAX_MSGLEN)
 			Sys_Error("Demo message > MAX_MSGLEN");
-		cls.demofile->Serialise(GNet->NetMsg.Data, GNet->NetMsg.GetCurSize());
+		cls.demofile->Serialise(GNet->NetMsg.GetData(), GNet->NetMsg.GetCurSize());
 		if (cls.demofile->IsError())
 		{
 			CL_StopPlayback();
@@ -195,7 +195,7 @@ int CL_GetMessage()
 			return r;
 	
 		// discard nop keepalive message
-		if (GNet->NetMsg.GetCurSize() == 1 && GNet->NetMsg.Data[0] == svc_nop)
+		if (GNet->NetMsg.GetCurSize() == 1 && GNet->NetMsg.GetData()[0] == svc_nop)
 			GCon->Log("<-- server to client keepalive");
 		else
 			break;

@@ -517,7 +517,7 @@ void VEntityChannel::Update(int SendId)
 					<< (vuint8)(SendId >> 7);
 			}
 			Msg << (vuint8)F->NetIndex;
-			VField::NetWriteValue(Msg, Data + F->Ofs, F->Type);
+			VField::NetSerialiseValue(Msg, Data + F->Ofs, F->Type);
 			VField::CopyFieldValue(Data + F->Ofs, OldData + F->Ofs, F->Type);
 		}
 	}
@@ -615,7 +615,7 @@ void VPlayerChannel::Update()
 		{
 			Msg << (vuint8)svc_set_player_prop;
 			Msg << (vuint8)F->NetIndex;
-			VField::NetWriteValue(Msg, Data + F->Ofs, F->Type);
+			VField::NetSerialiseValue(Msg, Data + F->Ofs, F->Type);
 			VField::CopyFieldValue(Data + F->Ofs, OldData + F->Ofs, F->Type);
 		}
 	}

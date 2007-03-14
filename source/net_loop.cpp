@@ -289,7 +289,7 @@ int VLoopbackDriver::SendMessage(VSocket* sock, VMessageOut* data)
 	buffer++;
 
 	// message
-	memcpy(buffer, data->Data, data->GetCurSize());
+	memcpy(buffer, data->GetData(), data->GetCurSize());
 	*bufferLength = IntAlign(*bufferLength + data->GetCurSize() + 4);
 
 	sock->CanSend = false;
@@ -330,7 +330,7 @@ int VLoopbackDriver::SendUnreliableMessage(VSocket* sock, VMessageOut* data)
 	buffer++;
 
 	// message
-	memcpy(buffer, data->Data, data->GetCurSize());
+	memcpy(buffer, data->GetData(), data->GetCurSize());
 	*bufferLength = IntAlign(*bufferLength + data->GetCurSize() + 4);
 	return 1;
 	unguard;

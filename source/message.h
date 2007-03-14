@@ -34,7 +34,6 @@ class VMessageIn : public VStream
 public:
 	VMessageIn()
 	{
-		Data = NULL;
 		MaxSizeBits = 0;
 		CurSizeBits = 0;
 	}
@@ -44,7 +43,7 @@ public:
 	}
 
 	vint8	BadRead;
-	vuint8*	Data;
+	TArray<vuint8>	ArrData;
 	vint32	MaxSizeBits;
 	vint32	CurSizeBits;
 	vint32	ReadCountBits;
@@ -73,6 +72,10 @@ public:
 	{
 		return (MaxSizeBits + 7) >> 3;
 	}
+	vuint8* GetData()
+	{
+		return ArrData.Ptr();
+	}
 };
 
 class VMessageOut : public VStream
@@ -82,7 +85,6 @@ public:
 	{
 		AllowOverflow = false;
 		Overflowed = false;
-		Data = NULL;
 		MaxSizeBits = 0;
 		CurSizeBits = 0;
 	}
@@ -93,7 +95,7 @@ public:
 
 	vint8	AllowOverflow;	// if false, do a Sys_Error
 	vint8	Overflowed;		// set to true if the buffer size failed
-	vuint8*	Data;
+	TArray<vuint8>	ArrData;
 	vint32	MaxSizeBits;
 	vint32	CurSizeBits;
 
@@ -103,7 +105,6 @@ public:
 	void AllocBits(vint32 startsize);
 	void Free();
 	void Clear();
-	void* GetSpaceBits(vint32 length);
 	bool CheckSpaceBits(vint32 length) const
 	{
 		return CurSizeBits + length <= MaxSizeBits;
@@ -121,6 +122,10 @@ public:
 	int GetMaxSize() const
 	{
 		return (MaxSizeBits + 7) >> 3;
+	}
+	vuint8* GetData()
+	{
+		return ArrData.Ptr();
 	}
 };
 

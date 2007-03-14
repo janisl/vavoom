@@ -709,7 +709,7 @@ static void CL_ParseSetProp(VMessageIn& Msg)
 	{
 		Sys_Error("Bad net field %d", FldIdx);
 	}
-	VField::NetReadValue(Msg, (vuint8*)Ent + F->Ofs, F->Type);
+	VField::NetSerialiseValue(Msg, (vuint8*)Ent + F->Ofs, F->Type);
 	unguard;
 }
 
@@ -763,7 +763,7 @@ static void CL_ParseSetPlayerProp(VMessageIn& Msg)
 	{
 		Sys_Error("Bad net field %d", FldIdx);
 	}
-	VField::NetReadValue(Msg, (vuint8*)cl + F->Ofs, F->Type);
+	VField::NetSerialiseValue(Msg, (vuint8*)cl + F->Ofs, F->Type);
 	unguard;
 }
 
@@ -834,7 +834,7 @@ void CL_ParseServerMessage(VMessageIn& msg)
 		{
 			GCon->Logf(NAME_Dev, "Length %d", msg.GetCurSize());
 			for (i = 0; i < msg.GetCurSize(); i++)
-				GCon->Logf(NAME_Dev, "  %d", (int)msg.Data[i]);
+				GCon->Logf(NAME_Dev, "  %d", (int)msg.GetData()[i]);
 			Host_Error("Packet corupted");
 		}
 
@@ -1075,7 +1075,7 @@ void CL_ParseServerMessage(VMessageIn& msg)
 			GCon->Logf(NAME_Dev, "Length %d", msg.GetCurSize());
 			for (i = 0; i < msg.GetCurSize(); i++)
 			{
-				GCon->Logf(NAME_Dev, "  %d", (int)msg.Data[i]);
+				GCon->Logf(NAME_Dev, "  %d", (int)msg.GetData()[i]);
 			}
 			GCon->Logf(NAME_Dev, "ReadCount %d", msg.GetReadCount());
 			Host_Error("Invalid packet %d", cmd_type);
