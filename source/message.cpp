@@ -58,6 +58,7 @@ void VMessageOut::AllocBits(vint32 startsize)
 	MaxSizeBits = startsize;
 	CurSizeBits = 0;
 	Overflowed = false;
+	memset(ArrData.Ptr(), 0, (MaxSizeBits + 7) >> 3);
 	unguard;
 }
 
@@ -85,6 +86,7 @@ void VMessageOut::Free()
 void VMessageOut::Clear()
 {
 	CurSizeBits = 0;
+	memset(ArrData.Ptr(), 0, (MaxSizeBits + 7) >> 3);
 }
 
 //==========================================================================
@@ -95,22 +97,94 @@ void VMessageOut::Clear()
 
 void VMessageOut::Serialise(void* data, vint32 length)
 {
-	guard(VMessageOut::Serialise);
-	if (CurSizeBits + (length << 3) > MaxSizeBits)
+	SerialiseBits(data, length << 3);
+}
+
+//==========================================================================
+//
+//  VMessageOut::SerialiseBits
+//
+//==========================================================================
+
+void VMessageOut::SerialiseBits(void* Src, vint32 Length)
+{
+	guard(VMessageOut::SerialiseBits);
+	if (!Length)
+	{
+		return;
+	}
+
+	if (CurSizeBits + Length > MaxSizeBits)
 	{
 		if (!AllowOverflow)
 			Sys_Error("TSizeBuf::GetSpace: overflow without allowoverflow set");
 
-		if ((length << 3) > MaxSizeBits)
-			Sys_Error("TSizeBuf::GetSpace: %i is > full buffer size", length << 3);
+		if (Length > MaxSizeBits)
+			Sys_Error("TSizeBuf::GetSpace: %i is > full buffer size", Length);
 
 		Overflowed = true;
 		GCon->Log("TSizeBuf::GetSpace: overflow");
 		Clear();
+		return;
 	}
 
-	memcpy(ArrData.Ptr() + ((CurSizeBits + 7) >> 3), data, length);
-	CurSizeBits += length << 3;
+	if (Length <= 8)
+	{
+		int Byte1 = CurSizeBits >> 3;
+		int Byte2 = (CurSizeBits + Length - 1) >> 3;
+
+		vuint8 Val = ((vuint8*)Src)[0] & ((1 << Length) - 1);
+		int Shift = CurSizeBits & 7;
+		if (Byte1 == Byte2)
+		{
+			ArrData[Byte1] |= Val << Shift;
+		}
+		else
+		{
+			ArrData[Byte1] |= Val << Shift;
+			ArrData[Byte2] |= Val >> (8 - Shift);
+		}
+		CurSizeBits += Length;
+		return;
+	}
+
+	int Bytes = Length >> 3;
+	if (Bytes)
+	{
+		if (CurSizeBits & 7)
+		{
+			vuint8* pSrc = (vuint8*)Src;
+			vuint8* pDst = (vuint8*)ArrData.Ptr() + (CurSizeBits >> 3);
+			for (int i = 0; i < Bytes; i++, pSrc++, pDst++)
+			{
+				pDst[0] |= *pSrc << (CurSizeBits & 7);
+				pDst[1] |= *pSrc >> (8 - (CurSizeBits & 7));
+			}
+		}
+		else
+		{
+			memcpy(ArrData.Ptr() + ((CurSizeBits + 7) >> 3), Src, Length >> 3);
+		}
+		CurSizeBits += Length & ~7;
+	}
+
+	if (Length & 7)
+	{
+		int Byte1 = CurSizeBits >> 3;
+		int Byte2 = (CurSizeBits + (Length & 7) - 1) >> 3;
+		vuint8 Val = ((vuint8*)Src)[Length >> 3] & ((1 << (Length & 7)) - 1);
+		int Shift = CurSizeBits & 7;
+		if (Byte1 == Byte2)
+		{
+			ArrData[Byte1] |= Val << Shift;
+		}
+		else
+		{
+			ArrData[Byte1] |= Val << Shift;
+			ArrData[Byte2] |= Val >> (8 - Shift);
+		}
+		CurSizeBits += Length & 7;
+	}
 	unguard;
 }
 
@@ -123,7 +197,7 @@ void VMessageOut::Serialise(void* data, vint32 length)
 VMessageOut& VMessageOut::operator << (const VMessageOut &msg)
 {
 	guard(VMessageOut::operator << VMessageOut);
-	Serialise(const_cast<VMessageOut&>(msg).GetData(), msg.GetCurSize());
+	SerialiseBits(const_cast<VMessageOut&>(msg).GetData(), msg.CurSizeBits);
 	return *this;
 	unguard;
 }
@@ -195,16 +269,64 @@ void VMessageIn::BeginReading()
 
 void VMessageIn::Serialise(void* AData, int ALen)
 {
-	guard(VMessageIn::Serialise);
-	if (ReadCountBits + (ALen << 3) > CurSizeBits)
+	SerialiseBits(AData, ALen << 3);
+}
+
+//==========================================================================
+//
+//  VMessageIn::SerialiseBits
+//
+//==========================================================================
+
+void VMessageIn::SerialiseBits(void* Dst, int Length)
+{
+	guard(VMessageIn::SerialiseBits);
+	if (!Length)
+	{
+		return;
+	}
+
+	if (ReadCountBits + Length > CurSizeBits)
 	{
 		BadRead = true;
-		memset(AData, 0, ALen);
+		memset(Dst, 0, (Length + 7) >> 3);
+		return;
+	}
+
+	if (ReadCountBits & 7)
+	{
+		int SrcPos = ReadCountBits >> 3;
+		int Shift1 = ReadCountBits & 7;
+		int Shift2 = 8 - Shift1;
+		int Count = Length >> 3;
+		for (int i = 0; i < Count; i++, SrcPos++)
+		{
+			((vuint8*)Dst)[i] = (ArrData[SrcPos] >> Shift1) |
+				ArrData[SrcPos + 1] << Shift2;
+		}
+		if (Length & 7)
+		{
+			if ((Length & 7) > Shift2)
+			{
+				((vuint8*)Dst)[Count] = ((ArrData[SrcPos] >> Shift1) |
+					ArrData[SrcPos + 1] << Shift2) & ((1 << (Length & 7)) - 1);
+			}
+			else
+			{
+				((vuint8*)Dst)[Count] = (ArrData[SrcPos] >> Shift1) &
+					((1 << (Length & 7)) - 1);
+			}
+		}
 	}
 	else
 	{
-		memcpy(AData, ArrData.Ptr() + ((ReadCountBits + 7) >> 3), ALen);
-		ReadCountBits += ALen << 3;
+		int Count = Length >> 3;
+		memcpy(Dst, ArrData.Ptr() + (ReadCountBits >> 3), Count);
+		if (Length & 7)
+		{
+			((vuint8*)Dst)[Count] = ArrData[Count] & ((1 << (Length & 7)) - 1);
+		}
 	}
+	ReadCountBits += Length;
 	unguard;
 }

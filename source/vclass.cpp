@@ -771,8 +771,20 @@ void VField::SerialiseFieldValue(VStream& Strm, vuint8* Data, const VField::FTyp
 		break;
 
 	case ev_bool:
-		if (Type.BitMask == 1)
-			Strm << *(int*)Data;
+		if (Strm.IsLoading())
+		{
+			vuint8 Val;
+			Strm << Val;
+			if (Val)
+				*(int*)Data |= Type.BitMask;
+			else
+				*(int*)Data &= ~Type.BitMask;
+		}
+		else
+		{
+			vuint8 Val = !!(*(int*)Data & Type.BitMask);
+			Strm << Val;
+		}
 		break;
 
 	case ev_vector:
@@ -1064,7 +1076,7 @@ void VField::NetSerialiseValue(VStream& Strm, vuint8* Data, const VField::FType&
 		if (Strm.IsLoading())
 		{
 			vuint8 Val;
-			Strm << Val;
+			Strm.SerialiseBits(&Val, 1);
 			if (Val)
 				*(vuint32*)Data |= Type.BitMask;
 			else
@@ -1073,7 +1085,7 @@ void VField::NetSerialiseValue(VStream& Strm, vuint8* Data, const VField::FType&
 		else
 		{
 			vuint8 Val = (vuint8)!!(*(vuint32*)Data & Type.BitMask);
-			Strm << Val;
+			Strm.SerialiseBits(&Val, 1);
 		}
 		break;
 

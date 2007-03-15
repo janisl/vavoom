@@ -71,6 +71,21 @@ void VStream::Serialise(void*, int)
 
 //==========================================================================
 //
+//	VStream::SerialiseBits
+//
+//==========================================================================
+
+void VStream::SerialiseBits(void* Data, int Length)
+{
+	guardSlow(VStream::SerialiseBits);
+	Serialise(Data, (Length + 7) >> 3);
+	if (IsLoading() && (Length & 7))
+		((vuint8*)Data)[Length >> 3] &= (1 << (Length & 7)) - 1;
+	unguardSlow;
+}
+
+//==========================================================================
+//
 //	VStream::Seek
 //
 //==========================================================================

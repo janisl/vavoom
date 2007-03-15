@@ -62,6 +62,7 @@ public:
 
 	//	Stream interface.
 	virtual void Serialise(void*, int);
+	virtual void SerialiseBits(void*, int);
 	virtual void Seek(int);
 	virtual int Tell();
 	virtual int TotalSize();

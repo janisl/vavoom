@@ -50,6 +50,7 @@ public:
 
 	//	VStream interface
 	void Serialise(void*, int);
+	void SerialiseBits(void*, int);
 
 	void AllocBits(vint32 startsize);
 	void Free();
@@ -101,6 +102,7 @@ public:
 
 	//	VStream interface
 	void Serialise(void*, int);
+	void SerialiseBits(void*, int);
 
 	void AllocBits(vint32 startsize);
 	void Free();
