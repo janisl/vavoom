@@ -44,6 +44,7 @@
 #include "array.h"		//	Dynamic arrays
 #include "map.h"		//	Mapping of keys to values
 #include "stream.h"		//	Streams
+#include "bitstream.h"	//	Streams for bit-data
 #include "names.h"		//	Built-in names
 #include "name.h"		//	Names
 #include "str.h"		//	Strings

@@ -144,7 +144,7 @@ void SV_SetUserInfo(const VStr& info)
 	{
 		sv_player->UserInfo = info;
 		SV_ReadFromUserInfo();
-		sv_reliable << (byte)svc_userinfo
+		*sv_reliable << (byte)svc_userinfo
 					<< (byte)SV_GetPlayerNum(sv_player)
 					<< sv_player->UserInfo;
 	}
@@ -181,11 +181,9 @@ bool SV_ReadClientMessages(int clientnum)
 
 		VMessageIn& msg = GNet->NetMsg;
 
-		msg.BeginReading();
-
 		while (1)
 		{
-			if (msg.BadRead)
+			if (msg.IsError())
 			{
 				GCon->Log(NAME_DevNet, "Packet corupted");
 				return false;
@@ -193,7 +191,7 @@ bool SV_ReadClientMessages(int clientnum)
 
 			msg << cmd_type;
 
-			if (msg.BadRead)
+			if (msg.IsError())
 				break; // Here this means end of packet
 
 			switch (cmd_type)
@@ -248,7 +246,7 @@ COMMAND(SetInfo)
 	}
 
 	Info_SetValueForKey(sv_player->UserInfo, *Args[1], *Args[2]);
-	sv_reliable << (byte)svc_setinfo
+	*sv_reliable << (byte)svc_setinfo
 				<< (byte)SV_GetPlayerNum(sv_player)
 				<< Args[1]
 				<< Args[2];

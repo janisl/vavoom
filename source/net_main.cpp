@@ -210,9 +210,6 @@ void VNetwork::Init()
 		s->Disconnected = true;
 	}
 
-	// allocate space for network message buffer
-	NetMsg.AllocBits(NET_MAXMESSAGE << 3);
-
 	// Initialise all the drivers
 	for (i = 0; i < NumDrivers; i++)
 	{
@@ -268,7 +265,6 @@ void VNetwork::Shutdown()
 		sock = Next;
 	}
 	FreeSockets = NULL;
-	NetMsg.Free();
 	unguard;
 }
 

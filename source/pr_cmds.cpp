@@ -1084,18 +1084,18 @@ void PR_MSG_Select(int msgtype)
 	{
 #ifdef SERVER
 		case MSG_SV_DATAGRAM:
-			pr_msg = &sv_datagram;
+			pr_msg = sv_datagram;
 			break;
 		case MSG_SV_RELIABLE:
-			pr_msg = &sv_reliable;
+			pr_msg = sv_reliable;
 			break;
 		case MSG_SV_SIGNON:
-			pr_msg = &sv_signon;
+			pr_msg = sv_signon;
 			break;
 #endif
 #ifdef CLIENT
 		case MSG_CL_MESSAGE:
-			pr_msg = &cls.message;
+			pr_msg = cls.message;
 			break;
 #endif
 	}

@@ -381,7 +381,7 @@ void VCommand::ForwardToServer()
 {
 	guard(VCommand::ForwardToServer);
 #ifdef CLIENT
-	cls.message << (vuint8)clc_stringcmd << Original;
+	*cls.message << (vuint8)clc_stringcmd << Original;
 #endif
 	unguard;
 }

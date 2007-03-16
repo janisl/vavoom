@@ -92,6 +92,7 @@ struct VPlayerNetInfo
 
 	VPlayerNetInfo()
 	: NetCon(NULL)
+	, Message(MAX_MSGLEN << 3)
 	, MobjUpdateStart(0)
 	, LastMessage(0)
 	, NeedsUpdate(false)

@@ -44,6 +44,8 @@ _____MAIN_EXE__SOURCES = \
 	array.h \
 	asm_i386.h \
 	automap.h \
+	bitstream.cpp \
+	bitstream.h \
 	build.h \
 	chat.cpp \
 	chat.h \
@@ -416,6 +418,7 @@ _____SERVER_EXE__LDADD = @SV_LIBS@
 
 _____SERVER_EXE__SOURCES = \
 	args.cpp \
+	bitstream.cpp \
 	cmd.cpp \
 	crc.cpp \
 	cvar.cpp \

@@ -216,7 +216,7 @@ void VCvar::DoSet(const VStr& AValue)
 		Info_SetValueForKey(cls.userinfo, Name, *StringValue);
 		if (cls.state >= ca_connected)
 		{
-			cls.message	<< (byte)clc_stringcmd
+			*cls.message	<< (byte)clc_stringcmd
 						<< (VStr("setinfo \"") + Name + "\" \"" +
 							StringValue + "\"\n");
 		}
@@ -229,7 +229,7 @@ void VCvar::DoSet(const VStr& AValue)
 		Info_SetValueForKey(svs.serverinfo, Name, *StringValue);
 		if (sv.active)
 		{
-			sv_reliable << (byte)svc_serverinfo << Name << StringValue;
+			*sv_reliable << (byte)svc_serverinfo << Name << StringValue;
 		}
 	}
 #endif

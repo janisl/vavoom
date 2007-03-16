@@ -721,9 +721,9 @@ static void SV_SaveMap(int slot, bool savePlayers)
 	//	Save baseline
 	Seg = ASEG_BASELINE;
 	*Saver << Seg;
-	int SignonSize = sv_signon.GetCurSize();
+	int SignonSize = sv_signon->GetNumBits();
 	*Saver << STRM_INDEX(SignonSize);
-	Saver->Serialise(sv_signon.GetData(), sv_signon.GetCurSize());
+	Saver->Serialise(sv_signon->GetData(), sv_signon->GetNumBytes());
 	for (int i = 0; i < GMaxEntities; i++)
 	{
 		if (sv_mo_base[i].Class ||
@@ -805,10 +805,10 @@ static void SV_LoadMap(VName MapName, int slot)
 	AssertSegment(ASEG_BASELINE);
 	int len;
 	*Loader << STRM_INDEX(len);
-	sv_signon.Clear();
-	void *tmp = Z_Malloc(len);
-	Loader->Serialise(tmp, len);
-	sv_signon.Serialise(tmp, len);
+	sv_signon->Clear();
+	void *tmp = Z_Malloc((len + 7) >> 3);
+	Loader->Serialise(tmp, (len + 7) >> 3);
+	sv_signon->SerialiseBits(tmp, len);
 	Z_Free(tmp);
 	memset(sv_mo_base, 0, sizeof(mobj_base_t) * GMaxEntities);
 	int Idx;

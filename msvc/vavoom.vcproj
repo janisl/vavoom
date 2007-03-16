@@ -206,6 +206,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\bitstream.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\source\cheats.cpp"
 				>
 			</File>
@@ -356,6 +360,10 @@
 			</File>
 			<File
 				RelativePath="..\source\asm_i386.h"
+				>
+			</File>
+			<File
+				RelativePath="..\source\bitstream.h"
 				>
 			</File>
 			<File

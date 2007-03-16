@@ -22,36 +22,72 @@
 //**  GNU General Public License for more details.
 //**
 //**************************************************************************
+//**
+//**	MESSAGE IO FUNCTIONS
+//**
+//**    Handles byte ordering and avoids alignment errors
+//**
+//**************************************************************************
 
-// HEADER FILES ------------------------------------------------------------
-
-// MACROS ------------------------------------------------------------------
-
-// TYPES -------------------------------------------------------------------
-
-struct server_t
+//
+//	VBitStreamWriter
+//
+class VBitStreamWriter : public VStream
 {
-	bool		active;
+protected:
+	TArray<vuint8>		Data;
+	vint32				Max;
+	vint32				Pos;
 
-	int			intermission;
-	int			intertime;
+public:
+	VBitStreamWriter(vint32);
+	void Serialise(void*, int);
+	void SerialiseBits(void*, int);
+	void WriteBit(bool);
+	vuint8* GetData()
+	{
+		return Data.Ptr();
+	}
+	int GetNumBits()
+	{
+		return Pos;
+	}
+	int GetNumBytes()
+	{
+		return (Pos + 7) >> 3;
+	}
 };
 
-struct server_static_t
+//
+//	VBitStreamReader
+//
+class VBitStreamReader : public VStream
 {
-	int			max_clients;
-	int			num_connected;
+protected:
+	TArray<vuint8>		Data;
+	vint32				Num;
+	vint32				Pos;
 
-	VStr		serverinfo;
+public:
+	VBitStreamReader(vuint8* = NULL, vint32 = 0);
+	void Serialise(void*, int);
+	void SerialiseBits(void*, int);
+	bool ReadBit();
+	bool AtEnd();
+	vuint8* GetData()
+	{
+		return Data.Ptr();
+	}
+	int GetNumBits()
+	{
+		return Num;
+	}
+	int GetNumBytes()
+	{
+		return (Num + 7) >> 3;
+	}
+	int GetPosBits()
+	{
+		return (Num + 7) >> 3;
+	}
 };
-
-// PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
-
-// PUBLIC DATA DECLARATIONS ------------------------------------------------
-
-extern server_t			sv;
-extern server_static_t	svs;
-
-extern VMessageOut*		sv_reliable;
-extern VMessageOut*		sv_datagram;
-extern VMessageOut*		sv_signon;

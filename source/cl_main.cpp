@@ -89,7 +89,7 @@ void CL_Init()
 	memset(cl_mobjs, 0, sizeof(VEntity*) * GMaxEntities);
 	memset(cl_mo_base, 0, sizeof(clmobjbase_t) * GMaxEntities);
 
-	cls.message.AllocBits(NET_MAXMESSAGE << 3);
+	cls.message = new VMessageOut(NET_MAXMESSAGE << 3);
 
 	GClGame = (VClientGameBase*)VObject::StaticSpawnObject(
 		VClass::FindClass("ClientGame"));
@@ -145,7 +145,7 @@ void CL_Shutdown()
 		delete[] cl_mobjs;
 	}
 	delete[] cl_mo_base;
-	cls.message.Free();
+	delete cls.message;
 	if (GClLevel)
 		GClLevel->ConditionalDestroy();
 	if (GClPrevLevel)
@@ -264,7 +264,7 @@ void CL_SignonReply()
 	switch (cls.signon)
 	{
 	case 1:
-		cls.message << (byte)clc_stringcmd << "PreSpawn\n";
+		*cls.message << (byte)clc_stringcmd << "PreSpawn\n";
 		break;
 
 	case 2:
@@ -272,14 +272,14 @@ void CL_SignonReply()
 		GClLevel->RenderData->PreRender();
 		if (!UserInfoSent)
 		{
-			cls.message << (byte)clc_player_info << cls.userinfo;
+			*cls.message << (byte)clc_player_info << cls.userinfo;
 			UserInfoSent = true;
 		}
-		cls.message << (byte)clc_stringcmd << "Spawn\n";
+		*cls.message << (byte)clc_stringcmd << "Spawn\n";
 		break;
 
 	case 3:
-		cls.message << (byte)clc_stringcmd << "Begin\n";
+		*cls.message << (byte)clc_stringcmd << "Begin\n";
 		break;
 	}
 	unguard;
@@ -342,9 +342,9 @@ void CL_KeepaliveMessage()
 	// write out a nop
 	GCon->Log("--> client to server keepalive");
 
-	cls.message << (byte)clc_nop;
-	cls.netcon->SendMessage(&cls.message);
-	cls.message.Clear();
+	*cls.message << (byte)clc_nop;
+	cls.netcon->SendMessage(cls.message);
+	cls.message->Clear();
 	unguard;
 }
 
@@ -382,14 +382,14 @@ void CL_Disconnect()
 		}
 
 		GCon->Log(NAME_Dev, "Sending clc_disconnect");
-		if (cls.message.GetCurSize())
+		if (cls.message->GetNumBits())
 		{
 			GCon->Log(NAME_Dev, "Buffer contains data");
 		}
-		cls.message.Clear();
-		cls.message << (byte)clc_disconnect;
-		cls.netcon->SendUnreliableMessage(&cls.message);
-		cls.message.Clear();
+		cls.message->Clear();
+		*cls.message << (byte)clc_disconnect;
+		cls.netcon->SendUnreliableMessage(cls.message);
+		cls.message->Clear();
 		cls.netcon->Close();
 		cls.netcon = NULL;
 

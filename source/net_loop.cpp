@@ -273,7 +273,7 @@ int VLoopbackDriver::SendMessage(VSocket* sock, VMessageOut* data)
 
 	bufferLength = &((VSocket*)sock->DriverData)->ReceiveMessageLength;
 
-	if ((*bufferLength + data->GetCurSize() + 4) > NET_MAXMESSAGE)
+	if ((*bufferLength + data->GetNumBytes() + 4) > NET_MAXMESSAGE)
 		Sys_Error("Loop_SendMessage: overflow\n");
 
 	buffer = ((VSocket*)sock->DriverData)->ReceiveMessageData + *bufferLength;
@@ -282,15 +282,15 @@ int VLoopbackDriver::SendMessage(VSocket* sock, VMessageOut* data)
 	*buffer++ = 1;
 
 	// length
-	*buffer++ = data->GetCurSize() & 0xff;
-	*buffer++ = data->GetCurSize() >> 8;
+	*buffer++ = data->GetNumBytes() & 0xff;
+	*buffer++ = data->GetNumBytes() >> 8;
 
 	// align
 	buffer++;
 
 	// message
-	memcpy(buffer, data->GetData(), data->GetCurSize());
-	*bufferLength = IntAlign(*bufferLength + data->GetCurSize() + 4);
+	memcpy(buffer, data->GetData(), data->GetNumBytes());
+	*bufferLength = IntAlign(*bufferLength + data->GetNumBytes() + 4);
 
 	sock->CanSend = false;
 	return 1;
@@ -314,7 +314,7 @@ int VLoopbackDriver::SendUnreliableMessage(VSocket* sock, VMessageOut* data)
 
 	bufferLength = &((VSocket*)sock->DriverData)->ReceiveMessageLength;
 
-	if ((*bufferLength + data->GetCurSize() + sizeof(byte) + sizeof(short)) > NET_MAXMESSAGE)
+	if ((*bufferLength + data->GetNumBytes() + sizeof(byte) + sizeof(short)) > NET_MAXMESSAGE)
 		return 0;
 
 	buffer = ((VSocket*)sock->DriverData)->ReceiveMessageData + *bufferLength;
@@ -323,15 +323,15 @@ int VLoopbackDriver::SendUnreliableMessage(VSocket* sock, VMessageOut* data)
 	*buffer++ = 2;
 
 	// length
-	*buffer++ = data->GetCurSize() & 0xff;
-	*buffer++ = data->GetCurSize() >> 8;
+	*buffer++ = data->GetNumBytes() & 0xff;
+	*buffer++ = data->GetNumBytes() >> 8;
 
 	// align
 	buffer++;
 
 	// message
-	memcpy(buffer, data->GetData(), data->GetCurSize());
-	*bufferLength = IntAlign(*bufferLength + data->GetCurSize() + 4);
+	memcpy(buffer, data->GetData(), data->GetNumBytes());
+	*bufferLength = IntAlign(*bufferLength + data->GetNumBytes() + 4);
 	return 1;
 	unguard;
 }

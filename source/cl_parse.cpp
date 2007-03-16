@@ -825,22 +825,20 @@ void CL_ParseServerMessage(VMessageIn& msg)
 	float		radius;
 	vuint32		colour;
 
-	msg.BeginReading();
-
 	// update command store from the packet
 	while (1)
 	{
-		if (msg.BadRead)
+		if (msg.IsError())
 		{
-			GCon->Logf(NAME_Dev, "Length %d", msg.GetCurSize());
-			for (i = 0; i < msg.GetCurSize(); i++)
+			GCon->Logf(NAME_Dev, "Length %d", msg.GetNumBits());
+			for (i = 0; i < msg.GetNumBytes(); i++)
 				GCon->Logf(NAME_Dev, "  %d", (int)msg.GetData()[i]);
 			Host_Error("Packet corupted");
 		}
 
 		msg << cmd_type;
 
-		if (msg.BadRead)
+		if (msg.IsError())
 			break; // Here this means end of packet
 
 		switch (cmd_type)
@@ -1072,12 +1070,12 @@ void CL_ParseServerMessage(VMessageIn& msg)
 			{
 				break;
 			}
-			GCon->Logf(NAME_Dev, "Length %d", msg.GetCurSize());
-			for (i = 0; i < msg.GetCurSize(); i++)
+			GCon->Logf(NAME_Dev, "Length %d", msg.GetNumBits());
+			for (i = 0; i < msg.GetNumBytes(); i++)
 			{
 				GCon->Logf(NAME_Dev, "  %d", (int)msg.GetData()[i]);
 			}
-			GCon->Logf(NAME_Dev, "ReadCount %d", msg.GetReadCount());
+			GCon->Logf(NAME_Dev, "ReadCount %d", msg.GetPosBits());
 			Host_Error("Invalid packet %d", cmd_type);
 			break;
 		}

@@ -608,7 +608,7 @@ void CL_SendMove()
 
 	if (cls.demoplayback)
 	{
-		cls.message.Clear();
+		cls.message->Clear();
 		return;
 	}
 	
@@ -618,8 +618,7 @@ void CL_SendMove()
 		BuildTiccmd(&cmd);
 		mousex = mousey = 0;
 
-		VMessageOut msg;
-		msg.AllocBits(MAX_DATAGRAM << 3);
+		VMessageOut msg(MAX_DATAGRAM << 3);
 		msg << (byte)clc_move
 			<< (byte)(AngleToByte(cl->ViewAngles.yaw))
 			<< (byte)(AngleToByte(cl->ViewAngles.pitch))
@@ -633,7 +632,7 @@ void CL_SendMove()
 	}
 
 	// send the reliable message
-	if (!cls.message.GetCurSize())
+	if (!cls.message->GetNumBits())
 	{
 		return;		// no message at all
 	}
@@ -644,12 +643,12 @@ void CL_SendMove()
 		return;
 	}
 
-	if (cls.netcon->SendMessage(&cls.message) == -1)
+	if (cls.netcon->SendMessage(cls.message) == -1)
 	{
 		Host_Error("CL_WriteToServer: lost server connection");
 	}
 
-	cls.message.Clear();
+	cls.message->Clear();
 	unguard;
 }
 

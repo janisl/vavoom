@@ -29,106 +29,43 @@
 //**
 //**************************************************************************
 
-class VMessageIn : public VStream
+class VMessageIn : public VBitStreamReader
 {
 public:
-	VMessageIn()
+	VMessageIn(vuint8* Src = NULL, vint32 Length = 0)
+	: VBitStreamReader(Src, Length)
 	{
-		MaxSizeBits = 0;
-		CurSizeBits = 0;
-	}
-	~VMessageIn()
-	{
-		Free();
 	}
 
-	vint8	BadRead;
-	TArray<vuint8>	ArrData;
-	vint32	MaxSizeBits;
-	vint32	CurSizeBits;
-	vint32	ReadCountBits;
-
-	//	VStream interface
-	void Serialise(void*, int);
-	void SerialiseBits(void*, int);
-
-	void AllocBits(vint32 startsize);
-	void Free();
 	void SetDataBits(const void* data, vint32 length);
 
-	void BeginReading();
 	vuint8 ReadByte() { vuint8 c; *this << c; return c; }
 	vint16 ReadShort() { vint16	c; *this << c; return c; }
 	VStr ReadString() { VStr S; *this << S; return S; }
-
-	int GetReadCount() const
-	{
-		return (ReadCountBits + 7) >> 3;
-	}
-	int GetCurSize() const
-	{
-		return (CurSizeBits + 7) >> 3;
-	}
-	int GetMaxSize() const
-	{
-		return (MaxSizeBits + 7) >> 3;
-	}
-	vuint8* GetData()
-	{
-		return ArrData.Ptr();
-	}
 };
 
-class VMessageOut : public VStream
+class VMessageOut : public VBitStreamWriter
 {
 public:
-	VMessageOut()
+	VMessageOut(vint32 AMax)
+	: VBitStreamWriter(AMax)
+	, AllowOverflow(false)
 	{
-		AllowOverflow = false;
-		Overflowed = false;
-		MaxSizeBits = 0;
-		CurSizeBits = 0;
-	}
-	~VMessageOut()
-	{
-		Free();
 	}
 
 	vint8	AllowOverflow;	// if false, do a Sys_Error
-	vint8	Overflowed;		// set to true if the buffer size failed
-	TArray<vuint8>	ArrData;
-	vint32	MaxSizeBits;
-	vint32	CurSizeBits;
 
-	//	VStream interface
-	void Serialise(void*, int);
 	void SerialiseBits(void*, int);
-
-	void AllocBits(vint32 startsize);
-	void Free();
 	void Clear();
 	bool CheckSpaceBits(vint32 length) const
 	{
-		return CurSizeBits + length <= MaxSizeBits;
+		return Pos + length <= Max;
 	}
 
 	//
 	//	writing functions
 	//
-	VMessageOut& operator << (const VMessageOut& msg);
-
-	int GetCurSize() const
-	{
-		return (CurSizeBits + 7) >> 3;
-	}
-	int GetMaxSize() const
-	{
-		return (MaxSizeBits + 7) >> 3;
-	}
-	vuint8* GetData()
-	{
-		return ArrData.Ptr();
-	}
+	VMessageOut& operator << (VMessageOut& msg);
 };
 
 inline VMessageOut& operator << (VMessageOut& Msg, const vuint8& Val)
