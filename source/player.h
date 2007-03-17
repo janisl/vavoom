@@ -89,6 +89,7 @@ struct VPlayerNetInfo
 	bool			NeedsUpdate;
 	VEntityChannel*	EntChan;
 	VPlayerChannel	Chan;
+	VMessageOut*	Messages;
 
 	VPlayerNetInfo()
 	: NetCon(NULL)
@@ -97,6 +98,7 @@ struct VPlayerNetInfo
 	, LastMessage(0)
 	, NeedsUpdate(false)
 	, EntChan(NULL)
+	, Messages(NULL)
 	{}
 };
 

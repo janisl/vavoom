@@ -1660,6 +1660,28 @@ void SV_SendClientDatagram()
 
 //==========================================================================
 //
+//	SV_AddPlayerMessage
+//
+//==========================================================================
+
+void SV_AddPlayerMessage(VBasePlayer* Player, VMessageOut& Message)
+{
+	guard(SV_AddPlayerMessage);
+	VMessageOut* Copy = new VMessageOut(Message.GetNumBits());
+	Copy->SerialiseBits(Message.GetData(), Message.GetNumBits());
+
+	VMessageOut** Prev = &Player->Net->Messages;
+	while (*Prev)
+	{
+		Prev = &(*Prev)->Next;
+	}
+	*Prev = Copy;
+	Copy->Next = NULL;
+	unguard;
+}
+
+//==========================================================================
+//
 //	SV_SendReliable
 //
 //==========================================================================
@@ -1685,36 +1707,47 @@ void SV_SendReliable()
 
 	for (int i = 0; i < svs.max_clients; i++)
 	{
-		if (!GGameInfo->Players[i])
+		VBasePlayer* Player = GGameInfo->Players[i];
+		sv_player = Player;
+		if (!Player)
 		{
 			continue;
 		}
 
-		if (GGameInfo->Players[i]->Net->Message.IsError())
+		if (Player->Net->Message.IsError())
 		{
 			SV_DropClient(true);
 			GCon->Log(NAME_Dev, "Client message overflowed");
 			continue;
 		}
 
-		if (!GGameInfo->Players[i]->Net->Message.GetNumBytes())
+		if (!Player->Net->NetCon->CanSendMessage())
 		{
 			continue;
 		}
 
-		if (!GGameInfo->Players[i]->Net->NetCon->CanSendMessage())
+		if ((Player->Net->Message.GetNumBytes() > MAX_DATAGRAM * 3 / 4) ||
+			(Player->Net->Message.GetNumBytes() && !Player->Net->Messages))
+		{
+			SV_AddPlayerMessage(Player, Player->Net->Message);
+			Player->Net->Message.Clear();
+		}
+
+		if (!Player->Net->Messages)
 		{
 			continue;
 		}
 
-		if (GGameInfo->Players[i]->Net->NetCon->SendMessage(
-			&GGameInfo->Players[i]->Net->Message) == -1)
+		VMessageOut* Msg = Player->Net->Messages;
+		Player->Net->Messages = Msg->Next;
+		if (Player->Net->NetCon->SendMessage(Msg) == -1)
 		{
+			delete Msg;
 			SV_DropClient(true);
 			continue;
 		}
-		GGameInfo->Players[i]->Net->Message.Clear();
-		GGameInfo->Players[i]->Net->LastMessage = realtime;
+		delete Msg;
+		Player->Net->LastMessage = realtime;
 	}
 	unguard;
 }
@@ -2930,6 +2963,13 @@ void SV_DropClient(bool)
 		sv_player->Net->NetCon->Close();
 	}
 	sv_player->Net->NetCon = NULL;
+	for (VMessageOut* Msg = sv_player->Net->Messages; Msg; )
+	{
+		VMessageOut* Next = Msg->Next;
+		delete Msg;
+		Msg = Next;
+	}
+	sv_player->Net->Messages = NULL;
 	svs.num_connected--;
 	sv_player->UserInfo = VStr();
 	*sv_reliable << (vuint8)svc_userinfo

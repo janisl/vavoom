@@ -55,7 +55,8 @@ public:
 	{
 	}
 
-	vint8	AllowOverflow;	// if false, do a Sys_Error
+	VMessageOut*	Next;
+	vint8			AllowOverflow;	// if false, do a Sys_Error
 
 	void SerialiseBits(void*, int);
 	void Clear();
