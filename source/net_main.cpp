@@ -382,6 +382,7 @@ VSocket* VNetwork::NewSocket(VNetDriver* Drv)
 	sock->ReceiveSequence = 0;
 	sock->UnreliableReceiveSequence = 0;
 	sock->ReceiveMessageLength = 0;
+	sock->ReceiveMessages = NULL;
 
 	return sock;
 	unguard;
@@ -421,7 +422,15 @@ void VNetwork::FreeSocket(VSocket* sock)
 	// add it to free list
 	sock->Next = FreeSockets;
 	FreeSockets = sock;
+
 	sock->Disconnected = true;
+	for (VMessageIn* Msg = sock->ReceiveMessages; Msg;)
+	{
+		VMessageIn* Next = Msg->Next;
+		delete Msg;
+		Msg = Next;
+	}
+	sock->ReceiveMessages = NULL;
 	unguard;
 }
 

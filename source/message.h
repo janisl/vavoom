@@ -38,7 +38,8 @@ public:
 	{
 	}
 
-	int			MessageType;
+	int				MessageType;
+	VMessageIn*		Next;
 
 	vuint8 ReadByte() { vuint8 c; *this << c; return c; }
 	vint16 ReadShort() { vint16	c; *this << c; return c; }

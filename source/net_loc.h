@@ -71,6 +71,7 @@ public:
 	vuint32			UnreliableReceiveSequence;
 	int				ReceiveMessageLength;
 	vuint8			ReceiveMessageData[NET_MAXMESSAGE];
+	VMessageIn*		ReceiveMessages;
 
 	sockaddr_t		Addr;
 

@@ -231,29 +231,16 @@ int VLoopbackDriver::IntAlign(int value)
 int VLoopbackDriver::GetMessage(VSocket* sock, VMessageIn*& Msg)
 {
 	guard(VLoopbackDriver::GetMessage);
-	int		ret;
-	int		length;
-
-	if (sock->ReceiveMessageLength == 0)
+	if (!sock->ReceiveMessages)
 		return 0;
 
-	ret = sock->ReceiveMessageData[0];
-	length = sock->ReceiveMessageData[1] + (sock->ReceiveMessageData[2] << 8);
-	// alignment byte skipped here
-	Msg = new VMessageIn(sock->ReceiveMessageData + 4, length << 3);
-	Msg->MessageType = ret;
+	Msg = sock->ReceiveMessages;
+	sock->ReceiveMessages = Msg->Next;
 
-	length = IntAlign(length + 4);
-	sock->ReceiveMessageLength -= length;
-
-	if (sock->ReceiveMessageLength)
-		memcpy(sock->ReceiveMessageData, &sock->ReceiveMessageData[length],
-			sock->ReceiveMessageLength);
-
-	if (sock->DriverData && ret == 1)
+	if (sock->DriverData && Msg->MessageType == 1)
 		((VSocket*)sock->DriverData)->CanSend = true;
 
-	return ret;
+	return Msg->MessageType;
 	unguard;
 }
 
@@ -266,32 +253,20 @@ int VLoopbackDriver::GetMessage(VSocket* sock, VMessageIn*& Msg)
 int VLoopbackDriver::SendMessage(VSocket* sock, VMessageOut* data)
 {
 	guard(VLoopbackDriver::SendMessage);
-	vuint8*		buffer;
-	int*		bufferLength;
-
 	if (!sock->DriverData)
 		return -1;
 
-	bufferLength = &((VSocket*)sock->DriverData)->ReceiveMessageLength;
-
-	if ((*bufferLength + data->GetNumBytes() + 4) > NET_MAXMESSAGE)
-		Sys_Error("Loop_SendMessage: overflow\n");
-
-	buffer = ((VSocket*)sock->DriverData)->ReceiveMessageData + *bufferLength;
-
+	VMessageIn* Msg = new VMessageIn(data->GetData(), data->GetNumBits());
 	// message type
-	*buffer++ = 1;
+	Msg->MessageType = 1;
 
-	// length
-	*buffer++ = data->GetNumBytes() & 0xff;
-	*buffer++ = data->GetNumBytes() >> 8;
-
-	// align
-	buffer++;
-
-	// message
-	memcpy(buffer, data->GetData(), data->GetNumBytes());
-	*bufferLength = IntAlign(*bufferLength + data->GetNumBytes() + 4);
+	VMessageIn** Prev = &((VSocket*)sock->DriverData)->ReceiveMessages;
+	while (*Prev)
+	{
+		Prev = &(*Prev)->Next;
+	}
+	*Prev = Msg;
+	Msg->Next = NULL;
 
 	sock->CanSend = false;
 	return 1;
@@ -307,32 +282,21 @@ int VLoopbackDriver::SendMessage(VSocket* sock, VMessageOut* data)
 int VLoopbackDriver::SendUnreliableMessage(VSocket* sock, VMessageOut* data)
 {
 	guard(VLoopbackDriver::SendUnreliableMessage);
-	vuint8*		buffer;
-	int*		bufferLength;
-
 	if (!sock->DriverData)
 		return -1;
 
-	bufferLength = &((VSocket*)sock->DriverData)->ReceiveMessageLength;
-
-	if ((*bufferLength + data->GetNumBytes() + sizeof(byte) + sizeof(short)) > NET_MAXMESSAGE)
-		return 0;
-
-	buffer = ((VSocket*)sock->DriverData)->ReceiveMessageData + *bufferLength;
-
+	VMessageIn* Msg = new VMessageIn(data->GetData(), data->GetNumBits());
 	// message type
-	*buffer++ = 2;
+	Msg->MessageType = 2;
 
-	// length
-	*buffer++ = data->GetNumBytes() & 0xff;
-	*buffer++ = data->GetNumBytes() >> 8;
+	VMessageIn** Prev = &((VSocket*)sock->DriverData)->ReceiveMessages;
+	while (*Prev)
+	{
+		Prev = &(*Prev)->Next;
+	}
+	*Prev = Msg;
+	Msg->Next = NULL;
 
-	// align
-	buffer++;
-
-	// message
-	memcpy(buffer, data->GetData(), data->GetNumBytes());
-	*bufferLength = IntAlign(*bufferLength + data->GetNumBytes() + 4);
 	return 1;
 	unguard;
 }

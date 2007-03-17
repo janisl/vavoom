@@ -94,20 +94,3 @@ void VMessageOut::SerialiseBits(void* Src, vint32 Length)
 	}
 	unguard;
 }
-
-//==========================================================================
-//
-//  VMessageIn::SetDataBits
-//
-//==========================================================================
-
-void VMessageIn::SetDataBits(const void* AData, vint32 ALength)
-{
-	guard(VMessageIn::SetDataBits);
-	Data.SetNum((ALength + 7) >> 3);
-	memcpy(Data.Ptr(), AData, (ALength + 7) >> 3);
-	Num = ALength;
-	Pos = 0;
-	bError = false;
-	unguard;
-}
