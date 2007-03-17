@@ -163,7 +163,6 @@ VSocket* VLoopbackDriver::Connect(const char* host)
 		}
 		loop_client->Address = "localhost";
 	}
-	loop_client->ReceiveMessageLength = 0;
 	loop_client->SendMessageLength = 0;
 	loop_client->CanSend = true;
 
@@ -177,7 +176,6 @@ VSocket* VLoopbackDriver::Connect(const char* host)
 		}
 		loop_server->Address = "LOCAL";
 	}
-	loop_server->ReceiveMessageLength = 0;
 	loop_server->SendMessageLength = 0;
 	loop_server->CanSend = true;
 
@@ -202,10 +200,8 @@ VSocket* VLoopbackDriver::CheckNewConnections()
 
 	localconnectpending = false;
 	loop_server->SendMessageLength = 0;
-	loop_server->ReceiveMessageLength = 0;
 	loop_server->CanSend = true;
 	loop_client->SendMessageLength = 0;
-	loop_client->ReceiveMessageLength = 0;
 	loop_client->CanSend = true;
 	return loop_server;
 	unguard;
@@ -338,7 +334,6 @@ void VLoopbackDriver::Close(VSocket* sock)
 	guard(VLoopbackDriver::Close);
 	if (sock->DriverData)
 		((VSocket*)sock->DriverData)->DriverData = NULL;
-	sock->ReceiveMessageLength = 0;
 	sock->SendMessageLength = 0;
 	sock->CanSend = true;
 	if (sock == loop_client)

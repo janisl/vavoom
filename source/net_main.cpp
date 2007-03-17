@@ -373,7 +373,6 @@ VSocket* VNetwork::NewSocket(VNetDriver* Drv)
 	sock->LanSocket = 0;
 	sock->DriverData = NULL;
 	sock->CanSend = true;
-	sock->SendNext = false;
 	sock->LastMessageTime = NetTime;
 	sock->AckSequence = 0;
 	sock->SendSequence = 0;
@@ -381,7 +380,6 @@ VSocket* VNetwork::NewSocket(VNetDriver* Drv)
 	sock->SendMessageLength = 0;
 	sock->ReceiveSequence = 0;
 	sock->UnreliableReceiveSequence = 0;
-	sock->ReceiveMessageLength = 0;
 	sock->ReceiveMessages = NULL;
 
 	return sock;

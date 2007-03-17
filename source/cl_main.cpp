@@ -89,7 +89,7 @@ void CL_Init()
 	memset(cl_mobjs, 0, sizeof(VEntity*) * GMaxEntities);
 	memset(cl_mo_base, 0, sizeof(clmobjbase_t) * GMaxEntities);
 
-	cls.message = new VMessageOut(NET_MAXMESSAGE << 3);
+	cls.message = new VMessageOut(MAX_MSGLEN << 3);
 
 	GClGame = (VClientGameBase*)VObject::StaticSpawnObject(
 		VClass::FindClass("ClientGame"));

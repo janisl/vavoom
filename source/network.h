@@ -25,10 +25,7 @@
 
 enum
 {
-	MAX_MSGLEN			= 8000,		// max length of a reliable message
-	MAX_DATAGRAM		= 1024,		// max length of unreliable message
-
-	NET_MAXMESSAGE		= 8192
+	MAX_MSGLEN			= 1024,		// max length of a message
 };
 
 //

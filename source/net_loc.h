@@ -33,7 +33,7 @@
 #define HOSTCACHESIZE		8
 
 #define NET_HEADERSIZE		(2 * sizeof(vuint32) + sizeof(vuint16))
-#define NET_DATAGRAMSIZE	(MAX_DATAGRAM + NET_HEADERSIZE)
+#define NET_DATAGRAMSIZE	(MAX_MSGLEN + NET_HEADERSIZE)
 
 class VNetDriver;
 class VNetLanDriver;
@@ -54,7 +54,6 @@ public:
 
 	bool			Disconnected;
 	bool			CanSend;
-	bool			SendNext;
 	
 	VNetDriver*		Driver;
 	VNetLanDriver*	LanDriver;
@@ -65,12 +64,10 @@ public:
 	vuint32			SendSequence;
 	vuint32			UnreliableSendSequence;
 	int				SendMessageLength;
-	vuint8			SendMessageData[NET_MAXMESSAGE];
+	vuint8			SendMessageData[MAX_MSGLEN];
 
 	vuint32			ReceiveSequence;
 	vuint32			UnreliableReceiveSequence;
-	int				ReceiveMessageLength;
-	vuint8			ReceiveMessageData[NET_MAXMESSAGE];
 	VMessageIn*		ReceiveMessages;
 
 	sockaddr_t		Addr;

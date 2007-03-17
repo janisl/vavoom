@@ -86,7 +86,6 @@ public:
 		NETFLAG_FLAGS_MASK		= 0xf8000000,
 		NETFLAG_COMPR_NONE		= 0x00000000,
 		NETFLAG_COMPR_ZIP		= 0x00000800,
-		NETFLAG_EOM				= 0x08000000,
 		NETFLAG_ACK				= 0x10000000,
 		NETFLAG_DATA			= 0x20000000,
 		NETFLAG_UNRELIABLE		= 0x40000000,
@@ -113,7 +112,7 @@ public:
 		vuint32		length;
 		vuint32		sequence;
 		vuint16		crc;
-		vuint8		data[MAX_DATAGRAM];
+		vuint8		data[MAX_MSGLEN];
 	} packetBuffer;
 
 	//	Statistic counters.
@@ -143,7 +142,6 @@ public:
 	VSocket* Connect(VNetLanDriver*, const char*);
 	VSocket* CheckNewConnections(VNetLanDriver*);
 	int BuildNetPacket(vuint32, vuint32, vuint8*, vuint32);
-	int SendMessageNext(VSocket*);
 	int ReSendMessage(VSocket*);
 };
 
@@ -279,7 +277,7 @@ void VDatagramDriver::SearchForHosts(VNetLanDriver* Drv, bool xmit)
 		Drv->Broadcast(Drv->controlSock, Reply.GetData(), Reply.GetNumBytes());
 	}
 
-	while ((len = Drv->Read(Drv->controlSock, packetBuffer.data, MAX_DATAGRAM, &readaddr)) > 0)
+	while ((len = Drv->Read(Drv->controlSock, packetBuffer.data, MAX_MSGLEN, &readaddr)) > 0)
 	{
 		if (len < (int)sizeof(int))
 			continue;
@@ -440,7 +438,7 @@ VSocket* VDatagramDriver::Connect(VNetLanDriver* Drv, const char* host)
 
 		do
 		{
-			ret = Drv->Read(newsock, packetBuffer.data, MAX_DATAGRAM, &readaddr);
+			ret = Drv->Read(newsock, packetBuffer.data, MAX_MSGLEN, &readaddr);
 			// if we got something, validate it
 			if (ret > 0)
 			{
@@ -611,7 +609,7 @@ VSocket* VDatagramDriver::CheckNewConnections(VNetLanDriver* Drv)
 	if (acceptsock == -1)
 		return NULL;
 
-	len = Drv->Read(acceptsock, packetBuffer.data, MAX_DATAGRAM, &clientaddr);
+	len = Drv->Read(acceptsock, packetBuffer.data, MAX_MSGLEN, &clientaddr);
 	if (len < (int)sizeof(vint32))
 		return NULL;
 	VMessageIn msg(packetBuffer.data, len << 3);
@@ -632,7 +630,7 @@ VSocket* VDatagramDriver::CheckNewConnections(VNetLanDriver* Drv)
 		if (gamename != "VAVOOM")
 			return NULL;
 
-		VMessageOut MsgOut(MAX_DATAGRAM << 3);
+		VMessageOut MsgOut(MAX_MSGLEN << 3);
 		// save space for the header, filled in later
 		MsgOut << 0
 			<< (byte)CCREP_SERVER_INFO
@@ -859,12 +857,12 @@ int VDatagramDriver::GetMessage(VSocket* sock, VMessageIn*& Msg)
 
 			if (comprMethod == NETFLAG_COMPR_ZIP)
 			{
-				if (comprLength > MAX_DATAGRAM)
+				if (comprLength > MAX_MSGLEN)
 				{
 					GCon->Logf(NAME_DevNet, "Bad decompressed length");
 					continue;
 				}
-				byte CompressedData[MAX_DATAGRAM];
+				byte CompressedData[MAX_MSGLEN];
 				memcpy(CompressedData, packetBuffer.data, length - NET_HEADERSIZE);
 				uLongf DecomprLength = comprLength;
 				if (uncompress(packetBuffer.data, &DecomprLength,
@@ -921,19 +919,8 @@ int VDatagramDriver::GetMessage(VSocket* sock, VMessageIn*& Msg)
 				continue;
 			}
 
-			sock->SendMessageLength -= MAX_DATAGRAM;
-			if (sock->SendMessageLength > 0)
-			{
-				memcpy(sock->SendMessageData, sock->SendMessageData +
-					MAX_DATAGRAM, sock->SendMessageLength);
-				sock->SendNext = true;
-			}
-			else
-			{
-				sock->SendMessageLength = 0;
-				sock->CanSend = true;
-			}
-
+			sock->SendMessageLength = 0;
+			sock->CanSend = true;
 			continue;
 		}
 
@@ -954,26 +941,13 @@ int VDatagramDriver::GetMessage(VSocket* sock, VMessageIn*& Msg)
 
 			length -= NET_HEADERSIZE;
 
-			memcpy(sock->ReceiveMessageData + sock->ReceiveMessageLength,
-				packetBuffer.data, length);
-			sock->ReceiveMessageLength += length;
+			Msg = new VMessageIn(packetBuffer.data, length << 3);
+			Msg->MessageType = 1;
 
-			if (flags & NETFLAG_EOM)
-			{
-				Msg = new VMessageIn(sock->ReceiveMessageData,
-					sock->ReceiveMessageLength << 3);
-				Msg->MessageType = 1;
-				sock->ReceiveMessageLength = 0;
-
-				ret = 1;
-				break;
-			}
-			continue;
+			ret = 1;
+			break;
 		}
 	}
-
-	if (sock->SendNext)
-		SendMessageNext(sock);
 
 	return ret;
 	unguard;
@@ -993,7 +967,7 @@ int VDatagramDriver::BuildNetPacket(vuint32 Flags, vuint32 Sequence,
 	vuint32 ComprLength = DataLen;
 
 	//	Try to compress
-	uLongf ZipLen = MAX_DATAGRAM;
+	uLongf ZipLen = MAX_MSGLEN;
 	if (compress(packetBuffer.data, &ZipLen, Data, DataLen) == Z_OK)
 	{
 		if (ZipLen < DataLen)
@@ -1030,7 +1004,6 @@ int VDatagramDriver::SendMessage(VSocket* sock, VMessageOut* data)
 	guard(VDatagramDriver::SendMessage);
 	vuint32		packetLen;
 	vuint32		dataLen;
-	vuint32		eom;
 
 #ifdef DEBUG
 	if (data->CurSize == 0)
@@ -1046,62 +1019,13 @@ int VDatagramDriver::SendMessage(VSocket* sock, VMessageOut* data)
 	memcpy(sock->SendMessageData, data->GetData(), data->GetNumBytes());
 	sock->SendMessageLength = data->GetNumBytes();
 
-	if (data->GetNumBytes() <= MAX_DATAGRAM)
-	{
-		dataLen = data->GetNumBytes();
-		eom = NETFLAG_EOM;
-	}
-	else
-	{
-		dataLen = MAX_DATAGRAM;
-		eom = 0;
-	}
-	packetLen = BuildNetPacket(NETFLAG_DATA | eom, sock->SendSequence,
+	check(data->GetNumBytes() <= MAX_MSGLEN);
+	dataLen = data->GetNumBytes();
+	packetLen = BuildNetPacket(NETFLAG_DATA, sock->SendSequence,
 		sock->SendMessageData, dataLen);
 
 	sock->SendSequence++;
 	sock->CanSend = false;
-
-	if (sock->LanDriver->Write(sock->LanSocket, (vuint8*)&packetBuffer,
-		packetLen, &sock->Addr) == -1)
-	{
-		return -1;
-	}
-
-	sock->LastSendTime = Net->NetTime;
-	packetsSent++;
-	return 1;
-	unguard;
-}
-
-//==========================================================================
-//
-//	VDatagramDriver::SendMessageNext
-//
-//==========================================================================
-
-int VDatagramDriver::SendMessageNext(VSocket* sock)
-{
-	guard(VDatagramDriver::SendMessageNext);
-	vuint32		packetLen;
-	vuint32		dataLen;
-	vuint32		eom;
-
-	if (sock->SendMessageLength <= MAX_DATAGRAM)
-	{
-		dataLen = sock->SendMessageLength;
-		eom = NETFLAG_EOM;
-	}
-	else
-	{
-		dataLen = MAX_DATAGRAM;
-		eom = 0;
-	}
-	packetLen = BuildNetPacket(NETFLAG_DATA | eom, sock->SendSequence,
-		sock->SendMessageData, dataLen);
-
-	sock->SendSequence++;
-	sock->SendNext = false;
 
 	if (sock->LanDriver->Write(sock->LanSocket, (vuint8*)&packetBuffer,
 		packetLen, &sock->Addr) == -1)
@@ -1126,22 +1050,10 @@ int VDatagramDriver::ReSendMessage(VSocket* sock)
 	guard(VDatagramDriver::ReSendMessage);
 	vuint32		packetLen;
 	vuint32		dataLen;
-	vuint32		eom;
 
-	if (sock->SendMessageLength <= MAX_DATAGRAM)
-	{
-		dataLen = sock->SendMessageLength;
-		eom = NETFLAG_EOM;
-	}
-	else
-	{
-		dataLen = MAX_DATAGRAM;
-		eom = 0;
-	}
-	packetLen = BuildNetPacket(NETFLAG_DATA | eom, sock->SendSequence - 1,
+	dataLen = sock->SendMessageLength;
+	packetLen = BuildNetPacket(NETFLAG_DATA, sock->SendSequence - 1,
 		sock->SendMessageData, dataLen);
-
-	sock->SendNext = false;
 
 	if (sock->LanDriver->Write(sock->LanSocket, (vuint8*)&packetBuffer,
 		packetLen, &sock->Addr) == -1)
@@ -1170,7 +1082,7 @@ int VDatagramDriver::SendUnreliableMessage(VSocket* sock, VMessageOut* data)
 	if (data->GetNumBytes() == 0)
 		Sys_Error("Datagram_SendUnreliableMessage: zero length message\n");
 
-	if (data->GetNumBytes() > MAX_DATAGRAM)
+	if (data->GetNumBytes() > MAX_MSGLEN)
 		Sys_Error("Datagram_SendUnreliableMessage: message too big %u\n", data->GetNumBytes());
 #endif
 
@@ -1197,9 +1109,6 @@ int VDatagramDriver::SendUnreliableMessage(VSocket* sock, VMessageOut* data)
 bool VDatagramDriver::CanSendMessage(VSocket* sock)
 {
 	guard(VDatagramDriver::CanSendMessage);
-	if (sock->SendNext)
-		SendMessageNext(sock);
-
 	return sock->CanSend;
 	unguard;
 }

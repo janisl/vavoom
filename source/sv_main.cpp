@@ -234,7 +234,7 @@ void SV_Init()
 	int		i;
 
 	sv_reliable = new VMessageOut(MAX_MSGLEN << 3);
-	sv_datagram = new VMessageOut(MAX_DATAGRAM << 3);
+	sv_datagram = new VMessageOut(MAX_MSGLEN << 3);
 	sv_signons = new VMessageOut(MAX_MSGLEN << 3);
 	sv_signons->Next = NULL;
 
@@ -1650,7 +1650,7 @@ void SV_SendClientDatagram()
 		if (!sv_player->Net->NeedsUpdate)
 			continue;
 
-		VMessageOut msg(MAX_DATAGRAM << 3);
+		VMessageOut msg(MAX_MSGLEN << 3);
 
 		msg << (vuint8)svc_time
 			<< level.time;
@@ -1738,7 +1738,7 @@ void SV_SendReliable()
 			continue;
 		}
 
-		if ((Player->Net->Message.GetNumBytes() > MAX_DATAGRAM * 3 / 4) ||
+		if ((Player->Net->Message.GetNumBytes() > MAX_MSGLEN * 3 / 4) ||
 			(Player->Net->Message.GetNumBytes() && !Player->Net->Messages))
 		{
 			SV_AddPlayerMessage(Player, Player->Net->Message);
