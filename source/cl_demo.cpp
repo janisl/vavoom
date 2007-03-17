@@ -137,7 +137,7 @@ void CL_WriteDemoMessage(VMessageIn& msg)
 //
 //==========================================================================
 
-int CL_GetMessage()
+int CL_GetMessage(VMessageIn*& Msg)
 {
 	guard(CL_GetMessage);
 	int			r;
@@ -177,7 +177,7 @@ int CL_GetMessage()
 		if (MsgSize > MAX_MSGLEN * 8)
 			Sys_Error("Demo message > MAX_MSGLEN");
 		cls.demofile->Serialise(MsgBuf, (MsgSize + 7) >> 3);
-		GNet->NetMsg.SetDataBits(MsgBuf, MsgSize);
+		Msg = new VMessageIn(MsgBuf, MsgSize);
 		if (cls.demofile->IsError())
 		{
 			CL_StopPlayback();
@@ -190,13 +190,13 @@ int CL_GetMessage()
 	do
 	{
 		check(cls.netcon);
-		r = cls.netcon->GetMessage();
+		r = cls.netcon->GetMessage(Msg);
 
 		if (r != 1 && r != 2)
 			return r;
 	
 		// discard nop keepalive message
-		if (GNet->NetMsg.GetNumBytes() == 1 && GNet->NetMsg.GetData()[0] == svc_nop)
+		if (Msg->GetNumBytes() == 1 && Msg->GetData()[0] == svc_nop)
 			GCon->Log("<-- server to client keepalive");
 		else
 			break;
@@ -205,7 +205,7 @@ int CL_GetMessage()
 
 	if (cls.demorecording)
 	{
-		CL_WriteDemoMessage(GNet->NetMsg);
+		CL_WriteDemoMessage(*Msg);
 	}
 	
 	return r;
@@ -223,8 +223,8 @@ void CL_StopRecording()
 	guard(CL_StopRecording);
 	// write a disconnect message to the demo file
 	vuint8 EndMsg[1] = { (vuint8)svc_disconnect };
-	GNet->NetMsg.SetDataBits(EndMsg, 8);
-	CL_WriteDemoMessage(GNet->NetMsg);
+	VMessageIn Msg(EndMsg, 8);
+	CL_WriteDemoMessage(Msg);
 
 	// finish up
 	delete cls.demofile;

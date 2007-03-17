@@ -733,16 +733,16 @@ void DrawViewBorder(int x, int y, int w, int h)
 //
 //==========================================================================
 
-void ParseGunShot()
+void ParseGunShot(void* Msg)
 {
 	TVec org;
 	int i, j;
 	particle_t *p;
 	int c;
 
-	org.x = itof(MSG_ReadShort());
-	org.y = itof(MSG_ReadShort());
-	org.z = itof(MSG_ReadShort());
+	org.x = itof(MSG_ReadShort(Msg));
+	org.y = itof(MSG_ReadShort(Msg));
+	org.z = itof(MSG_ReadShort(Msg));
 
 	for (i = 0; i < 20; i++)
 	{
@@ -766,7 +766,7 @@ void ParseGunShot()
 //
 //==========================================================================
 
-void ParseBlood()
+void ParseBlood(void* Msg)
 {
 	TVec org;
 	int damage;
@@ -774,10 +774,10 @@ void ParseBlood()
 	particle_t *p;
 	int c;
 
-	org.x = itof(MSG_ReadShort());
-	org.y = itof(MSG_ReadShort());
-	org.z = itof(MSG_ReadShort());
-	damage = MSG_ReadByte();
+	org.x = itof(MSG_ReadShort(Msg));
+	org.y = itof(MSG_ReadShort(Msg));
+	org.z = itof(MSG_ReadShort(Msg));
+	damage = MSG_ReadByte(Msg);
 
 	for (i = 0; i < damage; i++)
 	{
@@ -801,16 +801,16 @@ void ParseBlood()
 //
 //==========================================================================
 
-void ParseExplosion()
+void ParseExplosion(void* Msg)
 {
 	TVec org;
 	dlight_t* dl;
 	int etype;
 
-	etype = MSG_ReadByte();
-	org.x = itof(MSG_ReadShort());
-	org.y = itof(MSG_ReadShort());
-	org.z = itof(MSG_ReadShort());
+	etype = MSG_ReadByte(Msg);
+	org.x = itof(MSG_ReadShort(Msg));
+	org.y = itof(MSG_ReadShort(Msg));
+	org.z = itof(MSG_ReadShort(Msg));
 
 	dl = AllocDlight(0);
 	dl->origin = org;
@@ -826,28 +826,28 @@ void ParseExplosion()
 //
 //==========================================================================
 
-bool ParseServerCommand(int cmd_type)
+bool ParseServerCommand(int cmd_type, void* Msg)
 {
 	switch (cmd_type)
 	{
 	case StrifeDefs::svc_gun_shot:
-		ParseGunShot();
+		ParseGunShot(Msg);
 		break;
 
 	case StrifeDefs::svc_blood:
-		ParseBlood();
+		ParseBlood(Msg);
 		break;
 
 	case StrifeDefs::svc_explosion:
-		ParseExplosion();
+		ParseExplosion(Msg);
 		break;
 
 	case StrifeDefs::svc_speech:
-		StartSpeech(MSG_ReadShort());
+		StartSpeech(MSG_ReadShort(Msg));
 		break;
 
 	case StrifeDefs::svc_voice:
-		LocalSound(StrToName(va("svox/voc%d", MSG_ReadShort())));
+		LocalSound(StrToName(va("svox/voc%d", MSG_ReadShort(Msg))));
 		break;
 
 	case StrifeDefs::svc_slideshow1:
@@ -859,7 +859,7 @@ bool ParseServerCommand(int cmd_type)
 		break;
 
 	case StrifeDefs::svc_finale_type:
-		GFinale.FinaleType = MSG_ReadByte();
+		GFinale.FinaleType = MSG_ReadByte(Msg);
 		break;
 
 	default:

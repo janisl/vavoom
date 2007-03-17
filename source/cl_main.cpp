@@ -39,7 +39,7 @@ void SV_ShutdownServer(bool crash);
 void CL_Disconnect();
 
 void CL_ParseServerMessage(VMessageIn&);
-int CL_GetMessage();
+int CL_GetMessage(VMessageIn*&);
 void CL_StopPlayback();
 void CL_StopRecording();
 
@@ -232,7 +232,8 @@ void CL_ReadFromServer()
 	
 	do
 	{
-		ret = CL_GetMessage();
+		VMessageIn* Msg;
+		ret = CL_GetMessage(Msg);
 		if (ret == -1)
 		{
 			Host_Error("CL_ReadFromServer: lost server connection");
@@ -240,7 +241,8 @@ void CL_ReadFromServer()
 		if (ret)
 		{
 //			cl->last_received_message = realtime;
-			CL_ParseServerMessage(GNet->NetMsg);
+			CL_ParseServerMessage(*Msg);
+			delete Msg;
 		}
 	} while (ret && cls.state == ca_connected);
 
@@ -300,7 +302,6 @@ void CL_KeepaliveMessage()
 	float			time;
 	static float	lastmsg;
 	int				ret;
-	VMessageIn		old;
 
 #ifdef SERVER
 	if (sv.active)
@@ -310,11 +311,10 @@ void CL_KeepaliveMessage()
 		return;
 
 	// read messages from server, should just be nops
-	old = GNet->NetMsg;
-	
 	do
 	{
-		ret = CL_GetMessage();
+		VMessageIn* Msg;
+		ret = CL_GetMessage(Msg);
 		switch (ret)
 		{
 		default:
@@ -322,16 +322,19 @@ void CL_KeepaliveMessage()
 		case 0:
 			break;	// nothing waiting
 		case 1:
+			delete Msg;
 			Host_Error("CL_KeepaliveMessage: received a message");
 			break;
 		case 2:
-			if (GNet->NetMsg.ReadByte() != svc_nop)
+			if (Msg->ReadByte() != svc_nop)
+			{
+				delete Msg;
 				Host_Error("CL_KeepaliveMessage: datagram wasn't a nop");
+			}
+			delete Msg;
 			break;
 		}
 	} while (ret);
-
-	GNet->NetMsg = old;
 
 	// check time
 	time = Sys_Time();

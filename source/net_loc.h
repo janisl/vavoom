@@ -75,7 +75,7 @@ public:
 	sockaddr_t		Addr;
 
 	bool IsLocalConnection();
-	int GetMessage();
+	int GetMessage(VMessageIn*&);
 	int SendMessage(VMessageOut*);
 	int SendUnreliableMessage(VMessageOut*);
 	bool CanSendMessage();
@@ -163,7 +163,7 @@ public:
 	virtual void SearchForHosts(bool) = 0;
 	virtual VSocket* Connect(const char*) = 0;
 	virtual VSocket* CheckNewConnections() = 0;
-	virtual int GetMessage(VSocket*) = 0;
+	virtual int GetMessage(VSocket*, VMessageIn*&) = 0;
 	virtual int SendMessage(VSocket*, VMessageOut*) = 0;
 	virtual int SendUnreliableMessage(VSocket*, VMessageOut*) = 0;
 	virtual bool CanSendMessage(VSocket*) = 0;

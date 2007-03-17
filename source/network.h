@@ -42,7 +42,7 @@ public:
 	VStr			Address;
 
 	virtual bool IsLocalConnection() = 0;
-	virtual int GetMessage() = 0;
+	virtual int GetMessage(VMessageIn*&) = 0;
 	virtual int SendMessage(VMessageOut*) = 0;
 	virtual int SendUnreliableMessage(VMessageOut*) = 0;
 	virtual bool CanSendMessage() = 0;
@@ -90,8 +90,6 @@ class VNetworkPublic : public VVirtualObjectBase
 {
 public:
 	//	Public API
-	VMessageIn		NetMsg;
-
 	bool			ConnectBot;
 
 	VNetworkPublic()

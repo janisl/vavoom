@@ -1611,11 +1611,11 @@ native static final bool MSG_CheckSpace(int Size);
 native static final void MSG_WriteByte(int data);
 native static final void MSG_WriteShort(int data);
 native static final void MSG_WriteLong(int data);
-native static final int MSG_ReadChar();
-native static final int MSG_ReadByte();
-native static final int MSG_ReadShort();
-native static final int MSG_ReadWord();
-native static final int MSG_ReadLong();
+native static final int MSG_ReadChar(void* Msg);
+native static final int MSG_ReadByte(void* Msg);
+native static final int MSG_ReadShort(void* Msg);
+native static final int MSG_ReadWord(void* Msg);
+native static final int MSG_ReadLong(void* Msg);
 
 //
 //  Type conversions

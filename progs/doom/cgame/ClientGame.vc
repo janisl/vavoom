@@ -805,16 +805,16 @@ void DrawViewBorder(int x, int y, int w, int h)
 //
 //==========================================================================
 
-void ParseGunShot()
+void ParseGunShot(void* Msg)
 {
 	TVec org;
 	int i;
 	particle_t *p;
 	int c;
 
-	org.x = itof(MSG_ReadShort());
-	org.y = itof(MSG_ReadShort());
-	org.z = itof(MSG_ReadShort());
+	org.x = itof(MSG_ReadShort(Msg));
+	org.y = itof(MSG_ReadShort(Msg));
+	org.z = itof(MSG_ReadShort(Msg));
 
 	for (i = 0; i < 20; i++)
 	{
@@ -839,7 +839,7 @@ void ParseGunShot()
 //
 //==========================================================================
 
-void ParseBlood()
+void ParseBlood(void* Msg)
 {
 	TVec org;
 	int damage;
@@ -847,10 +847,10 @@ void ParseBlood()
 	particle_t *p;
 	int c;
 
-	org.x = itof(MSG_ReadShort());
-	org.y = itof(MSG_ReadShort());
-	org.z = itof(MSG_ReadShort());
-	damage = MSG_ReadByte();
+	org.x = itof(MSG_ReadShort(Msg));
+	org.y = itof(MSG_ReadShort(Msg));
+	org.z = itof(MSG_ReadShort(Msg));
+	damage = MSG_ReadByte(Msg);
 
 	for (i = 0; i < 4 * damage; i++)
 	{
@@ -875,16 +875,16 @@ void ParseBlood()
 //
 //==========================================================================
 
-void ParseExplosion()
+void ParseExplosion(void* Msg)
 {
 	TVec org;
 	int i;
 	particle_t *p;
 	dlight_t *dl;
 
-	org.x = itof(MSG_ReadShort());
-	org.y = itof(MSG_ReadShort());
-	org.z = itof(MSG_ReadShort());
+	org.x = itof(MSG_ReadShort(Msg));
+	org.y = itof(MSG_ReadShort(Msg));
+	org.z = itof(MSG_ReadShort(Msg));
 
 	for (i = 0; i < 1024; i++)
 	{
@@ -924,16 +924,16 @@ void ParseExplosion()
 //
 //==========================================================================
 
-void ParseExplosion2()
+void ParseExplosion2(void* Msg)
 {
 	TVec org;
 	dlight_t *dl;
 	int etype;
 
-	etype = MSG_ReadByte();
-	org.x = itof(MSG_ReadShort());
-	org.y = itof(MSG_ReadShort());
-	org.z = itof(MSG_ReadShort());
+	etype = MSG_ReadByte(Msg);
+	org.x = itof(MSG_ReadShort(Msg));
+	org.y = itof(MSG_ReadShort(Msg));
+	org.z = itof(MSG_ReadShort(Msg));
 
 	dl = AllocDlight(0);
 	dl->origin = org;
@@ -949,24 +949,24 @@ void ParseExplosion2()
 //
 //==========================================================================
 
-bool ParseServerCommand(int cmd_type)
+bool ParseServerCommand(int cmd_type, void* Msg)
 {
 	switch (cmd_type)
 	{
 	case DoomDefs::svc_gun_shot:
-		ParseGunShot();
+		ParseGunShot(Msg);
 		break;
 
 	case DoomDefs::svc_blood:
-		ParseBlood();
+		ParseBlood(Msg);
 		break;
 
 	case DoomDefs::svc_explosion:
-		ParseExplosion();
+		ParseExplosion(Msg);
 		break;
 
 	case DoomDefs::svc_explosion2:
-		ParseExplosion2();
+		ParseExplosion2(Msg);
 		break;
 
 	default:

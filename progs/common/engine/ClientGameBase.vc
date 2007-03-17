@@ -278,7 +278,7 @@ void DrawViewBorder(int x, int y, int w, int h)
 //
 //==========================================================================
 
-bool ParseServerCommand(int cmd_type)
+bool ParseServerCommand(int cmd_type, void* Msg)
 {
 	return false;
 }

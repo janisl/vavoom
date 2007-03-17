@@ -130,7 +130,7 @@ public:
 	void SearchForHosts(bool);
 	VSocket* Connect(const char*);
 	VSocket* CheckNewConnections();
-	int GetMessage(VSocket*);
+	int GetMessage(VSocket*, VMessageIn*&);
 	int SendMessage(VSocket*, VMessageOut*);
 	int SendUnreliableMessage(VSocket*, VMessageOut*);
 	bool CanSendMessage(VSocket*);
@@ -403,7 +403,7 @@ VSocket* VDatagramDriver::Connect(VNetLanDriver* Drv, const char* host)
 	VStr			reason;
 	byte			msgtype;
 	int				newport;
-	VMessageIn		msg;
+	VMessageIn*		msg = NULL;
 
 	// see if we can resolve the host name
 	if (Drv->GetAddrFromName(host, &sendaddr) == -1)
@@ -457,23 +457,26 @@ VSocket* VDatagramDriver::Connect(VNetLanDriver* Drv, const char* host)
 					continue;
 				}
 
-				msg.SetDataBits(packetBuffer.data, ret << 3);
+				msg = new VMessageIn(packetBuffer.data, ret << 3);
 
-				msg << control;
-				control = BigLong(*(vint32*)msg.GetData());
+				*msg << control;
+				control = BigLong(*(vint32*)msg->GetData());
 				if (control == -1)
 				{
 					ret = 0;
+					delete msg;
 					continue;
 				}
 				if ((control & NETFLAG_FLAGS_MASK) !=  NETFLAG_CTL)
 				{
 					ret = 0;
+					delete msg;
 					continue;
 				}
 				if (((vint32)(control & NETFLAG_LENGTH_MASK) >> 16) != ret)
 				{
 					ret = 0;
+					delete msg;
 					continue;
 				}
 			}
@@ -501,10 +504,10 @@ VSocket* VDatagramDriver::Connect(VNetLanDriver* Drv, const char* host)
 		goto ErrorReturn;
 	}
 
-	msg << msgtype;
+	*msg << msgtype;
 	if (msgtype == CCREP_REJECT)
 	{
-		msg << reason;
+		*msg << reason;
 		GCon->Log(reason);
 		VStr::NCpy(Net->ReturnReason, *reason, 31);
 		goto ErrorReturn;
@@ -518,7 +521,7 @@ VSocket* VDatagramDriver::Connect(VNetLanDriver* Drv, const char* host)
 		goto ErrorReturn;
 	}
 
-	msg << newport;
+	*msg << newport;
 
 	memcpy(&sock->Addr, &readaddr, sizeof(sockaddr_t));
 	Drv->SetSocketPort(&sock->Addr, newport);
@@ -537,6 +540,7 @@ VSocket* VDatagramDriver::Connect(VNetLanDriver* Drv, const char* host)
 		goto ErrorReturn;
 	}
 
+	delete msg;
 //	m_return_onerror = false;
 	return sock;
 
@@ -544,6 +548,8 @@ ErrorReturn:
 	Net->FreeSocket(sock);
 ErrorReturn2:
 	Drv->CloseSocket(newsock);
+	if (msg)
+		delete msg;
 //	if (m_return_onerror)
 //	{
 //		key_dest = key_menu;
@@ -776,7 +782,7 @@ VSocket* VDatagramDriver::CheckNewConnections()
 //
 //==========================================================================
 
-int VDatagramDriver::GetMessage(VSocket* sock)
+int VDatagramDriver::GetMessage(VSocket* sock, VMessageIn*& Msg)
 {
 	guard(VDatagramDriver::GetMessage);
 	vuint32		sequence;
@@ -889,7 +895,8 @@ int VDatagramDriver::GetMessage(VSocket* sock)
 
 			length -= NET_HEADERSIZE;
 
-			Net->NetMsg.SetDataBits(packetBuffer.data, length << 3);
+			Msg = new VMessageIn(packetBuffer.data, length << 3);
+			Msg->MessageType = 2;
 
 			ret = 2;
 			break;
@@ -953,8 +960,9 @@ int VDatagramDriver::GetMessage(VSocket* sock)
 
 			if (flags & NETFLAG_EOM)
 			{
-				Net->NetMsg.SetDataBits(sock->ReceiveMessageData,
+				Msg = new VMessageIn(sock->ReceiveMessageData,
 					sock->ReceiveMessageLength << 3);
+				Msg->MessageType = 1;
 				sock->ReceiveMessageLength = 0;
 
 				ret = 1;

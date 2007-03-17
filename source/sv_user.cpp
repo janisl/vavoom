@@ -167,7 +167,8 @@ bool SV_ReadClientMessages(int clientnum)
 	sv_player->Net->NeedsUpdate = false;
 	do
 	{
-		ret = sv_player->Net->NetCon->GetMessage();
+		VMessageIn* Msg = NULL;
+		ret = sv_player->Net->NetCon->GetMessage(Msg);
 		if (ret == -1)
 		{
 			GCon->Log(NAME_DevNet, "Bad read");
@@ -179,13 +180,14 @@ bool SV_ReadClientMessages(int clientnum)
 
 		sv_player->Net->NeedsUpdate = true;
 
-		VMessageIn& msg = GNet->NetMsg;
+		VMessageIn& msg = *Msg;
 
 		while (1)
 		{
 			if (msg.IsError())
 			{
 				GCon->Log(NAME_DevNet, "Packet corupted");
+				delete Msg;
 				return false;
 			}
 
@@ -204,6 +206,7 @@ bool SV_ReadClientMessages(int clientnum)
 				break;
 
 			case clc_disconnect:
+				delete Msg;
 				return false;
 	
 			case clc_player_info:
@@ -219,6 +222,7 @@ bool SV_ReadClientMessages(int clientnum)
 				return false;
 			}
 		}
+		delete Msg;
 	} while (ret > 0);
 
 	return true;

@@ -1066,7 +1066,7 @@ void CL_ParseServerMessage(VMessageIn& msg)
 			break;
 
 		default:
-			if (GClGame->eventParseServerCommand(cmd_type))
+			if (GClGame->eventParseServerCommand(cmd_type, &msg))
 			{
 				break;
 			}

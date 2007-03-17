@@ -45,7 +45,7 @@ public:
 	void SearchForHosts(bool);
 	VSocket* Connect(const char*);
 	VSocket* CheckNewConnections();
-	int GetMessage(VSocket*);
+	int GetMessage(VSocket*, VMessageIn*&);
 	int SendMessage(VSocket*, VMessageOut*);
 	int SendUnreliableMessage(VSocket*, VMessageOut*);
 	bool CanSendMessage(VSocket*);
@@ -228,7 +228,7 @@ int VLoopbackDriver::IntAlign(int value)
 //
 //==========================================================================
 
-int VLoopbackDriver::GetMessage(VSocket* sock)
+int VLoopbackDriver::GetMessage(VSocket* sock, VMessageIn*& Msg)
 {
 	guard(VLoopbackDriver::GetMessage);
 	int		ret;
@@ -240,7 +240,8 @@ int VLoopbackDriver::GetMessage(VSocket* sock)
 	ret = sock->ReceiveMessageData[0];
 	length = sock->ReceiveMessageData[1] + (sock->ReceiveMessageData[2] << 8);
 	// alignment byte skipped here
-	Net->NetMsg.SetDataBits(sock->ReceiveMessageData + 4, length << 3);
+	Msg = new VMessageIn(sock->ReceiveMessageData + 4, length << 3);
+	Msg->MessageType = ret;
 
 	length = IntAlign(length + 4);
 	sock->ReceiveMessageLength -= length;

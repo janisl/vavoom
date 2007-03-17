@@ -41,7 +41,7 @@ public:
 	void SearchForHosts(bool);
 	VSocket* Connect(const char*);
 	VSocket* CheckNewConnections();
-	int GetMessage(VSocket*);
+	int GetMessage(VSocket*, VMessageIn*&);
 	int SendMessage(VSocket*, VMessageOut*);
 	int SendUnreliableMessage(VSocket*, VMessageOut*);
 	bool CanSendMessage(VSocket*);
@@ -149,7 +149,7 @@ VSocket* VNullNetDriver::CheckNewConnections()
 //
 //==========================================================================
 
-int VNullNetDriver::GetMessage(VSocket*)
+int VNullNetDriver::GetMessage(VSocket*, VMessageIn*&)
 {
 	return 0;
 }

@@ -2317,7 +2317,10 @@ int NET_SendToAll(VMessageOut* data, int blocktime)
 				}
 				else
 				{
-					sv_player->Net->NetCon->GetMessage();
+					VMessageIn* Msg = NULL;
+					sv_player->Net->NetCon->GetMessage(Msg);
+					if (Msg)
+						delete Msg;
 				}
 				count++;
 				continue;
@@ -2331,7 +2334,10 @@ int NET_SendToAll(VMessageOut* data, int blocktime)
 				}
 				else
 				{
-					sv_player->Net->NetCon->GetMessage();
+					VMessageIn* Msg = NULL;
+					sv_player->Net->NetCon->GetMessage(Msg);
+					if (Msg)
+						delete Msg;
 				}
 				count++;
 				continue;

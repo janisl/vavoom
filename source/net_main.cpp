@@ -799,11 +799,12 @@ void VSocket::Close()
 //
 //==========================================================================
 
-int	VSocket::GetMessage()
+int	VSocket::GetMessage(VMessageIn*& Msg)
 {
 	guard(VSocket::GetMessage);
 	int			ret;
 
+	Msg = NULL;
 	if (Disconnected)
 	{
 		GCon->Log(NAME_DevNet, "NET_GetMessage: disconnected socket");
@@ -812,7 +813,7 @@ int	VSocket::GetMessage()
 
 	Driver->Net->SetNetTime();
 
-	ret = Driver->GetMessage(this);
+	ret = Driver->GetMessage(this, Msg);
 
 	// see if this connection has timed out
 	if (ret == 0 && !IsLocalConnection())
