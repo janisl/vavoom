@@ -721,9 +721,18 @@ static void SV_SaveMap(int slot, bool savePlayers)
 	//	Save baseline
 	Seg = ASEG_BASELINE;
 	*Saver << Seg;
-	int SignonSize = sv_signon->GetNumBits();
-	*Saver << STRM_INDEX(SignonSize);
-	Saver->Serialise(sv_signon->GetData(), sv_signon->GetNumBytes());
+	int NumSignons = 0;
+	for (VMessageOut* Msg = sv_signons; Msg; Msg = Msg->Next)
+	{
+		NumSignons++;
+	}
+	*Saver << STRM_INDEX(NumSignons);
+	for (VMessageOut* Msg = sv_signons; Msg; Msg = Msg->Next)
+	{
+		int SignonSize = Msg->GetNumBits();
+		*Saver << STRM_INDEX(SignonSize);
+		Saver->Serialise(Msg->GetData(), Msg->GetNumBytes());
+	}
 	for (int i = 0; i < GMaxEntities; i++)
 	{
 		if (sv_mo_base[i].Class ||
@@ -803,13 +812,29 @@ static void SV_LoadMap(VName MapName, int slot)
 		<< level.cdTrack;
 
 	AssertSegment(ASEG_BASELINE);
-	int len;
-	*Loader << STRM_INDEX(len);
-	sv_signon->Clear();
-	void *tmp = Z_Malloc((len + 7) >> 3);
-	Loader->Serialise(tmp, (len + 7) >> 3);
-	sv_signon->SerialiseBits(tmp, len);
-	Z_Free(tmp);
+	for (VMessageOut* Msg = sv_signons; Msg;)
+	{
+		VMessageOut* Next = Msg->Next;
+		delete Msg;
+		Msg = Next;
+	}
+	sv_signons = NULL;
+	VMessageOut** Prev = &sv_signons;
+	int NumSignons;
+	*Loader << STRM_INDEX(NumSignons);
+	for (int i = 0; i < NumSignons; i++)
+	{	
+		int len;
+		*Loader << STRM_INDEX(len);
+		VMessageOut* Msg = new VMessageOut(MAX_MSGLEN << 3);
+		void *tmp = Z_Malloc((len + 7) >> 3);
+		Loader->Serialise(tmp, (len + 7) >> 3);
+		Msg->SerialiseBits(tmp, len);
+		Z_Free(tmp);
+		*Prev = Msg;
+		Msg->Next = NULL;
+		Prev = &Msg->Next;
+	}
 	memset(sv_mo_base, 0, sizeof(mobj_base_t) * GMaxEntities);
 	int Idx;
 	*Loader << STRM_INDEX(Idx);

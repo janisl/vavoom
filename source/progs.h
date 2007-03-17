@@ -157,3 +157,4 @@ VStr PR_PopStr();
 
 VStr PF_FormatString();
 void PR_MSG_Select(int);
+bool PR_MSG_CheckSpace(int);

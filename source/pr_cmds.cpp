@@ -54,6 +54,7 @@ VClass* SV_FindClassFromScriptId(int Id);
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 VMessageOut			*pr_msg;
+int					pr_msg_type;
 
 // CODE --------------------------------------------------------------------
 
@@ -1090,7 +1091,7 @@ void PR_MSG_Select(int msgtype)
 			pr_msg = sv_reliable;
 			break;
 		case MSG_SV_SIGNON:
-			pr_msg = sv_signon;
+			pr_msg = SV_GetSignon(8);
 			break;
 #endif
 #ifdef CLIENT
@@ -1099,4 +1100,16 @@ void PR_MSG_Select(int msgtype)
 			break;
 #endif
 	}
+	pr_msg_type = msgtype;
+}
+
+bool PR_MSG_CheckSpace(int Bytes)
+{
+#ifdef SERVER
+	if (pr_msg_type == MSG_SV_SIGNON)
+	{
+		pr_msg = SV_GetSignon(Bytes << 3);
+	}
+#endif
+	return pr_msg->CheckSpaceBits(Bytes << 3);
 }

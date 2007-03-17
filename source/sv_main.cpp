@@ -121,7 +121,7 @@ double*			sv_mo_free_time;
 
 VMessageOut*	sv_reliable;
 VMessageOut*	sv_datagram;
-VMessageOut*	sv_signon;
+VMessageOut*	sv_signons;
 
 VBasePlayer*	sv_player;
 
@@ -235,7 +235,8 @@ void SV_Init()
 
 	sv_reliable = new VMessageOut(MAX_MSGLEN << 3);
 	sv_datagram = new VMessageOut(MAX_DATAGRAM << 3);
-	sv_signon = new VMessageOut(MAX_MSGLEN << 3);
+	sv_signons = new VMessageOut(MAX_MSGLEN << 3);
+	sv_signons->Next = NULL;
 
 	svs.max_clients = 1;
 
@@ -310,7 +311,12 @@ void SV_Shutdown()
 
 	delete sv_reliable;
 	delete sv_datagram;
-	delete sv_signon;
+	for (VMessageOut* Msg = sv_signons; Msg; )
+	{
+		VMessageOut* Next = Msg->Next;
+		delete Msg;
+		Msg = Next;
+	}
 	unguard;
 }
 
@@ -335,7 +341,14 @@ void SV_Clear()
 	memset(sv_mobjs, 0, sizeof(VEntity *) * GMaxEntities);
 	memset(sv_mo_base, 0, sizeof(mobj_base_t) * GMaxEntities);
 	memset(sv_mo_free_time, 0, sizeof(double) * GMaxEntities);
-	sv_signon->Clear();
+	for (VMessageOut* Msg = sv_signons; Msg; )
+	{
+		VMessageOut* Next = Msg->Next;
+		delete Msg;
+		Msg = Next;
+	}
+	sv_signons = new VMessageOut(MAX_MSGLEN << 3);
+	sv_signons->Next = NULL;
 	sv_reliable->Clear();
 	sv_datagram->Clear();
 	sv_ActiveSequences.Clear();
@@ -848,7 +861,8 @@ void SV_CreateBaseline()
 			continue;
 
 		//NOTE Do we really need 10 bytes extra?
-		if (!sv_signon->CheckSpaceBits(26 << 3))
+		VMessageOut* Msg = SV_GetSignon(26 << 3);
+		if (!Msg)
 		{
 			GCon->Log(NAME_Dev, "SV_CreateBaseline: Overflow");
 			return;
@@ -866,16 +880,16 @@ void SV_CreateBaseline()
 		base.Angles.pitch = mobj.Angles.pitch;
 		base.Angles.roll = mobj.Angles.roll;
 
-		*sv_signon << (vuint8)svc_spawn_baseline
-					<< (vuint16)i
-					<< (vuint16)mobj.GetClass()->NetId
-					<< (vuint16)mobj.State->NetId
-					<< (vuint16)mobj.Origin.x
-					<< (vuint16)mobj.Origin.y
-					<< (vuint16)(mobj.Origin.z - mobj.FloorClip)
-					<< (vuint8)(AngleToByte(mobj.Angles.yaw))
-					<< (vuint8)(AngleToByte(mobj.Angles.pitch))
-					<< (vuint8)(AngleToByte(mobj.Angles.roll));
+		*Msg << (vuint8)svc_spawn_baseline
+			<< (vuint16)i
+			<< (vuint16)mobj.GetClass()->NetId
+			<< (vuint16)mobj.State->NetId
+			<< (vuint16)mobj.Origin.x
+			<< (vuint16)mobj.Origin.y
+			<< (vuint16)(mobj.Origin.z - mobj.FloorClip)
+			<< (vuint8)(AngleToByte(mobj.Angles.yaw))
+			<< (vuint8)(AngleToByte(mobj.Angles.pitch))
+			<< (vuint8)(AngleToByte(mobj.Angles.roll));
 	}
 	unguard;
 }
@@ -1636,9 +1650,7 @@ void SV_SendClientDatagram()
 		if (!sv_player->Net->NeedsUpdate)
 			continue;
 
-		//	HACK!!!!!
-		//	Make a bigger buffer for single player.
-		VMessageOut msg(!netgame ? (4096 << 3) : (MAX_DATAGRAM << 3));
+		VMessageOut msg(MAX_DATAGRAM << 3);
 
 		msg << (vuint8)svc_time
 			<< level.time;
@@ -2845,7 +2857,10 @@ COMMAND(PreSpawn)
 		return;
 	}
 
-	sv_player->Net->Message << *sv_signon;
+	for (VMessageOut* Msg = sv_signons; Msg; Msg = Msg->Next)
+	{
+		SV_AddPlayerMessage(sv_player, *Msg);
+	}
 	sv_player->Net->Message << (vuint8)svc_signonnum << (vuint8)2;
 	unguard;
 }
@@ -3274,6 +3289,30 @@ void SV_ConnectBot(const char *name)
 	sv_player->Net->Message.Clear();
 	SV_RunClientCommand("Begin\n");
 	sv_player->Net->Message.Clear();
+	unguard;
+}
+
+//==========================================================================
+//
+//	SV_GetSignon
+//
+//==========================================================================
+
+VMessageOut* SV_GetSignon(int Len)
+{
+	guard(SV_GetSignon);
+	VMessageOut* Msg = sv_signons;
+	while (Msg->Next)
+	{
+		Msg = Msg->Next;
+	}
+	if (!Msg->CheckSpaceBits(Len))
+	{
+		Msg->Next = new VMessageOut(MAX_MSGLEN << 3);
+		Msg = Msg->Next;
+		Msg->Next = NULL;
+	}
+	return Msg;
 	unguard;
 }
 

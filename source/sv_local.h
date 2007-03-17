@@ -250,7 +250,7 @@ int SV_FindSkin(const char*);
 void SV_ChangeSky(const char*, const char*);
 void SV_ChangeMusic(const char*);
 void SV_ChangeLocalMusic(VBasePlayer*, const char*);
-
+VMessageOut* SV_GetSignon(int);
 void SV_ReadMove();
 
 extern VBasePlayer*			sv_player;
