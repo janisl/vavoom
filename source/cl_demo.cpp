@@ -197,7 +197,10 @@ int CL_GetMessage(VMessageIn*& Msg)
 	
 		// discard nop keepalive message
 		if (Msg->GetNumBytes() == 1 && Msg->GetData()[0] == svc_nop)
+		{
 			GCon->Log("<-- server to client keepalive");
+			delete Msg;
+		}
 		else
 			break;
 	}
