@@ -639,88 +639,138 @@ int c_bigClass;
 int c_bigState;
 //==========================================================================
 //
-//	SV_GetMobjBits
-//
-//==========================================================================
-
-int SV_GetMobjBits(VEntity &mobj, mobj_base_t &base)
-{
-	guard(SV_GetMobjBits);
-	int		bits = 0;
-
-	if (fabs(base.Origin.x - mobj.Origin.x) >= 1.0)
-		bits |= MOB_X;
-	if (fabs(base.Origin.y - mobj.Origin.y) >= 1.0)
-		bits |= MOB_Y;
-	if (fabs(base.Origin.z - (mobj.Origin.z - mobj.FloorClip)) >= 1.0)
-		bits |= MOB_Z;
-	if (AngleToByte(base.Angles.yaw) != AngleToByte(mobj.Angles.yaw))
-		bits |= MOB_ANGLE;
-	if (AngleToByte(base.Angles.pitch) != AngleToByte(mobj.Angles.pitch))
-		bits |= MOB_ANGLEP;
-	if (AngleToByte(base.Angles.roll) != AngleToByte(mobj.Angles.roll))
-		bits |= MOB_ANGLER;
-	if (base.Class != mobj.GetClass())
-	{
-		bits |= MOB_CLASS;
-		if (mobj.GetClass()->NetId > 0xff)
-		{
-			bits |= MOB_BIG_CLASS;
-			c_bigClass++;
-		}
-	}
-	if (base.State != mobj.State)
-	{
-		bits |= MOB_STATE;
-		if (mobj.State->NetId > 0xff)
-		{
-			bits |= MOB_BIG_STATE;
-			c_bigState++;
-		}
-	}
-
-	return bits;
-	unguard;
-}
-
-//==========================================================================
-//
 //	SV_WriteMobj
 //
 //==========================================================================
 
-void SV_WriteMobj(int bits, VEntity &mobj, VMessageOut& msg)
+void SV_WriteMobj(VEntity &mobj, mobj_base_t &base, VMessageOut& msg)
 {
 	guard(SV_WriteMobj);
-	if (bits & MOB_BIG_CLASS)
-		msg << (vuint16)mobj.GetClass()->NetId;
-	else if (bits & MOB_CLASS)
-		msg << (vuint8)mobj.GetClass()->NetId;
-	if (bits & MOB_BIG_STATE)
-		msg << (vuint16)mobj.State->NetId;
-	else if (bits & MOB_STATE)
-		msg << (vuint8)mobj.State->NetId;
-	int TimeFrac = 0;
-	if (mobj.StateTime < 0)
-		TimeFrac = 255;
-	else if (mobj.State->Time > 0)
+	msg.WriteBit(base.Class != mobj.GetClass());
+	if (base.Class != mobj.GetClass())
 	{
-		TimeFrac = (int)(254.0 * mobj.StateTime / mobj.State->Time);
-		TimeFrac = MID(0, TimeFrac, 254);
+		msg.WriteBit(mobj.GetClass()->NetId > 0xff);
+		if (mobj.GetClass()->NetId > 0xff)
+		{
+			c_bigClass++;
+			msg << (vuint16)mobj.GetClass()->NetId;
+		}
+		else
+		{
+			msg << (vuint8)mobj.GetClass()->NetId;
+		}
 	}
-	msg << (vuint8)TimeFrac;
-	if (bits & MOB_X)
-		msg << (vuint16)mobj.Origin.x;
-	if (bits & MOB_Y)
-		msg << (vuint16)mobj.Origin.y;
-	if (bits & MOB_Z)
-		msg << (vuint16)(mobj.Origin.z - mobj.FloorClip);
-	if (bits & MOB_ANGLE)
-		msg << (vuint8)(AngleToByte(mobj.Angles.yaw));
-	if (bits & MOB_ANGLEP)
-		msg << (vuint8)(AngleToByte(mobj.Angles.pitch));
-	if (bits & MOB_ANGLER)
-		msg << (vuint8)(AngleToByte(mobj.Angles.roll));
+
+	msg.WriteBit(base.State != mobj.State);
+	if (base.State != mobj.State)
+	{
+		msg.WriteBit(mobj.State->NetId > 0xff);
+		if (mobj.State->NetId > 0xff)
+		{
+			c_bigState++;
+			msg << (vuint16)mobj.State->NetId;
+		}
+		else
+		{
+			msg << (vuint8)mobj.State->NetId;
+		}
+	}
+	if (mobj.StateTime < 0)
+		msg.WriteBit(false);
+	else
+	{
+		msg.WriteBit(true);
+		int TimeFrac = 0;
+		if (mobj.State->Time > 0)
+		{
+			TimeFrac = (int)(255.0 * mobj.StateTime / mobj.State->Time);
+			TimeFrac = MID(0, TimeFrac, 255);
+		}
+		msg << (vuint8)TimeFrac;
+	}
+
+	if (fabs(base.Origin.x - mobj.Origin.x) >= 1.0 ||
+		fabs(base.Origin.y - mobj.Origin.y) >= 1.0 ||
+		fabs(base.Origin.z - (mobj.Origin.z - mobj.FloorClip)) >= 1.0)
+	{
+		msg.WriteBit(true);
+		if (fabs(base.Origin.x - mobj.Origin.x) >= 1.0)
+		{
+			msg.WriteBit(true);
+			msg << (vuint16)mobj.Origin.x;
+		}
+		else
+		{
+			msg.WriteBit(false);
+		}
+		if (fabs(base.Origin.y - mobj.Origin.y) >= 1.0)
+		{
+			msg.WriteBit(true);
+			msg << (vuint16)mobj.Origin.y;
+		}
+		else
+		{
+			msg.WriteBit(false);
+		}
+		if (fabs(base.Origin.z - (mobj.Origin.z - mobj.FloorClip)) >= 1.0)
+		{
+			msg.WriteBit(true);
+			msg << (vuint16)(mobj.Origin.z - mobj.FloorClip);
+		}
+		else
+		{
+			msg.WriteBit(false);
+		}
+	}
+	else
+	{
+		msg.WriteBit(false);
+	}
+
+	TAVec A = mobj.Angles;
+	if (mobj.EntityFlags & VEntity::EF_IsPlayer)
+	{
+		//	Clear look angles, because they must not affect model orientation
+		A.pitch = 0;
+		A.roll = 0;
+	}
+	if (AngleToByte(base.Angles.yaw) != AngleToByte(A.yaw) ||
+		AngleToByte(base.Angles.pitch) != AngleToByte(A.pitch) ||
+		AngleToByte(base.Angles.roll) != AngleToByte(A.roll))
+	{
+		msg.WriteBit(true);
+		if (AngleToByte(base.Angles.yaw) != AngleToByte(A.yaw))
+		{
+			msg.WriteBit(true);
+			msg << (vuint8)(AngleToByte(A.yaw));
+		}
+		else
+		{
+			msg.WriteBit(false);
+		}
+		if (AngleToByte(base.Angles.pitch) != AngleToByte(A.pitch))
+		{
+			msg.WriteBit(true);
+			msg << (vuint8)(AngleToByte(A.pitch));
+		}
+		else
+		{
+			msg.WriteBit(false);
+		}
+		if (AngleToByte(base.Angles.roll) != AngleToByte(A.roll))
+		{
+			msg.WriteBit(true);
+			msg << (vuint8)(AngleToByte(A.roll));
+		}
+		else
+		{
+			msg.WriteBit(false);
+		}
+	}
+	else
+	{
+		msg.WriteBit(false);
+	}
 	unguard;
 }
 
@@ -775,29 +825,16 @@ void SV_UpdateMobj(int i, VMessageOut& msg)
 		sv_player->Net->EntChan[i].NewObj = false;
 	}
 
-	bits = SV_GetMobjBits(*sv_mobjs[i], sv_mo_base[sendnum]);
-
-	if (sv_mobjs[i]->EntityFlags & VEntity::EF_IsPlayer)
-	{
-		//	Clear look angles, because they must not affect model orientation
-		bits &= ~(MOB_ANGLEP | MOB_ANGLER);
-	}
-	if (sendnum > 0xff)
-		bits |= MOB_BIG_NUM;
-	if (bits > 0xff)
-		bits |= MOB_MORE_BITS;
+	bits = 0;
 
 	msg << (vuint8)svc_update_mobj;
-	if (bits & MOB_MORE_BITS)
-		msg << (vuint16)bits;
-	else
-		msg << (vuint8)bits;
-	if (bits & MOB_BIG_NUM)
+	msg.WriteBit(sendnum > 0xff);
+	if (sendnum > 0xff)
 		msg << (vuint16)sendnum;
 	else
 		msg << (vuint8)sendnum;
 
-	SV_WriteMobj(bits, *sv_mobjs[i], msg);
+	SV_WriteMobj(*sv_mobjs[i], sv_mo_base[sendnum], msg);
 
 	sv_player->Net->EntChan[i].Update(sendnum);
 	return;
@@ -1415,7 +1452,6 @@ void SV_UpdateLevel(VMessageOut& msg)
 {
 	guard(SV_UpdateLevel);
 	int		i;
-	int		bits;
 
 	fatpvs = GLevel->LeafPVS(sv_player->MO->SubSector);
 
@@ -1427,24 +1463,13 @@ void SV_UpdateLevel(VMessageOut& msg)
 		if (!SV_SecCheckFatPVS(sec) && !(sec->SectorFlags & sector_t::SF_ExtrafloorSource))
 			continue;
 
-		bits = 0;
+		bool FloorChanged = fabs(sec->base_floorheight - sec->floor.dist) >= 1.0 ||
+			sec->floor.xoffs || sec->floor.yoffs;
+		bool CeilChanged = fabs(sec->base_ceilingheight - sec->ceiling.dist) >= 1.0 ||
+			sec->ceiling.xoffs || sec->ceiling.yoffs;
+		bool LightChanged = abs(sec->base_lightlevel - sec->params.lightlevel) >= 4;
 
-		if (fabs(sec->base_floorheight - sec->floor.dist) >= 1.0)
-			bits |= SUB_FLOOR;
-		if (fabs(sec->base_ceilingheight - sec->ceiling.dist) >= 1.0)
-			bits |= SUB_CEIL;
-		if (abs(sec->base_lightlevel - sec->params.lightlevel) >= 4)
-			bits |= SUB_LIGHT;
-		if (sec->floor.xoffs)
-			bits |= SUB_FLOOR_X;
-		if (sec->floor.yoffs)
-			bits |= SUB_FLOOR_Y;
-		if (sec->ceiling.xoffs)
-			bits |= SUB_CEIL_X;
-		if (sec->ceiling.yoffs)
-			bits |= SUB_CEIL_Y;
-
-		if (!bits)
+		if (!FloorChanged && !CeilChanged && !LightChanged)
 			continue;
 
 		if (!msg.CheckSpaceBits(14 << 3))
@@ -1453,28 +1478,47 @@ void SV_UpdateLevel(VMessageOut& msg)
 			return;
 		}
 		
+		msg << (vuint8)svc_sec_update;
+		msg.WriteBit(i > 255);
 		if (i > 255)
-			bits |= SUB_BIG_NUM;
-		msg << (vuint8)svc_sec_update
-			<< (vuint8)bits;
-		if (bits & SUB_BIG_NUM)
+		{
 			msg << (vuint16)i;
+		}
 		else
+		{
 			msg << (vuint8)i;
-		if (bits & SUB_FLOOR)
-			msg << (vuint16)(sec->floor.dist);
-		if (bits & SUB_CEIL)
-			msg << (vuint16)(sec->ceiling.dist);
-		if (bits & SUB_LIGHT)
+		}
+		msg.WriteBit(FloorChanged);
+		if (FloorChanged)
+		{
+			msg.WriteBit(fabs(sec->base_floorheight - sec->floor.dist) >= 1.0);
+			if (fabs(sec->base_floorheight - sec->floor.dist) >= 1.0)
+				msg << (vuint16)(sec->floor.dist);
+			msg.WriteBit(sec->floor.xoffs != 0);
+			if (sec->floor.xoffs)
+				msg << (vuint8)(sec->floor.xoffs);
+			msg.WriteBit(sec->floor.yoffs != 0);
+			if (sec->floor.yoffs)
+				msg << (vuint8)(sec->floor.yoffs);
+		}
+		msg.WriteBit(CeilChanged);
+		if (CeilChanged)
+		{
+			msg.WriteBit(fabs(sec->base_ceilingheight - sec->ceiling.dist) >= 1.0);
+			if (fabs(sec->base_ceilingheight - sec->ceiling.dist) >= 1.0)
+				msg << (vuint16)(sec->ceiling.dist);
+			msg.WriteBit(sec->ceiling.xoffs != 0);
+			if (sec->ceiling.xoffs)
+				msg << (vuint8)(sec->ceiling.xoffs);
+			msg.WriteBit(sec->ceiling.yoffs != 0);
+			if (sec->ceiling.yoffs)
+				msg << (vuint8)(sec->ceiling.yoffs);
+		}
+		msg.WriteBit(LightChanged);
+		if (LightChanged)
+		{
 			msg << (vuint8)(sec->params.lightlevel >> 2);
-		if (bits & SUB_FLOOR_X)
-			msg << (vuint8)(sec->floor.xoffs);
-		if (bits & SUB_FLOOR_Y)
-			msg << (vuint8)(sec->floor.yoffs);
-		if (bits & SUB_CEIL_X)
-			msg << (vuint8)(sec->ceiling.xoffs);
-		if (bits & SUB_CEIL_Y)
-			msg << (vuint8)(sec->ceiling.yoffs);
+		}
 	}
 	for (i = 0; i < GLevel->NumSides; i++)
 	{

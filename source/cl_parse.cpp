@@ -127,12 +127,12 @@ static void CL_ParseBaseline(VMessageIn& msg)
 	unguard;
 }
 
-static void CL_ReadMobj(VMessageIn& msg, int bits, VEntity*& mobj, const clmobjbase_t &base)
+static void CL_ReadMobj(VMessageIn& msg, VEntity*& mobj, const clmobjbase_t &base)
 {
 	VClass* C;
-	if (bits & MOB_CLASS)
+	if (msg.ReadBit())
 	{
-		if (bits & MOB_BIG_CLASS)
+		if (msg.ReadBit())
 			C = ClassLookup[(vuint16)msg.ReadShort()];
 		else
 			C = ClassLookup[msg.ReadByte()];
@@ -142,6 +142,7 @@ static void CL_ReadMobj(VMessageIn& msg, int bits, VEntity*& mobj, const clmobjb
 		check(base.Class);
 		C = base.Class;
 	}
+
 	if (mobj->GetClass() != C)
 	{
 		if (mobj->GetClass() != VEntity::StaticClass())
@@ -151,9 +152,9 @@ static void CL_ReadMobj(VMessageIn& msg, int bits, VEntity*& mobj, const clmobjb
 		mobj->Role = ROLE_DumbProxy;
 		mobj->RemoteRole = ROLE_Authority;
 	}
-	if (bits & MOB_STATE)
+	if (msg.ReadBit())
 	{
-		if (bits & MOB_BIG_STATE)
+		if (msg.ReadBit())
 			mobj->State = mobj->GetClass()->StatesLookup[(vuint16)msg.ReadShort()];
 		else
 			mobj->State = mobj->GetClass()->StatesLookup[msg.ReadByte()];
@@ -162,53 +163,66 @@ static void CL_ReadMobj(VMessageIn& msg, int bits, VEntity*& mobj, const clmobjb
 	{
 		mobj->State = base.State;
 	}
-	vuint8 TimeFrac = msg.ReadByte();
-	if (TimeFrac == 255)
+	if (msg.ReadBit())
+	{
+		vuint8 TimeFrac = msg.ReadByte();
+		mobj->StateTime = mobj->State->Time * TimeFrac / 255.0;
+	}
+	else
+	{
 		mobj->StateTime = -1;
+	}
+	if (msg.ReadBit())
+	{
+		if (msg.ReadBit())
+			mobj->Origin.x = msg.ReadShort();
+		else
+			mobj->Origin.x = base.origin.x;
+		if (msg.ReadBit())
+			mobj->Origin.y = msg.ReadShort();
+		else
+			mobj->Origin.y = base.origin.y;
+		if (msg.ReadBit())
+			mobj->Origin.z = msg.ReadShort();
+		else
+			mobj->Origin.z = base.origin.z;
+	}
 	else
-		mobj->StateTime = mobj->State->Time * TimeFrac / 254.0;
-	if (bits & MOB_X)
-		mobj->Origin.x = msg.ReadShort();
+	{
+		mobj->Origin = base.origin;
+	}
+	if (msg.ReadBit())
+	{
+		if (msg.ReadBit())
+			mobj->Angles.yaw = ByteToAngle(msg.ReadByte());
+		else
+			mobj->Angles.yaw = base.angles.yaw;
+		if (msg.ReadBit())
+			mobj->Angles.pitch = ByteToAngle(msg.ReadByte());
+		else
+			mobj->Angles.pitch = base.angles.pitch;
+		if (msg.ReadBit())
+			mobj->Angles.roll = ByteToAngle(msg.ReadByte());
+		else
+			mobj->Angles.roll = base.angles.roll;
+	}
 	else
-		mobj->Origin.x = base.origin.x;
-	if (bits & MOB_Y)
-		mobj->Origin.y = msg.ReadShort();
-	else
-		mobj->Origin.y = base.origin.y;
-	if (bits & MOB_Z)
-		mobj->Origin.z = msg.ReadShort();
-	else
-		mobj->Origin.z = base.origin.z;
-	if (bits & MOB_ANGLE)
-		mobj->Angles.yaw = ByteToAngle(msg.ReadByte());
-	else
-		mobj->Angles.yaw = base.angles.yaw;
-	if (bits & MOB_ANGLEP)
-		mobj->Angles.pitch = ByteToAngle(msg.ReadByte());
-	else
-		mobj->Angles.pitch = base.angles.pitch;
-	if (bits & MOB_ANGLER)
-		mobj->Angles.roll = ByteToAngle(msg.ReadByte());
-	else
-		mobj->Angles.roll = base.angles.roll;
+	{
+		mobj->Angles = base.angles;
+	}
 }
 
 static void CL_ParseUpdateMobj(VMessageIn& msg)
 {
 	guard(CL_ParseUpdateMobj);
 	int		i;
-	int		bits;
 
-	bits = msg.ReadByte();
-	if (bits & MOB_MORE_BITS)
-		bits |= msg.ReadByte() << 8;
-
-	if (bits & MOB_BIG_NUM)
+	if (msg.ReadBit())
 		i = msg.ReadShort();
 	else
 		i = msg.ReadByte();
 
-	CL_ReadMobj(msg, bits, cl_mobjs[i], cl_mo_base[i]);
+	CL_ReadMobj(msg, cl_mobjs[i], cl_mo_base[i]);
 
 	//	Marking mobj in use
 	cl_mobjs[i]->InUse = 2;
@@ -220,28 +234,41 @@ static void CL_ParseSecUpdate(VMessageIn& msg)
 	int			bits;
 	int			i;
 
-	bits = msg.ReadByte();
-	if (bits & SUB_BIG_NUM)
+	if (msg.ReadBit())
 		i = msg.ReadShort();
 	else
 		i = msg.ReadByte();
 
-	if (bits & SUB_FLOOR)
-		GClLevel->Sectors[i].floor.dist = msg.ReadShort();
-	if (bits & SUB_CEIL)
-		GClLevel->Sectors[i].ceiling.dist = msg.ReadShort();
-	if (bits & SUB_LIGHT)
+	float PrevFloorDist = GClLevel->Sectors[i].floor.dist;
+	float PrevCeilDist = GClLevel->Sectors[i].ceiling.dist;
+
+	if (msg.ReadBit())
+	{
+		if (msg.ReadBit())
+			GClLevel->Sectors[i].floor.dist = msg.ReadShort();
+		if (msg.ReadBit())
+			GClLevel->Sectors[i].floor.xoffs = msg.ReadByte() & 63;
+		if (msg.ReadBit())
+			GClLevel->Sectors[i].floor.yoffs = msg.ReadByte() & 63;
+	}
+	if (msg.ReadBit())
+	{
+		if (msg.ReadBit())
+			GClLevel->Sectors[i].ceiling.dist = msg.ReadShort();
+		if (msg.ReadBit())
+			GClLevel->Sectors[i].ceiling.xoffs = msg.ReadByte() & 63;
+		if (msg.ReadBit())
+			GClLevel->Sectors[i].ceiling.yoffs = msg.ReadByte() & 63;
+	}
+	if (msg.ReadBit())
+	{
 		GClLevel->Sectors[i].params.lightlevel = msg.ReadByte() << 2;
-	if (bits & SUB_FLOOR_X)
-		GClLevel->Sectors[i].floor.xoffs = msg.ReadByte() & 63;
-	if (bits & SUB_FLOOR_Y)
-		GClLevel->Sectors[i].floor.yoffs = msg.ReadByte() & 63;
-	if (bits & SUB_CEIL_X)
-		GClLevel->Sectors[i].ceiling.xoffs = msg.ReadByte() & 63;
-	if (bits & SUB_CEIL_Y)
-		GClLevel->Sectors[i].ceiling.yoffs = msg.ReadByte() & 63;
-	if (bits & (SUB_FLOOR | SUB_CEIL))
+	}
+	if (PrevFloorDist != GClLevel->Sectors[i].floor.dist ||
+		PrevCeilDist != GClLevel->Sectors[i].ceiling.dist)
+	{
 		CalcSecMinMaxs(&GClLevel->Sectors[i]);
+	}
 }
 
 static void CL_ParseViewData(VMessageIn& msg)

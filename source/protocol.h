@@ -100,25 +100,3 @@ enum
 	clc_stringcmd,
 	clc_player_info,
 };
-
-#define MOB_X			0x0001
-#define MOB_Y			0x0002
-#define MOB_Z			0x0004
-#define MOB_ANGLE		0x0008
-#define MOB_STATE		0x0010
-#define MOB_CLASS		0x0020
-#define MOB_BIG_NUM		0x0040
-#define MOB_MORE_BITS	0x0080
-#define MOB_BIG_STATE	0x0100
-#define MOB_BIG_CLASS	0x0200
-#define MOB_ANGLEP		0x1000
-#define MOB_ANGLER		0x2000
-
-#define SUB_FLOOR		0x0001
-#define SUB_CEIL		0x0002
-#define SUB_LIGHT		0x0004
-#define SUB_FLOOR_X		0x0008
-#define SUB_FLOOR_Y		0x0010
-#define SUB_CEIL_X		0x0020
-#define SUB_CEIL_Y		0x0040
-#define SUB_BIG_NUM		0x0080
