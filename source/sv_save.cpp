@@ -577,7 +577,7 @@ static void UnarchiveThinkers()
 
 	//	Add world info
 	vuint8 WorldInfoSaved;
-	*Saver << WorldInfoSaved;
+	*Loader << WorldInfoSaved;
 	if (WorldInfoSaved)
 	{
 		Loader->Exports.Append(GWorldInfo);
