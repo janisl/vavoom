@@ -44,6 +44,7 @@ public:
 	void Serialise(void*, int);
 	void SerialiseBits(void*, int);
 	void WriteBit(bool);
+	void WriteInt(vuint32, vuint32);
 	vuint8* GetData()
 	{
 		return Data.Ptr();
@@ -73,6 +74,7 @@ public:
 	void Serialise(void*, int);
 	void SerialiseBits(void*, int);
 	bool ReadBit();
+	vuint32 ReadInt(vuint32);
 	bool AtEnd();
 	vuint8* GetData()
 	{

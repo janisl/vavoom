@@ -175,6 +175,45 @@ void VBitStreamWriter::WriteBit(bool Bit)
 
 //==========================================================================
 //
+//  VBitStreamWriter::WriteInt
+//
+//==========================================================================
+
+void VBitStreamWriter::WriteInt(vuint32 Val, vuint32 Maximum)
+{
+	guard(VBitStreamWriter::WriteInt);
+	checkSlow(Val < Maximum);
+	//	With maximum of 1 the only possible value is 0.
+	if (Maximum <= 1)
+	{
+		return;
+	}
+
+	//	Check for the case when it will take all 32 bits.
+	if (Maximum > 0x80000000)
+	{
+		*this << Val;
+		return;
+	}
+
+	for (vuint32 Mask = 1; Mask && Mask < Maximum; Mask <<= 1)
+	{
+		if (Pos + 1 > Max)
+		{
+			bError = true;
+			return;
+		}
+		if (Val & Mask)
+		{
+			Data[Pos >> 3] |= 1 << (Pos & 7);
+		}
+		Pos++;
+	}
+	unguard;
+}
+
+//==========================================================================
+//
 //  VBitStreamReader::VBitStreamReader
 //
 //==========================================================================
@@ -279,6 +318,45 @@ bool VBitStreamReader::ReadBit()
 	bool Ret = !!(Data[Pos >> 3] & (1 << (Pos & 7)));
 	Pos++;
 	return Ret;
+	unguard;
+}
+
+//==========================================================================
+//
+//  VBitStreamReader::ReadInt
+//
+//==========================================================================
+
+vuint32 VBitStreamReader::ReadInt(vuint32 Maximum)
+{
+	guard(VBitStreamReader::ReadInt);
+	//	With maximum of 1 the only possible value is 0.
+	if (Maximum <= 1)
+	{
+		return 0;
+	}
+
+	//	Check for the case when it will take all 32 bits.
+	if (Maximum > 0x80000000)
+	{
+		return Streamer<vuint32>(*this);
+	}
+
+	vuint32 Val = 0;
+	for (vuint32 Mask = 1; Mask && Mask < Maximum; Mask <<= 1)
+	{
+		if (Pos + 1 > Num)
+		{
+			bError = true;
+			return 0;
+		}
+		if (Data[Pos >> 3] & (1 << (Pos & 7)))
+		{
+			Val |= Mask;
+		}
+		Pos++;
+	}
+	return Val;
 	unguard;
 }
 

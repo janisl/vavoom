@@ -233,13 +233,7 @@ static void CL_ParseUpdateMobj(VMessageIn& msg)
 
 static void CL_ParseSecUpdate(VMessageIn& msg)
 {
-	int			bits;
-	int			i;
-
-	if (msg.ReadBit())
-		i = msg.ReadShort();
-	else
-		i = msg.ReadByte();
+	int i = msg.ReadInt(GClLevel->NumSectors);
 
 	float PrevFloorDist = GClLevel->Sectors[i].floor.dist;
 	float PrevCeilDist = GClLevel->Sectors[i].ceiling.dist;
@@ -718,11 +712,7 @@ static void CL_ParseSkin(VMessageIn& msg)
 static void CL_ParseSetProp(VMessageIn& Msg)
 {
 	guard(CL_ParseSetProp);
-	int Id = Msg.ReadByte();
-	if (Id & 0x80)
-	{
-		Id = (Id & 0x7f) | (Msg.ReadByte() << 7);
-	}
+	int Id = Msg.ReadInt(GMaxEntities);
 	VEntity* Ent = cl_mobjs[Id];
 	int FldIdx = Msg.ReadByte();
 	VField* F = NULL;
@@ -751,9 +741,7 @@ static void CL_ParseSetProp(VMessageIn& Msg)
 static void CL_ParseNewObj(VMessageIn& msg)
 {
 	guard(CL_ParseNewObj);
-	int i = msg.ReadByte();
-	if (i & 0x80)
-		i = (i & 0x7f) | (msg.ReadByte() << 7);
+	int i = msg.ReadInt(GMaxEntities);
 
 	int ci = msg.ReadByte();
 	if (ci & 0x80)
@@ -910,7 +898,7 @@ bool VClientPlayerNetInfo::ParsePacket(VMessageIn& msg)
 			break;
 
 		case svc_side_ofs:
-			i = msg.ReadShort();
+			i = msg.ReadInt(GClLevel->NumSides);
 			GClLevel->Sides[i].textureoffset = msg.ReadShort();
 			GClLevel->Sides[i].rowoffset = msg.ReadShort();
 			break;
@@ -976,7 +964,7 @@ bool VClientPlayerNetInfo::ParsePacket(VMessageIn& msg)
 			break;
 
 		case svc_poly_update:
-			i = msg.ReadByte();
+			i = msg.ReadInt(GClLevel->NumPolyObjs);
 			x = msg.ReadShort();
 			y = msg.ReadShort();
 			angle = ByteToAngle(msg.ReadByte());

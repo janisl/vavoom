@@ -518,15 +518,7 @@ void VEntityChannel::Update(int SendId)
 		if (!VField::IdenticalValue(Data + F->Ofs, OldData + F->Ofs, F->Type))
 		{
 			Msg << (vuint8)svc_set_prop;
-			if (SendId < 0x80)
-			{
-				Msg << (vuint8)SendId;
-			}
-			else
-			{
-				Msg << (vuint8)(SendId & 0x7f | 0x80)
-					<< (vuint8)(SendId >> 7);
-			}
+			Msg.WriteInt(SendId, GMaxEntities);
 			Msg << (vuint8)F->NetIndex;
 			VField::NetSerialiseValue(Msg, Data + F->Ofs, F->Type);
 			VField::CopyFieldValue(Data + F->Ofs, OldData + F->Ofs, F->Type);
@@ -703,15 +695,7 @@ void SV_UpdateMobj(int i, VMessageOut& msg)
 	if (sv_player->Net->EntChan[i].NewObj)
 	{
 		msg << (vuint8)svc_new_obj;
-		if (sendnum < 0x80)
-		{
-			msg << (vuint8)sendnum;
-		}
-		else
-		{
-			msg << (vuint8)(sendnum & 0x7f | 0x80)
-				<< (vuint8)(sendnum >> 7);
-		}
+		msg.WriteInt(sendnum, GMaxEntities);
 		int ClsId = sv_player->Net->EntChan[i].Ent->GetClass()->NetId;
 		if (ClsId < 0x80)
 		{
@@ -1379,15 +1363,7 @@ void SV_UpdateLevel(VMessageOut& msg)
 		}
 		
 		msg << (vuint8)svc_sec_update;
-		msg.WriteBit(i > 255);
-		if (i > 255)
-		{
-			msg << (vuint16)i;
-		}
-		else
-		{
-			msg << (vuint8)i;
-		}
+		msg.WriteInt(i, GLevel->NumSectors);
 		msg.WriteBit(FloorChanged);
 		if (FloorChanged)
 		{
@@ -1438,9 +1414,9 @@ void SV_UpdateLevel(VMessageOut& msg)
 			return;
 		}
 
-		msg << (vuint8)svc_side_ofs
-			<< (vuint16)i
-			<< (vuint16)side->textureoffset
+		msg << (vuint8)svc_side_ofs;
+		msg.WriteInt(i, GLevel->NumSides);
+		msg << (vuint16)side->textureoffset
 			<< (vuint16)side->rowoffset;
 	}
 
@@ -1466,9 +1442,9 @@ void SV_UpdateLevel(VMessageOut& msg)
 			return;
 		}
 
-		msg << (vuint8)svc_poly_update
-			<< (vuint8)i
-			<< (vuint16)floor(po->startSpot.x + 0.5)
+		msg << (vuint8)svc_poly_update;
+		msg.WriteInt(i, GLevel->NumPolyObjs);
+		msg << (vuint16)floor(po->startSpot.x + 0.5)
 			<< (vuint16)floor(po->startSpot.y + 0.5)
 			<< (vuint8)(AngleToByte(po->angle));
 	}
