@@ -236,6 +236,14 @@ class VClientGameBase : public VObject
 	}
 };
 
+class VClientPlayerNetInfo : public VPlayerNetInfo
+{
+public:
+	//	VPlayerNetInfo interface
+	int GetRawMessage(VMessageIn*&);
+	bool ParsePacket(VMessageIn&);
+};
+
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 void CL_DecayLights();

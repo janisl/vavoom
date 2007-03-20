@@ -52,6 +52,267 @@ static VCvarI		sv_maxmove("sv_maxmove", "400", CVAR_Archive);
 
 //==========================================================================
 //
+//	VPlayerChannel::VPlayerChannel
+//
+//==========================================================================
+
+VPlayerChannel::VPlayerChannel()
+: Plr(NULL)
+, OldData(NULL)
+, NewObj(false)
+, FieldCondValues(NULL)
+{
+}
+
+//==========================================================================
+//
+//	VPlayerChannel::~VPlayerChannel
+//
+//==========================================================================
+
+VPlayerChannel::~VPlayerChannel()
+{
+}
+
+//==========================================================================
+//
+//	VPlayerChannel::SetPlayer
+//
+//==========================================================================
+
+void VPlayerChannel::SetPlayer(VBasePlayer* APlr)
+{
+	guard(VPlayerChannel::SetPlayer);
+	if (Plr)
+	{
+		for (VField* F = Plr->GetClass()->NetFields; F; F = F->NextNetField)
+		{
+			VField::CleanField(OldData + F->Ofs, F->Type);
+		}
+		if (OldData)
+		{
+			delete[] OldData;
+			OldData = NULL;
+		}
+		if (FieldCondValues)
+		{
+			delete[] FieldCondValues;
+			FieldCondValues = NULL;
+		}
+	}
+
+	Plr = APlr;
+
+	if (Plr)
+	{
+		VBasePlayer* Def = (VBasePlayer*)Plr->GetClass()->Defaults;
+		OldData = new vuint8[Plr->GetClass()->ClassSize];
+		memset(OldData, 0, Plr->GetClass()->ClassSize);
+		for (VField* F = Plr->GetClass()->NetFields; F; F = F->NextNetField)
+		{
+			VField::CopyFieldValue((vuint8*)Def + F->Ofs, OldData + F->Ofs,
+				F->Type);
+		}
+		FieldCondValues = new vuint8[Plr->GetClass()->NumNetFields];
+		NewObj = true;
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VPlayerChannel::Update
+//
+//==========================================================================
+
+void VPlayerChannel::Update()
+{
+	guard(VPlayerChannel::Update);
+	EvalCondValues(Plr, Plr->GetClass(), FieldCondValues);
+	VMessageOut& Msg = sv_player->Net->Message;
+	vuint8* Data = (vuint8*)Plr;
+	for (VField* F = Plr->GetClass()->NetFields; F; F = F->NextNetField)
+	{
+		if (!FieldCondValues[F->NetIndex])
+		{
+			continue;
+		}
+		if (!VField::IdenticalValue(Data + F->Ofs, OldData + F->Ofs, F->Type))
+		{
+			Msg << (vuint8)svc_set_player_prop;
+			Msg << (vuint8)F->NetIndex;
+			VField::NetSerialiseValue(Msg, Data + F->Ofs, F->Type);
+			VField::CopyFieldValue(Data + F->Ofs, OldData + F->Ofs, F->Type);
+		}
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VPlayerNetInfo::VPlayerNetInfo
+//
+//==========================================================================
+
+VPlayerNetInfo::VPlayerNetInfo()
+: NetCon(NULL)
+, Message(MAX_MSGLEN << 3)
+, MobjUpdateStart(0)
+, LastMessage(0)
+, NeedsUpdate(false)
+, EntChan(NULL)
+, Messages(NULL)
+{
+	EntChan = new VEntityChannel[GMaxEntities];
+}
+
+//==========================================================================
+//
+//	VPlayerNetInfo::~VPlayerNetInfo
+//
+//==========================================================================
+
+VPlayerNetInfo::~VPlayerNetInfo()
+{
+	delete[] EntChan;
+	Chan.SetPlayer(NULL);
+}
+
+//==========================================================================
+//
+//	VPlayerNetInfo::SetNetCon
+//
+//==========================================================================
+
+void VPlayerNetInfo::SetNetCon(VSocketPublic* ANetCon)
+{
+	guard(VPlayerNetInfo::SetNetCon);
+	NetCon = ANetCon;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VPlayerNetInfo::GetMessages
+//
+//==========================================================================
+
+bool VPlayerNetInfo::GetMessages()
+{
+	guard(VPlayerNetInfo::GetMessages);
+	int ret;
+
+	do
+	{
+		VMessageIn* Msg = NULL;
+		ret = GetRawMessage(Msg);
+		if (ret == -1)
+		{
+			GCon->Log(NAME_DevNet, "Bad read");
+			return false;
+		}
+
+		if (ret)
+		{
+			if (!ParsePacket(*Msg))
+			{
+				delete Msg;
+				return false;
+			}
+			delete Msg;
+		}
+
+		//	This is for client connection which closes the connection on
+		// disconnect command.
+		if (!NetCon)
+		{
+			return true;
+		}
+	} while (ret > 0);
+
+	return true;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VPlayerNetInfo::GetRawMessage
+//
+//==========================================================================
+
+int VPlayerNetInfo::GetRawMessage(VMessageIn*& Msg)
+{
+	guard(VPlayerNetInfo::GetRawMessage);
+	checkSlow(NetCon);
+	return NetCon->GetMessage(Msg);
+	unguard;
+}
+
+//==========================================================================
+//
+//	VPlayerNetInfo::SendMessage
+//
+//==========================================================================
+
+int VPlayerNetInfo::SendMessage(VMessageOut* Msg, bool Reliable)
+{
+	guard(VPlayerNetInfo::SendMessage);
+	if (Reliable)
+	{
+		return NetCon->SendMessage(Msg);
+	}
+	else
+	{
+		return NetCon->SendUnreliableMessage(Msg);
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VPlayerNetInfo::CanSendMessage
+//
+//==========================================================================
+
+bool VPlayerNetInfo::CanSendMessage()
+{
+	guard(VPlayerNetInfo::CanSendMessage);
+	return NetCon->CanSendMessage();
+	unguard;
+}
+
+//==========================================================================
+//
+//	VPlayerNetInfo::IsLocalConnection
+//
+//==========================================================================
+
+bool VPlayerNetInfo::IsLocalConnection()
+{
+	guard(VPlayerNetInfo::IsLocalConnection);
+	return NetCon->IsLocalConnection();
+	unguard;
+}
+
+//==========================================================================
+//
+//	VPlayerNetInfo::CloseSocket
+//
+//==========================================================================
+
+void VPlayerNetInfo::CloseSocket()
+{
+	guard(VPlayerNetInfo::CloseSocket);
+	if (NetCon)
+	{
+		NetCon->Close();
+	}
+	NetCon = NULL;
+	unguard;
+}
+
+//==========================================================================
+//
 //	SV_ReadMove
 //
 //==========================================================================
@@ -153,6 +414,58 @@ void SV_SetUserInfo(const VStr& info)
 
 //==========================================================================
 //
+//	VServerPlayerNetInfo::ParsePacket
+//
+//==========================================================================
+
+bool VServerPlayerNetInfo::ParsePacket(VMessageIn& msg)
+{
+	NeedsUpdate = true;
+
+	while (1)
+	{
+		if (msg.IsError())
+		{
+			GCon->Log(NAME_DevNet, "Packet corupted");
+			return false;
+		}
+
+		vuint8 cmd_type;
+		msg << cmd_type;
+
+		if (msg.IsError())
+			break; // Here this means end of packet
+
+		switch (cmd_type)
+		{
+		case clc_nop:
+			break;
+
+		case clc_move:
+			SV_ReadMove(msg);
+			break;
+
+		case clc_disconnect:
+			return false;
+
+		case clc_player_info:
+			SV_SetUserInfo(msg.ReadString());
+			break;
+
+		case clc_stringcmd:
+			SV_RunClientCommand(msg.ReadString());
+			break;
+
+		default:
+			GCon->Log(NAME_DevNet, "Invalid command");
+			return false;
+		}
+	}
+	return true;
+}
+
+//==========================================================================
+//
 //	SV_ReadClientMessages
 //
 //==========================================================================
@@ -160,72 +473,9 @@ void SV_SetUserInfo(const VStr& info)
 bool SV_ReadClientMessages(int clientnum)
 {
 	guard(SV_ReadClientMessages);
-	int			ret;
-	byte		cmd_type;
-
 	sv_player = GGameInfo->Players[clientnum];
 	sv_player->Net->NeedsUpdate = false;
-	do
-	{
-		VMessageIn* Msg = NULL;
-		ret = sv_player->Net->NetCon->GetMessage(Msg);
-		if (ret == -1)
-		{
-			GCon->Log(NAME_DevNet, "Bad read");
-			return false;
-		}
-
-		if (ret == 0)
-			return true;
-
-		sv_player->Net->NeedsUpdate = true;
-
-		VMessageIn& msg = *Msg;
-
-		while (1)
-		{
-			if (msg.IsError())
-			{
-				GCon->Log(NAME_DevNet, "Packet corupted");
-				delete Msg;
-				return false;
-			}
-
-			msg << cmd_type;
-
-			if (msg.IsError())
-				break; // Here this means end of packet
-
-			switch (cmd_type)
-			{
-			case clc_nop:
-				break;
-
-			case clc_move:
-				SV_ReadMove(msg);
-				break;
-
-			case clc_disconnect:
-				delete Msg;
-				return false;
-	
-			case clc_player_info:
-				SV_SetUserInfo(msg.ReadString());
-				break;
-
-			case clc_stringcmd:
-				SV_RunClientCommand(msg.ReadString());
-				break;
-
-			default:
-				GCon->Log(NAME_DevNet, "Invalid command");
-				return false;
-			}
-		}
-		delete Msg;
-	} while (ret > 0);
-
-	return true;
+	return sv_player->Net->GetMessages();
 	unguard;
 }
 

@@ -131,16 +131,15 @@ void CL_WriteDemoMessage(VMessageIn& msg)
 
 //==========================================================================
 //
-//	CL_GetMassage
+//	VClientPlayerNetInfo::GetRawMessage
 //
 //	Handles recording and playback of demos, on top of NET_ code
 //
 //==========================================================================
 
-int CL_GetMessage(VMessageIn*& Msg)
+int VClientPlayerNetInfo::GetRawMessage(VMessageIn*& Msg)
 {
-	guard(CL_GetMessage);
-	int			r;
+	guard(VClientPlayerNetInfo::GetRawMessage);
 	vuint8		MsgBuf[MAX_MSGLEN];
 
 	if (cls.demoplayback)
@@ -187,28 +186,14 @@ int CL_GetMessage(VMessageIn*& Msg)
 		return 1;
 	}
 
-	do
-	{
-		check(cls.netcon);
-		r = cls.netcon->GetMessage(Msg);
+	int r = VPlayerNetInfo::GetRawMessage(Msg);
 
-		if (r != 1 && r != 2)
-			return r;
-	
-		// discard nop keepalive message
-		if (Msg->GetNumBytes() == 1 && Msg->GetData()[0] == svc_nop)
+	if (cls.demorecording && (r == 1 || r == 2))
+	{
+		if (Msg->GetNumBytes() != 1 || Msg->GetData()[0] != svc_nop)
 		{
-			GCon->Log("<-- server to client keepalive");
-			delete Msg;
+			CL_WriteDemoMessage(*Msg);
 		}
-		else
-			break;
-	}
-	while (1);
-
-	if (cls.demorecording)
-	{
-		CL_WriteDemoMessage(*Msg);
 	}
 	
 	return r;

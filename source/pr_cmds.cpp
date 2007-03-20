@@ -1096,7 +1096,7 @@ void PR_MSG_Select(int msgtype)
 #endif
 #ifdef CLIENT
 		case MSG_CL_MESSAGE:
-			pr_msg = cls.message;
+			pr_msg = &cl->Net->Message;
 			break;
 #endif
 	}

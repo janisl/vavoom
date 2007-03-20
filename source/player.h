@@ -31,8 +31,6 @@
 
 // TYPES -------------------------------------------------------------------
 
-class VEntityChannel;
-
 //
 // Overlay psprites are scaled shapes
 // drawn directly on the view screen,
@@ -66,6 +64,20 @@ struct VViewState
 	float			SY;
 };
 
+class VEntityChannel
+{
+public:
+	VEntity*		Ent;
+	vuint8*			OldData;
+	bool			NewObj;
+	vuint8*			FieldCondValues;
+
+	VEntityChannel();
+	~VEntityChannel();
+	void SetEntity(VEntity*);
+	void Update(int);
+};
+
 class VPlayerChannel
 {
 public:
@@ -80,9 +92,11 @@ public:
 	void Update();
 };
 
-struct VPlayerNetInfo
+class VPlayerNetInfo
 {
+protected:
 	VSocketPublic*	NetCon;
+public:
 	VMessageOut		Message;
 	int				MobjUpdateStart;
 	double			LastMessage;
@@ -91,15 +105,26 @@ struct VPlayerNetInfo
 	VPlayerChannel	Chan;
 	VMessageOut*	Messages;
 
-	VPlayerNetInfo()
-	: NetCon(NULL)
-	, Message(MAX_MSGLEN << 3)
-	, MobjUpdateStart(0)
-	, LastMessage(0)
-	, NeedsUpdate(false)
-	, EntChan(NULL)
-	, Messages(NULL)
-	{}
+	VPlayerNetInfo();
+	virtual ~VPlayerNetInfo();
+
+	//	VPlayerNetInfo interface
+	void SetNetCon(VSocketPublic*);
+	bool GetMessages();
+	virtual int GetRawMessage(VMessageIn*& Msg);
+	virtual bool ParsePacket(VMessageIn&) = 0;
+	int SendMessage(VMessageOut*, bool);
+	bool CanSendMessage();
+	bool IsLocalConnection();
+	void CloseSocket();
+	bool ValidNetCon() const
+	{
+		return NetCon != NULL;
+	}
+	VStr GetAddress() const
+	{
+		return NetCon->Address;
+	}
 };
 
 //

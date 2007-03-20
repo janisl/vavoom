@@ -66,9 +66,11 @@ void CL_Clear()
 	GClGame->serverinfo.Clean();
 	GClGame->intermission = 0;
 	GClGame->time = 0;
+	VPlayerNetInfo* Net = cl->Net;
 	VEntity* PrevVEnt = cl->ViewEnt;
 	memset((byte*)cl + sizeof(VObject), 0, cl->GetClass()->ClassSize - sizeof(VObject));
 	cl->ViewEnt = PrevVEnt;
+	cl->Net = Net;
 	cl_level.LevelName.Clean();
 	memset(&cl_level, 0, sizeof(cl_level));
 	for (int i = 0; i < GMaxEntities; i++)
@@ -834,13 +836,13 @@ void CL_PO_Update(int i, float x, float y, float angle)
 
 //==========================================================================
 //
-//	CL_ParseServerMessage
+//	VClientPlayerNetInfo::ParsePacket
 //
 //==========================================================================
 
-void CL_ParseServerMessage(VMessageIn& msg)
+bool VClientPlayerNetInfo::ParsePacket(VMessageIn& msg)
 {
-	guard(CL_ParseServerMessage);
+	guard(VClientPlayerNetInfo::ParsePacket);
 	int			i;
 	byte		cmd_type;
 	float		x;
@@ -851,6 +853,8 @@ void CL_ParseServerMessage(VMessageIn& msg)
 	TVec		origin;
 	float		radius;
 	vuint32		colour;
+
+//	cl->last_received_message = realtime;
 
 	// update command store from the packet
 	while (1)
@@ -871,6 +875,8 @@ void CL_ParseServerMessage(VMessageIn& msg)
 		switch (cmd_type)
 		{
 		case svc_nop:
+			// nop keepalive message
+			GCon->Log("<-- server to client keepalive");
 			break;
 
 		case svc_disconnect:
@@ -1107,5 +1113,6 @@ void CL_ParseServerMessage(VMessageIn& msg)
 			break;
 		}
 	}
+	return true;
 	unguard;
 }

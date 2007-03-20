@@ -252,9 +252,23 @@ void SV_ChangeMusic(const char*);
 void SV_ChangeLocalMusic(VBasePlayer*, const char*);
 VMessageOut* SV_GetSignon(int);
 void SV_ReadMove();
+void EvalCondValues(VObject* Obj, VClass* Class, vuint8* Values);
 
 extern VBasePlayer*			sv_player;
 extern TArray<VSndSeqInfo>	sv_ActiveSequences;
+
+//==========================================================================
+//
+//	sv_user
+//
+//==========================================================================
+
+class VServerPlayerNetInfo : public VPlayerNetInfo
+{
+public:
+	//	VPlayerNetInfo interface
+	bool ParsePacket(VMessageIn&);
+};
 
 //==========================================================================
 //

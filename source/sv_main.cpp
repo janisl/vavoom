@@ -45,29 +45,6 @@
 
 // TYPES -------------------------------------------------------------------
 
-class VEntityChannel
-{
-public:
-	VEntity*		Ent;
-	vuint8*			OldData;
-	bool			NewObj;
-	vuint8*			FieldCondValues;
-
-	VEntityChannel()
-	: Ent(NULL)
-	, OldData(NULL)
-	, NewObj(false)
-	, FieldCondValues(NULL)
-	{
-	}
-	~VEntityChannel()
-	{
-	}
-
-	void SetEntity(VEntity*);
-	void Update(int);
-};
-
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 void Draw_TeleportIcon();
@@ -260,8 +237,7 @@ void SV_Init()
 	{
 		GPlayersBase[i] = (VBasePlayer*)VObject::StaticSpawnObject(
 			PlayerClass);
-		GPlayersBase[i]->Net = new VPlayerNetInfo();
-		GPlayersBase[i]->Net->EntChan = new VEntityChannel[GMaxEntities];
+		GPlayersBase[i]->Net = new VServerPlayerNetInfo();
 		GPlayersBase[i]->Net->Chan.SetPlayer(GPlayersBase[i]);
 	}
 
@@ -291,8 +267,6 @@ void SV_Shutdown()
 	{
 		if (GPlayersBase[i])
 		{
-			delete[] GPlayersBase[i]->Net->EntChan;
-			GPlayersBase[i]->Net->Chan.SetPlayer(NULL);
 			delete GPlayersBase[i]->Net;
 			GPlayersBase[i]->ConditionalDestroy();
 		}
@@ -431,6 +405,30 @@ VThinker* VLevel::SpawnThinker(VClass* Class, const TVec& AOrigin,
 
 //==========================================================================
 //
+//	VEntityChannel::VEntityChannel
+//
+//==========================================================================
+
+VEntityChannel::VEntityChannel()
+: Ent(NULL)
+, OldData(NULL)
+, NewObj(false)
+, FieldCondValues(NULL)
+{
+}
+
+//==========================================================================
+//
+//	VEntityChannel::~VEntityChannel
+//
+//==========================================================================
+
+VEntityChannel::~VEntityChannel()
+{
+}
+
+//==========================================================================
+//
 //	VEntityChannel::SetEntity
 //
 //==========================================================================
@@ -480,7 +478,7 @@ void VEntityChannel::SetEntity(VEntity* AEnt)
 //
 //==========================================================================
 
-static void EvalCondValues(VObject* Obj, VClass* Class, vuint8* Values)
+void EvalCondValues(VObject* Obj, VClass* Class, vuint8* Values)
 {
 	guard(EvalCondValues);
 	if (Class->GetSuperClass())
@@ -529,104 +527,6 @@ void VEntityChannel::Update(int SendId)
 				Msg << (vuint8)(SendId & 0x7f | 0x80)
 					<< (vuint8)(SendId >> 7);
 			}
-			Msg << (vuint8)F->NetIndex;
-			VField::NetSerialiseValue(Msg, Data + F->Ofs, F->Type);
-			VField::CopyFieldValue(Data + F->Ofs, OldData + F->Ofs, F->Type);
-		}
-	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	VPlayerChannel::VPlayerChannel
-//
-//==========================================================================
-
-VPlayerChannel::VPlayerChannel()
-: Plr(NULL)
-, OldData(NULL)
-, NewObj(false)
-, FieldCondValues(NULL)
-{
-}
-
-//==========================================================================
-//
-//	VPlayerChannel::~VPlayerChannel
-//
-//==========================================================================
-
-VPlayerChannel::~VPlayerChannel()
-{
-}
-
-//==========================================================================
-//
-//	VPlayerChannel::SetPlayer
-//
-//==========================================================================
-
-void VPlayerChannel::SetPlayer(VBasePlayer* APlr)
-{
-	guard(VPlayerChannel::SetPlayer);
-	if (Plr)
-	{
-		for (VField* F = Plr->GetClass()->NetFields; F; F = F->NextNetField)
-		{
-			VField::CleanField(OldData + F->Ofs, F->Type);
-		}
-		if (OldData)
-		{
-			delete[] OldData;
-			OldData = NULL;
-		}
-		if (FieldCondValues)
-		{
-			delete[] FieldCondValues;
-			FieldCondValues = NULL;
-		}
-	}
-
-	Plr = APlr;
-
-	if (Plr)
-	{
-		VBasePlayer* Def = (VBasePlayer*)Plr->GetClass()->Defaults;
-		OldData = new vuint8[Plr->GetClass()->ClassSize];
-		memset(OldData, 0, Plr->GetClass()->ClassSize);
-		for (VField* F = Plr->GetClass()->NetFields; F; F = F->NextNetField)
-		{
-			VField::CopyFieldValue((vuint8*)Def + F->Ofs, OldData + F->Ofs,
-				F->Type);
-		}
-		FieldCondValues = new vuint8[Plr->GetClass()->NumNetFields];
-		NewObj = true;
-	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	VPlayerChannel::Update
-//
-//==========================================================================
-
-void VPlayerChannel::Update()
-{
-	guard(VPlayerChannel::Update);
-	EvalCondValues(Plr, Plr->GetClass(), FieldCondValues);
-	VMessageOut& Msg = sv_player->Net->Message;
-	vuint8* Data = (vuint8*)Plr;
-	for (VField* F = Plr->GetClass()->NetFields; F; F = F->NextNetField)
-	{
-		if (!FieldCondValues[F->NetIndex])
-		{
-			continue;
-		}
-		if (!VField::IdenticalValue(Data + F->Ofs, OldData + F->Ofs, F->Type))
-		{
-			Msg << (vuint8)svc_set_player_prop;
 			Msg << (vuint8)F->NetIndex;
 			VField::NetSerialiseValue(Msg, Data + F->Ofs, F->Type);
 			VField::CopyFieldValue(Data + F->Ofs, OldData + F->Ofs, F->Type);
@@ -1653,7 +1553,7 @@ void SV_SendNop(VBasePlayer *client)
 
 	msg << (vuint8)svc_nop;
 
-	if (client->Net->NetCon->SendUnreliableMessage(&msg) == -1)
+	if (client->Net->SendMessage(&msg, false) == -1)
 		SV_DropClient(true);	// if the message couldn't send, kick off
 	client->Net->LastMessage = realtime;
 	unguard;
@@ -1706,7 +1606,7 @@ void SV_SendClientDatagram()
 
 		SV_UpdateLevel(msg);
 
-		if (sv_player->Net->NetCon->SendUnreliableMessage(&msg) == -1)
+		if (sv_player->Net->SendMessage(&msg, false) == -1)
 		{
 			SV_DropClient(true);
 		}
@@ -1777,7 +1677,7 @@ void SV_SendReliable()
 			continue;
 		}
 
-		if (!Player->Net->NetCon->CanSendMessage())
+		if (!Player->Net->CanSendMessage())
 		{
 			continue;
 		}
@@ -1796,7 +1696,7 @@ void SV_SendReliable()
 
 		VMessageOut* Msg = Player->Net->Messages;
 		Player->Net->Messages = Msg->Next;
-		if (Player->Net->NetCon->SendMessage(Msg) == -1)
+		if (Player->Net->SendMessage(Msg, true) == -1)
 		{
 			delete Msg;
 			SV_DropClient(true);
@@ -2370,11 +2270,11 @@ int NET_SendToAll(VMessageOut* data, int blocktime)
 	for (i = 0; i < svs.max_clients; i++)
 	{
 		sv_player = GGameInfo->Players[i];
-		if (sv_player && sv_player->Net->NetCon)
+		if (sv_player && sv_player->Net->ValidNetCon())
 		{
-			if (sv_player->Net->NetCon->IsLocalConnection())
+			if (sv_player->Net->IsLocalConnection())
 			{
-				sv_player->Net->NetCon->SendMessage(data);
+				sv_player->Net->SendMessage(data, true);
 				state1[i] = true;
 				state2[i] = true;
 				continue;
@@ -2399,15 +2299,15 @@ int NET_SendToAll(VMessageOut* data, int blocktime)
 			sv_player = GGameInfo->Players[i];
 			if (!state1[i])
 			{
-				if (sv_player->Net->NetCon->CanSendMessage())
+				if (sv_player->Net->CanSendMessage())
 				{
 					state1[i] = true;
-					sv_player->Net->NetCon->SendMessage(data);
+					sv_player->Net->SendMessage(data, true);
 				}
 				else
 				{
 					VMessageIn* Msg = NULL;
-					sv_player->Net->NetCon->GetMessage(Msg);
+					sv_player->Net->GetRawMessage(Msg);
 					if (Msg)
 						delete Msg;
 				}
@@ -2417,14 +2317,14 @@ int NET_SendToAll(VMessageOut* data, int blocktime)
 
 			if (!state2[i])
 			{
-				if (sv_player->Net->NetCon->CanSendMessage())
+				if (sv_player->Net->CanSendMessage())
 				{
 					state2[i] = true;
 				}
 				else
 				{
 					VMessageIn* Msg = NULL;
-					sv_player->Net->NetCon->GetMessage(Msg);
+					sv_player->Net->GetRawMessage(Msg);
 					if (Msg)
 						delete Msg;
 				}
@@ -3017,11 +2917,7 @@ void SV_DropClient(bool)
 	sv_player->PlayerFlags &= ~VBasePlayer::PF_Active;
 	GGameInfo->Players[SV_GetPlayerNum(sv_player)] = NULL;
 	sv_player->PlayerFlags &= ~VBasePlayer::PF_Spawned;
-	if (sv_player->Net->NetCon)
-	{
-		sv_player->Net->NetCon->Close();
-	}
-	sv_player->Net->NetCon = NULL;
+	sv_player->Net->CloseSocket();
 	for (VMessageOut* Msg = sv_player->Net->Messages; Msg; )
 	{
 		VMessageOut* Next = Msg->Next;
@@ -3229,7 +3125,7 @@ COMMAND(Stats)
 void SV_ConnectClient(VBasePlayer *player)
 {
 	guard(SV_ConnectClient);
-	GCon->Logf(NAME_Dev, "Client %s connected", *player->Net->NetCon->Address);
+	GCon->Logf(NAME_Dev, "Client %s connected", *player->Net->GetAddress());
 
 	GGameInfo->Players[SV_GetPlayerNum(player)] = player;
 	player->PlayerFlags |= VBasePlayer::PF_Active;
@@ -3283,7 +3179,7 @@ void SV_CheckForNewClients()
 		if (i == svs.max_clients)
 			Sys_Error("Host_CheckForNewClients: no free clients");
 
-		GPlayersBase[i]->Net->NetCon = sock;
+		GPlayersBase[i]->Net->SetNetCon(sock);
 		SV_ConnectClient(GPlayersBase[i]);
 		svs.num_connected++;
 	}
@@ -3318,7 +3214,7 @@ void SV_ConnectBot(const char *name)
 	if (i == svs.max_clients)
 		Sys_Error("SV_ConnectBot: no free clients");
 
-	GPlayersBase[i]->Net->NetCon = sock;
+	GPlayersBase[i]->Net->SetNetCon(sock);
 	GPlayersBase[i]->PlayerFlags |= VBasePlayer::PF_IsBot;
 	GPlayersBase[i]->PlayerName = name;
 	SV_ConnectClient(GPlayersBase[i]);

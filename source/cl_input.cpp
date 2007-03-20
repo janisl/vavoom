@@ -608,7 +608,7 @@ void CL_SendMove()
 
 	if (cls.demoplayback)
 	{
-		cls.message->Clear();
+		cl->Net->Message.Clear();
 		return;
 	}
 	
@@ -628,27 +628,27 @@ void CL_SendMove()
 			<< cmd.flymove
 			<< cmd.buttons
 			<< cmd.impulse;
-		cls.netcon->SendUnreliableMessage(&msg);
+		cl->Net->SendMessage(&msg, false);
 	}
 
 	// send the reliable message
-	if (!cls.message->GetNumBits())
+	if (!cl->Net->Message.GetNumBits())
 	{
 		return;		// no message at all
 	}
 
-	if (!cls.netcon->CanSendMessage())
+	if (!cl->Net->CanSendMessage())
 	{
 		GCon->Log(NAME_Dev, "CL_WriteToServer: can't send");
 		return;
 	}
 
-	if (cls.netcon->SendMessage(cls.message) == -1)
+	if (cl->Net->SendMessage(&cl->Net->Message, true) == -1)
 	{
 		Host_Error("CL_WriteToServer: lost server connection");
 	}
 
-	cls.message->Clear();
+	cl->Net->Message.Clear();
 	unguard;
 }
 

@@ -38,8 +38,6 @@
 void SV_ShutdownServer(bool crash);
 void CL_Disconnect();
 
-void CL_ParseServerMessage(VMessageIn&);
-int CL_GetMessage(VMessageIn*&);
 void CL_StopPlayback();
 void CL_StopRecording();
 
@@ -89,12 +87,11 @@ void CL_Init()
 	memset(cl_mobjs, 0, sizeof(VEntity*) * GMaxEntities);
 	memset(cl_mo_base, 0, sizeof(clmobjbase_t) * GMaxEntities);
 
-	cls.message = new VMessageOut(MAX_MSGLEN << 3);
-
 	GClGame = (VClientGameBase*)VObject::StaticSpawnObject(
 		VClass::FindClass("ClientGame"));
 	cl = (VBasePlayer*)VObject::StaticSpawnObject(
 		VClass::FindClass("Player"));
+	cl->Net = new VClientPlayerNetInfo();
 	cl->ViewEnt = Spawn<VEntity>();
 	GClGame->cl = cl;
 	GClGame->level = &cl_level;
@@ -145,7 +142,6 @@ void CL_Shutdown()
 		delete[] cl_mobjs;
 	}
 	delete[] cl_mo_base;
-	delete cls.message;
 	if (GClLevel)
 		GClLevel->ConditionalDestroy();
 	if (GClPrevLevel)
@@ -155,6 +151,7 @@ void CL_Shutdown()
 	if (cl)
 	{
 		cl->ViewEnt->ConditionalDestroy();
+		delete cl->Net;
 		cl->ConditionalDestroy();
 	}
 	if (GRoot)
@@ -222,29 +219,16 @@ void CL_UpdateMobjs()
 void CL_ReadFromServer()
 {
 	guard(CL_ReadFromServer);
-	int		ret;
-
 	if (cls.state != ca_connected)
 		return;
 
 	GClGame->oldtime = GClGame->time;
 	GClGame->time += host_frametime;
 	
-	do
+	if (!cl->Net->GetMessages())
 	{
-		VMessageIn* Msg;
-		ret = CL_GetMessage(Msg);
-		if (ret == -1)
-		{
-			Host_Error("CL_ReadFromServer: lost server connection");
-		}
-		if (ret)
-		{
-//			cl->last_received_message = realtime;
-			CL_ParseServerMessage(*Msg);
-			delete Msg;
-		}
-	} while (ret && cls.state == ca_connected);
+		Host_Error("CL_ReadFromServer: lost server connection");
+	}
 
 	if (cls.signon == SIGNONS)
 	{
@@ -266,7 +250,7 @@ void CL_SignonReply()
 	switch (cls.signon)
 	{
 	case 1:
-		*cls.message << (byte)clc_stringcmd << "PreSpawn\n";
+		cl->Net->Message << (byte)clc_stringcmd << "PreSpawn\n";
 		break;
 
 	case 2:
@@ -274,14 +258,14 @@ void CL_SignonReply()
 		GClLevel->RenderData->PreRender();
 		if (!UserInfoSent)
 		{
-			*cls.message << (byte)clc_player_info << cls.userinfo;
+			cl->Net->Message << (byte)clc_player_info << cls.userinfo;
 			UserInfoSent = true;
 		}
-		*cls.message << (byte)clc_stringcmd << "Spawn\n";
+		cl->Net->Message << (byte)clc_stringcmd << "Spawn\n";
 		break;
 
 	case 3:
-		*cls.message << (byte)clc_stringcmd << "Begin\n";
+		cl->Net->Message << (byte)clc_stringcmd << "Begin\n";
 		break;
 	}
 	unguard;
@@ -314,7 +298,7 @@ void CL_KeepaliveMessage()
 	do
 	{
 		VMessageIn* Msg;
-		ret = CL_GetMessage(Msg);
+		ret = cl->Net->GetRawMessage(Msg);
 		switch (ret)
 		{
 		default:
@@ -345,9 +329,9 @@ void CL_KeepaliveMessage()
 	// write out a nop
 	GCon->Log("--> client to server keepalive");
 
-	*cls.message << (byte)clc_nop;
-	cls.netcon->SendMessage(cls.message);
-	cls.message->Clear();
+	cl->Net->Message << (byte)clc_nop;
+	cl->Net->SendMessage(&cl->Net->Message, false);
+	cl->Net->Message.Clear();
 	unguard;
 }
 
@@ -385,16 +369,15 @@ void CL_Disconnect()
 		}
 
 		GCon->Log(NAME_Dev, "Sending clc_disconnect");
-		if (cls.message->GetNumBits())
+		if (cl->Net->Message.GetNumBits())
 		{
 			GCon->Log(NAME_Dev, "Buffer contains data");
 		}
-		cls.message->Clear();
-		*cls.message << (byte)clc_disconnect;
-		cls.netcon->SendUnreliableMessage(cls.message);
-		cls.message->Clear();
-		cls.netcon->Close();
-		cls.netcon = NULL;
+		cl->Net->Message.Clear();
+		cl->Net->Message << (byte)clc_disconnect;
+		cl->Net->SendMessage(&cl->Net->Message, false);
+		cl->Net->Message.Clear();
+		cl->Net->CloseSocket();
 
 		cls.state = ca_disconnected;
 #ifdef SERVER
@@ -432,8 +415,8 @@ void CL_EstablishConnection(const char* host)
 
 	CL_Disconnect();
 
-	cls.netcon = GNet->Connect(host);
-	if (!cls.netcon)
+	cl->Net->SetNetCon(GNet->Connect(host));
+	if (!cl->Net->ValidNetCon())
 	{
 		GCon->Log("Failed to connect to the server");
 		return;
