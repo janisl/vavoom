@@ -210,9 +210,9 @@ void SV_Init()
 	guard(SV_Init);
 	int		i;
 
-	sv_reliable = new VMessageOut(MAX_MSGLEN << 3);
-	sv_datagram = new VMessageOut(MAX_MSGLEN << 3);
-	sv_signons = new VMessageOut(MAX_MSGLEN << 3);
+	sv_reliable = new VMessageOut(OUT_MESSAGE_SIZE);
+	sv_datagram = new VMessageOut(OUT_MESSAGE_SIZE);
+	sv_signons = new VMessageOut(OUT_MESSAGE_SIZE);
 	sv_signons->Next = NULL;
 
 	svs.max_clients = 1;
@@ -321,7 +321,7 @@ void SV_Clear()
 		delete Msg;
 		Msg = Next;
 	}
-	sv_signons = new VMessageOut(MAX_MSGLEN << 3);
+	sv_signons = new VMessageOut(OUT_MESSAGE_SIZE);
 	sv_signons->Next = NULL;
 	sv_reliable->Clear();
 	sv_datagram->Clear();
@@ -1570,7 +1570,7 @@ void SV_SendClientDatagram()
 		if (!sv_player->Net->NeedsUpdate)
 			continue;
 
-		VMessageOut msg(MAX_MSGLEN << 3);
+		VMessageOut msg(OUT_MESSAGE_SIZE);
 
 		msg << (vuint8)svc_time
 			<< level.time;
@@ -1599,7 +1599,7 @@ void SV_SendClientDatagram()
 void SV_AddPlayerMessage(VBasePlayer* Player, VMessageOut& Message)
 {
 	guard(SV_AddPlayerMessage);
-	VMessageOut* Copy = new VMessageOut(Message.GetNumBits());
+	VMessageOut* Copy = new VMessageOut(OUT_MESSAGE_SIZE);
 	Copy->SerialiseBits(Message.GetData(), Message.GetNumBits());
 
 	VMessageOut** Prev = &Player->Net->Messages;
@@ -1658,7 +1658,7 @@ void SV_SendReliable()
 			continue;
 		}
 
-		if ((Player->Net->Message.GetNumBytes() > MAX_MSGLEN * 3 / 4) ||
+		if ((Player->Net->Message.GetNumBits() > OUT_MESSAGE_SIZE * 3 / 4) ||
 			(Player->Net->Message.GetNumBytes() && !Player->Net->Messages))
 		{
 			SV_AddPlayerMessage(Player, Player->Net->Message);
@@ -3224,7 +3224,7 @@ VMessageOut* SV_GetSignon(int Len)
 	}
 	if (!Msg->CheckSpaceBits(Len))
 	{
-		Msg->Next = new VMessageOut(MAX_MSGLEN << 3);
+		Msg->Next = new VMessageOut(OUT_MESSAGE_SIZE);
 		Msg = Msg->Next;
 		Msg->Next = NULL;
 	}

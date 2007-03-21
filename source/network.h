@@ -25,7 +25,9 @@
 
 enum
 {
-	MAX_MSGLEN			= 1024,		// max length of a message
+	MAX_MSGLEN					= 1024,		// max length of a message
+	MAX_MESSAGE_TRAILER_BITS	= 1,
+	OUT_MESSAGE_SIZE			= MAX_MSGLEN * 8 - MAX_MESSAGE_TRAILER_BITS,
 };
 
 //

@@ -179,7 +179,7 @@ void VPlayerChannel::Update()
 
 VPlayerNetInfo::VPlayerNetInfo()
 : NetCon(NULL)
-, Message(MAX_MSGLEN << 3)
+, Message(OUT_MESSAGE_SIZE)
 , MobjUpdateStart(0)
 , LastMessage(0)
 , NeedsUpdate(false)
@@ -271,7 +271,20 @@ int VPlayerNetInfo::GetRawMessage(VMessageIn*& Msg)
 	int Ret = NetCon->GetMessage(Data);
 	if (Ret > 0)
 	{
-		Msg = new VMessageIn(Data.Ptr(), Data.Num() * 8);
+		check(Data.Num());
+		vuint8 LastByte = Data[Data.Num() - 1];
+		if (LastByte == 0)
+		{
+			GCon->Logf(NAME_DevNet, "Packet is missing trailing bit");
+			return 0;
+		}
+		//	Find out real length by stepping back untill the trailing bit.
+		vuint32 Length = Data.Num() * 8 - 1;
+		for (vuint8 Mask = 0x80; !(LastByte & Mask); Mask >>= 1)
+		{
+			Length--;
+		}
+		Msg = new VMessageIn(Data.Ptr(), Length);
 		Msg->MessageType = Ret;
 	}
 	return Ret;
@@ -287,6 +300,14 @@ int VPlayerNetInfo::GetRawMessage(VMessageIn*& Msg)
 int VPlayerNetInfo::SendMessage(VMessageOut* Msg, bool Reliable)
 {
 	guard(VPlayerNetInfo::SendMessage);
+	//	Add trailing bit so we can find out how many bits the message has.
+	Msg->WriteBit(true);
+	//	Pad it with zero bits untill byte boundary.
+	while (Msg->GetNumBits() & 7)
+	{
+		Msg->WriteBit(false);
+	}
+
 	if (Reliable)
 	{
 		return NetCon->SendMessage(Msg->GetData(), Msg->GetNumBytes());

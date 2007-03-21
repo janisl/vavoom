@@ -618,7 +618,7 @@ void CL_SendMove()
 		BuildTiccmd(&cmd);
 		mousex = mousey = 0;
 
-		VMessageOut msg(MAX_MSGLEN << 3);
+		VMessageOut msg(OUT_MESSAGE_SIZE);
 		msg << (byte)clc_move
 			<< (byte)(AngleToByte(cl->ViewAngles.yaw))
 			<< (byte)(AngleToByte(cl->ViewAngles.pitch))

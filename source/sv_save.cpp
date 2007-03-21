@@ -826,7 +826,7 @@ static void SV_LoadMap(VName MapName, int slot)
 	{	
 		int len;
 		*Loader << STRM_INDEX(len);
-		VMessageOut* Msg = new VMessageOut(MAX_MSGLEN << 3);
+		VMessageOut* Msg = new VMessageOut(OUT_MESSAGE_SIZE);
 		void *tmp = Z_Malloc((len + 7) >> 3);
 		Loader->Serialise(tmp, (len + 7) >> 3);
 		Msg->SerialiseBits(tmp, len);

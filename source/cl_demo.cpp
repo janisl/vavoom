@@ -173,7 +173,7 @@ int VClientPlayerNetInfo::GetRawMessage(VMessageIn*& Msg)
 //		VectorCopy (cl->mviewangles[0], cl->mviewangles[1]);
 		*cls.demofile << cl->ViewAngles;
 
-		if (MsgSize > MAX_MSGLEN * 8)
+		if (MsgSize > OUT_MESSAGE_SIZE)
 			Sys_Error("Demo message > MAX_MSGLEN");
 		cls.demofile->Serialise(MsgBuf, (MsgSize + 7) >> 3);
 		Msg = new VMessageIn(MsgBuf, MsgSize);
