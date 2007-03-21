@@ -80,7 +80,6 @@ public:
 	//	NetHeader flags
 	enum
 	{
-		NETFLAG_CRC_MASK		= 0x0000ffff,
 		NETFLAG_LENGTH_MASK		= 0x07ff0000,
 		NETFLAG_FLAGS_MASK		= 0xf8000000,
 		NETFLAG_ACK				= 0x10000000,
@@ -133,7 +132,6 @@ public:
 	void Close(VSocket*);
 	void Shutdown();
 
-	static vuint16 NetbufferChecksum(const vuint8*, int);
 	void SearchForHosts(VNetLanDriver*, bool);
 	VSocket* Connect(VNetLanDriver*, const char*);
 	VSocket* CheckNewConnections(VNetLanDriver*);
@@ -178,28 +176,6 @@ VDatagramDriver::VDatagramDriver()
 : VNetDriver(2, "Datagram")
 {
 	memset(&packetBuffer, 0, sizeof(packetBuffer));
-}
-
-//==========================================================================
-//
-//  VDatagramDriver::NetbufferChecksum
-//
-//==========================================================================
-
-vuint16 VDatagramDriver::NetbufferChecksum(const vuint8* buf, int len)
-{
-	guardSlow(NetbufferChecksum);
-	TCRC	crc;
-
-	crc.Init();
-
-	for (int i = 0; i < len; i++)
-	{
-		crc + buf[i];
-	}
-
-	return crc;
-	unguardSlow;
 }
 
 //==========================================================================
@@ -784,7 +760,6 @@ int VDatagramDriver::GetMessage(VSocket* Sock, TArray<vuint8>& Data)
 	vuint32		flags;
 	sockaddr_t	readaddr;
 	int			ret = 0;
-	vuint16		crc;
 	vuint32		count;
 
 	//	Resend message if needed.
@@ -828,7 +803,6 @@ int VDatagramDriver::GetMessage(VSocket* Sock, TArray<vuint8>& Data)
 
 		length = BigLong(packetBuffer.length);
 		flags = length & NETFLAG_FLAGS_MASK;
-		crc = length & NETFLAG_CRC_MASK;
 		length = (length & NETFLAG_LENGTH_MASK) >> 16;
 
 		if (flags & NETFLAG_CTL)
@@ -836,17 +810,6 @@ int VDatagramDriver::GetMessage(VSocket* Sock, TArray<vuint8>& Data)
 
 		sequence = BigLong(packetBuffer.sequence);
 		packetsReceived++;
-
-		if (flags & (NETFLAG_UNRELIABLE | NETFLAG_DATA))
-		{
-			//	Check if checksum is OK.
-			word buf_crc = NetbufferChecksum(packetBuffer.data, length - NET_HEADERSIZE);
-			if (buf_crc != crc)
-			{
-				GCon->Logf(NAME_DevNet, "bad packet checksum %04x %04d", buf_crc, crc);
-				continue;
-			}
-		}
 
 		if (flags & NETFLAG_UNRELIABLE)
 		{
@@ -937,8 +900,7 @@ int VDatagramDriver::BuildNetPacket(vuint32 Flags, vuint32 Sequence,
 	guard(VDatagramDriver::BuildNetPacket);
 	memcpy(packetBuffer.data, Data, DataLen);
 	vuint32 PacketLen = NET_HEADERSIZE + DataLen;
-	vuint16 CRC = NetbufferChecksum(packetBuffer.data, DataLen);
-	packetBuffer.length = BigLong(CRC | (PacketLen << 16) | Flags);
+	packetBuffer.length = BigLong((PacketLen << 16) | Flags);
 	packetBuffer.sequence = BigLong(Sequence);
 	return PacketLen;
 	unguard;
