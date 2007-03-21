@@ -44,6 +44,12 @@ struct sockaddr_t
 	vint8		sa_data[14];
 };
 
+struct VLoopbackMessage
+{
+	TArray<vuint8>	Data;
+	int				MessageType;
+};
+
 class VSocket : public VSocketPublic
 {
 public:
@@ -68,14 +74,15 @@ public:
 
 	vuint32			ReceiveSequence;
 	vuint32			UnreliableReceiveSequence;
-	VMessageIn*		ReceiveMessages;
+
+	TArray<VLoopbackMessage>	LoopbackMessages;
 
 	sockaddr_t		Addr;
 
 	bool IsLocalConnection();
-	int GetMessage(VMessageIn*&);
-	int SendMessage(VMessageOut*);
-	int SendUnreliableMessage(VMessageOut*);
+	int GetMessage(TArray<vuint8>&);
+	int SendMessage(vuint8*, vuint32);
+	int SendUnreliableMessage(vuint8*, vuint32);
 	bool CanSendMessage();
 	void Close();
 };
@@ -161,9 +168,9 @@ public:
 	virtual void SearchForHosts(bool) = 0;
 	virtual VSocket* Connect(const char*) = 0;
 	virtual VSocket* CheckNewConnections() = 0;
-	virtual int GetMessage(VSocket*, VMessageIn*&) = 0;
-	virtual int SendMessage(VSocket*, VMessageOut*) = 0;
-	virtual int SendUnreliableMessage(VSocket*, VMessageOut*) = 0;
+	virtual int GetMessage(VSocket*, TArray<vuint8>&) = 0;
+	virtual int SendMessage(VSocket*, vuint8*, vuint32) = 0;
+	virtual int SendUnreliableMessage(VSocket*, vuint8*, vuint32) = 0;
 	virtual bool CanSendMessage(VSocket*) = 0;
 	virtual bool CanSendUnreliableMessage(VSocket*) = 0;
 	virtual void Close(VSocket*) = 0;

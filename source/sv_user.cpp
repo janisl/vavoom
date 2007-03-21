@@ -267,7 +267,14 @@ int VPlayerNetInfo::GetRawMessage(VMessageIn*& Msg)
 {
 	guard(VPlayerNetInfo::GetRawMessage);
 	checkSlow(NetCon);
-	return NetCon->GetMessage(Msg);
+	TArray<vuint8> Data;
+	int Ret = NetCon->GetMessage(Data);
+	if (Ret > 0)
+	{
+		Msg = new VMessageIn(Data.Ptr(), Data.Num() * 8);
+		Msg->MessageType = Ret;
+	}
+	return Ret;
 	unguard;
 }
 
@@ -282,11 +289,11 @@ int VPlayerNetInfo::SendMessage(VMessageOut* Msg, bool Reliable)
 	guard(VPlayerNetInfo::SendMessage);
 	if (Reliable)
 	{
-		return NetCon->SendMessage(Msg);
+		return NetCon->SendMessage(Msg->GetData(), Msg->GetNumBytes());
 	}
 	else
 	{
-		return NetCon->SendUnreliableMessage(Msg);
+		return NetCon->SendUnreliableMessage(Msg->GetData(), Msg->GetNumBytes());
 	}
 	unguard;
 }

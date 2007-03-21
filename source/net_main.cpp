@@ -380,7 +380,7 @@ VSocket* VNetwork::NewSocket(VNetDriver* Drv)
 	sock->SendMessageLength = 0;
 	sock->ReceiveSequence = 0;
 	sock->UnreliableReceiveSequence = 0;
-	sock->ReceiveMessages = NULL;
+	sock->LoopbackMessages.Clear();
 
 	return sock;
 	unguard;
@@ -422,13 +422,6 @@ void VNetwork::FreeSocket(VSocket* sock)
 	FreeSockets = sock;
 
 	sock->Disconnected = true;
-	for (VMessageIn* Msg = sock->ReceiveMessages; Msg;)
-	{
-		VMessageIn* Next = Msg->Next;
-		delete Msg;
-		Msg = Next;
-	}
-	sock->ReceiveMessages = NULL;
 	unguard;
 }
 
@@ -806,12 +799,11 @@ void VSocket::Close()
 //
 //==========================================================================
 
-int	VSocket::GetMessage(VMessageIn*& Msg)
+int	VSocket::GetMessage(TArray<vuint8>& Data)
 {
 	guard(VSocket::GetMessage);
 	int			ret;
 
-	Msg = NULL;
 	if (Disconnected)
 	{
 		GCon->Log(NAME_DevNet, "NET_GetMessage: disconnected socket");
@@ -820,7 +812,7 @@ int	VSocket::GetMessage(VMessageIn*& Msg)
 
 	Driver->Net->SetNetTime();
 
-	ret = Driver->GetMessage(this, Msg);
+	ret = Driver->GetMessage(this, Data);
 
 	// see if this connection has timed out
 	if (ret == 0 && !IsLocalConnection())
@@ -860,7 +852,7 @@ int	VSocket::GetMessage(VMessageIn*& Msg)
 //
 //==========================================================================
 
-int VSocket::SendMessage(VMessageOut* data)
+int VSocket::SendMessage(vuint8* Data, vuint32 Length)
 {
 	guard(VSocket::SendMessage);
 	int		r;
@@ -872,7 +864,7 @@ int VSocket::SendMessage(VMessageOut* data)
 	}
 
 	Driver->Net->SetNetTime();
-	r = Driver->SendMessage(this, data);
+	r = Driver->SendMessage(this, Data, Length);
 	if (r == 1 && !IsLocalConnection())
 		Driver->Net->MessagesSent++;
 
@@ -886,7 +878,7 @@ int VSocket::SendMessage(VMessageOut* data)
 //
 //==========================================================================
 
-int VSocket::SendUnreliableMessage(VMessageOut* data)
+int VSocket::SendUnreliableMessage(vuint8* Data, vuint32 Length)
 {
 	guard(VSocket::SendUnreliableMessage);
 	int		r;
@@ -898,7 +890,7 @@ int VSocket::SendUnreliableMessage(VMessageOut* data)
 	}
 
 	Driver->Net->SetNetTime();
-	r = Driver->SendUnreliableMessage(this, data);
+	r = Driver->SendUnreliableMessage(this, Data, Length);
 	if (r == 1 && !IsLocalConnection())
 		Driver->Net->UnreliableMessagesSent++;
 

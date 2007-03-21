@@ -39,9 +39,9 @@ public:
 	VStr			Address;
 
 	virtual bool IsLocalConnection() = 0;
-	virtual int GetMessage(VMessageIn*&) = 0;
-	virtual int SendMessage(VMessageOut*) = 0;
-	virtual int SendUnreliableMessage(VMessageOut*) = 0;
+	virtual int GetMessage(TArray<vuint8>&) = 0;
+	virtual int SendMessage(vuint8*, vuint32) = 0;
+	virtual int SendUnreliableMessage(vuint8*, vuint32) = 0;
 	virtual bool CanSendMessage() = 0;
 	virtual void Close() = 0;
 };

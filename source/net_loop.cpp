@@ -45,9 +45,9 @@ public:
 	void SearchForHosts(bool);
 	VSocket* Connect(const char*);
 	VSocket* CheckNewConnections();
-	int GetMessage(VSocket*, VMessageIn*&);
-	int SendMessage(VSocket*, VMessageOut*);
-	int SendUnreliableMessage(VSocket*, VMessageOut*);
+	int GetMessage(VSocket*, TArray<vuint8>&);
+	int SendMessage(VSocket*, vuint8*, vuint32);
+	int SendUnreliableMessage(VSocket*, vuint8*, vuint32);
 	bool CanSendMessage(VSocket*);
 	bool CanSendUnreliableMessage(VSocket*);
 	void Close(VSocket*);
@@ -224,19 +224,20 @@ int VLoopbackDriver::IntAlign(int value)
 //
 //==========================================================================
 
-int VLoopbackDriver::GetMessage(VSocket* sock, VMessageIn*& Msg)
+int VLoopbackDriver::GetMessage(VSocket* Sock, TArray<vuint8>& Data)
 {
 	guard(VLoopbackDriver::GetMessage);
-	if (!sock->ReceiveMessages)
+	if (!Sock->LoopbackMessages.Num())
 		return 0;
 
-	Msg = sock->ReceiveMessages;
-	sock->ReceiveMessages = Msg->Next;
+	Data = Sock->LoopbackMessages[0].Data;
+	int Ret = Sock->LoopbackMessages[0].MessageType;
+	Sock->LoopbackMessages.RemoveIndex(0);
 
-	if (sock->DriverData && Msg->MessageType == 1)
-		((VSocket*)sock->DriverData)->CanSend = true;
+	if (Sock->DriverData && Ret == 1)
+		((VSocket*)Sock->DriverData)->CanSend = true;
 
-	return Msg->MessageType;
+	return Ret;
 	unguard;
 }
 
@@ -246,25 +247,18 @@ int VLoopbackDriver::GetMessage(VSocket* sock, VMessageIn*& Msg)
 //
 //==========================================================================
 
-int VLoopbackDriver::SendMessage(VSocket* sock, VMessageOut* data)
+int VLoopbackDriver::SendMessage(VSocket* Sock, vuint8* Data, vuint32 Length)
 {
 	guard(VLoopbackDriver::SendMessage);
-	if (!sock->DriverData)
+	if (!Sock->DriverData)
 		return -1;
 
-	VMessageIn* Msg = new VMessageIn(data->GetData(), data->GetNumBits());
-	// message type
-	Msg->MessageType = 1;
+	VLoopbackMessage& Msg = ((VSocket*)Sock->DriverData)->LoopbackMessages.Alloc();
+	Msg.Data.SetNum(Length);
+	memcpy(Msg.Data.Ptr(), Data, Length);
+	Msg.MessageType = 1;
 
-	VMessageIn** Prev = &((VSocket*)sock->DriverData)->ReceiveMessages;
-	while (*Prev)
-	{
-		Prev = &(*Prev)->Next;
-	}
-	*Prev = Msg;
-	Msg->Next = NULL;
-
-	sock->CanSend = false;
+	Sock->CanSend = false;
 	return 1;
 	unguard;
 }
@@ -275,23 +269,18 @@ int VLoopbackDriver::SendMessage(VSocket* sock, VMessageOut* data)
 //
 //==========================================================================
 
-int VLoopbackDriver::SendUnreliableMessage(VSocket* sock, VMessageOut* data)
+int VLoopbackDriver::SendUnreliableMessage(VSocket* Sock, vuint8* Data,
+	vuint32 Length)
 {
 	guard(VLoopbackDriver::SendUnreliableMessage);
-	if (!sock->DriverData)
+	if (!Sock->DriverData)
 		return -1;
 
-	VMessageIn* Msg = new VMessageIn(data->GetData(), data->GetNumBits());
+	VLoopbackMessage& Msg = ((VSocket*)Sock->DriverData)->LoopbackMessages.Alloc();
+	Msg.Data.SetNum(Length);
+	memcpy(Msg.Data.Ptr(), Data, Length);
 	// message type
-	Msg->MessageType = 2;
-
-	VMessageIn** Prev = &((VSocket*)sock->DriverData)->ReceiveMessages;
-	while (*Prev)
-	{
-		Prev = &(*Prev)->Next;
-	}
-	*Prev = Msg;
-	Msg->Next = NULL;
+	Msg.MessageType = 2;
 
 	return 1;
 	unguard;

@@ -41,9 +41,9 @@ public:
 	void SearchForHosts(bool);
 	VSocket* Connect(const char*);
 	VSocket* CheckNewConnections();
-	int GetMessage(VSocket*, VMessageIn*&);
-	int SendMessage(VSocket*, VMessageOut*);
-	int SendUnreliableMessage(VSocket*, VMessageOut*);
+	int GetMessage(VSocket*, TArray<vuint8>&);
+	int SendMessage(VSocket*, vuint8*, vuint32);
+	int SendUnreliableMessage(VSocket*, vuint8*, vuint32);
 	bool CanSendMessage(VSocket*);
 	bool CanSendUnreliableMessage(VSocket*);
 	void Close(VSocket*);
@@ -149,7 +149,7 @@ VSocket* VNullNetDriver::CheckNewConnections()
 //
 //==========================================================================
 
-int VNullNetDriver::GetMessage(VSocket*, VMessageIn*&)
+int VNullNetDriver::GetMessage(VSocket*, TArray<vuint8>&)
 {
 	return 0;
 }
@@ -160,7 +160,7 @@ int VNullNetDriver::GetMessage(VSocket*, VMessageIn*&)
 //
 //==========================================================================
 
-int VNullNetDriver::SendMessage(VSocket*, VMessageOut*)
+int VNullNetDriver::SendMessage(VSocket*, vuint8*, vuint32)
 {
 	return 1;
 }
@@ -171,7 +171,7 @@ int VNullNetDriver::SendMessage(VSocket*, VMessageOut*)
 //
 //==========================================================================
 
-int VNullNetDriver::SendUnreliableMessage(VSocket*, VMessageOut*)
+int VNullNetDriver::SendUnreliableMessage(VSocket*, vuint8*, vuint32)
 {
 	return 1;
 }
