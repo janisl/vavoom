@@ -80,12 +80,9 @@ public:
 	//	NetHeader flags
 	enum
 	{
-		NETFLAG_COMPR_LEN_MASK	= 0x000007ff,
-		NETFLAG_COMPR_MODE_MASK	= 0x0000f800,
+		NETFLAG_CRC_MASK		= 0x0000ffff,
 		NETFLAG_LENGTH_MASK		= 0x07ff0000,
 		NETFLAG_FLAGS_MASK		= 0xf8000000,
-		NETFLAG_COMPR_NONE		= 0x00000000,
-		NETFLAG_COMPR_ZIP		= 0x00000800,
 		NETFLAG_ACK				= 0x10000000,
 		NETFLAG_DATA			= 0x20000000,
 		NETFLAG_UNRELIABLE		= 0x40000000,
@@ -111,7 +108,6 @@ public:
 	{
 		vuint32		length;
 		vuint32		sequence;
-		vuint16		crc;
 		vuint8		data[MAX_MSGLEN];
 	} packetBuffer;
 
@@ -786,8 +782,6 @@ int VDatagramDriver::GetMessage(VSocket* Sock, TArray<vuint8>& Data)
 	vuint32		sequence;
 	vuint32		length;
 	vuint32		flags;
-	vuint32		comprLength;
-	vuint32		comprMethod;
 	sockaddr_t	readaddr;
 	int			ret = 0;
 	vuint16		crc;
@@ -833,16 +827,14 @@ int VDatagramDriver::GetMessage(VSocket* Sock, TArray<vuint8>& Data)
 //		}
 
 		length = BigLong(packetBuffer.length);
-		comprLength = length & NETFLAG_COMPR_LEN_MASK;
-		comprMethod = length & NETFLAG_COMPR_MODE_MASK;
 		flags = length & NETFLAG_FLAGS_MASK;
+		crc = length & NETFLAG_CRC_MASK;
 		length = (length & NETFLAG_LENGTH_MASK) >> 16;
 
 		if (flags & NETFLAG_CTL)
 			continue;
 
 		sequence = BigLong(packetBuffer.sequence);
-		crc = BigShort(packetBuffer.crc);
 		packetsReceived++;
 
 		if (flags & (NETFLAG_UNRELIABLE | NETFLAG_DATA))
@@ -853,25 +845,6 @@ int VDatagramDriver::GetMessage(VSocket* Sock, TArray<vuint8>& Data)
 			{
 				GCon->Logf(NAME_DevNet, "bad packet checksum %04x %04d", buf_crc, crc);
 				continue;
-			}
-
-			if (comprMethod == NETFLAG_COMPR_ZIP)
-			{
-				if (comprLength > MAX_MSGLEN)
-				{
-					GCon->Logf(NAME_DevNet, "Bad decompressed length");
-					continue;
-				}
-				byte CompressedData[MAX_MSGLEN];
-				memcpy(CompressedData, packetBuffer.data, length - NET_HEADERSIZE);
-				uLongf DecomprLength = comprLength;
-				if (uncompress(packetBuffer.data, &DecomprLength,
-					CompressedData, length - NET_HEADERSIZE) != Z_OK)
-				{
-					GCon->Logf(NAME_DevNet, "Decompression failed");
-					continue;
-				}
-				length = comprLength + NET_HEADERSIZE;
 			}
 		}
 
@@ -928,7 +901,6 @@ int VDatagramDriver::GetMessage(VSocket* Sock, TArray<vuint8>& Data)
 		{
 			packetBuffer.length = BigLong(NETFLAG_ACK | (NET_HEADERSIZE << 16));
 			packetBuffer.sequence = BigLong(sequence);
-			packetBuffer.crc = 0;
 			Sock->LanDriver->Write(Sock->LanSocket, (vuint8*)&packetBuffer,
 				NET_HEADERSIZE, &readaddr);
 
@@ -963,32 +935,11 @@ int VDatagramDriver::BuildNetPacket(vuint32 Flags, vuint32 Sequence,
 	vuint8* Data, vuint32 DataLen)
 {
 	guard(VDatagramDriver::BuildNetPacket);
-	vuint32 ComprMethod = NETFLAG_COMPR_NONE;
-	vuint32 ComprLength = DataLen;
-
-	//	Try to compress
-	uLongf ZipLen = MAX_MSGLEN;
-	if (compress(packetBuffer.data, &ZipLen, Data, DataLen) == Z_OK)
-	{
-		if (ZipLen < DataLen)
-		{
-			ComprMethod = NETFLAG_COMPR_ZIP;
-			ComprLength = ZipLen;
-		}
-	}
-
-	//	Just copy data if it cannot be compressed.
-	if (ComprMethod == NETFLAG_COMPR_NONE)
-	{
-		memcpy(packetBuffer.data, Data, DataLen);
-	}
-
-	vuint32 PacketLen = NET_HEADERSIZE + ComprLength;
-	vuint16 CRC = NetbufferChecksum(packetBuffer.data, ComprLength);
-	packetBuffer.length = BigLong(DataLen | ComprMethod |
-		(PacketLen << 16) | Flags);
+	memcpy(packetBuffer.data, Data, DataLen);
+	vuint32 PacketLen = NET_HEADERSIZE + DataLen;
+	vuint16 CRC = NetbufferChecksum(packetBuffer.data, DataLen);
+	packetBuffer.length = BigLong(CRC | (PacketLen << 16) | Flags);
 	packetBuffer.sequence = BigLong(Sequence);
-	packetBuffer.crc = BigShort(CRC);
 	return PacketLen;
 	unguard;
 }
