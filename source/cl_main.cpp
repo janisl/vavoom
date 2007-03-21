@@ -92,6 +92,7 @@ void CL_Init()
 	cl = (VBasePlayer*)VObject::StaticSpawnObject(
 		VClass::FindClass("Player"));
 	cl->Net = new VClientPlayerNetInfo();
+	cl->Net->Chan.SetPlayer(cl);
 	cl->ViewEnt = Spawn<VEntity>();
 	GClGame->cl = cl;
 	GClGame->level = &cl_level;

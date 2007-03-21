@@ -52,6 +52,26 @@ static VCvarI		sv_maxmove("sv_maxmove", "400", CVAR_Archive);
 
 //==========================================================================
 //
+//	VChannel::VChannel
+//
+//==========================================================================
+
+VChannel::VChannel()
+{
+}
+
+//==========================================================================
+//
+//	VChannel::~VChannel
+//
+//==========================================================================
+
+VChannel::~VChannel()
+{
+}
+
+//==========================================================================
+//
 //	VPlayerChannel::VPlayerChannel
 //
 //==========================================================================
@@ -102,9 +122,12 @@ void VPlayerChannel::SetPlayer(VBasePlayer* APlr)
 	}
 
 	Plr = APlr;
+	PlayerNet = NULL;
 
 	if (Plr)
 	{
+		PlayerNet = Plr->Net;
+
 		VBasePlayer* Def = (VBasePlayer*)Plr->GetClass()->Defaults;
 		OldData = new vuint8[Plr->GetClass()->ClassSize];
 		memset(OldData, 0, Plr->GetClass()->ClassSize);

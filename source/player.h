@@ -31,6 +31,8 @@
 
 // TYPES -------------------------------------------------------------------
 
+class VPlayerNetInfo;
+
 //
 // Overlay psprites are scaled shapes
 // drawn directly on the view screen,
@@ -64,7 +66,16 @@ struct VViewState
 	float			SY;
 };
 
-class VEntityChannel
+class VChannel
+{
+public:
+	VPlayerNetInfo*	PlayerNet;
+
+	VChannel();
+	virtual ~VChannel();
+};
+
+class VEntityChannel : public VChannel
 {
 public:
 	VEntity*		Ent;
@@ -78,7 +89,7 @@ public:
 	void Update(int);
 };
 
-class VPlayerChannel
+class VPlayerChannel : public VChannel
 {
 public:
 	VBasePlayer*	Plr;
