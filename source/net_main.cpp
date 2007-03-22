@@ -91,7 +91,7 @@ private:
 VNetworkPublic*	GNet;
 
 VCvarS			VNetworkLocal::HostName("hostname", "UNNAMED");
-VCvarF			VNetworkLocal::MessageTimeOut("net_messagetimeout", "300");
+VCvarF			VNetworkPublic::MessageTimeOut("net_messagetimeout", "300");
 
 VNetDriver*		VNetworkLocal::Drivers[MAX_NET_DRIVERS];
 int				VNetworkLocal::NumDrivers = 0;
@@ -116,23 +116,34 @@ VNetworkPublic* VNetworkPublic::Create()
 
 //==========================================================================
 //
+//	VNetworkPublic::VNetworkPublic
+//
+//==========================================================================
+
+VNetworkPublic::VNetworkPublic()
+: ConnectBot(false)
+, NetTime(0.0)
+, MessagesSent(0)
+, MessagesReceived(0)
+, UnreliableMessagesSent(0)
+, UnreliableMessagesReceived(0)
+{
+}
+
+//==========================================================================
+//
 //	VNetworkLocal::VNetworkLocal
 //
 //==========================================================================
 
 VNetworkLocal::VNetworkLocal()
-: NetTime(0.0)
-, ActiveSockets(NULL)
+: ActiveSockets(NULL)
 , FreeSockets(NULL)
 , HostCacheCount(0)
 , HostPort(0)
 , DefaultHostPort(26000)
 , IpxAvailable(false)
 , IpAvailable(false)
-, MessagesSent(0)
-, MessagesReceived(0)
-, UnreliableMessagesSent(0)
-, UnreliableMessagesReceived(0)
 , Listening(false)
 {
 	MyIpxAddress[0] = 0;
@@ -855,8 +866,6 @@ int	VSocket::GetMessage(TArray<vuint8>& Data)
 int VSocket::SendMessage(vuint8* Data, vuint32 Length)
 {
 	guard(VSocket::SendMessage);
-	int		r;
-	
 	if (Disconnected)
 	{
 		GCon->Log(NAME_DevNet, "NET_SendMessage: disconnected socket");
@@ -864,7 +873,7 @@ int VSocket::SendMessage(vuint8* Data, vuint32 Length)
 	}
 
 	Driver->Net->SetNetTime();
-	r = Driver->SendMessage(this, Data, Length);
+	int r = Driver->SendMessage(this, Data, Length);
 	if (r == 1 && !IsLocalConnection())
 		Driver->Net->MessagesSent++;
 
@@ -881,8 +890,6 @@ int VSocket::SendMessage(vuint8* Data, vuint32 Length)
 int VSocket::SendUnreliableMessage(vuint8* Data, vuint32 Length)
 {
 	guard(VSocket::SendUnreliableMessage);
-	int		r;
-
 	if (Disconnected)
 	{
 		GCon->Log(NAME_DevNet, "NET_SendMessage: disconnected socket");
@@ -890,7 +897,7 @@ int VSocket::SendUnreliableMessage(vuint8* Data, vuint32 Length)
 	}
 
 	Driver->Net->SetNetTime();
-	r = Driver->SendUnreliableMessage(this, Data, Length);
+	int r = Driver->SendUnreliableMessage(this, Data, Length);
 	if (r == 1 && !IsLocalConnection())
 		Driver->Net->UnreliableMessagesSent++;
 

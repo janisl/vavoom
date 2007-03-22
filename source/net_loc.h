@@ -54,9 +54,6 @@ class VSocket : public VSocketPublic
 {
 public:
 	VSocket*		Next;
-	double			ConnectTime;
-	double			LastMessageTime;
-	double			LastSendTime;
 
 	bool			Disconnected;
 	bool			CanSend;
@@ -65,15 +62,6 @@ public:
 	VNetLanDriver*	LanDriver;
 	int				LanSocket;
 	void*			DriverData;
-
-	vuint32			AckSequence;
-	vuint32			SendSequence;
-	vuint32			UnreliableSendSequence;
-	int				SendMessageLength;
-	vuint8			SendMessageData[MAX_MSGLEN];
-
-	vuint32			ReceiveSequence;
-	vuint32			UnreliableReceiveSequence;
 
 	TArray<VLoopbackMessage>	LoopbackMessages;
 
@@ -111,8 +99,6 @@ struct VNetPollProcedure
 class VNetworkLocal : public VNetworkPublic
 {
 public:
-	double			NetTime;
-	
 	VSocket*		ActiveSockets;
 	VSocket*		FreeSockets;
 
@@ -128,11 +114,6 @@ public:
 	bool			IpxAvailable;
 	bool			IpAvailable;
 
-	int				MessagesSent;
-	int				MessagesReceived;
-	int				UnreliableMessagesSent;
-	int				UnreliableMessagesReceived;
-
 	char			ReturnReason[32];
 
 	bool			Listening;
@@ -144,7 +125,6 @@ public:
 	static int				NumLanDrivers;
 
 	static VCvarS			HostName;
-	static VCvarF			MessageTimeOut;
 
 	VNetworkLocal();
 	virtual VSocket* NewSocket(VNetDriver*) = 0;

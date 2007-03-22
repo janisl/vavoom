@@ -40,6 +40,19 @@ class VSocketPublic : public VVirtualObjectBase
 public:
 	VStr			Address;
 
+	double			ConnectTime;
+	double			LastMessageTime;
+	double			LastSendTime;
+
+	vuint32			AckSequence;
+	vuint32			SendSequence;
+	vuint32			UnreliableSendSequence;
+	int				SendMessageLength;
+	vuint8			SendMessageData[MAX_MSGLEN];
+
+	vuint32			ReceiveSequence;
+	vuint32			UnreliableReceiveSequence;
+
 	virtual bool IsLocalConnection() = 0;
 	virtual int GetMessage(TArray<vuint8>&) = 0;
 	virtual int SendMessage(vuint8*, vuint32) = 0;
@@ -91,9 +104,16 @@ public:
 	//	Public API
 	bool			ConnectBot;
 
-	VNetworkPublic()
-	: ConnectBot(false)
-	{}
+	double			NetTime;
+	
+	int				MessagesSent;
+	int				MessagesReceived;
+	int				UnreliableMessagesSent;
+	int				UnreliableMessagesReceived;
+
+	static VCvarF	MessageTimeOut;
+
+	VNetworkPublic();
 
 	virtual void Init() = 0;
 	virtual void Shutdown() = 0;
