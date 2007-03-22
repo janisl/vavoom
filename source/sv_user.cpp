@@ -237,6 +237,8 @@ bool VPlayerNetInfo::GetMessages()
 
 		if (ret)
 		{
+			vuint8 Hdr;
+			*Msg << Hdr;
 			if (ret == 1)
 			{
 				int Tmp;
@@ -307,6 +309,8 @@ int VPlayerNetInfo::SendMessage(VMessageOut* Msg, bool Reliable)
 	guard(VPlayerNetInfo::SendMessage);
 	VBitStreamWriter	Out(MAX_MSGLEN * 8);
 
+	vuint8 Hdr = 0;
+	Out << Hdr;
 	if (Reliable)
 	{
 		int Tmp = 0;

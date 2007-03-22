@@ -80,8 +80,6 @@ public:
 	//	NetHeader flags
 	enum
 	{
-		NETFLAG_ACK				= 0x10,
-		NETFLAG_DATA			= 0x20,
 		NETFLAG_UNRELIABLE		= 0x40,
 		NETFLAG_CTL				= 0x80
 	};
@@ -764,11 +762,67 @@ int VDatagramDriver::GetMessage(VSocket* Sock, TArray<vuint8>& Data)
 
 		flags = packetBuffer.flags;
 
-		if (flags & NETFLAG_CTL)
+		if (!(flags & NETFLAG_UNRELIABLE))
 			continue;
 
 		sequence = BigLong(packetBuffer.sequence);
 		packetsReceived++;
+
+		if (packetBuffer.data[0] == 1)
+		{
+			vuint32 AckSeq = packetBuffer.data[1] | (packetBuffer.data[2] << 8) |
+				(packetBuffer.data[3] << 16) | (packetBuffer.data[4] << 24);
+			if (AckSeq != Sock->SendSequence - 1)
+			{
+				GCon->Log(NAME_DevNet, "Stale ACK received");
+				continue;
+			}
+			if (AckSeq == Sock->AckSequence)
+			{
+				Sock->AckSequence++;
+				if (Sock->AckSequence != Sock->SendSequence)
+					GCon->Log(NAME_DevNet, "ack sequencing error");
+			}
+			else
+			{
+				GCon->Log(NAME_DevNet, "Duplicate ACK received");
+				continue;
+			}
+
+			Sock->SendMessageLength = 0;
+			Sock->CanSend = true;
+			continue;
+		}
+
+		if (packetBuffer.data[0] == 2)
+		{
+			Data.SetNum(length - NET_HEADERSIZE);
+			memcpy(Data.Ptr(), packetBuffer.data, length - NET_HEADERSIZE);
+
+			vuint32 Seq = packetBuffer.data[1] | (packetBuffer.data[2] << 8) |
+				(packetBuffer.data[3] << 16) | (packetBuffer.data[4] << 24);
+
+			packetBuffer.flags = NETFLAG_UNRELIABLE;
+			packetBuffer.sequence = BigLong(Sock->UnreliableSendSequence++);
+			packetBuffer.data[0] = 1;
+			packetBuffer.data[1] = Seq;
+			packetBuffer.data[2] = Seq >> 8;
+			packetBuffer.data[3] = Seq >> 16;
+			packetBuffer.data[4] = Seq >> 24;
+			Sock->LanDriver->Write(Sock->LanSocket, (vuint8*)&packetBuffer,
+				NET_HEADERSIZE + 5, &readaddr);
+
+			if (Seq != Sock->ReceiveSequence)
+			{
+				receivedDuplicateCount++;
+				Data.Clear();
+				continue;
+			}
+			Sock->ReceiveSequence++;
+
+			ret = 1;
+			break;
+		}
 
 		if (flags & NETFLAG_UNRELIABLE)
 		{
@@ -792,61 +846,6 @@ int VDatagramDriver::GetMessage(VSocket* Sock, TArray<vuint8>& Data)
 			memcpy(Data.Ptr(), packetBuffer.data, length);
 
 			ret = 2;
-			break;
-		}
-
-		if (flags & NETFLAG_ACK)
-		{
-			vuint32 AckSeq = packetBuffer.data[0] | (packetBuffer.data[1] << 8) |
-				(packetBuffer.data[2] << 16) | (packetBuffer.data[3] << 24);
-			if (AckSeq != Sock->SendSequence - 1)
-			{
-				GCon->Log(NAME_DevNet, "Stale ACK received");
-				continue;
-			}
-			if (AckSeq == Sock->AckSequence)
-			{
-				Sock->AckSequence++;
-				if (Sock->AckSequence != Sock->SendSequence)
-					GCon->Log(NAME_DevNet, "ack sequencing error");
-			}
-			else
-			{
-				GCon->Log(NAME_DevNet, "Duplicate ACK received");
-				continue;
-			}
-
-			Sock->SendMessageLength = 0;
-			Sock->CanSend = true;
-			continue;
-		}
-
-		if (flags & NETFLAG_DATA)
-		{
-			Data.SetNum(length - NET_HEADERSIZE);
-			memcpy(Data.Ptr(), packetBuffer.data, length - NET_HEADERSIZE);
-
-			vuint32 Seq = packetBuffer.data[0] | (packetBuffer.data[1] << 8) |
-				(packetBuffer.data[2] << 16) | (packetBuffer.data[3] << 24);
-
-			packetBuffer.flags = NETFLAG_ACK;
-			packetBuffer.sequence = BigLong(Sock->UnreliableSendSequence++);
-			packetBuffer.data[0] = Seq;
-			packetBuffer.data[1] = Seq >> 8;
-			packetBuffer.data[2] = Seq >> 16;
-			packetBuffer.data[3] = Seq >> 24;
-			Sock->LanDriver->Write(Sock->LanSocket, (vuint8*)&packetBuffer,
-				NET_HEADERSIZE + 4, &readaddr);
-
-			if (Seq != Sock->ReceiveSequence)
-			{
-				receivedDuplicateCount++;
-				Data.Clear();
-				continue;
-			}
-			Sock->ReceiveSequence++;
-
-			ret = 1;
 			break;
 		}
 	}
@@ -897,13 +896,14 @@ int VDatagramDriver::SendMessage(VSocket* Sock, vuint8* Data, vuint32 Length)
 	memcpy(Sock->SendMessageData, Data, Length);
 	Sock->SendMessageLength = Length;
 
-	Sock->SendMessageData[0] = Sock->SendSequence;
-	Sock->SendMessageData[1] = Sock->SendSequence >> 8;
-	Sock->SendMessageData[2] = Sock->SendSequence >> 16;
-	Sock->SendMessageData[3] = Sock->SendSequence >> 24;
+	Sock->SendMessageData[0] = 2;
+	Sock->SendMessageData[1] = Sock->SendSequence;
+	Sock->SendMessageData[2] = Sock->SendSequence >> 8;
+	Sock->SendMessageData[3] = Sock->SendSequence >> 16;
+	Sock->SendMessageData[4] = Sock->SendSequence >> 24;
 
 	check(Length <= MAX_MSGLEN);
-	packetLen = BuildNetPacket(NETFLAG_DATA, Sock->UnreliableSendSequence++,
+	packetLen = BuildNetPacket(NETFLAG_UNRELIABLE, Sock->UnreliableSendSequence++,
 		Sock->SendMessageData, Length);
 
 	Sock->SendSequence++;
@@ -934,7 +934,7 @@ int VDatagramDriver::ReSendMessage(VSocket* sock)
 	vuint32		dataLen;
 
 	dataLen = sock->SendMessageLength;
-	packetLen = BuildNetPacket(NETFLAG_DATA, sock->UnreliableSendSequence++,
+	packetLen = BuildNetPacket(NETFLAG_UNRELIABLE, sock->UnreliableSendSequence++,
 		sock->SendMessageData, dataLen);
 
 	if (sock->LanDriver->Write(sock->LanSocket, (vuint8*)&packetBuffer,
