@@ -300,21 +300,24 @@ int VPlayerNetInfo::GetRawMessage(VMessageIn*& Msg)
 int VPlayerNetInfo::SendMessage(VMessageOut* Msg, bool Reliable)
 {
 	guard(VPlayerNetInfo::SendMessage);
+	VBitStreamWriter	Out(MAX_MSGLEN * 8);
+
+	Out.SerialiseBits(Msg->GetData(), Msg->GetNumBits());
 	//	Add trailing bit so we can find out how many bits the message has.
-	Msg->WriteBit(true);
+	Out.WriteBit(true);
 	//	Pad it with zero bits untill byte boundary.
-	while (Msg->GetNumBits() & 7)
+	while (Out.GetNumBits() & 7)
 	{
-		Msg->WriteBit(false);
+		Out.WriteBit(false);
 	}
 
 	if (Reliable)
 	{
-		return NetCon->SendMessage(Msg->GetData(), Msg->GetNumBytes());
+		return NetCon->SendMessage(Out.GetData(), Out.GetNumBytes());
 	}
 	else
 	{
-		return NetCon->SendUnreliableMessage(Msg->GetData(), Msg->GetNumBytes());
+		return NetCon->SendUnreliableMessage(Out.GetData(), Out.GetNumBytes());
 	}
 	unguard;
 }
