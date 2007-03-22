@@ -127,6 +127,12 @@ VNetworkPublic::VNetworkPublic()
 , MessagesReceived(0)
 , UnreliableMessagesSent(0)
 , UnreliableMessagesReceived(0)
+, packetsSent(0)
+, packetsReSent(0)
+, packetsReceived(0)
+, receivedDuplicateCount(0)
+, shortPacketCount(0)
+, droppedDatagrams(0)
 {
 }
 
@@ -876,30 +882,6 @@ int VSocket::SendMessage(vuint8* Data, vuint32 Length)
 	int r = Driver->SendMessage(this, Data, Length);
 	if (r == 1 && !IsLocalConnection())
 		Driver->Net->MessagesSent++;
-
-	return r;
-	unguard;
-}
-
-//==========================================================================
-//
-//	VSocket::SendUnreliableMessage
-//
-//==========================================================================
-
-int VSocket::SendUnreliableMessage(vuint8* Data, vuint32 Length)
-{
-	guard(VSocket::SendUnreliableMessage);
-	if (Disconnected)
-	{
-		GCon->Log(NAME_DevNet, "NET_SendMessage: disconnected socket");
-		return -1;
-	}
-
-	Driver->Net->SetNetTime();
-	int r = Driver->SendUnreliableMessage(this, Data, Length);
-	if (r == 1 && !IsLocalConnection())
-		Driver->Net->UnreliableMessagesSent++;
 
 	return r;
 	unguard;

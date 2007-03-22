@@ -43,9 +43,7 @@ public:
 	VSocket* CheckNewConnections();
 	int GetMessage(VSocket*, TArray<vuint8>&);
 	int SendMessage(VSocket*, vuint8*, vuint32);
-	int SendUnreliableMessage(VSocket*, vuint8*, vuint32);
 	bool CanSendMessage(VSocket*);
-	bool CanSendUnreliableMessage(VSocket*);
 	void Close(VSocket*);
 	void Shutdown();
 };
@@ -167,34 +165,13 @@ int VNullNetDriver::SendMessage(VSocket*, vuint8*, vuint32)
 
 //==========================================================================
 //
-//	VNullNetDriver::SendUnreliableMessage
-//
-//==========================================================================
-
-int VNullNetDriver::SendUnreliableMessage(VSocket*, vuint8*, vuint32)
-{
-	return 1;
-}
-
-//==========================================================================
-//
 //	VNullNetDriver::CanSendMessage
 //
 //==========================================================================
 
-bool VNullNetDriver::CanSendMessage(VSocket*)
+bool VNullNetDriver::CanSendMessage(VSocket* Sock)
 {
-	return true;
-}
-
-//==========================================================================
-//
-//	VNullNetDriver::CanSendUnreliableMessage
-//
-//==========================================================================
-
-bool VNullNetDriver::CanSendUnreliableMessage(VSocket*)
-{
+	Sock->CanSend = true;
 	return true;
 }
 

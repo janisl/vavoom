@@ -178,7 +178,8 @@ void VPlayerChannel::Update()
 //==========================================================================
 
 VPlayerNetInfo::VPlayerNetInfo()
-: NetCon(NULL)
+: Driver(GNet)
+, NetCon(NULL)
 , Message(OUT_MESSAGE_SIZE)
 , MobjUpdateStart(0)
 , LastMessage(0)
@@ -239,15 +240,50 @@ bool VPlayerNetInfo::GetMessages()
 		{
 			vuint8 Hdr;
 			*Msg << Hdr;
-			if (ret == 1)
+			if (Hdr == 1)
 			{
-				int Tmp;
-				*Msg << Tmp;
+				vuint32 AckSeq;
+				*Msg << AckSeq;
+				if (AckSeq != NetCon->SendSequence - 1)
+				{
+					GCon->Log(NAME_DevNet, "Stale ACK received");
+				}
+				else if (AckSeq == NetCon->AckSequence)
+				{
+					NetCon->AckSequence++;
+					if (NetCon->AckSequence != NetCon->SendSequence)
+						GCon->Log(NAME_DevNet, "ack sequencing error");
+					NetCon->SendMessageLength = 0;
+					NetCon->CanSend = true;
+				}
+				else
+				{
+					GCon->Log(NAME_DevNet, "Duplicate ACK received");
+				}
 			}
-			if (!ParsePacket(*Msg))
+			else
 			{
-				delete Msg;
-				return false;
+				if (Hdr == 2)
+				{
+					vuint32 Seq;
+					*Msg << Seq;
+		
+					SendAck(Seq);
+
+					if (Seq != NetCon->ReceiveSequence)
+					{
+						Driver->receivedDuplicateCount++;
+						delete Msg;
+						continue;
+					}
+					NetCon->ReceiveSequence++;
+				}
+
+				if (!ParsePacket(*Msg))
+				{
+					delete Msg;
+					return false;
+				}
 			}
 			delete Msg;
 		}
@@ -309,12 +345,20 @@ int VPlayerNetInfo::SendMessage(VMessageOut* Msg, bool Reliable)
 	guard(VPlayerNetInfo::SendMessage);
 	VBitStreamWriter	Out(MAX_MSGLEN * 8);
 
-	vuint8 Hdr = 0;
+	vuint8 Hdr = Reliable ? 2 : 0;
 	Out << Hdr;
 	if (Reliable)
 	{
-		int Tmp = 0;
-		Out << Tmp;
+#ifdef PARANOID
+		if (NetCon->CanSend == false)
+			Sys_Error("SendMessage: called with canSend == false\n");
+#endif
+
+		Out << NetCon->SendSequence;
+
+		NetCon->SendSequence++;
+		NetCon->CanSend = false;
+		NetCon->LastSendTime = Driver->NetTime;
 	}
 	Out.SerialiseBits(Msg->GetData(), Msg->GetNumBits());
 	//	Add trailing bit so we can find out how many bits the message has.
@@ -327,12 +371,38 @@ int VPlayerNetInfo::SendMessage(VMessageOut* Msg, bool Reliable)
 
 	if (Reliable)
 	{
-		return NetCon->SendMessage(Out.GetData(), Out.GetNumBytes());
+		memcpy(NetCon->SendMessageData, Out.GetData(), Out.GetNumBytes());
+		NetCon->SendMessageLength = Out.GetNumBytes();
 	}
-	else
+
+	return NetCon->SendMessage(Out.GetData(), Out.GetNumBytes());
+	unguard;
+}
+
+//==========================================================================
+//
+//	VPlayerNetInfo::SendAck
+//
+//==========================================================================
+
+void VPlayerNetInfo::SendAck(vuint32 Sequence)
+{
+	guard(VPlayerNetInfo::SendAck);
+	VBitStreamWriter	Out(MAX_MSGLEN * 8);
+
+	vuint8 Hdr = 1;
+	Out << Hdr;
+	Out << Sequence;
+
+	//	Add trailing bit so we can find out how many bits the message has.
+	Out.WriteBit(true);
+	//	Pad it with zero bits untill byte boundary.
+	while (Out.GetNumBits() & 7)
 	{
-		return NetCon->SendUnreliableMessage(Out.GetData(), Out.GetNumBytes());
+		Out.WriteBit(false);
 	}
+
+	NetCon->SendMessage(Out.GetData(), Out.GetNumBytes());
 	unguard;
 }
 

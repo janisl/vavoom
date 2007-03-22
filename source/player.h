@@ -106,6 +106,7 @@ public:
 class VPlayerNetInfo
 {
 protected:
+	VNetworkPublic*	Driver;
 	VSocketPublic*	NetCon;
 public:
 	VMessageOut		Message;
@@ -125,6 +126,7 @@ public:
 	virtual int GetRawMessage(VMessageIn*& Msg);
 	virtual bool ParsePacket(VMessageIn&) = 0;
 	virtual int SendMessage(VMessageOut*, bool);
+	virtual void SendAck(vuint32);
 	bool CanSendMessage();
 	bool IsLocalConnection();
 	void CloseSocket();

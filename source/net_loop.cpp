@@ -47,9 +47,7 @@ public:
 	VSocket* CheckNewConnections();
 	int GetMessage(VSocket*, TArray<vuint8>&);
 	int SendMessage(VSocket*, vuint8*, vuint32);
-	int SendUnreliableMessage(VSocket*, vuint8*, vuint32);
 	bool CanSendMessage(VSocket*);
-	bool CanSendUnreliableMessage(VSocket*);
 	void Close(VSocket*);
 	void Shutdown();
 
@@ -231,13 +229,12 @@ int VLoopbackDriver::GetMessage(VSocket* Sock, TArray<vuint8>& Data)
 		return 0;
 
 	Data = Sock->LoopbackMessages[0].Data;
-	int Ret = Sock->LoopbackMessages[0].MessageType;
 	Sock->LoopbackMessages.RemoveIndex(0);
 
-	if (Sock->DriverData && Ret == 1)
+	if (Sock->DriverData)
 		((VSocket*)Sock->DriverData)->CanSend = true;
 
-	return Ret;
+	return 1;
 	unguard;
 }
 
@@ -256,31 +253,6 @@ int VLoopbackDriver::SendMessage(VSocket* Sock, vuint8* Data, vuint32 Length)
 	VLoopbackMessage& Msg = ((VSocket*)Sock->DriverData)->LoopbackMessages.Alloc();
 	Msg.Data.SetNum(Length);
 	memcpy(Msg.Data.Ptr(), Data, Length);
-	Msg.MessageType = 1;
-
-	Sock->CanSend = false;
-	return 1;
-	unguard;
-}
-
-//==========================================================================
-//
-//	VLoopbackDriver::SendUnreliableMessage
-//
-//==========================================================================
-
-int VLoopbackDriver::SendUnreliableMessage(VSocket* Sock, vuint8* Data,
-	vuint32 Length)
-{
-	guard(VLoopbackDriver::SendUnreliableMessage);
-	if (!Sock->DriverData)
-		return -1;
-
-	VLoopbackMessage& Msg = ((VSocket*)Sock->DriverData)->LoopbackMessages.Alloc();
-	Msg.Data.SetNum(Length);
-	memcpy(Msg.Data.Ptr(), Data, Length);
-	// message type
-	Msg.MessageType = 2;
 
 	return 1;
 	unguard;
@@ -299,17 +271,6 @@ bool VLoopbackDriver::CanSendMessage(VSocket* sock)
 		return false;
 	return sock->CanSend;
 	unguard;
-}
-
-//==========================================================================
-//
-//	VLoopbackDriver::CanSendUnreliableMessage
-//
-//==========================================================================
-
-bool VLoopbackDriver::CanSendUnreliableMessage(VSocket*)
-{
-	return true;
 }
 
 //==========================================================================

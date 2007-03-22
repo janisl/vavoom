@@ -42,6 +42,8 @@ class VSocketPublic : public VVirtualObjectBase
 public:
 	VStr			Address;
 
+	bool			CanSend;
+
 	double			ConnectTime;
 	double			LastMessageTime;
 	double			LastSendTime;
@@ -58,7 +60,6 @@ public:
 	virtual bool IsLocalConnection() = 0;
 	virtual int GetMessage(TArray<vuint8>&) = 0;
 	virtual int SendMessage(vuint8*, vuint32) = 0;
-	virtual int SendUnreliableMessage(vuint8*, vuint32) = 0;
 	virtual bool CanSendMessage() = 0;
 	virtual void Close() = 0;
 };
@@ -108,10 +109,17 @@ public:
 
 	double			NetTime;
 	
+	//	Statistic counters.
 	int				MessagesSent;
 	int				MessagesReceived;
 	int				UnreliableMessagesSent;
 	int				UnreliableMessagesReceived;
+	int				packetsSent;
+	int				packetsReSent;
+	int				packetsReceived;
+	int				receivedDuplicateCount;
+	int				shortPacketCount;
+	int				droppedDatagrams;
 
 	static VCvarF	MessageTimeOut;
 

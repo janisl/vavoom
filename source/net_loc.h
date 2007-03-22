@@ -47,7 +47,6 @@ struct sockaddr_t
 struct VLoopbackMessage
 {
 	TArray<vuint8>	Data;
-	int				MessageType;
 };
 
 class VSocket : public VSocketPublic
@@ -56,7 +55,6 @@ public:
 	VSocket*		Next;
 
 	bool			Disconnected;
-	bool			CanSend;
 	
 	VNetDriver*		Driver;
 	VNetLanDriver*	LanDriver;
@@ -70,7 +68,6 @@ public:
 	bool IsLocalConnection();
 	int GetMessage(TArray<vuint8>&);
 	int SendMessage(vuint8*, vuint32);
-	int SendUnreliableMessage(vuint8*, vuint32);
 	bool CanSendMessage();
 	void Close();
 };
@@ -150,9 +147,7 @@ public:
 	virtual VSocket* CheckNewConnections() = 0;
 	virtual int GetMessage(VSocket*, TArray<vuint8>&) = 0;
 	virtual int SendMessage(VSocket*, vuint8*, vuint32) = 0;
-	virtual int SendUnreliableMessage(VSocket*, vuint8*, vuint32) = 0;
 	virtual bool CanSendMessage(VSocket*) = 0;
-	virtual bool CanSendUnreliableMessage(VSocket*) = 0;
 	virtual void Close(VSocket*) = 0;
 	virtual void Shutdown() = 0;
 };

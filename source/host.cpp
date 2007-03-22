@@ -160,6 +160,9 @@ void Host_Init()
 	GSoundManager->Init();
 	R_InitTexture();
 
+	GNet = VNetworkPublic::Create();
+	GNet->Init();
+
 #ifdef CLIENT
 	GInput = VInputPublic::Create();
 	GInput->Init();
@@ -187,9 +190,6 @@ void Host_Init()
 #ifdef SERVER
 	SV_Init();
 #endif
-
-	GNet = VNetworkPublic::Create();
-	GNet->Init();
 
 	GCmdBuf.Exec();
 

@@ -108,14 +108,6 @@ public:
 	} packetBuffer;
 #pragma pack(pop)
 
-	//	Statistic counters.
-	static int		packetsSent;
-	static int		packetsReSent;
-	static int		packetsReceived;
-	static int		receivedDuplicateCount;
-	static int		shortPacketCount;
-	static int		droppedDatagrams;
-
 	VDatagramDriver();
 	int Init();
 	void Listen(bool);
@@ -124,9 +116,7 @@ public:
 	VSocket* CheckNewConnections();
 	int GetMessage(VSocket*, TArray<vuint8>&);
 	int SendMessage(VSocket*, vuint8*, vuint32);
-	int SendUnreliableMessage(VSocket*, vuint8*, vuint32);
 	bool CanSendMessage(VSocket*);
-	bool CanSendUnreliableMessage(VSocket*);
 	void Close(VSocket*);
 	void Shutdown();
 
@@ -153,14 +143,6 @@ extern TArray<VStr>	wadfiles;
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static VDatagramDriver	Impl;
-
-//	Statistic counters.
-int		VDatagramDriver::packetsSent = 0;
-int		VDatagramDriver::packetsReSent = 0;
-int		VDatagramDriver::packetsReceived = 0;
-int		VDatagramDriver::receivedDuplicateCount = 0;
-int		VDatagramDriver::shortPacketCount = 0;
-int		VDatagramDriver::droppedDatagrams;
 
 // CODE --------------------------------------------------------------------
 
@@ -756,7 +738,7 @@ int VDatagramDriver::GetMessage(VSocket* Sock, TArray<vuint8>& Data)
 
 		if (length < NET_HEADERSIZE)
 		{
-			shortPacketCount++;
+			Net->shortPacketCount++;
 			continue;
 		}
 
@@ -766,88 +748,28 @@ int VDatagramDriver::GetMessage(VSocket* Sock, TArray<vuint8>& Data)
 			continue;
 
 		sequence = BigLong(packetBuffer.sequence);
-		packetsReceived++;
+		Net->packetsReceived++;
 
-		if (packetBuffer.data[0] == 1)
+		if (sequence < Sock->UnreliableReceiveSequence)
 		{
-			vuint32 AckSeq = packetBuffer.data[1] | (packetBuffer.data[2] << 8) |
-				(packetBuffer.data[3] << 16) | (packetBuffer.data[4] << 24);
-			if (AckSeq != Sock->SendSequence - 1)
-			{
-				GCon->Log(NAME_DevNet, "Stale ACK received");
-				continue;
-			}
-			if (AckSeq == Sock->AckSequence)
-			{
-				Sock->AckSequence++;
-				if (Sock->AckSequence != Sock->SendSequence)
-					GCon->Log(NAME_DevNet, "ack sequencing error");
-			}
-			else
-			{
-				GCon->Log(NAME_DevNet, "Duplicate ACK received");
-				continue;
-			}
-
-			Sock->SendMessageLength = 0;
-			Sock->CanSend = true;
+			GCon->Log(NAME_DevNet, "Got a stale datagram");
 			continue;
 		}
-
-		if (packetBuffer.data[0] == 2)
+		if (sequence != Sock->UnreliableReceiveSequence)
 		{
-			Data.SetNum(length - NET_HEADERSIZE);
-			memcpy(Data.Ptr(), packetBuffer.data, length - NET_HEADERSIZE);
-
-			vuint32 Seq = packetBuffer.data[1] | (packetBuffer.data[2] << 8) |
-				(packetBuffer.data[3] << 16) | (packetBuffer.data[4] << 24);
-
-			packetBuffer.flags = NETFLAG_UNRELIABLE;
-			packetBuffer.sequence = BigLong(Sock->UnreliableSendSequence++);
-			packetBuffer.data[0] = 1;
-			packetBuffer.data[1] = Seq;
-			packetBuffer.data[2] = Seq >> 8;
-			packetBuffer.data[3] = Seq >> 16;
-			packetBuffer.data[4] = Seq >> 24;
-			Sock->LanDriver->Write(Sock->LanSocket, (vuint8*)&packetBuffer,
-				NET_HEADERSIZE + 5, &readaddr);
-
-			if (Seq != Sock->ReceiveSequence)
-			{
-				receivedDuplicateCount++;
-				Data.Clear();
-				continue;
-			}
-			Sock->ReceiveSequence++;
-
-			ret = 1;
-			break;
+			count = sequence - Sock->UnreliableReceiveSequence;
+			Net->droppedDatagrams += count;
+			GCon->Logf(NAME_DevNet, "Dropped %d datagram(s)", count);
 		}
+		Sock->UnreliableReceiveSequence = sequence + 1;
 
-		if (flags & NETFLAG_UNRELIABLE)
-		{
-			if (sequence < Sock->UnreliableReceiveSequence)
-			{
-				GCon->Log(NAME_DevNet, "Got a stale datagram");
-				ret = 0;
-				break;
-			}
-			if (sequence != Sock->UnreliableReceiveSequence)
-			{
-				count = sequence - Sock->UnreliableReceiveSequence;
-				droppedDatagrams += count;
-				GCon->Logf(NAME_DevNet, "Dropped %d datagram(s)", count);
-			}
-			Sock->UnreliableReceiveSequence = sequence + 1;
+		length -= NET_HEADERSIZE;
 
-			length -= NET_HEADERSIZE;
+		Data.SetNum(length);
+		memcpy(Data.Ptr(), packetBuffer.data, length);
 
-			Data.SetNum(length);
-			memcpy(Data.Ptr(), packetBuffer.data, length);
-
-			ret = 2;
-			break;
-		}
+		ret = 1;
+		break;
 	}
 
 	return ret;
@@ -880,34 +802,16 @@ int VDatagramDriver::BuildNetPacket(vuint32 Flags, vuint32 Sequence,
 int VDatagramDriver::SendMessage(VSocket* Sock, vuint8* Data, vuint32 Length)
 {
 	guard(VDatagramDriver::SendMessage);
-	vuint32		packetLen;
-
 #ifdef PARANOID
 	if (Length == 0)
 		Sys_Error("Datagram_SendMessage: zero length message\n");
 
 	if (Length > MAX_MSGLEN)
 		Sys_Error("Datagram_SendMessage: message too big %u\n", Length);
-
-	if (Sock->CanSend == false)
-		Sys_Error("SendMessage: called with canSend == false\n");
 #endif
 
-	memcpy(Sock->SendMessageData, Data, Length);
-	Sock->SendMessageLength = Length;
-
-	Sock->SendMessageData[0] = 2;
-	Sock->SendMessageData[1] = Sock->SendSequence;
-	Sock->SendMessageData[2] = Sock->SendSequence >> 8;
-	Sock->SendMessageData[3] = Sock->SendSequence >> 16;
-	Sock->SendMessageData[4] = Sock->SendSequence >> 24;
-
-	check(Length <= MAX_MSGLEN);
-	packetLen = BuildNetPacket(NETFLAG_UNRELIABLE, Sock->UnreliableSendSequence++,
-		Sock->SendMessageData, Length);
-
-	Sock->SendSequence++;
-	Sock->CanSend = false;
+	vuint32 packetLen = BuildNetPacket(NETFLAG_UNRELIABLE,
+		Sock->UnreliableSendSequence++, Data, Length);
 
 	if (Sock->LanDriver->Write(Sock->LanSocket, (vuint8*)&packetBuffer,
 		packetLen, &Sock->Addr) == -1)
@@ -915,8 +819,7 @@ int VDatagramDriver::SendMessage(VSocket* Sock, vuint8* Data, vuint32 Length)
 		return -1;
 	}
 
-	Sock->LastSendTime = Net->NetTime;
-	packetsSent++;
+	Net->packetsSent++;
 	return 1;
 	unguard;
 }
@@ -944,41 +847,7 @@ int VDatagramDriver::ReSendMessage(VSocket* sock)
 	}
 
 	sock->LastSendTime = Net->NetTime;
-	packetsReSent++;
-	return 1;
-	unguard;
-}
-
-//==========================================================================
-//
-//	VDatagramDriver::SendUnreliableMessage
-//
-//==========================================================================
-
-int VDatagramDriver::SendUnreliableMessage(VSocket* Sock, vuint8* Data,
-	vuint32 Length)
-{
-	guard(VDatagramDriver::SendUnreliableMessage);
-	vuint32		packetLen;
-
-#ifdef PARANOID
-	if (Length == 0)
-		Sys_Error("Datagram_SendUnreliableMessage: zero length message\n");
-
-	if (Length > MAX_MSGLEN)
-		Sys_Error("Datagram_SendUnreliableMessage: message too big %u\n", Length);
-#endif
-
-	packetLen = BuildNetPacket(NETFLAG_UNRELIABLE,
-		Sock->UnreliableSendSequence++, Data, Length);
-
-	if (Sock->LanDriver->Write(Sock->LanSocket, (vuint8*)&packetBuffer,
-		packetLen, &Sock->Addr) == -1)
-	{
-		return -1;
-	}
-
-	packetsSent++;
+	Net->packetsReSent++;
 	return 1;
 	unguard;
 }
@@ -994,17 +863,6 @@ bool VDatagramDriver::CanSendMessage(VSocket* sock)
 	guard(VDatagramDriver::CanSendMessage);
 	return sock->CanSend;
 	unguard;
-}
-
-//==========================================================================
-//
-//	VDatagramDriver::CanSendUnreliableMessage
-//
-//==========================================================================
-
-bool VDatagramDriver::CanSendUnreliableMessage(VSocket*)
-{
-	return true;
 }
 
 //==========================================================================
@@ -1075,12 +933,12 @@ COMMAND(NetStats)
 		GCon->Logf("unreliable messages recv   = %d", Net->UnreliableMessagesReceived);
 		GCon->Logf("reliable messages sent     = %d", Net->MessagesSent);
 		GCon->Logf("reliable messages received = %d", Net->MessagesReceived);
-		GCon->Logf("packetsSent                = %d", VDatagramDriver::packetsSent);
-		GCon->Logf("packetsReSent              = %d", VDatagramDriver::packetsReSent);
-		GCon->Logf("packetsReceived            = %d", VDatagramDriver::packetsReceived);
-		GCon->Logf("receivedDuplicateCount     = %d", VDatagramDriver::receivedDuplicateCount);
-		GCon->Logf("shortPacketCount           = %d", VDatagramDriver::shortPacketCount);
-		GCon->Logf("droppedDatagrams           = %d", VDatagramDriver::droppedDatagrams);
+		GCon->Logf("packetsSent                = %d", Net->packetsSent);
+		GCon->Logf("packetsReSent              = %d", Net->packetsReSent);
+		GCon->Logf("packetsReceived            = %d", Net->packetsReceived);
+		GCon->Logf("receivedDuplicateCount     = %d", Net->receivedDuplicateCount);
+		GCon->Logf("shortPacketCount           = %d", Net->shortPacketCount);
+		GCon->Logf("droppedDatagrams           = %d", Net->droppedDatagrams);
 	}
 	else if (Args[1] == "*")
 	{
