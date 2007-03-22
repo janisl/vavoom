@@ -118,30 +118,28 @@ void CL_StopPlayback()
 //
 //==========================================================================
 
-void CL_WriteDemoMessage(VMessageIn& msg)
+void CL_WriteDemoMessage(TArray<vuint8>& msg)
 {
 	guard(CL_WriteDemoMessage);
-	vint32 MsgSize = msg.GetNumBits();
+	vint32 MsgSize = msg.Num();
 	*cls.demofile << MsgSize;
 	*cls.demofile << cl->ViewAngles;
-	cls.demofile->Serialise(msg.GetData(), msg.GetNumBytes());
+	cls.demofile->Serialise(msg.Ptr(), msg.Num());
 	cls.demofile->Flush();
 	unguard;
 }
 
 //==========================================================================
 //
-//	VClientPlayerNetInfo::GetRawMessage
+//	VClientPlayerNetInfo::GetRawPacket
 //
 //	Handles recording and playback of demos, on top of NET_ code
 //
 //==========================================================================
 
-int VClientPlayerNetInfo::GetRawMessage(VMessageIn*& Msg)
+int VClientPlayerNetInfo::GetRawPacket(TArray<vuint8>& Data)
 {
-	guard(VClientPlayerNetInfo::GetRawMessage);
-	vuint8		MsgBuf[MAX_MSGLEN];
-
+	guard(VClientPlayerNetInfo::GetRawPacket);
 	if (cls.demoplayback)
 	{
 		// decide if it is time to grab the next message
@@ -167,16 +165,21 @@ int VClientPlayerNetInfo::GetRawMessage(VMessageIn*& Msg)
 			}
 		}
 
+		if (cls.demofile->AtEnd())
+		{
+			CL_StopPlayback();
+			return 0;
+		}
+	
 		// get the next message
 		vint32 MsgSize;
 		*cls.demofile << MsgSize;
-//		VectorCopy (cl->mviewangles[0], cl->mviewangles[1]);
 		*cls.demofile << cl->ViewAngles;
 
 		if (MsgSize > OUT_MESSAGE_SIZE)
 			Sys_Error("Demo message > MAX_MSGLEN");
-		cls.demofile->Serialise(MsgBuf, (MsgSize + 7) >> 3);
-		Msg = new VMessageIn(MsgBuf, MsgSize);
+		Data.SetNum(MsgSize);
+		cls.demofile->Serialise(Data.Ptr(), MsgSize);
 		if (cls.demofile->IsError())
 		{
 			CL_StopPlayback();
@@ -186,14 +189,11 @@ int VClientPlayerNetInfo::GetRawMessage(VMessageIn*& Msg)
 		return 1;
 	}
 
-	int r = VPlayerNetInfo::GetRawMessage(Msg);
+	int r = VPlayerNetInfo::GetRawPacket(Data);
 
-	if (cls.demorecording && (r == 1 || r == 2))
+	if (cls.demorecording && r == 1)
 	{
-		if (Msg->GetNumBytes() != 1 || Msg->GetData()[0] != svc_nop)
-		{
-			CL_WriteDemoMessage(*Msg);
-		}
+		CL_WriteDemoMessage(Data);
 	}
 	
 	return r;
@@ -213,7 +213,7 @@ int VClientPlayerNetInfo::SendMessage(VMessageOut* Msg, bool Reliable)
 	{
 		return 1;
 	}
-	VPlayerNetInfo::SendMessage(Msg, Reliable);
+	return VPlayerNetInfo::SendMessage(Msg, Reliable);
 	unguard;
 }
 
@@ -226,11 +226,6 @@ int VClientPlayerNetInfo::SendMessage(VMessageOut* Msg, bool Reliable)
 void CL_StopRecording()
 {
 	guard(CL_StopRecording);
-	// write a disconnect message to the demo file
-	vuint8 EndMsg[1] = { (vuint8)svc_disconnect };
-	VMessageIn Msg(EndMsg, 8);
-	CL_WriteDemoMessage(Msg);
-
 	// finish up
 	delete cls.demofile;
 	cls.demofile = NULL;

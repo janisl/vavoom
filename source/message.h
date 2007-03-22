@@ -34,11 +34,10 @@ class VMessageIn : public VBitStreamReader
 public:
 	VMessageIn(vuint8* Src = NULL, vint32 Length = 0)
 	: VBitStreamReader(Src, Length)
-	, MessageType(0)
+	, Next(NULL)
 	{
 	}
 
-	int				MessageType;
 	VMessageIn*		Next;
 
 	vuint8 ReadByte() { vuint8 c; *this << c; return c; }

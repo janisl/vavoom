@@ -2282,10 +2282,8 @@ int NET_SendToAll(VMessageOut* data, int blocktime)
 				}
 				else
 				{
-					VMessageIn* Msg = NULL;
-					sv_player->Net->GetRawMessage(Msg);
-					if (Msg)
-						delete Msg;
+					TArray<vuint8> Msg;
+					sv_player->Net->GetRawPacket(Msg);
 				}
 				count++;
 				continue;
@@ -2299,10 +2297,8 @@ int NET_SendToAll(VMessageOut* data, int blocktime)
 				}
 				else
 				{
-					VMessageIn* Msg = NULL;
-					sv_player->Net->GetRawMessage(Msg);
-					if (Msg)
-						delete Msg;
+					TArray<vuint8> Msg;
+					sv_player->Net->GetRawPacket(Msg);
 				}
 				count++;
 				continue;

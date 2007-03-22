@@ -240,7 +240,7 @@ class VClientPlayerNetInfo : public VPlayerNetInfo
 {
 public:
 	//	VPlayerNetInfo interface
-	int GetRawMessage(VMessageIn*&);
+	int GetRawPacket(TArray<vuint8>&);
 	bool ParsePacket(VMessageIn&);
 	int SendMessage(VMessageOut*, bool);
 };

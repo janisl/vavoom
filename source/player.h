@@ -123,7 +123,8 @@ public:
 	//	VPlayerNetInfo interface
 	void SetNetCon(VSocketPublic*);
 	bool GetMessages();
-	virtual int GetRawMessage(VMessageIn*& Msg);
+	virtual int GetRawPacket(TArray<vuint8>&);
+	bool ReceivedPacket(VMessageIn&);
 	virtual bool ParsePacket(VMessageIn&) = 0;
 	virtual int SendMessage(VMessageOut*, bool);
 	virtual void SendAck(vuint32);

@@ -298,8 +298,8 @@ void CL_KeepaliveMessage()
 	// read messages from server, should just be nops
 	do
 	{
-		VMessageIn* Msg;
-		ret = cl->Net->GetRawMessage(Msg);
+		TArray<vuint8> Data;
+		ret = cl->Net->GetRawPacket(Data);
 		switch (ret)
 		{
 		default:
@@ -307,16 +307,17 @@ void CL_KeepaliveMessage()
 		case 0:
 			break;	// nothing waiting
 		case 1:
-			delete Msg;
-			Host_Error("CL_KeepaliveMessage: received a message");
-			break;
-		case 2:
-			if (Msg->ReadByte() != svc_nop)
 			{
-				delete Msg;
-				Host_Error("CL_KeepaliveMessage: datagram wasn't a nop");
+				VMessageIn Msg(Data.Ptr(), Data.Num());
+				if (Msg.ReadBit())
+					break;
+				if (Msg.ReadBit())
+					Host_Error("CL_KeepaliveMessage: received a message");
+				if (Msg.ReadByte() != svc_nop)
+				{
+					Host_Error("CL_KeepaliveMessage: datagram wasn't a nop");
+				}
 			}
-			delete Msg;
 			break;
 		}
 	} while (ret);

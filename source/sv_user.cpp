@@ -228,8 +228,8 @@ bool VPlayerNetInfo::GetMessages()
 
 	do
 	{
-		VMessageIn* Msg = NULL;
-		ret = GetRawMessage(Msg);
+		TArray<vuint8> Data;
+		ret = GetRawPacket(Data);
 		if (ret == -1)
 		{
 			GCon->Log(NAME_DevNet, "Bad read");
@@ -238,54 +238,32 @@ bool VPlayerNetInfo::GetMessages()
 
 		if (ret)
 		{
-			vuint8 Hdr;
-			*Msg << Hdr;
-			if (Hdr == 1)
+			if (Data.Num() > 0)
 			{
-				vuint32 AckSeq;
-				*Msg << AckSeq;
-				if (AckSeq != NetCon->SendSequence - 1)
+				vuint8 LastByte = Data[Data.Num() - 1];
+				if (LastByte)
 				{
-					GCon->Log(NAME_DevNet, "Stale ACK received");
-				}
-				else if (AckSeq == NetCon->AckSequence)
-				{
-					NetCon->AckSequence++;
-					if (NetCon->AckSequence != NetCon->SendSequence)
-						GCon->Log(NAME_DevNet, "ack sequencing error");
-					NetCon->SendMessageLength = 0;
-					NetCon->CanSend = true;
+					//	Find out real length by stepping back untill the trailing bit.
+					vuint32 Length = Data.Num() * 8 - 1;
+					for (vuint8 Mask = 0x80; !(LastByte & Mask); Mask >>= 1)
+					{
+						Length--;
+					}
+					VMessageIn Msg(Data.Ptr(), Length);
+					if (!ReceivedPacket(Msg))
+					{
+						return false;
+					}
 				}
 				else
 				{
-					GCon->Log(NAME_DevNet, "Duplicate ACK received");
+					GCon->Logf(NAME_DevNet, "Packet is missing trailing bit");
 				}
 			}
 			else
 			{
-				if (Hdr == 2)
-				{
-					vuint32 Seq;
-					*Msg << Seq;
-		
-					SendAck(Seq);
-
-					if (Seq != NetCon->ReceiveSequence)
-					{
-						Driver->receivedDuplicateCount++;
-						delete Msg;
-						continue;
-					}
-					NetCon->ReceiveSequence++;
-				}
-
-				if (!ParsePacket(*Msg))
-				{
-					delete Msg;
-					return false;
-				}
+				GCon->Logf(NAME_DevNet, "Packet is too small");
 			}
-			delete Msg;
 		}
 
 		//	This is for client connection which closes the connection on
@@ -306,31 +284,67 @@ bool VPlayerNetInfo::GetMessages()
 //
 //==========================================================================
 
-int VPlayerNetInfo::GetRawMessage(VMessageIn*& Msg)
+int VPlayerNetInfo::GetRawPacket(TArray<vuint8>& Data)
 {
 	guard(VPlayerNetInfo::GetRawMessage);
 	checkSlow(NetCon);
-	TArray<vuint8> Data;
-	int Ret = NetCon->GetMessage(Data);
-	if (Ret > 0)
+	return NetCon->GetMessage(Data);
+	unguard;
+}
+
+//==========================================================================
+//
+//	VPlayerNetInfo::ReceivedPacket
+//
+//==========================================================================
+
+bool VPlayerNetInfo::ReceivedPacket(VMessageIn& Msg)
+{
+	guard(VPlayerNetInfo::ReceivedPacket);
+	if (Msg.ReadBit())
 	{
-		check(Data.Num());
-		vuint8 LastByte = Data[Data.Num() - 1];
-		if (LastByte == 0)
+		vuint32 AckSeq;
+		Msg << AckSeq;
+		if (AckSeq != NetCon->SendSequence - 1)
 		{
-			GCon->Logf(NAME_DevNet, "Packet is missing trailing bit");
-			return 0;
+			GCon->Log(NAME_DevNet, "Stale ACK received");
 		}
-		//	Find out real length by stepping back untill the trailing bit.
-		vuint32 Length = Data.Num() * 8 - 1;
-		for (vuint8 Mask = 0x80; !(LastByte & Mask); Mask >>= 1)
+		else if (AckSeq == NetCon->AckSequence)
 		{
-			Length--;
+			NetCon->AckSequence++;
+			if (NetCon->AckSequence != NetCon->SendSequence)
+				GCon->Log(NAME_DevNet, "ack sequencing error");
+			NetCon->SendMessageLength = 0;
+			NetCon->CanSend = true;
 		}
-		Msg = new VMessageIn(Data.Ptr(), Length);
-		Msg->MessageType = Ret;
+		else
+		{
+			GCon->Log(NAME_DevNet, "Duplicate ACK received");
+		}
 	}
-	return Ret;
+	else
+	{
+		if (Msg.ReadBit())
+		{
+			vuint32 Seq;
+			Msg << Seq;
+
+			SendAck(Seq);
+
+			if (Seq != NetCon->ReceiveSequence)
+			{
+				Driver->receivedDuplicateCount++;
+				return true;
+			}
+			NetCon->ReceiveSequence++;
+		}
+
+		if (!ParsePacket(Msg))
+		{
+			return false;
+		}
+	}
+	return true;
 	unguard;
 }
 
@@ -345,8 +359,8 @@ int VPlayerNetInfo::SendMessage(VMessageOut* Msg, bool Reliable)
 	guard(VPlayerNetInfo::SendMessage);
 	VBitStreamWriter	Out(MAX_MSGLEN * 8);
 
-	vuint8 Hdr = Reliable ? 2 : 0;
-	Out << Hdr;
+	Out.WriteBit(false);
+	Out.WriteBit(Reliable);
 	if (Reliable)
 	{
 #ifdef PARANOID
@@ -390,8 +404,7 @@ void VPlayerNetInfo::SendAck(vuint32 Sequence)
 	guard(VPlayerNetInfo::SendAck);
 	VBitStreamWriter	Out(MAX_MSGLEN * 8);
 
-	vuint8 Hdr = 1;
-	Out << Hdr;
+	Out.WriteBit(true);
 	Out << Sequence;
 
 	//	Add trailing bit so we can find out how many bits the message has.
