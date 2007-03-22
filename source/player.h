@@ -124,7 +124,7 @@ public:
 	bool GetMessages();
 	virtual int GetRawMessage(VMessageIn*& Msg);
 	virtual bool ParsePacket(VMessageIn&) = 0;
-	int SendMessage(VMessageOut*, bool);
+	virtual int SendMessage(VMessageOut*, bool);
 	bool CanSendMessage();
 	bool IsLocalConnection();
 	void CloseSocket();

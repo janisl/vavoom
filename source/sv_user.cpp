@@ -237,6 +237,11 @@ bool VPlayerNetInfo::GetMessages()
 
 		if (ret)
 		{
+			if (ret == 1)
+			{
+				int Tmp;
+				*Msg << Tmp;
+			}
 			if (!ParsePacket(*Msg))
 			{
 				delete Msg;
@@ -302,6 +307,11 @@ int VPlayerNetInfo::SendMessage(VMessageOut* Msg, bool Reliable)
 	guard(VPlayerNetInfo::SendMessage);
 	VBitStreamWriter	Out(MAX_MSGLEN * 8);
 
+	if (Reliable)
+	{
+		int Tmp = 0;
+		Out << Tmp;
+	}
 	Out.SerialiseBits(Msg->GetData(), Msg->GetNumBits());
 	//	Add trailing bit so we can find out how many bits the message has.
 	Out.WriteBit(true);

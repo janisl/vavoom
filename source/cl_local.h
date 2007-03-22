@@ -242,6 +242,7 @@ public:
 	//	VPlayerNetInfo interface
 	int GetRawMessage(VMessageIn*&);
 	bool ParsePacket(VMessageIn&);
+	int SendMessage(VMessageOut*, bool);
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------

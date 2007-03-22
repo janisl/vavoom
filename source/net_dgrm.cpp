@@ -797,7 +797,7 @@ int VDatagramDriver::GetMessage(VSocket* Sock, TArray<vuint8>& Data)
 
 		if (flags & NETFLAG_ACK)
 		{
-			int AckSeq = packetBuffer.data[0] | (packetBuffer.data[1] << 8) |
+			vuint32 AckSeq = packetBuffer.data[0] | (packetBuffer.data[1] << 8) |
 				(packetBuffer.data[2] << 16) | (packetBuffer.data[3] << 24);
 			if (AckSeq != Sock->SendSequence - 1)
 			{
@@ -826,16 +826,19 @@ int VDatagramDriver::GetMessage(VSocket* Sock, TArray<vuint8>& Data)
 			Data.SetNum(length - NET_HEADERSIZE);
 			memcpy(Data.Ptr(), packetBuffer.data, length - NET_HEADERSIZE);
 
+			vuint32 Seq = packetBuffer.data[0] | (packetBuffer.data[1] << 8) |
+				(packetBuffer.data[2] << 16) | (packetBuffer.data[3] << 24);
+
 			packetBuffer.flags = NETFLAG_ACK;
 			packetBuffer.sequence = BigLong(Sock->UnreliableSendSequence++);
-			packetBuffer.data[0] = sequence;
-			packetBuffer.data[1] = sequence >> 8;
-			packetBuffer.data[2] = sequence >> 16;
-			packetBuffer.data[3] = sequence >> 24;
+			packetBuffer.data[0] = Seq;
+			packetBuffer.data[1] = Seq >> 8;
+			packetBuffer.data[2] = Seq >> 16;
+			packetBuffer.data[3] = Seq >> 24;
 			Sock->LanDriver->Write(Sock->LanSocket, (vuint8*)&packetBuffer,
 				NET_HEADERSIZE + 4, &readaddr);
 
-			if (sequence != Sock->ReceiveSequence)
+			if (Seq != Sock->ReceiveSequence)
 			{
 				receivedDuplicateCount++;
 				Data.Clear();
@@ -894,8 +897,13 @@ int VDatagramDriver::SendMessage(VSocket* Sock, vuint8* Data, vuint32 Length)
 	memcpy(Sock->SendMessageData, Data, Length);
 	Sock->SendMessageLength = Length;
 
+	Sock->SendMessageData[0] = Sock->SendSequence;
+	Sock->SendMessageData[1] = Sock->SendSequence >> 8;
+	Sock->SendMessageData[2] = Sock->SendSequence >> 16;
+	Sock->SendMessageData[3] = Sock->SendSequence >> 24;
+
 	check(Length <= MAX_MSGLEN);
-	packetLen = BuildNetPacket(NETFLAG_DATA, Sock->SendSequence,
+	packetLen = BuildNetPacket(NETFLAG_DATA, Sock->UnreliableSendSequence++,
 		Sock->SendMessageData, Length);
 
 	Sock->SendSequence++;
@@ -926,7 +934,7 @@ int VDatagramDriver::ReSendMessage(VSocket* sock)
 	vuint32		dataLen;
 
 	dataLen = sock->SendMessageLength;
-	packetLen = BuildNetPacket(NETFLAG_DATA, sock->SendSequence - 1,
+	packetLen = BuildNetPacket(NETFLAG_DATA, sock->UnreliableSendSequence++,
 		sock->SendMessageData, dataLen);
 
 	if (sock->LanDriver->Write(sock->LanSocket, (vuint8*)&packetBuffer,

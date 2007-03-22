@@ -202,6 +202,23 @@ int VClientPlayerNetInfo::GetRawMessage(VMessageIn*& Msg)
 
 //==========================================================================
 //
+//	VClientPlayerNetInfo::SendMessage
+//
+//==========================================================================
+
+int VClientPlayerNetInfo::SendMessage(VMessageOut* Msg, bool Reliable)
+{
+	guard(VClientPlayerNetInfo::SendMessage);
+	if (cls.demoplayback)
+	{
+		return 1;
+	}
+	VPlayerNetInfo::SendMessage(Msg, Reliable);
+	unguard;
+}
+
+//==========================================================================
+//
 //	CL_StopRecording
 //
 //==========================================================================
