@@ -797,12 +797,14 @@ int VDatagramDriver::GetMessage(VSocket* Sock, TArray<vuint8>& Data)
 
 		if (flags & NETFLAG_ACK)
 		{
-			if (sequence != Sock->SendSequence - 1)
+			int AckSeq = packetBuffer.data[0] | (packetBuffer.data[1] << 8) |
+				(packetBuffer.data[2] << 16) | (packetBuffer.data[3] << 24);
+			if (AckSeq != Sock->SendSequence - 1)
 			{
 				GCon->Log(NAME_DevNet, "Stale ACK received");
 				continue;
 			}
-			if (sequence == Sock->AckSequence)
+			if (AckSeq == Sock->AckSequence)
 			{
 				Sock->AckSequence++;
 				if (Sock->AckSequence != Sock->SendSequence)
@@ -821,22 +823,25 @@ int VDatagramDriver::GetMessage(VSocket* Sock, TArray<vuint8>& Data)
 
 		if (flags & NETFLAG_DATA)
 		{
+			Data.SetNum(length - NET_HEADERSIZE);
+			memcpy(Data.Ptr(), packetBuffer.data, length - NET_HEADERSIZE);
+
 			packetBuffer.flags = NETFLAG_ACK;
-			packetBuffer.sequence = BigLong(sequence);
+			packetBuffer.sequence = BigLong(Sock->UnreliableSendSequence++);
+			packetBuffer.data[0] = sequence;
+			packetBuffer.data[1] = sequence >> 8;
+			packetBuffer.data[2] = sequence >> 16;
+			packetBuffer.data[3] = sequence >> 24;
 			Sock->LanDriver->Write(Sock->LanSocket, (vuint8*)&packetBuffer,
-				NET_HEADERSIZE, &readaddr);
+				NET_HEADERSIZE + 4, &readaddr);
 
 			if (sequence != Sock->ReceiveSequence)
 			{
 				receivedDuplicateCount++;
+				Data.Clear();
 				continue;
 			}
 			Sock->ReceiveSequence++;
-
-			length -= NET_HEADERSIZE;
-
-			Data.SetNum(length);
-			memcpy(Data.Ptr(), packetBuffer.data, length);
 
 			ret = 1;
 			break;
