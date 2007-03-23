@@ -239,6 +239,10 @@ class VClientGameBase : public VObject
 class VClientPlayerNetInfo : public VPlayerNetInfo
 {
 public:
+	VClientPlayerNetInfo(VSocketPublic* Sock)
+	: VPlayerNetInfo(Sock)
+	{}
+
 	//	VPlayerNetInfo interface
 	int GetRawPacket(TArray<vuint8>&);
 	bool ParsePacket(VMessageIn&);

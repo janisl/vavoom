@@ -192,6 +192,25 @@ VPlayerNetInfo::VPlayerNetInfo()
 
 //==========================================================================
 //
+//	VPlayerNetInfo::VPlayerNetInfo
+//
+//==========================================================================
+
+VPlayerNetInfo::VPlayerNetInfo(VSocketPublic* ANetCon)
+: Driver(GNet)
+, NetCon(ANetCon)
+, Message(OUT_MESSAGE_SIZE)
+, MobjUpdateStart(0)
+, LastMessage(0)
+, NeedsUpdate(false)
+, EntChan(NULL)
+, Messages(NULL)
+{
+	EntChan = new VEntityChannel[GMaxEntities];
+}
+
+//==========================================================================
+//
 //	VPlayerNetInfo::~VPlayerNetInfo
 //
 //==========================================================================
@@ -200,19 +219,17 @@ VPlayerNetInfo::~VPlayerNetInfo()
 {
 	delete[] EntChan;
 	Chan.SetPlayer(NULL);
-}
-
-//==========================================================================
-//
-//	VPlayerNetInfo::SetNetCon
-//
-//==========================================================================
-
-void VPlayerNetInfo::SetNetCon(VSocketPublic* ANetCon)
-{
-	guard(VPlayerNetInfo::SetNetCon);
-	NetCon = ANetCon;
-	unguard;
+	for (VMessageOut* Msg = Messages; Msg; )
+	{
+		VMessageOut* Next = Msg->Next;
+		delete Msg;
+		Msg = Next;
+	}
+	if (NetCon)
+	{
+		NetCon->Close();
+	}
+	NetCon = NULL;
 }
 
 //==========================================================================
@@ -442,23 +459,6 @@ bool VPlayerNetInfo::IsLocalConnection()
 {
 	guard(VPlayerNetInfo::IsLocalConnection);
 	return NetCon->IsLocalConnection();
-	unguard;
-}
-
-//==========================================================================
-//
-//	VPlayerNetInfo::CloseSocket
-//
-//==========================================================================
-
-void VPlayerNetInfo::CloseSocket()
-{
-	guard(VPlayerNetInfo::CloseSocket);
-	if (NetCon)
-	{
-		NetCon->Close();
-	}
-	NetCon = NULL;
 	unguard;
 }
 

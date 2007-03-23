@@ -91,8 +91,6 @@ void CL_Init()
 		VClass::FindClass("ClientGame"));
 	cl = (VBasePlayer*)VObject::StaticSpawnObject(
 		VClass::FindClass("Player"));
-	cl->Net = new VClientPlayerNetInfo();
-	cl->Net->Chan.SetPlayer(cl);
 	cl->ViewEnt = Spawn<VEntity>();
 	GClGame->cl = cl;
 	GClGame->level = &cl_level;
@@ -379,7 +377,8 @@ void CL_Disconnect()
 		cl->Net->Message << (byte)clc_disconnect;
 		cl->Net->SendMessage(&cl->Net->Message, false);
 		cl->Net->Message.Clear();
-		cl->Net->CloseSocket();
+		delete cl->Net;
+		cl->Net = NULL;
 
 		cls.state = ca_disconnected;
 #ifdef SERVER
@@ -417,12 +416,14 @@ void CL_EstablishConnection(const char* host)
 
 	CL_Disconnect();
 
-	cl->Net->SetNetCon(GNet->Connect(host));
-	if (!cl->Net->ValidNetCon())
+	VSocketPublic* Sock = GNet->Connect(host);
+	if (!Sock)
 	{
 		GCon->Log("Failed to connect to the server");
 		return;
 	}
+	cl->Net = new VClientPlayerNetInfo(Sock);
+	cl->Net->Chan.SetPlayer(cl);
 	GCon->Logf(NAME_Dev, "CL_EstablishConnection: connected to %s", host);
 
 	UserInfoSent = false;

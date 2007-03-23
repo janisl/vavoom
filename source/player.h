@@ -118,10 +118,10 @@ public:
 	VMessageOut*	Messages;
 
 	VPlayerNetInfo();
+	VPlayerNetInfo(VSocketPublic*);
 	virtual ~VPlayerNetInfo();
 
 	//	VPlayerNetInfo interface
-	void SetNetCon(VSocketPublic*);
 	bool GetMessages();
 	virtual int GetRawPacket(TArray<vuint8>&);
 	bool ReceivedPacket(VMessageIn&);
@@ -130,7 +130,6 @@ public:
 	virtual void SendAck(vuint32);
 	bool CanSendMessage();
 	bool IsLocalConnection();
-	void CloseSocket();
 	bool ValidNetCon() const
 	{
 		return NetCon != NULL;

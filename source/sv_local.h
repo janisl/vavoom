@@ -266,6 +266,10 @@ extern TArray<VSndSeqInfo>	sv_ActiveSequences;
 class VServerPlayerNetInfo : public VPlayerNetInfo
 {
 public:
+	VServerPlayerNetInfo(VSocketPublic* Sock)
+	: VPlayerNetInfo(Sock)
+	{}
+
 	//	VPlayerNetInfo interface
 	bool ParsePacket(VMessageIn&);
 };

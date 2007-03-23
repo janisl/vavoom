@@ -237,8 +237,6 @@ void SV_Init()
 	{
 		GPlayersBase[i] = (VBasePlayer*)VObject::StaticSpawnObject(
 			PlayerClass);
-		GPlayersBase[i]->Net = new VServerPlayerNetInfo();
-		GPlayersBase[i]->Net->Chan.SetPlayer(GPlayersBase[i]);
 	}
 
 	GGameInfo->validcount = &validcount;
@@ -425,6 +423,7 @@ VEntityChannel::VEntityChannel()
 
 VEntityChannel::~VEntityChannel()
 {
+	SetEntity(NULL);
 }
 
 //==========================================================================
@@ -2889,24 +2888,15 @@ void SV_DropClient(bool)
 	sv_player->PlayerFlags &= ~VBasePlayer::PF_Active;
 	GGameInfo->Players[SV_GetPlayerNum(sv_player)] = NULL;
 	sv_player->PlayerFlags &= ~VBasePlayer::PF_Spawned;
-	sv_player->Net->CloseSocket();
-	for (VMessageOut* Msg = sv_player->Net->Messages; Msg; )
-	{
-		VMessageOut* Next = Msg->Next;
-		delete Msg;
-		Msg = Next;
-	}
-	sv_player->Net->Messages = NULL;
+
+	delete sv_player->Net;
+	sv_player->Net = NULL;
+
 	svs.num_connected--;
 	sv_player->UserInfo = VStr();
 	*sv_reliable << (vuint8)svc_userinfo
 				<< (vuint8)SV_GetPlayerNum(sv_player)
 				<< "";
-
-	for (int i = 0; i < GMaxEntities; i++)
-	{
-		sv_player->Net->EntChan[i].SetEntity(NULL);
-	}
 	unguard;
 }
 
@@ -3151,7 +3141,8 @@ void SV_CheckForNewClients()
 		if (i == svs.max_clients)
 			Sys_Error("Host_CheckForNewClients: no free clients");
 
-		GPlayersBase[i]->Net->SetNetCon(sock);
+		GPlayersBase[i]->Net = new VServerPlayerNetInfo(sock);
+		GPlayersBase[i]->Net->Chan.SetPlayer(GPlayersBase[i]);
 		SV_ConnectClient(GPlayersBase[i]);
 		svs.num_connected++;
 	}
@@ -3186,9 +3177,10 @@ void SV_ConnectBot(const char *name)
 	if (i == svs.max_clients)
 		Sys_Error("SV_ConnectBot: no free clients");
 
-	GPlayersBase[i]->Net->SetNetCon(sock);
 	GPlayersBase[i]->PlayerFlags |= VBasePlayer::PF_IsBot;
 	GPlayersBase[i]->PlayerName = name;
+	GPlayersBase[i]->Net = new VServerPlayerNetInfo(sock);
+	GPlayersBase[i]->Net->Chan.SetPlayer(GPlayersBase[i]);
 	SV_ConnectClient(GPlayersBase[i]);
 	svs.num_connected++;
 
