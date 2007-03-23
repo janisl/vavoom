@@ -37,8 +37,11 @@
 #if 1
 #define D3D_OVERLOADS
 #include <d3d.h>
-#else
+#elif 1
 #include <d3d8.h>
+#include <dx7todx8.h>
+#else
+#include <d3d9.h>
 #include <dx7todx8.h>
 #endif
 #include "cl_local.h"
@@ -225,7 +228,9 @@ private:
 	void FlushTextures();
 	void ReleaseTextures();
 	static int ToPowerOf2(int);
-#if DIRECT3D_VERSION >= 0x0800
+#if DIRECT3D_VERSION >= 0x0900
+	LPDIRECT3DTEXTURE9 CreateSurface(int, int, int, bool);
+#elif DIRECT3D_VERSION >= 0x0800
 	LPDIRECT3DTEXTURE8 CreateSurface(int, int, int, bool);
 #else
 	LPDIRECTDRAWSURFACE7 CreateSurface(int, int, int, bool);
@@ -233,7 +238,9 @@ private:
 	void SetPic(int);
 	void GenerateTexture(int);
 	void GenerateTranslatedSprite(int, int, int);
-#if DIRECT3D_VERSION >= 0x0800
+#if DIRECT3D_VERSION >= 0x0900
+	void UploadTextureImage(LPDIRECT3DTEXTURE9, int, int, int, rgba_t*);
+#elif DIRECT3D_VERSION >= 0x0800
 	void UploadTextureImage(LPDIRECT3DTEXTURE8, int, int, int, rgba_t*);
 #else
 	void UploadTextureImage(LPDIRECTDRAWSURFACE7, int, int, rgba_t*);
@@ -241,7 +248,10 @@ private:
 	void AdjustGamma(rgba_t *, int);
 	void ResampleTexture(int, int, const byte*, int, int, byte*);
 	void MipMap(int, int, byte*);
-#if DIRECT3D_VERSION >= 0x0800
+#if DIRECT3D_VERSION >= 0x0900
+	LPDIRECT3DTEXTURE9 UploadTexture8(int, int, byte*, rgba_t*);
+	LPDIRECT3DTEXTURE9 UploadTexture(int, int, rgba_t*);
+#elif DIRECT3D_VERSION >= 0x0800
 	LPDIRECT3DTEXTURE8 UploadTexture8(int, int, byte*, rgba_t*);
 	LPDIRECT3DTEXTURE8 UploadTexture(int, int, rgba_t*);
 #else
@@ -284,7 +294,15 @@ private:
 
 	bool						Windowed;
 
-#if DIRECT3D_VERSION >= 0x0800
+#if DIRECT3D_VERSION >= 0x0900
+	HMODULE						DLLHandle;
+
+	//	Direct3D interfaces
+	LPDIRECT3D9					Direct3D;
+	LPDIRECT3DDEVICE9			RenderDevice;
+
+	D3DVIEWPORT9				viewData;
+#elif DIRECT3D_VERSION >= 0x0800
 	HMODULE						DLLHandle;
 
 	//	Direct3D interfaces
@@ -348,7 +366,10 @@ private:
 #endif
 
 	//	Textures.
-#if DIRECT3D_VERSION >= 0x0800
+#if DIRECT3D_VERSION >= 0x0900
+	LPDIRECT3DTEXTURE9			*trsprdata;
+	LPDIRECT3DTEXTURE9			particle_texture;
+#elif DIRECT3D_VERSION >= 0x0800
 	LPDIRECT3DTEXTURE8			*trsprdata;
 	LPDIRECT3DTEXTURE8			particle_texture;
 #else
@@ -367,7 +388,9 @@ private:
 	surface_t*					SkyPortalsTail;
 
 	//	Lightmaps.
-#if DIRECT3D_VERSION >= 0x0800
+#if DIRECT3D_VERSION >= 0x0900
+	LPDIRECT3DTEXTURE9			*light_surf;
+#elif DIRECT3D_VERSION >= 0x0800
 	LPDIRECT3DTEXTURE8			*light_surf;
 #else
 	LPDIRECTDRAWSURFACE7		*light_surf;
@@ -377,7 +400,9 @@ private:
 	surfcache_t					*light_chain[NUM_BLOCK_SURFS];
 
 	//	Specular lightmaps.
-#if DIRECT3D_VERSION >= 0x0800
+#if DIRECT3D_VERSION >= 0x0900
+	LPDIRECT3DTEXTURE9			*add_surf;
+#elif DIRECT3D_VERSION >= 0x0800
 	LPDIRECT3DTEXTURE8			*add_surf;
 #else
 	LPDIRECTDRAWSURFACE7		*add_surf;

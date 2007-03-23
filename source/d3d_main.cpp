@@ -125,7 +125,31 @@ VDirect3DDrawer::VDirect3DDrawer()
 void VDirect3DDrawer::Init()
 {
 	guard(VDirect3DDrawer::Init);
-#if DIRECT3D_VERSION >= 0x0800
+#if DIRECT3D_VERSION >= 0x0900
+	typedef IDirect3D9* (WINAPI*fp_Direct3DCreate9)(UINT SDKVersion);
+
+	fp_Direct3DCreate9 p_Direct3DCreate9;
+
+	DLLHandle = LoadLibrary("d3d9.dll");
+	if (!DLLHandle)
+	{
+		Sys_Error("Couldn't load d3d9.dll");
+	}
+
+	p_Direct3DCreate9 = (fp_Direct3DCreate9)GetProcAddress(DLLHandle,
+		"Direct3DCreate9");
+	if (!p_Direct3DCreate9)
+	{
+		Sys_Error("Symbol Direct3DCreate9 not found");
+	}
+
+	// Create Direct3D object
+	Direct3D = p_Direct3DCreate9(D3D_SDK_VERSION);
+	if (!Direct3D)
+	{
+		Sys_Error("Failed to create Direct3D object");
+	}
+#elif DIRECT3D_VERSION >= 0x0800
 	typedef IDirect3D8* (WINAPI*fp_Direct3DCreate8)(UINT SDKVersion);
 
 	fp_Direct3DCreate8 p_Direct3DCreate8;
@@ -355,8 +379,6 @@ bool VDirect3DDrawer::SetResolution(int Width, int Height, int BPP,
 	d3dpp.EnableAutoDepthStencil = TRUE;
 	d3dpp.AutoDepthStencilFormat = D3DFMT_D24S8;
 	d3dpp.Flags = D3DPRESENTFLAG_LOCKABLE_BACKBUFFER;
-	d3dpp.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
-	d3dpp.FullScreen_PresentationInterval = D3DPRESENT_INTERVAL_DEFAULT;
 
 	if (Direct3D->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hwnd,
 //		D3DCREATE_FPU_PRESERVE | D3DCREATE_HARDWARE_VERTEXPROCESSING,
@@ -366,7 +388,11 @@ bool VDirect3DDrawer::SetResolution(int Width, int Height, int BPP,
 		return false;
 	}
 
+#if DIRECT3D_VERSION >= 0x0900
+	D3DCAPS9 DeviceCaps;
+#else
 	D3DCAPS8 DeviceCaps;
+#endif
 	RenderDevice->GetDeviceCaps(&DeviceCaps);
 //	VCvar::Set("r_sort_sprites", int((DeviceCaps.DevCaps & D3DDEVCAPS_SORTINCREASINGZ) != 0));
 	square_textures = (DeviceCaps.TextureCaps & D3DPTEXTURECAPS_SQUAREONLY) != 0;
@@ -382,7 +408,11 @@ bool VDirect3DDrawer::SetResolution(int Width, int Height, int BPP,
 		//	In software actually can be only one texture
 		maxMultiTex = 1;
 	}
+#if DIRECT3D_VERSION >= 0x0900
+	RenderDevice->SetSamplerState(0, D3DSAMP_MAXANISOTROPY, DeviceCaps.MaxAnisotropy);
+#else
 	RenderDevice->SetTextureStageState(0, D3DTSS_MAXANISOTROPY, DeviceCaps.MaxAnisotropy);
+#endif
 
 	abits = 1;
 	ashift = 15;
@@ -592,7 +622,10 @@ bool VDirect3DDrawer::SetResolution(int Width, int Height, int BPP,
 void VDirect3DDrawer::InitResolution()
 {
 	guard(VDirect3DDrawer::InitResolution);
-#if DIRECT3D_VERSION >= 0x0800
+#if DIRECT3D_VERSION >= 0x0900
+	RenderDevice->SetStreamSource(0, NULL, 0, sizeof(MyD3DVertex));
+	RenderDevice->SetFVF(MYD3D_VERTEX_FORMAT);
+#elif DIRECT3D_VERSION >= 0x0800
 	RenderDevice->SetStreamSource(0, NULL, sizeof(MyD3DVertex));
 	RenderDevice->SetVertexShader(MYD3D_VERTEX_FORMAT);
 #endif
@@ -719,9 +752,15 @@ void VDirect3DDrawer::StartUpdate()
 		lastgamma = usegamma;
 	}
 
+#if DIRECT3D_VERSION >= 0x0900
+	RenderDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, magfilter);
+	RenderDevice->SetSamplerState(0, D3DSAMP_MINFILTER, minfilter);
+	RenderDevice->SetSamplerState(0, D3DSAMP_MIPFILTER, mipfilter);
+#else
 	RenderDevice->SetTextureStageState(0, D3DTSS_MAGFILTER, magfilter);
 	RenderDevice->SetTextureStageState(0, D3DTSS_MINFILTER, minfilter);
 	RenderDevice->SetTextureStageState(0, D3DTSS_MIPFILTER, mipfilter);
+#endif
 
 	//	Dithering
 	if (dither)
@@ -751,8 +790,13 @@ void VDirect3DDrawer::Setup2D()
 	guard(VDirect3DDrawer::Setup2D);
 	//	Setup viewport
 #if DIRECT3D_VERSION >= 0x0800
+#if DIRECT3D_VERSION >= 0x0900
+	D3DVIEWPORT9 view2D;
+	memset(&view2D, 0, sizeof(D3DVIEWPORT9));
+#else
 	D3DVIEWPORT8 view2D;
 	memset(&view2D, 0, sizeof(D3DVIEWPORT8));
+#endif
 	view2D.X = 0;
 	view2D.Y = 0;
 	view2D.Width  = ScreenWidth;
@@ -807,7 +851,11 @@ void VDirect3DDrawer::SetupView(VRenderLevelDrawer* ARLev, const refdef_t *rd)
 
 	//	Setup viewport
 #if DIRECT3D_VERSION >= 0x0800
+#if DIRECT3D_VERSION >= 0x0900
+	memset(&viewData, 0, sizeof(D3DVIEWPORT9));
+#else
 	memset(&viewData, 0, sizeof(D3DVIEWPORT8));
+#endif
 	viewData.X = rd->x;
 	viewData.Y = rd->y;
 	viewData.Width  = rd->width;
@@ -1045,8 +1093,13 @@ void *VDirect3DDrawer::ReadScreen(int *bpp, bool *bot2top)
 	void* dst = Z_Malloc(ScreenWidth * ScreenHeight * sizeof(rgb_t));
 
 #if DIRECT3D_VERSION >= 0x0800
+#if DIRECT3D_VERSION >= 0x0900
+	LPDIRECT3DSURFACE9 surf;
+	RenderDevice->GetRenderTarget(0, &surf);
+#else
 	LPDIRECT3DSURFACE8 surf;
 	RenderDevice->GetRenderTarget(&surf);
+#endif
 
 	D3DSURFACE_DESC desc;
 	surf->GetDesc(&desc);
