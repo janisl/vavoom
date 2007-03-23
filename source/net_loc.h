@@ -32,7 +32,7 @@
 
 #define HOSTCACHESIZE		8
 
-#define NET_HEADERSIZE		(1 + sizeof(vuint32))
+#define NET_HEADERSIZE		(1)
 #define NET_DATAGRAMSIZE	(MAX_MSGLEN + NET_HEADERSIZE)
 
 class VNetDriver;

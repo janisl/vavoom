@@ -291,6 +291,19 @@ bool VPlayerNetInfo::GetMessages()
 		}
 	} while (ret > 0);
 
+	//	Resend message if needed.
+	//FIXME This is absolutely wrong place to do this.
+	if (!NetCon->CanSend && (Driver->NetTime - NetCon->LastSendTime) > 1.0)
+	{
+		VBitStreamWriter Out(MAX_MSGLEN * 8);
+		Out << NetCon->UnreliableSendSequence;
+		NetCon->UnreliableSendSequence++;
+		Out.Serialise(NetCon->SendMessageData + 4, NetCon->SendMessageLength - 4);
+		NetCon->SendMessage(Out.GetData(), Out.GetNumBytes());
+		NetCon->LastSendTime = Driver->NetTime;
+		Driver->packetsReSent++;
+	}
+
 	return true;
 	unguard;
 }
@@ -318,6 +331,21 @@ int VPlayerNetInfo::GetRawPacket(TArray<vuint8>& Data)
 bool VPlayerNetInfo::ReceivedPacket(VMessageIn& Msg)
 {
 	guard(VPlayerNetInfo::ReceivedPacket);
+	vuint32 Sequence;
+	Msg << Sequence;
+	if (Sequence < NetCon->UnreliableReceiveSequence)
+	{
+		GCon->Log(NAME_DevNet, "Got a stale datagram");
+		return true;
+	}
+	if (Sequence != NetCon->UnreliableReceiveSequence)
+	{
+		int count = Sequence - NetCon->UnreliableReceiveSequence;
+		Driver->droppedDatagrams += count;
+		GCon->Logf(NAME_DevNet, "Dropped %d datagram(s)", count);
+	}
+	NetCon->UnreliableReceiveSequence = Sequence + 1;
+
 	if (Msg.ReadBit())
 	{
 		vuint32 AckSeq;
@@ -376,6 +404,9 @@ int VPlayerNetInfo::SendMessage(VMessageOut* Msg, bool Reliable)
 	guard(VPlayerNetInfo::SendMessage);
 	VBitStreamWriter	Out(MAX_MSGLEN * 8);
 
+	Out << NetCon->UnreliableSendSequence;
+	NetCon->UnreliableSendSequence++;
+
 	Out.WriteBit(false);
 	Out.WriteBit(Reliable);
 	if (Reliable)
@@ -406,6 +437,8 @@ int VPlayerNetInfo::SendMessage(VMessageOut* Msg, bool Reliable)
 		NetCon->SendMessageLength = Out.GetNumBytes();
 	}
 
+	Driver->packetsSent++;
+
 	return NetCon->SendMessage(Out.GetData(), Out.GetNumBytes());
 	unguard;
 }
@@ -420,6 +453,9 @@ void VPlayerNetInfo::SendAck(vuint32 Sequence)
 {
 	guard(VPlayerNetInfo::SendAck);
 	VBitStreamWriter	Out(MAX_MSGLEN * 8);
+
+	Out << NetCon->UnreliableSendSequence;
+	NetCon->UnreliableSendSequence++;
 
 	Out.WriteBit(true);
 	Out << Sequence;

@@ -99,14 +99,11 @@ public:
 		CCREP_SERVER_INFO		= 13
 	};
 
-#pragma pack(push, 1)
 	struct
 	{
 		vuint8		flags;
-		vuint32		sequence;
 		vuint8		data[MAX_MSGLEN];
 	} packetBuffer;
-#pragma pack(pop)
 
 	VDatagramDriver();
 	int Init();
@@ -123,8 +120,6 @@ public:
 	void SearchForHosts(VNetLanDriver*, bool);
 	VSocket* Connect(VNetLanDriver*, const char*);
 	VSocket* CheckNewConnections(VNetLanDriver*);
-	int BuildNetPacket(vuint32, vuint32, vuint8*, vuint32);
-	int ReSendMessage(VSocket*);
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -702,16 +697,10 @@ VSocket* VDatagramDriver::CheckNewConnections()
 int VDatagramDriver::GetMessage(VSocket* Sock, TArray<vuint8>& Data)
 {
 	guard(VDatagramDriver::GetMessage);
-	vuint32		sequence;
 	vuint32		length;
 	vuint32		flags;
 	sockaddr_t	readaddr;
 	int			ret = 0;
-	vuint32		count;
-
-	//	Resend message if needed.
-	if (!Sock->CanSend && (Net->NetTime - Sock->LastSendTime) > 1.0)
-		ReSendMessage(Sock);
 
 	while(1)
 	{
@@ -747,21 +736,7 @@ int VDatagramDriver::GetMessage(VSocket* Sock, TArray<vuint8>& Data)
 		if (!(flags & NETFLAG_UNRELIABLE))
 			continue;
 
-		sequence = BigLong(packetBuffer.sequence);
 		Net->packetsReceived++;
-
-		if (sequence < Sock->UnreliableReceiveSequence)
-		{
-			GCon->Log(NAME_DevNet, "Got a stale datagram");
-			continue;
-		}
-		if (sequence != Sock->UnreliableReceiveSequence)
-		{
-			count = sequence - Sock->UnreliableReceiveSequence;
-			Net->droppedDatagrams += count;
-			GCon->Logf(NAME_DevNet, "Dropped %d datagram(s)", count);
-		}
-		Sock->UnreliableReceiveSequence = sequence + 1;
 
 		length -= NET_HEADERSIZE;
 
@@ -778,23 +753,6 @@ int VDatagramDriver::GetMessage(VSocket* Sock, TArray<vuint8>& Data)
 
 //==========================================================================
 //
-//	VDatagramDriver::BuildNetPacket
-//
-//==========================================================================
-
-int VDatagramDriver::BuildNetPacket(vuint32 Flags, vuint32 Sequence,
-	vuint8* Data, vuint32 DataLen)
-{
-	guard(VDatagramDriver::BuildNetPacket);
-	memcpy(packetBuffer.data, Data, DataLen);
-	packetBuffer.flags = Flags;
-	packetBuffer.sequence = BigLong(Sequence);
-	return NET_HEADERSIZE + DataLen;
-	unguard;
-}
-
-//==========================================================================
-//
 //	VDatagramDriver::SendMessage
 //
 //==========================================================================
@@ -802,52 +760,17 @@ int VDatagramDriver::BuildNetPacket(vuint32 Flags, vuint32 Sequence,
 int VDatagramDriver::SendMessage(VSocket* Sock, vuint8* Data, vuint32 Length)
 {
 	guard(VDatagramDriver::SendMessage);
-#ifdef PARANOID
-	if (Length == 0)
-		Sys_Error("Datagram_SendMessage: zero length message\n");
+	checkSlow(Length > 0);
+	checkSlow(Length <= MAX_MSGLEN);
 
-	if (Length > MAX_MSGLEN)
-		Sys_Error("Datagram_SendMessage: message too big %u\n", Length);
-#endif
-
-	vuint32 packetLen = BuildNetPacket(NETFLAG_UNRELIABLE,
-		Sock->UnreliableSendSequence++, Data, Length);
+	packetBuffer.flags = NETFLAG_UNRELIABLE;
+	memcpy(packetBuffer.data, Data, Length);
 
 	if (Sock->LanDriver->Write(Sock->LanSocket, (vuint8*)&packetBuffer,
-		packetLen, &Sock->Addr) == -1)
+		NET_HEADERSIZE + DataLen, &Sock->Addr) == -1)
 	{
 		return -1;
 	}
-
-	Net->packetsSent++;
-	return 1;
-	unguard;
-}
-
-//==========================================================================
-//
-//	VDatagramDriver::ReSendMessage
-//
-//==========================================================================
-
-int VDatagramDriver::ReSendMessage(VSocket* sock)
-{
-	guard(VDatagramDriver::ReSendMessage);
-	vuint32		packetLen;
-	vuint32		dataLen;
-
-	dataLen = sock->SendMessageLength;
-	packetLen = BuildNetPacket(NETFLAG_UNRELIABLE, sock->UnreliableSendSequence++,
-		sock->SendMessageData, dataLen);
-
-	if (sock->LanDriver->Write(sock->LanSocket, (vuint8*)&packetBuffer,
-		packetLen, &sock->Addr) == -1)
-	{
-		return -1;
-	}
-
-	sock->LastSendTime = Net->NetTime;
-	Net->packetsReSent++;
 	return 1;
 	unguard;
 }
