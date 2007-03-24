@@ -280,6 +280,7 @@ bool VPlayerNetInfo::GetMessages()
 			else
 			{
 				GCon->Logf(NAME_DevNet, "Packet is too small");
+				Driver->shortPacketCount++;
 			}
 		}
 
@@ -296,9 +297,10 @@ bool VPlayerNetInfo::GetMessages()
 	if (!NetCon->CanSend && (Driver->NetTime - NetCon->LastSendTime) > 1.0)
 	{
 		VBitStreamWriter Out(MAX_MSGLEN * 8);
+		Out.WriteInt(NETPACKET_DATA, 256);
 		Out << NetCon->UnreliableSendSequence;
 		NetCon->UnreliableSendSequence++;
-		Out.Serialise(NetCon->SendMessageData + 4, NetCon->SendMessageLength - 4);
+		Out.Serialise(NetCon->SendMessageData + 5, NetCon->SendMessageLength - 5);
 		NetCon->SendMessage(Out.GetData(), Out.GetNumBytes());
 		NetCon->LastSendTime = Driver->NetTime;
 		Driver->packetsReSent++;
@@ -331,8 +333,17 @@ int VPlayerNetInfo::GetRawPacket(TArray<vuint8>& Data)
 bool VPlayerNetInfo::ReceivedPacket(VMessageIn& Msg)
 {
 	guard(VPlayerNetInfo::ReceivedPacket);
+	if (Msg.ReadInt(256) != NETPACKET_DATA)
+		return true;
+	Driver->packetsReceived++;
+
 	vuint32 Sequence;
 	Msg << Sequence;
+	if (Msg.IsError())
+	{
+		GCon->Log(NAME_DevNet, "Packet is missing packet ID");
+		return true;
+	}
 	if (Sequence < NetCon->UnreliableReceiveSequence)
 	{
 		GCon->Log(NAME_DevNet, "Got a stale datagram");
@@ -404,6 +415,7 @@ int VPlayerNetInfo::SendMessage(VMessageOut* Msg, bool Reliable)
 	guard(VPlayerNetInfo::SendMessage);
 	VBitStreamWriter	Out(MAX_MSGLEN * 8);
 
+	Out.WriteInt(NETPACKET_DATA, 256);
 	Out << NetCon->UnreliableSendSequence;
 	NetCon->UnreliableSendSequence++;
 
@@ -454,6 +466,7 @@ void VPlayerNetInfo::SendAck(vuint32 Sequence)
 	guard(VPlayerNetInfo::SendAck);
 	VBitStreamWriter	Out(MAX_MSGLEN * 8);
 
+	Out.WriteInt(NETPACKET_DATA, 256);
 	Out << NetCon->UnreliableSendSequence;
 	NetCon->UnreliableSendSequence++;
 

@@ -23,6 +23,16 @@
 //**
 //**************************************************************************
 
+//	Packet header IDs.
+//	Since control and data communications are on different ports, there should
+// never be a case when these are mixed. But I will keep it for now just in
+// case.
+enum
+{
+	NETPACKET_DATA		= 0x40,
+	NETPACKET_CTL		= 0x80
+};
+
 enum
 {
 	MAX_MSGLEN					= 1024,		// max length of a message
