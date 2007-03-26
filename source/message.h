@@ -51,11 +51,15 @@ public:
 	VMessageOut(vint32 AMax)
 	: VBitStreamWriter(AMax)
 	, AllowOverflow(false)
+	, bReliable(false)
 	{
 	}
 
 	VMessageOut*	Next;
 	vint8			AllowOverflow;	// if false, do a Sys_Error
+	bool			bReliable;		//	Needs ACK or not
+	int				Sequence;		//	Reliable message sequence ID
+	double			Time;			//	Time this message has been sent
 
 	void SerialiseBits(void*, int);
 	void Clear();

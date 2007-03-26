@@ -177,25 +177,6 @@ void VPlayerChannel::Update()
 //
 //==========================================================================
 
-VPlayerNetInfo::VPlayerNetInfo()
-: Driver(GNet)
-, NetCon(NULL)
-, Message(OUT_MESSAGE_SIZE)
-, MobjUpdateStart(0)
-, LastMessage(0)
-, NeedsUpdate(false)
-, EntChan(NULL)
-, Messages(NULL)
-{
-	EntChan = new VEntityChannel[GMaxEntities];
-}
-
-//==========================================================================
-//
-//	VPlayerNetInfo::VPlayerNetInfo
-//
-//==========================================================================
-
 VPlayerNetInfo::VPlayerNetInfo(VSocketPublic* ANetCon)
 : Driver(GNet)
 , NetCon(ANetCon)
@@ -205,6 +186,8 @@ VPlayerNetInfo::VPlayerNetInfo(VSocketPublic* ANetCon)
 , NeedsUpdate(false)
 , EntChan(NULL)
 , Messages(NULL)
+, SendMessageData(0)
+, Out(MAX_MSGLEN * 8)
 {
 	EntChan = new VEntityChannel[GMaxEntities];
 }
@@ -294,15 +277,9 @@ bool VPlayerNetInfo::GetMessages()
 
 	//	Resend message if needed.
 	//FIXME This is absolutely wrong place to do this.
-	if (!NetCon->CanSend && (Driver->NetTime - NetCon->LastSendTime) > 1.0)
+	if (!NetCon->CanSend && (Driver->NetTime - SendMessageData.Time) > 1.0)
 	{
-		VBitStreamWriter Out(MAX_MSGLEN * 8);
-		Out.WriteInt(NETPACKET_DATA, 256);
-		Out << NetCon->UnreliableSendSequence;
-		NetCon->UnreliableSendSequence++;
-		Out.Serialise(NetCon->SendMessageData + 5, NetCon->SendMessageLength - 5);
-		NetCon->SendMessage(Out.GetData(), Out.GetNumBytes());
-		NetCon->LastSendTime = Driver->NetTime;
+		SendRawMessage(SendMessageData);
 		Driver->packetsReSent++;
 	}
 
@@ -370,7 +347,7 @@ bool VPlayerNetInfo::ReceivedPacket(VMessageIn& Msg)
 			NetCon->AckSequence++;
 			if (NetCon->AckSequence != NetCon->SendSequence)
 				GCon->Log(NAME_DevNet, "ack sequencing error");
-			NetCon->SendMessageLength = 0;
+			SendMessageData = VMessageOut(0);
 			NetCon->CanSend = true;
 		}
 		else
@@ -410,48 +387,54 @@ bool VPlayerNetInfo::ReceivedPacket(VMessageIn& Msg)
 //
 //==========================================================================
 
-int VPlayerNetInfo::SendMessage(VMessageOut* Msg, bool Reliable)
+int VPlayerNetInfo::SendMessage(VMessageOut* AMsg, bool Reliable)
 {
 	guard(VPlayerNetInfo::SendMessage);
-	VBitStreamWriter	Out(MAX_MSGLEN * 8);
-
-	Out.WriteInt(NETPACKET_DATA, 256);
-	Out << NetCon->UnreliableSendSequence;
-	NetCon->UnreliableSendSequence++;
-
-	Out.WriteBit(false);
-	Out.WriteBit(Reliable);
+	VMessageOut* Msg = AMsg;
+	Msg->bReliable = Reliable;
 	if (Reliable)
 	{
 #ifdef PARANOID
 		if (NetCon->CanSend == false)
 			Sys_Error("SendMessage: called with canSend == false\n");
 #endif
+		Msg->Sequence = NetCon->SendSequence;
 
-		Out << NetCon->SendSequence;
+		SendMessageData = *Msg;
+		Msg = &SendMessageData;
 
 		NetCon->SendSequence++;
 		NetCon->CanSend = false;
-		NetCon->LastSendTime = Driver->NetTime;
 	}
-	Out.SerialiseBits(Msg->GetData(), Msg->GetNumBits());
-	//	Add trailing bit so we can find out how many bits the message has.
-	Out.WriteBit(true);
-	//	Pad it with zero bits untill byte boundary.
-	while (Out.GetNumBits() & 7)
-	{
-		Out.WriteBit(false);
-	}
-
-	if (Reliable)
-	{
-		memcpy(NetCon->SendMessageData, Out.GetData(), Out.GetNumBytes());
-		NetCon->SendMessageLength = Out.GetNumBytes();
-	}
-
 	Driver->packetsSent++;
 
-	return NetCon->SendMessage(Out.GetData(), Out.GetNumBytes());
+	return SendRawMessage(*Msg);
+	unguard;
+}
+
+//==========================================================================
+//
+//	VPlayerNetInfo::SendRawMessage
+//
+//==========================================================================
+
+int VPlayerNetInfo::SendRawMessage(VMessageOut& Msg)
+{
+	guard(VPlayerNetInfo::SendRawMessage);
+	Out.WriteInt(NETPACKET_DATA, 256);
+	Out << NetCon->UnreliableSendSequence;
+
+	Out.WriteBit(false);
+	Out.WriteBit(Msg.bReliable);
+	if (Msg.bReliable)
+	{
+		Out << Msg.Sequence;
+	}
+	Out.SerialiseBits(Msg.GetData(), Msg.GetNumBits());
+
+	Msg.Time = Driver->NetTime;
+
+	return Flush();
 	unguard;
 }
 
@@ -464,15 +447,23 @@ int VPlayerNetInfo::SendMessage(VMessageOut* Msg, bool Reliable)
 void VPlayerNetInfo::SendAck(vuint32 Sequence)
 {
 	guard(VPlayerNetInfo::SendAck);
-	VBitStreamWriter	Out(MAX_MSGLEN * 8);
-
 	Out.WriteInt(NETPACKET_DATA, 256);
 	Out << NetCon->UnreliableSendSequence;
-	NetCon->UnreliableSendSequence++;
-
 	Out.WriteBit(true);
 	Out << Sequence;
+	Flush();
+	unguard;
+}
 
+//==========================================================================
+//
+//	VPlayerNetInfo::Flush
+//
+//==========================================================================
+
+int VPlayerNetInfo::Flush()
+{
+	guard(VPlayerNetInfo::Flush);
 	//	Add trailing bit so we can find out how many bits the message has.
 	Out.WriteBit(true);
 	//	Pad it with zero bits untill byte boundary.
@@ -481,7 +472,16 @@ void VPlayerNetInfo::SendAck(vuint32 Sequence)
 		Out.WriteBit(false);
 	}
 
-	NetCon->SendMessage(Out.GetData(), Out.GetNumBytes());
+	//	Send the message.
+	int Ret = NetCon->SendMessage(Out.GetData(), Out.GetNumBytes());
+
+	//	Increment outgoing packet counter
+	NetCon->UnreliableSendSequence++;
+
+	//	Clear outgoing packet buffer.
+	Out = VBitStreamWriter(MAX_MSGLEN * 8);
+
+	return Ret;
 	unguard;
 }
 

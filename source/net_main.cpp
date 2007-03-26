@@ -394,7 +394,6 @@ VSocket* VNetwork::NewSocket(VNetDriver* Drv)
 	sock->AckSequence = 0;
 	sock->SendSequence = 0;
 	sock->UnreliableSendSequence = 0;
-	sock->SendMessageLength = 0;
 	sock->ReceiveSequence = 0;
 	sock->UnreliableReceiveSequence = 0;
 	sock->LoopbackMessages.Clear();

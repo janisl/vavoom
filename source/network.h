@@ -56,13 +56,10 @@ public:
 
 	double			ConnectTime;
 	double			LastMessageTime;
-	double			LastSendTime;
 
 	vuint32			AckSequence;
 	vuint32			SendSequence;
 	vuint32			UnreliableSendSequence;
-	int				SendMessageLength;
-	vuint8			SendMessageData[MAX_MSGLEN];
 
 	vuint32			ReceiveSequence;
 	vuint32			UnreliableReceiveSequence;

@@ -106,18 +106,19 @@ public:
 class VPlayerNetInfo
 {
 protected:
-	VNetworkPublic*	Driver;
-	VSocketPublic*	NetCon;
+	VNetworkPublic*		Driver;
+	VSocketPublic*		NetCon;
 public:
-	VMessageOut		Message;
-	int				MobjUpdateStart;
-	double			LastMessage;
-	bool			NeedsUpdate;
-	VEntityChannel*	EntChan;
-	VPlayerChannel	Chan;
-	VMessageOut*	Messages;
+	VMessageOut			Message;
+	int					MobjUpdateStart;
+	double				LastMessage;
+	bool				NeedsUpdate;
+	VEntityChannel*		EntChan;
+	VPlayerChannel		Chan;
+	VMessageOut*		Messages;
+	VMessageOut			SendMessageData;
+	VBitStreamWriter	Out;
 
-	VPlayerNetInfo();
 	VPlayerNetInfo(VSocketPublic*);
 	virtual ~VPlayerNetInfo();
 
@@ -127,7 +128,9 @@ public:
 	bool ReceivedPacket(VMessageIn&);
 	virtual bool ParsePacket(VMessageIn&) = 0;
 	virtual int SendMessage(VMessageOut*, bool);
+	int SendRawMessage(VMessageOut&);
 	virtual void SendAck(vuint32);
+	int Flush();
 	bool CanSendMessage();
 	bool IsLocalConnection();
 	bool ValidNetCon() const
