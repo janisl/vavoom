@@ -60,6 +60,7 @@ public:
 	bool			bReliable;		//	Needs ACK or not
 	int				Sequence;		//	Reliable message sequence ID
 	double			Time;			//	Time this message has been sent
+	int				PacketId;		//	Packet in which this message was sent
 
 	void SerialiseBits(void*, int);
 	void Clear();

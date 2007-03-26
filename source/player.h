@@ -130,6 +130,7 @@ public:
 	virtual int SendMessage(VMessageOut*, bool);
 	int SendRawMessage(VMessageOut&);
 	virtual void SendAck(vuint32);
+	void PrepareOut();
 	int Flush();
 	bool CanSendMessage();
 	bool IsLocalConnection();

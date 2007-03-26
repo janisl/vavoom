@@ -334,25 +334,24 @@ bool VPlayerNetInfo::ReceivedPacket(VMessageIn& Msg)
 	}
 	NetCon->UnreliableReceiveSequence = Sequence + 1;
 
+	SendAck(Sequence);
+
 	if (Msg.ReadBit())
 	{
 		vuint32 AckSeq;
 		Msg << AckSeq;
-		if (AckSeq != NetCon->SendSequence - 1)
-		{
-			GCon->Log(NAME_DevNet, "Stale ACK received");
-		}
-		else if (AckSeq == NetCon->AckSequence)
+		if (AckSeq == NetCon->AckSequence)
 		{
 			NetCon->AckSequence++;
-			if (NetCon->AckSequence != NetCon->SendSequence)
-				GCon->Log(NAME_DevNet, "ack sequencing error");
-			SendMessageData = VMessageOut(0);
-			NetCon->CanSend = true;
 		}
 		else
 		{
 			GCon->Log(NAME_DevNet, "Duplicate ACK received");
+		}
+		if (SendMessageData.PacketId == AckSeq)
+		{
+			SendMessageData = VMessageOut(0);
+			NetCon->CanSend = true;
 		}
 	}
 	else
@@ -361,8 +360,6 @@ bool VPlayerNetInfo::ReceivedPacket(VMessageIn& Msg)
 		{
 			vuint32 Seq;
 			Msg << Seq;
-
-			SendAck(Seq);
 
 			if (Seq != NetCon->ReceiveSequence)
 			{
@@ -421,8 +418,7 @@ int VPlayerNetInfo::SendMessage(VMessageOut* AMsg, bool Reliable)
 int VPlayerNetInfo::SendRawMessage(VMessageOut& Msg)
 {
 	guard(VPlayerNetInfo::SendRawMessage);
-	Out.WriteInt(NETPACKET_DATA, 256);
-	Out << NetCon->UnreliableSendSequence;
+	PrepareOut();
 
 	Out.WriteBit(false);
 	Out.WriteBit(Msg.bReliable);
@@ -433,6 +429,7 @@ int VPlayerNetInfo::SendRawMessage(VMessageOut& Msg)
 	Out.SerialiseBits(Msg.GetData(), Msg.GetNumBits());
 
 	Msg.Time = Driver->NetTime;
+	Msg.PacketId = NetCon->UnreliableSendSequence;
 
 	return Flush();
 	unguard;
@@ -447,11 +444,26 @@ int VPlayerNetInfo::SendRawMessage(VMessageOut& Msg)
 void VPlayerNetInfo::SendAck(vuint32 Sequence)
 {
 	guard(VPlayerNetInfo::SendAck);
-	Out.WriteInt(NETPACKET_DATA, 256);
-	Out << NetCon->UnreliableSendSequence;
+	PrepareOut();
+
 	Out.WriteBit(true);
 	Out << Sequence;
+
 	Flush();
+	unguard;
+}
+
+//==========================================================================
+//
+//	VPlayerNetInfo::PrepareOut
+//
+//==========================================================================
+
+void VPlayerNetInfo::PrepareOut()
+{
+	guard(VPlayerNetInfo::PrepareOut);
+	Out.WriteInt(NETPACKET_DATA, 256);
+	Out << NetCon->UnreliableSendSequence;
 	unguard;
 }
 
