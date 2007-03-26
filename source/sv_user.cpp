@@ -249,8 +249,8 @@ bool VPlayerNetInfo::GetMessages()
 					{
 						Length--;
 					}
-					VMessageIn Msg(Data.Ptr(), Length);
-					if (!ReceivedPacket(Msg))
+					VBitStreamReader Packet(Data.Ptr(), Length);
+					if (!ReceivedPacket(Packet))
 					{
 						return false;
 					}
@@ -307,16 +307,16 @@ int VPlayerNetInfo::GetRawPacket(TArray<vuint8>& Data)
 //
 //==========================================================================
 
-bool VPlayerNetInfo::ReceivedPacket(VMessageIn& Msg)
+bool VPlayerNetInfo::ReceivedPacket(VBitStreamReader& Packet)
 {
 	guard(VPlayerNetInfo::ReceivedPacket);
-	if (Msg.ReadInt(256) != NETPACKET_DATA)
+	if (Packet.ReadInt(256) != NETPACKET_DATA)
 		return true;
 	Driver->packetsReceived++;
 
 	vuint32 Sequence;
-	Msg << Sequence;
-	if (Msg.IsError())
+	Packet << Sequence;
+	if (Packet.IsError())
 	{
 		GCon->Log(NAME_DevNet, "Packet is missing packet ID");
 		return true;
@@ -334,45 +334,73 @@ bool VPlayerNetInfo::ReceivedPacket(VMessageIn& Msg)
 	}
 	NetCon->UnreliableReceiveSequence = Sequence + 1;
 
-	SendAck(Sequence);
+	bool NeedsAck = false;
 
-	if (Msg.ReadBit())
+	while (!Packet.AtEnd())
 	{
-		vuint32 AckSeq;
-		Msg << AckSeq;
-		if (AckSeq == NetCon->AckSequence)
+		//	Read a flag to see if it's an ACK or a message.
+		bool IsAck = Packet.ReadBit();
+		if (Packet.IsError())
 		{
-			NetCon->AckSequence++;
+			GCon->Log(NAME_DevNet, "Packet is missing ACK flag");
+			return true;
+		}
+
+		if (IsAck)
+		{
+			vuint32 AckSeq;
+			Packet << AckSeq;
+			if (AckSeq == NetCon->AckSequence)
+			{
+				NetCon->AckSequence++;
+			}
+			else if (AckSeq > NetCon->AckSequence)
+			{
+				NetCon->AckSequence = AckSeq + 1;
+			}
+			else
+			{
+				GCon->Log(NAME_DevNet, "Duplicate ACK received");
+			}
+			if (SendMessageData.PacketId == AckSeq)
+			{
+				SendMessageData = VMessageOut(0);
+				NetCon->CanSend = true;
+			}
 		}
 		else
 		{
-			GCon->Log(NAME_DevNet, "Duplicate ACK received");
-		}
-		if (SendMessageData.PacketId == AckSeq)
-		{
-			SendMessageData = VMessageOut(0);
-			NetCon->CanSend = true;
+			NeedsAck = true;
+			VMessageIn Msg;
+
+			//	Read sequence ID and check for duplicated packets.
+			if (Packet.ReadBit())
+			{
+				vuint32 Seq;
+				Packet << Seq;
+
+				if (Seq != NetCon->ReceiveSequence)
+				{
+					Driver->receivedDuplicateCount++;
+					continue;
+				}
+				NetCon->ReceiveSequence++;
+			}
+
+			//	Read data
+			int Length = Packet.ReadInt(OUT_MESSAGE_SIZE);
+			Msg.SetData(Packet, Length);
+	
+			if (!ParsePacket(Msg))
+			{
+				return false;
+			}
 		}
 	}
-	else
+
+	if (NeedsAck)
 	{
-		if (Msg.ReadBit())
-		{
-			vuint32 Seq;
-			Msg << Seq;
-
-			if (Seq != NetCon->ReceiveSequence)
-			{
-				Driver->receivedDuplicateCount++;
-				return true;
-			}
-			NetCon->ReceiveSequence++;
-		}
-
-		if (!ParsePacket(Msg))
-		{
-			return false;
-		}
+		SendAck(Sequence);
 	}
 	return true;
 	unguard;
@@ -426,6 +454,7 @@ int VPlayerNetInfo::SendRawMessage(VMessageOut& Msg)
 	{
 		Out << Msg.Sequence;
 	}
+	Out.WriteInt(Msg.GetNumBits(), OUT_MESSAGE_SIZE);
 	Out.SerialiseBits(Msg.GetData(), Msg.GetNumBits());
 
 	Msg.Time = Driver->NetTime;

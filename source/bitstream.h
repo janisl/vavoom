@@ -71,6 +71,7 @@ protected:
 
 public:
 	VBitStreamReader(vuint8* = NULL, vint32 = 0);
+	void SetData(VBitStreamReader&, int);
 	void Serialise(void*, int);
 	void SerialiseBits(void*, int);
 	bool ReadBit();

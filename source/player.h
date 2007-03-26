@@ -125,7 +125,7 @@ public:
 	//	VPlayerNetInfo interface
 	bool GetMessages();
 	virtual int GetRawPacket(TArray<vuint8>&);
-	bool ReceivedPacket(VMessageIn&);
+	bool ReceivedPacket(VBitStreamReader&);
 	virtual bool ParsePacket(VMessageIn&) = 0;
 	virtual int SendMessage(VMessageOut*, bool);
 	int SendRawMessage(VMessageOut&);

@@ -232,6 +232,22 @@ VBitStreamReader::VBitStreamReader(vuint8* Src, vint32 Length)
 
 //==========================================================================
 //
+//  VBitStreamReader::SetData
+//
+//==========================================================================
+
+void VBitStreamReader::SetData(VBitStreamReader& Src, int Length)
+{
+	guard(VBitStreamReader::SetData);
+	Data.SetNum((Length + 7) >> 3);
+	Src.SerialiseBits(Data.Ptr(), Length);
+	Num = Length;
+	Pos = 0;
+	unguard;
+}
+
+//==========================================================================
+//
 //  VBitStreamReader::Serialise
 //
 //==========================================================================
