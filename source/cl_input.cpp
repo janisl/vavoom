@@ -634,12 +634,14 @@ void CL_SendMove()
 	// send the reliable message
 	if (!cl->Net->Message.GetNumBits())
 	{
+		cl->Net->Flush();
 		return;		// no message at all
 	}
 
 	if (!cl->Net->CanSendMessage())
 	{
 		GCon->Log(NAME_Dev, "CL_WriteToServer: can't send");
+		cl->Net->Flush();
 		return;
 	}
 
@@ -649,6 +651,7 @@ void CL_SendMove()
 	}
 
 	cl->Net->Message.Clear();
+	cl->Net->Flush();
 	unguard;
 }
 

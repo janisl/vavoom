@@ -1680,6 +1680,17 @@ void SV_SendReliable()
 		delete Msg;
 		Player->Net->LastMessage = realtime;
 	}
+
+	for (int i = 0; i < svs.max_clients; i++)
+	{
+		sv_player = GGameInfo->Players[i];
+		if (!sv_player)
+		{
+			continue;
+		}
+		sv_player->Net->Flush();
+	}
+
 	unguard;
 }
 

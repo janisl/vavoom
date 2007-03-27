@@ -374,12 +374,19 @@ bool VPlayerNetInfo::ReceivedPacket(VBitStreamReader& Packet)
 			VMessageIn Msg;
 
 			//	Read sequence ID and check for duplicated packets.
-			if (Packet.ReadBit())
+			Msg.bReliable = Packet.ReadBit();
+			if (Msg.bReliable)
 			{
-				vuint32 Seq;
-				Packet << Seq;
+				Packet << Msg.Sequence;
+			}
 
-				if (Seq != NetCon->ReceiveSequence)
+			//	Read data
+			int Length = Packet.ReadInt(OUT_MESSAGE_SIZE);
+			Msg.SetData(Packet, Length);
+
+			if (Msg.bReliable)
+			{
+				if (Msg.Sequence < NetCon->ReceiveSequence)
 				{
 					Driver->receivedDuplicateCount++;
 					continue;
@@ -387,10 +394,6 @@ bool VPlayerNetInfo::ReceivedPacket(VBitStreamReader& Packet)
 				NetCon->ReceiveSequence++;
 			}
 
-			//	Read data
-			int Length = Packet.ReadInt(OUT_MESSAGE_SIZE);
-			Msg.SetData(Packet, Length);
-	
 			if (!ParsePacket(Msg))
 			{
 				return false;
@@ -446,7 +449,7 @@ int VPlayerNetInfo::SendMessage(VMessageOut* AMsg, bool Reliable)
 int VPlayerNetInfo::SendRawMessage(VMessageOut& Msg)
 {
 	guard(VPlayerNetInfo::SendRawMessage);
-	PrepareOut();
+	PrepareOut(MAX_MESSAGE_HEADER_BITS + Msg.GetNumBits());
 
 	Out.WriteBit(false);
 	Out.WriteBit(Msg.bReliable);
@@ -459,8 +462,7 @@ int VPlayerNetInfo::SendRawMessage(VMessageOut& Msg)
 
 	Msg.Time = Driver->NetTime;
 	Msg.PacketId = NetCon->UnreliableSendSequence;
-
-	return Flush();
+	return 1;
 	unguard;
 }
 
@@ -473,12 +475,10 @@ int VPlayerNetInfo::SendRawMessage(VMessageOut& Msg)
 void VPlayerNetInfo::SendAck(vuint32 Sequence)
 {
 	guard(VPlayerNetInfo::SendAck);
-	PrepareOut();
+	PrepareOut(33);
 
 	Out.WriteBit(true);
 	Out << Sequence;
-
-	Flush();
 	unguard;
 }
 
@@ -488,11 +488,20 @@ void VPlayerNetInfo::SendAck(vuint32 Sequence)
 //
 //==========================================================================
 
-void VPlayerNetInfo::PrepareOut()
+void VPlayerNetInfo::PrepareOut(int Length)
 {
 	guard(VPlayerNetInfo::PrepareOut);
-	Out.WriteInt(NETPACKET_DATA, 256);
-	Out << NetCon->UnreliableSendSequence;
+	//	Send current packet if new message doesn't fit.
+	if (Out.GetNumBits() + Length + MAX_MESSAGE_TRAILER_BITS > MAX_MSGLEN * 8)
+	{
+		Flush();
+	}
+
+	if (Out.GetNumBits() == 0)
+	{
+		Out.WriteInt(NETPACKET_DATA, 256);
+		Out << NetCon->UnreliableSendSequence;
+	}
 	unguard;
 }
 
@@ -505,6 +514,11 @@ void VPlayerNetInfo::PrepareOut()
 int VPlayerNetInfo::Flush()
 {
 	guard(VPlayerNetInfo::Flush);
+	if (!Out.GetNumBits())
+	{
+		return 1;
+	}
+
 	//	Add trailing bit so we can find out how many bits the message has.
 	Out.WriteBit(true);
 	//	Pad it with zero bits untill byte boundary.

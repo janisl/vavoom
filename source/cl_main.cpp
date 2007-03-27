@@ -332,6 +332,7 @@ void CL_KeepaliveMessage()
 	cl->Net->Message << (byte)clc_nop;
 	cl->Net->SendMessage(&cl->Net->Message, false);
 	cl->Net->Message.Clear();
+	cl->Net->Flush();
 	unguard;
 }
 
@@ -377,6 +378,7 @@ void CL_Disconnect()
 		cl->Net->Message << (byte)clc_disconnect;
 		cl->Net->SendMessage(&cl->Net->Message, false);
 		cl->Net->Message.Clear();
+		cl->Net->Flush();
 		delete cl->Net;
 		cl->Net = NULL;
 
