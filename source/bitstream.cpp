@@ -309,7 +309,7 @@ void VBitStreamReader::SerialiseBits(void* Dst, int Length)
 		memcpy(Dst, Data.Ptr() + (Pos >> 3), Count);
 		if (Length & 7)
 		{
-			((vuint8*)Dst)[Count] = Data[Count] & ((1 << (Length & 7)) - 1);
+			((vuint8*)Dst)[Count] = Data[(Pos >> 3) + Count] & ((1 << (Length & 7)) - 1);
 		}
 	}
 	Pos += Length;

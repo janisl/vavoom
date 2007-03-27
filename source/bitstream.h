@@ -91,6 +91,6 @@ public:
 	}
 	int GetPosBits()
 	{
-		return (Num + 7) >> 3;
+		return Pos;
 	}
 };
