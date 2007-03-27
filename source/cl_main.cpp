@@ -223,8 +223,9 @@ void CL_ReadFromServer()
 
 	GClGame->oldtime = GClGame->time;
 	GClGame->time += host_frametime;
-	
-	if (!cl->Net->GetMessages())
+
+	cl->Net->GetMessages();
+	if (cl->Net->State == NETCON_Closed)
 	{
 		Host_Error("CL_ReadFromServer: lost server connection");
 	}

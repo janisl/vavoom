@@ -40,7 +40,7 @@ public:
 
 	VMessageIn*		Next;
 	bool			bReliable;		//	Reliable message
-	int				Sequence;		//	Reliable message sequence ID
+	vuint32			Sequence;		//	Reliable message sequence ID
 
 	vuint8 ReadByte() { vuint8 c; *this << c; return c; }
 	vint16 ReadShort() { vint16	c; *this << c; return c; }
@@ -60,9 +60,9 @@ public:
 	VMessageOut*	Next;
 	vint8			AllowOverflow;	// if false, do a Sys_Error
 	bool			bReliable;		//	Needs ACK or not
-	int				Sequence;		//	Reliable message sequence ID
+	vuint32			Sequence;		//	Reliable message sequence ID
 	double			Time;			//	Time this message has been sent
-	int				PacketId;		//	Packet in which this message was sent
+	vuint32			PacketId;		//	Packet in which this message was sent
 
 	void SerialiseBits(void*, int);
 	void Clear();

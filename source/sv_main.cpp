@@ -49,7 +49,7 @@
 
 void Draw_TeleportIcon();
 void CL_Disconnect();
-bool SV_ReadClientMessages(int i);
+void SV_ReadClientMessages(int i);
 void SV_RunClientCommand(const VStr& cmd);
 void EntInit();
 
@@ -1528,8 +1528,7 @@ void SV_SendNop(VBasePlayer *client)
 
 	msg << (vuint8)svc_nop;
 
-	if (client->Net->SendMessage(&msg, false) == -1)
-		SV_DropClient(true);	// if the message couldn't send, kick off
+	client->Net->SendMessage(&msg, false);
 	client->Net->LastMessage = realtime;
 	unguard;
 }
@@ -1581,10 +1580,7 @@ void SV_SendClientDatagram()
 
 		SV_UpdateLevel(msg);
 
-		if (sv_player->Net->SendMessage(&msg, false) == -1)
-		{
-			SV_DropClient(true);
-		}
+		sv_player->Net->SendMessage(&msg, false);
 	}
 	unguard;
 }
@@ -1671,12 +1667,7 @@ void SV_SendReliable()
 
 		VMessageOut* Msg = Player->Net->Messages;
 		Player->Net->Messages = Msg->Next;
-		if (Player->Net->SendMessage(Msg, true) == -1)
-		{
-			delete Msg;
-			SV_DropClient(true);
-			continue;
-		}
+		Player->Net->SendMessage(Msg, true);
 		delete Msg;
 		Player->Net->LastMessage = realtime;
 	}
@@ -1686,6 +1677,11 @@ void SV_SendReliable()
 		sv_player = GGameInfo->Players[i];
 		if (!sv_player)
 		{
+			continue;
+		}
+		if (sv_player->Net->State == NETCON_Closed)
+		{
+			SV_DropClient(true);
 			continue;
 		}
 		sv_player->Net->Flush();
@@ -1786,10 +1782,8 @@ static void CheckForSkip()
 void SV_RunClients()
 {
 	guard(SV_RunClients);
-	int			i;
-
 	// get commands
-	for (i = 0; i < MAXPLAYERS; i++)
+	for (int i = 0; i < MAXPLAYERS; i++)
 	{
 		if (!GGameInfo->Players[i])
 		{
@@ -1802,11 +1796,7 @@ void SV_RunClients()
 			G_DoReborn(i);
 		}
 
-		if (!SV_ReadClientMessages(i))
-		{
-			SV_DropClient(true);
-			continue;
-		}
+		SV_ReadClientMessages(i);
 
 		// pause if in menu or console and at least one tic has been run
 #ifdef CLIENT
@@ -2256,7 +2246,7 @@ int NET_SendToAll(VMessageOut* data, int blocktime)
 	for (i = 0; i < svs.max_clients; i++)
 	{
 		sv_player = GGameInfo->Players[i];
-		if (sv_player && sv_player->Net->ValidNetCon())
+		if (sv_player)
 		{
 			if (sv_player->Net->IsLocalConnection())
 			{

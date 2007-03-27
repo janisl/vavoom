@@ -103,12 +103,19 @@ public:
 	void Update();
 };
 
+enum ENetConState
+{
+	NETCON_Closed,
+	NETCON_Open,
+};
+
 class VPlayerNetInfo
 {
 protected:
 	VNetworkPublic*		Driver;
 	VSocketPublic*		NetCon;
 public:
+	ENetConState		State;
 	VMessageOut			Message;
 	int					MobjUpdateStart;
 	double				LastMessage;
@@ -123,21 +130,17 @@ public:
 	virtual ~VPlayerNetInfo();
 
 	//	VPlayerNetInfo interface
-	bool GetMessages();
+	void GetMessages();
 	virtual int GetRawPacket(TArray<vuint8>&);
-	bool ReceivedPacket(VBitStreamReader&);
+	void ReceivedPacket(VBitStreamReader&);
 	virtual bool ParsePacket(VMessageIn&) = 0;
-	virtual int SendMessage(VMessageOut*, bool);
-	int SendRawMessage(VMessageOut&);
+	virtual void SendMessage(VMessageOut*, bool);
+	void SendRawMessage(VMessageOut&);
 	virtual void SendAck(vuint32);
 	void PrepareOut(int);
-	int Flush();
+	void Flush();
 	bool CanSendMessage();
 	bool IsLocalConnection();
-	bool ValidNetCon() const
-	{
-		return NetCon != NULL;
-	}
 	VStr GetAddress() const
 	{
 		return NetCon->Address;

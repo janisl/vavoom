@@ -180,6 +180,7 @@ void VPlayerChannel::Update()
 VPlayerNetInfo::VPlayerNetInfo(VSocketPublic* ANetCon)
 : Driver(GNet)
 , NetCon(ANetCon)
+, State(NETCON_Open)
 , Message(OUT_MESSAGE_SIZE)
 , MobjUpdateStart(0)
 , LastMessage(0)
@@ -221,7 +222,7 @@ VPlayerNetInfo::~VPlayerNetInfo()
 //
 //==========================================================================
 
-bool VPlayerNetInfo::GetMessages()
+void VPlayerNetInfo::GetMessages()
 {
 	guard(VPlayerNetInfo::GetMessages);
 	int ret;
@@ -233,7 +234,8 @@ bool VPlayerNetInfo::GetMessages()
 		if (ret == -1)
 		{
 			GCon->Log(NAME_DevNet, "Bad read");
-			return false;
+			State = NETCON_Closed;
+			return;
 		}
 
 		if (ret)
@@ -250,10 +252,7 @@ bool VPlayerNetInfo::GetMessages()
 						Length--;
 					}
 					VBitStreamReader Packet(Data.Ptr(), Length);
-					if (!ReceivedPacket(Packet))
-					{
-						return false;
-					}
+					ReceivedPacket(Packet);
 				}
 				else
 				{
@@ -266,14 +265,7 @@ bool VPlayerNetInfo::GetMessages()
 				Driver->shortPacketCount++;
 			}
 		}
-
-		//	This is for client connection which closes the connection on
-		// disconnect command.
-		if (!NetCon)
-		{
-			return true;
-		}
-	} while (ret > 0);
+	} while (ret > 0 && State != NETCON_Closed);
 
 	//	Resend message if needed.
 	//FIXME This is absolutely wrong place to do this.
@@ -282,8 +274,6 @@ bool VPlayerNetInfo::GetMessages()
 		SendRawMessage(SendMessageData);
 		Driver->packetsReSent++;
 	}
-
-	return true;
 	unguard;
 }
 
@@ -307,11 +297,11 @@ int VPlayerNetInfo::GetRawPacket(TArray<vuint8>& Data)
 //
 //==========================================================================
 
-bool VPlayerNetInfo::ReceivedPacket(VBitStreamReader& Packet)
+void VPlayerNetInfo::ReceivedPacket(VBitStreamReader& Packet)
 {
 	guard(VPlayerNetInfo::ReceivedPacket);
 	if (Packet.ReadInt(256) != NETPACKET_DATA)
-		return true;
+		return;
 	Driver->packetsReceived++;
 
 	vuint32 Sequence;
@@ -319,12 +309,12 @@ bool VPlayerNetInfo::ReceivedPacket(VBitStreamReader& Packet)
 	if (Packet.IsError())
 	{
 		GCon->Log(NAME_DevNet, "Packet is missing packet ID");
-		return true;
+		return;
 	}
 	if (Sequence < NetCon->UnreliableReceiveSequence)
 	{
 		GCon->Log(NAME_DevNet, "Got a stale datagram");
-		return true;
+		return;
 	}
 	if (Sequence != NetCon->UnreliableReceiveSequence)
 	{
@@ -343,7 +333,7 @@ bool VPlayerNetInfo::ReceivedPacket(VBitStreamReader& Packet)
 		if (Packet.IsError())
 		{
 			GCon->Log(NAME_DevNet, "Packet is missing ACK flag");
-			return true;
+			return;
 		}
 
 		if (IsAck)
@@ -396,7 +386,8 @@ bool VPlayerNetInfo::ReceivedPacket(VBitStreamReader& Packet)
 
 			if (!ParsePacket(Msg))
 			{
-				return false;
+				State = NETCON_Closed;
+				return;
 			}
 		}
 	}
@@ -405,7 +396,6 @@ bool VPlayerNetInfo::ReceivedPacket(VBitStreamReader& Packet)
 	{
 		SendAck(Sequence);
 	}
-	return true;
 	unguard;
 }
 
@@ -415,7 +405,7 @@ bool VPlayerNetInfo::ReceivedPacket(VBitStreamReader& Packet)
 //
 //==========================================================================
 
-int VPlayerNetInfo::SendMessage(VMessageOut* AMsg, bool Reliable)
+void VPlayerNetInfo::SendMessage(VMessageOut* AMsg, bool Reliable)
 {
 	guard(VPlayerNetInfo::SendMessage);
 	VMessageOut* Msg = AMsg;
@@ -436,7 +426,7 @@ int VPlayerNetInfo::SendMessage(VMessageOut* AMsg, bool Reliable)
 	}
 	Driver->packetsSent++;
 
-	return SendRawMessage(*Msg);
+	SendRawMessage(*Msg);
 	unguard;
 }
 
@@ -446,7 +436,7 @@ int VPlayerNetInfo::SendMessage(VMessageOut* AMsg, bool Reliable)
 //
 //==========================================================================
 
-int VPlayerNetInfo::SendRawMessage(VMessageOut& Msg)
+void VPlayerNetInfo::SendRawMessage(VMessageOut& Msg)
 {
 	guard(VPlayerNetInfo::SendRawMessage);
 	PrepareOut(MAX_MESSAGE_HEADER_BITS + Msg.GetNumBits());
@@ -462,7 +452,6 @@ int VPlayerNetInfo::SendRawMessage(VMessageOut& Msg)
 
 	Msg.Time = Driver->NetTime;
 	Msg.PacketId = NetCon->UnreliableSendSequence;
-	return 1;
 	unguard;
 }
 
@@ -511,12 +500,12 @@ void VPlayerNetInfo::PrepareOut(int Length)
 //
 //==========================================================================
 
-int VPlayerNetInfo::Flush()
+void VPlayerNetInfo::Flush()
 {
 	guard(VPlayerNetInfo::Flush);
 	if (!Out.GetNumBits())
 	{
-		return 1;
+		return;
 	}
 
 	//	Add trailing bit so we can find out how many bits the message has.
@@ -528,15 +517,16 @@ int VPlayerNetInfo::Flush()
 	}
 
 	//	Send the message.
-	int Ret = NetCon->SendMessage(Out.GetData(), Out.GetNumBytes());
+	if (NetCon->SendMessage(Out.GetData(), Out.GetNumBytes()) == -1)
+	{
+		State = NETCON_Closed;
+	}
 
 	//	Increment outgoing packet counter
 	NetCon->UnreliableSendSequence++;
 
 	//	Clear outgoing packet buffer.
 	Out = VBitStreamWriter(MAX_MSGLEN * 8);
-
-	return Ret;
 	unguard;
 }
 
@@ -725,12 +715,12 @@ bool VServerPlayerNetInfo::ParsePacket(VMessageIn& msg)
 //
 //==========================================================================
 
-bool SV_ReadClientMessages(int clientnum)
+void SV_ReadClientMessages(int clientnum)
 {
 	guard(SV_ReadClientMessages);
 	sv_player = GGameInfo->Players[clientnum];
 	sv_player->Net->NeedsUpdate = false;
-	return sv_player->Net->GetMessages();
+	sv_player->Net->GetMessages();
 	unguard;
 }
 

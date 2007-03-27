@@ -645,11 +645,7 @@ void CL_SendMove()
 		return;
 	}
 
-	if (cl->Net->SendMessage(&cl->Net->Message, true) == -1)
-	{
-		Host_Error("CL_WriteToServer: lost server connection");
-	}
-
+	cl->Net->SendMessage(&cl->Net->Message, true);
 	cl->Net->Message.Clear();
 	cl->Net->Flush();
 	unguard;

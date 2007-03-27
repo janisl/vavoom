@@ -206,14 +206,14 @@ int VClientPlayerNetInfo::GetRawPacket(TArray<vuint8>& Data)
 //
 //==========================================================================
 
-int VClientPlayerNetInfo::SendMessage(VMessageOut* Msg, bool Reliable)
+void VClientPlayerNetInfo::SendMessage(VMessageOut* Msg, bool Reliable)
 {
 	guard(VClientPlayerNetInfo::SendMessage);
 	if (cls.demoplayback)
 	{
-		return 1;
+		return;
 	}
-	return VPlayerNetInfo::SendMessage(Msg, Reliable);
+	VPlayerNetInfo::SendMessage(Msg, Reliable);
 	unguard;
 }
 

@@ -246,7 +246,7 @@ public:
 	//	VPlayerNetInfo interface
 	int GetRawPacket(TArray<vuint8>&);
 	bool ParsePacket(VMessageIn&);
-	int SendMessage(VMessageOut*, bool);
+	void SendMessage(VMessageOut*, bool);
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
