@@ -186,8 +186,8 @@ VPlayerNetInfo::VPlayerNetInfo(VSocketPublic* ANetCon)
 , LastMessage(0)
 , NeedsUpdate(false)
 , EntChan(NULL)
-, Messages(NULL)
-, SendMessageData(0)
+, InMsg(NULL)
+, OutMsg(NULL)
 , Out(MAX_MSGLEN * 8)
 {
 	EntChan = new VEntityChannel[GMaxEntities];
@@ -203,7 +203,13 @@ VPlayerNetInfo::~VPlayerNetInfo()
 {
 	delete[] EntChan;
 	Chan.SetPlayer(NULL);
-	for (VMessageOut* Msg = Messages; Msg; )
+	for (VMessageIn* Msg = InMsg; Msg; )
+	{
+		VMessageIn* Next = Msg->Next;
+		delete Msg;
+		Msg = Next;
+	}
+	for (VMessageOut* Msg = OutMsg; Msg; )
 	{
 		VMessageOut* Next = Msg->Next;
 		delete Msg;
@@ -269,10 +275,13 @@ void VPlayerNetInfo::GetMessages()
 
 	//	Resend message if needed.
 	//FIXME This is absolutely wrong place to do this.
-	if (!NetCon->CanSend && (Driver->NetTime - SendMessageData.Time) > 1.0)
+	for (VMessageOut* Msg = OutMsg; Msg; Msg = Msg->Next)
 	{
-		SendRawMessage(SendMessageData);
-		Driver->packetsReSent++;
+		if (Driver->NetTime - Msg->Time > 1.0)
+		{
+			SendRawMessage(*Msg);
+			Driver->packetsReSent++;
+		}
 	}
 	unguard;
 }
@@ -352,10 +361,18 @@ void VPlayerNetInfo::ReceivedPacket(VBitStreamReader& Packet)
 			{
 				GCon->Log(NAME_DevNet, "Duplicate ACK received");
 			}
-			if (SendMessageData.PacketId == AckSeq)
+			for (VMessageOut** pMsg = &OutMsg; *pMsg;)
 			{
-				SendMessageData = VMessageOut(0);
-				NetCon->CanSend = true;
+				if ((*pMsg)->PacketId == AckSeq)
+				{
+					VMessageOut* Msg = *pMsg;
+					*pMsg = Msg->Next;
+					delete Msg;
+				}
+				else
+				{
+					pMsg = &(*pMsg)->Next;
+				}
 			}
 		}
 		else
@@ -374,27 +391,71 @@ void VPlayerNetInfo::ReceivedPacket(VBitStreamReader& Packet)
 			int Length = Packet.ReadInt(OUT_MESSAGE_SIZE);
 			Msg.SetData(Packet, Length);
 
-			if (Msg.bReliable)
-			{
-				if (Msg.Sequence < NetCon->ReceiveSequence)
-				{
-					Driver->receivedDuplicateCount++;
-					continue;
-				}
-				NetCon->ReceiveSequence++;
-			}
-
-			if (!ParsePacket(Msg))
-			{
-				State = NETCON_Closed;
-				return;
-			}
+			ReceivedRawMessage(Msg);
 		}
 	}
 
 	if (NeedsAck)
 	{
 		SendAck(Sequence);
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VPlayerNetInfo::ReceivedRawMessage
+//
+//==========================================================================
+
+void VPlayerNetInfo::ReceivedRawMessage(VMessageIn& Msg)
+{
+	guard(VPlayerNetInfo::ReceivedRawMessage);
+	//	Drop outdated messages
+	if (Msg.bReliable && Msg.Sequence < NetCon->ReceiveSequence)
+	{
+		Driver->receivedDuplicateCount++;
+		return;
+	}
+
+	if (Msg.bReliable && Msg.Sequence > NetCon->ReceiveSequence)
+	{
+		VMessageIn** pNext = &InMsg;
+		while (*pNext && (*pNext)->Sequence <= Msg.Sequence)
+		{
+			if ((*pNext)->Sequence == Msg.Sequence)
+			{
+				Driver->receivedDuplicateCount++;
+				return;
+			}
+		}
+		VMessageIn* Copy = new VMessageIn(Msg);
+		Copy->Next = *pNext;
+		*pNext = Copy;
+		return;
+	}
+
+	if (!ParsePacket(Msg))
+	{
+		State = NETCON_Closed;
+		return;
+	}
+	if (Msg.bReliable)
+	{
+		NetCon->ReceiveSequence++;
+	}
+
+	while (InMsg && InMsg->Sequence == NetCon->ReceiveSequence)
+	{
+		VMessageIn* OldMsg = InMsg;
+		if (!ParsePacket(*OldMsg))
+		{
+			State = NETCON_Closed;
+			return;
+		}
+		NetCon->ReceiveSequence++;
+		InMsg = OldMsg->Next;
+		delete OldMsg;
 	}
 	unguard;
 }
@@ -412,17 +473,19 @@ void VPlayerNetInfo::SendMessage(VMessageOut* AMsg, bool Reliable)
 	Msg->bReliable = Reliable;
 	if (Reliable)
 	{
-#ifdef PARANOID
-		if (NetCon->CanSend == false)
-			Sys_Error("SendMessage: called with canSend == false\n");
-#endif
 		Msg->Sequence = NetCon->SendSequence;
 
-		SendMessageData = *Msg;
-		Msg = &SendMessageData;
+		VMessageOut* Copy = new VMessageOut(*Msg);
+		Copy->Next = NULL;
+		VMessageOut** pNext = &OutMsg;
+		while (*pNext)
+		{
+			pNext = &(*pNext)->Next;
+		}
+		*pNext = Copy;
+		Msg = Copy;
 
 		NetCon->SendSequence++;
-		NetCon->CanSend = false;
 	}
 	Driver->packetsSent++;
 
@@ -527,19 +590,6 @@ void VPlayerNetInfo::Flush()
 
 	//	Clear outgoing packet buffer.
 	Out = VBitStreamWriter(MAX_MSGLEN * 8);
-	unguard;
-}
-
-//==========================================================================
-//
-//	VPlayerNetInfo::CanSendMessage
-//
-//==========================================================================
-
-bool VPlayerNetInfo::CanSendMessage()
-{
-	guard(VPlayerNetInfo::CanSendMessage);
-	return NetCon->CanSendMessage();
 	unguard;
 }
 

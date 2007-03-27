@@ -43,7 +43,6 @@ public:
 	VSocket* CheckNewConnections();
 	int GetMessage(VSocket*, TArray<vuint8>&);
 	int SendMessage(VSocket*, vuint8*, vuint32);
-	bool CanSendMessage(VSocket*);
 	void Close(VSocket*);
 	void Shutdown();
 };
@@ -161,18 +160,6 @@ int VNullNetDriver::GetMessage(VSocket*, TArray<vuint8>&)
 int VNullNetDriver::SendMessage(VSocket*, vuint8*, vuint32)
 {
 	return 1;
-}
-
-//==========================================================================
-//
-//	VNullNetDriver::CanSendMessage
-//
-//==========================================================================
-
-bool VNullNetDriver::CanSendMessage(VSocket* Sock)
-{
-	Sock->CanSend = true;
-	return true;
 }
 
 //==========================================================================

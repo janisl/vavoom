@@ -47,7 +47,6 @@ public:
 	VSocket* CheckNewConnections();
 	int GetMessage(VSocket*, TArray<vuint8>&);
 	int SendMessage(VSocket*, vuint8*, vuint32);
-	bool CanSendMessage(VSocket*);
 	void Close(VSocket*);
 	void Shutdown();
 
@@ -161,7 +160,6 @@ VSocket* VLoopbackDriver::Connect(const char* host)
 		}
 		loop_client->Address = "localhost";
 	}
-	loop_client->CanSend = true;
 
 	if (!loop_server)
 	{
@@ -173,7 +171,6 @@ VSocket* VLoopbackDriver::Connect(const char* host)
 		}
 		loop_server->Address = "LOCAL";
 	}
-	loop_server->CanSend = true;
 
 	loop_client->DriverData = (void*)loop_server;
 	loop_server->DriverData = (void*)loop_client;
@@ -195,8 +192,6 @@ VSocket* VLoopbackDriver::CheckNewConnections()
 		return NULL;
 
 	localconnectpending = false;
-	loop_server->CanSend = true;
-	loop_client->CanSend = true;
 	return loop_server;
 	unguard;
 }
@@ -226,10 +221,6 @@ int VLoopbackDriver::GetMessage(VSocket* Sock, TArray<vuint8>& Data)
 
 	Data = Sock->LoopbackMessages[0].Data;
 	Sock->LoopbackMessages.RemoveIndex(0);
-
-	if (Sock->DriverData)
-		((VSocket*)Sock->DriverData)->CanSend = true;
-
 	return 1;
 	unguard;
 }
@@ -256,21 +247,6 @@ int VLoopbackDriver::SendMessage(VSocket* Sock, vuint8* Data, vuint32 Length)
 
 //==========================================================================
 //
-//	VLoopbackDriver::CanSendMessage
-//
-//==========================================================================
-
-bool VLoopbackDriver::CanSendMessage(VSocket* sock)
-{
-	guard(VLoopbackDriver::CanSendMessage);
-	if (!sock->DriverData)
-		return false;
-	return sock->CanSend;
-	unguard;
-}
-
-//==========================================================================
-//
 //	VLoopbackDriver::Close
 //
 //==========================================================================
@@ -280,7 +256,6 @@ void VLoopbackDriver::Close(VSocket* sock)
 	guard(VLoopbackDriver::Close);
 	if (sock->DriverData)
 		((VSocket*)sock->DriverData)->DriverData = NULL;
-	sock->CanSend = true;
 	if (sock == loop_client)
 		loop_client = NULL;
 	else

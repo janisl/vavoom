@@ -52,8 +52,6 @@ class VSocketPublic : public VVirtualObjectBase
 public:
 	VStr			Address;
 
-	bool			CanSend;
-
 	double			ConnectTime;
 	double			LastMessageTime;
 
@@ -67,7 +65,6 @@ public:
 	virtual bool IsLocalConnection() = 0;
 	virtual int GetMessage(TArray<vuint8>&) = 0;
 	virtual int SendMessage(vuint8*, vuint32) = 0;
-	virtual bool CanSendMessage() = 0;
 	virtual void Close() = 0;
 };
 

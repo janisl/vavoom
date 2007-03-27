@@ -389,7 +389,6 @@ VSocket* VNetwork::NewSocket(VNetDriver* Drv)
 	sock->Driver = Drv;
 	sock->LanSocket = 0;
 	sock->DriverData = NULL;
-	sock->CanSend = true;
 	sock->LastMessageTime = NetTime;
 	sock->AckSequence = 0;
 	sock->SendSequence = 0;
@@ -883,27 +882,6 @@ int VSocket::SendMessage(vuint8* Data, vuint32 Length)
 		Driver->Net->MessagesSent++;
 
 	return r;
-	unguard;
-}
-
-//==========================================================================
-//
-//	VSocket::CanSendMessage
-//
-//	Returns true or false if the given qsocket can currently accept a
-// message to be transmitted.
-//
-//==========================================================================
-
-bool VSocket::CanSendMessage()
-{
-	guard(VSocket::CanSendMessage);
-	if (Disconnected)
-		return false;
-
-	Driver->Net->SetNetTime();
-
-	return Driver->CanSendMessage(this);
 	unguard;
 }
 

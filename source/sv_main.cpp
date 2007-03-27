@@ -1587,28 +1587,6 @@ void SV_SendClientDatagram()
 
 //==========================================================================
 //
-//	SV_AddPlayerMessage
-//
-//==========================================================================
-
-void SV_AddPlayerMessage(VBasePlayer* Player, VMessageOut& Message)
-{
-	guard(SV_AddPlayerMessage);
-	VMessageOut* Copy = new VMessageOut(OUT_MESSAGE_SIZE);
-	Copy->SerialiseBits(Message.GetData(), Message.GetNumBits());
-
-	VMessageOut** Prev = &Player->Net->Messages;
-	while (*Prev)
-	{
-		Prev = &(*Prev)->Next;
-	}
-	*Prev = Copy;
-	Copy->Next = NULL;
-	unguard;
-}
-
-//==========================================================================
-//
 //	SV_SendReliable
 //
 //==========================================================================
@@ -1648,28 +1626,12 @@ void SV_SendReliable()
 			continue;
 		}
 
-		if (!Player->Net->CanSendMessage())
+		if (Player->Net->Message.GetNumBytes())
 		{
-			continue;
-		}
-
-		if ((Player->Net->Message.GetNumBits() > OUT_MESSAGE_SIZE * 3 / 4) ||
-			(Player->Net->Message.GetNumBytes() && !Player->Net->Messages))
-		{
-			SV_AddPlayerMessage(Player, Player->Net->Message);
+			Player->Net->SendMessage(&Player->Net->Message, true);
 			Player->Net->Message.Clear();
+			Player->Net->LastMessage = realtime;
 		}
-
-		if (!Player->Net->Messages)
-		{
-			continue;
-		}
-
-		VMessageOut* Msg = Player->Net->Messages;
-		Player->Net->Messages = Msg->Next;
-		Player->Net->SendMessage(Msg, true);
-		delete Msg;
-		Player->Net->LastMessage = realtime;
 	}
 
 	for (int i = 0; i < svs.max_clients; i++)
@@ -2275,30 +2237,21 @@ int NET_SendToAll(VMessageOut* data, int blocktime)
 			sv_player = GGameInfo->Players[i];
 			if (!state1[i])
 			{
-				if (sv_player->Net->CanSendMessage())
-				{
-					state1[i] = true;
-					sv_player->Net->SendMessage(data, true);
-				}
-				else
-				{
-					TArray<vuint8> Msg;
-					sv_player->Net->GetRawPacket(Msg);
-				}
+				state1[i] = true;
+				sv_player->Net->SendMessage(data, true);
 				count++;
 				continue;
 			}
 
 			if (!state2[i])
 			{
-				if (sv_player->Net->CanSendMessage())
+				if (!sv_player->Net->OutMsg)
 				{
 					state2[i] = true;
 				}
 				else
 				{
-					TArray<vuint8> Msg;
-					sv_player->Net->GetRawPacket(Msg);
+					sv_player->Net->GetMessages();
 				}
 				count++;
 				continue;
@@ -2775,7 +2728,7 @@ COMMAND(PreSpawn)
 
 	for (VMessageOut* Msg = sv_signons; Msg; Msg = Msg->Next)
 	{
-		SV_AddPlayerMessage(sv_player, *Msg);
+		sv_player->Net->SendMessage(Msg, true);
 	}
 	sv_player->Net->Message << (vuint8)svc_signonnum << (vuint8)2;
 	unguard;

@@ -105,7 +105,6 @@ public:
 	VSocket* CheckNewConnections();
 	int GetMessage(VSocket*, TArray<vuint8>&);
 	int SendMessage(VSocket*, vuint8*, vuint32);
-	bool CanSendMessage(VSocket*);
 	void Close(VSocket*);
 	void Shutdown();
 
@@ -690,7 +689,6 @@ int VDatagramDriver::GetMessage(VSocket* Sock, TArray<vuint8>& Data)
 {
 	guard(VDatagramDriver::GetMessage);
 	vuint32		length;
-	vuint32		flags;
 	sockaddr_t	readaddr;
 	int			ret = 0;
 
@@ -746,19 +744,6 @@ int VDatagramDriver::SendMessage(VSocket* Sock, vuint8* Data, vuint32 Length)
 
 //==========================================================================
 //
-//	VDatagramDriver::CanSendMessage
-//
-//==========================================================================
-
-bool VDatagramDriver::CanSendMessage(VSocket* sock)
-{
-	guard(VDatagramDriver::CanSendMessage);
-	return sock->CanSend;
-	unguard;
-}
-
-//==========================================================================
-//
 //	VDatagramDriver::Close
 //
 //==========================================================================
@@ -801,7 +786,6 @@ void VDatagramDriver::Shutdown()
 
 static void PrintStats(VSocket* s)
 {
-	GCon->Logf("canSend = %4d", s->CanSend);
 	GCon->Logf("sendSeq = %4d", s->SendSequence);
 	GCon->Logf("recvSeq = %4d", s->ReceiveSequence);
 	GCon->Logf("");

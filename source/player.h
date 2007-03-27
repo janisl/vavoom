@@ -122,8 +122,8 @@ public:
 	bool				NeedsUpdate;
 	VEntityChannel*		EntChan;
 	VPlayerChannel		Chan;
-	VMessageOut*		Messages;
-	VMessageOut			SendMessageData;
+	VMessageIn*			InMsg;
+	VMessageOut*		OutMsg;
 	VBitStreamWriter	Out;
 
 	VPlayerNetInfo(VSocketPublic*);
@@ -133,13 +133,13 @@ public:
 	void GetMessages();
 	virtual int GetRawPacket(TArray<vuint8>&);
 	void ReceivedPacket(VBitStreamReader&);
+	void ReceivedRawMessage(VMessageIn&);
 	virtual bool ParsePacket(VMessageIn&) = 0;
 	virtual void SendMessage(VMessageOut*, bool);
 	void SendRawMessage(VMessageOut&);
 	virtual void SendAck(vuint32);
 	void PrepareOut(int);
 	void Flush();
-	bool CanSendMessage();
 	bool IsLocalConnection();
 	VStr GetAddress() const
 	{

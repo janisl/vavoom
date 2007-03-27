@@ -638,13 +638,6 @@ void CL_SendMove()
 		return;		// no message at all
 	}
 
-	if (!cl->Net->CanSendMessage())
-	{
-		GCon->Log(NAME_Dev, "CL_WriteToServer: can't send");
-		cl->Net->Flush();
-		return;
-	}
-
 	cl->Net->SendMessage(&cl->Net->Message, true);
 	cl->Net->Message.Clear();
 	cl->Net->Flush();
