@@ -177,8 +177,6 @@ int Args[5];	// special arguments
 
 readonly private int NetID;
 
-native readonly private int InUse;	//	Counter for client side
-
 //  Params
 float Mass;
 float MaxStepHeight;

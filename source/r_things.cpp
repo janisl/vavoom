@@ -767,7 +767,7 @@ void VRenderLevel::RenderMobjs()
 
 	for (VThinker* Th = Level->ThinkerHead; Th; Th = Th->Next)
 	{
-		if (Th->IsA(VEntity::StaticClass()) && ((VEntity*)Th)->InUse)
+		if (Th->IsA(VEntity::StaticClass()))
 		{
 			RenderThing((VEntity*)Th);
 		}

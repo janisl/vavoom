@@ -411,6 +411,8 @@ VEntityChannel::VEntityChannel()
 : Ent(NULL)
 , OldData(NULL)
 , NewObj(false)
+, PendingClose(false)
+, UpdatedThisFrame(false)
 , FieldCondValues(NULL)
 {
 }
@@ -451,6 +453,7 @@ void VEntityChannel::SetEntity(VEntity* AEnt)
 			delete[] FieldCondValues;
 			FieldCondValues = NULL;
 		}
+		PendingClose = true;
 	}
 
 	Ent = AEnt;
@@ -523,6 +526,7 @@ void VEntityChannel::Update(int SendId)
 			VField::CopyFieldValue(Data + F->Ofs, OldData + F->Ofs, F->Type);
 		}
 	}
+	UpdatedThisFrame = true;
 	unguard;
 }
 
@@ -721,6 +725,31 @@ void SV_UpdateMobj(int i, VMessageOut& msg)
 
 	sv_player->Net->EntChan[i].Update(sendnum);
 	return;
+	unguard;
+}
+
+//==========================================================================
+//
+//	SV_SendDestroyMobj
+//
+//==========================================================================
+
+void SV_SendDestroyMobj(int i, VMessageOut& msg)
+{
+	guard(SV_SendDestroyMobj);
+	int sendnum;
+	if (sv_mobjs[i] && sv_mobjs[i]->EntityFlags & VEntity::EF_IsPlayer)
+	{
+		sendnum = SV_GetPlayerNum(sv_mobjs[i]->Player) + 1;
+	}
+	else
+	{
+		sendnum = i;
+	}
+
+	msg << (vuint8)svc_destroy_obj;
+	msg.WriteInt(sendnum, GMaxEntities);
+	sv_player->Net->EntChan[i].PendingClose = false;
 	unguard;
 }
 
@@ -1450,6 +1479,19 @@ void SV_UpdateLevel(VMessageOut& msg)
 
 int StartSize = msg.GetNumBytes();
 int NumObjs = 0;
+	//	Send close channel commands.
+	for (i = 0; i < GMaxEntities; i++)
+	{
+		if (sv_player->Net->EntChan[i].PendingClose)
+			SV_SendDestroyMobj(i, msg);
+	}
+
+	//	Mark all entity channels as not updated in this frame.
+	for (i = 0; i < GMaxEntities; i++)
+	{
+		sv_player->Net->EntChan[i].UpdatedThisFrame = false;
+	}
+
 	//	First update players
 	for (i = 0; i < GMaxEntities; i++)
 	{
@@ -1506,6 +1548,23 @@ dprintf("Update size %d (%d) for %d, aver %f big %d %d\n", msg.GetNumBytes(), ms
 		NumObjs++;
 	}
 	sv_player->Net->MobjUpdateStart = 0;
+
+
+	//	Close entity channels that were not updated in this frame.
+	for (i = 0; i < GMaxEntities; i++)
+	{
+		if (!sv_player->Net->EntChan[i].UpdatedThisFrame)
+		{
+			sv_player->Net->EntChan[i].SetEntity(NULL);
+		}
+	}
+	//	Send close channel commands.
+	for (i = 0; i < GMaxEntities; i++)
+	{
+		if (sv_player->Net->EntChan[i].PendingClose)
+			SV_SendDestroyMobj(i, msg);
+	}
+
 if (show_update_stats)
 dprintf("Update size %d (%d) for %d, aver %f big %d %d\n", msg.GetNumBytes(), msg.GetNumBytes() -
 		StartSize, NumObjs, float(msg.GetNumBytes() - StartSize) / NumObjs, c_bigClass, c_bigState);

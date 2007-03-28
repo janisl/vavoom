@@ -92,12 +92,6 @@ void CL_Clear()
 		// Make sure all sounds are stopped.
 		GAudio->StopAllSound();
 	}
-	for (int i = 0; i < GMaxEntities; i++)
-	{
-		cl_mobjs[i] = Spawn<VEntity>();
-		cl_mobjs[i]->Role = ROLE_Authority;
-		cl_mobjs[i]->RemoteRole = ROLE_None;
-	}
 	cls.signon = 0;
 	unguard;
 }
@@ -145,11 +139,13 @@ static void CL_ReadMobj(VMessageIn& msg, VEntity*& mobj, const clmobjbase_t &bas
 		C = base.Class;
 	}
 
-	if (mobj->GetClass() != C)
+	if (!mobj || mobj->GetClass() != C)
 	{
-		if (mobj->GetClass() != VEntity::StaticClass())
+		if (mobj)
+		{
 			GClLevel->RemoveThinker(mobj);
-		mobj->ConditionalDestroy();
+			mobj->ConditionalDestroy();
+		}
 		mobj = (VEntity*)GClLevel->SpawnThinker(C);
 		mobj->Role = ROLE_DumbProxy;
 		mobj->RemoteRole = ROLE_Authority;
@@ -225,9 +221,6 @@ static void CL_ParseUpdateMobj(VMessageIn& msg)
 		i = msg.ReadByte();
 
 	CL_ReadMobj(msg, cl_mobjs[i], cl_mo_base[i]);
-
-	//	Marking mobj in use
-	cl_mobjs[i]->InUse = 2;
 	unguard;
 }
 
@@ -412,14 +405,6 @@ static void CL_ParseTime(VMessageIn& msg)
 	{
 		GClLevel->Sides[i].textureoffset = GClLevel->Sides[i].base_textureoffset;
 		GClLevel->Sides[i].rowoffset = GClLevel->Sides[i].base_rowoffset;
-	}
-
-	for (i = 0; i < GMaxEntities; i++)
-	{
-		if (cl_mobjs[i]->InUse)
-		{
-			cl_mobjs[i]->InUse--;
-		}
 	}
 
 	R_AnimateSurfaces();
@@ -748,12 +733,33 @@ static void CL_ParseNewObj(VMessageIn& msg)
 		ci = (ci & 0x7f) | (msg.ReadByte() << 7);
 	VClass* C = ClassLookup[ci];
 
-	if (cl_mobjs[i]->GetClass() != VEntity::StaticClass())
+	if (cl_mobjs[i])
+	{
 		GClLevel->RemoveThinker(cl_mobjs[i]);
-	cl_mobjs[i]->ConditionalDestroy();
+		cl_mobjs[i]->ConditionalDestroy();
+	}
 	cl_mobjs[i] = (VEntity*)GClLevel->SpawnThinker(C);
 	cl_mobjs[i]->Role = ROLE_DumbProxy;
 	cl_mobjs[i]->RemoteRole = ROLE_Authority;
+	unguard;
+}
+
+//==========================================================================
+//
+//	CL_ParseDestroyObj
+//
+//==========================================================================
+
+static void CL_ParseDestroyObj(VMessageIn& msg)
+{
+	guard(CL_ParseDestroyObj);
+	int i = msg.ReadInt(GMaxEntities);
+	if (cl_mobjs[i])
+	{
+		GClLevel->RemoveThinker(cl_mobjs[i]);
+		cl_mobjs[i]->ConditionalDestroy();
+		cl_mobjs[i] = NULL;
+	}
 	unguard;
 }
 
@@ -1080,6 +1086,10 @@ bool VClientPlayerNetInfo::ParsePacket(VMessageIn& msg)
 
 		case svc_new_obj:
 			CL_ParseNewObj(msg);
+			break;
+
+		case svc_destroy_obj:
+			CL_ParseDestroyObj(msg);
 			break;
 
 		case svc_set_player_prop:

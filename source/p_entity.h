@@ -189,8 +189,6 @@ class VEntity : public VThinker
 
 	int				NetID;
 
-	int				InUse;			//	Counter for client side
-
 	//  Params
 	float			Mass;
 	float			MaxStepHeight;

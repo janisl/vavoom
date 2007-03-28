@@ -1333,16 +1333,14 @@ static void AM_drawPlayers()
 
 static void AM_drawThings(vuint32 colour)
 {
-	int			i;
-	float		x, y, angle;
-
-	for (i = 0; i < GMaxEntities; i++)
+	for (VThinker* Th = GClLevel->ThinkerHead; Th; Th = Th->Next)
 	{
-		if (cl_mobjs[i]->InUse)
+		VEntity* Ent = Cast<VEntity>(Th);
+		if (Ent)
 		{
-			x = FTOM(MTOF(cl_mobjs[i]->Origin.x));
-			y = FTOM(MTOF(cl_mobjs[i]->Origin.y));
-			angle = cl_mobjs[i]->Angles.yaw;
+			float x = FTOM(MTOF(Ent->Origin.x));
+			float y = FTOM(MTOF(Ent->Origin.y));
+			float angle = Ent->Angles.yaw;
 
 			if (am_rotate)
 			{

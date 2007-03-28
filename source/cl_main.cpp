@@ -199,7 +199,7 @@ void CL_UpdateMobjs()
 	guard(CL_UpdateMobjs);
 	for (int i = 0; i < GMaxEntities; i++)
 	{
-		if (cl_mobjs[i]->InUse)
+		if (cl_mobjs[i])
 		{
 			GClGame->eventUpdateMobj(cl_mobjs[i], i, host_frametime);
 		}
