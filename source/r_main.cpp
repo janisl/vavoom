@@ -476,7 +476,17 @@ void VRenderLevel::SetupFrame()
 
 	if (r_chasecam)
 	{
-		vieworg = cl_mobjs[cl->ClientNum + 1]->Origin + TVec(0.0, 0.0, 32.0)
+		VEntity* ViewEnt = NULL;
+		for (VThinker* Th = Level->ThinkerHead; Th; Th = Th->Next)
+		{
+			if (Th->IsA(VEntity::StaticClass()) &&
+				((VEntity*)Th)->EntityFlags & VEntity::EF_NetLocalPlayer)
+			{
+				ViewEnt = (VEntity*)Th;
+				break;
+			}
+		}
+		vieworg = ViewEnt->Origin + TVec(0.0, 0.0, 32.0)
 			- r_chase_dist * viewforward + r_chase_up * viewup
 			+ r_chase_right * viewright;
 	}

@@ -170,6 +170,7 @@ class VEntity : public VThinker
 		EF_OnMobj				= 0x00100000,	// mobj is resting on top of another mobj
 		EF_Corpse				= 0x00200000,	// don't stop moving halfway off a step
 		EF_FullBright			= 0x00400000,	// make current state full bright
+		EF_NetLocalPlayer		= 0x00800000,	// Mobj of player currently being updated
 	};
 	vuint32			EntityFlags;
 

@@ -354,9 +354,7 @@ void SV_AddEntity(VEntity* Ent)
 {
 	int i;
 
-	//	Client treats first objects as player objects and will use
-	// models and skins from player info
-	for (i = svs.max_clients + 1; i < GMaxEntities; i++)
+	for (i = 1; i < GMaxEntities; i++)
 	{
 		if (!sv_mobjs[i] && (sv_mo_free_time[i] < 1.0 ||
 			level.time - sv_mo_free_time[i] > 2.0))
@@ -679,16 +677,6 @@ void SV_UpdateMobj(int i, VMessageOut& msg)
 {
 	guard(SV_UpdateMobj);
 	int bits;
-	int sendnum;
-
-	if (sv_mobjs[i]->EntityFlags & VEntity::EF_IsPlayer)
-	{
-		sendnum = SV_GetPlayerNum(sv_mobjs[i]->Player) + 1;
-	}
-	else
-	{
-		sendnum = i;
-	}
 
 	if (sv_player->Net->EntChan[i].Ent != sv_mobjs[i])
 	{
@@ -698,7 +686,7 @@ void SV_UpdateMobj(int i, VMessageOut& msg)
 	if (sv_player->Net->EntChan[i].NewObj)
 	{
 		msg << (vuint8)svc_new_obj;
-		msg.WriteInt(sendnum, GMaxEntities);
+		msg.WriteInt(i, GMaxEntities);
 		int ClsId = sv_player->Net->EntChan[i].Ent->GetClass()->NetId;
 		if (ClsId < 0x80)
 		{
@@ -715,15 +703,15 @@ void SV_UpdateMobj(int i, VMessageOut& msg)
 	bits = 0;
 
 	msg << (vuint8)svc_update_mobj;
-	msg.WriteBit(sendnum > 0xff);
-	if (sendnum > 0xff)
-		msg << (vuint16)sendnum;
+	msg.WriteBit(i > 0xff);
+	if (i > 0xff)
+		msg << (vuint16)i;
 	else
-		msg << (vuint8)sendnum;
+		msg << (vuint8)i;
 
-	SV_WriteMobj(*sv_mobjs[i], sv_mo_base[sendnum], msg);
+	SV_WriteMobj(*sv_mobjs[i], sv_mo_base[i], msg);
 
-	sv_player->Net->EntChan[i].Update(sendnum);
+	sv_player->Net->EntChan[i].Update(i);
 	return;
 	unguard;
 }
@@ -737,18 +725,8 @@ void SV_UpdateMobj(int i, VMessageOut& msg)
 void SV_SendDestroyMobj(int i, VMessageOut& msg)
 {
 	guard(SV_SendDestroyMobj);
-	int sendnum;
-	if (sv_mobjs[i] && sv_mobjs[i]->EntityFlags & VEntity::EF_IsPlayer)
-	{
-		sendnum = SV_GetPlayerNum(sv_mobjs[i]->Player) + 1;
-	}
-	else
-	{
-		sendnum = i;
-	}
-
 	msg << (vuint8)svc_destroy_obj;
-	msg.WriteInt(sendnum, GMaxEntities);
+	msg.WriteInt(i, GMaxEntities);
 	sv_player->Net->EntChan[i].PendingClose = false;
 	unguard;
 }
@@ -855,12 +833,6 @@ int GetOriginNum(const VEntity *mobj)
 	{
 		return 0;
 	}
-
-	if (mobj->EntityFlags & VEntity::EF_IsPlayer)
-	{
-		return SV_GetPlayerNum(mobj->Player) + 1;
-	}
-
 	return mobj->NetID;
 }
 
@@ -1627,6 +1599,8 @@ void SV_SendClientDatagram()
 		if (!sv_player->Net->NeedsUpdate)
 			continue;
 
+		sv_player->MO->EntityFlags |= VEntity::EF_NetLocalPlayer;
+
 		VMessageOut msg(OUT_MESSAGE_SIZE);
 
 		msg << (vuint8)svc_time
@@ -1640,6 +1614,8 @@ void SV_SendClientDatagram()
 		SV_UpdateLevel(msg);
 
 		sv_player->Net->SendMessage(&msg, false);
+
+		sv_player->MO->EntityFlags &= ~VEntity::EF_NetLocalPlayer;
 	}
 	unguard;
 }

@@ -160,6 +160,7 @@ bool bAvoidingDropoff;	// used to move monsters away from dropoffs
 bool bOnMobj;			// mobj is resting on top of another mobj
 bool bCorpse;			// don't stop moving halfway off a step
 bool bFullBright;		// make current state full bright
+native readonly bool bNetLocalPlayer;	// Mobj of player currently being updated
 
 int Health;
 
@@ -197,7 +198,7 @@ replication
 {
 	reliable if (Role == ROLE_Authority)
 		SpriteType, ModelVersion, Alpha, Translation, Effects, bFullBright,
-		bFixedModel;
+		bFixedModel, bNetLocalPlayer;
 	reliable if (Role == ROLE_Authority && bFixedModel)
 		FixedModelIndex, ModelSkinNum;
 }

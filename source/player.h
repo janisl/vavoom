@@ -228,7 +228,7 @@ class VBasePlayer : public VObject
 
 	vuint32			WorldTimer;				// total time the player's been playing
 
-	int				ClientNum;		// cl_mobjs[cl.clientnum] = player
+	int				ClientNum;
 
 	float			ViewEntAlpha;
 

@@ -475,7 +475,9 @@ void VAudio::PlaySound(int InSoundId, const TVec& origin,
 	// calculate the distance before other stuff so that we can throw out
 	// sounds that are beyond the hearing range.
 	int dist = 0;
-	if (origin_id && origin_id != cl->ClientNum + 1 && Attenuation > 0)
+	bool LocalSound = origin_id < GMaxEntities && cl_mobjs[origin_id] &&
+		(cl_mobjs[origin_id]->EntityFlags & VEntity::EF_NetLocalPlayer);
+	if (origin_id && !LocalSound && Attenuation > 0)
 		dist = (int)(Length(origin - cl->ViewOrg) * Attenuation);
 	if (dist >= MaxSoundDist && !NoSoundClipping)
 	{
@@ -499,7 +501,7 @@ void VAudio::PlaySound(int InSoundId, const TVec& origin,
 	}
 	int handle;
 	bool is3D;
-	if (!origin_id || origin_id == cl->ClientNum + 1 || Attenuation <= 0)
+	if (!origin_id || LocalSound || Attenuation <= 0)
 	{
 		//	Local sound
 		handle = SoundDevice->PlaySound(sound_id, volume, 0, pitch, false);
@@ -901,7 +903,8 @@ void VAudio::UpdateSfx()
 			continue;
 		}
 
-		if (Channel[i].origin_id == cl->ClientNum + 1)
+		if (Channel[i].origin_id < GMaxEntities && cl_mobjs[Channel[i].origin_id] &&
+			(cl_mobjs[Channel[i].origin_id]->EntityFlags & VEntity::EF_NetLocalPlayer))
 		{
 			//	Client sound
 			continue;
