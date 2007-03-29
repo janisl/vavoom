@@ -186,11 +186,14 @@ VPlayerNetInfo::VPlayerNetInfo(VSocketPublic* ANetCon)
 , LastMessage(0)
 , NeedsUpdate(false)
 , EntChan(NULL)
+, Chan(NULL)
 , InMsg(NULL)
 , OutMsg(NULL)
 , Out(MAX_MSGLEN * 8)
 {
-	EntChan = new VEntityChannel[GMaxEntities];
+	EntChan = new VEntityChannel*[GMaxEntities];
+	memset(EntChan, 0, sizeof(VEntityChannel*) * GMaxEntities);
+	Chan = new VPlayerChannel();
 }
 
 //==========================================================================
@@ -201,8 +204,16 @@ VPlayerNetInfo::VPlayerNetInfo(VSocketPublic* ANetCon)
 
 VPlayerNetInfo::~VPlayerNetInfo()
 {
+	for (int i = 0; i < GMaxEntities; i++)
+	{
+		if (EntChan[i])
+		{
+			delete EntChan[i];
+		}
+	}
 	delete[] EntChan;
-	Chan.SetPlayer(NULL);
+	Chan->SetPlayer(NULL);
+	delete Chan;
 	for (VMessageIn* Msg = InMsg; Msg; )
 	{
 		VMessageIn* Next = Msg->Next;

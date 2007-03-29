@@ -681,16 +681,21 @@ void SV_UpdateMobj(int i, VMessageOut& msg)
 	guard(SV_UpdateMobj);
 	int bits;
 
-	if (sv_player->Net->EntChan[i].Ent != sv_mobjs[i])
+	if (!sv_player->Net->EntChan[i])
 	{
-		sv_player->Net->EntChan[i].SetEntity(sv_mobjs[i]);
+		sv_player->Net->EntChan[i] = new VEntityChannel();
 	}
 
-	if (sv_player->Net->EntChan[i].NewObj)
+	if (sv_player->Net->EntChan[i]->Ent != sv_mobjs[i])
+	{
+		sv_player->Net->EntChan[i]->SetEntity(sv_mobjs[i]);
+	}
+
+	if (sv_player->Net->EntChan[i]->NewObj)
 	{
 		msg << (vuint8)svc_new_obj;
 		msg.WriteInt(i, GMaxEntities);
-		int ClsId = sv_player->Net->EntChan[i].Ent->GetClass()->NetId;
+		int ClsId = sv_player->Net->EntChan[i]->Ent->GetClass()->NetId;
 		if (ClsId < 0x80)
 		{
 			msg << (vuint8)ClsId;
@@ -700,7 +705,7 @@ void SV_UpdateMobj(int i, VMessageOut& msg)
 			msg << (vuint8)(ClsId & 0x7f | 0x80)
 				<< (vuint8)(ClsId >> 7);
 		}
-		sv_player->Net->EntChan[i].NewObj = false;
+		sv_player->Net->EntChan[i]->NewObj = false;
 	}
 
 	bits = 0;
@@ -714,7 +719,7 @@ void SV_UpdateMobj(int i, VMessageOut& msg)
 
 	SV_WriteMobj(*sv_mobjs[i], sv_mo_base[i], msg);
 
-	sv_player->Net->EntChan[i].Update(i);
+	sv_player->Net->EntChan[i]->Update(i);
 	return;
 	unguard;
 }
@@ -730,7 +735,9 @@ void SV_SendDestroyMobj(int i, VMessageOut& msg)
 	guard(SV_SendDestroyMobj);
 	msg << (vuint8)svc_destroy_obj;
 	msg.WriteInt(i, GMaxEntities);
-	sv_player->Net->EntChan[i].PendingClose = false;
+	sv_player->Net->EntChan[i]->PendingClose = false;
+	delete sv_player->Net->EntChan[i];
+	sv_player->Net->EntChan[i] = NULL;
 	unguard;
 }
 
@@ -758,9 +765,10 @@ void VEntity::Destroy()
 
 		for (int i = 0; i < MAXPLAYERS; i++)
 		{
-			if (GGameInfo->Players[i])
+			if (GGameInfo->Players[i] &&
+				GGameInfo->Players[i]->Net->EntChan[NetID])
 			{
-				GGameInfo->Players[i]->Net->EntChan[NetID].SetEntity(NULL);
+				GGameInfo->Players[i]->Net->EntChan[NetID]->SetEntity(NULL);
 			}
 		}
 
@@ -771,7 +779,10 @@ void VEntity::Destroy()
 #ifdef CLIENT
 	if (XLevel == GClLevel && GClLevel && cl->Net)
 	{
-		cl->Net->EntChan[NetID].SetEntity(NULL);
+		if (cl->Net->EntChan[NetID])
+		{
+			cl->Net->EntChan[NetID]->SetEntity(NULL);
+		}
 	}
 #endif
 
@@ -1464,14 +1475,17 @@ int NumObjs = 0;
 	//	Send close channel commands.
 	for (i = 0; i < GMaxEntities; i++)
 	{
-		if (sv_player->Net->EntChan[i].PendingClose)
+		if (sv_player->Net->EntChan[i] && sv_player->Net->EntChan[i]->PendingClose)
 			SV_SendDestroyMobj(i, msg);
 	}
 
 	//	Mark all entity channels as not updated in this frame.
 	for (i = 0; i < GMaxEntities; i++)
 	{
-		sv_player->Net->EntChan[i].UpdatedThisFrame = false;
+		if (sv_player->Net->EntChan[i])
+		{
+			sv_player->Net->EntChan[i]->UpdatedThisFrame = false;
+		}
 	}
 
 	//	First update players
@@ -1535,16 +1549,20 @@ dprintf("Update size %d (%d) for %d, aver %f big %d %d\n", msg.GetNumBytes(), ms
 	//	Close entity channels that were not updated in this frame.
 	for (i = 0; i < GMaxEntities; i++)
 	{
-		if (!sv_player->Net->EntChan[i].UpdatedThisFrame)
+		if (sv_player->Net->EntChan[i] &&
+			!sv_player->Net->EntChan[i]->UpdatedThisFrame)
 		{
-			sv_player->Net->EntChan[i].SetEntity(NULL);
+			sv_player->Net->EntChan[i]->SetEntity(NULL);
 		}
 	}
 	//	Send close channel commands.
 	for (i = 0; i < GMaxEntities; i++)
 	{
-		if (sv_player->Net->EntChan[i].PendingClose)
+		if (sv_player->Net->EntChan[i] &&
+			sv_player->Net->EntChan[i]->PendingClose)
+		{
 			SV_SendDestroyMobj(i, msg);
+		}
 	}
 
 if (show_update_stats)
@@ -1650,7 +1668,7 @@ void SV_SendReliable()
 			continue;
 
 		sv_player = GGameInfo->Players[i];
-		GGameInfo->Players[i]->Net->Chan.Update();
+		GGameInfo->Players[i]->Net->Chan->Update();
 	}
 
 	sv_reliable->Clear();
@@ -2832,8 +2850,8 @@ COMMAND(Spawn)
 						<< (vuint8)0;
 	sv_player->Net->Message << (vuint8)svc_signonnum << (vuint8)3;
 	sv_player->PlayerFlags &= ~VBasePlayer::PF_FixAngle;
-	sv_player->Net->Chan.SetPlayer(NULL);
-	sv_player->Net->Chan.SetPlayer(sv_player);
+	sv_player->Net->Chan->SetPlayer(NULL);
+	sv_player->Net->Chan->SetPlayer(sv_player);
 	unguard;
 }
 
@@ -3137,7 +3155,7 @@ void SV_CheckForNewClients()
 			Sys_Error("Host_CheckForNewClients: no free clients");
 
 		GPlayersBase[i]->Net = new VServerPlayerNetInfo(sock);
-		GPlayersBase[i]->Net->Chan.SetPlayer(GPlayersBase[i]);
+		GPlayersBase[i]->Net->Chan->SetPlayer(GPlayersBase[i]);
 		SV_ConnectClient(GPlayersBase[i]);
 		svs.num_connected++;
 	}
@@ -3175,7 +3193,7 @@ void SV_ConnectBot(const char *name)
 	GPlayersBase[i]->PlayerFlags |= VBasePlayer::PF_IsBot;
 	GPlayersBase[i]->PlayerName = name;
 	GPlayersBase[i]->Net = new VServerPlayerNetInfo(sock);
-	GPlayersBase[i]->Net->Chan.SetPlayer(GPlayersBase[i]);
+	GPlayersBase[i]->Net->Chan->SetPlayer(GPlayersBase[i]);
 	SV_ConnectClient(GPlayersBase[i]);
 	svs.num_connected++;
 

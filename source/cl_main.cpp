@@ -414,7 +414,7 @@ void CL_EstablishConnection(const char* host)
 		return;
 	}
 	cl->Net = new VClientPlayerNetInfo(Sock);
-	cl->Net->Chan.SetPlayer(cl);
+	cl->Net->Chan->SetPlayer(cl);
 	GCon->Logf(NAME_Dev, "CL_EstablishConnection: connected to %s", host);
 
 	UserInfoSent = false;

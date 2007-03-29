@@ -215,7 +215,7 @@ static void CL_ParseUpdateMobj(VMessageIn& msg)
 	else
 		i = msg.ReadByte();
 
-	CL_ReadMobj(msg, cl->Net->EntChan[i].Ent, cl_mo_base[i]);
+	CL_ReadMobj(msg, cl->Net->EntChan[i]->Ent, cl_mo_base[i]);
 	unguard;
 }
 
@@ -693,7 +693,7 @@ static void CL_ParseSetProp(VMessageIn& Msg)
 {
 	guard(CL_ParseSetProp);
 	int Id = Msg.ReadInt(GMaxEntities);
-	VEntity* Ent = cl->Net->EntChan[Id].Ent;
+	VEntity* Ent = cl->Net->EntChan[Id]->Ent;
 	int FldIdx = Msg.ReadByte();
 	VField* F = NULL;
 	for (VField* CF = Ent->GetClass()->NetFields; CF; CF = CF->NextNetField)
@@ -728,15 +728,19 @@ static void CL_ParseNewObj(VMessageIn& msg)
 		ci = (ci & 0x7f) | (msg.ReadByte() << 7);
 	VClass* C = ClassLookup[ci];
 
-	if (cl->Net->EntChan[i].Ent)
+	if (cl->Net->EntChan[i] && cl->Net->EntChan[i]->Ent)
 	{
-		GClLevel->RemoveThinker(cl->Net->EntChan[i].Ent);
-		cl->Net->EntChan[i].Ent->ConditionalDestroy();
+		GClLevel->RemoveThinker(cl->Net->EntChan[i]->Ent);
+		cl->Net->EntChan[i]->Ent->ConditionalDestroy();
+	}
+	if (!cl->Net->EntChan[i])
+	{
+		cl->Net->EntChan[i] = new VEntityChannel();
 	}
 	VEntity* Ent = (VEntity*)GClLevel->SpawnThinker(C);
 	Ent->Role = ROLE_DumbProxy;
 	Ent->RemoteRole = ROLE_Authority;
-	cl->Net->EntChan[i].SetEntity(Ent);
+	cl->Net->EntChan[i]->SetEntity(Ent);
 	unguard;
 }
 
@@ -750,11 +754,16 @@ static void CL_ParseDestroyObj(VMessageIn& msg)
 {
 	guard(CL_ParseDestroyObj);
 	int i = msg.ReadInt(GMaxEntities);
-	if (cl->Net->EntChan[i].Ent)
+	if (cl->Net->EntChan[i])
 	{
-		GClLevel->RemoveThinker(cl->Net->EntChan[i].Ent);
-		cl->Net->EntChan[i].Ent->ConditionalDestroy();
-		cl->Net->EntChan[i].SetEntity(NULL);
+		if (cl->Net->EntChan[i]->Ent)
+		{
+			GClLevel->RemoveThinker(cl->Net->EntChan[i]->Ent);
+			cl->Net->EntChan[i]->Ent->ConditionalDestroy();
+			cl->Net->EntChan[i]->SetEntity(NULL);
+		}
+		delete cl->Net->EntChan[i];
+		cl->Net->EntChan[i] = NULL;
 	}
 	unguard;
 }

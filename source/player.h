@@ -122,8 +122,8 @@ public:
 	int					MobjUpdateStart;
 	double				LastMessage;
 	bool				NeedsUpdate;
-	VEntityChannel*		EntChan;
-	VPlayerChannel		Chan;
+	VEntityChannel**	EntChan;
+	VPlayerChannel*		Chan;
 	VMessageIn*			InMsg;
 	VMessageOut*		OutMsg;
 	VBitStreamWriter	Out;
