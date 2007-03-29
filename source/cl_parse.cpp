@@ -49,7 +49,6 @@ void CL_SignonReply();
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-VEntity**		cl_mobjs;
 clmobjbase_t*	cl_mo_base;
 VModel*			model_precache[1024];
 VStr			skin_list[256];
@@ -73,10 +72,6 @@ void CL_Clear()
 	cl->Net = Net;
 	cl_level.LevelName.Clean();
 	memset(&cl_level, 0, sizeof(cl_level));
-	for (int i = 0; i < GMaxEntities; i++)
-		if (cl_mobjs[i])
-			cl_mobjs[i]->ConditionalDestroy();
-	memset(cl_mobjs, 0, sizeof(VEntity*) * GMaxEntities);
 	memset(cl_mo_base, 0, sizeof(clmobjbase_t) * GMaxEntities);
 	for (int i = 0; i < MAXPLAYERS; i++)
 	{
@@ -220,7 +215,7 @@ static void CL_ParseUpdateMobj(VMessageIn& msg)
 	else
 		i = msg.ReadByte();
 
-	CL_ReadMobj(msg, cl_mobjs[i], cl_mo_base[i]);
+	CL_ReadMobj(msg, cl->Net->EntChan[i].Ent, cl_mo_base[i]);
 	unguard;
 }
 
@@ -698,7 +693,7 @@ static void CL_ParseSetProp(VMessageIn& Msg)
 {
 	guard(CL_ParseSetProp);
 	int Id = Msg.ReadInt(GMaxEntities);
-	VEntity* Ent = cl_mobjs[Id];
+	VEntity* Ent = cl->Net->EntChan[Id].Ent;
 	int FldIdx = Msg.ReadByte();
 	VField* F = NULL;
 	for (VField* CF = Ent->GetClass()->NetFields; CF; CF = CF->NextNetField)
@@ -733,14 +728,15 @@ static void CL_ParseNewObj(VMessageIn& msg)
 		ci = (ci & 0x7f) | (msg.ReadByte() << 7);
 	VClass* C = ClassLookup[ci];
 
-	if (cl_mobjs[i])
+	if (cl->Net->EntChan[i].Ent)
 	{
-		GClLevel->RemoveThinker(cl_mobjs[i]);
-		cl_mobjs[i]->ConditionalDestroy();
+		GClLevel->RemoveThinker(cl->Net->EntChan[i].Ent);
+		cl->Net->EntChan[i].Ent->ConditionalDestroy();
 	}
-	cl_mobjs[i] = (VEntity*)GClLevel->SpawnThinker(C);
-	cl_mobjs[i]->Role = ROLE_DumbProxy;
-	cl_mobjs[i]->RemoteRole = ROLE_Authority;
+	VEntity* Ent = (VEntity*)GClLevel->SpawnThinker(C);
+	Ent->Role = ROLE_DumbProxy;
+	Ent->RemoteRole = ROLE_Authority;
+	cl->Net->EntChan[i].SetEntity(Ent);
 	unguard;
 }
 
@@ -754,11 +750,11 @@ static void CL_ParseDestroyObj(VMessageIn& msg)
 {
 	guard(CL_ParseDestroyObj);
 	int i = msg.ReadInt(GMaxEntities);
-	if (cl_mobjs[i])
+	if (cl->Net->EntChan[i].Ent)
 	{
-		GClLevel->RemoveThinker(cl_mobjs[i]);
-		cl_mobjs[i]->ConditionalDestroy();
-		cl_mobjs[i] = NULL;
+		GClLevel->RemoveThinker(cl->Net->EntChan[i].Ent);
+		cl->Net->EntChan[i].Ent->ConditionalDestroy();
+		cl->Net->EntChan[i].SetEntity(NULL);
 	}
 	unguard;
 }

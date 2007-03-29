@@ -265,7 +265,6 @@ void SCR_SetVirtualScreen(int, int);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
-extern VEntity**		cl_mobjs;
 extern clmobjbase_t*	cl_mo_base;
 
 extern VClientGameBase*	GClGame;

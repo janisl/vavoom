@@ -458,15 +458,18 @@ void VEntityChannel::SetEntity(VEntity* AEnt)
 
 	if (Ent)
 	{
-		VEntity* Def = (VEntity*)Ent->GetClass()->Defaults;
-		OldData = new vuint8[Ent->GetClass()->ClassSize];
-		memset(OldData, 0, Ent->GetClass()->ClassSize);
-		for (VField* F = Ent->GetClass()->NetFields; F; F = F->NextNetField)
+		if (Ent->Role == ROLE_Authority)
 		{
-			VField::CopyFieldValue((vuint8*)Def + F->Ofs, OldData + F->Ofs,
-				F->Type);
+			VEntity* Def = (VEntity*)Ent->GetClass()->Defaults;
+			OldData = new vuint8[Ent->GetClass()->ClassSize];
+			memset(OldData, 0, Ent->GetClass()->ClassSize);
+			for (VField* F = Ent->GetClass()->NetFields; F; F = F->NextNetField)
+			{
+				VField::CopyFieldValue((vuint8*)Def + F->Ofs, OldData + F->Ofs,
+					F->Type);
+			}
+			FieldCondValues = new vuint8[Ent->GetClass()->NumNetFields];
 		}
-		FieldCondValues = new vuint8[Ent->GetClass()->NumNetFields];
 		NewObj = true;
 	}
 	unguard;
@@ -764,6 +767,13 @@ void VEntity::Destroy()
 		sv_mobjs[NetID] = NULL;
 		sv_mo_free_time[NetID] = level.time;
 	}
+
+#ifdef CLIENT
+	if (XLevel == GClLevel && GClLevel && cl->Net)
+	{
+		cl->Net->EntChan[NetID].SetEntity(NULL);
+	}
+#endif
 
 	Super::Destroy();
 	unguard;
@@ -2672,13 +2682,10 @@ void SV_SpawnServer(const char *mapname, bool spawn_thinkers)
 	SV_SendServerInfoToClients();
 
 	//	Call BeginPlay events.
-dprintf("Doing BeginPlay\n");
 	for (TThinkerIterator<VEntity> Ent(GLevel); Ent; ++Ent)
 	{
-check(Ent->IsA(VEntity::StaticClass()));
 		Ent->eventBeginPlay();
 	}
-dprintf("Did it\n");
 	GLevelInfo->LevelInfoFlags |= VLevelInfo::LIF_BegunPlay;
 
 	//	Start open scripts.

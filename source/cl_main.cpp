@@ -82,9 +82,7 @@ void CL_Init()
 	guard(CL_Init);
 	VMemberBase::StaticLoadPackage(NAME_clprogs);
 
-	cl_mobjs = new VEntity*[GMaxEntities];
 	cl_mo_base = new clmobjbase_t[GMaxEntities];
-	memset(cl_mobjs, 0, sizeof(VEntity*) * GMaxEntities);
 	memset(cl_mo_base, 0, sizeof(clmobjbase_t) * GMaxEntities);
 
 	GClGame = (VClientGameBase*)VObject::StaticSpawnObject(
@@ -134,13 +132,9 @@ void CL_Shutdown()
 
 	//	Free up memory.
 	if (GClLevel)
-	{
-		GClLevel->DestroyAllThinkers();
 		GClLevel->ConditionalDestroy();
-	}
 	if (GClPrevLevel)
 		GClPrevLevel->ConditionalDestroy();
-	delete[] cl_mobjs;
 	delete[] cl_mo_base;
 	if (GClGame)
 		GClGame->ConditionalDestroy();
