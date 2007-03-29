@@ -133,18 +133,15 @@ void CL_Shutdown()
 	}
 
 	//	Free up memory.
-	if (cl_mobjs)
-	{
-		for (int i = 0; i < GMaxEntities; i++)
-			if (cl_mobjs[i])
-				cl_mobjs[i]->ConditionalDestroy();
-		delete[] cl_mobjs;
-	}
-	delete[] cl_mo_base;
 	if (GClLevel)
+	{
+		GClLevel->DestroyAllThinkers();
 		GClLevel->ConditionalDestroy();
+	}
 	if (GClPrevLevel)
 		GClPrevLevel->ConditionalDestroy();
+	delete[] cl_mobjs;
+	delete[] cl_mo_base;
 	if (GClGame)
 		GClGame->ConditionalDestroy();
 	if (cl)
@@ -197,11 +194,12 @@ void CL_DecayLights()
 void CL_UpdateMobjs()
 {
 	guard(CL_UpdateMobjs);
-	for (int i = 0; i < GMaxEntities; i++)
+	for (VThinker* Th = GClLevel->ThinkerHead; Th; Th = Th->Next)
 	{
-		if (cl_mobjs[i])
+		VEntity* Ent = Cast<VEntity>(Th);
+		if (Ent)
 		{
-			GClGame->eventUpdateMobj(cl_mobjs[i], i, host_frametime);
+			GClGame->eventUpdateMobj(Ent, Ent->NetID, host_frametime);
 		}
 	}
 	unguard;
