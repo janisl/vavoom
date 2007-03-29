@@ -198,7 +198,7 @@ replication
 {
 	reliable if (Role == ROLE_Authority)
 		SpriteType, ModelVersion, Alpha, Translation, Effects, bFullBright,
-		bFixedModel, bNetLocalPlayer;
+		bFixedModel, bNetLocalPlayer, NetID;
 	reliable if (Role == ROLE_Authority && bFixedModel)
 		FixedModelIndex, ModelSkinNum;
 }
