@@ -52,3 +52,43 @@ class VThinker : public VObject
 	DECLARE_FUNCTION(Destroy)
 	DECLARE_FUNCTION(NextThinker)
 };
+
+template <class T> class TThinkerIterator
+{
+private:
+	VThinker* Th;
+	void GetNext()
+	{
+		while (Th && (!Th->IsA(T::StaticClass()) ||
+			(Th->GetFlags() & _OF_DelayedDestroy)))
+		{
+			Th = Th->Next;
+		}
+	}
+public:
+	TThinkerIterator(const VLevel* Level)
+	{
+		Th = Level->ThinkerHead;
+		GetNext();
+	}
+	operator bool()
+	{
+		return Th != NULL;
+	}
+	void operator ++()
+	{
+		if (Th)
+		{
+			Th = Th->Next;
+			GetNext();
+		}
+	}
+	T* operator ->()
+	{
+		return (T*)Th;
+	}
+	T* operator *()
+	{
+		return (T*)Th;
+	}
+};

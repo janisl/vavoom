@@ -477,12 +477,11 @@ void VRenderLevel::SetupFrame()
 	if (r_chasecam)
 	{
 		VEntity* ViewEnt = NULL;
-		for (VThinker* Th = Level->ThinkerHead; Th; Th = Th->Next)
+		for (TThinkerIterator<VEntity> Ent(Level); Ent; ++Ent)
 		{
-			if (Th->IsA(VEntity::StaticClass()) &&
-				((VEntity*)Th)->EntityFlags & VEntity::EF_NetLocalPlayer)
+			if (Ent->EntityFlags & VEntity::EF_NetLocalPlayer)
 			{
-				ViewEnt = (VEntity*)Th;
+				ViewEnt = *Ent;
 				break;
 			}
 		}

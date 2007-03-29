@@ -2672,14 +2672,13 @@ void SV_SpawnServer(const char *mapname, bool spawn_thinkers)
 	SV_SendServerInfoToClients();
 
 	//	Call BeginPlay events.
-	for (VThinker* Th = GLevel->ThinkerHead; Th; Th = Th->Next)
+dprintf("Doing BeginPlay\n");
+	for (TThinkerIterator<VEntity> Ent(GLevel); Ent; ++Ent)
 	{
-		if (Th->IsA(VEntity::StaticClass()) &&
-			!(Th->GetFlags() & _OF_DelayedDestroy))
-		{
-			((VEntity*)Th)->eventBeginPlay();
-		}
+check(Ent->IsA(VEntity::StaticClass()));
+		Ent->eventBeginPlay();
 	}
+dprintf("Did it\n");
 	GLevelInfo->LevelInfoFlags |= VLevelInfo::LIF_BegunPlay;
 
 	//	Start open scripts.

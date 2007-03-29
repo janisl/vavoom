@@ -1333,24 +1333,20 @@ static void AM_drawPlayers()
 
 static void AM_drawThings(vuint32 colour)
 {
-	for (VThinker* Th = GClLevel->ThinkerHead; Th; Th = Th->Next)
+	for (TThinkerIterator<VEntity> Ent(GClLevel); Ent; ++Ent)
 	{
-		VEntity* Ent = Cast<VEntity>(Th);
-		if (Ent)
+		float x = FTOM(MTOF(Ent->Origin.x));
+		float y = FTOM(MTOF(Ent->Origin.y));
+		float angle = Ent->Angles.yaw;
+
+		if (am_rotate)
 		{
-			float x = FTOM(MTOF(Ent->Origin.x));
-			float y = FTOM(MTOF(Ent->Origin.y));
-			float angle = Ent->Angles.yaw;
-
-			if (am_rotate)
-			{
-				AM_rotatePoint (&x, &y);
-				angle += 90.0 - cl->ViewAngles.yaw;
-			}
-
-			AM_drawLineCharacter(thintriangle_guy, NUMTHINTRIANGLEGUYLINES,
-				16.0, angle, colour, x, y);
+			AM_rotatePoint (&x, &y);
+			angle += 90.0 - cl->ViewAngles.yaw;
 		}
+
+		AM_drawLineCharacter(thintriangle_guy, NUMTHINTRIANGLEGUYLINES,
+			16.0, angle, colour, x, y);
 	}
 }
 

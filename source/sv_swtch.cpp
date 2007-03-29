@@ -153,17 +153,12 @@ static bool P_StartButton(int sidenum, EBWhere w, int SwitchDef,
 {
 	guard(P_StartButton);
 	// See if button is already pressed
-	for (VThinker* Th = GLevel->ThinkerHead; Th; Th = Th->Next)
+	for (TThinkerIterator<VButton> Btn(GLevel); Btn; ++Btn)
 	{
-		if (!Th->IsA(VButton::StaticClass()) ||
-			(Th->GetFlags() & _OF_DelayedDestroy))
-		{
-			continue;
-		}
-		if (((VButton*)Th)->Side == sidenum)
+		if (Btn->Side == sidenum)
 		{
 			//	Force advancing to the next frame
-			((VButton*)Th)->Timer = 0.001;
+			Btn->Timer = 0.001;
 			return false;
 		}
 	}

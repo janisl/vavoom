@@ -477,10 +477,9 @@ void VAudio::PlaySound(int InSoundId, const TVec& origin,
 	bool LocalPlayerSound = false;
 	if (GClLevel)
 	{
-		for (VThinker* Th = GClLevel->ThinkerHead; Th; Th = Th->Next)
+		for (TThinkerIterator<VEntity> Ent(GClLevel); Ent; ++Ent)
 		{
-			VEntity* Ent = Cast<VEntity>(Th);
-			if (Ent && Ent->NetID == origin_id &&
+			if (Ent->NetID == origin_id &&
 				(Ent->EntityFlags & VEntity::EF_NetLocalPlayer))
 			{
 				LocalPlayerSound = true;

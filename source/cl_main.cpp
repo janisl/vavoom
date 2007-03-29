@@ -194,13 +194,9 @@ void CL_DecayLights()
 void CL_UpdateMobjs()
 {
 	guard(CL_UpdateMobjs);
-	for (VThinker* Th = GClLevel->ThinkerHead; Th; Th = Th->Next)
+	for (TThinkerIterator<VEntity> Ent(GClLevel); Ent; ++Ent)
 	{
-		VEntity* Ent = Cast<VEntity>(Th);
-		if (Ent)
-		{
-			GClGame->eventUpdateMobj(Ent, Ent->NetID, host_frametime);
-		}
+		GClGame->eventUpdateMobj(*Ent, Ent->NetID, host_frametime);
 	}
 	unguard;
 }

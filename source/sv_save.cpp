@@ -530,16 +530,16 @@ static void ArchiveThinkers()
 
 	//	Add thinkers.
 	int ThinkersStart = Saver->Exports.Num();
-	for (VThinker* Th = GLevel->ThinkerHead; Th; Th = Th->Next)
+	for (TThinkerIterator<VThinker> Th(GLevel); Th; ++Th)
 	{
-		VEntity *mobj = Cast<VEntity>(Th);
+		VEntity *mobj = Cast<VEntity>(*Th);
 		if (mobj && mobj->EntityFlags & VEntity::EF_IsPlayer && !SavingPlayers)
 		{
 			// Skipping player mobjs
 			continue;
 		}
 
-		Saver->Exports.Append(Th);
+		Saver->Exports.Append(*Th);
 		Saver->ObjectsMap[Th->GetIndex()] = Saver->Exports.Num();
 	}
 

@@ -765,12 +765,9 @@ void VRenderLevel::RenderMobjs()
 		return;
 	}
 
-	for (VThinker* Th = Level->ThinkerHead; Th; Th = Th->Next)
+	for (TThinkerIterator<VEntity> Ent(Level); Ent; ++Ent)
 	{
-		if (Th->IsA(VEntity::StaticClass()))
-		{
-			RenderThing((VEntity*)Th);
-		}
+		RenderThing(*Ent);
 	}
 	unguard;
 }
