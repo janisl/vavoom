@@ -65,7 +65,7 @@ void CL_Clear()
 	GClGame->serverinfo.Clean();
 	GClGame->intermission = 0;
 	GClGame->time = 0;
-	VPlayerNetInfo* Net = cl->Net;
+	VNetConnection* Net = cl->Net;
 	VEntity* PrevVEnt = cl->ViewEnt;
 	memset((byte*)cl + sizeof(VObject), 0, cl->GetClass()->ClassSize - sizeof(VObject));
 	cl->ViewEnt = PrevVEnt;
@@ -835,13 +835,13 @@ void CL_PO_Update(int i, float x, float y, float angle)
 
 //==========================================================================
 //
-//	VClientPlayerNetInfo::ParsePacket
+//	VClientGenChannel::ParsePacket
 //
 //==========================================================================
 
-bool VClientPlayerNetInfo::ParsePacket(VMessageIn& msg)
+bool VClientGenChannel::ParsePacket(VMessageIn& msg)
 {
-	guard(VClientPlayerNetInfo::ParsePacket);
+	guard(VClientGenChannel::ParsePacket);
 	int			i;
 	byte		cmd_type;
 	float		x;

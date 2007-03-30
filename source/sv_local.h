@@ -263,15 +263,25 @@ extern TArray<VSndSeqInfo>	sv_ActiveSequences;
 //
 //==========================================================================
 
-class VServerPlayerNetInfo : public VPlayerNetInfo
+class VServerGenChannel : public VChannel
+{
+public:
+	VServerGenChannel(VNetConnection* AConnection)
+	: VChannel(AConnection)
+	{}
+
+	//	VChannel interface
+	bool ParsePacket(VMessageIn&);
+};
+
+class VServerPlayerNetInfo : public VNetConnection
 {
 public:
 	VServerPlayerNetInfo(VSocketPublic* Sock)
-	: VPlayerNetInfo(Sock)
-	{}
-
-	//	VPlayerNetInfo interface
-	bool ParsePacket(VMessageIn&);
+	: VNetConnection(Sock)
+	{
+		GenChannel = new VServerGenChannel(this);
+	}
 };
 
 //==========================================================================

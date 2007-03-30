@@ -31,7 +31,7 @@
 
 // TYPES -------------------------------------------------------------------
 
-class VPlayerNetInfo;
+class VNetConnection;
 
 //
 // Overlay psprites are scaled shapes
@@ -69,10 +69,16 @@ struct VViewState
 class VChannel
 {
 public:
-	VPlayerNetInfo*	PlayerNet;
+	VNetConnection*	Connection;
 
 	VChannel();
+	VChannel(VNetConnection* AConnection)
+	: Connection(AConnection)
+	{}
 	virtual ~VChannel();
+
+	//	VChannel interface
+	virtual bool ParsePacket(VMessageIn&) = 0;
 };
 
 class VEntityChannel : public VChannel
@@ -89,6 +95,7 @@ public:
 	~VEntityChannel();
 	void SetEntity(VEntity*);
 	void Update(int);
+	bool ParsePacket(VMessageIn&) {return true;}
 };
 
 class VPlayerChannel : public VChannel
@@ -103,6 +110,7 @@ public:
 	~VPlayerChannel();
 	void SetPlayer(VBasePlayer*);
 	void Update();
+	bool ParsePacket(VMessageIn&) {return true;}
 };
 
 enum ENetConState
@@ -111,7 +119,7 @@ enum ENetConState
 	NETCON_Open,
 };
 
-class VPlayerNetInfo
+class VNetConnection
 {
 protected:
 	VNetworkPublic*		Driver;
@@ -127,16 +135,16 @@ public:
 	VMessageIn*			InMsg;
 	VMessageOut*		OutMsg;
 	VBitStreamWriter	Out;
+	VChannel*			GenChannel;
 
-	VPlayerNetInfo(VSocketPublic*);
-	virtual ~VPlayerNetInfo();
+	VNetConnection(VSocketPublic*);
+	virtual ~VNetConnection();
 
-	//	VPlayerNetInfo interface
+	//	VNetConnection interface
 	void GetMessages();
 	virtual int GetRawPacket(TArray<vuint8>&);
 	void ReceivedPacket(VBitStreamReader&);
 	void ReceivedRawMessage(VMessageIn&);
-	virtual bool ParsePacket(VMessageIn&) = 0;
 	virtual void SendMessage(VMessageOut*, bool);
 	void SendRawMessage(VMessageOut&);
 	virtual void SendAck(vuint32);
@@ -171,7 +179,7 @@ class VBasePlayer : public VObject
 	};
 	vuint32			PlayerFlags;
 
-	VPlayerNetInfo*	Net;
+	VNetConnection*	Net;
 
 	VStr			UserInfo;
 

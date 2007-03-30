@@ -236,16 +236,28 @@ class VClientGameBase : public VObject
 	}
 };
 
-class VClientPlayerNetInfo : public VPlayerNetInfo
+class VClientGenChannel : public VChannel
+{
+public:
+	VClientGenChannel(VNetConnection* AConnection)
+	: VChannel(AConnection)
+	{}
+
+	//	VChannel interface
+	bool ParsePacket(VMessageIn&);
+};
+
+class VClientPlayerNetInfo : public VNetConnection
 {
 public:
 	VClientPlayerNetInfo(VSocketPublic* Sock)
-	: VPlayerNetInfo(Sock)
-	{}
+	: VNetConnection(Sock)
+	{
+		GenChannel = new VClientGenChannel(this);
+	}
 
-	//	VPlayerNetInfo interface
+	//	VNetConnection interface
 	int GetRawPacket(TArray<vuint8>&);
-	bool ParsePacket(VMessageIn&);
 	void SendMessage(VMessageOut*, bool);
 };
 

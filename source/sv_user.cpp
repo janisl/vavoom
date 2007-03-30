@@ -122,12 +122,9 @@ void VPlayerChannel::SetPlayer(VBasePlayer* APlr)
 	}
 
 	Plr = APlr;
-	PlayerNet = NULL;
 
 	if (Plr)
 	{
-		PlayerNet = Plr->Net;
-
 		VBasePlayer* Def = (VBasePlayer*)Plr->GetClass()->Defaults;
 		OldData = new vuint8[Plr->GetClass()->ClassSize];
 		memset(OldData, 0, Plr->GetClass()->ClassSize);
@@ -173,11 +170,11 @@ void VPlayerChannel::Update()
 
 //==========================================================================
 //
-//	VPlayerNetInfo::VPlayerNetInfo
+//	VNetConnection::VNetConnection
 //
 //==========================================================================
 
-VPlayerNetInfo::VPlayerNetInfo(VSocketPublic* ANetCon)
+VNetConnection::VNetConnection(VSocketPublic* ANetCon)
 : Driver(GNet)
 , NetCon(ANetCon)
 , State(NETCON_Open)
@@ -190,6 +187,7 @@ VPlayerNetInfo::VPlayerNetInfo(VSocketPublic* ANetCon)
 , InMsg(NULL)
 , OutMsg(NULL)
 , Out(MAX_MSGLEN * 8)
+, GenChannel(NULL)
 {
 	EntChan = new VEntityChannel*[GMaxEntities];
 	memset(EntChan, 0, sizeof(VEntityChannel*) * GMaxEntities);
@@ -198,11 +196,11 @@ VPlayerNetInfo::VPlayerNetInfo(VSocketPublic* ANetCon)
 
 //==========================================================================
 //
-//	VPlayerNetInfo::~VPlayerNetInfo
+//	VNetConnection::~VNetConnection
 //
 //==========================================================================
 
-VPlayerNetInfo::~VPlayerNetInfo()
+VNetConnection::~VNetConnection()
 {
 	for (int i = 0; i < GMaxEntities; i++)
 	{
@@ -214,6 +212,7 @@ VPlayerNetInfo::~VPlayerNetInfo()
 	delete[] EntChan;
 	Chan->SetPlayer(NULL);
 	delete Chan;
+	delete GenChannel;
 	for (VMessageIn* Msg = InMsg; Msg; )
 	{
 		VMessageIn* Next = Msg->Next;
@@ -235,13 +234,13 @@ VPlayerNetInfo::~VPlayerNetInfo()
 
 //==========================================================================
 //
-//	VPlayerNetInfo::GetMessages
+//	VNetConnection::GetMessages
 //
 //==========================================================================
 
-void VPlayerNetInfo::GetMessages()
+void VNetConnection::GetMessages()
 {
-	guard(VPlayerNetInfo::GetMessages);
+	guard(VNetConnection::GetMessages);
 	int ret;
 
 	do
@@ -299,13 +298,13 @@ void VPlayerNetInfo::GetMessages()
 
 //==========================================================================
 //
-//	VPlayerNetInfo::GetRawMessage
+//	VNetConnection::GetRawMessage
 //
 //==========================================================================
 
-int VPlayerNetInfo::GetRawPacket(TArray<vuint8>& Data)
+int VNetConnection::GetRawPacket(TArray<vuint8>& Data)
 {
-	guard(VPlayerNetInfo::GetRawMessage);
+	guard(VNetConnection::GetRawMessage);
 	checkSlow(NetCon);
 	return NetCon->GetMessage(Data);
 	unguard;
@@ -313,13 +312,13 @@ int VPlayerNetInfo::GetRawPacket(TArray<vuint8>& Data)
 
 //==========================================================================
 //
-//	VPlayerNetInfo::ReceivedPacket
+//	VNetConnection::ReceivedPacket
 //
 //==========================================================================
 
-void VPlayerNetInfo::ReceivedPacket(VBitStreamReader& Packet)
+void VNetConnection::ReceivedPacket(VBitStreamReader& Packet)
 {
-	guard(VPlayerNetInfo::ReceivedPacket);
+	guard(VNetConnection::ReceivedPacket);
 	if (Packet.ReadInt(256) != NETPACKET_DATA)
 		return;
 	Driver->packetsReceived++;
@@ -415,13 +414,13 @@ void VPlayerNetInfo::ReceivedPacket(VBitStreamReader& Packet)
 
 //==========================================================================
 //
-//	VPlayerNetInfo::ReceivedRawMessage
+//	VNetConnection::ReceivedRawMessage
 //
 //==========================================================================
 
-void VPlayerNetInfo::ReceivedRawMessage(VMessageIn& Msg)
+void VNetConnection::ReceivedRawMessage(VMessageIn& Msg)
 {
-	guard(VPlayerNetInfo::ReceivedRawMessage);
+	guard(VNetConnection::ReceivedRawMessage);
 	//	Drop outdated messages
 	if (Msg.bReliable && Msg.Sequence < NetCon->ReceiveSequence)
 	{
@@ -446,7 +445,7 @@ void VPlayerNetInfo::ReceivedRawMessage(VMessageIn& Msg)
 		return;
 	}
 
-	if (!ParsePacket(Msg))
+	if (!GenChannel->ParsePacket(Msg))
 	{
 		State = NETCON_Closed;
 		return;
@@ -459,7 +458,7 @@ void VPlayerNetInfo::ReceivedRawMessage(VMessageIn& Msg)
 	while (InMsg && InMsg->Sequence == NetCon->ReceiveSequence)
 	{
 		VMessageIn* OldMsg = InMsg;
-		if (!ParsePacket(*OldMsg))
+		if (!GenChannel->ParsePacket(*OldMsg))
 		{
 			State = NETCON_Closed;
 			return;
@@ -473,13 +472,13 @@ void VPlayerNetInfo::ReceivedRawMessage(VMessageIn& Msg)
 
 //==========================================================================
 //
-//	VPlayerNetInfo::SendMessage
+//	VNetConnection::SendMessage
 //
 //==========================================================================
 
-void VPlayerNetInfo::SendMessage(VMessageOut* AMsg, bool Reliable)
+void VNetConnection::SendMessage(VMessageOut* AMsg, bool Reliable)
 {
-	guard(VPlayerNetInfo::SendMessage);
+	guard(VNetConnection::SendMessage);
 	VMessageOut* Msg = AMsg;
 	Msg->bReliable = Reliable;
 	if (Reliable)
@@ -506,13 +505,13 @@ void VPlayerNetInfo::SendMessage(VMessageOut* AMsg, bool Reliable)
 
 //==========================================================================
 //
-//	VPlayerNetInfo::SendRawMessage
+//	VNetConnection::SendRawMessage
 //
 //==========================================================================
 
-void VPlayerNetInfo::SendRawMessage(VMessageOut& Msg)
+void VNetConnection::SendRawMessage(VMessageOut& Msg)
 {
-	guard(VPlayerNetInfo::SendRawMessage);
+	guard(VNetConnection::SendRawMessage);
 	PrepareOut(MAX_MESSAGE_HEADER_BITS + Msg.GetNumBits());
 
 	Out.WriteBit(false);
@@ -531,13 +530,13 @@ void VPlayerNetInfo::SendRawMessage(VMessageOut& Msg)
 
 //==========================================================================
 //
-//	VPlayerNetInfo::SendAck
+//	VNetConnection::SendAck
 //
 //==========================================================================
 
-void VPlayerNetInfo::SendAck(vuint32 Sequence)
+void VNetConnection::SendAck(vuint32 Sequence)
 {
-	guard(VPlayerNetInfo::SendAck);
+	guard(VNetConnection::SendAck);
 	PrepareOut(33);
 
 	Out.WriteBit(true);
@@ -547,13 +546,13 @@ void VPlayerNetInfo::SendAck(vuint32 Sequence)
 
 //==========================================================================
 //
-//	VPlayerNetInfo::PrepareOut
+//	VNetConnection::PrepareOut
 //
 //==========================================================================
 
-void VPlayerNetInfo::PrepareOut(int Length)
+void VNetConnection::PrepareOut(int Length)
 {
-	guard(VPlayerNetInfo::PrepareOut);
+	guard(VNetConnection::PrepareOut);
 	//	Send current packet if new message doesn't fit.
 	if (Out.GetNumBits() + Length + MAX_MESSAGE_TRAILER_BITS > MAX_MSGLEN * 8)
 	{
@@ -570,13 +569,13 @@ void VPlayerNetInfo::PrepareOut(int Length)
 
 //==========================================================================
 //
-//	VPlayerNetInfo::Flush
+//	VNetConnection::Flush
 //
 //==========================================================================
 
-void VPlayerNetInfo::Flush()
+void VNetConnection::Flush()
 {
-	guard(VPlayerNetInfo::Flush);
+	guard(VNetConnection::Flush);
 	if (!Out.GetNumBits())
 	{
 		return;
@@ -606,13 +605,13 @@ void VPlayerNetInfo::Flush()
 
 //==========================================================================
 //
-//	VPlayerNetInfo::IsLocalConnection
+//	VNetConnection::IsLocalConnection
 //
 //==========================================================================
 
-bool VPlayerNetInfo::IsLocalConnection()
+bool VNetConnection::IsLocalConnection()
 {
-	guard(VPlayerNetInfo::IsLocalConnection);
+	guard(VNetConnection::IsLocalConnection);
 	return NetCon->IsLocalConnection();
 	unguard;
 }
@@ -720,13 +719,14 @@ void SV_SetUserInfo(const VStr& info)
 
 //==========================================================================
 //
-//	VServerPlayerNetInfo::ParsePacket
+//	VServerGenChannel::ParsePacket
 //
 //==========================================================================
 
-bool VServerPlayerNetInfo::ParsePacket(VMessageIn& msg)
+bool VServerGenChannel::ParsePacket(VMessageIn& msg)
 {
-	NeedsUpdate = true;
+	guard(VServerGenChannel::ParsePacket);
+	Connection->NeedsUpdate = true;
 
 	while (1)
 	{
@@ -768,6 +768,7 @@ bool VServerPlayerNetInfo::ParsePacket(VMessageIn& msg)
 		}
 	}
 	return true;
+	unguard;
 }
 
 //==========================================================================

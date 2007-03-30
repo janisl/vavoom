@@ -189,7 +189,7 @@ int VClientPlayerNetInfo::GetRawPacket(TArray<vuint8>& Data)
 		return 1;
 	}
 
-	int r = VPlayerNetInfo::GetRawPacket(Data);
+	int r = VNetConnection::GetRawPacket(Data);
 
 	if (cls.demorecording && r == 1)
 	{
@@ -213,7 +213,7 @@ void VClientPlayerNetInfo::SendMessage(VMessageOut* Msg, bool Reliable)
 	{
 		return;
 	}
-	VPlayerNetInfo::SendMessage(Msg, Reliable);
+	VNetConnection::SendMessage(Msg, Reliable);
 	unguard;
 }
 

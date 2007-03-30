@@ -2998,7 +2998,7 @@ void SV_ShutdownServer(bool crash)
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
 		//	Save net pointer
-		VPlayerNetInfo* OldNet = GPlayersBase[i]->Net;
+		VNetConnection* OldNet = GPlayersBase[i]->Net;
 		GPlayersBase[i]->GetClass()->DestructObject(GPlayersBase[i]);
 		memset((vuint8*)GPlayersBase[i] + sizeof(VObject), 0,
 			GPlayersBase[i]->GetClass()->ClassSize - sizeof(VObject));
