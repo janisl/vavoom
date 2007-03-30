@@ -69,16 +69,20 @@ struct VViewState
 class VChannel
 {
 public:
-	VNetConnection*	Connection;
+	VNetConnection*		Connection;
+	VMessageIn*			InMsg;
+	VMessageOut*		OutMsg;
+	vuint32				ReceiveSequence;
+	vuint32				SendSequence;
 
 	VChannel();
-	VChannel(VNetConnection* AConnection)
-	: Connection(AConnection)
-	{}
+	VChannel(VNetConnection* AConnection);
 	virtual ~VChannel();
 
 	//	VChannel interface
-	virtual bool ParsePacket(VMessageIn&) = 0;
+	void ReceivedRawMessage(VMessageIn&);
+	virtual void ParsePacket(VMessageIn&) = 0;
+	void SendMessage(VMessageOut*);
 };
 
 class VEntityChannel : public VChannel
@@ -95,7 +99,7 @@ public:
 	~VEntityChannel();
 	void SetEntity(VEntity*);
 	void Update(int);
-	bool ParsePacket(VMessageIn&) {return true;}
+	void ParsePacket(VMessageIn&) {}
 };
 
 class VPlayerChannel : public VChannel
@@ -110,7 +114,7 @@ public:
 	~VPlayerChannel();
 	void SetPlayer(VBasePlayer*);
 	void Update();
-	bool ParsePacket(VMessageIn&) {return true;}
+	void ParsePacket(VMessageIn&) {}
 };
 
 enum ENetConState
@@ -122,9 +126,9 @@ enum ENetConState
 class VNetConnection
 {
 protected:
-	VNetworkPublic*		Driver;
 	VSocketPublic*		NetCon;
 public:
+	VNetworkPublic*		Driver;
 	ENetConState		State;
 	VMessageOut			Message;
 	int					MobjUpdateStart;
@@ -132,8 +136,6 @@ public:
 	bool				NeedsUpdate;
 	VEntityChannel**	EntChan;
 	VPlayerChannel*		Chan;
-	VMessageIn*			InMsg;
-	VMessageOut*		OutMsg;
 	VBitStreamWriter	Out;
 	VChannel*			GenChannel;
 
@@ -144,9 +146,7 @@ public:
 	void GetMessages();
 	virtual int GetRawPacket(TArray<vuint8>&);
 	void ReceivedPacket(VBitStreamReader&);
-	void ReceivedRawMessage(VMessageIn&);
-	virtual void SendMessage(VMessageOut*, bool);
-	void SendRawMessage(VMessageOut&);
+	virtual void SendRawMessage(VMessageOut&);
 	virtual void SendAck(vuint32);
 	void PrepareOut(int);
 	void Flush();

@@ -57,6 +57,26 @@ static VCvarI		sv_maxmove("sv_maxmove", "400", CVAR_Archive);
 //==========================================================================
 
 VChannel::VChannel()
+: Connection(NULL)
+, InMsg(NULL)
+, OutMsg(NULL)
+, ReceiveSequence(0)
+, SendSequence(0)
+{
+}
+
+//==========================================================================
+//
+//	VChannel::VChannel
+//
+//==========================================================================
+
+VChannel::VChannel(VNetConnection* AConnection)
+: Connection(AConnection)
+, InMsg(NULL)
+, OutMsg(NULL)
+, ReceiveSequence(0)
+, SendSequence(0)
 {
 }
 
@@ -68,6 +88,99 @@ VChannel::VChannel()
 
 VChannel::~VChannel()
 {
+	for (VMessageIn* Msg = InMsg; Msg; )
+	{
+		VMessageIn* Next = Msg->Next;
+		delete Msg;
+		Msg = Next;
+	}
+	for (VMessageOut* Msg = OutMsg; Msg; )
+	{
+		VMessageOut* Next = Msg->Next;
+		delete Msg;
+		Msg = Next;
+	}
+}
+
+//==========================================================================
+//
+//	VChannel::ReceivedRawMessage
+//
+//==========================================================================
+
+void VChannel::ReceivedRawMessage(VMessageIn& Msg)
+{
+	guard(VChannel::ReceivedRawMessage);
+	//	Drop outdated messages
+	if (Msg.bReliable && Msg.Sequence < ReceiveSequence)
+	{
+		Connection->Driver->receivedDuplicateCount++;
+		return;
+	}
+
+	if (Msg.bReliable && Msg.Sequence > ReceiveSequence)
+	{
+		VMessageIn** pNext = &InMsg;
+		while (*pNext && (*pNext)->Sequence <= Msg.Sequence)
+		{
+			if ((*pNext)->Sequence == Msg.Sequence)
+			{
+				Connection->Driver->receivedDuplicateCount++;
+				return;
+			}
+		}
+		VMessageIn* Copy = new VMessageIn(Msg);
+		Copy->Next = *pNext;
+		*pNext = Copy;
+		return;
+	}
+
+	ParsePacket(Msg);
+	if (Msg.bReliable)
+	{
+		ReceiveSequence++;
+	}
+
+	while (InMsg && InMsg->Sequence == ReceiveSequence)
+	{
+		VMessageIn* OldMsg = InMsg;
+		ParsePacket(*OldMsg);
+		ReceiveSequence++;
+		InMsg = OldMsg->Next;
+		delete OldMsg;
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VChannel::SendMessage
+//
+//==========================================================================
+
+void VChannel::SendMessage(VMessageOut* AMsg)
+{
+	guard(VChannel::SendMessage);
+	VMessageOut* Msg = AMsg;
+	if (Msg->bReliable)
+	{
+		Msg->Sequence = SendSequence;
+
+		VMessageOut* Copy = new VMessageOut(*Msg);
+		Copy->Next = NULL;
+		VMessageOut** pNext = &OutMsg;
+		while (*pNext)
+		{
+			pNext = &(*pNext)->Next;
+		}
+		*pNext = Copy;
+		Msg = Copy;
+
+		SendSequence++;
+	}
+
+	Connection->SendRawMessage(*Msg);
+	unguard;
 }
 
 //==========================================================================
@@ -175,8 +288,8 @@ void VPlayerChannel::Update()
 //==========================================================================
 
 VNetConnection::VNetConnection(VSocketPublic* ANetCon)
-: Driver(GNet)
-, NetCon(ANetCon)
+: NetCon(ANetCon)
+, Driver(GNet)
 , State(NETCON_Open)
 , Message(OUT_MESSAGE_SIZE)
 , MobjUpdateStart(0)
@@ -184,8 +297,6 @@ VNetConnection::VNetConnection(VSocketPublic* ANetCon)
 , NeedsUpdate(false)
 , EntChan(NULL)
 , Chan(NULL)
-, InMsg(NULL)
-, OutMsg(NULL)
 , Out(MAX_MSGLEN * 8)
 , GenChannel(NULL)
 {
@@ -213,18 +324,6 @@ VNetConnection::~VNetConnection()
 	Chan->SetPlayer(NULL);
 	delete Chan;
 	delete GenChannel;
-	for (VMessageIn* Msg = InMsg; Msg; )
-	{
-		VMessageIn* Next = Msg->Next;
-		delete Msg;
-		Msg = Next;
-	}
-	for (VMessageOut* Msg = OutMsg; Msg; )
-	{
-		VMessageOut* Next = Msg->Next;
-		delete Msg;
-		Msg = Next;
-	}
 	if (NetCon)
 	{
 		NetCon->Close();
@@ -285,7 +384,7 @@ void VNetConnection::GetMessages()
 
 	//	Resend message if needed.
 	//FIXME This is absolutely wrong place to do this.
-	for (VMessageOut* Msg = OutMsg; Msg; Msg = Msg->Next)
+	for (VMessageOut* Msg = GenChannel->OutMsg; Msg; Msg = Msg->Next)
 	{
 		if (Driver->NetTime - Msg->Time > 1.0)
 		{
@@ -371,7 +470,7 @@ void VNetConnection::ReceivedPacket(VBitStreamReader& Packet)
 			{
 				GCon->Log(NAME_DevNet, "Duplicate ACK received");
 			}
-			for (VMessageOut** pMsg = &OutMsg; *pMsg;)
+			for (VMessageOut** pMsg = &GenChannel->OutMsg; *pMsg;)
 			{
 				if ((*pMsg)->PacketId == AckSeq)
 				{
@@ -401,7 +500,7 @@ void VNetConnection::ReceivedPacket(VBitStreamReader& Packet)
 			int Length = Packet.ReadInt(OUT_MESSAGE_SIZE);
 			Msg.SetData(Packet, Length);
 
-			ReceivedRawMessage(Msg);
+			GenChannel->ReceivedRawMessage(Msg);
 		}
 	}
 
@@ -409,97 +508,6 @@ void VNetConnection::ReceivedPacket(VBitStreamReader& Packet)
 	{
 		SendAck(Sequence);
 	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	VNetConnection::ReceivedRawMessage
-//
-//==========================================================================
-
-void VNetConnection::ReceivedRawMessage(VMessageIn& Msg)
-{
-	guard(VNetConnection::ReceivedRawMessage);
-	//	Drop outdated messages
-	if (Msg.bReliable && Msg.Sequence < NetCon->ReceiveSequence)
-	{
-		Driver->receivedDuplicateCount++;
-		return;
-	}
-
-	if (Msg.bReliable && Msg.Sequence > NetCon->ReceiveSequence)
-	{
-		VMessageIn** pNext = &InMsg;
-		while (*pNext && (*pNext)->Sequence <= Msg.Sequence)
-		{
-			if ((*pNext)->Sequence == Msg.Sequence)
-			{
-				Driver->receivedDuplicateCount++;
-				return;
-			}
-		}
-		VMessageIn* Copy = new VMessageIn(Msg);
-		Copy->Next = *pNext;
-		*pNext = Copy;
-		return;
-	}
-
-	if (!GenChannel->ParsePacket(Msg))
-	{
-		State = NETCON_Closed;
-		return;
-	}
-	if (Msg.bReliable)
-	{
-		NetCon->ReceiveSequence++;
-	}
-
-	while (InMsg && InMsg->Sequence == NetCon->ReceiveSequence)
-	{
-		VMessageIn* OldMsg = InMsg;
-		if (!GenChannel->ParsePacket(*OldMsg))
-		{
-			State = NETCON_Closed;
-			return;
-		}
-		NetCon->ReceiveSequence++;
-		InMsg = OldMsg->Next;
-		delete OldMsg;
-	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	VNetConnection::SendMessage
-//
-//==========================================================================
-
-void VNetConnection::SendMessage(VMessageOut* AMsg, bool Reliable)
-{
-	guard(VNetConnection::SendMessage);
-	VMessageOut* Msg = AMsg;
-	Msg->bReliable = Reliable;
-	if (Reliable)
-	{
-		Msg->Sequence = NetCon->SendSequence;
-
-		VMessageOut* Copy = new VMessageOut(*Msg);
-		Copy->Next = NULL;
-		VMessageOut** pNext = &OutMsg;
-		while (*pNext)
-		{
-			pNext = &(*pNext)->Next;
-		}
-		*pNext = Copy;
-		Msg = Copy;
-
-		NetCon->SendSequence++;
-	}
-	Driver->packetsSent++;
-
-	SendRawMessage(*Msg);
 	unguard;
 }
 
@@ -594,6 +602,8 @@ void VNetConnection::Flush()
 	{
 		State = NETCON_Closed;
 	}
+
+	Driver->packetsSent++;
 
 	//	Increment outgoing packet counter
 	NetCon->UnreliableSendSequence++;
@@ -723,7 +733,7 @@ void SV_SetUserInfo(const VStr& info)
 //
 //==========================================================================
 
-bool VServerGenChannel::ParsePacket(VMessageIn& msg)
+void VServerGenChannel::ParsePacket(VMessageIn& msg)
 {
 	guard(VServerGenChannel::ParsePacket);
 	Connection->NeedsUpdate = true;
@@ -733,7 +743,8 @@ bool VServerGenChannel::ParsePacket(VMessageIn& msg)
 		if (msg.IsError())
 		{
 			GCon->Log(NAME_DevNet, "Packet corupted");
-			return false;
+			Connection->State = NETCON_Closed;
+			return;
 		}
 
 		vuint8 cmd_type;
@@ -752,7 +763,8 @@ bool VServerGenChannel::ParsePacket(VMessageIn& msg)
 			break;
 
 		case clc_disconnect:
-			return false;
+			Connection->State = NETCON_Closed;
+			return;
 
 		case clc_player_info:
 			SV_SetUserInfo(msg.ReadString());
@@ -764,10 +776,10 @@ bool VServerGenChannel::ParsePacket(VMessageIn& msg)
 
 		default:
 			GCon->Log(NAME_DevNet, "Invalid command");
-			return false;
+			Connection->State = NETCON_Closed;
+			return;
 		}
 	}
-	return true;
 	unguard;
 }
 

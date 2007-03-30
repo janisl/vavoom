@@ -1587,7 +1587,7 @@ void SV_SendNop(VBasePlayer *client)
 
 	msg << (vuint8)svc_nop;
 
-	client->Net->SendMessage(&msg, false);
+	client->Net->GenChannel->SendMessage(&msg);
 	client->Net->LastMessage = realtime;
 	unguard;
 }
@@ -1641,7 +1641,7 @@ void SV_SendClientDatagram()
 
 		SV_UpdateLevel(msg);
 
-		sv_player->Net->SendMessage(&msg, false);
+		sv_player->Net->GenChannel->SendMessage(&msg);
 
 		sv_player->MO->EntityFlags &= ~VEntity::EF_NetLocalPlayer;
 	}
@@ -1691,7 +1691,8 @@ void SV_SendReliable()
 
 		if (Player->Net->Message.GetNumBytes())
 		{
-			Player->Net->SendMessage(&Player->Net->Message, true);
+			Player->Net->Message.bReliable = true;
+			Player->Net->GenChannel->SendMessage(&Player->Net->Message);
 			Player->Net->Message.Clear();
 			Player->Net->LastMessage = realtime;
 		}
@@ -2268,6 +2269,7 @@ int NET_SendToAll(VMessageOut* data, int blocktime)
 	bool		state1[MAXPLAYERS];
 	bool		state2[MAXPLAYERS];
 
+	data->bReliable = true;
 	for (i = 0; i < svs.max_clients; i++)
 	{
 		sv_player = GGameInfo->Players[i];
@@ -2275,7 +2277,7 @@ int NET_SendToAll(VMessageOut* data, int blocktime)
 		{
 			if (sv_player->Net->IsLocalConnection())
 			{
-				sv_player->Net->SendMessage(data, true);
+				sv_player->Net->GenChannel->SendMessage(data);
 				state1[i] = true;
 				state2[i] = true;
 				continue;
@@ -2301,14 +2303,14 @@ int NET_SendToAll(VMessageOut* data, int blocktime)
 			if (!state1[i])
 			{
 				state1[i] = true;
-				sv_player->Net->SendMessage(data, true);
+				sv_player->Net->GenChannel->SendMessage(data);
 				count++;
 				continue;
 			}
 
 			if (!state2[i])
 			{
-				if (!sv_player->Net->OutMsg)
+				if (!sv_player->Net->GenChannel->OutMsg)
 				{
 					state2[i] = true;
 				}
@@ -2787,7 +2789,8 @@ COMMAND(PreSpawn)
 
 	for (VMessageOut* Msg = sv_signons; Msg; Msg = Msg->Next)
 	{
-		sv_player->Net->SendMessage(Msg, true);
+		Msg->bReliable = true;
+		sv_player->Net->GenChannel->SendMessage(Msg);
 	}
 	sv_player->Net->Message << (vuint8)svc_signonnum << (vuint8)2;
 	unguard;

@@ -839,7 +839,7 @@ void CL_PO_Update(int i, float x, float y, float angle)
 //
 //==========================================================================
 
-bool VClientGenChannel::ParsePacket(VMessageIn& msg)
+void VClientGenChannel::ParsePacket(VMessageIn& msg)
 {
 	guard(VClientGenChannel::ParsePacket);
 	int			i;
@@ -1116,6 +1116,5 @@ bool VClientGenChannel::ParsePacket(VMessageIn& msg)
 			break;
 		}
 	}
-	return true;
 	unguard;
 }

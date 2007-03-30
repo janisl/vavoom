@@ -244,7 +244,7 @@ public:
 	{}
 
 	//	VChannel interface
-	bool ParsePacket(VMessageIn&);
+	void ParsePacket(VMessageIn&);
 };
 
 class VClientPlayerNetInfo : public VNetConnection
@@ -258,7 +258,7 @@ public:
 
 	//	VNetConnection interface
 	int GetRawPacket(TArray<vuint8>&);
-	void SendMessage(VMessageOut*, bool);
+	void SendRawMessage(VMessageOut&);
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------

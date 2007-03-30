@@ -271,7 +271,7 @@ public:
 	{}
 
 	//	VChannel interface
-	bool ParsePacket(VMessageIn&);
+	void ParsePacket(VMessageIn&);
 };
 
 class VServerPlayerNetInfo : public VNetConnection

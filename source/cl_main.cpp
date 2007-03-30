@@ -319,7 +319,7 @@ void CL_KeepaliveMessage()
 	GCon->Log("--> client to server keepalive");
 
 	cl->Net->Message << (byte)clc_nop;
-	cl->Net->SendMessage(&cl->Net->Message, false);
+	cl->Net->GenChannel->SendMessage(&cl->Net->Message);
 	cl->Net->Message.Clear();
 	cl->Net->Flush();
 	unguard;
@@ -365,7 +365,7 @@ void CL_Disconnect()
 		}
 		cl->Net->Message.Clear();
 		cl->Net->Message << (byte)clc_disconnect;
-		cl->Net->SendMessage(&cl->Net->Message, false);
+		cl->Net->GenChannel->SendMessage(&cl->Net->Message);
 		cl->Net->Message.Clear();
 		cl->Net->Flush();
 		delete cl->Net;

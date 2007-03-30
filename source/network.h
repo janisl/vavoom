@@ -56,10 +56,7 @@ public:
 	double			LastMessageTime;
 
 	vuint32			AckSequence;
-	vuint32			SendSequence;
 	vuint32			UnreliableSendSequence;
-
-	vuint32			ReceiveSequence;
 	vuint32			UnreliableReceiveSequence;
 
 	virtual bool IsLocalConnection() = 0;

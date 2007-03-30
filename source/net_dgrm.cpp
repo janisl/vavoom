@@ -784,10 +784,8 @@ void VDatagramDriver::Shutdown()
 //
 //==========================================================================
 
-static void PrintStats(VSocket* s)
+static void PrintStats(VSocket*)
 {
-	GCon->Logf("sendSeq = %4d", s->SendSequence);
-	GCon->Logf("recvSeq = %4d", s->ReceiveSequence);
 	GCon->Logf("");
 }
 
