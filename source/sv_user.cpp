@@ -528,7 +528,7 @@ void VNetConnection::SendRawMessage(VMessageOut& Msg)
 	{
 		Out << Msg.Sequence;
 	}
-	Out.WriteInt(Msg.GetNumBits(), OUT_MESSAGE_SIZE);
+	Out.WriteInt(Msg.GetNumBits(), MAX_MSGLEN * 8);
 	Out.SerialiseBits(Msg.GetData(), Msg.GetNumBits());
 
 	Msg.Time = Driver->NetTime;
