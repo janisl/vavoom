@@ -82,9 +82,6 @@ void CL_Init()
 	guard(CL_Init);
 	VMemberBase::StaticLoadPackage(NAME_clprogs);
 
-	cl_mo_base = new clmobjbase_t[GMaxEntities];
-	memset(cl_mo_base, 0, sizeof(clmobjbase_t) * GMaxEntities);
-
 	GClGame = (VClientGameBase*)VObject::StaticSpawnObject(
 		VClass::FindClass("ClientGame"));
 	cl = (VBasePlayer*)VObject::StaticSpawnObject(
@@ -135,7 +132,6 @@ void CL_Shutdown()
 		GClLevel->ConditionalDestroy();
 	if (GClPrevLevel)
 		GClPrevLevel->ConditionalDestroy();
-	delete[] cl_mo_base;
 	if (GClGame)
 		GClGame->ConditionalDestroy();
 	if (cl)

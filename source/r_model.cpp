@@ -918,15 +918,16 @@ bool VRenderLevel::DrawEntityModel(VEntity* Ent, vuint32 Light, float Alpha, flo
 		{
 			return false;
 		}
-		return DrawAliasModel(Ent->Origin, Ent->Angles, Mdl,
-			Ent->State->InClassIndex, *skin_list[Ent->ModelSkinNum],
-			Ent->ModelVersion, Light, Alpha, false, Inter);
+		return DrawAliasModel(Ent->Origin - TVec(0, 0, Ent->FloorClip),
+			Ent->Angles, Mdl, Ent->State->InClassIndex,
+			*skin_list[Ent->ModelSkinNum], Ent->ModelVersion, Light, Alpha,
+			false, Inter);
 	}
 	else
 	{
-		return DrawAliasModel(Ent->Origin, Ent->Angles, Ent->State,
-			*skin_list[Ent->ModelSkinNum], Ent->ModelVersion, Light, Alpha,
-			false, Inter);
+		return DrawAliasModel(Ent->Origin - TVec(0, 0, Ent->FloorClip),
+			Ent->Angles, Ent->State, *skin_list[Ent->ModelSkinNum],
+			Ent->ModelVersion, Light, Alpha, false, Inter);
 	}
 	unguard;
 }

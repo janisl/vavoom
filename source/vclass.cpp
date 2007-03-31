@@ -30,6 +30,7 @@ bool					VMemberBase::GObjInitialised;
 VClass*					VMemberBase::GClasses;
 TArray<VMemberBase*>	VMemberBase::GMembers;
 TArray<VPackage*>		VMemberBase::GLoadedPackages;
+TArray<VClass*>			VMemberBase::GNetClassLookup;
 
 TArray<mobjinfo_t>		VClass::GMobjInfos;
 TArray<mobjinfo_t>		VClass::GScriptIds;
@@ -332,6 +333,7 @@ void VMemberBase::StaticExit()
 	}
 	GMembers.Clear();
 	GLoadedPackages.Clear();
+	GNetClassLookup.Clear();
 	VClass::GMobjInfos.Clear();
 	VClass::GScriptIds.Clear();
 	VClass::GSpriteNames.Clear();
@@ -543,7 +545,8 @@ VMemberBase* VMemberBase::StaticFindMember(VName InName,
 void VMemberBase::SetUpNetClasses()
 {
 	guard(VMemberBase::SetUpNetClasses);
-	int CurId = 0;
+	GNetClassLookup.Clear();
+	GNetClassLookup.Append(NULL);
 	for (int i = 0; i < GMembers.Num(); i++)
 	{
 		if (GMembers[i]->MemberType == MEMBER_Class)
@@ -551,7 +554,8 @@ void VMemberBase::SetUpNetClasses()
 			VClass* C = static_cast<VClass*>(GMembers[i]);
 			if (C->IsChildOf(VThinker::StaticClass()))
 			{
-				C->NetId = CurId++;
+				C->NetId = GNetClassLookup.Num();
+				GNetClassLookup.Append(C);
 			}
 		}
 	}
@@ -1144,6 +1148,42 @@ void VField::NetSerialiseValue(VStream& Strm, vuint8* Data, const VField::FType&
 
 	case ev_string:
 		Strm << *(VStr*)Data;
+		break;
+
+	case ev_state:
+		if (Strm.IsLoading())
+		{
+			vuint32 ClassId;
+			Strm.SerialiseInt(ClassId, GNetClassLookup.Num());
+			if (ClassId)
+			{
+				vuint32 StateId;
+				Strm.SerialiseInt(StateId,
+					GNetClassLookup[ClassId]->StatesLookup.Num());
+				*(VState**)Data = GNetClassLookup[ClassId]->StatesLookup[StateId];
+			}
+			else
+			{
+				*(VState**)Data = NULL;
+			}
+		}
+		else
+		{
+			if (*(VState**)Data)
+			{
+				vuint32 ClassId = ((VClass*)(*(VState**)Data)->Outer)->NetId;
+				vuint32 StateId = (*(VState**)Data)->NetId;
+				checkSlow(ClassId);
+				Strm.SerialiseInt(ClassId, GNetClassLookup.Num());
+				Strm.SerialiseInt(StateId,
+					((VClass*)(*(VState**)Data)->Outer)->StatesLookup.Num());
+			}
+			else
+			{
+				vuint32 NoClass = 0;
+				Strm.SerialiseInt(NoClass, GNetClassLookup.Num());
+			}
+		}
 		break;
 
 	case ev_struct:

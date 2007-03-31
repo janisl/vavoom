@@ -1235,9 +1235,6 @@ enum
 	svc_time,
 	svc_pause,
 
-	svc_spawn_baseline,
-	svc_update_mobj,
-
 	svc_side_top,
 	svc_side_mid,
 	svc_side_bot,

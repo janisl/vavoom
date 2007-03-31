@@ -414,6 +414,7 @@ void VRenderLevel::RenderSprite(VEntity* thing, vuint32 light)
 	int spr_type = thing->SpriteType;
 
 	TVec sprorigin = thing->Origin;
+	sprorigin.z -= thing->FloorClip;
 	TVec sprforward;
 	TVec sprright;
 	TVec sprup;

@@ -207,15 +207,6 @@ extern int 			TimerGame; // tic countdown for deathmatch
 //
 //==========================================================================
 
-//	Mobj baseline type
-struct mobj_base_t
-{
-	VClass*		Class;			// class
-	VState*		State;			// state
-	TVec		Origin;			// position
-	TAVec		Angles;			// orientation
-};
-
 struct VSndSeqInfo
 {
 	VName			Name;

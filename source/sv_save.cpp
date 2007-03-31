@@ -83,7 +83,6 @@ void SV_AddEntity(VEntity* Ent);
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
 extern VEntity		**sv_mobjs;
-extern mobj_base_t	*sv_mo_base;
 extern bool			sv_loading;
 extern int			sv_load_num_players;
 
@@ -733,26 +732,6 @@ static void SV_SaveMap(int slot, bool savePlayers)
 		*Saver << STRM_INDEX(SignonSize);
 		Saver->Serialise(Msg->GetData(), Msg->GetNumBytes());
 	}
-	for (int i = 0; i < GMaxEntities; i++)
-	{
-		if (sv_mo_base[i].Class ||
-			sv_mo_base[i].State ||
-			sv_mo_base[i].Origin.x ||
-			sv_mo_base[i].Origin.y ||
-			sv_mo_base[i].Origin.z ||
-			sv_mo_base[i].Angles.pitch ||
-			sv_mo_base[i].Angles.yaw ||
-			sv_mo_base[i].Angles.roll)
-		{
-			*Saver << STRM_INDEX(i)
-				<< sv_mo_base[i].Class
-				<< sv_mo_base[i].State
-				<< sv_mo_base[i].Origin
-				<< sv_mo_base[i].Angles;
-		}
-	}
-	int Term = -1;
-	*Saver << STRM_INDEX(Term);
 
 	ArchiveThinkers();
 	ArchiveSounds();
@@ -834,17 +813,6 @@ static void SV_LoadMap(VName MapName, int slot)
 		*Prev = Msg;
 		Msg->Next = NULL;
 		Prev = &Msg->Next;
-	}
-	memset(sv_mo_base, 0, sizeof(mobj_base_t) * GMaxEntities);
-	int Idx;
-	*Loader << STRM_INDEX(Idx);
-	while (Idx != -1)
-	{
-		*Loader << sv_mo_base[Idx].Class
-			<< sv_mo_base[Idx].State
-			<< sv_mo_base[Idx].Origin
-			<< sv_mo_base[Idx].Angles
-			<< STRM_INDEX(Idx);
 	}
 
 	UnarchiveThinkers();

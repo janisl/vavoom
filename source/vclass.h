@@ -58,6 +58,7 @@ public:
 	static VClass*					GClasses;	// Linked list of all classes.
 	static TArray<VMemberBase*>		GMembers;
 	static TArray<VPackage*>		GLoadedPackages;
+	static TArray<VClass*>			GNetClassLookup;
 
 	//	Srtuctors.
 	VMemberBase(vuint8, VName);

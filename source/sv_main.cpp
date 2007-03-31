@@ -93,7 +93,6 @@ bool			deathmatch = false;   	// only if started as net death
 bool			netgame;                // only true if packets are broadcast
 
 VEntity**		sv_mobjs;
-mobj_base_t*	sv_mo_base;
 double*			sv_mo_free_time;
 
 VMessageOut*	sv_reliable;
@@ -218,10 +217,8 @@ void SV_Init()
 	svs.max_clients = 1;
 
 	sv_mobjs = new VEntity*[GMaxEntities];
-	sv_mo_base = new mobj_base_t[GMaxEntities];
 	sv_mo_free_time = new double[GMaxEntities];
 	memset(sv_mobjs, 0, sizeof(VEntity*) * GMaxEntities);
-	memset(sv_mo_base, 0, sizeof(mobj_base_t) * GMaxEntities);
 	memset(sv_mo_free_time, 0, sizeof(double) * GMaxEntities);
 
 	VMemberBase::StaticLoadPackage(NAME_svprogs);
@@ -270,7 +267,6 @@ void SV_Shutdown()
 		}
 	}
 	delete[] sv_mobjs;
-	delete[] sv_mo_base;
 	delete[] sv_mo_free_time;
 	level.LevelName.Clean();
 	
@@ -311,7 +307,6 @@ void SV_Clear()
 	level.LevelName.Clean();
 	memset(&level, 0, sizeof(level));
 	memset(sv_mobjs, 0, sizeof(VEntity *) * GMaxEntities);
-	memset(sv_mo_base, 0, sizeof(mobj_base_t) * GMaxEntities);
 	memset(sv_mo_free_time, 0, sizeof(double) * GMaxEntities);
 	for (VMessageOut* Msg = sv_signons; Msg; )
 	{
@@ -506,18 +501,26 @@ void EvalCondValues(VObject* Obj, VClass* Class, vuint8* Values)
 //
 //==========================================================================
 
-void VEntityChannel::Update(int SendId)
+void VEntityChannel::Update(int SendId, VMessageOut& Msg)
 {
 	guard(VEntityChannel::Update);
 	EvalCondValues(Ent, Ent->GetClass(), FieldCondValues);
-	VMessageOut& Msg = sv_player->Net->Message;
 	vuint8* Data = (vuint8*)Ent;
+	TAVec SavedAngles = Ent->Angles;
+	if (Ent->EntityFlags & VEntity::EF_IsPlayer)
+	{
+		//	Clear look angles, because they must not affect model orientation
+		Ent->Angles.pitch = 0;
+		Ent->Angles.roll = 0;
+	}
 	for (VField* F = Ent->GetClass()->NetFields; F; F = F->NextNetField)
 	{
 		if (!FieldCondValues[F->NetIndex])
 		{
 			continue;
 		}
+		if (!Msg.CheckSpaceBits(10 * 8))
+			break;
 		if (!VField::IdenticalValue(Data + F->Ofs, OldData + F->Ofs, F->Type))
 		{
 			Msg << (vuint8)svc_set_prop;
@@ -527,149 +530,16 @@ void VEntityChannel::Update(int SendId)
 			VField::CopyFieldValue(Data + F->Ofs, OldData + F->Ofs, F->Type);
 		}
 	}
+	if (Ent->EntityFlags & VEntity::EF_IsPlayer)
+	{
+		Ent->Angles = SavedAngles;
+	}
 	UpdatedThisFrame = true;
 	unguard;
 }
 
 int c_bigClass;
 int c_bigState;
-//==========================================================================
-//
-//	SV_WriteMobj
-//
-//==========================================================================
-
-void SV_WriteMobj(VEntity &mobj, mobj_base_t &base, VMessageOut& msg)
-{
-	guard(SV_WriteMobj);
-	msg.WriteBit(base.Class != mobj.GetClass());
-	if (base.Class != mobj.GetClass())
-	{
-		msg.WriteBit(mobj.GetClass()->NetId > 0xff);
-		if (mobj.GetClass()->NetId > 0xff)
-		{
-			c_bigClass++;
-			msg << (vuint16)mobj.GetClass()->NetId;
-		}
-		else
-		{
-			msg << (vuint8)mobj.GetClass()->NetId;
-		}
-	}
-
-	msg.WriteBit(base.State != mobj.State);
-	if (base.State != mobj.State)
-	{
-		msg.WriteBit(mobj.State->NetId > 0xff);
-		if (mobj.State->NetId > 0xff)
-		{
-			c_bigState++;
-			msg << (vuint16)mobj.State->NetId;
-		}
-		else
-		{
-			msg << (vuint8)mobj.State->NetId;
-		}
-	}
-	if (mobj.StateTime < 0)
-		msg.WriteBit(false);
-	else
-	{
-		msg.WriteBit(true);
-		int TimeFrac = 0;
-		if (mobj.State->Time > 0)
-		{
-			TimeFrac = (int)(255.0 * mobj.StateTime / mobj.State->Time);
-			TimeFrac = MID(0, TimeFrac, 255);
-		}
-		msg << (vuint8)TimeFrac;
-	}
-
-	if (fabs(base.Origin.x - mobj.Origin.x) >= 1.0 ||
-		fabs(base.Origin.y - mobj.Origin.y) >= 1.0 ||
-		fabs(base.Origin.z - (mobj.Origin.z - mobj.FloorClip)) >= 1.0)
-	{
-		msg.WriteBit(true);
-		if (fabs(base.Origin.x - mobj.Origin.x) >= 1.0)
-		{
-			msg.WriteBit(true);
-			msg << (vuint16)mobj.Origin.x;
-		}
-		else
-		{
-			msg.WriteBit(false);
-		}
-		if (fabs(base.Origin.y - mobj.Origin.y) >= 1.0)
-		{
-			msg.WriteBit(true);
-			msg << (vuint16)mobj.Origin.y;
-		}
-		else
-		{
-			msg.WriteBit(false);
-		}
-		if (fabs(base.Origin.z - (mobj.Origin.z - mobj.FloorClip)) >= 1.0)
-		{
-			msg.WriteBit(true);
-			msg << (vuint16)(mobj.Origin.z - mobj.FloorClip);
-		}
-		else
-		{
-			msg.WriteBit(false);
-		}
-	}
-	else
-	{
-		msg.WriteBit(false);
-	}
-
-	TAVec A = mobj.Angles;
-	if (mobj.EntityFlags & VEntity::EF_IsPlayer)
-	{
-		//	Clear look angles, because they must not affect model orientation
-		A.pitch = 0;
-		A.roll = 0;
-	}
-	if (AngleToByte(base.Angles.yaw) != AngleToByte(A.yaw) ||
-		AngleToByte(base.Angles.pitch) != AngleToByte(A.pitch) ||
-		AngleToByte(base.Angles.roll) != AngleToByte(A.roll))
-	{
-		msg.WriteBit(true);
-		if (AngleToByte(base.Angles.yaw) != AngleToByte(A.yaw))
-		{
-			msg.WriteBit(true);
-			msg << (vuint8)(AngleToByte(A.yaw));
-		}
-		else
-		{
-			msg.WriteBit(false);
-		}
-		if (AngleToByte(base.Angles.pitch) != AngleToByte(A.pitch))
-		{
-			msg.WriteBit(true);
-			msg << (vuint8)(AngleToByte(A.pitch));
-		}
-		else
-		{
-			msg.WriteBit(false);
-		}
-		if (AngleToByte(base.Angles.roll) != AngleToByte(A.roll))
-		{
-			msg.WriteBit(true);
-			msg << (vuint8)(AngleToByte(A.roll));
-		}
-		else
-		{
-			msg.WriteBit(false);
-		}
-	}
-	else
-	{
-		msg.WriteBit(false);
-	}
-	unguard;
-}
-
 //==========================================================================
 //
 //	SV_UpdateMobj
@@ -679,8 +549,6 @@ void SV_WriteMobj(VEntity &mobj, mobj_base_t &base, VMessageOut& msg)
 void SV_UpdateMobj(int i, VMessageOut& msg)
 {
 	guard(SV_UpdateMobj);
-	int bits;
-
 	if (!sv_player->Net->EntChan[i])
 	{
 		sv_player->Net->EntChan[i] = new VEntityChannel();
@@ -708,18 +576,7 @@ void SV_UpdateMobj(int i, VMessageOut& msg)
 		sv_player->Net->EntChan[i]->NewObj = false;
 	}
 
-	bits = 0;
-
-	msg << (vuint8)svc_update_mobj;
-	msg.WriteBit(i > 0xff);
-	if (i > 0xff)
-		msg << (vuint16)i;
-	else
-		msg << (vuint8)i;
-
-	SV_WriteMobj(*sv_mobjs[i], sv_mo_base[i], msg);
-
-	sv_player->Net->EntChan[i]->Update(i);
+	sv_player->Net->EntChan[i]->Update(i, msg);
 	return;
 	unguard;
 }
@@ -733,6 +590,8 @@ void SV_UpdateMobj(int i, VMessageOut& msg)
 void SV_SendDestroyMobj(int i, VMessageOut& msg)
 {
 	guard(SV_SendDestroyMobj);
+	if (!msg.CheckSpaceBits(3 * 8))
+		return;
 	msg << (vuint8)svc_destroy_obj;
 	msg.WriteInt(i, GMaxEntities);
 	sv_player->Net->EntChan[i]->PendingClose = false;
@@ -787,58 +646,6 @@ void VEntity::Destroy()
 #endif
 
 	Super::Destroy();
-	unguard;
-}
-
-//==========================================================================
-//
-//	SV_CreateBaseline
-//
-//==========================================================================
-
-void SV_CreateBaseline()
-{
-	guard(SV_CreateBaseline);
-	VMemberBase::SetUpNetClasses();
-
-	for (int i = 0; i < GMaxEntities; i++)
-	{
-		if (!sv_mobjs[i])
-			continue;
-		if (sv_mobjs[i]->EntityFlags & VEntity::EF_Hidden)
-			continue;
-
-		//NOTE Do we really need 10 bytes extra?
-		VMessageOut* Msg = SV_GetSignon(26 << 3);
-		if (!Msg)
-		{
-			GCon->Log(NAME_Dev, "SV_CreateBaseline: Overflow");
-			return;
-		}
-
-		VEntity &mobj = *sv_mobjs[i];
-		mobj_base_t &base = sv_mo_base[i];
-
-		base.Class = mobj.GetClass();
-		base.State = mobj.State;
-		base.Origin.x = mobj.Origin.x;
-		base.Origin.y = mobj.Origin.y;
-		base.Origin.z = mobj.Origin.z - mobj.FloorClip;
-		base.Angles.yaw = mobj.Angles.yaw;
-		base.Angles.pitch = mobj.Angles.pitch;
-		base.Angles.roll = mobj.Angles.roll;
-
-		*Msg << (vuint8)svc_spawn_baseline
-			<< (vuint16)i
-			<< (vuint16)mobj.GetClass()->NetId
-			<< (vuint16)mobj.State->NetId
-			<< (vuint16)mobj.Origin.x
-			<< (vuint16)mobj.Origin.y
-			<< (vuint16)(mobj.Origin.z - mobj.FloorClip)
-			<< (vuint8)(AngleToByte(mobj.Angles.yaw))
-			<< (vuint8)(AngleToByte(mobj.Angles.pitch))
-			<< (vuint8)(AngleToByte(mobj.Angles.roll));
-	}
 	unguard;
 }
 
@@ -2690,6 +2497,8 @@ void SV_SpawnServer(const char *mapname, bool spawn_thinkers)
 
 	SV_InitModelLists();
 
+	VMemberBase::SetUpNetClasses();
+
 	if (!spawn_thinkers)
 	{
 //		if (level.thinkerHead)
@@ -2713,7 +2522,6 @@ void SV_SpawnServer(const char *mapname, bool spawn_thinkers)
 
 	P_Ticker();
 	P_Ticker();
-	SV_CreateBaseline();
 
 	GCon->Log(NAME_Dev, "Server spawned");
 	unguard;

@@ -152,6 +152,19 @@ void VBitStreamWriter::SerialiseBits(void* Src, vint32 Length)
 
 //==========================================================================
 //
+//	VBitStreamWriter::SerialiseInt
+//
+//==========================================================================
+
+void VBitStreamWriter::SerialiseInt(vuint32& Value, vuint32 Max)
+{
+	guardSlow(VBitStreamWriter::SerialiseInt);
+	WriteInt(Value, Max);
+	unguardSlow;
+}
+
+//==========================================================================
+//
 //  VBitStreamWriter::WriteBit
 //
 //==========================================================================
@@ -314,6 +327,19 @@ void VBitStreamReader::SerialiseBits(void* Dst, int Length)
 	}
 	Pos += Length;
 	unguard;
+}
+
+//==========================================================================
+//
+//	VBitStreamReader::SerialiseInt
+//
+//==========================================================================
+
+void VBitStreamReader::SerialiseInt(vuint32& Value, vuint32 Max)
+{
+	guardSlow(VBitStreamReader::SerialiseInt);
+	Value = ReadInt(Max);
+	unguardSlow;
 }
 
 //==========================================================================

@@ -98,7 +98,7 @@ public:
 	VEntityChannel();
 	~VEntityChannel();
 	void SetEntity(VEntity*);
-	void Update(int);
+	void Update(int, VMessageOut&);
 	void ParsePacket(VMessageIn&) {}
 };
 

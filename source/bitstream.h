@@ -43,6 +43,7 @@ public:
 	VBitStreamWriter(vint32);
 	void Serialise(void*, int);
 	void SerialiseBits(void*, int);
+	void SerialiseInt(vuint32&, vuint32);
 	void WriteBit(bool);
 	void WriteInt(vuint32, vuint32);
 	vuint8* GetData()
@@ -74,6 +75,7 @@ public:
 	void SetData(VBitStreamReader&, int);
 	void Serialise(void*, int);
 	void SerialiseBits(void*, int);
+	void SerialiseInt(vuint32&, vuint32);
 	bool ReadBit();
 	vuint32 ReadInt(vuint32);
 	bool AtEnd();

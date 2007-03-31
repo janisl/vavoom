@@ -46,15 +46,6 @@ struct dlight_t
 	vuint32	colour;		// for coloured lights
 };
 
-// Client side Map Object definition.
-struct clmobjbase_t
-{
-	VClass*		Class;
-	VState*		State;
-	TVec		origin;	// position
-	TAVec		angles;	// orientation
-};
-
 class VRootWindow;
 
 class VClientGameBase : public VObject
@@ -276,8 +267,6 @@ bool R_GetModelSkinInfo(VModel*, int, VName&, VStr&);
 void SCR_SetVirtualScreen(int, int);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
-
-extern clmobjbase_t*	cl_mo_base;
 
 extern VClientGameBase*	GClGame;
 

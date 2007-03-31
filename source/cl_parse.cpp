@@ -31,8 +31,6 @@
 
 // MACROS ------------------------------------------------------------------
 
-#define MAX_CLASS_LOOKUP		1024
-
 // TYPES -------------------------------------------------------------------
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -49,13 +47,10 @@ void CL_SignonReply();
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-clmobjbase_t*	cl_mo_base;
 VModel*			model_precache[1024];
 VStr			skin_list[256];
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
-
-static VClass*			ClassLookup[MAX_CLASS_LOOKUP];
 
 // CODE --------------------------------------------------------------------
 
@@ -72,7 +67,6 @@ void CL_Clear()
 	cl->Net = Net;
 	cl_level.LevelName.Clean();
 	memset(&cl_level, 0, sizeof(cl_level));
-	memset(cl_mo_base, 0, sizeof(clmobjbase_t) * GMaxEntities);
 	for (int i = 0; i < MAXPLAYERS; i++)
 	{
 		scores[i].name.Clean();
@@ -88,134 +82,6 @@ void CL_Clear()
 		GAudio->StopAllSound();
 	}
 	cls.signon = 0;
-	unguard;
-}
-
-static void CL_ReadMobjBase(VMessageIn& msg, clmobjbase_t &mobj)
-{
-	guard(CL_ReadMobjBase);
-	vuint16 CIdx = (vuint16)msg.ReadShort();
-	mobj.Class = ClassLookup[CIdx];
-	check(mobj.Class);
-	mobj.State = mobj.Class->StatesLookup[(vuint16)msg.ReadShort()];
-	mobj.origin.x = msg.ReadShort();
-	mobj.origin.y = msg.ReadShort();
-	mobj.origin.z = msg.ReadShort();
-	mobj.angles.yaw = ByteToAngle(msg.ReadByte());
-	mobj.angles.pitch = ByteToAngle(msg.ReadByte());
-	mobj.angles.roll = ByteToAngle(msg.ReadByte());
-	unguard;
-}
-
-static void CL_ParseBaseline(VMessageIn& msg)
-{
-	guard(CL_ParseBaseline);
-	int		i;
-
-	i = msg.ReadShort();
-
-	CL_ReadMobjBase(msg, cl_mo_base[i]);
-	unguard;
-}
-
-static void CL_ReadMobj(VMessageIn& msg, VEntity*& mobj, const clmobjbase_t &base)
-{
-	VClass* C;
-	if (msg.ReadBit())
-	{
-		if (msg.ReadBit())
-			C = ClassLookup[(vuint16)msg.ReadShort()];
-		else
-			C = ClassLookup[msg.ReadByte()];
-	}
-	else
-	{
-		check(base.Class);
-		C = base.Class;
-	}
-
-	if (!mobj || mobj->GetClass() != C)
-	{
-		if (mobj)
-		{
-			GClLevel->RemoveThinker(mobj);
-			mobj->ConditionalDestroy();
-		}
-		mobj = (VEntity*)GClLevel->SpawnThinker(C);
-		mobj->Role = ROLE_DumbProxy;
-		mobj->RemoteRole = ROLE_Authority;
-	}
-	if (msg.ReadBit())
-	{
-		if (msg.ReadBit())
-			mobj->State = mobj->GetClass()->StatesLookup[(vuint16)msg.ReadShort()];
-		else
-			mobj->State = mobj->GetClass()->StatesLookup[msg.ReadByte()];
-	}
-	else
-	{
-		mobj->State = base.State;
-	}
-	if (msg.ReadBit())
-	{
-		vuint8 TimeFrac = msg.ReadByte();
-		mobj->StateTime = mobj->State->Time * TimeFrac / 255.0;
-	}
-	else
-	{
-		mobj->StateTime = -1;
-	}
-	if (msg.ReadBit())
-	{
-		if (msg.ReadBit())
-			mobj->Origin.x = msg.ReadShort();
-		else
-			mobj->Origin.x = base.origin.x;
-		if (msg.ReadBit())
-			mobj->Origin.y = msg.ReadShort();
-		else
-			mobj->Origin.y = base.origin.y;
-		if (msg.ReadBit())
-			mobj->Origin.z = msg.ReadShort();
-		else
-			mobj->Origin.z = base.origin.z;
-	}
-	else
-	{
-		mobj->Origin = base.origin;
-	}
-	if (msg.ReadBit())
-	{
-		if (msg.ReadBit())
-			mobj->Angles.yaw = ByteToAngle(msg.ReadByte());
-		else
-			mobj->Angles.yaw = base.angles.yaw;
-		if (msg.ReadBit())
-			mobj->Angles.pitch = ByteToAngle(msg.ReadByte());
-		else
-			mobj->Angles.pitch = base.angles.pitch;
-		if (msg.ReadBit())
-			mobj->Angles.roll = ByteToAngle(msg.ReadByte());
-		else
-			mobj->Angles.roll = base.angles.roll;
-	}
-	else
-	{
-		mobj->Angles = base.angles;
-	}
-}
-
-static void CL_ParseUpdateMobj(VMessageIn& msg)
-{
-	guard(CL_ParseUpdateMobj);
-	int		i;
-
-	if (msg.ReadBit())
-		i = msg.ReadShort();
-	else
-		i = msg.ReadByte();
-
-	CL_ReadMobj(msg, cl->Net->EntChan[i]->Ent, cl_mo_base[i]);
 	unguard;
 }
 
@@ -271,7 +137,7 @@ static void CL_ParseViewData(VMessageIn& msg)
 		if (ClsIdx != -1)
 		{
 			cl->ViewStates[i].State =
-				ClassLookup[ClsIdx]->StatesLookup[msg.ReadShort()];
+				VMemberBase::GNetClassLookup[ClsIdx]->StatesLookup[msg.ReadShort()];
 			vuint8 TimeFrac = msg.ReadByte();
 			if (TimeFrac == 255)
 				cl->ViewStates[i].StateTime = -1;
@@ -512,18 +378,6 @@ static void CL_ParseServerInfo(VMessageIn& msg)
 	}
 
 	VMemberBase::SetUpNetClasses();
-	for (int i = 0; i < VMemberBase::GMembers.Num(); i++)
-	{
-		if (VMemberBase::GMembers[i]->MemberType == MEMBER_Class)
-		{
-			VClass* C = static_cast<VClass*>(VMemberBase::GMembers[i]);
-			if (C->IsChildOf(VThinker::StaticClass()))
-			{
-				check(C->NetId >= 0);
-				ClassLookup[C->NetId] = C;
-			}
-		}
-	}
 
 	GCon->Log(NAME_Dev, "Client level loaded");
 	unguard;
@@ -655,7 +509,7 @@ static void CL_ParseClassName(VMessageIn& msg)
 {
 	vint32 i = msg.ReadShort();
 	VStr Name = msg.ReadString();
-	ClassLookup[i] = VClass::FindClass(*Name);
+//	ClassLookup[i] = VClass::FindClass(*Name);
 }
 
 //==========================================================================
@@ -726,7 +580,7 @@ static void CL_ParseNewObj(VMessageIn& msg)
 	int ci = msg.ReadByte();
 	if (ci & 0x80)
 		ci = (ci & 0x7f) | (msg.ReadByte() << 7);
-	VClass* C = ClassLookup[ci];
+	VClass* C = VMemberBase::GNetClassLookup[ci];
 
 	if (cl->Net->EntChan[i] && cl->Net->EntChan[i]->Ent)
 	{
@@ -883,14 +737,6 @@ void VClientGenChannel::ParsePacket(VMessageIn& msg)
 
 		case svc_server_info:
 			CL_ParseServerInfo(msg);
-			break;
-
-		case svc_spawn_baseline:
-			CL_ParseBaseline(msg);
-			break;
-
-		case svc_update_mobj:
-			CL_ParseUpdateMobj(msg);
 			break;
 
 		case svc_side_top:
