@@ -1089,6 +1089,59 @@ void VField::NetSerialiseValue(VStream& Strm, vuint8* Data, const VField::FType&
 		}
 		break;
 
+	case ev_vector:
+		if (Type.Struct->Name == NAME_TAVec)
+		{
+			if (Strm.IsLoading())
+			{
+				vuint8 ByteYaw;
+				vuint8 BytePitch = 0;
+				vuint8 ByteRoll = 0;
+				vuint8 HavePitchRoll = 0;
+				Strm << ByteYaw;
+				Strm.SerialiseBits(&HavePitchRoll, 1);
+				if (HavePitchRoll)
+				{
+					Strm << BytePitch << ByteRoll;
+				}
+				((TAVec*)Data)->yaw = ByteToAngle(ByteYaw);
+				((TAVec*)Data)->pitch = ByteToAngle(BytePitch);
+				((TAVec*)Data)->roll = ByteToAngle(ByteRoll);
+			}
+			else
+			{
+				vuint8 ByteYaw = AngleToByte(((TAVec*)Data)->yaw);
+				vuint8 BytePitch = AngleToByte(((TAVec*)Data)->pitch);
+				vuint8 ByteRoll = AngleToByte(((TAVec*)Data)->roll);
+				vuint8 HavePitchRoll = BytePitch || ByteRoll;
+				Strm << ByteYaw;
+				Strm.SerialiseBits(&HavePitchRoll, 1);
+				if (HavePitchRoll)
+				{
+					Strm << BytePitch << ByteRoll;
+				}
+			}
+		}
+		else
+		{
+			if (Strm.IsLoading())
+			{
+				vint16 x, y, z;
+				Strm << x << y << z;
+				((TVec*)Data)->x = x;
+				((TVec*)Data)->y = y;
+				((TVec*)Data)->z = z;
+			}
+			else
+			{
+				vint16 x = (vint16)((TVec*)Data)->x;
+				vint16 y = (vint16)((TVec*)Data)->y;
+				vint16 z = (vint16)((TVec*)Data)->z;
+				Strm << x << y << z;
+			}
+		}
+		break;
+
 	case ev_string:
 		Strm << *(VStr*)Data;
 		break;

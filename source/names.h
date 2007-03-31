@@ -65,6 +65,7 @@ REGISTER_NAME(ModalWindow)
 REGISTER_NAME(RootWindow)
 REGISTER_NAME(ClientGameBase)
 REGISTER_NAME(ClientState)
+REGISTER_NAME(TAVec)
 
 //	Lump names
 REGISTER_NAME(s_start)
