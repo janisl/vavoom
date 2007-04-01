@@ -29,6 +29,8 @@
 //**
 //**************************************************************************
 
+class VChannel;
+
 class VMessageIn : public VBitStreamReader
 {
 public:
@@ -39,6 +41,7 @@ public:
 	}
 
 	VMessageIn*		Next;
+	vint32			ChanIndex;
 	bool			bReliable;		//	Reliable message
 	vuint32			Sequence;		//	Reliable message sequence ID
 
@@ -52,12 +55,15 @@ class VMessageOut : public VBitStreamWriter
 public:
 	VMessageOut(vint32 AMax)
 	: VBitStreamWriter(AMax)
+	, ChanIndex(0)
 	, AllowOverflow(false)
 	, bReliable(false)
 	{
 	}
+	VMessageOut(VChannel*);
 
 	VMessageOut*	Next;
+	vint32			ChanIndex;
 	vint8			AllowOverflow;	// if false, do a Sys_Error
 	bool			bReliable;		//	Needs ACK or not
 	vuint32			Sequence;		//	Reliable message sequence ID

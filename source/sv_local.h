@@ -257,8 +257,8 @@ extern TArray<VSndSeqInfo>	sv_ActiveSequences;
 class VServerGenChannel : public VChannel
 {
 public:
-	VServerGenChannel(VNetConnection* AConnection)
-	: VChannel(AConnection)
+	VServerGenChannel(VNetConnection* AConnection, vint32 AIndex)
+	: VChannel(AConnection, AIndex)
 	{}
 
 	//	VChannel interface
@@ -271,7 +271,7 @@ public:
 	VServerPlayerNetInfo(VSocketPublic* Sock)
 	: VNetConnection(Sock)
 	{
-		GenChannel = new VServerGenChannel(this);
+		new VServerGenChannel(this, 0);
 	}
 };
 

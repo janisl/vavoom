@@ -628,7 +628,7 @@ void CL_SendMove()
 			<< cmd.flymove
 			<< cmd.buttons
 			<< cmd.impulse;
-		cl->Net->GenChannel->SendMessage(&msg);
+		cl->Net->Channels[0]->SendMessage(&msg);
 	}
 
 	// send the reliable message
@@ -639,7 +639,7 @@ void CL_SendMove()
 	}
 
 	cl->Net->Message.bReliable = true;
-	cl->Net->GenChannel->SendMessage(&cl->Net->Message);
+	cl->Net->Channels[0]->SendMessage(&cl->Net->Message);
 	cl->Net->Message.Clear();
 	cl->Net->Flush();
 	unguard;

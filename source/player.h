@@ -66,17 +66,20 @@ struct VViewState
 	float			SY;
 };
 
+enum { MAX_CHANNELS		= 265 };
+
 class VChannel
 {
 public:
 	VNetConnection*		Connection;
+	vint32				Index;
 	VMessageIn*			InMsg;
 	VMessageOut*		OutMsg;
 	vuint32				ReceiveSequence;
 	vuint32				SendSequence;
 
 	VChannel();
-	VChannel(VNetConnection*);
+	VChannel(VNetConnection*, vint32);
 	virtual ~VChannel();
 
 	//	VChannel interface
@@ -94,7 +97,7 @@ public:
 	bool			PendingClose;
 	bool			UpdatedThisFrame;
 	vuint8*			FieldCondValues;
-	vint32			Index;
+	vint32			EntChanIndex;
 
 	VEntityChannel(VNetConnection*, vint32);
 	~VEntityChannel();
@@ -111,7 +114,7 @@ public:
 	bool			NewObj;
 	vuint8*			FieldCondValues;
 
-	VPlayerChannel();
+	VPlayerChannel(VNetConnection*);
 	~VPlayerChannel();
 	void SetPlayer(VBasePlayer*);
 	void Update();
@@ -127,18 +130,19 @@ enum ENetConState
 class VNetConnection
 {
 protected:
-	VSocketPublic*		NetCon;
+	VSocketPublic*					NetCon;
 public:
-	VNetworkPublic*		Driver;
-	ENetConState		State;
-	VMessageOut			Message;
-	double				LastMessage;
-	bool				NeedsUpdate;
-	VEntityChannel**	EntChan;
-	VPlayerChannel*		Chan;
-	VBitStreamWriter	Out;
-	VChannel*			GenChannel;
-	TMap<VEntity*, VEntityChannel*>		EntityChannels;
+	VNetworkPublic*					Driver;
+	ENetConState					State;
+	VMessageOut						Message;
+	double							LastMessage;
+	bool							NeedsUpdate;
+	VEntityChannel**				EntChan;
+	VPlayerChannel*					Chan;
+	VBitStreamWriter				Out;
+	VChannel*						Channels[MAX_CHANNELS];
+	TArray<VChannel*>				OpenChannels;
+	TMap<VEntity*, VEntityChannel*>	EntityChannels;
 
 	VNetConnection(VSocketPublic*);
 	virtual ~VNetConnection();

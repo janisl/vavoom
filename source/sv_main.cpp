@@ -390,15 +390,16 @@ VThinker* VLevel::SpawnThinker(VClass* Class, const TVec& AOrigin,
 //==========================================================================
 
 VEntityChannel::VEntityChannel(VNetConnection* AConnection, vint32 AIndex)
-: VChannel(AConnection)
+: VChannel()
 , Ent(NULL)
 , OldData(NULL)
 , NewObj(false)
 , PendingClose(false)
 , UpdatedThisFrame(false)
 , FieldCondValues(NULL)
-, Index(AIndex)
+, EntChanIndex(AIndex)
 {
+	Connection = AConnection;
 }
 
 //==========================================================================
@@ -503,7 +504,7 @@ void VEntityChannel::Update(VMessageOut& Msg)
 	if (NewObj)
 	{
 		Msg << (vuint8)svc_new_obj;
-		Msg.WriteInt(Index, GMaxEntities);
+		Msg.WriteInt(EntChanIndex, GMaxEntities);
 		Msg.WriteInt(Ent->GetClass()->NetId, VMemberBase::GNetClassLookup.Num());
 		NewObj = false;
 	}
@@ -526,7 +527,7 @@ void VEntityChannel::Update(VMessageOut& Msg)
 		if (!VField::IdenticalValue(Data + F->Ofs, OldData + F->Ofs, F->Type))
 		{
 			Msg << (vuint8)svc_set_prop;
-			Msg.WriteInt(Index, GMaxEntities);
+			Msg.WriteInt(EntChanIndex, GMaxEntities);
 			Msg << (vuint8)F->NetIndex;
 			VField::NetSerialiseValue(Msg, Data + F->Ofs, F->Type);
 			VField::CopyFieldValue(Data + F->Ofs, OldData + F->Ofs, F->Type);
@@ -581,7 +582,6 @@ void SV_SendDestroyMobj(int i, VMessageOut& msg)
 		return;
 	msg << (vuint8)svc_destroy_obj;
 	msg.WriteInt(i, GMaxEntities);
-	sv_player->Net->EntChan[i]->PendingClose = false;
 	delete sv_player->Net->EntChan[i];
 	sv_player->Net->EntChan[i] = NULL;
 	unguard;
@@ -1361,7 +1361,7 @@ void SV_SendNop(VBasePlayer *client)
 
 	msg << (vuint8)svc_nop;
 
-	client->Net->GenChannel->SendMessage(&msg);
+	client->Net->Channels[0]->SendMessage(&msg);
 	client->Net->LastMessage = realtime;
 	unguard;
 }
@@ -1415,7 +1415,7 @@ void SV_SendClientDatagram()
 
 		SV_UpdateLevel(msg);
 
-		sv_player->Net->GenChannel->SendMessage(&msg);
+		sv_player->Net->Channels[0]->SendMessage(&msg);
 
 		sv_player->MO->EntityFlags &= ~VEntity::EF_NetLocalPlayer;
 	}
@@ -1466,7 +1466,7 @@ void SV_SendReliable()
 		if (Player->Net->Message.GetNumBytes())
 		{
 			Player->Net->Message.bReliable = true;
-			Player->Net->GenChannel->SendMessage(&Player->Net->Message);
+			Player->Net->Channels[0]->SendMessage(&Player->Net->Message);
 			Player->Net->Message.Clear();
 			Player->Net->LastMessage = realtime;
 		}
@@ -2051,7 +2051,7 @@ int NET_SendToAll(VMessageOut* data, int blocktime)
 		{
 			if (sv_player->Net->IsLocalConnection())
 			{
-				sv_player->Net->GenChannel->SendMessage(data);
+				sv_player->Net->Channels[0]->SendMessage(data);
 				state1[i] = true;
 				state2[i] = true;
 				continue;
@@ -2077,14 +2077,14 @@ int NET_SendToAll(VMessageOut* data, int blocktime)
 			if (!state1[i])
 			{
 				state1[i] = true;
-				sv_player->Net->GenChannel->SendMessage(data);
+				sv_player->Net->Channels[0]->SendMessage(data);
 				count++;
 				continue;
 			}
 
 			if (!state2[i])
 			{
-				if (!sv_player->Net->GenChannel->OutMsg)
+				if (!sv_player->Net->Channels[0]->OutMsg)
 				{
 					state2[i] = true;
 				}
@@ -2565,7 +2565,7 @@ COMMAND(PreSpawn)
 	for (VMessageOut* Msg = sv_signons; Msg; Msg = Msg->Next)
 	{
 		Msg->bReliable = true;
-		sv_player->Net->GenChannel->SendMessage(Msg);
+		sv_player->Net->Channels[0]->SendMessage(Msg);
 	}
 	sv_player->Net->Message << (vuint8)svc_signonnum << (vuint8)2;
 	unguard;

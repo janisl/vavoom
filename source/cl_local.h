@@ -230,8 +230,8 @@ class VClientGameBase : public VObject
 class VClientGenChannel : public VChannel
 {
 public:
-	VClientGenChannel(VNetConnection* AConnection)
-	: VChannel(AConnection)
+	VClientGenChannel(VNetConnection* AConnection, vint32 AIndex)
+	: VChannel(AConnection, AIndex)
 	{}
 
 	//	VChannel interface
@@ -244,7 +244,7 @@ public:
 	VClientPlayerNetInfo(VSocketPublic* Sock)
 	: VNetConnection(Sock)
 	{
-		GenChannel = new VClientGenChannel(this);
+		new VClientGenChannel(this, 0);
 	}
 
 	//	VNetConnection interface

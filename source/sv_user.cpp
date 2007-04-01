@@ -58,6 +58,7 @@ static VCvarI		sv_maxmove("sv_maxmove", "400", CVAR_Archive);
 
 VChannel::VChannel()
 : Connection(NULL)
+, Index(-1)
 , InMsg(NULL)
 , OutMsg(NULL)
 , ReceiveSequence(0)
@@ -71,13 +72,26 @@ VChannel::VChannel()
 //
 //==========================================================================
 
-VChannel::VChannel(VNetConnection* AConnection)
+VChannel::VChannel(VNetConnection* AConnection, vint32 AIndex)
 : Connection(AConnection)
+, Index(AIndex)
 , InMsg(NULL)
 , OutMsg(NULL)
 , ReceiveSequence(0)
 , SendSequence(0)
 {
+	if (Index == -1)
+	{
+		Index = 1;
+		while (Index < MAX_CHANNELS && Connection->Channels[Index])
+		{
+			Index++;
+		}
+		check(Index < MAX_CHANNELS);
+	}
+	checkSlow(!Connection->Channels[Index]);
+	Connection->Channels[Index] = this;
+	Connection->OpenChannels.Append(this);
 }
 
 //==========================================================================
@@ -88,6 +102,7 @@ VChannel::VChannel(VNetConnection* AConnection)
 
 VChannel::~VChannel()
 {
+	guard(VChannel::~VChannel);
 	for (VMessageIn* Msg = InMsg; Msg; )
 	{
 		VMessageIn* Next = Msg->Next;
@@ -100,6 +115,12 @@ VChannel::~VChannel()
 		delete Msg;
 		Msg = Next;
 	}
+	if (Index != -1 && Connection->Channels[Index] == this)
+	{
+		Connection->Channels[Index] = NULL;
+	}
+	Connection->OpenChannels.Remove(this);
+	unguard;
 }
 
 //==========================================================================
@@ -189,12 +210,13 @@ void VChannel::SendMessage(VMessageOut* AMsg)
 //
 //==========================================================================
 
-VPlayerChannel::VPlayerChannel()
+VPlayerChannel::VPlayerChannel(VNetConnection* AConnection)
 : Plr(NULL)
 , OldData(NULL)
 , NewObj(false)
 , FieldCondValues(NULL)
 {
+	Connection = AConnection;
 }
 
 //==========================================================================
@@ -297,11 +319,11 @@ VNetConnection::VNetConnection(VSocketPublic* ANetCon)
 , EntChan(NULL)
 , Chan(NULL)
 , Out(MAX_MSGLEN * 8)
-, GenChannel(NULL)
 {
+	memset(Channels, 0, sizeof(Channels));
 	EntChan = new VEntityChannel*[GMaxEntities];
 	memset(EntChan, 0, sizeof(VEntityChannel*) * GMaxEntities);
-	Chan = new VPlayerChannel();
+	Chan = new VPlayerChannel(this);
 }
 
 //==========================================================================
@@ -312,6 +334,7 @@ VNetConnection::VNetConnection(VSocketPublic* ANetCon)
 
 VNetConnection::~VNetConnection()
 {
+	guard(VNetConnection::~VNetConnection);
 	for (int i = 0; i < GMaxEntities; i++)
 	{
 		if (EntChan[i])
@@ -322,12 +345,16 @@ VNetConnection::~VNetConnection()
 	delete[] EntChan;
 	Chan->SetPlayer(NULL);
 	delete Chan;
-	delete GenChannel;
+	while (OpenChannels.Num())
+	{
+		delete OpenChannels[OpenChannels.Num() - 1];
+	}
 	if (NetCon)
 	{
 		NetCon->Close();
 	}
 	NetCon = NULL;
+	unguard;
 }
 
 //==========================================================================
@@ -383,12 +410,15 @@ void VNetConnection::GetMessages()
 
 	//	Resend message if needed.
 	//FIXME This is absolutely wrong place to do this.
-	for (VMessageOut* Msg = GenChannel->OutMsg; Msg; Msg = Msg->Next)
+	for (int i = 0; i < OpenChannels.Num(); i++)
 	{
-		if (Driver->NetTime - Msg->Time > 1.0)
+		for (VMessageOut* Msg = OpenChannels[i]->OutMsg; Msg; Msg = Msg->Next)
 		{
-			SendRawMessage(*Msg);
-			Driver->packetsReSent++;
+			if (Driver->NetTime - Msg->Time > 1.0)
+			{
+				SendRawMessage(*Msg);
+				Driver->packetsReSent++;
+			}
 		}
 	}
 	unguard;
@@ -469,17 +499,20 @@ void VNetConnection::ReceivedPacket(VBitStreamReader& Packet)
 			{
 				GCon->Log(NAME_DevNet, "Duplicate ACK received");
 			}
-			for (VMessageOut** pMsg = &GenChannel->OutMsg; *pMsg;)
+			for (int i = OpenChannels.Num() - 1; i >= 0; i--)
 			{
-				if ((*pMsg)->PacketId == AckSeq)
+				for (VMessageOut** pMsg = &OpenChannels[i]->OutMsg; *pMsg;)
 				{
-					VMessageOut* Msg = *pMsg;
-					*pMsg = Msg->Next;
-					delete Msg;
-				}
-				else
-				{
-					pMsg = &(*pMsg)->Next;
+					if ((*pMsg)->PacketId == AckSeq)
+					{
+						VMessageOut* Msg = *pMsg;
+						*pMsg = Msg->Next;
+						delete Msg;
+					}
+					else
+					{
+						pMsg = &(*pMsg)->Next;
+					}
 				}
 			}
 		}
@@ -488,18 +521,24 @@ void VNetConnection::ReceivedPacket(VBitStreamReader& Packet)
 			NeedsAck = true;
 			VMessageIn Msg;
 
-			//	Read sequence ID and check for duplicated packets.
+			//	Read message header
+			Msg.ChanIndex = Packet.ReadInt(MAX_CHANNELS);
 			Msg.bReliable = Packet.ReadBit();
+			Msg.Sequence = 0;
 			if (Msg.bReliable)
 			{
 				Packet << Msg.Sequence;
 			}
 
 			//	Read data
-			int Length = Packet.ReadInt(OUT_MESSAGE_SIZE);
+			int Length = Packet.ReadInt(OUT_MESSAGE_SIZE + 1);
 			Msg.SetData(Packet, Length);
 
-			GenChannel->ReceivedRawMessage(Msg);
+			VChannel* Chan = Channels[Msg.ChanIndex];
+			if (Chan)
+			{
+				Chan->ReceivedRawMessage(Msg);
+			}
 		}
 	}
 
@@ -522,6 +561,7 @@ void VNetConnection::SendRawMessage(VMessageOut& Msg)
 	PrepareOut(MAX_MESSAGE_HEADER_BITS + Msg.GetNumBits());
 
 	Out.WriteBit(false);
+	Out.WriteInt(Msg.ChanIndex, MAX_CHANNELS);
 	Out.WriteBit(Msg.bReliable);
 	if (Msg.bReliable)
 	{
@@ -561,7 +601,7 @@ void VNetConnection::PrepareOut(int Length)
 {
 	guard(VNetConnection::PrepareOut);
 	//	Send current packet if new message doesn't fit.
-	if (Out.GetNumBits() + Length + MAX_MESSAGE_TRAILER_BITS > MAX_MSGLEN * 8)
+	if (Out.GetNumBits() + Length + MAX_PACKET_TRAILER_BITS > MAX_MSGLEN * 8)
 	{
 		Flush();
 	}

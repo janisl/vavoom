@@ -187,6 +187,16 @@ public:
 	
 		return true;
 	}
+	void Remove(const T& Item)
+	{
+		for (int i = 0; i < ArrNum; i++)
+		{
+			if (ArrData[i] == Item)
+			{
+				RemoveIndex(i--);
+			}
+		}
+	}
 
 private:
 	int ArrNum;
