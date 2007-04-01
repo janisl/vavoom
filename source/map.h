@@ -144,7 +144,7 @@ public:
 		{
 			if (Pairs[i].Key == Key)
 			{
-				Pairs[i].RemoveIndex(i);
+				Pairs.RemoveIndex(i);
 				Removed = true;
 				break;
 			}
@@ -179,6 +179,20 @@ public:
 			if (Pairs[i].Key == Key)
 			{
 				return &Pairs[i].Value;
+			}
+		}
+		return NULL;
+		unguardSlow;
+	}
+	const TV FindPtr(TK Key) const
+	{
+		guardSlow(TMap::Find);
+		int HashIndex = GetTypeHash(Key) & (HashSize - 1);
+		for (int i = HashTable[HashIndex]; i != -1; i = Pairs[i].HashNext)
+		{
+			if (Pairs[i].Key == Key)
+			{
+				return Pairs[i].Value;
 			}
 		}
 		return NULL;
