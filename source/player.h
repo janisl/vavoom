@@ -76,7 +76,7 @@ public:
 	vuint32				SendSequence;
 
 	VChannel();
-	VChannel(VNetConnection* AConnection);
+	VChannel(VNetConnection*);
 	virtual ~VChannel();
 
 	//	VChannel interface
@@ -94,11 +94,12 @@ public:
 	bool			PendingClose;
 	bool			UpdatedThisFrame;
 	vuint8*			FieldCondValues;
+	vint32			Index;
 
-	VEntityChannel();
+	VEntityChannel(VNetConnection*, vint32);
 	~VEntityChannel();
 	void SetEntity(VEntity*);
-	void Update(int, VMessageOut&);
+	void Update(VMessageOut&);
 	void ParsePacket(VMessageIn&) {}
 };
 
@@ -131,13 +132,13 @@ public:
 	VNetworkPublic*		Driver;
 	ENetConState		State;
 	VMessageOut			Message;
-	int					MobjUpdateStart;
 	double				LastMessage;
 	bool				NeedsUpdate;
 	VEntityChannel**	EntChan;
 	VPlayerChannel*		Chan;
 	VBitStreamWriter	Out;
 	VChannel*			GenChannel;
+	TMap<VEntity*, VEntityChannel*>		EntityChannels;
 
 	VNetConnection(VSocketPublic*);
 	virtual ~VNetConnection();

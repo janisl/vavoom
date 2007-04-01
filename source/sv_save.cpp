@@ -82,7 +82,6 @@ void SV_AddEntity(VEntity* Ent);
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
-extern VEntity		**sv_mobjs;
 extern bool			sv_loading;
 extern int			sv_load_num_players;
 
@@ -1042,7 +1041,6 @@ void SV_MapTeleport(VName mapname)
 			GLevel->RemoveThinker(vent);
 			vent->UnlinkFromWorld();
 			SV_StopSound(vent, 0);
-			sv_mobjs[vent->NetID] = NULL;
 		}
 	}
 

@@ -577,9 +577,7 @@ static void CL_ParseNewObj(VMessageIn& msg)
 	guard(CL_ParseNewObj);
 	int i = msg.ReadInt(GMaxEntities);
 
-	int ci = msg.ReadByte();
-	if (ci & 0x80)
-		ci = (ci & 0x7f) | (msg.ReadByte() << 7);
+	int ci = msg.ReadInt(VMemberBase::GNetClassLookup.Num());
 	VClass* C = VMemberBase::GNetClassLookup[ci];
 
 	if (cl->Net->EntChan[i] && cl->Net->EntChan[i]->Ent)
@@ -589,7 +587,7 @@ static void CL_ParseNewObj(VMessageIn& msg)
 	}
 	if (!cl->Net->EntChan[i])
 	{
-		cl->Net->EntChan[i] = new VEntityChannel();
+		cl->Net->EntChan[i] = new VEntityChannel(cl->Net, i);
 	}
 	VEntity* Ent = (VEntity*)GClLevel->SpawnThinker(C);
 	Ent->Role = ROLE_DumbProxy;

@@ -125,8 +125,6 @@ struct tztrace_t
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
-extern VEntity**	sv_mobjs;
-
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
 int VEntity::FIndex_OnMapSpawn;
@@ -164,7 +162,6 @@ void VEntity::Serialise(VStream& Strm)
 
 	if (Strm.IsLoading())
 	{
-		sv_mobjs[NetID] = this;
 		if (EntityFlags & EF_IsPlayer)
 		{
 			Player->MO = this;

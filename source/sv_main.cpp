@@ -92,9 +92,6 @@ bool			paused;
 bool			deathmatch = false;   	// only if started as net death
 bool			netgame;                // only true if packets are broadcast
 
-VEntity**		sv_mobjs;
-double*			sv_mo_free_time;
-
 VMessageOut*	sv_reliable;
 VMessageOut*	sv_datagram;
 VMessageOut*	sv_signons;
@@ -216,11 +213,6 @@ void SV_Init()
 
 	svs.max_clients = 1;
 
-	sv_mobjs = new VEntity*[GMaxEntities];
-	sv_mo_free_time = new double[GMaxEntities];
-	memset(sv_mobjs, 0, sizeof(VEntity*) * GMaxEntities);
-	memset(sv_mo_free_time, 0, sizeof(double) * GMaxEntities);
-
 	VMemberBase::StaticLoadPackage(NAME_svprogs);
 
 	ProcessDehackedFiles();
@@ -266,8 +258,6 @@ void SV_Shutdown()
 			GPlayersBase[i]->ConditionalDestroy();
 		}
 	}
-	delete[] sv_mobjs;
-	delete[] sv_mo_free_time;
 	level.LevelName.Clean();
 	
 	P_FreeTerrainTypes();
@@ -306,8 +296,6 @@ void SV_Clear()
 	memset(&sv, 0, sizeof(sv));
 	level.LevelName.Clean();
 	memset(&level, 0, sizeof(level));
-	memset(sv_mobjs, 0, sizeof(VEntity *) * GMaxEntities);
-	memset(sv_mo_free_time, 0, sizeof(double) * GMaxEntities);
 	for (VMessageOut* Msg = sv_signons; Msg; )
 	{
 		VMessageOut* Next = Msg->Next;
@@ -347,22 +335,23 @@ void SV_ClearDatagram()
 
 void SV_AddEntity(VEntity* Ent)
 {
-	int i;
-
-	for (i = 1; i < GMaxEntities; i++)
+	int Id = 0;
+	bool Used = false;
+	do
 	{
-		if (!sv_mobjs[i] && (sv_mo_free_time[i] < 1.0 ||
-			level.time - sv_mo_free_time[i] > 2.0))
+		Id++;
+		Used = false;
+		for (TThinkerIterator<VEntity> Other(GLevel); Other; ++Other)
 		{
-			break;
+			if (Other->NetID == Id)
+			{
+				Used = true;
+				break;
+			}
 		}
 	}
-	if (i == GMaxEntities)
-	{
-		Sys_Error("SV_SpawnMobj: Overflow");
-	}
-	sv_mobjs[i] = Ent;
-	Ent->NetID = i;
+	while (Used);
+	Ent->NetID = Id;
 }
 
 //==========================================================================
@@ -400,13 +389,15 @@ VThinker* VLevel::SpawnThinker(VClass* Class, const TVec& AOrigin,
 //
 //==========================================================================
 
-VEntityChannel::VEntityChannel()
-: Ent(NULL)
+VEntityChannel::VEntityChannel(VNetConnection* AConnection, vint32 AIndex)
+: VChannel(AConnection)
+, Ent(NULL)
 , OldData(NULL)
 , NewObj(false)
 , PendingClose(false)
 , UpdatedThisFrame(false)
 , FieldCondValues(NULL)
+, Index(AIndex)
 {
 }
 
@@ -432,6 +423,7 @@ void VEntityChannel::SetEntity(VEntity* AEnt)
 	guard(VEntityChannel::SetEntity);
 	if (Ent)
 	{
+		Connection->EntityChannels.Remove(Ent);
 		for (VField* F = Ent->GetClass()->NetFields; F; F = F->NextNetField)
 		{
 			VField::CleanField(OldData + F->Ofs, F->Type);
@@ -466,6 +458,7 @@ void VEntityChannel::SetEntity(VEntity* AEnt)
 			FieldCondValues = new vuint8[Ent->GetClass()->NumNetFields];
 		}
 		NewObj = true;
+		Connection->EntityChannels.Set(Ent, this);
 	}
 	unguard;
 }
@@ -501,11 +494,20 @@ void EvalCondValues(VObject* Obj, VClass* Class, vuint8* Values)
 //
 //==========================================================================
 
-void VEntityChannel::Update(int SendId, VMessageOut& Msg)
+void VEntityChannel::Update(VMessageOut& Msg)
 {
 	guard(VEntityChannel::Update);
 	EvalCondValues(Ent, Ent->GetClass(), FieldCondValues);
 	vuint8* Data = (vuint8*)Ent;
+
+	if (NewObj)
+	{
+		Msg << (vuint8)svc_new_obj;
+		Msg.WriteInt(Index, GMaxEntities);
+		Msg.WriteInt(Ent->GetClass()->NetId, VMemberBase::GNetClassLookup.Num());
+		NewObj = false;
+	}
+
 	TAVec SavedAngles = Ent->Angles;
 	if (Ent->EntityFlags & VEntity::EF_IsPlayer)
 	{
@@ -524,7 +526,7 @@ void VEntityChannel::Update(int SendId, VMessageOut& Msg)
 		if (!VField::IdenticalValue(Data + F->Ofs, OldData + F->Ofs, F->Type))
 		{
 			Msg << (vuint8)svc_set_prop;
-			Msg.WriteInt(SendId, GMaxEntities);
+			Msg.WriteInt(Index, GMaxEntities);
 			Msg << (vuint8)F->NetIndex;
 			VField::NetSerialiseValue(Msg, Data + F->Ofs, F->Type);
 			VField::CopyFieldValue(Data + F->Ofs, OldData + F->Ofs, F->Type);
@@ -546,37 +548,22 @@ int c_bigState;
 //
 //==========================================================================
 
-void SV_UpdateMobj(int i, VMessageOut& msg)
+void SV_UpdateMobj(VEntity* Ent, VMessageOut& msg)
 {
 	guard(SV_UpdateMobj);
-	if (!sv_player->Net->EntChan[i])
+	VEntityChannel* Chan = sv_player->Net->EntityChannels.FindPtr(Ent);
+	if (!Chan)
 	{
-		sv_player->Net->EntChan[i] = new VEntityChannel();
-	}
-
-	if (sv_player->Net->EntChan[i]->Ent != sv_mobjs[i])
-	{
-		sv_player->Net->EntChan[i]->SetEntity(sv_mobjs[i]);
-	}
-
-	if (sv_player->Net->EntChan[i]->NewObj)
-	{
-		msg << (vuint8)svc_new_obj;
-		msg.WriteInt(i, GMaxEntities);
-		int ClsId = sv_player->Net->EntChan[i]->Ent->GetClass()->NetId;
-		if (ClsId < 0x80)
+		int ChIndex = 0;
+		while (sv_player->Net->EntChan[ChIndex])
 		{
-			msg << (vuint8)ClsId;
+			ChIndex++;
 		}
-		else
-		{
-			msg << (vuint8)(ClsId & 0x7f | 0x80)
-				<< (vuint8)(ClsId >> 7);
-		}
-		sv_player->Net->EntChan[i]->NewObj = false;
+		Chan = new VEntityChannel(sv_player->Net, ChIndex);
+		sv_player->Net->EntChan[ChIndex] = Chan;
+		Chan->SetEntity(Ent);
 	}
-
-	sv_player->Net->EntChan[i]->Update(i, msg);
+	Chan->Update(msg);
 	return;
 	unguard;
 }
@@ -611,9 +598,6 @@ void VEntity::Destroy()
 	guard(VEntity::Destroy);
 	if (XLevel == GLevel && GLevel)
 	{
-		if (sv_mobjs[NetID] != this)
-			Sys_Error("Invalid entity num %d", NetID);
-
 		eventDestroyed();
 
 		// unlink from sector and block lists
@@ -624,23 +608,24 @@ void VEntity::Destroy()
 
 		for (int i = 0; i < MAXPLAYERS; i++)
 		{
-			if (GGameInfo->Players[i] &&
-				GGameInfo->Players[i]->Net->EntChan[NetID])
+			if (GGameInfo->Players[i])
 			{
-				GGameInfo->Players[i]->Net->EntChan[NetID]->SetEntity(NULL);
+				VEntityChannel* Chan = GGameInfo->Players[i]->Net->EntityChannels.FindPtr(this);
+				if (Chan)
+				{
+					Chan->SetEntity(NULL);
+				}
 			}
 		}
-
-		sv_mobjs[NetID] = NULL;
-		sv_mo_free_time[NetID] = level.time;
 	}
 
 #ifdef CLIENT
 	if (XLevel == GClLevel && GClLevel && cl->Net)
 	{
-		if (cl->Net->EntChan[NetID])
+		VEntityChannel* Chan = cl->Net->EntityChannels.FindPtr(this);
+		if (Chan)
 		{
-			cl->Net->EntChan[NetID]->SetEntity(NULL);
+			Chan->SetEntity(NULL);
 		}
 	}
 #endif
@@ -1296,62 +1281,44 @@ int NumObjs = 0;
 	}
 
 	//	First update players
-	for (i = 0; i < GMaxEntities; i++)
+	for (TThinkerIterator<VEntity> Ent(GLevel); Ent; ++Ent)
 	{
-		if (!sv_mobjs[i])
+		if (Ent->EntityFlags & VEntity::EF_Hidden)
 			continue;
-		if (sv_mobjs[i]->GetFlags() & _OF_DelayedDestroy)
-			continue;
-		if (sv_mobjs[i]->EntityFlags & VEntity::EF_Hidden)
-			continue;
-		if (!(sv_mobjs[i]->EntityFlags & VEntity::EF_IsPlayer))
+		if (!(Ent->EntityFlags & VEntity::EF_IsPlayer))
 			continue;
 		if (!msg.CheckSpaceBits(29 << 3))
 		{
 			GCon->Log(NAME_Dev, "UpdateLevel: player overflow");
 			return;
 		}
-		SV_UpdateMobj(i, msg);
+		SV_UpdateMobj(*Ent, msg);
 		NumObjs++;
 	}
 
 	//	Then update non-player mobjs in sight
-	int starti = sv_player->Net->MobjUpdateStart;
-	for (i = 0; i < GMaxEntities; i++)
+	for (TThinkerIterator<VEntity> Ent(GLevel); Ent; ++Ent)
 	{
-		int index = (i + starti) % GMaxEntities;
-		if (!sv_mobjs[index])
+		if (Ent->EntityFlags & VEntity::EF_Hidden)
 			continue;
-		if (sv_mobjs[index]->GetFlags() & _OF_DelayedDestroy)
+		if (Ent->EntityFlags & VEntity::EF_IsPlayer)
 			continue;
-		if (sv_mobjs[index]->EntityFlags & VEntity::EF_Hidden)
-			continue;
-		if (sv_mobjs[index]->EntityFlags & VEntity::EF_IsPlayer)
-			continue;
-		if (!SV_CheckFatPVS(sv_mobjs[index]->SubSector))
+		if (!SV_CheckFatPVS(Ent->SubSector))
 			continue;
 		if (!msg.CheckSpaceBits(29 << 3))
 		{
-			if (sv_player->Net->MobjUpdateStart && show_mobj_overflow)
-			{
-				GCon->Log(NAME_Dev, "UpdateLevel: mobj overflow 2");
-			}
-			else if (show_mobj_overflow > 1)
+			if (show_mobj_overflow > 1)
 			{
 				GCon->Log(NAME_Dev, "UpdateLevel: mobj overflow");
 			}
-			//	Next update starts here
-			sv_player->Net->MobjUpdateStart = index;
 if (show_update_stats)
 dprintf("Update size %d (%d) for %d, aver %f big %d %d\n", msg.GetNumBytes(), msg.GetNumBytes() -
 		StartSize, NumObjs, float(msg.GetNumBytes() - StartSize) / NumObjs, c_bigClass, c_bigState);
 			return;
 		}
-		SV_UpdateMobj(index, msg);
+		SV_UpdateMobj(*Ent, msg);
 		NumObjs++;
 	}
-	sv_player->Net->MobjUpdateStart = 0;
-
 
 	//	Close entity channels that were not updated in this frame.
 	for (i = 0; i < GMaxEntities; i++)
@@ -2917,7 +2884,6 @@ void SV_ConnectClient(VBasePlayer *player)
 	player->PlayerFlags |= VBasePlayer::PF_Active;
 
 	player->Net->Message.AllowOverflow = true;		// we can catch it
-	player->Net->MobjUpdateStart = 0;
 	player->Net->LastMessage = 0;
 	player->Net->NeedsUpdate = false;
 	player->PlayerFlags &= ~VBasePlayer::PF_Spawned;
