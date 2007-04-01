@@ -499,7 +499,7 @@ template<class T> T* Spawn()
 
 inline vuint32 GetTypeHash(VObject* Obj)
 {
-	return Obj->GetIndex();
+	return Obj ? Obj->GetIndex() : 0;
 }
 
 //
