@@ -1862,3 +1862,140 @@
 18.02.2007
   I created a WorldInfo class that exists during the whole game session. I added
  pointer to the global ACS data class to this class.
+19.02.2007
+  I moved serialisation of ACS state to Level and WorldInfo classes.
+22.02.2007
+  I added references to LevelInfo and WorldInfo to Level class.
+  I implemented support for LOADACS script.
+26.02.2007
+  I created an EntityChannel class. Currently it doesn't do anything yet.
+27.02.2007
+  I started to implement updates of some of the Entity fields using the
+ EntityChannel class. In compiler I added a keyword that allows me to specify
+ which fields to update.
+28.02.2007
+  In compiler I changed the way net fields are specified making it to be more
+ like UnrealScript. I moved some methods that are used for network replication
+ to Field class. In Entity class I added network role fields.
+01.03.2007
+  I created a PlayerChannel class that does updates of player fields similar
+ to the way entity fields are updated. All player stats are now updated using
+ PlayerChannel. I moved channels to the PlayerNetInfo class.
+02.03.2007
+  I changed some of the fields in BasePlayer class to be updated using channel.
+03.03.2007
+  I implemented support for conditional field replication.
+04.03.2007
+  I moved handling of dynamic lights and particles to LevelRenderData class.
+05.03.2007
+  I finished moving dynamic lights to LevelRenderData class.
+06.03.2007
+  I created a ViewClipper class and moved methods for angle based view clipping
+ to this class.
+07.03.2007
+  I decided to move level rendering methods to LevelRenderData class and to make
+ it more clear I renamed it to RenderLevel. RenderLevel class pointer is now
+ passed to Drawer class to avoid usage of global variables. I also split all
+ definitions of texture loader classes into a separate header file.
+08.03.2007
+  I added a Destroy method to the Thinker class that replaces old style method
+ RemoveSpecialThinker and Entity's Remove method. I also merged create Thinker
+ and Entity methods.
+09.03.2007
+  I changed the way LevelInfo class is created by specifying the class instead
+ of actually creating it. I added some extra arguments to NewSpecialThinker
+ method that allowed me to make Spawn a wrapper around it and move it to Thinker
+ class. In compiler I added a spawner method attribute that automaticly casts
+ return value. I changed spawning of all thinkers to use Spawn.
+10.03.2007
+  I made Thinker's Spawn native and added an optional angles argument. I also
+ simplified spawning of thnkers in engine.
+  I created a template class for mapping of keys to values and changed language
+ strings class to use it.
+11.03.2007
+  I changed RGB table to be calculated in engine.
+  I fixed a bug in model rendering in software renderer in 8-bit mode.
+12.03.2007
+  I split Message class into incoming and outgoing message classes and changed
+ them to be derived from Stream.
+13.03.2007
+  I changed some of the Message class fields and method arguments to be in bits.
+  I merged network field serialisation methods by taking Stream as argument.
+14.03.2007
+  In Stream class I added SerialiseBits method and implemented serialisation of
+ some bits of data in message classes.
+15.03.2007
+  I moved serialisation of bit data from message classes to general purpose bit
+ stream classes.
+17.03.2007
+  I got rid of global incoming message class.
+  In bit stream classes I added methods for reading and writing a bit and made
+ use of it in some places.
+  In datagram driver I removed splitting bigger packets into smaller ones. I
+ split signon message into multiple ones and added message queue for a player.
+ This allowed me to change maximal message size to be 1024 bytes.
+18.03.2007
+  I changed sector updates to use read/write bit methods.
+19.03.2007
+  In PlayerNetInfo class I added all of the methods of Socket class making it a
+ wrapper around it. I created client and server versions of it and moved parsing
+ of packets to them.
+20.03.2007
+  In bit stream classes I added methods for reading/writing of integers with
+ known maximal value in more compact form.
+21.03.2007
+  I changed network driver API not to take message classes as arguments. The
+ outgoing packets now have a trailing bit that allows me to find out the size
+ of the packet in bits.
+  I did some tests with datagram driver and found out that with current protocol
+ packet compression mostly doesn't give anything so I decided to remove it. The
+ length of packet is always known and is not needed in header so I removed it.
+ Also the UDP protocol already has a checksum so I removed it. I also changed
+ ACK packets to have ACK packet ID in data.
+22.03.2007
+  I moved ACK packet identifier to the data that allowed me to move ACK handling
+ out of datagram driver to PlayerNetInfo class. I also changed reliable message
+ sequence ID to be in data and have it's identifier in data that allowed me to
+ move handling of ACK sending to PlayerNetInfo class. Now all game packets look
+ as unreliable messages. I removed from network API separate methods for sending
+ unreliable messages since they are the same as normal messages.
+23.03.2007
+  I changed PlayerNetInfo to be created when connected and have the same life
+ time as underlying network socket.
+  I moved unreliable packet ID to data and moved sequencing handling out of the
+ datagram driver to the PlayerNetInfo class. Packet resending also has been moved
+ to it.
+  In Direct3D driver I added additional port to DirectX 9.
+24.03.2007
+  I moved datagram packet flags to the data. In datagram driver game packets are
+ now sent and received without any additional logic.
+25.03.2007
+  I changed the way messages are sent to be able to save resend message as a
+ message and not as outgoing packet data. I also added a method that does adding
+ of trailing bit and sending final packet.
+26.03.2007
+  I implemented support for having multiple messages and ACKs in a single packet.
+27.03.2007
+  I added network connection state to the PlayerNetInfo class to simplify error
+ handling. I implemented support for sending and receiving multiple reliable
+ messages. Received out of order messages are kept in a queue untill missing
+ messages are received.
+  On client side entities are now created and destroyed as needed.
+28.03.2007
+  I added a destroy Entity network command that allowed me to get rid of InUse
+ counter. I also added a flag to identify local player removeing the need to
+ use first entity IDs for players.
+29.03.2007
+  On client side I got rid of the cl_mobjs array.
+  I created a thinker iterator template class to simplify this task.
+  I changed entity channels to be created and destroyed as needed.
+  I renamed PlayerNetInfo to NetConnection since it does all connection handling
+ now.
+30.03.2007
+  I stared to prepare for multi-channel communication by creating a client and
+ server general channel classes and moving message queues and message parsing to
+ this class. This channel will be used for old-style protocol.
+31.03.2007
+  I changed remaining entity fields that used old style update to be updated
+ using channel. This way I got rid of entity baseline. On server side entity
+ channels now will allocate first available slot.
