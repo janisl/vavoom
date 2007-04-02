@@ -44,7 +44,7 @@ enum
 	MAX_MSGLEN					= 1024,		// max length of a message
 	MAX_PACKET_HEADER_BITS		= 40,
 	MAX_PACKET_TRAILER_BITS		= 1,
-	MAX_MESSAGE_HEADER_BITS		= 55,
+	MAX_MESSAGE_HEADER_BITS		= 59,
 	OUT_MESSAGE_SIZE			= MAX_MSGLEN * 8 - MAX_PACKET_HEADER_BITS -
 		MAX_MESSAGE_HEADER_BITS - MAX_PACKET_TRAILER_BITS,
 };
@@ -244,6 +244,7 @@ public:
 	{
 		return NetCon->Address;
 	}
+	virtual VLevel* GetLevel() = 0;
 };
 
 extern VNetworkPublic*	GNet;

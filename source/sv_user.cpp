@@ -533,10 +533,16 @@ void VNetConnection::ReceivedPacket(VBitStreamReader& Packet)
 			//	Read message header
 			Msg.ChanIndex = Packet.ReadInt(MAX_CHANNELS);
 			Msg.bReliable = Packet.ReadBit();
+			Msg.bOpen = Packet.ReadBit();
 			Msg.Sequence = 0;
+			Msg.ChanType = 0;
 			if (Msg.bReliable)
 			{
 				Packet << Msg.Sequence;
+			}
+			if (Msg.bOpen)
+			{
+				Msg.ChanType = Packet.ReadInt(CHANNEL_MAX);
 			}
 
 			//	Read data
@@ -544,11 +550,33 @@ void VNetConnection::ReceivedPacket(VBitStreamReader& Packet)
 			Msg.SetData(Packet, Length);
 
 			VChannel* Chan = Channels[Msg.ChanIndex];
-			check(Chan);
-			if (Chan)
+			if (!Chan)
 			{
-				Chan->ReceivedRawMessage(Msg);
+				if (Msg.bOpen)
+				{
+					switch (Msg.ChanType)
+					{
+					case CHANNEL_General:
+						Sys_Error("Tried to remotely open general channel");
+					case CHANNEL_Player:
+						Chan = new VPlayerChannel(this, Msg.ChanIndex);
+						break;
+					case CHANNEL_Entity:
+						Chan = new VEntityChannel(this, Msg.ChanIndex);
+						break;
+					default:
+						GCon->Logf("Unknown channel type %d for channel %d",
+							Msg.ChanType, Msg.ChanIndex);
+						continue;
+					}
+				}
+				else
+				{
+					GCon->Logf("Channel %d is not open", Msg.ChanIndex);
+					continue;
+				}
 			}
+			Chan->ReceivedRawMessage(Msg);
 		}
 	}
 
@@ -573,9 +601,14 @@ void VNetConnection::SendRawMessage(VMessageOut& Msg)
 	Out.WriteBit(false);
 	Out.WriteInt(Msg.ChanIndex, MAX_CHANNELS);
 	Out.WriteBit(Msg.bReliable);
+	Out.WriteBit(Msg.bOpen);
 	if (Msg.bReliable)
 	{
 		Out << Msg.Sequence;
+	}
+	if (Msg.bOpen)
+	{
+		Out.WriteInt(Msg.ChanType, CHANNEL_MAX);
 	}
 	Out.WriteInt(Msg.GetNumBits(), MAX_MSGLEN * 8);
 	Out.SerialiseBits(Msg.GetData(), Msg.GetNumBits());
@@ -830,6 +863,17 @@ void VServerGenChannel::ParsePacket(VMessageIn& msg)
 		}
 	}
 	unguard;
+}
+
+//==========================================================================
+//
+//	VServerPlayerNetInfo::GetLevel
+//
+//==========================================================================
+
+VLevel* VServerPlayerNetInfo::GetLevel()
+{
+	return GLevel;
 }
 
 //==========================================================================

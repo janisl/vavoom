@@ -41,8 +41,10 @@ public:
 	}
 
 	VMessageIn*		Next;
+	vuint8			ChanType;
 	vint32			ChanIndex;
 	bool			bReliable;		//	Reliable message
+	bool			bOpen;			//	Open channel message
 	vuint32			Sequence;		//	Reliable message sequence ID
 
 	vuint8 ReadByte() { vuint8 c; *this << c; return c; }
@@ -55,17 +57,21 @@ class VMessageOut : public VBitStreamWriter
 public:
 	VMessageOut(vint32 AMax)
 	: VBitStreamWriter(AMax)
+	, ChanType(0)
 	, ChanIndex(0)
 	, AllowOverflow(false)
 	, bReliable(false)
+	, bOpen(false)
 	{
 	}
 	VMessageOut(VChannel*);
 
 	VMessageOut*	Next;
+	vuint8			ChanType;
 	vint32			ChanIndex;
 	vint8			AllowOverflow;	// if false, do a Sys_Error
 	bool			bReliable;		//	Needs ACK or not
+	bool			bOpen;
 	vuint32			Sequence;		//	Reliable message sequence ID
 	double			Time;			//	Time this message has been sent
 	vuint32			PacketId;		//	Packet in which this message was sent

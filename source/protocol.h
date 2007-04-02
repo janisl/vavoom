@@ -81,7 +81,6 @@ enum
 	svc_class_name,
 	svc_add_seq_choice,
 
-	svc_new_obj,
 	svc_destroy_obj,
 
 	USER_PROTOCOL_START = 128

@@ -54,9 +54,11 @@
 
 VMessageOut::VMessageOut(VChannel* AChannel)
 : VBitStreamWriter(OUT_MESSAGE_SIZE)
+, ChanType(AChannel->Type)
 , ChanIndex(AChannel->Index)
 , AllowOverflow(true)
 , bReliable(false)
+, bOpen(false)
 {
 }
 

@@ -539,28 +539,6 @@ static void CL_ParseSkin(VMessageIn& msg)
 
 //==========================================================================
 //
-//	CL_ParseNewObj
-//
-//==========================================================================
-
-static void CL_ParseNewObj(VMessageIn& msg)
-{
-	guard(CL_ParseNewObj);
-	int Index = msg.ReadInt(MAX_CHANNELS);
-
-	int ci = msg.ReadInt(VMemberBase::GNetClassLookup.Num());
-	VClass* C = VMemberBase::GNetClassLookup[ci];
-
-	VEntityChannel* Chan = new VEntityChannel(cl->Net, Index);
-	VEntity* Ent = (VEntity*)GClLevel->SpawnThinker(C);
-	Ent->Role = ROLE_DumbProxy;
-	Ent->RemoteRole = ROLE_Authority;
-	Chan->SetEntity(Ent);
-	unguard;
-}
-
-//==========================================================================
-//
 //	CL_ParseDestroyObj
 //
 //==========================================================================
@@ -863,10 +841,6 @@ void VClientGenChannel::ParsePacket(VMessageIn& msg)
 
 		case svc_class_name:
 			CL_ParseClassName(msg);
-			break;
-
-		case svc_new_obj:
-			CL_ParseNewObj(msg);
 			break;
 
 		case svc_destroy_obj:

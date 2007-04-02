@@ -499,19 +499,15 @@ void VEntityChannel::Update()
 	EvalCondValues(Ent, Ent->GetClass(), FieldCondValues);
 	vuint8* Data = (vuint8*)Ent;
 
-	if (NewObj)
-	{
-		VMessageOut CreateMsg(Connection->Channels[0]);
-
-		CreateMsg << (vuint8)svc_new_obj;
-		CreateMsg.WriteInt(Index, MAX_CHANNELS);
-		CreateMsg.WriteInt(Ent->GetClass()->NetId, VMemberBase::GNetClassLookup.Num());
-		Connection->Channels[0]->SendMessage(&CreateMsg);
-		NewObj = false;
-	}
-
 	VMessageOut Msg(this);
 	Msg.bReliable = true;
+
+	if (NewObj)
+	{
+		Msg.bOpen = true;
+		Msg.WriteInt(Ent->GetClass()->NetId, VMemberBase::GNetClassLookup.Num());
+		NewObj = false;
+	}
 
 	TAVec SavedAngles = Ent->Angles;
 	if (Ent->EntityFlags & VEntity::EF_IsPlayer)
@@ -555,6 +551,17 @@ void VEntityChannel::Update()
 void VEntityChannel::ParsePacket(VMessageIn& Msg)
 {
 	guard(VEntityChannel::ParsePacket);
+	if (Msg.bOpen)
+	{
+		int ci = Msg.ReadInt(VMemberBase::GNetClassLookup.Num());
+		VClass* C = VMemberBase::GNetClassLookup[ci];
+	
+		VEntity* Ent = (VEntity*)Connection->GetLevel()->SpawnThinker(C);
+		Ent->Role = ROLE_DumbProxy;
+		Ent->RemoteRole = ROLE_Authority;
+		SetEntity(Ent);
+	}
+
 	while (!Msg.AtEnd())
 	{
 		int FldIdx = Msg.ReadByte();

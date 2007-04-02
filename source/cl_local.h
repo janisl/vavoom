@@ -251,6 +251,7 @@ public:
 	//	VNetConnection interface
 	int GetRawPacket(TArray<vuint8>&);
 	void SendRawMessage(VMessageOut&);
+	VLevel* GetLevel();
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
