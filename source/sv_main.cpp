@@ -495,7 +495,7 @@ void EvalCondValues(VObject* Obj, VClass* Class, vuint8* Values)
 //
 //==========================================================================
 
-void VEntityChannel::Update(VMessageOut& Msg)
+void VEntityChannel::Update(VMessageOut& DstMsg)
 {
 	guard(VEntityChannel::Update);
 	EvalCondValues(Ent, Ent->GetClass(), FieldCondValues);
@@ -503,11 +503,13 @@ void VEntityChannel::Update(VMessageOut& Msg)
 
 	if (NewObj)
 	{
-		Msg << (vuint8)svc_new_obj;
-		Msg.WriteInt(EntChanIndex, GMaxEntities);
-		Msg.WriteInt(Ent->GetClass()->NetId, VMemberBase::GNetClassLookup.Num());
+		DstMsg << (vuint8)svc_new_obj;
+		DstMsg.WriteInt(EntChanIndex, GMaxEntities);
+		DstMsg.WriteInt(Ent->GetClass()->NetId, VMemberBase::GNetClassLookup.Num());
 		NewObj = false;
 	}
+
+	VMessageOut Msg(this);
 
 	TAVec SavedAngles = Ent->Angles;
 	if (Ent->EntityFlags & VEntity::EF_IsPlayer)
@@ -522,12 +524,10 @@ void VEntityChannel::Update(VMessageOut& Msg)
 		{
 			continue;
 		}
-		if (!Msg.CheckSpaceBits(10 * 8))
+		if (!DstMsg.CheckSpaceBits(Msg.GetNumBits() + 10 * 8))
 			break;
 		if (!VField::IdenticalValue(Data + F->Ofs, OldData + F->Ofs, F->Type))
 		{
-			Msg << (vuint8)svc_set_prop;
-			Msg.WriteInt(EntChanIndex, GMaxEntities);
 			Msg << (vuint8)F->NetIndex;
 			VField::NetSerialiseValue(Msg, Data + F->Ofs, F->Type);
 			VField::CopyFieldValue(Data + F->Ofs, OldData + F->Ofs, F->Type);
@@ -538,6 +538,44 @@ void VEntityChannel::Update(VMessageOut& Msg)
 		Ent->Angles = SavedAngles;
 	}
 	UpdatedThisFrame = true;
+
+	if (Msg.GetNumBits())
+	{
+		DstMsg << (vuint8)svc_set_prop;
+		DstMsg.WriteInt(EntChanIndex, GMaxEntities);
+		DstMsg.WriteInt(Msg.GetNumBits(), MAX_MSGLEN * 8);
+		DstMsg.SerialiseBits(Msg.GetData(), Msg.GetNumBits());
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VEntityChannel::ParsePacket
+//
+//==========================================================================
+
+void VEntityChannel::ParsePacket(VMessageIn& Msg)
+{
+	guard(VEntityChannel::ParsePacket);
+	while (!Msg.AtEnd())
+	{
+		int FldIdx = Msg.ReadByte();
+		VField* F = NULL;
+		for (VField* CF = Ent->GetClass()->NetFields; CF; CF = CF->NextNetField)
+		{
+			if (CF->NetIndex == FldIdx)
+			{
+				F = CF;
+				break;
+			}
+		}
+		if (!F)
+		{
+			Sys_Error("Bad net field %d", FldIdx);
+		}
+		VField::NetSerialiseValue(Msg, (vuint8*)Ent + F->Ofs, F->Type);
+	}
 	unguard;
 }
 
@@ -1442,7 +1480,7 @@ void SV_SendReliable()
 			continue;
 
 		sv_player = GGameInfo->Players[i];
-		GGameInfo->Players[i]->Net->Chan->Update();
+		((VPlayerChannel*)sv_player->Net->Channels[1])->Update();
 	}
 
 	sv_reliable->Clear();
@@ -2628,8 +2666,8 @@ COMMAND(Spawn)
 						<< (vuint8)0;
 	sv_player->Net->Message << (vuint8)svc_signonnum << (vuint8)3;
 	sv_player->PlayerFlags &= ~VBasePlayer::PF_FixAngle;
-	sv_player->Net->Chan->SetPlayer(NULL);
-	sv_player->Net->Chan->SetPlayer(sv_player);
+	((VPlayerChannel*)sv_player->Net->Channels[1])->SetPlayer(NULL);
+	((VPlayerChannel*)sv_player->Net->Channels[1])->SetPlayer(sv_player);
 	unguard;
 }
 
@@ -2932,7 +2970,7 @@ void SV_CheckForNewClients()
 			Sys_Error("Host_CheckForNewClients: no free clients");
 
 		GPlayersBase[i]->Net = new VServerPlayerNetInfo(sock);
-		GPlayersBase[i]->Net->Chan->SetPlayer(GPlayersBase[i]);
+		((VPlayerChannel*)GPlayersBase[i]->Net->Channels[1])->SetPlayer(GPlayersBase[i]);
 		SV_ConnectClient(GPlayersBase[i]);
 		svs.num_connected++;
 	}
@@ -2970,7 +3008,7 @@ void SV_ConnectBot(const char *name)
 	GPlayersBase[i]->PlayerFlags |= VBasePlayer::PF_IsBot;
 	GPlayersBase[i]->PlayerName = name;
 	GPlayersBase[i]->Net = new VServerPlayerNetInfo(sock);
-	GPlayersBase[i]->Net->Chan->SetPlayer(GPlayersBase[i]);
+	((VPlayerChannel*)GPlayersBase[i]->Net->Channels[1])->SetPlayer(GPlayersBase[i]);
 	SV_ConnectClient(GPlayersBase[i]);
 	svs.num_connected++;
 

@@ -507,7 +507,7 @@ static void CL_ParseIntermission(VMessageIn& msg)
 
 static void CL_ParseClassName(VMessageIn& msg)
 {
-	vint32 i = msg.ReadShort();
+	/*vint32 i = */msg.ReadShort();
 	VStr Name = msg.ReadString();
 //	ClassLookup[i] = VClass::FindClass(*Name);
 }
@@ -547,22 +547,10 @@ static void CL_ParseSetProp(VMessageIn& Msg)
 {
 	guard(CL_ParseSetProp);
 	int Id = Msg.ReadInt(GMaxEntities);
-	VEntity* Ent = cl->Net->EntChan[Id]->Ent;
-	int FldIdx = Msg.ReadByte();
-	VField* F = NULL;
-	for (VField* CF = Ent->GetClass()->NetFields; CF; CF = CF->NextNetField)
-	{
-		if (CF->NetIndex == FldIdx)
-		{
-			F = CF;
-			break;
-		}
-	}
-	if (!F)
-	{
-		Sys_Error("Bad net field %d", FldIdx);
-	}
-	VField::NetSerialiseValue(Msg, (vuint8*)Ent + F->Ofs, F->Type);
+	int Length = Msg.ReadInt(MAX_MSGLEN * 8);
+	VMessageIn TmpMsg;
+	TmpMsg.SetData(Msg, Length);
+	cl->Net->EntChan[Id]->ParsePacket(TmpMsg);
 	unguard;
 }
 
@@ -617,33 +605,6 @@ static void CL_ParseDestroyObj(VMessageIn& msg)
 		delete cl->Net->EntChan[i];
 		cl->Net->EntChan[i] = NULL;
 	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	CL_ParseSetPlayerProp
-//
-//==========================================================================
-
-static void CL_ParseSetPlayerProp(VMessageIn& Msg)
-{
-	guard(CL_ParseSetPlayerProp);
-	int FldIdx = Msg.ReadByte();
-	VField* F = NULL;
-	for (VField* CF = cl->GetClass()->NetFields; CF; CF = CF->NextNetField)
-	{
-		if (CF->NetIndex == FldIdx)
-		{
-			F = CF;
-			break;
-		}
-	}
-	if (!F)
-	{
-		Sys_Error("Bad net field %d", FldIdx);
-	}
-	VField::NetSerialiseValue(Msg, (vuint8*)cl + F->Ofs, F->Type);
 	unguard;
 }
 
@@ -939,10 +900,6 @@ void VClientGenChannel::ParsePacket(VMessageIn& msg)
 
 		case svc_destroy_obj:
 			CL_ParseDestroyObj(msg);
-			break;
-
-		case svc_set_player_prop:
-			CL_ParseSetPlayerProp(msg);
 			break;
 
 		default:

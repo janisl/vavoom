@@ -82,7 +82,7 @@ VChannel::VChannel(VNetConnection* AConnection, vint32 AIndex)
 {
 	if (Index == -1)
 	{
-		Index = 1;
+		Index = 2;
 		while (Index < MAX_CHANNELS && Connection->Channels[Index])
 		{
 			Index++;
@@ -210,13 +210,13 @@ void VChannel::SendMessage(VMessageOut* AMsg)
 //
 //==========================================================================
 
-VPlayerChannel::VPlayerChannel(VNetConnection* AConnection)
-: Plr(NULL)
+VPlayerChannel::VPlayerChannel(VNetConnection* AConnection, vint32 AIndex)
+: VChannel(AConnection, AIndex)
+, Plr(NULL)
 , OldData(NULL)
 , NewObj(false)
 , FieldCondValues(NULL)
 {
-	Connection = AConnection;
 }
 
 //==========================================================================
@@ -227,6 +227,7 @@ VPlayerChannel::VPlayerChannel(VNetConnection* AConnection)
 
 VPlayerChannel::~VPlayerChannel()
 {
+	SetPlayer(NULL);
 }
 
 //==========================================================================
@@ -284,7 +285,9 @@ void VPlayerChannel::Update()
 {
 	guard(VPlayerChannel::Update);
 	EvalCondValues(Plr, Plr->GetClass(), FieldCondValues);
-	VMessageOut& Msg = sv_player->Net->Message;
+
+	VMessageOut Msg(this);
+	Msg.bReliable = true;
 	vuint8* Data = (vuint8*)Plr;
 	for (VField* F = Plr->GetClass()->NetFields; F; F = F->NextNetField)
 	{
@@ -294,11 +297,45 @@ void VPlayerChannel::Update()
 		}
 		if (!VField::IdenticalValue(Data + F->Ofs, OldData + F->Ofs, F->Type))
 		{
-			Msg << (vuint8)svc_set_player_prop;
 			Msg << (vuint8)F->NetIndex;
 			VField::NetSerialiseValue(Msg, Data + F->Ofs, F->Type);
 			VField::CopyFieldValue(Data + F->Ofs, OldData + F->Ofs, F->Type);
 		}
+	}
+
+	if (Msg.GetNumBits())
+	{
+		SendMessage(&Msg);
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VPlayerChannel::ParsePacket
+//
+//==========================================================================
+
+void VPlayerChannel::ParsePacket(VMessageIn& Msg)
+{
+	guard(VPlayerChannel::ParsePacket);
+	while (!Msg.AtEnd())
+	{
+		int FldIdx = Msg.ReadByte();
+		VField* F = NULL;
+		for (VField* CF = Plr->GetClass()->NetFields; CF; CF = CF->NextNetField)
+		{
+			if (CF->NetIndex == FldIdx)
+			{
+				F = CF;
+				break;
+			}
+		}
+		if (!F)
+		{
+			Sys_Error("Bad net field %d", FldIdx);
+		}
+		VField::NetSerialiseValue(Msg, (vuint8*)Plr + F->Ofs, F->Type);
 	}
 	unguard;
 }
@@ -317,13 +354,12 @@ VNetConnection::VNetConnection(VSocketPublic* ANetCon)
 , LastMessage(0)
 , NeedsUpdate(false)
 , EntChan(NULL)
-, Chan(NULL)
 , Out(MAX_MSGLEN * 8)
 {
 	memset(Channels, 0, sizeof(Channels));
 	EntChan = new VEntityChannel*[GMaxEntities];
 	memset(EntChan, 0, sizeof(VEntityChannel*) * GMaxEntities);
-	Chan = new VPlayerChannel(this);
+	new VPlayerChannel(this, 1);
 }
 
 //==========================================================================
@@ -343,8 +379,6 @@ VNetConnection::~VNetConnection()
 		}
 	}
 	delete[] EntChan;
-	Chan->SetPlayer(NULL);
-	delete Chan;
 	while (OpenChannels.Num())
 	{
 		delete OpenChannels[OpenChannels.Num() - 1];

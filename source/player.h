@@ -103,7 +103,7 @@ public:
 	~VEntityChannel();
 	void SetEntity(VEntity*);
 	void Update(VMessageOut&);
-	void ParsePacket(VMessageIn&) {}
+	void ParsePacket(VMessageIn&);
 };
 
 class VPlayerChannel : public VChannel
@@ -114,11 +114,11 @@ public:
 	bool			NewObj;
 	vuint8*			FieldCondValues;
 
-	VPlayerChannel(VNetConnection*);
+	VPlayerChannel(VNetConnection*, vint32);
 	~VPlayerChannel();
 	void SetPlayer(VBasePlayer*);
 	void Update();
-	void ParsePacket(VMessageIn&) {}
+	void ParsePacket(VMessageIn&);
 };
 
 enum ENetConState
@@ -138,7 +138,6 @@ public:
 	double							LastMessage;
 	bool							NeedsUpdate;
 	VEntityChannel**				EntChan;
-	VPlayerChannel*					Chan;
 	VBitStreamWriter				Out;
 	VChannel*						Channels[MAX_CHANNELS];
 	TArray<VChannel*>				OpenChannels;
