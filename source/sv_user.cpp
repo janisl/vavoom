@@ -58,10 +58,11 @@ static VCvarI		sv_maxmove("sv_maxmove", "400", CVAR_Archive);
 //==========================================================================
 
 VChannel::VChannel(VNetConnection* AConnection, EChannelType AType,
-	vint32 AIndex)
+	vint32 AIndex, vuint8 AOpenedLocally)
 : Connection(AConnection)
-, Type(AType)
 , Index(AIndex)
+, Type(AType)
+, OpenedLocally(AOpenedLocally)
 , InMsg(NULL)
 , OutMsg(NULL)
 , ReceiveSequence(0)
@@ -197,8 +198,9 @@ void VChannel::SendMessage(VMessageOut* AMsg)
 //
 //==========================================================================
 
-VPlayerChannel::VPlayerChannel(VNetConnection* AConnection, vint32 AIndex)
-: VChannel(AConnection, CHANNEL_Player, AIndex)
+VPlayerChannel::VPlayerChannel(VNetConnection* AConnection, vint32 AIndex,
+	vuint8 AOpenedLocally)
+: VChannel(AConnection, CHANNEL_Player, AIndex, AOpenedLocally)
 , Plr(NULL)
 , OldData(NULL)
 , NewObj(false)
@@ -560,10 +562,10 @@ void VNetConnection::ReceivedPacket(VBitStreamReader& Packet)
 					case CHANNEL_General:
 						Sys_Error("Tried to remotely open general channel");
 					case CHANNEL_Player:
-						Chan = new VPlayerChannel(this, Msg.ChanIndex);
+						Chan = new VPlayerChannel(this, Msg.ChanIndex, false);
 						break;
 					case CHANNEL_Entity:
-						Chan = new VEntityChannel(this, Msg.ChanIndex);
+						Chan = new VEntityChannel(this, Msg.ChanIndex, false);
 						break;
 					default:
 						GCon->Logf("Unknown channel type %d for channel %d",

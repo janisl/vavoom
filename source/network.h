@@ -159,14 +159,15 @@ class VChannel
 {
 public:
 	VNetConnection*		Connection;
-	vuint8				Type;
 	vint32				Index;
+	vuint8				Type;
+	vuint8				OpenedLocally;
 	VMessageIn*			InMsg;
 	VMessageOut*		OutMsg;
 	vuint32				ReceiveSequence;
 	vuint32				SendSequence;
 
-	VChannel(VNetConnection*, EChannelType, vint32);
+	VChannel(VNetConnection*, EChannelType, vint32, vuint8);
 	virtual ~VChannel();
 
 	//	VChannel interface
@@ -185,7 +186,7 @@ public:
 	bool			UpdatedThisFrame;
 	vuint8*			FieldCondValues;
 
-	VEntityChannel(VNetConnection*, vint32);
+	VEntityChannel(VNetConnection*, vint32, vuint8 = true);
 	~VEntityChannel();
 	void SetEntity(VEntity*);
 	void Update();
@@ -200,7 +201,7 @@ public:
 	bool			NewObj;
 	vuint8*			FieldCondValues;
 
-	VPlayerChannel(VNetConnection*, vint32);
+	VPlayerChannel(VNetConnection*, vint32, vuint8 = true);
 	~VPlayerChannel();
 	void SetPlayer(VBasePlayer*);
 	void Update();
@@ -250,8 +251,8 @@ public:
 class VClientGenChannel : public VChannel
 {
 public:
-	VClientGenChannel(VNetConnection* AConnection, vint32 AIndex)
-	: VChannel(AConnection, CHANNEL_General, AIndex)
+	VClientGenChannel(VNetConnection* AConnection, vint32 AIndex, vuint8 AOpenedLocally = true)
+	: VChannel(AConnection, CHANNEL_General, AIndex, AOpenedLocally)
 	{}
 
 	//	VChannel interface
@@ -276,8 +277,8 @@ public:
 class VServerGenChannel : public VChannel
 {
 public:
-	VServerGenChannel(VNetConnection* AConnection, vint32 AIndex)
-	: VChannel(AConnection, CHANNEL_General, AIndex)
+	VServerGenChannel(VNetConnection* AConnection, vint32 AIndex, vuint8 AOpenedLocally = true)
+	: VChannel(AConnection, CHANNEL_General, AIndex, AOpenedLocally)
 	{}
 
 	//	VChannel interface

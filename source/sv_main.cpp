@@ -389,8 +389,9 @@ VThinker* VLevel::SpawnThinker(VClass* Class, const TVec& AOrigin,
 //
 //==========================================================================
 
-VEntityChannel::VEntityChannel(VNetConnection* AConnection, vint32 AIndex)
-: VChannel(AConnection, CHANNEL_Entity, AIndex)
+VEntityChannel::VEntityChannel(VNetConnection* AConnection, vint32 AIndex,
+	vuint8 AOpenedLocally)
+: VChannel(AConnection, CHANNEL_Entity, AIndex, AOpenedLocally)
 , Ent(NULL)
 , OldData(NULL)
 , NewObj(false)
