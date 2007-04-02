@@ -26,8 +26,6 @@
 #ifndef _SV_LOCAL_H
 #define _SV_LOCAL_H
 
-#include "network.h"
-
 #define MAXHEALTH				100
 #define DEFAULT_GRAVITY			1225.0
 
@@ -255,29 +253,6 @@ extern TArray<VSndSeqInfo>	sv_ActiveSequences;
 //	sv_user
 //
 //==========================================================================
-
-class VServerGenChannel : public VChannel
-{
-public:
-	VServerGenChannel(VNetConnection* AConnection, vint32 AIndex)
-	: VChannel(AConnection, CHANNEL_General, AIndex)
-	{}
-
-	//	VChannel interface
-	void ParsePacket(VMessageIn&);
-};
-
-class VServerPlayerNetInfo : public VNetConnection
-{
-public:
-	VServerPlayerNetInfo(VSocketPublic* Sock)
-	: VNetConnection(Sock)
-	{
-		new VServerGenChannel(this, 0);
-	}
-
-	VLevel* GetLevel();
-};
 
 //==========================================================================
 //

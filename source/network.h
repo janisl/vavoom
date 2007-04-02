@@ -247,6 +247,55 @@ public:
 	virtual VLevel* GetLevel() = 0;
 };
 
+class VClientGenChannel : public VChannel
+{
+public:
+	VClientGenChannel(VNetConnection* AConnection, vint32 AIndex)
+	: VChannel(AConnection, CHANNEL_General, AIndex)
+	{}
+
+	//	VChannel interface
+	void ParsePacket(VMessageIn&);
+};
+
+class VClientPlayerNetInfo : public VNetConnection
+{
+public:
+	VClientPlayerNetInfo(VSocketPublic* Sock)
+	: VNetConnection(Sock)
+	{
+		new VClientGenChannel(this, 0);
+	}
+
+	//	VNetConnection interface
+	int GetRawPacket(TArray<vuint8>&);
+	void SendRawMessage(VMessageOut&);
+	VLevel* GetLevel();
+};
+
+class VServerGenChannel : public VChannel
+{
+public:
+	VServerGenChannel(VNetConnection* AConnection, vint32 AIndex)
+	: VChannel(AConnection, CHANNEL_General, AIndex)
+	{}
+
+	//	VChannel interface
+	void ParsePacket(VMessageIn&);
+};
+
+class VServerPlayerNetInfo : public VNetConnection
+{
+public:
+	VServerPlayerNetInfo(VSocketPublic* Sock)
+	: VNetConnection(Sock)
+	{
+		new VServerGenChannel(this, 0);
+	}
+
+	VLevel* GetLevel();
+};
+
 extern VNetworkPublic*	GNet;
 
 #endif

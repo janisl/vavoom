@@ -30,7 +30,6 @@
 
 #include "iline.h"		//	Input line widget
 #include "drawer.h"
-#include "network.h"
 
 // MACROS ------------------------------------------------------------------
 
@@ -204,7 +203,7 @@ class VClientGameBase : public VObject
 		P_PASS_INT(h);
 		EV_RET_VOID("DrawViewBorder");
 	}
-	bool eventParseServerCommand(int cmd_type, VMessageIn* Msg)
+	bool eventParseServerCommand(int cmd_type, class VMessageIn* Msg)
 	{
 		P_PASS_SELF;
 		P_PASS_INT(cmd_type);
@@ -226,32 +225,6 @@ class VClientGameBase : public VObject
 		P_PASS_FLOAT(DeltaTime);
 		EV_RET_VOID("UpdateMobj");
 	}
-};
-
-class VClientGenChannel : public VChannel
-{
-public:
-	VClientGenChannel(VNetConnection* AConnection, vint32 AIndex)
-	: VChannel(AConnection, CHANNEL_General, AIndex)
-	{}
-
-	//	VChannel interface
-	void ParsePacket(VMessageIn&);
-};
-
-class VClientPlayerNetInfo : public VNetConnection
-{
-public:
-	VClientPlayerNetInfo(VSocketPublic* Sock)
-	: VNetConnection(Sock)
-	{
-		new VClientGenChannel(this, 0);
-	}
-
-	//	VNetConnection interface
-	int GetRawPacket(TArray<vuint8>&);
-	void SendRawMessage(VMessageOut&);
-	VLevel* GetLevel();
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------

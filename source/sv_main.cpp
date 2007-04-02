@@ -26,7 +26,7 @@
 // HEADER FILES ------------------------------------------------------------
 
 #include "gamedefs.h"
-#include "progdefs.h"
+#include "network.h"
 #include "sv_local.h"
 
 // MACROS ------------------------------------------------------------------

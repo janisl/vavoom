@@ -26,6 +26,7 @@
 // HEADER FILES ------------------------------------------------------------
 
 #include "gamedefs.h"
+#include "network.h"
 #include "cl_local.h"
 #include "ui.h"
 
