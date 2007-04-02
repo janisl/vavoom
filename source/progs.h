@@ -80,7 +80,7 @@ void PR_Traceback();
 
 extern VStack*			pr_stackPtr;
 
-extern VMessageOut*		pr_msg;
+extern class VMessageOut*		pr_msg;
 
 //**************************************************************************
 //

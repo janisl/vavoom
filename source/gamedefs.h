@@ -52,7 +52,6 @@
 #include "misc.h"		//	Misc utilites
 #include "vector.h"		//	Vector math
 #include "maths.h"		//	Misc math methods
-#include "message.h"	//	Network message class
 #include "cvar.h"		//	Console variables
 #include "crc.h"		//	CRC calcuation
 #include "infostr.h"	//	Info strings
@@ -67,7 +66,6 @@
 #include "vclass.h"
 #include "vobject.h"
 #include "input.h"		//	Input from keyboard, mouse and joystick
-#include "network.h"
 #include "waddefs.h"    // 	External data types
 #include "video.h"		//	Graphics
 #include "screen.h"
@@ -86,7 +84,6 @@
 #include "finale.h"
 #include "save.h"
 #include "server.h"
-#include "protocol.h"
 #include "imission.h"
 #include "p_clip.h"
 #include "p_worldinfo.h"

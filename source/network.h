@@ -23,6 +23,12 @@
 //**
 //**************************************************************************
 
+#ifndef _NETWORK_H_
+#define _NETWORK_H_
+
+#include "protocol.h"
+#include "message.h"	//	Network message class
+
 //	Packet header IDs.
 //	Since control and data communications are on different ports, there should
 // never be a case when these are mixed. But I will keep it for now just in
@@ -138,4 +144,108 @@ public:
 	static VNetworkPublic* Create();
 };
 
+enum { MAX_CHANNELS		= 265 };
+
+enum EChannelType
+{
+	CHANNEL_General		= 1,
+	CHANNEL_Player,
+	CHANNEL_Entity,
+
+	CHANNEL_MAX			= 8
+};
+
+class VChannel
+{
+public:
+	VNetConnection*		Connection;
+	vuint8				Type;
+	vint32				Index;
+	VMessageIn*			InMsg;
+	VMessageOut*		OutMsg;
+	vuint32				ReceiveSequence;
+	vuint32				SendSequence;
+
+	VChannel(VNetConnection*, EChannelType, vint32);
+	virtual ~VChannel();
+
+	//	VChannel interface
+	void ReceivedRawMessage(VMessageIn&);
+	virtual void ParsePacket(VMessageIn&) = 0;
+	void SendMessage(VMessageOut*);
+};
+
+class VEntityChannel : public VChannel
+{
+public:
+	VEntity*		Ent;
+	vuint8*			OldData;
+	bool			NewObj;
+	bool			PendingClose;
+	bool			UpdatedThisFrame;
+	vuint8*			FieldCondValues;
+
+	VEntityChannel(VNetConnection*, vint32);
+	~VEntityChannel();
+	void SetEntity(VEntity*);
+	void Update();
+	void ParsePacket(VMessageIn&);
+};
+
+class VPlayerChannel : public VChannel
+{
+public:
+	VBasePlayer*	Plr;
+	vuint8*			OldData;
+	bool			NewObj;
+	vuint8*			FieldCondValues;
+
+	VPlayerChannel(VNetConnection*, vint32);
+	~VPlayerChannel();
+	void SetPlayer(VBasePlayer*);
+	void Update();
+	void ParsePacket(VMessageIn&);
+};
+
+enum ENetConState
+{
+	NETCON_Closed,
+	NETCON_Open,
+};
+
+class VNetConnection
+{
+protected:
+	VSocketPublic*					NetCon;
+public:
+	VNetworkPublic*					Driver;
+	ENetConState					State;
+	VMessageOut						Message;
+	double							LastMessage;
+	bool							NeedsUpdate;
+	VBitStreamWriter				Out;
+	VChannel*						Channels[MAX_CHANNELS];
+	TArray<VChannel*>				OpenChannels;
+	TMap<VEntity*, VEntityChannel*>	EntityChannels;
+
+	VNetConnection(VSocketPublic*);
+	virtual ~VNetConnection();
+
+	//	VNetConnection interface
+	void GetMessages();
+	virtual int GetRawPacket(TArray<vuint8>&);
+	void ReceivedPacket(VBitStreamReader&);
+	virtual void SendRawMessage(VMessageOut&);
+	virtual void SendAck(vuint32);
+	void PrepareOut(int);
+	void Flush();
+	bool IsLocalConnection();
+	VStr GetAddress() const
+	{
+		return NetCon->Address;
+	}
+};
+
 extern VNetworkPublic*	GNet;
+
+#endif

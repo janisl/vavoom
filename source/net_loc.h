@@ -26,6 +26,8 @@
 #ifndef _NET_LOC_H
 #define _NET_LOC_H
 
+#include "network.h"
+
 #define	NET_NAMELEN			64
 
 #define	MAX_NET_DRIVERS		8

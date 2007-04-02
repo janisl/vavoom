@@ -26,6 +26,8 @@
 #ifndef _SV_LOCAL_H
 #define _SV_LOCAL_H
 
+#include "network.h"
+
 #define MAXHEALTH				100
 #define DEFAULT_GRAVITY			1225.0
 

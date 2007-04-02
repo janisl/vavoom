@@ -30,6 +30,7 @@
 
 #include "iline.h"		//	Input line widget
 #include "drawer.h"
+#include "network.h"
 
 // MACROS ------------------------------------------------------------------
 

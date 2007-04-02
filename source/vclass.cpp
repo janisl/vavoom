@@ -25,6 +25,7 @@
 
 #include "gamedefs.h"
 #include "progdefs.h"
+#include "network.h"
 
 bool					VMemberBase::GObjInitialised;
 VClass*					VMemberBase::GClasses;
