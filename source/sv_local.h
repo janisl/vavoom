@@ -258,7 +258,7 @@ class VServerGenChannel : public VChannel
 {
 public:
 	VServerGenChannel(VNetConnection* AConnection, vint32 AIndex)
-	: VChannel(AConnection, AIndex)
+	: VChannel(AConnection, CHANNEL_General, AIndex)
 	{}
 
 	//	VChannel interface

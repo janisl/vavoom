@@ -68,18 +68,27 @@ struct VViewState
 
 enum { MAX_CHANNELS		= 265 };
 
+enum EChannelType
+{
+	CHANNEL_General		= 1,
+	CHANNEL_Player,
+	CHANNEL_Entity,
+
+	CHANNEL_MAX			= 8
+};
+
 class VChannel
 {
 public:
 	VNetConnection*		Connection;
+	vuint8				Type;
 	vint32				Index;
 	VMessageIn*			InMsg;
 	VMessageOut*		OutMsg;
 	vuint32				ReceiveSequence;
 	vuint32				SendSequence;
 
-	VChannel();
-	VChannel(VNetConnection*, vint32);
+	VChannel(VNetConnection*, EChannelType, vint32);
 	virtual ~VChannel();
 
 	//	VChannel interface
@@ -97,12 +106,11 @@ public:
 	bool			PendingClose;
 	bool			UpdatedThisFrame;
 	vuint8*			FieldCondValues;
-	vint32			EntChanIndex;
 
 	VEntityChannel(VNetConnection*, vint32);
 	~VEntityChannel();
 	void SetEntity(VEntity*);
-	void Update(VMessageOut&);
+	void Update();
 	void ParsePacket(VMessageIn&);
 };
 
@@ -137,7 +145,6 @@ public:
 	VMessageOut						Message;
 	double							LastMessage;
 	bool							NeedsUpdate;
-	VEntityChannel**				EntChan;
 	VBitStreamWriter				Out;
 	VChannel*						Channels[MAX_CHANNELS];
 	TArray<VChannel*>				OpenChannels;

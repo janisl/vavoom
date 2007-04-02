@@ -539,23 +539,6 @@ static void CL_ParseSkin(VMessageIn& msg)
 
 //==========================================================================
 //
-//	CL_ParseSetProp
-//
-//==========================================================================
-
-static void CL_ParseSetProp(VMessageIn& Msg)
-{
-	guard(CL_ParseSetProp);
-	int Id = Msg.ReadInt(GMaxEntities);
-	int Length = Msg.ReadInt(MAX_MSGLEN * 8);
-	VMessageIn TmpMsg;
-	TmpMsg.SetData(Msg, Length);
-	cl->Net->EntChan[Id]->ParsePacket(TmpMsg);
-	unguard;
-}
-
-//==========================================================================
-//
 //	CL_ParseNewObj
 //
 //==========================================================================
@@ -563,24 +546,16 @@ static void CL_ParseSetProp(VMessageIn& Msg)
 static void CL_ParseNewObj(VMessageIn& msg)
 {
 	guard(CL_ParseNewObj);
-	int i = msg.ReadInt(GMaxEntities);
+	int Index = msg.ReadInt(MAX_CHANNELS);
 
 	int ci = msg.ReadInt(VMemberBase::GNetClassLookup.Num());
 	VClass* C = VMemberBase::GNetClassLookup[ci];
 
-	if (cl->Net->EntChan[i] && cl->Net->EntChan[i]->Ent)
-	{
-		GClLevel->RemoveThinker(cl->Net->EntChan[i]->Ent);
-		cl->Net->EntChan[i]->Ent->ConditionalDestroy();
-	}
-	if (!cl->Net->EntChan[i])
-	{
-		cl->Net->EntChan[i] = new VEntityChannel(cl->Net, i);
-	}
+	VEntityChannel* Chan = new VEntityChannel(cl->Net, Index);
 	VEntity* Ent = (VEntity*)GClLevel->SpawnThinker(C);
 	Ent->Role = ROLE_DumbProxy;
 	Ent->RemoteRole = ROLE_Authority;
-	cl->Net->EntChan[i]->SetEntity(Ent);
+	Chan->SetEntity(Ent);
 	unguard;
 }
 
@@ -593,17 +568,17 @@ static void CL_ParseNewObj(VMessageIn& msg)
 static void CL_ParseDestroyObj(VMessageIn& msg)
 {
 	guard(CL_ParseDestroyObj);
-	int i = msg.ReadInt(GMaxEntities);
-	if (cl->Net->EntChan[i])
+	int i = msg.ReadInt(MAX_CHANNELS);
+	if (cl->Net->Channels[i])
 	{
-		if (cl->Net->EntChan[i]->Ent)
+		VEntityChannel* Chan = (VEntityChannel*)cl->Net->Channels[i];
+		if (Chan->Ent)
 		{
-			GClLevel->RemoveThinker(cl->Net->EntChan[i]->Ent);
-			cl->Net->EntChan[i]->Ent->ConditionalDestroy();
-			cl->Net->EntChan[i]->SetEntity(NULL);
+			GClLevel->RemoveThinker(Chan->Ent);
+			Chan->Ent->ConditionalDestroy();
+			Chan->SetEntity(NULL);
 		}
-		delete cl->Net->EntChan[i];
-		cl->Net->EntChan[i] = NULL;
+		delete Chan;
 	}
 	unguard;
 }
@@ -888,10 +863,6 @@ void VClientGenChannel::ParsePacket(VMessageIn& msg)
 
 		case svc_class_name:
 			CL_ParseClassName(msg);
-			break;
-
-		case svc_set_prop:
-			CL_ParseSetProp(msg);
 			break;
 
 		case svc_new_obj:

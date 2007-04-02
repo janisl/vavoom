@@ -56,24 +56,10 @@ static VCvarI		sv_maxmove("sv_maxmove", "400", CVAR_Archive);
 //
 //==========================================================================
 
-VChannel::VChannel()
-: Connection(NULL)
-, Index(-1)
-, InMsg(NULL)
-, OutMsg(NULL)
-, ReceiveSequence(0)
-, SendSequence(0)
-{
-}
-
-//==========================================================================
-//
-//	VChannel::VChannel
-//
-//==========================================================================
-
-VChannel::VChannel(VNetConnection* AConnection, vint32 AIndex)
+VChannel::VChannel(VNetConnection* AConnection, EChannelType AType,
+	vint32 AIndex)
 : Connection(AConnection)
+, Type(AType)
 , Index(AIndex)
 , InMsg(NULL)
 , OutMsg(NULL)
@@ -211,7 +197,7 @@ void VChannel::SendMessage(VMessageOut* AMsg)
 //==========================================================================
 
 VPlayerChannel::VPlayerChannel(VNetConnection* AConnection, vint32 AIndex)
-: VChannel(AConnection, AIndex)
+: VChannel(AConnection, CHANNEL_Player, AIndex)
 , Plr(NULL)
 , OldData(NULL)
 , NewObj(false)
@@ -353,12 +339,9 @@ VNetConnection::VNetConnection(VSocketPublic* ANetCon)
 , Message(OUT_MESSAGE_SIZE)
 , LastMessage(0)
 , NeedsUpdate(false)
-, EntChan(NULL)
 , Out(MAX_MSGLEN * 8)
 {
 	memset(Channels, 0, sizeof(Channels));
-	EntChan = new VEntityChannel*[GMaxEntities];
-	memset(EntChan, 0, sizeof(VEntityChannel*) * GMaxEntities);
 	new VPlayerChannel(this, 1);
 }
 
@@ -371,14 +354,6 @@ VNetConnection::VNetConnection(VSocketPublic* ANetCon)
 VNetConnection::~VNetConnection()
 {
 	guard(VNetConnection::~VNetConnection);
-	for (int i = 0; i < GMaxEntities; i++)
-	{
-		if (EntChan[i])
-		{
-			delete EntChan[i];
-		}
-	}
-	delete[] EntChan;
 	while (OpenChannels.Num())
 	{
 		delete OpenChannels[OpenChannels.Num() - 1];
@@ -569,6 +544,7 @@ void VNetConnection::ReceivedPacket(VBitStreamReader& Packet)
 			Msg.SetData(Packet, Length);
 
 			VChannel* Chan = Channels[Msg.ChanIndex];
+			check(Chan);
 			if (Chan)
 			{
 				Chan->ReceivedRawMessage(Msg);

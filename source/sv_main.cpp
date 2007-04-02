@@ -390,16 +390,14 @@ VThinker* VLevel::SpawnThinker(VClass* Class, const TVec& AOrigin,
 //==========================================================================
 
 VEntityChannel::VEntityChannel(VNetConnection* AConnection, vint32 AIndex)
-: VChannel()
+: VChannel(AConnection, CHANNEL_Entity, AIndex)
 , Ent(NULL)
 , OldData(NULL)
 , NewObj(false)
 , PendingClose(false)
 , UpdatedThisFrame(false)
 , FieldCondValues(NULL)
-, EntChanIndex(AIndex)
 {
-	Connection = AConnection;
 }
 
 //==========================================================================
@@ -495,7 +493,7 @@ void EvalCondValues(VObject* Obj, VClass* Class, vuint8* Values)
 //
 //==========================================================================
 
-void VEntityChannel::Update(VMessageOut& DstMsg)
+void VEntityChannel::Update()
 {
 	guard(VEntityChannel::Update);
 	EvalCondValues(Ent, Ent->GetClass(), FieldCondValues);
@@ -503,13 +501,17 @@ void VEntityChannel::Update(VMessageOut& DstMsg)
 
 	if (NewObj)
 	{
-		DstMsg << (vuint8)svc_new_obj;
-		DstMsg.WriteInt(EntChanIndex, GMaxEntities);
-		DstMsg.WriteInt(Ent->GetClass()->NetId, VMemberBase::GNetClassLookup.Num());
+		VMessageOut CreateMsg(Connection->Channels[0]);
+
+		CreateMsg << (vuint8)svc_new_obj;
+		CreateMsg.WriteInt(Index, MAX_CHANNELS);
+		CreateMsg.WriteInt(Ent->GetClass()->NetId, VMemberBase::GNetClassLookup.Num());
+		Connection->Channels[0]->SendMessage(&CreateMsg);
 		NewObj = false;
 	}
 
 	VMessageOut Msg(this);
+	Msg.bReliable = true;
 
 	TAVec SavedAngles = Ent->Angles;
 	if (Ent->EntityFlags & VEntity::EF_IsPlayer)
@@ -524,8 +526,6 @@ void VEntityChannel::Update(VMessageOut& DstMsg)
 		{
 			continue;
 		}
-		if (!DstMsg.CheckSpaceBits(Msg.GetNumBits() + 10 * 8))
-			break;
 		if (!VField::IdenticalValue(Data + F->Ofs, OldData + F->Ofs, F->Type))
 		{
 			Msg << (vuint8)F->NetIndex;
@@ -541,10 +541,7 @@ void VEntityChannel::Update(VMessageOut& DstMsg)
 
 	if (Msg.GetNumBits())
 	{
-		DstMsg << (vuint8)svc_set_prop;
-		DstMsg.WriteInt(EntChanIndex, GMaxEntities);
-		DstMsg.WriteInt(Msg.GetNumBits(), MAX_MSGLEN * 8);
-		DstMsg.SerialiseBits(Msg.GetData(), Msg.GetNumBits());
+		SendMessage(&Msg);
 	}
 	unguard;
 }
@@ -587,22 +584,16 @@ int c_bigState;
 //
 //==========================================================================
 
-void SV_UpdateMobj(VEntity* Ent, VMessageOut& msg)
+void SV_UpdateMobj(VEntity* Ent)
 {
 	guard(SV_UpdateMobj);
 	VEntityChannel* Chan = sv_player->Net->EntityChannels.FindPtr(Ent);
 	if (!Chan)
 	{
-		int ChIndex = 0;
-		while (sv_player->Net->EntChan[ChIndex])
-		{
-			ChIndex++;
-		}
-		Chan = new VEntityChannel(sv_player->Net, ChIndex);
-		sv_player->Net->EntChan[ChIndex] = Chan;
+		Chan = new VEntityChannel(sv_player->Net, -1);
 		Chan->SetEntity(Ent);
 	}
-	Chan->Update(msg);
+	Chan->Update();
 	return;
 	unguard;
 }
@@ -613,15 +604,15 @@ void SV_UpdateMobj(VEntity* Ent, VMessageOut& msg)
 //
 //==========================================================================
 
-void SV_SendDestroyMobj(int i, VMessageOut& msg)
+void SV_SendDestroyMobj(VEntityChannel* Chan)
 {
 	guard(SV_SendDestroyMobj);
-	if (!msg.CheckSpaceBits(3 * 8))
-		return;
-	msg << (vuint8)svc_destroy_obj;
-	msg.WriteInt(i, GMaxEntities);
-	delete sv_player->Net->EntChan[i];
-	sv_player->Net->EntChan[i] = NULL;
+	VMessageOut Msg(sv_player->Net->Channels[0]);
+	Msg.bReliable = true;
+	Msg << (vuint8)svc_destroy_obj;
+	Msg.WriteInt(Chan->Index, MAX_CHANNELS);
+	delete Chan;
+	sv_player->Net->Channels[0]->SendMessage(&Msg);
 	unguard;
 }
 
@@ -1303,18 +1294,20 @@ void SV_UpdateLevel(VMessageOut& msg)
 int StartSize = msg.GetNumBytes();
 int NumObjs = 0;
 	//	Send close channel commands.
-	for (i = 0; i < GMaxEntities; i++)
+	for (i = sv_player->Net->OpenChannels.Num() - 1; i >= 0; i--)
 	{
-		if (sv_player->Net->EntChan[i] && sv_player->Net->EntChan[i]->PendingClose)
-			SV_SendDestroyMobj(i, msg);
+		VChannel* Chan = sv_player->Net->OpenChannels[i];
+		if (Chan->Type == CHANNEL_Entity && ((VEntityChannel*)Chan)->PendingClose)
+			SV_SendDestroyMobj((VEntityChannel*)Chan);
 	}
 
 	//	Mark all entity channels as not updated in this frame.
-	for (i = 0; i < GMaxEntities; i++)
+	for (i = sv_player->Net->OpenChannels.Num() - 1; i >= 0; i--)
 	{
-		if (sv_player->Net->EntChan[i])
+		VChannel* Chan = sv_player->Net->OpenChannels[i];
+		if (Chan->Type == CHANNEL_Entity)
 		{
-			sv_player->Net->EntChan[i]->UpdatedThisFrame = false;
+			((VEntityChannel*)Chan)->UpdatedThisFrame = false;
 		}
 	}
 
@@ -1325,12 +1318,7 @@ int NumObjs = 0;
 			continue;
 		if (!(Ent->EntityFlags & VEntity::EF_IsPlayer))
 			continue;
-		if (!msg.CheckSpaceBits(29 << 3))
-		{
-			GCon->Log(NAME_Dev, "UpdateLevel: player overflow");
-			return;
-		}
-		SV_UpdateMobj(*Ent, msg);
+		SV_UpdateMobj(*Ent);
 		NumObjs++;
 	}
 
@@ -1343,37 +1331,28 @@ int NumObjs = 0;
 			continue;
 		if (!SV_CheckFatPVS(Ent->SubSector))
 			continue;
-		if (!msg.CheckSpaceBits(29 << 3))
-		{
-			if (show_mobj_overflow > 1)
-			{
-				GCon->Log(NAME_Dev, "UpdateLevel: mobj overflow");
-			}
-if (show_update_stats)
-dprintf("Update size %d (%d) for %d, aver %f big %d %d\n", msg.GetNumBytes(), msg.GetNumBytes() -
-		StartSize, NumObjs, float(msg.GetNumBytes() - StartSize) / NumObjs, c_bigClass, c_bigState);
-			return;
-		}
-		SV_UpdateMobj(*Ent, msg);
+		SV_UpdateMobj(*Ent);
 		NumObjs++;
 	}
 
 	//	Close entity channels that were not updated in this frame.
-	for (i = 0; i < GMaxEntities; i++)
+	for (i = sv_player->Net->OpenChannels.Num() - 1; i >= 0; i--)
 	{
-		if (sv_player->Net->EntChan[i] &&
-			!sv_player->Net->EntChan[i]->UpdatedThisFrame)
+		VChannel* Chan = sv_player->Net->OpenChannels[i];
+		if (Chan->Type == CHANNEL_Entity &&
+			!((VEntityChannel*)Chan)->UpdatedThisFrame)
 		{
-			sv_player->Net->EntChan[i]->SetEntity(NULL);
+			((VEntityChannel*)Chan)->SetEntity(NULL);
 		}
 	}
 	//	Send close channel commands.
-	for (i = 0; i < GMaxEntities; i++)
+	for (i = sv_player->Net->OpenChannels.Num() - 1; i >= 0; i--)
 	{
-		if (sv_player->Net->EntChan[i] &&
-			sv_player->Net->EntChan[i]->PendingClose)
+		VChannel* Chan = sv_player->Net->OpenChannels[i];
+		if (Chan->Type == CHANNEL_Entity &&
+			((VEntityChannel*)Chan)->PendingClose)
 		{
-			SV_SendDestroyMobj(i, msg);
+			SV_SendDestroyMobj((VEntityChannel*)Chan);
 		}
 	}
 

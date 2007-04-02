@@ -81,7 +81,6 @@ enum
 	svc_class_name,
 	svc_add_seq_choice,
 
-	svc_set_prop,
 	svc_new_obj,
 	svc_destroy_obj,
 

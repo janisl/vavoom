@@ -231,7 +231,7 @@ class VClientGenChannel : public VChannel
 {
 public:
 	VClientGenChannel(VNetConnection* AConnection, vint32 AIndex)
-	: VChannel(AConnection, AIndex)
+	: VChannel(AConnection, CHANNEL_General, AIndex)
 	{}
 
 	//	VChannel interface
