@@ -194,6 +194,32 @@ void VChannel::SendMessage(VMessageOut* AMsg)
 
 //==========================================================================
 //
+//	VChannel::ReceivedAck
+//
+//==========================================================================
+
+void VChannel::ReceivedAck()
+{
+	guard(VChannel::ReceivedAck);
+	//	Clean up messages that have been ACK-ed
+	for (VMessageOut** pMsg = &OutMsg; *pMsg;)
+	{
+		if ((*pMsg)->bReceivedAck)
+		{
+			VMessageOut* Msg = *pMsg;
+			*pMsg = Msg->Next;
+			delete Msg;
+		}
+		else
+		{
+			pMsg = &(*pMsg)->Next;
+		}
+	}
+	unguard;
+}
+
+//==========================================================================
+//
 //	VPlayerChannel::VPlayerChannel
 //
 //==========================================================================
@@ -511,21 +537,24 @@ void VNetConnection::ReceivedPacket(VBitStreamReader& Packet)
 			{
 				GCon->Log(NAME_DevNet, "Duplicate ACK received");
 			}
-			for (int i = OpenChannels.Num() - 1; i >= 0; i--)
+
+			//	Mark corrresponding messages as ACK-ed.
+			for (int i = 0; i < OpenChannels.Num(); i++)
 			{
-				for (VMessageOut** pMsg = &OpenChannels[i]->OutMsg; *pMsg;)
+				for (VMessageOut* Msg = OpenChannels[i]->OutMsg; Msg;
+					Msg = Msg->Next)
 				{
-					if ((*pMsg)->PacketId == AckSeq)
+					if (Msg->PacketId == AckSeq)
 					{
-						VMessageOut* Msg = *pMsg;
-						*pMsg = Msg->Next;
-						delete Msg;
-					}
-					else
-					{
-						pMsg = &(*pMsg)->Next;
+						Msg->bReceivedAck = true;
 					}
 				}
+			}
+
+			//	Notify channels that ACK has been received.
+			for (int i = OpenChannels.Num() - 1; i >= 0; i--)
+			{
+				OpenChannels[i]->ReceivedAck();
 			}
 		}
 		else

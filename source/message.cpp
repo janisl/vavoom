@@ -59,6 +59,7 @@ VMessageOut::VMessageOut(VChannel* AChannel)
 , AllowOverflow(true)
 , bReliable(false)
 , bOpen(false)
+, bReceivedAck(false)
 {
 }
 

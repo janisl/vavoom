@@ -62,6 +62,7 @@ public:
 	, AllowOverflow(false)
 	, bReliable(false)
 	, bOpen(false)
+	, bReceivedAck(false)
 	{
 	}
 	VMessageOut(VChannel*);
@@ -72,6 +73,7 @@ public:
 	vint8			AllowOverflow;	// if false, do a Sys_Error
 	bool			bReliable;		//	Needs ACK or not
 	bool			bOpen;
+	bool			bReceivedAck;
 	vuint32			Sequence;		//	Reliable message sequence ID
 	double			Time;			//	Time this message has been sent
 	vuint32			PacketId;		//	Packet in which this message was sent
