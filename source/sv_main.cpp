@@ -409,6 +409,11 @@ VEntityChannel::VEntityChannel(VNetConnection* AConnection, vint32 AIndex,
 
 VEntityChannel::~VEntityChannel()
 {
+	if (Ent && !OpenedLocally)
+	{
+		Ent->XLevel->RemoveThinker(Ent);
+		Ent->ConditionalDestroy();
+	}
 	SetEntity(NULL);
 }
 

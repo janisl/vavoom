@@ -550,12 +550,6 @@ static void CL_ParseDestroyObj(VMessageIn& msg)
 	if (cl->Net->Channels[i])
 	{
 		VEntityChannel* Chan = (VEntityChannel*)cl->Net->Channels[i];
-		if (Chan->Ent)
-		{
-			GClLevel->RemoveThinker(Chan->Ent);
-			Chan->Ent->ConditionalDestroy();
-			Chan->SetEntity(NULL);
-		}
 		delete Chan;
 	}
 	unguard;
