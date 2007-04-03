@@ -709,7 +709,7 @@ int VStreamFileReader::TotalSize()
 }
 bool VStreamFileReader::AtEnd()
 {
-	return !!feof(File);
+	return Tell() >= TotalSize();
 }
 bool VStreamFileReader::Close()
 {

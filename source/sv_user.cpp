@@ -422,6 +422,9 @@ VNetConnection::VNetConnection(VSocketPublic* ANetCon)
 , NeedsUpdate(false)
 , AutoAck(false)
 , Out(MAX_MSGLEN * 8)
+, AckSequence(0)
+, UnreliableSendSequence(0)
+, UnreliableReceiveSequence(0)
 {
 	memset(Channels, 0, sizeof(Channels));
 	new VPlayerChannel(this, 1);
@@ -535,18 +538,18 @@ void VNetConnection::ReceivedPacket(VBitStreamReader& Packet)
 		GCon->Log(NAME_DevNet, "Packet is missing packet ID");
 		return;
 	}
-	if (Sequence < NetCon->UnreliableReceiveSequence)
+	if (Sequence < UnreliableReceiveSequence)
 	{
 		GCon->Log(NAME_DevNet, "Got a stale datagram");
 		return;
 	}
-	if (Sequence != NetCon->UnreliableReceiveSequence)
+	if (Sequence != UnreliableReceiveSequence)
 	{
-		int count = Sequence - NetCon->UnreliableReceiveSequence;
+		int count = Sequence - UnreliableReceiveSequence;
 		Driver->droppedDatagrams += count;
 		GCon->Logf(NAME_DevNet, "Dropped %d datagram(s)", count);
 	}
-	NetCon->UnreliableReceiveSequence = Sequence + 1;
+	UnreliableReceiveSequence = Sequence + 1;
 
 	bool NeedsAck = false;
 
@@ -564,13 +567,13 @@ void VNetConnection::ReceivedPacket(VBitStreamReader& Packet)
 		{
 			vuint32 AckSeq;
 			Packet << AckSeq;
-			if (AckSeq == NetCon->AckSequence)
+			if (AckSeq == AckSequence)
 			{
-				NetCon->AckSequence++;
+				AckSequence++;
 			}
-			else if (AckSeq > NetCon->AckSequence)
+			else if (AckSeq > AckSequence)
 			{
-				NetCon->AckSequence = AckSeq + 1;
+				AckSequence = AckSeq + 1;
 			}
 			else
 			{
@@ -687,7 +690,7 @@ void VNetConnection::SendRawMessage(VMessageOut& Msg)
 	Out.SerialiseBits(Msg.GetData(), Msg.GetNumBits());
 
 	Msg.Time = Driver->NetTime;
-	Msg.PacketId = NetCon->UnreliableSendSequence;
+	Msg.PacketId = UnreliableSendSequence;
 	unguard;
 }
 
@@ -700,6 +703,11 @@ void VNetConnection::SendRawMessage(VMessageOut& Msg)
 void VNetConnection::SendAck(vuint32 Sequence)
 {
 	guard(VNetConnection::SendAck);
+	if (AutoAck)
+	{
+		return;
+	}
+
 	PrepareOut(33);
 
 	Out.WriteBit(true);
@@ -725,7 +733,7 @@ void VNetConnection::PrepareOut(int Length)
 	if (Out.GetNumBits() == 0)
 	{
 		Out.WriteInt(NETPACKET_DATA, 256);
-		Out << NetCon->UnreliableSendSequence;
+		Out << UnreliableSendSequence;
 	}
 	unguard;
 }
@@ -761,7 +769,7 @@ void VNetConnection::Flush()
 	Driver->packetsSent++;
 
 	//	Increment outgoing packet counter
-	NetCon->UnreliableSendSequence++;
+	UnreliableSendSequence++;
 
 	//	Clear outgoing packet buffer.
 	Out = VBitStreamWriter(MAX_MSGLEN * 8);

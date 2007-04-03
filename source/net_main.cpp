@@ -390,9 +390,6 @@ VSocket* VNetwork::NewSocket(VNetDriver* Drv)
 	sock->LanSocket = 0;
 	sock->DriverData = NULL;
 	sock->LastMessageTime = NetTime;
-	sock->AckSequence = 0;
-	sock->UnreliableSendSequence = 0;
-	sock->UnreliableReceiveSequence = 0;
 	sock->LoopbackMessages.Clear();
 
 	return sock;

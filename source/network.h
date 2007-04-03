@@ -62,10 +62,6 @@ public:
 	double			ConnectTime;
 	double			LastMessageTime;
 
-	vuint32			AckSequence;
-	vuint32			UnreliableSendSequence;
-	vuint32			UnreliableReceiveSequence;
-
 	virtual bool IsLocalConnection() = 0;
 	virtual int GetMessage(TArray<vuint8>&) = 0;
 	virtual int SendMessage(vuint8*, vuint32) = 0;
@@ -232,6 +228,9 @@ public:
 	VChannel*						Channels[MAX_CHANNELS];
 	TArray<VChannel*>				OpenChannels;
 	TMap<VEntity*, VEntityChannel*>	EntityChannels;
+	vuint32							AckSequence;
+	vuint32							UnreliableSendSequence;
+	vuint32							UnreliableReceiveSequence;
 
 	VNetConnection(VSocketPublic*);
 	virtual ~VNetConnection();

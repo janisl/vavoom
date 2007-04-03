@@ -391,6 +391,7 @@ COMMAND(PlayDemo)
 	cls.state = ca_connected;
 	cl->Net = new VClientPlayerNetInfo(NULL);
 	cl->Net->AutoAck = true;
+	((VPlayerChannel*)cl->Net->Channels[1])->SetPlayer(cl);
 	GClGame->eventDemoPlaybackStarted();
 	unguard;
 }
