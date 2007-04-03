@@ -1505,12 +1505,12 @@ void SV_SendReliable()
 		{
 			continue;
 		}
+		sv_player->Net->Tick();
 		if (sv_player->Net->State == NETCON_Closed)
 		{
 			SV_DropClient(true);
 			continue;
 		}
-		sv_player->Net->Flush();
 	}
 
 	unguard;

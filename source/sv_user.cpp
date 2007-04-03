@@ -251,6 +251,27 @@ void VChannel::Close()
 
 //==========================================================================
 //
+//	VChannel::Tick
+//
+//==========================================================================
+
+void VChannel::Tick()
+{
+	guard(VChannel::Tick);
+	//	Resend timed out messages.
+	for (VMessageOut* Msg = OutMsg; Msg; Msg = Msg->Next)
+	{
+		if (!Msg->bReceivedAck && Connection->Driver->NetTime - Msg->Time > 1.0)
+		{
+			Connection->SendRawMessage(*Msg);
+			Connection->Driver->packetsReSent++;
+		}
+	}
+	unguard;
+}
+
+//==========================================================================
+//
 //	VPlayerChannel::VPlayerChannel
 //
 //==========================================================================
@@ -476,20 +497,6 @@ void VNetConnection::GetMessages()
 			}
 		}
 	} while (ret > 0 && State != NETCON_Closed);
-
-	//	Resend message if needed.
-	//FIXME This is absolutely wrong place to do this.
-	for (int i = 0; i < OpenChannels.Num(); i++)
-	{
-		for (VMessageOut* Msg = OpenChannels[i]->OutMsg; Msg; Msg = Msg->Next)
-		{
-			if (Driver->NetTime - Msg->Time > 1.0)
-			{
-				SendRawMessage(*Msg);
-				Driver->packetsReSent++;
-			}
-		}
-	}
 	unguard;
 }
 
@@ -770,6 +777,30 @@ bool VNetConnection::IsLocalConnection()
 {
 	guard(VNetConnection::IsLocalConnection);
 	return NetCon->IsLocalConnection();
+	unguard;
+}
+
+//==========================================================================
+//
+//	VNetConnection::Tick
+//
+//==========================================================================
+
+void VNetConnection::Tick()
+{
+	guard(VNetConnection::Tick);
+	if (State == NETCON_Closed)
+	{
+		return;
+	}
+
+	//	Run tick for all of the open channels.
+	for (int i = OpenChannels.Num() - 1; i >= 0; i--)
+	{
+		OpenChannels[i]->Tick();
+	}
+
+	Flush();
 	unguard;
 }
 

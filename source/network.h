@@ -176,6 +176,7 @@ public:
 	void SendMessage(VMessageOut*);
 	virtual void ReceivedAck();
 	virtual void Close();
+	virtual void Tick();
 };
 
 class VEntityChannel : public VChannel
@@ -248,6 +249,7 @@ public:
 		return NetCon->Address;
 	}
 	virtual VLevel* GetLevel() = 0;
+	void Tick();
 };
 
 class VClientGenChannel : public VChannel

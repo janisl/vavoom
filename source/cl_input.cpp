@@ -633,15 +633,12 @@ void CL_SendMove()
 	}
 
 	// send the reliable message
-	if (!cl->Net->Message.GetNumBits())
+	if (cl->Net->Message.GetNumBits())
 	{
-		cl->Net->Flush();
-		return;		// no message at all
+		cl->Net->Message.bReliable = true;
+		cl->Net->Channels[0]->SendMessage(&cl->Net->Message);
+		cl->Net->Message.Clear();
 	}
-
-	cl->Net->Message.bReliable = true;
-	cl->Net->Channels[0]->SendMessage(&cl->Net->Message);
-	cl->Net->Message.Clear();
 	cl->Net->Flush();
 	unguard;
 }
