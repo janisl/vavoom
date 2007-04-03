@@ -395,7 +395,6 @@ VEntityChannel::VEntityChannel(VNetConnection* AConnection, vint32 AIndex,
 , Ent(NULL)
 , OldData(NULL)
 , NewObj(false)
-, PendingClose(false)
 , UpdatedThisFrame(false)
 , FieldCondValues(NULL)
 {
@@ -409,12 +408,18 @@ VEntityChannel::VEntityChannel(VNetConnection* AConnection, vint32 AIndex,
 
 VEntityChannel::~VEntityChannel()
 {
+	guard(VEntityChannel::~VEntityChannel);
+	//	Mark channel as closing to prevent sending a message.
+	Closing = true;
+
+	//	If this is a client version of entity, destriy it.
 	if (Ent && !OpenedLocally)
 	{
 		Ent->XLevel->RemoveThinker(Ent);
 		Ent->ConditionalDestroy();
 	}
 	SetEntity(NULL);
+	unguard;
 }
 
 //==========================================================================
@@ -443,7 +448,6 @@ void VEntityChannel::SetEntity(VEntity* AEnt)
 			delete[] FieldCondValues;
 			FieldCondValues = NULL;
 		}
-		PendingClose = true;
 	}
 
 	Ent = AEnt;
@@ -502,6 +506,11 @@ void EvalCondValues(VObject* Obj, VClass* Class, vuint8* Values)
 void VEntityChannel::Update()
 {
 	guard(VEntityChannel::Update);
+	if (Closing)
+	{
+		return;
+	}
+
 	EvalCondValues(Ent, Ent->GetClass(), FieldCondValues);
 	vuint8* Data = (vuint8*)Ent;
 
@@ -613,20 +622,6 @@ void SV_UpdateMobj(VEntity* Ent)
 
 //==========================================================================
 //
-//	SV_SendDestroyMobj
-//
-//==========================================================================
-
-void SV_SendDestroyMobj(VEntityChannel* Chan)
-{
-	guard(SV_SendDestroyMobj);
-	Chan->Close();
-	delete Chan;
-	unguard;
-}
-
-//==========================================================================
-//
 //	VEntity::Destroy
 //
 //==========================================================================
@@ -651,7 +646,7 @@ void VEntity::Destroy()
 				VEntityChannel* Chan = GGameInfo->Players[i]->Net->EntityChannels.FindPtr(this);
 				if (Chan)
 				{
-					Chan->SetEntity(NULL);
+					Chan->Close();
 				}
 			}
 		}
@@ -663,7 +658,7 @@ void VEntity::Destroy()
 		VEntityChannel* Chan = cl->Net->EntityChannels.FindPtr(this);
 		if (Chan)
 		{
-			Chan->SetEntity(NULL);
+			Chan->Close();
 		}
 	}
 #endif
@@ -1302,14 +1297,6 @@ void SV_UpdateLevel(VMessageOut& msg)
 
 int StartSize = msg.GetNumBytes();
 int NumObjs = 0;
-	//	Send close channel commands.
-	for (i = sv_player->Net->OpenChannels.Num() - 1; i >= 0; i--)
-	{
-		VChannel* Chan = sv_player->Net->OpenChannels[i];
-		if (Chan->Type == CHANNEL_Entity && ((VEntityChannel*)Chan)->PendingClose)
-			SV_SendDestroyMobj((VEntityChannel*)Chan);
-	}
-
 	//	Mark all entity channels as not updated in this frame.
 	for (i = sv_player->Net->OpenChannels.Num() - 1; i >= 0; i--)
 	{
@@ -1351,17 +1338,7 @@ int NumObjs = 0;
 		if (Chan->Type == CHANNEL_Entity &&
 			!((VEntityChannel*)Chan)->UpdatedThisFrame)
 		{
-			((VEntityChannel*)Chan)->SetEntity(NULL);
-		}
-	}
-	//	Send close channel commands.
-	for (i = sv_player->Net->OpenChannels.Num() - 1; i >= 0; i--)
-	{
-		VChannel* Chan = sv_player->Net->OpenChannels[i];
-		if (Chan->Type == CHANNEL_Entity &&
-			((VEntityChannel*)Chan)->PendingClose)
-		{
-			SV_SendDestroyMobj((VEntityChannel*)Chan);
+			Chan->Close();
 		}
 	}
 

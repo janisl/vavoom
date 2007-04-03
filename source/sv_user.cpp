@@ -223,19 +223,25 @@ void VChannel::SendMessage(VMessageOut* AMsg)
 void VChannel::ReceivedAck()
 {
 	guard(VChannel::ReceivedAck);
-	//	Clean up messages that have been ACK-ed
-	for (VMessageOut** pMsg = &OutMsg; *pMsg;)
+	//	Clean up messages that have been ACK-ed. Only the first ones are
+	// deleted so that close message doesn't get handled while there's
+	// still messages that are not ACK-ed.
+	bool CloseAcked = false;
+	while (OutMsg && OutMsg->bReceivedAck)
 	{
-		if ((*pMsg)->bReceivedAck)
+		VMessageOut* Msg = OutMsg;
+		OutMsg = Msg->Next;
+		if (Msg->bClose)
 		{
-			VMessageOut* Msg = *pMsg;
-			*pMsg = Msg->Next;
-			delete Msg;
+			CloseAcked = true;
 		}
-		else
-		{
-			pMsg = &(*pMsg)->Next;
-		}
+		delete Msg;
+	}
+
+	//	If we received ACK for close message then delete this channel.
+	if (CloseAcked)
+	{
+		delete this;
 	}
 	unguard;
 }

@@ -182,7 +182,6 @@ public:
 	VEntity*		Ent;
 	vuint8*			OldData;
 	bool			NewObj;
-	bool			PendingClose;
 	bool			UpdatedThisFrame;
 	vuint8*			FieldCondValues;
 
