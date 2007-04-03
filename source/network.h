@@ -180,6 +180,7 @@ class VEntityChannel : public VChannel
 {
 public:
 	VEntity*		Ent;
+	VClass*			EntClass;
 	vuint8*			OldData;
 	bool			NewObj;
 	bool			UpdatedThisFrame;
@@ -190,6 +191,7 @@ public:
 	void SetEntity(VEntity*);
 	void Update();
 	void ParsePacket(VMessageIn&);
+	void Close();
 };
 
 class VPlayerChannel : public VChannel

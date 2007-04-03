@@ -393,6 +393,7 @@ VEntityChannel::VEntityChannel(VNetConnection* AConnection, vint32 AIndex,
 	vuint8 AOpenedLocally)
 : VChannel(AConnection, CHANNEL_Entity, AIndex, AOpenedLocally)
 , Ent(NULL)
+, EntClass(NULL)
 , OldData(NULL)
 , NewObj(false)
 , UpdatedThisFrame(false)
@@ -434,7 +435,7 @@ void VEntityChannel::SetEntity(VEntity* AEnt)
 	if (Ent)
 	{
 		Connection->EntityChannels.Remove(Ent);
-		for (VField* F = Ent->GetClass()->NetFields; F; F = F->NextNetField)
+		for (VField* F = EntClass->NetFields; F; F = F->NextNetField)
 		{
 			VField::CleanField(OldData + F->Ofs, F->Type);
 		}
@@ -454,17 +455,18 @@ void VEntityChannel::SetEntity(VEntity* AEnt)
 
 	if (Ent)
 	{
+		EntClass = Ent->GetClass();
 		if (Ent->Role == ROLE_Authority)
 		{
-			VEntity* Def = (VEntity*)Ent->GetClass()->Defaults;
-			OldData = new vuint8[Ent->GetClass()->ClassSize];
-			memset(OldData, 0, Ent->GetClass()->ClassSize);
-			for (VField* F = Ent->GetClass()->NetFields; F; F = F->NextNetField)
+			VEntity* Def = (VEntity*)EntClass->Defaults;
+			OldData = new vuint8[EntClass->ClassSize];
+			memset(OldData, 0, EntClass->ClassSize);
+			for (VField* F = EntClass->NetFields; F; F = F->NextNetField)
 			{
 				VField::CopyFieldValue((vuint8*)Def + F->Ofs, OldData + F->Ofs,
 					F->Type);
 			}
-			FieldCondValues = new vuint8[Ent->GetClass()->NumNetFields];
+			FieldCondValues = new vuint8[EntClass->NumNetFields];
 		}
 		NewObj = true;
 		Connection->EntityChannels.Set(Ent, this);
@@ -595,6 +597,20 @@ void VEntityChannel::ParsePacket(VMessageIn& Msg)
 		}
 		VField::NetSerialiseValue(Msg, (vuint8*)Ent + F->Ofs, F->Type);
 	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VEntityChannel::Close
+//
+//==========================================================================
+
+void VEntityChannel::Close()
+{
+	guard(VEntityChannel::Close);
+	VChannel::Close();
+	SetEntity(NULL);
 	unguard;
 }
 
