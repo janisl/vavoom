@@ -2996,6 +2996,7 @@ void SV_ConnectBot(const char *name)
 	GPlayersBase[i]->PlayerFlags |= VBasePlayer::PF_IsBot;
 	GPlayersBase[i]->PlayerName = name;
 	GPlayersBase[i]->Net = new VServerPlayerNetInfo(sock);
+	GPlayersBase[i]->Net->AutoAck = true;
 	((VPlayerChannel*)GPlayersBase[i]->Net->Channels[1])->SetPlayer(GPlayersBase[i]);
 	SV_ConnectClient(GPlayersBase[i]);
 	svs.num_connected++;

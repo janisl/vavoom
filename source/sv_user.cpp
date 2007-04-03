@@ -420,6 +420,7 @@ VNetConnection::VNetConnection(VSocketPublic* ANetCon)
 , Message(OUT_MESSAGE_SIZE)
 , LastMessage(0)
 , NeedsUpdate(false)
+, AutoAck(false)
 , Out(MAX_MSGLEN * 8)
 {
 	memset(Channels, 0, sizeof(Channels));
@@ -792,6 +793,20 @@ void VNetConnection::Tick()
 	if (State == NETCON_Closed)
 	{
 		return;
+	}
+
+	//	For bots and demo playback there's no other end that will send us
+	// the ACK so just mark all outgoing messages as ACK-ed.
+	if (AutoAck)
+	{
+		for (int i = OpenChannels.Num() - 1; i >= 0; i--)
+		{
+			for (VMessageOut* Msg = OpenChannels[i]->OutMsg; Msg; Msg = Msg->Next)
+			{
+				Msg->bReceivedAck = true;
+			}
+			OpenChannels[i]->ReceivedAck();
+		}
 	}
 
 	//	Run tick for all of the open channels.

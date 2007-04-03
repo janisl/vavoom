@@ -347,6 +347,8 @@ void CL_Disconnect()
 	if (cls.demoplayback)
 	{
 		CL_StopPlayback();
+		delete cl->Net;
+		cl->Net = NULL;
 	}
 	else if (cls.state == ca_connected)
 	{

@@ -227,6 +227,7 @@ public:
 	VMessageOut						Message;
 	double							LastMessage;
 	bool							NeedsUpdate;
+	bool							AutoAck;
 	VBitStreamWriter				Out;
 	VChannel*						Channels[MAX_CHANNELS];
 	TArray<VChannel*>				OpenChannels;
