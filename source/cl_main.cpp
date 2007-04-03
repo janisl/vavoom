@@ -34,6 +34,17 @@
 
 // TYPES -------------------------------------------------------------------
 
+class VDemoRecordingNetConnection : public VNetConnection
+{
+public:
+	VDemoRecordingNetConnection(VSocketPublic* Sock, VNetContext* AContext)
+	: VNetConnection(Sock, AContext)
+	{}
+
+	//	VNetConnection interface
+	int GetRawPacket(TArray<vuint8>&);
+};
+
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 void SV_ShutdownServer(bool crash);
@@ -41,6 +52,7 @@ void CL_Disconnect();
 
 void CL_StopPlayback();
 void CL_StopRecording();
+void CL_WriteDemoMessage(TArray<vuint8>& msg);
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
@@ -55,6 +67,7 @@ extern VLevel*		GClPrevLevel;
 
 client_static_t		cls;
 VBasePlayer*		cl;
+VClientNetContext*	ClientNetContext;
 
 VClientGameBase*	GClGame;
 
@@ -68,7 +81,7 @@ VCvarS			cl_skin("skin", "", CVAR_Archive | CVAR_UserInfo);
 
 IMPLEMENT_CLASS(V, ClientGameBase);
 
-static bool UserInfoSent;
+static bool					UserInfoSent;
 
 // CODE --------------------------------------------------------------------
 
@@ -83,6 +96,7 @@ void CL_Init()
 	guard(CL_Init);
 	VMemberBase::StaticLoadPackage(NAME_clprogs);
 
+	ClientNetContext = new VClientNetContext();
 	GClGame = (VClientGameBase*)VObject::StaticSpawnObject(
 		VClass::FindClass("ClientGame"));
 	cl = (VBasePlayer*)VObject::StaticSpawnObject(
@@ -157,6 +171,7 @@ void CL_Shutdown()
 		scores[i].name.Clean();
 		scores[i].userinfo.Clean();
 	}
+	delete ClientNetContext;
 	unguard;
 }
 
@@ -412,7 +427,14 @@ void CL_EstablishConnection(const char* host)
 		GCon->Log("Failed to connect to the server");
 		return;
 	}
-	cl->Net = new VClientPlayerNetInfo(Sock);
+	if (cls.demorecording)
+	{
+		cl->Net = new VDemoRecordingNetConnection(Sock, ClientNetContext);
+	}
+	else
+	{
+		cl->Net = new VNetConnection(Sock, ClientNetContext);
+	}
 	((VPlayerChannel*)cl->Net->Channels[1])->SetPlayer(cl);
 	GCon->Logf(NAME_Dev, "CL_EstablishConnection: connected to %s", host);
 
@@ -423,6 +445,28 @@ void CL_EstablishConnection(const char* host)
 	cls.signon = 0;				// need all the signon messages before playing
 
 	MN_DeactivateMenu();
+	unguard;
+}
+
+//==========================================================================
+//
+//	VDemoRecordingNetConnection::GetRawPacket
+//
+//	Handles recording and playback of demos, on top of NET_ code
+//
+//==========================================================================
+
+int VDemoRecordingNetConnection::GetRawPacket(TArray<vuint8>& Data)
+{
+	guard(VDemoRecordingNetConnection::GetRawPacket);
+	int r = VNetConnection::GetRawPacket(Data);
+
+	if (r == 1)
+	{
+		CL_WriteDemoMessage(Data);
+	}
+	
+	return r;
 	unguard;
 }
 

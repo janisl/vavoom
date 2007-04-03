@@ -29,6 +29,8 @@
 #include "protocol.h"
 #include "message.h"	//	Network message class
 
+class VNetContext;
+
 //	Packet header IDs.
 //	Since control and data communications are on different ports, there should
 // never be a case when these are mixed. But I will keep it for now just in
@@ -47,6 +49,17 @@ enum
 	MAX_MESSAGE_HEADER_BITS		= 59,
 	OUT_MESSAGE_SIZE			= MAX_MSGLEN * 8 - MAX_PACKET_HEADER_BITS -
 		MAX_MESSAGE_HEADER_BITS - MAX_PACKET_TRAILER_BITS,
+};
+
+enum { MAX_CHANNELS		= 265 };
+
+enum EChannelType
+{
+	CHANNEL_General		= 1,
+	CHANNEL_Player,
+	CHANNEL_Entity,
+
+	CHANNEL_MAX			= 8
 };
 
 //
@@ -140,17 +153,12 @@ public:
 	static VNetworkPublic* Create();
 };
 
-enum { MAX_CHANNELS		= 265 };
-
-enum EChannelType
-{
-	CHANNEL_General		= 1,
-	CHANNEL_Player,
-	CHANNEL_Entity,
-
-	CHANNEL_MAX			= 8
-};
-
+//
+//	VChannel
+//
+//	Base class for network channels that are responsible for sending and
+// receiving of the data.
+//
 class VChannel
 {
 public:
@@ -176,6 +184,11 @@ public:
 	virtual void Tick();
 };
 
+//
+//	VEntityChannel
+//
+//	A channel for updating entities.
+//
 class VEntityChannel : public VChannel
 {
 public:
@@ -194,6 +207,11 @@ public:
 	void Close();
 };
 
+//
+//	VPlayerChannel
+//
+//	A channel for updating player data.
+//
 class VPlayerChannel : public VChannel
 {
 public:
@@ -215,12 +233,19 @@ enum ENetConState
 	NETCON_Open,
 };
 
+//
+//	VNetConnection
+//
+//	Network connection class, responsible for sending and receiving network
+// packets and managing of channels.
+//
 class VNetConnection
 {
 protected:
 	VSocketPublic*					NetCon;
 public:
 	VNetworkPublic*					Driver;
+	VNetContext*					Context;
 	ENetConState					State;
 	VMessageOut						Message;
 	double							LastMessage;
@@ -234,7 +259,7 @@ public:
 	vuint32							UnreliableSendSequence;
 	vuint32							UnreliableReceiveSequence;
 
-	VNetConnection(VSocketPublic*);
+	VNetConnection(VSocketPublic*, VNetContext*);
 	virtual ~VNetConnection();
 
 	//	VNetConnection interface
@@ -250,59 +275,52 @@ public:
 	{
 		return NetCon->Address;
 	}
-	virtual VLevel* GetLevel() = 0;
 	void Tick();
 };
 
-class VClientGenChannel : public VChannel
+//
+//	VNetContext
+//
+//	Class that provides access to client or server specific data.
+//
+class VNetContext
 {
 public:
-	VClientGenChannel(VNetConnection* AConnection, vint32 AIndex, vuint8 AOpenedLocally = true)
-	: VChannel(AConnection, CHANNEL_General, AIndex, AOpenedLocally)
-	{}
+	VNetContext();
+	virtual ~VNetContext();
 
-	//	VChannel interface
-	void ParsePacket(VMessageIn&);
+	//	VNetContext interface
+	virtual VChannel* CreateGenChannel(VNetConnection*) = 0;
+	virtual VLevel* GetLevel() = 0;
 };
 
-class VClientPlayerNetInfo : public VNetConnection
+//
+//	VClientNetContext
+//
+//	A client side network context.
+//
+class VClientNetContext : public VNetContext
 {
 public:
-	VClientPlayerNetInfo(VSocketPublic* Sock)
-	: VNetConnection(Sock)
-	{
-		new VClientGenChannel(this, 0);
-	}
-
-	//	VNetConnection interface
-	int GetRawPacket(TArray<vuint8>&);
-	void SendRawMessage(VMessageOut&);
+	//	VNetContext interface
+	VChannel* CreateGenChannel(VNetConnection*);
 	VLevel* GetLevel();
 };
 
-class VServerGenChannel : public VChannel
+//
+//	VServerNetContext
+//
+//	Server side network context.
+//
+class VServerNetContext : public VNetContext
 {
 public:
-	VServerGenChannel(VNetConnection* AConnection, vint32 AIndex, vuint8 AOpenedLocally = true)
-	: VChannel(AConnection, CHANNEL_General, AIndex, AOpenedLocally)
-	{}
-
-	//	VChannel interface
-	void ParsePacket(VMessageIn&);
-};
-
-class VServerPlayerNetInfo : public VNetConnection
-{
-public:
-	VServerPlayerNetInfo(VSocketPublic* Sock)
-	: VNetConnection(Sock)
-	{
-		new VServerGenChannel(this, 0);
-	}
-
+	//	VNetContext interface
+	VChannel* CreateGenChannel(VNetConnection*);
 	VLevel* GetLevel();
 };
 
+//	Global access to the low-level networking services.
 extern VNetworkPublic*	GNet;
 
 #endif

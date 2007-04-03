@@ -138,6 +138,8 @@ static VStr		skins[MAX_SKINS];
 static VCvarI	split_frame("split_frame", "1", CVAR_Archive);
 static VCvarF	sv_gravity("sv_gravity", "800.0", CVAR_ServerInfo);
 
+static VServerNetContext*	ServerNetContext;
+
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
@@ -206,6 +208,7 @@ void SV_Init()
 	guard(SV_Init);
 	int		i;
 
+	ServerNetContext = new VServerNetContext();
 	sv_reliable = new VMessageOut(OUT_MESSAGE_SIZE);
 	sv_datagram = new VMessageOut(OUT_MESSAGE_SIZE);
 	sv_signons = new VMessageOut(OUT_MESSAGE_SIZE);
@@ -275,6 +278,7 @@ void SV_Shutdown()
 		delete Msg;
 		Msg = Next;
 	}
+	delete ServerNetContext;
 	unguard;
 }
 
@@ -573,7 +577,7 @@ void VEntityChannel::ParsePacket(VMessageIn& Msg)
 		int ci = Msg.ReadInt(VMemberBase::GNetClassLookup.Num());
 		VClass* C = VMemberBase::GNetClassLookup[ci];
 	
-		VEntity* Ent = (VEntity*)Connection->GetLevel()->SpawnThinker(C);
+		VEntity* Ent = (VEntity*)Connection->Context->GetLevel()->SpawnThinker(C);
 		Ent->Role = ROLE_DumbProxy;
 		Ent->RemoteRole = ROLE_Authority;
 		SetEntity(Ent);
@@ -2950,7 +2954,7 @@ void SV_CheckForNewClients()
 		if (i == svs.max_clients)
 			Sys_Error("Host_CheckForNewClients: no free clients");
 
-		GPlayersBase[i]->Net = new VServerPlayerNetInfo(sock);
+		GPlayersBase[i]->Net = new VNetConnection(sock, ServerNetContext);
 		((VPlayerChannel*)GPlayersBase[i]->Net->Channels[1])->SetPlayer(GPlayersBase[i]);
 		SV_ConnectClient(GPlayersBase[i]);
 		svs.num_connected++;
@@ -2988,7 +2992,7 @@ void SV_ConnectBot(const char *name)
 
 	GPlayersBase[i]->PlayerFlags |= VBasePlayer::PF_IsBot;
 	GPlayersBase[i]->PlayerName = name;
-	GPlayersBase[i]->Net = new VServerPlayerNetInfo(sock);
+	GPlayersBase[i]->Net = new VNetConnection(sock, ServerNetContext);
 	GPlayersBase[i]->Net->AutoAck = true;
 	((VPlayerChannel*)GPlayersBase[i]->Net->Channels[1])->SetPlayer(GPlayersBase[i]);
 	SV_ConnectClient(GPlayersBase[i]);

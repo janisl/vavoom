@@ -43,6 +43,20 @@
 
 // TYPES -------------------------------------------------------------------
 
+class VDemoPlaybackNetConnection : public VNetConnection
+{
+public:
+	VDemoPlaybackNetConnection(VNetContext* AContext)
+	: VNetConnection(NULL, AContext)
+	{
+		AutoAck = true;
+	}
+
+	//	VNetConnection interface
+	int GetRawPacket(TArray<vuint8>&);
+	void SendRawMessage(VMessageOut&);
+};
+
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 void CL_Disconnect();
@@ -52,6 +66,8 @@ void CL_Disconnect();
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
+
+extern VClientNetContext*	ClientNetContext;
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
@@ -132,101 +148,71 @@ void CL_WriteDemoMessage(TArray<vuint8>& msg)
 
 //==========================================================================
 //
-//	VClientPlayerNetInfo::GetRawPacket
+//	VDemoPlaybackNetConnection::GetRawPacket
 //
 //	Handles recording and playback of demos, on top of NET_ code
 //
 //==========================================================================
 
-int VClientPlayerNetInfo::GetRawPacket(TArray<vuint8>& Data)
+int VDemoPlaybackNetConnection::GetRawPacket(TArray<vuint8>& Data)
 {
-	guard(VClientPlayerNetInfo::GetRawPacket);
-	if (cls.demoplayback)
+	guard(VDemoPlaybackNetConnection::GetRawPacket);
+	// decide if it is time to grab the next message
+	if (cls.signon == SIGNONS)	// allways grab until fully connected
 	{
-		// decide if it is time to grab the next message
-		if (cls.signon == SIGNONS)	// allways grab until fully connected
+		if (cls.timedemo)
 		{
-			if (cls.timedemo)
+			if (host_framecount == cls.td_lastframe)
 			{
-				if (host_framecount == cls.td_lastframe)
-				{
-					return 0;		// allready read this frame's message
-				}
-				cls.td_lastframe = host_framecount;
-				// if this is the second frame, grab the real  cls.td_starttime
-				// so the bogus time on the first frame doesn't count
-				if (host_framecount == cls.td_startframe + 1)
-				{
-					cls.td_starttime = realtime;
-				}
+				return 0;		// allready read this frame's message
 			}
-			else if ( /* cl->time > 0 && */ GClGame->time <= cl_level.time)
+			cls.td_lastframe = host_framecount;
+			// if this is the second frame, grab the real  cls.td_starttime
+			// so the bogus time on the first frame doesn't count
+			if (host_framecount == cls.td_startframe + 1)
 			{
-				return 0;		// don't need another message yet
+				cls.td_starttime = realtime;
 			}
 		}
-
-		if (cls.demofile->AtEnd())
+		else if ( /* cl->time > 0 && */ GClGame->time <= cl_level.time)
 		{
-			CL_StopPlayback();
-			return 0;
+			return 0;		// don't need another message yet
 		}
-	
-		// get the next message
-		vint32 MsgSize;
-		*cls.demofile << MsgSize;
-		*cls.demofile << cl->ViewAngles;
-
-		if (MsgSize > OUT_MESSAGE_SIZE)
-			Sys_Error("Demo message > MAX_MSGLEN");
-		Data.SetNum(MsgSize);
-		cls.demofile->Serialise(Data.Ptr(), MsgSize);
-		if (cls.demofile->IsError())
-		{
-			CL_StopPlayback();
-			return 0;
-		}
-	
-		return 1;
 	}
 
-	int r = VNetConnection::GetRawPacket(Data);
-
-	if (cls.demorecording && r == 1)
+	if (cls.demofile->AtEnd())
 	{
-		CL_WriteDemoMessage(Data);
+		CL_StopPlayback();
+		return 0;
 	}
-	
-	return r;
+
+	// get the next message
+	vint32 MsgSize;
+	*cls.demofile << MsgSize;
+	*cls.demofile << cl->ViewAngles;
+
+	if (MsgSize > OUT_MESSAGE_SIZE)
+		Sys_Error("Demo message > MAX_MSGLEN");
+	Data.SetNum(MsgSize);
+	cls.demofile->Serialise(Data.Ptr(), MsgSize);
+	if (cls.demofile->IsError())
+	{
+		CL_StopPlayback();
+		return 0;
+	}
+
+	return 1;
 	unguard;
 }
 
 //==========================================================================
 //
-//	VClientPlayerNetInfo::SendRawMessage
+//	VDemoPlaybackNetConnection::SendRawMessage
 //
 //==========================================================================
 
-void VClientPlayerNetInfo::SendRawMessage(VMessageOut& Msg)
+void VDemoPlaybackNetConnection::SendRawMessage(VMessageOut&)
 {
-	guard(VClientPlayerNetInfo::SendRawMessage);
-	if (cls.demoplayback)
-	{
-		return;
-	}
-	VNetConnection::SendRawMessage(Msg);
-	unguard;
-}
-
-//==========================================================================
-//
-//	VClientPlayerNetInfo::GetLevel
-//
-//==========================================================================
-
-VLevel* VClientPlayerNetInfo::GetLevel()
-{
-	return GClLevel;
 }
 
 //==========================================================================
@@ -389,8 +375,7 @@ COMMAND(PlayDemo)
 
 	cls.demoplayback = true;
 	cls.state = ca_connected;
-	cl->Net = new VClientPlayerNetInfo(NULL);
-	cl->Net->AutoAck = true;
+	cl->Net = new VDemoPlaybackNetConnection(ClientNetContext);
 	((VPlayerChannel*)cl->Net->Channels[1])->SetPlayer(cl);
 	GClGame->eventDemoPlaybackStarted();
 	unguard;

@@ -33,6 +33,17 @@
 
 // TYPES -------------------------------------------------------------------
 
+class VServerGenChannel : public VChannel
+{
+public:
+	VServerGenChannel(VNetConnection* AConnection, vint32 AIndex, vuint8 AOpenedLocally = true)
+	: VChannel(AConnection, CHANNEL_General, AIndex, AOpenedLocally)
+	{}
+
+	//	VChannel interface
+	void ParsePacket(VMessageIn&);
+};
+
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -436,9 +447,10 @@ void VPlayerChannel::ParsePacket(VMessageIn& Msg)
 //
 //==========================================================================
 
-VNetConnection::VNetConnection(VSocketPublic* ANetCon)
+VNetConnection::VNetConnection(VSocketPublic* ANetCon, VNetContext* AContext)
 : NetCon(ANetCon)
 , Driver(GNet)
+, Context(AContext)
 , State(NETCON_Open)
 , Message(OUT_MESSAGE_SIZE)
 , LastMessage(0)
@@ -450,6 +462,7 @@ VNetConnection::VNetConnection(VSocketPublic* ANetCon)
 , UnreliableReceiveSequence(0)
 {
 	memset(Channels, 0, sizeof(Channels));
+	Context->CreateGenChannel(this);
 	new VPlayerChannel(this, 1);
 }
 
@@ -852,6 +865,26 @@ void VNetConnection::Tick()
 
 //==========================================================================
 //
+//	VNetContext::VNetContext
+//
+//==========================================================================
+
+VNetContext::VNetContext()
+{
+}
+
+//==========================================================================
+//
+//	VNetContext::~VNetContext
+//
+//==========================================================================
+
+VNetContext::~VNetContext()
+{
+}
+
+//==========================================================================
+//
 //	SV_ReadMove
 //
 //==========================================================================
@@ -1009,13 +1042,24 @@ void VServerGenChannel::ParsePacket(VMessageIn& msg)
 
 //==========================================================================
 //
-//	VServerPlayerNetInfo::GetLevel
+//	VServerNetContext::GetLevel
 //
 //==========================================================================
 
-VLevel* VServerPlayerNetInfo::GetLevel()
+VLevel* VServerNetContext::GetLevel()
 {
 	return GLevel;
+}
+
+//==========================================================================
+//
+//	VServerNetContext::CreateGenChannel
+//
+//==========================================================================
+
+VChannel* VServerNetContext::CreateGenChannel(VNetConnection* Connection)
+{
+	return new VServerGenChannel(Connection, 0);
 }
 
 //==========================================================================
