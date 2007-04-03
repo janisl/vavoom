@@ -63,6 +63,7 @@ VChannel::VChannel(VNetConnection* AConnection, EChannelType AType,
 , Index(AIndex)
 , Type(AType)
 , OpenedLocally(AOpenedLocally)
+, Closing(false)
 , InMsg(NULL)
 , OutMsg(NULL)
 , ReceiveSequence(0)
@@ -148,7 +149,10 @@ void VChannel::ReceivedRawMessage(VMessageIn& Msg)
 		ReceiveSequence++;
 	}
 
-	ParsePacket(Msg);
+	if (!Closing)
+	{
+		ParsePacket(Msg);
+	}
 	if (Msg.bClose)
 	{
 		delete this;
@@ -160,7 +164,10 @@ void VChannel::ReceivedRawMessage(VMessageIn& Msg)
 		VMessageIn* OldMsg = InMsg;
 		InMsg = OldMsg->Next;
 		ReceiveSequence++;
-		ParsePacket(*OldMsg);
+		if (!Closing)
+		{
+			ParsePacket(*OldMsg);
+		}
 		bool Closed = false;
 		if (OldMsg->bClose)
 		{
@@ -242,10 +249,20 @@ void VChannel::ReceivedAck()
 void VChannel::Close()
 {
 	guard(VChannel::Close);
+	if (Closing)
+	{
+		//	Already in closing state.
+		return;
+	}
+
+	//	Send close message.
 	VMessageOut Msg(this);
 	Msg.bReliable = true;
 	Msg.bClose = true;
 	SendMessage(&Msg);
+
+	//	Enter closing state.
+	Closing = true;
 	unguard;
 }
 
