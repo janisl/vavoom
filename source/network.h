@@ -175,6 +175,7 @@ public:
 	virtual void ParsePacket(VMessageIn&) = 0;
 	void SendMessage(VMessageOut*);
 	virtual void ReceivedAck();
+	virtual void Close();
 };
 
 class VEntityChannel : public VChannel

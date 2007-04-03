@@ -45,6 +45,7 @@ public:
 	vint32			ChanIndex;
 	bool			bReliable;		//	Reliable message
 	bool			bOpen;			//	Open channel message
+	bool			bClose;			//	Close channel message
 	vuint32			Sequence;		//	Reliable message sequence ID
 
 	vuint8 ReadByte() { vuint8 c; *this << c; return c; }
@@ -62,6 +63,7 @@ public:
 	, AllowOverflow(false)
 	, bReliable(false)
 	, bOpen(false)
+	, bClose(false)
 	, bReceivedAck(false)
 	{
 	}
@@ -73,6 +75,7 @@ public:
 	vint8			AllowOverflow;	// if false, do a Sys_Error
 	bool			bReliable;		//	Needs ACK or not
 	bool			bOpen;
+	bool			bClose;
 	bool			bReceivedAck;
 	vuint32			Sequence;		//	Reliable message sequence ID
 	double			Time;			//	Time this message has been sent

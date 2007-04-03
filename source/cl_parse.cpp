@@ -539,24 +539,6 @@ static void CL_ParseSkin(VMessageIn& msg)
 
 //==========================================================================
 //
-//	CL_ParseDestroyObj
-//
-//==========================================================================
-
-static void CL_ParseDestroyObj(VMessageIn& msg)
-{
-	guard(CL_ParseDestroyObj);
-	int i = msg.ReadInt(MAX_CHANNELS);
-	if (cl->Net->Channels[i])
-	{
-		VEntityChannel* Chan = (VEntityChannel*)cl->Net->Channels[i];
-		delete Chan;
-	}
-	unguard;
-}
-
-//==========================================================================
-//
 //	CL_ReadFromUserInfo
 //
 //==========================================================================
@@ -835,10 +817,6 @@ void VClientGenChannel::ParsePacket(VMessageIn& msg)
 
 		case svc_class_name:
 			CL_ParseClassName(msg);
-			break;
-
-		case svc_destroy_obj:
-			CL_ParseDestroyObj(msg);
 			break;
 
 		default:

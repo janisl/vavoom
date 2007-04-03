@@ -143,20 +143,35 @@ void VChannel::ReceivedRawMessage(VMessageIn& Msg)
 		*pNext = Copy;
 		return;
 	}
-
-	ParsePacket(Msg);
 	if (Msg.bReliable)
 	{
 		ReceiveSequence++;
 	}
 
+	ParsePacket(Msg);
+	if (Msg.bClose)
+	{
+		delete this;
+		return;
+	}
+
 	while (InMsg && InMsg->Sequence == ReceiveSequence)
 	{
 		VMessageIn* OldMsg = InMsg;
-		ParsePacket(*OldMsg);
-		ReceiveSequence++;
 		InMsg = OldMsg->Next;
+		ReceiveSequence++;
+		ParsePacket(*OldMsg);
+		bool Closed = false;
+		if (OldMsg->bClose)
+		{
+			delete this;
+			Closed = true;
+		}
 		delete OldMsg;
+		if (Closed)
+		{
+			return;
+		}
 	}
 	unguard;
 }
@@ -215,6 +230,22 @@ void VChannel::ReceivedAck()
 			pMsg = &(*pMsg)->Next;
 		}
 	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VChannel::Close
+//
+//==========================================================================
+
+void VChannel::Close()
+{
+	guard(VChannel::Close);
+	VMessageOut Msg(this);
+	Msg.bReliable = true;
+	Msg.bClose = true;
+	SendMessage(&Msg);
 	unguard;
 }
 
@@ -566,6 +597,7 @@ void VNetConnection::ReceivedPacket(VBitStreamReader& Packet)
 			Msg.ChanIndex = Packet.ReadInt(MAX_CHANNELS);
 			Msg.bReliable = Packet.ReadBit();
 			Msg.bOpen = Packet.ReadBit();
+			Msg.bClose = Packet.ReadBit();
 			Msg.Sequence = 0;
 			Msg.ChanType = 0;
 			if (Msg.bReliable)
@@ -578,7 +610,7 @@ void VNetConnection::ReceivedPacket(VBitStreamReader& Packet)
 			}
 
 			//	Read data
-			int Length = Packet.ReadInt(OUT_MESSAGE_SIZE + 1);
+			int Length = Packet.ReadInt(MAX_MSGLEN * 8);
 			Msg.SetData(Packet, Length);
 
 			VChannel* Chan = Channels[Msg.ChanIndex];
@@ -634,6 +666,7 @@ void VNetConnection::SendRawMessage(VMessageOut& Msg)
 	Out.WriteInt(Msg.ChanIndex, MAX_CHANNELS);
 	Out.WriteBit(Msg.bReliable);
 	Out.WriteBit(Msg.bOpen);
+	Out.WriteBit(Msg.bClose);
 	if (Msg.bReliable)
 	{
 		Out << Msg.Sequence;

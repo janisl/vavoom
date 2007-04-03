@@ -620,12 +620,8 @@ void SV_UpdateMobj(VEntity* Ent)
 void SV_SendDestroyMobj(VEntityChannel* Chan)
 {
 	guard(SV_SendDestroyMobj);
-	VMessageOut Msg(sv_player->Net->Channels[0]);
-	Msg.bReliable = true;
-	Msg << (vuint8)svc_destroy_obj;
-	Msg.WriteInt(Chan->Index, MAX_CHANNELS);
+	Chan->Close();
 	delete Chan;
-	sv_player->Net->Channels[0]->SendMessage(&Msg);
 	unguard;
 }
 
