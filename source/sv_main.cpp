@@ -389,15 +389,15 @@ VThinker* VLevel::SpawnThinker(VClass* Class, const TVec& AOrigin,
 
 //==========================================================================
 //
-//	VEntityChannel::VEntityChannel
+//	VThinkerChannel::VThinkerChannel
 //
 //==========================================================================
 
-VEntityChannel::VEntityChannel(VNetConnection* AConnection, vint32 AIndex,
+VThinkerChannel::VThinkerChannel(VNetConnection* AConnection, vint32 AIndex,
 	vuint8 AOpenedLocally)
-: VChannel(AConnection, CHANNEL_Entity, AIndex, AOpenedLocally)
-, Ent(NULL)
-, EntClass(NULL)
+: VChannel(AConnection, CHANNEL_Thinker, AIndex, AOpenedLocally)
+, Thinker(NULL)
+, ThinkerClass(NULL)
 , OldData(NULL)
 , NewObj(false)
 , UpdatedThisFrame(false)
@@ -407,39 +407,39 @@ VEntityChannel::VEntityChannel(VNetConnection* AConnection, vint32 AIndex,
 
 //==========================================================================
 //
-//	VEntityChannel::~VEntityChannel
+//	VThinkerChannel::~VThinkerChannel
 //
 //==========================================================================
 
-VEntityChannel::~VEntityChannel()
+VThinkerChannel::~VThinkerChannel()
 {
-	guard(VEntityChannel::~VEntityChannel);
+	guard(VThinkerChannel::~VThinkerChannel);
 	//	Mark channel as closing to prevent sending a message.
 	Closing = true;
 
 	//	If this is a client version of entity, destriy it.
-	if (Ent && !OpenedLocally)
+	if (Thinker && !OpenedLocally)
 	{
-		Ent->XLevel->RemoveThinker(Ent);
-		Ent->ConditionalDestroy();
+		Thinker->XLevel->RemoveThinker(Thinker);
+		Thinker->ConditionalDestroy();
 	}
-	SetEntity(NULL);
+	SetThinker(NULL);
 	unguard;
 }
 
 //==========================================================================
 //
-//	VEntityChannel::SetEntity
+//	VThinkerChannel::SetThinker
 //
 //==========================================================================
 
-void VEntityChannel::SetEntity(VEntity* AEnt)
+void VThinkerChannel::SetThinker(VThinker* AThinker)
 {
-	guard(VEntityChannel::SetEntity);
-	if (Ent)
+	guard(VThinkerChannel::SetThinker);
+	if (Thinker)
 	{
-		Connection->EntityChannels.Remove(Ent);
-		for (VField* F = EntClass->NetFields; F; F = F->NextNetField)
+		Connection->ThinkerChannels.Remove(Thinker);
+		for (VField* F = ThinkerClass->NetFields; F; F = F->NextNetField)
 		{
 			VField::CleanField(OldData + F->Ofs, F->Type);
 		}
@@ -455,25 +455,25 @@ void VEntityChannel::SetEntity(VEntity* AEnt)
 		}
 	}
 
-	Ent = AEnt;
+	Thinker = AThinker;
 
-	if (Ent)
+	if (Thinker)
 	{
-		EntClass = Ent->GetClass();
-		if (Ent->Role == ROLE_Authority)
+		ThinkerClass = Thinker->GetClass();
+		if (OpenedLocally)
 		{
-			VEntity* Def = (VEntity*)EntClass->Defaults;
-			OldData = new vuint8[EntClass->ClassSize];
-			memset(OldData, 0, EntClass->ClassSize);
-			for (VField* F = EntClass->NetFields; F; F = F->NextNetField)
+			VThinker* Def = (VThinker*)ThinkerClass->Defaults;
+			OldData = new vuint8[ThinkerClass->ClassSize];
+			memset(OldData, 0, ThinkerClass->ClassSize);
+			for (VField* F = ThinkerClass->NetFields; F; F = F->NextNetField)
 			{
 				VField::CopyFieldValue((vuint8*)Def + F->Ofs, OldData + F->Ofs,
 					F->Type);
 			}
-			FieldCondValues = new vuint8[EntClass->NumNetFields];
+			FieldCondValues = new vuint8[ThinkerClass->NumNetFields];
 		}
 		NewObj = true;
-		Connection->EntityChannels.Set(Ent, this);
+		Connection->ThinkerChannels.Set(Thinker, this);
 	}
 	unguard;
 }
@@ -505,20 +505,20 @@ void EvalCondValues(VObject* Obj, VClass* Class, vuint8* Values)
 
 //==========================================================================
 //
-//	VEntityChannel::Update
+//	VThinkerChannel::Update
 //
 //==========================================================================
 
-void VEntityChannel::Update()
+void VThinkerChannel::Update()
 {
-	guard(VEntityChannel::Update);
+	guard(VThinkerChannel::Update);
 	if (Closing)
 	{
 		return;
 	}
 
-	EvalCondValues(Ent, Ent->GetClass(), FieldCondValues);
-	vuint8* Data = (vuint8*)Ent;
+	EvalCondValues(Thinker, Thinker->GetClass(), FieldCondValues);
+	vuint8* Data = (vuint8*)Thinker;
 
 	VMessageOut Msg(this);
 	Msg.bReliable = true;
@@ -526,18 +526,31 @@ void VEntityChannel::Update()
 	if (NewObj)
 	{
 		Msg.bOpen = true;
-		Msg.WriteInt(Ent->GetClass()->NetId, VMemberBase::GNetClassLookup.Num());
+		Msg.WriteInt(Thinker->GetClass()->NetId, VMemberBase::GNetClassLookup.Num());
 		NewObj = false;
 	}
 
-	TAVec SavedAngles = Ent->Angles;
-	if (Ent->EntityFlags & VEntity::EF_IsPlayer)
+	TAVec SavedAngles;
+	if (Thinker->IsA(VEntity::StaticClass()))
 	{
-		//	Clear look angles, because they must not affect model orientation
-		Ent->Angles.pitch = 0;
-		Ent->Angles.roll = 0;
+		VEntity* Ent = (VEntity*)Thinker;
+		SavedAngles = Ent->Angles;
+		if (Ent->EntityFlags & VEntity::EF_IsPlayer)
+		{
+			//	Clear look angles, because they must not affect model orientation
+			Ent->Angles.pitch = 0;
+			Ent->Angles.roll = 0;
+		}
 	}
-	for (VField* F = Ent->GetClass()->NetFields; F; F = F->NextNetField)
+	else
+	{
+		//	Shut up compiler warnings.
+		SavedAngles.yaw = 0;
+		SavedAngles.pitch = 0;
+		SavedAngles.roll = 0;
+	}
+
+	for (VField* F = Thinker->GetClass()->NetFields; F; F = F->NextNetField)
 	{
 		if (!FieldCondValues[F->NetIndex])
 		{
@@ -550,9 +563,14 @@ void VEntityChannel::Update()
 			VField::CopyFieldValue(Data + F->Ofs, OldData + F->Ofs, F->Type);
 		}
 	}
-	if (Ent->EntityFlags & VEntity::EF_IsPlayer)
+
+	if (Thinker->IsA(VEntity::StaticClass()))
 	{
-		Ent->Angles = SavedAngles;
+		VEntity* Ent = (VEntity*)Thinker;
+		if (Ent->EntityFlags & VEntity::EF_IsPlayer)
+		{
+			Ent->Angles = SavedAngles;
+		}
 	}
 	UpdatedThisFrame = true;
 
@@ -565,13 +583,13 @@ void VEntityChannel::Update()
 
 //==========================================================================
 //
-//	VEntityChannel::ParsePacket
+//	VThinkerChannel::ParsePacket
 //
 //==========================================================================
 
-void VEntityChannel::ParsePacket(VMessageIn& Msg)
+void VThinkerChannel::ParsePacket(VMessageIn& Msg)
 {
-	guard(VEntityChannel::ParsePacket);
+	guard(VThinkerChannel::ParsePacket);
 	if (Msg.bOpen)
 	{
 		int ci = Msg.ReadInt(VMemberBase::GNetClassLookup.Num());
@@ -580,14 +598,14 @@ void VEntityChannel::ParsePacket(VMessageIn& Msg)
 		VEntity* Ent = (VEntity*)Connection->Context->GetLevel()->SpawnThinker(C);
 		Ent->Role = ROLE_DumbProxy;
 		Ent->RemoteRole = ROLE_Authority;
-		SetEntity(Ent);
+		SetThinker(Ent);
 	}
 
 	while (!Msg.AtEnd())
 	{
 		int FldIdx = Msg.ReadByte();
 		VField* F = NULL;
-		for (VField* CF = Ent->GetClass()->NetFields; CF; CF = CF->NextNetField)
+		for (VField* CF = ThinkerClass->NetFields; CF; CF = CF->NextNetField)
 		{
 			if (CF->NetIndex == FldIdx)
 			{
@@ -599,22 +617,22 @@ void VEntityChannel::ParsePacket(VMessageIn& Msg)
 		{
 			Sys_Error("Bad net field %d", FldIdx);
 		}
-		VField::NetSerialiseValue(Msg, (vuint8*)Ent + F->Ofs, F->Type);
+		VField::NetSerialiseValue(Msg, (vuint8*)Thinker + F->Ofs, F->Type);
 	}
 	unguard;
 }
 
 //==========================================================================
 //
-//	VEntityChannel::Close
+//	VThinkerChannel::Close
 //
 //==========================================================================
 
-void VEntityChannel::Close()
+void VThinkerChannel::Close()
 {
-	guard(VEntityChannel::Close);
+	guard(VThinkerChannel::Close);
 	VChannel::Close();
-	SetEntity(NULL);
+	SetThinker(NULL);
 	unguard;
 }
 
@@ -629,11 +647,11 @@ int c_bigState;
 void SV_UpdateMobj(VEntity* Ent)
 {
 	guard(SV_UpdateMobj);
-	VEntityChannel* Chan = sv_player->Net->EntityChannels.FindPtr(Ent);
+	VThinkerChannel* Chan = sv_player->Net->ThinkerChannels.FindPtr(Ent);
 	if (!Chan)
 	{
-		Chan = new VEntityChannel(sv_player->Net, -1);
-		Chan->SetEntity(Ent);
+		Chan = new VThinkerChannel(sv_player->Net, -1);
+		Chan->SetThinker(Ent);
 	}
 	Chan->Update();
 	return;
@@ -663,7 +681,7 @@ void VEntity::Destroy()
 		{
 			if (GGameInfo->Players[i])
 			{
-				VEntityChannel* Chan = GGameInfo->Players[i]->Net->EntityChannels.FindPtr(this);
+				VThinkerChannel* Chan = GGameInfo->Players[i]->Net->ThinkerChannels.FindPtr(this);
 				if (Chan)
 				{
 					Chan->Close();
@@ -675,7 +693,7 @@ void VEntity::Destroy()
 #ifdef CLIENT
 	if (XLevel == GClLevel && GClLevel && cl->Net)
 	{
-		VEntityChannel* Chan = cl->Net->EntityChannels.FindPtr(this);
+		VThinkerChannel* Chan = cl->Net->ThinkerChannels.FindPtr(this);
 		if (Chan)
 		{
 			Chan->Close();
@@ -1321,9 +1339,9 @@ int NumObjs = 0;
 	for (i = sv_player->Net->OpenChannels.Num() - 1; i >= 0; i--)
 	{
 		VChannel* Chan = sv_player->Net->OpenChannels[i];
-		if (Chan->Type == CHANNEL_Entity)
+		if (Chan->Type == CHANNEL_Thinker)
 		{
-			((VEntityChannel*)Chan)->UpdatedThisFrame = false;
+			((VThinkerChannel*)Chan)->UpdatedThisFrame = false;
 		}
 	}
 
@@ -1355,8 +1373,8 @@ int NumObjs = 0;
 	for (i = sv_player->Net->OpenChannels.Num() - 1; i >= 0; i--)
 	{
 		VChannel* Chan = sv_player->Net->OpenChannels[i];
-		if (Chan->Type == CHANNEL_Entity &&
-			!((VEntityChannel*)Chan)->UpdatedThisFrame)
+		if (Chan->Type == CHANNEL_Thinker &&
+			!((VThinkerChannel*)Chan)->UpdatedThisFrame)
 		{
 			Chan->Close();
 		}

@@ -672,8 +672,8 @@ void VNetConnection::ReceivedPacket(VBitStreamReader& Packet)
 					case CHANNEL_Player:
 						Chan = new VPlayerChannel(this, Msg.ChanIndex, false);
 						break;
-					case CHANNEL_Entity:
-						Chan = new VEntityChannel(this, Msg.ChanIndex, false);
+					case CHANNEL_Thinker:
+						Chan = new VThinkerChannel(this, Msg.ChanIndex, false);
 						break;
 					default:
 						GCon->Logf("Unknown channel type %d for channel %d",

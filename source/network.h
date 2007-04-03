@@ -57,7 +57,7 @@ enum EChannelType
 {
 	CHANNEL_General		= 1,
 	CHANNEL_Player,
-	CHANNEL_Entity,
+	CHANNEL_Thinker,
 
 	CHANNEL_MAX			= 8
 };
@@ -185,23 +185,23 @@ public:
 };
 
 //
-//	VEntityChannel
+//	VThinkerChannel
 //
-//	A channel for updating entities.
+//	A channel for updating thinkers.
 //
-class VEntityChannel : public VChannel
+class VThinkerChannel : public VChannel
 {
 public:
-	VEntity*		Ent;
-	VClass*			EntClass;
+	VThinker*		Thinker;
+	VClass*			ThinkerClass;
 	vuint8*			OldData;
 	bool			NewObj;
 	bool			UpdatedThisFrame;
 	vuint8*			FieldCondValues;
 
-	VEntityChannel(VNetConnection*, vint32, vuint8 = true);
-	~VEntityChannel();
-	void SetEntity(VEntity*);
+	VThinkerChannel(VNetConnection*, vint32, vuint8 = true);
+	~VThinkerChannel();
+	void SetThinker(VThinker*);
 	void Update();
 	void ParsePacket(VMessageIn&);
 	void Close();
@@ -242,22 +242,22 @@ enum ENetConState
 class VNetConnection
 {
 protected:
-	VSocketPublic*					NetCon;
+	VSocketPublic*						NetCon;
 public:
-	VNetworkPublic*					Driver;
-	VNetContext*					Context;
-	ENetConState					State;
-	VMessageOut						Message;
-	double							LastMessage;
-	bool							NeedsUpdate;
-	bool							AutoAck;
-	VBitStreamWriter				Out;
-	VChannel*						Channels[MAX_CHANNELS];
-	TArray<VChannel*>				OpenChannels;
-	TMap<VEntity*, VEntityChannel*>	EntityChannels;
-	vuint32							AckSequence;
-	vuint32							UnreliableSendSequence;
-	vuint32							UnreliableReceiveSequence;
+	VNetworkPublic*						Driver;
+	VNetContext*						Context;
+	ENetConState						State;
+	VMessageOut							Message;
+	double								LastMessage;
+	bool								NeedsUpdate;
+	bool								AutoAck;
+	VBitStreamWriter					Out;
+	VChannel*							Channels[MAX_CHANNELS];
+	TArray<VChannel*>					OpenChannels;
+	TMap<VThinker*, VThinkerChannel*>	ThinkerChannels;
+	vuint32								AckSequence;
+	vuint32								UnreliableSendSequence;
+	vuint32								UnreliableReceiveSequence;
 
 	VNetConnection(VSocketPublic*, VNetContext*);
 	virtual ~VNetConnection();
