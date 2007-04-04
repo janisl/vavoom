@@ -1592,6 +1592,22 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\source\net_channel.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\source\net_channel_player.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\source\net_channel_thinker.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\source\net_connection.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\source\net_dgrm.cpp"
 				>
 			</File>

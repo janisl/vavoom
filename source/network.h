@@ -202,6 +202,7 @@ public:
 	VThinkerChannel(VNetConnection*, vint32, vuint8 = true);
 	~VThinkerChannel();
 	void SetThinker(VThinker*);
+	void EvalCondValues(VObject*, VClass*, vuint8*);
 	void Update();
 	void ParsePacket(VMessageIn&);
 	void Close();
@@ -223,6 +224,7 @@ public:
 	VPlayerChannel(VNetConnection*, vint32, vuint8 = true);
 	~VPlayerChannel();
 	void SetPlayer(VBasePlayer*);
+	void EvalCondValues(VObject*, VClass*, vuint8*);
 	void Update();
 	void ParsePacket(VMessageIn&);
 };

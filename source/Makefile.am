@@ -124,6 +124,10 @@ _____MAIN_EXE__SOURCES = \
 	name.cpp \
 	name.h \
 	names.h \
+	net_channel.cpp \
+	net_channel_player.cpp \
+	net_channel_thinker.cpp \
+	net_connection.cpp \
 	net_dgrm.cpp \
 	net_loc.h \
 	net_loop.cpp \
@@ -437,6 +441,10 @@ _____SERVER_EXE__SOURCES = \
 	message.cpp \
 	misc.cpp \
 	name.cpp \
+	net_channel.cpp \
+	net_channel_player.cpp \
+	net_channel_thinker.cpp \
+	net_connection.cpp \
 	net_dgrm.cpp \
 	net_loop.cpp \
 	net_main.cpp \
