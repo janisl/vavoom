@@ -67,6 +67,8 @@ VNetConnection::VNetConnection(VSocketPublic* ANetCon, VNetContext* AContext)
 , UnreliableReceiveSequence(0)
 {
 	memset(Channels, 0, sizeof(Channels));
+	memset(InSequence, 0, sizeof(InSequence));
+	memset(OutSequence, 0, sizeof(OutSequence));
 	Context->CreateGenChannel(this);
 	new VPlayerChannel(this, 1);
 }
@@ -182,7 +184,6 @@ void VNetConnection::ReceivedPacket(VBitStreamReader& Packet)
 	if (Sequence < UnreliableReceiveSequence)
 	{
 		GCon->Log(NAME_DevNet, "Got a stale datagram");
-		return;
 	}
 	if (Sequence != UnreliableReceiveSequence)
 	{

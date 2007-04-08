@@ -169,8 +169,6 @@ public:
 	vuint8				Closing;
 	VMessageIn*			InMsg;
 	VMessageOut*		OutMsg;
-	vuint32				ReceiveSequence;
-	vuint32				SendSequence;
 
 	VChannel(VNetConnection*, EChannelType, vint32, vuint8);
 	virtual ~VChannel();
@@ -256,6 +254,8 @@ public:
 	VBitStreamWriter					Out;
 	VChannel*							Channels[MAX_CHANNELS];
 	TArray<VChannel*>					OpenChannels;
+	vuint32								InSequence[MAX_CHANNELS];
+	vuint32								OutSequence[MAX_CHANNELS];
 	TMap<VThinker*, VThinkerChannel*>	ThinkerChannels;
 	vuint32								AckSequence;
 	vuint32								UnreliableSendSequence;

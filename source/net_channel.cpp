@@ -61,8 +61,6 @@ VChannel::VChannel(VNetConnection* AConnection, EChannelType AType,
 , Closing(false)
 , InMsg(NULL)
 , OutMsg(NULL)
-, ReceiveSequence(0)
-, SendSequence(0)
 {
 	if (Index == -1)
 	{
@@ -117,13 +115,13 @@ void VChannel::ReceivedRawMessage(VMessageIn& Msg)
 {
 	guard(VChannel::ReceivedRawMessage);
 	//	Drop outdated messages
-	if (Msg.bReliable && Msg.Sequence < ReceiveSequence)
+	if (Msg.bReliable && Msg.Sequence < Connection->InSequence[Index])
 	{
 		Connection->Driver->receivedDuplicateCount++;
 		return;
 	}
 
-	if (Msg.bReliable && Msg.Sequence > ReceiveSequence)
+	if (Msg.bReliable && Msg.Sequence > Connection->InSequence[Index])
 	{
 		VMessageIn** pNext = &InMsg;
 		while (*pNext && (*pNext)->Sequence <= Msg.Sequence)
@@ -141,7 +139,7 @@ void VChannel::ReceivedRawMessage(VMessageIn& Msg)
 	}
 	if (Msg.bReliable)
 	{
-		ReceiveSequence++;
+		Connection->InSequence[Index]++;
 	}
 
 	if (!Closing)
@@ -154,11 +152,11 @@ void VChannel::ReceivedRawMessage(VMessageIn& Msg)
 		return;
 	}
 
-	while (InMsg && InMsg->Sequence == ReceiveSequence)
+	while (InMsg && InMsg->Sequence == Connection->InSequence[Index])
 	{
 		VMessageIn* OldMsg = InMsg;
 		InMsg = OldMsg->Next;
-		ReceiveSequence++;
+		Connection->InSequence[Index]++;
 		if (!Closing)
 		{
 			ParsePacket(*OldMsg);
@@ -190,7 +188,7 @@ void VChannel::SendMessage(VMessageOut* AMsg)
 	VMessageOut* Msg = AMsg;
 	if (Msg->bReliable)
 	{
-		Msg->Sequence = SendSequence;
+		Msg->Sequence = Connection->OutSequence[Index];
 
 		VMessageOut* Copy = new VMessageOut(*Msg);
 		Copy->Next = NULL;
@@ -202,7 +200,7 @@ void VChannel::SendMessage(VMessageOut* AMsg)
 		*pNext = Copy;
 		Msg = Copy;
 
-		SendSequence++;
+		Connection->OutSequence[Index]++;
 	}
 
 	Connection->SendRawMessage(*Msg);
