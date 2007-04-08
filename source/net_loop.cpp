@@ -32,12 +32,34 @@
 
 // TYPES -------------------------------------------------------------------
 
+struct VLoopbackMessage
+{
+	TArray<vuint8>	Data;
+};
+
+class VLoopbackSocket : public VSocket
+{
+public:
+	VLoopbackSocket*			OtherSock;
+	TArray<VLoopbackMessage>	LoopbackMessages;
+
+	VLoopbackSocket(VNetDriver* Drv)
+	: VSocket(Drv)
+	, OtherSock(NULL)
+	{}
+	~VLoopbackSocket();
+
+	int GetMessage(TArray<vuint8>&);
+	int SendMessage(vuint8*, vuint32);
+	bool IsLocalConnection();
+};
+
 class VLoopbackDriver : public VNetDriver
 {
 public:
-	bool		localconnectpending;
-	VSocket*	loop_client;
-	VSocket*	loop_server;
+	bool				localconnectpending;
+	VLoopbackSocket*	loop_client;
+	VLoopbackSocket*	loop_server;
 
 	VLoopbackDriver();
 	int Init();
@@ -45,9 +67,6 @@ public:
 	void SearchForHosts(bool);
 	VSocket* Connect(const char*);
 	VSocket* CheckNewConnections();
-	int GetMessage(VSocket*, TArray<vuint8>&);
-	int SendMessage(VSocket*, vuint8*, vuint32);
-	void Close(VSocket*);
 	void Shutdown();
 
 	static int IntAlign(int);
@@ -152,28 +171,18 @@ VSocket* VLoopbackDriver::Connect(const char* host)
 
 	if (!loop_client)
 	{
-		loop_client = Net->NewSocket(this);
-		if (loop_client == NULL)
-		{
-			GCon->Log(NAME_DevNet, "Loop_Connect: no qsocket available");
-			return NULL;
-		}
+		loop_client = new VLoopbackSocket(this);
 		loop_client->Address = "localhost";
 	}
 
 	if (!loop_server)
 	{
-		loop_server = Net->NewSocket(this);
-		if (loop_server == NULL)
-		{
-			GCon->Log(NAME_DevNet, "Loop_Connect: no qsocket available");
-			return NULL;
-		}
+		loop_server = new VLoopbackSocket(this);
 		loop_server->Address = "LOCAL";
 	}
 
-	loop_client->DriverData = (void*)loop_server;
-	loop_server->DriverData = (void*)loop_client;
+	loop_client->OtherSock = loop_server;
+	loop_server->OtherSock = loop_client;
 	
 	return loop_client;	
 	unguard;
@@ -209,35 +218,73 @@ int VLoopbackDriver::IntAlign(int value)
 
 //==========================================================================
 //
-//	VLoopbackDriver::GetMessage
+//	VLoopbackDriver::Shutdown
 //
 //==========================================================================
 
-int VLoopbackDriver::GetMessage(VSocket* Sock, TArray<vuint8>& Data)
+void VLoopbackDriver::Shutdown()
 {
-	guard(VLoopbackDriver::GetMessage);
-	if (!Sock->LoopbackMessages.Num())
+}
+
+//==========================================================================
+//
+//	VLoopbackSocket::~VLoopbackSocket
+//
+//==========================================================================
+
+VLoopbackSocket::~VLoopbackSocket()
+{
+	guard(VLoopbackSocket::~VLoopbackSocket);
+	if (OtherSock)
+		OtherSock->OtherSock = NULL;
+	if (this == ((VLoopbackDriver*)Driver)->loop_client)
+		((VLoopbackDriver*)Driver)->loop_client = NULL;
+	else
+		((VLoopbackDriver*)Driver)->loop_server = NULL;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VLoopbackSocket::GetMessage
+//
+//	If there is a packet, return it.
+//
+//	returns 0 if no data is waiting
+//	returns 1 if a packet was received
+//	returns -1 if connection is invalid
+//
+//==========================================================================
+
+int VLoopbackSocket::GetMessage(TArray<vuint8>& Data)
+{
+	guard(VLoopbackSocket::GetMessage);
+	if (!LoopbackMessages.Num())
 		return 0;
 
-	Data = Sock->LoopbackMessages[0].Data;
-	Sock->LoopbackMessages.RemoveIndex(0);
+	Data = LoopbackMessages[0].Data;
+	LoopbackMessages.RemoveIndex(0);
 	return 1;
 	unguard;
 }
 
 //==========================================================================
 //
-//	VLoopbackDriver::SendMessage
+//	VLoopbackSocket::SendMessage
+//
+//	Send a packet over the net connection.
+//	returns 1 if the packet was sent properly
+//	returns -1 if the connection died
 //
 //==========================================================================
 
-int VLoopbackDriver::SendMessage(VSocket* Sock, vuint8* Data, vuint32 Length)
+int VLoopbackSocket::SendMessage(vuint8* Data, vuint32 Length)
 {
-	guard(VLoopbackDriver::SendMessage);
-	if (!Sock->DriverData)
+	guard(VLoopbackSocket::SendMessage);
+	if (!OtherSock)
 		return -1;
 
-	VLoopbackMessage& Msg = ((VSocket*)Sock->DriverData)->LoopbackMessages.Alloc();
+	VLoopbackMessage& Msg = OtherSock->LoopbackMessages.Alloc();
 	Msg.Data.SetNum(Length);
 	memcpy(Msg.Data.Ptr(), Data, Length);
 
@@ -247,28 +294,11 @@ int VLoopbackDriver::SendMessage(VSocket* Sock, vuint8* Data, vuint32 Length)
 
 //==========================================================================
 //
-//	VLoopbackDriver::Close
+//	VLoopbackSocket::IsLocalConnection
 //
 //==========================================================================
 
-void VLoopbackDriver::Close(VSocket* sock)
+bool VLoopbackSocket::IsLocalConnection()
 {
-	guard(VLoopbackDriver::Close);
-	if (sock->DriverData)
-		((VSocket*)sock->DriverData)->DriverData = NULL;
-	if (sock == loop_client)
-		loop_client = NULL;
-	else
-		loop_server = NULL;
-	unguard;
-}
-
-//==========================================================================
-//
-//	VLoopbackDriver::Shutdown
-//
-//==========================================================================
-
-void VLoopbackDriver::Shutdown()
-{
+	return true;
 }

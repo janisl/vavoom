@@ -47,8 +47,6 @@ public:
 	slist_t* GetSlist();
 
 	//	API only for network drivers!
-	VSocket* NewSocket(VNetDriver*);
-	void FreeSocket(VSocket*);
 	double SetNetTime();
 	void SchedulePollProcedure(VNetPollProcedure*, double);
 
@@ -144,7 +142,6 @@ VNetworkPublic::VNetworkPublic()
 
 VNetworkLocal::VNetworkLocal()
 : ActiveSockets(NULL)
-, FreeSockets(NULL)
 , HostCacheCount(0)
 , HostPort(0)
 , DefaultHostPort(26000)
@@ -196,9 +193,6 @@ VNetwork::~VNetwork()
 void VNetwork::Init()
 {
 	guard(VNetwork::Init);
-	int			i;
-	VSocket*	s;
-
 	const char* p = GArgs.CheckValue("-port");
 	if (p)
 	{
@@ -209,26 +203,14 @@ void VNetwork::Init()
 #ifdef CLIENT
 /*	if (GArgs.CheckParm("-listen") || cls.state == ca_dedicated)
 		Listening = true;
-	net_numsockets = svs.maxclientslimit;
-	if (cls.state != ca_dedicated)
-		net_numsockets++;
 */
 #else
 	Listening = true;
 #endif
 	SetNetTime();
 
-/*	for (i = 0; i < net_numsockets; i++)*/
-	for (i = 0; i < MAXPLAYERS + 1; i++)
-	{
-		s = new VSocket();
-		s->Next = FreeSockets;
-		FreeSockets = s;
-		s->Disconnected = true;
-	}
-
 	// Initialise all the drivers
-	for (i = 0; i < NumDrivers; i++)
+	for (int i = 0; i < NumDrivers; i++)
 	{
 		Drivers[i]->Net = this;
 		if (Drivers[i]->Init() != -1)
@@ -257,11 +239,10 @@ void VNetwork::Shutdown()
 	guard(VNetwork::Shutdown);
 	SetNetTime();
 
-	for (VSocket* sock = ActiveSockets; sock; sock = sock->Next)
+	while (ActiveSockets)
 	{
-		sock->Close();
+		delete ActiveSockets;
 	}
-	ActiveSockets = NULL;
 
 	//
 	// shutdown the drivers
@@ -274,14 +255,6 @@ void VNetwork::Shutdown()
 			Drivers[i]->initialised = false;
 		}
 	}
-
-	for (VSocket* sock = FreeSockets; sock;)
-	{
-		VSocket* Next = sock->Next;
-		delete sock;
-		sock = Next;
-	}
-	FreeSockets = NULL;
 	unguard;
 }
 
@@ -350,88 +323,6 @@ void VNetwork::SchedulePollProcedure(VNetPollProcedure* proc,
 		proc->next = pp;
 		prev->next = proc;
 	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	VNetwork::NewSocket
-//
-//	Called by drivers when a new communications endpoint is required
-//	The sequence and buffer fields will be filled in properly
-//
-//==========================================================================
-
-VSocket* VNetwork::NewSocket(VNetDriver* Drv)
-{
-	guard(VNetwork::NewSocket);
-	VSocket*	sock;
-
-	if (FreeSockets == NULL)
-		return NULL;
-
-#ifdef SERVER
-	if (svs.num_connected >= svs.max_clients)
-		return NULL;
-#endif
-
-	// get one from free list
-	sock = FreeSockets;
-	FreeSockets = sock->Next;
-
-	// add it to active list
-	sock->Next = ActiveSockets;
-	ActiveSockets = sock;
-
-	sock->Disconnected = false;
-	sock->ConnectTime = NetTime;
-	sock->Address = "UNSET ADDRESS";
-	sock->Driver = Drv;
-	sock->LanSocket = 0;
-	sock->DriverData = NULL;
-	sock->LastMessageTime = NetTime;
-	sock->LoopbackMessages.Clear();
-
-	return sock;
-	unguard;
-}
-
-//==========================================================================
-//
-//	VNetwork::FreeSocket
-//
-//==========================================================================
-
-void VNetwork::FreeSocket(VSocket* sock)
-{
-	guard(VNetwork::FreeSocket);
-	// remove it from active list
-	if (sock == ActiveSockets)
-	{
-		ActiveSockets = ActiveSockets->Next;
-	}
-	else
-	{
-		VSocket* s;
-		for (s = ActiveSockets; s; s = s->Next)
-		{
-			if (s->Next == sock)
-			{
-				s->Next = sock->Next;
-				break;
-			}
-		}
-		if (!s)
-		{
-			Sys_Error("NET_FreeQSocket: not active\n");
-		}
-	}
-
-	// add it to free list
-	sock->Next = FreeSockets;
-	FreeSockets = sock;
-
-	sock->Disconnected = true;
 	unguard;
 }
 
@@ -766,118 +657,51 @@ VSocketPublic* VNetwork::CheckNewConnections()
 
 //==========================================================================
 //
-//	VSocket::IsLocalConnection
+//	VSocket::VSocket
 //
 //==========================================================================
 
-bool VSocket::IsLocalConnection()
+VSocket::VSocket(VNetDriver* Drv)
+: Driver(Drv)
 {
-	return Driver == VNetwork::Drivers[0] || Driver == VNetwork::Drivers[1];
+	// add it to active list
+	Next = Driver->Net->ActiveSockets;
+	Driver->Net->ActiveSockets = this;
+
+	ConnectTime = Driver->Net->NetTime;
+	Address = "UNSET ADDRESS";
+	LastMessageTime = Driver->Net->NetTime;
 }
 
 //==========================================================================
 //
-//	VSocket::Close
+//	VSocket::~VSocket
 //
 //==========================================================================
 
-void VSocket::Close()
+VSocket::~VSocket()
 {
-	guard(VSocket::Close);
-	if (Disconnected)
-		return;
-
-	Driver->Net->SetNetTime();
-
-	// call the driver_Close function
-	Driver->Close(this);
-
-	Driver->Net->FreeSocket(this);
-	unguard;
-}
-
-//==========================================================================
-//
-//	VSocket::GetMessage
-//
-//	If there is a complete message, return it in net_message
-//
-//	returns 0 if no data is waiting
-//	returns 1 if a reliable message was received
-//	returns 2 if a unreliable message was received
-//	returns -1 if connection is invalid
-//
-//==========================================================================
-
-int	VSocket::GetMessage(TArray<vuint8>& Data)
-{
-	guard(VSocket::GetMessage);
-	int			ret;
-
-	if (Disconnected)
+	// remove it from active list
+	if (this == Driver->Net->ActiveSockets)
 	{
-		GCon->Log(NAME_DevNet, "NET_GetMessage: disconnected socket");
-		return -1;
+		Driver->Net->ActiveSockets = Driver->Net->ActiveSockets->Next;
 	}
-
-	Driver->Net->SetNetTime();
-
-	ret = Driver->GetMessage(this, Data);
-
-	// see if this connection has timed out
-	if (ret == 0 && !IsLocalConnection())
+	else
 	{
-		if (Driver->Net->NetTime - LastMessageTime > VNetwork::MessageTimeOut)
+		VSocket* s;
+		for (s = Driver->Net->ActiveSockets; s; s = s->Next)
 		{
-			Close();
-			return -1;
+			if (s->Next == this)
+			{
+				s->Next = this->Next;
+				break;
+			}
+		}
+		if (!s)
+		{
+			Sys_Error("NET_FreeQSocket: not active\n");
 		}
 	}
-
-	if (ret > 0)
-	{
-		if (!IsLocalConnection())
-		{
-			LastMessageTime = Driver->Net->NetTime;
-			if (ret == 1)
-				Driver->Net->MessagesReceived++;
-			else if (ret == 2)
-				Driver->Net->UnreliableMessagesReceived++;
-		}
-	}
-
-	return ret;
-	unguard;
-}
-
-//==========================================================================
-//
-//	VSocket::SendMessage
-//
-//	Try to send a complete length+message unit over the reliable stream.
-//	returns 0 if the message cannot be delivered reliably, but the connection
-// is still considered valid
-//	returns 1 if the message was sent properly
-//	returns -1 if the connection died
-//
-//==========================================================================
-
-int VSocket::SendMessage(vuint8* Data, vuint32 Length)
-{
-	guard(VSocket::SendMessage);
-	if (Disconnected)
-	{
-		GCon->Log(NAME_DevNet, "NET_SendMessage: disconnected socket");
-		return -1;
-	}
-
-	Driver->Net->SetNetTime();
-	int r = Driver->SendMessage(this, Data, Length);
-	if (r == 1 && !IsLocalConnection())
-		Driver->Net->MessagesSent++;
-
-	return r;
-	unguard;
 }
 
 //==========================================================================

@@ -2721,7 +2721,13 @@ void SV_ConnectBot(const char *name)
 	guard(SV_ConnectBot);
 	VSocketPublic*	sock;
 	int				i;
-		
+
+	if (svs.num_connected >= svs.max_clients)
+	{
+		GCon->Log("Server is full");
+		return;
+	}
+
 	GNet->ConnectBot = true;
 	sock = GNet->CheckNewConnections();
 	if (!sock)

@@ -88,7 +88,7 @@ VNetConnection::~VNetConnection()
 	}
 	if (NetCon)
 	{
-		NetCon->Close();
+		delete NetCon;
 	}
 	NetCon = NULL;
 	unguard;
@@ -105,6 +105,8 @@ void VNetConnection::GetMessages()
 	guard(VNetConnection::GetMessages);
 	int ret;
 
+	Driver->SetNetTime();
+
 	do
 	{
 		TArray<vuint8> Data;
@@ -118,6 +120,15 @@ void VNetConnection::GetMessages()
 
 		if (ret)
 		{
+			if (!IsLocalConnection())
+			{
+				NetCon->LastMessageTime = Driver->NetTime;
+				if (ret == 1)
+					Driver->MessagesReceived++;
+				else if (ret == 2)
+					Driver->UnreliableMessagesReceived++;
+			}
+
 			if (Data.Num() > 0)
 			{
 				vuint8 LastByte = Data[Data.Num() - 1];
@@ -403,11 +414,14 @@ void VNetConnection::Flush()
 	}
 
 	//	Send the message.
+	Driver->SetNetTime();
 	if (NetCon->SendMessage(Out.GetData(), Out.GetNumBytes()) == -1)
 	{
 		State = NETCON_Closed;
 	}
 
+	if (!IsLocalConnection())
+		Driver->MessagesSent++;
 	Driver->packetsSent++;
 
 	//	Increment outgoing packet counter
@@ -457,6 +471,14 @@ void VNetConnection::Tick()
 			}
 			OpenChannels[i]->ReceivedAck();
 		}
+	}
+
+	// see if this connection has timed out
+	if (!IsLocalConnection() &&
+		Driver->NetTime - NetCon->LastMessageTime > VNetworkPublic::MessageTimeOut)
+	{
+		State = NETCON_Closed;
+		return;
 	}
 
 	//	Run tick for all of the open channels.

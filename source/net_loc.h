@@ -45,31 +45,15 @@ struct sockaddr_t
 	vint8		sa_data[14];
 };
 
-struct VLoopbackMessage
-{
-	TArray<vuint8>	Data;
-};
-
 class VSocket : public VSocketPublic
 {
 public:
 	VSocket*		Next;
 
-	bool			Disconnected;
-	
 	VNetDriver*		Driver;
-	VNetLanDriver*	LanDriver;
-	int				LanSocket;
-	void*			DriverData;
 
-	TArray<VLoopbackMessage>	LoopbackMessages;
-
-	sockaddr_t		Addr;
-
-	bool IsLocalConnection();
-	int GetMessage(TArray<vuint8>&);
-	int SendMessage(vuint8*, vuint32);
-	void Close();
+	VSocket(VNetDriver*);
+	~VSocket();
 };
 
 struct VNetPollProcedure
@@ -97,7 +81,6 @@ class VNetworkLocal : public VNetworkPublic
 {
 public:
 	VSocket*		ActiveSockets;
-	VSocket*		FreeSockets;
 
 	int				HostCacheCount;
 	hostcache_t		HostCache[HOSTCACHESIZE];
@@ -124,9 +107,6 @@ public:
 	static VCvarS			HostName;
 
 	VNetworkLocal();
-	virtual VSocket* NewSocket(VNetDriver*) = 0;
-	virtual void FreeSocket(VSocket*) = 0;
-	virtual double SetNetTime() = 0;
 	virtual void SchedulePollProcedure(VNetPollProcedure*, double) = 0;
 
 	virtual void Slist() = 0;
@@ -145,9 +125,6 @@ public:
 	virtual void SearchForHosts(bool) = 0;
 	virtual VSocket* Connect(const char*) = 0;
 	virtual VSocket* CheckNewConnections() = 0;
-	virtual int GetMessage(VSocket*, TArray<vuint8>&) = 0;
-	virtual int SendMessage(VSocket*, vuint8*, vuint32) = 0;
-	virtual void Close(VSocket*) = 0;
 	virtual void Shutdown() = 0;
 };
 

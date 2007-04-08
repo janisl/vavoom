@@ -78,7 +78,6 @@ public:
 	virtual bool IsLocalConnection() = 0;
 	virtual int GetMessage(TArray<vuint8>&) = 0;
 	virtual int SendMessage(vuint8*, vuint32) = 0;
-	virtual void Close() = 0;
 };
 
 //
@@ -149,6 +148,7 @@ public:
 	virtual void Poll() = 0;
 	virtual void StartSearch() = 0;
 	virtual slist_t* GetSlist() = 0;
+	virtual double SetNetTime() = 0;
 
 	static VNetworkPublic* Create();
 };

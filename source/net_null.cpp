@@ -32,6 +32,18 @@
 
 // TYPES -------------------------------------------------------------------
 
+class VNullSocket : public VSocket
+{
+public:
+	VNullSocket(VNetDriver* Drv)
+	: VSocket(Drv)
+	{}
+
+	int GetMessage(TArray<vuint8>&);
+	int SendMessage(vuint8*, vuint32);
+	bool IsLocalConnection();
+};
+
 class VNullNetDriver : public VNetDriver
 {
 public:
@@ -41,9 +53,6 @@ public:
 	void SearchForHosts(bool);
 	VSocket* Connect(const char*);
 	VSocket* CheckNewConnections();
-	int GetMessage(VSocket*, TArray<vuint8>&);
-	int SendMessage(VSocket*, vuint8*, vuint32);
-	void Close(VSocket*);
 	void Shutdown();
 };
 
@@ -129,47 +138,10 @@ VSocket* VNullNetDriver::CheckNewConnections()
 		return NULL;
 
 	Net->ConnectBot = false;
-	VSocket* sock = Net->NewSocket(this);
-	if (!sock)
-	{
-		GCon->Log("Server is full");
-		return NULL;
-	}
+	VSocket* sock = new VNullSocket(this);
 	sock->Address = "NULL";
 	return sock;
 	unguard;
-}
-
-//==========================================================================
-//
-//	VNullNetDriver::GetMessage
-//
-//==========================================================================
-
-int VNullNetDriver::GetMessage(VSocket*, TArray<vuint8>&)
-{
-	return 0;
-}
-
-//==========================================================================
-//
-//	VNullNetDriver::SendMessage
-//
-//==========================================================================
-
-int VNullNetDriver::SendMessage(VSocket*, vuint8*, vuint32)
-{
-	return 1;
-}
-
-//==========================================================================
-//
-//	VNullNetDriver::Close
-//
-//==========================================================================
-
-void VNullNetDriver::Close(VSocket*)
-{
 }
 
 //==========================================================================
@@ -180,4 +152,37 @@ void VNullNetDriver::Close(VSocket*)
 
 void VNullNetDriver::Shutdown()
 {
+}
+
+//==========================================================================
+//
+//	VNullSocket::GetMessage
+//
+//==========================================================================
+
+int VNullSocket::GetMessage(TArray<vuint8>&)
+{
+	return 0;
+}
+
+//==========================================================================
+//
+//	VNullSocket::SendMessage
+//
+//==========================================================================
+
+int VNullSocket::SendMessage(vuint8*, vuint32)
+{
+	return 1;
+}
+
+//==========================================================================
+//
+//	VNullSocket::IsLocalConnection
+//
+//==========================================================================
+
+bool VNullSocket::IsLocalConnection()
+{
+	return true;
 }
