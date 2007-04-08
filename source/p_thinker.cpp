@@ -34,6 +34,7 @@
 // HEADER FILES ------------------------------------------------------------
 
 #include "gamedefs.h"
+#include "network.h"
 #include "sv_local.h"
 
 // MACROS ------------------------------------------------------------------
@@ -66,6 +67,45 @@ IMPLEMENT_CLASS(V, Thinker)
 
 VThinker::VThinker()
 {
+}
+
+//==========================================================================
+//
+//	VThinker::Destroy
+//
+//==========================================================================
+
+void VThinker::Destroy()
+{
+	guard(VThinker::Destroy);
+	if (XLevel == GLevel && GLevel)
+	{
+		for (int i = 0; i < MAXPLAYERS; i++)
+		{
+			if (GGameInfo->Players[i])
+			{
+				VThinkerChannel* Chan = GGameInfo->Players[i]->Net->ThinkerChannels.FindPtr(this);
+				if (Chan)
+				{
+					Chan->Close();
+				}
+			}
+		}
+	}
+
+#ifdef CLIENT
+	if (XLevel == GClLevel && GClLevel && cl->Net)
+	{
+		VThinkerChannel* Chan = cl->Net->ThinkerChannels.FindPtr(this);
+		if (Chan)
+		{
+			Chan->Close();
+		}
+	}
+#endif
+
+	Super::Destroy();
+	unguard;
 }
 
 //==========================================================================

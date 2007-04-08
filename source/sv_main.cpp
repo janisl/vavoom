@@ -427,30 +427,7 @@ void VEntity::Destroy()
 
 		// stop any playing sound
 		SV_StopSound(this, 0);
-
-		for (int i = 0; i < MAXPLAYERS; i++)
-		{
-			if (GGameInfo->Players[i])
-			{
-				VThinkerChannel* Chan = GGameInfo->Players[i]->Net->ThinkerChannels.FindPtr(this);
-				if (Chan)
-				{
-					Chan->Close();
-				}
-			}
-		}
 	}
-
-#ifdef CLIENT
-	if (XLevel == GClLevel && GClLevel && cl->Net)
-	{
-		VThinkerChannel* Chan = cl->Net->ThinkerChannels.FindPtr(this);
-		if (Chan)
-		{
-			Chan->Close();
-		}
-	}
-#endif
 
 	Super::Destroy();
 	unguard;

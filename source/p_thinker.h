@@ -42,9 +42,11 @@ class VThinker : public VObject
 
 	VThinker();
 
+	//	VObject interface
+	void Destroy();
 	void Serialise(VStream&);
 
-	//	VThinker interface.
+	//	VThinker interface
 	virtual void Tick(float);
 	virtual void DestroyThinker();
 
