@@ -68,7 +68,6 @@ static void G_DoCompleted();
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
 IMPLEMENT_CLASS(V, LevelInfo)
-IMPLEMENT_CLASS(V, WorldInfo)
 IMPLEMENT_CLASS(V, GameInfo)
 IMPLEMENT_CLASS(V, BasePlayer)
 
@@ -153,48 +152,6 @@ VLevelInfo::VLevelInfo()
 	Level = this;
 	Game = GGameInfo;
 	World = GWorldInfo;
-}
-
-//==========================================================================
-//
-//	VWorldInfo::VWorldInfo
-//
-//==========================================================================
-
-VWorldInfo::VWorldInfo()
-{
-	Acs = new VAcsGlobal;
-}
-
-//==========================================================================
-//
-//	VWorldInfo::Serialise
-//
-//==========================================================================
-
-void VWorldInfo::Serialise(VStream& Strm)
-{
-	guard(VWorldInfo::Serialise);
-	//	Serialise global script info.
-	Acs->Serialise(Strm);
-
-	Super::Serialise(Strm);
-	unguard;
-}
-
-//==========================================================================
-//
-//	VWorldInfo::Destroy
-//
-//==========================================================================
-
-void VWorldInfo::Destroy()
-{
-	guard(VWorldInfo::Destroy);
-	delete Acs;
-
-	Super::Destroy();
-	unguard;
 }
 
 //==========================================================================
