@@ -27,6 +27,7 @@
 
 #include "gamedefs.h"
 #include "network.h"
+#include "progdefs.h"
 
 // MACROS ------------------------------------------------------------------
 
@@ -163,7 +164,30 @@ void VPlayerChannel::Update()
 		{
 			continue;
 		}
-		if (!VField::IdenticalValue(Data + F->Ofs, OldData + F->Ofs, F->Type))
+		if (VField::IdenticalValue(Data + F->Ofs, OldData + F->Ofs, F->Type))
+		{
+			continue;
+		}
+		if (F->Type.Type == ev_array)
+		{
+			VField::FType IntType = F->Type;
+			IntType.Type = F->Type.ArrayInnerType;
+			int InnerSize = IntType.GetSize();
+			for (int i = 0; i < F->Type.ArrayDim; i++)
+			{
+				if (VField::IdenticalValue(Data + F->Ofs + i * InnerSize,
+					OldData + F->Ofs + i * InnerSize, IntType))
+				{
+					continue;
+				}
+				Msg << (vuint8)F->NetIndex;
+				Msg.WriteInt(i, F->Type.ArrayDim);
+				VField::NetSerialiseValue(Msg, Data + F->Ofs + i * InnerSize, IntType);
+				VField::CopyFieldValue(Data + F->Ofs + i * InnerSize,
+					OldData + F->Ofs + i * InnerSize, IntType);
+			}
+		}
+		else
 		{
 			Msg << (vuint8)F->NetIndex;
 			VField::NetSerialiseValue(Msg, Data + F->Ofs, F->Type);
@@ -203,7 +227,18 @@ void VPlayerChannel::ParsePacket(VMessageIn& Msg)
 		{
 			Sys_Error("Bad net field %d", FldIdx);
 		}
-		VField::NetSerialiseValue(Msg, (vuint8*)Plr + F->Ofs, F->Type);
+		if (F->Type.Type == ev_array)
+		{
+			int Idx = Msg.ReadInt(F->Type.ArrayDim);
+			VField::FType IntType = F->Type;
+			IntType.Type = F->Type.ArrayInnerType;
+			VField::NetSerialiseValue(Msg, (vuint8*)Plr + F->Ofs +
+				Idx * IntType.GetSize(), IntType);
+		}
+		else
+		{
+			VField::NetSerialiseValue(Msg, (vuint8*)Plr + F->Ofs, F->Type);
+		}
 	}
 	unguard;
 }
