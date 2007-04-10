@@ -132,6 +132,7 @@ void VLevel::Serialise(VStream& Strm)
 	//
 	//	Sectors
 	//
+	guard(Sectors);
 	for (i = 0, sec = Sectors; i < NumSectors; i++, sec++)
 	{
 		Strm << sec->floor.dist
@@ -156,15 +157,17 @@ void VLevel::Serialise(VStream& Strm)
 			CalcSecMinMaxs(sec);
 		}
 	}
+	unguard;
 
 	//
 	//	Lines
 	//
+	guard(Lines);
 	for (i = 0, li = Lines; i < NumLines; i++, li++)
 	{
 		//	Temporary hack to save seen on automap flags.
 #ifdef CLIENT
-		if (cls.state == ca_connected)
+		if (Strm.IsSaving() && cls.state == ca_connected)
 		{
 			li->flags |= GClLevel->Lines[i].flags & ML_MAPPED;
 		}
@@ -184,17 +187,19 @@ void VLevel::Serialise(VStream& Strm)
 				continue;
 			}
 			si = &Sides[li->sidenum[j]];
-			Strm << si->textureoffset 
+			Strm << si->textureoffset
 				<< si->rowoffset
-				<< si->toptexture 
-				<< si->bottomtexture 
+				<< si->toptexture
+				<< si->bottomtexture
 				<< si->midtexture;
 		}
 	}
+	unguard;
 
 	//
 	//	Polyobjs
 	//
+	guard(Polyobjs);
 	for (i = 0; i < NumPolyObjs; i++)
 	{
 		if (Strm.IsLoading())
@@ -217,11 +222,14 @@ void VLevel::Serialise(VStream& Strm)
 		}
 		Strm << PolyObjs[i].SpecialData;
 	}
+	unguard;
 
 	//
 	//	ACS
 	//
+	guard(ACS);
 	Acs->Serialise(Strm);
+	unguard;
 	unguard;
 }
 
