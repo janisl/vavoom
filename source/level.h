@@ -154,23 +154,26 @@ struct side_t
 	// add this to the calculated texture top
 	float		rowoffset;
 
-	float		base_textureoffset;
-	float		base_rowoffset;
-
 	// Texture indices.
 	// We do not maintain names here.
 	int			toptexture;
 	int			bottomtexture;
 	int			midtexture;
 
-	//	Remember base textures so we can inform new clients about
-	// changed textures
-	int			base_toptexture;
-	int			base_bottomtexture;
-	int			base_midtexture;
-
 	// Sector the SideDef is facing.
 	sector_t	*sector;
+};
+
+//
+//	Sidedef properties that will be replicated
+//
+struct rep_side_t
+{
+	float		textureoffset;
+	float		rowoffset;
+	int			toptexture;
+	int			bottomtexture;
+	int			midtexture;
 };
 
 struct subsector_t;
@@ -616,6 +619,8 @@ class VLevel : public VObject
 
 	VRenderLevelPublic*	RenderData;
 
+	rep_side_t*	BaseSides;
+
 	void Serialise(VStream& Strm);
 	void ClearReferences();
 	void Destroy();
@@ -681,6 +686,7 @@ private:
 	int FindGLNodes(VName) const;
 	int TexNumForName(const char*, int, bool = false) const;
 	void SetupLineSides(line_t*) const;
+	void CreateRepBase();
 
 	//	Post-loading routines.
 	void GroupLines() const;

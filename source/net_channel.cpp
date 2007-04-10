@@ -64,7 +64,7 @@ VChannel::VChannel(VNetConnection* AConnection, EChannelType AType,
 {
 	if (Index == -1)
 	{
-		Index = 2;
+		Index = CHANIDX_ThinkersStart;
 		while (Index < MAX_CHANNELS && Connection->Channels[Index])
 		{
 			Index++;

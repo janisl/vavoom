@@ -376,7 +376,7 @@ COMMAND(PlayDemo)
 	cls.demoplayback = true;
 	cls.state = ca_connected;
 	cl->Net = new VDemoPlaybackNetConnection(ClientNetContext);
-	((VPlayerChannel*)cl->Net->Channels[1])->SetPlayer(cl);
+	((VPlayerChannel*)cl->Net->Channels[CHANIDX_Player])->SetPlayer(cl);
 	GClGame->eventDemoPlaybackStarted();
 	unguard;
 }

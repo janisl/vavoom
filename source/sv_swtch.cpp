@@ -42,6 +42,10 @@
 
 #define BUTTONTIME	1.0					// 1 second
 
+#define TEXTURE_TOP				0
+#define TEXTURE_MIDDLE			1
+#define TEXTURE_BOTTOM			2
+
 // TYPES -------------------------------------------------------------------
 
 enum EBWhere
@@ -200,21 +204,23 @@ void P_ChangeSwitchTexture(line_t* line, bool useAgain, VName DefaultSound)
 		if (sw->Tex == texTop)
 		{
 			where = SWITCH_TOP;
+			GLevel->Sides[sidenum].toptexture = sw->Frames[0].Texture;
 		}
 		else if (sw->Tex == texMid)
 		{
 			where = SWITCH_MIDDLE;
+			GLevel->Sides[sidenum].midtexture = sw->Frames[0].Texture;
 		}
 		else if (sw->Tex == texBot)
 		{
 			where = SWITCH_BOTTOM;
+			GLevel->Sides[sidenum].bottomtexture = sw->Frames[0].Texture;
 		}
 		else
 		{
 			continue;
 		}
 
-		SV_SetLineTexture(sidenum, where, sw->Frames[0].Texture);
 		bool PlaySound;
 		if (useAgain || sw->NumFrames > 1)
 			PlaySound = P_StartButton(sidenum, where, i, DefaultSound,
@@ -275,7 +281,18 @@ void VButton::Tick(float DeltaTime)
 		}
 
 		bool KillMe = AdvanceFrame();
-		SV_SetLineTexture(Side, Where, Def->Frames[Frame].Texture);
+		if (Where == TEXTURE_MIDDLE)
+		{
+			XLevel->Sides[Side].midtexture = Def->Frames[Frame].Texture;
+		}
+		else if (Where == TEXTURE_BOTTOM)
+		{
+			XLevel->Sides[Side].bottomtexture = Def->Frames[Frame].Texture;
+		}
+		else
+		{ // TEXTURE_TOP
+			XLevel->Sides[Side].toptexture = Def->Frames[Frame].Texture;
+		}
 		if (KillMe)
 		{
 			DestroyThinker();

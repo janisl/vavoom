@@ -3067,8 +3067,8 @@ bool EV_RemoveForceField(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
 			if (!(secline->flags & ML_TWOSIDED))
 				continue;
 
-			XLevel.SetLineTexture(secline->sidenum[0], 1, 0);
-			XLevel.SetLineTexture(secline->sidenum[1], 1, 0);
+			XLevel.Sides[secline->sidenum[0]].midtexture = 0;
+			XLevel.Sides[secline->sidenum[1]].midtexture = 0;
 			secline->special = 0;
 			secline->flags &= ~ML_BLOCKING;
 		}

@@ -213,10 +213,10 @@ void Tick(float deltaTime)
 
 void SetAnimTexture(int NewTex)
 {
-	XLevel.SetLineTexture(Line1->sidenum[0], 1, NewTex);
-	XLevel.SetLineTexture(Line1->sidenum[1], 1, NewTex);
-	XLevel.SetLineTexture(Line2->sidenum[0], 1, NewTex);
-	XLevel.SetLineTexture(Line2->sidenum[1], 1, NewTex);
+	XLevel.Sides[Line1->sidenum[0]].midtexture = NewTex;
+	XLevel.Sides[Line1->sidenum[1]].midtexture = NewTex;
+	XLevel.Sides[Line2->sidenum[0]].midtexture = NewTex;
+	XLevel.Sides[Line2->sidenum[1]].midtexture = NewTex;
 }
 
 defaultproperties

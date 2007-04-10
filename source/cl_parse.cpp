@@ -273,12 +273,6 @@ static void CL_ParseTime(VMessageIn& msg)
 		sec.ceiling.yoffs = 0.0;
 	}
 
-	for (i = 0; i < GClLevel->NumSides; i++)
-	{
-		GClLevel->Sides[i].textureoffset = GClLevel->Sides[i].base_textureoffset;
-		GClLevel->Sides[i].rowoffset = GClLevel->Sides[i].base_rowoffset;
-	}
-
 	R_AnimateSurfaces();
 	msg << new_time;
 	cl_level.tictime = int(new_time * 35);
@@ -366,6 +360,8 @@ static void CL_ParseServerInfo(VMessageIn& msg)
 	C_ClearNotify();
 
 	CL_LoadLevel(cl_level.MapName);
+
+	((VLevelChannel*)cl->Net->Channels[CHANIDX_Level])->SetLevel(GClLevel);
 
 	//	Temporary hack to restore seen on automap flags.
 #ifdef SERVER
@@ -636,27 +632,6 @@ void VClientGenChannel::ParsePacket(VMessageIn& msg)
 
 		case svc_server_info:
 			CL_ParseServerInfo(msg);
-			break;
-
-		case svc_side_top:
-			i = msg.ReadShort();
-			GClLevel->Sides[i].toptexture = msg.ReadShort();
-			break;
-
-		case svc_side_mid:
-			i = msg.ReadShort();
-			GClLevel->Sides[i].midtexture = msg.ReadShort();
-			break;
-
-		case svc_side_bot:
-			i = msg.ReadShort();
-			GClLevel->Sides[i].bottomtexture = msg.ReadShort();
-			break;
-
-		case svc_side_ofs:
-			i = msg.ReadInt(GClLevel->NumSides);
-			GClLevel->Sides[i].textureoffset = msg.ReadShort();
-			GClLevel->Sides[i].rowoffset = msg.ReadShort();
 			break;
 
 		case svc_sec_floor:

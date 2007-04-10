@@ -70,7 +70,8 @@ VNetConnection::VNetConnection(VSocketPublic* ANetCon, VNetContext* AContext)
 	memset(InSequence, 0, sizeof(InSequence));
 	memset(OutSequence, 0, sizeof(OutSequence));
 	Context->CreateGenChannel(this);
-	new VPlayerChannel(this, 1);
+	new VPlayerChannel(this, CHANIDX_Player);
+	new VLevelChannel(this, CHANIDX_Level);
 }
 
 //==========================================================================

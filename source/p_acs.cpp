@@ -2567,7 +2567,19 @@ int VAcs::RunScript(float DeltaTime)
 				for (line_t *line = Level->eventFindLine(sp[-4], &searcher);
 					line != NULL; line = Level->eventFindLine(sp[-4], &searcher))
 				{
-					SV_SetLineTexture(line->sidenum[sp[-3]], sp[-2], Tex);
+					if (sp[-2] == TEXTURE_MIDDLE)
+					{
+						GLevel->Sides[line->sidenum[sp[-3]]].midtexture = Tex;
+					}
+					else if (sp[-2] == TEXTURE_BOTTOM)
+					{
+						GLevel->Sides[line->sidenum[sp[-3]]].bottomtexture = Tex;
+					}
+					else
+					{
+						// TEXTURE_TOP
+						GLevel->Sides[line->sidenum[sp[-3]]].toptexture = Tex;
+					}
 				}
 				sp -= 4;
 			}
@@ -4356,17 +4368,17 @@ int VAcs::RunScript(float DeltaTime)
 					if (!(sp[-1] & NOT_TOP) &&
 						XLevel->Sides[i].toptexture == FromTex)
 					{
-						SV_SetLineTexture(i, TEXTURE_TOP, ToTex);
+						XLevel->Sides[i].toptexture = ToTex;
 					}
 					if (!(sp[-1] & NOT_MIDDLE) &&
 						XLevel->Sides[i].midtexture == FromTex)
 					{
-						SV_SetLineTexture(i, TEXTURE_MIDDLE, ToTex);
+						XLevel->Sides[i].midtexture = ToTex;
 					}
 					if (!(sp[-1] & NOT_BOTTOM) &&
 						XLevel->Sides[i].bottomtexture == FromTex)
 					{
-						SV_SetLineTexture(i, TEXTURE_BOTTOM, ToTex);
+						XLevel->Sides[i].bottomtexture = ToTex;
 					}
 				}
 			}

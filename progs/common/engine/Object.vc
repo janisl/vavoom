@@ -702,18 +702,11 @@ struct side_t
 	// add this to the calculated texture top
 	float rowoffset;
 
-	float __base_textureoffset;
-	float __base_rowoffset;
-
 	// Texture indices.
 	// We do not maintain names here.
 	int toptexture;
 	int bottomtexture;
 	int midtexture;
-
-	int __base_toptexture;
-	int __base_bottomtexture;
-	int __base_midtexture;
 
 	// Sector the SideDef is facing.
 	sector_t *sector;

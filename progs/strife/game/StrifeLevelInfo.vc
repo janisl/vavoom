@@ -341,7 +341,7 @@ bool ActivateLine(line_t* Line, Actor A, int Side, int ActivationType)
 	}
 	if (changeBack)
 	{
-		XLevel.SetLineTexture(Line->sidenum[1], 1, XLevel.Sides[Line->sidenum[0]].midtexture);
+		XLevel.Sides[Line->sidenum[1]].midtexture = XLevel.Sides[Line->sidenum[0]].midtexture;
 	}
 	if (!repeat && buttonSuccess)
 	{
@@ -463,7 +463,7 @@ bool EV_BreakGlass(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 	if (Line->sidenum[1] != -1)
 	{
 		//switched |= P_ChangeSwitchTexture(&sides[ln->sidenum[1]], false, 0, &quest2);
-		XLevel.SetLineTexture(Line->sidenum[1], 1, XLevel.Sides[Line->sidenum[0]].midtexture);
+		XLevel.Sides[Line->sidenum[1]].midtexture = XLevel.Sides[Line->sidenum[0]].midtexture;
 		quest2 = quest1;
 	}
 	else

@@ -234,7 +234,6 @@ void SV_ClientPrintf(VBasePlayer*, const char*, ...);
 void SV_ClientCentrePrintf(VBasePlayer*, const char*, ...);
 void SV_SetFloorPic(int, int);
 void SV_SetCeilPic(int, int);
-void SV_SetLineTexture(int, int, int);
 int SV_FindModel(const char*);
 int SV_GetModelIndex(const VName&);
 int SV_FindSkin(const char*);
@@ -243,6 +242,7 @@ void SV_ChangeMusic(const char*);
 void SV_ChangeLocalMusic(VBasePlayer*, const char*);
 VMessageOut* SV_GetSignon(int);
 void SV_ReadMove();
+bool SV_SecCheckFatPVS(sector_t*);
 
 extern VBasePlayer*			sv_player;
 extern TArray<VSndSeqInfo>	sv_ActiveSequences;

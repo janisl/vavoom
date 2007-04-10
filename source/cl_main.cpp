@@ -435,7 +435,7 @@ void CL_EstablishConnection(const char* host)
 	{
 		cl->Net = new VNetConnection(Sock, ClientNetContext);
 	}
-	((VPlayerChannel*)cl->Net->Channels[1])->SetPlayer(cl);
+	((VPlayerChannel*)cl->Net->Channels[CHANIDX_Player])->SetPlayer(cl);
 	GCon->Logf(NAME_Dev, "CL_EstablishConnection: connected to %s", host);
 
 	UserInfoSent = false;

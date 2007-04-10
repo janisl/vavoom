@@ -44,11 +44,6 @@ enum
 	svc_time,
 	svc_pause,
 
-	svc_side_top,
-	svc_side_mid,
-	svc_side_bot,
-	svc_side_ofs,
-
 	svc_sec_floor,
 	svc_sec_ceil,
 	svc_sec_update,

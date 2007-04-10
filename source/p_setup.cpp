@@ -245,6 +245,8 @@ void VLevel::LoadMap(VName MapName)
 		CalcSecMinMaxs(&Sectors[i]);
 	}
 
+	CreateRepBase();
+
 	//
 	// End of map lump processing
 	//
@@ -486,9 +488,6 @@ void VLevel::LoadSideDefsPass1(int Lump)
 		sd->textureoffset = textureoffset;
 		sd->rowoffset = rowoffset;
 		sd->sector = &Sectors[sector];
-
-		sd->base_textureoffset = sd->textureoffset;
-		sd->base_rowoffset = sd->rowoffset;
 	}
 	delete Strm;
 	unguard;
@@ -562,10 +561,6 @@ void VLevel::LoadSideDefsPass2(int Lump)
 			sd->bottomtexture = TexNumForName(bottomtexture, TEXTYPE_Wall);
 			break;
 		}
-
-		sd->base_midtexture = sd->midtexture;
-		sd->base_toptexture = sd->toptexture;
-		sd->base_bottomtexture = sd->bottomtexture;
 	}
 	delete Strm;
 	unguard;
@@ -1452,4 +1447,27 @@ void VLevel::LinkNode(int BSPNum, node_t* pParent) const
 		LinkNode(bsp->children[1], bsp);
 	}
 	unguardSlow;
+}
+
+//==========================================================================
+//
+//  VLevel::CreateRepBase
+//
+//==========================================================================
+
+void VLevel::CreateRepBase()
+{
+	guard(VLevel::CreateRepBase);
+	BaseSides = new rep_side_t[NumSides];
+	for (int i = 0; i < NumSides; i++)
+	{
+		side_t& S = Sides[i];
+		rep_side_t& B = BaseSides[i];
+		B.textureoffset = S.textureoffset;
+		B.rowoffset = S.rowoffset;
+		B.toptexture = S.toptexture;
+		B.bottomtexture = S.bottomtexture;
+		B.midtexture = S.midtexture;
+	}
+	unguard;
 }

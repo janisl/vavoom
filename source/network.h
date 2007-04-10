@@ -56,10 +56,19 @@ enum { MAX_CHANNELS		= 265 };
 enum EChannelType
 {
 	CHANNEL_General		= 1,
+	CHANNEL_Level,
 	CHANNEL_Player,
 	CHANNEL_Thinker,
 
 	CHANNEL_MAX			= 8
+};
+
+enum EChannelIndex
+{
+	CHANIDX_General,
+	CHANIDX_Player,
+	CHANIDX_Level,
+	CHANIDX_ThinkersStart
 };
 
 //
@@ -180,6 +189,24 @@ public:
 	virtual void ReceivedAck();
 	virtual void Close();
 	virtual void Tick();
+};
+
+//
+//	VLevelChannel
+//
+//	A channel for updating level data.
+//
+class VLevelChannel : public VChannel
+{
+public:
+	VLevel*			Level;
+	rep_side_t*		Sides;
+
+	VLevelChannel(VNetConnection*, vint32, vuint8 = true);
+	~VLevelChannel();
+	void SetLevel(VLevel*);
+	void Update();
+	void ParsePacket(VMessageIn&);
 };
 
 //

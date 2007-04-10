@@ -343,19 +343,12 @@ void VLevel::Destroy()
 	{
 		delete[] NoVis;
 	}
-	if (BlockMapLump)
-	{
-		delete[] BlockMapLump;
-		delete[] BlockLinks;
-	}
-	if (RejectMatrix)
-	{
-		delete[] RejectMatrix;
-	}
-	if (Things)
-	{
-		delete[] Things;
-	}
+	delete[] BlockMapLump;
+	delete[] BlockLinks;
+	delete[] RejectMatrix;
+	delete[] Things;
+
+	delete[] BaseSides;
 
 	if (Acs)
 	{
@@ -742,15 +735,6 @@ IMPLEMENT_FUNCTION(VLevel, SetCeilPic)
 	P_GET_PTR(sector_t, sec);
 	P_GET_SELF;
 	SV_SetCeilPic(sec - Self->Sectors, texture);
-}
-
-IMPLEMENT_FUNCTION(VLevel, SetLineTexture)
-{
-	P_GET_INT(texture);
-	P_GET_INT(position);
-	P_GET_INT(side);
-	P_GET_SELF;
-	SV_SetLineTexture(side, position, texture);
 }
 
 IMPLEMENT_FUNCTION(VLevel, SetLineAlpha)

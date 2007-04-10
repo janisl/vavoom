@@ -33,10 +33,6 @@
 
 #define TOCENTRE				-128
 
-#define TEXTURE_TOP				0
-#define TEXTURE_MIDDLE			1
-#define TEXTURE_BOTTOM			2
-
 #define REBORN_DESCRIPTION		"TEMP GAME"
 
 #define MAX_MODELS				512
@@ -908,6 +904,8 @@ void SV_UpdateLevel(VMessageOut& msg)
 
 	fatpvs = GLevel->LeafPVS(sv_player->MO->SubSector);
 
+	((VLevelChannel*)sv_player->Net->Channels[CHANIDX_Level])->Update();
+
 	for (i = 0; i < GLevel->NumSectors; i++)
 	{
 		sector_t	*sec;
@@ -964,29 +962,6 @@ void SV_UpdateLevel(VMessageOut& msg)
 		{
 			msg << (vuint8)(sec->params.lightlevel >> 2);
 		}
-	}
-	for (i = 0; i < GLevel->NumSides; i++)
-	{
-		side_t		*side;
-
-		side = &GLevel->Sides[i];
-		if (!SV_SecCheckFatPVS(side->sector))
-			continue;
-
-		if (side->base_textureoffset == side->textureoffset &&
-			side->base_rowoffset == side->rowoffset)
-			continue;
-
-		if (!msg.CheckSpaceBits(7 << 3))
-		{
-			GCon->Log(NAME_Dev, "UpdateLevel: sides overflow");
-			return;
-		}
-
-		msg << (vuint8)svc_side_ofs;
-		msg.WriteInt(i, GLevel->NumSides);
-		msg << (vuint16)side->textureoffset
-			<< (vuint16)side->rowoffset;
 	}
 
 	for (i = 0; i < GLevel->NumPolyObjs; i++)
@@ -1168,7 +1143,7 @@ void SV_SendReliable()
 			continue;
 
 		sv_player = GGameInfo->Players[i];
-		((VPlayerChannel*)sv_player->Net->Channels[1])->Update();
+		((VPlayerChannel*)sv_player->Net->Channels[CHANIDX_Player])->Update();
 	}
 
 	sv_reliable->Clear();
@@ -1429,39 +1404,6 @@ void SV_ForceLightning()
 
 //==========================================================================
 //
-//	SV_SetLineTexture
-//
-//==========================================================================
-
-void SV_SetLineTexture(int side, int position, int texture)
-{
-	guard(SV_SetLineTexture);
-	if (position == TEXTURE_MIDDLE)
-	{
-		GLevel->Sides[side].midtexture = texture;
-		*sv_reliable << (vuint8)svc_side_mid
-					<< (vuint16)side
-					<< (vuint16)GLevel->Sides[side].midtexture;
-	}
-	else if (position == TEXTURE_BOTTOM)
-	{
-		GLevel->Sides[side].bottomtexture = texture;
-		*sv_reliable << (vuint8)svc_side_bot
-					<< (vuint16)side
-					<< (vuint16)GLevel->Sides[side].bottomtexture;
-	}
-	else
-	{ // TEXTURE_TOP
-		GLevel->Sides[side].toptexture = texture;
-		*sv_reliable << (vuint8)svc_side_top
-					<< (vuint16)side
-					<< (vuint16)GLevel->Sides[side].toptexture;
-	}
-	unguard;
-}
-
-//==========================================================================
-//
 //	SV_SetFloorPic
 //
 //==========================================================================
@@ -1558,7 +1500,8 @@ static void G_DoCompleted()
 	{
 		return;
 	}
-	if (!netgame && (!GGameInfo->Players[0] || !(GGameInfo->Players[0]->PlayerFlags & VBasePlayer::PF_Spawned)))
+	if (!netgame && (!GGameInfo->Players[0] ||
+		!(GGameInfo->Players[0]->PlayerFlags & VBasePlayer::PF_Spawned)))
 	{
 		//FIXME Some ACS left from previous visit of the level
 		return;
@@ -1574,7 +1517,9 @@ static void G_DoCompleted()
 	{
 		if (GGameInfo->Players[i])
 		{
-			GGameInfo->Players[i]->eventPlayerExitMap(!old_info.Cluster || !(ClusterD->Flags & CLUSTERF_Hub) || old_info.Cluster != new_info.Cluster);
+			GGameInfo->Players[i]->eventPlayerExitMap(!old_info.Cluster ||
+				!(ClusterD->Flags & CLUSTERF_Hub) ||
+				old_info.Cluster != new_info.Cluster);
 		}
 	}
 
@@ -1946,6 +1891,8 @@ void SV_SendServerInfo(VBasePlayer *player)
 	int				i;
 	VMessageOut&	msg = player->Net->Message;
 
+	((VLevelChannel*)player->Net->Channels[CHANIDX_Level])->SetLevel(GLevel);
+
 	msg << (vuint8)svc_server_info
 		<< (vuint8)PROTOCOL_VERSION
 		<< svs.serverinfo
@@ -2230,32 +2177,7 @@ void SV_SpawnServer(const char *mapname, bool spawn_thinkers)
 
 static void SV_WriteChangedTextures(VMessageOut& msg)
 {
-	int			i;
-
-	for (i = 0; i < GLevel->NumSides; i++)
-	{
-		side_t &s = GLevel->Sides[i];
-		if (s.midtexture != s.base_midtexture)
-		{
-			msg << (vuint8)svc_side_mid
-				<< (vuint16)i
-				<< (vuint16)s.midtexture;
-		}
-		if (s.bottomtexture != s.base_bottomtexture)
-		{
-			msg << (vuint8)svc_side_bot
-				<< (vuint16)i
-				<< (vuint16)s.bottomtexture;
-		}
-		if (s.toptexture != s.base_toptexture)
-		{
-			msg << (vuint8)svc_side_top
-				<< (vuint16)i
-				<< (vuint16)s.toptexture;
-		}
-	}
-
-	for (i = 0; i < GLevel->NumSectors; i++)
+	for (int i = 0; i < GLevel->NumSectors; i++)
 	{
 		sector_t &s = GLevel->Sectors[i];
 		if (s.floor.pic != s.floor.base_pic)
@@ -2354,8 +2276,8 @@ COMMAND(Spawn)
 						<< (vuint8)0;
 	sv_player->Net->Message << (vuint8)svc_signonnum << (vuint8)3;
 	sv_player->PlayerFlags &= ~VBasePlayer::PF_FixAngle;
-	((VPlayerChannel*)sv_player->Net->Channels[1])->SetPlayer(NULL);
-	((VPlayerChannel*)sv_player->Net->Channels[1])->SetPlayer(sv_player);
+	((VPlayerChannel*)sv_player->Net->Channels[CHANIDX_Player])->SetPlayer(NULL);
+	((VPlayerChannel*)sv_player->Net->Channels[CHANIDX_Player])->SetPlayer(sv_player);
 	unguard;
 }
 
@@ -2658,7 +2580,7 @@ void SV_CheckForNewClients()
 			Sys_Error("Host_CheckForNewClients: no free clients");
 
 		GPlayersBase[i]->Net = new VNetConnection(sock, ServerNetContext);
-		((VPlayerChannel*)GPlayersBase[i]->Net->Channels[1])->SetPlayer(GPlayersBase[i]);
+		((VPlayerChannel*)GPlayersBase[i]->Net->Channels[CHANIDX_Player])->SetPlayer(GPlayersBase[i]);
 		SV_ConnectClient(GPlayersBase[i]);
 		svs.num_connected++;
 	}
@@ -2703,7 +2625,7 @@ void SV_ConnectBot(const char *name)
 	GPlayersBase[i]->PlayerName = name;
 	GPlayersBase[i]->Net = new VNetConnection(sock, ServerNetContext);
 	GPlayersBase[i]->Net->AutoAck = true;
-	((VPlayerChannel*)GPlayersBase[i]->Net->Channels[1])->SetPlayer(GPlayersBase[i]);
+	((VPlayerChannel*)GPlayersBase[i]->Net->Channels[CHANIDX_Player])->SetPlayer(GPlayersBase[i]);
 	SV_ConnectClient(GPlayersBase[i]);
 	svs.num_connected++;
 

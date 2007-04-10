@@ -1596,6 +1596,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\net_channel_level.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\source\net_channel_player.cpp"
 				>
 			</File>
