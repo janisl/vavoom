@@ -62,32 +62,32 @@ native readonly side_t*			Sides;
 native readonly int				NumLines;
 native readonly line_t*			Lines;
 
-native readonly private int		__NumSegs;
-native readonly private void*	__Segs;
+native readonly private int		NumSegs;
+native readonly private void*	Segs;
 
-native readonly private int		__NumSubsectors;
-native readonly private void*	__Subsectors;
+native readonly private int		NumSubsectors;
+native readonly private void*	Subsectors;
 
-native readonly private int		__NumNodes;
-native readonly private void*	__Nodes;
+native readonly private int		NumNodes;
+native readonly private void*	Nodes;
 
-native readonly private void*	__VisData;
-native readonly private void*	__NoVis;
+native readonly private void*	VisData;
+native readonly private void*	NoVis;
 
 // !!! Used only during level loading
 native readonly int				NumThings;
 native readonly mthing_t*		Things;
 
-native readonly private void*	__BlockMapLump;
-native readonly private void*	__BlockMap;
-native readonly private int		__BlockMapWidth;
-native readonly private int		__BlockMapHeight;
+native readonly private void*	BlockMapLump;
+native readonly private void*	BlockMap;
+native readonly private int		BlockMapWidth;
+native readonly private int		BlockMapHeight;
 native readonly float			BlockMapOrgX;
 native readonly float			BlockMapOrgY;
-native readonly private void*	__BlockLinks;
-native readonly private void*	__PolyBlockMap;
+native readonly private void*	BlockLinks;
+native readonly private void*	PolyBlockMap;
 
-native readonly private void*	__RejectMatrix;
+native readonly private void*	RejectMatrix;
 
 //	Strife conversations.
 native readonly int				NumGenericSpeeches;
@@ -97,14 +97,14 @@ native readonly int				NumLevelSpeeches;
 native readonly RogueConSpeech*	LevelSpeeches;
 
 //	List of all poly-objects on the level.
-native readonly private int		__NumPolyObjs;
-native readonly private void*	__PolyObjs;
+native readonly private int		NumPolyObjs;
+native readonly private void*	PolyObjs;
 
-native readonly private int		__NumPolyAnchorPoints;
-native readonly private void*	__PolyAnchorPoints;
+native readonly private int		NumPolyAnchorPoints;
+native readonly private void*	PolyAnchorPoints;
 
-native readonly private Thinker	__ThinkerHead;
-native readonly private Thinker	__ThinkerTail;
+native readonly private Thinker	ThinkerHead;
+native readonly private Thinker	ThinkerTail;
 
 native readonly LevelInfo		LevelInfo;
 native readonly WorldInfo		WorldInfo;
@@ -114,6 +114,8 @@ native readonly private void*	Acs;
 native readonly private void*	RenderData;
 
 native readonly private void*	BaseSides;
+native readonly private void*	BaseSectors;
+native readonly private void*	BasePolyObjs;
 
 //
 //	Natives
@@ -132,9 +134,6 @@ native final sec_region_t *AddExtraFloor(line_t * line, sector_t * dst);
 // EDGE and Legacy 3D floors.
 native final void SwapPlanes(sector_t *s);
 
-native final void SetFloorPic(sector_t * sec, int texture);
-native final void SetCeilPic(sector_t * sec, int texture);
-native final void SetLineAlpha(line_t * line, float alpha);
 native final void SetFloorLightSector(sector_t* Sector, sector_t* SrcSector);
 native final void SetCeilingLightSector(sector_t* Sector, sector_t* SrcSector);
 native final void SetHeightSector(sector_t* Sector, sector_t* SrcSector, int Flags);

@@ -236,7 +236,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		DestHeight = Level.FindNextHighestFloor(Sector, &Spot);
 		Spot.z = DestHeight;
 		FloorDestDist = DotProduct(Sector->floor.normal, Spot);
-		XLevel.SetFloorPic(Sector, Line->frontsector->floor.pic);
+		Sector->floor.pic = Line->frontsector->floor.pic;
 		// NO MORE DAMAGE, IF APPLICABLE
 		Sector->special &= SECSPEC_SECRET_MASK;
 		SeqName = LineSpecialLevelInfo(Level).DefaultFloorAltSound;
@@ -247,7 +247,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		DestHeight = GetPlanePointZ(&Sector->floor, Spot) + itof(Arg3);
 		Spot.z = DestHeight;
 		FloorDestDist = DotProduct(Sector->floor.normal, Spot);
-		XLevel.SetFloorPic(Sector, Line->frontsector->floor.pic);
+		Sector->floor.pic = Line->frontsector->floor.pic;
 		Sector->special = (Sector->special & SECSPEC_SECRET_MASK) |
 			(Line->frontsector->special & ~SECSPEC_SECRET_MASK);
 		break;
@@ -257,7 +257,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		DestHeight = GetPlanePointZ(&Sector->floor, Spot) + itof(Arg3) * 8.0;
 		Spot.z = DestHeight;
 		FloorDestDist = DotProduct(Sector->floor.normal, Spot);
-		XLevel.SetFloorPic(Sector, Line->frontsector->floor.pic);
+		Sector->floor.pic = Line->frontsector->floor.pic;
 		SeqName = LineSpecialLevelInfo(Level).DefaultFloorAltSound;
 		break;
 
@@ -550,15 +550,15 @@ void Tick(float deltaTime)
 		{
 			Sector->special = (Sector->special & SECSPEC_SECRET_MASK) |
 				NewSpecial;
-			XLevel.SetFloorPic(Sector, Texture);
+			Sector->floor.pic = Texture;
 		}
 		else if (Type == FLOOREV_GenericChange)
 		{
-			XLevel.SetFloorPic(Sector, Texture);
+			Sector->floor.pic = Texture;
 		}
 		if (TextureChange)
 		{
-			XLevel.SetFloorPic(Sector, Sector->floor.pic - TextureChange);
+			Sector->floor.pic = Sector->floor.pic - TextureChange;
 		}
 		Finished();
 	}

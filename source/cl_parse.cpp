@@ -96,42 +96,6 @@ void CL_Clear()
 	unguard;
 }
 
-static void CL_ParseSecUpdate(VMessageIn& msg)
-{
-	int i = msg.ReadInt(GClLevel->NumSectors);
-
-	float PrevFloorDist = GClLevel->Sectors[i].floor.dist;
-	float PrevCeilDist = GClLevel->Sectors[i].ceiling.dist;
-
-	if (msg.ReadBit())
-	{
-		if (msg.ReadBit())
-			GClLevel->Sectors[i].floor.dist = msg.ReadShort();
-		if (msg.ReadBit())
-			GClLevel->Sectors[i].floor.xoffs = msg.ReadByte() & 63;
-		if (msg.ReadBit())
-			GClLevel->Sectors[i].floor.yoffs = msg.ReadByte() & 63;
-	}
-	if (msg.ReadBit())
-	{
-		if (msg.ReadBit())
-			GClLevel->Sectors[i].ceiling.dist = msg.ReadShort();
-		if (msg.ReadBit())
-			GClLevel->Sectors[i].ceiling.xoffs = msg.ReadByte() & 63;
-		if (msg.ReadBit())
-			GClLevel->Sectors[i].ceiling.yoffs = msg.ReadByte() & 63;
-	}
-	if (msg.ReadBit())
-	{
-		GClLevel->Sectors[i].params.lightlevel = msg.ReadByte() << 2;
-	}
-	if (PrevFloorDist != GClLevel->Sectors[i].floor.dist ||
-		PrevCeilDist != GClLevel->Sectors[i].ceiling.dist)
-	{
-		CalcSecMinMaxs(&GClLevel->Sectors[i]);
-	}
-}
-
 static void CL_ParseViewData(VMessageIn& msg)
 {
 	guard(CL_ParseViewData);
@@ -244,7 +208,6 @@ static void CL_ParseTime(VMessageIn& msg)
 {
 	guard(CL_ParseTime);
 	float	new_time;
-	int		i;
 
 	if (cls.signon == SIGNONS - 1)
 	{
@@ -255,23 +218,6 @@ static void CL_ParseTime(VMessageIn& msg)
 
 	if (cls.signon != SIGNONS)
 		Sys_Error("Update when at %d", cls.signon);
-
-	for (i = 0; i < GClLevel->NumSectors; i++)
-	{
-		sector_t &sec = GClLevel->Sectors[i];
-		if (sec.floor.dist != sec.base_floorheight ||
-			sec.ceiling.dist != sec.base_ceilingheight)
-		{
-			sec.floor.dist = sec.base_floorheight;
-			sec.ceiling.dist = sec.base_ceilingheight;
-			CalcSecMinMaxs(&sec);
-		}
-		sec.params.lightlevel = sec.base_lightlevel;
-		sec.floor.xoffs = 0.0;
-		sec.floor.yoffs = 0.0;
-		sec.ceiling.xoffs = 0.0;
-		sec.ceiling.yoffs = 0.0;
-	}
 
 	R_AnimateSurfaces();
 	msg << new_time;
@@ -556,34 +502,6 @@ static void CL_ReadFromUserInfo(int)
 
 //==========================================================================
 //
-//	CL_PO_Update
-//
-//==========================================================================
-
-void CL_PO_Update(int i, float x, float y, float angle)
-{
-	guard(CL_PO_Update);
-	if (!GClLevel->NumPolyObjs)
-		return;
-
-	if (GClLevel->PolyObjs[i].angle != angle)
-	{
-		GClLevel->RotatePolyobj(GClLevel->PolyObjs[i].tag,
-			angle - GClLevel->PolyObjs[i].angle);
-	}
-
-	if (x != GClLevel->PolyObjs[i].startSpot.x ||
-		y != GClLevel->PolyObjs[i].startSpot.y)
-	{
-		GClLevel->MovePolyobj(GClLevel->PolyObjs[i].tag,
-			x - GClLevel->PolyObjs[i].startSpot.x,
-			y - GClLevel->PolyObjs[i].startSpot.y);
-	}
-	unguard;
-}
-
-//==========================================================================
-//
 //	VClientGenChannel::ParsePacket
 //
 //==========================================================================
@@ -593,9 +511,6 @@ void VClientGenChannel::ParsePacket(VMessageIn& msg)
 	guard(VClientGenChannel::ParsePacket);
 	int			i;
 	byte		cmd_type;
-	float		x;
-	float		y;
-	float		angle;
 	VStr		name;
 	VStr		string;
 	TVec		origin;
@@ -632,20 +547,6 @@ void VClientGenChannel::ParsePacket(VMessageIn& msg)
 
 		case svc_server_info:
 			CL_ParseServerInfo(msg);
-			break;
-
-		case svc_sec_floor:
-			i = msg.ReadShort();
-			GClLevel->Sectors[i].floor.pic = (word)msg.ReadShort();
-			break;
-
-		case svc_sec_ceil:
-			i = msg.ReadShort();
-			GClLevel->Sectors[i].ceiling.pic = (word)msg.ReadShort();
-			break;
-
-		case svc_sec_update:
-			CL_ParseSecUpdate(msg);
 			break;
 
 		case svc_set_angles:
@@ -692,14 +593,6 @@ void VClientGenChannel::ParsePacket(VMessageIn& msg)
 
 		case svc_time:
 			CL_ParseTime(msg);
-			break;
-
-		case svc_poly_update:
-			i = msg.ReadInt(GClLevel->NumPolyObjs);
-			x = msg.ReadShort();
-			y = msg.ReadShort();
-			angle = ByteToAngle(msg.ReadByte());
-			CL_PO_Update(i, x, y, angle);
 			break;
 
 		case svc_force_lightning:

@@ -718,7 +718,6 @@ struct sec_plane_t : TPlane
 	float maxz;
 
 	int pic;
-	int __base_pic;
 
 	float xoffs;
 	float yoffs;
@@ -767,10 +766,6 @@ struct sector_t
 	float ceilingheight;
 	int special;
 	int tag;
-
-	float base_floorheight;
-	float base_ceilingheight;
-	int __base_lightlevel;
 
 	float skyheight;
 
@@ -842,10 +837,6 @@ struct polyobj_t
 	bool bCrush;			// should the polyobj attempt to crush mobjs?
 	int seqType;
 	subsector_t *__subsector;
-	float __base_x;
-	float __base_y;
-	float __base_angle;
-	int __changed;
 	Thinker SpecialData;	// pointer a thinker, if the poly is moving
 };
 
@@ -1228,21 +1219,11 @@ enum
 	svc_time,
 	svc_pause,
 
-	svc_side_top,
-	svc_side_mid,
-	svc_side_bot,
-	svc_side_ofs,
-
-	svc_sec_floor,
-	svc_sec_ceil,
-	svc_sec_update,
-
 	svc_start_sound,
 	svc_stop_sound,
 	svc_start_seq,
 	svc_stop_seq,
 
-	svc_poly_update,
 	svc_force_lightning,
 
 	svc_intermission,
@@ -1264,10 +1245,6 @@ enum
 
 	svc_class_name,
 	svc_add_seq_choice,
-
-	svc_set_prop,
-	svc_new_obj,
-	svc_set_player_prop,
 
 	USER_PROTOCOL_START = 128
 };

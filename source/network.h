@@ -201,6 +201,8 @@ class VLevelChannel : public VChannel
 public:
 	VLevel*			Level;
 	rep_side_t*		Sides;
+	rep_sector_t*	Sectors;
+	rep_polyobj_t*	PolyObjs;
 
 	VLevelChannel(VNetConnection*, vint32, vuint8 = true);
 	~VLevelChannel();

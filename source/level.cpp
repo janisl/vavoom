@@ -349,6 +349,8 @@ void VLevel::Destroy()
 	delete[] Things;
 
 	delete[] BaseSides;
+	delete[] BaseSectors;
+	delete[] BasePolyObjs;
 
 	if (Acs)
 	{
@@ -585,11 +587,6 @@ void SwapPlanes(sector_t *s)
 
 	s->floor.pic = s->ceiling.pic;
 	s->ceiling.pic = tempTexture;
-
-	s->floor.base_pic = s->floor.pic;
-	s->ceiling.base_pic = s->ceiling.pic;
-	s->base_floorheight = s->floor.dist;
-	s->base_ceilingheight = s->ceiling.dist;
 	unguard;
 }
 
@@ -719,30 +716,6 @@ IMPLEMENT_FUNCTION(VLevel, SwapPlanes)
 	P_GET_PTR(sector_t, s);
 	P_GET_SELF;
 	SwapPlanes(s);
-}
-
-IMPLEMENT_FUNCTION(VLevel, SetFloorPic)
-{
-	P_GET_INT(texture);
-	P_GET_PTR(sector_t, sec);
-	P_GET_SELF;
-	SV_SetFloorPic(sec - Self->Sectors, texture);
-}
-
-IMPLEMENT_FUNCTION(VLevel, SetCeilPic)
-{
-	P_GET_INT(texture);
-	P_GET_PTR(sector_t, sec);
-	P_GET_SELF;
-	SV_SetCeilPic(sec - Self->Sectors, texture);
-}
-
-IMPLEMENT_FUNCTION(VLevel, SetLineAlpha)
-{
-	P_GET_FLOAT(alpha);
-	P_GET_PTR(line_t, line);
-	P_GET_SELF;
-	line->alpha = alpha;
 }
 
 IMPLEMENT_FUNCTION(VLevel, SetFloorLightSector)

@@ -90,7 +90,6 @@ void MakeFloorSlope(Level InLevel, mthing_t * mthing)
 				Error("Floor with normal.z <= 0.0");
 			}
 			sec->floor.dist = DotProduct(sec->floor.normal, p3);
-			sec->base_floorheight = sec->floor.dist;
 			return;
 		}
 	}
@@ -139,7 +138,6 @@ void MakeCeilingSlope(Level InLevel, mthing_t * mthing)
 				Error("Ceiling with normal.z >= 0.0");
 			}
 			sec->ceiling.dist = DotProduct(sec->ceiling.normal, p3);
-			sec->base_ceilingheight = sec->ceiling.dist;
 			return;
 		}
 	}
@@ -267,7 +265,6 @@ void MakeVertexFloorHeights(Level InLevel)
 			Error("Floor with normal.z <= 0.0");
 		}
 		sec->floor.dist = DotProduct(sec->floor.normal, p3);
-		sec->base_floorheight = sec->floor.dist;
 	}
 }
 
@@ -339,7 +336,6 @@ void MakeVertexCeilingHeights(Level InLevel)
 			Error("Ceiling with normal.z >= 0.0");
 		}
 		sec->ceiling.dist = DotProduct(sec->ceiling.normal, p3);
-		sec->base_ceilingheight = sec->ceiling.dist;
 	}
 }
 
@@ -761,20 +757,20 @@ void SpawnWorld(Level InLevel)
 				{
 					if (InLevel.Lines[j].LineTag == line->arg1)
 					{
-						InLevel.SetLineAlpha(&InLevel.Lines[j], alpha);
+						InLevel.Lines[j].alpha = alpha;
 					}
 				}
 			}
 			else
 			{
-				InLevel.SetLineAlpha(line, alpha);
+				line->alpha = alpha;
 			}
 			line->special = 0;
 			break;
 		case 49:
 			if (line->arg2 != 255)
 			{
-				InLevel.SetLineAlpha(line, itof(line->arg2) / 255.0);
+				line->alpha = itof(line->arg2) / 255.0;
 			}
 			break;
 		}

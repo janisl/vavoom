@@ -2312,7 +2312,7 @@ int VAcs::RunScript(float DeltaTime)
 				for  (int Idx = FindSectorFromTag(sp[-2], -1); Idx >= 0;
 					Idx = FindSectorFromTag(sp[-2], Idx))
 				{
-					SV_SetFloorPic(Idx, Flat);
+					XLevel->Sectors[Idx].floor.pic = Flat;
 				}
 				sp -= 2;
 			}
@@ -2328,7 +2328,7 @@ int VAcs::RunScript(float DeltaTime)
 				for (int Idx = FindSectorFromTag(Tag, -1); Idx >= 0;
 					Idx = FindSectorFromTag(Tag, Idx))
 				{
-					SV_SetFloorPic(Idx, Flat);
+					XLevel->Sectors[Idx].floor.pic = Flat;
 				}
 			}
 			ACSVM_BREAK;
@@ -2340,7 +2340,7 @@ int VAcs::RunScript(float DeltaTime)
 				for  (int Idx = FindSectorFromTag(sp[-2], -1); Idx >= 0;
 					Idx = FindSectorFromTag(sp[-2], Idx))
 				{
-					SV_SetCeilPic(Idx, Flat);
+					XLevel->Sectors[Idx].ceiling.pic = Flat;
 				}
 				sp -= 2;
 			}
@@ -2356,7 +2356,7 @@ int VAcs::RunScript(float DeltaTime)
 				for (int Idx = FindSectorFromTag(Tag, -1); Idx >= 0;
 					Idx = FindSectorFromTag(Tag, Idx))
 				{
-					SV_SetCeilPic(Idx, Flat);
+					XLevel->Sectors[Idx].ceiling.pic = Flat;
 				}
 			}
 			ACSVM_BREAK;
@@ -4393,12 +4393,12 @@ int VAcs::RunScript(float DeltaTime)
 					if (!(sp[-1] & NOT_FLOOR) &&
 						XLevel->Sectors[i].floor.pic == FromTex)
 					{
-						SV_SetFloorPic(i, ToTex);
+						XLevel->Sectors[i].floor.pic = ToTex;
 					}
 					if (!(sp[-1] & NOT_CEILING) &&
 						XLevel->Sectors[i].ceiling.pic == FromTex)
 					{
-						SV_SetCeilPic(i, ToTex);
+						XLevel->Sectors[i].ceiling.pic = ToTex;
 					}
 				}
 			}

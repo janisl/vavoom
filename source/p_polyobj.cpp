@@ -371,10 +371,6 @@ void VLevel::TranslatePolyobjToStartSpot(float originX, float originY, int tag)
 	po->subsector = sub;
 
 	UpdatePolySegs(po);
-
-	po->base_x = po->startSpot.x;
-	po->base_y = po->startSpot.y;
-	po->base_angle = po->angle;
 	unguard;
 }
 

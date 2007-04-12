@@ -164,18 +164,6 @@ struct side_t
 	sector_t	*sector;
 };
 
-//
-//	Sidedef properties that will be replicated
-//
-struct rep_side_t
-{
-	float		textureoffset;
-	float		rowoffset;
-	int			toptexture;
-	int			bottomtexture;
-	int			midtexture;
-};
-
 struct subsector_t;
 
 //
@@ -215,7 +203,6 @@ struct sec_plane_t : public TPlane
 	float		maxz;
 
 	int			pic;
-	int			base_pic;
 
 	float		xoffs;
 	float		yoffs;
@@ -265,10 +252,6 @@ struct sector_t
 	float		ceilingheight;
 	int			special;
 	int			tag;
-
-	float		base_floorheight;
-	float		base_ceilingheight;
-	int			base_lightlevel;
 
 	float		skyheight;
 
@@ -348,10 +331,6 @@ struct polyobj_t
 	vuint32		PolyFlags;
 	int 		seqType;
 	subsector_t	*subsector;
-	float		base_x;
-	float		base_y;
-	float		base_angle;
-	int			changed;
 	VThinker*	SpecialData;	// pointer a thinker, if the poly is moving
 };
 
@@ -503,6 +482,40 @@ struct linetrace_t
 
 //==========================================================================
 //
+//	Structures for level network replication
+//
+//==========================================================================
+
+struct rep_side_t
+{
+	float		textureoffset;
+	float		rowoffset;
+	int			toptexture;
+	int			bottomtexture;
+	int			midtexture;
+};
+
+struct rep_sector_t
+{
+	int			floor_pic;
+	float		floor_dist;
+	float		floor_xoffs;
+	float		floor_yoffs;
+	int			ceil_pic;
+	float		ceil_dist;
+	float		ceil_xoffs;
+	float		ceil_yoffs;
+	int			lightlevel;
+};
+
+struct rep_polyobj_t
+{
+	TVec		startSpot;
+	float	 	angle;
+};
+
+//==========================================================================
+//
 //									LEVEL
 //
 //==========================================================================
@@ -619,7 +632,9 @@ class VLevel : public VObject
 
 	VRenderLevelPublic*	RenderData;
 
-	rep_side_t*	BaseSides;
+	rep_side_t*			BaseSides;
+	rep_sector_t*		BaseSectors;
+	rep_polyobj_t*		BasePolyObjs;
 
 	void Serialise(VStream& Strm);
 	void ClearReferences();

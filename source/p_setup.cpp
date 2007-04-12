@@ -409,7 +409,6 @@ void VLevel::LoadSectors(int Lump)
 		//	Floor
 		ss->floor.Set(TVec(0, 0, 1), floorheight);
 		ss->floor.pic = TexNumForName(floorpic, TEXTYPE_Flat);
-		ss->floor.base_pic = ss->floor.pic;
 		ss->floor.xoffs = 0;
 		ss->floor.yoffs = 0;
 		ss->floor.minz = floorheight;
@@ -420,7 +419,6 @@ void VLevel::LoadSectors(int Lump)
 		//	Ceiling
 		ss->ceiling.Set(TVec(0, 0, -1), -ceilingheight);
 		ss->ceiling.pic = TexNumForName(ceilingpic, TEXTYPE_Flat);
-		ss->ceiling.base_pic = ss->ceiling.pic;
 		ss->ceiling.xoffs = 0;
 		ss->ceiling.yoffs = 0;
 		ss->ceiling.minz = ceilingheight;
@@ -447,9 +445,6 @@ void VLevel::LoadSectors(int Lump)
 		ss->tag = tag;
 		ss->seqType = -1;	// default seqType
 
-		ss->base_floorheight = ss->floor.dist;
-		ss->base_ceilingheight = ss->ceiling.dist;
-		ss->base_lightlevel = ss->params.lightlevel;
 		ss->Gravity = 1.0;	// default sector gravity of 1.0
 	}
 	delete Strm;
@@ -1468,6 +1463,31 @@ void VLevel::CreateRepBase()
 		B.toptexture = S.toptexture;
 		B.bottomtexture = S.bottomtexture;
 		B.midtexture = S.midtexture;
+	}
+
+	BaseSectors = new rep_sector_t[NumSectors];
+	for (int i = 0; i < NumSectors; i++)
+	{
+		sector_t& S = Sectors[i];
+		rep_sector_t& B = BaseSectors[i];
+		B.floor_pic = S.floor.pic;
+		B.floor_dist = S.floor.dist;
+		B.floor_xoffs = S.floor.xoffs;
+		B.floor_yoffs = S.floor.yoffs;
+		B.ceil_pic = S.ceiling.pic;
+		B.ceil_dist = S.ceiling.dist;
+		B.ceil_xoffs = S.ceiling.xoffs;
+		B.ceil_yoffs = S.ceiling.yoffs;
+		B.lightlevel = S.params.lightlevel;
+	}
+
+	BasePolyObjs = new rep_polyobj_t[NumPolyObjs];
+	for (int i = 0; i < NumPolyObjs; i++)
+	{
+		polyobj_t& P = PolyObjs[i];
+		rep_polyobj_t& B = BasePolyObjs[i];
+		B.startSpot = P.startSpot;
+		B.angle = P.angle;
 	}
 	unguard;
 }

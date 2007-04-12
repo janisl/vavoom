@@ -418,7 +418,7 @@ void Tick(float deltaTime)
 			case CEILEV_GenericChange0:
 				Sector->special = NewSpecial;
 			case CEILEV_GenericChange:
-				XLevel.SetCeilPic(Sector, Texture);
+				Sector->ceiling.pic = Texture;
 			default:
 				Finished();
 				break;
@@ -457,7 +457,7 @@ void Tick(float deltaTime)
 			case CEILEV_GenericChange0:
 				Sector->special = NewSpecial;
 			case CEILEV_GenericChange:
-				XLevel.SetCeilPic(Sector, Texture);
+				Sector->ceiling.pic = Texture;
 			default:
 				Finished();
 				break;

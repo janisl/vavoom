@@ -906,93 +906,6 @@ void SV_UpdateLevel(VMessageOut& msg)
 
 	((VLevelChannel*)sv_player->Net->Channels[CHANIDX_Level])->Update();
 
-	for (i = 0; i < GLevel->NumSectors; i++)
-	{
-		sector_t	*sec;
-
-		sec = &GLevel->Sectors[i];
-		if (!SV_SecCheckFatPVS(sec) && !(sec->SectorFlags & sector_t::SF_ExtrafloorSource))
-			continue;
-
-		bool FloorChanged = fabs(sec->base_floorheight - sec->floor.dist) >= 1.0 ||
-			sec->floor.xoffs || sec->floor.yoffs;
-		bool CeilChanged = fabs(sec->base_ceilingheight - sec->ceiling.dist) >= 1.0 ||
-			sec->ceiling.xoffs || sec->ceiling.yoffs;
-		bool LightChanged = abs(sec->base_lightlevel - sec->params.lightlevel) >= 4;
-
-		if (!FloorChanged && !CeilChanged && !LightChanged)
-			continue;
-
-		if (!msg.CheckSpaceBits(14 << 3))
-		{
-			GCon->Log(NAME_Dev, "UpdateLevel: secs overflow");
-			return;
-		}
-		
-		msg << (vuint8)svc_sec_update;
-		msg.WriteInt(i, GLevel->NumSectors);
-		msg.WriteBit(FloorChanged);
-		if (FloorChanged)
-		{
-			msg.WriteBit(fabs(sec->base_floorheight - sec->floor.dist) >= 1.0);
-			if (fabs(sec->base_floorheight - sec->floor.dist) >= 1.0)
-				msg << (vuint16)(sec->floor.dist);
-			msg.WriteBit(sec->floor.xoffs != 0);
-			if (sec->floor.xoffs)
-				msg << (vuint8)(sec->floor.xoffs);
-			msg.WriteBit(sec->floor.yoffs != 0);
-			if (sec->floor.yoffs)
-				msg << (vuint8)(sec->floor.yoffs);
-		}
-		msg.WriteBit(CeilChanged);
-		if (CeilChanged)
-		{
-			msg.WriteBit(fabs(sec->base_ceilingheight - sec->ceiling.dist) >= 1.0);
-			if (fabs(sec->base_ceilingheight - sec->ceiling.dist) >= 1.0)
-				msg << (vuint16)(sec->ceiling.dist);
-			msg.WriteBit(sec->ceiling.xoffs != 0);
-			if (sec->ceiling.xoffs)
-				msg << (vuint8)(sec->ceiling.xoffs);
-			msg.WriteBit(sec->ceiling.yoffs != 0);
-			if (sec->ceiling.yoffs)
-				msg << (vuint8)(sec->ceiling.yoffs);
-		}
-		msg.WriteBit(LightChanged);
-		if (LightChanged)
-		{
-			msg << (vuint8)(sec->params.lightlevel >> 2);
-		}
-	}
-
-	for (i = 0; i < GLevel->NumPolyObjs; i++)
-	{
-		polyobj_t	*po;
-
-		po = &GLevel->PolyObjs[i];
-		if (!SV_CheckFatPVS(po->subsector))
-			continue;
-
-		if (po->base_x != po->startSpot.x ||
-			po->base_y != po->startSpot.y ||
-			po->base_angle != po->angle)
-			po->changed = true;
-
-		if (!po->changed)
-			continue;
-
-		if (!msg.CheckSpaceBits(7 << 3))
-		{
-			GCon->Log(NAME_Dev, "UpdateLevel: poly overflow");
-			return;
-		}
-
-		msg << (vuint8)svc_poly_update;
-		msg.WriteInt(i, GLevel->NumPolyObjs);
-		msg << (vuint16)floor(po->startSpot.x + 0.5)
-			<< (vuint16)floor(po->startSpot.y + 0.5)
-			<< (vuint8)(AngleToByte(po->angle));
-	}
-
 int StartSize = msg.GetNumBytes();
 int NumObjs = 0;
 	//	Mark all entity channels as not updated in this frame.
@@ -1400,38 +1313,6 @@ void SV_Ticker()
 void SV_ForceLightning()
 {
 	*sv_datagram << (vuint8)svc_force_lightning;
-}
-
-//==========================================================================
-//
-//	SV_SetFloorPic
-//
-//==========================================================================
-
-void SV_SetFloorPic(int i, int texture)
-{
-	guard(SV_SetFloorPic);
-	GLevel->Sectors[i].floor.pic = texture;
-	*sv_reliable << (vuint8)svc_sec_floor
-				<< (vuint16)i
-				<< (vuint16)GLevel->Sectors[i].floor.pic;
-	unguard;
-}
-
-//==========================================================================
-//
-//	SV_SetCeilPic
-//
-//==========================================================================
-
-void SV_SetCeilPic(int i, int texture)
-{
-	guard(SV_SetCeilPic);
-	GLevel->Sectors[i].ceiling.pic = texture;
-	*sv_reliable << (vuint8)svc_sec_ceil
-				<< (vuint16)i
-				<< (vuint16)GLevel->Sectors[i].ceiling.pic;
-	unguard;
 }
 
 //==========================================================================
@@ -2169,34 +2050,6 @@ void SV_SpawnServer(const char *mapname, bool spawn_thinkers)
 
 //==========================================================================
 //
-//	SV_WriteChangedTextures
-//
-//	Writes texture change commands for new clients
-//
-//==========================================================================
-
-static void SV_WriteChangedTextures(VMessageOut& msg)
-{
-	for (int i = 0; i < GLevel->NumSectors; i++)
-	{
-		sector_t &s = GLevel->Sectors[i];
-		if (s.floor.pic != s.floor.base_pic)
-		{
-			msg << (vuint8)svc_sec_floor
-				<< (vuint16)i
-				<< (vuint16)s.floor.pic;
-		}
-		if (s.ceiling.pic != s.ceiling.base_pic)
-		{
-			msg << (vuint8)svc_sec_ceil
-				<< (vuint16)i
-				<< (vuint16)s.ceiling.pic;
-		}
-	}
-}
-
-//==========================================================================
-//
 //	COMMAND PreSpawn
 //
 //==========================================================================
@@ -2269,7 +2122,6 @@ COMMAND(Spawn)
 			Host_Error("Player without Mobj\n");
 		}
 	}
-	SV_WriteChangedTextures(sv_player->Net->Message);
 	sv_player->Net->Message << (vuint8)svc_set_angles
 						<< (vuint8)(AngleToByte(sv_player->ViewAngles.pitch))
 						<< (vuint8)(AngleToByte(sv_player->ViewAngles.yaw))

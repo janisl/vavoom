@@ -44,16 +44,11 @@ enum
 	svc_time,
 	svc_pause,
 
-	svc_sec_floor,
-	svc_sec_ceil,
-	svc_sec_update,
-
 	svc_start_sound,
 	svc_stop_sound,
 	svc_start_seq,
 	svc_stop_seq,
 
-	svc_poly_update,
 	svc_force_lightning,
 
 	svc_intermission,
