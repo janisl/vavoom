@@ -33,6 +33,9 @@ readonly LevelInfo		Level;		//	Level info object.
 native readonly private Thinker	Prev;
 native readonly private Thinker	Next;
 
+bool					bAlwaysRelevant;	//	Always updated
+readonly bool			bNetInitial;		//	Initial update
+
 native final spawner Thinker Spawn(class<Thinker> Type, optional TVec AOrigin,
 	optional TAVec AAngles, optional mthing_t* mthing);
 native void Destroy();

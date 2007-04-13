@@ -188,12 +188,13 @@ void VThinkerChannel::Update()
 		Msg.bOpen = true;
 		Msg.WriteInt(Thinker->GetClass()->NetId, VMemberBase::GNetClassLookup.Num());
 		NewObj = false;
+		Thinker->ThinkerFlags |= VThinker::TF_NetInitial;
 	}
 
 	TAVec SavedAngles;
-	if (Thinker->IsA(VEntity::StaticClass()))
+	VEntity* Ent = Cast<VEntity>(Thinker);
+	if (Ent)
 	{
-		VEntity* Ent = (VEntity*)Thinker;
 		SavedAngles = Ent->Angles;
 		if (Ent->EntityFlags & VEntity::EF_IsPlayer)
 		{
@@ -247,13 +248,9 @@ void VThinkerChannel::Update()
 		}
 	}
 
-	if (Thinker->IsA(VEntity::StaticClass()))
+	if (Ent && (Ent->EntityFlags & VEntity::EF_IsPlayer))
 	{
-		VEntity* Ent = (VEntity*)Thinker;
-		if (Ent->EntityFlags & VEntity::EF_IsPlayer)
-		{
-			Ent->Angles = SavedAngles;
-		}
+		Ent->Angles = SavedAngles;
 	}
 	UpdatedThisFrame = true;
 
@@ -261,6 +258,9 @@ void VThinkerChannel::Update()
 	{
 		SendMessage(&Msg);
 	}
+
+	//	Clear temporary networking flags.
+	Thinker->ThinkerFlags &= ~VThinker::TF_NetInitial;
 	unguard;
 }
 
@@ -278,10 +278,25 @@ void VThinkerChannel::ParsePacket(VMessageIn& Msg)
 		int ci = Msg.ReadInt(VMemberBase::GNetClassLookup.Num());
 		VClass* C = VMemberBase::GNetClassLookup[ci];
 	
-		VEntity* Ent = (VEntity*)Connection->Context->GetLevel()->SpawnThinker(C);
-		Ent->Role = ROLE_DumbProxy;
-		Ent->RemoteRole = ROLE_Authority;
-		SetThinker(Ent);
+		VThinker* Th = Connection->Context->GetLevel()->SpawnThinker(C);
+#ifdef CLIENT
+		if (Th->IsA(VLevelInfo::StaticClass()))
+		{
+			VLevelInfo* LInfo = (VLevelInfo*)Th;
+			LInfo->Level = LInfo;
+			LInfo->Game = NULL;
+			LInfo->World = NULL;
+			GClLevel->LevelInfo = LInfo;
+			cl->Level = LInfo;
+		}
+#endif
+		if (Th->IsA(VEntity::StaticClass()))
+		{
+			VEntity* Ent = (VEntity*)Th;
+			Ent->Role = ROLE_DumbProxy;
+			Ent->RemoteRole = ROLE_Authority;
+		}
+		SetThinker(Th);
 	}
 
 	while (!Msg.AtEnd())

@@ -119,7 +119,7 @@ void VLevel::AddThinker(VThinker* Th)
 {
 	guard(VLevel::AddThinker);
 	Th->XLevel = this;
-	Th->Level = GLevelInfo;
+	Th->Level = LevelInfo;
 	Th->Prev = ThinkerTail;
 	Th->Next = NULL;
 	if (ThinkerTail)

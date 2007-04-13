@@ -1028,4 +1028,5 @@ void CopyMThing(mthing_t * from, mthing_t * to)
 
 defaultproperties
 {
+	bAlwaysRelevant = true;
 }

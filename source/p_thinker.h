@@ -38,6 +38,13 @@ class VThinker : public VObject
 	VThinker*		Prev;
 	VThinker*		Next;
 
+	enum
+	{
+		TF_AlwaysRelevant			= 0x00000001,
+		TF_NetInitial				= 0x00000002,
+	};
+	vuint32			ThinkerFlags;
+
 	static int		FIndex_Tick;
 
 	VThinker();

@@ -344,26 +344,6 @@ int c_bigClass;
 int c_bigState;
 //==========================================================================
 //
-//	SV_UpdateMobj
-//
-//==========================================================================
-
-void SV_UpdateMobj(VEntity* Ent)
-{
-	guard(SV_UpdateMobj);
-	VThinkerChannel* Chan = sv_player->Net->ThinkerChannels.FindPtr(Ent);
-	if (!Chan)
-	{
-		Chan = new VThinkerChannel(sv_player->Net, -1);
-		Chan->SetThinker(Ent);
-	}
-	Chan->Update();
-	return;
-	unguard;
-}
-
-//==========================================================================
-//
 //	VEntity::Destroy
 //
 //==========================================================================
@@ -893,6 +873,28 @@ bool SV_SecCheckFatPVS(sector_t *sec)
 
 //==========================================================================
 //
+//	IsRelevant
+//
+//==========================================================================
+
+static bool IsRelevant(VThinker* Th)
+{
+	guardSlow(IsRelevant);
+	if (Th->ThinkerFlags & VThinker::TF_AlwaysRelevant)
+		return true;
+	VEntity* Ent = Cast<VEntity>(Th);
+	if (!Ent)
+		return false;
+	if (Ent->EntityFlags & VEntity::EF_Hidden)
+		return false;
+	if (!SV_CheckFatPVS(Ent->SubSector))
+		return false;
+	return true;
+	unguardSlow;
+}
+
+//==========================================================================
+//
 //	SV_UpdateLevel
 //
 //==========================================================================
@@ -918,27 +920,18 @@ int NumObjs = 0;
 		}
 	}
 
-	//	First update players
-	for (TThinkerIterator<VEntity> Ent(GLevel); Ent; ++Ent)
+	//	Update mobjs in sight
+	for (TThinkerIterator<VThinker> Th(GLevel); Th; ++Th)
 	{
-		if (Ent->EntityFlags & VEntity::EF_Hidden)
+		if (!IsRelevant(*Th))
 			continue;
-		if (!(Ent->EntityFlags & VEntity::EF_IsPlayer))
-			continue;
-		SV_UpdateMobj(*Ent);
-		NumObjs++;
-	}
-
-	//	Then update non-player mobjs in sight
-	for (TThinkerIterator<VEntity> Ent(GLevel); Ent; ++Ent)
-	{
-		if (Ent->EntityFlags & VEntity::EF_Hidden)
-			continue;
-		if (Ent->EntityFlags & VEntity::EF_IsPlayer)
-			continue;
-		if (!SV_CheckFatPVS(Ent->SubSector))
-			continue;
-		SV_UpdateMobj(*Ent);
+		VThinkerChannel* Chan = sv_player->Net->ThinkerChannels.FindPtr(*Th);
+		if (!Chan)
+		{
+			Chan = new VThinkerChannel(sv_player->Net, -1);
+			Chan->SetThinker(*Th);
+		}
+		Chan->Update();
 		NumObjs++;
 	}
 
@@ -1977,6 +1970,7 @@ void SV_SpawnServer(const char *mapname, bool spawn_thinkers)
 
 	if (spawn_thinkers)
 	{
+		//	Create level info.
 		GLevelInfo = (VLevelInfo*)GLevel->SpawnThinker(
 			GGameInfo->LevelInfoClass);
 		GLevelInfo->Level = GLevelInfo;
@@ -1985,6 +1979,8 @@ void SV_SpawnServer(const char *mapname, bool spawn_thinkers)
 			GLevelInfo->Gravity = info.Gravity * DEFAULT_GRAVITY / 800.0;
 		else
 			GLevelInfo->Gravity = sv_gravity * DEFAULT_GRAVITY / 800.0;
+
+		//	Spawn things.
 		for (i = 0; i < GLevel->NumThings; i++)
 		{
 			GLevelInfo->eventSpawnMapThing(&GLevel->Things[i]);
