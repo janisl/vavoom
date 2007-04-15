@@ -186,7 +186,7 @@ void IM_InitStats()
 	intertime = 0.0;
 	if (!ClGame.deathmatch)
 	{
-		if (!ClGame.im->bNoIntermission)
+		if (!ClGame.cl.Level.bNoIntermission)
 		{
 			print("Single player stats are not implemented");
 		}

@@ -207,8 +207,7 @@ void CHolySeekerMissile(float thresh, float turnMax)
 	angle = Angles.yaw;
 	Velocity.x = Speed * cos(angle);
 	Velocity.y = Speed * sin(angle);
-	if (!(Level.Game.level->tictime & 15) ||
-		Origin.z > Enemy.Origin.z + Enemy.Height ||
+	if (!(XLevel.TicTime & 15) || Origin.z > Enemy.Origin.z + Enemy.Height ||
 		Origin.z + Height < Enemy.Origin.z)
 	{
 		newZ = Enemy.Origin.z + Random() * Enemy.Height;
@@ -279,7 +278,7 @@ final void A_CHolySeek()
 	if (Enemy)
 	{
 		CHolySeekerMissile(itof(Args[0]), itof(Args[0]) * 2.0);
-		if (!((Level.Game.level->tictime + 7) & 15))
+		if (!((XLevel.TicTime + 7) & 15))
 		{
 			Args[0] = 5 + (P_Random() / 20);
 		}

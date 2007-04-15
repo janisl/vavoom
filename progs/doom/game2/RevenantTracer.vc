@@ -44,7 +44,7 @@ final void A_Tracer()
 	TVec delta;
 	float adjustlen;
 
-	if (Level.Game.level->tictime & 3)
+	if (XLevel.TicTime & 3)
 		return;
 
 	// spawn a puff of smoke behind the rocket      

@@ -261,7 +261,7 @@ final void A_MinotaurChase()
 
 	Alpha = 1.0;	// In case pain caused him to skip his fade in.
 
-	if ((Level.Game.level->tictime - starttime) >= ftoi(MAULATORTIME * 35.0))
+	if ((XLevel.TicTime - starttime) >= ftoi(MAULATORTIME * 35.0))
 	{
 		Damage(none, none, 10000);
 		return;
@@ -324,7 +324,7 @@ final void A_MinotaurRoam()
 
 	Alpha = 1.0;	// In case pain caused him to skip his fade in.
 
-	if ((Level.Game.level->tictime - starttime) >= ftoi(MAULATORTIME * 35.0))
+	if ((XLevel.TicTime - starttime) >= ftoi(MAULATORTIME * 35.0))
 	{
 		Damage(none, none, 10000);
 		return;

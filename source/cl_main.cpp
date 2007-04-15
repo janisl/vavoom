@@ -83,6 +83,9 @@ IMPLEMENT_CLASS(V, ClientGameBase);
 
 static bool					UserInfoSent;
 
+static VName				CurrentSongLump;
+static int					CurrentCDTrack;
+
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
@@ -103,7 +106,6 @@ void CL_Init()
 		VClass::FindClass("Player"));
 	cl->ViewEnt = Spawn<VEntity>();
 	GClGame->cl = cl;
-	GClGame->level = &cl_level;
 	unguard;
 }
 
@@ -165,7 +167,6 @@ void CL_Shutdown()
 	im.LeaveName.Clean();
 	im.EnterName.Clean();
 	im.Text.Clean();
-	cl_level.LevelName.Clean();
 	for (int i = 0; i < MAXPLAYERS; i++)
 	{
 		scores[i].name.Clean();
@@ -234,6 +235,17 @@ void CL_ReadFromServer()
 	{
 		CL_UpdateMobjs();
 		CL_Ticker();
+	}
+
+	if (GClLevel && GClLevel->LevelInfo)
+	{
+		if (CurrentSongLump != GClLevel->LevelInfo->SongLump ||
+			CurrentCDTrack != GClLevel->LevelInfo->CDTrack)
+		{
+			CurrentSongLump = GClLevel->LevelInfo->SongLump;
+			CurrentCDTrack = GClLevel->LevelInfo->CDTrack;
+			GAudio->MusicChanged();
+		}
 	}
 	unguard;
 }

@@ -60,7 +60,7 @@ void SpawnSpecials()
 		if (sector->special & SECSPEC_SECRET_MASK)
 		{
 			//	Secret sector.
-			Game.level->totalsecret++;
+			TotalSecret++;
 		}
 		switch (sector->special & SECSPEC_BASE_MASK)
 		{

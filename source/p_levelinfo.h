@@ -32,11 +32,58 @@ class VLevelInfo : public VThinker
 	VGameInfo*		Game;
 	VWorldInfo*		World;
 
+	VStr			LevelName;
+	int				LevelNum;
+	int				Cluster;
+
+	VName			NextMap;
+	VName			SecretMap;
+
+	int				ParTime;
+	int				SuckTime;
+
+	int				Sky1Texture;
+	int				Sky2Texture;
+	float			Sky1ScrollDelta;
+	float			Sky2ScrollDelta;
+	VName			SkyBox;
+
+	VName			FadeTable;
+
+	VName			SongLump;
+	int				CDTrack;
+
 	enum
 	{
-		LIF_BegunPlay					= 0x00000001,
+		LIF_DoubleSky					= 0x00000001,
+		LIF_Lightning					= 0x00000002,
+		LIF_Map07Special				= 0x00000004,
+		LIF_BaronSpecial				= 0x00000008,
+		LIF_CyberDemonSpecial			= 0x00000010,
+		LIF_SpiderMastermindSpecial		= 0x00000020,
+		LIF_MinotaurSpecial				= 0x00000040,
+		LIF_DSparilSpecial				= 0x00000080,
+		LIF_IronLichSpecial				= 0x00000100,
+		LIF_SpecialActionOpenDoor		= 0x00000200,
+		LIF_SpecialActionLowerFloor		= 0x00000400,
+		LIF_SpecialActionKillMonsters	= 0x00000800,
+		LIF_NoIntermission				= 0x00001000,
+		LIF_NoSoundClipping				= 0x00002000,
+		LIF_AllowMonsterTelefrags		= 0x00004000,
+		LIF_NoAllies					= 0x00008000,
+		LIF_DeathSlideShow				= 0x00010000,
+		LIF_ForceNoSkyStretch			= 0x00020000,
+		LIF_LookupName					= 0x00040000,
+		LIF_BegunPlay					= 0x00080000,
 	};
 	vuint32			LevelInfoFlags;
+
+	int				TotalKills;
+	int				TotalItems;
+	int				TotalSecret;    // for intermission
+	int				CurrentKills;
+	int				CurrentItems;
+	int				CurrentSecret;
 
 	// Maintain single and multi player starting spots.
 	mthing_t		DeathmatchStarts[MAXDEATHMATCHSTARTS];  // Player spawn spots for deathmatch.
@@ -49,6 +96,13 @@ class VLevelInfo : public VThinker
 	float			Gravity;								// Level Gravity
 
 	VLevelInfo();
+
+	void SetMapInfo(const mapInfo_t&);
+
+	VStr GetLevelName() const
+	{
+		return LevelInfoFlags & LIF_LookupName ? GLanguage[*LevelName] : LevelName;
+	}
 
 	void eventSpawnSpecials()
 	{

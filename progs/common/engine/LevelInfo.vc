@@ -30,7 +30,55 @@ class LevelInfo : Thinker
 native readonly GameInfo	Game;
 native readonly WorldInfo	World;
 
+string			LevelName;
+int				LevelNum;
+int				Cluster;
+
+name			NextMap;
+name			SecretMap;
+
+int				ParTime;
+int				SuckTime;
+
+int				Sky1Texture;
+int				Sky2Texture;
+float			Sky1ScrollDelta;
+float			Sky2ScrollDelta;
+name			SkyBox;
+
+name			FadeTable;
+
+name			SongLump;
+int				CDTrack;
+
+bool			bDoubleSky;	// parallax sky: sky2 behind sky1
+bool			bLightning;	// Use of lightning on the level flashes from sky1 to sky2
+//	Special actions, as set in MAPINFO.
+bool			bMap07Special;
+bool			bBaronSpecial;
+bool			bCyberDemonSpecial;
+bool			bSpiderMastermindSpecial;
+bool			bMinotaurSpecial;
+bool			bDSparilSpecial;
+bool			bIronLichSpecial;
+bool			bSpecialActionOpenDoor;
+bool			bSpecialActionLowerFloor;
+bool			bSpecialActionKillMonsters;
+bool			bNoIntermission;
+bool			bNoSoundClipping;
+bool			bAllowMonsterTelefrags;
+bool			bNoAllies;
+bool			bDeathSlideShow;
+bool			bForceNoSkyStretch;
+bool			bLookupName;
 readonly bool	bBegunPlay;
+
+int				TotalKills;
+int				TotalItems;
+int				TotalSecret;    // for intermission
+int				CurrentKills;
+int				CurrentItems;
+int				CurrentSecret;
 
 // Maintain single and multi player starting spots.
 mthing_t		DeathmatchStarts[MAXDEATHMATCHSTARTS];	// Player spawn spots for deathmatch.
@@ -41,6 +89,16 @@ int				TIDList[MAX_TID_COUNT + 1];	// +1 for termination marker
 Entity			TIDMobj[MAX_TID_COUNT];
 
 float			Gravity;				// Level Gravity
+
+replication
+{
+	reliable if (true)
+		LevelName, Cluster, ParTime, SuckTime, Sky1Texture, Sky2Texture,
+		Sky1ScrollDelta, Sky2ScrollDelta, SkyBox, FadeTable, SongLump,
+		CDTrack, bDoubleSky, bLightning, bNoIntermission, bNoSoundClipping,
+		bForceNoSkyStretch, bLookupName, TotalKills, TotalItems, TotalSecret,
+		CurrentKills, CurrentItems, CurrentSecret;
+}
 
 //==========================================================================
 //

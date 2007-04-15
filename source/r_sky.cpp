@@ -176,12 +176,10 @@ void VRenderLevel::InitOldSky()
 	memset(sky, 0, sizeof(sky));
 	bIsSkyBox = false;
 
-	const mapInfo_t& linfo = P_GetMapInfo(cl_level.MapName);
-
 	// Check if the level is a lightning level
 	LevelHasLightning = false;
 	LightningFlash = 0;
-	if (cl_level.lightning)
+	if (Level->LevelInfo->LevelInfoFlags & VLevelInfo::LIF_Lightning)
 	{
 		int secCount = 0;
 		for (int i = 0; i < Level->NumSectors; i++)
@@ -202,8 +200,8 @@ void VRenderLevel::InitOldSky()
 		}
 	}
 
-	int skyheight = GTextureManager.Textures[cl_level.sky1Texture]->GetHeight();
-	if (linfo.Flags & MAPINFOF_ForceNoSkyStretch)
+	int skyheight = GTextureManager.Textures[Level->LevelInfo->Sky1Texture]->GetHeight();
+	if (Level->LevelInfo->LevelInfoFlags & VLevelInfo::LIF_ForceNoSkyStretch)
 	{
 		skyheight = 256;
 	}
@@ -292,19 +290,19 @@ float tk = skyh / RADIUS;
 
 	for (j = 0; j < NumSkySurfs; j++)
 	{
-		sky[j].baseTexture1 = cl_level.sky1Texture;
-		sky[j].baseTexture2 = cl_level.sky2Texture;
-		if (cl_level.doubleSky)
+		sky[j].baseTexture1 = Level->LevelInfo->Sky1Texture;
+		sky[j].baseTexture2 = Level->LevelInfo->Sky2Texture;
+		if (Level->LevelInfo->LevelInfoFlags & VLevelInfo::LIF_DoubleSky)
 		{
 			sky[j].texture1 = sky[j].baseTexture2;
 			sky[j].texture2 = sky[j].baseTexture1;
-			sky[j].scrollDelta1 = cl_level.sky2ScrollDelta;
-			sky[j].scrollDelta2 = cl_level.sky1ScrollDelta;
+			sky[j].scrollDelta1 = Level->LevelInfo->Sky2ScrollDelta;
+			sky[j].scrollDelta2 = Level->LevelInfo->Sky1ScrollDelta;
 		}
 		else
 		{
 			sky[j].texture1 = sky[j].baseTexture1;
-			sky[j].scrollDelta1 = cl_level.sky1ScrollDelta;
+			sky[j].scrollDelta1 = Level->LevelInfo->Sky1ScrollDelta;
 		}
 		sky[j].surf.plane = &sky[j].plane;
 		sky[j].surf.texinfo = &sky[j].texinfo;
@@ -313,8 +311,8 @@ float tk = skyh / RADIUS;
 	}
 
 	//	Precache textures
-	Drawer->SetTexture(cl_level.sky1Texture);
-	Drawer->SetTexture(cl_level.sky2Texture);
+	Drawer->SetTexture(Level->LevelInfo->Sky1Texture);
+	Drawer->SetTexture(Level->LevelInfo->Sky2Texture);
 	unguard;
 }
 
@@ -348,7 +346,7 @@ void VRenderLevel::InitSkyBox(VName Name1, VName Name2)
 	// Check if the level is a lightning level
 	LevelHasLightning = false;
 	LightningFlash = 0;
-	if (cl_level.lightning)
+	if (Level->LevelInfo->LevelInfoFlags & VLevelInfo::LIF_Lightning)
 	{
 		int secCount = 0;
 		for (int i = 0; i < Level->NumSectors; i++)
@@ -473,9 +471,21 @@ void VRenderLevel::InitSkyBox(VName Name1, VName Name2)
 void VRenderLevel::InitSky()
 {
 	guard(VRenderLevel::InitSky);
-	if (cl_level.SkyBox != NAME_None)
+	if (CurrentSky1Texture == Level->LevelInfo->Sky1Texture &&
+		CurrentSky2Texture == Level->LevelInfo->Sky2Texture &&
+		CurrentDoubleSky == !!(Level->LevelInfo->LevelInfoFlags & VLevelInfo::LIF_DoubleSky) &&
+		CurrentLightning == !!(Level->LevelInfo->LevelInfoFlags & VLevelInfo::LIF_Lightning))
 	{
-		InitSkyBox(cl_level.SkyBox, NAME_None);
+		return;
+	}
+	CurrentSky1Texture = Level->LevelInfo->Sky1Texture;
+	CurrentSky2Texture = Level->LevelInfo->Sky2Texture;
+	CurrentDoubleSky = !!(Level->LevelInfo->LevelInfoFlags & VLevelInfo::LIF_DoubleSky);
+	CurrentLightning = !!(Level->LevelInfo->LevelInfoFlags & VLevelInfo::LIF_Lightning);
+
+	if (Level->LevelInfo->SkyBox != NAME_None)
+	{
+		InitSkyBox(Level->LevelInfo->SkyBox, NAME_None);
 	}
 	else
 	{
@@ -485,11 +495,12 @@ void VRenderLevel::InitSky()
 		VName Name2(NAME_None);
 		//	Check if we want to replace old sky with a skybox. We can't do
 		// this if level is using double sky or it's scrolling.
-		if (r_skyboxes && !cl_level.doubleSky && !cl_level.sky1ScrollDelta)
+		if (r_skyboxes && !(Level->LevelInfo->LevelInfoFlags & VLevelInfo::LIF_DoubleSky) &&
+			!Level->LevelInfo->Sky1ScrollDelta)
 		{
-			Name1 = GTextureManager.Textures[cl_level.sky1Texture]->Name;
-			Name2 = cl_level.lightning ? GTextureManager.Textures[
-				cl_level.sky2Texture]->Name : Name1;
+			Name1 = GTextureManager.Textures[Level->LevelInfo->Sky1Texture]->Name;
+			Name2 = Level->LevelInfo->LevelInfoFlags & VLevelInfo::LIF_Lightning ?
+				GTextureManager.Textures[Level->LevelInfo->Sky2Texture]->Name : Name1;
 			Num1 = CheckSkyboxNumForName(Name1);
 			Num2 = CheckSkyboxNumForName(Name2);
 		}
@@ -507,41 +518,6 @@ void VRenderLevel::InitSky()
 
 //==========================================================================
 //
-//	VRenderLevel::SkyChanged
-//
-//==========================================================================
-
-void VRenderLevel::SkyChanged()
-{
-	guard(VRenderLevel::SkyChanged);
-	if (bIsSkyBox)
-	{
-		return;
-	}
-
-	for (int j = 0; j < NumSkySurfs; j++)
-	{
-		sky[j].baseTexture1 = cl_level.sky1Texture;
-		sky[j].baseTexture2 = cl_level.sky2Texture;
-		if (cl_level.doubleSky)
-		{
-			sky[j].texture1 = sky[j].baseTexture2;
-			sky[j].texture2 = sky[j].baseTexture1;
-		}
-		else
-		{
-			sky[j].texture1 = sky[j].baseTexture1;
-		}
-	}
-
-	//	Precache textures
-	Drawer->SetTexture(cl_level.sky1Texture);
-	Drawer->SetTexture(cl_level.sky2Texture);
-	unguard;
-}
-
-//==========================================================================
-//
 //	VRenderLevel::AnimateSky
 //
 //==========================================================================
@@ -549,6 +525,8 @@ void VRenderLevel::SkyChanged()
 void VRenderLevel::AnimateSky(float frametime)
 {
 	guard(VRenderLevel::AnimateSky);
+	InitSky();
+
 	//	Update sky column offsets
 	for (int i = 0; i < NumSkySurfs; i++)
 	{
@@ -691,7 +669,7 @@ void VRenderLevel::DoLightningFlash()
 		}
 		else
 		{
-			if ((rand() & 0xff) < 128 && !(cl_level.tictime & 32))
+			if ((rand() & 0xff) < 128 && !(Level->TicTime & 32))
 			{
 				NextLightningFlash = ((rand() & 7) + 2) * 35;
 			}
@@ -726,6 +704,8 @@ void VRenderLevel::ForceLightning()
 void VRenderLevel::DrawSky()
 {
 	guard(VRenderLevel::DrawSky);
+	InitSky();
+
 	Drawer->BeginSky();
 
 	for (int i = 0; i < NumSkySurfs; i++)

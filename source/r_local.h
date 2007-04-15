@@ -177,11 +177,14 @@ private:
 	segpart_t*		AllocatedSegParts;
 
 	//	Sky variables
+	int				CurrentSky1Texture;
+	int				CurrentSky2Texture;
+	bool			CurrentDoubleSky;
+	bool			CurrentLightning;
 	bool			LevelHasLightning;
 	int				NextLightningFlash;
 	int				LightningFlash;
 	int*			LightningLightLevels;
-
 	sky_t			sky[HDIVS * VDIVS];
 	int				NumSkySurfs;
 	bool			bIsSkyBox;
@@ -301,7 +304,6 @@ public:
 	void UpdateWorld();
 	void SetupFakeFloors(sector_t*);
 
-	void SkyChanged();
 	void ForceLightning();
 
 	void AddStaticLight(const TVec&, float, vuint32);

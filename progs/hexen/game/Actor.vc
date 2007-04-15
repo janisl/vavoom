@@ -616,7 +616,7 @@ bool HitFloorType()
 		smallsplash = true;
 
 	if (TInfo->DamageAmount && bIsPlayer &&
-		Level.Game.level->tictime & TInfo->DamageTimeMask)
+		XLevel.TicTime & TInfo->DamageTimeMask)
 	{
 		Damage(TInfo->DamageType == 'lava' ? HexenLevelInfo(
 			Level).GLavaInflictor : none, none, TInfo->DamageAmount);
@@ -802,7 +802,7 @@ Actor ActiveMinotaur()
 			continue;	// for morphed minotaurs
 		if (mo.bCorpse)
 			continue;
-		if ((Level.Game.level->tictime - mo.Args[0]) >= ftoi(MAULATORTIME * 35.0))
+		if ((XLevel.TicTime - mo.Args[0]) >= ftoi(MAULATORTIME * 35.0))
 			continue;
 		if (mo.Instigator == self)
 			return mo;
@@ -869,7 +869,7 @@ void Died(Actor source)
 		}
 	}
 	if (bCountKill)
-		Level.Game.level->currentkills++;
+		Level.CurrentKills++;
 	if (bIsPlayer)
 	{
 		// Player death
@@ -1494,7 +1494,7 @@ void PoisonPlayer(Actor poisoner, int poison)
 	{
 		Player(Player).PoisonCount = 100;
 	}
-	Player(Player).LastPoisonTime = Level.Game.level->time;
+	Player(Player).LastPoisonTime = XLevel.Time;
 }
 
 //==========================================================================
@@ -1564,7 +1564,7 @@ void PoisonDamage(Actor source, int damage, bool playPainSound)
 		Died(source);
 		return;
 	}
-	if (!(Level.Game.level->tictime & 63) && playPainSound)
+	if (!(XLevel.TicTime & 63) && playPainSound)
 	{
 		SetState(PainState);
 	}
@@ -2620,9 +2620,9 @@ bool ZMovement(float DeltaTime)
 				Origin.z += FLOATSPEED * DeltaTime;
 		}
 	}
-	if (bIsPlayer && bFly && !(Origin.z <= FloorZ) && Level.Game.level->tictime & 2)
+	if (bIsPlayer && bFly && !(Origin.z <= FloorZ) && XLevel.TicTime & 2)
 	{
-		Origin.z += sin(90.0 * 35.0 / 20.0 * Level.Game.level->time);
+		Origin.z += sin(90.0 * 35.0 / 20.0 * XLevel.Time);
 	}
 
 	//
@@ -3047,7 +3047,7 @@ bool SectorChanged(int CrushChange)
 		return true;
 	}
 
-	if (CrushChange && !(Level.Game.level->tictime & 3))
+	if (CrushChange && !(XLevel.TicTime & 3))
 	{
 		Damage(none, none, CrushChange);
 
@@ -3093,7 +3093,7 @@ bool PIT_StompThing(Entity Other)
 	}
 
 	//  Check if allowed to stomp things
-	if (!bTelestomp && !XLevel.bAllowMonsterTelefrags)
+	if (!bTelestomp && !Level.bAllowMonsterTelefrags)
 	{
 		return false;
 	}

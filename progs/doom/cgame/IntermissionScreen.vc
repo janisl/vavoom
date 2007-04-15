@@ -151,6 +151,10 @@ int sp_state;
 int ng_state;
 int dm_state;
 
+int				TotalKills;
+int				TotalItems;
+int				TotalSecret;
+
 int cnt_kills[MAXPLAYERS];
 int cnt_items[MAXPLAYERS];
 int cnt_secret[MAXPLAYERS];
@@ -294,14 +298,18 @@ void Start()
 	IM_InitAnimatedBack();
 #endif
 
-	if (!ClGame.im->TotalKills)
-		ClGame.im->TotalKills = 1;
+	TotalKills = ClGame.cl.Level.TotalKills;
+	TotalItems = ClGame.cl.Level.TotalItems;
+	TotalSecret = ClGame.cl.Level.TotalSecret;
 
-	if (!ClGame.im->TotalItems)
-		ClGame.im->TotalItems = 1;
+	if (!TotalKills)
+		TotalKills = 1;
 
-	if (!ClGame.im->TotalSecret)
-		ClGame.im->TotalSecret = 1;
+	if (!TotalItems)
+		TotalItems = 1;
+
+	if (!TotalSecret)
+		TotalSecret = 1;
 
 	if (ClGame.deathmatch)
 		IM_InitDeathmatchStats();
@@ -860,7 +868,7 @@ void IM_DrawTime(int x, int y, int t, string BaseText, bool sucks)
 	T_SetAlign(hleft, vtop);
 
 	string Text;
-	if (!sucks || !ClGame.im->SuckTime || t < ClGame.im->SuckTime * 60 * 60)
+	if (!sucks || !ClGame.cl.Level.SuckTime || t < ClGame.cl.Level.SuckTime * 60 * 60)
 	{
 		Text = BaseText;
 		if (t >= 60 * 60)
@@ -902,7 +910,7 @@ void IM_InitSingleStats()
 	cnt_secret[0] = -1;
 	cnt_time = -1;
 	cnt_pause = 1.0;
-	if (ClGame.im->bNoIntermission)
+	if (ClGame.cl.Level.bNoIntermission)
 	{
 		interstate = IMS_NoState;
 	}
@@ -933,8 +941,8 @@ void IM_DrawSingleStats()
 	IM_DrawPercent(640 - SP_STATSX, SP_STATSY + lh, cnt_items[0]);
 	IM_DrawPercent(640 - SP_STATSX, SP_STATSY + 2 * lh, cnt_secret[0]);
 	IM_DrawTime(SP_TIMEX, SP_TIMEY, cnt_time, "time: ", true);
-	if (cnt_time >= 0 && ClGame.im->ParTime)
-		IM_DrawTime(SP_PARX, SP_PARY, ClGame.im->ParTime, "par: ", false);
+	if (cnt_time >= 0 && ClGame.cl.Level.ParTime)
+		IM_DrawTime(SP_PARX, SP_PARY, ClGame.cl.Level.ParTime, "par: ", false);
 }
 
 //==========================================================================
@@ -948,9 +956,9 @@ void IM_UpdateSingleStats(float DeltaTime)
 	if (ClGame.skipintermission && sp_state != 10)
 	{
 		ClGame.skipintermission = 0;
-		cnt_kills[0] = (ClGame.scores[0].killcount * 100) / ClGame.im->TotalKills;
-		cnt_items[0] = (ClGame.scores[0].itemcount * 100) / ClGame.im->TotalItems;
-		cnt_secret[0] = (ClGame.scores[0].secretcount * 100) / ClGame.im->TotalSecret;
+		cnt_kills[0] = (ClGame.scores[0].killcount * 100) / TotalKills;
+		cnt_items[0] = (ClGame.scores[0].itemcount * 100) / TotalItems;
+		cnt_secret[0] = (ClGame.scores[0].secretcount * 100) / TotalSecret;
 		cnt_time = ftoi(ClGame.im->Time);
 		LocalSound('weapons/rocklx');
 		sp_state = 10;
@@ -963,9 +971,9 @@ void IM_UpdateSingleStats(float DeltaTime)
 		if (!(ftoi(btime * 35.0) & 3))
 			LocalSound('weapons/pistol');
 
-		if (cnt_kills[0] >= (ClGame.scores[0].killcount * 100) / ClGame.im->TotalKills)
+		if (cnt_kills[0] >= (ClGame.scores[0].killcount * 100) / TotalKills)
 		{
-			cnt_kills[0] = (ClGame.scores[0].killcount * 100) / ClGame.im->TotalKills;
+			cnt_kills[0] = (ClGame.scores[0].killcount * 100) / TotalKills;
 			LocalSound('weapons/rocklx');
 			sp_state++;
 		}
@@ -977,9 +985,9 @@ void IM_UpdateSingleStats(float DeltaTime)
 		if (!(ftoi(btime * 35.0) & 3))
 			LocalSound('weapons/pistol');
 
-		if (cnt_items[0] >= (ClGame.scores[0].itemcount * 100) / ClGame.im->TotalItems)
+		if (cnt_items[0] >= (ClGame.scores[0].itemcount * 100) / TotalItems)
 		{
-			cnt_items[0] = (ClGame.scores[0].itemcount * 100) / ClGame.im->TotalItems;
+			cnt_items[0] = (ClGame.scores[0].itemcount * 100) / TotalItems;
 			LocalSound('weapons/rocklx');
 			sp_state++;
 		}
@@ -991,9 +999,9 @@ void IM_UpdateSingleStats(float DeltaTime)
 		if (!(ftoi(btime * 35.0) & 3))
 			LocalSound('weapons/pistol');
 
-		if (cnt_secret[0] >= (ClGame.scores[0].secretcount * 100) / ClGame.im->TotalSecret)
+		if (cnt_secret[0] >= (ClGame.scores[0].secretcount * 100) / TotalSecret)
 		{
-			cnt_secret[0] = (ClGame.scores[0].secretcount * 100) / ClGame.im->TotalSecret;
+			cnt_secret[0] = (ClGame.scores[0].secretcount * 100) / TotalSecret;
 			LocalSound('weapons/rocklx');
 			sp_state++;
 		}
@@ -1065,7 +1073,7 @@ void IM_InitCooperativeStats()
 		cnt_frags[i] = 0;
 	}
 
-	if (ClGame.im->bNoIntermission)
+	if (ClGame.cl.Level.bNoIntermission)
 	{
 		interstate = IMS_NoState;
 	}
@@ -1178,9 +1186,9 @@ void IM_UpdateCooperativeStats(float DeltaTime)
 			if (!ClGame.scores[i].bActive)
 				continue;
 
-			cnt_kills[i] = (ClGame.scores[i].killcount * 100) / ClGame.im->TotalKills;
-			cnt_items[i] = (ClGame.scores[i].itemcount * 100) / ClGame.im->TotalItems;
-			cnt_secret[i] = (ClGame.scores[i].secretcount * 100) / ClGame.im->TotalSecret;
+			cnt_kills[i] = (ClGame.scores[i].killcount * 100) / TotalKills;
+			cnt_items[i] = (ClGame.scores[i].itemcount * 100) / TotalItems;
+			cnt_secret[i] = (ClGame.scores[i].secretcount * 100) / TotalSecret;
 			cnt_frags[i] = FragSum(i);
 		}
 		LocalSound('weapons/rocklx');
@@ -1201,8 +1209,8 @@ void IM_UpdateCooperativeStats(float DeltaTime)
 
 			cnt_kills[i] += 2;
 
-			if (cnt_kills[i] >= (ClGame.scores[i].killcount * 100) / ClGame.im->TotalKills)
-				cnt_kills[i] = (ClGame.scores[i].killcount * 100) / ClGame.im->TotalKills;
+			if (cnt_kills[i] >= (ClGame.scores[i].killcount * 100) / TotalKills)
+				cnt_kills[i] = (ClGame.scores[i].killcount * 100) / TotalKills;
 			else
 				stillticking = true;
 		}
@@ -1226,8 +1234,8 @@ void IM_UpdateCooperativeStats(float DeltaTime)
 				continue;
 
 			cnt_items[i] += 2;
-			if (cnt_items[i] >= (ClGame.scores[i].itemcount * 100) / ClGame.im->TotalItems)
-				cnt_items[i] = (ClGame.scores[i].itemcount * 100) / ClGame.im->TotalItems;
+			if (cnt_items[i] >= (ClGame.scores[i].itemcount * 100) / TotalItems)
+				cnt_items[i] = (ClGame.scores[i].itemcount * 100) / TotalItems;
 			else
 				stillticking = true;
 		}
@@ -1252,9 +1260,9 @@ void IM_UpdateCooperativeStats(float DeltaTime)
 			cnt_secret[i] += 2;
 
 			if (cnt_secret[i] >=
-				(ClGame.scores[i].secretcount * 100) / ClGame.im->TotalSecret)
+				(ClGame.scores[i].secretcount * 100) / TotalSecret)
 				cnt_secret[i] =
-					(ClGame.scores[i].secretcount * 100) / ClGame.im->TotalSecret;
+					(ClGame.scores[i].secretcount * 100) / TotalSecret;
 			else
 				stillticking = true;
 		}

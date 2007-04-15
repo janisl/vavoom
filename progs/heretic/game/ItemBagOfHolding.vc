@@ -65,7 +65,7 @@ void TouchSpecial(Actor Toucher)
 	if (bCountItem)
 	{
 		Toucher.Player.ItemCount++;
-		Level.Game.level->currentitems++;
+		Level.CurrentItems++;
 	}
 	if (Level.Game.deathmatch && !bDropped)
 	{

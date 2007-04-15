@@ -66,7 +66,7 @@ bool Touch(Entity InOther)
 				{
 					LightningOwner.Enemy = Other;
 				}
-				if (!(Level.Game.level->tictime & 3))
+				if (!(XLevel.TicTime & 3))
 				{
 					LightningOwner.Health--;
 				}

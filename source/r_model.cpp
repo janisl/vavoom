@@ -731,7 +731,7 @@ static int FindFrame(const VClassModelScript& Cls, int Frame, float Inter)
 //
 //==========================================================================
 
-static void DrawModel(const TVec& Org, const TAVec& Angles,
+static void DrawModel(VLevel* Level, const TVec& Org, const TAVec& Angles,
 	VClassModelScript& Cls, int FIdx, const char* Skin, int Version,
 	vuint32 Light, float Alpha, bool IsViewModel, float Inter)
 {
@@ -759,7 +759,7 @@ static void DrawModel(const TVec& Org, const TAVec& Angles,
 		int Md2SkinIdx = 0;
 		if (SubMdl.SkinAnimSpeed)
 		{
-			Md2SkinIdx = int(cl_level.time * SubMdl.SkinAnimSpeed) %
+			Md2SkinIdx = int((Level ? Level->Time : 0) * SubMdl.SkinAnimSpeed) %
 				SubMdl.SkinAnimRange;
 		}
 
@@ -860,8 +860,8 @@ bool VRenderLevel::DrawAliasModel(const TVec& Org, const TAVec& Angles,
 		return false;
 	}
 
-	DrawModel(Org, Angles, *SMdl->DefaultClass, FIdx, Skin, Version, Light,
-		Alpha, IsViewModel, Inter);
+	DrawModel(Level, Org, Angles, *SMdl->DefaultClass, FIdx, Skin, Version,
+		Light, Alpha, IsViewModel, Inter);
 	return true;
 	unguard;
 }
@@ -896,7 +896,7 @@ bool VRenderLevel::DrawAliasModel(const TVec& Org, const TAVec& Angles,
 		return false;
 	}
 
-	DrawModel(Org, Angles, *Cls, FIdx, Skin, Version, Light, Alpha,
+	DrawModel(Level, Org, Angles, *Cls, FIdx, Skin, Version, Light, Alpha,
 		IsViewModel, Inter);
 	return true;
 	unguard;
@@ -1022,8 +1022,8 @@ void R_DrawModelFrame(const TVec& Origin, float Angle, VModel* Model,
 	Angles.pitch = 0;
 	Angles.roll = 0;
 
-	DrawModel(Origin, Angles, *SMdl->DefaultClass, FIdx, Skin, 0, 0xffffffff,
-		1.0, false, 0);
+	DrawModel(NULL, Origin, Angles, *SMdl->DefaultClass, FIdx, Skin, 0,
+		0xffffffff, 1.0, false, 0);
 
 	Drawer->EndView();
 	unguard;

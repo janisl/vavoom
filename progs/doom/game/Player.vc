@@ -906,7 +906,7 @@ void CalcHeight(float deltaTime)
 	if (Bob > MAXBOB)
 		Bob = MAXBOB;
 
-	angle = (180.0 * 35.0 / 10.0) * Level.Game.level->time;
+	angle = (180.0 * 35.0 / 10.0) * Level.XLevel.Time;
 	bob = Bob / 2.0 * sin(angle);
 
 	// move viewheight
@@ -1108,7 +1108,7 @@ void PlayerInSpecialSector(float deltaTime)
 	{
 		//	Secret area.
 		SecretCount++;
-		Level.Game.level->currentsecret++;
+		Level.CurrentSecret++;
 		MO.Sector->special &= ~SECSPEC_SECRET_MASK;
 		centreprint("You found a secret area");
 	}
@@ -1121,34 +1121,34 @@ void PlayerInSpecialSector(float deltaTime)
 		{
 		case SECSPEC_DamageHellslime:
 			if (!Powers[pw_ironfeet] &&
-				Level.Game.level->time - LastSectorDamageTime >= 32.0 / 35.0)
+				Level.XLevel.Time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
-				LastSectorDamageTime = Level.Game.level->time;
+				LastSectorDamageTime = Level.XLevel.Time;
 				Actor(MO).Damage(none, none, 10);
 			}
 			break;
 		case SECSPEC_DamageSludge:
 			if (!Powers[pw_ironfeet] &&
-				Level.Game.level->time - LastSectorDamageTime >= 32.0 / 35.0)
+				Level.XLevel.Time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
-				LastSectorDamageTime = Level.Game.level->time;
+				LastSectorDamageTime = Level.XLevel.Time;
 				Actor(MO).Damage(none, none, 4);
 			}
 			break;
 		case SECSPEC_DamageNukage:
 			if (!Powers[pw_ironfeet] &&
-				Level.Game.level->time - LastSectorDamageTime >= 32.0 / 35.0)
+				Level.XLevel.Time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
-				LastSectorDamageTime = Level.Game.level->time;
+				LastSectorDamageTime = Level.XLevel.Time;
 				Actor(MO).Damage(none, none, 5);
 			}
 			break;
 		case SECSPEC_LightStrobeFastDamage:
 		case SECSPEC_DamageSuperHellslime:
 			if ((!Powers[pw_ironfeet] || (P_Random() < 5)) &&
-				Level.Game.level->time - LastSectorDamageTime >= 32.0 / 35.0)
+				Level.XLevel.Time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
-				LastSectorDamageTime = Level.Game.level->time;
+				LastSectorDamageTime = Level.XLevel.Time;
 				Actor(MO).Damage(none, none, 20);
 			}
 			break;
@@ -1156,9 +1156,9 @@ void PlayerInSpecialSector(float deltaTime)
 			// EXIT SUPER DAMAGE! (for E1M8 finale)
 			Cheats &= ~CF_GODMODE;
 	
-			if (Level.Game.level->time - LastSectorDamageTime >= 32.0 / 35.0)
+			if (Level.XLevel.Time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
-				LastSectorDamageTime = Level.Game.level->time;
+				LastSectorDamageTime = Level.XLevel.Time;
 				Actor(MO).Damage(none, none, 20);
 			}
 	
@@ -1168,18 +1168,18 @@ void PlayerInSpecialSector(float deltaTime)
 			}
 			break;
 		case SECSPEC_DamageLavaWimpy:
-			if (Level.Game.level->time - LastSectorDamageTime >= 16.0 / 35.0)
+			if (Level.XLevel.Time - LastSectorDamageTime >= 16.0 / 35.0)
 			{
-				LastSectorDamageTime = Level.Game.level->time;
+				LastSectorDamageTime = Level.XLevel.Time;
 				//MO.Damage(GLavaInflictor, none, 5);
 				Actor(MO).Damage(none, none, 5);
 				Actor(MO).HitFloorType();
 			}
 			break;
 		case SECSPEC_DamageLavaHefty:
-			if (Level.Game.level->time - LastSectorDamageTime >= 16.0 / 35.0)
+			if (Level.XLevel.Time - LastSectorDamageTime >= 16.0 / 35.0)
 			{
-				LastSectorDamageTime = Level.Game.level->time;
+				LastSectorDamageTime = Level.XLevel.Time;
 				//MO.Damage(GLavaInflictor, none, 8);
 				Actor(MO).Damage(none, none, 8);
 				Actor(MO).HitFloorType();
@@ -1187,9 +1187,9 @@ void PlayerInSpecialSector(float deltaTime)
 			break;
 		case SECSPEC_ScrollEastLavaDamage:
 			ThrustPlayer(0.0, 1024.0, deltaTime);
-			if (Level.Game.level->time - LastSectorDamageTime >= 16.0 / 35.0)
+			if (Level.XLevel.Time - LastSectorDamageTime >= 16.0 / 35.0)
 			{
-				LastSectorDamageTime = Level.Game.level->time;
+				LastSectorDamageTime = Level.XLevel.Time;
 				//MO.Damage(GLavaInflictor, none, 5);
 				Actor(MO).Damage(none, none, 5);
 				Actor(MO).HitFloorType();
@@ -1215,25 +1215,25 @@ void PlayerInSpecialSector(float deltaTime)
 		{
 		case 0x0100:
 			if (!Powers[pw_ironfeet] &&
-				Level.Game.level->time - LastSectorDamageTime >= 32.0 / 35.0)
+				Level.XLevel.Time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
-				LastSectorDamageTime = Level.Game.level->time;
+				LastSectorDamageTime = Level.XLevel.Time;
 				Actor(MO).Damage(none, none, 5);
 			}
 			break;
 		case 0x0200:
 			if (!Powers[pw_ironfeet] &&
-				Level.Game.level->time - LastSectorDamageTime >= 32.0 / 35.0)
+				Level.XLevel.Time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
-				LastSectorDamageTime = Level.Game.level->time;
+				LastSectorDamageTime = Level.XLevel.Time;
 				Actor(MO).Damage(none, none, 10);
 			}
 			break;
 		case 0x0300:
 			if ((!Powers[pw_ironfeet] || (P_Random() < 5)) &&
-				Level.Game.level->time - LastSectorDamageTime >= 32.0 / 35.0)
+				Level.XLevel.Time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
-				LastSectorDamageTime = Level.Game.level->time;
+				LastSectorDamageTime = Level.XLevel.Time;
 				Actor(MO).Damage(none, none, 20);
 			}
 			break;
@@ -1246,24 +1246,24 @@ void PlayerInSpecialSector(float deltaTime)
 		if (MO.Sector->Damage < 20)
 		{
 			if (!Powers[pw_ironfeet] &&
-				Level.Game.level->time - LastSectorDamageTime >= 32.0 / 35.0)
+				Level.XLevel.Time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
-				LastSectorDamageTime = Level.Game.level->time;
+				LastSectorDamageTime = Level.XLevel.Time;
 				Actor(MO).Damage(none, none, MO.Sector->Damage);
 			}
 		}
 		else if (MO.Sector->Damage < 50)
 		{
 			if ((!Powers[pw_ironfeet] || (P_Random() < 5)) &&
-				Level.Game.level->time - LastSectorDamageTime >= 32.0 / 35.0)
+				Level.XLevel.Time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
-				LastSectorDamageTime = Level.Game.level->time;
+				LastSectorDamageTime = Level.XLevel.Time;
 				Actor(MO).Damage(none, none, MO.Sector->Damage);
 			}
 		}
-		else if (Level.Game.level->time - LastSectorDamageTime >= 1.0 / 35.0)
+		else if (Level.XLevel.Time - LastSectorDamageTime >= 1.0 / 35.0)
 		{
-			LastSectorDamageTime = Level.Game.level->time;
+			LastSectorDamageTime = Level.XLevel.Time;
 			Actor(MO).Damage(none, none, MO.Sector->Damage);
 		}
 	}
@@ -1375,45 +1375,45 @@ void PlayerInContents(float deltaTime)
 	{
 	case CONTENTS_LAVA:
 		if (!Powers[pw_ironfeet] &&
-			Level.Game.level->time - LastSectorDamageTime >= 32.0 / 35.0)
+			Level.XLevel.Time - LastSectorDamageTime >= 32.0 / 35.0)
 		{
-			LastSectorDamageTime = Level.Game.level->time;
+			LastSectorDamageTime = Level.XLevel.Time;
 			Actor(MO).Damage(none, none, 10);
 		}
 		break;
 
 	case CONTENTS_NUKAGE:
 		if (!Powers[pw_ironfeet] &&
-			Level.Game.level->time - LastSectorDamageTime >= 32.0 / 35.0)
+			Level.XLevel.Time - LastSectorDamageTime >= 32.0 / 35.0)
 		{
-			LastSectorDamageTime = Level.Game.level->time;
+			LastSectorDamageTime = Level.XLevel.Time;
 			Actor(MO).Damage(none, none, 5);
 		}
 		break;
 
 	case CONTENTS_SLIME:
 		if (!Powers[pw_ironfeet] &&
-			Level.Game.level->time - LastSectorDamageTime >= 32.0 / 35.0)
+			Level.XLevel.Time - LastSectorDamageTime >= 32.0 / 35.0)
 		{
-			LastSectorDamageTime = Level.Game.level->time;
+			LastSectorDamageTime = Level.XLevel.Time;
 			Actor(MO).Damage(none, none, 10);
 		}
 		break;
 
 	case CONTENTS_HELLSLIME:
 		if ((!Powers[pw_ironfeet] || (P_Random() < 5)) &&
-			Level.Game.level->time - LastSectorDamageTime >= 32.0 / 35.0)
+			Level.XLevel.Time - LastSectorDamageTime >= 32.0 / 35.0)
 		{
-			LastSectorDamageTime = Level.Game.level->time;
+			LastSectorDamageTime = Level.XLevel.Time;
 			Actor(MO).Damage(none, none, 20);
 		}
 		break;
 
 	case CONTENTS_SLUDGE:
 		if (!Powers[pw_ironfeet] &&
-			Level.Game.level->time - LastSectorDamageTime >= 32.0 / 35.0)
+			Level.XLevel.Time - LastSectorDamageTime >= 32.0 / 35.0)
 		{
-			LastSectorDamageTime = Level.Game.level->time;
+			LastSectorDamageTime = Level.XLevel.Time;
 			Actor(MO).Damage(none, none, 4);
 		}
 		break;
@@ -1746,10 +1746,9 @@ void PlayerTick(float deltaTime)
 		HazardTime -= deltaTime;
 		if (HazardTime <= 0.0)
 			HazardTime = 0.0;
-		if (Level.Game.level->time - LastHazardTime >= 32.0 / 35.0 &&
-			HazardTime > 16.0)
+		if (Level.XLevel.Time - LastHazardTime >= 32.0 / 35.0 && HazardTime > 16.0)
 		{
-			LastHazardTime = Level.Game.level->time;
+			LastHazardTime = Level.XLevel.Time;
 			Actor(MO).Damage(none, none, 5);
 		}
 	}

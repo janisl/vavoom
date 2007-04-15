@@ -883,7 +883,7 @@ const mapInfo_t& P_GetMapInfo(VName map)
 
 const char* P_GetMapName(int map)
 {
-	return *MapInfo[QualifyMap(map)].Name;
+	return *MapInfo[QualifyMap(map)].GetName();
 }
 
 //==========================================================================

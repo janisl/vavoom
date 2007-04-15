@@ -221,7 +221,7 @@ COMMAND(MyPos)
 	if (CheatAllowed())
     {
 		GCon->Logf("MAP %s  X:%f  Y:%f  Z:%f  Yaw:%f Pitch:%f",
-			*level.MapName, GGameInfo->Players[0]->MO->Origin.x,
+			*GLevel->MapName, GGameInfo->Players[0]->MO->Origin.x,
 			GGameInfo->Players[0]->MO->Origin.y, GGameInfo->Players[0]->MO->Origin.z,
 			GGameInfo->Players[0]->MO->Angles.yaw, GGameInfo->Players[0]->MO->Angles.pitch);
 	}

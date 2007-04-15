@@ -76,8 +76,6 @@ void CL_Clear()
 	memset((byte*)cl + sizeof(VObject), 0, cl->GetClass()->ClassSize - sizeof(VObject));
 	cl->ViewEnt = PrevVEnt;
 	cl->Net = Net;
-	cl_level.LevelName.Clean();
-	memset(&cl_level, 0, sizeof(cl_level));
 	for (int i = 0; i < MAXPLAYERS; i++)
 	{
 		scores[i].name.Clean();
@@ -221,9 +219,9 @@ static void CL_ParseTime(VMessageIn& msg)
 
 	R_AnimateSurfaces();
 	msg << new_time;
-	cl_level.tictime = int(new_time * 35);
-	cl_level.time = new_time;
-	cl->WorldTimer = cl_level.tictime;
+	GClLevel->TicTime = int(new_time * 35);
+	GClLevel->Time = new_time;
+	cl->WorldTimer = GClLevel->TicTime;
 	unguard;
 }
 
@@ -278,34 +276,19 @@ static void CL_ParseServerInfo(VMessageIn& msg)
 	msg << GClGame->serverinfo;
 	CL_ReadFromServerInfo();
 
-	cl_level.MapName = *msg.ReadString();
-	cl_level.LevelName = msg.ReadString();
+	VName MapName = *msg.ReadString();
 
 	cl->ClientNum = msg.ReadByte();
 	GClGame->maxclients = msg.ReadByte();
 	GClGame->deathmatch = msg.ReadByte();
 
-	msg << cl_level.totalkills
-		<< cl_level.totalitems
-		<< cl_level.totalsecret;
-	cl_level.sky1Texture = (word)msg.ReadShort();
-	cl_level.sky2Texture = (word)msg.ReadShort();
-	msg << cl_level.sky1ScrollDelta
-		<< cl_level.sky2ScrollDelta;
-	cl_level.doubleSky = msg.ReadByte();
-	cl_level.lightning = msg.ReadByte();
-	cl_level.SkyBox = *msg.ReadString();
-	cl_level.FadeTable = *msg.ReadString();
-
-	cl_level.SongLump = *msg.ReadString();
-	cl_level.cdTrack = msg.ReadByte();
-
+	const mapInfo_t& LInfo = P_GetMapInfo(MapName);
 	GCon->Log("---------------------------------------");
-	GCon->Log(cl_level.LevelName);
+	GCon->Log(LInfo.GetName());
 	GCon->Log("");
 	C_ClearNotify();
 
-	CL_LoadLevel(cl_level.MapName);
+	CL_LoadLevel(MapName);
 
 	((VLevelChannel*)cl->Net->Channels[CHANIDX_Level])->SetLevel(GClLevel);
 
@@ -349,15 +332,11 @@ static void CL_ParseIntermission(VMessageIn& msg)
 	im.Text.Clean();
 	im.IMFlags = 0;
 
-	const mapInfo_t& linfo = P_GetMapInfo(cl_level.MapName);
-	im.LeaveMap = cl_level.MapName;
+	const mapInfo_t& linfo = P_GetMapInfo(GClLevel->MapName);
+	im.LeaveMap = GClLevel->MapName;
 	im.LeaveCluster = linfo.Cluster;
 	im.LeaveName = linfo.GetName();
 	im.LeaveTitlePatch = linfo.TitlePatch;
-	im.ParTime = linfo.ParTime;
-	im.SuckTime = linfo.SuckTime;
-	if (linfo.Flags & MAPINFOF_NoIntermission)
-		im.IMFlags |= im_t::IMF_NoIntermission;
 
 	const mapInfo_t& einfo = P_GetMapInfo(nextmap);
 	im.EnterMap = nextmap;
@@ -433,10 +412,7 @@ static void CL_ParseIntermission(VMessageIn& msg)
 		}
 	}
 
-	im.TotalKills = cl_level.totalkills;
-	im.TotalItems = cl_level.totalitems;
-	im.TotalSecret = cl_level.totalsecret;
-	im.Time = cl_level.time;
+	im.Time = GClLevel->Time;
 	for (int i = 0; i < MAXPLAYERS; i++)
 	{
 		if (msg.ReadByte())
@@ -682,15 +658,9 @@ void VClientGenChannel::ParsePacket(VMessageIn& msg)
 			GClLevel->RenderData->AddStaticLight(origin, radius, colour);
 			break;
 
-		case svc_change_sky:
-			cl_level.sky1Texture = (word)msg.ReadShort();
-			cl_level.sky2Texture = (word)msg.ReadShort();
-			GClLevel->RenderData->SkyChanged();
-			break;
-
 		case svc_change_music:
-			cl_level.SongLump = *msg.ReadString();
-			cl_level.cdTrack = msg.ReadByte();
+			GClLevel->LevelInfo->SongLump = *msg.ReadString();
+			GClLevel->LevelInfo->CDTrack = msg.ReadByte();
 			GAudio->MusicChanged();
 			break;
 

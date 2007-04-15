@@ -33,13 +33,13 @@ class ConversationItem343 : Pickup;
 
 bool HandlePickup(Actor Toucher)
 {
-	if (Level.Game.level->MapName == 'map03')
+	if (XLevel.MapName == 'map03')
 	{
 		StrifeLevelInfo(Level).ConversationSlideshow = true;
 		MSG_Select(MSG_SV_RELIABLE);
 		MSG_WriteByte(StrifeDefs::svc_slideshow1);
 	}
-	else if (Level.Game.level->MapName == 'map10')
+	else if (XLevel.MapName == 'map10')
 	{
 		StrifeLevelInfo(Level).ConversationSlideshow = true;
 		MSG_Select(MSG_SV_RELIABLE);

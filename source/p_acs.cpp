@@ -1342,7 +1342,7 @@ void VAcsLevel::CheckAcsStore()
 	for (int i = XLevel->WorldInfo->Acs->Store.Num() - 1; i >= 0; i--)
 	{
 		VAcsStore* store = &XLevel->WorldInfo->Acs->Store[i];
-		if (store->Map != level.MapName)
+		if (store->Map != XLevel->MapName)
 		{
 			continue;
 		}
@@ -1409,7 +1409,7 @@ bool VAcsLevel::Start(int Number, int MapNum, int Arg1, int Arg2, int Arg3,
 	if (MapNum)
 	{
 		VName Map = P_GetMapNameByLevelNum(MapNum);
-		if (Map != NAME_None && Map != level.MapName)
+		if (Map != NAME_None && Map != XLevel->MapName)
 		{
 			// Add to the script store
 			return AddToACSStore(Always ? VAcsStore::StartAlways :
@@ -1447,7 +1447,7 @@ bool VAcsLevel::Terminate(int Number, int MapNum)
 	if (MapNum)
 	{
 		VName Map = P_GetMapNameByLevelNum(MapNum);
-		if (Map != NAME_None && Map != level.MapName)
+		if (Map != NAME_None && Map != XLevel->MapName)
 		{
 			// Add to the script store
 			return AddToACSStore(VAcsStore::Terminate, Map, Number, 0, 0, 0, 0);
@@ -1484,7 +1484,7 @@ bool VAcsLevel::Suspend(int Number, int MapNum)
 	if (MapNum)
 	{
 		VName Map = P_GetMapNameByLevelNum(MapNum);
-		if (Map != NAME_None && Map != level.MapName)
+		if (Map != NAME_None && Map != XLevel->MapName)
 		{
 			// Add to the script store
 			return AddToACSStore(VAcsStore::Suspend, Map, Number, 0, 0, 0, 0);
@@ -2537,7 +2537,7 @@ int VAcs::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_Timer)
-			*sp = level.tictime;
+			*sp = XLevel->TicTime;
 			sp++;
 			ACSVM_BREAK;
 
@@ -3825,34 +3825,34 @@ int VAcs::RunScript(float DeltaTime)
 			switch (sp[-1])
 			{
 			case LEVELINFO_PAR_TIME:
-				sp[-1] = level.partime;
+				sp[-1] = Level->ParTime;
 				break;
 			case LEVELINFO_SUCK_TIME:
-				sp[-1] = level.sucktime;
+				sp[-1] = Level->SuckTime;
 				break;
 			case LEVELINFO_CLUSTERNUM:
-				sp[-1] = level.cluster;
+				sp[-1] = Level->Cluster;
 				break;
 			case LEVELINFO_LEVELNUM:
-				sp[-1] = level.levelnum;
+				sp[-1] = Level->LevelNum;
 				break;
 			case LEVELINFO_TOTAL_SECRETS:
-				sp[-1] = level.totalsecret;
+				sp[-1] = Level->TotalSecret;
 				break;
 			case LEVELINFO_FOUND_SECRETS:
-				sp[-1] = level.currentsecret;
+				sp[-1] = Level->CurrentSecret;
 				break;
 			case LEVELINFO_TOTAL_ITEMS:
-				sp[-1] = level.totalitems;
+				sp[-1] = Level->TotalItems;
 				break;
 			case LEVELINFO_FOUND_ITEMS:
-				sp[-1] = level.currentitems;
+				sp[-1] = Level->CurrentItems;
 				break;
 			case LEVELINFO_TOTAL_MONSTERS:
-				sp[-1] = level.totalkills;
+				sp[-1] = Level->TotalKills;
 				break;
 			case LEVELINFO_KILLED_MONSTERS:
-				sp[-1] = level.currentkills;
+				sp[-1] = Level->CurrentKills;
 				break;
 			default:
 				sp[-1] = 0;

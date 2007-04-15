@@ -608,11 +608,11 @@ static void AM_Start()
 {
 	if (!stopped)
 		AM_Stop();
-		stopped = false;
-	if (lastmap != cl_level.MapName)
+	stopped = false;
+	if (lastmap != GClLevel->MapName)
 	{
 		AM_LevelInit();
-		lastmap = cl_level.MapName;
+		lastmap = GClLevel->MapName;
 	}
 	AM_initVariables();
 	AM_loadPics();
@@ -1132,9 +1132,9 @@ static void AM_drawGrid(vuint32 colour)
 
 	// Figure out start of vertical gridlines
 	start = m_x;
-//	if ((FX(start - cl_level.bmaporgx))%(MAPBLOCKUNITS<<FRACBITS))
+//	if ((FX(start - GClLevel->bmaporgx))%(MAPBLOCKUNITS<<FRACBITS))
 //		start += FL((MAPBLOCKUNITS<<FRACBITS)
-//			- ((FX(start - cl_level.bmaporgx))%(MAPBLOCKUNITS<<FRACBITS)));
+//			- ((FX(start - GClLevel->bmaporgx))%(MAPBLOCKUNITS<<FRACBITS)));
 	end = m_x + m_w;
 
 	// draw vertical gridlines
@@ -1154,9 +1154,9 @@ static void AM_drawGrid(vuint32 colour)
 
 	// Figure out start of horizontal gridlines
 	start = m_y;
-//	if ((FX(start - cl_level.bmaporgy))%(MAPBLOCKUNITS<<FRACBITS))
+//	if ((FX(start - GClLevel->bmaporgy))%(MAPBLOCKUNITS<<FRACBITS))
 //		start += FL((MAPBLOCKUNITS<<FRACBITS)
-//			- ((FX(start - cl_level.bmaporgy))%(MAPBLOCKUNITS<<FRACBITS)));
+//			- ((FX(start - GClLevel->bmaporgy))%(MAPBLOCKUNITS<<FRACBITS)));
 	end = m_y + m_h;
 
 	// draw horizontal gridlines
@@ -1503,7 +1503,7 @@ static void AM_DrawDeathmatchStats()
 
 static void AM_DrawLevelStats()
 {
-/*	int kills;
+	int kills;
 	int totalkills;
 	int items;
 	int totalitems;
@@ -1513,12 +1513,12 @@ static void AM_DrawLevelStats()
 	char secret[80];
 	char item[80];
 
-	kills = sv_player->KillCount;
-	items = sv_player->ItemCount;
-	secrets = sv_player->SecretCount;
-	totalkills = cl_level.totalkills;
-	totalitems = cl_level.totalitems;
-	totalsecrets = cl_level.totalsecret;
+	kills = cl->KillCount;
+	items = cl->ItemCount;
+	secrets = cl->SecretCount;
+	totalkills = GClLevel->LevelInfo->TotalKills;
+	totalitems = GClLevel->LevelInfo->TotalItems;
+	totalsecrets = GClLevel->LevelInfo->TotalSecret;
 
 	T_SetFont(font_small);
 	T_SetAlign(hleft, vtop);
@@ -1527,7 +1527,7 @@ static void AM_DrawLevelStats()
 	sprintf(item, "Items: %.2d / %.2d", items, totalitems);
 	T_DrawString(8, 400, item);
 	sprintf(secret, "Secrets: %.2d / %.2d", secrets, totalsecrets);
-	T_DrawString(8, 410, secret);*/
+	T_DrawString(8, 410, secret);
 }
 
 //==========================================================================
@@ -1625,7 +1625,7 @@ void AM_Drawer()
 	DrawWorldTimer();
 	T_SetFont(font_small);
 	T_SetAlign(hleft, vbottom);
-	T_DrawText(20, 480 - sb_height - 7, *cl_level.LevelName);
+	T_DrawText(20, 480 - sb_height - 7, *GClLevel->LevelInfo->GetLevelName());
 	if (ShowStats)
 	{
 		AM_DrawLevelStats();

@@ -98,7 +98,7 @@ final void A_KSpiritSeeker(float thresh, float turnMax)
 	Velocity.x = Speed * cos(angle);
 	Velocity.y = Speed * sin(angle);
 
-	if (!(Level.Game.level->tictime & 15) ||
+	if (!(XLevel.TicTime & 15) ||
 		Origin.z > Enemy.Origin.z + Enemy.Height ||
 		Origin.z + Height < Enemy.Origin.z)
 	{

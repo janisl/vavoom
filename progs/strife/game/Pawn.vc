@@ -714,7 +714,7 @@ final void A_Stand()
 
 	if (!bNeutral && targ && targ.bShootable)
 	{
-		if (bFriendly != targ.bFriendly || XLevel.bNoAllies)
+		if (bFriendly != targ.bFriendly || Level.bNoAllies)
 		{
 			Enemy = targ;
 			if (!bCountItem || CanSee(targ))

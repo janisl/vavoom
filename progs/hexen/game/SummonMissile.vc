@@ -50,7 +50,7 @@ final void A_Summon()
 			return;
 		}
 
-		A.Args[0] = Level.Game.level->tictime;
+		A.Args[0] = XLevel.TicTime;
 		if (!Instigator.bCorpse)
 		{
 			//	Master isn't dead

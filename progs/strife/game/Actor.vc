@@ -498,7 +498,7 @@ void OnMapSpawn(mthing_t * mthing)
 		if (StateTime > 0.0)
 			StateTime = 0.1 + Random() * StateTime;
 		if (bCountKill)
-			Level.Game.level->totalkills++;
+			Level.TotalKills++;
 
 		Angles.yaw = itof(45 * (mthing->angle / 45));
 		if (mthing->options & StrifeLevelInfo::MTF_AMBUSH)
@@ -609,7 +609,7 @@ void Died(Actor source)
 	class<Actor> DropItemType;
 	Actor A;
 
-	if (bIsPlayer && XLevel.bDeathSlideShow)
+	if (bIsPlayer && Level.bDeathSlideShow)
 	{
 		//	Start sad finale.
 		MSG_Select(MSG_SV_RELIABLE);
@@ -662,7 +662,7 @@ void Died(Actor source)
 		Level.Game.Players[0].KillCount++;
 	}
 	if (bCountKill)
-		Level.Game.level->currentkills++;
+		Level.CurrentKills++;
 
 	if (bIsPlayer)
 	{
@@ -1081,7 +1081,7 @@ bool HitFloorType()
 		smallsplash = true;
 
 	if (TInfo->DamageAmount && bIsPlayer &&
-		Level.Game.level->tictime & TInfo->DamageTimeMask)
+		XLevel.TicTime & TInfo->DamageTimeMask)
 	{
 		Damage(none, none, TInfo->DamageAmount);
 	}
@@ -2318,7 +2318,7 @@ void Tick(float deltaTime)
 		if (MoveCount < 12 * 35)
 			return;
 
-		if (Level.Game.level->tictime & 31)
+		if (XLevel.TicTime & 31)
 			return;
 
 		if (P_Random() > 4)
@@ -2410,7 +2410,7 @@ bool SectorChanged(int CrushChange)
 		return true;
 	}
 
-	if (CrushChange && !(Level.Game.level->tictime & 3))
+	if (CrushChange && !(XLevel.TicTime & 3))
 	{
 		Damage(none, none, CrushChange);
 
@@ -2518,7 +2518,7 @@ bool PIT_StompThing(Entity Other)
 	if (Other == self)
 		return true;
 
-	if (!bIsPlayer && !XLevel.bAllowMonsterTelefrags)
+	if (!bIsPlayer && !Level.bAllowMonsterTelefrags)
 	{
 		return false;
 	}

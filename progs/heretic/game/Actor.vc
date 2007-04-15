@@ -542,12 +542,12 @@ void OnMapSpawn(mthing_t * mthing)
 		}
 		if (bCountKill)
 		{
-			Level.Game.level->totalkills++;
+			Level.TotalKills++;
 			Level.CopyMThing(mthing, &SpawnSpot);
 		}
 		if (bCountItem)
 		{
-			Level.Game.level->totalitems++;
+			Level.TotalItems++;
 		}
 		Angles.yaw = itof(45 * (mthing->angle / 45));
 		if (mthing->options & HereticLevelInfo::MTF_AMBUSH)
@@ -726,7 +726,7 @@ void Kill(Actor source)
 		Level.Game.Players[0].KillCount++;
 	}
 	if (bCountKill)
-		Level.Game.level->currentkills++;
+		Level.CurrentKills++;
 	if (bIsPlayer)
 	{
 		if (!source)
@@ -797,7 +797,7 @@ void TouchWhirlwind(Actor Other)
 		(Random() - Random()) * 45.0 / 2.0);
 	Other.Velocity.x += (Random() - Random()) * 4.0 * 35.0;
 	Other.Velocity.y += (Random() - Random()) * 4.0 * 35.0;
-	if (Level.Game.level->tictime & 16 && !Other.bBoss)
+	if (XLevel.TicTime & 16 && !Other.bBoss)
 	{
 		randVal = Random() * 4.0;
 		if (randVal > 2.5)
@@ -810,7 +810,7 @@ void TouchWhirlwind(Actor Other)
 			Other.Velocity.z = 12.0 * 35.0;
 		}
 	}
-	if (!(Level.Game.level->tictime & 7))
+	if (!(XLevel.TicTime & 7))
 	{
 		Other.Damage(none, none, 3);
 	}
@@ -1347,7 +1347,7 @@ bool HitFloorType()
 		smallsplash = true;
 
 	if (TInfo->DamageAmount && bIsPlayer &&
-		Level.Game.level->tictime & TInfo->DamageTimeMask)
+		XLevel.TicTime & TInfo->DamageTimeMask)
 	{
 		Damage(TInfo->DamageType == 'lava' ? HereticLevelInfo(
 			Level).GLavaInflictor : none, none, TInfo->DamageAmount);
@@ -1984,9 +1984,9 @@ void ZMovement(float DeltaTime)
 				Origin.z += FLOATSPEED * DeltaTime;
 		}
 	}
-	if (bIsPlayer && bFly && !(Origin.z <= FloorZ) && Level.Game.level->tictime & 2)
+	if (bIsPlayer && bFly && !(Origin.z <= FloorZ) && XLevel.TicTime & 2)
 	{
-		Origin.z += sin(90.0 * 35.0 / 20.0 * Level.Game.level->time);
+		Origin.z += sin(90.0 * 35.0 / 20.0 * XLevel.Time);
 	}
 
 	//
@@ -2373,7 +2373,7 @@ void Tick(float deltaTime)
 		{
 			return;
 		}
-		if (Level.Game.level->tictime & 31)
+		if (XLevel.TicTime & 31)
 		{
 			return;
 		}
@@ -2466,7 +2466,7 @@ bool SectorChanged(int CrushChange)
 		return true;	//fit
 	}
 
-	if (CrushChange && !(Level.Game.level->tictime & 3))
+	if (CrushChange && !(XLevel.TicTime & 3))
 	{
 		Damage(none, none, CrushChange);
 
@@ -2853,7 +2853,7 @@ bool PIT_StompThing(Entity Other)
 	}
 
 	//  Check if allowed to stomp things
-	if (!bTelestomp && !XLevel.bAllowMonsterTelefrags)
+	if (!bTelestomp && !Level.bAllowMonsterTelefrags)
 	{
 		return false;
 	}

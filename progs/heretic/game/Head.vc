@@ -124,7 +124,7 @@ final void A_HeadAttack()
 
 final void A_BossDeath()
 {
-	if (!XLevel.bIronLichSpecial)
+	if (!Level.bIronLichSpecial)
 	{
 		return;
 	}

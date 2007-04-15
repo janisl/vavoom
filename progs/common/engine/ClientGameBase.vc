@@ -35,7 +35,6 @@ bool skipintermission;
 bool bPaused;
 
 readonly BasePlayer cl;
-readonly level_t* level;
 readonly Level GLevel;
 
 readonly scores_t *scores;

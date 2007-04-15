@@ -350,7 +350,7 @@ void IM_InitStats()
 
 	if (ClGame.maxclients == 1)
 	{
-		if (ClGame.im->bNoIntermission)
+		if (ClGame.cl.Level.bNoIntermission)
 		{
 			IM_InitText();
 			return;
@@ -365,7 +365,7 @@ void IM_InitStats()
 	}
 	else if (!ClGame.deathmatch)
 	{
-		if (ClGame.im->bNoIntermission)
+		if (ClGame.cl.Level.bNoIntermission)
 		{
 			IM_InitText();
 			return;
@@ -378,20 +378,20 @@ void IM_InitStats()
 			secretPercent[i] = 0;
 			if (ClGame.scores[i].bActive)
 			{
-				if (ClGame.im->TotalKills)
+				if (ClGame.cl.Level.TotalKills)
 				{
-					killPercent[i] =
-						ClGame.scores[i].killcount * 100 / ClGame.im->TotalKills;
+					killPercent[i] = ClGame.scores[i].killcount * 100 /
+						ClGame.cl.Level.TotalKills;
 				}
-				if (ClGame.im->TotalItems)
+				if (ClGame.cl.Level.TotalItems)
 				{
-					bonusPercent[i] =
-						ClGame.scores[i].itemcount * 100 / ClGame.im->TotalItems;
+					bonusPercent[i] = ClGame.scores[i].itemcount * 100 /
+						ClGame.cl.Level.TotalItems;
 				}
-				if (ClGame.im->TotalSecret)
+				if (ClGame.cl.Level.TotalSecret)
 				{
-					secretPercent[i] =
-						ClGame.scores[i].secretcount * 100 / ClGame.im->TotalSecret;
+					secretPercent[i] = ClGame.scores[i].secretcount * 100 /
+						ClGame.cl.Level.TotalSecret;
 				}
 			}
 		}
@@ -494,7 +494,7 @@ void IM_DrawSingleStats()
 	T_SetDist(1, 1);
 	T_DrawText(362, 205, va("%d", ClGame.scores[0].killcount));
 	T_DrawText(397, 205, "/");
-	T_DrawText(410, 205, va("%d", ClGame.im->TotalKills));
+	T_DrawText(410, 205, va("%d", ClGame.cl.Level.TotalKills));
 	T_SetDist(-1, 1);
 	T_SetShadow(false);
 	if (intertime < 2.0)
@@ -512,7 +512,7 @@ void IM_DrawSingleStats()
 	T_SetDist(1, 1);
 	T_DrawText(362, 230, va("%d", ClGame.scores[0].itemcount));
 	T_DrawText(397, 230, "/");
-	T_DrawText(410, 230, va("%d", ClGame.im->TotalItems));
+	T_DrawText(410, 230, va("%d", ClGame.cl.Level.TotalItems));
 	T_SetDist(-1, 1);
 	T_SetShadow(false);
 	if (intertime < 3.0)
@@ -530,7 +530,7 @@ void IM_DrawSingleStats()
 	T_SetDist(1, 1);
 	T_DrawText(362, 255, va("%d", ClGame.scores[0].secretcount));
 	T_DrawText(397, 255, "/");
-	T_DrawText(410, 255, va("%d", ClGame.im->TotalSecret));
+	T_DrawText(410, 255, va("%d", ClGame.cl.Level.TotalSecret));
 	T_SetDist(-1, 1);
 	T_SetShadow(false);
 	if (intertime < 5.0)
@@ -845,7 +845,7 @@ void IM_InitText()
 
 	if (!ClGame.im->Text)
 	{
-		if (ClGame.im->bNoIntermission)
+		if (ClGame.cl.Level.bNoIntermission)
 		{
 			CmdBuf_AddText("TeleportNewMap\n");
 			interstate = IMS_Done;

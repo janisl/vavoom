@@ -232,7 +232,7 @@ final void A_MinotaurCharge()
 
 final void A_BossDeath()
 {
-	if (!XLevel.bMinotaurSpecial)
+	if (!Level.bMinotaurSpecial)
 	{
 		//  Not a boss level
 		return;

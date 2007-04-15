@@ -174,7 +174,7 @@ int VDemoPlaybackNetConnection::GetRawPacket(TArray<vuint8>& Data)
 				cls.td_starttime = realtime;
 			}
 		}
-		else if ( /* cl->time > 0 && */ GClGame->time <= cl_level.time)
+		else if ( /* cl->time > 0 && */ GClGame->time <= GClLevel->Time)
 		{
 			return 0;		// don't need another message yet
 		}

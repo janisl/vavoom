@@ -104,7 +104,7 @@ final void A_FirePhoenixPL2()
 	A.Angles.pitch = Owner.Angles.pitch;
 	AngleVector(&A.Angles, &dir);
 	A.Velocity = Owner.Velocity + A.Speed * dir;
-	if (!Player(Owner.Player).Refire || !(Level.Game.level->tictime % 38))
+	if (!Player(Owner.Player).Refire || !(XLevel.TicTime % 38))
 	{
 		Owner.PlaySound('weapons/phoenixpowshoot', CHAN_WEAPON);
 	}

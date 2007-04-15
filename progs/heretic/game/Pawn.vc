@@ -422,18 +422,18 @@ void BossDeathSpecialAction()
 		}
 	}
 
-	if (XLevel.bSpecialActionKillMonsters)
+	if (Level.bSpecialActionKillMonsters)
 	{
 		// Kill any remaining monsters
 		HereticLevelInfo(Level).P_Massacre();
 	}
 
-	if (XLevel.bSpecialActionOpenDoor)
+	if (Level.bSpecialActionOpenDoor)
 	{
 		Level.ExecuteActionSpecial(LNSPEC_DoorOpen, 666, 64, 150, 0, 0,
 			NULL, 0, none);
 	}
-	else if (XLevel.bSpecialActionLowerFloor)
+	else if (Level.bSpecialActionLowerFloor)
 	{
 		//NOTE Doom does loer to lowest.
 		Level.ExecuteActionSpecial(LNSPEC_FloorLowerToNearest, 666, 8, 0, 0,

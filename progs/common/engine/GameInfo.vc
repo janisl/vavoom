@@ -42,8 +42,6 @@ readonly int		skyflatnum;
 
 readonly BasePlayer	Players[MAXPLAYERS]; // Bookkeeping on players - state.
 
-readonly level_t*	level;
-
 int					RebornPosition;
 
 readonly float		frametime;

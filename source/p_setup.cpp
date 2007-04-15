@@ -113,13 +113,14 @@ static VCvarI strict_level_errors("strict_level_errors", "1");
 //
 //==========================================================================
 
-void VLevel::LoadMap(VName MapName)
+void VLevel::LoadMap(VName AMapName)
 {
 	guard(VLevel::LoadMap);
 	bool AuxiliaryMap = false;
 	int lumpnum;
 	VName MapLumpName;
 
+	MapName = AMapName;
 	//	If working with a devlopment map, reload it.
 	VStr aux_file_name = va("maps/%s.wad", *MapName);
 	if (FL_FileExists(aux_file_name))

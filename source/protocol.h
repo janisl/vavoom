@@ -65,7 +65,6 @@ enum
 	svc_static_light,
 	svc_static_light_rgb,
 
-	svc_change_sky,
 	svc_change_music,
 
 	svc_class_name,

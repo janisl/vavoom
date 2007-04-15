@@ -1077,6 +1077,11 @@ void VField::NetSerialiseValue(VStream& Strm, vuint8* Data, const VField::FType&
 		Strm << *(float*)Data;
 		break;
 
+	//FIXME this will work only for the local connection.
+	case ev_name:
+		Strm << *(vint32*)Data;
+		break;
+
 	case ev_bool:
 		if (Strm.IsLoading())
 		{

@@ -755,7 +755,7 @@ void TouchSpecial(Actor Toucher)
 	if (bCountItem)
 	{
 		Toucher.Player.ItemCount++;
-		Level.Game.level->currentitems++;
+		Level.CurrentItems++;
 	}
 	HideSpecial();
 	Player(Toucher.Player).BonusFlash += Player::BONUSADD;
@@ -873,9 +873,9 @@ void OnMapSpawn(mthing_t * mthing)
 		if (StateTime > 0.0)
 			StateTime = 0.1 + Random() * StateTime;
 		if (bCountKill)
-			Level.Game.level->totalkills++;
+			Level.TotalKills++;
 		if (bCountItem)
-			Level.Game.level->totalitems++;
+			Level.TotalItems++;
 
 		Angles.yaw = itof(45 * (mthing->angle / 45));
 		if (mthing->options & MTF_AMBUSH)
@@ -1117,7 +1117,7 @@ void Died(Actor source)
 		Level.Game.Players[0].KillCount++;
 	}
 	if (bCountKill)
-		Level.Game.level->currentkills++;
+		Level.CurrentKills++;
 
 	if (bIsPlayer)
 	{
@@ -1333,7 +1333,7 @@ bool HitFloorType()
 		smallsplash = true;
 
 	if (TInfo->DamageAmount && bIsPlayer &&
-		Level.Game.level->tictime & TInfo->DamageTimeMask)
+		XLevel.TicTime & TInfo->DamageTimeMask)
 	{
 		Damage(none, none, TInfo->DamageAmount);
 	}
@@ -2255,7 +2255,7 @@ void Tick(float deltaTime)
 		//  In my deathmatch mode monstars respawns very fast
 		if (Level.Game.deathmatch == 3)
 		{
-			if (Level.Game.level->tictime & 31)
+			if (XLevel.TicTime & 31)
 				return;
 
 			if (P_Random() > 32)
@@ -2273,7 +2273,7 @@ void Tick(float deltaTime)
 			if (MoveCount < 12 * 35)
 				return;
 
-			if (Level.Game.level->tictime & 31)
+			if (XLevel.TicTime & 31)
 				return;
 
 			if (P_Random() > 4)
@@ -2366,7 +2366,7 @@ bool SectorChanged(int CrushChange)
 		return true;
 	}
 
-	if (CrushChange && !(Level.Game.level->tictime & 3))
+	if (CrushChange && !(XLevel.TicTime & 3))
 	{
 		Damage(none, none, CrushChange);
 
@@ -2482,7 +2482,7 @@ bool PIT_StompThing(Entity Other)
 	if (Other == self)
 		return true;
 
-	if (!bTelestomp && !XLevel.bAllowMonsterTelefrags)
+	if (!bTelestomp && !Level.bAllowMonsterTelefrags)
 	{
 		return false;
 	}
@@ -4203,18 +4203,18 @@ void BossDeathSpecialAction()
 	}
 
 	// victory!
-	if (XLevel.bSpecialActionKillMonsters)
+	if (Level.bSpecialActionKillMonsters)
 	{
 		// Kill any remaining monsters
 		DoomLevelInfo(Level).P_Massacre();
 	}
 
-	if (XLevel.bSpecialActionOpenDoor)
+	if (Level.bSpecialActionOpenDoor)
 	{
 		Level.ExecuteActionSpecial(LNSPEC_DoorOpen, 666, 64, 150, 0, 0,
 			NULL, 0, none);
 	}
-	else if (XLevel.bSpecialActionLowerFloor)
+	else if (Level.bSpecialActionLowerFloor)
 	{
 		Level.ExecuteActionSpecial(LNSPEC_FloorLowerToLowest, 666, 8, 0, 0,
 			0, NULL, 0, none);
@@ -4237,7 +4237,7 @@ final void A_BossDeath()
 {
 	if (Class == BaronOfHell)
 	{
-		if (!XLevel.bBaronSpecial)
+		if (!Level.bBaronSpecial)
 		{
 			//  Not a boss level
 			return;
@@ -4246,7 +4246,7 @@ final void A_BossDeath()
 	}
 	else if (Class == Cyberdemon)
 	{
-		if (!XLevel.bCyberDemonSpecial)
+		if (!Level.bCyberDemonSpecial)
 		{
 			//  Not a boss level
 			return;
@@ -4255,7 +4255,7 @@ final void A_BossDeath()
 	}
 	else if (Class == SpiderMastermind)
 	{
-		if (!XLevel.bSpiderMastermindSpecial)
+		if (!Level.bSpiderMastermindSpecial)
 		{
 			//  Not a boss level
 			return;
@@ -4267,7 +4267,7 @@ final void A_BossDeath()
 		int i;
 		Actor Other;
 
-		if (!XLevel.bMap07Special)
+		if (!Level.bMap07Special)
 		{
 			//  Not a boss level
 			return;
@@ -4299,7 +4299,7 @@ final void A_BossDeath()
 		int i;
 		Mancubus Other;
 
-		if (!XLevel.bMap07Special)
+		if (!Level.bMap07Special)
 		{
 			//  Not a boss level
 			return;

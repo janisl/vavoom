@@ -92,7 +92,6 @@ public:
 	virtual void SegMoved(seg_t*) = 0;
 	virtual void SetupFakeFloors(sector_t*) = 0;
 
-	virtual void SkyChanged() = 0;
 	virtual void ForceLightning() = 0;
 
 	virtual void AddStaticLight(const TVec&, float, vuint32) = 0;

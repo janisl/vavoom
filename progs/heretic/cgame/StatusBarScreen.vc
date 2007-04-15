@@ -383,11 +383,11 @@ void SB_DrawMainBar()
 		R_DrawPic(BAR_X + 50 + cl.InvCurPos * 31, BAR_Y + 31, pic_selectbox);
 		if (x != 0)
 		{
-			R_DrawPic(BAR_X + 38, BAR_Y + 1, pic_invgeml[!(ClGame.level->tictime & 4) ? 0 : 1]);
+			R_DrawPic(BAR_X + 38, BAR_Y + 1, pic_invgeml[!(ClGame.GLevel.TicTime & 4) ? 0 : 1]);
 		}
 		if ((cl.InventorySlotNum - x > 7))
 		{
-			R_DrawPic(BAR_X + 269, BAR_Y + 1, pic_invgemr[!(ClGame.level->tictime & 4) ? 0 : 1]);
+			R_DrawPic(BAR_X + 269, BAR_Y + 1, pic_invgemr[!(ClGame.GLevel.TicTime & 4) ? 0 : 1]);
 		}
 	}
 }
@@ -456,11 +456,11 @@ void SB_DrawFullscreenStats()
 		R_DrawPic(210 + cl.InvCurPos * 31, 477, pic_selectbox);
 		if (x != 0)
 		{
-			R_DrawPic(198, 447, pic_invgeml[!(ClGame.level->tictime & 4) ? 0 : 1]);
+			R_DrawPic(198, 447, pic_invgeml[!(ClGame.GLevel.TicTime & 4) ? 0 : 1]);
 		}
 		if (cl.InventorySlotNum - x > 7)
 		{
-			R_DrawPic(429, 447, pic_invgemr[!(ClGame.level->tictime & 4) ? 0 : 1]);
+			R_DrawPic(429, 447, pic_invgemr[!(ClGame.GLevel.TicTime & 4) ? 0 : 1]);
 		}
 	}
 	else if (cl.ReadyArtifact > 0)
@@ -485,7 +485,7 @@ void SB_DrawIcons()
 	//  Artifact rotating icons
 	if (cl.SBFlags & HereticDefs::SBF_POWER_FLIGHT)
 	{
-		frame = (ClGame.level->tictime / 3) & 15;
+		frame = (ClGame.GLevel.TicTime / 3) & 15;
 		if (cl.SBFlags & HereticDefs::SBF_IN_FLIGHT)
 		{
 			if (hitCentreFrame && frame != 15 && frame != 0)
@@ -510,7 +510,7 @@ void SB_DrawIcons()
 
 	if (cl.SBFlags & HereticDefs::SBF_POWER_BOOK)
 	{
-		R_DrawPic(620, 17, pic_book[(ClGame.level->tictime / 3) & 15]);
+		R_DrawPic(620, 17, pic_book[(ClGame.GLevel.TicTime / 3) & 15]);
 	}
 }
 
@@ -560,7 +560,7 @@ void SB_UpdateWidgets()
 	int delta;
 	int curHealth;
 
-	if (ClGame.level->tictime & 1)
+	if (ClGame.GLevel.TicTime & 1)
 	{
 		ChainWiggle = P_Random() & 1;
 	}

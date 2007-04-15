@@ -478,12 +478,12 @@ void Tick(float DeltaTime)
 		bJustStepped = false;
 		if (CurrNode.Args[2])
 		{
-			HoldTime = Level.Game.level->time + itof(CurrNode.Args[2]) / 8.0;
+			HoldTime = XLevel.Time + itof(CurrNode.Args[2]) * 4.0 / 35.0;
 			Origin = CurrNode.Origin;
 		}
 	}
 
-	if (HoldTime > Level.Game.level->time)
+	if (HoldTime > XLevel.Time)
 		return;
 
 	if (CurrNode.NextPoint == none)

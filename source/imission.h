@@ -51,8 +51,6 @@ struct im_t
 	vint32		LeaveCluster;
 	VStr		LeaveName;
 	VName		LeaveTitlePatch;
-	vint32		ParTime;
-	vint32		SuckTime;
 
 	VName		EnterMap;
 	vint32		EnterCluster;
@@ -66,15 +64,11 @@ struct im_t
 	vint32		TextCDTrack;
 	vint32		TextCDId;
 
-	vint32		TotalKills;
-	vint32		TotalItems;
-	vint32		TotalSecret;
 	float		Time;
 
 	enum
 	{
-		IMF_NoIntermission	= 0x01,
-		IMF_TextIsLump		= 0x02,
+		IMF_TextIsLump		= 0x01,
 	};
 	vint32		IMFlags;
 };

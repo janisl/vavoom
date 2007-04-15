@@ -485,6 +485,8 @@ void VAudio::PlaySound(int InSoundId, const TVec& origin,
 				LocalPlayerSound = true;
 			}
 		}
+		NoSoundClipping = !!(GClLevel->LevelInfo->LevelInfoFlags &
+			VLevelInfo::LIF_NoSoundClipping);
 	}
 
 	// calculate the distance before other stuff so that we can throw out
@@ -898,6 +900,12 @@ void VAudio::UpdateSfx()
 
 	AngleVectors(cl->ViewAngles, ListenerForward, ListenerRight, ListenerUp);
 
+	if (GClLevel && GClLevel->LevelInfo)
+	{
+		NoSoundClipping = !!(GClLevel->LevelInfo->LevelInfoFlags &
+			VLevelInfo::LIF_NoSoundClipping);
+	}
+
 	for (int i = 0; i < NumChannels; i++)
 	{
 		if (!Channel[i].sound_id)
@@ -1057,11 +1065,6 @@ void VAudio::Start()
 	guard(VAudio::Start);
 	StopAllSequences();
 	StopAllSound();
-
-	MapSong = cl_level.SongLump;
-	MapCDTrack = cl_level.cdTrack;
-
-	StartMusic();
 	unguard;
 }	
 
@@ -1074,8 +1077,8 @@ void VAudio::Start()
 void VAudio::MusicChanged()
 {
 	guard(VAudio::MusicChanged);
-	MapSong = cl_level.SongLump;
-	MapCDTrack = cl_level.cdTrack;
+	MapSong = GClLevel->LevelInfo->SongLump;
+	MapCDTrack = GClLevel->LevelInfo->CDTrack;
 
 	StartMusic();
 	unguard;

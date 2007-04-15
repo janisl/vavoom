@@ -51,14 +51,7 @@ VLevel*			GLevel;
 VLevel*			GClLevel;
 VLevel*			GClPrevLevel;
 
-int			GMaxEntities = 4096;
-
-#ifdef CLIENT
-level_t cl_level;
-#endif
-#ifdef SERVER
-level_t level;
-#endif
+int				GMaxEntities = 4096;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -501,9 +494,6 @@ void CL_LoadLevel(VName MapName)
 	GClGame->GLevel = GClLevel;
 
 	GClLevel->LoadMap(MapName);
-
-	const mapInfo_t& info = P_GetMapInfo(MapName);
-	GAudio->NoSoundClipping = !!(info.Flags & MAPINFOF_NoSoundClipping);
 	unguard;
 }
 

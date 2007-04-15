@@ -117,7 +117,7 @@ final void A_WeaponReady()
 		Owner.Player.bAttackDown = false;
 
 	// bob the weapon based on movement speed
-	angle = AngleMod360(180.0 * Level.Game.level->time);
+	angle = AngleMod360(180.0 * XLevel.Time);
 	Owner.Player.ViewStates[ps_weapon].SX = 1.0 + Player(Owner.Player).Bob * cos(angle);
 	if (angle >= 180.0)
 	{

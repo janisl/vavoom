@@ -81,7 +81,7 @@ bool Touch(Entity InOther)
 		Other.Velocity.x += Velocity.x / 16.0;
 		Other.Velocity.y += Velocity.y / 16.0;
 	}
-	if ((!Other.bIsPlayer && !Other.bBoss) || !(Level.Game.level->tictime & 1))
+	if ((!Other.bIsPlayer && !Other.bBoss) || !(XLevel.TicTime & 1))
 	{
 		if (Other.Class == Centaur ||
 			Other.Class == CentaurLeader)

@@ -528,61 +528,49 @@ class VLevel : public VObject
 	DECLARE_CLASS(VLevel, VObject, 0)
 	NO_DEFAULT_CONSTRUCTOR(VLevel)
 
+	VName				MapName;
+
 	//	Flags.
 	enum
 	{
 		LF_ForServer	= 0x01,	//	True if this level belongs to the server.
 		LF_Extended		= 0x02,	//	True if level was in Hexen format.
 		LF_GLNodesV5	= 0x04,	//	True if using version 5 GL nodes.
-		//	From mapinfo.
-		LF_Map07Special					= 0x00000008,
-		LF_BaronSpecial					= 0x00000010,
-		LF_CyberDemonSpecial			= 0x00000020,
-		LF_SpiderMastermindSpecial		= 0x00000040,
-		LF_MinotaurSpecial				= 0x00000080,
-		LF_DSparilSpecial				= 0x00000100,
-		LF_IronLichSpecial				= 0x00000200,
-		LF_SpecialActionOpenDoor		= 0x00000400,
-		LF_SpecialActionLowerFloor		= 0x00000800,
-		LF_SpecialActionKillMonsters	= 0x00001000,
-		LF_AllowMonsterTelefrags		= 0x00002000,
-		LF_NoAllies						= 0x00004000,
-		LF_DeathSlideShow				= 0x00008000,
 	};
-	vuint32			LevelFlags;
+	vuint32				LevelFlags;
 
 	//
 	//	MAP related Lookup tables.
 	//	Store VERTEXES, LINEDEFS, SIDEDEFS, etc.
 	//
 
-	vint32			NumVertexes;
-	vertex_t*		Vertexes;
+	vint32				NumVertexes;
+	vertex_t*			Vertexes;
 
-	vint32			NumSectors;
-	sector_t*		Sectors;
+	vint32				NumSectors;
+	sector_t*			Sectors;
 
-	vint32			NumSides;
-	side_t*			Sides;
+	vint32				NumSides;
+	side_t*				Sides;
 
-	vint32			NumLines;
-	line_t*			Lines;
+	vint32				NumLines;
+	line_t*				Lines;
 
-	vint32			NumSegs;
-	seg_t*			Segs;
+	vint32				NumSegs;
+	seg_t*				Segs;
 
-	vint32			NumSubsectors;
-	subsector_t*	Subsectors;
+	vint32				NumSubsectors;
+	subsector_t*		Subsectors;
 
-	vint32			NumNodes;
-	node_t*			Nodes;
+	vint32				NumNodes;
+	node_t*				Nodes;
 
-	vuint8*			VisData;
-	vuint8*			NoVis;
+	vuint8*				VisData;
+	vuint8*				NoVis;
 
 	// !!! Used only during level loading
-	vint32			NumThings;
-	mthing_t*		Things;
+	vint32				NumThings;
+	mthing_t*			Things;
 
 	//
 	//	BLOCKMAP
@@ -590,14 +578,14 @@ class VLevel : public VObject
 	// array of blocks of size ...
 	// Used to speed up collision detection by spatial subdivision in 2D.
 	//
-	vint16*			BlockMapLump;	// offsets in blockmap are from here
-	vuint16*		BlockMap;		// int for larger maps
-	vint32			BlockMapWidth;	// Blockmap size.
-	vint32			BlockMapHeight;	// size in mapblocks
-	float			BlockMapOrgX;	// origin of block map
-	float			BlockMapOrgY;
-	VEntity**		BlockLinks;		// for thing chains
-	polyblock_t**	PolyBlockMap;
+	vint16*				BlockMapLump;	// offsets in blockmap are from here
+	vuint16*			BlockMap;		// int for larger maps
+	vint32				BlockMapWidth;	// Blockmap size.
+	vint32				BlockMapHeight;	// size in mapblocks
+	float				BlockMapOrgX;	// origin of block map
+	float				BlockMapOrgY;
+	VEntity**			BlockLinks;		// for thing chains
+	polyblock_t**		PolyBlockMap;
 
 	//
 	//	REJECT
@@ -605,7 +593,7 @@ class VLevel : public VObject
 	//	Speeds up enemy AI by skipping detailed LineOf Sight calculation.
 	// 	Without special effect, this could be used as a PVS lookup as well.
 	//
-	vuint8*			RejectMatrix;
+	vuint8*				RejectMatrix;
 
 	//	Strife conversations.
 	vint32				NumGenericSpeeches;
@@ -635,6 +623,9 @@ class VLevel : public VObject
 	rep_side_t*			BaseSides;
 	rep_sector_t*		BaseSectors;
 	rep_polyobj_t*		BasePolyObjs;
+
+	float				Time;
+	int					TicTime;
 
 	void Serialise(VStream& Strm);
 	void ClearReferences();
@@ -760,38 +751,6 @@ private:
 	DECLARE_FUNCTION(TerminateACS)
 };
 
-struct level_t
-{
-	float		time;
-	int			tictime;
-
-	int			totalkills;
-	int			totalitems;
-	int			totalsecret;    // for intermission
-	int			currentkills;
-	int			currentitems;
-	int			currentsecret;
-
-	VName		MapName;
-	int			levelnum;
-	int			cluster;
-	int			partime;
-	int			sucktime;
-	VStr		LevelName;
-
-	int			sky1Texture;
-	int			sky2Texture;
-	float		sky1ScrollDelta;
-	float		sky2ScrollDelta;
-	int			doubleSky;
-	int			lightning;
-	VName		SkyBox;
-	VName		FadeTable;
-
-	int			cdTrack;
-	VName		SongLump;
-};
-
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 void CalcLine(line_t *line);
@@ -805,9 +764,6 @@ void CalcSecMinMaxs(sector_t *sector);
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
 extern int				GMaxEntities;
-
-extern level_t			level;
-extern level_t			cl_level;
 
 extern VLevel*			GLevel;
 extern VLevel*			GClLevel;

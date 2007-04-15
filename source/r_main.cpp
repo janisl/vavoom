@@ -186,18 +186,16 @@ VRenderLevel::VRenderLevel(VLevel* ALevel)
 , AllocatedSubRegions(0)
 , AllocatedDrawSegs(0)
 , AllocatedSegParts(0)
+, CurrentSky1Texture(-1)
+, CurrentSky2Texture(-1)
+, CurrentDoubleSky(false)
+, CurrentLightning(false)
 , LightningLightLevels(0)
 , Particles(0)
 , ActiveParticles(0)
 , FreeParticles(0)
 {
 	guard(VRenderLevel::VRenderLevel);
-	if (Level == GLevel)
-	{
-		cl_level.MapName = level.MapName;
-		cl_level.sky1Texture = level.sky1Texture;
-		cl_level.sky2Texture = level.sky2Texture;
-	}
 	r_oldviewleaf = NULL;
 
 	memset(DLights, 0, sizeof(DLights));
@@ -205,9 +203,6 @@ VRenderLevel::VRenderLevel(VLevel* ALevel)
 
 	InitParticles();
 	ClearParticles();
-	InitSky();
-
-	r_fog = cl_level.FadeTable == NAME_fogmap;
 
 	screenblocks = 0;
 
@@ -722,6 +717,12 @@ void R_RenderPlayerView()
 void VRenderLevel::RenderPlayerView()
 {
 	guard(VRenderLevel::RenderPlayerView);
+	//HACK!!!
+	if (CurrentSky1Texture == -1)
+	{
+		r_fog = Level->LevelInfo->FadeTable == NAME_fogmap;
+	}
+
 	AnimateSky(host_frametime);
 
 	UpdateParticles(host_frametime);

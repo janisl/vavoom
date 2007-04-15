@@ -685,7 +685,7 @@ static void SV_SaveMap(int slot, bool savePlayers)
 
 	// Open the output file
 	Saver = new VSaveWriterStream(FL_OpenFileWrite(*SAVE_MAP_NAME(slot,
-		*level.MapName)));
+		*GLevel->MapName)));
 
 	int NamesOffset = 0;
 	*Saver << NamesOffset;
@@ -695,27 +695,8 @@ static void SV_SaveMap(int slot, bool savePlayers)
 	*Saver << Seg;
 
 	// Write the level timer
-	*Saver << level.time
-		<< level.tictime;
-
-	//	Write totals, because when thinkers are not spawned, they are not
-	// counted
-	*Saver << level.totalkills
-		<< level.totalitems
-		<< level.totalsecret
-		<< level.currentkills
-		<< level.currentitems
-		<< level.currentsecret;
-
-	*Saver << level.sky1Texture
-		<< level.sky2Texture
-		<< level.sky1ScrollDelta
-		<< level.sky2ScrollDelta
-		<< level.doubleSky
-		<< level.lightning
-		<< level.SkyBox
-		<< level.SongLump
-		<< level.cdTrack;
+	*Saver << GLevel->Time
+		<< GLevel->TicTime;
 
 	//	Save baseline
 	Seg = ASEG_BASELINE;
@@ -770,25 +751,8 @@ static void SV_LoadMap(VName MapName, int slot)
 	AssertSegment(ASEG_MAP_HEADER);
 
 	// Read the level timer
-	*Loader << level.time
-		<< level.tictime;
-
-	*Loader << level.totalkills
-		<< level.totalitems
-		<< level.totalsecret
-		<< level.currentkills
-		<< level.currentitems
-		<< level.currentsecret;
-
-	*Loader << level.sky1Texture
-		<< level.sky2Texture
-		<< level.sky1ScrollDelta
-		<< level.sky2ScrollDelta
-		<< level.doubleSky
-		<< level.lightning
-		<< level.SkyBox
-		<< level.SongLump
-		<< level.cdTrack;
+	*Loader << GLevel->Time
+		<< GLevel->TicTime;
 
 	AssertSegment(ASEG_BASELINE);
 	for (VMessageOut* Msg = sv_signons; Msg;)
@@ -864,7 +828,7 @@ void SV_SaveGame(int slot, const char* description)
 	// Write current map and difficulty
 	byte Skill = (byte)gameskill;
 	*Saver << Skill;
-	*Saver << level.MapName;
+	*Saver << GLevel->MapName;
 
 	// Place a termination marker
 	Seg = ASEG_END;
@@ -1047,7 +1011,7 @@ void SV_MapTeleport(VName mapname)
 
 	if (!deathmatch)
 	{
-		const mapInfo_t& old_info = P_GetMapInfo(level.MapName);
+		const mapInfo_t& old_info = P_GetMapInfo(GLevel->MapName);
 		const mapInfo_t& new_info = P_GetMapInfo(mapname);
 		//	All maps in cluster 0 are treated as in different clusters.
 		if (old_info.Cluster && old_info.Cluster == new_info.Cluster &&

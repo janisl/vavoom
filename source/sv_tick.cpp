@@ -104,8 +104,8 @@ void P_Ticker()
 		}
 	}
 
-	level.time += host_frametime;
-	level.tictime++;
+	GLevel->Time += host_frametime;
+	GLevel->TicTime++;
 	unguard;
 }
 

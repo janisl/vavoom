@@ -251,7 +251,7 @@ final void A_SorDBon()
 
 final void A_BossDeath()
 {
-	if (!XLevel.bDSparilSpecial)
+	if (!Level.bDSparilSpecial)
 	{
 		//  Not a boss level
 		return;

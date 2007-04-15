@@ -147,7 +147,7 @@ void VLoopbackDriver::SearchForHosts(bool)
 		Net->HostCache[0].Name = "local";
 	else
 		Net->HostCache[0].Name = Net->HostName;
-	Net->HostCache[0].Map = VStr(level.MapName);
+	Net->HostCache[0].Map = VStr(GLevel->MapName);
 	Net->HostCache[0].Users = svs.num_connected;
 	Net->HostCache[0].MaxUsers = svs.max_clients;
 	Net->HostCache[0].CName = "local";

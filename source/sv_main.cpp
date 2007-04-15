@@ -93,9 +93,6 @@ VMessageOut*	sv_signons;
 
 VBasePlayer*	sv_player;
 
-VName			sv_next_map;
-VName			sv_secret_map;
-
 int 			TimerGame;
 
 VGameInfo*		GGameInfo;
@@ -152,6 +149,78 @@ VLevelInfo::VLevelInfo()
 
 //==========================================================================
 //
+//	VLevelInfo::SetMapInfo
+//
+//==========================================================================
+
+void VLevelInfo::SetMapInfo(const mapInfo_t& Info)
+{
+	guard(VLevelInfo::SetMapInfo);
+	LevelName = Info.Name;
+	LevelNum = Info.LevelNum;
+	Cluster = Info.Cluster;
+
+	NextMap = Info.NextMap;
+	SecretMap = Info.SecretMap;
+
+	ParTime = Info.ParTime;
+	SuckTime = Info.SuckTime;
+
+	Sky1Texture = Info.Sky1Texture;
+	Sky2Texture = Info.Sky2Texture;
+	Sky1ScrollDelta = Info.Sky1ScrollDelta;
+	Sky2ScrollDelta = Info.Sky2ScrollDelta;
+	SkyBox = Info.SkyBox;
+
+	FadeTable = Info.FadeTable;
+
+	SongLump = Info.SongLump;
+	CDTrack = Info.CDTrack;
+
+	//	Copy flags from mapinfo.
+	if (Info.Flags & MAPINFOF_DoubleSky)
+		LevelInfoFlags |= LIF_DoubleSky;
+	if (Info.Flags & MAPINFOF_Lightning)
+		LevelInfoFlags |= LIF_Lightning;
+	if (Info.Flags & MAPINFOF_Map07Special)
+		LevelInfoFlags |= LIF_Map07Special;
+	if (Info.Flags & MAPINFOF_BaronSpecial)
+		LevelInfoFlags |= LIF_BaronSpecial;
+	if (Info.Flags & MAPINFOF_CyberDemonSpecial)
+		LevelInfoFlags |= LIF_CyberDemonSpecial;
+	if (Info.Flags & MAPINFOF_SpiderMastermindSpecial)
+		LevelInfoFlags |= LIF_SpiderMastermindSpecial;
+	if (Info.Flags & MAPINFOF_MinotaurSpecial)
+		LevelInfoFlags |= LIF_MinotaurSpecial;
+	if (Info.Flags & MAPINFOF_DSparilSpecial)
+		LevelInfoFlags |= LIF_DSparilSpecial;
+	if (Info.Flags & MAPINFOF_IronLichSpecial)
+		LevelInfoFlags |= LIF_IronLichSpecial;
+	if (Info.Flags & MAPINFOF_SpecialActionOpenDoor)
+		LevelInfoFlags |= LIF_SpecialActionOpenDoor;
+	if (Info.Flags & MAPINFOF_SpecialActionLowerFloor)
+		LevelInfoFlags |= LIF_SpecialActionLowerFloor;
+	if (Info.Flags & MAPINFOF_SpecialActionKillMonsters)
+		LevelInfoFlags |= LIF_SpecialActionKillMonsters;
+	if (Info.Flags & MAPINFOF_NoIntermission)
+		LevelInfoFlags |= LIF_NoIntermission;
+	if (Info.Flags & MAPINFOF_NoSoundClipping)
+		LevelInfoFlags |= LIF_NoSoundClipping;
+	if (Info.Flags & MAPINFOF_AllowMonsterTelefrags)
+		LevelInfoFlags |= LIF_AllowMonsterTelefrags;
+	if (Info.Flags & MAPINFOF_NoAllies)
+		LevelInfoFlags |= LIF_NoAllies;
+	if (Info.Flags & MAPINFOF_DeathSlideShow)
+		LevelInfoFlags |= LIF_DeathSlideShow;
+	if (Info.Flags & MAPINFOF_ForceNoSkyStretch)
+		LevelInfoFlags |= LIF_ForceNoSkyStretch;
+	if (Info.Flags & MAPINFOF_LookupName)
+		LevelInfoFlags |= LIF_LookupName;
+	unguard;
+}
+
+//==========================================================================
+//
 //	SV_Init
 //
 //==========================================================================
@@ -185,7 +254,6 @@ void SV_Init()
 	}
 
 	GGameInfo->validcount = &validcount;
-	GGameInfo->level = &level;
 	GGameInfo->skyflatnum = skyflatnum;
 	EntInit();
 
@@ -214,7 +282,6 @@ void SV_Shutdown()
 			GPlayersBase[i]->ConditionalDestroy();
 		}
 	}
-	level.LevelName.Clean();
 	
 	P_FreeTerrainTypes();
 	svs.serverinfo.Clean();
@@ -251,8 +318,6 @@ void SV_Clear()
 		VObject::CollectGarbage();
 	}
 	memset(&sv, 0, sizeof(sv));
-	level.LevelName.Clean();
-	memset(&level, 0, sizeof(level));
 	for (VMessageOut* Msg = sv_signons; Msg; )
 	{
 		VMessageOut* Next = Msg->Next;
@@ -1013,7 +1078,7 @@ void SV_SendClientDatagram()
 		VMessageOut msg(OUT_MESSAGE_SIZE);
 
 		msg << (vuint8)svc_time
-			<< level.time;
+			<< GLevel->Time;
 
 		SV_WriteViewData(*sv_player, msg);
 
@@ -1317,13 +1382,10 @@ void SV_ForceLightning()
 void SV_ChangeSky(const char* Sky1, const char* Sky2)
 {
 	guard(SV_ChangeSky);
-	level.sky1Texture = GTextureManager.NumForName(VName(Sky1,
+	GLevelInfo->Sky1Texture = GTextureManager.NumForName(VName(Sky1,
 		VName::AddLower8), TEXTYPE_Wall, true, false);
-	level.sky2Texture = GTextureManager.NumForName(VName(Sky2,
+	GLevelInfo->Sky2Texture = GTextureManager.NumForName(VName(Sky2,
 		VName::AddLower8), TEXTYPE_Wall, true, false);
-	*sv_reliable << (vuint8)svc_change_sky
-				<< (vuint16)level.sky1Texture
-				<< (vuint16)level.sky2Texture;
 	unguard;
 }
 
@@ -1336,10 +1398,7 @@ void SV_ChangeSky(const char* Sky1, const char* Sky2)
 void SV_ChangeMusic(const char* SongName)
 {
 	guard(SV_ChangeMusic);
-	level.SongLump = VName(SongName, VName::AddLower8);
-	*sv_reliable << (vuint8)svc_change_music
-				<< *level.SongLump
-				<< (vuint8)level.cdTrack;
+	GLevelInfo->SongLump = VName(SongName, VName::AddLower8);
 	unguard;
 }
 
@@ -1383,8 +1442,8 @@ static void G_DoCompleted()
 	sv.intermission = 1;
 	sv.intertime = 0;
 
-	const mapInfo_t& old_info = P_GetMapInfo(level.MapName);
-	const mapInfo_t& new_info = P_GetMapInfo(sv_next_map);
+	const mapInfo_t& old_info = P_GetMapInfo(GLevel->MapName);
+	const mapInfo_t& new_info = P_GetMapInfo(GLevelInfo->NextMap);
 	const VClusterDef* ClusterD = P_GetClusterDef(old_info.Cluster);
 
 	for (i = 0; i < MAXPLAYERS; i++)
@@ -1398,7 +1457,7 @@ static void G_DoCompleted()
 	}
 
 	*sv_reliable << (vuint8)svc_intermission
-				<< *sv_next_map;
+				<< *GLevelInfo->NextMap;
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
 		if (GGameInfo->Players[i])
@@ -1445,7 +1504,7 @@ void G_ExitLevel(int Position)
 void G_SecretExitLevel(int Position)
 {
 	guard(G_SecretExitLevel);
-	if (sv_secret_map == NAME_None)
+	if (GLevelInfo->SecretMap == NAME_None)
 	{
 		// No secret map, use normal exit
 		G_ExitLevel(Position);
@@ -1455,7 +1514,7 @@ void G_SecretExitLevel(int Position)
 	LeavePosition = Position;
 	completed = true;
 
-	sv_next_map = sv_secret_map; 	// go to secret level
+	GLevelInfo->NextMap = GLevelInfo->SecretMap; 	// go to secret level
 
 	for (int i = 0; i < MAXPLAYERS; i++)
 	{
@@ -1486,14 +1545,15 @@ void G_Completed(int InMap, int InPosition, int SaveAngle)
 		if (!deathmatch)
 		{
 			*sv_reliable << (vuint8)svc_finale <<
-				(VStr(sv_next_map).StartsWith("EndGame") ? *sv_next_map : "");
+				(VStr(GLevelInfo->NextMap).StartsWith("EndGame") ?
+				*GLevelInfo->NextMap : "");
 			sv.intermission = 2;
 			return;
 		}
 		Map = 1;
 		Position = 0;
 	}
-	sv_next_map = P_GetMapNameByLevelNum(Map);
+	GLevelInfo->NextMap = P_GetMapNameByLevelNum(Map);
 
 	LeavePosition = Position;
 	completed = true;
@@ -1524,7 +1584,7 @@ COMMAND(TeleportNewMap)
 
 	if (Args.Num() == 3)
 	{
-		sv_next_map = VName(*Args[1], VName::AddLower8);
+		GLevelInfo->NextMap = VName(*Args[1], VName::AddLower8);
 		LeavePosition = atoi(*Args[2]);
 	}
 	else if (sv.intermission != 1)
@@ -1534,9 +1594,9 @@ COMMAND(TeleportNewMap)
 
 	if (!deathmatch)
 	{
-		if (VStr(sv_next_map).StartsWith("EndGame"))
+		if (VStr(GLevelInfo->NextMap).StartsWith("EndGame"))
 		{
-			*sv_reliable << (vuint8)svc_finale << *sv_next_map;
+			*sv_reliable << (vuint8)svc_finale << *GLevelInfo->NextMap;
 			sv.intermission = 2;
 			return;
 		}
@@ -1770,24 +1830,10 @@ void SV_SendServerInfo(VBasePlayer *player)
 	msg << (vuint8)svc_server_info
 		<< (vuint8)PROTOCOL_VERSION
 		<< svs.serverinfo
-		<< *level.MapName
-		<< level.LevelName
+		<< *GLevel->MapName
 		<< (vuint8)SV_GetPlayerNum(player)
 		<< (vuint8)svs.max_clients
-		<< (vuint8)deathmatch
-		<< level.totalkills
-		<< level.totalitems
-		<< level.totalsecret
-		<< (vuint16)level.sky1Texture
-		<< (vuint16)level.sky2Texture
-		<< level.sky1ScrollDelta
-		<< level.sky2ScrollDelta
-		<< (vuint8)level.doubleSky
-		<< (vuint8)level.lightning
-		<< *level.SkyBox
-		<< *level.FadeTable
-		<< *level.SongLump
-		<< (vuint8)level.cdTrack;
+		<< (vuint8)deathmatch;
 
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
@@ -1903,29 +1949,11 @@ void SV_SpawnServer(const char *mapname, bool spawn_thinkers)
 
 	sv.active = true;
 
-	level.MapName = VName(mapname, VName::AddLower8);
+	//	Load it
+	SV_LoadLevel(VName(mapname, VName::AddLower8));
+	GLevel->WorldInfo = GWorldInfo;
 
-	const mapInfo_t& info = P_GetMapInfo(level.MapName);
-	sv_next_map = info.NextMap;
-	sv_secret_map = info.SecretMap;
-
-	level.LevelName = info.GetName();
-	level.levelnum = info.LevelNum;
-	level.cluster = info.Cluster;
-	level.partime = info.ParTime;
-	level.sucktime = info.SuckTime;
-
-	level.sky1Texture = info.Sky1Texture;
-	level.sky2Texture = info.Sky2Texture;
-	level.sky1ScrollDelta = info.Sky1ScrollDelta;
-	level.sky2ScrollDelta = info.Sky2ScrollDelta;
-	level.doubleSky = !!(info.Flags & MAPINFOF_DoubleSky);
-	level.lightning = !!(info.Flags & MAPINFOF_Lightning);
-	level.SkyBox = info.SkyBox;
-	level.FadeTable = info.FadeTable;
-
-	level.cdTrack = info.CDTrack;
-	level.SongLump = info.SongLump;
+	const mapInfo_t& info = P_GetMapInfo(GLevel->MapName);
 
 	netgame = svs.max_clients > 1;
 	deathmatch = DeathMatch;
@@ -1933,38 +1961,6 @@ void SV_SpawnServer(const char *mapname, bool spawn_thinkers)
 	GGameInfo->gameskill = gameskill;
 	GGameInfo->netgame = netgame;
 	GGameInfo->deathmatch = deathmatch;
-
-	//	Load it
-	SV_LoadLevel(level.MapName);
-	GLevel->WorldInfo = GWorldInfo;
-
-	//	Copy special action flags from mapinfo.
-	if (info.Flags & MAPINFOF_Map07Special)
-		GLevel->LevelFlags |= VLevel::LF_Map07Special;
-	if (info.Flags & MAPINFOF_BaronSpecial)
-		GLevel->LevelFlags |= VLevel::LF_BaronSpecial;
-	if (info.Flags & MAPINFOF_CyberDemonSpecial)
-		GLevel->LevelFlags |= VLevel::LF_CyberDemonSpecial;
-	if (info.Flags & MAPINFOF_SpiderMastermindSpecial)
-		GLevel->LevelFlags |= VLevel::LF_SpiderMastermindSpecial;
-	if (info.Flags & MAPINFOF_MinotaurSpecial)
-		GLevel->LevelFlags |= VLevel::LF_MinotaurSpecial;
-	if (info.Flags & MAPINFOF_DSparilSpecial)
-		GLevel->LevelFlags |= VLevel::LF_DSparilSpecial;
-	if (info.Flags & MAPINFOF_IronLichSpecial)
-		GLevel->LevelFlags |= VLevel::LF_IronLichSpecial;
-	if (info.Flags & MAPINFOF_SpecialActionOpenDoor)
-		GLevel->LevelFlags |= VLevel::LF_SpecialActionOpenDoor;
-	if (info.Flags & MAPINFOF_SpecialActionLowerFloor)
-		GLevel->LevelFlags |= VLevel::LF_SpecialActionLowerFloor;
-	if (info.Flags & MAPINFOF_SpecialActionKillMonsters)
-		GLevel->LevelFlags |= VLevel::LF_SpecialActionKillMonsters;
-	if (info.Flags & MAPINFOF_AllowMonsterTelefrags)
-		GLevel->LevelFlags |= VLevel::LF_AllowMonsterTelefrags;
-	if (info.Flags & MAPINFOF_NoAllies)
-		GLevel->LevelFlags |= VLevel::LF_NoAllies;
-	if (info.Flags & MAPINFOF_DeathSlideShow)
-		GLevel->LevelFlags |= VLevel::LF_DeathSlideShow;
 
 	P_InitThinkers();
 
@@ -1979,6 +1975,7 @@ void SV_SpawnServer(const char *mapname, bool spawn_thinkers)
 			GLevelInfo->Gravity = info.Gravity * DEFAULT_GRAVITY / 800.0;
 		else
 			GLevelInfo->Gravity = sv_gravity * DEFAULT_GRAVITY / 800.0;
+		GLevelInfo->SetMapInfo(info);
 
 		//	Spawn things.
 		for (i = 0; i < GLevel->NumThings; i++)
@@ -2310,7 +2307,7 @@ COMMAND(Restart)
 	else
 	{
 		// reload the level from scratch
-		SV_SpawnServer(*level.MapName, true);
+		SV_SpawnServer(*GLevel->MapName, true);
 	}
 	unguard;
 }
@@ -2356,9 +2353,9 @@ COMMAND(Stats)
 		return;
 	}
 
-	SV_ClientPrintf(sv_player, "Kills: %d of %d", sv_player->KillCount, level.totalkills);
-	SV_ClientPrintf(sv_player, "Items: %d of %d", sv_player->ItemCount, level.totalitems);
-	SV_ClientPrintf(sv_player, "Secrets: %d of %d", sv_player->SecretCount, level.totalsecret);
+	SV_ClientPrintf(sv_player, "Kills: %d of %d", sv_player->KillCount, GLevelInfo->TotalKills);
+	SV_ClientPrintf(sv_player, "Items: %d of %d", sv_player->ItemCount, GLevelInfo->TotalItems);
+	SV_ClientPrintf(sv_player, "Secrets: %d of %d", sv_player->SecretCount, GLevelInfo->TotalSecret);
 	unguard;
 }
 
@@ -2650,7 +2647,7 @@ void ServerFrame(int realtics)
 
 	if (mapteleport_issued)
 	{
-		SV_MapTeleport(sv_next_map);
+		SV_MapTeleport(GLevelInfo->NextMap);
 	}
 
 	SV_SendClientMessages();

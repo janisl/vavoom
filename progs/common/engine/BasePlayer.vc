@@ -112,7 +112,8 @@ native readonly float ViewEntAlpha;
 replication
 {
 	reliable if (true)
-		Health, Items, Frags, ExtraLight, FixedColourmap, CShifts, PSpriteSY;
+		Health, Items, Frags, ExtraLight, FixedColourmap, CShifts, PSpriteSY,
+		KillCount, ItemCount, SecretCount;
 }
 
 //  Print to client

@@ -130,7 +130,7 @@ void VWarpTexture::SetFrontSkyLayer()
 bool VWarpTexture::CheckModified()
 {
 #ifdef CLIENT
-	return GenTime != cl_level.time;
+	return GenTime != GClLevel->Time;
 #else
 	return false;
 #endif
@@ -146,7 +146,7 @@ vuint8* VWarpTexture::GetPixels()
 {
 	guard(VWarpTexture::GetPixels);
 #ifdef CLIENT
-	if (Pixels && GenTime == cl_level.time)
+	if (Pixels && GenTime == GClLevel->Time)
 	{
 		return Pixels;
 	}
@@ -154,7 +154,7 @@ vuint8* VWarpTexture::GetPixels()
 	const vuint8* SrcPixels = SrcTex->GetPixels();
 	Format = SrcTex->Format;
 
-	GenTime = cl_level.time;
+	GenTime = GClLevel->Time;
 	Pixels8BitValid = false;
 
 	if (!XSin1)
@@ -309,7 +309,7 @@ vuint8* VWarp2Texture::GetPixels()
 {
 	guard(VWarp2Texture::GetPixels);
 #ifdef CLIENT
-	if (Pixels && GenTime == cl_level.time)
+	if (Pixels && GenTime == GClLevel->Time)
 	{
 		return Pixels;
 	}
@@ -317,7 +317,7 @@ vuint8* VWarp2Texture::GetPixels()
 	const vuint8* SrcPixels = SrcTex->GetPixels();
 	Format = SrcTex->Format;
 
-	GenTime = cl_level.time;
+	GenTime = GClLevel->Time;
 	Pixels8BitValid = false;
 
 	if (!XSin1)

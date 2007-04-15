@@ -42,8 +42,6 @@ class VGameInfo : public VObject
 
 	VBasePlayer*	Players[MAXPLAYERS]; // Bookkeeping on players - state.
 
-	level_t*		level;
-
 	vint32			RebornPosition;
 
 	float			frametime;
