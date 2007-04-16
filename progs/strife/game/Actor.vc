@@ -104,6 +104,7 @@ bool bInCombat;			// Actors in combat won't talk
 bool bLookAllAround;	// Actor can see all around.
 bool bStaticLight;		// Static light source.
 bool bCannotPush;		// cannot push other pushable mobjs
+bool bSmallSplash;		// Always use small splash
 bool bNoSplash;			// Things that don't splash
 
 //  Params
@@ -1065,6 +1066,7 @@ VTerrainInfo* GetFloorType()
 bool HitFloorType()
 {
 	Actor A;
+	TVec org;
 	int smallsplash = false;
 	VTerrainInfo* TInfo;
 	VSplashInfo* SInfo;
@@ -1084,7 +1086,7 @@ bool HitFloorType()
 	TInfo = GetFloorType();
 
 	// Small splash for small masses
-	if (Mass < 10.0)
+	if (Mass < 10.0 || bSmallSplash)
 		smallsplash = true;
 
 	if (TInfo->DamageAmount && bIsPlayer &&
@@ -1099,11 +1101,14 @@ bool HitFloorType()
 		return TInfo->bLiquid;
 	}
 
+	org = Origin;
+	org.z = FloorZ;
+
 	if (smallsplash)
 	{
 		if (SInfo->SmallClass)
 		{
-			A = Spawn(class<Actor>(SInfo->SmallClass), Origin);
+			A = Spawn(class<Actor>(SInfo->SmallClass), org);
 			A.FloorClip += SInfo->SmallClip;
 			if (SInfo->SmallSound)
 			{
@@ -1115,7 +1120,7 @@ bool HitFloorType()
 	{
 		if (SInfo->BaseClass)
 		{
-			Spawn(class<Actor>(SInfo->BaseClass), Origin);
+			Spawn(class<Actor>(SInfo->BaseClass), org);
 			if (SInfo->Sound && !SInfo->ChunkClass)
 			{
 				A.PlaySound(SInfo->Sound, CHAN_VOICE);
@@ -1123,7 +1128,7 @@ bool HitFloorType()
 		}
 		if (SInfo->ChunkClass)
 		{
-			A = Spawn(class<Actor>(SInfo->ChunkClass), Origin);
+			A = Spawn(class<Actor>(SInfo->ChunkClass), org);
 			A.Instigator = self;
 			A.Velocity.x = (Random() - Random()) * SInfo->ChunkXVelMul * 35.0;
 			A.Velocity.y = (Random() - Random()) * SInfo->ChunkYVelMul * 35.0;
@@ -3470,7 +3475,10 @@ final void A_Pain()
 final void A_Explode()
 {
 	RadiusAttack(64, 0, 0);
-	HitFloorType();
+	if (Origin.z <= FloorZ + 64.0)
+	{
+		HitFloorType();
+	}
 	if (Instigator && Instigator.bIsPlayer)
 	{
 		StrifeLevelInfo(Level).NoiseAlert(Instigator, self);
@@ -3501,7 +3509,10 @@ final void A_Explode()
 final void A_Explode2()
 {
 	RadiusAttack(128, 0, 0);
-	HitFloorType();
+	if (Origin.z <= FloorZ + 128.0)
+	{
+		HitFloorType();
+	}
 
 	if (ExplodeEffect)
 	{

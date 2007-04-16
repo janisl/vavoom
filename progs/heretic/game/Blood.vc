@@ -37,5 +37,6 @@ defaultproperties
 {
 	Mass = 12.5;
 	bNoGravity = false;
+	bSmallSplash = true;
 	IdleState = S_BLOOD1;
 }

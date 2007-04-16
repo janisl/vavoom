@@ -38,5 +38,6 @@ defaultproperties
 	Alpha = 0.666;
 	bNoBlockmap = true;
 	bNoPassMobj = true;
+	bSmallSplash = true;
 	IdleState = S_BLOOD1;
 }

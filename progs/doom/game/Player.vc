@@ -936,6 +936,13 @@ void CalcHeight(float deltaTime)
 	}
 	ViewOrg.z = MO.Origin.z + ViewHeight + bob;
 
+	if (PlayerState != PST_DEAD && MO.Origin.z <= MO.FloorZ)
+	{
+		ViewOrg.z -= MO.FloorClip;
+	}
+	if (ViewOrg.z < MO.FloorZ + 4.0)
+		ViewOrg.z = MO.FloorZ + 4.0;
+
 	if (ViewOrg.z > MO.CeilingZ - 4.0)
 		ViewOrg.z = MO.CeilingZ - 4.0;
 }
@@ -2130,7 +2137,7 @@ Actor SpawnPlayerMissile(class<Actor> type)
 
 	dir = Actor(MO).Aim(16.0 * 64.0);
 
-	A = DoomLevelInfo(Level).Spawn(type, MO.Origin + vector(0.0, 0.0, 32.0));
+	A = Level.Spawn(type, MO.Origin + vector(0.0, 0.0, 32.0 - MO.FloorClip));
 
 	if (A.SightSound)
 		A.PlaySound(A.SightSound, CHAN_VOICE);

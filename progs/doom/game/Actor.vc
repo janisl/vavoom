@@ -100,6 +100,7 @@ bool bFaster;
 bool bFastMelee;
 bool bDehackedSpecial;	// Old style special handling
 bool bCannotPush;		// cannot push other pushable mobjs
+bool bSmallSplash;		// Always use small splash
 bool bNoSplash;			// Things that don't splash
 
 //  Params
@@ -1026,7 +1027,7 @@ Actor SpawnMissile(Actor dest, class<Actor> type)
 	Actor A;
 	TVec dir;
 
-	A = Spawn(type, Origin + vector(0.0, 0.0, 32.0));
+	A = Spawn(type, Origin + vector(0.0, 0.0, 32.0 - FloorClip));
 
 	if (A.SightSound)
 		A.PlaySound(A.SightSound, CHAN_VOICE);
@@ -1317,6 +1318,7 @@ VTerrainInfo* GetFloorType()
 bool HitFloorType()
 {
 	Actor A;
+	TVec org;
 	int smallsplash = false;
 	VTerrainInfo* TInfo;
 	VSplashInfo* SInfo;
@@ -1336,7 +1338,7 @@ bool HitFloorType()
 	TInfo = GetFloorType();
 
 	// Small splash for small masses
-	if (Mass < 10.0)
+	if (Mass < 10.0 || bSmallSplash)
 		smallsplash = true;
 
 	if (TInfo->DamageAmount && bIsPlayer &&
@@ -1351,11 +1353,14 @@ bool HitFloorType()
 		return TInfo->bLiquid;
 	}
 
+	org = Origin;
+	org.z = FloorZ;
+
 	if (smallsplash)
 	{
 		if (SInfo->SmallClass)
 		{
-			A = Spawn(class<Actor>(SInfo->SmallClass), Origin);
+			A = Spawn(class<Actor>(SInfo->SmallClass), org);
 			A.FloorClip += SInfo->SmallClip;
 			if (SInfo->SmallSound)
 			{
@@ -1367,7 +1372,7 @@ bool HitFloorType()
 	{
 		if (SInfo->BaseClass)
 		{
-			Spawn(class<Actor>(SInfo->BaseClass), Origin);
+			Spawn(class<Actor>(SInfo->BaseClass), org);
 			if (SInfo->Sound && !SInfo->ChunkClass)
 			{
 				A.PlaySound(SInfo->Sound, CHAN_VOICE);
@@ -1375,7 +1380,7 @@ bool HitFloorType()
 		}
 		if (SInfo->ChunkClass)
 		{
-			A = Spawn(class<Actor>(SInfo->ChunkClass), Origin);
+			A = Spawn(class<Actor>(SInfo->ChunkClass), org);
 			A.Instigator = self;
 			A.Velocity.x = (Random() - Random()) * SInfo->ChunkXVelMul * 35.0;
 			A.Velocity.y = (Random() - Random()) * SInfo->ChunkYVelMul * 35.0;
@@ -3929,7 +3934,10 @@ final void A_Explode()
 {
 	Alpha = 0.5;
 	RadiusAttack(128, 0, 0);
-	HitFloorType();
+	if (Origin.z <= FloorZ + 128.0)
+	{
+		HitFloorType();
+	}
 
 	//  Spawn explosion effects - dynamic light and particles
 	MSG_Select(MSG_SV_DATAGRAM);

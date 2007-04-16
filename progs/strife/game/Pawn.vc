@@ -94,7 +94,7 @@ Actor SpawnMissile(Actor dest, class<Actor> type)
 	Actor A;
 	TVec dir;
 
-	A = Spawn(type, Origin + vector(0.0, 0.0, 32.0));
+	A = Spawn(type, Origin + vector(0.0, 0.0, 32.0 - FloorClip));
 
 	if (A.SightSound)
 		A.PlaySound(A.SightSound, CHAN_VOICE);
@@ -128,7 +128,7 @@ Actor SpawnMissileZ(float z, Actor dest, class<Actor> type)
 	Actor A;
 	TVec dir;
 
-	A = Spawn(type, Origin + vector(0.0, 0.0, z));
+	A = Spawn(type, Origin + vector(0.0, 0.0, z - FloorClip));
 
 	if (A.SightSound)
 		A.PlaySound(A.SightSound, CHAN_VOICE);
@@ -163,7 +163,7 @@ Actor SpawnMissileZAimed(float z, Actor dest, class<Actor> type)
 	TVec dir;
 	float dist;
 
-	A = Spawn(type, Origin + vector(0.0, 0.0, z));
+	A = Spawn(type, Origin + vector(0.0, 0.0, z - FloorClip));
 
 	if (A.SightSound)
 		A.PlaySound(A.SightSound, CHAN_VOICE);
