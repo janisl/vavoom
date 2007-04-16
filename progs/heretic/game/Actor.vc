@@ -2008,25 +2008,6 @@ void ZMovement(float DeltaTime)
 	{
 		// Hit the floor
 		vdot = DotProduct(Velocity, Floor->normal);
-		if (bMissile)
-		{
-			Origin.z = FloorZ;
-			if (bFloorBounce)
-			{
-				FloorBounceMissile();
-				return;
-			}
-			else if (bIgnoreFloorStep)
-			{
-				// Minotaur floor fire can go up steps
-				return;
-			}
-			else
-			{
-				ExplodeMissile();
-				return;
-			}
-		}
 		if (Origin.z - Velocity.z * DeltaTime > FloorZ)
 		{
 			// Spawn splashes, etc.
@@ -2052,6 +2033,25 @@ void ZMovement(float DeltaTime)
 		{
 			SetState(CrashState);
 			return;
+		}
+		if (bMissile)
+		{
+			Origin.z = FloorZ;
+			if (bFloorBounce)
+			{
+				FloorBounceMissile();
+				return;
+			}
+			else if (bIgnoreFloorStep)
+			{
+				// Minotaur floor fire can go up steps
+				return;
+			}
+			else
+			{
+				ExplodeMissile();
+				return;
+			}
 		}
 	}
 
