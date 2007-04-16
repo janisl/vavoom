@@ -30,15 +30,14 @@ Actor bmo;
 
 //==========================================================================
 //
-//	HitMobj
+//	BlasterHitMobj
 //
 //==========================================================================
 
-void HitMobj(Entity Other)
+bool BlasterHitMobj(Entity Other)
 {
 	bmo = Actor(Other);
-	::HitMobj(Other);
-	bmo = none;
+	return ::BlasterHitMobj(Other);
 }
 
 //============================================================================

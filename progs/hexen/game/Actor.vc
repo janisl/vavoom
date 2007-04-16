@@ -2690,6 +2690,17 @@ void PlayerLandedOnThing()
 
 //==========================================================================
 //
+//	BlasterHitMobj
+//
+//==========================================================================
+
+bool BlasterHitMobj(Entity Other)
+{
+	return ExplodeMissile();
+}
+
+//==========================================================================
+//
 //	BlasterPhysics
 //
 //==========================================================================
@@ -2715,10 +2726,19 @@ bool BlasterPhysics(float DeltaTime)
 		{
 			if (changexy)
 			{
-				if (!TryMove(vector(Origin.x + xfrac, Origin.y + yfrac, Origin.z)))
+				tmtrace_t tmtrace;
+				if (!TryMoveEx(&tmtrace, vector(Origin.x + xfrac,
+					Origin.y + yfrac, Origin.z)))
 				{
 					// Blocked move
-					return ExplodeMissile();
+					if (tmtrace.BlockingMobj)
+					{
+						return BlasterHitMobj(tmtrace.BlockingMobj);
+					}
+					else
+					{
+						return ExplodeMissile();
+					}
 				}
 			}
 			Origin.z += zfrac;
