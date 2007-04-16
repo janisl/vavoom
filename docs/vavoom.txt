@@ -96,9 +96,9 @@ In order to compile and run Vavoom under Linux, you need the following:
 Compiler and tools:
     * GNU C++ Compiler, GNU make (every LINUX user must have them)
 Libraries:
-    * zlib
-    * libpng
-    * libjpeg
+    * zlib (http://www.zlib.net)
+    * libpng (http://www.libpng.org)
+    * libjpeg (http://www.ijg.org)
     * Allegro 4.0 (http://alleg.sourceforge.net)
   or
     * SDL 1.2 (http://www.libsdl.org) and SDL_mixer 1.2
@@ -177,9 +177,9 @@ For DOS you need
   Compiler and tools:
       * DJGPP (http://www.delorie.com/djgpp) with gcc, make and bash
   Libraries:
-      * zlib
-      * libpng
-      * libjpeg
+      * zlib (http://www.zlib.net)
+      * libpng (http://www.libpng.org)
+      * libjpeg (http://www.ijg.org)
       * Allegro 4.0 (http://alleg.sourceforge.net) and later.
       * OpenGL version: MESA (http://www.mesa3d.org) and Allegro driver for
     MESA (http://www.geocities.com/SiliconValley/7259/)
@@ -188,12 +188,12 @@ For Windows you need:
   Compiler and tools:
       * MinGW and MSYS (http://www.mingw.org).
   or:
-      * Microsoft Visual C++ 6.0.
+      * Microsoft Visual C++ 2005.
       * DJGPP (http://www.delorie.com/djgpp) - used to compile asm files.
   Libraries:
-      * zlib
-      * libpng
-      * libjpeg
+      * zlib (http://www.zlib.net)
+      * libpng (http://www.libpng.org)
+      * libjpeg (http://www.ijg.org)
       * DirectX 7 SDK (http://www.microsoft.com/directx), already included
     in Builder but some headers needed by DirectMusic are missing. In Allegro
     website (http://alleg.sourceforge.net) you will find a minimal version of
