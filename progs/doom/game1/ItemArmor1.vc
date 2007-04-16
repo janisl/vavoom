@@ -37,6 +37,7 @@ defaultproperties
 {
 	bSpecial = true;
 	bNoPassMobj = true;
+	bFloorClip = true;
 	IdleState = S_ARM1;
 	ArmorClass = 1;
 	PickupMessage = "$gotarmor";

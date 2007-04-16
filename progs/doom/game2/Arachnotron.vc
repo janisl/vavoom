@@ -113,6 +113,7 @@ defaultproperties
 	bMonster = true;
 	bActivateMCross = true;
 	bActivatePushWall = true;
+	bFloorClip = true;
 	IdleState = S_BSPI_STND;
 	SeeState = S_BSPI_SIGHT;
 	MissileState = S_BSPI_ATK1;

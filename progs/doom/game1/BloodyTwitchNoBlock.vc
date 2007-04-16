@@ -30,4 +30,5 @@ defaultproperties
 {
 	Radius = 20.0;
 	bSolid = false;
+	bFloorClip = true;
 }

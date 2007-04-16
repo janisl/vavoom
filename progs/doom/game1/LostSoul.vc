@@ -87,6 +87,7 @@ defaultproperties
 	bFloat = true;
 	bTriggerHappy = true;
 	bNoGravKill = true;
+	bFloorClip = true;
 	IdleState = S_SKULL_STND;
 	SeeState = S_SKULL_RUN1;
 	MissileState = S_SKULL_ATK1;

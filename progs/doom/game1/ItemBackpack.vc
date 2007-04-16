@@ -61,6 +61,7 @@ defaultproperties
 {
 	bSpecial = true;
 	bNoPassMobj = true;
+	bFloorClip = true;
 	IdleState = S_BPAK;
 	PickupMessage = "$gotbackpack";
 }

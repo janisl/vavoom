@@ -54,4 +54,5 @@ defaultproperties
 	DeathSound = '';
 
 	IdleState = S_TROO_DIE5;
+	bFloorClip = true;
 }

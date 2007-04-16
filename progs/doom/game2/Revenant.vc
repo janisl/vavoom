@@ -148,6 +148,7 @@ defaultproperties
 	bActivateMCross = true;
 	bActivatePushWall = true;
 	bTriggerHappy = true;
+	bFloorClip = true;
 	IdleState = S_SKEL_STND;
 	SeeState = S_SKEL_RUN1;
 	MeleeState = S_SKEL_FIST1;

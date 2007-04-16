@@ -39,6 +39,7 @@ defaultproperties
 	Radius = 16.0;
 	Height = 72.0;
 	bSolid = true;
+	bFloorClip = true;
 	IdleState = S_TECHLAMP;
 	bStaticLight = true;
 	LightOffset = vector(0.0, 0.0, 64.0);

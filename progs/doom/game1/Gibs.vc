@@ -30,4 +30,5 @@ class Gibs : Actor
 defaultproperties
 {
 	IdleState = S_GIBS;
+	bFloorClip = true;
 }

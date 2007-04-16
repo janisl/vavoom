@@ -37,5 +37,6 @@ defaultproperties
 	Radius = 16.0;
 	Height = 40.0;
 	bSolid = true;
+	bFloorClip = true;
 	IdleState = S_HEARTCOL;
 }

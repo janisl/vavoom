@@ -38,6 +38,7 @@ defaultproperties
 	bSpecial = true;
 	bNoPassMobj = true;
 	bNoDeathmatch = true;
+	bFloorClip = true;
 	IdleState = S_YKEY;
 	KeyType = it_yellowcard;
 	PickupMessage = "$gotyelwcard";

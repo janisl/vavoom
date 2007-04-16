@@ -36,6 +36,7 @@ defaultproperties
 {
 	bSpecial = true;
 	bNoPassMobj = true;
+	bFloorClip = true;
 	IdleState = S_STIM;
 	HealthAmount = 10;
 	PickupMessage = "$gotstim";

@@ -36,6 +36,7 @@ defaultproperties
 	Radius = 16.0;
 	Height = 48.0;
 	bSolid = true;
+	bFloorClip = true;
 	IdleState = S_COLU;
 	bStaticLight = true;
 	LightOffset = vector(0.0, 0.0, 32.0);

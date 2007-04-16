@@ -36,6 +36,7 @@ defaultproperties
 {
 	bSpecial = true;
 	bNoPassMobj = true;
+	bFloorClip = true;
 	IdleState = S_LAUN;
 	WeaponType = DoomDefs::wp_missile;
 	PickupMessage = "$gotlauncher";

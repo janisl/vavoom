@@ -55,4 +55,5 @@ defaultproperties
 	Effects = 0;
 
 	IdleState = S_SKULL_DIE6;
+	bFloorClip = true;
 }

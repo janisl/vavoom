@@ -106,6 +106,7 @@ defaultproperties
 	bActivatePushWall = true;
 	bBoss = true;
 	bTriggerHappy = true;
+	bFloorClip = true;
 	IdleState = S_CYBER_STND;
 	SeeState = S_CYBER_RUN1;
 	MissileState = S_CYBER_ATK1;

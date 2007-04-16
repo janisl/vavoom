@@ -78,6 +78,7 @@ defaultproperties
 	bActivatePushWall = true;
 	bBoss = true;
 	bTriggerHappy = true;
+	bFloorClip = true;
 	IdleState = S_SPID_STND;
 	SeeState = S_SPID_RUN1;
 	MissileState = S_SPID_ATK1;

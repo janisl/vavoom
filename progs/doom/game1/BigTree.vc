@@ -36,5 +36,6 @@ defaultproperties
 	Radius = 32.0;
 	Height = 96.0;
 	bSolid = true;
+	bFloorClip = true;
 	IdleState = S_BIGTREE;
 }

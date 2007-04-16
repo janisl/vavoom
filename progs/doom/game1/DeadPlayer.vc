@@ -52,4 +52,5 @@ defaultproperties
 	DeathSound = '';
 
 	IdleState = S_PLAY_DIE7;
+	bFloorClip = true;
 }

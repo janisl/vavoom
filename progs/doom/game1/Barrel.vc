@@ -46,6 +46,7 @@ defaultproperties
 	bSolid = true;
 	bShootable = true;
 	bNoBlood = true;
+	bFloorClip = true;
 	IdleState = S_BAR1;
 	DeathState = S_BEXP;
 	DeathSound = 'world/barrelx';

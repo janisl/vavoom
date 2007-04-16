@@ -94,6 +94,7 @@ defaultproperties
 	bActivatePushWall = true;
 	bNoGravity = true;
 	bFloat = true;
+	bFloorClip = true;
 	IdleState = S_HEAD_STND;
 	SeeState = S_HEAD_RUN1;
 	MissileState = S_HEAD_ATK1;

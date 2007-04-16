@@ -63,6 +63,7 @@ defaultproperties
 	bSpecial = true;
 	bNoPassMobj = true;
 	bCountItem = true;
+	bFloorClip = true;
 	IdleState = S_SOUL;
 	PickupMessage = "$gotsuper";
 }

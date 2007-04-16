@@ -1700,6 +1700,25 @@ int FaceActor(Actor target, float *delta)
 	}
 }
 
+//==========================================================================
+//
+//	HandleFloorclip
+//
+//==========================================================================
+
+void HandleFloorclip()
+{
+	VTerrainInfo* TInfo = GetFloorType();
+	if (bFloorClip && TInfo->bLiquid)
+	{
+		FloorClip = TInfo->FootClip;
+	}
+	else
+	{
+		FloorClip = 0.0;
+	}
+}
+
 //**************************************************************************
 //
 //  OBJECT MOVEMENT
@@ -2580,6 +2599,7 @@ bool Teleport(TVec Dst, float angle, bool DstFog, bool SrcFog, bool KeepDir)
 		Angles.yaw = angle;
 		Velocity = vector(0.0, 0.0, 0.0);
 	}
+	HandleFloorclip();
 	return true;
 }
 

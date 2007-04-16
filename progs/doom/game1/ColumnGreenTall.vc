@@ -36,5 +36,6 @@ defaultproperties
 	Radius = 16.0;
 	Height = 52.0;
 	bSolid = true;
+	bFloorClip = true;
 	IdleState = S_TALLGRNCOL;
 }

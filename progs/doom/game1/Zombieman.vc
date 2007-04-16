@@ -126,6 +126,7 @@ defaultproperties
 	bMonster = true;
 	bActivateMCross = true;
 	bActivatePushWall = true;
+	bFloorClip = true;
 	IdleState = S_POSS_STND;
 	SeeState = S_POSS_RUN1;
 	MissileState = S_POSS_ATK1;

@@ -54,4 +54,5 @@ defaultproperties
 	bFastMelee = false;
 
 	IdleState = S_SARG_DIE6;
+	bFloorClip = true;
 }

@@ -38,6 +38,7 @@ defaultproperties
 	bSpecial = true;
 	bNoPassMobj = true;
 	bNoDeathmatch = true;
+	bFloorClip = true;
 	IdleState = S_YSKULL;
 	KeyType = it_yellowskull;
 	PickupMessage = "$gotyelwskul";

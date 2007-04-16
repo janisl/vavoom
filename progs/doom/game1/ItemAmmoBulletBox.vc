@@ -36,6 +36,7 @@ defaultproperties
 {
 	bSpecial = true;
 	bNoPassMobj = true;
+	bFloorClip = true;
 	IdleState = S_AMMO;
 	AmmoType = DoomDefs::am_clip;
 	AmmoCount = 50;

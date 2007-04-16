@@ -100,6 +100,7 @@ defaultproperties
 	PainChance = 1.0;
 	bSolid = true;
 	bShootable = true;
+	bFloorClip = true;
 	IdleState = S_BRAIN;
 	PainState = S_BRAIN_PAIN;
 	DeathState = S_BRAIN_DIE1;

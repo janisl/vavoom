@@ -41,5 +41,6 @@ defaultproperties
 	bSolid = true;
 	bSpawnCeiling = true;
 	bNoGravity = true;
+	bFloorClip = true;
 	IdleState = S_BLOODYTWITCH;
 }

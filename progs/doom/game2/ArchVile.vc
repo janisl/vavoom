@@ -229,6 +229,7 @@ defaultproperties
 	bActivatePushWall = true;
 	bNoGrudge = true;
 	bNeverTarget = true;
+	bFloorClip = true;
 	IdleState = S_VILE_STND;
 	SeeState = S_VILE_RUN1;
 	MissileState = S_VILE_ATK1;

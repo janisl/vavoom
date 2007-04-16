@@ -173,6 +173,7 @@ defaultproperties
 	bMonster = true;
 	bActivateMCross = true;
 	bActivatePushWall = true;
+	bFloorClip = true;
 	IdleState = S_FATT_STND;
 	SeeState = S_FATT_RUN1;
 	MissileState = S_FATT_ATK1;

@@ -107,6 +107,7 @@ defaultproperties
 	bMonster = true;
 	bActivateMCross = true;
 	bActivatePushWall = true;
+	bFloorClip = true;
 	IdleState = S_TROO_STND;
 	SeeState = S_TROO_RUN1;
 	MeleeState = S_TROO_ATK1;

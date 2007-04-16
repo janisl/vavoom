@@ -36,6 +36,7 @@ defaultproperties
 {
 	bSpecial = true;
 	bNoPassMobj = true;
+	bFloorClip = true;
 	IdleState = S_SHOT;
 	WeaponType = DoomDefs::wp_shotgun;
 	PickupMessage = "$gotshotgun";

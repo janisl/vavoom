@@ -36,6 +36,7 @@ defaultproperties
 {
 	bSpecial = true;
 	bNoPassMobj = true;
+	bFloorClip = true;
 	IdleState = S_ROCK;
 	AmmoType = DoomDefs::am_misl;
 	AmmoCount = 1;

@@ -101,6 +101,7 @@ defaultproperties
 	bMonster = true;
 	bActivateMCross = true;
 	bActivatePushWall = true;
+	bFloorClip = true;
 	ImuneMissileType = BruiserShot;
 	IdleState = S_BOSS_STND;
 	SeeState = S_BOSS_RUN1;

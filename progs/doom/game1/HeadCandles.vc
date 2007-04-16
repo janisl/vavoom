@@ -37,6 +37,7 @@ defaultproperties
 	Radius = 16.0;
 	Height = 48.0;
 	bSolid = true;
+	bFloorClip = true;
 	IdleState = S_HEADCANDLES;
 	bStaticLight = true;
 	LightColour = RGB(255, 127, 80);
