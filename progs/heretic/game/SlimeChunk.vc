@@ -44,6 +44,7 @@ defaultproperties
 	bNoTeleport = true;
 	bActivatePCross = true;
 	bCannotPush = true;
+	bNoSplash = true;
 	IdleState = S_SLUDGECHUNK1;
 	DeathState = S_SLUDGECHUNKX;
 }

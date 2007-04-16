@@ -77,7 +77,7 @@ bool bMissile;			// don't hit same species, explode on block
 bool bDropped;			// dropped by a demon, not level spawned
 bool bNoBlood;			// don't bleed when shot (use puff)
 bool bInFloat;			// floating to a height for a move, don't
-				// auto float to target's height
+						// auto float to target's height
 bool bSkullFly;			// skull in flight
 bool bCountKill;		// count towards intermission kill total
 bool bFloorBounce;		// bounces off the floor
@@ -85,11 +85,11 @@ bool bCountItem;		//COUNTITEM	800000
 bool bFriendly;			// Will fight on player's side
 bool bUnknown2;			//8000000
 bool bSpectral;			// Can be killed only with Sigil
-bool bActivateImpact;		// an MF_MISSILE mobj can activate
-				// SPAC_IMPACT
-bool bActivatePushWall;		// mobj can push walls
-bool bActivateMCross;		// can activate monster cross lines
-bool bActivatePCross;		// can activate projectile cross lines
+bool bActivateImpact;	// an MF_MISSILE mobj can activate
+						// SPAC_IMPACT
+bool bActivatePushWall;	// mobj can push walls
+bool bActivateMCross;	// can activate monster cross lines
+bool bActivatePCross;	// can activate projectile cross lines
 bool bDormant;			// thing is dormant
 bool bWaterJump;
 bool bNoDeathmatch;
@@ -99,11 +99,12 @@ bool bWindThrust;
 bool bNoTeleport;
 bool bPoisonDamage;		// Does poison damage (doesn't gib enemies).
 bool bFireDamage;		// Causes fire damage.
-bool bDisruptDamage;		// Disrupts enemies.
+bool bDisruptDamage;	// Disrupts enemies.
 bool bInCombat;			// Actors in combat won't talk
-bool bLookAllAround;		// Actor can see all around.
+bool bLookAllAround;	// Actor can see all around.
 bool bStaticLight;		// Static light source.
-bool bCannotPush;	// cannot push other pushable mobjs
+bool bCannotPush;		// cannot push other pushable mobjs
+bool bNoSplash;			// Things that don't splash
 
 //  Params
 float Speed;
@@ -1071,6 +1072,12 @@ bool HitFloorType()
 	if (FloorZ != GetPlanePointZ(&Sector->floor, Origin))
 	{
 		// don't splash if landing on the edge above water/lava/etc....
+		return false;
+	}
+
+	// Things that don't splash go here
+	if (bNoSplash)
+	{
 		return false;
 	}
 

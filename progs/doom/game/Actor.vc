@@ -58,32 +58,32 @@ name PainSound;
 name DeathSound;
 
 //	Flags
-bool bSpecial;		// call P_SpecialThing when touched
-bool bShootable;	// Can be hit.
+bool bSpecial;			// call P_SpecialThing when touched
+bool bShootable;		// Can be hit.
 bool bAmbush;
-bool bJustHit;		// try to attack right back
-bool bJustAttacked;	// take at least one step before attacking
-bool bSpawnCeiling;	// hang from ceiling instead of floor
+bool bJustHit;			// try to attack right back
+bool bJustAttacked;		// take at least one step before attacking
+bool bSpawnCeiling;		// hang from ceiling instead of floor
 // movement flags
-bool bPickUp;		// for players to pick up items
-bool bSlide;		// keep info about sliding along walls
-bool bTeleport;		// don't cross lines or look at heights
-bool bMissile;		// don't hit same species, explode on block
-bool bDropped;		// dropped by a demon, not level spawned
-bool bNoBlood;		// don't bleed when shot (use puff)
-bool bInFloat;		// floating to a height for a move, don't
-			// auto float to target's height
-bool bCountKill;	// count towards intermission kill total
-bool bCountItem;	// count towards intermission item total
+bool bPickUp;			// for players to pick up items
+bool bSlide;			// keep info about sliding along walls
+bool bTeleport;			// don't cross lines or look at heights
+bool bMissile;			// don't hit same species, explode on block
+bool bDropped;			// dropped by a demon, not level spawned
+bool bNoBlood;			// don't bleed when shot (use puff)
+bool bInFloat;			// floating to a height for a move, don't
+						// auto float to target's height
+bool bCountKill;		// count towards intermission kill total
+bool bCountItem;		// count towards intermission item total
 bool bActivateImpact;	// an MF_MISSILE mobj can activate
-			// SPAC_IMPACT
+						// SPAC_IMPACT
 bool bActivatePushWall;	// mobj can push walls
 bool bActivateMCross;	// can activate monster cross lines
 bool bActivatePCross;	// can activate projectile cross lines
-bool bDormant;		// thing is dormant
+bool bDormant;			// thing is dormant
 bool bBounce;
 bool bWaterJump;
-bool bSkullFly;		// skull in flight
+bool bSkullFly;			// skull in flight
 bool bNoDeathmatch;
 bool bMonster;
 bool bTelestomp;
@@ -95,11 +95,12 @@ bool bBoss;
 bool bNoRespawn;
 bool bWindThrust;
 bool bNoTeleport;
-bool bStaticLight;	// Static light source.
+bool bStaticLight;		// Static light source.
 bool bFaster;
 bool bFastMelee;
 bool bDehackedSpecial;	// Old style special handling
-bool bCannotPush;	// cannot push other pushable mobjs
+bool bCannotPush;		// cannot push other pushable mobjs
+bool bNoSplash;			// Things that don't splash
 
 //  Params
 float Speed;
@@ -1323,6 +1324,12 @@ bool HitFloorType()
 	if (FloorZ != GetPlanePointZ(&Sector->floor, Origin))
 	{
 		// don't splash if landing on the edge above water/lava/etc....
+		return false;
+	}
+
+	// Things that don't splash go here
+	if (bNoSplash)
+	{
 		return false;
 	}
 
