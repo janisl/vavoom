@@ -1102,8 +1102,7 @@ void MovePlayer(float deltaTime)
 		side *= 1.5;
 	}
 	if ((!Powers[pw_flight] || MO.Origin.z <= MO.FloorZ) &&
-		(Actor(MO).GetFloorType()->Friction < Actor::FRICTION_NORMAL ||
-		(MO.Sector->special & SECSPEC_BASE_MASK) == SECSPEC_FrictionLow))
+		Actor(MO).GetFriction() < Actor::FRICTION_NORMAL * 0.5)
 	{
 		forward *= 0.5;
 		side *= 0.5;
