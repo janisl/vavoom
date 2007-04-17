@@ -85,6 +85,7 @@ class VBasePlayer : public VObject
 		PF_UseDown		= 0x0020,
 		PF_DidSecret	= 0x0040,	// True if secret level has been done.
 		PF_Centreing	= 0x0080,
+		PF_IsClient		= 0x0100,	// Player on client side
 	};
 	vuint32			PlayerFlags;
 
@@ -153,6 +154,9 @@ class VBasePlayer : public VObject
 	: UserInfo(E_NoInit)
 	, PlayerName(E_NoInit)
 	{}
+
+	//	VObject interface
+	bool ExecuteNetMethod(VMethod*);
 
 	void SetViewState(int, VState*);
 	void AdvanceViewStates(float);

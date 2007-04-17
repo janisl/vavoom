@@ -119,7 +119,7 @@ TVec MoveDir;
 
 replication
 {
-	reliable if (true)
+	reliable if (!bIsClient)
 		ReadyAmmo, Sigil, Accuracy, Stamina, Keys, InvFirst, InvCursor,
 		Objectives, ArmorType, ArmorPoints, Cheats, Ammo, MaxAmmo,
 		WeaponOwned, Inventory, Backpack, Communicator;

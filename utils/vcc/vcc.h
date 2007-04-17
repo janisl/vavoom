@@ -452,13 +452,14 @@ struct mobjinfo_t
 
 struct VRepField
 {
-	VName		Name;
-	TLocation	Loc;
-	VField*		Field;
+	VName			Name;
+	TLocation		Loc;
+	VMemberBase*	Member;
 };
 
 struct VRepInfo
 {
+	bool				Reliable;
 	VMethod*			Cond;
 	TArray<VRepField>	RepFields;
 };

@@ -1329,17 +1329,20 @@ void VProperty::Serialise(VStream& Strm)
 
 VMethod::VMethod(VName AName)
 : VMemberBase(MEMBER_Method, AName)
-, NumParms(0)
 , NumLocals(0)
-, Type(0)
 , Flags(0)
+, NumParams(0)
+, ParamsSize(0)
+, NumInstructions(0)
+, Instructions(0)
 , Profile1(0)
 , Profile2(0)
 , NativeFunc(0)
-, NumInstructions(0)
-, Instructions(0)
 , VTableIndex(0)
+, NetIndex(0)
+, NextNetMethod(0)
 {
+	memset(ParamFlags, 0, sizeof(ParamFlags));
 }
 
 //==========================================================================
@@ -1377,26 +1380,17 @@ void VMethod::Serialise(VStream& Strm)
 {
 	guard(VMethod::Serialise);
 	VMemberBase::Serialise(Strm);
-	VField::FType TmpType;
-	vint32 TmpNumParams;
-	vint32 TmpNumLocals;
-	vint32 TmpFlags;
-	vint32 ParamsSize;
-	vuint8 TmpParmFlag;
-	Strm << STRM_INDEX(TmpNumLocals)
-		<< STRM_INDEX(TmpFlags)
-		<< TmpType
-		<< STRM_INDEX(TmpNumParams)
+
+	Strm << STRM_INDEX(NumLocals)
+		<< STRM_INDEX(Flags)
+		<< ReturnType
+		<< STRM_INDEX(NumParams)
 		<< STRM_INDEX(ParamsSize);
-	Type = TmpType.Type;
-	NumParms = ParamsSize;
-	NumLocals = TmpNumLocals;
-	Flags = TmpFlags;
-	for (int i = 0; i < TmpNumParams; i++)
-		Strm << TmpType << TmpParmFlag;
+	for (int i = 0; i < NumParams; i++)
+		Strm << ParamTypes[i] << ParamFlags[i];
 
 	//	Set up builtins
-	if (NumParms > 16)
+	if (NumParams > 16)
 		Sys_Error("Function has more than 16 params");
 	for (FBuiltinInfo* B = FBuiltinInfo::Builtins; B; B = B->Next)
 	{
@@ -2367,6 +2361,7 @@ VClass::VClass(VName AName)
 , ReferenceFields(0)
 , DestructorFields(0)
 , NetFields(0)
+, NetMethods(0)
 , States(0)
 , DefaultProperties(0)
 , Defaults(0)
@@ -2401,6 +2396,7 @@ VClass::VClass(ENativeConstructor, size_t ASize, vuint32 AClassFlags,
 , ReferenceFields(0)
 , DestructorFields(0)
 , NetFields(0)
+, NetMethods(0)
 , States(0)
 , DefaultProperties(0)
 , Defaults(0)
@@ -2519,15 +2515,15 @@ void VClass::Serialise(VStream& Strm)
 	for (int i = 0; i < RepInfos.Num(); i++)
 	{
 		Strm << RepInfos[i].Cond;
-		int NumRepFields = RepInfos[i].RepFields.Num();
-		Strm << STRM_INDEX(NumRepFields);
+		int NumRepMembers = RepInfos[i].RepMembers.Num();
+		Strm << STRM_INDEX(NumRepMembers);
 		if (Strm.IsLoading())
 		{
-			RepInfos[i].RepFields.SetNum(NumRepFields);
+			RepInfos[i].RepMembers.SetNum(NumRepMembers);
 		}
-		for (int j = 0; j < RepInfos[i].RepFields.Num(); j++)
+		for (int j = 0; j < RepInfos[i].RepMembers.Num(); j++)
 		{
-			Strm << RepInfos[i].RepFields[j];
+			Strm << RepInfos[i].RepMembers[j];
 		}
 	}
 	unguard;
@@ -2931,6 +2927,7 @@ void VClass::InitNetFields()
 	if (ParentClass)
 	{
 		NetFields = ParentClass->NetFields;
+		NetMethods = ParentClass->NetMethods;
 		NumNetFields = ParentClass->NumNetFields;
 	}
 
@@ -2943,6 +2940,35 @@ void VClass::InitNetFields()
 		fi->NetIndex = NumNetFields++;
 		fi->NextNetField = NetFields;
 		NetFields = fi;
+	}
+
+	for (int i = 0; i < GMembers.Num(); i++)
+	{
+		if (GMembers[i]->MemberType != MEMBER_Method ||
+			GMembers[i]->Outer != this)
+		{
+			continue;
+		}
+		VMethod* M = (VMethod*)GMembers[i];
+		if (!(M->Flags & FUNC_Net))
+		{
+			continue;
+		}
+		VMethod* MPrev = NULL;
+		if (ParentClass)
+		{
+			MPrev = ParentClass->FindFunction(M->Name);
+		}
+		if (MPrev)
+		{
+			M->NetIndex = MPrev->NetIndex;
+		}
+		else
+		{
+			M->NetIndex = NumNetFields++;
+		}
+		M->NextNetMethod = NetMethods;
+		NetMethods = M;
 	}
 	unguard;
 }

@@ -208,17 +208,26 @@ struct FInstruction
 class VMethod : public VMemberBase
 {
 public:
-	vint16			NumParms;
-	vint16			NumLocals;
-	vint16			Type;
-	vint16			Flags;
+	//FIXME avoid copying
+	enum { MAX_PARAMS		= 16 };
+
+	vint32			NumLocals;
+	vint32			Flags;
+	VField::FType	ReturnType;
+	vint32			NumParams;
+	vint32			ParamsSize;
+	VField::FType	ParamTypes[MAX_PARAMS];
+	vuint8			ParamFlags[MAX_PARAMS];
+	vint32			NumInstructions;
+	FInstruction*	Instructions;
+
 	vuint32			Profile1;
 	vuint32			Profile2;
 	TArray<vuint8>	Statements;
 	builtin_t		NativeFunc;
-	vint32			NumInstructions;
-	FInstruction*	Instructions;
 	vint16			VTableIndex;
+	vint32			NetIndex;
+	VMethod*		NextNetMethod;
 
 	VMethod(VName);
 	~VMethod();
@@ -350,8 +359,8 @@ struct mobjinfo_t
 
 struct VRepInfo
 {
-	VMethod*			Cond;
-	TArray<VField*>		RepFields;
+	VMethod*				Cond;
+	TArray<VMemberBase*>	RepMembers;
 };
 
 class VClass : public VMemberBase
@@ -376,6 +385,7 @@ public:
 	VField*			ReferenceFields;
 	VField*			DestructorFields;
 	VField*			NetFields;
+	VMethod*		NetMethods;
 	VState*			States;
 	VMethod*		DefaultProperties;
 

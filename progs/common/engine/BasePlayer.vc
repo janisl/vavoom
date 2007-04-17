@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 //
-//	Extended player object info: player_t
+//	Extended player object info
 //
 //**************************************************************************
 
@@ -39,79 +39,80 @@ struct VViewState
 
 readonly LevelInfo		Level;
 
-readonly bool bActive;
-readonly bool bSpawned;
-readonly bool bIsBot;
-bool bFixAngle;
-bool bAttackDown;	// True if button down last tic.
-bool bUseDown;
-bool bDidSecret;	// True if secret level has been done.
-readonly private bool bCentreing;
+readonly bool			bActive;
+readonly bool			bSpawned;
+readonly bool			bIsBot;
+bool					bFixAngle;
+bool					bAttackDown;	// True if button down last tic.
+bool					bUseDown;
+bool					bDidSecret;	// True if secret level has been done.
+readonly private bool	bCentreing;
+readonly bool			bIsClient;	// Player on client side
 
 native readonly private void* Net;
 
-string UserInfo;
+string					UserInfo;
 
-string PlayerName;
-int BaseClass;
-int PClass;	// player class type
-int Colour;
+string					PlayerName;
+int						BaseClass;
+int						PClass;	// player class type
+int						Colour;
 
 // Copied from cmd, needed for PROGS, which supports only 4 byte ints
-float ForwardMove;	// *2048 for move
-float SideMove;	// *2048 for move
-float FlyMove;	// fly up/down/centreing
-int Buttons;	// fire, use
-int Impulse;	// weapon changes, inventory, etc
+float					ForwardMove;	// *2048 for move
+float					SideMove;	// *2048 for move
+float					FlyMove;	// fly up/down/centreing
+int						Buttons;	// fire, use
+int						Impulse;	// weapon changes, inventory, etc
 
-Entity MO;
-int PlayerState;
+Entity					MO;
+int						PlayerState;
 
 // Determine POV,
 //  including viewpoint bobbing during movement.
 // Focal origin above r.z
-TVec ViewOrg;
+TVec					ViewOrg;
 
-TAVec ViewAngles;
+TAVec					ViewAngles;
 
 // This is only used between levels,
 // mo->health is used during levels.
-int Health;
+int						Health;
 
-int Items;
+int						Items;
 
 // Frags, kills of other players.
-int Frags;
-int FragsStats[MAXPLAYERS];
+int						Frags;
+int						FragsStats[MAXPLAYERS];
 
 // For intermission stats.
-int KillCount;
-int ItemCount;
-int SecretCount;
+int						KillCount;
+int						ItemCount;
+int						SecretCount;
 
 // So gun flashes light up areas.
-int ExtraLight;
+int						ExtraLight;
 
 // For lite-amp and invulnarability powers
-int FixedColourmap;
+int						FixedColourmap;
 
 //  Colour shifts for damage, powerups and content types
-int CShifts[NUM_CSHIFTS];
+int						CShifts[NUM_CSHIFTS];
 
 // Overlay view sprites (gun, etc).
-VViewState		ViewStates[NUMPSPRITES];
-Entity			ViewEnt;
-float			PSpriteSY;
+VViewState				ViewStates[NUMPSPRITES];
+Entity					ViewEnt;
+float					PSpriteSY;
 
-int WorldTimer;	// total time the player's been playing
+int						WorldTimer;	// total time the player's been playing
 
-native readonly int ClientNum;
+native readonly int		ClientNum;
 
-native readonly float ViewEntAlpha;
+native readonly float	ViewEntAlpha;
 
 replication
 {
-	reliable if (true)
+	reliable if (!bIsClient)
 		Health, Items, Frags, ExtraLight, FixedColourmap, CShifts, PSpriteSY,
 		KillCount, ItemCount, SecretCount;
 }

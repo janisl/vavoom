@@ -27,6 +27,7 @@
 
 #include "gamedefs.h"
 #include "network.h"
+#include "progdefs.h"
 #include "sv_local.h"
 
 // MACROS ------------------------------------------------------------------
@@ -80,6 +81,165 @@ VNetContext::VNetContext()
 
 VNetContext::~VNetContext()
 {
+}
+
+//==========================================================================
+//
+//	EvalCond
+//
+//==========================================================================
+
+static bool EvalCond(VObject* Obj, VClass* Class, VMethod* M)
+{
+	guard(EvalCond);
+	for (int i = 0; i < Class->RepInfos.Num(); i++)
+	{
+		for (int j = 0; j < Class->RepInfos[i].RepMembers.Num(); j++)
+		{
+			if (Class->RepInfos[i].RepMembers[j]->MemberType != MEMBER_Method)
+				continue;
+			if (Class->RepInfos[i].RepMembers[j]->Name != M->Name)
+				continue;
+			P_PASS_REF(Obj);
+			return !!VObject::ExecuteFunction(Class->RepInfos[i].Cond).i;
+		}
+	}
+	if (Class->GetSuperClass())
+	{
+		return EvalCond(Obj, Class->GetSuperClass(), M);
+	}
+	return false;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VBasePlayer::ExecuteNetMethod
+//
+//==========================================================================
+
+bool VBasePlayer::ExecuteNetMethod(VMethod* Func)
+{
+	if (!EvalCond(this, GetClass(), Func))
+	{
+		return false;
+	}
+
+	VMessageOut Msg(Net->Channels[CHANIDX_Player]);
+	Msg.bReliable = !!(Func->Flags & FUNC_NetReliable);
+
+	Msg.WriteInt(Func->NetIndex, GetClass()->NumNetFields);
+
+	//	Serialise arguments
+	guard(SerialiseArguments);
+	VStack* Param = pr_stackPtr - Func->ParamsSize + 1;	//	Skip self
+	for (int i = 0; i < Func->NumParams; i++)
+	{
+		switch (Func->ParamTypes[i].Type)
+		{
+		case ev_int:
+		case ev_name:
+		case ev_bool:
+			VField::NetSerialiseValue(Msg, (vuint8*)&Param->i, Func->ParamTypes[i]);
+			Param++;
+			break;
+		case ev_float:
+			VField::NetSerialiseValue(Msg, (vuint8*)&Param->f, Func->ParamTypes[i]);
+			Param++;
+			break;
+		case ev_string:
+		case ev_pointer:
+		case ev_reference:
+		case ev_class:
+		case ev_state:
+			VField::NetSerialiseValue(Msg, (vuint8*)&Param->p, Func->ParamTypes[i]);
+			Param++;
+			break;
+		case ev_vector:
+			{
+				TVec Vec;
+				Vec.x = Param[0].f;
+				Vec.y = Param[1].f;
+				Vec.z = Param[2].f;
+				VField::NetSerialiseValue(Msg, (vuint8*)&Vec, Func->ParamTypes[i]);
+				Param += 3;
+			}
+			break;
+		default:
+			Sys_Error("Bad method argument type %d", Func->ParamTypes[i].Type);
+		}
+	}
+	unguard;
+
+	//	Send it.
+	Net->Channels[CHANIDX_Player]->SendMessage(&Msg);
+
+	//	Clean up parameters
+	guard(CleanUp);
+	VStack* Param = pr_stackPtr - Func->ParamsSize + 1;	//	Skip self
+	for (int i = 0; i < Func->NumParams; i++)
+	{
+		switch (Func->ParamTypes[i].Type)
+		{
+		case ev_int:
+		case ev_name:
+		case ev_bool:
+		case ev_float:
+		case ev_pointer:
+		case ev_reference:
+		case ev_class:
+		case ev_state:
+			Param++;
+			break;
+		case ev_string:
+			((VStr*)&Param->p)->Clean();
+			Param++;
+			break;
+		case ev_vector:
+			Param += 3;
+			break;
+		default:
+			Sys_Error("Bad method argument type %d", Func->ParamTypes[i].Type);
+		}
+	}
+	pr_stackPtr -= Func->ParamsSize;
+	unguard;
+
+	//	Push null return value
+	guard(RetVal);
+	switch (Func->ReturnType.Type)
+	{
+	case ev_void:
+		break;
+	case ev_int:
+	case ev_name:
+	case ev_bool:
+		PR_Push(0);
+		break;
+	case ev_float:
+		PR_Pushf(0);
+		break;
+	case ev_string:
+		PR_PushStr(VStr());
+		break;
+	case ev_pointer:
+	case ev_reference:
+	case ev_class:
+	case ev_state:
+		PR_PushPtr(NULL);
+		break;
+	case ev_vector:
+		PR_Pushf(0);
+		PR_Pushf(0);
+		PR_Pushf(0);
+		break;
+	default:
+		Sys_Error("Bad return value type");
+	}
+	unguard;
+
+	//	It's been handled here.
+	return true;
 }
 
 //==========================================================================

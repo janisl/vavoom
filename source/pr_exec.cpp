@@ -166,6 +166,15 @@ static void RunFunction(VMethod *func)
 	guardSlow(RunFunction);
 	current_func = func;
 
+	if (func->Flags & FUNC_Net)
+	{
+		VStack* Params = pr_stackPtr - func->ParamsSize;
+		if (((VObject*)Params[0].p)->ExecuteNetMethod(func))
+		{
+			return;
+		}
+	}
+
 	if (func->Flags & FUNC_Native)
 	{
 		//	Native function, first statement is pointer to function.
@@ -177,9 +186,9 @@ static void RunFunction(VMethod *func)
 	sp = pr_stackPtr;
 
 	//	Setup local vars
-	local_vars = sp - func->NumParms;
-	memset(sp, 0, (func->NumLocals - func->NumParms) * sizeof(VStack));
-	sp += func->NumLocals - func->NumParms;
+	local_vars = sp - func->ParamsSize;
+	memset(sp, 0, (func->NumLocals - func->ParamsSize) * sizeof(VStack));
+	sp += func->NumLocals - func->ParamsSize;
 
 	ip = func->Statements.Ptr();
 
@@ -1584,7 +1593,7 @@ VStack VObject::ExecuteFunction(VMethod *func)
 	current_func = prev_func;
 
 	//	Get return value
-	if (func->Type)
+	if (func->ReturnType.Type)
 	{
 		--pr_stackPtr;
 		ret = *pr_stackPtr;

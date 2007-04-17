@@ -1465,6 +1465,9 @@ bool VMethod::Define()
 				ParseError(Loc, "Type of argument %d differs from base class", i + 1);
 				Ret = false;
 			}
+
+		//	Inherit network flags
+		Flags |= BaseMethod->Flags & FUNC_NetFlags;
 	}
 
 	if (Flags & FUNC_Spawner)
@@ -2218,7 +2221,7 @@ void VClass::Serialise(VStream& Strm)
 		}
 		for (int j = 0; j < RepInfos[i].RepFields.Num(); j++)
 		{
-			Strm << RepInfos[i].RepFields[j].Field;
+			Strm << RepInfos[i].RepFields[j].Member;
 		}
 	}
 }
@@ -2586,19 +2589,44 @@ bool VClass::DefineMembers()
 					break;
 				}
 			}
-			if (!RepField)
+			if (RepField)
 			{
-				ParseError(RepFields[i].Loc, "No such field %s", *RepFields[i].Name);
+				if (RepField->flags & FIELD_Net)
+				{
+					ParseError(RepFields[i].Loc, "Field %s has multiple replication statements",
+						*RepFields[i].Name);
+					continue;
+				}
+				RepField->flags |= FIELD_Net;
+				RepFields[i].Member = RepField;
 				continue;
 			}
-			if (RepField->flags & FIELD_Net)
+
+			VMethod* RepMethod = NULL;
+			for (int mi = 0; mi < Methods.Num(); mi++)
 			{
-				ParseError(RepFields[i].Loc, "Field %s has multiple replication statements",
-					*RepFields[i].Name);
+				if (Methods[mi]->Name == RepFields[i].Name)
+				{
+					RepMethod = Methods[mi];
+					break;
+				}
+			}
+			if (RepMethod)
+			{
+				if (RepMethod->Flags & FUNC_Net)
+				{
+					ParseError(RepFields[i].Loc, "Method %s has multiple replication statements",
+						*RepFields[i].Name);
+					continue;
+				}
+				RepMethod->Flags |= FUNC_Net;
+				if (RepInfos[ri].Reliable)
+					RepMethod->Flags |= FUNC_NetReliable;
+				RepFields[i].Member = RepMethod;
 				continue;
 			}
-			RepField->flags |= FIELD_Net;
-			RepFields[i].Field = RepField;
+
+			ParseError(RepFields[i].Loc, "No such field or method %s", *RepFields[i].Name);
 		}
 	}
 

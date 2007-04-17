@@ -28,7 +28,7 @@
 #define PROG_MAGIC		"VPRG"
 #define PROG_VERSION	22
 
-#define	MAX_PARAMS		16
+enum { MAX_PARAMS		= 16 };
 
 enum EType
 {
@@ -68,11 +68,15 @@ enum
 
 enum
 {
-	FUNC_Native		= 0x0001,	// Native method
-	FUNC_Static		= 0x0002,	// Static method
-	FUNC_VarArgs	= 0x0004,	// Variable argument count
-	FUNC_Final		= 0x0008,	// Final version of a method
-	FUNC_Spawner	= 0x0010,	// Automatic cast of return value
+	FUNC_Native			= 0x0001,	// Native method
+	FUNC_Static			= 0x0002,	// Static method
+	FUNC_VarArgs		= 0x0004,	// Variable argument count
+	FUNC_Final			= 0x0008,	// Final version of a method
+	FUNC_Spawner		= 0x0010,	// Automatic cast of return value
+	FUNC_Net			= 0x0020,	// Method is network-replicated
+	FUNC_NetReliable	= 0x0040,	// Sent reliably over the network
+
+	FUNC_NetFlags = FUNC_Net | FUNC_NetReliable,
 };
 
 enum

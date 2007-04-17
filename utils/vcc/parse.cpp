@@ -1548,12 +1548,15 @@ void VParser::ParseReplication(VClass* Class)
 		//	Reliable or unreliable flag, currently unused.
 		if (Lex.Check(TK_Reliable))
 		{
+			RI.Reliable = true;
 		}
 		else if (Lex.Check(TK_Unreliable))
 		{
+			RI.Reliable = false;
 		}
 		else
 		{
+			ParseError(Lex.Location, "Expected reliable or unreliable");
 		}
 
 		//	Replication condition.
@@ -1584,7 +1587,7 @@ void VParser::ParseReplication(VClass* Class)
 				VRepField& F = RI.RepFields.Alloc();
 				F.Name = Lex.Name;
 				F.Loc = Lex.Location;
-				F.Field = NULL;
+				F.Member = NULL;
 				Lex.NextToken();
 			}
 		}

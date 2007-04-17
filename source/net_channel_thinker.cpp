@@ -155,9 +155,11 @@ void VThinkerChannel::EvalCondValues(VObject* Obj, VClass* Class, vuint8* Values
 	{
 		P_PASS_REF(Obj);
 		bool Val = !!VObject::ExecuteFunction(Class->RepInfos[i].Cond).i;
-		for (int j = 0; j < Class->RepInfos[i].RepFields.Num(); j++)
+		for (int j = 0; j < Class->RepInfos[i].RepMembers.Num(); j++)
 		{
-			Values[Class->RepInfos[i].RepFields[j]->NetIndex] = Val;
+			if (Class->RepInfos[i].RepMembers[j]->MemberType != MEMBER_Field)
+				continue;
+			Values[((VField*)Class->RepInfos[i].RepMembers[j])->NetIndex] = Val;
 		}
 	}
 	unguard;
@@ -233,7 +235,7 @@ void VThinkerChannel::Update()
 				{
 					continue;
 				}
-				Msg << (vuint8)F->NetIndex;
+				Msg.WriteInt(F->NetIndex, Thinker->GetClass()->NumNetFields);
 				Msg.WriteInt(i, F->Type.ArrayDim);
 				VField::NetSerialiseValue(Msg, Data + F->Ofs + i * InnerSize, IntType);
 				VField::CopyFieldValue(Data + F->Ofs + i * InnerSize,
@@ -242,7 +244,7 @@ void VThinkerChannel::Update()
 		}
 		else
 		{
-			Msg << (vuint8)F->NetIndex;
+			Msg.WriteInt(F->NetIndex, Thinker->GetClass()->NumNetFields);
 			VField::NetSerialiseValue(Msg, Data + F->Ofs, F->Type);
 			VField::CopyFieldValue(Data + F->Ofs, OldData + F->Ofs, F->Type);
 		}
@@ -301,7 +303,7 @@ void VThinkerChannel::ParsePacket(VMessageIn& Msg)
 
 	while (!Msg.AtEnd())
 	{
-		int FldIdx = Msg.ReadByte();
+		int FldIdx = Msg.ReadInt(Thinker->GetClass()->NumNetFields);
 		VField* F = NULL;
 		for (VField* CF = ThinkerClass->NetFields; CF; CF = CF->NextNetField)
 		{
@@ -313,20 +315,82 @@ void VThinkerChannel::ParsePacket(VMessageIn& Msg)
 		}
 		if (!F)
 		{
-			Sys_Error("Bad net field %d", FldIdx);
+			if (F->Type.Type == ev_array)
+			{
+				int Idx = Msg.ReadInt(F->Type.ArrayDim);
+				VField::FType IntType = F->Type;
+				IntType.Type = F->Type.ArrayInnerType;
+				VField::NetSerialiseValue(Msg, (vuint8*)Thinker + F->Ofs +
+					Idx * IntType.GetSize(), IntType);
+			}
+			else
+			{
+				VField::NetSerialiseValue(Msg, (vuint8*)Thinker + F->Ofs, F->Type);
+			}
+			continue;
 		}
-		if (F->Type.Type == ev_array)
+
+		VMethod* Func = NULL;
+		for (VMethod* CM = Thinker->GetClass()->NetMethods; CM; CM = CM->NextNetMethod)
 		{
-			int Idx = Msg.ReadInt(F->Type.ArrayDim);
-			VField::FType IntType = F->Type;
-			IntType.Type = F->Type.ArrayInnerType;
-			VField::NetSerialiseValue(Msg, (vuint8*)Thinker + F->Ofs +
-				Idx * IntType.GetSize(), IntType);
+			if (CM->NetIndex == FldIdx)
+			{
+				Func = CM;
+				break;
+			}
 		}
-		else
+		if (Func)
 		{
-			VField::NetSerialiseValue(Msg, (vuint8*)Thinker + F->Ofs, F->Type);
+			guard(RPC);
+			//	Push self pointer
+			PR_PushPtr(Thinker);
+			//	Get arguments
+			for (int i = 0; i < Func->NumParams; i++)
+			{
+				switch (Func->ParamTypes[i].Type)
+				{
+				case ev_int:
+				case ev_name:
+				case ev_bool:
+					VField::NetSerialiseValue(Msg, (vuint8*)&pr_stackPtr->i, Func->ParamTypes[i]);
+					pr_stackPtr++;
+					break;
+				case ev_float:
+					VField::NetSerialiseValue(Msg, (vuint8*)&pr_stackPtr->f, Func->ParamTypes[i]);
+					pr_stackPtr++;
+					break;
+				case ev_string:
+				case ev_pointer:
+				case ev_reference:
+				case ev_class:
+				case ev_state:
+					VField::NetSerialiseValue(Msg, (vuint8*)&pr_stackPtr->p, Func->ParamTypes[i]);
+					pr_stackPtr++;
+					break;
+				case ev_vector:
+					{
+						TVec Vec;
+						VField::NetSerialiseValue(Msg, (vuint8*)&Vec, Func->ParamTypes[i]);
+						PR_Pushv(Vec);
+					}
+					break;
+				default:
+					Sys_Error("Bad method argument type %d", Func->ParamTypes[i].Type);
+				}
+			}
+			//	Execute it
+			VObject::ExecuteFunction(Func);
+			//	If it returns a vector, pop the rest of values
+			if (Func->ReturnType.Type == ev_vector)
+			{
+				PR_Pop();
+				PR_Pop();
+			}
+			unguard;
+			continue;
 		}
+
+		Sys_Error("Bad net field %d", FldIdx);
 	}
 	unguard;
 }

@@ -144,7 +144,7 @@ bool onground;
 
 replication
 {
-	reliable if (true)
+	reliable if (!bIsClient)
 		SBFlags, ArmorPoints, ReadyAmmo, ArtifactFlash, InvPtr, InvCurPos,
 		ReadyArtifact, InventorySlotNum, ReadyWeapon, Inventory;
 }

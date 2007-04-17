@@ -140,7 +140,7 @@ BotPlayer Bot;
 
 replication
 {
-	reliable if (true)
+	reliable if (!bIsClient)
 		ArmorPoints, SBFlags, sb_faceindex, ReadyWeapon, ReadyAmmo,
 		Ammo, MaxAmmo, WeaponOwned;
 }

@@ -74,6 +74,7 @@ void CL_Clear()
 	VNetConnection* Net = cl->Net;
 	VEntity* PrevVEnt = cl->ViewEnt;
 	memset((byte*)cl + sizeof(VObject), 0, cl->GetClass()->ClassSize - sizeof(VObject));
+	cl->PlayerFlags |= VBasePlayer::PF_IsClient;
 	cl->ViewEnt = PrevVEnt;
 	cl->Net = Net;
 	for (int i = 0; i < MAXPLAYERS; i++)

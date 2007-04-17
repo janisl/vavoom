@@ -179,16 +179,17 @@ public:
 	virtual void Destroy();
 	virtual void Serialise(VStream&);
 	virtual void ClearReferences();
+	virtual bool ExecuteNetMethod(VMethod*);
 
 	// Systemwide functions.
 	static void StaticInit();
 	static void StaticExit();
 	static VObject* StaticSpawnObject(VClass*);
 	static void CollectGarbage();
-	static VObject* GetIndexObject(int Index);
+	static VObject* GetIndexObject(int);
 	static int GetObjectsCount();
 
-	static VStack ExecuteFunction(VMethod *func);
+	static VStack ExecuteFunction(VMethod*);
 	static void DumpProfile();
 
 	// Functions.
