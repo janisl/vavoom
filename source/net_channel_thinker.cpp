@@ -313,7 +313,7 @@ void VThinkerChannel::ParsePacket(VMessageIn& Msg)
 				break;
 			}
 		}
-		if (!F)
+		if (F)
 		{
 			if (F->Type.Type == ev_array)
 			{
