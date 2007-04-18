@@ -124,6 +124,24 @@ enum
 	EF_ROCKET		= 0x08
 };
 
+enum
+{
+	pt_static,
+	pt_explode,
+	pt_explode2
+};
+
+int ramp1[16];
+int ramp2[16];
+
 defaultproperties
 {
+	ramp1[0] = 0xfffff31b; ramp1[1] = 0xefdfab27; ramp1[2] = 0xdfbf772f; ramp1[3] = 0xcf9f4f33;
+	ramp1[4] = 0xbf7f3b2b; ramp1[5] = 0xaf632f1f; ramp1[6] = 0x9f4b2313; ramp1[7] = 0x8f2f170b;
+	ramp1[8] = 0x7f7f3b2b; ramp1[9] = 0x6f632f1f; ramp1[10] = 0x5f4b2313; ramp1[11] = 0x4f2f170b;
+	ramp1[12] = 0x3f7f3b2b; ramp1[13] = 0x2f632f1f; ramp1[14] = 0x1f4b2313; ramp1[15] = 0x0f2f170b;
+	ramp2[0] = 0xfffff31b; ramp2[1] = 0xefefcb1f; ramp2[2] = 0xdfdfab27; ramp2[3] = 0xcfcf8f2b;
+	ramp2[4] = 0xbfbf772f; ramp2[5] = 0xafaf632f; ramp2[6] = 0x9f8f4333; ramp2[7] = 0x8f733723;
+	ramp2[8] = 0x7fbf772f; ramp2[9] = 0x6faf632f; ramp2[10] = 0x5f8f4333; ramp2[11] = 0x4f733723;
+	ramp2[12] = 0x3fbf772f; ramp2[13] = 0x2faf632f; ramp2[14] = 0x1f8f4333; ramp2[15] = 0x0f733723;
 }

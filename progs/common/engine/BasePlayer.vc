@@ -110,6 +110,8 @@ native readonly int		ClientNum;
 
 native readonly float	ViewEntAlpha;
 
+native readonly ClientGameBase	ClGame;	//	Valid only on client side
+
 replication
 {
 	reliable if (!bIsClient)
@@ -201,6 +203,17 @@ void Cheat_NoWeapons()
 
 void Cheat_Class()
 {
+}
+
+//==========================================================================
+//
+//  ParseServerCommand
+//
+//==========================================================================
+
+bool ParseServerCommand(int cmd_type, void* Msg)
+{
+	return false;
 }
 
 defaultproperties

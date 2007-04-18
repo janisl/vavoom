@@ -425,3 +425,5 @@
 #include "SubEntity.vc"
 #include "Rat.vc"
 #include "KneelingGyu.vc"
+
+#include "ClientGameBaseEx.vc"

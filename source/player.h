@@ -32,6 +32,7 @@
 // TYPES -------------------------------------------------------------------
 
 class VNetConnection;
+class VClientGameBase;
 
 //
 // Overlay psprites are scaled shapes
@@ -149,6 +150,8 @@ class VBasePlayer : public VObject
 	int				ClientNum;
 
 	float			ViewEntAlpha;
+
+	VClientGameBase*	ClGame;
 
 	VBasePlayer()
 	: UserInfo(E_NoInit)
@@ -295,6 +298,13 @@ class VBasePlayer : public VObject
 		P_PASS_SELF;
 		P_PASS_INT(OriginId);
 		EV_RET_VOID("ClientStopSequence");
+	}
+	bool eventParseServerCommand(int cmd_type, class VMessageIn* Msg)
+	{
+		P_PASS_SELF;
+		P_PASS_INT(cmd_type);
+		P_PASS_PTR(Msg);
+		EV_RET_BOOL("ParseServerCommand");
 	}
 };
 

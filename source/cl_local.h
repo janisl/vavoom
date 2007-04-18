@@ -202,13 +202,6 @@ class VClientGameBase : public VObject
 		P_PASS_INT(h);
 		EV_RET_VOID("DrawViewBorder");
 	}
-	bool eventParseServerCommand(int cmd_type, class VMessageIn* Msg)
-	{
-		P_PASS_SELF;
-		P_PASS_INT(cmd_type);
-		P_PASS_PTR(Msg);
-		EV_RET_BOOL("ParseServerCommand");
-	}
 	void eventUpdateParticle(particle_t* p, float DeltaTime)
 	{
 		P_PASS_SELF;

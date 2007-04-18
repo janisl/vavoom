@@ -77,6 +77,7 @@ void CL_Clear()
 	cl->PlayerFlags |= VBasePlayer::PF_IsClient;
 	cl->ViewEnt = PrevVEnt;
 	cl->Net = Net;
+	cl->ClGame = GClGame;
 	for (int i = 0; i < MAXPLAYERS; i++)
 	{
 		scores[i].name.Clean();
@@ -622,7 +623,7 @@ void VClientGenChannel::ParsePacket(VMessageIn& msg)
 			break;
 
 		default:
-			if (GClGame->eventParseServerCommand(cmd_type, &msg))
+			if (cl->eventParseServerCommand(cmd_type, &msg))
 			{
 				break;
 			}
