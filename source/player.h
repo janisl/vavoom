@@ -169,50 +169,49 @@ class VBasePlayer : public VObject
 	DECLARE_FUNCTION(SetViewState)
 	DECLARE_FUNCTION(AdvanceViewStates)
 
+	DECLARE_FUNCTION(ClientStartSound)
+	DECLARE_FUNCTION(ClientStopSound)
+	DECLARE_FUNCTION(ClientStartSequence)
+	DECLARE_FUNCTION(ClientAddSequenceChoice)
+	DECLARE_FUNCTION(ClientStopSequence)
+
 	void eventPutClientIntoServer()
 	{
 		P_PASS_SELF;
 		EV_RET_VOID("PutClientIntoServer");
 	}
-
 	void eventSpawnClient()
 	{
 		P_PASS_SELF;
 		EV_RET_VOID("SpawnClient");
 	}
-
 	void eventNetGameReborn()
 	{
 		P_PASS_SELF;
 		EV_RET_VOID("NetGameReborn");
 	}
-
 	void eventDisconnectClient()
 	{
 		P_PASS_SELF;
 		EV_RET_VOID("DisconnectClient");
 	}
-
 	void eventUserinfoChanged()
 	{
 		P_PASS_SELF;
 		EV_RET_VOID("UserinfoChanged");
 	}
-
 	void eventPlayerExitMap(bool clusterChange)
 	{
 		P_PASS_SELF;
 		P_PASS_BOOL(clusterChange);
 		EV_RET_VOID("PlayerExitMap");
 	}
-
 	void eventPlayerTick(float deltaTime)
 	{
 		P_PASS_SELF;
 		P_PASS_FLOAT(deltaTime);
 		EV_RET_VOID("PlayerTick");
 	}
-
 	void eventSetViewPos()
 	{
 		P_PASS_SELF;
@@ -224,41 +223,78 @@ class VBasePlayer : public VObject
 		P_PASS_SELF;
 		EV_RET_VOID("Cheat_God");
 	}
-
 	void eventCheat_NoClip()
 	{
 		P_PASS_SELF;
 		EV_RET_VOID("Cheat_NoClip");
 	}
-
 	void eventCheat_Gimme()
 	{
 		P_PASS_SELF;
 		EV_RET_VOID("Cheat_Gimme");
 	}
-
 	void eventCheat_KillAll()
 	{
 		P_PASS_SELF;
 		EV_RET_VOID("Cheat_KillAll");
 	}
-
 	void eventCheat_Morph()
 	{
 		P_PASS_SELF;
 		EV_RET_VOID("Cheat_Morph");
 	}
-
 	void eventCheat_NoWeapons()
 	{
 		P_PASS_SELF;
 		EV_RET_VOID("Cheat_NoWeapons");
 	}
-
 	void eventCheat_Class()
 	{
 		P_PASS_SELF;
 		EV_RET_VOID("Cheat_Class");
+	}
+
+	void eventClientStartSound(int SoundId, TVec Org, int OriginId,
+		int Channel, float Volume, float Attenuation)
+	{
+		P_PASS_SELF;
+		P_PASS_INT(SoundId);
+		P_PASS_VEC(Org);
+		P_PASS_INT(OriginId);
+		P_PASS_INT(Channel);
+		P_PASS_FLOAT(Volume);
+		P_PASS_FLOAT(Attenuation);
+		EV_RET_VOID("ClientStartSound");
+	}
+	void eventClientStopSound(int OriginId, int Channel)
+	{
+		P_PASS_SELF;
+		P_PASS_INT(OriginId);
+		P_PASS_INT(Channel);
+		EV_RET_VOID("ClientStopSound");
+	}
+	void eventClientStartSequence(TVec Origin, int OriginId, VName Name,
+		int ModeNum)
+	{
+		P_PASS_SELF;
+		P_PASS_VEC(Origin);
+		P_PASS_INT(OriginId);
+		P_PASS_NAME(Name);
+		P_PASS_INT(ModeNum);
+		EV_RET_VOID("ClientStartSequence");
+	}
+	void eventClientAddSequenceChoice(int OriginId, VName Choice)
+	{
+		P_PASS_SELF;
+		P_PASS_INT(OriginId);
+		P_PASS_NAME(Choice);
+		EV_RET_VOID("ClientAddSequenceChoice");
+	}
+	void eventClientStopSequence(int OriginId)
+	{
+		P_PASS_SELF;
+		P_PASS_INT(OriginId);
+		EV_RET_VOID("ClientStopSequence");
 	}
 };
 

@@ -44,11 +44,6 @@ enum
 	svc_time,
 	svc_pause,
 
-	svc_start_sound,
-	svc_stop_sound,
-	svc_start_seq,
-	svc_stop_seq,
-
 	svc_force_lightning,
 
 	svc_intermission,
@@ -68,7 +63,6 @@ enum
 	svc_change_music,
 
 	svc_class_name,
-	svc_add_seq_choice,
 
 	USER_PROTOCOL_START = 128
 };

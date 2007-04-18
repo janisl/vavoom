@@ -456,20 +456,15 @@ void SV_StartSound(const TVec &origin, int origin_id, int sound_id,
 	int channel, float volume, float Attenuation)
 {
 	guard(SV_StartSound);
-	if (!sv_datagram->CheckSpaceBits(12 << 3))
-		return;
-
-	*sv_datagram << (vuint8)svc_start_sound
-				<< (vuint16)sound_id
-				<< (vuint16)(origin_id | (channel << 13));
-	if (origin_id)
+	for (int i = 0; i < MAXPLAYERS; i++)
 	{
-		*sv_datagram << (vuint16)origin.x
-					<< (vuint16)origin.y
-					<< (vuint16)origin.z;
+		if (!GGameInfo->Players[i])
+			continue;
+		if (!(GGameInfo->Players[i]->PlayerFlags & VBasePlayer::PF_Spawned))
+			continue;
+		GGameInfo->Players[i]->eventClientStartSound(sound_id, origin,
+			origin_id, channel, volume, Attenuation);
 	}
-	*sv_datagram << (vuint8)(volume * 127)
-		<< (vuint8)(Attenuation * 64);
 	unguard;
 }
 
@@ -485,8 +480,14 @@ void SV_StopSound(int origin_id, int channel)
 	if (!sv_datagram->CheckSpaceBits(3 << 3))
 		return;
 
-	*sv_datagram << (vuint8)svc_stop_sound
-				<< (vuint16)(origin_id | (channel << 13));
+	for (int i = 0; i < MAXPLAYERS; i++)
+	{
+		if (!GGameInfo->Players[i])
+			continue;
+		if (!(GGameInfo->Players[i]->PlayerFlags & VBasePlayer::PF_Spawned))
+			continue;
+		GGameInfo->Players[i]->eventClientStopSound(origin_id, channel);
+	}
 	unguard;
 }
 
@@ -522,14 +523,11 @@ void SV_StartSound(const VEntity* Ent, int SoundId, int Channel,
 void SV_StartLocalSound(const VEntity* Ent, int SoundId, int Channel,
 	float Volume, float Attenuation)
 {
-	guard(SV_StartSound);
+	guard(SV_StartLocalSound);
 	if (Ent && Ent->Player)
 	{
-		Ent->Player->Net->Message << (vuint8)svc_start_sound
-								<< (vuint16)SoundId
-								<< (vuint16)(Channel << 13)
-								<< (vuint8)(Volume * 127)
-								<< (vuint8)(Attenuation * 64);
+		Ent->Player->eventClientStartSound(SoundId, TVec(0, 0, 0), 0, Channel,
+			Volume, Attenuation);
 	}
 	unguard;
 }
@@ -609,13 +607,15 @@ void SV_StartSequence(const TVec& Origin, vint32 OriginId, VName Name,
 	Seq.Origin = Origin;
 	Seq.ModeNum = ModeNum;
 
-	*sv_reliable << (vuint8)svc_start_seq
-				<< (vuint16)OriginId
-				<< (vuint16)Origin.x
-				<< (vuint16)Origin.y
-				<< (vuint16)Origin.z
-				<< *Name
-				<< (vuint8)ModeNum;
+	for (int i = 0; i < MAXPLAYERS; i++)
+	{
+		if (!GGameInfo->Players[i])
+			continue;
+		if (!(GGameInfo->Players[i]->PlayerFlags & VBasePlayer::PF_Spawned))
+			continue;
+		GGameInfo->Players[i]->eventClientStartSequence(Origin, OriginId,
+			Name, ModeNum);
+	}
 	unguard;
 }
 
@@ -637,9 +637,15 @@ void SV_AddSequenceChoice(int origin_id, VName Choice)
 		}
 	}
 
-	*sv_reliable << (vuint8)svc_add_seq_choice
-				<< (vuint16)origin_id
-				<< *Choice;
+	for (int i = 0; i < MAXPLAYERS; i++)
+	{
+		if (!GGameInfo->Players[i])
+			continue;
+		if (!(GGameInfo->Players[i]->PlayerFlags & VBasePlayer::PF_Spawned))
+			continue;
+		GGameInfo->Players[i]->eventClientAddSequenceChoice(origin_id,
+			Choice);
+	}
 	unguard;
 }
 
@@ -662,8 +668,14 @@ void SV_StopSequence(int origin_id)
 		}
 	}
 
-	*sv_reliable << (vuint8)svc_stop_seq
-				<< (vuint16)origin_id;
+	for (int i = 0; i < MAXPLAYERS; i++)
+	{
+		if (!GGameInfo->Players[i])
+			continue;
+		if (!(GGameInfo->Players[i]->PlayerFlags & VBasePlayer::PF_Spawned))
+			continue;
+		GGameInfo->Players[i]->eventClientStopSequence(origin_id);
+	}
 	unguard;
 }
 
@@ -2093,18 +2105,16 @@ COMMAND(Spawn)
 		sv_player->eventSpawnClient();
 		for (int i = 0; i < sv_ActiveSequences.Num(); i++)
 		{
-			sv_player->Net->Message << (vuint8)svc_start_seq
-				<< (vuint16)sv_ActiveSequences[i].OriginId
-				<< (vuint16)sv_ActiveSequences[i].Origin.x
-				<< (vuint16)sv_ActiveSequences[i].Origin.y
-				<< (vuint16)sv_ActiveSequences[i].Origin.z
-				<< *sv_ActiveSequences[i].Name
-				<< (vuint8)sv_ActiveSequences[i].ModeNum;
+			sv_player->eventClientStartSequence(
+				sv_ActiveSequences[i].Origin,
+				sv_ActiveSequences[i].OriginId,
+				sv_ActiveSequences[i].Name,
+				sv_ActiveSequences[i].ModeNum);
 			for (int j = 0; j < sv_ActiveSequences[i].Choices.Num(); j++)
 			{
-				sv_player->Net->Message << (vuint8)svc_add_seq_choice
-					<< (vuint16)sv_ActiveSequences[i].OriginId
-					<< *sv_ActiveSequences[i].Choices[j];
+				sv_player->eventClientAddSequenceChoice(
+					sv_ActiveSequences[i].OriginId,
+					sv_ActiveSequences[i].Choices[j]);
 			}
 		}
 	}

@@ -95,6 +95,52 @@ void CL_Clear()
 	unguard;
 }
 
+IMPLEMENT_FUNCTION(VBasePlayer, ClientStartSound)
+{
+	P_GET_FLOAT(Attenuation);
+	P_GET_FLOAT(Volume);
+	P_GET_INT(Channel);
+	P_GET_INT(OriginId);
+	P_GET_VEC(Org);
+	P_GET_INT(SoundId);
+	P_GET_SELF;
+	GAudio->PlaySound(SoundId, Org, TVec(0, 0, 0), OriginId, Channel, Volume,
+		Attenuation);
+}
+
+IMPLEMENT_FUNCTION(VBasePlayer, ClientStopSound)
+{
+	P_GET_INT(Channel);
+	P_GET_INT(OriginId);
+	P_GET_SELF;
+	GAudio->StopSound(OriginId, Channel);
+}
+
+IMPLEMENT_FUNCTION(VBasePlayer, ClientStartSequence)
+{
+	P_GET_INT(ModeNum);
+	P_GET_NAME(Name);
+	P_GET_INT(OriginId);
+	P_GET_VEC(Origin);
+	P_GET_SELF;
+	GAudio->StartSequence(OriginId, Origin, Name, ModeNum);
+}
+
+IMPLEMENT_FUNCTION(VBasePlayer, ClientAddSequenceChoice)
+{
+	P_GET_NAME(Choice);
+	P_GET_INT(OriginId);
+	P_GET_SELF;
+	GAudio->AddSeqChoice(OriginId, Choice);
+}
+
+IMPLEMENT_FUNCTION(VBasePlayer, ClientStopSequence)
+{
+	P_GET_INT(OriginId);
+	P_GET_SELF;
+	GAudio->StopSequence(OriginId);
+}
+
 static void CL_ParseViewData(VMessageIn& msg)
 {
 	guard(CL_ParseViewData);
@@ -127,80 +173,6 @@ static void CL_ParseViewData(VMessageIn& msg)
 		}
 	}
 	unguard;
-}
-
-static void CL_ParseStartSound(VMessageIn& msg)
-{
-	vuint16		sound_id;
-	vuint16		origin_id;
-	float		x = 0.0;
-	float		y = 0.0;
-	float		z = 0.0;
-	vuint8		volume;
-	vuint8		attenuation;
-	int			channel;
-
-	msg << sound_id
-		<< origin_id;
-
-	channel = origin_id >> 13;
-	origin_id &= 0x1fff;
-
-	if (origin_id)
-	{
-		x = msg.ReadShort();
-		y = msg.ReadShort();
-		z = msg.ReadShort();
-	}
-	msg << volume
-		<< attenuation;
-
-	GAudio->PlaySound(sound_id, TVec(x, y, z), TVec(0, 0, 0), origin_id,
-		channel, volume / 127.0, attenuation / 64.0);
-}
-
-static void CL_ParseStopSound(VMessageIn& msg)
-{
-	word	origin_id;
-	int		channel;
-
-	msg << origin_id;
-
-	channel = origin_id >> 13;
-	origin_id &= 0x1fff;
-
-	GAudio->StopSound(origin_id, channel);
-}
-
-static void CL_ParseStartSeq(VMessageIn& msg)
-{
-	int OriginId = msg.ReadShort();
-	float x = msg.ReadShort();
-	float y = msg.ReadShort();
-	float z = msg.ReadShort();
-	VStr Name = msg.ReadString();
-	int ModeNum = msg.ReadByte();
-
-	GAudio->StartSequence(OriginId, TVec(x, y, z), *Name, ModeNum);
-}
-
-static void CL_ParseAddSeqChoice(VMessageIn& msg)
-{
-	vuint16	origin_id;
-
-	msg << origin_id;
-	VName Choice = *msg.ReadString();
-
-	GAudio->AddSeqChoice(origin_id, Choice);
-}
-
-static void CL_ParseStopSeq(VMessageIn& msg)
-{
-	word	origin_id;
-
-	msg << origin_id;
-
-	GAudio->StopSequence(origin_id);
 }
 
 static void CL_ParseTime(VMessageIn& msg)
@@ -538,26 +510,6 @@ void VClientGenChannel::ParsePacket(VMessageIn& msg)
 
 		case svc_view_data:
 			CL_ParseViewData(msg);
-			break;
-
-		case svc_start_sound:
-			CL_ParseStartSound(msg);
-			break;
-
-		case svc_stop_sound:
-			CL_ParseStopSound(msg);
-			break;
-
-		case svc_start_seq:
-			CL_ParseStartSeq(msg);
-			break;
-
-		case svc_add_seq_choice:
-			CL_ParseAddSeqChoice(msg);
-			break;
-
-		case svc_stop_seq:
-			CL_ParseStopSeq(msg);
 			break;
 
 		case svc_print:

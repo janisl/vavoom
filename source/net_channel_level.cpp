@@ -375,7 +375,7 @@ void VLevelChannel::ParsePacket(VMessageIn& Msg)
 				{
 					float a;
 					Msg << a;
-					Level->RotatePolyobj(Po->tag, ByteToAngle(a) - Po->angle);
+					Level->RotatePolyobj(Po->tag, a - Po->angle);
 				}
 			}
 			break;

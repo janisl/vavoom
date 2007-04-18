@@ -115,6 +115,12 @@ replication
 	reliable if (!bIsClient)
 		Health, Items, Frags, ExtraLight, FixedColourmap, CShifts, PSpriteSY,
 		KillCount, ItemCount, SecretCount;
+
+	unreliable if (!bIsClient)
+		ClientStartSound, ClientStopSound;
+
+	reliable if (!bIsClient)
+		ClientStartSequence, ClientAddSequenceChoice, ClientStopSequence;
 }
 
 //  Print to client
@@ -127,6 +133,15 @@ native final void SelectClientMsg(int msgtype);
 
 native final void SetViewState(int position, state stnum);
 native final void AdvanceViewStates(float deltaTime);
+
+//	For networking
+native void ClientStartSound(int SoundId, TVec Org, int OriginId,
+	int Channel, float Volume, float Attenuation);
+native void ClientStopSound(int OriginId, int Channel);
+native void ClientStartSequence(TVec Origin, int OriginId, name Name,
+	int ModeNum);
+native void ClientAddSequenceChoice(int OriginId, name Choice);
+native void ClientStopSequence(int OriginId);
 
 void PutClientIntoServer()
 {
