@@ -117,14 +117,19 @@ float LastHazardTime;
 
 TVec MoveDir;
 
-int ecolours[8];
-
 replication
 {
 	reliable if (!bIsClient)
 		ReadyAmmo, Sigil, Accuracy, Stamina, Keys, InvFirst, InvCursor,
 		Objectives, ArmorType, ArmorPoints, Cheats, Ammo, MaxAmmo,
 		WeaponOwned, Inventory, Backpack, Communicator;
+
+	unreliable if (!bIsClient)
+		ClientBlood, ClientExplosion;
+
+	reliable if (!bIsClient)
+		ClientSpeech, ClientVoice, ClientSlideshow1, ClientSlideshow2,
+		ClientFinaleType;
 }
 
 //==========================================================================
@@ -2684,55 +2689,15 @@ void Cheat_KillAll()
 
 //==========================================================================
 //
-//  ParseGunShot
+//  ClientBlood
 //
 //==========================================================================
 
-void ParseGunShot(void* Msg)
+void ClientBlood(TVec org, int damage)
 {
-	TVec org;
 	int i, j;
 	particle_t *p;
 	int c;
-
-	org.x = itof(MSG_ReadShort(Msg));
-	org.y = itof(MSG_ReadShort(Msg));
-	org.z = itof(MSG_ReadShort(Msg));
-
-	for (i = 0; i < 20; i++)
-	{
-		p = NewParticle();
-		if (!p)
-			return;
-
-		p->org = org;
-		c = P_Random() >> 1;
-		p->colour = RGB(c, c, c);
-		p->die = ClGame.time + 0.5 * Random();
-		p->vel.x = 32.0 * (Random() - 0.5);
-		p->vel.y = 32.0 * (Random() - 0.5);
-		p->vel.z = 32.0 * (Random() - 0.5);
-	}
-}
-
-//==========================================================================
-//
-//  ParseBlood
-//
-//==========================================================================
-
-void ParseBlood(void* Msg)
-{
-	TVec org;
-	int damage;
-	int i, j;
-	particle_t *p;
-	int c;
-
-	org.x = itof(MSG_ReadShort(Msg));
-	org.y = itof(MSG_ReadShort(Msg));
-	org.z = itof(MSG_ReadShort(Msg));
-	damage = MSG_ReadByte(Msg);
 
 	for (i = 0; i < damage; i++)
 	{
@@ -2752,83 +2717,77 @@ void ParseBlood(void* Msg)
 
 //==========================================================================
 //
-//  ParseExplosion
+//  ClientExplosion
 //
 //==========================================================================
 
-void ParseExplosion(void* Msg)
+void ClientExplosion(int etype, TVec org)
 {
-	TVec org;
 	dlight_t* dl;
-	int etype;
-
-	etype = MSG_ReadByte(Msg);
-	org.x = itof(MSG_ReadShort(Msg));
-	org.y = itof(MSG_ReadShort(Msg));
-	org.z = itof(MSG_ReadShort(Msg));
 
 	dl = AllocDlight(0);
 	dl->origin = org;
 	dl->radius = 350.0;
-	dl->colour = ecolours[etype];
+	dl->colour = StrifeDefs.default.ecolours[etype];
 	dl->die = ClGame.time + 0.5;
 	dl->decay = 300.0;
 }
 
 //==========================================================================
 //
-//  ParseServerCommand
+//  ClientSpeech
 //
 //==========================================================================
 
-bool ParseServerCommand(int cmd_type, void* Msg)
+void ClientSpeech(int SpeechNum)
 {
-	switch (cmd_type)
-	{
-	case StrifeDefs::svc_gun_shot:
-		ParseGunShot(Msg);
-		break;
+	ClientGameBaseEx(ClGame).StartSpeech(SpeechNum);
+}
 
-	case StrifeDefs::svc_blood:
-		ParseBlood(Msg);
-		break;
+//==========================================================================
+//
+//  ClientVoice
+//
+//==========================================================================
 
-	case StrifeDefs::svc_explosion:
-		ParseExplosion(Msg);
-		break;
+void ClientVoice(int VoiceNum)
+{
+	LocalSound(StrToName(va("svox/voc%d", VoiceNum)));
+}
 
-	case StrifeDefs::svc_speech:
-		ClientGameBaseEx(ClGame).StartSpeech(MSG_ReadShort(Msg));
-		break;
+//==========================================================================
+//
+//  ClientSlideshow1
+//
+//==========================================================================
 
-	case StrifeDefs::svc_voice:
-		LocalSound(StrToName(va("svox/voc%d", MSG_ReadShort(Msg))));
-		break;
+void ClientSlideshow1()
+{
+	ClientGameBaseEx(ClGame).StartConSlideshow1();
+}
 
-	case StrifeDefs::svc_slideshow1:
-		ClientGameBaseEx(ClGame).StartConSlideshow1();
-		break;
+//==========================================================================
+//
+//  ClientSlideshow2
+//
+//==========================================================================
 
-	case StrifeDefs::svc_slideshow2:
-		ClientGameBaseEx(ClGame).StartConSlideshow2();
-		break;
+void ClientSlideshow2()
+{
+	ClientGameBaseEx(ClGame).StartConSlideshow2();
+}
 
-	case StrifeDefs::svc_finale_type:
-		ClientGameBaseEx(ClGame).SetFinaleType(MSG_ReadByte(Msg));
-		break;
+//==========================================================================
+//
+//  ClientFinaleType
+//
+//==========================================================================
 
-	default:
-		return false;
-	}
-	return true;
+void ClientFinaleType(int Type)
+{
+	ClientGameBaseEx(ClGame).SetFinaleType(Type);
 }
 
 defaultproperties
 {
-	ecolours[0] = 0;	// EF_DL_NONE
-	ecolours[1] = RGB(255, 255, 255);	// EF_DL_MISSILE
-	ecolours[2] = RGB(255, 32, 32);	// EF_DL_RED
-	ecolours[3] = RGB(32, 255, 32);	// EF_DL_GREEN
-	ecolours[4] = RGB(32, 32, 255);	// EF_DL_BLUE
-	ecolours[5] = 0;	// EF_DL_MUZZLEFLASH
 }

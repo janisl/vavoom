@@ -559,16 +559,28 @@ void ExplodeMissile()
 
 	if (Effects & StrifeDefs::EF_DLIGHT_MASK)
 	{
-		MSG_Select(MSG_SV_DATAGRAM);
-		if (MSG_CheckSpace(8))
-		{
-			MSG_WriteByte(StrifeDefs::svc_explosion);
-			MSG_WriteByte(Effects & StrifeDefs::EF_DLIGHT_MASK);
-			MSG_WriteShort(ftoi(Origin.x));
-			MSG_WriteShort(ftoi(Origin.y));
-			MSG_WriteShort(ftoi(Origin.z));
-		}
+		SendExplosion(Effects & StrifeDefs::EF_DLIGHT_MASK, Origin);
 		Effects &= ~StrifeDefs::EF_DLIGHT_MASK;
+	}
+}
+
+//==========================================================================
+//
+//  SendExplosion
+//
+//==========================================================================
+
+final void SendExplosion(int etype, TVec org)
+{
+	int i;
+
+	for (i = 0; i < MAXPLAYERS; i++)
+	{
+		if (!Level.Game.Players[i])
+			continue;
+		if (!Level.Game.Players[i].bSpawned)
+			continue;
+		Player(Level.Game.Players[i]).ClientExplosion(etype, org);
 	}
 }
 
@@ -614,9 +626,7 @@ void Died(Actor source)
 	if (bIsPlayer && Level.bDeathSlideShow)
 	{
 		//	Start sad finale.
-		MSG_Select(MSG_SV_RELIABLE);
-		MSG_WriteByte(StrifeDefs::svc_finale_type);
-		MSG_WriteByte(1);
+		Player(Player).ClientFinaleType(1);
 		G_Completed(-1, -1, 0);
 	}
 
@@ -3376,15 +3386,16 @@ void SpawnPuff(class<Actor> PuffType, TVec Org)
 void SpawnBlood(float x, float y, float z, int damage)
 {
 	Actor A;
+	int i;
 
-	MSG_Select(MSG_SV_DATAGRAM);
-	if (MSG_CheckSpace(8))
+	for (i = 0; i < MAXPLAYERS; i++)
 	{
-		MSG_WriteByte(StrifeDefs::svc_blood);
-		MSG_WriteShort(ftoi(x));
-		MSG_WriteShort(ftoi(y));
-		MSG_WriteShort(ftoi(z));
-		MSG_WriteByte(damage > 255 ? 255 : damage);
+		if (!Level.Game.Players[i])
+			continue;
+		if (!Level.Game.Players[i].bSpawned)
+			continue;
+		Player(Level.Game.Players[i]).ClientBlood(
+			vector(x, y, z), damage > 255 ? 255 : damage);
 	}
 
 	z += (Random() - Random()) * 4.0;
@@ -3486,15 +3497,7 @@ final void A_Explode()
 
 	if (ExplodeEffect)
 	{
-		MSG_Select(MSG_SV_DATAGRAM);
-		if (MSG_CheckSpace(8))
-		{
-			MSG_WriteByte(StrifeDefs::svc_explosion);
-			MSG_WriteByte(ExplodeEffect);
-			MSG_WriteShort(ftoi(Origin.x));
-			MSG_WriteShort(ftoi(Origin.y));
-			MSG_WriteShort(ftoi(Origin.z));
-		}
+		SendExplosion(ExplodeEffect, Origin);
 	}
 }
 
@@ -3516,15 +3519,7 @@ final void A_Explode2()
 
 	if (ExplodeEffect)
 	{
-		MSG_Select(MSG_SV_DATAGRAM);
-		if (MSG_CheckSpace(8))
-		{
-			MSG_WriteByte(StrifeDefs::svc_explosion);
-			MSG_WriteByte(ExplodeEffect);
-			MSG_WriteShort(ftoi(Origin.x));
-			MSG_WriteShort(ftoi(Origin.y));
-			MSG_WriteShort(ftoi(Origin.z));
-		}
+		SendExplosion(ExplodeEffect, Origin);
 	}
 }
 
@@ -3829,15 +3824,7 @@ final void A_Explode32()
 
 	if (ExplodeEffect)
 	{
-		MSG_Select(MSG_SV_DATAGRAM);
-		if (MSG_CheckSpace(8))
-		{
-			MSG_WriteByte(StrifeDefs::svc_explosion);
-			MSG_WriteByte(ExplodeEffect);
-			MSG_WriteShort(ftoi(Origin.x));
-			MSG_WriteShort(ftoi(Origin.y));
-			MSG_WriteShort(ftoi(Origin.z));
-		}
+		SendExplosion(ExplodeEffect, Origin);
 	}
 }
 
@@ -3855,15 +3842,7 @@ final void A_Explode192()
 
 	if (ExplodeEffect)
 	{
-		MSG_Select(MSG_SV_DATAGRAM);
-		if (MSG_CheckSpace(8))
-		{
-			MSG_WriteByte(StrifeDefs::svc_explosion);
-			MSG_WriteByte(ExplodeEffect);
-			MSG_WriteShort(ftoi(Origin.x));
-			MSG_WriteShort(ftoi(Origin.y));
-			MSG_WriteShort(ftoi(Origin.z));
-		}
+		SendExplosion(ExplodeEffect, Origin);
 	}
 }
 

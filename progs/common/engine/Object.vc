@@ -224,11 +224,7 @@ enum { IT_ALL_MAP			= 1 };
 
 enum
 {
-	MSG_SV_DATAGRAM,
-	MSG_SV_RELIABLE,
-	MSG_SV_SIGNON,
-	MSG_SV_CLIENT,
-	MSG_CL_MESSAGE
+	MSG_SV_SIGNON
 };
 
 const int MAX_TID_COUNT		= 200;
@@ -1533,11 +1529,6 @@ native static final bool MSG_CheckSpace(int Size);
 native static final void MSG_WriteByte(int data);
 native static final void MSG_WriteShort(int data);
 native static final void MSG_WriteLong(int data);
-native static final int MSG_ReadChar(void* Msg);
-native static final int MSG_ReadByte(void* Msg);
-native static final int MSG_ReadShort(void* Msg);
-native static final int MSG_ReadWord(void* Msg);
-native static final int MSG_ReadLong(void* Msg);
 
 //
 //  Type conversions

@@ -59,9 +59,7 @@ void Died(Actor source)
 	StrifeLevelInfo(Level).EV_DoFloor(44, 8, 0, 0, 0,
 		FloorMover::FLOOREV_LowerToHighest, NULL);
 	Player(Level.Game.Players[i]).GiveQuest(QUEST_BrokePowerCoupling);
-	MSG_Select(MSG_SV_RELIABLE);
-	MSG_WriteByte(StrifeDefs::svc_voice);
-	MSG_WriteShort(13);
+	Player(Level.Game.Players[i]).ClientVoice(13);
 	Player(Level.Game.Players[i]).SetObjectives(13);
 	Spawn(BrokenPowerCoupling, Origin);
 }

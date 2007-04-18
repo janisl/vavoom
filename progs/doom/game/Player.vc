@@ -138,13 +138,14 @@ int sb_faceindex;
 
 BotPlayer Bot;
 
-int ecolours[8];
-
 replication
 {
 	reliable if (!bIsClient)
 		ArmorPoints, SBFlags, sb_faceindex, ReadyWeapon, ReadyAmmo,
 		Ammo, MaxAmmo, WeaponOwned;
+
+	unreliable if (!bIsClient)
+		ClientGunShot, ClientBlood, ClientExplosion, ClientExplosion2;
 }
 
 //==========================================================================
@@ -2765,20 +2766,15 @@ void Cheat_KillAll()
 
 //==========================================================================
 //
-//  ParseGunShot
+//  ClientGunShot
 //
 //==========================================================================
 
-void ParseGunShot(void* Msg)
+void ClientGunShot(TVec org)
 {
-	TVec org;
 	int i;
 	particle_t *p;
 	int c;
-
-	org.x = itof(MSG_ReadShort(Msg));
-	org.y = itof(MSG_ReadShort(Msg));
-	org.z = itof(MSG_ReadShort(Msg));
 
 	for (i = 0; i < 20; i++)
 	{
@@ -2799,22 +2795,15 @@ void ParseGunShot(void* Msg)
 
 //==========================================================================
 //
-//  ParseBlood
+//  ClientBlood
 //
 //==========================================================================
 
-void ParseBlood(void* Msg)
+void ClientBlood(TVec org, int damage)
 {
-	TVec org;
-	int damage;
 	int i;
 	particle_t *p;
 	int c;
-
-	org.x = itof(MSG_ReadShort(Msg));
-	org.y = itof(MSG_ReadShort(Msg));
-	org.z = itof(MSG_ReadShort(Msg));
-	damage = MSG_ReadByte(Msg);
 
 	for (i = 0; i < 4 * damage; i++)
 	{
@@ -2835,20 +2824,15 @@ void ParseBlood(void* Msg)
 
 //==========================================================================
 //
-//  ParseExplosion
+//  ClientExplosion
 //
 //==========================================================================
 
-void ParseExplosion(void* Msg)
+void ClientExplosion(TVec org)
 {
-	TVec org;
 	int i;
 	particle_t *p;
 	dlight_t *dl;
-
-	org.x = itof(MSG_ReadShort(Msg));
-	org.y = itof(MSG_ReadShort(Msg));
-	org.z = itof(MSG_ReadShort(Msg));
 
 	for (i = 0; i < 1024; i++)
 	{
@@ -2884,67 +2868,22 @@ void ParseExplosion(void* Msg)
 
 //==========================================================================
 //
-//  ParseExplosion2
+//  ClientExplosion2
 //
 //==========================================================================
 
-void ParseExplosion2(void* Msg)
+void ClientExplosion2(int etype, TVec org)
 {
-	TVec org;
 	dlight_t *dl;
-	int etype;
-
-	etype = MSG_ReadByte(Msg);
-	org.x = itof(MSG_ReadShort(Msg));
-	org.y = itof(MSG_ReadShort(Msg));
-	org.z = itof(MSG_ReadShort(Msg));
 
 	dl = AllocDlight(0);
 	dl->origin = org;
 	dl->radius = 350.0;
-	dl->colour = ecolours[etype];
+	dl->colour = DoomDefs.default.ecolours[etype];
 	dl->die = ClGame.time + 0.5;
 	dl->decay = 300.0;
 }
 
-//==========================================================================
-//
-//  ParseServerCommand
-//
-//==========================================================================
-
-bool ParseServerCommand(int cmd_type, void* Msg)
-{
-	switch (cmd_type)
-	{
-	case DoomDefs::svc_gun_shot:
-		ParseGunShot(Msg);
-		break;
-
-	case DoomDefs::svc_blood:
-		ParseBlood(Msg);
-		break;
-
-	case DoomDefs::svc_explosion:
-		ParseExplosion(Msg);
-		break;
-
-	case DoomDefs::svc_explosion2:
-		ParseExplosion2(Msg);
-		break;
-
-	default:
-		return false;
-	}
-	return true;
-}
-
 defaultproperties
 {
-	ecolours[0] = 0;	// EF_DL_NONE
-	ecolours[1] = RGB(255, 255, 255);	// EF_DL_MISSILE
-	ecolours[2] = RGB(255, 32, 32);	// EF_DL_RBALL
-	ecolours[3] = RGB(32, 255, 32);	// EF_DL_GBALL
-	ecolours[4] = RGB(32, 32, 255);	// EF_DL_PLASMA
-	ecolours[5] = 0;	// EF_DL_MUZZLEFLASH
 }

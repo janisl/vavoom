@@ -516,16 +516,3 @@ IMPLEMENT_FUNCTION(VBasePlayer, ClearPlayer)
 	memset((vuint8*)Self + sizeof(VBasePlayer), 0,
 		Self->GetClass()->ClassSize - sizeof(VBasePlayer));
 }
-
-IMPLEMENT_FUNCTION(VBasePlayer, SelectClientMsg)
-{
-	P_GET_INT(msgtype);
-	P_GET_SELF;
-	switch (msgtype)
-	{
-	case MSG_SV_CLIENT:
-		pr_msg = &Self->Net->Message;
-		break;
-	}
-}
-

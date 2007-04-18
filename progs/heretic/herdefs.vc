@@ -25,6 +25,8 @@
 
 import engine;
 
+#include <macros.vc>
+
 class HereticDefs : Object;
 
 enum
@@ -57,13 +59,6 @@ enum
 
 enum
 {
-	svc_gun_shot = USER_PROTOCOL_START,
-	svc_blood,
-	svc_explosion
-};
-
-enum
-{
 	EF_DL_NONE,
 	EF_DL_WHITE,
 	EF_DL_RED,
@@ -74,6 +69,14 @@ enum
 	EF_DLIGHT_MASK		= 7
 };
 
+int ecolours[8];
+
 defaultproperties
 {
+	ecolours[0] = 0;	// EF_DL_NONE
+	ecolours[1] = RGB(255, 255, 255);	// EF_DL_WHITE
+	ecolours[2] = RGB(255, 32, 32);	// EF_DL_RED
+	ecolours[3] = RGB(32, 255, 32);	// EF_DL_GREEN
+	ecolours[4] = RGB(16, 16, 255);	// EF_DL_BLUE
+	ecolours[5] = RGB(255, 0, 255);	// EF_DL_MAGENTA
 }

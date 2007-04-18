@@ -648,16 +648,28 @@ void ExplodeMissile()
 	}
 	if (Effects & HereticDefs::EF_DLIGHT_MASK)
 	{
-		MSG_Select(MSG_SV_DATAGRAM);
-		if (MSG_CheckSpace(8))
-		{
-			MSG_WriteByte(HereticDefs::svc_explosion);
-			MSG_WriteByte(Effects & HereticDefs::EF_DLIGHT_MASK);
-			MSG_WriteShort(ftoi(Origin.x));
-			MSG_WriteShort(ftoi(Origin.y));
-			MSG_WriteShort(ftoi(Origin.z));
-		}
+		SendExplosion(Effects & HereticDefs::EF_DLIGHT_MASK, Origin);
 		Effects &= ~HereticDefs::EF_DLIGHT_MASK;
+	}
+}
+
+//==========================================================================
+//
+//  SendExplosion
+//
+//==========================================================================
+
+final void SendExplosion(int etype, TVec org)
+{
+	int i;
+
+	for (i = 0; i < MAXPLAYERS; i++)
+	{
+		if (!Level.Game.Players[i])
+			continue;
+		if (!Level.Game.Players[i].bSpawned)
+			continue;
+		Player(Level.Game.Players[i]).ClientExplosion(etype, org);
 	}
 }
 
@@ -3853,6 +3865,7 @@ bool PTR_ShootTraverse(intercept_t * in)
 	TVec hit_point;
 	line_t *li;
 	Actor th;
+	int i;
 
 	if (in->bIsALine)
 	{
@@ -3963,15 +3976,7 @@ bool PTR_ShootTraverse(intercept_t * in)
 		A = Spawn(BlasterPuff2, hit_point);
 		A.PlaySound('weapons/blastershoot', CHAN_VOICE);
 
-		MSG_Select(MSG_SV_DATAGRAM);
-		if (MSG_CheckSpace(8))
-		{
-			MSG_WriteByte(HereticDefs::svc_explosion);
-			MSG_WriteByte(HereticDefs::EF_DL_BLUE);
-			MSG_WriteShort(ftoi(hit_point.x));
-			MSG_WriteShort(ftoi(hit_point.y));
-			MSG_WriteShort(ftoi(hit_point.z));
-		}
+		SendExplosion(HereticDefs::EF_DL_BLUE, hit_point);
 	}
 	else
 	{
@@ -3981,14 +3986,14 @@ bool PTR_ShootTraverse(intercept_t * in)
 	{
 		if (!th.bNoBlood && P_Random() < 192)
 		{
-			MSG_Select(MSG_SV_DATAGRAM);
-			if (MSG_CheckSpace(8))
+			for (i = 0; i < MAXPLAYERS; i++)
 			{
-				MSG_WriteByte(HereticDefs::svc_blood);
-				MSG_WriteShort(ftoi(hit_point.x));
-				MSG_WriteShort(ftoi(hit_point.y));
-				MSG_WriteShort(ftoi(hit_point.z));
-				MSG_WriteByte(la_damage > 255 ? 255 : la_damage);
+				if (!Level.Game.Players[i])
+					continue;
+				if (!Level.Game.Players[i].bSpawned)
+					continue;
+				Player(Level.Game.Players[i]).ClientBlood(hit_point,
+					la_damage > 255 ? 255 : la_damage);
 			}
 
 			th.SpawnBloodSplatter(hit_point);
@@ -4133,39 +4138,15 @@ final void A_Explode()
 	}
 	if (Class == FireBomb)
 	{
-		MSG_Select(MSG_SV_DATAGRAM);
-		if (MSG_CheckSpace(8))
-		{
-			MSG_WriteByte(HereticDefs::svc_explosion);
-			MSG_WriteByte(HereticDefs::EF_DL_WHITE);
-			MSG_WriteShort(ftoi(Origin.x));
-			MSG_WriteShort(ftoi(Origin.y));
-			MSG_WriteShort(ftoi(Origin.z));
-		}
+		SendExplosion(HereticDefs::EF_DL_WHITE, Origin);
 	}
 	if (Class == Pod)
 	{
-		MSG_Select(MSG_SV_DATAGRAM);
-		if (MSG_CheckSpace(8))
-		{
-			MSG_WriteByte(HereticDefs::svc_explosion);
-			MSG_WriteByte(HereticDefs::EF_DL_GREEN);
-			MSG_WriteShort(ftoi(Origin.x));
-			MSG_WriteShort(ftoi(Origin.y));
-			MSG_WriteShort(ftoi(Origin.z));
-		}
+		SendExplosion(HereticDefs::EF_DL_GREEN, Origin);
 	}
 	if (ExplodeEffect)
 	{
-		MSG_Select(MSG_SV_DATAGRAM);
-		if (MSG_CheckSpace(8))
-		{
-			MSG_WriteByte(HereticDefs::svc_explosion);
-			MSG_WriteByte(ExplodeEffect);
-			MSG_WriteShort(ftoi(Origin.x));
-			MSG_WriteShort(ftoi(Origin.y));
-			MSG_WriteShort(ftoi(Origin.z));
-		}
+		SendExplosion(ExplodeEffect, Origin);
 	}
 }
 
@@ -4195,27 +4176,11 @@ void SpawnPuff(TVec org, class<Actor> PuffType)
 	}
 	if (PuffType == GoldWandPuff1)
 	{
-		MSG_Select(MSG_SV_DATAGRAM);
-		if (MSG_CheckSpace(8))
-		{
-			MSG_WriteByte(HereticDefs::svc_explosion);
-			MSG_WriteByte(HereticDefs::EF_DL_WHITE);
-			MSG_WriteShort(ftoi(org.x));
-			MSG_WriteShort(ftoi(org.y));
-			MSG_WriteShort(ftoi(org.z));
-		}
+		SendExplosion(HereticDefs::EF_DL_WHITE, org);
 	}
 	if (PuffType == BlasterPuff1)
 	{
-		MSG_Select(MSG_SV_DATAGRAM);
-		if (MSG_CheckSpace(8))
-		{
-			MSG_WriteByte(HereticDefs::svc_explosion);
-			MSG_WriteByte(HereticDefs::EF_DL_BLUE);
-			MSG_WriteShort(ftoi(org.x));
-			MSG_WriteShort(ftoi(org.y));
-			MSG_WriteShort(ftoi(org.z));
-		}
+		SendExplosion(HereticDefs::EF_DL_BLUE, org);
 	}
 }
 

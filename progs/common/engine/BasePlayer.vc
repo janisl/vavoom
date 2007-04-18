@@ -131,7 +131,6 @@ native final void cprint(string format, ...);
 native final void centreprint(string format, ...);
 native final int GetPlayerNum();
 native final void ClearPlayer();
-native final void SelectClientMsg(int msgtype);
 
 native final void SetViewState(int position, state stnum);
 native final void AdvanceViewStates(float deltaTime);

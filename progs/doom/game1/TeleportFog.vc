@@ -35,15 +35,7 @@ class TeleportFog : Actor;
 
 final void A_Lights()
 {
-	MSG_Select(MSG_SV_DATAGRAM);
-	if (MSG_CheckSpace(8))
-	{
-		MSG_WriteByte(DoomDefs::svc_explosion2);
-		MSG_WriteByte(Effects);
-		MSG_WriteShort(ftoi(Origin.x));
-		MSG_WriteShort(ftoi(Origin.y));
-		MSG_WriteShort(ftoi(Origin.z + Height * 0.5));
-	}
+	SendExplosion2(Effects, Origin + vector(0.0, 0.0, Height * 0.5));
 
 	//  Clear old dynamic light effect
 	Effects &= ~DoomDefs::EF_DLIGHT_MASK;

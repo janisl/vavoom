@@ -168,7 +168,6 @@ class VBasePlayer : public VObject
 	DECLARE_FUNCTION(centreprint)
 	DECLARE_FUNCTION(GetPlayerNum)
 	DECLARE_FUNCTION(ClearPlayer)
-	DECLARE_FUNCTION(SelectClientMsg)
 	DECLARE_FUNCTION(SetViewState)
 	DECLARE_FUNCTION(AdvanceViewStates)
 

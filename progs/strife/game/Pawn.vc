@@ -1204,9 +1204,7 @@ final void A_BossDeath()
 		StrifeLevelInfo(Level).EV_DoFloor(999, 8, 0, 0, 0,
 			FloorMover::FLOOREV_LowerToLowest, NULL);
 		Player(Enemy.Player).SetObjectives(95);
-		MSG_Select(MSG_SV_RELIABLE);
-		MSG_WriteByte(StrifeDefs::svc_voice);
-		MSG_WriteShort(95);
+		Player(Enemy.Player).ClientVoice(95);
 	}
 	else if (Class == Specter2)
 	{
@@ -1217,9 +1215,7 @@ final void A_BossDeath()
 		Player(Enemy.Player).GiveSigilPiece();
 		Player(Enemy.Player).GiveQuest(QUEST_KilledBishop);
 		Player(Enemy.Player).SetObjectives(74);
-		MSG_Select(MSG_SV_RELIABLE);
-		MSG_WriteByte(StrifeDefs::svc_voice);
-		MSG_WriteShort(74);
+		Player(Enemy.Player).ClientVoice(74);
 	}
 	else if (Class == Specter3)
 	{
@@ -1237,16 +1233,12 @@ final void A_BossDeath()
 		if (Player(Enemy.Player).Quests & (1 << QUEST_KilledLoremaster))
 		{
 			Player(Enemy.Player).SetObjectives(85);
-			MSG_Select(MSG_SV_RELIABLE);
-			MSG_WriteByte(StrifeDefs::svc_voice);
-			MSG_WriteShort(85);
+			Player(Enemy.Player).ClientVoice(85);
 		}
 		else
 		{
 			Player(Enemy.Player).SetObjectives(87);
-			MSG_Select(MSG_SV_RELIABLE);
-			MSG_WriteByte(StrifeDefs::svc_voice);
-			MSG_WriteShort(87);
+			Player(Enemy.Player).ClientVoice(87);
 		}
 		Level.ExecuteActionSpecial(LNSPEC_DoorOpen, 222, 256, 0, 0, 0, NULL, 0, none);
 	}
@@ -1261,16 +1253,12 @@ final void A_BossDeath()
 		if (Player(Enemy.Player).Quests & (1 << QUEST_Factory))
 		{
 			Player(Enemy.Player).SetObjectives(106);
-			MSG_Select(MSG_SV_RELIABLE);
-			MSG_WriteByte(StrifeDefs::svc_voice);
-			MSG_WriteShort(106);
+			Player(Enemy.Player).ClientVoice(106);
 		}
 		else
 		{
 			Player(Enemy.Player).SetObjectives(79);
-			MSG_Select(MSG_SV_RELIABLE);
-			MSG_WriteByte(StrifeDefs::svc_voice);
-			MSG_WriteShort(79);
+			Player(Enemy.Player).ClientVoice(79);
 		}
 	}
 	else if (Class == Specter5)
@@ -1287,16 +1275,12 @@ final void A_BossDeath()
 		if (Player(Enemy.Player).Sigil == 4)
 		{
 			Player(Enemy.Player).SetObjectives(85);
-			MSG_Select(MSG_SV_RELIABLE);
-			MSG_WriteByte(StrifeDefs::svc_voice);
-			MSG_WriteShort(85);
+			Player(Enemy.Player).ClientVoice(85);
 		}
 		else
 		{
 			Player(Enemy.Player).SetObjectives(83);
-			MSG_Select(MSG_SV_RELIABLE);
-			MSG_WriteByte(StrifeDefs::svc_voice);
-			MSG_WriteShort(83);
+			Player(Enemy.Player).ClientVoice(83);
 		}
 		StrifeLevelInfo(Level).EV_DoFloor(666, 8, 0, 0, 0,
 			FloorMover::FLOOREV_LowerToLowest, NULL);
@@ -1308,15 +1292,11 @@ final void A_BossDeath()
 
 		if (Player(Enemy.Player).Quests & (1 << QUEST_Factory))
 		{
-			MSG_Select(MSG_SV_RELIABLE);
-			MSG_WriteByte(StrifeDefs::svc_finale_type);
-			MSG_WriteByte(0);
+			Player(Enemy.Player).ClientFinaleType(0);
 		}
 		else
 		{
-			MSG_Select(MSG_SV_RELIABLE);
-			MSG_WriteByte(StrifeDefs::svc_finale_type);
-			MSG_WriteByte(2);
+			Player(Enemy.Player).ClientFinaleType(2);
 		}
 		G_Completed(-1, -1, 0);
 	}

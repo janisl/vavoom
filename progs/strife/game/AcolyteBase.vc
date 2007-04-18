@@ -67,9 +67,7 @@ final void A_AcolyteDeath()
 
 	Player(Level.Game.Players[0]).GiveQuest(QUEST_7);
 	Player(Level.Game.Players[0]).SetObjectives(14);
-	MSG_Select(MSG_SV_RELIABLE);
-	MSG_WriteByte(StrifeDefs::svc_voice);
-	MSG_WriteShort(14);
+	Player(Level.Game.Players[0]).ClientVoice(14);
 }
 
 __states__

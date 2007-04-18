@@ -414,9 +414,7 @@ bool EV_SendToCommunicator(Actor A, int Arg1, int Arg2, int Arg3, int Arg4,
 			Player(A.Player).SetObjectives(Arg1);
 		}
 
-		MSG_Select(MSG_SV_RELIABLE);
-		MSG_WriteByte(StrifeDefs::svc_voice);
-		MSG_WriteShort(Arg1);
+		Player(A.Player).ClientVoice(Arg1);
 
 		if (Arg3 == 0)
 		{
@@ -770,9 +768,7 @@ void StartSpeech(int SpeechNum)
 	while (conJumped);
 	CurrentSpeechIndex = SpeechNum;
 
-	MSG_Select(MSG_SV_RELIABLE);
-	MSG_WriteByte(StrifeDefs::svc_speech);
-	MSG_WriteShort(SpeechNum);
+	Player(CurrentSpeakingTo.Player).ClientSpeech(SpeechNum);
 }
 
 //==========================================================================

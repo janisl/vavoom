@@ -25,6 +25,8 @@
 
 import engine;
 
+#include <macros.vc>
+
 class DoomDefs : Object;
 
 //#define GRENADE_LAUNCHER
@@ -101,15 +103,6 @@ enum
 	ST_DEADFACE			= (ST_GODFACE + 1)
 };
 
-// Additional network protocol commands
-enum
-{
-	svc_gun_shot = USER_PROTOCOL_START,
-	svc_blood,
-	svc_explosion,
-	svc_explosion2
-};
-
 //  Dynamic light effects
 enum
 {
@@ -133,9 +126,16 @@ enum
 
 int ramp1[16];
 int ramp2[16];
+int ecolours[8];
 
 defaultproperties
 {
+	ecolours[0] = 0;	// EF_DL_NONE
+	ecolours[1] = RGB(255, 255, 255);	// EF_DL_MISSILE
+	ecolours[2] = RGB(255, 32, 32);	// EF_DL_RBALL
+	ecolours[3] = RGB(32, 255, 32);	// EF_DL_GBALL
+	ecolours[4] = RGB(32, 32, 255);	// EF_DL_PLASMA
+	ecolours[5] = 0;	// EF_DL_MUZZLEFLASH
 	ramp1[0] = 0xfffff31b; ramp1[1] = 0xefdfab27; ramp1[2] = 0xdfbf772f; ramp1[3] = 0xcf9f4f33;
 	ramp1[4] = 0xbf7f3b2b; ramp1[5] = 0xaf632f1f; ramp1[6] = 0x9f4b2313; ramp1[7] = 0x8f2f170b;
 	ramp1[8] = 0x7f7f3b2b; ramp1[9] = 0x6f632f1f; ramp1[10] = 0x5f4b2313; ramp1[11] = 0x4f2f170b;

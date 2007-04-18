@@ -29,15 +29,6 @@
 
 // TYPES -------------------------------------------------------------------
 
-enum
-{
-	MSG_SV_DATAGRAM,
-	MSG_SV_RELIABLE,
-	MSG_SV_SIGNON,
-	MSG_SV_CLIENT,
-	MSG_CL_MESSAGE
-};
-
 class VProgsReader;
 struct dprograms_t;
 

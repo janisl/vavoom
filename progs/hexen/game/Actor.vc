@@ -3448,18 +3448,30 @@ bool ExplodeMissile()
 	}
 	if (Effects & HexenDefs::EF_DLIGHT_MASK)
 	{
-		MSG_Select(MSG_SV_DATAGRAM);
-		if (MSG_CheckSpace(8))
-		{
-			MSG_WriteByte(HexenDefs::svc_explosion);
-			MSG_WriteByte(Effects & HexenDefs::EF_DLIGHT_MASK);
-			MSG_WriteShort(ftoi(Origin.x));
-			MSG_WriteShort(ftoi(Origin.y));
-			MSG_WriteShort(ftoi(Origin.z));
-		}
+		SendExplosion(Effects & HexenDefs::EF_DLIGHT_MASK, Origin);
 		Effects &= ~HexenDefs::EF_DLIGHT_MASK;
 	}
 	return true;
+}
+
+//==========================================================================
+//
+//  SendExplosion
+//
+//==========================================================================
+
+final void SendExplosion(int etype, TVec org)
+{
+	int i;
+
+	for (i = 0; i < MAXPLAYERS; i++)
+	{
+		if (!Level.Game.Players[i])
+			continue;
+		if (!Level.Game.Players[i].bSpawned)
+			continue;
+		Player(Level.Game.Players[i]).ClientExplosion(etype, org);
+	}
 }
 
 //==========================================================================
@@ -3898,6 +3910,7 @@ bool PTR_ShootTraverse(intercept_t * in)
 	TVec hit_point;
 	line_t *li;
 	Actor th;
+	int i;
 
 	if (in->bIsALine)
 	{
@@ -4005,14 +4018,14 @@ bool PTR_ShootTraverse(intercept_t * in)
 			}
 			if (P_Random() < 192)
 			{
-				MSG_Select(MSG_SV_DATAGRAM);
-				if (MSG_CheckSpace(8))
+				for (i = 0; i < MAXPLAYERS; i++)
 				{
-					MSG_WriteByte(HexenDefs::svc_blood);
-					MSG_WriteShort(ftoi(hit_point.x));
-					MSG_WriteShort(ftoi(hit_point.y));
-					MSG_WriteShort(ftoi(hit_point.z));
-					MSG_WriteByte(la_damage > 255 ? 255 : la_damage);
+					if (!Level.Game.Players[i])
+						continue;
+					if (!Level.Game.Players[i].bSpawned)
+						continue;
+					Player(Level.Game.Players[i]).ClientBlood(hit_point,
+						la_damage > 255 ? 255 : la_damage);
 				}
 
 				th.SpawnBloodSplatter(hit_point);
@@ -4356,15 +4369,7 @@ final void A_Explode()
 
 	if (ExplodeEffect)
 	{
-		MSG_Select(MSG_SV_DATAGRAM);
-		if (MSG_CheckSpace(8))
-		{
-			MSG_WriteByte(HexenDefs::svc_explosion);
-			MSG_WriteByte(ExplodeEffect);
-			MSG_WriteShort(ftoi(Origin.x));
-			MSG_WriteShort(ftoi(Origin.y));
-			MSG_WriteShort(ftoi(Origin.z));
-		}
+		SendExplosion(ExplodeEffect, Origin);
 	}
 }
 

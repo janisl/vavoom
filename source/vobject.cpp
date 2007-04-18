@@ -867,38 +867,6 @@ IMPLEMENT_FUNCTION(VObject, MSG_WriteLong)
 	*pr_msg << d;
 }
 
-IMPLEMENT_FUNCTION(VObject, MSG_ReadChar)
-{
-	P_GET_PTR(VMessageIn, Msg);
-	RET_INT((vint8)Msg->ReadByte());
-}
-
-IMPLEMENT_FUNCTION(VObject, MSG_ReadByte)
-{
-	P_GET_PTR(VMessageIn, Msg);
-	RET_INT((vuint8)Msg->ReadByte());
-}
-
-IMPLEMENT_FUNCTION(VObject, MSG_ReadShort)
-{
-	P_GET_PTR(VMessageIn, Msg);
-	RET_INT((vint16)Msg->ReadShort());
-}
-
-IMPLEMENT_FUNCTION(VObject, MSG_ReadWord)
-{
-	P_GET_PTR(VMessageIn, Msg);
-	RET_INT((vuint16)Msg->ReadShort());
-}
-
-IMPLEMENT_FUNCTION(VObject, MSG_ReadLong)
-{
-	P_GET_PTR(VMessageIn, Msg);
-	vint32 l;
-	*Msg << l;
-	RET_INT(l);
-}
-
 //==========================================================================
 //
 //	Printing in console

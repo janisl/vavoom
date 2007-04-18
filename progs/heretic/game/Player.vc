@@ -142,13 +142,14 @@ BotPlayer Bot;
 
 bool onground;
 
-int ecolours[8];
-
 replication
 {
 	reliable if (!bIsClient)
 		SBFlags, ArmorPoints, ReadyAmmo, ArtifactFlash, InvPtr, InvCurPos,
 		ReadyArtifact, InventorySlotNum, ReadyWeapon, Inventory;
+
+	unreliable if (!bIsClient)
+		ClientBlood, ClientExplosion;
 }
 
 //==========================================================================
@@ -3133,55 +3134,15 @@ void Cheat_NoWeapons()
 
 //==========================================================================
 //
-//  ParseGunShot
+//  ClientBlood
 //
 //==========================================================================
 
-void ParseGunShot(void* Msg)
+void ClientBlood(TVec org, int damage)
 {
-	TVec org;
 	int i, j;
 	particle_t *p;
 	int c;
-
-	org.x = itof(MSG_ReadShort(Msg));
-	org.y = itof(MSG_ReadShort(Msg));
-	org.z = itof(MSG_ReadShort(Msg));
-
-	for (i = 0; i < 20; i++)
-	{
-		p = NewParticle();
-		if (!p)
-			return;
-
-		p->org = org;
-		c = P_Random() >> 1;
-		p->colour = RGB(c, c, c);
-		p->die = ClGame.time + 0.5 * Random();
-		p->vel.x = 32.0 * (Random() - 0.5);
-		p->vel.y = 32.0 * (Random() - 0.5);
-		p->vel.z = 32.0 * (Random() - 0.5);
-	}
-}
-
-//==========================================================================
-//
-//  ParseBlood
-//
-//==========================================================================
-
-void ParseBlood(void* Msg)
-{
-	TVec org;
-	int damage;
-	int i, j;
-	particle_t *p;
-	int c;
-
-	org.x = itof(MSG_ReadShort(Msg));
-	org.y = itof(MSG_ReadShort(Msg));
-	org.z = itof(MSG_ReadShort(Msg));
-	damage = MSG_ReadByte(Msg);
 
 	for (i = 0; i < damage; i++)
 	{
@@ -3201,63 +3162,22 @@ void ParseBlood(void* Msg)
 
 //==========================================================================
 //
-//  ParseExplosion
+//  ClientExplosion
 //
 //==========================================================================
 
-void ParseExplosion(void* Msg)
+void ClientExplosion(int etype, TVec org)
 {
-	TVec org;
 	dlight_t *dl;
-	int etype;
-
-	etype = MSG_ReadByte(Msg);
-	org.x = itof(MSG_ReadShort(Msg));
-	org.y = itof(MSG_ReadShort(Msg));
-	org.z = itof(MSG_ReadShort(Msg));
 
 	dl = AllocDlight(0);
 	dl->origin = org;
 	dl->radius = 350.0;
-	dl->colour = ecolours[etype];
+	dl->colour = HereticDefs.default.ecolours[etype];
 	dl->die = ClGame.time + 0.5;
 	dl->decay = 300.0;
 }
 
-//==========================================================================
-//
-//  ParseServerCommand
-//
-//==========================================================================
-
-bool ParseServerCommand(int cmd_type, void* Msg)
-{
-	switch (cmd_type)
-	{
-	case HereticDefs::svc_gun_shot:
-		ParseGunShot(Msg);
-		break;
-
-	case HereticDefs::svc_blood:
-		ParseBlood(Msg);
-		break;
-
-	case HereticDefs::svc_explosion:
-		ParseExplosion(Msg);
-		break;
-
-	default:
-		return false;
-	}
-	return true;
-}
-
 defaultproperties
 {
-	ecolours[0] = 0;	// EF_DL_NONE
-	ecolours[1] = RGB(255, 255, 255);	// EF_DL_WHITE
-	ecolours[2] = RGB(255, 32, 32);	// EF_DL_RED
-	ecolours[3] = RGB(32, 255, 32);	// EF_DL_GREEN
-	ecolours[4] = RGB(16, 16, 255);	// EF_DL_BLUE
-	ecolours[5] = RGB(255, 0, 255);	// EF_DL_MAGENTA
 }

@@ -1080,24 +1080,18 @@ IMPLEMENT_FUNCTION(VObject, T_DrawCursor)
 
 #endif
 
+enum
+{
+	MSG_SV_SIGNON,
+};
+
 void PR_MSG_Select(int msgtype)
 {
 	switch (msgtype)
 	{
 #ifdef SERVER
-		case MSG_SV_DATAGRAM:
-			pr_msg = sv_datagram;
-			break;
-		case MSG_SV_RELIABLE:
-			pr_msg = sv_reliable;
-			break;
 		case MSG_SV_SIGNON:
 			pr_msg = SV_GetSignon(8);
-			break;
-#endif
-#ifdef CLIENT
-		case MSG_CL_MESSAGE:
-			pr_msg = &cl->Net->Message;
 			break;
 #endif
 	}
