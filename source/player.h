@@ -176,6 +176,15 @@ class VBasePlayer : public VObject
 	DECLARE_FUNCTION(ClientStartSequence)
 	DECLARE_FUNCTION(ClientAddSequenceChoice)
 	DECLARE_FUNCTION(ClientStopSequence)
+	DECLARE_FUNCTION(ClientForceLightning)
+	DECLARE_FUNCTION(ClientPrint)
+	DECLARE_FUNCTION(ClientCentrePrint)
+	DECLARE_FUNCTION(ClientSetAngles)
+	DECLARE_FUNCTION(ClientIntermission)
+	DECLARE_FUNCTION(ClientPause)
+	DECLARE_FUNCTION(ClientSkipIntermission)
+	DECLARE_FUNCTION(ClientFinale)
+	DECLARE_FUNCTION(ClientChangeMusic)
 
 	void eventPutClientIntoServer()
 	{
@@ -298,12 +307,57 @@ class VBasePlayer : public VObject
 		P_PASS_INT(OriginId);
 		EV_RET_VOID("ClientStopSequence");
 	}
-	bool eventParseServerCommand(int cmd_type, class VMessageIn* Msg)
+	void eventClientForceLightning()
 	{
 		P_PASS_SELF;
-		P_PASS_INT(cmd_type);
-		P_PASS_PTR(Msg);
-		EV_RET_BOOL("ParseServerCommand");
+		EV_RET_VOID("ClientForceLightning");
+	}
+	void eventClientPrint(VStr Str)
+	{
+		P_PASS_SELF;
+		P_PASS_STR(Str);
+		EV_RET_VOID("ClientPrint");
+	}
+	void eventClientCentrePrint(VStr Str)
+	{
+		P_PASS_SELF;
+		P_PASS_STR(Str);
+		EV_RET_VOID("ClientCentrePrint");
+	}
+	void eventClientSetAngles(TAVec Angles)
+	{
+		P_PASS_SELF;
+		P_PASS_AVEC(Angles);
+		EV_RET_VOID("ClientSetAngles");
+	}
+	void eventClientIntermission()
+	{
+		P_PASS_SELF;
+		EV_RET_VOID("ClientIntermission");
+	}
+	void eventClientPause(bool Paused)
+	{
+		P_PASS_SELF;
+		P_PASS_BOOL(Paused);
+		EV_RET_VOID("ClientPause");
+	}
+	void eventClientSkipIntermission()
+	{
+		P_PASS_SELF;
+		EV_RET_VOID("ClientSkipIntermission");
+	}
+	void eventClientFinale(VStr Type)
+	{
+		P_PASS_SELF;
+		P_PASS_STR(Type);
+		EV_RET_VOID("ClientFinale");
+	}
+	void eventClientChangeMusic(VName Song, int CDTrack)
+	{
+		P_PASS_SELF;
+		P_PASS_NAME(Song);
+		P_PASS_INT(CDTrack);
+		EV_RET_VOID("ClientChangeMusic");
 	}
 };
 

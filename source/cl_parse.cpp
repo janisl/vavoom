@@ -142,6 +142,77 @@ IMPLEMENT_FUNCTION(VBasePlayer, ClientStopSequence)
 	GAudio->StopSequence(OriginId);
 }
 
+IMPLEMENT_FUNCTION(VBasePlayer, ClientForceLightning)
+{
+	P_GET_SELF;
+	GClLevel->RenderData->ForceLightning();
+}
+
+IMPLEMENT_FUNCTION(VBasePlayer, ClientPrint)
+{
+	P_GET_STR(Str);
+	P_GET_SELF;
+	C_NotifyMessage(*Str);
+}
+
+IMPLEMENT_FUNCTION(VBasePlayer, ClientCentrePrint)
+{
+	P_GET_STR(Str);
+	P_GET_SELF;
+	C_CentreMessage(*Str);
+}
+
+IMPLEMENT_FUNCTION(VBasePlayer, ClientSetAngles)
+{
+	P_GET_AVEC(Angles);
+	P_GET_SELF;
+	Self->ViewAngles = Angles;
+	Self->ViewAngles.pitch = AngleMod180(Self->ViewAngles.pitch);
+}
+
+IMPLEMENT_FUNCTION(VBasePlayer, ClientIntermission)
+{
+}
+
+IMPLEMENT_FUNCTION(VBasePlayer, ClientPause)
+{
+	P_GET_BOOL(Paused);
+	P_GET_SELF;
+	if (Paused)
+	{
+		GClGame->ClientFlags |= VClientGameBase::CF_Paused;
+		GAudio->PauseSound();
+	}
+	else
+	{
+		GClGame->ClientFlags &= ~VClientGameBase::CF_Paused;
+		GAudio->ResumeSound();
+	}
+}
+
+IMPLEMENT_FUNCTION(VBasePlayer, ClientSkipIntermission)
+{
+	P_GET_SELF;
+	IM_SkipIntermission();
+}
+
+IMPLEMENT_FUNCTION(VBasePlayer, ClientFinale)
+{
+	P_GET_STR(Type);
+	P_GET_SELF;
+	F_StartFinale(*Type);
+}
+
+IMPLEMENT_FUNCTION(VBasePlayer, ClientChangeMusic)
+{
+	P_GET_INT(CDTrack);
+	P_GET_NAME(Song);
+	P_GET_SELF;
+	GClLevel->LevelInfo->SongLump = Song;
+	GClLevel->LevelInfo->CDTrack = CDTrack;
+	GAudio->MusicChanged();
+}
+
 static void CL_ParseViewData(VMessageIn& msg)
 {
 	guard(CL_ParseViewData);
@@ -499,51 +570,16 @@ void VClientGenChannel::ParsePacket(VMessageIn& msg)
 			CL_ParseServerInfo(msg);
 			break;
 
-		case svc_set_angles:
-			cl->ViewAngles.pitch = AngleMod180(ByteToAngle(msg.ReadByte()));
-			cl->ViewAngles.yaw = ByteToAngle(msg.ReadByte());
-			cl->ViewAngles.roll = ByteToAngle(msg.ReadByte());
-			break;
-
-		case svc_centre_look:
-//FIXME
-			break;
-
 		case svc_view_data:
 			CL_ParseViewData(msg);
-			break;
-
-		case svc_print:
-			C_NotifyMessage(*msg.ReadString());
-			break;
-
-		case svc_centre_print:
-			C_CentreMessage(*msg.ReadString());
 			break;
 
 		case svc_time:
 			CL_ParseTime(msg);
 			break;
 
-		case svc_force_lightning:
-			GClLevel->RenderData->ForceLightning();
-			break;
-
 		case svc_intermission:
 			CL_ParseIntermission(msg);
-			break;
-
-		case svc_pause:
-			if (msg.ReadByte())
-			{
-				GClGame->ClientFlags |= VClientGameBase::CF_Paused;
-				GAudio->PauseSound();
-			}
-			else
-			{
-				GClGame->ClientFlags &= ~VClientGameBase::CF_Paused;
-				GAudio->ResumeSound();
-			}
 			break;
 
 		case svc_stringcmd:
@@ -556,14 +592,6 @@ void VClientGenChannel::ParsePacket(VMessageIn& msg)
 				Host_Error("Received signon %i when at %i", i, cls.signon);
 			cls.signon = i;
 			CL_SignonReply();
-			break;
-
-		case svc_skip_intermission:
-			IM_SkipIntermission();
-			break;
-
-		case svc_finale:
-			F_StartFinale(*msg.ReadString());
 			break;
 
 		case svc_serverinfo:
@@ -612,21 +640,11 @@ void VClientGenChannel::ParsePacket(VMessageIn& msg)
 			GClLevel->RenderData->AddStaticLight(origin, radius, colour);
 			break;
 
-		case svc_change_music:
-			GClLevel->LevelInfo->SongLump = *msg.ReadString();
-			GClLevel->LevelInfo->CDTrack = msg.ReadByte();
-			GAudio->MusicChanged();
-			break;
-
 		case svc_class_name:
 			CL_ParseClassName(msg);
 			break;
 
 		default:
-			if (cl->eventParseServerCommand(cmd_type, &msg))
-			{
-				break;
-			}
 			GCon->Logf(NAME_Dev, "Length %d", msg.GetNumBits());
 			for (i = 0; i < msg.GetNumBytes(); i++)
 			{

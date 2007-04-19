@@ -32,23 +32,14 @@ enum
 	svc_disconnect,
 	svc_server_info,
 
-	svc_print,
-	svc_centre_print,
 	svc_stringcmd,
 	svc_signonnum,
 
-	svc_set_angles,
-	svc_centre_look,
 	svc_view_data,
 
 	svc_time,
-	svc_pause,
-
-	svc_force_lightning,
 
 	svc_intermission,
-	svc_skip_intermission,
-	svc_finale,
 
 	svc_serverinfo,
 	svc_userinfo,
@@ -60,11 +51,7 @@ enum
 	svc_static_light,
 	svc_static_light_rgb,
 
-	svc_change_music,
-
 	svc_class_name,
-
-	USER_PROTOCOL_START = 128
 };
 
 enum

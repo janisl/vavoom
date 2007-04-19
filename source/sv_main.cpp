@@ -88,7 +88,6 @@ bool			deathmatch = false;   	// only if started as net death
 bool			netgame;                // only true if packets are broadcast
 
 VMessageOut*	sv_reliable;
-VMessageOut*	sv_datagram;
 VMessageOut*	sv_signons;
 
 VBasePlayer*	sv_player;
@@ -117,8 +116,6 @@ static VCvarI	Skill("Skill", "2");
 static VCvarI	sv_cheats("sv_cheats", "0", CVAR_ServerInfo | CVAR_Latch);
 
 static vuint8	*fatpvs;
-static VCvarI	show_mobj_overflow("show_mobj_overflow", "0", CVAR_Archive);
-static VCvarI	show_update_stats("show_update_stats", "0", 0);
 
 static bool		mapteleport_issued;
 
@@ -232,7 +229,6 @@ void SV_Init()
 
 	ServerNetContext = new VServerNetContext();
 	sv_reliable = new VMessageOut(OUT_MESSAGE_SIZE);
-	sv_datagram = new VMessageOut(OUT_MESSAGE_SIZE);
 	sv_signons = new VMessageOut(OUT_MESSAGE_SIZE);
 	sv_signons->Next = NULL;
 
@@ -291,7 +287,6 @@ void SV_Shutdown()
 	}
 
 	delete sv_reliable;
-	delete sv_datagram;
 	for (VMessageOut* Msg = sv_signons; Msg; )
 	{
 		VMessageOut* Next = Msg->Next;
@@ -327,25 +322,11 @@ void SV_Clear()
 	sv_signons = new VMessageOut(OUT_MESSAGE_SIZE);
 	sv_signons->Next = NULL;
 	sv_reliable->Clear();
-	sv_datagram->Clear();
 	sv_ActiveSequences.Clear();
 #ifdef CLIENT
 	// Make sure all sounds are stopped.
 	GAudio->StopAllSound();
 #endif
-	unguard;
-}
-
-//==========================================================================
-//
-//	SV_ClearDatagram
-//
-//==========================================================================
-
-void SV_ClearDatagram()
-{
-	guard(SV_ClearDatagram);
-	sv_datagram->Clear();
 	unguard;
 }
 
@@ -477,9 +458,6 @@ void SV_StartSound(const TVec &origin, int origin_id, int sound_id,
 void SV_StopSound(int origin_id, int channel)
 {
 	guard(SV_StopSound);
-	if (!sv_datagram->CheckSpaceBits(3 << 3))
-		return;
-
 	for (int i = 0; i < MAXPLAYERS; i++)
 	{
 		if (!GGameInfo->Players[i])
@@ -797,7 +775,7 @@ void SV_ClientPrintf(VBasePlayer *player, const char *s, ...)
 	vsprintf(buf, s, v);
 	va_end(v);
 
-	player->Net->Message << (vuint8)svc_print << buf;
+	player->eventClientPrint(buf);
 	unguard;
 }
 
@@ -817,7 +795,7 @@ void SV_ClientCentrePrintf(VBasePlayer *player, const char *s, ...)
 	vsprintf(buf, s, v);
 	va_end(v);
 
-	player->Net->Message << (vuint8)svc_centre_print << buf;
+	player->eventClientCentrePrint(buf);
 	unguard;
 }
 
@@ -839,7 +817,7 @@ void SV_BroadcastPrintf(const char *s, ...)
 
 	for (int i = 0; i < svs.max_clients; i++)
 		if (GGameInfo->Players[i])
-			GGameInfo->Players[i]->Net->Message << (vuint8)svc_print << buf;
+			GGameInfo->Players[i]->eventClientPrint(buf);
 	unguard;
 }
 
@@ -861,7 +839,7 @@ void SV_BroadcastCentrePrintf(const char *s, ...)
 
 	for (int i = 0; i < svs.max_clients; i++)
 		if (GGameInfo->Players[i])
-			GGameInfo->Players[i]->Net->Message << (vuint8)svc_centre_print << buf;
+			GGameInfo->Players[i]->eventClientCentrePrint(buf);
 	unguard;
 }
 
@@ -910,10 +888,7 @@ void SV_WriteViewData(VBasePlayer &player, VMessageOut& msg)
 	if (player.PlayerFlags & VBasePlayer::PF_FixAngle)
 	{
 		player.PlayerFlags &= ~VBasePlayer::PF_FixAngle;
-		msg << (vuint8)svc_set_angles
-			<< (vuint8)(AngleToByte(player.ViewAngles.pitch))
-			<< (vuint8)(AngleToByte(player.ViewAngles.yaw))
-			<< (vuint8)(AngleToByte(player.ViewAngles.roll));
+		player.eventClientSetAngles(player.ViewAngles);
 	}
 	unguard;
 }
@@ -976,7 +951,7 @@ static bool IsRelevant(VThinker* Th)
 //
 //==========================================================================
 
-void SV_UpdateLevel(VMessageOut& msg)
+void SV_UpdateLevel(VMessageOut&)
 {
 	guard(SV_UpdateLevel);
 	int		i;
@@ -985,8 +960,6 @@ void SV_UpdateLevel(VMessageOut& msg)
 
 	((VLevelChannel*)sv_player->Net->Channels[CHANIDX_Level])->Update();
 
-int StartSize = msg.GetNumBytes();
-int NumObjs = 0;
 	//	Mark all entity channels as not updated in this frame.
 	for (i = sv_player->Net->OpenChannels.Num() - 1; i >= 0; i--)
 	{
@@ -1009,7 +982,6 @@ int NumObjs = 0;
 			Chan->SetThinker(*Th);
 		}
 		Chan->Update();
-		NumObjs++;
 	}
 
 	//	Close entity channels that were not updated in this frame.
@@ -1022,10 +994,6 @@ int NumObjs = 0;
 			Chan->Close();
 		}
 	}
-
-if (show_update_stats)
-dprintf("Update size %d (%d) for %d, aver %f big %d %d\n", msg.GetNumBytes(), msg.GetNumBytes() -
-		StartSize, NumObjs, float(msg.GetNumBytes() - StartSize) / NumObjs, c_bigClass, c_bigState);
 	unguard;
 }
 
@@ -1093,9 +1061,6 @@ void SV_SendClientDatagram()
 			<< GLevel->Time;
 
 		SV_WriteViewData(*sv_player, msg);
-
-		if (msg.CheckSpaceBits(sv_datagram->GetNumBytes() << 3))
-			msg << *sv_datagram;
 
 		SV_UpdateLevel(msg);
 
@@ -1253,7 +1218,9 @@ static void CheckForSkip()
 	}
 	if (skip)
 	{
-		*sv_reliable << (vuint8)svc_skip_intermission;
+		for (int i = 0; i < svs.max_clients; i++)
+			if (GGameInfo->Players[i])
+				GGameInfo->Players[i]->eventClientSkipIntermission();
 	}
 }
 
@@ -1382,7 +1349,14 @@ void SV_Ticker()
 
 void SV_ForceLightning()
 {
-	*sv_datagram << (vuint8)svc_force_lightning;
+	for (int i = 0; i < MAXPLAYERS; i++)
+	{
+		if (!GGameInfo->Players[i])
+			continue;
+		if (!(GGameInfo->Players[i]->PlayerFlags & VBasePlayer::PF_Spawned))
+			continue;
+		GGameInfo->Players[i]->eventClientForceLightning();
+	}
 }
 
 //==========================================================================
@@ -1423,9 +1397,7 @@ void SV_ChangeMusic(const char* SongName)
 void SV_ChangeLocalMusic(VBasePlayer *player, const char* SongName)
 {
 	guard(SV_ChangeLocalMusic);
-	player->Net->Message << (vuint8)svc_change_music
-						<< SongName
-						<< (vuint8)0;
+	player->eventClientChangeMusic(SongName, 0);
 	unguard;
 }
 
@@ -1556,9 +1528,11 @@ void G_Completed(int InMap, int InPosition, int SaveAngle)
 	{
 		if (!deathmatch)
 		{
-			*sv_reliable << (vuint8)svc_finale <<
-				(VStr(GLevelInfo->NextMap).StartsWith("EndGame") ?
-				*GLevelInfo->NextMap : "");
+			for (int i = 0; i < svs.max_clients; i++)
+				if (GGameInfo->Players[i])
+					GGameInfo->Players[i]->eventClientFinale(
+						VStr(GLevelInfo->NextMap).StartsWith("EndGame") ?
+						*GLevelInfo->NextMap : "");
 			sv.intermission = 2;
 			return;
 		}
@@ -1608,7 +1582,9 @@ COMMAND(TeleportNewMap)
 	{
 		if (VStr(GLevelInfo->NextMap).StartsWith("EndGame"))
 		{
-			*sv_reliable << (vuint8)svc_finale << *GLevelInfo->NextMap;
+			for (int i = 0; i < svs.max_clients; i++)
+				if (GGameInfo->Players[i])
+					GGameInfo->Players[i]->eventClientFinale(*GLevelInfo->NextMap);
 			sv.intermission = 2;
 			return;
 		}
@@ -2125,14 +2101,12 @@ COMMAND(Spawn)
 			Host_Error("Player without Mobj\n");
 		}
 	}
-	sv_player->Net->Message << (vuint8)svc_set_angles
-						<< (vuint8)(AngleToByte(sv_player->ViewAngles.pitch))
-						<< (vuint8)(AngleToByte(sv_player->ViewAngles.yaw))
-						<< (vuint8)0;
-	sv_player->Net->Message << (vuint8)svc_signonnum << (vuint8)3;
-	sv_player->PlayerFlags &= ~VBasePlayer::PF_FixAngle;
 	((VPlayerChannel*)sv_player->Net->Channels[CHANIDX_Player])->SetPlayer(NULL);
 	((VPlayerChannel*)sv_player->Net->Channels[CHANIDX_Player])->SetPlayer(sv_player);
+	sv_player->ViewAngles.roll = 0;
+	sv_player->eventClientSetAngles(sv_player->ViewAngles);
+	sv_player->Net->Message << (vuint8)svc_signonnum << (vuint8)3;
+	sv_player->PlayerFlags &= ~VBasePlayer::PF_FixAngle;
 	unguard;
 }
 
@@ -2342,7 +2316,9 @@ COMMAND(Pause)
 	}
 
 	paused ^= 1;
-	*sv_reliable << (vuint8)svc_pause << (vuint8)paused;
+	for (int i = 0; i < svs.max_clients; i++)
+		if (GGameInfo->Players[i])
+			GGameInfo->Players[i]->eventClientPause(paused);
 	unguard;
 }
 
@@ -2638,8 +2614,6 @@ COMMAND(MaxPlayers)
 void ServerFrame(int realtics)
 {
 	guard(ServerFrame);
-	SV_ClearDatagram();
-
 	SV_CheckForNewClients();
 
 	if (real_time)
