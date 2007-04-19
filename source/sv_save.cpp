@@ -994,7 +994,7 @@ void SV_ClearRebornSlot()
 void SV_MapTeleport(VName mapname)
 {
 	guard(SV_MapTeleport);
-	TArray<VEntity*>		TravelObjs;
+	TArray<VThinker*>		TravelObjs;
 
 	//	Coolect list of thinkers that will go to the new level.
 	for (VThinker* Th = GLevel->ThinkerHead; Th; Th = Th->Next)
@@ -1006,6 +1006,11 @@ void SV_MapTeleport(VName mapname)
 			GLevel->RemoveThinker(vent);
 			vent->UnlinkFromWorld();
 			SV_StopSound(vent, 0);
+		}
+		if (Th->IsA(VPlayerReplicationInfo::StaticClass()))
+		{
+			TravelObjs.Append(Th);
+			GLevel->RemoveThinker(Th);
 		}
 	}
 
@@ -1042,8 +1047,12 @@ void SV_MapTeleport(VName mapname)
 	for (int i = 0; i < TravelObjs.Num(); i++)
 	{
 		GLevel->AddThinker(TravelObjs[i]);
-		SV_AddEntity(TravelObjs[i]);
-		TravelObjs[i]->LinkToWorld();
+		VEntity* Ent = Cast<VEntity>(TravelObjs[i]);
+		if (Ent)
+		{
+			SV_AddEntity(Ent);
+			Ent->LinkToWorld();
+		}
 	}
 
 	// Launch waiting scripts

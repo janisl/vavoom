@@ -1036,6 +1036,24 @@ void SV_SendClientDatagram()
 
 		sv_player = GGameInfo->Players[i];
 
+		VPlayerReplicationInfo* RepInfo = sv_player->PlayerReplicationInfo;
+		for (int j = 0; j < MAXPLAYERS; j++)
+			RepInfo->FragsStats[j] = sv_player->FragsStats[j];
+		RepInfo->Frags = sv_player->Frags;
+		RepInfo->KillCount = sv_player->KillCount;
+		RepInfo->ItemCount = sv_player->ItemCount;
+		RepInfo->SecretCount = sv_player->SecretCount;
+	}
+
+	for (int i = 0; i < svs.max_clients; i++)
+	{
+		if (!GGameInfo->Players[i])
+		{
+			continue;
+		}
+
+		sv_player = GGameInfo->Players[i];
+
 		if (!(sv_player->PlayerFlags & VBasePlayer::PF_Spawned))
 		{
 			// the player isn't totally in the game yet
@@ -2157,6 +2175,8 @@ void SV_DropClient(bool)
 	GGameInfo->Players[SV_GetPlayerNum(sv_player)] = NULL;
 	sv_player->PlayerFlags &= ~VBasePlayer::PF_Spawned;
 
+	sv_player->PlayerReplicationInfo->DestroyThinker();
+
 	delete sv_player->Net;
 	sv_player->Net = NULL;
 
@@ -2375,6 +2395,10 @@ void SV_ConnectClient(VBasePlayer *player)
 	}
 	player->Frags = 0;
 	memset(player->FragsStats, 0, sizeof(player->FragsStats));
+
+	player->PlayerReplicationInfo =
+		(VPlayerReplicationInfo*)GLevel->SpawnThinker(GGameInfo->PlayerReplicationInfoClass);
+	player->PlayerReplicationInfo->PlayerNum = SV_GetPlayerNum(player);
 
 	SV_SendServerInfo(player);
 	unguard;

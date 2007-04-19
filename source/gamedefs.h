@@ -90,6 +90,7 @@
 #include "p_thinker.h"
 #include "p_levelinfo.h"
 #include "p_entity.h"
+#include "p_playerreplicationinfo.h"
 #include "player.h"
 #include "p_gameinfo.h"
 #include "client.h"

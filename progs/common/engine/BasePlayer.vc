@@ -112,6 +112,8 @@ native readonly float	ViewEntAlpha;
 
 native readonly ClientGameBase	ClGame;	//	Valid only on client side
 
+PlayerReplicationInfo	PlayerReplicationInfo;
+
 replication
 {
 	reliable if (!bIsClient)

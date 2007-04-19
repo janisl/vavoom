@@ -50,6 +50,7 @@ float				FloatBobOffsets[64];
 int					PhaseTable[64];
 
 class<LevelInfo>	LevelInfoClass;
+class<PlayerReplicationInfo>	PlayerReplicationInfoClass;
 
 //==========================================================================
 //
@@ -153,4 +154,5 @@ defaultproperties
 	PhaseTable[56] = 32; PhaseTable[57] = 32; PhaseTable[58] = 48; PhaseTable[59] = 64; PhaseTable[60] = 80; PhaseTable[61] = 96; PhaseTable[62] = 112; PhaseTable[63] = 128;
 
 	LevelInfoClass = LevelInfo;
+	PlayerReplicationInfoClass = PlayerReplicationInfo;
 }

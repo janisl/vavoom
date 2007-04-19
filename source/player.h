@@ -153,6 +153,8 @@ class VBasePlayer : public VObject
 
 	VClientGameBase*	ClGame;
 
+	VPlayerReplicationInfo*	PlayerReplicationInfo;
+
 	VBasePlayer()
 	: UserInfo(E_NoInit)
 	, PlayerName(E_NoInit)

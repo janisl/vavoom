@@ -2152,6 +2152,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\p_playerreplicationinfo.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\source\p_playerreplicationinfo.h"
+				>
+			</File>
+			<File
 				RelativePath="..\source\p_polyobj.cpp"
 				>
 			</File>

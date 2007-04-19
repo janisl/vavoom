@@ -50,6 +50,7 @@ class VGameInfo : public VObject
 	vint32			PhaseTable[64];
 
 	VClass*			LevelInfoClass;
+	VClass*			PlayerReplicationInfoClass;
 
 	VGameInfo()
 	{}

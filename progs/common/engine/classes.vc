@@ -30,6 +30,7 @@
 #include "Thinker.vc"
 #include "LevelInfo.vc"
 #include "Entity.vc"
+#include "PlayerReplicationInfo.vc"
 #include "BasePlayer.vc"
 #include "WorldInfo.vc"
 #include "GameInfo.vc"
