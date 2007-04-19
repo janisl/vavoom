@@ -71,8 +71,6 @@ void PR_Traceback();
 
 extern VStack*			pr_stackPtr;
 
-extern class VMessageOut*		pr_msg;
-
 //**************************************************************************
 //
 //	Stack routines
@@ -147,5 +145,3 @@ void PR_PushStr(const VStr& value);
 VStr PR_PopStr();
 
 VStr PF_FormatString();
-void PR_MSG_Select(int);
-bool PR_MSG_CheckSpace(int);

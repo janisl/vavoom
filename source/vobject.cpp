@@ -831,42 +831,6 @@ IMPLEMENT_FUNCTION(VObject, GetTextureName)
 	RET_NAME(GTextureManager.GetTextureName(Handle));
 }
 
-//**************************************************************************
-//
-//	Message IO functions
-//
-//**************************************************************************
-
-IMPLEMENT_FUNCTION(VObject, MSG_Select)
-{
-	P_GET_INT(msgtype);
-	PR_MSG_Select(msgtype);
-}
-
-IMPLEMENT_FUNCTION(VObject, MSG_CheckSpace)
-{
-	P_GET_INT(len);
-	RET_BOOL(PR_MSG_CheckSpace(len));
-}
-
-IMPLEMENT_FUNCTION(VObject, MSG_WriteByte)
-{
-	P_GET_INT(d);
-	*pr_msg << (vuint8)d;
-}
-
-IMPLEMENT_FUNCTION(VObject, MSG_WriteShort)
-{
-	P_GET_INT(d);
-	*pr_msg << (vint16)d;
-}
-
-IMPLEMENT_FUNCTION(VObject, MSG_WriteLong)
-{
-	P_GET_INT(d);
-	*pr_msg << d;
-}
-
 //==========================================================================
 //
 //	Printing in console

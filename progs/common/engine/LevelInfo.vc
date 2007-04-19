@@ -100,6 +100,9 @@ replication
 		CurrentKills, CurrentItems, CurrentSecret;
 }
 
+native final void AddStaticLight(TVec origin, float radius);
+native final void AddStaticLightRGB(TVec origin, float radius, int colour);
+
 //==========================================================================
 //
 //  SpawnSpecials
@@ -251,59 +254,6 @@ void StartPlaneWatcher(Entity it, line_t* line, int lineSide, bool ceiling,
 	int tag, int height, int special, int arg0, int arg1, int arg2, int arg3,
 	int arg4)
 {
-}
-
-//**************************************************************************
-//
-//  TRACE A LINE
-//
-//**************************************************************************
-
-//==========================================================================
-//
-//  AddStaticLight
-//
-//==========================================================================
-
-void AddStaticLight(TVec origin, float radius)
-{
-	MSG_Select(MSG_SV_SIGNON);
-	if (MSG_CheckSpace(8))
-	{
-		MSG_WriteByte(svc_static_light);
-		MSG_WriteShort(ftoi(origin.x));
-		MSG_WriteShort(ftoi(origin.y));
-		MSG_WriteShort(ftoi(origin.z));
-		MSG_WriteByte(ftoi(radius / 8.0));
-	}
-	else
-	{
-		print("Too many static lights");
-	}
-}
-
-//==========================================================================
-//
-//  AddStaticLightRGB
-//
-//==========================================================================
-
-void AddStaticLightRGB(TVec origin, float radius, int colour)
-{
-	MSG_Select(MSG_SV_SIGNON);
-	if (MSG_CheckSpace(12))
-	{
-		MSG_WriteByte(svc_static_light_rgb);
-		MSG_WriteShort(ftoi(origin.x));
-		MSG_WriteShort(ftoi(origin.y));
-		MSG_WriteShort(ftoi(origin.z));
-		MSG_WriteByte(ftoi(radius / 8.0));
-		MSG_WriteLong(colour);
-	}
-	else
-	{
-		print("Too many static lights");
-	}
 }
 
 //==========================================================================

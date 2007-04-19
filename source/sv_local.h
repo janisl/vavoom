@@ -30,6 +30,7 @@
 #define DEFAULT_GRAVITY			1225.0
 
 struct tmtrace_t;
+class VMessageOut;
 
 extern VGameInfo*		GGameInfo;
 extern VWorldInfo*		GWorldInfo;
@@ -245,6 +246,10 @@ bool SV_SecCheckFatPVS(sector_t*);
 
 extern VBasePlayer*			sv_player;
 extern TArray<VSndSeqInfo>	sv_ActiveSequences;
+
+extern VMessageOut*		sv_reliable;
+extern VMessageOut*		sv_datagram;
+extern VMessageOut*		sv_signons;
 
 //==========================================================================
 //

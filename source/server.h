@@ -23,12 +23,6 @@
 //**
 //**************************************************************************
 
-// HEADER FILES ------------------------------------------------------------
-
-// MACROS ------------------------------------------------------------------
-
-// TYPES -------------------------------------------------------------------
-
 struct server_t
 {
 	bool		active;
@@ -45,13 +39,5 @@ struct server_static_t
 	VStr		serverinfo;
 };
 
-// PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
-
-// PUBLIC DATA DECLARATIONS ------------------------------------------------
-
 extern server_t			sv;
 extern server_static_t	svs;
-
-extern VMessageOut*		sv_reliable;
-extern VMessageOut*		sv_datagram;
-extern VMessageOut*		sv_signons;

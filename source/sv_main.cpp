@@ -2695,6 +2695,40 @@ COMMAND(Say)
 	unguard;
 }
 
+//==========================================================================
+//
+//	VLevelInfo natives
+//
+//==========================================================================
+
+IMPLEMENT_FUNCTION(VLevelInfo, AddStaticLight)
+{
+	P_GET_FLOAT(Radius);
+	P_GET_VEC(Origin);
+	P_GET_SELF;
+	VMessageOut* Msg = SV_GetSignon(8 << 3);
+	*Msg << (vuint8)svc_static_light
+		<< (short)Origin.x
+		<< (short)Origin.y
+		<< (short)Origin.z
+		<< (vuint8)(Radius / 8.0);
+}
+
+IMPLEMENT_FUNCTION(VLevelInfo, AddStaticLightRGB)
+{
+	P_GET_INT(Colour);
+	P_GET_FLOAT(Radius);
+	P_GET_VEC(Origin);
+	P_GET_SELF;
+	VMessageOut* Msg = SV_GetSignon(12 << 3);
+	*Msg << (vuint8)svc_static_light_rgb
+		<< (short)Origin.x
+		<< (short)Origin.y
+		<< (short)Origin.z
+		<< (vuint8)(Radius / 8.0)
+		<< Colour;
+}
+
 //**************************************************************************
 //
 //	Dedicated server console streams

@@ -54,9 +54,6 @@ VClass* SV_FindClassFromScriptId(int Id);
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-VMessageOut			*pr_msg;
-int					pr_msg_type;
-
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
@@ -1079,32 +1076,3 @@ IMPLEMENT_FUNCTION(VObject, T_DrawCursor)
 }
 
 #endif
-
-enum
-{
-	MSG_SV_SIGNON,
-};
-
-void PR_MSG_Select(int msgtype)
-{
-	switch (msgtype)
-	{
-#ifdef SERVER
-		case MSG_SV_SIGNON:
-			pr_msg = SV_GetSignon(8);
-			break;
-#endif
-	}
-	pr_msg_type = msgtype;
-}
-
-bool PR_MSG_CheckSpace(int Bytes)
-{
-#ifdef SERVER
-	if (pr_msg_type == MSG_SV_SIGNON)
-	{
-		pr_msg = SV_GetSignon(Bytes << 3);
-	}
-#endif
-	return pr_msg->CheckSpaceBits(Bytes << 3);
-}

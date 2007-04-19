@@ -289,13 +289,6 @@ public:
 	DECLARE_FUNCTION(TextureHeight)
 	DECLARE_FUNCTION(GetTextureName)
 
-	//	Message IO functions
-	DECLARE_FUNCTION(MSG_Select)
-	DECLARE_FUNCTION(MSG_CheckSpace)
-	DECLARE_FUNCTION(MSG_WriteByte)
-	DECLARE_FUNCTION(MSG_WriteShort)
-	DECLARE_FUNCTION(MSG_WriteLong)
-
 	//	Printing in console
 	DECLARE_FUNCTION(print)
 	DECLARE_FUNCTION(dprint)

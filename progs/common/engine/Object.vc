@@ -222,11 +222,6 @@ enum
 //
 enum { IT_ALL_MAP			= 1 };
 
-enum
-{
-	MSG_SV_SIGNON
-};
-
 const int MAX_TID_COUNT		= 200;
 
 const float ATTN_NONE		= 0.0;
@@ -1151,66 +1146,6 @@ struct EpisodeDef
 };
 
 //**************************************************************************
-//
-//	Network protocol constants.
-//
-//**************************************************************************
-
-enum { PROTOCOL_VERSION = 10 };
-
-enum
-{
-	svc_bad,
-	svc_nop,
-	svc_disconnect,
-	svc_server_info,
-
-	svc_print,
-	svc_centre_print,
-	svc_stringcmd,
-	svc_signonnum,
-
-	svc_set_angles,
-	svc_centre_look,
-	svc_view_data,
-
-	svc_time,
-	svc_pause,
-
-	svc_force_lightning,
-
-	svc_intermission,
-	svc_skip_intermission,
-	svc_finale,
-
-	svc_serverinfo,
-	svc_userinfo,
-	svc_setinfo,
-
-	svc_model,
-	svc_skin,
-
-	svc_static_light,
-	svc_static_light_rgb,
-
-	svc_change_music,
-
-	svc_class_name,
-
-	USER_PROTOCOL_START = 128
-};
-
-enum
-{
-	clc_bad,
-	clc_nop,
-	clc_disconnect,
-	clc_move,
-	clc_stringcmd,
-	clc_player_info
-};
-
-//**************************************************************************
 
 //  Keys and buttons
 enum
@@ -1519,16 +1454,6 @@ native static final int CheckFlatNumForName(name Name);
 native static final int FlatNumForName(name Name);
 native static final float TextureHeight(int pic);
 native static final name GetTextureName(int Handle);
-
-//
-//  Message IO functions
-//
-
-native static final void MSG_Select(int msgtype);
-native static final bool MSG_CheckSpace(int Size);
-native static final void MSG_WriteByte(int data);
-native static final void MSG_WriteShort(int data);
-native static final void MSG_WriteLong(int data);
 
 //
 //  Type conversions

@@ -104,6 +104,9 @@ class VLevelInfo : public VThinker
 		return LevelInfoFlags & LIF_LookupName ? GLanguage[*LevelName] : LevelName;
 	}
 
+	DECLARE_FUNCTION(AddStaticLight)
+	DECLARE_FUNCTION(AddStaticLightRGB)
+
 	void eventSpawnSpecials()
 	{
 		P_PASS_SELF;
