@@ -32,6 +32,9 @@ class VPlayerReplicationInfo : public VThinker
 	VBasePlayer*		Player;
 	vint32				PlayerNum;
 
+	VStr				PlayerName;
+	VStr				UserInfo;
+
 	vint32				FragsStats[MAXPLAYERS];
 	vint32				Frags;
 	vint32				KillCount;

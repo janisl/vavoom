@@ -69,7 +69,6 @@ int secretPercent[MAXPLAYERS];
 int patchFaceOkay[4];
 int patchFaceDead[4];
 
-int totalFrags[MAXPLAYERS];
 float dSlideX[MAXPLAYERS];
 float dSlideY[MAXPLAYERS];
 
@@ -347,6 +346,8 @@ void IM_InitStats()
 	int slaughtercount;
 	int playercount;
 	int time;
+	PlayerReplicationInfo RepInfo;
+	PlayerReplicationInfo Other;
 
 	if (ClGame.maxclients == 1)
 	{
@@ -371,28 +372,26 @@ void IM_InitStats()
 			return;
 		}
 
-		for (i = 0; i < MAXPLAYERS; i++)
+		FOREACH_EX(ClGame.GLevel.LevelInfo, PlayerReplicationInfo, RepInfo)
 		{
+			i = RepInfo.PlayerNum;
 			killPercent[i] = 0;
 			bonusPercent[i] = 0;
 			secretPercent[i] = 0;
-			if (ClGame.scores[i].bActive)
+			if (ClGame.cl.Level.TotalKills)
 			{
-				if (ClGame.cl.Level.TotalKills)
-				{
-					killPercent[i] = ClGame.scores[i].killcount * 100 /
-						ClGame.cl.Level.TotalKills;
-				}
-				if (ClGame.cl.Level.TotalItems)
-				{
-					bonusPercent[i] = ClGame.scores[i].itemcount * 100 /
-						ClGame.cl.Level.TotalItems;
-				}
-				if (ClGame.cl.Level.TotalSecret)
-				{
-					secretPercent[i] = ClGame.scores[i].secretcount * 100 /
-						ClGame.cl.Level.TotalSecret;
-				}
+				killPercent[i] = RepInfo.KillCount * 100 /
+					ClGame.cl.Level.TotalKills;
+			}
+			if (ClGame.cl.Level.TotalItems)
+			{
+				bonusPercent[i] = RepInfo.ItemCount * 100 /
+					ClGame.cl.Level.TotalItems;
+			}
+			if (ClGame.cl.Level.TotalSecret)
+			{
+				secretPercent[i] = RepInfo.SecretCount * 100 /
+					ClGame.cl.Level.TotalSecret;
 			}
 		}
 	}
@@ -403,30 +402,20 @@ void IM_InitStats()
 		posnum = 0;
 		playercount = 0;
 		slaughtercount = 0;
-		for (i = 0; i < MAXPLAYERS; i++)
+		FOREACH_EX(ClGame.GLevel.LevelInfo, PlayerReplicationInfo, RepInfo)
 		{
-			totalFrags[i] = 0;
-			if (ClGame.scores[i].bActive)
-			{
-				playercount++;
-				for (j = 0; j < MAXPLAYERS; j++)
-				{
-					if (ClGame.scores[j].bActive)
-					{
-						totalFrags[i] += ClGame.scores[i].frags[j];
-					}
-				}
-				dSlideX[i] = (43.0 * itof(posnum)) / 20.0;
-				dSlideY[i] = (36.0 * itof(posnum)) / 20.0;
-				posnum++;
-			}
-			if (totalFrags[i] > slaughterfrags)
+			i = RepInfo.PlayerNum;
+			playercount++;
+			dSlideX[i] = (43.0 * itof(posnum)) / 20.0;
+			dSlideY[i] = (36.0 * itof(posnum)) / 20.0;
+			posnum++;
+			if (RepInfo.Frags > slaughterfrags)
 			{
 				slaughterboy = 1 << i;
-				slaughterfrags = totalFrags[i];
+				slaughterfrags = RepInfo.Frags;
 				slaughtercount = 1;
 			}
-			else if (totalFrags[i] == slaughterfrags)
+			else if (RepInfo.Frags == slaughterfrags)
 			{
 				slaughterboy |= 1 << i;
 				slaughtercount++;
@@ -492,7 +481,7 @@ void IM_DrawSingleStats()
 	T_SetFont(font_big);
 	T_SetAlign(hleft, vtop);
 	T_SetDist(1, 1);
-	T_DrawText(362, 205, va("%d", ClGame.scores[0].killcount));
+	T_DrawText(362, 205, va("%d", ClGame.cl.KillCount));
 	T_DrawText(397, 205, "/");
 	T_DrawText(410, 205, va("%d", ClGame.cl.Level.TotalKills));
 	T_SetDist(-1, 1);
@@ -510,7 +499,7 @@ void IM_DrawSingleStats()
 	T_SetFont(font_big);
 	T_SetAlign(hleft, vtop);
 	T_SetDist(1, 1);
-	T_DrawText(362, 230, va("%d", ClGame.scores[0].itemcount));
+	T_DrawText(362, 230, va("%d", ClGame.cl.ItemCount));
 	T_DrawText(397, 230, "/");
 	T_DrawText(410, 230, va("%d", ClGame.cl.Level.TotalItems));
 	T_SetDist(-1, 1);
@@ -528,7 +517,7 @@ void IM_DrawSingleStats()
 	T_SetFont(font_big);
 	T_SetAlign(hleft, vtop);
 	T_SetDist(1, 1);
-	T_DrawText(362, 255, va("%d", ClGame.scores[0].secretcount));
+	T_DrawText(362, 255, va("%d", ClGame.cl.SecretCount));
 	T_DrawText(397, 255, "/");
 	T_DrawText(410, 255, va("%d", ClGame.cl.Level.TotalSecret));
 	T_SetDist(-1, 1);
@@ -578,6 +567,7 @@ void IM_DrawCoopStats()
 {
 	int i;
 	int ypos;
+	PlayerReplicationInfo RepInfo;
 
 	T_SetShadow(true);
 	T_SetFont(font_big);
@@ -597,30 +587,27 @@ void IM_DrawCoopStats()
 	T_SetAlign(hleft, vtop);
 	T_SetDist(1, 1);
 	ypos = 190;
-//  for (i = 0; i < MAXPLAYERS; i++)
-	for (i = 0; i < 4; i++)
+	FOREACH_EX(ClGame.GLevel.LevelInfo, PlayerReplicationInfo, RepInfo)
 	{
-		if (ClGame.scores[i].bActive)
+		i = RepInfo.PlayerNum;
+		R_DrawShadowedPic(185, ypos, patchFaceOkay[i]);
+		if (intertime < 1.25)
 		{
-			R_DrawShadowedPic(185, ypos, patchFaceOkay[i]);
-			if (intertime < 1.25)
-			{
-				ypos += 37;
-				continue;
-			}
-			else if (intertime >= 1.25 && im_sounds < 1)
-			{
-				LocalSound('doors/dr1_clos');
-				im_sounds++;
-			}
-			T_DrawText(247, ypos + 10, va("%d", killPercent[i]));
-			T_DrawText(281, ypos + 10, "%");
-			T_DrawText(322, ypos + 10, va("%d", bonusPercent[i]));
-			T_DrawText(356, ypos + 10, "%");
-			T_DrawText(399, ypos + 10, va("%d", secretPercent[i]));
-			T_DrawText(433, ypos + 10, "%");
 			ypos += 37;
+			continue;
 		}
+		else if (intertime >= 1.25 && im_sounds < 1)
+		{
+			LocalSound('doors/dr1_clos');
+			im_sounds++;
+		}
+		T_DrawText(247, ypos + 10, va("%d", killPercent[i]));
+		T_DrawText(281, ypos + 10, "%");
+		T_DrawText(322, ypos + 10, va("%d", bonusPercent[i]));
+		T_DrawText(356, ypos + 10, "%");
+		T_DrawText(399, ypos + 10, va("%d", secretPercent[i]));
+		T_DrawText(433, ypos + 10, "%");
+		ypos += 37;
 	}
 	T_SetDist(-1, 1);
 	T_SetShadow(false);
@@ -639,6 +626,8 @@ void IM_DrawDMStats()
 	int ypos;
 	int xpos;
 	int kpos;
+	PlayerReplicationInfo RepInfo;
+	PlayerReplicationInfo Other;
 
 	xpos = 250;
 	ypos = 195;
@@ -654,16 +643,13 @@ void IM_DrawDMStats()
 	T_DrawText(170, 220, "K\nI\nL\nL\nE\nR\nS");
 	if (intertime < 0.625)
 	{
-		for (i = 0; i < MAXPLAYERS; i++)
+		FOREACH_EX(ClGame.GLevel.LevelInfo, PlayerReplicationInfo, RepInfo)
 		{
-			if (ClGame.scores[i].bActive)
-			{
-				R_DrawShadowedPic(200,
-					ypos + ftoi(dSlideY[i] * 35.0 * intertime),
-					patchFaceOkay[i]);
-				R_DrawShadowedPic(xpos + ftoi(dSlideX[i] * 35.0 * intertime),
-					158, patchFaceDead[i]);
-			}
+			i = RepInfo.PlayerNum;
+			R_DrawShadowedPic(200, ypos + ftoi(dSlideY[i] * 35.0 * intertime),
+				patchFaceOkay[i]);
+			R_DrawShadowedPic(xpos + ftoi(dSlideX[i] * 35.0 * intertime),
+				158, patchFaceDead[i]);
 		}
 		return;
 	}
@@ -681,45 +667,39 @@ void IM_DrawDMStats()
 	T_SetFont(font_big);
 	T_SetAlign(hleft, vtop);
 	T_SetDist(1, 1);
-//  for (i = 0; i < MAXPLAYERS; i++)
-	for (i = 0; i < 4; i++)
+	FOREACH_EX(ClGame.GLevel.LevelInfo, PlayerReplicationInfo, RepInfo)
 	{
-		if (ClGame.scores[i].bActive)
+		i = RepInfo.PlayerNum;
+		if (intertime < 3.0 || i == ClGame.cl.ClientNum)
 		{
-			if (intertime < 3.0 || i == ClGame.cl.ClientNum)
-			{
-				R_DrawShadowedPic(200, ypos, patchFaceOkay[i]);
-				R_DrawShadowedPic(xpos, 158, patchFaceDead[i]);
-			}
-			else
-			{
-				R_DrawPic2(200, ypos, patchFaceOkay[i], 0.4);
-				R_DrawPic2(xpos, 158, patchFaceDead[i], 0.4);
-			}
-			kpos = 246;
-//          for (j = 0; j < MAXPLAYERS; j++)
-			for (j = 0; j < 4; j++)
-			{
-				if (ClGame.scores[j].bActive)
-				{
-					T_DrawText(kpos, ypos + 10, va("%d", ClGame.scores[i].frags[j]));
-					kpos += 43;
-				}
-			}
-			if (slaughterboy & (1 << i))
-			{
-				if (!(ftoi(32.0 * intertime) & 16))
-				{
-					T_DrawText(423, ypos + 10, va("%d", totalFrags[i]));
-				}
-			}
-			else
-			{
-				T_DrawText(423, ypos + 10, va("%d", totalFrags[i]));
-			}
-			ypos += 36;
-			xpos += 43;
+			R_DrawShadowedPic(200, ypos, patchFaceOkay[i]);
+			R_DrawShadowedPic(xpos, 158, patchFaceDead[i]);
 		}
+		else
+		{
+			R_DrawPic2(200, ypos, patchFaceOkay[i], 0.4);
+			R_DrawPic2(xpos, 158, patchFaceDead[i], 0.4);
+		}
+		kpos = 246;
+		FOREACH_EX(ClGame.GLevel.LevelInfo, PlayerReplicationInfo, Other)
+		{
+			j = Other.PlayerNum;
+			T_DrawText(kpos, ypos + 10, va("%d", RepInfo.FragsStats[j]));
+			kpos += 43;
+		}
+		if (slaughterboy & (1 << i))
+		{
+			if (!(ftoi(32.0 * intertime) & 16))
+			{
+				T_DrawText(423, ypos + 10, va("%d", RepInfo.Frags));
+			}
+		}
+		else
+		{
+			T_DrawText(423, ypos + 10, va("%d", RepInfo.Frags));
+		}
+		ypos += 36;
+		xpos += 43;
 	}
 	T_SetDist(-1, 1);
 	T_SetShadow(false);

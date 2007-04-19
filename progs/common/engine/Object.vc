@@ -1057,18 +1057,6 @@ struct slist_t
 	string			ReturnReason;
 };
 
-struct scores_t
-{
-	string	Name;
-	bool	bActive;
-	int		frags[MAXPLAYERS];
-	int		killcount;
-	int		itemcount;
-	int		secretcount;
-	float	time;
-	string	userinfo;
-};
-
 struct im_t
 {
 	name	LeaveMap;

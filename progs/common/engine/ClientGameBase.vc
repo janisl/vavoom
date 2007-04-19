@@ -37,7 +37,6 @@ bool bPaused;
 readonly BasePlayer cl;
 readonly Level GLevel;
 
-readonly scores_t *scores;
 readonly im_t *im;
 
 readonly RootWindow GRoot;

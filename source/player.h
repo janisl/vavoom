@@ -332,9 +332,10 @@ class VBasePlayer : public VObject
 		P_PASS_AVEC(Angles);
 		EV_RET_VOID("ClientSetAngles");
 	}
-	void eventClientIntermission()
+	void eventClientIntermission(VName NextMap)
 	{
 		P_PASS_SELF;
+		P_PASS_NAME(NextMap);
 		EV_RET_VOID("ClientIntermission");
 	}
 	void eventClientPause(bool Paused)

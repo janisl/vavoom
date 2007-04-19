@@ -46,7 +46,6 @@
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-scores_t		scores[MAXPLAYERS];
 im_t			im;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
@@ -89,9 +88,8 @@ void IM_SkipIntermission()
 //
 //==========================================================================
 
-void IM_Start(void)
+void IM_Start()
 {
-	GClGame->scores = scores;
 	GClGame->im = &im;
 
 	GClGame->intermission = 1;

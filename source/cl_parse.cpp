@@ -78,12 +78,6 @@ void CL_Clear()
 	cl->ViewEnt = PrevVEnt;
 	cl->Net = Net;
 	cl->ClGame = GClGame;
-	for (int i = 0; i < MAXPLAYERS; i++)
-	{
-		scores[i].name.Clean();
-		scores[i].userinfo.Clean();
-	}
-	memset(scores, 0, sizeof(scores));
 	CL_ClearInput();
 #ifdef SERVER
 	if (!sv.active)
@@ -105,6 +99,7 @@ IMPLEMENT_FUNCTION(VBasePlayer, ClientStartSound)
 	P_GET_VEC(Org);
 	P_GET_INT(SoundId);
 	P_GET_SELF;
+	Self = Self;
 	GAudio->PlaySound(SoundId, Org, TVec(0, 0, 0), OriginId, Channel, Volume,
 		Attenuation);
 }
@@ -114,6 +109,7 @@ IMPLEMENT_FUNCTION(VBasePlayer, ClientStopSound)
 	P_GET_INT(Channel);
 	P_GET_INT(OriginId);
 	P_GET_SELF;
+	Self = Self;
 	GAudio->StopSound(OriginId, Channel);
 }
 
@@ -124,6 +120,7 @@ IMPLEMENT_FUNCTION(VBasePlayer, ClientStartSequence)
 	P_GET_INT(OriginId);
 	P_GET_VEC(Origin);
 	P_GET_SELF;
+	Self = Self;
 	GAudio->StartSequence(OriginId, Origin, Name, ModeNum);
 }
 
@@ -132,6 +129,7 @@ IMPLEMENT_FUNCTION(VBasePlayer, ClientAddSequenceChoice)
 	P_GET_NAME(Choice);
 	P_GET_INT(OriginId);
 	P_GET_SELF;
+	Self = Self;
 	GAudio->AddSeqChoice(OriginId, Choice);
 }
 
@@ -139,12 +137,14 @@ IMPLEMENT_FUNCTION(VBasePlayer, ClientStopSequence)
 {
 	P_GET_INT(OriginId);
 	P_GET_SELF;
+	Self = Self;
 	GAudio->StopSequence(OriginId);
 }
 
 IMPLEMENT_FUNCTION(VBasePlayer, ClientForceLightning)
 {
 	P_GET_SELF;
+	Self = Self;
 	GClLevel->RenderData->ForceLightning();
 }
 
@@ -152,6 +152,7 @@ IMPLEMENT_FUNCTION(VBasePlayer, ClientPrint)
 {
 	P_GET_STR(Str);
 	P_GET_SELF;
+	Self = Self;
 	C_NotifyMessage(*Str);
 }
 
@@ -159,6 +160,7 @@ IMPLEMENT_FUNCTION(VBasePlayer, ClientCentrePrint)
 {
 	P_GET_STR(Str);
 	P_GET_SELF;
+	Self = Self;
 	C_CentreMessage(*Str);
 }
 
@@ -172,12 +174,102 @@ IMPLEMENT_FUNCTION(VBasePlayer, ClientSetAngles)
 
 IMPLEMENT_FUNCTION(VBasePlayer, ClientIntermission)
 {
+	P_GET_NAME(NextMap);
+	P_GET_SELF;
+	Self = Self;
+
+	im.Text.Clean();
+	im.IMFlags = 0;
+
+	const mapInfo_t& linfo = P_GetMapInfo(GClLevel->MapName);
+	im.LeaveMap = GClLevel->MapName;
+	im.LeaveCluster = linfo.Cluster;
+	im.LeaveName = linfo.GetName();
+	im.LeaveTitlePatch = linfo.TitlePatch;
+
+	const mapInfo_t& einfo = P_GetMapInfo(NextMap);
+	im.EnterMap = NextMap;
+	im.EnterCluster = einfo.Cluster;
+	im.EnterName = einfo.GetName();
+	im.EnterTitlePatch = einfo.TitlePatch;
+
+	if (linfo.Cluster != einfo.Cluster)
+	{
+		if (einfo.Cluster)
+		{
+			const VClusterDef* CDef = P_GetClusterDef(einfo.Cluster);
+			if (CDef->EnterText.Length())
+			{
+				if (CDef->Flags & CLUSTERF_LookupEnterText)
+				{
+					im.Text = GLanguage[*CDef->EnterText];
+				}
+				else
+				{
+					im.Text = CDef->EnterText;
+				}
+				if (CDef->Flags & CLUSTERF_EnterTextIsLump)
+				{
+					im.IMFlags |= im_t::IMF_TextIsLump;
+				}
+				if (CDef->Flags & CLUSTERF_FinalePic)
+				{
+					im.TextFlat = NAME_None;
+					im.TextPic = CDef->Flat;
+				}
+				else
+				{
+					im.TextFlat = CDef->Flat;
+					im.TextPic = NAME_None;
+				}
+				im.TextMusic = CDef->Music;
+				im.TextCDTrack = CDef->CDTrack;
+				im.TextCDId = CDef->CDId;
+			}
+		}
+		if (im.Text.Length() == 0 && linfo.Cluster)
+		{
+			const VClusterDef* CDef = P_GetClusterDef(linfo.Cluster);
+			if (CDef->ExitText.Length())
+			{
+				if (CDef->Flags & CLUSTERF_LookupExitText)
+				{
+					im.Text = GLanguage[*CDef->ExitText];
+				}
+				else
+				{
+					im.Text = CDef->ExitText;
+				}
+				if (CDef->Flags & CLUSTERF_ExitTextIsLump)
+				{
+					im.IMFlags |= im_t::IMF_TextIsLump;
+				}
+				if (CDef->Flags & CLUSTERF_FinalePic)
+				{
+					im.TextFlat = NAME_None;
+					im.TextPic = CDef->Flat;
+				}
+				else
+				{
+					im.TextFlat = CDef->Flat;
+					im.TextPic = NAME_None;
+				}
+				im.TextMusic = CDef->Music;
+				im.TextCDTrack = CDef->CDTrack;
+				im.TextCDId = CDef->CDId;
+			}
+		}
+	}
+
+	im.Time = GClLevel->Time;
+	IM_Start();
 }
 
 IMPLEMENT_FUNCTION(VBasePlayer, ClientPause)
 {
 	P_GET_BOOL(Paused);
 	P_GET_SELF;
+	Self = Self;
 	if (Paused)
 	{
 		GClGame->ClientFlags |= VClientGameBase::CF_Paused;
@@ -193,6 +285,7 @@ IMPLEMENT_FUNCTION(VBasePlayer, ClientPause)
 IMPLEMENT_FUNCTION(VBasePlayer, ClientSkipIntermission)
 {
 	P_GET_SELF;
+	Self = Self;
 	IM_SkipIntermission();
 }
 
@@ -200,6 +293,7 @@ IMPLEMENT_FUNCTION(VBasePlayer, ClientFinale)
 {
 	P_GET_STR(Type);
 	P_GET_SELF;
+	Self = Self;
 	F_StartFinale(*Type);
 }
 
@@ -208,6 +302,7 @@ IMPLEMENT_FUNCTION(VBasePlayer, ClientChangeMusic)
 	P_GET_INT(CDTrack);
 	P_GET_NAME(Song);
 	P_GET_SELF;
+	Self = Self;
 	GClLevel->LevelInfo->SongLump = Song;
 	GClLevel->LevelInfo->CDTrack = CDTrack;
 	GAudio->MusicChanged();
@@ -366,115 +461,6 @@ static void CL_ParseServerInfo(VMessageIn& msg)
 
 //==========================================================================
 //
-//	CL_ParseIntermission
-//
-//==========================================================================
-
-static void CL_ParseIntermission(VMessageIn& msg)
-{
-	VName nextmap = *msg.ReadString();
-
-	im.Text.Clean();
-	im.IMFlags = 0;
-
-	const mapInfo_t& linfo = P_GetMapInfo(GClLevel->MapName);
-	im.LeaveMap = GClLevel->MapName;
-	im.LeaveCluster = linfo.Cluster;
-	im.LeaveName = linfo.GetName();
-	im.LeaveTitlePatch = linfo.TitlePatch;
-
-	const mapInfo_t& einfo = P_GetMapInfo(nextmap);
-	im.EnterMap = nextmap;
-	im.EnterCluster = einfo.Cluster;
-	im.EnterName = einfo.GetName();
-	im.EnterTitlePatch = einfo.TitlePatch;
-
-	if (linfo.Cluster != einfo.Cluster)
-	{
-		if (einfo.Cluster)
-		{
-			const VClusterDef* CDef = P_GetClusterDef(einfo.Cluster);
-			if (CDef->EnterText.Length())
-			{
-				if (CDef->Flags & CLUSTERF_LookupEnterText)
-				{
-					im.Text = GLanguage[*CDef->EnterText];
-				}
-				else
-				{
-					im.Text = CDef->EnterText;
-				}
-				if (CDef->Flags & CLUSTERF_EnterTextIsLump)
-				{
-					im.IMFlags |= im_t::IMF_TextIsLump;
-				}
-				if (CDef->Flags & CLUSTERF_FinalePic)
-				{
-					im.TextFlat = NAME_None;
-					im.TextPic = CDef->Flat;
-				}
-				else
-				{
-					im.TextFlat = CDef->Flat;
-					im.TextPic = NAME_None;
-				}
-				im.TextMusic = CDef->Music;
-				im.TextCDTrack = CDef->CDTrack;
-				im.TextCDId = CDef->CDId;
-			}
-		}
-		if (im.Text.Length() == 0 && linfo.Cluster)
-		{
-			const VClusterDef* CDef = P_GetClusterDef(linfo.Cluster);
-			if (CDef->ExitText.Length())
-			{
-				if (CDef->Flags & CLUSTERF_LookupExitText)
-				{
-					im.Text = GLanguage[*CDef->ExitText];
-				}
-				else
-				{
-					im.Text = CDef->ExitText;
-				}
-				if (CDef->Flags & CLUSTERF_ExitTextIsLump)
-				{
-					im.IMFlags |= im_t::IMF_TextIsLump;
-				}
-				if (CDef->Flags & CLUSTERF_FinalePic)
-				{
-					im.TextFlat = NAME_None;
-					im.TextPic = CDef->Flat;
-				}
-				else
-				{
-					im.TextFlat = CDef->Flat;
-					im.TextPic = NAME_None;
-				}
-				im.TextMusic = CDef->Music;
-				im.TextCDTrack = CDef->CDTrack;
-				im.TextCDId = CDef->CDId;
-			}
-		}
-	}
-
-	im.Time = GClLevel->Time;
-	for (int i = 0; i < MAXPLAYERS; i++)
-	{
-		if (msg.ReadByte())
-			scores[i].Flags |= scores_t::SF_Active;
-		else
-			scores[i].Flags &= ~scores_t::SF_Active;
-		for (int j = 0; j < MAXPLAYERS; j++)
-			scores[i].frags[j] = (char)msg.ReadByte();
-		scores[i].killcount = msg.ReadShort();
-		scores[i].itemcount = msg.ReadShort();
-		scores[i].secretcount = msg.ReadShort();
-	}
-	IM_Start();
-}
-
-//==========================================================================
-//
 //	CL_ParseClassName
 //
 //==========================================================================
@@ -509,16 +495,6 @@ static void CL_ParseSkin(VMessageIn& msg)
 {
 	int i = msg.ReadByte();
 	msg << skin_list[i];
-}
-
-//==========================================================================
-//
-//	CL_ReadFromUserInfo
-//
-//==========================================================================
-
-static void CL_ReadFromUserInfo(int)
-{
 }
 
 //==========================================================================
@@ -578,10 +554,6 @@ void VClientGenChannel::ParsePacket(VMessageIn& msg)
 			CL_ParseTime(msg);
 			break;
 
-		case svc_intermission:
-			CL_ParseIntermission(msg);
-			break;
-
 		case svc_stringcmd:
 			GCmdBuf << msg.ReadString();
 			break;
@@ -599,20 +571,6 @@ void VClientGenChannel::ParsePacket(VMessageIn& msg)
 				<< string;
 			Info_SetValueForKey(GClGame->serverinfo, name, string);
 			CL_ReadFromServerInfo();
-			break;
-
-		case svc_userinfo:
-			i = msg.ReadByte();
-			msg << scores[i].userinfo;
-			CL_ReadFromUserInfo(i);
-			break;
-
-		case svc_setinfo:
-			i = msg.ReadByte();
-			msg << name
-				<< string;
-			Info_SetValueForKey(scores[i].userinfo, name, string);
-			CL_ReadFromUserInfo(i);
 			break;
 
 		case svc_model:

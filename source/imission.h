@@ -29,22 +29,6 @@
 
 // TYPES -------------------------------------------------------------------
 
-struct scores_t
-{
-	VStr		name;
-	enum
-	{
-		SF_Active	= 0x01,
-	};
-	vuint32		Flags;
-	int			frags[MAXPLAYERS];
-	int			killcount;
-	int			itemcount;
-	int			secretcount;
-	float		time;
-	VStr		userinfo;
-};
-
 struct im_t
 {
 	VName		LeaveMap;
@@ -80,5 +64,4 @@ void IM_SkipIntermission();
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
-extern scores_t			scores[MAXPLAYERS];
 extern im_t				im;

@@ -64,7 +64,6 @@ class VClientGameBase : public VObject
 	VBasePlayer*		cl;
 	VLevel*				GLevel;
 
-	scores_t*			scores;
 	im_t*				im;
 
 	VRootWindow*		GRoot;

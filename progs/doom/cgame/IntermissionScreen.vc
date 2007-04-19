@@ -956,9 +956,9 @@ void IM_UpdateSingleStats(float DeltaTime)
 	if (ClGame.skipintermission && sp_state != 10)
 	{
 		ClGame.skipintermission = 0;
-		cnt_kills[0] = (ClGame.scores[0].killcount * 100) / TotalKills;
-		cnt_items[0] = (ClGame.scores[0].itemcount * 100) / TotalItems;
-		cnt_secret[0] = (ClGame.scores[0].secretcount * 100) / TotalSecret;
+		cnt_kills[0] = (ClGame.cl.KillCount * 100) / TotalKills;
+		cnt_items[0] = (ClGame.cl.ItemCount * 100) / TotalItems;
+		cnt_secret[0] = (ClGame.cl.SecretCount * 100) / TotalSecret;
 		cnt_time = ftoi(ClGame.im->Time);
 		LocalSound('weapons/rocklx');
 		sp_state = 10;
@@ -971,9 +971,9 @@ void IM_UpdateSingleStats(float DeltaTime)
 		if (!(ftoi(btime * 35.0) & 3))
 			LocalSound('weapons/pistol');
 
-		if (cnt_kills[0] >= (ClGame.scores[0].killcount * 100) / TotalKills)
+		if (cnt_kills[0] >= (ClGame.cl.KillCount * 100) / TotalKills)
 		{
-			cnt_kills[0] = (ClGame.scores[0].killcount * 100) / TotalKills;
+			cnt_kills[0] = (ClGame.cl.KillCount * 100) / TotalKills;
 			LocalSound('weapons/rocklx');
 			sp_state++;
 		}
@@ -985,9 +985,9 @@ void IM_UpdateSingleStats(float DeltaTime)
 		if (!(ftoi(btime * 35.0) & 3))
 			LocalSound('weapons/pistol');
 
-		if (cnt_items[0] >= (ClGame.scores[0].itemcount * 100) / TotalItems)
+		if (cnt_items[0] >= (ClGame.cl.ItemCount * 100) / TotalItems)
 		{
-			cnt_items[0] = (ClGame.scores[0].itemcount * 100) / TotalItems;
+			cnt_items[0] = (ClGame.cl.ItemCount * 100) / TotalItems;
 			LocalSound('weapons/rocklx');
 			sp_state++;
 		}
@@ -999,9 +999,9 @@ void IM_UpdateSingleStats(float DeltaTime)
 		if (!(ftoi(btime * 35.0) & 3))
 			LocalSound('weapons/pistol');
 
-		if (cnt_secret[0] >= (ClGame.scores[0].secretcount * 100) / TotalSecret)
+		if (cnt_secret[0] >= (ClGame.cl.SecretCount * 100) / TotalSecret)
 		{
-			cnt_secret[0] = (ClGame.scores[0].secretcount * 100) / TotalSecret;
+			cnt_secret[0] = (ClGame.cl.SecretCount * 100) / TotalSecret;
 			LocalSound('weapons/rocklx');
 			sp_state++;
 		}
@@ -1064,9 +1064,6 @@ void IM_InitCooperativeStats()
 
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
-		if (!ClGame.scores[i].bActive)
-			continue;
-
 		cnt_kills[i] = 0;
 		cnt_items[i] = 0;
 		cnt_secret[i] = 0;
@@ -1092,6 +1089,7 @@ void IM_DrawCooperativeStats()
 	int y;
 	int pwidth;
 	picinfo_t info;
+	PlayerReplicationInfo RepInfo;
 
 	pwidth = T_TextWidth("%");
 
@@ -1110,12 +1108,9 @@ void IM_DrawCooperativeStats()
 	// draw stats
 	y = NG_STATSY + T_TextHeight("kills");
 
-//  for (i = 0; i < MAXPLAYERS; i++)
-	for (i = 0; i < 4; i++)
+	FOREACH_EX(ClGame.GLevel.LevelInfo, PlayerReplicationInfo, RepInfo)
 	{
-		if (!ClGame.scores[i].bActive)
-			continue;
-
+		i = RepInfo.PlayerNum;
 		x = NG_STATSX;
 		R_GetPicInfo(p[i], &info);
 		R_DrawPic(x - info.width, y, p[i]);
@@ -1140,40 +1135,14 @@ void IM_DrawCooperativeStats()
 
 //==========================================================================
 //
-//  FragSum
-//
-//==========================================================================
-
-int FragSum(int playernum)
-{
-	int i;
-	int frags = 0;
-
-	for (i = 0; i < MAXPLAYERS; i++)
-	{
-		if (ClGame.scores[i].bActive && i != playernum)
-		{
-			frags += ClGame.scores[playernum].frags[i];
-		}
-	}
-
-	// JDC hack - negative frags.
-	frags -= ClGame.scores[playernum].frags[playernum];
-
-	return frags;
-}
-
-//==========================================================================
-//
 //  IM_UpdateCooperativeStats
 //
 //==========================================================================
 
 void IM_UpdateCooperativeStats(float DeltaTime)
 {
-
-	int i;
 	int fsum;
+	PlayerReplicationInfo	RepInfo;
 
 	bool stillticking;
 
@@ -1181,15 +1150,12 @@ void IM_UpdateCooperativeStats(float DeltaTime)
 	{
 		ClGame.skipintermission = 0;
 
-		for (i = 0; i < MAXPLAYERS; i++)
+		FOREACH_EX(ClGame.GLevel.LevelInfo, PlayerReplicationInfo, RepInfo)
 		{
-			if (!ClGame.scores[i].bActive)
-				continue;
-
-			cnt_kills[i] = (ClGame.scores[i].killcount * 100) / TotalKills;
-			cnt_items[i] = (ClGame.scores[i].itemcount * 100) / TotalItems;
-			cnt_secret[i] = (ClGame.scores[i].secretcount * 100) / TotalSecret;
-			cnt_frags[i] = FragSum(i);
+			cnt_kills[RepInfo.PlayerNum] = (RepInfo.KillCount * 100) / TotalKills;
+			cnt_items[RepInfo.PlayerNum] = (RepInfo.ItemCount * 100) / TotalItems;
+			cnt_secret[RepInfo.PlayerNum] = (RepInfo.SecretCount * 100) / TotalSecret;
+			cnt_frags[RepInfo.PlayerNum] = RepInfo.Frags;
 		}
 		LocalSound('weapons/rocklx');
 		ng_state = 10;
@@ -1202,15 +1168,12 @@ void IM_UpdateCooperativeStats(float DeltaTime)
 
 		stillticking = false;
 
-		for (i = 0; i < MAXPLAYERS; i++)
+		FOREACH_EX(ClGame.GLevel.LevelInfo, PlayerReplicationInfo, RepInfo)
 		{
-			if (!ClGame.scores[i].bActive)
-				continue;
+			cnt_kills[RepInfo.PlayerNum] += 2;
 
-			cnt_kills[i] += 2;
-
-			if (cnt_kills[i] >= (ClGame.scores[i].killcount * 100) / TotalKills)
-				cnt_kills[i] = (ClGame.scores[i].killcount * 100) / TotalKills;
+			if (cnt_kills[RepInfo.PlayerNum] >= (RepInfo.KillCount * 100) / TotalKills)
+				cnt_kills[RepInfo.PlayerNum] = (RepInfo.KillCount * 100) / TotalKills;
 			else
 				stillticking = true;
 		}
@@ -1228,14 +1191,11 @@ void IM_UpdateCooperativeStats(float DeltaTime)
 
 		stillticking = false;
 
-		for (i = 0; i < MAXPLAYERS; i++)
+		FOREACH_EX(ClGame.GLevel.LevelInfo, PlayerReplicationInfo, RepInfo)
 		{
-			if (!ClGame.scores[i].bActive)
-				continue;
-
-			cnt_items[i] += 2;
-			if (cnt_items[i] >= (ClGame.scores[i].itemcount * 100) / TotalItems)
-				cnt_items[i] = (ClGame.scores[i].itemcount * 100) / TotalItems;
+			cnt_items[RepInfo.PlayerNum] += 2;
+			if (cnt_items[RepInfo.PlayerNum] >= (RepInfo.ItemCount * 100) / TotalItems)
+				cnt_items[RepInfo.PlayerNum] = (RepInfo.ItemCount * 100) / TotalItems;
 			else
 				stillticking = true;
 		}
@@ -1252,17 +1212,12 @@ void IM_UpdateCooperativeStats(float DeltaTime)
 
 		stillticking = false;
 
-		for (i = 0; i < MAXPLAYERS; i++)
+		FOREACH_EX(ClGame.GLevel.LevelInfo, PlayerReplicationInfo, RepInfo)
 		{
-			if (!ClGame.scores[i].bActive)
-				continue;
+			cnt_secret[RepInfo.PlayerNum] += 2;
 
-			cnt_secret[i] += 2;
-
-			if (cnt_secret[i] >=
-				(ClGame.scores[i].secretcount * 100) / TotalSecret)
-				cnt_secret[i] =
-					(ClGame.scores[i].secretcount * 100) / TotalSecret;
+			if (cnt_secret[RepInfo.PlayerNum] >= RepInfo.SecretCount * 100 / TotalSecret)
+				cnt_secret[RepInfo.PlayerNum] = RepInfo.SecretCount * 100 / TotalSecret;
 			else
 				stillticking = true;
 		}
@@ -1280,16 +1235,12 @@ void IM_UpdateCooperativeStats(float DeltaTime)
 
 		stillticking = false;
 
-		for (i = 0; i < MAXPLAYERS; i++)
+		FOREACH_EX(ClGame.GLevel.LevelInfo, PlayerReplicationInfo, RepInfo)
 		{
-			if (!ClGame.scores[i].bActive)
-				continue;
+			cnt_frags[RepInfo.PlayerNum] += 1;
 
-			cnt_frags[i] += 1;
-
-			fsum = FragSum(i);
-			if (cnt_frags[i] >= fsum)
-				cnt_frags[i] = fsum;
+			if (cnt_frags[RepInfo.PlayerNum] >= RepInfo.Frags)
+				cnt_frags[RepInfo.PlayerNum] = RepInfo.Frags;
 			else
 				stillticking = true;
 		}
@@ -1331,8 +1282,9 @@ void IM_UpdateCooperativeStats(float DeltaTime)
 
 void IM_InitDeathmatchStats()
 {
-	int i;
-	int j;
+	int						i;
+	int						j;
+	PlayerReplicationInfo	RepInfo;
 
 	interstate = IMS_Stats;
 	ClGame.skipintermission = 0;
@@ -1340,16 +1292,13 @@ void IM_InitDeathmatchStats()
 
 	cnt_pause = 1.0;
 
-	for (i = 0; i < MAXPLAYERS; i++)
+	FOREACH_EX(ClGame.GLevel.LevelInfo, PlayerReplicationInfo, RepInfo)
 	{
-		if (ClGame.scores[i].bActive)
-		{
-			for (j = 0; j < MAXPLAYERS; j++)
-				if (ClGame.scores[j].bActive)
-					dm_frags[i * MAXPLAYERS + j] = 0;
+		i = RepInfo.PlayerNum;
+		for (j = 0; j < MAXPLAYERS; j++)
+			dm_frags[i * MAXPLAYERS + j] = 0;
 
-			dm_totals[i] = 0;
-		}
+		dm_totals[i] = 0;
 	}
 }
 
@@ -1368,6 +1317,8 @@ void IM_DrawDeathmatchStats()
 	int w;
 	int lh;	// line height
 	picinfo_t info;
+	PlayerReplicationInfo RepInfo;
+	PlayerReplicationInfo Other;
 
 	lh = WI_SPACINGY;
 
@@ -1384,21 +1335,18 @@ void IM_DrawDeathmatchStats()
 	x = DM_MATRIXX + DM_SPACINGX;
 	y = DM_MATRIXY;
 
-//  for (i = 0; i < MAXPLAYERS; i++)
-	for (i = 0; i < 4; i++)
+	FOREACH_EX(ClGame.GLevel.LevelInfo, PlayerReplicationInfo, RepInfo)
 	{
-		if (ClGame.scores[i].bActive)
-		{
-			R_GetPicInfo(p[i], &info);
-			R_DrawPic(x - info.width / 2, DM_MATRIXY - WI_SPACINGY, p[i]);
-			R_DrawPic(DM_MATRIXX - info.width / 2, y, p[i]);
+		i = RepInfo.PlayerNum;
+		R_GetPicInfo(p[i], &info);
+		R_DrawPic(x - info.width / 2, DM_MATRIXY - WI_SPACINGY, p[i]);
+		R_DrawPic(DM_MATRIXX - info.width / 2, y, p[i]);
 
-			if (i == ClGame.cl.ClientNum)
-			{
-				R_DrawPic(x - info.width / 2, DM_MATRIXY - WI_SPACINGY,
-					bstar);
-				R_DrawPic(DM_MATRIXX - info.width / 2, y, star);
-			}
+		if (i == ClGame.cl.ClientNum)
+		{
+			R_DrawPic(x - info.width / 2, DM_MATRIXY - WI_SPACINGY,
+				bstar);
+			R_DrawPic(DM_MATRIXX - info.width / 2, y, star);
 		}
 		x += DM_SPACINGX;
 		y += WI_SPACINGY;
@@ -1409,24 +1357,18 @@ void IM_DrawDeathmatchStats()
 	w = T_TextWidth("0");
 
 	T_SetAlign(hright, vtop);
-//  for (i = 0; i < MAXPLAYERS; i++)
-	for (i = 0; i < 4; i++)
+	FOREACH_EX(ClGame.GLevel.LevelInfo, PlayerReplicationInfo, RepInfo)
 	{
+		i = RepInfo.PlayerNum;
 		x = DM_MATRIXX + DM_SPACINGX;
 
-		if (ClGame.scores[i].bActive)
+		FOREACH_EX(ClGame.GLevel.LevelInfo, PlayerReplicationInfo, Other)
 		{
-//          for (j = 0; j < MAXPLAYERS; j++)
-			for (j = 0; j < 4; j++)
-			{
-				if (ClGame.scores[j].bActive)
-				{
-					T_DrawText(x + w, y, va("%d", dm_frags[i * MAXPLAYERS + j]));
-				}
-				x += DM_SPACINGX;
-			}
-			T_DrawText(DM_TOTALSX + w, y, va("%d", dm_totals[i]));
+			j = Other.PlayerNum;
+			T_DrawText(x + w, y, va("%d", dm_frags[i * MAXPLAYERS + j]));
+			x += DM_SPACINGX;
 		}
+		T_DrawText(DM_TOTALSX + w, y, va("%d", dm_totals[i]));
 		y += WI_SPACINGY;
 	}
 }
@@ -1443,21 +1385,22 @@ void IM_UpdateDeathmatchStats(float DeltaTime)
 	int j;
 
 	bool stillticking;
+	PlayerReplicationInfo	RepInfo;
+	PlayerReplicationInfo	Other;
 
 	if (ClGame.skipintermission && dm_state != 4)
 	{
 		ClGame.skipintermission = 0;
 
-		for (i = 0; i < MAXPLAYERS; i++)
+		FOREACH_EX(ClGame.GLevel.LevelInfo, PlayerReplicationInfo, RepInfo)
 		{
-			if (ClGame.scores[i].bActive)
+			FOREACH_EX(ClGame.GLevel.LevelInfo, PlayerReplicationInfo, Other)
 			{
-				for (j = 0; j < MAXPLAYERS; j++)
-					if (ClGame.scores[j].bActive)
-						dm_frags[i * MAXPLAYERS + j] = ClGame.scores[i].frags[j];
-
-				dm_totals[i] = FragSum(i);
+				dm_frags[RepInfo.PlayerNum * MAXPLAYERS + Other.PlayerNum] =
+					RepInfo.FragsStats[Other.PlayerNum];
 			}
+
+			dm_totals[RepInfo.PlayerNum] = RepInfo.Frags;
 		}
 
 		LocalSound('weapons/rocklx');
@@ -1471,38 +1414,35 @@ void IM_UpdateDeathmatchStats(float DeltaTime)
 
 		stillticking = false;
 
-		for (i = 0; i < MAXPLAYERS; i++)
+		FOREACH_EX(ClGame.GLevel.LevelInfo, PlayerReplicationInfo, RepInfo)
 		{
-			if (ClGame.scores[i].bActive)
+			i = RepInfo.PlayerNum;
+			FOREACH_EX(ClGame.GLevel.LevelInfo, PlayerReplicationInfo, Other)
 			{
-				for (j = 0; j < MAXPLAYERS; j++)
+				j = Other.PlayerNum;
+				if (dm_frags[i * MAXPLAYERS + j] != RepInfo.FragsStats[j])
 				{
-					if (ClGame.scores[j].bActive
-						&& dm_frags[i * MAXPLAYERS + j] != ClGame.scores[i].frags[j])
-					{
-						if (ClGame.scores[i].frags[j] < 0)
-							dm_frags[i * MAXPLAYERS + j]--;
-						else
-							dm_frags[i * MAXPLAYERS + j]++;
+					if (RepInfo.FragsStats[j] < 0)
+						dm_frags[i * MAXPLAYERS + j]--;
+					else
+						dm_frags[i * MAXPLAYERS + j]++;
 
-						if (dm_frags[i * MAXPLAYERS + j] > 99)
-							dm_frags[i * MAXPLAYERS + j] = 99;
+					if (dm_frags[i * MAXPLAYERS + j] > 99)
+						dm_frags[i * MAXPLAYERS + j] = 99;
 
-						if (dm_frags[i * MAXPLAYERS + j] < -99)
-							dm_frags[i * MAXPLAYERS + j] = -99;
+					if (dm_frags[i * MAXPLAYERS + j] < -99)
+						dm_frags[i * MAXPLAYERS + j] = -99;
 
-						stillticking = true;
-					}
+					stillticking = true;
 				}
-				dm_totals[i] = FragSum(i);
-
-				if (dm_totals[i] > 99)
-					dm_totals[i] = 99;
-
-				if (dm_totals[i] < -99)
-					dm_totals[i] = -99;
 			}
+			dm_totals[i] = RepInfo.Frags;
 
+			if (dm_totals[i] > 99)
+				dm_totals[i] = 99;
+
+			if (dm_totals[i] < -99)
+				dm_totals[i] = -99;
 		}
 		if (!stillticking)
 		{

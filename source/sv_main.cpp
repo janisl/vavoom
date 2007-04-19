@@ -1037,6 +1037,8 @@ void SV_SendClientDatagram()
 		sv_player = GGameInfo->Players[i];
 
 		VPlayerReplicationInfo* RepInfo = sv_player->PlayerReplicationInfo;
+		RepInfo->PlayerName = sv_player->PlayerName;
+		RepInfo->UserInfo = sv_player->UserInfo;
 		for (int j = 0; j < MAXPLAYERS; j++)
 			RepInfo->FragsStats[j] = sv_player->FragsStats[j];
 		RepInfo->Frags = sv_player->Frags;
@@ -1428,7 +1430,6 @@ void SV_ChangeLocalMusic(VBasePlayer *player, const char* SongName)
 static void G_DoCompleted()
 {
 	int			i;
-	int			j;
 
 	completed = false;
 	if (sv.intermission)
@@ -1455,30 +1456,7 @@ static void G_DoCompleted()
 			GGameInfo->Players[i]->eventPlayerExitMap(!old_info.Cluster ||
 				!(ClusterD->Flags & CLUSTERF_Hub) ||
 				old_info.Cluster != new_info.Cluster);
-		}
-	}
-
-	*sv_reliable << (vuint8)svc_intermission
-				<< *GLevelInfo->NextMap;
-	for (i = 0; i < MAXPLAYERS; i++)
-	{
-		if (GGameInfo->Players[i])
-		{
-			*sv_reliable << (vuint8)true;
-			for (j = 0; j < MAXPLAYERS; j++)
-				*sv_reliable << (vuint8)GGameInfo->Players[i]->FragsStats[j];
-			*sv_reliable << (vint16)GGameInfo->Players[i]->KillCount
-						<< (vint16)GGameInfo->Players[i]->ItemCount
-						<< (vint16)GGameInfo->Players[i]->SecretCount;
-		}
-		else
-		{
-			*sv_reliable << (vuint8)false;
-			for (j = 0; j < MAXPLAYERS; j++)
-				*sv_reliable << (vuint8)0;
-			*sv_reliable << (vint16)0
-						<< (vint16)0
-						<< (vint16)0;
+			GGameInfo->Players[i]->eventClientIntermission(GLevelInfo->NextMap);
 		}
 	}
 }
@@ -1841,13 +1819,6 @@ void SV_SendServerInfo(VBasePlayer *player)
 		<< (vuint8)svs.max_clients
 		<< (vuint8)deathmatch;
 
-	for (i = 0; i < MAXPLAYERS; i++)
-	{
-		msg << (vuint8)svc_userinfo
-			<< (vuint8)i
-			<< (GGameInfo->Players[i] ? GGameInfo->Players[i]->UserInfo : "");
-	}
-
 /*	for (i = 0; i < VMemberBase::GMembers.Num(); i++)
 	{
 		if (VMemberBase::GMembers[i]->MemberType == MEMBER_Class)
@@ -2182,9 +2153,6 @@ void SV_DropClient(bool)
 
 	svs.num_connected--;
 	sv_player->UserInfo = VStr();
-	*sv_reliable << (vuint8)svc_userinfo
-				<< (vuint8)SV_GetPlayerNum(sv_player)
-				<< "";
 	unguard;
 }
 

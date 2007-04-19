@@ -169,11 +169,6 @@ void CL_Shutdown()
 	im.LeaveName.Clean();
 	im.EnterName.Clean();
 	im.Text.Clean();
-	for (int i = 0; i < MAXPLAYERS; i++)
-	{
-		scores[i].name.Clean();
-		scores[i].userinfo.Clean();
-	}
 	delete ClientNetContext;
 	unguard;
 }

@@ -66,7 +66,6 @@ string HubText;
 float cnt;
 
 int slaughterboy;
-int totalFrags[MAXPLAYERS];
 
 int tallytop;
 int tallylft;
@@ -181,6 +180,8 @@ void IM_InitStats()
 	int posnum;
 	int slaughtercount;
 	int playercount;
+	PlayerReplicationInfo RepInfo;
+	PlayerReplicationInfo Other;
 
 	ClGame.skipintermission = false;
 	intertime = 0.0;
@@ -204,28 +205,18 @@ void IM_InitStats()
 		posnum = 0;
 		playercount = 0;
 		slaughtercount = 0;
-		for (i = 0; i < MAXPLAYERS; i++)
+		FOREACH_EX(ClGame.GLevel.LevelInfo, PlayerReplicationInfo, RepInfo)
 		{
-			totalFrags[i] = 0;
-			if (ClGame.scores[i].bActive)
-			{
-				playercount++;
-				for (j = 0; j < MAXPLAYERS; j++)
-				{
-					if (ClGame.scores[j].bActive)
-					{
-						totalFrags[i] += ClGame.scores[i].frags[j];
-					}
-				}
-				posnum++;
-			}
-			if (totalFrags[i] > slaughterfrags)
+			i = RepInfo.PlayerNum;
+			playercount++;
+			posnum++;
+			if (RepInfo.Frags > slaughterfrags)
 			{
 				slaughterboy = 1 << i;
-				slaughterfrags = totalFrags[i];
+				slaughterfrags = RepInfo.Frags;
 				slaughtercount = 1;
 			}
-			else if (totalFrags[i] == slaughterfrags)
+			else if (RepInfo.Frags == slaughterfrags)
 			{
 				slaughterboy |= 1 << i;
 				slaughtercount++;
@@ -383,6 +374,8 @@ void IM_DrawDeathTally(GC gc)
 	float xStart, scale;
 	int x, y;
 	bool bold;
+	PlayerReplicationInfo RepInfo;
+	PlayerReplicationInfo Other;
 
 	gc.DrawFullScreenPic(patchINTERPIC);
 	R_DrawPic(TALLY_TOP_X, TALLY_TOP_Y, tallytop);
@@ -411,42 +404,28 @@ void IM_DrawDeathTally(GC gc)
 		LocalSound('PlatformStop');
 	}
 	y = ftoi(yPos);
-	for (i = 0; i < MAXPLAYERS; i++)
+	FOREACH_EX(ClGame.GLevel.LevelInfo, PlayerReplicationInfo, RepInfo)
 	{
+		i = RepInfo.PlayerNum;
 		xPos = xStart;
-		for (j = 0; j < MAXPLAYERS; j++, xPos += xDelta)
+		FOREACH_EX(ClGame.GLevel.LevelInfo, PlayerReplicationInfo, Other)
 		{
+			j = Other.PlayerNum;
 			x = ftoi(xPos);
 			bold = (i == ClGame.cl.ClientNum || j == ClGame.cl.ClientNum);
-			if (ClGame.scores[i].bActive && ClGame.scores[j].bActive)
+			if (bold)
 			{
-				if (bold)
-				{
-					IM_DrawNumberBold(ClGame.scores[i].frags[j], x, y, 100);
-				}
-				else
-				{
-					IM_DrawNumber(ClGame.scores[i].frags[j], x, y, 100);
-				}
+				IM_DrawNumberBold(RepInfo.FragsStats[j], x, y, 100);
 			}
 			else
 			{
-				if (bold)
-				{
-					T_SetFont(font_yellow);
-				}
-				else
-				{
-					T_SetFont(font_small);
-				}
-				T_SetAlign(hcentre, vtop);
-				T_DrawText(x, y, "--");
+				IM_DrawNumber(RepInfo.FragsStats[j], x, y, 100);
 			}
 		}
-		if (showTotals && ClGame.scores[i].bActive && !((slaughterboy & (1 << i)) &&
-				!(ftoi(32.0 * intertime) & 16)))
+		if (showTotals && !((slaughterboy & (1 << i)) &&
+			!(ftoi(32.0 * intertime) & 16)))
 		{
-			IM_DrawNumber(totalFrags[i], TALLY_TOTALS_X, y, 1000);
+			IM_DrawNumber(RepInfo.Frags, TALLY_TOTALS_X, y, 1000);
 		}
 		yPos += yDelta;
 		y = ftoi(yPos);

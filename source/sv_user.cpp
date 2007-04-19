@@ -336,9 +336,6 @@ void SV_SetUserInfo(const VStr& info)
 	{
 		sv_player->UserInfo = info;
 		SV_ReadFromUserInfo();
-		*sv_reliable << (byte)svc_userinfo
-					<< (byte)SV_GetPlayerNum(sv_player)
-					<< sv_player->UserInfo;
 	}
 	unguard;
 }
@@ -457,10 +454,6 @@ COMMAND(SetInfo)
 	}
 
 	Info_SetValueForKey(sv_player->UserInfo, *Args[1], *Args[2]);
-	*sv_reliable << (byte)svc_setinfo
-				<< (byte)SV_GetPlayerNum(sv_player)
-				<< Args[1]
-				<< Args[2];
 	SV_ReadFromUserInfo();
 	unguard;
 }

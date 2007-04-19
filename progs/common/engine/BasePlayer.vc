@@ -151,7 +151,7 @@ native void ClientForceLightning();
 native void ClientPrint(string Str);
 native void ClientCentrePrint(string Str);
 native void ClientSetAngles(TAVec Angles);
-native void ClientIntermission();
+native void ClientIntermission(name NextMap);
 native void ClientPause(bool Paused);
 native void ClientSkipIntermission();
 native void ClientFinale(string Type);

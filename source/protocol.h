@@ -39,11 +39,7 @@ enum
 
 	svc_time,
 
-	svc_intermission,
-
 	svc_serverinfo,
-	svc_userinfo,
-	svc_setinfo,
 
 	svc_model,
 	svc_skin,

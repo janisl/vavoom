@@ -29,6 +29,9 @@ class PlayerReplicationInfo : Thinker
 BasePlayer		Player;
 int				PlayerNum;
 
+string			PlayerName;
+string			UserInfo;
+
 int				FragsStats[MAXPLAYERS];
 int				Frags;
 int				KillCount;
