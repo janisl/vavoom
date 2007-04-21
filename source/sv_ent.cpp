@@ -2445,7 +2445,7 @@ void VBasePlayer::SetViewState(int position, VState* stnum)
 		}
 		state = VSt.State->NextState;
 	}
-	while (state && !VSt.StateTime);	// An initial state of 0 could cycle through.
+	while (!VSt.StateTime);	// An initial state of 0 could cycle through.
 	unguard;
 }
 
