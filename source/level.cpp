@@ -218,6 +218,31 @@ void VLevel::Serialise(VStream& Strm)
 	unguard;
 
 	//
+	//	Static lights
+	//
+	guard(StaticLights);
+	Strm << STRM_INDEX(NumStaticLights);
+	if (Strm.IsLoading())
+	{
+		if (StaticLights)
+		{
+			delete[] StaticLights;
+			StaticLights = NULL;
+		}
+		if (NumStaticLights)
+		{
+			StaticLights = new rep_light_t[NumStaticLights];
+		}
+	}
+	for (int i = 0; i < NumStaticLights; i++)
+	{
+		Strm << StaticLights[i].Origin
+			<< StaticLights[i].Radius
+			<< StaticLights[i].Colour;
+	}
+	unguard;
+
+	//
 	//	ACS
 	//
 	guard(ACS);
@@ -356,6 +381,10 @@ void VLevel::Destroy()
 	if (LevelSpeeches)
 	{
 		delete[] LevelSpeeches;
+	}
+	if (StaticLights)
+	{
+		delete[] StaticLights;
 	}
 
 	//	Call parent class's Destroy method.

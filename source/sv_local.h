@@ -247,7 +247,6 @@ extern VBasePlayer*			sv_player;
 extern TArray<VSndSeqInfo>	sv_ActiveSequences;
 
 extern VMessageOut*		sv_reliable;
-extern VMessageOut*		sv_signons;
 
 //==========================================================================
 //

@@ -71,13 +71,6 @@ void CL_Clear()
 	GClGame->serverinfo.Clean();
 	GClGame->intermission = 0;
 	GClGame->time = 0;
-	VNetConnection* Net = cl->Net;
-	VEntity* PrevVEnt = cl->ViewEnt;
-	memset((byte*)cl + sizeof(VObject), 0, cl->GetClass()->ClassSize - sizeof(VObject));
-	cl->PlayerFlags |= VBasePlayer::PF_IsClient;
-	cl->ViewEnt = PrevVEnt;
-	cl->Net = Net;
-	cl->ClGame = GClGame;
 	CL_ClearInput();
 #ifdef SERVER
 	if (!sv.active)
@@ -511,10 +504,6 @@ void VClientGenChannel::ParsePacket(VMessageIn& msg)
 	VStr		name;
 	VStr		string;
 	TVec		origin;
-	float		radius;
-	vuint32		colour;
-
-//	cl->last_received_message = realtime;
 
 	// update command store from the packet
 	while (1)
@@ -579,23 +568,6 @@ void VClientGenChannel::ParsePacket(VMessageIn& msg)
 
 		case svc_skin:
 			CL_ParseSkin(msg);
-			break;
-
-		case svc_static_light:
-			origin.x = msg.ReadShort();
-			origin.y = msg.ReadShort();
-			origin.z = msg.ReadShort();
-			radius = (byte)msg.ReadByte() * 8;
-			GClLevel->RenderData->AddStaticLight(origin, radius, 0xffffffff);
-			break;
-
-		case svc_static_light_rgb:
-			origin.x = msg.ReadShort();
-			origin.y = msg.ReadShort();
-			origin.z = msg.ReadShort();
-			radius = (byte)msg.ReadByte() * 8;
-			msg << colour;
-			GClLevel->RenderData->AddStaticLight(origin, radius, colour);
 			break;
 
 		case svc_class_name:

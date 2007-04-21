@@ -62,7 +62,6 @@ enum gameArchiveSegment_t
 {
 	ASEG_GAME_HEADER = 101,
 	ASEG_MAP_HEADER,
-	ASEG_BASELINE,
 	ASEG_WORLD,
 	ASEG_SCRIPTS,
 	ASEG_SOUNDS,
@@ -698,22 +697,6 @@ static void SV_SaveMap(int slot, bool savePlayers)
 	*Saver << GLevel->Time
 		<< GLevel->TicTime;
 
-	//	Save baseline
-	Seg = ASEG_BASELINE;
-	*Saver << Seg;
-	int NumSignons = 0;
-	for (VMessageOut* Msg = sv_signons; Msg; Msg = Msg->Next)
-	{
-		NumSignons++;
-	}
-	*Saver << STRM_INDEX(NumSignons);
-	for (VMessageOut* Msg = sv_signons; Msg; Msg = Msg->Next)
-	{
-		int SignonSize = Msg->GetNumBits();
-		*Saver << STRM_INDEX(SignonSize);
-		Saver->Serialise(Msg->GetData(), Msg->GetNumBytes());
-	}
-
 	ArchiveThinkers();
 	ArchiveSounds();
 
@@ -753,31 +736,6 @@ static void SV_LoadMap(VName MapName, int slot)
 	// Read the level timer
 	*Loader << GLevel->Time
 		<< GLevel->TicTime;
-
-	AssertSegment(ASEG_BASELINE);
-	for (VMessageOut* Msg = sv_signons; Msg;)
-	{
-		VMessageOut* Next = Msg->Next;
-		delete Msg;
-		Msg = Next;
-	}
-	sv_signons = NULL;
-	VMessageOut** Prev = &sv_signons;
-	int NumSignons;
-	*Loader << STRM_INDEX(NumSignons);
-	for (int i = 0; i < NumSignons; i++)
-	{	
-		int len;
-		*Loader << STRM_INDEX(len);
-		VMessageOut* Msg = new VMessageOut(OUT_MESSAGE_SIZE);
-		void *tmp = Z_Malloc((len + 7) >> 3);
-		Loader->Serialise(tmp, (len + 7) >> 3);
-		Msg->SerialiseBits(tmp, len);
-		Z_Free(tmp);
-		*Prev = Msg;
-		Msg->Next = NULL;
-		Prev = &Msg->Next;
-	}
 
 	UnarchiveThinkers();
 	UnarchiveSounds();

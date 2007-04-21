@@ -36,16 +36,11 @@ enum
 	svc_signonnum,
 
 	svc_view_data,
-
 	svc_time,
-
 	svc_serverinfo,
 
 	svc_model,
 	svc_skin,
-
-	svc_static_light,
-	svc_static_light_rgb,
 
 	svc_class_name,
 };

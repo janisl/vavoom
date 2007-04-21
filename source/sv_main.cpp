@@ -88,7 +88,6 @@ bool			deathmatch = false;   	// only if started as net death
 bool			netgame;                // only true if packets are broadcast
 
 VMessageOut*	sv_reliable;
-VMessageOut*	sv_signons;
 
 VBasePlayer*	sv_player;
 
@@ -229,8 +228,6 @@ void SV_Init()
 
 	ServerNetContext = new VServerNetContext();
 	sv_reliable = new VMessageOut(OUT_MESSAGE_SIZE);
-	sv_signons = new VMessageOut(OUT_MESSAGE_SIZE);
-	sv_signons->Next = NULL;
 
 	svs.max_clients = 1;
 
@@ -287,12 +284,6 @@ void SV_Shutdown()
 	}
 
 	delete sv_reliable;
-	for (VMessageOut* Msg = sv_signons; Msg; )
-	{
-		VMessageOut* Next = Msg->Next;
-		delete Msg;
-		Msg = Next;
-	}
 	delete ServerNetContext;
 	unguard;
 }
@@ -313,14 +304,6 @@ void SV_Clear()
 		VObject::CollectGarbage();
 	}
 	memset(&sv, 0, sizeof(sv));
-	for (VMessageOut* Msg = sv_signons; Msg; )
-	{
-		VMessageOut* Next = Msg->Next;
-		delete Msg;
-		Msg = Next;
-	}
-	sv_signons = new VMessageOut(OUT_MESSAGE_SIZE);
-	sv_signons->Next = NULL;
 	sv_reliable->Clear();
 	sv_ActiveSequences.Clear();
 #ifdef CLIENT
@@ -2033,11 +2016,8 @@ COMMAND(PreSpawn)
 		return;
 	}
 
-	for (VMessageOut* Msg = sv_signons; Msg; Msg = Msg->Next)
-	{
-		Msg->bReliable = true;
-		sv_player->Net->Channels[0]->SendMessage(Msg);
-	}
+	((VLevelChannel*)sv_player->Net->Channels[CHANIDX_Level])->SendStaticLights();
+
 	sv_player->Net->Message << (vuint8)svc_signonnum << (vuint8)2;
 	unguard;
 }
@@ -2090,8 +2070,6 @@ COMMAND(Spawn)
 			Host_Error("Player without Mobj\n");
 		}
 	}
-	((VPlayerChannel*)sv_player->Net->Channels[CHANIDX_Player])->SetPlayer(NULL);
-	((VPlayerChannel*)sv_player->Net->Channels[CHANIDX_Player])->SetPlayer(sv_player);
 	sv_player->ViewAngles.roll = 0;
 	sv_player->eventClientSetAngles(sv_player->ViewAngles);
 	sv_player->Net->Message << (vuint8)svc_signonnum << (vuint8)3;
@@ -2366,6 +2344,7 @@ void SV_ConnectClient(VBasePlayer *player)
 
 	player->PlayerReplicationInfo =
 		(VPlayerReplicationInfo*)GLevel->SpawnThinker(GGameInfo->PlayerReplicationInfoClass);
+	player->PlayerReplicationInfo->Player = player;
 	player->PlayerReplicationInfo->PlayerNum = SV_GetPlayerNum(player);
 
 	SV_SendServerInfo(player);
@@ -2461,30 +2440,6 @@ void SV_ConnectBot(const char *name)
 	sv_player->Net->Message.Clear();
 	SV_RunClientCommand("Begin\n");
 	sv_player->Net->Message.Clear();
-	unguard;
-}
-
-//==========================================================================
-//
-//	SV_GetSignon
-//
-//==========================================================================
-
-VMessageOut* SV_GetSignon(int Len)
-{
-	guard(SV_GetSignon);
-	VMessageOut* Msg = sv_signons;
-	while (Msg->Next)
-	{
-		Msg = Msg->Next;
-	}
-	if (!Msg->CheckSpaceBits(Len))
-	{
-		Msg->Next = new VMessageOut(OUT_MESSAGE_SIZE);
-		Msg = Msg->Next;
-		Msg->Next = NULL;
-	}
-	return Msg;
 	unguard;
 }
 
@@ -2672,12 +2627,19 @@ IMPLEMENT_FUNCTION(VLevelInfo, AddStaticLight)
 	P_GET_FLOAT(Radius);
 	P_GET_VEC(Origin);
 	P_GET_SELF;
-	VMessageOut* Msg = SV_GetSignon(8 << 3);
-	*Msg << (vuint8)svc_static_light
-		<< (short)Origin.x
-		<< (short)Origin.y
-		<< (short)Origin.z
-		<< (vuint8)(Radius / 8.0);
+	rep_light_t* OldLights = Self->XLevel->StaticLights;
+	Self->XLevel->NumStaticLights++;
+	Self->XLevel->StaticLights = new rep_light_t[Self->XLevel->NumStaticLights];
+	if (OldLights)
+	{
+		memcpy(Self->XLevel->StaticLights, OldLights,
+			(Self->XLevel->NumStaticLights - 1) * sizeof(rep_light_t));
+		delete[] OldLights;
+	}
+	rep_light_t& L = Self->XLevel->StaticLights[Self->XLevel->NumStaticLights - 1];
+	L.Origin = Origin;
+	L.Radius = Radius;
+	L.Colour = 0xffffffff;
 }
 
 IMPLEMENT_FUNCTION(VLevelInfo, AddStaticLightRGB)
@@ -2686,13 +2648,19 @@ IMPLEMENT_FUNCTION(VLevelInfo, AddStaticLightRGB)
 	P_GET_FLOAT(Radius);
 	P_GET_VEC(Origin);
 	P_GET_SELF;
-	VMessageOut* Msg = SV_GetSignon(12 << 3);
-	*Msg << (vuint8)svc_static_light_rgb
-		<< (short)Origin.x
-		<< (short)Origin.y
-		<< (short)Origin.z
-		<< (vuint8)(Radius / 8.0)
-		<< Colour;
+	rep_light_t* OldLights = Self->XLevel->StaticLights;
+	Self->XLevel->NumStaticLights++;
+	Self->XLevel->StaticLights = new rep_light_t[Self->XLevel->NumStaticLights];
+	if (OldLights)
+	{
+		memcpy(Self->XLevel->StaticLights, OldLights,
+			(Self->XLevel->NumStaticLights - 1) * sizeof(rep_light_t));
+		delete[] OldLights;
+	}
+	rep_light_t& L = Self->XLevel->StaticLights[Self->XLevel->NumStaticLights - 1];
+	L.Origin = Origin;
+	L.Radius = Radius;
+	L.Colour = Colour;
 }
 
 //**************************************************************************

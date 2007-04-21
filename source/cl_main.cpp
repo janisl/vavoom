@@ -436,6 +436,14 @@ void CL_EstablishConnection(const char* host)
 		GCon->Log("Failed to connect to the server");
 		return;
 	}
+
+	//	Clean player structure.
+	VEntity* PrevVEnt = cl->ViewEnt;
+	memset((byte*)cl + sizeof(VObject), 0, cl->GetClass()->ClassSize - sizeof(VObject));
+	cl->PlayerFlags |= VBasePlayer::PF_IsClient;
+	cl->ViewEnt = PrevVEnt;
+	cl->ClGame = GClGame;
+
 	if (cls.demorecording)
 	{
 		cl->Net = new VDemoRecordingNetConnection(Sock, ClientNetContext);

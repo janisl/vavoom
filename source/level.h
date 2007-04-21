@@ -514,6 +514,13 @@ struct rep_polyobj_t
 	float	 	angle;
 };
 
+struct rep_light_t
+{
+	TVec		Origin;
+	float		Radius;
+	vuint32		Colour;
+};
+
 //==========================================================================
 //
 //									LEVEL
@@ -623,6 +630,9 @@ class VLevel : public VObject
 	rep_side_t*			BaseSides;
 	rep_sector_t*		BaseSectors;
 	rep_polyobj_t*		BasePolyObjs;
+
+	vint32				NumStaticLights;
+	rep_light_t*		StaticLights;
 
 	float				Time;
 	int					TicTime;

@@ -38,6 +38,8 @@ enum
 	CMD_Side,
 	CMD_Sector,
 	CMD_PolyObj,
+	CMD_StaticLight,
+
 	CMD_MAX
 };
 
@@ -291,6 +293,27 @@ void VLevelChannel::Update()
 
 //==========================================================================
 //
+//	VLevelChannel::SendStaticLights
+//
+//==========================================================================
+
+void VLevelChannel::SendStaticLights()
+{
+	guard(VLevelChannel::SendStaticLights);
+	for (int i = 0; i < Level->NumStaticLights; i++)
+	{
+		rep_light_t& L = Level->StaticLights[i];
+		VMessageOut Msg(this);
+		Msg.bReliable = true;
+		Msg.WriteInt(CMD_StaticLight, CMD_MAX);
+		Msg << L.Origin << L.Radius << L.Colour;
+		SendMessage(&Msg);
+	}
+	unguard;
+}
+
+//==========================================================================
+//
 //	VLevelChannel::ParsePacket
 //
 //==========================================================================
@@ -377,6 +400,16 @@ void VLevelChannel::ParsePacket(VMessageIn& Msg)
 					Msg << a;
 					Level->RotatePolyobj(Po->tag, a - Po->angle);
 				}
+			}
+			break;
+
+		case CMD_StaticLight:
+			{
+				TVec		Origin;
+				float		Radius;
+				vuint32		Colour;
+				Msg << Origin << Radius << Colour;
+				Level->RenderData->AddStaticLight(Origin, Radius, Colour);
 			}
 			break;
 		}
