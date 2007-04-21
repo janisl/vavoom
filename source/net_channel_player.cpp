@@ -254,6 +254,7 @@ void VPlayerChannel::ParsePacket(VMessageIn& Msg)
 		if (Func)
 		{
 			guard(RPC);
+			memset(pr_stackPtr, 0, Func->ParamsSize * sizeof(VStack));
 			//	Push self pointer
 			PR_PushPtr(Plr);
 			//	Get arguments
@@ -272,10 +273,6 @@ void VPlayerChannel::ParsePacket(VMessageIn& Msg)
 					pr_stackPtr++;
 					break;
 				case ev_string:
-					pr_stackPtr->p = NULL;
-					VField::NetSerialiseValue(Msg, (vuint8*)&pr_stackPtr->p, Func->ParamTypes[i]);
-					pr_stackPtr++;
-					break;
 				case ev_pointer:
 				case ev_reference:
 				case ev_class:

@@ -342,6 +342,7 @@ void VThinkerChannel::ParsePacket(VMessageIn& Msg)
 		if (Func)
 		{
 			guard(RPC);
+			memset(pr_stackPtr, 0, Func->ParamsSize * sizeof(VStack));
 			//	Push self pointer
 			PR_PushPtr(Thinker);
 			//	Get arguments
