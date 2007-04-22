@@ -41,7 +41,8 @@ int				SecretCount;
 replication
 {
 	reliable if (true)
-		PlayerNum, FragsStats, Frags, KillCount, ItemCount, SecretCount;
+		PlayerNum, PlayerName, UserInfo, FragsStats, Frags, KillCount,
+		ItemCount, SecretCount;
 }
 
 defaultproperties
