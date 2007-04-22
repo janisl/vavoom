@@ -34,17 +34,6 @@
 
 // TYPES -------------------------------------------------------------------
 
-class VDemoRecordingNetConnection : public VNetConnection
-{
-public:
-	VDemoRecordingNetConnection(VSocketPublic* Sock, VNetContext* AContext)
-	: VNetConnection(Sock, AContext)
-	{}
-
-	//	VNetConnection interface
-	int GetRawPacket(TArray<vuint8>&);
-};
-
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 void SV_ShutdownServer(bool crash);
@@ -52,7 +41,7 @@ void CL_Disconnect();
 
 void CL_StopPlayback();
 void CL_StopRecording();
-void CL_WriteDemoMessage(TArray<vuint8>& msg);
+void CL_SetUpLocalPlayer(VSocketPublic*);
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
@@ -102,12 +91,6 @@ void CL_Init()
 	ClientNetContext = new VClientNetContext();
 	GClGame = (VClientGameBase*)VObject::StaticSpawnObject(
 		VClass::FindClass("ClientGame"));
-	cl = (VBasePlayer*)VObject::StaticSpawnObject(
-		VClass::FindClass("Player"));
-	cl->PlayerFlags |= VBasePlayer::PF_IsClient;
-	cl->ViewEnt = Spawn<VEntity>();
-	cl->ClGame = GClGame;
-	GClGame->cl = cl;
 	unguard;
 }
 
@@ -153,12 +136,6 @@ void CL_Shutdown()
 		GClPrevLevel->ConditionalDestroy();
 	if (GClGame)
 		GClGame->ConditionalDestroy();
-	if (cl)
-	{
-		cl->ViewEnt->ConditionalDestroy();
-		delete cl->Net;
-		cl->ConditionalDestroy();
-	}
 	if (GRoot)
 		GRoot->ConditionalDestroy();
 	for (int i = 0; i < 256; i++)
@@ -371,8 +348,6 @@ void CL_Disconnect()
 	if (cls.demoplayback)
 	{
 		CL_StopPlayback();
-		delete cl->Net;
-		cl->Net = NULL;
 	}
 	else if (cls.state == ca_connected)
 	{
@@ -391,13 +366,19 @@ void CL_Disconnect()
 		cl->Net->Channels[0]->SendMessage(&cl->Net->Message);
 		cl->Net->Message.Clear();
 		cl->Net->Flush();
-		delete cl->Net;
-		cl->Net = NULL;
 
 		cls.state = ca_disconnected;
 #ifdef SERVER
 		SV_ShutdownServer(false);
 #endif
+	}
+
+	if (cl)
+	{
+		delete cl->Net;
+		cl->ViewEnt->ConditionalDestroy();
+		cl->ConditionalDestroy();
+		cl = NULL;
 	}
 
 	cls.demoplayback = false;
@@ -437,22 +418,7 @@ void CL_EstablishConnection(const char* host)
 		return;
 	}
 
-	//	Clean player structure.
-	VEntity* PrevVEnt = cl->ViewEnt;
-	memset((byte*)cl + sizeof(VObject), 0, cl->GetClass()->ClassSize - sizeof(VObject));
-	cl->PlayerFlags |= VBasePlayer::PF_IsClient;
-	cl->ViewEnt = PrevVEnt;
-	cl->ClGame = GClGame;
-
-	if (cls.demorecording)
-	{
-		cl->Net = new VDemoRecordingNetConnection(Sock, ClientNetContext);
-	}
-	else
-	{
-		cl->Net = new VNetConnection(Sock, ClientNetContext);
-	}
-	((VPlayerChannel*)cl->Net->Channels[CHANIDX_Player])->SetPlayer(cl);
+	CL_SetUpLocalPlayer(Sock);
 	GCon->Logf(NAME_Dev, "CL_EstablishConnection: connected to %s", host);
 
 	UserInfoSent = false;
@@ -462,28 +428,6 @@ void CL_EstablishConnection(const char* host)
 	cls.signon = 0;				// need all the signon messages before playing
 
 	MN_DeactivateMenu();
-	unguard;
-}
-
-//==========================================================================
-//
-//	VDemoRecordingNetConnection::GetRawPacket
-//
-//	Handles recording and playback of demos, on top of NET_ code
-//
-//==========================================================================
-
-int VDemoRecordingNetConnection::GetRawPacket(TArray<vuint8>& Data)
-{
-	guard(VDemoRecordingNetConnection::GetRawPacket);
-	int r = VNetConnection::GetRawPacket(Data);
-
-	if (r == 1)
-	{
-		CL_WriteDemoMessage(Data);
-	}
-	
-	return r;
 	unguard;
 }
 

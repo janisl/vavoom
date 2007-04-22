@@ -95,7 +95,6 @@ void RootWindowCreated()
 	GFinale = FinaleScreen(GRoot.NewChild(FinaleScreen));
 	GTitle.ClGame = self;
 	GSBar.ClGame = self;
-	GSBar.cl = Player(cl);
 	GSBar.Hide();
 	GImission.ClGame = self;
 	GImission.Hide();
@@ -190,6 +189,7 @@ void OnHostError()
 
 void StatusBarStartMap()
 {
+	GSBar.cl = Player(cl);
 	GSBar.Show();
 	GSBar.StartMap();
 	GImission.Hide();

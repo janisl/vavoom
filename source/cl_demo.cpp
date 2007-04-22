@@ -57,6 +57,17 @@ public:
 	void SendRawMessage(VMessageOut&);
 };
 
+class VDemoRecordingNetConnection : public VNetConnection
+{
+public:
+	VDemoRecordingNetConnection(VSocketPublic* Sock, VNetContext* AContext)
+	: VNetConnection(Sock, AContext)
+	{}
+
+	//	VNetConnection interface
+	int GetRawPacket(TArray<vuint8>&);
+};
+
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 void CL_Disconnect();
@@ -74,6 +85,39 @@ extern VClientNetContext*	ClientNetContext;
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 // CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//	CL_SetUpLocalPlayer
+//
+//==========================================================================
+
+void CL_SetUpLocalPlayer(VSocketPublic* Sock)
+{
+	guard(CL_SetUpLocalPlayer);
+	//	Create player structure.
+	cl = (VBasePlayer*)VObject::StaticSpawnObject(
+		VClass::FindClass("Player"));
+	cl->PlayerFlags |= VBasePlayer::PF_IsClient;
+	cl->ViewEnt = Spawn<VEntity>();
+	cl->ClGame = GClGame;
+	GClGame->cl = cl;
+
+	if (cls.demoplayback)
+	{
+		cl->Net = new VDemoPlaybackNetConnection(ClientNetContext);
+	}
+	else if (cls.demorecording)
+	{
+		cl->Net = new VDemoRecordingNetConnection(Sock, ClientNetContext);
+	}
+	else
+	{
+		cl->Net = new VNetConnection(Sock, ClientNetContext);
+	}
+	((VPlayerChannel*)cl->Net->Channels[CHANIDX_Player])->SetPlayer(cl);
+	unguard;
+}
 
 //==========================================================================
 //
@@ -217,6 +261,28 @@ void VDemoPlaybackNetConnection::SendRawMessage(VMessageOut&)
 
 //==========================================================================
 //
+//	VDemoRecordingNetConnection::GetRawPacket
+//
+//	Handles recording and playback of demos, on top of NET_ code
+//
+//==========================================================================
+
+int VDemoRecordingNetConnection::GetRawPacket(TArray<vuint8>& Data)
+{
+	guard(VDemoRecordingNetConnection::GetRawPacket);
+	int r = VNetConnection::GetRawPacket(Data);
+
+	if (r == 1)
+	{
+		CL_WriteDemoMessage(Data);
+	}
+	
+	return r;
+	unguard;
+}
+
+//==========================================================================
+//
 //	CL_StopRecording
 //
 //==========================================================================
@@ -346,11 +412,6 @@ COMMAND(PlayDemo)
 	}
 
 	//
-	// disconnect from server
-	//
-	CL_Disconnect();
-	
-	//
 	// open the demo file
 	//
 	VStr name = VStr("demos/") + Args[1].DefaultExtension(".dem");
@@ -373,10 +434,14 @@ COMMAND(PlayDemo)
 		return;
 	}
 
+	//
+	// disconnect from server
+	//
+	CL_Disconnect();
+
 	cls.demoplayback = true;
 	cls.state = ca_connected;
-	cl->Net = new VDemoPlaybackNetConnection(ClientNetContext);
-	((VPlayerChannel*)cl->Net->Channels[CHANIDX_Player])->SetPlayer(cl);
+	CL_SetUpLocalPlayer(NULL);
 	GClGame->eventDemoPlaybackStarted();
 	unguard;
 }

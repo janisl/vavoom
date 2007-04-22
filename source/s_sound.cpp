@@ -898,7 +898,10 @@ void VAudio::UpdateSfx()
 		return;
 	}
 
-	AngleVectors(cl->ViewAngles, ListenerForward, ListenerRight, ListenerUp);
+	if (cl)
+	{
+		AngleVectors(cl->ViewAngles, ListenerForward, ListenerRight, ListenerUp);
+	}
 
 	if (GClLevel && GClLevel->LevelInfo)
 	{
@@ -964,7 +967,7 @@ void VAudio::UpdateSfx()
 			(PRIORITY_MAX_ADJUST - PRIORITY_MAX_ADJUST * dist / MaxSoundDist);
 	}
 
-	if (SoundDevice->Sound3D)
+	if (SoundDevice->Sound3D && cl)
 	{
 		SoundDevice->UpdateListener(cl->ViewOrg, TVec(0, 0, 0),
 			ListenerForward, ListenerRight, ListenerUp);
