@@ -85,12 +85,12 @@ void VPlayerChannel::SetPlayer(VBasePlayer* APlr)
 	guard(VPlayerChannel::SetPlayer);
 	if (Plr)
 	{
-		for (VField* F = Plr->GetClass()->NetFields; F; F = F->NextNetField)
-		{
-			VField::CleanField(OldData + F->Ofs, F->Type);
-		}
 		if (OldData)
 		{
+			for (VField* F = Plr->GetClass()->NetFields; F; F = F->NextNetField)
+			{
+				VField::DestructField(OldData + F->Ofs, F->Type);
+			}
 			delete[] OldData;
 			OldData = NULL;
 		}

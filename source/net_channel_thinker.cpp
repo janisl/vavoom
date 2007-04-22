@@ -99,12 +99,12 @@ void VThinkerChannel::SetThinker(VThinker* AThinker)
 	if (Thinker)
 	{
 		Connection->ThinkerChannels.Remove(Thinker);
-		for (VField* F = ThinkerClass->NetFields; F; F = F->NextNetField)
-		{
-			VField::CleanField(OldData + F->Ofs, F->Type);
-		}
 		if (OldData)
 		{
+			for (VField* F = ThinkerClass->NetFields; F; F = F->NextNetField)
+			{
+				VField::DestructField(OldData + F->Ofs, F->Type);
+			}
 			delete[] OldData;
 			OldData = NULL;
 		}
