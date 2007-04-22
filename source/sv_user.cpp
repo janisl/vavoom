@@ -506,6 +506,10 @@ IMPLEMENT_FUNCTION(VBasePlayer, ClearPlayer)
 	Self->FixedColourmap = 0;
 	memset(Self->CShifts, 0, sizeof(Self->CShifts));
 	Self->PSpriteSY = 0;
-	memset((vuint8*)Self + sizeof(VBasePlayer), 0,
-		Self->GetClass()->ClassSize - sizeof(VBasePlayer));
+
+	vuint8* Def = Self->GetClass()->Defaults;
+	for (VField* F = Self->GetClass()->Fields; F; F = F->Next)
+	{
+		VField::CopyFieldValue(Def + F->Ofs, (vuint8*)Self + F->Ofs, F->Type);
+	}
 }
