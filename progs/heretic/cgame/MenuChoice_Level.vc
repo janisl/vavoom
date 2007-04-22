@@ -31,7 +31,7 @@ void InitMapList(int epi)
 
 	for (i = 0; i < 9; i++)
 	{
-		EnumNames[i] = P_GetMapName(epi * 9 + i + 1);
+		EnumNames[i] = P_GetMapName(epi * 9 + i);
 	}
 	MaxValue = 9;
 	Value = 0;
