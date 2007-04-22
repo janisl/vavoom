@@ -87,6 +87,11 @@ void VStr::Resize(int NewLen)
 {
 	guard(VStr::Resize);
 	check(NewLen >= 0);
+	if (NewLen == Length())
+	{
+		//	Same length, use existing buffer.
+		return;
+	}
 	if (!NewLen)
 	{
 		//	Free string.
