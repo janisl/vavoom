@@ -286,8 +286,6 @@ void VThinkerChannel::ParsePacket(VMessageIn& Msg)
 		{
 			VLevelInfo* LInfo = (VLevelInfo*)Th;
 			LInfo->Level = LInfo;
-			LInfo->Game = NULL;
-			LInfo->World = NULL;
 			GClLevel->LevelInfo = LInfo;
 			cl->Level = LInfo;
 		}

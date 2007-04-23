@@ -59,7 +59,6 @@ static void G_DoCompleted();
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-IMPLEMENT_CLASS(V, LevelInfo)
 IMPLEMENT_CLASS(V, GameInfo)
 IMPLEMENT_CLASS(V, BasePlayer)
 
@@ -120,91 +119,6 @@ static VCvarF	sv_gravity("sv_gravity", "800.0", CVAR_ServerInfo);
 static VServerNetContext*	ServerNetContext;
 
 // CODE --------------------------------------------------------------------
-
-//==========================================================================
-//
-//	VLevelInfo::VLevelInfo
-//
-//==========================================================================
-
-VLevelInfo::VLevelInfo()
-{
-	Level = this;
-	Game = GGameInfo;
-	World = GWorldInfo;
-}
-
-//==========================================================================
-//
-//	VLevelInfo::SetMapInfo
-//
-//==========================================================================
-
-void VLevelInfo::SetMapInfo(const mapInfo_t& Info)
-{
-	guard(VLevelInfo::SetMapInfo);
-	LevelName = Info.Name;
-	LevelNum = Info.LevelNum;
-	Cluster = Info.Cluster;
-
-	NextMap = Info.NextMap;
-	SecretMap = Info.SecretMap;
-
-	ParTime = Info.ParTime;
-	SuckTime = Info.SuckTime;
-
-	Sky1Texture = Info.Sky1Texture;
-	Sky2Texture = Info.Sky2Texture;
-	Sky1ScrollDelta = Info.Sky1ScrollDelta;
-	Sky2ScrollDelta = Info.Sky2ScrollDelta;
-	SkyBox = Info.SkyBox;
-
-	FadeTable = Info.FadeTable;
-
-	SongLump = Info.SongLump;
-	CDTrack = Info.CDTrack;
-
-	//	Copy flags from mapinfo.
-	if (Info.Flags & MAPINFOF_DoubleSky)
-		LevelInfoFlags |= LIF_DoubleSky;
-	if (Info.Flags & MAPINFOF_Lightning)
-		LevelInfoFlags |= LIF_Lightning;
-	if (Info.Flags & MAPINFOF_Map07Special)
-		LevelInfoFlags |= LIF_Map07Special;
-	if (Info.Flags & MAPINFOF_BaronSpecial)
-		LevelInfoFlags |= LIF_BaronSpecial;
-	if (Info.Flags & MAPINFOF_CyberDemonSpecial)
-		LevelInfoFlags |= LIF_CyberDemonSpecial;
-	if (Info.Flags & MAPINFOF_SpiderMastermindSpecial)
-		LevelInfoFlags |= LIF_SpiderMastermindSpecial;
-	if (Info.Flags & MAPINFOF_MinotaurSpecial)
-		LevelInfoFlags |= LIF_MinotaurSpecial;
-	if (Info.Flags & MAPINFOF_DSparilSpecial)
-		LevelInfoFlags |= LIF_DSparilSpecial;
-	if (Info.Flags & MAPINFOF_IronLichSpecial)
-		LevelInfoFlags |= LIF_IronLichSpecial;
-	if (Info.Flags & MAPINFOF_SpecialActionOpenDoor)
-		LevelInfoFlags |= LIF_SpecialActionOpenDoor;
-	if (Info.Flags & MAPINFOF_SpecialActionLowerFloor)
-		LevelInfoFlags |= LIF_SpecialActionLowerFloor;
-	if (Info.Flags & MAPINFOF_SpecialActionKillMonsters)
-		LevelInfoFlags |= LIF_SpecialActionKillMonsters;
-	if (Info.Flags & MAPINFOF_NoIntermission)
-		LevelInfoFlags |= LIF_NoIntermission;
-	if (Info.Flags & MAPINFOF_NoSoundClipping)
-		LevelInfoFlags |= LIF_NoSoundClipping;
-	if (Info.Flags & MAPINFOF_AllowMonsterTelefrags)
-		LevelInfoFlags |= LIF_AllowMonsterTelefrags;
-	if (Info.Flags & MAPINFOF_NoAllies)
-		LevelInfoFlags |= LIF_NoAllies;
-	if (Info.Flags & MAPINFOF_DeathSlideShow)
-		LevelInfoFlags |= LIF_DeathSlideShow;
-	if (Info.Flags & MAPINFOF_ForceNoSkyStretch)
-		LevelInfoFlags |= LIF_ForceNoSkyStretch;
-	if (Info.Flags & MAPINFOF_LookupName)
-		LevelInfoFlags |= LIF_LookupName;
-	unguard;
-}
 
 //==========================================================================
 //
@@ -1783,6 +1697,8 @@ void SV_SpawnServer(const char *mapname, bool spawn_thinkers)
 		GLevelInfo = (VLevelInfo*)GLevel->SpawnThinker(
 			GGameInfo->LevelInfoClass);
 		GLevelInfo->Level = GLevelInfo;
+		GLevelInfo->Game = GGameInfo;
+		GLevelInfo->World = GWorldInfo;
 		GLevel->LevelInfo = GLevelInfo;
 		if (info.Gravity)
 			GLevelInfo->Gravity = info.Gravity * DEFAULT_GRAVITY / 800.0;
@@ -2465,53 +2381,6 @@ COMMAND(Say)
 	SV_BroadcastPrintf(*Text);
 	SV_StartSound(NULL, GSoundManager->GetSoundID("misc/chat"), 0, 1.0, 0);
 	unguard;
-}
-
-//==========================================================================
-//
-//	VLevelInfo natives
-//
-//==========================================================================
-
-IMPLEMENT_FUNCTION(VLevelInfo, AddStaticLight)
-{
-	P_GET_FLOAT(Radius);
-	P_GET_VEC(Origin);
-	P_GET_SELF;
-	rep_light_t* OldLights = Self->XLevel->StaticLights;
-	Self->XLevel->NumStaticLights++;
-	Self->XLevel->StaticLights = new rep_light_t[Self->XLevel->NumStaticLights];
-	if (OldLights)
-	{
-		memcpy(Self->XLevel->StaticLights, OldLights,
-			(Self->XLevel->NumStaticLights - 1) * sizeof(rep_light_t));
-		delete[] OldLights;
-	}
-	rep_light_t& L = Self->XLevel->StaticLights[Self->XLevel->NumStaticLights - 1];
-	L.Origin = Origin;
-	L.Radius = Radius;
-	L.Colour = 0xffffffff;
-}
-
-IMPLEMENT_FUNCTION(VLevelInfo, AddStaticLightRGB)
-{
-	P_GET_INT(Colour);
-	P_GET_FLOAT(Radius);
-	P_GET_VEC(Origin);
-	P_GET_SELF;
-	rep_light_t* OldLights = Self->XLevel->StaticLights;
-	Self->XLevel->NumStaticLights++;
-	Self->XLevel->StaticLights = new rep_light_t[Self->XLevel->NumStaticLights];
-	if (OldLights)
-	{
-		memcpy(Self->XLevel->StaticLights, OldLights,
-			(Self->XLevel->NumStaticLights - 1) * sizeof(rep_light_t));
-		delete[] OldLights;
-	}
-	rep_light_t& L = Self->XLevel->StaticLights[Self->XLevel->NumStaticLights - 1];
-	L.Origin = Origin;
-	L.Radius = Radius;
-	L.Colour = Colour;
 }
 
 //**************************************************************************

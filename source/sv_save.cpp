@@ -614,6 +614,8 @@ static void UnarchiveThinkers()
 		if (Obj->IsA(VLevelInfo::StaticClass()))
 		{
 			GLevelInfo = (VLevelInfo*)Obj;
+			GLevelInfo->Game = GGameInfo;
+			GLevelInfo->World = GWorldInfo;
 			GLevel->LevelInfo = GLevelInfo;
 		}
 

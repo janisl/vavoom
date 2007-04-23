@@ -2148,6 +2148,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\p_levelinfo.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\source\p_levelinfo.h"
 				>
 			</File>
