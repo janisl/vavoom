@@ -965,7 +965,7 @@ void SV_MapTeleport(VName mapname)
 			TravelObjs.Append(vent);
 			GLevel->RemoveThinker(vent);
 			vent->UnlinkFromWorld();
-			SV_StopSound(vent, 0);
+			vent->StopSound(0);
 		}
 		if (Th->IsA(VPlayerReplicationInfo::StaticClass()))
 		{

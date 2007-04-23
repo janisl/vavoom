@@ -380,58 +380,6 @@ IMPLEMENT_FUNCTION(VObject, GetSeqSlot)
 
 //==========================================================================
 //
-//  PF_SectorStartSequence
-//
-//==========================================================================
-
-IMPLEMENT_FUNCTION(VObject, SectorStartSequence)
-{
-	P_GET_INT(ModeNum);
-	P_GET_NAME(name);
-	P_GET_PTR(sector_t, sec);
-	SV_SectorStartSequence(sec, *name, ModeNum);
-}
-
-//==========================================================================
-//
-//  PF_SectorStopSequence
-//
-//==========================================================================
-
-IMPLEMENT_FUNCTION(VObject, SectorStopSequence)
-{
-	P_GET_PTR(sector_t, sec);
-	SV_SectorStopSequence(sec);
-}
-
-//==========================================================================
-//
-//  PF_PolyobjStartSequence
-//
-//==========================================================================
-
-IMPLEMENT_FUNCTION(VObject, PolyobjStartSequence)
-{
-	P_GET_INT(ModeNum);
-	P_GET_NAME(name);
-	P_GET_PTR(polyobj_t, poly);
-	SV_PolyobjStartSequence(poly, *name, ModeNum);
-}
-
-//==========================================================================
-//
-//  PF_PolyobjStopSequence
-//
-//==========================================================================
-
-IMPLEMENT_FUNCTION(VObject, PolyobjStopSequence)
-{
-	P_GET_PTR(polyobj_t, poly);
-	SV_PolyobjStopSequence(poly);
-}
-
-//==========================================================================
-//
 //  PF_G_ExitLevel
 //
 //==========================================================================

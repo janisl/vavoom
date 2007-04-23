@@ -99,13 +99,27 @@ class VLevelInfo : public VThinker
 
 	void SetMapInfo(const mapInfo_t&);
 
+	void SectorStartSound(const sector_t*, int, int, float, float);
+	void SectorStopSound(const sector_t*, int);
+	void SectorStartSequence(const sector_t*, VName, int);
+	void SectorStopSequence(const sector_t*);
+	void PolyobjStartSequence(const polyobj_t*, VName, int);
+	void PolyobjStopSequence(const polyobj_t*);
+
 	VStr GetLevelName() const
 	{
 		return LevelInfoFlags & LIF_LookupName ? GLanguage[*LevelName] : LevelName;
 	}
 
+	//	Static lights
 	DECLARE_FUNCTION(AddStaticLight)
 	DECLARE_FUNCTION(AddStaticLightRGB)
+
+	//	Sound sequences
+	DECLARE_FUNCTION(SectorStartSequence)
+	DECLARE_FUNCTION(SectorStopSequence)
+	DECLARE_FUNCTION(PolyobjStartSequence)
+	DECLARE_FUNCTION(PolyobjStopSequence)
 
 	void eventSpawnSpecials()
 	{

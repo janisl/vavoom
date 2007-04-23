@@ -2542,19 +2542,20 @@ int VAcs::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_SectorSound)
-			SV_SectorStartSound(line ? line->frontsector : NULL,
-				GSoundManager->GetSoundID(GetStr(sp[-2])), 0, sp[-1] / 127.0, 1.0);
+			Level->SectorStartSound(line ? line->frontsector : NULL,
+				GSoundManager->GetSoundID(GetStr(sp[-2])), 0, sp[-1] / 127.0,
+				1.0);
 			sp -= 2;
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_AmbientSound)
-			SV_StartSound(NULL, GSoundManager->GetSoundID(GetStr(sp[-2])),
-				0, sp[-1] / 127.0, 0.0);
+			StartSound(TVec(0, 0, 0), 0, GSoundManager->GetSoundID(
+				GetStr(sp[-2])), 0, sp[-1] / 127.0, 0.0);
 			sp -= 2;
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_SoundSequence)
-			SV_SectorStartSequence(line ? line->frontsector : NULL,
+			Level->SectorStartSequence(line ? line->frontsector : NULL,
 				GetStr(sp[-1]), 0);
 			sp--;
 			ACSVM_BREAK;
@@ -2634,12 +2635,12 @@ int VAcs::RunScript(float DeltaTime)
 
 		ACSVM_CASE(PCD_ThingSound)
 			{
-				int sound = GSoundManager->GetSoundID(GetStr(sp[-2]));
+				VName sound = GetStr(sp[-2]);
 				int searcher = -1;
 				for (VEntity* mobj = Level->eventFindMobjFromTID(sp[-3], &searcher);
 					mobj != NULL; mobj = Level->eventFindMobjFromTID(sp[-3], &searcher))
 				{
-					SV_StartSound(mobj, sound, 0, sp[-1] / 127.0, 1.0);
+					mobj->StartSound(sound, 0, sp[-1] / 127.0, 1.0);
 				}
 				sp -= 3;
 			}
@@ -2653,14 +2654,24 @@ int VAcs::RunScript(float DeltaTime)
 
 		//	Extended P-Code commands.
 		ACSVM_CASE(PCD_ActivatorSound)
-			SV_StartSound(Activator, GSoundManager->GetSoundID(GetStr(
-				sp[-2])), 0, sp[-1] / 127.0, 1.0);
+			if (Activator)
+			{
+				Activator->StartSound(GetStr(sp[-2]), 0, sp[-1] / 127.0, 1.0);
+			}
+			else
+			{
+				StartSound(TVec(0, 0, 0), 0, GSoundManager->GetSoundID(
+					GetStr(sp[-2])), 0, sp[-1] / 127.0, 1.0);
+			}
 			sp -= 2;
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_LocalAmbientSound)
-			SV_StartLocalSound(Activator, GSoundManager->GetSoundID(GetStr(
-				sp[-2])), 0, sp[-1] / 127.0, 1.0);
+			if (Activator)
+			{
+				Activator->StartLocalSound(GetStr(sp[-2]), 0, sp[-1] / 127.0,
+					1.0);
+			}
 			sp -= 2;
 			ACSVM_BREAK;
 

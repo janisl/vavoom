@@ -229,7 +229,7 @@ void P_ChangeSwitchTexture(line_t* line, bool useAgain, VName DefaultSound)
 			PlaySound = true;
 		if (PlaySound)
 		{
-			SV_SectorStartSound(GLevel->Sides[sidenum].sector, sw->Sound ?
+			GLevelInfo->SectorStartSound(GLevel->Sides[sidenum].sector, sw->Sound ?
 				sw->Sound : GSoundManager->GetSoundID(DefaultSound), 0, 1, 1);
 		}
 		return;
@@ -274,7 +274,7 @@ void VButton::Tick(float DeltaTime)
 			SwitchDef = Def->PairIndex;
 			Def = Switches[Def->PairIndex];
 			Frame = -1;
-			SV_SectorStartSound(GLevel->Sides[Side].sector,
+			Level->SectorStartSound(XLevel->Sides[Side].sector,
 				Def->Sound ? Def->Sound :
 				GSoundManager->GetSoundID(DefaultSound), 0, 1, 1);
 			UseAgain = false;

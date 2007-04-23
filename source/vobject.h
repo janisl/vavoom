@@ -386,10 +386,6 @@ public:
 	DECLARE_FUNCTION(SetSeqTrans)
 	DECLARE_FUNCTION(GetSeqTrans)
 	DECLARE_FUNCTION(GetSeqSlot)
-	DECLARE_FUNCTION(SectorStartSequence)
-	DECLARE_FUNCTION(SectorStopSequence)
-	DECLARE_FUNCTION(PolyobjStartSequence)
-	DECLARE_FUNCTION(PolyobjStopSequence)
 
 	DECLARE_FUNCTION(G_ExitLevel)
 	DECLARE_FUNCTION(G_SecretExitLevel)
@@ -502,7 +498,7 @@ inline vuint32 GetTypeHash(VObject* Obj)
 #define P_PASS_NAME(v)		PR_PushName(v)
 #define P_PASS_STR(v)		PR_PushStr(v)
 #define P_PASS_VEC(v)		PR_Pushv(v)
-#define P_PASS_AVEC(v)		PR_Pushv(*(TVec*)&(v))
+#define P_PASS_AVEC(v)		PR_Pushav(v)
 #define P_PASS_REF(v)		PR_PushPtr(v)
 #define P_PASS_PTR(v)		PR_PushPtr(v)
 #define P_PASS_SELF			PR_PushPtr(this)
@@ -530,7 +526,7 @@ inline vuint32 GetTypeHash(VObject* Obj)
 #define P_GET_NAME(v)		VName v = PR_PopName()
 #define P_GET_STR(v)		VStr v = PR_PopStr()
 #define P_GET_VEC(v)		TVec v = PR_Popv()
-#define P_GET_AVEC(v)		TAVec v; v.roll = PR_Popf(); v.yaw = PR_Popf(); v.pitch = PR_Popf()
+#define P_GET_AVEC(v)		TAVec v = PR_Popav()
 #define P_GET_REF(c, v)		c* v = (c*)PR_PopPtr()
 #define P_GET_PTR(t, v)		t* v = (t*)PR_PopPtr()
 #define P_GET_SELF			ThisClass* Self = (ThisClass*)PR_PopPtr()
@@ -548,8 +544,7 @@ inline vuint32 GetTypeHash(VObject* Obj)
 #define P_GET_VEC_OPT(v, d)		bool specified_##v = !!PR_Pop(); \
 	TVec v = PR_Popv(); if (!specified_##v) v = d
 #define P_GET_AVEC_OPT(v, d)	bool specified_##v = !!PR_Pop(); \
-	TAVec v; v.roll = PR_Popf(); v.yaw = PR_Popf(); v.pitch = PR_Popf(); \
-	if (!specified_##v) v = d
+	TAVec v = PR_Popav(); if (!specified_##v) v = d
 #define P_GET_REF_OPT(c, v, d)	bool specified_##v = !!PR_Pop(); \
 	c* v = (c*)PR_PopPtr(); if (!specified_##v) v = d
 #define P_GET_PTR_OPT(t, v, d)	bool specified_##v = !!PR_Pop(); \
@@ -564,6 +559,6 @@ inline vuint32 GetTypeHash(VObject* Obj)
 #define RET_NAME(v)			PR_PushName(v)
 #define RET_STR(v)			PR_PushStr(v)
 #define RET_VEC(v)			PR_Pushv(v)
-#define RET_AVEC(v)			PR_Pushv(*(TVec*)&(v))
+#define RET_AVEC(v)			PR_Pushav(v)
 #define RET_REF(v)			PR_PushPtr(v)
 #define RET_PTR(v)			PR_PushPtr(v)

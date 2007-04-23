@@ -26,6 +26,7 @@
 // HEADER FILES ------------------------------------------------------------
 
 #include "gamedefs.h"
+//#include "sv_local.h"
 
 // MACROS ------------------------------------------------------------------
 
@@ -132,6 +133,105 @@ void VLevelInfo::SetMapInfo(const mapInfo_t& Info)
 
 //==========================================================================
 //
+//	VLevelInfo::SectorStartSound
+//
+//==========================================================================
+
+void VLevelInfo::SectorStartSound(const sector_t* Sector, int SoundId,
+	int Channel, float Volume, float Attenuation)
+{
+	guard(VLevelInfo::SectorStartSound);
+	if (Sector)
+	{
+		StartSound(Sector->soundorg, (Sector - XLevel->Sectors) +
+			GMaxEntities, SoundId, Channel, Volume, Attenuation);
+	}
+	else
+	{
+		StartSound(TVec(0, 0, 0), 0, SoundId, Channel, Volume,
+			Attenuation);
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VLevelInfo::SectorStopSound
+//
+//==========================================================================
+
+void VLevelInfo::SectorStopSound(const sector_t *sector, int channel)
+{
+	guard(VLevelInfo::SectorStopSound);
+	StopSound((sector - GLevel->Sectors) + GMaxEntities, channel);
+	unguard;
+}
+
+//==========================================================================
+//
+//	VLevelInfo::SectorStartSequence
+//
+//==========================================================================
+
+void VLevelInfo::SectorStartSequence(const sector_t* Sector, VName Name,
+	int ModeNum)
+{
+	guard(VLevelInfo::SectorStartSequence);
+	if (Sector)
+	{
+		StartSoundSequence(Sector->soundorg, (Sector - XLevel->Sectors) +
+			GMaxEntities, Name, ModeNum);
+	}
+	else
+	{
+		StartSoundSequence(TVec(0, 0, 0), 0, Name, ModeNum);
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VLevelInfo::SectorStopSequence
+//
+//==========================================================================
+
+void VLevelInfo::SectorStopSequence(const sector_t *sector)
+{
+	guard(VLevelInfo::SectorStopSequence);
+	StopSoundSequence((sector - XLevel->Sectors) + GMaxEntities);
+	unguard;
+}
+
+//==========================================================================
+//
+//	VLevelInfo::PolyobjStartSequence
+//
+//==========================================================================
+
+void VLevelInfo::PolyobjStartSequence(const polyobj_t* Poly, VName Name,
+	int ModeNum)
+{
+	guard(VLevelInfo::PolyobjStartSequence);
+	StartSoundSequence(Poly->startSpot, (Poly - XLevel->PolyObjs) +
+		GMaxEntities + XLevel->NumSectors, Name, ModeNum);
+	unguard;
+}
+
+//==========================================================================
+//
+//	VLevelInfo::PolyobjStopSequence
+//
+//==========================================================================
+
+void VLevelInfo::PolyobjStopSequence(const polyobj_t *poly)
+{
+	guard(VLevelInfo::PolyobjStopSequence);
+	StopSoundSequence((poly - XLevel->PolyObjs) + GMaxEntities + XLevel->NumSectors);
+	unguard;
+}
+
+//==========================================================================
+//
 //	VLevelInfo natives
 //
 //==========================================================================
@@ -175,4 +275,36 @@ IMPLEMENT_FUNCTION(VLevelInfo, AddStaticLightRGB)
 	L.Origin = Origin;
 	L.Radius = Radius;
 	L.Colour = Colour;
+}
+
+IMPLEMENT_FUNCTION(VLevelInfo, SectorStartSequence)
+{
+	P_GET_INT(ModeNum);
+	P_GET_NAME(name);
+	P_GET_PTR(sector_t, sec);
+	P_GET_SELF;
+	Self->SectorStartSequence(sec, name, ModeNum);
+}
+
+IMPLEMENT_FUNCTION(VLevelInfo, SectorStopSequence)
+{
+	P_GET_PTR(sector_t, sec);
+	P_GET_SELF;
+	Self->SectorStopSequence(sec);
+}
+
+IMPLEMENT_FUNCTION(VLevelInfo, PolyobjStartSequence)
+{
+	P_GET_INT(ModeNum);
+	P_GET_NAME(name);
+	P_GET_PTR(polyobj_t, poly);
+	P_GET_SELF;
+	Self->PolyobjStartSequence(poly, name, ModeNum);
+}
+
+IMPLEMENT_FUNCTION(VLevelInfo, PolyobjStopSequence)
+{
+	P_GET_PTR(polyobj_t, poly);
+	P_GET_SELF;
+	Self->PolyobjStopSequence(poly);
 }

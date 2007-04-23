@@ -361,6 +361,13 @@ class VEntity : public VThinker
 	void UnlinkFromWorld();
 	bool CanSee(VEntity*);
 
+	void StartSound(VName, vint32, float, float);
+	void StartLocalSound(VName, vint32, float, float);
+	void StopSound(vint32);
+	void StartSoundSequence(VName, vint32);
+	void AddSoundSequenceChoice(VName);
+	void StopSoundSequence();
+
 	DECLARE_FUNCTION(SetState)
 	DECLARE_FUNCTION(SetInitialState)
 	DECLARE_FUNCTION(AdvanceState)

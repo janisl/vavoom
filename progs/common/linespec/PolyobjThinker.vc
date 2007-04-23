@@ -28,6 +28,28 @@ class PolyobjThinker : Thinker
 
 float thrust_force;
 
+//==========================================================================
+//
+//  PolyobjStartSequence
+//
+//==========================================================================
+
+final void PolyobjStartSequence(polyobj_t* mobj, name sequence, int ModeNum)
+{
+	Level.PolyobjStartSequence(mobj, sequence, ModeNum);
+}
+
+//==========================================================================
+//
+//  PolyobjStopSequence
+//
+//==========================================================================
+
+final void PolyobjStopSequence(polyobj_t* mobj)
+{
+	Level.PolyobjStopSequence(mobj);
+}
+
 defaultproperties
 {
 }

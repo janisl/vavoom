@@ -217,18 +217,6 @@ struct VSndSeqInfo
 	TArray<VName>	Choices;
 };
 
-void SV_StartSound(const VEntity*, int, int, float, float);
-void SV_StartLocalSound(const VEntity*, int, int, float, float);
-void SV_StopSound(const VEntity*, int);
-void SV_SectorStartSound(const sector_t*, int, int, float, float);
-void SV_SectorStopSound(const sector_t*, int);
-void SV_SectorStartSequence(const sector_t*, VName, int);
-void SV_SectorStopSequence(const sector_t*);
-void SV_PolyobjStartSequence(const polyobj_t*, VName, int);
-void SV_PolyobjStopSequence(const polyobj_t*);
-void SV_EntityStartSequence(const VEntity*, VName, int);
-void SV_EntityAddSequenceChoice(const VEntity*, VName);
-void SV_EntityStopSequence(const VEntity*);
 void SV_BroadcastPrintf(const char*, ...);
 void SV_BroadcastCentrePrintf(const char*, ...);
 void SV_ClientPrintf(VBasePlayer*, const char*, ...);

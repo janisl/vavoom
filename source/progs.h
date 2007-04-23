@@ -108,12 +108,28 @@ inline void PR_Pushv(const TVec &v)
 	PR_Pushf(v.z);
 }
 
+inline void PR_Pushav(const TAVec &v)
+{
+	PR_Pushf(v.pitch);
+	PR_Pushf(v.yaw);
+	PR_Pushf(v.roll);
+}
+
 inline TVec PR_Popv()
 {
 	TVec v;
 	v.z = PR_Popf();
 	v.y = PR_Popf();
 	v.x = PR_Popf();
+	return v;
+}
+
+inline TAVec PR_Popav()
+{
+	TAVec v;
+	v.roll = PR_Popf();
+	v.yaw = PR_Popf();
+	v.pitch = PR_Popf();
 	return v;
 }
 

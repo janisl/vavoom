@@ -100,8 +100,21 @@ replication
 		CurrentKills, CurrentItems, CurrentSecret;
 }
 
+//
+//	Static lights
+//
 native final void AddStaticLight(TVec origin, float radius);
 native final void AddStaticLightRGB(TVec origin, float radius, int colour);
+
+//
+//	Sound sequences
+//
+native final void SectorStartSequence(sector_t* sector, name sequence,
+	int ModeNum);
+native final void SectorStopSequence(sector_t* sector);
+native final void PolyobjStartSequence(polyobj_t* mobj, name sequence,
+	int ModeNum);
+native final void PolyobjStopSequence(polyobj_t* mobj);
 
 //==========================================================================
 //

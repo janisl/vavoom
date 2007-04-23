@@ -57,6 +57,12 @@ class VThinker : public VObject
 	virtual void Tick(float);
 	virtual void DestroyThinker();
 
+	void StartSound(const TVec&, vint32, vint32, vint32, float, float);
+	void StopSound(vint32, vint32);
+	void StartSoundSequence(const TVec&, vint32, VName, vint32);
+	void AddSoundSequenceChoice(vint32, VName);
+	void StopSoundSequence(vint32);
+
 	DECLARE_FUNCTION(Spawn)
 	DECLARE_FUNCTION(Destroy)
 	DECLARE_FUNCTION(NextThinker)

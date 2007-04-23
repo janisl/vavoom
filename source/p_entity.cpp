@@ -26,7 +26,7 @@
 // HEADER FILES ------------------------------------------------------------
 
 #include "gamedefs.h"
-#include "sv_local.h"
+//#include "sv_local.h"
 
 // MACROS ------------------------------------------------------------------
 
@@ -57,8 +57,139 @@ IMPLEMENT_CLASS(V, Entity);
 void VEntity::DestroyThinker()
 {
 	guard(VEntity::DestroyThinker)
+	// unlink from sector and block lists
 	UnlinkFromWorld();
 
 	Super::DestroyThinker();
 	unguard;
+}
+
+//==========================================================================
+//
+//	VEntity::StartSound
+//
+//==========================================================================
+
+void VEntity::StartSound(VName Sound, vint32 Channel, float Volume,
+	float Attenuation)
+{
+	guard(VEntity::StartSound);
+	Super::StartSound(Origin, NetID, GSoundManager->ResolveEntitySound(
+		SoundClass, SoundGender, Sound), Channel, Volume, Attenuation);
+	unguard;
+}
+
+//==========================================================================
+//
+//	VEntity::StartLocalSound
+//
+//==========================================================================
+
+void VEntity::StartLocalSound(VName Sound, vint32 Channel, float Volume,
+	float Attenuation)
+{
+	guard(VEntity::StartLocalSound);
+	if (Player)
+	{
+		Player->eventClientStartSound(
+			GSoundManager->ResolveEntitySound(SoundClass, SoundGender, Sound),
+			TVec(0, 0, 0), 0, Channel, Volume, Attenuation);
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VEntity::StopSound
+//
+//==========================================================================
+
+void VEntity::StopSound(vint32 channel)
+{
+	guard(VEntity::StopSound);
+	Super::StopSound(NetID, channel);
+	unguard;
+}
+
+//==========================================================================
+//
+//	VEntity::StartSoundSequence
+//
+//==========================================================================
+
+void VEntity::StartSoundSequence(VName Name, vint32 ModeNum)
+{
+	guard(VEntity::StartSoundSequence);
+	Super::StartSoundSequence(Origin, NetID, Name, ModeNum);
+	unguard;
+}
+
+//==========================================================================
+//
+//	VEntity::AddSoundSequenceChoice
+//
+//==========================================================================
+
+void VEntity::AddSoundSequenceChoice(VName Choice)
+{
+	guard(VEntity::AddSoundSequenceChoice);
+	Super::AddSoundSequenceChoice(NetID, Choice);
+	unguard;
+}
+
+//==========================================================================
+//
+//	VEntity::StopSoundSequence
+//
+//==========================================================================
+
+void VEntity::StopSoundSequence()
+{
+	guard(VEntity::StopSoundSequence);
+	Super::StopSoundSequence(NetID);
+	unguard;
+}
+
+//==========================================================================
+//
+//	Entity.StartSoundSequence
+//
+//==========================================================================
+
+IMPLEMENT_FUNCTION(VEntity, PlaySound)
+{
+	P_GET_FLOAT_OPT(Attenuation, 1.0);
+	P_GET_FLOAT_OPT(Volume, 1.0);
+	P_GET_INT(Channel);
+	P_GET_NAME(SoundName);
+	P_GET_SELF;
+	Self->StartSound(SoundName, Channel, Volume, Attenuation);
+}
+
+IMPLEMENT_FUNCTION(VEntity, StopSound)
+{
+	P_GET_INT(Channel);
+	P_GET_SELF;
+	Self->StopSound(Channel);
+}
+
+IMPLEMENT_FUNCTION(VEntity, StartSoundSequence)
+{
+	P_GET_INT(ModeNum);
+	P_GET_NAME(Name);
+	P_GET_SELF;
+	Self->StartSoundSequence(Name, ModeNum);
+}
+
+IMPLEMENT_FUNCTION(VEntity, AddSoundSequenceChoice)
+{
+	P_GET_NAME(Choice);
+	P_GET_SELF;
+	Self->AddSoundSequenceChoice(Choice);
+}
+
+IMPLEMENT_FUNCTION(VEntity, StopSoundSequence)
+{
+	P_GET_SELF;
+	Self->StopSoundSequence();
 }

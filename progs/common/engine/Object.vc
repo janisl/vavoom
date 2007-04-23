@@ -1618,12 +1618,6 @@ native static final int GetSoundID(name Name);
 native static final void SetSeqTrans(name Name, int Num, int SeqType);
 native static final name GetSeqTrans(int Num, int SeqType);
 native static final name GetSeqSlot(name Sequence);
-native static final void SectorStartSequence(sector_t * sector, name sequence,
-	int ModeNum);
-native static final void SectorStopSequence(sector_t * sector);
-native static final void PolyobjStartSequence(polyobj_t * mobj, name sequence,
-	int ModeNum);
-native static final void PolyobjStopSequence(polyobj_t * mobj);
 
 native static final void G_ExitLevel(int Position);
 native static final void G_SecretExitLevel(int Position);

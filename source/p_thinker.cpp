@@ -82,9 +82,9 @@ void VThinker::Destroy()
 	{
 		for (int i = 0; i < MAXPLAYERS; i++)
 		{
-			if (GGameInfo->Players[i])
+			if (Level->Game->Players[i])
 			{
-				VThinkerChannel* Chan = GGameInfo->Players[i]->Net->ThinkerChannels.FindPtr(this);
+				VThinkerChannel* Chan = Level->Game->Players[i]->Net->ThinkerChannels.FindPtr(this);
 				if (Chan)
 				{
 					Chan->Close();
@@ -150,6 +150,145 @@ void VThinker::DestroyThinker()
 {
 	guard(VThinker::DestroyThinker);
 	SetFlags(_OF_DelayedDestroy);
+	unguard;
+}
+
+//==========================================================================
+//
+//	VThinker::StartSound
+//
+//==========================================================================
+
+void VThinker::StartSound(const TVec &origin, vint32 origin_id,
+	vint32 sound_id, vint32 channel, float volume, float Attenuation)
+{
+	guard(VThinker::StartSound);
+	for (int i = 0; i < MAXPLAYERS; i++)
+	{
+		if (!Level->Game->Players[i])
+			continue;
+		if (!(Level->Game->Players[i]->PlayerFlags & VBasePlayer::PF_Spawned))
+			continue;
+		Level->Game->Players[i]->eventClientStartSound(sound_id, origin,
+			origin_id, channel, volume, Attenuation);
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VThinker::StopSound
+//
+//==========================================================================
+
+void VThinker::StopSound(vint32 origin_id, vint32 channel)
+{
+	guard(VThinker::StopSound);
+	for (int i = 0; i < MAXPLAYERS; i++)
+	{
+		if (!Level->Game->Players[i])
+			continue;
+		if (!(Level->Game->Players[i]->PlayerFlags & VBasePlayer::PF_Spawned))
+			continue;
+		Level->Game->Players[i]->eventClientStopSound(origin_id, channel);
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VThinker::StartSoundSequence
+//
+//==========================================================================
+
+void VThinker::StartSoundSequence(const TVec& Origin, vint32 OriginId,
+	VName Name, vint32 ModeNum)
+{
+	guard(VThinker::StartSoundSequence);
+	//	Remove any existing sequences of this origin
+	for (int i = 0; i < sv_ActiveSequences.Num(); i++)
+	{
+		if (sv_ActiveSequences[i].OriginId == OriginId)
+		{
+			sv_ActiveSequences.RemoveIndex(i);
+			i--;
+		}
+	}
+	VSndSeqInfo& Seq = sv_ActiveSequences.Alloc();
+	Seq.Name = Name;
+	Seq.OriginId = OriginId;
+	Seq.Origin = Origin;
+	Seq.ModeNum = ModeNum;
+
+	for (int i = 0; i < MAXPLAYERS; i++)
+	{
+		if (!Level->Game->Players[i])
+			continue;
+		if (!(Level->Game->Players[i]->PlayerFlags & VBasePlayer::PF_Spawned))
+			continue;
+		Level->Game->Players[i]->eventClientStartSequence(Origin, OriginId,
+			Name, ModeNum);
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VThinker::AddSoundSequenceChoice
+//
+//==========================================================================
+
+void VThinker::AddSoundSequenceChoice(int origin_id, VName Choice)
+{
+	guard(VThinker::AddSoundSequenceChoice);
+	//	Remove it from server's sequences list.
+	for (int i = 0; i < sv_ActiveSequences.Num(); i++)
+	{
+		if (sv_ActiveSequences[i].OriginId == origin_id)
+		{
+			sv_ActiveSequences[i].Choices.Append(Choice);
+		}
+	}
+
+	for (int i = 0; i < MAXPLAYERS; i++)
+	{
+		if (!Level->Game->Players[i])
+			continue;
+		if (!(Level->Game->Players[i]->PlayerFlags & VBasePlayer::PF_Spawned))
+			continue;
+		Level->Game->Players[i]->eventClientAddSequenceChoice(origin_id,
+			Choice);
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VThinker::StopSoundSequence
+//
+//==========================================================================
+
+void VThinker::StopSoundSequence(int origin_id)
+{
+	guard(VThinker::StopSoundSequence);
+	//	Remove it from server's sequences list.
+	for (int i = 0; i < sv_ActiveSequences.Num(); i++)
+	{
+		if (sv_ActiveSequences[i].OriginId == origin_id)
+		{
+			sv_ActiveSequences.RemoveIndex(i);
+			i--;
+		}
+	}
+
+	for (int i = 0; i < MAXPLAYERS; i++)
+	{
+		if (!Level->Game->Players[i])
+			continue;
+		if (!(Level->Game->Players[i]->PlayerFlags & VBasePlayer::PF_Spawned))
+			continue;
+		Level->Game->Players[i]->eventClientStopSequence(origin_id);
+	}
 	unguard;
 }
 

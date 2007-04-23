@@ -83,6 +83,28 @@ void RemoveAffector()
 	NextAffector = none;
 }
 
+//==========================================================================
+//
+//	SectorStartSequence
+//
+//==========================================================================
+
+final void SectorStartSequence(sector_t * sector, name sequence, int ModeNum)
+{
+	Level.SectorStartSequence(sector, sequence, ModeNum);
+}
+
+//==========================================================================
+//
+//	SectorStopSequence
+//
+//==========================================================================
+
+final void SectorStopSequence(sector_t * sector)
+{
+	Level.SectorStopSequence(sector);
+}
+
 defaultproperties
 {
 }
