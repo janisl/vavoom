@@ -28,16 +28,13 @@
 #include "gamedefs.h"
 #include "r_local.h"
 
-extern VModel*		model_precache[1024];
-extern VStr			skin_list[256];
-
 // MACROS ------------------------------------------------------------------
 
 // TYPES -------------------------------------------------------------------
 
 struct VModel
 {
-	char		name[128];
+	VStr		name;
 	void*		data;		// only access through Mod_Extradata
 	int			type;
 };
@@ -162,7 +159,7 @@ void R_InitModels()
 
 	for (VXmlNode* N = Doc->Root.FindChild("include"); N; N = N->FindNext())
 	{
-		VModel* Mdl = Mod_FindName(*N->GetAttribute("file"));
+		VModel* Mdl = Mod_FindName(N->GetAttribute("file"));
 		Mod_Extradata(Mdl);
 	}
 
@@ -235,25 +232,27 @@ void *Mod_Extradata(VModel* mod)
 //
 //==========================================================================
 
-VModel* Mod_FindName(const char *name)
+VModel* Mod_FindName(const VStr& name)
 {
 	guard(Mod_FindName);
-	if (!name[0])
+	if (!name)
+	{
 		Sys_Error("Mod_ForName: NULL name");
+	}
 
 	//
 	// search the currently loaded models
 	//
 	for (int i = 0; i < mod_known.Num(); i++)
 	{
-		if (!VStr::Cmp(mod_known[i]->name, name))
+		if (mod_known[i]->name == name)
 		{
 			return mod_known[i];
 		}
 	}
 
 	VModel* mod = new VModel();
-	VStr::Cpy(mod->name, name);
+	mod->name = name;
 	mod->data = NULL;
 	mod->type = MODEL_Unknown;
 	mod_known.Append(mod);
@@ -290,22 +289,22 @@ static void Mod_SwapAliasModel(VModel* mod)
 
 	if (pmodel->version != ALIAS_VERSION)
 		Sys_Error("%s has wrong version number (%i should be %i)",
-			mod->name, pmodel->version, ALIAS_VERSION);
+			*mod->name, pmodel->version, ALIAS_VERSION);
 
 	if (pmodel->numverts <= 0)
-		Sys_Error("model %s has no vertices", mod->name);
+		Sys_Error("model %s has no vertices", *mod->name);
 
 	if (pmodel->numverts > MAXALIASVERTS)
-		Sys_Error("model %s has too many vertices", mod->name);
+		Sys_Error("model %s has too many vertices", *mod->name);
 
 	if (pmodel->numstverts <= 0)
-		Sys_Error("model %s has no texture vertices", mod->name);
+		Sys_Error("model %s has no texture vertices", *mod->name);
 
 	if (pmodel->numstverts > MAXALIASSTVERTS)
-		Sys_Error("model %s has too many texture vertices", mod->name);
+		Sys_Error("model %s has too many texture vertices", *mod->name);
 
 	if (pmodel->numtris <= 0)
-		Sys_Error("model %s has no triangles", mod->name);
+		Sys_Error("model %s has no triangles", *mod->name);
 
 	if (pmodel->skinwidth & 0x03)
 		Sys_Error("Mod_LoadAliasModel: skinwidth not multiple of 4");
@@ -384,7 +383,7 @@ static void ParseModelScript(VModel* mod, VStream& Strm)
 
 	//	Verify that it's a model definition file.
 	if (Doc->Root.Name != "vavoom_model_definition")
-		Sys_Error("%s is not a valid model definition file", mod->name);
+		Sys_Error("%s is not a valid model definition file", *mod->name);
 
 	VScriptedModel* Mdl = new VScriptedModel();
 	mod->data = Mdl;
@@ -401,7 +400,7 @@ static void ParseModelScript(VModel* mod, VStream& Strm)
 		for (VXmlNode* SN = N->FindChild("md2"); SN; SN = SN->FindNext())
 		{
 			VScriptSubModel& Md2 = SMdl.SubModels.Alloc();
-			Md2.Model = Mod_FindName(*SN->GetAttribute("file").ToLower().FixFileSlashes());
+			Md2.Model = Mod_FindName(SN->GetAttribute("file").ToLower().FixFileSlashes());
 
 			//	Version
 			Md2.Version = -1;
@@ -414,7 +413,7 @@ static void ParseModelScript(VModel* mod, VStream& Strm)
 			Md2.PositionModel = NULL;
 			if (SN->HasAttribute("position_file"))
 			{
-				Md2.PositionModel = Mod_FindName(*SN->GetAttribute(
+				Md2.PositionModel = Mod_FindName(SN->GetAttribute(
 					"position_file").ToLower().FixFileSlashes());
 			}
 
@@ -572,7 +571,7 @@ static void ParseModelScript(VModel* mod, VStream& Strm)
 			}
 			if (F.ModelIndex == -1)
 			{
-				Sys_Error("%s has no model %s", mod->name, *MdlName);
+				Sys_Error("%s has no model %s", *mod->name, *MdlName);
 			}
 
 			F.Inter = 0.0;
@@ -606,12 +605,12 @@ static void ParseModelScript(VModel* mod, VStream& Strm)
 		if (!Cls->Frames.Num())
 		{
 			Sys_Error("%s class %s has no states defined",
-				mod->name, *Cls->Name);
+				*mod->name, *Cls->Name);
 		}
 	}
 	if (!ClassDefined)
 	{
-		Sys_Error("%s defined no classes", mod->name);
+		Sys_Error("%s defined no classes", *mod->name);
 	}
 
 	//	We don't need the XML file anymore.
@@ -640,7 +639,7 @@ static VModel* Mod_LoadModel(VModel* mod)
 	//
 	VStream* Strm = FL_OpenFileRead(mod->name);
 	if (!Strm)
-		Sys_Error("Couldn't load %s", mod->name);
+		Sys_Error("Couldn't load %s", *mod->name);
 
 	mod->data = Z_Malloc(Strm->TotalSize());
 	Strm->Serialise(mod->data, Strm->TotalSize());
@@ -657,7 +656,7 @@ static VModel* Mod_LoadModel(VModel* mod)
 	}
 	else
 	{
-		Sys_Error("model %s is not a md2 model", mod->name);
+		Sys_Error("model %s is not a md2 model", *mod->name);
 	}
 
 	delete Strm;
@@ -794,7 +793,7 @@ static void DrawModel(VLevel* Level, const TVec& Org, const TAVec& Angles,
 		if (Md2Frame >= pmdl->numframes || Md2Frame < 0)
 		{
 			GCon->Logf(NAME_Dev, "no such frame %d in %s", Md2Frame,
-				SubMdl.Model->name);
+				*SubMdl.Model->name);
 			Md2Frame = 0;
 			//	Stop further warnings.
 			F.Index = 0;
@@ -913,21 +912,25 @@ bool VRenderLevel::DrawEntityModel(VEntity* Ent, vuint32 Light, float Alpha, flo
 	guard(VRenderLevel::DrawEntityModel);
 	if (Ent->EntityFlags & VEntity::EF_FixedModel)
 	{
-		VModel* Mdl = model_precache[Ent->FixedModelIndex];
+		if (!FL_FileExists(VStr("models/") + Ent->FixedModelName))
+		{
+			GCon->Logf("Can't find %s", *Ent->FixedModelName);
+			return false;
+		}
+		VModel* Mdl = Mod_FindName(VStr("models/") + Ent->FixedModelName);
 		if (!Mdl)
 		{
 			return false;
 		}
 		return DrawAliasModel(Ent->Origin - TVec(0, 0, Ent->FloorClip),
-			Ent->Angles, Mdl, Ent->State->InClassIndex,
-			*skin_list[Ent->ModelSkinNum], Ent->ModelVersion, Light, Alpha,
-			false, Inter);
+			Ent->Angles, Mdl, Ent->State->InClassIndex, *Ent->ModelSkin,
+			Ent->ModelVersion, Light, Alpha, false, Inter);
 	}
 	else
 	{
 		return DrawAliasModel(Ent->Origin - TVec(0, 0, Ent->FloorClip),
-			Ent->Angles, Ent->State, *skin_list[Ent->ModelSkinNum],
-			Ent->ModelVersion, Light, Alpha, false, Inter);
+			Ent->Angles, Ent->State, *Ent->ModelSkin, Ent->ModelVersion,
+			Light, Alpha, false, Inter);
 	}
 	unguard;
 }
@@ -943,7 +946,11 @@ bool VRenderLevel::CheckAliasModelFrame(VEntity* Ent, float Inter)
 	guard(VRenderLevel::CheckAliasModelFrame);
 	if (Ent->EntityFlags & VEntity::EF_FixedModel)
 	{
-		VModel* Mdl = model_precache[Ent->FixedModelIndex];
+		if (!FL_FileExists(VStr("models/") + Ent->FixedModelName))
+		{
+			return false;
+		}
+		VModel* Mdl = Mod_FindName(VStr("models/") + Ent->FixedModelName);
 		if (!Mdl)
 		{
 			return false;

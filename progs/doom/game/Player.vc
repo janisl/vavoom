@@ -287,27 +287,18 @@ void UserinfoChanged()
 void SetClientModel()
 {
 	string model;
-	string skin;
 
 	model = Info_ValueForKey(UserInfo, "model");
 	if (!model)
 	{
 		MO.bFixedModel = false;
-		MO.ModelSkinNum = 0;
+		MO.ModelSkin = "";
 		return;
 	}
 
 	MO.bFixedModel = true;
-	MO.FixedModelIndex = FindModel(va("players/%s/player.xml", model));
-	skin = Info_ValueForKey(UserInfo, "skin");
-	if (skin)
-	{
-		MO.ModelSkinNum = FindSkin(skin);
-	}
-	else
-	{
-		MO.ModelSkinNum = 0;
-	}
+	MO.FixedModelName = va("players/%s/player.xml", model);
+	MO.ModelSkin = Info_ValueForKey(UserInfo, "skin");
 }
 
 //==========================================================================

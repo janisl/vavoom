@@ -49,7 +49,6 @@ void CL_SetUpLocalPlayer(VSocketPublic*);
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
-extern VStr			skin_list[256];
 extern VLevel*		GClPrevLevel;
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
@@ -138,10 +137,6 @@ void CL_Shutdown()
 		GClGame->ConditionalDestroy();
 	if (GRoot)
 		GRoot->ConditionalDestroy();
-	for (int i = 0; i < 256; i++)
-	{
-		skin_list[i].Clean();
-	}
 	cls.userinfo.Clean();
 	im.LeaveName.Clean();
 	im.EnterName.Clean();

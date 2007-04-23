@@ -227,7 +227,7 @@ void CL_KeepaliveMessage();
 void R_InstallSprite(const char*, int);
 void R_DrawModelFrame(const TVec&, float, VModel*, int, const char*);
 
-VModel* Mod_FindName(const char*);
+VModel* Mod_FindName(const VStr&);
 bool R_GetModelSkinInfo(VModel*, int, VName&, VStr&);
 
 void SCR_SetVirtualScreen(int, int);

@@ -1160,7 +1160,7 @@ void Died(Actor source)
 		if (bFixedModel)
 		{
 			bFixedModel = false;
-			ModelSkinNum = 0;
+			ModelSkin = "";
 		}
 		SetState(GibsDeathState);
 	}

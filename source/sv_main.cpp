@@ -35,10 +35,6 @@
 
 #define REBORN_DESCRIPTION		"TEMP GAME"
 
-#define MAX_MODELS				512
-#define MAX_SPRITES				512
-#define MAX_SKINS				256
-
 // TYPES -------------------------------------------------------------------
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -117,11 +113,6 @@ static VCvarI	sv_cheats("sv_cheats", "0", CVAR_ServerInfo | CVAR_Latch);
 static vuint8	*fatpvs;
 
 static bool		mapteleport_issued;
-
-static int		nummodels;
-static VName	models[MAX_MODELS];
-static int		numskins;
-static VStr		skins[MAX_SKINS];
 
 static VCvarI	split_frame("split_frame", "1", CVAR_Archive);
 static VCvarF	sv_gravity("sv_gravity", "800.0", CVAR_ServerInfo);
@@ -278,10 +269,6 @@ void SV_Shutdown()
 	
 	P_FreeTerrainTypes();
 	svs.serverinfo.Clean();
-	for (int i = 0; i < MAX_SKINS; i++)
-	{
-		skins[i].Clean();
-	}
 
 	delete sv_reliable;
 	delete ServerNetContext;
@@ -1677,111 +1664,6 @@ int NET_SendToAll(VMessageOut* data, int blocktime)
 
 //==========================================================================
 //
-//	SV_InitModels
-//
-//==========================================================================
-
-static void SV_InitModelLists()
-{
-	nummodels = 1;
-	numskins = 1;
-}
-
-//==========================================================================
-//
-//	SV_FindModel
-//
-//==========================================================================
-
-int SV_FindModel(const char *name)
-{
-	guard(SV_FindModel);
-	int i;
-
-	if (!name || !*name)
-	{
-		return 0;
-	}
-	for (i = 0; i < nummodels; i++)
-	{
-		if (models[i] == name)
-		{
-			return i;
-		}
-	}
-	models[i] = name;
-	nummodels++;
-	*sv_reliable << (vuint8)svc_model
-				<< (vint16)i
-				<< name;
-	return i;
-	unguard;
-}
-
-//==========================================================================
-//
-//	SV_GetModelIndex
-//
-//==========================================================================
-
-int SV_GetModelIndex(const VName &Name)
-{
-	guard(SV_GetModelIndex);
-	int i;
-
-	if (Name == NAME_None)
-	{
-		return 0;
-	}
-	for (i = 0; i < nummodels; i++)
-	{
-		if (Name == models[i])
-		{
-			return i;
-		}
-	}
-	models[i] = Name;
-	nummodels++;
-	*sv_reliable << (vuint8)svc_model
-				<< (vint16)i
-				<< *Name;
-	return i;
-	unguard;
-}
-
-//==========================================================================
-//
-//	SV_FindSkin
-//
-//==========================================================================
-
-int SV_FindSkin(const char *name)
-{
-	guard(SV_FindSkin);
-	int i;
-
-	if (!name || !*name)
-	{
-		return 0;
-	}
-	for (i = 0; i < numskins; i++)
-	{
-		if (skins[i] == name)
-		{
-			return i;
-		}
-	}
-	skins[i] = name;
-	numskins++;
-	*sv_reliable << (vuint8)svc_skin
-				<< (vuint8)i
-				<< name;
-	return i;
-	unguard;
-}
-
-//==========================================================================
-//
 //	SV_SendServerInfo
 //
 //==========================================================================
@@ -1789,7 +1671,6 @@ int SV_FindSkin(const char *name)
 void SV_SendServerInfo(VBasePlayer *player)
 {
 	guard(SV_SendServerInfo);
-	int				i;
 	VMessageOut&	msg = player->Net->Message;
 
 	((VLevelChannel*)player->Net->Channels[CHANIDX_Level])->SetLevel(GLevel);
@@ -1801,34 +1682,6 @@ void SV_SendServerInfo(VBasePlayer *player)
 		<< (vuint8)SV_GetPlayerNum(player)
 		<< (vuint8)svs.max_clients
 		<< (vuint8)deathmatch;
-
-/*	for (i = 0; i < VMemberBase::GMembers.Num(); i++)
-	{
-		if (VMemberBase::GMembers[i]->MemberType == MEMBER_Class)
-		{
-			VClass* C = static_cast<VClass*>(VMemberBase::GMembers[i]);
-			if (C->IsChildOf(VThinker::StaticClass()))
-			{
-				msg << (vuint8)svc_class_name
-					<< (vuint16)C->NetId
-					<< C->GetName();
-			}
-		}
-	}*/
-
-	for (i = 1; i < nummodels; i++)
-	{
-		msg << (vuint8)svc_model
-			<< (vint16)i
-			<< *models[i];
-	}
-
-	for (i = 1; i < numskins; i++)
-	{
-		msg << (vuint8)svc_skin
-			<< (vuint8)i
-			<< *skins[i];
-	}
 
 	msg << (vuint8)svc_signonnum
 		<< (vuint8)1;
@@ -1968,8 +1821,6 @@ void SV_SpawnServer(const char *mapname, bool spawn_thinkers)
 	{
 		GLevelInfo->eventSpawnSpecials();
 	}
-
-	SV_InitModelLists();
 
 	VMemberBase::SetUpNetClasses();
 

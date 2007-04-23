@@ -58,9 +58,6 @@ void CL_SignonReply();
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-VModel*			model_precache[1024];
-VStr			skin_list[256];
-
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 // CODE --------------------------------------------------------------------
@@ -371,24 +368,6 @@ static void CL_ReadFromServerInfo()
 
 //==========================================================================
 //
-//	CL_AddModel
-//
-//==========================================================================
-
-static void CL_AddModel(int i, const char *name)
-{
-	if (FL_FileExists(name))
-	{
-		model_precache[i] = Mod_FindName(name);
-	}
-	else if (VCvar::GetInt("r_models"))
-	{
-		GCon->Logf("Can't find %s", name);
-	}
-}
-
-//==========================================================================
-//
 //	CL_DoLoadLevel
 //
 //==========================================================================
@@ -450,44 +429,6 @@ static void CL_ParseServerInfo(VMessageIn& msg)
 
 	GCon->Log(NAME_Dev, "Client level loaded");
 	unguard;
-}
-
-//==========================================================================
-//
-//	CL_ParseClassName
-//
-//==========================================================================
-
-static void CL_ParseClassName(VMessageIn& msg)
-{
-	/*vint32 i = */msg.ReadShort();
-	VStr Name = msg.ReadString();
-//	ClassLookup[i] = VClass::FindClass(*Name);
-}
-
-//==========================================================================
-//
-//	CL_ParseModel
-//
-//==========================================================================
-
-static void CL_ParseModel(VMessageIn& msg)
-{
-	int i = msg.ReadShort();
-	VStr name = VStr("models/") + msg.ReadString();
-	CL_AddModel(i, *name);
-}
-
-//==========================================================================
-//
-//	CL_ParseSkin
-//
-//==========================================================================
-
-static void CL_ParseSkin(VMessageIn& msg)
-{
-	int i = msg.ReadByte();
-	msg << skin_list[i];
 }
 
 //==========================================================================
@@ -560,18 +501,6 @@ void VClientGenChannel::ParsePacket(VMessageIn& msg)
 				<< string;
 			Info_SetValueForKey(GClGame->serverinfo, name, string);
 			CL_ReadFromServerInfo();
-			break;
-
-		case svc_model:
-			CL_ParseModel(msg);
-			break;
-
-		case svc_skin:
-			CL_ParseSkin(msg);
-			break;
-
-		case svc_class_name:
-			CL_ParseClassName(msg);
 			break;
 
 		default:

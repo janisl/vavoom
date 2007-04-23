@@ -31,18 +31,11 @@ enum
 	svc_nop,
 	svc_disconnect,
 	svc_server_info,
-
 	svc_stringcmd,
 	svc_signonnum,
-
 	svc_view_data,
 	svc_time,
 	svc_serverinfo,
-
-	svc_model,
-	svc_skin,
-
-	svc_class_name,
 };
 
 enum

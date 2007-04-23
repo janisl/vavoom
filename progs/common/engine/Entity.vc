@@ -86,52 +86,52 @@ enum
 	ROLE_Authority
 };
 
-int Role;
-int RemoteRole;
+int				Role;
+int				RemoteRole;
 
 // Info for drawing: position.
-TVec Origin;
+TVec			Origin;
 
 // Momentums, used to update position.
-TVec Velocity;
+TVec			Velocity;
 
-TAVec Angles;				// orientation
+TAVec			Angles;				// orientation
 
-readonly state State;
-float StateTime;			// state tic counter
+readonly state	State;
+float			StateTime;			// state tic counter
 
 //More drawing info.
-int SpriteType;				//  How to draw sprite
-int FixedModelIndex;
-int ModelSkinNum;
-int ModelVersion;
+int				SpriteType;				//  How to draw sprite
+string			FixedModelName;
+string			ModelSkin;
+int				ModelVersion;
 
-float Alpha;
-int Translation;
+float			Alpha;
+int				Translation;
 
-float FloorClip;	// value to use for floor clipping
+float			FloorClip;	// value to use for floor clipping
 
-int Effects;
+int				Effects;
 
-native readonly subsector_t* SubSector;
-native readonly sector_t* Sector;
+native readonly subsector_t*	SubSector;
+native readonly sector_t*		Sector;
 
 // Interaction info, by BLOCKMAP.
 // Links in blocks (if needed).
-native readonly private Entity BlockMapNext;
-native readonly private Entity BlockMapPrev;
+native readonly private Entity	BlockMapNext;
+native readonly private Entity	BlockMapPrev;
 
 // The closest interval over all contacted Sectors.
-native float FloorZ;
-native float CeilingZ;
-native float DropOffZ;
+native float	FloorZ;
+native float	CeilingZ;
+native float	DropOffZ;
 
 //  Closest floor and ceiling, source of floorz and ceilingz
-native sec_plane_t* Floor;
-native sec_plane_t* Ceiling;
+native sec_plane_t*	Floor;
+native sec_plane_t*	Ceiling;
 
 // If == validcount, already checked.
-int ValidCount;
+int				ValidCount;
 
 //	Flags
 bool bSolid;			// Blocks.
@@ -155,53 +155,53 @@ bool bBlasted;			// missile will pass through ghosts
 bool bCantLeaveFloorpic;// stay within a certain floor type
 bool bFloorClip;		// if feet are allowed to be clipped
 bool bIgnoreCeilingStep;// continue walk without lowering itself
-bool bIgnoreFloorStep;// continue walk ignoring floor height changes
+bool bIgnoreFloorStep;	// continue walk ignoring floor height changes
 bool bAvoidingDropoff;	// used to move monsters away from dropoffs
 bool bOnMobj;			// mobj is resting on top of another mobj
 bool bCorpse;			// don't stop moving halfway off a step
 bool bFullBright;		// make current state full bright
 native readonly bool bNetLocalPlayer;	// Mobj of player currently being updated
 
-int Health;
+int				Health;
 
 // For movement checking.
-float Radius;
-float Height;
+float			Radius;
+float			Height;
 
 // Additional info record for player avatars only.
 // Only valid if type == MT_PLAYER
-BasePlayer Player;
+BasePlayer		Player;
 
-int TID;		// thing identifier
-int Special;	// special
-int Args[5];	// special arguments
+int				TID;		// thing identifier
+int				Special;	// special
+int				Args[5];	// special arguments
 
-readonly private int NetID;
+readonly private int	NetID;
 
 //  Params
-float Mass;
-float MaxStepHeight;
-float MaxDropoffHeight;
+float			Mass;
+float			MaxStepHeight;
+float			MaxDropoffHeight;
 
 //  Water
-int WaterLevel;
-int WaterType;
+int				WaterLevel;
+int				WaterType;
 
 //   For player sounds.
-name SoundClass;
-name SoundGender;
+name			SoundClass;
+name			SoundGender;
 
 	//	Owner entity of inventory item
-Entity Owner;
+Entity			Owner;
 
 replication
 {
 	reliable if (Role == ROLE_Authority)
 		Origin, Angles, FloorClip, State, StateTime,
-		SpriteType, ModelVersion, Alpha, Translation, Effects, bFullBright,
-		bFixedModel, bNetLocalPlayer, NetID;
+		SpriteType, ModelSkin, ModelVersion, Alpha, Translation, Effects,
+		bFullBright, bFixedModel, bNetLocalPlayer, NetID;
 	reliable if (Role == ROLE_Authority && bFixedModel)
-		FixedModelIndex, ModelSkinNum;
+		FixedModelName;
 }
 
 //

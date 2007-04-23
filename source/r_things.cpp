@@ -100,8 +100,6 @@ struct spritedef_t
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
-extern VModel*		model_precache[1024];
-
 extern VCvarI		r_chasecam;
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------

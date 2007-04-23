@@ -506,42 +506,6 @@ IMPLEMENT_FUNCTION(VObject, P_ForceLightning)
 
 //==========================================================================
 //
-//	PF_FindModel
-//
-//==========================================================================
-
-IMPLEMENT_FUNCTION(VObject, FindModel)
-{
-	P_GET_STR(name);
-	RET_INT(SV_FindModel(*name));
-}
-
-//==========================================================================
-//
-//	PF_GetModelIndex
-//
-//==========================================================================
-
-IMPLEMENT_FUNCTION(VObject, GetModelIndex)
-{
-	P_GET_NAME(Name);
-	RET_INT(SV_GetModelIndex(Name));
-}
-
-//==========================================================================
-//
-//	PF_FindSkin
-//
-//==========================================================================
-
-IMPLEMENT_FUNCTION(VObject, FindSkin)
-{
-	P_GET_STR(name);
-	RET_INT(SV_FindSkin(*name));
-}
-
-//==========================================================================
-//
 //	PF_FindClassFromEditorId
 //
 //==========================================================================
@@ -720,7 +684,7 @@ IMPLEMENT_FUNCTION(VObject, InstallModel)
 	P_GET_STR(name);
 	if (FL_FileExists(name))
 	{
-		RET_PTR(Mod_FindName(*name));
+		RET_PTR(Mod_FindName(name));
 	}
 	else
 	{
