@@ -26,7 +26,7 @@
 // HEADER FILES ------------------------------------------------------------
 
 #include "gamedefs.h"
-//#include "sv_local.h"
+#include "sv_local.h"
 
 // MACROS ------------------------------------------------------------------
 
@@ -232,6 +232,110 @@ void VLevelInfo::PolyobjStopSequence(const polyobj_t *poly)
 
 //==========================================================================
 //
+//	VLevelInfo::ExitLevel
+//
+//==========================================================================
+
+void VLevelInfo::ExitLevel(int Position)
+{
+	guard(VLevelInfo::ExitLevel);
+	LeavePosition = Position;
+	completed = true;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VLevelInfo::SecretExitLevel
+//
+//==========================================================================
+
+void VLevelInfo::SecretExitLevel(int Position)
+{
+	guard(VLevelInfo::SecretExitLevel);
+	if (SecretMap == NAME_None)
+	{
+		// No secret map, use normal exit
+		ExitLevel(Position);
+		return;
+	}
+
+	LeavePosition = Position;
+	completed = true;
+
+	NextMap = SecretMap; 	// go to secret level
+
+	for (int i = 0; i < MAXPLAYERS; i++)
+	{
+		if (Game->Players[i])
+		{
+			Game->Players[i]->PlayerFlags |= VBasePlayer::PF_DidSecret;
+		}
+	}
+	unguard;
+} 
+
+//==========================================================================
+//
+//	VLevelInfo::Completed
+//
+//	Starts intermission routine, which is used only during hub exits,
+// and DeathMatch games.
+//
+//==========================================================================
+
+void VLevelInfo::Completed(int InMap, int InPosition, int SaveAngle)
+{
+	guard(VLevelInfo::Completed);
+	int Map = InMap;
+	int Position = InPosition;
+	if (Map == -1 && Position == -1)
+	{
+		if (!deathmatch)
+		{
+			for (int i = 0; i < svs.max_clients; i++)
+			{
+				if (Game->Players[i])
+				{
+					Game->Players[i]->eventClientFinale(
+						VStr(NextMap).StartsWith("EndGame") ? *NextMap : "");
+				}
+			}
+			sv.intermission = 2;
+			return;
+		}
+		Map = 1;
+		Position = 0;
+	}
+	NextMap = P_GetMapNameByLevelNum(Map);
+
+	LeavePosition = Position;
+	completed = true;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VLevelInfo::ForceLightning
+//
+//==========================================================================
+
+void VLevelInfo::ForceLightning()
+{
+	guard(VLevelInfo::ForceLightning);
+	for (int i = 0; i < MAXPLAYERS; i++)
+	{
+		if (!Game->Players[i])
+			continue;
+		if (!(Game->Players[i]->PlayerFlags & VBasePlayer::PF_Spawned))
+			continue;
+		Game->Players[i]->eventClientForceLightning();
+	}
+	unguard;
+}
+
+//==========================================================================
+//
 //	VLevelInfo natives
 //
 //==========================================================================
@@ -307,4 +411,42 @@ IMPLEMENT_FUNCTION(VLevelInfo, PolyobjStopSequence)
 	P_GET_PTR(polyobj_t, poly);
 	P_GET_SELF;
 	Self->PolyobjStopSequence(poly);
+}
+
+IMPLEMENT_FUNCTION(VLevelInfo, ExitLevel)
+{
+	P_GET_INT(Position);
+	P_GET_SELF;
+	Self->ExitLevel(Position);
+}
+
+IMPLEMENT_FUNCTION(VLevelInfo, SecretExitLevel)
+{
+	P_GET_INT(Position);
+	P_GET_SELF;
+	Self->SecretExitLevel(Position);
+}
+
+IMPLEMENT_FUNCTION(VLevelInfo, Completed)
+{
+	P_GET_INT(SaveAngle);
+	P_GET_INT(pos);
+	P_GET_INT(map);
+	P_GET_SELF;
+	Self->Completed(map, pos, SaveAngle);
+}
+
+IMPLEMENT_FUNCTION(VLevelInfo, ChangeSwitchTexture)
+{
+	P_GET_NAME(DefaultSound);
+	P_GET_BOOL(useAgain);
+	P_GET_PTR(line_t, line);
+	P_GET_SELF;
+	Self->ChangeSwitchTexture(line, useAgain, DefaultSound);
+}
+
+IMPLEMENT_FUNCTION(VLevelInfo, ForceLightning)
+{
+	P_GET_SELF;
+	Self->ForceLightning();
 }

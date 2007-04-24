@@ -310,7 +310,7 @@ bool ActivateLine(line_t* Line, Actor A, int Side, int ActivationType)
 	if ((lineActivation == SPAC_USE || lineActivation == SPAC_IMPACT ||
 		lineActivation == SPAC_USETHROUGH) && buttonSuccess)
 	{
-		P_ChangeSwitchTexture(Line, repeat,
+		ChangeSwitchTexture(Line, repeat,
 			Line->special == LNSPEC_ExitNormal ||
 			Line->special == LNSPEC_ExitSecret ||
 			Line->special == LNSPEC_TeleportNewMap ||

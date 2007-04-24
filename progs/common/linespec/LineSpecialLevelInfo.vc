@@ -470,7 +470,7 @@ bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 			// Players must be alive to teleport
 			if (!(A && A.bIsPlayer && A.Player.PlayerState == PST_DEAD))
 			{
-				G_Completed(Arg1, Arg2, Arg3);
+				Completed(Arg1, Arg2, Arg3);
 				buttonSuccess = true;
 			}
 		}
@@ -486,12 +486,12 @@ bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 				if (Game.deathmatch)
 				{
 					// Winning in deathmatch just goes back to map 1
-					G_Completed(1, 0, 0);
+					Completed(1, 0, 0);
 				}
 				else
 				{
 					// Passing -1, -1 to G_Completed() starts the Finale
-					G_Completed(-1, -1, 0);
+					Completed(-1, -1, 0);
 				}
 			}
 		}
@@ -555,7 +555,7 @@ bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 		break;
 	case LNSPEC_LightForceLightning:
 		buttonSuccess = true;
-		P_ForceLightning();
+		ForceLightning();
 		break;
 	case LNSPEC_LightRaiseByValue:
 		buttonSuccess = EV_LightRaiseByValue(Arg1, Arg2, Arg3, Arg4, Arg5);
@@ -765,11 +765,11 @@ bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 		break;
 	case LNSPEC_ExitNormal:
 		buttonSuccess = true;
-		G_ExitLevel(Arg1);
+		ExitLevel(Arg1);
 		break;
 	case LNSPEC_ExitSecret:
 		buttonSuccess = true;
-		G_SecretExitLevel(Arg1);
+		SecretExitLevel(Arg1);
 		break;
 	case LNSPEC_ElevatorRaiseToNearest:
 		buttonSuccess = EV_DoElevator(Arg1, Arg2, Arg3, Arg4, Arg5,

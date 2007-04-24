@@ -96,11 +96,11 @@ TArray<VSndSeqInfo>	sv_ActiveSequences;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static int 		LeavePosition;
+int 		LeavePosition;
 
 static int		RebornPosition;	// Position indicator for cooperative net-play reborn
 
-static bool		completed;
+bool		completed;
 
 static VCvarI	TimeLimit("TimeLimit", "0");
 static VCvarI	DeathMatch("DeathMatch", "0", CVAR_ServerInfo);
@@ -290,90 +290,6 @@ void VEntity::Destroy()
 	}
 
 	Super::Destroy();
-	unguard;
-}
-
-//==========================================================================
-//
-//	SV_ClientPrintf
-//
-//==========================================================================
-
-void SV_ClientPrintf(VBasePlayer *player, const char *s, ...)
-{
-	guard(SV_ClientPrintf);
-	va_list	v;
-	char	buf[1024];
-
-	va_start(v, s);
-	vsprintf(buf, s, v);
-	va_end(v);
-
-	player->eventClientPrint(buf);
-	unguard;
-}
-
-//==========================================================================
-//
-//	SV_ClientCentrePrintf
-//
-//==========================================================================
-
-void SV_ClientCentrePrintf(VBasePlayer *player, const char *s, ...)
-{
-	guard(SV_ClientCentrePrintf);
-	va_list	v;
-	char	buf[1024];
-
-	va_start(v, s);
-	vsprintf(buf, s, v);
-	va_end(v);
-
-	player->eventClientCentrePrint(buf);
-	unguard;
-}
-
-//==========================================================================
-//
-//	SV_BroadcastPrintf
-//
-//==========================================================================
-
-void SV_BroadcastPrintf(const char *s, ...)
-{
-	guard(SV_BroadcastPrintf);
-	va_list	v;
-	char	buf[1024];
-
-	va_start(v, s);
-	vsprintf(buf, s, v);
-	va_end(v);
-
-	for (int i = 0; i < svs.max_clients; i++)
-		if (GGameInfo->Players[i])
-			GGameInfo->Players[i]->eventClientPrint(buf);
-	unguard;
-}
-
-//==========================================================================
-//
-//	SV_BroadcastCentrePrintf
-//
-//==========================================================================
-
-void SV_BroadcastCentrePrintf(const char *s, ...)
-{
-	guard(SV_BroadcastCentrePrintf);
-	va_list	v;
-	char	buf[1024];
-
-	va_start(v, s);
-	vsprintf(buf, s, v);
-	va_end(v);
-
-	for (int i = 0; i < svs.max_clients; i++)
-		if (GGameInfo->Players[i])
-			GGameInfo->Players[i]->eventClientCentrePrint(buf);
 	unguard;
 }
 
@@ -897,24 +813,6 @@ void SV_Ticker()
 
 //==========================================================================
 //
-//	SV_ForceLightning
-//
-//==========================================================================
-
-void SV_ForceLightning()
-{
-	for (int i = 0; i < MAXPLAYERS; i++)
-	{
-		if (!GGameInfo->Players[i])
-			continue;
-		if (!(GGameInfo->Players[i]->PlayerFlags & VBasePlayer::PF_Spawned))
-			continue;
-		GGameInfo->Players[i]->eventClientForceLightning();
-	}
-}
-
-//==========================================================================
-//
 //	SV_ChangeSky
 //
 //==========================================================================
@@ -993,87 +891,6 @@ static void G_DoCompleted()
 			GGameInfo->Players[i]->eventClientIntermission(GLevelInfo->NextMap);
 		}
 	}
-}
-
-//==========================================================================
-//
-//	G_ExitLevel
-//
-//==========================================================================
-
-void G_ExitLevel(int Position)
-{ 
-	guard(G_ExitLevel);
-	LeavePosition = Position;
-	completed = true;
-	unguard;
-}
-
-//==========================================================================
-//
-//	G_SecretExitLevel
-//
-//==========================================================================
-
-void G_SecretExitLevel(int Position)
-{
-	guard(G_SecretExitLevel);
-	if (GLevelInfo->SecretMap == NAME_None)
-	{
-		// No secret map, use normal exit
-		G_ExitLevel(Position);
-		return;
-	}
-
-	LeavePosition = Position;
-	completed = true;
-
-	GLevelInfo->NextMap = GLevelInfo->SecretMap; 	// go to secret level
-
-	for (int i = 0; i < MAXPLAYERS; i++)
-	{
-		if (GGameInfo->Players[i])
-		{
-			GGameInfo->Players[i]->PlayerFlags |= VBasePlayer::PF_DidSecret;
-		}
-	}
-	unguard;
-} 
-
-//==========================================================================
-//
-//	G_Completed
-//
-//	Starts intermission routine, which is used only during hub exits,
-// and DeathMatch games.
-//
-//==========================================================================
-
-void G_Completed(int InMap, int InPosition, int SaveAngle)
-{
-	guard(G_Completed);
-	int Map = InMap;
-	int Position = InPosition;
-	if (Map == -1 && Position == -1)
-	{
-		if (!deathmatch)
-		{
-			for (int i = 0; i < svs.max_clients; i++)
-				if (GGameInfo->Players[i])
-					GGameInfo->Players[i]->eventClientFinale(
-						VStr(GLevelInfo->NextMap).StartsWith("EndGame") ?
-						*GLevelInfo->NextMap : "");
-			sv.intermission = 2;
-			return;
-		}
-		Map = 1;
-		Position = 0;
-	}
-	GLevelInfo->NextMap = P_GetMapNameByLevelNum(Map);
-
-	LeavePosition = Position;
-	completed = true;
-	unguard;
 }
 
 //==========================================================================
@@ -1722,9 +1539,9 @@ COMMAND(Stats)
 		return;
 	}
 
-	SV_ClientPrintf(sv_player, "Kills: %d of %d", sv_player->KillCount, GLevelInfo->TotalKills);
-	SV_ClientPrintf(sv_player, "Items: %d of %d", sv_player->ItemCount, GLevelInfo->TotalItems);
-	SV_ClientPrintf(sv_player, "Secrets: %d of %d", sv_player->SecretCount, GLevelInfo->TotalSecret);
+	sv_player->Printf("Kills: %d of %d", sv_player->KillCount, GLevelInfo->TotalKills);
+	sv_player->Printf("Items: %d of %d", sv_player->ItemCount, GLevelInfo->TotalItems);
+	sv_player->Printf("Secrets: %d of %d", sv_player->SecretCount, GLevelInfo->TotalSecret);
 	unguard;
 }
 
@@ -2028,7 +1845,7 @@ COMMAND(Say)
 		Text += " ";
 		Text += Args[i];
 	}
-	SV_BroadcastPrintf(*Text);
+	GLevelInfo->BroadcastPrintf(*Text);
 	GLevelInfo->StartSound(TVec(0, 0, 0), 0,
 		GSoundManager->GetSoundID("misc/chat"), 0, 1.0, 0);
 	unguard;

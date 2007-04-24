@@ -627,7 +627,7 @@ void Died(Actor source)
 	{
 		//	Start sad finale.
 		Player(Player).ClientFinaleType(1);
-		G_Completed(-1, -1, 0);
+		Level.Completed(-1, -1, 0);
 	}
 
 	bShootable = false;

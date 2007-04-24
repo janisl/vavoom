@@ -326,8 +326,6 @@ public:
 	DECLARE_FUNCTION(GetSlist)
 
 	DECLARE_FUNCTION(LoadTextLump)
-	DECLARE_FUNCTION(AllocDlight)
-	DECLARE_FUNCTION(NewParticle)
 
 	//	Graphics
 	DECLARE_FUNCTION(SetVirtualScreen)
@@ -365,9 +363,6 @@ public:
 	DECLARE_FUNCTION(TranslateKey)
 #endif
 #ifdef SERVER
-	//	Print functions
-	DECLARE_FUNCTION(bprint)
-
 	//	Map utilites
 	DECLARE_FUNCTION(LineOpenings)
 	DECLARE_FUNCTION(P_BoxOnLineSide)
@@ -375,9 +370,6 @@ public:
 	DECLARE_FUNCTION(FindOpening)
 	DECLARE_FUNCTION(PointInRegion)
 	DECLARE_FUNCTION(MapBlock)
-
-	//	Special thinker utilites
-	DECLARE_FUNCTION(P_ChangeSwitchTexture)
 
 	//	Sound functions
 	DECLARE_FUNCTION(SectorStopSound)
@@ -387,14 +379,10 @@ public:
 	DECLARE_FUNCTION(GetSeqTrans)
 	DECLARE_FUNCTION(GetSeqSlot)
 
-	DECLARE_FUNCTION(G_ExitLevel)
-	DECLARE_FUNCTION(G_SecretExitLevel)
-	DECLARE_FUNCTION(G_Completed)
 	DECLARE_FUNCTION(SB_Start)
 	DECLARE_FUNCTION(TerrainType)
 	DECLARE_FUNCTION(GetSplashInfo)
 	DECLARE_FUNCTION(GetTerrainInfo)
-	DECLARE_FUNCTION(P_ForceLightning)
 	DECLARE_FUNCTION(FindClassFromEditorId)
 	DECLARE_FUNCTION(FindClassFromScriptId)
 	DECLARE_FUNCTION(ChangeMusic)

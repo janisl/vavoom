@@ -229,7 +229,7 @@ void DisconnectClient()
 		ViewEnt.Destroy();
 		ViewEnt = none;
 	}
-	bprint("%s left the game\n", PlayerName);
+	Level.bprint("%s left the game\n", PlayerName);
 	MO.PlaySound('misc/chat', CHAN_AUTO, 1.0, ATTN_NONE);
 }
 
@@ -1414,7 +1414,7 @@ void PlayerInSpecialSector(float deltaTime)
 	
 			if (Health <= 10)
 			{
-				G_ExitLevel(0);
+				Level.ExitLevel(0);
 			}
 			break;
 		case SECSPEC_DamageLavaWimpy:
@@ -2701,7 +2701,7 @@ void ClientBlood(TVec org, int damage)
 
 	for (i = 0; i < damage; i++)
 	{
-		p = NewParticle();
+		p = Level.NewParticle();
 		if (!p)
 			return;
 
@@ -2725,7 +2725,7 @@ void ClientExplosion(int etype, TVec org)
 {
 	dlight_t* dl;
 
-	dl = AllocDlight(0);
+	dl = Level.AllocDlight(0);
 	dl->origin = org;
 	dl->radius = 350.0;
 	dl->colour = StrifeDefs.default.ecolours[etype];

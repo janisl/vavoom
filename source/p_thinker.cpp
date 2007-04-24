@@ -294,6 +294,50 @@ void VThinker::StopSoundSequence(int origin_id)
 
 //==========================================================================
 //
+//	VThinker::BroadcastPrintf
+//
+//==========================================================================
+
+void VThinker::BroadcastPrintf(const char *s, ...)
+{
+	guard(VThinker::BroadcastPrintf);
+	va_list	v;
+	char	buf[1024];
+
+	va_start(v, s);
+	vsprintf(buf, s, v);
+	va_end(v);
+
+	for (int i = 0; i < svs.max_clients; i++)
+		if (Level->Game->Players[i])
+			Level->Game->Players[i]->eventClientPrint(buf);
+	unguard;
+}
+
+//==========================================================================
+//
+//	VThinker::BroadcastCentrePrintf
+//
+//==========================================================================
+
+void VThinker::BroadcastCentrePrintf(const char *s, ...)
+{
+	guard(VThinker::BroadcastCentrePrintf);
+	va_list	v;
+	char	buf[1024];
+
+	va_start(v, s);
+	vsprintf(buf, s, v);
+	va_end(v);
+
+	for (int i = 0; i < svs.max_clients; i++)
+		if (Level->Game->Players[i])
+			Level->Game->Players[i]->eventClientCentrePrint(buf);
+	unguard;
+}
+
+//==========================================================================
+//
 //	Script natives
 //
 //==========================================================================
@@ -347,4 +391,24 @@ IMPLEMENT_FUNCTION(VThinker, NextThinker)
 		th = th->Next;
 	}
 	RET_REF(Ret);
+}
+
+IMPLEMENT_FUNCTION(VThinker, bprint)
+{
+	VStr Msg = PF_FormatString();
+	P_GET_SELF;
+	Self->BroadcastPrintf(*Msg);
+}
+
+IMPLEMENT_FUNCTION(VThinker, AllocDlight)
+{
+	P_GET_INT(key);
+	P_GET_SELF;
+	RET_PTR(Self->XLevel->RenderData->AllocDlight(key));
+}
+
+IMPLEMENT_FUNCTION(VThinker, NewParticle)
+{
+	P_GET_SELF;
+	RET_PTR(Self->XLevel->RenderData->NewParticle());
 }

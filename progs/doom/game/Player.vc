@@ -258,7 +258,7 @@ void DisconnectClient()
 		ViewEnt.Destroy();
 		ViewEnt = none;
 	}
-	bprint("%s left the game\n", PlayerName);
+	Level.bprint("%s left the game\n", PlayerName);
 	MO.PlaySound('misc/chat', CHAN_AUTO, 1.0, ATTN_NONE);
 }
 
@@ -1165,7 +1165,7 @@ void PlayerInSpecialSector(float deltaTime)
 	
 			if (Health <= 10)
 			{
-				G_ExitLevel(0);
+				Level.ExitLevel(0);
 			}
 			break;
 		case SECSPEC_DamageLavaWimpy:
@@ -2769,7 +2769,7 @@ void ClientGunShot(TVec org)
 
 	for (i = 0; i < 20; i++)
 	{
-		p = NewParticle();
+		p = Level.NewParticle();
 		if (!p)
 			return;
 
@@ -2798,7 +2798,7 @@ void ClientBlood(TVec org, int damage)
 
 	for (i = 0; i < 4 * damage; i++)
 	{
-		p = NewParticle();
+		p = Level.NewParticle();
 		if (!p)
 			return;
 
@@ -2827,7 +2827,7 @@ void ClientExplosion(TVec org)
 
 	for (i = 0; i < 1024; i++)
 	{
-		p = NewParticle();
+		p = Level.NewParticle();
 		if (!p)
 			return;
 		p->die = ClGame.time + 5.0;
@@ -2849,7 +2849,7 @@ void ClientExplosion(TVec org)
 		p->vel.z = (Random() * 512.0) - 256.0;
 	}
 
-	dl = AllocDlight(0);
+	dl = Level.AllocDlight(0);
 	dl->origin = org;
 	dl->radius = 350.0;
 	dl->colour = 0xffffffff;
@@ -2867,7 +2867,7 @@ void ClientExplosion2(int etype, TVec org)
 {
 	dlight_t *dl;
 
-	dl = AllocDlight(0);
+	dl = Level.AllocDlight(0);
 	dl->origin = org;
 	dl->radius = 350.0;
 	dl->colour = DoomDefs.default.ecolours[etype];

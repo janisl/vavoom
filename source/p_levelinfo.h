@@ -106,6 +106,13 @@ class VLevelInfo : public VThinker
 	void PolyobjStartSequence(const polyobj_t*, VName, int);
 	void PolyobjStopSequence(const polyobj_t*);
 
+	void ExitLevel(int Position);
+	void SecretExitLevel(int Position);
+	void Completed(int Map, int Position, int SaveAngle);
+
+	void ChangeSwitchTexture(line_t*, bool, VName);
+	void ForceLightning();
+
 	VStr GetLevelName() const
 	{
 		return LevelInfoFlags & LIF_LookupName ? GLanguage[*LevelName] : LevelName;
@@ -120,6 +127,15 @@ class VLevelInfo : public VThinker
 	DECLARE_FUNCTION(SectorStopSequence)
 	DECLARE_FUNCTION(PolyobjStartSequence)
 	DECLARE_FUNCTION(PolyobjStopSequence)
+
+	//	Exiting the level
+	DECLARE_FUNCTION(ExitLevel)
+	DECLARE_FUNCTION(SecretExitLevel)
+	DECLARE_FUNCTION(Completed)
+
+	//	Special thinker utilites
+	DECLARE_FUNCTION(ChangeSwitchTexture)
+	DECLARE_FUNCTION(ForceLightning)
 
 	void eventSpawnSpecials()
 	{

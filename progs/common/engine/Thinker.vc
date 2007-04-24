@@ -41,6 +41,12 @@ native final spawner Thinker Spawn(class<Thinker> Type, optional TVec AOrigin,
 native void Destroy();
 native final Thinker NextThinker(Thinker last, class<Thinker> id);
 
+//  Broadcast message (print to all clients)
+native final void bprint(string format, ...);
+
+native final dlight_t *AllocDlight(int key);
+native final particle_t *NewParticle();
+
 //==========================================================================
 //
 //	Tick

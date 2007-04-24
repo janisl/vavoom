@@ -63,9 +63,18 @@ class VThinker : public VObject
 	void AddSoundSequenceChoice(vint32, VName);
 	void StopSoundSequence(vint32);
 
+	void BroadcastPrintf(const char*, ...);
+	void BroadcastCentrePrintf(const char*, ...);
+
 	DECLARE_FUNCTION(Spawn)
 	DECLARE_FUNCTION(Destroy)
 	DECLARE_FUNCTION(NextThinker)
+
+	//	Print functions
+	DECLARE_FUNCTION(bprint)
+
+	DECLARE_FUNCTION(AllocDlight)
+	DECLARE_FUNCTION(NewParticle)
 };
 
 template <class T> class TThinkerIterator

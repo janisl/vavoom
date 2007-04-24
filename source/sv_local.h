@@ -183,7 +183,6 @@ int SV_PointContents(const sector_t *sector, const TVec &p);
 //==========================================================================
 
 void P_InitSwitchList();
-void P_ChangeSwitchTexture(line_t* line, bool useAgain, VName DefaultSound);
 
 void P_InitTerrainTypes();
 struct VTerrainInfo* SV_TerrainType(int pic);
@@ -217,10 +216,6 @@ struct VSndSeqInfo
 	TArray<VName>	Choices;
 };
 
-void SV_BroadcastPrintf(const char*, ...);
-void SV_BroadcastCentrePrintf(const char*, ...);
-void SV_ClientPrintf(VBasePlayer*, const char*, ...);
-void SV_ClientCentrePrintf(VBasePlayer*, const char*, ...);
 void SV_ChangeSky(const char*, const char*);
 void SV_ChangeMusic(const char*);
 void SV_ChangeLocalMusic(VBasePlayer*, const char*);
@@ -232,6 +227,9 @@ extern VBasePlayer*			sv_player;
 extern TArray<VSndSeqInfo>	sv_ActiveSequences;
 
 extern VMessageOut*		sv_reliable;
+
+extern int 		LeavePosition;
+extern bool		completed;
 
 //==========================================================================
 //
@@ -255,9 +253,6 @@ enum skill_t
 	sk_nightmare
 };
 
-void G_ExitLevel(int Position);
-void G_SecretExitLevel(int Position);
-void G_Completed(int Map, int Position, int SaveAngle);
 void G_TeleportNewMap(int map, int position);
 void G_WorldDone();
 void G_PlayerReborn(int player);

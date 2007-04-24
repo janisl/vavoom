@@ -765,7 +765,7 @@ void UpdateMobj(Entity mobj, int key, float DeltaTime)
 		break;
 
 	case HereticDefs::EF_DL_WHITE:
-		dl = AllocDlight(key);
+		dl = mobj.AllocDlight(key);
 		dl->origin = mobj.Origin;
 		dl->radius = 200.0;
 		dl->colour = RGB(255, 255, 255);
@@ -773,7 +773,7 @@ void UpdateMobj(Entity mobj, int key, float DeltaTime)
 		break;
 
 	case HereticDefs::EF_DL_RED:
-		dl = AllocDlight(key);
+		dl = mobj.AllocDlight(key);
 		dl->origin = mobj.Origin;
 		dl->radius = 200.0;
 		dl->colour = RGB(255, 0, 0);
@@ -781,7 +781,7 @@ void UpdateMobj(Entity mobj, int key, float DeltaTime)
 		break;
 
 	case HereticDefs::EF_DL_GREEN:
-		dl = AllocDlight(key);
+		dl = mobj.AllocDlight(key);
 		dl->origin = mobj.Origin;
 		dl->radius = 200.0;
 		dl->colour = RGB(0, 255, 0);
@@ -789,7 +789,7 @@ void UpdateMobj(Entity mobj, int key, float DeltaTime)
 		break;
 
 	case HereticDefs::EF_DL_BLUE:
-		dl = AllocDlight(key);
+		dl = mobj.AllocDlight(key);
 		dl->origin = mobj.Origin;
 		dl->radius = 200.0;
 		dl->colour = RGB(0, 0, 255);
@@ -797,7 +797,7 @@ void UpdateMobj(Entity mobj, int key, float DeltaTime)
 		break;
 
 	case HereticDefs::EF_DL_MAGENTA:
-		dl = AllocDlight(key);
+		dl = mobj.AllocDlight(key);
 		dl->origin = mobj.Origin;
 		dl->radius = 200.0;
 		dl->colour = RGB(255, 0, 255);

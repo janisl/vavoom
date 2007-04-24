@@ -1570,21 +1570,12 @@ native static final string KeyNameForNum(int KeyNr);
 native static final void IN_GetBindingKeys(string cmd, int *key1, int *key2);
 native static final void IN_SetBinding(int key, string ondown, string onup);
 native static final string LoadTextLump(name Name);
-native static final dlight_t *AllocDlight(int key);
-native static final particle_t *NewParticle();
 
 //==========================================================================
 //
 //              SERVER BUILTINS
 //
 //==========================================================================
-
-//
-//  Print functions
-//
-
-//  Broadcast message (print to all clients)
-native static final void bprint(string format, ...);
 
 //
 //  Map utilites
@@ -1604,12 +1595,6 @@ native static final sec_region_t *PointInRegion(sector_t * sector, TVec p);
 native static final int MapBlock(float val);
 
 //
-//  Special thinker utilites
-//
-
-native static final void P_ChangeSwitchTexture(line_t * line, int useAgain, name DefaultSound);
-
-//
 //  Sound functions
 //
 
@@ -1619,14 +1604,9 @@ native static final void SetSeqTrans(name Name, int Num, int SeqType);
 native static final name GetSeqTrans(int Num, int SeqType);
 native static final name GetSeqSlot(name Sequence);
 
-native static final void G_ExitLevel(int Position);
-native static final void G_SecretExitLevel(int Position);
-
-native static final void G_Completed(int Map, int Position, int SaveAngle);
 native static final VTerrainInfo* TerrainType(int pic);
 native static final VSplashInfo* GetSplashInfo(name Name);
 native static final VTerrainInfo* GetTerrainInfo(name Name);
-native static final void P_ForceLightning();
 native static final void SB_Start();
 native static final class FindClassFromEditorId(int Id);
 native static final class FindClassFromScriptId(int Id);

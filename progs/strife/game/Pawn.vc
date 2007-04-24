@@ -1298,7 +1298,7 @@ final void A_BossDeath()
 		{
 			Player(Enemy.Player).ClientFinaleType(2);
 		}
-		G_Completed(-1, -1, 0);
+		Level.Completed(-1, -1, 0);
 	}
 }
 

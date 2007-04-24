@@ -441,7 +441,7 @@ void BossDeathSpecialAction()
 	}
 	else
 	{
-		G_ExitLevel(0);
+		Level.ExitLevel(0);
 	}
 }
 

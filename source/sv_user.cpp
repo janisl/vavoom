@@ -244,6 +244,46 @@ bool VBasePlayer::ExecuteNetMethod(VMethod* Func)
 
 //==========================================================================
 //
+//	VBasePlayer::Printf
+//
+//==========================================================================
+
+void VBasePlayer::Printf(const char *s, ...)
+{
+	guard(VBasePlayer::Printf);
+	va_list	v;
+	char	buf[1024];
+
+	va_start(v, s);
+	vsprintf(buf, s, v);
+	va_end(v);
+
+	eventClientPrint(buf);
+	unguard;
+}
+
+//==========================================================================
+//
+//	VBasePlayer::CentrePrintf
+//
+//==========================================================================
+
+void VBasePlayer::CentrePrintf(const char *s, ...)
+{
+	guard(VBasePlayer::CentrePrintf);
+	va_list	v;
+	char	buf[1024];
+
+	va_start(v, s);
+	vsprintf(buf, s, v);
+	va_end(v);
+
+	eventClientCentrePrint(buf);
+	unguard;
+}
+
+//==========================================================================
+//
 //	SV_ReadMove
 //
 //==========================================================================
@@ -468,14 +508,14 @@ IMPLEMENT_FUNCTION(VBasePlayer, cprint)
 {
 	VStr msg = PF_FormatString();
 	P_GET_SELF;
-	SV_ClientPrintf(Self, *msg);
+	Self->Printf(*msg);
 }
 
 IMPLEMENT_FUNCTION(VBasePlayer, centreprint)
 {
 	VStr msg = PF_FormatString();
 	P_GET_SELF;
-	SV_ClientCentrePrintf(Self, *msg);
+	Self->CentrePrintf(*msg);
 }
 
 IMPLEMENT_FUNCTION(VBasePlayer, GetPlayerNum)

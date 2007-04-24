@@ -181,20 +181,20 @@ static bool P_StartButton(int sidenum, EBWhere w, int SwitchDef,
 
 //==========================================================================
 //
-//  P_ChangeSwitchTexture
+//  VLevelInfo::ChangeSwitchTexture
 //
 //	Function that changes wall texture.
 //	Tell it if switch is ok to use again (1=yes, it's a button).
 //
 //==========================================================================
 
-void P_ChangeSwitchTexture(line_t* line, bool useAgain, VName DefaultSound)
+void VLevelInfo::ChangeSwitchTexture(line_t* line, bool useAgain, VName DefaultSound)
 {
-	guard(P_ChangeSwitchTexture);
+	guard(VLevelInfo::ChangeSwitchTexture);
 	int sidenum = line->sidenum[0];
-	int texTop = GLevel->Sides[sidenum].toptexture;
-	int texMid = GLevel->Sides[sidenum].midtexture;
-	int texBot = GLevel->Sides[sidenum].bottomtexture;
+	int texTop = XLevel->Sides[sidenum].toptexture;
+	int texMid = XLevel->Sides[sidenum].midtexture;
+	int texBot = XLevel->Sides[sidenum].bottomtexture;
 
 	for (int  i = 0; i < Switches.Num(); i++)
 	{
@@ -204,17 +204,17 @@ void P_ChangeSwitchTexture(line_t* line, bool useAgain, VName DefaultSound)
 		if (sw->Tex == texTop)
 		{
 			where = SWITCH_TOP;
-			GLevel->Sides[sidenum].toptexture = sw->Frames[0].Texture;
+			XLevel->Sides[sidenum].toptexture = sw->Frames[0].Texture;
 		}
 		else if (sw->Tex == texMid)
 		{
 			where = SWITCH_MIDDLE;
-			GLevel->Sides[sidenum].midtexture = sw->Frames[0].Texture;
+			XLevel->Sides[sidenum].midtexture = sw->Frames[0].Texture;
 		}
 		else if (sw->Tex == texBot)
 		{
 			where = SWITCH_BOTTOM;
-			GLevel->Sides[sidenum].bottomtexture = sw->Frames[0].Texture;
+			XLevel->Sides[sidenum].bottomtexture = sw->Frames[0].Texture;
 		}
 		else
 		{
@@ -229,7 +229,7 @@ void P_ChangeSwitchTexture(line_t* line, bool useAgain, VName DefaultSound)
 			PlaySound = true;
 		if (PlaySound)
 		{
-			GLevelInfo->SectorStartSound(GLevel->Sides[sidenum].sector, sw->Sound ?
+			SectorStartSound(XLevel->Sides[sidenum].sector, sw->Sound ?
 				sw->Sound : GSoundManager->GetSoundID(DefaultSound), 0, 1, 1);
 		}
 		return;

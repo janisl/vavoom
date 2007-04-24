@@ -79,7 +79,7 @@ final void A_BrainScream()
 
 final void A_BrainDie()
 {
-	G_ExitLevel(0);
+	Level.ExitLevel(0);
 }
 
 __states__

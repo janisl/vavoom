@@ -2482,11 +2482,11 @@ int VAcs::RunScript(float DeltaTime)
 			PrintStr = PrintStr.EvalEscapeSequences();
 			if (Activator && Activator->EntityFlags & VEntity::EF_IsPlayer)
 			{
-				SV_ClientCentrePrintf(Activator->Player, *PrintStr);
+				Activator->Player->CentrePrintf(*PrintStr);
 			}
 			else
 			{
-				SV_BroadcastCentrePrintf(*PrintStr);
+				BroadcastCentrePrintf(*PrintStr);
 			}
 			ACSVM_BREAK;
 
@@ -2649,7 +2649,7 @@ int VAcs::RunScript(float DeltaTime)
 		ACSVM_CASE(PCD_EndPrintBold)
 			//FIXME yellow message
 			PrintStr = PrintStr.EvalEscapeSequences();
-			SV_BroadcastCentrePrintf(*PrintStr);
+			BroadcastCentrePrintf(*PrintStr);
 			ACSVM_BREAK;
 
 		//	Extended P-Code commands.
@@ -2970,11 +2970,11 @@ int VAcs::RunScript(float DeltaTime)
 			if (cmd != PCD_EndHudMessageBold &&
 				Activator && Activator->EntityFlags & VEntity::EF_IsPlayer)
 			{
-				SV_ClientPrintf(Activator->Player, *PrintStr);
+				Activator->Player->Printf(*PrintStr);
 			}
 			else
 			{
-				SV_BroadcastCentrePrintf(*PrintStr);
+				BroadcastCentrePrintf(*PrintStr);
 			}
 			sp = optstart - 6;
 			ACSVM_BREAK;

@@ -332,7 +332,7 @@ bool ActivateLine(line_t* Line, Actor A, int Side, int ActivationType)
 	if ((lineActivation == SPAC_USE || lineActivation == SPAC_IMPACT ||
 		lineActivation == SPAC_USETHROUGH) && buttonSuccess)
 	{
-		P_ChangeSwitchTexture(Line, repeat,
+		ChangeSwitchTexture(Line, repeat,
 			Line->special == LNSPEC_ExitNormal ||
 			Line->special == LNSPEC_ExitSecret ||
 			Line->special == LNSPEC_TeleportNewMap ||
@@ -455,7 +455,7 @@ bool EV_BreakGlass(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 	quest1 = false;
 	if (XLevel.Sides[Line->sidenum[0]].midtexture == TextureNumForName('brnscn01'))
 		quest1 = true;
-	P_ChangeSwitchTexture(Line, false, 'switches/normbutn');
+	ChangeSwitchTexture(Line, false, 'switches/normbutn');
 	switched = true;
 	Line->special = 0;
 	if (Line->sidenum[1] != -1)

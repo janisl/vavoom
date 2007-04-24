@@ -116,6 +116,19 @@ native final void PolyobjStartSequence(polyobj_t* mobj, name sequence,
 	int ModeNum);
 native final void PolyobjStopSequence(polyobj_t* mobj);
 
+//
+//	Exiting the level
+//
+native final void ExitLevel(int Position);
+native final void SecretExitLevel(int Position);
+native final void Completed(int Map, int Position, int SaveAngle);
+
+//
+//  Special thinker utilites
+//
+native final void ChangeSwitchTexture(line_t* line, int useAgain, name DefaultSound);
+native final void ForceLightning();
+
 //==========================================================================
 //
 //  SpawnSpecials

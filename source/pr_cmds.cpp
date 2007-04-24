@@ -40,7 +40,6 @@
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
-void SV_ForceLightning();
 VClass* SV_FindClassFromEditorId(int Id);
 VClass* SV_FindClassFromScriptId(int Id);
 
@@ -183,23 +182,6 @@ VStr PF_FormatString()
 
 //**************************************************************************
 //
-//	Print functions
-//
-//**************************************************************************
-
-//==========================================================================
-//
-//	PF_bprint
-//
-//==========================================================================
-
-IMPLEMENT_FUNCTION(VObject, bprint)
-{
-	SV_BroadcastPrintf(*PF_FormatString());
-}
-
-//**************************************************************************
-//
 //	Map utilites
 //
 //**************************************************************************
@@ -286,26 +268,6 @@ IMPLEMENT_FUNCTION(VObject, MapBlock)
 
 //**************************************************************************
 //
-//	Special thinker utilites
-//
-//**************************************************************************
-
-//==========================================================================
-//
-//  PF_P_ChangeSwitchTexture
-//
-//==========================================================================
-
-IMPLEMENT_FUNCTION(VObject, P_ChangeSwitchTexture)
-{
-	P_GET_NAME(DefaultSound);
-	P_GET_BOOL(useAgain);
-	P_GET_PTR(line_t, line);
-	P_ChangeSwitchTexture(line, useAgain, DefaultSound);
-}
-
-//**************************************************************************
-//
 //  Sound functions
 //
 //**************************************************************************
@@ -380,44 +342,6 @@ IMPLEMENT_FUNCTION(VObject, GetSeqSlot)
 
 //==========================================================================
 //
-//  PF_G_ExitLevel
-//
-//==========================================================================
-
-IMPLEMENT_FUNCTION(VObject, G_ExitLevel)
-{
-	P_GET_INT(Position);
-	G_ExitLevel(Position);
-}
-
-//==========================================================================
-//
-//  PF_G_SecretExitLevel
-//
-//==========================================================================
-
-IMPLEMENT_FUNCTION(VObject, G_SecretExitLevel)
-{
-	P_GET_INT(Position);
-	G_SecretExitLevel(Position);
-}
-
-//==========================================================================
-//
-//  PF_G_Completed
-//
-//==========================================================================
-
-IMPLEMENT_FUNCTION(VObject, G_Completed)
-{
-	P_GET_INT(SaveAngle);
-	P_GET_INT(pos);
-	P_GET_INT(map);
-	G_Completed(map, pos, SaveAngle);
-}
-
-//==========================================================================
-//
 //	PF_P_GetThingFloorType
 //
 //==========================================================================
@@ -439,17 +363,6 @@ IMPLEMENT_FUNCTION(VObject, SB_Start)
 #ifdef CLIENT
 //	SB_Start();
 #endif
-}
-
-//==========================================================================
-//
-//  PF_P_ForceLightning
-//
-//==========================================================================
-
-IMPLEMENT_FUNCTION(VObject, P_ForceLightning)
-{
-	SV_ForceLightning();
 }
 
 //==========================================================================
@@ -964,17 +877,6 @@ IMPLEMENT_FUNCTION(VObject, LoadTextLump)
 {
 	P_GET_NAME(name);
 	RET_STR(LoadTextLump(name));
-}
-
-IMPLEMENT_FUNCTION(VObject, AllocDlight)
-{
-	P_GET_INT(key);
-	RET_PTR(GClLevel->RenderData->AllocDlight(key));
-}
-
-IMPLEMENT_FUNCTION(VObject, NewParticle)
-{
-	RET_PTR(GClLevel->RenderData->NewParticle());
 }
 
 IMPLEMENT_FUNCTION(VObject, StartSearch)
