@@ -318,6 +318,9 @@ public:
 class VNetContext
 {
 public:
+	VField*			RoleField;
+	VField*			RemoteRoleField;
+
 	VNetContext();
 	virtual ~VNetContext();
 

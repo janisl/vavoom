@@ -23,6 +23,13 @@
 //**
 //**************************************************************************
 
+enum
+{
+	ROLE_None,
+	ROLE_DumbProxy,
+	ROLE_Authority
+};
+
 //
 //	VThinker
 //
@@ -37,6 +44,9 @@ class VThinker : public VObject
 
 	VThinker*		Prev;
 	VThinker*		Next;
+
+	vint32			Role;
+	vint32			RemoteRole;
 
 	enum
 	{

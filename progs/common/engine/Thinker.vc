@@ -27,14 +27,30 @@ class Thinker : Object
 	native
 	abstract;
 
+enum
+{
+	ROLE_None,
+	ROLE_DumbProxy,
+	ROLE_Authority
+};
+
 readonly Level			XLevel;		//	Level object.
 readonly LevelInfo		Level;		//	Level info object.
 
 native readonly private Thinker	Prev;
 native readonly private Thinker	Next;
 
+int						Role;
+int						RemoteRole;
+
 bool					bAlwaysRelevant;	//	Always updated
 readonly bool			bNetInitial;		//	Initial update
+
+replication
+{
+	reliable if (Role == ROLE_Authority)
+		Role, RemoteRole;
+}
 
 native final spawner Thinker Spawn(class<Thinker> Type, optional TVec AOrigin,
 	optional TAVec AAngles, optional mthing_t* mthing);
@@ -59,4 +75,6 @@ void Tick(float deltaTime)
 
 defaultproperties
 {
+	Role = ROLE_Authority;
+	RemoteRole = ROLE_DumbProxy;
 }

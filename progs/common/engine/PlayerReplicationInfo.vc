@@ -40,7 +40,7 @@ int				SecretCount;
 
 replication
 {
-	reliable if (true)
+	reliable if (Role == ROLE_Authority)
 		PlayerNum, PlayerName, UserInfo, FragsStats, Frags, KillCount,
 		ItemCount, SecretCount;
 }

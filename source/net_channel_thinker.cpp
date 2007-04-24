@@ -219,7 +219,19 @@ void VThinkerChannel::Update()
 		{
 			continue;
 		}
-		if (VField::IdenticalValue(Data + F->Ofs, OldData + F->Ofs, F->Type))
+
+		//	Set up pointer to the value and do swapping for the role fields.
+		vuint8* FieldValue = Data + F->Ofs;
+		if (F == Connection->Context->RoleField)
+		{
+			FieldValue = Data + Connection->Context->RemoteRoleField->Ofs;
+		}
+		else if (F == Connection->Context->RemoteRoleField)
+		{
+			FieldValue = Data + Connection->Context->RoleField->Ofs;
+		}
+
+		if (VField::IdenticalValue(FieldValue, OldData + F->Ofs, F->Type))
 		{
 			continue;
 		}
@@ -230,23 +242,23 @@ void VThinkerChannel::Update()
 			int InnerSize = IntType.GetSize();
 			for (int i = 0; i < F->Type.ArrayDim; i++)
 			{
-				if (VField::IdenticalValue(Data + F->Ofs + i * InnerSize,
+				if (VField::IdenticalValue(FieldValue + i * InnerSize,
 					OldData + F->Ofs + i * InnerSize, IntType))
 				{
 					continue;
 				}
 				Msg.WriteInt(F->NetIndex, Thinker->GetClass()->NumNetFields);
 				Msg.WriteInt(i, F->Type.ArrayDim);
-				VField::NetSerialiseValue(Msg, Data + F->Ofs + i * InnerSize, IntType);
-				VField::CopyFieldValue(Data + F->Ofs + i * InnerSize,
+				VField::NetSerialiseValue(Msg, FieldValue + i * InnerSize, IntType);
+				VField::CopyFieldValue(FieldValue + i * InnerSize,
 					OldData + F->Ofs + i * InnerSize, IntType);
 			}
 		}
 		else
 		{
 			Msg.WriteInt(F->NetIndex, Thinker->GetClass()->NumNetFields);
-			VField::NetSerialiseValue(Msg, Data + F->Ofs, F->Type);
-			VField::CopyFieldValue(Data + F->Ofs, OldData + F->Ofs, F->Type);
+			VField::NetSerialiseValue(Msg, FieldValue, F->Type);
+			VField::CopyFieldValue(FieldValue, OldData + F->Ofs, F->Type);
 		}
 	}
 
@@ -290,12 +302,6 @@ void VThinkerChannel::ParsePacket(VMessageIn& Msg)
 			cl->Level = LInfo;
 		}
 #endif
-		if (Th->IsA(VEntity::StaticClass()))
-		{
-			VEntity* Ent = (VEntity*)Th;
-			Ent->Role = ROLE_DumbProxy;
-			Ent->RemoteRole = ROLE_Authority;
-		}
 		SetThinker(Th);
 	}
 

@@ -70,7 +70,11 @@ static VCvarI		sv_maxmove("sv_maxmove", "400", CVAR_Archive);
 //==========================================================================
 
 VNetContext::VNetContext()
+: RoleField(0)
+, RemoteRoleField(0)
 {
+	RoleField = VThinker::StaticClass()->FindFieldChecked("Role");
+	RemoteRoleField = VThinker::StaticClass()->FindFieldChecked("RemoteRole");
 }
 
 //==========================================================================

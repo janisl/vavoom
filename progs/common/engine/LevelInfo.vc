@@ -92,7 +92,7 @@ float			Gravity;				// Level Gravity
 
 replication
 {
-	reliable if (true)
+	reliable if (Role == ROLE_Authority)
 		LevelName, Cluster, ParTime, SuckTime, Sky1Texture, Sky2Texture,
 		Sky1ScrollDelta, Sky2ScrollDelta, SkyBox, FadeTable, SongLump,
 		CDTrack, bDoubleSky, bLightning, bNoIntermission, bNoSoundClipping,
