@@ -33,7 +33,6 @@ enum
 	svc_server_info,
 	svc_stringcmd,
 	svc_signonnum,
-	svc_view_data,
 	svc_time,
 	svc_serverinfo,
 };

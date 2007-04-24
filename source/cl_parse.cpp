@@ -298,40 +298,6 @@ IMPLEMENT_FUNCTION(VBasePlayer, ClientChangeMusic)
 	GAudio->MusicChanged();
 }
 
-static void CL_ParseViewData(VMessageIn& msg)
-{
-	guard(CL_ParseViewData);
-	int		i;
-
-	msg << cl->ViewOrg.x
-		<< cl->ViewOrg.y
-		<< cl->ViewOrg.z;
-	cl->ViewEntAlpha = (float)msg.ReadByte() / 255.0;
-
-	for (i = 0; i < NUMPSPRITES; i++)
-	{
-		int ClsIdx = msg.ReadShort();
-		if (ClsIdx != -1)
-		{
-			cl->ViewStates[i].State =
-				VMemberBase::GNetClassLookup[ClsIdx]->StatesLookup[msg.ReadShort()];
-			vuint8 TimeFrac = msg.ReadByte();
-			if (TimeFrac == 255)
-				cl->ViewStates[i].StateTime = -1;
-			else
-				cl->ViewStates[i].StateTime = cl->ViewStates[i].State->Time *
-					TimeFrac / 254.0;
-			cl->ViewStates[i].SX = msg.ReadShort();
-			cl->ViewStates[i].SY = msg.ReadShort();
-		}
-		else
-		{
-			cl->ViewStates[i].State = NULL;
-		}
-	}
-	unguard;
-}
-
 static void CL_ParseTime(VMessageIn& msg)
 {
 	guard(CL_ParseTime);
@@ -474,10 +440,6 @@ void VClientGenChannel::ParsePacket(VMessageIn& msg)
 
 		case svc_server_info:
 			CL_ParseServerInfo(msg);
-			break;
-
-		case svc_view_data:
-			CL_ParseViewData(msg);
 			break;
 
 		case svc_time:

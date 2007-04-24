@@ -118,7 +118,7 @@ replication
 {
 	reliable if (!bIsClient)
 		Health, Items, Frags, ExtraLight, FixedColourmap, CShifts, PSpriteSY,
-		KillCount, ItemCount, SecretCount;
+		KillCount, ItemCount, SecretCount, ViewStates, ViewEntAlpha, ViewOrg;
 
 	unreliable if (!bIsClient)
 		ClientStartSound, ClientStopSound, ClientForceLightning;

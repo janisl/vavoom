@@ -299,40 +299,10 @@ void VEntity::Destroy()
 //
 //==========================================================================
 
-void SV_WriteViewData(VBasePlayer &player, VMessageOut& msg)
+void SV_WriteViewData(VBasePlayer &player)
 {
 	guard(SV_WriteViewData);
-	int		i;
-
-	msg << (vuint8)svc_view_data
-		<< player.ViewOrg.x
-		<< player.ViewOrg.y
-		<< player.ViewOrg.z
-		<< (vuint8)(player.MO->Alpha * 255);
-	for (i = 0; i < NUMPSPRITES; i++)
-	{
-		if (player.ViewStates[i].State)
-		{
-			int TimeFrac = 0;
-			if (player.ViewStates[i].StateTime < 0)
-				TimeFrac = 255;
-			else if (player.ViewStates[i].State->Time > 0)
-			{
-				TimeFrac = (int)(254.0 * player.ViewStates[i].StateTime /
-					player.ViewStates[i].State->Time);
-				TimeFrac = MID(0, TimeFrac, 254);
-			}
-			msg << (vuint16)((VClass*)player.ViewStates[i].State->Outer)->NetId
-				<< (vuint16)player.ViewStates[i].State->NetId
-				<< (vuint8)TimeFrac
-				<< (vuint16)player.ViewStates[i].SX
-				<< (vuint16)player.ViewStates[i].SY;
-		}
-		else
-		{
-			msg << (vint16)-1;
-		}
-	}
+	player.ViewEntAlpha = player.MO->Alpha;
 
 	//	Update bam_angles (after teleportation)
 	if (player.PlayerFlags & VBasePlayer::PF_FixAngle)
@@ -401,7 +371,7 @@ static bool IsRelevant(VThinker* Th)
 //
 //==========================================================================
 
-void SV_UpdateLevel(VMessageOut&)
+void SV_UpdateLevel()
 {
 	guard(SV_UpdateLevel);
 	int		i;
@@ -530,11 +500,11 @@ void SV_SendClientDatagram()
 		msg << (vuint8)svc_time
 			<< GLevel->Time;
 
-		SV_WriteViewData(*sv_player, msg);
-
-		SV_UpdateLevel(msg);
-
 		sv_player->Net->Channels[0]->SendMessage(&msg);
+
+		SV_WriteViewData(*sv_player);
+
+		SV_UpdateLevel();
 
 		sv_player->MO->EntityFlags &= ~VEntity::EF_NetLocalPlayer;
 	}
