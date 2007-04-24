@@ -723,6 +723,8 @@ void VRenderLevel::RenderPlayerView()
 		r_fog = Level->LevelInfo->FadeTable == NAME_fogmap;
 	}
 
+	GTextureManager.Time = Level->Time;
+
 	AnimateSky(host_frametime);
 
 	UpdateParticles(host_frametime);

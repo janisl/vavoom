@@ -106,6 +106,7 @@ class VTextureManager
 public:
 	TArray<VTexture*>	Textures;
 	vint32				DefaultTexture;
+	float				Time;	//	Time value for warp textures
 
 	VTextureManager();
 	void Init();

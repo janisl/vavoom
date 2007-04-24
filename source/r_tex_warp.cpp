@@ -129,11 +129,7 @@ void VWarpTexture::SetFrontSkyLayer()
 
 bool VWarpTexture::CheckModified()
 {
-#ifdef CLIENT
-	return GenTime != GClLevel->Time;
-#else
-	return false;
-#endif
+	return GenTime != GTextureManager.Time;
 }
 
 //==========================================================================
@@ -145,8 +141,7 @@ bool VWarpTexture::CheckModified()
 vuint8* VWarpTexture::GetPixels()
 {
 	guard(VWarpTexture::GetPixels);
-#ifdef CLIENT
-	if (Pixels && GenTime == GClLevel->Time)
+	if (Pixels && GenTime == GTextureManager.Time)
 	{
 		return Pixels;
 	}
@@ -154,7 +149,7 @@ vuint8* VWarpTexture::GetPixels()
 	const vuint8* SrcPixels = SrcTex->GetPixels();
 	Format = SrcTex->Format;
 
-	GenTime = GClLevel->Time;
+	GenTime = GTextureManager.Time;
 	Pixels8BitValid = false;
 
 	if (!XSin1)
@@ -211,9 +206,6 @@ vuint8* VWarpTexture::GetPixels()
 	}
 
 	return Pixels;
-#else
-	return NULL;
-#endif
 	unguard;
 }
 
@@ -308,8 +300,7 @@ VWarp2Texture::VWarp2Texture(VTexture* ASrcTex)
 vuint8* VWarp2Texture::GetPixels()
 {
 	guard(VWarp2Texture::GetPixels);
-#ifdef CLIENT
-	if (Pixels && GenTime == GClLevel->Time)
+	if (Pixels && GenTime == GTextureManager.Time)
 	{
 		return Pixels;
 	}
@@ -317,7 +308,7 @@ vuint8* VWarp2Texture::GetPixels()
 	const vuint8* SrcPixels = SrcTex->GetPixels();
 	Format = SrcTex->Format;
 
-	GenTime = GClLevel->Time;
+	GenTime = GTextureManager.Time;
 	Pixels8BitValid = false;
 
 	if (!XSin1)
@@ -381,8 +372,5 @@ vuint8* VWarp2Texture::GetPixels()
 	}
 
 	return Pixels;
-#else
-	return NULL;
-#endif
 	unguard;
 }

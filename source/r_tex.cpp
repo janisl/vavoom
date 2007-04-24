@@ -146,6 +146,7 @@ static TArray<VAnimDoorDef>	AnimDoorDefs;
 
 VTextureManager::VTextureManager()
 : DefaultTexture(-1)
+, Time(0)
 {
 }
 
