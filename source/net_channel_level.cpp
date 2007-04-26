@@ -40,6 +40,7 @@ enum
 	CMD_PolyObj,
 	CMD_StaticLight,
 	CMD_NewLevel,
+	CMD_PreRender,
 
 	CMD_MAX
 };
@@ -128,6 +129,7 @@ void VLevelChannel::SetLevel(VLevel* ALevel)
 void VLevelChannel::SendNewLevel()
 {
 	guard(VLevelChannel::SendNewLevel);
+	guardSlow(NewLevel);
 	VMessageOut Msg(this);
 	Msg.bReliable = true;
 	Msg.WriteInt(CMD_NewLevel, CMD_MAX);
@@ -136,6 +138,18 @@ void VLevelChannel::SendNewLevel()
 	Msg.WriteInt(svs.max_clients, MAXPLAYERS + 1);
 	Msg.WriteInt(deathmatch, 256);
 	SendMessage(&Msg);
+	unguardSlow;
+
+	guardSlow(StaticLights);
+	SendStaticLights();
+	unguardSlow;
+
+	guardSlow(PreRender);
+	VMessageOut Msg(this);
+	Msg.bReliable = true;
+	Msg.WriteInt(CMD_PreRender, CMD_MAX);
+	SendMessage(&Msg);
+	unguardSlow;
 	unguard;
 }
 
@@ -440,6 +454,10 @@ void VLevelChannel::ParsePacket(VMessageIn& Msg)
 #ifdef CLIENT
 			CL_ParseServerInfo(Msg);
 #endif
+			break;
+
+		case CMD_PreRender:
+			Level->RenderData->PreRender();
 			break;
 		}
 	}

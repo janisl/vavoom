@@ -1208,9 +1208,6 @@ COMMAND(PreSpawn)
 		GCon->Log("PreSpawn is not valid from console");
 		return;
 	}
-
-	((VLevelChannel*)sv_player->Net->Channels[CHANIDX_Level])->SendStaticLights();
-
 	sv_player->Net->Message << (vuint8)svc_signonnum << (vuint8)2;
 	unguard;
 }

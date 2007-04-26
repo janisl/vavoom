@@ -235,7 +235,6 @@ void CL_SignonReply()
 		break;
 
 	case 2:
-		GClLevel->RenderData->PreRender();
 		if (!UserInfoSent)
 		{
 			cl->Net->Message << (byte)clc_player_info << cls.userinfo;
