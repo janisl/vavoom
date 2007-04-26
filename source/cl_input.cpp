@@ -58,7 +58,7 @@ static TCmdKeyUp	name ## Up_f("-" #name, Key ## name);
 
 class TKButton
 {
- public:
+public:
 	int		down[2];		// key nums holding it down
 	int		state;			// low bit is down state
 
@@ -420,12 +420,12 @@ static void AdjustAngles()
 
 	//	ROLL
 	if (cl->Health <= 0)
- 	{
- 		if (cl->ViewAngles.roll >= 0 && cl->ViewAngles.roll < cl_deathroll)
+	{
+		if (cl->ViewAngles.roll >= 0 && cl->ViewAngles.roll < cl_deathroll)
 		{
 			cl->ViewAngles.roll += cl_deathrollspeed * host_frametime;
 		}
- 		if (cl->ViewAngles.roll < 0 && cl->ViewAngles.roll > -cl_deathroll)
+		if (cl->ViewAngles.roll < 0 && cl->ViewAngles.roll > -cl_deathroll)
 		{
 			cl->ViewAngles.roll -= cl_deathrollspeed * host_frametime;
 		}
@@ -465,17 +465,15 @@ static void AdjustAngles()
 //
 //==========================================================================
 
-static void BuildTiccmd(ticcmd_t* cmd)
+static void BuildTiccmd()
 {
 	guard(BuildTiccmd);
 	float		forward;
 	float		side;
 	float		flyheight;
 
-	memset(cmd, 0, sizeof(*cmd));
-
 	forward = side = flyheight = 0;
-    
+
 	// let movement keys cancel each other out
 	if (KeyStrafe.state & 1)
 	{ 
@@ -486,7 +484,7 @@ static void BuildTiccmd(ticcmd_t* cmd)
 		if (joyxmove < 0)
 			side -= cl_sidespeed;
 	}
- 
+
 	forward += KeyForward.KeyState() * cl_forwardspeed;
 	forward -= KeyBackward.KeyState() * cl_backspeed;
 
@@ -529,51 +527,53 @@ static void BuildTiccmd(ticcmd_t* cmd)
 		flyheight = TOCENTRE;
 	}
 
- 	//
+	//
 	//	BUTTONS
 	//
+
+	cl->Buttons = 0;
 
 	// Fire buttons
 	if (KeyAttack.KeyState())
 	{
-		cmd->buttons |= BT_ATTACK;
+		cl->Buttons |= BT_ATTACK;
 	}
 
 	// Use buttons
 	if (KeyUse.KeyState())
 	{ 
-		cmd->buttons |= BT_USE;
+		cl->Buttons |= BT_USE;
 	} 
 
 	// Jumping
 	if (KeyJump.KeyState())
 	{
-		cmd->buttons |= BT_JUMP;
+		cl->Buttons |= BT_JUMP;
 	}
 
 	if (KeyButton4.KeyState())
 	{
-		cmd->buttons |= 0x08;
+		cl->Buttons |= 0x08;
 	}
 
 	if (KeyButton5.KeyState())
 	{
-		cmd->buttons |= 0x10;
+		cl->Buttons |= 0x10;
 	}
 
 	if (KeyButton6.KeyState())
 	{
-		cmd->buttons |= 0x20;
+		cl->Buttons |= 0x20;
 	}
 
 	if (KeyButton7.KeyState())
 	{
-		cmd->buttons |= 0x40;
+		cl->Buttons |= 0x40;
 	}
 
 	if (KeyButton8.KeyState())
 	{
-		cmd->buttons |= 0x80;
+		cl->Buttons |= 0x80;
 	}
 
 	//
@@ -581,13 +581,13 @@ static void BuildTiccmd(ticcmd_t* cmd)
 	//
 	if (impulse_cmd)
 	{
-		cmd->impulse = impulse_cmd;
+		cl->eventServerImpulse(impulse_cmd);
 		impulse_cmd = 0;
 	}
 
-	cmd->forwardmove = (int)forward;
-	cmd->sidemove = (int)side;
-	cmd->flymove = (int)flyheight;
+	cl->ForwardMove = forward;
+	cl->SideMove = side;
+	cl->FlyMove = flyheight;
 	unguard;
 }
 
@@ -600,8 +600,6 @@ static void BuildTiccmd(ticcmd_t* cmd)
 void CL_SendMove()
 {
 	guard(CL_SendMove);
-	ticcmd_t	cmd;
-
 	if (cls.state != ca_connected)
 	{
 		return;
@@ -616,27 +614,16 @@ void CL_SendMove()
 	if (cls.signon == SIGNONS)
 	{
 		AdjustAngles();
-		BuildTiccmd(&cmd);
+		BuildTiccmd();
 		mousex = mousey = 0;
-
-		VMessageOut msg(OUT_MESSAGE_SIZE);
-		msg << (byte)clc_move
-			<< (byte)(AngleToByte(cl->ViewAngles.yaw))
-			<< (byte)(AngleToByte(cl->ViewAngles.pitch))
-			<< (byte)(AngleToByte(cl->ViewAngles.roll))
-			<< cmd.forwardmove
-			<< cmd.sidemove
-			<< cmd.flymove
-			<< cmd.buttons
-			<< cmd.impulse;
-		cl->Net->Channels[0]->SendMessage(&msg);
+		((VPlayerChannel*)cl->Net->Channels[CHANIDX_Player])->Update();
 	}
 
 	// send the reliable message
 	if (cl->Net->Message.GetNumBits())
 	{
 		cl->Net->Message.bReliable = true;
-		cl->Net->Channels[0]->SendMessage(&cl->Net->Message);
+		cl->Net->Channels[CHANIDX_General]->SendMessage(&cl->Net->Message);
 		cl->Net->Message.Clear();
 	}
 	cl->Net->Flush();

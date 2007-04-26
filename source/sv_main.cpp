@@ -115,6 +115,7 @@ static bool		mapteleport_issued;
 
 static VCvarI	split_frame("split_frame", "1", CVAR_Archive);
 static VCvarF	sv_gravity("sv_gravity", "800.0", CVAR_ServerInfo);
+static VCvarI	sv_maxmove("sv_maxmove", "400", CVAR_Archive);
 
 static VServerNetContext*	ServerNetContext;
 
@@ -131,7 +132,6 @@ void SV_Init()
 	guard(SV_Init);
 	int		i;
 
-	ServerNetContext = new VServerNetContext();
 	sv_reliable = new VMessageOut(OUT_MESSAGE_SIZE);
 
 	svs.max_clients = 1;
@@ -139,6 +139,8 @@ void SV_Init()
 	VMemberBase::StaticLoadPackage(NAME_svprogs);
 
 	ProcessDehackedFiles();
+
+	ServerNetContext = new VServerNetContext();
 
 	GGameInfo = (VGameInfo*)VObject::StaticSpawnObject(
 		VClass::FindClass("MainGameInfo"));
@@ -419,27 +421,6 @@ void SV_UpdateLevel()
 
 //==========================================================================
 //
-//	SV_SendNop
-//
-//	Send a nop message without trashing or sending the accumulated client
-// message buffer
-//
-//==========================================================================
-
-void SV_SendNop(VBasePlayer *client)
-{
-	guard(SV_SendNop);
-	VMessageOut	msg(4 << 3);
-
-	msg << (vuint8)svc_nop;
-
-	client->Net->Channels[0]->SendMessage(&msg);
-	client->Net->LastMessage = realtime;
-	unguard;
-}
-
-//==========================================================================
-//
 //	SV_SendClientDatagram
 //
 //==========================================================================
@@ -460,7 +441,9 @@ void SV_SendClientDatagram()
 		RepInfo->PlayerName = sv_player->PlayerName;
 		RepInfo->UserInfo = sv_player->UserInfo;
 		for (int j = 0; j < MAXPLAYERS; j++)
+		{
 			RepInfo->FragsStats[j] = sv_player->FragsStats[j];
+		}
 		RepInfo->Frags = sv_player->Frags;
 		RepInfo->KillCount = sv_player->KillCount;
 		RepInfo->ItemCount = sv_player->ItemCount;
@@ -476,22 +459,21 @@ void SV_SendClientDatagram()
 
 		sv_player = GGameInfo->Players[i];
 
+		if (!sv_player->Net->Channels[0])
+		{
+			continue;
+		}
+
 		if (!(sv_player->PlayerFlags & VBasePlayer::PF_Spawned))
 		{
 			// the player isn't totally in the game yet
-			// send small keepalive messages if too much time has passed
-			// send a full message when the next signon stage has been requested
-			// some other message data (name changes, etc) may accumulate
-			// between signon stages
-			if (realtime - sv_player->Net->LastMessage > 5)
-			{
-				SV_SendNop(sv_player);
-			}
 			continue;
 		}
 
 		if (!sv_player->Net->NeedsUpdate)
+		{
 			continue;
+		}
 
 		sv_player->MO->EntityFlags |= VEntity::EF_NetLocalPlayer;
 
@@ -557,7 +539,6 @@ void SV_SendReliable()
 			Player->Net->Message.bReliable = true;
 			Player->Net->Channels[0]->SendMessage(&Player->Net->Message);
 			Player->Net->Message.Clear();
-			Player->Net->LastMessage = realtime;
 		}
 	}
 
@@ -699,6 +680,23 @@ void SV_RunClients()
 			!sv.intermission && !paused)
 #endif
 		{
+			// Don't move faster than maxmove
+			if (GGameInfo->Players[i]->ForwardMove > sv_maxmove)
+			{
+				GGameInfo->Players[i]->ForwardMove = sv_maxmove;
+			}
+			else if (GGameInfo->Players[i]->ForwardMove < -sv_maxmove)
+			{
+				GGameInfo->Players[i]->ForwardMove = -sv_maxmove;
+			}
+			if (GGameInfo->Players[i]->SideMove > sv_maxmove)
+			{
+				GGameInfo->Players[i]->SideMove = sv_maxmove;
+			}
+			else if (GGameInfo->Players[i]->SideMove < -sv_maxmove)
+			{
+				GGameInfo->Players[i]->SideMove = -sv_maxmove;
+			}
 			GGameInfo->Players[i]->eventPlayerTick(host_frametime);
 		}
 	}
@@ -944,7 +942,7 @@ static void G_DoReborn(int playernum)
 //
 //==========================================================================
 
-int NET_SendToAll(VMessageOut* data, int blocktime)
+int NET_SendToAll(int blocktime)
 {
 	guard(NET_SendToAll);
 	double		start;
@@ -953,7 +951,6 @@ int NET_SendToAll(VMessageOut* data, int blocktime)
 	bool		state1[MAXPLAYERS];
 	bool		state2[MAXPLAYERS];
 
-	data->bReliable = true;
 	for (i = 0; i < svs.max_clients; i++)
 	{
 		sv_player = GGameInfo->Players[i];
@@ -961,8 +958,7 @@ int NET_SendToAll(VMessageOut* data, int blocktime)
 		{
 			if (sv_player->Net->IsLocalConnection())
 			{
-				sv_player->Net->Channels[0]->SendMessage(data);
-				state1[i] = true;
+				state1[i] = false;
 				state2[i] = true;
 				continue;
 			}
@@ -987,20 +983,21 @@ int NET_SendToAll(VMessageOut* data, int blocktime)
 			if (!state1[i])
 			{
 				state1[i] = true;
-				sv_player->Net->Channels[0]->SendMessage(data);
+				sv_player->Net->Channels[0]->Close();
 				count++;
 				continue;
 			}
 
 			if (!state2[i])
 			{
-				if (!sv_player->Net->Channels[0]->OutMsg)
+				if (sv_player->Net->State == NETCON_Closed)
 				{
 					state2[i] = true;
 				}
 				else
 				{
 					sv_player->Net->GetMessages();
+					sv_player->Net->Tick();
 				}
 				count++;
 				continue;
@@ -1153,7 +1150,6 @@ void SV_SpawnServer(const char *mapname, bool spawn_thinkers)
 			Host_Error("Level needs more deathmatch start spots");
 		}
 	}
-	GLevel->InitPolyobjs(); // Initialise the polyobjs
 
 	if (deathmatch)
 	{
@@ -1394,9 +1390,7 @@ void SV_ShutdownServer(bool crash)
 #endif
 
 	// make sure all the clients know we're disconnecting
-	VMessageOut msg(128 << 3);
-	msg << (vuint8)svc_disconnect;
-	count = NET_SendToAll(&msg, 5);
+	count = NET_SendToAll(5);
 	if (count)
 		GCon->Logf("Shutdown server failed for %d clients", count);
 
@@ -1533,7 +1527,6 @@ void SV_ConnectClient(VBasePlayer *player)
 	player->PlayerFlags |= VBasePlayer::PF_Active;
 
 	player->Net->Message.AllowOverflow = true;		// we can catch it
-	player->Net->LastMessage = 0;
 	player->Net->NeedsUpdate = false;
 	player->PlayerFlags &= ~VBasePlayer::PF_Spawned;
 	player->Level = GLevelInfo;

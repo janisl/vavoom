@@ -240,6 +240,8 @@ void VLevel::LoadMap(VName AMapName)
 
 	//	Set up polyobjs, slopes, 3D floors and some other static stuff.
 	GGameInfo->eventSpawnWorld(this);
+	InitPolyobjs();	// Initialise the polyobjs
+
 	//	We need this for client.
 	for (int i = 0; i < NumSectors; i++)
 	{

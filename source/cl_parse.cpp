@@ -430,14 +430,6 @@ void VClientGenChannel::ParsePacket(VMessageIn& msg)
 
 		switch (cmd_type)
 		{
-		case svc_nop:
-			// nop keepalive message
-			GCon->Log("<-- server to client keepalive");
-			break;
-
-		case svc_disconnect:
-			Host_EndGame("Server disconnected");
-
 		case svc_server_info:
 			CL_ParseServerInfo(msg);
 			break;

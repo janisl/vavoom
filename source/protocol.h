@@ -28,10 +28,8 @@
 enum
 {
 	svc_bad,
-	svc_nop,
-	svc_disconnect,
-	svc_server_info,
 	svc_stringcmd,
+	svc_server_info,
 	svc_signonnum,
 	svc_time,
 	svc_serverinfo,
@@ -40,9 +38,6 @@ enum
 enum
 {
 	clc_bad,
-	clc_nop,
-	clc_disconnect,
-	clc_move,
 	clc_stringcmd,
 	clc_player_info,
 };

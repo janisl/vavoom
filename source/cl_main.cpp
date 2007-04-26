@@ -197,7 +197,7 @@ void CL_ReadFromServer()
 	cl->Net->GetMessages();
 	if (cl->Net->State == NETCON_Closed)
 	{
-		Host_Error("CL_ReadFromServer: lost server connection");
+		Host_EndGame("Server disconnected");
 	}
 
 	if (cls.signon == SIGNONS)
@@ -235,7 +235,6 @@ void CL_SignonReply()
 		break;
 
 	case 2:
-		GClLevel->InitPolyobjs();
 		GClLevel->RenderData->PreRender();
 		if (!UserInfoSent)
 		{
@@ -264,56 +263,13 @@ void CL_SignonReply()
 void CL_KeepaliveMessage()
 {
 	guard(CL_KeepaliveMessage);
-	float			time;
-	static float	lastmsg;
-	int				ret;
-
 #ifdef SERVER
 	if (sv.active)
 		return;		// no need if server is local
 #endif
 	if (cls.demoplayback)
 		return;
-
-	// read messages from server, should just be nops
-	do
-	{
-		TArray<vuint8> Data;
-		ret = cl->Net->GetRawPacket(Data);
-		switch (ret)
-		{
-		default:
-			Host_Error("CL_KeepaliveMessage: CL_GetMessage failed");
-		case 0:
-			break;	// nothing waiting
-		case 1:
-			{
-				VMessageIn Msg(Data.Ptr(), Data.Num());
-				if (Msg.ReadBit())
-					break;
-				if (Msg.ReadBit())
-					Host_Error("CL_KeepaliveMessage: received a message");
-				if (Msg.ReadByte() != svc_nop)
-				{
-					Host_Error("CL_KeepaliveMessage: datagram wasn't a nop");
-				}
-			}
-			break;
-		}
-	} while (ret);
-
-	// check time
-	time = Sys_Time();
-	if (time - lastmsg < 5.0)
-		return;
-	lastmsg = time;
-
 	// write out a nop
-	GCon->Log("--> client to server keepalive");
-
-	cl->Net->Message << (byte)clc_nop;
-	cl->Net->Channels[0]->SendMessage(&cl->Net->Message);
-	cl->Net->Message.Clear();
 	cl->Net->Flush();
 	unguard;
 }
@@ -357,9 +313,7 @@ void CL_Disconnect()
 			GCon->Log(NAME_Dev, "Buffer contains data");
 		}
 		cl->Net->Message.Clear();
-		cl->Net->Message << (byte)clc_disconnect;
-		cl->Net->Channels[0]->SendMessage(&cl->Net->Message);
-		cl->Net->Message.Clear();
+		cl->Net->Channels[0]->Close();
 		cl->Net->Flush();
 
 		cls.state = ca_disconnected;

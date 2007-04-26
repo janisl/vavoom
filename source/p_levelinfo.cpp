@@ -163,7 +163,7 @@ void VLevelInfo::SectorStartSound(const sector_t* Sector, int SoundId,
 void VLevelInfo::SectorStopSound(const sector_t *sector, int channel)
 {
 	guard(VLevelInfo::SectorStopSound);
-	StopSound((sector - GLevel->Sectors) + GMaxEntities, channel);
+	StopSound((sector - XLevel->Sectors) + GMaxEntities, channel);
 	unguard;
 }
 

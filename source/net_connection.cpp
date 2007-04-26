@@ -58,7 +58,7 @@ VNetConnection::VNetConnection(VSocketPublic* ANetCon, VNetContext* AContext)
 , Context(AContext)
 , State(NETCON_Open)
 , Message(OUT_MESSAGE_SIZE)
-, LastMessage(0)
+, LastSendTime(0)
 , NeedsUpdate(false)
 , AutoAck(false)
 , Out(MAX_MSGLEN * 8)
@@ -185,6 +185,8 @@ void VNetConnection::ReceivedPacket(VBitStreamReader& Packet)
 	if (Packet.ReadInt(256) != NETPACKET_DATA)
 		return;
 	Driver->packetsReceived++;
+
+	NeedsUpdate = true;
 
 	vuint32 Sequence;
 	Packet << Sequence;
@@ -401,9 +403,16 @@ void VNetConnection::PrepareOut(int Length)
 void VNetConnection::Flush()
 {
 	guard(VNetConnection::Flush);
-	if (!Out.GetNumBits())
+	Driver->SetNetTime();
+	if (!Out.GetNumBits() && Driver->NetTime - LastSendTime < 5.0)
 	{
 		return;
+	}
+
+	//	Prepare out for keepalive messages
+	if (!Out.GetNumBits())
+	{
+		PrepareOut(0);
 	}
 
 	//	Add trailing bit so we can find out how many bits the message has.
@@ -415,11 +424,11 @@ void VNetConnection::Flush()
 	}
 
 	//	Send the message.
-	Driver->SetNetTime();
 	if (NetCon->SendMessage(Out.GetData(), Out.GetNumBytes()) == -1)
 	{
 		State = NETCON_Closed;
 	}
+	LastSendTime = Driver->NetTime;
 
 	if (!IsLocalConnection())
 		Driver->MessagesSent++;
@@ -455,11 +464,6 @@ bool VNetConnection::IsLocalConnection()
 void VNetConnection::Tick()
 {
 	guard(VNetConnection::Tick);
-	if (State == NETCON_Closed)
-	{
-		return;
-	}
-
 	//	For bots and demo playback there's no other end that will send us
 	// the ACK so just mark all outgoing messages as ACK-ed.
 	if (AutoAck)
@@ -478,16 +482,27 @@ void VNetConnection::Tick()
 	if (!IsLocalConnection() &&
 		Driver->NetTime - NetCon->LastMessageTime > VNetworkPublic::MessageTimeOut)
 	{
+		if (State != NETCON_Closed)
+		{
+			GCon->Logf("Channel timed out");
+		}
 		State = NETCON_Closed;
-		return;
 	}
-
-	//	Run tick for all of the open channels.
-	for (int i = OpenChannels.Num() - 1; i >= 0; i--)
+	else
 	{
-		OpenChannels[i]->Tick();
+		//	Run tick for all of the open channels.
+		for (int i = OpenChannels.Num() - 1; i >= 0; i--)
+		{
+			OpenChannels[i]->Tick();
+		}
+		//	If general channel has been closed, then this connection is closed
+		if (!Channels[CHANIDX_General])
+		{
+			State = NETCON_Closed;
+		}
 	}
 
+	//	Flush any remaining data or send keepalive.
 	Flush();
 	unguard;
 }

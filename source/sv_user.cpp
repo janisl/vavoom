@@ -59,8 +59,6 @@ extern bool			sv_loading;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static VCvarI		sv_maxmove("sv_maxmove", "400", CVAR_Archive);
-
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
@@ -288,55 +286,6 @@ void VBasePlayer::CentrePrintf(const char *s, ...)
 
 //==========================================================================
 //
-//	SV_ReadMove
-//
-//==========================================================================
-
-void SV_ReadMove(VMessageIn& msg)
-{
-	guard(SV_ReadMove);
-    ticcmd_t	cmd;
-
-	sv_player->ViewAngles.yaw = ByteToAngle(msg.ReadByte());
-	sv_player->ViewAngles.pitch = ByteToAngle(msg.ReadByte());
-	sv_player->ViewAngles.roll = ByteToAngle(msg.ReadByte());
-	msg << cmd.forwardmove
-		<< cmd.sidemove
-		<< cmd.flymove
-		<< cmd.buttons
-		<< cmd.impulse;
-
-	// Don't move faster than maxmove
-	if (cmd.forwardmove > sv_maxmove)
-	{
-		cmd.forwardmove = sv_maxmove;
-	}
-	else if (cmd.forwardmove < -sv_maxmove)
-	{
-		cmd.forwardmove = -sv_maxmove;
-	}
-	if (cmd.sidemove > sv_maxmove)
-	{
-		cmd.sidemove = sv_maxmove;
-	}
-	else if (cmd.sidemove < -sv_maxmove)
-	{
-		cmd.sidemove = -sv_maxmove;
-	}
-
-	sv_player->ForwardMove = cmd.forwardmove;
-	sv_player->SideMove = cmd.sidemove;
-	sv_player->FlyMove = cmd.flymove;
-	sv_player->Buttons = cmd.buttons;
-	if (cmd.impulse)
-	{
-		sv_player->Impulse = cmd.impulse;
-	}
-	unguard;
-}
-
-//==========================================================================
-//
 //	SV_RunClientCommand
 //
 //==========================================================================
@@ -393,8 +342,6 @@ void SV_SetUserInfo(const VStr& info)
 void VServerGenChannel::ParsePacket(VMessageIn& msg)
 {
 	guard(VServerGenChannel::ParsePacket);
-	Connection->NeedsUpdate = true;
-
 	while (1)
 	{
 		if (msg.IsError())
@@ -412,17 +359,6 @@ void VServerGenChannel::ParsePacket(VMessageIn& msg)
 
 		switch (cmd_type)
 		{
-		case clc_nop:
-			break;
-
-		case clc_move:
-			SV_ReadMove(msg);
-			break;
-
-		case clc_disconnect:
-			Connection->State = NETCON_Closed;
-			return;
-
 		case clc_player_info:
 			SV_SetUserInfo(msg.ReadString());
 			break;

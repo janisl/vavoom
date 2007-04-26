@@ -44,18 +44,6 @@
 
 // TYPES -------------------------------------------------------------------
 
-// The data sampled per tick (single player)
-// and transmitted to other peers (multiplayer).
-// Mainly movements/button commands per game tick
-struct ticcmd_t
-{
-	short		forwardmove;	// *2048 for move
-	short		sidemove;		// *2048 for move
-	short		flymove;		// fly up/down/centreing
-	byte		buttons;
-	byte		impulse;
-};
-
 struct VModel;
 
 enum cactive_t

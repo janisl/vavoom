@@ -365,6 +365,12 @@ class VBasePlayer : public VObject
 		P_PASS_INT(CDTrack);
 		EV_RET_VOID("ClientChangeMusic");
 	}
+	void eventServerImpulse(int AImpulse)
+	{
+		P_PASS_SELF;
+		P_PASS_INT(AImpulse);
+		EV_RET_VOID("ServerImpulse");
+	}
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------

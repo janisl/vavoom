@@ -278,7 +278,7 @@ public:
 	VNetContext*						Context;
 	ENetConState						State;
 	VMessageOut							Message;
-	double								LastMessage;
+	double								LastSendTime;
 	bool								NeedsUpdate;
 	bool								AutoAck;
 	VBitStreamWriter					Out;
