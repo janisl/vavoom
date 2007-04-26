@@ -275,10 +275,20 @@ void VNetConnection::ReceivedPacket(VBitStreamReader& Packet)
 			{
 				Msg.ChanType = Packet.ReadInt(CHANNEL_MAX);
 			}
+			if (Packet.IsError())
+			{
+				GCon->Logf(NAME_DevNet, "Packet is missing message header");
+				break;
+			}
 
 			//	Read data
 			int Length = Packet.ReadInt(MAX_MSGLEN * 8);
 			Msg.SetData(Packet, Length);
+			if (Packet.IsError())
+			{
+				GCon->Logf(NAME_DevNet, "Packet is missing message data");
+				break;
+			}
 
 			VChannel* Chan = Channels[Msg.ChanIndex];
 			if (!Chan)
