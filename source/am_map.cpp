@@ -1391,7 +1391,7 @@ static void AM_drawMarks()
 //
 //===========================================================================
 
-static void DrawWorldTimer(void)
+static void DrawWorldTimer()
 {
 	int days;
 	int hours;
@@ -1401,12 +1401,11 @@ static void DrawWorldTimer(void)
 	char timeBuffer[15];
 	char dayBuffer[20];
 
-	worldTimer = cl->WorldTimer;
+	worldTimer = (int)cl->WorldTimer;
 
 	if (!worldTimer)
 		return;
 
-	worldTimer /= 35;
 	days = worldTimer / 86400;
 	worldTimer -= days * 86400;
 	hours = worldTimer / 3600;

@@ -104,7 +104,7 @@ VViewState				ViewStates[NUMPSPRITES];
 Entity					ViewEnt;
 float					PSpriteSY;
 
-int						WorldTimer;	// total time the player's been playing
+float					WorldTimer;	// total time the player's been playing
 
 native readonly int		ClientNum;
 
@@ -118,7 +118,8 @@ replication
 {
 	reliable if (!bIsClient)
 		Health, Items, Frags, ExtraLight, FixedColourmap, CShifts, PSpriteSY,
-		KillCount, ItemCount, SecretCount, ViewStates, ViewEntAlpha, ViewOrg;
+		KillCount, ItemCount, SecretCount, ViewStates, ViewEntAlpha, ViewOrg,
+		ClientNum, WorldTimer;
 
 	unreliable if (!bIsClient)
 		ClientStartSound, ClientStopSound, ClientForceLightning;
@@ -127,6 +128,14 @@ replication
 		ClientStartSequence, ClientAddSequenceChoice, ClientStopSequence,
 		ClientPrint, ClientCentrePrint, ClientSetAngles, ClientIntermission,
 		ClientPause, ClientSkipIntermission, ClientFinale, ClientChangeMusic;
+
+	//	Movement variables
+	reliable if (bIsClient)
+		ViewAngles, ForwardMove, SideMove, FlyMove, Buttons;
+
+	//	Methods client can execute on server
+	reliable if (bIsClient)
+		ServerImpulse;
 }
 
 //  Print to client
@@ -215,6 +224,11 @@ void Cheat_NoWeapons()
 
 void Cheat_Class()
 {
+}
+
+void ServerImpulse(int AImpulse)
+{
+	Impulse = AImpulse;
 }
 
 defaultproperties

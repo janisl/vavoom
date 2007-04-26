@@ -145,7 +145,7 @@ class VBasePlayer : public VObject
 	VEntity*		ViewEnt;
 	float			PSpriteSY;
 
-	vuint32			WorldTimer;				// total time the player's been playing
+	float			WorldTimer;				// total time the player's been playing
 
 	int				ClientNum;
 

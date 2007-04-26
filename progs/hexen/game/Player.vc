@@ -2205,7 +2205,7 @@ void PlayerTick(float deltaTime)
 		Actor(MO).bJustAttacked = false;
 	}
 
-	WorldTimer++;
+	WorldTimer += deltaTime;
 	InventoryTick(deltaTime);
 
 	if (PlayerState == PST_DEAD)
