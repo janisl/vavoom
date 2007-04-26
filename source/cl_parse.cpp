@@ -306,7 +306,6 @@ static void CL_ParseTime(VMessageIn& msg)
 	if (cls.signon == SIGNONS - 1)
 	{
 		cls.signon = SIGNONS;
-		CL_SignonReply();
 		GCmdBuf << "HideConsole\n";
 	}
 
@@ -315,9 +314,7 @@ static void CL_ParseTime(VMessageIn& msg)
 
 	R_AnimateSurfaces();
 	msg << new_time;
-	GClLevel->TicTime = int(new_time * 35);
 	GClLevel->Time = new_time;
-	cl->WorldTimer = GClLevel->TicTime;
 	unguard;
 }
 
@@ -340,15 +337,9 @@ static void CL_ReadFromServerInfo()
 
 void CL_SetupLevel();
 
-static void CL_ParseServerInfo(VMessageIn& msg)
+void CL_ParseServerInfo(VMessageIn& msg)
 {
 	guard(CL_ParseServerInfo);
-	byte		ver;
-
-	msg << ver;
-	if (ver != PROTOCOL_VERSION)
-		Host_Error("Server runs protocol %d, not %d", ver, PROTOCOL_VERSION);
-
 	CL_Clear();
 
 	msg << GClGame->serverinfo;
@@ -356,9 +347,8 @@ static void CL_ParseServerInfo(VMessageIn& msg)
 
 	VName MapName = *msg.ReadString();
 
-	cl->ClientNum = msg.ReadByte();
-	GClGame->maxclients = msg.ReadByte();
-	GClGame->deathmatch = msg.ReadByte();
+	GClGame->maxclients = msg.ReadInt(MAXPLAYERS + 1);
+	GClGame->deathmatch = msg.ReadInt(256);
 
 	const mapInfo_t& LInfo = P_GetMapInfo(MapName);
 	GCon->Log("---------------------------------------");
@@ -390,8 +380,6 @@ static void CL_ParseServerInfo(VMessageIn& msg)
 	{
 		R_InstallSprite(*VClass::GSpriteNames[i], i);
 	}
-
-	VMemberBase::SetUpNetClasses();
 
 	GCon->Log(NAME_Dev, "Client level loaded");
 	unguard;
@@ -430,10 +418,6 @@ void VClientGenChannel::ParsePacket(VMessageIn& msg)
 
 		switch (cmd_type)
 		{
-		case svc_server_info:
-			CL_ParseServerInfo(msg);
-			break;
-
 		case svc_time:
 			CL_ParseTime(msg);
 			break;

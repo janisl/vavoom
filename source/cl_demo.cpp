@@ -95,6 +95,8 @@ extern VClientNetContext*	ClientNetContext;
 void CL_SetUpLocalPlayer(VSocketPublic* Sock)
 {
 	guard(CL_SetUpLocalPlayer);
+	VMemberBase::SetUpNetClasses();
+
 	//	Create player structure.
 	cl = (VBasePlayer*)VObject::StaticSpawnObject(
 		VClass::FindClass("Player"));

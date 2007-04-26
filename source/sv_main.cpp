@@ -1022,14 +1022,7 @@ void SV_SendServerInfo(VBasePlayer *player)
 	VMessageOut&	msg = player->Net->Message;
 
 	((VLevelChannel*)player->Net->Channels[CHANIDX_Level])->SetLevel(GLevel);
-
-	msg << (vuint8)svc_server_info
-		<< (vuint8)PROTOCOL_VERSION
-		<< svs.serverinfo
-		<< *GLevel->MapName
-		<< (vuint8)SV_GetPlayerNum(player)
-		<< (vuint8)svs.max_clients
-		<< (vuint8)deathmatch;
+	((VLevelChannel*)player->Net->Channels[CHANIDX_Level])->SendNewLevel();
 
 	msg << (vuint8)svc_signonnum
 		<< (vuint8)1;
@@ -1524,6 +1517,7 @@ void SV_ConnectClient(VBasePlayer *player)
 	GCon->Logf(NAME_Dev, "Client %s connected", *player->Net->GetAddress());
 
 	GGameInfo->Players[SV_GetPlayerNum(player)] = player;
+	player->ClientNum = SV_GetPlayerNum(player);
 	player->PlayerFlags |= VBasePlayer::PF_Active;
 
 	player->Net->Message.AllowOverflow = true;		// we can catch it

@@ -29,7 +29,6 @@ enum
 {
 	svc_bad,
 	svc_stringcmd,
-	svc_server_info,
 	svc_signonnum,
 	svc_time,
 	svc_serverinfo,

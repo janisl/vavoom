@@ -39,11 +39,14 @@ enum
 	CMD_Sector,
 	CMD_PolyObj,
 	CMD_StaticLight,
+	CMD_NewLevel,
 
 	CMD_MAX
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
+
+void CL_ParseServerInfo(VMessageIn& msg);
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
@@ -113,6 +116,26 @@ void VLevelChannel::SetLevel(VLevel* ALevel)
 		PolyObjs = new rep_polyobj_t[Level->NumPolyObjs];
 		memcpy(PolyObjs, Level->BasePolyObjs, sizeof(rep_polyobj_t) * Level->NumPolyObjs);
 	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VLevelChannel::SendNewLevel
+//
+//==========================================================================
+
+void VLevelChannel::SendNewLevel()
+{
+	guard(VLevelChannel::SendNewLevel);
+	VMessageOut Msg(this);
+	Msg.bReliable = true;
+	Msg.WriteInt(CMD_NewLevel, CMD_MAX);
+	VStr MapName = *Level->MapName;
+	Msg << svs.serverinfo << MapName;
+	Msg.WriteInt(svs.max_clients, MAXPLAYERS + 1);
+	Msg.WriteInt(deathmatch, 256);
+	SendMessage(&Msg);
 	unguard;
 }
 
@@ -411,6 +434,12 @@ void VLevelChannel::ParsePacket(VMessageIn& Msg)
 				Msg << Origin << Radius << Colour;
 				Level->RenderData->AddStaticLight(Origin, Radius, Colour);
 			}
+			break;
+
+		case CMD_NewLevel:
+#ifdef CLIENT
+			CL_ParseServerInfo(Msg);
+#endif
 			break;
 		}
 	}

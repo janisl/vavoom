@@ -208,6 +208,7 @@ public:
 	~VLevelChannel();
 	void SetLevel(VLevel*);
 	void Update();
+	void SendNewLevel();
 	void SendStaticLights();
 	void ParsePacket(VMessageIn&);
 };
