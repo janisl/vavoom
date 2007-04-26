@@ -27,16 +27,12 @@
 
 enum
 {
-	svc_bad,
 	svc_stringcmd,
 	svc_signonnum,
 	svc_time,
-	svc_serverinfo,
 };
 
 enum
 {
-	clc_bad,
 	clc_stringcmd,
-	clc_player_info,
 };

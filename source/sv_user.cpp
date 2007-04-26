@@ -359,10 +359,6 @@ void VServerGenChannel::ParsePacket(VMessageIn& msg)
 
 		switch (cmd_type)
 		{
-		case clc_player_info:
-			SV_SetUserInfo(msg.ReadString());
-			break;
-
 		case clc_stringcmd:
 			SV_RunClientCommand(msg.ReadString());
 			break;
@@ -492,4 +488,12 @@ IMPLEMENT_FUNCTION(VBasePlayer, ClearPlayer)
 	{
 		VField::CopyFieldValue(Def + F->Ofs, (vuint8*)Self + F->Ofs, F->Type);
 	}
+}
+
+IMPLEMENT_FUNCTION(VBasePlayer, ServerSetUserInfo)
+{
+	P_GET_STR(Info);
+	P_GET_SELF;
+	sv_player = Self;
+	SV_SetUserInfo(Info);
 }

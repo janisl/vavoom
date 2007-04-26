@@ -237,7 +237,7 @@ void CL_SignonReply()
 	case 2:
 		if (!UserInfoSent)
 		{
-			cl->Net->Message << (byte)clc_player_info << cls.userinfo;
+			cl->eventServerSetUserInfo(cls.userinfo);
 			UserInfoSent = true;
 		}
 		cl->Net->Message << (byte)clc_stringcmd << "Spawn\n";

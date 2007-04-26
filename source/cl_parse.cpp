@@ -62,6 +62,12 @@ void CL_SignonReply();
 
 // CODE --------------------------------------------------------------------
 
+//==========================================================================
+//
+//	CL_Clear
+//
+//==========================================================================
+
 void CL_Clear()
 {
 	guard(CL_Clear);
@@ -80,6 +86,19 @@ void CL_Clear()
 	unguard;
 }
 
+//==========================================================================
+//
+//	CL_ReadFromServerInfo
+//
+//==========================================================================
+
+static void CL_ReadFromServerInfo()
+{
+	guard(CL_ReadFromServerInfo);
+	VCvar::SetCheating(!!atoi(*Info_ValueForKey(GClGame->serverinfo, "sv_cheats")));
+	unguard;
+}
+
 IMPLEMENT_FUNCTION(VBasePlayer, ClientStartSound)
 {
 	P_GET_FLOAT(Attenuation);
@@ -89,7 +108,6 @@ IMPLEMENT_FUNCTION(VBasePlayer, ClientStartSound)
 	P_GET_VEC(Org);
 	P_GET_INT(SoundId);
 	P_GET_SELF;
-	Self = Self;
 	GAudio->PlaySound(SoundId, Org, TVec(0, 0, 0), OriginId, Channel, Volume,
 		Attenuation);
 }
@@ -99,7 +117,6 @@ IMPLEMENT_FUNCTION(VBasePlayer, ClientStopSound)
 	P_GET_INT(Channel);
 	P_GET_INT(OriginId);
 	P_GET_SELF;
-	Self = Self;
 	GAudio->StopSound(OriginId, Channel);
 }
 
@@ -110,7 +127,6 @@ IMPLEMENT_FUNCTION(VBasePlayer, ClientStartSequence)
 	P_GET_INT(OriginId);
 	P_GET_VEC(Origin);
 	P_GET_SELF;
-	Self = Self;
 	GAudio->StartSequence(OriginId, Origin, Name, ModeNum);
 }
 
@@ -119,7 +135,6 @@ IMPLEMENT_FUNCTION(VBasePlayer, ClientAddSequenceChoice)
 	P_GET_NAME(Choice);
 	P_GET_INT(OriginId);
 	P_GET_SELF;
-	Self = Self;
 	GAudio->AddSeqChoice(OriginId, Choice);
 }
 
@@ -127,14 +142,12 @@ IMPLEMENT_FUNCTION(VBasePlayer, ClientStopSequence)
 {
 	P_GET_INT(OriginId);
 	P_GET_SELF;
-	Self = Self;
 	GAudio->StopSequence(OriginId);
 }
 
 IMPLEMENT_FUNCTION(VBasePlayer, ClientForceLightning)
 {
 	P_GET_SELF;
-	Self = Self;
 	GClLevel->RenderData->ForceLightning();
 }
 
@@ -142,7 +155,6 @@ IMPLEMENT_FUNCTION(VBasePlayer, ClientPrint)
 {
 	P_GET_STR(Str);
 	P_GET_SELF;
-	Self = Self;
 	C_NotifyMessage(*Str);
 }
 
@@ -150,7 +162,6 @@ IMPLEMENT_FUNCTION(VBasePlayer, ClientCentrePrint)
 {
 	P_GET_STR(Str);
 	P_GET_SELF;
-	Self = Self;
 	C_CentreMessage(*Str);
 }
 
@@ -166,7 +177,6 @@ IMPLEMENT_FUNCTION(VBasePlayer, ClientIntermission)
 {
 	P_GET_NAME(NextMap);
 	P_GET_SELF;
-	Self = Self;
 
 	im.Text.Clean();
 	im.IMFlags = 0;
@@ -259,7 +269,6 @@ IMPLEMENT_FUNCTION(VBasePlayer, ClientPause)
 {
 	P_GET_BOOL(Paused);
 	P_GET_SELF;
-	Self = Self;
 	if (Paused)
 	{
 		GClGame->ClientFlags |= VClientGameBase::CF_Paused;
@@ -275,7 +284,6 @@ IMPLEMENT_FUNCTION(VBasePlayer, ClientPause)
 IMPLEMENT_FUNCTION(VBasePlayer, ClientSkipIntermission)
 {
 	P_GET_SELF;
-	Self = Self;
 	IM_SkipIntermission();
 }
 
@@ -283,7 +291,6 @@ IMPLEMENT_FUNCTION(VBasePlayer, ClientFinale)
 {
 	P_GET_STR(Type);
 	P_GET_SELF;
-	Self = Self;
 	F_StartFinale(*Type);
 }
 
@@ -292,10 +299,18 @@ IMPLEMENT_FUNCTION(VBasePlayer, ClientChangeMusic)
 	P_GET_INT(CDTrack);
 	P_GET_NAME(Song);
 	P_GET_SELF;
-	Self = Self;
 	GClLevel->LevelInfo->SongLump = Song;
 	GClLevel->LevelInfo->CDTrack = CDTrack;
 	GAudio->MusicChanged();
+}
+
+IMPLEMENT_FUNCTION(VBasePlayer, ClientSetServerInfo)
+{
+	P_GET_STR(Value);
+	P_GET_STR(Key);
+	P_GET_SELF;
+	Info_SetValueForKey(GClGame->serverinfo, Key, Value);
+	CL_ReadFromServerInfo();
 }
 
 static void CL_ParseTime(VMessageIn& msg)
@@ -316,17 +331,6 @@ static void CL_ParseTime(VMessageIn& msg)
 	msg << new_time;
 	GClLevel->Time = new_time;
 	unguard;
-}
-
-//==========================================================================
-//
-//	CL_ReadFromServerInfo
-//
-//==========================================================================
-
-static void CL_ReadFromServerInfo()
-{
-	VCvar::SetCheating(!!atoi(*Info_ValueForKey(GClGame->serverinfo, "sv_cheats")));
 }
 
 //==========================================================================
@@ -432,13 +436,6 @@ void VClientGenChannel::ParsePacket(VMessageIn& msg)
 				Host_Error("Received signon %i when at %i", i, cls.signon);
 			cls.signon = i;
 			CL_SignonReply();
-			break;
-
-		case svc_serverinfo:
-			msg << name
-				<< string;
-			Info_SetValueForKey(GClGame->serverinfo, name, string);
-			CL_ReadFromServerInfo();
 			break;
 
 		default:

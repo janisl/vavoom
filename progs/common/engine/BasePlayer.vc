@@ -127,7 +127,8 @@ replication
 	reliable if (!bIsClient)
 		ClientStartSequence, ClientAddSequenceChoice, ClientStopSequence,
 		ClientPrint, ClientCentrePrint, ClientSetAngles, ClientIntermission,
-		ClientPause, ClientSkipIntermission, ClientFinale, ClientChangeMusic;
+		ClientPause, ClientSkipIntermission, ClientFinale, ClientChangeMusic,
+		ClientSetServerInfo;
 
 	//	Movement variables
 	reliable if (bIsClient)
@@ -165,6 +166,9 @@ native void ClientPause(bool Paused);
 native void ClientSkipIntermission();
 native void ClientFinale(string Type);
 native void ClientChangeMusic(name Song, int CDTrack);
+native void ClientSetServerInfo(string Key, string Value);
+
+native void ServerSetUserInfo(string Info);
 
 void PutClientIntoServer()
 {

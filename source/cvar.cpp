@@ -231,7 +231,14 @@ void VCvar::DoSet(const VStr& AValue)
 		Info_SetValueForKey(svs.serverinfo, Name, *StringValue);
 		if (sv.active)
 		{
-			*sv_reliable << (byte)svc_serverinfo << Name << StringValue;
+			for (int i = 0; i < MAXPLAYERS; i++)
+			{
+				if (GGameInfo->Players[i])
+				{
+					GGameInfo->Players[i]->eventClientSetServerInfo(
+						Name, StringValue);
+				}
+			}
 		}
 	}
 #endif

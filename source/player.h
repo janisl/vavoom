@@ -190,6 +190,9 @@ class VBasePlayer : public VObject
 	DECLARE_FUNCTION(ClientSkipIntermission)
 	DECLARE_FUNCTION(ClientFinale)
 	DECLARE_FUNCTION(ClientChangeMusic)
+	DECLARE_FUNCTION(ClientSetServerInfo)
+
+	DECLARE_FUNCTION(ServerSetUserInfo)
 
 	void eventPutClientIntoServer()
 	{
@@ -365,11 +368,25 @@ class VBasePlayer : public VObject
 		P_PASS_INT(CDTrack);
 		EV_RET_VOID("ClientChangeMusic");
 	}
+	void eventClientSetServerInfo(VStr Key, VStr Value)
+	{
+		P_PASS_SELF;
+		P_PASS_STR(Key);
+		P_PASS_STR(Value);
+		EV_RET_VOID("ClientSetServerInfo");
+	}
+
 	void eventServerImpulse(int AImpulse)
 	{
 		P_PASS_SELF;
 		P_PASS_INT(AImpulse);
 		EV_RET_VOID("ServerImpulse");
+	}
+	void eventServerSetUserInfo(VStr Info)
+	{
+		P_PASS_SELF;
+		P_PASS_STR(Info);
+		EV_RET_VOID("ServerSetUserInfo");
 	}
 };
 
