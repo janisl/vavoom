@@ -110,6 +110,7 @@ void CL_Ticker()
 		AM_Ticker();
 		break;
 	}
+	R_AnimateSurfaces();
 	unguard;
 }
 
@@ -200,7 +201,7 @@ void CL_ReadFromServer()
 		Host_EndGame("Server disconnected");
 	}
 
-	if (cls.signon == SIGNONS)
+	if (cls.signon)
 	{
 		CL_UpdateMobjs();
 		CL_Ticker();
@@ -228,25 +229,17 @@ void CL_ReadFromServer()
 void CL_SignonReply()
 {
 	guard(CL_SignonReply);
-	switch (cls.signon)
+	if (cls.signon)
 	{
-	case 1:
-		cl->Net->Message << (byte)clc_stringcmd << "PreSpawn\n";
-		break;
-
-	case 2:
-		if (!UserInfoSent)
-		{
-			cl->eventServerSetUserInfo(cls.userinfo);
-			UserInfoSent = true;
-		}
-		cl->Net->Message << (byte)clc_stringcmd << "Spawn\n";
-		break;
-
-	case 3:
-		cl->Net->Message << (byte)clc_stringcmd << "Begin\n";
-		break;
+		Host_Error("Spawn command already sent");
 	}
+	if (!UserInfoSent)
+	{
+		cl->eventServerSetUserInfo(cls.userinfo);
+		UserInfoSent = true;
+	}
+	cl->Net->Message << (byte)clc_stringcmd << "Spawn\n";
+	GCmdBuf << "HideConsole\n";
 	unguard;
 }
 

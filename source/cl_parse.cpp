@@ -48,7 +48,6 @@ public:
 
 void CL_ClearInput();
 void CL_PO_Update(int i, float x, float y, float angle);
-void CL_SignonReply();
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
@@ -318,16 +317,6 @@ static void CL_ParseTime(VMessageIn& msg)
 	guard(CL_ParseTime);
 	float	new_time;
 
-	if (cls.signon == SIGNONS - 1)
-	{
-		cls.signon = SIGNONS;
-		GCmdBuf << "HideConsole\n";
-	}
-
-	if (cls.signon != SIGNONS)
-		Sys_Error("Update when at %d", cls.signon);
-
-	R_AnimateSurfaces();
 	msg << new_time;
 	GClLevel->Time = new_time;
 	unguard;
@@ -428,14 +417,6 @@ void VClientGenChannel::ParsePacket(VMessageIn& msg)
 
 		case svc_stringcmd:
 			GCmdBuf << msg.ReadString();
-			break;
-
-		case svc_signonnum:
-			i = msg.ReadByte();
-			if (i <= cls.signon)
-				Host_Error("Received signon %i when at %i", i, cls.signon);
-			cls.signon = i;
-			CL_SignonReply();
 			break;
 
 		default:

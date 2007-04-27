@@ -28,7 +28,6 @@
 enum
 {
 	svc_stringcmd,
-	svc_signonnum,
 	svc_time,
 };
 

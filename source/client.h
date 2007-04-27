@@ -33,8 +33,6 @@
 
 #define IT_ALL_MAP		1
 
-#define SIGNONS		4
-
 //
 // Button/action code definitions.
 //

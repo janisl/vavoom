@@ -82,8 +82,6 @@ bool			paused;
 bool			deathmatch = false;   	// only if started as net death
 bool			netgame;                // only true if packets are broadcast
 
-VMessageOut*	sv_reliable;
-
 VBasePlayer*	sv_player;
 
 int 			TimerGame;
@@ -131,8 +129,6 @@ void SV_Init()
 {
 	guard(SV_Init);
 	int		i;
-
-	sv_reliable = new VMessageOut(OUT_MESSAGE_SIZE);
 
 	svs.max_clients = 1;
 
@@ -186,7 +182,6 @@ void SV_Shutdown()
 	P_FreeTerrainTypes();
 	svs.serverinfo.Clean();
 
-	delete sv_reliable;
 	delete ServerNetContext;
 	unguard;
 }
@@ -207,7 +202,6 @@ void SV_Clear()
 		VObject::CollectGarbage();
 	}
 	memset(&sv, 0, sizeof(sv));
-	sv_reliable->Clear();
 	sv_ActiveSequences.Clear();
 #ifdef CLIENT
 	// Make sure all sounds are stopped.
@@ -507,16 +501,12 @@ void SV_SendReliable()
 		if (!GGameInfo->Players[i])
 			continue;
 
-		GGameInfo->Players[i]->Net->Message << *sv_reliable;
-
 		if (!(GGameInfo->Players[i]->PlayerFlags & VBasePlayer::PF_Spawned))
 			continue;
 
 		sv_player = GGameInfo->Players[i];
 		((VPlayerChannel*)sv_player->Net->Channels[CHANIDX_Player])->Update();
 	}
-
-	sv_reliable->Clear();
 
 	for (int i = 0; i < svs.max_clients; i++)
 	{
@@ -1019,13 +1009,8 @@ int NET_SendToAll(int blocktime)
 void SV_SendServerInfo(VBasePlayer *player)
 {
 	guard(SV_SendServerInfo);
-	VMessageOut&	msg = player->Net->Message;
-
 	((VLevelChannel*)player->Net->Channels[CHANIDX_Level])->SetLevel(GLevel);
 	((VLevelChannel*)player->Net->Channels[CHANIDX_Level])->SendNewLevel();
-
-	msg << (vuint8)svc_signonnum
-		<< (vuint8)1;
 	unguard;
 }
 
@@ -1196,24 +1181,6 @@ void SV_SpawnServer(const char *mapname, bool spawn_thinkers)
 
 //==========================================================================
 //
-//	COMMAND PreSpawn
-//
-//==========================================================================
-
-COMMAND(PreSpawn)
-{
-	guard(COMMAND PreSpawn);
-	if (Source == SRC_Command)
-	{
-		GCon->Log("PreSpawn is not valid from console");
-		return;
-	}
-	sv_player->Net->Message << (vuint8)svc_signonnum << (vuint8)2;
-	unguard;
-}
-
-//==========================================================================
-//
 //	COMMAND Spawn
 //
 //==========================================================================
@@ -1260,27 +1227,10 @@ COMMAND(Spawn)
 			Host_Error("Player without Mobj\n");
 		}
 	}
+
 	sv_player->ViewAngles.roll = 0;
 	sv_player->eventClientSetAngles(sv_player->ViewAngles);
-	sv_player->Net->Message << (vuint8)svc_signonnum << (vuint8)3;
 	sv_player->PlayerFlags &= ~VBasePlayer::PF_FixAngle;
-	unguard;
-}
-
-//==========================================================================
-//
-//	COMMAND Begin
-//
-//==========================================================================
-
-COMMAND(Begin)
-{
-	guard(COMMAND Begin);
-	if (Source == SRC_Command)
-	{
-		GCon->Log("Begin is not valid from console");
-		return;
-	}
 
 	if (!netgame || svs.num_connected == sv_load_num_players)
 	{
@@ -1621,12 +1571,8 @@ void SV_ConnectBot(const char *name)
 
 	sv_player = GGameInfo->Players[i];
 	sv_player->Net->Message.Clear();
-	SV_RunClientCommand("PreSpawn\n");
-	sv_player->Net->Message.Clear();
 	SV_SetUserInfo(sv_player->UserInfo);
 	SV_RunClientCommand("Spawn\n");
-	sv_player->Net->Message.Clear();
-	SV_RunClientCommand("Begin\n");
 	sv_player->Net->Message.Clear();
 	unguard;
 }

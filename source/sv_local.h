@@ -226,8 +226,6 @@ bool SV_SecCheckFatPVS(sector_t*);
 extern VBasePlayer*			sv_player;
 extern TArray<VSndSeqInfo>	sv_ActiveSequences;
 
-extern VMessageOut*		sv_reliable;
-
 extern int 		LeavePosition;
 extern bool		completed;
 

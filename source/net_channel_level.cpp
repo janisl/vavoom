@@ -27,6 +27,7 @@
 
 #include "gamedefs.h"
 #include "network.h"
+#include "cl_local.h"
 #include "sv_local.h"
 
 // MACROS ------------------------------------------------------------------
@@ -46,8 +47,6 @@ enum
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
-
-void CL_ParseServerInfo(VMessageIn& msg);
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
@@ -458,6 +457,9 @@ void VLevelChannel::ParsePacket(VMessageIn& Msg)
 
 		case CMD_PreRender:
 			Level->RenderData->PreRender();
+#ifdef CLIENT
+			CL_SignonReply();
+#endif
 			break;
 		}
 	}
