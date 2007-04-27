@@ -48,9 +48,13 @@ class VDemoPlaybackNetConnection : public VNetConnection
 public:
 	VDemoPlaybackNetConnection(VNetContext* AContext)
 	: VNetConnection(NULL, AContext)
+	, NextPacketTime(0)
 	{
 		AutoAck = true;
+		*cls.demofile << NextPacketTime;
 	}
+
+	float			NextPacketTime;
 
 	//	VNetConnection interface
 	int GetRawPacket(TArray<vuint8>&);
@@ -184,6 +188,7 @@ void CL_StopPlayback()
 void CL_WriteDemoMessage(TArray<vuint8>& msg)
 {
 	guard(CL_WriteDemoMessage);
+	*cls.demofile << GClGame->time;
 	vint32 MsgSize = msg.Num();
 	*cls.demofile << MsgSize;
 	*cls.demofile << cl->ViewAngles;
@@ -220,7 +225,7 @@ int VDemoPlaybackNetConnection::GetRawPacket(TArray<vuint8>& Data)
 				cls.td_starttime = realtime;
 			}
 		}
-		else if ( /* cl->time > 0 && */ GClGame->time <= GClLevel->Time)
+		else if (GClGame->time < NextPacketTime)
 		{
 			return 0;		// don't need another message yet
 		}
@@ -245,6 +250,11 @@ int VDemoPlaybackNetConnection::GetRawPacket(TArray<vuint8>& Data)
 	{
 		CL_StopPlayback();
 		return 0;
+	}
+
+	if (!cls.demofile->AtEnd())
+	{
+		*cls.demofile << NextPacketTime;
 	}
 
 	return 1;
@@ -274,7 +284,7 @@ int VDemoRecordingNetConnection::GetRawPacket(TArray<vuint8>& Data)
 	guard(VDemoRecordingNetConnection::GetRawPacket);
 	int r = VNetConnection::GetRawPacket(Data);
 
-	if (r == 1)
+	if (r == 1 && cls.demorecording)
 	{
 		CL_WriteDemoMessage(Data);
 	}
