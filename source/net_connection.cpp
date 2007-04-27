@@ -461,7 +461,8 @@ void VNetConnection::Flush()
 bool VNetConnection::IsLocalConnection()
 {
 	guard(VNetConnection::IsLocalConnection);
-	return NetCon->IsLocalConnection();
+	//	For demo playback NetCon can be NULL.
+	return NetCon ? NetCon->IsLocalConnection() : true;
 	unguard;
 }
 
