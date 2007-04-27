@@ -219,15 +219,20 @@ void VDatagramDriver::SearchForHosts(VNetLanDriver* Drv, bool xmit)
 	vuint8		msgtype;
 	int			n;
 	int			i;
+	vuint8		TmpByte;
 
 	Drv->GetSocketAddr(Drv->controlSock, &myaddr);
 	if (xmit)
 	{
-		VMessageOut Reply(256 << 3);
-		Reply << (vuint8)NETPACKET_CTL
-			<< (vuint8)CCREQ_SERVER_INFO
-			<< "VAVOOM"
-			<< (vuint8)NET_PROTOCOL_VERSION;
+		VBitStreamWriter Reply(256 << 3);
+		TmpByte = NETPACKET_CTL;
+		Reply << TmpByte;
+		TmpByte = CCREQ_SERVER_INFO;
+		Reply << TmpByte;
+		VStr GameName("VAVOOM");
+		Reply << GameName;
+		TmpByte = NET_PROTOCOL_VERSION;
+		Reply << TmpByte;
 		Drv->Broadcast(Drv->controlSock, Reply.GetData(), Reply.GetNumBytes());
 	}
 
@@ -244,7 +249,7 @@ void VDatagramDriver::SearchForHosts(VNetLanDriver* Drv, bool xmit)
 		if (Net->HostCacheCount == HOSTCACHESIZE)
 			continue;
 
-		VMessageIn msg(packetBuffer.data, len << 3);
+		VBitStreamReader msg(packetBuffer.data, len << 3);
 		msg << control;
 		if (control != NETPACKET_CTL)
 			continue;
@@ -273,9 +278,12 @@ void VDatagramDriver::SearchForHosts(VNetLanDriver* Drv, bool xmit)
 		Net->HostCache[n].Name = str;
 		msg << str;
 		Net->HostCache[n].Map = str;
-		Net->HostCache[n].Users = msg.ReadByte();
-		Net->HostCache[n].MaxUsers = msg.ReadByte();
-		if (msg.ReadByte() != NET_PROTOCOL_VERSION)
+		msg << TmpByte;
+		Net->HostCache[n].Users = TmpByte;
+		msg << TmpByte;
+		Net->HostCache[n].MaxUsers = TmpByte;
+		msg << TmpByte;
+		if (TmpByte != NET_PROTOCOL_VERSION)
 		{
 			Net->HostCache[n].Name = VStr("*") + Net->HostCache[n].Name;
 		}
@@ -350,7 +358,8 @@ VSocket* VDatagramDriver::Connect(VNetLanDriver* Drv, const char* host)
 	VStr				reason;
 	vuint8				msgtype;
 	int					newport;
-	VMessageIn*			msg = NULL;
+	VBitStreamReader*	msg = NULL;
+	vuint8				TmpByte;
 
 	// see if we can resolve the host name
 	if (Drv->GetAddrFromName(host, &sendaddr) == -1)
@@ -374,12 +383,16 @@ VSocket* VDatagramDriver::Connect(VNetLanDriver* Drv, const char* host)
 
 	for (reps = 0; reps < 3; reps++)
 	{
-		VMessageOut MsgOut(256 << 3);
+		VBitStreamWriter MsgOut(256 << 3);
 		// save space for the header, filled in later
-		MsgOut << (vuint8)NETPACKET_CTL
-			<< (vuint8)CCREQ_CONNECT
-			<< "VAVOOM"
-			<< (vuint8)NET_PROTOCOL_VERSION;
+		TmpByte = NETPACKET_CTL;
+		MsgOut << TmpByte;
+		TmpByte = CCREQ_CONNECT;
+		MsgOut << TmpByte;
+		VStr GameName("VAVOOM");
+		MsgOut << GameName;
+		TmpByte = NET_PROTOCOL_VERSION;
+		MsgOut << TmpByte;
 		Drv->Write(newsock, MsgOut.GetData(), MsgOut.GetNumBytes(), &sendaddr);
 
 		do
@@ -401,7 +414,7 @@ VSocket* VDatagramDriver::Connect(VNetLanDriver* Drv, const char* host)
 					continue;
 				}
 
-				msg = new VMessageIn(packetBuffer.data, ret << 3);
+				msg = new VBitStreamReader(packetBuffer.data, ret << 3);
 
 				*msg << control;
 				if (control !=  NETPACKET_CTL)
@@ -535,6 +548,8 @@ VSocket* VDatagramDriver::CheckNewConnections(VNetLanDriver* Drv)
 	VDatagramSocket*	sock;
 	int			ret;
 	VStr		gamename;
+	vuint8		TmpByte;
+	VStr		TmpStr;
 
 	acceptsock = Drv->CheckNewConnections();
 	if (acceptsock == -1)
@@ -543,7 +558,7 @@ VSocket* VDatagramDriver::CheckNewConnections(VNetLanDriver* Drv)
 	len = Drv->Read(acceptsock, packetBuffer.data, MAX_MSGLEN, &clientaddr);
 	if (len < (int)sizeof(vint32))
 		return NULL;
-	VMessageIn msg(packetBuffer.data, len << 3);
+	VBitStreamReader msg(packetBuffer.data, len << 3);
 
 	msg << control;
 	if (control != NETPACKET_CTL)
@@ -556,17 +571,28 @@ VSocket* VDatagramDriver::CheckNewConnections(VNetLanDriver* Drv)
 		if (gamename != "VAVOOM")
 			return NULL;
 
-		VMessageOut MsgOut(MAX_MSGLEN << 3);
-		MsgOut << (vuint8)NETPACKET_CTL
-			<< (vuint8)CCREP_SERVER_INFO
-			<< (const char*)VNetworkLocal::HostName
-			<< *GLevel->MapName
-			<< (vuint8)svs.num_connected
-			<< (vuint8)svs.max_clients
-			<< (vuint8)NET_PROTOCOL_VERSION;
+		VBitStreamWriter MsgOut(MAX_MSGLEN << 3);
+		TmpByte = NETPACKET_CTL;
+		MsgOut << TmpByte;
+		TmpByte = CCREP_SERVER_INFO;
+		MsgOut << TmpByte;
+		TmpStr = VNetworkLocal::HostName;
+		MsgOut << TmpStr;
+		TmpStr = *GLevel->MapName;
+		MsgOut << TmpStr;
+		TmpByte = svs.num_connected;
+		MsgOut << TmpByte;
+		TmpByte = svs.max_clients;
+		MsgOut << TmpByte;
+		TmpByte = NET_PROTOCOL_VERSION;
+		MsgOut << TmpByte;
 		for (int i = 0; i < wadfiles.Num(); i++)
-			MsgOut << *wadfiles[i];
-		MsgOut << "";
+		{
+			TmpStr = wadfiles[i];
+			MsgOut << TmpStr;
+		}
+		TmpStr = "";
+		MsgOut << TmpStr;
 
 		Drv->Write(acceptsock, MsgOut.GetData(), MsgOut.GetNumBytes(), &clientaddr);
 		return NULL;
@@ -605,11 +631,14 @@ VSocket* VDatagramDriver::CheckNewConnections(VNetLanDriver* Drv)
 			if (ret == 0 && Net->NetTime - s->ConnectTime < 2.0)
 			{
 				// yes, so send a duplicate reply
-				VMessageOut MsgOut(32 << 3);
+				VBitStreamWriter MsgOut(32 << 3);
 				Drv->GetSocketAddr(s->LanSocket, &newaddr);
-				MsgOut << (vuint8)NETPACKET_CTL
-					<< (vuint8)CCREP_ACCEPT
-					<< (vint32)Drv->GetSocketPort(&newaddr);
+				TmpByte = NETPACKET_CTL;
+				MsgOut << TmpByte;
+				TmpByte = CCREP_ACCEPT;
+				MsgOut << TmpByte;
+				vint32 TmpPort = Drv->GetSocketPort(&newaddr);
+				MsgOut << TmpPort;
 				Drv->Write(acceptsock, MsgOut.GetData(), MsgOut.GetNumBytes(), &clientaddr);
 				return NULL;
 			}
@@ -623,10 +652,13 @@ VSocket* VDatagramDriver::CheckNewConnections(VNetLanDriver* Drv)
 	if (svs.num_connected >= svs.max_clients)
 	{
 		// no room; try to let him know
-		VMessageOut MsgOut(256 << 3);
-		MsgOut << (vuint8)NETPACKET_CTL
-			<< (vuint8)CCREP_REJECT
-			<< "Server is full.\n";
+		VBitStreamWriter MsgOut(256 << 3);
+		TmpByte = NETPACKET_CTL;
+		MsgOut << TmpByte;
+		TmpByte = CCREP_REJECT;
+		MsgOut << TmpByte;
+		TmpStr = "Server is full.\n";
+		MsgOut << TmpStr;
 		Drv->Write(acceptsock, MsgOut.GetData(), MsgOut.GetNumBytes(), &clientaddr);
 		return NULL;
 	}
@@ -656,10 +688,13 @@ VSocket* VDatagramDriver::CheckNewConnections(VNetLanDriver* Drv)
 	Drv->GetSocketAddr(newsock, &newaddr);
 
 	// send him back the info about the server connection he has been allocated
-	VMessageOut MsgOut(32 << 3);
-	MsgOut << (vuint8)NETPACKET_CTL
-		<< (vuint8)CCREP_ACCEPT
-		<< (vint32)Drv->GetSocketPort(&newaddr);
+	VBitStreamWriter MsgOut(32 << 3);
+	TmpByte = NETPACKET_CTL;
+	MsgOut << TmpByte;
+	TmpByte = CCREP_ACCEPT;
+	MsgOut << TmpByte;
+	vint32 TmpPort = Drv->GetSocketPort(&newaddr);
+	MsgOut << TmpPort;
 	Drv->Write(acceptsock, MsgOut.GetData(), MsgOut.GetNumBytes(), &clientaddr);
 
 	return sock;
