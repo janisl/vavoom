@@ -307,7 +307,7 @@ public:
 		return NetCon->Address;
 	}
 	void Tick();
-	void SendCommand(const VStr& Str);
+	void SendCommand(VStr Str);
 };
 
 //

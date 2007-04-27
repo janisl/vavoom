@@ -325,7 +325,9 @@ void CL_ParseServerInfo(VMessageIn& msg)
 	msg << GClGame->serverinfo;
 	CL_ReadFromServerInfo();
 
-	VName MapName = *msg.ReadString();
+	VStr TmpStr;
+	msg << TmpStr;
+	VName MapName = *TmpStr;
 
 	GClGame->maxclients = msg.ReadInt(MAXPLAYERS + 1);
 	GClGame->deathmatch = msg.ReadInt(256);

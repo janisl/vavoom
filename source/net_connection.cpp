@@ -523,11 +523,10 @@ void VNetConnection::Tick()
 //
 //==========================================================================
 
-void VNetConnection::SendCommand(const VStr& Str)
+void VNetConnection::SendCommand(VStr Str)
 {
 	guard(VNetConnection::SendCommand);
 	VMessageOut		Msg(Channels[CHANIDX_General]);
-
 	Msg.bReliable = true;
 	Msg << Str;
 	Channels[CHANIDX_General]->SendMessage(&Msg);
