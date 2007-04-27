@@ -204,7 +204,7 @@ int VDemoPlaybackNetConnection::GetRawPacket(TArray<vuint8>& Data)
 {
 	guard(VDemoPlaybackNetConnection::GetRawPacket);
 	// decide if it is time to grab the next message
-	if (cls.signon == SIGNONS)	// allways grab until fully connected
+	if (cls.signon)	// allways grab until fully connected
 	{
 		if (cls.timedemo)
 		{

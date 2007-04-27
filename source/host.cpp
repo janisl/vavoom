@@ -404,7 +404,7 @@ void Host_Frame()
 		if (show_time)
 			time2 = Sys_Time();
 
-		if (cls.signon == SIGNONS)
+		if (cls.signon)
 		{
 			CL_DecayLights();
 		}

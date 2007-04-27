@@ -717,13 +717,17 @@ void R_RenderPlayerView()
 void VRenderLevel::RenderPlayerView()
 {
 	guard(VRenderLevel::RenderPlayerView);
+	if (!Level->LevelInfo)
+	{
+		return;
+	}
 	//HACK!!!
 	if (CurrentSky1Texture == -1)
 	{
 		r_fog = Level->LevelInfo->FadeTable == NAME_fogmap;
 	}
 
-	GTextureManager.Time = Level->Time;
+	GTextureManager.Time = GClGame->time;
 
 	AnimateSky(host_frametime);
 

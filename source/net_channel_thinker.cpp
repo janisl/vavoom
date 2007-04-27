@@ -300,6 +300,7 @@ void VThinkerChannel::ParsePacket(VMessageIn& Msg)
 			LInfo->Level = LInfo;
 			GClLevel->LevelInfo = LInfo;
 			cl->Level = LInfo;
+			cls.signon = 1;
 		}
 #endif
 		SetThinker(Th);

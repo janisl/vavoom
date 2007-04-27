@@ -456,11 +456,10 @@ void SCR_Init()
 void SCR_Update()
 {
 	guard(SCR_Update);
-	if (cls.state == ca_connected && cls.signon != SIGNONS)
+	if (cls.state == ca_connected && !cls.signon)
 	{
 		return;
 	}
-
 
 	CheckResolutionChange();
 

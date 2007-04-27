@@ -611,7 +611,7 @@ void CL_SendMove()
 		return;
 	}
 	
-	if (cls.signon == SIGNONS)
+	if (cls.signon)
 	{
 		AdjustAngles();
 		BuildTiccmd();

@@ -80,7 +80,7 @@ void SB_Init()
 
 void SB_Ticker()
 {
-	if (cls.signon == SIGNONS)
+	if (cls.signon)
 	{
 	    GClGame->eventStatusBarUpdateWidgets();
 	}
