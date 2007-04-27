@@ -471,13 +471,6 @@ void SV_SendClientDatagram()
 
 		sv_player->MO->EntityFlags |= VEntity::EF_NetLocalPlayer;
 
-		VMessageOut msg(OUT_MESSAGE_SIZE);
-
-		msg << (vuint8)svc_time
-			<< GLevel->Time;
-
-		sv_player->Net->Channels[0]->SendMessage(&msg);
-
 		SV_WriteViewData(*sv_player);
 
 		SV_UpdateLevel();

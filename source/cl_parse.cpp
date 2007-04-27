@@ -47,7 +47,7 @@ public:
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 void CL_ClearInput();
-void CL_PO_Update(int i, float x, float y, float angle);
+void CL_SetupLevel();
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
@@ -311,23 +311,11 @@ IMPLEMENT_FUNCTION(VBasePlayer, ClientSetServerInfo)
 	CL_ReadFromServerInfo();
 }
 
-static void CL_ParseTime(VMessageIn& msg)
-{
-	guard(CL_ParseTime);
-	float	new_time;
-
-	msg << new_time;
-	GClLevel->Time = new_time;
-	unguard;
-}
-
 //==========================================================================
 //
 //	CL_DoLoadLevel
 //
 //==========================================================================
-
-void CL_SetupLevel();
 
 void CL_ParseServerInfo(VMessageIn& msg)
 {
@@ -410,10 +398,6 @@ void VClientGenChannel::ParsePacket(VMessageIn& msg)
 
 		switch (cmd_type)
 		{
-		case svc_time:
-			CL_ParseTime(msg);
-			break;
-
 		case svc_stringcmd:
 			GCmdBuf << msg.ReadString();
 			break;
