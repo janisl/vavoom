@@ -48,68 +48,39 @@
 
 //==========================================================================
 //
+//  VMessageIn::VMessageIn
+//
+//==========================================================================
+
+VMessageIn::VMessageIn(vuint8* Src, vint32 Length)
+: VBitStreamReader(Src, Length)
+, Next(NULL)
+, ChanType(0)
+, ChanIndex(0)
+, bReliable(false)
+, bOpen(false)
+, bClose(false)
+, Sequence(0)
+{
+}
+
+//==========================================================================
+//
 //  VMessageOut::VMessageOut
 //
 //==========================================================================
 
 VMessageOut::VMessageOut(VChannel* AChannel)
 : VBitStreamWriter(OUT_MESSAGE_SIZE)
+, Next(NULL)
 , ChanType(AChannel->Type)
 , ChanIndex(AChannel->Index)
-, AllowOverflow(true)
 , bReliable(false)
 , bOpen(false)
 , bClose(false)
 , bReceivedAck(false)
+, Sequence(0)
+, Time(0)
+, PacketId(0)
 {
-}
-
-//==========================================================================
-//
-//  VMessageOut::Clear
-//
-//==========================================================================
-
-void VMessageOut::Clear()
-{
-	Pos = 0;
-	memset(Data.Ptr(), 0, (Max + 7) >> 3);
-}
-
-//==========================================================================
-//
-//	VMessageOut::operator << VMessageOut
-//
-//==========================================================================
-
-VMessageOut& VMessageOut::operator << (VMessageOut &msg)
-{
-	guard(VMessageOut::operator << VMessageOut);
-	SerialiseBits(msg.GetData(), msg.GetNumBits());
-	return *this;
-	unguard;
-}
-
-//==========================================================================
-//
-//  VMessageOut::SerialiseBits
-//
-//==========================================================================
-
-void VMessageOut::SerialiseBits(void* Src, vint32 Length)
-{
-	guard(VMessageOut::SerialiseBits);
-	VBitStreamWriter::SerialiseBits(Src, Length);
-	if (bError)
-	{
-		if (!AllowOverflow)
-			Sys_Error("VMessageOut::SerialiseBits: overflow without allowoverflow set");
-
-		if (Length > Max)
-			Sys_Error("VMessageOut::SerialiseBits: %i is > full buffer size", Length);
-
-		GCon->Log("VMessageOut::SerialiseBits: overflow");
-		Clear();
-	}
-	unguard;
 }
