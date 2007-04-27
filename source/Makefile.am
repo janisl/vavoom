@@ -158,7 +158,6 @@ _____MAIN_EXE__SOURCES = \
 	pr_exec.cpp \
 	progdefs.h \
 	progs.h \
-	protocol.h \
 	r_bsp.cpp \
 	r_light.cpp \
 	r_local.h \
