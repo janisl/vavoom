@@ -2271,6 +2271,8 @@ void SetViewPos()
 		ReadyAmmo = Ammo[Weapon(ViewEnt).Ammo];
 	else
 		ReadyAmmo = 0;
+
+	ClientSetViewOrg(ViewOrg.x, ViewOrg.y, ViewOrg.z);
 }
 
 //==========================================================================

@@ -118,11 +118,11 @@ replication
 {
 	reliable if (!bIsClient)
 		Health, Items, Frags, ExtraLight, FixedColourmap, CShifts, PSpriteSY,
-		KillCount, ItemCount, SecretCount, ViewStates, ViewEntAlpha, ViewOrg,
+		KillCount, ItemCount, SecretCount, ViewStates, ViewEntAlpha,
 		ClientNum, WorldTimer;
 
 	unreliable if (!bIsClient)
-		ClientStartSound, ClientStopSound, ClientForceLightning;
+		ClientStartSound, ClientStopSound, ClientForceLightning, ClientSetViewOrg;
 
 	reliable if (!bIsClient)
 		ClientStartSequence, ClientAddSequenceChoice, ClientStopSequence,
@@ -233,6 +233,11 @@ void Cheat_Class()
 void ServerImpulse(int AImpulse)
 {
 	Impulse = AImpulse;
+}
+
+void ClientSetViewOrg(float x, float y, float z)
+{
+	ViewOrg = vector(x, y, z);
 }
 
 defaultproperties

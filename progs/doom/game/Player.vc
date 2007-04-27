@@ -2100,6 +2100,8 @@ void SetViewPos()
 		ReadyAmmo = 1994;	// means "n/a"
 	else
 		ReadyAmmo = Ammo[Weapon(ViewEnt).Ammo];
+
+	ClientSetViewOrg(ViewOrg.x, ViewOrg.y, ViewOrg.z);
 }
 
 //==========================================================================

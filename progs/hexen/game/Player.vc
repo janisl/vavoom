@@ -2695,6 +2695,8 @@ void SetViewPos()
 			ArmorPerc[i] = 0;
 		}
 	}
+
+	ClientSetViewOrg(ViewOrg.x, ViewOrg.y, ViewOrg.z);
 }
 
 //==========================================================================

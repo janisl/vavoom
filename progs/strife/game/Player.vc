@@ -2132,6 +2132,8 @@ void SetViewPos()
 	ReadyAmmo = Weapon(ViewEnt).Ammo;
 
 	PaletteFlash();
+
+	ClientSetViewOrg(ViewOrg.x, ViewOrg.y, ViewOrg.z);
 }
 
 //==========================================================================
