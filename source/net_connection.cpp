@@ -57,7 +57,6 @@ VNetConnection::VNetConnection(VSocketPublic* ANetCon, VNetContext* AContext)
 , Driver(GNet)
 , Context(AContext)
 , State(NETCON_Open)
-, Message(OUT_MESSAGE_SIZE)
 , LastSendTime(0)
 , NeedsUpdate(false)
 , AutoAck(false)
@@ -515,5 +514,22 @@ void VNetConnection::Tick()
 
 	//	Flush any remaining data or send keepalive.
 	Flush();
+	unguard;
+}
+
+//==========================================================================
+//
+//	VNetConnection::SendCommand
+//
+//==========================================================================
+
+void VNetConnection::SendCommand(const VStr& Str)
+{
+	guard(VNetConnection::SendCommand);
+	VMessageOut		Msg(Channels[CHANIDX_General]);
+
+	Msg.bReliable = true;
+	Msg << Str;
+	Channels[CHANIDX_General]->SendMessage(&Msg);
 	unguard;
 }

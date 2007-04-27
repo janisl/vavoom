@@ -503,30 +503,6 @@ void SV_SendReliable()
 
 	for (int i = 0; i < svs.max_clients; i++)
 	{
-		VBasePlayer* Player = GGameInfo->Players[i];
-		sv_player = Player;
-		if (!Player)
-		{
-			continue;
-		}
-
-		if (Player->Net->Message.IsError())
-		{
-			SV_DropClient(true);
-			GCon->Log(NAME_Dev, "Client message overflowed");
-			continue;
-		}
-
-		if (Player->Net->Message.GetNumBytes())
-		{
-			Player->Net->Message.bReliable = true;
-			Player->Net->Channels[0]->SendMessage(&Player->Net->Message);
-			Player->Net->Message.Clear();
-		}
-	}
-
-	for (int i = 0; i < svs.max_clients; i++)
-	{
 		sv_player = GGameInfo->Players[i];
 		if (!sv_player)
 		{
@@ -1068,7 +1044,6 @@ void SV_SpawnServer(const char *mapname, bool spawn_thinkers)
 			memset(GGameInfo->Players[i]->FragsStats, 0, sizeof(GGameInfo->Players[i]->FragsStats));
 			if (GGameInfo->Players[i]->PlayerState == PST_DEAD)
 				GGameInfo->Players[i]->PlayerState = PST_REBORN;
-			GGameInfo->Players[i]->Net->Message.Clear();
 		}
 	}
 	else
@@ -1461,7 +1436,6 @@ void SV_ConnectClient(VBasePlayer *player)
 	player->ClientNum = SV_GetPlayerNum(player);
 	player->PlayerFlags |= VBasePlayer::PF_Active;
 
-	player->Net->Message.AllowOverflow = true;		// we can catch it
 	player->Net->NeedsUpdate = false;
 	player->PlayerFlags &= ~VBasePlayer::PF_Spawned;
 	player->Level = GLevelInfo;
@@ -1564,10 +1538,8 @@ void SV_ConnectBot(const char *name)
 	svs.num_connected++;
 
 	sv_player = GGameInfo->Players[i];
-	sv_player->Net->Message.Clear();
 	SV_SetUserInfo(sv_player->UserInfo);
 	SV_RunClientCommand("Spawn\n");
-	sv_player->Net->Message.Clear();
 	unguard;
 }
 

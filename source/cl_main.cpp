@@ -238,7 +238,7 @@ void CL_SignonReply()
 		cl->eventServerSetUserInfo(cls.userinfo);
 		UserInfoSent = true;
 	}
-	cl->Net->Message << (byte)clc_stringcmd << "Spawn\n";
+	cl->Net->SendCommand("Spawn\n");
 	GCmdBuf << "HideConsole\n";
 	unguard;
 }
@@ -300,11 +300,6 @@ void CL_Disconnect()
 		}
 
 		GCon->Log(NAME_Dev, "Sending clc_disconnect");
-		if (cl->Net->Message.GetNumBits())
-		{
-			GCon->Log(NAME_Dev, "Buffer contains data");
-		}
-		cl->Net->Message.Clear();
 		cl->Net->Channels[0]->Close();
 		cl->Net->Flush();
 

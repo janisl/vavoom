@@ -342,32 +342,15 @@ void SV_SetUserInfo(const VStr& info)
 void VServerGenChannel::ParsePacket(VMessageIn& msg)
 {
 	guard(VServerGenChannel::ParsePacket);
-	while (1)
+	while (!msg.AtEnd())
 	{
+		VStr Cmd;
+		msg << Cmd;
 		if (msg.IsError())
 		{
-			GCon->Log(NAME_DevNet, "Packet corupted");
-			Connection->State = NETCON_Closed;
-			return;
-		}
-
-		vuint8 cmd_type;
-		msg << cmd_type;
-
-		if (msg.IsError())
-			break; // Here this means end of packet
-
-		switch (cmd_type)
-		{
-		case clc_stringcmd:
-			SV_RunClientCommand(msg.ReadString());
 			break;
-
-		default:
-			GCon->Log(NAME_DevNet, "Invalid command");
-			Connection->State = NETCON_Closed;
-			return;
 		}
+		SV_RunClientCommand(Cmd);
 	}
 	unguard;
 }

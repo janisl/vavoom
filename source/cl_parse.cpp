@@ -374,44 +374,15 @@ void CL_ParseServerInfo(VMessageIn& msg)
 void VClientGenChannel::ParsePacket(VMessageIn& msg)
 {
 	guard(VClientGenChannel::ParsePacket);
-	int			i;
-	byte		cmd_type;
-	VStr		name;
-	VStr		string;
-	TVec		origin;
-
-	// update command store from the packet
-	while (1)
+	while (!msg.AtEnd())
 	{
+		VStr Cmd;
+		msg << Cmd;
 		if (msg.IsError())
 		{
-			GCon->Logf(NAME_Dev, "Length %d", msg.GetNumBits());
-			for (i = 0; i < msg.GetNumBytes(); i++)
-				GCon->Logf(NAME_Dev, "  %d", (int)msg.GetData()[i]);
-			Host_Error("Packet corupted");
-		}
-
-		msg << cmd_type;
-
-		if (msg.IsError())
-			break; // Here this means end of packet
-
-		switch (cmd_type)
-		{
-		case svc_stringcmd:
-			GCmdBuf << msg.ReadString();
-			break;
-
-		default:
-			GCon->Logf(NAME_Dev, "Length %d", msg.GetNumBits());
-			for (i = 0; i < msg.GetNumBytes(); i++)
-			{
-				GCon->Logf(NAME_Dev, "  %d", (int)msg.GetData()[i]);
-			}
-			GCon->Logf(NAME_Dev, "ReadCount %d", msg.GetPosBits());
-			Host_Error("Invalid packet %d", cmd_type);
 			break;
 		}
+		GCmdBuf << Cmd;
 	}
 	unguard;
 }

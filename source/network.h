@@ -26,7 +26,6 @@
 #ifndef _NETWORK_H_
 #define _NETWORK_H_
 
-#include "protocol.h"
 #include "message.h"	//	Network message class
 
 class VNetContext;
@@ -278,7 +277,6 @@ public:
 	VNetworkPublic*						Driver;
 	VNetContext*						Context;
 	ENetConState						State;
-	VMessageOut							Message;
 	double								LastSendTime;
 	bool								NeedsUpdate;
 	bool								AutoAck;
@@ -309,6 +307,7 @@ public:
 		return NetCon->Address;
 	}
 	void Tick();
+	void SendCommand(const VStr& Str);
 };
 
 //

@@ -607,7 +607,6 @@ void CL_SendMove()
 
 	if (cls.demoplayback)
 	{
-		cl->Net->Message.Clear();
 		return;
 	}
 	
@@ -619,13 +618,6 @@ void CL_SendMove()
 		((VPlayerChannel*)cl->Net->Channels[CHANIDX_Player])->Update();
 	}
 
-	// send the reliable message
-	if (cl->Net->Message.GetNumBits())
-	{
-		cl->Net->Message.bReliable = true;
-		cl->Net->Channels[CHANIDX_General]->SendMessage(&cl->Net->Message);
-		cl->Net->Message.Clear();
-	}
 	cl->Net->Flush();
 	unguard;
 }

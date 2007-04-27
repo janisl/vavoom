@@ -218,9 +218,8 @@ void VCvar::DoSet(const VStr& AValue)
 		Info_SetValueForKey(cls.userinfo, Name, *StringValue);
 		if (cls.state >= ca_connected)
 		{
-			cl->Net->Message	<< (byte)clc_stringcmd
-								<< (VStr("setinfo \"") + Name + "\" \"" +
-									StringValue + "\"\n");
+			cl->Net->SendCommand(VStr("setinfo \"") + Name + "\" \"" +
+				StringValue + "\"\n");
 		}
 	}
 #endif
