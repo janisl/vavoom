@@ -75,6 +75,7 @@ public:
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 int mlog2(int val);
+int mround(float);
 
 float AngleMod(float angle);
 float AngleMod180(float angle);

@@ -1144,9 +1144,9 @@ void VField::NetSerialiseValue(VStream& Strm, vuint8* Data, const VField::FType&
 			}
 			else
 			{
-				vint16 x = (vint16)((TVec*)Data)->x;
-				vint16 y = (vint16)((TVec*)Data)->y;
-				vint16 z = (vint16)((TVec*)Data)->z;
+				vint16 x = mround(((TVec*)Data)->x);
+				vint16 y = mround(((TVec*)Data)->y);
+				vint16 z = mround(((TVec*)Data)->z);
 				Strm << x << y << z;
 			}
 		}

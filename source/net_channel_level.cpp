@@ -219,12 +219,12 @@ void VLevelChannel::Update()
 			continue;
 
 		rep_sector_t* RepSec = &Sectors[i];
-		bool FloorChanged = fabs(RepSec->floor_dist - Sec->floor.dist) >= 1.0 ||
-			RepSec->floor_xoffs != Sec->floor.xoffs ||
-			RepSec->floor_yoffs != Sec->floor.yoffs;
-		bool CeilChanged = fabs(RepSec->ceil_dist - Sec->ceiling.dist) >= 1.0 ||
-			RepSec->ceil_xoffs != Sec->ceiling.xoffs ||
-			RepSec->ceil_yoffs != Sec->ceiling.yoffs;
+		bool FloorChanged = RepSec->floor_dist != Sec->floor.dist ||
+			mround(RepSec->floor_xoffs) != mround(Sec->floor.xoffs) ||
+			mround(RepSec->floor_yoffs) != mround(Sec->floor.yoffs);
+		bool CeilChanged = RepSec->ceil_dist != Sec->ceiling.dist ||
+			mround(RepSec->ceil_xoffs) != mround(Sec->ceiling.xoffs) ||
+			mround(RepSec->ceil_yoffs) != mround(Sec->ceiling.yoffs);
 		bool LightChanged = abs(RepSec->lightlevel - Sec->params.lightlevel) >= 4;
 		if (RepSec->floor_pic == Sec->floor.pic &&
 			RepSec->ceil_pic == Sec->ceiling.pic &&
@@ -246,28 +246,28 @@ void VLevelChannel::Update()
 		Msg.WriteBit(FloorChanged);
 		if (FloorChanged)
 		{
-			Msg.WriteBit(fabs(RepSec->floor_dist - Sec->floor.dist) >= 1.0);
-			if (fabs(RepSec->floor_dist - Sec->floor.dist) >= 1.0)
+			Msg.WriteBit(RepSec->floor_dist != Sec->floor.dist);
+			if (RepSec->floor_dist != Sec->floor.dist)
 				Msg << Sec->floor.dist;
-			Msg.WriteBit(RepSec->floor_xoffs != Sec->floor.xoffs);
-			if (RepSec->floor_xoffs != Sec->floor.xoffs)
-				Msg.WriteInt((vint32)Sec->floor.xoffs & 63, 64);
-			Msg.WriteBit(RepSec->floor_yoffs != Sec->floor.yoffs);
-			if (RepSec->floor_yoffs != Sec->floor.yoffs)
-				Msg.WriteInt((vint32)Sec->floor.yoffs & 63, 64);
+			Msg.WriteBit(mround(RepSec->floor_xoffs) != mround(Sec->floor.xoffs));
+			if (mround(RepSec->floor_xoffs) != mround(Sec->floor.xoffs))
+				Msg.WriteInt(mround(Sec->floor.xoffs) & 63, 64);
+			Msg.WriteBit(mround(RepSec->floor_yoffs) != mround(Sec->floor.yoffs));
+			if (mround(RepSec->floor_yoffs) != mround(Sec->floor.yoffs))
+				Msg.WriteInt(mround(Sec->floor.yoffs) & 63, 64);
 		}
 		Msg.WriteBit(CeilChanged);
 		if (CeilChanged)
 		{
-			Msg.WriteBit(fabs(RepSec->ceil_dist - Sec->ceiling.dist) >= 1.0);
-			if (fabs(RepSec->ceil_dist - Sec->ceiling.dist) >= 1.0)
+			Msg.WriteBit(RepSec->ceil_dist != Sec->ceiling.dist);
+			if (RepSec->ceil_dist != Sec->ceiling.dist)
 				Msg << Sec->ceiling.dist;
-			Msg.WriteBit(RepSec->ceil_xoffs != Sec->ceiling.xoffs);
-			if (RepSec->ceil_xoffs != Sec->ceiling.xoffs)
-				Msg.WriteInt((vint32)Sec->ceiling.xoffs & 63, 64);
-			Msg.WriteBit(RepSec->ceil_yoffs != Sec->ceiling.yoffs);
-			if (RepSec->ceil_yoffs != Sec->ceiling.yoffs)
-				Msg.WriteInt((vint32)Sec->ceiling.yoffs & 63, 64);
+			Msg.WriteBit(mround(RepSec->ceil_xoffs) != mround(Sec->ceiling.xoffs));
+			if (mround(RepSec->ceil_xoffs) != mround(Sec->ceiling.xoffs))
+				Msg.WriteInt(mround(Sec->ceiling.xoffs) & 63, 64);
+			Msg.WriteBit(mround(RepSec->ceil_yoffs) != mround(Sec->ceiling.yoffs));
+			if (mround(RepSec->ceil_yoffs) != mround(Sec->ceiling.yoffs))
+				Msg.WriteInt(mround(Sec->ceiling.yoffs) & 63, 64);
 		}
 		Msg.WriteBit(LightChanged);
 		if (LightChanged)
