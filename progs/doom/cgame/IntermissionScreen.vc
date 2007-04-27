@@ -959,7 +959,7 @@ void IM_UpdateSingleStats(float DeltaTime)
 		cnt_kills[0] = (ClGame.cl.KillCount * 100) / TotalKills;
 		cnt_items[0] = (ClGame.cl.ItemCount * 100) / TotalItems;
 		cnt_secret[0] = (ClGame.cl.SecretCount * 100) / TotalSecret;
-		cnt_time = ftoi(ClGame.im->Time);
+		cnt_time = ftoi(ClGame.GLevel.LevelInfo.CompletitionTime);
 		LocalSound('weapons/rocklx');
 		sp_state = 10;
 	}
@@ -1014,9 +1014,9 @@ void IM_UpdateSingleStats(float DeltaTime)
 
 		cnt_time += 3;
 
-		if (cnt_time >= ftoi(ClGame.im->Time))
+		if (cnt_time >= ftoi(ClGame.GLevel.LevelInfo.CompletitionTime))
 		{
-			cnt_time = ftoi(ClGame.im->Time);
+			cnt_time = ftoi(ClGame.GLevel.LevelInfo.CompletitionTime);
 			LocalSound('weapons/rocklx');
 			sp_state++;
 		}

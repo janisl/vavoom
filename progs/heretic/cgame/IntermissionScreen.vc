@@ -357,7 +357,7 @@ void IM_InitStats()
 			return;
 		}
 
-		time = ftoi(ClGame.im->Time);
+		time = ftoi(ClGame.GLevel.LevelInfo.CompletitionTime);
 		hours = time / 3600;
 		time -= hours * 3600;
 		minutes = time / 60;

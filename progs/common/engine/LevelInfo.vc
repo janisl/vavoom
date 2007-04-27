@@ -80,6 +80,8 @@ int				CurrentKills;
 int				CurrentItems;
 int				CurrentSecret;
 
+float			CompletitionTime;	//	For intermission
+
 // Maintain single and multi player starting spots.
 mthing_t		DeathmatchStarts[MAXDEATHMATCHSTARTS];	// Player spawn spots for deathmatch.
 int				NumDeathmatchStarts;
@@ -97,7 +99,7 @@ replication
 		Sky1ScrollDelta, Sky2ScrollDelta, SkyBox, FadeTable, SongLump,
 		CDTrack, bDoubleSky, bLightning, bNoIntermission, bNoSoundClipping,
 		bForceNoSkyStretch, bLookupName, TotalKills, TotalItems, TotalSecret,
-		CurrentKills, CurrentItems, CurrentSecret;
+		CurrentKills, CurrentItems, CurrentSecret, CompletitionTime;
 }
 
 //

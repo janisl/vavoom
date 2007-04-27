@@ -1076,8 +1076,6 @@ struct im_t
 	int		TextCDTrack;
 	int		TextCDId;
 
-	float	Time;
-
 	bool	bTextIsLump;
 };
 
