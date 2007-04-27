@@ -834,6 +834,7 @@ static void G_DoCompleted()
 	}
 	sv.intermission = 1;
 	sv.intertime = 0;
+	GLevelInfo->CompletitionTime = GLevel->Time;
 
 	const mapInfo_t& old_info = P_GetMapInfo(GLevel->MapName);
 	const mapInfo_t& new_info = P_GetMapInfo(GLevelInfo->NextMap);

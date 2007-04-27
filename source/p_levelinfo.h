@@ -85,6 +85,8 @@ class VLevelInfo : public VThinker
 	int				CurrentItems;
 	int				CurrentSecret;
 
+	float			CompletitionTime;	//	For intermission
+
 	// Maintain single and multi player starting spots.
 	mthing_t		DeathmatchStarts[MAXDEATHMATCHSTARTS];  // Player spawn spots for deathmatch.
 	int				NumDeathmatchStarts;

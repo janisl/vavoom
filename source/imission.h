@@ -48,8 +48,6 @@ struct im_t
 	vint32		TextCDTrack;
 	vint32		TextCDId;
 
-	float		Time;
-
 	enum
 	{
 		IMF_TextIsLump		= 0x01,

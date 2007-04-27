@@ -260,7 +260,6 @@ IMPLEMENT_FUNCTION(VBasePlayer, ClientIntermission)
 		}
 	}
 
-	im.Time = GClLevel->Time;
 	IM_Start();
 }
 
