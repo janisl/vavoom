@@ -73,6 +73,16 @@ void Tick(float deltaTime)
 {
 }
 
+//==========================================================================
+//
+//	ClientTick
+//
+//==========================================================================
+
+void ClientTick(float DeltaTime)
+{
+}
+
 defaultproperties
 {
 	Role = ROLE_Authority;

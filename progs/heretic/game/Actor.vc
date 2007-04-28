@@ -4184,6 +4184,63 @@ void SpawnPuff(TVec org, class<Actor> PuffType)
 	}
 }
 
+//==========================================================================
+//
+//	ClientTick
+//
+//==========================================================================
+
+void ClientTick(float DeltaTime)
+{
+	dlight_t *dl;
+
+	switch (Effects & HereticDefs::EF_DLIGHT_MASK)
+	{
+	case HereticDefs::EF_DL_NONE:
+		break;
+
+	case HereticDefs::EF_DL_WHITE:
+		dl = AllocDlight(self);
+		dl->origin = Origin;
+		dl->radius = 200.0;
+		dl->colour = RGB(255, 255, 255);
+		dl->die = XLevel.Time + 0.1;
+		break;
+
+	case HereticDefs::EF_DL_RED:
+		dl = AllocDlight(self);
+		dl->origin = Origin;
+		dl->radius = 200.0;
+		dl->colour = RGB(255, 0, 0);
+		dl->die = XLevel.Time + 0.1;
+		break;
+
+	case HereticDefs::EF_DL_GREEN:
+		dl = AllocDlight(self);
+		dl->origin = Origin;
+		dl->radius = 200.0;
+		dl->colour = RGB(0, 255, 0);
+		dl->die = XLevel.Time + 0.1;
+		break;
+
+	case HereticDefs::EF_DL_BLUE:
+		dl = AllocDlight(self);
+		dl->origin = Origin;
+		dl->radius = 200.0;
+		dl->colour = RGB(0, 0, 255);
+		dl->die = XLevel.Time + 0.1;
+		break;
+
+	case HereticDefs::EF_DL_MAGENTA:
+		dl = AllocDlight(self);
+		dl->origin = Origin;
+		dl->radius = 200.0;
+		dl->colour = RGB(255, 0, 255);
+		dl->die = XLevel.Time + 0.1;
+		break;
+	}
+}
+
 __states__
 {
 	S_FREETARGMOBJ('ACLO', 4, 30.0, none) = A_FreeTargMobj

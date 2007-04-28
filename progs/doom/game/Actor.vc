@@ -4379,6 +4379,93 @@ final void A_BossDeath()
 	}
 }
 
+//==========================================================================
+//
+//	ClientTick
+//
+//==========================================================================
+
+void ClientTick(float DeltaTime)
+{
+	dlight_t*	dl;
+	TVec		fv;
+
+	switch (Effects & DoomDefs::EF_DLIGHT_MASK)
+	{
+	case DoomDefs::EF_DL_NONE:
+		break;
+
+	case DoomDefs::EF_DL_MISSILE:
+		dl = AllocDlight(self);
+		dl->origin = Origin;
+		dl->radius = 200.0;
+		dl->colour = RGB(255, 255, 255);
+		dl->die = XLevel.Time + 0.1;
+		break;
+
+	case DoomDefs::EF_DL_RBALL:
+		dl = AllocDlight(self);
+		dl->origin = Origin;
+		dl->radius = 200.0;
+		dl->colour = RGB(255, 0, 0);
+		dl->die = XLevel.Time + 0.1;
+		break;
+
+	case DoomDefs::EF_DL_GBALL:
+		dl = AllocDlight(self);
+		dl->origin = Origin;
+		dl->radius = 200.0;
+		dl->colour = RGB(0, 255, 0);
+		dl->die = XLevel.Time + 0.1;
+		break;
+
+	case DoomDefs::EF_DL_PLASMA:
+		dl = AllocDlight(self);
+		dl->origin = Origin;
+		dl->radius = 200.0;
+		dl->colour = RGB(0, 0, 255);
+		dl->die = XLevel.Time + 0.1;
+		break;
+
+	case DoomDefs::EF_DL_MUZZLEFLASH:
+		dl = AllocDlight(self);
+		dl->origin = Origin;
+		dl->origin.z += 48.0;
+		AngleVector(&Angles, &fv);
+
+		dl->origin = dl->origin + 18.0 * fv;
+		dl->radius = 200.0 + Random() * 31.0;
+		dl->colour = 0xffffffff;
+		dl->minlight = 32.0;
+		dl->die = XLevel.Time + 0.1;
+	}
+
+	if (Effects & DoomDefs::EF_ROCKET)
+	{
+		int i;
+		particle_t *p;
+		int c;
+		int count;
+
+		count = ftoi(DeltaTime * 256.0);
+		for (i = 0; i < count; i++)
+		{
+			p = NewParticle();
+			if (!p)
+				return;
+
+			p->org = Origin;
+			c = P_Random() >> 1;
+			p->colour = RGB(c, c, c);
+			p->die = XLevel.Time + 0.5 * Random();
+			p->type = DoomDefs::pt_static;
+			p->vel.x = 16.0 * (Random() - 0.5);
+			p->vel.y = 16.0 * (Random() - 0.5);
+			p->vel.z = 16.0 * (Random() - 0.5);
+		}
+	}
+}
+
 __states__
 {
 	S_GIBS('POL5', 0, -1.0, none) = none

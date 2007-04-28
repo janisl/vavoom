@@ -737,68 +737,6 @@ void UpdateParticle(particle_t * p, float DeltaTime)
 
 //==========================================================================
 //
-//  UpdateMobj
-//
-//==========================================================================
-
-void UpdateMobj(Entity mobj, int key, float DeltaTime)
-{
-	dlight_t* dl;
-	TVec fv;
-
-	switch (mobj.Effects & StrifeDefs::EF_DLIGHT_MASK)
-	{
-	case StrifeDefs::EF_DL_NONE:
-		break;
-
-	case StrifeDefs::EF_DL_MISSILE:
-		dl = mobj.AllocDlight(mobj);
-		dl->origin = mobj.Origin;
-		dl->radius = 200.0;
-		dl->colour = RGB(255, 255, 255);
-		dl->die = time + 0.1;
-		break;
-
-	case StrifeDefs::EF_DL_RED:
-		dl = mobj.AllocDlight(mobj);
-		dl->origin = mobj.Origin;
-		dl->radius = 200.0;
-		dl->colour = RGB(255, 0, 0);
-		dl->die = time + 0.1;
-		break;
-
-	case StrifeDefs::EF_DL_GREEN:
-		dl = mobj.AllocDlight(mobj);
-		dl->origin = mobj.Origin;
-		dl->radius = 200.0;
-		dl->colour = RGB(0, 255, 0);
-		dl->die = time + 0.1;
-		break;
-
-	case StrifeDefs::EF_DL_BLUE:
-		dl = mobj.AllocDlight(mobj);
-		dl->origin = mobj.Origin;
-		dl->radius = 200.0;
-		dl->colour = RGB(0, 0, 255);
-		dl->die = time + 0.1;
-		break;
-
-	case StrifeDefs::EF_DL_MUZZLEFLASH:
-		dl = mobj.AllocDlight(mobj);
-		dl->origin = mobj.Origin;
-		dl->origin.z += 48.0;
-		AngleVector(&mobj.Angles, &fv);
-
-		dl->origin = dl->origin + 18.0 * fv;
-		dl->radius = 200.0 + Random() * 31.0;
-		dl->colour = 0xffffffff;
-		dl->minlight = 32.0;
-		dl->die = time + 0.1;
-	}
-}
-
-//==========================================================================
-//
 //	StartSpeech
 //
 //==========================================================================

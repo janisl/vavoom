@@ -85,6 +85,13 @@ class VThinker : public VObject
 
 	DECLARE_FUNCTION(AllocDlight)
 	DECLARE_FUNCTION(NewParticle)
+
+	void eventClientTick(float DeltaTime)
+	{
+		P_PASS_SELF;
+		P_PASS_FLOAT(DeltaTime);
+		EV_RET_VOID("ClientTick");
+	}
 };
 
 template <class T> class TThinkerIterator

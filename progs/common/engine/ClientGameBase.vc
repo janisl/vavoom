@@ -280,16 +280,6 @@ void UpdateParticle(particle_t* p, float DeltaTime)
 {
 }
 
-//==========================================================================
-//
-//  UpdateMobj
-//
-//==========================================================================
-
-void UpdateMobj(Entity mobj, int key, float DeltaTime)
-{
-}
-
 defaultproperties
 {
 	local_server = true;

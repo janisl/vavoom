@@ -208,14 +208,6 @@ class VClientGameBase : public VObject
 		P_PASS_FLOAT(DeltaTime);
 		EV_RET_VOID("UpdateParticle");
 	}
-	void eventUpdateMobj(VEntity* mobj, int key, float DeltaTime)
-	{
-		P_PASS_SELF;
-		P_PASS_REF(mobj);
-		P_PASS_INT(key);
-		P_PASS_FLOAT(DeltaTime);
-		EV_RET_VOID("UpdateMobj");
-	}
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------

@@ -171,9 +171,9 @@ void CL_DecayLights()
 void CL_UpdateMobjs()
 {
 	guard(CL_UpdateMobjs);
-	for (TThinkerIterator<VEntity> Ent(GClLevel); Ent; ++Ent)
+	for (TThinkerIterator<VThinker> Th(GClLevel); Th; ++Th)
 	{
-		GClGame->eventUpdateMobj(*Ent, Ent->NetID, host_frametime);
+		Th->eventClientTick(host_frametime);
 	}
 	unguard;
 }
@@ -194,6 +194,10 @@ void CL_ReadFromServer()
 
 	GClGame->oldtime = GClGame->time;
 	GClGame->time += host_frametime;
+	if (GClLevel)
+	{
+		GClLevel->Time = GClGame->time;
+	}
 
 	cl->Net->GetMessages();
 	if (cl->Net->State == NETCON_Closed)
