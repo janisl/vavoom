@@ -136,6 +136,15 @@ IMPLEMENT_AUDIO_CODEC(VFlacAudioCodec, "FLAC");
 void VFlacSampleLoader::Load(sfxinfo_t& Sfx, VStream& Stream)
 {
 	guard(VFlacSampleLoader::Load);
+	//	Check if it's a FLAC file
+	Stream.Seek(0);
+	char Hdr[4];
+	Stream.Serialise(Hdr, 4);
+	if (Hdr[0] != 'f' || Hdr[1] != 'L' || Hdr[2] != 'a' || Hdr[3] != 'C')
+	{
+		return;
+	}
+
 	//	Create reader sream.
 	FStream* Strm = new FStream(Stream);
 	Strm->Data = Z_Malloc(1);
@@ -583,6 +592,15 @@ void VFlacAudioCodec::FStream::error_callback(
 VAudioCodec* VFlacAudioCodec::Create(VStream* InStream)
 {
 	guard(VFlacAudioCodec::Create);
+	//	Check if it's a FLAC file
+	InStream->Seek(0);
+	char Hdr[4];
+	InStream->Serialise(Hdr, 4);
+	if (Hdr[0] != 'f' || Hdr[1] != 'L' || Hdr[2] != 'a' || Hdr[3] != 'C')
+	{
+		return NULL;
+	}
+
 	FStream* Strm = new FStream(InStream);
 	if (!Strm->SampleRate)
 	{
