@@ -307,7 +307,7 @@ public:
 	void ForceLightning();
 
 	void AddStaticLight(const TVec&, float, vuint32);
-	dlight_t* AllocDlight(int);
+	dlight_t* AllocDlight(VThinker*);
 	void DecayLights(float);
 	void PushDlights();
 	vuint32 LightPoint(const TVec &p);

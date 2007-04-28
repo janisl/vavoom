@@ -2727,7 +2727,7 @@ void ClientExplosion(int etype, TVec org)
 {
 	dlight_t* dl;
 
-	dl = Level.AllocDlight(0);
+	dl = Level.AllocDlight(none);
 	dl->origin = org;
 	dl->radius = 350.0;
 	dl->colour = StrifeDefs.default.ecolours[etype];

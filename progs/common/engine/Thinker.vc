@@ -60,7 +60,7 @@ native final Thinker NextThinker(Thinker last, class<Thinker> id);
 //  Broadcast message (print to all clients)
 native final void bprint(string format, ...);
 
-native final dlight_t *AllocDlight(int key);
+native final dlight_t *AllocDlight(Thinker Owner);
 native final particle_t *NewParticle();
 
 //==========================================================================

@@ -37,13 +37,13 @@
 
 struct dlight_t
 {
-	TVec	origin;		// origin of the light
-	float	radius;		// radius - how far light goes
-	float	die;		// stop lighting after this time
-	float	decay;		// drop this each second
-	float	minlight;	// don't add when contributing less
-	int		key;		// used to identify owner to reuse the same light
-	vuint32	colour;		// for coloured lights
+	TVec		origin;		// origin of the light
+	float		radius;		// radius - how far light goes
+	float		die;		// stop lighting after this time
+	float		decay;		// drop this each second
+	float		minlight;	// don't add when contributing less
+	VThinker*	Owner;		// used to identify owner to reuse the same light
+	vuint32		colour;		// for coloured lights
 };
 
 class VRootWindow;

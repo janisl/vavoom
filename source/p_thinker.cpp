@@ -402,9 +402,9 @@ IMPLEMENT_FUNCTION(VThinker, bprint)
 
 IMPLEMENT_FUNCTION(VThinker, AllocDlight)
 {
-	P_GET_INT(key);
+	P_GET_REF(VThinker, Owner);
 	P_GET_SELF;
-	RET_PTR(Self->XLevel->RenderData->AllocDlight(key));
+	RET_PTR(Self->XLevel->RenderData->AllocDlight(Owner));
 }
 
 IMPLEMENT_FUNCTION(VThinker, NewParticle)

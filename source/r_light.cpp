@@ -604,22 +604,22 @@ void VRenderLevel::LightFace(surface_t *surf, subsector_t *leaf)
 //
 //==========================================================================
 
-dlight_t* VRenderLevel::AllocDlight(int key)
+dlight_t* VRenderLevel::AllocDlight(VThinker* Owner)
 {
 	guard(VRenderLevel::AllocDlight);
 	int			i;
 	dlight_t*	dl;
 
 	// first look for an exact key match
-	if (key)
+	if (Owner)
 	{
 		dl = DLights;
 		for (i = 0; i < MAX_DLIGHTS; i++, dl++)
 		{
-			if (dl->key == key)
+			if (dl->Owner == Owner)
 			{
 				memset(dl, 0, sizeof(*dl));
-				dl->key = key;
+				dl->Owner = Owner;
 				return dl;
 			}
 		}
@@ -632,7 +632,7 @@ dlight_t* VRenderLevel::AllocDlight(int key)
 		if (dl->die < GClGame->time)
 		{
 			memset(dl, 0, sizeof(*dl));
-			dl->key = key;
+			dl->Owner = Owner;
 			return dl;
 		}
 	}
@@ -650,7 +650,7 @@ dlight_t* VRenderLevel::AllocDlight(int key)
 	}
 	dl = &DLights[bestnum];
 	memset(dl, 0, sizeof(*dl));
-	dl->key = key;
+	dl->Owner = Owner;
 	return dl;
 	unguard;
 }
