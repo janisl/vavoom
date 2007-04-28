@@ -456,17 +456,12 @@ void SCR_Init()
 void SCR_Update()
 {
 	guard(SCR_Update);
-	if (cls.state == ca_connected && !cls.signon)
-	{
-		return;
-	}
-
 	CheckResolutionChange();
 
 	Drawer->StartUpdate();
 
 	// do buffered drawing
-	if (cls.state != ca_disconnected)
+	if (cls.state == ca_connected && cls.signon)
 	{
 		switch (GClGame->intermission)
 		{
