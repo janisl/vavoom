@@ -63,6 +63,7 @@ public:
 		float	AlphaEnd;
 		TVec	Offset;
 		TVec	Scale;
+		int		SkinIndex;
 	};
 
 	struct VSkin
@@ -522,6 +523,13 @@ static void ParseModelScript(VModel* mod, VStream& Strm)
 				{
 					F.AlphaEnd = atof(*FN->GetAttribute("alpha_end"));
 				}
+
+				//	Skin index
+				F.SkinIndex = -1;
+				if (FN->HasAttribute("skin_index"))
+				{
+					F.SkinIndex = atoi(*FN->GetAttribute("skin_index"));
+				}
 			}
 
 			//	Process skins.
@@ -756,7 +764,11 @@ static void DrawModel(VLevel* Level, const TVec& Org, const TAVec& Angles,
 
 		//	Skin aniations.
 		int Md2SkinIdx = 0;
-		if (SubMdl.SkinAnimSpeed)
+		if (F.SkinIndex >= 0)
+		{
+			Md2SkinIdx = F.SkinIndex;
+		}
+		else if (SubMdl.SkinAnimSpeed)
 		{
 			Md2SkinIdx = int((Level ? Level->Time : 0) * SubMdl.SkinAnimSpeed) %
 				SubMdl.SkinAnimRange;

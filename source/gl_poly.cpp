@@ -1025,8 +1025,8 @@ void VOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	glRotatef(angles.pitch,  0, 1, 0);
 	glRotatef(angles.roll,  1, 0, 0);
 
-	glTranslatef(Offset.x, Offset.y, Offset.z);
 	glScalef(Scale.x, Scale.y, Scale.z);
+	glTranslatef(Offset.x, Offset.y, Offset.z);
 
 	framedesc = (mframe_t*)((byte *)pmdl + pmdl->ofsframes + frame * pmdl->framesize);
 

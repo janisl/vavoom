@@ -1151,14 +1151,23 @@ void VDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	matWorld(3, 2) = origin.z;
 
 	matTmp = IdentityMatrix;
-	matTmp(0, 0) = pframedesc->scale[0] * Scale.x;
-	matTmp(1, 1) = pframedesc->scale[1] * Scale.y;
-	matTmp(2, 2) = pframedesc->scale[2] * Scale.z;
-	matTmp(3, 0) = pframedesc->scale_origin[0] * Scale.x + Offset.x;
-	matTmp(3, 1) = pframedesc->scale_origin[1] * Scale.y + Offset.x;
-	matTmp(3, 2) = pframedesc->scale_origin[2] * Scale.z + Offset.x;
-
+	matTmp(0, 0) = Scale.x;
+	matTmp(1, 1) = Scale.y;
+	matTmp(2, 2) = Scale.z;
+	matTmp(3, 0) = Offset.x * Scale.x;
+	matTmp(3, 1) = Offset.y * Scale.y;
+	matTmp(3, 2) = Offset.z * Scale.z;
 	matWorld = matTmp * matWorld;
+
+	matTmp = IdentityMatrix;
+	matTmp(0, 0) = pframedesc->scale[0];
+	matTmp(1, 1) = pframedesc->scale[1];
+	matTmp(2, 2) = pframedesc->scale[2];
+	matTmp(3, 0) = pframedesc->scale_origin[0] * Scale.x;
+	matTmp(3, 1) = pframedesc->scale_origin[1] * Scale.y;
+	matTmp(3, 2) = pframedesc->scale_origin[2] * Scale.z;
+	matWorld = matTmp * matWorld;
+
 	RenderDevice->SetTransform(D3DTRANSFORMSTATE_WORLD, &matWorld);
 
 	SetPic(SkinID);

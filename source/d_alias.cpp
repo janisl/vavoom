@@ -319,11 +319,13 @@ bool VSoftwareDrawer::AliasCheckBBox(mmdl_t* pmdl, const TAVec &angles,
 void VSoftwareDrawer::AliasSetUpTransform(const TAVec &angles,
 	const TVec& Offset, const TVec& Scale, int frame, int trivial_accept)
 {
-	int				i;
-	float			rotationmatrix[3][4], t2matrix[3][4];
-	static float	tmatrix[3][4];
-	static float	viewmatrix[3][4];
-	mframe_t		*pframedesc;
+	int			i;
+	float		rotationmatrix[3][4];
+	float		tmatrix[3][4];
+	float		t2matrix[3][4];
+	float		t3matrix[3][4];
+	float		viewmatrix[3][4];
+	mframe_t*	pframedesc;
 
 // TODO: should really be stored with the entity instead of being reconstructed
 // TODO: should use a look-up table
@@ -341,16 +343,29 @@ void VSoftwareDrawer::AliasSetUpTransform(const TAVec &angles,
 	pframedesc = (mframe_t *)((byte*)pmdl + pmdl->ofsframes +
 		frame * pmdl->framesize);
 
-	tmatrix[0][0] = pframedesc->scale[0] * Scale.x;
-	tmatrix[1][1] = pframedesc->scale[1] * Scale.y;
-	tmatrix[2][2] = pframedesc->scale[2] * Scale.z;
+	memset(tmatrix, 0, sizeof(tmatrix));
+	tmatrix[0][0] = pframedesc->scale[0];
+	tmatrix[1][1] = pframedesc->scale[1];
+	tmatrix[2][2] = pframedesc->scale[2];
 
-	tmatrix[0][3] = pframedesc->scale_origin[0] * Scale.x + Offset.x;
-	tmatrix[1][3] = pframedesc->scale_origin[1] * Scale.y + Offset.y;
-	tmatrix[2][3] = pframedesc->scale_origin[2] * Scale.z + Offset.z;
+	tmatrix[0][3] = pframedesc->scale_origin[0];
+	tmatrix[1][3] = pframedesc->scale_origin[1];
+	tmatrix[2][3] = pframedesc->scale_origin[2];
 
 // TODO: can do this with simple matrix rearrangement
+	memset(t2matrix, 0, sizeof(t2matrix));
+	t2matrix[0][0] = Scale.x;
+	t2matrix[1][1] = Scale.y;
+	t2matrix[2][2] = Scale.z;
 
+	t2matrix[0][3] = Scale.x * Offset.x;
+	t2matrix[1][3] = Scale.y * Offset.y;
+	t2matrix[2][3] = Scale.z * Offset.z;
+
+// FIXME: can do more efficiently than full concatenation
+	D_ConcatTransforms(t2matrix, tmatrix, t3matrix);
+
+	memset(t2matrix, 0, sizeof(t2matrix));
 	for (i = 0; i < 3; i++)
 	{
 		t2matrix[i][0] = alias_forward[i];
@@ -363,9 +378,10 @@ void VSoftwareDrawer::AliasSetUpTransform(const TAVec &angles,
 	t2matrix[2][3] = -modelorg[2];
 
 // FIXME: can do more efficiently than full concatenation
-	D_ConcatTransforms(t2matrix, tmatrix, rotationmatrix);
+	D_ConcatTransforms(t2matrix, t3matrix, rotationmatrix);
 
 // TODO: should be global, set when vright, etc., set
+	memset(viewmatrix, 0, sizeof(viewmatrix));
 	for (i = 0; i < 3; i++)
 	{
 		viewmatrix[0][i] = viewright[i];
