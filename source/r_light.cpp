@@ -629,7 +629,7 @@ dlight_t* VRenderLevel::AllocDlight(VThinker* Owner)
 	dl = DLights;
 	for (i = 0; i < MAX_DLIGHTS; i++, dl++)
 	{
-		if (dl->die < GClGame->time)
+		if (dl->die < Level->Time)
 		{
 			memset(dl, 0, sizeof(*dl));
 			dl->Owner = Owner;
@@ -667,7 +667,7 @@ void VRenderLevel::DecayLights(float time)
 	dlight_t* dl = DLights;
 	for (int i = 0; i < MAX_DLIGHTS; i++, dl++)
 	{
-		if (dl->die < GClGame->time || !dl->radius)
+		if (dl->die < Level->Time || !dl->radius)
 			continue;
 
 		dl->radius -= time * dl->decay;
@@ -752,7 +752,7 @@ void VRenderLevel::PushDlights()
 	dlight_t* l = DLights;
 	for (int i = 0; i < MAX_DLIGHTS; i++, l++)
 	{
-		if (l->die < GClGame->time || !l->radius)
+		if (l->die < Level->Time || !l->radius)
 			continue;
 		MarkLights(l, 1 << i, Level->NumNodes - 1);
 	}

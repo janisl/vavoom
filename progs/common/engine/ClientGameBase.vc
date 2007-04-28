@@ -52,9 +52,6 @@ int intermission;
 
 int prev_cshifts[NUM_CSHIFTS];	// powerups and content types
 
-float time;
-float oldtime;
-
 //==========================================================================
 //
 //  RootWindowCreated
@@ -151,7 +148,7 @@ void StatusBarDrawer(int sb_view)
 //
 //==========================================================================
 
-void StatusBarUpdateWidgets()
+void StatusBarUpdateWidgets(float DeltaTime)
 {
 }
 

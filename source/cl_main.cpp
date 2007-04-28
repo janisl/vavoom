@@ -157,7 +157,7 @@ void CL_DecayLights()
 	guard(CL_DecayLights);
 	if (GClLevel)
 	{
-		GClLevel->RenderData->DecayLights(GClGame->time - GClGame->oldtime);
+		GClLevel->RenderData->DecayLights(host_frametime);
 	}
 	unguard;
 }
@@ -192,13 +192,6 @@ void CL_ReadFromServer()
 	if (cls.state != ca_connected)
 		return;
 
-	GClGame->oldtime = GClGame->time;
-	GClGame->time += host_frametime;
-	if (GClLevel)
-	{
-		GClLevel->Time = GClGame->time;
-	}
-
 	cl->Net->GetMessages();
 	if (cl->Net->State == NETCON_Closed)
 	{
@@ -207,6 +200,8 @@ void CL_ReadFromServer()
 
 	if (cls.signon)
 	{
+		GClLevel->Time += host_frametime;
+
 		CL_UpdateMobjs();
 		CL_Ticker();
 	}

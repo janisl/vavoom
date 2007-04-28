@@ -72,7 +72,6 @@ void CL_Clear()
 	guard(CL_Clear);
 	GClGame->serverinfo.Clean();
 	GClGame->intermission = 0;
-	GClGame->time = 0;
 	CL_ClearInput();
 #ifdef SERVER
 	if (!sv.active)

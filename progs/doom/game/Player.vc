@@ -2778,7 +2778,7 @@ void ClientGunShot(TVec org)
 		p->org = org;
 		c = P_Random() >> 1;
 		p->colour = RGB(c, c, c);
-		p->die = ClGame.time + 0.5 * Random();
+		p->die = Level.XLevel.Time + 0.5 * Random();
 		p->vel.x = 32.0 * (Random() - 0.5);
 		p->vel.y = 32.0 * (Random() - 0.5);
 		p->vel.z = 32.0 * (Random() - 0.5);
@@ -2807,7 +2807,7 @@ void ClientBlood(TVec org, int damage)
 		p->org = org;
 		c = P_Random() >> 1;
 		p->colour = RGB(32 + c, c >> 4, c >> 4);
-		p->die = ClGame.time + 0.5 * Random();
+		p->die = Level.XLevel.Time + 0.5 * Random();
 		p->vel.x = 32.0 * (Random() - 0.5);
 		p->vel.y = 32.0 * (Random() - 0.5);
 		p->vel.z = 32.0 * (Random() - 0.5);
@@ -2832,7 +2832,7 @@ void ClientExplosion(TVec org)
 		p = Level.NewParticle();
 		if (!p)
 			return;
-		p->die = ClGame.time + 5.0;
+		p->die = Level.XLevel.Time + 5.0;
 		p->colour = DoomDefs.default.ramp1[0];
 		p->ramp = Random() * 4.0;
 		if (i & 1)
@@ -2855,7 +2855,7 @@ void ClientExplosion(TVec org)
 	dl->origin = org;
 	dl->radius = 350.0;
 	dl->colour = 0xffffffff;
-	dl->die = ClGame.time + 0.5;
+	dl->die = Level.XLevel.Time + 0.5;
 	dl->decay = 300.0;
 }
 
@@ -2873,7 +2873,7 @@ void ClientExplosion2(int etype, TVec org)
 	dl->origin = org;
 	dl->radius = 350.0;
 	dl->colour = DoomDefs.default.ecolours[etype];
-	dl->die = ClGame.time + 0.5;
+	dl->die = Level.XLevel.Time + 0.5;
 	dl->decay = 300.0;
 }
 

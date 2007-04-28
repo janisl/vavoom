@@ -639,7 +639,7 @@ void VRenderLevel::UpdateParticles(float frametime)
 	particle_t		*p, *kill;
 
 	kill = ActiveParticles;
-	while (kill && kill->die < GClGame->time)
+	while (kill && kill->die < Level->Time)
 	{
 		ActiveParticles = kill->next;
 		kill->next = FreeParticles;
@@ -650,7 +650,7 @@ void VRenderLevel::UpdateParticles(float frametime)
 	for (p = ActiveParticles; p; p = p->next)
 	{
 		kill = p->next;
-		while (kill && kill->die < GClGame->time)
+		while (kill && kill->die < Level->Time)
 		{
 			p->next = kill->next;
 			kill->next = FreeParticles;
@@ -660,7 +660,7 @@ void VRenderLevel::UpdateParticles(float frametime)
 
 		p->org += p->vel * frametime;
 
-		GClLevel->LevelInfo->eventUpdateParticle(p, frametime);
+		Level->LevelInfo->eventUpdateParticle(p, frametime);
 	}
 	unguard;
 }
@@ -727,7 +727,7 @@ void VRenderLevel::RenderPlayerView()
 		r_fog = Level->LevelInfo->FadeTable == NAME_fogmap;
 	}
 
-	GTextureManager.Time = GClGame->time;
+	GTextureManager.Time = Level->Time;
 
 	AnimateSky(host_frametime);
 

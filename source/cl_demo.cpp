@@ -189,7 +189,7 @@ void CL_StopPlayback()
 void CL_WriteDemoMessage(TArray<vuint8>& msg)
 {
 	guard(CL_WriteDemoMessage);
-	*cls.demofile << GClGame->time;
+	*cls.demofile << GClLevel->Time;
 	vint32 MsgSize = msg.Num();
 	*cls.demofile << MsgSize;
 	*cls.demofile << cl->ViewAngles;
@@ -226,7 +226,7 @@ int VDemoPlaybackNetConnection::GetRawPacket(TArray<vuint8>& Data)
 				cls.td_starttime = realtime;
 			}
 		}
-		else if (GClGame->time < NextPacketTime)
+		else if (GClLevel->Time < NextPacketTime)
 		{
 			return 0;		// don't need another message yet
 		}

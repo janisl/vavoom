@@ -204,7 +204,7 @@ void StatusBarDrawer(int sb_view)
 //
 //==========================================================================
 
-void StatusBarUpdateWidgets()
+void StatusBarUpdateWidgets(float DeltaTime)
 {
 	GSBar.SB_UpdateWidgets();
 }

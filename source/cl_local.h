@@ -79,9 +79,6 @@ class VClientGameBase : public VObject
 
 	vuint32				prev_cshifts[NUM_CSHIFTS];	// powerups and content types
 
-	float				time;
-	float				oldtime;
-
 	VClientGameBase()
 	: serverinfo(E_NoInit)
 	{}
@@ -132,9 +129,10 @@ class VClientGameBase : public VObject
 		P_PASS_INT(sb_type);
 		EV_RET_VOID("StatusBarDrawer");
 	}
-	void eventStatusBarUpdateWidgets()
+	void eventStatusBarUpdateWidgets(float DeltaTime)
 	{
 		P_PASS_SELF;
+		P_PASS_FLOAT(DeltaTime);
 		EV_RET_VOID("StatusBarUpdateWidgets");
 	}
 	void eventIintermissionStart()

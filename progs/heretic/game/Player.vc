@@ -3155,7 +3155,7 @@ void ClientBlood(TVec org, int damage)
 		p->org = org;
 		c = P_Random() >> 1;
 		p->colour = RGB(32 + c, c >> 4, c >> 4);
-		p->die = ClGame.time + 0.5 * Random();
+		p->die = Level.XLevel.Time + 0.5 * Random();
 		p->vel.x = 32.0 * (Random() - 0.5);
 		p->vel.y = 32.0 * (Random() - 0.5);
 		p->vel.z = 32.0 * (Random() - 0.5);
@@ -3176,7 +3176,7 @@ void ClientExplosion(int etype, TVec org)
 	dl->origin = org;
 	dl->radius = 350.0;
 	dl->colour = HereticDefs.default.ecolours[etype];
-	dl->die = ClGame.time + 0.5;
+	dl->die = Level.XLevel.Time + 0.5;
 	dl->decay = 300.0;
 }
 
