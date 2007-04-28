@@ -559,6 +559,12 @@ void SV_RunClients()
 			continue;
 		}
 
+		if ((Player->PlayerFlags & VBasePlayer::PF_IsBot) &&
+			!(Player->PlayerFlags & VBasePlayer::PF_Spawned))
+		{
+			VCommand::ExecuteString("Spawn\n", VCommand::SRC_Client, Player);
+		}
+
 		// do player reborns if needed
 		if (Player->PlayerState == PST_REBORN)
 		{
@@ -941,10 +947,6 @@ void SV_SendServerInfoToClients()
 		}
 		Player->Level = GLevelInfo;
 		SV_SendServerInfo(Player);
-		if (Player->PlayerFlags & VBasePlayer::PF_IsBot)
-		{
-			VCommand::ExecuteString("Spawn\n", VCommand::SRC_Client, Player);
-		}
 	}
 	unguard;
 }

@@ -475,7 +475,7 @@ void VAudio::PlaySound(int InSoundId, const TVec& origin,
 
 	//	Check if this sound is emited by the local player.
 	bool LocalPlayerSound = false;
-	if (GClLevel)
+	if (GClLevel && GClLevel->LevelInfo)
 	{
 		for (TThinkerIterator<VEntity> Ent(GClLevel); Ent; ++Ent)
 		{
