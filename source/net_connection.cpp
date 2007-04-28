@@ -52,10 +52,12 @@
 //
 //==========================================================================
 
-VNetConnection::VNetConnection(VSocketPublic* ANetCon, VNetContext* AContext)
+VNetConnection::VNetConnection(VSocketPublic* ANetCon, VNetContext* AContext,
+	VBasePlayer* AOwner)
 : NetCon(ANetCon)
 , Driver(GNet)
 , Context(AContext)
+, Owner(AOwner)
 , State(NETCON_Open)
 , LastSendTime(0)
 , NeedsUpdate(false)

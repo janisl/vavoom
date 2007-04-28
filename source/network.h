@@ -276,6 +276,7 @@ protected:
 public:
 	VNetworkPublic*						Driver;
 	VNetContext*						Context;
+	VBasePlayer*						Owner;
 	ENetConState						State;
 	double								LastSendTime;
 	bool								NeedsUpdate;
@@ -290,7 +291,7 @@ public:
 	vuint32								UnreliableSendSequence;
 	vuint32								UnreliableReceiveSequence;
 
-	VNetConnection(VSocketPublic*, VNetContext*);
+	VNetConnection(VSocketPublic*, VNetContext*, VBasePlayer*);
 	virtual ~VNetConnection();
 
 	//	VNetConnection interface

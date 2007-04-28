@@ -39,16 +39,7 @@
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
-void Draw_TeleportIcon();
-void CL_Disconnect();
-void SV_ReadClientMessages(int i);
-void SV_RunClientCommand(const VStr& cmd);
-void EntInit();
-
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
-
-void SV_DropClient(bool crash);
-void SV_ShutdownServer(bool);
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
@@ -81,8 +72,6 @@ bool			paused;
 
 bool			deathmatch = false;   	// only if started as net death
 bool			netgame;                // only true if packets are broadcast
-
-VBasePlayer*	sv_player;
 
 int 			TimerGame;
 
@@ -367,19 +356,19 @@ static bool IsRelevant(VThinker* Th)
 //
 //==========================================================================
 
-void SV_UpdateLevel()
+static void SV_UpdateLevel(VBasePlayer* Player)
 {
 	guard(SV_UpdateLevel);
 	int		i;
 
-	fatpvs = GLevel->LeafPVS(sv_player->MO->SubSector);
+	fatpvs = GLevel->LeafPVS(Player->MO->SubSector);
 
-	((VLevelChannel*)sv_player->Net->Channels[CHANIDX_Level])->Update();
+	((VLevelChannel*)Player->Net->Channels[CHANIDX_Level])->Update();
 
 	//	Mark all entity channels as not updated in this frame.
-	for (i = sv_player->Net->OpenChannels.Num() - 1; i >= 0; i--)
+	for (i = Player->Net->OpenChannels.Num() - 1; i >= 0; i--)
 	{
-		VChannel* Chan = sv_player->Net->OpenChannels[i];
+		VChannel* Chan = Player->Net->OpenChannels[i];
 		if (Chan->Type == CHANNEL_Thinker)
 		{
 			((VThinkerChannel*)Chan)->UpdatedThisFrame = false;
@@ -391,19 +380,19 @@ void SV_UpdateLevel()
 	{
 		if (!IsRelevant(*Th))
 			continue;
-		VThinkerChannel* Chan = sv_player->Net->ThinkerChannels.FindPtr(*Th);
+		VThinkerChannel* Chan = Player->Net->ThinkerChannels.FindPtr(*Th);
 		if (!Chan)
 		{
-			Chan = new VThinkerChannel(sv_player->Net, -1);
+			Chan = new VThinkerChannel(Player->Net, -1);
 			Chan->SetThinker(*Th);
 		}
 		Chan->Update();
 	}
 
 	//	Close entity channels that were not updated in this frame.
-	for (i = sv_player->Net->OpenChannels.Num() - 1; i >= 0; i--)
+	for (i = Player->Net->OpenChannels.Num() - 1; i >= 0; i--)
 	{
-		VChannel* Chan = sv_player->Net->OpenChannels[i];
+		VChannel* Chan = Player->Net->OpenChannels[i];
 		if (Chan->Type == CHANNEL_Thinker &&
 			!((VThinkerChannel*)Chan)->UpdatedThisFrame)
 		{
@@ -415,121 +404,69 @@ void SV_UpdateLevel()
 
 //==========================================================================
 //
-//	SV_SendClientDatagram
-//
-//==========================================================================
-
-void SV_SendClientDatagram()
-{
-	guard(SV_SendClientDatagram);
-	for (int i = 0; i < svs.max_clients; i++)
-	{
-		if (!GGameInfo->Players[i])
-		{
-			continue;
-		}
-
-		sv_player = GGameInfo->Players[i];
-
-		VPlayerReplicationInfo* RepInfo = sv_player->PlayerReplicationInfo;
-		RepInfo->PlayerName = sv_player->PlayerName;
-		RepInfo->UserInfo = sv_player->UserInfo;
-		for (int j = 0; j < MAXPLAYERS; j++)
-		{
-			RepInfo->FragsStats[j] = sv_player->FragsStats[j];
-		}
-		RepInfo->Frags = sv_player->Frags;
-		RepInfo->KillCount = sv_player->KillCount;
-		RepInfo->ItemCount = sv_player->ItemCount;
-		RepInfo->SecretCount = sv_player->SecretCount;
-	}
-
-	for (int i = 0; i < svs.max_clients; i++)
-	{
-		if (!GGameInfo->Players[i])
-		{
-			continue;
-		}
-
-		sv_player = GGameInfo->Players[i];
-
-		if (!sv_player->Net->Channels[0])
-		{
-			continue;
-		}
-
-		if (!(sv_player->PlayerFlags & VBasePlayer::PF_Spawned))
-		{
-			// the player isn't totally in the game yet
-			continue;
-		}
-
-		if (!sv_player->Net->NeedsUpdate)
-		{
-			continue;
-		}
-
-		sv_player->MO->EntityFlags |= VEntity::EF_NetLocalPlayer;
-
-		SV_WriteViewData(*sv_player);
-
-		SV_UpdateLevel();
-
-		sv_player->MO->EntityFlags &= ~VEntity::EF_NetLocalPlayer;
-	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	SV_SendReliable
-//
-//==========================================================================
-
-void SV_SendReliable()
-{
-	guard(SV_SendReliable);
-	for (int i = 0; i < svs.max_clients; i++)
-	{
-		if (!GGameInfo->Players[i])
-			continue;
-
-		if (!(GGameInfo->Players[i]->PlayerFlags & VBasePlayer::PF_Spawned))
-			continue;
-
-		sv_player = GGameInfo->Players[i];
-		((VPlayerChannel*)sv_player->Net->Channels[CHANIDX_Player])->Update();
-	}
-
-	for (int i = 0; i < svs.max_clients; i++)
-	{
-		sv_player = GGameInfo->Players[i];
-		if (!sv_player)
-		{
-			continue;
-		}
-		sv_player->Net->Tick();
-		if (sv_player->Net->State == NETCON_Closed)
-		{
-			SV_DropClient(true);
-			continue;
-		}
-	}
-
-	unguard;
-}
-
-//==========================================================================
-//
 //	SV_SendClientMessages
 //
 //==========================================================================
 
 void SV_SendClientMessages()
 {
-	SV_SendClientDatagram();
+	guard(SV_SendClientMessages);
+	//	Update player replication infos.
+	for (int i = 0; i < svs.max_clients; i++)
+	{
+		if (!GGameInfo->Players[i])
+		{
+			continue;
+		}
 
-	SV_SendReliable();
+		VBasePlayer* Player = GGameInfo->Players[i];
+
+		VPlayerReplicationInfo* RepInfo = Player->PlayerReplicationInfo;
+		RepInfo->PlayerName = Player->PlayerName;
+		RepInfo->UserInfo = Player->UserInfo;
+		for (int j = 0; j < MAXPLAYERS; j++)
+		{
+			RepInfo->FragsStats[j] = Player->FragsStats[j];
+		}
+		RepInfo->Frags = Player->Frags;
+		RepInfo->KillCount = Player->KillCount;
+		RepInfo->ItemCount = Player->ItemCount;
+		RepInfo->SecretCount = Player->SecretCount;
+	}
+
+	for (int i = 0; i < svs.max_clients; i++)
+	{
+		VBasePlayer* Player = GGameInfo->Players[i];
+		if (!Player)
+		{
+			continue;
+		}
+
+		// Don't update level if the player isn't totally in the game yet
+		if (Player->Net->Channels[0] &&
+			(Player->PlayerFlags & VBasePlayer::PF_Spawned))
+		{
+			if (Player->Net->NeedsUpdate)
+			{
+				Player->MO->EntityFlags |= VEntity::EF_NetLocalPlayer;
+		
+				SV_WriteViewData(*Player);
+		
+				SV_UpdateLevel(Player);
+		
+				Player->MO->EntityFlags &= ~VEntity::EF_NetLocalPlayer;
+			}
+
+			((VPlayerChannel*)Player->Net->Channels[CHANIDX_Player])->Update();
+		}
+
+		Player->Net->Tick();
+		if (Player->Net->State == NETCON_Closed)
+		{
+			SV_DropClient(Player, true);
+		}
+	}
+	unguard;
 }
 
 //========================================================================
@@ -616,47 +553,49 @@ void SV_RunClients()
 	// get commands
 	for (int i = 0; i < MAXPLAYERS; i++)
 	{
-		if (!GGameInfo->Players[i])
+		VBasePlayer* Player = GGameInfo->Players[i];
+		if (!Player)
 		{
 			continue;
 		}
 
 		// do player reborns if needed
-		if (GGameInfo->Players[i]->PlayerState == PST_REBORN)
+		if (Player->PlayerState == PST_REBORN)
 		{
 			G_DoReborn(i);
 		}
 
-		SV_ReadClientMessages(i);
+		Player->Net->NeedsUpdate = false;
+		Player->Net->GetMessages();
 
 		// pause if in menu or console and at least one tic has been run
 #ifdef CLIENT
-		if (GGameInfo->Players[i]->PlayerFlags & VBasePlayer::PF_Spawned &&
+		if (Player->PlayerFlags & VBasePlayer::PF_Spawned &&
 			!sv.intermission && !paused &&
 			(netgame || !(MN_Active() || C_Active())))
 #else
-		if (GGameInfo->Players[i]->PlayerFlags & VBasePlayer::PF_Spawned &&
+		if (Player->PlayerFlags & VBasePlayer::PF_Spawned &&
 			!sv.intermission && !paused)
 #endif
 		{
 			// Don't move faster than maxmove
-			if (GGameInfo->Players[i]->ForwardMove > sv_maxmove)
+			if (Player->ForwardMove > sv_maxmove)
 			{
-				GGameInfo->Players[i]->ForwardMove = sv_maxmove;
+				Player->ForwardMove = sv_maxmove;
 			}
-			else if (GGameInfo->Players[i]->ForwardMove < -sv_maxmove)
+			else if (Player->ForwardMove < -sv_maxmove)
 			{
-				GGameInfo->Players[i]->ForwardMove = -sv_maxmove;
+				Player->ForwardMove = -sv_maxmove;
 			}
-			if (GGameInfo->Players[i]->SideMove > sv_maxmove)
+			if (Player->SideMove > sv_maxmove)
 			{
-				GGameInfo->Players[i]->SideMove = sv_maxmove;
+				Player->SideMove = sv_maxmove;
 			}
-			else if (GGameInfo->Players[i]->SideMove < -sv_maxmove)
+			else if (Player->SideMove < -sv_maxmove)
 			{
-				GGameInfo->Players[i]->SideMove = -sv_maxmove;
+				Player->SideMove = -sv_maxmove;
 			}
-			GGameInfo->Players[i]->eventPlayerTick(host_frametime);
+			Player->eventPlayerTick(host_frametime);
 		}
 	}
 
@@ -913,10 +852,10 @@ int NET_SendToAll(int blocktime)
 
 	for (i = 0; i < svs.max_clients; i++)
 	{
-		sv_player = GGameInfo->Players[i];
-		if (sv_player)
+		VBasePlayer* Player = GGameInfo->Players[i];
+		if (Player)
 		{
-			if (sv_player->Net->IsLocalConnection())
+			if (Player->Net->IsLocalConnection())
 			{
 				state1[i] = false;
 				state2[i] = true;
@@ -939,25 +878,25 @@ int NET_SendToAll(int blocktime)
 		count = 0;
 		for (i = 0; i < svs.max_clients; i++)
 		{
-			sv_player = GGameInfo->Players[i];
+			VBasePlayer* Player = GGameInfo->Players[i];
 			if (!state1[i])
 			{
 				state1[i] = true;
-				sv_player->Net->Channels[0]->Close();
+				Player->Net->Channels[0]->Close();
 				count++;
 				continue;
 			}
 
 			if (!state2[i])
 			{
-				if (sv_player->Net->State == NETCON_Closed)
+				if (Player->Net->State == NETCON_Closed)
 				{
 					state2[i] = true;
 				}
 				else
 				{
-					sv_player->Net->GetMessages();
-					sv_player->Net->Tick();
+					Player->Net->GetMessages();
+					Player->Net->Tick();
 				}
 				count++;
 				continue;
@@ -995,17 +934,16 @@ void SV_SendServerInfoToClients()
 	guard(SV_SendServerInfoToClients);
 	for (int i = 0; i < svs.max_clients; i++)
 	{
-		if (GGameInfo->Players[i])
+		VBasePlayer* Player = GGameInfo->Players[i];
+		if (!Player)
 		{
-			GGameInfo->Players[i]->Level = GLevelInfo;
-			SV_SendServerInfo(GGameInfo->Players[i]);
-			if (GGameInfo->Players[i]->PlayerFlags & VBasePlayer::PF_IsBot)
-			{
-				sv_player = GGameInfo->Players[i];
-				SV_RunClientCommand("PreSpawn\n");
-				SV_RunClientCommand("Spawn\n");
-				SV_RunClientCommand("Begin\n");
-			}
+			continue;
+		}
+		Player->Level = GLevelInfo;
+		SV_SendServerInfo(Player);
+		if (Player->PlayerFlags & VBasePlayer::PF_IsBot)
+		{
+			VCommand::ExecuteString("Spawn\n", VCommand::SRC_Client, Player);
 		}
 	}
 	unguard;
@@ -1165,25 +1103,25 @@ COMMAND(Spawn)
 
 	if (!sv_loading)
 	{
-		if (sv_player->PlayerFlags & VBasePlayer::PF_Spawned)
+		if (Player->PlayerFlags & VBasePlayer::PF_Spawned)
 		{
 			GCon->Log(NAME_Dev, "Already spawned");
 		}
-		if (sv_player->MO)
+		if (Player->MO)
 		{
 			GCon->Log(NAME_Dev, "Mobj already spawned");
 		}
-		sv_player->eventSpawnClient();
+		Player->eventSpawnClient();
 		for (int i = 0; i < sv_ActiveSequences.Num(); i++)
 		{
-			sv_player->eventClientStartSequence(
+			Player->eventClientStartSequence(
 				sv_ActiveSequences[i].Origin,
 				sv_ActiveSequences[i].OriginId,
 				sv_ActiveSequences[i].Name,
 				sv_ActiveSequences[i].ModeNum);
 			for (int j = 0; j < sv_ActiveSequences[i].Choices.Num(); j++)
 			{
-				sv_player->eventClientAddSequenceChoice(
+				Player->eventClientAddSequenceChoice(
 					sv_ActiveSequences[i].OriginId,
 					sv_ActiveSequences[i].Choices[j]);
 			}
@@ -1191,22 +1129,22 @@ COMMAND(Spawn)
 	}
 	else
 	{
-		if (!sv_player->MO)
+		if (!Player->MO)
 		{
 			Host_Error("Player without Mobj\n");
 		}
 	}
 
-	sv_player->ViewAngles.roll = 0;
-	sv_player->eventClientSetAngles(sv_player->ViewAngles);
-	sv_player->PlayerFlags &= ~VBasePlayer::PF_FixAngle;
+	Player->ViewAngles.roll = 0;
+	Player->eventClientSetAngles(Player->ViewAngles);
+	Player->PlayerFlags &= ~VBasePlayer::PF_FixAngle;
 
 	if (!netgame || svs.num_connected == sv_load_num_players)
 	{
 		sv_loading = false;
 	}
 
-	sv_player->PlayerFlags |= VBasePlayer::PF_Spawned;
+	Player->PlayerFlags |= VBasePlayer::PF_Spawned;
 
 	// For single play, save immediately into the reborn slot
 	if (!netgame)
@@ -1222,24 +1160,24 @@ COMMAND(Spawn)
 //
 //==========================================================================
 
-void SV_DropClient(bool)
+void SV_DropClient(VBasePlayer* Player, bool)
 {
 	guard(SV_DropClient);
-	if (sv_player->PlayerFlags & VBasePlayer::PF_Spawned)
+	if (Player->PlayerFlags & VBasePlayer::PF_Spawned)
 	{
-		sv_player->eventDisconnectClient();
+		Player->eventDisconnectClient();
 	}
-	sv_player->PlayerFlags &= ~VBasePlayer::PF_Active;
-	GGameInfo->Players[SV_GetPlayerNum(sv_player)] = NULL;
-	sv_player->PlayerFlags &= ~VBasePlayer::PF_Spawned;
+	Player->PlayerFlags &= ~VBasePlayer::PF_Active;
+	GGameInfo->Players[SV_GetPlayerNum(Player)] = NULL;
+	Player->PlayerFlags &= ~VBasePlayer::PF_Spawned;
 
-	sv_player->PlayerReplicationInfo->DestroyThinker();
+	Player->PlayerReplicationInfo->DestroyThinker();
 
-	delete sv_player->Net;
-	sv_player->Net = NULL;
+	delete Player->Net;
+	Player->Net = NULL;
 
 	svs.num_connected--;
-	sv_player->UserInfo = VStr();
+	Player->UserInfo = VStr();
 	unguard;
 }
 
@@ -1268,35 +1206,6 @@ void SV_ShutdownServer(bool crash)
 	if (cls.state == ca_connected)
 		CL_Disconnect();
 #endif
-#if 0
-	double	start;
-
-	// flush any pending messages - like the score!!!
-	start = Sys_FloatTime();
-	do
-	{
-		count = 0;
-		for (i=0, sv_player = svs.clients ; i<svs.maxclients ; i++, sv_player++)
-		{
-			if (sv_player->PlayerFlags & VBasePlayer::PF_Active && sv_player->Message.cursize)
-			{
-				if (NET_CanSendMessage (sv_player->netconnection))
-				{
-					NET_SendMessage(sv_player->netconnection, &sv_player->Message);
-					SZ_Clear (&sv_player->Message);
-				}
-				else
-				{
-					NET_GetMessage(sv_player->netconnection);
-					count++;
-				}
-			}
-		}
-		if ((Sys_FloatTime() - start) > 3.0)
-			break;
-	}
-	while (count);
-#endif
 
 	// make sure all the clients know we're disconnecting
 	count = NET_SendToAll(5);
@@ -1305,9 +1214,8 @@ void SV_ShutdownServer(bool crash)
 
 	for (i = 0; i < svs.max_clients; i++)
 	{
-		sv_player = GGameInfo->Players[i];
-		if (sv_player)
-			SV_DropClient(crash);
+		if (GGameInfo->Players[i])
+			SV_DropClient(GGameInfo->Players[i], crash);
 	}
 
 	//
@@ -1412,9 +1320,9 @@ COMMAND(Stats)
 		return;
 	}
 
-	sv_player->Printf("Kills: %d of %d", sv_player->KillCount, GLevelInfo->TotalKills);
-	sv_player->Printf("Items: %d of %d", sv_player->ItemCount, GLevelInfo->TotalItems);
-	sv_player->Printf("Secrets: %d of %d", sv_player->SecretCount, GLevelInfo->TotalSecret);
+	Player->Printf("Kills: %d of %d", Player->KillCount, GLevelInfo->TotalKills);
+	Player->Printf("Items: %d of %d", Player->ItemCount, GLevelInfo->TotalItems);
+	Player->Printf("Secrets: %d of %d", Player->SecretCount, GLevelInfo->TotalSecret);
 	unguard;
 }
 
@@ -1487,9 +1395,10 @@ void SV_CheckForNewClients()
 		if (i == svs.max_clients)
 			Sys_Error("Host_CheckForNewClients: no free clients");
 
-		GPlayersBase[i]->Net = new VNetConnection(sock, ServerNetContext);
-		((VPlayerChannel*)GPlayersBase[i]->Net->Channels[CHANIDX_Player])->SetPlayer(GPlayersBase[i]);
-		SV_ConnectClient(GPlayersBase[i]);
+		VBasePlayer* Player = GPlayersBase[i];
+		Player->Net = new VNetConnection(sock, ServerNetContext, Player);
+		((VPlayerChannel*)Player->Net->Channels[CHANIDX_Player])->SetPlayer(Player);
+		SV_ConnectClient(Player);
 		svs.num_connected++;
 	}
 	unguard;
@@ -1500,8 +1409,6 @@ void SV_CheckForNewClients()
 //	SV_ConnectBot
 //
 //==========================================================================
-
-void SV_SetUserInfo(const VStr& info);
 
 void SV_ConnectBot(const char *name)
 {
@@ -1529,17 +1436,16 @@ void SV_ConnectBot(const char *name)
 	if (i == svs.max_clients)
 		Sys_Error("SV_ConnectBot: no free clients");
 
-	GPlayersBase[i]->PlayerFlags |= VBasePlayer::PF_IsBot;
-	GPlayersBase[i]->PlayerName = name;
-	GPlayersBase[i]->Net = new VNetConnection(sock, ServerNetContext);
-	GPlayersBase[i]->Net->AutoAck = true;
-	((VPlayerChannel*)GPlayersBase[i]->Net->Channels[CHANIDX_Player])->SetPlayer(GPlayersBase[i]);
-	SV_ConnectClient(GPlayersBase[i]);
+	VBasePlayer* Player = GPlayersBase[i];
+	Player->PlayerFlags |= VBasePlayer::PF_IsBot;
+	Player->PlayerName = name;
+	Player->Net = new VNetConnection(sock, ServerNetContext, Player);
+	Player->Net->AutoAck = true;
+	((VPlayerChannel*)Player->Net->Channels[CHANIDX_Player])->SetPlayer(Player);
+	SV_ConnectClient(Player);
 	svs.num_connected++;
-
-	sv_player = GGameInfo->Players[i];
-	SV_SetUserInfo(sv_player->UserInfo);
-	SV_RunClientCommand("Spawn\n");
+	SV_SetUserInfo(Player, Player->UserInfo);
+	VCommand::ExecuteString("Spawn\n", VCommand::SRC_Client, Player);
 	unguard;
 }
 
@@ -1704,7 +1610,7 @@ COMMAND(Say)
 	if (Args.Num() < 2)
 		return;
 
-	VStr Text = sv_player->PlayerName;
+	VStr Text = Player->PlayerName;
 	Text += ":";
 	for (int i = 1; i < Args.Num(); i++)
 	{

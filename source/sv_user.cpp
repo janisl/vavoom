@@ -286,33 +286,20 @@ void VBasePlayer::CentrePrintf(const char *s, ...)
 
 //==========================================================================
 //
-//	SV_RunClientCommand
-//
-//==========================================================================
-
-void SV_RunClientCommand(const VStr& cmd)
-{
-	guard(SV_RunClientCommand);
-	VCommand::ExecuteString(cmd, VCommand::SRC_Client);
-	unguard;
-}
-
-//==========================================================================
-//
 //	SV_ReadFromUserInfo
 //
 //==========================================================================
 
-void SV_ReadFromUserInfo()
+void SV_ReadFromUserInfo(VBasePlayer* Player)
 {
 	guard(SV_ReadFromUserInfo);
 	if (!sv_loading)
 	{
-		sv_player->BaseClass = atoi(*Info_ValueForKey(sv_player->UserInfo, "class"));
+		Player->BaseClass = atoi(*Info_ValueForKey(Player->UserInfo, "class"));
 	}
-	sv_player->PlayerName = Info_ValueForKey(sv_player->UserInfo, "name");
-	sv_player->Colour = atoi(*Info_ValueForKey(sv_player->UserInfo, "colour"));
-	sv_player->eventUserinfoChanged();
+	Player->PlayerName = Info_ValueForKey(Player->UserInfo, "name");
+	Player->Colour = atoi(*Info_ValueForKey(Player->UserInfo, "colour"));
+	Player->eventUserinfoChanged();
 	unguard;
 }
 
@@ -322,13 +309,13 @@ void SV_ReadFromUserInfo()
 //
 //==========================================================================
 
-void SV_SetUserInfo(const VStr& info)
+void SV_SetUserInfo(VBasePlayer* Player, const VStr& info)
 {
 	guard(SV_SetUserInfo);
 	if (!sv_loading)
 	{
-		sv_player->UserInfo = info;
-		SV_ReadFromUserInfo();
+		Player->UserInfo = info;
+		SV_ReadFromUserInfo(Player);
 	}
 	unguard;
 }
@@ -350,7 +337,7 @@ void VServerGenChannel::ParsePacket(VMessageIn& msg)
 		{
 			break;
 		}
-		SV_RunClientCommand(Cmd);
+		VCommand::ExecuteString(Cmd, VCommand::SRC_Client, Connection->Owner);
 	}
 	unguard;
 }
@@ -379,21 +366,6 @@ VChannel* VServerNetContext::CreateGenChannel(VNetConnection* Connection)
 
 //==========================================================================
 //
-//	SV_ReadClientMessages
-//
-//==========================================================================
-
-void SV_ReadClientMessages(int clientnum)
-{
-	guard(SV_ReadClientMessages);
-	sv_player = GGameInfo->Players[clientnum];
-	sv_player->Net->NeedsUpdate = false;
-	sv_player->Net->GetMessages();
-	unguard;
-}
-
-//==========================================================================
-//
 //	COMMAND SetInfo
 //
 //==========================================================================
@@ -412,8 +384,8 @@ COMMAND(SetInfo)
 		return;
 	}
 
-	Info_SetValueForKey(sv_player->UserInfo, *Args[1], *Args[2]);
-	SV_ReadFromUserInfo();
+	Info_SetValueForKey(Player->UserInfo, *Args[1], *Args[2]);
+	SV_ReadFromUserInfo(Player);
 	unguard;
 }
 
@@ -477,6 +449,5 @@ IMPLEMENT_FUNCTION(VBasePlayer, ServerSetUserInfo)
 {
 	P_GET_STR(Info);
 	P_GET_SELF;
-	sv_player = Self;
-	SV_SetUserInfo(Info);
+	SV_SetUserInfo(Self, Info);
 }

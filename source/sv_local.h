@@ -223,7 +223,14 @@ void SV_ReadMove();
 int SV_CheckFatPVS(subsector_t*);
 bool SV_SecCheckFatPVS(sector_t*);
 
-extern VBasePlayer*			sv_player;
+void Draw_TeleportIcon();
+void CL_Disconnect();
+void EntInit();
+void SV_SetUserInfo(VBasePlayer* Player, const VStr& info);
+
+void SV_DropClient(VBasePlayer* Player, bool crash);
+void SV_ShutdownServer(bool);
+
 extern TArray<VSndSeqInfo>	sv_ActiveSequences;
 
 extern int 		LeavePosition;

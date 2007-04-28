@@ -51,6 +51,7 @@ VStr					VCommand::Original;
 
 TArray<VStr>			VCommand::Args;
 VCommand::ECmdSource	VCommand::Source;
+VBasePlayer*			VCommand::Player;
 
 TArray<const char*>		VCommand::AutoCompleteTable;
 
@@ -321,11 +322,13 @@ void VCommand::TokeniseString(const VStr& str)
 //
 //==========================================================================
 
-void VCommand::ExecuteString(const VStr& Acmd, ECmdSource src)
+void VCommand::ExecuteString(const VStr& Acmd, ECmdSource src,
+	VBasePlayer* APlayer)
 {
 	guard(VCommand::ExecuteString);
 	TokeniseString(Acmd);
 	Source = src;
+	Player = APlayer;
 
 	if (!Args.Num())
 		return;
@@ -512,7 +515,7 @@ void VCmdBuf::Exec()
 
 		Buffer = VStr(Buffer, len, Buffer.Length() - len);
 
-		VCommand::ExecuteString(ParsedCmd, VCommand::SRC_Command);
+		VCommand::ExecuteString(ParsedCmd, VCommand::SRC_Command, NULL);
 
 		if (host_request_exit)
 		{

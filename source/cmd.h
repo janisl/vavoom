@@ -60,6 +60,7 @@ private:
 protected:
 	static TArray<VStr>			Args;
 	static ECmdSource			Source;
+	static VBasePlayer*			Player;	//	For SRC_Client
 
 public:
 	VCommand(const char*);
@@ -74,7 +75,7 @@ public:
 	static void AddToAutoComplete(const char*);
 	static VStr GetAutoComplete(const VStr&, int&, bool);
 
-	static void ExecuteString(const VStr&, ECmdSource);
+	static void ExecuteString(const VStr&, ECmdSource, VBasePlayer*);
 	static void ForwardToServer();
 	static int CheckParm(const char*);
 

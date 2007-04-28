@@ -46,8 +46,8 @@
 class VDemoPlaybackNetConnection : public VNetConnection
 {
 public:
-	VDemoPlaybackNetConnection(VNetContext* AContext)
-	: VNetConnection(NULL, AContext)
+	VDemoPlaybackNetConnection(VNetContext* AContext, VBasePlayer* AOwner)
+	: VNetConnection(NULL, AContext, AOwner)
 	, NextPacketTime(0)
 	{
 		AutoAck = true;
@@ -64,8 +64,9 @@ public:
 class VDemoRecordingNetConnection : public VNetConnection
 {
 public:
-	VDemoRecordingNetConnection(VSocketPublic* Sock, VNetContext* AContext)
-	: VNetConnection(Sock, AContext)
+	VDemoRecordingNetConnection(VSocketPublic* Sock, VNetContext* AContext,
+		VBasePlayer* AOwner)
+	: VNetConnection(Sock, AContext, AOwner)
 	{}
 
 	//	VNetConnection interface
@@ -111,15 +112,15 @@ void CL_SetUpLocalPlayer(VSocketPublic* Sock)
 
 	if (cls.demoplayback)
 	{
-		cl->Net = new VDemoPlaybackNetConnection(ClientNetContext);
+		cl->Net = new VDemoPlaybackNetConnection(ClientNetContext, cl);
 	}
 	else if (cls.demorecording)
 	{
-		cl->Net = new VDemoRecordingNetConnection(Sock, ClientNetContext);
+		cl->Net = new VDemoRecordingNetConnection(Sock, ClientNetContext, cl);
 	}
 	else
 	{
-		cl->Net = new VNetConnection(Sock, ClientNetContext);
+		cl->Net = new VNetConnection(Sock, ClientNetContext, cl);
 	}
 	((VPlayerChannel*)cl->Net->Channels[CHANIDX_Player])->SetPlayer(cl);
 	unguard;
@@ -378,7 +379,7 @@ COMMAND(Record)
 	//
 	if (c > 2)
 	{
-		VCommand::ExecuteString(VStr("map ") + Args[2], SRC_Command);
+		VCommand::ExecuteString(VStr("map ") + Args[2], SRC_Command, NULL);
 	}
 	
 	//
