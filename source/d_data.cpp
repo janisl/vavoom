@@ -345,10 +345,11 @@ void VSoftwareDrawer::UpdatePalette()
 
 	for (i = 0; i < NUM_CSHIFTS; i++)
 	{
-		if (cl->CShifts[i] != GClGame->prev_cshifts[i])
+		vuint32 Val = cl ? cl->CShifts[i] : 0;
+		if (Val != GClGame->prev_cshifts[i])
 		{
 			newshifts = true;
-			GClGame->prev_cshifts[i] = cl->CShifts[i];
+			GClGame->prev_cshifts[i] = Val;
 		}
 	}
 
@@ -369,10 +370,11 @@ void VSoftwareDrawer::UpdatePalette()
 	
 		for (j = 0; j < NUM_CSHIFTS; j++)
 		{
-			perc = (cl->CShifts[j] >> 24) & 0xff;
-			dstr = (cl->CShifts[j] >> 16) & 0xff;
-			dstg = (cl->CShifts[j] >> 8) & 0xff;
-			dstb = cl->CShifts[j] & 0xff;
+			vuint32 Val = cl ? cl->CShifts[j] : 0;
+			perc = (Val >> 24) & 0xff;
+			dstr = (Val >> 16) & 0xff;
+			dstg = (Val >> 8) & 0xff;
+			dstb = Val & 0xff;
 			r += (perc * (dstr - r)) >> 8;
 			g += (perc * (dstg - g)) >> 8;
 			b += (perc * (dstb - b)) >> 8;
