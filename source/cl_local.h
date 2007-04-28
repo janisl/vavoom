@@ -201,13 +201,6 @@ class VClientGameBase : public VObject
 		P_PASS_INT(h);
 		EV_RET_VOID("DrawViewBorder");
 	}
-	void eventUpdateParticle(particle_t* p, float DeltaTime)
-	{
-		P_PASS_SELF;
-		P_PASS_PTR(p);
-		P_PASS_FLOAT(DeltaTime);
-		EV_RET_VOID("UpdateParticle");
-	}
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------

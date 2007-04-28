@@ -739,16 +739,6 @@ void DrawViewBorder(int x, int y, int w, int h)
 	DrawBorder(x, y, w, h);
 }
 
-//==========================================================================
-//
-//  UpdateParticle
-//
-//==========================================================================
-
-void UpdateParticle(particle_t * p, float DeltaTime)
-{
-}
-
 defaultproperties
 {
 	sb_height = 42;

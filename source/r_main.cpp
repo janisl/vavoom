@@ -660,7 +660,7 @@ void VRenderLevel::UpdateParticles(float frametime)
 
 		p->org += p->vel * frametime;
 
-		GClGame->eventUpdateParticle(p, frametime);
+		GClLevel->LevelInfo->eventUpdateParticle(p, frametime);
 	}
 	unguard;
 }

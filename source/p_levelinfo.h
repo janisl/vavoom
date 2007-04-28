@@ -248,4 +248,11 @@ class VLevelInfo : public VThinker
 		P_PASS_PTR(mthing);
 		EV_RET_VOID("SpawnMapThing");
 	}
+	void eventUpdateParticle(particle_t* p, float DeltaTime)
+	{
+		P_PASS_SELF;
+		P_PASS_PTR(p);
+		P_PASS_FLOAT(DeltaTime);
+		EV_RET_VOID("UpdateParticle");
+	}
 };

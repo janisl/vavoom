@@ -1062,6 +1062,16 @@ void CopyMThing(mthing_t * from, mthing_t * to)
 	to->arg5 = from->arg5;
 }
 
+//==========================================================================
+//
+//  UpdateParticle
+//
+//==========================================================================
+
+void UpdateParticle(particle_t* p, float DeltaTime)
+{
+}
+
 defaultproperties
 {
 	bAlwaysRelevant = true;

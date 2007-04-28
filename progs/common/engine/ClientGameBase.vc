@@ -270,16 +270,6 @@ void DrawViewBorder(int x, int y, int w, int h)
 {
 }
 
-//==========================================================================
-//
-//  UpdateParticle
-//
-//==========================================================================
-
-void UpdateParticle(particle_t* p, float DeltaTime)
-{
-}
-
 defaultproperties
 {
 	local_server = true;
