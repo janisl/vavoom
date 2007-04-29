@@ -34,9 +34,10 @@
 
 struct VModel
 {
-	VStr		name;
-	void*		data;		// only access through Mod_Extradata
-	int			type;
+	VStr			name;
+	void*			data;		// only access through Mod_Extradata
+	int				type;
+	TArray<VName>	Skins;
 };
 
 enum
@@ -361,6 +362,15 @@ static void Mod_SwapAliasModel(VModel* mod)
 	for (i = 0; i < pmodel->numcmds; i++)
 	{
 		pcmds[i] = LittleLong(pcmds[i]);
+	}
+
+	//
+	//	Skins
+	//
+	mskin_t* pskindesc = (mskin_t *)((byte *)pmodel + pmodel->ofsskins);
+	for (i = 0; i < pmodel->numskins; i++)
+	{
+		mod->Skins.Append(*VStr(pskindesc[0].name).ToLower());
 	}
 	unguard;
 }
@@ -776,16 +786,15 @@ static void DrawModel(VLevel* Level, const TVec& Org, const TAVec& Angles,
 
 		//	Get the proper skin texture ID.
 		int SkinID;
-		mskin_t* pskindesc = (mskin_t *)((byte *)pmdl + pmdl->ofsskins);
 		if (Md2SkinIdx < 0 || Md2SkinIdx >= pmdl->numskins)
 		{
 			SkinID = GTextureManager.AddFileTexture(
-				VName(pskindesc[0].name), TEXTYPE_Skin);
+				SubMdl.Model->Skins[0], TEXTYPE_Skin);
 		}
 		else
 		{
 			SkinID = GTextureManager.AddFileTexture(
-				VName(pskindesc[Md2SkinIdx].name), TEXTYPE_Skin);
+				SubMdl.Model->Skins[Md2SkinIdx], TEXTYPE_Skin);
 		}
 		if (Skin && *Skin)
 		{
