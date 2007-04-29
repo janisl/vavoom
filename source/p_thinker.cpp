@@ -136,7 +136,7 @@ void VThinker::Tick(float DeltaTime)
 	guard(VThinker::Tick);
 	P_PASS_SELF;
 	P_PASS_FLOAT(DeltaTime);
-	EV_RET_VOID(FIndex_Tick);
+	EV_RET_VOID_IDX(FIndex_Tick);
 	unguard;
 }
 

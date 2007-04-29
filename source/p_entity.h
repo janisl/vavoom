@@ -227,103 +227,103 @@ class VEntity : public VThinker
 	{
 		P_PASS_SELF;
 		P_PASS_PTR(mthing);
-		EV_RET_VOID(FIndex_OnMapSpawn);
+		EV_RET_VOID_IDX(FIndex_OnMapSpawn);
 	}
 	void eventBeginPlay()
 	{
 		P_PASS_SELF;
-		EV_RET_VOID(FIndex_BeginPlay);
+		EV_RET_VOID_IDX(FIndex_BeginPlay);
 	}
 	void eventDestroyed()
 	{
 		P_PASS_SELF;
-		EV_RET_VOID(FIndex_Destroyed);
+		EV_RET_VOID_IDX(FIndex_Destroyed);
 	}
 	bool eventTouch(VEntity *Other)
 	{
 		P_PASS_SELF;
 		P_PASS_REF(Other);
-		EV_RET_BOOL(FIndex_Touch);
+		EV_RET_BOOL_IDX(FIndex_Touch);
 	}
 	void eventBlockedByLine(line_t * ld)
 	{
 		P_PASS_SELF;
 		P_PASS_PTR(ld);
-		EV_RET_VOID(FIndex_BlockedByLine);
+		EV_RET_VOID_IDX(FIndex_BlockedByLine);
 	}
 	void eventApplyFriction()
 	{
 		P_PASS_SELF;
-		EV_RET_VOID(FIndex_ApplyFriction);
+		EV_RET_VOID_IDX(FIndex_ApplyFriction);
 	}
 	void eventPushLine(tmtrace_t* tmtrace)
 	{
 		P_PASS_SELF;
 		P_PASS_PTR(tmtrace);
-		EV_RET_VOID(FIndex_PushLine);
+		EV_RET_VOID_IDX(FIndex_PushLine);
 	}
 	void eventHandleFloorclip()
 	{
 		P_PASS_SELF;
-		EV_RET_VOID(FIndex_HandleFloorclip);
+		EV_RET_VOID_IDX(FIndex_HandleFloorclip);
 	}
 	void eventCrossSpecialLine(line_t *ld, int side)
 	{
 		P_PASS_SELF;
 		P_PASS_PTR(ld);
 		P_PASS_INT(side);
-		EV_RET_VOID(FIndex_CrossSpecialLine);
+		EV_RET_VOID_IDX(FIndex_CrossSpecialLine);
 	}
 	bool eventSectorChanged(int CrushChange)
 	{
 		P_PASS_SELF;
 		P_PASS_INT(CrushChange);
-		EV_RET_BOOL(FIndex_SectorChanged);
+		EV_RET_BOOL_IDX(FIndex_SectorChanged);
 	}
 	bool eventRoughCheckThing(VEntity *Other)
 	{
 		P_PASS_SELF;
 		P_PASS_REF(Other);
-		EV_RET_BOOL(FIndex_RoughCheckThing);
+		EV_RET_BOOL_IDX(FIndex_RoughCheckThing);
 	}
 	void eventGiveInventory(VName ItemName, int Amount)
 	{
 		P_PASS_SELF;
 		P_PASS_NAME(ItemName);
 		P_PASS_INT(Amount);
-		EV_RET_VOID(FIndex_GiveInventory);
+		EV_RET_VOID_IDX(FIndex_GiveInventory);
 	}
 	void eventTakeInventory(VName ItemName, int Amount)
 	{
 		P_PASS_SELF;
 		P_PASS_NAME(ItemName);
 		P_PASS_INT(Amount);
-		EV_RET_VOID(FIndex_TakeInventory);
+		EV_RET_VOID_IDX(FIndex_TakeInventory);
 	}
 	int eventCheckInventory(VName ItemName)
 	{
 		P_PASS_SELF;
 		P_PASS_NAME(ItemName);
-		EV_RET_INT(FIndex_CheckInventory);
+		EV_RET_INT_IDX(FIndex_CheckInventory);
 	}
 	int eventGetSigilPieces()
 	{
 		P_PASS_SELF;
-		EV_RET_INT(FIndex_GetSigilPieces);
+		EV_RET_INT_IDX(FIndex_GetSigilPieces);
 	}
 	bool eventMoveThing(TVec Pos, bool Fog)
 	{
 		P_PASS_SELF;
 		P_PASS_VEC(Pos);
 		P_PASS_BOOL(Fog);
-		EV_RET_BOOL(FIndex_MoveThing);
+		EV_RET_BOOL_IDX(FIndex_MoveThing);
 	}
 	float eventGetStateTime(VState* State, float StateTime)
 	{
 		P_PASS_SELF;
 		P_PASS_PTR(State);
 		P_PASS_FLOAT(StateTime);
-		EV_RET_FLOAT(FIndex_GetStateTime);
+		EV_RET_FLOAT_IDX(FIndex_GetStateTime);
 	}
 
 	bool SetState(VState*);

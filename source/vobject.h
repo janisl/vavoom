@@ -217,7 +217,7 @@ public:
 	{
 		return Index;
 	}
-	VMethod *GetVFunction(int InIndex) const
+	VMethod *GetVFunctionIdx(int InIndex) const
 	{
 		return vtable[InIndex];
 	}
@@ -504,6 +504,17 @@ inline vuint32 GetTypeHash(VObject* Obj)
 #define EV_RET_AVEC(v)		Sys_Error("Not implemented")//ExecuteFunction(GetVFunction(v))
 #define EV_RET_REF(t, v)	return (t*)ExecuteFunction(GetVFunction(v)).p
 #define EV_RET_PTR(t, v)	return (t*)ExecuteFunction(GetVFunction(v)).p
+
+#define EV_RET_VOID_IDX(v)		ExecuteFunction(GetVFunctionIdx(v))
+#define EV_RET_INT_IDX(v)		return ExecuteFunction(GetVFunctionIdx(v)).i
+#define EV_RET_FLOAT_IDX(v)		return ExecuteFunction(GetVFunctionIdx(v)).f
+#define EV_RET_BOOL_IDX(v)		return !!ExecuteFunction(GetVFunctionIdx(v)).i
+#define EV_RET_NAME_IDX(v)		vint32 ret = ExecuteFunction(GetVFunctionIdx(v)).i; return *(VName*)&ret
+#define EV_RET_STR_IDX(v)		VStack Ret = ExecuteFunction(GetVFunctionIdx(v)); PR_PushPtr(Ret.p); return PR_PopStr()
+#define EV_RET_VEC_IDX(v)		Sys_Error("Not implemented")//ExecuteFunction(GetVFunctionIdx(v))
+#define EV_RET_AVEC_IDX(v)		Sys_Error("Not implemented")//ExecuteFunction(GetVFunctionIdx(v))
+#define EV_RET_REF_IDX(t, v)	return (t*)ExecuteFunction(GetVFunctionIdx(v)).p
+#define EV_RET_PTR_IDX(t, v)	return (t*)ExecuteFunction(GetVFunctionIdx(v)).p
 
 //
 //	Parameter get macros. Parameters must be retrieved in backwards order.

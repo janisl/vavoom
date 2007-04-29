@@ -222,13 +222,13 @@ func_loop:
 			PR_VM_BREAK;
 
 		PR_VM_CASE(OPC_PushVFunc)
-			sp[0].p = ((VObject*)sp[-1].p)->GetVFunction(ReadInt16(ip + 1));
+			sp[0].p = ((VObject*)sp[-1].p)->GetVFunctionIdx(ReadInt16(ip + 1));
 			ip += 3;
 			sp++;
 			PR_VM_BREAK;
 
 		PR_VM_CASE(OPC_PushVFuncB)
-			sp[0].p = ((VObject*)sp[-1].p)->GetVFunction(ip[1]);
+			sp[0].p = ((VObject*)sp[-1].p)->GetVFunctionIdx(ip[1]);
 			ip += 2;
 			sp++;
 			PR_VM_BREAK;
@@ -239,7 +239,7 @@ func_loop:
 			{
 				Sys_Error("Reference not set to an instance of an object");
 			}
-			RunFunction(((VObject*)sp[-ip[3]].p)->GetVFunction(ReadInt16(ip + 1)));
+			RunFunction(((VObject*)sp[-ip[3]].p)->GetVFunctionIdx(ReadInt16(ip + 1)));
 			ip += 4;
 			current_func = func;
 			sp = pr_stackPtr;
@@ -251,7 +251,7 @@ func_loop:
 			{
 				Sys_Error("Reference not set to an instance of an object");
 			}
-			RunFunction(((VObject*)sp[-ip[2]].p)->GetVFunction(ip[1]));
+			RunFunction(((VObject*)sp[-ip[2]].p)->GetVFunctionIdx(ip[1]));
 			ip += 3;
 			current_func = func;
 			sp = pr_stackPtr;
