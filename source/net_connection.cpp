@@ -70,9 +70,9 @@ VNetConnection::VNetConnection(VSocketPublic* ANetCon, VNetContext* AContext,
 	memset(Channels, 0, sizeof(Channels));
 	memset(InSequence, 0, sizeof(InSequence));
 	memset(OutSequence, 0, sizeof(OutSequence));
-	new VControlChannel(this, CHANIDX_General);
-	new VPlayerChannel(this, CHANIDX_Player);
-	new VLevelChannel(this, CHANIDX_Level);
+	CreateChannel(CHANNEL_Control, CHANIDX_General);
+	CreateChannel(CHANNEL_Player, CHANIDX_Player);
+	CreateChannel(CHANNEL_Level, CHANIDX_Level);
 }
 
 //==========================================================================
@@ -305,22 +305,7 @@ void VNetConnection::ReceivedPacket(VBitStreamReader& Packet)
 			{
 				if (Msg.bOpen)
 				{
-					switch (Msg.ChanType)
-					{
-					case CHANNEL_Control:
-						Chan = new VControlChannel(this, Msg.ChanIndex, false);
-						break;
-					case CHANNEL_Player:
-						Chan = new VPlayerChannel(this, Msg.ChanIndex, false);
-						break;
-					case CHANNEL_Thinker:
-						Chan = new VThinkerChannel(this, Msg.ChanIndex, false);
-						break;
-					default:
-						GCon->Logf("Unknown channel type %d for channel %d",
-							Msg.ChanType, Msg.ChanIndex);
-						continue;
-					}
+					Chan = CreateChannel(Msg.ChanType, Msg.ChanIndex, false);
 				}
 				else
 				{
@@ -335,6 +320,48 @@ void VNetConnection::ReceivedPacket(VBitStreamReader& Packet)
 	if (NeedsAck)
 	{
 		SendAck(Sequence);
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VNetConnection::CreateChannel
+//
+//==========================================================================
+
+VChannel* VNetConnection::CreateChannel(vuint8 Type, vint32 AIndex,
+	vuint8 OpenedLocally)
+{
+	guard(VNetConnection::CreateChannel);
+	//	If channel index is -1, find a free channel slot.
+	vint32 Index = AIndex;
+	if (Index == -1)
+	{
+		Index = CHANIDX_ThinkersStart;
+		while (Index < MAX_CHANNELS && Channels[Index])
+		{
+			Index++;
+		}
+		if (Index == MAX_CHANNELS)
+		{
+			return NULL;
+		}
+	}
+
+	switch (Type)
+	{
+	case CHANNEL_Control:
+		return new VControlChannel(this, Index, OpenedLocally);
+	case CHANNEL_Level:
+		return new VLevelChannel(this, Index, OpenedLocally);
+	case CHANNEL_Player:
+		return new VPlayerChannel(this, Index, OpenedLocally);
+	case CHANNEL_Thinker:
+		return new VThinkerChannel(this, Index, OpenedLocally);
+	default:
+		GCon->Logf("Unknown channel type %d for channel %d", Type, Index);
+		return NULL;
 	}
 	unguard;
 }

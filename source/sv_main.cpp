@@ -379,11 +379,18 @@ static void SV_UpdateLevel(VBasePlayer* Player)
 	for (TThinkerIterator<VThinker> Th(GLevel); Th; ++Th)
 	{
 		if (!IsRelevant(*Th))
+		{
 			continue;
+		}
 		VThinkerChannel* Chan = Player->Net->ThinkerChannels.FindPtr(*Th);
 		if (!Chan)
 		{
-			Chan = new VThinkerChannel(Player->Net, -1);
+			Chan = (VThinkerChannel*)Player->Net->CreateChannel(
+				CHANNEL_Thinker, -1);
+			if (!Chan)
+			{
+				continue;
+			}
 			Chan->SetThinker(*Th);
 		}
 		Chan->Update();

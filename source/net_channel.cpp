@@ -62,15 +62,8 @@ VChannel::VChannel(VNetConnection* AConnection, EChannelType AType,
 , InMsg(NULL)
 , OutMsg(NULL)
 {
-	if (Index == -1)
-	{
-		Index = CHANIDX_ThinkersStart;
-		while (Index < MAX_CHANNELS && Connection->Channels[Index])
-		{
-			Index++;
-		}
-		check(Index < MAX_CHANNELS);
-	}
+	checkSlow(Index >= 0);
+	checkSlow(Index < MAX_CHANNELS);
 	checkSlow(!Connection->Channels[Index]);
 	Connection->Channels[Index] = this;
 	Connection->OpenChannels.Append(this);

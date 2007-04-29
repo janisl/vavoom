@@ -307,6 +307,7 @@ public:
 	void GetMessages();
 	virtual int GetRawPacket(TArray<vuint8>&);
 	void ReceivedPacket(VBitStreamReader&);
+	VChannel* CreateChannel(vuint8, vint32, vuint8 = true);
 	virtual void SendRawMessage(VMessageOut&);
 	virtual void SendAck(vuint32);
 	void PrepareOut(int);
