@@ -50,12 +50,6 @@ extern bool			sv_loading;
 
 // CODE --------------------------------------------------------------------
 
-VControlChannel::VControlChannel(VNetConnection* AConnection, vint32 AIndex,
-	vuint8 AOpenedLocally)
-: VChannel(AConnection, CHANNEL_Control, AIndex, AOpenedLocally)
-{
-}
-
 //==========================================================================
 //
 //	VNetContext::VNetContext
@@ -312,36 +306,6 @@ void SV_SetUserInfo(VBasePlayer* Player, const VStr& info)
 	{
 		Player->UserInfo = info;
 		SV_ReadFromUserInfo(Player);
-	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	VControlChannel::ParsePacket
-//
-//==========================================================================
-
-void VControlChannel::ParsePacket(VMessageIn& msg)
-{
-	guard(VControlChannel::ParsePacket);
-	while (!msg.AtEnd())
-	{
-		VStr Cmd;
-		msg << Cmd;
-		if (msg.IsError())
-		{
-			break;
-		}
-		if (Connection->Context->ServerConnection)
-		{
-			GCmdBuf << Cmd;
-		}
-		else
-		{
-			VCommand::ExecuteString(Cmd, VCommand::SRC_Client,
-				Connection->Owner);
-		}
 	}
 	unguard;
 }

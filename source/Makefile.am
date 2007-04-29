@@ -125,6 +125,7 @@ _____MAIN_EXE__SOURCES = \
 	name.h \
 	names.h \
 	net_channel.cpp \
+	net_channel_control.cpp \
 	net_channel_level.cpp \
 	net_channel_player.cpp \
 	net_channel_thinker.cpp \
@@ -446,6 +447,7 @@ _____SERVER_EXE__SOURCES = \
 	misc.cpp \
 	name.cpp \
 	net_channel.cpp \
+	net_channel_control.cpp \
 	net_channel_level.cpp \
 	net_channel_player.cpp \
 	net_channel_thinker.cpp \
