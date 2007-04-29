@@ -58,6 +58,7 @@
 
 class VRenderLevelPublic;
 class VAcsLevel;
+class VNetContext;
 
 struct sector_t;
 
@@ -626,6 +627,7 @@ class VLevel : public VObject
 	VAcsLevel*			Acs;
 
 	VRenderLevelPublic*	RenderData;
+	VNetContext*		NetContext;
 
 	rep_side_t*			BaseSides;
 	rep_sector_t*		BaseSectors;

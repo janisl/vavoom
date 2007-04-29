@@ -44,6 +44,8 @@ void CL_SetupLevel();
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
+extern VClientNetContext*	ClientNetContext;
+
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
@@ -327,6 +329,7 @@ void CL_ParseServerInfo(VMessageIn& msg)
 	C_ClearNotify();
 
 	CL_LoadLevel(MapName);
+	GClLevel->NetContext = ClientNetContext;
 
 	((VLevelChannel*)cl->Net->Channels[CHANIDX_Level])->SetLevel(GClLevel);
 

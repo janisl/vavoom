@@ -339,6 +339,7 @@ public:
 
 	//	VNetContext interface
 	virtual VLevel* GetLevel() = 0;
+	void ThinkerDestroyed(VThinker*);
 };
 
 //

@@ -70,3 +70,34 @@ VNetContext::VNetContext()
 VNetContext::~VNetContext()
 {
 }
+
+//==========================================================================
+//
+//	VNetContext::ThinkerDestroyed
+//
+//==========================================================================
+
+void VNetContext::ThinkerDestroyed(VThinker* Th)
+{
+	guard(VNetContext::ThinkerDestroyed);
+	if (ServerConnection)
+	{
+		VThinkerChannel* Chan = ServerConnection->ThinkerChannels.FindPtr(Th);
+		if (Chan)
+		{
+			Chan->Close();
+		}
+	}
+	else
+	{
+		for (int i = 0; i < ClientConnections.Num(); i++)
+		{
+			VThinkerChannel* Chan = ClientConnections[i]->ThinkerChannels.FindPtr(Th);
+			if (Chan)
+			{
+				Chan->Close();
+			}
+		}
+	}
+	unguard;
+}

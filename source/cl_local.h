@@ -219,14 +219,14 @@ void SCR_SetVirtualScreen(int, int);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
-extern VClientGameBase*	GClGame;
+extern VClientGameBase*		GClGame;
 
-extern int				VirtualWidth;
-extern int				VirtualHeight;
+extern int					VirtualWidth;
+extern int					VirtualHeight;
 
-extern float fScaleX;
-extern float fScaleY;
-extern float fScaleXI;
-extern float fScaleYI;
+extern float				fScaleX;
+extern float				fScaleY;
+extern float				fScaleXI;
+extern float				fScaleYI;
 
 #endif

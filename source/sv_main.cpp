@@ -1006,6 +1006,7 @@ void SV_SpawnServer(const char *mapname, bool spawn_thinkers)
 
 	//	Load it
 	SV_LoadLevel(VName(mapname, VName::AddLower8));
+	GLevel->NetContext = ServerNetContext;
 	GLevel->WorldInfo = GWorldInfo;
 
 	const mapInfo_t& info = P_GetMapInfo(GLevel->MapName);

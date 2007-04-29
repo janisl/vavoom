@@ -78,31 +78,8 @@ VThinker::VThinker()
 void VThinker::Destroy()
 {
 	guard(VThinker::Destroy);
-	if (XLevel == GLevel && GLevel)
-	{
-		for (int i = 0; i < MAXPLAYERS; i++)
-		{
-			if (Level->Game->Players[i])
-			{
-				VThinkerChannel* Chan = Level->Game->Players[i]->Net->ThinkerChannels.FindPtr(this);
-				if (Chan)
-				{
-					Chan->Close();
-				}
-			}
-		}
-	}
-
-#ifdef CLIENT
-	if (XLevel == GClLevel && GClLevel && cl->Net)
-	{
-		VThinkerChannel* Chan = cl->Net->ThinkerChannels.FindPtr(this);
-		if (Chan)
-		{
-			Chan->Close();
-		}
-	}
-#endif
+	//	Close any thinker channels.
+	XLevel->NetContext->ThinkerDestroyed(this);
 
 	Super::Destroy();
 	unguard;
