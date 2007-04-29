@@ -128,7 +128,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\Name\\bot1\\colour\\0\\class\\0\\model\\doomguy\\skin\\green.pcx"
+		"\\Name\\bot1\\colour\\0\\class\\0\\model\\doomguy\\skin\\green"
 	);
 	SetBotType(1,
 		"bot2",
@@ -137,7 +137,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\Name\\bot2\\colour\\0\\class\\0\\model\\doomguy\\skin\\greenf.pcx"
+		"\\Name\\bot2\\colour\\0\\class\\0\\model\\doomguy\\skin\\greenf"
 	);
 	SetBotType(2,
 		"bot3",
@@ -146,7 +146,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\Name\\bot3\\colour\\0\\class\\0\\model\\doomguy\\skin\\camo.pcx"
+		"\\Name\\bot3\\colour\\0\\class\\0\\model\\doomguy\\skin\\camo"
 	);
 	SetBotType(3,
 		"bot4",
@@ -155,7 +155,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\Name\\bot4\\colour\\0\\class\\0\\model\\doomguy\\skin\\camof.pcx"
+		"\\Name\\bot4\\colour\\0\\class\\0\\model\\doomguy\\skin\\camof"
 	);
 	SetBotType(4,
 		"bot5",
@@ -164,7 +164,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\Name\\bot5\\colour\\1\\class\\0\\model\\doomguy\\skin\\black.pcx"
+		"\\Name\\bot5\\colour\\1\\class\\0\\model\\doomguy\\skin\\black"
 	);
 	SetBotType(5,
 		"bot6",
@@ -173,7 +173,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\Name\\bot6\\colour\\1\\class\\0\\model\\doomguy\\skin\\blackf.pcx"
+		"\\Name\\bot6\\colour\\1\\class\\0\\model\\doomguy\\skin\\blackf"
 	);
 	SetBotType(6,
 		"bot7",
@@ -182,7 +182,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\Name\\bot7\\colour\\1\\class\\0\\model\\doomguy\\skin\\white.pcx"
+		"\\Name\\bot7\\colour\\1\\class\\0\\model\\doomguy\\skin\\white"
 	);
 	SetBotType(7,
 		"bot8",
@@ -191,7 +191,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\Name\\bot8\\colour\\1\\class\\0\\model\\doomguy\\skin\\whitef.pcx"
+		"\\Name\\bot8\\colour\\1\\class\\0\\model\\doomguy\\skin\\whitef"
 	);
 	SetBotType(8,
 		"bot9",
@@ -200,7 +200,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\Name\\bot9\\colour\\2\\class\\0\\model\\doomguy\\skin\\brown.pcx"
+		"\\Name\\bot9\\colour\\2\\class\\0\\model\\doomguy\\skin\\brown"
 	);
 	SetBotType(9,
 		"bot10",
@@ -209,7 +209,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\Name\\bot10\\colour\\2\\class\\0\\model\\doomguy\\skin\\brownf.pcx"
+		"\\Name\\bot10\\colour\\2\\class\\0\\model\\doomguy\\skin\\brownf"
 	);
 	SetBotType(10,
 		"bot11",
@@ -218,7 +218,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\Name\\bot11\\colour\\3\\class\\0\\model\\doomguy\\skin\\red.pcx"
+		"\\Name\\bot11\\colour\\3\\class\\0\\model\\doomguy\\skin\\red"
 	);
 	SetBotType(11,
 		"bot12",
@@ -227,7 +227,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\Name\\bot12\\colour\\3\\class\\0\\model\\doomguy\\skin\\redf.pcx"
+		"\\Name\\bot12\\colour\\3\\class\\0\\model\\doomguy\\skin\\redf"
 	);
 	SetBotType(12,
 		"bot13",
@@ -236,7 +236,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\Name\\bot13\\colour\\4\\class\\0\\model\\doomguy\\skin\\pink.pcx"
+		"\\Name\\bot13\\colour\\4\\class\\0\\model\\doomguy\\skin\\pink"
 	);
 	SetBotType(13,
 		"bot14",
@@ -245,7 +245,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\Name\\bot14\\colour\\4\\class\\0\\model\\doomguy\\skin\\pinkf.pcx"
+		"\\Name\\bot14\\colour\\4\\class\\0\\model\\doomguy\\skin\\pinkf"
 	);
 	SetBotType(14,
 		"bot15",
@@ -254,7 +254,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\Name\\bot15\\colour\\5\\class\\0\\model\\doomguy\\skin\\blue.pcx"
+		"\\Name\\bot15\\colour\\5\\class\\0\\model\\doomguy\\skin\\blue"
 	);
 	SetBotType(15,
 		"bot16",
@@ -263,7 +263,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\Name\\bot16\\colour\\5\\class\\0\\model\\doomguy\\skin\\bluef.pcx"
+		"\\Name\\bot16\\colour\\5\\class\\0\\model\\doomguy\\skin\\bluef"
 	);
 	SetBotType(16,
 		"bot17",
@@ -272,7 +272,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\Name\\bot17\\colour\\5\\class\\0\\model\\doomguy\\skin\\lgtblue.pcx"
+		"\\Name\\bot17\\colour\\5\\class\\0\\model\\doomguy\\skin\\lgtblue"
 	);
 	SetBotType(17,
 		"bot18",
@@ -281,7 +281,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\Name\\bot18\\colour\\5\\class\\0\\model\\doomguy\\skin\\lgtbluef.pcx"
+		"\\Name\\bot18\\colour\\5\\class\\0\\model\\doomguy\\skin\\lgtbluef"
 	);
 	SetBotType(18,
 		"bot19",
@@ -290,7 +290,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\Name\\bot19\\colour\\5\\class\\0\\model\\doomguy\\skin\\navy.pcx"
+		"\\Name\\bot19\\colour\\5\\class\\0\\model\\doomguy\\skin\\navy"
 	);
 	SetBotType(19,
 		"bot20",
@@ -299,7 +299,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\Name\\bot20\\colour\\5\\class\\0\\model\\doomguy\\skin\\navyf.pcx"
+		"\\Name\\bot20\\colour\\5\\class\\0\\model\\doomguy\\skin\\navyf"
 	);
 	SetBotType(20,
 		"bot21",
@@ -308,7 +308,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\Name\\bot21\\colour\\5\\class\\0\\model\\doomguy\\skin\\indigo.pcx"
+		"\\Name\\bot21\\colour\\5\\class\\0\\model\\doomguy\\skin\\indigo"
 	);
 	SetBotType(21,
 		"bot22",
@@ -317,7 +317,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\Name\\bot22\\colour\\5\\class\\0\\model\\doomguy\\skin\\indigof.pcx"
+		"\\Name\\bot22\\colour\\5\\class\\0\\model\\doomguy\\skin\\indigof"
 	);
 	SetBotType(22,
 		"bot23",
@@ -326,7 +326,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\Name\\bot23\\colour\\6\\class\\0\\model\\doomguy\\skin\\violet.pcx"
+		"\\Name\\bot23\\colour\\6\\class\\0\\model\\doomguy\\skin\\violet"
 	);
 	SetBotType(23,
 		"bot24",
@@ -335,7 +335,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\Name\\bot24\\colour\\6\\class\\0\\model\\doomguy\\skin\\violetf.pcx"
+		"\\Name\\bot24\\colour\\6\\class\\0\\model\\doomguy\\skin\\violetf"
 	);
 	SetBotType(24,
 		"bot25",
@@ -344,7 +344,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\Name\\bot25\\colour\\6\\class\\0\\model\\doomguy\\skin\\purple.pcx"
+		"\\Name\\bot25\\colour\\6\\class\\0\\model\\doomguy\\skin\\purple"
 	);
 	SetBotType(25,
 		"bot26",
@@ -353,7 +353,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\Name\\bot26\\colour\\6\\class\\0\\model\\doomguy\\skin\\purplef.pcx"
+		"\\Name\\bot26\\colour\\6\\class\\0\\model\\doomguy\\skin\\purplef"
 	);
 	SetBotType(26,
 		"bot27",
@@ -362,7 +362,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\Name\\bot27\\colour\\7\\class\\0\\model\\doomguy\\skin\\orange.pcx"
+		"\\Name\\bot27\\colour\\7\\class\\0\\model\\doomguy\\skin\\orange"
 	);
 	SetBotType(27,
 		"bot28",
@@ -371,7 +371,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\Name\\bot28\\colour\\7\\class\\0\\model\\doomguy\\skin\\orangef.pcx"
+		"\\Name\\bot28\\colour\\7\\class\\0\\model\\doomguy\\skin\\orangef"
 	);
 	SetBotType(28,
 		"bot29",
@@ -380,7 +380,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\Name\\bot29\\colour\\7\\class\\0\\model\\doomguy\\skin\\yellow.pcx"
+		"\\Name\\bot29\\colour\\7\\class\\0\\model\\doomguy\\skin\\yellow"
 	);
 	SetBotType(29,
 		"bot30",
@@ -389,7 +389,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\Name\\bot30\\colour\\7\\class\\0\\model\\doomguy\\skin\\yellowf.pcx"
+		"\\Name\\bot30\\colour\\7\\class\\0\\model\\doomguy\\skin\\yellowf"
 	);
 }
 
