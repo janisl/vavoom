@@ -136,7 +136,7 @@ replication
 
 	//	Methods client can execute on server
 	reliable if (bIsClient)
-		ServerImpulse;
+		ServerImpulse, ServerSetUserInfo;
 }
 
 //  Print to client
