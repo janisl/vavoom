@@ -1616,6 +1616,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\net_context.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\source\net_dgrm.cpp"
 				>
 			</File>

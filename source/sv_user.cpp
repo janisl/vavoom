@@ -52,31 +52,6 @@ extern bool			sv_loading;
 
 //==========================================================================
 //
-//	VNetContext::VNetContext
-//
-//==========================================================================
-
-VNetContext::VNetContext()
-: RoleField(NULL)
-, RemoteRoleField(NULL)
-, ServerConnection(NULL)
-{
-	RoleField = VThinker::StaticClass()->FindFieldChecked("Role");
-	RemoteRoleField = VThinker::StaticClass()->FindFieldChecked("RemoteRole");
-}
-
-//==========================================================================
-//
-//	VNetContext::~VNetContext
-//
-//==========================================================================
-
-VNetContext::~VNetContext()
-{
-}
-
-//==========================================================================
-//
 //	EvalCond
 //
 //==========================================================================

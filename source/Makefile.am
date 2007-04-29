@@ -130,6 +130,7 @@ _____MAIN_EXE__SOURCES = \
 	net_channel_player.cpp \
 	net_channel_thinker.cpp \
 	net_connection.cpp \
+	net_context.cpp \
 	net_dgrm.cpp \
 	net_loc.h \
 	net_loop.cpp \
@@ -452,6 +453,7 @@ _____SERVER_EXE__SOURCES = \
 	net_channel_player.cpp \
 	net_channel_thinker.cpp \
 	net_connection.cpp \
+	net_context.cpp \
 	net_dgrm.cpp \
 	net_loop.cpp \
 	net_main.cpp \
