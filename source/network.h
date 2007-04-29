@@ -28,7 +28,7 @@
 
 class VNetContext;
 
-#include "message.h"	//	Network message class
+#include "net_message.h"	//	Network message class
 
 //	Packet header IDs.
 //	Since control and data communications are on different ports, there should

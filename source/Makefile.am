@@ -117,8 +117,6 @@ _____MAIN_EXE__SOURCES = \
 	maths.h \
 	menu.cpp \
 	menu.h \
-	message.cpp \
-	message.h \
 	misc.cpp \
 	misc.h \
 	name.cpp \
@@ -135,6 +133,8 @@ _____MAIN_EXE__SOURCES = \
 	net_loc.h \
 	net_loop.cpp \
 	net_main.cpp \
+	net_message.cpp \
+	net_message.h \
 	net_null.cpp \
 	network.h \
 	p_acs.cpp \
@@ -444,7 +444,6 @@ _____SERVER_EXE__SOURCES = \
 	level.cpp \
 	mapinfo.cpp \
 	maths.cpp \
-	message.cpp \
 	misc.cpp \
 	name.cpp \
 	net_channel.cpp \
@@ -457,6 +456,7 @@ _____SERVER_EXE__SOURCES = \
 	net_dgrm.cpp \
 	net_loop.cpp \
 	net_main.cpp \
+	net_message.cpp \
 	net_null.cpp \
 	p_acs.cpp \
 	p_clip.cpp \

@@ -274,10 +274,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\source\message.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\source\misc.cpp"
 				>
 			</File>
@@ -436,10 +432,6 @@
 			</File>
 			<File
 				RelativePath="..\source\maths.h"
-				>
-			</File>
-			<File
-				RelativePath="..\source\message.h"
 				>
 			</File>
 			<File
@@ -1661,6 +1653,14 @@
 			</File>
 			<File
 				RelativePath="..\source\net_main.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\source\net_message.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\source\net_message.h"
 				>
 			</File>
 			<File
