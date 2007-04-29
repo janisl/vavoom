@@ -34,17 +34,6 @@
 
 // TYPES -------------------------------------------------------------------
 
-class VServerGenChannel : public VChannel
-{
-public:
-	VServerGenChannel(VNetConnection* AConnection, vint32 AIndex, vuint8 AOpenedLocally = true)
-	: VChannel(AConnection, CHANNEL_General, AIndex, AOpenedLocally)
-	{}
-
-	//	VChannel interface
-	void ParsePacket(VMessageIn&);
-};
-
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -61,6 +50,12 @@ extern bool			sv_loading;
 
 // CODE --------------------------------------------------------------------
 
+VControlChannel::VControlChannel(VNetConnection* AConnection, vint32 AIndex,
+	vuint8 AOpenedLocally)
+: VChannel(AConnection, CHANNEL_Control, AIndex, AOpenedLocally)
+{
+}
+
 //==========================================================================
 //
 //	VNetContext::VNetContext
@@ -68,8 +63,9 @@ extern bool			sv_loading;
 //==========================================================================
 
 VNetContext::VNetContext()
-: RoleField(0)
-, RemoteRoleField(0)
+: RoleField(NULL)
+, RemoteRoleField(NULL)
+, ServerConnection(NULL)
 {
 	RoleField = VThinker::StaticClass()->FindFieldChecked("Role");
 	RemoteRoleField = VThinker::StaticClass()->FindFieldChecked("RemoteRole");
@@ -322,13 +318,13 @@ void SV_SetUserInfo(VBasePlayer* Player, const VStr& info)
 
 //==========================================================================
 //
-//	VServerGenChannel::ParsePacket
+//	VControlChannel::ParsePacket
 //
 //==========================================================================
 
-void VServerGenChannel::ParsePacket(VMessageIn& msg)
+void VControlChannel::ParsePacket(VMessageIn& msg)
 {
-	guard(VServerGenChannel::ParsePacket);
+	guard(VControlChannel::ParsePacket);
 	while (!msg.AtEnd())
 	{
 		VStr Cmd;
@@ -337,7 +333,15 @@ void VServerGenChannel::ParsePacket(VMessageIn& msg)
 		{
 			break;
 		}
-		VCommand::ExecuteString(Cmd, VCommand::SRC_Client, Connection->Owner);
+		if (Connection->Context->ServerConnection)
+		{
+			GCmdBuf << Cmd;
+		}
+		else
+		{
+			VCommand::ExecuteString(Cmd, VCommand::SRC_Client,
+				Connection->Owner);
+		}
 	}
 	unguard;
 }
@@ -351,17 +355,6 @@ void VServerGenChannel::ParsePacket(VMessageIn& msg)
 VLevel* VServerNetContext::GetLevel()
 {
 	return GLevel;
-}
-
-//==========================================================================
-//
-//	VServerNetContext::CreateGenChannel
-//
-//==========================================================================
-
-VChannel* VServerNetContext::CreateGenChannel(VNetConnection* Connection)
-{
-	return new VServerGenChannel(Connection, 0);
 }
 
 //==========================================================================

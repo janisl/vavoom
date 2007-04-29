@@ -1342,6 +1342,8 @@ void SV_ConnectClient(VBasePlayer *player)
 	guard(SV_ConnectClient);
 	GCon->Logf(NAME_Dev, "Client %s connected", *player->Net->GetAddress());
 
+	ServerNetContext->ClientConnections.Append(player->Net);
+
 	GGameInfo->Players[SV_GetPlayerNum(player)] = player;
 	player->ClientNum = SV_GetPlayerNum(player);
 	player->PlayerFlags |= VBasePlayer::PF_Active;

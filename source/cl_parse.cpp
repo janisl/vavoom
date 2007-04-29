@@ -33,17 +33,6 @@
 
 // TYPES -------------------------------------------------------------------
 
-class VClientGenChannel : public VChannel
-{
-public:
-	VClientGenChannel(VNetConnection* AConnection, vint32 AIndex, vuint8 AOpenedLocally = true)
-	: VChannel(AConnection, CHANNEL_General, AIndex, AOpenedLocally)
-	{}
-
-	//	VChannel interface
-	void ParsePacket(VMessageIn&);
-};
-
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 void CL_ClearInput();
@@ -368,28 +357,6 @@ void CL_ParseServerInfo(VMessageIn& msg)
 
 //==========================================================================
 //
-//	VClientGenChannel::ParsePacket
-//
-//==========================================================================
-
-void VClientGenChannel::ParsePacket(VMessageIn& msg)
-{
-	guard(VClientGenChannel::ParsePacket);
-	while (!msg.AtEnd())
-	{
-		VStr Cmd;
-		msg << Cmd;
-		if (msg.IsError())
-		{
-			break;
-		}
-		GCmdBuf << Cmd;
-	}
-	unguard;
-}
-
-//==========================================================================
-//
 //	VClientNetContext::GetLevel
 //
 //==========================================================================
@@ -397,15 +364,4 @@ void VClientGenChannel::ParsePacket(VMessageIn& msg)
 VLevel* VClientNetContext::GetLevel()
 {
 	return GClLevel;
-}
-
-//==========================================================================
-//
-//	VClientNetContext::CreateGenChannel
-//
-//==========================================================================
-
-VChannel* VClientNetContext::CreateGenChannel(VNetConnection* Connection)
-{
-	return new VClientGenChannel(Connection, 0);
 }

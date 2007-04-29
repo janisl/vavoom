@@ -26,9 +26,9 @@
 #ifndef _NETWORK_H_
 #define _NETWORK_H_
 
-#include "message.h"	//	Network message class
-
 class VNetContext;
+
+#include "message.h"	//	Network message class
 
 //	Packet header IDs.
 //	Since control and data communications are on different ports, there should
@@ -54,7 +54,7 @@ enum { MAX_CHANNELS		= 265 };
 
 enum EChannelType
 {
-	CHANNEL_General		= 1,
+	CHANNEL_Control		= 1,
 	CHANNEL_Level,
 	CHANNEL_Player,
 	CHANNEL_Thinker,
@@ -190,6 +190,15 @@ public:
 	virtual void Tick();
 };
 
+class VControlChannel : public VChannel
+{
+public:
+	VControlChannel(VNetConnection*, vint32, vuint8 = true);
+
+	//	VChannel interface
+	void ParsePacket(VMessageIn&);
+};
+
 //
 //	VLevelChannel
 //
@@ -319,14 +328,15 @@ public:
 class VNetContext
 {
 public:
-	VField*			RoleField;
-	VField*			RemoteRoleField;
+	VField*					RoleField;
+	VField*					RemoteRoleField;
+	VNetConnection*			ServerConnection;
+	TArray<VNetConnection*>	ClientConnections;
 
 	VNetContext();
 	virtual ~VNetContext();
 
 	//	VNetContext interface
-	virtual VChannel* CreateGenChannel(VNetConnection*) = 0;
 	virtual VLevel* GetLevel() = 0;
 };
 
@@ -339,7 +349,6 @@ class VClientNetContext : public VNetContext
 {
 public:
 	//	VNetContext interface
-	VChannel* CreateGenChannel(VNetConnection*);
 	VLevel* GetLevel();
 };
 
@@ -352,7 +361,6 @@ class VServerNetContext : public VNetContext
 {
 public:
 	//	VNetContext interface
-	VChannel* CreateGenChannel(VNetConnection*);
 	VLevel* GetLevel();
 };
 

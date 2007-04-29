@@ -70,7 +70,7 @@ VNetConnection::VNetConnection(VSocketPublic* ANetCon, VNetContext* AContext,
 	memset(Channels, 0, sizeof(Channels));
 	memset(InSequence, 0, sizeof(InSequence));
 	memset(OutSequence, 0, sizeof(OutSequence));
-	Context->CreateGenChannel(this);
+	new VControlChannel(this, CHANIDX_General);
 	new VPlayerChannel(this, CHANIDX_Player);
 	new VLevelChannel(this, CHANIDX_Level);
 }
@@ -93,6 +93,15 @@ VNetConnection::~VNetConnection()
 		delete NetCon;
 	}
 	NetCon = NULL;
+	if (Context->ServerConnection)
+	{
+		checkSlow(Context->ServerConnection == this);
+		Context->ServerConnection = NULL;
+	}
+	else
+	{
+		Context->ClientConnections.Remove(this);
+	}
 	unguard;
 }
 
@@ -298,8 +307,9 @@ void VNetConnection::ReceivedPacket(VBitStreamReader& Packet)
 				{
 					switch (Msg.ChanType)
 					{
-					case CHANNEL_General:
-						Sys_Error("Tried to remotely open general channel");
+					case CHANNEL_Control:
+						Chan = new VControlChannel(this, Msg.ChanIndex, false);
+						break;
 					case CHANNEL_Player:
 						Chan = new VPlayerChannel(this, Msg.ChanIndex, false);
 						break;

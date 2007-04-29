@@ -122,6 +122,7 @@ void CL_SetUpLocalPlayer(VSocketPublic* Sock)
 	{
 		cl->Net = new VNetConnection(Sock, ClientNetContext, cl);
 	}
+	ClientNetContext->ServerConnection = cl->Net;
 	((VPlayerChannel*)cl->Net->Channels[CHANIDX_Player])->SetPlayer(cl);
 	unguard;
 }
