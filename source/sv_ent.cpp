@@ -2303,23 +2303,23 @@ IMPLEMENT_FUNCTION(VEntity, RoughMonsterSearch)
 void VEntity::InitFuncIndexes()
 {
 	guard(VEntity::InitFuncIndexes);
-	FIndex_OnMapSpawn = StaticClass()->GetFunctionIndex("OnMapSpawn");
-	FIndex_BeginPlay = StaticClass()->GetFunctionIndex("BeginPlay");
-	FIndex_Destroyed = StaticClass()->GetFunctionIndex("Destroyed");
-	FIndex_Touch = StaticClass()->GetFunctionIndex("Touch");
-	FIndex_BlockedByLine = StaticClass()->GetFunctionIndex("BlockedByLine");
-	FIndex_ApplyFriction = StaticClass()->GetFunctionIndex("ApplyFriction");
-	FIndex_PushLine = StaticClass()->GetFunctionIndex("PushLine");
-	FIndex_HandleFloorclip = StaticClass()->GetFunctionIndex("HandleFloorclip");
-	FIndex_CrossSpecialLine = StaticClass()->GetFunctionIndex("CrossSpecialLine");
-	FIndex_SectorChanged = StaticClass()->GetFunctionIndex("SectorChanged");
-	FIndex_RoughCheckThing = StaticClass()->GetFunctionIndex("RoughCheckThing");
-	FIndex_GiveInventory = StaticClass()->GetFunctionIndex("GiveInventory");
-	FIndex_TakeInventory = StaticClass()->GetFunctionIndex("TakeInventory");
-	FIndex_CheckInventory = StaticClass()->GetFunctionIndex("CheckInventory");
-	FIndex_GetSigilPieces = StaticClass()->GetFunctionIndex("GetSigilPieces");
-	FIndex_MoveThing = StaticClass()->GetFunctionIndex("MoveThing");
-	FIndex_GetStateTime = StaticClass()->GetFunctionIndex("GetStateTime");
+	FIndex_OnMapSpawn = StaticClass()->GetFunctionIndex(NAME_OnMapSpawn);
+	FIndex_BeginPlay = StaticClass()->GetFunctionIndex(NAME_BeginPlay);
+	FIndex_Destroyed = StaticClass()->GetFunctionIndex(NAME_Destroyed);
+	FIndex_Touch = StaticClass()->GetFunctionIndex(NAME_Touch);
+	FIndex_BlockedByLine = StaticClass()->GetFunctionIndex(NAME_BlockedByLine);
+	FIndex_ApplyFriction = StaticClass()->GetFunctionIndex(NAME_ApplyFriction);
+	FIndex_PushLine = StaticClass()->GetFunctionIndex(NAME_PushLine);
+	FIndex_HandleFloorclip = StaticClass()->GetFunctionIndex(NAME_HandleFloorclip);
+	FIndex_CrossSpecialLine = StaticClass()->GetFunctionIndex(NAME_CrossSpecialLine);
+	FIndex_SectorChanged = StaticClass()->GetFunctionIndex(NAME_SectorChanged);
+	FIndex_RoughCheckThing = StaticClass()->GetFunctionIndex(NAME_RoughCheckThing);
+	FIndex_GiveInventory = StaticClass()->GetFunctionIndex(NAME_GiveInventory);
+	FIndex_TakeInventory = StaticClass()->GetFunctionIndex(NAME_TakeInventory);
+	FIndex_CheckInventory = StaticClass()->GetFunctionIndex(NAME_CheckInventory);
+	FIndex_GetSigilPieces = StaticClass()->GetFunctionIndex(NAME_GetSigilPieces);
+	FIndex_MoveThing = StaticClass()->GetFunctionIndex(NAME_MoveThing);
+	FIndex_GetStateTime = StaticClass()->GetFunctionIndex(NAME_GetStateTime);
 	unguard;
 }
 

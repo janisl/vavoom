@@ -117,7 +117,7 @@ void R_InitSkyBoxes()
 	for (int Lump = W_IterateNS(-1, WADNS_Global); Lump >= 0;
 		Lump = W_IterateNS(Lump, WADNS_Global))
 	{
-		if (W_LumpName(Lump) == "skyboxes")
+		if (W_LumpName(Lump) == NAME_skyboxes)
 		{
 			ParseSkyBoxesScript(new VScriptParser("skyboxes",
 				W_CreateLumpReaderNum(Lump)));

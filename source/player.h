@@ -197,80 +197,80 @@ class VBasePlayer : public VObject
 	void eventPutClientIntoServer()
 	{
 		P_PASS_SELF;
-		EV_RET_VOID("PutClientIntoServer");
+		EV_RET_VOID(NAME_PutClientIntoServer);
 	}
 	void eventSpawnClient()
 	{
 		P_PASS_SELF;
-		EV_RET_VOID("SpawnClient");
+		EV_RET_VOID(NAME_SpawnClient);
 	}
 	void eventNetGameReborn()
 	{
 		P_PASS_SELF;
-		EV_RET_VOID("NetGameReborn");
+		EV_RET_VOID(NAME_NetGameReborn);
 	}
 	void eventDisconnectClient()
 	{
 		P_PASS_SELF;
-		EV_RET_VOID("DisconnectClient");
+		EV_RET_VOID(NAME_DisconnectClient);
 	}
 	void eventUserinfoChanged()
 	{
 		P_PASS_SELF;
-		EV_RET_VOID("UserinfoChanged");
+		EV_RET_VOID(NAME_UserinfoChanged);
 	}
 	void eventPlayerExitMap(bool clusterChange)
 	{
 		P_PASS_SELF;
 		P_PASS_BOOL(clusterChange);
-		EV_RET_VOID("PlayerExitMap");
+		EV_RET_VOID(NAME_PlayerExitMap);
 	}
 	void eventPlayerTick(float deltaTime)
 	{
 		P_PASS_SELF;
 		P_PASS_FLOAT(deltaTime);
-		EV_RET_VOID("PlayerTick");
+		EV_RET_VOID(NAME_PlayerTick);
 	}
 	void eventSetViewPos()
 	{
 		P_PASS_SELF;
-		EV_RET_VOID("SetViewPos");
+		EV_RET_VOID(NAME_SetViewPos);
 	}
 
 	void eventCheat_God()
 	{
 		P_PASS_SELF;
-		EV_RET_VOID("Cheat_God");
+		EV_RET_VOID(NAME_Cheat_God);
 	}
 	void eventCheat_NoClip()
 	{
 		P_PASS_SELF;
-		EV_RET_VOID("Cheat_NoClip");
+		EV_RET_VOID(NAME_Cheat_NoClip);
 	}
 	void eventCheat_Gimme()
 	{
 		P_PASS_SELF;
-		EV_RET_VOID("Cheat_Gimme");
+		EV_RET_VOID(NAME_Cheat_Gimme);
 	}
 	void eventCheat_KillAll()
 	{
 		P_PASS_SELF;
-		EV_RET_VOID("Cheat_KillAll");
+		EV_RET_VOID(NAME_Cheat_KillAll);
 	}
 	void eventCheat_Morph()
 	{
 		P_PASS_SELF;
-		EV_RET_VOID("Cheat_Morph");
+		EV_RET_VOID(NAME_Cheat_Morph);
 	}
 	void eventCheat_NoWeapons()
 	{
 		P_PASS_SELF;
-		EV_RET_VOID("Cheat_NoWeapons");
+		EV_RET_VOID(NAME_Cheat_NoWeapons);
 	}
 	void eventCheat_Class()
 	{
 		P_PASS_SELF;
-		EV_RET_VOID("Cheat_Class");
+		EV_RET_VOID(NAME_Cheat_Class);
 	}
 
 	void eventClientStartSound(int SoundId, TVec Org, int OriginId,
@@ -283,14 +283,14 @@ class VBasePlayer : public VObject
 		P_PASS_INT(Channel);
 		P_PASS_FLOAT(Volume);
 		P_PASS_FLOAT(Attenuation);
-		EV_RET_VOID("ClientStartSound");
+		EV_RET_VOID(NAME_ClientStartSound);
 	}
 	void eventClientStopSound(int OriginId, int Channel)
 	{
 		P_PASS_SELF;
 		P_PASS_INT(OriginId);
 		P_PASS_INT(Channel);
-		EV_RET_VOID("ClientStopSound");
+		EV_RET_VOID(NAME_ClientStopSound);
 	}
 	void eventClientStartSequence(TVec Origin, int OriginId, VName Name,
 		int ModeNum)
@@ -300,93 +300,93 @@ class VBasePlayer : public VObject
 		P_PASS_INT(OriginId);
 		P_PASS_NAME(Name);
 		P_PASS_INT(ModeNum);
-		EV_RET_VOID("ClientStartSequence");
+		EV_RET_VOID(NAME_ClientStartSequence);
 	}
 	void eventClientAddSequenceChoice(int OriginId, VName Choice)
 	{
 		P_PASS_SELF;
 		P_PASS_INT(OriginId);
 		P_PASS_NAME(Choice);
-		EV_RET_VOID("ClientAddSequenceChoice");
+		EV_RET_VOID(NAME_ClientAddSequenceChoice);
 	}
 	void eventClientStopSequence(int OriginId)
 	{
 		P_PASS_SELF;
 		P_PASS_INT(OriginId);
-		EV_RET_VOID("ClientStopSequence");
+		EV_RET_VOID(NAME_ClientStopSequence);
 	}
 	void eventClientForceLightning()
 	{
 		P_PASS_SELF;
-		EV_RET_VOID("ClientForceLightning");
+		EV_RET_VOID(NAME_ClientForceLightning);
 	}
 	void eventClientPrint(VStr Str)
 	{
 		P_PASS_SELF;
 		P_PASS_STR(Str);
-		EV_RET_VOID("ClientPrint");
+		EV_RET_VOID(NAME_ClientPrint);
 	}
 	void eventClientCentrePrint(VStr Str)
 	{
 		P_PASS_SELF;
 		P_PASS_STR(Str);
-		EV_RET_VOID("ClientCentrePrint");
+		EV_RET_VOID(NAME_ClientCentrePrint);
 	}
 	void eventClientSetAngles(TAVec Angles)
 	{
 		P_PASS_SELF;
 		P_PASS_AVEC(Angles);
-		EV_RET_VOID("ClientSetAngles");
+		EV_RET_VOID(NAME_ClientSetAngles);
 	}
 	void eventClientIntermission(VName NextMap)
 	{
 		P_PASS_SELF;
 		P_PASS_NAME(NextMap);
-		EV_RET_VOID("ClientIntermission");
+		EV_RET_VOID(NAME_ClientIntermission);
 	}
 	void eventClientPause(bool Paused)
 	{
 		P_PASS_SELF;
 		P_PASS_BOOL(Paused);
-		EV_RET_VOID("ClientPause");
+		EV_RET_VOID(NAME_ClientPause);
 	}
 	void eventClientSkipIntermission()
 	{
 		P_PASS_SELF;
-		EV_RET_VOID("ClientSkipIntermission");
+		EV_RET_VOID(NAME_ClientSkipIntermission);
 	}
 	void eventClientFinale(VStr Type)
 	{
 		P_PASS_SELF;
 		P_PASS_STR(Type);
-		EV_RET_VOID("ClientFinale");
+		EV_RET_VOID(NAME_ClientFinale);
 	}
 	void eventClientChangeMusic(VName Song, int CDTrack)
 	{
 		P_PASS_SELF;
 		P_PASS_NAME(Song);
 		P_PASS_INT(CDTrack);
-		EV_RET_VOID("ClientChangeMusic");
+		EV_RET_VOID(NAME_ClientChangeMusic);
 	}
 	void eventClientSetServerInfo(VStr Key, VStr Value)
 	{
 		P_PASS_SELF;
 		P_PASS_STR(Key);
 		P_PASS_STR(Value);
-		EV_RET_VOID("ClientSetServerInfo");
+		EV_RET_VOID(NAME_ClientSetServerInfo);
 	}
 
 	void eventServerImpulse(int AImpulse)
 	{
 		P_PASS_SELF;
 		P_PASS_INT(AImpulse);
-		EV_RET_VOID("ServerImpulse");
+		EV_RET_VOID(NAME_ServerImpulse);
 	}
 	void eventServerSetUserInfo(VStr Info)
 	{
 		P_PASS_SELF;
 		P_PASS_STR(Info);
-		EV_RET_VOID("ServerSetUserInfo");
+		EV_RET_VOID(NAME_ServerSetUserInfo);
 	}
 };
 

@@ -644,7 +644,7 @@ void P_InitTerrainTypes()
 	for (int Lump = W_IterateNS(-1, WADNS_Global); Lump >= 0;
 		Lump = W_IterateNS(Lump, WADNS_Global))
 	{
-		if (W_LumpName(Lump) == "terrain")
+		if (W_LumpName(Lump) == NAME_terrain)
 		{
 			ParseTerrainScript(new VScriptParser(*W_LumpName(Lump),
 				W_CreateLumpReaderNum(Lump)));

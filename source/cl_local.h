@@ -86,109 +86,109 @@ class VClientGameBase : public VObject
 	void eventRootWindowCreated()
 	{
 		P_PASS_SELF;
-		EV_RET_VOID("RootWindowCreated");
+		EV_RET_VOID(NAME_RootWindowCreated);
 	}
 	void eventConnected()
 	{
 		P_PASS_SELF;
-		EV_RET_VOID("Connected");
+		EV_RET_VOID(NAME_Connected);
 	}
 	void eventDisconnected()
 	{
 		P_PASS_SELF;
-		EV_RET_VOID("Disconnected");
+		EV_RET_VOID(NAME_Disconnected);
 	}
 	void eventDemoPlaybackStarted()
 	{
 		P_PASS_SELF;
-		EV_RET_VOID("DemoPlaybackStarted");
+		EV_RET_VOID(NAME_DemoPlaybackStarted);
 	}
 	void eventDemoPlaybackStopped()
 	{
 		P_PASS_SELF;
-		EV_RET_VOID("DemoPlaybackStopped");
+		EV_RET_VOID(NAME_DemoPlaybackStopped);
 	}
 	void eventOnHostEndGame()
 	{
 		P_PASS_SELF;
-		EV_RET_VOID("OnHostEndGame");
+		EV_RET_VOID(NAME_OnHostEndGame);
 	}
 	void eventOnHostError()
 	{
 		P_PASS_SELF;
-		EV_RET_VOID("OnHostError");
+		EV_RET_VOID(NAME_OnHostError);
 	}
 	void eventStatusBarStartMap()
 	{
 		P_PASS_SELF;
-		EV_RET_VOID("StatusBarStartMap");
+		EV_RET_VOID(NAME_StatusBarStartMap);
 	}
 	void eventStatusBarDrawer(int sb_type)
 	{
 		P_PASS_SELF;
 		P_PASS_INT(sb_type);
-		EV_RET_VOID("StatusBarDrawer");
+		EV_RET_VOID(NAME_StatusBarDrawer);
 	}
 	void eventStatusBarUpdateWidgets(float DeltaTime)
 	{
 		P_PASS_SELF;
 		P_PASS_FLOAT(DeltaTime);
-		EV_RET_VOID("StatusBarUpdateWidgets");
+		EV_RET_VOID(NAME_StatusBarUpdateWidgets);
 	}
 	void eventIintermissionStart()
 	{
 		P_PASS_SELF;
-		EV_RET_VOID("IintermissionStart");
+		EV_RET_VOID(NAME_IintermissionStart);
 	}
 	void eventStartFinale(VName FinaleType)
 	{
 		P_PASS_SELF;
 		P_PASS_NAME(FinaleType);
-		EV_RET_VOID("StartFinale");
+		EV_RET_VOID(NAME_StartFinale);
 	}
 	bool eventFinaleResponder(event_t* event)
 	{
 		P_PASS_SELF;
 		P_PASS_PTR(event);
-		EV_RET_BOOL("FinaleResponder");
+		EV_RET_BOOL(NAME_FinaleResponder);
 	}
 	void eventDeactivateMenu()
 	{
 		P_PASS_SELF;
-		EV_RET_VOID("DeactivateMenu");
+		EV_RET_VOID(NAME_DeactivateMenu);
 	}
 	bool eventMenuResponder(event_t* event)
 	{
 		P_PASS_SELF;
 		P_PASS_PTR(event);
-		EV_RET_BOOL("MenuResponder");
+		EV_RET_BOOL(NAME_MenuResponder);
 	}
 	bool eventMenuActive()
 	{
 		P_PASS_SELF;
-		EV_RET_BOOL("MenuActive");
+		EV_RET_BOOL(NAME_MenuActive);
 	}
 	void eventSetMenu(const VStr& Name)
 	{
 		P_PASS_SELF;
 		P_PASS_STR(Name);
-		EV_RET_VOID("SetMenu");
+		EV_RET_VOID(NAME_SetMenu);
 	}
 	void eventMessageBoxDrawer()
 	{
 		P_PASS_SELF;
-		EV_RET_VOID("MessageBoxDrawer");
+		EV_RET_VOID(NAME_MessageBoxDrawer);
 	}
 	bool eventMessageBoxResponder(event_t* event)
 	{
 		P_PASS_SELF;
 		P_PASS_PTR(event);
-		EV_RET_BOOL("MessageBoxResponder");
+		EV_RET_BOOL(NAME_MessageBoxResponder);
 	}
 	bool eventMessageBoxActive()
 	{
 		P_PASS_SELF;
-		EV_RET_BOOL("MessageBoxActive");
+		EV_RET_BOOL(NAME_MessageBoxActive);
 	}
 	void eventDrawViewBorder(int x, int y, int w, int h)
 	{
@@ -197,7 +197,7 @@ class VClientGameBase : public VObject
 		P_PASS_INT(y);
 		P_PASS_INT(w);
 		P_PASS_INT(h);
-		EV_RET_VOID("DrawViewBorder");
+		EV_RET_VOID(NAME_DrawViewBorder);
 	}
 };
 

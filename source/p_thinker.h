@@ -90,7 +90,7 @@ class VThinker : public VObject
 	{
 		P_PASS_SELF;
 		P_PASS_FLOAT(DeltaTime);
-		EV_RET_VOID("ClientTick");
+		EV_RET_VOID(NAME_ClientTick);
 	}
 };
 

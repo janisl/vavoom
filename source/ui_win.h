@@ -155,73 +155,73 @@ public:
 	void InitWindow()
 	{
 		P_PASS_SELF;
-		EV_RET_VOID("InitWindow");
+		EV_RET_VOID(NAME_InitWindow);
 	}
 	void DestroyWindow()
 	{
 		P_PASS_SELF;
-		EV_RET_VOID("DestroyWindow");
+		EV_RET_VOID(NAME_DestroyWindow);
 	}
 	void WindowReady()
 	{
 		P_PASS_SELF;
-		EV_RET_VOID("WindowReady");
+		EV_RET_VOID(NAME_WindowReady);
 	}
 
 	virtual void ChildAdded(VWindow *Child)
 	{
 		P_PASS_SELF;
 		P_PASS_REF(Child);
-		EV_RET_VOID("ChildAdded");
+		EV_RET_VOID(NAME_ChildAdded);
 	}
 	virtual void ChildRemoved(VWindow *Child)
 	{
 		P_PASS_SELF;
 		P_PASS_REF(Child);
-		EV_RET_VOID("ChildRemoved");
+		EV_RET_VOID(NAME_ChildRemoved);
 	}
 	virtual void DescendantAdded(VWindow *Descendant)
 	{
 		P_PASS_SELF;
 		P_PASS_REF(Descendant);
-		EV_RET_VOID("DescendantAdded");
+		EV_RET_VOID(NAME_DescendantAdded);
 	}
 	virtual void DescendantRemoved(VWindow *Descendant)
 	{
 		P_PASS_SELF;
 		P_PASS_REF(Descendant);
-		EV_RET_VOID("DescendantRemoved");
+		EV_RET_VOID(NAME_DescendantRemoved);
 	}
 
 	virtual void ConfigurationChanged()
 	{
 		P_PASS_SELF;
-		EV_RET_VOID("ConfigurationChanged");
+		EV_RET_VOID(NAME_ConfigurationChanged);
 	}
 	virtual void VisibilityChanged(bool NewVisibility)
 	{
 		P_PASS_SELF;
 		P_PASS_BOOL(NewVisibility);
-		EV_RET_VOID("VisibilityChanged");
+		EV_RET_VOID(NAME_VisibilityChanged);
 	}
 	virtual void SensitivityChanged(bool bNewSensitivity)
 	{
 		P_PASS_SELF;
 		P_PASS_BOOL(bNewSensitivity);
-		EV_RET_VOID("SensitivityChanged");
+		EV_RET_VOID(NAME_SensitivityChanged);
 	}
 
 	virtual void DrawWindow(VGC *gc)
 	{
 		P_PASS_SELF;
 		P_PASS_REF(gc);
-		EV_RET_VOID("DrawWindow");
+		EV_RET_VOID(NAME_DrawWindow);
 	}
 	virtual void PostDrawWindow(VGC *gc)
 	{
 		P_PASS_SELF;
 		P_PASS_REF(gc);
-		EV_RET_VOID("PostDrawWindow");
+		EV_RET_VOID(NAME_PostDrawWindow);
 	}
 
 	virtual void Tick(float) { }
@@ -229,7 +229,7 @@ public:
 	{
 		P_PASS_SELF;
 		P_PASS_FLOAT(DeltaTime);
-		EV_RET_VOID("Tick");
+		EV_RET_VOID(NAME_Tick);
 	}
 
 	static VWindow *CreateNewWindow(VClass *NewClass, VWindow *ParentWindow);

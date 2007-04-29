@@ -700,7 +700,7 @@ void VTextureManager::AddHiResTextures()
 	for (int Lump = W_IterateNS(-1, WADNS_Global); Lump >= 0;
 		Lump = W_IterateNS(Lump, WADNS_Global))
 	{
-		if (W_LumpName(Lump) != "hirestex")
+		if (W_LumpName(Lump) != NAME_hirestex)
 		{
 			continue;
 		}

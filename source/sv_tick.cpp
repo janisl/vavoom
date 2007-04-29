@@ -54,7 +54,7 @@
 
 void P_InitThinkers()
 {
-	VThinker::FIndex_Tick = VThinker::StaticClass()->GetFunctionIndex("Tick");
+	VThinker::FIndex_Tick = VThinker::StaticClass()->GetFunctionIndex(NAME_Tick);
 }
 
 //==========================================================================
