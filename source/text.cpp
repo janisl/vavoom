@@ -275,14 +275,14 @@ void T_SetShadow(bool state)
 //
 //==========================================================================
 
-int T_StringWidth(const char* String)
+int T_StringWidth(const VStr& String)
 {
 	guard(T_StringWidth);
-	int				i;
+	size_t			i;
 	int				w = 0;
 	int				c;
 	
-	for (i = 0; i < (int)VStr::Length(String);i++)
+	for (i = 0; i < String.Length();i++)
 	{
 		c = String[i] - 32;
 
@@ -303,14 +303,14 @@ int T_StringWidth(const char* String)
 //
 //==========================================================================
 
-int T_StringHeight(const char* String)
+int T_StringHeight(const VStr& String)
 {
 	guard(T_StringHeight);
-	int		i;
+	size_t	i;
 	int		c;
 	int		h = Font->SpaceHeight;
 
-	for (i = 0;i < (int)VStr::Length(String);i++)
+	for (i = 0;i < String.Length();i++)
 	{
 		c = String[i] - 32;
 
@@ -329,22 +329,20 @@ int T_StringHeight(const char* String)
 //
 //==========================================================================
 
-int T_TextWidth(const char* String)
+int T_TextWidth(const VStr& String)
 {
 	guard(T_TextWidth);
-	char		cs[256];
-	int			i;
+	size_t		i;
 	int			w1;
 	int			w = 0;
 	int			start = 0;
 
-	for (i = 0; i <= (int)VStr::Length(String); i++)
+	for (i = 0; i <= String.Length(); i++)
 		if ((String[i] == '\n') || !String[i])
 		{
-			memset(cs, 0, sizeof(cs));
-			VStr::NCpy(cs, String + start, i - start);
-			w1 = T_StringWidth(cs);
-			if (w1 > w) w = w1;
+			w1 = T_StringWidth(VStr(String, start, i - start));
+			if (w1 > w)
+				w = w1;
 			start = i;
 		}
 	return w;
@@ -357,20 +355,18 @@ int T_TextWidth(const char* String)
 //
 //==========================================================================
 
-int T_TextHeight(const char* String)
+int T_TextHeight(const VStr& String)
 {
 	guard(T_TextHeight);
-	char		cs[256];
-	int			i;
+	VStr		cs;
+	size_t		i;
 	int			h = 0;
 	int			start = 0;
 
-	for (i=0; i <= (int)VStr::Length(String); i++)
+	for (i=0; i <= String.Length(); i++)
 		if ((String[i] == '\n') || !String[i])
 		{
-			memset(cs, 0, sizeof(cs));
-			VStr::NCpy(cs, String + start, i - start);
-			h += T_StringHeight(cs) + VDistance;
+			h += T_StringHeight(VStr(String, start, i - start)) + VDistance;
 			start = i;
 		}
 	h -= VDistance;
@@ -382,11 +378,11 @@ int T_TextHeight(const char* String)
 //
 //	T_DrawNString
 //
-//	Write a string using the font with maximal lenght.
+//	Write a string using the font with maximal length.
 //
 //==========================================================================
 
-void T_DrawNString(int x, int y, const char* String, int lenght)
+void T_DrawNString(int x, int y, const VStr& String, int ALength)
 {
 	guard(T_DrawNString);
 	int		w;
@@ -406,17 +402,18 @@ void T_DrawNString(int x, int y, const char* String, int lenght)
 	if (HAlign == hright)
 		cx -= T_StringWidth(String);
 
-	if (lenght > (int)VStr::Length(String))
-		lenght = (int)VStr::Length(String);
+	int length = ALength;
+	if (length > (int)String.Length())
+		length = (int)String.Length();
 	
 	if (cx < 0 || cy < 0 || cx >= VirtualWidth || cy >= VirtualHeight)
 	{
 	   	GCon->Logf(NAME_Dev, "T_DrawNString: Draw text \"%s\" at (%d,%d)",
-			String, cx, cy);
+			*String, cx, cy);
 	  	return;
 	}
 
-	for (i=0; i<lenght; i++)
+	for (i=0; i<length; i++)
 	{
 		c = String[i] - 32;
 
@@ -455,9 +452,9 @@ void T_DrawNString(int x, int y, const char* String, int lenght)
 //
 //==========================================================================
 
-void T_DrawString(int x, int y, const char* String)
+void T_DrawString(int x, int y, const VStr& String)
 {
-	T_DrawNString(x, y, String, VStr::Length(String));
+	T_DrawNString(x, y, String, String.Length());
 }
 
 //==========================================================================
@@ -466,13 +463,12 @@ void T_DrawString(int x, int y, const char* String)
 //
 //==========================================================================
 
-void T_DrawNText(int x, int y, const char* String, int lenght)
+void T_DrawNText(int x, int y, const VStr& String, int ALength)
 {
 	guard(T_DrawNText);
 	int			start = 0;
 	int			cx;
 	int			cy;
-	char		cs[80];
 	int			i;
 
 	cx = x;
@@ -483,26 +479,26 @@ void T_DrawNText(int x, int y, const char* String, int lenght)
 	if (VAlign == vbottom)
 		cy -= T_TextHeight(String);
 
-	if (lenght > (int)VStr::Length(String))
-		lenght = (int)VStr::Length(String);
+	int length = ALength;
+	if (length > (int)String.Length())
+		length = (int)String.Length();
 
 	//	Need this for correct cursor position with empty strings.
 	LastX = cx;
 	LastY = cy;
 
-	for (i=0; i<lenght; i++)
+	for (i=0; i<length; i++)
 	{
 		if (String[i] == '\n')
 		{
-			memset(cs, 0, sizeof(cs));
-			VStr::NCpy(cs, String + start, i - start);
-			T_DrawNString(cx, cy, cs, lenght - start);
+			VStr cs(String, start, i - start);
+			T_DrawNString(cx, cy, cs, length - start);
 			cy += T_StringHeight(cs) + VDistance;
 			start = i + 1;
 		}
-		if (i == lenght - 1)
+		if (i == length - 1)
 		{
-			T_DrawNString(cx, cy, String + start, lenght - start);
+			T_DrawNString(cx, cy, VStr(String, start, length - start), length - start);
 		}
 	}
 	unguard;
@@ -514,9 +510,9 @@ void T_DrawNText(int x, int y, const char* String, int lenght)
 //
 //==========================================================================
 
-void T_DrawText(int x, int y, const char* String)
+void T_DrawText(int x, int y, const VStr& String)
 {
-	T_DrawNText(x, y, String, VStr::Length(String));
+	T_DrawNText(x, y, String, String.Length());
 }
 
 //==========================================================================
@@ -525,13 +521,12 @@ void T_DrawText(int x, int y, const char* String)
 //
 //==========================================================================
 
-int T_DrawTextW(int x, int y, const char* String, int w)
+int T_DrawTextW(int x, int y, const VStr& String, int w)
 {
 	guard(T_DrawTextW);
 	int			start = 0;
 	int			cx;
 	int			cy;
-	char		cs[80];
 	int			i;
 	bool		wordStart = true;
 	int			LinesPrinted = 0;
@@ -553,8 +548,7 @@ int T_DrawTextW(int x, int y, const char* String, int w)
 	{
 		if (String[i] == '\n')
 		{
-			memset(cs, 0, sizeof(cs));
-			VStr::NCpy(cs, String + start, i - start);
+			VStr cs(String, start, i - start);
 			T_DrawNString(cx, cy, cs, i - start);
 			cy += T_StringHeight(cs) + VDistance;
 			start = i + 1;
@@ -566,12 +560,9 @@ int T_DrawTextW(int x, int y, const char* String, int w)
 			int j = i;
 			while (String[j] > ' ')
 				j++;
-			memset(cs, 0, sizeof(cs));
-			VStr::NCpy(cs, String + start, j - start);
-			if (T_StringWidth(cs) > w)
+			if (T_StringWidth(VStr(String, start, j - start)) > w)
 			{
-				memset(cs, 0, sizeof(cs));
-				VStr::NCpy(cs, String + start, i - start);
+				VStr cs(String, start, i - start);
 				T_DrawNString(cx, cy, cs, i - start);
 				cy += T_StringHeight(cs) + VDistance;
 				start = i;
@@ -585,7 +576,7 @@ int T_DrawTextW(int x, int y, const char* String, int w)
 		}
 		if (!String[i + 1])
 		{
-			T_DrawNString(cx, cy, String + start, i - start + 1);
+			T_DrawNString(cx, cy, VStr(String, start, i - start + 1), i - start + 1);
 			LinesPrinted++;
 		}
 	}
@@ -626,7 +617,7 @@ void T_DrawCursorAt(int x, int y)
 //
 //==========================================================================
 
-void T_DrawString8(int x, int y, const char* String)
+void T_DrawString8(int x, int y, const VStr& String)
 {
 	guard(T_DrawString8);
 	int		w;
@@ -634,7 +625,7 @@ void T_DrawString8(int x, int y, const char* String)
 	int		cx;
 	int		cy;
 	int		i;
-	int		lenght;
+	int		length;
 
 	if (!String)
 		return;
@@ -647,16 +638,16 @@ void T_DrawString8(int x, int y, const char* String)
 	if (HAlign == hright)
 		cx -= T_StringWidth(String);
 
-	lenght = (int)VStr::Length(String);
+	length = (int)String.Length();
 	
 	if (cx >= VirtualWidth || cy >= VirtualHeight)
 	{
 	   	GCon->Logf(NAME_Dev, "T_DrawString8: Draw text \"%s\" at (%d,%d)",
-			String, cx, cy);
+			*String, cx, cy);
 	  	return;
 	}
 
-	for (i = 0; i < lenght && cx < VirtualWidth; i++)
+	for (i = 0; i < length && cx < VirtualWidth; i++)
 	{
 		c = String[i] - 32;
 

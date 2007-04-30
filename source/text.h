@@ -71,19 +71,19 @@ void T_SetDist(int, int);
 void T_SetAlign(halign_e, valign_e);
 void T_SetShadow(bool);
 
-int T_StringWidth(const char*);
-int T_StringHeight(const char*);
+int T_StringWidth(const VStr&);
+int T_StringHeight(const VStr&);
 
-int T_TextWidth(const char*);
-int T_TextHeight(const char*);
+int T_TextWidth(const VStr&);
+int T_TextHeight(const VStr&);
 
-void T_DrawString(int, int, const char*);
-void T_DrawString8(int, int, const char*);
-void T_DrawText(int, int, const char*);
-int T_DrawTextW(int x, int y, const char* String, int w);
+void T_DrawString(int, int, const VStr&);
+void T_DrawString8(int, int, const VStr&);
+void T_DrawText(int, int, const VStr&);
+int T_DrawTextW(int, int, const VStr&, int);
 
-void T_DrawNString(int, int, const char*, int);
-void T_DrawNText(int, int, const char*, int);
+void T_DrawNString(int, int, const VStr&, int);
+void T_DrawNText(int, int, const VStr&, int);
 
 void T_DrawCursor();
 void T_DrawCursorAt(int, int);
