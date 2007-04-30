@@ -33,8 +33,8 @@ class Object
 
 //  Since version 1.5 compiler defines PROG_VERSION, so we can check that
 // progs are compiled with the right version of compiler
-#if !defined PROG_VERSION || PROG_VERSION != 22
-#error These are version 22 progs
+#if !defined PROG_VERSION || PROG_VERSION != 23
+#error These are version 23 progs
 #endif
 
 enum

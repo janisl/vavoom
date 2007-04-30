@@ -53,7 +53,7 @@
 	(SV_GetSavesDir() + "/" + _map + ".vs" + _slot)
 
 #define SAVE_DESCRIPTION_LENGTH		24
-#define SAVE_VERSION_TEXT			"Version 1.22"
+#define SAVE_VERSION_TEXT			"Version 1.23"
 #define SAVE_VERSION_TEXT_LENGTH	16
 
 // TYPES -------------------------------------------------------------------
