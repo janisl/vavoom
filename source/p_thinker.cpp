@@ -79,7 +79,10 @@ void VThinker::Destroy()
 {
 	guard(VThinker::Destroy);
 	//	Close any thinker channels.
-	XLevel->NetContext->ThinkerDestroyed(this);
+	if (XLevel)
+	{
+		XLevel->NetContext->ThinkerDestroyed(this);
+	}
 
 	Super::Destroy();
 	unguard;
