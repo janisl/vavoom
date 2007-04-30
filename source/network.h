@@ -50,7 +50,7 @@ enum
 		MAX_MESSAGE_HEADER_BITS - MAX_PACKET_TRAILER_BITS,
 };
 
-enum { MAX_CHANNELS		= 265 };
+enum { MAX_CHANNELS		= 256 };
 
 enum EChannelType
 {
