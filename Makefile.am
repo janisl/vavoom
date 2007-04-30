@@ -1,4 +1,4 @@
-SUBDIRS = utils source progs basev
+SUBDIRS = utils source progs basev $(EXTRA_SUBDIRS)
 EXTRA_DIST = \
 	autogen.sh \
 	fixunix.sh \

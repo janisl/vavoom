@@ -583,6 +583,12 @@ dnl
 
 AC_SUBST([ASMFLAGS])
 
+dnl
+dnl  Possibility to add additional subdirs to the build process that are not
+dnl part of distribution.
+dnl
+AC_SUBST([EXTRA_SUBDIRS])
+
 AC_OUTPUT([
 	Makefile
 	basev/Makefile
