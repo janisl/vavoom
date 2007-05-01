@@ -1847,7 +1847,7 @@
 09.02.2007
   I created a class with ACS per-level data.
 10.02.1007
-  In level class I added poiunter to the per-level ACS data class. I implemented
+  In level class I added pointer to the per-level ACS data class. I implemented
  support for suspending and terminating scripts in other maps.
 11.02.2007
   I moved ACS native methods to the Level class.
@@ -1999,3 +1999,143 @@
   I changed remaining entity fields that used old style update to be updated
  using channel. This way I got rid of entity baseline. On server side entity
  channels now will allocate first available slot.
+01.04.2007
+  In network connection class I started to implement support for generic multi
+ channel communication. I changed general and player channels to use it.
+02.04.2007
+  I made network.h not to be part of gamedefs.h to have less dependencies on it.
+  I also changed entity channels to use new channel system. To do this I had to
+ implement support for opening a remote channel.
+03.04.2007
+  I created separate connection classes for demo playback and recording.
+  I created a network conext class, currently to handle client and server
+ specific access to the level and creation of general channel.
+  I changed entity channel to be a thinker channel since I'm planing to use it
+ for non-entity thinkers such as level info.
+  I implemented proper support for closing a channel. I also fixed handling
+ of messages that need to be resent and added an AutoACK flag for demo playback
+ and bots where there's no other end to ACK the packets.
+04.04.2007
+  I split implementation of network connection and channels into separate source
+ files.
+08.04.2007
+  I finished playing Soldier Of Fortune 2, back to work now :-).
+  I moved message sequence counters to the connection class to avoid possibility
+ of accepting a wrong message after a channel slot has been closed and reopened.
+  I made network socket classes to be driver specific, each driver now has it's
+ own implementation of a socket.
+09.04.2007
+  In thinker and player channels I implemented special handling for arrays to
+ update array elements that have been changed.
+10.04.2007
+  I created a level channel that does handling of changes of sectors, sides and
+ polyobjs, currently only sidedefs and sectors are handled. I removed multiple
+ Set* methods that are not needed anymore.
+11.04.2007
+  I did some more changes needed for sector updates and implemented updates of
+ polyobjs.
+12.04.2007
+  I finished implementing sector updates.
+13.04.2007
+  I implemented what's necesary to make LevelInfo to be replicated.
+15.04.2007
+  I moved most of the fields from level_t structure to LevelInfo class and most
+ of them are replicated. I also moved flags that are set from MAPINFO from
+ Level to LevelInfo. Time fields have been moved to Level class allowing me to
+ get rid of level_t structure.
+16.04.2007
+  In Doom Firebrand added proper support for foot clipping on liquid terrains
+ and did some more improvements to splashes.
+  In Hexen I fixed cleric's third weapon and slow running speed.
+17.04.2007
+  In BasePlayer class I added bIsClient flag so that replication conditions can
+ check if it's on client or server side.
+  I implemented support for remote procedure calls. Currently both thinker and
+ player channels accept them but only player class supports them.
+18.04.2007
+  I changed sound net protocol commands to use remote procedure calls. Then I
+ moved parsing of custom network protocol commands to the player class. After
+ that I changed them to be done using remote procedure calls.
+19.04.2007
+  I changed more network protocol commands to RPCs. I made methods for adding
+ static lights native that allowed me to remove all message related natives and
+ protocol command definitions from progs. Then I created PlayerReplicationInfo
+ class that contains info about a player that is replicated to all clients.
+ This replaces scores structure used for intermission and makes more player
+ replated data available on client during the game that makes it easy to show
+ deathmatch scores during the game.
+20.04.2007
+  Static lights are now storeed in a list on the server and are sent to clients
+ using level channel. This allowed me to get rid of server's signon messages.
+21.04.2007
+  I fixed PlayerReplicationInfo missing replication conditions for player name
+ and user info.
+  I fixed wrong map names being displayed in new net game menu.
+  Setting a weapon state didn't properly handle case when state time is 0 and
+ there's no next state.
+22.04.2007
+  I changed player structure on client to be recreated for every time when
+ connecting to the server.
+  I changed ClearPlayer method to reset fields to their default values instead
+ of using memset that must not be done is dynamic strings are being used.
+23.04.2007
+  I changed custom player model and skin names to be stored in player class as
+ strings to be able to get rid of model and skin tables on the server.
+  I moved some of the methods from Object class to appropiate classes.
+24.04.2007
+  In player class view states and location are now sent using net replication.
+ I also changed sending of movement commands to be done using relpicated fields.
+  I moved network role fields to the Thinker class since it needs them too.
+  I moved some more methods from Object class to it's proper location.
+  I added a time field to the texture manager class so that warp textures don't
+ have to reference client side specific global variables and to make it more
+ abstract.
+25.04.2007
+  I changed keepalive packets to be simply empty packets and disconnect to be
+ done by closing the general channel.
+26.04.2007
+  I moved sending of the level info to the level channel.
+  I fixed Hexen's world timer, changed it to be float.
+  I changed sending of client and server infos to use RPCs.
+27.04.2007
+  I got rid of multiple client signon stages.
+  I added proper rounding of some of the values being sent over the network.
+  The time used in intermission is now a field in LevelInfo set on the server.
+  View origin is now set using a RPC to avoid jerkiness because of the rounded
+ vector values.
+  Demo messages now also record the current time. After this there's no need to
+ send server's time to the client in every frame.
+  After that general channel is only used for string commands so I could get
+ rid of the command itself.
+  In datagram driver I changed the use of message classes to use bit stream
+ classes instead.
+  I cleaned up message classes from now unused methods and fields.
+28.04.2007
+  I got rid of the sv_player global variable.
+  I changed menus and console to be drawn while not yet fully connected to the
+ server.
+  I moved client side update of entities to the actor class and made it for all
+ types of thinkers. I also moved update of particles to LevelInfo class.
+  I changed current time on client to use time fields in Level class.
+  Aparently latest version of FLAC library crashes if non-FLAC data is passed
+ to it so I added a check for FLAC header before doing it.
+  I fixed some crashes when changing levels while playing with bots.
+  I updated Doom weapon models to Alex Bomberman's ones. I fixed drawing of
+ models with custom scale and offset properties.
+29.04.2007
+  I added name constants for all engine events and added or improved usage of
+ names to have less name lookups during the game. I had to add a separate set
+ of macros for executing an event using vertual function index since compiler
+ tries to use name constant as virtual function index.
+  Now that both general channels are used only for text, I could merge them and
+ rename it to control channel.
+  I changed creation of channels so that I don't have to abort game if there's
+ no free channel slot is available.
+  I fixed user info not being sent to the server.
+  I made closing of open channels when a thinker has been destroyed not to
+ depend on client and server specific global variables.
+30.04.2007
+  I changed drawing of text to use dynamic strings.
+  I fixed a crash when destroying a thinker that doesn't belong to a level.
+  I fixed a typo in maximal number of channels.
+  I updated version number in preparation for a release.
