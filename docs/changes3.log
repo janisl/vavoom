@@ -2139,3 +2139,10 @@
   I fixed a crash when destroying a thinker that doesn't belong to a level.
   I fixed a typo in maximal number of channels.
   I updated version number in preparation for a release.
+01.05.2007
+  I fixed bad behaviour when server decides to modify player's movement values.
+  Some makefiles needed some attention.
+
+******************************************************************************
+                            VERSION 1.23
+******************************************************************************

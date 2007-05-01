@@ -82,6 +82,7 @@ _____MAIN_EXE__SOURCES = \
 	debug.cpp \
 	debug.h \
 	dehacked.cpp \
+	dehacked.h \
 	drawer.h \
 	files.cpp \
 	files.h \
