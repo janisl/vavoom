@@ -18,4 +18,7 @@ $(OUTDIR)/clprogs.dat: $(VCC) $(srcdir)/clprogs.vc $(srcdir)/../doom/*.vc \
 		$(srcdir)/../doom/cgame/*.vc $(OUTDIR)/svprogs.dat
 	$(VCC) -I$(COMMON_DIR) -P$(COMMON_PROGS_DIR) -P$(OUTDIR) $(srcdir)/clprogs.vc $@
 
-EXTRA_DIST = *.vc compile.bat
+EXTRA_DIST = compile.bat \
+	clprogs.vc \
+	shared.vc \
+	svprogs.vc
