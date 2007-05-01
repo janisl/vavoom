@@ -585,8 +585,8 @@ static void BuildTiccmd()
 		impulse_cmd = 0;
 	}
 
-	cl->ForwardMove = forward;
-	cl->SideMove = side;
+	cl->ClientForwardMove = forward;
+	cl->ClientSideMove = side;
 	cl->FlyMove = flyheight;
 	unguard;
 }

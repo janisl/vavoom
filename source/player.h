@@ -100,6 +100,8 @@ class VBasePlayer : public VObject
 	int				Colour;
 
 	// Copied from cmd, needed for PROGS, which supports only 4 byte ints
+	float			ClientForwardMove;	// *2048 for move
+	float			ClientSideMove;		// *2048 for move
 	float			ForwardMove;	// *2048 for move
 	float			SideMove;		// *2048 for move
 	float			FlyMove;		// fly up/down/centreing

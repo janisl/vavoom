@@ -591,6 +591,8 @@ void SV_RunClients()
 			!sv.intermission && !paused)
 #endif
 		{
+			Player->ForwardMove = Player->ClientForwardMove;
+			Player->SideMove = Player->ClientSideMove;
 			// Don't move faster than maxmove
 			if (Player->ForwardMove > sv_maxmove)
 			{
