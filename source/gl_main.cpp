@@ -49,7 +49,7 @@ VCvarI VOpenGLDrawer::tex_linear("gl_tex_linear", "2", CVAR_Archive);
 VCvarI VOpenGLDrawer::clear("gl_clear", "0", CVAR_Archive);
 VCvarI VOpenGLDrawer::blend_sprites("gl_blend_sprites", "0", CVAR_Archive);
 VCvarI VOpenGLDrawer::ext_multitexture("gl_ext_multitexture", "1", CVAR_Archive);
-VCvarI VOpenGLDrawer::ext_point_parameters("gl_ext_point_parameters", "1", CVAR_Archive);
+VCvarI VOpenGLDrawer::ext_point_parameters("gl_ext_point_parameters", "0", CVAR_Archive);
 VCvarI VOpenGLDrawer::ext_anisotropy("gl_ext_anisotropy", "1", CVAR_Archive);
 VCvarF VOpenGLDrawer::maxdist("gl_maxdist", "8192.0", CVAR_Archive);
 VCvarI VOpenGLDrawer::model_lighting("gl_model_lighting", "0", CVAR_Archive);
