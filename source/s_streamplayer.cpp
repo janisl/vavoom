@@ -89,7 +89,6 @@ void VStreamMusicPlayer::Tick(float)
 	if (Paused)
 	{
 		//	Pause playback.
-		Pause();
 		return;
 	}
 	for (int Len = SoundDevice->GetStreamAvailable(); Len;
@@ -151,6 +150,10 @@ void VStreamMusicPlayer::Play(VAudioCodec* InCodec, const char* InName,
 	CurrSong = InName;
 	CurrLoop = InLoop;
 	Stopping = false;
+	if (Paused)
+	{
+		Resume();
+	}
 	unguard;
 }
 

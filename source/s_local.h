@@ -387,6 +387,7 @@ public:
 	, Codec(NULL)
 	, CurrLoop(false)
 	, Stopping(false)
+	, Paused(false)
 	, SoundDevice(InSoundDevice)
 	{}
 	~VStreamMusicPlayer()
