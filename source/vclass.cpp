@@ -2353,6 +2353,7 @@ VClass::VClass(VName AName)
 , LinkNext(0)
 , ParentClass(0)
 , ClassSize(0)
+, ClassUnalignedSize(0)
 , ClassFlags(0)
 , ClassVTable(0)
 , ClassConstructor(0)
@@ -2388,6 +2389,7 @@ VClass::VClass(ENativeConstructor, size_t ASize, vuint32 AClassFlags,
 , LinkNext(0)
 , ParentClass(AParent)
 , ClassSize(ASize)
+, ClassUnalignedSize(ASize)
 , ClassFlags(AClassFlags)
 , ClassVTable(0)
 , ClassConstructor(ACtor)
@@ -2849,10 +2851,7 @@ void VClass::CalcFieldOffsets()
 		return;
 	}
 
-	int PrevSize = ClassSize;
-	int size = ParentClass ? ParentClass->ClassSize : 0;
 	int numMethods = ParentClass ? ParentClass->ClassNumMethods : 0;
-	VField* PrevField = NULL;
 	for (int i = 0; i < GMembers.Num(); i++)
 	{
 		if (GMembers[i]->MemberType != MEMBER_Method ||
@@ -2877,6 +2876,10 @@ void VClass::CalcFieldOffsets()
 		}
 		M->VTableIndex = MOfs;
 	}
+
+	VField* PrevField = NULL;
+	int PrevSize = ClassSize;
+	int size = ParentClass ? ParentClass->ClassUnalignedSize : 0;
 	for (VField* fi = Fields; fi; fi = fi->Next)
 	{
 		if (fi->Type.Type == ev_bool && PrevField &&
@@ -2904,6 +2907,7 @@ void VClass::CalcFieldOffsets()
 		}
 		PrevField = fi;
 	}
+	ClassUnalignedSize = size;
 	size = (size + sizeof(void*) - 1) & ~(sizeof(void*) - 1);
 	ClassSize = size;
 	ClassNumMethods = numMethods;

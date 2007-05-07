@@ -375,6 +375,7 @@ public:
 	VClass*			ParentClass;
 
 	vint32			ClassSize;
+	vint32			ClassUnalignedSize;
 	vuint32			ClassFlags;
 	VMethod**		ClassVTable;
 	void			(*ClassConstructor)();
