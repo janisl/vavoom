@@ -87,6 +87,12 @@ static bool EvalCond(VObject* Obj, VClass* Class, VMethod* M)
 
 bool VBasePlayer::ExecuteNetMethod(VMethod* Func)
 {
+	guard(VBasePlayer::ExecuteNetMethod);
+	if (host_standalone)
+	{
+		return false;
+	}
+
 	if (!EvalCond(this, GetClass(), Func))
 	{
 		return false;
@@ -207,6 +213,7 @@ bool VBasePlayer::ExecuteNetMethod(VMethod* Func)
 
 	//	It's been handled here.
 	return true;
+	unguard;
 }
 
 //==========================================================================

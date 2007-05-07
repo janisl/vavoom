@@ -103,6 +103,7 @@ static bool		mapteleport_issued;
 static VCvarI	split_frame("split_frame", "1", CVAR_Archive);
 static VCvarF	sv_gravity("sv_gravity", "800.0", CVAR_ServerInfo);
 static VCvarI	sv_maxmove("sv_maxmove", "400", CVAR_Archive);
+static VCvarI	test_standalone("test_standalone", "0", CVAR_Archive);
 
 static VServerNetContext*	ServerNetContext;
 
@@ -450,27 +451,35 @@ void SV_SendClientMessages()
 		}
 
 		// Don't update level if the player isn't totally in the game yet
-		if (Player->Net->Channels[0] &&
+		if (Player->Net && Player->Net->Channels[0] &&
 			(Player->PlayerFlags & VBasePlayer::PF_Spawned))
 		{
 			if (Player->Net->NeedsUpdate)
 			{
 				Player->MO->EntityFlags |= VEntity::EF_NetLocalPlayer;
-		
+
 				SV_WriteViewData(*Player);
-		
+
 				SV_UpdateLevel(Player);
-		
+
 				Player->MO->EntityFlags &= ~VEntity::EF_NetLocalPlayer;
 			}
 
 			((VPlayerChannel*)Player->Net->Channels[CHANIDX_Player])->Update();
 		}
-
-		Player->Net->Tick();
-		if (Player->Net->State == NETCON_Closed)
+		else if (host_standalone && (Player->PlayerFlags & VBasePlayer::PF_Spawned))
 		{
-			SV_DropClient(Player, true);
+			Player->MO->EntityFlags |= VEntity::EF_NetLocalPlayer;
+			SV_WriteViewData(*Player);
+		}
+
+		if (Player->Net)
+		{
+			Player->Net->Tick();
+			if (Player->Net->State == NETCON_Closed)
+			{
+				SV_DropClient(Player, true);
+			}
 		}
 	}
 	unguard;
@@ -578,8 +587,11 @@ void SV_RunClients()
 			G_DoReborn(i);
 		}
 
-		Player->Net->NeedsUpdate = false;
-		Player->Net->GetMessages();
+		if (Player->Net)
+		{
+			Player->Net->NeedsUpdate = false;
+			Player->Net->GetMessages();
+		}
 
 		// pause if in menu or console and at least one tic has been run
 #ifdef CLIENT
@@ -865,6 +877,11 @@ int NET_SendToAll(int blocktime)
 	bool		state1[MAXPLAYERS];
 	bool		state2[MAXPLAYERS];
 
+	if (host_standalone)
+	{
+		return 0;
+	}
+
 	for (i = 0; i < svs.max_clients; i++)
 	{
 		VBasePlayer* Player = GGameInfo->Players[i];
@@ -933,8 +950,11 @@ int NET_SendToAll(int blocktime)
 void SV_SendServerInfo(VBasePlayer *player)
 {
 	guard(SV_SendServerInfo);
-	((VLevelChannel*)player->Net->Channels[CHANIDX_Level])->SetLevel(GLevel);
-	((VLevelChannel*)player->Net->Channels[CHANIDX_Level])->SendNewLevel();
+	if (player->Net)
+	{
+		((VLevelChannel*)player->Net->Channels[CHANIDX_Level])->SetLevel(GLevel);
+		((VLevelChannel*)player->Net->Channels[CHANIDX_Level])->SendNewLevel();
+	}
 	unguard;
 }
 
@@ -999,6 +1019,8 @@ void SV_SpawnServer(const char *mapname, bool spawn_thinkers)
 	{
 		//	New game
 		GWorldInfo = GGameInfo->eventCreateWorldInfo();
+
+		host_standalone = !netgame && test_standalone;
 	}
 
 	SV_Clear();
@@ -1350,15 +1372,18 @@ COMMAND(Stats)
 void SV_ConnectClient(VBasePlayer *player)
 {
 	guard(SV_ConnectClient);
-	GCon->Logf(NAME_Dev, "Client %s connected", *player->Net->GetAddress());
+	if (player->Net)
+	{
+		GCon->Logf(NAME_Dev, "Client %s connected", *player->Net->GetAddress());
 
-	ServerNetContext->ClientConnections.Append(player->Net);
+		ServerNetContext->ClientConnections.Append(player->Net);
+		player->Net->NeedsUpdate = false;
+	}
 
 	GGameInfo->Players[SV_GetPlayerNum(player)] = player;
 	player->ClientNum = SV_GetPlayerNum(player);
 	player->PlayerFlags |= VBasePlayer::PF_Active;
 
-	player->Net->NeedsUpdate = false;
 	player->PlayerFlags &= ~VBasePlayer::PF_Spawned;
 	player->Level = GLevelInfo;
 	if (!sv_loading)

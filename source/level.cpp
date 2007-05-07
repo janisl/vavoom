@@ -473,6 +473,12 @@ void CalcSeg(seg_t *seg)
 void SV_LoadLevel(VName MapName)
 {
 	guard(SV_LoadLevel);
+#ifdef CLIENT
+	if (GClLevel == GLevel)
+	{
+		GClLevel = NULL;
+	}
+#endif
 	if (GLevel)
 	{
 		delete GLevel;

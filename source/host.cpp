@@ -81,6 +81,7 @@ int				host_framecount;
 
 bool			host_initialised = false;
 bool			host_request_exit = false;
+bool			host_standalone;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 

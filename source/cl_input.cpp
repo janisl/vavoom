@@ -615,10 +615,16 @@ void CL_SendMove()
 		AdjustAngles();
 		BuildTiccmd();
 		mousex = mousey = 0;
-		((VPlayerChannel*)cl->Net->Channels[CHANIDX_Player])->Update();
+		if (cl->Net)
+		{
+			((VPlayerChannel*)cl->Net->Channels[CHANIDX_Player])->Update();
+		}
 	}
 
-	cl->Net->Flush();
+	if (cl->Net)
+	{
+		cl->Net->Flush();
+	}
 	unguard;
 }
 

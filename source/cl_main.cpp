@@ -29,6 +29,7 @@
 #include "network.h"
 #include "cl_local.h"
 #include "ui.h"
+#include "sv_local.h"
 
 // MACROS ------------------------------------------------------------------
 
@@ -42,6 +43,9 @@ void CL_Disconnect();
 void CL_StopPlayback();
 void CL_StopRecording();
 void CL_SetUpLocalPlayer(VSocketPublic*);
+void SV_ConnectClient(VBasePlayer*);
+void CL_Clear();
+void CL_ReadFromServerInfo();
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
@@ -192,15 +196,21 @@ void CL_ReadFromServer()
 	if (cls.state != ca_connected)
 		return;
 
-	cl->Net->GetMessages();
-	if (cl->Net->State == NETCON_Closed)
+	if (cl->Net)
 	{
-		Host_EndGame("Server disconnected");
+		cl->Net->GetMessages();
+		if (cl->Net->State == NETCON_Closed)
+		{
+			Host_EndGame("Server disconnected");
+		}
 	}
 
 	if (cls.signon)
 	{
-		GClLevel->Time += host_frametime;
+		if (!host_standalone)
+		{
+			GClLevel->Time += host_frametime;
+		}
 
 		CL_UpdateMobjs();
 		CL_Ticker();
@@ -237,7 +247,14 @@ void CL_SignonReply()
 		cl->eventServerSetUserInfo(cls.userinfo);
 		UserInfoSent = true;
 	}
-	cl->Net->SendCommand("Spawn\n");
+	if (host_standalone)
+	{
+		VCommand::ExecuteString("Spawn\n", VCommand::SRC_Client, cl);
+	}
+	else
+	{
+		cl->Net->SendCommand("Spawn\n");
+	}
 	GCmdBuf << "HideConsole\n";
 	unguard;
 }
@@ -298,9 +315,12 @@ void CL_Disconnect()
 			CL_StopRecording();
 		}
 
-		GCon->Log(NAME_Dev, "Sending clc_disconnect");
-		cl->Net->Channels[0]->Close();
-		cl->Net->Flush();
+		if (cl->Net)
+		{
+			GCon->Log(NAME_Dev, "Sending clc_disconnect");
+			cl->Net->Channels[0]->Close();
+			cl->Net->Flush();
+		}
 
 		cls.state = ca_disconnected;
 #ifdef SERVER
@@ -308,7 +328,7 @@ void CL_Disconnect()
 #endif
 	}
 
-	if (cl)
+	if (!host_standalone && cl)
 	{
 		delete cl->Net;
 		cl->ViewEnt->ConditionalDestroy();
@@ -346,15 +366,30 @@ void CL_EstablishConnection(const char* host)
 
 	CL_Disconnect();
 
-	VSocketPublic* Sock = GNet->Connect(host);
-	if (!Sock)
+	if (host_standalone)
 	{
-		GCon->Log("Failed to connect to the server");
-		return;
-	}
+		VBasePlayer* Player = GPlayersBase[0];
+		SV_ConnectClient(Player);
+		svs.num_connected++;
 
-	CL_SetUpLocalPlayer(Sock);
-	GCon->Logf(NAME_Dev, "CL_EstablishConnection: connected to %s", host);
+		VMemberBase::SetUpNetClasses();
+
+		cl = Player;
+		cl->ClGame = GClGame;
+		GClGame->cl = cl;
+	}
+	else
+	{
+		VSocketPublic* Sock = GNet->Connect(host);
+		if (!Sock)
+		{
+			GCon->Log("Failed to connect to the server");
+			return;
+		}
+
+		CL_SetUpLocalPlayer(Sock);
+		GCon->Logf(NAME_Dev, "CL_EstablishConnection: connected to %s", host);
+	}
 
 	UserInfoSent = false;
 
@@ -363,6 +398,48 @@ void CL_EstablishConnection(const char* host)
 	cls.signon = 0;				// need all the signon messages before playing
 
 	MN_DeactivateMenu();
+
+	if (host_standalone)
+	{
+		CL_Clear();
+
+		GClGame->serverinfo = svs.serverinfo;
+		CL_ReadFromServerInfo();
+
+		GClGame->maxclients = svs.max_clients;
+		GClGame->deathmatch = deathmatch;
+
+		const mapInfo_t& LInfo = P_GetMapInfo(*GLevel->MapName);
+		GCon->Log("---------------------------------------");
+		GCon->Log(LInfo.GetName());
+		GCon->Log("");
+		C_ClearNotify();
+
+		GClLevel = GLevel;
+		GClGame->GLevel = GClLevel;
+
+		R_Start(GClLevel);
+		GAudio->Start();
+
+		SB_Start();
+
+		for (int i = 0; i < VClass::GSpriteNames.Num(); i++)
+		{
+			R_InstallSprite(*VClass::GSpriteNames[i], i);
+		}
+
+		for (int i = 0; i < GClLevel->NumStaticLights; i++)
+		{
+			rep_light_t& L = GClLevel->StaticLights[i];
+			GClLevel->RenderData->AddStaticLight(L.Origin, L.Radius, L.Colour);
+		}
+		GClLevel->RenderData->PreRender();
+
+		CL_SignonReply();
+
+		cls.signon = 1;
+		GCon->Log(NAME_Dev, "Client level loaded");
+	}
 	unguard;
 }
 

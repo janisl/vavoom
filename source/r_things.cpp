@@ -729,6 +729,11 @@ void VRenderLevel::RenderThing(VEntity* mobj)
 		return;
 	}
 
+	if (mobj->EntityFlags & VEntity::EF_Hidden)
+	{
+		return;
+	}
+
 	//	Setup lighting
 	vuint32 light;
 	if ((mobj->State->Frame & FF_FULLBRIGHT) ||

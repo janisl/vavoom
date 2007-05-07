@@ -385,7 +385,19 @@ void VCommand::ForwardToServer()
 {
 	guard(VCommand::ForwardToServer);
 #ifdef CLIENT
-	cl->Net->SendCommand(Original);
+	if (!cl)
+	{
+		GCon->Log("You must be in a game to execute this command");
+		return;
+	}
+	if (cl->Net)
+	{
+		cl->Net->SendCommand(Original);
+	}
+	else
+	{
+		VCommand::ExecuteString(Original, VCommand::SRC_Client, cl);
+	}
 #endif
 	unguard;
 }

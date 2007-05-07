@@ -52,3 +52,4 @@ extern double		host_frametime;
 extern double		host_time;
 extern double		realtime;
 extern int			host_framecount;
+extern bool			host_standalone;

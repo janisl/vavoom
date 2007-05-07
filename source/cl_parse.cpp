@@ -81,7 +81,7 @@ void CL_Clear()
 //
 //==========================================================================
 
-static void CL_ReadFromServerInfo()
+void CL_ReadFromServerInfo()
 {
 	guard(CL_ReadFromServerInfo);
 	VCvar::SetCheating(!!atoi(*Info_ValueForKey(GClGame->serverinfo, "sv_cheats")));
