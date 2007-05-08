@@ -27,6 +27,20 @@
 #include "progdefs.h"
 #include "network.h"
 
+class DummyClass1 : public VVirtualObjectBase
+{
+public:
+	void*		Pointer;
+	vuint8		Byte1;
+	virtual void Dummy() = 0;
+};
+
+class DummyClass2 : public DummyClass1
+{
+public:
+	vuint8		Byte2;
+};
+
 bool					VMemberBase::GObjInitialised;
 VClass*					VMemberBase::GClasses;
 TArray<VMemberBase*>	VMemberBase::GMembers;
@@ -2879,7 +2893,18 @@ void VClass::CalcFieldOffsets()
 
 	VField* PrevField = NULL;
 	int PrevSize = ClassSize;
-	int size = ParentClass ? ParentClass->ClassUnalignedSize : 0;
+	int size = 0;
+	if (ParentClass)
+	{
+		//	GCC has a strange behavior of starting to add fields in subclasses
+		// in a class that has virtual methods on unaligned parent size offset.
+		// In other cases and in other compilers it starts on aligned parent
+		// class size offset.
+		if (sizeof(DummyClass1) == sizeof(DummyClass2))
+			size = ParentClass->ClassUnalignedSize;
+		else
+			size = ParentClass->ClassSize;
+	}
 	for (VField* fi = Fields; fi; fi = fi->Next)
 	{
 		if (fi->Type.Type == ev_bool && PrevField &&
