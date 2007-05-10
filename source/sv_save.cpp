@@ -82,7 +82,6 @@ void SV_AddEntity(VEntity* Ent);
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
-extern bool			sv_loading;
 extern int			sv_load_num_players;
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------

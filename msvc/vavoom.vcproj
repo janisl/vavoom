@@ -2164,6 +2164,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\p_player.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\source\p_playerreplicationinfo.cpp"
 				>
 			</File>

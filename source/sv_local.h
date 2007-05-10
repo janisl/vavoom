@@ -272,6 +272,8 @@ extern bool				deathmatch;   			// only if started as net death
 
 extern bool				paused;
 
+extern bool				sv_loading;
+
 //==========================================================================
 //
 //	Inlines

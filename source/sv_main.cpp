@@ -51,7 +51,6 @@ static void G_DoCompleted();
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
 IMPLEMENT_CLASS(V, GameInfo)
-IMPLEMENT_CLASS(V, BasePlayer)
 
 VCvarI			real_time("real_time", "1");
 
