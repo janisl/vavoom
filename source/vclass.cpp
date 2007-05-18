@@ -2493,6 +2493,8 @@ void VClass::Shutdown()
 		delete[] Defaults;
 		Defaults = NULL;
 	}
+	StatesLookup.Clear();
+	RepInfos.Clear();
 	unguard;
 }
 

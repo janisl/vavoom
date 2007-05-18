@@ -171,6 +171,13 @@ void VObject::StaticInit()
 
 void VObject::StaticExit()
 {
+	for (int i = 0; i < GObjObjects.Num(); i++)
+	{
+		if (GObjObjects[i])
+		{
+			GObjObjects[i]->ConditionalDestroy();
+		}
+	}
 	CollectGarbage();
 	GObjObjects.Clear();
 	GObjAvailable.Clear();
