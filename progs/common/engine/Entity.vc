@@ -189,7 +189,7 @@ replication
 	reliable if (Role == ROLE_Authority)
 		Origin, Angles, FloorClip, State, StateTime,
 		SpriteType, ModelSkin, ModelVersion, Alpha, Translation, Effects,
-		bFullBright, bFixedModel, bNetLocalPlayer, NetID;
+		bHidden, bFullBright, bFixedModel, bNetLocalPlayer, NetID;
 	reliable if (Role == ROLE_Authority && bFixedModel)
 		FixedModelName;
 }
