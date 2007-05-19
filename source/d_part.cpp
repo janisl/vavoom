@@ -45,10 +45,10 @@
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-extern "C" {
-
 float			xscaleshrink;
 float			yscaleshrink;
+
+extern "C" {
 
 int				d_particle_right;
 int				d_particle_top;

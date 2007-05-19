@@ -69,6 +69,7 @@ struct surface_t
 	texinfo_t*		texinfo;
 	TPlane*			plane;
 	vuint32			Light;		//	Light level and colour.
+	vuint32			Fade;
 	vuint8*			lightmap;
 	rgb_t*			lightmap_rgb;
 	int				dlightframe;

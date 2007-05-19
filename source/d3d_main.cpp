@@ -83,6 +83,7 @@ VDirect3DDrawer::VDirect3DDrawer()
 				0, 0, 0, 1)
 , TexStage(0)
 , lastgamma(0)
+, CurrentFade(0)
 #if DIRECT3D_VERSION >= 0x0800
 , trsprdata(0)
 , particle_texture(0)
@@ -827,9 +828,10 @@ void VDirect3DDrawer::Setup2D()
 
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ZENABLE, FALSE);
 	RenderDevice->SetRenderState(D3DRENDERSTATE_CULLMODE, D3DCULL_NONE);
-	RenderDevice->SetRenderState(D3DRENDERSTATE_FOGENABLE, FALSE);
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, FALSE);
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, TRUE);
+
+	SetFade(0);
 	unguard;
 }
 
@@ -909,19 +911,6 @@ void VDirect3DDrawer::SetupView(VRenderLevelDrawer* ARLev, const refdef_t *rd)
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ZENABLE, TRUE);
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, FALSE);
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, FALSE);
-	if (r_fog)
-	{
-		static const D3DFOGMODE fog_mode[4] = {
-			D3DFOG_NONE, D3DFOG_LINEAR, D3DFOG_EXP, D3DFOG_EXP2 };
-
-		RenderDevice->SetRenderState(D3DRENDERSTATE_FOGVERTEXMODE, fog_mode[r_fog & 3]);
-		RenderDevice->SetRenderState(D3DRENDERSTATE_FOGCOLOR,
-			((int)(r_fog_r * 255) << 16) | ((int)(r_fog_g * 255) << 8) | (int)(r_fog_b * 255));
-		RenderDevice->SetRenderState(D3DRENDERSTATE_FOGDENSITY, PassFloat(r_fog_density));
-		RenderDevice->SetRenderState(D3DRENDERSTATE_FOGSTART, PassFloat(r_fog_start));
-		RenderDevice->SetRenderState(D3DRENDERSTATE_FOGEND, PassFloat(r_fog_end));
-		RenderDevice->SetRenderState(D3DRENDERSTATE_FOGENABLE, TRUE);
-	}
 
 	memset(light_chain, 0, sizeof(light_chain));
 	memset(add_chain, 0, sizeof(add_chain));
@@ -1210,5 +1199,38 @@ void *VDirect3DDrawer::ReadScreen(int *bpp, bool *bot2top)
 	*bpp = 24;
 	*bot2top = false;
 	return dst;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VOpenGLDrawer::SetFade
+//
+//==========================================================================
+
+void VOpenGLDrawer::SetFade(vuint32 NewFade)
+{
+	guard(VOpenGLDrawer::SetFade);
+	if (CurrentFade == NewFade)
+	{
+		return;
+	}
+	if (NewFade)
+	{
+		static const D3DFOGMODE fog_mode[4] = {
+			D3DFOG_LINEAR, D3DFOG_LINEAR, D3DFOG_EXP, D3DFOG_EXP2 };
+
+		RenderDevice->SetRenderState(D3DRENDERSTATE_FOGVERTEXMODE, fog_mode[r_fog & 3]);
+		RenderDevice->SetRenderState(D3DRENDERSTATE_FOGCOLOR, NewFade);
+		RenderDevice->SetRenderState(D3DRENDERSTATE_FOGDENSITY, PassFloat(r_fog_density));
+		RenderDevice->SetRenderState(D3DRENDERSTATE_FOGSTART, PassFloat(r_fog_start));
+		RenderDevice->SetRenderState(D3DRENDERSTATE_FOGEND, PassFloat(r_fog_end));
+		RenderDevice->SetRenderState(D3DRENDERSTATE_FOGENABLE, TRUE);
+	}
+	else
+	{
+		RenderDevice->SetRenderState(D3DRENDERSTATE_FOGENABLE, FALSE);
+	}
+	CurrentFade = NewFade;
 	unguard;
 }

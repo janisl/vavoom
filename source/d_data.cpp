@@ -69,6 +69,9 @@ bool			ForcePaletteUpdate;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
+static rgb_t	CurrentPal[256];
+static vuint32	CurrentFade;
+
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
@@ -77,14 +80,16 @@ bool			ForcePaletteUpdate;
 //
 //==========================================================================
 
-static void CalcRGBTable8()
+static void CalcRGBTable8(vuint32 Fade)
 {
 	guard(CalcRGBTable8);
 	int i = 0;
 	for (int tn = 0; tn < 32; tn++)
 	{
 		float frac = 1.0 - tn / 32.0;
-		int fog = r_fog ? 128 * tn / 32 : 0;
+		int fog_r = ((Fade >> 16) & 255) * tn / 32;
+		int fog_g = ((Fade >> 8) & 255) * tn / 32;
+		int fog_b = (Fade & 255) * tn / 32;
 		for (int ci = 0; ci < 256; ci++, i++)
 		{
 			if (!(i & 0xff))
@@ -92,14 +97,25 @@ static void CalcRGBTable8()
 				d_fadetable16r[i] = 0x8000;
 				d_fadetable16g[i] = 0x8000;
 				d_fadetable16b[i] = 0x8000;
+				d_fadetable[i] = 0;
 				continue;
 			}
-			int r = (int)(r_palette[ci].r * frac + 0.5) + fog;
-			int g = (int)(r_palette[ci].g * frac + 0.5) + fog;
-			int b = (int)(r_palette[ci].b * frac + 0.5) + fog;
+			int r = (int)(r_palette[ci].r * frac + 0.5) + fog_r;
+			int g = (int)(r_palette[ci].g * frac + 0.5) + fog_g;
+			int b = (int)(r_palette[ci].b * frac + 0.5) + fog_b;
+			if (r > 255)
+				r = 255;
+			if (g > 255)
+				g = 255;
+			if (b > 255)
+				b = 255;
 			d_fadetable16r[i] = (r << 7) & 0x7c00;
 			d_fadetable16g[i] = (g << 2) & 0x03e0;
 			d_fadetable16b[i] = (b >> 3) & 0x001f;
+			if (Fade)
+			{
+				d_fadetable[i] = MakeCol8(r, g, b);
+			}
 		}
 	}
 	unguard;
@@ -129,7 +145,7 @@ static void CalcCol16Table()
 //
 //==========================================================================
 
-static void CalcFadetable16(rgb_t *pal)
+static void CalcFadetable16(rgb_t *pal, vuint32 Fade)
 {
 	guard(CalcFadetable16);
 	byte *gt = gammatable[usegamma];
@@ -137,7 +153,9 @@ static void CalcFadetable16(rgb_t *pal)
 	for (int tn = 0; tn < 32; tn++)
 	{
 		int colm = 32 - tn;
-		int fog = r_fog ? 128 * tn / 32 : 0;
+		int fog_r = ((Fade >> 16) & 255) * tn / 32;
+		int fog_g = ((Fade >> 8) & 255) * tn / 32;
+		int fog_b = (Fade & 255) * tn / 32;
 		for (int ci = 0; ci < 256; ci++, i++)
 		{
 			if (!(i & 0xff))
@@ -148,9 +166,9 @@ static void CalcFadetable16(rgb_t *pal)
 				d_fadetable16b[i] = 0;
 				continue;
 			}
-			int r = gt[pal[ci].r] * colm / 32 + fog;
-			int g = gt[pal[ci].g] * colm / 32 + fog;
-			int b = gt[pal[ci].b] * colm / 32 + fog;
+			int r = gt[pal[ci].r] * colm / 32 + fog_r;
+			int g = gt[pal[ci].g] * colm / 32 + fog_g;
+			int b = gt[pal[ci].b] * colm / 32 + fog_b;
 			d_fadetable16[i] = MakeCol(r, g, b);
 			d_fadetable16r[i] = MakeCol(r, 0, 0);
 			d_fadetable16g[i] = MakeCol(0, g, 0);
@@ -193,7 +211,7 @@ static void CalcCol32Table()
 //
 //==========================================================================
 
-static void CalcFadetable32(rgb_t *pal)
+static void CalcFadetable32(rgb_t *pal, vuint32 Fade)
 {
 	guard(CalcFadetable32);
 	byte *gt = gammatable[usegamma];
@@ -201,7 +219,9 @@ static void CalcFadetable32(rgb_t *pal)
 	for (int tn = 0; tn < 32; tn++)
 	{
 		int colm = 32 - tn;
-		int fog = r_fog ? 128 * tn / 32 : 0;
+		int fog_r = ((Fade >> 16) & 255) * tn / 32;
+		int fog_g = ((Fade >> 8) & 255) * tn / 32;
+		int fog_b = (Fade & 255) * tn / 32;
 		for (int ci = 0; ci < 256; ci++, i++)
 		{
 			if (!(i & 0xff))
@@ -212,9 +232,9 @@ static void CalcFadetable32(rgb_t *pal)
 				d_fadetable32b[i] = 0;
 				continue;
 			}
-			int r = gt[pal[ci].r] * colm / 32 + fog;
-			int g = gt[pal[ci].g] * colm / 32 + fog;
-			int b = gt[pal[ci].b] * colm / 32 + fog;
+			int r = gt[pal[ci].r] * colm / 32 + fog_r;
+			int g = gt[pal[ci].g] * colm / 32 + fog_g;
+			int b = gt[pal[ci].b] * colm / 32 + fog_b;
 			d_fadetable32[i] = MakeCol32(r, g, b);
 			d_fadetable32r[i] = r;
 			d_fadetable32g[i] = g;
@@ -247,6 +267,18 @@ static void InitColourmaps()
 	colourmaps = new vuint8[Strm->TotalSize()];
 	Strm->Serialise(colourmaps, Strm->TotalSize());
 	delete Strm;
+	//	Remap colour 0 to alternate balck colour
+	for (int i = 0; i < 32 * 256; i++)
+	{
+		if (!(i & 0xff))
+		{
+			colourmaps[i] = 0;
+		}
+		else if (!colourmaps[i])
+		{
+			colourmaps[i] = r_black_colour;
+		}
+	}
 	memcpy(d_fadetable, colourmaps, 32 * 256);
 	unguard;
 }
@@ -335,8 +367,6 @@ void VSoftwareDrawer::UpdatePalette()
 	guard(VSoftwareDrawer::UpdatePalette);
 	int		i, j;
 	bool	newshifts;
-	byte	*newpal;
-	byte	pal[768];
 	int		r,g,b;
 	int		dstr, dstg, dstb, perc;
 
@@ -359,7 +389,7 @@ void VSoftwareDrawer::UpdatePalette()
 	}
 
 	rgba_t* basepal = r_palette;
-	newpal = pal;
+	rgb_t* newpal = CurrentPal;
 	
 	for (i = 0; i < 256; i++)
 	{
@@ -380,27 +410,27 @@ void VSoftwareDrawer::UpdatePalette()
 			b += (perc * (dstb - b)) >> 8;
 		}
 		
-		newpal[0] = r;
-		newpal[1] = g;
-		newpal[2] = b;
-		newpal += 3;
+		newpal->r = r;
+		newpal->g = g;
+		newpal->b = b;
+		newpal++;
 	}
 
 	if (ScreenBPP == 8)
 	{
-		SetPalette8(pal);
+		SetPalette8((vuint8*)CurrentPal);
 	}
 	else if (PixelBytes == 2)
 	{
 		CalcCol16Table();
-		CalcFadetable16((rgb_t*)pal);
+		CalcFadetable16(CurrentPal, CurrentFade);
 		FlushCaches(true);
 		FlushTextureCaches();
 	}
 	else
 	{
 		CalcCol32Table();
-		CalcFadetable32((rgb_t*)pal);
+		CalcFadetable32(CurrentPal, CurrentFade);
 		FlushCaches(true);
 		FlushTextureCaches();
 	}
@@ -416,36 +446,40 @@ void VSoftwareDrawer::UpdatePalette()
 void VSoftwareDrawer::NewMap()
 {
 	guard(VSoftwareDrawer::NewMap);
-	if (r_fog)
-	{
-		VStream* Strm = W_CreateLumpReaderName(NAME_fogmap);
-		Strm->Serialise(d_fadetable, Strm->TotalSize());
-		delete Strm;
-	}
-	else
-	{
-		memcpy(d_fadetable, colourmaps, 32 * 256);
-	}
+	FlushCaches(false);
+	unguard;
+}
 
-	//	Remap colour 0 to alternate balck colour
-	for (int i = 0; i < 32 * 256; i++)
+//==========================================================================
+//
+//	VSoftwareDrawer::SetFade
+//
+//==========================================================================
+
+void VSoftwareDrawer::SetFade(vuint32 NewFade)
+{
+	guard(VSoftwareDrawer::SetFade);
+	if (CurrentFade == NewFade)
 	{
-		if (!(i & 0xff))
-		{
-			d_fadetable[i] = 0;
-		}
-		else if (!colourmaps[i])
-		{
-			d_fadetable[i] = r_black_colour;
-		}
+		return;
 	}
 
 	if (ScreenBPP == 8)
 	{
-		CalcRGBTable8();
+		if (!(NewFade & 0x00ffffff))
+		{
+			memcpy(d_fadetable, colourmaps, 32 * 256);
+		}
+		CalcRGBTable8(NewFade);
 	}
-
-	ForcePaletteUpdate = true;
-	FlushCaches(false);
+	else if (PixelBytes == 2)
+	{
+		CalcFadetable16(CurrentPal, NewFade);
+	}
+	else
+	{
+		CalcFadetable32(CurrentPal, NewFade);
+	}
+	CurrentFade = NewFade;
 	unguard;
 }

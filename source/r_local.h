@@ -157,6 +157,7 @@ private:
 		int				type;
 		float			dist;
 		vuint32			light;
+		vuint32			Fade;
 	};
 
 	enum { MAX_TRANS_SPRITES	= 256 };
@@ -211,6 +212,7 @@ private:
 	void TransformFrustum();
 	void SetupFrame();
 	void MarkLeaves();
+	vuint32 GetFade(subsector_t*);
 
 	//	Surf methods
 	void SetupSky();
@@ -273,24 +275,25 @@ private:
 
 	//	Things
 	void DrawTranslucentPoly(surface_t*, TVec*, int, int, float, int, bool,
-		vuint32, const TVec&, float, const TVec&, const TVec&, const TVec&);
-	void RenderSprite(VEntity*, vuint32);
-	void RenderTranslucentAliasModel(VEntity*, vuint32, float);
-	bool RenderAliasModel(VEntity*, vuint32);
+		vuint32, vuint32, const TVec&, float, const TVec&, const TVec&,
+		const TVec&);
+	void RenderSprite(VEntity*, vuint32, vuint32);
+	void RenderTranslucentAliasModel(VEntity*, vuint32, vuint32, float);
+	bool RenderAliasModel(VEntity*, vuint32, vuint32);
 	void RenderThing(VEntity*);
 	void RenderMobjs();
 	void DrawTranslucentPolys();
-	void RenderPSprite(VViewState*, float, vuint32);
-	bool RenderViewModel(VViewState*, vuint32);
+	void RenderPSprite(VViewState*, float, vuint32, vuint32);
+	bool RenderViewModel(VViewState*, vuint32, vuint32);
 	void DrawPlayerSprites();
 	void DrawCroshair();
 
 	//	Models
 	bool DrawAliasModel(const TVec&, const TAVec&, VModel*, int, const char*,
-		int, vuint32, float, bool, float);
+		int, vuint32, vuint32, float, bool, float);
 	bool DrawAliasModel(const TVec&, const TAVec&, VState*, const char*,
-		int, vuint32, float, bool, float);
-	bool DrawEntityModel(VEntity*, vuint32, float, float);
+		int, vuint32, vuint32, float, bool, float);
+	bool DrawEntityModel(VEntity*, vuint32, vuint32, float, float);
 	bool CheckAliasModelFrame(VEntity*, float);
 
 public:

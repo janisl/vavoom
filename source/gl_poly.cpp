@@ -541,6 +541,7 @@ void VOpenGLDrawer::WorldDrawing()
 				((surf->Light >> 8) & 255) * lev / 255.0,
 				(surf->Light & 255) * lev / 255.0, 1.0);
 		}
+		SetFade(surf->Fade);
 
 		glBegin(GL_POLYGON);
 		for (i = 0; i < surf->count; i++)
@@ -587,6 +588,7 @@ void VOpenGLDrawer::WorldDrawing()
 				tex = surf->texinfo;
 
 				SetTexture(tex->pic);
+				SetFade(surf->Fade);
 				glBegin(GL_POLYGON);
 				for (i = 0; i < surf->count; i++)
 				{
@@ -639,6 +641,7 @@ void VOpenGLDrawer::WorldDrawing()
 				surf = cache->surf;
 				tex = surf->texinfo;
 
+				SetFade(surf->Fade);
 				glBegin(GL_POLYGON);
 				for (i = 0; i < surf->count; i++)
 				{
@@ -667,10 +670,7 @@ void VOpenGLDrawer::WorldDrawing()
 		glBlendFunc(GL_ONE, GL_ONE);
 		glEnable(GL_BLEND);
 		glColor4f(1, 1, 1, 1);
-		if (r_fog)
-		{
-			glDisable(GL_FOG);
-		}
+		SetFade(0);
 
 		for (lb = 0; lb < NUM_BLOCK_SURFS; lb++)
 		{
@@ -712,10 +712,6 @@ void VOpenGLDrawer::WorldDrawing()
 		glDisable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glDepthMask(1);		// back to normal Z buffering
-		if (r_fog)
-		{
-			glEnable(GL_FOG);
-		}
 	}
 	unguard;
 }
@@ -735,10 +731,7 @@ void VOpenGLDrawer::BeginSky()
 	glPushMatrix();
 	glTranslatef(vieworg.x, vieworg.y, vieworg.z);
 
-	if (r_fog)
-	{
-		glDisable(GL_FOG);
-	}
+	SetFade(0);
 	unguard;
 }
 
@@ -843,11 +836,6 @@ void VOpenGLDrawer::DrawSkyPolygon(surface_t* surf, bool bIsSkyBox,
 void VOpenGLDrawer::EndSky()
 {
 	guard(VOpenGLDrawer::EndSky);
-	if (r_fog)
-	{
-		glEnable(GL_FOG);
-	}
-
 	glPopMatrix();
 	glDepthMask(1);
 	unguard;
@@ -897,6 +885,7 @@ void VOpenGLDrawer::DrawMaskedPolygon(surface_t* surf, float Alpha)
 			((surf->Light >> 8) & 255) * lev / 255.0,
 			(surf->Light & 255) * lev / 255.0, Alpha);
 	}
+	SetFade(surf->Fade);
 
 	glBegin(GL_POLYGON);
 	for (int i = 0; i < surf->count; i++)
@@ -923,8 +912,8 @@ void VOpenGLDrawer::DrawMaskedPolygon(surface_t* surf, float Alpha)
 //==========================================================================
 
 void VOpenGLDrawer::DrawSpritePolygon(TVec *cv, int lump, float Alpha,
-	int translation, vuint32 light, const TVec&, float, const TVec& saxis,
-	const TVec& taxis, const TVec& texorg)
+	int translation, vuint32 light, vuint32 Fade, const TVec&, float,
+	const TVec& saxis, const TVec& taxis, const TVec& texorg)
 {
 	guard(VOpenGLDrawer::DrawSpritePolygon);
 	TVec	texpt;
@@ -940,6 +929,7 @@ void VOpenGLDrawer::DrawSpritePolygon(TVec *cv, int lump, float Alpha,
 
 	vuint32 alpha = (int)(255 * Alpha);
 	SetColour((light & 0x00ffffff) | (alpha << 24));
+	SetFade(Fade);
 
 	glBegin(GL_QUADS);
 
@@ -982,7 +972,7 @@ void VOpenGLDrawer::DrawSpritePolygon(TVec *cv, int lump, float Alpha,
 
 void VOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	const TVec& Offset, const TVec& Scale, mmdl_t* pmdl, int frame,
-	int SkinID, vuint32 light, float Alpha, bool is_view_model)
+	int SkinID, vuint32 light, vuint32 Fade, float Alpha, bool is_view_model)
 {
 	guard(VOpenGLDrawer::DrawAliasModel);
 	mframe_t	*framedesc;
@@ -1013,7 +1003,8 @@ void VOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	{
 		SetColour((light & 0x00ffffff) | (int(255 * Alpha) << 24));
 	}
-	
+	SetFade(Fade);
+
 	//
 	// draw all the triangles
 	//

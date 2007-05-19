@@ -199,10 +199,10 @@ public:
 	void DrawSkyPolygon(surface_t*, bool, int, float, int, float);
 	void EndSky();
 	void DrawMaskedPolygon(surface_t*, float);
-	void DrawSpritePolygon(TVec*, int, float, int, vuint32, const TVec&,
-		float, const TVec&, const TVec&, const TVec&);
+	void DrawSpritePolygon(TVec*, int, float, int, vuint32, vuint32,
+		const TVec&, float, const TVec&, const TVec&, const TVec&);
 	void DrawAliasModel(const TVec&, const TAVec&, const TVec&, const TVec&,
-		mmdl_t*, int, int, vuint32, float, bool);
+		mmdl_t*, int, int, vuint32, vuint32, float, bool);
 
 	//	Particles
 	void StartParticles();
@@ -264,6 +264,8 @@ private:
 	surfcache_t	*AllocBlock(int, int);
 	surfcache_t	*FreeBlock(surfcache_t*, bool);
 	void CacheSurface(surface_t*);
+
+	void SetFade(vuint32 NewFade);
 
 #if DIRECT3D_VERSION < 0x0800
 	static HRESULT CALLBACK EnumDevicesCallback(
@@ -353,6 +355,7 @@ private:
 	float						tex_ih;
 
 	int							lastgamma;
+	int							CurrentFade;
 
 	//	Texture filters.
 #if DIRECT3D_VERSION >= 0x0800

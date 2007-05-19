@@ -190,10 +190,12 @@ surfcache_t *VSoftwareDrawer::CacheSurface(surface_t *surface, int miplevel)
 	//
 	cache = surface->cachespots[miplevel];
 
-	if (cache && ((!cache->dlight && surface->dlightframe != r_dlightframecount)
-			|| cache->dlight == r_dlightframecount)
-			&& cache->texture == texture
-			&& cache->Light == surface->Light)
+	if (cache &&
+		((!cache->dlight && surface->dlightframe != r_dlightframecount) ||
+		cache->dlight == r_dlightframecount) &&
+		cache->texture == texture &&
+		cache->Light == surface->Light &&
+		cache->Fade == surface->Fade)
 		return cache;
 
 	//
@@ -221,6 +223,7 @@ surfcache_t *VSoftwareDrawer::CacheSurface(surface_t *surface, int miplevel)
 
 	cache->texture = texture;
 	cache->Light = surface->Light;
+	cache->Fade = surface->Fade;
 
 	//
 	// draw and light the surface texture
@@ -247,7 +250,7 @@ surfcache_t *VSoftwareDrawer::CacheSurface(surface_t *surface, int miplevel)
 	
 	surfrowbytes = surfwidth * PixelBytes;
 
-	Drawer->SetTexture(texture);
+	SetTexture(texture);
 	mt = miptexture;
 	
 	r_source = (byte *)mt + mt->offsets[miplevel];
@@ -313,6 +316,8 @@ surfcache_t *VSoftwareDrawer::CacheSurface(surface_t *surface, int miplevel)
 		+ (tmax << 16)) % tmax) * twidth)];
 
 	pcolumndest = (byte*)cache->data;
+
+	SetFade(surface->Fade);
 
 	for (u = 0; u < r_numhblocks; u++)
 	{

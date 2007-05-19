@@ -67,6 +67,7 @@ TClipPlane				view_clipplanes[4];
 int						r_visframecount;
 
 VCvarI					r_fog("r_fog", "0");
+VCvarI					r_fog_test("r_fog_test", "0");
 VCvarF					r_fog_r("r_fog_r", "0.5");
 VCvarF					r_fog_g("r_fog_g", "0.5");
 VCvarF					r_fog_b("r_fog_b", "0.5");
@@ -721,11 +722,6 @@ void VRenderLevel::RenderPlayerView()
 	{
 		return;
 	}
-	//HACK!!!
-	if (CurrentSky1Texture == -1)
-	{
-		r_fog = Level->LevelInfo->FadeTable == NAME_fogmap;
-	}
 
 	GTextureManager.Time = Level->Time;
 
@@ -759,6 +755,28 @@ void VRenderLevel::RenderPlayerView()
 
 	// Draw croshair
 	DrawCroshair();
+	unguard;
+}
+
+//==========================================================================
+//
+//	VRenderLevel::GetFade
+//
+//==========================================================================
+
+vuint32 VRenderLevel::GetFade(subsector_t*)
+{
+	guard(VRenderLevel::GetFade);
+	if (r_fog_test)
+	{
+		return 0xff000000 | (int(255 * r_fog_r) << 16) |
+			(int(255 * r_fog_g) << 8) | int(255 * r_fog_b);
+	}
+	if (Level->LevelInfo->FadeTable == NAME_fogmap)
+	{
+		return 0xff7f7f7f;
+	}
+	return 0;
 	unguard;
 }
 

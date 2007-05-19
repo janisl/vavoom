@@ -124,7 +124,7 @@ static aedge_t aedges[12] =
 
 void VSoftwareDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	const TVec& Offset, const TVec& Scale, mmdl_t* Apmdl, int frame,
-	int SkinID, vuint32 light, float Alpha, bool is_view_model)
+	int SkinID, vuint32 light, vuint32 Fade, float Alpha, bool is_view_model)
 {
 	guard(VSoftwareDrawer::DrawAliasModel);
 	modelorg = vieworg - origin;
@@ -159,6 +159,8 @@ void VSoftwareDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	AliasSetupFrame(frame);
 
 	PolysetSetupDrawer(Alpha);
+
+	SetFade(Fade);
 
 	// hack the depth range to prevent view model from poking into walls
 	if (is_view_model)

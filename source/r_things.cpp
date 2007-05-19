@@ -310,8 +310,8 @@ void R_FreeSpriteData()
 
 void VRenderLevel::DrawTranslucentPoly(surface_t* surf, TVec* sv, int count,
 	int lump, float Alpha, int translation, bool type, vuint32 light,
-	const TVec& normal, float pdist, const TVec& saxis, const TVec& taxis,
-	const TVec& texorg)
+	vuint32 Fade, const TVec& normal, float pdist, const TVec& saxis,
+	const TVec& taxis, const TVec& texorg)
 {
 	guard(VRenderLevel::DrawTranslucentPoly);
 	int i;
@@ -345,6 +345,7 @@ void VRenderLevel::DrawTranslucentPoly(surface_t* surf, TVec* sv, int count,
 			spr.translation = translation;
 			spr.type = type;
 			spr.light = light;
+			spr.Fade = Fade;
 			return;
 		}
 		if (spr.dist > best_dist)
@@ -359,13 +360,14 @@ void VRenderLevel::DrawTranslucentPoly(surface_t* surf, TVec* sv, int count,
 		trans_sprite_t &spr = trans_sprites[found];
 		if (spr.type == 2)
 		{
-			DrawEntityModel(spr.Ent, spr.light, spr.Alpha, spr.TimeFrac);
+			DrawEntityModel(spr.Ent, spr.light, spr.Fade, spr.Alpha,
+				spr.TimeFrac);
 		}
 		else if (spr.type)
 		{
 			Drawer->DrawSpritePolygon(spr.Verts, spr.lump, spr.Alpha,
-				spr.translation, spr.light, spr.normal, spr.pdist, spr.saxis,
-				spr.taxis, spr.texorg);
+				spr.translation, spr.light, spr.Fade, spr.normal, spr.pdist,
+				spr.saxis, spr.taxis, spr.texorg);
 		}
 		else
 		{
@@ -384,6 +386,7 @@ void VRenderLevel::DrawTranslucentPoly(surface_t* surf, TVec* sv, int count,
 		spr.Alpha = Alpha;
 		spr.translation = translation;
 		spr.light = light;
+		spr.Fade = Fade;
 		return;
 	}
 
@@ -391,7 +394,7 @@ void VRenderLevel::DrawTranslucentPoly(surface_t* surf, TVec* sv, int count,
 	if (type)
 	{
 		Drawer->DrawSpritePolygon(sv, lump, Alpha, translation, light,
-			normal, pdist, saxis, taxis, texorg);
+			Fade, normal, pdist, saxis, taxis, texorg);
 	}
 	else
 	{
@@ -406,7 +409,7 @@ void VRenderLevel::DrawTranslucentPoly(surface_t* surf, TVec* sv, int count,
 //
 //==========================================================================
 
-void VRenderLevel::RenderSprite(VEntity* thing, vuint32 light)
+void VRenderLevel::RenderSprite(VEntity* thing, vuint32 light, vuint32 Fade)
 {
 	guard(VRenderLevel::RenderSprite);
 	int spr_type = thing->SpriteType;
@@ -593,14 +596,14 @@ void VRenderLevel::RenderSprite(VEntity* thing, vuint32 light)
 	if (thing->Alpha < 1.0 || r_sort_sprites)
 	{
 		DrawTranslucentPoly(NULL, sv, 4, lump, thing->Alpha,
-			thing->Translation, true, light, -sprforward, DotProduct(
+			thing->Translation, true, light, Fade, -sprforward, DotProduct(
 			sprorigin, -sprforward), flip ? -sprright : sprright, -sprup,
 			flip ? sv[2] : sv[1]);
 	}
 	else
 	{
 		Drawer->DrawSpritePolygon(sv, lump, thing->Alpha, thing->Translation,
-			light, -sprforward, DotProduct(sprorigin, -sprforward),
+			light, Fade, -sprforward, DotProduct(sprorigin, -sprforward),
 			flip ? -sprright : sprright, -sprup, flip ? sv[2] : sv[1]);
 	}
 	unguard;
@@ -613,7 +616,7 @@ void VRenderLevel::RenderSprite(VEntity* thing, vuint32 light)
 //==========================================================================
 
 void VRenderLevel::RenderTranslucentAliasModel(VEntity* mobj, vuint32 light,
-	float TimeFrac)
+	vuint32 Fade, float TimeFrac)
 {
 	guard(VRenderLevel::RenderTranslucentAliasModel);
 	int i;
@@ -628,6 +631,7 @@ void VRenderLevel::RenderTranslucentAliasModel(VEntity* mobj, vuint32 light,
 		{
 			spr.Ent = mobj;
 			spr.light = light;
+			spr.Fade = Fade;
 			spr.Alpha = mobj->Alpha;
 			spr.dist = dist;
 			spr.type = 2;
@@ -646,13 +650,13 @@ void VRenderLevel::RenderTranslucentAliasModel(VEntity* mobj, vuint32 light,
 		trans_sprite_t &spr = trans_sprites[found];
 		if (spr.type == 2)
 		{
-			DrawEntityModel(spr.Ent, spr.light, spr.Alpha, spr.TimeFrac);
+			DrawEntityModel(spr.Ent, spr.light, spr.Fade, spr.Alpha, spr.TimeFrac);
 		}
 		else if (spr.type)
 		{
 			Drawer->DrawSpritePolygon(spr.Verts, spr.lump, spr.Alpha,
-				spr.translation, spr.light, spr.normal, spr.pdist, spr.saxis,
-				spr.taxis, spr.texorg);
+				spr.translation, spr.light, spr.Fade, spr.normal, spr.pdist,
+				spr.saxis, spr.taxis, spr.texorg);
 		}
 		else
 		{
@@ -660,13 +664,14 @@ void VRenderLevel::RenderTranslucentAliasModel(VEntity* mobj, vuint32 light,
 		}
 		spr.Ent = mobj;
 		spr.light = light;
+		spr.Fade = Fade;
 		spr.Alpha = mobj->Alpha;
 		spr.dist = dist;
 		spr.type = 2;
 		spr.TimeFrac = TimeFrac;
 		return;
 	}
-	DrawEntityModel(mobj, light, mobj->Alpha, TimeFrac);
+	DrawEntityModel(mobj, light, Fade, mobj->Alpha, TimeFrac);
 	unguard;
 }
 
@@ -676,7 +681,8 @@ void VRenderLevel::RenderTranslucentAliasModel(VEntity* mobj, vuint32 light,
 //
 //==========================================================================
 
-bool VRenderLevel::RenderAliasModel(VEntity* mobj, vuint32 light)
+bool VRenderLevel::RenderAliasModel(VEntity* mobj, vuint32 light,
+	vuint32 Fade)
 {
 	guard(VRenderLevel::RenderAliasModel);
 	if (!r_models)
@@ -698,12 +704,12 @@ bool VRenderLevel::RenderAliasModel(VEntity* mobj, vuint32 light)
 		{
 			return false;
 		}
-		RenderTranslucentAliasModel(mobj, light, TimeFrac);
+		RenderTranslucentAliasModel(mobj, light, Fade, TimeFrac);
 		return true;
 	}
 	else
 	{
-		return DrawEntityModel(mobj, light, 1.0, TimeFrac);
+		return DrawEntityModel(mobj, light, Fade, 1.0, TimeFrac);
 	}
 	unguard;
 }
@@ -745,12 +751,13 @@ void VRenderLevel::RenderThing(VEntity* mobj)
 	{
 		light = LightPoint(mobj->Origin);
 	}
+	vuint32 Fade = GetFade(mobj->SubSector);
 
 	//	Try to draw a model. If it's a script and it doesn't
 	// specify model for this frame, draw sprite instead.
-	if (!RenderAliasModel(mobj, light))
+	if (!RenderAliasModel(mobj, light, Fade))
 	{
-		RenderSprite(mobj, light);
+		RenderSprite(mobj, light, Fade);
 	}
 	unguard;
 }
@@ -808,14 +815,14 @@ void VRenderLevel::DrawTranslucentPolys()
 			trans_sprite_t &spr = trans_sprites[found];
 			if (spr.type == 2)
 			{
-				DrawEntityModel(spr.Ent, spr.light, spr.Alpha,
+				DrawEntityModel(spr.Ent, spr.light, spr.Fade, spr.Alpha,
 					spr.TimeFrac);
 			}
 			else if (spr.type)
 			{
 				Drawer->DrawSpritePolygon(spr.Verts, spr.lump, spr.Alpha,
-					spr.translation, spr.light, spr.normal, spr.pdist,
-					spr.saxis, spr.taxis, spr.texorg);
+					spr.translation, spr.light, spr.Fade, spr.normal,
+					spr.pdist, spr.saxis, spr.taxis, spr.texorg);
 			}
 			else
 			{
@@ -833,7 +840,8 @@ void VRenderLevel::DrawTranslucentPolys()
 //
 //==========================================================================
 
-void VRenderLevel::RenderPSprite(VViewState* VSt, float PSP_DIST, vuint32 light)
+void VRenderLevel::RenderPSprite(VViewState* VSt, float PSP_DIST,
+	vuint32 light, vuint32 Fade)
 {
 	guard(VRenderLevel::RenderPSprite);
 	spritedef_t*		sprdef;
@@ -916,7 +924,7 @@ void VRenderLevel::RenderPSprite(VViewState* VSt, float PSP_DIST, vuint32 light)
 	else
 		taxis = -(viewup * 100 * 4 / 3 * PSP_DISTI);
 
-	Drawer->DrawSpritePolygon(dv, lump, cl->ViewEntAlpha, 0, light,
+	Drawer->DrawSpritePolygon(dv, lump, cl->ViewEntAlpha, 0, light, Fade,
 		-viewforward, DotProduct(dv[0], -viewforward), saxis, taxis, texorg);
 	unguard;
 }
@@ -927,7 +935,8 @@ void VRenderLevel::RenderPSprite(VViewState* VSt, float PSP_DIST, vuint32 light)
 //
 //==========================================================================
 
-bool VRenderLevel::RenderViewModel(VViewState* VSt, vuint32 light)
+bool VRenderLevel::RenderViewModel(VViewState* VSt, vuint32 light,
+	vuint32 Fade)
 {
 	guard(VRenderLevel::RenderViewModel);
 	if (!r_view_models)
@@ -946,7 +955,7 @@ bool VRenderLevel::RenderViewModel(VViewState* VSt, vuint32 light)
 	}
 
 	return DrawAliasModel(origin, cl->ViewAngles, VSt->State,
-		NULL, 0, light, cl->ViewEntAlpha, true, TimeFrac);
+		NULL, 0, light, Fade, cl->ViewEntAlpha, true, TimeFrac);
 	unguard;
 }
 
@@ -981,10 +990,11 @@ void VRenderLevel::DrawPlayerSprites()
 		{
 			light = LightPoint(vieworg);
 		}
+		vuint32 Fade = GetFade(Level->PointInSubsector(cl->ViewOrg));
 
-		if (!RenderViewModel(&cl->ViewStates[i], light))
+		if (!RenderViewModel(&cl->ViewStates[i], light, Fade))
 		{
-			RenderPSprite(&cl->ViewStates[i], 3 - i, light);
+			RenderPSprite(&cl->ViewStates[i], 3 - i, light, Fade);
 		}
 	}
 	unguard;

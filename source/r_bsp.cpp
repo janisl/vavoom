@@ -118,9 +118,11 @@ void VRenderLevel::DrawSurfaces(surface_t* InSurfs, texinfo_t *texinfo,
 	{
 		lLev = light_remap[lLev];
 	}
+	vuint32 Fade = GetFade(r_sub);
 	do
 	{
 		surfs->Light = (lLev << 24) | LightParams->LightColour;
+		surfs->Fade = Fade;
 		surfs->dlightframe = r_sub->dlightframe;
 		surfs->dlightbits = r_sub->dlightbits;
 
@@ -131,7 +133,7 @@ void VRenderLevel::DrawSurfaces(surface_t* InSurfs, texinfo_t *texinfo,
 		else
 		{
 			DrawTranslucentPoly(surfs, surfs->verts, surfs->count,
-				texinfo->pic, texinfo->Alpha, 0, false, 0,
+				texinfo->pic, texinfo->Alpha, 0, false, 0, 0,
 				TVec(), 0, TVec(), TVec(), TVec());
 		}
 		surfs = surfs->next;

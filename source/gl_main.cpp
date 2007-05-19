@@ -70,6 +70,7 @@ VOpenGLDrawer::VOpenGLDrawer()
 , freeblocks(0)
 , cacheframecount(0)
 , lastgamma(0)
+, CurrentFade(0)
 {
 	memset(light_block, 0, sizeof(light_block));
 	memset(block_changed, 0, sizeof(block_changed));
@@ -251,10 +252,10 @@ void VOpenGLDrawer::Setup2D()
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_CULL_FACE);
 	glDisable(GL_BLEND);
-	glDisable(GL_FOG);
 	glEnable(GL_ALPHA_TEST);
 
 	glColor4f(1,1,1,1);
+	SetFade(0);
 	unguard;
 }
 
@@ -388,19 +389,6 @@ void VOpenGLDrawer::SetupView(VRenderLevelDrawer* ARLev, const refdef_t *rd)
 	glEnable(GL_DEPTH_TEST);
 	glDisable(GL_BLEND);
 	glDisable(GL_ALPHA_TEST);
-	if (r_fog)
-	{
-		static GLenum fogMode[4] = { GL_LINEAR, GL_LINEAR, GL_EXP, GL_EXP2 };
-		float fogColour[4] = { r_fog_r, r_fog_g, r_fog_b, 1.0 };
-
-		glFogi(GL_FOG_MODE, fogMode[r_fog & 3]);
-		glFogfv(GL_FOG_COLOR, fogColour);
-		glFogf(GL_FOG_DENSITY, r_fog_density);
-		glHint(GL_FOG_HINT, r_fog < 4 ? GL_DONT_CARE : GL_NICEST);
-		glFogf(GL_FOG_START, r_fog_start);
-		glFogf(GL_FOG_END, r_fog_end);
-		glEnable(GL_FOG);
-	}
 
 	if (pointparmsable)
 	{
@@ -473,5 +461,43 @@ void *VOpenGLDrawer::ReadScreen(int *bpp, bool *bot2top)
 	*bpp = 24;
 	*bot2top = true;
 	return dst;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VOpenGLDrawer::SetFade
+//
+//==========================================================================
+
+void VOpenGLDrawer::SetFade(vuint32 NewFade)
+{
+	guard(VOpenGLDrawer::SetFade);
+	if (CurrentFade == NewFade)
+	{
+		return;
+	}
+	if (NewFade)
+	{
+		static GLenum fogMode[4] = { GL_LINEAR, GL_LINEAR, GL_EXP, GL_EXP2 };
+		float fogColour[4];
+
+		fogColour[0] = float((NewFade >> 16) & 0xff) / 255.0;
+		fogColour[1] = float((NewFade >> 8) & 0xff) / 255.0;
+		fogColour[2] = float(NewFade & 0xff) / 255.0;
+		fogColour[3] = float((NewFade >> 24) & 0xff) / 255.0;
+		glFogi(GL_FOG_MODE, fogMode[r_fog & 3]);
+		glFogfv(GL_FOG_COLOR, fogColour);
+		glFogf(GL_FOG_DENSITY, r_fog_density);
+		glHint(GL_FOG_HINT, r_fog < 4 ? GL_DONT_CARE : GL_NICEST);
+		glFogf(GL_FOG_START, r_fog_start);
+		glFogf(GL_FOG_END, r_fog_end);
+		glEnable(GL_FOG);
+	}
+	else
+	{
+		glDisable(GL_FOG);
+	}
+	CurrentFade = NewFade;
 	unguard;
 }

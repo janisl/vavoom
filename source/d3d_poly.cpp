@@ -570,6 +570,7 @@ void VDirect3DDrawer::WorldDrawing()
 		}
 
 		SetTexture(tex->pic);
+		SetFade(surf->Fade);
 
 		for (i = 0; i < surf->count; i++)
 		{
@@ -632,6 +633,7 @@ void VDirect3DDrawer::WorldDrawing()
 				surf = cache->surf;
 				tex = surf->texinfo;
 				SetTexture(tex->pic);
+				SetFade(surf->Fade);
 				for (i = 0; i < surf->count; i++)
 				{
 					s = DotProduct(surf->verts[i], tex->saxis) + tex->soffs;
@@ -701,6 +703,7 @@ void VDirect3DDrawer::WorldDrawing()
 			{
 				surf = cache->surf;
 				tex = surf->texinfo;
+				SetFade(surf->Fade);
 				for (i = 0; i < surf->count; i++)
 				{
 					s = DotProduct(surf->verts[i], tex->saxis) + tex->soffs;
@@ -755,10 +758,7 @@ void VDirect3DDrawer::WorldDrawing()
 		RenderDevice->SetRenderState(D3DRENDERSTATE_DESTBLEND, D3DBLEND_ONE);
 		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, TRUE);
 		RenderDevice->SetRenderState(D3DRENDERSTATE_ZWRITEENABLE, FALSE);	// don't bother writing Z
-		if (r_fog)
-		{
-			RenderDevice->SetRenderState(D3DRENDERSTATE_FOGENABLE, FALSE);
-		}
+		SetFade(0);
 
 		for (lb = 0; lb < NUM_BLOCK_SURFS; lb++)
 		{
@@ -818,10 +818,6 @@ void VDirect3DDrawer::WorldDrawing()
 		RenderDevice->SetRenderState(D3DRENDERSTATE_SRCBLEND, D3DBLEND_SRCALPHA);
 		RenderDevice->SetRenderState(D3DRENDERSTATE_DESTBLEND, D3DBLEND_INVSRCALPHA);
 		RenderDevice->SetRenderState(D3DRENDERSTATE_ZWRITEENABLE, TRUE);		// back to normal Z buffering
-		if (r_fog)
-		{
-			RenderDevice->SetRenderState(D3DRENDERSTATE_FOGENABLE, TRUE);
-		}
 	}
 	unguard;
 }
@@ -836,10 +832,7 @@ void VDirect3DDrawer::BeginSky()
 {
 	guard(VDirect3DDrawer::BeginSky);
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ZWRITEENABLE, FALSE);
-	if (r_fog)
-	{
-		RenderDevice->SetRenderState(D3DRENDERSTATE_FOGENABLE, FALSE);
-	}
+	SetFade(0);
 	unguard;
 }
 
@@ -949,10 +942,6 @@ void VDirect3DDrawer::DrawSkyPolygon(surface_t* surf, bool bIsSkyBox,
 void VDirect3DDrawer::EndSky()
 {
 	guard(VDirect3DDrawer::EndSky);
-	if (r_fog)
-	{
-		RenderDevice->SetRenderState(D3DRENDERSTATE_FOGENABLE, TRUE);
-	}
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ZWRITEENABLE, TRUE);
 	unguard;
 }
@@ -1003,6 +992,7 @@ void VDirect3DDrawer::DrawMaskedPolygon(surface_t* surf, float Alpha)
 		int alpha = (int)(Alpha * 255);
 		l = (alpha << 24) | (lR << 16) | (lG << 8) | lB;
 	}
+	SetFade(surf->Fade);
 
 	for (int i = 0; i < surf->count; i++)
 	{
@@ -1040,8 +1030,8 @@ void VDirect3DDrawer::DrawMaskedPolygon(surface_t* surf, float Alpha)
 //==========================================================================
 
 void VDirect3DDrawer::DrawSpritePolygon(TVec *cv, int lump, float Alpha,
-	int translation, vuint32 light, const TVec&, float, const TVec& saxis,
-	const TVec& taxis, const TVec& texorg)
+	int translation, vuint32 light, vuint32 Fade, const TVec&, float,
+	const TVec& saxis, const TVec& taxis, const TVec& texorg)
 {
 	guard(VDirect3DDrawer::DrawSpritePolygon);
 	MyD3DVertex		out[4];
@@ -1056,6 +1046,7 @@ void VDirect3DDrawer::DrawSpritePolygon(TVec *cv, int lump, float Alpha,
 			DotProduct(texpt, saxis) * tex_iw,
 			DotProduct(texpt, taxis) * tex_ih);
 	}
+	SetFade(Fade);
 
 	if (blend_sprites || Alpha < 1.0)
 	{
@@ -1087,7 +1078,7 @@ void VDirect3DDrawer::DrawSpritePolygon(TVec *cv, int lump, float Alpha,
 
 void VDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	const TVec& Offset, const TVec& Scale, mmdl_t* pmdl, int frame,
-	int SkinID, vuint32 light, float Alpha, bool is_view_model)
+	int SkinID, vuint32 light, vuint32 Fade, float Alpha, bool is_view_model)
 {
 	guard(VDirect3DDrawer::DrawAliasModel);
 	mframe_t			*pframedesc;
@@ -1174,6 +1165,8 @@ void VDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 
 	RenderDevice->SetRenderState(D3DRENDERSTATE_SHADEMODE, D3DSHADE_GOURAUD);
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, TRUE);
+
+	SetFade(Fade);
 
 	verts = (trivertx_t *)(pframedesc + 1);
 	order = (int *)((byte *)pmdl + pmdl->ofscmds);

@@ -97,6 +97,7 @@ struct surfcache_t
 	surfcache_t	*next;
 	surfcache_t	**owner;	// NULL is an empty chunk of memory
 	vuint32		Light;		// checked for strobe flash
+	vuint32		Fade;
 	int			dlight;
 	int			size;		// including header
 	unsigned	width;
@@ -175,10 +176,10 @@ public:
 	void DrawSkyPolygon(surface_t*, bool, int, float, int, float);
 	void EndSky();
 	void DrawMaskedPolygon(surface_t*, float);
-	void DrawSpritePolygon(TVec*, int, float, int, vuint32, const TVec&,
-		float, const TVec&, const TVec&, const TVec&);
+	void DrawSpritePolygon(TVec*, int, float, int, vuint32, vuint32,
+		const TVec&, float, const TVec&, const TVec&, const TVec&);
 	void DrawAliasModel(const TVec&, const TAVec&, const TVec&, const TVec&,
-		mmdl_t*, int, int, vuint32, float, bool);
+		mmdl_t*, int, int, vuint32, vuint32, float, bool);
 
 	//	Particles
 	void StartParticles();
@@ -213,6 +214,7 @@ protected:
 	//	Palette and colour lookup table management.
 	virtual void SetPalette8(vuint8*) = 0;
 	void UpdatePalette();
+	void SetFade(vuint32);
 
 	//	Textures.
 	void FlushTextureCaches();
@@ -250,7 +252,7 @@ protected:
 		const TVec&, const TVec&);
 	void MaskedSurfCaclulateGradients(surface_t*);
 	void SpriteDrawPolygon(TVec*, int, surface_t*, int, int, float, vuint32,
-		const TVec&, float, const TVec&, const TVec&, const TVec&);
+		vuint32, const TVec&, float, const TVec&, const TVec&, const TVec&);
 
 	//	Drawing of the aliased models, i.e. md2
 	bool AliasCheckBBox(mmdl_t*, const TAVec&, const TVec&, const TVec&, int);

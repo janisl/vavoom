@@ -140,10 +140,10 @@ public:
 	void DrawSkyPolygon(surface_t*, bool, int, float, int, float);
 	void EndSky();
 	void DrawMaskedPolygon(surface_t*, float);
-	void DrawSpritePolygon(TVec*, int, float, int, vuint32, const TVec&,
-		float, const TVec&, const TVec&, const TVec&);
+	void DrawSpritePolygon(TVec*, int, float, int, vuint32, vuint32,
+		const TVec&, float, const TVec&, const TVec&, const TVec&);
 	void DrawAliasModel(const TVec&, const TAVec&, const TVec&, const TVec&,
-		mmdl_t*, int, int, vuint32, float, bool);
+		mmdl_t*, int, int, vuint32, vuint32, float, bool);
 
 	//	Particles
 	void StartParticles();
@@ -201,6 +201,7 @@ protected:
 	float		tex_ih;
 
 	int			lastgamma;
+	int			CurrentFade;
 
 	GLenum		maxfilter;
 	GLenum		minfilter;
@@ -224,6 +225,8 @@ protected:
 	//	Extensions
 	bool CheckExtension(const char*);
 	virtual void* GetExtFuncPtr(const char*) = 0;
+
+	void SetFade(vuint32 NewFade);
 
 	void FlushCaches(bool);
 	void FlushOldCaches();
