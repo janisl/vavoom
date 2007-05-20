@@ -1204,13 +1204,13 @@ void *VDirect3DDrawer::ReadScreen(int *bpp, bool *bot2top)
 
 //==========================================================================
 //
-//	VOpenGLDrawer::SetFade
+//	VDirect3DDrawer::SetFade
 //
 //==========================================================================
 
-void VOpenGLDrawer::SetFade(vuint32 NewFade)
+void VDirect3DDrawer::SetFade(vuint32 NewFade)
 {
-	guard(VOpenGLDrawer::SetFade);
+	guard(VDirect3DDrawer::SetFade);
 	if (CurrentFade == NewFade)
 	{
 		return;
