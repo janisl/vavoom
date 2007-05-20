@@ -49,6 +49,8 @@ class VLevelInfo : public VThinker
 	VName			SkyBox;
 
 	VName			FadeTable;
+	vuint32			Fade;
+	vuint32			OutsideFog;
 
 	VName			SongLump;
 	int				CDTrack;

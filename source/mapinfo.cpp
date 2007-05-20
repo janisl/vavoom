@@ -98,6 +98,8 @@ void InitMapInfo()
 	info->Sky1ScrollDelta = 0.0;
 	info->Sky2ScrollDelta = 0.0;
 	info->FadeTable = NAME_colormap;
+	info->Fade = 0;
+	info->OutsideFog = 0;
 	info->Gravity = 0.0;
 	info->Flags = 0;
 	info->TitlePatch = NAME_None;
@@ -243,6 +245,8 @@ static void ParseMap(VScriptParser* sc, bool IsDefault, bool& HexenMode)
 		info->Sky2ScrollDelta = 0;
 		info->SkyBox = NAME_None;
 		info->FadeTable = NAME_colormap;
+		info->Fade = 0;
+		info->OutsideFog = 0;
 		info->Gravity = 0;
 		info->Flags = 0;
 		info->TitlePatch = NAME_None;
@@ -298,6 +302,8 @@ static void ParseMap(VScriptParser* sc, bool IsDefault, bool& HexenMode)
 		info->Sky2ScrollDelta = DefaultMap.Sky2ScrollDelta;
 		info->SkyBox = DefaultMap.SkyBox;
 		info->FadeTable = DefaultMap.FadeTable;
+		info->Fade = DefaultMap.Fade;
+		info->OutsideFog = DefaultMap.OutsideFog;
 		info->Gravity = DefaultMap.Gravity;
 		info->Flags = DefaultMap.Flags;
 		info->TitlePatch = DefaultMap.TitlePatch;
@@ -431,6 +437,16 @@ static void ParseMap(VScriptParser* sc, bool IsDefault, bool& HexenMode)
 		{
 			sc->ExpectName8();
 			info->FadeTable = sc->Name8;
+		}
+		else if (sc->Check("fade"))
+		{
+			sc->ExpectString();
+			info->Fade = M_ParseColour(sc->String);
+		}
+		else if (sc->Check("outsidefog"))
+		{
+			sc->ExpectString();
+			info->OutsideFog = M_ParseColour(sc->String);
 		}
 		else if (sc->Check("music"))
 		{

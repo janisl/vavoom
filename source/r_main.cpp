@@ -764,13 +764,21 @@ void VRenderLevel::RenderPlayerView()
 //
 //==========================================================================
 
-vuint32 VRenderLevel::GetFade(subsector_t*)
+vuint32 VRenderLevel::GetFade(subsector_t* Sub)
 {
 	guard(VRenderLevel::GetFade);
 	if (r_fog_test)
 	{
 		return 0xff000000 | (int(255 * r_fog_r) << 16) |
 			(int(255 * r_fog_g) << 8) | int(255 * r_fog_b);
+	}
+	if (Level->LevelInfo->OutsideFog && Sub->sector->ceiling.pic == skyflatnum)
+	{
+		return Level->LevelInfo->OutsideFog;
+	}
+	if (Level->LevelInfo->Fade)
+	{
+		return Level->LevelInfo->Fade;
 	}
 	if (Level->LevelInfo->FadeTable == NAME_fogmap)
 	{

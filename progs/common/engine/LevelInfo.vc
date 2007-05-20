@@ -47,6 +47,8 @@ float			Sky2ScrollDelta;
 name			SkyBox;
 
 name			FadeTable;
+int				Fade;
+int				OutsideFog;
 
 name			SongLump;
 int				CDTrack;
@@ -96,10 +98,11 @@ replication
 {
 	reliable if (Role == ROLE_Authority)
 		LevelName, Cluster, ParTime, SuckTime, Sky1Texture, Sky2Texture,
-		Sky1ScrollDelta, Sky2ScrollDelta, SkyBox, FadeTable, SongLump,
-		CDTrack, bDoubleSky, bLightning, bNoIntermission, bNoSoundClipping,
-		bForceNoSkyStretch, bLookupName, TotalKills, TotalItems, TotalSecret,
-		CurrentKills, CurrentItems, CurrentSecret, CompletitionTime;
+		Sky1ScrollDelta, Sky2ScrollDelta, SkyBox, FadeTable, Fade, OutsideFog,
+		SongLump, CDTrack, bDoubleSky, bLightning, bNoIntermission,
+		bNoSoundClipping, bForceNoSkyStretch, bLookupName, TotalKills,
+		TotalItems, TotalSecret, CurrentKills, CurrentItems, CurrentSecret,
+		CompletitionTime;
 }
 
 //

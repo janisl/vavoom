@@ -85,6 +85,8 @@ void VLevelInfo::SetMapInfo(const mapInfo_t& Info)
 	SkyBox = Info.SkyBox;
 
 	FadeTable = Info.FadeTable;
+	Fade = Info.Fade;
+	OutsideFog = Info.OutsideFog;
 
 	SongLump = Info.SongLump;
 	CDTrack = Info.CDTrack;

@@ -63,6 +63,8 @@ struct mapInfo_t
 	float		Sky2ScrollDelta;// Alternate sky texture speed
 	VName		SkyBox;			// Sky box
 	VName		FadeTable;		// Fade table {fogmap}
+	vuint32		Fade;
+	vuint32		OutsideFog;
 	float		Gravity;		// Map gravity
 	vuint32		Flags;
 	VName		TitlePatch;
