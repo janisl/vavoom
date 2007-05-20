@@ -306,6 +306,11 @@ void VThinkerChannel::ParsePacket(VMessageIn& Msg)
 		SetThinker(Th);
 	}
 
+	VEntity* Ent = Cast<VEntity>(Thinker);
+	if (Ent)
+	{
+		Ent->UnlinkFromWorld();
+	}
 	while (!Msg.AtEnd())
 	{
 		int FldIdx = Msg.ReadInt(Thinker->GetClass()->NumNetFields);
@@ -401,6 +406,10 @@ void VThinkerChannel::ParsePacket(VMessageIn& Msg)
 		}
 
 		Sys_Error("Bad net field %d", FldIdx);
+	}
+	if (Ent)
+	{
+		Ent->LinkToWorld();
 	}
 	unguard;
 }
