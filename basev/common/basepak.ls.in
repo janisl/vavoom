@@ -11,5 +11,8 @@ progs/linespec.dat		progs/linespec.dat
 //	Default texture
 textures/-noflat-.png	@srcdir@/textures/-noflat-.png
 
+//	Colour names
+x11r6rgb.txt			@srcdir@/x11r6rgb.txt
+
 //	Base scripts
 terrain.txt				@srcdir@/terrain.txt

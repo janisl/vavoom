@@ -347,3 +347,214 @@ int PassFloat(float f)
 	v.f = f;
 	return v.i;
 }
+
+//==========================================================================
+//
+//	LookupColourName
+//
+//==========================================================================
+
+static VStr LookupColourName(VStr& Name)
+{
+	guard(LookupColourName);
+	//	Check that X111R6RGB lump exists.
+	int Lump = W_CheckNumForName(NAME_x11r6rgb);
+	if (Lump < 0)
+	{
+		GCon->Logf("X11R6RGB lump not found");
+		return Name;
+	}
+
+	//	Read the lump.
+	VStream* Strm = W_CreateLumpReaderNum(Lump);
+	char* Buf = new char[Strm->TotalSize() + 1];
+	Strm->Serialise(Buf, Strm->TotalSize());
+	Buf[Strm->TotalSize()] = 0;
+	char* BufEnd = Buf + Strm->TotalSize();
+	delete Strm;
+
+	vuint8 Col[3];
+	int Count = 0;
+	for (char* pBuf = Buf; pBuf < BufEnd;)
+	{
+		if ((vuint8)*pBuf <= ' ')
+		{
+			//	Skip whitespace
+			pBuf++;
+		}
+		else if (Count == 0 && *pBuf == '!')
+		{
+			//	Skip comment
+			while (pBuf < BufEnd && *pBuf != '\n')
+			{
+				pBuf++;
+			}
+		}
+		else if (Count < 3)
+		{
+			//	Parse colour component
+			char* pEnd;
+			Col[Count] = strtoul(pBuf, &pEnd, 10);
+			if (pEnd == pBuf)
+			{
+				GCon->Logf("Bad colour component value");
+				break;
+			}
+			pBuf = pEnd;
+			Count++;
+		}
+		else
+		{
+			//	Colour name
+			char* Start = pBuf;
+			while (pBuf < BufEnd && *pBuf != '\n')
+			{
+				pBuf++;
+			}
+			//	Skip trailing whitespace
+			while (pBuf > Start && pBuf[-1] >= 0 && pBuf[-1] <= ' ')
+			{
+				pBuf--;
+			}
+			if (pBuf == Start)
+			{
+				GCon->Logf("Missing name of the colour");
+				break;
+			}
+			*pBuf = 0;
+			if ((size_t)(pBuf - Start) == Name.Length() && !Name.ICmp(Start))
+			{
+				char ValBuf[8];
+				sprintf(ValBuf, "#%02x%02x%02x", Col[0], Col[1], Col[2]);
+				delete[] Buf;
+				return ValBuf;
+			}
+			Count = 0;
+		}
+	}
+	delete[] Buf;
+	return Name;
+	unguard;
+}
+
+//==========================================================================
+//
+//	ParseHex
+//
+//==========================================================================
+
+int ParseHex(const char* Str)
+{
+	guard(ParseHex);
+	int Ret = 0;
+	int Mul = 1;
+	const char* c = Str;
+	if (*c == '-')
+	{
+		c++;
+		Mul = -1;
+	}
+	for (; *c; c++)
+	{
+		if (*c >= '0' && *c <= '9')
+		{
+			Ret = (Ret << 4) + *c - '0';
+		}
+		else if (*c >= 'a' && *c <= 'f')
+		{
+			Ret = (Ret << 4) + *c - 'a' + 10;
+		}
+		else if (*c >= 'A' && *c <= 'F')
+		{
+			Ret = (Ret << 4) + *c - 'A' + 10;
+		}
+	}
+	return Ret * Mul;
+	unguard;
+}
+
+//==========================================================================
+//
+//	M_ParseColour
+//
+//==========================================================================
+
+vuint32 M_ParseColour(VStr Name)
+{
+	guard(M_ParseColour);
+	VStr Str = LookupColourName(Name);
+	vuint8 Col[3];
+	if (Str[0] == '#')
+	{
+		//	Looks like an HTML-style colur
+		if (Str.Length() == 7)
+		{
+			//	#rrggbb format colour
+			for (int i = 0; i < 3; i++)
+			{
+				char Val[3];
+				Val[0] = Str[i * 2 + 1];
+				Val[1] = Str[i * 2 + 2];
+				Val[2] = 0;
+				Col[i] = ParseHex(Val);
+			}
+		}
+		else if (Str.Length() == 4)
+		{
+			//	#rgb format colur
+			for (int i = 0; i < 3; i++)
+			{
+				char Val[3];
+				Val[0] = Str[i + 1];
+				Val[1] = Str[i + 1];
+				Val[2] = 0;
+				Col[i] = ParseHex(Val);
+			}
+		}
+		else
+		{
+			//	Assume it's a bad colour value, set it to black
+			Col[0] = 0;
+			Col[1] = 0;
+			Col[2] = 0;
+		}
+	}
+	else
+	{
+		//	Treat like space separated hex values
+		size_t Idx = 0;
+		for (int i = 0; i < 3; i++)
+		{
+			//	Skip whitespace.
+			while (Idx < Str.Length() && (vuint8)Str[Idx] <= ' ')
+			{
+				Idx++;
+			}
+			int Count = 0;
+			char Val[3];
+			while (Idx < Str.Length() && (vuint8)Str[Idx] > ' ')
+			{
+				if (Count < 2)
+				{
+					Val[Count++] = Str[Idx];
+				}
+				Idx++;
+			}
+			if (Count == 0)
+			{
+				Col[i] = 0;
+			}
+			else
+			{
+				if (Count == 1)
+				{
+					Val[1] = Val[0];
+				}
+				Val[2] = 0;
+				Col[i] = ParseHex(Val);
+			}
+		}
+	}
+	return 0xff000000 | (Col[0] << 16) | (Col[1] << 8) | Col[2];
+	unguard;
+}
