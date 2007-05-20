@@ -1482,6 +1482,7 @@ void VLevel::CreateRepBase()
 		B.ceil_xoffs = S.ceiling.xoffs;
 		B.ceil_yoffs = S.ceiling.yoffs;
 		B.lightlevel = S.params.lightlevel;
+		B.Fade = S.params.Fade;
 	}
 
 	BasePolyObjs = new rep_polyobj_t[NumPolyObjs];

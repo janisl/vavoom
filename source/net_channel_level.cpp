@@ -226,9 +226,10 @@ void VLevelChannel::Update()
 			mround(RepSec->ceil_xoffs) != mround(Sec->ceiling.xoffs) ||
 			mround(RepSec->ceil_yoffs) != mround(Sec->ceiling.yoffs);
 		bool LightChanged = abs(RepSec->lightlevel - Sec->params.lightlevel) >= 4;
+		bool FadeChanged = RepSec->Fade != Sec->params.Fade;
 		if (RepSec->floor_pic == Sec->floor.pic &&
 			RepSec->ceil_pic == Sec->ceiling.pic &&
-			!FloorChanged && !CeilChanged && !LightChanged)
+			!FloorChanged && !CeilChanged && !LightChanged && !FadeChanged)
 			continue;
 
 		Msg.WriteInt(CMD_Sector, CMD_MAX);
@@ -274,6 +275,11 @@ void VLevelChannel::Update()
 		{
 			Msg.WriteInt(Sec->params.lightlevel >> 2, 256);
 		}
+		Msg.WriteBit(FadeChanged);
+		if (FadeChanged)
+		{
+			Msg << Sec->params.Fade;
+		}
 
 		RepSec->floor_pic = Sec->floor.pic;
 		RepSec->floor_dist = Sec->floor.dist;
@@ -284,6 +290,7 @@ void VLevelChannel::Update()
 		RepSec->ceil_xoffs = Sec->ceiling.xoffs;
 		RepSec->ceil_yoffs = Sec->ceiling.yoffs;
 		RepSec->lightlevel = Sec->params.lightlevel;
+		RepSec->Fade = Sec->params.Fade;
 	}
 
 	for (int i = 0; i < Level->NumPolyObjs; i++)
@@ -408,6 +415,10 @@ void VLevelChannel::ParsePacket(VMessageIn& Msg)
 				if (Msg.ReadBit())
 				{
 					Sec->params.lightlevel = Msg.ReadInt(256) << 2;
+				}
+				if (Msg.ReadBit())
+				{
+					Msg << Sec->params.Fade;
 				}
 				if (PrevFloorDist != Sec->floor.dist ||
 					PrevCeilDist != Sec->ceiling.dist)

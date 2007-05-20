@@ -554,7 +554,8 @@ enum
 	LNSPEC_TransferFloorLight,// 210
 	LNSPEC_TransferCeilingLight,
 
-	LNSPEC_SectorSetDamage = 214,
+	LNSPEC_SectorSetFade = 213,
+	LNSPEC_SectorSetDamage,
 	LNSPEC_TeleportLine,
 	LNSPEC_SectorSetGravity,
 	LNSPEC_StairsBuildUpDoom,
@@ -723,6 +724,7 @@ struct sec_params_t
 {
 	int lightlevel;
 	int LightColour;
+	int Fade;
 	int contents;
 };
 

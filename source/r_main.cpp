@@ -772,6 +772,10 @@ vuint32 VRenderLevel::GetFade(subsector_t* Sub)
 		return 0xff000000 | (int(255 * r_fog_r) << 16) |
 			(int(255 * r_fog_g) << 8) | int(255 * r_fog_b);
 	}
+	if (Sub->sector->params.Fade)
+	{
+		return Sub->sector->params.Fade;
+	}
 	if (Level->LevelInfo->OutsideFog && Sub->sector->ceiling.pic == skyflatnum)
 	{
 		return Level->LevelInfo->OutsideFog;

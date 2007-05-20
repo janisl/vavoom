@@ -218,6 +218,7 @@ struct sec_params_t
 {
 	int			lightlevel;
 	int			LightColour;
+	int			Fade;
 	int			contents;
 };
 
@@ -507,6 +508,7 @@ struct rep_sector_t
 	float		ceil_xoffs;
 	float		ceil_yoffs;
 	int			lightlevel;
+	int			Fade;
 };
 
 struct rep_polyobj_t
