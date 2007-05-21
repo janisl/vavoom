@@ -124,6 +124,25 @@ void StartFinale(name AFinaleType)
 	{
 		InitPic('endpic');
 	}
+	else if (FinaleType == 'EndGameUnderwater')
+	{
+		fpage1 = R_RegisterPicPal('e2end', 'e2pal');
+#ifdef FIXME
+		S_StartSong("d_victor", P_GetCDEnd1Track(), true);
+#else
+		CmdBuf_AddText("music loop d_victor\n");
+#endif
+	}
+	else if (FinaleType == 'EndGameDemon')
+	{
+		fpage1 = R_RegisterPic('final1');
+		fpage2 = R_RegisterPic('final2');
+#ifdef FIXME
+		S_StartSong("d_victor", P_GetCDEnd1Track(), true);
+#else
+		CmdBuf_AddText("music loop d_victor\n");
+#endif
+	}
 	else if (FinaleType == 'EndGameCast')
 	{
 		F_StartCast();
@@ -171,6 +190,10 @@ void DrawWindow(GC gc)
 	else if (FinaleType == 'EndGameCast')
 	{
 		F_CastDrawer();
+	}
+	else if (FinaleType == 'EndGameDemon')
+	{
+		F_DemonScroll();
 	}
 	else
 	{
@@ -530,6 +553,34 @@ void F_CastDrawer()
 	// draw the current frame in the middle of the screen
 	R_DrawSpritePatch(160, 170, caststate->sprite, caststate->frame, 0);
 #endif
+}
+
+//==========================================================================
+//
+//  F_DemonScroll
+//
+//==========================================================================
+
+void F_DemonScroll()
+{
+	SetVirtualScreen(320, 200);
+	if (FinaleTime < 2.0)
+	{
+		R_DrawPic(0, 0, fpage1);
+	}
+	else if (FinaleTime < 22.0)
+	{
+		int yval = ftoi((FinaleTime - 2.0) * 10.0);
+
+		R_DrawPic(0, yval, fpage1);
+		R_DrawPic(0, yval - 200, fpage2);
+	}
+	else
+	{
+		//else, we'll just sit here and wait, for now
+		R_DrawPic(0, 0, fpage2);
+	}
+	SetVirtualScreen(640, 480);
 }
 
 //==========================================================================
