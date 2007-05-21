@@ -70,11 +70,7 @@ enum gameArchiveSegment_t
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
-void SV_SpawnServer(const char *mapname, bool spawn_thinkers);
-void SV_SendServerInfoToClients();
-void SV_ShutdownServer(bool);
 void CL_Disconnect();
-void SV_AddEntity(VEntity* Ent);
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
@@ -1009,7 +1005,6 @@ void SV_MapTeleport(VName mapname)
 		VEntity* Ent = Cast<VEntity>(TravelObjs[i]);
 		if (Ent)
 		{
-			SV_AddEntity(Ent);
 			Ent->LinkToWorld();
 		}
 	}

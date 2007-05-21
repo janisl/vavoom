@@ -66,6 +66,8 @@ class VThinker : public VObject
 	//	VThinker interface
 	virtual void Tick(float);
 	virtual void DestroyThinker();
+	virtual void AddedToLevel();
+	virtual void RemovedFromLevel();
 
 	void StartSound(const TVec&, vint32, vint32, vint32, float, float);
 	void StopSound(vint32, vint32);

@@ -197,33 +197,6 @@ void SV_Clear()
 
 //==========================================================================
 //
-//	SV_AddEntity
-//
-//==========================================================================
-
-void SV_AddEntity(VEntity* Ent)
-{
-	int Id = 0;
-	bool Used = false;
-	do
-	{
-		Id++;
-		Used = false;
-		for (TThinkerIterator<VEntity> Other(GLevel); Other; ++Other)
-		{
-			if (Other->NetID == Id)
-			{
-				Used = true;
-				break;
-			}
-		}
-	}
-	while (Used);
-	Ent->NetID = Id;
-}
-
-//==========================================================================
-//
 //	VLevel::SpawnThinker
 //
 //==========================================================================
@@ -237,7 +210,6 @@ VThinker* VLevel::SpawnThinker(VClass* Class, const TVec& AOrigin,
 
 	if (this == GLevel && Class->IsChildOf(VEntity::StaticClass()))
 	{
-		SV_AddEntity((VEntity*)Ret);
 		((VEntity*)Ret)->Origin = AOrigin;
 		((VEntity*)Ret)->Angles = AAngles;
 		if (GLevelInfo->LevelInfoFlags & VLevelInfo::LIF_BegunPlay)
@@ -248,27 +220,6 @@ VThinker* VLevel::SpawnThinker(VClass* Class, const TVec& AOrigin,
 	}
 
 	return Ret;
-	unguard;
-}
-
-//==========================================================================
-//
-//	VEntity::Destroy
-//
-//==========================================================================
-
-void VEntity::Destroy()
-{
-	guard(VEntity::Destroy);
-	if (XLevel == GLevel && GLevel)
-	{
-		eventDestroyed();
-
-		// stop any playing sound
-		StopSound(0);
-	}
-
-	Super::Destroy();
 	unguard;
 }
 

@@ -57,10 +57,48 @@ IMPLEMENT_CLASS(V, Entity);
 void VEntity::DestroyThinker()
 {
 	guard(VEntity::DestroyThinker)
+	if (Role == ROLE_Authority)
+	{
+		eventDestroyed();
+
+		// stop any playing sound
+		StopSound(0);
+	}
+
 	// unlink from sector and block lists
 	UnlinkFromWorld();
 
 	Super::DestroyThinker();
+	unguard;
+}
+
+//==========================================================================
+//
+//	VEntity::AddedToLevel
+//
+//==========================================================================
+
+void VEntity::AddedToLevel()
+{
+	guard(VEntity::AddedToLevel);
+	//	Find an available net ID.
+	int Id = 0;
+	bool Used = false;
+	do
+	{
+		Id++;
+		Used = false;
+		for (TThinkerIterator<VEntity> Other(XLevel); Other; ++Other)
+		{
+			if (Other->NetID == Id)
+			{
+				Used = true;
+				break;
+			}
+		}
+	}
+	while (Used);
+	NetID = Id;
 	unguard;
 }
 

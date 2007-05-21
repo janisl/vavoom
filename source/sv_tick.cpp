@@ -127,6 +127,9 @@ void VLevel::AddThinker(VThinker* Th)
 	else
 		ThinkerHead = Th;
 	ThinkerTail = Th;
+
+	//	Notify thinker that is was just added to a level.
+	Th->AddedToLevel();
 	unguard;
 }
 
@@ -139,6 +142,9 @@ void VLevel::AddThinker(VThinker* Th)
 void VLevel::RemoveThinker(VThinker* Th)
 {
 	guard(VLevel::RemoveThinker);
+	//	Notify that thinker is being removed from level.
+	Th->RemovedFromLevel();
+
 	if (Th == ThinkerHead)
 		ThinkerHead = Th->Next;
 	else

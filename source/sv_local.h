@@ -228,6 +228,8 @@ void SV_SetUserInfo(VBasePlayer* Player, const VStr& info);
 
 void SV_DropClient(VBasePlayer* Player, bool crash);
 void SV_ShutdownServer(bool);
+void SV_SpawnServer(const char *mapname, bool spawn_thinkers);
+void SV_SendServerInfoToClients();
 
 extern TArray<VSndSeqInfo>	sv_ActiveSequences;
 

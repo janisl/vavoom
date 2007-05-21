@@ -217,11 +217,11 @@ class VEntity : public VThinker
 	static void InitFuncIndexes();
 
 	//	VObject interface.
-	void Destroy();
 	void Serialise(VStream&);
 
 	//	VThinker interface.
 	void DestroyThinker();
+	void AddedToLevel();
 
 	void eventOnMapSpawn(mthing_t* mthing)
 	{
