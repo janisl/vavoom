@@ -220,8 +220,6 @@ void SV_ChangeSky(const char*, const char*);
 void SV_ChangeMusic(const char*);
 void SV_ChangeLocalMusic(VBasePlayer*, const char*);
 void SV_ReadMove();
-int SV_CheckFatPVS(subsector_t*);
-bool SV_SecCheckFatPVS(sector_t*);
 
 void Draw_TeleportIcon();
 void CL_Disconnect();

@@ -167,7 +167,7 @@ void VLevelChannel::Update()
 	for (int i = 0; i < Level->NumSides; i++)
 	{
 		side_t* Side = &Level->Sides[i];
-		if (!SV_SecCheckFatPVS(Side->sector))
+		if (!Connection->SecCheckFatPVS(Side->sector))
 			continue;
 
 		rep_side_t* RepSide = &Sides[i];
@@ -215,7 +215,8 @@ void VLevelChannel::Update()
 	for (int i = 0; i < Level->NumSectors; i++)
 	{
 		sector_t* Sec = &Level->Sectors[i];
-		if (!SV_SecCheckFatPVS(Sec) && !(Sec->SectorFlags & sector_t::SF_ExtrafloorSource))
+		if (!Connection->SecCheckFatPVS(Sec) &&
+			!(Sec->SectorFlags & sector_t::SF_ExtrafloorSource))
 			continue;
 
 		rep_sector_t* RepSec = &Sectors[i];
@@ -296,7 +297,7 @@ void VLevelChannel::Update()
 	for (int i = 0; i < Level->NumPolyObjs; i++)
 	{
 		polyobj_t* Po = &Level->PolyObjs[i];
-		if (!SV_CheckFatPVS(Po->subsector))
+		if (!Connection->CheckFatPVS(Po->subsector))
 			continue;
 
 		rep_polyobj_t* RepPo = &PolyObjs[i];

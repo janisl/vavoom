@@ -80,25 +80,21 @@ VLevelInfo*		GLevelInfo;
 
 TArray<VSndSeqInfo>	sv_ActiveSequences;
 
-// PRIVATE DATA DEFINITIONS ------------------------------------------------
+int 			LeavePosition;
 
-int 		LeavePosition;
+bool			completed;
+
+// PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static int		RebornPosition;	// Position indicator for cooperative net-play reborn
 
-bool		completed;
+static bool		mapteleport_issued;
 
 static VCvarI	TimeLimit("TimeLimit", "0");
 static VCvarI	DeathMatch("DeathMatch", "0", CVAR_ServerInfo);
 static VCvarI  	NoMonsters("NoMonsters", "0");
 static VCvarI	Skill("Skill", "2");
-
 static VCvarI	sv_cheats("sv_cheats", "0", CVAR_ServerInfo | CVAR_Latch);
-
-static vuint8	*fatpvs;
-
-static bool		mapteleport_issued;
-
 static VCvarI	split_frame("split_frame", "1", CVAR_Archive);
 static VCvarF	sv_gravity("sv_gravity", "800.0", CVAR_ServerInfo);
 static VCvarI	sv_maxmove("sv_maxmove", "400", CVAR_Archive);
@@ -255,8 +251,6 @@ VThinker* VLevel::SpawnThinker(VClass* Class, const TVec& AOrigin,
 	unguard;
 }
 
-int c_bigClass;
-int c_bigState;
 //==========================================================================
 //
 //	VEntity::Destroy
@@ -300,41 +294,11 @@ void SV_WriteViewData(VBasePlayer &player)
 
 //==========================================================================
 //
-//	SV_CheckFatPVS
-//
-//==========================================================================
-
-int SV_CheckFatPVS(subsector_t *subsector)
-{
-	int ss = subsector - GLevel->Subsectors;
-	return fatpvs[ss / 8] & (1 << (ss & 7));
-}
-
-//==========================================================================
-//
-//	SV_SecCheckFatPVS
-//
-//==========================================================================
-
-bool SV_SecCheckFatPVS(sector_t *sec)
-{
-	for (subsector_t *sub = sec->subsectors; sub; sub = sub->seclink)
-	{
-		if (SV_CheckFatPVS(sub))
-		{
-			return true;
-		}
-	}
-	return false;
-}
-
-//==========================================================================
-//
 //	IsRelevant
 //
 //==========================================================================
 
-static bool IsRelevant(VThinker* Th)
+static bool IsRelevant(VThinker* Th, VNetConnection* Connection)
 {
 	guardSlow(IsRelevant);
 	if (Th->ThinkerFlags & VThinker::TF_AlwaysRelevant)
@@ -344,7 +308,7 @@ static bool IsRelevant(VThinker* Th)
 		return false;
 	if (Ent->EntityFlags & VEntity::EF_Hidden)
 		return false;
-	if (!SV_CheckFatPVS(Ent->SubSector))
+	if (!Connection->CheckFatPVS(Ent->SubSector))
 		return false;
 	return true;
 	unguardSlow;
@@ -361,7 +325,7 @@ static void SV_UpdateLevel(VBasePlayer* Player)
 	guard(SV_UpdateLevel);
 	int		i;
 
-	fatpvs = GLevel->LeafPVS(Player->MO->SubSector);
+	Player->Net->FatPvs = GLevel->LeafPVS(Player->MO->SubSector);
 
 	((VLevelChannel*)Player->Net->Channels[CHANIDX_Level])->Update();
 
@@ -378,7 +342,7 @@ static void SV_UpdateLevel(VBasePlayer* Player)
 	//	Update mobjs in sight
 	for (TThinkerIterator<VThinker> Th(GLevel); Th; ++Th)
 	{
-		if (!IsRelevant(*Th))
+		if (!IsRelevant(*Th, Player->Net))
 		{
 			continue;
 		}

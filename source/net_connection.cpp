@@ -66,6 +66,7 @@ VNetConnection::VNetConnection(VSocketPublic* ANetCon, VNetContext* AContext,
 , AckSequence(0)
 , UnreliableSendSequence(0)
 , UnreliableReceiveSequence(0)
+, FatPvs(NULL)
 {
 	memset(Channels, 0, sizeof(Channels));
 	memset(InSequence, 0, sizeof(InSequence));
@@ -570,4 +571,38 @@ void VNetConnection::SendCommand(VStr Str)
 	Msg << Str;
 	Channels[CHANIDX_General]->SendMessage(&Msg);
 	unguard;
+}
+
+//==========================================================================
+//
+//	VNetConnection::CheckFatPVS
+//
+//==========================================================================
+
+int VNetConnection::CheckFatPVS(subsector_t* Subsector)
+{
+	guardSlow(VNetConnection::CheckFatPVS);
+	int ss = Subsector - Context->GetLevel()->Subsectors;
+	return FatPvs[ss / 8] & (1 << (ss & 7));
+	unguardSlow;
+}
+
+//==========================================================================
+//
+//	VNetConnection::SecCheckFatPVS
+//
+//==========================================================================
+
+bool VNetConnection::SecCheckFatPVS(sector_t* Sec)
+{
+	guardSlow(VNetConnection::SecCheckFatPVS);
+	for (subsector_t* Sub = Sec->subsectors; Sub; Sub = Sub->seclink)
+	{
+		if (CheckFatPVS(Sub))
+		{
+			return true;
+		}
+	}
+	return false;
+	unguardSlow;
 }

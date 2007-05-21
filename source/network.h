@@ -299,6 +299,7 @@ public:
 	vuint32								AckSequence;
 	vuint32								UnreliableSendSequence;
 	vuint32								UnreliableReceiveSequence;
+	vuint8*								FatPvs;
 
 	VNetConnection(VSocketPublic*, VNetContext*, VBasePlayer*);
 	virtual ~VNetConnection();
@@ -319,6 +320,8 @@ public:
 	}
 	void Tick();
 	void SendCommand(VStr Str);
+	int CheckFatPVS(subsector_t*);
+	bool SecCheckFatPVS(sector_t*);
 };
 
 //
