@@ -124,6 +124,7 @@ void VChannel::ReceivedRawMessage(VMessageIn& Msg)
 				Connection->Driver->receivedDuplicateCount++;
 				return;
 			}
+			pNext = &(*pNext)->Next;
 		}
 		VMessageIn* Copy = new VMessageIn(Msg);
 		Copy->Next = *pNext;
@@ -179,6 +180,11 @@ void VChannel::SendMessage(VMessageOut* AMsg)
 {
 	guard(VChannel::SendMessage);
 	VMessageOut* Msg = AMsg;
+	if (Msg->IsError())
+	{
+		GCon->Logf(NAME_DevNet, "Overflowed message");
+		return;
+	}
 	if (Msg->bReliable)
 	{
 		Msg->Sequence = Connection->OutSequence[Index];
