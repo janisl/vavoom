@@ -80,6 +80,7 @@ VThinkerChannel::~VThinkerChannel()
 	//	If this is a client version of entity, destriy it.
 	if (Thinker && !OpenedLocally)
 	{
+		Thinker->DestroyThinker();
 		Thinker->XLevel->RemoveThinker(Thinker);
 		Thinker->ConditionalDestroy();
 	}
