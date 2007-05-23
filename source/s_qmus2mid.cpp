@@ -346,7 +346,7 @@ bool VQMus2Mid::Convert(VStream& Strm)
 		if (event & 0x80)
 		{
 			DeltaTime = ReadTime(Strm);
-			for (i = 0; i < (int)TrackCnt; i++)
+			for (i = 0; i < 16; i++)
 				Tracks[i].DeltaTime += DeltaTime;
 		}
 
