@@ -389,8 +389,13 @@ dnl ---------------- Other *NIX platforms ----------------
 	])])
 
 	if test "x$with_opengl" != "xno"; then
+		AC_CHECK_HEADER([GL/gl.h], [], [with_opengl=no])
+	fi
+	if test "x$with_opengl" != "xno"; then
+		AC_CHECK_LIB([GL], [glBegin], [], [with_opengl=no])
+	fi
+	if test "x$with_opengl" != "xno"; then
 		MAIN_OPENGL=TRUE
-		LIBS="-lGL $LIBS"
 		if test "x$MAIN_PLATFORM" = "xUNIX_ALLEGRO"; then
 			AC_CHECK_HEADER([alleggl.h], [], AC_MSG_ERROR(['Vavoom requires AllegroGL to use OpenGL']))
 			AC_CHECK_LIB([GLU], [gluProject], [], AC_MSG_ERROR(['Vavoom requires GLU to use OpenGL']))
