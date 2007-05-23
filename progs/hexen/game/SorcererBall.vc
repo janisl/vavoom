@@ -170,6 +170,13 @@ final void A_SorcBallOrbit()
 	float dist = Instigator.Radius - (Radius * 2.0);
 	float prevangle = Special1f;
 
+	if (!Instigator)
+	{
+		//	Sorcerer dissapeared.
+		Destroy();
+		return;
+	}
+
 	if (Instigator.Health <= 0)
 		SetState(PainState);
 
