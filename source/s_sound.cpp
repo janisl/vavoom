@@ -1180,6 +1180,14 @@ void VAudio::PlaySong(const char* Song, bool Loop)
 
 	//	Get music volume for this song.
 	MusicVolumeFactor = GSoundManager->GetMusicVolume(Song);
+	if (StreamMusicPlayer)
+	{
+		SoundDevice->SetStreamVolume(music_volume * MusicVolumeFactor);
+	}
+	if (MidiDevice)
+	{
+		MidiDevice->SetVolume(music_volume * MusicVolumeFactor);
+	}
 
 	//	Find the song.
 	int Lump = -1;
