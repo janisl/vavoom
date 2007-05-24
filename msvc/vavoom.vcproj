@@ -2188,6 +2188,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\p_terrain.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\source\p_thinker.cpp"
 				>
 			</File>

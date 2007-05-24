@@ -153,6 +153,7 @@ _____MAIN_EXE__SOURCES = \
 	p_playerreplicationinfo.h \
 	p_polyobj.cpp \
 	p_setup.cpp \
+	p_terrain.cpp \
 	p_thinker.cpp \
 	p_thinker.h \
 	p_trace.cpp \
@@ -469,6 +470,7 @@ _____SERVER_EXE__SOURCES = \
 	p_playerreplicationinfo.cpp \
 	p_polyobj.cpp \
 	p_setup.cpp \
+	p_terrain.cpp \
 	p_thinker.cpp \
 	p_trace.cpp \
 	p_worldinfo.cpp \
