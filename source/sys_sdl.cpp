@@ -504,7 +504,7 @@ void Sys_Error(const char *error, ...)
 	vsprintf(buf, error, argptr);
 	va_end(argptr);
 
-	dprintf("Sys_Error: %s", buf);
+	dprintf("Sys_Error: %s\n", buf);
 	throw VavoomError(buf);
 }
 
