@@ -2152,6 +2152,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\p_entity_world.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\source\p_gameinfo.h"
 				>
 			</File>

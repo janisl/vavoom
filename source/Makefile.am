@@ -144,6 +144,7 @@ _____MAIN_EXE__SOURCES = \
 	p_clip.h \
 	p_entity.cpp \
 	p_entity.h \
+	p_entity_world.cpp \
 	p_gameinfo.h \
 	p_levelinfo.cpp \
 	p_levelinfo.h \
@@ -463,6 +464,7 @@ _____SERVER_EXE__SOURCES = \
 	p_acs.cpp \
 	p_clip.cpp \
 	p_entity.cpp \
+	p_entity_world.cpp \
 	p_levelinfo.cpp \
 	p_player.cpp \
 	p_playerreplicationinfo.cpp \
