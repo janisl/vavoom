@@ -1068,9 +1068,12 @@ void VLevel::LoadBlockMap(int Lump)
 void VLevel::LoadReject(int Lump)
 {
 	guard(VLevel::LoadReject);
-	RejectMatrix = new vuint8[W_LumpLength(Lump)];
 	VStream* Strm = W_CreateLumpReaderNum(Lump);
-	Strm->Serialise(RejectMatrix, Strm->TotalSize());
+	if (Strm->TotalSize())
+	{
+		RejectMatrix = new vuint8[Strm->TotalSize()];
+		Strm->Serialise(RejectMatrix, Strm->TotalSize());
+	}
 	delete Strm;
 	unguard;
 }
