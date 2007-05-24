@@ -816,7 +816,7 @@ void TranslateLine(Level InLevel, line_t* line)
 			line->arg1 = OldTag;
 		}
 
-		if (OldSpec <= 0x3000)
+		if (OldSpec < 0x3000)
 		{
 			//	Generalised crusher (tag, dnspeed, upspeed, silent, damage)
 			line->special = LNSPEC_CeilingGenericCrush;
@@ -835,7 +835,7 @@ void TranslateLine(Level InLevel, line_t* line)
 			line->arg4 = (OldSpec & 0x0040) >> 6;
 			line->arg5 = 10;
 		}
-		else if (OldSpec <= 0x3400)
+		else if (OldSpec < 0x3400)
 		{
 			//	Generalised stairs (tag, speed, step, dir/igntxt, reset)
 			line->special = LNSPEC_StairsGeneric;
@@ -860,7 +860,7 @@ void TranslateLine(Level InLevel, line_t* line)
 			line->arg4 = (OldSpec & 0x0300) >> 8;
 			line->arg5 = 0;
 		}
-		else if (OldSpec <= 0x3800)
+		else if (OldSpec < 0x3800)
 		{
 			//	Generalised lift (tag, speed, delay, target, height)
 			line->special = LNSPEC_PlatGeneric;
@@ -885,7 +885,7 @@ void TranslateLine(Level InLevel, line_t* line)
 			line->arg4 = ((OldSpec & 0x0300) >> 8) + 1;
 			line->arg5 = 0;
 		}
-		else if (OldSpec <= 0x3c00)
+		else if (OldSpec < 0x3c00)
 		{
 			//	Generalised locked door (tag, speed, kind, delay, lock)
 			line->special = LNSPEC_DoorGeneric;
@@ -913,7 +913,7 @@ void TranslateLine(Level InLevel, line_t* line)
 			}
 			line->arg5 |= (OldSpec & 0x0200) >> 2;
 		}
-		else if (OldSpec <= 0x4000)
+		else if (OldSpec < 0x4000)
 		{
 			//	Generalised door (tag, speed, kind, delay, lock)
 			line->special = LNSPEC_DoorGeneric;
@@ -943,7 +943,7 @@ void TranslateLine(Level InLevel, line_t* line)
 		{
 			//	Generalised ceiling (tag, speed, height, target, change/model/direct/crush)
 			//	Generalised floor (tag, speed, height, target, change/model/direct/crush)
-			if (OldSpec <= 0x6000)
+			if (OldSpec < 0x6000)
 				line->special = LNSPEC_CeilingGeneric;
 			else
 				line->special = LNSPEC_FloorGeneric;
