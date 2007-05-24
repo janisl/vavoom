@@ -25,7 +25,7 @@
 
 class MainGameInfo : LineSpecialGameInfo;
 
-const int NUM_SPECIALS = 273;
+const int NUM_SPECIALS = 348;
 
 struct spec_trans_t
 {
@@ -719,6 +719,15 @@ void InitTranslationTables()
 	//	270
 	SetLineTrans(271, 0, -1, 255, 0, 0, 0, SPAC_CROSS, false); // LNSPEC_StaticInit
 	SetLineTrans(272, 0, -1, 255, 1, 0, 0, SPAC_CROSS, false); // LNSPEC_StaticInit
+
+	SetLineTrans(340, LNSPEC_PlaneAlign, 1, 0, 0, 0, 0, SPAC_CROSS, false);
+	SetLineTrans(341, LNSPEC_PlaneAlign, 0, 1, 0, 0, 0, SPAC_CROSS, false);
+	SetLineTrans(342, LNSPEC_PlaneAlign, 1, 1, 0, 0, 0, SPAC_CROSS, false);
+	SetLineTrans(343, LNSPEC_PlaneAlign, 2, 0, 0, 0, 0, SPAC_CROSS, false);
+	SetLineTrans(344, LNSPEC_PlaneAlign, 0, 2, 0, 0, 0, SPAC_CROSS, false);
+	SetLineTrans(345, LNSPEC_PlaneAlign, 2, 2, 0, 0, 0, SPAC_CROSS, false);
+	SetLineTrans(346, LNSPEC_PlaneAlign, 2, 1, 0, 0, 0, SPAC_CROSS, false);
+	SetLineTrans(347, LNSPEC_PlaneAlign, 1, 2, 0, 0, 0, SPAC_CROSS, false);
 }
 
 //==========================================================================
