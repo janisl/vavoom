@@ -136,7 +136,7 @@ void SV_Init()
 
 	GGameInfo->validcount = &validcount;
 	GGameInfo->skyflatnum = skyflatnum;
-	EntInit();
+	VEntity::InitFuncIndexes();
 
 	P_InitSwitchList();
 	P_InitTerrainTypes();
@@ -1541,6 +1541,46 @@ void ServerFrame(int realtics)
 	}
 
 	SV_SendClientMessages();
+	unguard;
+}
+
+//==========================================================================
+//
+//	SV_FindClassFromEditorId
+//
+//==========================================================================
+
+VClass* SV_FindClassFromEditorId(int Id)
+{
+	guard(SV_FindClassFromEditorId);
+	for (int i = 0; i < VClass::GMobjInfos.Num(); i++)
+	{
+		if (Id == VClass::GMobjInfos[i].doomednum)
+		{
+			return VClass::GMobjInfos[i].class_id;
+		}
+	}
+	return NULL;
+	unguard;
+}
+
+//==========================================================================
+//
+//	SV_FindClassFromScriptId
+//
+//==========================================================================
+
+VClass* SV_FindClassFromScriptId(int Id)
+{
+	guard(SV_FindClassFromScriptId);
+	for (int i = 0; i < VClass::GScriptIds.Num(); i++)
+	{
+		if (Id == VClass::GScriptIds[i].doomednum)
+		{
+			return VClass::GScriptIds[i].class_id;
+		}
+	}
+	return NULL;
 	unguard;
 }
 

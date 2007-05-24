@@ -2248,10 +2248,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\source\sv_ent.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\source\sv_local.h"
 				>
 			</File>

@@ -207,7 +207,6 @@ _____MAIN_EXE__SOURCES = \
 	str.h \
 	stream.cpp \
 	stream.h \
-	sv_ent.cpp \
 	sv_local.h \
 	sv_main.cpp \
 	sv_save.cpp \
@@ -492,7 +491,6 @@ _____SERVER_EXE__SOURCES = \
 	sc_man.cpp \
 	str.cpp \
 	stream.cpp \
-	sv_ent.cpp \
 	sv_main.cpp \
 	sv_save.cpp \
 	sv_swtch.cpp \
