@@ -383,7 +383,7 @@ void AlignPlane(Level InLevel, sector_t *sec, line_t *line, int which)
 		}
 		else
 			vert = (*probe)->v1;
-		dist = fabs(DotProduct(*vert, line->normal));
+		dist = fabs(DotProduct(*vert, line->normal) - line->dist);
 
 		if (dist > bestdist)
 		{
