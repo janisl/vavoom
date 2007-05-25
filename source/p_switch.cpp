@@ -42,17 +42,13 @@
 
 #define BUTTONTIME	1.0					// 1 second
 
-#define TEXTURE_TOP				0
-#define TEXTURE_MIDDLE			1
-#define TEXTURE_BOTTOM			2
-
 // TYPES -------------------------------------------------------------------
 
 enum EBWhere
 {
-	SWITCH_TOP,
-	SWITCH_MIDDLE,
-	SWITCH_BOTTOM
+	SWITCH_Top,
+	SWITCH_Middle,
+	SWITCH_Bottom
 };
 
 class VButton : public VThinker
@@ -90,41 +86,6 @@ IMPLEMENT_CLASS(V, Button)
 
 //==========================================================================
 //
-//  P_StartButton
-//
-//	Start a button counting down till it turns off.
-//
-//==========================================================================
-
-static bool P_StartButton(int sidenum, EBWhere w, int SwitchDef,
-	VName DefaultSound, bool UseAgain)
-{
-	guard(P_StartButton);
-	// See if button is already pressed
-	for (TThinkerIterator<VButton> Btn(GLevel); Btn; ++Btn)
-	{
-		if (Btn->Side == sidenum)
-		{
-			//	Force advancing to the next frame
-			Btn->Timer = 0.001;
-			return false;
-		}
-	}
-
-	VButton* But = (VButton*)GLevel->SpawnThinker(VButton::StaticClass());
-	But->Side = sidenum;
-	But->Where = w;
-	But->SwitchDef = SwitchDef;
-	But->Frame = -1;
-	But->DefaultSound = DefaultSound;
-	But->UseAgain = UseAgain;
-	But->AdvanceFrame();
-	return true;
-	unguard;
-}
-
-//==========================================================================
-//
 //  VLevelInfo::ChangeSwitchTexture
 //
 //	Function that changes wall texture.
@@ -132,7 +93,8 @@ static bool P_StartButton(int sidenum, EBWhere w, int SwitchDef,
 //
 //==========================================================================
 
-void VLevelInfo::ChangeSwitchTexture(line_t* line, bool useAgain, VName DefaultSound)
+void VLevelInfo::ChangeSwitchTexture(line_t* line, bool useAgain,
+	VName DefaultSound)
 {
 	guard(VLevelInfo::ChangeSwitchTexture);
 	int sidenum = line->sidenum[0];
@@ -147,17 +109,17 @@ void VLevelInfo::ChangeSwitchTexture(line_t* line, bool useAgain, VName DefaultS
 
 		if (sw->Tex == texTop)
 		{
-			where = SWITCH_TOP;
+			where = SWITCH_Top;
 			XLevel->Sides[sidenum].toptexture = sw->Frames[0].Texture;
 		}
 		else if (sw->Tex == texMid)
 		{
-			where = SWITCH_MIDDLE;
+			where = SWITCH_Middle;
 			XLevel->Sides[sidenum].midtexture = sw->Frames[0].Texture;
 		}
 		else if (sw->Tex == texBot)
 		{
-			where = SWITCH_BOTTOM;
+			where = SWITCH_Bottom;
 			XLevel->Sides[sidenum].bottomtexture = sw->Frames[0].Texture;
 		}
 		else
@@ -167,10 +129,15 @@ void VLevelInfo::ChangeSwitchTexture(line_t* line, bool useAgain, VName DefaultS
 
 		bool PlaySound;
 		if (useAgain || sw->NumFrames > 1)
-			PlaySound = P_StartButton(sidenum, where, i, DefaultSound,
+		{
+			PlaySound = StartButton(sidenum, where, i, DefaultSound,
 				useAgain);
+		}
 		else
+		{
 			PlaySound = true;
+		}
+
 		if (PlaySound)
 		{
 			SectorStartSound(XLevel->Sides[sidenum].sector, sw->Sound ?
@@ -178,6 +145,41 @@ void VLevelInfo::ChangeSwitchTexture(line_t* line, bool useAgain, VName DefaultS
 		}
 		return;
 	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VLevelInfo::StartButton
+//
+//	Start a button counting down till it turns off.
+//
+//==========================================================================
+
+bool VLevelInfo::StartButton(int sidenum, vuint8 w, int SwitchDef,
+	VName DefaultSound, bool UseAgain)
+{
+	guard(VLevelInfo::StartButton);
+	// See if button is already pressed
+	for (TThinkerIterator<VButton> Btn(XLevel); Btn; ++Btn)
+	{
+		if (Btn->Side == sidenum)
+		{
+			//	Force advancing to the next frame
+			Btn->Timer = 0.001;
+			return false;
+		}
+	}
+
+	VButton* But = (VButton*)XLevel->SpawnThinker(VButton::StaticClass());
+	But->Side = sidenum;
+	But->Where = w;
+	But->SwitchDef = SwitchDef;
+	But->Frame = -1;
+	But->DefaultSound = DefaultSound;
+	But->UseAgain = UseAgain;
+	But->AdvanceFrame();
+	return true;
 	unguard;
 }
 
@@ -225,11 +227,11 @@ void VButton::Tick(float DeltaTime)
 		}
 
 		bool KillMe = AdvanceFrame();
-		if (Where == TEXTURE_MIDDLE)
+		if (Where == SWITCH_Middle)
 		{
 			XLevel->Sides[Side].midtexture = Def->Frames[Frame].Texture;
 		}
-		else if (Where == TEXTURE_BOTTOM)
+		else if (Where == SWITCH_Bottom)
 		{
 			XLevel->Sides[Side].bottomtexture = Def->Frames[Frame].Texture;
 		}

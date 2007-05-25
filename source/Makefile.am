@@ -153,6 +153,7 @@ _____MAIN_EXE__SOURCES = \
 	p_playerreplicationinfo.h \
 	p_polyobj.cpp \
 	p_setup.cpp \
+	p_switch.cpp \
 	p_terrain.cpp \
 	p_thinker.cpp \
 	p_thinker.h \
@@ -211,7 +212,6 @@ _____MAIN_EXE__SOURCES = \
 	sv_local.h \
 	sv_main.cpp \
 	sv_save.cpp \
-	sv_swtch.cpp \
 	sv_tick.cpp \
 	sv_user.cpp \
 	sv_world.cpp \
@@ -470,6 +470,7 @@ _____SERVER_EXE__SOURCES = \
 	p_playerreplicationinfo.cpp \
 	p_polyobj.cpp \
 	p_setup.cpp \
+	p_switch.cpp \
 	p_terrain.cpp \
 	p_thinker.cpp \
 	p_trace.cpp \
@@ -495,7 +496,6 @@ _____SERVER_EXE__SOURCES = \
 	stream.cpp \
 	sv_main.cpp \
 	sv_save.cpp \
-	sv_swtch.cpp \
 	sv_tick.cpp \
 	sv_user.cpp \
 	sv_world.cpp \

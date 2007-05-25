@@ -115,6 +115,8 @@ class VLevelInfo : public VThinker
 	void Completed(int Map, int Position, int SaveAngle);
 
 	void ChangeSwitchTexture(line_t*, bool, VName);
+	bool StartButton(int, vuint8, int, VName, bool);
+
 	void ForceLightning();
 
 	VStr GetLevelName() const
