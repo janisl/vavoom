@@ -2146,3 +2146,47 @@
 ******************************************************************************
                             VERSION 1.23
 ******************************************************************************
+
+05.05.2007
+  I implemented test version of standalone mode for single-player. With new net
+ code it was very easy to do.
+  I decided by default to disable GL point parameters extension.
+  I fixed missing initialisation of paused state of stream music player.
+07.05.2007
+  It turns out that in subclasses of a class with virtual methods GCC starts to
+ add fields on unaligned parent size offset, that caused class-size error on
+ 64 bit systems. I added a proper check for this.
+10.05.2007
+  I created s separate source file for BasePlayer class, I moved most of it's
+ methods there.
+18.05.2007
+  I fixed some remaining cases when memory wasn't freed on exit.
+19.05.2007
+  In Entity class hidden flag wasn't replicated to clients, I fixed that.
+  In render drivers I implemented support for having different fog setting for
+ each polygon.
+  I implemented a general method for pasing colour values with possibility to
+ use colour names that are looked up in a table from X.Org.
+20.05.2007
+  I implemented support for custom fog MAPINFO commands and line special for
+ setting fog parameter to a sector.
+21.05.2007
+  In Doom I implemented support for Heretic finale types specially for Heresy
+ project.
+  I moved PVS checks in network update to connection class.
+22.05.2007
+  I hunted down a memory corruption bug I introduced some days ago.
+23.05.2007
+  I added proper configure check for OpenGL libraries.
+  I fixed force field damage amount and force.
+  I fixed crash when destroying a Heresiarch with Thing_remove.
+  I fixed MUS to MIDI converter that forced all tracks to start at 0 tick.
+24.05.2007
+  I tried to play a ZDoom level from last /newstuff chronicles and found some
+ bugs, such as wrong slope calculation with Plane_Align special and wrong
+ translation of Boom's generic line specials. This level didn't have the
+ REJECT data, so I added a proper check for this.
+  I moved Entity's world related methods to a separate source file and others
+ to Entity's main source file. The rest of sv_ent moved to sv_main. I also
+ split handling of terrain types to it's own source file and renamed sv_swtch
+ to p_switch.
