@@ -19,6 +19,7 @@ nobase_dist_basev_DATA = \
 EXTRA_DIST = \
 	common/basepak.ls.in \
 	common/default.cfg \
+	common/x11r6rgb.txt \
 	common/startup.vs \
 	common/terrain.txt \
 	common/textures/-noflat-.png \
