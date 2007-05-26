@@ -84,7 +84,6 @@ defaultproperties
 	GibsHealth = -500;
 	Radius = 5.0;
 	Height = 5.0;
-	Mass = 12.5;
 	Speed = 245.0;
 	bFloorBounce = true;
 	bDropOff = false;

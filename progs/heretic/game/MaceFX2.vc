@@ -49,6 +49,7 @@ final void A_MaceBallImpact2()
 		Velocity = vector(0.0, 0.0, 0.0);
 		bNoGravity = true;
 		bFloorBounce = false;
+		Gravity = 1.0;
 	}
 	else
 	{

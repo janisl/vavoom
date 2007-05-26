@@ -27,7 +27,7 @@
 //
 //**************************************************************************
 
-class IceGuyBit:Effect;
+class IceGuyBit : Effect;
 
 __states__
 {
@@ -39,7 +39,7 @@ defaultproperties
 {
 	Radius = 1.0;
 	Height = 1.0;
-	Mass = 12.5;
+	Gravity = 0.125;
 	bDropOff = true;
 	bNoTeleport = true;
 	bNoGravity = false;

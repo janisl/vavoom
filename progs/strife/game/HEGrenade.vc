@@ -25,25 +25,6 @@
 
 class HEGrenade : Projectile;
 
-//==========================================================================
-//
-//	Physics
-//
-//==========================================================================
-
-bool Physics(float DeltaTime)
-{
-	//	Add more gravity to simulate original behavior.
-	if (!bNoGravity)
-	{
-		if (WaterLevel < 2)
-		{
-			Velocity.z -= (100.0 - Mass) / 100.0 * GetGravity() * DeltaTime;
-		}
-	}
-	return ::Physics(DeltaTime);
-}
-
 __states__
 {
 	S_GRENADE_HE_1('GRAP', 0, 3.0 / 35.0, S_GRENADE_HE_2) = A_DecReactionCount

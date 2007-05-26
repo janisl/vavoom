@@ -1547,22 +1547,6 @@ void VEntity::BounceWall(float overbounce)
 
 //==========================================================================
 //
-//	VEntity::GetGravity
-//
-//	Set the gravity for this thing depending on gravity of sectors,
-//	level and self gravity.
-//
-//==========================================================================
-
-float VEntity::GetGravity()
-{
-	guard(VEntity::GetGravity);
-	return Level->Gravity * Sector->Gravity;
-	unguard;
-}
-
-//==========================================================================
-//
 //  VEntity::UpdateVelocity
 //
 //==========================================================================
@@ -1587,12 +1571,14 @@ void VEntity::UpdateVelocity()
 		//	Add gravity
 		if (WaterLevel < 2)
 		{
-			Velocity.z -= Mass / 100.0 * GetGravity() * host_frametime;
+			Velocity.z -= Gravity * Level->Gravity * Sector->Gravity *
+				host_frametime;
 		}
 		else if (!(EntityFlags & EF_IsPlayer) || Health <= 0)
 		{
 			// Water Gravity
-			Velocity.z -= Mass / 100.0 * GetGravity() / 10.0 * host_frametime;
+			Velocity.z -= Gravity * Level->Gravity * Sector->Gravity / 10.0 *
+				host_frametime;
 			startvelz = Velocity.z;
 
 			if (EntityFlags & EF_Corpse)
@@ -2093,12 +2079,6 @@ IMPLEMENT_FUNCTION(VEntity, BounceWall)
 	P_GET_FLOAT(overbounce);
 	P_GET_SELF;
 	Self->BounceWall(overbounce);
-}
-
-IMPLEMENT_FUNCTION(VEntity, GetGravity)
-{
-	P_GET_SELF;
-	RET_FLOAT(Self->GetGravity());
 }
 
 IMPLEMENT_FUNCTION(VEntity, UpdateVelocity)

@@ -53,7 +53,7 @@ final void A_DripBlood()
 		(Random() - Random()) * 8.0, 0.0));
 	mo.Velocity.x = (Random() - Random()) * 4.0 * 35.0;
 	mo.Velocity.y = (Random() - Random()) * 4.0 * 35.0;
-	mo.bNoGravity = false;
+	mo.Gravity = 0.125;
 }
 
 __states__

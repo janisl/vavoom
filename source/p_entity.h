@@ -184,6 +184,7 @@ class VEntity : public VThinker
 	float			Mass;
 	float			MaxStepHeight;
 	float			MaxDropoffHeight;
+	float			Gravity;
 
 	//  Water
 	int				WaterLevel;
@@ -340,7 +341,6 @@ class VEntity : public VThinker
 	bool TestMobjZ(tztrace_t&, bool = false);
 	void SlideMove();
 	void BounceWall(float);
-	float GetGravity();
 	void UpdateVelocity();
 	void FakeZMovement(tztrace_t&);
 	VEntity *CheckOnmobj();
@@ -392,7 +392,6 @@ public:
 	DECLARE_FUNCTION(TestMobjZ)
 	DECLARE_FUNCTION(SlideMove)
 	DECLARE_FUNCTION(BounceWall)
-	DECLARE_FUNCTION(GetGravity)
 	DECLARE_FUNCTION(UpdateVelocity)
 	DECLARE_FUNCTION(CheckOnmobj)
 	DECLARE_FUNCTION(LinkToWorld)

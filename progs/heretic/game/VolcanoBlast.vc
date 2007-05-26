@@ -60,6 +60,7 @@ final void A_VolcBallImpact()
 	if (Origin.z <= FloorZ)
 	{
 		bNoGravity = true;
+		Gravity = 1.0;
 		Origin.z += 28.0;
 	}
 	RadiusAttack(25, 0, 0);
@@ -93,6 +94,7 @@ defaultproperties
 	Radius = 8.0;
 	Height = 8.0;
 	Speed = 70.0;
+	Gravity = 0.125;
 	MissileDamage = 2;
 	bFireDamage = true;
 	bNoGravity = false;

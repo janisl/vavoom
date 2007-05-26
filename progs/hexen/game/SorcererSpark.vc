@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class SorcererSpark:Effect;
+class SorcererSpark : Effect;
 
 __states__
 {
@@ -40,7 +40,7 @@ defaultproperties
 {
 	Radius = 5.0;
 	Height = 5.0;
-	Mass = 12.5;
+	Gravity = 0.125;
 	bDropOff = true;
 	bNoTeleport = true;
 	bNoGravity = false;

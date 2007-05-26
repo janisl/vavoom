@@ -4047,6 +4047,7 @@ final void A_FreeTargMobj()
 {
 	Velocity = vector(0.0, 0.0, 0.0);
 	Origin.z = CeilingZ + 4.0;
+	Gravity = 1.0;
 	bSolid = false;
 	bShootable = false;
 	bFloat = false;

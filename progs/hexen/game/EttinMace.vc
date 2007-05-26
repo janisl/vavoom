@@ -38,7 +38,7 @@ final void A_CheckFloor()
 	if (Origin.z <= FloorZ)
 	{
 		Origin.z = FloorZ;
-		//bLowGravity = false;
+		Gravity = 1.0;
 		SetState(DeathState);
 	}
 }

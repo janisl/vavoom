@@ -47,6 +47,7 @@ final void A_MacePL1Check()
 	}
 	Special1 = 0;
 	bNoGravity = false;
+	Gravity = 0.125;
 	angle = Angles.yaw;
 	Velocity.x = 7.0 * cos(angle) * 35.0;
 	Velocity.y = 7.0 * sin(angle) * 35.0;

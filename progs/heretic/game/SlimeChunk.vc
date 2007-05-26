@@ -38,6 +38,7 @@ defaultproperties
 {
 	Radius = 2.0;
 	Height = 4.0;
+	Gravity = 0.125;
 	bMissile = true;
 	bNoBlockmap = true;
 	bDropOff = true;

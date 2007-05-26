@@ -44,6 +44,7 @@ defaultproperties
 	Radius = 8.0;
 	Height = 6.0;
 	Speed = 70.0;
+	Gravity = 0.125;
 	MissileDamage = 1;
 	bFireDamage = true;
 	bNoGravity = false;

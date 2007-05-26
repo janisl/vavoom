@@ -33,18 +33,10 @@ class FlameFX1 : Projectile;
 
 bool Physics(float DeltaTime)
 {
-	if (!bNoGravity)
+	if (!bNoGravity && WaterLevel >= 2)
 	{
-		if (WaterLevel < 2)
-		{
-			//	Add more gravity to simulate original behavior.
-			Velocity.z -= (100.0 - Mass) / 100.0 * GetGravity() * DeltaTime;
-		}
-		else
-		{
-			//	Flames die in water.
-			ExplodeMissile();
-		}
+		//	Flames die in water.
+		ExplodeMissile();
 	}
 	return ::Physics(DeltaTime);
 }

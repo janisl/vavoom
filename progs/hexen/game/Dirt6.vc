@@ -34,7 +34,7 @@ __states__
 
 defaultproperties
 {
-	Mass = 12.5;
+	Gravity = 0.125;
 	bNoGravity = false;
 	IdleState = S_DIRT6_1;
 	DeathState = S_DIRT6_D;

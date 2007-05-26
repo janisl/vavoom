@@ -44,7 +44,7 @@ final void A_SpawnFly()
 		return;	// still flying
 
 	// First spawn teleport fog.
-	fog = Spawn(SpawnFire, Enemy.Origin);
+	fog = Spawn(SpawnFire, Enemy.Origin, vector(0.0, 0.0, 0.0));
 	fog.PlaySound('brain/spawn', CHAN_VOICE);
 
 	// Randomly select monster to spawn.
@@ -75,7 +75,7 @@ final void A_SpawnFly()
 	else
 		type = BaronOfHell;
 
-	newmobj = Spawn(type, Enemy.Origin);
+	newmobj = Spawn(type, Enemy.Origin, vector(0.0, 0.0, 0.0));
 	if (newmobj.LookForPlayers(true))
 		newmobj.SetState(newmobj.SeeState);
 

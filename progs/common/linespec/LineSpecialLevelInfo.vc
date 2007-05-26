@@ -2882,7 +2882,7 @@ bool EV_ThingProjectile(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 		if (gravity)
 		{
 			newA.bNoGravity = false;
-			newA.Mass = 12.5;
+			newA.Gravity = 0.125;
 		}
 		if (newtid)
 			newA.InsertIntoTIDList(newtid);

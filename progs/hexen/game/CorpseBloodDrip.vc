@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class CorpseBloodDrip:Fragment;
+class CorpseBloodDrip : Fragment;
 
 __states__
 {
@@ -38,7 +38,7 @@ defaultproperties
 {
 	Radius = 1.0;
 	Height = 4.0;
-	Mass = 12.5;
+	Gravity = 0.125;
 	bNoBlockmap = false;
 	bDropOff = false;
 	bNoGravity = false;

@@ -274,6 +274,7 @@ final void A_SorcBallPop()
 {
 	PlaySound('SorcererBallPop', CHAN_VOICE, 1.0, ATTN_NONE);
 	bNoGravity = false;
+	Gravity = 0.125;
 	Velocity.x = (Random() * 10.0 - 5.0) * 35.0;
 	Velocity.y = (Random() * 10.0 - 5.0) * 35.0;
 	Velocity.z = (2.0 + Random() * 3.0) * 35.0;
@@ -307,7 +308,6 @@ defaultproperties
 {
 	Radius = 5.0;
 	Height = 5.0;
-	Mass = 12.5;
 	Speed = 350.0;
 	bFloorBounce = true;
 	bDropOff = false;

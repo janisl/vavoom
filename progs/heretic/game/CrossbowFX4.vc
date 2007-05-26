@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class CrossbowFX4:Effect;
+class CrossbowFX4 : Effect;
 
 __states__
 {
@@ -33,7 +33,7 @@ __states__
 
 defaultproperties
 {
-	Mass = 12.5;
+	Gravity = 0.125;
 	bNoGravity = false;
 	IdleState = S_CRBOWFX4_1;
 }

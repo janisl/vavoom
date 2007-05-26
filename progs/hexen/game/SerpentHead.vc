@@ -64,7 +64,7 @@ defaultproperties
 {
 	Radius = 5.0;
 	Height = 10.0;
-	Mass = 12.5;
+	Gravity = 0.125;
 	bNoGravity = false;
 	IdleState = S_SERPENT_HEAD1;
 	DeathState = S_SERPENT_HEAD_X1;

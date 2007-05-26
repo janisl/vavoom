@@ -53,6 +53,7 @@ final void A_MaceBallImpact()
 	{
 		// Explode
 		bNoGravity = true;
+		Gravity = 1.0;
 		PlaySound('weapons/macehit', CHAN_VOICE);
 	}
 }
@@ -72,8 +73,8 @@ defaultproperties
 {
 	Radius = 8.0;
 	Height = 6.0;
-	Mass = 12.5;
 	Speed = 245.0;
+	Gravity = 0.125;
 	MissileDamage = 4;
 	bFloorBounce = true;
 	bThruGhost = true;

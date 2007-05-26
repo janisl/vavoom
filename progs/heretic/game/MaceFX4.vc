@@ -97,6 +97,7 @@ final void A_DeathBallImpact()
 	{
 		// Explode
 		bNoGravity = true;
+		Gravity = 1.0;
 		PlaySound('weapons/maceexplode', CHAN_VOICE);
 	}
 }

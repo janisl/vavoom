@@ -53,7 +53,7 @@ defaultproperties
 	ReactionCount = 0;
 	Radius = 16.0;
 	Height = 24.0;
-	Mass = 12.5;
+	Gravity = 0.125;
 	PainChance = 1.0;
 	bWindThrust = true;
 	bSlide = true;
