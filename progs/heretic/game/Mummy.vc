@@ -46,14 +46,14 @@ void DropStuff()
 
 final void A_MummyAttack()
 {
-	if (!Enemy)
+	if (!Target)
 	{
 		return;
 	}
 	PlaySound(AttackSound, CHAN_WEAPON);
 	if (CheckMeleeRange())
 	{
-		Enemy.Damage(self, self, HITDICE(2));
+		Target.Damage(self, self, HITDICE(2));
 		PlaySound('mummy/attack2', CHAN_WEAPON);
 		return;
 	}

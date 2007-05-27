@@ -40,7 +40,7 @@ final void A_PosAttack()
 	int damage;
 	TVec dir;
 
-	if (!Enemy)
+	if (!Target)
 		return;
 
 	A_FaceTarget();

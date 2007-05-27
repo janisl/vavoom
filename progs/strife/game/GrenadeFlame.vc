@@ -74,7 +74,7 @@ final void A_Burnination()
 			drop.Velocity.z = Velocity.z - 1.0 * 35.0;
 			drop.ReactionCount = (P_Random() & 3) + 2;
 			drop.bDropped = true;
-			drop.Instigator = Instigator;
+			drop.Target = Target;
 		}
 	}
 }

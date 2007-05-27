@@ -114,9 +114,9 @@ int SpawnHealth;
 int GibsHealth;
 
 // Thing being chased/attacked (or NULL).
-Actor Enemy;
 // The originator for missiles.
-Actor Instigator;
+Actor			Target;
+Actor			Tracer;
 
 int Special1;	// Special info
 float Special1f;
@@ -181,7 +181,7 @@ int ExplodeEffect;
 
 void SetInstigator(Entity NewInstigator)
 {
-	Instigator = Actor(NewInstigator);
+	Target = Actor(NewInstigator);
 }
 
 //===========================================================================
@@ -911,7 +911,7 @@ bool ChickenMorph()
 	chicken.SpecialCID = class<Actor>(Class);
 	chicken.Special1 = ftoi(Player::CHICKENTIME * 35.0) + P_Random();
 	chicken.Alpha = Alpha;
-	chicken.Enemy = Enemy;
+	chicken.Target = Target;
 	chicken.Angles.yaw = Angles.yaw;
 	chicken.TID = TID;
 	chicken.Special = Special;
@@ -1262,7 +1262,7 @@ void Damage(Actor inflictor, Actor source, int damage)
 		if (Class == Pod && source && source.Class != Pod)
 		{
 			// Make sure players get frags for chain-reaction kills
-			Instigator = source;
+			Target = source;
 		}
 		if (bIsPlayer && inflictor && !Player(Player).ChickenTime)
 		{
@@ -1288,7 +1288,7 @@ void Damage(Actor inflictor, Actor source, int damage)
 	{
 		// Target actor is not intent on another actor,
 		// so make him chase after source
-		Enemy = source;
+		Target = source;
 		Threshold = BASETHRESHOLD;
 		if (State == IdleState && SeeState)
 		{
@@ -1308,7 +1308,7 @@ void SpawnBloodSplatter(TVec org)
 	Actor mo;
 
 	mo = Spawn(BloodSplatter, org);
-	mo.Instigator = self;
+	mo.Target = self;
 	mo.Velocity.x = (Random() - Random()) * 2.0 * 35.0;
 	mo.Velocity.y = (Random() - Random()) * 2.0 * 35.0;
 	mo.Velocity.z = 2.0 * 35.0;
@@ -1408,7 +1408,7 @@ bool HitFloorType()
 		if (SInfo->ChunkClass)
 		{
 			A = Spawn(class<Actor>(SInfo->ChunkClass), org);
-			A.Instigator = self;
+			A.Target = self;
 			A.Velocity.x = (Random() - Random()) * SInfo->ChunkXVelMul * 35.0;
 			A.Velocity.y = (Random() - Random()) * SInfo->ChunkYVelMul * 35.0;
 			A.Velocity.z = (SInfo->ChunkBaseZVel + Random() *
@@ -1563,10 +1563,10 @@ bool Touch(Entity InOther)
 			return true;
 		}
 
-		if (Instigator && Instigator.Class == Other.Class)
+		if (Target && Target.Class == Other.Class)
 		{
 			// Don't hit same species as originator
-			if (Other == Instigator)
+			if (Other == Target)
 			{
 				// Don't missile self
 				return true;
@@ -1593,7 +1593,7 @@ bool Touch(Entity InOther)
 			}
 			PlaySound('misc/ripslop', CHAN_VOICE);
 			damage = ((P_Random() & 3) + 2) * MissileDamage;
-			Other.Damage(self, Instigator, damage);
+			Other.Damage(self, Target, damage);
 			if (Other.bPushable && !bCannotPush)
 			{
 				// Push	thing
@@ -1611,7 +1611,7 @@ bool Touch(Entity InOther)
 			{
 				Other.SpawnBloodSplatter(Origin);
 			}
-			Other.Damage(self, Instigator, damage);
+			Other.Damage(self, Target, damage);
 		}
 		// don't traverse any more
 		return false;
@@ -1652,7 +1652,7 @@ void CheckForPushSpecial(line_t * line, int side)
 		else if (bActivateImpact)
 		{
 			HereticLevelInfo(Level).ActivateLine(line,
-				bMissile ? Instigator : self, side, SPAC_IMPACT);
+				bMissile ? Target : self, side, SPAC_IMPACT);
 		}
 	}
 }
@@ -1995,13 +1995,13 @@ void ZMovement(float DeltaTime)
 	// adjust height
 	//
 	Origin.z += Velocity.z * DeltaTime;
-	if (bFloat && Enemy)
+	if (bFloat && Target)
 	{
 		// float down towards enemy if too close
 		if (!bSkullFly && !bInFloat)
 		{
-			dist = DistTo(Enemy);
-			delta = Enemy.Origin.z + Height / 2.0 - Origin.z;
+			dist = DistTo(Target);
+			delta = Target.Origin.z + Height / 2.0 - Origin.z;
 			if (delta < 0.0 && dist < -(delta * 3.0))
 				Origin.z -= FLOATSPEED * DeltaTime;
 			else if (delta > 0.0 && dist < (delta * 3.0))
@@ -2541,7 +2541,7 @@ bool PIT_RadiusAttack(Entity Other)
 	if (Actor(Other).CanSee(self))
 	{
 		// must be in direct path
-		Actor(Other).Damage(self, Instigator, ftoi(bombdamage - dist));
+		Actor(Other).Damage(self, Target, ftoi(bombdamage - dist));
 	}
 
 	return true;
@@ -2647,7 +2647,7 @@ Actor SpawnMissile(Actor dest, class<Actor> type)
 	{
 		A.PlaySound(A.SightSound, CHAN_VOICE);
 	}
-	A.Instigator = self;	// Originator
+	A.Target = self;	// Originator
 	dir = dest.Origin - Origin;
 	if (dest.Alpha < 1.0)
 	{
@@ -2701,7 +2701,7 @@ Actor SpawnMissileAngles(class<Actor> type, float yaw, float pitch)
 	{
 		A.PlaySound(A.SightSound, CHAN_VOICE);
 	}
-	A.Instigator = self;	// Originator
+	A.Target = self;	// Originator
 	A.Angles.yaw = yaw;
 	A.Angles.pitch = pitch;
 	AngleVector(&A.Angles, &dir);
@@ -2734,7 +2734,7 @@ Actor SpawnPlayerMissile(class<Actor> type)
 	{
 		MissileMobj.PlaySound(MissileMobj.SightSound, CHAN_VOICE);
 	}
-	MissileMobj.Instigator = self;
+	MissileMobj.Target = self;
 	MissileMobj.Velocity = dir * MissileMobj.Speed;
 	VectorAngles(&dir, &MissileMobj.Angles);
 	if (MissileMobj.Class == BlasterFX1)
@@ -2777,7 +2777,7 @@ Actor SpawnPlayerMissileAngle(class<Actor> type, float angle)
 	{
 		A.PlaySound(A.SightSound, CHAN_VOICE);
 	}
-	A.Instigator = self;
+	A.Target = self;
 	A.Velocity = dir * A.Speed;
 	VectorAngles(&dir, &A.Angles);
 	return A.CheckMissileSpawn() ? A : none;
@@ -2787,7 +2787,7 @@ Actor SpawnPlayerMissileAngle(class<Actor> type, float angle)
 //
 //  SeekerMissile
 //
-//  The missile Enemy field must be Actor target. Returns true if
+//  The missile Tracer field must be Actor target. Returns true if
 // target was tracked, false if not.
 //
 //==========================================================================
@@ -2799,17 +2799,17 @@ bool SeekerMissile(float thresh, float turnMax)
 	float delta;
 	float angle;
 
-	if (!Enemy)
+	if (!Tracer)
 	{
 		return false;
 	}
-	if (!Enemy.bShootable)
+	if (!Tracer.bShootable)
 	{
 		// Target died
-		Enemy = none;
+		Tracer = none;
 		return false;
 	}
-	dir = FaceActor(Enemy, &delta);
+	dir = FaceActor(Tracer, &delta);
 	if (delta > thresh)
 	{
 		delta /= 2.0;
@@ -2831,17 +2831,17 @@ bool SeekerMissile(float thresh, float turnMax)
 	angle = Angles.yaw;
 	Velocity.x = Speed * cos(angle);
 	Velocity.y = Speed * sin(angle);
-	if (Origin.z + Height < Enemy.Origin.z ||
-		Enemy.Origin.z + Enemy.Height < Origin.z)
+	if (Origin.z + Height < Tracer.Origin.z ||
+		Tracer.Origin.z + Tracer.Height < Origin.z)
 	{
 		// Need to seek vertically
-		dist = DistTo2(Enemy);
+		dist = DistTo2(Tracer);
 		dist = dist / Speed;
 		if (dist < 1.0)
 		{
 			dist = 1.0;
 		}
-		Velocity.z = (Enemy.Origin.z - Origin.z) / dist;
+		Velocity.z = (Tracer.Origin.z - Origin.z) / dist;
 	}
 	return true;
 }
@@ -3023,21 +3023,21 @@ bool CheckMeleeRange()
 {
 	float dist;
 
-	if (!Enemy)
+	if (!Target)
 	{
 		return false;
 	}
-	dist = DistTo(Enemy);
+	dist = DistTo(Target);
 	if (dist >= MELEERANGE)
 	{
 		return false;
 	}
 	// Don't melee things too far above or below actor.
-	if (Enemy.Origin.z > Origin.z + Height)
+	if (Target.Origin.z > Origin.z + Height)
 		return false;
-	if (Enemy.Origin.z + Enemy.Height < Origin.z)
+	if (Target.Origin.z + Target.Height < Origin.z)
 		return false;
-	if (!CanSee(Enemy))
+	if (!CanSee(Target))
 	{
 		return false;
 	}
@@ -3054,7 +3054,7 @@ bool CheckMissileRange()
 {
 	float dist;
 
-	if (!CanSee(Enemy))
+	if (!CanSee(Target))
 	{
 		return false;
 	}
@@ -3069,7 +3069,7 @@ bool CheckMissileRange()
 		// Don't attack yet
 		return false;
 	}
-	dist = DistTo(Enemy) - 64.0;
+	dist = DistTo(Target) - 64.0;
 	if (!MeleeState)
 	{
 		// No melee attack, so fire more frequently
@@ -3136,7 +3136,7 @@ bool LookForMonsters()
 			continue;
 		}
 		// Found a target monster
-		Enemy = mo;
+		Target = mo;
 		return true;
 	}
 	return false;
@@ -3212,7 +3212,7 @@ bool LookForPlayers(bool allaround)
 				return false;
 			}
 		}
-		Enemy = Actor(P.MO);
+		Target = Actor(P.MO);
 		return true;
 	}
 	return false;
@@ -3523,11 +3523,11 @@ void NewChaseDir()
 	float deltax;
 	float deltay;
 
-	deltax = Enemy.Origin.x - Origin.x;
-	deltay = Enemy.Origin.y - Origin.y;
+	if (!Target)
+		Error("NewChaseDir: called with no Target");
 
-	if (!Enemy)
-		Error("NewChaseDir: called with no Enemy");
+	deltax = Target.Origin.x - Origin.x;
+	deltay = Target.Origin.y - Origin.y;
 
 	tmtrace_t tmtrace;
 	CheckRelPosition(&tmtrace, Origin);

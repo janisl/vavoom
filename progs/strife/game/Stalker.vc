@@ -94,14 +94,14 @@ final void A_StalkerAttack()
 	}
 	else
 	{
-		if (!Enemy)
+		if (!Target)
 			return;
 
 		A_FaceTarget();
 
 		if (CheckMeleeRange())
 		{
-			Enemy.Damage(self, self, (P_Random() & 7) * 2 + 2);
+			Target.Damage(self, self, (P_Random() & 7) * 2 + 2);
 		}
 	}
 }
@@ -133,19 +133,19 @@ bool CheckMeleeRange()
 	}
 
 	//	When walking on ceiling, ignore height difference.
-	if (!Enemy)
+	if (!Target)
 	{
 		return false;
 	}
 
-	dist = DistTo2(Enemy);
+	dist = DistTo2(Target);
 
-	if (dist >= MELEERANGE - 20.0 + Enemy.Radius)
+	if (dist >= MELEERANGE - 20.0 + Target.Radius)
 	{
 		return false;
 	}
 
-	if (!CanSee(Enemy))
+	if (!CanSee(Target))
 	{
 		return false;
 	}

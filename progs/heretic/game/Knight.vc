@@ -46,13 +46,13 @@ void DropStuff()
 
 final void A_KnightAttack()
 {
-	if (!Enemy)
+	if (!Target)
 	{
 		return;
 	}
 	if (CheckMeleeRange())
 	{
-		Enemy.Damage(self, self, HITDICE(3));
+		Target.Damage(self, self, HITDICE(3));
 		PlaySound('hknight/melee', CHAN_WEAPON);
 		return;
 	}
@@ -61,11 +61,11 @@ final void A_KnightAttack()
 	if (Class == KnightGhost || Random() < 0.15625)
 	{
 		// Red axe
-		SpawnMissile(Enemy, KnightRedAxe);
+		SpawnMissile(Target, KnightRedAxe);
 		return;
 	}
 	// Green axe
-	SpawnMissile(Enemy, KnightAxe);
+	SpawnMissile(Target, KnightAxe);
 }
 
 __states__

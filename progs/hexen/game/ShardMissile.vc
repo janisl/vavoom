@@ -79,7 +79,7 @@ final void A_ShedShard()
 			mo.bShardSpawnLeft = true;
 			mo._Special2 = spermcount;
 			mo.Velocity.z = Velocity.z;
-			mo.Instigator = Instigator;
+			mo.Target = Target;
 			mo.Args[0] = (spermcount == 3) ? 2 : 0;
 		}
 	}
@@ -92,7 +92,7 @@ final void A_ShedShard()
 			mo.bShardSpawnRight = true;
 			mo._Special2 = spermcount;
 			mo.Velocity.z = Velocity.z;
-			mo.Instigator = Instigator;
+			mo.Target = Target;
 			mo.Args[0] = (spermcount == 3) ? 2 : 0;
 		}
 	}
@@ -111,7 +111,7 @@ final void A_ShedShard()
 			}
 			mo.bShardSpawnUp = true;
 			mo._Special2 = spermcount;
-			mo.Instigator = Instigator;
+			mo.Target = Target;
 			mo.Args[0] = (spermcount == 3) ? 2 : 0;
 		}
 	}
@@ -130,7 +130,7 @@ final void A_ShedShard()
 			}
 			mo.bShardSpawnDown = true;
 			mo._Special2 = spermcount;
-			mo.Instigator = Instigator;
+			mo.Target = Target;
 			mo.Args[0] = (spermcount == 3) ? 2 : 0;
 		}
 	}

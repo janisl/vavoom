@@ -59,25 +59,25 @@ final void A_Srcr1Attack()
 	TAVec ang;
 	float angle;
 
-	if (!Enemy)
+	if (!Target)
 	{
 		return;
 	}
 	PlaySound(AttackSound, CHAN_WEAPON);
 	if (CheckMeleeRange())
 	{
-		Enemy.Damage(self, self, HITDICE(8));
+		Target.Damage(self, self, HITDICE(8));
 		return;
 	}
 	if (Health > (SpawnHealth / 3) * 2)
 	{
 		// Spit one fireball
-		SpawnMissile(Enemy, Sorcerer1Missile);
+		SpawnMissile(Target, Sorcerer1Missile);
 	}
 	else
 	{
 		// Spit three fireballs
-		A = SpawnMissile(Enemy, Sorcerer1Missile);
+		A = SpawnMissile(Target, Sorcerer1Missile);
 		if (A)
 		{
 			VectorAngles(&A.Velocity, &ang);
@@ -142,7 +142,7 @@ final void A_SorcererRise()
 	S2 = Sorcerer2(Spawn(Sorcerer2, Origin));
 	S2.SetState(S2.RiseState);
 	S2.Angles.yaw = Angles.yaw;
-	S2.Enemy = Enemy;
+	S2.Target = Target;
 }
 
 __states__

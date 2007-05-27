@@ -55,7 +55,7 @@ final void A_VolcanoBlast()
 	for (i = 0; i < count; i++)
 	{
 		blast = Spawn(VolcanoBlast, Origin + vector(0.0, 0.0, 44.0));
-		blast.Instigator = self;
+		blast.Target = self;
 		angle = Random() * 360.0;
 		blast.Angles.yaw = angle;
 		blast.Velocity.x = cos(angle) * 35.0;

@@ -35,11 +35,11 @@ class CentaurLeader : Centaur
 
 final void A_CentaurAttack2()
 {
-	if (!Enemy)
+	if (!Target)
 	{
 		return;
 	}
-	SpawnMissile(Enemy, CentaurMissile);
+	SpawnMissile(Target, CentaurMissile);
 	PlaySound('CentaurLeaderAttack', CHAN_WEAPON);
 }
 

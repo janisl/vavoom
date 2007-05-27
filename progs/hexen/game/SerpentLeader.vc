@@ -70,7 +70,7 @@ void A_SerpentHumpDecide()
 
 void A_SerpentCheckForAttack()
 {
-	if (!Enemy)
+	if (!Target)
 	{
 		return;
 	}
@@ -90,7 +90,7 @@ void A_SerpentCheckForAttack()
 
 void A_SerpentChooseAttack()
 {
-	if (!Enemy || CheckMeleeRange())
+	if (!Target || CheckMeleeRange())
 	{
 		return;
 	}
@@ -105,11 +105,11 @@ void A_SerpentChooseAttack()
 
 final void A_SerpentMissileAttack()
 {
-	if (!Enemy)
+	if (!Target)
 	{
 		return;
 	}
-	SpawnMissile(Enemy, SerpentMissile);
+	SpawnMissile(Target, SerpentMissile);
 }
 
 __states__

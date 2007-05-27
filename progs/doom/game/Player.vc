@@ -2138,7 +2138,7 @@ Actor SpawnPlayerMissile(class<Actor> type)
 	if (A.SightSound)
 		A.PlaySound(A.SightSound, CHAN_VOICE);
 
-	A.Instigator = Actor(MO);
+	A.Target = Actor(MO);
 	A.Velocity = dir * A.Speed;
 	VectorAngles(&dir, &A.Angles);
 

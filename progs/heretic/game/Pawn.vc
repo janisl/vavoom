@@ -97,11 +97,11 @@ final void A_Look()
 
 	if (targ && targ.bShootable)
 	{
-		Enemy = targ;
+		Target = targ;
 
 		if (bAmbush)
 		{
-			if (!CanSee(Enemy))
+			if (!CanSee(Target))
 			{
 				if (!LookForPlayers(false))
 					return;
@@ -151,7 +151,7 @@ final void A_Chase()
 	// modify target threshold
 	if (Threshold)
 	{
-		if (!Enemy || Enemy.Health <= 0)
+		if (!Target || Target.Health <= 0)
 		{
 			Threshold = 0;
 		}
@@ -187,7 +187,7 @@ final void A_Chase()
 		}
 	}
 
-	if (!Enemy || !Enemy.bShootable)
+	if (!Target || !Target.bShootable)
 	{
 		// look for a new target
 		if (LookForPlayers(true))
@@ -237,7 +237,7 @@ final void A_Chase()
 	// possibly choose another target
 	if (Level.Game.netgame && !Threshold)
 	{
-		if (!CanSee(Enemy))
+		if (!CanSee(Target))
 		{
 			if (LookForPlayers(true))
 				return;	// got a new target
@@ -276,14 +276,14 @@ final void A_Chase()
 
 final void A_FaceTarget()
 {
-	if (!Enemy)
+	if (!Target)
 		return;
 
 	bAmbush = false;
 
-	Angles.yaw = atan2(Enemy.Origin.y - Origin.y, Enemy.Origin.x - Origin.x);
+	Angles.yaw = atan2(Target.Origin.y - Origin.y, Target.Origin.x - Origin.x);
 
-	if (Enemy.Alpha < 1.0)
+	if (Target.Alpha < 1.0)
 	{
 		Angles.yaw = AngleMod360(Angles.yaw + (Random() - Random()) * 45.0);
 	}
@@ -376,7 +376,7 @@ final void A_Feathers()
 	for (i = 0; i < count; i++)
 	{
 		mo = Spawn(Feather, Origin + vector(0.0, 0.0, 20.0));
-		mo.Instigator = self;
+		mo.Target = self;
 		mo.Velocity.x = (Random() - Random()) * 35.0;
 		mo.Velocity.y = (Random() - Random()) * 35.0;
 		mo.Velocity.z = (1.0 + Random() * 2.0) * 35.0;

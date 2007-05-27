@@ -44,9 +44,9 @@ final void A_HideDecepticon()
 {
 	StrifeLevelInfo(Level).EV_DoDoor(999, 64, 0, 0, 0,
 		VerticalDoor::DOOREV_Close, NULL, none);
-	if (Enemy && Enemy.bIsPlayer)
+	if (Target && Target.bIsPlayer)
 	{
-		StrifeLevelInfo(Level).NoiseAlert(Enemy, self);
+		StrifeLevelInfo(Level).NoiseAlert(Target, self);
 	}
 }
 

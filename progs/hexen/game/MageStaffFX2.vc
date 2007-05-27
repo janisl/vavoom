@@ -36,7 +36,7 @@ bool RoughCheckThing(Entity Other)
 	float angle;
 	Actor link = Actor(Other);
 	
-	if (!(link.bCountKill || link.bIsPlayer) || link == Instigator ||
+	if (!(link.bCountKill || link.bIsPlayer) || link == Target ||
 		link.bDormant)
 	{
 		return false;
@@ -51,12 +51,9 @@ bool RoughCheckThing(Entity Other)
 	}
 	if (CanSee(link))
 	{
-		angle = AngleMod360(atan2(
-			link.Origin.y - Instigator.Origin.y,
-			link.Origin.x - Instigator.Origin.x) -
-			Instigator.Angles.yaw);
-		if (angle > 226.0 * 360.0 / 256.0 ||
-			angle < 30.0 * 360.0 / 256.0)
+		angle = AngleMod360(atan2(link.Origin.y - Target.Origin.y,
+			link.Origin.x - Target.Origin.x) - Target.Angles.yaw);
+		if (angle > 226.0 * 360.0 / 256.0 || angle < 30.0 * 360.0 / 256.0)
 		{
 			return true;
 		}
@@ -72,9 +69,9 @@ bool RoughCheckThing(Entity Other)
 
 final void A_MStaffTrack()
 {
-	if (!Enemy && (P_Random() < 50))
+	if (!Tracer && (P_Random() < 50))
 	{
-		Enemy = Actor(RoughMonsterSearch(10));
+		Tracer = Actor(RoughMonsterSearch(10));
 	}
 	SeekerMissile(2.0, 10.0);
 }

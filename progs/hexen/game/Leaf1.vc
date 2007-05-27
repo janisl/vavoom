@@ -61,13 +61,13 @@ final void A_LeafCheck()
 	{
 		if (!Velocity.x && !Velocity.y)
 		{
-			Thrust(Instigator.Angles.yaw, Random() * 2.0 + 1.0);
+			Thrust(Target.Angles.yaw, Random() * 2.0 + 1.0);
 		}
 		return;
 	}
 	SetState(RestartState);
 	Velocity.z = (Random() * 2.0 + 1.0) * 35.0;
-	Thrust(Instigator.Angles.yaw, Random() * 2.0 + 2.0);
+	Thrust(Target.Angles.yaw, Random() * 2.0 + 2.0);
 	bMissile = true;
 }
 

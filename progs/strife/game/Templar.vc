@@ -39,7 +39,7 @@ final void A_TemplarAttack()
 	TVec aimDir;
 	TVec dir;
 
-	if (!Enemy)
+	if (!Target)
 		return;
 
 	PlaySound('templar/shoot', CHAN_WEAPON);

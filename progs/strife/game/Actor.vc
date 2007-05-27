@@ -116,9 +116,9 @@ int GibsHealth;
 name ClassName;
 
 // Thing being chased/attacked (or NULL),
-Actor Enemy;
 // also the originator for missiles.
-Actor Instigator;
+Actor			Target;
+Actor			Tracer;
 
 int MissileDamage;	// For missiles
 
@@ -183,7 +183,7 @@ int ExplodeEffect;
 
 void SetInstigator(Entity NewInstigator)
 {
-	Instigator = Actor(NewInstigator);
+	Target = Actor(NewInstigator);
 }
 
 //===========================================================================
@@ -1025,7 +1025,7 @@ void Damage(Actor inflictor, Actor source, int damage)
 	{
 		// if not intent on another player,
 		// chase after this one
-		Enemy = source;
+		Target = source;
 		Threshold = BASETHRESHOLD;
 		if (State == IdleState && SeeState)
 		{
@@ -1139,7 +1139,7 @@ bool HitFloorType()
 		if (SInfo->ChunkClass)
 		{
 			A = Spawn(class<Actor>(SInfo->ChunkClass), org);
-			A.Instigator = self;
+			A.Target = self;
 			A.Velocity.x = (Random() - Random()) * SInfo->ChunkXVelMul * 35.0;
 			A.Velocity.y = (Random() - Random()) * SInfo->ChunkYVelMul * 35.0;
 			A.Velocity.z = (SInfo->ChunkBaseZVel + Random() *
@@ -1286,10 +1286,10 @@ bool Touch(Entity InOther)
 	// missiles can hit other things
 	if (bMissile)
 	{
-		if (Instigator && (Instigator.Class == Other.Class))
+		if (Target && (Target.Class == Other.Class))
 		{
 			// Don't hit same species as originator.
-			if (Other == Instigator)
+			if (Other == Target)
 				return true;
 
 			if (Other.Class != StrifePlayer)
@@ -1314,7 +1314,7 @@ bool Touch(Entity InOther)
 
 		// damage / explode
 		damage = ((P_Random() % 4) + 1) * MissileDamage;
-		Other.Damage(self, Instigator, damage);
+		Other.Damage(self, Target, damage);
 		// don't traverse any more
 		return false;
 	}
@@ -1348,7 +1348,7 @@ void CheckForPushSpecial(line_t * line, int side)
 		else if (bActivateImpact)
 		{
 			StrifeLevelInfo(Level).ActivateLine(line,
-				bMissile ? Instigator : self, side, SPAC_IMPACT);
+				bMissile ? Target : self, side, SPAC_IMPACT);
 		}
 	}
 }
@@ -1871,7 +1871,7 @@ void XYMovement(float DeltaTime)
 							A_DecReactionCount();
 							// Hit killable objects, but don't explode
 							if (Actor(tmtrace.BlockingMobj).bCountKill)
-								Damage(self, self.Instigator, MissileDamage);
+								Damage(self, Target, MissileDamage);
 
 						}
 					}
@@ -1937,14 +1937,14 @@ void ZMovement(float DeltaTime)
 	// adjust height
 	Origin.z += Velocity.z * DeltaTime;
 
-	if (bFloat && Enemy)
+	if (bFloat && Target)
 	{
 		// float down towards enemy if too close
 		if (!bSkullFly && !bInFloat)
 		{
-			dist = DistTo2(Enemy);
+			dist = DistTo2(Target);
 
-			delta = Enemy.Origin.z + Height / 2.0 - Origin.z;
+			delta = Target.Origin.z + Height / 2.0 - Origin.z;
 
 			if (delta < 0.0 && dist < -(delta * 3.0))
 				Origin.z -= FLOATSPEED * DeltaTime;
@@ -2476,7 +2476,7 @@ bool PIT_RadiusAttack(Entity Other)
 	if (Actor(Other).CanSee(self))
 	{
 		// must be in direct path
-		Actor(Other).Damage(self, Instigator, ftoi(bombdamage - dist));
+		Actor(Other).Damage(self, Target, ftoi(bombdamage - dist));
 	}
 
 	return true;
@@ -2691,7 +2691,7 @@ bool LookForMonsters(bool allaround)
 			}
 		}
 
-		Enemy = mo;
+		Target = mo;
 		return true;
 	}
 	return false;
@@ -2743,7 +2743,7 @@ bool LookForMonsters2(bool allaround)
 			}
 		}
 
-		Enemy = mo;
+		Target = mo;
 		return true;
 	}
 	return false;
@@ -2821,7 +2821,7 @@ bool LookForPlayers(bool allaround)
 			}
 		}
 
-		Enemy = Actor(player.MO);
+		Target = Actor(player.MO);
 		return true;
 	}
 
@@ -2845,7 +2845,7 @@ Actor SpawnSubMissile(class<Actor> type, Actor AInstigator)
 		return none;
 	}
 
-	other.Instigator = AInstigator;
+	other.Target = AInstigator;
 	other.Angles = Angles;
 
 	other.Velocity.x = other.Speed * cos(Angles.yaw);
@@ -2875,8 +2875,8 @@ Actor TossUpObject(class<Actor> type)
 	{
 		an = AngleMod360(Angles.yaw + Random() * 360.0);
 		A.Angles.yaw = an;
-		A.Enemy = Enemy;
-		A.Instigator = self;
+		A.Tracer = Target;
+		A.Target = self;
 		A.Velocity.x = randomspeed * cos(an) * 35.0;
 		A.Velocity.y = randomspeed * sin(an) * 35.0;
 		A.Velocity.z = (12.0 + Random() / 8.0) * 35.0;
@@ -3430,7 +3430,7 @@ final void A_Look()
 
 	if (targ && targ.bShootable)
 	{
-		Enemy = targ;
+		Target = targ;
 	}
 	else
 	{
@@ -3490,9 +3490,9 @@ final void A_Explode()
 	{
 		HitFloorType();
 	}
-	if (Instigator && Instigator.bIsPlayer)
+	if (Target && Target.bIsPlayer)
 	{
-		StrifeLevelInfo(Level).NoiseAlert(Instigator, self);
+		StrifeLevelInfo(Level).NoiseAlert(Target, self);
 	}
 
 	if (ExplodeEffect)
@@ -3616,7 +3616,7 @@ final void A_Tracer()
 	float dist;
 	float slope;
 
-	dest = Enemy;
+	dest = Tracer;
 
 	if (!dest || dest.Health <= 0)
 		return;
@@ -3776,9 +3776,9 @@ final void A_DecReactionCount()
 
 final void A_AlertMonsters()
 {
-	if (Instigator && Instigator.bIsPlayer)
+	if (Target && Target.bIsPlayer)
 	{
-		StrifeLevelInfo(Level).NoiseAlert(Instigator, self);
+		StrifeLevelInfo(Level).NoiseAlert(Target, self);
 	}
 }
 
@@ -3799,7 +3799,7 @@ final void A_CheckAlarm()
 	targ = Actor(Sector->SoundTarget);
 	if (targ && targ.bShootable)
 	{
-		Enemy = targ;
+		Target = targ;
 		// go into chase state
 		if (SightSound)
 		{

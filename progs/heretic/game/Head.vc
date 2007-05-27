@@ -59,28 +59,28 @@ final void A_HeadAttack()
 	// Whirlwind    (close 40% : far 20%)
 	// Distance threshold = 8 cells
 
-	if (!Enemy)
+	if (!Target)
 	{
 		return;
 	}
 	A_FaceTarget();
 	if (CheckMeleeRange())
 	{
-		Enemy.Damage(self, self, HITDICE(6));
+		Target.Damage(self, self, HITDICE(6));
 		return;
 	}
-	dist = DistTo2(Enemy) > 8.0 * 64.0;
+	dist = DistTo2(Target) > 8.0 * 64.0;
 	randAttack = P_Random();
 	if (randAttack < (dist ? 150 : 50))
 	{
 		// Ice ball
-		SpawnMissile(Enemy, HeadMissile1);
+		SpawnMissile(Target, HeadMissile1);
 		PlaySound('ironlich/attack2', CHAN_WEAPON);
 	}
 	else if (randAttack < (dist ? 200 : 150))
 	{
 		// Fire column
-		baseFire = SpawnMissile(Enemy, HeadMissile3);
+		baseFire = SpawnMissile(Target, HeadMissile3);
 		if (baseFire != none)
 		{
 			baseFire.SetState(HeadMissile3::S_HEADFX3_4);	// Don't grow
@@ -91,7 +91,7 @@ final void A_HeadAttack()
 				{
 					PlaySound('ironlich/attack1', CHAN_WEAPON);
 				}
-				fire.Instigator = baseFire.Instigator;
+				fire.Target = baseFire.Target;
 				fire.Angles.yaw = baseFire.Angles.yaw;
 				fire.Velocity = baseFire.Velocity;
 				fire.MissileDamage = 0;
@@ -103,11 +103,11 @@ final void A_HeadAttack()
 	else
 	{
 		// Whirlwind
-		A = SpawnMissile(Enemy, WhirlWind);
+		A = SpawnMissile(Target, WhirlWind);
 		if (A != none)
 		{
 			A.Origin.z -= 32.0;
-			A.Enemy = Enemy;
+			A.Tracer = Target;
 			A.Health = 20 * TICRATE;	// Duration
 			PlaySound('ironlich/attack3', CHAN_WEAPON);
 		}

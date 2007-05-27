@@ -888,7 +888,7 @@ void InvUse()
 		if (A)
 		{
 			A.SetState(A.SeeState);
-			A.Instigator = Actor(MO);
+			A.Target = Actor(MO);
 			itemUsed = true;
 		}
 		else
@@ -2171,7 +2171,7 @@ Actor SpawnPlayerMissile(class<Actor> type)
 	if (A.SightSound)
 		A.PlaySound(A.SightSound, CHAN_VOICE);
 
-	A.Instigator = Actor(MO);
+	A.Target = Actor(MO);
 	A.Velocity = dir * A.Speed;
 	VectorAngles(&dir, &A.Angles);
 
@@ -2201,7 +2201,7 @@ Actor SpawnPlayerMissileAngle(class<Actor> type, float angle)
 	if (A.SightSound)
 		A.PlaySound(A.SightSound, CHAN_VOICE);
 
-	A.Instigator = Actor(MO);
+	A.Target = Actor(MO);
 	A.Velocity = dir * A.Speed;
 	VectorAngles(&dir, &A.Angles);
 

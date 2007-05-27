@@ -39,19 +39,19 @@ final void A_BruisAttack()
 {
 	int damage;
 
-	if (!Enemy)
+	if (!Target)
 		return;
 
 	if (CheckMeleeRange())
 	{
 		PlaySound('baron/melee', CHAN_WEAPON);
 		damage = (P_Random() % 8 + 1) * 10;
-		Enemy.Damage(self, self, damage);
+		Target.Damage(self, self, damage);
 		return;
 	}
 
 	// launch a missile
-	SpawnMissile(Enemy, BruiserShot);
+	SpawnMissile(Target, BruiserShot);
 }
 
 __states__

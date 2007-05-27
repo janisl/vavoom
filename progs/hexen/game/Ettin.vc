@@ -37,7 +37,7 @@ final void A_EttinAttack()
 {
 	if (CheckMeleeRange())
 	{
-		Enemy.Damage(self, self, HITDICE(2));
+		Target.Damage(self, self, HITDICE(2));
 	}
 }
 
@@ -57,7 +57,7 @@ final void A_DropMace()
 		mace.Velocity.x = (Random() - 0.5) * 8.0 * 35.0;
 		mace.Velocity.y = (Random() - 0.5) * 8.0 * 35.0;
 		mace.Velocity.z = (10.0 + Random() * 4.0) * 35.0;
-		mace.Instigator = self;
+		mace.Target = self;
 	}
 }
 

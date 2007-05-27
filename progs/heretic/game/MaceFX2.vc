@@ -59,7 +59,7 @@ final void A_MaceBallImpact2()
 
 		tiny = Spawn(MaceFX3, Origin);
 		angle = AngleMod360(Angles.yaw + 90.0);
-		tiny.Instigator = Instigator;
+		tiny.Target = Target;
 		tiny.Angles.yaw = angle;
 		tiny.Velocity.x =
 			Velocity.x / 2.0 + (Velocity.z - 35.0) * cos(angle);
@@ -70,7 +70,7 @@ final void A_MaceBallImpact2()
 
 		tiny = Spawn(MaceFX3, Origin);
 		angle = AngleMod360(Angles.yaw - 90.0);
-		tiny.Instigator = Instigator;
+		tiny.Target = Target;
 		tiny.Angles.yaw = angle;
 		tiny.Velocity.x =
 			Velocity.x / 2.0 + (Velocity.z - 35.0) * cos(angle);

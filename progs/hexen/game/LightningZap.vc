@@ -50,21 +50,21 @@ bool Touch(Entity InOther)
 		{
 			return true;
 		}
-		if (Other.bShootable && Other != Instigator)
+		if (Other.bShootable && Other != Target)
 		{
 			if (LightningOwner)
 			{
 				if (LightningOwner.Class == LightningFloor)
 				{
 					if (LightningOwner.LightningLink &&
-						!LightningOwner.LightningLink.Enemy)
+						!LightningOwner.LightningLink.Tracer)
 					{
-						LightningOwner.LightningLink.Enemy = Other;
+						LightningOwner.LightningLink.Tracer = Other;
 					}
 				}
-				else if (!LightningOwner.Enemy)
+				else if (!LightningOwner.Tracer)
 				{
-					LightningOwner.Enemy = Other;
+					LightningOwner.Tracer = Other;
 				}
 				if (!(XLevel.TicTime & 3))
 				{
@@ -72,10 +72,10 @@ bool Touch(Entity InOther)
 				}
 			}
 		}
-		if (Instigator && Instigator.Class == Other.Class)
+		if (Target && Target.Class == Other.Class)
 		{
 			// Don't hit same species as originator
-			if (Other == Instigator)
+			if (Other == Target)
 			{
 				// Don't missile self
 				return true;
@@ -100,7 +100,7 @@ bool Touch(Entity InOther)
 			{
 				Other.SpawnBloodSplatter(Origin);
 			}
-			Other.Damage(self, Instigator, damage);
+			Other.Damage(self, Target, damage);
 		}
 		return false;
 	}

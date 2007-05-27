@@ -31,7 +31,7 @@ class Minotaur : Pawn
 //
 
 bool bFloorFireRefired;		//  internal to minotaur AI
-//  Args[0]         minotaur start time
+float StartTime;			//  minotaur start time
 //  Args[4]         charge duration countdown
 
 state LookState;
@@ -70,11 +70,11 @@ int InflictorModifyDamage(Actor victim, Actor source, int damage)
 void Died(Actor source)
 {
 	::Died(source);
-	if (Instigator && Instigator.Health > 0)
+	if (Tracer && Tracer.Health > 0)
 	{
-		if (!Instigator.ActiveMinotaur())
+		if (!Tracer.ActiveMinotaur())
 		{
-			Player(Instigator.Player).Powers[pw_minotaur] = 0.0;
+			Player(Tracer.Player).Powers[pw_minotaur] = 0.0;
 		}
 	}
 }
@@ -90,11 +90,11 @@ bool MorphMonster()
 	if (::MorphMonster())
 	{
 		// check for turning off minotaur power for active icon
-		if (Instigator && Instigator.Health > 0)
+		if (Tracer && Tracer.Health > 0)
 		{
-			if (!Instigator.ActiveMinotaur())
+			if (!Tracer.ActiveMinotaur())
 			{
-				Player(Instigator.Player).Powers[pw_minotaur] = 0.0;
+				Player(Tracer.Player).Powers[pw_minotaur] = 0.0;
 			}
 		}
 		return true;
@@ -112,7 +112,7 @@ bool RoughCheckThing(Entity Other)
 {
 	Actor link = Actor(Other);
 	
-	if (!link.bCountKill && (!link.bIsPlayer || link == Instigator))
+	if (!link.bCountKill && (!link.bIsPlayer || link == Tracer))
 	{
 		return false;
 	}
@@ -124,7 +124,7 @@ bool RoughCheckThing(Entity Other)
 	{
 		return false;
 	}
-	if (Minotaur(link) && link.Instigator == Instigator)
+	if (Minotaur(link) && link.Tracer == Tracer)
 	{
 		return false;
 	}
@@ -188,7 +188,7 @@ final void A_MinotaurLook()
 	float dist;
 	int i;
 
-	Enemy = none;
+	Target = none;
 
 	if (Level.Game.deathmatch)	// Quick search for players
 	{
@@ -197,27 +197,27 @@ final void A_MinotaurLook()
 			if (!Level.Game.Players[i] || !Level.Game.Players[i].bSpawned)
 				continue;
 			mo = Actor(Level.Game.Players[i].MO);
-			if (mo == Instigator)
+			if (mo == Tracer)
 				continue;
 			if (mo.Health <= 0)
 				continue;
 			dist = DistTo(mo);
 			if (dist > MinotaurLookDist)
 				continue;
-			Enemy = mo;
+			Target = mo;
 			break;
 		}
 	}
 
-	if (!Enemy)	// Near player monster search
+	if (!Target)	// Near player monster search
 	{
-		if (Instigator && (Instigator.Health > 0) && Instigator.bIsPlayer)
-			Enemy = Actor(Instigator.RoughMonsterSearch(20));
+		if (Tracer && (Tracer.Health > 0) && Tracer.bIsPlayer)
+			Target = Actor(Tracer.RoughMonsterSearch(20));
 		else
-			Enemy = Actor(RoughMonsterSearch(20));
+			Target = Actor(RoughMonsterSearch(20));
 	}
 
-	if (!Enemy)	// Normal monster search
+	if (!Target)	// Normal monster search
 	{
 		FOREACH(Actor, mo)
 		{
@@ -230,16 +230,16 @@ final void A_MinotaurLook()
 			dist = DistTo(mo);
 			if (dist > MinotaurLookDist)
 				continue;
-			if ((mo == Instigator) || (mo == self))
+			if ((mo == Tracer) || (mo == self))
 				continue;
-			if (mo.Class == Minotaur && mo.Instigator == Instigator)
+			if (mo.Class == Minotaur && mo.Tracer == Tracer)
  				continue;
-			Enemy = mo;
+			Target = mo;
 			break;	// Found mobj to attack
 		}
 	}
 
-	if (Enemy)
+	if (Target)
 	{
 		SetState(SeeStateNF);
 	}
@@ -257,11 +257,9 @@ final void A_MinotaurLook()
 
 final void A_MinotaurChase()
 {
-	int starttime = Args[0];
-
 	Alpha = 1.0;	// In case pain caused him to skip his fade in.
 
-	if ((XLevel.TicTime - starttime) >= ftoi(MAULATORTIME * 35.0))
+	if (XLevel.Time - StartTime >= MAULATORTIME)
 	{
 		Damage(none, none, 10000);
 		return;
@@ -270,7 +268,7 @@ final void A_MinotaurChase()
 	if (P_Random() < 30)
 		A_MinotaurLook();	// adjust to closest target
 
-	if (!Enemy || (Enemy.Health <= 0) || !Enemy.bShootable)
+	if (!Target || (Target.Health <= 0) || !Target.bShootable)
 	{
 		// look for a new enemy
 		SetState(LookState);
@@ -320,11 +318,9 @@ final void A_MinotaurChase()
 
 final void A_MinotaurRoam()
 {
-	int starttime = Args[0];
-
 	Alpha = 1.0;	// In case pain caused him to skip his fade in.
 
-	if ((XLevel.TicTime - starttime) >= ftoi(MAULATORTIME * 35.0))
+	if (XLevel.Time - StartTime >= MAULATORTIME)
 	{
 		Damage(none, none, 10000);
 		return;
@@ -360,7 +356,7 @@ final void A_MinotaurRoam()
 
 final void A_MinotaurAtk1()
 {
-	if (!Enemy)
+	if (!Target)
 	{
 		return;
 	}
@@ -368,7 +364,7 @@ final void A_MinotaurAtk1()
 	PlaySound('MaulatorHamSwing', CHAN_WEAPON);
 	if (CheckMeleeRange())
 	{
-		Enemy.Damage(self, self, HITDICE(4));
+		Target.Damage(self, self, HITDICE(4));
 	}
 }
 
@@ -384,12 +380,12 @@ final void A_MinotaurDecide()
 {
 	float dist;
 
-	if (!Enemy)
+	if (!Target)
 		return;
-	dist = DistTo(Enemy);
+	dist = DistTo(Target);
 
-	if (Enemy.Origin.z + Enemy.Height > Origin.z &&
-		Enemy.Origin.z + Enemy.Height < Origin.z + Height &&
+	if (Target.Origin.z + Target.Height > Origin.z &&
+		Target.Origin.z + Target.Height < Origin.z + Height &&
 		dist < 16.0 * 64.0 && dist > 1.0 * 64.0 && P_Random() < 230)
 	{
 		// Charge attack
@@ -397,10 +393,10 @@ final void A_MinotaurDecide()
 		SetState(ChargeState);
 		bSkullFly = true;
 		A_FaceTarget();
-		Velocity = Normalise(Enemy.Origin - Origin) * ChargeSpeed;
+		Velocity = Normalise(Target.Origin - Origin) * ChargeSpeed;
 		Args[4] = 35 / 2;	// Charge duration
 	}
-	else if (Enemy.Origin.z == Enemy.FloorZ &&
+	else if (Target.Origin.z == Target.FloorZ &&
 		dist < 9.0 * 64.0 && P_Random() < 100)
 	{
 		// Floor fire attack
@@ -430,16 +426,16 @@ final void A_MinotaurAtk2()
 	float angle;
 	float momz;
 
-	if (!Enemy)
+	if (!Target)
 		return;
 
 	PlaySound('MaulatorHamSwing', CHAN_WEAPON);
 	if (CheckMeleeRange())
 	{
-		Enemy.Damage(self, self, HITDICE(3));
+		Target.Damage(self, self, HITDICE(3));
 		return;
 	}
-	mo = SpawnMissile(Enemy, MinotaurMissile);
+	mo = SpawnMissile(Target, MinotaurMissile);
 	if (mo)
 	{
 		momz = mo.Velocity.z;
@@ -467,22 +463,22 @@ final void A_MinotaurAtk3()
 {
 	Actor mo;
 
-	if (!Enemy)
+	if (!Target)
 	{
 		return;
 	}
 	if (CheckMeleeRange())
 	{
-		Enemy.Damage(self, self, HITDICE(3));
-		if (Enemy.bIsPlayer)
+		Target.Damage(self, self, HITDICE(3));
+		if (Target.bIsPlayer)
 		{
 			// Squish the player
-			Player(Enemy.Player).DeltaViewHeight = -512.0;
+			Player(Target.Player).DeltaViewHeight = -512.0;
 		}
 	}
 	else
 	{
-		mo = SpawnMissile(Enemy, MinotaurFloorFire1);
+		mo = SpawnMissile(Target, MinotaurFloorFire1);
 		if (mo)
 		{
 			mo.PlaySound('MaulatorHamHit', CHAN_VOICE);
@@ -505,7 +501,7 @@ final void A_MinotaurCharge()
 {
 	Actor puff;
 
-	if (!Enemy)
+	if (!Target)
 		return;
 
 	if (Args[4] > 0)

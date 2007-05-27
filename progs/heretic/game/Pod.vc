@@ -51,7 +51,7 @@ final void A_PodPain()
 	for (i = 0; i < count; i++)
 	{
 		goo = Spawn(PodGoo, Origin + vector(0.0, 0.0, 48.0));
-		goo.Instigator = self;
+		goo.Target = self;
 		goo.Velocity.x = (Random() - Random()) * 2.0 * 35.0;
 		goo.Velocity.y = (Random() - Random()) * 2.0 * 35.0;
 		goo.Velocity.z = (0.5 + Random() * 2.0) * 35.0;

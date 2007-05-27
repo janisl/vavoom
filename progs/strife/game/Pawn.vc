@@ -99,7 +99,7 @@ Actor SpawnMissile(Actor dest, class<Actor> type)
 	if (A.SightSound)
 		A.PlaySound(A.SightSound, CHAN_VOICE);
 
-	A.Instigator = self;	// where it came from
+	A.Target = self;	// where it came from
 
 	dir = dest.Origin - Origin;
 	// fuzzy player
@@ -133,7 +133,7 @@ Actor SpawnMissileZ(float z, Actor dest, class<Actor> type)
 	if (A.SightSound)
 		A.PlaySound(A.SightSound, CHAN_VOICE);
 
-	A.Instigator = self;	// where it came from
+	A.Target = self;	// where it came from
 
 	dir = dest.Origin - Origin;
 	// fuzzy player
@@ -168,9 +168,9 @@ Actor SpawnMissileZAimed(float z, Actor dest, class<Actor> type)
 	if (A.SightSound)
 		A.PlaySound(A.SightSound, CHAN_VOICE);
 
-	A.Instigator = self;	// where it came from
+	A.Target = self;	// where it came from
 
-	dist = DistTo2(Enemy);
+	dist = DistTo2(dest);
 	dir.x = cos(Angles.yaw);
 	dir.y = sin(Angles.yaw);
 	dir.z = dist != 0.0 ? (dest.Origin.z - Origin.z) / dist : A.Speed;
@@ -199,25 +199,25 @@ bool CheckMeleeRange()
 {
 	float dist;
 
-	if (!Enemy)
+	if (!Target)
 	{
 		return false;
 	}
 
-	dist = DistTo(Enemy);
+	dist = DistTo(Target);
 
-	if (dist >= MELEERANGE - 20.0 + Enemy.Radius)
+	if (dist >= MELEERANGE - 20.0 + Target.Radius)
 	{
 		return false;
 	}
 
 	// Don't melee things too far above or below actor.
-	if (Enemy.Origin.z > Origin.z + Height)
+	if (Target.Origin.z > Origin.z + Height)
 		return false;
-	if (Enemy.Origin.z + Enemy.Height < Origin.z)
+	if (Target.Origin.z + Target.Height < Origin.z)
 		return false;
 
-	if (!CanSee(Enemy))
+	if (!CanSee(Target))
 	{
 		return false;
 	}
@@ -235,7 +235,7 @@ bool CheckMissileRange()
 {
 	float dist;
 
-	if (!CanSee(Enemy))
+	if (!CanSee(Target))
 	{
 		return false;
 	}
@@ -254,7 +254,7 @@ bool CheckMissileRange()
 	}
 
 	// OPTIMIZE: get this from a global checksight
-	dist = DistTo(Enemy) - 64.0;
+	dist = DistTo(Target) - 64.0;
 
 	if (!MeleeState)
 		dist -= 128.0;	// no melee attack, so fire more
@@ -570,11 +570,11 @@ void NewChaseDir()
 	float deltay;
 	float angle;
 
-	deltax = Enemy.Origin.x - Origin.x;
-	deltay = Enemy.Origin.y - Origin.y;
+	if (!Target)
+		Error("NewChaseDir: called with no Target");
 
-	if (!Enemy)
-		Error("NewChaseDir: called with no Enemy");
+	deltax = Target.Origin.x - Origin.x;
+	deltay = Target.Origin.y - Origin.y;
 
 	tmtrace_t tmtrace;
 	CheckRelPosition(&tmtrace, Origin);
@@ -694,9 +694,9 @@ void RandomChaseDir()
 
 bool CheckRobotRange()
 {
-	return ReactionCount == 0 && Enemy && !(bFriendly && Enemy.bFriendly) &&
-		(DistTo2(Enemy) < ROBOTRANGE - 20.0 + Enemy.Radius) &&
-    	CanSee(Enemy);
+	return ReactionCount == 0 && Target && !(bFriendly && Target.bFriendly) &&
+		(DistTo2(Target) < ROBOTRANGE - 20.0 + Target.Radius) &&
+    	CanSee(Target);
 }
 
 //==========================================================================
@@ -716,7 +716,7 @@ final void A_Stand()
 	{
 		if (bFriendly != targ.bFriendly || Level.bNoAllies)
 		{
-			Enemy = targ;
+			Target = targ;
 			if (!bCountItem || CanSee(targ))
 			{
 				Threshold = 10;
@@ -823,7 +823,7 @@ final void A_Chase()
 	// modify target threshold
 	if (Threshold)
 	{
-		if (!Enemy || Enemy.Health <= 0)
+		if (!Target || Target.Health <= 0)
 		{
 			Threshold = 0;
 		}
@@ -849,7 +849,7 @@ final void A_Chase()
 		}
 	}
 
-	if (!Enemy || !Enemy.bShootable)
+	if (!Target || !Target.bShootable)
 	{
 		// look for a new target
 		if (LookForPlayers(true))
@@ -900,7 +900,7 @@ final void A_Chase()
 	// possibly choose another target
 	if (Level.Game.netgame && !Threshold)
 	{
-		if (!CanSee(Enemy))
+		if (!CanSee(Target))
 		{
 			if (LookForPlayers(true))
 				return;	// got a new target
@@ -928,13 +928,13 @@ final void A_Chase()
 
 final void A_FaceTarget()
 {
-	if (!Enemy)
+	if (!Target)
 		return;
 
-	Angles.yaw = atan2(Enemy.Origin.y - Origin.y,
-		Enemy.Origin.x - Origin.x);
+	Angles.yaw = atan2(Target.Origin.y - Origin.y,
+		Target.Origin.x - Origin.x);
 
-	if (Enemy.Alpha < 1.0)
+	if (Target.Alpha < 1.0)
 	{
 		Angles.yaw = AngleMod360(Angles.yaw + (Random() - Random()) * 45.0);
 	}
@@ -977,7 +977,7 @@ final void A_RiffleAttack()
 	int damage;
 	TVec dir;
 
-	if (!Enemy)
+	if (!Target)
 		return;
 
 	PlaySound('monsters/rifle', CHAN_WEAPON);
@@ -1003,7 +1003,7 @@ final void A_CheckRefire()
 	if (P_Random() < 30)
 		return;
 
-	if (!Enemy || Enemy.Health <= 0 || !CanSee(Enemy) || P_Random() < 40)
+	if (!Target || Target.Health <= 0 || !CanSee(Target) || P_Random() < 40)
 	{
 		SetState(SeeState);
 	}
@@ -1025,7 +1025,7 @@ final void A_Dying()
 	}
 	if (Health <= 0)
 	{
-		Died(Enemy);
+		Died(Target);
 	}
 }
 
@@ -1039,7 +1039,7 @@ final void A_RobotMelee()
 {
 	int damage;
 
-	if (!Enemy)
+	if (!Target)
 		return;
 
 	A_FaceTarget();
@@ -1047,7 +1047,7 @@ final void A_RobotMelee()
 	{
 		PlaySound('reaver/blade', CHAN_WEAPON);
 		damage = ((P_Random() % 8) + 1) * 3;
-		Enemy.Damage(self, self, damage);
+		Target.Damage(self, self, damage);
 	}
 }
 
@@ -1064,7 +1064,7 @@ final void A_RobotMissile()
 	TVec aimDir;
 	TVec dir;
 
-	if (!Enemy)
+	if (!Target)
 		return;
 
 	A_FaceTarget();
@@ -1203,100 +1203,100 @@ final void A_BossDeath()
 		//	Specter in ruined temple.
 		StrifeLevelInfo(Level).EV_DoFloor(999, 8, 0, 0, 0,
 			FloorMover::FLOOREV_LowerToLowest, NULL);
-		Player(Enemy.Player).SetObjectives(95);
-		Player(Enemy.Player).ClientVoice(95);
+		Player(Target.Player).SetObjectives(95);
+		Player(Target.Player).ClientVoice(95);
 	}
 	else if (Class == Specter2)
 	{
 		//	Bishop's specter
-		if (!Enemy)
+		if (!Target)
 			return;
 
-		Player(Enemy.Player).GiveSigilPiece();
-		Player(Enemy.Player).GiveQuest(QUEST_KilledBishop);
-		Player(Enemy.Player).SetObjectives(74);
-		Player(Enemy.Player).ClientVoice(74);
+		Player(Target.Player).GiveSigilPiece();
+		Player(Target.Player).GiveQuest(QUEST_KilledBishop);
+		Player(Target.Player).SetObjectives(74);
+		Player(Target.Player).ClientVoice(74);
 	}
 	else if (Class == Specter3)
 	{
 		//	Oracle's specter
-		if (!Enemy)
+		if (!Target)
 			return;
 
-		Player(Enemy.Player).GiveSigilPiece();
-		Player(Enemy.Player).GiveQuest(QUEST_KilledOracle);
-		if (Player(Enemy.Player).Quests & (1 << QUEST_KilledBishop))
+		Player(Target.Player).GiveSigilPiece();
+		Player(Target.Player).GiveQuest(QUEST_KilledOracle);
+		if (Player(Target.Player).Quests & (1 << QUEST_KilledBishop))
 		{
 			//	If the Bishop is dead, set quest item 22
-			Player(Enemy.Player).GiveQuest(QUEST_KillMacil);
+			Player(Target.Player).GiveQuest(QUEST_KillMacil);
 		}
-		if (Player(Enemy.Player).Quests & (1 << QUEST_KilledLoremaster))
+		if (Player(Target.Player).Quests & (1 << QUEST_KilledLoremaster))
 		{
-			Player(Enemy.Player).SetObjectives(85);
-			Player(Enemy.Player).ClientVoice(85);
+			Player(Target.Player).SetObjectives(85);
+			Player(Target.Player).ClientVoice(85);
 		}
 		else
 		{
-			Player(Enemy.Player).SetObjectives(87);
-			Player(Enemy.Player).ClientVoice(87);
+			Player(Target.Player).SetObjectives(87);
+			Player(Target.Player).ClientVoice(87);
 		}
 		Level.ExecuteActionSpecial(LNSPEC_DoorOpen, 222, 256, 0, 0, 0, NULL, 0, none);
 	}
 	else if (Class == Specter4)
 	{
 		//	Macil's specter
-		if (!Enemy)
+		if (!Target)
 			return;
 
-		Player(Enemy.Player).GiveSigilPiece();
-		Player(Enemy.Player).GiveQuest(QUEST_KilledMacil);
-		if (Player(Enemy.Player).Quests & (1 << QUEST_Factory))
+		Player(Target.Player).GiveSigilPiece();
+		Player(Target.Player).GiveQuest(QUEST_KilledMacil);
+		if (Player(Target.Player).Quests & (1 << QUEST_Factory))
 		{
-			Player(Enemy.Player).SetObjectives(106);
-			Player(Enemy.Player).ClientVoice(106);
+			Player(Target.Player).SetObjectives(106);
+			Player(Target.Player).ClientVoice(106);
 		}
 		else
 		{
-			Player(Enemy.Player).SetObjectives(79);
-			Player(Enemy.Player).ClientVoice(79);
+			Player(Target.Player).SetObjectives(79);
+			Player(Target.Player).ClientVoice(79);
 		}
 	}
 	else if (Class == Specter5)
 	{
 		//	Loremaster's specter
-		if (!Enemy)
+		if (!Target)
 			return;
 
-		Player(Enemy.Player).GiveSigilPiece();
-		Player(Enemy.Player).GiveQuest(QUEST_KilledLoremaster);
-		Player(Enemy.Player).Accuracy += 10;
-		Player(Enemy.Player).Stamina += 10;
-		Player(Enemy.Player).GiveBody(200);
-		if (Player(Enemy.Player).Sigil == 4)
+		Player(Target.Player).GiveSigilPiece();
+		Player(Target.Player).GiveQuest(QUEST_KilledLoremaster);
+		Player(Target.Player).Accuracy += 10;
+		Player(Target.Player).Stamina += 10;
+		Player(Target.Player).GiveBody(200);
+		if (Player(Target.Player).Sigil == 4)
 		{
-			Player(Enemy.Player).SetObjectives(85);
-			Player(Enemy.Player).ClientVoice(85);
+			Player(Target.Player).SetObjectives(85);
+			Player(Target.Player).ClientVoice(85);
 		}
 		else
 		{
-			Player(Enemy.Player).SetObjectives(83);
-			Player(Enemy.Player).ClientVoice(83);
+			Player(Target.Player).SetObjectives(83);
+			Player(Target.Player).ClientVoice(83);
 		}
 		StrifeLevelInfo(Level).EV_DoFloor(666, 8, 0, 0, 0,
 			FloorMover::FLOOREV_LowerToLowest, NULL);
 	}
 	else if (Class == SubEntity)
 	{
-		if (!Enemy)
+		if (!Target)
 			return;
 
-		if (Player(Enemy.Player).Quests & (1 << QUEST_Factory))
+		if (Player(Target.Player).Quests & (1 << QUEST_Factory))
 		{
-			Player(Enemy.Player).ClientFinaleType(0);
+			Player(Target.Player).ClientFinaleType(0);
 		}
 		else
 		{
-			Player(Enemy.Player).ClientFinaleType(2);
+			Player(Target.Player).ClientFinaleType(2);
 		}
 		Level.Completed(-1, -1, 0);
 	}
@@ -1310,14 +1310,14 @@ final void A_BossDeath()
 
 final void A_SpecterMelee()
 {
-	if (!Enemy)
+	if (!Target)
 		return;
 
 	A_FaceTarget();
 
 	if (CheckMeleeRange())
 	{
-		Enemy.Damage(self, self, ((P_Random() % 10) + 1) * 12);
+		Target.Damage(self, self, ((P_Random() % 10) + 1) * 12);
 	}
 }
 
@@ -1333,15 +1333,15 @@ final void A_SpecterAttack()
 {
 	Actor		A;
 
-	if (!Enemy)
+	if (!Target)
 		return;
 
 	A_FaceTarget();
 
-	A = Spawn(SigilFloor, Enemy.Origin);
+	A = Spawn(SigilFloor, Target.Origin);
 	A.Origin.z = A.FloorZ;
 	A.Velocity = vector(0.0, 0.0, 0.0);
-	A.Instigator = self;
+	A.Target = self;
 	if (A.SightSound)
 	{
 		A.PlaySound(A.SightSound, CHAN_VOICE);
@@ -1358,12 +1358,12 @@ final void A_Specter2Attack()
 {
 	Actor A;
 
-	if (!Enemy)
+	if (!Target)
 		return;
 
 	A_FaceTarget();
 
-	A = SpawnMissile(Enemy, SigilFX1);
+	A = SpawnMissile(Target, SigilFX1);
 	A.bSpectral = false;
 }
 
@@ -1378,14 +1378,14 @@ final void A_Specter3Attack()
 	Actor spread;
 	int i;
 
-	if (!Enemy)
+	if (!Target)
 		return;
 
 	A_FaceTarget();
 
 	for (i = 0; i < 20; i++)
 	{
-		spread = SpawnMissile(Enemy, SpecterFX2);
+		spread = SpawnMissile(Target, SpecterFX2);
 		spread.bSpectral = false;
 		spread.Angles.yaw = AngleMod360(spread.Angles.yaw - 90.0 + itof(i) * (45.0 / 4.0));
 		spread.Velocity.x = spread.Speed * cos(spread.Angles.yaw);
@@ -1395,7 +1395,7 @@ final void A_Specter3Attack()
 	spread = Spawn(SigilFX4, Origin + vector(0.0, 0.0, -Height));
 	spread.bNoGravity = false;
 	spread.bSpectral = false;
-	spread.Instigator = self;
+	spread.Target = self;
 	spread.Velocity.x = 0.001;
 	spread.Velocity.y = 0.001;
 	spread.CheckMissileSpawn();
@@ -1411,12 +1411,12 @@ final void A_Specter4Attack()
 {
 	Actor A;
 
-	if (!Enemy)
+	if (!Target)
 		return;
 
 	A_FaceTarget();
 
-	A = SpawnMissile(Enemy, SpecterFX5);
+	A = SpawnMissile(Target, SpecterFX5);
 	A.bSpectral = false;
 }
 
@@ -1430,12 +1430,12 @@ final void A_Specter5Attack()
 {
 	Actor A;
 
-	if (!Enemy)
+	if (!Target)
 		return;
 
 	A_FaceTarget();
 
-	A = SpawnMissile(Enemy, SpecterFX3);
+	A = SpawnMissile(Target, SpecterFX3);
 	A.bSpectral = false;
 }
 

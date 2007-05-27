@@ -42,35 +42,35 @@ final void A_Unknown91()
 	dir = Angles.yaw;
 
 	A = Spawn(SpecterFX1_2, Origin);
-	A.Instigator = Instigator;
-	if (Specter5(Instigator))
+	A.Target = Target;
+	if (Specter5(Target))
 	{
 		A.bSpectral = false;
 	}
 	A.Angles.yaw = AngleMod360(dir + 90.0);
-	A.Enemy = Enemy;
+	A.Tracer = Tracer;
 	A.Velocity.x = A.Speed * cos(A.Angles.yaw);
 	A.Velocity.y = A.Speed * sin(A.Angles.yaw);
 
 	A = Spawn(SpecterFX1_2, Origin);
-	A.Instigator = Instigator;
-	if (Specter5(Instigator))
+	A.Target = Target;
+	if (Specter5(Target))
 	{
 		A.bSpectral = false;
 	}
 	A.Angles.yaw = AngleMod360(dir - 90.0);
-	A.Enemy = Enemy;
+	A.Tracer = Tracer;
 	A.Velocity.x = A.Speed * cos(A.Angles.yaw);
 	A.Velocity.y = A.Speed * sin(A.Angles.yaw);
 
 	A = Spawn(SpecterFX1_2, Origin);
-	A.Instigator = Instigator;
-	if (Specter5(Instigator))
+	A.Target = Target;
+	if (Specter5(Target))
 	{
 		A.bSpectral = false;
 	}
 	A.Angles.yaw = dir;
-	A.Enemy = Enemy;
+	A.Tracer = Tracer;
 	A.Velocity.x = A.Speed * cos(A.Angles.yaw);
 	A.Velocity.y = A.Speed * sin(A.Angles.yaw);
 }

@@ -38,8 +38,8 @@ void MStaffSpawn(float angle)
 	mo = Player(Owner.Player).SpawnPlayerMissileAngle(MageStaffFX2, angle);
 	if (mo)
 	{
-		mo.Instigator = Actor(Owner);
-		mo.Enemy = Actor(mo.RoughMonsterSearch(10));
+		mo.Target = Actor(Owner);
+		mo.Tracer = Actor(mo.RoughMonsterSearch(10));
 	}
 }
 

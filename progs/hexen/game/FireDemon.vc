@@ -73,7 +73,7 @@ final void A_FiredSpawnRock()
 	mo = Spawn(rtype, rockOrg);
 	if (mo)
 	{
-		mo.Instigator = self;
+		mo.Target = self;
 		mo.Velocity.x = (Random() - 0.5) * 4.0 * 35.0;
 		mo.Velocity.y = (Random() - 0.5) * 4.0 * 35.0;
 		mo.Velocity.z = Random() * 4.0 * 35.0;
@@ -133,7 +133,7 @@ final void A_FiredChase()
 		}
 	}
 
-	if (!Enemy || !Enemy.bShootable)
+	if (!Target || !Target.bShootable)
 	{
 		// Invalid enemy
 		LookForPlayers(true);
@@ -150,13 +150,13 @@ final void A_FiredChase()
 		StrafeCount = 0;
 		Velocity.x = 0.0;
 		Velocity.y = 0.0;
-		dist = DistTo(Enemy);
+		dist = DistTo(Target);
 		if (dist < AttackRange)
 		{
 			if (P_Random() < 30)
 			{
-				ang = atan2(Enemy.Origin.y - Origin.y,
-					Enemy.Origin.x - Origin.x);
+				ang = atan2(Target.Origin.y - Origin.y,
+					Target.Origin.x - Origin.x);
 				if (P_Random() < 128)
 					ang = AngleMod360(ang + 90.0);
 				else
@@ -211,7 +211,7 @@ final void A_FiredAttack()
 {
 	Actor mo;
 
-	mo = SpawnMissile(Enemy, FireDemonMissile);
+	mo = SpawnMissile(Target, FireDemonMissile);
 	if (mo)
 	{
 		PlaySound('FireDemonAttack', CHAN_WEAPON);

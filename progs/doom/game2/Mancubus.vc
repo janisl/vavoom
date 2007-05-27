@@ -59,9 +59,9 @@ final void A_FatAttack1()
 	A_FaceTarget();
 	// Change direction  to ...
 	Angles.yaw = AngleMod360(Angles.yaw + SpreadAngle);
-	SpawnMissile(Enemy, MancubusMissile);
+	SpawnMissile(Target, MancubusMissile);
 
-	A = SpawnMissile(Enemy, MancubusMissile);
+	A = SpawnMissile(Target, MancubusMissile);
 	A.Angles.yaw = AngleMod360(A.Angles.yaw + SpreadAngle);
 	VectorRotateAroundZ(&A.Velocity, SpreadAngle);
 }
@@ -81,9 +81,9 @@ final void A_FatAttack2()
 	A_FaceTarget();
 	// Now here choose opposite deviation.
 	Angles.yaw = AngleMod360(Angles.yaw - SpreadAngle);
-	SpawnMissile(Enemy, MancubusMissile);
+	SpawnMissile(Target, MancubusMissile);
 
-	A = SpawnMissile(Enemy, MancubusMissile);
+	A = SpawnMissile(Target, MancubusMissile);
 	A.Angles.yaw = AngleMod360(A.Angles.yaw - SpreadAngle * 2.0);
 	VectorRotateAroundZ(&A.Velocity, -SpreadAngle * 2.0);
 }
@@ -102,11 +102,11 @@ final void A_FatAttack3()
 
 	A_FaceTarget();
 
-	A = SpawnMissile(Enemy, MancubusMissile);
+	A = SpawnMissile(Target, MancubusMissile);
 	A.Angles.yaw = AngleMod360(A.Angles.yaw - SpreadAngle / 2.0);
 	VectorRotateAroundZ(&A.Velocity, -SpreadAngle / 2.0);
 
-	A = SpawnMissile(Enemy, MancubusMissile);
+	A = SpawnMissile(Target, MancubusMissile);
 	A.Angles.yaw = AngleMod360(A.Angles.yaw + SpreadAngle / 2.0);
 	VectorRotateAroundZ(&A.Velocity, SpreadAngle / 2.0);
 }

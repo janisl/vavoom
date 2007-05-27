@@ -34,14 +34,14 @@ class PeasantBase : Pawn
 
 final void A_PeasantAttack()
 {
-	if (!Enemy)
+	if (!Target)
 		return;
 
 	A_FaceTarget();
 
 	if (CheckMeleeRange())
 	{
-		Enemy.Damage(self, self, (P_Random() % 5) * 2 + 2);
+		Target.Damage(self, self, (P_Random() % 5) * 2 + 2);
 	}
 }
 

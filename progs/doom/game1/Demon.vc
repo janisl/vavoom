@@ -39,14 +39,14 @@ final void A_SargAttack()
 {
 	int damage;
 
-	if (!Enemy)
+	if (!Target)
 		return;
 
 	A_FaceTarget();
 	if (CheckMeleeRange())
 	{
 		damage = ((P_Random() % 10) + 1) * 4;
-		Enemy.Damage(self, self, damage);
+		Target.Damage(self, self, damage);
 	}
 }
 

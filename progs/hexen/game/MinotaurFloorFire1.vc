@@ -39,7 +39,7 @@ final void A_MntrFloorFire()
 	A = Spawn(MinotaurFloorFire2, vector(
 		Origin.x + (Random() - Random()) * 4.0,
 		Origin.y + (Random() - Random()) * 4.0, ONFLOORZ));
-	A.Instigator = Instigator;
+	A.Target = Target;
 	A.Velocity.x = 0.00001;	// Force block checking
 	A.CheckMissileSpawn();
 }

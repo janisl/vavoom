@@ -61,7 +61,7 @@ final void A_MLightningAttack()
 	}
 	if (cmo)
 	{
-		cmo.Enemy = none;	// mobj that it will track
+		cmo.Tracer = none;	// mobj that it will track
 		cmo.LightningLink = fmo;
 		cmo.A_LightningZap();
 	}

@@ -78,7 +78,7 @@ final void A_BatSpawn()
 		mo.FloatBobIndex = P_Random() & 63;	// floatbob index
 		mo.TurnAngle = itof(Args[4]);	// turn degrees
 		mo.LifeTime = Args[3] << 3;	// Set lifetime
-		mo.Instigator = self;
+		mo.Target = self;
 	}
 }
 

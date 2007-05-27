@@ -36,7 +36,7 @@ final void A_FireGrenadeExplode()
 	Actor A;
 
 	A = Spawn(GrenadeFlame, Origin);
-	A.Instigator = Instigator;
+	A.Target = Target;
 }
 
 __states__

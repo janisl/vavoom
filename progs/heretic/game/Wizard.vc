@@ -76,17 +76,17 @@ final void A_WizAtk3()
 	TAVec ang;
 
 	Alpha = 1.0;
-	if (!Enemy)
+	if (!Target)
 	{
 		return;
 	}
 	PlaySound(AttackSound, CHAN_WEAPON);
 	if (CheckMeleeRange())
 	{
-		Enemy.Damage(self, self, HITDICE(4));
+		Target.Damage(self, self, HITDICE(4));
 		return;
 	}
-	A = SpawnMissile(Enemy, WizardMissile);
+	A = SpawnMissile(Target, WizardMissile);
 	if (A)
 	{
 		VectorAngles(&A.Velocity, &ang);

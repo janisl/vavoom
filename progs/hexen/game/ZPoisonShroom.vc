@@ -50,7 +50,7 @@ final void A_PoisonBagInit()
 	A = Spawn(PoisonCloud, Origin + vector(0.0, 0.0, 28.0));
 	if (A)
 	{
-		PoisonCloud(A).InitCloud(Instigator);
+		PoisonCloud(A).InitCloud(Target);
 	}
 }
 

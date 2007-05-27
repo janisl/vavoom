@@ -39,7 +39,7 @@ int UpdateMorphedMonster(int tics)
 	TVec oldOrigin;
 	class<Actor> originalClass;
 	float oldAngle;
-	Actor oldEnemy;
+	Actor oldTarget;
 	int oldSpecial;
 	int oldTID;
 	int oldArgs[5];
@@ -61,7 +61,7 @@ int UpdateMorphedMonster(int tics)
 	}
 	oldOrigin = Origin;
 	oldAngle = Angles.yaw;
-	oldEnemy = Enemy;
+	oldTarget = Target;
 	oldSpecial = Special;
 	oldTID = TID;
 	oldArgs[0] = Args[0];
@@ -85,7 +85,7 @@ int UpdateMorphedMonster(int tics)
 	RemoveFromTIDList();
 	SetState(S_FREETARGMOBJ);
 	mo.Angles.yaw = oldAngle;
-	mo.Enemy = oldEnemy;
+	mo.Target = oldTarget;
 	mo.TID = oldTID;
 	mo.Special = oldSpecial;
 	mo.Args[0] = oldArgs[0];
@@ -141,13 +141,13 @@ final void A_PigAttack()
 	{
 		return;
 	}
-	if (!Enemy)
+	if (!Target)
 	{
 		return;
 	}
 	if (CheckMeleeRange())
 	{
-		Enemy.Damage(self, self, 2 + (P_Random() & 1));
+		Target.Damage(self, self, 2 + (P_Random() & 1));
 		PlaySound('PigAttack', CHAN_VOICE);
 	}
 }

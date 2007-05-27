@@ -46,15 +46,15 @@ final void A_BridgeInit()
 	// Spawn triad into world
 	ball1 = BridgeBall(Spawn(BridgeBall, Origin));
 	ball1.OrbitAngle = StartAngle;
-	ball1.Instigator = self;
+	ball1.Target = self;
 
 	ball2 = BridgeBall(Spawn(BridgeBall, Origin));
 	ball2.OrbitAngle = AngleMod360(StartAngle + 120.0);
-	ball2.Instigator = self;
+	ball2.Target = self;
 
 	ball3 = BridgeBall(Spawn(BridgeBall, Origin));
 	ball3.OrbitAngle = AngleMod360(StartAngle + 240.0);
-	ball3.Instigator = self;
+	ball3.Target = self;
 
 	ball1.A_BridgeOrbit();
 	ball2.A_BridgeOrbit();

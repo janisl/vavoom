@@ -33,7 +33,7 @@ class LoremasterChain : Projectile;
 
 int DoSpecialDamage(Actor Victim, int damage)
 {
-	Victim.Velocity += Normalise(Instigator.Origin - Victim.Origin) *
+	Victim.Velocity += Normalise(Target.Origin - Victim.Origin) *
 		((255.0 * 50.0 * 35.0) / (Victim.Mass ? Victim.Mass : 1.0));
 	return damage;
 }

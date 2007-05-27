@@ -125,14 +125,14 @@ final void A_BishopChase()
 
 final void A_BishopAttack()
 {
-	if (!Enemy)
+	if (!Target)
 	{
 		return;
 	}
 	PlaySound(AttackSound, CHAN_WEAPON);
 	if (CheckMeleeRange())
 	{
-		Enemy.Damage(self, self, HITDICE(4));
+		Target.Damage(self, self, HITDICE(4));
 		return;
 	}
 	NumToSpawn = (P_Random() & 3) + 5;
@@ -150,16 +150,16 @@ final void A_BishopAttack2()
 {
 	Actor mo;
 
-	if (!Enemy || !NumToSpawn)
+	if (!Target || !NumToSpawn)
 	{
 		NumToSpawn = 0;
 		SetState(SeeState);
 		return;
 	}
-	mo = SpawnMissile(Enemy, BishopMissile);
+	mo = SpawnMissile(Target, BishopMissile);
 	if (mo)
 	{
-		mo.Enemy = Enemy;
+		mo.Tracer = Target;
 	}
 	NumToSpawn--;
 }

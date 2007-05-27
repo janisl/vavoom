@@ -136,11 +136,11 @@ void BeginPlay()
 	{
 		if (A.TID == Args[3])
 		{
-			Enemy = A;
+			Target = A;
 			break;
 		}
 	}
-	if (Enemy == none)
+	if (Target == none)
 	{
 		print("AimingCamera %d: Can't find thing %d", TID, Args[3]);
 	}
@@ -154,10 +154,10 @@ void BeginPlay()
 
 void TickCamera(float DeltaTime)
 {
-	if (Enemy)
+	if (Target)
 	{
 		float delta;
-		int dir = FaceActor(Enemy, &delta);
+		int dir = FaceActor(Target, &delta);
 		if (delta > Range * DeltaTime)
 		{
 			delta = Range * DeltaTime;
@@ -173,7 +173,7 @@ void TickCamera(float DeltaTime)
 		if (MaxPitchChange)
 		{
 			// Aim camera's pitch
-			TVec dv = MobjCentre(Enemy) - Origin;
+			TVec dv = MobjCentre(Target) - Origin;
 			TAVec d;
 			VectorAngles(&dv, &d);
 			if (fabs(d.pitch - Angles.pitch) < MaxPitchChange * DeltaTime)
@@ -703,12 +703,12 @@ void BeginPlay()
 	{
 		if (A.TID == Args[3])
 		{
-			Enemy = A;
+			Target = A;
 			break;
 		}
 	}
 
-	if (Enemy == none)
+	if (Target == none)
 	{
 		print("ActorMover %d: Can't find target %d", TID, Args[3]);
 	}
@@ -722,20 +722,20 @@ void BeginPlay()
 
 bool Interpolate()
 {
-	if (Enemy == none)
+	if (Target == none)
 		return true;
 
 	if (::Interpolate())
 	{
-		if (!Enemy.TryMove(Origin))
+		if (!Target.TryMove(Origin))
 		{
 			return false;
 		}
 
 		if (Args[2] & 2)
-			Enemy.Angles.yaw = Angles.yaw;
+			Target.Angles.yaw = Angles.yaw;
 		if (Args[2] & 4)
-			Enemy.Angles.pitch = Angles.pitch;
+			Target.Angles.pitch = Angles.pitch;
 
 		return true;
 	}
@@ -750,25 +750,25 @@ bool Interpolate()
 
 bool Activate()
 {
-	if (Enemy == none || bActive)
+	if (Target == none || bActive)
 		return false;
 
 	::Activate();
-	bSavedNoGravity = Enemy.bNoGravity;
-	bSavedNoBlockmap = Enemy.bNoBlockmap;
-	bSavedSolid = Enemy.bSolid;
-	bSavedDormant = Enemy.bDormant;
-	Enemy.bNoGravity = true;
+	bSavedNoGravity = Target.bNoGravity;
+	bSavedNoBlockmap = Target.bNoBlockmap;
+	bSavedSolid = Target.bSolid;
+	bSavedDormant = Target.bDormant;
+	Target.bNoGravity = true;
 	if (Args[2] & 128)
 	{
-		Enemy.UnlinkFromWorld();
-		Enemy.bNoBlockmap = true;
-		Enemy.bSolid = false;
-		Enemy.LinkToWorld();
+		Target.UnlinkFromWorld();
+		Target.bNoBlockmap = true;
+		Target.bSolid = false;
+		Target.LinkToWorld();
 	}
-	if (Enemy.bMonster)
+	if (Target.bMonster)
 	{
-		Enemy.bDormant = true;
+		Target.bDormant = true;
 	}
 	return true;
 }
@@ -782,14 +782,14 @@ bool Activate()
 bool Deactivate()
 {
 	::Deactivate();
-	if (Enemy != none)
+	if (Target != none)
 	{
-		Enemy.bSolid = bSavedSolid;
-		Enemy.bNoGravity = bSavedNoGravity;
-		Enemy.UnlinkFromWorld();
-		Enemy.bNoBlockmap = bSavedNoBlockmap;
-		Enemy.LinkToWorld();
-		Enemy.bDormant = bSavedDormant;
+		Target.bSolid = bSavedSolid;
+		Target.bNoGravity = bSavedNoGravity;
+		Target.UnlinkFromWorld();
+		Target.bNoBlockmap = bSavedNoBlockmap;
+		Target.LinkToWorld();
+		Target.bDormant = bSavedDormant;
 	}
 	return true;
 }
@@ -828,11 +828,11 @@ void BeginPlay()
 		{
 			if (A.TID == Args[3])
 			{
-				Enemy = A;
+				Target = A;
 				break;
 			}
 		}
-		if (Enemy == none)
+		if (Target == none)
 		{
 			print("LookAtCamera %d: Can't find thing %d", TID, Args[3]);
 		}
@@ -850,12 +850,12 @@ bool Interpolate()
 	TVec delta;
 	TAVec ang;
 
-	if (Enemy == none)
+	if (Target == none)
 		return ::Interpolate();
 
 	if (::Interpolate())
 	{
-		delta = MobjCentre(Enemy) - Origin;
+		delta = MobjCentre(Target) - Origin;
 		VectorAngles(&delta, &ang);
 		Angles.yaw = ang.yaw;
 		if (Args[2] & 4)

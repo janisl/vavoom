@@ -34,12 +34,12 @@ class Loremaster : Pawn
 
 final void A_LoremasterAttack()
 {
-	if (!Enemy)
+	if (!Target)
 		return;
 
 	A_FaceTarget();
 
-	SpawnMissile(Enemy, LoremasterChain);
+	SpawnMissile(Target, LoremasterChain);
 }
 
 //==========================================================================
@@ -62,7 +62,7 @@ final void A_LoremasterDeath()
 			A.Velocity.x = (Random() * 8.0 - 4.0) * 35.0;
 			A.Velocity.y = (Random() * 8.0 - 4.0) * 35.0;
 			A.Velocity.z = (10.0 + Random() * 4.0)  * 35.0;
-			A.Instigator = self;
+			A.Target = self;
 		}
 	}
 

@@ -43,15 +43,15 @@ final void A_InquisitorChase()
 {
 	float		ZSpeed;
 
-	if (!Enemy)
+	if (!Target)
 		return;
 
 	PlaySound('inquisitor/walk', CHAN_BODY);
 	A_Chase();
 	ZSpeed = fabs(Velocity.z);
-	if (Origin.z < Enemy.Origin.z)
+	if (Origin.z < Target.Origin.z)
 	{
-		if(TestMobjZ())
+		if (TestMobjZ())
 			Origin.z = FloorZ + 80.0;
 		else
 		{
@@ -59,7 +59,7 @@ final void A_InquisitorChase()
 			return;
 		}
 
-		if(TestMobjZ())
+		if (TestMobjZ())
 		{
 			A_FaceTarget();
 
@@ -78,11 +78,11 @@ final void A_InquisitorChase()
 			return;
 		}
 	}
-	else if (Origin.z != Enemy.Origin.z && Origin.z != FloorZ && 
+	else if (Origin.z != Target.Origin.z && Origin.z != FloorZ && 
 		ZSpeed > 21.0)
 	{
 		A_FaceTarget();
-		if(TestMobjZ())
+		if (TestMobjZ())
 		{
 			SetState(JumpState);
 			Effects = StrifeDefs::EF_DL_BLUE;
@@ -100,7 +100,7 @@ final void A_InquisitorChase()
 
 final void A_InquisitorChase2()
 {
-	if (!Enemy || Origin.z != FloorZ)
+	if (!Target || Origin.z != FloorZ)
 		return;
 
 	if (!CheckRobotRange())
@@ -129,17 +129,17 @@ final void A_InquisitorGrenade()
 
 	A_FaceTarget();
 
-	A = SpawnMissileZAimed(76.0, Enemy, InquisitorGrenade);
+	A = SpawnMissileZAimed(76.0, Target, InquisitorGrenade);
 	A.Angles.yaw -= 45.0 / 16.0;
 	A.Velocity.x = A.Speed * cos(A.Angles.yaw);
 	A.Velocity.y = A.Speed * sin(A.Angles.yaw);
-	A.Velocity.z += 4.0;
+	A.Velocity.z += 4.0 * 35.0;
 
-	A = SpawnMissileZAimed(76.0, Enemy, InquisitorGrenade);
+	A = SpawnMissileZAimed(76.0, Target, InquisitorGrenade);
 	A.Angles.yaw += 45.0 / 16.0;
 	A.Velocity.x = A.Speed * cos(A.Angles.yaw);
 	A.Velocity.y = A.Speed * sin(A.Angles.yaw);
-	A.Velocity.z += 170.0;	//weeeeeeeeeee!!!!
+	A.Velocity.z += 170.0 * 35.0;	//weeeeeeeeeee!!!!
 }
 
 //==========================================================================
@@ -153,20 +153,20 @@ final void A_InquisitorInitJump()
 	float an;
 	float dist;
 
-	if (!Enemy)
+	if (!Target)
 		return;
 
 	PlaySound(JumpSound, CHAN_BODY);
 	A_FaceTarget();
 	Velocity.x += JumpSpeed * cos(Angles.yaw);
 	Velocity.y += JumpSpeed * sin(Angles.yaw);
-	dist = DistTo2(Enemy);
+	dist = DistTo2(Target);
 	dist /= JumpSpeed;
 	if (dist < 1.0)
 	{
 		dist = 1.0;
 	}
-	Velocity.z = (Enemy.Origin.z - Origin.z) / dist;
+	Velocity.z = (Target.Origin.z - Origin.z) / dist;
 	ReactionCount = 60;
 	bNoGravity = true;
 	bFloat = false;

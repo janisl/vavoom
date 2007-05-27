@@ -71,7 +71,7 @@ bool Touch(Entity InOther)
 		}
 	}
 
-	if (Other == Instigator)
+	if (Other == Target)
 	{
 		return true;
 	}
@@ -87,11 +87,11 @@ bool Touch(Entity InOther)
 			Other.Class == CentaurLeader)
 		{
 			// Lightning does more damage to centaurs
-			Other.Damage(self, Instigator, 9);
+			Other.Damage(self, Target, 9);
 		}
 		else
 		{
-			Other.Damage(self, Instigator, 3);
+			Other.Damage(self, Target, 3);
 		}
 		if (!(GetSoundPlayingInfo(self,
 					GetSoundID('MageLightningZap'))))
@@ -117,14 +117,14 @@ bool Touch(Entity InOther)
 	}
 	if (Class == LightningFloor)
 	{
-		if (LightningLink && !LightningLink.Enemy)
+		if (LightningLink && !LightningLink.Tracer)
 		{
-			LightningLink.Enemy = Other;
+			LightningLink.Tracer = Other;
 		}
 	}
-	else if (!Enemy)
+	else if (!Tracer)
 	{
-		Enemy = Other;
+		Tracer = Other;
 	}
 	return true;	// lightning zaps through all sprites
 }
@@ -142,22 +142,22 @@ final void A_LightningClip()
 
 	if (Class == LightningFloor)
 	{
-		if (Sector->bHasExtrafloors && LightningLink && Instigator.Origin.z >= LightningLink.FloorZ)
+		if (Sector->bHasExtrafloors && LightningLink && Target.Origin.z >= LightningLink.FloorZ)
 			Origin.z = LightningLink.FloorZ;
 		else
 			Origin.z = FloorZ;
 		if (LightningLink)
-			targ = LightningLink.Enemy;
+			targ = LightningLink.Tracer;
 		else
 			targ = none;
 	}
 	else if (Class == LightningCeiling)
 	{
-		if (Sector->bHasExtrafloors && LightningLink && Instigator.Origin.z <= LightningLink.CeilingZ)
+		if (Sector->bHasExtrafloors && LightningLink && Target.Origin.z <= LightningLink.CeilingZ)
 			Origin.z = LightningLink.CeilingZ - Height;
 		else
 			Origin.z = CeilingZ - Height;
-		targ = Enemy;
+		targ = Tracer;
 	}
 	if (Class == LightningFloor)
 	{
@@ -234,7 +234,7 @@ final void A_LightningZap()
 		Zap.LightningOwner = self;
 		Zap.Velocity.x = Velocity.x;
 		Zap.Velocity.y = Velocity.y;
-		Zap.Instigator = Instigator;
+		Zap.Target = Target;
 		if (Class == LightningFloor)
 		{
 			Zap.Velocity.z = 20.0 * 35.0;

@@ -51,13 +51,13 @@ final void A_BabyMetal()
 
 final void A_BspiAttack()
 {
-	if (!Enemy)
+	if (!Target)
 		return;
 
 	A_FaceTarget();
 
 	// launch a missile
-	SpawnMissile(Enemy, ArachnotronPlasma);
+	SpawnMissile(Target, ArachnotronPlasma);
 }
 
 __states__

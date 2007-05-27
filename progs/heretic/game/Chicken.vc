@@ -39,7 +39,7 @@ bool UpdateChicken(int tics)
 	Actor fog;
 	class<Actor> moType;
 	float oldAngle;
-	Actor oldEnemy;
+	Actor oldTarget;
 	int oldSpecial;
 	int oldTID;
 	int oldArgs[5];
@@ -52,7 +52,7 @@ bool UpdateChicken(int tics)
 	}
 	moType = SpecialCID;
 	oldAngle = Angles.yaw;
-	oldEnemy = Enemy;
+	oldTarget = Target;
 	oldSpecial = Special;
 	oldTID = TID;
 	oldArgs[0] = Args[0];
@@ -74,7 +74,7 @@ bool UpdateChicken(int tics)
 	RemoveFromTIDList();
 	SetState(S_FREETARGMOBJ);
 	A.Angles.yaw = oldAngle;
-	A.Enemy = oldEnemy;
+	A.Target = oldTarget;
 	A.TID = oldTID;
 	A.Special = oldSpecial;
 	A.Args[0] = oldArgs[0];
@@ -130,13 +130,13 @@ final void A_ChicAttack()
 	{
 		return;
 	}
-	if (!Enemy)
+	if (!Target)
 	{
 		return;
 	}
 	if (CheckMeleeRange())
 	{
-		Enemy.Damage(self, self, 1 + (P_Random() & 1));
+		Target.Damage(self, self, 1 + (P_Random() & 1));
 	}
 }
 

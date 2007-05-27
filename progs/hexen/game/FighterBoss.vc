@@ -34,7 +34,7 @@ class FighterBoss : ClassBoss
 
 final void A_FighterAttack()
 {
-	if (!Enemy)
+	if (!Target)
 		return;
 
 	SpawnMissileAngle(FighterSwordMissile,

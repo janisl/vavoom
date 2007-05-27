@@ -121,15 +121,15 @@ final void A_SorcSpinBalls()
 	ball = Spawn(SorcererBall1, org);
 	if (ball)
 	{
-		ball.Instigator = self;
+		ball.Target = self;
 		ball._Special2 = SORCFX4_RAPIDFIRE_TIME;
 	}
 	ball = Spawn(SorcererBall2, org);
 	if (ball)
-		ball.Instigator = self;
+		ball.Target = self;
 	ball = Spawn(SorcererBall3, org);
 	if (ball)
-		ball.Instigator = self;
+		ball.Target = self;
 }
 
 //============================================================================

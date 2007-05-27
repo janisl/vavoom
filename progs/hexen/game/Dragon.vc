@@ -123,11 +123,11 @@ final void DragonSeek(float thresh, float turnMax)
 			atan2(tempTarget.Origin.y - Origin.y,
 			tempTarget.Origin.x - Origin.x))) < 45.0 / 2.0)
 		{
-			oldTarget = Enemy;
-			Enemy = tempTarget;
+			oldTarget = Target;
+			Target = tempTarget;
 			if (CheckMeleeRange())
 			{
-				Enemy.Damage(self, self, HITDICE(10));
+				Target.Damage(self, self, HITDICE(10));
 				PlaySound('DragonAttack', CHAN_WEAPON);
 			}
 			else if (P_Random() < 128 && CheckMissileRange())
@@ -135,18 +135,18 @@ final void DragonSeek(float thresh, float turnMax)
 				SpawnMissile(tempTarget, DragonMissile);
 				PlaySound('DragonAttack', CHAN_WEAPON);
 			}
-			Enemy = oldTarget;
+			Target = oldTarget;
 		}
 	}
 	if (dist * 35.0 < 4.0)
 	{
 		// Hit the target thing
-		if (Enemy && P_Random() < 200)
+		if (Target && P_Random() < 200)
 		{
 			bestArg = -1;
 			bestAngle = 360.0;
-			angleToTarget = atan2(Enemy.Origin.y - Origin.y,
-				Enemy.Origin.x - Origin.x);
+			angleToTarget = atan2(Target.Origin.y - Origin.y,
+				Target.Origin.x - Origin.x);
 			for (i = 0; i < 5; i++)
 			{
 				if (!tempTarget.Args[i])
@@ -195,19 +195,19 @@ final void A_DragonFlight()
 	float angle;
 
 	DragonSeek(4.0, 8.0);
-	if (Enemy)
+	if (Target)
 	{
-		if (!Enemy.bShootable)
+		if (!Target.bShootable)
 		{
 			// enemy died
-			Enemy = none;
+			Target = none;
 			return;
 		}
-		angle = atan2(Enemy.Origin.y - Origin.y, Enemy.Origin.x - Origin.x);
+		angle = atan2(Target.Origin.y - Origin.y, Target.Origin.x - Origin.x);
 		if (fabs(AngleMod180(Angles.yaw - angle)) < 45.0 / 2.0
 			&& CheckMeleeRange())
 		{
-			Enemy.Damage(self, self, HITDICE(8));
+			Target.Damage(self, self, HITDICE(8));
 			PlaySound('DragonAttack', CHAN_WEAPON);
 		}
 		else if (fabs(AngleMod180(Angles.yaw - angle)) <= 20.0)
@@ -249,7 +249,7 @@ final void A_DragonFlap()
 
 final void A_DragonAttack()
 {
-	SpawnMissile(Enemy, DragonMissile);
+	SpawnMissile(Target, DragonMissile);
 }
 
 //============================================================================

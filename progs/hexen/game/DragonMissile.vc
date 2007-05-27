@@ -45,7 +45,7 @@ final void A_DragonFX2()
 		if (A)
 		{
 			A.StateTime = delay + Random() * 0.2 * itof(i);
-			A.Instigator = Instigator;
+			A.Target = Target;
 		}
 	}
 }

@@ -76,7 +76,7 @@ final void A_FogSpawn()
 			delta = 1.0;
 		A.Angles.yaw = AngleMod360(Angles.yaw +
 			((Random() * delta) - (delta * 0.5)) * 360.0 / 256.0);
-		A.Instigator = self;
+		A.Target = self;
 		if (Args[0] < 1)
 			Args[0] = 1;
 		A.Args[0] = (P_Random() % (Args[0])) + 1;	// P_Random speed

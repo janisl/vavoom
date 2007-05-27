@@ -36,17 +36,17 @@ class ArchvileFire : Actor
 
 final void A_Fire()
 {
-	if (!Enemy || !Instigator)
+	if (!Target || !Tracer)
 		return;
 
 	// don't move it if the vile lost sight
-	if (!Instigator.CanSee(Enemy))
+	if (!Target.CanSee(Tracer))
 		return;
 
 	UnlinkFromWorld();
-	Origin.x = Enemy.Origin.x + 24.0 * cos(Enemy.Angles.yaw);
-	Origin.y = Enemy.Origin.y + 24.0 * sin(Enemy.Angles.yaw);
-	Origin.z = Enemy.Origin.z;
+	Origin.x = Tracer.Origin.x + 24.0 * cos(Tracer.Angles.yaw);
+	Origin.y = Tracer.Origin.y + 24.0 * sin(Tracer.Angles.yaw);
+	Origin.z = Tracer.Origin.z;
 	LinkToWorld();
 }
 

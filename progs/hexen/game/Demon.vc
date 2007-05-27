@@ -39,7 +39,7 @@ final void A_DemonAttack1()
 {
 	if (CheckMeleeRange())
 	{
-		Enemy.Damage(self, self, HITDICE(2));
+		Target.Damage(self, self, HITDICE(2));
 	}
 }
 
@@ -53,7 +53,7 @@ final void A_DemonAttack2()
 {
 	Actor M;
 
-	M = SpawnMissile(Enemy, FireBallType);
+	M = SpawnMissile(Target, FireBallType);
 	if (M)
 	{
 		M.Origin.z += 30.0;
@@ -79,7 +79,7 @@ final void A_DemonDeath()
 		A.Velocity.x = (Random() * 4.0 + 1.0) * cos(angle) * 35.0;
 		A.Velocity.y = (Random() * 4.0 + 1.0) * sin(angle) * 35.0;
 		A.Velocity.z = 8.0 * 35.0;
-		A.Instigator = self;
+		A.Target = self;
 	}
 	A = Spawn(DemonChunk2, Origin + vector(0.0, 0.0, 45.0));
 	if (A)
@@ -88,7 +88,7 @@ final void A_DemonDeath()
 		A.Velocity.x = (Random() * 4.0 + 1.0) * cos(angle) * 35.0;
 		A.Velocity.y = (Random() * 4.0 + 1.0) * sin(angle) * 35.0;
 		A.Velocity.z = 8.0 * 35.0;
-		A.Instigator = self;
+		A.Target = self;
 	}
 	A = Spawn(DemonChunk3, Origin + vector(0.0, 0.0, 45.0));
 	if (A)
@@ -97,7 +97,7 @@ final void A_DemonDeath()
 		A.Velocity.x = (Random() * 4.0 + 1.0) * cos(angle) * 35.0;
 		A.Velocity.y = (Random() * 4.0 + 1.0) * sin(angle) * 35.0;
 		A.Velocity.z = 8.0 * 35.0;
-		A.Instigator = self;
+		A.Target = self;
 	}
 	A = Spawn(DemonChunk4, Origin + vector(0.0, 0.0, 45.0));
 	if (A)
@@ -106,7 +106,7 @@ final void A_DemonDeath()
 		A.Velocity.x = (Random() * 4.0 + 1.0) * cos(angle) * 35.0;
 		A.Velocity.y = (Random() * 4.0 + 1.0) * sin(angle) * 35.0;
 		A.Velocity.z = 8.0 * 35.0;
-		A.Instigator = self;
+		A.Target = self;
 	}
 	A = Spawn(DemonChunk5, Origin + vector(0.0, 0.0, 45.0));
 	if (A)
@@ -115,7 +115,7 @@ final void A_DemonDeath()
 		A.Velocity.x = (Random() * 4.0 + 1.0) * cos(angle) * 35.0;
 		A.Velocity.y = (Random() * 4.0 + 1.0) * sin(angle) * 35.0;
 		A.Velocity.z = 8.0 * 35.0;
-		A.Instigator = self;
+		A.Target = self;
 	}
 }
 

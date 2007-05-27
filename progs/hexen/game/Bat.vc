@@ -65,7 +65,7 @@ final void A_BatMove()
 		PlaySound('BatScream', CHAN_VOICE);
 
 	// Handle Z movement
-	Origin.z = Instigator.Origin.z + 2.0 * Level.Game.FloatBobOffsets[FloatBobIndex];
+	Origin.z = Target.Origin.z + 2.0 * Level.Game.FloatBobOffsets[FloatBobIndex];
 	FloatBobIndex = (FloatBobIndex + 3) & 63;
 }
 

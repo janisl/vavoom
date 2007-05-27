@@ -34,7 +34,7 @@ class Programmer : Pawn
 
 final void A_ProgrammerMelee()
 {
-	if (!Enemy)
+	if (!Target)
 		return;
 
 	A_FaceTarget();
@@ -42,7 +42,7 @@ final void A_ProgrammerMelee()
 	if (CheckMeleeRange())
 	{
 		PlaySound('programmer/clank', CHAN_WEAPON);
-		Enemy.Damage(self, self, ((P_Random() % 10) + 1) * 6);
+		Target.Damage(self, self, ((P_Random() % 10) + 1) * 6);
 	}
 }
 
@@ -58,8 +58,8 @@ final void A_ProgrammerDeath()
 	TossUpObject(ProgrammersBase);
 
 	//	Give Silil piece to the player.
-	Player(Enemy.Player).GiveSigilPiece();
-	Enemy.Player.cprint("You\'ve Killed the Programmer!");
+	Player(Target.Player).GiveSigilPiece();
+	Target.Player.cprint("You\'ve Killed the Programmer!");
 }
 
 __states__

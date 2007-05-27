@@ -55,7 +55,7 @@ final void A_WraithFX2()
 			A.Velocity.z = 0.0;
 			A.Velocity.x = (Random() / 2.0 + 1.0) * cos(angle) * 35.0;
 			A.Velocity.y = (Random() / 2.0 + 1.0) * sin(angle) * 35.0;
-			A.Instigator = self;
+			A.Target = self;
 			A.FloorClip = 10.0;
 		}
 	}

@@ -50,14 +50,14 @@ final void A_BFGSpray()
 
 		// target is the originator (player)
 		//  of the missile
-		Instigator.AimLineAttack(aimAng, 16.0 * 64.0);
-		if (!Instigator.linetarget)
+		Target.AimLineAttack(aimAng, 16.0 * 64.0);
+		if (!Target.linetarget)
 		{
 			continue;
 		}
 
-		emo = Spawn(ExtraBFG, Instigator.linetarget.Origin +
-			vector(0.0, 0.0, Instigator.linetarget.Height / 4.0));
+		emo = Spawn(ExtraBFG, Target.linetarget.Origin +
+			vector(0.0, 0.0, Target.linetarget.Height / 4.0));
 
 		SendExplosion2(DoomDefs::EF_DL_GBALL, emo.Origin);
 
@@ -65,7 +65,7 @@ final void A_BFGSpray()
 		for (j = 0; j < 15; j++)
 			damage += (P_Random() & 7) + 1;
 
-		Instigator.linetarget.Damage(Instigator, Instigator, damage);
+		Target.linetarget.Damage(Target, Target, damage);
 	}
 }
 

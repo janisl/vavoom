@@ -39,19 +39,19 @@ final void A_HeadAttack()
 {
 	int damage;
 
-	if (!Enemy)
+	if (!Target)
 		return;
 
 	A_FaceTarget();
 	if (CheckMeleeRange())
 	{
 		damage = (P_Random() % 6 + 1) * 10;
-		Enemy.Damage(self, self, damage);
+		Target.Damage(self, self, damage);
 		return;
 	}
 
 	// launch a missile
-	SpawnMissile(Enemy, CacodemonMissile);
+	SpawnMissile(Target, CacodemonMissile);
 }
 
 __states__

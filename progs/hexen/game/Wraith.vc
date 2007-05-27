@@ -67,7 +67,7 @@ final void A_WraithFX3()
 			A.Origin.x += (Random() - 0.5) * 8.0;
 			A.Origin.y += (Random() - 0.5) * 8.0;
 			A.Origin.z += Random() * 4.0;
-			A.Instigator = self;
+			A.Target = self;
 		}
 	}
 }
@@ -115,7 +115,7 @@ final void A_WraithFX4()
 			mo.Origin.x += (Random() - 0.5) * 16.0;
 			mo.Origin.y += (Random() - 0.5) * 16.0;
 			mo.Origin.z += Random() * 4.0;
-			mo.Instigator = self;
+			mo.Target = self;
 		}
 	}
 	if (spawn5)
@@ -126,7 +126,7 @@ final void A_WraithFX4()
 			mo.Origin.x += (Random() - 0.5) * 8.0;
 			mo.Origin.y += (Random() - 0.5) * 8.0;
 			mo.Origin.z += Random() * 4.0;
-			mo.Instigator = self;
+			mo.Target = self;
 		}
 	}
 }
@@ -176,7 +176,7 @@ final void A_WraithMelee()
 	if (CheckMeleeRange() && (P_Random() < 220))
 	{
 		amount = HITDICE(2);
-		Enemy.Damage(self, self, amount);
+		Target.Damage(self, self, amount);
 		Health += amount;
 	}
 }
@@ -191,7 +191,7 @@ final void A_WraithMissile()
 {
 	Actor mo;
 
-	mo = SpawnMissile(Enemy, WraithMissile);
+	mo = SpawnMissile(Target, WraithMissile);
 	if (mo)
 	{
 		PlaySound('WraithMissileFire', CHAN_WEAPON);

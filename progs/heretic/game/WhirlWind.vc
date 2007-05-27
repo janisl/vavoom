@@ -66,7 +66,7 @@ final void A_WhirlwindSeek()
 		SoundTimer = 58.0 / 35.0 + Random() * 31.0 / 35.0;
 		PlaySound('ironlich/attack3', CHAN_WEAPON);
 	}
-	if (Enemy && Enemy.Alpha < 1.0)
+	if (Tracer && Tracer.Alpha < 1.0)
 	{
 		return;
 	}

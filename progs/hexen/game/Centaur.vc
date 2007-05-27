@@ -63,13 +63,13 @@ float GetReflectedAngle(Actor Other)
 
 final void A_CentaurAttack()
 {
-	if (!Enemy)
+	if (!Target)
 	{
 		return;
 	}
 	if (CheckMeleeRange())
 	{
-		Enemy.Damage(self, self, P_Random() % 7 + 3);
+		Target.Damage(self, self, P_Random() % 7 + 3);
 	}
 }
 
@@ -135,7 +135,7 @@ final void A_CentaurDropStuff()
 		A.Velocity.x = ((Random() - 0.5) * 8.0 + 1.0) * cos(angle) * 35.0;
 		A.Velocity.y = ((Random() - 0.5) * 8.0 + 1.0) * sin(angle) * 35.0;
 		A.Velocity.z = (8.0 + Random() * 4.0) * 35.0;
-		A.Instigator = self;
+		A.Target = self;
 	}
 	A = Spawn(CentaurSword, Origin + vector(0.0, 0.0, 45.0));
 	if (A)
@@ -144,7 +144,7 @@ final void A_CentaurDropStuff()
 		A.Velocity.x = ((Random() - 0.5) * 8.0 + 1.0) * cos(angle) * 35.0;
 		A.Velocity.y = ((Random() - 0.5) * 8.0 + 1.0) * sin(angle) * 35.0;
 		A.Velocity.z = (8.0 + Random() * 4.0) * 35.0;
-		A.Instigator = self;
+		A.Target = self;
 	}
 }
 

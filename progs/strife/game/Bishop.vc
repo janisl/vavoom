@@ -36,13 +36,13 @@ final void A_BishopAttack()
 {
 	Actor missile;
 
-	if (!Enemy)
+	if (!Target)
 		return;
 
-	missile = SpawnMissileZ(64.0, Enemy, RobotMissile2);
+	missile = SpawnMissileZ(64.0, Target, RobotMissile2);
 	if (missile)
 	{
-		missile.Enemy = Enemy;
+		missile.Tracer = Target;
 	}
 }
 

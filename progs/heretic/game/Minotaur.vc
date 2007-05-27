@@ -55,18 +55,18 @@ void DropStuff()
 
 final void A_MinotaurAtk1()
 {
-	if (!Enemy)
+	if (!Target)
 	{
 		return;
 	}
 	PlaySound('minotaur/melee', CHAN_WEAPON);
 	if (CheckMeleeRange())
 	{
-		Enemy.Damage(self, self, HITDICE(4));
-		if (Enemy.bIsPlayer)
+		Target.Damage(self, self, HITDICE(4));
+		if (Target.bIsPlayer)
 		{
 			// Squish the player
-			Player(Enemy.Player).DeltaViewHeight = -512.0;
+			Player(Target.Player).DeltaViewHeight = -512.0;
 		}
 	}
 }
@@ -83,14 +83,14 @@ final void A_MinotaurDecide()
 {
 	float dist;
 
-	if (!Enemy)
+	if (!Target)
 	{
 		return;
 	}
 	PlaySound('minotaur/sight', CHAN_VOICE);
-	dist = DistTo(Enemy);
-	if (Enemy.Origin.z + Enemy.Height > Origin.z &&
-		Enemy.Origin.z + Enemy.Height < Origin.z + Height &&
+	dist = DistTo(Target);
+	if (Target.Origin.z + Target.Height > Origin.z &&
+		Target.Origin.z + Target.Height < Origin.z + Height &&
 		dist < 8.0 * 64.0 && dist > 1.0 * 64.0 && P_Random() < 150)
 	{
 		// Charge attack
@@ -98,10 +98,10 @@ final void A_MinotaurDecide()
 		SetState(ChargeAttackState);
 		bSkullFly = true;
 		A_FaceTarget();
-		Velocity = Normalise(Enemy.Origin - Origin) * ChargeSpeed;
+		Velocity = Normalise(Target.Origin - Origin) * ChargeSpeed;
 		Special1 = 35 / 2;	// Charge duration
 	}
-	else if (Enemy.Origin.z == Enemy.FloorZ &&
+	else if (Target.Origin.z == Target.FloorZ &&
 		dist < 9.0 * 64.0 && P_Random() < 220)
 	{
 		// Floor fire attack
@@ -131,17 +131,17 @@ final void A_MinotaurAtk2()
 	float angle;
 	TAVec ang;
 
-	if (!Enemy)
+	if (!Target)
 	{
 		return;
 	}
 	PlaySound('minotaur/attack2', CHAN_WEAPON);
 	if (CheckMeleeRange())
 	{
-		Enemy.Damage(self, self, HITDICE(5));
+		Target.Damage(self, self, HITDICE(5));
 		return;
 	}
-	A = SpawnMissile(Enemy, MinotaurMissile);
+	A = SpawnMissile(Target, MinotaurMissile);
 	if (A)
 	{
 		A.PlaySound('minotaur/attack2', CHAN_WEAPON);
@@ -170,23 +170,23 @@ final void A_MinotaurAtk3()
 {
 	Actor A;
 
-	if (!Enemy)
+	if (!Target)
 	{
 		return;
 	}
 	PlaySound('minotaur/attack3', CHAN_WEAPON);
 	if (CheckMeleeRange())
 	{
-		Enemy.Damage(self, self, HITDICE(5));
-		if (Enemy.Player)
+		Target.Damage(self, self, HITDICE(5));
+		if (Target.Player)
 		{
 			// Squish the player
-			Player(Enemy.Player).DeltaViewHeight = -512.0;
+			Player(Target.Player).DeltaViewHeight = -512.0;
 		}
 	}
 	else
 	{
-		A = SpawnMissile(Enemy, MinotaurFloorFire);
+		A = SpawnMissile(Target, MinotaurFloorFire);
 		if (A != none)
 		{
 			A.PlaySound('minotaur/attack1', CHAN_VOICE);

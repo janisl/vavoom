@@ -110,9 +110,9 @@ float PainChance;
 int GibsHealth;
 
 // Thing being chased/attacked (or NULL).
-Actor Enemy;
-// The originator for missiles.
-Actor Instigator;
+// Also the originator for missiles.
+Actor			Target;
+Actor			Tracer;
 
 // Player number last looked for.
 int LastLook;
@@ -179,7 +179,7 @@ float LightRadius;
 
 void SetInstigator(Entity NewInstigator)
 {
-	Instigator = Actor(NewInstigator);
+	Target = Actor(NewInstigator);
 }
 
 //===========================================================================
@@ -1044,7 +1044,7 @@ Actor SpawnMissile(Actor dest, class<Actor> type)
 	if (A.SightSound)
 		A.PlaySound(A.SightSound, CHAN_VOICE);
 
-	A.Instigator = self;	// where it came from
+	A.Target = self;	// where it came from
 
 	if (dest)
 	{
@@ -1300,7 +1300,7 @@ void Damage(Actor inflictor, Actor source, int damage)
 	{
 		// if not intent on another player,
 		// chase after this one
-		Enemy = source;
+		Target = source;
 		Threshold = BASETHRESHOLD;
 		if (State == IdleState && SeeState)
 		{
@@ -1393,7 +1393,7 @@ bool HitFloorType()
 		if (SInfo->ChunkClass)
 		{
 			A = Spawn(class<Actor>(SInfo->ChunkClass), org);
-			A.Instigator = self;
+			A.Target = self;
 			A.Velocity.x = (Random() - Random()) * SInfo->ChunkXVelMul * 35.0;
 			A.Velocity.y = (Random() - Random()) * SInfo->ChunkYVelMul * 35.0;
 			A.Velocity.z = (SInfo->ChunkBaseZVel + Random() *
@@ -1530,11 +1530,11 @@ bool Touch(Entity InOther)
 	// missiles can hit other things
 	if (bMissile)
 	{
-		if (Instigator && (Instigator.Class == Other.Class ||
+		if (Target && (Target.Class == Other.Class ||
 			Class == Other.ImuneMissileType))
 		{
 			// Don't hit same species as originator.
-			if (Other == Instigator)
+			if (Other == Target)
 				return true;
 
 			if (Other.Class != DoomPlayer)
@@ -1553,7 +1553,7 @@ bool Touch(Entity InOther)
 
 		// damage / explode
 		damage = ((P_Random() % 8) + 1) * MissileDamage;
-		Other.Damage(self, Instigator, damage);
+		Other.Damage(self, Target, damage);
 		// don't traverse any more
 		return false;
 	}
@@ -1586,7 +1586,7 @@ void CheckForPushSpecial(line_t * line, int side)
 		}
 		else if (bActivateImpact)
 		{
-			DoomLevelInfo(Level).ActivateLine(line, bMissile ? Instigator :
+			DoomLevelInfo(Level).ActivateLine(line, bMissile ? Target :
 				self, side, SPAC_IMPACT);
 		}
 	}
@@ -1919,14 +1919,14 @@ void ZMovement(float DeltaTime)
 	// adjust height
 	Origin.z += Velocity.z * DeltaTime;
 
-	if (bFloat && Enemy)
+	if (bFloat && Target)
 	{
 		// float down towards enemy if too close
 		if (!bSkullFly && !bInFloat)
 		{
-			dist = DistTo2(Enemy);
+			dist = DistTo2(Target);
 
-			delta = Enemy.Origin.z + Height / 2.0 - Origin.z;
+			delta = Target.Origin.z + Height / 2.0 - Origin.z;
 
 			if (delta < 0.0 && dist < -(delta * 3.0))
 				Origin.z -= FLOATSPEED * DeltaTime;
@@ -2458,7 +2458,7 @@ bool PIT_RadiusAttack(Entity Other)
 	if (Actor(Other).CanSee(self))
 	{
 		// must be in direct path
-		Actor(Other).Damage(self, Instigator, ftoi(bombdamage - dist));
+		Actor(Other).Damage(self, Target, ftoi(bombdamage - dist));
 	}
 
 	return true;
@@ -2637,25 +2637,25 @@ bool CheckMeleeRange()
 {
 	float dist;
 
-	if (!Enemy)
+	if (!Target)
 	{
 		return false;
 	}
 
-	dist = DistTo(Enemy);
+	dist = DistTo(Target);
 
-	if (dist >= MELEERANGE - 20.0 + Enemy.Radius)
+	if (dist >= MELEERANGE - 20.0 + Target.Radius)
 	{
 		return false;
 	}
 
 	// Don't melee things too far above or below actor.
-	if (Enemy.Origin.z > Origin.z + Height)
+	if (Target.Origin.z > Origin.z + Height)
 		return false;
-	if (Enemy.Origin.z + Enemy.Height < Origin.z)
+	if (Target.Origin.z + Target.Height < Origin.z)
 		return false;
 
-	if (!CanSee(Enemy))
+	if (!CanSee(Target))
 	{
 		return false;
 	}
@@ -2673,7 +2673,7 @@ bool CheckMissileRange()
 {
 	float dist;
 
-	if (!CanSee(Enemy))
+	if (!CanSee(Target))
 	{
 		return false;
 	}
@@ -2692,7 +2692,7 @@ bool CheckMissileRange()
 	}
 
 	// OPTIMIZE: get this from a global checksight
-	dist = DistTo(Enemy) - 64.0;
+	dist = DistTo(Target) - 64.0;
 
 	if (!MeleeState)
 		dist -= 128.0;	// no melee attack, so fire more
@@ -2785,7 +2785,7 @@ bool LookForMonsters(bool allaround)
 			}
 		}
 
-		Enemy = mo;
+		Target = mo;
 		return true;
 	}
 	return false;
@@ -2839,7 +2839,7 @@ bool LookForMonsters2(bool allaround)
 			}
 		}
 
-		Enemy = mo;
+		Target = mo;
 		return true;
 	}
 	return false;
@@ -2918,7 +2918,7 @@ bool LookForPlayers(bool allaround)
 			}
 		}
 
-		Enemy = Actor(P.MO);
+		Target = Actor(P.MO);
 		return true;
 	}
 
@@ -3241,11 +3241,11 @@ void NewChaseDir()
 	float deltax;
 	float deltay;
 
-	deltax = Enemy.Origin.x - Origin.x;
-	deltay = Enemy.Origin.y - Origin.y;
-
-	if (!Enemy)
+	if (!Target)
 		Error("NewChaseDir: called with no Enemy");
+
+	deltax = Target.Origin.x - Origin.x;
+	deltay = Target.Origin.y - Origin.y;
 
 	tmtrace_t tmtrace;
 	CheckRelPosition(&tmtrace, Origin);
@@ -3735,11 +3735,11 @@ final void A_Look()
 
 	if (targ && targ.bShootable)
 	{
-		Enemy = targ;
+		Target = targ;
 
 		if (bAmbush)
 		{
-			if (!CanSee(Enemy))
+			if (!CanSee(Target))
 			{
 				if (!LookForPlayers(false))
 					return;
@@ -3787,7 +3787,7 @@ final void A_Chase()
 	// modify target threshold
 	if (Threshold)
 	{
-		if (!Enemy || Enemy.Health <= 0)
+		if (!Target || Target.Health <= 0)
 		{
 			Threshold = 0;
 		}
@@ -3823,7 +3823,7 @@ final void A_Chase()
 		}
 	}
 
-	if (!Enemy || !Enemy.bShootable)
+	if (!Target || !Target.bShootable)
 	{
 		// look for a new target
 		if (LookForPlayers(true))
@@ -3873,7 +3873,7 @@ final void A_Chase()
 	// possibly choose another target
 	if (Level.Game.netgame && !Threshold)
 	{
-		if (!CanSee(Enemy))
+		if (!CanSee(Target))
 		{
 			if (LookForPlayers(true))
 				return;	// got a new target
@@ -3901,14 +3901,14 @@ final void A_Chase()
 
 final void A_FaceTarget()
 {
-	if (!Enemy)
+	if (!Target)
 		return;
 
 	bAmbush = false;
 
-	Angles.yaw = atan2(Enemy.Origin.y - Origin.y, Enemy.Origin.x - Origin.x);
+	Angles.yaw = atan2(Target.Origin.y - Origin.y, Target.Origin.x - Origin.x);
 
-	if (Enemy.Alpha < 1.0)
+	if (Target.Alpha < 1.0)
 	{
 		Angles.yaw = AngleMod360(Angles.yaw + (Random() - Random()) * 45.0);
 	}
@@ -4171,7 +4171,7 @@ final void A_SPosAttack()
 	TVec aimDir;
 	TVec dir;
 
-	if (!Enemy)
+	if (!Target)
 		return;
 
 	PlaySound('shotguy/attack', CHAN_WEAPON);
@@ -4219,7 +4219,7 @@ final void A_SpidRefire()
 	if (P_Random() < 10)
 		return;
 
-	if (!Enemy || Enemy.Health <= 0 || !CanSee(Enemy))
+	if (!Target || Target.Health <= 0 || !CanSee(Target))
 	{
 		SetState(SeeState);
 	}

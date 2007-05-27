@@ -126,7 +126,7 @@ final void A_KoraxChase()
 		return;
 	}
 
-	if (!Enemy)
+	if (!Target)
 		return;
 	if (Random() < 0.1171875)
 	{
@@ -186,7 +186,7 @@ final Actor SpawnKoraxMissile(TVec org, Actor dest, class<Actor> type)
 	{
 		th.PlaySound(th.SightSound, CHAN_VOICE);
 	}
-	th.Instigator = self;	// Originator
+	th.Target = self;	// Originator
 	dir = dest.Origin - org;
 	if (dest.Alpha < 1.0)
 	{
@@ -212,7 +212,7 @@ final void KoraxFire1(class<Actor> type)
 	x = Origin.x + ArmExtensionShort * cos(ang);
 	y = Origin.y + ArmExtensionShort * sin(ang);
 	z = Origin.z - FloorClip + Arm1Height;
-	SpawnKoraxMissile(vector(x, y, z), Enemy, type);
+	SpawnKoraxMissile(vector(x, y, z), Target, type);
 }
 
 //============================================================================
@@ -228,7 +228,7 @@ final void KoraxFire2(class<Actor> type)
 	x = Origin.x + ArmExtensionLong * cos(ang);
 	y = Origin.y + ArmExtensionLong * sin(ang);
 	z = Origin.z - FloorClip + Arm2Height;
-	SpawnKoraxMissile(vector(x, y, z), Enemy, type);
+	SpawnKoraxMissile(vector(x, y, z), Target, type);
 }
 
 //============================================================================
@@ -244,7 +244,7 @@ final void KoraxFire3(class<Actor> type)
 	x = Origin.x + ArmExtensionLong * cos(ang);
 	y = Origin.y + ArmExtensionLong * sin(ang);
 	z = Origin.z - FloorClip + Arm3Height;
-	SpawnKoraxMissile(vector(x, y, z), Enemy, type);
+	SpawnKoraxMissile(vector(x, y, z), Target, type);
 }
 
 //============================================================================
@@ -260,7 +260,7 @@ final void KoraxFire4(class<Actor> type)
 	x = Origin.x + ArmExtensionShort * cos(ang);
 	y = Origin.y + ArmExtensionShort * sin(ang);
 	z = Origin.z - FloorClip + Arm4Height;
-	SpawnKoraxMissile(vector(x, y, z), Enemy, type);
+	SpawnKoraxMissile(vector(x, y, z), Target, type);
 }
 
 //============================================================================
@@ -276,7 +276,7 @@ final void KoraxFire5(class<Actor> type)
 	x = Origin.x + ArmExtensionLong * cos(ang);
 	y = Origin.y + ArmExtensionLong * sin(ang);
 	z = Origin.z - FloorClip + Arm5Height;
-	SpawnKoraxMissile(vector(x, y, z), Enemy, type);
+	SpawnKoraxMissile(vector(x, y, z), Target, type);
 }
 
 //============================================================================
@@ -292,7 +292,7 @@ final void KoraxFire6(class<Actor> type)
 	x = Origin.x + ArmExtensionLong * cos(ang);
 	y = Origin.y + ArmExtensionLong * sin(ang);
 	z = Origin.z - FloorClip + Arm6Height;
-	SpawnKoraxMissile(vector(x, y, z), Enemy, type);
+	SpawnKoraxMissile(vector(x, y, z), Target, type);
 }
 
 //============================================================================

@@ -122,7 +122,7 @@ final void A_FireSigil()
 		if (sigil.SightSound)
 			sigil.PlaySound(sigil.SightSound, CHAN_VOICE);
 
-		sigil.Instigator = Actor(Owner);
+		sigil.Target = Actor(Owner);
 		sigil.Origin.z = sigil.FloorZ;
 		Actor(Owner).Aim(16.0 * 64.0);
 		if (!Actor(Owner).linetarget)

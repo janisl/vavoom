@@ -79,7 +79,7 @@ final void A_CHolyAttack2()
 		A.Angles.yaw = AngleMod360(Angles.yaw +
 			(45.0 + 45.0 / 2.0) - 45.0 * itof(j));
 		A.Thrust(A.Angles.yaw, A.Speed * Level.Game.frametime);
-		A.Instigator = Instigator;
+		A.Target = Target;
 		A.Args[0] = 10;	// initial turn value
 		A.Args[1] = 0;	// initial look angle
 		if (Level.Game.deathmatch)
@@ -89,7 +89,7 @@ final void A_CHolyAttack2()
 		}
 		if (linetarget)
 		{
-			A.Enemy = linetarget;
+			A.Tracer = linetarget;
 			//	Don't colide with world but colide with things, i.e explode
 			A.bColideWithWorld = false;
 			A.bSkullFly = true;

@@ -46,17 +46,17 @@ void DropStuff()
 
 final void A_BeastAttack()
 {
-	if (!Enemy)
+	if (!Target)
 	{
 		return;
 	}
 	PlaySound(AttackSound, CHAN_WEAPON);
 	if (CheckMeleeRange())
 	{
-		Enemy.Damage(self, self, HITDICE(3));
+		Target.Damage(self, self, HITDICE(3));
 		return;
 	}
-	SpawnMissile(Enemy, BeastBall);
+	SpawnMissile(Target, BeastBall);
 }
 
 __states__

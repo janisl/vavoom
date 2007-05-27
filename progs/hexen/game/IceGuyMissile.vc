@@ -52,7 +52,7 @@ final void A_IceGuyMissileExplode()
 		mo = SpawnMissileAngle(IceGuyMissile2, itof(i) * 45.0, -0.3 * 35.0);
 		if (mo)
 		{
-			mo.Instigator = Instigator;
+			mo.Target = Target;
 		}
 	}
 }

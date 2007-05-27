@@ -40,7 +40,7 @@ final void A_CPosAttack()
 	int damage;
 	TVec dir;
 
-	if (!Enemy)
+	if (!Target)
 		return;
 
 	//FIXME
@@ -70,7 +70,7 @@ final void A_CPosRefire()
 	if (P_Random() < 40)
 		return;
 
-	if (!Enemy || Enemy.Health <= 0 || !CanSee(Enemy))
+	if (!Target || Target.Health <= 0 || !CanSee(Target))
 	{
 		SetState(SeeState);
 	}

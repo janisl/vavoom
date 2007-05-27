@@ -99,7 +99,7 @@ final void A_FirePhoenixPL2()
 	org.z = Owner.Origin.z + 26.0 - sin(Owner.Angles.pitch);
 	org.z -= Owner.FloorClip;
 	A = HereticLevelInfo(Level).Spawn(PhoenixFX2, org);
-	A.Instigator = Actor(Owner);
+	A.Target = Actor(Owner);
 	A.Angles.yaw = Owner.Angles.yaw;
 	A.Angles.pitch = Owner.Angles.pitch;
 	AngleVector(&A.Angles, &dir);

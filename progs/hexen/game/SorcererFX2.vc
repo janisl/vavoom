@@ -51,7 +51,7 @@ final void A_SorcFX2Split()
 	A = Spawn(SorcererFX2, Origin);
 	if (A)
 	{
-		A.Instigator = Instigator;
+		A.Target = Target;
 		A.Args[0] = 0;	// CW
 		A.Special1f = Angles.yaw;	// Set angle
 		A.SetState(SorcererFX2(A).OrbitState);
@@ -59,7 +59,7 @@ final void A_SorcFX2Split()
 	A = Spawn(SorcererFX2, Origin);
 	if (A)
 	{
-		A.Instigator = Instigator;
+		A.Target = Target;
 		A.Args[0] = 1;	// CCW
 		A.Special1f = Angles.yaw;	// Set angle
 		A.SetState(SorcererFX2(A).OrbitState);
@@ -79,22 +79,22 @@ final void A_SorcFX2Orbit()
 {
 	float angle;
 	float x, y, z;
-	float dist = Instigator.Radius;
+	float dist = Target.Radius;
 
-	if ((Instigator.Health <= 0) ||	// Sorcerer is dead
-		(!Instigator.Args[0]))	// Time expired
+	if ((Target.Health <= 0) ||	// Sorcerer is dead
+		(!Target.Args[0]))	// Time expired
 	{
 		SetState(DeathState);
-		Instigator.Args[0] = 0;
-		Instigator.bReflective = false;
-		Instigator.bInvulnerable = false;
+		Target.Args[0] = 0;
+		Target.bReflective = false;
+		Target.bInvulnerable = false;
 	}
 
-	if (Args[0] && (Instigator.Args[0]-- <= 0))	// Time expired
+	if (Args[0] && (Target.Args[0]-- <= 0))	// Time expired
 	{
 		SetState(DeathState);
-		Instigator.Args[0] = 0;
-		Instigator.bReflective = false;
+		Target.Args[0] = 0;
+		Target.bReflective = false;
 	}
 
 	// Move to new position based on angle
@@ -102,9 +102,9 @@ final void A_SorcFX2Orbit()
 	{
 		Special1f = AngleMod360(Special1f + 10.0);
 		angle = Special1f;
-		x = Instigator.Origin.x + dist * cos(angle);
-		y = Instigator.Origin.y + dist * sin(angle);
-		z = Instigator.Origin.z - Instigator.FloorClip + Sorcerer::SORC_DEFENSE_HEIGHT;
+		x = Target.Origin.x + dist * cos(angle);
+		y = Target.Origin.y + dist * sin(angle);
+		z = Target.Origin.z - Target.FloorClip + Sorcerer::SORC_DEFENSE_HEIGHT;
 		z += 15.0 * cos(angle);
 		// Spawn trailer
 		Spawn(SorcererFX2_T1, vector(x, y, z));
@@ -113,9 +113,9 @@ final void A_SorcFX2Orbit()
 	{
 		Special1f = AngleMod360(Special1f - 10.0);
 		angle = Special1f;
-		x = Instigator.Origin.x + dist * cos(angle);
-		y = Instigator.Origin.y + dist * sin(angle);
-		z = Instigator.Origin.z - Instigator.FloorClip + Sorcerer::SORC_DEFENSE_HEIGHT;
+		x = Target.Origin.x + dist * cos(angle);
+		y = Target.Origin.y + dist * sin(angle);
+		z = Target.Origin.z - Target.FloorClip + Sorcerer::SORC_DEFENSE_HEIGHT;
 		z += 20.0 * sin(angle);
 		// Spawn trailer
 		Spawn(SorcererFX2_T1, vector(x, y, z));

@@ -40,19 +40,19 @@ final void A_SorcOffense1()
 
 	ang1 = AngleMod360(Angles.yaw + 70.0);
 	ang2 = AngleMod360(Angles.yaw - 70.0);
-	mo = Instigator.SpawnMissileAngle(SorcererFX1, ang1, 0.0);
+	mo = Target.SpawnMissileAngle(SorcererFX1, ang1, 0.0);
 	if (mo)
 	{
-		mo.Instigator = Instigator;
-		mo.Enemy = Instigator.Enemy;
+		mo.Target = Target;
+		mo.Tracer = Target.Target;
 		mo.Args[4] = Sorcerer::BOUNCE_TIME_UNIT;
 		mo.Args[3] = 15;	// Bounce time in seconds
 	}
-	mo = Instigator.SpawnMissileAngle(SorcererFX1, ang2, 0.0);
+	mo = Target.SpawnMissileAngle(SorcererFX1, ang2, 0.0);
 	if (mo)
 	{
-		mo.Instigator = Instigator;
-		mo.Enemy = Instigator.Enemy;
+		mo.Target = Target;
+		mo.Tracer = Target.Target;
 		mo.Args[4] = Sorcerer::BOUNCE_TIME_UNIT;
 		mo.Args[3] = 15;	// Bounce time in seconds
 	}
@@ -72,18 +72,18 @@ void A_CastSorcererSpell()
 	{
 		_Special2 = Sorcerer::SORCFX4_RAPIDFIRE_TIME;
 		Args[4] = 128;
-		Instigator.Args[3] = Sorcerer::SORC_FIRING_SPELL;
+		Target.Args[3] = Sorcerer::SORC_FIRING_SPELL;
 		return;
 	}
 
 	// Put sorcerer into throw spell animation
-	if (Instigator.Health > 0)
-		Instigator.SetState(Sorcerer::S_SORC_ATTACK4);
+	if (Target.Health > 0)
+		Target.SetState(Sorcerer::S_SORC_ATTACK4);
 
 	// Offensive
 	A_SorcOffense1();
 
-	Instigator.Args[3] = Sorcerer::SORC_STOPPED;
+	Target.Args[3] = Sorcerer::SORC_STOPPED;
 }
 
 __states__

@@ -49,18 +49,18 @@ final void A_DeathBallImpact()
 	{
 		// Bounce
 		newAngle = false;
-		if (Enemy)
+		if (Tracer)
 		{
-			if (!Enemy.bShootable)
+			if (!Tracer.bShootable)
 			{
 				// Target died
-				Enemy = none;
+				Tracer = none;
 			}
 			else
 			{
 				// Seek
-				angle = atan2(Enemy.Origin.y - Origin.y,
-					Enemy.Origin.x - Origin.x);
+				angle = atan2(Tracer.Origin.y - Origin.y,
+					Tracer.Origin.x - Origin.x);
 				newAngle = true;
 			}
 		}
@@ -73,9 +73,9 @@ final void A_DeathBallImpact()
 			for (i = 0; i < 16; i++)
 			{
 				AimLineAttack(angles, 10.0 * 64.0);
-				if (linetarget && Instigator != linetarget)
+				if (linetarget && Target != linetarget)
 				{
-					Enemy = linetarget;
+					Tracer = linetarget;
 					angle = atan2(linetarget.Origin.y - Origin.y,
 						linetarget.Origin.x - Origin.x);
 					newAngle = true;

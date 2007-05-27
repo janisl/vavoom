@@ -41,7 +41,7 @@ void KSpiritInit(Actor korax)
 	Actor tail;
 	Actor next;
 
-	Enemy = korax;	// Swarm around korax
+	Tracer = korax;	// Swarm around korax
 	WeaveZ = 32 + (P_Random() & 7);	// Float bob index
 
 	// Spawn a tail for spirit
@@ -71,11 +71,11 @@ final void A_KSpiritSeeker(float thresh, float turnMax)
 	float newZ;
 	float deltaZ;
 
-	if (Enemy == none)
+	if (Tracer == none)
 	{
 		return;
 	}
-	dir = FaceActor(Enemy, &delta);
+	dir = FaceActor(Tracer, &delta);
 	if (delta > thresh)
 	{
 		delta /= 2.0;
@@ -99,10 +99,10 @@ final void A_KSpiritSeeker(float thresh, float turnMax)
 	Velocity.y = Speed * sin(angle);
 
 	if (!(XLevel.TicTime & 15) ||
-		Origin.z > Enemy.Origin.z + Enemy.Height ||
-		Origin.z + Height < Enemy.Origin.z)
+		Origin.z > Tracer.Origin.z + Tracer.Height ||
+		Origin.z + Height < Tracer.Origin.z)
 	{
-		newZ = Enemy.Origin.z + Random() * Enemy.Height;
+		newZ = Tracer.Origin.z + Random() * Tracer.Height;
 		deltaZ = newZ - Origin.z;
 		if (fabs(deltaZ) > 15.0)
 		{
@@ -115,7 +115,7 @@ final void A_KSpiritSeeker(float thresh, float turnMax)
 				deltaZ = -15.0;
 			}
 		}
-		dist = DistTo2(Enemy);
+		dist = DistTo2(Tracer);
 		dist = dist / Speed;
 		if (dist < 1.0)
 		{
@@ -164,7 +164,7 @@ final void A_KSpiritRoam()
 	}
 	else
 	{
-		if (Enemy)
+		if (Tracer)
 		{
 			A_KSpiritSeeker(10.0, 20.0);
 		}

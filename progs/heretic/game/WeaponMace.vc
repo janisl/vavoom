@@ -45,7 +45,7 @@ final void A_FireMacePL1B()
 		vector(0.0, 0.0, 28.0 - Owner.FloorClip));
 	ball.Velocity.z = (2.0 + 173.0 * -tan(Owner.Angles.pitch) / 32.0) * 35.0;
 	angle = Owner.Angles.yaw;
-	ball.Instigator = Actor(Owner);
+	ball.Target = Actor(Owner);
 	ball.Angles.yaw = angle;
 	ball.Origin.z += 173.0 * -tan(Owner.Angles.pitch) / 16.0;
 	ball.Velocity.x = Owner.Velocity.x / 2.0 + ball.Speed * cos(angle);
@@ -103,7 +103,7 @@ final void A_FireMacePL2()
 		A.Velocity.z = (2.0 + 173.0 * -tan(Owner.Angles.pitch) / 32.0) * 35.0;
 		if (Actor(Owner).linetarget)
 		{
-			A.Enemy = Actor(Owner).linetarget;
+			A.Tracer = Actor(Owner).linetarget;
 		}
 	}
 	Owner.PlaySound('weapons/maceshoot', CHAN_WEAPON);

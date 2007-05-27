@@ -40,7 +40,7 @@ final void A_OracleDeath()
 	{
 		if (A && A.bCountKill && A.Health > 0)
 		{
-			A.Enemy = Enemy;
+			A.Target = Target;
 			A.SetState(A.SeeState);
 		}
 	}

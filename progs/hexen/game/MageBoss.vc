@@ -39,8 +39,8 @@ void MStaffSpawn2(float angle)
 	mo = SpawnMissileAngle(MageStaffFX2, angle, 0.0);
 	if (mo)
 	{
-		mo.Instigator = self;
-		mo.Enemy = Actor(mo.RoughMonsterSearch(10));
+		mo.Target = self;
+		mo.Tracer = Actor(mo.RoughMonsterSearch(10));
 	}
 }
 
@@ -52,7 +52,7 @@ void MStaffSpawn2(float angle)
 
 final void A_MageAttack()
 {
-	if (!Enemy)
+	if (!Target)
 		return;
 
 	MStaffSpawn2(Angles.yaw);

@@ -80,7 +80,7 @@ final void A_CFlameMissile()
 			if (A)
 			{
 				A.Angles.yaw = an;
-				A.Instigator = Instigator;
+				A.Target = Target;
 				A.Velocity.x = FlameSpeed * cos(an);
 				A.Velocity.y = FlameSpeed * sin(an);
 				A.Special1f = A.Velocity.x;
@@ -92,7 +92,7 @@ final void A_CFlameMissile()
 			if (A)
 			{
 				A.Angles.yaw = AngleMod360(180.0 + an);
-				A.Instigator = Instigator;
+				A.Target = Target;
 				A.Velocity.x = -FlameSpeed * cos(an);
 				A.Velocity.y = -FlameSpeed * sin(an);
 				A.Special1f = A.Velocity.x;

@@ -2249,7 +2249,7 @@ void PlayerTick(float deltaTime)
 			{
 				speedA.Angles.yaw = MO.Angles.yaw;
 				speedA.Translation = MO.Translation;
-				speedA.Instigator = Actor(MO);
+				speedA.Target = Actor(MO);
 				speedA._Special1 = PClass;
 				if (speedA._Special1 > 2)
 				{
@@ -3074,7 +3074,7 @@ void UseArtiSummon()
 	mo = SpawnPlayerMissile(SummonMissile);
 	if (mo)
 	{
-		mo.Instigator = Actor(MO);
+		mo.Target = Actor(MO);
 		mo.Velocity.z = 5.0 * 35.0;
 	}
 }
@@ -3161,7 +3161,7 @@ void UseArtiPoisonBag()
 			vector(16.0 * cos(angle), 24.0 * sin(angle), 8.0 - MO.FloorClip));
 		if (bomb)
 		{
-			bomb.Instigator = Actor(MO);
+			bomb.Target = Actor(MO);
 		}
 	}
 	else if (PClass == HexenDefs::PCLASS_MAGE)
@@ -3170,7 +3170,7 @@ void UseArtiPoisonBag()
 			vector(16.0 * cos(angle), 24.0 * sin(angle), 8.0 - MO.FloorClip));
 		if (bomb)
 		{
-			bomb.Instigator = Actor(MO);
+			bomb.Target = Actor(MO);
 		}
 	}
 	else	// PCLASS_FIGHTER, obviously (also pig, not so obviously)
@@ -3188,7 +3188,7 @@ void UseArtiPoisonBag()
 			bomb.Velocity.y += bomb.Speed * sin(bomb.Angles.yaw);
 			bomb.Velocity.x += MO.Velocity.x / 2.0;
 			bomb.Velocity.y += MO.Velocity.y / 2.0;
-			bomb.Instigator = Actor(MO);
+			bomb.Target = Actor(MO);
 			bomb.StateTime -= Random() * 0.1;
 			bomb.CheckMissileSpawn();
 		}
@@ -3208,7 +3208,7 @@ void UseArtiTeleportOther()
 	mo = SpawnPlayerMissile(TeleportOtherFX1);
 	if (mo)
 	{
-		mo.Instigator = Actor(MO);
+		mo.Target = Actor(MO);
 	}
 }
 
@@ -3261,7 +3261,7 @@ Actor SpawnPlayerMissile(class<Actor> type)
 		org.z -= MO.FloorClip;
 	}
 	MissileMobj = HexenLevelInfo(Level).Spawn(type, org);
-	MissileMobj.Instigator = Actor(MO);
+	MissileMobj.Target = Actor(MO);
 	MissileMobj.Angles = angles;
 	AngleVector(&angles, &vforward);
 	MissileMobj.Velocity = vforward * MissileMobj.Speed;
@@ -3322,7 +3322,7 @@ Actor SpawnPlayerMissileAngle(class<Actor> type, float angle)
 	org.z = MO.Origin.z + 4.0 * 8.0 - tan(MO.Angles.pitch);
 	org.z -= MO.FloorClip;
 	th = HexenLevelInfo(Level).Spawn(type, org);
-	th.Instigator = Actor(MO);
+	th.Target = Actor(MO);
 	th.Angles = angles;
 	AngleVector(&angles, &vforward);
 	th.Velocity = vforward * th.Speed;
@@ -3364,7 +3364,7 @@ Actor SpawnPlayerMissileAngleXYZ(TVec org, class<Actor> type, float angle)
 	org.z += 4.0 * 8.0 - tan(MO.Angles.pitch);
 	org.z -= MO.FloorClip;
 	th = HexenLevelInfo(Level).Spawn(type, org);
-	th.Instigator = Actor(MO);
+	th.Target = Actor(MO);
 	th.Angles = angles;
 	AngleVector(&angles, &vforward);
 	th.Velocity = vforward * th.Speed;

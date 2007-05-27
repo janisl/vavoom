@@ -51,11 +51,11 @@ final void A_Hoof()
 
 final void A_CyberAttack()
 {
-	if (!Enemy)
+	if (!Target)
 		return;
 
 	A_FaceTarget();
-	SpawnMissile(Enemy, Rocket);
+	SpawnMissile(Target, Rocket);
 }
 
 __states__

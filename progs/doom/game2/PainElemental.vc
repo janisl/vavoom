@@ -87,7 +87,7 @@ final void A_PainShootSkull(float angle)
 		return;
 	}
 
-	newSkull.Enemy = Enemy;
+	newSkull.Target = Target;
 	newSkull.A_SkullAttack();
 }
 
@@ -101,7 +101,7 @@ final void A_PainShootSkull(float angle)
 
 final void A_PainAttack()
 {
-	if (!Enemy)
+	if (!Target)
 		return;
 
 	A_FaceTarget();

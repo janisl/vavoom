@@ -43,11 +43,11 @@ final void A_SigilFloorAttack()
 
 	//	Spawn bolt in the centre.
 	lightning1 = Spawn(SigilFX4, vector(Origin.x, Origin.y, ONCEILINGZ));
-	if(Sector->bHasExtrafloors && Origin.z <= CeilingZ)
+	if (Sector->bHasExtrafloors && Origin.z <= CeilingZ)
 		lightning1.Origin.z = CeilingZ - lightning1.Height;
-	lightning1.Instigator = Instigator;
+	lightning1.Target = Target;
 	lightning1.bNoGravity = false;
-	if (Programmer(Instigator) || Specter1(Instigator))
+	if (Programmer(Target) || Specter1(Target))
 	{
 		lightning1.bSpectral = false;
 	}
@@ -59,9 +59,9 @@ final void A_SigilFloorAttack()
 	lightning2 = Spawn(SpecterFX4, vector(x, y, ONCEILINGZ));
 	if(Sector->bHasExtrafloors && Origin.z <= CeilingZ)
 		lightning2.Origin.z = CeilingZ - lightning2.Height;
-	lightning2.Instigator = Instigator;
+	lightning2.Target = Target;
 	lightning2.bNoGravity = false;
-	if (Programmer(Instigator) || Specter1(Instigator))
+	if (Programmer(Target) || Specter1(Target))
 	{
 		lightning2.bSpectral = false;
 	}

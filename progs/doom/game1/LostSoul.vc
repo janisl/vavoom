@@ -39,14 +39,14 @@ const float SKULLSPEED = 700.0;
 
 final void A_SkullAttack()
 {
-	if (!Enemy)
+	if (!Target)
 		return;
 
 	bSkullFly = true;
 
 	PlaySound(AttackSound, CHAN_VOICE);
 	A_FaceTarget();
-	Velocity = Normalise(MobjCentre(Enemy) - Origin) * SKULLSPEED;
+	Velocity = Normalise(MobjCentre(Target) - Origin) * SKULLSPEED;
 }
 
 __states__

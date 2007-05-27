@@ -46,14 +46,14 @@ void DropStuff()
 
 final void A_SnakeAttack()
 {
-	if (!Enemy)
+	if (!Target)
 	{
 		SetState(SeeState);
 		return;
 	}
 	PlaySound(AttackSound, CHAN_WEAPON);
 	A_FaceTarget();
-	SpawnMissile(Enemy, SnakeProjectileA);
+	SpawnMissile(Target, SnakeProjectileA);
 }
 
 //==========================================================================
@@ -64,14 +64,14 @@ final void A_SnakeAttack()
 
 final void A_SnakeAttack2()
 {
-	if (!Enemy)
+	if (!Target)
 	{
 		SetState(SeeState);
 		return;
 	}
 	PlaySound(AttackSound, CHAN_WEAPON);
 	A_FaceTarget();
-	SpawnMissile(Enemy, SnakeProjectileB);
+	SpawnMissile(Target, SnakeProjectileB);
 }
 
 __states__

@@ -47,15 +47,15 @@ float OrbitAngle;		// Angle of ball
 
 final void A_BridgeOrbit()
 {
-	if (Instigator._Special1)
+	if (Target._Special1)
 	{
 		SetState(none);
 	}
 	//	3.0 * 360.0 / 256.0 = 4.21875
 	OrbitAngle = AngleMod360(OrbitAngle + 4.21875);
-	Origin.x = Instigator.Origin.x + 15.0 * cos(OrbitAngle);
-	Origin.y = Instigator.Origin.y + 15.0 * sin(OrbitAngle);
-	Origin.z = Instigator.Origin.z;
+	Origin.x = Target.Origin.x + 15.0 * cos(OrbitAngle);
+	Origin.y = Target.Origin.y + 15.0 * sin(OrbitAngle);
+	Origin.z = Target.Origin.z;
 }
 
 __states__

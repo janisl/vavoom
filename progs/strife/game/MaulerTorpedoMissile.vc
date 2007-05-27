@@ -49,7 +49,7 @@ final void A_MaulerTorpedoExplode()
 	for (i = 0; i < 80; i++)
 	{
 		Angles.yaw = AngleMod360(Angles.yaw + 45.0 / 10.0);
-		wave = SpawnSubMissile(MaulerTorpedoWav, Instigator);
+		wave = SpawnSubMissile(MaulerTorpedoWav, Target);
 	}
 	Origin.z = savedz;
 }

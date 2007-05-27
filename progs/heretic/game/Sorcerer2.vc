@@ -155,14 +155,14 @@ final void A_Srcr2Attack()
 {
 	int chance;
 
-	if (!Enemy)
+	if (!Target)
 	{
 		return;
 	}
 	PlaySound(AttackSound, CHAN_AUTO, 1.0, ATTN_NONE);
 	if (CheckMeleeRange())
 	{
-		Enemy.Damage(self, self, HITDICE(20));
+		Target.Damage(self, self, HITDICE(20));
 		return;
 	}
 	chance = Health < SpawnHealth / 2 ? 96 : 48;
@@ -177,7 +177,7 @@ final void A_Srcr2Attack()
 	else
 	{
 		// Blue bolt
-		SpawnMissile(Enemy, Sorcerer2Missile1);
+		SpawnMissile(Target, Sorcerer2Missile1);
 	}
 }
 

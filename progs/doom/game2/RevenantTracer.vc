@@ -58,10 +58,10 @@ final void A_Tracer()
 		A.StateTime = 0.1;
 
 	// adjust direction
-	if (!Enemy || Enemy.Health <= 0)
+	if (!Tracer || Tracer.Health <= 0)
 		return;
 
-	wishdir = Normalise(MobjCentre(Enemy) - Origin);
+	wishdir = Normalise(MobjCentre(Tracer) - Origin);
 	currdir = Normalise(Velocity);
 	delta = wishdir - currdir;
 	adjustlen = Length(delta);

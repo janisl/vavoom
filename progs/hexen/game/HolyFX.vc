@@ -46,7 +46,7 @@ bool Touch(Entity InOther)
 	// Check for skulls slamming into things
 	if (bSkullFly)
 	{
-		if (Other.bShootable && Other != Instigator)
+		if (Other.bShootable && Other != Target)
 		{
 			if (Level.Game.netgame && !Level.Game.deathmatch && Other.bIsPlayer)
 			{
@@ -55,13 +55,13 @@ bool Touch(Entity InOther)
 			}
 			if (Other.bReflective && (Other.bIsPlayer || Other.bBoss))
 			{
-				Enemy = Instigator;
-				Instigator = Other;
+				Tracer = Target;
+				Target = Other;
 				return true;
 			}
 			if (Other.bCountKill || Other.bIsPlayer)
 			{
-				Enemy = Other;
+				Tracer = Other;
 			}
 			if (P_Random() < 96)
 			{
@@ -72,7 +72,7 @@ bool Touch(Entity InOther)
 					// ghost burns out faster when attacking players/bosses
 					Health -= 6;
 				}
-				Other.Damage(self, Instigator, damage);
+				Other.Damage(self, Target, damage);
 				if (P_Random() < 128)
 				{
 					Spawn(HolyPuff, Origin);
@@ -92,7 +92,7 @@ bool Touch(Entity InOther)
 			}
 			if (Other.Health <= 0)
 			{
-				Enemy = none;
+				Tracer = none;
 			}
 		}
 		return true;
@@ -122,7 +122,7 @@ bool RoughCheckThing(Entity Other)
 	{
 		return false;
 	}
-	if (link == Instigator)
+	if (link == Target)
 	{
 		return false;
 	}
@@ -146,7 +146,7 @@ void CHolyFindTarget()
 	targ = Actor(RoughMonsterSearch(6));
 	if (targ)
 	{
-		Enemy = targ;
+		Tracer = targ;
 		bColideWithWorld = false;
 		bSkullFly = true;
 		bMissile = false;
@@ -170,21 +170,21 @@ void CHolySeekerMissile(float thresh, float turnMax)
 	float newZ;
 	float deltaZ;
 
-	if (!Enemy)
+	if (!Tracer)
 	{
 		return;
 	}
-	if (!Enemy.bShootable || (!Enemy.bCountKill && !Enemy.bIsPlayer))
+	if (!Tracer.bShootable || (!Tracer.bCountKill && !Tracer.bIsPlayer))
 	{
 		// Target died/target isn't a player or creature
-		Enemy = none;
+		Tracer = none;
 		bColideWithWorld = true;
 		bSkullFly = false;
 		bMissile = true;
 		CHolyFindTarget();
 		return;
 	}
-	dir = FaceActor(Enemy, &delta);
+	dir = FaceActor(Tracer, &delta);
 	if (delta > thresh)
 	{
 		delta /= 2.0;
@@ -207,10 +207,10 @@ void CHolySeekerMissile(float thresh, float turnMax)
 	angle = Angles.yaw;
 	Velocity.x = Speed * cos(angle);
 	Velocity.y = Speed * sin(angle);
-	if (!(XLevel.TicTime & 15) || Origin.z > Enemy.Origin.z + Enemy.Height ||
-		Origin.z + Height < Enemy.Origin.z)
+	if (!(XLevel.TicTime & 15) || Origin.z > Tracer.Origin.z + Tracer.Height ||
+		Origin.z + Height < Tracer.Origin.z)
 	{
-		newZ = Enemy.Origin.z + Random() * Enemy.Height;
+		newZ = Tracer.Origin.z + Random() * Tracer.Height;
 		deltaZ = newZ - Origin.z;
 		if (fabs(deltaZ) > 15.0)
 		{
@@ -223,7 +223,7 @@ void CHolySeekerMissile(float thresh, float turnMax)
 				deltaZ = -15.0;
 			}
 		}
-		dist = DistTo2(Enemy);
+		dist = DistTo2(Tracer);
 		dist = dist / Speed;
 		if (dist < 1.0)
 		{
@@ -275,7 +275,7 @@ final void A_CHolySeek()
 		StateTime -= Random() * 0.1;
 		return;
 	}
-	if (Enemy)
+	if (Tracer)
 	{
 		CHolySeekerMissile(itof(Args[0]), itof(Args[0]) * 2.0);
 		if (!((XLevel.TicTime + 7) & 15))
@@ -299,7 +299,7 @@ final void A_CHolyCheckScream()
 	{
 		PlaySound('SpiritActive', CHAN_VOICE);
 	}
-	if (!Enemy)
+	if (!Tracer)
 	{
 		CHolyFindTarget();
 	}

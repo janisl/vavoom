@@ -37,7 +37,7 @@ class Revenant : Actor
 
 final void A_SkelWhoosh()
 {
-	if (!Enemy)
+	if (!Target)
 		return;
 	A_FaceTarget();
 	PlaySound('skeleton/swing', CHAN_WEAPON);
@@ -55,7 +55,7 @@ final void A_SkelFist()
 {
 	int damage;
 
-	if (!Enemy)
+	if (!Target)
 		return;
 
 	A_FaceTarget();
@@ -64,7 +64,7 @@ final void A_SkelFist()
 	{
 		damage = ((P_Random() % 10) + 1) * 6;
 		PlaySound('skeleton/melee', CHAN_WEAPON);
-		Enemy.Damage(self, self, damage);
+		Target.Damage(self, self, damage);
 	}
 }
 
@@ -80,16 +80,16 @@ final void A_SkelMissile()
 {
 	Actor A;
 
-	if (!Enemy)
+	if (!Target)
 		return;
 
 	A_FaceTarget();
 	Origin.z += 16.0;	// so missile spawns higher
-	A = SpawnMissile(Enemy, RevenantTracer);
+	A = SpawnMissile(Target, RevenantTracer);
 	Origin.z -= 16.0;	// back to normal
 
 	A.Origin = A.Origin + A.Velocity * 0.03;
-	A.Enemy = Enemy;
+	A.Tracer = Target;
 }
 
 __states__

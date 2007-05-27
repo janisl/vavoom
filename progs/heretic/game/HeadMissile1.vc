@@ -55,7 +55,7 @@ final void A_HeadIceImpact()
 	{
 		shard = Spawn(HeadMissile2, Origin);
 		angle = itof(i) * 45.0;
-		shard.Instigator = Instigator;
+		shard.Target = Target;
 		shard.Angles.yaw = angle;
 		shard.Velocity.x = shard.Speed * cos(angle);
 		shard.Velocity.y = shard.Speed * sin(angle);

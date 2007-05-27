@@ -99,7 +99,7 @@ final void A_FastChase()
 		}
 	}
 
-	if (!Enemy || !Enemy.bShootable)
+	if (!Target || !Target.bShootable)
 	{
 		// look for a new enemy
 		if (LookForPlayers(true))
@@ -132,13 +132,13 @@ final void A_FastChase()
 		StrafeCount = 0;
 		Velocity.x = 0.0;
 		Velocity.y = 0.0;
-		dist = DistTo(Enemy);
+		dist = DistTo(Target);
 		if (dist < StrafeRange)
 		{
 			if (P_Random() < 100)
 			{
-				ang = atan2(Enemy.Origin.y - Origin.y,
-					Enemy.Origin.x - Origin.x);
+				ang = atan2(Target.Origin.y - Origin.y,
+					Target.Origin.x - Origin.x);
 				if (P_Random() < 128)
 					ang = AngleMod360(ang + 90.0);
 				else
@@ -169,7 +169,7 @@ final void A_FastChase()
 	//
 	// possibly choose another enemy
 	//
-	if (Level.Game.netgame && !Threshold && !CanSee(Enemy))
+	if (Level.Game.netgame && !Threshold && !CanSee(Target))
 	{
 		if (LookForPlayers(true))
 			return;	// got a new enemy

@@ -37,17 +37,17 @@ class ImpLeader : Imp
 
 final void A_ImpMsAttack2()
 {
-	if (!Enemy)
+	if (!Target)
 	{
 		return;
 	}
 	PlaySound(AttackSound, CHAN_WEAPON);
 	if (CheckMeleeRange())
 	{
-		Enemy.Damage(self, self, 5 + (P_Random() & 7));
+		Target.Damage(self, self, 5 + (P_Random() & 7));
 		return;
 	}
-	SpawnMissile(Enemy, ImpBall);
+	SpawnMissile(Target, ImpBall);
 }
 
 __states__

@@ -36,9 +36,9 @@ class ClericBoss : ClassBoss
 
 final void A_ClericAttack()
 {
-	if (!Enemy)
+	if (!Target)
 		return;
-	SpawnMissile(Enemy, HolyMissile);
+	SpawnMissile(Target, HolyMissile);
 	PlaySound('HolySymbolFire', CHAN_WEAPON);
 }
 

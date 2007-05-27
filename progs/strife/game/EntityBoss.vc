@@ -38,7 +38,7 @@ final void A_EntityAttack()
 {
 	float r;
 
-	if (!Enemy)
+	if (!Target)
 		return;
 
 	A_FaceTarget();

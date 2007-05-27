@@ -67,7 +67,7 @@ final void A_VolcBallImpact()
 	for (i = 0; i < 4; i++)
 	{
 		tiny = Spawn(VolcanoTBlast, Origin);
-		tiny.Instigator = self;
+		tiny.Target = self;
 		angle = itof(i) * 90.0;
 		tiny.Angles.yaw = angle;
 		tiny.Velocity.x = 0.7 * cos(angle) * 35.0;

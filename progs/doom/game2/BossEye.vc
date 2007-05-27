@@ -76,7 +76,7 @@ final void A_BrainSpit()
 
 	// spawn brain missile
 	A = SpawnMissile(targ, SpawnShot);
-	A.Enemy = targ;
+	A.Target = targ;
 	A.ReactionCount = ftoi((targ.Origin.y - Origin.y) /
 		A.Velocity.y / A.StateTime);
 

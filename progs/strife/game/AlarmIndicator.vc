@@ -37,9 +37,9 @@ final void A_AlarmActive()
 	ReactionCount--;
 	if (ReactionCount <= 0)
 	{
-		Enemy = none;
+		Target = none;
 		ReactionCount = 60;
-		if(Enemy == none)
+		if (Target == none)
 		{
 			SetState(IdleState);
 		}

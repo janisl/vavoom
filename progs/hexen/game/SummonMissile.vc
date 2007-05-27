@@ -40,7 +40,7 @@ final void A_Summon()
 	A = Spawn(Minotaur, Origin);
 	if (A)
 	{
-		if (!A.TestLocation() || !Instigator)
+		if (!A.TestLocation() || !Target)
 		{
 			// Didn't fit - change back to artifact
 			A.SetState(none);
@@ -50,12 +50,12 @@ final void A_Summon()
 			return;
 		}
 
-		A.Args[0] = XLevel.TicTime;
-		if (!Instigator.bCorpse)
+		Minotaur(A).StartTime = XLevel.Time;
+		if (!Target.bCorpse)
 		{
 			//	Master isn't dead
-			A.Instigator = Instigator;	// Pointer to master
-			Player(Instigator.Player).GivePower(pw_minotaur);
+			A.Tracer = Target;	// Pointer to master
+			Player(Target.Player).GivePower(pw_minotaur);
 		}
 
 		// Make smoke puff

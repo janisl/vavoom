@@ -46,7 +46,7 @@ final void A_LeafSpawn()
 		if (A)
 		{
 			A.Thrust(Angles.yaw, Random() * 2.0 + 3.0);
-			A.Instigator = self;
+			A.Target = self;
 		}
 	}
 }

@@ -2559,7 +2559,7 @@ void UseArtiFireBomb()
 	Actor A = HereticLevelInfo(Level).Spawn(FireBomb, MO.Origin + vector(24.0 * cos(angle),
 		24.0 * sin(angle), -MO.FloorClip));
 
-	A.Instigator = Actor(MO);
+	A.Target = Actor(MO);
 }
 
 //****************************************************************************

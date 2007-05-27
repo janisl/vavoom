@@ -37,14 +37,14 @@ state XCrashState;
 
 final void A_ImpMeAttack()
 {
-	if (!Enemy)
+	if (!Target)
 	{
 		return;
 	}
 	PlaySound(AttackSound, CHAN_WEAPON);
 	if (CheckMeleeRange())
 	{
-		Enemy.Damage(self, self, 5 + (P_Random() & 7));
+		Target.Damage(self, self, 5 + (P_Random() & 7));
 	}
 }
 
@@ -56,7 +56,7 @@ final void A_ImpMeAttack()
 
 final void A_ImpMsAttack()
 {
-	if (!Enemy || Random() > 0.25)
+	if (!Target || Random() > 0.25)
 	{
 		SetState(SeeState);
 		return;
@@ -64,7 +64,7 @@ final void A_ImpMsAttack()
 	bSkullFly = true;
 	PlaySound(AttackSound, CHAN_WEAPON);
 	A_FaceTarget();
-	Velocity = Normalise(MobjCentre(Enemy) - Origin) * 12.0 * 35.0;
+	Velocity = Normalise(MobjCentre(Target) - Origin) * 12.0 * 35.0;
 }
 
 //==========================================================================

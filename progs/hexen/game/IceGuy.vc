@@ -80,7 +80,7 @@ final void A_IceGuyChase()
 		if (A)
 		{
 			A.Velocity = Velocity;
-			A.Instigator = self;
+			A.Target = self;
 		}
 	}
 }
@@ -95,17 +95,17 @@ final void A_IceGuyAttack()
 {
 	float an;
 
-	if (!Enemy)
+	if (!Target)
 	{
 		return;
 	}
 	an = AngleMod360(Angles.yaw + 90.0);
 	SpawnMissileXYZ(Origin + vector(Radius / 2.0 * cos(an),
-		Radius / 2.0 * sin(an), 40.0), Enemy, IceGuyMissile);
+		Radius / 2.0 * sin(an), 40.0), Target, IceGuyMissile);
 
 	an = AngleMod360(Angles.yaw - 90.0);
 	SpawnMissileXYZ(Origin + vector(Radius / 2.0 * cos(an),
-		Radius / 2.0 * sin(an), 40.0), Enemy, IceGuyMissile);
+		Radius / 2.0 * sin(an), 40.0), Target, IceGuyMissile);
 
 	PlaySound(AttackSound, CHAN_WEAPON);
 }

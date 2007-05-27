@@ -59,7 +59,7 @@ void FloorBounceMissile()
 
 final void A_AccelBalls()
 {
-	Actor sorc = Instigator;
+	Actor sorc = Target;
 
 	if (sorc.Args[4] < sorc.Args[2])
 	{
@@ -86,7 +86,7 @@ final void A_AccelBalls()
 
 final void A_DecelBalls()
 {
-	Actor sorc = Instigator;
+	Actor sorc = Target;
 
 	if (sorc.Args[4] > sorc.Args[2])
 	{
@@ -110,7 +110,7 @@ final void A_SorcUpdateBallAngle()
 {
 	if (Class == SorcererBall1)
 	{
-		Instigator.Special1f = AngleMod360(Instigator.Special1f + itof(Instigator.Args[4]));
+		Target.Special1f = AngleMod360(Target.Special1f + itof(Target.Args[4]));
 	}
 }
 
@@ -133,15 +133,15 @@ final void A_SorcOffense2()
 	Args[4] = (Args[4] + 15) & 0xff;
 	delta = sin(index) * Sorcerer::SORCFX4_SPREAD_ANGLE;
 	ang1 = AngleMod360(Angles.yaw + delta);
-	mo = Instigator.SpawnMissileAngle(SorcererFX4, ang1, 0.0);
+	mo = Target.SpawnMissileAngle(SorcererFX4, ang1, 0.0);
 	if (mo)
 	{
 		mo._Special2 = 35 * 5 / 2;	// 5 seconds
-		dist = Instigator.Enemy.DistTo2(mo);
+		dist = Target.Target.DistTo2(mo);
 		dist = dist / mo.Speed;
 		if (dist < 1.0)
 			dist = 1.0;
-		mo.Velocity.z = (Instigator.Enemy.Origin.z - mo.Origin.z) / dist;
+		mo.Velocity.z = (Target.Target.Origin.z - mo.Origin.z) / dist;
 	}
 }
 
@@ -165,22 +165,22 @@ void A_CastSorcererSpell()
 
 final void A_SorcBallOrbit()
 {
-	float angle, baseangle;
-	int mode = Instigator.Args[3];
-	float dist = Instigator.Radius - (Radius * 2.0);
-	float prevangle = Special1f;
-
-	if (!Instigator)
+	if (!Target)
 	{
 		//	Sorcerer dissapeared.
 		Destroy();
 		return;
 	}
 
-	if (Instigator.Health <= 0)
+	float angle, baseangle;
+	int mode = Target.Args[3];
+	float dist = Target.Radius - (Radius * 2.0);
+	float prevangle = Special1f;
+
+	if (Target.Health <= 0)
 		SetState(PainState);
 
-	baseangle = Instigator.Special1f;
+	baseangle = Target.Special1f;
 	angle = AngleMod360(baseangle + BallAngleOffset);
 	Angles.yaw = angle;
 
@@ -198,16 +198,16 @@ final void A_SorcBallOrbit()
 		A_SorcUpdateBallAngle();
 		break;
 	case Sorcerer::SORC_STOPPING:	// Balls stopping
-		if ((Instigator.SpecialCID == Class) &&
-			(Instigator.Args[1] > Sorcerer::SORCBALL_SPEED_ROTATIONS) &&
-			(fabs(AngleMod180(angle - Instigator.Angles.yaw)) <
+		if ((Target.SpecialCID == Class) &&
+			(Target.Args[1] > Sorcerer::SORCBALL_SPEED_ROTATIONS) &&
+			(fabs(AngleMod180(angle - Target.Angles.yaw)) <
 			15.0 * 45.0 / 16.0))
 		{
 			// Can stop now
-			Instigator.Args[3] = Sorcerer::SORC_FIRESPELL;
-			Instigator.Args[4] = 0;
+			Target.Args[3] = Sorcerer::SORC_FIRESPELL;
+			Target.Args[4] = 0;
 			// Set angle so ball angle == sorcerer angle
-			Instigator.Special1f = AngleMod360(Instigator.Angles.yaw -
+			Target.Special1f = AngleMod360(Target.Angles.yaw -
 				BallAngleOffset);
 		}
 		else
@@ -216,11 +216,11 @@ final void A_SorcBallOrbit()
 		}
 		break;
 	case Sorcerer::SORC_FIRESPELL:	// Casting spell
-		if (Instigator.SpecialCID == Class)
+		if (Target.SpecialCID == Class)
 		{
 			// Put sorcerer into special throw spell anim
-			if (Instigator.Health > 0)
-				Instigator.SetState(Sorcerer::S_SORC_ATTACK1);
+			if (Target.Health > 0)
+				Target.SetState(Sorcerer::S_SORC_ATTACK1);
 
 			PlaySound('SorcererSpellCast', CHAN_VOICE, 1.0, ATTN_NONE);
 
@@ -228,15 +228,15 @@ final void A_SorcBallOrbit()
 		}
 		break;
 	case Sorcerer::SORC_FIRING_SPELL:
-		if (Instigator.SpecialCID == Class)
+		if (Target.SpecialCID == Class)
 		{
 			if (_Special2-- <= 0)
 			{
 				// Done rapid firing 
-				Instigator.Args[3] = Sorcerer::SORC_STOPPED;
+				Target.Args[3] = Sorcerer::SORC_STOPPED;
 				// Back to orbit balls
-				if (Instigator.Health > 0)
-					Instigator.SetState(Sorcerer::S_SORC_ATTACK4);
+				if (Target.Health > 0)
+					Target.SetState(Sorcerer::S_SORC_ATTACK4);
 			}
 			else
 			{
@@ -250,16 +250,16 @@ final void A_SorcBallOrbit()
 		break;
 	}
 
-	if ((angle < prevangle) && (Instigator.Args[4] == Sorcerer::SORCBALL_TERMINAL_SPEED))
+	if ((angle < prevangle) && (Target.Args[4] == Sorcerer::SORCBALL_TERMINAL_SPEED))
 	{
-		Instigator.Args[1]++;	// Bump rotation counter
+		Target.Args[1]++;	// Bump rotation counter
 		// Completed full rotation - make woosh sound
 		PlaySound('SorcererBallWoosh', CHAN_VOICE, 1.0, ATTN_NONE);
 	}
 	Special1f = angle;	// Set previous angle
-	Origin.x = Instigator.Origin.x + dist * cos(angle);
-	Origin.y = Instigator.Origin.y + dist * sin(angle);
-	Origin.z = Instigator.Origin.z - Instigator.FloorClip + Instigator.Height;
+	Origin.x = Target.Origin.x + dist * cos(angle);
+	Origin.y = Target.Origin.y + dist * sin(angle);
+	Origin.z = Target.Origin.z - Target.FloorClip + Target.Height;
 }
 
 //============================================================================

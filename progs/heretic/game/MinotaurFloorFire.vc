@@ -54,7 +54,7 @@ final void A_MntrFloorFire()
 	i1 = Origin.x + (Random() - Random()) * 4.0;
 	i2 = Origin.y + (Random() - Random()) * 4.0;
 	mo = Spawn(MinotaurFloorFire2, vector(i1, i2, ONFLOORZ));
-	mo.Instigator = Instigator;
+	mo.Target = Target;
 	mo.Velocity.x = 0.00001;	// Force block checking
 	mo.CheckMissileSpawn();
 }

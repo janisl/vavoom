@@ -39,18 +39,18 @@ void A_CastSorcererSpell()
 	float z;
 
 	// Put sorcerer into throw spell animation
-	if (Instigator.Health > 0)
-		Instigator.SetState(Sorcerer::S_SORC_ATTACK4);
+	if (Target.Health > 0)
+		Target.SetState(Sorcerer::S_SORC_ATTACK4);
 
-	z = Instigator.Origin.z - Instigator.FloorClip + Sorcerer::SORC_DEFENSE_HEIGHT;
+	z = Target.Origin.z - Target.FloorClip + Sorcerer::SORC_DEFENSE_HEIGHT;
 	mo = Spawn(SorcererFX2, vector(Origin.x, Origin.y, z));
-	Instigator.bInvulnerable = true;
-	Instigator.bReflective = true;
-	Instigator.Args[0] = Sorcerer::SORC_DEFENSE_TIME;
+	Target.bInvulnerable = true;
+	Target.bReflective = true;
+	Target.Args[0] = Sorcerer::SORC_DEFENSE_TIME;
 	if (mo)
-		mo.Instigator = Instigator;
+		mo.Target = Target;
 
-	Instigator.Args[3] = Sorcerer::SORC_STOPPED;
+	Target.Args[3] = Sorcerer::SORC_STOPPED;
 }
 
 __states__
