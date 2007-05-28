@@ -476,3 +476,119 @@ public:
 	friend inline VStream& operator<<(VStream& Strm, VClass*& Obj)
 	{ return Strm << *(VMemberBase**)&Obj; }
 };
+
+//==========================================================================
+//
+//	VScriptArray
+//
+//==========================================================================
+
+class VScriptArray
+{
+public:
+	void Clear(VField::FType& Type)
+	{
+		if (ArrData)
+		{
+			int InnerSize = Type.GetSize();
+			for (int i = 0; i < ArrSize; i++)
+			{
+				VField::DestructField(ArrData + i * InnerSize, Type);
+			}
+			delete[] ArrData;
+		}
+		ArrData = NULL;
+		ArrNum = 0;
+		ArrSize = 0;
+	}
+	int Num() const
+	{
+		return ArrNum;
+	}
+	vuint8* Ptr()
+	{
+		return ArrData;
+	}
+	const vuint8* Ptr() const
+	{
+		return ArrData;
+	}
+
+	void Resize(int NewSize, VField::FType& Type)
+	{
+		check(NewSize >= 0);
+
+		if (NewSize <= 0)
+		{
+			Clear(Type);
+			return;
+		}
+
+		if (NewSize == ArrSize)
+		{
+			return;
+		}
+		vuint8* OldData = ArrData;
+		vint32 OldSize = ArrSize;
+		ArrSize = NewSize;
+		if (ArrNum > NewSize)
+		{
+			ArrNum = NewSize;
+		}
+
+		int InnerSize = Type.GetSize();
+		ArrData = new vuint8[ArrSize * InnerSize];
+		memset(ArrData, 0, ArrSize * InnerSize);
+		for (int i = 0; i < ArrNum; i++)
+		{
+			VField::CopyFieldValue(OldData + i * InnerSize,
+				ArrData + i * InnerSize, Type);
+		}
+
+		if (OldData)
+		{
+			for (int i = 0; i < OldSize; i++)
+			{
+				VField::DestructField(OldData + i * InnerSize, Type);
+			}
+			delete[] OldData;
+		}
+	}
+	void SetNum(int NewNum, VField::FType& Type)
+	{
+		check(NewNum >= 0);
+		Resize(NewNum, Type);
+		ArrNum = NewNum;
+	}
+	void Condense(VField::FType& Type)
+	{
+		Resize(ArrNum, Type);
+	}
+
+	bool RemoveIndex(int Index, VField::FType& Type)
+	{
+		check(ArrData != NULL);
+		check(Index >= 0);
+		check(Index < ArrNum);
+	
+		if (Index < 0 || Index >= ArrNum)
+		{
+			return false;
+		}
+	
+		ArrNum--;
+		int InnerSize = Type.GetSize();
+		for (int i = Index; i < ArrNum; i++)
+		{
+			VField::CopyFieldValue(ArrData + (i + 1) * InnerSize,
+				ArrData + i * InnerSize, Type);
+		}
+	
+		return true;
+	}
+
+private:
+	int ArrNum;
+	int ArrSize;
+	vuint8* ArrData;
+};

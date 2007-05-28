@@ -672,6 +672,11 @@ VStream& operator<<(VStream& Strm, VField::FType& T)
 			<< STRM_INDEX(T.ArrayDim);
 		RealType = T.ArrayInnerType;
 	}
+	else if (RealType == TYPE_DynamicArray)
+	{
+		Strm << T.ArrayInnerType;
+		RealType = T.ArrayInnerType;
+	}
 	if (RealType == TYPE_Pointer)
 	{
 		Strm << T.InnerType
@@ -767,6 +772,22 @@ void VField::CopyFieldValue(const vuint8* Src, vuint8* Dst,
 		{
 			CopyFieldValue(Src + i * InnerSize, Dst + i * InnerSize, IntType);
 		}
+		break;
+
+	case TYPE_DynamicArray:
+	{
+		VScriptArray& ASrc = *(VScriptArray*)Src;
+		VScriptArray& ADst = *(VScriptArray*)Dst;
+		IntType = Type;
+		IntType.Type = Type.ArrayInnerType;
+		InnerSize = IntType.GetSize();
+		ADst.SetNum(ASrc.Num(), IntType);
+		for (int i = 0; i < Type.ArrayDim; i++)
+		{
+			CopyFieldValue(ASrc.Ptr() + i * InnerSize,
+				ADst.Ptr() + i * InnerSize, IntType);
+		}
+	}
 		break;
 	}
 	unguard;
@@ -924,6 +945,25 @@ void VField::SerialiseFieldValue(VStream& Strm, vuint8* Data, const VField::FTyp
 			SerialiseFieldValue(Strm, Data + i * InnerSize, IntType);
 		}
 		break;
+
+	case TYPE_DynamicArray:
+	{
+		VScriptArray& A = *(VScriptArray*)Data;
+		IntType = Type;
+		IntType.Type = Type.ArrayInnerType;
+		InnerSize = IntType.GetSize();
+		vint32 ArrNum = A.Num();
+		Strm << STRM_INDEX(ArrNum);
+		if (Strm.IsLoading())
+		{
+			A.SetNum(ArrNum, IntType);
+		}
+		for (int i = 0; i < A.Num(); i++)
+		{
+			SerialiseFieldValue(Strm, A.Ptr() + i * InnerSize, IntType);
+		}
+	}
+		break;
 	}
 	unguard;
 }
@@ -969,6 +1009,19 @@ void VField::CleanField(vuint8* Data, const VField::FType& Type)
 			CleanField(Data + i * InnerSize, IntType);
 		}
 		break;
+
+	case TYPE_DynamicArray:
+	{
+		VScriptArray& A = *(VScriptArray*)Data;
+		IntType = Type;
+		IntType.Type = Type.ArrayInnerType;
+		InnerSize = IntType.GetSize();
+		for (int i = 0; i < A.Num(); i++)
+		{
+			CleanField(A.Ptr() + i * InnerSize, IntType);
+		}
+	}
+		break;
 	}
 	unguard;
 }
@@ -1002,6 +1055,14 @@ void VField::DestructField(vuint8* Data, const VField::FType& Type)
 		{
 			DestructField(Data + i * InnerSize, IntType);
 		}
+		break;
+
+	case TYPE_DynamicArray:
+	{
+		IntType = Type;
+		IntType.Type = Type.ArrayInnerType;
+		((VScriptArray*)Data)->Clear(IntType);
+	}
 		break;
 	}
 	unguard;
@@ -1074,6 +1135,28 @@ bool VField::IdenticalValue(const vuint8* Val1, const vuint8* Val2,
 				return false;
 			}
 		}
+		return true;
+
+	case TYPE_DynamicArray:
+	{
+		VScriptArray& Arr1 = *(VScriptArray*)Val1;
+		VScriptArray& Arr2 = *(VScriptArray*)Val2;
+		if (Arr1.Num() != Arr2.Num())
+		{
+			return false;
+		}
+		IntType = Type;
+		IntType.Type = Type.ArrayInnerType;
+		InnerSize = IntType.GetSize();
+		for (int i = 0; i < Type.ArrayDim; i++)
+		{
+			if (!IdenticalValue(Arr1.Ptr() + i * InnerSize,
+				Arr2.Ptr() + i * InnerSize, IntType))
+			{
+				return false;
+			}
+		}
+	}
 		return true;
 	}
 	Sys_Error("Bad field type");
@@ -1252,20 +1335,21 @@ int VField::FType::GetSize() const
 	guard(VField::FType::GetSize);
 	switch (Type)
 	{
-	case TYPE_Int:		return sizeof(vint32);
-	case TYPE_Byte:		return sizeof(vuint8);
-	case TYPE_Bool:		return sizeof(vuint32);
+	case TYPE_Int:			return sizeof(vint32);
+	case TYPE_Byte:			return sizeof(vuint8);
+	case TYPE_Bool:			return sizeof(vuint32);
 	case TYPE_Float:		return sizeof(float);
-	case TYPE_Name:		return sizeof(VName);
+	case TYPE_Name:			return sizeof(VName);
 	case TYPE_String:		return sizeof(VStr);
-	case TYPE_Pointer:	return sizeof(void*);
+	case TYPE_Pointer:		return sizeof(void*);
 	case TYPE_Reference:	return sizeof(VObject*);
 	case TYPE_Class:		return sizeof(VClass*);
 	case TYPE_State:		return sizeof(VState*);
-	case TYPE_Delegate:	return sizeof(VObjectDelegate);
-	case TYPE_Array:		return ArrayDim * GetArrayInnerType().GetSize();
+	case TYPE_Delegate:		return sizeof(VObjectDelegate);
 	case TYPE_Struct:		return (Struct->Size + 3) & ~3;
 	case TYPE_Vector:		return sizeof(TVec);
+	case TYPE_Array:		return ArrayDim * GetArrayInnerType().GetSize();
+	case TYPE_DynamicArray:	return sizeof(VScriptArray);
 	}
 	return 0;
 	unguard;
@@ -1293,9 +1377,10 @@ int VField::FType::GetAlignment() const
 	case TYPE_Class:		return sizeof(VClass*);
 	case TYPE_State:		return sizeof(VState*);
 	case TYPE_Delegate:		return sizeof(VObject*);
-	case TYPE_Array:		return GetArrayInnerType().GetAlignment();
 	case TYPE_Struct:		return Struct->Alignment;
 	case TYPE_Vector:		return sizeof(float);
+	case TYPE_Array:		return GetArrayInnerType().GetAlignment();
+	case TYPE_DynamicArray:	return sizeof(void*);
 	}
 	return 0;
 	unguard;
@@ -1310,7 +1395,7 @@ int VField::FType::GetAlignment() const
 VField::FType VField::FType::GetArrayInnerType() const
 {
 	guard(VField::FType::GetArrayInnerType);
-	if (Type != TYPE_Array)
+	if (Type != TYPE_Array && Type != TYPE_DynamicArray)
 	{
 		Sys_Error("Not an array type");
 		return *this;
@@ -1495,6 +1580,7 @@ void VMethod::Serialise(VStream& Strm)
 			Strm << Instructions[i].Arg1;
 			break;
 		case OPCARGS_TypeSize:
+		case OPCARGS_Type:
 			Strm << Instructions[i].TypeArg;
 			break;
 		}
@@ -1536,6 +1622,13 @@ void VMethod::PostLoad()
 	*(vint32*)&Statements[Statements.Num() - 4] = (p)
 #define WritePtr(p)		Statements.SetNum(Statements.Num() + sizeof(void*)); \
 	*(void**)&Statements[Statements.Num() - sizeof(void*)] = (p)
+#define WriteType(T) \
+	WriteUInt8(T.Type); \
+	WriteUInt8(T.ArrayInnerType); \
+	WriteUInt8(T.InnerType); \
+	WriteUInt8(T.PtrLevel); \
+	WriteInt32(T.ArrayDim); \
+	WritePtr(T.Class);
 
 void VMethod::CompileCode()
 {
@@ -1667,6 +1760,9 @@ void VMethod::CompileCode()
 			break;
 		case OPCARGS_TypeSizeB:
 			WriteUInt8(Instructions[i].TypeArg.GetSize());
+			break;
+		case OPCARGS_Type:
+			WriteType(Instructions[i].TypeArg);
 			break;
 		}
 	}
@@ -1858,6 +1954,9 @@ void VMethod::OptimiseInstructions()
 			break;
 		case OPCARGS_IntBranchTarget:
 			Addr += 7;
+			break;
+		case OPCARGS_Type:
+			Addr += 9 + sizeof(void*);
 			break;
 		}
 	}
@@ -2155,6 +2254,7 @@ void VStruct::InitReferences()
 			break;
 		
 		case TYPE_Array:
+		case TYPE_DynamicArray:
 			if (F->Type.ArrayInnerType == TYPE_Reference)
 			{
 				F->NextReference = ReferenceFields;
@@ -2223,6 +2323,11 @@ void VStruct::InitDestructorFields()
 					DestructorFields = F;
 				}
 			}
+			break;
+
+		case TYPE_DynamicArray:
+			F->DestructorLink = DestructorFields;
+			DestructorFields = F;
 			break;
 		}
 	}
@@ -3055,8 +3160,9 @@ void VClass::InitReferences()
 				ReferenceFields = F;
 			}
 			break;
-		
+
 		case TYPE_Array:
+		case TYPE_DynamicArray:
 			if (F->Type.ArrayInnerType == TYPE_Reference)
 			{
 				F->NextReference = ReferenceFields;
@@ -3100,7 +3206,7 @@ void VClass::InitDestructorFields()
 			F->DestructorLink = DestructorFields;
 			DestructorFields = F;
 			break;
-		
+
 		case TYPE_Struct:
 			F->Type.Struct->PostLoad();
 			if (F->Type.Struct->DestructorFields)
@@ -3109,7 +3215,7 @@ void VClass::InitDestructorFields()
 				DestructorFields = F;
 			}
 			break;
-		
+
 		case TYPE_Array:
 			if (F->Type.ArrayInnerType == TYPE_String)
 			{
@@ -3125,6 +3231,11 @@ void VClass::InitDestructorFields()
 					DestructorFields = F;
 				}
 			}
+			break;
+
+		case TYPE_DynamicArray:
+			F->DestructorLink = DestructorFields;
+			DestructorFields = F;
 			break;
 		}
 	}

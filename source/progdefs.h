@@ -130,6 +130,7 @@ enum
 	OPCARGS_FieldOffset_Byte,
 	OPCARGS_FieldOffsetS_Byte,
 	OPCARGS_FieldOffsetB_Byte,
+	OPCARGS_Type,
 };
 
 enum
@@ -377,6 +378,13 @@ enum
 	DECLARE_OPC(AssignBool2, Byte),
 	DECLARE_OPC(AssignBool3, Byte),
 	DECLARE_OPC(AssignDelegate, None),
+
+	//	Dynamic arrays
+	DECLARE_OPC(DynArrayElement, TypeSize),
+	DECLARE_OPC(DynArrayElementS, TypeSizeS),
+	DECLARE_OPC(DynArrayElementB, TypeSizeB),
+	DECLARE_OPC(DynArrayGetNum, None),
+	DECLARE_OPC(DynArraySetNum, Type),
 
 	//	Dynamic cast
 	DECLARE_OPC(DynamicCast, Member),

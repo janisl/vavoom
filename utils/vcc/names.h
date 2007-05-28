@@ -42,6 +42,7 @@
 REGISTER_NAME(None)
 
 REGISTER_NAME(Object)
+REGISTER_NAME(Num)
 
 // Closing -----------------------------------------------------------------
 

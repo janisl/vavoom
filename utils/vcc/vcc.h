@@ -169,6 +169,7 @@ public:
 	TType MakePointerType() const;
 	TType GetPointerInnerType() const;
 	TType MakeArrayType(int, TLocation) const;
+	TType MakeDynamicArrayType(TLocation) const;
 	TType GetArrayInnerType() const;
 	int GetSize() const;
 	void CheckPassable(TLocation) const;

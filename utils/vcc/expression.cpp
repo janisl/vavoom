@@ -249,6 +249,42 @@ public:
 	void Emit(VEmitContext&);
 };
 
+//==========================================================================
+//
+//	VDynArrayGetNum
+//
+//==========================================================================
+
+class VDynArrayGetNum : public VExpression
+{
+public:
+	VExpression*		ArrayExpr;
+
+	VDynArrayGetNum(VExpression*, const TLocation&);
+	~VDynArrayGetNum();
+	VExpression* DoResolve(VEmitContext&);
+	void Emit(VEmitContext&);
+};
+
+//==========================================================================
+//
+//	VDynArraySetNum
+//
+//==========================================================================
+
+class VDynArraySetNum : public VExpression
+{
+public:
+	VExpression*		ArrayExpr;
+	VExpression*		NumExpr;
+
+	VDynArraySetNum(VExpression*, VExpression*, const TLocation&);
+	~VDynArraySetNum();
+	VExpression* DoResolve(VEmitContext&);
+	void Emit(VEmitContext&);
+	bool IsDynArraySetNum() const;
+};
+
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -414,8 +450,6 @@ void VExpression::EmitPushPointedCode(TType type, VEmitContext& ec)
 	case TYPE_Int:
 	case TYPE_Float:
 	case TYPE_Name:
-	case TYPE_Struct://	Not exactly, but the rest of code will fail without these.
-	case TYPE_Array:
 		ec.AddStatement(OPC_PushPointed);
 		break;
 
@@ -452,6 +486,9 @@ void VExpression::EmitPushPointedCode(TType type, VEmitContext& ec)
 	case TYPE_Delegate:
 		ec.AddStatement(OPC_PushPointedDelegate);
 		break;
+
+	default:
+		ParseError(Loc, "Bad push pointed");
 	}
 }
 
@@ -530,6 +567,17 @@ bool VExpression::IsDefaultObject() const
 //==========================================================================
 
 bool VExpression::IsPropertyAssign() const
+{
+	return false;
+}
+
+//==========================================================================
+//
+//	VExpression::IsDynArraySetNum
+//
+//==========================================================================
+
+bool VExpression::IsDynArraySetNum() const
 {
 	return false;
 }
@@ -1526,6 +1574,36 @@ VExpression* VDotField::IntResolve(VEmitContext& ec, bool AssignTarget)
 		delete this;
 		return e->Resolve(ec);
 	}
+	else if (op->Type.Type == TYPE_DynamicArray)
+	{
+		TType type = op->Type;
+		int Flags = op->Flags;
+		op->Flags &= ~FIELD_ReadOnly;
+		op->RequestAddressOf();
+		if (FieldName == NAME_Num)
+		{
+			if (AssignTarget)
+			{
+				VExpression* e = new VDynArraySetNum(op, NULL, Loc);
+				op = NULL;
+				delete this;
+				return e->Resolve(ec);
+			}
+			else
+			{
+				VExpression* e = new VDynArrayGetNum(op, Loc);
+				op = NULL;
+				delete this;
+				return e->Resolve(ec);
+			}
+		}
+		else
+		{
+			ParseError(Loc, "No such field %s", *FieldName);
+			delete this;
+			return NULL;
+		}
+	}
 	ParseError(Loc, "Reference, struct or vector expected on left side of .");
 	delete this;
 	return NULL;
@@ -1721,7 +1799,7 @@ VExpression* VArrayElement::DoResolve(VEmitContext& ec)
 		delete this;
 		return NULL;
 	}
-	if (op->Type.Type == TYPE_Array)
+	if (op->Type.Type == TYPE_Array || op->Type.Type == TYPE_DynamicArray)
 	{
 		Flags = op->Flags;
 		Type = op->Type.GetArrayInnerType();
@@ -1775,7 +1853,14 @@ void VArrayElement::Emit(VEmitContext& ec)
 {
 	op->Emit(ec);
 	ind->Emit(ec);
-	ec.AddStatement(OPC_ArrayElement, RealType);
+	if (op->Type.Type == TYPE_DynamicArray)
+	{
+		ec.AddStatement(OPC_DynArrayElement, RealType);
+	}
+	else
+	{
+		ec.AddStatement(OPC_ArrayElement, RealType);
+	}
 	if (!AddressRequested)
 	{
 		EmitPushPointedCode(RealType, ec);
@@ -3343,6 +3428,23 @@ VExpression* VAssignment::DoResolve(VEmitContext& ec)
 		VPropertyAssign* e = (VPropertyAssign*)op1;
 		e->NumArgs = 1;
 		e->Args[0] = op2;
+		op1 = NULL;
+		op2 = NULL;
+		delete this;
+		return e->Resolve(ec);
+	}
+
+	if (op1->IsDynArraySetNum())
+	{
+		if (Oper != Assign)
+		{
+			ParseError(Loc, "Only = can be used to resize an array");
+			delete this;
+			return NULL;
+		}
+		op2->Type.CheckMatch(Loc, TType(TYPE_Int));
+		VDynArraySetNum* e = (VDynArraySetNum*)op1;
+		e->NumExpr = op2;
 		op1 = NULL;
 		op2 = NULL;
 		delete this;
@@ -5048,6 +5150,192 @@ VTypeExpr* VFixedArrayType::ResolveAsType(VEmitContext& ec)
 	vint32 Size = SizeExpr->GetIntConst();
 	Type = Expr->Type.MakeArrayType(Size, Loc);
 	return this;
+}
+
+//END
+
+//BEGIN VDynamicArrayType
+
+//==========================================================================
+//
+//	VDynamicArrayType::VDynamicArrayType
+//
+//==========================================================================
+
+VDynamicArrayType::VDynamicArrayType(VExpression* AExpr,
+	const TLocation& ALoc)
+: VTypeExpr(TYPE_Unknown, ALoc)
+, Expr(AExpr)
+{
+}
+
+//==========================================================================
+//
+//	VDynamicArrayType::~VDynamicArrayType
+//
+//==========================================================================
+
+VDynamicArrayType::~VDynamicArrayType()
+{
+	if (Expr)
+	{
+		delete Expr;
+	}
+}
+
+//==========================================================================
+//
+//	VDynamicArrayType::ResolveAsType
+//
+//==========================================================================
+
+VTypeExpr* VDynamicArrayType::ResolveAsType(VEmitContext& ec)
+{
+	if (Expr)
+	{
+		Expr = Expr->ResolveAsType(ec);
+	}
+	if (!Expr)
+	{
+		delete this;
+		return NULL;
+	}
+
+	Type = Expr->Type.MakeDynamicArrayType(Loc);
+	return this;
+}
+
+//==========================================================================
+//
+//	VDynamicArrayType::CreateTypeExprCopy
+//
+//==========================================================================
+
+VExpression* VDynamicArrayType::CreateTypeExprCopy()
+{
+	return new VDynamicArrayType(Expr->CreateTypeExprCopy(), Loc);
+}
+
+//END
+
+//BEGIN VDynArrayGetNum
+
+//==========================================================================
+//
+//	VDynArrayGetNum::VDynArrayGetNum
+//
+//==========================================================================
+
+VDynArrayGetNum::VDynArrayGetNum(VExpression* AArrayExpr,
+	const TLocation& ALoc)
+: VExpression(ALoc)
+, ArrayExpr(AArrayExpr)
+{
+	Flags = FIELD_ReadOnly;
+}
+
+//==========================================================================
+//
+//	VDynArrayGetNum::~VDynArrayGetNum
+//
+//==========================================================================
+
+VDynArrayGetNum::~VDynArrayGetNum()
+{
+	if (ArrayExpr)
+		delete ArrayExpr;
+}
+
+//==========================================================================
+//
+//	VDynArrayGetNum::DoResolve
+//
+//==========================================================================
+
+VExpression* VDynArrayGetNum::DoResolve(VEmitContext&)
+{
+	Type = TType(TYPE_Int);
+	return this;
+}
+
+//==========================================================================
+//
+//	VDynArrayGetNum::Emit
+//
+//==========================================================================
+
+void VDynArrayGetNum::Emit(VEmitContext& ec)
+{
+	ArrayExpr->Emit(ec);
+	ec.AddStatement(OPC_DynArrayGetNum);
+}
+
+//END
+
+//BEGIN VDynArraySetNum
+
+//==========================================================================
+//
+//	VDynArraySetNum::VDynArraySetNum
+//
+//==========================================================================
+
+VDynArraySetNum::VDynArraySetNum(VExpression* AArrayExpr,
+	VExpression* ANumExpr, const TLocation& ALoc)
+: VExpression(ALoc)
+, ArrayExpr(AArrayExpr)
+, NumExpr(ANumExpr)
+{
+	Type = TType(TYPE_Void);
+}
+
+//==========================================================================
+//
+//	VDynArraySetNum::~VDynArraySetNum
+//
+//==========================================================================
+
+VDynArraySetNum::~VDynArraySetNum()
+{
+	if (ArrayExpr)
+		delete ArrayExpr;
+	if (NumExpr)
+		delete NumExpr;
+}
+
+//==========================================================================
+//
+//	VDynArraySetNum::DoResolve
+//
+//==========================================================================
+
+VExpression* VDynArraySetNum::DoResolve(VEmitContext&)
+{
+	return this;
+}
+
+//==========================================================================
+//
+//	VDynArraySetNum::Emit
+//
+//==========================================================================
+
+void VDynArraySetNum::Emit(VEmitContext& ec)
+{
+	ArrayExpr->Emit(ec);
+	NumExpr->Emit(ec);
+	ec.AddStatement(OPC_DynArraySetNum, ArrayExpr->Type.GetArrayInnerType());
+}
+
+//==========================================================================
+//
+//	VDynArraySetNum::IsDynArraySetNum
+//
+//==========================================================================
+
+bool VDynArraySetNum::IsDynArraySetNum() const
+{
+	return true;
 }
 
 //END

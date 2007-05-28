@@ -308,9 +308,10 @@ void VEmitContext::AddStatement(int statement, VMemberBase* Member, int Arg)
 
 void VEmitContext::AddStatement(int statement, const TType& TypeArg)
 {
-	if (StatementInfo[statement].Args != OPCARGS_TypeSize)
+	if (StatementInfo[statement].Args != OPCARGS_TypeSize &&
+		StatementInfo[statement].Args != OPCARGS_Type)
 	{
-		FatalError("Opcode does\'t take type as argument");
+		FatalError("Opcode doesn\'t take type as argument");
 	}
 
 	FInstruction& I = CurrentFunc->Instructions.Alloc();

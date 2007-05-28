@@ -1198,6 +1198,19 @@ VExpression* VParser::ParseType()
 		return new VSingleName(Name, l);
 	}
 
+	case TK_Array:
+	{
+		Lex.NextToken();
+		Lex.Expect(TK_Less);
+		VExpression* Inner = ParseType();
+		if (!Inner)
+		{
+			ParseError(Lex.Location, "Inner type declaration expected");
+		}
+		Lex.Expect(TK_Greater);
+		return new VDynamicArrayType(Inner, l);
+	}
+
 	default:
 		return NULL;
 	}

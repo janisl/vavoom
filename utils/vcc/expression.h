@@ -57,6 +57,7 @@ public:
 	virtual float GetFloatConst() const;
 	virtual bool IsDefaultObject() const;
 	virtual bool IsPropertyAssign() const;
+	virtual bool IsDynArraySetNum() const;
 	virtual VExpression* CreateTypeExprCopy();
 	virtual bool AddDropResult();
 };
@@ -642,6 +643,23 @@ public:
 	VFixedArrayType(VExpression*, VExpression*, const TLocation&);
 	~VFixedArrayType();
 	VTypeExpr* ResolveAsType(VEmitContext&);
+};
+
+//==========================================================================
+//
+//	VDynamicArrayType
+//
+//==========================================================================
+
+class VDynamicArrayType : public VTypeExpr
+{
+public:
+	VExpression*	Expr;
+
+	VDynamicArrayType(VExpression*, const TLocation&);
+	~VDynamicArrayType();
+	VTypeExpr* ResolveAsType(VEmitContext&);
+	VExpression* CreateTypeExprCopy();
 };
 
 //==========================================================================

@@ -93,6 +93,11 @@ VStream& operator<<(VStream& Strm, TType& T)
 			<< STRM_INDEX(T.ArrayDim);
 		RealType = T.ArrayInnerType;
 	}
+	else if (RealType == TYPE_DynamicArray)
+	{
+		Strm << T.ArrayInnerType;
+		RealType = T.ArrayInnerType;
+	}
 	if (RealType == TYPE_Pointer)
 	{
 		Strm << T.InnerType
@@ -181,7 +186,7 @@ TType TType::GetPointerInnerType() const
 
 TType TType::MakeArrayType(int elcount, TLocation l) const
 {
-	if (Type == TYPE_Array)
+	if (Type == TYPE_Array || Type == TYPE_DynamicArray)
 	{
 		ParseError(l, "Can't have multi-dimensional arrays");
 	}
@@ -194,13 +199,31 @@ TType TType::MakeArrayType(int elcount, TLocation l) const
 
 //==========================================================================
 //
+//	TType::MakeDynamicArrayType
+//
+//==========================================================================
+
+TType TType::MakeDynamicArrayType(TLocation l) const
+{
+	if (Type == TYPE_Array || Type == TYPE_DynamicArray)
+	{
+		ParseError(l, "Can't have multi-dimensional arrays");
+	}
+	TType array = *this;
+	array.ArrayInnerType = Type;
+	array.Type = TYPE_DynamicArray;
+	return array;
+}
+
+//==========================================================================
+//
 //	TType::GetArrayInnerType
 //
 //==========================================================================
 
 TType TType::GetArrayInnerType() const
 {
-	if (Type != TYPE_Array)
+	if (Type != TYPE_Array && Type != TYPE_DynamicArray)
 	{
 		FatalError("Not an array type");
 		return *this;
@@ -230,12 +253,13 @@ int TType::GetSize() const
 	case TYPE_String:		return 4;
 	case TYPE_Pointer:		return 4;
 	case TYPE_Reference:	return 4;
-	case TYPE_Array:		return ArrayDim * GetArrayInnerType().GetSize();
-	case TYPE_Struct:		return Struct->StackSize * 4;
-	case TYPE_Vector:		return 12;
 	case TYPE_Class:		return 4;
 	case TYPE_State:		return 4;
 	case TYPE_Delegate:		return 8;
+	case TYPE_Struct:		return Struct->StackSize * 4;
+	case TYPE_Vector:		return 12;
+	case TYPE_Array:		return ArrayDim * GetArrayInnerType().GetSize();
+	case TYPE_DynamicArray:	return 12;
 	}
 	return 0;
 }
@@ -406,11 +430,11 @@ void TType::GetName(char* Dest) const
 {
 	switch (Type)
 	{
-	case TYPE_Int:		strcpy(Dest, "int"); break;
-	case TYPE_Byte:		strcpy(Dest, "byte"); break;
-	case TYPE_Bool:		strcpy(Dest, "bool"); break;
+	case TYPE_Int:			strcpy(Dest, "int"); break;
+	case TYPE_Byte:			strcpy(Dest, "byte"); break;
+	case TYPE_Bool:			strcpy(Dest, "bool"); break;
 	case TYPE_Float:		strcpy(Dest, "float"); break;
-	case TYPE_Name:		strcpy(Dest, "name"); break;
+	case TYPE_Name:			strcpy(Dest, "name"); break;
 	case TYPE_String:		strcpy(Dest, "string"); break;
 	case TYPE_Pointer:	GetPointerInnerType().GetName(Dest); 
 		for (int i = 0; i < PtrLevel; i++) strcat(Dest, "*"); break;
@@ -418,9 +442,11 @@ void TType::GetName(char* Dest) const
 	case TYPE_Class:		strcpy(Dest, "class"); if (Class) { strcat(Dest, "<");
 		strcat(Dest, *Class->Name); strcat(Dest, ">"); } break;
 	case TYPE_State:		strcpy(Dest, "state"); break;
-	case TYPE_Array:		GetArrayInnerType().GetName(Dest); strcat(Dest, "[]"); break;
 	case TYPE_Struct:		strcpy(Dest, *Struct->Name); break;
 	case TYPE_Vector:		strcpy(Dest, "vector"); break;
+	case TYPE_Array:		GetArrayInnerType().GetName(Dest); strcat(Dest, "[]"); break;
+	case TYPE_DynamicArray:	strcpy(Dest, "array<");
+		GetArrayInnerType().GetName(Dest + 6); strcat(Dest, ">"); break;
 	default:			strcpy(Dest, "unknown"); break;
 	}
 }
@@ -1071,6 +1097,8 @@ bool VField::NeedsDestructor() const
 {
 	if (Type.Type == TYPE_String)
 		return true;
+	if (Type.Type == TYPE_DynamicArray)
+		return true;
 	if (Type.Type == TYPE_Array)
 	{
 		if (Type.ArrayInnerType == TYPE_String)
@@ -1338,6 +1366,7 @@ void VMethod::Serialise(VStream& Strm)
 			Strm << Instructions[i].Arg1;
 			break;
 		case OPCARGS_TypeSize:
+		case OPCARGS_Type:
 			Strm << Instructions[i].TypeArg;
 			break;
 		}
@@ -1663,6 +1692,7 @@ void VMethod::DumpAsm()
 			dprintf(" %s %d", *Instructions[s].Member->Name, Instructions[s].Arg2);
 			break;
 		case OPCARGS_TypeSize:
+		case OPCARGS_Type:
 			{
 				char Tmp[256];
 				Instructions[s].TypeArg.GetName(Tmp);

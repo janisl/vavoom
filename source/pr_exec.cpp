@@ -156,6 +156,13 @@ void PR_Traceback()
 #define ReadInt16(ip)		(*(vint16*)(ip))
 #define ReadInt32(ip)		(*(vint32*)(ip))
 #define ReadPtr(ip)			(*(void**)(ip))
+#define ReadType(T, ip) \
+	T.Type = (ip)[0]; \
+	T.ArrayInnerType = (ip)[1]; \
+	T.InnerType = (ip)[2]; \
+	T.PtrLevel = (ip)[3]; \
+	T.ArrayDim = ReadInt32((ip) + 4); \
+	T.Class = (VClass*)ReadPtr((ip) + 8);
 
 static void RunFunction(VMethod *func)
 {
@@ -1671,6 +1678,39 @@ func_loop:
 			((void**)sp[-3].p)[0] = sp[-2].p;
 			((void**)sp[-3].p)[1] = sp[-1].p;
 			sp -= 3;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_DynArrayElement)
+			sp[-2].p = ((VScriptArray*)sp[-2].p)->Ptr() + sp[-1].i * ReadInt32(ip + 1);
+			ip += 5;
+			sp--;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_DynArrayElementS)
+			sp[-2].p = ((VScriptArray*)sp[-2].p)->Ptr() + sp[-1].i * ReadInt16(ip + 1);
+			ip += 3;
+			sp--;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_DynArrayElementB)
+			sp[-2].p = ((VScriptArray*)sp[-2].p)->Ptr() + sp[-1].i * ip[1];
+			ip += 2;
+			sp--;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_DynArrayGetNum)
+			ip++;
+			sp[-1].i = ((VScriptArray*)sp[-1].p)->Num();
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_DynArraySetNum)
+			{
+				VField::FType Type;
+				ReadType(Type, ip + 1);
+				ip += 9 + sizeof(VClass*);
+				((VScriptArray*)sp[-2].p)->SetNum(sp[-1].i, Type);
+				sp -= 2;
+			}
 			PR_VM_BREAK;
 
 		PR_VM_CASE(OPC_DynamicCast)
