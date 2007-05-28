@@ -576,7 +576,7 @@ bool VSwitch::Resolve(VEmitContext& ec)
 	{
 		Expr = Expr->Resolve(ec);
 	}
-	if (!Expr || Expr->Type.type != TYPE_Int)
+	if (!Expr || Expr->Type.Type != TYPE_Int)
 	{
 		ParseError(Loc, "Int expression expected");
 		Ret = false;
@@ -888,7 +888,7 @@ bool VReturn::Resolve(VEmitContext& ec)
 	if (Expr)
 	{
 		Expr = Expr->Resolve(ec);
-		if (ec.FuncRetType.type == TYPE_Void)
+		if (ec.FuncRetType.Type == TYPE_Void)
 		{
 			ParseError(Loc, "viod function cannot return a value.");
 			Ret = false;
@@ -904,7 +904,7 @@ bool VReturn::Resolve(VEmitContext& ec)
 	}
 	else
 	{
-		if (ec.FuncRetType.type != TYPE_Void)
+		if (ec.FuncRetType.Type != TYPE_Void)
 		{
 			ParseError(Loc, "Return value expected.");
 			Ret = false;
@@ -929,7 +929,7 @@ void VReturn::DoEmit(VEmitContext& ec)
 		{
 			ec.AddStatement(OPC_ReturnL);
 		}
-		else if (Expr->Type.type == TYPE_Vector)
+		else if (Expr->Type.Type == TYPE_Vector)
 		{
 			ec.AddStatement(OPC_ReturnV);
 		}

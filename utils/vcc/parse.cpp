@@ -1140,7 +1140,7 @@ VExpression* VParser::ParseType()
 	{
 		Lex.NextToken();
 		TType ret(TYPE_Bool);
-		ret.bit_mask = 1;
+		ret.BitMask = 1;
 		return new VTypeExpr(ret, l);
 	}
 
@@ -1262,7 +1262,7 @@ void VParser::ParseMethodDef(VExpression* RetType, VName MName,
 
 	if (Lex.Check(TK_Semicolon))
 	{
-		Package->numbuiltins++;
+		Package->NumBuiltins++;
 	}
 	else
 	{
@@ -1314,9 +1314,9 @@ void VParser::ParseDelegate(VExpression* RetType, VField* Delegate)
 	Lex.Expect(TK_RParen, ERR_MISSING_RPAREN);
 	Lex.Expect(TK_Semicolon, ERR_MISSING_SEMICOLON);
 
-	Delegate->func = Func;
-	Delegate->type = TType(TYPE_Delegate);
-	Delegate->type.Function = Func;
+	Delegate->Func = Func;
+	Delegate->Type = TType(TYPE_Delegate);
+	Delegate->Type.Function = Func;
 }
 
 //==========================================================================
@@ -1567,7 +1567,7 @@ void VParser::ParseReplication(VClass* Class)
 		//	Replication condition.
 		RI.Cond = new VMethod(NAME_None, Class, Lex.Location);
 		RI.Cond->ReturnType = TType(TYPE_Bool);
-		RI.Cond->ReturnType.bit_mask = 1;
+		RI.Cond->ReturnType.BitMask = 1;
 		RI.Cond->ReturnTypeExpr = new VTypeExpr(RI.Cond->ReturnType,
 			Lex.Location);
 		Lex.Expect(TK_If);
@@ -1874,7 +1874,7 @@ void VParser::ParseClass()
 						if (Modifiers & TModifiers::Native)
 						{
 							Lex.Expect(TK_Semicolon, ERR_MISSING_SEMICOLON);
-							Package->numbuiltins++;
+							Package->NumBuiltins++;
 						}
 						else
 						{
@@ -1908,7 +1908,7 @@ void VParser::ParseClass()
 						if (Modifiers & TModifiers::Native)
 						{
 							Lex.Expect(TK_Semicolon, ERR_MISSING_SEMICOLON);
-							Package->numbuiltins++;
+							Package->NumBuiltins++;
 						}
 						else
 						{

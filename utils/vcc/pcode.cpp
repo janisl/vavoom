@@ -430,38 +430,38 @@ void VEmitContext::EmitClearStrings(int Start, int End)
 {
 	for (int i = Start; i < End; i++)
 	{
-		if (LocalDefs[i].type.type == TYPE_String)
+		if (LocalDefs[i].Type.Type == TYPE_String)
 		{
-			EmitLocalAddress(LocalDefs[i].ofs);
+			EmitLocalAddress(LocalDefs[i].Offset);
 			AddStatement(OPC_ClearPointedStr);
 		}
-		if (LocalDefs[i].type.type == TYPE_Struct &&
-			LocalDefs[i].type.Struct->NeedsDestructor())
+		if (LocalDefs[i].Type.Type == TYPE_Struct &&
+			LocalDefs[i].Type.Struct->NeedsDestructor())
 		{
-			EmitLocalAddress(LocalDefs[i].ofs);
-			AddStatement(OPC_ClearPointedStruct, LocalDefs[i].type.Struct);
+			EmitLocalAddress(LocalDefs[i].Offset);
+			AddStatement(OPC_ClearPointedStruct, LocalDefs[i].Type.Struct);
 		}
-		if (LocalDefs[i].type.type == TYPE_Array)
+		if (LocalDefs[i].Type.Type == TYPE_Array)
 		{
-			if (LocalDefs[i].type.ArrayInnerType == TYPE_String)
+			if (LocalDefs[i].Type.ArrayInnerType == TYPE_String)
 			{
-				for (int j = 0; j < LocalDefs[i].type.array_dim; j++)
+				for (int j = 0; j < LocalDefs[i].Type.ArrayDim; j++)
 				{
-					EmitLocalAddress(LocalDefs[i].ofs);
+					EmitLocalAddress(LocalDefs[i].Offset);
 					EmitPushNumber(j);
-					AddStatement(OPC_ArrayElement, LocalDefs[i].type.GetArrayInnerType());
+					AddStatement(OPC_ArrayElement, LocalDefs[i].Type.GetArrayInnerType());
 					AddStatement(OPC_ClearPointedStr);
 				}
 			}
-			else if (LocalDefs[i].type.ArrayInnerType == TYPE_Struct &&
-				LocalDefs[i].type.Struct->NeedsDestructor())
+			else if (LocalDefs[i].Type.ArrayInnerType == TYPE_Struct &&
+				LocalDefs[i].Type.Struct->NeedsDestructor())
 			{
-				for (int j = 0; j < LocalDefs[i].type.array_dim; j++)
+				for (int j = 0; j < LocalDefs[i].Type.ArrayDim; j++)
 				{
-					EmitLocalAddress(LocalDefs[i].ofs);
+					EmitLocalAddress(LocalDefs[i].Offset);
 					EmitPushNumber(j);
-					AddStatement(OPC_ArrayElement, LocalDefs[i].type.GetArrayInnerType());
-					AddStatement(OPC_ClearPointedStruct, LocalDefs[i].type.Struct);
+					AddStatement(OPC_ArrayElement, LocalDefs[i].Type.GetArrayInnerType());
+					AddStatement(OPC_ClearPointedStruct, LocalDefs[i].Type.Struct);
 				}
 			}
 		}

@@ -60,8 +60,8 @@ TArray<VPackage*>		VMemberBase::LoadedPackages;
 //==========================================================================
 
 TType::TType(VClass* InClass) :
-	type(TYPE_Reference), InnerType(TYPE_Void), ArrayInnerType(TYPE_Void),
-	PtrLevel(0), array_dim(0), Class(InClass)
+	Type(TYPE_Reference), InnerType(TYPE_Void), ArrayInnerType(TYPE_Void),
+	PtrLevel(0), ArrayDim(0), Class(InClass)
 {
 }
 
@@ -72,8 +72,8 @@ TType::TType(VClass* InClass) :
 //==========================================================================
 
 TType::TType(VStruct* InStruct) :
-	type(InStruct->IsVector ? TYPE_Vector : TYPE_Struct), InnerType(TYPE_Void),
-	ArrayInnerType(TYPE_Void), PtrLevel(0), array_dim(0), Struct(InStruct)
+	Type(InStruct->IsVector ? TYPE_Vector : TYPE_Struct), InnerType(TYPE_Void),
+	ArrayInnerType(TYPE_Void), PtrLevel(0), ArrayDim(0), Struct(InStruct)
 {
 }
 
@@ -85,12 +85,12 @@ TType::TType(VStruct* InStruct) :
 
 VStream& operator<<(VStream& Strm, TType& T)
 {
-	Strm << T.type;
-	vuint8 RealType = T.type;
+	Strm << T.Type;
+	vuint8 RealType = T.Type;
 	if (RealType == TYPE_Array)
 	{
 		Strm << T.ArrayInnerType
-			<< STRM_INDEX(T.array_dim);
+			<< STRM_INDEX(T.ArrayDim);
 		RealType = T.ArrayInnerType;
 	}
 	if (RealType == TYPE_Pointer)
@@ -106,7 +106,7 @@ VStream& operator<<(VStream& Strm, TType& T)
 	else if (RealType == TYPE_Delegate)
 		Strm << T.Function;
 	else if (RealType == TYPE_Bool)
-		Strm << T.bit_mask;
+		Strm << T.BitMask;
 	return Strm;
 }
 
@@ -118,11 +118,11 @@ VStream& operator<<(VStream& Strm, TType& T)
 
 bool TType::Equals(const TType& Other) const
 {
-	if (type != Other.type ||
+	if (Type != Other.Type ||
 		InnerType != Other.InnerType ||
 		ArrayInnerType != Other.ArrayInnerType ||
 		PtrLevel != Other.PtrLevel ||
-		array_dim != Other.array_dim ||
+		ArrayDim != Other.ArrayDim ||
 		Class != Other.Class)
 		return false;
 	return true;
@@ -137,14 +137,14 @@ bool TType::Equals(const TType& Other) const
 TType TType::MakePointerType() const
 {
 	TType pointer = *this;
-	if (pointer.type == TYPE_Pointer)
+	if (pointer.Type == TYPE_Pointer)
 	{
 		pointer.PtrLevel++;
 	}
 	else
 	{
-		pointer.InnerType = pointer.type;
-		pointer.type = TYPE_Pointer;
+		pointer.InnerType = pointer.Type;
+		pointer.Type = TYPE_Pointer;
 		pointer.PtrLevel = 1;
 	}
 	return pointer;
@@ -158,7 +158,7 @@ TType TType::MakePointerType() const
 
 TType TType::GetPointerInnerType() const
 {
-	if (type != TYPE_Pointer)
+	if (Type != TYPE_Pointer)
 	{
 		FatalError("Not a pointer type");
 		return *this;
@@ -167,7 +167,7 @@ TType TType::GetPointerInnerType() const
 	ret.PtrLevel--;
 	if (ret.PtrLevel <= 0)
 	{
-		ret.type = InnerType;
+		ret.Type = InnerType;
 		ret.InnerType = TYPE_Void;
 	}
 	return ret;
@@ -181,14 +181,14 @@ TType TType::GetPointerInnerType() const
 
 TType TType::MakeArrayType(int elcount, TLocation l) const
 {
-	if (type == TYPE_Array)
+	if (Type == TYPE_Array)
 	{
 		ParseError(l, "Can't have multi-dimensional arrays");
 	}
 	TType array = *this;
-	array.ArrayInnerType = type;
-	array.type = TYPE_Array;
-	array.array_dim = elcount;
+	array.ArrayInnerType = Type;
+	array.Type = TYPE_Array;
+	array.ArrayDim = elcount;
 	return array;
 }
 
@@ -200,15 +200,15 @@ TType TType::MakeArrayType(int elcount, TLocation l) const
 
 TType TType::GetArrayInnerType() const
 {
-	if (type != TYPE_Array)
+	if (Type != TYPE_Array)
 	{
 		FatalError("Not an array type");
 		return *this;
 	}
 	TType ret = *this;
-	ret.type = ArrayInnerType;
+	ret.Type = ArrayInnerType;
 	ret.ArrayInnerType = TYPE_Void;
-	ret.array_dim = 0;
+	ret.ArrayDim = 0;
 	return ret;
 }
 
@@ -220,22 +220,22 @@ TType TType::GetArrayInnerType() const
 
 int TType::GetSize() const
 {
-	switch (type)
+	switch (Type)
 	{
-	case TYPE_Int:		return 4;
-	case TYPE_Byte:		return 4;
-	case TYPE_Bool:		return 4;
+	case TYPE_Int:			return 4;
+	case TYPE_Byte:			return 4;
+	case TYPE_Bool:			return 4;
 	case TYPE_Float:		return 4;
-	case TYPE_Name:		return 4;
+	case TYPE_Name:			return 4;
 	case TYPE_String:		return 4;
-	case TYPE_Pointer:	return 4;
+	case TYPE_Pointer:		return 4;
 	case TYPE_Reference:	return 4;
-	case TYPE_Array:		return array_dim * GetArrayInnerType().GetSize();
+	case TYPE_Array:		return ArrayDim * GetArrayInnerType().GetSize();
 	case TYPE_Struct:		return Struct->StackSize * 4;
 	case TYPE_Vector:		return 12;
 	case TYPE_Class:		return 4;
 	case TYPE_State:		return 4;
-	case TYPE_Delegate:	return 8;
+	case TYPE_Delegate:		return 8;
 	}
 	return 0;
 }
@@ -250,7 +250,7 @@ int TType::GetSize() const
 
 void TType::CheckPassable(TLocation l) const
 {
-	if (GetSize() != 4 && type != TYPE_Vector && type != TYPE_Delegate)
+	if (GetSize() != 4 && Type != TYPE_Vector && Type != TYPE_Delegate)
 	{
 		char Name[256];
 		GetName(Name);
@@ -277,11 +277,11 @@ void TType::CheckMatch(TLocation l, const TType& Other) const
 	{
 		return;
 	}
-	if (type == TYPE_Vector && Other.type == TYPE_Vector)
+	if (Type == TYPE_Vector && Other.Type == TYPE_Vector)
 	{
 		return;
 	}
-	if (type == TYPE_Pointer && Other.type == TYPE_Pointer)
+	if (Type == TYPE_Pointer && Other.Type == TYPE_Pointer)
 	{
 		TType it1 = GetPointerInnerType();
 		TType it2 = Other.GetPointerInnerType();
@@ -289,11 +289,11 @@ void TType::CheckMatch(TLocation l, const TType& Other) const
 		{
 			return;
 		}
-		if ((it1.type == TYPE_Void) || (it2.type == TYPE_Void))
+		if ((it1.Type == TYPE_Void) || (it2.Type == TYPE_Void))
 		{
 			return;
 		}
-		if (it1.type == TYPE_Struct && it2.type == TYPE_Struct)
+		if (it1.Type == TYPE_Struct && it2.Type == TYPE_Struct)
 		{
 			VStruct* s1 = it1.Struct;
 			VStruct* s2 = it2.Struct;
@@ -306,7 +306,7 @@ void TType::CheckMatch(TLocation l, const TType& Other) const
 			}
 		}
 	}
-	if (type == TYPE_Reference && Other.type == TYPE_Reference)
+	if (Type == TYPE_Reference && Other.Type == TYPE_Reference)
 	{
 		VClass* c1 = Class;
 		VClass* c2 = Other.Class;
@@ -327,7 +327,7 @@ void TType::CheckMatch(TLocation l, const TType& Other) const
 			}
 		}
 	}
-	if (type == TYPE_Class && Other.type == TYPE_Class)
+	if (Type == TYPE_Class && Other.Type == TYPE_Class)
 	{
 		VClass* c1 = Class;
 		VClass* c2 = Other.Class;
@@ -351,21 +351,21 @@ void TType::CheckMatch(TLocation l, const TType& Other) const
 			}
 		}
 	}
-	if (type == TYPE_Int && Other.type == TYPE_Byte)
+	if (Type == TYPE_Int && Other.Type == TYPE_Byte)
 	{
 		return;
 	}
-	if (type == TYPE_Int && Other.type == TYPE_Bool)
+	if (Type == TYPE_Int && Other.Type == TYPE_Bool)
 	{
 		return;
 	}
 	//	Allow assigning none to states, classes and delegates
-	if (type == TYPE_Reference && Class == NULL && (Other.type == TYPE_Class ||
-		Other.type == TYPE_State || Other.type == TYPE_Delegate))
+	if (Type == TYPE_Reference && Class == NULL && (Other.Type == TYPE_Class ||
+		Other.Type == TYPE_State || Other.Type == TYPE_Delegate))
 	{
 		return;
 	}
-	if (type == TYPE_Delegate && Other.type == TYPE_Delegate)
+	if (Type == TYPE_Delegate && Other.Type == TYPE_Delegate)
 	{
 		VMethod& F1 = *Function;
 		VMethod& F2 = *Other.Function;
@@ -393,7 +393,7 @@ void TType::CheckMatch(TLocation l, const TType& Other) const
 	GetName(Name1);
 	Other.GetName(Name2);
 	ParseError(l, "Type mistmatch, types %s and %s are not compatible %d %d",
-		Name1, Name2, type, Other.type);
+		Name1, Name2, Type, Other.Type);
 }
 
 //==========================================================================
@@ -404,7 +404,7 @@ void TType::CheckMatch(TLocation l, const TType& Other) const
 
 void TType::GetName(char* Dest) const
 {
-	switch (type)
+	switch (Type)
 	{
 	case TYPE_Int:		strcpy(Dest, "int"); break;
 	case TYPE_Byte:		strcpy(Dest, "byte"); break;
@@ -1029,11 +1029,11 @@ VClass* VMemberBase::CheckForClass(VName Name)
 VField::VField(VName InName, VMemberBase* InOuter, TLocation InLoc)
 : VMemberBase(MEMBER_Field, InName, InOuter, InLoc)
 , Next(NULL)
-, type(TYPE_Void)
+, Type(TYPE_Void)
 , TypeExpr(NULL)
-, func(NULL)
+, Func(NULL)
 , Modifiers(0)
-, flags(0)
+, Flags(0)
 {
 }
 
@@ -1058,10 +1058,7 @@ VField::~VField()
 void VField::Serialise(VStream& Strm)
 {
 	VMemberBase::Serialise(Strm);
-	Strm << Next
-		<< type
-		<< func
-		<< STRM_INDEX(flags);
+	Strm << Next << Type << Func << STRM_INDEX(Flags);
 }
 
 //==========================================================================
@@ -1072,17 +1069,17 @@ void VField::Serialise(VStream& Strm)
 
 bool VField::NeedsDestructor() const
 {
-	if (type.type == TYPE_String)
+	if (Type.Type == TYPE_String)
 		return true;
-	if (type.type == TYPE_Array)
+	if (Type.Type == TYPE_Array)
 	{
-		if (type.ArrayInnerType == TYPE_String)
+		if (Type.ArrayInnerType == TYPE_String)
 			return true;
-		if (type.ArrayInnerType == TYPE_Struct)
-			return type.Struct->NeedsDestructor();
+		if (Type.ArrayInnerType == TYPE_Struct)
+			return Type.Struct->NeedsDestructor();
 	}
-	if (type.type == TYPE_Struct)
-		return type.Struct->NeedsDestructor();
+	if (Type.Type == TYPE_Struct)
+		return Type.Struct->NeedsDestructor();
 	return false;
 }
 
@@ -1094,9 +1091,9 @@ bool VField::NeedsDestructor() const
 
 bool VField::Define()
 {
-	if (type.type == TYPE_Delegate)
+	if (Type.Type == TYPE_Delegate)
 	{
-		return func->Define();
+		return Func->Define();
 	}
 
 	if (TypeExpr)
@@ -1109,15 +1106,15 @@ bool VField::Define()
 		return false;
 	}
 
-	if (TypeExpr->Type.type == TYPE_Void)
+	if (TypeExpr->Type.Type == TYPE_Void)
 	{
 		ParseError(TypeExpr->Loc, "Field cannot have void type.");
 		return false;
 	}
-	type = TypeExpr->Type;
+	Type = TypeExpr->Type;
 
 	Modifiers = TModifiers::Check(Modifiers, AllowedModifiers, Loc);
-	flags = TModifiers::FieldAttr(Modifiers);
+	Flags = TModifiers::FieldAttr(Modifiers);
 	return true;
 }
 
@@ -1186,7 +1183,7 @@ bool VProperty::Define()
 		return false;
 	}
 
-	if (TypeExpr->Type.type == TYPE_Void)
+	if (TypeExpr->Type.Type == TYPE_Void)
 	{
 		ParseError(TypeExpr->Loc, "Property cannot have void type.");
 		return false;
@@ -1388,7 +1385,7 @@ bool VMethod::Define()
 	if (ReturnTypeExpr)
 	{
 		TType t = ReturnTypeExpr->Type;
-		if (t.type != TYPE_Void)
+		if (t.Type != TYPE_Void)
 		{
 			//	Function's return type must be void, vector or with size 4
 			t.CheckPassable(ReturnTypeExpr->Loc);
@@ -1417,7 +1414,7 @@ bool VMethod::Define()
 		}
 		TType type = P.TypeExpr->Type;
 
-		if (type.type == TYPE_Void)
+		if (type.Type == TYPE_Void)
 		{
 			ParseError(P.TypeExpr->Loc, "Bad variable type");
 			Ret = false;
@@ -1483,11 +1480,11 @@ bool VMethod::Define()
 		{
 			ParseError(Loc, "Spawner method must have at least 1 argument");
 		}
-		else if (ParamTypes[0].type != TYPE_Class)
+		else if (ParamTypes[0].Type != TYPE_Class)
 		{
 			ParseError(Loc, "Spawner method must have class as it's first argument");
 		}
-		else if (ReturnType.type != TYPE_Reference)
+		else if (ReturnType.Type != TYPE_Reference)
 		{
 			ParseError(Loc, "Spawner method must return an object reference");
 		}
@@ -1550,8 +1547,8 @@ void VMethod::Emit()
 			}
 			VLocalVarDef& L = ec.LocalDefs.Alloc();
 			L.Name = P.Name;
-			L.type = ParamTypes[i];
-			L.ofs = ec.localsofs;
+			L.Type = ParamTypes[i];
+			L.Offset = ec.localsofs;
 			L.Visible = true;
 			L.ParamFlags = ParamFlags[i];
 		}
@@ -1562,8 +1559,8 @@ void VMethod::Emit()
 			{
 				VLocalVarDef& L = ec.LocalDefs.Alloc();
 				L.Name = va("specified_%s", *P.Name);
-				L.type = TYPE_Int;
-				L.ofs = ec.localsofs;
+				L.Type = TYPE_Int;
+				L.Offset = ec.localsofs;
 				L.Visible = true;
 				L.ParamFlags = 0;
 			}
@@ -1573,9 +1570,9 @@ void VMethod::Emit()
 
 	for (int i = 0; i < ec.LocalDefs.Num(); i++)
 	{
-		if (ec.LocalDefs[i].type.type == TYPE_Vector)
+		if (ec.LocalDefs[i].Type.Type == TYPE_Vector)
 		{
-			ec.AddStatement(OPC_VFixParam, ec.LocalDefs[i].ofs);
+			ec.AddStatement(OPC_VFixParam, ec.LocalDefs[i].Offset);
 		}
 	}
 
@@ -1586,7 +1583,7 @@ void VMethod::Emit()
 
 	Statement->Emit(ec);
 
-	if (ReturnType.type == TYPE_Void)
+	if (ReturnType.Type == TYPE_Void)
 	{
 		ec.EmitClearStrings(0, ec.LocalDefs.Num());
 		ec.AddStatement(OPC_Return);
@@ -1900,7 +1897,7 @@ bool VStruct::Define()
 	{
 		TType type = CheckForType(Outer->MemberType == MEMBER_Class ?
 			(VClass*)Outer : NULL, ParentStructName);
-		if (type.type != TYPE_Struct)
+		if (type.Type != TYPE_Struct)
 		{
 			ParseError(ParentStructLoc, "%s is not a struct type",
 				*ParentStructName);
@@ -1944,15 +1941,15 @@ bool VStruct::DefineMembers()
 		{
 			Ret = false;
 		}
-		if (fi->type.type == TYPE_Bool && PrevBool && PrevBool->type.bit_mask != 0x80000000)
+		if (fi->Type.Type == TYPE_Bool && PrevBool && PrevBool->Type.BitMask != 0x80000000)
 		{
-			fi->type.bit_mask = PrevBool->type.bit_mask << 1;
+			fi->Type.BitMask = PrevBool->Type.BitMask << 1;
 		}
 		else
 		{
-			size += fi->type.GetSize();
+			size += fi->Type.GetSize();
 		}
-		PrevBool = fi->type.type == TYPE_Bool ? fi : NULL;
+		PrevBool = fi->Type.Type == TYPE_Bool ? fi : NULL;
 	}
 
 	//	Validate vector type.
@@ -1961,7 +1958,7 @@ bool VStruct::DefineMembers()
 		int fc = 0;
 		for (VField* f = Fields; f; f = f->Next)
 		{
-			if (f->type.type != TYPE_Float)
+			if (f->Type.Type != TYPE_Float)
 			{
 				ParseError(f->Loc, "Vector can have only float fields");
 				Ret = false;
@@ -2134,7 +2131,7 @@ void VState::Emit()
 		}
 		else
 		{
-			if (Function->ReturnType.type != TYPE_Void)
+			if (Function->ReturnType.Type != TYPE_Void)
 			{
 				ParseError(Loc, "State method must not return a value");
 			}
@@ -2380,7 +2377,7 @@ VField* VClass::CheckForField(TLocation l, VName Name, VClass* SelfClass, bool C
 	{
 		if (Name == fi->Name)
 		{
-			if (CheckPrivate && fi->flags & FIELD_Private &&
+			if (CheckPrivate && fi->Flags & FIELD_Private &&
 				this != SelfClass)
 			{
 				ParseError(l, "Field %s is private", *fi->Name);
@@ -2484,9 +2481,9 @@ bool VClass::Define()
 			ParseError(MobjInfoExpressions[i]->Loc, "Integer constant expected");
 			return false;
 		}
-		mobjinfo_t& mi = ec.Package->mobj_info.Alloc();
-		mi.doomednum = MobjInfoExpressions[i]->GetIntConst();
-		mi.class_id = this;
+		mobjinfo_t& mi = ec.Package->MobjInfo.Alloc();
+		mi.DoomEdNum = MobjInfoExpressions[i]->GetIntConst();
+		mi.Class = this;
 	}
 
 	for (int i = 0; i < ScriptIdExpressions.Num(); i++)
@@ -2502,9 +2499,9 @@ bool VClass::Define()
 			ParseError(ScriptIdExpressions[i]->Loc, "Integer constant expected");
 			return false;
 		}
-		mobjinfo_t& mi = ec.Package->script_ids.Alloc();
-		mi.doomednum = ScriptIdExpressions[i]->GetIntConst();
-		mi.class_id = this;
+		mobjinfo_t& mi = ec.Package->ScriptIds.Alloc();
+		mi.DoomEdNum = ScriptIdExpressions[i]->GetIntConst();
+		mi.Class = this;
 	}
 
 	Defined = true;
@@ -2541,11 +2538,11 @@ bool VClass::DefineMembers()
 		{
 			Ret = false;
 		}
-		if (fi->type.type == TYPE_Bool && PrevBool && PrevBool->type.bit_mask != 0x80000000)
+		if (fi->Type.Type == TYPE_Bool && PrevBool && PrevBool->Type.BitMask != 0x80000000)
 		{
-			fi->type.bit_mask = PrevBool->type.bit_mask << 1;
+			fi->Type.BitMask = PrevBool->Type.BitMask << 1;
 		}
-		PrevBool = fi->type.type == TYPE_Bool ? fi : NULL;
+		PrevBool = fi->Type.Type == TYPE_Bool ? fi : NULL;
 	}
 
 	for (int i = 0; i < Properties.Num(); i++)
@@ -2597,13 +2594,13 @@ bool VClass::DefineMembers()
 			}
 			if (RepField)
 			{
-				if (RepField->flags & FIELD_Net)
+				if (RepField->Flags & FIELD_Net)
 				{
 					ParseError(RepFields[i].Loc, "Field %s has multiple replication statements",
 						*RepFields[i].Name);
 					continue;
 				}
-				RepField->flags |= FIELD_Net;
+				RepField->Flags |= FIELD_Net;
 				RepFields[i].Member = RepField;
 				continue;
 			}
@@ -2685,8 +2682,8 @@ VPackage::VPackage()
 	memset(StringLookup, 0, 256 * 4);
 	//	1-st string is empty
 	StringInfo.Alloc();
-	StringInfo[0].offs = 0;
-	StringInfo[0].next = 0;
+	StringInfo[0].Offs = 0;
+	StringInfo[0].Next = 0;
 	Strings.SetNum(4);
 	memset(Strings.Ptr(), 0, 4);
 }
@@ -2704,8 +2701,8 @@ VPackage::VPackage(VName InName)
 	memset(StringLookup, 0, 256 * 4);
 	//	1-st string is empty
 	StringInfo.Alloc();
-	StringInfo[0].offs = 0;
-	StringInfo[0].next = 0;
+	StringInfo[0].Offs = 0;
+	StringInfo[0].Next = 0;
 	Strings.SetNum(4);
 	memset(Strings.Ptr(), 0, 4);
 }
@@ -2736,11 +2733,11 @@ int VPackage::FindString(const char *str)
 		return 0;
 	}
 	int hash = StringHashFunc(str);
-	for (int i = StringLookup[hash]; i; i = StringInfo[i].next)
+	for (int i = StringLookup[hash]; i; i = StringInfo[i].Next)
 	{
-		if (!strcmp(&Strings[StringInfo[i].offs], str))
+		if (!strcmp(&Strings[StringInfo[i].Offs], str))
 		{
-			return StringInfo[i].offs;
+			return StringInfo[i].Offs;
 		}
 	}
 
@@ -2750,11 +2747,11 @@ int VPackage::FindString(const char *str)
 	int Ofs = Strings.Num();
 	Strings.SetNum(Strings.Num() + AddLen);
 	memset(&Strings[Ofs], 0, AddLen);
-	SI.offs = Ofs;
-	SI.next = StringLookup[hash];
+	SI.Offs = Ofs;
+	SI.Next = StringLookup[hash];
 	StringLookup[hash] = StringInfo.Num() - 1;
 	strcpy(&Strings[Ofs], str);
-	return SI.offs;
+	return SI.Offs;
 }
 
 //==========================================================================
@@ -2916,19 +2913,19 @@ void VPackage::WriteObject(const char *name)
 	Writer.Serialise(&Strings[0], Strings.Num());
 
 	progs.ofs_mobjinfo = Writer.Tell();
-	progs.num_mobjinfo = mobj_info.Num();
-	for (i = 0; i < mobj_info.Num(); i++)
+	progs.num_mobjinfo = MobjInfo.Num();
+	for (i = 0; i < MobjInfo.Num(); i++)
 	{
-		Writer << STRM_INDEX(mobj_info[i].doomednum)
-			<< mobj_info[i].class_id;
+		Writer << STRM_INDEX(MobjInfo[i].DoomEdNum)
+			<< MobjInfo[i].Class;
 	}
 
 	progs.ofs_scriptids = Writer.Tell();
-	progs.num_scriptids = script_ids.Num();
-	for (i = 0; i < script_ids.Num(); i++)
+	progs.num_scriptids = ScriptIds.Num();
+	for (i = 0; i < ScriptIds.Num(); i++)
 	{
-		Writer << STRM_INDEX(script_ids[i].doomednum)
-			<< script_ids[i].class_id;
+		Writer << STRM_INDEX(ScriptIds[i].DoomEdNum)
+			<< ScriptIds[i].Class;
 	}
 
 	//	Serialise imports.
@@ -2960,9 +2957,9 @@ void VPackage::WriteObject(const char *name)
 	dprintf("Header     %6d %6ld\n", 1, sizeof(progs));
 	dprintf("Names      %6d %6d\n", Writer.Names.Num(), progs.ofs_strings - progs.ofs_names);
 	dprintf("Strings    %6d %6d\n", StringInfo.Num(), Strings.Num());
-	dprintf("Builtins   %6d\n", numbuiltins);
-	dprintf("Mobj info  %6d %6d\n", mobj_info.Num(), progs.ofs_scriptids - progs.ofs_mobjinfo);
-	dprintf("Script Ids %6d %6d\n", script_ids.Num(), progs.ofs_imports - progs.ofs_scriptids);
+	dprintf("Builtins   %6d\n", NumBuiltins);
+	dprintf("Mobj info  %6d %6d\n", MobjInfo.Num(), progs.ofs_scriptids - progs.ofs_mobjinfo);
+	dprintf("Script Ids %6d %6d\n", ScriptIds.Num(), progs.ofs_imports - progs.ofs_scriptids);
 	dprintf("Imports    %6d %6d\n", Writer.Imports.Num(), progs.ofs_exportinfo - progs.ofs_imports);
 	dprintf("Exports    %6d %6d\n", Writer.Exports.Num(), progs.ofs_exportdata - progs.ofs_exportinfo);
 	dprintf("Type data  %6d %6d\n", Writer.Exports.Num(), Writer.Tell() - progs.ofs_exportdata);

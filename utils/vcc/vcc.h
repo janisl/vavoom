@@ -140,24 +140,24 @@ class TType
 {
 public:
 	TType() :
-		type(TYPE_Void), InnerType(TYPE_Void), ArrayInnerType(TYPE_Void),
-		PtrLevel(0), array_dim(0), Class(0)
+		Type(TYPE_Void), InnerType(TYPE_Void), ArrayInnerType(TYPE_Void),
+		PtrLevel(0), ArrayDim(0), Class(0)
 	{}
 	TType(EType Atype) :
-		type(Atype), InnerType(TYPE_Void), ArrayInnerType(TYPE_Void),
-		PtrLevel(0), array_dim(0), Class(0)
+		Type(Atype), InnerType(TYPE_Void), ArrayInnerType(TYPE_Void),
+		PtrLevel(0), ArrayDim(0), Class(0)
 	{}
 	explicit TType(VClass* InClass);
 	explicit TType(VStruct* InStruct);
 
-	vuint8		type;
+	vuint8		Type;
 	vuint8		InnerType;		//	For pointers
 	vuint8		ArrayInnerType;	//	For arrays
 	vuint8		PtrLevel;
-	int			array_dim;
+	int			ArrayDim;
 	union
 	{
-		vuint32		bit_mask;
+		vuint32		BitMask;
 		VClass*		Class;			//  Class of the reference
 		VStruct*	Struct;			//  Struct data.
 		VMethod*	Function;		//  Function of the delegate type.
@@ -242,11 +242,11 @@ public:
 		TModifiers::ReadOnly | TModifiers::Transient };
 
 	VField*			Next;
-	TType			type;
+	TType			Type;
 	VExpression*	TypeExpr;
-	VMethod*		func;	// Method's function
+	VMethod*		Func;	// Method's function
 	vuint32 		Modifiers;
-	vuint32			flags;
+	vuint32			Flags;
 
 	VField(VName, VMemberBase*, TLocation);
 	~VField();
@@ -320,8 +320,8 @@ class VLocalVarDef
 public:
 	VName			Name;
 	TLocation		Loc;
-	int				ofs;
-	TType			type;
+	int				Offset;
+	TType			Type;
 	bool			Visible;
 	vuint8			ParamFlags;
 
@@ -446,8 +446,8 @@ public:
 
 struct mobjinfo_t
 {
-	int		doomednum;
-	VClass*	class_id;
+	int			DoomEdNum;
+	VClass*		Class;
 };
 
 struct VRepField
@@ -524,8 +524,8 @@ class VPackage : public VMemberBase
 private:
 	struct TStringInfo
 	{
-		int offs;
-		int next;
+		int		Offs;
+		int		Next;
 	};
 
 	TArray<TStringInfo>			StringInfo;
@@ -538,14 +538,14 @@ public:
 
 	TArray<char>				Strings;
 
-	TArray<mobjinfo_t>			mobj_info;
-	TArray<mobjinfo_t>			script_ids;
+	TArray<mobjinfo_t>			MobjInfo;
+	TArray<mobjinfo_t>			ScriptIds;
 
 	TArray<VConstant*>			ParsedConstants;
 	TArray<VStruct*>			ParsedStructs;
 	TArray<VClass*>				ParsedClasses;
 
-	int							numbuiltins;
+	int							NumBuiltins;
 
 	VPackage();
 	VPackage(VName InName);
