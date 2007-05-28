@@ -91,10 +91,10 @@ readonly state	State;
 float			StateTime;			// state tic counter
 
 //More drawing info.
-int				SpriteType;				//  How to draw sprite
+byte			SpriteType;				//  How to draw sprite
 string			FixedModelName;
 string			ModelSkin;
-int				ModelVersion;
+byte			ModelVersion;
 
 float			Alpha;
 int				Translation;
@@ -175,8 +175,8 @@ float			MaxDropoffHeight;
 float			Gravity;
 
 //  Water
-int				WaterLevel;
-int				WaterType;
+byte			WaterLevel;
+byte			WaterType;
 
 //   For player sounds.
 name			SoundClass;

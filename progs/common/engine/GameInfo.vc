@@ -30,12 +30,12 @@ class GameInfo : Object
 name				AcsHelper;
 name				GenericConScript;
 
-readonly int		netgame;
-readonly int		deathmatch;
-readonly int		gameskill;
-int					respawn;
-int					nomonsters;
-int					fastparm;
+readonly byte		netgame;
+readonly byte		deathmatch;
+readonly byte		gameskill;
+byte				respawn;
+byte				nomonsters;
+byte				fastparm;
 
 readonly int*		validcount;
 readonly int		skyflatnum;

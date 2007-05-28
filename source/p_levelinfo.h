@@ -33,17 +33,17 @@ class VLevelInfo : public VThinker
 	VWorldInfo*		World;
 
 	VStr			LevelName;
-	int				LevelNum;
-	int				Cluster;
+	vint32			LevelNum;
+	vuint8			Cluster;
 
 	VName			NextMap;
 	VName			SecretMap;
 
-	int				ParTime;
-	int				SuckTime;
+	vint32			ParTime;
+	vint32			SuckTime;
 
-	int				Sky1Texture;
-	int				Sky2Texture;
+	vint32			Sky1Texture;
+	vint32			Sky2Texture;
 	float			Sky1ScrollDelta;
 	float			Sky2ScrollDelta;
 	VName			SkyBox;
@@ -53,7 +53,7 @@ class VLevelInfo : public VThinker
 	vuint32			OutsideFog;
 
 	VName			SongLump;
-	int				CDTrack;
+	vuint8			CDTrack;
 
 	enum
 	{

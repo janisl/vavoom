@@ -27,7 +27,7 @@ class Window : Object
 	native;
 
 // Quick class reference
-readonly int WindowType;			// Contains window type
+readonly byte WindowType;			// Contains window type
 
 // Booleans
 readonly bool bIsVisible;		// True if the window is visible

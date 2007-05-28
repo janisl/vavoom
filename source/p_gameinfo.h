@@ -30,12 +30,12 @@ class VGameInfo : public VObject
 	VName			AcsHelper;
 	VName			GenericConScript;
 
-	vint32			netgame;
-	vint32			deathmatch;
-	vint32			gameskill;
-	vint32			respawn;
-	vint32			nomonsters;
-	vint32			fastparm;
+	vuint8			netgame;
+	vuint8			deathmatch;
+	vuint8			gameskill;
+	vuint8			respawn;
+	vuint8			nomonsters;
+	vuint8			fastparm;
 
 	vint32*			validcount;
 	vint32			skyflatnum;

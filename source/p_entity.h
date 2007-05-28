@@ -98,10 +98,10 @@ class VEntity : public VThinker
 	float			StateTime;		// state tic counter
 
 	//More drawing info.
-	int				SpriteType;		//  How to draw sprite
+	vuint8			SpriteType;		//  How to draw sprite
 	VStr			FixedModelName;
 	VStr			ModelSkin;
-	int				ModelVersion;
+	vuint8			ModelVersion;
 
 	float			Alpha;
 	int				Translation;
@@ -187,8 +187,8 @@ class VEntity : public VThinker
 	float			Gravity;
 
 	//  Water
-	int				WaterLevel;
-	int				WaterType;
+	vuint8			WaterLevel;
+	vuint8			WaterType;
 
 	//   For player sounds.
 	VName			SoundClass;

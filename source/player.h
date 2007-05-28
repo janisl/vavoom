@@ -95,8 +95,8 @@ class VBasePlayer : public VObject
 	VStr			UserInfo;
 
 	VStr			PlayerName;
-	int				BaseClass;
-	int				PClass;			// player class type
+	vuint8			BaseClass;
+	vuint8			PClass;			// player class type
 	int				Colour;
 
 	// Copied from cmd, needed for PROGS, which supports only 4 byte ints
@@ -105,8 +105,8 @@ class VBasePlayer : public VObject
 	float			ForwardMove;	// *2048 for move
 	float			SideMove;		// *2048 for move
 	float			FlyMove;		// fly up/down/centreing
-	int				Buttons;		// fire, use
-	int				Impulse;		// weapon changes, inventory, etc
+	vuint8			Buttons;		// fire, use
+	vuint8			Impulse;		// weapon changes, inventory, etc
 
 	VEntity*		MO;
 	int				PlayerState;
@@ -134,10 +134,10 @@ class VBasePlayer : public VObject
 	int				SecretCount;
 
 	// So gun flashes light up areas.
-	int				ExtraLight;
+	vuint8			ExtraLight;
 
 	// For lite-amp and invulnarability powers
-	int				FixedColourmap;
+	vuint8			FixedColourmap;
 
 	// Colour shifts for damage, powerups and content types
 	vuint32			CShifts[NUM_CSHIFTS];
@@ -149,7 +149,7 @@ class VBasePlayer : public VObject
 
 	float			WorldTimer;				// total time the player's been playing
 
-	int				ClientNum;
+	vuint8			ClientNum;
 
 	float			ViewEntAlpha;
 

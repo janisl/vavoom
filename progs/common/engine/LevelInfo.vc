@@ -32,7 +32,7 @@ native readonly WorldInfo	World;
 
 string			LevelName;
 int				LevelNum;
-int				Cluster;
+byte			Cluster;
 
 name			NextMap;
 name			SecretMap;
@@ -51,7 +51,7 @@ int				Fade;
 int				OutsideFog;
 
 name			SongLump;
-int				CDTrack;
+byte			CDTrack;
 
 bool			bDoubleSky;	// parallax sky: sky2 behind sky1
 bool			bLightning;	// Use of lightning on the level flashes from sky1 to sky2

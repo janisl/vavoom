@@ -37,7 +37,7 @@ class VWindow : public VObject
 	friend class VRootWindow;
 
 	// Quick class reference
-	int WindowType;				// Contains window type
+	vuint8 WindowType;				// Contains window type
 
 	// Booleans
 	enum

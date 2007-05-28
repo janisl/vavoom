@@ -45,8 +45,8 @@ class VThinker : public VObject
 	VThinker*		Prev;
 	VThinker*		Next;
 
-	vint32			Role;
-	vint32			RemoteRole;
+	vuint8			Role;
+	vuint8			RemoteRole;
 
 	enum
 	{

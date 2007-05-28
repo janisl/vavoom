@@ -40,8 +40,8 @@ readonly LevelInfo		Level;		//	Level info object.
 native readonly private Thinker	Prev;
 native readonly private Thinker	Next;
 
-int						Role;
-int						RemoteRole;
+byte					Role;
+byte					RemoteRole;
 
 bool					bAlwaysRelevant;	//	Always updated
 readonly bool			bNetInitial;		//	Initial update
