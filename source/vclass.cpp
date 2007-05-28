@@ -708,8 +708,8 @@ void VField::CopyFieldValue(const vuint8* Src, vuint8* Dst,
 		*(vint32*)Dst = *(const vint32*)Src;
 		break;
 
-	case ev_float:
-		*(float*)Dst = *(const float*)Src;
+	case ev_byte:
+		*(vuint8*)Dst = *(const vuint8*)Src;
 		break;
 
 	case ev_bool:
@@ -717,6 +717,10 @@ void VField::CopyFieldValue(const vuint8* Src, vuint8* Dst,
 			*(vuint32*)Dst |= Type.BitMask;
 		else
 			*(vuint32*)Dst &= ~Type.BitMask;
+		break;
+
+	case ev_float:
+		*(float*)Dst = *(const float*)Src;
 		break;
 
 	case ev_vector:
@@ -782,11 +786,11 @@ void VField::SerialiseFieldValue(VStream& Strm, vuint8* Data, const VField::FTyp
 	switch (Type.Type)
 	{
 	case ev_int:
-		Strm << *(int*)Data;
+		Strm << *(vint32*)Data;
 		break;
 
-	case ev_float:
-		Strm << *(float*)Data;
+	case ev_byte:
+		Strm << *Data;
 		break;
 
 	case ev_bool:
@@ -804,6 +808,10 @@ void VField::SerialiseFieldValue(VStream& Strm, vuint8* Data, const VField::FTyp
 			vuint8 Val = !!(*(int*)Data & Type.BitMask);
 			Strm << Val;
 		}
+		break;
+
+	case ev_float:
+		Strm << *(float*)Data;
 		break;
 
 	case ev_vector:
@@ -1014,14 +1022,17 @@ bool VField::IdenticalValue(const vuint8* Val1, const vuint8* Val2,
 	switch (Type.Type)
 	{
 	case ev_int:
-		return *(const vuint32*)Val1 == *(const vuint32*)Val2;
+		return *(const vint32*)Val1 == *(const vint32*)Val2;
 
-	case ev_float:
-		return *(const float*)Val1 == *(const float*)Val2;
+	case ev_byte:
+		return *(const vuint8*)Val1 == *(const vuint8*)Val2;
 
 	case ev_bool:
 		return (*(const vuint32*)Val1 & Type.BitMask) ==
 			(*(const vuint32*)Val2 & Type.BitMask);
+
+	case ev_float:
+		return *(const float*)Val1 == *(const float*)Val2;
 
 	case ev_vector:
 		return *(const TVec*)Val1 == *(const TVec*)Val2;
@@ -1087,13 +1098,8 @@ void VField::NetSerialiseValue(VStream& Strm, vuint8* Data, const VField::FType&
 		Strm << *(vint32*)Data;
 		break;
 
-	case ev_float:
-		Strm << *(float*)Data;
-		break;
-
-	//FIXME this will work only for the local connection.
-	case ev_name:
-		Strm << *(vint32*)Data;
+	case ev_byte:
+		Strm << *(vuint8*)Data;
 		break;
 
 	case ev_bool:
@@ -1111,6 +1117,15 @@ void VField::NetSerialiseValue(VStream& Strm, vuint8* Data, const VField::FType&
 			vuint8 Val = (vuint8)!!(*(vuint32*)Data & Type.BitMask);
 			Strm.SerialiseBits(&Val, 1);
 		}
+		break;
+
+	case ev_float:
+		Strm << *(float*)Data;
+		break;
+
+	//FIXME this will work only for the local connection.
+	case ev_name:
+		Strm << *(vint32*)Data;
 		break;
 
 	case ev_vector:
@@ -1238,18 +1253,19 @@ int VField::FType::GetSize() const
 	switch (Type)
 	{
 	case ev_int:		return sizeof(vint32);
+	case ev_byte:		return sizeof(vuint8);
+	case ev_bool:		return sizeof(vuint32);
 	case ev_float:		return sizeof(float);
 	case ev_name:		return sizeof(VName);
 	case ev_string:		return sizeof(VStr);
 	case ev_pointer:	return sizeof(void*);
 	case ev_reference:	return sizeof(VObject*);
+	case ev_class:		return sizeof(VClass*);
+	case ev_state:		return sizeof(VState*);
+	case ev_delegate:	return sizeof(VObjectDelegate);
 	case ev_array:		return ArrayDim * GetArrayInnerType().GetSize();
 	case ev_struct:		return (Struct->Size + 3) & ~3;
 	case ev_vector:		return sizeof(TVec);
-	case ev_class:		return sizeof(VClass*);
-	case ev_state:		return sizeof(VState*);
-	case ev_bool:		return sizeof(vuint32);
-	case ev_delegate:	return sizeof(VObjectDelegate);
 	}
 	return 0;
 	unguard;
@@ -1267,18 +1283,19 @@ int VField::FType::GetAlignment() const
 	switch (Type)
 	{
 	case ev_int:		return sizeof(vint32);
+	case ev_byte:		return sizeof(vuint8);
+	case ev_bool:		return sizeof(vuint32);
 	case ev_float:		return sizeof(float);
 	case ev_name:		return sizeof(VName);
 	case ev_string:		return sizeof(char*);
 	case ev_pointer:	return sizeof(void*);
 	case ev_reference:	return sizeof(VObject*);
+	case ev_class:		return sizeof(VClass*);
+	case ev_state:		return sizeof(VState*);
+	case ev_delegate:	return sizeof(VObject*);
 	case ev_array:		return GetArrayInnerType().GetAlignment();
 	case ev_struct:		return Struct->Alignment;
 	case ev_vector:		return sizeof(float);
-	case ev_class:		return sizeof(VClass*);
-	case ev_state:		return sizeof(VState*);
-	case ev_bool:		return sizeof(vuint32);
-	case ev_delegate:	return sizeof(VObject*);
 	}
 	return 0;
 	unguard;
@@ -1753,6 +1770,7 @@ void VMethod::OptimiseInstructions()
 		case OPC_VFieldValue:
 		case OPC_PtrFieldValue:
 		case OPC_StrFieldValue:
+		case OPC_ByteFieldValue:
 		case OPC_Bool0FieldValue:
 		case OPC_Bool1FieldValue:
 		case OPC_Bool2FieldValue:

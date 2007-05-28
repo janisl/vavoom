@@ -318,9 +318,10 @@ VExpression* VExpression::ResolveBoolean(VEmitContext& ec)
 	switch (e->Type.type)
 	{
 	case ev_int:
+	case ev_byte:
+	case ev_bool:
 	case ev_float:
 	case ev_name:
-	case ev_bool:
 		break;
 
 	case ev_pointer:
@@ -418,15 +419,8 @@ void VExpression::EmitPushPointedCode(TType type, VEmitContext& ec)
 		ec.AddStatement(OPC_PushPointed);
 		break;
 
-	case ev_pointer:
-	case ev_reference:
-	case ev_class:
-	case ev_state:
-		ec.AddStatement(OPC_PushPointedPtr);
-		break;
-
-	case ev_vector:
-		ec.AddStatement(OPC_VPushPointed);
+	case ev_byte:
+		ec.AddStatement(OPC_PushPointedByte);
 		break;
 
 	case ev_bool:
@@ -438,6 +432,17 @@ void VExpression::EmitPushPointedCode(TType type, VEmitContext& ec)
 			ec.AddStatement(OPC_PushBool2, (int)(type.bit_mask >> 16));
 		else
 			ec.AddStatement(OPC_PushBool3, (int)(type.bit_mask >> 24));
+		break;
+
+	case ev_pointer:
+	case ev_reference:
+	case ev_class:
+	case ev_state:
+		ec.AddStatement(OPC_PushPointedPtr);
+		break;
+
+	case ev_vector:
+		ec.AddStatement(OPC_VPushPointed);
 		break;
 
 	case ev_string:
@@ -1736,7 +1741,7 @@ VExpression* VArrayElement::DoResolve(VEmitContext& ec)
 	}
 
 	RealType = Type;
-	if (Type.type == ev_bool)
+	if (Type.type == ev_byte || Type.type == ev_bool)
 	{
 		Type = TType(ev_int);
 	}
@@ -2449,7 +2454,7 @@ VExpression* VPushPointed::DoResolve(VEmitContext& ec)
 	}
 	Type = op->Type.GetPointerInnerType();
 	RealType = Type;
-	if (Type.type == ev_bool)
+	if (Type.type == ev_byte || Type.type == ev_bool)
 	{
 		Type = TType(ev_int);
 	}
@@ -3367,6 +3372,10 @@ void VAssignment::Emit(VEmitContext& ec)
 		{
 			ec.AddStatement(OPC_AssignDrop);
 		}
+		else if (op1->RealType.type == ev_byte && op2->Type.type == ev_int)
+		{
+			ec.AddStatement(OPC_ByteAssignDrop);
+		}
 		else if (op1->RealType.type == ev_float && op2->Type.type == ev_float)
 		{
 			ec.AddStatement(OPC_AssignDrop);
@@ -3432,6 +3441,10 @@ void VAssignment::Emit(VEmitContext& ec)
 		{
 			ec.AddStatement(OPC_AddVarDrop);
 		}
+		else if (op1->RealType.type == ev_byte && op2->Type.type == ev_int)
+		{
+			ec.AddStatement(OPC_ByteAddVarDrop);
+		}
 		else if (op1->RealType.type == ev_float && op2->Type.type == ev_float)
 		{
 			ec.AddStatement(OPC_FAddVarDrop);
@@ -3450,6 +3463,10 @@ void VAssignment::Emit(VEmitContext& ec)
 		if (op1->RealType.type == ev_int && op2->Type.type == ev_int)
 		{
 			ec.AddStatement(OPC_SubVarDrop);
+		}
+		else if (op1->RealType.type == ev_byte && op2->Type.type == ev_int)
+		{
+			ec.AddStatement(OPC_ByteSubVarDrop);
 		}
 		else if (op1->RealType.type == ev_float && op2->Type.type == ev_float)
 		{
@@ -3470,6 +3487,10 @@ void VAssignment::Emit(VEmitContext& ec)
 		{
 			ec.AddStatement(OPC_MulVarDrop);
 		}
+		else if (op1->RealType.type == ev_byte && op2->Type.type == ev_int)
+		{
+			ec.AddStatement(OPC_ByteMulVarDrop);
+		}
 		else if (op1->RealType.type == ev_float && op2->Type.type == ev_float)
 		{
 			ec.AddStatement(OPC_FMulVarDrop);
@@ -3488,6 +3509,10 @@ void VAssignment::Emit(VEmitContext& ec)
 		if (op1->RealType.type == ev_int && op2->Type.type == ev_int)
 		{
 			ec.AddStatement(OPC_DivVarDrop);
+		}
+		else if (op1->RealType.type == ev_byte && op2->Type.type == ev_int)
+		{
+			ec.AddStatement(OPC_ByteDivVarDrop);
 		}
 		else if (op1->RealType.type == ev_float && op2->Type.type == ev_float)
 		{
@@ -3508,6 +3533,10 @@ void VAssignment::Emit(VEmitContext& ec)
 		{
 			ec.AddStatement(OPC_ModVarDrop);
 		}
+		else if (op1->RealType.type == ev_byte && op2->Type.type == ev_int)
+		{
+			ec.AddStatement(OPC_ByteModVarDrop);
+		}
 		else
 		{
 			ParseError(Loc, "Expression type mistmatch");
@@ -3519,6 +3548,10 @@ void VAssignment::Emit(VEmitContext& ec)
 		{
 			ec.AddStatement(OPC_AndVarDrop);
 		}
+		else if (op1->RealType.type == ev_byte && op2->Type.type == ev_int)
+		{
+			ec.AddStatement(OPC_ByteAndVarDrop);
+		}
 		else
 		{
 			ParseError(Loc, "Expression type mistmatch");
@@ -3529,6 +3562,10 @@ void VAssignment::Emit(VEmitContext& ec)
 		if (op1->RealType.type == ev_int && op2->Type.type == ev_int)
 		{
 			ec.AddStatement(OPC_OrVarDrop);
+		}
+		else if (op1->RealType.type == ev_byte && op2->Type.type == ev_int)
+		{
+			ec.AddStatement(OPC_ByteOrVarDrop);
 		}
 //FIXME This is wrong!
 		else if (op1->RealType.type == ev_bool && op2->Type.type == ev_int)
@@ -3546,6 +3583,10 @@ void VAssignment::Emit(VEmitContext& ec)
 		{
 			ec.AddStatement(OPC_XOrVarDrop);
 		}
+		else if (op1->RealType.type == ev_byte && op2->Type.type == ev_int)
+		{
+			ec.AddStatement(OPC_ByteXOrVarDrop);
+		}
 		else
 		{
 			ParseError(Loc, "Expression type mistmatch");
@@ -3557,6 +3598,10 @@ void VAssignment::Emit(VEmitContext& ec)
 		{
 			ec.AddStatement(OPC_LShiftVarDrop);
 		}
+		else if (op1->RealType.type == ev_byte && op2->Type.type == ev_int)
+		{
+			ec.AddStatement(OPC_ByteLShiftVarDrop);
+		}
 		else
 		{
 			ParseError(Loc, "Expression type mistmatch");
@@ -3567,6 +3612,10 @@ void VAssignment::Emit(VEmitContext& ec)
 		if (op1->RealType.type == ev_int && op2->Type.type == ev_int)
 		{
 			ec.AddStatement(OPC_RShiftVarDrop);
+		}
+		else if (op1->RealType.type == ev_byte && op2->Type.type == ev_int)
+		{
+			ec.AddStatement(OPC_ByteRShiftVarDrop);
 		}
 		else
 		{
@@ -3917,7 +3966,7 @@ VExpression* VLocalVar::DoResolve(VEmitContext& ec)
 {
 	Type = ec.LocalDefs[num].type;
 	RealType = ec.LocalDefs[num].type;
-	if (Type.type == ev_bool)
+	if (Type.type == ev_byte || Type.type == ev_bool)
 	{
 		Type = TType(ev_int);
 	}
@@ -4000,13 +4049,14 @@ void VLocalVar::Emit(VEmitContext& ec)
 		switch (ec.LocalDefs[num].type.type)
 		{
 		case ev_int:
+		case ev_byte:
+		case ev_bool:
 		case ev_float:
 		case ev_name:
 		case ev_pointer:
 		case ev_reference:
 		case ev_class:
 		case ev_state:
-		case ev_bool:
 			if (Ofs == 0)
 				ec.AddStatement(OPC_LocalValue0);
 			else if (Ofs == 1)
@@ -4087,7 +4137,7 @@ VExpression* VFieldAccess::DoResolve(VEmitContext&)
 {
 	Type = field->type;
 	RealType = field->type;
-	if (Type.type == ev_bool)
+	if (Type.type == ev_byte || Type.type == ev_bool)
 	{
 		Type = TType(ev_int);
 	}
@@ -4134,15 +4184,8 @@ void VFieldAccess::Emit(VEmitContext& ec)
 			ec.AddStatement(OPC_FieldValue, field);
 			break;
 
-		case ev_pointer:
-		case ev_reference:
-		case ev_class:
-		case ev_state:
-			ec.AddStatement(OPC_PtrFieldValue, field);
-			break;
-
-		case ev_vector:
-			ec.AddStatement(OPC_VFieldValue, field);
+		case ev_byte:
+			ec.AddStatement(OPC_ByteFieldValue, field);
 			break;
 
 		case ev_bool:
@@ -4154,6 +4197,17 @@ void VFieldAccess::Emit(VEmitContext& ec)
 				ec.AddStatement(OPC_Bool2FieldValue, field, (int)(field->type.bit_mask >> 16));
 			else
 				ec.AddStatement(OPC_Bool3FieldValue, field, (int)(field->type.bit_mask >> 24));
+			break;
+
+		case ev_pointer:
+		case ev_reference:
+		case ev_class:
+		case ev_state:
+			ec.AddStatement(OPC_PtrFieldValue, field);
+			break;
+
+		case ev_vector:
+			ec.AddStatement(OPC_VFieldValue, field);
 			break;
 
 		case ev_string:
@@ -4294,7 +4348,7 @@ VExpression* VInvocation::DoResolve(VEmitContext& ec)
 	CheckParams();
 
 	Type  = Func->ReturnType;
-	if (Type.type == ev_bool)
+	if (Type.type == ev_byte || Type.type == ev_bool)
 		Type = TType(ev_int);
 	if (Func->Flags & FUNC_Spawner)
 		Type.Class = Args[0]->Type.Class;
@@ -4337,9 +4391,10 @@ void VInvocation::Emit(VEmitContext& ec)
 			switch (Func->ParamTypes[i].type)
 			{
 			case ev_int:
+			case ev_byte:
+			case ev_bool:
 			case ev_float:
 			case ev_name:
-			case ev_bool:
 				ec.EmitPushNumber(0);
 				SelfOffset++;
 				break;

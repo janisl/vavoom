@@ -111,8 +111,9 @@ bool VBasePlayer::ExecuteNetMethod(VMethod* Func)
 		switch (Func->ParamTypes[i].Type)
 		{
 		case ev_int:
-		case ev_name:
+		case ev_byte:
 		case ev_bool:
+		case ev_name:
 			VField::NetSerialiseValue(Msg, (vuint8*)&Param->i, Func->ParamTypes[i]);
 			Param++;
 			break;
@@ -155,9 +156,10 @@ bool VBasePlayer::ExecuteNetMethod(VMethod* Func)
 		switch (Func->ParamTypes[i].Type)
 		{
 		case ev_int:
-		case ev_name:
+		case ev_byte:
 		case ev_bool:
 		case ev_float:
+		case ev_name:
 		case ev_pointer:
 		case ev_reference:
 		case ev_class:
@@ -185,8 +187,9 @@ bool VBasePlayer::ExecuteNetMethod(VMethod* Func)
 	case ev_void:
 		break;
 	case ev_int:
-	case ev_name:
+	case ev_byte:
 	case ev_bool:
+	case ev_name:
 		PR_Push(0);
 		break;
 	case ev_float:

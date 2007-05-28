@@ -362,8 +362,9 @@ void VThinkerChannel::ParsePacket(VMessageIn& Msg)
 				switch (Func->ParamTypes[i].Type)
 				{
 				case ev_int:
-				case ev_name:
+				case ev_byte:
 				case ev_bool:
+				case ev_name:
 					VField::NetSerialiseValue(Msg, (vuint8*)&pr_stackPtr->i, Func->ParamTypes[i]);
 					pr_stackPtr++;
 					break;

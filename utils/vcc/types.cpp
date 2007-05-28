@@ -223,6 +223,8 @@ int TType::GetSize() const
 	switch (type)
 	{
 	case ev_int:		return 4;
+	case ev_byte:		return 4;
+	case ev_bool:		return 4;
 	case ev_float:		return 4;
 	case ev_name:		return 4;
 	case ev_string:		return 4;
@@ -233,7 +235,6 @@ int TType::GetSize() const
 	case ev_vector:		return 12;
 	case ev_class:		return 4;
 	case ev_state:		return 4;
-	case ev_bool:		return 4;
 	case ev_delegate:	return 8;
 	}
 	return 0;
@@ -350,6 +351,10 @@ void TType::CheckMatch(TLocation l, const TType& Other) const
 			}
 		}
 	}
+	if (type == ev_int && Other.type == ev_byte)
+	{
+		return;
+	}
 	if (type == ev_int && Other.type == ev_bool)
 	{
 		return;
@@ -402,19 +407,20 @@ void TType::GetName(char* Dest) const
 	switch (type)
 	{
 	case ev_int:		strcpy(Dest, "int"); break;
+	case ev_byte:		strcpy(Dest, "byte"); break;
+	case ev_bool:		strcpy(Dest, "bool"); break;
 	case ev_float:		strcpy(Dest, "float"); break;
 	case ev_name:		strcpy(Dest, "name"); break;
 	case ev_string:		strcpy(Dest, "string"); break;
 	case ev_pointer:	GetPointerInnerType().GetName(Dest); 
 		for (int i = 0; i < PtrLevel; i++) strcat(Dest, "*"); break;
 	case ev_reference:	strcpy(Dest, Class ? *Class->Name : "none"); break;
-	case ev_array:		GetArrayInnerType().GetName(Dest); strcat(Dest, "[]"); break;
-	case ev_struct:		strcpy(Dest, *Struct->Name); break;
-	case ev_vector:		strcpy(Dest, "vector"); break;
 	case ev_class:		strcpy(Dest, "class"); if (Class) { strcat(Dest, "<");
 		strcat(Dest, *Class->Name); strcat(Dest, ">"); } break;
 	case ev_state:		strcpy(Dest, "state"); break;
-	case ev_bool:		strcpy(Dest, "bool"); break;
+	case ev_array:		GetArrayInnerType().GetName(Dest); strcat(Dest, "[]"); break;
+	case ev_struct:		strcpy(Dest, *Struct->Name); break;
+	case ev_vector:		strcpy(Dest, "vector"); break;
 	default:			strcpy(Dest, "unknown"); break;
 	}
 }

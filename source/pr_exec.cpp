@@ -850,6 +850,33 @@ func_loop:
 			ip += 2;
 			PR_VM_BREAK;
 
+		PR_VM_CASE(OPC_ByteFieldValue)
+			if (!sp[-1].p)
+			{
+				Sys_Error("Reference not set to an instance of an object");
+			}
+			sp[-1].i = *((vuint8*)sp[-1].p + ReadInt32(ip + 1));
+			ip += 5;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_ByteFieldValueS)
+			if (!sp[-1].p)
+			{
+				Sys_Error("Reference not set to an instance of an object");
+			}
+			sp[-1].i = *((vuint8*)sp[-1].p + ReadInt16(ip + 1));
+			ip += 3;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_ByteFieldValueB)
+			if (!sp[-1].p)
+			{
+				Sys_Error("Reference not set to an instance of an object");
+			}
+			sp[-1].i = *((vuint8*)sp[-1].p + ip[1]);
+			ip += 2;
+			PR_VM_BREAK;
+
 		PR_VM_CASE(OPC_Bool0FieldValue)
 			if (!sp[-1].p)
 			{
@@ -992,6 +1019,11 @@ func_loop:
 		PR_VM_CASE(OPC_PushPointedPtr)
 			ip++;
 			sp[-1].p = *(void**)sp[-1].p;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_PushPointedByte)
+			ip++;
+			sp[-1].i = *(vuint8*)sp[-1].p;
 			PR_VM_BREAK;
 
 		PR_VM_CASE(OPC_PushBool0)
@@ -1246,6 +1278,114 @@ func_loop:
 
 		PR_VM_CASE(OPC_RShiftVarDrop)
 			ASSIGNOP(vint32, i, >>=);
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_BytePreInc)
+			ip++;
+#ifdef __GNUC__
+			sp[-1].i = ++(*(vuint8*)sp[-1].p);
+#else
+			{
+				vuint8* ptr = (vuint8*)sp[-1].p;
+				++(*ptr);
+				sp[-1].i = *ptr;
+			}
+#endif
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_BytePreDec)
+			ip++;
+#ifdef __GNUC__
+			sp[-1].i = --(*(vuint8*)sp[-1].p);
+#else
+			{
+				vuint8* ptr = (vuint8*)sp[-1].p;
+				--(*ptr);
+				sp[-1].i = *ptr;
+			}
+#endif
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_BytePostInc)
+			ip++;
+#ifdef __GNUC__
+			sp[-1].i = (*(vuint8*)sp[-1].p)++;
+#else
+			{
+				vuint8* ptr = (vuint8*)sp[-1].p;
+				sp[-1].i = *ptr;
+				(*ptr)++;
+			}
+#endif
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_BytePostDec)
+			ip++;
+#ifdef __GNUC__
+			sp[-1].i = (*(vuint8*)sp[-1].p)--;
+#else
+			{
+				vuint8* ptr = (vuint8*)sp[-1].p;
+				sp[-1].i = *ptr;
+				(*ptr)--;
+			}
+#endif
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_ByteIncDrop)
+			ip++;
+			(*(vuint8*)sp[-1].p)++;
+			sp--;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_ByteDecDrop)
+			ip++;
+			(*(vuint8*)sp[-1].p)--;
+			sp--;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_ByteAssignDrop)
+			ASSIGNOP(vuint8, i, =);
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_ByteAddVarDrop)
+			ASSIGNOP(vuint8, i, +=);
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_ByteSubVarDrop)
+			ASSIGNOP(vuint8, i, -=);
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_ByteMulVarDrop)
+			ASSIGNOP(vuint8, i, *=);
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_ByteDivVarDrop)
+			ASSIGNOP(vuint8, i, /=);
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_ByteModVarDrop)
+			ASSIGNOP(vuint8, i, %=);
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_ByteAndVarDrop)
+			ASSIGNOP(vuint8, i, &=);
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_ByteOrVarDrop)
+			ASSIGNOP(vuint8, i, |=);
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_ByteXOrVarDrop)
+			ASSIGNOP(vuint8, i, ^=);
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_ByteLShiftVarDrop)
+			ASSIGNOP(vuint8, i, <<=);
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_ByteRShiftVarDrop)
+			ASSIGNOP(vuint8, i, >>=);
 			PR_VM_BREAK;
 
 		PR_VM_CASE(OPC_FAdd)

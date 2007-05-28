@@ -45,6 +45,7 @@ enum EToken
 	TK_Abstract,
 	TK_Bool,
 	TK_Break,
+	TK_Byte,
 	TK_Case,
 	TK_Class,
 	TK_Const,

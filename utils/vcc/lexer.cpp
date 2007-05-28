@@ -56,6 +56,7 @@ const char*			VLexer::TokenNames[] =
 	"abstract",
 	"bool",
 	"break",
+	"byte",
 	"case",
 	"class",
 	"const",
@@ -545,6 +546,10 @@ void VLexer::ProcessLetterToken()
 			s[5] == 0)
 		{
 			Token = TK_Break;
+		}
+		else if (s[1] == 'y' && s[2] == 't' && s[3] == 'e' && s[4] == 0)
+		{
+			Token = TK_Byte;
 		}
 		break;
 

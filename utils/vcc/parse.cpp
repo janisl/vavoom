@@ -1056,6 +1056,7 @@ VStatement* VParser::ParseStatement()
 		return ParseCompoundStatement();
 
 	case TK_Bool:
+	case TK_Byte:
 	case TK_Class:
 	case TK_Float:
 	case TK_Int:
@@ -1131,6 +1132,18 @@ VExpression* VParser::ParseType()
 		Lex.NextToken();
 		return new VTypeExpr(ev_int, l);
 
+	case TK_Byte:
+		Lex.NextToken();
+		return new VTypeExpr(ev_byte, l);
+
+	case TK_Bool:
+	{
+		Lex.NextToken();
+		TType ret(ev_bool);
+		ret.bit_mask = 1;
+		return new VTypeExpr(ret, l);
+	}
+
 	case TK_Float:
 		Lex.NextToken();
 		return new VTypeExpr(ev_float, l);
@@ -1166,14 +1179,6 @@ VExpression* VParser::ParseType()
 	case TK_State:
 		Lex.NextToken();
 		return new VTypeExpr(ev_state, l);
-
-	case TK_Bool:
-	{
-		Lex.NextToken();
-		TType ret(ev_bool);
-		ret.bit_mask = 1;
-		return new VTypeExpr(ret, l);
-	}
 
 	case TK_Identifier:
 	{
