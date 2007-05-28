@@ -272,8 +272,8 @@ public:
 //==========================================================================
 
 VExpression::VExpression(const TLocation& ALoc)
-: Type(ev_void)
-, RealType(ev_void)
+: Type(TYPE_Void)
+, RealType(TYPE_Void)
 , Flags(0)
 , Loc(ALoc)
 {
@@ -317,25 +317,25 @@ VExpression* VExpression::ResolveBoolean(VEmitContext& ec)
 
 	switch (e->Type.type)
 	{
-	case ev_int:
-	case ev_byte:
-	case ev_bool:
-	case ev_float:
-	case ev_name:
+	case TYPE_Int:
+	case TYPE_Byte:
+	case TYPE_Bool:
+	case TYPE_Float:
+	case TYPE_Name:
 		break;
 
-	case ev_pointer:
-	case ev_reference:
-	case ev_class:
-	case ev_state:
+	case TYPE_Pointer:
+	case TYPE_Reference:
+	case TYPE_Class:
+	case TYPE_State:
 		e = new VPointerToBool(e);
 		break;
 
-	case ev_string:
+	case TYPE_String:
 		e = new VStringToBool(e);
 		break;
 
-	case ev_delegate:
+	case TYPE_Delegate:
 		e = new VDelegateToBool(e);
 		break;
 
@@ -411,19 +411,19 @@ void VExpression::EmitPushPointedCode(TType type, VEmitContext& ec)
 {
 	switch (type.type)
 	{
-	case ev_int:
-	case ev_float:
-	case ev_name:
-	case ev_struct://	Not exactly, but the rest of code will fail without these.
-	case ev_array:
+	case TYPE_Int:
+	case TYPE_Float:
+	case TYPE_Name:
+	case TYPE_Struct://	Not exactly, but the rest of code will fail without these.
+	case TYPE_Array:
 		ec.AddStatement(OPC_PushPointed);
 		break;
 
-	case ev_byte:
+	case TYPE_Byte:
 		ec.AddStatement(OPC_PushPointedByte);
 		break;
 
-	case ev_bool:
+	case TYPE_Bool:
 		if (type.bit_mask & 0x000000ff)
 			ec.AddStatement(OPC_PushBool0, (int)(type.bit_mask));
 		else if (type.bit_mask & 0x0000ff00)
@@ -434,22 +434,22 @@ void VExpression::EmitPushPointedCode(TType type, VEmitContext& ec)
 			ec.AddStatement(OPC_PushBool3, (int)(type.bit_mask >> 24));
 		break;
 
-	case ev_pointer:
-	case ev_reference:
-	case ev_class:
-	case ev_state:
+	case TYPE_Pointer:
+	case TYPE_Reference:
+	case TYPE_Class:
+	case TYPE_State:
 		ec.AddStatement(OPC_PushPointedPtr);
 		break;
 
-	case ev_vector:
+	case TYPE_Vector:
 		ec.AddStatement(OPC_VPushPointed);
 		break;
 
-	case ev_string:
+	case TYPE_String:
 		ec.AddStatement(OPC_PushPointedStr);
 		break;
 
-	case ev_delegate:
+	case TYPE_Delegate:
 		ec.AddStatement(OPC_PushPointedDelegate);
 		break;
 	}
@@ -543,7 +543,7 @@ bool VExpression::IsPropertyAssign() const
 VExpression* VExpression::CreateTypeExprCopy()
 {
 	ParseError(Loc, "Not a type");
-	return new VTypeExpr(ev_unknown, Loc);
+	return new VTypeExpr(TYPE_Unknown, Loc);
 }
 
 //==========================================================================
@@ -571,7 +571,7 @@ VIntLiteral::VIntLiteral(vint32 AValue, const TLocation& ALoc)
 : VExpression(ALoc)
 , Value(AValue)
 {
-	Type = ev_int;
+	Type = TYPE_Int;
 }
 
 //==========================================================================
@@ -632,7 +632,7 @@ VFloatLiteral::VFloatLiteral(float AValue, const TLocation& ALoc)
 : VExpression(ALoc)
 , Value(AValue)
 {
-	Type = ev_float;
+	Type = TYPE_Float;
 }
 
 //==========================================================================
@@ -693,7 +693,7 @@ VNameLiteral::VNameLiteral(VName AValue, const TLocation& ALoc)
 : VExpression(ALoc)
 , Value(AValue)
 {
-	Type = ev_name;
+	Type = TYPE_Name;
 }
 
 //==========================================================================
@@ -732,7 +732,7 @@ VStringLiteral::VStringLiteral(vint32 AValue, const TLocation& ALoc)
 : VExpression(ALoc)
 , Value(AValue)
 {
-	Type = ev_string;
+	Type = TYPE_String;
 }
 
 //==========================================================================
@@ -852,7 +852,7 @@ void VNoneLiteral::Emit(VEmitContext& ec)
 VNullLiteral::VNullLiteral(const TLocation& ALoc)
 : VExpression(ALoc)
 {
-	Type = TType(ev_void).MakePointerType();
+	Type = TType(TYPE_Void).MakePointerType();
 }
 
 //==========================================================================
@@ -943,26 +943,26 @@ VExpression* VVector::DoResolve(VEmitContext& ec)
 		return NULL;
 	}
 
-	if (op1->Type.type != ev_float)
+	if (op1->Type.type != TYPE_Float)
 	{
 		ParseError(Loc, "Expression type mistmatch, vector param 1 is not a float");
 		delete this;
 		return NULL;
 	}
-	if (op2->Type.type != ev_float)
+	if (op2->Type.type != TYPE_Float)
 	{
 		ParseError(Loc, "Expression type mistmatch, vector param 2 is not a float");
 		delete this;
 		return NULL;
 	}
-	if (op3->Type.type != ev_float)
+	if (op3->Type.type != TYPE_Float)
 	{
 		ParseError(Loc, "Expression type mistmatch, vector param 3 is not a float");
 		delete this;
 		return NULL;
 	}
 
-	Type = ev_vector;
+	Type = TYPE_Vector;
 	return this;
 }
 
@@ -1145,7 +1145,7 @@ VExpression* VSingleName::ResolveAssignmentTarget(VEmitContext& ec)
 VTypeExpr* VSingleName::ResolveAsType(VEmitContext& ec)
 {
 	Type = VMemberBase::CheckForType(ec.SelfClass, Name);
-	if (Type.type == ev_unknown)
+	if (Type.type == TYPE_Unknown)
 	{
 		ParseError(Loc, "Invalid identifier, bad type name %s", *Name);
 		delete this;
@@ -1261,7 +1261,7 @@ VTypeExpr* VDoubleName::ResolveAsType(VEmitContext&)
 	}
 
 	Type = VMemberBase::CheckForType(Class, Name2);
-	if (Type.type == ev_unknown)
+	if (Type.type == TYPE_Unknown)
 	{
 		ParseError(Loc, "Invalid identifier, bad type name %s::%s", *Name1, *Name2);
 		delete this;
@@ -1351,7 +1351,7 @@ VExpression* VPointerField::DoResolve(VEmitContext& ec)
 		return NULL;
 	}
 
-	if (op->Type.type != ev_pointer)
+	if (op->Type.type != TYPE_Pointer)
 	{
 		ParseError(Loc, "Pointer type required on left side of ->");
 		delete this;
@@ -1433,7 +1433,7 @@ VExpression* VDotField::IntResolve(VEmitContext& ec, bool AssignTarget)
 		return NULL;
 	}
 
-	if (op->Type.type == ev_reference)
+	if (op->Type.type == TYPE_Reference)
 	{
 		VMethod* M = op->Type.Class->CheckForMethod(FieldName);
 		if (M)
@@ -1508,7 +1508,7 @@ VExpression* VDotField::IntResolve(VEmitContext& ec, bool AssignTarget)
 		delete this;
 		return NULL;
 	}
-	else if (op->Type.type == ev_struct || op->Type.type == ev_vector)
+	else if (op->Type.type == TYPE_Struct || op->Type.type == TYPE_Vector)
 	{
 		TType type = op->Type;
 		int Flags = op->Flags;
@@ -1608,12 +1608,12 @@ VExpression* VDefaultObject::DoResolve(VEmitContext& ec)
 		return NULL;
 	}
 
-	if (op->Type.type == ev_reference)
+	if (op->Type.type == TYPE_Reference)
 	{
 		Type = op->Type;
 		return this;
 	}
-	else if (op->Type.type == ev_class)
+	else if (op->Type.type == TYPE_Class)
 	{
 		if (!op->Type.Class)
 		{
@@ -1639,11 +1639,11 @@ VExpression* VDefaultObject::DoResolve(VEmitContext& ec)
 void VDefaultObject::Emit(VEmitContext& ec)
 {
 	op->Emit(ec);
-	if (op->Type.type == ev_reference)
+	if (op->Type.type == TYPE_Reference)
 	{
 		ec.AddStatement(OPC_GetDefaultObj);
 	}
-	else if (op->Type.type == ev_class)
+	else if (op->Type.type == TYPE_Class)
 	{
 		ec.AddStatement(OPC_GetClassDefaultObj);
 	}
@@ -1715,20 +1715,20 @@ VExpression* VArrayElement::DoResolve(VEmitContext& ec)
 		return NULL;
 	}
 
-	if (ind->Type.type != ev_int)
+	if (ind->Type.type != TYPE_Int)
 	{
 		ParseError(Loc, "Array index must be of integer type");
 		delete this;
 		return NULL;
 	}
-	if (op->Type.type == ev_array)
+	if (op->Type.type == TYPE_Array)
 	{
 		Flags = op->Flags;
 		Type = op->Type.GetArrayInnerType();
 		op->Flags &= ~FIELD_ReadOnly;
 		op->RequestAddressOf();
 	}
-	else if (op->Type.type == ev_pointer)
+	else if (op->Type.type == TYPE_Pointer)
 	{
 		Flags = 0;
 		Type = op->Type.GetPointerInnerType();
@@ -1741,9 +1741,9 @@ VExpression* VArrayElement::DoResolve(VEmitContext& ec)
 	}
 
 	RealType = Type;
-	if (Type.type == ev_byte || Type.type == ev_bool)
+	if (Type.type == TYPE_Byte || Type.type == TYPE_Bool)
 	{
-		Type = TType(ev_int);
+		Type = TType(TYPE_Int);
 	}
 	return this;
 }
@@ -1922,7 +1922,7 @@ VExpression* VCastOrInvocation::DoResolve(VEmitContext& ec)
 			return e->Resolve(ec);
 		}
 		VField* field = ec.SelfClass->CheckForField(Loc, Name, ec.SelfClass);
-		if (field && field->type.type == ev_delegate)
+		if (field && field->type.type == TYPE_Delegate)
 		{
 			VExpression* e = new VInvocation(NULL, field->func, field,
 				false, false, Loc, NumArgs, Args);
@@ -1999,7 +1999,7 @@ VExpression* VDotInvocation::DoResolve(VEmitContext& ec)
 		return NULL;
 	}
 
-	if (SelfExpr->Type.type != ev_reference)
+	if (SelfExpr->Type.type != TYPE_Reference)
 	{
 		ParseError(Loc, "Object reference expected left side of .");
 		delete this;
@@ -2019,7 +2019,7 @@ VExpression* VDotInvocation::DoResolve(VEmitContext& ec)
 
 	VField* field = SelfExpr->Type.Class->CheckForField(Loc, MethodName,
 		ec.SelfClass);
-	if (field && field->type.type == ev_delegate)
+	if (field && field->type.type == TYPE_Delegate)
 	{
 		VExpression* e = new VInvocation(SelfExpr, field->func, field, true,
 			false, Loc, NumArgs, Args);
@@ -2104,7 +2104,7 @@ VExpression* VUnary::DoResolve(VEmitContext& ec)
 	{
 	case Plus:
 		Type = op->Type;
-		if (op->Type.type != ev_int && op->Type.type != ev_float)
+		if (op->Type.type != TYPE_Int && op->Type.type != TYPE_Float)
 		{
 			ParseError(Loc, "Expression type mistmatch");
 			delete this;
@@ -2119,15 +2119,15 @@ VExpression* VUnary::DoResolve(VEmitContext& ec)
 		}
 
 	case Minus:
-		if (op->Type.type == ev_int)
+		if (op->Type.type == TYPE_Int)
 		{
-			Type = ev_int;
+			Type = TYPE_Int;
 		}
-		else if (op->Type.type == ev_float)
+		else if (op->Type.type == TYPE_Float)
 		{
-			Type = ev_float;
+			Type = TYPE_Float;
 		}
-		else if (op->Type.type == ev_vector)
+		else if (op->Type.type == TYPE_Vector)
 		{
 			Type = op->Type;
 		}
@@ -2140,21 +2140,21 @@ VExpression* VUnary::DoResolve(VEmitContext& ec)
 		break;
 
 	case Not:
-		Type = ev_int;
+		Type = TYPE_Int;
 		break;
 
 	case BitInvert:
-		if (op->Type.type != ev_int)
+		if (op->Type.type != TYPE_Int)
 		{
 			ParseError(Loc, "Expression type mistmatch");
 			delete this;
 			return NULL;
 		}
-		Type = ev_int;
+		Type = TYPE_Int;
 		break;
 
 	case TakeAddress:
-		if (op->Type.type == ev_reference)
+		if (op->Type.type == TYPE_Reference)
 		{
 			ParseError(Loc, "Tried to take address of reference");
 			delete this;
@@ -2225,15 +2225,15 @@ void VUnary::Emit(VEmitContext& ec)
 		break;
 
 	case Minus:
-		if (op->Type.type == ev_int)
+		if (op->Type.type == TYPE_Int)
 		{
 			ec.AddStatement(OPC_UnaryMinus);
 		}
-		else if (op->Type.type == ev_float)
+		else if (op->Type.type == TYPE_Float)
 		{
 			ec.AddStatement(OPC_FUnaryMinus);
 		}
-		else if (op->Type.type == ev_vector)
+		else if (op->Type.type == TYPE_Vector)
 		{
 			ec.AddStatement(OPC_VUnaryMinus);
 		}
@@ -2320,13 +2320,13 @@ VExpression* VUnaryMutator::DoResolve(VEmitContext& ec)
 		return NULL;
 	}
 
-	if (op->Type.type != ev_int)
+	if (op->Type.type != TYPE_Int)
 	{
 		ParseError(Loc, "Expression type mistmatch");
 		delete this;
 		return NULL;
 	}
-	Type = ev_int;
+	Type = TYPE_Int;
 	op->RequestAddressOf();
 	return this;
 }
@@ -2392,7 +2392,7 @@ bool VUnaryMutator::AddDropResult()
 	case Dec:
 		FatalError("Should not happen");
 	}
-	Type = ev_void;
+	Type = TYPE_Void;
 	return true;
 }
 
@@ -2446,7 +2446,7 @@ VExpression* VPushPointed::DoResolve(VEmitContext& ec)
 		return NULL;
 	}
 
-	if (op->Type.type != ev_pointer)
+	if (op->Type.type != TYPE_Pointer)
 	{
 		ParseError(Loc, "Expression syntax error");
 		delete this;
@@ -2454,9 +2454,9 @@ VExpression* VPushPointed::DoResolve(VEmitContext& ec)
 	}
 	Type = op->Type.GetPointerInnerType();
 	RealType = Type;
-	if (Type.type == ev_byte || Type.type == ev_bool)
+	if (Type.type == TYPE_Byte || Type.type == TYPE_Bool)
 	{
-		Type = TType(ev_int);
+		Type = TType(TYPE_Int);
 	}
 	return this;
 }
@@ -2469,7 +2469,7 @@ VExpression* VPushPointed::DoResolve(VEmitContext& ec)
 
 void VPushPointed::RequestAddressOf()
 {
-	if (RealType.type == ev_void)
+	if (RealType.type == TYPE_Void)
 	{
 		ParseError(Loc, "Bad address operation");
 		return;
@@ -2553,17 +2553,17 @@ VExpression* VBinary::DoResolve(VEmitContext& ec)
 	{
 	case Add:
 	case Subtract:
-		if (op1->Type.type == ev_int && op2->Type.type == ev_int)
+		if (op1->Type.type == TYPE_Int && op2->Type.type == TYPE_Int)
 		{
-			Type = ev_int;
+			Type = TYPE_Int;
 		}
-		else if (op1->Type.type == ev_float && op2->Type.type == ev_float)
+		else if (op1->Type.type == TYPE_Float && op2->Type.type == TYPE_Float)
 		{
-			Type = ev_float;
+			Type = TYPE_Float;
 		}
-		else if (op1->Type.type == ev_vector && op2->Type.type == ev_vector)
+		else if (op1->Type.type == TYPE_Vector && op2->Type.type == TYPE_Vector)
 		{
-			Type = ev_vector;
+			Type = TYPE_Vector;
 		}
 		else
 		{
@@ -2573,21 +2573,21 @@ VExpression* VBinary::DoResolve(VEmitContext& ec)
 		}
 		break;
 	case Multiply:
-		if (op1->Type.type == ev_int && op2->Type.type == ev_int)
+		if (op1->Type.type == TYPE_Int && op2->Type.type == TYPE_Int)
 		{
-			Type = ev_int;
+			Type = TYPE_Int;
 		}
-		else if (op1->Type.type == ev_float && op2->Type.type == ev_float)
+		else if (op1->Type.type == TYPE_Float && op2->Type.type == TYPE_Float)
 		{
-			Type = ev_float;
+			Type = TYPE_Float;
 		}
-		else if (op1->Type.type == ev_vector && op2->Type.type == ev_float)
+		else if (op1->Type.type == TYPE_Vector && op2->Type.type == TYPE_Float)
 		{
-			Type = ev_vector;
+			Type = TYPE_Vector;
 		}
-		else if (op1->Type.type == ev_float && op2->Type.type == ev_vector)
+		else if (op1->Type.type == TYPE_Float && op2->Type.type == TYPE_Vector)
 		{
-			Type = ev_vector;
+			Type = TYPE_Vector;
 		}
 		else
 		{
@@ -2597,17 +2597,17 @@ VExpression* VBinary::DoResolve(VEmitContext& ec)
 		}
 		break;
 	case Divide:
-		if (op1->Type.type == ev_int && op2->Type.type == ev_int)
+		if (op1->Type.type == TYPE_Int && op2->Type.type == TYPE_Int)
 		{
-			Type = ev_int;
+			Type = TYPE_Int;
 		}
-		else if (op1->Type.type == ev_float && op2->Type.type == ev_float)
+		else if (op1->Type.type == TYPE_Float && op2->Type.type == TYPE_Float)
 		{
-			Type = ev_float;
+			Type = TYPE_Float;
 		}
-		else if (op1->Type.type == ev_vector && op2->Type.type == ev_float)
+		else if (op1->Type.type == TYPE_Vector && op2->Type.type == TYPE_Float)
 		{
-			Type = ev_vector;
+			Type = TYPE_Vector;
 		}
 		else
 		{
@@ -2622,9 +2622,9 @@ VExpression* VBinary::DoResolve(VEmitContext& ec)
 	case And:
 	case XOr:
 	case Or:
-		if (op1->Type.type == ev_int && op2->Type.type == ev_int)
+		if (op1->Type.type == TYPE_Int && op2->Type.type == TYPE_Int)
 		{
-			Type = ev_int;
+			Type = TYPE_Int;
 		}
 		else
 		{
@@ -2637,31 +2637,31 @@ VExpression* VBinary::DoResolve(VEmitContext& ec)
 	case LessEquals:
 	case Greater:
 	case GreaterEquals:
-		if (!(op1->Type.type == ev_int && op2->Type.type == ev_int) &&
-			!(op1->Type.type == ev_float && op2->Type.type == ev_float))
+		if (!(op1->Type.type == TYPE_Int && op2->Type.type == TYPE_Int) &&
+			!(op1->Type.type == TYPE_Float && op2->Type.type == TYPE_Float))
 		{
 			ParseError(Loc, "Expression type mistmatch");
 			delete this;
 			return NULL;
 		}
-		Type = ev_int;
+		Type = TYPE_Int;
 		break;
 	case Equals:
 	case NotEquals:
-		if (!(op1->Type.type == ev_int && op2->Type.type == ev_int) &&
-			!(op1->Type.type == ev_float && op2->Type.type == ev_float) &&
-			!(op1->Type.type == ev_name && op2->Type.type == ev_name) &&
-			!(op1->Type.type == ev_pointer && op2->Type.type == ev_pointer) &&
-			!(op1->Type.type == ev_vector && op2->Type.type == ev_vector) &&
-			!(op1->Type.type == ev_class && op2->Type.type == ev_class) &&
-			!(op1->Type.type == ev_state && op2->Type.type == ev_state) &&
-			!(op1->Type.type == ev_reference && op2->Type.type == ev_reference))
+		if (!(op1->Type.type == TYPE_Int && op2->Type.type == TYPE_Int) &&
+			!(op1->Type.type == TYPE_Float && op2->Type.type == TYPE_Float) &&
+			!(op1->Type.type == TYPE_Name && op2->Type.type == TYPE_Name) &&
+			!(op1->Type.type == TYPE_Pointer && op2->Type.type == TYPE_Pointer) &&
+			!(op1->Type.type == TYPE_Vector && op2->Type.type == TYPE_Vector) &&
+			!(op1->Type.type == TYPE_Class && op2->Type.type == TYPE_Class) &&
+			!(op1->Type.type == TYPE_State && op2->Type.type == TYPE_State) &&
+			!(op1->Type.type == TYPE_Reference && op2->Type.type == TYPE_Reference))
 		{
 			ParseError(Loc, "Expression type mistmatch");
 			delete this;
 			return NULL;
 		}
-		Type = ev_int;
+		Type = TYPE_Int;
 		break;
 	}
 
@@ -2816,220 +2816,220 @@ void VBinary::Emit(VEmitContext& ec)
 	switch (Oper)
 	{
 	case Add:
-		if (op1->Type.type == ev_int && op2->Type.type == ev_int)
+		if (op1->Type.type == TYPE_Int && op2->Type.type == TYPE_Int)
 		{
 			ec.AddStatement(OPC_Add);
 		}
-		else if (op1->Type.type == ev_float && op2->Type.type == ev_float)
+		else if (op1->Type.type == TYPE_Float && op2->Type.type == TYPE_Float)
 		{
 			ec.AddStatement(OPC_FAdd);
 		}
-		else if (op1->Type.type == ev_vector && op2->Type.type == ev_vector)
+		else if (op1->Type.type == TYPE_Vector && op2->Type.type == TYPE_Vector)
 		{
 			ec.AddStatement(OPC_VAdd);
 		}
 		break;
 
 	case Subtract:
-		if (op1->Type.type == ev_int && op2->Type.type == ev_int)
+		if (op1->Type.type == TYPE_Int && op2->Type.type == TYPE_Int)
 		{
 			ec.AddStatement(OPC_Subtract);
 		}
-		else if (op1->Type.type == ev_float && op2->Type.type == ev_float)
+		else if (op1->Type.type == TYPE_Float && op2->Type.type == TYPE_Float)
 		{
 			ec.AddStatement(OPC_FSubtract);
 		}
-		else if (op1->Type.type == ev_vector && op2->Type.type == ev_vector)
+		else if (op1->Type.type == TYPE_Vector && op2->Type.type == TYPE_Vector)
 		{
 			ec.AddStatement(OPC_VSubtract);
 		}
 		break;
 
 	case Multiply:
-		if (op1->Type.type == ev_int && op2->Type.type == ev_int)
+		if (op1->Type.type == TYPE_Int && op2->Type.type == TYPE_Int)
 		{
 			ec.AddStatement(OPC_Multiply);
 		}
-		else if (op1->Type.type == ev_float && op2->Type.type == ev_float)
+		else if (op1->Type.type == TYPE_Float && op2->Type.type == TYPE_Float)
 		{
 			ec.AddStatement(OPC_FMultiply);
 		}
-		else if (op1->Type.type == ev_vector && op2->Type.type == ev_float)
+		else if (op1->Type.type == TYPE_Vector && op2->Type.type == TYPE_Float)
 		{
 			ec.AddStatement(OPC_VPostScale);
 		}
-		else if (op1->Type.type == ev_float && op2->Type.type == ev_vector)
+		else if (op1->Type.type == TYPE_Float && op2->Type.type == TYPE_Vector)
 		{
 			ec.AddStatement(OPC_VPreScale);
 		}
 		break;
 
 	case Divide:
-		if (op1->Type.type == ev_int && op2->Type.type == ev_int)
+		if (op1->Type.type == TYPE_Int && op2->Type.type == TYPE_Int)
 		{
 			ec.AddStatement(OPC_Divide);
 		}
-		else if (op1->Type.type == ev_float && op2->Type.type == ev_float)
+		else if (op1->Type.type == TYPE_Float && op2->Type.type == TYPE_Float)
 		{
 			ec.AddStatement(OPC_FDivide);
 		}
-		else if (op1->Type.type == ev_vector && op2->Type.type == ev_float)
+		else if (op1->Type.type == TYPE_Vector && op2->Type.type == TYPE_Float)
 		{
 			ec.AddStatement(OPC_VIScale);
 		}
 		break;
 
 	case Modulus:
-		if (op1->Type.type == ev_int && op2->Type.type == ev_int)
+		if (op1->Type.type == TYPE_Int && op2->Type.type == TYPE_Int)
 		{
 			ec.AddStatement(OPC_Modulus);
 		}
 		break;
 
 	case LShift:
-		if (op1->Type.type == ev_int && op2->Type.type == ev_int)
+		if (op1->Type.type == TYPE_Int && op2->Type.type == TYPE_Int)
 		{
 			ec.AddStatement(OPC_LShift);
 		}
 		break;
 
 	case RShift:
-		if (op1->Type.type == ev_int && op2->Type.type == ev_int)
+		if (op1->Type.type == TYPE_Int && op2->Type.type == TYPE_Int)
 		{
 			ec.AddStatement(OPC_RShift);
 		}
 		break;
 
 	case Less:
-		if (op1->Type.type == ev_int && op2->Type.type == ev_int)
+		if (op1->Type.type == TYPE_Int && op2->Type.type == TYPE_Int)
 		{
 			ec.AddStatement(OPC_Less);
 		}
-		else if (op1->Type.type == ev_float && op2->Type.type == ev_float)
+		else if (op1->Type.type == TYPE_Float && op2->Type.type == TYPE_Float)
 		{
 			ec.AddStatement(OPC_FLess);
 		}
 		break;
 
 	case LessEquals:
-		if (op1->Type.type == ev_int && op2->Type.type == ev_int)
+		if (op1->Type.type == TYPE_Int && op2->Type.type == TYPE_Int)
 		{
 			ec.AddStatement(OPC_LessEquals);
 		}
-		else if (op1->Type.type == ev_float && op2->Type.type == ev_float)
+		else if (op1->Type.type == TYPE_Float && op2->Type.type == TYPE_Float)
 		{
 			ec.AddStatement(OPC_FLessEquals);
 		}
 		break;
 
 	case Greater:
-		if (op1->Type.type == ev_int && op2->Type.type == ev_int)
+		if (op1->Type.type == TYPE_Int && op2->Type.type == TYPE_Int)
 		{
 			ec.AddStatement(OPC_Greater);
 		}
-		else if (op1->Type.type == ev_float && op2->Type.type == ev_float)
+		else if (op1->Type.type == TYPE_Float && op2->Type.type == TYPE_Float)
 		{
 			ec.AddStatement(OPC_FGreater);
 		}
 		break;
 
 	case GreaterEquals:
-		if (op1->Type.type == ev_int && op2->Type.type == ev_int)
+		if (op1->Type.type == TYPE_Int && op2->Type.type == TYPE_Int)
 		{
 			ec.AddStatement(OPC_GreaterEquals);
 		}
-		else if (op1->Type.type == ev_float && op2->Type.type == ev_float)
+		else if (op1->Type.type == TYPE_Float && op2->Type.type == TYPE_Float)
 		{
 			ec.AddStatement(OPC_FGreaterEquals);
 		}
 		break;
 
 	case Equals:
-		if (op1->Type.type == ev_int && op2->Type.type == ev_int)
+		if (op1->Type.type == TYPE_Int && op2->Type.type == TYPE_Int)
 		{
 			ec.AddStatement(OPC_Equals);
 		}
-		else if (op1->Type.type == ev_float && op2->Type.type == ev_float)
+		else if (op1->Type.type == TYPE_Float && op2->Type.type == TYPE_Float)
 		{
 			ec.AddStatement(OPC_FEquals);
 		}
-		else if (op1->Type.type == ev_name && op2->Type.type == ev_name)
+		else if (op1->Type.type == TYPE_Name && op2->Type.type == TYPE_Name)
 		{
 			ec.AddStatement(OPC_Equals);
 		}
-		else if (op1->Type.type == ev_pointer && op2->Type.type == ev_pointer)
+		else if (op1->Type.type == TYPE_Pointer && op2->Type.type == TYPE_Pointer)
 		{
 			ec.AddStatement(OPC_PtrEquals);
 		}
-		else if (op1->Type.type == ev_vector && op2->Type.type == ev_vector)
+		else if (op1->Type.type == TYPE_Vector && op2->Type.type == TYPE_Vector)
 		{
 			ec.AddStatement(OPC_VEquals);
 		}
-		else if (op1->Type.type == ev_class && op2->Type.type == ev_class)
+		else if (op1->Type.type == TYPE_Class && op2->Type.type == TYPE_Class)
 		{
 			ec.AddStatement(OPC_PtrEquals);
 		}
-		else if (op1->Type.type == ev_state && op2->Type.type == ev_state)
+		else if (op1->Type.type == TYPE_State && op2->Type.type == TYPE_State)
 		{
 			ec.AddStatement(OPC_PtrEquals);
 		}
-		else if (op1->Type.type == ev_reference && op2->Type.type == ev_reference)
+		else if (op1->Type.type == TYPE_Reference && op2->Type.type == TYPE_Reference)
 		{
 			ec.AddStatement(OPC_PtrEquals);
 		}
 		break;
 
 	case NotEquals:
-		if (op1->Type.type == ev_int && op2->Type.type == ev_int)
+		if (op1->Type.type == TYPE_Int && op2->Type.type == TYPE_Int)
 		{
 			ec.AddStatement(OPC_NotEquals);
 		}
-		else if (op1->Type.type == ev_float && op2->Type.type == ev_float)
+		else if (op1->Type.type == TYPE_Float && op2->Type.type == TYPE_Float)
 		{
 			ec.AddStatement(OPC_FNotEquals);
 		}
-		else if (op1->Type.type == ev_name && op2->Type.type == ev_name)
+		else if (op1->Type.type == TYPE_Name && op2->Type.type == TYPE_Name)
 		{
 			ec.AddStatement(OPC_NotEquals);
 		}
-		else if (op1->Type.type == ev_pointer && op2->Type.type == ev_pointer)
+		else if (op1->Type.type == TYPE_Pointer && op2->Type.type == TYPE_Pointer)
 		{
 			ec.AddStatement(OPC_PtrNotEquals);
 		}
-		else if (op1->Type.type == ev_vector && op2->Type.type == ev_vector)
+		else if (op1->Type.type == TYPE_Vector && op2->Type.type == TYPE_Vector)
 		{
 			ec.AddStatement(OPC_VNotEquals);
 		}
-		else if (op1->Type.type == ev_class && op2->Type.type == ev_class)
+		else if (op1->Type.type == TYPE_Class && op2->Type.type == TYPE_Class)
 		{
 			ec.AddStatement(OPC_PtrNotEquals);
 		}
-		else if (op1->Type.type == ev_state && op2->Type.type == ev_state)
+		else if (op1->Type.type == TYPE_State && op2->Type.type == TYPE_State)
 		{
 			ec.AddStatement(OPC_PtrNotEquals);
 		}
-		else if (op1->Type.type == ev_reference && op2->Type.type == ev_reference)
+		else if (op1->Type.type == TYPE_Reference && op2->Type.type == TYPE_Reference)
 		{
 			ec.AddStatement(OPC_PtrNotEquals);
 		}
 		break;
 
 	case And:
-		if (op1->Type.type == ev_int && op2->Type.type == ev_int)
+		if (op1->Type.type == TYPE_Int && op2->Type.type == TYPE_Int)
 		{
 			ec.AddStatement(OPC_AndBitwise);
 		}
 		break;
 
 	case XOr:
-		if (op1->Type.type == ev_int && op2->Type.type == ev_int)
+		if (op1->Type.type == TYPE_Int && op2->Type.type == TYPE_Int)
 		{
 			ec.AddStatement(OPC_XOrBitwise);
 		}
 		break;
 
 	case Or:
-		if (op1->Type.type == ev_int && op2->Type.type == ev_int)
+		if (op1->Type.type == TYPE_Int && op2->Type.type == TYPE_Int)
 		{
 			ec.AddStatement(OPC_OrBitwise);
 		}
@@ -3093,7 +3093,7 @@ VExpression* VBinaryLogical::DoResolve(VEmitContext& ec)
 		return NULL;
 	}
 
-	Type = ev_int;
+	Type = TYPE_Int;
 
 	//	Optimise constant cases.
 	if (op1->IsIntConst() && op2->IsIntConst())
@@ -3250,7 +3250,7 @@ VExpression* VConditional::DoResolve(VEmitContext& ec)
 	}
 
 	op1->Type.CheckMatch(Loc, op2->Type);
-	if (op1->Type.type == ev_pointer && op1->Type.InnerType == ev_void)
+	if (op1->Type.type == TYPE_Pointer && op1->Type.InnerType == TYPE_Void)
 		Type = op2->Type;
 	else
 		Type = op1->Type;
@@ -3368,49 +3368,49 @@ void VAssignment::Emit(VEmitContext& ec)
 	switch (Oper)
 	{
 	case Assign:
-		if (op1->RealType.type == ev_int && op2->Type.type == ev_int)
+		if (op1->RealType.type == TYPE_Int && op2->Type.type == TYPE_Int)
 		{
 			ec.AddStatement(OPC_AssignDrop);
 		}
-		else if (op1->RealType.type == ev_byte && op2->Type.type == ev_int)
+		else if (op1->RealType.type == TYPE_Byte && op2->Type.type == TYPE_Int)
 		{
 			ec.AddStatement(OPC_ByteAssignDrop);
 		}
-		else if (op1->RealType.type == ev_float && op2->Type.type == ev_float)
+		else if (op1->RealType.type == TYPE_Float && op2->Type.type == TYPE_Float)
 		{
 			ec.AddStatement(OPC_AssignDrop);
 		}
-		else if (op1->RealType.type == ev_name && op2->Type.type == ev_name)
+		else if (op1->RealType.type == TYPE_Name && op2->Type.type == TYPE_Name)
 		{
 			ec.AddStatement(OPC_AssignDrop);
 		}
-		else if (op1->RealType.type == ev_string && op2->Type.type == ev_string)
+		else if (op1->RealType.type == TYPE_String && op2->Type.type == TYPE_String)
 		{
 			ec.AddStatement(OPC_AssignStrDrop);
 		}
-		else if (op1->RealType.type == ev_pointer && op2->Type.type == ev_pointer)
+		else if (op1->RealType.type == TYPE_Pointer && op2->Type.type == TYPE_Pointer)
 		{
 			ec.AddStatement(OPC_AssignPtrDrop);
 		}
-		else if (op1->RealType.type == ev_vector && op2->Type.type == ev_vector)
+		else if (op1->RealType.type == TYPE_Vector && op2->Type.type == TYPE_Vector)
 		{
 			ec.AddStatement(OPC_VAssignDrop);
 		}
-		else if (op1->RealType.type == ev_class && (op2->Type.type == ev_class ||
-			(op2->Type.type == ev_reference && op2->Type.Class == NULL)))
+		else if (op1->RealType.type == TYPE_Class && (op2->Type.type == TYPE_Class ||
+			(op2->Type.type == TYPE_Reference && op2->Type.Class == NULL)))
 		{
 			ec.AddStatement(OPC_AssignPtrDrop);
 		}
-		else if (op1->RealType.type == ev_state && (op2->Type.type == ev_state ||
-			(op2->Type.type == ev_reference && op2->Type.Class == NULL)))
+		else if (op1->RealType.type == TYPE_State && (op2->Type.type == TYPE_State ||
+			(op2->Type.type == TYPE_Reference && op2->Type.Class == NULL)))
 		{
 			ec.AddStatement(OPC_AssignPtrDrop);
 		}
-		else if (op1->RealType.type == ev_reference && op2->Type.type == ev_reference)
+		else if (op1->RealType.type == TYPE_Reference && op2->Type.type == TYPE_Reference)
 		{
 			ec.AddStatement(OPC_AssignPtrDrop);
 		}
-		else if (op1->RealType.type == ev_bool && op2->Type.type == ev_int)
+		else if (op1->RealType.type == TYPE_Bool && op2->Type.type == TYPE_Int)
 		{
 			if (op1->RealType.bit_mask & 0x000000ff)
 				ec.AddStatement(OPC_AssignBool0, (int)op1->RealType.bit_mask);
@@ -3421,11 +3421,11 @@ void VAssignment::Emit(VEmitContext& ec)
 			else
 				ec.AddStatement(OPC_AssignBool3, (int)(op1->RealType.bit_mask >> 24));
 		}
-		else if (op1->RealType.type == ev_delegate && op2->Type.type == ev_delegate)
+		else if (op1->RealType.type == TYPE_Delegate && op2->Type.type == TYPE_Delegate)
 		{
 			ec.AddStatement(OPC_AssignDelegate);
 		}
-		else if (op1->RealType.type == ev_delegate && op2->Type.type == ev_reference && op2->Type.Class == NULL)
+		else if (op1->RealType.type == TYPE_Delegate && op2->Type.type == TYPE_Reference && op2->Type.Class == NULL)
 		{
 			ec.AddStatement(OPC_PushNull);
 			ec.AddStatement(OPC_AssignDelegate);
@@ -3437,19 +3437,19 @@ void VAssignment::Emit(VEmitContext& ec)
 		break;
 
 	case AddAssign:
-		if (op1->RealType.type == ev_int && op2->Type.type == ev_int)
+		if (op1->RealType.type == TYPE_Int && op2->Type.type == TYPE_Int)
 		{
 			ec.AddStatement(OPC_AddVarDrop);
 		}
-		else if (op1->RealType.type == ev_byte && op2->Type.type == ev_int)
+		else if (op1->RealType.type == TYPE_Byte && op2->Type.type == TYPE_Int)
 		{
 			ec.AddStatement(OPC_ByteAddVarDrop);
 		}
-		else if (op1->RealType.type == ev_float && op2->Type.type == ev_float)
+		else if (op1->RealType.type == TYPE_Float && op2->Type.type == TYPE_Float)
 		{
 			ec.AddStatement(OPC_FAddVarDrop);
 		}
-		else if (op1->RealType.type == ev_vector && op2->Type.type == ev_vector)
+		else if (op1->RealType.type == TYPE_Vector && op2->Type.type == TYPE_Vector)
 		{
 			ec.AddStatement(OPC_VAddVarDrop);
 		}
@@ -3460,19 +3460,19 @@ void VAssignment::Emit(VEmitContext& ec)
 		break;
 
 	case MinusAssign:
-		if (op1->RealType.type == ev_int && op2->Type.type == ev_int)
+		if (op1->RealType.type == TYPE_Int && op2->Type.type == TYPE_Int)
 		{
 			ec.AddStatement(OPC_SubVarDrop);
 		}
-		else if (op1->RealType.type == ev_byte && op2->Type.type == ev_int)
+		else if (op1->RealType.type == TYPE_Byte && op2->Type.type == TYPE_Int)
 		{
 			ec.AddStatement(OPC_ByteSubVarDrop);
 		}
-		else if (op1->RealType.type == ev_float && op2->Type.type == ev_float)
+		else if (op1->RealType.type == TYPE_Float && op2->Type.type == TYPE_Float)
 		{
 			ec.AddStatement(OPC_FSubVarDrop);
 		}
-		else if (op1->RealType.type == ev_vector && op2->Type.type == ev_vector)
+		else if (op1->RealType.type == TYPE_Vector && op2->Type.type == TYPE_Vector)
 		{
 			ec.AddStatement(OPC_VSubVarDrop);
 		}
@@ -3483,19 +3483,19 @@ void VAssignment::Emit(VEmitContext& ec)
 		break;
 
 	case MultiplyAssign:
-		if (op1->RealType.type == ev_int && op2->Type.type == ev_int)
+		if (op1->RealType.type == TYPE_Int && op2->Type.type == TYPE_Int)
 		{
 			ec.AddStatement(OPC_MulVarDrop);
 		}
-		else if (op1->RealType.type == ev_byte && op2->Type.type == ev_int)
+		else if (op1->RealType.type == TYPE_Byte && op2->Type.type == TYPE_Int)
 		{
 			ec.AddStatement(OPC_ByteMulVarDrop);
 		}
-		else if (op1->RealType.type == ev_float && op2->Type.type == ev_float)
+		else if (op1->RealType.type == TYPE_Float && op2->Type.type == TYPE_Float)
 		{
 			ec.AddStatement(OPC_FMulVarDrop);
 		}
-		else if (op1->RealType.type == ev_vector && op2->Type.type == ev_float)
+		else if (op1->RealType.type == TYPE_Vector && op2->Type.type == TYPE_Float)
 		{
 			ec.AddStatement(OPC_VScaleVarDrop);
 		}
@@ -3506,19 +3506,19 @@ void VAssignment::Emit(VEmitContext& ec)
 		break;
 
 	case DivideAssign:
-		if (op1->RealType.type == ev_int && op2->Type.type == ev_int)
+		if (op1->RealType.type == TYPE_Int && op2->Type.type == TYPE_Int)
 		{
 			ec.AddStatement(OPC_DivVarDrop);
 		}
-		else if (op1->RealType.type == ev_byte && op2->Type.type == ev_int)
+		else if (op1->RealType.type == TYPE_Byte && op2->Type.type == TYPE_Int)
 		{
 			ec.AddStatement(OPC_ByteDivVarDrop);
 		}
-		else if (op1->RealType.type == ev_float && op2->Type.type == ev_float)
+		else if (op1->RealType.type == TYPE_Float && op2->Type.type == TYPE_Float)
 		{
 			ec.AddStatement(OPC_FDivVarDrop);
 		}
-		else if (op1->RealType.type == ev_vector && op2->Type.type == ev_float)
+		else if (op1->RealType.type == TYPE_Vector && op2->Type.type == TYPE_Float)
 		{
 			ec.AddStatement(OPC_VIScaleVarDrop);
 		}
@@ -3529,11 +3529,11 @@ void VAssignment::Emit(VEmitContext& ec)
 		break;
 
 	case ModAssign:
-		if (op1->RealType.type == ev_int && op2->Type.type == ev_int)
+		if (op1->RealType.type == TYPE_Int && op2->Type.type == TYPE_Int)
 		{
 			ec.AddStatement(OPC_ModVarDrop);
 		}
-		else if (op1->RealType.type == ev_byte && op2->Type.type == ev_int)
+		else if (op1->RealType.type == TYPE_Byte && op2->Type.type == TYPE_Int)
 		{
 			ec.AddStatement(OPC_ByteModVarDrop);
 		}
@@ -3544,11 +3544,11 @@ void VAssignment::Emit(VEmitContext& ec)
 		break;
 
 	case AndAssign:
-		if (op1->RealType.type == ev_int && op2->Type.type == ev_int)
+		if (op1->RealType.type == TYPE_Int && op2->Type.type == TYPE_Int)
 		{
 			ec.AddStatement(OPC_AndVarDrop);
 		}
-		else if (op1->RealType.type == ev_byte && op2->Type.type == ev_int)
+		else if (op1->RealType.type == TYPE_Byte && op2->Type.type == TYPE_Int)
 		{
 			ec.AddStatement(OPC_ByteAndVarDrop);
 		}
@@ -3559,16 +3559,16 @@ void VAssignment::Emit(VEmitContext& ec)
 		break;
 
 	case OrAssign:
-		if (op1->RealType.type == ev_int && op2->Type.type == ev_int)
+		if (op1->RealType.type == TYPE_Int && op2->Type.type == TYPE_Int)
 		{
 			ec.AddStatement(OPC_OrVarDrop);
 		}
-		else if (op1->RealType.type == ev_byte && op2->Type.type == ev_int)
+		else if (op1->RealType.type == TYPE_Byte && op2->Type.type == TYPE_Int)
 		{
 			ec.AddStatement(OPC_ByteOrVarDrop);
 		}
 //FIXME This is wrong!
-		else if (op1->RealType.type == ev_bool && op2->Type.type == ev_int)
+		else if (op1->RealType.type == TYPE_Bool && op2->Type.type == TYPE_Int)
 		{
 			ec.AddStatement(OPC_OrVarDrop);
 		}
@@ -3579,11 +3579,11 @@ void VAssignment::Emit(VEmitContext& ec)
 		break;
 
 	case XOrAssign:
-		if (op1->RealType.type == ev_int && op2->Type.type == ev_int)
+		if (op1->RealType.type == TYPE_Int && op2->Type.type == TYPE_Int)
 		{
 			ec.AddStatement(OPC_XOrVarDrop);
 		}
-		else if (op1->RealType.type == ev_byte && op2->Type.type == ev_int)
+		else if (op1->RealType.type == TYPE_Byte && op2->Type.type == TYPE_Int)
 		{
 			ec.AddStatement(OPC_ByteXOrVarDrop);
 		}
@@ -3594,11 +3594,11 @@ void VAssignment::Emit(VEmitContext& ec)
 		break;
 
 	case LShiftAssign:
-		if (op1->RealType.type == ev_int && op2->Type.type == ev_int)
+		if (op1->RealType.type == TYPE_Int && op2->Type.type == TYPE_Int)
 		{
 			ec.AddStatement(OPC_LShiftVarDrop);
 		}
-		else if (op1->RealType.type == ev_byte && op2->Type.type == ev_int)
+		else if (op1->RealType.type == TYPE_Byte && op2->Type.type == TYPE_Int)
 		{
 			ec.AddStatement(OPC_ByteLShiftVarDrop);
 		}
@@ -3609,11 +3609,11 @@ void VAssignment::Emit(VEmitContext& ec)
 		break;
 
 	case RShiftAssign:
-		if (op1->RealType.type == ev_int && op2->Type.type == ev_int)
+		if (op1->RealType.type == TYPE_Int && op2->Type.type == TYPE_Int)
 		{
 			ec.AddStatement(OPC_RShiftVarDrop);
 		}
-		else if (op1->RealType.type == ev_byte && op2->Type.type == ev_int)
+		else if (op1->RealType.type == TYPE_Byte && op2->Type.type == TYPE_Int)
 		{
 			ec.AddStatement(OPC_ByteRShiftVarDrop);
 		}
@@ -3639,7 +3639,7 @@ VStateConstant::VStateConstant(VState* AState, const TLocation& ALoc)
 : VExpression(ALoc)
 , State(AState)
 {
-	Type = ev_state;
+	Type = TYPE_State;
 }
 
 //==========================================================================
@@ -3678,7 +3678,7 @@ VClassConstant::VClassConstant(VClass* AClass, const TLocation& ALoc)
 : VExpression(ALoc)
 , Class(AClass)
 {
-	Type = ev_class;
+	Type = TYPE_Class;
 	Type.Class = Class;
 }
 
@@ -3751,7 +3751,7 @@ void VConstantValue::Emit(VEmitContext& ec)
 
 vint32 VConstantValue::GetIntConst() const
 {
-	if (Const->Type == ev_int)
+	if (Const->Type == TYPE_Int)
 	{
 		return Const->Value;
 	}
@@ -3766,7 +3766,7 @@ vint32 VConstantValue::GetIntConst() const
 
 float VConstantValue::GetFloatConst() const
 {
-	if (Const->Type == ev_float)
+	if (Const->Type == TYPE_Float)
 	{
 		return Const->FloatValue;
 	}
@@ -3781,7 +3781,7 @@ float VConstantValue::GetFloatConst() const
 
 bool VConstantValue::IsIntConst() const
 {
-	return Const->Type == ev_int;
+	return Const->Type == TYPE_Int;
 }
 
 //==========================================================================
@@ -3792,7 +3792,7 @@ bool VConstantValue::IsIntConst() const
 
 bool VConstantValue::IsFloatConst() const
 {
-	return Const->Type == ev_float;
+	return Const->Type == TYPE_Float;
 }
 
 //END
@@ -3840,7 +3840,7 @@ VExpression* VDynamicCast::DoResolve(VEmitContext& ec)
 		return NULL;
 	}
 
-	if (op->Type.type != ev_reference)
+	if (op->Type.type != TYPE_Reference)
 	{
 		ParseError(Loc, "Bad expression, class reference required");
 		delete this;
@@ -3908,14 +3908,14 @@ VExpression* VDynamicClassCast::DoResolve(VEmitContext& ec)
 		return NULL;
 	}
 
-	if (op->Type.type != ev_class)
+	if (op->Type.type != TYPE_Class)
 	{
 		ParseError(Loc, "Bad expression, class type required");
 		delete this;
 		return NULL;
 	}
 
-	Type = ev_class;
+	Type = TYPE_Class;
 	Type.Class = VMemberBase::CheckForClass(ClassName);
 	if (!Type.Class)
 	{
@@ -3966,9 +3966,9 @@ VExpression* VLocalVar::DoResolve(VEmitContext& ec)
 {
 	Type = ec.LocalDefs[num].type;
 	RealType = ec.LocalDefs[num].type;
-	if (Type.type == ev_byte || Type.type == ev_bool)
+	if (Type.type == TYPE_Byte || Type.type == TYPE_Bool)
 	{
-		Type = TType(ev_int);
+		Type = TType(TYPE_Int);
 	}
 	PushOutParam = !!(ec.LocalDefs[num].ParamFlags & FPARM_Out);
 	return this;
@@ -4041,22 +4041,22 @@ void VLocalVar::Emit(VEmitContext& ec)
 	else if (ec.LocalDefs[num].ofs < 256)
 	{
 		int Ofs = ec.LocalDefs[num].ofs;
-		if (ec.LocalDefs[num].type.type == ev_bool &&
+		if (ec.LocalDefs[num].type.type == TYPE_Bool &&
 			ec.LocalDefs[num].type.bit_mask != 1)
 		{
 			ParseError(Loc, "Strange local bool mask");
 		}
 		switch (ec.LocalDefs[num].type.type)
 		{
-		case ev_int:
-		case ev_byte:
-		case ev_bool:
-		case ev_float:
-		case ev_name:
-		case ev_pointer:
-		case ev_reference:
-		case ev_class:
-		case ev_state:
+		case TYPE_Int:
+		case TYPE_Byte:
+		case TYPE_Bool:
+		case TYPE_Float:
+		case TYPE_Name:
+		case TYPE_Pointer:
+		case TYPE_Reference:
+		case TYPE_Class:
+		case TYPE_State:
 			if (Ofs == 0)
 				ec.AddStatement(OPC_LocalValue0);
 			else if (Ofs == 1)
@@ -4077,11 +4077,11 @@ void VLocalVar::Emit(VEmitContext& ec)
 				ec.AddStatement(OPC_LocalValueB, Ofs);
 			break;
 
-		case ev_vector:
+		case TYPE_Vector:
 			ec.AddStatement(OPC_VLocalValueB, Ofs);
 			break;
 
-		case ev_string:
+		case TYPE_String:
 			ec.AddStatement(OPC_StrLocalValueB, Ofs);
 			break;
 
@@ -4137,9 +4137,9 @@ VExpression* VFieldAccess::DoResolve(VEmitContext&)
 {
 	Type = field->type;
 	RealType = field->type;
-	if (Type.type == ev_byte || Type.type == ev_bool)
+	if (Type.type == TYPE_Byte || Type.type == TYPE_Bool)
 	{
-		Type = TType(ev_int);
+		Type = TType(TYPE_Int);
 	}
 	return this;
 }
@@ -4178,17 +4178,17 @@ void VFieldAccess::Emit(VEmitContext& ec)
 	{
 		switch (field->type.type)
 		{
-		case ev_int:
-		case ev_float:
-		case ev_name:
+		case TYPE_Int:
+		case TYPE_Float:
+		case TYPE_Name:
 			ec.AddStatement(OPC_FieldValue, field);
 			break;
 
-		case ev_byte:
+		case TYPE_Byte:
 			ec.AddStatement(OPC_ByteFieldValue, field);
 			break;
 
-		case ev_bool:
+		case TYPE_Bool:
 			if (field->type.bit_mask & 0x000000ff)
 				ec.AddStatement(OPC_Bool0FieldValue, field, (int)(field->type.bit_mask));
 			else if (field->type.bit_mask & 0x0000ff00)
@@ -4199,22 +4199,22 @@ void VFieldAccess::Emit(VEmitContext& ec)
 				ec.AddStatement(OPC_Bool3FieldValue, field, (int)(field->type.bit_mask >> 24));
 			break;
 
-		case ev_pointer:
-		case ev_reference:
-		case ev_class:
-		case ev_state:
+		case TYPE_Pointer:
+		case TYPE_Reference:
+		case TYPE_Class:
+		case TYPE_State:
 			ec.AddStatement(OPC_PtrFieldValue, field);
 			break;
 
-		case ev_vector:
+		case TYPE_Vector:
 			ec.AddStatement(OPC_VFieldValue, field);
 			break;
 
-		case ev_string:
+		case TYPE_String:
 			ec.AddStatement(OPC_StrFieldValue, field);
 			break;
 
-		case ev_delegate:
+		case TYPE_Delegate:
 			ec.AddStatement(OPC_Offset, field);
 			ec.AddStatement(OPC_PushPointedDelegate);
 			break;
@@ -4262,7 +4262,7 @@ VDelegateVal::~VDelegateVal()
 
 VExpression* VDelegateVal::DoResolve(VEmitContext&)
 {
-	Type = ev_delegate;
+	Type = TYPE_Delegate;
 	Type.Function = M;
 	return this;
 }
@@ -4348,8 +4348,8 @@ VExpression* VInvocation::DoResolve(VEmitContext& ec)
 	CheckParams();
 
 	Type  = Func->ReturnType;
-	if (Type.type == ev_byte || Type.type == ev_bool)
-		Type = TType(ev_int);
+	if (Type.type == TYPE_Byte || Type.type == TYPE_Bool)
+		Type = TType(TYPE_Int);
 	if (Func->Flags & FUNC_Spawner)
 		Type.Class = Args[0]->Type.Class;
 	return this;
@@ -4390,25 +4390,25 @@ void VInvocation::Emit(VEmitContext& ec)
 		{
 			switch (Func->ParamTypes[i].type)
 			{
-			case ev_int:
-			case ev_byte:
-			case ev_bool:
-			case ev_float:
-			case ev_name:
+			case TYPE_Int:
+			case TYPE_Byte:
+			case TYPE_Bool:
+			case TYPE_Float:
+			case TYPE_Name:
 				ec.EmitPushNumber(0);
 				SelfOffset++;
 				break;
 
-			case ev_string:
-			case ev_pointer:
-			case ev_reference:
-			case ev_class:
-			case ev_state:
+			case TYPE_String:
+			case TYPE_Pointer:
+			case TYPE_Reference:
+			case TYPE_Class:
+			case TYPE_State:
 				ec.AddStatement(OPC_PushNull);
 				SelfOffset++;
 				break;
 
-			case ev_vector:
+			case TYPE_Vector:
 				ec.EmitPushNumber(0);
 				ec.EmitPushNumber(0);
 				ec.EmitPushNumber(0);
@@ -4425,7 +4425,7 @@ void VInvocation::Emit(VEmitContext& ec)
 		else
 		{
 			Args[i]->Emit(ec);
-			if (Args[i]->Type.type == ev_vector)
+			if (Args[i]->Type.type == TYPE_Vector)
 				SelfOffset += 3;
 			else
 				SelfOffset++;
@@ -4569,7 +4569,7 @@ VDelegateToBool::VDelegateToBool(VExpression* AOp)
 : VExpression(AOp->Loc)
 , op(AOp)
 {
-	Type = ev_int;
+	Type = TYPE_Int;
 	op->RequestAddressOf();
 }
 
@@ -4623,7 +4623,7 @@ VStringToBool::VStringToBool(VExpression* AOp)
 : VExpression(AOp->Loc)
 , op(AOp)
 {
-	Type = ev_int;
+	Type = TYPE_Int;
 }
 
 //==========================================================================
@@ -4675,7 +4675,7 @@ VPointerToBool::VPointerToBool(VExpression* AOp)
 : VExpression(AOp->Loc)
 , op(AOp)
 {
-	Type = ev_int;
+	Type = TYPE_Int;
 }
 
 //==========================================================================
@@ -4757,15 +4757,15 @@ VExpression* VDropResult::DoResolve(VEmitContext& ec)
 		return NULL;
 	}
 
-	if (op->Type.type == ev_delegate)
+	if (op->Type.type == TYPE_Delegate)
 	{
 		ParseError(Loc, "Delegate call parameters are missing");
 		delete this;
 		return NULL;
 	}
 
-	if (op->Type.type != ev_string && op->Type.GetSize() != 4 &&
-		op->Type.type != ev_vector && op->Type.type != ev_void)
+	if (op->Type.type != TYPE_String && op->Type.GetSize() != 4 &&
+		op->Type.type != TYPE_Vector && op->Type.type != TYPE_Void)
 	{
 		ParseError(Loc, "Expression's result type cannot be dropped");
 		delete this;
@@ -4780,7 +4780,7 @@ VExpression* VDropResult::DoResolve(VEmitContext& ec)
 		return e;
 	}
 
-	Type = ev_void;
+	Type = TYPE_Void;
 	return this;
 }
 
@@ -4793,11 +4793,11 @@ VExpression* VDropResult::DoResolve(VEmitContext& ec)
 void VDropResult::Emit(VEmitContext& ec)
 {
 	op->Emit(ec);
-	if (op->Type.type == ev_string)
+	if (op->Type.type == TYPE_String)
 	{
 		ec.AddStatement(OPC_DropStr);
 	}
-	else if (op->Type.type == ev_vector)
+	else if (op->Type.type == TYPE_Vector)
 	{
 		ec.AddStatement(OPC_VDrop);
 	}
@@ -4858,14 +4858,14 @@ VExpression* VTypeExpr::DoResolve(VEmitContext& ec)
 
 VTypeExpr* VTypeExpr::ResolveAsType(VEmitContext& ec)
 {
-	if (Type.type == ev_unknown)
+	if (Type.type == TYPE_Unknown)
 	{
 		ParseError(Loc, "Bad type");
 		delete this;
 		return NULL;
 	}
 
-	if (Type.type == ev_class && MetaClassName != NAME_None)
+	if (Type.type == TYPE_Class && MetaClassName != NAME_None)
 	{
 		Type.Class = VMemberBase::CheckForClass(MetaClassName);
 		if (!Type.Class)
@@ -4924,7 +4924,7 @@ VExpression* VTypeExpr::CreateTypeExprCopy()
 //==========================================================================
 
 VPointerType::VPointerType(VExpression* AExpr, const TLocation& ALoc)
-: VTypeExpr(ev_unknown, ALoc)
+: VTypeExpr(TYPE_Unknown, ALoc)
 , Expr(AExpr)
 {
 }
@@ -4988,7 +4988,7 @@ VExpression* VPointerType::CreateTypeExprCopy()
 
 VFixedArrayType::VFixedArrayType(VExpression* AExpr, VExpression* ASizeExpr,
 	const TLocation& ALoc)
-: VTypeExpr(ev_unknown, ALoc)
+: VTypeExpr(TYPE_Unknown, ALoc)
 , Expr(AExpr)
 , SizeExpr(ASizeExpr)
 {
@@ -5132,7 +5132,7 @@ void VLocalDecl::Declare(VEmitContext& ec)
 			continue;
 		}
 		TType Type = e.TypeExpr->Type;
-		if (Type.type == ev_void)
+		if (Type.type == TYPE_Void)
 		{
 			ParseError(e.TypeExpr->Loc, "Bad variable type");
 		}

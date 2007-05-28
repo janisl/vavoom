@@ -54,6 +54,7 @@ const char*			VLexer::TokenNames[] =
 	"FLOAT LITERAL",
 	//	Keywords
 	"abstract",
+	"array",
 	"bool",
 	"break",
 	"byte",
@@ -534,6 +535,11 @@ void VLexer::ProcessLetterToken()
 			s[5] == 'a' && s[6] == 'c' && s[7] == 't' && s[8] == 0)
 		{
 			Token = TK_Abstract;
+		}
+		else if (s[1] == 'r' && s[2] == 'r' && s[3] == 'a' && s[4] == 'y' &&
+			s[5] == 0)
+		{
+			Token = TK_Array;
 		}
 		break;
 

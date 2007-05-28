@@ -1126,35 +1126,35 @@ VExpression* VParser::ParseType()
 	{
 	case TK_Void:
 		Lex.NextToken();
-		return new VTypeExpr(ev_void, l);
+		return new VTypeExpr(TYPE_Void, l);
 
 	case TK_Int:
 		Lex.NextToken();
-		return new VTypeExpr(ev_int, l);
+		return new VTypeExpr(TYPE_Int, l);
 
 	case TK_Byte:
 		Lex.NextToken();
-		return new VTypeExpr(ev_byte, l);
+		return new VTypeExpr(TYPE_Byte, l);
 
 	case TK_Bool:
 	{
 		Lex.NextToken();
-		TType ret(ev_bool);
+		TType ret(TYPE_Bool);
 		ret.bit_mask = 1;
 		return new VTypeExpr(ret, l);
 	}
 
 	case TK_Float:
 		Lex.NextToken();
-		return new VTypeExpr(ev_float, l);
+		return new VTypeExpr(TYPE_Float, l);
 
 	case TK_Name:
 		Lex.NextToken();
-		return new VTypeExpr(ev_name, l);
+		return new VTypeExpr(TYPE_Name, l);
 
 	case TK_String:
 		Lex.NextToken();
-		return new VTypeExpr(ev_string, l);
+		return new VTypeExpr(TYPE_String, l);
 
 	case TK_Class:
 	{
@@ -1173,12 +1173,12 @@ VExpression* VParser::ParseType()
 			}
 			Lex.Expect(TK_Greater);
 		}
-		return new VTypeExpr(ev_class, l, MetaClassName);
+		return new VTypeExpr(TYPE_Class, l, MetaClassName);
 	}
 
 	case TK_State:
 		Lex.NextToken();
-		return new VTypeExpr(ev_state, l);
+		return new VTypeExpr(TYPE_State, l);
 
 	case TK_Identifier:
 	{
@@ -1315,7 +1315,7 @@ void VParser::ParseDelegate(VExpression* RetType, VField* Delegate)
 	Lex.Expect(TK_Semicolon, ERR_MISSING_SEMICOLON);
 
 	Delegate->func = Func;
-	Delegate->type = TType(ev_delegate);
+	Delegate->type = TType(TYPE_Delegate);
 	Delegate->type.Function = Func;
 }
 
@@ -1328,8 +1328,8 @@ void VParser::ParseDelegate(VExpression* RetType, VField* Delegate)
 void VParser::ParseDefaultProperties(VClass* InClass)
 {
 	VMethod* Func = new VMethod(NAME_None, InClass, Lex.Location);
-	Func->ReturnTypeExpr = new VTypeExpr(ev_void, Lex.Location);
-	Func->ReturnType = TType(ev_void);
+	Func->ReturnTypeExpr = new VTypeExpr(TYPE_Void, Lex.Location);
+	Func->ReturnType = TType(TYPE_Void);
 	InClass->DefaultProperties = Func;
 
 	Lex.Expect(TK_LBrace, ERR_MISSING_LBRACE);
@@ -1511,8 +1511,8 @@ void VParser::ParseStates(VClass* InClass)
 		if (Lex.Check(TK_LBrace))
 		{
 			s->Function = new VMethod(NAME_None, s, s->Loc);
-			s->Function->ReturnTypeExpr = new VTypeExpr(ev_void, Lex.Location);
-			s->Function->ReturnType = TType(ev_void);
+			s->Function->ReturnTypeExpr = new VTypeExpr(TYPE_Void, Lex.Location);
+			s->Function->ReturnType = TType(TYPE_Void);
 			s->Function->Statement = ParseCompoundStatement();
 		}
 		else if (Lex.Check(TK_Assign))
@@ -1566,7 +1566,7 @@ void VParser::ParseReplication(VClass* Class)
 
 		//	Replication condition.
 		RI.Cond = new VMethod(NAME_None, Class, Lex.Location);
-		RI.Cond->ReturnType = TType(ev_bool);
+		RI.Cond->ReturnType = TType(TYPE_Bool);
 		RI.Cond->ReturnType.bit_mask = 1;
 		RI.Cond->ReturnTypeExpr = new VTypeExpr(RI.Cond->ReturnType,
 			Lex.Location);
@@ -1699,7 +1699,7 @@ void VParser::ParseClass()
 					ParseError(Lex.Location, "Redefined identifier %s", *Lex.Name);
 				}
 				VConstant* cDef = new VConstant(Lex.Name, Class, Lex.Location);
-				cDef->Type = ev_int;
+				cDef->Type = TYPE_Int;
 				Lex.NextToken();
 				if (Lex.Check(TK_Assign))
 				{
@@ -1723,22 +1723,22 @@ void VParser::ParseClass()
 
 		if (Lex.Check(TK_Const))
 		{
-			int Type = ev_unknown;
+			int Type = TYPE_Unknown;
 			if (Lex.Check(TK_Int))
 			{
-				Type = ev_int;
+				Type = TYPE_Int;
 			}
 			else if (Lex.Check(TK_Float))
 			{
-				Type = ev_float;
+				Type = TYPE_Float;
 			}
 			else if (Lex.Check(TK_Name))
 			{
-				Type = ev_name;
+				Type = TYPE_Name;
 			}
 			else if (Lex.Check(TK_String))
 			{
-				Type = ev_string;
+				Type = TYPE_String;
 			}
 			else
 			{
@@ -1896,7 +1896,7 @@ void VParser::ParseClass()
 						sprintf(TmpName, "set_%s", *FieldName);
 						VMethod* Func = new VMethod(TmpName, Class, Lex.Location);
 						Func->Modifiers = Modifiers;
-						Func->ReturnTypeExpr = new VTypeExpr(ev_void, Lex.Location);
+						Func->ReturnTypeExpr = new VTypeExpr(TYPE_Void, Lex.Location);
 
 						VMethodParam& P = Func->Params[Func->NumParams];
 						P.Modifiers = 0;
@@ -2038,7 +2038,7 @@ void VParser::Parse()
 					ParseError(Lex.Location, "Redefined identifier %s", *Lex.Name);
 				}
 				VConstant* cDef = new VConstant(Lex.Name, Package, Lex.Location);
-				cDef->Type = ev_int;
+				cDef->Type = TYPE_Int;
 				Lex.NextToken();
 				if (Lex.Check(TK_Assign))
 				{

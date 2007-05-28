@@ -170,7 +170,7 @@ void VPlayerChannel::Update()
 		{
 			continue;
 		}
-		if (F->Type.Type == ev_array)
+		if (F->Type.Type == TYPE_Array)
 		{
 			VField::FType IntType = F->Type;
 			IntType.Type = F->Type.ArrayInnerType;
@@ -227,7 +227,7 @@ void VPlayerChannel::ParsePacket(VMessageIn& Msg)
 		}
 		if (F)
 		{
-			if (F->Type.Type == ev_array)
+			if (F->Type.Type == TYPE_Array)
 			{
 				int Idx = Msg.ReadInt(F->Type.ArrayDim);
 				VField::FType IntType = F->Type;
@@ -262,26 +262,26 @@ void VPlayerChannel::ParsePacket(VMessageIn& Msg)
 			{
 				switch (Func->ParamTypes[i].Type)
 				{
-				case ev_int:
-				case ev_byte:
-				case ev_bool:
-				case ev_name:
+				case TYPE_Int:
+				case TYPE_Byte:
+				case TYPE_Bool:
+				case TYPE_Name:
 					VField::NetSerialiseValue(Msg, (vuint8*)&pr_stackPtr->i, Func->ParamTypes[i]);
 					pr_stackPtr++;
 					break;
-				case ev_float:
+				case TYPE_Float:
 					VField::NetSerialiseValue(Msg, (vuint8*)&pr_stackPtr->f, Func->ParamTypes[i]);
 					pr_stackPtr++;
 					break;
-				case ev_string:
-				case ev_pointer:
-				case ev_reference:
-				case ev_class:
-				case ev_state:
+				case TYPE_String:
+				case TYPE_Pointer:
+				case TYPE_Reference:
+				case TYPE_Class:
+				case TYPE_State:
 					VField::NetSerialiseValue(Msg, (vuint8*)&pr_stackPtr->p, Func->ParamTypes[i]);
 					pr_stackPtr++;
 					break;
-				case ev_vector:
+				case TYPE_Vector:
 					{
 						TVec Vec;
 						VField::NetSerialiseValue(Msg, (vuint8*)&Vec, Func->ParamTypes[i]);
@@ -295,7 +295,7 @@ void VPlayerChannel::ParsePacket(VMessageIn& Msg)
 			//	Execute it
 			VObject::ExecuteFunction(Func);
 			//	If it returns a vector, pop the rest of values
-			if (Func->ReturnType.Type == ev_vector)
+			if (Func->ReturnType.Type == TYPE_Vector)
 			{
 				PR_Pop();
 				PR_Pop();

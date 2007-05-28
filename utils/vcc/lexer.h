@@ -43,6 +43,7 @@ enum EToken
 
 	//	Keywords
 	TK_Abstract,
+	TK_Array,
 	TK_Bool,
 	TK_Break,
 	TK_Byte,

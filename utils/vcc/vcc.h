@@ -140,11 +140,11 @@ class TType
 {
 public:
 	TType() :
-		type(ev_void), InnerType(ev_void), ArrayInnerType(ev_void),
+		type(TYPE_Void), InnerType(TYPE_Void), ArrayInnerType(TYPE_Void),
 		PtrLevel(0), array_dim(0), Class(0)
 	{}
 	TType(EType Atype) :
-		type(Atype), InnerType(ev_void), ArrayInnerType(ev_void),
+		type(Atype), InnerType(TYPE_Void), ArrayInnerType(TYPE_Void),
 		PtrLevel(0), array_dim(0), Class(0)
 	{}
 	explicit TType(VClass* InClass);

@@ -60,7 +60,7 @@ TArray<VPackage*>		VMemberBase::LoadedPackages;
 //==========================================================================
 
 TType::TType(VClass* InClass) :
-	type(ev_reference), InnerType(ev_void), ArrayInnerType(ev_void),
+	type(TYPE_Reference), InnerType(TYPE_Void), ArrayInnerType(TYPE_Void),
 	PtrLevel(0), array_dim(0), Class(InClass)
 {
 }
@@ -72,8 +72,8 @@ TType::TType(VClass* InClass) :
 //==========================================================================
 
 TType::TType(VStruct* InStruct) :
-	type(InStruct->IsVector ? ev_vector : ev_struct), InnerType(ev_void),
-	ArrayInnerType(ev_void), PtrLevel(0), array_dim(0), Struct(InStruct)
+	type(InStruct->IsVector ? TYPE_Vector : TYPE_Struct), InnerType(TYPE_Void),
+	ArrayInnerType(TYPE_Void), PtrLevel(0), array_dim(0), Struct(InStruct)
 {
 }
 
@@ -87,25 +87,25 @@ VStream& operator<<(VStream& Strm, TType& T)
 {
 	Strm << T.type;
 	vuint8 RealType = T.type;
-	if (RealType == ev_array)
+	if (RealType == TYPE_Array)
 	{
 		Strm << T.ArrayInnerType
 			<< STRM_INDEX(T.array_dim);
 		RealType = T.ArrayInnerType;
 	}
-	if (RealType == ev_pointer)
+	if (RealType == TYPE_Pointer)
 	{
 		Strm << T.InnerType
 			<< T.PtrLevel;
 		RealType = T.InnerType;
 	}
-	if (RealType == ev_reference || RealType == ev_class)
+	if (RealType == TYPE_Reference || RealType == TYPE_Class)
 		Strm << T.Class;
-	else if (RealType == ev_struct || RealType == ev_vector)
+	else if (RealType == TYPE_Struct || RealType == TYPE_Vector)
 		Strm << T.Struct;
-	else if (RealType == ev_delegate)
+	else if (RealType == TYPE_Delegate)
 		Strm << T.Function;
-	else if (RealType == ev_bool)
+	else if (RealType == TYPE_Bool)
 		Strm << T.bit_mask;
 	return Strm;
 }
@@ -137,14 +137,14 @@ bool TType::Equals(const TType& Other) const
 TType TType::MakePointerType() const
 {
 	TType pointer = *this;
-	if (pointer.type == ev_pointer)
+	if (pointer.type == TYPE_Pointer)
 	{
 		pointer.PtrLevel++;
 	}
 	else
 	{
 		pointer.InnerType = pointer.type;
-		pointer.type = ev_pointer;
+		pointer.type = TYPE_Pointer;
 		pointer.PtrLevel = 1;
 	}
 	return pointer;
@@ -158,7 +158,7 @@ TType TType::MakePointerType() const
 
 TType TType::GetPointerInnerType() const
 {
-	if (type != ev_pointer)
+	if (type != TYPE_Pointer)
 	{
 		FatalError("Not a pointer type");
 		return *this;
@@ -168,7 +168,7 @@ TType TType::GetPointerInnerType() const
 	if (ret.PtrLevel <= 0)
 	{
 		ret.type = InnerType;
-		ret.InnerType = ev_void;
+		ret.InnerType = TYPE_Void;
 	}
 	return ret;
 }
@@ -181,13 +181,13 @@ TType TType::GetPointerInnerType() const
 
 TType TType::MakeArrayType(int elcount, TLocation l) const
 {
-	if (type == ev_array)
+	if (type == TYPE_Array)
 	{
 		ParseError(l, "Can't have multi-dimensional arrays");
 	}
 	TType array = *this;
 	array.ArrayInnerType = type;
-	array.type = ev_array;
+	array.type = TYPE_Array;
 	array.array_dim = elcount;
 	return array;
 }
@@ -200,14 +200,14 @@ TType TType::MakeArrayType(int elcount, TLocation l) const
 
 TType TType::GetArrayInnerType() const
 {
-	if (type != ev_array)
+	if (type != TYPE_Array)
 	{
 		FatalError("Not an array type");
 		return *this;
 	}
 	TType ret = *this;
 	ret.type = ArrayInnerType;
-	ret.ArrayInnerType = ev_void;
+	ret.ArrayInnerType = TYPE_Void;
 	ret.array_dim = 0;
 	return ret;
 }
@@ -222,20 +222,20 @@ int TType::GetSize() const
 {
 	switch (type)
 	{
-	case ev_int:		return 4;
-	case ev_byte:		return 4;
-	case ev_bool:		return 4;
-	case ev_float:		return 4;
-	case ev_name:		return 4;
-	case ev_string:		return 4;
-	case ev_pointer:	return 4;
-	case ev_reference:	return 4;
-	case ev_array:		return array_dim * GetArrayInnerType().GetSize();
-	case ev_struct:		return Struct->StackSize * 4;
-	case ev_vector:		return 12;
-	case ev_class:		return 4;
-	case ev_state:		return 4;
-	case ev_delegate:	return 8;
+	case TYPE_Int:		return 4;
+	case TYPE_Byte:		return 4;
+	case TYPE_Bool:		return 4;
+	case TYPE_Float:		return 4;
+	case TYPE_Name:		return 4;
+	case TYPE_String:		return 4;
+	case TYPE_Pointer:	return 4;
+	case TYPE_Reference:	return 4;
+	case TYPE_Array:		return array_dim * GetArrayInnerType().GetSize();
+	case TYPE_Struct:		return Struct->StackSize * 4;
+	case TYPE_Vector:		return 12;
+	case TYPE_Class:		return 4;
+	case TYPE_State:		return 4;
+	case TYPE_Delegate:	return 8;
 	}
 	return 0;
 }
@@ -250,7 +250,7 @@ int TType::GetSize() const
 
 void TType::CheckPassable(TLocation l) const
 {
-	if (GetSize() != 4 && type != ev_vector && type != ev_delegate)
+	if (GetSize() != 4 && type != TYPE_Vector && type != TYPE_Delegate)
 	{
 		char Name[256];
 		GetName(Name);
@@ -277,11 +277,11 @@ void TType::CheckMatch(TLocation l, const TType& Other) const
 	{
 		return;
 	}
-	if (type == ev_vector && Other.type == ev_vector)
+	if (type == TYPE_Vector && Other.type == TYPE_Vector)
 	{
 		return;
 	}
-	if (type == ev_pointer && Other.type == ev_pointer)
+	if (type == TYPE_Pointer && Other.type == TYPE_Pointer)
 	{
 		TType it1 = GetPointerInnerType();
 		TType it2 = Other.GetPointerInnerType();
@@ -289,11 +289,11 @@ void TType::CheckMatch(TLocation l, const TType& Other) const
 		{
 			return;
 		}
-		if ((it1.type == ev_void) || (it2.type == ev_void))
+		if ((it1.type == TYPE_Void) || (it2.type == TYPE_Void))
 		{
 			return;
 		}
-		if (it1.type == ev_struct && it2.type == ev_struct)
+		if (it1.type == TYPE_Struct && it2.type == TYPE_Struct)
 		{
 			VStruct* s1 = it1.Struct;
 			VStruct* s2 = it2.Struct;
@@ -306,7 +306,7 @@ void TType::CheckMatch(TLocation l, const TType& Other) const
 			}
 		}
 	}
-	if (type == ev_reference && Other.type == ev_reference)
+	if (type == TYPE_Reference && Other.type == TYPE_Reference)
 	{
 		VClass* c1 = Class;
 		VClass* c2 = Other.Class;
@@ -327,7 +327,7 @@ void TType::CheckMatch(TLocation l, const TType& Other) const
 			}
 		}
 	}
-	if (type == ev_class && Other.type == ev_class)
+	if (type == TYPE_Class && Other.type == TYPE_Class)
 	{
 		VClass* c1 = Class;
 		VClass* c2 = Other.Class;
@@ -351,21 +351,21 @@ void TType::CheckMatch(TLocation l, const TType& Other) const
 			}
 		}
 	}
-	if (type == ev_int && Other.type == ev_byte)
+	if (type == TYPE_Int && Other.type == TYPE_Byte)
 	{
 		return;
 	}
-	if (type == ev_int && Other.type == ev_bool)
+	if (type == TYPE_Int && Other.type == TYPE_Bool)
 	{
 		return;
 	}
 	//	Allow assigning none to states, classes and delegates
-	if (type == ev_reference && Class == NULL && (Other.type == ev_class ||
-		Other.type == ev_state || Other.type == ev_delegate))
+	if (type == TYPE_Reference && Class == NULL && (Other.type == TYPE_Class ||
+		Other.type == TYPE_State || Other.type == TYPE_Delegate))
 	{
 		return;
 	}
-	if (type == ev_delegate && Other.type == ev_delegate)
+	if (type == TYPE_Delegate && Other.type == TYPE_Delegate)
 	{
 		VMethod& F1 = *Function;
 		VMethod& F2 = *Other.Function;
@@ -406,21 +406,21 @@ void TType::GetName(char* Dest) const
 {
 	switch (type)
 	{
-	case ev_int:		strcpy(Dest, "int"); break;
-	case ev_byte:		strcpy(Dest, "byte"); break;
-	case ev_bool:		strcpy(Dest, "bool"); break;
-	case ev_float:		strcpy(Dest, "float"); break;
-	case ev_name:		strcpy(Dest, "name"); break;
-	case ev_string:		strcpy(Dest, "string"); break;
-	case ev_pointer:	GetPointerInnerType().GetName(Dest); 
+	case TYPE_Int:		strcpy(Dest, "int"); break;
+	case TYPE_Byte:		strcpy(Dest, "byte"); break;
+	case TYPE_Bool:		strcpy(Dest, "bool"); break;
+	case TYPE_Float:		strcpy(Dest, "float"); break;
+	case TYPE_Name:		strcpy(Dest, "name"); break;
+	case TYPE_String:		strcpy(Dest, "string"); break;
+	case TYPE_Pointer:	GetPointerInnerType().GetName(Dest); 
 		for (int i = 0; i < PtrLevel; i++) strcat(Dest, "*"); break;
-	case ev_reference:	strcpy(Dest, Class ? *Class->Name : "none"); break;
-	case ev_class:		strcpy(Dest, "class"); if (Class) { strcat(Dest, "<");
+	case TYPE_Reference:	strcpy(Dest, Class ? *Class->Name : "none"); break;
+	case TYPE_Class:		strcpy(Dest, "class"); if (Class) { strcat(Dest, "<");
 		strcat(Dest, *Class->Name); strcat(Dest, ">"); } break;
-	case ev_state:		strcpy(Dest, "state"); break;
-	case ev_array:		GetArrayInnerType().GetName(Dest); strcat(Dest, "[]"); break;
-	case ev_struct:		strcpy(Dest, *Struct->Name); break;
-	case ev_vector:		strcpy(Dest, "vector"); break;
+	case TYPE_State:		strcpy(Dest, "state"); break;
+	case TYPE_Array:		GetArrayInnerType().GetName(Dest); strcat(Dest, "[]"); break;
+	case TYPE_Struct:		strcpy(Dest, *Struct->Name); break;
+	case TYPE_Vector:		strcpy(Dest, "vector"); break;
 	default:			strcpy(Dest, "unknown"); break;
 	}
 }
@@ -979,7 +979,7 @@ TType VMemberBase::CheckForType(VClass* InClass, VName Name)
 {
 	if (Name == NAME_None)
 	{
-		return TType(ev_unknown);
+		return TType(TYPE_Unknown);
 	}
 
 	VMemberBase* m = StaticFindMember(Name, ANY_PACKAGE, MEMBER_Class);
@@ -997,7 +997,7 @@ TType VMemberBase::CheckForType(VClass* InClass, VName Name)
 	{
 		return CheckForType(InClass->ParentClass, Name);
 	}
-	return TType(ev_unknown);
+	return TType(TYPE_Unknown);
 }
 
 //==========================================================================
@@ -1029,7 +1029,7 @@ VClass* VMemberBase::CheckForClass(VName Name)
 VField::VField(VName InName, VMemberBase* InOuter, TLocation InLoc)
 : VMemberBase(MEMBER_Field, InName, InOuter, InLoc)
 , Next(NULL)
-, type(ev_void)
+, type(TYPE_Void)
 , TypeExpr(NULL)
 , func(NULL)
 , Modifiers(0)
@@ -1072,16 +1072,16 @@ void VField::Serialise(VStream& Strm)
 
 bool VField::NeedsDestructor() const
 {
-	if (type.type == ev_string)
+	if (type.type == TYPE_String)
 		return true;
-	if (type.type == ev_array)
+	if (type.type == TYPE_Array)
 	{
-		if (type.ArrayInnerType == ev_string)
+		if (type.ArrayInnerType == TYPE_String)
 			return true;
-		if (type.ArrayInnerType == ev_struct)
+		if (type.ArrayInnerType == TYPE_Struct)
 			return type.Struct->NeedsDestructor();
 	}
-	if (type.type == ev_struct)
+	if (type.type == TYPE_Struct)
 		return type.Struct->NeedsDestructor();
 	return false;
 }
@@ -1094,7 +1094,7 @@ bool VField::NeedsDestructor() const
 
 bool VField::Define()
 {
-	if (type.type == ev_delegate)
+	if (type.type == TYPE_Delegate)
 	{
 		return func->Define();
 	}
@@ -1109,7 +1109,7 @@ bool VField::Define()
 		return false;
 	}
 
-	if (TypeExpr->Type.type == ev_void)
+	if (TypeExpr->Type.type == TYPE_Void)
 	{
 		ParseError(TypeExpr->Loc, "Field cannot have void type.");
 		return false;
@@ -1133,7 +1133,7 @@ bool VField::Define()
 
 VProperty::VProperty(VName AName, VMemberBase* AOuter, TLocation ALoc)
 : VMemberBase(MEMBER_Property, AName, AOuter, ALoc)
-, Type(ev_void)
+, Type(TYPE_Void)
 , GetFunc(NULL)
 , SetFunc(NULL)
 , DefaultField(NULL)
@@ -1186,7 +1186,7 @@ bool VProperty::Define()
 		return false;
 	}
 
-	if (TypeExpr->Type.type == ev_void)
+	if (TypeExpr->Type.type == TYPE_Void)
 	{
 		ParseError(TypeExpr->Loc, "Property cannot have void type.");
 		return false;
@@ -1240,7 +1240,7 @@ VMethod::VMethod(VName InName, VMemberBase* InOuter, TLocation InLoc)
 : VMemberBase(MEMBER_Method, InName, InOuter, InLoc)
 , NumLocals(0)
 , Flags(0)
-, ReturnType(ev_void)
+, ReturnType(TYPE_Void)
 , NumParams(0)
 , ParamsSize(0)
 , Modifiers(0)
@@ -1388,7 +1388,7 @@ bool VMethod::Define()
 	if (ReturnTypeExpr)
 	{
 		TType t = ReturnTypeExpr->Type;
-		if (t.type != ev_void)
+		if (t.type != TYPE_Void)
 		{
 			//	Function's return type must be void, vector or with size 4
 			t.CheckPassable(ReturnTypeExpr->Loc);
@@ -1417,7 +1417,7 @@ bool VMethod::Define()
 		}
 		TType type = P.TypeExpr->Type;
 
-		if (type.type == ev_void)
+		if (type.type == TYPE_Void)
 		{
 			ParseError(P.TypeExpr->Loc, "Bad variable type");
 			Ret = false;
@@ -1483,11 +1483,11 @@ bool VMethod::Define()
 		{
 			ParseError(Loc, "Spawner method must have at least 1 argument");
 		}
-		else if (ParamTypes[0].type != ev_class)
+		else if (ParamTypes[0].type != TYPE_Class)
 		{
 			ParseError(Loc, "Spawner method must have class as it's first argument");
 		}
-		else if (ReturnType.type != ev_reference)
+		else if (ReturnType.type != TYPE_Reference)
 		{
 			ParseError(Loc, "Spawner method must return an object reference");
 		}
@@ -1562,7 +1562,7 @@ void VMethod::Emit()
 			{
 				VLocalVarDef& L = ec.LocalDefs.Alloc();
 				L.Name = va("specified_%s", *P.Name);
-				L.type = ev_int;
+				L.type = TYPE_Int;
 				L.ofs = ec.localsofs;
 				L.Visible = true;
 				L.ParamFlags = 0;
@@ -1573,7 +1573,7 @@ void VMethod::Emit()
 
 	for (int i = 0; i < ec.LocalDefs.Num(); i++)
 	{
-		if (ec.LocalDefs[i].type.type == ev_vector)
+		if (ec.LocalDefs[i].type.type == TYPE_Vector)
 		{
 			ec.AddStatement(OPC_VFixParam, ec.LocalDefs[i].ofs);
 		}
@@ -1586,7 +1586,7 @@ void VMethod::Emit()
 
 	Statement->Emit(ec);
 
-	if (ReturnType.type == ev_void)
+	if (ReturnType.type == TYPE_Void)
 	{
 		ec.EmitClearStrings(0, ec.LocalDefs.Num());
 		ec.AddStatement(OPC_Return);
@@ -1689,7 +1689,7 @@ void VMethod::DumpAsm()
 
 VConstant::VConstant(VName InName, VMemberBase* InOuter, TLocation InLoc)
 : VMemberBase(MEMBER_Const, InName, InOuter, InLoc)
-, Type(ev_unknown)
+, Type(TYPE_Unknown)
 , Value(0)
 , ValueExpr(NULL)
 , PrevEnumValue(NULL)
@@ -1720,11 +1720,11 @@ void VConstant::Serialise(VStream& Strm)
 	Strm << Type;
 	switch (Type)
 	{
-	case ev_float:
+	case TYPE_Float:
 		Strm << FloatValue;
 		break;
 
-	case ev_name:
+	case TYPE_Name:
 		Strm << *(VName*)&Value;
 		break;
 
@@ -1760,7 +1760,7 @@ bool VConstant::Define()
 
 	switch (Type)
 	{
-	case ev_int:
+	case TYPE_Int:
 		if (!ValueExpr->IsIntConst())
 		{
 			ParseError(ValueExpr->Loc, "Integer constant expected");
@@ -1769,7 +1769,7 @@ bool VConstant::Define()
 		Value = ValueExpr->GetIntConst();
 		break;
 
-	case ev_float:
+	case TYPE_Float:
 		if (!ValueExpr->IsFloatConst())
 		{
 			ParseError(ValueExpr->Loc, "Float constant expected");
@@ -1900,7 +1900,7 @@ bool VStruct::Define()
 	{
 		TType type = CheckForType(Outer->MemberType == MEMBER_Class ?
 			(VClass*)Outer : NULL, ParentStructName);
-		if (type.type != ev_struct)
+		if (type.type != TYPE_Struct)
 		{
 			ParseError(ParentStructLoc, "%s is not a struct type",
 				*ParentStructName);
@@ -1944,7 +1944,7 @@ bool VStruct::DefineMembers()
 		{
 			Ret = false;
 		}
-		if (fi->type.type == ev_bool && PrevBool && PrevBool->type.bit_mask != 0x80000000)
+		if (fi->type.type == TYPE_Bool && PrevBool && PrevBool->type.bit_mask != 0x80000000)
 		{
 			fi->type.bit_mask = PrevBool->type.bit_mask << 1;
 		}
@@ -1952,7 +1952,7 @@ bool VStruct::DefineMembers()
 		{
 			size += fi->type.GetSize();
 		}
-		PrevBool = fi->type.type == ev_bool ? fi : NULL;
+		PrevBool = fi->type.type == TYPE_Bool ? fi : NULL;
 	}
 
 	//	Validate vector type.
@@ -1961,7 +1961,7 @@ bool VStruct::DefineMembers()
 		int fc = 0;
 		for (VField* f = Fields; f; f = f->Next)
 		{
-			if (f->type.type != ev_float)
+			if (f->type.type != TYPE_Float)
 			{
 				ParseError(f->Loc, "Vector can have only float fields");
 				Ret = false;
@@ -2134,7 +2134,7 @@ void VState::Emit()
 		}
 		else
 		{
-			if (Function->ReturnType.type != ev_void)
+			if (Function->ReturnType.type != TYPE_Void)
 			{
 				ParseError(Loc, "State method must not return a value");
 			}
@@ -2541,11 +2541,11 @@ bool VClass::DefineMembers()
 		{
 			Ret = false;
 		}
-		if (fi->type.type == ev_bool && PrevBool && PrevBool->type.bit_mask != 0x80000000)
+		if (fi->type.type == TYPE_Bool && PrevBool && PrevBool->type.bit_mask != 0x80000000)
 		{
 			fi->type.bit_mask = PrevBool->type.bit_mask << 1;
 		}
-		PrevBool = fi->type.type == ev_bool ? fi : NULL;
+		PrevBool = fi->type.type == TYPE_Bool ? fi : NULL;
 	}
 
 	for (int i = 0; i < Properties.Num(); i++)

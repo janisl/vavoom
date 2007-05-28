@@ -666,25 +666,25 @@ VStream& operator<<(VStream& Strm, VField::FType& T)
 	guard(operator VStream << FType);
 	Strm << T.Type;
 	vuint8 RealType = T.Type;
-	if (RealType == ev_array)
+	if (RealType == TYPE_Array)
 	{
 		Strm << T.ArrayInnerType
 			<< STRM_INDEX(T.ArrayDim);
 		RealType = T.ArrayInnerType;
 	}
-	if (RealType == ev_pointer)
+	if (RealType == TYPE_Pointer)
 	{
 		Strm << T.InnerType
 			<< T.PtrLevel;
 		RealType = T.InnerType;
 	}
-	if (RealType == ev_reference || RealType == ev_class)
+	if (RealType == TYPE_Reference || RealType == TYPE_Class)
 		Strm << T.Class;
-	else if (RealType == ev_struct || RealType == ev_vector)
+	else if (RealType == TYPE_Struct || RealType == TYPE_Vector)
 		Strm << T.Struct;
-	else if (RealType == ev_delegate)
+	else if (RealType == TYPE_Delegate)
 		Strm << T.Function;
-	else if (RealType == ev_bool)
+	else if (RealType == TYPE_Bool)
 		Strm << T.BitMask;
 	return Strm;
 	unguard;
@@ -704,62 +704,62 @@ void VField::CopyFieldValue(const vuint8* Src, vuint8* Dst,
 	int InnerSize;
 	switch (Type.Type)
 	{
-	case ev_int:
+	case TYPE_Int:
 		*(vint32*)Dst = *(const vint32*)Src;
 		break;
 
-	case ev_byte:
+	case TYPE_Byte:
 		*(vuint8*)Dst = *(const vuint8*)Src;
 		break;
 
-	case ev_bool:
+	case TYPE_Bool:
 		if (*(const vuint32*)Src & Type.BitMask)
 			*(vuint32*)Dst |= Type.BitMask;
 		else
 			*(vuint32*)Dst &= ~Type.BitMask;
 		break;
 
-	case ev_float:
+	case TYPE_Float:
 		*(float*)Dst = *(const float*)Src;
 		break;
 
-	case ev_vector:
+	case TYPE_Vector:
 		*(TVec*)Dst = *(const TVec*)Src;
 		break;
 
-	case ev_name:
+	case TYPE_Name:
 		*(VName*)Dst = *(const VName*)Src;
 		break;
 
-	case ev_string:
+	case TYPE_String:
 		*(VStr*)Dst = *(const VStr*)Src;
 		break;
 
-	case ev_pointer:
+	case TYPE_Pointer:
 		*(void**)Dst = *(void*const*)Src;
 		break;
 
-	case ev_reference:
+	case TYPE_Reference:
 		*(VObject**)Dst = *(VObject*const*)Src;
 		break;
 
-	case ev_class:
+	case TYPE_Class:
 		*(VClass**)Dst = *(VClass*const*)Src;
 		break;
 
-	case ev_state:
+	case TYPE_State:
 		*(VState**)Dst = *(VState*const*)Src;
 		break;
 
-	case ev_delegate:
+	case TYPE_Delegate:
 		*(VObjectDelegate*)Dst = *(const VObjectDelegate*)Src;
 		break;
 
-	case ev_struct:
+	case TYPE_Struct:
 		Type.Struct->CopyObject(Src, Dst);
 		break;
 
-	case ev_array:
+	case TYPE_Array:
 		IntType = Type;
 		IntType.Type = Type.ArrayInnerType;
 		InnerSize = IntType.GetSize();
@@ -785,15 +785,15 @@ void VField::SerialiseFieldValue(VStream& Strm, vuint8* Data, const VField::FTyp
 	int InnerSize;
 	switch (Type.Type)
 	{
-	case ev_int:
+	case TYPE_Int:
 		Strm << *(vint32*)Data;
 		break;
 
-	case ev_byte:
+	case TYPE_Byte:
 		Strm << *Data;
 		break;
 
-	case ev_bool:
+	case TYPE_Bool:
 		if (Strm.IsLoading())
 		{
 			vuint8 Val;
@@ -810,24 +810,24 @@ void VField::SerialiseFieldValue(VStream& Strm, vuint8* Data, const VField::FTyp
 		}
 		break;
 
-	case ev_float:
+	case TYPE_Float:
 		Strm << *(float*)Data;
 		break;
 
-	case ev_vector:
+	case TYPE_Vector:
 		Strm << *(TVec*)Data;
 		break;
 
-	case ev_name:
+	case TYPE_Name:
 		Strm << *(VName*)Data;
 		break;
 
-	case ev_string:
+	case TYPE_String:
 		Strm << *(VStr*)Data;
 		break;
 
-	case ev_pointer:
-		if (Type.InnerType == ev_struct)
+	case TYPE_Pointer:
+		if (Type.InnerType == TYPE_Struct)
 			Strm.SerialiseStructPointer(*(void**)Data, Type.Struct);
 		else
 		{
@@ -836,11 +836,11 @@ void VField::SerialiseFieldValue(VStream& Strm, vuint8* Data, const VField::FTyp
 		}
 		break;
 
-	case ev_reference:
+	case TYPE_Reference:
 		Strm << *(VObject**)Data;
 		break;
 
-	case ev_class:
+	case TYPE_Class:
 		if (Strm.IsLoading())
 		{
 			VName CName;
@@ -865,7 +865,7 @@ void VField::SerialiseFieldValue(VStream& Strm, vuint8* Data, const VField::FTyp
 		}
 		break;
 
-	case ev_state:
+	case TYPE_State:
 		if (Strm.IsLoading())
 		{
 			VName CName;
@@ -893,7 +893,7 @@ void VField::SerialiseFieldValue(VStream& Strm, vuint8* Data, const VField::FTyp
 		}
 		break;
 
-	case ev_delegate:
+	case TYPE_Delegate:
 		Strm << ((VObjectDelegate*)Data)->Obj;
 		if (Strm.IsLoading())
 		{
@@ -911,11 +911,11 @@ void VField::SerialiseFieldValue(VStream& Strm, vuint8* Data, const VField::FTyp
 		}
 		break;
 
-	case ev_struct:
+	case TYPE_Struct:
 		Type.Struct->SerialiseObject(Strm, Data);
 		break;
 
-	case ev_array:
+	case TYPE_Array:
 		IntType = Type;
 		IntType.Type = Type.ArrayInnerType;
 		InnerSize = IntType.GetSize();
@@ -941,14 +941,14 @@ void VField::CleanField(vuint8* Data, const VField::FType& Type)
 	int InnerSize;
 	switch (Type.Type)
 	{
-	case ev_reference:
+	case TYPE_Reference:
 		if (*(VObject**)Data && (*(VObject**)Data)->GetFlags() & _OF_CleanupRef)
 		{
 			*(VObject**)Data = NULL;
 		}
 		break;
 
-	case ev_delegate:
+	case TYPE_Delegate:
 		if (((VObjectDelegate*)Data)->Obj && (((VObjectDelegate*)Data)->Obj->GetFlags() & _OF_CleanupRef))
 		{
 			((VObjectDelegate*)Data)->Obj = NULL;
@@ -956,11 +956,11 @@ void VField::CleanField(vuint8* Data, const VField::FType& Type)
 		}
 		break;
 
-	case ev_struct:
+	case TYPE_Struct:
 		Type.Struct->CleanObject(Data);
 		break;
 
-	case ev_array:
+	case TYPE_Array:
 		IntType = Type;
 		IntType.Type = Type.ArrayInnerType;
 		InnerSize = IntType.GetSize();
@@ -986,15 +986,15 @@ void VField::DestructField(vuint8* Data, const VField::FType& Type)
 	int InnerSize;
 	switch (Type.Type)
 	{
-	case ev_string:
+	case TYPE_String:
 		((VStr*)Data)->Clean();
 		break;
 
-	case ev_struct:
+	case TYPE_Struct:
 		Type.Struct->DestructObject(Data);
 		break;
 
-	case ev_array:
+	case TYPE_Array:
 		IntType = Type;
 		IntType.Type = Type.ArrayInnerType;
 		InnerSize = IntType.GetSize();
@@ -1021,48 +1021,48 @@ bool VField::IdenticalValue(const vuint8* Val1, const vuint8* Val2,
 	int InnerSize;
 	switch (Type.Type)
 	{
-	case ev_int:
+	case TYPE_Int:
 		return *(const vint32*)Val1 == *(const vint32*)Val2;
 
-	case ev_byte:
+	case TYPE_Byte:
 		return *(const vuint8*)Val1 == *(const vuint8*)Val2;
 
-	case ev_bool:
+	case TYPE_Bool:
 		return (*(const vuint32*)Val1 & Type.BitMask) ==
 			(*(const vuint32*)Val2 & Type.BitMask);
 
-	case ev_float:
+	case TYPE_Float:
 		return *(const float*)Val1 == *(const float*)Val2;
 
-	case ev_vector:
+	case TYPE_Vector:
 		return *(const TVec*)Val1 == *(const TVec*)Val2;
 
-	case ev_name:
+	case TYPE_Name:
 		return *(const VName*)Val1 == *(const VName*)Val2;
 
-	case ev_string:
+	case TYPE_String:
 		return *(const VStr*)Val1 == *(const VStr*)Val2;
 
-	case ev_pointer:
+	case TYPE_Pointer:
 		return *(void*const*)Val1 == *(void*const*)Val2;
 
-	case ev_reference:
+	case TYPE_Reference:
 		return *(VObject*const*)Val1 == *(VObject*const*)Val2;
 
-	case ev_class:
+	case TYPE_Class:
 		return *(VClass*const*)Val1 == *(VClass*const*)Val2;
 
-	case ev_state:
+	case TYPE_State:
 		return *(VState*const*)Val1 == *(VState*const*)Val2;
 
-	case ev_delegate:
+	case TYPE_Delegate:
 		return ((const VObjectDelegate*)Val1)->Obj == ((const VObjectDelegate*)Val2)->Obj &&
 			((const VObjectDelegate*)Val1)->Func == ((const VObjectDelegate*)Val2)->Func;
 
-	case ev_struct:
+	case TYPE_Struct:
 		return Type.Struct->IdenticalObject(Val1, Val2);
 
-	case ev_array:
+	case TYPE_Array:
 		IntType = Type;
 		IntType.Type = Type.ArrayInnerType;
 		InnerSize = IntType.GetSize();
@@ -1094,15 +1094,15 @@ void VField::NetSerialiseValue(VStream& Strm, vuint8* Data, const VField::FType&
 	int InnerSize;
 	switch (Type.Type)
 	{
-	case ev_int:
+	case TYPE_Int:
 		Strm << *(vint32*)Data;
 		break;
 
-	case ev_byte:
+	case TYPE_Byte:
 		Strm << *(vuint8*)Data;
 		break;
 
-	case ev_bool:
+	case TYPE_Bool:
 		if (Strm.IsLoading())
 		{
 			vuint8 Val;
@@ -1119,16 +1119,16 @@ void VField::NetSerialiseValue(VStream& Strm, vuint8* Data, const VField::FType&
 		}
 		break;
 
-	case ev_float:
+	case TYPE_Float:
 		Strm << *(float*)Data;
 		break;
 
 	//FIXME this will work only for the local connection.
-	case ev_name:
+	case TYPE_Name:
 		Strm << *(vint32*)Data;
 		break;
 
-	case ev_vector:
+	case TYPE_Vector:
 		if (Type.Struct->Name == NAME_TAVec)
 		{
 			if (Strm.IsLoading())
@@ -1181,11 +1181,11 @@ void VField::NetSerialiseValue(VStream& Strm, vuint8* Data, const VField::FType&
 		}
 		break;
 
-	case ev_string:
+	case TYPE_String:
 		Strm << *(VStr*)Data;
 		break;
 
-	case ev_state:
+	case TYPE_State:
 		if (Strm.IsLoading())
 		{
 			vuint32 ClassId;
@@ -1221,11 +1221,11 @@ void VField::NetSerialiseValue(VStream& Strm, vuint8* Data, const VField::FType&
 		}
 		break;
 
-	case ev_struct:
+	case TYPE_Struct:
 		Type.Struct->NetSerialiseObject(Strm, Data);
 		break;
 
-	case ev_array:
+	case TYPE_Array:
 		IntType = Type;
 		IntType.Type = Type.ArrayInnerType;
 		InnerSize = IntType.GetSize();
@@ -1252,20 +1252,20 @@ int VField::FType::GetSize() const
 	guard(VField::FType::GetSize);
 	switch (Type)
 	{
-	case ev_int:		return sizeof(vint32);
-	case ev_byte:		return sizeof(vuint8);
-	case ev_bool:		return sizeof(vuint32);
-	case ev_float:		return sizeof(float);
-	case ev_name:		return sizeof(VName);
-	case ev_string:		return sizeof(VStr);
-	case ev_pointer:	return sizeof(void*);
-	case ev_reference:	return sizeof(VObject*);
-	case ev_class:		return sizeof(VClass*);
-	case ev_state:		return sizeof(VState*);
-	case ev_delegate:	return sizeof(VObjectDelegate);
-	case ev_array:		return ArrayDim * GetArrayInnerType().GetSize();
-	case ev_struct:		return (Struct->Size + 3) & ~3;
-	case ev_vector:		return sizeof(TVec);
+	case TYPE_Int:		return sizeof(vint32);
+	case TYPE_Byte:		return sizeof(vuint8);
+	case TYPE_Bool:		return sizeof(vuint32);
+	case TYPE_Float:		return sizeof(float);
+	case TYPE_Name:		return sizeof(VName);
+	case TYPE_String:		return sizeof(VStr);
+	case TYPE_Pointer:	return sizeof(void*);
+	case TYPE_Reference:	return sizeof(VObject*);
+	case TYPE_Class:		return sizeof(VClass*);
+	case TYPE_State:		return sizeof(VState*);
+	case TYPE_Delegate:	return sizeof(VObjectDelegate);
+	case TYPE_Array:		return ArrayDim * GetArrayInnerType().GetSize();
+	case TYPE_Struct:		return (Struct->Size + 3) & ~3;
+	case TYPE_Vector:		return sizeof(TVec);
 	}
 	return 0;
 	unguard;
@@ -1282,20 +1282,20 @@ int VField::FType::GetAlignment() const
 	guard(VField::FType::GetAlignment);
 	switch (Type)
 	{
-	case ev_int:		return sizeof(vint32);
-	case ev_byte:		return sizeof(vuint8);
-	case ev_bool:		return sizeof(vuint32);
-	case ev_float:		return sizeof(float);
-	case ev_name:		return sizeof(VName);
-	case ev_string:		return sizeof(char*);
-	case ev_pointer:	return sizeof(void*);
-	case ev_reference:	return sizeof(VObject*);
-	case ev_class:		return sizeof(VClass*);
-	case ev_state:		return sizeof(VState*);
-	case ev_delegate:	return sizeof(VObject*);
-	case ev_array:		return GetArrayInnerType().GetAlignment();
-	case ev_struct:		return Struct->Alignment;
-	case ev_vector:		return sizeof(float);
+	case TYPE_Int:			return sizeof(vint32);
+	case TYPE_Byte:			return sizeof(vuint8);
+	case TYPE_Bool:			return sizeof(vuint32);
+	case TYPE_Float:		return sizeof(float);
+	case TYPE_Name:			return sizeof(VName);
+	case TYPE_String:		return sizeof(char*);
+	case TYPE_Pointer:		return sizeof(void*);
+	case TYPE_Reference:	return sizeof(VObject*);
+	case TYPE_Class:		return sizeof(VClass*);
+	case TYPE_State:		return sizeof(VState*);
+	case TYPE_Delegate:		return sizeof(VObject*);
+	case TYPE_Array:		return GetArrayInnerType().GetAlignment();
+	case TYPE_Struct:		return Struct->Alignment;
+	case TYPE_Vector:		return sizeof(float);
 	}
 	return 0;
 	unguard;
@@ -1310,14 +1310,14 @@ int VField::FType::GetAlignment() const
 VField::FType VField::FType::GetArrayInnerType() const
 {
 	guard(VField::FType::GetArrayInnerType);
-	if (Type != ev_array)
+	if (Type != TYPE_Array)
 	{
 		Sys_Error("Not an array type");
 		return *this;
 	}
 	VField::FType ret = *this;
 	ret.Type = ArrayInnerType;
-	ret.ArrayInnerType = ev_void;
+	ret.ArrayInnerType = TYPE_Void;
 	ret.ArrayDim = 0;
 	return ret;
 	unguard;
@@ -1988,11 +1988,11 @@ void VConstant::Serialise(VStream& Strm)
 	Strm << Type;
 	switch (Type)
 	{
-	case ev_float:
+	case TYPE_Float:
 		Strm << FloatValue;
 		break;
 
-	case ev_name:
+	case TYPE_Name:
 		Strm << *(VName*)&Value;
 		break;
 
@@ -2085,8 +2085,8 @@ void VStruct::CalcFieldOffsets()
 	VField* PrevField = NULL;
 	for (VField* fi = Fields; fi; fi = fi->Next)
 	{
-		if (fi->Type.Type == ev_bool && PrevField &&
-			PrevField->Type.Type == ev_bool &&
+		if (fi->Type.Type == TYPE_Bool && PrevField &&
+			PrevField->Type.Type == TYPE_Bool &&
 			PrevField->Type.BitMask != 0x80000000)
 		{
 			vuint32 bit_mask = PrevField->Type.BitMask << 1;
@@ -2097,8 +2097,8 @@ void VStruct::CalcFieldOffsets()
 		}
 		else
 		{
-			if (fi->Type.Type == ev_struct ||
-				(fi->Type.Type == ev_array && fi->Type.ArrayInnerType == ev_struct))
+			if (fi->Type.Type == TYPE_Struct ||
+				(fi->Type.Type == TYPE_Array && fi->Type.ArrayInnerType == TYPE_Struct))
 			{
 				//	Make sure struct size has been calculated.
 				fi->Type.Struct->PostLoad();
@@ -2139,13 +2139,13 @@ void VStruct::InitReferences()
 	{
 		switch (F->Type.Type)
 		{
-		case ev_reference:
-		case ev_delegate:
+		case TYPE_Reference:
+		case TYPE_Delegate:
 			F->NextReference = ReferenceFields;
 			ReferenceFields = F;
 			break;
 		
-		case ev_struct:
+		case TYPE_Struct:
 			F->Type.Struct->PostLoad();
 			if (F->Type.Struct->ReferenceFields)
 			{
@@ -2154,13 +2154,13 @@ void VStruct::InitReferences()
 			}
 			break;
 		
-		case ev_array:
-			if (F->Type.ArrayInnerType == ev_reference)
+		case TYPE_Array:
+			if (F->Type.ArrayInnerType == TYPE_Reference)
 			{
 				F->NextReference = ReferenceFields;
 				ReferenceFields = F;
 			}
-			else if (F->Type.ArrayInnerType == ev_struct)
+			else if (F->Type.ArrayInnerType == TYPE_Struct)
 			{
 				F->Type.Struct->PostLoad();
 				if (F->Type.Struct->ReferenceFields)
@@ -2194,12 +2194,12 @@ void VStruct::InitDestructorFields()
 	{
 		switch (F->Type.Type)
 		{
-		case ev_string:
+		case TYPE_String:
 			F->DestructorLink = DestructorFields;
 			DestructorFields = F;
 			break;
 		
-		case ev_struct:
+		case TYPE_Struct:
 			F->Type.Struct->PostLoad();
 			if (F->Type.Struct->DestructorFields)
 			{
@@ -2208,13 +2208,13 @@ void VStruct::InitDestructorFields()
 			}
 			break;
 		
-		case ev_array:
-			if (F->Type.ArrayInnerType == ev_string)
+		case TYPE_Array:
+			if (F->Type.ArrayInnerType == TYPE_String)
 			{
 				F->DestructorLink = DestructorFields;
 				DestructorFields = F;
 			}
-			else if (F->Type.ArrayInnerType == ev_struct)
+			else if (F->Type.ArrayInnerType == TYPE_Struct)
 			{
 				F->Type.Struct->PostLoad();
 				if (F->Type.Struct->DestructorFields)
@@ -2927,8 +2927,8 @@ void VClass::CalcFieldOffsets()
 	}
 	for (VField* fi = Fields; fi; fi = fi->Next)
 	{
-		if (fi->Type.Type == ev_bool && PrevField &&
-			PrevField->Type.Type == ev_bool &&
+		if (fi->Type.Type == TYPE_Bool && PrevField &&
+			PrevField->Type.Type == TYPE_Bool &&
 			PrevField->Type.BitMask != 0x80000000)
 		{
 			vuint32 bit_mask = PrevField->Type.BitMask << 1;
@@ -2939,8 +2939,8 @@ void VClass::CalcFieldOffsets()
 		}
 		else
 		{
-			if (fi->Type.Type == ev_struct ||
-				(fi->Type.Type == ev_array && fi->Type.ArrayInnerType == ev_struct))
+			if (fi->Type.Type == TYPE_Struct ||
+				(fi->Type.Type == TYPE_Array && fi->Type.ArrayInnerType == TYPE_Struct))
 			{
 				//	Make sure struct size has been calculated.
 				fi->Type.Struct->PostLoad();
@@ -3041,13 +3041,13 @@ void VClass::InitReferences()
 	{
 		switch (F->Type.Type)
 		{
-		case ev_reference:
-		case ev_delegate:
+		case TYPE_Reference:
+		case TYPE_Delegate:
 			F->NextReference = ReferenceFields;
 			ReferenceFields = F;
 			break;
 		
-		case ev_struct:
+		case TYPE_Struct:
 			F->Type.Struct->PostLoad();
 			if (F->Type.Struct->ReferenceFields)
 			{
@@ -3056,13 +3056,13 @@ void VClass::InitReferences()
 			}
 			break;
 		
-		case ev_array:
-			if (F->Type.ArrayInnerType == ev_reference)
+		case TYPE_Array:
+			if (F->Type.ArrayInnerType == TYPE_Reference)
 			{
 				F->NextReference = ReferenceFields;
 				ReferenceFields = F;
 			}
-			else if (F->Type.ArrayInnerType == ev_struct)
+			else if (F->Type.ArrayInnerType == TYPE_Struct)
 			{
 				F->Type.Struct->PostLoad();
 				if (F->Type.Struct->ReferenceFields)
@@ -3096,12 +3096,12 @@ void VClass::InitDestructorFields()
 	{
 		switch (F->Type.Type)
 		{
-		case ev_string:
+		case TYPE_String:
 			F->DestructorLink = DestructorFields;
 			DestructorFields = F;
 			break;
 		
-		case ev_struct:
+		case TYPE_Struct:
 			F->Type.Struct->PostLoad();
 			if (F->Type.Struct->DestructorFields)
 			{
@@ -3110,13 +3110,13 @@ void VClass::InitDestructorFields()
 			}
 			break;
 		
-		case ev_array:
-			if (F->Type.ArrayInnerType == ev_string)
+		case TYPE_Array:
+			if (F->Type.ArrayInnerType == TYPE_String)
 			{
 				F->DestructorLink = DestructorFields;
 				DestructorFields = F;
 			}
-			else if (F->Type.ArrayInnerType == ev_struct)
+			else if (F->Type.ArrayInnerType == TYPE_Struct)
 			{
 				F->Type.Struct->PostLoad();
 				if (F->Type.Struct->DestructorFields)

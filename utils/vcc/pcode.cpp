@@ -60,7 +60,7 @@ VStatementInfo StatementInfo[NUM_OPCODES] =
 
 VEmitContext::VEmitContext(VMemberBase* Member)
 : CurrentFunc(NULL)
-, FuncRetType(ev_unknown)
+, FuncRetType(TYPE_Unknown)
 , localsofs(0)
 , InDefaultProperties(false)
 {
@@ -430,20 +430,20 @@ void VEmitContext::EmitClearStrings(int Start, int End)
 {
 	for (int i = Start; i < End; i++)
 	{
-		if (LocalDefs[i].type.type == ev_string)
+		if (LocalDefs[i].type.type == TYPE_String)
 		{
 			EmitLocalAddress(LocalDefs[i].ofs);
 			AddStatement(OPC_ClearPointedStr);
 		}
-		if (LocalDefs[i].type.type == ev_struct &&
+		if (LocalDefs[i].type.type == TYPE_Struct &&
 			LocalDefs[i].type.Struct->NeedsDestructor())
 		{
 			EmitLocalAddress(LocalDefs[i].ofs);
 			AddStatement(OPC_ClearPointedStruct, LocalDefs[i].type.Struct);
 		}
-		if (LocalDefs[i].type.type == ev_array)
+		if (LocalDefs[i].type.type == TYPE_Array)
 		{
-			if (LocalDefs[i].type.ArrayInnerType == ev_string)
+			if (LocalDefs[i].type.ArrayInnerType == TYPE_String)
 			{
 				for (int j = 0; j < LocalDefs[i].type.array_dim; j++)
 				{
@@ -453,7 +453,7 @@ void VEmitContext::EmitClearStrings(int Start, int End)
 					AddStatement(OPC_ClearPointedStr);
 				}
 			}
-			else if (LocalDefs[i].type.ArrayInnerType == ev_struct &&
+			else if (LocalDefs[i].type.ArrayInnerType == TYPE_Struct &&
 				LocalDefs[i].type.Struct->NeedsDestructor())
 			{
 				for (int j = 0; j < LocalDefs[i].type.array_dim; j++)

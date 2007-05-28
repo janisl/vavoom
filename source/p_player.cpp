@@ -110,26 +110,26 @@ bool VBasePlayer::ExecuteNetMethod(VMethod* Func)
 	{
 		switch (Func->ParamTypes[i].Type)
 		{
-		case ev_int:
-		case ev_byte:
-		case ev_bool:
-		case ev_name:
+		case TYPE_Int:
+		case TYPE_Byte:
+		case TYPE_Bool:
+		case TYPE_Name:
 			VField::NetSerialiseValue(Msg, (vuint8*)&Param->i, Func->ParamTypes[i]);
 			Param++;
 			break;
-		case ev_float:
+		case TYPE_Float:
 			VField::NetSerialiseValue(Msg, (vuint8*)&Param->f, Func->ParamTypes[i]);
 			Param++;
 			break;
-		case ev_string:
-		case ev_pointer:
-		case ev_reference:
-		case ev_class:
-		case ev_state:
+		case TYPE_String:
+		case TYPE_Pointer:
+		case TYPE_Reference:
+		case TYPE_Class:
+		case TYPE_State:
 			VField::NetSerialiseValue(Msg, (vuint8*)&Param->p, Func->ParamTypes[i]);
 			Param++;
 			break;
-		case ev_vector:
+		case TYPE_Vector:
 			{
 				TVec Vec;
 				Vec.x = Param[0].f;
@@ -155,22 +155,22 @@ bool VBasePlayer::ExecuteNetMethod(VMethod* Func)
 	{
 		switch (Func->ParamTypes[i].Type)
 		{
-		case ev_int:
-		case ev_byte:
-		case ev_bool:
-		case ev_float:
-		case ev_name:
-		case ev_pointer:
-		case ev_reference:
-		case ev_class:
-		case ev_state:
+		case TYPE_Int:
+		case TYPE_Byte:
+		case TYPE_Bool:
+		case TYPE_Float:
+		case TYPE_Name:
+		case TYPE_Pointer:
+		case TYPE_Reference:
+		case TYPE_Class:
+		case TYPE_State:
 			Param++;
 			break;
-		case ev_string:
+		case TYPE_String:
 			((VStr*)&Param->p)->Clean();
 			Param++;
 			break;
-		case ev_vector:
+		case TYPE_Vector:
 			Param += 3;
 			break;
 		default:
@@ -184,27 +184,27 @@ bool VBasePlayer::ExecuteNetMethod(VMethod* Func)
 	guard(RetVal);
 	switch (Func->ReturnType.Type)
 	{
-	case ev_void:
+	case TYPE_Void:
 		break;
-	case ev_int:
-	case ev_byte:
-	case ev_bool:
-	case ev_name:
+	case TYPE_Int:
+	case TYPE_Byte:
+	case TYPE_Bool:
+	case TYPE_Name:
 		PR_Push(0);
 		break;
-	case ev_float:
+	case TYPE_Float:
 		PR_Pushf(0);
 		break;
-	case ev_string:
+	case TYPE_String:
 		PR_PushStr(VStr());
 		break;
-	case ev_pointer:
-	case ev_reference:
-	case ev_class:
-	case ev_state:
+	case TYPE_Pointer:
+	case TYPE_Reference:
+	case TYPE_Class:
+	case TYPE_State:
 		PR_PushPtr(NULL);
 		break;
-	case ev_vector:
+	case TYPE_Vector:
 		PR_Pushf(0);
 		PR_Pushf(0);
 		PR_Pushf(0);
