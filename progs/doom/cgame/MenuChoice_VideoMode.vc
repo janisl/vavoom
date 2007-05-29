@@ -69,22 +69,16 @@ int GetModeHeight()
 defaultproperties
 {
 	Text = "Resolution";
-	EnumNames[0] = "320x200";
-	EnumNames[1] = "320x240";
-	EnumNames[2] = "640x400";
-	EnumNames[3] = "640x480";
-	EnumNames[4] = "800x600";
-	EnumNames[5] = "1024x768";
-	EnumNames[6] = "1152x864";
-	EnumNames[7] = "1280x1024";
-	EnumNames[8] = "1600x1200";
-	modes[0].width = 320; modes[0].height = 200;
-	modes[1].width = 320; modes[1].height = 240;
-	modes[2].width = 640; modes[2].height = 400;
-	modes[3].width = 640; modes[3].height = 480;
-	modes[4].width = 800; modes[4].height = 600;
-	modes[5].width = 1024; modes[5].height = 768;
-	modes[6].width = 1152; modes[6].height = 864;
-	modes[7].width = 1280; modes[7].height = 1024;
-	modes[8].width = 1600; modes[8].height = 1200;
+	EnumNames[0] = "640x480";
+	EnumNames[1] = "800x600";
+	EnumNames[2] = "1024x768";
+	EnumNames[3] = "1152x864";
+	EnumNames[4] = "1280x1024";
+	EnumNames[5] = "1600x1200";
+	modes[0].width = 640; modes[0].height = 480;
+	modes[1].width = 800; modes[1].height = 600;
+	modes[2].width = 1024; modes[2].height = 768;
+	modes[3].width = 1152; modes[3].height = 864;
+	modes[4].width = 1280; modes[4].height = 1024;
+	modes[5].width = 1600; modes[5].height = 1200;
 }
