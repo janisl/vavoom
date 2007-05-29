@@ -55,6 +55,7 @@ extern surfcache_t*		sc_rover;
 extern surfcache_t*		sc_base;
 
 extern bool				ForcePaletteUpdate;
+extern vuint32			CurrentFade;
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
@@ -240,6 +241,10 @@ void VSoftwareDrawer::InitResolution()
 	//	Force palette update
 	ForcePaletteUpdate = true;
 	UpdatePalette();
+
+	//	Needed for 8-bit mode.
+	CurrentFade = 0xffffffff;
+	SetFade(0);
 	unguard;
 }
 

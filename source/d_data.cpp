@@ -66,11 +66,11 @@ vuint16			scaletable[32][256];
 vuint8*			consbgmap = NULL;
 
 bool			ForcePaletteUpdate;
+vuint32			CurrentFade;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static rgb_t	CurrentPal[256];
-static vuint32	CurrentFade;
 
 // CODE --------------------------------------------------------------------
 
