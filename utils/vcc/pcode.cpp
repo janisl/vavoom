@@ -123,7 +123,7 @@ void VEmitContext::EndCode()
 #endif
 	FInstruction& Dummy = CurrentFunc->Instructions.Alloc();
 	Dummy.Opcode = OPC_Done;
-	CurrentFunc->DumpAsm();
+//	CurrentFunc->DumpAsm();
 }
 
 //==========================================================================
@@ -435,6 +435,12 @@ void VEmitContext::EmitClearStrings(int Start, int End)
 		{
 			EmitLocalAddress(LocalDefs[i].Offset);
 			AddStatement(OPC_ClearPointedStr);
+		}
+		if (LocalDefs[i].Type.Type == TYPE_DynamicArray)
+		{
+			EmitLocalAddress(LocalDefs[i].Offset);
+			AddStatement(OPC_PushNumber0);
+			AddStatement(OPC_DynArraySetNum, LocalDefs[i].Type.GetArrayInnerType());
 		}
 		if (LocalDefs[i].Type.Type == TYPE_Struct &&
 			LocalDefs[i].Type.Struct->NeedsDestructor())
