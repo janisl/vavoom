@@ -126,8 +126,6 @@ void VSoftwareDrawer::SetTexture(int tex)
 		return;
 	}
 
-if (GTextureManager.Textures[tex]->WarpType)
-dprintf("Warp needs rebuild %d\n", GTextureManager.Textures[tex]->CheckModified());
 	if (!GTextureManager.Textures[tex]->DriverData ||
 		GTextureManager.Textures[tex]->CheckModified())
 	{
