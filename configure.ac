@@ -58,8 +58,6 @@ if test "x$enable_debug" == "xyes"; then
 	CFLAGS="$CFLAGS -W -Wall"
 	CXXFLAGS="$CXXFLAGS -W -Wall"
 	LDFLAGS="$LDFLAGS -W -Wall"
-else
-	LDFLAGS="$LDFLAGS -s"
 fi
 
 case $host in
