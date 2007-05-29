@@ -285,6 +285,46 @@ public:
 	bool IsDynArraySetNum() const;
 };
 
+//==========================================================================
+//
+//	VDynArrayInsert
+//
+//==========================================================================
+
+class VDynArrayInsert : public VExpression
+{
+public:
+	VExpression*		ArrayExpr;
+	VExpression*		IndexExpr;
+	VExpression*		CountExpr;
+
+	VDynArrayInsert(VExpression*, VExpression*, VExpression*,
+		const TLocation&);
+	~VDynArrayInsert();
+	VExpression* DoResolve(VEmitContext&);
+	void Emit(VEmitContext&);
+};
+
+//==========================================================================
+//
+//	VDynArrayRemove
+//
+//==========================================================================
+
+class VDynArrayRemove : public VExpression
+{
+public:
+	VExpression*		ArrayExpr;
+	VExpression*		IndexExpr;
+	VExpression*		CountExpr;
+
+	VDynArrayRemove(VExpression*, VExpression*, VExpression*,
+		const TLocation&);
+	~VDynArrayRemove();
+	VExpression* DoResolve(VEmitContext&);
+	void Emit(VEmitContext&);
+};
+
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -1577,7 +1617,6 @@ VExpression* VDotField::IntResolve(VEmitContext& ec, bool AssignTarget)
 	else if (op->Type.Type == TYPE_DynamicArray)
 	{
 		TType type = op->Type;
-		int Flags = op->Flags;
 		op->Flags &= ~FIELD_ReadOnly;
 		op->RequestAddressOf();
 		if (FieldName == NAME_Num)
@@ -1753,6 +1792,7 @@ VArrayElement::VArrayElement(VExpression* AOp, VExpression* AInd, const TLocatio
 , op(AOp)
 , ind(AInd)
 , AddressRequested(false)
+, IsAssign(false)
 {
 	if (!ind)
 	{
@@ -1828,6 +1868,18 @@ VExpression* VArrayElement::DoResolve(VEmitContext& ec)
 
 //==========================================================================
 //
+//	VArrayElement::ResolveAssignmentTarget
+//
+//==========================================================================
+
+VExpression* VArrayElement::ResolveAssignmentTarget(VEmitContext& ec)
+{
+	IsAssign = true;
+	return Resolve(ec);
+}
+
+//==========================================================================
+//
 //	VArrayElement::RequestAddressOf
 //
 //==========================================================================
@@ -1855,7 +1907,14 @@ void VArrayElement::Emit(VEmitContext& ec)
 	ind->Emit(ec);
 	if (op->Type.Type == TYPE_DynamicArray)
 	{
-		ec.AddStatement(OPC_DynArrayElement, RealType);
+		if (IsAssign)
+		{
+			ec.AddStatement(OPC_DynArrayElementGrow, RealType);
+		}
+		else
+		{
+			ec.AddStatement(OPC_DynArrayElement, RealType);
+		}
 	}
 	else
 	{
@@ -2080,6 +2139,55 @@ VExpression* VDotInvocation::DoResolve(VEmitContext& ec)
 		SelfExpr = SelfExpr->Resolve(ec);
 	if (!SelfExpr)
 	{
+		delete this;
+		return NULL;
+	}
+
+	if (SelfExpr->Type.Type == TYPE_DynamicArray)
+	{
+		if (MethodName == NAME_Insert)
+		{
+			if (NumArgs == 1)
+			{
+				//	Default count is 1
+				Args[1] = new VIntLiteral(1, Loc);
+				NumArgs = 2;
+			}
+			if (NumArgs != 2)
+			{
+				ParseError(Loc, "Insert requires 1 or 2 arguments");
+				delete this;
+				return NULL;
+			}
+			VExpression* e = new VDynArrayInsert(SelfExpr, Args[0], Args[1], Loc);
+			SelfExpr = NULL;
+			NumArgs = 0;
+			delete this;
+			return e->Resolve(ec);
+		}
+
+		if (MethodName == NAME_Remove)
+		{
+			if (NumArgs == 1)
+			{
+				//	Default count is 1
+				Args[1] = new VIntLiteral(1, Loc);
+				NumArgs = 2;
+			}
+			if (NumArgs != 2)
+			{
+				ParseError(Loc, "Insert requires 1 or 2 arguments");
+				delete this;
+				return NULL;
+			}
+			VExpression* e = new VDynArrayRemove(SelfExpr, Args[0], Args[1], Loc);
+			SelfExpr = NULL;
+			NumArgs = 0;
+			delete this;
+			return e->Resolve(ec);
+		}
+
+		ParseError(Loc, "Invalid operation on dynamic array");
 		delete this;
 		return NULL;
 	}
@@ -4958,7 +5066,7 @@ VExpression* VTypeExpr::DoResolve(VEmitContext& ec)
 //
 //==========================================================================
 
-VTypeExpr* VTypeExpr::ResolveAsType(VEmitContext& ec)
+VTypeExpr* VTypeExpr::ResolveAsType(VEmitContext&)
 {
 	if (Type.Type == TYPE_Unknown)
 	{
@@ -5336,6 +5444,190 @@ void VDynArraySetNum::Emit(VEmitContext& ec)
 bool VDynArraySetNum::IsDynArraySetNum() const
 {
 	return true;
+}
+
+//END
+
+//BEGIN VDynArrayInsert
+
+//==========================================================================
+//
+//	VDynArrayInsert::VDynArrayInsert
+//
+//==========================================================================
+
+VDynArrayInsert::VDynArrayInsert(VExpression* AArrayExpr,
+	VExpression* AIndexExpr, VExpression* ACountExpr, const TLocation& ALoc)
+: VExpression(ALoc)
+, ArrayExpr(AArrayExpr)
+, IndexExpr(AIndexExpr)
+, CountExpr(ACountExpr)
+{
+}
+
+//==========================================================================
+//
+//	VDynArrayInsert::~VDynArrayInsert
+//
+//==========================================================================
+
+VDynArrayInsert::~VDynArrayInsert()
+{
+	if (ArrayExpr)
+		delete ArrayExpr;
+	if (IndexExpr)
+		delete IndexExpr;
+	if (CountExpr)
+		delete CountExpr;
+}
+
+//==========================================================================
+//
+//	VDynArrayInsert::DoResolve
+//
+//==========================================================================
+
+VExpression* VDynArrayInsert::DoResolve(VEmitContext& ec)
+{
+	ArrayExpr->RequestAddressOf();
+
+	//	Resolve arguments.
+	if (IndexExpr)
+	{
+		IndexExpr = IndexExpr->Resolve(ec);
+	}
+	if (CountExpr)
+	{
+		CountExpr = CountExpr->Resolve(ec);
+	}
+	if (!IndexExpr || !CountExpr)
+	{
+		delete this;
+		return NULL;
+	}
+
+	//	Check argument types.
+	if (IndexExpr->Type.Type != TYPE_Int)
+	{
+		ParseError(Loc, "Index must be integer expression");
+		delete this;
+		return NULL;
+	}
+	if (CountExpr->Type.Type != TYPE_Int)
+	{
+		ParseError(Loc, "Count must be integer expression");
+		delete this;
+		return NULL;
+	}
+
+	Type = TType(TYPE_Void);
+	return this;
+}
+
+//==========================================================================
+//
+//	VDynArrayInsert::Emit
+//
+//==========================================================================
+
+void VDynArrayInsert::Emit(VEmitContext& ec)
+{
+	ArrayExpr->Emit(ec);
+	IndexExpr->Emit(ec);
+	CountExpr->Emit(ec);
+	ec.AddStatement(OPC_DynArrayInsert, ArrayExpr->Type.GetArrayInnerType());
+}
+
+//END
+
+//BEGIN VDynArrayRemove
+
+//==========================================================================
+//
+//	VDynArrayRemove::VDynArrayRemove
+//
+//==========================================================================
+
+VDynArrayRemove::VDynArrayRemove(VExpression* AArrayExpr,
+	VExpression* AIndexExpr, VExpression* ACountExpr, const TLocation& ALoc)
+: VExpression(ALoc)
+, ArrayExpr(AArrayExpr)
+, IndexExpr(AIndexExpr)
+, CountExpr(ACountExpr)
+{
+}
+
+//==========================================================================
+//
+//	VDynArrayRemove::~VDynArrayRemove
+//
+//==========================================================================
+
+VDynArrayRemove::~VDynArrayRemove()
+{
+	if (ArrayExpr)
+		delete ArrayExpr;
+	if (IndexExpr)
+		delete IndexExpr;
+	if (CountExpr)
+		delete CountExpr;
+}
+
+//==========================================================================
+//
+//	VDynArrayRemove::DoResolve
+//
+//==========================================================================
+
+VExpression* VDynArrayRemove::DoResolve(VEmitContext& ec)
+{
+	ArrayExpr->RequestAddressOf();
+
+	//	Resolve arguments.
+	if (IndexExpr)
+	{
+		IndexExpr = IndexExpr->Resolve(ec);
+	}
+	if (CountExpr)
+	{
+		CountExpr = CountExpr->Resolve(ec);
+	}
+	if (!IndexExpr || !CountExpr)
+	{
+		delete this;
+		return NULL;
+	}
+
+	//	Check argument types.
+	if (IndexExpr->Type.Type != TYPE_Int)
+	{
+		ParseError(Loc, "Index must be integer expression");
+		delete this;
+		return NULL;
+	}
+	if (CountExpr->Type.Type != TYPE_Int)
+	{
+		ParseError(Loc, "Count must be integer expression");
+		delete this;
+		return NULL;
+	}
+
+	Type = TType(TYPE_Void);
+	return this;
+}
+
+//==========================================================================
+//
+//	VDynArrayRemove::Emit
+//
+//==========================================================================
+
+void VDynArrayRemove::Emit(VEmitContext& ec)
+{
+	ArrayExpr->Emit(ec);
+	IndexExpr->Emit(ec);
+	CountExpr->Emit(ec);
+	ec.AddStatement(OPC_DynArrayRemove, ArrayExpr->Type.GetArrayInnerType());
 }
 
 //END

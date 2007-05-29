@@ -1681,21 +1681,52 @@ func_loop:
 			PR_VM_BREAK;
 
 		PR_VM_CASE(OPC_DynArrayElement)
+			if (sp[-1].i < 0 || sp[-1].i >= ((VScriptArray*)sp[-2].p)->Num())
+			{
+				Sys_Error("Index outside the bounds of an array");
+			}
 			sp[-2].p = ((VScriptArray*)sp[-2].p)->Ptr() + sp[-1].i * ReadInt32(ip + 1);
 			ip += 5;
 			sp--;
 			PR_VM_BREAK;
 
 		PR_VM_CASE(OPC_DynArrayElementS)
+			if (sp[-1].i < 0 || sp[-1].i >= ((VScriptArray*)sp[-2].p)->Num())
+			{
+				Sys_Error("Index outside the bounds of an array");
+			}
 			sp[-2].p = ((VScriptArray*)sp[-2].p)->Ptr() + sp[-1].i * ReadInt16(ip + 1);
 			ip += 3;
 			sp--;
 			PR_VM_BREAK;
 
 		PR_VM_CASE(OPC_DynArrayElementB)
+			if (sp[-1].i < 0 || sp[-1].i >= ((VScriptArray*)sp[-2].p)->Num())
+			{
+				Sys_Error("Index outside the bounds of an array");
+			}
 			sp[-2].p = ((VScriptArray*)sp[-2].p)->Ptr() + sp[-1].i * ip[1];
 			ip += 2;
 			sp--;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_DynArrayElementGrow)
+			{
+				VField::FType Type;
+				ReadType(Type, ip + 1);
+				ip += 9 + sizeof(VClass*);
+				if (sp[-1].i < 0)
+				{
+					Sys_Error("Array index is negative");
+				}
+				VScriptArray& A = *(VScriptArray*)sp[-2].p;
+				if (sp[-1].i >= A.Num())
+				{
+					A.SetNum(sp[-1].i + 1, Type);
+				}
+				sp[-2].p = A.Ptr() + sp[-1].i * Type.GetSize();
+				sp--;
+			}
 			PR_VM_BREAK;
 
 		PR_VM_CASE(OPC_DynArrayGetNum)
@@ -1710,6 +1741,26 @@ func_loop:
 				ip += 9 + sizeof(VClass*);
 				((VScriptArray*)sp[-2].p)->SetNum(sp[-1].i, Type);
 				sp -= 2;
+			}
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_DynArrayInsert)
+			{
+				VField::FType Type;
+				ReadType(Type, ip + 1);
+				ip += 9 + sizeof(VClass*);
+				((VScriptArray*)sp[-3].p)->Insert(sp[-2].i, sp[-1].i, Type);
+				sp -= 3;
+			}
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_DynArrayRemove)
+			{
+				VField::FType Type;
+				ReadType(Type, ip + 1);
+				ip += 9 + sizeof(VClass*);
+				((VScriptArray*)sp[-3].p)->Remove(sp[-2].i, sp[-1].i, Type);
+				sp -= 3;
 			}
 			PR_VM_BREAK;
 

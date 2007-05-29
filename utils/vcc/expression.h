@@ -300,10 +300,12 @@ public:
 	VExpression*		op;
 	VExpression*		ind;
 	bool				AddressRequested;
+	bool				IsAssign;
 
 	VArrayElement(VExpression*, VExpression*, const TLocation&);
 	~VArrayElement();
 	VExpression* DoResolve(VEmitContext&);
+	VExpression* ResolveAssignmentTarget(VEmitContext&);
 	void RequestAddressOf();
 	void Emit(VEmitContext&);
 };

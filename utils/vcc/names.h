@@ -43,6 +43,8 @@ REGISTER_NAME(None)
 
 REGISTER_NAME(Object)
 REGISTER_NAME(Num)
+REGISTER_NAME(Insert)
+REGISTER_NAME(Remove)
 
 // Closing -----------------------------------------------------------------
 

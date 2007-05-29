@@ -383,8 +383,11 @@ enum
 	DECLARE_OPC(DynArrayElement, TypeSize),
 	DECLARE_OPC(DynArrayElementS, TypeSizeS),
 	DECLARE_OPC(DynArrayElementB, TypeSizeB),
+	DECLARE_OPC(DynArrayElementGrow, Type),
 	DECLARE_OPC(DynArrayGetNum, None),
 	DECLARE_OPC(DynArraySetNum, Type),
+	DECLARE_OPC(DynArrayInsert, Type),
+	DECLARE_OPC(DynArrayRemove, Type),
 
 	//	Dynamic cast
 	DECLARE_OPC(DynamicCast, Member),
