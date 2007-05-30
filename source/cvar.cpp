@@ -216,7 +216,7 @@ void VCvar::DoSet(const VStr& AValue)
 	if (Flags & CVAR_UserInfo)
 	{
 		Info_SetValueForKey(cls.userinfo, Name, *StringValue);
-		if (cls.state >= ca_connected)
+		if (cls.state >= ca_connected && cl->Net)
 		{
 			cl->Net->SendCommand(VStr("setinfo \"") + Name + "\" \"" +
 				StringValue + "\"\n");
