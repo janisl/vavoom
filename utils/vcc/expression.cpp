@@ -449,6 +449,19 @@ VExpression* VExpression::ResolveAssignmentTarget(VEmitContext& ec)
 
 //==========================================================================
 //
+//	VExpression::ResolveIterator
+//
+//==========================================================================
+
+VExpression* VExpression::ResolveIterator(VEmitContext&)
+{
+	ParseError(Loc, "Iterator method expected");
+	delete this;
+	return NULL;
+}
+
+//==========================================================================
+//
 //	VExpression::RequestAddressOf
 //
 //==========================================================================
@@ -2083,6 +2096,35 @@ VExpression* VCastOrInvocation::DoResolve(VEmitContext& ec)
 
 //==========================================================================
 //
+//	VCastOrInvocation::ResolveIterator
+//
+//==========================================================================
+
+VExpression* VCastOrInvocation::ResolveIterator(VEmitContext& ec)
+{
+	VMethod* M = ec.SelfClass->CheckForMethod(Name);
+	if (!M)
+	{
+		ParseError(Loc, "Unknown method %s", *Name);
+		delete this;
+		return NULL;
+	}
+	if (!(M->Flags & FUNC_Iterator))
+	{
+		ParseError(Loc, "%s is not an iterator method", *Name);
+		delete this;
+		return NULL;
+	}
+
+	VExpression* e = new VInvocation(NULL, M, NULL, false, false, Loc,
+		NumArgs, Args);
+	NumArgs = 0;
+	delete this;
+	return e->Resolve(ec);
+}
+
+//==========================================================================
+//
 //	VCastOrInvocation::Emit
 //
 //==========================================================================
@@ -2225,6 +2267,51 @@ VExpression* VDotInvocation::DoResolve(VEmitContext& ec)
 	ParseError(Loc, "No such method %s", *MethodName);
 	delete this;
 	return NULL;
+}
+
+//==========================================================================
+//
+//	VDotInvocation::ResolveIterator
+//
+//==========================================================================
+
+VExpression* VDotInvocation::ResolveIterator(VEmitContext& ec)
+{
+	if (SelfExpr)
+		SelfExpr = SelfExpr->Resolve(ec);
+	if (!SelfExpr)
+	{
+		delete this;
+		return NULL;
+	}
+
+	if (SelfExpr->Type.Type != TYPE_Reference)
+	{
+		ParseError(Loc, "Object reference expected left side of .");
+		delete this;
+		return NULL;
+	}
+
+	VMethod* M = SelfExpr->Type.Class->CheckForMethod(MethodName);
+	if (!M)
+	{
+		ParseError(Loc, "No such method %s", *MethodName);
+		delete this;
+		return NULL;
+	}
+	if (!(M->Flags & FUNC_Iterator))
+	{
+		ParseError(Loc, "%s is not an iterator method", *MethodName);
+		delete this;
+		return NULL;
+	}
+	
+	VExpression* e = new VInvocation(SelfExpr, M, NULL, true,
+		false, Loc, NumArgs, Args);
+	SelfExpr = NULL;
+	NumArgs = 0;
+	delete this;
+	return e->Resolve(ec);
 }
 
 //==========================================================================

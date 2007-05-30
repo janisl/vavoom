@@ -72,6 +72,7 @@ const char*			VLexer::TokenNames[] =
 	"final",
 	"float",
 	"for",
+	"foreach",
 	"get",
 	"if",
 	"import",
@@ -640,9 +641,17 @@ void VLexer::ProcessLetterToken()
 		{
 			Token = TK_Float;
 		}
-		else if (s[1] == 'o' && s[2] == 'r' && s[3] == 0)
+		else if (s[1] == 'o' && s[2] == 'r')
 		{
-			Token = TK_For;
+			if (s[3] == 0)
+			{
+				Token = TK_For;
+			}
+			else if (s[3] == 'e' && s[4] == 'a' && s[5] == 'c' &&
+				s[6] == 'h' && s[7] == 0)
+			{
+				Token = TK_Foreach;
+			}
 		}
 		break;
 
@@ -665,6 +674,11 @@ void VLexer::ProcessLetterToken()
 		else if (s[1] == 'n' && s[2] == 't' && s[3] == 0)
 		{
 			Token = TK_Int;
+		}
+		else if (s[1] == 't' && s[2] == 'e' && s[3] == 'r' && s[4] == 'a' &&
+			s[5] == 't' && s[6] == 'o' && s[7] == 'r' && s[8] == 0)
+		{
+			Token = TK_Iterator;
 		}
 		break;
 

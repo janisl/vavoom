@@ -56,12 +56,12 @@
 
 FBuiltinInfo *FBuiltinInfo::Builtins;
 
-VStack*				pr_stackPtr; 
+VStack*				pr_stackPtr;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static VMethod*		current_func = NULL;
-static VStack		pr_stack[MAX_PROG_STACK];
+static VMethod*				current_func = NULL;
+static VStack				pr_stack[MAX_PROG_STACK];
 
 // CODE --------------------------------------------------------------------
 
@@ -169,6 +169,7 @@ static void RunFunction(VMethod *func)
 	vuint8*		ip = NULL;
 	VStack*		sp;
 	VStack*		local_vars;
+	VScriptIterator*	ActiveIterators = NULL;
 
 	guardSlow(RunFunction);
 	current_func = func;
@@ -321,12 +322,24 @@ func_loop:
 		PR_VM_CASE(OPC_Return)
 			checkSlow(sp == local_vars + func->NumLocals);
 			pr_stackPtr = local_vars;
+			while (ActiveIterators)
+			{
+				VScriptIterator* Tmp = ActiveIterators;
+				ActiveIterators = Tmp->Next;
+				delete Tmp;
+			}
 			return;
 
 		PR_VM_CASE(OPC_ReturnL)
 			checkSlow(sp == local_vars + func->NumLocals + 1);
 			((VStack*)local_vars)[0] = sp[-1];
 			pr_stackPtr = local_vars + 1;
+			while (ActiveIterators)
+			{
+				VScriptIterator* Tmp = ActiveIterators;
+				ActiveIterators = Tmp->Next;
+				delete Tmp;
+			}
 			return;
 
 		PR_VM_CASE(OPC_ReturnV)
@@ -335,6 +348,12 @@ func_loop:
 			((VStack*)local_vars)[1] = sp[-2];
 			((VStack*)local_vars)[2] = sp[-1];
 			pr_stackPtr = local_vars + 3;
+			while (ActiveIterators)
+			{
+				VScriptIterator* Tmp = ActiveIterators;
+				ActiveIterators = Tmp->Next;
+				delete Tmp;
+			}
 			return;
 
 		PR_VM_CASE(OPC_GotoB)
@@ -1792,6 +1811,30 @@ func_loop:
 				Sys_Error("Reference not set to an instance of an object");
 			}
 			sp[-1].p = ((VClass*)sp[-1].p)->Defaults;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_IteratorInit)
+			ip++;
+			((VScriptIterator*)sp[-1].p)->Next = ActiveIterators;
+			ActiveIterators = (VScriptIterator*)sp[-1].p;
+			sp--;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_IteratorNext)
+			ip++;
+			checkSlow(ActiveIterators);
+			sp->i = ActiveIterators->GetNext();
+			sp++;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_IteratorPop)
+			{
+				ip++;
+				checkSlow(ActiveIterators);
+				VScriptIterator* Temp = ActiveIterators;
+				ActiveIterators = Temp->Next;
+				delete Temp;
+			}
 			PR_VM_BREAK;
 
 		PR_VM_DEFAULT

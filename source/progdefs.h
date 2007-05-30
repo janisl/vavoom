@@ -77,6 +77,7 @@ enum
 	FUNC_Spawner		= 0x0010,	// Automatic cast of return value
 	FUNC_Net			= 0x0020,	// Method is network-replicated
 	FUNC_NetReliable	= 0x0040,	// Sent reliably over the network
+	FUNC_Iterator		= 0x0080,	// Can be used in foreach statements
 
 	FUNC_NetFlags = FUNC_Net | FUNC_NetReliable,
 };
@@ -396,6 +397,11 @@ enum
 	//	Access to the default object
 	DECLARE_OPC(GetDefaultObj, None),
 	DECLARE_OPC(GetClassDefaultObj, None),
+
+	//	Iterators
+	DECLARE_OPC(IteratorInit, None),
+	DECLARE_OPC(IteratorNext, None),
+	DECLARE_OPC(IteratorPop, None),
 
 #undef DECLARE_OPC
 #ifndef OPCODE_INFO

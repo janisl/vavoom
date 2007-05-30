@@ -533,6 +533,96 @@ void VFor::DoEmit(VEmitContext& ec)
 
 //END
 
+//BEGIN VForeach
+
+//==========================================================================
+//
+//	VForeach::VForeach
+//
+//==========================================================================
+
+VForeach::VForeach(VExpression* AExpr, VStatement* AStatement,
+	const TLocation& ALoc)
+: VStatement(ALoc)
+, Expr(AExpr)
+, Statement(AStatement)
+{
+}
+
+//==========================================================================
+//
+//	VForeach::~VForeach
+//
+//==========================================================================
+
+VForeach::~VForeach()
+{
+	if (Expr)
+		delete Expr;
+	if (Statement)
+		delete Statement;
+}
+
+//==========================================================================
+//
+//	VForeach::Resolve
+//
+//==========================================================================
+
+bool VForeach::Resolve(VEmitContext& ec)
+{
+	bool Ret = true;
+
+	if (Expr)
+	{
+		Expr = Expr->ResolveIterator(ec);
+	}
+	if (!Expr)
+	{
+		Ret = false;
+	}
+
+	if (!Statement->Resolve(ec))
+	{
+		Ret = false;
+	}
+
+	return Ret;
+}
+
+//==========================================================================
+//
+//	VForeach::DoEmit
+//
+//==========================================================================
+
+void VForeach::DoEmit(VEmitContext& ec)
+{
+	VLabel OldStart = ec.LoopStart;
+	VLabel OldEnd = ec.LoopEnd;
+
+	Expr->Emit(ec);
+	ec.AddStatement(OPC_IteratorInit);
+
+	VLabel Loop = ec.DefineLabel();
+	ec.LoopStart = ec.DefineLabel();
+	ec.LoopEnd = ec.DefineLabel();
+
+	ec.AddStatement(OPC_Goto, ec.LoopStart);
+	ec.MarkLabel(Loop);
+	Statement->Emit(ec);
+	ec.MarkLabel(ec.LoopStart);
+	ec.AddStatement(OPC_IteratorNext);
+	ec.AddStatement(OPC_IfGoto, Loop);
+	ec.MarkLabel(ec.LoopEnd);
+	ec.AddStatement(OPC_IteratorPop);
+
+	ec.LoopStart = OldStart;
+	ec.LoopEnd = OldEnd;
+}
+
+//END
+
 //BEGIN VSwitch
 
 //==========================================================================

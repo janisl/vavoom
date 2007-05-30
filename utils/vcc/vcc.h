@@ -589,7 +589,7 @@ private:
 	VStatement* ParseStatement();
 	VCompound* ParseCompoundStatement();
 	VExpression* ParseType();
-	void ParseMethodDef(VExpression*, VName, TLocation, VClass*, vint32);
+	void ParseMethodDef(VExpression*, VName, TLocation, VClass*, vint32, bool);
 	void ParseDelegate(VExpression*, VField*);
 	void ParseDefaultProperties(VClass*);
 	void ParseStruct(VClass*, bool);

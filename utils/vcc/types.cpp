@@ -1403,6 +1403,13 @@ bool VMethod::Define()
 	if ((Flags & FUNC_VarArgs) && !(Flags & FUNC_Native))
 	{
 		ParseError(Loc, "Only native methods can have varargs");
+		Ret = false;
+	}
+
+	if ((Flags & FUNC_Iterator) && !(Flags & FUNC_Native))
+	{
+		ParseError(Loc, "Iterators can only be native");
+		Ret = false;
 	}
 
 	VEmitContext ec(this);

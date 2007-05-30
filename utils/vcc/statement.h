@@ -95,6 +95,18 @@ public:
 	void DoEmit(VEmitContext&);
 };
 
+class VForeach : public VStatement
+{
+public:
+	VExpression*		Expr;
+	VStatement*			Statement;
+
+	VForeach(VExpression*, VStatement*, const TLocation&);
+	~VForeach();
+	bool Resolve(VEmitContext&);
+	void DoEmit(VEmitContext&);
+};
+
 class VSwitch : public VStatement
 {
 public:

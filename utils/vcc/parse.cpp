@@ -993,6 +993,18 @@ VStatement* VParser::ParseStatement()
 		return For;
 	}
 
+	case TK_Foreach:
+	{
+		Lex.NextToken();
+		VExpression* Expr = ParseExpression();
+		if (!Expr)
+		{
+			ParseError(Lex.Location, "Iterator expression expected");
+		}
+		VStatement* Statement = ParseStatement();
+		return new VForeach(Expr, Statement, l);
+	}
+
 	case TK_Break:
 		Lex.NextToken();
 		Lex.Expect(TK_Semicolon, ERR_MISSING_SEMICOLON);
@@ -1223,7 +1235,7 @@ VExpression* VParser::ParseType()
 //==========================================================================
 
 void VParser::ParseMethodDef(VExpression* RetType, VName MName,
-	TLocation MethodLoc, VClass* InClass, vint32 Modifiers)
+	TLocation MethodLoc, VClass* InClass, vint32 Modifiers, bool Iterator)
 {
 	if (InClass->CheckForFunction(MName))
 	{
@@ -1233,6 +1245,10 @@ void VParser::ParseMethodDef(VExpression* RetType, VName MName,
 	VMethod* Func = new VMethod(MName, InClass, MethodLoc);
 	Func->Modifiers = Modifiers;
 	Func->ReturnTypeExpr = RetType;
+	if (Iterator)
+	{
+		Func->Flags |= FUNC_Iterator;
+	}
 	InClass->AddMethod(Func);
 
 	do
@@ -1836,6 +1852,21 @@ void VParser::ParseClass()
 
 		int Modifiers = TModifiers::Parse(Lex);
 
+		if (Lex.Check(TK_Iterator))
+		{
+			if (Lex.Token != TK_Identifier)
+			{
+				ParseError(Lex.Location, "Method name expected");
+			}
+			VName FieldName = Lex.Name;
+			TLocation FieldLoc = Lex.Location;
+			Lex.NextToken();
+			Lex.Expect(TK_LParen, ERR_MISSING_LPAREN);
+			ParseMethodDef(new VTypeExpr(TType(TYPE_Void).MakePointerType(),
+				Lex.Location), FieldName, FieldLoc, Class, Modifiers, true);
+			continue;
+		}
+
 		VExpression* Type = ParseType();
 		if (!Type)
 		{
@@ -1968,7 +1999,8 @@ void VParser::ParseClass()
 
 			if (Lex.Check(TK_LParen))
 			{
-				ParseMethodDef(FieldType, FieldName, FieldLoc, Class, Modifiers);
+				ParseMethodDef(FieldType, FieldName, FieldLoc, Class,
+					Modifiers, false);
 				need_semicolon = false;
 				break;
 			}

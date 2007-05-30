@@ -46,6 +46,7 @@ public:
 	VExpression* ResolveBoolean(VEmitContext&);
 	virtual VTypeExpr* ResolveAsType(VEmitContext&);
 	virtual VExpression* ResolveAssignmentTarget(VEmitContext&);
+	virtual VExpression* ResolveIterator(VEmitContext&);
 	virtual void RequestAddressOf();
 	virtual void Emit(VEmitContext&) = 0;
 	virtual void EmitBranchable(VEmitContext&, VLabel, bool);
@@ -345,6 +346,7 @@ public:
 	VCastOrInvocation(VName, const TLocation&, int, VExpression**);
 	~VCastOrInvocation();
 	VExpression* DoResolve(VEmitContext&);
+	VExpression* ResolveIterator(VEmitContext&);
 	void Emit(VEmitContext&);
 };
 
@@ -365,6 +367,7 @@ public:
 	VDotInvocation(VExpression*, VName, const TLocation&, int, VExpression**);
 	~VDotInvocation();
 	VExpression* DoResolve(VEmitContext&);
+	VExpression* ResolveIterator(VEmitContext&);
 	void Emit(VEmitContext&);
 };
 

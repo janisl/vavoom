@@ -561,3 +561,17 @@ inline vuint32 GetTypeHash(VObject* Obj)
 #define RET_AVEC(v)			PR_Pushav(v)
 #define RET_REF(v)			PR_PushPtr(v)
 #define RET_PTR(v)			PR_PushPtr(v)
+
+//==========================================================================
+//
+//	VScriptIterator
+//
+//==========================================================================
+
+class VScriptIterator : public VVirtualObjectBase
+{
+public:
+	VScriptIterator*	Next;	//	Linked list of active iterators.
+
+	virtual bool GetNext() = 0;
+};
