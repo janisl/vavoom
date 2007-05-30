@@ -2660,7 +2660,7 @@ bool LookForMonsters(bool allaround)
 		return false;	//  Not seen by player
 	}
 
-	FOREACH(Actor, mo)
+	foreach AllThinkers(Actor, mo)
 	{
 		if (mo.Health <= 0)
 			continue;	// dead
@@ -2709,7 +2709,7 @@ bool LookForMonsters2(bool allaround)
 	float an;
 	float dist;
 
-	FOREACH(Actor, mo)
+	foreach AllThinkers(Actor, mo)
 	{
 		if (mo.Health <= 0)
 			continue;	// dead

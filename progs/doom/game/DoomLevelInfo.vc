@@ -149,7 +149,7 @@ int ThingCount(int type, int tid)
 	else
 	{
 		// Count only types
-		FOREACH(Actor, Ent)
+		foreach AllThinkers(Actor, Ent)
 		{
 			if (Ent.Class != moType)
 			{
@@ -634,7 +634,7 @@ int P_Massacre()
 	Actor mo;
 
 	count = 0;
-	FOREACH(Actor, mo)
+	foreach AllThinkers(Actor, mo)
 	{
 		if (mo.bCountKill && (mo.Health > 0))
 		{

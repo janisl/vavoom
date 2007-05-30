@@ -372,7 +372,7 @@ void IM_InitStats()
 			return;
 		}
 
-		FOREACH_EX(ClGame.GLevel.LevelInfo, PlayerReplicationInfo, RepInfo)
+		foreach ClGame.GLevel.LevelInfo.AllThinkers(PlayerReplicationInfo, RepInfo)
 		{
 			i = RepInfo.PlayerNum;
 			killPercent[i] = 0;
@@ -402,7 +402,7 @@ void IM_InitStats()
 		posnum = 0;
 		playercount = 0;
 		slaughtercount = 0;
-		FOREACH_EX(ClGame.GLevel.LevelInfo, PlayerReplicationInfo, RepInfo)
+		foreach ClGame.GLevel.LevelInfo.AllThinkers(PlayerReplicationInfo, RepInfo)
 		{
 			i = RepInfo.PlayerNum;
 			playercount++;
@@ -587,7 +587,7 @@ void IM_DrawCoopStats()
 	T_SetAlign(hleft, vtop);
 	T_SetDist(1, 1);
 	ypos = 190;
-	FOREACH_EX(ClGame.GLevel.LevelInfo, PlayerReplicationInfo, RepInfo)
+	foreach ClGame.GLevel.LevelInfo.AllThinkers(PlayerReplicationInfo, RepInfo)
 	{
 		i = RepInfo.PlayerNum;
 		R_DrawShadowedPic(185, ypos, patchFaceOkay[i]);
@@ -643,7 +643,7 @@ void IM_DrawDMStats()
 	T_DrawText(170, 220, "K\nI\nL\nL\nE\nR\nS");
 	if (intertime < 0.625)
 	{
-		FOREACH_EX(ClGame.GLevel.LevelInfo, PlayerReplicationInfo, RepInfo)
+		foreach ClGame.GLevel.LevelInfo.AllThinkers(PlayerReplicationInfo, RepInfo)
 		{
 			i = RepInfo.PlayerNum;
 			R_DrawShadowedPic(200, ypos + ftoi(dSlideY[i] * 35.0 * intertime),
@@ -667,7 +667,7 @@ void IM_DrawDMStats()
 	T_SetFont(font_big);
 	T_SetAlign(hleft, vtop);
 	T_SetDist(1, 1);
-	FOREACH_EX(ClGame.GLevel.LevelInfo, PlayerReplicationInfo, RepInfo)
+	foreach ClGame.GLevel.LevelInfo.AllThinkers(PlayerReplicationInfo, RepInfo)
 	{
 		i = RepInfo.PlayerNum;
 		if (intertime < 3.0 || i == ClGame.cl.ClientNum)
@@ -681,7 +681,7 @@ void IM_DrawDMStats()
 			R_DrawPic2(xpos, 158, patchFaceDead[i], 0.4);
 		}
 		kpos = 246;
-		FOREACH_EX(ClGame.GLevel.LevelInfo, PlayerReplicationInfo, Other)
+		foreach ClGame.GLevel.LevelInfo.AllThinkers(PlayerReplicationInfo, Other)
 		{
 			j = Other.PlayerNum;
 			T_DrawText(kpos, ypos + 10, va("%d", RepInfo.FragsStats[j]));

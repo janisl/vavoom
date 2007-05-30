@@ -29,9 +29,3 @@
 #define RGBA(r, g, b, a)	(((a) << 24) + ((r) << 16) + ((g) << 8) + (b))
 #define MobjCentre(mobj)\
 	(mobj.Origin + vector(0.0, 0.0, mobj.Height * 0.5 - mobj.FloorClip))
-#define FOREACH(type, var) \
-	for (var = type(NextThinker(none, type)); var; \
-		var = type(NextThinker(var, type)))
-#define FOREACH_EX(ctx, type, var) \
-	for (var = type(ctx.NextThinker(none, type)); var; \
-		var = type(ctx.NextThinker(var, type)))

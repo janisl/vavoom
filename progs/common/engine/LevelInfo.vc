@@ -299,7 +299,7 @@ void CreateTIDList()
 	Entity mobj;
 
 	i = 0;
-	FOREACH(Entity, mobj)
+	foreach AllThinkers(Entity, mobj)
 	{
 		if (mobj.TID != 0)
 		{

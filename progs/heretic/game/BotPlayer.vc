@@ -438,7 +438,7 @@ void Scan()
 {
 	Actor actor;
 
-	FOREACH_EX(botmo, Actor, actor)
+	foreach botmo.AllThinkers(Actor, actor)
 	{
 		if (!actor.bSpecial && !actor.bMissile)
 		{

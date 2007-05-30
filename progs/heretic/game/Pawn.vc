@@ -413,7 +413,7 @@ void BossDeathSpecialAction()
 
 	// Make sure all bosses are dead
 	Actor mo;
-	FOREACH(Actor, mo)
+	foreach AllThinkers(Actor, mo)
 	{
 		if ((mo != self) && (mo.Class == Class) && (mo.Health > 0))
 		{

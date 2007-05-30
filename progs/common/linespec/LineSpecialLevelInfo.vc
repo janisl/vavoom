@@ -1145,7 +1145,7 @@ int EV_DoCeiling(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5, int Type,
 		if (Type == CeilingMover::CEILEV_CrushAndRaiseA ||
 			Type == CeilingMover::CEILEV_CrushAndRaiseSilA)
 		{
-			FOREACH(CeilingMover, Ceiling)
+			foreach AllThinkers(CeilingMover, Ceiling)
 			{
 				Ceiling.ActivateInStasis(Arg1);
 			}
@@ -1182,7 +1182,7 @@ int EV_CeilingCrushStop(line_t* line, int Arg1, int Arg2, int Arg3, int Arg4,
 	CeilingMover	Ceiling;
 
 	rtn = false;
-	FOREACH(CeilingMover, Ceiling)
+	foreach AllThinkers(CeilingMover, Ceiling)
 	{
 		if (Ceiling.CrushStop(Arg1))
 		{
@@ -1291,7 +1291,7 @@ int EV_FloorCrushStop(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
 	bool		Rtn;
 
 	Rtn = false;
-	FOREACH(FloorMover, Floor)
+	foreach AllThinkers(FloorMover, Floor)
 	{
 		if (Floor.CrushStop(Arg1))
 		{
@@ -1612,7 +1612,7 @@ int EV_DoPlat(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5, int Type,
 			Type == Platform::PLATEV_Toggle)
 		{
 			//  Activate in stasis
-			FOREACH(Platform, Plat)
+			foreach AllThinkers(Platform, Plat)
 			{
 				Plat.ActivateInStasis(Arg1);
 			}
@@ -1648,7 +1648,7 @@ int EV_StopPlat(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
 {
 	Platform	Plat;
 
-	FOREACH(Platform, Plat)
+	foreach AllThinkers(Platform, Plat)
 	{
 		Plat.StopPlat(Arg1);
 	}
@@ -2434,7 +2434,7 @@ bool EV_LightStop(int Tag)
 {
 	Lighting		L;
 
-	FOREACH(Lighting, L)
+	foreach AllThinkers(Lighting, L)
 	{
 		if (L.Sector->tag == Tag)
 		{
@@ -3183,7 +3183,7 @@ bool EV_Teleport(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 			SecNum = XLevel.FindSectorFromTag(SecTag, SecNum))
 		{
 			Sec = &XLevel.Sectors[SecNum];
-			FOREACH(EntityEx, A)
+			foreach AllThinkers(EntityEx, A)
 			{
 				if (!A.IsTeleportSpot())
 				{
@@ -3414,7 +3414,7 @@ bool EV_TeleportSector(int tag, int source_tid, int dest_tid, bool fog,
 	{
 		sec = &XLevel.Sectors[secnum];
 
-		FOREACH(EntityEx, A)
+		foreach AllThinkers(EntityEx, A)
 		{
 			// possibly limit actors by group
 			if (A.Sector == sec && (group_tid == 0 || A.TID == group_tid))
@@ -3667,7 +3667,7 @@ EntityEx GetPushThing(int s)
 	sector_t*	sec;
 
 	sec = &XLevel.Sectors[s];
-	FOREACH(EntityEx, thing)
+	foreach AllThinkers(EntityEx, thing)
 	{
 		if (thing.IsPointPusher() || thing.IsPointPuller())
 		{
@@ -3784,7 +3784,7 @@ bool AdjustPusher(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 	angle = Arg3;
 	Collection = none;
 	// Find pushers already attached to the sector, and change their parameters.
-	FOREACH(Pusher, P)
+	foreach AllThinkers(Pusher, P)
 	{
 		if (P.CheckForSectorMatch(Type, tag) >= 0)
 		{

@@ -80,13 +80,15 @@ class VThinker : public VObject
 
 	DECLARE_FUNCTION(Spawn)
 	DECLARE_FUNCTION(Destroy)
-	DECLARE_FUNCTION(NextThinker)
 
 	//	Print functions
 	DECLARE_FUNCTION(bprint)
 
 	DECLARE_FUNCTION(AllocDlight)
 	DECLARE_FUNCTION(NewParticle)
+
+	//	Iterators
+	DECLARE_FUNCTION(AllThinkers)
 
 	void eventClientTick(float DeltaTime)
 	{

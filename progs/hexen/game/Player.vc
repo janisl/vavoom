@@ -3011,7 +3011,7 @@ bool UseArtiHealRadius()
 	int effective = false;
 	int amount;
 
-	FOREACH_EX(MO, PlayerPawn, P)
+	foreach MO.AllThinkers(PlayerPawn, P)
 	{
 		if (!P.bIsPlayer)
 			continue;
@@ -3095,7 +3095,7 @@ void UseArtiBlastRadius()
 	MO.PlaySound('BlastRadius', CHAN_ITEM);
 	HexenLevelInfo(Level).NoiseAlert(Actor(MO), Actor(MO));
 
-	FOREACH_EX(MO, Actor, mo)
+	foreach MO.AllThinkers(Actor, mo)
 	{
 		if ((mo == MO) || mo.bBoss)
 		{
@@ -3910,7 +3910,7 @@ int P_Massacre()
 	Actor mo;
 
 	count = 0;
-	FOREACH_EX(MO, Actor, mo)
+	foreach MO.AllThinkers(Actor, mo)
 	{
 		if (mo.bCountKill && mo.Health > 0)
 		{

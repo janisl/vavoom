@@ -116,7 +116,7 @@ void BeginPlay()
 		// This is a slotted sound, so add it to the master for that slot
 		SoundSequenceSlot master;
 
-		FOREACH(SoundSequenceSlot, master)
+		foreach AllThinkers(SoundSequenceSlot, master)
 		{
 			if (master.SeqName == slot)
 			{

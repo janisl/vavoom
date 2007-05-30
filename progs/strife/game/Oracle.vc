@@ -36,7 +36,7 @@ final void A_OracleDeath()
 {
 	Specter3 A;
 
-	FOREACH(Specter3, A)
+	foreach AllThinkers(Specter3, A)
 	{
 		if (A && A.bCountKill && A.Health > 0)
 		{

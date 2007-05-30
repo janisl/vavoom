@@ -40,13 +40,10 @@ final void A_BrainAwake()
 
 	// find all the target spots
 	DoomLevelInfo(Level).NumBrainTargets = 0;
-	FOREACH(Actor, m)
+	foreach AllThinkers(BossTarget, m)
 	{
-		if (m.Class == BossTarget)
-		{
-			DoomLevelInfo(Level).BrainTargets[DoomLevelInfo(Level).NumBrainTargets] = m;
-			DoomLevelInfo(Level).NumBrainTargets++;
-		}
+		DoomLevelInfo(Level).BrainTargets[DoomLevelInfo(Level).NumBrainTargets] = m;
+		DoomLevelInfo(Level).NumBrainTargets++;
 	}
 	DoomLevelInfo(Level).BrainTargetOn = 0;
 

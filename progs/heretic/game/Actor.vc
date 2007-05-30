@@ -3108,7 +3108,7 @@ bool LookForMonsters()
 		return false;
 	}
 	count = 0;
-	FOREACH(Actor, mo)
+	foreach AllThinkers(Actor, mo)
 	{
 		if (!mo.bCountKill || (mo == self) || (mo.Health <= 0))
 		{

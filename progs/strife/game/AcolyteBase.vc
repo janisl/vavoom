@@ -56,7 +56,7 @@ final void A_AcolyteDeath()
 		return;
 
 	//	Make sure all the other blue acolytes are dead.
-	FOREACH(Actor, Other)
+	foreach AllThinkers(Actor, Other)
 	{
 		if (Other != self && Other.Class == Class && Other.Health > 0)
 		{

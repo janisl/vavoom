@@ -338,6 +338,51 @@ void VThinker::BroadcastCentrePrintf(const char *s, ...)
 
 //==========================================================================
 //
+//	Script iterators
+//
+//==========================================================================
+
+class VScriptThinkerIterator : public VScriptIterator
+{
+private:
+	VThinker*	Self;
+	VClass*		Class;
+	VThinker**	Out;
+	VThinker*	Current;
+
+public:
+	VScriptThinkerIterator(VThinker* ASelf, VClass* AClass, VThinker** AOut)
+	: Self(ASelf)
+	, Class(AClass)
+	, Out(AOut)
+	, Current(NULL)
+	{}
+	bool GetNext()
+	{
+		if (!Current)
+		{
+			Current = Self->XLevel->ThinkerHead;
+		}
+		else
+		{
+			Current = Current->Next;
+		}
+		*Out = NULL;
+		while (Current)
+		{
+			if (Current->IsA(Class) && !(Current->GetFlags() & _OF_DelayedDestroy))
+			{
+				*Out = Current;
+				break;
+			}
+			Current = Current->Next;
+		}
+		return !!*Out;
+	}
+};
+
+//==========================================================================
+//
 //	Script natives
 //
 //==========================================================================
@@ -367,32 +412,6 @@ IMPLEMENT_FUNCTION(VThinker, Destroy)
 	Self->DestroyThinker();
 }
 
-IMPLEMENT_FUNCTION(VThinker, NextThinker)
-{
-	P_GET_PTR(VClass, Class);
-	P_GET_REF(VThinker, th);
-	P_GET_SELF;
-	if (!th)
-	{
-		th = Self->XLevel->ThinkerHead;
-	}
-	else
-	{
-		th = th->Next;
-	}
-	VThinker* Ret = NULL;
-	while (th)
-	{
-		if (th->IsA(Class) && !(th->GetFlags() & _OF_DelayedDestroy))
-		{
-			Ret = th;
-			break;
-		}
-		th = th->Next;
-	}
-	RET_REF(Ret);
-}
-
 IMPLEMENT_FUNCTION(VThinker, bprint)
 {
 	VStr Msg = PF_FormatString();
@@ -411,4 +430,12 @@ IMPLEMENT_FUNCTION(VThinker, NewParticle)
 {
 	P_GET_SELF;
 	RET_PTR(Self->XLevel->RenderData->NewParticle());
+}
+
+IMPLEMENT_FUNCTION(VThinker, AllThinkers)
+{
+	P_GET_PTR(VThinker*, Thinker);
+	P_GET_PTR(VClass, Class);
+	P_GET_SELF;
+	RET_PTR(new VScriptThinkerIterator(Self, Class, Thinker));
 }

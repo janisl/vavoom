@@ -219,7 +219,7 @@ final void A_MinotaurLook()
 
 	if (!Target)	// Normal monster search
 	{
-		FOREACH(Actor, mo)
+		foreach AllThinkers(Actor, mo)
 		{
 			if (!mo.bCountKill)
 				continue;

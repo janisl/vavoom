@@ -132,7 +132,7 @@ void BeginPlay()
 	Args[2] = 0;
 	::BeginPlay();
 
-	FOREACH(Actor, A)
+	foreach AllThinkers(Actor, A)
 	{
 		if (A.TID == Args[3])
 		{
@@ -228,7 +228,7 @@ void FormChain()
 
 	bAmbush = true;
 
-	FOREACH(InterpolationPoint, A)
+	foreach AllThinkers(InterpolationPoint, A)
 	{
 		if (A.TID != Args[3] + 256 * Args[4])
 			continue;
@@ -367,7 +367,7 @@ void BeginPlay()
 	::BeginPlay();
 
 	// Find first node of path
-	FOREACH(InterpolationPoint, A)
+	foreach AllThinkers(InterpolationPoint, A)
 	{
 		if (A.TID == Args[0] + 256 * Args[1])
 		{
@@ -521,7 +521,7 @@ void NewNode()
 {
 	InterpolationSpecial S;
 
-	FOREACH(InterpolationSpecial, S)
+	foreach AllThinkers(InterpolationSpecial, S)
 	{
 		if (S.TID == CurrNode.TID)
 		{
@@ -699,7 +699,7 @@ void BeginPlay()
 
 	::BeginPlay();
 
-	FOREACH(Actor, A)
+	foreach AllThinkers(Actor, A)
 	{
 		if (A.TID == Args[3])
 		{
@@ -824,7 +824,7 @@ void BeginPlay()
 
 	if (Args[3] != 0)
 	{
-		FOREACH(Actor, A)
+		foreach AllThinkers(Actor, A)
 		{
 			if (A.TID == Args[3])
 			{

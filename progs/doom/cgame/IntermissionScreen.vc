@@ -1108,7 +1108,7 @@ void IM_DrawCooperativeStats()
 	// draw stats
 	y = NG_STATSY + T_TextHeight("kills");
 
-	FOREACH_EX(ClGame.GLevel.LevelInfo, PlayerReplicationInfo, RepInfo)
+	foreach ClGame.GLevel.LevelInfo.AllThinkers(PlayerReplicationInfo, RepInfo)
 	{
 		i = RepInfo.PlayerNum;
 		x = NG_STATSX;
@@ -1150,7 +1150,7 @@ void IM_UpdateCooperativeStats(float DeltaTime)
 	{
 		ClGame.skipintermission = 0;
 
-		FOREACH_EX(ClGame.GLevel.LevelInfo, PlayerReplicationInfo, RepInfo)
+		foreach ClGame.GLevel.LevelInfo.AllThinkers(PlayerReplicationInfo, RepInfo)
 		{
 			cnt_kills[RepInfo.PlayerNum] = (RepInfo.KillCount * 100) / TotalKills;
 			cnt_items[RepInfo.PlayerNum] = (RepInfo.ItemCount * 100) / TotalItems;
@@ -1168,7 +1168,7 @@ void IM_UpdateCooperativeStats(float DeltaTime)
 
 		stillticking = false;
 
-		FOREACH_EX(ClGame.GLevel.LevelInfo, PlayerReplicationInfo, RepInfo)
+		foreach ClGame.GLevel.LevelInfo.AllThinkers(PlayerReplicationInfo, RepInfo)
 		{
 			cnt_kills[RepInfo.PlayerNum] += 2;
 
@@ -1191,7 +1191,7 @@ void IM_UpdateCooperativeStats(float DeltaTime)
 
 		stillticking = false;
 
-		FOREACH_EX(ClGame.GLevel.LevelInfo, PlayerReplicationInfo, RepInfo)
+		foreach ClGame.GLevel.LevelInfo.AllThinkers(PlayerReplicationInfo, RepInfo)
 		{
 			cnt_items[RepInfo.PlayerNum] += 2;
 			if (cnt_items[RepInfo.PlayerNum] >= (RepInfo.ItemCount * 100) / TotalItems)
@@ -1212,7 +1212,7 @@ void IM_UpdateCooperativeStats(float DeltaTime)
 
 		stillticking = false;
 
-		FOREACH_EX(ClGame.GLevel.LevelInfo, PlayerReplicationInfo, RepInfo)
+		foreach ClGame.GLevel.LevelInfo.AllThinkers(PlayerReplicationInfo, RepInfo)
 		{
 			cnt_secret[RepInfo.PlayerNum] += 2;
 
@@ -1235,7 +1235,7 @@ void IM_UpdateCooperativeStats(float DeltaTime)
 
 		stillticking = false;
 
-		FOREACH_EX(ClGame.GLevel.LevelInfo, PlayerReplicationInfo, RepInfo)
+		foreach ClGame.GLevel.LevelInfo.AllThinkers(PlayerReplicationInfo, RepInfo)
 		{
 			cnt_frags[RepInfo.PlayerNum] += 1;
 
@@ -1292,7 +1292,7 @@ void IM_InitDeathmatchStats()
 
 	cnt_pause = 1.0;
 
-	FOREACH_EX(ClGame.GLevel.LevelInfo, PlayerReplicationInfo, RepInfo)
+	foreach ClGame.GLevel.LevelInfo.AllThinkers(PlayerReplicationInfo, RepInfo)
 	{
 		i = RepInfo.PlayerNum;
 		for (j = 0; j < MAXPLAYERS; j++)
@@ -1335,7 +1335,7 @@ void IM_DrawDeathmatchStats()
 	x = DM_MATRIXX + DM_SPACINGX;
 	y = DM_MATRIXY;
 
-	FOREACH_EX(ClGame.GLevel.LevelInfo, PlayerReplicationInfo, RepInfo)
+	foreach ClGame.GLevel.LevelInfo.AllThinkers(PlayerReplicationInfo, RepInfo)
 	{
 		i = RepInfo.PlayerNum;
 		R_GetPicInfo(p[i], &info);
@@ -1357,12 +1357,12 @@ void IM_DrawDeathmatchStats()
 	w = T_TextWidth("0");
 
 	T_SetAlign(hright, vtop);
-	FOREACH_EX(ClGame.GLevel.LevelInfo, PlayerReplicationInfo, RepInfo)
+	foreach ClGame.GLevel.LevelInfo.AllThinkers(PlayerReplicationInfo, RepInfo)
 	{
 		i = RepInfo.PlayerNum;
 		x = DM_MATRIXX + DM_SPACINGX;
 
-		FOREACH_EX(ClGame.GLevel.LevelInfo, PlayerReplicationInfo, Other)
+		foreach ClGame.GLevel.LevelInfo.AllThinkers(PlayerReplicationInfo, Other)
 		{
 			j = Other.PlayerNum;
 			T_DrawText(x + w, y, va("%d", dm_frags[i * MAXPLAYERS + j]));
@@ -1392,9 +1392,9 @@ void IM_UpdateDeathmatchStats(float DeltaTime)
 	{
 		ClGame.skipintermission = 0;
 
-		FOREACH_EX(ClGame.GLevel.LevelInfo, PlayerReplicationInfo, RepInfo)
+		foreach ClGame.GLevel.LevelInfo.AllThinkers(PlayerReplicationInfo, RepInfo)
 		{
-			FOREACH_EX(ClGame.GLevel.LevelInfo, PlayerReplicationInfo, Other)
+			foreach ClGame.GLevel.LevelInfo.AllThinkers(PlayerReplicationInfo, Other)
 			{
 				dm_frags[RepInfo.PlayerNum * MAXPLAYERS + Other.PlayerNum] =
 					RepInfo.FragsStats[Other.PlayerNum];
@@ -1414,10 +1414,10 @@ void IM_UpdateDeathmatchStats(float DeltaTime)
 
 		stillticking = false;
 
-		FOREACH_EX(ClGame.GLevel.LevelInfo, PlayerReplicationInfo, RepInfo)
+		foreach ClGame.GLevel.LevelInfo.AllThinkers(PlayerReplicationInfo, RepInfo)
 		{
 			i = RepInfo.PlayerNum;
-			FOREACH_EX(ClGame.GLevel.LevelInfo, PlayerReplicationInfo, Other)
+			foreach ClGame.GLevel.LevelInfo.AllThinkers(PlayerReplicationInfo, Other)
 			{
 				j = Other.PlayerNum;
 				if (dm_frags[i * MAXPLAYERS + j] != RepInfo.FragsStats[j])

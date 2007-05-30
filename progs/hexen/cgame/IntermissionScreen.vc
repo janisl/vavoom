@@ -205,7 +205,7 @@ void IM_InitStats()
 		posnum = 0;
 		playercount = 0;
 		slaughtercount = 0;
-		FOREACH_EX(ClGame.GLevel.LevelInfo, PlayerReplicationInfo, RepInfo)
+		foreach ClGame.GLevel.LevelInfo.AllThinkers(PlayerReplicationInfo, RepInfo)
 		{
 			i = RepInfo.PlayerNum;
 			playercount++;
@@ -404,11 +404,11 @@ void IM_DrawDeathTally(GC gc)
 		LocalSound('PlatformStop');
 	}
 	y = ftoi(yPos);
-	FOREACH_EX(ClGame.GLevel.LevelInfo, PlayerReplicationInfo, RepInfo)
+	foreach ClGame.GLevel.LevelInfo.AllThinkers(PlayerReplicationInfo, RepInfo)
 	{
 		i = RepInfo.PlayerNum;
 		xPos = xStart;
-		FOREACH_EX(ClGame.GLevel.LevelInfo, PlayerReplicationInfo, Other)
+		foreach ClGame.GLevel.LevelInfo.AllThinkers(PlayerReplicationInfo, Other)
 		{
 			j = Other.PlayerNum;
 			x = ftoi(xPos);

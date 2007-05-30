@@ -180,7 +180,7 @@ int ThingCount(int type, int tid)
 	else
 	{
 		// Count only types
-		FOREACH(Actor, Ent)
+		foreach AllThinkers(Actor, Ent)
 		{
 			if (Ent.Class != moType)
 			{

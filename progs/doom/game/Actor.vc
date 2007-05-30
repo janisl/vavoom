@@ -2731,7 +2731,7 @@ bool FindOther()
 {
 	Actor Other;
 
-	FOREACH(Actor, Other)
+	foreach AllThinkers(Actor, Other)
 	{
 		if (Other != self && Other.Class == Class && Other.Health > 0)
 		{
@@ -2754,7 +2754,7 @@ bool LookForMonsters(bool allaround)
 	float an;
 	float dist;
 
-	FOREACH(Actor, mo)
+	foreach AllThinkers(Actor, mo)
 	{
 		if (mo.Health <= 0)
 			continue;	// dead
@@ -2808,7 +2808,7 @@ bool LookForMonsters2(bool allaround)
 		return false;	//  Not seen by player
 	}
 
-	FOREACH(Actor, mo)
+	foreach AllThinkers(Actor, mo)
 	{
 		if (mo.Health <= 0)
 			continue;	// dead
@@ -4244,7 +4244,7 @@ void BossDeathSpecialAction()
 
 	// scan the remaining thinkers to see if all bosses are dead
 	Actor Other;
-	FOREACH(Actor, Other)
+	foreach AllThinkers(Actor, Other)
 	{
 		if (Other != self && Other.Class == Class && Other.Health > 0)
 		{
@@ -4333,9 +4333,9 @@ final void A_BossDeath()
 			return;	// no one left alive, so do not end game
 
 		// scan the remaining thinkers to see if all bosses are dead
-		FOREACH(Arachnotron, Other)
+		foreach AllThinkers(Arachnotron, Other)
 		{
-			if (Other != self && Other.Health > 0)
+			if (Other != self && Other.Class == Arachnotron && Other.Health > 0)
 			{
 				// other boss not dead
 				return;
@@ -4348,7 +4348,7 @@ final void A_BossDeath()
 	else if (Class == Mancubus)
 	{
 		int i;
-		Mancubus Other;
+		Actor Other;
 
 		if (!Level.bMap07Special)
 		{
@@ -4365,9 +4365,9 @@ final void A_BossDeath()
 			return;	// no one left alive, so do not end game
 
 		// scan the remaining thinkers to see if all bosses are dead
-		FOREACH(Mancubus, Other)
+		foreach AllThinkers(Mancubus, Other)
 		{
-			if (Other != self && Other.Health > 0)
+			if (Other != self && Other.Class == Mancubus && Other.Health > 0)
 			{
 				// other boss not dead
 				return;

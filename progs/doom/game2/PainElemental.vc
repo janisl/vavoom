@@ -44,7 +44,7 @@ final void A_PainShootSkull(float angle)
 
 	// count total number of skull currently on the level
 	count = 0;
-	FOREACH(LostSoul, mo)
+	foreach AllThinkers(LostSoul, mo)
 	{
 		count++;
 	}

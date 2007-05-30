@@ -799,7 +799,7 @@ Actor ActiveMinotaur()
 {
 	Minotaur mo;
 
-	FOREACH(Minotaur, mo)
+	foreach AllThinkers(Minotaur, mo)
 	{
 		if (mo.Health <= 0)
 			continue;

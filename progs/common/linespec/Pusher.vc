@@ -258,7 +258,7 @@ void Tick(float DeltaTime)
 	// constant pushers p_wind and p_current
 
 	// things touching this sector
-	FOREACH(EntityEx, thing)
+	foreach AllThinkers(EntityEx, thing)
 	{
 		if (thing.Sector != sec)
 			continue;

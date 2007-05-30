@@ -1173,7 +1173,7 @@ final void A_BossDeath()
 		return;	// no one left alive, so do not end game
 
 	// scan the remaining thinkers to see if all bosses are dead
-	FOREACH(Actor, Other)
+	foreach AllThinkers(Actor, Other)
 	{
 		if (Other != self && Other.Class == Class && Other.Health > 0)
 		{
