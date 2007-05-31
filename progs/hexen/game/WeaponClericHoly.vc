@@ -40,7 +40,7 @@ final void A_CHolyAttack()
 	Player(Owner.Player).SpawnPlayerMissile(HolyMissile);
 	Player(Owner.Player).DamageFlash = 0.0;
 	Player(Owner.Player).BonusFlash = 0.0;
-	Player(Owner.Player).WeaponCShift = CSHIFT(255, 255, 255, 66);
+	Player(Owner.Player).WeaponCShift = RGBA(255, 255, 255, 66);
 	Owner.PlaySound('HolySymbolFire', CHAN_WEAPON);
 }
 
@@ -52,7 +52,7 @@ final void A_CHolyAttack()
 
 final void A_CHolyPalette1()
 {
-	Player(Owner.Player).WeaponCShift = CSHIFT(255, 255, 255, 51);
+	Player(Owner.Player).WeaponCShift = RGBA(255, 255, 255, 51);
 }
 
 //============================================================================
@@ -63,7 +63,7 @@ final void A_CHolyPalette1()
 
 final void A_CHolyPalette2()
 {
-	Player(Owner.Player).WeaponCShift = CSHIFT(255, 255, 255, 36);
+	Player(Owner.Player).WeaponCShift = RGBA(255, 255, 255, 36);
 }
 
 //============================================================================

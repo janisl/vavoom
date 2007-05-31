@@ -1231,7 +1231,7 @@ void Damage(Actor inflictor, Actor source, int damage)
 			Player(source.Player).ReadyWeapon != DoomDefs::wp_chainsaw))
 	{
 		Velocity += (500.0 * itof(damage) / Mass) *
-			Normalise(MobjCentre(self) - MobjCentre(inflictor));
+			Normalise(GetCentre() - inflictor.GetCentre());
 	}
 
 	// player specific
@@ -2447,7 +2447,7 @@ bool PIT_RadiusAttack(Entity Other)
 	if (Actor(Other).bBoss)
 		return true;
 
-	dist = Length(MobjCentre(Other) - MobjCentre(self)) - Other.Radius;
+	dist = Length(Other.GetCentre() - GetCentre()) - Other.Radius;
 
 	if (dist < 0.0)
 		dist = 0.0;

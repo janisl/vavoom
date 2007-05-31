@@ -65,7 +65,7 @@ final void A_MStaffAttack()
 	Owner.PlaySound('MageStaffFire', CHAN_WEAPON);
 	Player(Owner.Player).DamageFlash = 0.0;
 	Player(Owner.Player).BonusFlash = 0.0;
-	Player(Owner.Player).WeaponCShift = CSHIFT(255, 187, 4, 76);
+	Player(Owner.Player).WeaponCShift = RGBA(255, 187, 4, 76);
 }
 
 //==========================================================================
@@ -76,7 +76,7 @@ final void A_MStaffAttack()
 
 final void A_MStaffPalette1()
 {
-	Player(Owner.Player).WeaponCShift = CSHIFT(255, 187, 4, 63);
+	Player(Owner.Player).WeaponCShift = RGBA(255, 187, 4, 63);
 }
 
 //==========================================================================
@@ -87,7 +87,7 @@ final void A_MStaffPalette1()
 
 final void A_MStaffPalette2()
 {
-	Player(Owner.Player).WeaponCShift = CSHIFT(255, 187, 4, 51);
+	Player(Owner.Player).WeaponCShift = RGBA(255, 187, 4, 51);
 }
 
 //==========================================================================

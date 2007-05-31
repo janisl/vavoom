@@ -952,3 +952,20 @@ IMPLEMENT_FUNCTION(VObject, GetLangString)
 	P_GET_NAME(Id);
 	RET_STR(GLanguage[Id]);
 }
+
+IMPLEMENT_FUNCTION(VObject, RGB)
+{
+	P_GET_BYTE(b);
+	P_GET_BYTE(g);
+	P_GET_BYTE(r);
+	RET_INT(0xff000000 + (r << 16) + (g << 8) + b);
+}
+
+IMPLEMENT_FUNCTION(VObject, RGBA)
+{
+	P_GET_BYTE(a);
+	P_GET_BYTE(b);
+	P_GET_BYTE(g);
+	P_GET_BYTE(r);
+	RET_INT((a << 24) + (r << 16) + (g << 8) + b);
+}

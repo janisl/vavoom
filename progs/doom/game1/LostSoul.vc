@@ -46,7 +46,7 @@ final void A_SkullAttack()
 
 	PlaySound(AttackSound, CHAN_VOICE);
 	A_FaceTarget();
-	Velocity = Normalise(MobjCentre(Target) - Origin) * SKULLSPEED;
+	Velocity = Normalise(Target.GetCentre() - Origin) * SKULLSPEED;
 }
 
 __states__

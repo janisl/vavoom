@@ -529,7 +529,7 @@ void RemoveThing()
 
 float DistTo(Entity Other)
 {
-	return Length(MobjCentre(Other) - MobjCentre(self));
+	return Length(Other.GetCentre() - GetCentre());
 }
 
 //==========================================================================
@@ -549,9 +549,14 @@ float DistTo2(Entity Other)
 
 //==========================================================================
 //
-//
+//	GetCentre
 //
 //==========================================================================
+
+TVec GetCentre()
+{
+	return Origin + vector(0.0, 0.0, Height * 0.5 - FloorClip);
+}
 
 defaultproperties
 {

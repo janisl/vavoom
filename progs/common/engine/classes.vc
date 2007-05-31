@@ -23,8 +23,6 @@
 //**
 //**************************************************************************
 
-#include "../macros.vc"
-
 #include "Object.vc"
 #include "Level.vc"
 #include "Thinker.vc"

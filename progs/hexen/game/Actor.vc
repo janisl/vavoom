@@ -1254,7 +1254,7 @@ void Damage(Actor inflictor, Actor source, int damage)
 		float thrust;
 
 		thrust = itof(damage) / Mass * 656.25;
-		dir = Normalise(MobjCentre(self) - MobjCentre(inflictor));
+		dir = Normalise(GetCentre() - inflictor.GetCentre());
 		Velocity += dir * thrust;
 	}
 
@@ -3604,7 +3604,7 @@ bool PIT_RadiusAttack(Entity Other)
 		return true;
 	}
 #endif
-	dist = Length(MobjCentre(Other) - MobjCentre(self)) - Other.Radius;
+	dist = Length(Other.GetCentre() - GetCentre()) - Other.Radius;
 	if (dist < 0.0)
 	{
 		dist = 0.0;

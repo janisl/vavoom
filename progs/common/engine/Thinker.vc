@@ -84,6 +84,17 @@ void ClientTick(float DeltaTime)
 {
 }
 
+//==========================================================================
+//
+//	GET_SPAC
+//
+//==========================================================================
+
+int GET_SPAC(int Flags)
+{
+	return (Flags & ML_SPAC_MASK) >> ML_SPAC_SHIFT;
+}
+
 defaultproperties
 {
 	Role = ROLE_Authority;

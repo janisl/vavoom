@@ -311,6 +311,8 @@ public:
 	DECLARE_FUNCTION(GetStateSpriteName)
 	DECLARE_FUNCTION(FindAnimDoor)
 	DECLARE_FUNCTION(GetLangString)
+	DECLARE_FUNCTION(RGB)
+	DECLARE_FUNCTION(RGBA)
 
 #ifdef CLIENT
 	DECLARE_FUNCTION(P_GetMapName)
@@ -481,6 +483,7 @@ inline vuint32 GetTypeHash(VObject* Obj)
 //	Macros for passign arguments to VavoomC methods.
 //
 #define P_PASS_INT(v)		PR_Push(v)
+#define P_PASS_BYTE(v)		PR_Push(v)
 #define P_PASS_FLOAT(v)		PR_Pushf(v)
 #define P_PASS_BOOL(v)		PR_Push(v)
 #define P_PASS_NAME(v)		PR_PushName(v)
@@ -496,6 +499,7 @@ inline vuint32 GetTypeHash(VObject* Obj)
 //
 #define EV_RET_VOID(v)		ExecuteFunction(GetVFunction(v))
 #define EV_RET_INT(v)		return ExecuteFunction(GetVFunction(v)).i
+#define EV_RET_BYTE(v)		return ExecuteFunction(GetVFunction(v)).i
 #define EV_RET_FLOAT(v)		return ExecuteFunction(GetVFunction(v)).f
 #define EV_RET_BOOL(v)		return !!ExecuteFunction(GetVFunction(v)).i
 #define EV_RET_NAME(v)		vint32 ret = ExecuteFunction(GetVFunction(v)).i; return *(VName*)&ret
@@ -507,6 +511,7 @@ inline vuint32 GetTypeHash(VObject* Obj)
 
 #define EV_RET_VOID_IDX(v)		ExecuteFunction(GetVFunctionIdx(v))
 #define EV_RET_INT_IDX(v)		return ExecuteFunction(GetVFunctionIdx(v)).i
+#define EV_RET_BYTE_IDX(v)		return ExecuteFunction(GetVFunctionIdx(v)).i
 #define EV_RET_FLOAT_IDX(v)		return ExecuteFunction(GetVFunctionIdx(v)).f
 #define EV_RET_BOOL_IDX(v)		return !!ExecuteFunction(GetVFunctionIdx(v)).i
 #define EV_RET_NAME_IDX(v)		vint32 ret = ExecuteFunction(GetVFunctionIdx(v)).i; return *(VName*)&ret
@@ -520,6 +525,7 @@ inline vuint32 GetTypeHash(VObject* Obj)
 //	Parameter get macros. Parameters must be retrieved in backwards order.
 //
 #define P_GET_INT(v)		vint32 v = PR_Pop()
+#define P_GET_BYTE(v)		vuint8 v = PR_Pop()
 #define P_GET_FLOAT(v)		float v = PR_Popf()
 #define P_GET_BOOL(v)		bool v = !!PR_Pop()
 #define P_GET_NAME(v)		VName v = PR_PopName()
@@ -532,6 +538,8 @@ inline vuint32 GetTypeHash(VObject* Obj)
 
 #define P_GET_INT_OPT(v, d)		bool specified_##v = !!PR_Pop(); \
 	vint32 v = PR_Pop(); if (!specified_##v) v = d
+#define P_GET_BYTE_OPT(v, d)	bool specified_##v = !!PR_Pop(); \
+	vuint8 v = PR_Pop(); if (!specified_##v) v = d
 #define P_GET_FLOAT_OPT(v, d)	bool specified_##v = !!PR_Pop(); \
 	float v = PR_Popf(); if (!specified_##v) v = d
 #define P_GET_BOOL_OPT(v, d)	bool specified_##v = !!PR_Pop(); \
@@ -553,6 +561,7 @@ inline vuint32 GetTypeHash(VObject* Obj)
 //	Method return macros.
 //
 #define RET_INT(v)			PR_Push(v)
+#define RET_BYTE(v)			PR_Push(v)
 #define RET_FLOAT(v)		PR_Pushf(v)
 #define RET_BOOL(v)			PR_Push(v)
 #define RET_NAME(v)			PR_PushName(v)

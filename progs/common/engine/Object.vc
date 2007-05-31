@@ -31,12 +31,6 @@ class Object
 	native
 	abstract;
 
-//  Since version 1.5 compiler defines PROG_VERSION, so we can check that
-// progs are compiled with the right version of compiler
-#if !defined PROG_VERSION || PROG_VERSION != 23
-#error These are version 23 progs
-#endif
-
 enum
 {
 	CVAR_ARCHIVE		= 1,	//	Set to cause it to be saved to vavoom.cfg
@@ -1611,6 +1605,8 @@ native static final void SB_Start();
 native static final class FindClassFromEditorId(int Id);
 native static final class FindClassFromScriptId(int Id);
 native static final void ChangeMusic(string SongName);
+native static final int RGB(byte r, byte g, byte b);
+native static final int RGBA(byte r, byte g, byte b, byte a);
 
 defaultproperties
 {

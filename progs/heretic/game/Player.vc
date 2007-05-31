@@ -2156,35 +2156,35 @@ void PaletteFlash()
 		switch (MO.WaterType)
 		{
 		case CONTENTS_WATER:
-			CShifts[CSHIFT_Contents] = CSHIFT(130, 80, 50, 128);
+			CShifts[CSHIFT_Contents] = RGBA(130, 80, 50, 128);
 			break;
 
 		case CONTENTS_LAVA:
-			CShifts[CSHIFT_Contents] = CSHIFT(255, 80, 0, 150);
+			CShifts[CSHIFT_Contents] = RGBA(255, 80, 0, 150);
 			break;
 
 		case CONTENTS_NUKAGE:
-			CShifts[CSHIFT_Contents] = CSHIFT(50, 255, 50, 150);
+			CShifts[CSHIFT_Contents] = RGBA(50, 255, 50, 150);
 			break;
 
 		case CONTENTS_SLIME:
-			CShifts[CSHIFT_Contents] = CSHIFT(0, 25, 5, 150);
+			CShifts[CSHIFT_Contents] = RGBA(0, 25, 5, 150);
 			break;
 
 		case CONTENTS_HELLSLIME:
-			CShifts[CSHIFT_Contents] = CSHIFT(255, 80, 0, 150);
+			CShifts[CSHIFT_Contents] = RGBA(255, 80, 0, 150);
 			break;
 
 		case CONTENTS_BLOOD:
-			CShifts[CSHIFT_Contents] = CSHIFT(160, 16, 16, 150);
+			CShifts[CSHIFT_Contents] = RGBA(160, 16, 16, 150);
 			break;
 
 		case CONTENTS_SLUDGE:
-			CShifts[CSHIFT_Contents] = CSHIFT(128, 160, 128, 150);
+			CShifts[CSHIFT_Contents] = RGBA(128, 160, 128, 150);
 			break;
 
 		case CONTENTS_HAZARD:
-			CShifts[CSHIFT_Contents] = CSHIFT(128, 160, 128, 128);
+			CShifts[CSHIFT_Contents] = RGBA(128, 160, 128, 128);
 			break;
 		}
 	}
@@ -2195,7 +2195,7 @@ void PaletteFlash()
 		int Amount = ftoi(114.0 * DamageFlash);
 		if (Amount >= 228)
 			Amount = 228;
-		CShifts[CSHIFT_Damage] = CSHIFT(255, 0, 0, Amount);
+		CShifts[CSHIFT_Damage] = RGBA(255, 0, 0, Amount);
 	}
 
 	CShifts[CSHIFT_Bonus] = 0;
@@ -2204,7 +2204,7 @@ void PaletteFlash()
 		int Amount = ftoi(256.0 * BonusFlash);
 		if (Amount >= 128)
 			Amount = 128;
-		CShifts[CSHIFT_Bonus] = CSHIFT(215, 186, 68, Amount);
+		CShifts[CSHIFT_Bonus] = RGBA(215, 186, 68, Amount);
 	}
 }
 
@@ -2862,8 +2862,8 @@ void WeaponLevel2Fade()
 
 bool PTR_UseTraverse(intercept_t * in)
 {
-	if (!in->line->special || (GET_SPAC(in->line->flags) != SPAC_USE &&
-		GET_SPAC(in->line->flags) != SPAC_USETHROUGH))
+	if (!in->line->special || (Level.GET_SPAC(in->line->flags) != SPAC_USE &&
+		Level.GET_SPAC(in->line->flags) != SPAC_USETHROUGH))
 	{
 		TVec hit_point;
 		opening_t *open;
@@ -2890,7 +2890,7 @@ bool PTR_UseTraverse(intercept_t * in)
 
 	//WAS can't use more than one special line in a row
 	//jff 3/21/98 NOW multiple use allowed with enabling line flag
-	return GET_SPAC(in->line->flags) == SPAC_USETHROUGH;
+	return Level.GET_SPAC(in->line->flags) == SPAC_USETHROUGH;
 }
 
 //==========================================================================

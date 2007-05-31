@@ -2696,7 +2696,7 @@ bool EV_SectorSetFade(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
 	int		SecNum;
 	int		Fade;
 
-	Fade = RGB(Arg2, Arg3, Arg4);
+	Fade = RGBA(Arg2, Arg3, Arg4, 255);
 	for (SecNum = XLevel.FindSectorFromTag(Arg1, -1); SecNum >= 0;
 		SecNum = XLevel.FindSectorFromTag(Arg1, SecNum))
 	{

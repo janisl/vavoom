@@ -173,7 +173,7 @@ void TickCamera(float DeltaTime)
 		if (MaxPitchChange)
 		{
 			// Aim camera's pitch
-			TVec dv = MobjCentre(Target) - Origin;
+			TVec dv = Target.GetCentre() - Origin;
 			TAVec d;
 			VectorAngles(&dv, &d);
 			if (fabs(d.pitch - Angles.pitch) < MaxPitchChange * DeltaTime)
@@ -855,7 +855,7 @@ bool Interpolate()
 
 	if (::Interpolate())
 	{
-		delta = MobjCentre(Target) - Origin;
+		delta = Target.GetCentre() - Origin;
 		VectorAngles(&delta, &ang);
 		Angles.yaw = ang.yaw;
 		if (Args[2] & 4)

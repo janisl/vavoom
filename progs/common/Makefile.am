@@ -3,14 +3,14 @@ OUTDIR=../../basev/common/progs
 
 noinst_DATA = $(OUTDIR)/engine.dat $(OUTDIR)/linespec.dat
 
-$(OUTDIR)/engine.dat: $(VCC) $(srcdir)/*.vc $(srcdir)/engine/*.vc
+$(OUTDIR)/engine.dat: $(VCC) $(srcdir)/engine/*.vc
 	@mkdir -p $(OUTDIR)
 	$(VCC) -P$(OUTDIR) $(srcdir)/engine/classes.vc $@
 
 $(OUTDIR)/linespec.dat: $(VCC) $(OUTDIR)/engine.dat $(srcdir)/linespec/*.vc
 	$(VCC) -P$(OUTDIR) $(srcdir)/linespec/classes.vc $@
 
-EXTRA_DIST = macros.vc \
+EXTRA_DIST = \
 	engine/BasePlayer.vc \
 	engine/Entity.vc \
 	engine/classes.vc \

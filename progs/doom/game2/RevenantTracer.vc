@@ -61,7 +61,7 @@ final void A_Tracer()
 	if (!Tracer || Tracer.Health <= 0)
 		return;
 
-	wishdir = Normalise(MobjCentre(Tracer) - Origin);
+	wishdir = Normalise(Tracer.GetCentre() - Origin);
 	currdir = Normalise(Velocity);
 	delta = wishdir - currdir;
 	adjustlen = Length(delta);
