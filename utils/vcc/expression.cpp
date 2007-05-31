@@ -2072,6 +2072,12 @@ VExpression* VCastOrInvocation::DoResolve(VEmitContext& ec)
 		VMethod* M = ec.SelfClass->CheckForMethod(Name);
 		if (M)
 		{
+			if (M->Flags & FUNC_Iterator)
+			{
+				ParseError(Loc, "Iterator methods can only be used in foreach statements");
+				delete this;
+				return NULL;
+			}
 			VExpression* e = new VInvocation(NULL, M, NULL,
 				false, false, Loc, NumArgs, Args);
 			NumArgs = 0;
@@ -2244,6 +2250,12 @@ VExpression* VDotInvocation::DoResolve(VEmitContext& ec)
 	VMethod* M = SelfExpr->Type.Class->CheckForMethod(MethodName);
 	if (M)
 	{
+		if (M->Flags & FUNC_Iterator)
+		{
+			ParseError(Loc, "Iterator methods can only be used in foreach statements");
+			delete this;
+			return NULL;
+		}
 		VExpression* e = new VInvocation(SelfExpr, M, NULL, true,
 			false, Loc, NumArgs, Args);
 		SelfExpr = NULL;
