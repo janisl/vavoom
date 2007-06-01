@@ -77,6 +77,7 @@ const char*			VLexer::TokenNames[] =
 	"if",
 	"import",
 	"int",
+	"iterator",
 	"name",
 	"native",
 	"none",
@@ -166,14 +167,8 @@ const char*			VLexer::TokenNames[] =
 //==========================================================================
 
 VLexer::VLexer()
-: IncLineNumber(false)
-, NewLine(false)
-, SourceOpen(false)
-, FileStart(NULL)
-, FilePtr(NULL)
-, FileEnd(NULL)
-, SourceIdx(0)
-, Line(1)
+: SourceOpen(false)
+, Src(NULL)
 , Token(TK_NoToken)
 , Number(0)
 , Float(0)
@@ -223,19 +218,14 @@ VLexer::VLexer()
 //
 //==========================================================================
 
-void VLexer::OpenSource(void* buf, size_t size)
+void VLexer::OpenSource(const char* FileName)
 {
 	//	Read file and prepare for compilation.
+	PushSource(Location, FileName);
+
 	SourceOpen = true;
-	FileStart = (char*)buf;
-	FileEnd = FileStart + size;
-	FilePtr = FileStart;
-	SourceIdx = 0;
-	Line = 1;
-	Location = TLocation(SourceIdx, Line);
+
 	Token = TK_NoToken;
-	NewLine = true;
-	NextChr();
 }
 
 //==========================================================================
@@ -246,11 +236,169 @@ void VLexer::OpenSource(void* buf, size_t size)
 
 VLexer::~VLexer()
 {
-	if (SourceOpen)
+	while (Src)
 	{
-		Free(FileStart);
-		SourceOpen = false;
+		PopSource();
 	}
+	SourceOpen = false;
+}
+
+//==========================================================================
+//
+//	VLexer::PushSource
+//
+//==========================================================================
+
+void VLexer::PushSource(TLocation& Loc, const char* FileName)
+{
+	FILE* F = fopen(FileName, "r");
+	if (!F)
+	{
+		FatalError("Couldn't open %s", FileName);
+		return;
+	}
+
+	VSourceFile* NewSrc = new VSourceFile();
+	NewSrc->Next = Src;
+	Src = NewSrc;
+
+	//	Copy file name
+	NewSrc->FileName = new char[strlen(FileName) + 1];
+	strcpy(NewSrc->FileName, FileName);
+
+	//	Extract path to the file.
+	const char* PathEnd = FileName + strlen(FileName) - 1;
+	while (PathEnd >= FileName && *PathEnd != '/' && *PathEnd != '\\')
+	{
+		PathEnd--;
+	}
+	NewSrc->Path = NULL;
+	if (PathEnd >= FileName)
+	{
+		NewSrc->Path = new char[(PathEnd - FileName) + 2];
+		strncpy(NewSrc->Path, FileName, (PathEnd - FileName) + 1);
+		NewSrc->Path[(PathEnd - FileName) + 1] = 0;
+	}
+
+	//	Read the file
+	fseek(F, 0, SEEK_END);
+	int FileSize = ftell(F);
+	fseek(F, 0, SEEK_SET);
+	NewSrc->FileStart = new char[FileSize + 1];
+	fread(NewSrc->FileStart, 1, FileSize, F);
+	fclose(F);
+	NewSrc->FileStart[FileSize] = 0;
+	NewSrc->FileEnd = NewSrc->FileStart + FileSize;
+	NewSrc->FilePtr = NewSrc->FileStart;
+
+	//	Skip garbage some editors add in the begining of UTF-8 files.
+	if ((vuint8)NewSrc->FilePtr[0] == 0xef &&
+		(vuint8)NewSrc->FilePtr[1] == 0xbb &&
+		(vuint8)NewSrc->FilePtr[2] == 0xbf)
+	{
+		NewSrc->FilePtr += 3;
+	}
+
+	//	Save current character and location to be able to restore them.
+	NewSrc->Chr = Chr;
+	NewSrc->Loc = Location;
+
+	NewSrc->SourceIdx = AddSourceFile(FileName);
+	NewSrc->Line = 1;
+	NewSrc->IncLineNumber = false;
+	NewSrc->NewLine = true;
+	NewSrc->Skipping = false;
+	Location = TLocation(NewSrc->SourceIdx, NewSrc->Line);
+	NextChr();
+}
+
+//==========================================================================
+//
+//	VLexer::PopSource
+//
+//==========================================================================
+
+void VLexer::PopSource()
+{
+	if (!Src)
+	{
+		return;
+	}
+
+	if (Src->IfStates.Num())
+	{
+		ParseError(Location, "#ifdef without a corresponding #endif");
+	}
+
+	VSourceFile* Tmp = Src;
+	delete[] Tmp->FileName;
+	if (Tmp->Path)
+	{
+		delete[] Tmp->Path;
+	}
+	delete[] Tmp->FileStart;
+	Src = Tmp->Next;
+	Chr = Tmp->Chr;
+	Location = Tmp->Loc;
+	delete Tmp;
+}
+
+//==========================================================================
+//
+//	VLexer::NextToken
+//
+//==========================================================================
+
+void VLexer::NextToken()
+{
+	do
+	{
+		TokenStringBuffer[0] = 0;
+		SkipWhitespaceAndComments();
+		if (Src->NewLine)
+		{
+			//	A new line has been started, check preprocessor directive.
+			Src->NewLine = false;
+			if (Chr == '#')
+			{
+				ProcessPreprocessor();
+				continue;
+			}
+		}
+		switch (ASCIIToChrCode[(vuint8)Chr])
+		{
+		case CHR_EOF:
+			PopSource();
+			if (Src)
+			{
+				Token = TK_NoToken;
+			}
+			else
+			{
+				Token = TK_EOF;
+			}
+			break;
+		case CHR_Letter:
+			ProcessLetterToken(true);
+			break;
+		case CHR_Number:
+			ProcessNumberToken();
+			break;
+		case CHR_Quote:
+			ProcessQuoteToken();
+			break;
+		case CHR_SingleQuote:
+			ProcessSingleQuoteToken();
+			break;
+		default:
+			ProcessSpecialToken();
+			break;
+		}
+		if (Token != TK_EOF && Src->Skipping)
+		{
+			Token = TK_NoToken;
+		}
+	} while (Token == TK_NoToken);
 }
 
 //==========================================================================
@@ -261,27 +409,452 @@ VLexer::~VLexer()
 
 void VLexer::NextChr()
 {
-	if (FilePtr >= FileEnd)
+	if (Src->FilePtr >= Src->FileEnd)
 	{
 		Chr = EOF_CHARACTER;
 		return;
 	}
-	if (IncLineNumber)
+	if (Src->IncLineNumber)
 	{
-		Line++;
-		Location = TLocation(SourceIdx, Line);
-		IncLineNumber = false;
+		Src->Line++;
+		Location = TLocation(Src->SourceIdx, Src->Line);
+		Src->IncLineNumber = false;
 	}
-	Chr = *FilePtr++;
+	Chr = *Src->FilePtr++;
 	if ((vuint8)Chr < ' ')
 	{
 		if (Chr == '\n')
 		{
-			IncLineNumber = true;
-			NewLine = true;
+			Src->IncLineNumber = true;
+			Src->NewLine = true;
 		}
 		Chr = ' ';
 	}
+}
+
+//==========================================================================
+//
+//	VLexer::SkipWhitespaceAndComments
+//
+//==========================================================================
+
+void VLexer::SkipWhitespaceAndComments()
+{
+	bool Done;
+	do
+	{
+		Done = true;
+		while (Chr == ' ') NextChr();
+		if (Chr == '/' && *Src->FilePtr == '*')
+		{
+			//	Block comment
+			NextChr();
+			do
+			{
+				NextChr();
+				if (Chr == EOF_CHARACTER)
+				{
+					ParseError(Location, "End of file inside a comment");
+					return;
+				}
+			} while (Chr != '*' || *Src->FilePtr != '/');
+			NextChr();
+			NextChr();
+			Done = false;
+		}
+		else if (Chr == '/' && *Src->FilePtr == '/')
+		{
+			//	C++ style comment
+			NextChr();
+			do
+			{
+				NextChr();
+				if (Chr == EOF_CHARACTER)
+				{
+					ParseError(Location, "End of file inside a comment");
+					return;
+				}
+			} while (!Src->IncLineNumber);
+			Done = false;
+		}
+	} while (!Done);
+}
+
+//==========================================================================
+//
+//	VLexer::ProcessPreprocessor
+//
+//==========================================================================
+
+void VLexer::ProcessPreprocessor()
+{
+	NextChr();
+	if (Src->NewLine || Chr == EOF_CHARACTER)
+	{
+		ParseError(Location, "Bad directive.");
+		return;
+	}
+	if (ASCIIToChrCode[(vuint8)Chr] != CHR_Letter)
+	{
+		ParseError(Location, "Bad directive.");
+		while (!Src->NewLine && Chr != EOF_CHARACTER) NextChr();
+		return;
+	}
+
+	ProcessLetterToken(false);
+	if (!strcmp(TokenStringBuffer, "line"))
+	{
+		//	Read line number
+		SkipWhitespaceAndComments();
+		if (ASCIIToChrCode[(vuint8)Chr] != CHR_Number)
+		{
+			ParseError(Location, "Bad directive.");
+		}
+		ProcessNumberToken();
+		Src->Line = Number - 1;
+
+		//	Read file name
+		SkipWhitespaceAndComments();
+		if (ASCIIToChrCode[(vuint8)Chr] != CHR_Quote)
+		{
+			ParseError(Location, "Bad directive.");
+		}
+		ProcessFileName();
+		Src->SourceIdx = AddSourceFile(String);
+		Location = TLocation(Src->SourceIdx, Src->Line);
+
+		//	Ignore flags
+		while (!Src->NewLine)
+		{
+			NextChr();
+		}
+	}
+	else if (!strcmp(TokenStringBuffer, "define"))
+	{
+		ProcessDefine();
+	}
+	else if (!strcmp(TokenStringBuffer, "ifdef"))
+	{
+		ProcessIf(true);
+	}
+	else if (!strcmp(TokenStringBuffer, "ifndef"))
+	{
+		ProcessIf(false);
+	}
+	else if (!strcmp(TokenStringBuffer, "else"))
+	{
+		ProcessElse();
+	}
+	else if (!strcmp(TokenStringBuffer, "endif"))
+	{
+		ProcessEndIf();
+	}
+	else if (!strcmp(TokenStringBuffer, "include"))
+	{
+		ProcessInclude();
+		return;
+	}
+	else
+	{
+		ParseError(Location, "Bad directive.");
+		while (!Src->NewLine && Chr != EOF_CHARACTER) NextChr();
+	}
+	Token = TK_NoToken;
+
+	SkipWhitespaceAndComments();
+	//	A new-line is expected at the end of preprocessor directive.
+	if (!Src->NewLine)
+	{
+		ParseError(Location, "Bad directive.");
+	}
+}
+
+//==========================================================================
+//
+//	VLexer::ProcessDefine
+//
+//==========================================================================
+
+void VLexer::ProcessDefine()
+{
+	SkipWhitespaceAndComments();
+	//	Argument to the #define must be on the same line.
+	if (Src->NewLine || Chr == EOF_CHARACTER)
+	{
+		ParseError(Location, "Bad directive.");
+		return;
+	}
+
+	//	Parse name to be defined
+	if (ASCIIToChrCode[(vuint8)Chr] != CHR_Letter)
+	{
+		ParseError(Location, "Bad directive.");
+		while (!Src->NewLine && Chr != EOF_CHARACTER) NextChr();
+		return;
+	}
+	ProcessLetterToken(false);
+
+	if (Src->Skipping)
+	{
+		return;
+	}
+
+	AddDefine(TokenStringBuffer);
+}
+
+//==========================================================================
+//
+//	VLexer::AddDefine
+//
+//==========================================================================
+
+void VLexer::AddDefine(const char* CondName)
+{
+	//	Check for redefined names.
+	bool Found = false;
+	for (int i = 0; i < Defines.Num(); i++)
+	{
+		if (!strcmp(Defines[i], CondName))
+		{
+			ParseWarning(Location, "Redefined conditional");
+			Found = true;
+			break;
+		}
+	}
+	if (!Found)
+	{
+		//	Add it.
+		char* Copy = new char[strlen(CondName) + 1];
+		strcpy(Copy, CondName);
+		Defines.Append(Copy);
+	}
+}
+
+//==========================================================================
+//
+//	VLexer::ProcessIf
+//
+//==========================================================================
+
+void VLexer::ProcessIf(bool OnTrue)
+{
+	SkipWhitespaceAndComments();
+	//	Argument to the #ifdef must be on the same line.
+	if (Src->NewLine || Chr == EOF_CHARACTER)
+	{
+		ParseError(Location, "Bad directive.");
+		return;
+	}
+
+	//	Parse condition name
+	if (ASCIIToChrCode[(vuint8)Chr] != CHR_Letter)
+	{
+		ParseError(Location, "Bad directive.");
+		while (!Src->NewLine && Chr != EOF_CHARACTER) NextChr();
+		return;
+	}
+	ProcessLetterToken(false);
+
+	if (Src->Skipping)
+	{
+		Src->IfStates.Append(IF_Skip);
+	}
+	else
+	{
+		//	Check if the names has been defined.
+		bool Found = false;
+		for (int i = 0; i < Defines.Num(); i++)
+		{
+			if (!strcmp(Defines[i], TokenStringBuffer))
+			{
+				Found = true;
+				break;
+			}
+		}
+		if (Found == OnTrue)
+		{
+			Src->IfStates.Append(IF_True);
+		}
+		else
+		{
+			Src->IfStates.Append(IF_False);
+			Src->Skipping = true;
+		}
+	}
+}
+
+//==========================================================================
+//
+//	VLexer::ProcessElse
+//
+//==========================================================================
+
+void VLexer::ProcessElse()
+{
+	if (!Src->IfStates.Num())
+	{
+		ParseError(Location, "#else without an #ifdef/#ifndef");
+		return;
+	}
+	switch (Src->IfStates[Src->IfStates.Num() - 1])
+	{
+	case IF_True:
+		Src->IfStates[Src->IfStates.Num() - 1] = IF_ElseFalse;
+		Src->Skipping = true;
+		break;
+	case IF_False:
+		Src->IfStates[Src->IfStates.Num() - 1] = IF_ElseTrue;
+		Src->Skipping = false;
+		break;
+	case IF_Skip:
+		Src->IfStates[Src->IfStates.Num() - 1] = IF_ElseSkip;
+		break;
+	case IF_ElseTrue:
+	case IF_ElseFalse:
+	case IF_ElseSkip:
+		ParseError(Location, "Multiple #else directives for a single #ifdef");
+		Src->Skipping = true;
+		break;
+	}
+}
+
+//==========================================================================
+//
+//	VLexer::ProcessEndIf
+//
+//==========================================================================
+
+void VLexer::ProcessEndIf()
+{
+	if (!Src->IfStates.Num())
+	{
+		ParseError(Location, "#endif without an #ifdef/#ifndef");
+		return;
+	}
+	Src->IfStates.RemoveIndex(Src->IfStates.Num() - 1);
+	if (Src->IfStates.Num() > 0)
+	{
+		switch (Src->IfStates[Src->IfStates.Num() - 1])
+		{
+		case IF_True:
+		case IF_ElseTrue:
+			Src->Skipping = false;
+			break;
+		case IF_False:
+		case IF_ElseFalse:
+			Src->Skipping = true;
+			break;
+		case IF_Skip:
+		case IF_ElseSkip:
+			break;
+		}
+	}
+	else
+	{
+		Src->Skipping = false;
+	}
+}
+
+//==========================================================================
+//
+//	VLexer::ProcessInclude
+//
+//==========================================================================
+
+void VLexer::ProcessInclude()
+{
+	SkipWhitespaceAndComments();
+	//	File name must be on the same line.
+	if (Src->NewLine || Chr == EOF_CHARACTER)
+	{
+		ParseError(Location, "Bad directive.");
+		return;
+	}
+
+	//	Parse file name
+	if (Chr != '\"')
+	{
+		ParseError(Location, "Bad directive.");
+		while (!Src->NewLine && Chr != EOF_CHARACTER) NextChr();
+		return;
+	}
+	ProcessFileName();
+	TLocation Loc = Location;
+
+	Token = TK_NoToken;
+	SkipWhitespaceAndComments();
+	//	A new-line is expected at the end of preprocessor directive.
+	if (!Src->NewLine)
+	{
+		ParseError(Location, "Bad directive.");
+	}
+
+	if (Src->Skipping)
+	{
+		return;
+	}
+
+	//	Check if it's an absolute path location.
+	if (TokenStringBuffer[0] != '/' && TokenStringBuffer[0] != '\\')
+	{
+		//	First try relative to the current source file.
+		if (Src->Path)
+		{
+			char* FileName = new char[strlen(Src->Path) +
+				strlen(TokenStringBuffer) + 1];
+			strcpy(FileName, Src->Path);
+			strcat(FileName, TokenStringBuffer);
+			FILE* F = fopen(FileName, "r");
+			if (F)
+			{
+				fclose(F);
+				PushSource(Loc, FileName);
+				delete[] FileName;
+				return;
+			}
+			delete[] FileName;
+		}
+
+		for (int i = IncludePath.Num() - 1; i >= 0; i--)
+		{
+			char* FileName = new char[strlen(IncludePath[i]) +
+				strlen(TokenStringBuffer) + 1];
+			strcpy(FileName, IncludePath[i]);
+			strcat(FileName, TokenStringBuffer);
+			FILE* F = fopen(FileName, "r");
+			if (F)
+			{
+				fclose(F);
+				PushSource(Loc, FileName);
+				delete[] FileName;
+				return;
+			}
+			delete[] FileName;
+		}
+	}
+
+	//	Either it's relative to the current directory or absolute path.
+	PushSource(Loc, TokenStringBuffer);
+}
+
+//==========================================================================
+//
+//	VLexer::AddIncludePath
+//
+//==========================================================================
+
+void VLexer::AddIncludePath(const char* DirName)
+{
+	int Len = strlen(DirName);
+	char* Copy = new char[Len + 2];
+	strcpy(Copy, DirName);
+	//	Append trailing slash if needed.
+	if (Copy[Len - 1] != '/' && Copy[Len - 1] != '\\')
+	{
+		Copy[Len] = '/';
+		Copy[Len + 1] = 0;
+	}
+	IncludePath.Append(Copy);
 }
 
 //==========================================================================
@@ -382,7 +955,7 @@ void VLexer::ProcessChar()
 		ParseError(Location, ERR_EOF_IN_STRING);
 		BailOut();
 	}
-	if (IncLineNumber)
+	if (Src->IncLineNumber)
 	{
 		ParseError(Location, ERR_NEW_LINE_INSIDE_QUOTE);
 	}
@@ -395,7 +968,7 @@ void VLexer::ProcessChar()
 			ParseError(Location, ERR_EOF_IN_STRING);
 			BailOut();
 		}
-		if (IncLineNumber)
+		if (Src->IncLineNumber)
 		{
 			ParseError(Location, ERR_NEW_LINE_INSIDE_QUOTE);
 		}
@@ -481,7 +1054,7 @@ void VLexer::ProcessSingleQuoteToken()
 //
 //==========================================================================
 
-void VLexer::ProcessLetterToken()
+void VLexer::ProcessLetterToken(bool CheckKeywords)
 {
 	int		len;
 
@@ -501,6 +1074,11 @@ void VLexer::ProcessLetterToken()
 		NextChr();
 	}
 	TokenStringBuffer[len] = 0;
+
+	if (!CheckKeywords)
+	{
+		return;
+	}
 
 	register const char* s = TokenStringBuffer;
 	switch (s[0])
@@ -1070,7 +1648,7 @@ void VLexer::ProcessSpecialToken()
 		break;
 
 	case '.':
-		if (Chr == '.' && FilePtr[0] == '.')
+		if (Chr == '.' && Src->FilePtr[0] == '.')
 		{
 			Token = TK_VarArgs;
 			NextChr();
@@ -1163,7 +1741,7 @@ void VLexer::ProcessFileName()
 			ParseError(Location, ERR_EOF_IN_STRING);
 			break;
 		}
-		if (IncLineNumber)
+		if (Src->IncLineNumber)
 		{
 			ParseError(Location, ERR_NEW_LINE_INSIDE_QUOTE);
 		}
@@ -1192,84 +1770,6 @@ int VLexer::AddSourceFile(const char* SName)
 	char* NewName = new char[strlen(SName) + 1];
 	strcpy(NewName, SName);
 	return TLocation::SourceFiles.Append(NewName);
-}
-
-//==========================================================================
-//
-//	VLexer::NextToken
-//
-//==========================================================================
-
-void VLexer::NextToken()
-{
-	do
-	{
-		TokenStringBuffer[0] = 0;
-		while (Chr == ' ') NextChr();
-		if (NewLine)
-		{
-			NewLine = false;
-			if (Chr == '#')
-			{
-				if (!strncmp(FilePtr, "line", 4))
-				{
-					NextChr();
-					NextChr();
-					NextChr();
-					NextChr();
-				}
-				NextChr();
-
-				//	Read line number
-				while (Chr == ' ') NextChr();
-				if (ASCIIToChrCode[(vuint8)Chr] != CHR_Number)
-				{
-					ParseError(Location, "Bad directive.");
-				}
-				ProcessNumberToken();
-				Line = Number - 1;
-
-				//	Read file name
-				while (Chr == ' ') NextChr();
-				if (ASCIIToChrCode[(vuint8)Chr] != CHR_Quote)
-				{
-					ParseError(Location, "Bad directive.");
-				}
-				ProcessFileName();
-				SourceIdx = AddSourceFile(String);
-				Location = TLocation(SourceIdx, Line);
-
-				//	Ignore flags
-				while (!NewLine)
-				{
-					NextChr();
-				}
-				Token = TK_NoToken;
-				continue;
-			}
-		}
-		switch (ASCIIToChrCode[(vuint8)Chr])
-		{
-			case CHR_EOF:
-				Token = TK_EOF;
-				break;
-			case CHR_Letter:
-				ProcessLetterToken();
-				break;
-			case CHR_Number:
-				ProcessNumberToken();
-				break;
-			case CHR_Quote:
-				ProcessQuoteToken();
-				break;
-			case CHR_SingleQuote:
-				ProcessSingleQuoteToken();
-				break;
-			default:
-				ProcessSpecialToken();
-				break;
-		}
-	} while (Token == TK_NoToken);
 }
 
 //==========================================================================

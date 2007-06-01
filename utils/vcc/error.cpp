@@ -39,8 +39,6 @@
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
-extern char SourceFileName[MAX_FILE_NAME_LENGTH];
-
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
 int			NumErrors = 0;

@@ -3597,13 +3597,6 @@ bool PIT_RadiusAttack(Entity Other)
 		// don't damage the source of the explosion
 		return true;
 	}
-#if 0
-	if (abs(ftoi(Other.Origin.z - Origin.z)) > 2 * bombdistance)
-	{
-		// too high/low
-		return true;
-	}
-#endif
 	dist = Length(Other.GetCentre() - GetCentre()) - Other.Radius;
 	if (dist < 0.0)
 	{

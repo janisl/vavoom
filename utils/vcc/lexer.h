@@ -201,25 +201,58 @@ private:
 		CHR_Special
 	};
 
+	enum
+	{
+		IF_False,		//	Skipping the content
+		IF_True,		//	Parsing the content
+		IF_ElseFalse,	//	Else case, skipping content
+		IF_ElseTrue,	//	Else case, parsing content
+		IF_Skip,		//	Conditon inside curently skipped code
+		IF_ElseSkip,	//	Else case inside curently skipped code
+	};
+
+	struct VSourceFile
+	{
+		VSourceFile*	Next;	//	Nesting stack
+		char*			FileName;
+		char*			Path;
+		char*			FileStart;
+		char*			FilePtr;
+		char*			FileEnd;
+		char			Chr;
+		TLocation		Loc;
+		int 			SourceIdx;
+		int 			Line;
+		bool			IncLineNumber;
+		bool			NewLine;
+		TArray<int>		IfStates;
+		bool			Skipping;
+	};
+
 	char			ASCIIToChrCode[256];
 	vuint8			ASCIIToHexDigit[256];
 	char			TokenStringBuffer[MAX_QUOTED_LENGTH];
-	bool			IncLineNumber;
-	bool			NewLine;
 	bool			SourceOpen;
-	char*			FileStart;
-	char*			FilePtr;
-	char*			FileEnd;
 	char			Chr;
-	int 			SourceIdx;
-	int 			Line;
+	TArray<char*>	Defines;
+	TArray<char*>	IncludePath;
+	VSourceFile*	Src;
 
 	void NextChr();
+	void SkipWhitespaceAndComments();
+	void ProcessPreprocessor();
+	void ProcessDefine();
+	void ProcessIf(bool);
+	void ProcessElse();
+	void ProcessEndIf();
+	void ProcessInclude();
+	void PushSource(TLocation&, const char*);
+	void PopSource();
 	void ProcessNumberToken();
 	void ProcessChar();
 	void ProcessQuoteToken();
 	void ProcessSingleQuoteToken();
-	void ProcessLetterToken();
+	void ProcessLetterToken(bool);
 	void ProcessSpecialToken();
 	void ProcessFileName();
 	int AddSourceFile(const char*);
@@ -235,8 +268,10 @@ public:
 	static const char*	TokenNames[];
 
 	VLexer();
-	void OpenSource(void*, size_t);
 	~VLexer();
+	void AddDefine(const char*);
+	void AddIncludePath(const char*);
+	void OpenSource(const char*);
 
 	void NextToken();
 	bool Check(EToken);

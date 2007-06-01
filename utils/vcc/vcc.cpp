@@ -35,11 +35,6 @@
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
-void cpp_init();
-size_t cpp_main(char*, void**);
-void cpp_add_include(char*);
-void cpp_add_define(int, char*);
-
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
@@ -82,27 +77,19 @@ int main(int argc, char **argv)
 {
 	int starttime;
 	int endtime;
-	void *buf;
-	size_t size;
 
 	signal(SIGSEGV, SignalHandler);
 
 	starttime = time(0);
-	cpp_init();
 	Init();
 	ProcessArgs(argc, argv);
 
-	dprintf("Preprocessing\n");
-	size = cpp_main(SourceFileName, &buf);
-	int preptime = time(0);
-	dprintf("Preprocessing in %02d:%02d\n",
-		(preptime - starttime) / 60, (preptime - starttime) % 60);
-	Lex.OpenSource(buf, size);
+	Lex.OpenSource(SourceFileName);
 	VParser Parser(Lex, CurrentPackage);
 	Parser.Parse();
 	int parsetime = time(0);
 	dprintf("Parsed in %02d:%02d\n",
-		(parsetime - preptime) / 60, (parsetime - preptime) % 60);
+		(parsetime - starttime) / 60, (parsetime - starttime) % 60);
 	CurrentPackage->Emit();
 	int compiletime = time(0);
 	dprintf("Compiled in %02d:%02d\n",
@@ -144,13 +131,6 @@ static void SignalHandler(int s)
 
 static void Init()
 {
-	char		pvbuf[32];
-
-	//	Add define of the progs version.
-	memset(pvbuf, 0, 32);
-	sprintf(pvbuf, "PROG_VERSION=%d", PROG_VERSION);
-	cpp_add_define('D', pvbuf);
-
 	DebugMode = false;
 	DebugFile = NULL;
 	num_dump_asm = 0;
@@ -172,8 +152,7 @@ static void DisplayUsage()
 	printf("Usage: vcc [options] source[.c] [object[.dat]]\n");
 	printf("    -d<file>     Output debugging information into specified file\n");
 	printf("    -a<function> Output function's ASM statements into debug file\n");
-	printf("    -D<name>[=<value>] Define macro\n");
-	printf("    -U<name>           Unefine macro\n");
+	printf("    -D<name>           Define macro\n");
 	printf("    -I<directory>      Include files directory\n");
 	printf("    -P<directory>      Package import files directory\n");
 	exit(1);
@@ -221,11 +200,10 @@ static void ProcessArgs(int ArgCount, char **ArgVector)
 				dump_asm_names[num_dump_asm++] = text;
 				break;
 			case 'I':
-				cpp_add_include(text);
+				Lex.AddIncludePath(text);
 				break;
 			case 'D':
-			case 'U':
-				cpp_add_define(option, text);
+				Lex.AddDefine(text);
 				break;
 			case 'P':
 				VMemberBase::AddPackagePath(text);

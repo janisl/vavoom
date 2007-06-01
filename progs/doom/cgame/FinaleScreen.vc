@@ -37,7 +37,7 @@ int fend[7];
 
 int laststage;
 
-#if 0
+#ifdef FIXME
 static int castnum;
 static int *castorder;
 static state_t *caststate;
@@ -322,7 +322,7 @@ void F_StartCast()
 #endif
 	fpage1 = R_RegisterPic('bossback');
 
-#if 0
+#ifdef FIXME
 	castnum = 0;
 	castorder = svpr.GlobalAddr("castorder");
 	caststate = &states[mobjinfo[castorder[castnum]].seestate];
@@ -340,7 +340,7 @@ void F_StartCast()
 //
 //==========================================================================
 
-#if 0
+#ifdef FIXME
 void CastSound(int state)
 {
 	string sfx;
@@ -430,7 +430,7 @@ void CastSound(int state)
 
 void F_CastTicker()
 {
-#if 0
+#ifdef FIXME
 	int st;
 
 	casttime -= host_frametime;
@@ -508,7 +508,7 @@ void F_CastTicker()
 
 bool F_CastResponder(event_t * ev)
 {
-#if 0
+#ifdef FIXME
 	if (ev->type != ev_keydown)
 		return false;
 
@@ -543,7 +543,7 @@ void F_CastDrawer()
 	R_DrawPic(0, 0, fpage1);
 	SetVirtualScreen(640, 480);
 
-#if 0
+#ifdef FIXME
 	T_SetFont(font_small);
 	T_SetAlign(hcentre, vtop);
 //  T_DrawText(160, 180, castorder[castnum].Name);

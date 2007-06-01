@@ -27,6 +27,6 @@ class MenuChoice_SkillNightmare:MenuChoice_SkillBaby;
 
 defaultproperties
 {
-	Text = "Nightmare";	//""
+	Text = "Nightmare";
 	SkillLevel = sk_nightmare;
 }

@@ -29,16 +29,6 @@ ___bin_vcc_SOURCES = \
 	stream.h \
 	types.cpp \
 	vcc.cpp \
-	vcc.h \
-	vcpp/cpp.cpp \
-	vcpp/cpp.h \
-	vcpp/eval.cpp \
-	vcpp/hideset.cpp \
-	vcpp/include.cpp \
-	vcpp/lex.cpp \
-	vcpp/macro.cpp \
-	vcpp/nlist.cpp \
-	vcpp/tokens.cpp \
-	vcpp/unix.cpp
+	vcc.h
 
 EXTRA_DIST = vcc.txt
