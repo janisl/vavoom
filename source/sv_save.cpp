@@ -71,6 +71,7 @@ enum gameArchiveSegment_t
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 void CL_Disconnect();
+void CL_SetUpStandaloneClient();
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
@@ -1008,6 +1009,13 @@ void SV_MapTeleport(VName mapname)
 			Ent->LinkToWorld();
 		}
 	}
+
+#ifdef CLIENT
+	if (host_standalone)
+	{
+		CL_SetUpStandaloneClient();
+	}
+#endif
 
 	// Launch waiting scripts
 	if (!deathmatch)

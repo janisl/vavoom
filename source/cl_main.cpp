@@ -49,6 +49,8 @@ void CL_ReadFromServerInfo();
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
+void CL_SetUpStandaloneClient();
+
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
@@ -401,45 +403,58 @@ void CL_EstablishConnection(const char* host)
 
 	if (host_standalone)
 	{
-		CL_Clear();
-
-		GClGame->serverinfo = svs.serverinfo;
-		CL_ReadFromServerInfo();
-
-		GClGame->maxclients = svs.max_clients;
-		GClGame->deathmatch = deathmatch;
-
-		const mapInfo_t& LInfo = P_GetMapInfo(*GLevel->MapName);
-		GCon->Log("---------------------------------------");
-		GCon->Log(LInfo.GetName());
-		GCon->Log("");
-		C_ClearNotify();
-
-		GClLevel = GLevel;
-		GClGame->GLevel = GClLevel;
-
-		R_Start(GClLevel);
-		GAudio->Start();
-
-		SB_Start();
-
-		for (int i = 0; i < VClass::GSpriteNames.Num(); i++)
-		{
-			R_InstallSprite(*VClass::GSpriteNames[i], i);
-		}
-
-		for (int i = 0; i < GClLevel->NumStaticLights; i++)
-		{
-			rep_light_t& L = GClLevel->StaticLights[i];
-			GClLevel->RenderData->AddStaticLight(L.Origin, L.Radius, L.Colour);
-		}
-		GClLevel->RenderData->PreRender();
-
-		CL_SignonReply();
-
-		cls.signon = 1;
-		GCon->Log(NAME_Dev, "Client level loaded");
+		CL_SetUpStandaloneClient();
 	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	CL_SetUpStandaloneClient
+//
+//==========================================================================
+
+void CL_SetUpStandaloneClient()
+{
+	guard();
+	CL_Clear();
+
+	GClGame->serverinfo = svs.serverinfo;
+	CL_ReadFromServerInfo();
+
+	GClGame->maxclients = svs.max_clients;
+	GClGame->deathmatch = deathmatch;
+
+	const mapInfo_t& LInfo = P_GetMapInfo(*GLevel->MapName);
+	GCon->Log("---------------------------------------");
+	GCon->Log(LInfo.GetName());
+	GCon->Log("");
+	C_ClearNotify();
+
+	GClLevel = GLevel;
+	GClGame->GLevel = GClLevel;
+
+	R_Start(GClLevel);
+	GAudio->Start();
+
+	SB_Start();
+
+	for (int i = 0; i < VClass::GSpriteNames.Num(); i++)
+	{
+		R_InstallSprite(*VClass::GSpriteNames[i], i);
+	}
+
+	for (int i = 0; i < GClLevel->NumStaticLights; i++)
+	{
+		rep_light_t& L = GClLevel->StaticLights[i];
+		GClLevel->RenderData->AddStaticLight(L.Origin, L.Radius, L.Colour);
+	}
+	GClLevel->RenderData->PreRender();
+
+	CL_SignonReply();
+
+	cls.signon = 1;
+	GCon->Log(NAME_Dev, "Client level loaded");
 	unguard;
 }
 
