@@ -276,7 +276,7 @@ static void SV_UpdateLevel(VBasePlayer* Player)
 	guard(SV_UpdateLevel);
 	int		i;
 
-	Player->Net->FatPvs = GLevel->LeafPVS(Player->MO->SubSector);
+	Player->Net->SetUpFatPVS();
 
 	((VLevelChannel*)Player->Net->Channels[CHANIDX_Level])->Update();
 

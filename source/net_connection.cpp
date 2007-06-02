@@ -66,7 +66,9 @@ VNetConnection::VNetConnection(VSocketPublic* ANetCon, VNetContext* AContext,
 , AckSequence(0)
 , UnreliableSendSequence(0)
 , UnreliableReceiveSequence(0)
-, FatPvs(NULL)
+, UpdatePvs(NULL)
+, UpdatePvsSize(0)
+, LeafPvs(NULL)
 {
 	memset(Channels, 0, sizeof(Channels));
 	memset(InSequence, 0, sizeof(InSequence));
@@ -102,6 +104,10 @@ VNetConnection::~VNetConnection()
 	else
 	{
 		Context->ClientConnections.Remove(this);
+	}
+	if (UpdatePvs)
+	{
+		delete[] UpdatePvs;
 	}
 	unguard;
 }
@@ -575,6 +581,94 @@ void VNetConnection::SendCommand(VStr Str)
 
 //==========================================================================
 //
+//	VNetConnection::SetUpFatPVS
+//
+//==========================================================================
+
+void VNetConnection::SetUpFatPVS()
+{
+	guard(VNetConnection::SetUpFatPVS);
+	float	dummy_bbox[6] = {-99999, -99999, -99999, 99999, 9999, 99999};
+	VLevel*	Level = Context->GetLevel();
+
+	LeafPvs = Level->LeafPVS(Owner->MO->SubSector);
+
+	//	Re-allocate PVS buffer if needed.
+	if (UpdatePvsSize != (Level->NumSubsectors + 7) / 8)
+	{
+		if (UpdatePvs)
+		{
+			delete[] UpdatePvs;
+		}
+		UpdatePvsSize = (Level->NumSubsectors + 7) / 8;
+		UpdatePvs = new vuint8[UpdatePvsSize];
+	}
+
+	//	Build view PVS using view clipper.
+	memset(UpdatePvs, 0, UpdatePvsSize);
+	Clipper.ClearClipNodes(Owner->ViewOrg, Level);
+	SetUpPvsNode(Level->NumNodes - 1, dummy_bbox);
+	unguard;
+}
+
+//==========================================================================
+//
+//	VNetConnection::SetUpPvsNode
+//
+//==========================================================================
+
+void VNetConnection::SetUpPvsNode(int BspNum, float* BBox)
+{
+	guard(VNetConnection::SetUpPvsNode);
+	VLevel* Level = Context->GetLevel();
+	if (Clipper.ClipIsFull())
+	{
+		return;
+	}
+	if (!Clipper.ClipIsBBoxVisible(BBox))
+	{
+		return;
+	}
+
+	// Found a subsector?
+	if (BspNum & NF_SUBSECTOR)
+	{
+		int SubNum = BspNum == -1 ? 0 : BspNum & ~NF_SUBSECTOR;
+		subsector_t* Sub = &Level->Subsectors[SubNum];
+		if (!Sub->sector->linecount)
+		{
+			//	Skip sectors containing original polyobjs
+			return;
+		}
+		if (!(LeafPvs[SubNum >> 3] & (1 << (SubNum & 7))))
+		{
+			return;
+		}
+
+		if (!Clipper.ClipCheckSubsector(Sub))
+		{
+			return;
+		}
+		Clipper.ClipAddSubsectorSegs(Sub);
+		UpdatePvs[SubNum >> 3] |= 1 << (SubNum & 7);
+		return;
+	}
+
+	node_t* Bsp = &Level->Nodes[BspNum];
+
+	// Decide which side the view point is on.
+	int Side = Bsp->PointOnSide(Owner->ViewOrg);
+
+	// Recursively divide front space.
+	SetUpPvsNode(Bsp->children[Side], Bsp->bbox[Side]);
+
+	// Divide back space.
+	SetUpPvsNode(Bsp->children[Side ^ 1], Bsp->bbox[Side ^ 1]);
+	unguard;
+}
+
+//==========================================================================
+//
 //	VNetConnection::CheckFatPVS
 //
 //==========================================================================
@@ -583,7 +677,7 @@ int VNetConnection::CheckFatPVS(subsector_t* Subsector)
 {
 	guardSlow(VNetConnection::CheckFatPVS);
 	int ss = Subsector - Context->GetLevel()->Subsectors;
-	return FatPvs[ss / 8] & (1 << (ss & 7));
+	return UpdatePvs[ss / 8] & (1 << (ss & 7));
 	unguardSlow;
 }
 
