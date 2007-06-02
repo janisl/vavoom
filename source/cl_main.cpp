@@ -55,8 +55,6 @@ void CL_SetUpStandaloneClient();
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
-extern VLevel*		GClPrevLevel;
-
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
 client_static_t		cls;
@@ -138,8 +136,6 @@ void CL_Shutdown()
 	//	Free up memory.
 	if (GClLevel)
 		GClLevel->ConditionalDestroy();
-	if (GClPrevLevel)
-		GClPrevLevel->ConditionalDestroy();
 	if (GClGame)
 		GClGame->ConditionalDestroy();
 	if (GRoot)

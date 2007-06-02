@@ -113,10 +113,6 @@ static VCvarI			precache("precache", "1", CVAR_Archive);
 
 static VCvarI			_driver("_driver", "0", CVAR_Rom);
 
-VCvarI					lev_test_srv("lev_test_srv", "0");
-VCvarI					lev_test_prev("lev_test_prev", "0");
-extern VLevel*			GClPrevLevel;
-
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
@@ -697,15 +693,7 @@ void VRenderLevel::DrawParticles()
 void R_RenderPlayerView()
 {
 	guard(R_RenderPlayerView);
-	VLevel* r_Level;
-	if (lev_test_srv && GLevel)
-		r_Level = GLevel;
-	else if (lev_test_prev && GClPrevLevel)
-		r_Level = GClPrevLevel;
-	else
-		r_Level = GClLevel;
-
-	((VRenderLevel*)r_Level->RenderData)->RenderPlayerView();
+	((VRenderLevel*)GClLevel->RenderData)->RenderPlayerView();
 	unguard;
 }
 
