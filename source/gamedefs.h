@@ -93,6 +93,7 @@
 #include "p_playerreplicationinfo.h"
 #include "player.h"
 #include "p_gameinfo.h"
+#include "p_world.h"
 #include "client.h"
 
 #endif

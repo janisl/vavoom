@@ -34,39 +34,9 @@
 #include "gamedefs.h"
 #include "sv_local.h"
 
-#define FRACBITS		16
-#define FRACUNIT		(1<<FRACBITS)
-
-typedef int fixed_t;
-
-#define FL(x)	((float)(x) / (float)FRACUNIT)
-#define FX(x)	(fixed_t)((x) * FRACUNIT)
-
-// mapblocks are used to check movement against lines and things
-#define MAPBLOCKUNITS	128
-#define MAPBLOCKSIZE	(MAPBLOCKUNITS*FRACUNIT)
-#define MAPBLOCKSHIFT	(FRACBITS+7)
-#define MAPBTOFRAC		(MAPBLOCKSHIFT-FRACBITS)
-
 // MACROS ------------------------------------------------------------------
 
 // TYPES -------------------------------------------------------------------
-
-struct pathtrace_t
-{
-	enum { MAXINTERCEPTS = 128 };
-
-	intercept_t		intercepts[MAXINTERCEPTS];
-	intercept_t*	intercept_p;
-	bool			earlyout;
-
-	TPlane			plane;
-	TVec			org;
-	TVec			dest;
-	TVec			delta;
-	TVec			dir;
-	float			len;
-};
 
 struct secchangetrace_t
 {
@@ -270,64 +240,14 @@ bool VLevel::BlockLinesIterator(int x, int y, bool(*func)(void*, line_t*),
 	void* FuncArg)
 {
 	guard(VLevel::BlockLinesIterator);
-	int			offset;
-	short*		list;
 	line_t*		ld;
-	int 		i;
-	polyblock_t	*polyLink;
-	seg_t		**tempSeg;
 
-	if (x < 0 || y < 0 || x >= BlockMapWidth || y >= BlockMapHeight)
+	for (VBlockLinesIterator It(LevelInfo, x, y, &ld); It.GetNext(); )
 	{
-		return true;
-	}
-
-	offset = y * BlockMapWidth + x;
-
-	//	Check polyobj blockmap
-	polyLink = PolyBlockMap[offset];
-	while (polyLink)
-	{
-		if (polyLink->polyobj)
-		{
-			if (polyLink->polyobj->validcount != validcount)
-			{
-				polyLink->polyobj->validcount = validcount;
-				tempSeg = polyLink->polyobj->segs;
-				for (i = 0; i < polyLink->polyobj->numsegs; i++, tempSeg++)
-				{
-					if ((*tempSeg)->linedef->validcount == validcount)
-					{
-						continue;
-					}
-					(*tempSeg)->linedef->validcount = validcount;
-					if (!func(FuncArg, (*tempSeg)->linedef))
-					{
-						return false;
-					}
-				}
-			}
-		}
-		polyLink = polyLink->next;
-	}
-
-	offset = *(BlockMap + offset);
-
-	for (list = BlockMapLump + offset; *list != -1; list++)
-	{
-#ifdef PARANOID
-		if (*list < 0 || *list >= NumLines)
-			Host_Error("Broken blockmap - line %d", *list);
-#endif
-		ld = &Lines[*list];
-
-		if (ld->validcount == validcount)
-			continue; 	// line has already been checked
-
-		ld->validcount = validcount;
-		
 		if (!func(FuncArg, ld))
+		{
 			return false;
+		}
 	}
 	return true;	// everything was checked
 	unguard;
@@ -343,22 +263,21 @@ bool VLevel::BlockThingsIterator(int x, int y, bool(*func)(void*, VEntity*),
 	void* FuncArg, VObject* PrSelf, VMethod *prfunc)
 {
 	guard(VLevel::BlockThingsIterator);
-	if (x < 0 || y < 0 || x >= BlockMapWidth || y >= BlockMapHeight)
-	{
-		return true;
-	}
-	
-	for (VEntity *Ent = BlockLinks[y * BlockMapWidth + x]; Ent;
-		Ent = Ent->BlockMapNext)
+	VEntity* Ent;
+	for (VBlockThingsIterator It(LevelInfo, x, y, &Ent); It.GetNext();)
 	{
 		if (func && !func(FuncArg, Ent))
+		{
 			return false;
+		}
 		if (prfunc && PrSelf)
 		{
 			P_PASS_REF(PrSelf);
 			P_PASS_REF(Ent);
 			if (!ExecuteFunction(prfunc).i)
+			{
 				return false;
+			}
 		}
 	}
 	return true;
@@ -370,112 +289,6 @@ bool VLevel::BlockThingsIterator(int x, int y, bool(*func)(void*, VEntity*),
 //	INTERCEPT ROUTINES
 //
 //**************************************************************************
-
-//==========================================================================
-//
-//	PIT_AddLineIntercepts
-//
-//	Looks for lines in the given block that intercept the given trace to add
-// to the intercepts list.
-//	A line is crossed if its endpoints are on opposite sides of the trace.
-// Returns true if earlyout and a solid line hit.
-//
-//==========================================================================
-
-static bool PIT_AddLineIntercepts(void* arg, line_t* ld)
-{
-	guard(PIT_AddLineIntercepts);
-	pathtrace_t& trace = *(pathtrace_t*)arg;
-	float dot1 = DotProduct(*ld->v1, trace.plane.normal) - trace.plane.dist;
-	float dot2 = DotProduct(*ld->v2, trace.plane.normal) - trace.plane.dist;
-	
-	if (dot1 * dot2 >= 0)
-	{
-		return true;	// line isn't crossed
-	}
-	
-	// hit the line
-	//
-	//	Find the fractional intercept point along the trace line.
-	//
-	float		num;
-	float		den;
-	float		frac;
-	
-	den = DotProduct(ld->normal, trace.delta);
-	if (den == 0)
-	{
-		return true;
-	}
-	num = ld->dist - DotProduct(trace.org, ld->normal);
-	frac = num / den;
-
-	if (frac < 0)
-	{
-		return true;	// behind source
-	}
-	
-	// try to early out the check
-	if (trace.earlyout && frac < 1.0 && !ld->backsector)
-	{
-		return false;	// stop checking
-	}
-
-	if (trace.intercept_p - trace.intercepts >= trace.MAXINTERCEPTS)
-	{
-		GCon->Log(NAME_Dev, "Intercepts overflow");
-	}
-	else
-	{
-		trace.intercept_p->frac = frac;
-		trace.intercept_p->Flags |= intercept_t::IF_IsALine;
-		trace.intercept_p->line = ld;
-		trace.intercept_p++;
-	}
-
-	return true;	// continue
-	unguard;
-}
-
-//==========================================================================
-//
-//	PIT_AddThingIntercepts
-//
-//==========================================================================
-
-static bool PIT_AddThingIntercepts(void* arg, VEntity* thing)
-{
-	guard(PIT_AddThingIntercepts);
-	pathtrace_t& trace = *(pathtrace_t*)arg;
-	float dot = DotProduct(thing->Origin, trace.plane.normal) - trace.plane.dist;
-	if (dot >= thing->Radius || dot <= -thing->Radius)
-	{
-		return true;		// line isn't crossed
-	}
-
-	float dist = DotProduct((thing->Origin - trace.org), trace.dir);
-//	dist -= sqrt(thing->radius * thing->radius - dot * dot);
-	if (dist < 0)
-	{
-		return true;		// behind source
-	}
-	float frac = dist / trace.len;
-
-	if (trace.intercept_p - trace.intercepts >= trace.MAXINTERCEPTS)
-	{
-		GCon->Log(NAME_Dev, "Intercepts overflow");
-	}
-	else
-	{
-		trace.intercept_p->frac = frac;
-		trace.intercept_p->Flags &= ~intercept_t::IF_IsALine;
-		trace.intercept_p->thing = thing;
-		trace.intercept_p++;
-	}
-
-	return true;		// keep going
-	unguard;
-}
 
 //==========================================================================
 //
@@ -491,170 +304,9 @@ bool VLevel::PathTraverse(float InX1, float InY1, float x2, float y2,
 	VObject* PrSelf, VMethod *prtrav)
 {
 	guard(VLevel::PathTraverse);
-	float x1 = InX1;
-	float y1 = InY1;
-	int			xt1;
-	int			yt1;
-	int			xt2;
-	int			yt2;
-
-	float		xstep;
-	float		ystep;
-
-	float		partial;
-
-	float		xintercept;
-	float		yintercept;
-
-	int			mapx;
-	int			mapy;
-
-	int			mapxstep;
-	int			mapystep;
-
-	int			count;
-	pathtrace_t	trace;
-
-	trace.earlyout = !!(flags & PT_EARLYOUT);
-
-	validcount++;
-	trace.intercept_p = trace.intercepts;
-	memset(trace.intercepts, 0, sizeof(trace.intercepts));
-
-	if (((FX(x1 - BlockMapOrgX)) & (MAPBLOCKSIZE - 1)) == 0)
-//	if (fmod(x1 - BlockMapOrgX, MAPBLOCKSIZE) == 0.0)
-		x1 += 1.0;	// don't side exactly on a line
-
-	if (((FX(y1 - BlockMapOrgY)) & (MAPBLOCKSIZE - 1)) == 0)
-//	if (fmod(y1 - BlockMapOrgY, MAPBLOCKSIZE) == 0.0)
-		y1 += 1.0;	// don't side exactly on a line
-
-	trace.org = TVec(x1, y1, 0);
-	trace.dest = TVec(x2, y2, 0);
-	trace.delta = trace.dest - trace.org;
-	trace.dir = Normalise(trace.delta);
-	trace.len = Length(trace.delta);
-
-	trace.plane.SetPointDir(trace.org, trace.delta);
-
-	x1 -= BlockMapOrgX;
-	y1 -= BlockMapOrgY;
-	xt1 = MapBlock(x1);
-	yt1 = MapBlock(y1);
-
-	x2 -= BlockMapOrgX;
-	y2 -= BlockMapOrgY;
-	xt2 = MapBlock(x2);
-	yt2 = MapBlock(y2);
-
-	if (xt2 > xt1)
-	{
-		mapxstep = 1;
-		partial = 1.0 - FL((FX(x1) >> MAPBTOFRAC) & (FRACUNIT - 1));
-//		partial = 1.0 - (x1 / 120.0 - xt1);
-		ystep = (y2 - y1) / fabs(x2 - x1);
-	}
-	else if (xt2 < xt1)
-	{
-		mapxstep = -1;
-		partial = FL((FX(x1) >> MAPBTOFRAC) & (FRACUNIT - 1));
-//		partial = x1 / MAPBLOCKSIZE - xt1;
-		ystep = (y2 - y1) / fabs(x2 - x1);
-	}
-	else
-	{
-		mapxstep = 0;
-		partial = 1.0;
-		ystep = 256.0;
-	}
-	yintercept = FL(FX(y1) >> MAPBTOFRAC) + partial * ystep;
-//	yintercept = y1 / MAPBLOCKSIZE + partial * ystep;
-
-	if (yt2 > yt1)
-	{
-		mapystep = 1;
-		partial = 1.0 - FL((FX(y1) >> MAPBTOFRAC) & (FRACUNIT - 1));
-//		partial = 1.0 - (y1 / MAPBLOCKSIZE - yt1);
-		xstep = (x2 - x1) / fabs(y2 - y1);
-	}
-	else if (yt2 < yt1)
-	{
-		mapystep = -1;
-		partial = FL((FX(y1) >> MAPBTOFRAC) & (FRACUNIT - 1));
-//		partial = y1 / MAPBLOCKSIZE - yt1;
-		xstep = (x2 - x1) / fabs(y2 - y1);
-	}
-	else
-	{
-		mapystep = 0;
-		partial = 1.0;
-		xstep = 256.0;
-	}
-	xintercept = FL(FX(x1) >> MAPBTOFRAC) + partial * xstep;
-//	xintercept = x1 / MAPBLOCKSIZE + partial * xstep;
-	
-	// Step through map blocks.
-	// Count is present to prevent a round off error
-	// from skipping the break.
-	mapx = xt1;
-	mapy = yt1;
-	
-	for (count = 0 ; count < 64 ; count++)
-	{
-		if (flags & PT_ADDLINES)
-		{
-			if (!BlockLinesIterator(mapx, mapy, PIT_AddLineIntercepts, &trace))
-				return false;	// early out
-		}
-	
-		if (flags & PT_ADDTHINGS)
-		{
-			if (!BlockThingsIterator(mapx, mapy, PIT_AddThingIntercepts, &trace, NULL, NULL))
-				return false;	// early out
-		}
-		
-		if (mapx == xt2 && mapy == yt2)
-		{
-			break;
-		}
-	
-		if ((int)yintercept == mapy)
-		{
-			yintercept += ystep;
-			mapx += mapxstep;
-		}
-		else if ((int)xintercept == mapx)
-		{
-			xintercept += xstep;
-			mapy += mapystep;
-		}
-		
-	}
-
-	// go through the sorted list
-	float			dist;
-	intercept_t*	scan;
 	intercept_t*	in;
-	
-	count = trace.intercept_p - trace.intercepts;
-	
-	in = 0;			// shut up compiler warning
-	
-	while (count--)
+	for (VPathTraverse It(LevelInfo, &in, InX1, InY1, x2, y2, flags); It.GetNext(); )
 	{
-		dist = 99999.0;
-		for (scan = trace.intercepts; scan < trace.intercept_p; scan++)
-		{
-			if (scan->frac < dist)
-			{
-				dist = scan->frac;
-				in = scan;
-			}
-		}
-
-		if (dist > 1.0)
-			return true;	// checked everything in range
-
 		if (trav && !trav(FuncArg, in))
 			return false;	// don't bother going farther
 
@@ -665,11 +317,9 @@ bool VLevel::PathTraverse(float InX1, float InY1, float x2, float y2,
 			if (!ExecuteFunction(prtrav).i)
 			return false;	// don't bother going farther
 		}
-
-		in->frac = 99999.0;
 	}
 	
-	return true;		// everything was traversed
+	return true;
 	unguard;
 }
 

@@ -158,6 +158,8 @@ _____MAIN_EXE__SOURCES = \
 	p_thinker.cpp \
 	p_thinker.h \
 	p_trace.cpp \
+	p_world.cpp \
+	p_world.h \
 	p_worldinfo.cpp \
 	p_worldinfo.h \
 	player.h \
@@ -474,6 +476,7 @@ _____SERVER_EXE__SOURCES = \
 	p_terrain.cpp \
 	p_thinker.cpp \
 	p_trace.cpp \
+	p_world.cpp \
 	p_worldinfo.cpp \
 	pr_cmds.cpp \
 	pr_exec.cpp \

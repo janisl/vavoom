@@ -2208,6 +2208,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\p_world.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\source\p_world.h"
+				>
+			</File>
+			<File
 				RelativePath="..\source\p_worldinfo.cpp"
 				>
 			</File>
