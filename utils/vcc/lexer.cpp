@@ -251,7 +251,7 @@ VLexer::~VLexer()
 
 void VLexer::PushSource(TLocation& Loc, const char* FileName)
 {
-	FILE* F = fopen(FileName, "r");
+	FILE* F = fopen(FileName, "rb");
 	if (!F)
 	{
 		FatalError("Couldn't open %s", FileName);
