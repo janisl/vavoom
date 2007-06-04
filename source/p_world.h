@@ -23,6 +23,16 @@
 //**
 //**************************************************************************
 
+//**************************************************************************
+//
+//	BLOCK MAP ITERATORS
+//
+//	For each line/thing in the given mapblock, call the passed PIT_*
+// function. If the function returns false, exit with false without checking
+// anything else.
+//
+//**************************************************************************
+
 //==========================================================================
 //
 //	VBlockLinesIterator

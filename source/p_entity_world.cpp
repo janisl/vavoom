@@ -382,9 +382,19 @@ bool VEntity::CheckSides(TVec lsPos)
 	// xl->xh, yl->yh determine the mapblock set to search
 	validcount++; // prevents checking same line twice
 	for (bx = xl; bx <= xh; bx++)
+	{
 		for (by = yl; by <= yh; by++)
-			if (!XLevel->BlockLinesIterator(bx, by, PIT_CrossLine, &trace))
-				return true;
+		{
+			line_t*		ld;
+			for (VBlockLinesIterator It(this, bx, by, &ld); It.GetNext(); )
+			{
+				if (!PIT_CrossLine(&trace, ld))
+				{
+					return true;
+				}
+			}
+		}
+	}
 
 	return false;
 	unguard;
@@ -618,9 +628,19 @@ bool VEntity::CheckPosition(TVec Pos)
 		yh = MapBlock(cptrace.bbox[BOXTOP] - XLevel->BlockMapOrgY + MAXRADIUS);
 
 		for (bx = xl; bx <= xh; bx++)
+		{
 			for (by = yl; by <= yh; by++)
-				if (!XLevel->BlockThingsIterator(bx, by, PIT_CheckThing, &cptrace, NULL, NULL))
-					return false;
+			{
+				VEntity* Ent;
+				for (VBlockThingsIterator It(this, bx, by, &Ent); It.GetNext();)
+				{
+					if (!PIT_CheckThing(&cptrace, Ent))
+					{
+						return false;
+					}
+				}
+			}
+		}
 	}
 
 	if (EntityFlags & EF_ColideWithWorld)
@@ -632,9 +652,19 @@ bool VEntity::CheckPosition(TVec Pos)
 		yh = MapBlock(cptrace.bbox[BOXTOP] - XLevel->BlockMapOrgY);
 
 		for (bx = xl; bx <= xh; bx++)
+		{
 			for (by = yl; by <= yh; by++)
-				if (!XLevel->BlockLinesIterator(bx, by, PIT_CheckLine, &cptrace))
-					return false;
+			{
+				line_t*		ld;
+				for (VBlockLinesIterator It(this, bx, by, &ld); It.GetNext(); )
+				{
+					if (!PIT_CheckLine(&cptrace, ld))
+					{
+						return false;
+					}
+				}
+			}
+		}
 	}
 
 	return true;
@@ -748,9 +778,19 @@ bool VEntity::CheckDropOff(avoiddropoff_t& a)
 	// check lines
 	validcount++;
 	for (bx = xl; bx <= xh; bx++)
+	{
 		for (by = yl; by <= yh; by++)
-			if (!XLevel->BlockLinesIterator(bx, by, PIT_AvoidDropoff, &a)) // all contacted lines
-				return true;
+		{
+			line_t*		ld;
+			for (VBlockLinesIterator It(this, bx, by, &ld); It.GetNext(); )
+			{
+				if (!PIT_AvoidDropoff(&a, ld))
+				{
+					return true;
+				}
+			}
+		}
+	}
 
 	return false;
 	unguard;
@@ -1031,9 +1071,19 @@ bool VEntity::CheckRelPosition(tmtrace_t& tmtrace, TVec Pos)
 		yh = MapBlock(tmtrace.BBox[BOXTOP] - XLevel->BlockMapOrgY + MAXRADIUS);
 
 		for (bx = xl; bx <= xh; bx++)
+		{
 			for (by = yl; by <= yh; by++)
-				if (!XLevel->BlockThingsIterator(bx, by, PIT_CheckRelThing, &tmtrace, NULL, NULL))
-					return false;
+			{
+				VEntity* Ent;
+				for (VBlockThingsIterator It(this, bx, by, &Ent); It.GetNext();)
+				{
+					if (!PIT_CheckRelThing(&tmtrace, Ent))
+					{
+						return false;
+					}
+				}
+			}
+		}
 
 		tmtrace.BlockingMobj = NULL;
 	}
@@ -1047,9 +1097,19 @@ bool VEntity::CheckRelPosition(tmtrace_t& tmtrace, TVec Pos)
 		yh = MapBlock(tmtrace.BBox[BOXTOP] - XLevel->BlockMapOrgY);
 
 		for (bx = xl; bx <= xh; bx++)
+		{
 			for (by = yl; by <= yh; by++)
-				if (!XLevel->BlockLinesIterator(bx, by, PIT_CheckRelLine, &tmtrace))
-					return false;
+			{
+				line_t*		ld;
+				for (VBlockLinesIterator It(this, bx, by, &ld); It.GetNext(); )
+				{
+					if (!PIT_CheckRelLine(&tmtrace, ld))
+					{
+						return false;
+					}
+				}
+			}
+		}
 	}
 
 	return true;
@@ -1334,12 +1394,19 @@ bool VEntity::PTR_SlideTraverse(void* arg, intercept_t* in)
 //
 //==========================================================================
 
-void VEntity::SlidePathTraverse(VLevel* XLevel, slidetrace_t& trace, float x, float y)
+void VEntity::SlidePathTraverse(VLevel*, slidetrace_t& trace, float x, float y)
 {
 	trace.slideorg = TVec(x, y, trace.slidemo->Origin.z);
 	trace.slidedir = trace.slidemo->Velocity * host_frametime;
-	XLevel->PathTraverse(x, y, x + trace.slidedir.x, y + trace.slidedir.y,
-		PT_ADDLINES, PTR_SlideTraverse, &trace, NULL, NULL);
+	intercept_t*	in;
+	for (VPathTraverse It(trace.slidemo, &in, x, y, x + trace.slidedir.x,
+		y + trace.slidedir.y, PT_ADDLINES); It.GetNext(); )
+	{
+		if (!PTR_SlideTraverse(&trace, in))
+		{
+			break;
+		}
+	}
 }
 
 //==========================================================================
@@ -1533,10 +1600,16 @@ void VEntity::BounceWall(float overbounce)
 	trace.slideorg.z = Origin.z;
 	trace.slidedir = Velocity * host_frametime;
 	trace.bestslideline = NULL;
-	XLevel->PathTraverse(trace.slideorg.x, trace.slideorg.y,
+	intercept_t*	in;
+	for (VPathTraverse It(this, &in, trace.slideorg.x, trace.slideorg.y,
 		trace.slideorg.x + trace.slidedir.x,
-		trace.slideorg.y + trace.slidedir.y, PT_ADDLINES, 
-		PTR_BounceTraverse, &trace, NULL, NULL);
+		trace.slideorg.y + trace.slidedir.y, PT_ADDLINES); It.GetNext(); )
+	{
+		if (!PTR_BounceTraverse(&trace, in))
+		{
+			break;	// don't bother going farther
+		}
+	}
 	if (trace.bestslideline)
 	{
 		Velocity = ClipVelocity(Velocity, trace.bestslideline->normal,
@@ -1692,9 +1765,19 @@ bool VEntity::TestMobjZ(tztrace_t& tztrace, bool AlreadySetUp)
 
 	// xl->xh, yl->yh determine the mapblock set to search
 	for (bx = xl; bx <= xh; bx++)
+	{
 		for (by = yl; by <= yh; by++)
-			if (!XLevel->BlockThingsIterator(bx, by, PIT_CheckOnmobjZ, &tztrace, NULL, NULL))
-				return false;
+		{
+			VEntity* Ent;
+			for (VBlockThingsIterator It(this, bx, by, &Ent); It.GetNext(); )
+			{
+				if (!PIT_CheckOnmobjZ(&tztrace, Ent))
+				{
+					return false;
+				}
+			}
+		}
+	}
 
 	return true;
 	unguard;

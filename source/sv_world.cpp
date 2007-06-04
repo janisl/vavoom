@@ -38,12 +38,6 @@
 
 // TYPES -------------------------------------------------------------------
 
-struct secchangetrace_t
-{
-	vint32			crushchange;
-	bool			nofit;
-};
-
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -216,43 +210,6 @@ int P_BoxOnLineSide(float* tmbox, line_t* ld)
 	unguard;
 }
 
-//**************************************************************************
-//
-//	BLOCK MAP ITERATORS
-//
-//	For each line/thing in the given mapblock, call the passed PIT_*
-// function. If the function returns false, exit with false without checking
-// anything else.
-//
-//**************************************************************************
-
-//==========================================================================
-//
-//	VLevel::BlockLinesIterator
-//
-//	The validcount flags are used to avoid checking lines that are marked in
-// multiple mapblocks, so increment validcount before the first call to
-// SV_BlockLinesIterator, then make one or more calls to it.
-//
-//==========================================================================
-
-bool VLevel::BlockLinesIterator(int x, int y, bool(*func)(void*, line_t*),
-	void* FuncArg)
-{
-	guard(VLevel::BlockLinesIterator);
-	line_t*		ld;
-
-	for (VBlockLinesIterator It(LevelInfo, x, y, &ld); It.GetNext(); )
-	{
-		if (!func(FuncArg, ld))
-		{
-			return false;
-		}
-	}
-	return true;	// everything was checked
-	unguard;
-}
-
 //==========================================================================
 //
 //	VLevel::BlockThingsIterator
@@ -293,9 +250,6 @@ bool VLevel::BlockThingsIterator(int x, int y, bool(*func)(void*, VEntity*),
 //==========================================================================
 //
 //	VLevel::PathTraverse
-//
-//	Traces a line from x1,y1 to x2,y2, calling the traverser function for
-// each. Returns true if the traverser function returns true for all lines.
 //
 //==========================================================================
 
@@ -581,23 +535,6 @@ int SV_PointContents(const sector_t *sector, const TVec &p)
 
 //==========================================================================
 //
-//  PIT_ChangeSector
-//
-//==========================================================================
-
-bool PIT_ChangeSector(void* arg, VEntity *Other)
-{
-	secchangetrace_t& trace = *(secchangetrace_t*)arg;
-	if (!Other->eventSectorChanged(trace.crushchange))
-	{
-		// keep checking (crush other things)
-		trace.nofit = true;	//don't fit
-	}
-	return true;
-}
-
-//==========================================================================
-//
 //	VLevel::ChangeSector
 //
 //==========================================================================
@@ -608,22 +545,30 @@ bool VLevel::ChangeSector(sector_t* sector, int crunch)
 	int x;
 	int y;
 	int i;
-	bool ret;
 	sector_t* sec2;
 	sec_region_t* reg;
-	secchangetrace_t trace;
 
 	CalcSecMinMaxs(sector);
 
-	trace.nofit = false;
-	trace.crushchange = crunch;
+	bool ret = false;
 
 	// re-check heights for all things near the moving sector
 	for (x = sector->blockbox[BOXLEFT]; x <= sector->blockbox[BOXRIGHT]; x++)
+	{
 		for (y = sector->blockbox[BOXBOTTOM]; y <= sector->blockbox[BOXTOP]; y++)
-			BlockThingsIterator(x, y, PIT_ChangeSector, &trace, NULL, NULL);
+		{
+			VEntity* Ent;
+			for (VBlockThingsIterator It(LevelInfo, x, y, &Ent); It.GetNext(); )
+			{
+				if (!Ent->eventSectorChanged(crunch))
+				{
+					// keep checking (crush other things)
+					ret = true;	//don't fit
+				}
+			}
+		}
+	}
 
-	ret = trace.nofit;
 	if (sector->SectorFlags & sector_t::SF_ExtrafloorSource)
 	{
 		for (i = 0; i < NumSectors; i++)

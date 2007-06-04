@@ -666,7 +666,6 @@ class VLevel : public VObject
 	bool MovePolyobj(int, float, float);
 	bool RotatePolyobj(int, float);
 
-	bool BlockLinesIterator(int, int, bool(*func)(void*, line_t*), void*);
 	bool BlockThingsIterator(int, int, bool(*func)(void*, VEntity*),
 		void*, VObject*, VMethod*);
 	bool PathTraverse(float, float, float, float, int,
