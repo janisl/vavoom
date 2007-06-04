@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1253"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="8,00"
 	Name="vcc"
 	ProjectGUID="{2DB17B76-8B9F-4F30-A5FA-DC3FBC2E6768}"
 	RootNamespace="vcc"
@@ -276,50 +276,6 @@
 			</File>
 			<File
 				RelativePath="..\utils\vcc\vcc.h"
-				>
-			</File>
-		</Filter>
-		<Filter
-			Name="Preprocessor Files"
-			>
-			<File
-				RelativePath="..\utils\vcc\vcpp\cpp.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\utils\vcc\vcpp\cpp.h"
-				>
-			</File>
-			<File
-				RelativePath="..\utils\vcc\vcpp\eval.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\utils\vcc\vcpp\hideset.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\utils\vcc\vcpp\include.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\utils\vcc\vcpp\lex.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\utils\vcc\vcpp\macro.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\utils\vcc\vcpp\nlist.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\utils\vcc\vcpp\tokens.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\utils\vcc\vcpp\unix.cpp"
 				>
 			</File>
 		</Filter>
