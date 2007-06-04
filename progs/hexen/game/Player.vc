@@ -142,8 +142,6 @@ float LastHazardTime;
 
 BotPlayer Bot;
 
-TVec useDir;
-
 bool onground;
 
 replication
@@ -3587,73 +3585,6 @@ void PostMorphWeapon(int weapon)
 	SetViewState(ps_weapon, Weapon(ViewEnt).UpState);
 }
 
-//**************************************************************************
-//
-//  USE LINES
-//
-//**************************************************************************
-
-//==========================================================================
-//
-//  PTR_UseTraverse
-//
-//==========================================================================
-
-bool PTR_UseTraverse(intercept_t * in)
-{
-	line_t* line;
-	float pheight;
-	TVec hit_point;
-	opening_t *open;
-
-	line = in->line;
-	if (!line->special || (Level.GET_SPAC(line->flags) != SPAC_USE &&
-		Level.GET_SPAC(line->flags) != SPAC_USETHROUGH))
-	{
-		hit_point = MO.Origin + (USERANGE * in->frac) * useDir;
-		open = LineOpenings(line, hit_point);
-		open = FindOpening(open, hit_point.z + MO.Height / 2.0,
-			hit_point.z + MO.Height);
-		if (!open)
-		{
-			if (MorphTime)
-			{
-				MO.PlaySound('PigActive1', CHAN_VOICE);
-			}
-			else
-			{
-				MO.PlaySound('*usefail', CHAN_VOICE);
-			}
-			return false;	// can't use through a wall
-		}
-		pheight = MO.Origin.z + MO.Height / 2.0;
-		if ((open->top < pheight) || (open->bottom > pheight))
-		{
-			if (MorphTime)
-			{
-				MO.PlaySound('PigActive1', CHAN_VOICE);
-			}
-			else
-			{
-				MO.PlaySound('*usefail', CHAN_VOICE);
-			}
-		}
-		return true;	// not a special line, but keep checking
-	}
-
-	if (PointOnPlaneSide(MO.Origin, line) == 1)
-	{
-		//	Don't use back side unless it's a two-sided line.
-		return line->backsector != NULL;
-	}
-
-	HexenLevelInfo(Level).ActivateLine(line, Actor(MO), 0, SPAC_USE);
-
-	//WAS can't use more than one special line in a row
-	//jff 3/21/98 NOW multiple use allowed with enabling line flag
-	return Level.GET_SPAC(line->flags) == SPAC_USETHROUGH;
-}
-
 //==========================================================================
 //
 //  P_UseLines
@@ -3668,92 +3599,80 @@ void P_UseLines()
 	float y1;
 	float x2;
 	float y2;
+	intercept_t* in;
+	TVec useDir;
 
 	AngleVector(&MO.Angles, &useDir);
 	x1 = MO.Origin.x;
 	y1 = MO.Origin.y;
 	x2 = x1 + USERANGE * useDir.x;
 	y2 = y1 + USERANGE * useDir.y;
-	MO.XLevel.PathTraverse(x1, y1, x2, y2, PT_ADDLINES, self, 'PTR_UseTraverse');
-}
-
-//**************************************************************************
-//
-//  USING A PUZZLE ITEM
-//
-//**************************************************************************
-
-int PuzzleItemType;
-bool PuzzleActivated;
-TVec PuzzleUseDir;
-
-//==========================================================================
-//
-// PTR_PuzzleItemTraverse
-//
-//==========================================================================
-
-bool PTR_PuzzleItemTraverse(intercept_t * in)
-{
-	Actor mobj;
-	TVec hit_point;
-	opening_t *open;
-
-	if (in->bIsALine)
+	foreach MO.PathTraverse(in, x1, y1, x2, y2, PT_ADDLINES)
 	{
-		// Check line
-		hit_point = MO.Origin + (USERANGE * in->frac) * PuzzleUseDir;
-		if (in->line->special != LNSPEC_UsePuzzleItem)
+		line_t* line;
+		float pheight;
+		TVec hit_point;
+		opening_t *open;
+
+		line = in->line;
+		if (!line->special || (Level.GET_SPAC(line->flags) != SPAC_USE &&
+			Level.GET_SPAC(line->flags) != SPAC_USETHROUGH))
 		{
-			open = LineOpenings(in->line, hit_point);
-			if (!open || open->range <= 0.0)
+			hit_point = MO.Origin + (USERANGE * in->frac) * useDir;
+			open = LineOpenings(line, hit_point);
+			open = FindOpening(open, hit_point.z + MO.Height / 2.0,
+				hit_point.z + MO.Height);
+			if (!open)
 			{
-				if (MO.bIsPlayer)
+				if (MorphTime)
 				{
-					MO.PlaySound('*puzzfail', CHAN_VOICE);
+					MO.PlaySound('PigActive1', CHAN_VOICE);
 				}
-				return false;	// can't use through a wall
+				else
+				{
+					MO.PlaySound('*usefail', CHAN_VOICE);
+				}
+				break;	// can't use through a wall
 			}
-			return true;	// Continue searching
+			pheight = MO.Origin.z + MO.Height / 2.0;
+			if ((open->top < pheight) || (open->bottom > pheight))
+			{
+				if (MorphTime)
+				{
+					MO.PlaySound('PigActive1', CHAN_VOICE);
+				}
+				else
+				{
+					MO.PlaySound('*usefail', CHAN_VOICE);
+				}
+			}
+			continue;	// not a special line, but keep checking
 		}
-		if (PointOnPlaneSide(MO.Origin, in->line) == 1)
+
+		if (PointOnPlaneSide(MO.Origin, line) == 1)
 		{
-			// Don't use back sides
-			return false;
+			//	Don't use back side unless it's a two-sided line.
+			if (line->backsector != NULL)
+				continue;
+			break;
 		}
-		if (PuzzleItemType != in->line->arg1)
+
+		HexenLevelInfo(Level).ActivateLine(line, Actor(MO), 0, SPAC_USE);
+
+		//WAS can't use more than one special line in a row
+		//jff 3/21/98 NOW multiple use allowed with enabling line flag
+		if (Level.GET_SPAC(line->flags) != SPAC_USETHROUGH)
 		{
-			// Item type doesn't match
-			return false;
+			break;
 		}
-		MO.XLevel.StartACS(in->line->arg2, 0, in->line->arg3, in->line->arg4,
-			in->line->arg5, MO, in->line, 0, false, false);
-		in->line->special = 0;
-		PuzzleActivated = true;
-		return false;	// Stop searching
 	}
-	// Check thing
-	mobj = Actor(in->Thing);
-	if (mobj.Special != LNSPEC_UsePuzzleItem)
-	{
-		// Wrong special
-		return true;
-	}
-	if (PuzzleItemType != mobj.Args[0])
-	{
-		// Item type doesn't match
-		return true;
-	}
-	MO.XLevel.StartACS(mobj.Args[1], 0, mobj.Args[2], mobj.Args[3], mobj.Args[4],
-		MO, NULL, 0, false, false);
-	mobj.Special = 0;
-	PuzzleActivated = true;
-	return false;	// Stop searching
 }
 
 //==========================================================================
 //
 //  UsePuzzleItem
+//
+//  USING A PUZZLE ITEM
 //
 //  Returns true if the puzzle item was used on a line or a thing.
 //
@@ -3762,6 +3681,10 @@ bool PTR_PuzzleItemTraverse(intercept_t * in)
 bool UsePuzzleItem(int itemType)
 {
 	float x1, y1, x2, y2;
+	int PuzzleItemType;
+	bool PuzzleActivated;
+	TVec PuzzleUseDir;
+	intercept_t * in;
 
 	PuzzleItemType = itemType;
 	PuzzleActivated = false;
@@ -3770,8 +3693,63 @@ bool UsePuzzleItem(int itemType)
 	y1 = MO.Origin.y;
 	x2 = x1 + USERANGE * PuzzleUseDir.x;
 	y2 = y1 + USERANGE * PuzzleUseDir.y;
-	MO.XLevel.PathTraverse(x1, y1, x2, y2, PT_ADDLINES | PT_ADDTHINGS,
-		self, 'PTR_PuzzleItemTraverse');
+	foreach MO.PathTraverse(in, x1, y1, x2, y2, PT_ADDLINES | PT_ADDTHINGS)
+	{
+		Actor mobj;
+		TVec hit_point;
+		opening_t *open;
+
+		if (in->bIsALine)
+		{
+			// Check line
+			hit_point = MO.Origin + (USERANGE * in->frac) * PuzzleUseDir;
+			if (in->line->special != LNSPEC_UsePuzzleItem)
+			{
+				open = LineOpenings(in->line, hit_point);
+				if (!open || open->range <= 0.0)
+				{
+					if (MO.bIsPlayer)
+					{
+						MO.PlaySound('*puzzfail', CHAN_VOICE);
+					}
+					break;	// can't use through a wall
+				}
+				continue;	// Continue searching
+			}
+			if (PointOnPlaneSide(MO.Origin, in->line) == 1)
+			{
+				// Don't use back sides
+				break;
+			}
+			if (PuzzleItemType != in->line->arg1)
+			{
+				// Item type doesn't match
+				break;
+			}
+			MO.XLevel.StartACS(in->line->arg2, 0, in->line->arg3, in->line->arg4,
+				in->line->arg5, MO, in->line, 0, false, false);
+			in->line->special = 0;
+			PuzzleActivated = true;
+			break;	// Stop searching
+		}
+		// Check thing
+		mobj = Actor(in->Thing);
+		if (mobj.Special != LNSPEC_UsePuzzleItem)
+		{
+			// Wrong special
+			continue;
+		}
+		if (PuzzleItemType != mobj.Args[0])
+		{
+			// Item type doesn't match
+			continue;
+		}
+		MO.XLevel.StartACS(mobj.Args[1], 0, mobj.Args[2], mobj.Args[3], mobj.Args[4],
+			MO, NULL, 0, false, false);
+		mobj.Special = 0;
+		PuzzleActivated = true;
+		break;	// Stop searching
+	}
 	return PuzzleActivated;
 }
 

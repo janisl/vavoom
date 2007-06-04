@@ -564,120 +564,6 @@ bool IsDangerous(sector_t *sec)
 
 //==========================================================================
 //
-//	PTR_BotPathTraverse
-//
-//	[BC] For the bots
-//
-//==========================================================================
-
-float bottracerange;
-TVec bottracedir;
-
-bool PTR_BotPathTraverse(intercept_t *in)
-{
-	Actor th;
-	line_t *ld;
-	TVec hit_point;
-
-	if (in->bIsALine)
-	{
-		sector_t *back;
-		sector_t *front;
-		opening_t *open;
-		float diffheight;
-
-		ld = in->line;					// This linedef
-		hit_point = botmo.Origin + (bottracerange * in->frac) * bottracedir;
-
-		// Line is impassible
-		if (!(ld->flags & ML_TWOSIDED) || (ld->flags & ML_BLOCKING))
-			return false;
-
-		// Line isn't two sided
-		if (!ld->backsector)
-			return false;
-
-		if (!PointOnPlaneSide(botmo.Origin, ld))
-		{
-			back = ld->backsector;
-			front = ld->frontsector;
-		}
-		else
-		{
-			back = ld->frontsector;
-			front = ld->backsector;
-		}
-
-		// Sector is dangerous
-		if (IsDangerous(back))
-			return false;
-
-		// crosses a two sided line
-		open = LineOpenings(ld, hit_point);
-		open = FindOpening(open, hit_point.z, hit_point.z + botmo.Height);
-		// No valid openings
-		if (!open)
-		{
-			return false;
-		}
-
-		// No cliff jumping unless we're going after something
-		if ((front->floorheight - back->floorheight) > 32.0 && !enemy)
-		{
-			return false;
-		}
-
-		diffheight = back->floorheight - front->floorheight;
-		
-		if (diffheight > 0.0)
-		{
-			if (diffheight > 48.0)
-			{
-/*				if (front->SSpecial == ThrustThingZ || front->springpadzone)
-				{
-					return true;
-				}
-				else*/
-					return false;
-			}
-			else if (diffheight <= 48.0 && diffheight >= 24.0)
-			{
-				player.Buttons |= BT_JUMP;
-			}
-		}
-
-		return true;
-	}
-
-	th = Actor(in->Thing);
-
-	if (th == botmo)
-		return true;
-
-	if (th.bSolid)
-		return false;
-
-/*	fixed_t diffheight = (th->z + th->Height) - shootthing->z;
-
-	if (diffheight > 0)
-	{
-		if (diffheight <= 48*FRACUNIT && diffheight >= 24*FRACUNIT)
-		{
-			bot->player.cmd.ucmd.buttons |= BT_JUMP;
-			return true;
-		}
-		else if (diffheight <= 24*FRACUNIT)
-			return true;
-		else
-			return false;
-				
-	}
-*/
-	return true;
-}
-
-//==========================================================================
-//
 //	CheckPath
 //
 //	Checks for obstructions at a certain angle and distance. Returns true if
@@ -688,6 +574,9 @@ bool PTR_BotPathTraverse(intercept_t *in)
 bool CheckPath(float ang, float dist)
 {
 	float x1, y1, x2, y2;
+	intercept_t* in;
+	float bottracerange;
+	TVec bottracedir;
 
 	bottracerange = dist;
 	bottracedir.x = cos(ang);
@@ -700,10 +589,108 @@ bool CheckPath(float ang, float dist)
 
 	player.P_UseLines();
 
-	if (!player.MO.XLevel.PathTraverse(x1, y1, x2, y2, PT_ADDLINES, self, 'PTR_BotPathTraverse'))
-		return false;
-	else
-		return true;
+	foreach botmo.PathTraverse(in, x1, y1, x2, y2, PT_ADDLINES)
+	{
+		Actor th;
+		line_t *ld;
+		TVec hit_point;
+
+		if (in->bIsALine)
+		{
+			sector_t *back;
+			sector_t *front;
+			opening_t *open;
+			float diffheight;
+
+			ld = in->line;					// This linedef
+			hit_point = botmo.Origin + (bottracerange * in->frac) * bottracedir;
+
+			// Line is impassible
+			if (!(ld->flags & ML_TWOSIDED) || (ld->flags & ML_BLOCKING))
+				return false;
+
+			// Line isn't two sided
+			if (!ld->backsector)
+				return false;
+
+			if (!PointOnPlaneSide(botmo.Origin, ld))
+			{
+				back = ld->backsector;
+				front = ld->frontsector;
+			}
+			else
+			{
+				back = ld->frontsector;
+				front = ld->backsector;
+			}
+
+			// Sector is dangerous
+			if (IsDangerous(back))
+				return false;
+
+			// crosses a two sided line
+			open = LineOpenings(ld, hit_point);
+			open = FindOpening(open, hit_point.z, hit_point.z + botmo.Height);
+			// No valid openings
+			if (!open)
+			{
+				return false;
+			}
+
+			// No cliff jumping unless we're going after something
+			if ((front->floorheight - back->floorheight) > 32.0 && !enemy)
+			{
+				return false;
+			}
+
+			diffheight = back->floorheight - front->floorheight;
+
+			if (diffheight > 0.0)
+			{
+				if (diffheight > 48.0)
+				{
+/*					if (front->SSpecial == ThrustThingZ || front->springpadzone)
+					{
+						return true;
+					}
+					else*/
+						return false;
+				}
+				else if (diffheight <= 48.0 && diffheight >= 24.0)
+				{
+					player.Buttons |= BT_JUMP;
+				}
+			}
+		}
+		else
+		{
+			th = Actor(in->Thing);
+
+			if (th == botmo)
+				continue;
+
+			if (th.bSolid)
+				return false;
+
+/*			fixed_t diffheight = (th->z + th->Height) - shootthing->z;
+
+			if (diffheight > 0)
+			{
+				if (diffheight <= 48*FRACUNIT && diffheight >= 24*FRACUNIT)
+				{
+					bot->player.cmd.ucmd.buttons |= BT_JUMP;
+					return true;
+				}
+				else if (diffheight <= 24*FRACUNIT)
+					return true;
+				else
+					return false;
+						
+			}
+*/
+		}
+	}
+	return true;
 }
 
 //==========================================================================

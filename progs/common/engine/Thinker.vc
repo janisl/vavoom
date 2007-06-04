@@ -63,6 +63,8 @@ native final dlight_t *AllocDlight(Thinker Owner);
 native final particle_t *NewParticle();
 
 native final iterator AllThinkers(class<Thinker> Class, out Thinker Thinker);
+native final iterator PathTraverse(out intercept_t* In, float x1, float y1,
+	float x2, float y2, int flags);
 
 //==========================================================================
 //

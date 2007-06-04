@@ -439,3 +439,15 @@ IMPLEMENT_FUNCTION(VThinker, AllThinkers)
 	P_GET_SELF;
 	RET_PTR(new VScriptThinkerIterator(Self, Class, Thinker));
 }
+
+IMPLEMENT_FUNCTION(VThinker, PathTraverse)
+{
+	P_GET_INT(flags);
+	P_GET_FLOAT(y2);
+	P_GET_FLOAT(x2);
+	P_GET_FLOAT(y1);
+	P_GET_FLOAT(x1);
+	P_GET_PTR(intercept_t*, In);
+	P_GET_SELF;
+	RET_PTR(new VPathTraverse(Self, In, x1, y1, x2, y2, flags));
+}

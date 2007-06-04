@@ -668,8 +668,6 @@ class VLevel : public VObject
 
 	bool BlockThingsIterator(int, int, bool(*func)(void*, VEntity*),
 		void*, VObject*, VMethod*);
-	bool PathTraverse(float, float, float, float, int,
-		bool(*trav)(void*, intercept_t *), void*, VObject*, VMethod*);
 	bool ChangeSector(sector_t*, int);
 
 	bool TraceLine(linetrace_t&, const TVec&, const TVec&, int) const;
@@ -734,7 +732,6 @@ private:
 
 	DECLARE_FUNCTION(PointInSector)
 	DECLARE_FUNCTION(BlockThingsIterator)
-	DECLARE_FUNCTION(PathTraverse)
 	DECLARE_FUNCTION(TraceLine)
 	DECLARE_FUNCTION(ChangeSector)
 	DECLARE_FUNCTION(AddExtraFloor)

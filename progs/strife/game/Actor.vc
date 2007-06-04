@@ -3004,6 +3004,7 @@ TVec AimLineAttack(TAVec angles, float distance)
 	float topangle;
 	float botangle;
 	TVec dir;
+	intercept_t* in;
 
 	AngleVector(&angles, &aim_dir);
 	x2 = Origin.x + distance * aim_dir.x;
@@ -3025,8 +3026,12 @@ TVec AimLineAttack(TAVec angles, float distance)
 	aim_range = distance;
 	linetarget = none;
 
-	XLevel.PathTraverse(Origin.x, Origin.y, x2, y2,
-		PT_ADDLINES | PT_ADDTHINGS, self, 'PTR_AimTraverse');
+	foreach PathTraverse(in, Origin.x, Origin.y, x2, y2,
+		PT_ADDLINES | PT_ADDTHINGS)
+	{
+		if (!PTR_AimTraverse(in))
+			break;
+	}
 
 	if (linetarget)
 	{
@@ -3338,6 +3343,7 @@ bool PTR_ShootTraverse(intercept_t * in)
 int LineAttack(TVec dir, float distance, int damage, class<Actor> PuffType)
 {
 	TVec dst;
+	intercept_t* in;
 
 	la_damage = damage;
 	shootPuffType = PuffType;
@@ -3350,10 +3356,11 @@ int LineAttack(TVec dir, float distance, int damage, class<Actor> PuffType)
 
 	dst = shoot_origin + shoot_range * shoot_dir;
 	shoot_linestart = shoot_origin;
-	if (!XLevel.PathTraverse(Origin.x, Origin.y, dst.x, dst.y,
-		PT_ADDLINES | PT_ADDTHINGS, self, 'PTR_ShootTraverse'))
+	foreach PathTraverse(in, Origin.x, Origin.y, dst.x, dst.y,
+		PT_ADDLINES | PT_ADDTHINGS)
 	{
-		return false;
+		if (!PTR_ShootTraverse(in))
+			return false;
 	}
 	shoot_lineend = dst;
 	return ShootCheckPlanes(XLevel.PointInSector(dst));

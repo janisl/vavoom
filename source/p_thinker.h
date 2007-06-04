@@ -89,6 +89,7 @@ class VThinker : public VObject
 
 	//	Iterators
 	DECLARE_FUNCTION(AllThinkers)
+	DECLARE_FUNCTION(PathTraverse)
 
 	void eventClientTick(float DeltaTime)
 	{

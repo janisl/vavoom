@@ -241,42 +241,6 @@ bool VLevel::BlockThingsIterator(int x, int y, bool(*func)(void*, VEntity*),
 	unguard;
 }
 
-//**************************************************************************
-//
-//	INTERCEPT ROUTINES
-//
-//**************************************************************************
-
-//==========================================================================
-//
-//	VLevel::PathTraverse
-//
-//==========================================================================
-
-bool VLevel::PathTraverse(float InX1, float InY1, float x2, float y2,
-	int flags, bool(*trav)(void*, intercept_t *), void* FuncArg,
-	VObject* PrSelf, VMethod *prtrav)
-{
-	guard(VLevel::PathTraverse);
-	intercept_t*	in;
-	for (VPathTraverse It(LevelInfo, &in, InX1, InY1, x2, y2, flags); It.GetNext(); )
-	{
-		if (trav && !trav(FuncArg, in))
-			return false;	// don't bother going farther
-
-		if (prtrav && PrSelf)
-		{
-			P_PASS_REF(PrSelf);
-			P_PASS_REF(in);
-			if (!ExecuteFunction(prtrav).i)
-			return false;	// don't bother going farther
-		}
-	}
-	
-	return true;
-	unguard;
-}
-
 //==========================================================================
 //
 //	SV_FindThingGap

@@ -689,21 +689,6 @@ IMPLEMENT_FUNCTION(VLevel, BlockThingsIterator)
 	RET_BOOL(Self->BlockThingsIterator(x, y, NULL, NULL, SelfObj, func));
 }
 
-IMPLEMENT_FUNCTION(VLevel, PathTraverse)
-{
-	P_GET_NAME(FuncName);
-	P_GET_REF(VObject, SelfObj);
-	P_GET_INT(flags);
-	P_GET_FLOAT(y2);
-	P_GET_FLOAT(x2);
-	P_GET_FLOAT(y1);
-	P_GET_FLOAT(x1);
-	P_GET_SELF;
-	VMethod* func = SelfObj->GetClass()->FindFunctionChecked(FuncName);
-	RET_BOOL(Self->PathTraverse(x1, y1, x2, y2, flags, NULL, NULL, SelfObj,
-		func));
-}
-
 IMPLEMENT_FUNCTION(VLevel, ChangeSector)
 {
 	P_GET_INT(crunch);
