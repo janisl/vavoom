@@ -149,6 +149,7 @@ public:
 	VMethod*	Func;
 	vint32		Flags;
 	vint32		NetIndex;
+	VMethod*	ReplCond;
 
 	VField(VName);
 
@@ -220,6 +221,8 @@ public:
 	vuint8			ParamFlags[MAX_PARAMS];
 	vint32			NumInstructions;
 	FInstruction*	Instructions;
+	VMethod*		SuperMethod;
+	VMethod*		ReplCond;
 
 	vuint32			Profile1;
 	vuint32			Profile2;

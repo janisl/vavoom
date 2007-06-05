@@ -634,6 +634,7 @@ VField::VField(VName AName)
 , Func(0)
 , Flags(0)
 , NetIndex(-1)
+, ReplCond(NULL)
 {
 	memset(&Type, 0, sizeof(Type));
 }
@@ -651,7 +652,8 @@ void VField::Serialise(VStream& Strm)
 	Strm << Next
 		<< Type
 		<< Func
-		<< STRM_INDEX(Flags);
+		<< STRM_INDEX(Flags)
+		<< ReplCond;
 	unguard;
 }
 
@@ -1451,6 +1453,8 @@ VMethod::VMethod(VName AName)
 , ParamsSize(0)
 , NumInstructions(0)
 , Instructions(0)
+, SuperMethod(NULL)
+, ReplCond(NULL)
 , Profile1(0)
 , Profile2(0)
 , NativeFunc(0)
@@ -1497,13 +1501,15 @@ void VMethod::Serialise(VStream& Strm)
 	guard(VMethod::Serialise);
 	VMemberBase::Serialise(Strm);
 
-	Strm << STRM_INDEX(NumLocals)
+	Strm << SuperMethod
+		<< STRM_INDEX(NumLocals)
 		<< STRM_INDEX(Flags)
 		<< ReturnType
 		<< STRM_INDEX(NumParams)
 		<< STRM_INDEX(ParamsSize);
 	for (int i = 0; i < NumParams; i++)
 		Strm << ParamTypes[i] << ParamFlags[i];
+	Strm << ReplCond;
 
 	//	Set up builtins
 	if (NumParams > 16)

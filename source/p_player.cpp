@@ -52,35 +52,6 @@ IMPLEMENT_CLASS(V, BasePlayer)
 
 //==========================================================================
 //
-//	EvalCond
-//
-//==========================================================================
-
-static bool EvalCond(VObject* Obj, VClass* Class, VMethod* M)
-{
-	guard(EvalCond);
-	for (int i = 0; i < Class->RepInfos.Num(); i++)
-	{
-		for (int j = 0; j < Class->RepInfos[i].RepMembers.Num(); j++)
-		{
-			if (Class->RepInfos[i].RepMembers[j]->MemberType != MEMBER_Method)
-				continue;
-			if (Class->RepInfos[i].RepMembers[j]->Name != M->Name)
-				continue;
-			P_PASS_REF(Obj);
-			return !!VObject::ExecuteFunction(Class->RepInfos[i].Cond).i;
-		}
-	}
-	if (Class->GetSuperClass())
-	{
-		return EvalCond(Obj, Class->GetSuperClass(), M);
-	}
-	return false;
-	unguard;
-}
-
-//==========================================================================
-//
 //	VBasePlayer::ExecuteNetMethod
 //
 //==========================================================================
@@ -93,11 +64,21 @@ bool VBasePlayer::ExecuteNetMethod(VMethod* Func)
 		return false;
 	}
 
-	if (!EvalCond(this, GetClass(), Func))
+	//	Find initial version of the method.
+	VMethod* Base = Func;
+	while (Base->SuperMethod)
+	{
+		Base = Base->SuperMethod;
+	}
+	//	Execute it's replication condition method.
+	check(Base->ReplCond);
+	P_PASS_REF(this);
+	if (!VObject::ExecuteFunction(Base->ReplCond).i)
 	{
 		return false;
 	}
 
+	//	Replication condition is true, the method must be replicated.
 	VMessageOut Msg(Net->Channels[CHANIDX_Player]);
 	Msg.bReliable = !!(Func->Flags & FUNC_NetReliable);
 

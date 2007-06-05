@@ -248,6 +248,7 @@ public:
 	VMethod*		Func;	// Method's function
 	vuint32 		Modifiers;
 	vuint32			Flags;
+	VMethod*		ReplCond;
 
 	VField(VName, VMemberBase*, TLocation);
 	~VField();
@@ -345,6 +346,8 @@ public:
 	TType					ParamTypes[MAX_PARAMS];
 	vuint8					ParamFlags[MAX_PARAMS];
 	TArray<FInstruction>	Instructions;
+	VMethod*				SuperMethod;
+	VMethod*				ReplCond;
 
 	vint32					Modifiers;
 	VExpression*			ReturnTypeExpr;

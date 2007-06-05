@@ -1060,6 +1060,7 @@ VField::VField(VName InName, VMemberBase* InOuter, TLocation InLoc)
 , Func(NULL)
 , Modifiers(0)
 , Flags(0)
+, ReplCond(NULL)
 {
 }
 
@@ -1084,7 +1085,7 @@ VField::~VField()
 void VField::Serialise(VStream& Strm)
 {
 	VMemberBase::Serialise(Strm);
-	Strm << Next << Type << Func << STRM_INDEX(Flags);
+	Strm << Next << Type << Func << STRM_INDEX(Flags) << ReplCond;
 }
 
 //==========================================================================
@@ -1268,6 +1269,8 @@ VMethod::VMethod(VName InName, VMemberBase* InOuter, TLocation InLoc)
 , ReturnType(TYPE_Void)
 , NumParams(0)
 , ParamsSize(0)
+, SuperMethod(NULL)
+, ReplCond(NULL)
 , Modifiers(0)
 , ReturnTypeExpr(NULL)
 , Statement(NULL)
@@ -1298,7 +1301,8 @@ VMethod::~VMethod()
 void VMethod::Serialise(VStream& Strm)
 {
 	VMemberBase::Serialise(Strm);
-	Strm << STRM_INDEX(NumLocals)
+	Strm << SuperMethod
+		<< STRM_INDEX(NumLocals)
 		<< STRM_INDEX(Flags)
 		<< ReturnType
 		<< STRM_INDEX(NumParams)
@@ -1306,6 +1310,7 @@ void VMethod::Serialise(VStream& Strm)
 	for (int i = 0; i < NumParams; i++)
 		Strm << ParamTypes[i]
 			<< ParamFlags[i];
+	Strm << ReplCond;
 
 	if (Strm.IsLoading())
 	{
@@ -1475,38 +1480,38 @@ bool VMethod::Define()
 
 	//	If this is a overriden method, verify that return type and argument
 	// types match.
-	VMethod* BaseMethod = NULL;
+	SuperMethod = NULL;
 	if (Outer->MemberType == MEMBER_Class && Name != NAME_None &&
 		((VClass*)Outer)->ParentClass)
 	{
-		BaseMethod = ((VClass*)Outer)->ParentClass->CheckForMethod(Name);
+		SuperMethod = ((VClass*)Outer)->ParentClass->CheckForMethod(Name);
 	}
-	if (BaseMethod)
+	if (SuperMethod)
 	{
-		if (BaseMethod->Flags & FUNC_Final)
+		if (SuperMethod->Flags & FUNC_Final)
 		{
 			ParseError(Loc, "Method already has been declared as final and cannot be overriden.");
 			Ret = false;
 		}
-		if (!BaseMethod->ReturnType.Equals(ReturnType))
+		if (!SuperMethod->ReturnType.Equals(ReturnType))
 		{
 			ParseError(Loc, "Method redefined with different return type");
 			Ret = false;
 		}
-		else if (BaseMethod->NumParams != NumParams)
+		else if (SuperMethod->NumParams != NumParams)
 		{
 			ParseError(Loc, "Method redefined with different number of arguments");
 			Ret = false;
 		}
 		else for (int i = 0; i < NumParams; i++)
-			if (!BaseMethod->ParamTypes[i].Equals(ParamTypes[i]))
+			if (!SuperMethod->ParamTypes[i].Equals(ParamTypes[i]))
 			{
 				ParseError(Loc, "Type of argument %d differs from base class", i + 1);
 				Ret = false;
 			}
 
 		//	Inherit network flags
-		Flags |= BaseMethod->Flags & FUNC_NetFlags;
+		Flags |= SuperMethod->Flags & FUNC_NetFlags;
 	}
 
 	if (Flags & FUNC_Spawner)
@@ -2638,6 +2643,7 @@ bool VClass::DefineMembers()
 					continue;
 				}
 				RepField->Flags |= FIELD_Net;
+				RepField->ReplCond = RepInfos[ri].Cond;
 				RepFields[i].Member = RepField;
 				continue;
 			}
@@ -2653,6 +2659,12 @@ bool VClass::DefineMembers()
 			}
 			if (RepMethod)
 			{
+				if (RepMethod->SuperMethod)
+				{
+					ParseError(RepFields[i].Loc, "Method %s is overloaded in this class",
+						*RepFields[i].Name);
+					continue;
+				}
 				if (RepMethod->Flags & FUNC_Net)
 				{
 					ParseError(RepFields[i].Loc, "Method %s has multiple replication statements",
@@ -2660,6 +2672,7 @@ bool VClass::DefineMembers()
 					continue;
 				}
 				RepMethod->Flags |= FUNC_Net;
+				RepMethod->ReplCond = RepInfos[ri].Cond;
 				if (RepInfos[ri].Reliable)
 					RepMethod->Flags |= FUNC_NetReliable;
 				RepFields[i].Member = RepMethod;
