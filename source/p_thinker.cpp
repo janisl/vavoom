@@ -451,3 +451,12 @@ IMPLEMENT_FUNCTION(VThinker, PathTraverse)
 	P_GET_SELF;
 	RET_PTR(new VPathTraverse(Self, In, x1, y1, x2, y2, flags));
 }
+
+IMPLEMENT_FUNCTION(VThinker, RadiusThings)
+{
+	P_GET_FLOAT(Radius);
+	P_GET_VEC(Org);
+	P_GET_PTR(VEntity*, EntPtr);
+	P_GET_SELF;
+	RET_PTR(new VRadiusThingsIterator(Self, EntPtr, Org, Radius));
+}

@@ -2492,26 +2492,15 @@ bool PIT_RadiusAttack(Entity Other)
 
 void RadiusAttack(int damage, int distance, bool damageSource)
 {
-	int x;
-	int y;
-
-	int xl;
-	int xh;
-	int yl;
-	int yh;
-
 	float dist;
+	Entity Other;
 
 	dist = itof(damage);
-	yh = MapBlock(Origin.y + dist - XLevel.BlockMapOrgY);
-	yl = MapBlock(Origin.y - dist - XLevel.BlockMapOrgY);
-	xh = MapBlock(Origin.x + dist - XLevel.BlockMapOrgX);
-	xl = MapBlock(Origin.x - dist - XLevel.BlockMapOrgX);
 	bombdamage = itof(damage);
 
-	for (y = yl; y <= yh; y++)
-		for (x = xl; x <= xh; x++)
-			XLevel.BlockThingsIterator(x, y, self, 'PIT_RadiusAttack');
+	foreach RadiusThings(Other, Origin, dist)
+		if (!PIT_RadiusAttack(Other))
+			break;
 }
 
 //==========================================================================
@@ -2558,27 +2547,16 @@ bool PIT_StompThing(Entity Other)
 
 bool TeleportMove(TVec org)
 {
-	int xl;
-	int xh;
-	int yl;
-	int yh;
-	int bx;
-	int by;
+	Entity Other;
 
 	// kill anything occupying the position
 	teleport_x = org.x;
 	teleport_y = org.y;
 
 	// stomp on any things contacted
-	xl = MapBlock(org.x - Radius - XLevel.BlockMapOrgX - MAXRADIUS);
-	xh = MapBlock(org.x + Radius - XLevel.BlockMapOrgX + MAXRADIUS);
-	yl = MapBlock(org.y - Radius - XLevel.BlockMapOrgY - MAXRADIUS);
-	yh = MapBlock(org.y + Radius - XLevel.BlockMapOrgY + MAXRADIUS);
-
-	for (bx = xl; bx <= xh; bx++)
-		for (by = yl; by <= yh; by++)
-			if (!XLevel.BlockThingsIterator(bx, by, self, 'PIT_StompThing'))
-				return false;
+	foreach RadiusThings(Other, org, Radius)
+		if (!PIT_StompThing(Other))
+			return false;
 
 	// the move is ok,
 	// so link the thing into its new position

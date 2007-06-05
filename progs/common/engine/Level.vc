@@ -70,8 +70,8 @@ native readonly private void*	BlockMapLump;
 native readonly private void*	BlockMap;
 native readonly private int		BlockMapWidth;
 native readonly private int		BlockMapHeight;
-native readonly float			BlockMapOrgX;
-native readonly float			BlockMapOrgY;
+native readonly private float	BlockMapOrgX;
+native readonly private float	BlockMapOrgY;
 native readonly private void*	BlockLinks;
 native readonly private void*	PolyBlockMap;
 
@@ -117,8 +117,6 @@ native readonly int				TicTime;
 //
 
 native final sector_t *PointInSector(TVec Point);
-native final bool BlockThingsIterator(int x, int y, Object SelfObj,
-	name FuncName);
 native final bool TraceLine(TVec start, TVec end, out TVec HitPoint,
 	out TVec HitNormal);
 native final bool ChangeSector(sector_t* sector, int crunch);

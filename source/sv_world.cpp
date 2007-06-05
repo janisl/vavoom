@@ -212,37 +212,6 @@ int P_BoxOnLineSide(float* tmbox, line_t* ld)
 
 //==========================================================================
 //
-//	VLevel::BlockThingsIterator
-//
-//==========================================================================
-
-bool VLevel::BlockThingsIterator(int x, int y, bool(*func)(void*, VEntity*),
-	void* FuncArg, VObject* PrSelf, VMethod *prfunc)
-{
-	guard(VLevel::BlockThingsIterator);
-	VEntity* Ent;
-	for (VBlockThingsIterator It(LevelInfo, x, y, &Ent); It.GetNext();)
-	{
-		if (func && !func(FuncArg, Ent))
-		{
-			return false;
-		}
-		if (prfunc && PrSelf)
-		{
-			P_PASS_REF(PrSelf);
-			P_PASS_REF(Ent);
-			if (!ExecuteFunction(prfunc).i)
-			{
-				return false;
-			}
-		}
-	}
-	return true;
-	unguard;
-}
-
-//==========================================================================
-//
 //	SV_FindThingGap
 //
 // Find the best gap that the thing could fit in, given a certain Z

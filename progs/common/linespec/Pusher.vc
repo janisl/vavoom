@@ -154,47 +154,6 @@ void ChangeValues(int magnitude, int angle)
 
 //==========================================================================
 //
-//	PIT_PushThing
-//
-// PIT_PushThing determines the angle and magnitude of the effect.
-// The object's x and y momentum values are changed.
-//
-// tmpusher belongs to the point source (MT_PUSH/MT_PULL).
-//
-//==========================================================================
-
-bool PIT_PushThing(Entity thing)
-{
-	float sx;
-	float sy;
-	float dist;
-	float speed;
-	float pushangle;
-
-	if (EntityEx(thing).CanWindThrust() && thing.bColideWithWorld)
-	{
-		sx = X;
-		sy = Y;
-		dist = Length(vector(thing.Origin.x - sx, thing.Origin.y - sy, 0.0));
-		speed = itof(Magnitude - (ftoi(dist) >> 1)) / (2.0 * PUSH_FACTOR);
-
-		// If speed <= 0, you're outside the effective radius. You also have
-		// to be able to see the push/pull source point.
-
-		if ((speed > 0.0) && thing.CanSee(Source))
-		{
-			pushangle = atan2(sy - thing.Origin.y, sx - thing.Origin.x);
-			if (Source.IsPointPusher())
-				pushangle += 180.0;    // away
-			thing.Velocity.x += speed * cos(pushangle) * 35.0 * Level.Game.frametime;
-			thing.Velocity.y += speed * sin(pushangle) * 35.0 * Level.Game.frametime;
-		}
-	}
-	return true;
-}
-
-//==========================================================================
-//
 //	Tick
 //
 //	Looks for all objects that are inside the radius of the effect.
@@ -206,7 +165,6 @@ void Tick(float DeltaTime)
 	sector_t*		sec;
 	EntityEx		thing;
 	int				xspeed, yspeed;
-	int				xl, xh, yl, yh, bx, by;
 	float			ht;
 	sec_plane_t*	floor;
 
@@ -244,14 +202,38 @@ void Tick(float DeltaTime)
 	{
 		// Seek out all pushable things within the force radius of this
 		// point pusher. Crosses sectors, so use blockmap.
-		xl = MapBlock(X - Radius - XLevel.BlockMapOrgX - MAXRADIUS);
-		xh = MapBlock(X + Radius - XLevel.BlockMapOrgX + MAXRADIUS);
-		yl = MapBlock(Y - Radius - XLevel.BlockMapOrgY - MAXRADIUS);
-		yh = MapBlock(Y + Radius - XLevel.BlockMapOrgY + MAXRADIUS);
+		foreach RadiusThings(thing, vector(X, Y, 0.0), Radius)
+		{
+			// PIT_PushThing determines the angle and magnitude of the effect.
+			// The object's x and y momentum values are changed.
+			//
+			// tmpusher belongs to the point source (MT_PUSH/MT_PULL).
+			float sx;
+			float sy;
+			float dist;
+			float speed;
+			float pushangle;
 
-		for (bx = xl; bx <= xh; bx++)
-			for (by = yl; by <= yh; by++)
-				XLevel.BlockThingsIterator(bx, by, self, 'PIT_PushThing');
+			if (EntityEx(thing).CanWindThrust() && thing.bColideWithWorld)
+			{
+				sx = X;
+				sy = Y;
+				dist = Length(vector(thing.Origin.x - sx, thing.Origin.y - sy, 0.0));
+				speed = itof(Magnitude - (ftoi(dist) >> 1)) / (2.0 * PUSH_FACTOR);
+
+				// If speed <= 0, you're outside the effective radius. You also have
+				// to be able to see the push/pull source point.
+
+				if ((speed > 0.0) && thing.CanSee(Source))
+				{
+					pushangle = atan2(sy - thing.Origin.y, sx - thing.Origin.x);
+					if (Source.IsPointPusher())
+						pushangle += 180.0;    // away
+					thing.Velocity.x += speed * cos(pushangle) * 35.0 * Level.Game.frametime;
+					thing.Velocity.y += speed * sin(pushangle) * 35.0 * Level.Game.frametime;
+				}
+			}
+		}
 		return;
 	}
 

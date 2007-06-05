@@ -254,18 +254,6 @@ IMPLEMENT_FUNCTION(VObject, PointInRegion)
 	RET_PTR(SV_PointInRegion(sector, p));
 }
 
-//==========================================================================
-//
-//	PF_MapBlock
-//
-//==========================================================================
-
-IMPLEMENT_FUNCTION(VObject, MapBlock)
-{
-	P_GET_FLOAT(x);
-	RET_INT(MapBlock(x));
-}
-
 //**************************************************************************
 //
 //  Sound functions

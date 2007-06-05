@@ -203,6 +203,78 @@ bool VBlockThingsIterator::GetNext()
 
 //==========================================================================
 //
+//	VRadiusThingsIterator::VRadiusThingsIterator
+//
+//==========================================================================
+
+VRadiusThingsIterator::VRadiusThingsIterator(VThinker* ASelf,
+	VEntity** AEntPtr, TVec Org, float Radius)
+: Self(ASelf)
+, EntPtr(AEntPtr)
+{
+	guard(VRadiusThingsIterator::VRadiusThingsIterator);
+	xl = MapBlock(Org.x - Radius - Self->XLevel->BlockMapOrgX - MAXRADIUS);
+	xh = MapBlock(Org.x + Radius - Self->XLevel->BlockMapOrgX + MAXRADIUS);
+	yl = MapBlock(Org.y - Radius - Self->XLevel->BlockMapOrgY - MAXRADIUS);
+	yh = MapBlock(Org.y + Radius - Self->XLevel->BlockMapOrgY + MAXRADIUS);
+	x = xl;
+	y = yl;
+	if (x < 0 || x >= Self->XLevel->BlockMapWidth ||
+		y < 0 || y >= Self->XLevel->BlockMapHeight)
+	{
+		Ent = NULL;
+	}
+	else
+	{
+		Ent = Self->XLevel->BlockLinks[y * Self->XLevel->BlockMapWidth + x];
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VRadiusThingsIterator::GetNext
+//
+//==========================================================================
+
+bool VRadiusThingsIterator::GetNext()
+{
+	guard(VRadiusThingsIterator::GetNext);
+	while (1)
+	{
+		while (Ent)
+		{
+			*EntPtr = Ent;
+			Ent = Ent->BlockMapNext;
+			return true;
+		}
+
+		y++;
+		if (y > yh)
+		{
+			x++;
+			y = yl;
+			if (x > xh)
+			{
+				return false;
+			}
+		}
+
+		if (x < 0 || x >= Self->XLevel->BlockMapWidth ||
+			y < 0 || y >= Self->XLevel->BlockMapHeight)
+		{
+			Ent = NULL;
+		}
+		else
+		{
+			Ent = Self->XLevel->BlockLinks[y * Self->XLevel->BlockMapWidth + x];
+		}
+	}
+	unguard;
+}
+
+//==========================================================================
+//
 //	VPathTraverse::VPathTraverse
 //
 //==========================================================================

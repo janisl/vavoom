@@ -76,6 +76,30 @@ public:
 
 //==========================================================================
 //
+//	VRadiusThingsIterator
+//
+//==========================================================================
+
+class VRadiusThingsIterator : public VScriptIterator
+{
+private:
+	VThinker*	Self;
+	VEntity**	EntPtr;
+	VEntity*	Ent;
+	int			x;
+	int			y;
+	int			xl;
+	int			xh;
+	int			yl;
+	int			yh;
+
+public:
+	VRadiusThingsIterator(VThinker*, VEntity**, TVec, float);
+	bool GetNext();
+};
+
+//==========================================================================
+//
 //	VPathTraverse
 //
 //	Traces a line from x1,y1 to x2,y2, calling the traverser function for

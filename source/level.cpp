@@ -678,17 +678,6 @@ IMPLEMENT_FUNCTION(VLevel, PointInSector)
 	RET_PTR(Self->PointInSubsector(Point)->sector);
 }
 
-IMPLEMENT_FUNCTION(VLevel, BlockThingsIterator)
-{
-	P_GET_NAME(FuncName);
-	P_GET_REF(VObject, SelfObj);
-	P_GET_INT(y);
-	P_GET_INT(x);
-	P_GET_SELF;
-	VMethod* func = SelfObj->GetClass()->FindFunctionChecked(FuncName);
-	RET_BOOL(Self->BlockThingsIterator(x, y, NULL, NULL, SelfObj, func));
-}
-
 IMPLEMENT_FUNCTION(VLevel, ChangeSector)
 {
 	P_GET_INT(crunch);

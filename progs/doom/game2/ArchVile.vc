@@ -37,15 +37,9 @@ class ArchVile : Actor
 
 final void A_VileChase()
 {
-	int xl;
-	int xh;
-	int yl;
-	int yh;
-
-	int bx;
-	int by;
-
-	Actor temp;
+	float viletryx;
+	float viletryy;
+	Entity Other;
 
 	if (MoveDir != DI_NODIR)
 	{
@@ -53,40 +47,66 @@ final void A_VileChase()
 		viletryx = Origin.x + StepSpeed * MainGameInfo(Level.Game).xspeed[MoveDir];
 		viletryy = Origin.y + StepSpeed * MainGameInfo(Level.Game).yspeed[MoveDir];
 
-		xl = MapBlock(viletryx - XLevel.BlockMapOrgX - MAXRADIUS * 2.0);
-		xh = MapBlock(viletryx - XLevel.BlockMapOrgX + MAXRADIUS * 2.0);
-		yl = MapBlock(viletryy - XLevel.BlockMapOrgY - MAXRADIUS * 2.0);
-		yh = MapBlock(viletryy - XLevel.BlockMapOrgY + MAXRADIUS * 2.0);
-
-		for (bx = xl; bx <= xh; bx++)
+		//	For all things in radius check whether object is a corpse
+		// that can be raised.
+		foreach RadiusThings(Other, vector(viletryx, viletryy, 0.0), MAXRADIUS)
 		{
-			for (by = yl; by <= yh; by++)
-			{
-				// Call PIT_VileCheck to check whether object is a corpse
-				// that canbe raised.
-				if (!XLevel.BlockThingsIterator(bx, by, self, 'PIT_VileCheck'))
-				{
-					// got one!
-					temp = Target;
-					Target = CorpseHit;
-					A_FaceTarget();
-					Target = temp;
+			//  Detect a corpse that could be raised.
+			float maxdist;
+			bool check;
 
-					SetState(ArchVile::S_VILE_HEAL1);
-					CorpseHit.PlaySound('vile/raise', CHAN_BODY);
+			if (!Actor(Other).bCorpse)
+				continue;	// not a monster
 
-					CorpseHit.SetState(CorpseHit.RaiseState);
-					CorpseHit.Height = CorpseHit.default.Height;
-					CorpseHit.bShootable = true;
-					CorpseHit.bFloat = CorpseHit.default.bFloat;
-					CorpseHit.bNoGravity = CorpseHit.default.bNoGravity;
-					CorpseHit.bDropOff = false;
-					CorpseHit.bSolid = true;
-					CorpseHit.bCorpse = false;
-					CorpseHit.Health = CorpseHit.default.Health;
-					CorpseHit.Target = none;
-				}
-			}
+			if (Actor(Other).StateTime != -1.0)
+				continue;	// not lying still yet
+
+			if (!Actor(Other).RaiseState)
+				continue;	// monster doesn't have a raise state
+
+			maxdist = Other.Radius + Radius;
+
+			if (fabs(Other.Origin.x - viletryx) > maxdist ||
+				fabs(Other.Origin.y - viletryy) > maxdist)
+				continue;	// not actually touching
+
+			if (!CanSee(Other))
+				continue;	//  Con't see, possibly in other region
+
+			Actor CorpseHit = Actor(Other);
+			CorpseHit.Velocity.x = 0.0;
+			CorpseHit.Velocity.y = 0.0;
+			float OldHeight = CorpseHit.Height;
+			bool OldSolid = CorpseHit.bSolid;
+			CorpseHit.bSolid = true;
+			CorpseHit.Height = CorpseHit.default.Height;
+			check = CorpseHit.CheckPosition(CorpseHit.Origin);
+			CorpseHit.bSolid = OldSolid;
+			CorpseHit.Height = OldHeight;
+
+			if (!check)
+				continue;	// doesn't fit here
+
+			// got one!
+			Actor temp = Target;
+			Target = CorpseHit;
+			A_FaceTarget();
+			Target = temp;
+
+			SetState(ArchVile::S_VILE_HEAL1);
+			CorpseHit.PlaySound('vile/raise', CHAN_BODY);
+
+			CorpseHit.SetState(CorpseHit.RaiseState);
+			CorpseHit.Height = CorpseHit.default.Height;
+			CorpseHit.bShootable = true;
+			CorpseHit.bFloat = CorpseHit.default.bFloat;
+			CorpseHit.bNoGravity = CorpseHit.default.bNoGravity;
+			CorpseHit.bDropOff = false;
+			CorpseHit.bSolid = true;
+			CorpseHit.bCorpse = false;
+			CorpseHit.Health = CorpseHit.default.Health;
+			CorpseHit.Target = none;
+			return;
 		}
 	}
 

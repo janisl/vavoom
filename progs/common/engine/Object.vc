@@ -1586,7 +1586,6 @@ native static final sec_region_t *FindThingGap(sec_region_t * gaps, TVec point, 
 native static final opening_t *FindOpening(opening_t * gaps, float z1, float z2);
 //  Find best region in sector for a given point
 native static final sec_region_t *PointInRegion(sector_t * sector, TVec p);
-native static final int MapBlock(float val);
 
 //
 //  Sound functions

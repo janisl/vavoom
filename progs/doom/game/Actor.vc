@@ -144,10 +144,6 @@ string PickupMessage;
 
 float bombdamage;
 
-Actor CorpseHit;
-float viletryx;
-float viletryy;
-
 // Height if not aiming up or down
 // ???: use slope for monsters?
 float aim_z;
@@ -2474,26 +2470,15 @@ bool PIT_RadiusAttack(Entity Other)
 
 void RadiusAttack(int damage, int distance, bool damageSource)
 {
-	int x;
-	int y;
-
-	int xl;
-	int xh;
-	int yl;
-	int yh;
-
 	float dist;
+	Entity Other;
 
 	dist = itof(damage);
-	yh = MapBlock(Origin.y + dist - XLevel.BlockMapOrgY);
-	yl = MapBlock(Origin.y - dist - XLevel.BlockMapOrgY);
-	xh = MapBlock(Origin.x + dist - XLevel.BlockMapOrgX);
-	xl = MapBlock(Origin.x - dist - XLevel.BlockMapOrgX);
 	bombdamage = itof(damage);
 
-	for (y = yl; y <= yh; y++)
-		for (x = xl; x <= xh; x++)
-			XLevel.BlockThingsIterator(x, y, self, 'PIT_RadiusAttack');
+	foreach RadiusThings(Other, Origin, dist)
+		if (!PIT_RadiusAttack(Other))
+			break;
 }
 
 float teleport_x;
@@ -2543,27 +2528,16 @@ bool PIT_StompThing(Entity Other)
 
 bool TeleportMove(TVec org)
 {
-	int xl;
-	int xh;
-	int yl;
-	int yh;
-	int bx;
-	int by;
+	Entity Other;
 
 	// kill anything occupying the position
 	teleport_x = org.x;
 	teleport_y = org.y;
 
 	// stomp on any things contacted
-	xl = MapBlock(org.x - Radius - XLevel.BlockMapOrgX - MAXRADIUS);
-	xh = MapBlock(org.x + Radius - XLevel.BlockMapOrgX + MAXRADIUS);
-	yl = MapBlock(org.y - Radius - XLevel.BlockMapOrgY - MAXRADIUS);
-	yh = MapBlock(org.y + Radius - XLevel.BlockMapOrgY + MAXRADIUS);
-
-	for (bx = xl; bx <= xh; bx++)
-		for (by = yl; by <= yh; by++)
-			if (!XLevel.BlockThingsIterator(bx, by, self, 'PIT_StompThing'))
-				return false;
+	foreach RadiusThings(Other, org, Radius)
+		if (!PIT_StompThing(Other))
+			return false;
 
 	// the move is ok,
 	// so link the thing into its new position
@@ -4047,54 +4021,6 @@ final void A_Fall()
 
 	// So change this if corpse objects
 	// are meant to be obstacles.
-}
-
-//==========================================================================
-//
-//  PIT_VileCheck
-//
-//  Detect a corpse that could be raised.
-//
-//==========================================================================
-
-bool PIT_VileCheck(Entity Other)
-{
-	float maxdist;
-	bool check;
-
-	if (!Actor(Other).bCorpse)
-		return true;	// not a monster
-
-	if (Actor(Other).StateTime != -1.0)
-		return true;	// not lying still yet
-
-	if (!Actor(Other).RaiseState)
-		return true;	// monster doesn't have a raise state
-
-	maxdist = Other.Radius + Radius;
-
-	if (fabs(Other.Origin.x - viletryx) > maxdist ||
-		fabs(Other.Origin.y - viletryy) > maxdist)
-		return true;	// not actually touching
-
-	if (!CanSee(Other))
-		return true;	//  Con't see, possibly in other region
-
-	CorpseHit = Actor(Other);
-	CorpseHit.Velocity.x = 0.0;
-	CorpseHit.Velocity.y = 0.0;
-	float OldHeight = CorpseHit.Height;
-	bool OldSolid = CorpseHit.bSolid;
-	CorpseHit.bSolid = true;
-	CorpseHit.Height = CorpseHit.default.Height;
-	check = CorpseHit.CheckPosition(CorpseHit.Origin);
-	CorpseHit.bSolid = OldSolid;
-	CorpseHit.Height = OldHeight;
-
-	if (!check)
-		return true;	// doesn't fit here
-
-	return false;	// got one, so stop checking
 }
 
 //==========================================================================

@@ -145,60 +145,37 @@ final void A_ThrustBlock()
 
 //==========================================================================
 //
-//  PIT_ThrustStompThing
-//
-//==========================================================================
-
-bool PIT_ThrustStompThing(Entity Other)
-{
-	float blockdist;
-
-	if (!Actor(Other).bShootable)
-		return true;
-
-	blockdist = Other.Radius + Radius;
-	if (fabs(Other.Origin.x - Origin.x) >= blockdist ||
-		fabs(Other.Origin.y - Origin.y) >= blockdist ||
-		(Other.Origin.z > Origin.z + Height))
-	{
-		return true;	// didn't hit it
-	}
-
-	if (Other == self)
-		return true;	// don't clip against self
-
-	Actor(Other).Damage(self, self, 10001);
-	bBloody = true;	// Mark thrust thing as bloody
-
-	return true;
-}
-
-//==========================================================================
-//
 //  A_ThrustImpale
 //
 //==========================================================================
 
 final void A_ThrustImpale()
 {
-	int xl, xh, yl, yh, bx, by;
-	float x0, x2, y0, y2;
+	Entity Other;
 
 	// Impale all shootables in radius
-	x0 = Origin.x - Radius;
-	x2 = Origin.x + Radius;
-	y0 = Origin.y - Radius;
-	y2 = Origin.y + Radius;
-
-	xl = MapBlock(x0 - XLevel.BlockMapOrgX - MAXRADIUS);
-	xh = MapBlock(x2 - XLevel.BlockMapOrgX + MAXRADIUS);
-	yl = MapBlock(y0 - XLevel.BlockMapOrgY - MAXRADIUS);
-	yh = MapBlock(y2 - XLevel.BlockMapOrgY + MAXRADIUS);
-
 	// stomp on any things contacted
-	for (bx = xl; bx <= xh; bx++)
-		for (by = yl; by <= yh; by++)
-			XLevel.BlockThingsIterator(bx, by, self, 'PIT_ThrustStompThing');
+	foreach RadiusThings(Other, Origin, Radius)
+	{
+		float blockdist;
+	
+		if (!Actor(Other).bShootable)
+			continue;
+	
+		blockdist = Other.Radius + Radius;
+		if (fabs(Other.Origin.x - Origin.x) >= blockdist ||
+			fabs(Other.Origin.y - Origin.y) >= blockdist ||
+			(Other.Origin.z > Origin.z + Height))
+		{
+			continue;	// didn't hit it
+		}
+	
+		if (Other == self)
+			continue;	// don't clip against self
+	
+		Actor(Other).Damage(self, self, 10001);
+		bBloody = true;	// Mark thrust thing as bloody
+	}
 }
 
 __states__

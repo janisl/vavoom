@@ -371,7 +371,6 @@ public:
 	DECLARE_FUNCTION(FindThingGap)
 	DECLARE_FUNCTION(FindOpening)
 	DECLARE_FUNCTION(PointInRegion)
-	DECLARE_FUNCTION(MapBlock)
 
 	//	Sound functions
 	DECLARE_FUNCTION(SectorStopSound)

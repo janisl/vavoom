@@ -666,8 +666,6 @@ class VLevel : public VObject
 	bool MovePolyobj(int, float, float);
 	bool RotatePolyobj(int, float);
 
-	bool BlockThingsIterator(int, int, bool(*func)(void*, VEntity*),
-		void*, VObject*, VMethod*);
 	bool ChangeSector(sector_t*, int);
 
 	bool TraceLine(linetrace_t&, const TVec&, const TVec&, int) const;
@@ -731,7 +729,6 @@ private:
 	bool CrossBSPNode(linetrace_t&, int) const;
 
 	DECLARE_FUNCTION(PointInSector)
-	DECLARE_FUNCTION(BlockThingsIterator)
 	DECLARE_FUNCTION(TraceLine)
 	DECLARE_FUNCTION(ChangeSector)
 	DECLARE_FUNCTION(AddExtraFloor)
