@@ -177,6 +177,7 @@ class VBasePlayer : public VObject
 	DECLARE_FUNCTION(ClearPlayer)
 	DECLARE_FUNCTION(SetViewState)
 	DECLARE_FUNCTION(AdvanceViewStates)
+	DECLARE_FUNCTION(DisconnectBot)
 
 	DECLARE_FUNCTION(ClientStartSound)
 	DECLARE_FUNCTION(ClientStopSound)

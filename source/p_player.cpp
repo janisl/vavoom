@@ -404,3 +404,10 @@ IMPLEMENT_FUNCTION(VBasePlayer, AdvanceViewStates)
 	P_GET_SELF;
 	Self->AdvanceViewStates(deltaTime);
 }
+
+IMPLEMENT_FUNCTION(VBasePlayer, DisconnectBot)
+{
+	P_GET_SELF;
+	check(Self->PlayerFlags & PF_IsBot);
+	SV_DropClient(Self, false);
+}

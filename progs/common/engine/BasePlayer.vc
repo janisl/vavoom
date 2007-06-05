@@ -150,6 +150,7 @@ native final void ClearPlayer();
 
 native final void SetViewState(int position, state stnum);
 native final void AdvanceViewStates(float deltaTime);
+native final void DisconnectBot();
 
 //	For networking
 native void ClientStartSound(int SoundId, TVec Org, int OriginId,
