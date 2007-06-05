@@ -1122,10 +1122,18 @@ func_loop:
 			PR_VM_BREAK;
 
 		PR_VM_CASE(OPC_Divide)
+			if (!sp[-1].i)
+			{
+				Sys_Error("Division by 0");
+			}
 			BINOP(i, /=);
 			PR_VM_BREAK;
 
 		PR_VM_CASE(OPC_Modulus)
+			if (!sp[-1].i)
+			{
+				Sys_Error("Division by 0");
+			}
 			BINOP_Q(i, %=);
 			PR_VM_BREAK;
 
@@ -1279,10 +1287,18 @@ func_loop:
 			PR_VM_BREAK;
 
 		PR_VM_CASE(OPC_DivVarDrop)
+			if (!sp[-1].i)
+			{
+				Sys_Error("Division by 0");
+			}
 			ASSIGNOP(vint32, i, /=);
 			PR_VM_BREAK;
 
 		PR_VM_CASE(OPC_ModVarDrop)
+			if (!sp[-1].i)
+			{
+				Sys_Error("Division by 0");
+			}
 			ASSIGNOP(vint32, i, %=);
 			PR_VM_BREAK;
 
@@ -1387,10 +1403,18 @@ func_loop:
 			PR_VM_BREAK;
 
 		PR_VM_CASE(OPC_ByteDivVarDrop)
+			if (!sp[-1].i)
+			{
+				Sys_Error("Division by 0");
+			}
 			ASSIGNOP(vuint8, i, /=);
 			PR_VM_BREAK;
 
 		PR_VM_CASE(OPC_ByteModVarDrop)
+			if (!sp[-1].i)
+			{
+				Sys_Error("Division by 0");
+			}
 			ASSIGNOP(vuint8, i, %=);
 			PR_VM_BREAK;
 
@@ -1427,6 +1451,10 @@ func_loop:
 			PR_VM_BREAK;
 
 		PR_VM_CASE(OPC_FDivide)
+			if (!sp[-1].f)
+			{
+				Sys_Error("Division by 0");
+			}
 			BINOP_Q(f, /=);
 			PR_VM_BREAK;
 
