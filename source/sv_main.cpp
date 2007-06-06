@@ -98,7 +98,7 @@ static VCvarI	sv_cheats("sv_cheats", "0", CVAR_ServerInfo | CVAR_Latch);
 static VCvarI	split_frame("split_frame", "1", CVAR_Archive);
 static VCvarF	sv_gravity("sv_gravity", "800.0", CVAR_ServerInfo);
 static VCvarI	sv_maxmove("sv_maxmove", "400", CVAR_Archive);
-static VCvarI	test_standalone("test_standalone", "0", CVAR_Archive);
+static VCvarI	use_standalone("use_standalone", "1", CVAR_Archive);
 
 static VServerNetContext*	ServerNetContext;
 
@@ -951,7 +951,7 @@ void SV_SpawnServer(const char *mapname, bool spawn_thinkers)
 		//	New game
 		GWorldInfo = GGameInfo->eventCreateWorldInfo();
 
-		host_standalone = !netgame && test_standalone;
+		host_standalone = !netgame && use_standalone;
 	}
 
 	SV_Clear();
