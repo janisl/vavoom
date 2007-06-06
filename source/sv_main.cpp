@@ -791,15 +791,10 @@ int NET_SendToAll(int blocktime)
 	bool		state1[MAXPLAYERS];
 	bool		state2[MAXPLAYERS];
 
-	if (host_standalone)
-	{
-		return 0;
-	}
-
 	for (i = 0; i < svs.max_clients; i++)
 	{
 		VBasePlayer* Player = GGameInfo->Players[i];
-		if (Player)
+		if (Player && Player->Net)
 		{
 			if (Player->Net->IsLocalConnection())
 			{
@@ -951,7 +946,7 @@ void SV_SpawnServer(const char *mapname, bool spawn_thinkers)
 		//	New game
 		GWorldInfo = GGameInfo->eventCreateWorldInfo();
 
-		host_standalone = !netgame && use_standalone;
+		host_standalone = svs.max_clients == 1 && use_standalone;
 	}
 
 	SV_Clear();
@@ -1383,7 +1378,6 @@ void SV_CheckForNewClients()
 void SV_ConnectBot(const char *name)
 {
 	guard(SV_ConnectBot);
-	VSocketPublic*	sock;
 	int				i;
 
 	if (svs.num_connected >= svs.max_clients)
@@ -1391,11 +1385,6 @@ void SV_ConnectBot(const char *name)
 		GCon->Log("Server is full");
 		return;
 	}
-
-	GNet->ConnectBot = true;
-	sock = GNet->CheckNewConnections();
-	if (!sock)
-		return;
 
 	//
 	// init a new client structure
@@ -1409,9 +1398,6 @@ void SV_ConnectBot(const char *name)
 	VBasePlayer* Player = GPlayersBase[i];
 	Player->PlayerFlags |= VBasePlayer::PF_IsBot;
 	Player->PlayerName = name;
-	Player->Net = new VNetConnection(sock, ServerNetContext, Player);
-	Player->Net->AutoAck = true;
-	((VPlayerChannel*)Player->Net->Channels[CHANIDX_Player])->SetPlayer(Player);
 	SV_ConnectClient(Player);
 	svs.num_connected++;
 	SV_SetUserInfo(Player, Player->UserInfo);

@@ -78,56 +78,59 @@ bool VBasePlayer::ExecuteNetMethod(VMethod* Func)
 		return false;
 	}
 
-	//	Replication condition is true, the method must be replicated.
-	VMessageOut Msg(Net->Channels[CHANIDX_Player]);
-	Msg.bReliable = !!(Func->Flags & FUNC_NetReliable);
-
-	Msg.WriteInt(Func->NetIndex, GetClass()->NumNetFields);
-
-	//	Serialise arguments
-	guard(SerialiseArguments);
-	VStack* Param = pr_stackPtr - Func->ParamsSize + 1;	//	Skip self
-	for (int i = 0; i < Func->NumParams; i++)
+	if (Net)
 	{
-		switch (Func->ParamTypes[i].Type)
-		{
-		case TYPE_Int:
-		case TYPE_Byte:
-		case TYPE_Bool:
-		case TYPE_Name:
-			VField::NetSerialiseValue(Msg, (vuint8*)&Param->i, Func->ParamTypes[i]);
-			Param++;
-			break;
-		case TYPE_Float:
-			VField::NetSerialiseValue(Msg, (vuint8*)&Param->f, Func->ParamTypes[i]);
-			Param++;
-			break;
-		case TYPE_String:
-		case TYPE_Pointer:
-		case TYPE_Reference:
-		case TYPE_Class:
-		case TYPE_State:
-			VField::NetSerialiseValue(Msg, (vuint8*)&Param->p, Func->ParamTypes[i]);
-			Param++;
-			break;
-		case TYPE_Vector:
-			{
-				TVec Vec;
-				Vec.x = Param[0].f;
-				Vec.y = Param[1].f;
-				Vec.z = Param[2].f;
-				VField::NetSerialiseValue(Msg, (vuint8*)&Vec, Func->ParamTypes[i]);
-				Param += 3;
-			}
-			break;
-		default:
-			Sys_Error("Bad method argument type %d", Func->ParamTypes[i].Type);
-		}
-	}
-	unguard;
+		//	Replication condition is true, the method must be replicated.
+		VMessageOut Msg(Net->Channels[CHANIDX_Player]);
+		Msg.bReliable = !!(Func->Flags & FUNC_NetReliable);
 
-	//	Send it.
-	Net->Channels[CHANIDX_Player]->SendMessage(&Msg);
+		Msg.WriteInt(Func->NetIndex, GetClass()->NumNetFields);
+
+		//	Serialise arguments
+		guard(SerialiseArguments);
+		VStack* Param = pr_stackPtr - Func->ParamsSize + 1;	//	Skip self
+		for (int i = 0; i < Func->NumParams; i++)
+		{
+			switch (Func->ParamTypes[i].Type)
+			{
+			case TYPE_Int:
+			case TYPE_Byte:
+			case TYPE_Bool:
+			case TYPE_Name:
+				VField::NetSerialiseValue(Msg, (vuint8*)&Param->i, Func->ParamTypes[i]);
+				Param++;
+				break;
+			case TYPE_Float:
+				VField::NetSerialiseValue(Msg, (vuint8*)&Param->f, Func->ParamTypes[i]);
+				Param++;
+				break;
+			case TYPE_String:
+			case TYPE_Pointer:
+			case TYPE_Reference:
+			case TYPE_Class:
+			case TYPE_State:
+				VField::NetSerialiseValue(Msg, (vuint8*)&Param->p, Func->ParamTypes[i]);
+				Param++;
+				break;
+			case TYPE_Vector:
+				{
+					TVec Vec;
+					Vec.x = Param[0].f;
+					Vec.y = Param[1].f;
+					Vec.z = Param[2].f;
+					VField::NetSerialiseValue(Msg, (vuint8*)&Vec, Func->ParamTypes[i]);
+					Param += 3;
+				}
+				break;
+			default:
+				Sys_Error("Bad method argument type %d", Func->ParamTypes[i].Type);
+			}
+		}
+		unguard;
+
+		//	Send it.
+		Net->Channels[CHANIDX_Player]->SendMessage(&Msg);
+	}
 
 	//	Clean up parameters
 	guard(CleanUp);
