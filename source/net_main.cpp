@@ -119,8 +119,7 @@ VNetworkPublic* VNetworkPublic::Create()
 //==========================================================================
 
 VNetworkPublic::VNetworkPublic()
-: ConnectBot(false)
-, NetTime(0.0)
+: NetTime(0.0)
 , MessagesSent(0)
 , MessagesReceived(0)
 , UnreliableMessagesSent(0)

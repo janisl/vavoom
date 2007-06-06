@@ -1616,10 +1616,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\source\net_dgrm.h"
-				>
-			</File>
-			<File
 				RelativePath="..\source\net_ipx.cpp"
 				>
 				<FileConfiguration
@@ -1645,10 +1641,6 @@
 			</File>
 			<File
 				RelativePath="..\source\net_loop.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\source\net_loop.h"
 				>
 			</File>
 			<File
@@ -1682,14 +1674,6 @@
 						Name="VCCLCompilerTool"
 					/>
 				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\source\net_null.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\source\net_null.h"
-				>
 			</File>
 			<File
 				RelativePath="..\source\net_udp.cpp"

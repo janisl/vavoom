@@ -129,8 +129,6 @@ class VNetworkPublic : public VVirtualObjectBase
 {
 public:
 	//	Public API
-	bool			ConnectBot;
-
 	double			NetTime;
 	
 	//	Statistic counters.

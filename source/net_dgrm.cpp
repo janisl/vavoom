@@ -157,7 +157,7 @@ static VDatagramDriver	Impl;
 //==========================================================================
 
 VDatagramDriver::VDatagramDriver()
-: VNetDriver(2, "Datagram")
+: VNetDriver(1, "Datagram")
 {
 	memset(&packetBuffer, 0, sizeof(packetBuffer));
 }

@@ -136,7 +136,6 @@ _____MAIN_EXE__SOURCES = \
 	net_main.cpp \
 	net_message.cpp \
 	net_message.h \
-	net_null.cpp \
 	network.h \
 	p_acs.cpp \
 	p_acs.h \
@@ -462,7 +461,6 @@ _____SERVER_EXE__SOURCES = \
 	net_loop.cpp \
 	net_main.cpp \
 	net_message.cpp \
-	net_null.cpp \
 	p_acs.cpp \
 	p_clip.cpp \
 	p_entity.cpp \
