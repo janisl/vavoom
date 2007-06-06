@@ -67,7 +67,6 @@ bool			bSpecialActionOpenDoor;
 bool			bSpecialActionLowerFloor;
 bool			bSpecialActionKillMonsters;
 bool			bNoIntermission;
-bool			bNoSoundClipping;
 bool			bAllowMonsterTelefrags;
 bool			bNoAllies;
 bool			bDeathSlideShow;
@@ -100,9 +99,8 @@ replication
 		LevelName, Cluster, ParTime, SuckTime, Sky1Texture, Sky2Texture,
 		Sky1ScrollDelta, Sky2ScrollDelta, SkyBox, FadeTable, Fade, OutsideFog,
 		SongLump, CDTrack, bDoubleSky, bLightning, bNoIntermission,
-		bNoSoundClipping, bForceNoSkyStretch, bLookupName, TotalKills,
-		TotalItems, TotalSecret, CurrentKills, CurrentItems, CurrentSecret,
-		CompletitionTime;
+		bForceNoSkyStretch, bLookupName, TotalKills, TotalItems, TotalSecret,
+		CurrentKills, CurrentItems, CurrentSecret, CompletitionTime;
 }
 
 //

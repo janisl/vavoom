@@ -252,7 +252,6 @@ VAudio::VAudio()
 , MidiDevice(NULL)
 , CDAudioDevice(NULL)
 {
-	NoSoundClipping = false;
 	ActiveSequences = 0;
 	SequenceListHead = NULL;
 	memset(Channel, 0, sizeof(Channel));
@@ -485,8 +484,6 @@ void VAudio::PlaySound(int InSoundId, const TVec& origin,
 				LocalPlayerSound = true;
 			}
 		}
-		NoSoundClipping = !!(GClLevel->LevelInfo->LevelInfoFlags &
-			VLevelInfo::LIF_NoSoundClipping);
 	}
 
 	// calculate the distance before other stuff so that we can throw out
@@ -494,7 +491,7 @@ void VAudio::PlaySound(int InSoundId, const TVec& origin,
 	int dist = 0;
 	if (origin_id && !LocalPlayerSound && Attenuation > 0)
 		dist = (int)(Length(origin - cl->ViewOrg) * Attenuation);
-	if (dist >= MaxSoundDist && !NoSoundClipping)
+	if (dist >= MaxSoundDist)
 	{
 		return; // sound is beyond the hearing range...
 	}
@@ -903,12 +900,6 @@ void VAudio::UpdateSfx()
 		AngleVectors(cl->ViewAngles, ListenerForward, ListenerRight, ListenerUp);
 	}
 
-	if (GClLevel && GClLevel->LevelInfo)
-	{
-		NoSoundClipping = !!(GClLevel->LevelInfo->LevelInfoFlags &
-			VLevelInfo::LIF_NoSoundClipping);
-	}
-
 	for (int i = 0; i < NumChannels; i++)
 	{
 		if (!Channel[i].sound_id)
@@ -939,7 +930,7 @@ void VAudio::UpdateSfx()
 
 		int dist = (int)(Length(Channel[i].origin - cl->ViewOrg) *
 			Channel[i].Attenuation);
-		if (dist >= MaxSoundDist && !NoSoundClipping)
+		if (dist >= MaxSoundDist)
 		{
 			//	Too far away
 			StopChannel(i);

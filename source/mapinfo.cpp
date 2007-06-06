@@ -535,7 +535,7 @@ static void ParseMap(VScriptParser* sc, bool IsDefault, bool& HexenMode)
 		}
 		else if (sc->Check("nosoundclipping"))
 		{
-			info->Flags |= MAPINFOF_NoSoundClipping;
+			//	Ignored
 		}
 		else if (sc->Check("allowmonstertelefrags"))
 		{

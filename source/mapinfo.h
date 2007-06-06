@@ -38,12 +38,11 @@ enum
 	MAPINFOF_SpecialActionLowerFloor	= 0x00000400,
 	MAPINFOF_SpecialActionKillMonsters	= 0x00000800,
 	MAPINFOF_NoIntermission				= 0x00001000,
-	MAPINFOF_NoSoundClipping			= 0x00002000,
-	MAPINFOF_AllowMonsterTelefrags		= 0x00004000,
-	MAPINFOF_NoAllies					= 0x00008000,
-	MAPINFOF_DeathSlideShow				= 0x00010000,
-	MAPINFOF_ForceNoSkyStretch			= 0x00020000,
-	MAPINFOF_LookupName					= 0x00040000,
+	MAPINFOF_AllowMonsterTelefrags		= 0x00002000,
+	MAPINFOF_NoAllies					= 0x00004000,
+	MAPINFOF_DeathSlideShow				= 0x00008000,
+	MAPINFOF_ForceNoSkyStretch			= 0x00010000,
+	MAPINFOF_LookupName					= 0x00020000,
 };
 
 struct mapInfo_t

@@ -70,13 +70,12 @@ class VLevelInfo : public VThinker
 		LIF_SpecialActionLowerFloor		= 0x00000400,
 		LIF_SpecialActionKillMonsters	= 0x00000800,
 		LIF_NoIntermission				= 0x00001000,
-		LIF_NoSoundClipping				= 0x00002000,
-		LIF_AllowMonsterTelefrags		= 0x00004000,
-		LIF_NoAllies					= 0x00008000,
-		LIF_DeathSlideShow				= 0x00010000,
-		LIF_ForceNoSkyStretch			= 0x00020000,
-		LIF_LookupName					= 0x00040000,
-		LIF_BegunPlay					= 0x00080000,
+		LIF_AllowMonsterTelefrags		= 0x00002000,
+		LIF_NoAllies					= 0x00004000,
+		LIF_DeathSlideShow				= 0x00008000,
+		LIF_ForceNoSkyStretch			= 0x00010000,
+		LIF_LookupName					= 0x00020000,
+		LIF_BegunPlay					= 0x00040000,
 	};
 	vuint32			LevelInfoFlags;
 

@@ -118,8 +118,6 @@ void VLevelInfo::SetMapInfo(const mapInfo_t& Info)
 		LevelInfoFlags |= LIF_SpecialActionKillMonsters;
 	if (Info.Flags & MAPINFOF_NoIntermission)
 		LevelInfoFlags |= LIF_NoIntermission;
-	if (Info.Flags & MAPINFOF_NoSoundClipping)
-		LevelInfoFlags |= LIF_NoSoundClipping;
 	if (Info.Flags & MAPINFOF_AllowMonsterTelefrags)
 		LevelInfoFlags |= LIF_AllowMonsterTelefrags;
 	if (Info.Flags & MAPINFOF_NoAllies)
