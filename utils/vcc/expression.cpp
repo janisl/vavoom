@@ -887,6 +887,12 @@ VExpression* VSelf::DoResolve(VEmitContext& ec)
 		delete this;
 		return NULL;
 	}
+	if (ec.CurrentFunc->Flags & FUNC_Static)
+	{
+		ParseError(Loc, "self used in a static method\n");
+		delete this;
+		return NULL;
+	}
 	Type = TType(ec.SelfClass);
 	return this;
 }
@@ -4688,6 +4694,10 @@ void VInvocation::Emit(VEmitContext& ec)
 	{
 		if (!HaveSelf)
 		{
+			if (ec.CurrentFunc->Flags & FUNC_Static)
+			{
+				ParseError(Loc, "An object is required to call non-static methods");
+			}
 			ec.AddStatement(OPC_LocalValue0);
 		}
 	}

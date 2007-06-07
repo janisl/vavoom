@@ -611,8 +611,6 @@ public:
 class VEmitContext
 {
 private:
-	VMethod*				CurrentFunc;
-
 	struct VLabelFixup
 	{
 		int					Pos;
@@ -624,6 +622,7 @@ private:
 	TArray<VLabelFixup>		Fixups;
 
 public:
+	VMethod*				CurrentFunc;
 	VClass*					SelfClass;
 	VPackage*				Package;
 

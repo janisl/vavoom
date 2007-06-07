@@ -1393,11 +1393,6 @@ bool VMethod::Define()
 
 	if (Flags & FUNC_Static)
 	{
-		if (!(Flags & FUNC_Native))
-		{
-			ParseError(Loc, "Currently only native methods can be static");
-			Ret = false;
-		}
 		if (!(Flags & FUNC_Final))
 		{
 			ParseError(Loc, "Currently static methods must be final.");
@@ -1439,7 +1434,7 @@ bool VMethod::Define()
 	}
 
 	//	Resolve parameters types.
-	ParamsSize = 1;
+	ParamsSize = Flags & FUNC_Static ? 0 : 1;
 	for (int i = 0; i < NumParams; i++)
 	{
 		VMethodParam& P = Params[i];
@@ -1570,7 +1565,7 @@ void VMethod::Emit()
 	VEmitContext ec(this);
 
 	ec.LocalDefs.Clear();
-	ec.localsofs = 1;
+	ec.localsofs = Flags & FUNC_Static ? 0 : 1;
 	if (Outer->MemberType == MEMBER_Class &&
 		this == ((VClass*)Outer)->DefaultProperties)
 	{
