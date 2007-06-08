@@ -1029,21 +1029,35 @@ void VLevel::LoadPVS(int Lump)
 void VLevel::LoadBlockMap(int Lump)
 {
 	guard(VLevel::LoadBlockMap);
-	if (W_LumpLength(Lump) <= 8)
+	VStream* Strm = W_CreateLumpReaderNum(Lump);
+
+	if (Strm->TotalSize() <= 8)
 	{
 		//	This is fatal.
+		delete Strm;
 		Host_Error("Missing a blockmap");
 	}
 
-	//	Allocate memory for blockmap.
-	int count = W_LumpLength(Lump) / 2;
-	BlockMapLump = new vint16[count];
-	BlockMap = (vuint16*)BlockMapLump + 4;
+	// killough 3/1/98: Expand wad blockmap into larger internal one,
+	// by treating all offsets except -1 as unsigned and zero-extending
+	// them. This potentially doubles the size of blockmaps allowed,
+	// because Doom originally considered the offsets as always signed.
 
-	//	Read data.
-	VStream* Strm = W_CreateLumpReaderNum(Lump);
-	for (int i = 0; i < count; i++)
-		*Strm << BlockMapLump[i];
+	//	Allocate memory for blockmap.
+	int Count = Strm->TotalSize() / 2;
+	BlockMapLump = new vint32[Count];
+
+	//	Read origin and dimensions.
+	BlockMapLump[0] = Streamer<vint16>(*Strm);
+	BlockMapLump[1] = Streamer<vint16>(*Strm);
+	BlockMapLump[2] = Streamer<vuint16>(*Strm);
+	BlockMapLump[3] = Streamer<vuint16>(*Strm);
+	for (int i = 4; i < Count; i++)
+	{
+		vint16 Tmp;
+		*Strm << Tmp;
+		BlockMapLump[i] = Tmp == -1 ? -1 : (vuint16)Tmp & 0xffff;
+	}
 	delete Strm;
 
 	//	Read blockmap origin and size.
@@ -1051,11 +1065,12 @@ void VLevel::LoadBlockMap(int Lump)
 	BlockMapOrgY = BlockMapLump[1];
 	BlockMapWidth = BlockMapLump[2];
 	BlockMapHeight = BlockMapLump[3];
+	BlockMap = BlockMapLump + 4;
 
 	//	Clear out mobj chains.
-	count = BlockMapWidth * BlockMapHeight;
-	BlockLinks = new VEntity*[count];
-	memset(BlockLinks, 0, sizeof(VEntity*) * count);
+	Count = BlockMapWidth * BlockMapHeight;
+	BlockLinks = new VEntity*[Count];
+	memset(BlockLinks, 0, sizeof(VEntity*) * Count);
 	unguard;
 }
 

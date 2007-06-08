@@ -597,8 +597,8 @@ class VLevel : public VObject
 	// array of blocks of size ...
 	// Used to speed up collision detection by spatial subdivision in 2D.
 	//
-	vint16*				BlockMapLump;	// offsets in blockmap are from here
-	vuint16*			BlockMap;		// int for larger maps
+	vint32*				BlockMapLump;	// offsets in blockmap are from here
+	vint32*				BlockMap;		// int for larger maps
 	vint32				BlockMapWidth;	// Blockmap size.
 	vint32				BlockMapHeight;	// size in mapblocks
 	float				BlockMapOrgX;	// origin of block map

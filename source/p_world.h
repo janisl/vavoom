@@ -50,7 +50,7 @@ private:
 	line_t**		LinePtr;
 	polyblock_t*	PolyLink;
 	vint32			PolySegIdx;
-	vint16*			List;
+	vint32*			List;
 
 public:
 	VBlockLinesIterator(VThinker*, int, int, line_t**);
