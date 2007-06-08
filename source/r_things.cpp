@@ -76,10 +76,10 @@ struct spriteframe_t
 	bool		rotate;
 
 	// Lump to use for view angles 0-7.
-	short		lump[8];
+	short		lump[16];
 
 	// Flip bit (1 = flip) to use for view angles 0-7.
-	bool		flip[8];
+	bool		flip[16];
 };
 
 //
@@ -135,13 +135,27 @@ static VCvarF			croshair_alpha("croshair_alpha", "1", CVAR_Archive);
 //
 //==========================================================================
 
-static void InstallSpriteLump(int lumpnr, int frame, int rotation, bool flipped)
+static void InstallSpriteLump(int lumpnr, int frame, char Rot, bool flipped)
 {
 	guard(InstallSpriteLump);
 	int			r;
+	int			rotation;
+
+	if (Rot >= '0' && Rot <= '9')
+	{
+		rotation = Rot - '0';
+	}
+	else if (Rot >= 'a')
+	{
+		rotation = Rot - 'a' + 10;
+	}
+	else
+	{
+		rotation = 17;
+	}
 
 	VTexture* Tex = GTextureManager.Textures[lumpnr];
-	if ((vuint32)frame >= 30 || (vuint32)rotation > 8)
+	if ((vuint32)frame >= 30 || (vuint32)rotation > 16)
 	{
 		Sys_Error("InstallSpriteLump: Bad frame characters in lump %s",
 			*Tex->Name);
@@ -154,7 +168,7 @@ static void InstallSpriteLump(int lumpnr, int frame, int rotation, bool flipped)
 	{
 		// the lump should be used for all rotations
 		sprtemp[frame].rotate = false;
-		for (r = 0; r < 8; r++)
+		for (r = 0; r < 16; r++)
 		{
 			sprtemp[frame].lump[r] = lumpnr;
 			sprtemp[frame].flip[r] = flipped;
@@ -162,10 +176,19 @@ static void InstallSpriteLump(int lumpnr, int frame, int rotation, bool flipped)
 		return;
 	}
 
+	if (rotation <= 8)
+	{
+		rotation = (rotation - 1) * 2;
+	}
+	else
+	{
+		rotation = (rotation - 9) * 2 + 1;
+	}
+
 	// the lump is only used for one rotation
 	if (sprtemp[frame].rotate == false)
 	{
-		for (r = 0; r < 8; r++)
+		for (r = 0; r < 16; r++)
 		{
 			sprtemp[frame].lump[r] = -1;
 			sprtemp[frame].flip[r] = false;
@@ -173,10 +196,6 @@ static void InstallSpriteLump(int lumpnr, int frame, int rotation, bool flipped)
 	}
 
 	sprtemp[frame].rotate = true;
-
-	// make 0 based
-	rotation--;
-
 	sprtemp[frame].lump[rotation] = lumpnr;
 	sprtemp[frame].flip[rotation] = flipped;
 	unguard;
@@ -198,10 +217,6 @@ static void InstallSpriteLump(int lumpnr, int frame, int rotation, bool flipped)
 void R_InstallSprite(const char *name, int index)
 {
 	guard(R_InstallSprite);
-	int			intname;
-	int			frame;
-	int			rotation;
-
 	if ((vuint32)index >= MAX_SPRITE_MODELS)
 	{
 		Host_Error("Invalid sprite index %d for sprite %s", index, name);
@@ -213,7 +228,7 @@ void R_InstallSprite(const char *name, int index)
 	// scan all the lump names for each of the names,
 	//  noting the highest frame letter.
 	// Just compare 4 characters as ints
-	intname = *(int*)*VName(spritename, VName::AddLower8);
+	int intname = *(int*)*VName(spritename, VName::AddLower8);
 
 	// scan the lumps, filling in the frames for whatever is found
 	for (int l = 0; l < GTextureManager.Textures.Num(); l++)
@@ -223,15 +238,13 @@ void R_InstallSprite(const char *name, int index)
 			const char* lumpname = *GTextureManager.Textures[l]->Name;
 			if (*(int*)lumpname == intname)
 			{
-				frame = VStr::ToUpper(lumpname[4]) - 'A';
-				rotation = lumpname[5] - '0';
-				InstallSpriteLump(l, frame, rotation, false);
+				InstallSpriteLump(l, VStr::ToUpper(lumpname[4]) - 'A',
+					lumpname[5], false);
 
 				if (lumpname[6])
 				{
-					frame = VStr::ToUpper(lumpname[6]) - 'A';
-					rotation = lumpname[7] - '0';
-					InstallSpriteLump(l, frame, rotation, true);
+					InstallSpriteLump(l, VStr::ToUpper(lumpname[6]) - 'A',
+						lumpname[7], true);
 				}
 			}
 		}
@@ -246,7 +259,7 @@ void R_InstallSprite(const char *name, int index)
 
 	maxframe++;
 
-	for (frame = 0 ; frame < maxframe ; frame++)
+	for (int frame = 0 ; frame < maxframe ; frame++)
 	{
 		switch ((int)sprtemp[frame].rotate)
 		{
@@ -261,8 +274,26 @@ void R_InstallSprite(const char *name, int index)
 			break;
 
 		case 1:
+			//	Copy missing frames for 16-angle rotation.
+			for (int rotation = 0; rotation < 8; rotation++)
+			{
+				if (sprtemp[frame].lump[rotation * 2 + 1] == -1)
+				{
+					sprtemp[frame].lump[rotation * 2 + 1] =
+						sprtemp[frame].lump[rotation * 2];
+					sprtemp[frame].flip[rotation * 2 + 1] =
+						sprtemp[frame].flip[rotation * 2];
+				}
+				if (sprtemp[frame].lump[rotation * 2] == -1)
+				{
+					sprtemp[frame].lump[rotation * 2] =
+						sprtemp[frame].lump[rotation * 2 + 1];
+					sprtemp[frame].flip[rotation * 2] =
+						sprtemp[frame].flip[rotation * 2 + 1];
+				}
+			}
 			// must have all 8 frames
-			for (rotation = 0; rotation < 8; rotation++)
+			for (int rotation = 0; rotation < 8; rotation++)
 			{
 				if (sprtemp[frame].lump[rotation] == -1)
 				{
@@ -557,8 +588,15 @@ void VRenderLevel::RenderSprite(VEntity* thing, vuint32 light, vuint32 Fade)
 		//FIXME must use sprforward here?
 		float ang = matan(thing->Origin.y - vieworg.y,
 			thing->Origin.x - vieworg.x);
-		ang = AngleMod(ang - thing->Angles.yaw + 180.0 + 45.0 / 2.0);
-		vuint32 rot = (vuint32)(ang * 8 / 360.0) & 7;
+		if (sprframe->lump[0] == sprframe->lump[1])
+		{
+			ang = AngleMod(ang - thing->Angles.yaw + 180.0 + 45.0 / 2.0);
+		}
+		else
+		{
+			ang = AngleMod(ang - thing->Angles.yaw + 180.0 + 45.0 / 4.0);
+		}
+		vuint32 rot = (vuint32)(ang * 16 / 360.0) & 15;
 		lump = sprframe->lump[rot];
 		flip = sprframe->flip[rot];
 	}
