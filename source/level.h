@@ -713,6 +713,7 @@ private:
 	int TexNumForName(const char*, int, bool = false) const;
 	void SetupLineSides(line_t*) const;
 	void CreateRepBase();
+	void CreateBlockMap();
 
 	//	Post-loading routines.
 	void GroupLines() const;

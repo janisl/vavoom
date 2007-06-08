@@ -104,6 +104,7 @@ enum
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static VCvarI strict_level_errors("strict_level_errors", "1");
+static VCvarI build_blockmap("build_blockmap", "0", CVAR_Archive);
 
 // CODE --------------------------------------------------------------------
 
@@ -1031,33 +1032,36 @@ void VLevel::LoadBlockMap(int Lump)
 	guard(VLevel::LoadBlockMap);
 	VStream* Strm = W_CreateLumpReaderNum(Lump);
 
-	if (Strm->TotalSize() <= 8)
+	if (Strm->TotalSize() == 0 || Strm->TotalSize() / 2 >= 0x10000 ||
+		build_blockmap)
 	{
-		//	This is fatal.
-		delete Strm;
-		Host_Error("Missing a blockmap");
+		GCon->Logf("Creating BLOCKMAP");
+		CreateBlockMap();
+	}
+	else
+	{
+		// killough 3/1/98: Expand wad blockmap into larger internal one,
+		// by treating all offsets except -1 as unsigned and zero-extending
+		// them. This potentially doubles the size of blockmaps allowed,
+		// because Doom originally considered the offsets as always signed.
+
+		//	Allocate memory for blockmap.
+		int Count = Strm->TotalSize() / 2;
+		BlockMapLump = new vint32[Count];
+
+		//	Read data.
+		BlockMapLump[0] = Streamer<vint16>(*Strm);
+		BlockMapLump[1] = Streamer<vint16>(*Strm);
+		BlockMapLump[2] = Streamer<vuint16>(*Strm);
+		BlockMapLump[3] = Streamer<vuint16>(*Strm);
+		for (int i = 4; i < Count; i++)
+		{
+			vint16 Tmp;
+			*Strm << Tmp;
+			BlockMapLump[i] = Tmp == -1 ? -1 : (vuint16)Tmp & 0xffff;
+		}
 	}
 
-	// killough 3/1/98: Expand wad blockmap into larger internal one,
-	// by treating all offsets except -1 as unsigned and zero-extending
-	// them. This potentially doubles the size of blockmaps allowed,
-	// because Doom originally considered the offsets as always signed.
-
-	//	Allocate memory for blockmap.
-	int Count = Strm->TotalSize() / 2;
-	BlockMapLump = new vint32[Count];
-
-	//	Read origin and dimensions.
-	BlockMapLump[0] = Streamer<vint16>(*Strm);
-	BlockMapLump[1] = Streamer<vint16>(*Strm);
-	BlockMapLump[2] = Streamer<vuint16>(*Strm);
-	BlockMapLump[3] = Streamer<vuint16>(*Strm);
-	for (int i = 4; i < Count; i++)
-	{
-		vint16 Tmp;
-		*Strm << Tmp;
-		BlockMapLump[i] = Tmp == -1 ? -1 : (vuint16)Tmp & 0xffff;
-	}
 	delete Strm;
 
 	//	Read blockmap origin and size.
@@ -1068,9 +1072,160 @@ void VLevel::LoadBlockMap(int Lump)
 	BlockMap = BlockMapLump + 4;
 
 	//	Clear out mobj chains.
-	Count = BlockMapWidth * BlockMapHeight;
+	int Count = BlockMapWidth * BlockMapHeight;
 	BlockLinks = new VEntity*[Count];
 	memset(BlockLinks, 0, sizeof(VEntity*) * Count);
+	unguard;
+}
+
+//==========================================================================
+//
+//  VLevel::CreateBlockMap
+//
+//==========================================================================
+
+void VLevel::CreateBlockMap()
+{
+	guard(VLevel::CreateBlockMap);
+	//	Determine bounds of the map.
+	float MinX = Vertexes[0].x;
+	float MaxX = MinX;
+	float MinY = Vertexes[0].y;
+	float MaxY = MinY;
+	for (int i = 0; i < NumVertexes; i++)
+	{
+		if (MinX > Vertexes[i].x)
+		{
+			MinX = Vertexes[i].x;
+		}
+		if (MaxX < Vertexes[i].x)
+		{
+			MaxX = Vertexes[i].x;
+		}
+		if (MinY > Vertexes[i].y)
+		{
+			MinY = Vertexes[i].y;
+		}
+		if (MaxY < Vertexes[i].y)
+		{
+			MaxY = Vertexes[i].y;
+		}
+	}
+
+	//	They should be integers, but just in case round them.
+	MinX = floor(MinX);
+	MinY = floor(MinY);
+	MaxX = ceil(MaxX);
+	MaxY = ceil(MaxY);
+
+	int Width = MapBlock(MaxX - MinX) + 1;
+	int Height = MapBlock(MaxX - MinX) + 1;
+
+	//	Add all lines to their corresponding blocks
+	TArray<vuint16>* BlockLines = new TArray<vuint16>[Width * Height];
+	for (int i = 0; i < NumLines; i++)
+	{
+		//	Determine starting and ending blocks.
+		line_t& Line = Lines[i];
+		int X1 = MapBlock(Line.v1->x - MinX);
+		int Y1 = MapBlock(Line.v1->y - MinY);
+		int X2 = MapBlock(Line.v2->x - MinX);
+		int Y2 = MapBlock(Line.v2->y - MinY);
+
+		if (X1 > X2)
+		{
+			int Tmp = X2;
+			X2 = X1;
+			X1 = Tmp;
+		}
+		if (Y1 > Y2)
+		{
+			int Tmp = Y2;
+			Y2 = Y1;
+			Y1 = Tmp;
+		}
+
+		if (X1 == X2 && Y1 == Y2)
+		{
+			//	Line is inside a single block.
+			BlockLines[X1 + Y1 * Width].Append(i);
+		}
+		else if (Y1 == Y2)
+		{
+			//	Horisontal line of blocks.
+			for (int x = X1; x <= X2; x++)
+			{
+				BlockLines[x + Y1 * Width].Append(i);
+			}
+		}
+		else if (X1 == X2)
+		{
+			//	Vertical line of blocks.
+			for (int y = Y1; y <= Y2; y++)
+			{
+				BlockLines[X1 + y * Width].Append(i);
+			}
+		}
+		else
+		{
+			//	Diagonal line.
+			for (int x = X1; x <= X2; x++)
+			{
+				for (int y = Y1; y <= Y2; y++)
+				{
+					//	Check if line crosses the block
+					if (Line.slopetype == ST_POSITIVE)
+					{
+						int p1 = Line.PointOnSide(TVec(MinX + x * 128,
+							MinY + (y + 1) * 128, 0));
+						int p2 = Line.PointOnSide(TVec(MinX + (x + 1) * 128,
+							MinY + y * 128, 0));
+						if (p1 == p2)
+							continue;
+					}
+					else
+					{
+						int p1 = Line.PointOnSide(TVec(MinX + x * 128,
+							MinY + y * 128, 0));
+						int p2 = Line.PointOnSide(TVec(MinX + (x + 1) * 128,
+							MinY + (y + 1) * 128, 0));
+						if (p1 == p2)
+							continue;
+					}
+					BlockLines[x + y * Width].Append(i);
+				}
+			}
+		}
+	}
+
+	//	Build blockmap lump.
+	TArray<vint32> BMap;
+	BMap.SetNum(4 + Width * Height);
+	BMap[0] = (int)MinX;
+	BMap[1] = (int)MinY;
+	BMap[2] = Width;
+	BMap[3] = Height;
+	for (int i = 0; i < Width * Height; i++)
+	{
+		//	Write offset.
+		BMap[i + 4] = BMap.Num();
+		TArray<vuint16>& Block = BlockLines[i];
+		//	Add dummy start marker.
+		BMap.Append(0);
+		//	Add lines in this block.
+		for (int j = 0; j < Block.Num(); j++)
+		{
+			BMap.Append(Block[j]);
+		}
+		//	Add terminator marker.
+		BMap.Append(-1);
+	}
+
+	//	Copy data
+	BlockMapLump = new vint32[BMap.Num()];
+	memcpy(BlockMapLump, BMap.Ptr(), BMap.Num() * sizeof(vint32));
+
+	delete[] BlockLines;
 	unguard;
 }
 
