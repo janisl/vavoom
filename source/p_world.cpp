@@ -90,7 +90,7 @@ VBlockLinesIterator::VBlockLinesIterator(VThinker* ASelf, int x, int y, line_t**
 	PolyLink = Self->XLevel->PolyBlockMap[offset];
 
 	offset = *(Self->XLevel->BlockMap + offset);
-	List = Self->XLevel->BlockMapLump + offset;
+	List = Self->XLevel->BlockMapLump + offset + 1;
 	unguard;
 }
 
