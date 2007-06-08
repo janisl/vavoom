@@ -1069,10 +1069,39 @@ void VLevel::LoadReject(int Lump)
 {
 	guard(VLevel::LoadReject);
 	VStream* Strm = W_CreateLumpReaderNum(Lump);
+	//	Check for empty reject lump
 	if (Strm->TotalSize())
 	{
-		RejectMatrix = new vuint8[Strm->TotalSize()];
-		Strm->Serialise(RejectMatrix, Strm->TotalSize());
+		//	Check if reject lump is required bytes long.
+		int NeededSize = (NumSectors * NumSectors + 7) / 8;
+		if (Strm->TotalSize() < NeededSize)
+		{
+			GCon->Logf("Reject data is %d bytes too short",
+				NeededSize - Strm->TotalSize());
+		}
+		else
+		{
+			//	Read it.
+			RejectMatrix = new vuint8[Strm->TotalSize()];
+			Strm->Serialise(RejectMatrix, Strm->TotalSize());
+
+			//	Check if it's an all-zeroes lump, in which case it's useless
+			// and can be discarded.
+			bool Blank = true;
+			for (int i = 0; i < NeededSize; i++)
+			{
+				if (RejectMatrix[i])
+				{
+					Blank = false;
+					break;
+				}
+			}
+			if (Blank)
+			{
+				delete[] RejectMatrix;
+				RejectMatrix = NULL;
+			}
+		}
 	}
 	delete Strm;
 	unguard;
