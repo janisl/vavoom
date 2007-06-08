@@ -109,6 +109,8 @@ native readonly private void*	BasePolyObjs;
 native readonly private int		NumStaticLights;
 native readonly private void*	StaticLights;
 
+native readonly private array<int>	ActiveSequences;
+
 native readonly float			Time;
 native readonly int				TicTime;
 

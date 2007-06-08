@@ -386,6 +386,8 @@ void VLevel::Destroy()
 		delete[] StaticLights;
 	}
 
+	ActiveSequences.Clear();
+
 	//	Call parent class's Destroy method.
 	Super::Destroy();
 	unguard;

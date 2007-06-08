@@ -206,15 +206,15 @@ void VThinker::StartSoundSequence(const TVec& Origin, vint32 OriginId,
 {
 	guard(VThinker::StartSoundSequence);
 	//	Remove any existing sequences of this origin
-	for (int i = 0; i < sv_ActiveSequences.Num(); i++)
+	for (int i = 0; i < XLevel->ActiveSequences.Num(); i++)
 	{
-		if (sv_ActiveSequences[i].OriginId == OriginId)
+		if (XLevel->ActiveSequences[i].OriginId == OriginId)
 		{
-			sv_ActiveSequences.RemoveIndex(i);
+			XLevel->ActiveSequences.RemoveIndex(i);
 			i--;
 		}
 	}
-	VSndSeqInfo& Seq = sv_ActiveSequences.Alloc();
+	VSndSeqInfo& Seq = XLevel->ActiveSequences.Alloc();
 	Seq.Name = Name;
 	Seq.OriginId = OriginId;
 	Seq.Origin = Origin;
@@ -242,11 +242,11 @@ void VThinker::AddSoundSequenceChoice(int origin_id, VName Choice)
 {
 	guard(VThinker::AddSoundSequenceChoice);
 	//	Remove it from server's sequences list.
-	for (int i = 0; i < sv_ActiveSequences.Num(); i++)
+	for (int i = 0; i < XLevel->ActiveSequences.Num(); i++)
 	{
-		if (sv_ActiveSequences[i].OriginId == origin_id)
+		if (XLevel->ActiveSequences[i].OriginId == origin_id)
 		{
-			sv_ActiveSequences[i].Choices.Append(Choice);
+			XLevel->ActiveSequences[i].Choices.Append(Choice);
 		}
 	}
 
@@ -272,11 +272,11 @@ void VThinker::StopSoundSequence(int origin_id)
 {
 	guard(VThinker::StopSoundSequence);
 	//	Remove it from server's sequences list.
-	for (int i = 0; i < sv_ActiveSequences.Num(); i++)
+	for (int i = 0; i < XLevel->ActiveSequences.Num(); i++)
 	{
-		if (sv_ActiveSequences[i].OriginId == origin_id)
+		if (XLevel->ActiveSequences[i].OriginId == origin_id)
 		{
-			sv_ActiveSequences.RemoveIndex(i);
+			XLevel->ActiveSequences.RemoveIndex(i);
 			i--;
 		}
 	}

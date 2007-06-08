@@ -207,15 +207,6 @@ extern int 			TimerGame; // tic countdown for deathmatch
 //
 //==========================================================================
 
-struct VSndSeqInfo
-{
-	VName			Name;
-	vint32			OriginId;
-	TVec			Origin;
-	vint32			ModeNum;
-	TArray<VName>	Choices;
-};
-
 void SV_ChangeSky(const char*, const char*);
 void SV_ChangeMusic(const char*);
 void SV_ChangeLocalMusic(VBasePlayer*, const char*);
@@ -229,8 +220,6 @@ void SV_DropClient(VBasePlayer* Player, bool crash);
 void SV_ShutdownServer(bool);
 void SV_SpawnServer(const char *mapname, bool spawn_thinkers);
 void SV_SendServerInfoToClients();
-
-extern TArray<VSndSeqInfo>	sv_ActiveSequences;
 
 extern int 		LeavePosition;
 extern bool		completed;

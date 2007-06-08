@@ -524,6 +524,15 @@ struct rep_light_t
 	vuint32		Colour;
 };
 
+struct VSndSeqInfo
+{
+	VName			Name;
+	vint32			OriginId;
+	TVec			Origin;
+	vint32			ModeNum;
+	TArray<VName>	Choices;
+};
+
 //==========================================================================
 //
 //									LEVEL
@@ -637,6 +646,8 @@ class VLevel : public VObject
 
 	vint32				NumStaticLights;
 	rep_light_t*		StaticLights;
+
+	TArray<VSndSeqInfo>	ActiveSequences;
 
 	float				Time;
 	int					TicTime;

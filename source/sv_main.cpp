@@ -78,8 +78,6 @@ VGameInfo*		GGameInfo;
 VWorldInfo*		GWorldInfo;
 VLevelInfo*		GLevelInfo;
 
-TArray<VSndSeqInfo>	sv_ActiveSequences;
-
 int 			LeavePosition;
 
 bool			completed;
@@ -187,7 +185,6 @@ void SV_Clear()
 		VObject::CollectGarbage();
 	}
 	memset(&sv, 0, sizeof(sv));
-	sv_ActiveSequences.Clear();
 #ifdef CLIENT
 	// Make sure all sounds are stopped.
 	GAudio->StopAllSound();
@@ -1072,18 +1069,18 @@ COMMAND(Spawn)
 			GCon->Log(NAME_Dev, "Mobj already spawned");
 		}
 		Player->eventSpawnClient();
-		for (int i = 0; i < sv_ActiveSequences.Num(); i++)
+		for (int i = 0; i < GLevel->ActiveSequences.Num(); i++)
 		{
 			Player->eventClientStartSequence(
-				sv_ActiveSequences[i].Origin,
-				sv_ActiveSequences[i].OriginId,
-				sv_ActiveSequences[i].Name,
-				sv_ActiveSequences[i].ModeNum);
-			for (int j = 0; j < sv_ActiveSequences[i].Choices.Num(); j++)
+				GLevel->ActiveSequences[i].Origin,
+				GLevel->ActiveSequences[i].OriginId,
+				GLevel->ActiveSequences[i].Name,
+				GLevel->ActiveSequences[i].ModeNum);
+			for (int j = 0; j < GLevel->ActiveSequences[i].Choices.Num(); j++)
 			{
 				Player->eventClientAddSequenceChoice(
-					sv_ActiveSequences[i].OriginId,
-					sv_ActiveSequences[i].Choices[j]);
+					GLevel->ActiveSequences[i].OriginId,
+					GLevel->ActiveSequences[i].Choices[j]);
 			}
 		}
 	}
@@ -1203,7 +1200,6 @@ void SV_ShutdownServer(bool crash)
 	}
 	memset(GGameInfo->Players, 0, sizeof(GGameInfo->Players));
 	memset(&sv, 0, sizeof(sv));
-	sv_ActiveSequences.Clear();
 	unguard;
 }
 
