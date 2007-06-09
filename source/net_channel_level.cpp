@@ -216,7 +216,8 @@ void VLevelChannel::Update()
 	{
 		sector_t* Sec = &Level->Sectors[i];
 		if (!Connection->SecCheckFatPVS(Sec) &&
-			!(Sec->SectorFlags & sector_t::SF_ExtrafloorSource))
+			!(Sec->SectorFlags & sector_t::SF_ExtrafloorSource) &&
+			!(Sec->SectorFlags & sector_t::SF_TransferSource))
 			continue;
 
 		rep_sector_t* RepSec = &Sectors[i];

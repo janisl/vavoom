@@ -782,6 +782,7 @@ struct sector_t
 	//	Flags.
 	bool		bHasExtrafloors;	//	This sector has extrafloors.
 	bool		bExtrafloorSource;	//	This sector is a source of an extrafloor.
+	bool		bTransferSource;	//	Source of an heightsec or transfer light.
 	bool		bFakeFloorOnly;		//	When used as heightsec in R_FakeFlat, only copies floor
 	bool		bClipFakePlanes;	//	As a heightsec, clip planes to target sector's planes
 	bool		bNoFakeLight;		//	heightsec does not change lighting

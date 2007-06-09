@@ -533,6 +533,7 @@ void MakeHeightSec(Level InLevel, line_t* Line)
 	int			s;
 
 	Sec = Line->frontsector;
+	Sec->bTransferSource = true;
 	if (Line->arg2 & 2)
 	{
 		Sec->bFakeFloorOnly = true;
@@ -701,6 +702,7 @@ void SpawnWorld(Level InLevel)
 					line->frontsector);
 			}
 			line->special = 0;
+			line->frontsector->bTransferSource = true;
 			break;
 		case LNSPEC_TransferCeilingLight:
 			for (SecNum = InLevel.FindSectorFromTag(line->arg1, -1);
@@ -711,6 +713,7 @@ void SpawnWorld(Level InLevel)
 					line->frontsector);
 			}
 			line->special = 0;
+			line->frontsector->bTransferSource = true;
 			break;
 		case LNSPEC_SectorSetFriction:
 			if (line->arg2)

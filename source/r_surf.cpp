@@ -1686,6 +1686,15 @@ void VRenderLevel::PreRender()
 	light_mem = 0;
 	SetupSky();
 
+	//	Set up fake floors.
+	for (i = 0; i < Level->NumSectors; i++)
+	{
+		if (Level->Sectors[i].heightsec)
+		{
+			SetupFakeFloors(&Level->Sectors[i]);
+		}
+	}
+
 	//	Count regions in all subsectors
 	count = 0;
 	dscount = 0;
@@ -1745,11 +1754,25 @@ void VRenderLevel::PreRender()
 		r_sub = sub;
 		for (reg = sub->sector->botregion; reg; reg = reg->next)
 		{
+			r_floor = reg->floor;
+			r_ceiling = reg->ceiling;
+			if (sub->sector->fakefloors)
+			{
+				if (r_floor == &sub->sector->floor)
+				{
+					r_floor = &sub->sector->fakefloors->floorplane;
+				}
+				if (r_ceiling == &sub->sector->ceiling)
+				{
+					r_ceiling = &sub->sector->fakefloors->ceilplane;
+				}
+			}
+
 			sreg->secregion = reg;
-			sreg->floorplane = reg->floor;
-			sreg->ceilplane = reg->ceiling;
-			sreg->floor = CreateSecSurface(sub, reg->floor);
-			sreg->ceil = CreateSecSurface(sub, reg->ceiling);
+			sreg->floorplane = r_floor;
+			sreg->ceilplane = r_ceiling;
+			sreg->floor = CreateSecSurface(sub, r_floor);
+			sreg->ceil = CreateSecSurface(sub, r_ceiling);
 
 			sreg->count = sub->numlines;
 			if (sub->poly)
@@ -1759,8 +1782,6 @@ void VRenderLevel::PreRender()
 			}
 			sreg->lines = pds;
 			pds += sreg->count;
-			r_floor = reg->floor;
-			r_ceiling = reg->ceiling;
 			for (j = 0; j < sub->numlines; j++)
 			{
 				CreateSegParts(&sreg->lines[j], &Level->Segs[sub->firstline + j]);
@@ -1805,6 +1826,17 @@ void VRenderLevel::UpdateSubRegion(subregion_t* region)
 
 	r_floor = region->floorplane;
 	r_ceiling = region->ceilplane;
+	if (r_sub->sector->fakefloors)
+	{
+		if (r_floor == &r_sub->sector->floor)
+		{
+			r_floor = &r_sub->sector->fakefloors->floorplane;
+		}
+		if (r_ceiling == &r_sub->sector->ceiling)
+		{
+			r_ceiling = &r_sub->sector->fakefloors->ceilplane;
+		}
+	}
 
 	count = r_sub->numlines;
 	drawseg_t *ds = region->lines;
@@ -2217,8 +2249,6 @@ void VRenderLevel::SetupFakeFloors(sector_t* Sec)
 	Sec->fakefloors->ceilplane = Sec->ceiling;
 	Sec->fakefloors->params = Sec->params;
 
-	Sec->botregion->floor = &Sec->fakefloors->floorplane;
-	Sec->topregion->ceiling = &Sec->fakefloors->ceilplane;
 	Sec->topregion->params = &Sec->fakefloors->params;
 	unguard;
 }

@@ -285,11 +285,12 @@ struct sector_t
 	{
 		SF_HasExtrafloors	= 0x0001,	//	This sector has extrafloors.
 		SF_ExtrafloorSource	= 0x0002,	//	This sector is a source of an extrafloor.
-		SF_FakeFloorOnly	= 0x0004,	//	When used as heightsec in R_FakeFlat, only copies floor
-		SF_ClipFakePlanes	= 0x0008,	//	As a heightsec, clip planes to target sector's planes
-		SF_NoFakeLight		= 0x0010,	//	heightsec does not change lighting
-		SF_IgnoreHeightSec	= 0x0020,	//	heightsec is only for triggering sector actions
-		SF_UnderWater		= 0x0040,	//	Sector is underwater
+		SF_TransferSource	= 0x0004,	//	Source of an heightsec or transfer light.
+		SF_FakeFloorOnly	= 0x0008,	//	When used as heightsec in R_FakeFlat, only copies floor
+		SF_ClipFakePlanes	= 0x0010,	//	As a heightsec, clip planes to target sector's planes
+		SF_NoFakeLight		= 0x0020,	//	heightsec does not change lighting
+		SF_IgnoreHeightSec	= 0x0040,	//	heightsec is only for triggering sector actions
+		SF_UnderWater		= 0x0080,	//	Sector is underwater
 	};
 	vuint32		SectorFlags;
 
