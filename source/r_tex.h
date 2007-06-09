@@ -218,7 +218,7 @@ private:
 public:
 	static VTexture* Create(VStream&, int);
 
-	VPngTexture(int, int, int);
+	VPngTexture(int, int, int, int, int);
 	~VPngTexture();
 	vuint8* GetPixels();
 	void Unload();

@@ -99,11 +99,45 @@ VTexture* VPngTexture::Create(VStream& Strm, int LumpNum)
 	vuint8		Compression;
 	vuint8		Filter;
 	vuint8		Interlace;
+	vuint32		CRC;
 	Strm.SerialiseBigEndian(&Width, 4);
 	Strm.SerialiseBigEndian(&Height, 4);
 	Strm << BitDepth << ColourType << Compression << Filter << Interlace;
+	Strm << CRC;
 
-	return new VPngTexture(LumpNum, Width, Height);
+	//	Scan other chunks looking for grAb chunk with offsets
+	vint32 SOffset = 0;
+	vint32 TOffset = 0;
+	while (Strm.TotalSize() - Strm.Tell() >= 12)
+	{
+		vuint32 Len;
+		Strm.SerialiseBigEndian(&Len, 4);
+		Strm.Serialise(Id, 4);
+		if (Id[0] == 'g' && Id[1] == 'r' && Id[2] == 'A' && Id[3] == 'b')
+		{
+			Strm.SerialiseBigEndian(&SOffset, 4);
+			Strm.SerialiseBigEndian(&TOffset, 4);
+			if (SOffset < -32768 || SOffset > 32767)
+			{
+				GCon->Logf("S-offset for PNG texture %s is bad: %d (0x%08x)",
+					*W_LumpName(LumpNum), SOffset, SOffset);
+				SOffset = 0;
+			}
+			if (TOffset < -32768 || TOffset > 32767)
+			{
+				GCon->Logf("T-offset for PNG texture %s is bad: %d (0x%08x)",
+					*W_LumpName(LumpNum), TOffset, TOffset);
+				TOffset = 0;
+			}
+		}
+		else
+		{
+			Strm.Seek(Strm.Tell() + Len);
+		}
+		Strm << CRC;
+	}
+
+	return new VPngTexture(LumpNum, Width, Height, SOffset, TOffset);
 	unguard;
 }
 
@@ -113,13 +147,16 @@ VTexture* VPngTexture::Create(VStream& Strm, int LumpNum)
 //
 //==========================================================================
 
-VPngTexture::VPngTexture(int ALumpNum, int AWidth, int AHeight)
+VPngTexture::VPngTexture(int ALumpNum, int AWidth, int AHeight, int ASOffset,
+	int ATOffset)
 : LumpNum(ALumpNum)
 , Pixels(0)
 {
 	Name = W_LumpName(LumpNum);
 	Width = AWidth;
 	Height = AHeight;
+	SOffset = ASOffset;
+	TOffset = ATOffset;
 }
 
 //==========================================================================
