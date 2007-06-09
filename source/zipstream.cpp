@@ -64,11 +64,23 @@ VZipStreamReader::VZipStreamReader(VStream* ASrcStream,
 	ZStream.zalloc = (alloc_func)0;
 	ZStream.zfree = (free_func)0;
 	ZStream.opaque = (voidpf)0;
-	ZStream.next_in = (Bytef*)0;
-	ZStream.avail_in = 0;
+
+	//	Read in some initial data.
+	vint32 BytesToRead = BUFFER_SIZE;
+	if (BytesToRead > SrcStream->TotalSize())
+		BytesToRead = SrcStream->TotalSize();
+	SrcStream->Seek(0);
+	SrcStream->Serialise(Buffer, BytesToRead);
+	if (SrcStream->IsError())
+	{
+		bError = true;
+		return;
+	}
+	ZStream.next_in = Buffer;
+	ZStream.avail_in = BytesToRead;
 
 	//	Open zip stream.
-	int err = inflateInit2(&ZStream, -MAX_WBITS);
+	int err = inflateInit(&ZStream);
 	if (err != Z_OK)
 	{
 		bError = true;
@@ -76,8 +88,6 @@ VZipStreamReader::VZipStreamReader(VStream* ASrcStream,
 		return;
 	}
 
-	//	Make sure source stream is at the begining.
-	SrcStream->Seek(0);
 	Initialised = true;
 	bLoading = true;
 	unguard;

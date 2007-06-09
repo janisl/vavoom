@@ -703,6 +703,7 @@ private:
 	void LoadSubsectors(int);
 	void LoadNodes(int);
 	void LoadPVS(int);
+	void LoadCompressedGLNodes(int);
 	void LoadBlockMap(int);
 	void LoadReject(int);
 	void LoadThings1(int);
