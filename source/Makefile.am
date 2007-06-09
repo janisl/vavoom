@@ -239,6 +239,8 @@ _____MAIN_EXE__SOURCES = \
 	waddefs.h \
 	xml.cpp \
 	xml.h \
+	zipstream.cpp \
+	zipstream.h \
 	zone.cpp \
 	zone.h
 
@@ -504,6 +506,7 @@ _____SERVER_EXE__SOURCES = \
 	vobject.cpp \
 	wad.cpp \
 	xml.cpp \
+	zipstream.cpp \
 	zone.cpp
 
 if SERVER_PLATFORM_DJGPP

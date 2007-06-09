@@ -338,6 +338,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\zipstream.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\source\zone.cpp"
 				>
 			</File>
@@ -500,6 +504,10 @@
 			</File>
 			<File
 				RelativePath="..\source\xml.h"
+				>
+			</File>
+			<File
+				RelativePath="..\source\zipstream.h"
 				>
 			</File>
 			<File

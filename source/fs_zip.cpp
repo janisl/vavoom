@@ -261,7 +261,7 @@ VZipFile::VZipFile(const VStr& zipfile)
 		// be in a file name, so we do a little mapping here.
 		if (Files[i].LumpNamespace == WADNS_Sprites)
 		{
-			for (int ni = 0; ni < LumpName.Length(); ni++)
+			for (size_t ni = 0; ni < LumpName.Length(); ni++)
 			{
 				if (LumpName[ni] == '^')
 				{
@@ -873,7 +873,7 @@ void VZipFileReader::Seek(int InPos)
 			check(stream_initialised);
 			inflateEnd(&stream);
 			memset(&stream, 0, sizeof(stream));
-			check(inflateInit2(&stream, -MAX_WBITS) == Z_OK);
+			verify(inflateInit2(&stream, -MAX_WBITS) == Z_OK);
 		}
 		else
 		{
