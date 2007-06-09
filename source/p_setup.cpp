@@ -1063,7 +1063,6 @@ void VLevel::LoadPVS(int Lump)
 void VLevel::LoadCompressedGLNodes(int Lump)
 {
 	guard(VLevel::LoadCompressedGLNodes);
-GCon->Log("Loading Z-GL nodes");
 	VStream* BaseStrm = W_CreateLumpReaderNum(Lump);
 	//	Skip header.
 	BaseStrm->Seek(4);
@@ -1080,7 +1079,6 @@ GCon->Log("Loading Z-GL nodes");
 	vuint32 OrgVerts;
 	vuint32 NewVerts;
 	*Strm << OrgVerts << NewVerts;
-dprintf("Vertexes %d org %d new\n", OrgVerts, NewVerts);
 
 	if (OrgVerts + NewVerts != (vuint32)NumVertexes)
 	{
@@ -1112,7 +1110,6 @@ dprintf("Vertexes %d org %d new\n", OrgVerts, NewVerts);
 	//	Load subsectors
 	guard(Subsectors);
 	NumSubsectors = Streamer<vuint32>(*Strm);
-dprintf("%d subsectors\n", NumSubsectors);
 	Subsectors = new subsector_t[NumSubsectors];
 	memset(Subsectors, 0, sizeof(subsector_t) * NumSubsectors);
 	subsector_t* ss = Subsectors;
@@ -1130,7 +1127,6 @@ dprintf("%d subsectors\n", NumSubsectors);
 	//	Load segs
 	guard(Segs);
 	NumSegs = Streamer<vuint32>(*Strm);
-dprintf("%d segs\n", NumSegs);
 	Segs = new seg_t[NumSegs];
 	memset(Segs, 0, sizeof(seg_t) * NumSegs);
 	seg_t* li = Segs;
@@ -1151,7 +1147,6 @@ dprintf("%d segs\n", NumSegs);
 
 		if (linedef != 0xffff)
 		{
-guard(1);
 			if (linedef >= NumLines)
 			{
 				Host_Error("Bad linedef index %d", linedef);
@@ -1160,44 +1155,29 @@ guard(1);
 			{
 				Host_Error("Bad seg side %d", side);
 			}
-unguard;
 			line_t* ldef = &Lines[linedef];
-guard(2);
 			li->linedef = ldef;
-unguard;
-guard(3);
 			li->sidedef = &Sides[ldef->sidenum[side]];
 			li->frontsector = Sides[ldef->sidenum[side]].sector;
-unguard;
 
-guard(4);
 			if (ldef->flags & ML_TWOSIDED)
 				li->backsector = Sides[ldef->sidenum[side ^ 1]].sector;
-unguard;
 
-guard(5);
 			if (side)
 			{
-guard(7);
 				check(li);
 				check(li->v1);
 				check(ldef->v2);
 				li->offset = Length(*li->v1 - *ldef->v2);
-unguard;
 			}
 			else
 			{
-guard(8);
 				check(li);
 				check(li->v1);
 				check(ldef->v1);
 				li->offset = Length(*li->v1 - *ldef->v1);
-unguard;
 			}
-unguard;
-guard(6);
 			li->side = side;
-unguard;
 		}
 	}
 	unguard;
@@ -1205,7 +1185,6 @@ unguard;
 	//	Load nodes.
 	guard(Nodes);
 	NumNodes = Streamer<vuint32>(*Strm);
-dprintf("%d nodes\n", NumNodes);
 	Nodes = new node_t[NumNodes];
 	memset(Nodes, 0, sizeof(node_t) * NumNodes);
 	node_t* no = Nodes;
@@ -1387,7 +1366,7 @@ void VLevel::CreateBlockMap()
 	MaxY = ceil(MaxY);
 
 	int Width = MapBlock(MaxX - MinX) + 1;
-	int Height = MapBlock(MaxX - MinX) + 1;
+	int Height = MapBlock(MaxY - MinY) + 1;
 
 	//	Add all lines to their corresponding blocks
 	TArray<vuint16>* BlockLines = new TArray<vuint16>[Width * Height];
