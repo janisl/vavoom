@@ -26,22 +26,27 @@
 class LineSpecialGameInfo : GameInfo;
 
 //	Thing types that are handled durign set-up of a level.
-enum
-{
+const int
 	FLOOR_SLOPE_TYPE = 1500,
-	CEILING_SLOPE_TYPE,
+	CEILING_SLOPE_TYPE = 1501,
 
 	FLOOR_VERTEX_HEIGHT_TYPE = 1504,
-	CEILING_VERTEX_HEIGHT_TYPE,
+	CEILING_VERTEX_HEIGHT_TYPE = 1505,
 
 	PO_ANCHOR_TYPE_HEXEN = 3000,
-	PO_SPAWN_TYPE_HEXEN,
-	PO_SPAWNCRUSH_TYPE_HEXEN,
+	PO_SPAWN_TYPE_HEXEN = 3001,
+	PO_SPAWNCRUSH_TYPE_HEXEN = 3002,
 
 	PO_ANCHOR_TYPE = 9300,
-	PO_SPAWN_TYPE,
-	PO_SPAWNCRUSH_TYPE
-};
+	PO_SPAWN_TYPE = 9301,
+	PO_SPAWNCRUSH_TYPE = 9302,
+
+	SLOPE_FLOOR_POINT_LINE_TYPE = 9500,
+	SLOPE_CEILING_POINT_LINE_TYPE = 9501,
+	SET_FLOOR_SLOPE_TYPE = 9502,
+	SET_CEILING_SLOPE_TYPE = 9503,
+	COPY_FLOOR_PLANE_TYPE = 9510,
+	COPY_CEILING_PLANE_TYPE = 9511;
 
 float			contents_alpha[9];
 
@@ -49,15 +54,16 @@ bool			bUseHexenPolyobjTypes;
 
 //==========================================================================
 //
-//  MakeFloorSlope
+//  MakeSlope
 //
 //==========================================================================
 
-void MakeFloorSlope(Level InLevel, mthing_t * mthing)
+void MakeSlope(Level InLevel, mthing_t* mthing, bool IsCeiling)
 {
-	sector_t *sec;
-	line_t *line;
-	int i;
+	sector_t*		sec;
+	line_t*			line;
+	int				i;
+	sec_plane_t*	plane;
 
 	sec = InLevel.PointInSector(vector(mthing->x, mthing->y, 0.0));
 	for (i = 0; i < sec->linecount; i++)
@@ -71,10 +77,20 @@ void MakeFloorSlope(Level InLevel, mthing_t * mthing)
 			TVec p2;
 			TVec p3;
 
-			p1 = vector(line->v1->x, line->v1->y, sec->floor.minz);
-			p2 = vector(line->v2->x, line->v2->y, sec->floor.minz);
+			if (!IsCeiling)
+			{
+				plane = &sec->floor;
+				p1 = vector(line->v1->x, line->v1->y, plane->minz);
+				p2 = vector(line->v2->x, line->v2->y, plane->minz);
+			}
+			else
+			{
+				plane = &sec->ceiling;
+				p1 = vector(line->v1->x, line->v1->y, plane->maxz);
+				p2 = vector(line->v2->x, line->v2->y, plane->maxz);
+			}
 			p3 = vector(mthing->x, mthing->y, mthing->height);
-			if (PointOnPlaneSide(p3, line) == 0)
+			if (PointOnPlaneSide(p3, line) == IsCeiling)
 			{
 				v1 = p2 - p3;
 				v2 = p1 - p3;
@@ -84,63 +100,158 @@ void MakeFloorSlope(Level InLevel, mthing_t * mthing)
 				v1 = p1 - p3;
 				v2 = p2 - p3;
 			}
-			sec->floor.normal = Normalise(CrossProduct(v1, v2));
-			if (sec->floor.normal.z <= 0.0)
+			plane->normal = Normalise(CrossProduct(v1, v2));
+			if (!IsCeiling && plane->normal.z <= 0.0)
 			{
 				Error("Floor with normal.z <= 0.0");
 			}
-			sec->floor.dist = DotProduct(sec->floor.normal, p3);
+			else if (IsCeiling && plane->normal.z >= 0.0)
+			{
+				Error("Ceiling with normal.z >= 0.0");
+			}
+			plane->dist = DotProduct(plane->normal, p3);
 			return;
 		}
 	}
 }
 
-//==========================================================================
+//===========================================================================
 //
-//  MakeCeilingSlope
+//	SlopeLineToPoint
 //
-//==========================================================================
+//===========================================================================
 
-void MakeCeilingSlope(Level InLevel, mthing_t * mthing)
+void SlopeLineToPoint(Level InLevel, mthing_t* mthing, bool IsCeiling)
 {
-	sector_t *sec;
-	line_t *line;
-	int i;
+	sector_t*		sec;
+	sec_plane_t*	plane;
+	TVec			p1;
+	TVec			p2;
+	int				i;
+	TVec			v1;
+	TVec			v2;
+	TVec			cross;
 
 	sec = InLevel.PointInSector(vector(mthing->x, mthing->y, 0.0));
-	for (i = 0; i < sec->linecount; i++)
+	if (!IsCeiling)
 	{
-		line = sec->lines[i];
-		if (mthing->tid == line->arg1)
-		{
-			TVec p1;
-			TVec p2;
-			TVec p3;
-			TVec v1;
-			TVec v2;
+		plane = &sec->floor;
+	}
+	else
+	{
+		plane = &sec->ceiling;
+	}
+	p1 = vector(mthing->x, mthing->y, 0.0);
+	p1.z = GetPlanePointZ(plane, p1) + mthing->height;
 
-			p1 = vector(line->v1->x, line->v1->y, sec->ceiling.maxz);
-			p2 = vector(line->v2->x, line->v2->y, sec->ceiling.maxz);
-			p3 = vector(mthing->x, mthing->y, mthing->height);
-			if (PointOnPlaneSide(p3, line) == 0)
-			{
-				v1 = p1 - p3;
-				v2 = p2 - p3;
-			}
-			else
-			{
-				v1 = p2 - p3;
-				v2 = p1 - p3;
-			}
-			sec->ceiling.normal = Normalise(CrossProduct(v1, v2));
-			if (sec->ceiling.normal.z >= 0.0)
-			{
-				Error("Ceiling with normal.z >= 0.0");
-			}
-			sec->ceiling.dist = DotProduct(sec->ceiling.normal, p3);
+	for (i = 0; i < InLevel.NumLines; i++)
+	{
+		line_t* line = &InLevel.Lines[i];
+		if (line->LineTag != mthing->arg1)
+		{
+			continue;
+		}
+
+		if (PointOnPlaneSide(p1, line) == 0)
+		{
+			sec = line->frontsector;
+		}
+		else
+		{
+			sec = line->backsector;
+		}
+		if (sec == NULL)
+		{
+			continue;
+		}
+		if (!IsCeiling)
+		{
+			plane = &sec->floor;
+		}
+		else
+		{
+			plane = &sec->ceiling;
+		}
+
+		p2 = *line->v1;
+		p2.z = GetPlanePointZ(plane, p2);
+		v1 = *line->v2 - *line->v1;
+		v1.z = GetPlanePointZ(plane, *line->v2) - p2.z;
+		v2 = p1 - *line->v1;
+		v2.z = p1.z - p2.z;
+
+		cross = CrossProduct(v1, v2);
+		float len = Length(cross);
+		if (len == 0.0)
+		{
+			print("Slope thing at (%d,%d) lies directly on its target line.\n",
+				mthing->x, mthing->y);
 			return;
 		}
+		cross = cross / len;
+		// Fix backward normals
+		if ((cross.z < 0.0 && !IsCeiling) || (cross.z > 0.0 && IsCeiling))
+		{
+			cross = -cross;
+		}
+
+		plane->normal = cross;
+		plane->dist = DotProduct(plane->normal, p1);
 	}
+}
+
+//===========================================================================
+//
+//	SetSlope
+//
+//===========================================================================
+
+void SetSlope(Level InLevel, mthing_t* mthing, bool IsCeiling)
+{
+	TVec			p1;
+	sec_plane_t*	plane;
+	sector_t*		sec;
+	float			xyang;
+	float			zang;
+	TVec			norm;
+
+	sec = InLevel.PointInSector(vector(mthing->x, mthing->y, 0.0));
+	if (!IsCeiling)
+	{
+		plane = &sec->floor;
+	}
+	else
+	{
+		plane = &sec->ceiling;
+	}
+	p1 = vector(mthing->x, mthing->y, 0.0);
+	p1.z = GetPlanePointZ(plane, p1) + mthing->height;
+
+	if (mthing->arg1 >= 180)
+	{
+		zang = 179.0;
+	}
+	else if (mthing->arg1 <= 0)
+	{
+		zang = 1.0;
+	}
+	else
+	{
+		zang = itof(mthing->arg1);
+	}
+	if (IsCeiling)
+	{
+		zang += 180.0;
+	}
+
+	xyang = itof(mthing->angle);
+
+	norm.x = cos(zang) * cos(xyang);
+	norm.y = cos(zang) * sin(xyang);
+	norm.z = sin(zang);
+	norm = Normalise(norm);
+	plane->normal = norm;
+	plane->dist = DotProduct(plane->normal, p1);
 }
 
 //==========================================================================
@@ -461,6 +572,39 @@ void SetSlopes(Level InLevel)
 	}
 }
 
+//===========================================================================
+//
+//	CopyPlane
+//
+//===========================================================================
+
+void CopyPlane(Level InLevel, mthing_t* mthing, bool IsCeiling)
+{
+	sector_t*	dst;
+	sector_t*	src;
+	int			secnum;
+
+	dst = InLevel.PointInSector(vector(mthing->x, mthing->y, 0.0));
+	secnum = InLevel.FindSectorFromTag(mthing->arg1, -1);
+	if (secnum == -1)
+	{
+		return;
+	}
+
+	src = &InLevel.Sectors[secnum];
+
+	if (!IsCeiling)
+	{
+		dst->floor.normal = src->floor.normal;
+		dst->floor.dist = src->floor.dist;
+	}
+	else
+	{
+		dst->ceiling.normal = src->ceiling.normal;
+		dst->ceiling.dist = src->ceiling.dist;
+	}
+}
+
 //==========================================================================
 //
 //  SpawnExtraFloors
@@ -652,7 +796,25 @@ void SpawnWorld(Level InLevel)
 	mthing_t*	mthing;
 	line_t*		line;
 
-	//	Spawn slopes first
+	//	Set up tagged lines.
+	for (i = 0; i < InLevel.NumLines; i++)
+	{
+		line = &InLevel.Lines[i];
+		switch (line->special)
+		{
+		case LNSPEC_LineSetIdentification:
+			line->special = 0;
+		case LNSPEC_LineTranslucent:
+		case LNSPEC_TeleportLine:
+			if (line->arg1)
+			{
+				line->LineTag = line->arg1;
+			}
+			break;
+		}
+	}
+
+	//	Spawn slopes.
 	SetSlopes(InLevel);
 	for (i = 0; i < InLevel.NumThings; i++)
 	{
@@ -660,11 +822,27 @@ void SpawnWorld(Level InLevel)
 		switch (mthing->type)
 		{
 		case FLOOR_SLOPE_TYPE:
-			MakeFloorSlope(InLevel, mthing);
+			MakeSlope(InLevel, mthing, false);
 			mthing->type = 0;
 			break;
 		case CEILING_SLOPE_TYPE:
-			MakeCeilingSlope(InLevel, mthing);
+			MakeSlope(InLevel, mthing, true);
+			mthing->type = 0;
+			break;
+		case SLOPE_FLOOR_POINT_LINE_TYPE:
+			SlopeLineToPoint(InLevel, mthing, false);
+			mthing->type = 0;
+			break;
+		case SLOPE_CEILING_POINT_LINE_TYPE:
+			SlopeLineToPoint(InLevel, mthing, true);
+			mthing->type = 0;
+			break;
+		case SET_FLOOR_SLOPE_TYPE:
+			SetSlope(InLevel, mthing, false);
+			mthing->type = 0;
+			break;
+		case SET_CEILING_SLOPE_TYPE:
+			SetSlope(InLevel, mthing, true);
 			mthing->type = 0;
 			break;
 		}
@@ -672,6 +850,16 @@ void SpawnWorld(Level InLevel)
 	MakeVertexFloorHeights(InLevel);
 	MakeVertexCeilingHeights(InLevel);
 	CleanVertexHeights(InLevel);
+	for (i = 0; i < InLevel.NumThings; i++)
+	{
+		mthing = &InLevel.Things[i];
+		if (mthing->type == COPY_FLOOR_PLANE_TYPE ||
+			mthing->type == COPY_CEILING_PLANE_TYPE)
+		{
+			CopyPlane(InLevel, mthing, mthing->type & 1);
+			mthing->type = 0;
+		}
+	}
 
 	//	Initialise initial friction values.
 	for (i = 0; i < InLevel.NumSectors; i++)
@@ -679,7 +867,7 @@ void SpawnWorld(Level InLevel)
 		InLevel.Sectors[i].Friction = EntityEx::FRICTION_NORMAL;
 	}
 
-	//	Set up 3D floors, transfers of light, tagged lines, etc.
+	//	Set up 3D floors, transfers of light, etc.
 	for (i = 0; i < InLevel.NumLines; i++)
 	{
 		line = &InLevel.Lines[i];
@@ -731,17 +919,6 @@ void SpawnWorld(Level InLevel)
 		case LNSPEC_TransferHeights:
 			MakeHeightSec(InLevel, line);
 			line->special = 0;
-			break;
-
-		//	Set up tagged lines.
-		case LNSPEC_LineSetIdentification:
-			line->special = 0;
-		case LNSPEC_LineTranslucent:
-		case LNSPEC_TeleportLine:
-			if (line->arg1)
-			{
-				line->LineTag = line->arg1;
-			}
 			break;
 		}
 	}
