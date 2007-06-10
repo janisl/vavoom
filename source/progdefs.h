@@ -26,7 +26,7 @@
 #ifndef OPCODE_INFO
 
 #define PROG_MAGIC		"VPRG"
-#define PROG_VERSION	23
+#define PROG_VERSION	24
 
 enum { MAX_PARAMS		= 16 };
 
