@@ -1458,6 +1458,13 @@ native static final int Cmd_CheckParm(string str);
 native static final void CmdBuf_AddText(string format, ...);
 
 //
+//  Iterators
+//
+
+native static final iterator AllObjects(class BaseClass, out Object Obj);
+native static final iterator AllClasses(class BaseClass, out class Class);
+
+//
 //  Misc
 //
 
@@ -1472,6 +1479,9 @@ native static final bool StateIsInRange(state State, state Start, state End,
 native static final name GetStateSpriteName(state State);
 native static final VAnimDoorDef* FindAnimDoor(int BaseTex);
 native static final string GetLangString(name Id);
+native static final int RGB(byte r, byte g, byte b);
+native static final int RGBA(byte r, byte g, byte b, byte a);
+native static final bool ClassIsChildOf(class SomeClass, class BaseClass);
 
 //==========================================================================
 //
@@ -1605,8 +1615,6 @@ native static final void SB_Start();
 native static final class FindClassFromEditorId(int Id);
 native static final class FindClassFromScriptId(int Id);
 native static final void ChangeMusic(string SongName);
-native static final int RGB(byte r, byte g, byte b);
-native static final int RGBA(byte r, byte g, byte b, byte a);
 
 defaultproperties
 {

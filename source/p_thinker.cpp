@@ -381,6 +381,34 @@ public:
 	}
 };
 
+class VActivePlayersIterator : public VScriptIterator
+{
+private:
+	VThinker*		Self;
+	VBasePlayer**	Out;
+	int				Index;
+
+public:
+	VActivePlayersIterator(VThinker* ASelf, VBasePlayer** AOut)
+	: Out(AOut)
+	, Index(0)
+	{}
+	bool GetNext()
+	{
+		while (Index < MAXPLAYERS)
+		{
+			VBasePlayer* P = Self->Level->Game->Players[Index];
+			Index++;
+			if (P && (P->PlayerFlags && VBasePlayer::PF_Spawned))
+			{
+				*Out = P;
+				return true;
+			}
+		}
+		return false;
+	}
+};
+
 //==========================================================================
 //
 //	Script natives
@@ -438,6 +466,13 @@ IMPLEMENT_FUNCTION(VThinker, AllThinkers)
 	P_GET_PTR(VClass, Class);
 	P_GET_SELF;
 	RET_PTR(new VScriptThinkerIterator(Self, Class, Thinker));
+}
+
+IMPLEMENT_FUNCTION(VThinker, AllActivePlayers)
+{
+	P_GET_PTR(VBasePlayer*, Out);
+	P_GET_SELF;
+	RET_PTR(new VActivePlayersIterator(Self, Out));
 }
 
 IMPLEMENT_FUNCTION(VThinker, PathTraverse)

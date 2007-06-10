@@ -302,6 +302,10 @@ public:
 	DECLARE_FUNCTION(Cmd_CheckParm)
 	DECLARE_FUNCTION(CmdBuf_AddText)
 
+	//	Iterators
+	DECLARE_FUNCTION(AllObjects)
+	DECLARE_FUNCTION(AllClasses)
+
 	//	Misc
 	DECLARE_FUNCTION(Info_ValueForKey)
 	DECLARE_FUNCTION(WadLumpPresent)
@@ -313,6 +317,7 @@ public:
 	DECLARE_FUNCTION(GetLangString)
 	DECLARE_FUNCTION(RGB)
 	DECLARE_FUNCTION(RGBA)
+	DECLARE_FUNCTION(ClassIsChildOf)
 
 #ifdef CLIENT
 	DECLARE_FUNCTION(P_GetMapName)

@@ -89,6 +89,7 @@ class VThinker : public VObject
 
 	//	Iterators
 	DECLARE_FUNCTION(AllThinkers)
+	DECLARE_FUNCTION(AllActivePlayers)
 	DECLARE_FUNCTION(PathTraverse)
 	DECLARE_FUNCTION(RadiusThings)
 

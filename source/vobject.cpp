@@ -25,6 +25,7 @@
 
 #include "gamedefs.h"
 #include "network.h"
+#include "progdefs.h"
 
 // Register a class at startup time.
 VClass VObject::PrivateStaticClass
@@ -897,6 +898,90 @@ IMPLEMENT_FUNCTION(VObject, CmdBuf_AddText)
 
 //==========================================================================
 //
+//	Iterators
+//
+//==========================================================================
+
+class VObjectsIterator : public VScriptIterator
+{
+private:
+	VClass*		BaseClass;
+	VObject**	Out;
+	int			Index;
+
+public:
+	VObjectsIterator(VClass* ABaseClass, VObject** AOut)
+	: BaseClass(ABaseClass)
+	, Out(AOut)
+	, Index(0)
+	{
+	}
+	bool GetNext()
+	{
+		while (Index < VObject::GetObjectsCount())
+		{
+			VObject* Check = VObject::GetIndexObject(Index);
+			Index++;
+			if (Check && !(Check->GetFlags() & _OF_DelayedDestroy) &&
+				Check->IsA(BaseClass))
+			{
+				*Out = Check;
+				return true;
+			}
+		}
+		*Out = NULL;
+		return false;
+	}
+};
+
+IMPLEMENT_FUNCTION(VObject, AllObjects)
+{
+	P_GET_PTR(VObject*, Obj);
+	P_GET_PTR(VClass, BaseClass);
+	RET_PTR(new VObjectsIterator(BaseClass, Obj));
+}
+
+class VClassesIterator : public VScriptIterator
+{
+private:
+	VClass*		BaseClass;
+	VClass**	Out;
+	int			Index;
+
+public:
+	VClassesIterator(VClass* ABaseClass, VClass** AOut)
+	: BaseClass(ABaseClass)
+	, Out(AOut)
+	, Index(0)
+	{
+	}
+	bool GetNext()
+	{
+		while (Index < VMemberBase::GMembers.Num())
+		{
+			VMemberBase* Check = VMemberBase::GMembers[Index];
+			Index++;
+			if (Check->MemberType == MEMBER_Class &&
+				((VClass*)Check)->IsChildOf(BaseClass))
+			{
+				*Out = (VClass*)Check;
+				return true;
+			}
+		}
+		*Out = NULL;
+		return false;
+	}
+};
+
+IMPLEMENT_FUNCTION(VObject, AllClasses)
+{
+	P_GET_PTR(VClass*, Class);
+	P_GET_PTR(VClass, BaseClass);
+	RET_PTR(new VClassesIterator(BaseClass, Class));
+}
+
+//==========================================================================
+//
 //	Misc
 //
 //==========================================================================
@@ -968,4 +1053,11 @@ IMPLEMENT_FUNCTION(VObject, RGBA)
 	P_GET_BYTE(g);
 	P_GET_BYTE(r);
 	RET_INT((a << 24) + (r << 16) + (g << 8) + b);
+}
+
+IMPLEMENT_FUNCTION(VObject, ClassIsChildOf)
+{
+	P_GET_PTR(VClass, BaseClass);
+	P_GET_PTR(VClass, SomeClass);
+	RET_BOOL(SomeClass->IsChildOf(BaseClass));
 }
