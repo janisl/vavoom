@@ -94,7 +94,7 @@ void ClientTick(float DeltaTime)
 //
 //==========================================================================
 
-int GET_SPAC(int Flags)
+final int GET_SPAC(int Flags)
 {
 	return (Flags & ML_SPAC_MASK) >> ML_SPAC_SHIFT;
 }
