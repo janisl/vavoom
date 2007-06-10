@@ -579,6 +579,276 @@ static void ParseMap(VScriptParser* sc, bool IsDefault, bool& HexenMode)
 			sc->ExpectNumber();
 			cd_NonLevelTracks[CD_TITLETRACK] = sc->Number;
 		}
+		//	These are stubs for now.
+		else if (sc->Check("evenlighting"))
+		{
+			GCon->Logf("Unimplemented MAPINFO comand evenlighting");
+		}
+		else if (sc->Check("noautosequences"))
+		{
+			GCon->Logf("Unimplemented MAPINFO comand noautosequences");
+		}
+		else if (sc->Check("allowfreelook"))
+		{
+			GCon->Logf("Unimplemented MAPINFO comand allowfreelook");
+		}
+		else if (sc->Check("nofreelook"))
+		{
+			GCon->Logf("Unimplemented MAPINFO comand nofreelook");
+		}
+		else if (sc->Check("allowjump"))
+		{
+			GCon->Logf("Unimplemented MAPINFO comand allowjump");
+		}
+		else if (sc->Check("nojump"))
+		{
+			GCon->Logf("Unimplemented MAPINFO comand nojump");
+		}
+		else if (sc->Check("fallingdamage"))
+		{
+			GCon->Logf("Unimplemented MAPINFO comand fallingdamage");
+		}
+		else if (sc->Check("oldfallingdamage"))
+		{
+			GCon->Logf("Unimplemented MAPINFO comand oldfallingdamage");
+		}
+		else if (sc->Check("forcefallingdamage"))
+		{
+			GCon->Logf("Unimplemented MAPINFO comand forcefallingdamage");
+		}
+		else if (sc->Check("strifefallingdamage"))
+		{
+			GCon->Logf("Unimplemented MAPINFO comand strifefallingdamage");
+		}
+		else if (sc->Check("nofallingdamage"))
+		{
+			GCon->Logf("Unimplemented MAPINFO comand nofallingdamage");
+		}
+		else if (sc->Check("cdid"))
+		{
+			GCon->Logf("Unimplemented MAPINFO comand cdid");
+			sc->ExpectString();
+		}
+		else if (sc->Check("vertwallshade"))
+		{
+			GCon->Logf("Unimplemented MAPINFO comand vertwallshade");
+			sc->ExpectFloat();
+		}
+		else if (sc->Check("horizwallshade"))
+		{
+			GCon->Logf("Unimplemented MAPINFO comand horizwallshade");
+			sc->ExpectFloat();
+		}
+		else if (sc->Check("aircontrol"))
+		{
+			GCon->Logf("Unimplemented MAPINFO comand aircontrol");
+			sc->ExpectFloat();
+		}
+		else if (sc->Check("filterstarts"))
+		{
+			GCon->Logf("Unimplemented MAPINFO comand filterstarts");
+		}
+		else if (sc->Check("activateowndeathspecials"))
+		{
+			GCon->Logf("Unimplemented MAPINFO comand activateowndeathspecials");
+		}
+		else if (sc->Check("killeractivatesdeathspecials"))
+		{
+			GCon->Logf("Unimplemented MAPINFO comand killeractivatesdeathspecials");
+		}
+		else if (sc->Check("missilesactivateimpactlines"))
+		{
+			GCon->Logf("Unimplemented MAPINFO comand missilesactivateimpactlines");
+		}
+		else if (sc->Check("missileshootersactivetimpactlines"))
+		{
+			GCon->Logf("Unimplemented MAPINFO comand missileshootersactivetimpactlines");
+		}
+		else if (sc->Check("noinventorybar"))
+		{
+			GCon->Logf("Unimplemented MAPINFO comand noinventorybar");
+		}
+		else if (sc->Check("redirect"))
+		{
+			GCon->Logf("Unimplemented MAPINFO comand redirect");
+			sc->ExpectString();
+			ParseNextMapName(sc, HexenMode);
+		}
+		else if (sc->Check("strictmonsteractivation"))
+		{
+			GCon->Logf("Unimplemented MAPINFO comand strictmonsteractivation");
+		}
+		else if (sc->Check("laxmonsteractivation"))
+		{
+			GCon->Logf("Unimplemented MAPINFO comand laxmonsteractivation");
+		}
+		else if (sc->Check("additive_scrollers"))
+		{
+			GCon->Logf("Unimplemented MAPINFO comand additive_scrollers");
+		}
+		else if (sc->Check("interpic"))
+		{
+			GCon->Logf("Unimplemented MAPINFO comand interpic");
+			sc->ExpectName8();
+		}
+		else if (sc->Check("exitpic"))
+		{
+			GCon->Logf("Unimplemented MAPINFO comand exitpic");
+			sc->ExpectName8();
+		}
+		else if (sc->Check("enterpic"))
+		{
+			GCon->Logf("Unimplemented MAPINFO comand enterpic");
+			sc->ExpectName8();
+		}
+		else if (sc->Check("intermusic"))
+		{
+			GCon->Logf("Unimplemented MAPINFO comand intermusic");
+			sc->ExpectString();
+		}
+		else if (sc->Check("airsupply"))
+		{
+			GCon->Logf("Unimplemented MAPINFO comand airsupply");
+			sc->ExpectNumber();
+		}
+		else if (sc->Check("specialaction"))
+		{
+			GCon->Logf("Unimplemented MAPINFO comand specialaction");
+			sc->SetCMode(true);
+			sc->ExpectString();
+			sc->Expect(",");
+			sc->ExpectString();
+			for (int i = 0; i < 5 && sc->Check(","); i++)
+			{
+				sc->ExpectNumber();
+			}
+			sc->SetCMode(false);
+		}
+		else if (sc->Check("keepfullinventory"))
+		{
+			GCon->Logf("Unimplemented MAPINFO comand keepfullinventory");
+		}
+		else if (sc->Check("monsterfallingdamage"))
+		{
+			GCon->Logf("Unimplemented MAPINFO comand monsterfallingdamage");
+		}
+		else if (sc->Check("nomonsterfallingdamage"))
+		{
+			GCon->Logf("Unimplemented MAPINFO comand nomonsterfallingdamage");
+		}
+		else if (sc->Check("sndseq"))
+		{
+			GCon->Logf("Unimplemented MAPINFO comand sndseq");
+			sc->ExpectName8();
+		}
+		else if (sc->Check("sndinfo"))
+		{
+			GCon->Logf("Unimplemented MAPINFO comand sndinfo");
+			sc->ExpectName8();
+		}
+		else if (sc->Check("soundinfo"))
+		{
+			GCon->Logf("Unimplemented MAPINFO comand soundinfo");
+			sc->ExpectName8();
+		}
+		else if (sc->Check("clipmidtextures"))
+		{
+			GCon->Logf("Unimplemented MAPINFO comand clipmidtextures");
+		}
+		else if (sc->Check("wrapmidtextures"))
+		{
+			GCon->Logf("Unimplemented MAPINFO comand wrapmidtextures");
+		}
+		else if (sc->Check("allowcrouch"))
+		{
+			GCon->Logf("Unimplemented MAPINFO comand allowcrouch");
+		}
+		else if (sc->Check("nocrouch"))
+		{
+			GCon->Logf("Unimplemented MAPINFO comand nocrouch");
+		}
+		else if (sc->Check("pausemusicinmenus"))
+		{
+			GCon->Logf("Unimplemented MAPINFO comand pausemusicinmenus");
+		}
+		else if (sc->Check("compat_shorttex"))
+		{
+			GCon->Logf("Unimplemented MAPINFO comand compat_shorttex");
+		}
+		else if (sc->Check("compat_stairs"))
+		{
+			GCon->Logf("Unimplemented MAPINFO comand compat_stairs");
+		}
+		else if (sc->Check("compat_limitpain"))
+		{
+			GCon->Logf("Unimplemented MAPINFO comand compat_limitpain");
+		}
+		else if (sc->Check("compat_nopassover"))
+		{
+			GCon->Logf("Unimplemented MAPINFO comand compat_nopassover");
+		}
+		else if (sc->Check("compat_notossdrops"))
+		{
+			GCon->Logf("Unimplemented MAPINFO comand compat_notossdrops");
+		}
+		else if (sc->Check("compat_useblocking"))
+		{
+			GCon->Logf("Unimplemented MAPINFO comand compat_useblocking");
+		}
+		else if (sc->Check("compat_nodoorlight"))
+		{
+			GCon->Logf("Unimplemented MAPINFO comand compat_nodoorlight");
+		}
+		else if (sc->Check("compat_ravenscroll"))
+		{
+			GCon->Logf("Unimplemented MAPINFO comand compat_ravenscroll");
+		}
+		else if (sc->Check("compat_soundtarget"))
+		{
+			GCon->Logf("Unimplemented MAPINFO comand compat_soundtarget");
+		}
+		else if (sc->Check("compat_dehhealth"))
+		{
+			GCon->Logf("Unimplemented MAPINFO comand compat_dehhealth");
+		}
+		else if (sc->Check("compat_trace"))
+		{
+			GCon->Logf("Unimplemented MAPINFO comand compat_trace");
+		}
+		else if (sc->Check("compat_dropoff"))
+		{
+			GCon->Logf("Unimplemented MAPINFO comand compat_dropoff");
+		}
+		else if (sc->Check("compat_boomscroll"))
+		{
+			GCon->Logf("Unimplemented MAPINFO comand compat_boomscroll");
+		}
+		else if (sc->Check("compat_invisibility"))
+		{
+			GCon->Logf("Unimplemented MAPINFO comand compat_invisibility");
+		}
+		else if (sc->Check("bordertexture"))
+		{
+			GCon->Logf("Unimplemented MAPINFO comand bordertexture");
+			sc->ExpectName8();
+		}
+		else if (sc->Check("f1"))
+		{
+			GCon->Logf("Unimplemented MAPINFO comand f1");
+			sc->ExpectString();
+		}
+		else if (sc->Check("noinfighting"))
+		{
+			GCon->Logf("Unimplemented MAPINFO comand noinfighting");
+		}
+		else if (sc->Check("normalinfighting"))
+		{
+			GCon->Logf("Unimplemented MAPINFO comand normalinfighting");
+		}
+		else if (sc->Check("totalinfighting"))
+		{
+			GCon->Logf("Unimplemented MAPINFO comand totalinfighting");
+		}
 		else
 		{
 			break;
@@ -711,6 +981,12 @@ static void ParseClusterDef(VScriptParser* sc)
 		{
 			sc->ExpectNumber();
 			CDef->CDId = sc->Number;
+		}
+		else if (sc->Check("name"))
+		{
+			sc->Check("lookup");
+			sc->ExpectString();
+			GCon->Logf("Unimplemented MAPINFO cluster comand name");
 		}
 		else
 		{
