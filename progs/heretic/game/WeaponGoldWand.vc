@@ -65,9 +65,9 @@ final void A_FireGoldWandPL2()
 		Level.Game.deathmatch ? USE_GWND_AMMO_1 : USE_GWND_AMMO_2;
 	dir = Actor(Owner).Aim(Owner.Angles.yaw, 16.0 * 64.0);
 	VectorAngles(&dir, &angles);
-	Actor(Owner).SpawnMissileAngles(GoldWandMissile2,
+	Actor(Owner).SpawnMissileAngles(GoldWandFX2,
 		AngleMod360(angles.yaw - (45.0 / 8.0)), angles.pitch);
-	Actor(Owner).SpawnMissileAngles(GoldWandMissile2,
+	Actor(Owner).SpawnMissileAngles(GoldWandFX2,
 		AngleMod360(angles.yaw + (45.0 / 8.0)), angles.pitch);
 	VectorRotateAroundZ(&dir, -45.0 / 8.0);
 	for (i = 0; i < 5; i++)

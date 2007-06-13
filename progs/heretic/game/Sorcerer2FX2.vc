@@ -1,0 +1,76 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class Sorcerer2FX2 : Projectile
+	__scriptid__(146);
+
+//==========================================================================
+//
+//  A_GenWizard
+//
+//==========================================================================
+
+final void A_GenWizard()
+{
+	Actor A;
+	Actor fog;
+
+	A = Spawn(Wizard, Origin);
+	A.Origin.z = Origin.z - A.Height / 2.0;
+	if (!A.TestLocation())
+	{
+		// Didn't fit
+		A.Destroy();
+		return;
+	}
+	Velocity = vector(0.0, 0.0, 0.0);
+	SetState(DeathState);
+	bMissile = false;
+	fog = Spawn(TeleportFog, Origin);
+	fog.PlaySound('misc/teleport', CHAN_VOICE);
+}
+
+__states__
+{
+	S_SOR2FX2_1('FX11', 0 | FF_FULLBRIGHT, 35.0 / 35.0, S_SOR2FX2_2) = none
+	S_SOR2FX2_2('FX11', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_SOR2FX2_3) = A_GenWizard
+	S_SOR2FX2_3('FX11', 1 | FF_FULLBRIGHT, 5.0 / 35.0, S_SOR2FX2_2) = none
+	S_SOR2FXI2_1('FX11', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_SOR2FXI2_2) = none
+	S_SOR2FXI2_2('FX11', 3 | FF_FULLBRIGHT, 5.0 / 35.0, S_SOR2FXI2_3) = none
+	S_SOR2FXI2_3('FX11', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_SOR2FXI2_4) = none
+	S_SOR2FXI2_4('FX11', 5 | FF_FULLBRIGHT, 5.0 / 35.0, S_SOR2FXI2_5) = none
+	S_SOR2FXI2_5('FX11', 6 | FF_FULLBRIGHT, 5.0 / 35.0, none) = none
+}
+
+defaultproperties
+{
+	Radius = 10.0;
+	Height = 6.0;
+	Speed = 210.0;
+	MissileDamage = 10;
+	IdleState = S_SOR2FX2_1;
+	DeathState = S_SOR2FXI2_1;
+	Effects = HereticDefs::EF_DL_BLUE;
+}

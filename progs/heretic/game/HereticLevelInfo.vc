@@ -549,24 +549,24 @@ void SpawnMapThing(mthing_t * mthing)
 	if (MainGameInfo(Game).shareware)
 	{
 		// Special stuff
-		if (moClass == ItemWeaponSkullRod ||
-			moClass == ItemWeaponPhoenixRod ||
-			moClass == ItemAmmoSkullRodWimpy ||
-			moClass == ItemAmmoSkullRodHefty ||
-			moClass == ItemAmmoPhoenixWimpy ||
-			moClass == ItemAmmoPhoenixHefty ||
-			moClass == ItemAmmoMaceWimpy ||
-			moClass == ItemAmmoMaceHefty ||
-			moClass == ArtifactSuperHeal ||
-			moClass == ArtifactTeleport ||
-			moClass == ItemShield2 ||
-			moClass == ItemWeaponMace)
+		if (moClass == SkullRod ||
+			moClass == PhoenixRod ||
+			moClass == SkullRodAmmo ||
+			moClass == SkullRodHefty ||
+			moClass == PhoenixRodAmmo ||
+			moClass == PhoenixRodHefty ||
+			moClass == MaceAmmo ||
+			moClass == MaceHefty ||
+			moClass == ArtiSuperHealth ||
+			moClass == ArtiTeleport ||
+			moClass == EnchantedShield ||
+			moClass == Mace)
 		{
 			// Don't place on map in shareware version
 			return;
 		}
 	}
-	if (moClass == ItemWeaponMace)
+	if (moClass == Mace)
 	{
 		// Put in the mace spot list
 		AddMaceSpot(mthing->x, mthing->y);
@@ -616,7 +616,7 @@ void CloseWeapons()
 		return;
 	}
 	spot = P_Random() % MaceSpotCount;
-	Spawn(ItemWeaponMace, vector(MaceSpot_x[spot], MaceSpot_y[spot],
+	Spawn(Mace, vector(MaceSpot_x[spot], MaceSpot_y[spot],
 		Actor::ONFLOORZ));
 }
 

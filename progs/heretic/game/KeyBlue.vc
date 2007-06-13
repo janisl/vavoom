@@ -1,0 +1,48 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class KeyBlue : Key
+	__mobjinfo__(79)
+	__scriptid__(85);
+
+__states__
+{
+	S_BKYY1('BKYY', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_BKYY2) = none
+	S_BKYY2('BKYY', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_BKYY3) = none
+	S_BKYY3('BKYY', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_BKYY4) = none
+	S_BKYY4('BKYY', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_BKYY5) = none
+	S_BKYY5('BKYY', 4 | FF_FULLBRIGHT, 3.0 / 35.0, S_BKYY6) = none
+	S_BKYY6('BKYY', 5 | FF_FULLBRIGHT, 3.0 / 35.0, S_BKYY7) = none
+	S_BKYY7('BKYY', 6 | FF_FULLBRIGHT, 3.0 / 35.0, S_BKYY8) = none
+	S_BKYY8('BKYY', 7 | FF_FULLBRIGHT, 3.0 / 35.0, S_BKYY9) = none
+	S_BKYY9('BKYY', 8 | FF_FULLBRIGHT, 3.0 / 35.0, S_BKYY10) = none
+	S_BKYY10('BKYY', 9 | FF_FULLBRIGHT, 3.0 / 35.0, S_BKYY1) = none
+}
+
+defaultproperties
+{
+	KeyType = key_blue;
+	IdleState = S_BKYY1;
+}

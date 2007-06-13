@@ -1,0 +1,40 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class Sorcerer2FXSpark : Effect;
+
+__states__
+{
+	S_SOR2FXSPARK1('FX16', 3 | FF_FULLBRIGHT, 12.0 / 35.0, S_SOR2FXSPARK2) = none
+	S_SOR2FXSPARK2('FX16', 4 | FF_FULLBRIGHT, 12.0 / 35.0, S_SOR2FXSPARK3) = none
+	S_SOR2FXSPARK3('FX16', 5 | FF_FULLBRIGHT, 12.0 / 35.0, none) = none
+}
+
+defaultproperties
+{
+	bNoTeleport = true;
+	bCannotPush = true;
+	IdleState = S_SOR2FXSPARK1;
+}

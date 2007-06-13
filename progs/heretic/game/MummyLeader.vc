@@ -48,7 +48,7 @@ final void A_MummyAttack2()
 		Target.Damage(self, self, HITDICE(2));
 		return;
 	}
-	A = SpawnMissile(Target, MummyMissile);
+	A = SpawnMissile(Target, MummyFX1);
 	if (A)
 	{
 		A.Tracer = Target;

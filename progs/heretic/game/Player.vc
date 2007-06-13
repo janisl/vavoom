@@ -2502,14 +2502,14 @@ void UseArtiTele()
 
 void UseArtiEgg()
 {
-	PlayerPawn(MO).SpawnPlayerMissile(EggMissile);
-	PlayerPawn(MO).SpawnPlayerMissileAngle(EggMissile,
+	PlayerPawn(MO).SpawnPlayerMissile(EggFX);
+	PlayerPawn(MO).SpawnPlayerMissileAngle(EggFX,
 		AngleMod360(MO.Angles.yaw - 7.5));
-	PlayerPawn(MO).SpawnPlayerMissileAngle(EggMissile,
+	PlayerPawn(MO).SpawnPlayerMissileAngle(EggFX,
 		AngleMod360(MO.Angles.yaw + 7.5));
-	PlayerPawn(MO).SpawnPlayerMissileAngle(EggMissile,
+	PlayerPawn(MO).SpawnPlayerMissileAngle(EggFX,
 		AngleMod360(MO.Angles.yaw - 15.0));
-	PlayerPawn(MO).SpawnPlayerMissileAngle(EggMissile,
+	PlayerPawn(MO).SpawnPlayerMissileAngle(EggFX,
 		AngleMod360(MO.Angles.yaw + 15.0));
 }
 
@@ -2556,8 +2556,9 @@ bool UseArtiTomeOfPower()
 void UseArtiFireBomb()
 {
 	float angle = MO.Angles.yaw;
-	Actor A = HereticLevelInfo(Level).Spawn(FireBomb, MO.Origin + vector(24.0 * cos(angle),
-		24.0 * sin(angle), -MO.FloorClip));
+	Actor A = HereticLevelInfo(Level).Spawn(ActivatedTimeBomb,
+		MO.Origin + vector(24.0 * cos(angle), 24.0 * sin(angle),
+		-MO.FloorClip));
 
 	A.Target = Actor(MO);
 }

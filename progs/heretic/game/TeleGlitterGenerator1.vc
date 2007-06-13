@@ -1,0 +1,56 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class TeleGlitterGenerator1 : Actor
+	__mobjinfo__(74);
+
+//==========================================================================
+//
+//  A_SpawnTeleGlitter
+//
+//==========================================================================
+
+final void A_SpawnTeleGlitter()
+{
+	Actor mo;
+
+	mo = Spawn(TeleGlitter1, vector(Origin.x + Random() * 32.0 - 16.0,
+		Origin.y + Random() * 32.0 - 16.0, FloorZ));
+	mo.Velocity.z = 0.25 * 35.0;
+}
+
+__states__
+{
+	S_TELEGLITGEN1('TGLT', 0, 8.0 / 35.0, S_TELEGLITGEN1) = A_SpawnTeleGlitter
+}
+
+defaultproperties
+{
+	bHidden = true;
+	bNoBlockmap = true;
+	bNoGravity = true;
+	bNoPassMobj = true;
+	IdleState = S_TELEGLITGEN1;
+}

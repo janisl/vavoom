@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class RainPlayer2 : RainPlayer1;
+class RainPlayer2 : RainPillar;
 
 __states__
 {

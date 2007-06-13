@@ -305,11 +305,11 @@ bool CheckItem(Actor item)
 			return false;
 	}
 
-	if (item.Class == ItemHealthPotion && (botmo.Health >= Player::MAXHEALTH))
+	if (item.Class == CrystalVial && (botmo.Health >= Player::MAXHEALTH))
 		return false;
-	if (item.Class == ItemShield1 && (player.ArmorPoints >= 100))
+	if (item.Class == SilverShield && (player.ArmorPoints >= 100))
 		return false;
-	if (item.Class == ItemShield2 && (player.ArmorPoints >= 200))
+	if (item.Class == EnchantedShield && (player.ArmorPoints >= 200))
 		return false;
 
 	// Guess we're okay

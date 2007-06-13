@@ -84,7 +84,7 @@ final void DSparilTeleport()
 	PrevOrg = Origin;
 	if (TeleportMove(vector(x, y, Origin.z)))
 	{
-		fog = Spawn(Sorcerer2TeleFade, PrevOrg);
+		fog = Spawn(Sorcerer2Telefade, PrevOrg);
 		fog.PlaySound('misc/teleport', CHAN_VOICE);
 		SetState(TeleportState);
 		PlaySound('misc/teleport', CHAN_VOICE);
@@ -169,15 +169,15 @@ final void A_Srcr2Attack()
 	if (P_Random() < chance)
 	{
 		// Wizard spawners
-		SpawnMissileAngles(Sorcerer2Missile2,
+		SpawnMissileAngles(Sorcerer2FX2,
 			AngleMod360(Angles.yaw - 45.0), -30.0);
-		SpawnMissileAngles(Sorcerer2Missile2,
+		SpawnMissileAngles(Sorcerer2FX2,
 			AngleMod360(Angles.yaw + 45.0), -30.0);
 	}
 	else
 	{
 		// Blue bolt
-		SpawnMissile(Target, Sorcerer2Missile1);
+		SpawnMissile(Target, Sorcerer2FX1);
 	}
 }
 

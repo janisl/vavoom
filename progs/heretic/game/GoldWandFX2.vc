@@ -1,0 +1,49 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class GoldWandFX2 : Projectile
+	__scriptid__(152);
+
+__states__
+{
+	S_GWANDFX2_1('FX01', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_GWANDFX2_2) = none
+	S_GWANDFX2_2('FX01', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_GWANDFX2_1) = none
+	S_GWANDFXI1_1('FX01', 4 | FF_FULLBRIGHT, 3.0 / 35.0, S_GWANDFXI1_2) = none
+	S_GWANDFXI1_2('FX01', 5 | FF_FULLBRIGHT, 3.0 / 35.0, S_GWANDFXI1_3) = none
+	S_GWANDFXI1_3('FX01', 6 | FF_FULLBRIGHT, 3.0 / 35.0, S_GWANDFXI1_4) = none
+	S_GWANDFXI1_4('FX01', 7 | FF_FULLBRIGHT, 3.0 / 35.0, none) = none
+}
+
+defaultproperties
+{
+	Radius = 10.0;
+	Height = 6.0;
+	Speed = 630.0;
+	MissileDamage = 1;
+	bActivateImpact = true;
+	IdleState = S_GWANDFX2_1;
+	DeathState = S_GWANDFXI1_1;
+	Effects = HereticDefs::EF_DL_WHITE;
+}

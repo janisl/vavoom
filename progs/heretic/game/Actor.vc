@@ -273,7 +273,7 @@ void ThingDamage(int Amount)
 
 bool IsTeleportSpot()
 {
-	return !!TeleportSpot(self);
+	return !!TeleportDest(self);
 }
 
 //===========================================================================
@@ -284,7 +284,7 @@ bool IsTeleportSpot()
 
 bool IsTeleportSpot2()
 {
-	return !!TeleportSpot2(self);
+	return !!TeleportDest2(self);
 }
 
 //===========================================================================
@@ -1074,7 +1074,7 @@ void Damage(Actor inflictor, Actor source, int damage)
 	// Special damage types
 	if (inflictor)
 	{
-		if (inflictor.Class == EggMissile)
+		if (inflictor.Class == EggFX)
 		{
 			if (bIsPlayer)
 			{
@@ -1086,7 +1086,7 @@ void Damage(Actor inflictor, Actor source, int damage)
 			}
 			return;	// Always return
 		}
-		else if (inflictor.Class == WhirlWind)
+		else if (inflictor.Class == Whirlwind)
 		{
 			inflictor.TouchWhirlwind(self);
 			return;
@@ -1102,7 +1102,7 @@ void Damage(Actor inflictor, Actor source, int damage)
 		}
 		else if (inflictor.Class == MaceFX4)	// Death ball
 		{
-			if (bBoss || Class == Head)
+			if (bBoss || Class == Ironlich)
 			{
 				// Don't allow cheap boss kills
 			}
@@ -1133,7 +1133,7 @@ void Damage(Actor inflictor, Actor source, int damage)
 				ReactionTime += 0.125;
 			}
 		}
-		else if (inflictor.Class == RainPlayer1 ||	// Rain missiles
+		else if (inflictor.Class == RainPillar ||	// Rain missiles
 			inflictor.Class == RainPlayer2 ||
 			inflictor.Class == RainPlayer3 ||
 			inflictor.Class == RainPlayer4)
@@ -1144,7 +1144,7 @@ void Damage(Actor inflictor, Actor source, int damage)
 				damage = (P_Random() & 7) + 1;
 			}
 		}
-		else if (inflictor.Class == HornRodMissile2 ||
+		else if (inflictor.Class == HornRodFX2 ||
 			inflictor.Class == PhoenixFX1)
 		{
 			if (Class == Sorcerer2 && P_Random() < 96)
@@ -1157,7 +1157,7 @@ void Damage(Actor inflictor, Actor source, int damage)
 		else if (inflictor.Class == BlasterFX1 ||
 			inflictor.Class == Ripper)
 		{
-			if (Class == Head)
+			if (Class == Ironlich)
 			{
 				// Less damage to Ironlich bosses
 				damage = P_Random() & 1;
@@ -2606,23 +2606,23 @@ Actor SpawnMissile(Actor dest, class<Actor> type)
 	TVec dir;
 
 	org = Origin;
-	if (type == MinotaurMissile)
+	if (type == MinotaurFX1)
 	{
 		// Minotaur swing attack missile
 		org.z = Origin.z + 40.0;
 	}
-	else if (type == MinotaurFloorFire)
+	else if (type == MinotaurFX2)
 	{
 		// Minotaur floor fire missile
 		org.z = ONFLOORZ + FloorClip;
 	}
-	else if (type == Sorcerer1Missile)
+	else if (type == SorcererFX1)
 	{
 		// Sorcerer Demon fireball
 		org.z = Origin.z + 48.0;
 	}
 	else if (type == KnightAxe||	// Knight normal axe
-			type == KnightRedAxe)	// Knight red power axe
+			type == RedAxe)	// Knight red power axe
 	{
 		org.z = Origin.z + 36.0;
 	}
@@ -2665,17 +2665,17 @@ Actor SpawnMissileAngles(class<Actor> type, float yaw, float pitch)
 	TVec dir;
 
 	org = Origin;
-	if (type == MinotaurMissile)
+	if (type == MinotaurFX1)
 	{
 		// Minotaur swing attack missile
 		org.z = Origin.z + 40.0;
 	}
-	else if (type == MinotaurFloorFire)
+	else if (type == MinotaurFX2)
 	{
 		// Minotaur floor fire missile
 		org.z = ONFLOORZ + FloorClip;
 	}
-	if (type == Sorcerer1Missile)
+	if (type == SorcererFX1)
 	{
 		// Sorcerer Demon fireball
 		org.z = Origin.z + 48.0;
@@ -3053,7 +3053,7 @@ bool CheckMissileRange()
 		// No melee attack, so fire more frequently
 		dist -= 128.0;
 	}
-	if (Class == Imp)
+	if (Class == HereticImp)
 	{
 		// Imp's fly attack from far away
 		dist /= 2.0;
@@ -4101,18 +4101,18 @@ final void A_Explode()
 	int damage;
 
 	damage = 128;
-	if (Class == FireBomb)
+	if (Class == ActivatedTimeBomb)
 	{
 		// Time Bombs
 		Origin.z += 32.0;
 		Alpha = 1.0;
 	}
-	else if (Class == MinotaurFloorFire)
+	else if (Class == MinotaurFX2)
 	{
 		// Minotaur floor fire
 		damage = 24;
 	}
-	else if (Class == Sorcerer2Missile1)
+	else if (Class == Sorcerer2FX1)
 	{
 		// D'Sparil missile
 		damage = 80 + (P_Random() & 31);
@@ -4122,7 +4122,7 @@ final void A_Explode()
 	{
 		HitFloorType();
 	}
-	if (Class == FireBomb)
+	if (Class == ActivatedTimeBomb)
 	{
 		SendExplosion(HereticDefs::EF_DL_WHITE, Origin);
 	}

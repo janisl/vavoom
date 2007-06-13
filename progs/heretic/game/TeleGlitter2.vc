@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class TeleGlitter2 : TeleGlitter
+class TeleGlitter2 : TeleGlitter1
 	__scriptid__(167);
 
 __states__

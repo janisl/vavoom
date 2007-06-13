@@ -35,7 +35,7 @@ class Beast : Pawn
 
 void DropStuff()
 {
-	DropItem(ItemAmmoCrossbowWimpy, 10, 0.328125);
+	DropItem(CrossbowAmmo, 10, 0.328125);
 }
 
 //==========================================================================

@@ -35,7 +35,7 @@ class Clink : Pawn
 
 void DropStuff()
 {
-	DropItem(ItemAmmoSkullRodWimpy, 20, 0.328125);
+	DropItem(SkullRodAmmo, 20, 0.328125);
 }
 
 //==========================================================================

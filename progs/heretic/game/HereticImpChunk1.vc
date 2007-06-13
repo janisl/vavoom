@@ -1,0 +1,39 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class HereticImpChunk1 : Effect;
+
+__states__
+{
+	S_IMP_CHUNKA1('IMPX', 12, 5.0 / 35.0, S_IMP_CHUNKA2) = none
+	S_IMP_CHUNKA2('IMPX', 13, 700.0 / 35.0, S_IMP_CHUNKA3) = none
+	S_IMP_CHUNKA3('IMPX', 14, 700.0 / 35.0, none) = none
+}
+
+defaultproperties
+{
+	bNoGravity = false;
+	IdleState = S_IMP_CHUNKA1;
+}

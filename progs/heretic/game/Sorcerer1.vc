@@ -72,19 +72,19 @@ final void A_Srcr1Attack()
 	if (Health > (SpawnHealth / 3) * 2)
 	{
 		// Spit one fireball
-		SpawnMissile(Target, Sorcerer1Missile);
+		SpawnMissile(Target, SorcererFX1);
 	}
 	else
 	{
 		// Spit three fireballs
-		A = SpawnMissile(Target, Sorcerer1Missile);
+		A = SpawnMissile(Target, SorcererFX1);
 		if (A)
 		{
 			VectorAngles(&A.Velocity, &ang);
 			angle = A.Angles.yaw;
-			SpawnMissileAngles(Sorcerer1Missile,
+			SpawnMissileAngles(SorcererFX1,
 				AngleMod360(angle - 3.0), ang.pitch);
-			SpawnMissileAngles(Sorcerer1Missile,
+			SpawnMissileAngles(SorcererFX1,
 				AngleMod360(angle + 3.0), ang.pitch);
 		}
 		if (Health < SpawnHealth / 3)

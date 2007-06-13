@@ -153,65 +153,139 @@ EXTRA_DIST = compile.bat \
 	cgame/MenuChoice_ExternalMusic.vc \
 	cgame/MenuChoice_DrawFPS.vc \
 	cgame/MenuChoice_D3DModelLights.vc \
-	game/HornRodMissile2.vc \
-	game/ItemShield1.vc \
-	game/HeadMissile1.vc \
+	\
+	game/ActivatedTimeBomb.vc \
+	game/AmbientSoundSequence.vc \
+	game/ArtiEgg.vc \
+	game/Artifact.vc \
+	game/ArtiFly.vc \
+	game/ArtiHealth.vc \
+	game/ArtiInvisibility.vc \
+	game/ArtiInvulnerability.vc \
+	game/ArtiSuperHealth.vc \
+	game/ArtiTeleport.vc \
+	game/ArtiTimeBomb.vc \
+	game/ArtiTomeOfPower.vc \
+	game/ArtiTorch.vc \
+	game/BagOfHolding.vc \
+	game/Blaster.vc \
+	game/BlasterAmmo.vc \
+	game/BlasterHefty.vc \
+	game/Crossbow.vc \
+	game/CrossbowAmmo.vc \
+	game/CrossbowHefty.vc \
+	game/CrystalVial.vc \
+	game/EggFX.vc \
+	game/EnchantedShield.vc \
+	game/Gauntlets.vc \
+	game/GoldWandAmmo.vc \
+	game/GoldWandFX1.vc \
+	game/GoldWandFX2.vc \
+	game/GoldWandHefty.vc \
+	game/GoldWandPuff1.vc \
+	game/GoldWandPuff2.vc \
+	game/HeadFX1.vc \
+	game/HeadFX2.vc \
+	game/HeadFX3.vc \
+	game/HereticImp.vc \
+	game/HereticImpBall.vc \
+	game/HereticImpChunk1.vc \
+	game/HereticImpChunk2.vc \
+	game/HereticImpLeader.vc \
+	game/HereticSoundSequence1.vc \
+	game/HereticSoundSequence2.vc \
+	game/HereticSoundSequence3.vc \
+	game/HereticSoundSequence4.vc \
+	game/HereticSoundSequence5.vc \
+	game/HereticSoundSequence6.vc \
+	game/HereticSoundSequence7.vc \
+	game/HereticSoundSequence8.vc \
+	game/HereticSoundSequence9.vc \
+	game/HereticSoundSequence10.vc \
+	game/HornRodFX1.vc \
+	game/HornRodFX2.vc \
+	game/Ironlich.vc \
+	game/KeyBlue.vc \
+	game/KeyGreen.vc \
+	game/KeyYellow.vc \
+	game/Mace.vc \
+	game/MaceAmmo.vc \
+	game/MaceHefty.vc \
+	game/Minotaur.vc \
+	game/MinotaurFX1.vc \
+	game/MinotaurFX2.vc \
+	game/MinotaurFX3.vc \
+	game/MummyFX1.vc \
+	game/PhoenixRod.vc \
+	game/PhoenixRodAmmo.vc \
+	game/PhoenixRodHefty.vc \
+	game/RainPillar.vc \
+	game/RainPlayer2.vc \
+	game/RainPlayer3.vc \
+	game/RainPlayer4.vc \
+	game/RedAxe.vc \
+	game/SilverShield.vc \
+	game/SkullRod.vc \
+	game/SkullRodAmmo.vc \
+	game/SkullRodHefty.vc \
+	game/SnakeProjA.vc \
+	game/SnakeProjB.vc \
+	game/Sorcerer1.vc \
+	game/Sorcerer2.vc \
+	game/Sorcerer2FX1.vc \
+	game/Sorcerer2FX2.vc \
+	game/Sorcerer2FXSpark.vc \
+	game/Sorcerer2Telefade.vc \
+	game/SorcererFX1.vc \
+	game/SoundSequence.vc \
+	game/SoundSequenceSlot.vc \
+	game/SuperMap.vc \
+	game/TeleGlitter1.vc \
+	game/TeleGlitter2.vc \
+	game/TeleGlitterGenerator1.vc \
+	game/TeleGlitterGenerator2.vc \
+	game/TeleportDest.vc \
+	game/TeleportDest2.vc \
+	game/TeleportDest3.vc \
+	game/TeleportFog.vc \
+	game/Whirlwind.vc \
+	game/WizardFX1.vc \
+	\
 	game/BlasterFX1.vc \
 	game/VolcanoTBlast.vc \
 	game/BloodSplatter.vc \
 	game/SerpentTorch.vc \
 	game/Actor.vc \
 	game/KnightAxe.vc \
-	game/ItemAmmoMaceWimpy.vc \
 	game/Chicken.vc \
 	game/KeyGizmoFloat.vc \
 	game/Decoration.vc \
 	game/MaceFX2.vc \
 	game/PodGoo.vc \
 	game/Pawn.vc \
-	game/ItemWeaponSkullRod.vc \
-	game/MinotaurFloorFire2.vc \
-	game/EggMissile.vc \
-	game/ItemAmmoSkullRodHefty.vc \
 	game/MainGameInfo.vc \
-	game/TeleportFog.vc \
-	game/Sorcerer2MissileSpark.vc \
-	game/Artifact.vc \
-	game/ItemWeaponGauntlets.vc \
 	game/SkullHang35.vc \
 	game/StaticLightSource.vc \
-	game/ArtifactFireBomb.vc \
-	game/TeleGlitGen.vc \
 	game/Barrel.vc \
 	game/StalagmiteLarge.vc \
 	game/WeaponGoldWand.vc \
 	game/MummyGhost.vc \
 	game/BurnBallFB.vc \
-	game/ItemAmmoGoldWandWimpy.vc \
 	game/WeaponCrossbow.vc \
-	game/ArtifactTeleport.vc \
 	game/SludgeChunk.vc \
-	game/ItemAmmoPhoenixWimpy.vc \
-	game/Sorcerer2Missile2.vc \
-	game/SnakeProjectileB.vc \
 	game/MummyLeaderGhost.vc \
 	game/HangingCorpse.vc \
-	game/RainPlayer1.vc \
 	game/HereticLevelInfo.vc \
 	game/Key.vc \
 	game/KnightGhost.vc \
 	game/Puffy.vc \
 	game/Pickup.vc \
-	game/ArtifactTorch.vc \
 	game/classes.vc \
 	game/SkullHang70.vc \
 	game/HereticPlayer.vc \
 	game/Projectile.vc \
 	game/Wizard.vc \
-	game/ImpLeader.vc \
 	game/WeaponGauntlets.vc \
-	game/Sorcerer1.vc \
-	game/MinotaurFloorFire.vc \
 	game/QuakeFocus.vc \
 	game/StaffPuff2.vc \
 	game/WeaponBlaster.vc \
@@ -222,149 +296,77 @@ EXTRA_DIST = compile.bat \
 	game/WeaponStaff.vc \
 	game/CrossbowFX3.vc \
 	game/PlayerPawn.vc \
-	game/ArtifactEgg.vc \
 	game/Blood.vc \
 	game/GauntletPuff1.vc \
 	game/BloodSplash.vc \
 	game/SoundWaterfall.vc \
 	game/PhoenixFX1.vc \
 	game/PodGenerator.vc \
-	game/ArtifactFly.vc \
-	game/RainPlayer4.vc \
-	game/ArtifactHealthFlask.vc \
-	game/Sorcerer1Missile.vc \
 	game/LavaSplash.vc \
 	game/Clink.vc \
 	game/SludgeSplash.vc \
-	game/Head.vc \
 	game/BlasterPuff2.vc \
 	game/BurnBall.vc \
 	game/Snake.vc \
 	game/BloodySkull.vc \
-	game/GoldWandMissile2.vc \
 	game/FireBrazier.vc \
-	game/ItemHealthPotion.vc \
 	game/BeastBall.vc \
-	game/ItemShield2.vc \
-	game/HeadMissile2.vc \
-	game/KnightRedAxe.vc \
 	game/StalactiteSmall.vc \
 	game/BlasterPuff1.vc \
 	game/MummyLeader.vc \
-	game/ItemAmmoCrossbowWimpy.vc \
 	game/ChickenPlayer.vc \
 	game/LavaSmoke.vc \
 	game/Pod.vc \
 	game/BeakPuff.vc \
-	game/FireBomb.vc \
 	game/Moss1.vc \
-	game/ArtifactTomeOfPower.vc \
 	game/MaceFX3.vc \
-	game/ItemAmmoMaceHefty.vc \
-	game/TeleportSpot2.vc \
 	game/VolcanoBlast.vc \
-	game/ItemKeyGreen.vc \
 	game/BlasterSmoke.vc \
 	game/Effect.vc \
 	game/BrownPillar.vc \
 	game/LavaInflictor.vc \
-	game/WhirlWind.vc \
 	game/Mummy.vc \
-	game/ArtifactInvulnerability.vc \
-	game/ArtifactSuperHeal.vc \
-	game/GoldWandPuff1.vc \
-	game/ItemKeyYellow.vc \
 	game/Chandelier.vc \
 	game/CrossbowFX1.vc \
 	game/KeyGizmoBlue.vc \
 	game/MapSpotGravity.vc \
-	game/TeleGlitter2.vc \
 	game/CrossbowFX4.vc \
 	game/SmallPillar.vc \
-	game/ItemAmmoBlasterWimpy.vc \
 	game/Feather.vc \
 	game/GauntletPuff2.vc \
 	game/PointPusher.vc \
-	game/GoldWandPuff2.vc \
 	game/Knight.vc \
-	game/Imp.vc \
-	game/ImpBall.vc \
-	game/TeleGlitGen2.vc \
-	game/HeadMissile3.vc \
-	game/RainPlayer2.vc \
-	game/ItemAmmoGoldWandHefty.vc \
 	game/SkullHang45.vc \
 	game/Weapon.vc \
-	game/ItemWeaponCrossbow.vc \
 	game/WeaponPhoenixRod.vc \
-	game/ImpChunk1.vc \
 	game/Moss2.vc \
 	game/StaticRGBLightSource.vc \
-	game/ArtifactInvisibility.vc \
-	game/ItemAmmoSkullRodWimpy.vc \
-	game/Sorcerer2TeleFade.vc \
-	game/ImpChunk2.vc \
-	game/Sorcerer2.vc \
 	game/WeaponSkullRod.vc \
-	game/ItemAmmoBlasterHefty.vc \
-	game/ItemAmmoPhoenixHefty.vc \
-	game/HornRodMissile1.vc \
 	game/MaceFX1.vc \
 	game/StaffPuff.vc \
-	game/GoldWandMissile1.vc \
-	game/ItemMap.vc \
-	game/MummyMissile.vc \
 	game/PhoenixFX2.vc \
-	game/ItemKeyBlue.vc \
 	game/PhoenixPuff.vc \
-	game/ItemWeaponMace.vc \
 	game/SkullHang60.vc \
 	game/WallTorch.vc \
 	game/Ammo.vc \
-	game/ItemWeaponPhoenixRod.vc \
 	game/StalactiteLarge.vc \
 	game/MaceFX4.vc \
 	game/BossSpot.vc \
 	game/PointPuller.vc \
-	game/Sorcerer2Missile1.vc \
 	game/WeaponMace.vc \
-	game/ItemBagOfHolding.vc \
-	game/SnakeProjectileA.vc \
 	game/StalagmiteSmall.vc \
-	game/ItemWeaponBlaster.vc \
 	game/MapSpot.vc \
-	game/Minotaur.vc \
-	game/MinotaurMissile.vc \
 	game/WaterSplashBase.vc \
-	game/TeleportSpot3.vc \
-	game/ItemAmmoCrossbowHefty.vc \
-	game/RainPlayer3.vc \
 	game/KeyGizmoYellow.vc \
 	game/Ripper.vc \
-	game/TeleGlitter.vc \
 	game/Player.vc \
 	game/Volcano.vc \
-	game/WizardMissile.vc \
 	game/WaterSplash.vc \
 	game/BloodSplashBase.vc \
 	game/SlimeChunk.vc \
-	game/TeleportSpot.vc \
 	game/KeyGizmoGreen.vc \
 	game/SlimeSplash.vc \
 	game/CrossbowFX2.vc \
 	game/HereticWorldInfo.vc \
 	game/BotPlayer.vc \
-	game/WeaponPickup.vc \
-	game/SoundSequence.vc \
-	game/SoundSequenceSlot.vc \
-	game/AmbientSoundSequence.vc \
-	game/AmbientSoundSequence1.vc \
-	game/AmbientSoundSequence2.vc \
-	game/AmbientSoundSequence3.vc \
-	game/AmbientSoundSequence4.vc \
-	game/AmbientSoundSequence5.vc \
-	game/AmbientSoundSequence6.vc \
-	game/AmbientSoundSequence7.vc \
-	game/AmbientSoundSequence8.vc \
-	game/AmbientSoundSequence9.vc \
-	game/AmbientSoundSequence10.vc
+	game/WeaponPickup.vc

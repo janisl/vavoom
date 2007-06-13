@@ -35,7 +35,7 @@ class Snake : Pawn
 
 void DropStuff()
 {
-	DropItem(ItemAmmoPhoenixWimpy, 5, 0.328125);
+	DropItem(PhoenixRodAmmo, 5, 0.328125);
 }
 
 //==========================================================================
@@ -53,7 +53,7 @@ final void A_SnakeAttack()
 	}
 	PlaySound(AttackSound, CHAN_WEAPON);
 	A_FaceTarget();
-	SpawnMissile(Target, SnakeProjectileA);
+	SpawnMissile(Target, SnakeProjA);
 }
 
 //==========================================================================
@@ -71,7 +71,7 @@ final void A_SnakeAttack2()
 	}
 	PlaySound(AttackSound, CHAN_WEAPON);
 	A_FaceTarget();
-	SpawnMissile(Target, SnakeProjectileB);
+	SpawnMissile(Target, SnakeProjB);
 }
 
 __states__

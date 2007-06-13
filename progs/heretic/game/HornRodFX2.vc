@@ -1,0 +1,199 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class HornRodFX2 : Projectile;
+
+int RainColour;
+
+//===========================================================================
+//
+//  A_SkullRodPL2Seek
+//
+//===========================================================================
+
+final void A_SkullRodPL2Seek()
+{
+	SeekerMissile(10.0, 30.0);
+}
+
+//===========================================================================
+//
+//  A_AddPlayerRain
+//
+//===========================================================================
+
+final void A_AddPlayerRain()
+{
+	Player player;
+
+	player = Player(Target.Player);
+	if (!player || !player.bActive)
+	{
+		// Player left the game
+		return;
+	}
+	if (player.Health <= 0)
+	{
+		// Player is dead
+		return;
+	}
+	if (player.Rain1 && player.Rain2)
+	{
+		// Terminate an active rain
+		if (player.Rain1.Health < player.Rain2.Health)
+		{
+			if (player.Rain1.Health > 16)
+			{
+				player.Rain1.Health = 16;
+			}
+			player.Rain1 = none;
+		}
+		else
+		{
+			if (player.Rain2.Health > 16)
+			{
+				player.Rain2.Health = 16;
+			}
+			player.Rain2 = none;
+		}
+	}
+	// Add rain mobj to list
+	if (player.Rain1)
+	{
+		player.Rain2 = self;
+	}
+	else
+	{
+		player.Rain1 = self;
+	}
+}
+
+//===========================================================================
+//
+//  A_HideInCeiling
+//
+//===========================================================================
+
+final void A_HideInCeiling()
+{
+	Origin.z = CeilingZ + 4.0;
+}
+
+//===========================================================================
+//
+//  A_SkullRodStorm
+//
+//===========================================================================
+
+final void A_SkullRodStorm()
+{
+	float x;
+	float y;
+	Actor A;
+	Player player;
+	class<Actor> rain_type;
+
+	if (Health-- == 0)
+	{
+		SetState(none);
+		player = Player(Target.Player);
+		if (!player || !player.bActive)
+		{
+			// Player left the game
+			return;
+		}
+		if (player.Health <= 0)
+		{
+			// Player is dead
+			return;
+		}
+		if (player.Rain1 == self)
+		{
+			player.Rain1 = none;
+		}
+		else if (player.Rain2 == self)
+		{
+			player.Rain2 = none;
+		}
+		return;
+	}
+	if (Random() < 0.1)
+	{
+		// Fudge rain frequency
+		return;
+	}
+	x = Origin.x + Random() * 128.0 - 64.0;
+	y = Origin.y + Random() * 128.0 - 64.0;
+	switch (RainColour)
+	{
+	case 0: rain_type = RainPillar; break;
+	case 1: rain_type = RainPlayer2; break;
+	case 2: rain_type = RainPlayer3; break;
+	case 3: rain_type = RainPlayer4; break;
+	}
+	A = Spawn(rain_type, vector(x, y, ONCEILINGZ));
+	if(Sector->bHasExtrafloors && Origin.z <= CeilingZ)
+		A.Origin.z = CeilingZ - A.Height;
+	A.Target = Target;
+	A.Velocity.x = 0.00001;	// Force collision detection
+	A.Velocity.z = -A.Speed;
+	A.CheckMissileSpawn();
+	if (!(Special1 & 31))
+	{
+		PlaySound('weapons/hornrodpowrain', CHAN_VOICE);
+	}
+	Special1++;
+}
+
+__states__
+{
+	S_HRODFX2_1('FX00', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_HRODFX2_2) = none
+	S_HRODFX2_2('FX00', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_HRODFX2_3) = A_SkullRodPL2Seek
+	S_HRODFX2_3('FX00', 4 | FF_FULLBRIGHT, 3.0 / 35.0, S_HRODFX2_4) = none
+	S_HRODFX2_4('FX00', 5 | FF_FULLBRIGHT, 3.0 / 35.0, S_HRODFX2_1) = A_SkullRodPL2Seek
+	S_HRODFXI2_1('FX00', 7 | FF_FULLBRIGHT, 5.0 / 35.0, S_HRODFXI2_2) = A_AddPlayerRain
+	S_HRODFXI2_2('FX00', 8 | FF_FULLBRIGHT, 5.0 / 35.0, S_HRODFXI2_3) = none
+	S_HRODFXI2_3('FX00', 9 | FF_FULLBRIGHT, 4.0 / 35.0, S_HRODFXI2_4) = none
+	S_HRODFXI2_4('FX00', 10 | FF_FULLBRIGHT, 3.0 / 35.0, S_HRODFXI2_5) = none
+	S_HRODFXI2_5('FX00', 11 | FF_FULLBRIGHT, 3.0 / 35.0, S_HRODFXI2_6) = none
+	S_HRODFXI2_6('FX00', 12 | FF_FULLBRIGHT, 3.0 / 35.0, S_HRODFXI2_7) = none
+	S_HRODFXI2_7('FX00', 6, 1.0 / 35.0, S_HRODFXI2_8) = A_HideInCeiling
+	S_HRODFXI2_8('FX00', 6, 1.0 / 35.0, S_HRODFXI2_8) = A_SkullRodStorm
+}
+
+defaultproperties
+{
+	Health = 140;
+	Radius = 12.0;
+	Height = 8.0;
+	Speed = 770.0;
+	MissileDamage = 10;
+	bActivateImpact = true;
+	IdleState = S_HRODFX2_1;
+	DeathState = S_HRODFXI2_1;
+	SightSound = 'weapons/hornrodshoot';
+	DeathSound = 'weapons/hornrodpowhit';
+	Effects = HereticDefs::EF_DL_RED;
+}

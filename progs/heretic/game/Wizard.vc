@@ -35,8 +35,8 @@ class Wizard : Pawn
 
 void DropStuff()
 {
-	DropItem(ItemAmmoBlasterWimpy, 10, 0.328125);
-	DropItem(ArtifactTomeOfPower, 0, 0.015625);
+	DropItem(BlasterAmmo, 10, 0.328125);
+	DropItem(ArtiTomeOfPower, 0, 0.015625);
 }
 
 //==========================================================================
@@ -86,14 +86,14 @@ final void A_WizAtk3()
 		Target.Damage(self, self, HITDICE(4));
 		return;
 	}
-	A = SpawnMissile(Target, WizardMissile);
+	A = SpawnMissile(Target, WizardFX1);
 	if (A)
 	{
 		VectorAngles(&A.Velocity, &ang);
 		angle = A.Angles.yaw;
-		SpawnMissileAngles(WizardMissile,
+		SpawnMissileAngles(WizardFX1,
 			AngleMod360(angle - (45.0 / 8.0)), ang.pitch);
-		SpawnMissileAngles(WizardMissile,
+		SpawnMissileAngles(WizardFX1,
 			AngleMod360(angle + (45.0 / 8.0)), ang.pitch);
 	}
 }

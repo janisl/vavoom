@@ -35,7 +35,7 @@ class Knight : Pawn
 
 void DropStuff()
 {
-	DropItem(ItemAmmoCrossbowWimpy, 5, 0.328125);
+	DropItem(CrossbowAmmo, 5, 0.328125);
 }
 
 //==========================================================================
@@ -61,7 +61,7 @@ final void A_KnightAttack()
 	if (Class == KnightGhost || Random() < 0.15625)
 	{
 		// Red axe
-		SpawnMissile(Target, KnightRedAxe);
+		SpawnMissile(Target, RedAxe);
 		return;
 	}
 	// Green axe

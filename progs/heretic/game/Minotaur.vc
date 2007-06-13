@@ -41,8 +41,8 @@ state FloorFireAttackState2;
 
 void DropStuff()
 {
-	DropItem(ArtifactSuperHeal, 0, 0.19921875);
-	DropItem(ItemAmmoPhoenixWimpy, 10, 0.328125);
+	DropItem(ArtiSuperHealth, 0, 0.19921875);
+	DropItem(PhoenixRodAmmo, 10, 0.328125);
 }
 
 //==========================================================================
@@ -141,19 +141,19 @@ final void A_MinotaurAtk2()
 		Target.Damage(self, self, HITDICE(5));
 		return;
 	}
-	A = SpawnMissile(Target, MinotaurMissile);
+	A = SpawnMissile(Target, MinotaurFX1);
 	if (A)
 	{
 		A.PlaySound('minotaur/attack2', CHAN_WEAPON);
 		VectorAngles(&A.Velocity, &ang);
 		angle = A.Angles.yaw;
-		SpawnMissileAngles(MinotaurMissile,
+		SpawnMissileAngles(MinotaurFX1,
 			AngleMod360(angle - (45.0 / 8.0)), ang.pitch);
-		SpawnMissileAngles(MinotaurMissile,
+		SpawnMissileAngles(MinotaurFX1,
 			AngleMod360(angle + (45.0 / 8.0)), ang.pitch);
-		SpawnMissileAngles(MinotaurMissile,
+		SpawnMissileAngles(MinotaurFX1,
 			AngleMod360(angle - (45.0 / 16.0)), ang.pitch);
-		SpawnMissileAngles(MinotaurMissile,
+		SpawnMissileAngles(MinotaurFX1,
 			AngleMod360(angle + (45.0 / 16.0)), ang.pitch);
 	}
 }
@@ -186,7 +186,7 @@ final void A_MinotaurAtk3()
 	}
 	else
 	{
-		A = SpawnMissile(Target, MinotaurFloorFire);
+		A = SpawnMissile(Target, MinotaurFX2);
 		if (A != none)
 		{
 			A.PlaySound('minotaur/attack1', CHAN_VOICE);

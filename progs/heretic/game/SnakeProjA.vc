@@ -1,0 +1,65 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class SnakeProjA : Projectile
+	__scriptid__(138);
+
+//==========================================================================
+//
+//  OnMapSpawn
+//
+//==========================================================================
+
+void OnMapSpawn(mthing_t* mthing)
+{
+	::OnMapSpawn(mthing);
+	if (Level.Game.fastparm)
+		Speed = 700.0;
+}
+
+__states__
+{
+	S_SNAKEPRO_A1('SNFX', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_SNAKEPRO_A2) = none
+	S_SNAKEPRO_A2('SNFX', 1 | FF_FULLBRIGHT, 5.0 / 35.0, S_SNAKEPRO_A3) = none
+	S_SNAKEPRO_A3('SNFX', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_SNAKEPRO_A4) = none
+	S_SNAKEPRO_A4('SNFX', 3 | FF_FULLBRIGHT, 5.0 / 35.0, S_SNAKEPRO_A1) = none
+	S_SNAKEPRO_AX1('SNFX', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_SNAKEPRO_AX2) = none
+	S_SNAKEPRO_AX2('SNFX', 5 | FF_FULLBRIGHT, 5.0 / 35.0, S_SNAKEPRO_AX3) = none
+	S_SNAKEPRO_AX3('SNFX', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_SNAKEPRO_AX4) = none
+	S_SNAKEPRO_AX4('SNFX', 7 | FF_FULLBRIGHT, 3.0 / 35.0, S_SNAKEPRO_AX5) = none
+	S_SNAKEPRO_AX5('SNFX', 8 | FF_FULLBRIGHT, 3.0 / 35.0, none) = none
+}
+
+defaultproperties
+{
+	Radius = 12.0;
+	Height = 8.0;
+	Speed = 490.0;
+	MissileDamage = 1;
+	bWindThrust = true;
+	IdleState = S_SNAKEPRO_A1;
+	DeathState = S_SNAKEPRO_AX1;
+	Effects = HereticDefs::EF_DL_MAGENTA;
+}
