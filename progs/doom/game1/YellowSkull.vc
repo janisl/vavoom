@@ -1,0 +1,45 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class YellowSkull : KeyPickup
+	__mobjinfo__(39)
+	__scriptid__(88);
+
+__states__
+{
+	S_YSKULL('YSKU', 0, 10.0 / 35.0, S_YSKULL2) = none
+	S_YSKULL2('YSKU', 1 | FF_FULLBRIGHT, 10.0 / 35.0, S_YSKULL) = none
+}
+
+defaultproperties
+{
+	bSpecial = true;
+	bNoPassMobj = true;
+	bNoDeathmatch = true;
+	bFloorClip = true;
+	IdleState = S_YSKULL;
+	KeyType = it_yellowskull;
+	PickupMessage = "$gotyelwskul";
+}

@@ -1,0 +1,65 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class Megasphere : Actor
+	__mobjinfo__(83)
+	__scriptid__(132);
+
+const int MEGASPHERE_HEALTH		= 200;
+
+//==========================================================================
+//
+//	HandlePickup
+//
+//==========================================================================
+
+bool HandlePickup(Actor Toucher)
+{
+	Toucher.Player.Health = MEGASPHERE_HEALTH;
+	Toucher.Health = Toucher.Player.Health;
+	Player(Toucher.Player).GiveArmor(2);
+	Toucher.Player.cprint(PickupMessage);
+	Toucher.PlaySound('misc/p_pkup', CHAN_ITEM);
+	return true;
+}
+
+__states__
+{
+	S_MEGA('MEGA', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_MEGA2) = none
+	S_MEGA2('MEGA', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_MEGA3) = none
+	S_MEGA3('MEGA', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_MEGA4) = none
+	S_MEGA4('MEGA', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_MEGA) = none
+}
+
+defaultproperties
+{
+	Alpha = 0.666;
+	bSpecial = true;
+	bNoPassMobj = true;
+	bCountItem = true;
+	bFloorClip = true;
+	IdleState = S_MEGA;
+	PickupMessage = "$gotmsphere";
+}

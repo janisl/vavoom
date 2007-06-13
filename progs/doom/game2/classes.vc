@@ -23,13 +23,13 @@
 //**
 //**************************************************************************
 
-#include "ItemMegaSphere.vc"
-#include "ItemWeaponSuperShotgun.vc"
+#include "Megasphere.vc"
+#include "SuperShotgun.vc"
 
 #include "WeaponSuperShotgun.vc"
 
 #include "ChaingunGuy.vc"
-#include "WolfSS.vc"
+#include "WolfensteinSS.vc"
 #include "HellKnight.vc"
 #include "ArachnotronPlasma.vc"
 #include "Arachnotron.vc"
@@ -37,10 +37,10 @@
 #include "RevenantTracerSmoke.vc"
 #include "RevenantTracer.vc"
 #include "Revenant.vc"
-#include "MancubusMissile.vc"
-#include "Mancubus.vc"
+#include "FatShot.vc"
+#include "Fatso.vc"
 #include "ArchvileFire.vc"
-#include "ArchVile.vc"
+#include "Archvile.vc"
 #include "BossTarget.vc"
 #include "SpawnFire.vc"
 #include "SpawnShot.vc"

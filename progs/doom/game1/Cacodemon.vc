@@ -51,7 +51,7 @@ final void A_HeadAttack()
 	}
 
 	// launch a missile
-	SpawnMissile(Target, CacodemonMissile);
+	SpawnMissile(Target, CacodemonBall);
 }
 
 __states__

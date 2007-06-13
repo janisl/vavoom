@@ -51,7 +51,7 @@ final void A_BruisAttack()
 	}
 
 	// launch a missile
-	SpawnMissile(Target, BruiserShot);
+	SpawnMissile(Target, BaronBall);
 }
 
 __states__
@@ -102,7 +102,7 @@ defaultproperties
 	bActivateMCross = true;
 	bActivatePushWall = true;
 	bFloorClip = true;
-	ImuneMissileType = BruiserShot;
+	ImuneMissileType = BaronBall;
 	IdleState = S_BOSS_STND;
 	SeeState = S_BOSS_RUN1;
 	MeleeState = S_BOSS_ATK1;
