@@ -1,0 +1,68 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class SorcFX4 : Projectile;
+
+//============================================================================
+//
+//  A_SorcFX4Check
+//
+//  FX4 - rapid fire balls
+//
+//============================================================================
+
+final void A_SorcFX4Check()
+{
+	if (_Special2-- <= 0)
+	{
+		SetState(DeathState);
+	}
+}
+
+__states__
+{
+	S_SORCFX4_1('SBS4', 0 | FF_FULLBRIGHT, 2.0 / 35.0, S_SORCFX4_2) = A_SorcFX4Check
+	S_SORCFX4_2('SBS4', 1 | FF_FULLBRIGHT, 2.0 / 35.0, S_SORCFX4_3) = A_SorcFX4Check
+	S_SORCFX4_3('SBS4', 2 | FF_FULLBRIGHT, 2.0 / 35.0, S_SORCFX4_1) = A_SorcFX4Check
+	S_SORCFX4_D1('SBS4', 3 | FF_FULLBRIGHT, 2.0 / 35.0, S_SORCFX4_D2) = none
+	S_SORCFX4_D2('SBS4', 4 | FF_FULLBRIGHT, 2.0 / 35.0, S_SORCFX4_D3) = A_Explode
+	S_SORCFX4_D3('SBS4', 5 | FF_FULLBRIGHT, 2.0 / 35.0, S_SORCFX4_D4) = none
+	S_SORCFX4_D4('SBS4', 6 | FF_FULLBRIGHT, 2.0 / 35.0, S_SORCFX4_D5) = none
+	S_SORCFX4_D5('SBS4', 7 | FF_FULLBRIGHT, 2.0 / 35.0, none) = none
+}
+
+defaultproperties
+{
+	Radius = 10.0;
+	Height = 10.0;
+	Speed = 420.0;
+	bDropOff = false;
+	bActivateImpact = false;
+	bActivatePCross = false;
+	IdleState = S_SORCFX4_1;
+	DeathState = S_SORCFX4_D1;
+	DeathSound = 'SorcererBallExplode';
+	Effects = HexenDefs::EF_DL_WHITE;
+}

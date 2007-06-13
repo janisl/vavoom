@@ -37,15 +37,11 @@ final void A_FighterAttack()
 	if (!Target)
 		return;
 
-	SpawnMissileAngle(FighterSwordMissile,
-		AngleMod360(Angles.yaw + 45.0 / 4.0), 0.0);
-	SpawnMissileAngle(FighterSwordMissile,
-		AngleMod360(Angles.yaw + 45.0 / 8.0), 0.0);
-	SpawnMissileAngle(FighterSwordMissile, Angles.yaw, 0.0);
-	SpawnMissileAngle(FighterSwordMissile,
-		AngleMod360(Angles.yaw - 45.0 / 8.0), 0.0);
-	SpawnMissileAngle(FighterSwordMissile,
-		AngleMod360(Angles.yaw - 45.0 / 4.0), 0.0);
+	SpawnMissileAngle(FSwordMissile, AngleMod360(Angles.yaw + 45.0 / 4.0), 0.0);
+	SpawnMissileAngle(FSwordMissile, AngleMod360(Angles.yaw + 45.0 / 8.0), 0.0);
+	SpawnMissileAngle(FSwordMissile, Angles.yaw, 0.0);
+	SpawnMissileAngle(FSwordMissile, AngleMod360(Angles.yaw - 45.0 / 8.0), 0.0);
+	SpawnMissileAngle(FSwordMissile, AngleMod360(Angles.yaw - 45.0 / 4.0), 0.0);
 	PlaySound('FighterSwordFire', CHAN_WEAPON);
 }
 

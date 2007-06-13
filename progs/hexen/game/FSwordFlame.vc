@@ -1,0 +1,46 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class FSwordFlame : Effect;
+
+__states__
+{
+	S_FSWORD_FLAME1('FSFX', 13 | FF_FULLBRIGHT, 3.0 / 35.0, S_FSWORD_FLAME2) = none
+	S_FSWORD_FLAME2('FSFX', 14 | FF_FULLBRIGHT, 3.0 / 35.0, S_FSWORD_FLAME3) = none
+	S_FSWORD_FLAME3('FSFX', 15 | FF_FULLBRIGHT, 3.0 / 35.0, S_FSWORD_FLAME4) = none
+	S_FSWORD_FLAME4('FSFX', 16 | FF_FULLBRIGHT, 3.0 / 35.0, S_FSWORD_FLAME5) = none
+	S_FSWORD_FLAME5('FSFX', 17 | FF_FULLBRIGHT, 3.0 / 35.0, S_FSWORD_FLAME6) = none
+	S_FSWORD_FLAME6('FSFX', 18 | FF_FULLBRIGHT, 3.0 / 35.0, S_FSWORD_FLAME7) = none
+	S_FSWORD_FLAME7('FSFX', 19 | FF_FULLBRIGHT, 3.0 / 35.0, S_FSWORD_FLAME8) = none
+	S_FSWORD_FLAME8('FSFX', 20 | FF_FULLBRIGHT, 3.0 / 35.0, S_FSWORD_FLAME9) = none
+	S_FSWORD_FLAME9('FSFX', 21 | FF_FULLBRIGHT, 3.0 / 35.0, S_FSWORD_FLAME10) = none
+	S_FSWORD_FLAME10('FSFX', 22 | FF_FULLBRIGHT, 3.0 / 35.0, none) = none
+}
+
+defaultproperties
+{
+	Alpha = 0.333;
+	IdleState = S_FSWORD_FLAME1;
+}

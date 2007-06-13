@@ -1,0 +1,77 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class MagePlayer : PlayerPawn;
+
+__states__
+{
+	S_MPLAY('MAGE', 0, -1.0, none) = none
+	S_MPLAY_RUN1('MAGE', 0, 4.0 / 35.0, S_MPLAY_RUN2) = none
+	S_MPLAY_RUN2('MAGE', 1, 4.0 / 35.0, S_MPLAY_RUN3) = none
+	S_MPLAY_RUN3('MAGE', 2, 4.0 / 35.0, S_MPLAY_RUN4) = none
+	S_MPLAY_RUN4('MAGE', 3, 4.0 / 35.0, S_MPLAY_RUN1) = none
+	S_MPLAY_ATK1('MAGE', 4, 8.0 / 35.0, S_MPLAY_ATK2) = none
+	S_MPLAY_ATK2('MAGE', 5 | FF_FULLBRIGHT, 8.0 / 35.0, S_MPLAY) = none
+	S_MPLAY_PAIN('MAGE', 6, 4.0 / 35.0, S_MPLAY_PAIN2) = none
+	S_MPLAY_PAIN2('MAGE', 6, 4.0 / 35.0, S_MPLAY) = A_Pain
+	S_MPLAY_DIE1('MAGE', 7, 6.0 / 35.0, S_MPLAY_DIE2) = none
+	S_MPLAY_DIE2('MAGE', 8, 6.0 / 35.0, S_MPLAY_DIE3) = A_Scream
+	S_MPLAY_DIE3('MAGE', 9, 6.0 / 35.0, S_MPLAY_DIE4) = none
+	S_MPLAY_DIE4('MAGE', 10, 6.0 / 35.0, S_MPLAY_DIE5) = none
+	S_MPLAY_DIE5('MAGE', 11, 6.0 / 35.0, S_MPLAY_DIE6) = A_NoBlocking
+	S_MPLAY_DIE6('MAGE', 12, 6.0 / 35.0, S_MPLAY_DIE7) = none
+	S_MPLAY_DIE7('MAGE', 13, -1.0, none) = A_AddPlayerCorpse
+	S_MPLAY_XDIE1('MAGE', 14, 5.0 / 35.0, S_MPLAY_XDIE2) = A_Scream
+	S_MPLAY_XDIE2('MAGE', 15, 5.0 / 35.0, S_MPLAY_XDIE3) = none
+	S_MPLAY_XDIE3('MAGE', 17, 5.0 / 35.0, S_MPLAY_XDIE4) = A_NoBlocking
+	S_MPLAY_XDIE4('MAGE', 18, 5.0 / 35.0, S_MPLAY_XDIE5) = none
+	S_MPLAY_XDIE5('MAGE', 19, 5.0 / 35.0, S_MPLAY_XDIE6) = none
+	S_MPLAY_XDIE6('MAGE', 20, 5.0 / 35.0, S_MPLAY_XDIE7) = none
+	S_MPLAY_XDIE7('MAGE', 21, 5.0 / 35.0, S_MPLAY_XDIE8) = none
+	S_MPLAY_XDIE8('MAGE', 22, 5.0 / 35.0, S_MPLAY_XDIE9) = none
+	S_MPLAY_XDIE9('MAGE', 23, -1.0, none) = A_AddPlayerCorpse
+	S_MPLAY_ICE('MAGE', 24, 5.0 / 35.0, S_MPLAY_ICE2) = A_FreezeDeath
+	S_MPLAY_ICE2('MAGE', 24, 1.0 / 35.0, S_MPLAY_ICE2) = A_FreezeDeathChunks
+}
+
+defaultproperties
+{
+	Health = 100;
+	GibsHealth = -50;
+	Radius = 16.0;
+	Height = 64.0;
+	PainChance = 1.0;
+	bPickUp = true;
+	IdleState = S_MPLAY;
+	SeeState = S_MPLAY_RUN1;
+	MissileState = S_MPLAY_ATK1;
+	AttackEndState = S_MPLAY_ATK2;
+	PainState = S_MPLAY_PAIN;
+	DeathState = S_MPLAY_DIE1;
+	GibsDeathState = S_MPLAY_XDIE1;
+	IceDeathState = S_MPLAY_ICE;
+	PainSound = 'PlayerMagePain';
+	SoundClass = 'mage';
+}

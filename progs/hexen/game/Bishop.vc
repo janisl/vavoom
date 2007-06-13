@@ -156,7 +156,7 @@ final void A_BishopAttack2()
 		SetState(SeeState);
 		return;
 	}
-	mo = SpawnMissile(Target, BishopMissile);
+	mo = SpawnMissile(Target, BishopFX);
 	if (mo)
 	{
 		mo.Tracer = Target;

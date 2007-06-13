@@ -1,0 +1,94 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class SorcFX3 : Projectile;
+
+//============================================================================
+//
+//  A_SorcererBishopEntry
+//
+//============================================================================
+
+final void A_SorcererBishopEntry()
+{
+	Spawn(SorcFX3Explosion, Origin);
+	PlaySound(SightSound, CHAN_VOICE);
+}
+
+//============================================================================
+//
+//  A_SpawnBishop
+//
+//  Green spell - spawn bishops
+//
+//============================================================================
+
+final void A_SpawnBishop()
+{
+	Actor A;
+
+	A = Spawn(Bishop, Origin);
+	if (A)
+	{
+		if (!A.TestLocation())
+		{
+			A.SetState(none);
+		}
+	}
+	SetState(none);
+}
+
+__states__
+{
+	S_SORCFX3_1('SBS3', 0 | FF_FULLBRIGHT, 2.0 / 35.0, S_SORCFX3_2) = none
+	S_SORCFX3_2('SBS3', 1 | FF_FULLBRIGHT, 2.0 / 35.0, S_SORCFX3_3) = none
+	S_SORCFX3_3('SBS3', 2 | FF_FULLBRIGHT, 2.0 / 35.0, S_SORCFX3_1) = none
+	S_BISHMORPH1('SBS3', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_BISHMORPHA) = none
+	S_BISHMORPHA('BISH', 15, 4.0 / 35.0, S_BISHMORPHB) = A_SorcererBishopEntry
+	S_BISHMORPHB('BISH', 14, 4.0 / 35.0, S_BISHMORPHC) = none
+	S_BISHMORPHC('BISH', 13, 4.0 / 35.0, S_BISHMORPHD) = none
+	S_BISHMORPHD('BISH', 12, 3.0 / 35.0, S_BISHMORPHE) = none
+	S_BISHMORPHE('BISH', 11, 3.0 / 35.0, S_BISHMORPHF) = none
+	S_BISHMORPHF('BISH', 10, 3.0 / 35.0, S_BISHMORPHG) = none
+	S_BISHMORPHG('BISH', 9, 3.0 / 35.0, S_BISHMORPHH) = none
+	S_BISHMORPHH('BISH', 8, 3.0 / 35.0, S_BISHMORPHI) = none
+	S_BISHMORPHI('BISH', 7, 3.0 / 35.0, S_BISHMORPHJ) = none
+	S_BISHMORPHJ('BISH', 6, 3.0 / 35.0, none) = A_SpawnBishop
+}
+
+defaultproperties
+{
+	Radius = 22.0;
+	Height = 65.0;
+	Speed = 525.0;
+	bDropOff = false;
+	bNoGravity = false;
+	bActivateImpact = false;
+	bActivatePCross = false;
+	IdleState = S_SORCFX3_1;
+	DeathState = S_BISHMORPH1;
+	SightSound = 'SorcererBishopSpawn';
+	Effects = HexenDefs::EF_DL_WHITE;
+}

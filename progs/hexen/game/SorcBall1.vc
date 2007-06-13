@@ -1,0 +1,122 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class SorcBall1 : SorcBall;
+
+//============================================================================
+//
+//  A_SorcOffense1
+//
+//  Actor is ball.
+//
+//============================================================================
+
+final void A_SorcOffense1()
+{
+	Actor mo;
+	float ang1, ang2;
+
+	ang1 = AngleMod360(Angles.yaw + 70.0);
+	ang2 = AngleMod360(Angles.yaw - 70.0);
+	mo = Target.SpawnMissileAngle(SorcFX1, ang1, 0.0);
+	if (mo)
+	{
+		mo.Target = Target;
+		mo.Tracer = Target.Target;
+		mo.Args[4] = Heresiarch::BOUNCE_TIME_UNIT;
+		mo.Args[3] = 15;	// Bounce time in seconds
+	}
+	mo = Target.SpawnMissileAngle(SorcFX1, ang2, 0.0);
+	if (mo)
+	{
+		mo.Target = Target;
+		mo.Tracer = Target.Target;
+		mo.Args[4] = Heresiarch::BOUNCE_TIME_UNIT;
+		mo.Args[3] = 15;	// Bounce time in seconds
+	}
+}
+
+//============================================================================
+//
+//  A_CastSorcererSpell
+//
+//  Actor is ball.
+//
+//============================================================================
+
+void A_CastSorcererSpell()
+{
+	if (P_Random() < 200)
+	{
+		_Special2 = Heresiarch::SORCFX4_RAPIDFIRE_TIME;
+		Args[4] = 128;
+		Target.Args[3] = Heresiarch::SORC_FIRING_SPELL;
+		return;
+	}
+
+	// Put sorcerer into throw spell animation
+	if (Target.Health > 0)
+		Target.SetState(Heresiarch::S_SORC_ATTACK4);
+
+	// Offensive
+	A_SorcOffense1();
+
+	Target.Args[3] = Heresiarch::SORC_STOPPED;
+}
+
+__states__
+{
+	S_SORCBALL1_1('SBMP', 0, 2.0 / 35.0, S_SORCBALL1_2) = A_SorcBallOrbit
+	S_SORCBALL1_2('SBMP', 1, 2.0 / 35.0, S_SORCBALL1_3) = A_SorcBallOrbit
+	S_SORCBALL1_3('SBMP', 2, 2.0 / 35.0, S_SORCBALL1_4) = A_SorcBallOrbit
+	S_SORCBALL1_4('SBMP', 3, 2.0 / 35.0, S_SORCBALL1_5) = A_SorcBallOrbit
+	S_SORCBALL1_5('SBMP', 4, 2.0 / 35.0, S_SORCBALL1_6) = A_SorcBallOrbit
+	S_SORCBALL1_6('SBMP', 5, 2.0 / 35.0, S_SORCBALL1_7) = A_SorcBallOrbit
+	S_SORCBALL1_7('SBMP', 6, 2.0 / 35.0, S_SORCBALL1_8) = A_SorcBallOrbit
+	S_SORCBALL1_8('SBMP', 7, 2.0 / 35.0, S_SORCBALL1_9) = A_SorcBallOrbit
+	S_SORCBALL1_9('SBMP', 8, 2.0 / 35.0, S_SORCBALL1_0) = A_SorcBallOrbit
+	S_SORCBALL1_0('SBMP', 9, 2.0 / 35.0, S_SORCBALL1_A) = A_SorcBallOrbit
+	S_SORCBALL1_A('SBMP', 10, 2.0 / 35.0, S_SORCBALL1_B) = A_SorcBallOrbit
+	S_SORCBALL1_B('SBMP', 11, 2.0 / 35.0, S_SORCBALL1_C) = A_SorcBallOrbit
+	S_SORCBALL1_C('SBMP', 12, 2.0 / 35.0, S_SORCBALL1_D) = A_SorcBallOrbit
+	S_SORCBALL1_D('SBMP', 13, 2.0 / 35.0, S_SORCBALL1_E) = A_SorcBallOrbit
+	S_SORCBALL1_E('SBMP', 14, 2.0 / 35.0, S_SORCBALL1_F) = A_SorcBallOrbit
+	S_SORCBALL1_F('SBMP', 15, 2.0 / 35.0, S_SORCBALL1_1) = A_SorcBallOrbit
+	S_SORCBALL1_D1('SBMP', 0, 5.0 / 35.0, S_SORCBALL1_D2) = A_SorcBallPop
+	S_SORCBALL1_D2('SBMP', 1, 2.0 / 35.0, S_SORCBALL1_D2) = A_BounceCheck
+	S_SORCBALL1_D5('SBS4', 3, 5.0 / 35.0, S_SORCBALL1_D6) = A_Explode
+	S_SORCBALL1_D6('SBS4', 4, 5.0 / 35.0, S_SORCBALL1_D7) = none
+	S_SORCBALL1_D7('SBS4', 5, 6.0 / 35.0, S_SORCBALL1_D8) = none
+	S_SORCBALL1_D8('SBS4', 6, 6.0 / 35.0, S_SORCBALL1_D9) = none
+	S_SORCBALL1_D9('SBS4', 7, 6.0 / 35.0, none) = none
+}
+
+defaultproperties
+{
+	IdleState = S_SORCBALL1_1;
+	PainState = S_SORCBALL1_D1;
+	DeathState = S_SORCBALL1_D5;
+	BallAngleOffset = 0.0;
+}

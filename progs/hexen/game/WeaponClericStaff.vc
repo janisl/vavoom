@@ -80,7 +80,7 @@ final void A_CStaffCheck()
 		if (pmo.linetarget)
 		{
 			AngleVector(&angles, &vforward);
-			pmo.LineAttack(vforward, 1.5 * Actor::MELEERANGE, damage, ClericStaffPuff);
+			pmo.LineAttack(vforward, 1.5 * Actor::MELEERANGE, damage, CStaffPuff);
 			pmo.Angles.yaw = atan2(pmo.linetarget.Origin.y - pmo.Origin.y,
 				pmo.linetarget.Origin.x - pmo.Origin.x);
 			if ((pmo.linetarget.bIsPlayer || pmo.linetarget.bCountKill) &&
@@ -102,7 +102,7 @@ final void A_CStaffCheck()
 		if (pmo.linetarget)
 		{
 			AngleVector(&angles, &vforward);
-			pmo.LineAttack(vforward, 1.5 * Actor::MELEERANGE, damage, ClericStaffPuff);
+			pmo.LineAttack(vforward, 1.5 * Actor::MELEERANGE, damage, CStaffPuff);
 			pmo.Angles.yaw = atan2(pmo.linetarget.Origin.y - pmo.Origin.y,
 				pmo.linetarget.Origin.x - pmo.Origin.x);
 			if (pmo.linetarget.bIsPlayer || pmo.linetarget.bCountKill)
@@ -134,17 +134,17 @@ final void A_CStaffAttack()
 	Player(Owner.Player).Mana[HexenDefs::MANA_1] -=
 		WeaponManaUse(Owner.Player.PClass, Player(Owner.Player).ReadyWeapon);
 	playPawn = PlayerPawn(Owner);
-	mo = Player(Owner.Player).SpawnPlayerMissileAngle(ClericStaffMissile,
+	mo = Player(Owner.Player).SpawnPlayerMissileAngle(CStaffMissile,
 		playPawn.Angles.yaw - (45.0 / 15.0));
 	if (mo)
 	{
-		ClericStaffMissile(mo).WeaveXY = 32;
+		CStaffMissile(mo).WeaveXY = 32;
 	}
-	mo = Player(Owner.Player).SpawnPlayerMissileAngle(ClericStaffMissile,
+	mo = Player(Owner.Player).SpawnPlayerMissileAngle(CStaffMissile,
 		playPawn.Angles.yaw + (45.0 / 15.0));
 	if (mo)
 	{
-		ClericStaffMissile(mo).WeaveXY = 0;
+		CStaffMissile(mo).WeaveXY = 0;
 	}
 	playPawn.PlaySound('ClericCStaffFire', CHAN_WEAPON);
 }

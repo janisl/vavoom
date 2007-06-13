@@ -259,7 +259,7 @@ void ThingDamage(int Amount)
 
 bool IsTeleportSpot()
 {
-	return !!TeleportSpot(self);
+	return !!TeleportDest(self);
 }
 
 //===========================================================================
@@ -270,7 +270,7 @@ bool IsTeleportSpot()
 
 bool IsTeleportSpot2()
 {
-	return !!TeleportSpot2(self);
+	return !!TeleportDest2(self);
 }
 
 //===========================================================================
@@ -458,8 +458,8 @@ void OnMapSpawn(mthing_t * mthing)
 	if (!bMissile)
 	{
 		bCheckLineBlocking = true;
-		if (Class != PlayerFighter && Class != PlayerCleric &&
-			Class != PlayerMage && Class != PlayerPig)
+		if (Class != FighterPlayer && Class != ClericPlayer &&
+			Class != MagePlayer && Class != PigPlayer)
 		{
 			bCheckLineBlockMonsters = true;
 		}
@@ -797,9 +797,9 @@ void MonsterFallingDamage()
 
 Actor ActiveMinotaur()
 {
-	Minotaur mo;
+	MinotaurFriend mo;
 
-	foreach AllThinkers(Minotaur, mo)
+	foreach AllThinkers(MinotaurFriend, mo)
 	{
 		if (mo.Health <= 0)
 			continue;
@@ -836,7 +836,7 @@ void Died(Actor source)
 	if ((bCountKill || Class == ZBell) && Special)
 	{
 		// Initiate monster death actions
-		if (Class == Sorcerer)
+		if (Class == Heresiarch)
 		{
 			XLevel.StartACS(Special, 0, 0, 0, 0, self, NULL, 0, false, false);
 		}
@@ -1028,7 +1028,7 @@ bool MorphPlayer()
 	fog = Spawn(TeleportFog, Origin + vector(0.0, 0.0, TELEFOGHEIGHT));
 	fog.PlaySound('Teleport', CHAN_VOICE);
 
-	beastMo = Spawn(PlayerPig, Origin);
+	beastMo = Spawn(PigPlayer, Origin);
 	beastMo._Special1 = Player(Player).ReadyWeapon;
 	beastMo.Angles = Angles;
 	beastMo.Player = Player;
@@ -1350,7 +1350,7 @@ void Damage(Actor inflictor, Actor source, int damage)
 				bIceDamage = true;
 			}
 		}
-		if (Minotaur(source))
+		if (MinotaurFriend(source))
 		{
 			// Minotaur's kills go to his master
 			master = source.Tracer;
@@ -1421,7 +1421,7 @@ void Damage(Actor inflictor, Actor source, int damage)
 	}
 	Pawn(self).ReactionCount = 0;	// we're awake now...
 	if (!Pawn(self).Threshold && source && !source.bBoss &&
-		!(Class == Bishop) && !(Class == Minotaur))
+		!(Class == Bishop) && !(Class == MinotaurFriend))
 	{
 		// Target actor is not intent on another actor,
 		// so make him chase after source
@@ -1807,7 +1807,7 @@ bool Touch(Entity InOther)
 	// Check for skulls slamming into things
 	if (bSkullFly)
 	{
-		if (Class == Minotaur)
+		if (Class == MinotaurFriend)
 		{
 			// Slamming minotaurs shouldn't move non-creatures
 			if (!Other.bCountKill)
@@ -1910,11 +1910,11 @@ bool Touch(Entity InOther)
 		{
 			if (!Other.bNoBlood && !Other.bReflective &&
 				!Other.bInvulnerable &&
-				!(Class == TeleportOtherFX1) &&
-				!(Class == TeleportOtherFX2) &&
-				!(Class == TeleportOtherFX3) &&
-				!(Class == TeleportOtherFX4) &&
-				!(Class == TeleportOtherFX5) && (P_Random() < 192))
+				!(Class == TelOtherFX1) &&
+				!(Class == TelOtherFX2) &&
+				!(Class == TelOtherFX3) &&
+				!(Class == TelOtherFX4) &&
+				!(Class == TelOtherFX5) && (P_Random() < 192))
 			{
 				Other.SpawnBloodSplatter(Origin);
 			}
@@ -2269,7 +2269,7 @@ void HitLine(tmtrace_t* tmtrace)
 		{
 			// Struck a wall
 			BounceWall(1.5);
-			if (!SorcererBall(self) && !SorcererFX1(self))
+			if (!SorcBall(self) && !SorcFX1(self))
 			{
 				if (SightSound)
 				{
@@ -2288,7 +2288,7 @@ void HitLine(tmtrace_t* tmtrace)
 			{
 				Velocity = vector(0.0, 0.0, -1.0 * 35.0);
 			}
-			else if (Class == HolyFX)
+			else if (Class == HolySpirit)
 			{
 				ExplodeMissile();
 			}
@@ -2438,7 +2438,7 @@ bool HitFloor()
 			FloorBounceMissile();
 			return true;
 		}
-		else if (Class == HolyFX)
+		else if (Class == HolySpirit)
 		{
 			// The spirit struck the ground
 			Velocity.z = 0.0;
@@ -2567,7 +2567,7 @@ bool HitCeiling()
 			{
 				Velocity = vector(0.0, 0.0, -1.0 * 35.0);
 			}
-			else if (Class == HolyFX)
+			else if (Class == HolySpirit)
 			{
 				return ExplodeMissile();
 			}
@@ -2774,7 +2774,7 @@ bool BlasterPhysics(float DeltaTime)
 					{
 						z = FloorZ;
 					}
-					A = Spawn(ClericFlameFloor, vector(Origin.x, Origin.y, z));
+					A = Spawn(CFlameFloor, vector(Origin.x, Origin.y, z));
 					if (A)
 					{
 						A.Angles.yaw = Angles.yaw;
@@ -3280,17 +3280,17 @@ Actor SpawnMissileAngle(class<Actor> type, float angle, float momz)
 	Actor mo;
 
 	org = Origin;
-	if (type == MinotaurMissile)
+	if (type == MinotaurFX1)
 	{
 		// Minotaur swing attack missile
 		org.z = Origin.z + 40.0;
 	}
-	else if (type == MinotaurFloorFire1)
+	else if (type == MinotaurFX2)
 	{
 		// Minotaur floor fire missile
 		org.z = ONFLOORZ + FloorClip;
 	}
-	else if (type == IceGuyMissile2)
+	else if (type == IceGuyFX2)
 	{
 		// Secondary Projectiles of the Ice Guy
 		org.z = Origin.z + 3.0;
@@ -3423,11 +3423,11 @@ bool ExplodeMissile()
 	//mo->tics -= P_Random()&3;
 	bMissile = false;
 
-	if (SorcererBall(self))
+	if (SorcBall(self))
 	{
 		PlaySound('SorcererBigBallExplode', CHAN_AUTO, 1.0, ATTN_NONE);
 	}
-	else if (SorcererFX1(self))
+	else if (SorcFX1(self))
 	{
 		PlaySound('SorcererHeadScream', CHAN_AUTO, 1.0, ATTN_NONE);
 	}
@@ -3497,7 +3497,7 @@ void Blast(Actor source, float strength)
 	{
 		if (bMissile)
 		{
-			if (SorcererBall(self))
+			if (SorcBall(self))
 			{
 				// don't blast sorcerer balls
 				return;
@@ -3509,7 +3509,7 @@ void Blast(Actor source, float strength)
 				Target = source;
 			}
 		}
-		if (Class == HolyFX)
+		if (Class == HolySpirit)
 		{
 			if (Tracer == source)
 			{
@@ -4267,7 +4267,7 @@ final void A_Explode()
 		Origin.z += 32.0;
 		Alpha = 1.0;
 	}
-	else if (Class == MinotaurFloorFire1)
+	else if (Class == MinotaurFX2)
 	{
 		// Minotaur floor fire
 		damage = 24;
@@ -4283,7 +4283,7 @@ final void A_Explode()
 		damage = 128;
 		damageSelf = false;
 	}
-	else if (Class == FighterSwordMissile)
+	else if (Class == FSwordMissile)
 	{
 		// Fighter Runesword
 		damage = 64;
@@ -4295,19 +4295,19 @@ final void A_Explode()
 		damage = 20;
 		damageSelf = false;
 	}
-	else if (SorcererBall(self))
+	else if (SorcBall(self))
 	{
 		// Sorcerer balls
 		distance = 255.0;
 		damage = 255;
 		Args[0] = 1;	// don't play bounce
 	}
-	else if (Class == SorcererFX1)
+	else if (Class == SorcFX1)
 	{
 		// Sorcerer spell 1
 		damage = 30;
 	}
-	else if (Class == SorcererFX4)
+	else if (Class == SorcFX4)
 	{
 		// Sorcerer spell 4
 		damage = 20;
@@ -4316,7 +4316,7 @@ final void A_Explode()
 	{
 		damage = 10;
 	}
-	else if (Class == DragonFX2)
+	else if (Class == DragonExplosion)
 	{
 		damage = 80;
 		damageSelf = false;

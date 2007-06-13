@@ -132,7 +132,7 @@ final void DragonSeek(float thresh, float turnMax)
 			}
 			else if (P_Random() < 128 && CheckMissileRange())
 			{
-				SpawnMissile(tempTarget, DragonMissile);
+				SpawnMissile(tempTarget, DragonFireball);
 				PlaySound('DragonAttack', CHAN_WEAPON);
 			}
 			Target = oldTarget;
@@ -249,7 +249,7 @@ final void A_DragonFlap()
 
 final void A_DragonAttack()
 {
-	SpawnMissile(Target, DragonMissile);
+	SpawnMissile(Target, DragonFireball);
 }
 
 //============================================================================

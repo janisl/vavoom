@@ -116,21 +116,21 @@ Actor SpawnMissile(Actor dest, class<Actor> type)
 	TVec dir;
 
 	org = Origin;
-	if (type == MinotaurMissile)
+	if (type == MinotaurFX1)
 	{
 		// Minotaur swing attack missile
 		org.z = Origin.z + 40.0;
 	}
-	else if (type == MinotaurFloorFire1)
+	else if (type == MinotaurFX2)
 	{
 		// Minotaur floor fire missile
 		org.z = ONFLOORZ + FloorClip;
 	}
-	else if (type == CentaurMissile)
+	else if (type == CentaurFX)
 	{
 		org.z = Origin.z + 45.0;
 	}
-	else if (type == IceGuyMissile)
+	else if (type == IceGuyFX)
 	{
 		org.z = Origin.z + 40.0;
 	}
@@ -389,9 +389,9 @@ bool LookForMonsters()
 			// Out of sight
 			continue;
 		}
-		if (Class == Minotaur)
+		if (Class == MinotaurFriend)
 		{
-			if ((mo.Class == Minotaur) && (mo.Target != Tracer))
+			if ((mo.Class == MinotaurFriend) && (mo.Target != Tracer))
 			{
 				continue;
 			}
@@ -473,7 +473,7 @@ bool LookForPlayers(bool allaround)
 				return false;
 			}
 		}
-		if (Class == Minotaur)
+		if (Class == MinotaurFriend)
 		{
 			if (Tracer == P.MO)
 			{

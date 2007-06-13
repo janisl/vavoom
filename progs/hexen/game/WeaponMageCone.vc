@@ -37,7 +37,7 @@ final void A_FireConePL1()
 	int damage;
 	int i;
 	Actor pmo;
-	ShardMissile mo;
+	FrostMissile mo;
 	int conedone = false;
 
 	pmo = Actor(Owner);
@@ -64,7 +64,7 @@ final void A_FireConePL1()
 	// didn't find any creatures, so fire projectiles
 	if (!conedone)
 	{
-		mo = ShardMissile(Player(Owner.Player).SpawnPlayerMissile(ShardMissile));
+		mo = FrostMissile(Player(Owner.Player).SpawnPlayerMissile(FrostMissile));
 		if (mo)
 		{
 			mo.bShardSpawnLeft = true;

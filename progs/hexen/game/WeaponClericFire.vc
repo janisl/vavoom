@@ -35,7 +35,7 @@ final void A_CFlameAttack()
 {
 	Actor mo;
 
-	mo = Player(Owner.Player).SpawnPlayerMissile(ClericFlameMissile);
+	mo = Player(Owner.Player).SpawnPlayerMissile(CFlameMissile);
 	if (mo)
 	{
 		mo._Special1 = 2;

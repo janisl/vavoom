@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class LightningCeiling : LightningMissile;
+class LightningCeiling : Lightning;
 
 __states__
 {

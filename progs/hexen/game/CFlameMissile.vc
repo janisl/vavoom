@@ -1,0 +1,163 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class CFlameMissile : Projectile;
+
+float FlameSpeed;
+Actor bmo;
+
+//==========================================================================
+//
+//	BlasterHitMobj
+//
+//==========================================================================
+
+bool BlasterHitMobj(Entity Other)
+{
+	bmo = Actor(Other);
+	return ::BlasterHitMobj(Other);
+}
+
+//============================================================================
+//
+//	A_CFlamePuff
+//
+//============================================================================
+
+final void A_CFlamePuff()
+{
+	bHidden = false;
+	Velocity = vector(0.0, 0.0, 0.0);
+	PlaySound('ClericFlameExplode', CHAN_VOICE);
+}
+
+//============================================================================
+//
+//  A_CFlameMissile
+//
+//============================================================================
+
+final void A_CFlameMissile()
+{
+	int i;
+	float an;
+	float dist;
+	Actor A;
+
+	bHidden = false;
+	PlaySound('ClericFlameExplode', CHAN_VOICE);
+	if (bmo && bmo.bShootable)
+	{
+		// Hit something, so spawn the flame circle around the thing
+		dist = bmo.Radius + 18.0;
+		for (i = 0; i < 4; i++)
+		{
+			an = itof(i) * 45.0;
+			A = Spawn(CircleFlame, bmo.Origin +
+				vector(dist * cos(an), dist * sin(an), 5.0));
+			if (A)
+			{
+				A.Angles.yaw = an;
+				A.Target = Target;
+				A.Velocity.x = FlameSpeed * cos(an);
+				A.Velocity.y = FlameSpeed * sin(an);
+				A.Special1f = A.Velocity.x;
+				A.Special2f = A.Velocity.y;
+				A.StateTime -= Random() * 0.1;
+			}
+			A = Spawn(CircleFlame, bmo.Origin +
+				vector(-dist * cos(an), -dist * sin(an), 5.0));
+			if (A)
+			{
+				A.Angles.yaw = AngleMod360(180.0 + an);
+				A.Target = Target;
+				A.Velocity.x = -FlameSpeed * cos(an);
+				A.Velocity.y = -FlameSpeed * sin(an);
+				A.Special1f = A.Velocity.x;
+				A.Special2f = A.Velocity.y;
+				A.StateTime -= Random() * 0.1;
+			}
+		}
+		SetState(S_FLAMEPUFF2_1);
+	}
+}
+
+__states__
+{
+	S_CFLAME_MISSILE1('CFFX', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_CFLAME_MISSILE2) = none
+	S_CFLAME_MISSILE2('CFFX', 0, 1.0 / 35.0, S_FLAMEPUFF1) = A_CFlamePuff
+	S_CFLAME_MISSILE_X('CFFX', 0 | FF_FULLBRIGHT, 1.0 / 35.0, S_FLAMEPUFF1) = A_CFlameMissile
+
+	//FIXME avoid copying.
+	S_FLAMEPUFF1('CFFX', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_FLAMEPUFF2) = none
+	S_FLAMEPUFF2('CFFX', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_FLAMEPUFF3) = none
+	S_FLAMEPUFF3('CFFX', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_FLAMEPUFF4) = none
+	S_FLAMEPUFF4('CFFX', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_FLAMEPUFF5) = none
+	S_FLAMEPUFF5('CFFX', 4 | FF_FULLBRIGHT, 3.0 / 35.0, S_FLAMEPUFF6) = none
+	S_FLAMEPUFF6('CFFX', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_FLAMEPUFF7) = none
+	S_FLAMEPUFF7('CFFX', 6 | FF_FULLBRIGHT, 3.0 / 35.0, S_FLAMEPUFF8) = none
+	S_FLAMEPUFF8('CFFX', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_FLAMEPUFF9) = none
+	S_FLAMEPUFF9('CFFX', 8 | FF_FULLBRIGHT, 3.0 / 35.0, S_FLAMEPUFF10) = none
+	S_FLAMEPUFF10('CFFX', 9 | FF_FULLBRIGHT, 4.0 / 35.0, S_FLAMEPUFF11) = none
+	S_FLAMEPUFF11('CFFX', 10 | FF_FULLBRIGHT, 3.0 / 35.0, S_FLAMEPUFF12) = none
+	S_FLAMEPUFF12('CFFX', 11 | FF_FULLBRIGHT, 4.0 / 35.0, S_FLAMEPUFF13) = none
+	S_FLAMEPUFF13('CFFX', 12 | FF_FULLBRIGHT, 3.0 / 35.0, none) = none
+
+	S_FLAMEPUFF2_1('CFFX', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_FLAMEPUFF2_2) = none
+	S_FLAMEPUFF2_2('CFFX', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_FLAMEPUFF2_3) = none
+	S_FLAMEPUFF2_3('CFFX', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_FLAMEPUFF2_4) = none
+	S_FLAMEPUFF2_4('CFFX', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_FLAMEPUFF2_5) = none
+	S_FLAMEPUFF2_5('CFFX', 4 | FF_FULLBRIGHT, 3.0 / 35.0, S_FLAMEPUFF2_6) = none
+	S_FLAMEPUFF2_6('CFFX', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_FLAMEPUFF2_7) = none
+	S_FLAMEPUFF2_7('CFFX', 6 | FF_FULLBRIGHT, 3.0 / 35.0, S_FLAMEPUFF2_8) = none
+	S_FLAMEPUFF2_8('CFFX', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_FLAMEPUFF2_9) = none
+	S_FLAMEPUFF2_9('CFFX', 8 | FF_FULLBRIGHT, 3.0 / 35.0, S_FLAMEPUFF2_10) = none
+	S_FLAMEPUFF2_10('CFFX', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_FLAMEPUFF2_11) = none
+	S_FLAMEPUFF2_11('CFFX', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_FLAMEPUFF2_12) = none
+	S_FLAMEPUFF2_12('CFFX', 4 | FF_FULLBRIGHT, 3.0 / 35.0, S_FLAMEPUFF2_13) = none
+	S_FLAMEPUFF2_13('CFFX', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_FLAMEPUFF2_14) = none
+	S_FLAMEPUFF2_14('CFFX', 6 | FF_FULLBRIGHT, 3.0 / 35.0, S_FLAMEPUFF2_15) = none
+	S_FLAMEPUFF2_15('CFFX', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_FLAMEPUFF2_16) = none
+	S_FLAMEPUFF2_16('CFFX', 8 | FF_FULLBRIGHT, 3.0 / 35.0, S_FLAMEPUFF2_17) = none
+	S_FLAMEPUFF2_17('CFFX', 9 | FF_FULLBRIGHT, 4.0 / 35.0, S_FLAMEPUFF2_18) = none
+	S_FLAMEPUFF2_18('CFFX', 10 | FF_FULLBRIGHT, 3.0 / 35.0, S_FLAMEPUFF2_19) = none
+	S_FLAMEPUFF2_19('CFFX', 11 | FF_FULLBRIGHT, 4.0 / 35.0, S_FLAMEPUFF2_20) = none
+	S_FLAMEPUFF2_20('CFFX', 12 | FF_FULLBRIGHT, 3.0 / 35.0, none) = none
+}
+
+defaultproperties
+{
+	Radius = 14.0;
+	Height = 8.0;
+	Speed = 7000.0;
+	MissileDamage = 8;
+	bHidden = true;
+	bFireDamage = true;
+	bBlaster = true;
+	IdleState = S_CFLAME_MISSILE1;
+	DeathState = S_CFLAME_MISSILE_X;
+	Effects = HexenDefs::EF_DL_WHITE;
+	FlameSpeed = 9.0 / 20.0 * 35.0;
+}

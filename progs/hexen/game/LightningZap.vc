@@ -25,7 +25,7 @@
 
 class LightningZap : Projectile;
 
-LightningMissile LightningOwner;	//	Lightning missile that spawned zap.
+Lightning LightningOwner;	//	Lightning missile that spawned zap.
 
 //==========================================================================
 //

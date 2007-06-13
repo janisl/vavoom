@@ -1,0 +1,184 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class Demon1 : Pawn
+	__mobjinfo__(31)
+	__scriptid__(3);
+
+class<Actor> FireBallType;
+
+//============================================================================
+//
+//  A_DemonAttack1 (melee)
+//
+//============================================================================
+
+final void A_DemonAttack1()
+{
+	if (CheckMeleeRange())
+	{
+		Target.Damage(self, self, HITDICE(2));
+	}
+}
+
+//============================================================================
+//
+//  A_DemonAttack2 (missile)
+//
+//============================================================================
+
+final void A_DemonAttack2()
+{
+	Actor M;
+
+	M = SpawnMissile(Target, FireBallType);
+	if (M)
+	{
+		M.Origin.z += 30.0;
+		PlaySound('DemonMissileFire', CHAN_WEAPON);
+	}
+}
+
+//============================================================================
+//
+//  A_DemonDeath
+//
+//============================================================================
+
+final void A_DemonDeath()
+{
+	Actor A;
+	float angle;
+
+	A = Spawn(Demon1Chunk1, Origin + vector(0.0, 0.0, 45.0));
+	if (A)
+	{
+		angle = AngleMod360(Angles.yaw + 90.0);
+		A.Velocity.x = (Random() * 4.0 + 1.0) * cos(angle) * 35.0;
+		A.Velocity.y = (Random() * 4.0 + 1.0) * sin(angle) * 35.0;
+		A.Velocity.z = 8.0 * 35.0;
+		A.Target = self;
+	}
+	A = Spawn(Demon1Chunk2, Origin + vector(0.0, 0.0, 45.0));
+	if (A)
+	{
+		angle = AngleMod360(Angles.yaw - 90.0);
+		A.Velocity.x = (Random() * 4.0 + 1.0) * cos(angle) * 35.0;
+		A.Velocity.y = (Random() * 4.0 + 1.0) * sin(angle) * 35.0;
+		A.Velocity.z = 8.0 * 35.0;
+		A.Target = self;
+	}
+	A = Spawn(Demon1Chunk3, Origin + vector(0.0, 0.0, 45.0));
+	if (A)
+	{
+		angle = AngleMod360(Angles.yaw - 90.0);
+		A.Velocity.x = (Random() * 4.0 + 1.0) * cos(angle) * 35.0;
+		A.Velocity.y = (Random() * 4.0 + 1.0) * sin(angle) * 35.0;
+		A.Velocity.z = 8.0 * 35.0;
+		A.Target = self;
+	}
+	A = Spawn(Demon1Chunk4, Origin + vector(0.0, 0.0, 45.0));
+	if (A)
+	{
+		angle = AngleMod360(Angles.yaw - 90.0);
+		A.Velocity.x = (Random() * 4.0 + 1.0) * cos(angle) * 35.0;
+		A.Velocity.y = (Random() * 4.0 + 1.0) * sin(angle) * 35.0;
+		A.Velocity.z = 8.0 * 35.0;
+		A.Target = self;
+	}
+	A = Spawn(Demon1Chunk5, Origin + vector(0.0, 0.0, 45.0));
+	if (A)
+	{
+		angle = AngleMod360(Angles.yaw - 90.0);
+		A.Velocity.x = (Random() * 4.0 + 1.0) * cos(angle) * 35.0;
+		A.Velocity.y = (Random() * 4.0 + 1.0) * sin(angle) * 35.0;
+		A.Velocity.z = 8.0 * 35.0;
+		A.Target = self;
+	}
+}
+
+__states__
+{
+	S_DEMN_LOOK1('DEMN', 0, 10.0 / 35.0, S_DEMN_LOOK2) = A_Look
+	S_DEMN_LOOK2('DEMN', 0, 10.0 / 35.0, S_DEMN_LOOK1) = A_Look
+	S_DEMN_CHASE1('DEMN', 0, 4.0 / 35.0, S_DEMN_CHASE2) = A_Chase
+	S_DEMN_CHASE2('DEMN', 1, 4.0 / 35.0, S_DEMN_CHASE3) = A_Chase
+	S_DEMN_CHASE3('DEMN', 2, 4.0 / 35.0, S_DEMN_CHASE4) = A_Chase
+	S_DEMN_CHASE4('DEMN', 3, 4.0 / 35.0, S_DEMN_CHASE1) = A_Chase
+	S_DEMN_ATK1_1('DEMN', 4, 6.0 / 35.0, S_DEMN_ATK1_2) = A_FaceTarget
+	S_DEMN_ATK1_2('DEMN', 5, 8.0 / 35.0, S_DEMN_ATK1_3) = A_FaceTarget
+	S_DEMN_ATK1_3('DEMN', 6, 6.0 / 35.0, S_DEMN_CHASE1) = A_DemonAttack1
+	S_DEMN_ATK2_1('DEMN', 4, 5.0 / 35.0, S_DEMN_ATK2_2) = A_FaceTarget
+	S_DEMN_ATK2_2('DEMN', 5, 6.0 / 35.0, S_DEMN_ATK2_3) = A_FaceTarget
+	S_DEMN_ATK2_3('DEMN', 6, 5.0 / 35.0, S_DEMN_CHASE1) = A_DemonAttack2
+	S_DEMN_PAIN1('DEMN', 4, 4.0 / 35.0, S_DEMN_PAIN2) = none
+	S_DEMN_PAIN2('DEMN', 4, 4.0 / 35.0, S_DEMN_CHASE1) = A_Pain
+	S_DEMN_DEATH1('DEMN', 7, 6.0 / 35.0, S_DEMN_DEATH2) = none
+	S_DEMN_DEATH2('DEMN', 8, 6.0 / 35.0, S_DEMN_DEATH3) = none
+	S_DEMN_DEATH3('DEMN', 9, 6.0 / 35.0, S_DEMN_DEATH4) = A_Scream
+	S_DEMN_DEATH4('DEMN', 10, 6.0 / 35.0, S_DEMN_DEATH5) = A_NoBlocking
+	S_DEMN_DEATH5('DEMN', 11, 6.0 / 35.0, S_DEMN_DEATH6) = A_QueueCorpse
+	S_DEMN_DEATH6('DEMN', 12, 6.0 / 35.0, S_DEMN_DEATH7) = none
+	S_DEMN_DEATH7('DEMN', 13, 6.0 / 35.0, S_DEMN_DEATH8) = none
+	S_DEMN_DEATH8('DEMN', 14, 6.0 / 35.0, S_DEMN_DEATH9) = none
+	S_DEMN_DEATH9('DEMN', 15, -1.0, none) = none
+	S_DEMN_XDEATH1('DEMN', 7, 6.0 / 35.0, S_DEMN_XDEATH2) = none
+	S_DEMN_XDEATH2('DEMN', 8, 6.0 / 35.0, S_DEMN_XDEATH3) = A_DemonDeath
+	S_DEMN_XDEATH3('DEMN', 9, 6.0 / 35.0, S_DEMN_XDEATH4) = A_Scream
+	S_DEMN_XDEATH4('DEMN', 10, 6.0 / 35.0, S_DEMN_XDEATH5) = A_NoBlocking
+	S_DEMN_XDEATH5('DEMN', 11, 6.0 / 35.0, S_DEMN_XDEATH6) = A_QueueCorpse
+	S_DEMN_XDEATH6('DEMN', 12, 6.0 / 35.0, S_DEMN_XDEATH7) = none
+	S_DEMN_XDEATH7('DEMN', 13, 6.0 / 35.0, S_DEMN_XDEATH8) = none
+	S_DEMN_XDEATH8('DEMN', 14, 6.0 / 35.0, S_DEMN_XDEATH9) = none
+	S_DEMN_XDEATH9('DEMN', 15, -1.0, none) = none
+	S_DEMON_ICE('DEMN', 16, 5.0 / 35.0, S_DEMON_ICE2) = A_FreezeDeath
+	S_DEMON_ICE2('DEMN', 16, 1.0 / 35.0, S_DEMON_ICE2) = A_FreezeDeathChunks
+}
+
+defaultproperties
+{
+	Health = 250;
+	GibsHealth = -125;
+	Radius = 32.0;
+	Height = 64.0;
+	Mass = 220.0;
+	StepSpeed = 13.0;
+	PainChance = 0.1953125;
+	bActivatePushWall = false;
+	IdleState = S_DEMN_LOOK1;
+	SeeState = S_DEMN_CHASE1;
+	MeleeState = S_DEMN_ATK1_1;
+	MissileState = S_DEMN_ATK2_1;
+	PainState = S_DEMN_PAIN1;
+	DeathState = S_DEMN_DEATH1;
+	GibsDeathState = S_DEMN_XDEATH1;
+	IceDeathState = S_DEMON_ICE;
+	SightSound = 'DemonSight';
+	ActiveSound = 'DemonActive';
+	AttackSound = 'DemonAttack';
+	PainSound = 'DemonPain';
+	DeathSound = 'DemonDeath';
+	FireBallType = Demon1FX1;
+}

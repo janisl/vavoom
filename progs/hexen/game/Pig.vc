@@ -54,7 +54,7 @@ int UpdateMorphedMonster(int tics)
 	if (originalClass == WraithBuried ||
 		originalClass == Serpent ||
 		originalClass == SerpentLeader ||
-		originalClass == Minotaur)
+		originalClass == MinotaurFriend)
 	{
 		// These must remain morphed
 		return false;

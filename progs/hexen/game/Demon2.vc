@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Demon2 : Demon
+class Demon2 : Demon1
 	__mobjinfo__(8080);
 
 //===========================================================================
@@ -129,5 +129,5 @@ defaultproperties
 	PainState = S_DEMN2_PAIN1;
 	DeathState = S_DEMN2_DEATH1;
 	GibsDeathState = S_DEMN2_XDEATH1;
-	FireBallType = Demon2Missile;
+	FireBallType = Demon2FX1;
 }

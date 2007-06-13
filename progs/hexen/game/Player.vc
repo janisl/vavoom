@@ -519,13 +519,13 @@ void SpawnPlayer(mthing_t * mthing)
 	switch (PClass)
 	{
 	case HexenDefs::PCLASS_FIGHTER:
-		pp = PlayerPawn(HexenLevelInfo(Level).Spawn(PlayerFighter, vector(x, y, z)));
+		pp = PlayerPawn(HexenLevelInfo(Level).Spawn(FighterPlayer, vector(x, y, z)));
 		break;
 	case HexenDefs::PCLASS_CLERIC:
-		pp = PlayerPawn(HexenLevelInfo(Level).Spawn(PlayerCleric, vector(x, y, z)));
+		pp = PlayerPawn(HexenLevelInfo(Level).Spawn(ClericPlayer, vector(x, y, z)));
 		break;
 	case HexenDefs::PCLASS_MAGE:
-		pp = PlayerPawn(HexenLevelInfo(Level).Spawn(PlayerMage, vector(x, y, z)));
+		pp = PlayerPawn(HexenLevelInfo(Level).Spawn(MagePlayer, vector(x, y, z)));
 		break;
 	default:
 		Error("P_SpawnPlayer: Unknown class type");
@@ -1964,13 +1964,13 @@ bool UndoPlayerMorph()
 	switch (BaseClass)
 	{
 	case HexenDefs::PCLASS_FIGHTER:
-		A = HexenLevelInfo(Level).Spawn(PlayerFighter, MO.Origin);
+		A = HexenLevelInfo(Level).Spawn(FighterPlayer, MO.Origin);
 		break;
 	case HexenDefs::PCLASS_CLERIC:
-		A = HexenLevelInfo(Level).Spawn(PlayerCleric, MO.Origin);
+		A = HexenLevelInfo(Level).Spawn(ClericPlayer, MO.Origin);
 		break;
 	case HexenDefs::PCLASS_MAGE:
-		A = HexenLevelInfo(Level).Spawn(PlayerMage, MO.Origin);
+		A = HexenLevelInfo(Level).Spawn(MagePlayer, MO.Origin);
 		break;
 	default:
 		Error("UndoPlayerMorph: Unknown player class %d", BaseClass);
@@ -2987,11 +2987,11 @@ void UseArtiTele()
 
 void UseArtiPig()
 {
-	SpawnPlayerMissile(EggMissile);
-	SpawnPlayerMissileAngle(EggMissile, AngleMod360(MO.Angles.yaw - 7.5));
-	SpawnPlayerMissileAngle(EggMissile, AngleMod360(MO.Angles.yaw + 7.5));
-	SpawnPlayerMissileAngle(EggMissile, AngleMod360(MO.Angles.yaw - 15.0));
-	SpawnPlayerMissileAngle(EggMissile, AngleMod360(MO.Angles.yaw + 15.0));
+	SpawnPlayerMissile(PorkFX);
+	SpawnPlayerMissileAngle(PorkFX, AngleMod360(MO.Angles.yaw - 7.5));
+	SpawnPlayerMissileAngle(PorkFX, AngleMod360(MO.Angles.yaw + 7.5));
+	SpawnPlayerMissileAngle(PorkFX, AngleMod360(MO.Angles.yaw - 15.0));
+	SpawnPlayerMissileAngle(PorkFX, AngleMod360(MO.Angles.yaw + 15.0));
 }
 
 //==========================================================================
@@ -3069,7 +3069,7 @@ void UseArtiSummon()
 {
 	Actor mo;
 
-	mo = SpawnPlayerMissile(SummonMissile);
+	mo = SpawnPlayerMissile(SummoningDoll);
 	if (mo)
 	{
 		mo.Target = Actor(MO);
@@ -3101,7 +3101,7 @@ void UseArtiBlastRadius()
 			continue;
 		}
 		if ((mo.Class == PoisonCloud) ||	// poison cloud
-			(mo.Class == HolyFX) ||	// holy fx
+			(mo.Class == HolySpirit) ||	// holy fx
 			mo.bIceCorpse)	// frozen corpse
 		{
 			// Let these special cases go
@@ -3203,7 +3203,7 @@ void UseArtiTeleportOther()
 {
 	Actor mo;
 
-	mo = SpawnPlayerMissile(TeleportOtherFX1);
+	mo = SpawnPlayerMissile(TelOtherFX1);
 	if (mo)
 	{
 		mo.Target = Actor(MO);
@@ -3264,7 +3264,7 @@ Actor SpawnPlayerMissile(class<Actor> type)
 	AngleVector(&angles, &vforward);
 	MissileMobj.Velocity = vforward * MissileMobj.Speed;
 	if (MissileMobj.Class == MageWandMissile ||
-		MissileMobj.Class == ClericFlameMissile)
+		MissileMobj.Class == CFlameMissile)
 	{
 		// Ultra-fast ripper spawning missile
 		MissileMobj.Origin += MissileMobj.Velocity * Level.Game.frametime / 8.0;

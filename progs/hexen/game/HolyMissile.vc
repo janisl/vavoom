@@ -54,7 +54,7 @@ final void A_CHolyAttack2()
 
 	for (j = 0; j < 4; j++)
 	{
-		A = Spawn(HolyFX, Origin);
+		A = Spawn(HolySpirit, Origin);
 		if (!A)
 		{
 			continue;
@@ -62,17 +62,17 @@ final void A_CHolyAttack2()
 		switch (j)
 		{	// float bob index
 		case 0:
-			HolyFX(A).WeaveZ = P_Random() & 7;	// upper-left
+			HolySpirit(A).WeaveZ = P_Random() & 7;	// upper-left
 			break;
 		case 1:
-			HolyFX(A).WeaveZ = 32 + (P_Random() & 7);	// upper-right
+			HolySpirit(A).WeaveZ = 32 + (P_Random() & 7);	// upper-right
 			break;
 		case 2:
-			HolyFX(A).WeaveXY = 32 + (P_Random() & 7);	// lower-left
+			HolySpirit(A).WeaveXY = 32 + (P_Random() & 7);	// lower-left
 			break;
 		case 3:
-			HolyFX(A).WeaveXY = 32 + (P_Random() & 7);
-			HolyFX(A).WeaveZ = 32 + (P_Random() & 7);
+			HolySpirit(A).WeaveXY = 32 + (P_Random() & 7);
+			HolySpirit(A).WeaveZ = 32 + (P_Random() & 7);
 			break;
 		}
 		A.Origin.z = Origin.z;

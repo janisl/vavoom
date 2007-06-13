@@ -1,0 +1,54 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class FireBall : Projectile
+	__scriptid__(10);
+
+__states__
+{
+	S_FIREBALL1_1('FBL1', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_FIREBALL1_2) = none
+	S_FIREBALL1_2('FBL1', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_FIREBALL1_1) = none
+	S_FIREBALL1_X1('XPL1', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_FIREBALL1_X2) = none
+	S_FIREBALL1_X2('XPL1', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_FIREBALL1_X3) = none
+	S_FIREBALL1_X3('XPL1', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_FIREBALL1_X4) = none
+	S_FIREBALL1_X4('XPL1', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_FIREBALL1_X5) = none
+	S_FIREBALL1_X5('XPL1', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_FIREBALL1_X6) = none
+	S_FIREBALL1_X6('XPL1', 5 | FF_FULLBRIGHT, 4.0 / 35.0, none) = none
+}
+
+defaultproperties
+{
+	Radius = 8.0;
+	Height = 8.0;
+	Speed = 70.0;
+	MissileDamage = 4;
+	bFireDamage = true;
+	bActivateImpact = false;
+	bActivatePCross = false;
+	IdleState = S_FIREBALL1_1;
+	DeathState = S_FIREBALL1_X1;
+	DeathSound = 'Fireball';
+	Effects = HexenDefs::EF_DL_RED;
+}

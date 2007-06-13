@@ -160,46 +160,238 @@ EXTRA_DIST = compile.bat \
 	cgame/MenuChoice_Models.vc \
 	cgame/MenuChoice_DrawFPS.vc \
 	cgame/MenuChoice_D3DModelLights.vc \
-	game/ArtifactHealRadius.vc \
+	\
+	game/AmuletOfWarding.vc \
+	game/ArtiBlastRadius.vc \
+	game/ArtiBoostArmor.vc \
+	game/ArtiBoostMana.vc \
+	game/ArtiDarkServant.vc \
+	game/Artifact.vc \
+	game/ArtiFly.vc \
+	game/ArtiHealingRadius.vc \
+	game/ArtiHealth.vc \
+	game/ArtiInvulnerability.vc \
+	game/ArtiPoisonBag.vc \
+	game/ArtiPork.vc \
+	game/ArtiSpeedBoots.vc \
+	game/ArtiSuperHealth.vc \
+	game/ArtiTeleport.vc \
+	game/ArtiTeleportOther.vc \
+	game/ArtiTorch.vc \
+	game/Bishop.vc \
+	game/BishopBlur.vc \
+	game/BishopFX.vc \
+	game/BishopPainBlur.vc \
+	game/BishopPuff.vc \
+	game/BotPlayer.vc \
+	game/CentaurFX.vc \
+	game/CFlameFloor.vc \
+	game/CFlameMissile.vc \
+	game/ClericPlayer.vc \
+	game/CrystalVial.vc \
+	game/CStaffMissile.vc \
+	game/CStaffPuff.vc \
+	game/CWeapFlame.vc \
+	game/CWeaponPiece1.vc \
+	game/CWeaponPiece2.vc \
+	game/CWeaponPiece3.vc \
+	game/CWeapStaff.vc \
+	game/Demon1.vc \
+	game/Demon1Chunk1.vc \
+	game/Demon1Chunk2.vc \
+	game/Demon1Chunk3.vc \
+	game/Demon1Chunk4.vc \
+	game/Demon1Chunk5.vc \
+	game/Demon1FX1.vc \
+	game/Demon1Mash.vc \
+	game/Demon2.vc \
+	game/Demon2Chunk1.vc \
+	game/Demon2Chunk2.vc \
+	game/Demon2Chunk3.vc \
+	game/Demon2Chunk4.vc \
+	game/Demon2Chunk5.vc \
+	game/Demon2FX1.vc \
+	game/Demon2Mash.vc \
+	game/Dragon.vc \
+	game/DragonExplosion.vc \
+	game/DragonFireball.vc \
+	game/FalconShield.vc \
+	game/FighterPlayer.vc \
+	game/FireBall.vc \
+	game/FrostMissile.vc \
+	game/FSwordFlame.vc \
+	game/FSwordMissile.vc \
+	game/FWeapAxe.vc \
+	game/FWeapHammer.vc \
+	game/FWeaponPiece1.vc \
+	game/FWeaponPiece2.vc \
+	game/FWeaponPiece3.vc \
+	game/GlassShard.vc \
+	game/Heresiarch.vc \
+	game/HolySpirit.vc \
+	game/HWaterDrip.vc \
+	game/IceFXPuff.vc \
+	game/IceGuy.vc \
+	game/IceGuyBit.vc \
+	game/IceGuyFX.vc \
+	game/IceGuyFX2.vc \
+	game/IceGuyWisp1.vc \
+	game/IceGuyWisp2.vc \
+	game/KeyAxe.vc \
+	game/KeyCastle.vc \
+	game/KeyCave.vc \
+	game/KeyDungeon.vc \
+	game/KeyEmerald.vc \
+	game/KeyFire.vc \
+	game/KeyHorn.vc \
+	game/KeyRusted.vc \
+	game/KeySilver.vc \
+	game/KeySteel.vc \
+	game/KeySwamp.vc \
+	game/Korax.vc \
+	game/KoraxBolt.vc \
+	game/KoraxSpirit.vc \
+	game/LeafSpawner.vc \
+	game/Lightning.vc \
+	game/LightningCeiling.vc \
+	game/LightningFloor.vc \
+	game/LightningZap.vc \
+	game/MagePlayer.vc \
+	game/Mana1.vc \
+	game/Mana2.vc \
+	game/Mana3.vc \
+	game/MeshArmor.vc \
+	game/MinotaurFloorFire.vc \
+	game/MinotaurFriend.vc \
+	game/MinotaurFX1.vc \
+	game/MinotaurFX2.vc \
+	game/MinotaurFX3.vc \
+	game/MinotaurSmoke.vc \
+	game/MinotaurSmokeExit.vc \
+	game/MWeapFrost.vc \
+	game/MWeapLightning.vc \
+	game/MWeaponPiece1.vc \
+	game/MWeaponPiece2.vc \
+	game/MWeaponPiece3.vc \
+	game/PigPlayer.vc \
+	game/PlatinumHelm.vc \
+	game/Player.vc \
+	game/PlayerPawn.vc \
+	game/PlayerSpeed.vc \
+	game/PorkFX.vc \
+	game/PuzzBook1.vc \
+	game/PuzzBook2.vc \
+	game/PuzzCWeapon.vc \
+	game/PuzzFlameMask.vc \
+	game/PuzzFWeapon.vc \
+	game/PuzzGear1.vc \
+	game/PuzzGear2.vc \
+	game/PuzzGear3.vc \
+	game/PuzzGemBig.vc \
+	game/PuzzGemBlue1.vc \
+	game/PuzzGemBlue2.vc \
+	game/PuzzGemGreen1.vc \
+	game/PuzzGemGreen2.vc \
+	game/PuzzGemRed.vc \
+	game/PuzzleItem.vc \
+	game/PuzzMWeapon.vc \
+	game/PuzzSkull.vc \
+	game/PuzzGear4.vc \
+	game/Serpent.vc \
+	game/SerpentFX.vc \
+	game/SerpentGib1.vc \
+	game/SerpentGib2.vc \
+	game/SerpentGib3.vc \
+	game/SerpentHead.vc \
+	game/SerpentLeader.vc \
+	game/SGShard0.vc \
+	game/SGShard1.vc \
+	game/SGShard2.vc \
+	game/SGShard3.vc \
+	game/SGShard4.vc \
+	game/SGShard5.vc \
+	game/SGShard6.vc \
+	game/SGShard7.vc \
+	game/SGShard8.vc \
+	game/SGShard9.vc \
+	game/SorcBall.vc \
+	game/SorcBall1.vc \
+	game/SorcBall2.vc \
+	game/SorcBall3.vc \
+	game/SorcFX1.vc \
+	game/SorcFX2.vc \
+	game/SorcFX2T1.vc \
+	game/SorcFX3.vc \
+	game/SorcFX3Explosion.vc \
+	game/SorcFX4.vc \
+	game/SorcSpark1.vc \
+	game/SoundWindHexen.vc \
+	game/SummoningDoll.vc \
+	game/TeleportDest.vc \
+	game/TeleportDest2.vc \
+	game/TeleportDest3.vc \
+	game/TeleportFog.vc \
+	game/TelOtherFX1.vc \
+	game/TelOtherFX2.vc \
+	game/TelOtherFX3.vc \
+	game/TelOtherFX4.vc \
+	game/TelOtherFX5.vc \
+	game/Weapon.vc \
+	game/WeaponClericHoly.vc \
+	game/WeaponClericFire.vc \
+	game/WeaponClericMace.vc \
+	game/WeaponClericStaff.vc \
+	game/WeaponFighterAxe.vc \
+	game/WeaponFighterHammer.vc \
+	game/WeaponFighterPunch.vc \
+	game/WeaponFighterSword.vc \
+	game/WeaponMageCone.vc \
+	game/WeaponMageLightning.vc \
+	game/WeaponMageStaff.vc \
+	game/WeaponMageWand.vc \
+	game/WeaponPickup.vc \
+	game/WeaponPiece.vc \
+	game/WeaponPigSnout.vc \
+	game/Wraith.vc \
+	game/WraithBuried.vc \
+	game/WraithFX1.vc \
+	game/WraithFX2.vc \
+	game/WraithFX3.vc \
+	game/WraithFX4.vc \
+	game/WraithFX5.vc \
+	game/ZCorpseHanging.vc \
+	game/ZTombstoneBigCross.vc \
+	game/ZTombstoneBrianP.vc \
+	game/ZTombstoneBrianR.vc \
+	game/ZTombstoneCrossCircle.vc \
+	game/ZTombstoneRIP.vc \
+	game/ZTombstoneShane.vc \
+	game/ZTombstoneSmallCross.vc \
+	game/ZTreeSwamp120.vc \
+	game/ZTreeSwamp150.vc \
+	game/ZTwinedTorch.vc \
+	game/ZTwinedTorchUnlit.vc \
+	\
 	game/TreeDestructible.vc \
 	game/ZShroomSmall3.vc \
-	game/PlayerCleric.vc \
 	game/Armor.vc \
 	game/Actor.vc \
 	game/ZStatueGargoyleBlueTall.vc \
-	game/WeaponCHolyPiece3.vc \
-	game/TeleportOtherFX5.vc \
-	game/Sorcerer.vc \
 	game/Dirt4.vc \
-	game/Demon.vc \
-	game/TeleportFog.vc \
-	game/ItemKey5.vc \
-	game/ArtifactPuzzleGear.vc \
 	game/StaticLightSource.vc \
-	game/Demon2Chunk4.vc \
 	game/ZArmorChunk.vc \
 	game/BatSpawner.vc \
-	game/LightningMissile.vc \
 	game/CircleFlame.vc \
-	game/ItemManaGreen.vc \
 	game/EttinMace.vc \
 	game/ZRock1.vc \
 	game/FireDemonRock2.vc \
-	game/StainedGlassShard9.vc \
-	game/ArtifactTeleport.vc \
-	game/DemonChunk1.vc \
 	game/SludgeChunk.vc \
 	game/Rock2.vc \
-	game/ItemArmor1.vc \
 	game/ZRockBrown1.vc \
-	game/ZTombStoneShane.vc \
-	game/LightningFloor.vc \
 	game/ZTreeLarge2.vc \
-	game/CentaurMissile.vc \
 	game/FireDemonSplotch2.vc \
 	game/FireDemon.vc \
 	game/TeleSmoke.vc \
-	game/ItemManaCombined.vc \
 	game/FogPatchMedium.vc \
 	game/ClassBoss.vc \
 	game/ZChainEndSpike.vc \
@@ -207,48 +399,30 @@ EXTRA_DIST = compile.bat \
 	game/classes.vc \
 	game/PoisonCloud.vc \
 	game/ZShroomLarge2.vc \
-	game/ArtifactPuzzleMWeapon.vc \
-	game/SoundWind.vc \
 	game/Pawn.vc \
 	game/ZStalagmiteIceSmall.vc \
 	game/Projectile.vc \
-	game/IceGuy.vc \
 	game/ZStumpBurned.vc \
 	game/FlameSmallTemp.vc \
 	game/ZSwampVine.vc \
-	game/KoraxSpirit5.vc \
 	game/PotteryBit.vc \
 	game/ZChainEndHook2.vc \
 	game/QuakeFocus.vc \
 	game/TableShit7.vc \
-	game/ArtifactPuzzleGemBlue2.vc \
-	game/WeaponFSwordPiece2.vc \
-	game/IceGuyWisp2.vc \
 	game/CentaurLeader.vc \
 	game/FireThing.vc \
 	game/TableShit10.vc \
-	game/ArtifactFlechette.vc \
-	game/WeaponMStaffPiece3.vc \
-	game/SerpentGib2.vc \
-	game/Korax.vc \
-	game/Bishop.vc \
-	game/ArtifactPuzzleFWeapon.vc \
-	game/StainedGlassShard4.vc \
 	game/ZRubble3.vc \
-	game/ArtifactPuzzleGear3.vc \
 	game/SnoutPuff.vc \
 	game/MainGameInfo.vc \
-	game/WeaponFighterHammer.vc \
 	game/SoundWaterfall.vc \
 	game/MageStaffFX.vc \
-	game/ArtifactPuzzleBook2.vc \
 	game/ZCorpseLynched.vc \
 	game/LavaSplash.vc \
 	game/FireDemonMissile.vc \
 	game/Blood.vc \
 	game/TableShit2.vc \
 	game/BloodySkull.vc \
-	game/ClericFlameFloor.vc \
 	game/Pig.vc \
 	game/Carcas.vc \
 	game/Dirt5.vc \
@@ -257,360 +431,184 @@ EXTRA_DIST = compile.bat \
 	game/IceChunkHead.vc \
 	game/HexenLevelInfo.vc \
 	game/ZShroomSmall4.vc \
-	game/WraithFleshDrip1.vc \
 	game/FogPatchSmall.vc \
-	game/ZTWinedTorch.vc \
 	game/FireBomb.vc \
-	game/Player.vc \
 	game/Effect.vc \
-	game/ItemKey6.vc \
 	game/ZBannerTattered.vc \
 	game/ZStatueGargoyleDarkRedShort.vc \
-	game/ArtifactInvulnerability.vc \
-	game/WeaponFighterAxe.vc \
-	game/WeaponCFlame.vc \
-	game/Demon2Chunk5.vc \
-	game/ArtifactSuperHeal.vc \
 	game/Pottery1.vc \
 	game/Mana.vc \
-	game/ZTombStoneSmallCross.vc \
 	game/FireDemonRock3.vc \
 	game/ZRock2.vc \
-	game/ClericStaffMissile.vc \
-	game/WeaponMCone.vc \
-	game/LightningCeiling.vc \
-	game/DemonChunk2.vc \
 	game/ZStalagmiteIceLarge.vc \
-	game/TeleportOtherFX1.vc \
 	game/Rock3.vc \
 	game/ZStalagmiteMedium.vc \
-	game/ItemArmor2.vc \
 	game/ZRockBrown2.vc \
-	game/ArtifactPuzzleSkull.vc \
 	game/ZCorpseSitting.vc \
 	game/FlamePuff2.vc \
 	game/BridgeBall.vc \
 	game/ZChandelier.vc \
-	game/ItemKey1.vc \
 	game/StaticRGBLightSource.vc \
 	game/ZStalactiteMedium.vc \
-	game/Weapon.vc \
 	game/ZTree.vc \
 	game/HammerPuff.vc \
-	game/ItemHealingBottle.vc \
 	game/ZShroomLarge3.vc \
 	game/MageBoss.vc \
-	game/ArtifactPuzzleGemGreen1.vc \
-	game/WeaponFighterPunch.vc \
 	game/ZChandelierUnlit.vc \
-	game/KoraxSpirit6.vc \
 	game/Arrow.vc \
 	game/TableShit8.vc \
-	game/WeaponFSwordPiece3.vc \
-	game/ItemKeyA.vc \
-	game/BishopBlur.vc \
 	game/ZStalagmiteIceTiny.vc \
-	game/ArtifactTeleportOther.vc \
-	game/SorcererBall.vc \
 	game/CentaurSword.vc \
 	game/PoisonBag.vc \
-	game/ArtifactPuzzleGemBig.vc \
-	game/ZTreeSwamp1.vc \
-	game/Demon2.vc \
 	game/ZSuitOfArmor.vc \
-	game/SerpentGib3.vc \
-	game/Artifact.vc \
-	game/MinotaurFloorFire1.vc \
-	game/CorpseHanging.vc \
-	game/StainedGlassShard5.vc \
-	game/WeaponFHammer.vc \
-	game/ArtifactPuzzleGear4.vc \
-	game/DragonFX2.vc \
 	game/AxeBlood.vc \
-	game/WeaponMageWand.vc \
-	game/KoraxSpirit1.vc \
-	game/WeaponMageStaff.vc \
 	game/TableShit3.vc \
 	game/Fragment.vc \
-	game/BishopPuff.vc \
 	game/ZBucket.vc \
 	game/ZStatueGargoyleDarkRedTall.vc \
 	game/FogPatchLarge.vc \
 	game/ZStatueGargoyleTanTall.vc \
-	game/SorcererFX3Explosion.vc \
-	game/WraithFleshDrip2.vc \
 	game/PointPuller.vc \
 	game/MageStaffFX2.vc \
 	game/ZShroomSmall5.vc \
 	game/IceChunk.vc \
 	game/Dirt6.vc \
-	game/StainedGlassShard0.vc \
-	game/ArtifactEgg.vc \
-	game/MinotaurSmokeExit.vc \
-	game/DemonMissile.vc \
-	game/ZTombStoneBigCross.vc \
-	game/WeaponMageCone.vc \
 	game/ZStalagmitePillar.vc \
-	game/ArtifactBoostMana.vc \
 	game/CentaurShield.vc \
-	game/ItemKey7.vc \
 	game/ZChainEndHearth.vc \
 	game/ThrustFloorUp.vc \
-	game/WeaponClericHoly.vc \
 	game/ThrowingBomb.vc \
-	game/ZLeafSpawner.vc \
-	game/SorcererFX1.vc \
-	game/ArtifactFly.vc \
 	game/FlamePuff.vc \
-	game/ArtifactPuzzleCWeapon.vc \
 	game/FireDemonRock4.vc \
 	game/ZRock3.vc \
-	game/DemonChunk3.vc \
-	game/TeleportOtherFX2.vc \
-	game/ItemArmor3.vc \
 	game/MapSpot.vc \
 	game/Dirt1.vc \
 	game/Ettin.vc \
-	game/MinotaurMissile.vc \
 	game/Bat.vc \
-	game/ArtifactPuzzle.vc \
 	game/ZRockBlack.vc \
 	game/ZMossCeiling1.vc \
-	game/ItemKey2.vc \
-	game/WraithBuried.vc \
 	game/Dart.vc \
-	game/PlayerPig.vc \
 	game/ZStumpBare.vc \
-	game/Minotaur.vc \
 	game/ZBell.vc \
-	game/FighterSwordMissile.vc \
-	game/Demon2Chunk1.vc \
 	game/HolyMissile.vc \
-	game/BotPlayer.vc \
-	game/SerpentHead.vc \
 	game/ZStalactiteIceSmall.vc \
-	game/BishopPainBlur.vc \
 	game/TableShit9.vc \
-	game/ItemKeyB.vc \
 	game/CentaurMash.vc \
 	game/FlameSmall.vc \
 	game/ZStalactiteIceTiny.vc \
 	game/BloodSplatter.vc \
 	game/ZCorpseLynchedNoHeart.vc \
-	game/MinotaurFloorFire2.vc \
-	game/WeaponClericFire.vc \
 	game/MageWandSmoke.vc \
-	game/ArtifactTorch.vc \
-	game/ZTreeSwamp2.vc \
 	game/Decoration.vc \
 	game/Pottery2.vc \
-	game/ZTombStoneBrianP.vc \
-	game/EggMissile.vc \
 	game/ZPoisonShroom.vc \
-	game/StainedGlassShard6.vc \
 	game/ZWallTorch.vc \
 	game/Dirt2.vc \
 	game/ZStatueGargoyleStripeTall.vc \
-	game/ClericFlameMissile.vc \
 	game/AxePuff.vc \
 	game/ZShrub1.vc \
 	game/ZChainEndSkull.vc \
-	game/KoraxSpirit2.vc \
-	game/ItemManaBlue.vc \
 	game/DirtClump.vc \
 	game/ZTreeDead.vc \
-	game/ArtifactPuzzleGemGreen2.vc \
 	game/TableShit4.vc \
 	game/BrassTorch.vc \
 	game/Dirt3.vc \
 	game/FogSpawner.vc \
 	game/ZVasePillar.vc \
-	game/WraithFX3.vc \
 	game/BloodPool.vc \
 	game/Leaf1.vc \
 	game/ZStatueGargoyleBlueShort.vc \
-	game/StainedGlassShard1.vc \
 	game/Key.vc \
 	game/Pickup.vc \
 	game/ZStalagmiteIceMedium.vc \
-	game/IceGuyMissilePuff.vc \
 	game/AxePuffGlow.vc \
 	game/PunchPuff.vc \
-	game/LightningZap.vc \
-	game/ItemKey8.vc \
 	game/HammerMissile.vc \
-	game/SorcererBall1.vc \
-	game/SorcererFX2.vc \
-	game/MinotaurFloorFire.vc \
 	game/ZStatueGargoyleRedShort.vc \
-	game/FighterSwordFlame.vc \
 	game/ZTreeGnarled1.vc \
-	game/HolyFX.vc \
-	game/Dragon.vc \
-	game/IceGuyMissile.vc \
-	game/DemonMash.vc \
 	game/ZShroomSmall1.vc \
 	game/ZStalactiteIceLarge.vc \
 	game/FireDemonRock5.vc \
 	game/ZRock4.vc \
-	game/DemonChunk4.vc \
 	game/Leaf2.vc \
 	game/ZStatueGargoyleTanShort.vc \
 	game/FighterBoss.vc \
-	game/WeaponCHolyPiece1.vc \
 	game/ZStalactiteSmall.vc \
-	game/TeleportOtherFX3.vc \
-	game/PlayerPawn.vc \
 	game/BlastEffect.vc \
 	game/Bridge.vc \
-	game/ItemArmor4.vc \
 	game/ThrustFloorDown.vc \
 	game/ZStatueGargoyleGreenTall.vc \
-	game/ArtifactSpeedBoots.vc \
 	game/BloodSplash.vc \
-	game/KoraxBolt.vc \
 	game/Centaur.vc \
 	game/ZStatueGargoyleRustShort.vc \
 	game/ZMossCeiling2.vc \
 	game/CorpseBit.vc \
-	game/ItemKey3.vc \
 	game/EttinMash.vc \
 	game/SludgeSplash.vc \
-	game/Demon2Chunk2.vc \
 	game/FlameLarge.vc \
 	game/ZRubble1.vc \
-	game/FireBall1.vc \
 	game/MageWandPuff.vc \
-	game/ArtifactHealthFlask.vc \
-	game/ClericStaffPuff.vc \
-	game/WeaponMLightning.vc \
 	game/ZFireBullUnlit.vc \
 	game/ZCorpseSleeping.vc \
-	game/BishopMissile.vc \
 	game/ZIronMaiden.vc \
 	game/ZChainBit32.vc \
-	game/WeaponCSerpentStaff.vc \
-	game/WeaponFighterSword.vc \
 	game/LavaSmoke.vc \
-	game/WeaponPigSnout.vc \
 	game/ZXmasTree.vc \
 	game/ZStatueGargoyleRustTall.vc \
-	game/TeleportSpot2.vc \
 	game/Pottery3.vc \
-	game/StainedGlassShard7.vc \
 	game/FogPatch.vc \
 	game/ClericBoss.vc \
-	game/MinotaurSmoke.vc \
 	game/LavaInflictor.vc \
-	game/WeaponClericStaff.vc \
 	game/ZShrub2.vc \
-	game/KoraxSpirit3.vc \
 	game/CorpseBloodDrip.vc \
 	game/TableShit5.vc \
-	game/Demon2Chunk3.vc \
-	game/Demon2Missile.vc \
 	game/FlameLargeTemp.vc \
 	game/PointPusher.vc \
-	game/DemonChunk5.vc \
-	game/ArtifactBlastRadius.vc \
-	game/WeaponMStaffPiece1.vc \
 	game/MapSpotGravity.vc \
-	game/SorcererSpark.vc \
-	game/PlayerMage.vc \
-	game/StainedGlassShard2.vc \
-	game/DragonMissile.vc \
-	game/ShardMissile.vc \
 	game/HolyPuff.vc \
 	game/Rock1.vc \
-	game/ArtifactBoostArmor.vc \
 	game/FireDemonRock1.vc \
 	game/FireDemonSplotch1.vc \
 	game/ZStatueGargoyleGreenShort.vc \
-	game/ArtifactPuzzleGemRed.vc \
 	game/HolyTail.vc \
-	game/Demon2Mash.vc \
 	game/ZWingedStatue.vc \
 	game/ZFireBull.vc \
-	game/ItemKey9.vc \
-	game/IceGuyBit.vc \
-	game/ArtifactSummonMaulator.vc \
 	game/IceShard.vc \
-	game/SorcererBall2.vc \
 	game/ZStalactiteLarge.vc \
-	game/PlayerFighter.vc \
-	game/SorcererFX3.vc \
-	game/WeaponMageLightning.vc \
-	game/SerpentMissile.vc \
 	game/ZTreeGnarled2.vc \
 	game/ZShroomSmall2.vc \
-	game/PlayerSpeed.vc \
 	game/ZCauldronUnlit.vc \
 	game/ZStalagmiteSmall.vc \
-	game/IceGuyWisp1.vc \
-	game/WeaponCHolyPiece2.vc \
-	game/ItemKey4.vc \
-	game/TeleportOtherFX4.vc \
 	game/ZChainBit64.vc \
 	game/ZLog.vc \
-	game/Serpent.vc \
-	game/IceGuyMissile2.vc \
 	game/HolyMissilePuff.vc \
-	game/WaterDrip.vc \
-	game/WeaponClericMace.vc \
-	game/Wraith.vc \
-	game/SummonMissile.vc \
 	game/ZStatueGargoyleRedTall.vc \
 	game/ZWallTorchUnlit.vc \
 	game/MageWandMissile.vc \
-	game/SorcererFX2_T1.vc \
 	game/PoisonDart.vc \
-	game/ZTombStoneRip.vc \
 	game/ZBarrel.vc \
 	game/Gibs.vc \
-	game/WraithMissile.vc \
 	game/ZCorpseKabob.vc \
 	game/ZCandle.vc \
 	game/ZTreeLarge1.vc \
 	game/ProjectileBlade.vc \
 	game/RipperBall.vc \
-	game/TeleportSpot3.vc \
-	game/SerpentGib1.vc \
-	game/SorcererBall3.vc \
 	game/ZBlueCandle.vc \
 	game/ZStumpSwamp1.vc \
-	game/StainedGlassShard8.vc \
 	game/TableShit1.vc \
-	game/SerpentLeader.vc \
 	game/ZShroomLarge1.vc \
-	game/WraithSparkDrip.vc \
-	game/KoraxSpirit4.vc \
 	game/ZCauldron.vc \
-	game/ArtifactPuzzleSkull2.vc \
-	game/ZTombStoneBrianR.vc \
 	game/ZChainEndHook1.vc \
-	game/TeleportSpot.vc \
 	game/TableShit6.vc \
 	game/ZRubble2.vc \
-	game/WeaponFSwordPiece1.vc \
 	game/ZWingedStatueNoSkull.vc \
-	game/SorcererFX4.vc \
-	game/WeaponFAxe.vc \
-	game/WeaponMStaffPiece2.vc \
 	game/ZGemPedestal.vc \
 	game/WaterSplash.vc \
-	game/StainedGlassShard3.vc \
 	game/ZStalagmiteLarge.vc \
-	game/ZTombStoneCrossCircle.vc \
 	game/BloodSplashBase.vc \
 	game/WaterSplashBase.vc \
 	game/SlimeChunk.vc \
-	game/ArtifactPuzzleGemBlue1.vc \
-	game/ArtifactPuzzleGear2.vc \
 	game/SlimeSplash.vc \
 	game/HexenWorldInfo.vc \
-	game/ArtifactPuzzleBook1.vc \
-	game/WeaponPiece.vc \
-	game/ZTWinedTorchUnlit.vc \
 	game/SoundSequence.vc \
-	game/WeaponPickup.vc \
 	game/SoundSequenceSlot.vc

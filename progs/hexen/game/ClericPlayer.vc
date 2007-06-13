@@ -1,0 +1,81 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class ClericPlayer : PlayerPawn;
+
+__states__
+{
+	S_CPLAY('CLER', 0, -1.0, none) = none
+	S_CPLAY_RUN1('CLER', 0, 4.0 / 35.0, S_CPLAY_RUN2) = none
+	S_CPLAY_RUN2('CLER', 1, 4.0 / 35.0, S_CPLAY_RUN3) = none
+	S_CPLAY_RUN3('CLER', 2, 4.0 / 35.0, S_CPLAY_RUN4) = none
+	S_CPLAY_RUN4('CLER', 3, 4.0 / 35.0, S_CPLAY_RUN1) = none
+	S_CPLAY_ATK1('CLER', 4, 6.0 / 35.0, S_CPLAY_ATK2) = none
+	S_CPLAY_ATK2('CLER', 5, 6.0 / 35.0, S_CPLAY_ATK3) = none
+	S_CPLAY_ATK3('CLER', 6, 6.0 / 35.0, S_CPLAY) = none
+	S_CPLAY_PAIN('CLER', 7, 4.0 / 35.0, S_CPLAY_PAIN2) = none
+	S_CPLAY_PAIN2('CLER', 7, 4.0 / 35.0, S_CPLAY) = A_Pain
+	S_CPLAY_DIE1('CLER', 8, 6.0 / 35.0, S_CPLAY_DIE2) = none
+	S_CPLAY_DIE2('CLER', 10, 6.0 / 35.0, S_CPLAY_DIE3) = A_Scream
+	S_CPLAY_DIE3('CLER', 11, 6.0 / 35.0, S_CPLAY_DIE4) = none
+	S_CPLAY_DIE4('CLER', 11, 6.0 / 35.0, S_CPLAY_DIE5) = none
+	S_CPLAY_DIE5('CLER', 12, 6.0 / 35.0, S_CPLAY_DIE6) = A_NoBlocking
+	S_CPLAY_DIE6('CLER', 13, 6.0 / 35.0, S_CPLAY_DIE7) = none
+	S_CPLAY_DIE7('CLER', 14, 6.0 / 35.0, S_CPLAY_DIE8) = none
+	S_CPLAY_DIE8('CLER', 15, 6.0 / 35.0, S_CPLAY_DIE9) = none
+	S_CPLAY_DIE9('CLER', 16, -1.0, none) = A_AddPlayerCorpse
+	S_CPLAY_XDIE1('CLER', 17, 5.0 / 35.0, S_CPLAY_XDIE2) = A_Scream
+	S_CPLAY_XDIE2('CLER', 18, 5.0 / 35.0, S_CPLAY_XDIE3) = none
+	S_CPLAY_XDIE3('CLER', 19, 5.0 / 35.0, S_CPLAY_XDIE4) = A_NoBlocking
+	S_CPLAY_XDIE4('CLER', 20, 5.0 / 35.0, S_CPLAY_XDIE5) = none
+	S_CPLAY_XDIE5('CLER', 21, 5.0 / 35.0, S_CPLAY_XDIE6) = none
+	S_CPLAY_XDIE6('CLER', 22, 5.0 / 35.0, S_CPLAY_XDIE7) = none
+	S_CPLAY_XDIE7('CLER', 23, 5.0 / 35.0, S_CPLAY_XDIE8) = none
+	S_CPLAY_XDIE8('CLER', 24, 5.0 / 35.0, S_CPLAY_XDIE9) = none
+	S_CPLAY_XDIE9('CLER', 25, 5.0 / 35.0, S_CPLAY_XDIE10) = none
+	S_CPLAY_XDIE10('CLER', 26, -1.0, none) = A_AddPlayerCorpse
+	S_CPLAY_ICE('CLER', 27, 5.0 / 35.0, S_CPLAY_ICE2) = A_FreezeDeath
+	S_CPLAY_ICE2('CLER', 27, 1.0 / 35.0, S_CPLAY_ICE2) = A_FreezeDeathChunks
+}
+
+defaultproperties
+{
+	Health = 100;
+	GibsHealth = -50;
+	Radius = 16.0;
+	Height = 64.0;
+	PainChance = 1.0;
+	bPickUp = true;
+	IdleState = S_CPLAY;
+	SeeState = S_CPLAY_RUN1;
+	MissileState = S_CPLAY_ATK1;
+	AttackEndState = S_CPLAY_ATK3;
+	PainState = S_CPLAY_PAIN;
+	DeathState = S_CPLAY_DIE1;
+	GibsDeathState = S_CPLAY_XDIE1;
+	IceDeathState = S_CPLAY_ICE;
+	PainSound = 'PlayerClericPain';
+	SoundClass = 'cleric';
+}

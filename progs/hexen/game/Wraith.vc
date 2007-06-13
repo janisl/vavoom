@@ -109,7 +109,7 @@ final void A_WraithFX4()
 
 	if (spawn4)
 	{
-		mo = Spawn(WraithFleshDrip1, Origin);
+		mo = Spawn(WraithFX4, Origin);
 		if (mo)
 		{
 			mo.Origin.x += (Random() - 0.5) * 16.0;
@@ -120,7 +120,7 @@ final void A_WraithFX4()
 	}
 	if (spawn5)
 	{
-		mo = Spawn(WraithFleshDrip2, Origin);
+		mo = Spawn(WraithFX5, Origin);
 		if (mo)
 		{
 			mo.Origin.x += (Random() - 0.5) * 8.0;
@@ -191,7 +191,7 @@ final void A_WraithMissile()
 {
 	Actor mo;
 
-	mo = SpawnMissile(Target, WraithMissile);
+	mo = SpawnMissile(Target, WraithFX1);
 	if (mo)
 	{
 		PlaySound('WraithMissileFire', CHAN_WEAPON);

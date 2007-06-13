@@ -1,0 +1,47 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class CWeapFlame : WeaponPickup
+	__mobjinfo__(8009);
+
+__states__
+{
+	S_CFLAME1('WCFM', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_CFLAME2) = none
+	S_CFLAME2('WCFM', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_CFLAME3) = none
+	S_CFLAME3('WCFM', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_CFLAME4) = none
+	S_CFLAME4('WCFM', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_CFLAME5) = none
+	S_CFLAME5('WCFM', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_CFLAME6) = none
+	S_CFLAME6('WCFM', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_CFLAME7) = none
+	S_CFLAME7('WCFM', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_CFLAME8) = none
+	S_CFLAME8('WCFM', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_CFLAME1) = none
+}
+
+defaultproperties
+{
+	bNoGravity = true;
+	WeaponClass = HexenDefs::PCLASS_CLERIC;
+	WeaponType = HexenDefs::WP_THIRD;
+	IdleState = S_CFLAME1;
+}

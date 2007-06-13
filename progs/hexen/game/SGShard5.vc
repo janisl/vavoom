@@ -1,0 +1,43 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class SGShard5 : GlassShard
+	__scriptid__(58);
+
+__states__
+{
+	S_SGSHARD5_1('SGSA', 20, 4.0 / 35.0, S_SGSHARD5_2) = none
+	S_SGSHARD5_2('SGSA', 21, 4.0 / 35.0, S_SGSHARD5_3) = none
+	S_SGSHARD5_3('SGSA', 22, 4.0 / 35.0, S_SGSHARD5_4) = none
+	S_SGSHARD5_4('SGSA', 23, 4.0 / 35.0, S_SGSHARD5_5) = none
+	S_SGSHARD5_5('SGSA', 24, 4.0 / 35.0, S_SGSHARD5_1) = none
+	S_SGSHARD5_D('SGSA', 24, 30.0 / 35.0, none) = none
+}
+
+defaultproperties
+{
+	IdleState = S_SGSHARD5_1;
+	DeathState = S_SGSHARD5_D;
+}

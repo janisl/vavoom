@@ -1,0 +1,46 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class ArtiPork : Artifact
+	__mobjinfo__(30)
+	__scriptid__(14);
+
+__states__
+{
+	S_ARTI_EGGC1('PORK', 0, 5.0 / 35.0, S_ARTI_EGGC2) = none
+	S_ARTI_EGGC2('PORK', 1, 5.0 / 35.0, S_ARTI_EGGC3) = none
+	S_ARTI_EGGC3('PORK', 2, 5.0 / 35.0, S_ARTI_EGGC4) = none
+	S_ARTI_EGGC4('PORK', 3, 5.0 / 35.0, S_ARTI_EGGC5) = none
+	S_ARTI_EGGC5('PORK', 4, 5.0 / 35.0, S_ARTI_EGGC6) = none
+	S_ARTI_EGGC6('PORK', 5, 5.0 / 35.0, S_ARTI_EGGC7) = none
+	S_ARTI_EGGC7('PORK', 6, 5.0 / 35.0, S_ARTI_EGGC8) = none
+	S_ARTI_EGGC8('PORK', 7, 5.0 / 35.0, S_ARTI_EGGC1) = none
+}
+
+defaultproperties
+{
+	ArtifactType = HexenDefs::arti_egg;
+	IdleState = S_ARTI_EGGC1;
+}

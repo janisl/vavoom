@@ -43,7 +43,7 @@ float GetReflectedAngle(Actor Other)
 	{
 		return -1.0;
 	}
-	if (HolyFX(Other))
+	if (HolySpirit(Other))
 	{
 		return -1.0;
 	}

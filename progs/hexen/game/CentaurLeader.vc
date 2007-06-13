@@ -39,7 +39,7 @@ final void A_CentaurAttack2()
 	{
 		return;
 	}
-	SpawnMissile(Target, CentaurMissile);
+	SpawnMissile(Target, CentaurFX);
 	PlaySound('CentaurLeaderAttack', CHAN_WEAPON);
 }
 

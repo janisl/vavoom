@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Demon2Chunk4:DemonChunk1;
+class Demon2Chunk4 : Demon1Chunk1;
 
 __states__
 {

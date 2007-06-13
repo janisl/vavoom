@@ -1,0 +1,53 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class ArtiHealingRadius:Artifact
+	__mobjinfo__(10120);
+
+__states__
+{
+	S_ARTI_HEALRAD1('HRAD', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_ARTI_HEALRAD2) = none
+	S_ARTI_HEALRAD2('HRAD', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_ARTI_HEALRAD3) = none
+	S_ARTI_HEALRAD3('HRAD', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_ARTI_HEALRAD4) = none
+	S_ARTI_HEALRAD4('HRAD', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_ARTI_HEALRAD5) = none
+	S_ARTI_HEALRAD5('HRAD', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_ARTI_HEALRAD6) = none
+	S_ARTI_HEALRAD6('HRAD', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_ARTI_HEALRAD7) = none
+	S_ARTI_HEALRAD7('HRAD', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_ARTI_HEALRAD8) = none
+	S_ARTI_HEALRAD8('HRAD', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_ARTI_HEALRAD9) = none
+	S_ARTI_HEALRAD9('HRAD', 8 | FF_FULLBRIGHT, 4.0 / 35.0, S_ARTI_HEALRAD0) = none
+	S_ARTI_HEALRAD0('HRAD', 9 | FF_FULLBRIGHT, 4.0 / 35.0, S_ARTI_HEALRADA) = none
+	S_ARTI_HEALRADA('HRAD', 10 | FF_FULLBRIGHT, 4.0 / 35.0, S_ARTI_HEALRADB) = none
+	S_ARTI_HEALRADB('HRAD', 11 | FF_FULLBRIGHT, 4.0 / 35.0, S_ARTI_HEALRADC) = none
+	S_ARTI_HEALRADC('HRAD', 12 | FF_FULLBRIGHT, 4.0 / 35.0, S_ARTI_HEALRADD) = none
+	S_ARTI_HEALRADD('HRAD', 13 | FF_FULLBRIGHT, 4.0 / 35.0, S_ARTI_HEALRADE) = none
+	S_ARTI_HEALRADE('HRAD', 14 | FF_FULLBRIGHT, 4.0 / 35.0, S_ARTI_HEALRADF) = none
+	S_ARTI_HEALRADF('HRAD', 15 | FF_FULLBRIGHT, 4.0 / 35.0, S_ARTI_HEALRAD1) = none
+}
+
+defaultproperties
+{
+	ArtifactType = HexenDefs::arti_healingradius;
+	IdleState = S_ARTI_HEALRAD1;
+}

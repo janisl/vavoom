@@ -322,7 +322,7 @@ bool CheckItem(Actor item)
 			return false;
 	}
 
-	if (item.Class == ItemHealingBottle && (botmo.Health >= Player::MAXHEALTH))
+	if (item.Class == CrystalVial && (botmo.Health >= Player::MAXHEALTH))
 		return false;
 
 	// Guess we're okay

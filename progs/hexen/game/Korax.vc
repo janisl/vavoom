@@ -311,15 +311,15 @@ final void A_KoraxMissile()
 	switch (P_Random() % 6)
 	{
 	case 0:
-		mtype = WraithMissile;
+		mtype = WraithFX1;
 		sound = 'WraithMissileFire';
 		break;
 	case 1:
-		mtype = DemonMissile;
+		mtype = Demon1FX1;
 		sound = 'DemonMissileFire';
 		break;
 	case 2:
-		mtype = Demon2Missile;
+		mtype = Demon2FX1;
 		sound = 'DemonMissileFire';
 		break;
 	case 3:
@@ -327,11 +327,11 @@ final void A_KoraxMissile()
 		sound = 'FireDemonAttack';
 		break;
 	case 4:
-		mtype = CentaurMissile;
+		mtype = CentaurFX;
 		sound = 'CentaurLeaderAttack';
 		break;
 	case 5:
-		mtype = SerpentMissile;
+		mtype = SerpentFX;
 		sound = 'CentaurLeaderAttack';
 		break;
 	}
@@ -405,24 +405,24 @@ final void A_KoraxBonePop()
 	Actor mo;
 
 	// Spawn 6 spirits equalangularly
-	mo = SpawnMissileAngle(KoraxSpirit1, 60.0 * 0.0, 5.0 * 35.0);
+	mo = SpawnMissileAngle(KoraxSpirit, 60.0 * 0.0, 5.0 * 35.0);
 	if (mo)
-		KoraxSpirit1(mo).KSpiritInit(self);
-	mo = SpawnMissileAngle(KoraxSpirit2, 60.0 * 1.0, 5.0 * 35.0);
+		KoraxSpirit(mo).KSpiritInit(self);
+	mo = SpawnMissileAngle(KoraxSpirit, 60.0 * 1.0, 5.0 * 35.0);
 	if (mo)
-		KoraxSpirit2(mo).KSpiritInit(self);
-	mo = SpawnMissileAngle(KoraxSpirit3, 60.0 * 2.0, 5.0 * 35.0);
+		KoraxSpirit(mo).KSpiritInit(self);
+	mo = SpawnMissileAngle(KoraxSpirit, 60.0 * 2.0, 5.0 * 35.0);
 	if (mo)
-		KoraxSpirit3(mo).KSpiritInit(self);
-	mo = SpawnMissileAngle(KoraxSpirit4, 60.0 * 3.0, 5.0 * 35.0);
+		KoraxSpirit(mo).KSpiritInit(self);
+	mo = SpawnMissileAngle(KoraxSpirit, 60.0 * 3.0, 5.0 * 35.0);
 	if (mo)
-		KoraxSpirit4(mo).KSpiritInit(self);
-	mo = SpawnMissileAngle(KoraxSpirit5, 60.0 * 4.0, 5.0 * 35.0);
+		KoraxSpirit(mo).KSpiritInit(self);
+	mo = SpawnMissileAngle(KoraxSpirit, 60.0 * 4.0, 5.0 * 35.0);
 	if (mo)
-		KoraxSpirit5(mo).KSpiritInit(self);
-	mo = SpawnMissileAngle(KoraxSpirit6, 60.0 * 5.0, 5.0 * 35.0);
+		KoraxSpirit(mo).KSpiritInit(self);
+	mo = SpawnMissileAngle(KoraxSpirit, 60.0 * 5.0, 5.0 * 35.0);
 	if (mo)
-		KoraxSpirit6(mo).KSpiritInit(self);
+		KoraxSpirit(mo).KSpiritInit(self);
 
 	XLevel.StartACS(255, 0, 0, 0, 0, self, NULL, 0, false, false);	// Death script
 }

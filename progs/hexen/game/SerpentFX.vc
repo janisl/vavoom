@@ -1,0 +1,65 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class SerpentFX : Projectile;
+
+//==========================================================================
+//
+//  A_ContMobjSound
+//
+//==========================================================================
+
+final void A_ContMobjSound()
+{
+	PlaySound('SerpentFXContinuous', CHAN_VOICE);
+}
+
+__states__
+{
+	S_SERPENT_FX1('SSFX', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_SERPENT_FX2) = A_ContMobjSound
+	S_SERPENT_FX2('SSFX', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_SERPENT_FX3) = none
+	S_SERPENT_FX3('SSFX', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_SERPENT_FX4) = none
+	S_SERPENT_FX4('SSFX', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_SERPENT_FX1) = none
+	S_SERPENT_FX_X1('SSFX', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_SERPENT_FX_X2) = none
+	S_SERPENT_FX_X2('SSFX', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_SERPENT_FX_X3) = none
+	S_SERPENT_FX_X3('SSFX', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_SERPENT_FX_X4) = none
+	S_SERPENT_FX_X4('SSFX', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_SERPENT_FX_X5) = none
+	S_SERPENT_FX_X5('SSFX', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_SERPENT_FX_X6) = none
+	S_SERPENT_FX_X6('SSFX', 7 | FF_FULLBRIGHT, 4.0 / 35.0, none) = none
+}
+
+defaultproperties
+{
+	Radius = 8.0;
+	Height = 10.0;
+	Speed = 525.0;
+	MissileDamage = 4;
+	bActivateImpact = false;
+	bActivatePCross = false;
+	IdleState = S_SERPENT_FX1;
+	DeathState = S_SERPENT_FX_X1;
+	DeathSound = 'SerpentFXHit';
+	Effects = HexenDefs::EF_DL_GREEN;
+}

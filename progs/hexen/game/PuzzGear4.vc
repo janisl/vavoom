@@ -1,0 +1,45 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class PuzzGear4 : PuzzleItem
+	__mobjinfo__(9021);
+
+__states__
+{
+	S_ARTIPUZZGEAR4_1('AGR4', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_ARTIPUZZGEAR4_2) = none
+	S_ARTIPUZZGEAR4_2('AGR4', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_ARTIPUZZGEAR4_3) = none
+	S_ARTIPUZZGEAR4_3('AGR4', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_ARTIPUZZGEAR4_4) = none
+	S_ARTIPUZZGEAR4_4('AGR4', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_ARTIPUZZGEAR4_5) = none
+	S_ARTIPUZZGEAR4_5('AGR4', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_ARTIPUZZGEAR4_6) = none
+	S_ARTIPUZZGEAR4_6('AGR4', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_ARTIPUZZGEAR4_7) = none
+	S_ARTIPUZZGEAR4_7('AGR4', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_ARTIPUZZGEAR4_8) = none
+	S_ARTIPUZZGEAR4_8('AGR4', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_ARTIPUZZGEAR4_1) = none
+}
+
+defaultproperties
+{
+	ArtifactType = HexenDefs::arti_puzzgear4;
+	IdleState = S_ARTIPUZZGEAR4_1;
+}

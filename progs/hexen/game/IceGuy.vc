@@ -101,11 +101,11 @@ final void A_IceGuyAttack()
 	}
 	an = AngleMod360(Angles.yaw + 90.0);
 	SpawnMissileXYZ(Origin + vector(Radius / 2.0 * cos(an),
-		Radius / 2.0 * sin(an), 40.0), Target, IceGuyMissile);
+		Radius / 2.0 * sin(an), 40.0), Target, IceGuyFX);
 
 	an = AngleMod360(Angles.yaw - 90.0);
 	SpawnMissileXYZ(Origin + vector(Radius / 2.0 * cos(an),
-		Radius / 2.0 * sin(an), 40.0), Target, IceGuyMissile);
+		Radius / 2.0 * sin(an), 40.0), Target, IceGuyFX);
 
 	PlaySound(AttackSound, CHAN_WEAPON);
 }

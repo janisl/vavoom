@@ -1,0 +1,47 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class MWeapLightning : WeaponPickup
+	__mobjinfo__(8040);
+
+__states__
+{
+	S_MW_LIGHTNING1('WMLG', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_MW_LIGHTNING2) = none
+	S_MW_LIGHTNING2('WMLG', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_MW_LIGHTNING3) = none
+	S_MW_LIGHTNING3('WMLG', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_MW_LIGHTNING4) = none
+	S_MW_LIGHTNING4('WMLG', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_MW_LIGHTNING5) = none
+	S_MW_LIGHTNING5('WMLG', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_MW_LIGHTNING6) = none
+	S_MW_LIGHTNING6('WMLG', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_MW_LIGHTNING7) = none
+	S_MW_LIGHTNING7('WMLG', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_MW_LIGHTNING8) = none
+	S_MW_LIGHTNING8('WMLG', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_MW_LIGHTNING1) = none
+}
+
+defaultproperties
+{
+	bNoGravity = true;
+	WeaponClass = HexenDefs::PCLASS_MAGE;
+	WeaponType = HexenDefs::WP_THIRD;
+	IdleState = S_MW_LIGHTNING1;
+}

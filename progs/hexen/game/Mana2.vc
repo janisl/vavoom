@@ -1,0 +1,55 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class Mana2 : Mana
+	__mobjinfo__(124)
+	__scriptid__(12);
+
+__states__
+{
+	S_MANA2_1('MAN2', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_MANA2_2) = none
+	S_MANA2_2('MAN2', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_MANA2_3) = none
+	S_MANA2_3('MAN2', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_MANA2_4) = none
+	S_MANA2_4('MAN2', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_MANA2_5) = none
+	S_MANA2_5('MAN2', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_MANA2_6) = none
+	S_MANA2_6('MAN2', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_MANA2_7) = none
+	S_MANA2_7('MAN2', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_MANA2_8) = none
+	S_MANA2_8('MAN2', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_MANA2_9) = none
+	S_MANA2_9('MAN2', 8 | FF_FULLBRIGHT, 4.0 / 35.0, S_MANA2_10) = none
+	S_MANA2_10('MAN2', 9 | FF_FULLBRIGHT, 4.0 / 35.0, S_MANA2_11) = none
+	S_MANA2_11('MAN2', 10 | FF_FULLBRIGHT, 4.0 / 35.0, S_MANA2_12) = none
+	S_MANA2_12('MAN2', 11 | FF_FULLBRIGHT, 4.0 / 35.0, S_MANA2_13) = none
+	S_MANA2_13('MAN2', 12 | FF_FULLBRIGHT, 4.0 / 35.0, S_MANA2_14) = none
+	S_MANA2_14('MAN2', 13 | FF_FULLBRIGHT, 4.0 / 35.0, S_MANA2_15) = none
+	S_MANA2_15('MAN2', 14 | FF_FULLBRIGHT, 4.0 / 35.0, S_MANA2_16) = none
+	S_MANA2_16('MAN2', 15 | FF_FULLBRIGHT, 4.0 / 35.0, S_MANA2_1) = none
+}
+
+defaultproperties
+{
+	ManaType = HexenDefs::MANA_2;
+	ManaCount = 15;
+	IdleState = S_MANA2_1;
+}
