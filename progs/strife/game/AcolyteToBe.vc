@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class AcolyteToBe : AcolyteBase
+class AcolyteToBe : Acolyte
 	__mobjinfo__(201);
 
 //============================================================================
@@ -58,6 +58,21 @@ __states__
 
 defaultproperties
 {
+	ClassName = '';
+	StepSpeed = 0.0;
+	IdleRightState = none;
+	IdleLeftState = none;
+	WalkState = none;
+	SeeState = none;
+	MissileState = none;
+	GibsDeathState = none;
+	FireDeathState = none;
+	DisruptDeathState = none;
+	SightSound = '';
+	ActiveSound = '';
+	AttackSound = '';
+	PainSound = '';
+
 	ConversationID = 6;
 	Health = 61;
 	Radius = 20.0;

@@ -23,23 +23,42 @@
 //**
 //**************************************************************************
 
-class CeilingDrip:Decoration
-	__mobjinfo__(53);
+class StrifeHumanoid : Pawn
+	abstract;
+
+//==========================================================================
+//
+//	A_PeasantAttack
+//
+//==========================================================================
+
+final void A_PeasantAttack()
+{
+	if (!Target)
+		return;
+
+	A_FaceTarget();
+
+	if (CheckMeleeRange())
+	{
+		Target.Damage(self, self, (P_Random() % 5) * 2 + 2);
+	}
+}
 
 __states__
 {
-	S_CDRIP_1('CDRP', 0, 10.0 / 35.0, S_CDRIP_2) = none
-	S_CDRIP_2('CDRP', 1, 8.0 / 35.0, S_CDRIP_3) = none
-	S_CDRIP_3('CDRP', 2, 8.0 / 35.0, S_CDRIP_4) = none
-	S_CDRIP_4('CDRP', 3, 8.0 / 35.0, S_CDRIP_1) = none
+	S_PEASANT_XDIE1('GIBS', 12, 5.0 / 35.0, S_PEASANT_XDIE2) = A_XDying
+	S_PEASANT_XDIE2('GIBS', 13, 5.0 / 35.0, S_PEASANT_XDIE3) = A_XScream
+	S_PEASANT_XDIE3('GIBS', 14, 5.0 / 35.0, S_PEASANT_XDIE4) = A_Fall
+	S_PEASANT_XDIE4('GIBS', 15, 4.0 / 35.0, S_PEASANT_XDIE5) = A_XDying
+	S_PEASANT_XDIE5('GIBS', 16, 4.0 / 35.0, S_PEASANT_XDIE6) = A_XDying
+	S_PEASANT_XDIE6('GIBS', 17, 4.0 / 35.0, S_PEASANT_XDIE7) = A_XDying
+	S_PEASANT_XDIE7('GIBS', 18, 4.0 / 35.0, S_PEASANT_XDIE8) = A_XDying
+	S_PEASANT_XDIE8('GIBS', 19, 4.0 / 35.0, S_PEASANT_XDIE9) = none
+	S_PEASANT_XDIE9('GIBS', 20, 5.0 / 35.0, S_PEASANT_XDIE10) = none
+	S_PEASANT_XDIE10('GIBS', 21, 1400.0 / 35.0, none) = none
 }
 
 defaultproperties
 {
-	Radius = 20.0;
-	Height = 1.0;
-	bNoBlockmap = true;
-	bSpawnCeiling = true;
-	bNoGravity = true;
-	IdleState = S_CDRIP_1;
 }

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class AcolyteRust : AcolyteTan
+class AcolyteRust : Acolyte
 	__mobjinfo__(143);
 
 defaultproperties

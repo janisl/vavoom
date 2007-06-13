@@ -151,7 +151,7 @@ EXTRA_DIST = compile.bat \
 	cgame/MenuChoice_Models.vc \
 	cgame/MenuChoice_D3DModelLights.vc \
 	cgame/MenuChoice_DrawFPS.vc \
-	game/AcolyteBase.vc \
+	game/Acolyte.vc \
 	game/AcolyteBlue.vc \
 	game/AcolyteDGreen.vc \
 	game/AcolyteGold.vc \
@@ -186,6 +186,7 @@ EXTRA_DIST = compile.bat \
 	game/BarKeep.vc \
 	game/BarricadeColumn.vc \
 	game/BaseKey.vc \
+	game/Beggar.vc \
 	game/Beggar1.vc \
 	game/Beggar2.vc \
 	game/Beggar3.vc \
@@ -209,7 +210,6 @@ EXTRA_DIST = compile.bat \
 	game/CavePillarBottom.vc \
 	game/CavePillarTop.vc \
 	game/CeilingChain.vc \
-	game/CeilingDrip.vc \
 	game/CeilingTurret.vc \
 	game/ChapelKey.vc \
 	game/ChimneyStack.vc \
@@ -304,6 +304,7 @@ EXTRA_DIST = compile.bat \
 	game/MedicalKit.vc \
 	game/MediumTorch.vc \
 	game/MedPatch.vc \
+	game/Merchant.vc \
 	game/MetalArmor.vc \
 	game/MetalPot.vc \
 	game/MilitaryID.vc \
@@ -326,6 +327,7 @@ EXTRA_DIST = compile.bat \
 	game/PalmTree.vc \
 	game/Passcard.vc \
 	game/Pawn.vc \
+	game/Peasant.vc \
 	game/Peasant1.vc \
 	game/Peasant2.vc \
 	game/Peasant3.vc \
@@ -348,7 +350,6 @@ EXTRA_DIST = compile.bat \
 	game/Peasant20.vc \
 	game/Peasant21.vc \
 	game/Peasant22.vc \
-	game/PeasantBase.vc \
 	game/PhosphorousFire.vc \
 	game/PhosphorousGrenade.vc \
 	game/PhosphorusGrenadeRounds.vc \
@@ -417,6 +418,7 @@ EXTRA_DIST = compile.bat \
 	game/RaiseAlarm.vc \
 	game/RatBuddy.vc \
 	game/Reaver.vc \
+	game/Rebel.vc \
 	game/Rebel1.vc \
 	game/Rebel2.vc \
 	game/Rebel3.vc \
@@ -494,6 +496,7 @@ EXTRA_DIST = compile.bat \
 	game/StrifeCandelabra.vc \
 	game/StrifeCrossbow.vc \
 	game/StrifeGrenadeLauncher.vc \
+	game/StrifeHumanoid.vc \
 	game/StrifeLevelInfo.vc \
 	game/StrifeMap.vc \
 	game/StrifePlayer.vc \
@@ -527,6 +530,7 @@ EXTRA_DIST = compile.bat \
 	game/UpgradeStamina.vc \
 	game/WarehouseKey.vc \
 	game/WaterBottle.vc \
+	game/WaterDrip.vc \
 	game/WaterDropOnFloor.vc \
 	game/WaterfallSplash.vc \
 	game/WaterFountain.vc \

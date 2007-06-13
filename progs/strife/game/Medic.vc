@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Medic : WeaponSmith
+class Medic : Merchant
 	__mobjinfo__(74);
 
 defaultproperties

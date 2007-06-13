@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class AcolyteShadow : AcolyteTan
+class AcolyteShadow : Acolyte
 	__mobjinfo__(58);
 
 __states__

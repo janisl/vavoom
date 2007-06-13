@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Zombie : PeasantBase
+class Zombie : StrifeHumanoid
 	__mobjinfo__(169);
 
 __states__

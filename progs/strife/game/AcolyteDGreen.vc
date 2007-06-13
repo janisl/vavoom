@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class AcolyteDGreen : AcolyteTan
+class AcolyteDGreen : Acolyte
 	__mobjinfo__(147);
 
 defaultproperties

@@ -23,67 +23,6 @@
 //**
 //**************************************************************************
 
-class Peasant : PeasantBase
-	abstract;
-
-__states__
-{
-	S_PEASANT_STAND('PEAS', 0, 10.0 / 35.0, S_PEASANT_STAND) = A_Stand
-	S_PEASANT_WALK1('PEAS', 0, 5.0 / 35.0, S_PEASANT_WALK2) = A_Walk
-	S_PEASANT_WALK2('PEAS', 0, 5.0 / 35.0, S_PEASANT_WALK3) = A_Walk
-	S_PEASANT_WALK3('PEAS', 1, 5.0 / 35.0, S_PEASANT_WALK4) = A_Walk
-	S_PEASANT_WALK4('PEAS', 1, 5.0 / 35.0, S_PEASANT_WALK5) = A_Walk
-	S_PEASANT_WALK5('PEAS', 2, 5.0 / 35.0, S_PEASANT_WALK6) = A_Walk
-	S_PEASANT_WALK6('PEAS', 2, 5.0 / 35.0, S_PEASANT_WALK7) = A_Walk
-	S_PEASANT_WALK7('PEAS', 3, 5.0 / 35.0, S_PEASANT_WALK8) = A_Walk
-	S_PEASANT_WALK8('PEAS', 3, 5.0 / 35.0, S_PEASANT_STAND) = A_Walk
-	S_PEASANT_ATK1('PEAS', 4, 10.0 / 35.0, S_PEASANT_ATK2) = A_FaceTarget
-	S_PEASANT_ATK2('PEAS', 5, 8.0 / 35.0, S_PEASANT_ATK3) = A_PeasantAttack
-	S_PEASANT_ATK3('PEAS', 4, 8.0 / 35.0, S_PEASANT_WALK1) = none
-	S_PEASANT_PAIN1('PEAS', 14, 3.0 / 35.0, S_PEASANT_PAIN2) = none
-	S_PEASANT_PAIN2('PEAS', 14, 3.0 / 35.0, S_PEASANT_ATK1) = A_Pain
-	S_PEASANT_DIE1('PEAS', 6, 5.0 / 35.0, S_PEASANT_DIE2) = none
-	S_PEASANT_DIE2('PEAS', 7, 10.0 / 35.0, S_PEASANT_DIE3) = A_Dying
-	S_PEASANT_DIE3('PEAS', 8, 6.0 / 35.0, S_PEASANT_DIE2) = none
-	S_PEASANT_DIE4('PEAS', 6, 5.0 / 35.0, S_PEASANT_DIE5) = none
-	S_PEASANT_DIE5('PEAS', 7, 5.0 / 35.0, S_PEASANT_DIE6) = A_Scream
-	S_PEASANT_DIE6('PEAS', 8, 6.0 / 35.0, S_PEASANT_DIE7) = none
-	S_PEASANT_DIE7('PEAS', 9, 5.0 / 35.0, S_PEASANT_DIE8) = A_Fall
-	S_PEASANT_DIE8('PEAS', 10, 5.0 / 35.0, S_PEASANT_DIE9) = none
-	S_PEASANT_DIE9('PEAS', 11, 6.0 / 35.0, S_PEASANT_DIE10) = none
-	S_PEASANT_DIE10('PEAS', 12, 8.0 / 35.0, S_PEASANT_DIE11) = none
-	S_PEASANT_DIE11('PEAS', 13, 1400.0 / 35.0, S_PEASANT_XDIE9) = none
-}
-
-defaultproperties
-{
-	Health = 31;
-	GibsHealth = -15;
-	Radius = 20.0;
-	Height = 56.0;
-	Mass = 100.0;
-	StepSpeed = 4.0;
-	PainChance = 0.78125;
-	bNeutral = true;
-	IdleState = S_PEASANT_STAND;
-	IdleRightState = S_PEASANT_WALK1;
-	IdleLeftState = S_PEASANT_WALK2;
-	WalkState = S_PEASANT_WALK3;
-	SeeState = S_PEASANT_WALK1;
-	MeleeState = S_PEASANT_ATK1;
-	PainState = S_PEASANT_PAIN1;
-	DyingState = S_PEASANT_DIE1;
-	DeathState = S_PEASANT_DIE4;
-	GibsDeathState = S_PEASANT_XDIE1;
-	FireDeathState = S_BURN1;
-	DisruptDeathState = S_DISRUPT1;
-	SightSound = 'peasant/sight';
-	ActiveSound = 'peasant/active';
-	AttackSound = 'peasant/attack';
-	PainSound = 'peasant/pain';
-	DeathSound = 'peasant/death';
-}
-
 class Peasant1 : Peasant
 	__mobjinfo__(3004);
 

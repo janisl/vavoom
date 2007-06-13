@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class BarKeep : WeaponSmith
+class BarKeep : Merchant
 	__mobjinfo__(72);
 
 defaultproperties

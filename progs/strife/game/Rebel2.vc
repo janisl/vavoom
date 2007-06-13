@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Rebel2 : Rebel1
+class Rebel2 : Rebel
 	__mobjinfo__(144);
 
 defaultproperties

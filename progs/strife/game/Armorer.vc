@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Armorer : WeaponSmith
+class Armorer : Merchant
 	__mobjinfo__(73);
 
 defaultproperties
