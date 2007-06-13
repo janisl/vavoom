@@ -1,0 +1,106 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class AcolyteTan : AcolyteBase
+	__mobjinfo__(3002);
+
+//==========================================================================
+//
+//	A_AcolyteBits
+//
+//==========================================================================
+
+final void A_AcolyteBits()
+{
+	if (bSpawnFlag8)
+	{
+		Alpha = 0.333;
+	}
+	if (bSpawnFlag9)
+	{
+		bUnknown2 = true;
+	}
+}
+
+__states__
+{
+	S_ACOLYTE_STAND('AGRD', 0, 5.0 / 35.0, S_ACOLYTE_STAND) = A_Stand
+	S_ACOLYTE_STAND_R('AGRD', 1, 8.0 / 35.0, S_ACOLYTE_STAND) = A_ClearShadow
+	S_ACOLYTE_STAND_L('AGRD', 3, 8.0 / 35.0, S_ACOLYTE_STAND) = none
+	S_ACOLYTE_WALK1('AGRD', 0, 5.0 / 35.0, S_ACOLYTE_WALK2) = A_Walk
+	S_ACOLYTE_WALK2('AGRD', 1, 5.0 / 35.0, S_ACOLYTE_WALK3) = A_Walk
+	S_ACOLYTE_WALK3('AGRD', 2, 5.0 / 35.0, S_ACOLYTE_WALK4) = A_Walk
+	S_ACOLYTE_WALK4('AGRD', 3, 5.0 / 35.0, S_ACOLYTE_WALK5) = A_Walk
+	S_ACOLYTE_WALK5('AGRD', 0, 5.0 / 35.0, S_ACOLYTE_WALK6) = A_Walk
+	S_ACOLYTE_WALK6('AGRD', 1, 5.0 / 35.0, S_ACOLYTE_WALK7) = A_Walk
+	S_ACOLYTE_WALK7('AGRD', 2, 5.0 / 35.0, S_ACOLYTE_WALK8) = A_Walk
+	S_ACOLYTE_WALK8('AGRD', 3, 5.0 / 35.0, S_ACOLYTE_STAND) = A_Walk
+	S_ACOLYTE_RUN1('AGRD', 0, 6.0 / 35.0, S_ACOLYTE_RUN2) = A_AcolyteBits
+	S_ACOLYTE_RUN2('AGRD', 1, 6.0 / 35.0, S_ACOLYTE_RUN3) = A_Chase
+	S_ACOLYTE_RUN3('AGRD', 2, 6.0 / 35.0, S_ACOLYTE_RUN4) = A_Chase
+	S_ACOLYTE_RUN4('AGRD', 3, 6.0 / 35.0, S_ACOLYTE_RUN1) = A_Chase
+	S_ACOLYTE_ATK1('AGRD', 4, 8.0 / 35.0, S_ACOLYTE_ATK2) = A_FaceTarget
+	S_ACOLYTE_ATK2('AGRD', 5, 4.0 / 35.0, S_ACOLYTE_ATK3) = A_RiffleAttack
+	S_ACOLYTE_ATK3('AGRD', 4, 4.0 / 35.0, S_ACOLYTE_ATK4) = A_RiffleAttack
+	S_ACOLYTE_ATK4('AGRD', 5, 6.0 / 35.0, S_ACOLYTE_RUN1) = A_RiffleAttack
+	S_ACOLYTE_PAIN('AGRD', 14, 8.0 / 35.0, S_ACOLYTE_RUN1) = A_Pain
+	S_ACOLYTE_DIE1('AGRD', 6, 4.0 / 35.0, S_ACOLYTE_DIE2) = none
+	S_ACOLYTE_DIE2('AGRD', 7, 4.0 / 35.0, S_ACOLYTE_DIE3) = A_Scream
+	S_ACOLYTE_DIE3('AGRD', 8, 4.0 / 35.0, S_ACOLYTE_DIE4) = none
+	S_ACOLYTE_DIE4('AGRD', 9, 3.0 / 35.0, S_ACOLYTE_DIE5) = none
+	S_ACOLYTE_DIE5('AGRD', 10, 3.0 / 35.0, S_ACOLYTE_DIE6) = A_Fall
+	S_ACOLYTE_DIE6('AGRD', 11, 3.0 / 35.0, S_ACOLYTE_DIE7) = none
+	S_ACOLYTE_DIE7('AGRD', 12, 3.0 / 35.0, S_ACOLYTE_DIE8) = A_AcolyteDeath
+	S_ACOLYTE_DIE8('AGRD', 13, 1400.0 / 35.0, S_ACOLYTE_XDIE11) = none
+}
+
+defaultproperties
+{
+	ConversationID = 53;
+	ClassName = 'ACOLYTE';
+	Health = 70;
+	GibsHealth = -35;
+	Radius = 24.0;
+	Height = 64.0;
+	Mass = 400.0;
+	StepSpeed = 7.0;
+	PainChance = 0.5859375;
+	IdleState = S_ACOLYTE_STAND;
+	IdleRightState = S_ACOLYTE_STAND_R;
+	IdleLeftState = S_ACOLYTE_STAND_L;
+	WalkState = S_ACOLYTE_WALK1;
+	SeeState = S_ACOLYTE_RUN1;
+	MissileState = S_ACOLYTE_ATK1;
+	PainState = S_ACOLYTE_PAIN;
+	DeathState = S_ACOLYTE_DIE1;
+	GibsDeathState = S_ACOLYTE_XDIE1;
+	FireDeathState = S_BURN1;
+	DisruptDeathState = S_DISRUPT1;
+	SightSound = 'acolyte/sight';
+	ActiveSound = 'acolyte/active';
+	AttackSound = 'acolyte/rifle';
+	PainSound = 'acolyte/pain';
+	DeathSound = 'acolyte/death';
+}

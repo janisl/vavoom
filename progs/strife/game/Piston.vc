@@ -1,0 +1,61 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+// 123
+
+class Piston : Decoration
+	__mobjinfo__(45);
+
+__states__
+{
+	S_GATES_1('PSTN', 0, 8.0 / 35.0, S_GATES_2) = none
+	S_GATES_2('PSTN', 1, 8.0 / 35.0, S_GATES_1) = none
+	S_GATES_X1('PSTN', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_GATES_X2) = A_Scream
+	S_GATES_X2('PSTN', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_GATES_X3) = A_Fall
+	S_GATES_X3('PSTN', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_GATES_X4) = A_QuestObjectDeath
+	S_GATES_X4('PSTN', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_GATES_X5) = A_SpawnPuff
+	S_GATES_X5('PSTN', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_GATES_X6) = A_XDying
+	S_GATES_X6('PSTN', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_GATES_X7) = none
+	S_GATES_X7('PSTN', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_GATES_X8) = A_SpawnPuff
+	S_GATES_X8('PSTN', 7, 4.0 / 35.0, S_GATES_X9) = none
+	S_GATES_X9('PSTN', 8, -1.0, none) = none
+}
+
+defaultproperties
+{
+	Health = 100;
+	Radius = 20.0;
+	Height = 76.0;
+	Mass = 10000000.0;
+	bSolid = true;
+	bShootable = true;
+	bInCombat = true;
+	bNoBlood = true;
+	bFloorClip = true;
+	IdleState = S_GATES_1;
+	DeathState = S_GATES_X1;
+	DeathSound = 'misc/explosion';
+	bGiveQuest = true;
+	QuestID = QUEST_BlownUpGates;
+}

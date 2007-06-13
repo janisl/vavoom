@@ -1,0 +1,89 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class SpectralLightningSpot : Effect;
+
+//==========================================================================
+//
+//	A_SigilFloorAttack
+//
+//==========================================================================
+
+final void A_SigilFloorAttack()
+{
+	Actor	lightning1;
+	Actor	lightning2;
+	float	x;
+	float	y;
+
+	x = Origin.x + itof(P_Random() & 191) - 64.0;
+	y = Origin.y + itof(P_Random() & 191) - 64.0;
+
+	//	Spawn bolt in the centre.
+	lightning1 = Spawn(SpectralLightningV1, vector(Origin.x, Origin.y, ONCEILINGZ));
+	if (Sector->bHasExtrafloors && Origin.z <= CeilingZ)
+		lightning1.Origin.z = CeilingZ - lightning1.Height;
+	lightning1.Target = Target;
+	lightning1.bNoGravity = false;
+	if (Programmer(Target) || AlienSpectre1(Target))
+	{
+		lightning1.bSpectral = false;
+	}
+	lightning1.Velocity.x = 0.001;
+	lightning1.Velocity.y = 0.001;
+	lightning1.CheckMissileSpawn();
+
+	//	Spawn a random bolt.
+	lightning2 = Spawn(SpectralLightningV2, vector(x, y, ONCEILINGZ));
+	if(Sector->bHasExtrafloors && Origin.z <= CeilingZ)
+		lightning2.Origin.z = CeilingZ - lightning2.Height;
+	lightning2.Target = Target;
+	lightning2.bNoGravity = false;
+	if (Programmer(Target) || AlienSpectre1(Target))
+	{
+		lightning2.bSpectral = false;
+	}
+	lightning2.Velocity.x = 0.001;
+	lightning2.Velocity.y = 0.001;
+	lightning2.CheckMissileSpawn();
+}
+
+__states__
+{
+	S_SIGIL_FLOOR_1('ZAP5', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_SIGIL_FLOOR_2) = A_DecReactionCount
+	S_SIGIL_FLOOR_2('ZAP5', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_SIGIL_FLOOR_3) = A_SigilFloorAttack
+	S_SIGIL_FLOOR_3('ZAP5', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_SIGIL_FLOOR_4) = A_DecReactionCount
+	S_SIGIL_FLOOR_4('ZAP5', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_SIGIL_FLOOR_1) = A_DecReactionCount
+}
+
+defaultproperties
+{
+	Speed = 630.0;
+	ReactionCount = 70;
+	Alpha = 0.333;
+	bNoGravity = false;
+	IdleState = S_SIGIL_FLOOR_1;
+	DeathState = S_ZAP1_0;
+}

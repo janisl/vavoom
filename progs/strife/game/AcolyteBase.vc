@@ -41,7 +41,7 @@ final void A_AcolyteDeath()
 	Alpha = 1.0;
 
 	//	Only the Blue Acolyte does extra stuff on death.
-	if (Class != Acolyte8)
+	if (Class != AcolyteBlue)
 		return;
 
 	//	Make sure there is a player alive for victory.

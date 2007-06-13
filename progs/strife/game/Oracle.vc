@@ -34,9 +34,9 @@ class Oracle : Pawn
 
 final void A_OracleDeath()
 {
-	Specter3 A;
+	AlienSpectre3 A;
 
-	foreach AllThinkers(Specter3, A)
+	foreach AllThinkers(AlienSpectre3, A)
 	{
 		if (A && A.bCountKill && A.Health > 0)
 		{

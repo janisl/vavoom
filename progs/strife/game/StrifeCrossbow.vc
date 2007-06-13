@@ -1,0 +1,43 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class StrifeCrossbow : WeaponPickup
+	__mobjinfo__(2001);
+
+__states__
+{
+	S_CROSSBOW('CBOW', 0, -1.0, none) = none
+}
+
+defaultproperties
+{
+	ConversationID = 194;
+	PickupString = "$txt_strifecrossbow";
+	IdleState = S_CROSSBOW;
+	WeaponType = StrifeDefs::wp_crossbow;
+	Weapon2Type = StrifeDefs::wp_crossbow2;
+	Ammo1Count = 8;
+	Ammo2Count = 0;
+}

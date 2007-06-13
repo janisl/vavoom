@@ -160,7 +160,7 @@ __states__
 		SetState(IdleState);
 
 		// spawn a teleport fog at the new spot
-		A = Spawn(ItemRespawnFog, Origin);
+		A = Spawn(ItemFog, Origin);
 		A.PlaySound('misc/spawn', CHAN_ITEM);
 	}
 }

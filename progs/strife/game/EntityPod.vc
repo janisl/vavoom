@@ -1,0 +1,67 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class EntityPod : Decoration
+	__mobjinfo__(198);
+
+//==========================================================================
+//
+//	A_EntityBossRaise
+//
+//==========================================================================
+
+final void A_EntityBossRaise()
+{
+	Actor entity;
+
+	entity = Spawn(EntityBoss, Origin + vector(0.0, 0.0, 70.0));
+	if (entity)
+	{
+		entity.Velocity.z = 5.0 * 35.0;
+		//	Save spawn position for subenties.
+		EntityBoss(entity).BossSpawnPos = entity.Origin;
+	}
+}
+
+__states__
+{
+	S_ENT_POD('PODD', 0, 60.0 / 35.0, S_ENT_POD) = A_Look
+	S_ENT_POD_OPEN1('PODD', 0, 360.0 / 35.0, S_ENT_POD_OPEN2) = none
+	S_ENT_POD_OPEN2('PODD', 1, 9.0 / 35.0, S_ENT_POD_OPEN3) = A_Fall
+	S_ENT_POD_OPEN3('PODD', 2, 9.0 / 35.0, S_ENT_POD_OPEN4) = none
+	S_ENT_POD_OPEN4('PODD', 3, 9.0 / 35.0, S_ENT_POD_OPEN5) = A_EntityBossRaise
+	S_ENT_POD_OPEN5('PODD', 4, -1.0, none) = none
+}
+
+defaultproperties
+{
+	Radius = 25.0;
+	Height = 91.0;
+	bSolid = true;
+	bNoDeathmatch = true;
+	IdleState = S_ENT_POD;
+	SeeState = S_ENT_POD_OPEN1;
+	SightSound = 'misc/gibbed';
+}

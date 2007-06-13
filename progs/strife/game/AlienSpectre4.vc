@@ -1,0 +1,42 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class AlienSpectre4 : AlienSpectre1
+	__mobjinfo__(167);
+
+__states__
+{
+	S_SPECTER4_ATK1('ALN1', 5, 4.0 / 35.0, S_SPECTER4_ATK2) = A_FaceTarget
+	S_SPECTER4_ATK2('ALN1', 8, 4.0 / 35.0, S_SPECTER4_ATK3) = A_Specter4Attack
+	S_SPECTER4_ATK3('ALN1', 4, 4.0 / 35.0, S_SPECTER_RUN11) = none
+}
+
+defaultproperties
+{
+	Health = 1700;
+	Radius = 24.0;
+	PainChance = 0.1953125;
+	MissileState = S_SPECTER4_ATK1;
+}

@@ -1,0 +1,56 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class EnergyPod : AmmoPickup
+	__mobjinfo__(2047)
+	__scriptid__(75);
+
+//==========================================================================
+//
+//	HandlePickup
+//
+//==========================================================================
+
+bool HandlePickup(Actor Toucher)
+{
+	if (bDropped)
+		AmmoCount = 40;
+	return ::HandlePickup(Toucher);
+}
+
+__states__
+{
+	S_ENERGY_POD_1('BRY1', 0, 6.0 / 35.0, S_ENERGY_POD_2) = none
+	S_ENERGY_POD_2('BRY1', 1, 6.0 / 35.0, S_ENERGY_POD_1) = none
+}
+
+defaultproperties
+{
+	ConversationID = 183;
+	PickupString = "$txt_energypod";
+	IdleState = S_ENERGY_POD_1;
+	AmmoType = StrifeDefs::am_cell;
+	AmmoCount = 20;
+}

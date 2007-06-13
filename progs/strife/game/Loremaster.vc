@@ -39,7 +39,7 @@ final void A_LoremasterAttack()
 
 	A_FaceTarget();
 
-	SpawnMissile(Target, LoremasterChain);
+	SpawnMissile(Target, LoreShot);
 }
 
 //==========================================================================
@@ -67,7 +67,7 @@ final void A_LoremasterDeath()
 	}
 
 	//	Spawn Loremaster's specter.
-	A = Spawn(Specter5, Origin + vector(0.0, 0.0, Height));
+	A = Spawn(AlienSpectre5, Origin + vector(0.0, 0.0, Height));
 	A.Velocity.z += 2.0 * 35.0;
 	A.Angles.yaw = Angles.yaw;
 }

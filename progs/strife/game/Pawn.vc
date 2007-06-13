@@ -985,7 +985,7 @@ final void A_RiffleAttack()
 	dir = AimLineAttack(Angles, MISSILERANGE);
 	VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0 / 2.0);
 	damage = ((P_Random() % 5) + 1) * 3;
-	LineAttack(dir, MISSILERANGE, damage, Puff);
+	LineAttack(dir, MISSILERANGE, damage, StrifePuff);
 	Effects |= StrifeDefs::EF_DL_MUZZLEFLASH;
 }
 
@@ -1075,7 +1075,7 @@ final void A_RobotMissile()
 		dir = aimDir;
 		VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0 / 2.0);
 		damage = ((P_Random() % 8) + 1) * 3;
-		LineAttack(dir, MISSILERANGE, damage, Puff);
+		LineAttack(dir, MISSILERANGE, damage, StrifePuff);
 	}
 	Effects |= StrifeDefs::EF_DL_MUZZLEFLASH;
 }
@@ -1145,7 +1145,7 @@ final void A_BurnScream()
 
 final void A_Burn()
 {
-	Actor A = Spawn(FireFoot, Origin + vector(0.0, 0.0, 24.0));
+	Actor A = Spawn(FireDroplet, Origin + vector(0.0, 0.0, 24.0));
 	A.Velocity.z = -35.0;
 	RadiusAttack(64, 64, false);
 }
@@ -1198,7 +1198,7 @@ final void A_BossDeath()
 		//	Call death script.
 		XLevel.StartACS(250, 0, 0, 0, 0, self, NULL, 0, false, false);
 	}
-	else if (Class == Specter1)
+	else if (Class == AlienSpectre1)
 	{
 		//	Specter in ruined temple.
 		StrifeLevelInfo(Level).EV_DoFloor(999, 8, 0, 0, 0,
@@ -1206,7 +1206,7 @@ final void A_BossDeath()
 		Player(Target.Player).SetObjectives(95);
 		Player(Target.Player).ClientVoice(95);
 	}
-	else if (Class == Specter2)
+	else if (Class == AlienSpectre2)
 	{
 		//	Bishop's specter
 		if (!Target)
@@ -1217,7 +1217,7 @@ final void A_BossDeath()
 		Player(Target.Player).SetObjectives(74);
 		Player(Target.Player).ClientVoice(74);
 	}
-	else if (Class == Specter3)
+	else if (Class == AlienSpectre3)
 	{
 		//	Oracle's specter
 		if (!Target)
@@ -1242,7 +1242,7 @@ final void A_BossDeath()
 		}
 		Level.ExecuteActionSpecial(LNSPEC_DoorOpen, 222, 256, 0, 0, 0, NULL, 0, none);
 	}
-	else if (Class == Specter4)
+	else if (Class == AlienSpectre4)
 	{
 		//	Macil's specter
 		if (!Target)
@@ -1261,7 +1261,7 @@ final void A_BossDeath()
 			Player(Target.Player).ClientVoice(79);
 		}
 	}
-	else if (Class == Specter5)
+	else if (Class == AlienSpectre5)
 	{
 		//	Loremaster's specter
 		if (!Target)
@@ -1285,7 +1285,7 @@ final void A_BossDeath()
 		StrifeLevelInfo(Level).EV_DoFloor(666, 8, 0, 0, 0,
 			FloorMover::FLOOREV_LowerToLowest, NULL);
 	}
-	else if (Class == SubEntity)
+	else if (Class == EntitySecond)
 	{
 		if (!Target)
 			return;
@@ -1338,7 +1338,7 @@ final void A_SpecterAttack()
 
 	A_FaceTarget();
 
-	A = Spawn(SigilFloor, Target.Origin);
+	A = Spawn(SpectralLightningSpot, Target.Origin);
 	A.Origin.z = A.FloorZ;
 	A.Velocity = vector(0.0, 0.0, 0.0);
 	A.Target = self;
@@ -1363,7 +1363,7 @@ final void A_Specter2Attack()
 
 	A_FaceTarget();
 
-	A = SpawnMissile(Target, SigilFX1);
+	A = SpawnMissile(Target, SpectralLightningH2);
 	A.bSpectral = false;
 }
 
@@ -1385,14 +1385,14 @@ final void A_Specter3Attack()
 
 	for (i = 0; i < 20; i++)
 	{
-		spread = SpawnMissile(Target, SpecterFX2);
+		spread = SpawnMissile(Target, SpectralLightningBall2);
 		spread.bSpectral = false;
 		spread.Angles.yaw = AngleMod360(spread.Angles.yaw - 90.0 + itof(i) * (45.0 / 4.0));
 		spread.Velocity.x = spread.Speed * cos(spread.Angles.yaw);
 		spread.Velocity.y = spread.Speed * sin(spread.Angles.yaw);
 	}
 
-	spread = Spawn(SigilFX4, Origin + vector(0.0, 0.0, -Height));
+	spread = Spawn(SpectralLightningV1, Origin + vector(0.0, 0.0, -Height));
 	spread.bNoGravity = false;
 	spread.bSpectral = false;
 	spread.Target = self;
@@ -1416,7 +1416,7 @@ final void A_Specter4Attack()
 
 	A_FaceTarget();
 
-	A = SpawnMissile(Target, SpecterFX5);
+	A = SpawnMissile(Target, SpectralLightningBigV2);
 	A.bSpectral = false;
 }
 
@@ -1435,7 +1435,7 @@ final void A_Specter5Attack()
 
 	A_FaceTarget();
 
-	A = SpawnMissile(Target, SpecterFX3);
+	A = SpawnMissile(Target, SpectralLightningBigBall2);
 	A.bSpectral = false;
 }
 
@@ -1447,7 +1447,7 @@ final void A_Specter5Attack()
 
 final void A_SpecterTossChunk()
 {
-	TossUpObject(SpecterChunk);
+	TossUpObject(AlienChunkSmall);
 }
 
 //==========================================================================
@@ -1458,7 +1458,7 @@ final void A_SpecterTossChunk()
 
 final void A_SpecterTossHead()
 {
-	TossUpObject(SpecterHead);
+	TossUpObject(AlienChunkLarge);
 }
 
 __states__

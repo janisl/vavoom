@@ -40,7 +40,7 @@ final void A_FireElectricArrow()
 		(Random() - Random()) * 45.0 / 8.0 / itof(1 << (Player(Owner.Player).Accuracy * 5 / 100)));
 	Player(Owner.Player).Ammo[Ammo]--;
 	Owner.SetState(Actor(Owner).MissileState);
-	Player(Owner.Player).SpawnPlayerMissile(ElectricArrow);
+	Player(Owner.Player).SpawnPlayerMissile(ElectricBolt);
 	Owner.Angles.yaw = savedangle;
 	Owner.PlaySound('weapons/xbowshoot', CHAN_WEAPON);
 }
@@ -60,7 +60,7 @@ final void A_FirePoisonArrow()
 		(Random() - Random()) * 45.0 / 8.0 / itof(1 << (Player(Owner.Player).Accuracy * 5 / 100)));
 	Player(Owner.Player).Ammo[Ammo]--;
 	Owner.SetState(Actor(Owner).MissileState);
-	Player(Owner.Player).SpawnPlayerMissile(PoisonArrow);
+	Player(Owner.Player).SpawnPlayerMissile(PoisonBolt);
 	Owner.Angles.yaw = savedangle;
 	Owner.PlaySound('weapons/xbowshoot', CHAN_WEAPON);
 }

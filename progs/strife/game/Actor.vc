@@ -266,7 +266,7 @@ void ThingDamage(int Amount)
 
 bool IsTeleportSpot()
 {
-	return !!TeleportSpot(self);
+	return !!TeleportDest(self);
 }
 
 //===========================================================================
@@ -277,7 +277,7 @@ bool IsTeleportSpot()
 
 bool IsTeleportSpot2()
 {
-	return !!TeleportSpot2(self);
+	return !!TeleportDest2(self);
 }
 
 //===========================================================================
@@ -758,9 +758,9 @@ void Died(Actor source)
 		}
 	}
 	//  This class of rebel always drops a clip, unless it already did.
-	if (Class == Rebel && !ItemAmmoClipOfBullets(A))
+	if (Class == Rebel1 && !ClipOfBullets(A))
 	{
-		A = Spawn(ItemAmmoClipOfBullets, Origin + vector(0.0, 0.0, Height / 2.0));
+		A = Spawn(ClipOfBullets, Origin + vector(0.0, 0.0, Height / 2.0));
 		A.Velocity.x = (Random() - Random()) * 35.0;
 		A.Velocity.y = (Random() - Random()) * 35.0;
 		A.Velocity.z = (5.0 + Random() * 4.0) * 35.0;
@@ -768,15 +768,15 @@ void Died(Actor source)
 	}
 	if (Class == Crusader)
 	{
-		A = Spawn(ItemAmmoEnergyPod, Origin + vector(0.0, 0.0, Height / 2.0));
+		A = Spawn(EnergyPod, Origin + vector(0.0, 0.0, Height / 2.0));
 		A.Velocity.x = (Random() - Random()) * 35.0;
 		A.Velocity.y = (Random() - Random()) * 35.0;
 		A.Velocity.z = (5.0 + Random() * 4.0) * 35.0;
 		A.bDropped = true;	// special versions of items
 	}
-	if (Class == Bishop)
+	if (Class == StrifeBishop)
 	{
-		A = Spawn(ItemAmmoCrateOfMissiles, Origin + vector(0.0, 0.0, Height / 2.0));
+		A = Spawn(CrateOfMissiles, Origin + vector(0.0, 0.0, Height / 2.0));
 		A.Velocity.x = (Random() - Random()) * 35.0;
 		A.Velocity.y = (Random() - Random()) * 35.0;
 		A.Velocity.z = (5.0 + Random() * 4.0) * 35.0;
@@ -923,7 +923,7 @@ void Damage(Actor inflictor, Actor source, int damage)
 		return;
 	}
 
-	if (inflictor && inflictor.Class == InquisitorGrenade && Class == Inquisitor)
+	if (inflictor && inflictor.Class == InquisitorShot && Class == Inquisitor)
 	{
 		// Inquisitor grenades don't damage inquisitors
 		return;
@@ -3661,8 +3661,8 @@ final void A_SpawnPuff()
 	if (MiniMissile(self))
 	{
 		PlaySound('misc/missileinflight', CHAN_VOICE);
-		SpawnPuff(Puff, Origin);
-		A = Spawn(ReactorPuff, Origin - Velocity / 35.0);
+		SpawnPuff(StrifePuff, Origin);
+		A = Spawn(RocketTrail, Origin - Velocity / 35.0);
 		if (A)
 		{
 			A.Velocity.z = 1.0 * 35.0;
@@ -3670,11 +3670,11 @@ final void A_SpawnPuff()
 	}
 	else
 	{
-		A = Spawn(Puff, Origin + vector(
+		A = Spawn(StrifePuff, Origin + vector(
 			(Random() - Random()) * 5.0 / 8.0,
 			(Random() - Random()) * 5.0 / 8.0, 0.0));
 		//FIXME Create a class for this.
-		A.SetState(Puff::S_GRENADE_HE_X2);
+		A.SetState(StrifePuff::S_GRENADE_HE_X2);
 	}
 }
 
@@ -3721,9 +3721,9 @@ final void A_XDying()
 	class<Actor> tp;
 
 	if (bNoBlood)
-		tp = TechJunk;
+		tp = Junk;
 	else
-		tp = MeatChunk;
+		tp = Meat;
 	gib = Spawn(tp, Origin + vector(0.0, 0.0, 24.0));
 	if (!gib)
 	{

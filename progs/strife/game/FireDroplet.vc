@@ -1,0 +1,42 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class FireDroplet : Effect;
+
+__states__
+{
+	S_FFOT_1('FFOT', 0, 9.0 / 35.0, S_FFOT_2) = none
+	S_FFOT_2('FFOT', 1, 9.0 / 35.0, S_FFOT_3) = none
+	S_FFOT_3('FFOT', 2, 9.0 / 35.0, S_FFOT_4) = none
+	S_FFOT_4('FFOT', 3, 9.0 / 35.0, none) = none
+}
+
+defaultproperties
+{
+	bNoGravity = false;
+	bColideWithThings = false;
+	bColideWithWorld = false;
+	IdleState = S_FFOT_1;
+}

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Macil2 : Macil
+class Macil2 : Macil1
 	__mobjinfo__(200);
 
 //============================================================================
@@ -36,7 +36,7 @@ class Macil2 : Macil
 
 int TakeSpecialDamage(Actor inflictor, Actor source, int damage)
 {
-	if (SigilFX4(inflictor))
+	if (SpectralLightningV1(inflictor))
 		return -1;
 	return damage;
 }
@@ -51,7 +51,7 @@ final void A_MacilDeath()
 {
 	Actor A;
 
-	A = Spawn(Specter4, Origin + vector(0.0, 0.0, Height));
+	A = Spawn(AlienSpectre4, Origin + vector(0.0, 0.0, Height));
 	A.Velocity.z += 2.0 * 35.0;
 	A.Angles.yaw = Angles.yaw;
 }

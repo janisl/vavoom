@@ -56,18 +56,18 @@ final void A_CrusaderChoose()
 	{
 		A_FaceTarget();
 		Angles.yaw = AngleMod360(Angles.yaw - 45.0 / 4.0);
-		SpawnMissileZAimed(40.0, Target, FlameFX2);
+		SpawnMissileZAimed(40.0, Target, FastFlameMissile);
 	}
 	else
 	{
 		if (CheckMissileRange())
 		{
 			A_FaceTarget();
-			SpawnMissileZAimed(56.0, Target, RobotMissile);
+			SpawnMissileZAimed(56.0, Target, CrusaderMissile);
 			Angles.yaw -= 45.0 / 32.0;
-			SpawnMissileZAimed(40.0, Target, RobotMissile);
+			SpawnMissileZAimed(40.0, Target, CrusaderMissile);
 			Angles.yaw += 45.0 / 16.0;
-			SpawnMissileZAimed(40.0, Target, RobotMissile);
+			SpawnMissileZAimed(40.0, Target, CrusaderMissile);
 			Angles.yaw -= 45.0 / 16.0;
 			ReactionCount += 15;
 		}
@@ -86,7 +86,7 @@ final void A_CrusaderSweepLeft()
 	Actor misl;
 
 	Angles.yaw = AngleMod360(Angles.yaw + 45.0 / 8.0);
-	misl = SpawnMissileZAimed(48.0, Target, FlameFX2);
+	misl = SpawnMissileZAimed(48.0, Target, FastFlameMissile);
 	if (misl)
 	{
 		misl.Velocity.z = 1.0 * 35.0;
@@ -104,7 +104,7 @@ final void A_CrusaderSweepRight()
 	Actor misl;
 
 	Angles.yaw = AngleMod360(Angles.yaw - 45.0 / 8.0);
-	misl = SpawnMissileZAimed(48.0, Target, FlameFX2);
+	misl = SpawnMissileZAimed(48.0, Target, FastFlameMissile);
 	if (misl)
 	{
 		misl.Velocity.z = 1.0 * 35.0;

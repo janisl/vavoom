@@ -81,7 +81,7 @@ final void A_FireBlaster2()
 {
 	Owner.SetState(Actor(Owner).MissileState);
 	Player(Owner.Player).Ammo[Ammo] -= 30;
-	Player(Owner.Player).SpawnPlayerMissile(MaulerTorpedoMissile);
+	Player(Owner.Player).SpawnPlayerMissile(MaulerTorpedo);
 	Actor(Owner).Damage(none, Actor(Owner), 20);
 	Actor(Owner).Thrust(Owner.Angles.yaw + 180.0, 125.0 / 16.0);
 }

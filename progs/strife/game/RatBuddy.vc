@@ -1,0 +1,60 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class RatBuddy : Pawn
+	__mobjinfo__(85);
+
+__states__
+{
+	S_RAT_LOOK('RATT', 0, 10.0 / 35.0, S_RAT_LOOK) = A_Look
+	S_RAT_RUN1('RATT', 0, 4.0 / 35.0, S_RAT_RUN2) = A_Chase
+	S_RAT_RUN2('RATT', 0, 4.0 / 35.0, S_RAT_RUN3) = A_Chase
+	S_RAT_RUN3('RATT', 1, 4.0 / 35.0, S_RAT_RUN4) = A_Chase
+	S_RAT_RUN4('RATT', 1, 4.0 / 35.0, S_RAT_RUN1) = A_Chase
+	S_RAT_WALK1('RATT', 0, 8.0 / 35.0, S_RAT_WALK2) = A_Walk
+	S_RAT_WALK2('RATT', 1, 4.0 / 35.0, S_RAT_RUN1) = A_Walk
+	S_RAT_DIE('MEAT', 16, 700.0 / 35.0, none) = none
+}
+
+defaultproperties
+{
+	ClassName = 'rat_buddy';
+	Health = 5;
+	Radius = 10.0;
+	Height = 16.0;
+	Mass = 100.0;
+	StepSpeed = 13.0;
+	bSolid = false;
+	bShootable = false;
+	bInCombat = true;
+	bNoBlood = true;
+	IdleState = S_RAT_LOOK;
+	SeeState = S_RAT_RUN1;
+	MeleeState = S_RAT_WALK1;
+	DeathState = S_RAT_DIE;
+	SightSound = 'rat/sight';
+	ActiveSound = 'rat/active';
+	DeathSound = 'rat/death';
+}

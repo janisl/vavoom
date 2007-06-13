@@ -1,0 +1,131 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class TeleporterBeacon : InventoryItem
+	__mobjinfo__(10);
+
+bool			bRebelSpawned;
+
+//==========================================================================
+//
+//	HandlePickup
+//
+//==========================================================================
+
+bool HandlePickup(Actor Toucher)
+{
+	//	Can't pick it up if already started to spawn rebels.
+	if (bRebelSpawned)
+	{
+		return false;
+	}
+	return ::HandlePickup(Toucher);
+}
+
+//==========================================================================
+//
+//	A_SummonRebel
+//
+//==========================================================================
+
+final void A_SummonRebel()
+{
+	Actor	A;
+	Actor	TFog;
+
+	A = Spawn(Rebel1, Origin + vector((Random() - 0.5) * 64.0,
+		(Random() - 0.5) * 64.0, 0.0));
+	if (!A.TryMove(A.Origin))
+	{
+		A.Destroy();
+		return;
+	}
+	//	Once the rebels start teleporting in, you can't pick up the beacon
+	// anymore.
+	bRebelSpawned = true;
+/*	AActor *owner = self->target;
+	ARebel *rebel;
+	int friendNum;
+	angle_t an;
+
+	// Set up the new rebel.
+	friendNum = owner->player != NULL ? owner->player - players + 1 : 0;
+	rebel->FriendPlayer = friendNum;
+	rebel->threshold = 100;
+	rebel->target = NULL;*/
+	A.bInCombat = true;
+/*	rebel->LastHeard = owner;	// Make sure the rebels look for targets
+	if (deathmatch)
+	{
+		rebel->health *= 2;
+	}
+	if (owner != NULL)
+	{
+		// Rebels are the same colour as their owner
+		rebel->Translation = owner->Translation;
+		// Set the rebel's target to whatever last hurt the player, so long as it's not
+		// one of the player's other rebels.
+		if (owner->target != NULL &&
+			(!(owner->target->flags & MF_FRIENDLY) ||
+			 owner->target->FriendPlayer == 0 ||
+			 owner->target->FriendPlayer != friendNum))
+		{
+			rebel->target = owner->target;
+		}
+	}
+	rebel->SetState (rebel->SeeState);
+*/
+	A.Angles = Angles;
+
+	TFog = Spawn(TeleportFog, A.Origin);
+	TFog.PlaySound('misc/teleport', CHAN_BODY);
+
+	Health--;
+	if (Health < 0)
+	{
+		Destroy();
+	}
+}
+
+__states__
+{
+	S_BEACON('BEAC', 0, -1.0, none) = none
+	S_BEACON_1('BEAC', 0, 30.0 / 35.0, S_BEACON_2) = none
+	S_BEACON_2('BEAC', 0, 160.0 / 35.0, S_BEACON_1) = A_SummonRebel
+}
+
+defaultproperties
+{
+	ConversationID = 166;
+	PickupString = "$txt_beacon";
+	Health = 5;
+	Radius = 16.0;
+	Height = 8.0;
+	Mass = 3.0;
+	bDropped = true;
+	IdleState = S_BEACON;
+	SeeState = S_BEACON_1;
+	ItemType = StrifeDefs::ITEM_TeleporterBeacon;
+}

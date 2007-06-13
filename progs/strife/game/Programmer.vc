@@ -55,7 +55,7 @@ final void A_ProgrammerMelee()
 final void A_ProgrammerDeath()
 {
 	//	Spawn separate base object.
-	TossUpObject(ProgrammersBase);
+	TossUpObject(ProgrammerBase);
 
 	//	Give Silil piece to the player.
 	Player(Target.Player).GiveSigilPiece();

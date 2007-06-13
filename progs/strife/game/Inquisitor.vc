@@ -129,13 +129,13 @@ final void A_InquisitorGrenade()
 
 	A_FaceTarget();
 
-	A = SpawnMissileZAimed(76.0, Target, InquisitorGrenade);
+	A = SpawnMissileZAimed(76.0, Target, InquisitorShot);
 	A.Angles.yaw -= 45.0 / 16.0;
 	A.Velocity.x = A.Speed * cos(A.Angles.yaw);
 	A.Velocity.y = A.Speed * sin(A.Angles.yaw);
 	A.Velocity.z += 4.0 * 35.0;
 
-	A = SpawnMissileZAimed(76.0, Target, InquisitorGrenade);
+	A = SpawnMissileZAimed(76.0, Target, InquisitorShot);
 	A.Angles.yaw += 45.0 / 16.0;
 	A.Velocity.x = A.Speed * cos(A.Angles.yaw);
 	A.Velocity.y = A.Speed * sin(A.Angles.yaw);

@@ -1062,14 +1062,14 @@ bool GivePower(int power)
 void GiveQuest(int QuestID)
 {
 	class<Actor>	QClass;
-	QuestInfo		QInfo;
+	QuestItem		QInfo;
 	
 	if (Quests & (1 << QuestID))
 		cprint("Already have quest %d", QuestID);
 	Quests |= 1 << QuestID;
 	cprint("Got quest %d, quests %x", QuestID, Quests);
 	QClass = StrifeLevelInfo(Level).GetClassFromID(312 + QuestID);
-	QInfo = QuestInfo(StrifeLevelInfo(Level).Spawn(QClass, vector(0.0, 0.0, 0.0)));
+	QInfo = QuestItem(StrifeLevelInfo(Level).Spawn(QClass, vector(0.0, 0.0, 0.0)));
 	if (QInfo.QuestMessage)
 		cprint(QInfo.QuestMessage);
 	QInfo.Destroy();

@@ -65,9 +65,9 @@ final void A_EntityAttack()
 final void A_EntityDeath()
 {
 	//	Of course this isn't 100% accurate, but it does its job		-kaiser
-	Spawn(SubEntity, BossSpawnPos + vector(-240.0, -itof(P_Random() & 192), 0.0));
-	Spawn(SubEntity, BossSpawnPos + vector(-itof(P_Random() & 192), 240.0, 0.0));
-	Spawn(SubEntity, BossSpawnPos + vector(itof(P_Random() & 192), -240.0, 0.0));
+	Spawn(EntitySecond, BossSpawnPos + vector(-240.0, -itof(P_Random() & 192), 0.0));
+	Spawn(EntitySecond, BossSpawnPos + vector(-itof(P_Random() & 192), 240.0, 0.0));
+	Spawn(EntitySecond, BossSpawnPos + vector(itof(P_Random() & 192), -240.0, 0.0));
 }
 
 __states__

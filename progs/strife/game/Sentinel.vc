@@ -38,12 +38,12 @@ final void A_SentinelAttack()
 	Actor missile;
 	Actor trail;
 
-	missile = SpawnMissileZAimed(32.0, Target, SentinelShot);
+	missile = SpawnMissileZAimed(32.0, Target, SentinelFX2);
 	if (missile && (missile.Velocity.x || missile.Velocity.y))
 	{
 		for (i = 8; i > 1; i--)
 		{
-			trail = Spawn(SentinelShotTrail, vector(
+			trail = Spawn(SentinelFX1, vector(
 				Origin.x + missile.Radius * itof(i) * cos(missile.Angles.yaw),
 				Origin.y + missile.Radius * itof(i) * sin(missile.Angles.yaw),
 				missile.Origin.z + (missile.Velocity.z / 35.0 / 4.0 * itof(i))));

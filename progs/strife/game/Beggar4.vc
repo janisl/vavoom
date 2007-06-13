@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Beggar4:Beggar
+class Beggar4 : Beggar1
 	__mobjinfo__(157);
 
 defaultproperties

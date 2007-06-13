@@ -59,7 +59,7 @@ final void A_LightGoesOut()
 	Sector->floor.dist = Level.FindLowestFloorSurrounding(Sector, NULL);
 	for (i = 0; i < 8; i++)
 	{
-		foo = Spawn(Rub1, Origin);
+		foo = Spawn(Rubble1, Origin);
 		if (foo)
 		{
 			foo.Velocity.x = (Random() * 16.0 - Random() * 8.0) * 35.0;
