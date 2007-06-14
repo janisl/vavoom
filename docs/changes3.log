@@ -2190,3 +2190,95 @@
  to Entity's main source file. The rest of sv_ent moved to sv_main. I also
  split handling of terrain types to it's own source file and renamed sv_swtch
  to p_switch.
+
+******************************************************************************
+                            VERSION 1.23.1
+******************************************************************************
+
+25.05.2007
+  I fixed Doom 2 boss spawning monsters with pitch angle making models to
+ appear tilted.
+26.05.2007
+  I changed handling of gravity back to the original. I added Gravity field to
+ Entity to be to set different gravity for a thing that can be used to simulate
+ low gravity flag in Heretic and Hexen.
+  In Doom I renamed Actor's Enemy and Instigator fields back to theur original
+ names.
+27.05.2007
+  I renamed Actor's Enemy and Instigator fields in other games.
+28.05.2007
+  I implemented support for byte type in VavoomC and changed some fields in
+ engine classes to bytes. I also implemented support for dynamic arrays.
+  I removed video modes lower than 640x480 from the menu.
+29.05.2007
+  I removed automatic stripping of executables in default build.
+  I fixed problem with colourmaps in 8-bit mode in software renderer.
+  In VavoomC I added methods to insert and remove data in dynamic arrays and
+ changed assignment to an element out of bounds of an dynamic array to grow it
+ to the needed size.
+30.05.2007
+  After thinking for a while I found a very simple way how to implement
+ iterator methods. The method returns an instance of an iterator class which
+ is pushed to a stack of current iterators. As a test I implemented iterator
+ of thinkers.
+31.05.2007
+  I got rid of the remaining macros in common package. After that I could start
+ implementing my own preprocessor. I already implemented handling of ifdef-s.
+01.06.2007
+  In vcc I implemented handling of include directives and comments that allowed
+ me to get rid of the old preprocessor library.
+02.06.2007
+  I fixed crash when changing a level in standalone mode, cleaned up level
+ render tests.
+  For network updates I implemented setting up a visibility table using angle
+ based clipper. I also increased number of network channels since 256 seams not
+ to be enough.
+03.06.2007
+  I converted block lines/things iterators and path traverse to the iterator
+ classes so that in progs I can use foreach operator with them and get rid of
+ callback methods.
+04.06.2007
+  In progs I changed path traverse to iterator. The block things iterator is
+ always used to iterate blocks in a given radius, so I started to implement a
+ method that wraps around block things iterator and common code around it.
+  I fixed compiling progs on Windows.
+05.06.2007
+  In progs I added a method that disconnects a bot.
+  I finished work on radius things iterator that I started yesterday and made
+ it to be an iterator method. After this progs don't touch blockmap fields in
+ level class anymore.
+  I simplified calculation of replication condition of a method in RPC.
+06.06.2007
+  I removed support for nosoundclipping mapinfo command since sounds at maximum
+ hearing distance are almost inaudiable, so it basicly does nothing.
+  I changed bots not to have a network connection at all.
+  I made standalone mode to be used in single player by default.
+07.06.2007
+  In progs I implemented support for non-native static methods.
+08.06.2007
+  I implemented support for EDGE's sprites with 16 rotations.
+  I added a size check for reject lump. I also check if it's filled with all
+ zeroes in which case it can be discarded.
+  I implemented a blockmap builder that rebuilds it's missing or bigger than
+ 64k and most likely corrupt. Internally it's now stored using integers that
+ removes some of it's limitations.
+  I moved array of active sound sequences to the Level class.
+09.06.2007
+  I fixed support for Boom's height sectors.
+  I implemented support for ZDoom's compressed GL nodes.
+  I added support for texture offsets in PNG textures.
+10.06.2007
+  I added iterators of classes, all objects and active players, they could get
+ usefull sometimes.
+  Some splash chunks didn't have no-splash flag set that caused almost endless
+ splashing.
+  I added stubs for all unimplemented MAPINFO commands, many ZDoom levels can
+ now be loaded unmodified, including KDIZD.
+  I added support for ZDoom's sloping thing types.
+11.06.2007
+  I started to rename class to the names used by ZDoom since these are the
+ names that are used in some extended ACS commands and in some scripts.
+12.06.2007
+  I continued renaming.
+13.06.2007
+  I finished renaming.

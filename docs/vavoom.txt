@@ -10,7 +10,7 @@
             ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
              #    ##    ##    #      ####     ####   ##       ##
 
-                                                  Version 1.23.1
+                                                    Version 1.24
 
 Contents:
     0. Disclaimer
@@ -1031,6 +1031,20 @@ Version 1.23.1
 
 * Implemented support for fog effects.
 * Multiple bug fixes.
+
+==============================================================================
+Version 1.24
+==============================================================================
+
+* Added some new features to the VavoomC language such as byte types, dynamic
+ arrays, iterators, non-native static methods.
+* Some improvements in network update.
+* Added support for EDGE's sprites with 16 rotations.
+* Added internal blockmap builder, similar to Boom. For levels without blockmap
+ it will be generated automaticly.
+* Implemented support for ZDoom's compressed GL nodes.
+* Added support for texture offsets in PNG textures.
+* Added support for ZDoom's sloping thing types.
 
 *****************************************************************************
 8. Licensing
