@@ -23,11 +23,34 @@
 //**
 //**************************************************************************
 
-class KeyGizmoGreen : KeyGizmoBlue
+class KeyGizmoGreen : Decoration
 	__mobjinfo__(95);
+
+//==========================================================================
+//
+//  A_InitKeyGizmo
+//
+//==========================================================================
+
+final void A_InitKeyGizmo()
+{
+	Spawn(KeyGizmoFloatGreen, Origin + vector(0.0, 0.0, 60.0));
+}
+
+__states__
+{
+	S_KEYGIZMO1('KGZ1', 0, 1.0 / 35.0, S_KEYGIZMO2) = none
+	S_KEYGIZMO2('KGZ1', 0, 1.0 / 35.0, S_KEYGIZMO3) = A_InitKeyGizmo
+	S_KEYGIZMO3('KGZ1', 0, -1.0, none) = none
+}
 
 defaultproperties
 {
-	GizmoFloatState = KeyGizmoFloat::S_KGZ_GREENFLOAT1;
+	Radius = 16.0;
+	Height = 50.0;
+	bSolid = true;
+	bStaticLight = true;
 	LightColour = RGB(0, 255, 0);
+	LightOffset = vector(0.0, 0.0, 68.0);
+	IdleState = S_KEYGIZMO1;
 }

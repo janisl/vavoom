@@ -23,14 +23,11 @@
 //**
 //**************************************************************************
 
-class KeyGizmoFloat : Decoration;
+class KeyGizmoFloatBlue : Decoration;
 
 __states__
 {
-	S_KGZ_START('KGZB', 0, 1.0 / 35.0, S_KGZ_START) = none
 	S_KGZ_BLUEFLOAT1('KGZB', 0 | FF_FULLBRIGHT, -1.0, none) = none
-	S_KGZ_GREENFLOAT1('KGZG', 0 | FF_FULLBRIGHT, -1.0, none) = none
-	S_KGZ_YELLOWFLOAT1('KGZY', 0 | FF_FULLBRIGHT, -1.0, none) = none
 }
 
 defaultproperties
@@ -38,5 +35,5 @@ defaultproperties
 	Radius = 16.0;
 	bSolid = true;
 	bNoGravity = true;
-	IdleState = S_KGZ_START;
+	IdleState = S_KGZ_BLUEFLOAT1;
 }

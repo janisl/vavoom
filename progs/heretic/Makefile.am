@@ -206,6 +206,9 @@ EXTRA_DIST = compile.bat \
 	game/HornRodFX2.vc \
 	game/Ironlich.vc \
 	game/KeyBlue.vc \
+	game/KeyGizmoFloatBlue.vc \
+	game/KeyGizmoFloatGreen.vc \
+	game/KeyGizmoFloatYellow.vc \
 	game/KeyGreen.vc \
 	game/KeyYellow.vc \
 	game/Mace.vc \
@@ -258,7 +261,6 @@ EXTRA_DIST = compile.bat \
 	game/Actor.vc \
 	game/KnightAxe.vc \
 	game/Chicken.vc \
-	game/KeyGizmoFloat.vc \
 	game/Decoration.vc \
 	game/MaceFX2.vc \
 	game/PodGoo.vc \

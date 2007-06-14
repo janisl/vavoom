@@ -195,9 +195,11 @@
 #include "Moss2.vc"
 #include "WallTorch.vc"
 #include "HangingCorpse.vc"
-#include "KeyGizmoFloat.vc"
+#include "KeyGizmoFloatBlue.vc"
 #include "KeyGizmoBlue.vc"
+#include "KeyGizmoFloatGreen.vc"
 #include "KeyGizmoGreen.vc"
+#include "KeyGizmoFloatYellow.vc"
 #include "KeyGizmoYellow.vc"
 
 #include "HereticPlayer.vc"
