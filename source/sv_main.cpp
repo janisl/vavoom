@@ -69,7 +69,7 @@ skill_t         gameskill;
 
 bool			paused;
 
-bool			deathmatch = false;   	// only if started as net death
+vuint8			deathmatch = false;   	// only if started as net death
 bool			netgame;                // only true if packets are broadcast
 
 int 			TimerGame;

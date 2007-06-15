@@ -256,7 +256,7 @@ extern VBasePlayer*		GPlayersBase[MAXPLAYERS]; // Bookkeeping on players - state
 extern skill_t			gameskill;
  
 extern bool				netgame;                // only true if packets are broadcast
-extern bool				deathmatch;   			// only if started as net death
+extern vuint8			deathmatch;   			// only if started as net death
 
 extern bool				paused;
 
