@@ -412,7 +412,7 @@ void CL_EstablishConnection(const char* host)
 
 void CL_SetUpStandaloneClient()
 {
-	guard();
+	guard(CL_SetUpStandaloneClient);
 	CL_Clear();
 
 	GClGame->serverinfo = svs.serverinfo;
