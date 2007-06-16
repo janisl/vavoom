@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Player : BasePlayer;
+class Player : PlayerEx;
 
 const int MAXCHICKENHEALTH	= 30;
 const float VIEWHEIGHT		= 41.0;
@@ -84,13 +84,6 @@ int ReadyArtifact;
 int InventorySlotNum;
 int Arti;	// artitype_t to use
 
-// Base height above floor for viewz.
-float ViewHeight;
-// Bob/squat speed.
-float DeltaViewHeight;
-// bounded/scaled total momentum.
-float Bob;
-
 float FlyHeight;
 
 float InventoryTime;
@@ -111,16 +104,6 @@ int PendingWeapon;
 bool WeaponOwned[NUMWEAPONS];
 int ReadyWeapon;
 
-// Who did damage (NULL for floors/ceilings).
-Actor Attacker;
-
-// For screen flashing (red or bright).
-float DamageFlash;
-float BonusFlash;
-
-float JumpTime;
-int LocalQuakeHappening;
-
 // Armor type is 0-2.
 int ArmorType;
 
@@ -130,13 +113,6 @@ Actor Rain2;	// active rain maker 2
 
 int NewTorch;	// used in the torch flicker effect.
 int NewTorchDelta;
-
-TVec MoveDir;
-
-float LastSectorDamageTime;
-
-float HazardTime;
-float LastHazardTime;
 
 BotPlayer Bot;
 

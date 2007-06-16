@@ -211,7 +211,7 @@ final void A_StopBalls()
 	{
 		SpecialCID = SorcBall2;	// Blue
 	}
-	else if ((Health < (SpawnHealth >> 1)) && (chance < 200))
+	else if ((Health < (default.Health >> 1)) && (chance < 200))
 	{
 		SpecialCID = SorcBall3;	// Green
 	}

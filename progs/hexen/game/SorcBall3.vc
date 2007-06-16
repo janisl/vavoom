@@ -44,13 +44,13 @@ void A_CastSorcererSpell()
 
 	ang1 = AngleMod360(Angles.yaw - 45.0);
 	ang2 = AngleMod360(Angles.yaw + 45.0);
-	if (Health < (SpawnHealth / 3))
+	if (Health < (default.Health / 3))
 	{
 		// Spawn 2 at a time
-		mo = Target.SpawnMissileAngle(SorcFX3, ang1, 4.0);
+		mo = Actor(Target).SpawnMissileAngle(SorcFX3, ang1, 4.0);
 		if (mo)
 			mo.Target = Target;
-		mo = Target.SpawnMissileAngle(SorcFX3, ang2, 4.0);
+		mo = Actor(Target).SpawnMissileAngle(SorcFX3, ang2, 4.0);
 		if (mo)
 			mo.Target = Target;
 	}
@@ -58,7 +58,7 @@ void A_CastSorcererSpell()
 	{
 		if (P_Random() < 128)
 			ang1 = ang2;
-		mo = Target.SpawnMissileAngle(SorcFX3, ang1, 4.0);
+		mo = Actor(Target).SpawnMissileAngle(SorcFX3, ang1, 4.0);
 		if (mo)
 			mo.Target = Target;
 	}

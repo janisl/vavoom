@@ -69,7 +69,7 @@ final void A_Srcr1Attack()
 		Target.Damage(self, self, HITDICE(8));
 		return;
 	}
-	if (Health > (SpawnHealth / 3) * 2)
+	if (Health > (default.Health / 3) * 2)
 	{
 		// Spit one fireball
 		SpawnMissile(Target, SorcererFX1);
@@ -87,7 +87,7 @@ final void A_Srcr1Attack()
 			SpawnMissileAngles(SorcererFX1,
 				AngleMod360(angle + 3.0), ang.pitch);
 		}
-		if (Health < SpawnHealth / 3)
+		if (Health < default.Health / 3)
 		{
 			// Maybe attack again
 			if (Special1)

@@ -40,7 +40,7 @@ final void A_SorcOffense1()
 
 	ang1 = AngleMod360(Angles.yaw + 70.0);
 	ang2 = AngleMod360(Angles.yaw - 70.0);
-	mo = Target.SpawnMissileAngle(SorcFX1, ang1, 0.0);
+	mo = Actor(Target).SpawnMissileAngle(SorcFX1, ang1, 0.0);
 	if (mo)
 	{
 		mo.Target = Target;
@@ -48,7 +48,7 @@ final void A_SorcOffense1()
 		mo.Args[4] = Heresiarch::BOUNCE_TIME_UNIT;
 		mo.Args[3] = 15;	// Bounce time in seconds
 	}
-	mo = Target.SpawnMissileAngle(SorcFX1, ang2, 0.0);
+	mo = Actor(Target).SpawnMissileAngle(SorcFX1, ang2, 0.0);
 	if (mo)
 	{
 		mo.Target = Target;

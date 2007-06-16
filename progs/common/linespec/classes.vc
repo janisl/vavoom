@@ -26,6 +26,8 @@
 import engine;
 
 #include "EntityEx.vc"
+#include "PlayerEx.vc"
+
 #include "LineSpecialLevelInfo.vc"
 #include "LineSpecialGameInfo.vc"
 #include "SectorThinker.vc"

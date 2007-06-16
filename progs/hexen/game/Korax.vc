@@ -111,7 +111,7 @@ final void A_KoraxChase()
 	Actor spot;
 	int search;
 
-	if (!bDidBelowHalfHealth && (Health <= (SpawnHealth / 2)))
+	if (!bDidBelowHalfHealth && (Health <= (default.Health / 2)))
 	{
 		search = 0;
 		spot = Actor(Level.FindMobjFromTID(FirstTeleportTID, &search));
@@ -138,7 +138,7 @@ final void A_KoraxChase()
 	}
 
 	// Teleport away
-	if (Health < (SpawnHealth >> 1))
+	if (Health < (default.Health >> 1))
 	{
 		if (Random() < 0.0390625)
 		{
@@ -175,7 +175,7 @@ final void A_KoraxDecide()
 //
 //============================================================================
 
-final Actor SpawnKoraxMissile(TVec org, Actor dest, class<Actor> type)
+final Actor SpawnKoraxMissile(TVec org, EntityEx dest, class<Actor> type)
 {
 	TVec dir;
 	Actor th;
@@ -365,7 +365,7 @@ final void A_KoraxCommand()
 	z = Origin.z + CommandHeight;
 	Spawn(KoraxBolt, vector(x, y, z));
 
-	if (Health <= (SpawnHealth >> 1))
+	if (Health <= (default.Health >> 1))
 	{
 		numcommands = 5;
 	}

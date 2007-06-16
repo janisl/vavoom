@@ -157,7 +157,7 @@ void TickCamera(float DeltaTime)
 	if (Target)
 	{
 		float delta;
-		int dir = FaceActor(Target, &delta);
+		int dir = FaceActor(Actor(Target), &delta);
 		if (delta > Range * DeltaTime)
 		{
 			delta = Range * DeltaTime;
@@ -766,7 +766,7 @@ bool Activate()
 		Target.bSolid = false;
 		Target.LinkToWorld();
 	}
-	if (Target.bMonster)
+	if (Actor(Target).bMonster)
 	{
 		Target.bDormant = true;
 	}

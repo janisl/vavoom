@@ -88,7 +88,7 @@ final void A_VileChase()
 				continue;	// doesn't fit here
 
 			// got one!
-			Actor temp = Target;
+			EntityEx temp = Target;
 			Target = CorpseHit;
 			A_FaceTarget();
 			Target = temp;
@@ -163,7 +163,7 @@ final void A_VileTarget()
 
 final void A_VileAttack()
 {
-	Actor fire;
+	EntityEx fire;
 
 	if (!Target)
 		return;
@@ -185,7 +185,7 @@ final void A_VileAttack()
 	// move the fire between the vile and the player
 	fire.Origin.x = Target.Origin.x - 24.0 * cos(Angles.yaw);
 	fire.Origin.y = Target.Origin.y - 24.0 * sin(Angles.yaw);
-	fire.RadiusAttack(70, 0, 0);
+	Actor(fire).RadiusAttack(70, 0, 0);
 }
 
 __states__

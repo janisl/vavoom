@@ -103,7 +103,7 @@ final void A_FireMacePL2()
 		A.Velocity.z = (2.0 + 173.0 * -tan(Owner.Angles.pitch) / 32.0) * 35.0;
 		if (Actor(Owner).linetarget)
 		{
-			A.Tracer = Actor(Owner).linetarget;
+			A.Tracer = Actor(Actor(Owner).linetarget);
 		}
 	}
 	Owner.PlaySound('weapons/maceshoot', CHAN_WEAPON);

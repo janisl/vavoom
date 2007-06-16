@@ -50,7 +50,7 @@ final void A_BFGSpray()
 
 		// target is the originator (player)
 		//  of the missile
-		Target.AimLineAttack(aimAng, 16.0 * 64.0);
+		Actor(Target).AimLineAttack(aimAng, 16.0 * 64.0);
 		if (!Target.linetarget)
 		{
 			continue;
@@ -65,7 +65,7 @@ final void A_BFGSpray()
 		for (j = 0; j < 15; j++)
 			damage += (P_Random() & 7) + 1;
 
-		Target.linetarget.Damage(Target, Target, damage);
+		Actor(Target.linetarget).Damage(Target, Target, damage);
 	}
 }
 

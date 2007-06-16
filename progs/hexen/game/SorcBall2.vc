@@ -44,8 +44,8 @@ void A_CastSorcererSpell()
 
 	z = Target.Origin.z - Target.FloorClip + Heresiarch::SORC_DEFENSE_HEIGHT;
 	mo = Spawn(SorcFX2, vector(Origin.x, Origin.y, z));
-	Target.bInvulnerable = true;
-	Target.bReflective = true;
+	Actor(Target).bInvulnerable = true;
+	Actor(Target).bReflective = true;
 	Target.Args[0] = Heresiarch::SORC_DEFENSE_TIME;
 	if (mo)
 		mo.Target = Target;

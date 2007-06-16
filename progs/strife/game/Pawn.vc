@@ -89,7 +89,7 @@ bool Deactivate()
 //
 //==========================================================================
 
-Actor SpawnMissile(Actor dest, class<Actor> type)
+Actor SpawnMissile(EntityEx dest, class<Actor> type)
 {
 	Actor A;
 	TVec dir;
@@ -123,7 +123,7 @@ Actor SpawnMissile(Actor dest, class<Actor> type)
 //
 //==========================================================================
 
-Actor SpawnMissileZ(float z, Actor dest, class<Actor> type)
+Actor SpawnMissileZ(float z, EntityEx dest, class<Actor> type)
 {
 	Actor A;
 	TVec dir;
@@ -157,7 +157,7 @@ Actor SpawnMissileZ(float z, Actor dest, class<Actor> type)
 //
 //==========================================================================
 
-Actor SpawnMissileZAimed(float z, Actor dest, class<Actor> type)
+Actor SpawnMissileZAimed(float z, EntityEx dest, class<Actor> type)
 {
 	Actor A;
 	TVec dir;
@@ -259,8 +259,23 @@ bool CheckMissileRange()
 	if (!MeleeState)
 		dist -= 128.0;	// no melee attack, so fire more
 
-	if (dist > 200.0)
-		dist = 200.0;
+	if (MissileMaxRange && dist > MissileMaxRange)
+	{
+		return false;	// too far away
+	}
+
+	if (MissileMinRange && dist < MissileMinRange)
+	{
+		return false;	// close for fist attack
+	}
+
+	if (bTriggerHappy)
+	{
+		dist /= 2.0;
+	}
+
+	if (dist > MissileChance)
+		dist = MissileChance;
 
 	if (Random() * 256.0 < dist)
 		return false;
@@ -694,7 +709,7 @@ void RandomChaseDir()
 
 bool CheckRobotRange()
 {
-	return ReactionCount == 0 && Target && !(bFriendly && Target.bFriendly) &&
+	return ReactionCount == 0 && Target && !(bFriendly && Actor(Target).bFriendly) &&
 		(DistTo2(Target) < ROBOTRANGE - 20.0 + Target.Radius) &&
     	CanSee(Target);
 }
@@ -717,7 +732,7 @@ final void A_Stand()
 		if (bFriendly != targ.bFriendly || Level.bNoAllies)
 		{
 			Target = targ;
-			if (!bCountItem || CanSee(targ))
+			if (!bStandMustSeeTarget || CanSee(targ))
 			{
 				Threshold = 10;
 				SetState(SeeState);

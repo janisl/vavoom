@@ -191,6 +191,7 @@ defaultproperties
 	bFloat = true;
 	bSpawnFloat = true;
 	bFloorClip = false;
+	bTriggerHappy = true;
 	IdleState = S_IMP_LOOK1;
 	SeeState = S_IMP_FLY1;
 	MeleeState = S_IMP_MEATK1;

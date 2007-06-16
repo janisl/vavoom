@@ -84,7 +84,7 @@ final void A_CStaffCheck()
 			pmo.Angles.yaw = atan2(pmo.linetarget.Origin.y - pmo.Origin.y,
 				pmo.linetarget.Origin.x - pmo.Origin.x);
 			if ((pmo.linetarget.bIsPlayer || pmo.linetarget.bCountKill) &&
-				!pmo.linetarget.bDormant && !pmo.linetarget.bInvulnerable)
+				!pmo.linetarget.bDormant && !Actor(pmo.linetarget).bInvulnerable)
 			{
 				newLife = Owner.Player.Health + (damage >> 3);
 				newLife = newLife > 100 ? 100 : newLife;

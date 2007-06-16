@@ -28,19 +28,6 @@ class Pawn : Actor
 
 bool bCheckNoMonsters;		// Don't spawn if monsters are disabled
 
-float StepSpeed;
-
-// If >0, the target will be chased
-// no matter what (even if shot)
-int Threshold;
-
-// Player number last looked for.
-int LastLook;
-
-// Movement direction, movement generation (zig-zagging).
-int MoveDir;	// 0-7
-int MoveCount;	// when 0, select a new dir
-
 //==========================================================================
 //
 //	OnMapSpawn
@@ -109,7 +96,7 @@ bool Deactivate()
 //
 //==========================================================================
 
-Actor SpawnMissile(Actor dest, class<Actor> type)
+Actor SpawnMissile(EntityEx dest, class<Actor> type)
 {
 	Actor th;
 	TVec org;
@@ -170,7 +157,7 @@ Actor SpawnMissile(Actor dest, class<Actor> type)
 //
 //==========================================================================
 
-Actor SpawnMissileXYZ(TVec org, Actor dest, class<Actor> type)
+Actor SpawnMissileXYZ(TVec org, EntityEx dest, class<Actor> type)
 {
 	TVec dir;
 	Actor th;
@@ -297,9 +284,24 @@ bool CheckMissileRange()
 		// No melee attack, so fire more frequently
 		dist -= 128.0;
 	}
-	if (dist > 200.0)
+	if (MissileMaxRange && dist > MissileMaxRange)
 	{
-		dist = 200.0;
+		return false;	// too far away
+	}
+
+	if (MissileMinRange && dist < MissileMinRange)
+	{
+		return false;	// close for fist attack
+	}
+
+	if (bTriggerHappy)
+	{
+		dist /= 2.0;
+	}
+
+	if (dist > MissileChance)
+	{
+		dist = MissileChance;
 	}
 	if (Random() * 256.0 < dist)
 	{

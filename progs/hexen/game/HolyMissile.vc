@@ -89,7 +89,7 @@ final void A_CHolyAttack2()
 		}
 		if (linetarget)
 		{
-			A.Tracer = linetarget;
+			A.Tracer = Actor(linetarget);
 			//	Don't colide with world but colide with things, i.e explode
 			A.bColideWithWorld = false;
 			A.bSkullFly = true;

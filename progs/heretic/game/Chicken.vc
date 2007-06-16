@@ -39,7 +39,7 @@ bool UpdateChicken(int tics)
 	Actor fog;
 	class<Actor> moType;
 	float oldAngle;
-	Actor oldTarget;
+	EntityEx oldTarget;
 	int oldSpecial;
 	int oldTID;
 	int oldArgs[5];

@@ -44,136 +44,28 @@ const float
 
 	FLOATSPEED		= 175.0;
 
-//  States
-state IdleState;
-state SeeState;
-state MeleeState;
-state MissileState;
-state PainState;
-state DyingState;
-state DeathState;
-state GibsDeathState;
-state FireDeathState;
-state DisruptDeathState;
-
-//  Sounds
-name SightSound;
-name ActiveSound;
-name AttackSound;
-name PainSound;
-name DeathSound;
-
-//	FLAGS
-bool bSpecial;			// call P_SpecialThing when touched
-bool bShootable;		// Can be hit.
 bool bStanding;			// Don't walk around.
-bool bJustHit;			// try to attack right back
-bool bJustAttacked;		// take at least one step before attacking
-bool bSpawnCeiling;		// hang from ceiling instead of floor
 //	MOVEMENT FLAGS
 bool bNeutral;			// Neutral characters (peasants and beggars)
-bool bSlide;			// keep info about sliding along walls
-bool bMissile;			// don't hit same species, explode on block
-bool bDropped;			// dropped by a demon, not level spawned
-bool bNoBlood;			// don't bleed when shot (use puff)
-bool bInFloat;			// floating to a height for a move, don't
-						// auto float to target's height
-bool bSkullFly;			// skull in flight
-bool bCountKill;		// count towards intermission kill total
 bool bFloorBounce;		// bounces off the floor
-bool bCountItem;		//COUNTITEM	800000
+bool bStandMustSeeTarget;		//COUNTITEM	800000
 bool bFriendly;			// Will fight on player's side
 bool bUnknown2;			//8000000
 bool bSpectral;			// Can be killed only with Sigil
-bool bActivateImpact;	// an MF_MISSILE mobj can activate
-						// SPAC_IMPACT
-bool bActivatePushWall;	// mobj can push walls
-bool bActivateMCross;	// can activate monster cross lines
-bool bActivatePCross;	// can activate projectile cross lines
-bool bDormant;			// thing is dormant
-bool bWaterJump;
 bool bNoDeathmatch;
 bool bSpawnFlag8;
 bool bSpawnFlag9;
-bool bWindThrust;
-bool bNoTeleport;
 bool bPoisonDamage;		// Does poison damage (doesn't gib enemies).
 bool bFireDamage;		// Causes fire damage.
 bool bDisruptDamage;	// Disrupts enemies.
 bool bInCombat;			// Actors in combat won't talk
 bool bLookAllAround;	// Actor can see all around.
-bool bStaticLight;		// Static light source.
-bool bCannotPush;		// cannot push other pushable mobjs
-bool bSmallSplash;		// Always use small splash
-bool bNoSplash;			// Things that don't splash
 
-//  Params
-float Speed;
-float StepSpeed;
-float PainChance;
-int SpawnHealth;
-int GibsHealth;
 name ClassName;
-
-// Thing being chased/attacked (or NULL),
-// also the originator for missiles.
-Actor			Target;
-Actor			Tracer;
-
-int MissileDamage;	// For missiles
-
-// Player number last looked for.
-int LastLook;
-
-// For nightmare respawn.
-mthing_t SpawnSpot;
-
-// Reaction time: if non 0, don't attack yet.
-int ReactionCount;
-// Used by player to freeze a bit after teleporting.
-float ReactionTime;
-
-// If >0, the target will be chased
-// no matter what (even if shot)
-int Threshold;
-
-// Movement direction, movement generation (zig-zagging).
-int MoveDir;	// 0-7
-int MoveCount;	// when 0, select a new dir
 
 // Identifier in conversation scripts, originaly index into mobjinfo.
 int ConversationID;
 int CurrentSpeech;	// Current speech index.
-
-float bombdamage;
-
-float teleport_x;
-float teleport_y;
-
-// Height if not aiming up or down
-// ???: use slope for monsters?
-float aim_z;
-float aim_range;
-float aim_slope;
-TVec aim_dir;
-float aim_topslope;
-float aim_bottomslope;	// slopes to top and bottom of target
-Actor linetarget;	// who got hit (or NULL)
-float aim_range2d;
-
-float shoot_range;
-TVec shoot_origin;
-TVec shoot_dir;
-int la_damage;
-class<Actor> shootPuffType;
-TVec shoot_linestart;
-TVec shoot_lineend;
-
-// Static light parameters.
-TVec LightOffset;
-int LightColour;
-float LightRadius;
-int ExplodeEffect;
 
 //===========================================================================
 //
@@ -434,7 +326,6 @@ void OnMapSpawn(mthing_t * mthing)
 		return;
 	}
 
-	SpawnHealth = Health;
 	bCheckLineBlocking = false;
 	bCheckLineBlockMonsters = false;
 	if (!bMissile)
@@ -471,7 +362,7 @@ void OnMapSpawn(mthing_t * mthing)
 		float y;
 		float z;
 
-		Level.CopyMThing(mthing, &SpawnSpot);
+		Level.CopyMThing(mthing, &SpawnPoint);
 
 		x = mthing->x;
 		y = mthing->y;
@@ -616,7 +507,7 @@ bool CheckMissileSpawn()
 //
 //==========================================================================
 
-void Died(Actor source)
+void Died(EntityEx source)
 {
 	int SpeechNum;
 	RogueConSpeech *Speech;
@@ -745,7 +636,7 @@ void Died(Actor source)
 
 			if (Pickup(A) && Pickup(A).bDropAutoGive)
 			{
-				Pickup(A).HandlePickup(source);
+				Pickup(A).HandlePickup(Actor(source));
 				A.Destroy();
 			}
 			else
@@ -857,7 +748,7 @@ void AutoUseArmor()
 //
 //==========================================================================
 
-void Damage(Actor inflictor, Actor source, int damage)
+void Damage(EntityEx inflictor, EntityEx source, int damage)
 {
 	int saved;
 
@@ -870,7 +761,7 @@ void Damage(Actor inflictor, Actor source, int damage)
 	//	Spectral targets only take damage from spectral projectiles.
 	if (bSpectral)
 	{
-		if (!inflictor || !inflictor.bSpectral)
+		if (!inflictor || !Actor(inflictor).bSpectral)
 		{
 			if (MissileState)
 			{
@@ -896,13 +787,13 @@ void Damage(Actor inflictor, Actor source, int damage)
 
 	if (inflictor)
 	{
-		damage = inflictor.DoSpecialDamage(self, damage);
+		damage = Actor(inflictor).DoSpecialDamage(self, damage);
 		if (damage == -1)
 		{
 			return;
 		}
 	}
-	damage = TakeSpecialDamage(inflictor, source, damage);
+	damage = TakeSpecialDamage(Actor(inflictor), Actor(source), damage);
 	if (damage == -1)
 	{
 		return;
@@ -917,7 +808,7 @@ void Damage(Actor inflictor, Actor source, int damage)
 			Normalise(GetCentre() - inflictor.GetCentre());
 	}
 
-	if (inflictor && inflictor.bPoisonDamage && bNoBlood)
+	if (inflictor && Actor(inflictor).bPoisonDamage && bNoBlood)
 	{
 		// Don't damage actors that don't take poison damage
 		return;
@@ -932,7 +823,7 @@ void Damage(Actor inflictor, Actor source, int damage)
 	// player specific
 	if (bIsPlayer)
 	{
-		if (inflictor && inflictor.bFireDamage && Player(Player).Powers[pw_ironfeet])
+		if (inflictor && Actor(inflictor).bFireDamage && Player(Player).Powers[pw_ironfeet])
 		{
 			// If the player wears an environmental suit it's not
 			// damaged by fire damage
@@ -981,7 +872,7 @@ void Damage(Actor inflictor, Actor source, int damage)
 		if (Player.Health < 0)
 			Player.Health = 0;
 
-		Player(Player).Attacker = source;
+		Player(Player).Attacker = Actor(source);
 		Player(Player).DamageFlash += itof(damage) / 35.0;	// add damage after armor / invuln
 
 		if (Player(Player).DamageFlash > 3.0)
@@ -994,16 +885,16 @@ void Damage(Actor inflictor, Actor source, int damage)
 	{
 		if (inflictor)
 		{
-			if (inflictor.bPoisonDamage)
+			if (Actor(inflictor).bPoisonDamage)
 			{
 				//	Prevent gibing animation.
 				Health = -1;
 			}
-			else if (inflictor.bFireDamage)
+			else if (Actor(inflictor).bFireDamage)
 			{
 				bFireDamage = true;
 			}
-			else if (inflictor.bDisruptDamage)
+			else if (Actor(inflictor).bDisruptDamage)
 			{
 				bDisruptDamage = true;
 			}
@@ -1021,11 +912,11 @@ void Damage(Actor inflictor, Actor source, int damage)
 	ReactionCount = 0;	// we're awake now...
 
 	if ((!Threshold) && source && source != self &&
-		(Level.Game.deathmatch || source.bFriendly != bFriendly))
+		(Level.Game.deathmatch || Actor(source).bFriendly != bFriendly))
 	{
 		// if not intent on another player,
 		// chase after this one
-		Target = source;
+		Target = Actor(source);
 		Threshold = BASETHRESHOLD;
 		if (State == IdleState && SeeState)
 		{
@@ -1175,8 +1066,8 @@ void NightmareRespawn()
 	Actor A;
 	mthing_t *mthing;
 
-	x = SpawnSpot.x;
-	y = SpawnSpot.y;
+	x = SpawnPoint.x;
+	y = SpawnPoint.y;
 
 	// somthing is occupying it's position?
 	if (!CheckPosition(vector(x, y, ONFLOORZ)))
@@ -1195,7 +1086,7 @@ void NightmareRespawn()
 	A.PlaySound('misc/teleport', CHAN_BODY);
 
 	// spawn the new monster
-	mthing = &SpawnSpot;
+	mthing = &SpawnPoint;
 
 	// spawn it
 	if (bSpawnCeiling)
@@ -1205,7 +1096,7 @@ void NightmareRespawn()
 
 	// inherit attributes from deceased one
 	A = Spawn(class<Actor>(Class), vector(x, y, z));
-	Level.CopyMThing(&SpawnSpot, &A.SpawnSpot);
+	Level.CopyMThing(&SpawnPoint, &A.SpawnPoint);
 	A.Angles.yaw = itof(45 * (mthing->angle / 45));
 
 	if (mthing->options & StrifeLevelInfo::MTF_AMBUSH)
@@ -1348,7 +1239,7 @@ void CheckForPushSpecial(line_t * line, int side)
 		else if (bActivateImpact)
 		{
 			StrifeLevelInfo(Level).ActivateLine(line,
-				bMissile ? Target : self, side, SPAC_IMPACT);
+				bMissile ? Actor(Target) : self, side, SPAC_IMPACT);
 		}
 	}
 }
@@ -2470,13 +2361,13 @@ bool PIT_RadiusAttack(Entity Other)
 	if (dist < 0.0)
 		dist = 0.0;
 
-	if (dist >= bombdamage)
+	if (dist >= bombdistance)
 		return true;	// out of range
 
 	if (Actor(Other).CanSee(self))
 	{
 		// must be in direct path
-		Actor(Other).Damage(self, Target, ftoi(bombdamage - dist));
+		Actor(Other).Damage(self, Target, bombdamage - ftoi(dist));
 	}
 
 	return true;
@@ -2492,13 +2383,12 @@ bool PIT_RadiusAttack(Entity Other)
 
 void RadiusAttack(int damage, int distance, bool damageSource)
 {
-	float dist;
 	Entity Other;
 
-	dist = itof(damage);
-	bombdamage = itof(damage);
+	bombdistance = itof(damage);
+	bombdamage = damage;
 
-	foreach RadiusThings(Other, Origin, dist)
+	foreach RadiusThings(Other, Origin, bombdistance)
 		if (!PIT_RadiusAttack(Other))
 			break;
 }
@@ -2518,8 +2408,8 @@ bool PIT_StompThing(Entity Other)
 
 	blockdist = Other.Radius + Radius;
 
-	if (fabs(Other.Origin.x - teleport_x) >= blockdist ||
-		fabs(Other.Origin.y - teleport_y) >= blockdist)
+	if (fabs(Other.Origin.x - teleport_pos.x) >= blockdist ||
+		fabs(Other.Origin.y - teleport_pos.y) >= blockdist)
 	{
 		// didn't hit it
 		return true;
@@ -2550,8 +2440,7 @@ bool TeleportMove(TVec org)
 	Entity Other;
 
 	// kill anything occupying the position
-	teleport_x = org.x;
-	teleport_y = org.y;
+	teleport_pos = org;
 
 	// stomp on any things contacted
 	foreach RadiusThings(Other, org, Radius)
@@ -2812,7 +2701,7 @@ bool LookForPlayers(bool allaround)
 //
 //==========================================================================
 
-Actor SpawnSubMissile(class<Actor> type, Actor AInstigator)
+Actor SpawnSubMissile(class<Actor> type, EntityEx AInstigator)
 {
 	Actor other;
 	TVec dir;
@@ -3350,9 +3239,9 @@ int LineAttack(TVec dir, float distance, int damage, class<Actor> PuffType)
 //
 //==========================================================================
 
-void SpawnPuff(class<Actor> PuffType, TVec Org)
+void SpawnPuff(class<EntityEx> PuffType, TVec Org)
 {
-	Actor A;
+	EntityEx A;
 
 	Org.z += (Random() - Random()) * 4.0;
 	A = Spawn(PuffType, Org);
@@ -3601,7 +3490,7 @@ final void A_Tracer()
 	float dist;
 	float slope;
 
-	dest = Tracer;
+	dest = Actor(Tracer);
 
 	if (!dest || dest.Health <= 0)
 		return;

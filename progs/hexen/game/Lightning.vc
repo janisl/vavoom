@@ -137,7 +137,7 @@ bool Touch(Entity InOther)
 
 final void A_LightningClip()
 {
-	Actor targ;
+	EntityEx targ;
 	int zigZag;
 
 	if (Class == LightningFloor)

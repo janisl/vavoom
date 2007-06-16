@@ -33,7 +33,7 @@ class PowerCoupling : Decoration
 //
 //==========================================================================
 
-void Died(Actor source)
+void Died(EntityEx source)
 {
 	int i;
 

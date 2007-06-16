@@ -56,7 +56,7 @@ defaultproperties
 	IdleState = S_PRAYER_STAND1;
 	SeeState = S_PRAYER_STAND1;
 	PainState = S_PRAYER_PAIN1;
-	DyingState = S_PRAYER_DIE1;
+	WoundState = S_PRAYER_DIE1;
 	DeathState = S_PRAYER_DIE3;
 	ActiveSound = 'misc/chant';
 	PainSound = 'misc/static';

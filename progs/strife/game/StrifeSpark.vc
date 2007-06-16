@@ -45,5 +45,5 @@ __states__
 defaultproperties
 {
 	IdleState = S_PUNCH_PUFF_1;//FIXME S_POW3_1;
-	DyingState = S_PUNCH_PUFF_1;
+	WoundState = S_PUNCH_PUFF_1;
 }

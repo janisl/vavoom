@@ -45,133 +45,22 @@ const float BONUSADD		= 0.2;
 const float MONS_LOOK_RANGE	= (20.0 * 64.0);
 const int MONS_LOOK_LIMIT	= 64;
 
-//  States
-state IdleState;
-state SeeState;
-state PainState;
-state MeleeState;
-state MissileState;
-state CrashState;
-state DeathState;
-state GibsDeathState;
-
-//  Sounds
-name SightSound;
-name ActiveSound;
-name AttackSound;
-name PainSound;
-name DeathSound;
-
-//	FLAGS
-bool bSpecial;			// call P_SpecialThing when touched
-bool bShootable;		// Can be hit.
-bool bAmbush;			// Ambush
-bool bJustHit;			// try to attack right back
-bool bJustAttacked;		// take at least one step before attacking
-bool bSpawnCeiling;		// hang from ceiling instead of floor
-//	MOVEMENT FLAGS
-bool bPickUp;			// for players to pick up items
-bool bMissile;			// don't hit same species, explode on block
-bool bDropped;			// dropped by a demon, not level spawned
-bool bNoBlood;			// don't bleed when shot (use puff)
-bool bInFloat;			// floating to a height for a move, don't
-						// auto float to target's height
-bool bSkullFly;			// skull in flight
-bool bCountKill;		// count towards intermission kill total
-bool bCountItem;		// count towards intermission item total
-bool bWindThrust;		// gets pushed around by the wind specials
 bool bFloorBounce;		// bounces off the floor
 bool bThruGhost;		// missile will pass through ghosts
 bool bSpawnFloat;		// spawn random float z
-bool bNoTeleport;		// does not teleport
 bool bRip;				// missile rips through solid targets
 bool bPushable;			// can be pushed by other moving mobjs
 bool bSlide;			// slides against walls
-bool bCannotPush;		// cannot push other pushable mobjs
 bool bBoss;				// mobj is a major boss
 bool bFireDamage;		// does fire damage
 bool bNoDamageThrust;	// does not thrust target when damaging
-bool bTelestomp;		// mobj can stomp another
 bool bFloatBob;			// use float bobbing z movement
-bool bActivateImpact;	// an MF_MISSILE mobj can activate
-						// SPAC_IMPACT
-bool bActivatePushWall;	// mobj can push walls
-bool bActivateMCross;	// can activate monster cross lines
-bool bActivatePCross;	// can activate projectile cross lines
-bool bDormant;			// thing is dormant
-bool bWaterJump;
 bool bBlaster;
 bool bNoMorph;			// Don't morph into chicken.
-bool bStaticLight;		// Static light source.
-bool bSmallSplash;		// Always use small splash
-bool bNoSplash;			// Things that don't splash
-
-//  Params
-float Speed;
-float StepSpeed;
-float PainChance;
-int SpawnHealth;
-int GibsHealth;
-
-// Thing being chased/attacked (or NULL).
-// The originator for missiles.
-Actor			Target;
-Actor			Tracer;
 
 int Special1;	// Special info
 float Special1f;
 class<Actor> SpecialCID;
-
-int MissileDamage;	// For missiles
-
-// Player number last looked for.
-int LastLook;
-
-// For nightmare respawn.
-mthing_t SpawnSpot;
-
-// Reaction time: if non 0, don't attack yet.
-int ReactionCount;
-// Used by player to freeze a bit after teleporting.
-float ReactionTime;
-
-// If >0, the target will be chased
-// no matter what (even if shot)
-int Threshold;
-
-// Movement direction, movement generation (zig-zagging).
-int MoveDir;	// 0-7
-int MoveCount;	// when 0, select a new dir
-
-float bombdamage;
-
-float teleport_x;
-float teleport_y;
-
-// Height if not aiming up or down
-// ???: use slope for monsters?
-float aim_z;
-float aim_range;
-float aim_slope;
-TVec aim_dir;
-float aim_topslope;
-float aim_bottomslope;	// slopes to top and bottom of target
-Actor linetarget;	// who got hit (or NULL)
-float aim_range2d;
-
-float shoot_range;
-TVec shoot_origin;
-TVec shoot_dir;
-int la_damage;
-TVec shoot_linestart;
-TVec shoot_lineend;
-class<Actor> shootPuffType;
-
-// Static light parameters.
-TVec LightOffset;
-int LightColour;
-float LightRadius;
-int ExplodeEffect;
 
 //===========================================================================
 //
@@ -465,7 +354,6 @@ void SetOrigin2(TVec origin)
 
 void OnMapSpawn(mthing_t * mthing)
 {
-	SpawnHealth = Health;
 	if (Level.Game.gameskill == sk_nightmare)
 	{
 		ReactionCount = 0;
@@ -545,7 +433,7 @@ void OnMapSpawn(mthing_t * mthing)
 		if (bCountKill)
 		{
 			Level.TotalKills++;
-			Level.CopyMThing(mthing, &SpawnSpot);
+			Level.CopyMThing(mthing, &SpawnPoint);
 		}
 		if (bCountItem)
 		{
@@ -675,11 +563,11 @@ final void SendExplosion(int etype, TVec org)
 
 //==========================================================================
 //
-//  Kill
+//  Died
 //
 //==========================================================================
 
-void Kill(Actor source)
+void Died(EntityEx source)
 {
 	bShootable = false;
 	bNoGravity = false;
@@ -711,7 +599,7 @@ void Kill(Actor source)
 
 			if (Player.bIsBot)
 			{
-				Player(Player).Bot.Died(source);
+				Player(Player).Bot.Died(Actor(source));
 			}
 
 			// Frag stuff
@@ -1038,7 +926,7 @@ void AutoUseHealth(int saveHealth)
 //
 //==========================================================================
 
-void Damage(Actor inflictor, Actor source, int damage)
+void Damage(EntityEx inflictor, EntityEx source, int damage)
 {
 	int saved;
 
@@ -1088,7 +976,7 @@ void Damage(Actor inflictor, Actor source, int damage)
 		}
 		else if (inflictor.Class == Whirlwind)
 		{
-			inflictor.TouchWhirlwind(self);
+			Actor(inflictor).TouchWhirlwind(self);
 			return;
 		}
 		else if (inflictor.Class == Minotaur)
@@ -1096,7 +984,7 @@ void Damage(Actor inflictor, Actor source, int damage)
 			if (inflictor.bSkullFly)
 			{
 				// Slam only when in charge mode
-				inflictor.MinotaurSlam(self);
+				Actor(inflictor).MinotaurSlam(self);
 				return;
 			}
 		}
@@ -1171,7 +1059,7 @@ void Damage(Actor inflictor, Actor source, int damage)
 	// Push the target unless source is using the gauntlets
 	if (inflictor && (!source || !source.bIsPlayer ||
 			Player(source.Player).ReadyWeapon != wp_gauntlets) &&
-			!inflictor.bNoDamageThrust)
+			!Actor(inflictor).bNoDamageThrust)
 	{
 		TVec dir;
 		float thrust;
@@ -1243,7 +1131,7 @@ void Damage(Actor inflictor, Actor source, int damage)
 		{
 			Player.Health = 0;
 		}
-		Player(Player).Attacker = source;
+		Player(Player).Attacker = Actor(source);
 		Player(Player).DamageFlash += itof(damage) / 35.0;	// add damage after armor / invuln
 		if (Player(Player).DamageFlash > 3.0)
 		{
@@ -1262,19 +1150,19 @@ void Damage(Actor inflictor, Actor source, int damage)
 		if (Class == Pod && source && source.Class != Pod)
 		{
 			// Make sure players get frags for chain-reaction kills
-			Target = source;
+			Target = Actor(source);
 		}
 		if (bIsPlayer && inflictor && !Player(Player).ChickenTime)
 		{
 			// Check for flame death
-			if (inflictor.bFireDamage
+			if (Actor(inflictor).bFireDamage
 				|| ((inflictor.Class == PhoenixFX1)
 					&& (Health > -50) && (damage > 25)))
 			{
 				bFireDamage = true;
 			}
 		}
-		Kill(source);
+		Died(source);
 		return;
 	}
 	if ((Random() < PainChance) && !bSkullFly)
@@ -1283,12 +1171,12 @@ void Damage(Actor inflictor, Actor source, int damage)
 		SetState(PainState);
 	}
 	ReactionCount = 0;	// we're awake now...
-	if (!Threshold && source && !source.bBoss &&
+	if (!Threshold && source && !Actor(source).bBoss &&
 		!(Class == Sorcerer2 && source.Class == Wizard))
 	{
 		// Target actor is not intent on another actor,
 		// so make him chase after source
-		Target = source;
+		Target = Actor(source);
 		Threshold = BASETHRESHOLD;
 		if (State == IdleState && SeeState)
 		{
@@ -1465,8 +1353,8 @@ void NightmareRespawn()
 	float x, y, z;
 	Actor A;
 
-	x = SpawnSpot.x;
-	y = SpawnSpot.y;
+	x = SpawnPoint.x;
+	y = SpawnPoint.y;
 
 	if (!CheckPosition(vector(x, y, ONFLOORZ)))
 		return;	// somthing is occupying it's position
@@ -1489,9 +1377,9 @@ void NightmareRespawn()
 	else
 		z = ONFLOORZ;
 	A = Spawn(class<Actor>(Class), vector(x, y, z));
-	Level.CopyMThing(&SpawnSpot, &A.SpawnSpot);
-	A.Angles.yaw = itof(45 * (SpawnSpot.angle / 45));
-	if (SpawnSpot.options & HereticLevelInfo::MTF_AMBUSH)
+	Level.CopyMThing(&SpawnPoint, &A.SpawnPoint);
+	A.Angles.yaw = itof(45 * (SpawnPoint.angle / 45));
+	if (SpawnPoint.options & HereticLevelInfo::MTF_AMBUSH)
 		A.bAmbush = true;
 
 	A.ReactionCount = 18;
@@ -1652,7 +1540,7 @@ void CheckForPushSpecial(line_t * line, int side)
 		else if (bActivateImpact)
 		{
 			HereticLevelInfo(Level).ActivateLine(line,
-				bMissile ? Target : self, side, SPAC_IMPACT);
+				bMissile ? Actor(Target) : self, side, SPAC_IMPACT);
 		}
 	}
 }
@@ -2535,13 +2423,13 @@ bool PIT_RadiusAttack(Entity Other)
 	if (dist < 0.0)
 		dist = 0.0;
 
-	if (dist >= bombdamage)
+	if (dist >= bombdistance)
 		return true;	// out of range
 
 	if (Actor(Other).CanSee(self))
 	{
 		// must be in direct path
-		Actor(Other).Damage(self, Target, ftoi(bombdamage - dist));
+		Actor(Other).Damage(self, Target, bombdamage - ftoi(dist));
 	}
 
 	return true;
@@ -2557,13 +2445,12 @@ bool PIT_RadiusAttack(Entity Other)
 
 void RadiusAttack(int damage, int distance, bool damageSource)
 {
-	float dist;
 	Entity Other;
 
-	dist = itof(damage);
-	bombdamage = itof(damage);
+	bombdistance = itof(damage);
+	bombdamage = damage;
 
-	foreach RadiusThings(Other, Origin, dist)
+	foreach RadiusThings(Other, Origin, bombdistance)
 		if (!PIT_RadiusAttack(Other))
 			break;
 }
@@ -2599,7 +2486,7 @@ bool CheckMissileSpawn()
 //
 //==========================================================================
 
-Actor SpawnMissile(Actor dest, class<Actor> type)
+Actor SpawnMissile(EntityEx dest, class<Actor> type)
 {
 	TVec org;
 	Actor A;
@@ -2798,7 +2685,7 @@ bool SeekerMissile(float thresh, float turnMax)
 		Tracer = none;
 		return false;
 	}
-	dir = FaceActor(Tracer, &delta);
+	dir = FaceActor(Actor(Tracer), &delta);
 	if (delta > thresh)
 	{
 		delta /= 2.0;
@@ -2852,8 +2739,8 @@ bool PIT_StompThing(Entity Other)
 
 	blockdist = Other.Radius + Radius;
 
-	if (fabs(Other.Origin.x - teleport_x) >= blockdist ||
-		fabs(Other.Origin.y - teleport_y) >= blockdist)
+	if (fabs(Other.Origin.x - teleport_pos.x) >= blockdist ||
+		fabs(Other.Origin.y - teleport_pos.y) >= blockdist)
 	{
 		// didn't hit it
 		return true;
@@ -2887,8 +2774,7 @@ bool TeleportMove(TVec newOrg)
 	Entity Other;
 
 	// kill anything occupying the position
-	teleport_x = newOrg.x;
-	teleport_y = newOrg.y;
+	teleport_pos = newOrg;
 
 	// stomp on any things contacted
 	foreach RadiusThings(Other, newOrg, Radius)
@@ -3053,14 +2939,26 @@ bool CheckMissileRange()
 		// No melee attack, so fire more frequently
 		dist -= 128.0;
 	}
-	if (Class == HereticImp)
+
+	if (MissileMaxRange && dist > MissileMaxRange)
 	{
-		// Imp's fly attack from far away
+		return false;	// too far away
+	}
+
+	if (MissileMinRange && dist < MissileMinRange)
+	{
+		return false;	// close for fist attack
+	}
+
+	if (bTriggerHappy)
+	{
+		//	Attack from far away
 		dist /= 2.0;
 	}
-	if (dist > 200.0)
+
+	if (dist > MissileChance)
 	{
-		dist = 200.0;
+		dist = MissileChance;
 	}
 	if (Random() * 256.0 < dist)
 	{
@@ -4142,9 +4040,9 @@ final void A_Explode()
 //
 //==========================================================================
 
-void SpawnPuff(TVec org, class<Actor> PuffType)
+void SpawnPuff(TVec org, class<EntityEx> PuffType)
 {
-	Actor puff;
+	EntityEx puff;
 
 	org.z += (Random() - Random()) * 4.0;
 	puff = Spawn(PuffType, org);

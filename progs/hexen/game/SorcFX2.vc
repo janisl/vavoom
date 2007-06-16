@@ -86,15 +86,15 @@ final void A_SorcFX2Orbit()
 	{
 		SetState(DeathState);
 		Target.Args[0] = 0;
-		Target.bReflective = false;
-		Target.bInvulnerable = false;
+		Actor(Target).bReflective = false;
+		Actor(Target).bInvulnerable = false;
 	}
 
 	if (Args[0] && (Target.Args[0]-- <= 0))	// Time expired
 	{
 		SetState(DeathState);
 		Target.Args[0] = 0;
-		Target.bReflective = false;
+		Actor(Target).bReflective = false;
 	}
 
 	// Move to new position based on angle

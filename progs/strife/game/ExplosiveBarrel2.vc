@@ -32,11 +32,11 @@ class ExplosiveBarrel2 : Decoration
 //
 //==========================================================================
 
-void Died(Actor source)
+void Died(EntityEx source)
 {
 	if (source && !ExplosiveBarrel2(source))
 	{
-		Target = source;
+		Target = Actor(source);
 	}
 	::Died(source);
 }

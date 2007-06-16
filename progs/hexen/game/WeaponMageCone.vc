@@ -54,7 +54,7 @@ final void A_FireConePL1()
 		if (pmo.linetarget)
 		{
 			pmo.bIceDamage = true;
-			pmo.linetarget.Damage(pmo, pmo, damage);
+			Actor(pmo.linetarget).Damage(pmo, pmo, damage);
 			pmo.bIceDamage = false;
 			conedone = true;
 			break;

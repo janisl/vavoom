@@ -49,129 +49,31 @@ const float BONUSADD		= 0.2;
 const float MONS_LOOK_RANGE 	= (16.0 * 64.0);
 const int MONS_LOOK_LIMIT 		= 64;
 
-//  States
-state IdleState;
-state SeeState;
-state PainState;
-state MeleeState;
-state MissileState;
-state CrashState;
-state DeathState;
-state GibsDeathState;
-state IceDeathState;
-
-//  Sounds
-name SightSound;
-name ActiveSound;
-name AttackSound;
-name PainSound;
-name DeathSound;
-
-//	FLAGS
-bool bSpecial;			// call P_SpecialThing when touched
-bool bShootable;		// Can be hit.
-bool bAmbush;
-bool bJustHit;			// try to attack right back
-bool bJustAttacked;		// take at least one step before attacking
-bool bSpawnCeiling;		// hang from ceiling instead of floor
-//	MOVEMENT FLAGS
-bool bPickUp;			// for players to pick up items
-bool bMissile;			// don't hit same species, explode on block
-bool bNoBlood;			// don't bleed when shot (use puff)
-bool bInFloat;			// floating to a height for a move, don't
-						// auto float to target's height
-bool bSkullFly;			// skull in flight
-bool bCountKill;		// count towards intermission kill total
 bool bIceCorpse;		// a frozen corpse (for blasting)
-bool bWindThrust;		// gets pushed around by the wind specials
 bool bFloorBounce;		// bounces off the floor
 bool bSpawnFloat;		// spawn random float z
-bool bNoTeleport;		// does not teleport
 bool bRip;				// missile rips through solid targets
 bool bPushable;			// can be pushed by other moving mobjs
 bool bSlide;			// slides against walls
-bool bCannotPush;		// cannot push other pushable mobjs
-bool bDropped;			// dropped by a demon
 bool bBoss;				// mobj is a major boss
 bool bFireDamage;		// does fire damage
 bool bNoDamageThrust;	// does not thrust target when damaging
-bool bTelestomp;		// mobj can stomp another
 bool bFloatBob;			// use float bobbing z movement
-bool bActivateImpact;	// an MF_MISSILE mobj can activate
-						// SPAC_IMPACT
-bool bActivatePushWall;	// mobj can push walls
-bool bActivateMCross;	// can activate monster cross lines
-bool bActivatePCross;	// can activate projectile cross lines
 bool bNonShootable;		// mobj is totally non-shootable,
 						// but still considered solid
 bool bInvulnerable;		// mobj is invulnerable
-bool bDormant;			// thing is dormant
 bool bIceDamage;		// does ice damage
 bool bSeekerMissile;	// is a seeker (for reflection)
 bool bReflective;		// reflects missiles
-bool bWaterJump;
 bool bBlaster;
 bool bDamageInvulnerable;	// These inflictors aren't foiled by invulnerability
-bool bSmallSplash;		// Always use small splash
-bool bNoSplash;			// Things that don't splash
 bool bNoMorph;			// Won't morph into a pig.
-bool bStaticLight;		// Static light source.
-
-//  Params
-float Speed;
-float PainChance;
-int SpawnHealth;
-int GibsHealth;
-
-// Thing being chased/attacked (or none).
-// Also the originator for missiles.
-Actor				Target;
-Actor				Tracer;
 
 int _Special1;	// Special info
 int _Special2;	// Special info
 float Special1f;
 float Special2f;
 class<Actor> SpecialCID;
-
-int MissileDamage;	// For missiles
-
-// Reaction time: if non 0, don't attack yet.
-int ReactionCount;
-
-// Used by player to freeze a bit after teleporting.
-float ReactionTime;
-
-TVec teleport_pos;
-
-int bombdamage;
-float bombdistance;
-bool DamageSource;
-
-// Height if not aiming up or down
-// ???: use slope for monsters?
-float aim_z;
-float aim_range;
-float aim_slope;
-TVec aim_dir;
-float aim_topslope;
-float aim_bottomslope;	// slopes to top and bottom of target
-float aim_range2d;
-Actor linetarget;	// who got hit (or none)
-
-float shoot_range;
-TVec shoot_origin;
-TVec shoot_dir;
-int la_damage;
-TVec shoot_linestart;
-TVec shoot_lineend;
-class<Actor> shootPuffType;
-
-// Static light parameters.
-TVec LightOffset;
-int LightColour;
-float LightRadius;
-int ExplodeEffect;
 
 //===========================================================================
 //
@@ -452,7 +354,6 @@ void SetOrigin2(TVec origin)
 
 void OnMapSpawn(mthing_t * mthing)
 {
-	SpawnHealth = Health;
 	bCheckLineBlocking = false;
 	bCheckLineBlockMonsters = false;
 	if (!bMissile)
@@ -821,7 +722,7 @@ Actor ActiveMinotaur()
 //
 //==========================================================================
 
-void Died(Actor source)
+void Died(EntityEx source)
 {
 	int dummy[5];
 
@@ -857,7 +758,7 @@ void Died(Actor source)
 
 			if (Player.bIsBot)
 			{
-				Player(Player).Bot.Died(source);
+				Player(Player).Bot.Died(Actor(source));
 			}
 
 			if (self == source)
@@ -1180,7 +1081,7 @@ void AutoUseHealth(int saveHealth)
 //
 //==========================================================================
 
-void Damage(Actor inflictor, Actor source, int damage)
+void Damage(EntityEx inflictor, EntityEx source, int damage)
 {
 	float saved;
 	float savedPercent;
@@ -1194,7 +1095,7 @@ void Damage(Actor inflictor, Actor source, int damage)
 	}
 	if (Health <= 0)
 	{
-		if (inflictor && inflictor.bIceDamage)
+		if (inflictor && Actor(inflictor).bIceDamage)
 		{
 			return;
 		}
@@ -1211,7 +1112,7 @@ void Damage(Actor inflictor, Actor source, int damage)
 		// mobj is invulnerable
 		if (bIsPlayer)
 			return;	// for player, no exceptions
-		if (!inflictor || !inflictor.bDamageInvulnerable)
+		if (!inflictor || !Actor(inflictor).bDamageInvulnerable)
 			return;
 	}
 	if (bIsPlayer)
@@ -1240,7 +1141,7 @@ void Damage(Actor inflictor, Actor source, int damage)
 	// Special damage types
 	if (inflictor)
 	{
-		damage = inflictor.InflictorModifyDamage(self, source, damage);
+		damage = Actor(inflictor).InflictorModifyDamage(self, Actor(source), damage);
 		if (damage < 0)
 		{
 			return;
@@ -1248,7 +1149,7 @@ void Damage(Actor inflictor, Actor source, int damage)
 	}
 	// Push the	target
 	if (inflictor && (!source || !source.bIsPlayer) &&
-		!inflictor.bNoDamageThrust)
+		!Actor(inflictor).bNoDamageThrust)
 	{
 		TVec dir;
 		float thrust;
@@ -1312,7 +1213,7 @@ void Damage(Actor inflictor, Actor source, int damage)
 		{
 			Player.Health = 0;
 		}
-		Player(Player).Attacker = source;
+		Player(Player).Attacker = Actor(source);
 		Player(Player).DamageFlash += itof(damage) / 35.0;	// add damage after armor / invuln
 		if (Player(Player).DamageFlash > 3.0)
 		{
@@ -1330,7 +1231,7 @@ void Damage(Actor inflictor, Actor source, int damage)
 		if (inflictor)
 		{
 			// check for special fire damage or ice damage deaths
-			if (inflictor.bFireDamage)
+			if (Actor(inflictor).bFireDamage)
 			{
 				if (bIsPlayer && !Player(Player).MorphTime)
 				{
@@ -1345,7 +1246,7 @@ void Damage(Actor inflictor, Actor source, int damage)
 					bFireDamage = true;
 				}
 			}
-			else if (inflictor.bIceDamage)
+			else if (Actor(inflictor).bIceDamage)
 			{
 				bIceDamage = true;
 			}
@@ -1353,7 +1254,7 @@ void Damage(Actor inflictor, Actor source, int damage)
 		if (MinotaurFriend(source))
 		{
 			// Minotaur's kills go to his master
-			master = source.Tracer;
+			master = Actor(Actor(source).Tracer);
 			// Make sure still alive and not a pointer to fighter head
 			if (master && master.bIsPlayer && (master.Player.MO == master))
 			{
@@ -1420,7 +1321,7 @@ void Damage(Actor inflictor, Actor source, int damage)
 		return;
 	}
 	Pawn(self).ReactionCount = 0;	// we're awake now...
-	if (!Pawn(self).Threshold && source && !source.bBoss &&
+	if (!Pawn(self).Threshold && source && !Actor(source).bBoss &&
 		!(Class == Bishop) && !(Class == MinotaurFriend))
 	{
 		// Target actor is not intent on another actor,
@@ -1430,7 +1331,7 @@ void Damage(Actor inflictor, Actor source, int damage)
 		{
 			return;
 		}
-		Target = source;
+		Target = Actor(source);
 		Pawn(self).Threshold = BASETHRESHOLD;
 		if (State == IdleState && SeeState)
 		{
@@ -1955,7 +1856,7 @@ void CheckForPushSpecial(line_t * line, int side)
 		else if (bActivateImpact)
 		{
 			HexenLevelInfo(Level).ActivateLine(line,
-				bMissile ? Target : self, side, SPAC_IMPACT);
+				bMissile ? Actor(Target) : self, side, SPAC_IMPACT);
 		}
 	}
 }
@@ -3368,7 +3269,7 @@ bool SeekerMissile(float thresh, float turnMax)
 		Tracer = none;
 		return false;
 	}
-	dir = FaceActor(Tracer, &delta);
+	dir = FaceActor(Actor(Tracer), &delta);
 	if (delta > thresh)
 	{
 		delta /= 2.0;
@@ -4065,9 +3966,9 @@ int LineAttack(TVec dir, float distance, int damage, class<Actor> PuffType)
 //
 //==========================================================================
 
-void SpawnPuff(TVec org, class<Actor> PuffType)
+void SpawnPuff(TVec org, class<EntityEx> PuffType)
 {
-	Actor puff;
+	EntityEx puff;
 
 	org.z += (Random() - Random()) * 4.0;
 	puff = Spawn(PuffType, org);
@@ -4088,7 +3989,7 @@ void SpawnPuff(TVec org, class<Actor> PuffType)
 	{
 		puff.Velocity.z = 8.0 / 10.0 * 35.0;
 	}
-	MainGameInfo(Level.Game).PuffSpawned = puff;
+	MainGameInfo(Level.Game).PuffSpawned = Actor(puff);
 }
 
 //===========================================================================

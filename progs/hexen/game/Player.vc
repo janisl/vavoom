@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Player : BasePlayer;
+class Player : PlayerEx;
 
 const float BLINKTHRESHOLD	= 4.0;
 
@@ -82,13 +82,6 @@ int InventorySlotNum;
 inventory_t Inventory[HexenDefs::NUMARTIFACTS];
 int Arti;	// artitype_t to use
 
-// Base height above floor for viewz.
-float ViewHeight;
-// Bob/squat speed.
-float DeltaViewHeight;
-// bounded/scaled total momentum.
-float Bob;
-
 float FlyHeight;
 
 int ArtifactCount;
@@ -108,19 +101,9 @@ int ReadyWeapon;
 
 bool WeaponOwned[HexenDefs::NUMWEAPONS];
 
-// Who did damage (none for floors/ceilings).
-Actor Attacker;
-
-// For screen flashing (red or bright).
-float DamageFlash;
-float BonusFlash;
-
 int PoisonCount;	// screen flash for poison damage
 float LastPoisonTime;
 Actor Poisoner;		// none for non-player mobjs
-
-float JumpTime;
-int LocalQuakeHappening;
 
 int NewTorch;	// used in the torch flicker effect.
 int NewTorchDelta;
@@ -128,17 +111,10 @@ int NewTorchDelta;
 int WeaponCShift;
 float MorphTime;	// player is a pig if > 0
 
-TVec MoveDir;
-
 // For cleric's invulnerability effect
 bool bAltShadow;
 bool bShadow;
 bool bDontDraw;
-
-float LastSectorDamageTime;
-
-float HazardTime;
-float LastHazardTime;
 
 BotPlayer Bot;
 
@@ -2102,7 +2078,7 @@ void DeathPlayerTick(float deltaTime)
 	if (Attacker && Attacker != MO)
 	{
 		// Watch killer
-		dir = Actor(MO).FaceActor(Attacker, &delta);
+		dir = Actor(MO).FaceActor(Actor(Attacker), &delta);
 		if (delta < 10.0)
 		{
 			// Looking at killer, so fade damage and poison counters

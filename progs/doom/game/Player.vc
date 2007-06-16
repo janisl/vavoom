@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Player : BasePlayer;
+class Player : PlayerEx;
 
 const float VIEWHEIGHT		= 41.0;
 
@@ -60,10 +60,6 @@ int ArmorPoints;
 
 bool Backpack;
 
-// For screen flashing (red or bright).
-float DamageFlash;
-float BonusFlash;
-
 // Bit flags, for cheats and debug.
 // See cheat_t, above.
 int Cheats;
@@ -72,13 +68,6 @@ int Cheats;
 float Powers[NUMPOWERS];
 
 int Keys;
-
-// Base height above floor for viewz.
-float ViewHeight;
-// Bob/squat speed.
-float DeltaViewHeight;
-// bounded/scaled total momentum.
-float Bob;
 
 // Refired shots are less accurate.
 int Refire;
@@ -94,21 +83,8 @@ int Ammo[DoomDefs::NUMAMMO];
 int MaxAmmo[DoomDefs::NUMAMMO];
 int ReadyAmmo;
 
-// Who did damage (NULL for floors/ceilings).
-Actor Attacker;
-
-int JumpTics;
-int LocalQuakeHappening;
-
 // Armor type is 0-2.
 int ArmorType;
-
-TVec MoveDir;
-
-float LastSectorDamageTime;
-
-float HazardTime;
-float LastHazardTime;
 
 //
 //  FACE WIDGET DATA
@@ -980,12 +956,12 @@ void MovePlayer(float deltaTime)
 		SetPlayerRunState();
 	}
 
-	if ((Buttons & BT_JUMP) && onground && !JumpTics)
+	if ((Buttons & BT_JUMP) && onground && !JumpTime)
 	{
 		//  Jump
 		MO.Velocity.z = 9.0 * 35.0;
 		Actor(MO).bOnMobj = false;
-		JumpTics = 18;
+		JumpTime = 0.5;
 	}
 }
 
@@ -1638,9 +1614,13 @@ void PlayerTick(float deltaTime)
 	// Copy view angles
 	MO.Angles = ViewAngles;
 
-	if (JumpTics)
+	if (JumpTime)
 	{
-		JumpTics--;
+		JumpTime -= deltaTime;
+		if (JumpTime < 0.0)
+		{
+			JumpTime = 0.0;
+		}
 	}
 
 	// Move around.

@@ -75,7 +75,7 @@ final void A_DeathBallImpact()
 				AimLineAttack(angles, 10.0 * 64.0);
 				if (linetarget && Target != linetarget)
 				{
-					Tracer = linetarget;
+					Tracer = Actor(linetarget);
 					angle = atan2(linetarget.Origin.y - Origin.y,
 						linetarget.Origin.x - Origin.x);
 					newAngle = true;

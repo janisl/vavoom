@@ -34,6 +34,129 @@ const float FRICTION_LOW	= 0.95703125;
 const float FRICTION_FLY	= 2.87109375;
 const float FRICTION_WATER	= 3.0;
 
+//  States
+state			IdleState;
+state			SeeState;
+state			MeleeState;
+state			MissileState;
+state			PainState;
+state			WoundState;
+state			DeathState;
+state			GibsDeathState;
+state			IceDeathState;
+state			FireDeathState;
+state			DisruptDeathState;
+state			CrashState;
+state			RaiseState;
+
+//	Sounds
+name			SightSound;
+name			ActiveSound;
+name			AttackSound;
+name			PainSound;
+name			DeathSound;
+
+//	Flags
+bool bSpecial;			// call P_SpecialThing when touched
+bool bShootable;		// Can be hit.
+bool bAmbush;
+bool bJustHit;			// try to attack right back
+bool bJustAttacked;		// take at least one step before attacking
+bool bSpawnCeiling;		// hang from ceiling instead of floor
+// movement flags
+bool bPickUp;			// for players to pick up items
+bool bMissile;			// don't hit same species, explode on block
+bool bDropped;			// dropped by a demon, not level spawned
+bool bNoBlood;			// don't bleed when shot (use puff)
+bool bInFloat;			// floating to a height for a move, don't
+						// auto float to target's height
+bool bSkullFly;			// skull in flight
+bool bCountKill;		// count towards intermission kill total
+bool bCountItem;		// count towards intermission item total
+bool bWindThrust;		// gets pushed around by the wind specials
+bool bActivateImpact;	// an MF_MISSILE mobj can activate
+						// SPAC_IMPACT
+bool bActivatePushWall;	// mobj can push walls
+bool bActivateMCross;	// can activate monster cross lines
+bool bActivatePCross;	// can activate projectile cross lines
+bool bDormant;			// thing is dormant
+bool bWaterJump;
+bool bNoTeleport;		// does not teleport
+bool bTelestomp;		// mobj can stomp another
+bool bCannotPush;		// cannot push other pushable mobjs
+bool bSmallSplash;		// Always use small splash
+bool bNoSplash;			// Things that don't splash
+bool bStaticLight;		// Static light source.
+bool bTriggerHappy;
+
+//  Params
+float			Speed;
+float			StepSpeed;
+float			PainChance;
+int				GibsHealth;
+
+float			MissileChance;
+float			MissileMinRange;
+float			MissileMaxRange;
+
+// Thing being chased/attacked (or NULL).
+// Also the originator for missiles.
+EntityEx		Target;
+EntityEx		Tracer;
+
+// Player number last looked for.
+int				LastLook;
+
+int				MissileDamage;	// For missiles
+
+// For nightmare respawn.
+mthing_t		SpawnPoint;
+
+// Reaction time: if non 0, don't attack yet.
+int				ReactionCount;
+// Used by player to freeze a bit after teleporting.
+float			ReactionTime;
+
+// If >0, the target will be chased
+// no matter what (even if shot)
+int				Threshold;
+
+// Movement direction, movement generation (zig-zagging).
+int				MoveDir;	// 0-7
+int				MoveCount;	// when 0, select a new dir
+
+int				bombdamage;
+float			bombdistance;
+bool			DamageSource;
+
+TVec			teleport_pos;
+
+// Height if not aiming up or down
+// ???: use slope for monsters?
+float			aim_z;
+float			aim_range;
+float			aim_slope;
+TVec			aim_dir;
+float			aim_topslope;
+float			aim_bottomslope;	// slopes to top and bottom of target
+float			aim_range2d;
+EntityEx		linetarget;	// who got hit (or NULL)
+
+float			shoot_range;
+TVec			shoot_origin;
+TVec			shoot_dir;
+int				la_damage;
+TVec			shoot_linestart;
+TVec			shoot_lineend;
+class<EntityEx>	shootPuffType;
+
+// Static light parameters.
+TVec			LightOffset;
+int				LightColour;
+float			LightRadius;
+
+int				ExplodeEffect;
+
 //===========================================================================
 //
 //  SetInstigator
@@ -245,6 +368,17 @@ float GetPlayerViewHeight()
 	return 0.0;
 }
 
+//===========================================================================
+//
+//  Damage
+//
+//===========================================================================
+
+void Damage(EntityEx inflictor, EntityEx source, int damage)
+{
+}
+
 defaultproperties
 {
+	MissileChance = 200.0;
 }

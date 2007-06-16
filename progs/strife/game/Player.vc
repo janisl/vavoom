@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Player : BasePlayer;
+class Player : PlayerEx;
 
 const float VIEWHEIGHT		= 41.0;
 
@@ -70,10 +70,6 @@ int Ammo[StrifeDefs::NUMAMMO];
 int MaxAmmo[StrifeDefs::NUMAMMO];
 int ReadyAmmo;
 
-// For screen flashing (red or bright).
-float DamageFlash;
-float BonusFlash;
-
 int Accuracy;
 int Stamina;
 
@@ -86,13 +82,6 @@ int Inventory[StrifeDefs::NUMINVITEMS];
 // Power ups. invinc and invis are timers.
 float Powers[NUMPOWERS];
 
-// Base height above floor for viewz.
-float ViewHeight;
-// Bob/squat speed.
-float DeltaViewHeight;
-// bounded/scaled total momentum.
-float Bob;
-
 // Refired shots are less accurate.
 int Refire;
 
@@ -103,19 +92,6 @@ int Sigil;
 
 // Is wp_nochange if not changing.
 int PendingWeapon;
-
-// Who did damage (NULL for floors/ceilings).
-Actor Attacker;
-
-float JumpTime;
-int LocalQuakeHappening;
-
-float LastSectorDamageTime;
-
-float HazardTime;
-float LastHazardTime;
-
-TVec MoveDir;
 
 replication
 {

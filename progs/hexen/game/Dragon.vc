@@ -65,21 +65,21 @@ final void DragonSeek(float thresh, float turnMax)
 	int dir;
 	float dist;
 	float delta;
-	Actor tempTarget;
+	EntityEx tempTarget;
 	int search;
 	int i;
 	int bestArg;
 	float bestAngle;
 	float angleToSpot, angleToTarget;
 	Actor A;
-	Actor oldTarget;
+	EntityEx oldTarget;
 
 	tempTarget = FlightTarget;
 	if (!tempTarget)
 	{
 		return;
 	}
-	dir = FaceActor(tempTarget, &delta);
+	dir = FaceActor(Actor(tempTarget), &delta);
 	if (delta > thresh)
 	{
 		delta /= 2.0;

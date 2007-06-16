@@ -23,47 +23,33 @@
 //**
 //**************************************************************************
 
-class HereticImpLeader : HereticImp
-	__mobjinfo__(5)
-	__scriptid__(7);
+class PlayerEx : BasePlayer
+	abstract;
 
-//==========================================================================
-//
-//  A_ImpMsAttack2
-//
-//  Fireball attack of the imp leader.
-//
-//==========================================================================
+// For screen flashing (red or bright).
+float			DamageFlash;
+float			BonusFlash;
 
-final void A_ImpMsAttack2()
-{
-	if (!Target)
-	{
-		return;
-	}
-	PlaySound(AttackSound, CHAN_WEAPON);
-	if (CheckMeleeRange())
-	{
-		Target.Damage(self, self, 5 + (P_Random() & 7));
-		return;
-	}
-	SpawnMissile(Target, HereticImpBall);
-}
+// Base height above floor for viewz.
+float			ViewHeight;
+// Bob/squat speed.
+float			DeltaViewHeight;
+// bounded/scaled total momentum.
+float			Bob;
 
-__states__
-{
-	//	Missile attack
-	S_IMP_MSATK2_1('IMPX', 3, 6.0 /35.0, S_IMP_MSATK2_2) = A_FaceTarget
-	S_IMP_MSATK2_2('IMPX', 4, 6.0 /35.0, S_IMP_MSATK2_3) = A_FaceTarget
-	S_IMP_MSATK2_3('IMPX', 5, 6.0 /35.0, S_IMP_FLY1) = A_ImpMsAttack2
-}
+// Who did damage (none for floors/ceilings).
+EntityEx		Attacker;
+
+float			JumpTime;
+int				LocalQuakeHappening;
+
+TVec			MoveDir;
+
+float			LastSectorDamageTime;
+
+float			HazardTime;
+float			LastHazardTime;
 
 defaultproperties
 {
-	Health = 80;
-	GibsHealth = -40;
-	MeleeState = none;
-	bTriggerHappy = false;
-	MissileState = S_IMP_MSATK2_1;
-	AttackSound = 'himp/leaderattack';
 }

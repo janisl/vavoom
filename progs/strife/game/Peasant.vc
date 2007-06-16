@@ -72,7 +72,7 @@ defaultproperties
 	SeeState = S_PEASANT_WALK1;
 	MeleeState = S_PEASANT_ATK1;
 	PainState = S_PEASANT_PAIN1;
-	DyingState = S_PEASANT_DIE1;
+	WoundState = S_PEASANT_DIE1;
 	DeathState = S_PEASANT_DIE4;
 	GibsDeathState = S_PEASANT_XDIE1;
 	FireDeathState = S_BURN1;

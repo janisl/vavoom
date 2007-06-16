@@ -206,7 +206,7 @@ bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 //
 //==========================================================================
 
-bool CheckActivation(int activationType, line_t * line, Actor A)
+bool CheckActivation(int activationType, line_t * line, EntityEx A)
 {
 	int lineActivation;
 	bool noway;
@@ -288,7 +288,7 @@ bool CheckActivation(int activationType, line_t * line, Actor A)
 //
 //==========================================================================
 
-bool ActivateLine(line_t* Line, Actor A, int Side, int ActivationType)
+bool ActivateLine(line_t* Line, EntityEx A, int Side, int ActivationType)
 {
 	int lineActivation;
 	bool repeat;
