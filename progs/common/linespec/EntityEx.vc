@@ -45,8 +45,7 @@ enum
 	BOUNCE_None,
 	BOUNCE_Doom,
 	BOUNCE_Heretic,
-	BOUNCE_Hexen,
-	BOUNCE_Strife
+	BOUNCE_Hexen
 };
 
 //  States
@@ -207,7 +206,7 @@ float			Special1f;
 //
 //==========================================================================
 
-final bool Physics(float DeltaTime)
+bool Physics(float DeltaTime)
 {
 	EntityEx		onmo;
 	SectorThinker	SecThink;
@@ -550,8 +549,7 @@ final void HitLine(tmtrace_t* tmtrace)
 	if (bMissile)
 	{
 		if (BounceType == BOUNCE_Doom ||
-			BounceType == BOUNCE_Hexen ||
-			BounceType == BOUNCE_Strife)
+			BounceType == BOUNCE_Hexen)
 		{
 			//	If number of bounces is limited.
 			if (BounceCount > 0 && --BounceCount <= 0)
@@ -617,8 +615,7 @@ final void HitMobj(Entity Other)
 	if (bMissile)
 	{
 		if (BounceType == BOUNCE_Doom ||
-			BounceType == BOUNCE_Hexen ||
-			BounceType == BOUNCE_Strife)
+			BounceType == BOUNCE_Hexen)
 		{
 			//  Bounce against walls and non-killable ofjects
 			if (bBounceOnActors || EntityEx(Other).bReflective ||

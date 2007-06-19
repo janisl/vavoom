@@ -54,7 +54,7 @@ defaultproperties
 	Speed = 525.0;
 	ReactionCount = 40;
 	MissileDamage = 1;
-	BounceType = BOUNCE_Strife;
+	BounceType = BOUNCE_Doom;
 	BounceCount = 2;
 	BounceFactor = 0.5;
 	bNoGravity = false;

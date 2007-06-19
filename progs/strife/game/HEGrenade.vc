@@ -58,7 +58,7 @@ defaultproperties
 	bBounceOnActors = true;
 	bNoBounceSound = true;
 	bExplodeOnWater = true;
-	BounceType = BOUNCE_Strife;
+	BounceType = BOUNCE_Doom;
 	BounceCount = 2;
 	BounceFactor = 0.5;
 	IdleState = S_GRENADE_HE_1;

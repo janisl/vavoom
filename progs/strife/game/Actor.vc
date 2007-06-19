@@ -1669,7 +1669,7 @@ void ApplyFriction()
 		dot = DotProduct(Velocity, Floor->normal);
 		if (dot < 0.0)
 		{
-			if (BounceType == BOUNCE_Strife)
+			if (BounceType == BOUNCE_Doom)
 			{
 				dot *= BOUNCE_VAL;
 				if (BounceCount > 0 && --BounceCount <= 0)
