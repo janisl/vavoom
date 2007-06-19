@@ -270,17 +270,6 @@ int HITDICE(int a)
 	return (1 + (P_Random() & 7)) * a;
 }
 
-//===========================================================================
-//
-//  GetFloorType
-//
-//===========================================================================
-
-VTerrainInfo* GetFloorType()
-{
-	return TerrainType(Floor->pic);
-}
-
 //==========================================================================
 //
 //  SetOrigin2
@@ -471,99 +460,15 @@ void Destroyed()
 	::Destroyed();
 }
 
-//==========================================================================
+//===========================================================================
 //
-//  HitFloorType
+//  GetDamageTypeInflictor
 //
-//==========================================================================
+//===========================================================================
 
-bool HitFloorType()
+EntityEx GetDamageTypeInflictor(name DamageType)
 {
-	Actor A;
-	TVec org;
-	int smallsplash = false;
-	VTerrainInfo* TInfo;
-	VSplashInfo* SInfo;
-
-	if (FloorZ != GetPlanePointZ(&Sector->floor, Origin))
-	{
-		// don't splash if landing on the edge above water/lava/etc....
-		return false;
-	}
-
-	// Things that don't splash go here
-	if (bNoSplash)
-	{
-		return false;
-	}
-
-	TInfo = GetFloorType();
-
-	// Small splash for small masses
-	if (Mass < 10.0 || bSmallSplash)
-		smallsplash = true;
-
-	if (TInfo->DamageAmount && bIsPlayer &&
-		XLevel.TicTime & TInfo->DamageTimeMask)
-	{
-		Damage(TInfo->DamageType == 'lava' ? HexenLevelInfo(
-			Level).GLavaInflictor : none, none, TInfo->DamageAmount);
-	}
-
-	SInfo = GetSplashInfo(TInfo->Splash);
-	if (!SInfo)
-	{
-		return TInfo->bLiquid;
-	}
-
-	org = Origin;
-	org.z = FloorZ;
-
-	if (smallsplash)
-	{
-		if (SInfo->SmallClass)
-		{
-			A = Spawn(class<Actor>(SInfo->SmallClass), org);
-			A.FloorClip += SInfo->SmallClip;
-			if (SInfo->SmallSound)
-			{
-				A.PlaySound(SInfo->SmallSound, CHAN_VOICE);
-			}
-		}
-	}
-	else
-	{
-		if (SInfo->BaseClass)
-		{
-			Spawn(class<Actor>(SInfo->BaseClass), org);
-			if (SInfo->Sound && !SInfo->ChunkClass)
-			{
-				A.PlaySound(SInfo->Sound, CHAN_VOICE);
-			}
-		}
-		if (SInfo->ChunkClass)
-		{
-			A = Spawn(class<Actor>(SInfo->ChunkClass), org);
-			A.Target = self;
-			A.Velocity.x = (Random() - Random()) * SInfo->ChunkXVelMul * 35.0;
-			A.Velocity.y = (Random() - Random()) * SInfo->ChunkYVelMul * 35.0;
-			A.Velocity.z = (SInfo->ChunkBaseZVel + Random() *
-				SInfo->ChunkZVelMul) * 35.0;
-			if (SInfo->Sound)
-			{
-				A.PlaySound(SInfo->Sound, CHAN_VOICE);
-			}
-		}
-		if (SInfo->Sound && !SInfo->BaseClass && !SInfo->ChunkClass)
-		{
-			PlaySound(SInfo->Sound, CHAN_BODY);
-		}
-		if (!SInfo->bNoAlert && bIsPlayer)
-		{
-			HexenLevelInfo(Level).NoiseAlert(self, self);
-		}
-	}
-	return TInfo->bLiquid;
+	return DamageType == 'lava' ? HexenLevelInfo(Level).GLavaInflictor : none;
 }
 
 //==========================================================================

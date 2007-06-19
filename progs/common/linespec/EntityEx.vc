@@ -1040,6 +1040,112 @@ bool BlasterHitMobj(Entity Other)
 	return ExplodeMissile();
 }
 
+//==========================================================================
+//
+//  HitFloorType
+//
+//==========================================================================
+
+final bool HitFloorType()
+{
+	EntityEx A;
+	TVec org;
+	int smallsplash = false;
+	VTerrainInfo* TInfo;
+	VSplashInfo* SInfo;
+
+	if (FloorZ != GetPlanePointZ(&Sector->floor, Origin))
+	{
+		// don't splash if landing on the edge above water/lava/etc....
+		return false;
+	}
+
+	// Things that don't splash go here
+	if (bNoSplash)
+	{
+		return false;
+	}
+
+	TInfo = GetFloorType();
+
+	// Small splash for small masses
+	if (Mass < 10.0 || bSmallSplash)
+		smallsplash = true;
+
+	if (TInfo->DamageAmount && bIsPlayer &&
+		XLevel.TicTime & TInfo->DamageTimeMask)
+	{
+		Damage(GetDamageTypeInflictor(TInfo->DamageType), none,
+			TInfo->DamageAmount);
+	}
+
+	SInfo = GetSplashInfo(TInfo->Splash);
+	if (!SInfo)
+	{
+		return TInfo->bLiquid;
+	}
+
+	org = Origin;
+	org.z = FloorZ;
+
+	if (smallsplash)
+	{
+		if (SInfo->SmallClass)
+		{
+			A = Spawn(class<EntityEx>(SInfo->SmallClass), org);
+			A.FloorClip += SInfo->SmallClip;
+			if (SInfo->SmallSound)
+			{
+				A.PlaySound(SInfo->SmallSound, CHAN_VOICE);
+			}
+		}
+	}
+	else
+	{
+		if (SInfo->BaseClass)
+		{
+			Spawn(class<EntityEx>(SInfo->BaseClass), org);
+			if (SInfo->Sound && !SInfo->ChunkClass)
+			{
+				A.PlaySound(SInfo->Sound, CHAN_VOICE);
+			}
+		}
+		if (SInfo->ChunkClass)
+		{
+			A = Spawn(class<EntityEx>(SInfo->ChunkClass), org);
+			A.Target = self;
+			A.Velocity.x = (Random() - Random()) * SInfo->ChunkXVelMul * 35.0;
+			A.Velocity.y = (Random() - Random()) * SInfo->ChunkYVelMul * 35.0;
+			A.Velocity.z = (SInfo->ChunkBaseZVel + Random() *
+				SInfo->ChunkZVelMul) * 35.0;
+			if (SInfo->Sound)
+			{
+				A.PlaySound(SInfo->Sound, CHAN_VOICE);
+			}
+		}
+		if (SInfo->Sound && !SInfo->BaseClass && !SInfo->ChunkClass)
+		{
+			PlaySound(SInfo->Sound, CHAN_BODY);
+		}
+		if (!SInfo->bNoAlert && bIsPlayer)
+		{
+			LineSpecialLevelInfo(Level).NoiseAlert(self, self);
+		}
+	}
+	return TInfo->bLiquid;
+}
+
+//===========================================================================
+//
+//  GetFloorType
+//
+//===========================================================================
+
+final VTerrainInfo* GetFloorType()
+{
+	return TerrainType(Floor->pic);
+}
+
 void PlayerLandedOnThing()
 {
 }
@@ -1062,13 +1168,13 @@ void Crash()
 {
 }
 
-bool HitFloorType()
-{
-	return false;
-}
-
 void SpawnBlasterEffects()
 {
+}
+
+EntityEx GetDamageTypeInflictor(name DamageType)
+{
+	return none;
 }
 
 //**************************************************************************
