@@ -90,6 +90,7 @@ final void A_SkelMissile()
 
 	A.Origin = A.Origin + A.Velocity * 0.03;
 	A.Tracer = Target;
+	A.bSeekerMissile = true;
 }
 
 __states__

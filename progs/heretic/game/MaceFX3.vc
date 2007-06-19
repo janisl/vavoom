@@ -45,7 +45,7 @@ final void A_MaceBallImpact()
 		// Bounce
 		Health = 1234;
 		Velocity.z = Velocity.z * 192.0 / 256.0;
-		bFloorBounce = false;
+		BounceType = BOUNCE_None;
 		SetState(IdleState);
 		PlaySound('weapons/macebounce', CHAN_VOICE);
 	}
@@ -76,7 +76,7 @@ defaultproperties
 	Speed = 245.0;
 	Gravity = 0.125;
 	MissileDamage = 4;
-	bFloorBounce = true;
+	BounceType = BOUNCE_Heretic;
 	bThruGhost = true;
 	bNoGravity = false;
 	bActivateImpact = true;

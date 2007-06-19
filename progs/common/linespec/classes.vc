@@ -25,6 +25,15 @@
 
 import engine;
 
+enum
+{
+	CHAN_AUTO,
+	CHAN_VOICE,
+	CHAN_WEAPON,
+	CHAN_ITEM,
+	CHAN_BODY
+};
+
 #include "EntityEx.vc"
 #include "PlayerEx.vc"
 

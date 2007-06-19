@@ -79,6 +79,7 @@ final void A_FireSkullRodPL2()
 	if (Actor(Owner).linetarget)
 	{
 		MainGameInfo(Level.Game).MissileMobj.Tracer = Actor(Actor(Owner).linetarget);
+		MainGameInfo(Level.Game).MissileMobj.bSeekerMissile = true;
 	}
 	MainGameInfo(Level.Game).MissileMobj.PlaySound('weapons/hornrodpowshoot', CHAN_WEAPON);
 }

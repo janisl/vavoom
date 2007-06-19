@@ -52,6 +52,7 @@ final void A_MummyAttack2()
 	if (A)
 	{
 		A.Tracer = Target;
+		A.bSeekerMissile = true;
 	}
 }
 

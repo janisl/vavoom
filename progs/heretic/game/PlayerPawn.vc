@@ -54,4 +54,5 @@ defaultproperties
 	bActivateMCross = false;
 	bCheckNoMonsters = false;
 	bDropOff = true;
+	bOnmobjCopyVel = true;
 }

@@ -85,11 +85,12 @@ defaultproperties
 	Radius = 5.0;
 	Height = 5.0;
 	Speed = 245.0;
-	bFloorBounce = true;
+	BounceType = BOUNCE_Hexen;
 	bDropOff = false;
 	bNoGravity = false;
 	bActivateImpact = false;
 	bActivatePCross = false;
+	bNoWallBounceSnd = true;
 	IdleState = S_SORCFX1_1;
 	DeathState = S_SORCFX1_D1;
 	GibsDeathState = S_SORCFX1_D1;

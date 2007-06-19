@@ -55,7 +55,12 @@ defaultproperties
 	MissileDamage = 1;
 	bNoGravity = false;
 	bActivateImpact = true;
-	bFloorBounce = true;
+	bBounceOnActors = true;
+	bNoBounceSound = true;
+	bExplodeOnWater = true;
+	BounceType = BOUNCE_Strife;
+	BounceCount = 2;
+	BounceFactor = 0.5;
 	IdleState = S_GRENADE_HE_1;
 	DeathState = S_GRENADE_HE_X1;
 	SightSound = 'weapons/hegrenadeshoot';

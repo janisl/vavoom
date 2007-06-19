@@ -330,6 +330,8 @@ defaultproperties
 	bRip = true;
 	bSeekerMissile = true;
 	bDamageInvulnerable = true;
+	bExplodeOnSky = true;
+	bNoExplodeFloor = true;
 	IdleState = S_HOLY_FX1;
 	DeathState = S_HOLY_FX_X1;
 	DeathSound = 'SpiritDie';

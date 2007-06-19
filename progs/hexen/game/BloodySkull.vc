@@ -86,6 +86,7 @@ defaultproperties
 	bNoBlockmap = true;
 	bNoPassMobj = true;
 	bCannotPush = true;
+	bBounceSky = true;
 	IdleState = S_BLOODYSKULL1;
 	FloorState = S_BLOODYSKULLX1;
 	RemoveState = S_BLOODYSKULLX2;

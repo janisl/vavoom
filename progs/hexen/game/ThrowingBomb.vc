@@ -43,7 +43,7 @@ final void A_CheckThrowBomb()
 		SetState(LandedState);
 		Origin.z = FloorZ;
 		Velocity.z = 0.0;
-		bFloorBounce = false;
+		BounceType = BOUNCE_None;
 		bMissile = false;
 	}
 	if (!--Health)
@@ -82,7 +82,7 @@ defaultproperties
 	Radius = 8.0;
 	Height = 10.0;
 	Speed = 420.0;
-	bFloorBounce = true;
+	BounceType = BOUNCE_Hexen;
 	bFireDamage = true;
 	bNoGravity = false;
 	bNoTeleport = false;

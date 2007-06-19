@@ -109,6 +109,7 @@ final void A_HeadAttack()
 			A.Origin.z -= 32.0;
 			A.Tracer = Target;
 			A.Health = 20 * TICRATE;	// Duration
+			A.bSeekerMissile = true;
 			PlaySound('ironlich/attack3', CHAN_WEAPON);
 		}
 	}

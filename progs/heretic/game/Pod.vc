@@ -106,6 +106,7 @@ defaultproperties
 	bTelestomp = true;
 	bNoPassMobj = false;
 	bNoMorph = true;
+	bOnmobjCopyVel = true;
 	IdleState = S_POD_WAIT1;
 	PainState = S_POD_PAIN1;
 	DeathState = S_POD_DIE1;

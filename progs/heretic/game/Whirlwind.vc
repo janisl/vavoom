@@ -34,14 +34,14 @@ float SoundTimer;		// Timer for active sound
 //
 //===========================================================================
 
-void ExplodeMissile()
+bool ExplodeMissile()
 {
 	SoundTimer += 1.0 / 35.0;
 	if (SoundTimer < 60.0 / 35.0)
 	{
-		return;
+		return true;
 	}
-	::ExplodeMissile();
+	return ::ExplodeMissile();
 }
 
 //==========================================================================

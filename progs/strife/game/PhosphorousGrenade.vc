@@ -54,9 +54,14 @@ defaultproperties
 	Speed = 525.0;
 	ReactionCount = 40;
 	MissileDamage = 1;
-	bFloorBounce = true;
+	BounceType = BOUNCE_Strife;
+	BounceCount = 2;
+	BounceFactor = 0.5;
 	bNoGravity = false;
 	bActivateImpact = true;
+	bBounceOnActors = true;
+	bNoBounceSound = true;
+	bExplodeOnWater = true;
 	IdleState = S_GRENADE_FIRE_1;
 	DeathState = S_GRENADE_FIRE_X1;
 	SightSound = 'weapons/phgrenadeshoot';

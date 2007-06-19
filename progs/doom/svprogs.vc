@@ -97,15 +97,6 @@ enum
 	NUMPOWERS
 };
 
-enum
-{
-	CHAN_AUTO,
-	CHAN_VOICE,
-	CHAN_WEAPON,
-	CHAN_ITEM,
-	CHAN_BODY
-};
-
 #include "game/classes.vc"
 
 #include "game1/classes.vc"

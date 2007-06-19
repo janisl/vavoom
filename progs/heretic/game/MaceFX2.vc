@@ -48,7 +48,7 @@ final void A_MaceBallImpact2()
 		// Explode
 		Velocity = vector(0.0, 0.0, 0.0);
 		bNoGravity = true;
-		bFloorBounce = false;
+		BounceType = BOUNCE_None;
 		Gravity = 1.0;
 	}
 	else

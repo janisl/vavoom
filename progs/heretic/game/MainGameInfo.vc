@@ -60,16 +60,6 @@ string KeyText[NUMKEYS];
 string AmmoText[NUMAMMO * 2];
 string keymsg[NUMKEYS];
 
-float windTab[3];
-float pushTab[5];
-
-int opposite[9];
-int diags[4];
-float xspeed[8];
-float yspeed[8];
-
-float air_control;
-
 Actor MissileMobj;
 
 bool shareware;
@@ -628,51 +618,6 @@ defaultproperties
 	keymsg[0] = "$txt_needyellowkey";
 	keymsg[1] = "$txt_needgreenkey";
 	keymsg[2] = "$txt_needbluekey";
-
-	windTab[0] = 5.0 / 32.0;
-	windTab[1] = 10.0 / 32.0;
-	windTab[2] = 25.0 / 32.0;
-
-	pushTab[0] = 5.0 * 35.0 * 35.0 / 32.0;
-	pushTab[1] = 10.0 * 35.0 * 35.0 / 32.0;
-	pushTab[2] = 25.0 * 35.0 * 35.0 / 32.0;
-	pushTab[3] = 30.0 * 35.0 * 35.0 / 32.0;
-	pushTab[4] = 35.0 * 35.0 * 35.0 / 32.0;
-
-	opposite[0] = DI_WEST;
-	opposite[1] = DI_SOUTHWEST;
-	opposite[2] = DI_SOUTH;
-	opposite[3] = DI_SOUTHEAST;
-	opposite[4] = DI_EAST;
-	opposite[5] = DI_NORTHEAST;
-	opposite[6] = DI_NORTH;
-	opposite[7] = DI_NORTHWEST;
-	opposite[8] = DI_NODIR;
-
-	diags[0] = DI_NORTHWEST;
-	diags[1] = DI_NORTHEAST;
-	diags[2] = DI_SOUTHWEST;
-	diags[3] = DI_SOUTHEAST;
-
-	xspeed[0] = 1.0;
-	xspeed[1] = 0.7171630859;
-	xspeed[2] = 0.0;
-	xspeed[3] = -0.7171630859;
-	xspeed[4] = -1.0;
-	xspeed[5] = -0.7171630859;
-	xspeed[6] = 0.0;
-	xspeed[7] = 0.7171630859;
-
-	yspeed[0] = 0.0;
-	yspeed[1] = 0.7171630859;
-	yspeed[2] = 1.0;
-	yspeed[3] = 0.7171630859;
-	yspeed[4] = 0.0;
-	yspeed[5] = -0.7171630859;
-	yspeed[6] = -1.0;
-	yspeed[7] = -0.7171630859;
-
-	air_control = 1.0 / 256.0;
 
 	botskill = 2;
 }

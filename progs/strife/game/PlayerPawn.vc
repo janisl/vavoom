@@ -56,4 +56,5 @@ defaultproperties
 	bCkeckNoMonsters = false;
 	bActivateMCross = false;
 	bWindThrust = true;
+	bSlide = true;
 }

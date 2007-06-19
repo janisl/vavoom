@@ -96,6 +96,7 @@ defaultproperties
 	bDropOff = true;
 	bPickUp = true;
 	bFloorClip = true;
+	bSlide = true;
 	IdleState = S_PLAY;
 	SeeState = S_PLAY_RUN1;
 	MeleeState = S_PLAY_ATK1;

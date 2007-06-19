@@ -104,6 +104,7 @@ final void A_FireMacePL2()
 		if (Actor(Owner).linetarget)
 		{
 			A.Tracer = Actor(Actor(Owner).linetarget);
+			A.bSeekerMissile = true;
 		}
 	}
 	Owner.PlaySound('weapons/maceshoot', CHAN_WEAPON);

@@ -573,9 +573,9 @@ bool StepMove()
 		{
 			// must adjust height
 			if (Origin.z < tmtrace.FloorZ)
-				Origin.z += FLOATSPEED * Level.Game.frametime;
+				Origin.z += FloatSpeed * Level.Game.frametime;
 			else
-				Origin.z -= FLOATSPEED * Level.Game.frametime;
+				Origin.z -= FloatSpeed * Level.Game.frametime;
 
 			// Check to make sure there's nothing in the way of the float
 			if (TestMobjZ())

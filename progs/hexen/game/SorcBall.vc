@@ -309,9 +309,10 @@ defaultproperties
 	Radius = 5.0;
 	Height = 5.0;
 	Speed = 350.0;
-	bFloorBounce = true;
+	BounceType = BOUNCE_Hexen;
 	bDropOff = false;
 	bActivateImpact = false;
 	bActivatePCross = false;
+	bNoWallBounceSnd = true;
 	SightSound = 'SorcererBallBounce';
 }

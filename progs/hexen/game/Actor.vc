@@ -38,40 +38,25 @@ const float FLOATRANDZ		= 99998.0;
 const float MELEERANGE		= 64.0;
 const float MISSILERANGE	= (32.0 * 64.0);
 
-const float FLOATSPEED		= 140.0;
-
-const float MAXMOVE 		= 1050.0;
-const float MAXMOVESTEP		= 15.0;	//MAXMOVE / (35.0 * 2.0)
-const float STOPSPEED		= 2.1875;
-
 const float BONUSADD		= 0.2;
 
 const float MONS_LOOK_RANGE 	= (16.0 * 64.0);
 const int MONS_LOOK_LIMIT 		= 64;
 
-bool bIceCorpse;		// a frozen corpse (for blasting)
-bool bFloorBounce;		// bounces off the floor
 bool bSpawnFloat;		// spawn random float z
 bool bRip;				// missile rips through solid targets
 bool bPushable;			// can be pushed by other moving mobjs
-bool bSlide;			// slides against walls
 bool bBoss;				// mobj is a major boss
 bool bFireDamage;		// does fire damage
 bool bNoDamageThrust;	// does not thrust target when damaging
-bool bFloatBob;			// use float bobbing z movement
 bool bNonShootable;		// mobj is totally non-shootable,
 						// but still considered solid
 bool bInvulnerable;		// mobj is invulnerable
-bool bIceDamage;		// does ice damage
-bool bSeekerMissile;	// is a seeker (for reflection)
-bool bReflective;		// reflects missiles
-bool bBlaster;
 bool bDamageInvulnerable;	// These inflictors aren't foiled by invulnerability
 bool bNoMorph;			// Won't morph into a pig.
 
 int _Special1;	// Special info
 int _Special2;	// Special info
-float Special1f;
 float Special2f;
 class<Actor> SpecialCID;
 
@@ -579,28 +564,6 @@ bool HitFloorType()
 		}
 	}
 	return TInfo->bLiquid;
-}
-
-//==========================================================================
-//
-//  FloorBounceMissile
-//
-//==========================================================================
-
-void FloorBounceMissile()
-{
-	if (HitFloorType())
-	{
-		Destroy();
-		return;
-	}
-	Velocity.z = Velocity.z * -0.7;
-	Velocity.x = 2.0 * Velocity.x / 3.0;
-	Velocity.y = 2.0 * Velocity.y / 3.0;
-	if (SightSound)
-	{
-		PlaySound(SightSound, CHAN_VOICE);
-	}
 }
 
 //==========================================================================
@@ -1748,7 +1711,7 @@ bool Touch(Entity InOther)
 		{
 			return true;
 		}
-		if (bFloorBounce)
+		if (BounceType == BOUNCE_Hexen)
 		{
 			if (Target == Other || !Other.bSolid)
 			{
@@ -2053,263 +2016,6 @@ float GetFriction()
 
 //==========================================================================
 //
-//	HitMobj
-//
-//==========================================================================
-
-void HitMobj(Entity Other)
-{
-	float angle;
-
-	if (bMissile)
-	{
-		if (bFloorBounce)
-		{
-			if (Actor(Other).bReflective || (!Other.bIsPlayer &&
-				!Actor(Other).bCountKill))
-			{
-				float speed;
-
-				angle = AngleMod360(atan2(Origin.y - Other.Origin.y,
-					Origin.x - Other.Origin.x) + Random() * 16.0 - 8.0);
-				speed = Length(Velocity);
-				speed = speed * 0.75;
-				Angles.yaw = angle;
-				Velocity.x = speed * cos(angle);
-				Velocity.y = speed * sin(angle);
-				if (SightSound)
-				{
-					PlaySound(SightSound, CHAN_VOICE);
-				}
-			}
-			else
-			{
-				// Struck a player/creature
-				ExplodeMissile();
-			}
-			return;
-		}
-		if (Actor(Other).bReflective)
-		{
-			angle = Actor(Other).GetReflectedAngle(self);
-			if (angle != -1.0)
-			{
-				// Reflect the missile along angle
-				Angles.yaw = angle;
-				Velocity.x = (Speed / 2.0) * cos(angle);
-				Velocity.y = (Speed / 2.0) * sin(angle);
-//				Velocity.z = -Velocity.z;
-				if (bSeekerMissile)
-				{
-					Tracer = Target;
-				}
-				Target = Actor(Other);
-				return;
-			}
-		}
-		// Explode a missile
-		ExplodeMissile();
-	}
-	else
-	{
-		if (bSlide)
-		{
-			// Try to slide along it
-			// Slide against mobj
-//			if (TryMove(vector(Origin.x, ptryy, Origin.z)))
-			if (TryMove(vector(Origin.x, Origin.y + Velocity.y * Level.Game.frametime, Origin.z)))
-			{
-				Velocity.x = 0.0;
-			}
-//			else if (TryMove(vector(ptryx, Origin.y, Origin.z)))
-			else if (TryMove(vector(Origin.x + Velocity.x * Level.Game.frametime, Origin.y, Origin.z)))
-			{
-				Velocity.y = 0.0;
-			}
-			else
-			{
-				Velocity.x = 0.0;
-				Velocity.y = 0.0;
-			}
-		}
-		else
-		{
-			Velocity.x = 0.0;
-			Velocity.y = 0.0;
-		}
-	}
-}
-
-//==========================================================================
-//
-//	GetReflectedAngle
-//
-//==========================================================================
-
-float GetReflectedAngle(Actor Other)
-{
-	float angle = atan2(Other.Origin.y - Origin.y,
-		Other.Origin.x - Origin.x);
-
-	// Change angle for reflection
-	angle = AngleMod360(angle + Random() * 16.0 - 8.0);
-	return angle;
-}
-
-//==========================================================================
-//
-//	HitLine
-//
-//==========================================================================
-
-void HitLine(tmtrace_t* tmtrace)
-{
-	if (bMissile)
-	{
-		if (bFloorBounce)
-		{
-			// Struck a wall
-			BounceWall(1.5);
-			if (!SorcBall(self) && !SorcFX1(self))
-			{
-				if (SightSound)
-				{
-					PlaySound(SightSound, CHAN_VOICE);
-				}
-			}
-			return;
-		}
-
-		// Explode a missile
-		if (tmtrace->CeilingLine && tmtrace->CeilingLine->backsector &&
-			tmtrace->CeilingLine->backsector->ceiling.pic == Level.Game.skyflatnum)
-		{
-			// Hack to prevent missiles exploding against the sky
-			if (Class == BloodySkull)
-			{
-				Velocity = vector(0.0, 0.0, -1.0 * 35.0);
-			}
-			else if (Class == HolySpirit)
-			{
-				ExplodeMissile();
-			}
-			else
-			{
-				Destroy();
-			}
-			return;
-		}
-		ExplodeMissile();
-	}
-	else
-	{
-		if (bSlide)
-		{
-			// Try to slide along it
-			// Slide against wall
-			SlideMove();
-		}
-		else
-		{
-			Velocity.x = 0.0;
-			Velocity.y = 0.0;
-		}
-	}
-}
-
-//==========================================================================
-//
-//	XYMovement
-//
-//==========================================================================
-
-void XYMovement(float DeltaTime)
-{
-	float ptryx, ptryy;
-	float xmove, ymove;
-	int special;
-
-	if (bWindThrust)
-	{
-		special = Sector->special & SECSPEC_BASE_MASK;
-		switch (special)
-		{
-		case SECSPEC_WindEastSlow:
-		case SECSPEC_WindEastMedium:
-		case SECSPEC_WindEastFast:
-			Thrust(0.0, MainGameInfo(Level.Game).windTab[special - SECSPEC_WindEastSlow]);
-			break;
-		case SECSPEC_WindNorthSlow:
-		case SECSPEC_WindNorthMedium:
-		case SECSPEC_WindNorthFast:
-			Thrust(90.0, MainGameInfo(Level.Game).windTab[special - SECSPEC_WindNorthSlow]);
-			break;
-		case SECSPEC_WindSouthSlow:
-		case SECSPEC_WindSouthMedium:
-		case SECSPEC_WindSouthFast:
-			Thrust(270.0, MainGameInfo(Level.Game).windTab[special - SECSPEC_WindSouthSlow]);
-			break;
-		case SECSPEC_WindWestSlow:
-		case SECSPEC_WindWestMedium:
-		case SECSPEC_WindWestFast:
-			Thrust(180.0, MainGameInfo(Level.Game).windTab[special - SECSPEC_WindWestSlow]);
-			break;
-		}
-	}
-	if (Velocity.x > MAXMOVE)
-	{
-		Velocity.x = MAXMOVE;
-	}
-	else if (Velocity.x < -MAXMOVE)
-	{
-		Velocity.x = -MAXMOVE;
-	}
-	if (Velocity.y > MAXMOVE)
-	{
-		Velocity.y = MAXMOVE;
-	}
-	else if (Velocity.y < -MAXMOVE)
-	{
-		Velocity.y = -MAXMOVE;
-	}
-	xmove = Velocity.x * DeltaTime;
-	ymove = Velocity.y * DeltaTime;
-	do
-	{
-		if (xmove > MAXMOVESTEP || ymove > MAXMOVESTEP)
-		{
-			ptryx = Origin.x + xmove / 2.0;
-			ptryy = Origin.y + ymove / 2.0;
-			xmove /= 2.0;
-			ymove /= 2.0;
-		}
-		else
-		{
-			ptryx = Origin.x + xmove;
-			ptryy = Origin.y + ymove;
-			xmove = 0.0;
-			ymove = 0.0;
-		}
-		tmtrace_t tmtrace;
-		if (!TryMoveEx(&tmtrace, vector(ptryx, ptryy, Origin.z)))
-		{
-			// Blocked move
-			if (tmtrace.BlockingMobj)
-			{
-				HitMobj(Entity(tmtrace.BlockingMobj));
-			}
-			else
-			{
-				HitLine(&tmtrace);
-			}
-			return;
-		}
-	}
-	while (xmove || ymove);
-}
-
-//==========================================================================
-//
 //  ClipVelocity
 //
 //  Slide off of the impacting object
@@ -2323,243 +2029,15 @@ TVec ClipVelocity(TVec in, TVec normal, float overbounce)
 
 //==========================================================================
 //
-//	HitFloor
+//	Crash
 //
 //==========================================================================
 
-bool HitFloor()
+void Crash()
 {
-	float vdot;
-
-	if (bMissile)
-	{
-		Origin.z = FloorZ;
-		if (bFloorBounce)
-		{
-			FloorBounceMissile();
-			return true;
-		}
-		else if (Class == HolySpirit)
-		{
-			// The spirit struck the ground
-			Velocity.z = 0.0;
-			HitFloorType();
-			return true;
-		}
-		else if (bIgnoreFloorStep)
-		{
-			// Minotaur floor fire can go up steps
-			return true;
-		}
-		else
-		{
-			HitFloorType();
-			return ExplodeMissile();
-		}
-	}
-
-	vdot = DotProduct(Velocity, Floor->normal);
-	if (bCountKill)	// Blasted mobj falling
-	{
-		if (vdot < -23.0 * 35.0)
-		{
-			MonsterFallingDamage();
-		}
-	}
-	if (Origin.z - Velocity.z * Level.Game.frametime > FloorZ)
-	{
-		// Spawn splashes, etc.
-		HitFloorType();
-	}
-	Origin.z = FloorZ;
-	if (vdot < -0.1)
-	{
-		if (bIceDamage && vdot < -DEFAULT_GRAVITY * 0.25)
-		{
-			StateTime = 0.1;
-			Velocity = vector(0.0, 0.0, 0.0);
-			return true;
-		}
-		if (bIsPlayer)
-		{
-			Player(Player).JumpTime = 0.2;	// delay any jumping for a short time
-			if (vdot < -DEFAULT_GRAVITY * 0.25 && !bFly)
-			{
-				// squat down
-				Player(Player).DeltaViewHeight = vdot / 8.0;
-				if (vdot < -23.0 * 35.0)
-				{
-					FallingDamage();
-					HexenLevelInfo(Level).NoiseAlert(self, self);
-				}
-				else if (vdot < -DEFAULT_GRAVITY * 0.375 && !Player(Player).MorphTime)
-				{
-					PlaySound('*land', CHAN_BODY);
-					PlaySound('*grunt', CHAN_VOICE);
-				}
-				else if (!GetFloorType()->bLiquid && !Player(Player).MorphTime)
-				{
-					PlaySound('*land', CHAN_BODY);
-				}
-//FIXME				Player.centreing = true;
-			}
-		}
-		else if (Class == Pottery1 || Class == Pottery2 || Class == Pottery3)
-		{
-			Damage(none, none, 25);
-		}
-		else if (bCountKill)
-		{
-			if (vdot < -23.0 * 35.0)
-			{
-				// Doesn't get here
-			}
-		}
-		Velocity -= vdot * Floor->normal;
-	}
-	if (bSkullFly)
-	{
-		// The skull slammed into something
-		Velocity = ClipVelocity(Velocity, Floor->normal, 2.0);
-	}
 	if (CrashState && bCorpse && !bIceDamage)
 	{
-		return SetState(CrashState);
-	}
-	return true;
-}
-
-//==========================================================================
-//
-//	HitCeiling
-//
-//==========================================================================
-
-bool HitCeiling()
-{
-	float vdot;
-
-	vdot = DotProduct(Velocity, Ceiling->normal);
-	if (vdot < 0.0)
-	{
-		Velocity -= vdot * Ceiling->normal;
-	}
-	Origin.z = CeilingZ - Height;
-	if (bMissile)
-	{
-		if (bFloorBounce)
-		{
-			// Reverse momentum here for ceiling bounce
-			Velocity -= vdot * Ceiling->normal;
-
-			if (SightSound)
-			{
-				PlaySound(SightSound, CHAN_VOICE);
-			}
-			return true;
-		}
-		if (Class == LightningCeiling)
-		{
-			return true;
-		}
-		if (Ceiling->pic == Level.Game.skyflatnum)
-		{
-			if (Class == BloodySkull)
-			{
-				Velocity = vector(0.0, 0.0, -1.0 * 35.0);
-			}
-			else if (Class == HolySpirit)
-			{
-				return ExplodeMissile();
-			}
-			else
-			{
-				Destroy();
-				return false;
-			}
-			return true;
-		}
-		return ExplodeMissile();
-	}
-	if (bSkullFly)
-	{
-		// the skull slammed into something
-		Velocity.z = -Velocity.z;
-	}
-	return true;
-}
-
-//==========================================================================
-//
-//	ZMovement
-//
-//==========================================================================
-
-bool ZMovement(float DeltaTime)
-{
-	float dist;
-	float delta;
-
-	//
-	// check for smooth step up
-	//
-	if (bIsPlayer && Origin.z < FloorZ)
-	{
-		Player(Player).ViewHeight -= FloorZ - Origin.z;
-		Player(Player).DeltaViewHeight = (Player::VIEWHEIGHT - Player(Player).ViewHeight) * 4.0;
-	}
-
-	//
-	// adjust height
-	//
-	Origin.z += Velocity.z * DeltaTime;
-	if (bFloat && Target)
-	{
-		// float down towards enemy if too close
-		if (!bSkullFly && !bInFloat)
-		{
-			dist = DistTo2(Target);
-			delta = Target.Origin.z + Height / 2.0 - Origin.z;
-			if (delta < 0.0 && dist < -delta * 3.0)
-				Origin.z -= FLOATSPEED * DeltaTime;
-			else if (delta > 0.0 && dist < delta * 3.0)
-				Origin.z += FLOATSPEED * DeltaTime;
-		}
-	}
-	if (bIsPlayer && bFly && !(Origin.z <= FloorZ) && XLevel.TicTime & 2)
-	{
-		Origin.z += sin(90.0 * 35.0 / 20.0 * XLevel.Time);
-	}
-
-	//
-	// clip movement
-	//
-	if (Origin.z <= FloorZ + 0.1)
-	{
-		// Hit the floor
-		return HitFloor();
-	}
-
-	if (Origin.z + Height > CeilingZ)
-	{
-		// hit the ceiling
-		return HitCeiling();
-	}
-	return true;
-}
-
-//==========================================================================
-//
-//  ResetBlasted
-//
-//==========================================================================
-
-void ResetBlasted()
-{
-	bBlasted = false;
-	if (!bIceCorpse)
-	{
-		bSlide = false;
+		SetState(CrashState);
 	}
 }
 
@@ -2582,268 +2060,65 @@ void PlayerLandedOnThing()
 		PlaySound('*land', CHAN_BODY);
 		PlaySound('*grunt', CHAN_VOICE);
 	}
-	else if (!Player(Player).MorphTime)
+	else if ((Origin.z > FloorZ || !GetFloorType()->bLiquid) &&
+		!Player(Player).MorphTime)
 	{
 		PlaySound('*land', CHAN_BODY);
 	}
 //FIXME Player.centreing = true;
 }
 
-//==========================================================================
+//===========================================================================
 //
-//	BlasterHitMobj
+//	SpawnBlasterEffects
 //
-//==========================================================================
+//===========================================================================
 
-bool BlasterHitMobj(Entity Other)
+void SpawnBlasterEffects()
 {
-	return ExplodeMissile();
-}
-
-//==========================================================================
-//
-//	BlasterPhysics
-//
-//==========================================================================
-
-bool BlasterPhysics(float DeltaTime)
-{
-	int i;
-	float xfrac;
-	float yfrac;
-	float zfrac;
 	float z;
-	bool changexy;
 	Actor A;
 
-	// Handle movement
-	if (Velocity.x || Velocity.y || (Origin.z != FloorZ) || Velocity.z)
+	if (Class == MageWandMissile)
 	{
-		xfrac = Velocity.x * DeltaTime / 8.0;
-		yfrac = Velocity.y * DeltaTime / 8.0;
-		zfrac = Velocity.z * DeltaTime / 8.0;
-		changexy = xfrac || yfrac;
-		for (i = 0; i < 8; i++)
+		if (P_Random() < 128)
 		{
-			if (changexy)
+			z = Origin.z - 8.0;
+			if (z < FloorZ)
 			{
-				tmtrace_t tmtrace;
-				if (!TryMoveEx(&tmtrace, vector(Origin.x + xfrac,
-					Origin.y + yfrac, Origin.z)))
-				{
-					// Blocked move
-					if (tmtrace.BlockingMobj)
-					{
-						return BlasterHitMobj(tmtrace.BlockingMobj);
-					}
-					else
-					{
-						return ExplodeMissile();
-					}
-				}
+				z = FloorZ;
 			}
-			Origin.z += zfrac;
-			if (Origin.z <= FloorZ)
-			{
-				// Hit the floor
-				Origin.z = FloorZ;
-				HitFloorType();
-				return ExplodeMissile();
-			}
-			if (Origin.z + Height > CeilingZ)
-			{
-				// Hit the ceiling
-				Origin.z = CeilingZ - Height;
-				return ExplodeMissile();
-			}
-			if (changexy)
-			{
-				if (Class == MageWandMissile && (P_Random() < 128))
-				{
-					z = Origin.z - 8.0;
-					if (z < FloorZ)
-					{
-						z = FloorZ;
-					}
-					Spawn(MageWandSmoke, vector(Origin.x, Origin.y, z));
-				}
-				else if (Class != MageWandMissile && !--_Special1)
-				{
-					_Special1 = 4;
-					z = Origin.z - 12.0;
-					if (z < FloorZ)
-					{
-						z = FloorZ;
-					}
-					A = Spawn(CFlameFloor, vector(Origin.x, Origin.y, z));
-					if (A)
-					{
-						A.Angles.yaw = Angles.yaw;
-					}
-				}
-			}
-		}
-	}
-	return true;
-}
-
-//==========================================================================
-//
-//	Physics
-//
-//==========================================================================
-
-bool Physics(float DeltaTime)
-{
-	Actor			onmo;
-	SectorThinker	SecThink;
-	float			scrollx;
-	float			scrolly;
-	float			height;
-	float			waterheight;	// killough 4/4/98: add waterheight
-
-	if (bBlaster)
-	{
-		return BlasterPhysics(DeltaTime);
-	}
-
-	if (Sector->AffectorData && bColideWithWorld)
-	{
-
-		// killough 3/7/98: Carry things on floor
-		// killough 3/20/98: use new sector list which reflects true members
-		// killough 3/27/98: fix carrier bug
-		// killough 4/4/98: Underwater, carry things even w/o gravity
-
-		// Move objects only if on floor or underwater,
-		// non-floating, and clipped.
-
-		for (SecThink = SectorThinker(Sector->AffectorData); SecThink;
-			SecThink = SecThink.NextAffector)
-		{
-			if (!Scroller(SecThink))
-			{
-				continue;
-			}
-			scrollx = Scroller(SecThink).CarryScrollX;
-			scrolly = Scroller(SecThink).CarryScrollY;
-			if (!scrollx && !scrolly)
-			{
-				continue;
-			}
-			if (bNoGravity && (!Sector->heightsec ||
-				(Sector->heightsec->bIgnoreHeightSec)))
-			{
-				continue;
-			}
-			height = GetPlanePointZ(&Sector->floor, Origin);
-			if (Origin.z > height)
-			{
-				if (!Sector->heightsec || (Sector->heightsec->bIgnoreHeightSec))
-				{
-					continue;
-				}
-
-				waterheight = GetPlanePointZ(&Sector->heightsec->floor, Origin);
-				if (waterheight > height && Origin.z >= waterheight)
-				{
-					continue;
-				}
-			}
-
-			Velocity.x += scrollx;
-			Velocity.y += scrolly;
-		}
-	}
-
-	CheckWater();
-	if (!bFloatBob)
-		UpdateVelocity();
-
-	// Handle X and Y momentums
-	if (Velocity.x || Velocity.y)
-	{
-		XYMovement(DeltaTime);
-		if (IsDestroyed())
-		{
-			return false;
-		}
-	}
-	else if (bSkullFly)
-	{
-		// A flying mobj slammed into something
-		bSkullFly = false;
-		Velocity = vector(0.0, 0.0, 0.0);
-		if (!SetState(SeeState))
-		{
-			return false;
-		}
-	}
-	else if (bBlasted)
-	{
-		// Reset to not blasted when momentums are gone
-		ResetBlasted();
-	}
-
-	if (bFloatBob)
-	{
-		// Floating item bobbing motion (special1 is height)
-		if (Sector->bHasExtrafloors)
-		{
-			//	Make sure FloorZ is from bottom region.
-			Origin.z = ONFLOORZ;
-			LinkToWorld();
-		}
-		Origin.z = FloorZ + Special1f + Level.Game.FloatBobOffsets[(Health++) & 63];
-	}
-	else if (!bNoPassMobj && !bMissile)
-	{
-		// Handle Z momentum and gravity
-		onmo = Actor(CheckOnmobj());
-		if (onmo)
-		{
-			if (bIsPlayer)
-			{
-				if (Velocity.z < -DEFAULT_GRAVITY * 0.25 && !bFly)
-				{
-					PlayerLandedOnThing();
-				}
-			}
-			if (onmo.Origin.z + onmo.Height - Origin.z <= MaxStepHeight)
-			{
-				if (bIsPlayer)
-				{
-					Player(Player).ViewHeight -=
-						onmo.Origin.z + onmo.Height - Origin.z;
-					Player(Player).DeltaViewHeight =
-						(Player::VIEWHEIGHT - Player(Player).ViewHeight) * 4.0;
-				}
-				Origin.z = onmo.Origin.z + onmo.Height;
-			}
-			bOnMobj = true;
-			Velocity.z = 0.0;
-		}
-		else if ((Origin.z != FloorZ) || Velocity.z)
-		{
-			if (!ZMovement(DeltaTime))
-			{
-				return false;
-			}
-			bOnMobj = false;
+			Spawn(MageWandSmoke, vector(Origin.x, Origin.y, z));
 		}
 	}
 	else
 	{
-		if ((Origin.z != FloorZ) || Velocity.z)
+		if (!--_Special1)
 		{
-			// Handle Z momentum and gravity
-			if (!ZMovement(DeltaTime))
+			_Special1 = 4;
+			z = Origin.z - 12.0;
+			if (z < FloorZ)
 			{
-				return false;
+				z = FloorZ;
+			}
+			A = Spawn(CFlameFloor, vector(Origin.x, Origin.y, z));
+			if (A)
+			{
+				A.Angles.yaw = Angles.yaw;
 			}
 		}
 	}
-	return true;
+}
+
+//==========================================================================
+//
+//	GetBaseViewHeight
+//
+//==========================================================================
+
+float GetBaseViewHeight()
+{
+	return Player::VIEWHEIGHT;
 }
 
 //==========================================================================

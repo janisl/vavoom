@@ -36,18 +36,9 @@ const float
 	MAULERRANGE		= (33.0 * 64.0),
 	ROBOTRANGE		= 264.0;
 
-const float
-	MAXMOVE			= 1050.0,
-	STOPSPEED		= 2.1875,
-
-	BOUNCE_VAL		= 1.5,
-
-	FLOATSPEED		= 175.0;
-
 bool bStanding;			// Don't walk around.
 //	MOVEMENT FLAGS
 bool bNeutral;			// Neutral characters (peasants and beggars)
-bool bFloorBounce;		// bounces off the floor
 bool bStandMustSeeTarget;		//COUNTITEM	800000
 bool bFriendly;			// Will fight on player's side
 bool bUnknown2;			//8000000
@@ -430,7 +421,7 @@ void OnMapSpawn(mthing_t * mthing)
 //
 //==========================================================================
 
-void ExplodeMissile()
+bool ExplodeMissile()
 {
 	Velocity = vector(0.0, 0.0, 0.0);
 
@@ -442,8 +433,7 @@ void ExplodeMissile()
 		StateTime = 0.1;
 
 	bMissile = false;
-	if (bFloorBounce)
-		bFloorBounce = false;
+	BounceType = BOUNCE_None;
 
 	if (DeathSound)
 		PlaySound(DeathSound, CHAN_VOICE);
@@ -453,6 +443,7 @@ void ExplodeMissile()
 		SendExplosion(Effects & StrifeDefs::EF_DLIGHT_MASK, Origin);
 		Effects &= ~StrifeDefs::EF_DLIGHT_MASK;
 	}
+	return true;
 }
 
 //==========================================================================
@@ -1656,294 +1647,6 @@ int GetSigilPieces()
 
 //==========================================================================
 //
-//  XYMovement
-//
-//==========================================================================
-
-void XYMovement(float DeltaTime)
-{
-	float ptryx;
-	float ptryy;
-	float xmove;
-	float ymove;
-	int special;
-
-	if (bWindThrust)
-	{
-		special = Sector->special & SECSPEC_BASE_MASK;
-		switch (special)
-		{
-		case SECSPEC_WindEastSlow:
-		case SECSPEC_WindEastMedium:
-		case SECSPEC_WindEastFast:
-			Thrust(0.0, MainGameInfo(Level.Game).windTab[special - SECSPEC_WindEastSlow]);
-			break;
-		case SECSPEC_WindNorthSlow:
-		case SECSPEC_WindNorthMedium:
-		case SECSPEC_WindNorthFast:
-			Thrust(90.0, MainGameInfo(Level.Game).windTab[special - SECSPEC_WindNorthSlow]);
-			break;
-		case SECSPEC_WindSouthSlow:
-		case SECSPEC_WindSouthMedium:
-		case SECSPEC_WindSouthFast:
-			Thrust(270.0, MainGameInfo(Level.Game).windTab[special - SECSPEC_WindSouthSlow]);
-			break;
-		case SECSPEC_WindWestSlow:
-		case SECSPEC_WindWestMedium:
-		case SECSPEC_WindWestFast:
-			Thrust(180.0, MainGameInfo(Level.Game).windTab[special - SECSPEC_WindWestSlow]);
-			break;
-		}
-	}
-	if (Velocity.x > MAXMOVE)
-		Velocity.x = MAXMOVE;
-	else if (Velocity.x < -MAXMOVE)
-		Velocity.x = -MAXMOVE;
-
-	if (Velocity.y > MAXMOVE)
-		Velocity.y = MAXMOVE;
-	else if (Velocity.y < -MAXMOVE)
-		Velocity.y = -MAXMOVE;
-
-	xmove = Velocity.x * DeltaTime;
-	ymove = Velocity.y * DeltaTime;
-
-	do
-	{
-		if (xmove > MAXMOVE / (35.0 * 2.0) || ymove > MAXMOVE / (35.0 * 2.0))
-		{
-			ptryx = Origin.x + xmove / 2.0;
-			ptryy = Origin.y + ymove / 2.0;
-			xmove /= 2.0;
-			ymove /= 2.0;
-		}
-		else
-		{
-			ptryx = Origin.x + xmove;
-			ptryy = Origin.y + ymove;
-			xmove = 0.0;
-			ymove = 0.0;
-		}
-
-		tmtrace_t tmtrace;
-		if (!TryMoveEx(&tmtrace, vector(ptryx, ptryy, Origin.z)))
-		{
-			// blocked move
-			if (bIsPlayer)
-			{
-				// try to slide along it
-				SlideMove();
-			}
-			else if (bMissile)
-			{
-				if (bFloorBounce && ReactionCount > 0)
-				{
-					//  Bounce against walls and ofjects
-					if (tmtrace.BlockingMobj)
-					{
-						if ((!tmtrace.BlockingMobj.bIsPlayer))
-						{
-							float speed;
-							float angle;
-
-							angle = AngleMod360(
-								atan2(Origin.y - tmtrace.BlockingMobj.Origin.y,
-								Origin.x - tmtrace.BlockingMobj.Origin.x) +
-								(Random() * 16.0 - 8.0));
-							speed = Length(Velocity);
-							speed = speed * 0.50;
-							Angles.yaw = angle;
-							Velocity.x = speed * cos(angle);
-							Velocity.y = speed * sin(angle);
-							if (PainSound)
-							{
-								PlaySound(PainSound, CHAN_VOICE);
-							}
-							A_DecReactionCount();
-							// Hit killable objects, but don't explode
-							if (Actor(tmtrace.BlockingMobj).bCountKill)
-								Damage(self, Target, MissileDamage);
-
-						}
-					}
-					else
-					{
-						// Struck a wall
-						BounceWall(BOUNCE_VAL);
-						if (PainSound)
-						{
-							PlaySound(PainSound, CHAN_VOICE);
-						}
-						A_DecReactionCount();
-					}
-					if (IsDestroyed())
-					{
-						return;	// mobj was removed
-					}
-					A_DecReactionCount();
-					return;
-				}
-
-				// explode a missile
-				if (tmtrace.CeilingLine && tmtrace.CeilingLine->backsector &&
-					tmtrace.CeilingLine->backsector->ceiling.pic == Level.Game.skyflatnum)
-				{
-					// Hack to prevent missiles exploding
-					// against the sky.
-					// Does not handle sky floors.
-					Destroy();
-					return;
-				}
-				ExplodeMissile();
-			}
-			else
-			{
-				Velocity.x = 0.0;
-				Velocity.y = 0.0;
-			}
-		}
-	}
-	while (xmove || ymove);
-}
-
-//==========================================================================
-//
-//	ZMovement
-//
-//==========================================================================
-
-void ZMovement(float DeltaTime)
-{
-	float dist;
-	float delta;
-	float vdot;
-
-	// check for smooth step up
-	if (bIsPlayer && Origin.z < FloorZ)
-	{
-		Player(Player).ViewHeight -= FloorZ - Origin.z;
-		Player(Player).DeltaViewHeight = (Player::VIEWHEIGHT - Player(Player).ViewHeight) * 4.0;
-	}
-
-	// adjust height
-	Origin.z += Velocity.z * DeltaTime;
-
-	if (bFloat && Target)
-	{
-		// float down towards enemy if too close
-		if (!bSkullFly && !bInFloat)
-		{
-			dist = DistTo2(Target);
-
-			delta = Target.Origin.z + Height / 2.0 - Origin.z;
-
-			if (delta < 0.0 && dist < -(delta * 3.0))
-				Origin.z -= FLOATSPEED * DeltaTime;
-			else if (delta > 0.0 && dist < (delta * 3.0))
-				Origin.z += FLOATSPEED * DeltaTime;
-		}
-	}
-
-	// clip movement
-	if (Origin.z <= FloorZ + 0.1)
-	{
-		// hit the floor
-
-		vdot = DotProduct(Velocity, Floor->normal);
-		// Note (id):
-		//  somebody left this after the setting momz to 0,
-		//  kinda useless there.
-		if (bSkullFly)
-		{
-			// the skull slammed into something
-			Velocity.z = -Velocity.z;
-		}
-
-		if (vdot < -0.1)
-		{
-			if (bIsPlayer && (vdot < -DEFAULT_GRAVITY * 0.25))
-			{
-				// Squat down.
-				// Decrease ViewHeight for a moment
-				// after hitting the ground (hard),
-				// and utter appropriate sound.
-				Player(Player).DeltaViewHeight = vdot / 8.0;
-				PlaySound('*land', CHAN_VOICE);
-			}
-		}
-		if (Origin.z - Velocity.z * DeltaTime > FloorZ)
-		{
-			// Spawn splashes, etc.
-			HitFloorType();
-		}
-		Origin.z = FloorZ;
-
-		if (bMissile)
-		{
-			if (bColideWithWorld && !bFloorBounce)
-			{
-				ExplodeMissile();
-				return;
-			}
-			if (bFloorBounce)
-			{
-				// Bouncing Missiles explode on water surfaces
-				VTerrainInfo* TInfo = GetFloorType();
-				if (TInfo->bLiquid)
-				{
-					ExplodeMissile();
-					return;
-				}
-				Velocity.z = Velocity.z * -0.5;
-				Velocity.x = 2.0 * Velocity.x / 3.0;
-				Velocity.y = 2.0 * Velocity.y / 3.0;
-				if (PainSound && Length(Velocity) > 256.0)
-				{
-					PlaySound(PainSound, CHAN_VOICE);
-				}
-				A_DecReactionCount();
-			}
-		}
-	}
-
-	if (Origin.z + Height > CeilingZ)
-	{
-		// hit the ceiling
-		vdot = DotProduct(Velocity, Ceiling->normal);
-		if (vdot < 0.0)
-			Velocity -= vdot * Ceiling->normal;
-
-		Origin.z = CeilingZ - Height;
-
-		if (bSkullFly)
-		{
-			// the skull slammed into something
-			Velocity.z = -Velocity.z;
-		}
-
-		if (bMissile)
-		{
-			if (bColideWithWorld && !bFloorBounce)
-			{
-				ExplodeMissile();
-				return;
-			}
-			if (bFloorBounce)
-			{
-				// Reverse momentum here for ceiling bounce
-				Velocity -= vdot * Ceiling->normal;
-				if (PainSound && Length(Velocity) > 256.0)
-				{
-					PlaySound(PainSound, CHAN_VOICE);
-				}
-				A_DecReactionCount();
-			}
-		}
-	}
-}
-
-//==========================================================================
-//
 //  ApplyFriction
 //
 //==========================================================================
@@ -1966,10 +1669,14 @@ void ApplyFriction()
 		dot = DotProduct(Velocity, Floor->normal);
 		if (dot < 0.0)
 		{
-			if (bFloorBounce)
+			if (BounceType == BOUNCE_Strife)
 			{
 				dot *= BOUNCE_VAL;
-				A_DecReactionCount();
+				if (BounceCount > 0 && --BounceCount <= 0)
+				{
+					ExplodeMissile();
+					return;
+				}
 			}
 			Velocity -= dot * Floor->normal;
 		}
@@ -2050,138 +1757,13 @@ void PlayerLandedOnThing()
 
 //==========================================================================
 //
-//	Physics
+//	GetBaseViewHeight
 //
 //==========================================================================
 
-bool Physics(float DeltaTime)
+float GetBaseViewHeight()
 {
-	Actor			onmo;
-	SectorThinker	SecThink;
-	float			scrollx;
-	float			scrolly;
-	float			height;
-	float			waterheight;	// killough 4/4/98: add waterheight
-
-	if (Sector->AffectorData && bColideWithWorld)
-	{
-
-		// killough 3/7/98: Carry things on floor
-		// killough 3/20/98: use new sector list which reflects true members
-		// killough 3/27/98: fix carrier bug
-		// killough 4/4/98: Underwater, carry things even w/o gravity
-
-		// Move objects only if on floor or underwater,
-		// non-floating, and clipped.
-
-		for (SecThink = SectorThinker(Sector->AffectorData); SecThink;
-			SecThink = SecThink.NextAffector)
-		{
-			if (!Scroller(SecThink))
-			{
-				continue;
-			}
-			scrollx = Scroller(SecThink).CarryScrollX;
-			scrolly = Scroller(SecThink).CarryScrollY;
-			if (!scrollx && !scrolly)
-			{
-				continue;
-			}
-			if (bNoGravity && (!Sector->heightsec ||
-				(Sector->heightsec->bIgnoreHeightSec)))
-			{
-				continue;
-			}
-			height = GetPlanePointZ(&Sector->floor, Origin);
-			if (Origin.z > height)
-			{
-				if (!Sector->heightsec || (Sector->heightsec->bIgnoreHeightSec))
-				{
-					continue;
-				}
-
-				waterheight = GetPlanePointZ(&Sector->heightsec->floor, Origin);
-				if (waterheight > height && Origin.z >= waterheight)
-				{
-					continue;
-				}
-			}
-
-			Velocity.x += scrollx;
-			Velocity.y += scrolly;
-		}
-	}
-
-	CheckWater();
-	UpdateVelocity();
-
-	// momentum movement
-	if (Velocity.x || Velocity.y)
-	{
-		XYMovement(DeltaTime);
-		if (IsDestroyed())
-		{
-			// mobj was removed
-			return false;
-		}
-	}
-	else if (bSkullFly)
-	{
-		// the skull slammed into something
-		bSkullFly = false;
-		Velocity = vector(0.0, 0.0, 0.0);
-		if (!SetState(IdleState))
-		{
-			return false;
-		}
-	}
-	if (!bNoPassMobj && !bMissile)
-	{
-		// Handle Z momentum and gravity
-		onmo = Actor(CheckOnmobj());
-		if (onmo)
-		{
-			if (bIsPlayer)
-			{
-				if (Velocity.z < -DEFAULT_GRAVITY * 0.25 && !bFly)
-				{
-					PlayerLandedOnThing();
-				}
-			}
-			if (onmo.Origin.z + onmo.Height - Origin.z <= MaxStepHeight)
-			{
-				if (bIsPlayer)
-				{
-					Player(Player).ViewHeight -=
-						onmo.Origin.z + onmo.Height - Origin.z;
-					Player(Player).DeltaViewHeight =
-						(Player::VIEWHEIGHT - Player(Player).ViewHeight) * 4.0;
-				}
-				Origin.z = onmo.Origin.z + onmo.Height;
-			}
-			bOnMobj = true;
-			Velocity.z = 0.0;
-		}
-		else if ((Origin.z != FloorZ) || Velocity.z)
-		{
-			ZMovement(DeltaTime);
-			bOnMobj = false;
-		}
-		if (IsDestroyed())
-		{
-			return false;	// entity was removed
-		}
-	}
-	else if ((Origin.z != FloorZ) || Velocity.z)
-	{
-		// Handle Z momentum and gravity
-		ZMovement(DeltaTime);
-		if (IsDestroyed())
-		{
-			return false;	// entity was removed
-		}
-	}
-	return true;
+	return Player::VIEWHEIGHT;
 }
 
 //==========================================================================
@@ -3906,4 +3488,5 @@ defaultproperties
 	LightOffset = vector(0.0, 0.0, 0.0);
 	LightColour = 0xffffffff;
 	LightRadius = 128.0;
+	FloatSpeed = 175.0;
 }

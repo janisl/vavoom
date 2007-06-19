@@ -33,7 +33,7 @@ class Centaur : Pawn
 //
 //==========================================================================
 
-float GetReflectedAngle(Actor Other)
+float GetReflectedAngle(EntityEx Other)
 {
 	float angle = atan2(Other.Origin.y - Origin.y,
 		Other.Origin.x - Origin.x);

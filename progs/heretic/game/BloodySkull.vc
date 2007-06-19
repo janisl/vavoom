@@ -78,6 +78,7 @@ defaultproperties
 	bNoPassMobj = true;
 	bCannotPush = true;
 	bFloorClip = false;
+	bBounceSky = true;
 	IdleState = S_BLOODYSKULL1;
 	Done1State = S_BLOODYSKULLX1;
 	Done2State = S_BLOODYSKULLX2;
