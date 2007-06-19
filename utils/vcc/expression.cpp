@@ -1216,6 +1216,15 @@ VExpression* VSingleName::IntResolve(VEmitContext& ec, bool AssignTarget)
 		return e->Resolve(ec);
 	}
 
+	Const = (VConstant*)VMemberBase::StaticFindMember(Name, ANY_PACKAGE,
+		MEMBER_Const);
+	if (Const)
+	{
+		VExpression* e = new VConstantValue(Const, Loc);
+		delete this;
+		return e->Resolve(ec);
+	}
+
 	ParseError(Loc, "Illegal expression identifier %s", *Name);
 	delete this;
 	return NULL;
