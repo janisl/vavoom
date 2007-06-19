@@ -452,7 +452,6 @@ static void ReadThing(int num)
 			SetClassFieldBool(Ent, "bPickUp", value & 0x00000800);
 			SetClassFieldBool(Ent, "bColideWithThings", !(value & 0x00001000));
 			SetClassFieldBool(Ent, "bColideWithWorld", !(value & 0x00001000));
-			SetClassFieldBool(Ent, "bSlide", value & 0x00002000);
 			SetClassFieldBool(Ent, "bFloat", value & 0x00004000);
 			SetClassFieldBool(Ent, "bTeleport", value & 0x00008000);
 			SetClassFieldBool(Ent, "bMissile", value & 0x00010000);
