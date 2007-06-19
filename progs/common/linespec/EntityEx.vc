@@ -118,6 +118,7 @@ bool bIceDamage;		// does ice damage
 bool bIceCorpse;		// a frozen corpse (for blasting)
 bool bExplodeOnWater;	//	Explode on water surfaces
 bool bCanBounceWater;	//	Bounce on water surfaces
+bool bFallingFriction;	//	Apply friction while falling
 
 //  Params
 float			Speed;
@@ -1048,11 +1049,11 @@ bool BlasterHitMobj(Entity Other)
 
 final bool HitFloorType()
 {
-	EntityEx A;
-	TVec org;
-	int smallsplash = false;
-	VTerrainInfo* TInfo;
-	VSplashInfo* SInfo;
+	EntityEx		A;
+	TVec			org;
+	bool			smallsplash = false;
+	VTerrainInfo*	TInfo;
+	VSplashInfo*	SInfo;
 
 	if (FloorZ != GetPlanePointZ(&Sector->floor, Origin))
 	{
@@ -1144,6 +1145,128 @@ final bool HitFloorType()
 final VTerrainInfo* GetFloorType()
 {
 	return TerrainType(Floor->pic);
+}
+
+//==========================================================================
+//
+//	HandleFloorclip
+//
+//==========================================================================
+
+final void HandleFloorclip()
+{
+	if (bFloorClip)
+	{
+		VTerrainInfo* TInfo = GetFloorType();
+		if (Origin.z == FloorZ && TInfo->bLiquid)
+		{
+			FloorClip = TInfo->FootClip;
+		}
+		else
+		{
+			FloorClip = 0.0;
+		}
+	}
+}
+
+//==========================================================================
+//
+//  ApplyFriction
+//
+//==========================================================================
+
+final void ApplyFriction()
+{
+	float dot;
+
+	if (bMissile || bSkullFly)
+	{
+		// no friction for missiles ever
+		return;
+	}
+
+	if (Origin.z > FloorZ && !bOnMobj && WaterLevel < 2 && !bFly &&
+		!bFallingFriction)
+	{
+		// no friction when airborne
+		return;
+	}
+
+	//  Clip velocity
+	if (Origin.z <= FloorZ)
+	{
+		dot = DotProduct(Velocity, Floor->normal);
+		if (dot < 0.0)
+		{
+			Velocity -= dot * Floor->normal;
+		}
+	}
+
+	if (bCorpse)
+	{
+		// Don't stop sliding if halfway off a step with some momentum
+		if (Velocity.x > 0.25 * 35.0 || Velocity.x < -0.25 * 35.0 ||
+			Velocity.y > 0.25 * 35.0 || Velocity.y < -0.25 * 35.0)
+		{
+			if (FloorZ != GetPlanePointZ(&Sector->floor, Origin))
+			{
+				return;
+			}
+		}
+	}
+
+	if (Velocity.x > -STOPSPEED && Velocity.x < STOPSPEED &&
+		Velocity.y > -STOPSPEED && Velocity.y < STOPSPEED &&
+		Velocity.z > -STOPSPEED && Velocity.z < STOPSPEED &&
+		(!bIsPlayer || (!Player.ForwardMove && !Player.SideMove)))
+	{
+		if (bIsPlayer)
+		{
+			// if in a walking frame, stop moving
+			if (StateIsInRange(State, SeeState, none, 4))
+			{
+				SetState(IdleState);
+			}
+		}
+		Velocity = vector(0.0, 0.0, 0.0);
+	}
+	else
+	{
+		// slow down
+		Velocity -= Velocity * (GetFriction() * Level.Game.frametime);
+	}
+}
+
+//===========================================================================
+//
+//  GetFriction
+//
+//===========================================================================
+
+final float GetFriction()
+{
+	if (WaterLevel > 1)
+	{
+		return FRICTION_WATER;
+	}
+	if (bFly && Origin.z > FloorZ && !bOnMobj)
+	{
+		return FRICTION_FLY;
+	}
+	if ((Sector->special & SECSPEC_BASE_MASK) == SECSPEC_FrictionLow)
+	{
+		return FRICTION_LOW;
+	}
+	VTerrainInfo* TInfo = GetFloorType();
+	if (TInfo->Friction)
+	{
+		return TInfo->Friction;
+	}
+	if (Sector->special & SECSPEC_FRICTION_MASK)
+	{
+		return Sector->Friction;
+	}
+	return FRICTION_NORMAL;
 }
 
 void PlayerLandedOnThing()

@@ -44,5 +44,6 @@ defaultproperties
 	bColideWithWorld = false;
 	bColideWithThings = false;
 	bNoTeleport = true;
+	bFallingFriction = true;
 	IdleState = S_BLASTEFFECT1;
 }
