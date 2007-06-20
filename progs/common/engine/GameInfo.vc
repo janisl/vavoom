@@ -52,6 +52,8 @@ int					PhaseTable[64];
 class<LevelInfo>	LevelInfoClass;
 class<PlayerReplicationInfo>	PlayerReplicationInfoClass;
 
+bool				bDefaultMonsterFallingDamage;
+
 //==========================================================================
 //
 //	Init

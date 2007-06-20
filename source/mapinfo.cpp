@@ -26,6 +26,7 @@
 // HEADER FILES ------------------------------------------------------------
 
 #include "gamedefs.h"
+#include "sv_local.h"
 
 // MACROS ------------------------------------------------------------------
 
@@ -83,29 +84,6 @@ static int					cd_NonLevelTracks[6];
 void InitMapInfo()
 {
 	guard(InitMapInfo);
-	mapInfo_t 	*info;
-
-	// Put defaults into MapInfo[0]
-	info = &DefaultMap;
-	info->Name = "Unnamed";
-	info->Cluster = 0;
-	info->WarpTrans = 0;
-	info->NextMap = NAME_None;
-	info->CDTrack = 0;
-	info->Sky1Texture = GTextureManager.CheckNumForName("sky1",
-		TEXTYPE_Wall, true, false);
-	info->Sky2Texture = info->Sky1Texture;
-	info->Sky1ScrollDelta = 0.0;
-	info->Sky2ScrollDelta = 0.0;
-	info->FadeTable = NAME_colormap;
-	info->Fade = 0;
-	info->OutsideFog = 0;
-	info->Gravity = 0.0;
-	info->Flags = 0;
-	info->TitlePatch = NAME_None;
-	info->ParTime = 0;
-	info->SuckTime = 0;
-
 	for (int Lump = W_IterateNS(-1, WADNS_Global); Lump >= 0;
 		Lump = W_IterateNS(Lump, WADNS_Global))
 	{
@@ -312,7 +290,8 @@ static void ParseMap(VScriptParser* sc, bool IsDefault, bool& HexenMode)
 
 		if (HexenMode)
 		{
-			info->Flags |= MAPINFOF_NoIntermission;
+			info->Flags |= MAPINFOF_NoIntermission |
+				MAPINFOF_FallingDamage;
 		}
 
 		// Map name must follow the number
@@ -545,6 +524,38 @@ static void ParseMap(VScriptParser* sc, bool IsDefault, bool& HexenMode)
 		{
 			info->Flags |= MAPINFOF_NoAllies;
 		}
+		else if (sc->Check("fallingdamage"))
+		{
+			info->Flags &= ~(MAPINFOF_OldFallingDamage |
+				MAPINFOF_StrifeFallingDamage);
+			info->Flags |= MAPINFOF_FallingDamage;
+		}
+		else if (sc->Check("oldfallingdamage") ||
+			sc->Check("forcefallingdamage"))
+		{
+			info->Flags &= ~(MAPINFOF_FallingDamage |
+				MAPINFOF_StrifeFallingDamage);
+			info->Flags |= MAPINFOF_OldFallingDamage;
+		}
+		else if (sc->Check("strifefallingdamage"))
+		{
+			info->Flags &= ~(MAPINFOF_OldFallingDamage |
+				MAPINFOF_FallingDamage);
+			info->Flags |= MAPINFOF_StrifeFallingDamage;
+		}
+		else if (sc->Check("nofallingdamage"))
+		{
+			info->Flags &= ~(MAPINFOF_OldFallingDamage |
+				MAPINFOF_StrifeFallingDamage | MAPINFOF_FallingDamage);
+		}
+		else if (sc->Check("monsterfallingdamage"))
+		{
+			info->Flags |= MAPINFOF_MonsterFallingDamage;
+		}
+		else if (sc->Check("nomonsterfallingdamage"))
+		{
+			info->Flags &= ~MAPINFOF_MonsterFallingDamage;
+		}
 		else if (sc->Check("deathslideshow"))
 		{
 			info->Flags |= MAPINFOF_DeathSlideShow;
@@ -603,26 +614,6 @@ static void ParseMap(VScriptParser* sc, bool IsDefault, bool& HexenMode)
 		else if (sc->Check("nojump"))
 		{
 			GCon->Logf("Unimplemented MAPINFO comand nojump");
-		}
-		else if (sc->Check("fallingdamage"))
-		{
-			GCon->Logf("Unimplemented MAPINFO comand fallingdamage");
-		}
-		else if (sc->Check("oldfallingdamage"))
-		{
-			GCon->Logf("Unimplemented MAPINFO comand oldfallingdamage");
-		}
-		else if (sc->Check("forcefallingdamage"))
-		{
-			GCon->Logf("Unimplemented MAPINFO comand forcefallingdamage");
-		}
-		else if (sc->Check("strifefallingdamage"))
-		{
-			GCon->Logf("Unimplemented MAPINFO comand strifefallingdamage");
-		}
-		else if (sc->Check("nofallingdamage"))
-		{
-			GCon->Logf("Unimplemented MAPINFO comand nofallingdamage");
 		}
 		else if (sc->Check("cdid"))
 		{
@@ -727,14 +718,6 @@ static void ParseMap(VScriptParser* sc, bool IsDefault, bool& HexenMode)
 		else if (sc->Check("keepfullinventory"))
 		{
 			GCon->Logf("Unimplemented MAPINFO comand keepfullinventory");
-		}
-		else if (sc->Check("monsterfallingdamage"))
-		{
-			GCon->Logf("Unimplemented MAPINFO comand monsterfallingdamage");
-		}
-		else if (sc->Check("nomonsterfallingdamage"))
-		{
-			GCon->Logf("Unimplemented MAPINFO comand nomonsterfallingdamage");
 		}
 		else if (sc->Check("sndseq"))
 		{
@@ -1105,6 +1088,32 @@ static void ParseMapInfo(VScriptParser* sc)
 {
 	guard(ParseMapInfo);
 	bool HexenMode = false;
+
+	// Put defaults into MapInfo[0]
+	mapInfo_t* info = &DefaultMap;
+	info->Name = "Unnamed";
+	info->Cluster = 0;
+	info->WarpTrans = 0;
+	info->NextMap = NAME_None;
+	info->CDTrack = 0;
+	info->Sky1Texture = GTextureManager.CheckNumForName("sky1",
+		TEXTYPE_Wall, true, false);
+	info->Sky2Texture = info->Sky1Texture;
+	info->Sky1ScrollDelta = 0.0;
+	info->Sky2ScrollDelta = 0.0;
+	info->FadeTable = NAME_colormap;
+	info->Fade = 0;
+	info->OutsideFog = 0;
+	info->Gravity = 0.0;
+	info->Flags = 0;
+	info->TitlePatch = NAME_None;
+	info->ParTime = 0;
+	info->SuckTime = 0;
+	if (GGameInfo->Flags & VGameInfo::GIF_DefaultMonsterFallingDamage)
+	{
+		info->Flags |= MAPINFOF_MonsterFallingDamage;
+	}
+
 	while (!sc->AtEnd())
 	{
 		if (sc->Check("map"))

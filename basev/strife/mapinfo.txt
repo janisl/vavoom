@@ -3,6 +3,7 @@
 defaultmap
 forcenoskystretch
 nointermission
+strifefallingdamage
 sky1 skymnt02 0
 
 //------------------------------------------------------

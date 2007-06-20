@@ -75,7 +75,11 @@ class VLevelInfo : public VThinker
 		LIF_DeathSlideShow				= 0x00008000,
 		LIF_ForceNoSkyStretch			= 0x00010000,
 		LIF_LookupName					= 0x00020000,
-		LIF_BegunPlay					= 0x00040000,
+		LIF_FallingDamage				= 0x00040000,
+		LIF_OldFallingDamage			= 0x00080000,
+		LIF_StrifeFallingDamage			= 0x00100000,
+		LIF_MonsterFallingDamage		= 0x00200000,
+		LIF_BegunPlay					= 0x00400000,
 	};
 	vuint32			LevelInfoFlags;
 

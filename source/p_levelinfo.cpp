@@ -128,6 +128,12 @@ void VLevelInfo::SetMapInfo(const mapInfo_t& Info)
 		LevelInfoFlags |= LIF_ForceNoSkyStretch;
 	if (Info.Flags & MAPINFOF_LookupName)
 		LevelInfoFlags |= LIF_LookupName;
+	if (Info.Flags & MAPINFOF_FallingDamage)
+		LevelInfoFlags |= LIF_FallingDamage;
+	if (Info.Flags & MAPINFOF_OldFallingDamage)
+		LevelInfoFlags |= LIF_OldFallingDamage;
+	if (Info.Flags & MAPINFOF_StrifeFallingDamage)
+		LevelInfoFlags |= LIF_StrifeFallingDamage;
 	unguard;
 }
 

@@ -52,6 +52,12 @@ class VGameInfo : public VObject
 	VClass*			LevelInfoClass;
 	VClass*			PlayerReplicationInfoClass;
 
+	enum
+	{
+		GIF_DefaultMonsterFallingDamage		= 0x00000001,
+	};
+	vuint32			Flags;
+
 	VGameInfo()
 	{}
 

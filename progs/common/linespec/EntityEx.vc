@@ -978,6 +978,117 @@ final void PlayerLandedOnThing()
 
 //==========================================================================
 //
+//  FallingDamage
+//
+//==========================================================================
+
+final void FallingDamage()
+{
+	int		damage;
+	float	mom;
+	float	dist;
+
+	mom = fabs(Velocity.z);
+
+	if (Level.bFallingDamage)
+	{
+		//	Hexen style falling damage.
+		if (mom <= 23.0 * 35.0)
+		{
+			//	Not fast enough.
+			return;
+		}
+		if (mom >= 63.0 * 35.0)
+		{
+			//	Automatic death.
+			damage = 10000;
+		}
+		else
+		{
+			dist = mom / 35.0 * 16.0 / 23.0;
+			damage = ftoi(dist * dist / 10.0) - 24;
+			if (Velocity.z > -39.0 * 35.0 && damage > Health && Health != 1)
+			{
+				//	No-death threshold.
+				damage = Health - 1;
+			}
+		}
+	}
+	else if (Level.bOldFallingDamage)
+	{
+		//	ZDoom style falling damage, less damaging.
+		if (mom <= 19.0 * 35.0)
+		{
+			//	Not fast enough.
+			return;
+		}
+		if (mom >= 84.0 * 35.0)
+		{
+			//	Automatic death.
+			damage = 10000;
+		}
+		else
+		{
+			mom = mom / 35.0;
+			damage = (ftoi(mom * mom * 11.0 / 128.0) - 30) / 2;
+			if (damage < 1)
+			{
+				damage = 1;
+			}
+		}
+	}
+	else if (Level.bStrifeFallingDamage)
+	{
+		//	Strife style falling damage, very strong.
+		if (mom <= 20.0 * 35.0)
+		{
+			//	Not fast enough.
+			return;
+		}
+		damage = ftoi(mom * (8192.0 / 3125.0 / 35.0));
+	}
+	else
+	{
+		return;
+	}
+
+	PlaySound('*land', CHAN_BODY);
+	Damage(none, none, damage);
+	LineSpecialLevelInfo(Level).NoiseAlert(self, self);
+}
+
+//==========================================================================
+//
+//  MonsterFallingDamage
+//
+//==========================================================================
+
+final void MonsterFallingDamage()
+{
+	int		damage;
+	float	mom;
+
+	if (!Level.bMonsterFallingDamage)
+	{
+		return;
+	}
+
+	mom = fabs(Velocity.z) / 35.0;
+	if (mom > 35.0)
+	{
+		// automatic death
+		damage = 10000;
+	}
+	else
+	{
+		damage = ftoi((mom - 23.0) * 6.0);
+	}
+	damage = 10000;	// always kill 'em
+	Damage(none, none, damage);
+}
+
+//==========================================================================
+//
 //	BlasterPhysics
 //
 //  Thinker for the ultra-fast blaster PL2 ripper-spawning missile.
@@ -1328,17 +1439,9 @@ float GetBaseViewHeight()
 	return 0.0;
 }
 
-void MonsterFallingDamage()
-{
-}
-
 EntityEx GetDamageTypeInflictor(name DamageType)
 {
 	return none;
-}
-
-void FallingDamage()
-{
 }
 
 bool PlayerIsMorphed()

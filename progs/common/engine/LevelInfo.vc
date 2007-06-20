@@ -72,6 +72,10 @@ bool			bNoAllies;
 bool			bDeathSlideShow;
 bool			bForceNoSkyStretch;
 bool			bLookupName;
+bool			bFallingDamage;
+bool			bOldFallingDamage;
+bool			bStrifeFallingDamage;
+bool			bMonsterFallingDamage;
 readonly bool	bBegunPlay;
 
 int				TotalKills;

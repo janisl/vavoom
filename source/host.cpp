@@ -183,8 +183,6 @@ void Host_Init()
 	SB_Init();
 #endif
 
-	InitMapInfo();
-
 #ifdef CLIENT
 	R_Init();
 #endif
@@ -192,6 +190,8 @@ void Host_Init()
 #ifdef SERVER
 	SV_Init();
 #endif
+
+	InitMapInfo();
 
 	GCmdBuf.Exec();
 

@@ -533,31 +533,6 @@ int FaceActor(Actor target, float *delta)
 
 //==========================================================================
 //
-//  MonsterFallingDamage
-//
-//==========================================================================
-
-void MonsterFallingDamage()
-{
-	int damage;
-	float mom;
-
-	mom = fabs(Velocity.z) / 35.0;
-	if (mom > 35.0)
-	{
-		// automatic death
-		damage = 10000;
-	}
-	else
-	{
-		damage = ftoi((mom - 23.0) * 6.0);
-	}
-	damage = 10000;	// always kill 'em
-	Damage(none, none, damage);
-}
-
-//==========================================================================
-//
 //  ActiveMinotaur
 //
 //  Search thinker list for minotaur
@@ -1217,40 +1192,6 @@ void Damage(EntityEx inflictor, EntityEx source, int damage)
 int InflictorModifyDamage(Actor victim, Actor source, int damage)
 {
 	return damage;
-}
-
-//==========================================================================
-//
-//  FallingDamage
-//
-//==========================================================================
-
-void FallingDamage()
-{
-	int damage;
-	float mom;
-	float dist;
-
-	if (Velocity.z < -23.0 * 35.0)
-	{
-		mom = fabs(Velocity.z);
-		dist = mom / 35.0 * 16.0 / 23.0;
-
-		if (mom >= 63.0 * 35.0)
-		{
-			// automatic death
-			Damage(none, none, 10000);
-			return;
-		}
-		damage = ftoi(dist * dist / 10.0) - 24;
-		if (Velocity.z > -39.0 * 35.0 && damage > Health && Health != 1)
-		{
-			// No-death threshold
-			damage = Health - 1;
-		}
-		Damage(none, none, damage);
-		HexenLevelInfo(Level).NoiseAlert(self, self);
-	}
 }
 
 //==========================================================================

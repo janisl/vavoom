@@ -43,6 +43,10 @@ enum
 	MAPINFOF_DeathSlideShow				= 0x00008000,
 	MAPINFOF_ForceNoSkyStretch			= 0x00010000,
 	MAPINFOF_LookupName					= 0x00020000,
+	MAPINFOF_FallingDamage				= 0x00040000,
+	MAPINFOF_OldFallingDamage			= 0x00080000,
+	MAPINFOF_StrifeFallingDamage		= 0x00100000,
+	MAPINFOF_MonsterFallingDamage		= 0x00200000,
 };
 
 struct mapInfo_t
