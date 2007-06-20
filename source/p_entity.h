@@ -379,6 +379,7 @@ public:
 	DECLARE_FUNCTION(FindState)
 	DECLARE_FUNCTION(PlaySound)
 	DECLARE_FUNCTION(StopSound)
+	DECLARE_FUNCTION(AreSoundsEquivalent)
 	DECLARE_FUNCTION(StartSoundSequence)
 	DECLARE_FUNCTION(AddSoundSequenceChoice)
 	DECLARE_FUNCTION(StopSoundSequence)

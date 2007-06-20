@@ -939,6 +939,45 @@ float GetReflectedAngle(EntityEx Other)
 
 //==========================================================================
 //
+//	Crash
+//
+//==========================================================================
+
+final void Crash()
+{
+	if (CrashState && bCorpse && !bIceDamage)
+	{
+		SetState(CrashState);
+	}
+}
+
+//===========================================================================
+//
+//  PlayerLandedOnThing
+//
+//===========================================================================
+
+final void PlayerLandedOnThing()
+{
+	PlayerEx(Player).DeltaViewHeight = Velocity.z / 8.0;
+	FallingDamage();
+	if (Health > 0 && !PlayerIsMorphed())
+	{
+		if (Velocity.z < -DEFAULT_GRAVITY * 0.375)
+		{
+			PlaySound('*grunt', CHAN_VOICE);
+		}
+		if ((Origin.z > FloorZ || !GetFloorType()->bLiquid) &&
+			!AreSoundsEquivalent('*grunt', '*land'))
+		{
+			PlaySound('*land', CHAN_BODY);
+		}
+	}
+//FIXME Player.centreing = true;
+}
+
+//==========================================================================
+//
 //	BlasterPhysics
 //
 //  Thinker for the ultra-fast blaster PL2 ripper-spawning missile.
@@ -1039,6 +1078,16 @@ void OnHitFloor()
 bool BlasterHitMobj(Entity Other)
 {
 	return ExplodeMissile();
+}
+
+//==========================================================================
+//
+//  SpawnBlasterEffects
+//
+//==========================================================================
+
+void SpawnBlasterEffects()
+{
 }
 
 //==========================================================================
@@ -1269,10 +1318,6 @@ final float GetFriction()
 	return FRICTION_NORMAL;
 }
 
-void PlayerLandedOnThing()
-{
-}
-
 bool ExplodeMissile()
 {
 	return true;
@@ -1287,17 +1332,18 @@ void MonsterFallingDamage()
 {
 }
 
-void Crash()
-{
-}
-
-void SpawnBlasterEffects()
-{
-}
-
 EntityEx GetDamageTypeInflictor(name DamageType)
 {
 	return none;
+}
+
+void FallingDamage()
+{
+}
+
+bool PlayerIsMorphed()
+{
+	return false;
 }
 
 //**************************************************************************

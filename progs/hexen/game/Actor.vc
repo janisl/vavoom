@@ -1231,23 +1231,26 @@ void FallingDamage()
 	float mom;
 	float dist;
 
-	mom = fabs(Velocity.z);
-	dist = mom / 35.0 * 16.0 / 23.0;
+	if (Velocity.z < -23.0 * 35.0)
+	{
+		mom = fabs(Velocity.z);
+		dist = mom / 35.0 * 16.0 / 23.0;
 
-	if (mom >= 63.0 * 35.0)
-	{
-		// automatic death
-		Damage(none, none, 10000);
-		return;
+		if (mom >= 63.0 * 35.0)
+		{
+			// automatic death
+			Damage(none, none, 10000);
+			return;
+		}
+		damage = ftoi(dist * dist / 10.0) - 24;
+		if (Velocity.z > -39.0 * 35.0 && damage > Health && Health != 1)
+		{
+			// No-death threshold
+			damage = Health - 1;
+		}
+		Damage(none, none, damage);
+		HexenLevelInfo(Level).NoiseAlert(self, self);
 	}
-	damage = ftoi(dist * dist / 10.0) - 24;
-	if (Velocity.z > -39.0 * 35.0 && damage > Health && Health != 1)
-	{
-		// No-death threshold
-		damage = Health - 1;
-	}
-	PlaySound('*land', CHAN_BODY);
-	Damage(none, none, damage);
 }
 
 //==========================================================================
@@ -1815,45 +1818,15 @@ TVec ClipVelocity(TVec in, TVec normal, float overbounce)
 	return in - normal * (DotProduct(in, normal) * overbounce);
 }
 
-//==========================================================================
-//
-//	Crash
-//
-//==========================================================================
-
-void Crash()
-{
-	if (CrashState && bCorpse && !bIceDamage)
-	{
-		SetState(CrashState);
-	}
-}
-
 //===========================================================================
 //
-//  PlayerLandedOnThing
+//	PlayerIsMorphed
 //
 //===========================================================================
 
-void PlayerLandedOnThing()
+bool PlayerIsMorphed()
 {
-	Player(Player).DeltaViewHeight = Velocity.z / 8.0;
-	if (Velocity.z < -23.0 * 35.0)
-	{
-		FallingDamage();
-		HexenLevelInfo(Level).NoiseAlert(self, self);
-	}
-	else if (Velocity.z < -DEFAULT_GRAVITY * 0.375 && !Player(Player).MorphTime)
-	{
-		PlaySound('*land', CHAN_BODY);
-		PlaySound('*grunt', CHAN_VOICE);
-	}
-	else if ((Origin.z > FloorZ || !GetFloorType()->bLiquid) &&
-		!Player(Player).MorphTime)
-	{
-		PlaySound('*land', CHAN_BODY);
-	}
-//FIXME Player.centreing = true;
+	return !!Player(Player).MorphTime;
 }
 
 //===========================================================================

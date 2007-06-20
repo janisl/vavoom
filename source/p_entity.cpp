@@ -421,6 +421,16 @@ IMPLEMENT_FUNCTION(VEntity, StopSound)
 	Self->StopSound(Channel);
 }
 
+IMPLEMENT_FUNCTION(VEntity, AreSoundsEquivalent)
+{
+	P_GET_NAME(Sound2);
+	P_GET_NAME(Sound1);
+	P_GET_SELF;
+	RET_BOOL(GSoundManager->ResolveEntitySound(Self->SoundClass,
+		Self->SoundGender, Sound1) == GSoundManager->ResolveEntitySound(
+		Self->SoundClass, Self->SoundGender, Sound2));
+}
+
 IMPLEMENT_FUNCTION(VEntity, StartSoundSequence)
 {
 	P_GET_INT(ModeNum);
