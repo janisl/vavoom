@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1253"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="8,00"
 	Name="progs_doom"
 	ProjectGUID="{607F2422-5660-4D06-B604-C975A30E5CD5}"
 	RootNamespace="progs_common_linespec"
@@ -160,6 +160,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\doom\game\BloodSplash.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game\BloodSplashBase.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\doom\game\BotPlayer.vc"
 				>
 			</File>
@@ -168,15 +176,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\doom\game\Decoration.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\doom\game\DoomLevelInfo.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\doom\game\Effect.vc"
+				RelativePath="..\progs\doom\game\DoomWorldInfo.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game\LavaSmoke.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game\LavaSplash.vc"
 				>
 			</File>
 			<File
@@ -192,19 +204,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\doom\game\Pawn.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game\Pickup.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\doom\game\Player.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game\PlayerPawn.vc"
 				>
 			</File>
 			<File
@@ -216,15 +216,27 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\doom\game\Projectile.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\doom\game\QuakeFocus.vc"
 				>
 			</File>
 			<File
 				RelativePath="..\progs\doom\game\SecurityCamera.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game\SlimeChunk.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game\SlimeSplash.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game\SludgeChunk.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game\SludgeSplash.vc"
 				>
 			</File>
 			<File
@@ -245,6 +257,14 @@
 			</File>
 			<File
 				RelativePath="..\progs\doom\svprogs.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game\WaterSplash.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game\WaterSplashBase.vc"
 				>
 			</File>
 			<File
@@ -816,7 +836,15 @@
 			Name="game1"
 			>
 			<File
+				RelativePath="..\progs\doom\game1\Allmap.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\doom\game1\AmmoPickup.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game1\ArmorBonus.vc"
 				>
 			</File>
 			<File
@@ -824,15 +852,31 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\doom\game1\Backpack.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game1\BaronBall.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\doom\game1\BaronOfHell.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\doom\game1\Barrel.vc"
+				RelativePath="..\progs\doom\game1\Berserk.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\doom\game1\BFGShot.vc"
+				RelativePath="..\progs\doom\game1\BFG9000.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game1\BFGBall.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game1\BFGExtra.vc"
 				>
 			</File>
 			<File
@@ -848,7 +892,23 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\doom\game1\BloodyTwitchNoBlock.vc"
+				RelativePath="..\progs\doom\game1\BlueArmor.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game1\BlueCard.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game1\BlueSkull.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game1\BlueTorch.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game1\BlurSphere.vc"
 				>
 			</File>
 			<File
@@ -856,11 +916,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\doom\game1\BruiserShot.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game1\BurnedTree.vc"
+				RelativePath="..\progs\doom\game1\BulletPuff.vc"
 				>
 			</File>
 			<File
@@ -872,7 +928,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\doom\game1\CacodemonMissile.vc"
+				RelativePath="..\progs\doom\game1\CacodemonBall.vc"
 				>
 			</File>
 			<File
@@ -880,7 +936,23 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\doom\game1\CandleStick.vc"
+				RelativePath="..\progs\doom\game1\Candlestick.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game1\Cell.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game1\CellPack.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game1\Chaingun.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game1\Chainsaw.vc"
 				>
 			</File>
 			<File
@@ -888,35 +960,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\doom\game1\Clip.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game1\ClipBox.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\doom\game1\ColonGibs.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\doom\game1\ColumnGreenShort.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game1\ColumnGreenTall.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game1\ColumnLamp.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game1\ColumnRedShort.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game1\ColumnRedTall.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game1\ColumnWithHearth.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game1\ColumnWithSkull.vc"
+				RelativePath="..\progs\doom\game1\Column.vc"
 				>
 			</File>
 			<File
@@ -932,7 +988,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\doom\game1\DeadImp.vc"
+				RelativePath="..\progs\doom\game1\DeadDoomImp.vc"
 				>
 			</File>
 			<File
@@ -940,15 +996,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\doom\game1\DeadPlayer.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game1\DeadPlayerGibs.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game1\DeadPlayerGibs2.vc"
+				RelativePath="..\progs\doom\game1\DeadMarine.vc"
 				>
 			</File>
 			<File
@@ -960,7 +1008,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\doom\game1\DeadZombieman.vc"
+				RelativePath="..\progs\doom\game1\DeadZombieMan.vc"
 				>
 			</File>
 			<File
@@ -968,7 +1016,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\doom\game1\DoomImp.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game1\DoomImpBall.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\doom\game1\DoomPlayer.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game1\DoomUnusedStates.vc"
 				>
 			</File>
 			<File
@@ -976,7 +1036,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\doom\game1\ExtraBFG.vc"
+				RelativePath="..\progs\doom\game1\ExplosiveBarrel.vc"
 				>
 			</File>
 			<File
@@ -984,7 +1044,23 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\doom\game1\GibbedMarine.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game1\GibbedMarineExtra.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\doom\game1\Gibs.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game1\GreenArmor.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game1\GreenTorch.vc"
 				>
 			</File>
 			<File
@@ -992,27 +1068,31 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\doom\game1\HangingNoBrain.vc"
+				RelativePath="..\progs\doom\game1\GrenadeLauncher.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\doom\game1\HangingNoGuts.vc"
+				RelativePath="..\progs\doom\game1\HangBNoBrain.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\doom\game1\HangingTorsoLookDown.vc"
+				RelativePath="..\progs\doom\game1\HangNoGuts.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\doom\game1\HangingTorsoLookUp.vc"
+				RelativePath="..\progs\doom\game1\HangTLookingDown.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\doom\game1\HangingTorsoNoBrain.vc"
+				RelativePath="..\progs\doom\game1\HangTLookingUp.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\doom\game1\HangingTorsoSkull.vc"
+				RelativePath="..\progs\doom\game1\HangTNoBrain.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game1\HangTSkull.vc"
 				>
 			</File>
 			<File
@@ -1024,7 +1104,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\doom\game1\HeadsOnStick.vc"
+				RelativePath="..\progs\doom\game1\HeadsOnAStick.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game1\HealthBonus.vc"
 				>
 			</File>
 			<File
@@ -1032,155 +1116,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\doom\game1\Imp.vc"
+				RelativePath="..\progs\doom\game1\HeartColumn.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\doom\game1\ImpMissile.vc"
+				RelativePath="..\progs\doom\game1\Infrared.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\doom\game1\ItemAmmoBulletBox.vc"
+				RelativePath="..\progs\doom\game1\InvulnerabilitySphere.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\doom\game1\ItemAmmoBulletClip.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game1\ItemAmmoCells.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game1\ItemAmmoCellsPack.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game1\ItemAmmoRocket.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game1\ItemAmmoRocketBox.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game1\ItemAmmoShells.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game1\ItemAmmoShellsBox.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game1\ItemArmor1.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game1\ItemArmor2.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game1\ItemArmorBonus.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game1\ItemBackpack.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game1\ItemBerserk.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game1\ItemComputerMap.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game1\ItemHealthBonus.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game1\ItemInfrared.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game1\ItemInvisibility.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game1\ItemInvulnerability.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game1\ItemKeyBlueCard.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game1\ItemKeyBlueSkull.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game1\ItemKeyRedCard.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game1\ItemKeyRedSkull.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game1\ItemKeyYellowCard.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game1\ItemKeyYellowSkull.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game1\ItemMedikit.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game1\ItemRadiationSuit.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game1\ItemRespawnFog.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game1\ItemSoulSphere.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game1\ItemStimPack.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game1\ItemWeaponBFG.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game1\ItemWeaponChaingun.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game1\ItemWeaponChainsaw.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game1\ItemWeaponGrenadeLauncher.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game1\ItemWeaponPlasmaGun.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game1\ItemWeaponRocketLauncher.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game1\ItemWeaponShotgun.vc"
+				RelativePath="..\progs\doom\game1\ItemFog.vc"
 				>
 			</File>
 			<File
@@ -1200,15 +1148,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\doom\game1\Meat2NoBlock.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\doom\game1\Meat3.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game1\Meat3NoBlock.vc"
 				>
 			</File>
 			<File
@@ -1216,19 +1156,39 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\doom\game1\Meat4NoBlock.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\doom\game1\Meat5.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\doom\game1\Meat5NoBlock.vc"
+				RelativePath="..\progs\doom\game1\Medikit.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\doom\game1\PlasmaShot.vc"
+				RelativePath="..\progs\doom\game1\NonsolidMeat2.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game1\NonsolidMeat3.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game1\NonsolidMeat4.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game1\NonsolidMeat5.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game1\NonsolidTwitch.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game1\PlasmaBall.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game1\PlasmaRifle.vc"
 				>
 			</File>
 			<File
@@ -1236,7 +1196,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\doom\game1\Puff.vc"
+				RelativePath="..\progs\doom\game1\RadSuit.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game1\RedCard.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game1\RedSkull.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game1\RedTorch.vc"
 				>
 			</File>
 			<File
@@ -1244,7 +1216,47 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\doom\game1\Shadows.vc"
+				RelativePath="..\progs\doom\game1\RocketAmmo.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game1\RocketBox.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game1\RocketLauncher.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game1\Shell.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game1\ShellBox.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game1\ShortBlueTorch.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game1\ShortGreenColumn.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game1\ShortGreenTorch.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game1\ShortRedColumn.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game1\ShortRedTorch.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game1\Shotgun.vc"
 				>
 			</File>
 			<File
@@ -1252,7 +1264,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\doom\game1\SmallPool.vc"
+				RelativePath="..\progs\doom\game1\SkullColumn.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game1\SmallBloodPool.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game1\Soulsphere.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game1\Spectre.vc"
 				>
 			</File>
 			<File
@@ -1261,6 +1285,18 @@
 			</File>
 			<File
 				RelativePath="..\progs\doom\game1\Stalagtite.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game1\Stimpack.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game1\TallGreenColumn.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game1\TallRedColumn.vc"
 				>
 			</File>
 			<File
@@ -1276,43 +1312,23 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\doom\game1\TeleportDest.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game1\TeleportDest2.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game1\TeleportDest3.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\doom\game1\TeleportFog.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\doom\game1\TeleportSpot.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game1\TeleportSpot2.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game1\TeleportSpot3.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game1\TorchBlue.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game1\TorchBlueShort.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game1\TorchGreen.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game1\TorchGreenShort.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game1\TorchRed.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game1\TorchRedShort.vc"
+				RelativePath="..\progs\doom\game1\TorchTree.vc"
 				>
 			</File>
 			<File
@@ -1356,7 +1372,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\doom\game1\Zombieman.vc"
+				RelativePath="..\progs\doom\game1\YellowCard.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game1\YellowSkull.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game1\ZombieMan.vc"
 				>
 			</File>
 		</Filter>
@@ -1372,7 +1396,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\doom\game2\ArchVile.vc"
+				RelativePath="..\progs\doom\game2\Archvile.vc"
 				>
 			</File>
 			<File
@@ -1404,23 +1428,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\doom\game2\FatShot.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game2\Fatso.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\doom\game2\HellKnight.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\doom\game2\ItemMegaSphere.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game2\ItemWeaponSuperShotgun.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game2\Mancubus.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game2\MancubusMissile.vc"
+				RelativePath="..\progs\doom\game2\Megasphere.vc"
 				>
 			</File>
 			<File
@@ -1448,11 +1468,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\doom\game2\SuperShotgun.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\doom\game2\WeaponSuperShotgun.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\doom\game2\WolfSS.vc"
+				RelativePath="..\progs\doom\game2\WolfensteinSS.vc"
 				>
 			</File>
 		</Filter>

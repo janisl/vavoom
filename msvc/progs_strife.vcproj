@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1253"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="8,00"
 	Name="progs_strife"
 	ProjectGUID="{1CD88557-1039-4B0C-9DF6-AB181E799536}"
 	RootNamespace="progs_doom_shared"
@@ -692,51 +692,35 @@
 			Name="game"
 			>
 			<File
-				RelativePath="..\progs\strife\game\Accuracy.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\strife\game\Acolyte.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Acolyte2.vc"
+				RelativePath="..\progs\strife\game\AcolyteBlue.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Acolyte3.vc"
+				RelativePath="..\progs\strife\game\AcolyteDGreen.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Acolyte4.vc"
+				RelativePath="..\progs\strife\game\AcolyteGold.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Acolyte5.vc"
+				RelativePath="..\progs\strife\game\AcolyteGray.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Acolyte6.vc"
+				RelativePath="..\progs\strife\game\AcolyteLGreen.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Acolyte7.vc"
+				RelativePath="..\progs\strife\game\AcolyteRed.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Acolyte8.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\AcolyteArmor.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\AcolyteBase.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\AcolyteCarcass.vc"
+				RelativePath="..\progs\strife\game\AcolyteRust.vc"
 				>
 			</File>
 			<File
@@ -744,51 +728,71 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\strife\game\AcolyteTan.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\AcolyteToBe.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\strife\game\Actor.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Alarm1.vc"
+				RelativePath="..\progs\strife\game\AlienAspClimber.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\AlarmIndicator.vc"
+				RelativePath="..\progs\strife\game\AlienBubbleColumn.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\AlnBoublesCeiling.vc"
+				RelativePath="..\progs\strife\game\AlienCeilingBubble.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\AlnBoublesColumn.vc"
+				RelativePath="..\progs\strife\game\AlienChunkLarge.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\AlnBoublesFloor.vc"
+				RelativePath="..\progs\strife\game\AlienChunkSmall.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\AlnColumn.vc"
+				RelativePath="..\progs\strife\game\AlienFloorBubble.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\AlnPowerColumn.vc"
+				RelativePath="..\progs\strife\game\AlienSpectre1.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\AlnSpdl.vc"
+				RelativePath="..\progs\strife\game\AlienSpectre2.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Ammo2.vc"
+				RelativePath="..\progs\strife\game\AlienSpectre3.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Ammo_satchel.vc"
+				RelativePath="..\progs\strife\game\AlienSpectre4.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\AmmoFeader.vc"
+				RelativePath="..\progs\strife\game\AlienSpectre5.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\AlienSpiderLight.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\AmmoFiller.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\AmmoFillup.vc"
 				>
 			</File>
 			<File
@@ -796,15 +800,43 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\strife\game\AmmoSatchel.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\strife\game\Anvil.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Barrier1.vc"
+				RelativePath="..\progs\strife\game\Armorer.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\AssaultGun.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\AssaultGunStanding.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\BarKeep.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\BarricadeColumn.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\BaseKey.vc"
 				>
 			</File>
 			<File
 				RelativePath="..\progs\strife\game\Beggar.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\Beggar1.vc"
 				>
 			</File>
 			<File
@@ -824,7 +856,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Bishop.vc"
+				RelativePath="..\progs\strife\game\BeldinsRing.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\BigTree2.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\BishopMissile.vc"
 				>
 			</File>
 			<File
@@ -832,11 +872,23 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Bowl.vc"
+				RelativePath="..\progs\strife\game\BloodSplash.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Brazier.vc"
+				RelativePath="..\progs\strife\game\BloodSplashBase.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\BlueCrystalKey.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\BoxOfBullets.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\BrassKey.vc"
 				>
 			</File>
 			<File
@@ -844,19 +896,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\BurningBarrel.vc"
+				RelativePath="..\progs\strife\game\BurningBowl.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Bush.vc"
+				RelativePath="..\progs\strife\game\BurningBrazier.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Cage.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\Candelabra.vc"
+				RelativePath="..\progs\strife\game\CageLight.vc"
 				>
 			</File>
 			<File
@@ -864,15 +912,47 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\CeilingDrip.vc"
+				RelativePath="..\progs\strife\game\CatacombKey.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Chain.vc"
+				RelativePath="..\progs\strife\game\CavePillarBottom.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\CavePillarTop.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\CeilingChain.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\CeilingTurret.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\ChapelKey.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\ChimneyStack.vc"
 				>
 			</File>
 			<File
 				RelativePath="..\progs\strife\game\classes.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\ClientGameBaseEx.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\ClipOfBullets.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\CloseDoor222.vc"
 				>
 			</File>
 			<File
@@ -884,31 +964,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\ComputerCore.vc"
+				RelativePath="..\progs\strife\game\Computer.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\ConversationItem302.vc"
+				RelativePath="..\progs\strife\game\CoreKey.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\ConversationItem303.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\ConversationItem305.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\ConversationItem306.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\ConversationItem307.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\ConversationItem343.vc"
+				RelativePath="..\progs\strife\game\CrateOfMissiles.vc"
 				>
 			</File>
 			<File
@@ -916,19 +980,31 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\CrusaderCarcass.vc"
+				RelativePath="..\progs\strife\game\CrusaderMissile.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\DamagedStoneStatue.vc"
+				RelativePath="..\progs\strife\game\DeadAcolyte.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\DeadBody.vc"
+				RelativePath="..\progs\strife\game\DeadCrusader.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\DeadBody2.vc"
+				RelativePath="..\progs\strife\game\DeadPeasant.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\DeadReaver.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\DeadRebel.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\DeadStrifePlayer.vc"
 				>
 			</File>
 			<File
@@ -948,7 +1024,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\ElectricArrow.vc"
+				RelativePath="..\progs\strife\game\ElectricBolt.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\ElectricBolts.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\EnergyPack.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\EnergyPod.vc"
 				>
 			</File>
 			<File
@@ -956,43 +1044,51 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\EntityBossPod.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\strife\game\EntityNest.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Environmental_Suit.vc"
+				RelativePath="..\progs\strife\game\EntityPod.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\FireFoot.vc"
+				RelativePath="..\progs\strife\game\EntitySecond.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\FireGrenade.vc"
+				RelativePath="..\progs\strife\game\EnvironmentalSuit.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Flame_thrower_Parts.vc"
+				RelativePath="..\progs\strife\game\ExplosiveBarrel2.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\FlameFX1.vc"
+				RelativePath="..\progs\strife\game\FactoryKey.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\FlameFX2.vc"
+				RelativePath="..\progs\strife\game\FastFlameMissile.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\ForceFieldGuardian.vc"
+				RelativePath="..\progs\strife\game\FireDroplet.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\GateControl.vc"
+				RelativePath="..\progs\strife\game\FlameMissile.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\FlameThrower.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\FlameThrowerParts.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\ForceFieldGuard.vc"
 				>
 			</File>
 			<File
@@ -1012,19 +1108,31 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\GrenadeFlame.vc"
+				RelativePath="..\progs\strife\game\GoldKey.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Guard_Uniform.vc"
+				RelativePath="..\progs\strife\game\GovsKey.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Health1.vc"
+				RelativePath="..\progs\strife\game\GuardUniform.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Hearths.vc"
+				RelativePath="..\progs\strife\game\GunTraining.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\HealthFillup.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\HealthTraining.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\HeartsInTank.vc"
 				>
 			</File>
 			<File
@@ -1032,11 +1140,23 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\HugeElectricColumn.vc"
+				RelativePath="..\progs\strife\game\HEGrenadeRounds.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Info1.vc"
+				RelativePath="..\progs\strife\game\HugeTorch.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\IDBadge.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\IDCard.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\Info.vc"
 				>
 			</File>
 			<File
@@ -1048,7 +1168,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\InquisitorGrenade.vc"
+				RelativePath="..\progs\strife\game\InquisitorShot.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\InterrogatorReport.vc"
 				>
 			</File>
 			<File
@@ -1056,203 +1180,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\ItemAmmoBoxOfBullets.vc"
+				RelativePath="..\progs\strife\game\ItemFog.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\ItemAmmoClipOfBullets.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\ItemAmmoCrateOfMissiles.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\ItemAmmoElectricBolts.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\ItemAmmoEnergyPack.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\ItemAmmoEnergyPod.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\ItemAmmoHEGrenadeRounds.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\ItemAmmoMiniMissiles.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\ItemAmmoPhosphorusGrenadeRounds.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\ItemAmmoPoisonBolts.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\ItemBaseKey.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\ItemBlueCrystalKey.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\ItemBrassKey.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\ItemCatacombKey.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\ItemChapelKey.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\ItemCoreKey.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\ItemFactoryKey.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\ItemGoldKey.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\ItemGovsKey.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\ItemIDBadge.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\ItemIDCard.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\ItemMaulerKey.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\ItemMilitaryID.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\ItemMineKey.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\ItemNewKey5.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\ItemOracleKey.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\ItemOrderKey.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\ItemPasscard.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\ItemPower1Key.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\ItemPower2Key.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\ItemPower3Key.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\ItemPrisonKey.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\ItemRedCrystalKey.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\ItemRespawnFog.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\ItemSecurityKey.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\ItemSeveredHand.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\ItemSilverKey.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\ItemWarehouseKey.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\ItemWeaponAssaultGun.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\ItemWeaponAssaultGun2.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\ItemWeaponCrossbow.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\ItemWeaponFlameThrower.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\ItemWeaponGrenadeLauncher.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\ItemWeaponMauler.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\ItemWeaponMiniMissileLauncher.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\ItemWeaponSigil1.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\ItemWeaponSigil2.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\ItemWeaponSigil3.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\ItemWeaponSigil4.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\ItemWeaponSigil5.vc"
+				RelativePath="..\progs\strife\game\Junk.vc"
 				>
 			</File>
 			<File
@@ -1260,19 +1192,23 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\strife\game\KlaxonWarningLight.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\strife\game\KneelingGyu.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Lamp.vc"
+				RelativePath="..\progs\strife\game\LargeTorch.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\LampCandle.vc"
+				RelativePath="..\progs\strife\game\LavaSmoke.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Latern.vc"
+				RelativePath="..\progs\strife\game\LavaSplash.vc"
 				>
 			</File>
 			<File
@@ -1280,11 +1216,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Lite1.vc"
+				RelativePath="..\progs\strife\game\LightBrownFluorescent.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\LogInWater.vc"
+				RelativePath="..\progs\strife\game\LightGlobe.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\LightGoldFluorescent.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\LightSilverFluorescent.vc"
 				>
 			</File>
 			<File
@@ -1292,15 +1236,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\LoremasterChain.vc"
+				RelativePath="..\progs\strife\game\LoreShot.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\LoremasterChainTrail.vc"
+				RelativePath="..\progs\strife\game\LoreShot2.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Macil.vc"
+				RelativePath="..\progs\strife\game\Macil1.vc"
 				>
 			</File>
 			<File
@@ -1312,10 +1256,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Map.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\strife\game\MapSpot.vc"
 				>
 			</File>
@@ -1324,19 +1264,31 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\strife\game\Mauler.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\MaulerKey.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\strife\game\MaulerPuff.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\MaulerTorpedoMissile.vc"
+				RelativePath="..\progs\strife\game\MaulerTorpedo.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\MaulerTorpedoWav.vc"
+				RelativePath="..\progs\strife\game\MaulerTorpedoWave.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\MeatChunk.vc"
+				RelativePath="..\progs\strife\game\Meat.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\Medic.vc"
 				>
 			</File>
 			<File
@@ -1344,23 +1296,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\strife\game\MediumTorch.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\strife\game\MedPatch.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\MerchanderArmorer.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\MerchanderBarKeep.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\MerchanderMedic.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\MerchanderWeaponSmith.vc"
+				RelativePath="..\progs\strife\game\Merchant.vc"
 				>
 			</File>
 			<File
@@ -1368,7 +1312,27 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\strife\game\MetalPot.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\MilitaryID.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\MineKey.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\strife\game\MiniMissile.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\MiniMissileLauncher.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\MiniMissiles.vc"
 				>
 			</File>
 			<File
@@ -1376,19 +1340,27 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\MonitorColumn.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\strife\game\Mug.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Offering_Chalice.vc"
+				RelativePath="..\progs\strife\game\NewKey5.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Officers_Uniform.vc"
+				RelativePath="..\progs\strife\game\OfferingChalice.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\OfficersUniform.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\OpenDoor222.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\OpenDoor224.vc"
 				>
 			</File>
 			<File
@@ -1396,7 +1368,27 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Oracle_Pass.vc"
+				RelativePath="..\progs\strife\game\OracleKey.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\OraclePass.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\OrderKey.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\OutsideLamp.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\PalmTree.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\Passcard.vc"
 				>
 			</File>
 			<File
@@ -1405,6 +1397,10 @@
 			</File>
 			<File
 				RelativePath="..\progs\strife\game\Peasant.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\Peasant1.vc"
 				>
 			</File>
 			<File
@@ -1492,19 +1488,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\PeasantBase.vc"
+				RelativePath="..\progs\strife\game\PhosphorousFire.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\PeasantCarcass.vc"
+				RelativePath="..\progs\strife\game\PhosphorousGrenade.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\PeasantDummy.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\PeasantSpawner.vc"
+				RelativePath="..\progs\strife\game\PhosphorusGrenadeRounds.vc"
 				>
 			</File>
 			<File
@@ -1512,11 +1504,43 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Player.vc"
+				RelativePath="..\progs\strife\game\PileOfGuts.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\PlayerCarcass.vc"
+				RelativePath="..\progs\strife\game\PillarAlienPower.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\PillarAztec.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\PillarAztecDamaged.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\PillarAztecRuined.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\PillarHugeTech.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\PillarTechno.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\Piston.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\Pitcher.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\Player.vc"
 				>
 			</File>
 			<File
@@ -1532,7 +1556,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\PoisonArrow.vc"
+				RelativePath="..\progs\strife\game\PoisonBolt.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\PoisonBolts.vc"
 				>
 			</File>
 			<File
@@ -1540,7 +1568,23 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Pot1.vc"
+				RelativePath="..\progs\strife\game\Pot.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\PottedTree.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\Power1Key.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\Power2Key.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\Power3Key.vc"
 				>
 			</File>
 			<File
@@ -1552,7 +1596,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Prison_pass.vc"
+				RelativePath="..\progs\strife\game\PrisonKey.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\PrisonPass.vc"
 				>
 			</File>
 			<File
@@ -1560,7 +1608,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\ProgrammersBase.vc"
+				RelativePath="..\progs\strife\game\ProgrammerBase.vc"
 				>
 			</File>
 			<File
@@ -1568,151 +1616,143 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Puff.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\PuffPow3.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\strife\game\QuakeFocus.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Quest1.vc"
+				RelativePath="..\progs\strife\game\QuestItem.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Quest10.vc"
+				RelativePath="..\progs\strife\game\QuestItem1.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Quest11.vc"
+				RelativePath="..\progs\strife\game\QuestItem10.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Quest12.vc"
+				RelativePath="..\progs\strife\game\QuestItem11.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Quest13.vc"
+				RelativePath="..\progs\strife\game\QuestItem12.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Quest14.vc"
+				RelativePath="..\progs\strife\game\QuestItem13.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Quest15.vc"
+				RelativePath="..\progs\strife\game\QuestItem14.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Quest16.vc"
+				RelativePath="..\progs\strife\game\QuestItem15.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Quest17.vc"
+				RelativePath="..\progs\strife\game\QuestItem16.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Quest18.vc"
+				RelativePath="..\progs\strife\game\QuestItem17.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Quest19.vc"
+				RelativePath="..\progs\strife\game\QuestItem18.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Quest2.vc"
+				RelativePath="..\progs\strife\game\QuestItem19.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Quest20.vc"
+				RelativePath="..\progs\strife\game\QuestItem2.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Quest21.vc"
+				RelativePath="..\progs\strife\game\QuestItem20.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Quest22.vc"
+				RelativePath="..\progs\strife\game\QuestItem21.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Quest23.vc"
+				RelativePath="..\progs\strife\game\QuestItem22.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Quest24.vc"
+				RelativePath="..\progs\strife\game\QuestItem23.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Quest25.vc"
+				RelativePath="..\progs\strife\game\QuestItem24.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Quest26.vc"
+				RelativePath="..\progs\strife\game\QuestItem25.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Quest27.vc"
+				RelativePath="..\progs\strife\game\QuestItem26.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Quest28.vc"
+				RelativePath="..\progs\strife\game\QuestItem27.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Quest29.vc"
+				RelativePath="..\progs\strife\game\QuestItem28.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Quest3.vc"
+				RelativePath="..\progs\strife\game\QuestItem29.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Quest30.vc"
+				RelativePath="..\progs\strife\game\QuestItem3.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Quest31.vc"
+				RelativePath="..\progs\strife\game\QuestItem30.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Quest4.vc"
+				RelativePath="..\progs\strife\game\QuestItem31.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Quest5.vc"
+				RelativePath="..\progs\strife\game\QuestItem4.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Quest6.vc"
+				RelativePath="..\progs\strife\game\QuestItem5.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Quest7.vc"
+				RelativePath="..\progs\strife\game\QuestItem6.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Quest8.vc"
+				RelativePath="..\progs\strife\game\QuestItem7.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Quest9.vc"
+				RelativePath="..\progs\strife\game\QuestItem8.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\QuestInfo.vc"
+				RelativePath="..\progs\strife\game\QuestItem9.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Rat.vc"
+				RelativePath="..\progs\strife\game\RaiseAlarm.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\ReactorPuff.vc"
+				RelativePath="..\progs\strife\game\RatBuddy.vc"
 				>
 			</File>
 			<File
@@ -1720,11 +1760,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\ReaverCarcass.vc"
+				RelativePath="..\progs\strife\game\Rebel.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Rebel.vc"
+				RelativePath="..\progs\strife\game\Rebel1.vc"
 				>
 			</File>
 			<File
@@ -1748,83 +1788,59 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\RebelCarcass.vc"
+				RelativePath="..\progs\strife\game\RebelBoots.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\RebelsBoots.vc"
+				RelativePath="..\progs\strife\game\RebelHelmet.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\RebelsHat.vc"
+				RelativePath="..\progs\strife\game\RebelShirt.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\RebelsTop.vc"
+				RelativePath="..\progs\strife\game\RedCrystalKey.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Report.vc"
+				RelativePath="..\progs\strife\game\RocketTrail.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Ring.vc"
+				RelativePath="..\progs\strife\game\Rubble1.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\RobotMissile.vc"
+				RelativePath="..\progs\strife\game\Rubble2.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\RobotMissile2.vc"
+				RelativePath="..\progs\strife\game\Rubble3.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Rock1.vc"
+				RelativePath="..\progs\strife\game\Rubble4.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Rock2.vc"
+				RelativePath="..\progs\strife\game\Rubble5.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Rock3.vc"
+				RelativePath="..\progs\strife\game\Rubble6.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Rock4.vc"
+				RelativePath="..\progs\strife\game\Rubble7.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Rub1.vc"
+				RelativePath="..\progs\strife\game\Rubble8.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Rub2.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\Rub3.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\Rub4.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\Rub5.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\Rub6.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\Rub7.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\Rub8.vc"
+				RelativePath="..\progs\strife\game\SacrificedGuy.vc"
 				>
 			</File>
 			<File
@@ -1832,23 +1848,51 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\strife\game\SecurityKey.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\strife\game\Sentinel.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\SentinelShot.vc"
+				RelativePath="..\progs\strife\game\SentinelFX1.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\SentinelShotTrail.vc"
+				RelativePath="..\progs\strife\game\SentinelFX2.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Shadow_armor.vc"
+				RelativePath="..\progs\strife\game\SeveredHand.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Shrub.vc"
+				RelativePath="..\progs\strife\game\ShadowArmor.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\ShortBush.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\Sigil1.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\Sigil2.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\Sigil3.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\Sigil4.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\Sigil5.vc"
 				>
 			</File>
 			<File
@@ -1856,31 +1900,35 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\SigilFloor.vc"
+				RelativePath="..\progs\strife\game\SilverKey.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\SigilFX1.vc"
+				RelativePath="..\progs\strife\game\SlideshowStarter.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\SigilFX2.vc"
+				RelativePath="..\progs\strife\game\SlimeChunk.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\SigilFX3.vc"
+				RelativePath="..\progs\strife\game\SlimeSplash.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\SigilFX4.vc"
+				RelativePath="..\progs\strife\game\SludgeChunk.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\SigilFX5.vc"
+				RelativePath="..\progs\strife\game\SludgeSplash.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\SigilZap.vc"
+				RelativePath="..\progs\strife\game\SmallTorchLit.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\SmallTorchUnlit.vc"
 				>
 			</File>
 			<File
@@ -1892,83 +1940,87 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Specter1.vc"
+				RelativePath="..\progs\strife\game\SpectralLightningBall1.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Specter2.vc"
+				RelativePath="..\progs\strife\game\SpectralLightningBall2.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Specter3.vc"
+				RelativePath="..\progs\strife\game\SpectralLightningBigBall1.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Specter4.vc"
+				RelativePath="..\progs\strife\game\SpectralLightningBigBall2.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Specter5.vc"
+				RelativePath="..\progs\strife\game\SpectralLightningBigV1.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\SpecterChunk.vc"
+				RelativePath="..\progs\strife\game\SpectralLightningBigV2.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\SpecterFX1.vc"
+				RelativePath="..\progs\strife\game\SpectralLightningH1.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\SpecterFX1_2.vc"
+				RelativePath="..\progs\strife\game\SpectralLightningH2.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\SpecterFX2.vc"
+				RelativePath="..\progs\strife\game\SpectralLightningH3.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\SpecterFX3.vc"
+				RelativePath="..\progs\strife\game\SpectralLightningHTail.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\SpecterFX4.vc"
+				RelativePath="..\progs\strife\game\SpectralLightningSpot.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\SpecterFX5.vc"
+				RelativePath="..\progs\strife\game\SpectralLightningV1.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\SpecterHead.vc"
+				RelativePath="..\progs\strife\game\SpectralLightningV2.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Stake.vc"
+				RelativePath="..\progs\strife\game\SRock1.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Stalagmite1.vc"
+				RelativePath="..\progs\strife\game\SRock2.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Stalagmite2.vc"
+				RelativePath="..\progs\strife\game\SRock3.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Stalagmite3.vc"
+				RelativePath="..\progs\strife\game\SRock4.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Stalagmite4.vc"
+				RelativePath="..\progs\strife\game\SStalactiteBig.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Stalagmite5.vc"
+				RelativePath="..\progs\strife\game\SStalactiteSmall.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Stalagmite6.vc"
+				RelativePath="..\progs\strife\game\SStalagmiteBig.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\SStalagmiteSmall.vc"
 				>
 			</File>
 			<File
@@ -1984,19 +2036,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\StealColumn.vc"
+				RelativePath="..\progs\strife\game\Statue.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\StealColumnBroken1.vc"
+				RelativePath="..\progs\strife\game\StatueRuined.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\StealColumnBroken2.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\StoneStatue.vc"
+				RelativePath="..\progs\strife\game\StickInWater.vc"
 				>
 			</File>
 			<File
@@ -2004,7 +2052,35 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\strife\game\StrifeBishop.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\StrifeBurningBarrel.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\StrifeCandelabra.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\StrifeCrossbow.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\StrifeGrenadeLauncher.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\StrifeHumanoid.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\strife\game\StrifeLevelInfo.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\StrifeMap.vc"
 				>
 			</File>
 			<File
@@ -2012,7 +2088,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\SubEntity.vc"
+				RelativePath="..\progs\strife\game\StrifePuff.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\StrifeSpark.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\StrifeWorldInfo.vc"
 				>
 			</File>
 			<File
@@ -2028,39 +2112,31 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\TallLamp1.vc"
+				RelativePath="..\progs\strife\game\TallBush.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\TallLamp2.vc"
+				RelativePath="..\progs\strife\game\Tank1.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\TallTorch.vc"
+				RelativePath="..\progs\strife\game\Tank2.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Tanker1.vc"
+				RelativePath="..\progs\strife\game\Tank3.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Tanker2.vc"
+				RelativePath="..\progs\strife\game\Tank4.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Tanker3.vc"
+				RelativePath="..\progs\strife\game\Tank5.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Tanker4.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\Tanker5.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\Tanker6.vc"
+				RelativePath="..\progs\strife\game\Tank6.vc"
 				>
 			</File>
 			<File
@@ -2068,15 +2144,31 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\TechBarrel.vc"
+				RelativePath="..\progs\strife\game\TargetPractice.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\TechJunk.vc"
+				RelativePath="..\progs\strife\game\TechLampBrass.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Teleporter_Beacon.vc"
+				RelativePath="..\progs\strife\game\TechLampSilver.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\TeleportDest.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\TeleportDest2.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\TeleportDest3.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\TeleporterBeacon.vc"
 				>
 			</File>
 			<File
@@ -2084,19 +2176,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\TeleportMarker.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\TeleportSpot.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\TeleportSpot2.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\TeleportSpot3.vc"
+				RelativePath="..\progs\strife\game\TeleportSwirl.vc"
 				>
 			</File>
 			<File
@@ -2104,71 +2184,27 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\TextureChangeDoor.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\TorchUnlit.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\Toughness.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\TrainingTarget.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\strife\game\Tray.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Tree1.vc"
+				RelativePath="..\progs\strife\game\TreeStub.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Tree2.vc"
+				RelativePath="..\progs\strife\game\Tub.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Tree3.vc"
+				RelativePath="..\progs\strife\game\UpgradeAccuracy.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Tree4.vc"
+				RelativePath="..\progs\strife\game\UpgradeStamina.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Tub1.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\Turret.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\Vase1.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\Vase2.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\WallLight1.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\WallLight2.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\WallLight3.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\WallTorch.vc"
+				RelativePath="..\progs\strife\game\WarehouseKey.vc"
 				>
 			</File>
 			<File
@@ -2180,11 +2216,23 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\strife\game\WaterDropOnFloor.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\strife\game\WaterfallSplash.vc"
 				>
 			</File>
 			<File
 				RelativePath="..\progs\strife\game\WaterFountain.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\WaterSplash.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\WaterSplashBase.vc"
 				>
 			</File>
 			<File
@@ -2228,7 +2276,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\WoodBarrel.vc"
+				RelativePath="..\progs\strife\game\WeaponSmith.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\WoodenBarrel.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\Zombie.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\ZombieSpawner.vc"
 				>
 			</File>
 		</Filter>

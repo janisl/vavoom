@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1253"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="8,00"
 	Name="progs_heretic"
 	ProjectGUID="{AEDD4819-EE4F-4A94-9776-10C430A9D291}"
 	RootNamespace="progs_doom_cgame"
@@ -700,6 +700,10 @@
 			Name="game"
 			>
 			<File
+				RelativePath="..\progs\heretic\game\ActivatedTimeBomb.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\heretic\game\Actor.vc"
 				>
 			</File>
@@ -708,47 +712,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\heretic\game\AmbientSoundSequence1.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\heretic\game\AmbientSoundSequence10.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\heretic\game\AmbientSoundSequence2.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\heretic\game\AmbientSoundSequence3.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\heretic\game\AmbientSoundSequence4.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\heretic\game\AmbientSoundSequence5.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\heretic\game\AmbientSoundSequence6.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\heretic\game\AmbientSoundSequence7.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\heretic\game\AmbientSoundSequence8.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\heretic\game\AmbientSoundSequence9.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\heretic\game\Ammo.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\heretic\game\ArtiEgg.vc"
 				>
 			</File>
 			<File
@@ -756,43 +724,43 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\heretic\game\ArtifactEgg.vc"
+				RelativePath="..\progs\heretic\game\ArtiFly.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\heretic\game\ArtifactFireBomb.vc"
+				RelativePath="..\progs\heretic\game\ArtiHealth.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\heretic\game\ArtifactFly.vc"
+				RelativePath="..\progs\heretic\game\ArtiInvisibility.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\heretic\game\ArtifactHealthFlask.vc"
+				RelativePath="..\progs\heretic\game\ArtiInvulnerability.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\heretic\game\ArtifactInvisibility.vc"
+				RelativePath="..\progs\heretic\game\ArtiSuperHealth.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\heretic\game\ArtifactInvulnerability.vc"
+				RelativePath="..\progs\heretic\game\ArtiTeleport.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\heretic\game\ArtifactSuperHeal.vc"
+				RelativePath="..\progs\heretic\game\ArtiTimeBomb.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\heretic\game\ArtifactTeleport.vc"
+				RelativePath="..\progs\heretic\game\ArtiTomeOfPower.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\heretic\game\ArtifactTomeOfPower.vc"
+				RelativePath="..\progs\heretic\game\ArtiTorch.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\heretic\game\ArtifactTorch.vc"
+				RelativePath="..\progs\heretic\game\BagOfHolding.vc"
 				>
 			</File>
 			<File
@@ -812,7 +780,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\heretic\game\Blaster.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\heretic\game\BlasterAmmo.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\heretic\game\BlasterFX1.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\heretic\game\BlasterHefty.vc"
 				>
 			</File>
 			<File
@@ -829,6 +809,14 @@
 			</File>
 			<File
 				RelativePath="..\progs\heretic\game\Blood.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\heretic\game\BloodSplash.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\heretic\game\BloodSplashBase.vc"
 				>
 			</File>
 			<File
@@ -880,6 +868,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\heretic\game\Crossbow.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\heretic\game\CrossbowAmmo.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\heretic\game\CrossbowFX1.vc"
 				>
 			</File>
@@ -896,6 +892,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\heretic\game\CrossbowHefty.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\heretic\game\CrystalVial.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\heretic\game\Decoration.vc"
 				>
 			</File>
@@ -904,15 +908,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\heretic\game\EggMissile.vc"
+				RelativePath="..\progs\heretic\game\EggFX.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\heretic\game\EnchantedShield.vc"
 				>
 			</File>
 			<File
 				RelativePath="..\progs\heretic\game\Feather.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\heretic\game\FireBomb.vc"
 				>
 			</File>
 			<File
@@ -928,11 +932,23 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\heretic\game\GoldWandMissile1.vc"
+				RelativePath="..\progs\heretic\game\Gauntlets.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\heretic\game\GoldWandMissile2.vc"
+				RelativePath="..\progs\heretic\game\GoldWandAmmo.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\heretic\game\GoldWandFX1.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\heretic\game\GoldWandFX2.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\heretic\game\GoldWandHefty.vc"
 				>
 			</File>
 			<File
@@ -948,19 +964,35 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\heretic\game\Head.vc"
+				RelativePath="..\progs\heretic\game\HeadFX1.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\heretic\game\HeadMissile1.vc"
+				RelativePath="..\progs\heretic\game\HeadFX2.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\heretic\game\HeadMissile2.vc"
+				RelativePath="..\progs\heretic\game\HeadFX3.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\heretic\game\HeadMissile3.vc"
+				RelativePath="..\progs\heretic\game\HereticImp.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\heretic\game\HereticImpBall.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\heretic\game\HereticImpChunk1.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\heretic\game\HereticImpChunk2.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\heretic\game\HereticImpLeader.vc"
 				>
 			</File>
 			<File
@@ -972,135 +1004,59 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\heretic\game\HornRodMissile1.vc"
+				RelativePath="..\progs\heretic\game\HereticSoundSequence1.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\heretic\game\HornRodMissile2.vc"
+				RelativePath="..\progs\heretic\game\HereticSoundSequence10.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\heretic\game\Imp.vc"
+				RelativePath="..\progs\heretic\game\HereticSoundSequence2.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\heretic\game\ImpBall.vc"
+				RelativePath="..\progs\heretic\game\HereticSoundSequence3.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\heretic\game\ImpChunk1.vc"
+				RelativePath="..\progs\heretic\game\HereticSoundSequence4.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\heretic\game\ImpChunk2.vc"
+				RelativePath="..\progs\heretic\game\HereticSoundSequence5.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\heretic\game\ImpLeader.vc"
+				RelativePath="..\progs\heretic\game\HereticSoundSequence6.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\heretic\game\ItemAmmoBlasterHefty.vc"
+				RelativePath="..\progs\heretic\game\HereticSoundSequence7.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\heretic\game\ItemAmmoBlasterWimpy.vc"
+				RelativePath="..\progs\heretic\game\HereticSoundSequence8.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\heretic\game\ItemAmmoCrossbowHefty.vc"
+				RelativePath="..\progs\heretic\game\HereticSoundSequence9.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\heretic\game\ItemAmmoCrossbowWimpy.vc"
+				RelativePath="..\progs\heretic\game\HereticWorldInfo.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\heretic\game\ItemAmmoGoldWandHefty.vc"
+				RelativePath="..\progs\heretic\game\HornRodFX1.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\heretic\game\ItemAmmoGoldWandWimpy.vc"
+				RelativePath="..\progs\heretic\game\HornRodFX2.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\heretic\game\ItemAmmoMaceHefty.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\heretic\game\ItemAmmoMaceWimpy.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\heretic\game\ItemAmmoPhoenixHefty.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\heretic\game\ItemAmmoPhoenixWimpy.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\heretic\game\ItemAmmoSkullRodHefty.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\heretic\game\ItemAmmoSkullRodWimpy.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\heretic\game\ItemBagOfHolding.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\heretic\game\ItemHealthPotion.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\heretic\game\ItemKeyBlue.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\heretic\game\ItemKeyGreen.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\heretic\game\ItemKeyYellow.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\heretic\game\ItemMap.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\heretic\game\ItemShield1.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\heretic\game\ItemShield2.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\heretic\game\ItemWeaponBlaster.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\heretic\game\ItemWeaponCrossbow.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\heretic\game\ItemWeaponGauntlets.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\heretic\game\ItemWeaponMace.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\heretic\game\ItemWeaponPhoenixRod.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\heretic\game\ItemWeaponSkullRod.vc"
+				RelativePath="..\progs\heretic\game\Ironlich.vc"
 				>
 			</File>
 			<File
@@ -1108,11 +1064,23 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\heretic\game\KeyBlue.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\heretic\game\KeyGizmoBlue.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\heretic\game\KeyGizmoFloat.vc"
+				RelativePath="..\progs\heretic\game\KeyGizmoFloatBlue.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\heretic\game\KeyGizmoFloatGreen.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\heretic\game\KeyGizmoFloatYellow.vc"
 				>
 			</File>
 			<File
@@ -1121,6 +1089,14 @@
 			</File>
 			<File
 				RelativePath="..\progs\heretic\game\KeyGizmoYellow.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\heretic\game\KeyGreen.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\heretic\game\KeyYellow.vc"
 				>
 			</File>
 			<File
@@ -1136,10 +1112,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\heretic\game\KnightRedAxe.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\heretic\game\LavaInflictor.vc"
 				>
 			</File>
@@ -1149,6 +1121,14 @@
 			</File>
 			<File
 				RelativePath="..\progs\heretic\game\LavaSplash.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\heretic\game\Mace.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\heretic\game\MaceAmmo.vc"
 				>
 			</File>
 			<File
@@ -1168,6 +1148,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\heretic\game\MaceHefty.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\heretic\game\MainGameInfo.vc"
 				>
 			</File>
@@ -1184,15 +1168,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\heretic\game\MinotaurFloorFire.vc"
+				RelativePath="..\progs\heretic\game\MinotaurFX1.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\heretic\game\MinotaurFloorFire2.vc"
+				RelativePath="..\progs\heretic\game\MinotaurFX2.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\heretic\game\MinotaurMissile.vc"
+				RelativePath="..\progs\heretic\game\MinotaurFX3.vc"
 				>
 			</File>
 			<File
@@ -1208,6 +1192,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\heretic\game\MummyFX1.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\heretic\game\MummyGhost.vc"
 				>
 			</File>
@@ -1217,10 +1205,6 @@
 			</File>
 			<File
 				RelativePath="..\progs\heretic\game\MummyLeaderGhost.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\heretic\game\MummyMissile.vc"
 				>
 			</File>
 			<File
@@ -1241,6 +1225,18 @@
 			</File>
 			<File
 				RelativePath="..\progs\heretic\game\PhoenixPuff.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\heretic\game\PhoenixRod.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\heretic\game\PhoenixRodAmmo.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\heretic\game\PhoenixRodHefty.vc"
 				>
 			</File>
 			<File
@@ -1280,10 +1276,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\heretic\game\ProjEffect.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\heretic\game\Puffy.vc"
 				>
 			</File>
@@ -1292,7 +1284,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\heretic\game\RainPlayer1.vc"
+				RelativePath="..\progs\heretic\game\RainPillar.vc"
 				>
 			</File>
 			<File
@@ -1308,11 +1300,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\heretic\game\RedAxe.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\heretic\game\Ripper.vc"
 				>
 			</File>
 			<File
 				RelativePath="..\progs\heretic\game\SerpentTorch.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\heretic\game\SilverShield.vc"
 				>
 			</File>
 			<File
@@ -1332,6 +1332,26 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\heretic\game\SkullRod.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\heretic\game\SkullRodAmmo.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\heretic\game\SkullRodHefty.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\heretic\game\SlimeChunk.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\heretic\game\SlimeSplash.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\heretic\game\SludgeChunk.vc"
 				>
 			</File>
@@ -1348,11 +1368,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\heretic\game\SnakeProjectileA.vc"
+				RelativePath="..\progs\heretic\game\SnakeProjA.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\heretic\game\SnakeProjectileB.vc"
+				RelativePath="..\progs\heretic\game\SnakeProjB.vc"
 				>
 			</File>
 			<File
@@ -1360,27 +1380,27 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\heretic\game\Sorcerer1Missile.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\heretic\game\Sorcerer2.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\heretic\game\Sorcerer2Missile1.vc"
+				RelativePath="..\progs\heretic\game\Sorcerer2FX1.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\heretic\game\Sorcerer2Missile2.vc"
+				RelativePath="..\progs\heretic\game\Sorcerer2FX2.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\heretic\game\Sorcerer2MissileSpark.vc"
+				RelativePath="..\progs\heretic\game\Sorcerer2FXSpark.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\heretic\game\Sorcerer2TeleFade.vc"
+				RelativePath="..\progs\heretic\game\Sorcerer2Telefade.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\heretic\game\SorcererFX1.vc"
 				>
 			</File>
 			<File
@@ -1397,14 +1417,6 @@
 			</File>
 			<File
 				RelativePath="..\progs\heretic\game\SoundWind.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\heretic\game\Splash.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\heretic\game\SplashBase.vc"
 				>
 			</File>
 			<File
@@ -1440,19 +1452,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\heretic\game\SuperMap.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\heretic\svprogs.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\heretic\game\TeleGlitGen.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\heretic\game\TeleGlitGen2.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\heretic\game\TeleGlitter.vc"
+				RelativePath="..\progs\heretic\game\TeleGlitter1.vc"
 				>
 			</File>
 			<File
@@ -1460,19 +1468,27 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\heretic\game\TeleGlitterGenerator1.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\heretic\game\TeleGlitterGenerator2.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\heretic\game\TeleportDest.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\heretic\game\TeleportDest2.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\heretic\game\TeleportDest3.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\heretic\game\TeleportFog.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\heretic\game\TeleportSpot.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\heretic\game\TeleportSpot2.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\heretic\game\TeleportSpot3.vc"
 				>
 			</File>
 			<File
@@ -1489,6 +1505,14 @@
 			</File>
 			<File
 				RelativePath="..\progs\heretic\game\WallTorch.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\heretic\game\WaterSplash.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\heretic\game\WaterSplashBase.vc"
 				>
 			</File>
 			<File
@@ -1536,7 +1560,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\heretic\game\WhirlWind.vc"
+				RelativePath="..\progs\heretic\game\Whirlwind.vc"
 				>
 			</File>
 			<File
@@ -1544,7 +1568,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\heretic\game\WizardMissile.vc"
+				RelativePath="..\progs\heretic\game\WizardFX1.vc"
 				>
 			</File>
 		</Filter>

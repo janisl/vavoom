@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1253"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="8,00"
 	Name="progs_common"
 	ProjectGUID="{EE79378F-9689-40B8-99F4-B0E5872A6337}"
 	RootNamespace="progs_common_engine"
@@ -180,15 +180,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\common\macros.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\common\engine\ModalWindow.vc"
 				>
 			</File>
 			<File
 				RelativePath="..\progs\common\engine\Object.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\engine\PlayerReplicationInfo.vc"
 				>
 			</File>
 			<File
@@ -201,6 +201,10 @@
 			</File>
 			<File
 				RelativePath="..\progs\common\engine\Window.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\engine\WorldInfo.vc"
 				>
 			</File>
 		</Filter>
@@ -277,6 +281,10 @@
 			</File>
 			<File
 				RelativePath="..\progs\common\linespec\Platform.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\PlayerEx.vc"
 				>
 			</File>
 			<File
