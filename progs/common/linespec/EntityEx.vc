@@ -172,9 +172,6 @@ TVec			teleport_pos;
 
 EntityEx		linetarget;	// who got hit (or NULL)
 
-// [FB] Global copy of hit_point
-TVec			hit_pt;
-
 // Static light parameters.
 TVec			LightOffset;
 int				LightColour;
@@ -1786,7 +1783,8 @@ final bool ShootCheckPlanes(sector_t* sec, TVec linestart, TVec lineend,
 //==========================================================================
 
 final int LineAttack(TVec Dir, float Distance, int LADamage,
-	class<EntityEx> PuffType, optional bool NoAttackGhosts)
+	class<EntityEx> PuffType, optional bool NoAttackGhosts,
+	optional TVec* OutHitPoint)
 {
 	TVec			Dst;
 	intercept_t*	in;
@@ -1911,7 +1909,10 @@ final int LineAttack(TVec Dir, float Distance, int LADamage,
 			continue;
 		}
 
-		hit_pt = hit_point;
+		if (OutHitPoint)
+		{
+			*OutHitPoint = hit_point;
+		}
 
 		// Spawn bullet puffs or blod spots, depending on target type.
 		if (PuffType.default.bPuffOnActors || th.bNoBlood ||
