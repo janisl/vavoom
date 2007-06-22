@@ -3203,22 +3203,8 @@ Actor SpawnPlayerMissile(class<Actor> type)
 
 	// Try to find a target
 	angles = MO.Angles;
-	vforward = Actor(MO).AimLineAttack(angles, 16.0 * 64.0);
-	if (!Actor(MO).linetarget)
-	{
-		angles.yaw = AngleMod360(angles.yaw + 45.0 / 8.0);
-		vforward = Actor(MO).AimLineAttack(angles, 16.0 * 64.0);
-		if (!Actor(MO).linetarget)
-		{
-			angles.yaw = AngleMod360(angles.yaw - 45.0 / 4.0);
-			vforward = Actor(MO).AimLineAttack(angles, 16.0 * 64.0);
-			if (!Actor(MO).linetarget)
-			{
-				angles.yaw = MO.Angles.yaw;
-				AngleVector(&angles, &vforward);
-			}
-		}
-	}
+	vforward = Actor(MO).Aim(16.0 * 64.0);
+	VectorAngles(&vforward, &angles);
 	org = MO.Origin;
 	if (type == LightningFloor)
 	{
@@ -3279,24 +3265,8 @@ Actor SpawnPlayerMissileAngle(class<Actor> type, float angle)
 	//
 	// see which target is to be aimed at
 	//
-	angles = MO.Angles;
-	angles.yaw = angle;
-	vforward = Actor(MO).AimLineAttack(angles, 16.0 * 64.0);
-	if (!Actor(MO).linetarget)
-	{
-		angles.yaw = AngleMod360(angles.yaw + 45.0 / 8.0);
-		vforward = Actor(MO).AimLineAttack(angles, 16.0 * 64.0);
-		if (!Actor(MO).linetarget)
-		{
-			angles.yaw = AngleMod360(angles.yaw - 45.0 / 4.0);
-			vforward = Actor(MO).AimLineAttack(angles, 16.0 * 64.0);
-			if (!Actor(MO).linetarget)
-			{
-				angles.yaw = angle;
-				AngleVector(&angles, &vforward);
-			}
-		}
-	}
+	vforward = Actor(MO).Aim(16.0 * 64.0, angle);
+	VectorAngles(&vforward, &angles);
 	org = MO.Origin;
 	org.z = MO.Origin.z + 4.0 * 8.0 - tan(MO.Angles.pitch);
 	org.z -= MO.FloorClip;
@@ -3322,24 +3292,8 @@ Actor SpawnPlayerMissileAngleXYZ(TVec org, class<Actor> type, float angle)
 	//
 	// see which target is to be aimed at
 	//
-	angles = MO.Angles;
-	angles.yaw = angle;
-	vforward = Actor(MO).AimLineAttack(angles, 16.0 * 64.0);
-	if (!Actor(MO).linetarget)
-	{
-		angles.yaw = AngleMod360(angles.yaw + 45.0 / 8.0);
-		vforward = Actor(MO).AimLineAttack(angles, 16.0 * 64.0);
-		if (!Actor(MO).linetarget)
-		{
-			angles.yaw = AngleMod360(angles.yaw - 45.0 / 4.0);
-			vforward = Actor(MO).AimLineAttack(angles, 16.0 * 64.0);
-			if (!Actor(MO).linetarget)
-			{
-				angles.yaw = angle;
-				AngleVector(&angles, &vforward);
-			}
-		}
-	}
+	vforward = Actor(MO).Aim(16.0 * 64.0, angle);
+	VectorAngles(&vforward, &angles);
 	org.z += 4.0 * 8.0 - tan(MO.Angles.pitch);
 	org.z -= MO.FloorClip;
 	th = HexenLevelInfo(Level).Spawn(type, org);
