@@ -80,4 +80,5 @@ defaultproperties
 	bDropOff = true;
 	bWindThrust = true;
 	bSlide = true;
+	RDFactor = 0.25;
 }

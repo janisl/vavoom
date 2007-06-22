@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class GoldWandPuff2:Effect;
+class GoldWandPuff2 : Effect;
 
 __states__
 {
@@ -35,5 +35,6 @@ __states__
 
 defaultproperties
 {
+	bPuffOnActors = true;
 	IdleState = S_GWANDPUFF2_1;
 }

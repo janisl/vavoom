@@ -52,7 +52,7 @@ final void A_PosAttack()
 
 	damage = ((P_Random() % 5) + 1) * 3;
 
-	LineAttack(dir, MISSILERANGE, damage);
+	LineAttack(dir, MISSILERANGE, damage, BulletPuff);
 
 	Effects |= DoomDefs::EF_DL_MUZZLEFLASH;
 }

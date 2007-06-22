@@ -51,7 +51,6 @@ bool bFireDamage;		// does fire damage
 bool bNoDamageThrust;	// does not thrust target when damaging
 bool bNonShootable;		// mobj is totally non-shootable,
 						// but still considered solid
-bool bInvulnerable;		// mobj is invulnerable
 bool bDamageInvulnerable;	// These inflictors aren't foiled by invulnerability
 bool bNoMorph;			// Won't morph into a pig.
 
@@ -1294,9 +1293,20 @@ void PoisonDamage(Actor source, int damage, bool playPainSound)
 //
 //==========================================================================
 
-void SpawnBloodSplatter(TVec org)
+void SpawnBloodSplatter(TVec org, int damage)
 {
 	Actor mo;
+	int i;
+
+	for (i = 0; i < MAXPLAYERS; i++)
+	{
+		if (!Level.Game.Players[i])
+			continue;
+		if (!Level.Game.Players[i].bSpawned)
+			continue;
+		Player(Level.Game.Players[i]).ClientBlood(org,
+			damage > 255 ? 255 : damage);
+	}
 
 	mo = Spawn(BloodSplatter, org);
 	mo.Target = self;
@@ -1629,7 +1639,7 @@ bool Touch(Entity InOther)
 				!(Class == TelOtherFX4) &&
 				!(Class == TelOtherFX5) && (P_Random() < 192))
 			{
-				Other.SpawnBloodSplatter(Origin);
+				Other.SpawnBloodSplatter(Origin, damage);
 			}
 			Other.Damage(self, Target, damage);
 		}
@@ -2431,519 +2441,13 @@ void Blast(Actor source, float strength)
 	}
 }
 
-//**************************************************************************
-//
-//  RADIUS ATTACK
-//
-//**************************************************************************
-
-//==========================================================================
-//
-//  PIT_RadiusAttack
-//
-//  "bombsource" is the creature that caused the explosion at "bombspot".
-//
-//==========================================================================
-
-bool PIT_RadiusAttack(Entity Other)
-{
-	float dist;
-	int damage;
-
-	if (!Actor(Other).bShootable)
-	{
-		return true;
-	}
-//  if (Other.Flags2 & MF2_BOSS)
-//  {
-//		// Bosses take no damage from PIT_RadiusAttack
-//      return true;
-//  }
-	if (!DamageSource && Other == Target)
-	{
-		// don't damage the source of the explosion
-		return true;
-	}
-	dist = Length(Other.GetCentre() - GetCentre()) - Other.Radius;
-	if (dist < 0.0)
-	{
-		dist = 0.0;
-	}
-	if (dist >= bombdistance)
-	{
-		// Out of range
-		return true;
-	}
-	if (Other.CanSee(self))
-	{
-		// OK to damage, target is in direct path
-		damage = (bombdamage * ftoi(bombdistance - dist) /
-			ftoi(bombdistance)) + 1;
-		if (Other.bIsPlayer)
-		{
-			damage >>= 2;
-		}
-		Actor(Other).Damage(self, Target, damage);
-	}
-	return true;
-}
-
-//==========================================================================
-//
-//  P_RadiusAttack
-//
-//  Source is the creature that caused the explosion at spot.
-//
-//==========================================================================
-
-void P_RadiusAttack(int damage, float distance, bool damageSource)
-{
-	Entity Other;
-
-	bombdamage = damage;
-	bombdistance = distance;
-	DamageSource = damageSource;
-	foreach RadiusThings(Other, Origin, distance)
-		if (!PIT_RadiusAttack(Other))
-			break;
-}
-
-//**************************************************************************
-//
-//  AIMING
-//
-//**************************************************************************
-
-//==========================================================================
-//
-//  PTR_AimTraverse
-//
-//  Sets linetaget and aim_slope when a target is aimed at.
-//
-//==========================================================================
-
-bool PTR_AimTraverse(intercept_t * in)
-{
-	line_t *li;
-	Actor th;
-	float thingtopslope;
-	float thingbottomslope;
-	float dist;
-	float slope;
-	opening_t *open;
-
-	if (in->bIsALine)
-	{
-		TVec hit_point;
-
-		li = in->line;
-
-		if (!(li->flags & ML_TWOSIDED))
-			return false;	// stop
-
-		// Crosses a two sided line.
-		// A two sided line will restrict
-		// the possible target ranges.
-		dist = aim_range * in->frac;
-		hit_point = Origin + dist * aim_dir;
-		open = LineOpenings(li, hit_point);
-		open = FindOpening(open, hit_point.z, hit_point.z);
-
-		if (!open || open->bottom >= open->top)
-			return false;	// stop
-
-		dist = aim_range2d * in->frac;
-		if (li->frontsector->floorheight != li->backsector->floorheight)
-		{
-			slope = (open->bottom - aim_z) / dist;
-			if (slope > aim_bottomslope)
-				aim_bottomslope = slope;
-		}
-
-		if (li->frontsector->ceilingheight != li->backsector->ceilingheight)
-		{
-			slope = (open->top - aim_z) / dist;
-			if (slope < aim_topslope)
-				aim_topslope = slope;
-		}
-
-		if (aim_topslope <= aim_bottomslope)
-			return false;	// stop
-
-		return true;	// shot continues
-	}
-
-	// shoot a thing
-	th = Actor(in->Thing);
-	if (th == self)
-		return true;	// can't shoot self
-
-	if (!th.bShootable)
-		return true;	// corpse or something
-
-	if (th.bIsPlayer && Level.Game.netgame && !Level.Game.deathmatch)
-	{
-		// don't aim at fellow co-op players
-		return true;
-	}
-
-	// check angles to see if the thing can be aimed at
-	dist = aim_range2d * in->frac;
-	thingtopslope = (th.Origin.z + th.Height - aim_z) / dist;
-
-	if (thingtopslope < aim_bottomslope)
-		return true;	// shot over the thing
-
-	thingbottomslope = (th.Origin.z - aim_z) / dist;
-
-	if (thingbottomslope > aim_topslope)
-		return true;	// shot under the thing
-
-	// this thing can be hit!
-	if (thingtopslope > aim_topslope)
-		thingtopslope = aim_topslope;
-
-	if (thingbottomslope < aim_bottomslope)
-		thingbottomslope = aim_bottomslope;
-
-	aim_slope = (thingtopslope + thingbottomslope) / 2.0;
-	linetarget = th;
-
-	return false;	// don't go any farther
-}
-
-//==========================================================================
-//
-//  AimLineAttack
-//
-//==========================================================================
-
-void AimLineAttack(TAVec * angles, float distance)
-{
-	float x2;
-	float y2;
-	float topangle;
-	float botangle;
-	intercept_t* in;
-
-	AngleVector(angles, &aim_dir);
-	x2 = Origin.x + distance * aim_dir.x;
-	y2 = Origin.y + distance * aim_dir.y;
-	aim_z = Origin.z + Height / 2.0 + 8.0 - FloorClip;
-	aim_range2d =
-		Length(vector(distance * aim_dir.x, distance * aim_dir.y, 0.0));
-
-	// can't shoot outside view angles
-	topangle = AngleMod180(-angles->pitch + 30.0);
-	botangle = AngleMod180(-angles->pitch - 30.0);
-	if (topangle > 89.0)
-		topangle = 89.0;
-	if (botangle < -89.0)
-		botangle = -89.0;
-	aim_topslope = tan(topangle);
-	aim_bottomslope = tan(botangle);
-
-	aim_range = distance;
-	linetarget = none;
-
-	foreach PathTraverse(in, Origin.x, Origin.y, x2, y2,
-		PT_ADDLINES | PT_ADDTHINGS)
-	{
-		if (!PTR_AimTraverse(in))
-			break;
-	}
-
-	if (linetarget)
-	{
-		angles->pitch = -atan(aim_slope);
-	}
-}
-
-//**************************************************************************
-//
-//  SHOOTING
-//
-//**************************************************************************
-
-//==========================================================================
-//
-//  ShootHitPlane
-//
-//==========================================================================
-
-bool ShootHitPlane(sec_plane_t * plane)
-{
-	float org_dist;
-	float hit_dist;
-
-	if (plane->flags & SPF_NOBLOCKSHOOT)
-	{
-		//  Doesn't block shooting
-		return true;
-	}
-	org_dist = DotProduct(shoot_linestart, plane->normal) - plane->dist;
-	if (org_dist < 0.0)
-	{
-		//  Don't shoot back side
-		return true;
-	}
-	hit_dist = DotProduct(shoot_lineend, plane->normal) - plane->dist;
-	if (hit_dist >= 0.0)
-	{
-		//  Didn't hit plane
-		return true;
-	}
-
-	//  Hit plane
-	if (plane->pic == Level.Game.skyflatnum)
-	{
-		// don't shoot the sky!
-		return false;
-	}
-
-	//  If we are shooting floor or ceiling we are adjusting position
-	// to spawn puff on floor or ceiling, not on wall
-	shoot_lineend -= (shoot_lineend - shoot_linestart) * hit_dist / (hit_dist - org_dist);
-
-	// position a bit closer
-	shoot_lineend += 4.0 * plane->normal;
-
-	// Spawn bullet puffs.
-	SpawnPuff(shoot_lineend, shootPuffType);
-
-	// don't go any farther
-	return false;
-}
-
-//==========================================================================
-//
-//  ShootCheckPlanes
-//
-//==========================================================================
-
-bool ShootCheckPlanes(sector_t * sec)
-{
-	sec_region_t *reg;
-	sec_region_t *startreg;
-
-	startreg = PointInRegion(sec, shoot_linestart);
-	for (reg = startreg; reg; reg = reg->next)
-	{
-		if (!ShootHitPlane(reg->floor))
-		{
-			//  Hit floor
-			return false;
-		}
-		if (!ShootHitPlane(reg->ceiling))
-		{
-			//  Hit ceiling
-			return false;
-		}
-	}
-	for (reg = startreg->prev; reg; reg = reg->prev)
-	{
-		if (!ShootHitPlane(reg->floor))
-		{
-			//  Hit floor
-			return false;
-		}
-		if (!ShootHitPlane(reg->ceiling))
-		{
-			//  Hit ceiling
-			return false;
-		}
-	}
-	return true;
-}
-
-//==========================================================================
-//
-//  PTR_ShootTraverse
-//
-//==========================================================================
-
-bool PTR_ShootTraverse(intercept_t * in)
-{
-	TVec hit_point;
-	line_t *li;
-	Actor th;
-	int i;
-
-	if (in->bIsALine)
-	{
-		sector_t *sec;
-
-		li = in->line;
-		hit_point = shoot_origin + (shoot_range * in->frac) * shoot_dir;
-		if (li->flags & ML_TWOSIDED && PointOnPlaneSide(shoot_origin, li))
-		{
-			sec = li->backsector;
-		}
-		else
-		{
-			sec = li->frontsector;
-		}
-
-		shoot_lineend = hit_point;
-
-		//  Check for shooting floor or ceiling
-		if (!ShootCheckPlanes(sec))
-		{
-			return false;
-		}
-
-		shoot_linestart = shoot_lineend;
-
-		//  Execute line special after checking for hitting floor or ceiling
-		// when we know that it actally hits line
-		if (li->special)
-		{
-			HexenLevelInfo(Level).ActivateLine(li, self, 0, SPAC_IMPACT);
-		}
-
-		if (li->flags & ML_TWOSIDED)
-		{
-			// crosses a two sided line
-			opening_t *open;
-			float opentop = 0.0;
-
-			open = LineOpenings(li, hit_point);
-			if (open)
-			{
-				opentop = open->top;
-			}
-			while (open)
-			{
-				if (open->bottom <= hit_point.z && open->top >= hit_point.z)
-				{
-					// shot continues
-					return true;
-				}
-				open = open->next;
-			}
-			if (li->frontsector->ceiling.pic == Level.Game.skyflatnum &&
-				li->backsector->ceiling.pic == Level.Game.skyflatnum &&
-				hit_point.z > opentop)
-			{
-				// it's a sky hack wall
-				return false;
-			}
-		}
-
-		//  Hit line
-
-		// position a bit closer
-		hit_point -= 4.0 * shoot_dir;
-
-		// Spawn bullet puffs.
-		SpawnPuff(hit_point, shootPuffType);
-
-		// don't go any farther
-		return false;
-	}
-
-	// shoot a thing
-	th = Actor(in->Thing);
-
-	if (th == self)
-		return true;	// can't shoot self
-
-	if (!th.bShootable)
-		return true;	// corpse or something
-
-	// check angles to see if the thing can be aimed at
-	hit_point = shoot_origin + (shoot_range * in->frac) * shoot_dir;
-
-	if (th.Origin.z + th.Height < hit_point.z)
-		return true;	// shot over the thing
-
-	if (th.Origin.z > hit_point.z)
-		return true;	// shot under the thing
-
-	// hit thing
-	// position a bit closer
-	hit_point -= 10.0 * shoot_dir;
-
-	SpawnPuff(hit_point, shootPuffType);
-	if (la_damage)
-	{
-		if (!th.bNoBlood && !th.bInvulnerable)
-		{
-			if (shootPuffType == AxePuff || shootPuffType == AxePuffGlow)
-			{
-				th.SpawnBloodSplatter2(hit_point);
-			}
-			if (P_Random() < 192)
-			{
-				for (i = 0; i < MAXPLAYERS; i++)
-				{
-					if (!Level.Game.Players[i])
-						continue;
-					if (!Level.Game.Players[i].bSpawned)
-						continue;
-					Player(Level.Game.Players[i]).ClientBlood(hit_point,
-						la_damage > 255 ? 255 : la_damage);
-				}
-
-				th.SpawnBloodSplatter(hit_point);
-			}
-		}
-		if (shootPuffType == FlamePuff2)
-		{
-			// Cleric FlameStrike does fire damage
-			th.Damage(HexenLevelInfo(Level).GLavaInflictor, self, la_damage);
-		}
-		else
-		{
-			th.Damage(self, self, la_damage);
-		}
-	}
-
-	// don't go any farther
-	return false;
-}
-
-//==========================================================================
-//
-//  LineAttack
-//
-//  If damage == 0, it is just a test trace that will leave linetarget set.
-//
-//==========================================================================
-
-int LineAttack(TVec dir, float distance, int damage, class<Actor> PuffType)
-{
-	TVec dst;
-	intercept_t* in;
-
-	la_damage = damage;
-	shootPuffType = PuffType;
-
-	shoot_origin = Origin;
-	shoot_origin.z += Height * 0.5 + 8.0 - FloorClip;
-
-	shoot_dir = dir;
-	shoot_range = distance;
-
-	dst = shoot_origin + shoot_range * shoot_dir;
-	shoot_linestart = shoot_origin;
-	foreach PathTraverse(in, Origin.x, Origin.y, dst.x, dst.y,
-		PT_ADDLINES | PT_ADDTHINGS)
-	{
-		if (!PTR_ShootTraverse(in))
-			return false;
-	}
-	shoot_lineend = dst;
-	return ShootCheckPlanes(XLevel.PointInSector(dst));
-}
-
 //==========================================================================
 //
 //  SpawnPuff
 //
 //==========================================================================
 
-void SpawnPuff(TVec org, class<EntityEx> PuffType)
+void SpawnPuff(TVec org, float Range, class<EntityEx> PuffType, bool HitThing)
 {
 	EntityEx puff;
 
@@ -3221,7 +2725,7 @@ final void A_Explode()
 		damage = 4;
 		distance = 40.0;
 	}
-	P_RadiusAttack(damage, distance, damageSelf);
+	RadiusAttack(Target, damage, distance, damageSelf);
 	if (Class != PoisonCloud && Origin.z <= FloorZ + distance)
 	{
 		HitFloorType();

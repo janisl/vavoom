@@ -46,7 +46,7 @@ final void A_Punch()
 	aimAngles.yaw = AngleMod360(aimAngles.yaw + (Random() -
 		Random()) * 45.0 / 8.0);
 	dir = Actor(Owner).AimLineAttack(aimAngles, Actor::MELEERANGE);
-	Actor(Owner).LineAttack(dir, Actor::MELEERANGE, damage);
+	Actor(Owner).LineAttack(dir, Actor::MELEERANGE, damage, BulletPuff);
 
 	// turn to face target
 	if (Actor(Owner).linetarget)

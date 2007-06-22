@@ -55,6 +55,8 @@ bool			bUseHexenPolyobjTypes;
 //	In Doom non-clipping missiles doesn't explode when hitting the floor,
 // in other games they do.
 bool			bNoClipIgnoreFloor;
+//	Use blood splatter like in Raven games.
+bool			bBloodSplatter;
 
 float			windTab[3];
 float			pushTab[5];

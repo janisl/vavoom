@@ -37,6 +37,7 @@ __states__
 defaultproperties
 {
 	Alpha = 0.333;
+	bPuffOnActors = true;
 	IdleState = S_CSTAFFPUFF1;
 	SightSound = 'ClericCStaffHitThing';
 }

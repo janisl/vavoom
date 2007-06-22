@@ -57,4 +57,5 @@ defaultproperties
 	bActivateMCross = false;
 	bWindThrust = true;
 	bSlide = true;
+	bTelestomp = true;
 }

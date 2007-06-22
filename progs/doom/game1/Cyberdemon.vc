@@ -107,6 +107,7 @@ defaultproperties
 	bBoss = true;
 	bTriggerHappy = true;
 	bFloorClip = true;
+	bNoRadiusDamage = true;
 	IdleState = S_CYBER_STND;
 	SeeState = S_CYBER_RUN1;
 	MissileState = S_CYBER_ATK1;

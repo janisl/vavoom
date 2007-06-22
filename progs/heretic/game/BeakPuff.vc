@@ -27,5 +27,6 @@ class BeakPuff : StaffPuff;
 
 defaultproperties
 {
+	bPuffOnActors = true;
 	AttackSound = 'chicken/attack';
 }

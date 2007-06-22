@@ -54,7 +54,7 @@ final void A_FireShotgun2()
 		rot.roll = 0.0;
 		dir = RotateDirectionVector(aimDir, rot);
 		damage = 5 * (P_Random() % 3 + 1);
-		Actor(Owner).LineAttack(dir, Actor::MISSILERANGE, damage);
+		Actor(Owner).LineAttack(dir, Actor::MISSILERANGE, damage, BulletPuff);
 	}
 	Owner.Effects |= DoomDefs::EF_DL_MUZZLEFLASH;
 }

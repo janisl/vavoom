@@ -37,7 +37,7 @@ final void A_Unknown112()
 {
 	int i;
 
-	RadiusAttack(512, 512, true);
+	RadiusAttack(Target, 512, 512.0, true);
 	if (Target && Target.bIsPlayer)
 	{
 		Target.Player.ExtraLight = 5;

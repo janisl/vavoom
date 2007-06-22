@@ -281,13 +281,13 @@ bool CheckActivation(int activationType, line_t * line, Actor A)
 //
 //============================================================================
 
-bool ActivateLine(line_t* Line, Actor A, int Side, int ActivationType)
+bool ActivateLine(line_t* Line, EntityEx A, int Side, int ActivationType)
 {
 	int lineActivation;
 	bool repeat;
 	bool buttonSuccess;
 
-	if (!CheckActivation(ActivationType, Line, A))
+	if (!CheckActivation(ActivationType, Line, Actor(A)))
 	{
 		return false;
 	}

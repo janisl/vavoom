@@ -35,6 +35,7 @@ __states__
 
 defaultproperties
 {
+	bPuffOnActors = true;
 	IdleState = S_STAFFPUFF1;
 	AttackSound = 'weapons/staffhit';
 }

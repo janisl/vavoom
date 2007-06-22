@@ -3203,18 +3203,19 @@ Actor SpawnPlayerMissile(class<Actor> type)
 
 	// Try to find a target
 	angles = MO.Angles;
-	Actor(MO).AimLineAttack(&angles, 16.0 * 64.0);
+	vforward = Actor(MO).AimLineAttack(angles, 16.0 * 64.0);
 	if (!Actor(MO).linetarget)
 	{
 		angles.yaw = AngleMod360(angles.yaw + 45.0 / 8.0);
-		Actor(MO).AimLineAttack(&angles, 16.0 * 64.0);
+		vforward = Actor(MO).AimLineAttack(angles, 16.0 * 64.0);
 		if (!Actor(MO).linetarget)
 		{
 			angles.yaw = AngleMod360(angles.yaw - 45.0 / 4.0);
-			Actor(MO).AimLineAttack(&angles, 16.0 * 64.0);
+			vforward = Actor(MO).AimLineAttack(angles, 16.0 * 64.0);
 			if (!Actor(MO).linetarget)
 			{
 				angles.yaw = MO.Angles.yaw;
+				AngleVector(&angles, &vforward);
 			}
 		}
 	}
@@ -3223,11 +3224,15 @@ Actor SpawnPlayerMissile(class<Actor> type)
 	{
 		org.z = Actor::ONFLOORZ;
 		angles.pitch = 0.0;
+		vforward.z = 0.0;
+		vforward = Normalise(vforward);
 	}
 	else if (type == LightningCeiling)
 	{
 		org.z = Actor::ONCEILINGZ;
 		angles.pitch = 0.0;
+		vforward.z = 0.0;
+		vforward = Normalise(vforward);
 	}
 	else
 	{
@@ -3237,7 +3242,6 @@ Actor SpawnPlayerMissile(class<Actor> type)
 	MissileMobj = HexenLevelInfo(Level).Spawn(type, org);
 	MissileMobj.Target = Actor(MO);
 	MissileMobj.Angles = angles;
-	AngleVector(&angles, &vforward);
 	MissileMobj.Velocity = vforward * MissileMobj.Speed;
 	if (MissileMobj.Class == MageWandMissile ||
 		MissileMobj.Class == CFlameMissile)
@@ -3277,18 +3281,19 @@ Actor SpawnPlayerMissileAngle(class<Actor> type, float angle)
 	//
 	angles = MO.Angles;
 	angles.yaw = angle;
-	Actor(MO).AimLineAttack(&angles, 16.0 * 64.0);
+	vforward = Actor(MO).AimLineAttack(angles, 16.0 * 64.0);
 	if (!Actor(MO).linetarget)
 	{
 		angles.yaw = AngleMod360(angles.yaw + 45.0 / 8.0);
-		Actor(MO).AimLineAttack(&angles, 16.0 * 64.0);
+		vforward = Actor(MO).AimLineAttack(angles, 16.0 * 64.0);
 		if (!Actor(MO).linetarget)
 		{
 			angles.yaw = AngleMod360(angles.yaw - 45.0 / 4.0);
-			Actor(MO).AimLineAttack(&angles, 16.0 * 64.0);
+			vforward = Actor(MO).AimLineAttack(angles, 16.0 * 64.0);
 			if (!Actor(MO).linetarget)
 			{
 				angles.yaw = angle;
+				AngleVector(&angles, &vforward);
 			}
 		}
 	}
@@ -3298,7 +3303,6 @@ Actor SpawnPlayerMissileAngle(class<Actor> type, float angle)
 	th = HexenLevelInfo(Level).Spawn(type, org);
 	th.Target = Actor(MO);
 	th.Angles = angles;
-	AngleVector(&angles, &vforward);
 	th.Velocity = vforward * th.Speed;
 	return th.CheckMissileSpawn() ? th : none;
 }
@@ -3320,18 +3324,19 @@ Actor SpawnPlayerMissileAngleXYZ(TVec org, class<Actor> type, float angle)
 	//
 	angles = MO.Angles;
 	angles.yaw = angle;
-	Actor(MO).AimLineAttack(&angles, 16.0 * 64.0);
+	vforward = Actor(MO).AimLineAttack(angles, 16.0 * 64.0);
 	if (!Actor(MO).linetarget)
 	{
 		angles.yaw = AngleMod360(angles.yaw + 45.0 / 8.0);
-		Actor(MO).AimLineAttack(&angles, 16.0 * 64.0);
+		vforward = Actor(MO).AimLineAttack(angles, 16.0 * 64.0);
 		if (!Actor(MO).linetarget)
 		{
 			angles.yaw = AngleMod360(angles.yaw - 45.0 / 4.0);
-			Actor(MO).AimLineAttack(&angles, 16.0 * 64.0);
+			vforward = Actor(MO).AimLineAttack(angles, 16.0 * 64.0);
 			if (!Actor(MO).linetarget)
 			{
 				angles.yaw = angle;
+				AngleVector(&angles, &vforward);
 			}
 		}
 	}
@@ -3340,7 +3345,6 @@ Actor SpawnPlayerMissileAngleXYZ(TVec org, class<Actor> type, float angle)
 	th = HexenLevelInfo(Level).Spawn(type, org);
 	th.Target = Actor(MO);
 	th.Angles = angles;
-	AngleVector(&angles, &vforward);
 	th.Velocity = vforward * th.Speed;
 	return th.CheckMissileSpawn() ? th : none;
 }

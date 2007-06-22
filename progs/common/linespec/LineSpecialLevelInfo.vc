@@ -3865,6 +3865,17 @@ name GetDefaultDoorSound(sector_t* Sector)
 	return DefaultDoorSound;
 }
 
+//==========================================================================
+//
+//  ActivateLine
+//
+//==========================================================================
+
+bool ActivateLine(line_t* Line, EntityEx A, int Side, int ActivationType)
+{
+	return false;
+}
+
 defaultproperties
 {
 }

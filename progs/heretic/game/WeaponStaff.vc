@@ -64,7 +64,7 @@ final void A_StaffAttackPL1()
 	angles.yaw = AngleMod360(angles.yaw +
 		(Random() - Random()) * 45.0 / 8.0);
 	dir = Actor(Owner).AimLineAttack(angles, MELEERANGE);
-	Actor(Owner).LineAttack(dir, MELEERANGE, damage, StaffPuff);
+	Actor(Owner).LineAttack(dir, MELEERANGE, damage, StaffPuff, true);
 	if (Actor(Owner).linetarget)
 	{
 		// turn to face target
@@ -94,7 +94,7 @@ final void A_StaffAttackPL2()
 	angles.yaw = AngleMod360(angles.yaw +
 		(Random() - Random()) * 45.0 / 8.0);
 	dir = Actor(Owner).AimLineAttack(angles, MELEERANGE);
-	Actor(Owner).LineAttack(dir, MELEERANGE, damage, StaffPuff2);
+	Actor(Owner).LineAttack(dir, MELEERANGE, damage, StaffPuff2, true);
 	if (Actor(Owner).linetarget)
 	{
 		// turn to face target

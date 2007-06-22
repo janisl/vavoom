@@ -119,6 +119,11 @@ bool bIceCorpse;		// a frozen corpse (for blasting)
 bool bExplodeOnWater;	//	Explode on water surfaces
 bool bCanBounceWater;	//	Bounce on water surfaces
 bool bFallingFriction;	//	Apply friction while falling
+bool bNoRadiusDamage;	//	Does not take radius damage
+bool bCantAutoAim;		//	Can't auto aim at this actor
+bool bPuffOnActors;		//	Spawn this puff when hitting actors
+bool bInvulnerable;		// mobj is invulnerable
+bool bAxeBlood;			//	Use axe's blood splatter
 
 //  Params
 float			Speed;
@@ -161,30 +166,14 @@ int				Threshold;
 int				MoveDir;	// 0-7
 int				MoveCount;	// when 0, select a new dir
 
-int				bombdamage;
-float			bombdistance;
-bool			DamageSource;
+float			RDFactor;
 
 TVec			teleport_pos;
 
-// Height if not aiming up or down
-// ???: use slope for monsters?
-float			aim_z;
-float			aim_range;
-float			aim_slope;
-TVec			aim_dir;
-float			aim_topslope;
-float			aim_bottomslope;	// slopes to top and bottom of target
-float			aim_range2d;
 EntityEx		linetarget;	// who got hit (or NULL)
 
-float			shoot_range;
-TVec			shoot_origin;
-TVec			shoot_dir;
-int				la_damage;
-TVec			shoot_linestart;
-TVec			shoot_lineend;
-class<EntityEx>	shootPuffType;
+// [FB] Global copy of hit_point
+TVec			hit_pt;
 
 // Static light parameters.
 TVec			LightOffset;
@@ -1429,6 +1418,540 @@ final float GetFriction()
 	return FRICTION_NORMAL;
 }
 
+//**************************************************************************
+//
+//  RADIUS ATTACK
+//
+//**************************************************************************
+
+//==========================================================================
+//
+//	RadiusAttack
+//
+//	Source is the creature that caused the explosion at spot.
+//
+//==========================================================================
+
+final void RadiusAttack(EntityEx Source, int BombDamage, float BombDistance,
+	bool DamageSource)
+{
+	EntityEx	Other;
+	float		dist;
+	int			damage;
+
+	foreach RadiusThings(Other, Origin, BombDistance)
+	{
+		if (!Other.bShootable)
+		{
+			continue;
+		}
+
+		//	Check for actors that take no damage from concussion.
+		if (bNoRadiusDamage)
+		{
+			continue;
+		}
+
+		if (!DamageSource && Other == Source)
+		{
+			// don't damage the source of the explosion
+			continue;
+		}
+
+		dist = Length(Other.GetCentre() - GetCentre()) - Other.Radius;
+		if (dist < 0.0)
+		{
+			dist = 0.0;
+		}
+
+		if (dist >= BombDistance)
+		{
+			// out of range
+			continue;
+		}
+
+		if (Other.CanSee(self))
+		{
+			// OK to damage, target is in direct path
+			damage = ftoi(itof(BombDamage) * RDFactor *
+				(BombDistance - dist) / BombDistance);
+			Other.Damage(self, Source, damage);
+		}
+	}
+}
+
+//**************************************************************************
+//
+//  AIMING
+//
+//**************************************************************************
+
+//==========================================================================
+//
+//  AimLineAttack
+//
+//  Sets linetaget and aim_slope when a target is aimed at.
+//
+//==========================================================================
+
+final TVec AimLineAttack(TAVec angles, float distance)
+{
+	float			x2;
+	float			y2;
+	float			topangle;
+	float			botangle;
+	TVec			dir;
+	intercept_t*	in;
+
+	// Height if not aiming up or down
+	// ???: use slope for monsters?
+	float			aim_z;
+	float			aim_range;
+	float			aim_slope;
+	TVec			aim_dir;
+	float			aim_topslope;
+	float			aim_bottomslope;	// slopes to top and bottom of target
+	float			aim_range2d;
+
+	AngleVector(&angles, &aim_dir);
+	x2 = Origin.x + distance * aim_dir.x;
+	y2 = Origin.y + distance * aim_dir.y;
+	aim_z = Origin.z + Height / 2.0 + 8.0 - FloorClip;
+	aim_range2d = Length(vector(distance * aim_dir.x, distance * aim_dir.y,
+		0.0));
+
+	// can't shoot outside view angles
+	topangle = AngleMod180(-angles.pitch + 30.0);
+	botangle = AngleMod180(-angles.pitch - 30.0);
+	if (topangle > 89.0)
+		topangle = 89.0;
+	if (botangle < -89.0)
+		botangle = -89.0;
+	aim_topslope = tan(topangle);
+	aim_bottomslope = tan(botangle);
+
+	aim_range = distance;
+	linetarget = none;
+
+	foreach PathTraverse(in, Origin.x, Origin.y, x2, y2,
+		PT_ADDLINES | PT_ADDTHINGS)
+	{
+		line_t*		li;
+		EntityEx	th;
+		float		thingtopslope;
+		float		thingbottomslope;
+		float		dist;
+		float		slope;
+		opening_t*	open;
+
+		if (in->bIsALine)
+		{
+			TVec hit_point;
+
+			li = in->line;
+
+			if (!(li->flags & ML_TWOSIDED))
+				break;	// stop
+
+			// Crosses a two sided line.
+			// A two sided line will restrict
+			// the possible target ranges.
+			dist = aim_range * in->frac;
+			hit_point = Origin + dist * aim_dir;
+			open = LineOpenings(li, hit_point);
+			open = FindOpening(open, hit_point.z, hit_point.z);
+
+			if (!open || open->bottom >= open->top)
+				break;	// stop
+
+			dist = aim_range2d * in->frac;
+			if (li->frontsector->floorheight != li->backsector->floorheight)
+			{
+				slope = (open->bottom - aim_z) / dist;
+				if (slope > aim_bottomslope)
+					aim_bottomslope = slope;
+			}
+
+			if (li->frontsector->ceilingheight != li->backsector->ceilingheight)
+			{
+				slope = (open->top - aim_z) / dist;
+				if (slope < aim_topslope)
+					aim_topslope = slope;
+			}
+
+			if (aim_topslope <= aim_bottomslope)
+				break;	// stop
+
+			continue;	// shot continues
+		}
+
+		// shoot a thing
+		th = EntityEx(in->Thing);
+		if (th == self)
+			continue;	// can't shoot self
+
+		if (!th.bShootable)
+			continue;	// corpse or something
+
+		if (th.bCantAutoAim)
+		{
+			// Can't auto-aim at pods
+			continue;
+		}
+
+		if (IsTeammate(th))
+		{
+			// don't aim at fellow co-op players
+			continue;
+		}
+
+		// check angles to see if the thing can be aimed at
+		dist = aim_range2d * in->frac;
+		thingtopslope = (th.Origin.z + th.Height - aim_z) / dist;
+
+		if (thingtopslope < aim_bottomslope)
+			continue;	// shot over the thing
+
+		thingbottomslope = (th.Origin.z - aim_z) / dist;
+
+		if (thingbottomslope > aim_topslope)
+			continue;	// shot under the thing
+
+		// this thing can be hit!
+		if (thingtopslope > aim_topslope)
+			thingtopslope = aim_topslope;
+
+		if (thingbottomslope < aim_bottomslope)
+			thingbottomslope = aim_bottomslope;
+
+		aim_slope = (thingtopslope + thingbottomslope) / 2.0;
+		linetarget = th;
+
+		break;	// don't go any farther
+	}
+
+	if (linetarget)
+	{
+		angles.pitch = -atan(aim_slope);
+	}
+	AngleVector(&angles, &dir);
+	return dir;
+}
+
+//===========================================================================
+//
+//	Aim
+//
+//  Sets a slope so a near miss is at aproximately the height of the
+// intended target
+//
+//===========================================================================
+
+final TVec Aim(float distance, optional float yaw)
+{
+	TAVec	ang;
+	TVec	dir;
+
+	// see which target is to be aimed at
+	ang = Angles;
+	if (specified_yaw)
+	{
+		ang.yaw = yaw;
+	}
+
+	dir = AimLineAttack(ang, distance);
+	if (!linetarget)
+	{
+		ang.yaw = AngleMod360(ang.yaw + 45.0 / 8.0);
+		dir = AimLineAttack(ang, distance);
+		if (!linetarget)
+		{
+			ang.yaw = AngleMod360(ang.yaw - 45.0 / 4.0);
+			dir = AimLineAttack(ang, distance);
+			if (!linetarget)
+			{
+				ang.yaw = AngleMod360(ang.yaw + 45.0 / 8.0);
+				AngleVector(&ang, &dir);
+			}
+		}
+	}
+	return dir;
+}
+
+//**************************************************************************
+//
+//  SHOOTING
+//
+//**************************************************************************
+
+//==========================================================================
+//
+//  ShootHitPlane
+//
+//==========================================================================
+
+final bool ShootHitPlane(sec_plane_t* plane, TVec linestart, TVec lineend,
+	float range, class<EntityEx> PuffType)
+{
+	float	org_dist;
+	float	hit_dist;
+
+	if (plane->flags & SPF_NOBLOCKSHOOT)
+	{
+		//  Doesn't block shooting
+		return true;
+	}
+	org_dist = DotProduct(linestart, plane->normal) - plane->dist;
+	if (org_dist < 0.0)
+	{
+		//  Don't shoot back side
+		return true;
+	}
+	hit_dist = DotProduct(lineend, plane->normal) - plane->dist;
+	if (hit_dist >= 0.0)
+	{
+		//  Didn't hit plane
+		return true;
+	}
+
+	//  Hit plane
+	if (plane->pic == Level.Game.skyflatnum)
+	{
+		// don't shoot the sky!
+		return false;
+	}
+
+	//  If we are shooting floor or ceiling we are adjusting position
+	// to spawn puff on floor or ceiling, not on wall
+	lineend -= (lineend - linestart) * hit_dist / (hit_dist - org_dist);
+
+	// position a bit closer
+	lineend += 4.0 * plane->normal;
+
+	// Spawn bullet puffs.
+	SpawnPuff(lineend, range, PuffType, false);
+
+	// don't go any farther
+	return false;
+}
+
+//==========================================================================
+//
+//  ShootCheckPlanes
+//
+//==========================================================================
+
+final bool ShootCheckPlanes(sector_t* sec, TVec linestart, TVec lineend,
+	float range, class<EntityEx> PuffType)
+{
+	sec_region_t *reg;
+	sec_region_t *startreg;
+
+	startreg = PointInRegion(sec, linestart);
+	for (reg = startreg; reg; reg = reg->next)
+	{
+		if (!ShootHitPlane(reg->floor, linestart, lineend, range, PuffType))
+		{
+			//  Hit floor
+			return false;
+		}
+		if (!ShootHitPlane(reg->ceiling, linestart, lineend, range, PuffType))
+		{
+			//  Hit ceiling
+			return false;
+		}
+	}
+	for (reg = startreg->prev; reg; reg = reg->prev)
+	{
+		if (!ShootHitPlane(reg->floor, linestart, lineend, range, PuffType))
+		{
+			//  Hit floor
+			return false;
+		}
+		if (!ShootHitPlane(reg->ceiling, linestart, lineend, range, PuffType))
+		{
+			//  Hit ceiling
+			return false;
+		}
+	}
+	return true;
+}
+
+//==========================================================================
+//
+//  LineAttack
+//
+//  If damage == 0, it is just a test trace that will leave linetarget set.
+//
+//==========================================================================
+
+final int LineAttack(TVec Dir, float Distance, int LADamage,
+	class<EntityEx> PuffType, optional bool NoAttackGhosts)
+{
+	TVec			Dst;
+	intercept_t*	in;
+	TVec			LineStart;
+	TVec			LineEnd;
+	TVec			ShootOrigin;
+
+	ShootOrigin = Origin;
+	ShootOrigin.z += Height * 0.5 + 8.0 - FloorClip;
+
+	Dst = ShootOrigin + Distance * Dir;
+	LineStart = ShootOrigin;
+	foreach PathTraverse(in, Origin.x, Origin.y, Dst.x, Dst.y,
+		PT_ADDLINES | PT_ADDTHINGS)
+	{
+		TVec		hit_point;
+		line_t*		li;
+		EntityEx	th;
+
+		if (in->bIsALine)
+		{
+			sector_t *sec;
+
+			li = in->line;
+			hit_point = ShootOrigin + (Distance * in->frac) * Dir;
+			if (li->flags & ML_TWOSIDED && PointOnPlaneSide(ShootOrigin, li))
+			{
+				sec = li->backsector;
+			}
+			else
+			{
+				sec = li->frontsector;
+			}
+
+			LineEnd = hit_point;
+
+			//  Check for shooting floor or ceiling
+			if (!ShootCheckPlanes(sec, LineStart, LineEnd, Distance, PuffType))
+			{
+				return false;
+			}
+
+			LineStart = LineEnd;
+
+			//  Execute line special after checking for hitting floor or ceiling
+			// when we know that it actally hits line
+			if (li->special)
+			{
+				LineSpecialLevelInfo(Level).ActivateLine(li, self, 0, SPAC_IMPACT);
+			}
+
+			if (li->flags & ML_TWOSIDED)
+			{
+				// crosses a two sided line
+				opening_t *open;
+				float opentop = 0.0;
+
+				open = LineOpenings(li, hit_point);
+				if (open)
+				{
+					opentop = open->top;
+				}
+				while (open)
+				{
+					if (open->bottom <= hit_point.z && open->top >= hit_point.z)
+					{
+						// shot continues
+						break;
+					}
+					open = open->next;
+				}
+				if (open)
+				{
+					continue;
+				}
+				if (li->frontsector->ceiling.pic == Level.Game.skyflatnum &&
+					li->backsector->ceiling.pic == Level.Game.skyflatnum &&
+					hit_point.z > opentop)
+				{
+					// it's a sky hack wall
+					return false;
+				}
+			}
+
+			//  Hit line
+
+			// position a bit closer
+			hit_point -= 4.0 * Dir;
+
+			// Spawn bullet puffs.
+			SpawnPuff(hit_point, Distance, PuffType, false);
+
+			// don't go any farther
+			return false;
+		}
+
+		// shoot a thing
+		th = EntityEx(in->Thing);
+
+		if (th == self)
+			continue;	// can't shoot self
+
+		if (!th.bShootable)
+			continue;	// corpse or something
+
+		// check angles to see if the thing can be aimed at
+		hit_point = ShootOrigin + (Distance * in->frac) * Dir;
+
+		if (th.Origin.z + th.Height < hit_point.z)
+			continue;	// shot over the thing
+
+		if (th.Origin.z > hit_point.z)
+			continue;	// shot under the thing
+
+		// hit thing
+		// position a bit closer
+		hit_point -= 10.0 * Dir;
+
+		//  check for physical attacks on a ghost
+		if (th.Alpha < 1.0 && NoAttackGhosts)
+		{
+			continue;
+		}
+
+		hit_pt = hit_point;
+
+		// Spawn bullet puffs or blod spots, depending on target type.
+		if (PuffType.default.bPuffOnActors || th.bNoBlood ||
+			th.bInvulnerable || th.bDormant)
+		{
+			SpawnPuff(hit_point, Distance, PuffType, true);
+		}
+		if (!LineSpecialGameInfo(Level.Game).bBloodSplatter && !th.bNoBlood &&
+			!th.bInvulnerable && !th.bDormant)
+		{
+			SpawnBlood(hit_point, LADamage);
+		}
+		if (LADamage && LineSpecialGameInfo(Level.Game).bBloodSplatter)
+		{
+			if (!th.bNoBlood && !th.bInvulnerable && !th.bDormant)
+			{
+				if (PuffType.default.bAxeBlood)
+				{
+					th.SpawnBloodSplatter2(hit_point);
+				}
+				if (P_Random() < 192)
+				{
+					th.SpawnBloodSplatter(hit_point, LADamage);
+				}
+			}
+		}
+
+		if (LADamage)
+		{
+			th.Damage(self, self, LADamage);
+		}
+
+		// don't go any farther
+		return false;
+	}
+	LineEnd = Dst;
+	return ShootCheckPlanes(XLevel.PointInSector(Dst), LineStart, LineEnd,
+		Distance, PuffType);
+}
+
 bool ExplodeMissile()
 {
 	return true;
@@ -1447,6 +1970,28 @@ EntityEx GetDamageTypeInflictor(name DamageType)
 bool PlayerIsMorphed()
 {
 	return false;
+}
+
+bool IsTeammate(EntityEx Other)
+{
+	return bIsPlayer && Other.bIsPlayer && Level.Game.netgame &&
+		!Level.Game.deathmatch;
+}
+
+void SpawnPuff(TVec Org, float Range, class<EntityEx> PuffType, bool HitThing)
+{
+}
+
+void SpawnBlood(TVec hit_point, int damage)
+{
+}
+
+void SpawnBloodSplatter(TVec hit_point, int damage)
+{
+}
+
+void SpawnBloodSplatter2(TVec hit_point)
+{
 }
 
 //**************************************************************************
@@ -1678,4 +2223,5 @@ defaultproperties
 	MissileChance = 200.0;
 	FloatSpeed = 140.0;
 	BounceFactor = 0.7;
+	RDFactor = 1.0;
 }

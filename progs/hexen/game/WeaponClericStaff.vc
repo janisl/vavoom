@@ -76,10 +76,9 @@ final void A_CStaffCheck()
 	{
 		angles = pmo.Angles;
 		angles.yaw = AngleMod360(angles.yaw + itof(i) * (45.0 / 16.0));
-		pmo.AimLineAttack(&angles, 3.0 * Actor::MELEERANGE / 2.0);
+		vforward = pmo.AimLineAttack(angles, 3.0 * Actor::MELEERANGE / 2.0);
 		if (pmo.linetarget)
 		{
-			AngleVector(&angles, &vforward);
 			pmo.LineAttack(vforward, 1.5 * Actor::MELEERANGE, damage, CStaffPuff);
 			pmo.Angles.yaw = atan2(pmo.linetarget.Origin.y - pmo.Origin.y,
 				pmo.linetarget.Origin.x - pmo.Origin.x);
@@ -98,10 +97,9 @@ final void A_CStaffCheck()
 		}
 		angles = pmo.Angles;
 		angles.yaw = AngleMod360(angles.yaw - itof(i) * (45.0 / 16.0));
-		pmo.AimLineAttack(&angles, 3.0 * Actor::MELEERANGE / 2.0);
+		vforward = pmo.AimLineAttack(angles, 3.0 * Actor::MELEERANGE / 2.0);
 		if (pmo.linetarget)
 		{
-			AngleVector(&angles, &vforward);
 			pmo.LineAttack(vforward, 1.5 * Actor::MELEERANGE, damage, CStaffPuff);
 			pmo.Angles.yaw = atan2(pmo.linetarget.Origin.y - pmo.Origin.y,
 				pmo.linetarget.Origin.x - pmo.Origin.x);

@@ -62,10 +62,9 @@ final void A_FAxeAttack()
 	{
 		angles = Owner.Angles;
 		angles.yaw = AngleMod360(angles.yaw + itof(i) * (45.0 / 16.0));
-		Actor(Owner).AimLineAttack(&angles, AxeRange);
+		vforward = Actor(Owner).AimLineAttack(angles, AxeRange);
 		if (Actor(Owner).linetarget)
 		{
-			AngleVector(&angles, &vforward);
 			if (Actor(Owner).LineAttack(vforward, AxeRange, damage, PuffType))
 			{
 				Owner.PlaySound('FighterHammerMiss', CHAN_WEAPON);
@@ -80,10 +79,9 @@ final void A_FAxeAttack()
 		}
 		angles = Owner.Angles;
 		angles.yaw = AngleMod360(angles.yaw - itof(i) * (45.0 / 16.0));
-		Actor(Owner).AimLineAttack(&angles, AxeRange);
+		vforward = Actor(Owner).AimLineAttack(angles, AxeRange);
 		if (Actor(Owner).linetarget)
 		{
-			AngleVector(&angles, &vforward);
 			if (Actor(Owner).LineAttack(vforward, AxeRange, damage, PuffType))
 			{
 				Owner.PlaySound('FighterHammerMiss', CHAN_WEAPON);
@@ -101,8 +99,7 @@ final void A_FAxeAttack()
 	{
 		// didn't find any creatures, so try to strike any walls
 		angles = Owner.Angles;
-		Actor(Owner).AimLineAttack(&angles, Actor::MELEERANGE);
-		AngleVector(&angles, &vforward);
+		vforward = Actor(Owner).AimLineAttack(angles, Actor::MELEERANGE);
 		if (Actor(Owner).LineAttack(vforward, Actor::MELEERANGE, damage, PuffType))
 		{
 			Owner.PlaySound('FighterHammerMiss', CHAN_WEAPON);

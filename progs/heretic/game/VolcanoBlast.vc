@@ -63,7 +63,7 @@ final void A_VolcBallImpact()
 		Gravity = 1.0;
 		Origin.z += 28.0;
 	}
-	RadiusAttack(25, 0, 0);
+	RadiusAttack(Target, 25, 25.0, true);
 	for (i = 0; i < 4; i++)
 	{
 		tiny = Spawn(VolcanoTBlast, Origin);

@@ -43,10 +43,9 @@ final void A_CMaceAttack()
 	{
 		angles = Owner.Angles;
 		angles.yaw = AngleMod360(angles.yaw + itof(i) * (45.0 / 16.0));
-		Actor(Owner).AimLineAttack(&angles, 2.0 * Actor::MELEERANGE);
+		vforward = Actor(Owner).AimLineAttack(angles, 2.0 * Actor::MELEERANGE);
 		if (Actor(Owner).linetarget)
 		{
-			AngleVector(&angles, &vforward);
 			if (Actor(Owner).LineAttack(vforward, 2.0 * Actor::MELEERANGE, damage, HammerPuff))
 			{
 				Owner.PlaySound('FighterHammerMiss', CHAN_WEAPON);
@@ -56,10 +55,9 @@ final void A_CMaceAttack()
 		}
 		angles = Owner.Angles;
 		angles.yaw = AngleMod360(angles.yaw - itof(i) * (45.0 / 16.0));
-		Actor(Owner).AimLineAttack(&angles, 2.0 * Actor::MELEERANGE);
+		vforward = Actor(Owner).AimLineAttack(angles, 2.0 * Actor::MELEERANGE);
 		if (Actor(Owner).linetarget)
 		{
-			AngleVector(&angles, &vforward);
 			if (Actor(Owner).LineAttack(vforward, 2.0 * Actor::MELEERANGE, damage, HammerPuff))
 			{
 				Owner.PlaySound('FighterHammerMiss', CHAN_WEAPON);
@@ -70,8 +68,7 @@ final void A_CMaceAttack()
 	}
 	// didn't find any creatures, so try to strike any walls
 	angles = Owner.Angles;
-	Actor(Owner).AimLineAttack(&angles, Actor::MELEERANGE);
-	AngleVector(&angles, &vforward);
+	vforward = Actor(Owner).AimLineAttack(angles, Actor::MELEERANGE);
 	if (Actor(Owner).LineAttack(vforward, Actor::MELEERANGE, damage, HammerPuff))
 	{
 		Owner.PlaySound('FighterHammerMiss', CHAN_WEAPON);

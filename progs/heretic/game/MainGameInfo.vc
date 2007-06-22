@@ -532,6 +532,7 @@ defaultproperties
 {
 	LevelInfoClass = HereticLevelInfo;
 	bUseHexenPolyobjTypes = true;
+	bBloodSplatter = true;
 
 	WeaponClasses[0] = WeaponStaff;
 	WeaponClasses[1] = WeaponGoldWand;

@@ -185,7 +185,7 @@ final void A_VileAttack()
 	// move the fire between the vile and the player
 	fire.Origin.x = Target.Origin.x - 24.0 * cos(Angles.yaw);
 	fire.Origin.y = Target.Origin.y - 24.0 * sin(Angles.yaw);
-	Actor(fire).RadiusAttack(70, 0, 0);
+	Actor(fire).RadiusAttack(self, 70, 70.0, true);
 }
 
 __states__

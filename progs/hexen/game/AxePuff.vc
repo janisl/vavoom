@@ -37,6 +37,8 @@ __states__
 defaultproperties
 {
 	Alpha = 0.333;
+	bPuffOnActors = true;
+	bAxeBlood = true;
 	IdleState = S_HAMMERPUFF1;
 	SightSound = 'FighterAxeHitThing';
 	AttackSound = 'FighterHammerHitWall';

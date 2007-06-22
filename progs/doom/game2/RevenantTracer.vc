@@ -48,7 +48,7 @@ final void A_Tracer()
 		return;
 
 	// spawn a puff of smoke behind the rocket      
-	SpawnPuff(Origin, MISSILERANGE);
+	SpawnPuff(Origin, MISSILERANGE, BulletPuff, false);
 
 	A = Spawn(RevenantTracerSmoke, Origin - Velocity * Level.Game.frametime);
 

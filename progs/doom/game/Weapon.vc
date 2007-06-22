@@ -62,7 +62,7 @@ final void GunShot(Actor A, int accurate, TVec dir)
 
 	damage = 5 * (P_Random() % 3 + 1);
 
-	A.LineAttack(dir, MISSILERANGE, damage);
+	A.LineAttack(dir, MISSILERANGE, damage, BulletPuff);
 }
 
 //===========================================================================

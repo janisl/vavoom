@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class GauntletPuff1:Effect;
+class GauntletPuff1 : Effect;
 
 __states__
 {
@@ -36,5 +36,6 @@ __states__
 defaultproperties
 {
 	Alpha = 0.666;
+	bPuffOnActors = true;
 	IdleState = S_GAUNTLETPUFF1_1;
 }

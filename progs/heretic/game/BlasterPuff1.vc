@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class BlasterPuff1:Effect;
+class BlasterPuff1 : Effect;
 
 __states__
 {
@@ -36,5 +36,6 @@ __states__
 
 defaultproperties
 {
+	bPuffOnActors = true;
 	IdleState = S_BLASTERPUFF1_1;
 }

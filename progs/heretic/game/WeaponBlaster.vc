@@ -38,7 +38,7 @@ final void A_FireBlasterPL1()
 	TVec dir;
 
 	Player(Owner.Player).Ammo[am_blaster] -= USE_BLSR_AMMO_1;
-	dir = Actor(Owner).Aim(Owner.Angles.yaw, 16.0 * 64.0);
+	dir = Actor(Owner).Aim(16.0 * 64.0);
 	damage = HITDICE(4);
 	if (Player(Owner.Player).Refire)
 	{

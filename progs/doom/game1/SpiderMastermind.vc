@@ -79,6 +79,7 @@ defaultproperties
 	bBoss = true;
 	bTriggerHappy = true;
 	bFloorClip = true;
+	bNoRadiusDamage = true;
 	IdleState = S_SPID_STND;
 	SeeState = S_SPID_RUN1;
 	MissileState = S_SPID_ATK1;

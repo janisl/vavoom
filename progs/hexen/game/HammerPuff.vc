@@ -23,10 +23,11 @@
 //**
 //**************************************************************************
 
-class HammerPuff:AxePuff;
+class HammerPuff : AxePuff;
 
 defaultproperties
 {
+	bAxeBlood = false;
 	SightSound = 'FighterHammerHitThing';
 	AttackSound = 'FighterHammerHitWall';
 }

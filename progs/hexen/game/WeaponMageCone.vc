@@ -50,7 +50,7 @@ final void A_FireConePL1()
 	{
 		ang = pmo.Angles;
 		ang.yaw = AngleMod360(ang.yaw + itof(i) * (45.0 / 16.0));
-		pmo.AimLineAttack(&ang, Actor::MELEERANGE);
+		pmo.AimLineAttack(ang, Actor::MELEERANGE);
 		if (pmo.linetarget)
 		{
 			pmo.bIceDamage = true;

@@ -45,7 +45,7 @@ final void A_Saw()
 
 	// use meleerange + 1 se the puff doesn't skip the flash
 	dir = Actor(Owner).AimLineAttack(aimAng, Actor::MELEERANGE + 0.00001);
-	Actor(Owner).LineAttack(dir, Actor::MELEERANGE + 0.00001, damage);
+	Actor(Owner).LineAttack(dir, Actor::MELEERANGE + 0.00001, damage, BulletPuff);
 
 	if (!Actor(Owner).linetarget)
 	{

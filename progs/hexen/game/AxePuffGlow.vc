@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class AxePuffGlow:Effect;
+class AxePuffGlow : Effect;
 
 __states__
 {
@@ -38,6 +38,8 @@ __states__
 
 defaultproperties
 {
+	bPuffOnActors = true;
+	bAxeBlood = true;
 	IdleState = S_AXEPUFF_GLOW1;
 	SightSound = 'FighterAxeHitThing';
 	AttackSound = 'FighterHammerHitWall';

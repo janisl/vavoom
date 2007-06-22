@@ -48,10 +48,9 @@ final void A_FHammerAttack()
 	{
 		angles = Owner.Angles;
 		angles.yaw = AngleMod360(angles.yaw + itof(i) * (45.0 / 32.0));
-		Actor(Owner).AimLineAttack(&angles, HammerRange);
+		vforward = Actor(Owner).AimLineAttack(angles, HammerRange);
 		if (Actor(Owner).linetarget)
 		{
-			AngleVector(&angles, &vforward);
 			if (Actor(Owner).LineAttack(vforward, HammerRange, damage, HammerPuff))
 			{
 				Owner.PlaySound('FighterHammerMiss', CHAN_WEAPON);
@@ -66,10 +65,9 @@ final void A_FHammerAttack()
 		}
 		angles = Owner.Angles;
 		angles.yaw = AngleMod360(angles.yaw - itof(i) * (45.0 / 32.0));
-		Actor(Owner).AimLineAttack(&angles, HammerRange);
+		vforward = Actor(Owner).AimLineAttack(angles, HammerRange);
 		if (Actor(Owner).linetarget)
 		{
-			AngleVector(&angles, &vforward);
 			if (Actor(Owner).LineAttack(vforward, HammerRange, damage, HammerPuff))
 			{
 				Owner.PlaySound('FighterHammerMiss', CHAN_WEAPON);
@@ -88,8 +86,7 @@ final void A_FHammerAttack()
 		// didn't find any targets in meleerange, so set to throw out a hammer
 		MainGameInfo(Level.Game).PuffSpawned = none;
 		angles = Owner.Angles;
-		Actor(Owner).AimLineAttack(&angles, HammerRange);
-		AngleVector(&angles, &vforward);
+		vforward = Actor(Owner).AimLineAttack(angles, HammerRange);
 		if (Actor(Owner).LineAttack(vforward, HammerRange, damage, HammerPuff))
 		{
 			Owner.PlaySound('FighterHammerMiss', CHAN_WEAPON);

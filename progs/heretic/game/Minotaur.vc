@@ -292,6 +292,7 @@ defaultproperties
 	bDropOff = true;
 	bBoss = true;
 	bNoMorph = true;
+	bNoRadiusDamage = true;
 	IdleState = S_MNTR_LOOK1;
 	SeeState = S_MNTR_WALK1;
 	MeleeState = S_MNTR_ATK1_1;

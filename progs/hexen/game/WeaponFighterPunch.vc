@@ -50,7 +50,7 @@ final void A_FPunchAttack()
 	{
 		angles = Owner.Angles;
 		angles.yaw = AngleMod360(angles.yaw + itof(i) * (45.0 / 16.0));
-		Actor(Owner).AimLineAttack(&angles, 2.0 * Actor::MELEERANGE);
+		vforward = Actor(Owner).AimLineAttack(angles, 2.0 * Actor::MELEERANGE);
 		if (Actor(Owner).linetarget)
 		{
 			PunchCount++;
@@ -60,7 +60,6 @@ final void A_FPunchAttack()
 				power = 6.0;
 				PuffType = HammerPuff;
 			}
-			AngleVector(&angles, &vforward);
 			if (Actor(Owner).LineAttack(vforward, 2.0 * Actor::MELEERANGE, damage, PuffType))
 			{
 				if (PuffType == HammerPuff)
@@ -81,7 +80,7 @@ final void A_FPunchAttack()
 		}
 		angles = Owner.Angles;
 		angles.yaw = AngleMod360(angles.yaw - itof(i) * (45.0 / 16.0));
-		Actor(Owner).AimLineAttack(&angles, 2.0 * Actor::MELEERANGE);
+		vforward = Actor(Owner).AimLineAttack(angles, 2.0 * Actor::MELEERANGE);
 		if (Actor(Owner).linetarget)
 		{
 			PunchCount++;
@@ -91,7 +90,6 @@ final void A_FPunchAttack()
 				power = 6.0;
 				PuffType = HammerPuff;
 			}
-			AngleVector(&angles, &vforward);
 			if (Actor(Owner).LineAttack(vforward, 2.0 * Actor::MELEERANGE, damage, PuffType))
 			{
 				if (PuffType == HammerPuff)
@@ -117,8 +115,7 @@ final void A_FPunchAttack()
 		PunchCount = 0;
 
 		angles = Owner.Angles;
-		Actor(Owner).AimLineAttack(&angles, Actor::MELEERANGE);
-		AngleVector(&angles, &vforward);
+		vforward = Actor(Owner).AimLineAttack(angles, Actor::MELEERANGE);
 		if (Actor(Owner).LineAttack(vforward, Actor::MELEERANGE, damage, PuffType))
 		{
 			Owner.PlaySound('FighterPunchMiss', CHAN_WEAPON);
