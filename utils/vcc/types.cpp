@@ -1466,7 +1466,14 @@ bool VMethod::Define()
 		{
 			ParseError(P.Loc, "Modifiers optional and out are mutually exclusive");
 		}
-		ParamsSize += type.GetSize() / 4;
+		if (ParamFlags[i] & FPARM_Out)
+		{
+			ParamsSize++;
+		}
+		else
+		{
+			ParamsSize += type.GetSize() / 4;
+		}
 		if (ParamFlags[i] & FPARM_Optional)
 		{
 			ParamsSize++;
