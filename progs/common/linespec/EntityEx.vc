@@ -1037,7 +1037,7 @@ final void FallingDamage()
 	}
 
 	PlaySound('*land', CHAN_BODY);
-	Damage(none, none, damage);
+	Damage(none, none, damage, 'Falling');
 	LineSpecialLevelInfo(Level).NoiseAlert(self, self);
 }
 
@@ -1068,7 +1068,7 @@ final void MonsterFallingDamage()
 		damage = ftoi((mom - 23.0) * 6.0);
 	}
 	damage = 10000;	// always kill 'em
-	Damage(none, none, damage);
+	Damage(none, none, damage, 'Falling');
 }
 
 //==========================================================================
@@ -1221,7 +1221,7 @@ final bool HitFloorType()
 		XLevel.TicTime & TInfo->DamageTimeMask)
 	{
 		Damage(GetDamageTypeInflictor(TInfo->DamageType), none,
-			TInfo->DamageAmount);
+			TInfo->DamageAmount, TInfo->DamageType);
 	}
 
 	SInfo = GetSplashInfo(TInfo->Splash);
@@ -1428,7 +1428,7 @@ final float GetFriction()
 //==========================================================================
 
 final void RadiusAttack(EntityEx Source, int BombDamage, float BombDistance,
-	bool DamageSource)
+	bool DamageSource, optional name BombDmgType)
 {
 	EntityEx	Other;
 	float		dist;
@@ -1470,7 +1470,7 @@ final void RadiusAttack(EntityEx Source, int BombDamage, float BombDistance,
 			// OK to damage, target is in direct path
 			damage = ftoi(itof(BombDamage) * RDFactor *
 				(BombDistance - dist) / BombDistance);
-			Other.Damage(self, Source, damage);
+			Other.Damage(self, Source, damage, BombDmgType);
 		}
 	}
 }
@@ -1835,7 +1835,7 @@ final bool ShootCheckPlanes(sector_t* sec, TVec linestart, TVec lineend,
 
 final int LineAttack(TVec Dir, float Distance, int LADamage,
 	class<EntityEx> PuffType, optional bool NoAttackGhosts,
-	optional TVec* OutHitPoint)
+	optional TVec* OutHitPoint, optional name DmgType)
 {
 	TVec			Dst;
 	intercept_t*	in;
@@ -1993,7 +1993,7 @@ final int LineAttack(TVec Dir, float Distance, int LADamage,
 
 		if (LADamage)
 		{
-			th.Damage(self, self, LADamage);
+			th.Damage(self, self, LADamage, DmgType);
 		}
 
 		// don't go any farther
@@ -2264,9 +2264,11 @@ float GetPlayerViewHeight()
 //
 //  Damage
 //
+//	'Falling'
+//
 //==========================================================================
 
-void Damage(EntityEx inflictor, EntityEx source, int damage)
+void Damage(EntityEx inflictor, EntityEx source, int damage, optional name DmgType)
 {
 }
 

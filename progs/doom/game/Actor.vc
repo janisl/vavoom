@@ -1077,7 +1077,8 @@ void DropStuff()
 //
 //==========================================================================
 
-void Damage(EntityEx inflictor, EntityEx source, int damage)
+void Damage(EntityEx inflictor, EntityEx source, int damage,
+	optional name DmgType)
 {
 	int saved;
 
