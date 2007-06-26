@@ -34,10 +34,12 @@ class MaceFX4 : MaceFX3
 
 final void A_DeathBallImpact()
 {
-	int i;
-	float angle;
-	int newAngle;
-	TAVec angles;
+	int			i;
+	float		angle;
+	int			newAngle;
+	TAVec		angles;
+	TVec		Dir;
+	EntityEx	AimTarget;
 
 	if (Origin.z <= FloorZ && HitFloorType())
 	{
@@ -72,12 +74,12 @@ final void A_DeathBallImpact()
 			angles.roll = 0.0;
 			for (i = 0; i < 16; i++)
 			{
-				AimLineAttack(angles, 10.0 * 64.0);
-				if (linetarget && Target != linetarget)
+				AimTarget = AimLineAttack(Dir, angles, 10.0 * 64.0);
+				if (AimTarget && Target != AimTarget)
 				{
-					Tracer = Actor(linetarget);
-					angle = atan2(linetarget.Origin.y - Origin.y,
-						linetarget.Origin.x - Origin.x);
+					Tracer = AimTarget;
+					angle = atan2(AimTarget.Origin.y - Origin.y,
+						AimTarget.Origin.x - Origin.x);
 					newAngle = true;
 					break;
 				}

@@ -44,7 +44,7 @@ final void A_TemplarAttack()
 
 	PlaySound('templar/shoot', CHAN_WEAPON);
 	A_FaceTarget();
-	aimDir = AimLineAttack(Angles, MAULERRANGE);
+	AimLineAttack(aimDir, Angles, MAULERRANGE);
 	for (i = 0; i < 3; i++)
 	{
 		dir = aimDir;

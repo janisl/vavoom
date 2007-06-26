@@ -36,9 +36,15 @@ class ClericBoss : ClassBoss
 
 final void A_ClericAttack()
 {
+	Actor	A;
+
 	if (!Target)
 		return;
-	SpawnMissile(Target, HolyMissile);
+	A = SpawnMissile(Target, HolyMissile);
+	if (A)
+	{
+		A.Tracer = Target;
+	}
 	PlaySound('HolySymbolFire', CHAN_WEAPON);
 }
 

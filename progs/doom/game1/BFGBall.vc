@@ -36,11 +36,13 @@ class BFGBall : Actor
 
 final void A_BFGSpray()
 {
-	int i;
-	int j;
-	int damage;
-	TAVec aimAng;
-	Actor emo;
+	int			i;
+	int			j;
+	int			damage;
+	TAVec		aimAng;
+	Actor		emo;
+	TVec		Dir;
+	EntityEx	AimTarget;
 
 	// offset angles from its attack angle
 	for (i = 0; i < 40; i++)
@@ -50,14 +52,14 @@ final void A_BFGSpray()
 
 		// target is the originator (player)
 		//  of the missile
-		Actor(Target).AimLineAttack(aimAng, 16.0 * 64.0);
-		if (!Target.linetarget)
+		AimTarget = Target.AimLineAttack(Dir, aimAng, 16.0 * 64.0);
+		if (!AimTarget)
 		{
 			continue;
 		}
 
-		emo = Spawn(BFGExtra, Target.linetarget.Origin +
-			vector(0.0, 0.0, Target.linetarget.Height / 4.0));
+		emo = Spawn(BFGExtra, AimTarget.Origin +
+			vector(0.0, 0.0, AimTarget.Height / 4.0));
 
 		SendExplosion2(DoomDefs::EF_DL_GBALL, emo.Origin);
 
@@ -65,7 +67,7 @@ final void A_BFGSpray()
 		for (j = 0; j < 15; j++)
 			damage += (P_Random() & 7) + 1;
 
-		Actor(Target.linetarget).Damage(Target, Target, damage);
+		AimTarget.Damage(Target, Target, damage);
 	}
 }
 

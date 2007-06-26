@@ -33,9 +33,10 @@ class WeaponFist : Weapon;
 
 final void A_Punch()
 {
-	int damage;
-	TAVec aimAngles;
-	TVec dir;
+	int			damage;
+	TAVec		aimAngles;
+	TVec		dir;
+	EntityEx	AimTarget;
 
 	damage = (P_Random() % 10 + 1) << 1;
 
@@ -45,16 +46,16 @@ final void A_Punch()
 	aimAngles = Owner.Angles;
 	aimAngles.yaw = AngleMod360(aimAngles.yaw + (Random() -
 		Random()) * 45.0 / 8.0);
-	dir = Actor(Owner).AimLineAttack(aimAngles, Actor::MELEERANGE);
+	AimTarget = Actor(Owner).AimLineAttack(dir, aimAngles, Actor::MELEERANGE);
 	Actor(Owner).LineAttack(dir, Actor::MELEERANGE, damage, BulletPuff);
 
 	// turn to face target
-	if (Actor(Owner).linetarget)
+	if (AimTarget)
 	{
 		Owner.PlaySound('*fist', CHAN_WEAPON);
 		Owner.Angles.yaw = atan2(
-			Actor(Owner).linetarget.Origin.y - Owner.Origin.y,
-			Actor(Owner).linetarget.Origin.x - Owner.Origin.x);
+			AimTarget.Origin.y - Owner.Origin.y,
+			AimTarget.Origin.x - Owner.Origin.x);
 		Owner.Player.bFixAngle = true;
 	}
 }

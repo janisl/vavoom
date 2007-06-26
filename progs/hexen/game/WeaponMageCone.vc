@@ -33,12 +33,14 @@ class WeaponMageCone : Weapon;
 
 final void A_FireConePL1()
 {
-	TAVec ang;
-	int damage;
-	int i;
-	Actor pmo;
-	FrostMissile mo;
-	int conedone = false;
+	TAVec			ang;
+	int				damage;
+	int				i;
+	Actor			pmo;
+	FrostMissile	mo;
+	int				conedone = false;
+	TVec			Dir;
+	EntityEx		AimTarget;
 
 	pmo = Actor(Owner);
 	Player(Owner.Player).Mana[HexenDefs::MANA_1] -=
@@ -50,11 +52,11 @@ final void A_FireConePL1()
 	{
 		ang = pmo.Angles;
 		ang.yaw = AngleMod360(ang.yaw + itof(i) * (45.0 / 16.0));
-		pmo.AimLineAttack(ang, Actor::MELEERANGE);
-		if (pmo.linetarget)
+		AimTarget = pmo.AimLineAttack(Dir, ang, Actor::MELEERANGE);
+		if (AimTarget)
 		{
 			pmo.bIceDamage = true;
-			Actor(pmo.linetarget).Damage(pmo, pmo, damage);
+			AimTarget.Damage(pmo, pmo, damage);
 			pmo.bIceDamage = false;
 			conedone = true;
 			break;

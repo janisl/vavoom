@@ -52,7 +52,7 @@ final void A_FHammerAttack()
 		{
 			Owner.PlaySound('FighterHammerMiss', CHAN_WEAPON);
 		}
-		Player(Owner.Player).AdjustPlayerAngle();
+		Player(Owner.Player).AdjustPlayerAngle(AimTarget);
 		if (AimTarget.bCountKill || AimTarget.bIsPlayer)
 		{
 			AimTarget.Thrust(angles.yaw, power);

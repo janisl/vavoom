@@ -79,17 +79,17 @@ final void A_BeakReady()
 
 final void A_BeakAttackPL1()
 {
-	int damage;
-	TVec dir;
+	int			damage;
+	TVec		dir;
+	EntityEx	AimTarget;
 
 	damage = 1 + (P_Random() & 3);
-	dir = Actor(Owner).AimLineAttack(Owner.Angles, MELEERANGE);
+	AimTarget = Actor(Owner).AimLineAttack(dir, Owner.Angles, MELEERANGE);
 	Actor(Owner).LineAttack(dir, MELEERANGE, damage, BeakPuff);
-	if (Actor(Owner).linetarget)
+	if (AimTarget)
 	{
-		Owner.Angles.yaw =
-			atan2(Actor(Owner).linetarget.Origin.y - Owner.Origin.y,
-			Actor(Owner).linetarget.Origin.x - Owner.Origin.x);
+		Owner.Angles.yaw = atan2(AimTarget.Origin.y - Owner.Origin.y,
+			AimTarget.Origin.x - Owner.Origin.x);
 		Owner.Player.bFixAngle = true;
 	}
 	Owner.PlaySound('chicken/peck', CHAN_VOICE);
@@ -105,17 +105,17 @@ final void A_BeakAttackPL1()
 
 final void A_BeakAttackPL2()
 {
-	int damage;
-	TVec dir;
+	int			damage;
+	TVec		dir;
+	EntityEx	AimTarget;
 
 	damage = HITDICE(4);
-	dir = Actor(Owner).AimLineAttack(Owner.Angles, MELEERANGE);
+	AimTarget = Actor(Owner).AimLineAttack(dir, Owner.Angles, MELEERANGE);
 	Actor(Owner).LineAttack(dir, MELEERANGE, damage, BeakPuff);
-	if (Actor(Owner).linetarget)
+	if (AimTarget)
 	{
-		Owner.Angles.yaw =
-			atan2(Actor(Owner).linetarget.Origin.y - Owner.Origin.y,
-			Actor(Owner).linetarget.Origin.x - Owner.Origin.x);
+		Owner.Angles.yaw = atan2(AimTarget.Origin.y - Owner.Origin.y,
+			AimTarget.Origin.x - Owner.Origin.x);
 		Owner.Player.bFixAngle = true;
 	}
 	Owner.PlaySound('chicken/peck', CHAN_VOICE);

@@ -33,19 +33,21 @@ class WeaponClericMace : Weapon;
 
 final void A_CMaceAttack()
 {
-	int		damage;
-	TVec	vforward;
+	int			damage;
+	TVec		vforward;
+	EntityEx	AimTarget;
 
 	damage = 25 + (P_Random() & 15);
-	if (Actor(Owner).AimEx(vforward, 2.0 * Actor::MELEERANGE, 45.0 / 16.0, 16,
-		Actor::MELEERANGE))
+	AimTarget = Actor(Owner).AimEx(vforward, 2.0 * Actor::MELEERANGE,
+		45.0 / 16.0, 16, Actor::MELEERANGE);
+	if (AimTarget)
 	{
 		if (Actor(Owner).LineAttack(vforward, 2.0 * Actor::MELEERANGE, damage,
 			HammerPuff))
 		{
 			Owner.PlaySound('FighterHammerMiss', CHAN_WEAPON);
 		}
-		Player(Owner.Player).AdjustPlayerAngle();
+		Player(Owner.Player).AdjustPlayerAngle(AimTarget);
 	}
 	else
 	{

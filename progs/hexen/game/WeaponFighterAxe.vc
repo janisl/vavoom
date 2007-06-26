@@ -71,7 +71,7 @@ final void A_FAxeAttack()
 		{
 			AimTarget.Thrust(angles.yaw, power);
 		}
-		Player(Owner.Player).AdjustPlayerAngle();
+		Player(Owner.Player).AdjustPlayerAngle(AimTarget);
 		useMana++;
 	}
 	else

@@ -92,18 +92,19 @@ final void A_FireMacePL1()
 
 final void A_FireMacePL2()
 {
-	Actor A;
+	Actor		A;
+	EntityEx	AimTarget;
 
 	Player(Owner.Player).Ammo[am_mace] -= Level.Game.deathmatch ? USE_MACE_AMMO_1 : USE_MACE_AMMO_2;
-	A = Actor(Owner).SpawnPlayerMissile(MaceFX4);
+	A = Actor(Owner).SpawnPlayerMissileEx(MaceFX4, AimTarget);
 	if (A)
 	{
 		A.Velocity.x += Owner.Velocity.x;
 		A.Velocity.y += Owner.Velocity.y;
 		A.Velocity.z = (2.0 + 173.0 * -tan(Owner.Angles.pitch) / 32.0) * 35.0;
-		if (Actor(Owner).linetarget)
+		if (AimTarget)
 		{
-			A.Tracer = Actor(Actor(Owner).linetarget);
+			A.Tracer = AimTarget;
 			A.bSeekerMissile = true;
 		}
 	}

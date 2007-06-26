@@ -997,7 +997,7 @@ final void A_RiffleAttack()
 
 	PlaySound('monsters/rifle', CHAN_WEAPON);
 	A_FaceTarget();
-	dir = AimLineAttack(Angles, MISSILERANGE);
+	AimLineAttack(dir, Angles, MISSILERANGE);
 	VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0 / 2.0);
 	damage = ((P_Random() % 5) + 1) * 3;
 	LineAttack(dir, MISSILERANGE, damage, StrifePuff);
@@ -1084,7 +1084,7 @@ final void A_RobotMissile()
 
 	A_FaceTarget();
 	PlaySound('reaver/attack', CHAN_WEAPON);
-	aimDir = AimLineAttack(Angles, MISSILERANGE);
+	AimLineAttack(aimDir, Angles, MISSILERANGE);
 	for (i = 0; i < 3; i++)
 	{
 		dir = aimDir;

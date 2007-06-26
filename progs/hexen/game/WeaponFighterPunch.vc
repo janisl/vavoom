@@ -73,7 +73,7 @@ final void A_FPunchAttack()
 		{
 			AimTarget.Thrust(angles.yaw, power);
 		}
-		Player(Owner.Player).AdjustPlayerAngle();
+		Player(Owner.Player).AdjustPlayerAngle(AimTarget);
 	}
 	else
 	{

@@ -2025,7 +2025,7 @@ Actor SpawnSubMissile(class<Actor> type, EntityEx AInstigator)
 
 	other.Velocity.x = other.Speed * cos(Angles.yaw);
 	other.Velocity.y = other.Speed * sin(Angles.yaw);
-	dir = AimLineAttack(Angles, 1024.0);
+	AimLineAttack(dir, Angles, 1024.0);
 	other.Velocity.z = other.Speed * dir.z;
 	other.CheckMissileSpawn();
 	return other;

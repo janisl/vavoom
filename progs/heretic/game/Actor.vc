@@ -1869,6 +1869,53 @@ Actor SpawnPlayerMissile(class<Actor> type)
 
 //==========================================================================
 //
+//  SpawnPlayerMissileEx
+//
+//  Tries to aim at a nearby monster
+//
+//==========================================================================
+
+Actor SpawnPlayerMissileEx(class<Actor> type, out EntityEx AimTarget)
+{
+	TVec dir;
+	TVec org;
+	Actor MissileMobj;
+
+	// Try to find a target
+	AimTarget = Aim(dir, 16.0 * 64.0);
+	org = Origin;
+	org.z = Origin.z + 32.0 - tan(Angles.pitch);
+	org.z -= FloorClip;
+	MissileMobj = Spawn(type, org);
+	MainGameInfo(Level.Game).MissileMobj = MissileMobj;
+	if (MissileMobj.SightSound)
+	{
+		MissileMobj.PlaySound(MissileMobj.SightSound, CHAN_VOICE);
+	}
+	MissileMobj.Target = self;
+	MissileMobj.Velocity = dir * MissileMobj.Speed;
+	VectorAngles(&dir, &MissileMobj.Angles);
+	if (MissileMobj.Class == BlasterFX1)
+	{
+		// Ultra-fast ripper spawning missile
+		MissileMobj.Origin += MissileMobj.Velocity * 0.00357;
+	}
+	else
+	{
+		// Normal missile
+		MissileMobj.Origin += MissileMobj.Velocity * 0.01429;
+	}
+	if (!MissileMobj.TryMove(MissileMobj.Origin))
+	{
+		// Exploded immediately
+		MissileMobj.ExplodeMissile();
+		return none;
+	}
+	return MissileMobj;
+}
+
+//==========================================================================
+//
 //  SpawnPlayerMissileAngle
 //
 //==========================================================================

@@ -2859,7 +2859,7 @@ final void A_SPosAttack()
 	PlaySound('shotguy/attack', CHAN_WEAPON);
 //FIXME	PlaySound('spider/attack', CHAN_WEAPON);
 	A_FaceTarget();
-	aimDir = AimLineAttack(Angles, MISSILERANGE);
+	AimLineAttack(aimDir, Angles, MISSILERANGE);
 	for (i = 0; i < 3; i++)
 	{
 		dir = aimDir;

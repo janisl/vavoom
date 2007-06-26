@@ -55,14 +55,15 @@ void WeaponLevel2Fade()
 
 final void A_GauntletAttack()
 {
-	float angle;
-	int damage;
-	float slope;
-	int randVal;
-	float dist;
-	TAVec angles;
-	TVec dir;
-	class<Actor> PuffType;
+	float			angle;
+	int				damage;
+	float			slope;
+	int				randVal;
+	float			dist;
+	TAVec			angles;
+	TVec			dir;
+	class<Actor>	PuffType;
+	EntityEx		AimTarget;
 
 	Owner.Player.ViewStates[ps_weapon].SX = Random() * 4.0 - 2.0;
 	Owner.Player.ViewStates[ps_weapon].SY = WEAPONTOP + Random() * 4.0;
@@ -83,9 +84,9 @@ final void A_GauntletAttack()
 			(Random() - Random()) * 45.0 / 8.0);
 		PuffType = GauntletPuff1;
 	}
-	dir = Actor(Owner).AimLineAttack(angles, dist);
+	AimTarget = Actor(Owner).AimLineAttack(dir, angles, dist);
 	Actor(Owner).LineAttack(dir, dist, damage, PuffType);
-	if (!Actor(Owner).linetarget)
+	if (!AimTarget)
 	{
 		if (P_Random() > 64)
 		{
@@ -117,8 +118,8 @@ final void A_GauntletAttack()
 		Owner.PlaySound('weapons/gauntletshit', CHAN_WEAPON);
 	}
 	// turn to face target
-	angle = atan2(Actor(Owner).linetarget.Origin.y - Owner.Origin.y,
-		Actor(Owner).linetarget.Origin.x - Owner.Origin.x);
+	angle = atan2(AimTarget.Origin.y - Owner.Origin.y,
+		AimTarget.Origin.x - Owner.Origin.x);
 	if (AngleMod360(angle - Owner.Angles.yaw) > 180.0)
 	{
 		if (AngleMod360(angle - Owner.Angles.yaw) < 360.0 - 90.0 / 20.0)

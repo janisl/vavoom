@@ -55,22 +55,22 @@ void WeaponLevel2Fade()
 
 final void A_StaffAttackPL1()
 {
-	TAVec angles;
-	int damage;
-	TVec dir;
+	TAVec		angles;
+	int			damage;
+	TVec		dir;
+	EntityEx	AimTarget;
 
 	damage = 5 + (P_Random() & 15);
 	angles = Owner.Angles;
 	angles.yaw = AngleMod360(angles.yaw +
 		(Random() - Random()) * 45.0 / 8.0);
-	dir = Actor(Owner).AimLineAttack(angles, MELEERANGE);
+	AimTarget = Actor(Owner).AimLineAttack(dir, angles, MELEERANGE);
 	Actor(Owner).LineAttack(dir, MELEERANGE, damage, StaffPuff, true);
-	if (Actor(Owner).linetarget)
+	if (AimTarget)
 	{
 		// turn to face target
-		Owner.Angles.yaw =
-			atan2(Actor(Owner).linetarget.Origin.y - Owner.Origin.y,
-			Actor(Owner).linetarget.Origin.x - Owner.Origin.x);
+		Owner.Angles.yaw = atan2(AimTarget.Origin.y - Owner.Origin.y,
+			AimTarget.Origin.x - Owner.Origin.x);
 		Owner.Player.bFixAngle = true;
 	}
 }
@@ -83,9 +83,10 @@ final void A_StaffAttackPL1()
 
 final void A_StaffAttackPL2()
 {
-	TAVec angles;
-	int damage;
-	TVec dir;
+	TAVec		angles;
+	int			damage;
+	TVec		dir;
+	EntityEx	AimTarget;
 
 	// P_inter.c:DamageMobj() handles target momentums
 	damage = 18 + (P_Random() & 63);
@@ -93,14 +94,13 @@ final void A_StaffAttackPL2()
 	angles = Owner.Angles;
 	angles.yaw = AngleMod360(angles.yaw +
 		(Random() - Random()) * 45.0 / 8.0);
-	dir = Actor(Owner).AimLineAttack(angles, MELEERANGE);
+	AimTarget = Actor(Owner).AimLineAttack(dir, angles, MELEERANGE);
 	Actor(Owner).LineAttack(dir, MELEERANGE, damage, StaffPuff2, true);
-	if (Actor(Owner).linetarget)
+	if (AimTarget)
 	{
 		// turn to face target
-		Owner.Angles.yaw =
-			atan2(Actor(Owner).linetarget.Origin.y - Owner.Origin.y,
-			Actor(Owner).linetarget.Origin.x - Owner.Origin.x);
+		Owner.Angles.yaw = atan2(AimTarget.Origin.y - Owner.Origin.y,
+			AimTarget.Origin.x - Owner.Origin.x);
 		Owner.Player.bFixAngle = true;
 	}
 }

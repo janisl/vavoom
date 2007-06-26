@@ -45,7 +45,7 @@ final void A_PosAttack()
 
 	A_FaceTarget();
 
-	dir = AimLineAttack(Angles, MISSILERANGE);
+	AimLineAttack(dir, Angles, MISSILERANGE);
 	VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0 / 2.0);
 
 	PlaySound('grunt/attack', CHAN_WEAPON);

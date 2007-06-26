@@ -33,10 +33,11 @@ class WeaponChainsaw : Weapon;
 
 final void A_Saw()
 {
-	float angle;
-	int damage;
-	TAVec aimAng;
-	TVec dir;
+	float		angle;
+	int			damage;
+	TAVec		aimAng;
+	TVec		dir;
+	EntityEx	AimTarget;
 
 	damage = 2 * (P_Random() % 10 + 1);
 	aimAng = Owner.Angles;
@@ -44,10 +45,10 @@ final void A_Saw()
 		Random()) * 45.0 / 8.0);
 
 	// use meleerange + 1 se the puff doesn't skip the flash
-	dir = Actor(Owner).AimLineAttack(aimAng, Actor::MELEERANGE + 0.00001);
+	AimTarget = Actor(Owner).AimLineAttack(dir, aimAng, Actor::MELEERANGE + 0.00001);
 	Actor(Owner).LineAttack(dir, Actor::MELEERANGE + 0.00001, damage, BulletPuff);
 
-	if (!Actor(Owner).linetarget)
+	if (!AimTarget)
 	{
 		Owner.PlaySound('weapons/sawfull', CHAN_WEAPON);
 		return;
@@ -55,8 +56,8 @@ final void A_Saw()
 	Owner.PlaySound('weapons/sawhit', CHAN_WEAPON);
 
 	// turn to face target
-	angle = atan2(Actor(Owner).linetarget.Origin.y - Owner.Origin.y,
-		Actor(Owner).linetarget.Origin.x - Owner.Origin.x);
+	angle = atan2(AimTarget.Origin.y - Owner.Origin.y,
+		AimTarget.Origin.x - Owner.Origin.x);
 	if (AngleMod360(angle - Owner.Angles.yaw) > 180.0)
 	{
 		if (AngleMod360(angle - Owner.Angles.yaw) < -90.0 / 20.0)

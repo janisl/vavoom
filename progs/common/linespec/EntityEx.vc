@@ -170,8 +170,6 @@ float			RDFactor;
 
 TVec			teleport_pos;
 
-EntityEx		linetarget;	// who got hit (or NULL)
-
 // Static light parameters.
 TVec			LightOffset;
 int				LightColour;
@@ -1491,7 +1489,7 @@ final void RadiusAttack(EntityEx Source, int BombDamage, float BombDistance,
 //
 //==========================================================================
 
-final TVec AimLineAttack(TAVec angles, float distance)
+final EntityEx AimLineAttack(out TVec OutDir, TAVec angles, float distance)
 {
 	float			x2;
 	float			y2;
@@ -1499,6 +1497,7 @@ final TVec AimLineAttack(TAVec angles, float distance)
 	float			botangle;
 	TVec			dir;
 	intercept_t*	in;
+	EntityEx		linetarget;	// who got hit (or NULL)
 
 	// Height if not aiming up or down
 	// ???: use slope for monsters?
@@ -1632,7 +1631,8 @@ final TVec AimLineAttack(TAVec angles, float distance)
 		angles.pitch = -atan(aim_slope);
 	}
 	AngleVector(&angles, &dir);
-	return dir;
+	OutDir = dir;
+	return linetarget;
 }
 
 //===========================================================================
@@ -1646,8 +1646,9 @@ final TVec AimLineAttack(TAVec angles, float distance)
 
 final EntityEx Aim(out TVec OutDir, float distance, optional float yaw)
 {
-	TAVec	ang;
-	TVec	dir;
+	TAVec		ang;
+	TVec		dir;
+	EntityEx	LineTarget;
 
 	// see which target is to be aimed at
 	ang = Angles;
@@ -1656,24 +1657,24 @@ final EntityEx Aim(out TVec OutDir, float distance, optional float yaw)
 		ang.yaw = yaw;
 	}
 
-	dir = AimLineAttack(ang, distance);
-	if (!linetarget)
+	LineTarget = AimLineAttack(OutDir, ang, distance);
+	if (!LineTarget)
 	{
 		ang.yaw = AngleMod360(ang.yaw + 45.0 / 8.0);
-		dir = AimLineAttack(ang, distance);
-		if (!linetarget)
+		LineTarget = AimLineAttack(OutDir, ang, distance);
+		if (!LineTarget)
 		{
 			ang.yaw = AngleMod360(ang.yaw - 45.0 / 4.0);
-			dir = AimLineAttack(ang, distance);
-			if (!linetarget)
+			LineTarget = AimLineAttack(OutDir, ang, distance);
+			if (!LineTarget)
 			{
 				ang.yaw = AngleMod360(ang.yaw + 45.0 / 8.0);
 				AngleVector(&ang, &dir);
+				OutDir = dir;
 			}
 		}
 	}
-	OutDir = dir;
-	return linetarget;
+	return LineTarget;
 }
 
 //==========================================================================
@@ -1685,30 +1686,29 @@ final EntityEx Aim(out TVec OutDir, float distance, optional float yaw)
 final EntityEx AimEx(out TVec OutDir, float Range, float AngleInc,
 	int NumSteps, optional float FinalRange)
 {
-	int		i;
-	TAVec	angles;
-	TVec	vforward;
+	int			i;
+	TAVec		angles;
+	TVec		vforward;
+	EntityEx	LineTarget;
 
 	for (i = 0; i < NumSteps; i++)
 	{
 		//	Try to the left
 		angles = Angles;
 		angles.yaw = AngleMod360(angles.yaw + itof(i) * AngleInc);
-		vforward = AimLineAttack(angles, Range);
-		if (linetarget)
+		LineTarget = AimLineAttack(OutDir, angles, Range);
+		if (LineTarget)
 		{
-			OutDir = vforward;
-			return linetarget;
+			return LineTarget;
 		}
 
 		//	Try to the right
 		angles = Angles;
 		angles.yaw = AngleMod360(angles.yaw - itof(i) * AngleInc);
-		vforward = AimLineAttack(angles, Range);
-		if (linetarget)
+		LineTarget = AimLineAttack(OutDir, angles, Range);
+		if (LineTarget)
 		{
-			OutDir = vforward;
-			return linetarget;
+			return LineTarget;
 		}
 	}
 
@@ -1716,15 +1716,14 @@ final EntityEx AimEx(out TVec OutDir, float Range, float AngleInc,
 	{
 		//	Didn't find any creatures, so try to strike any walls
 		angles = Angles;
-		vforward = AimLineAttack(angles, FinalRange);
-		OutDir = vforward;
+		LineTarget = AimLineAttack(OutDir, angles, FinalRange);
 	}
 	else
 	{
 		AngleVector(&Angles, &vforward);
 		OutDir = vforward;
 	}
-	return linetarget;
+	return LineTarget;
 }
 
 //**************************************************************************

@@ -87,9 +87,9 @@ final void A_CHolyAttack2()
 			// Ghosts last slightly less longer in DeathMatch
 			A.Health = 85;
 		}
-		if (linetarget)
+		if (Tracer)
 		{
-			A.Tracer = Actor(linetarget);
+			A.Tracer = Tracer;
 			//	Don't colide with world but colide with things, i.e explode
 			A.bColideWithWorld = false;
 			A.bSkullFly = true;
