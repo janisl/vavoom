@@ -1595,7 +1595,14 @@ void VMethod::Emit()
 			L.Visible = true;
 			L.ParamFlags = ParamFlags[i];
 		}
-		ec.localsofs += ParamTypes[i].GetSize() / 4;
+		if (ParamFlags[i] & FPARM_Out)
+		{
+			ec.localsofs++;
+		}
+		else
+		{
+			ec.localsofs += ParamTypes[i].GetSize() / 4;
+		}
 		if (ParamFlags[i] & FPARM_Optional)
 		{
 			if (P.Name != NAME_None)
@@ -1613,7 +1620,8 @@ void VMethod::Emit()
 
 	for (int i = 0; i < ec.LocalDefs.Num(); i++)
 	{
-		if (ec.LocalDefs[i].Type.Type == TYPE_Vector)
+		if (ec.LocalDefs[i].Type.Type == TYPE_Vector &&
+			!(ParamFlags[i] & FPARM_Out))
 		{
 			ec.AddStatement(OPC_VFixParam, ec.LocalDefs[i].Offset);
 		}
