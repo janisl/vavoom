@@ -1675,6 +1675,57 @@ final TVec Aim(float distance, optional float yaw)
 	return dir;
 }
 
+//==========================================================================
+//
+//	AimEx
+//
+//==========================================================================
+
+final EntityEx AimEx(out TVec OutDir, float Range, float AngleInc,
+	int NumSteps, optional float FinalRange)
+{
+	int		i;
+	TAVec	angles;
+	TVec	vforward;
+
+	for (i = 0; i < NumSteps; i++)
+	{
+		//	Try to the left
+		angles = Angles;
+		angles.yaw = AngleMod360(angles.yaw + itof(i) * AngleInc);
+		vforward = AimLineAttack(angles, Range);
+		if (linetarget)
+		{
+			OutDir = vforward;
+			return linetarget;
+		}
+
+		//	Try to the right
+		angles = Angles;
+		angles.yaw = AngleMod360(angles.yaw - itof(i) * AngleInc);
+		vforward = AimLineAttack(angles, Range);
+		if (linetarget)
+		{
+			OutDir = vforward;
+			return linetarget;
+		}
+	}
+
+	if (FinalRange)
+	{
+		//	Didn't find any creatures, so try to strike any walls
+		angles = Angles;
+		vforward = AimLineAttack(angles, FinalRange);
+		OutDir = vforward;
+	}
+	else
+	{
+		AngleVector(&Angles, &vforward);
+		OutDir = vforward;
+	}
+	return linetarget;
+}
+
 //**************************************************************************
 //
 //  SHOOTING

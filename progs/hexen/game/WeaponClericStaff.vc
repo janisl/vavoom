@@ -63,58 +63,34 @@ final void A_CStaffCheckBlink()
 
 final void A_CStaffCheck()
 {
-	Actor pmo;
-	int damage;
-	int newLife;
-	int i;
-	TAVec angles;
-	TVec vforward;
+	Actor		pmo;
+	int			damage;
+	int			newLife;
+	int			i;
+	TAVec		angles;
+	TVec		vforward;
+	EntityEx	AimTarget;
 
 	pmo = Actor(Owner);
 	damage = 20 + (P_Random() & 15);
-	for (i = 0; i < 3; i++)
+	AimTarget = pmo.AimEx(vforward, 3.0 * Actor::MELEERANGE / 2.0, 45.0 / 16.0, 3);
+	if (AimTarget)
 	{
-		angles = pmo.Angles;
-		angles.yaw = AngleMod360(angles.yaw + itof(i) * (45.0 / 16.0));
-		vforward = pmo.AimLineAttack(angles, 3.0 * Actor::MELEERANGE / 2.0);
-		if (pmo.linetarget)
+		VectorAngles(&vforward, &angles);
+		pmo.LineAttack(vforward, 1.5 * Actor::MELEERANGE, damage, CStaffPuff);
+		pmo.Angles.yaw = atan2(AimTarget.Origin.y - pmo.Origin.y,
+			AimTarget.Origin.x - pmo.Origin.x);
+		if ((AimTarget.bIsPlayer || AimTarget.bCountKill) &&
+			!AimTarget.bDormant && !AimTarget.bInvulnerable)
 		{
-			pmo.LineAttack(vforward, 1.5 * Actor::MELEERANGE, damage, CStaffPuff);
-			pmo.Angles.yaw = atan2(pmo.linetarget.Origin.y - pmo.Origin.y,
-				pmo.linetarget.Origin.x - pmo.Origin.x);
-			if ((pmo.linetarget.bIsPlayer || pmo.linetarget.bCountKill) &&
-				!pmo.linetarget.bDormant && !Actor(pmo.linetarget).bInvulnerable)
-			{
-				newLife = Owner.Player.Health + (damage >> 3);
-				newLife = newLife > 100 ? 100 : newLife;
-				pmo.Health = newLife;
-				Owner.Player.Health = newLife;
-				Owner.Player.SetViewState(ps_weapon, Attack2State);
-			}
-			Player(Owner.Player).Mana[HexenDefs::MANA_1] -=
-				WeaponManaUse(Owner.Player.PClass, Player(Owner.Player).ReadyWeapon);
-			break;
+			newLife = Owner.Player.Health + (damage >> 3);
+			newLife = newLife > 100 ? 100 : newLife;
+			pmo.Health = newLife;
+			Owner.Player.Health = newLife;
+			Owner.Player.SetViewState(ps_weapon, Attack2State);
 		}
-		angles = pmo.Angles;
-		angles.yaw = AngleMod360(angles.yaw - itof(i) * (45.0 / 16.0));
-		vforward = pmo.AimLineAttack(angles, 3.0 * Actor::MELEERANGE / 2.0);
-		if (pmo.linetarget)
-		{
-			pmo.LineAttack(vforward, 1.5 * Actor::MELEERANGE, damage, CStaffPuff);
-			pmo.Angles.yaw = atan2(pmo.linetarget.Origin.y - pmo.Origin.y,
-				pmo.linetarget.Origin.x - pmo.Origin.x);
-			if (pmo.linetarget.bIsPlayer || pmo.linetarget.bCountKill)
-			{
-				newLife = Owner.Player.Health + (damage >> 4);
-				newLife = newLife > 100 ? 100 : newLife;
-				pmo.Health = newLife;
-				Owner.Player.Health = pmo.Health;
-				Owner.Player.SetViewState(ps_weapon, Attack2State);
-			}
-			Player(Owner.Player).Mana[HexenDefs::MANA_1] -=
-				WeaponManaUse(Owner.Player.PClass, Player(Owner.Player).ReadyWeapon);
-			break;
-		}
+		Player(Owner.Player).Mana[HexenDefs::MANA_1] -=
+			WeaponManaUse(Owner.Player.PClass, Player(Owner.Player).ReadyWeapon);
 	}
 }
 

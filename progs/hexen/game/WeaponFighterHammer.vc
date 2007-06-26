@@ -36,57 +36,33 @@ float HammerRange;
 
 final void A_FHammerAttack()
 {
-	int damage;
-	float power;
-	int i;
-	TAVec angles;
-	TVec vforward;
+	int			damage;
+	float		power;
+	TAVec		angles;
+	TVec		vforward;
+	EntityEx	AimTarget;
 
 	damage = 60 + (P_Random() & 63);
 	power = 10.0;
-	for (i = 0; i < 16; i++)
+	AimTarget = Actor(Owner).AimEx(vforward, HammerRange, 45.0 / 32.0, 16, HammerRange);
+	if (AimTarget)
 	{
-		angles = Owner.Angles;
-		angles.yaw = AngleMod360(angles.yaw + itof(i) * (45.0 / 32.0));
-		vforward = Actor(Owner).AimLineAttack(angles, HammerRange);
-		if (Actor(Owner).linetarget)
+		VectorAngles(&vforward, &angles);
+		if (Actor(Owner).LineAttack(vforward, HammerRange, damage, HammerPuff))
 		{
-			if (Actor(Owner).LineAttack(vforward, HammerRange, damage, HammerPuff))
-			{
-				Owner.PlaySound('FighterHammerMiss', CHAN_WEAPON);
-			}
-			Player(Owner.Player).AdjustPlayerAngle();
-			if (Actor(Owner).linetarget.bCountKill || Actor(Owner).linetarget.bIsPlayer)
-			{
-				Actor(Owner).linetarget.Thrust(angles.yaw, power);
-			}
-			bThrowHammer = false;	// Don't throw a hammer
-			break;
+			Owner.PlaySound('FighterHammerMiss', CHAN_WEAPON);
 		}
-		angles = Owner.Angles;
-		angles.yaw = AngleMod360(angles.yaw - itof(i) * (45.0 / 32.0));
-		vforward = Actor(Owner).AimLineAttack(angles, HammerRange);
-		if (Actor(Owner).linetarget)
+		Player(Owner.Player).AdjustPlayerAngle();
+		if (AimTarget.bCountKill || AimTarget.bIsPlayer)
 		{
-			if (Actor(Owner).LineAttack(vforward, HammerRange, damage, HammerPuff))
-			{
-				Owner.PlaySound('FighterHammerMiss', CHAN_WEAPON);
-			}
-			Player(Owner.Player).AdjustPlayerAngle();
-			if (Actor(Owner).linetarget.bCountKill || Actor(Owner).linetarget.bIsPlayer)
-			{
-				Actor(Owner).linetarget.Thrust(angles.yaw, power);
-			}
-			bThrowHammer = false;	// Don't throw a hammer
-			break;
+			AimTarget.Thrust(angles.yaw, power);
 		}
+		bThrowHammer = false;	// Don't throw a hammer
 	}
-	if (i == 16)
+	else
 	{
 		// didn't find any targets in meleerange, so set to throw out a hammer
 		MainGameInfo(Level.Game).PuffSpawned = none;
-		angles = Owner.Angles;
-		vforward = Actor(Owner).AimLineAttack(angles, HammerRange);
 		if (Actor(Owner).LineAttack(vforward, HammerRange, damage, HammerPuff))
 		{
 			Owner.PlaySound('FighterHammerMiss', CHAN_WEAPON);
