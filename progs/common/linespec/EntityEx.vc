@@ -168,8 +168,6 @@ int				MoveCount;	// when 0, select a new dir
 
 float			RDFactor;
 
-TVec			teleport_pos;
-
 // Static light parameters.
 TVec			LightOffset;
 int				LightColour;
@@ -2004,6 +2002,63 @@ final int LineAttack(TVec Dir, float Distance, int LADamage,
 		Distance, PuffType);
 }
 
+//==========================================================================
+//
+//  TeleportMove
+//
+//==========================================================================
+
+final bool TeleportMove(TVec org)
+{
+	EntityEx	Other;
+	float		blockdist;
+
+	// kill anything occupying the position
+	// stomp on any things contacted
+	foreach RadiusThings(Other, org, Radius)
+	{
+		if (!Other.bShootable)
+		{
+			continue;
+		}
+
+		blockdist = Other.Radius + Radius;
+
+		if (fabs(Other.Origin.x - org.x) >= blockdist ||
+			fabs(Other.Origin.y - org.y) >= blockdist)
+		{
+			// didn't hit it
+			continue;
+		}
+
+		// don't clip against self
+		if (Other == self)
+		{
+			continue;
+		}
+
+		//  Check if allowed to stomp things
+		if (!bTelestomp && !Level.bAllowMonsterTelefrags)
+		{
+			return false;
+		}
+
+		Other.Damage(self, self, 10000, 'Telefrag');
+	}
+
+	// the move is ok,
+	// so link the thing into its new position
+	UnlinkFromWorld();
+	Origin = org;
+	LinkToWorld();
+	if (org.z == ONFLOORZ)
+	{
+		Origin.z = FloorZ;
+	}
+
+	return true;
+}
+
 bool ExplodeMissile()
 {
 	return true;
@@ -2197,17 +2252,6 @@ bool Teleport(TVec Dst, float angle, bool DstFog, bool SrcFog, bool KeepDir)
 
 //==========================================================================
 //
-//  TeleportMove
-//
-//==========================================================================
-
-bool TeleportMove(TVec Pos)
-{
-	return false;
-}
-
-//==========================================================================
-//
 //  SetPainState
 //
 //==========================================================================
@@ -2265,6 +2309,7 @@ float GetPlayerViewHeight()
 //  Damage
 //
 //	'Falling'
+//	'Telefrag'
 //
 //==========================================================================
 
