@@ -46,7 +46,7 @@ final void A_FireShotgun2()
 
 	Owner.Player.SetViewState(ps_flash, Weapon(self).FlashState);
 
-	aimDir = Actor(Owner).Aim(16.0 * 64.0);
+	Actor(Owner).Aim(aimDir, 16.0 * 64.0);
 	for (i = 0; i < 20; i++)
 	{
 		rot.pitch = (Random() - Random()) * 45.0 / 8.0;

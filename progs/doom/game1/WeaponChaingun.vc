@@ -48,7 +48,7 @@ final void A_FireCGun()
 	else
 		Owner.Player.SetViewState(ps_flash, WeaponChaingun::S_CHAINFLASH2);
 
-	dir = Actor(Owner).Aim(16.0 * 64.0);
+	Actor(Owner).Aim(dir, 16.0 * 64.0);
 	GunShot(Actor(Owner), !Player(Owner.Player).Refire, dir);
 	Owner.Effects |= DoomDefs::EF_DL_MUZZLEFLASH;
 }

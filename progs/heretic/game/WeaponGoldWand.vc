@@ -38,7 +38,7 @@ final void A_FireGoldWandPL1()
 
 	Player(Owner.Player).Ammo[am_goldwand] -= USE_GWND_AMMO_1;
 	damage = 7 + (P_Random() & 7);
-	dir = Actor(Owner).Aim(16.0 * 64.0);
+	Actor(Owner).Aim(dir, 16.0 * 64.0);
 	if (Player(Owner.Player).Refire)
 	{
 		VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0 / 8.0);
@@ -63,7 +63,7 @@ final void A_FireGoldWandPL2()
 
 	Player(Owner.Player).Ammo[am_goldwand] -=
 		Level.Game.deathmatch ? USE_GWND_AMMO_1 : USE_GWND_AMMO_2;
-	dir = Actor(Owner).Aim(16.0 * 64.0);
+	Actor(Owner).Aim(dir, 16.0 * 64.0);
 	VectorAngles(&dir, &angles);
 	Actor(Owner).SpawnMissileAngles(GoldWandFX2,
 		AngleMod360(angles.yaw - (45.0 / 8.0)), angles.pitch);

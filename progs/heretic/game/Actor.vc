@@ -1835,7 +1835,7 @@ Actor SpawnPlayerMissile(class<Actor> type)
 	Actor MissileMobj;
 
 	// Try to find a target
-	dir = Aim(16.0 * 64.0);
+	Aim(dir, 16.0 * 64.0);
 	org = Origin;
 	org.z = Origin.z + 32.0 - tan(Angles.pitch);
 	org.z -= FloorClip;
@@ -1879,7 +1879,7 @@ Actor SpawnPlayerMissileAngle(class<Actor> type, float angle)
 	TVec dir;
 	TVec org;
 
-	dir = Aim(16.0 * 64.0, angle);
+	Aim(dir, 16.0 * 64.0, angle);
 	org = Origin;
 	org.z = Origin.z + 4.0 * 8.0 - tan(Angles.pitch);
 	org.z -= FloorClip;

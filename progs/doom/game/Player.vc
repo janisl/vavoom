@@ -2111,7 +2111,7 @@ Actor SpawnPlayerMissile(class<Actor> type)
 	Actor A;
 	TVec dir;
 
-	dir = Actor(MO).Aim(16.0 * 64.0);
+	Actor(MO).Aim(dir, 16.0 * 64.0);
 
 	A = Level.Spawn(type, MO.Origin + vector(0.0, 0.0, 32.0 - MO.FloorClip));
 

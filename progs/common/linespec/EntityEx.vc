@@ -1644,7 +1644,7 @@ final TVec AimLineAttack(TAVec angles, float distance)
 //
 //===========================================================================
 
-final TVec Aim(float distance, optional float yaw)
+final EntityEx Aim(out TVec OutDir, float distance, optional float yaw)
 {
 	TAVec	ang;
 	TVec	dir;
@@ -1672,7 +1672,8 @@ final TVec Aim(float distance, optional float yaw)
 			}
 		}
 	}
-	return dir;
+	OutDir = dir;
+	return linetarget;
 }
 
 //==========================================================================

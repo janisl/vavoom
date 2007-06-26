@@ -81,10 +81,11 @@ final void A_SigilShowFlash()
 
 final void A_FireSigil()
 {
-	Actor sigil;
-	float angle;
-	Actor sigilspread;
-	int i;
+	Actor	sigil;
+	float	angle;
+	Actor	sigilspread;
+	int		i;
+	TVec	dir;
 
 	Actor(Owner).Damage(none, Actor(Owner), (Player(Owner.Player).Sigil + 1) * 4);
 	angle = Owner.Angles.yaw + 180.0;
@@ -126,7 +127,7 @@ final void A_FireSigil()
 
 		sigil.Target = Actor(Owner);
 		sigil.Origin.z = sigil.FloorZ;
-		Actor(Owner).Aim(16.0 * 64.0);
+		Actor(Owner).Aim(dir, 16.0 * 64.0);
 		if (!Actor(Owner).linetarget)
 		{
 			sigil.Origin.x = Owner.Origin.x;
