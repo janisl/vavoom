@@ -2059,6 +2059,94 @@ final bool TeleportMove(TVec org)
 	return true;
 }
 
+//==========================================================================
+//
+//  Teleport
+//
+//==========================================================================
+
+final bool Teleport(TVec Dst, float angle, bool DstFog, bool SrcFog,
+	bool KeepDir)
+{
+	TVec		oldOrg;
+	float		aboveFloor;
+	float		fogDelta;
+	EntityEx	fog;
+
+	oldOrg = Origin;
+	aboveFloor = Origin.z - FloorZ;
+	if (!TeleportMove(Dst))
+	{
+		return false;
+	}
+	if (bIsPlayer)
+	{
+		if (HaveFlightPower() && aboveFloor)
+		{
+			Origin.z = Origin.z + aboveFloor;
+			if (Origin.z + Height > CeilingZ)
+			{
+				Origin.z = CeilingZ - Height;
+			}
+			Player.ViewOrg.z = Origin.z + PlayerEx(Player).ViewHeight;
+		}
+		else
+		{
+			Player.ViewOrg.z = Origin.z + PlayerEx(Player).ViewHeight;
+			if (!KeepDir)
+			{
+				Angles.pitch = 0.0;
+			}
+		}
+	}
+	else if (bMissile)
+	{
+		Origin.z = Origin.z + aboveFloor;
+		if (Origin.z + Height > CeilingZ)
+		{
+			Origin.z = CeilingZ - Height;
+		}
+	}
+	// spawn teleport fog at source and destination
+	fogDelta = bMissile ? 0.0 : LineSpecialGameInfo(Level.Game).TeleFogHeight;
+	if (SrcFog)
+	{
+		fog = Spawn(LineSpecialGameInfo(Level.Game).TeleportFogClass,
+			oldOrg + vector(0.0, 0.0, fogDelta));
+		fog.PlaySound('misc/teleport', CHAN_VOICE);
+	}
+	if (DstFog)
+	{
+		fog = Spawn(LineSpecialGameInfo(Level.Game).TeleportFogClass, Origin +
+			vector(20.0 * cos(angle), 20.0 * sin(angle), fogDelta));
+		fog.PlaySound('misc/teleport', CHAN_VOICE);
+	}
+	if (!KeepDir)
+	{
+		if (bIsPlayer && !HaveWeaponLevel2Power() && !HaveSpeedPower())
+		{
+			//	Don't move for a bit, freeze player for about .5 sec
+			ReactionTime = 0.5;
+		}
+		Angles.yaw = angle;
+		if (bIsPlayer)
+		{
+			Player.bFixAngle = true;
+		}
+	}
+	HandleFloorclip();
+	if (bMissile)
+	{
+		Velocity.x = Speed * cos(angle);
+		Velocity.y = Speed * sin(angle);
+	}
+	else if (!KeepDir)	// no fog doesn't alter the player's momentums
+	{
+		Velocity = vector(0.0, 0.0, 0.0);
+	}
+	return true;
+}
+
 bool ExplodeMissile()
 {
 	return true;
@@ -2099,6 +2187,21 @@ void SpawnBloodSplatter(TVec hit_point, int damage)
 
 void SpawnBloodSplatter2(TVec hit_point)
 {
+}
+
+bool HaveFlightPower()
+{
+	return false;
+}
+
+bool HaveWeaponLevel2Power()
+{
+	return false;
+}
+
+bool HaveSpeedPower()
+{
+	return false;
 }
 
 //**************************************************************************
@@ -2235,17 +2338,6 @@ bool IsTeleportSpot2()
 //==========================================================================
 
 bool CanTeleport()
-{
-	return false;
-}
-
-//==========================================================================
-//
-//  Teleport
-//
-//==========================================================================
-
-bool Teleport(TVec Dst, float angle, bool DstFog, bool SrcFog, bool KeepDir)
 {
 	return false;
 }

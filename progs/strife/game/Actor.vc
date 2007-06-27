@@ -1698,56 +1698,6 @@ bool SectorChanged(int CrushChange)
 
 //==========================================================================
 //
-//  Teleport
-//
-//==========================================================================
-
-bool Teleport(TVec Dst, float angle, bool DstFog, bool SrcFog, bool KeepDir)
-{
-	TVec oldOrg;
-	Actor fog;
-
-	oldOrg = Origin;
-
-	if (!TeleportMove(Dst))
-		return false;
-
-	if (bIsPlayer)
-		Player.ViewOrg.z = Origin.z + Player(Player).ViewHeight;
-
-	if (SrcFog)
-	{
-		// spawn teleport fog at source and destination
-		fog = Spawn(TeleportFog, oldOrg);
-		fog.PlaySound('misc/teleport', CHAN_VOICE);
-	}
-
-	if (DstFog)
-	{
-		fog = Spawn(TeleportFog, Origin +
-			vector(20.0 * cos(angle), 20.0 * sin(angle), 0.0));
-
-		// emit sound, where?
-		fog.PlaySound('misc/teleport', CHAN_VOICE);
-	}
-
-	if (!KeepDir)
-	{
-		// don't move for a bit
-		if (bIsPlayer)
-		{
-			ReactionTime = 0.5;
-			Player.bFixAngle = true;
-		}
-
-		Angles.yaw = angle;
-		Velocity = vector(0.0, 0.0, 0.0);
-	}
-	return true;
-}
-
-//==========================================================================
-//
 //  LookForMonsters
 //
 //==========================================================================

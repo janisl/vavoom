@@ -608,6 +608,7 @@ defaultproperties
 	LevelInfoClass = StrifeLevelInfo;
 	AcsHelper = 'strfhelp';
 	GenericConScript = 'script00';
+	TeleportFogClass = TeleportFog;
 
 	WeaponClasses[0] = WeaponPunch;
 	WeaponClasses[1] = WeaponCrossbow;

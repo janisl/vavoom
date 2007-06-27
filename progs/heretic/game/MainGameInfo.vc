@@ -533,6 +533,8 @@ defaultproperties
 	LevelInfoClass = HereticLevelInfo;
 	bUseHexenPolyobjTypes = true;
 	bBloodSplatter = true;
+	TeleFogHeight = Actor::TELEFOGHEIGHT;
+	TeleportFogClass = TeleportFog;
 
 	WeaponClasses[0] = WeaponStaff;
 	WeaponClasses[1] = WeaponGoldWand;

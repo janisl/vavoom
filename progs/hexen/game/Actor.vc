@@ -1978,86 +1978,24 @@ bool SectorChanged(int CrushChange)
 
 //==========================================================================
 //
-//	Teleport
+//  HaveFlightPower
 //
 //==========================================================================
 
-bool Teleport(TVec pos, float angle, bool DstFog, bool SrcFog, bool KeepDir)
+bool HaveFlightPower()
 {
-	TVec oldOrg;
-	float aboveFloor;
-	float fogDelta;
-	Actor fog;
+	return !!Player(Player).Powers[pw_flight];
+}
 
-	oldOrg = Origin;
-	aboveFloor = Origin.z - FloorZ;
-	if (!TeleportMove(pos))
-	{
-		return false;
-	}
-	if (bIsPlayer)
-	{
-		if (Player(Player).Powers[pw_flight] && aboveFloor)
-		{
-			Origin.z = Origin.z + aboveFloor;
-			if (Origin.z + Height > CeilingZ)
-			{
-				Origin.z = CeilingZ - Height;
-			}
-			Player.ViewOrg.z = Origin.z + Player(Player).ViewHeight;
-		}
-		else
-		{
-			Player.ViewOrg.z = Origin.z + Player(Player).ViewHeight;
-			if (!KeepDir)
-			{
-				Angles.pitch = 0.0;
-			}
-		}
-	}
-	else if (bMissile)
-	{
-		Origin.z = Origin.z + aboveFloor;
-		if (Origin.z + Height > CeilingZ)
-		{
-			Origin.z = CeilingZ - Height;
-		}
-	}
-	// Spawn teleport fog at source and destination
-	fogDelta = bMissile ? 0.0 : TELEFOGHEIGHT;
-	if (SrcFog)
-	{
-		fog = Spawn(TeleportFog, oldOrg + vector(0.0, 0.0, fogDelta));
-		fog.PlaySound('Teleport', CHAN_VOICE);
-	}
-	if (DstFog)
-	{
-		fog = Spawn(TeleportFog, Origin + vector(20.0 * cos(angle),
-			20.0 * sin(angle), fogDelta));
-		fog.PlaySound('Teleport', CHAN_VOICE);
-	}
-	if (!KeepDir)
-	{
-		if (bIsPlayer && !Player(Player).Powers[pw_speed])
-		{
-			// Freeze player for about .5 sec
-			ReactionTime = 0.5;
-		}
-		Angles.yaw = angle;
-		if (bIsPlayer)
-			Player.bFixAngle = true;
-	}
-	HandleFloorclip();
-	if (bMissile)
-	{
-		Velocity.x = Speed * cos(angle);
-		Velocity.y = Speed * sin(angle);
-	}
-	else if (!KeepDir)	// no fog doesn't alter the player's momentums
-	{
-		Velocity = vector(0.0, 0.0, 0.0);
-	}
-	return true;
+//==========================================================================
+//
+//  HaveFlightPower
+//
+//==========================================================================
+
+bool HaveSpeedPower()
+{
+	return !!Player(Player).Powers[pw_speed];
 }
 
 //==========================================================================

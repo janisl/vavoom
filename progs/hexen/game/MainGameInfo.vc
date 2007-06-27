@@ -369,6 +369,8 @@ defaultproperties
 	bDefaultMonsterFallingDamage = true;
 	bUseHexenPolyobjTypes = true;
 	bBloodSplatter = true;
+	TeleFogHeight = Actor::TELEFOGHEIGHT;
+	TeleportFogClass = TeleportFog;
 
 	WeaponClasses[0] = WeaponFighterPunch;
 	WeaponClasses[1] = WeaponClericMace;

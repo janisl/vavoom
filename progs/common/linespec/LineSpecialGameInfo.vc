@@ -68,6 +68,9 @@ float			yspeed[8];
 
 float			air_control;
 
+float			TeleFogHeight;
+class<EntityEx>	TeleportFogClass;
+
 //==========================================================================
 //
 //  MakeSlope

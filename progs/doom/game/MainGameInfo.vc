@@ -1254,6 +1254,8 @@ void TranslateLevel(Level InLevel)
 defaultproperties
 {
 	LevelInfoClass = DoomLevelInfo;
+	bNoClipIgnoreFloor = true;
+	TeleportFogClass = TeleportFog;
 
 	WeaponClasses[0] = WeaponFist;
 	WeaponClasses[1] = WeaponPistol;
@@ -1305,6 +1307,4 @@ defaultproperties
 	SOULSPHERE_MAX = 200;
 	SOULSPHERE_HEALTH = 100;
 	MEGASPHERE_HEALTH = 200;
-
-	bNoClipIgnoreFloor = true;
 }
