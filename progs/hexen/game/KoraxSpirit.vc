@@ -75,7 +75,7 @@ final void A_KSpiritSeeker(float thresh, float turnMax)
 	{
 		return;
 	}
-	dir = FaceActor(Actor(Tracer), &delta);
+	dir = FaceActor(Actor(Tracer), delta);
 	if (delta > thresh)
 	{
 		delta /= 2.0;

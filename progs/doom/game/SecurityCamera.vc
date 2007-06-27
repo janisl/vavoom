@@ -157,7 +157,7 @@ void TickCamera(float DeltaTime)
 	if (Target)
 	{
 		float delta;
-		int dir = FaceActor(Actor(Target), &delta);
+		int dir = FaceActor(Actor(Target), delta);
 		if (delta > Range * DeltaTime)
 		{
 			delta = Range * DeltaTime;

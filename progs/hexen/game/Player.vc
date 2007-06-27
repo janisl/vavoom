@@ -2078,7 +2078,7 @@ void DeathPlayerTick(float deltaTime)
 	if (Attacker && Attacker != MO)
 	{
 		// Watch killer
-		dir = Actor(MO).FaceActor(Actor(Attacker), &delta);
+		dir = Actor(MO).FaceActor(Actor(Attacker), delta);
 		if (delta < 10.0)
 		{
 			// Looking at killer, so fade damage and poison counters

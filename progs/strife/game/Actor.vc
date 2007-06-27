@@ -229,37 +229,6 @@ float GetPlayerViewHeight()
 	return Player(Player).ViewHeight;
 }
 
-//===========================================================================
-//
-//  MoveThing
-//
-//===========================================================================
-
-bool MoveThing(TVec Pos, bool Fog)
-{
-	TVec OldOrg = Origin;
-
-	UnlinkFromWorld();
-	Origin = Pos;
-	LinkToWorld();
-	if (TestLocation())
-	{
-		if (Fog)
-		{
-			LineSpecialLevelInfo(Level).SpawnTeleportFog(Pos);
-			LineSpecialLevelInfo(Level).SpawnTeleportFog(OldOrg);
-		}
-		return true;
-	}
-	else
-	{
-		UnlinkFromWorld();
-		Origin = OldOrg;
-		LinkToWorld();
-		return false;
-	}
-}
-
 //==========================================================================
 //
 //  TouchSpecial
@@ -268,39 +237,6 @@ bool MoveThing(TVec Pos, bool Fog)
 
 void TouchSpecial(Actor Toucher)
 {
-}
-
-//==========================================================================
-//
-//  SetOrigin2
-//
-//==========================================================================
-
-void SetOrigin2(TVec origin)
-{
-	Origin = origin;
-
-	// set subsector and/or block links
-	LinkToWorld();
-
-	if (origin.z == ONFLOORZ)
-	{
-		Origin.z = FloorZ;
-	}
-	else if (origin.z == ONCEILINGZ)
-	{
-		Origin.z = CeilingZ - Height;
-	}
-
-	VTerrainInfo* TInfo = GetFloorType();
-	if (bFloorClip && TInfo->bLiquid && Origin.z == FloorZ)
-	{
-		FloorClip = TInfo->FootClip;
-	}
-	else
-	{
-		FloorClip = 0.0;
-	}
 }
 
 //==========================================================================
@@ -996,45 +932,6 @@ void NightmareRespawn()
 
 //==========================================================================
 //
-//  Thrust
-//
-//==========================================================================
-
-void Thrust(float angle, float move)
-{
-	Velocity.x += move * cos(angle) * 35.0;
-	Velocity.y += move * sin(angle) * 35.0;
-}
-
-//==========================================================================
-//
-//  TestLocation
-//
-//  Returns true if the mobj is not blocked by anything at its current
-// location, otherwise returns false.
-//
-//==========================================================================
-
-bool TestLocation()
-{
-	if (!bColideWithThings && !bColideWithWorld)
-		return true;
-
-	if (CheckPosition(Origin))
-	{
-		// XY is ok, now check Z
-		if ((Origin.z < FloorZ) || (Origin.z + Height > CeilingZ))
-		{
-			// Bad Z
-			return false;
-		}
-		return true;
-	}
-	return false;
-}
-
-//==========================================================================
-//
 //	Touch
 //
 //==========================================================================
@@ -1600,50 +1497,6 @@ void Tick(float deltaTime)
 
 		NightmareRespawn();
 	}
-}
-
-//==========================================================================
-//
-//  HeightClip
-//
-//  Takes a valid thing and adjusts the thing->FloorZ, thing->CeilingZ, and
-// possibly thing->z. This is called for all nearby monsters whenever a
-// sector changes height. If the thing doesn't fit, the z will be set to the
-// lowest value and false will be returned.
-//
-//==========================================================================
-
-bool HeightClip()
-{
-	bool onfloor;
-
-	onfloor = (Origin.z == FloorZ);
-
-	tmtrace_t tmtrace;
-	CheckRelPosition(&tmtrace, Origin);
-	// what about stranding a monster partially off an edge?
-
-	Floor = tmtrace.Floor;
-	Ceiling = tmtrace.Ceiling;
-	FloorZ = tmtrace.FloorZ;
-	CeilingZ = tmtrace.CeilingZ;
-
-	if (onfloor)
-	{
-		// walking monsters rise and fall with the floor
-		Origin.z = FloorZ;
-	}
-	else
-	{
-		// don't adjust a floating monster unless forced to
-		if (Origin.z + Height > CeilingZ)
-			Origin.z = CeilingZ - Height;
-	}
-
-	if (CeilingZ - FloorZ < Height)
-		return false;
-
-	return true;
 }
 
 //==========================================================================

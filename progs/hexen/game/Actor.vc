@@ -33,8 +33,6 @@ const float TELEFOGHEIGHT	= 32.0;
 
 const int BASETHRESHOLD		= 100;	// follow a player exlusively for 3 seconds
 
-const float FLOATRANDZ		= 99998.0;
-
 const float MELEERANGE		= 64.0;
 const float MISSILERANGE	= (32.0 * 64.0);
 
@@ -225,37 +223,6 @@ float GetPlayerViewHeight()
 	return Player(Player).ViewHeight;
 }
 
-//===========================================================================
-//
-//  MoveThing
-//
-//===========================================================================
-
-bool MoveThing(TVec Pos, bool Fog)
-{
-	TVec OldOrg = Origin;
-
-	UnlinkFromWorld();
-	Origin = Pos;
-	LinkToWorld();
-	if (TestLocation())
-	{
-		if (Fog)
-		{
-			LineSpecialLevelInfo(Level).SpawnTeleportFog(Pos);
-			LineSpecialLevelInfo(Level).SpawnTeleportFog(OldOrg);
-		}
-		return true;
-	}
-	else
-	{
-		UnlinkFromWorld();
-		Origin = OldOrg;
-		LinkToWorld();
-		return false;
-	}
-}
-
 //==========================================================================
 //
 //  HITDICE
@@ -267,56 +234,6 @@ bool MoveThing(TVec Pos, bool Fog)
 int HITDICE(int a)
 {
 	return (1 + (P_Random() & 7)) * a;
-}
-
-//==========================================================================
-//
-//  SetOrigin2
-//
-//==========================================================================
-
-void SetOrigin2(TVec origin)
-{
-	float space;
-
-	SetOrigin(origin);
-	// Set subsector and/or block links.
-	LinkToWorld();
-	if (origin.z == ONFLOORZ)
-	{
-		origin.z = FloorZ;
-	}
-	else if (origin.z == ONCEILINGZ)
-	{
-		origin.z = CeilingZ - Height;
-	}
-	else if (origin.z == FLOATRANDZ)
-	{
-		space = CeilingZ - Height - FloorZ;
-		if (space > 48.0)
-		{
-			space -= 40.0;
-			origin.z = space * Random() + FloorZ + 40.0;
-		}
-		else
-		{
-			origin.z = FloorZ;
-		}
-	}
-	else if (bFloatBob)
-	{
-		origin.z = FloorZ + origin.z;	// artifact z passed in as height
-	}
-	SetOrigin(origin);
-	VTerrainInfo* TInfo = GetFloorType();
-	if (bFloorClip && TInfo->bLiquid && Origin.z == FloorZ)
-	{
-		FloorClip = TInfo->FootClip;
-	}
-	else
-	{
-		FloorClip = 0.0;
-	}
 }
 
 //==========================================================================
@@ -468,66 +385,6 @@ void Destroyed()
 EntityEx GetDamageTypeInflictor(name DamageType)
 {
 	return DamageType == 'lava' ? HexenLevelInfo(Level).GLavaInflictor : none;
-}
-
-//==========================================================================
-//
-//  Thrust
-//
-//==========================================================================
-
-void Thrust(float angle, float move)
-{
-	Velocity.x += move * cos(angle) * 35.0;
-	Velocity.y += move * sin(angle) * 35.0;
-}
-
-//==========================================================================
-//
-//  FaceActor
-//
-//  Returns 1 if 'source' needs to turn clockwise, or 0 if 'source' needs
-// to turn counter clockwise.  'delta' is set to the amount 'source'
-// needs to turn.
-//
-//==========================================================================
-
-int FaceActor(Actor target, float *delta)
-{
-	float diff;
-	float angle1;
-	float angle2;
-
-	angle1 = Angles.yaw;
-	angle2 = atan2(target.Origin.y - Origin.y, target.Origin.x - Origin.x);
-	if (angle2 > angle1)
-	{
-		diff = AngleMod360(angle2 - angle1);
-		if (diff > 180.0)
-		{
-			*delta = 360.0 - diff;
-			return 0;
-		}
-		else
-		{
-			*delta = diff;
-			return 1;
-		}
-	}
-	else
-	{
-		diff = AngleMod360(angle1 - angle2);
-		if (diff > 180.0)
-		{
-			*delta = 360.0 - diff;
-			return 1;
-		}
-		else
-		{
-			*delta = diff;
-			return 0;
-		}
-	}
 }
 
 //==========================================================================
@@ -1487,33 +1344,6 @@ void TeleportOther()
 
 //==========================================================================
 //
-//  TestLocation
-//
-//  Returns true if the mobj is not blocked by anything at its current
-// location, otherwise returns false.
-//
-//==========================================================================
-
-bool TestLocation()
-{
-	if (!bColideWithThings && !bColideWithWorld)
-		return true;
-
-	if (CheckPosition(Origin))
-	{
-		// XY is ok, now check Z
-		if ((Origin.z < FloorZ) || (Origin.z + Height > CeilingZ))
-		{
-			// Bad Z
-			return false;
-		}
-		return true;
-	}
-	return false;
-}
-
-//==========================================================================
-//
 //	Touch
 //
 //==========================================================================
@@ -1868,53 +1698,6 @@ void SetDormant()
 
 //==========================================================================
 //
-//  HeightClip
-//
-//  Takes a valid thing and adjusts the thing->FloorZ, thing->CeilingZ, and
-// possibly thing->z. This is called for all nearby monsters whenever a
-// sector changes height. If the thing doesn't fit, the z will be set to the
-// lowest value and false will be returned.
-//
-//==========================================================================
-
-bool HeightClip()
-{
-	bool onfloor;
-
-	onfloor = (Origin.z == FloorZ);
-
-	tmtrace_t tmtrace;
-	CheckRelPosition(&tmtrace, Origin);
-	// what about stranding a monster partially off an edge?
-
-	FloorZ = tmtrace.FloorZ;
-	CeilingZ = tmtrace.CeilingZ;
-	Floor = tmtrace.Floor;
-	Ceiling = tmtrace.Ceiling;
-
-	if (onfloor)
-	{
-		// walking monsters rise and fall with the floor
-		if ((Origin.z - FloorZ < 9.0) || bNoGravity)
-		{
-			Origin.z = FloorZ;
-		}
-	}
-	else
-	{
-		// don't adjust a floating monster unless forced to
-		if (Origin.z + Height > CeilingZ)
-			Origin.z = CeilingZ - Height;
-	}
-
-	if (CeilingZ - FloorZ < Height)
-		return false;
-
-	return true;
-}
-
-//==========================================================================
-//
 //	SectorChanged
 //
 //==========================================================================
@@ -2123,7 +1906,7 @@ bool SeekerMissile(float thresh, float turnMax)
 		Tracer = none;
 		return false;
 	}
-	dir = FaceActor(Actor(Tracer), &delta);
+	dir = FaceActor(Actor(Tracer), delta);
 	if (delta > thresh)
 	{
 		delta /= 2.0;

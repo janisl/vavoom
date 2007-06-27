@@ -79,7 +79,7 @@ final void DragonSeek(float thresh, float turnMax)
 	{
 		return;
 	}
-	dir = FaceActor(Actor(tempTarget), &delta);
+	dir = FaceActor(Actor(tempTarget), delta);
 	if (delta > thresh)
 	{
 		delta /= 2.0;
