@@ -1011,7 +1011,7 @@ bool VRenderLevel::CheckAliasModelFrame(VEntity* Ent, float Inter)
 //==========================================================================
 
 void R_DrawModelFrame(const TVec& Origin, float Angle, VModel* Model,
-	int Frame, const char* Skin)
+	int Frame, const char* Skin, float Inter)
 {
 	guard(R_DrawModelFrame);
 	void* MData = Mod_Extradata(Model);
@@ -1021,7 +1021,7 @@ void R_DrawModelFrame(const TVec& Origin, float Angle, VModel* Model,
 	}
 
 	VScriptedModel* SMdl = (VScriptedModel*)MData;
-	int FIdx = FindFrame(*SMdl->DefaultClass, Frame, 0);
+	int FIdx = FindFrame(*SMdl->DefaultClass, Frame, Inter);
 	if (FIdx == -1)
 	{
 		return;
@@ -1056,6 +1056,64 @@ void R_DrawModelFrame(const TVec& Origin, float Angle, VModel* Model,
 
 	Drawer->EndView();
 	unguard;
+}
+
+//==========================================================================
+//
+//	R_DrawStateModelFrame
+//
+//==========================================================================
+
+bool R_DrawStateModelFrame(VState* State, float Inter, const TVec& Origin,
+	float Angle)
+{
+	VClassModelScript* Cls = NULL;
+	for (int i = 0; i < ClassModels.Num(); i++)
+	{
+		if (ClassModels[i]->Name == State->Outer->Name)
+		{
+			Cls = ClassModels[i];
+		}
+	}
+	if (!Cls)
+	{
+		return false;
+	}
+	int FIdx = FindFrame(*Cls, State->InClassIndex, Inter);
+	if (FIdx == -1)
+	{
+		return false;
+	}
+
+	viewangles.yaw = 180;
+	viewangles.pitch = 0;
+	viewangles.roll = 0;
+	AngleVectors(viewangles, viewforward, viewright, viewup);
+	vieworg = TVec(0, 0, 0);
+	fixedlight = 0;
+
+	refdef_t	rd;
+
+	rd.x = 0;
+	rd.y = 0;
+	rd.width = ScreenWidth;
+	rd.height = ScreenHeight;
+	rd.fovx = tan(DEG2RAD(90) / 2);
+	rd.fovy = rd.fovx * rd.height / rd.width / PixelAspect;
+	rd.drawworld = false;
+
+	Drawer->SetupView(NULL, &rd);
+
+	TAVec Angles;
+	Angles.yaw = Angle;
+	Angles.pitch = 0;
+	Angles.roll = 0;
+
+	DrawModel(NULL, Origin, Angles, *Cls, FIdx, "", 0, 0xffffffff, 0, 1.0,
+		false, 0);
+
+	Drawer->EndView();
+	return true;
 }
 
 //==========================================================================

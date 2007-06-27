@@ -220,6 +220,7 @@ _____MAIN_EXE__SOURCES = \
 	text.cpp \
 	text.h \
 	ui.h \
+	ui_actor.cpp \
 	ui_gc.cpp \
 	ui_gc.h \
 	ui_modal.cpp \

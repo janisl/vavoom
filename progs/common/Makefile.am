@@ -11,6 +11,7 @@ $(OUTDIR)/linespec.dat: $(VCC) $(OUTDIR)/engine.dat $(srcdir)/linespec/*.vc
 	$(VCC) -P$(OUTDIR) $(srcdir)/linespec/classes.vc $@
 
 EXTRA_DIST = \
+	engine/ActorDisplayWindow.vc \
 	engine/BasePlayer.vc \
 	engine/Entity.vc \
 	engine/classes.vc \

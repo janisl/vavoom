@@ -23,18 +23,16 @@
 //**
 //**************************************************************************
 
-#include "Object.vc"
-#include "Level.vc"
-#include "Thinker.vc"
-#include "LevelInfo.vc"
-#include "Entity.vc"
-#include "PlayerReplicationInfo.vc"
-#include "BasePlayer.vc"
-#include "WorldInfo.vc"
-#include "GameInfo.vc"
-#include "GC.vc"
-#include "Window.vc"
-#include "ModalWindow.vc"
-#include "RootWindow.vc"
-#include "ActorDisplayWindow.vc"
-#include "ClientGameBase.vc"
+class ActorDisplayWindow : Window
+	native;
+
+state		CastState;
+float		CastTime;
+float		StateTime;
+state		NextState;
+
+native final void SetState(state State);
+
+defaultproperties
+{
+}

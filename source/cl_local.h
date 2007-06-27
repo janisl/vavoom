@@ -210,7 +210,7 @@ void CL_SignonReply();
 void CL_ParseServerInfo(class VMessageIn& msg);
 
 void R_InstallSprite(const char*, int);
-void R_DrawModelFrame(const TVec&, float, VModel*, int, const char*);
+void R_DrawModelFrame(const TVec&, float, VModel*, int, const char*, float);
 
 VModel* Mod_FindName(const VStr&);
 bool R_GetModelSkinInfo(VModel*, int, VName&, VStr&);

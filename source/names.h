@@ -64,6 +64,7 @@ REGISTER_NAME(GC)
 REGISTER_NAME(Window)
 REGISTER_NAME(ModalWindow)
 REGISTER_NAME(RootWindow)
+REGISTER_NAME(ActorDisplayWindow)
 REGISTER_NAME(ClientGameBase)
 REGISTER_NAME(ClientState)
 

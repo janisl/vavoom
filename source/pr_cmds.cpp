@@ -569,7 +569,7 @@ IMPLEMENT_FUNCTION(VObject, R_DrawModelFrame)
 	P_GET_PTR(VModel, model);
 	P_GET_FLOAT(angle);
 	P_GET_VEC(origin);
-	R_DrawModelFrame(origin, angle, model, frame, *skin);
+	R_DrawModelFrame(origin, angle, model, frame, *skin, 0);
 }
 
 //==========================================================================

@@ -37,62 +37,22 @@ int fend[7];
 
 int laststage;
 
-#ifdef FIXME
-static int castnum;
-static int *castorder;
-static state_t *caststate;
-static float casttime;
-static bool castdeath;
-static int castframes;
-static int castonmelee;
-static bool castattacking;
+ActorDisplayWindow CastWin;
+
+int			castnum;
+int			castframes;
+int			castonmelee;
+bool		castattacking;
+bool		castdeath;
+
+const int CastCount = 17;
 
 // Casting by id Software. in order of appearance
-int castorder[] = {
-	MT_POSSESSED,
-	MT_SHOTGUY,
-	MT_CHAINGUY,
-	MT_TROOP,
-	MT_SERGEANT,
-	MT_SKULL,
-	MT_HEAD,
-	MT_KNIGHT,
-	MT_BRUISER,
-	MT_BABY,
-	MT_PAIN,
-	MT_UNDEAD,
-	MT_FATSO,
-	MT_VILE,
-	MT_SPIDER,
-	MT_CYBORG,
-	MT_PLAYER,
-
-	-1
-};
-
+class<Actor> castorder[CastCount];
 //
 // Character cast strings
 //
-string caststrings[] = {
-	"ZOMBIEMAN",
-	"SHOTGUN GUY",
-	"HEAVY WEAPON DUDE",
-	"IMP",
-	"DEMON",
-	"LOST SOUL",
-	"CACODEMON",
-	"HELL KNIGHT",
-	"BARON OF HELL",
-	"ARACHNOTRON",
-	"PAIN ELEMENTAL",
-	"REVENANT",
-	"MANCUBUS",
-	"ARCH-VILE",
-	"THE SPIDER MASTERMIND",
-	"THE CYBERDEMON",
-	"OUR HERO"
-};
-#endif
+string caststrings[CastCount];
 
 //==========================================================================
 //
@@ -171,7 +131,7 @@ void Tick(float DeltaTime)
 	FinaleTime += DeltaTime;
 	if (FinaleType == 'EndGameCast')
 	{
-		F_CastTicker();
+		F_CastTicker(DeltaTime);
 	}
 }
 
@@ -198,6 +158,22 @@ void DrawWindow(GC gc)
 	else
 	{
 		gc.DrawFullScreenPic(fpage1);
+	}
+}
+
+//==========================================================================
+//
+//  PostDrawWindow
+//
+//==========================================================================
+
+void PostDrawWindow(GC gc)
+{
+	if (FinaleType == 'EndGameCast')
+	{
+		T_SetFont(font_small);
+		T_SetAlign(hcentre, vtop);
+		T_DrawText(320, 440, caststrings[castnum]);
 	}
 }
 
@@ -322,16 +298,20 @@ void F_StartCast()
 #endif
 	fpage1 = R_RegisterPic('bossback');
 
-#ifdef FIXME
+	if (!CastWin)
+	{
+		CastWin = ActorDisplayWindow(NewChild(ActorDisplayWindow));
+		CastWin.SetPos(0, 0);
+		CastWin.SetSize(640, 480);
+	}
+
 	castnum = 0;
-	castorder = svpr.GlobalAddr("castorder");
-	caststate = &states[mobjinfo[castorder[castnum]].seestate];
-	casttime = caststate->time;
+	CastWin.SetState(castorder[castnum].default.SeeState);
+	CastWin.CastTime = CastWin.StateTime;
 	castdeath = false;
 	castframes = 0;
 	castonmelee = 0;
 	castattacking = false;
-#endif
 }
 
 //==========================================================================
@@ -340,87 +320,61 @@ void F_StartCast()
 //
 //==========================================================================
 
-#ifdef FIXME
-void CastSound(int state)
+void CastSound(state State)
 {
-	string sfx;
+	name	sfx;
 
 	// sound hacks....
-	switch (state)
-	{
-	case S_PLAY_ATK1:
-		sfx = "weapons/sshotf";
-		break;
-	case S_POSS_ATK2:
-		sfx = "grunt/attack";
-		break;
-	case S_SPOS_ATK2:
-		sfx = "shotguy/attack";
-		break;
-	case S_VILE_ATK2:
-		sfx = "vile/start";
-		break;
-	case S_SKEL_FIST2:
-		sfx = "skeleton/swing";
-		break;
-	case S_SKEL_FIST4:
-		sfx = "skeleton/melee";
-		break;
-	case S_SKEL_MISS2:
-		sfx = "skeleton/attack";
-		break;
-	case S_FATT_ATK8:
-	case S_FATT_ATK5:
-	case S_FATT_ATK2:
-		sfx = "fatso/attack";
-		break;
-	case S_CPOS_ATK2:
-	case S_CPOS_ATK3:
-	case S_CPOS_ATK4:
-		sfx = "chainguy/attack";
-		break;
-	case S_TROO_ATK3:
-		sfx = "imp/melee";
-		break;
-	case S_SARG_ATK2:
-		sfx = "demon/melee";
-		break;
-	case S_BOSS_ATK2:
-	case S_BOS2_ATK2:
-		sfx = "baron/attack";
-		break;
-	case S_HEAD_ATK2:
-		sfx = "caco/attack";
-		break;
-	case S_SKULL_ATK2:
-		sfx = "skull/melee";
-		break;
-	case S_SPID_ATK2:
-	case S_SPID_ATK3:
-		sfx = "spider/attack";
-		break;
-	case S_BSPI_ATK2:
-		sfx = "baby/attack";
-		break;
-	case S_CYBER_ATK2:
-	case S_CYBER_ATK4:
-	case S_CYBER_ATK6:
-		sfx = "weapons/rocklf";
-		break;
-	case S_PAIN_ATK3:
-		sfx = "skull/melee";
-		break;
-	default:
-		sfx = "";
-		break;
-	}
+	if (State == DoomPlayer::S_PLAY_ATK1)
+		sfx = 'weapons/sshotf';
+	else if (State == ZombieMan::S_POSS_ATK2)
+		sfx = 'grunt/attack';
+	else if (State == ShotgunGuy::S_SPOS_ATK2)
+		sfx = 'shotguy/attack';
+	else if (State == Archvile::S_VILE_ATK2)
+		sfx = 'vile/start';
+	else if (State == Revenant::S_SKEL_FIST2)
+		sfx = 'skeleton/swing';
+	else if (State == Revenant::S_SKEL_FIST4)
+		sfx = 'skeleton/melee';
+	else if (State == Revenant::S_SKEL_MISS2)
+		sfx = 'skeleton/attack';
+	else if (State == Fatso::S_FATT_ATK8 ||
+		State == Fatso::S_FATT_ATK5 ||
+		State == Fatso::S_FATT_ATK2)
+		sfx = 'fatso/attack';
+	else if (State == ChaingunGuy::S_CPOS_ATK2 ||
+		State == ChaingunGuy::S_CPOS_ATK3 ||
+		State == ChaingunGuy::S_CPOS_ATK4)
+		sfx = 'chainguy/attack';
+	else if (State == DoomImp::S_TROO_ATK3)
+		sfx = 'imp/melee';
+	else if (State == Demon::S_SARG_ATK2)
+		sfx = 'demon/melee';
+	else if (State == BaronOfHell::S_BOSS_ATK2 ||
+		State == HellKnight::S_BOS2_ATK2)
+		sfx = 'baron/attack';
+	else if (State == Cacodemon::S_HEAD_ATK2)
+		sfx = 'caco/attack';
+	else if (State == LostSoul::S_SKULL_ATK2)
+		sfx = 'skull/melee';
+	else if (State == SpiderMastermind::S_SPID_ATK2 ||
+		State == SpiderMastermind::S_SPID_ATK3)
+		sfx = 'spider/attack';
+	else if (State == Arachnotron::S_BSPI_ATK2)
+		sfx = 'baby/attack';
+	else if (State == Cyberdemon::S_CYBER_ATK2 ||
+		State == Cyberdemon::S_CYBER_ATK4 ||
+		State == Cyberdemon::S_CYBER_ATK6)
+		sfx = 'weapons/rocklf';
+	else if (State == PainElemental::S_PAIN_ATK3)
+		sfx = 'skull/melee';
 
 	if (sfx)
 	{
-		StartSoundName(NULL, sfx);
+		LocalSound(sfx);
 	}
 }
-#endif
 
 //==========================================================================
 //
@@ -428,25 +382,35 @@ void CastSound(int state)
 //
 //==========================================================================
 
-void F_CastTicker()
+void F_CastTicker(float DeltaTime)
 {
-#ifdef FIXME
-	int st;
-
-	casttime -= host_frametime;
-	if (casttime > 0)
+	CastWin.CastTime -= DeltaTime;
+	if (CastWin.CastTime > 0.0)
 		return;	// not time to change state yet
 
-	if (caststate->time == -1 || !caststate->nextstate)
+	SetNextCastState(CastWin.StateTime, CastWin.NextState);
+}
+
+//==========================================================================
+//
+//  SetNextCastState
+//
+//==========================================================================
+
+void SetNextCastState(float StateTime, state NextState)
+{
+	state	NewState;
+
+	if (StateTime == -1.0 || !NextState)
 	{
 		// switch from deathstate to next monster
 		castnum++;
 		castdeath = false;
-		if (castorder[castnum] == -1)
+		if (castnum == CastCount)
 			castnum = 0;
-		if (mobjinfo[castorder[castnum]].seesound)
-			S_StartSound(mobjinfo[castorder[castnum]].seesound);
-		caststate = &states[mobjinfo[castorder[castnum]].seestate];
+		if (castorder[castnum].default.SightSound)
+			LocalSound(castorder[castnum].default.SightSound);
+		NewState = castorder[castnum].default.SeeState;
 		castframes = 0;
 	}
 	else
@@ -454,13 +418,12 @@ void F_CastTicker()
 		// just advance to next state in animation
 //      if (caststate == &states[S1_PLAY_ATK1])
 //          goto stopattack;    // Oh, gross hack!
-		st = caststate->nextstate;
-		if (st == mobjinfo[castorder[castnum]].spawnstate)
-			st = mobjinfo[castorder[castnum]].seestate;
-		caststate = &states[st];
+		NewState = NextState;
+		if (NewState == castorder[castnum].default.IdleState)
+			NewState = castorder[castnum].default.SeeState;
 		castframes++;
 
-		svpr.Exec("CastSound", st);
+		CastSound(NewState);
 	}
 
 	if (castframes == 12)
@@ -468,36 +431,35 @@ void F_CastTicker()
 		// go into attack frame
 		castattacking = true;
 		if (castonmelee)
-			caststate = &states[mobjinfo[castorder[castnum]].meleestate];
+			NewState = castorder[castnum].default.MeleeState;
 		else
-			caststate = &states[mobjinfo[castorder[castnum]].missilestate];
+			NewState = castorder[castnum].default.MissileState;
 		castonmelee ^= 1;
-		if (caststate == &states[0])
+		if (!NewState)
 		{
 			if (castonmelee)
-				caststate = &states[mobjinfo[castorder[castnum]].meleestate];
+				NewState = castorder[castnum].default.MeleeState;
 			else
-				caststate =
-					&states[mobjinfo[castorder[castnum]].missilestate];
+				NewState = castorder[castnum].default.MissileState;
 		}
 	}
 
 	if (castattacking)
 	{
 		if (castframes == 24
-			|| caststate == &states[mobjinfo[castorder[castnum]].seestate])
+			|| NewState == castorder[castnum].default.SeeState)
 		{
 //        stopattack:
 			castattacking = false;
 			castframes = 0;
-			caststate = &states[mobjinfo[castorder[castnum]].seestate];
+			NewState = castorder[castnum].default.SeeState;
 		}
 	}
 
-	casttime = caststate->time;
-	if (casttime == -1)
-		casttime = 15;
-#endif
+	CastWin.SetState(NewState);
+	CastWin.CastTime = CastWin.StateTime;
+	if (CastWin.CastTime < 0.0)
+		CastWin.CastTime = 15.0 / 35.0;
 }
 
 //==========================================================================
@@ -508,7 +470,6 @@ void F_CastTicker()
 
 bool F_CastResponder(event_t * ev)
 {
-#ifdef FIXME
 	if (ev->type != ev_keydown)
 		return false;
 
@@ -517,17 +478,14 @@ bool F_CastResponder(event_t * ev)
 
 	// go into death frame
 	castdeath = true;
-	caststate = &states[mobjinfo[castorder[castnum]].deathstate];
-	casttime = caststate->time;
+	CastWin.SetState(castorder[castnum].default.DeathState);
+	CastWin.CastTime = CastWin.StateTime;
 	castframes = 0;
 	castattacking = false;
-	if (mobjinfo[castorder[castnum]].deathsound)
-		S_StartSound(mobjinfo[castorder[castnum]].deathsound);
+	if (castorder[castnum].default.DeathSound)
+		LocalSound(castorder[castnum].default.DeathSound);
 
 	return true;
-#else
-	return false;
-#endif
 }
 
 //==========================================================================
@@ -542,17 +500,6 @@ void F_CastDrawer()
 	SetVirtualScreen(320, 200);
 	R_DrawPic(0, 0, fpage1);
 	SetVirtualScreen(640, 480);
-
-#ifdef FIXME
-	T_SetFont(font_small);
-	T_SetAlign(hcentre, vtop);
-//  T_DrawText(160, 180, castorder[castnum].Name);
-	T_DrawText(160, 180,
-		svpr.GetString(mobjinfo[castorder[castnum]].message));
-
-	// draw the current frame in the middle of the screen
-	R_DrawSpritePatch(160, 170, caststate->sprite, caststate->frame, 0);
-#endif
 }
 
 //==========================================================================
@@ -599,4 +546,40 @@ defaultproperties
 	bTickEnabled = true;
 	Width = 640;
 	Height = 480;
+
+	castorder[0] = ZombieMan;
+	castorder[1] = ShotgunGuy;
+	castorder[2] = ChaingunGuy;
+	castorder[3] = DoomImp;
+	castorder[4] = Demon;
+	castorder[5] = LostSoul;
+	castorder[6] = Cacodemon;
+	castorder[7] = HellKnight;
+	castorder[8] = BaronOfHell;
+	castorder[9] = Arachnotron;
+	castorder[10] = PainElemental;
+	castorder[11] = Revenant;
+	castorder[12] = Fatso;
+	castorder[13] = Archvile;
+	castorder[14] = SpiderMastermind;
+	castorder[15] = Cyberdemon;
+	castorder[16] = DoomPlayer;
+
+	caststrings[0] = "ZOMBIEMAN";
+	caststrings[1] = "SHOTGUN GUY";
+	caststrings[2] = "HEAVY WEAPON DUDE";
+	caststrings[3] = "IMP";
+	caststrings[4] = "DEMON";
+	caststrings[5] = "LOST SOUL";
+	caststrings[6] = "CACODEMON";
+	caststrings[7] = "HELL KNIGHT";
+	caststrings[8] = "BARON OF HELL";
+	caststrings[9] = "ARACHNOTRON";
+	caststrings[10] = "PAIN ELEMENTAL";
+	caststrings[11] = "REVENANT";
+	caststrings[12] = "MANCUBUS";
+	caststrings[13] = "ARCH-VILE";
+	caststrings[14] = "THE SPIDER MASTERMIND";
+	caststrings[15] = "THE CYBERDEMON";
+	caststrings[16] = "OUR HERO";
 }
