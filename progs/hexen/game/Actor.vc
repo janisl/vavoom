@@ -31,15 +31,7 @@ const float MAULATORTIME 	= 25.0;
 
 const float TELEFOGHEIGHT	= 32.0;
 
-const int BASETHRESHOLD		= 100;	// follow a player exlusively for 3 seconds
-
-const float MELEERANGE		= 64.0;
-const float MISSILERANGE	= (32.0 * 64.0);
-
 const float BONUSADD		= 0.2;
-
-const float MONS_LOOK_RANGE 	= (16.0 * 64.0);
-const int MONS_LOOK_LIMIT 		= 64;
 
 bool bSpawnFloat;		// spawn random float z
 bool bRip;				// missile rips through solid targets

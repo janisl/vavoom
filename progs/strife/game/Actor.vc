@@ -26,13 +26,8 @@
 class Actor : EntityEx
 	abstract;
 
-// follow a player exlusively for 3 seconds
-const int BASETHRESHOLD		= 100;
-
 const float
-	MELEERANGE		= 64.0,
 	PUNCHRANGE		= 80.0,
-	MISSILERANGE	= (32.0 * 64.0),
 	MAULERRANGE		= (33.0 * 64.0),
 	ROBOTRANGE		= 264.0;
 
@@ -40,7 +35,6 @@ bool bStanding;			// Don't walk around.
 //	MOVEMENT FLAGS
 bool bNeutral;			// Neutral characters (peasants and beggars)
 bool bStandMustSeeTarget;		//COUNTITEM	800000
-bool bFriendly;			// Will fight on player's side
 bool bUnknown2;			//8000000
 bool bSpectral;			// Can be killed only with Sigil
 bool bNoDeathmatch;
@@ -1547,191 +1541,6 @@ bool SectorChanged(int CrushChange)
 		A.Velocity.y = (Random() - Random()) * 16.0 * 35.0;
 	}
 	return false;	//don't fit
-}
-
-//==========================================================================
-//
-//  LookForMonsters
-//
-//==========================================================================
-
-bool LookForMonsters(bool allaround)
-{
-	Actor mo;
-	float an;
-	float dist;
-
-	if (!Level.Game.Players[0].MO.CanSee(self))
-	{
-		return false;	//  Not seen by player
-	}
-
-	foreach AllThinkers(Actor, mo)
-	{
-		if (mo.Health <= 0)
-			continue;	// dead
-
-		if (mo == self)
-			continue;	// self
-
-		if (!mo.bCountKill)
-			continue;	// not a monster
-
-		if (!CanSee(mo))
-			continue;	// out of sight
-
-		if (P_Random() > 128)
-			continue;	// sometimes skip
-
-		if (!allaround)
-		{
-			an = AngleMod360(atan2(mo.Origin.y - Origin.y,
-				mo.Origin.x - Origin.x) - Angles.yaw);
-
-			if (an > 90.0 && an < 270.0)
-			{
-				dist = DistTo(mo);
-				// if real close, react anyway
-				if (dist > MELEERANGE)
-					continue;	// behind back
-			}
-		}
-
-		Target = mo;
-		return true;
-	}
-	return false;
-}
-
-//==========================================================================
-//
-//  LookForMonsters2
-//
-//==========================================================================
-
-bool LookForMonsters2(bool allaround)
-{
-	Actor mo;
-	float an;
-	float dist;
-
-	foreach AllThinkers(Actor, mo)
-	{
-		if (mo.Health <= 0)
-			continue;	// dead
-
-		if (mo == self)
-			continue;	// self
-
-		if (!mo.bCountKill)
-			continue;	// not a monster
-
-		if (bFriendly == mo.bFriendly)
-			continue;	// fiendly.
-
-		if (!CanSee(mo))
-			continue;	// out of sight
-
-		if (P_Random() > 128)
-			continue;	// sometimes skip
-
-		if (!allaround)
-		{
-			an = AngleMod360(atan2(mo.Origin.y - Origin.y,
-				mo.Origin.x - Origin.x) - Angles.yaw);
-
-			if (an > 90.0 && an < 270.0)
-			{
-				dist = DistTo(mo);
-				// if real close, react anyway
-				if (dist > MELEERANGE)
-					continue;	// behind back
-			}
-		}
-
-		Target = mo;
-		return true;
-	}
-	return false;
-}
-
-//==========================================================================
-//
-//  LookForPlayers
-//
-//  If allaround is false, only look 180 degrees in front.
-//  Returns true if a player is targeted.
-//
-//==========================================================================
-
-bool LookForPlayers(bool allaround)
-{
-	int c;
-	int stop;
-	Player player;
-	float an;
-	float dist;
-
-	if (bFriendly)
-	{
-		return LookForMonsters2(allaround);
-	}
-// 
-	if (!Level.Game.netgame && Level.Game.Players[0] && Level.Game.Players[0].bSpawned && Level.Game.Players[0].Health <= 0)
-	{
-		return LookForMonsters(allaround);
-	}
-
-	c = 0;
-	stop = (LastLook - 1) & (MAXPLAYERS - 1);
-
-	for (;; LastLook = (LastLook + 1) & (MAXPLAYERS - 1))
-	{
-		if (LastLook == stop)
-		{
-			// done looking
-			return false;
-		}
-
-		player = Player(Level.Game.Players[LastLook]);
-
-		if (!player)
-			continue;
-
-		if (c++ == 2)
-		{
-			// done looking
-			return false;
-		}
-
-		if (!player.bSpawned || !player.MO)
-			continue;	//  not spawned yet
-
-		if (player.Health <= 0)
-			continue;	// dead
-
-		if (!CanSee(player.MO))
-			continue;	//  out of sight
-
-		if (!allaround)
-		{
-			an = AngleMod360(atan2(player.MO.Origin.y - Origin.y,
-				player.MO.Origin.x - Origin.x) - Angles.yaw);
-
-			if (an > 90.0 && an < 270.0)
-			{
-				dist = DistTo(player.MO);
-				// if real close, react anyway
-				if (dist > MELEERANGE)
-					continue;	// behind back
-			}
-		}
-
-		Target = Actor(player.MO);
-		return true;
-	}
-
-	return false;
 }
 
 //==========================================================================
