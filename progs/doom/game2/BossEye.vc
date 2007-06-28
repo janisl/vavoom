@@ -61,7 +61,7 @@ final void A_BrainAwake()
 final void A_BrainSpit()
 {
 	Actor targ;
-	Actor A;
+	EntityEx A;
 
 	DoomLevelInfo(Level).bBrainEasy = !DoomLevelInfo(Level).bBrainEasy;
 	if (Level.Game.gameskill <= sk_easy && !DoomLevelInfo(Level).bBrainEasy)
@@ -73,9 +73,12 @@ final void A_BrainSpit()
 
 	// spawn brain missile
 	A = SpawnMissile(targ, SpawnShot);
-	A.Target = targ;
-	A.ReactionCount = ftoi((targ.Origin.y - Origin.y) /
-		A.Velocity.y / A.StateTime);
+	if (A)
+	{
+		A.Target = targ;
+		A.ReactionCount = ftoi((targ.Origin.y - Origin.y) /
+			A.Velocity.y / A.StateTime);
+	}
 
 	PlaySound('brain/spit', CHAN_WEAPON, 1.0, ATTN_NONE);
 }

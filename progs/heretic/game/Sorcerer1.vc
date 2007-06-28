@@ -55,7 +55,7 @@ final void A_Sor1Chase()
 
 final void A_Srcr1Attack()
 {
-	Actor A;
+	EntityEx A;
 	TAVec ang;
 	float angle;
 
@@ -72,20 +72,20 @@ final void A_Srcr1Attack()
 	if (Health > (default.Health / 3) * 2)
 	{
 		// Spit one fireball
-		SpawnMissile(Target, SorcererFX1);
+		SpawnMissile(Target, SorcererFX1, 48.0);
 	}
 	else
 	{
 		// Spit three fireballs
-		A = SpawnMissile(Target, SorcererFX1);
+		A = SpawnMissile(Target, SorcererFX1, 48.0);
 		if (A)
 		{
 			VectorAngles(&A.Velocity, &ang);
 			angle = A.Angles.yaw;
 			SpawnMissileAngles(SorcererFX1,
-				AngleMod360(angle - 3.0), ang.pitch);
+				AngleMod360(angle - 3.0), ang.pitch, 48.0);
 			SpawnMissileAngles(SorcererFX1,
-				AngleMod360(angle + 3.0), ang.pitch);
+				AngleMod360(angle + 3.0), ang.pitch, 48.0);
 		}
 		if (Health < default.Health / 3)
 		{

@@ -123,6 +123,7 @@ defaultproperties
 	bNoTeleport = true;
 	bColideWithThings = false;
 	bColideWithWorld = false;
+	bRandomise = true;
 	IdleState = S_SPAWN1;
 	SightSound = 'brain/spit';
 	DeathSound = 'brain/cubeboom';

@@ -148,7 +148,7 @@ final void A_BishopAttack()
 
 final void A_BishopAttack2()
 {
-	Actor mo;
+	EntityEx mo;
 
 	if (!Target || !NumToSpawn)
 	{

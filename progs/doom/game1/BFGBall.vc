@@ -97,6 +97,7 @@ defaultproperties
 	bActivatePCross = true;
 	bActivateImpact = true;
 	bNoTeleport = true;
+	bRandomise = true;
 	IdleState = S_BFGSHOT;
 	DeathState = S_BFGLAND;
 	DeathSound = 'weapons/bfgx';

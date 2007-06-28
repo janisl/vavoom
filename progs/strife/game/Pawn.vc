@@ -85,112 +85,6 @@ bool Deactivate()
 
 //==========================================================================
 //
-//  SpawnMissile
-//
-//==========================================================================
-
-Actor SpawnMissile(EntityEx dest, class<Actor> type)
-{
-	Actor A;
-	TVec dir;
-
-	A = Spawn(type, Origin + vector(0.0, 0.0, 32.0 - FloorClip));
-
-	if (A.SightSound)
-		A.PlaySound(A.SightSound, CHAN_VOICE);
-
-	A.Target = self;	// where it came from
-
-	dir = dest.Origin - Origin;
-	// fuzzy player
-	if (dest.Alpha < 1.0)
-	{
-		VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0 / 2.0);
-	}
-	dir = Normalise(dir);
-	A.Velocity = dir * A.Speed;
-
-	VectorAngles(&dir, &A.Angles);
-
-	A.CheckMissileSpawn();
-
-	return A;
-}
-
-//==========================================================================
-//
-//  SpawnMissileZ
-//
-//==========================================================================
-
-Actor SpawnMissileZ(float z, EntityEx dest, class<Actor> type)
-{
-	Actor A;
-	TVec dir;
-
-	A = Spawn(type, Origin + vector(0.0, 0.0, z - FloorClip));
-
-	if (A.SightSound)
-		A.PlaySound(A.SightSound, CHAN_VOICE);
-
-	A.Target = self;	// where it came from
-
-	dir = dest.Origin - Origin;
-	// fuzzy player
-	if (dest.Alpha < 1.0)
-	{
-		VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0 / 2.0);
-	}
-	dir = Normalise(dir);
-	A.Velocity = dir * A.Speed;
-
-	VectorAngles(&dir, &A.Angles);
-
-	A.CheckMissileSpawn();
-
-	return A;
-}
-
-//==========================================================================
-//
-//  SpawnMissileZAimed
-//
-//==========================================================================
-
-Actor SpawnMissileZAimed(float z, EntityEx dest, class<Actor> type)
-{
-	Actor A;
-	TVec dir;
-	float dist;
-
-	A = Spawn(type, Origin + vector(0.0, 0.0, z - FloorClip));
-
-	if (A.SightSound)
-		A.PlaySound(A.SightSound, CHAN_VOICE);
-
-	A.Target = self;	// where it came from
-
-	dist = DistTo2(dest);
-	dir.x = cos(Angles.yaw);
-	dir.y = sin(Angles.yaw);
-	dir.z = dist != 0.0 ? (dest.Origin.z - Origin.z) / dist : A.Speed;
-	// fuzzy player
-	if (dest.Alpha < 1.0)
-	{
-		VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0 / 2.0);
-	}
-	dir = Normalise(dir);
-	A.Velocity = dir * A.Speed;
-
-	VectorAngles(&dir, &A.Angles);
-
-	A.CheckMissileSpawn();
-
-	return A;
-}
-
-//==========================================================================
-//
 //	CheckRobotRange
 //
 //==========================================================================
@@ -859,7 +753,7 @@ final void A_SpecterAttack()
 
 final void A_Specter2Attack()
 {
-	Actor A;
+	EntityEx A;
 
 	if (!Target)
 		return;
@@ -867,7 +761,10 @@ final void A_Specter2Attack()
 	A_FaceTarget();
 
 	A = SpawnMissile(Target, SpectralLightningH2);
-	A.bSpectral = false;
+	if (A)
+	{
+		A.bSpectral = false;
+	}
 }
 
 //==========================================================================
@@ -878,7 +775,7 @@ final void A_Specter2Attack()
 
 final void A_Specter3Attack()
 {
-	Actor spread;
+	EntityEx spread;
 	int i;
 
 	if (!Target)
@@ -889,10 +786,13 @@ final void A_Specter3Attack()
 	for (i = 0; i < 20; i++)
 	{
 		spread = SpawnMissile(Target, SpectralLightningBall2);
-		spread.bSpectral = false;
-		spread.Angles.yaw = AngleMod360(spread.Angles.yaw - 90.0 + itof(i) * (45.0 / 4.0));
-		spread.Velocity.x = spread.Speed * cos(spread.Angles.yaw);
-		spread.Velocity.y = spread.Speed * sin(spread.Angles.yaw);
+		if (spread)
+		{
+			spread.bSpectral = false;
+			spread.Angles.yaw = AngleMod360(spread.Angles.yaw - 90.0 + itof(i) * (45.0 / 4.0));
+			spread.Velocity.x = spread.Speed * cos(spread.Angles.yaw);
+			spread.Velocity.y = spread.Speed * sin(spread.Angles.yaw);
+		}
 	}
 
 	spread = Spawn(SpectralLightningV1, Origin + vector(0.0, 0.0, -Height));
@@ -912,7 +812,7 @@ final void A_Specter3Attack()
 
 final void A_Specter4Attack()
 {
-	Actor A;
+	EntityEx A;
 
 	if (!Target)
 		return;
@@ -920,7 +820,10 @@ final void A_Specter4Attack()
 	A_FaceTarget();
 
 	A = SpawnMissile(Target, SpectralLightningBigV2);
-	A.bSpectral = false;
+	if (A)
+	{
+		A.bSpectral = false;
+	}
 }
 
 //==========================================================================
@@ -931,7 +834,7 @@ final void A_Specter4Attack()
 
 final void A_Specter5Attack()
 {
-	Actor A;
+	EntityEx A;
 
 	if (!Target)
 		return;
@@ -939,7 +842,10 @@ final void A_Specter5Attack()
 	A_FaceTarget();
 
 	A = SpawnMissile(Target, SpectralLightningBigBall2);
-	A.bSpectral = false;
+	if (A)
+	{
+		A.bSpectral = false;
+	}
 }
 
 //==========================================================================

@@ -34,12 +34,12 @@ class StrifeBishop : Pawn
 
 final void A_BishopAttack()
 {
-	Actor missile;
+	EntityEx missile;
 
 	if (!Target)
 		return;
 
-	missile = SpawnMissileZ(64.0, Target, BishopMissile);
+	missile = SpawnMissile(Target, BishopMissile, 64.0);
 	if (missile)
 	{
 		missile.Tracer = Target;

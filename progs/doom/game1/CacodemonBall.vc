@@ -55,6 +55,7 @@ defaultproperties
 	bDropOff = true;
 	bActivatePCross = true;
 	bNoTeleport = true;
+	bRandomise = true;
 	IdleState = S_RBALL1;
 	DeathState = S_RBALLX1;
 	SightSound = 'caco/attack';

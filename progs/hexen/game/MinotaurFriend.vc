@@ -422,7 +422,7 @@ final void A_MinotaurDecide()
 
 final void A_MinotaurAtk2()
 {
-	Actor mo;
+	EntityEx mo;
 	float angle;
 	float momz;
 
@@ -435,7 +435,7 @@ final void A_MinotaurAtk2()
 		Target.Damage(self, self, HITDICE(3));
 		return;
 	}
-	mo = SpawnMissile(Target, MinotaurFX1);
+	mo = SpawnMissile(Target, MinotaurFX1, 40.0);
 	if (mo)
 	{
 		momz = mo.Velocity.z;
@@ -461,7 +461,7 @@ final void A_MinotaurAtk2()
 
 final void A_MinotaurAtk3()
 {
-	Actor mo;
+	EntityEx mo;
 
 	if (!Target)
 	{

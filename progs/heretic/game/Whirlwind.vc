@@ -26,24 +26,6 @@
 class Whirlwind : Projectile
 	__scriptid__(165);
 
-float SoundTimer;		// Timer for active sound
-
-//===========================================================================
-//
-//  ExplodeMissile
-//
-//===========================================================================
-
-bool ExplodeMissile()
-{
-	SoundTimer += 1.0 / 35.0;
-	if (SoundTimer < 60.0 / 35.0)
-	{
-		return true;
-	}
-	return ::ExplodeMissile();
-}
-
 //==========================================================================
 //
 //  A_WhirlwindSeek
@@ -60,10 +42,10 @@ final void A_WhirlwindSeek()
 		bMissile = false;
 		return;
 	}
-	SoundTimer -= 3.0 / 35.0;
-	if (SoundTimer < 0.0)
+	ExploCountSpec2 -= 3;
+	if (ExploCountSpec2 < 0)
 	{
-		SoundTimer = 58.0 / 35.0 + Random() * 31.0 / 35.0;
+		ExploCountSpec2 = 58 + (P_Random() & 31);
 		PlaySound('ironlich/attack3', CHAN_WEAPON);
 	}
 	if (Tracer && Tracer.Alpha < 1.0)
@@ -97,5 +79,7 @@ defaultproperties
 	Alpha = 0.666;
 	IdleState = S_HEADFX4_1;
 	DeathState = S_HEADFXI4_1;
-	SoundTimer = 50.0 / 35.0;
+	bExploCount = true;
+	ExploCountSpec2 = 50;
+	ExploCountSpec1 = 60;
 }

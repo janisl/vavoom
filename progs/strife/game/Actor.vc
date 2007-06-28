@@ -36,7 +36,6 @@ bool bStanding;			// Don't walk around.
 bool bNeutral;			// Neutral characters (peasants and beggars)
 bool bStandMustSeeTarget;		//COUNTITEM	800000
 bool bUnknown2;			//8000000
-bool bSpectral;			// Can be killed only with Sigil
 bool bNoDeathmatch;
 bool bSpawnFlag8;
 bool bSpawnFlag9;
@@ -347,33 +346,17 @@ void OnMapSpawn(mthing_t * mthing)
 
 //==========================================================================
 //
-//  ExplodeMissile
+//  DoMissileExplosionEffects
 //
 //==========================================================================
 
-bool ExplodeMissile()
+void DoMissileExplosionEffects()
 {
-	Velocity = vector(0.0, 0.0, 0.0);
-
-	SetState(DeathState);
-
-	StateTime -= Random() * 0.1;
-
-	if (StateTime < 0.1)
-		StateTime = 0.1;
-
-	bMissile = false;
-	BounceType = BOUNCE_None;
-
-	if (DeathSound)
-		PlaySound(DeathSound, CHAN_VOICE);
-
 	if (Effects & StrifeDefs::EF_DLIGHT_MASK)
 	{
 		SendExplosion(Effects & StrifeDefs::EF_DLIGHT_MASK, Origin);
 		Effects &= ~StrifeDefs::EF_DLIGHT_MASK;
 	}
-	return true;
 }
 
 //==========================================================================
@@ -394,32 +377,6 @@ final void SendExplosion(int etype, TVec org)
 			continue;
 		Player(Level.Game.Players[i]).ClientExplosion(etype, org);
 	}
-}
-
-//==========================================================================
-//
-//  CheckMissileSpawn
-//
-//  Moves the missile forward a bit and possibly explodes it right there.
-//
-//==========================================================================
-
-bool CheckMissileSpawn()
-{
-	StateTime -= Random() * 0.1;
-	if (StateTime < 0.1)
-		StateTime = 0.1;
-
-	// move a little forward so an angle can
-	// be computed if it immediately explodes
-	Origin += Velocity * 0.0142857143;
-
-	if (!TryMove(Origin))
-	{
-		ExplodeMissile();
-		return false;
-	}
-	return true;
 }
 
 //==========================================================================
@@ -1541,34 +1498,6 @@ bool SectorChanged(int CrushChange)
 		A.Velocity.y = (Random() - Random()) * 16.0 * 35.0;
 	}
 	return false;	//don't fit
-}
-
-//==========================================================================
-//
-//	SpawnSubMissile
-//
-//==========================================================================
-
-Actor SpawnSubMissile(class<Actor> type, EntityEx AInstigator)
-{
-	Actor other;
-	TVec dir;
-
-	other = Spawn(type, Origin);
-	if (!other)
-	{
-		return none;
-	}
-
-	other.Target = AInstigator;
-	other.Angles = Angles;
-
-	other.Velocity.x = other.Speed * cos(Angles.yaw);
-	other.Velocity.y = other.Speed * sin(Angles.yaw);
-	AimLineAttack(dir, Angles, 1024.0);
-	other.Velocity.z = other.Speed * dir.z;
-	other.CheckMissileSpawn();
-	return other;
 }
 
 //==========================================================================

@@ -94,6 +94,7 @@ defaultproperties
 	bDropOff = true;
 	bActivatePCross = true;
 	bNoTeleport = true;
+	bRandomise = true;
 	IdleState = S_TRACER;
 	DeathState = S_TRACEEXP1;
 	SightSound = 'skeleton/attack';

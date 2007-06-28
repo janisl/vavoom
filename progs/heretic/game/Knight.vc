@@ -61,11 +61,11 @@ final void A_KnightAttack()
 	if (Class == KnightGhost || Random() < 0.15625)
 	{
 		// Red axe
-		SpawnMissile(Target, RedAxe);
+		SpawnMissile(Target, RedAxe, 36.0);
 		return;
 	}
 	// Green axe
-	SpawnMissile(Target, KnightAxe);
+	SpawnMissile(Target, KnightAxe, 36.0);
 }
 
 __states__

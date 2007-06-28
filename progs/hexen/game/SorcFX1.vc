@@ -91,9 +91,11 @@ defaultproperties
 	bActivateImpact = false;
 	bActivatePCross = false;
 	bNoWallBounceSnd = true;
+	bFullVolDeath = true;
 	IdleState = S_SORCFX1_1;
 	DeathState = S_SORCFX1_D1;
 	GibsDeathState = S_SORCFX1_D1;
 	SightSound = 'SorcererBallBounce';
+	DeathSound = 'SorcererHeadScream';
 	Effects = HexenDefs::EF_DL_WHITE;
 }

@@ -209,7 +209,7 @@ final void A_FiredChase()
 
 final void A_FiredAttack()
 {
-	Actor mo;
+	EntityEx mo;
 
 	mo = SpawnMissile(Target, FireDemonMissile);
 	if (mo)

@@ -54,7 +54,7 @@ const float SpreadAngle = 90.0 / 8.0;
 
 final void A_FatAttack1()
 {
-	Actor A;
+	EntityEx A;
 
 	A_FaceTarget();
 	// Change direction  to ...
@@ -62,8 +62,11 @@ final void A_FatAttack1()
 	SpawnMissile(Target, FatShot);
 
 	A = SpawnMissile(Target, FatShot);
-	A.Angles.yaw = AngleMod360(A.Angles.yaw + SpreadAngle);
-	VectorRotateAroundZ(&A.Velocity, SpreadAngle);
+	if (A)
+	{
+		A.Angles.yaw = AngleMod360(A.Angles.yaw + SpreadAngle);
+		VectorRotateAroundZ(&A.Velocity, SpreadAngle);
+	}
 }
 
 //==========================================================================
@@ -76,7 +79,7 @@ final void A_FatAttack1()
 
 final void A_FatAttack2()
 {
-	Actor A;
+	EntityEx A;
 
 	A_FaceTarget();
 	// Now here choose opposite deviation.
@@ -84,8 +87,11 @@ final void A_FatAttack2()
 	SpawnMissile(Target, FatShot);
 
 	A = SpawnMissile(Target, FatShot);
-	A.Angles.yaw = AngleMod360(A.Angles.yaw - SpreadAngle * 2.0);
-	VectorRotateAroundZ(&A.Velocity, -SpreadAngle * 2.0);
+	if (A)
+	{
+		A.Angles.yaw = AngleMod360(A.Angles.yaw - SpreadAngle * 2.0);
+		VectorRotateAroundZ(&A.Velocity, -SpreadAngle * 2.0);
+	}
 }
 
 //==========================================================================
@@ -98,17 +104,23 @@ final void A_FatAttack2()
 
 final void A_FatAttack3()
 {
-	Actor A;
+	EntityEx A;
 
 	A_FaceTarget();
 
 	A = SpawnMissile(Target, FatShot);
-	A.Angles.yaw = AngleMod360(A.Angles.yaw - SpreadAngle / 2.0);
-	VectorRotateAroundZ(&A.Velocity, -SpreadAngle / 2.0);
+	if (A)
+	{
+		A.Angles.yaw = AngleMod360(A.Angles.yaw - SpreadAngle / 2.0);
+		VectorRotateAroundZ(&A.Velocity, -SpreadAngle / 2.0);
+	}
 
 	A = SpawnMissile(Target, FatShot);
-	A.Angles.yaw = AngleMod360(A.Angles.yaw + SpreadAngle / 2.0);
-	VectorRotateAroundZ(&A.Velocity, SpreadAngle / 2.0);
+	if (A)
+	{
+		A.Angles.yaw = AngleMod360(A.Angles.yaw + SpreadAngle / 2.0);
+		VectorRotateAroundZ(&A.Velocity, SpreadAngle / 2.0);
+	}
 }
 
 __states__

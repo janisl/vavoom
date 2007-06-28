@@ -78,6 +78,7 @@ defaultproperties
 	bActivatePCross = true;
 	bActivateImpact = true;
 	bNoTeleport = true;
+	bRandomise = true;
 	IdleState = S_ROCKET;
 	DeathState = S_EXPLODE1;
 	ExtraState = S_BRAINEXPLODE1;

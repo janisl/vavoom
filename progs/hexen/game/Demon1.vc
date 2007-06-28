@@ -51,7 +51,7 @@ final void A_DemonAttack1()
 
 final void A_DemonAttack2()
 {
-	Actor M;
+	EntityEx M;
 
 	M = SpawnMissile(Target, FireBallType);
 	if (M)

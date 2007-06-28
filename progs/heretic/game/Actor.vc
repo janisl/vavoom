@@ -359,28 +359,19 @@ void OnMapSpawn(mthing_t * mthing)
 	}
 }
 
-//===========================================================================
+//==========================================================================
 //
-//  ExplodeMissile
+//  DoMissileExplosionEffects
 //
-//===========================================================================
+//==========================================================================
 
-bool ExplodeMissile()
+void DoMissileExplosionEffects()
 {
-	Velocity = vector(0.0, 0.0, 0.0);
-	SetState(DeathState);
-	//tics -= P_Random()&3;
-	bMissile = false;
-	if (DeathSound)
-	{
-		PlaySound(DeathSound, CHAN_VOICE);
-	}
 	if (Effects & HereticDefs::EF_DLIGHT_MASK)
 	{
 		SendExplosion(Effects & HereticDefs::EF_DLIGHT_MASK, Origin);
 		Effects &= ~HereticDefs::EF_DLIGHT_MASK;
 	}
-	return true;
 }
 
 //==========================================================================
@@ -1468,136 +1459,6 @@ bool SectorChanged(int CrushChange)
 		A.Velocity.y = (Random() - Random()) * 16.0 * 35.0;
 	}
 	return false;	//don't fit
-}
-
-//==========================================================================
-//
-//  CheckMissileSpawn
-//
-//  Returns true if the missile is at a valid spawn point, otherwise
-// explodes it and returns false.
-//
-//==========================================================================
-
-bool CheckMissileSpawn()
-{
-	// move a little forward so an angle can be computed if it
-	// immediately explodes
-	Origin += Velocity * 0.0142857143;
-	if (!TryMove(Origin))
-	{
-		ExplodeMissile();
-		return false;
-	}
-	return true;
-}
-
-//==========================================================================
-//
-//  SpawnMissile
-//
-//  Returns NULL if the missile exploded immediately, otherwise returns
-// a Actor reference to the missile.
-//
-//==========================================================================
-
-Actor SpawnMissile(EntityEx dest, class<Actor> type)
-{
-	TVec org;
-	Actor A;
-	TVec dir;
-
-	org = Origin;
-	if (type == MinotaurFX1)
-	{
-		// Minotaur swing attack missile
-		org.z = Origin.z + 40.0;
-	}
-	else if (type == MinotaurFX2)
-	{
-		// Minotaur floor fire missile
-		org.z = ONFLOORZ + FloorClip;
-	}
-	else if (type == SorcererFX1)
-	{
-		// Sorcerer Demon fireball
-		org.z = Origin.z + 48.0;
-	}
-	else if (type == KnightAxe||	// Knight normal axe
-			type == RedAxe)	// Knight red power axe
-	{
-		org.z = Origin.z + 36.0;
-	}
-	else
-	{
-		org.z = Origin.z + 32.0;
-	}
-	org.z -= FloorClip;
-	A = Spawn(type, org);
-	if (A.SightSound)
-	{
-		A.PlaySound(A.SightSound, CHAN_VOICE);
-	}
-	A.Target = self;	// Originator
-	dir = dest.Origin - Origin;
-	if (dest.Alpha < 1.0)
-	{
-		// Invisible target
-		VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0);
-	}
-	dir = Normalise(dir);
-	A.Velocity = dir * A.Speed;
-	VectorAngles(&dir, &A.Angles);
-	return A.CheckMissileSpawn() ? A : none;
-}
-
-//==========================================================================
-//
-//  SpawnMissileAngles
-//
-//  Returns NULL if the missile exploded immediately, otherwise returns
-// a Actor reference to the missile.
-//
-//==========================================================================
-
-Actor SpawnMissileAngles(class<Actor> type, float yaw, float pitch)
-{
-	TVec org;
-	Actor A;
-	TVec dir;
-
-	org = Origin;
-	if (type == MinotaurFX1)
-	{
-		// Minotaur swing attack missile
-		org.z = Origin.z + 40.0;
-	}
-	else if (type == MinotaurFX2)
-	{
-		// Minotaur floor fire missile
-		org.z = ONFLOORZ + FloorClip;
-	}
-	if (type == SorcererFX1)
-	{
-		// Sorcerer Demon fireball
-		org.z = Origin.z + 48.0;
-	}
-	else
-	{
-		org.z = Origin.z + 32.0;
-	}
-	org.z -= FloorClip;
-	A = Spawn(type, org);
-	if (A.SightSound)
-	{
-		A.PlaySound(A.SightSound, CHAN_VOICE);
-	}
-	A.Target = self;	// Originator
-	A.Angles.yaw = yaw;
-	A.Angles.pitch = pitch;
-	AngleVector(&A.Angles, &dir);
-	A.Velocity = A.Speed * dir;
-	return A.CheckMissileSpawn() ? A : none;
 }
 
 //==========================================================================

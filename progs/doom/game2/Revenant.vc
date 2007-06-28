@@ -78,7 +78,7 @@ final void A_SkelFist()
 
 final void A_SkelMissile()
 {
-	Actor A;
+	EntityEx A;
 
 	if (!Target)
 		return;
@@ -88,9 +88,12 @@ final void A_SkelMissile()
 	A = SpawnMissile(Target, RevenantTracer);
 	Origin.z -= 16.0;	// back to normal
 
-	A.Origin = A.Origin + A.Velocity * 0.03;
-	A.Tracer = Target;
-	A.bSeekerMissile = true;
+	if (A)
+	{
+		A.Origin = A.Origin + A.Velocity * 0.03;
+		A.Tracer = Target;
+		A.bSeekerMissile = true;
+	}
 }
 
 __states__

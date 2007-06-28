@@ -55,6 +55,7 @@ defaultproperties
 	bDropOff = true;
 	bActivatePCross = true;
 	bNoTeleport = true;
+	bRandomise = true;
 	IdleState = S_BRBALL1;
 	DeathState = S_BRBALLX1;
 	SightSound = 'baron/attack';

@@ -71,7 +71,7 @@ final void A_WizAtk2()
 
 final void A_WizAtk3()
 {
-	Actor A;
+	EntityEx A;
 	float angle;
 	TAVec ang;
 

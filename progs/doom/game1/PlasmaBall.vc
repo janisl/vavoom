@@ -51,6 +51,7 @@ defaultproperties
 	bActivatePCross = true;
 	bActivateImpact = true;
 	bNoTeleport = true;
+	bRandomise = true;
 	IdleState = S_PLASBALL;
 	DeathState = S_PLASEXP;
 	SightSound = 'weapons/plasmaf';

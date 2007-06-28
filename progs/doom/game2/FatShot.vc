@@ -48,6 +48,7 @@ defaultproperties
 	bDropOff = true;
 	bActivatePCross = true;
 	bNoTeleport = true;
+	bRandomise = true;
 	IdleState = S_FATSHOT1;
 	DeathState = S_FATSHOTX1;
 	SightSound = 'fatso/attack';

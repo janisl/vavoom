@@ -35,8 +35,8 @@ class Sentinel : Pawn
 final void A_SentinelAttack()
 {
 	int i;
-	Actor missile;
-	Actor trail;
+	EntityEx missile;
+	EntityEx trail;
 
 	missile = SpawnMissileZAimed(32.0, Target, SentinelFX2);
 	if (missile && (missile.Velocity.x || missile.Velocity.y))

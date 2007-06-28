@@ -35,7 +35,6 @@ final void A_MaulerTorpedoExplode()
 {
 	int i;
 	float savedz;
-	Actor wave;
 
 	Angles.yaw = AngleMod360(Angles.yaw + 180.0);
 
@@ -49,7 +48,7 @@ final void A_MaulerTorpedoExplode()
 	for (i = 0; i < 80; i++)
 	{
 		Angles.yaw = AngleMod360(Angles.yaw + 45.0 / 10.0);
-		wave = SpawnSubMissile(MaulerTorpedoWave, Target);
+		SpawnSubMissile(MaulerTorpedoWave, Target);
 	}
 	Origin.z = savedz;
 }

@@ -314,5 +314,7 @@ defaultproperties
 	bActivateImpact = false;
 	bActivatePCross = false;
 	bNoWallBounceSnd = true;
+	bFullVolDeath = true;
 	SightSound = 'SorcererBallBounce';
+	DeathSound = 'SorcererBigBallExplode';
 }

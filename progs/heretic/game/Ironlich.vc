@@ -49,8 +49,8 @@ final void A_HeadAttack()
 {
 	int i;
 	Actor fire;
-	Actor baseFire;
-	Actor A;
+	EntityEx baseFire;
+	EntityEx A;
 	int randAttack;
 	int dist;
 

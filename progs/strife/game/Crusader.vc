@@ -83,7 +83,7 @@ final void A_CrusaderChoose()
 
 final void A_CrusaderSweepLeft()
 {
-	Actor misl;
+	EntityEx misl;
 
 	Angles.yaw = AngleMod360(Angles.yaw + 45.0 / 8.0);
 	misl = SpawnMissileZAimed(48.0, Target, FastFlameMissile);
@@ -101,7 +101,7 @@ final void A_CrusaderSweepLeft()
 
 final void A_CrusaderSweepRight()
 {
-	Actor misl;
+	EntityEx misl;
 
 	Angles.yaw = AngleMod360(Angles.yaw - 45.0 / 8.0);
 	misl = SpawnMissileZAimed(48.0, Target, FastFlameMissile);

@@ -761,33 +761,18 @@ bool Deactivate()
 
 //==========================================================================
 //
-//  ExplodeMissile
+//  DoMissileExplosionEffects
 //
 //==========================================================================
 
-bool ExplodeMissile()
+void DoMissileExplosionEffects()
 {
-	Velocity = vector(0.0, 0.0, 0.0);
-
-	SetState(DeathState);
-
-	StateTime -= Random() * 0.1;
-
-	if (StateTime < 0.1)
-		StateTime = 0.1;
-
-	bMissile = false;
-
-	if (DeathSound)
-		PlaySound(DeathSound, CHAN_VOICE);
-
 	if (!(Effects & DoomDefs::EF_ROCKET) && (Effects & DoomDefs::EF_DLIGHT_MASK))
 	{
 		SendExplosion2(Effects & DoomDefs::EF_DLIGHT_MASK, Origin);
 		Effects &= ~DoomDefs::EF_DLIGHT_MASK;
 	}
 	Effects &= ~DoomDefs::EF_ROCKET;
-	return true;
 }
 
 //==========================================================================
@@ -808,73 +793,6 @@ final void SendExplosion2(int etype, TVec org)
 			continue;
 		Player(Level.Game.Players[i]).ClientExplosion2(etype, org);
 	}
-}
-
-//==========================================================================
-//
-//  CheckMissileSpawn
-//
-//  Moves the missile forward a bit and possibly explodes it right there.
-//
-//==========================================================================
-
-bool CheckMissileSpawn()
-{
-	StateTime -= Random() * 0.1;
-	if (StateTime < 0.1)
-		StateTime = 0.1;
-
-	// move a little forward so an angle can
-	// be computed if it immediately explodes
-	Origin = Origin + Velocity * 0.0142857143;
-
-	if (!TryMove(Origin))
-	{
-		ExplodeMissile();
-		return false;
-	}
-	return true;
-}
-
-//==========================================================================
-//
-//  SpawnMissile
-//
-//==========================================================================
-
-Actor SpawnMissile(EntityEx dest, class<Actor> type)
-{
-	Actor A;
-	TVec dir;
-
-	A = Spawn(type, Origin + vector(0.0, 0.0, 32.0 - FloorClip));
-
-	if (A.SightSound)
-		A.PlaySound(A.SightSound, CHAN_VOICE);
-
-	A.Target = self;	// where it came from
-
-	if (dest)
-	{
-		dir = dest.Origin - Origin;
-		// fuzzy player
-		if (dest.Alpha < 1.0)
-		{
-			VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0 / 2.0);
-		}
-	}
-	else
-	{
-		dir = Velocity;
-	}
-	dir = Normalise(dir);
-	A.Velocity = dir * A.Speed;
-
-	VectorAngles(&dir, &A.Angles);
-
-	A.CheckMissileSpawn();
-
-	return A;
 }
 
 //==========================================================================

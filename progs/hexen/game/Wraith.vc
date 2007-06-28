@@ -189,7 +189,7 @@ final void A_WraithMelee()
 
 final void A_WraithMissile()
 {
-	Actor mo;
+	EntityEx mo;
 
 	mo = SpawnMissile(Target, WraithFX1);
 	if (mo)

@@ -1775,28 +1775,6 @@ bool HaveSpeedPower()
 
 //==========================================================================
 //
-//  CheckMissileSpawn
-//
-//  Returns true if the missile is at a valid spawn point, otherwise
-// explodes it and returns false.
-//
-//==========================================================================
-
-bool CheckMissileSpawn()
-{
-	// move a little forward so an angle can be computed if it
-	// immediately explodes
-	Origin += Velocity * 0.0142857143;
-	if (!TryMove(Origin))
-	{
-		ExplodeMissile();
-		return false;
-	}
-	return true;
-}
-
-//==========================================================================
-//
 //  SpawnMissileAngle
 //
 //  Returns NULL if the missile exploded immediately, otherwise returns
@@ -1939,38 +1917,17 @@ bool SeekerMissile(float thresh, float turnMax)
 
 //==========================================================================
 //
-//  ExplodeMissile
+//  DoMissileExplosionEffects
 //
 //==========================================================================
 
-bool ExplodeMissile()
+void DoMissileExplosionEffects()
 {
-	Velocity = vector(0.0, 0.0, 0.0);
-	if (!SetState(DeathState))
-	{
-		return false;
-	}
-	//mo->tics -= P_Random()&3;
-	bMissile = false;
-
-	if (SorcBall(self))
-	{
-		PlaySound('SorcererBigBallExplode', CHAN_AUTO, 1.0, ATTN_NONE);
-	}
-	else if (SorcFX1(self))
-	{
-		PlaySound('SorcererHeadScream', CHAN_AUTO, 1.0, ATTN_NONE);
-	}
-	else if (DeathSound)
-	{
-		PlaySound(DeathSound, CHAN_VOICE);
-	}
 	if (Effects & HexenDefs::EF_DLIGHT_MASK)
 	{
 		SendExplosion(Effects & HexenDefs::EF_DLIGHT_MASK, Origin);
 		Effects &= ~HexenDefs::EF_DLIGHT_MASK;
 	}
-	return true;
 }
 
 //==========================================================================

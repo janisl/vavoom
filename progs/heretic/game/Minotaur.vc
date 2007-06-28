@@ -127,7 +127,7 @@ final void A_MinotaurDecide()
 
 final void A_MinotaurAtk2()
 {
-	Actor A;
+	EntityEx A;
 	float angle;
 	TAVec ang;
 
@@ -141,20 +141,20 @@ final void A_MinotaurAtk2()
 		Target.Damage(self, self, HITDICE(5));
 		return;
 	}
-	A = SpawnMissile(Target, MinotaurFX1);
+	A = SpawnMissile(Target, MinotaurFX1, 40.0);
 	if (A)
 	{
 		A.PlaySound('minotaur/attack2', CHAN_WEAPON);
 		VectorAngles(&A.Velocity, &ang);
 		angle = A.Angles.yaw;
 		SpawnMissileAngles(MinotaurFX1,
-			AngleMod360(angle - (45.0 / 8.0)), ang.pitch);
+			AngleMod360(angle - (45.0 / 8.0)), ang.pitch, 40.0);
 		SpawnMissileAngles(MinotaurFX1,
-			AngleMod360(angle + (45.0 / 8.0)), ang.pitch);
+			AngleMod360(angle + (45.0 / 8.0)), ang.pitch, 40.0);
 		SpawnMissileAngles(MinotaurFX1,
-			AngleMod360(angle - (45.0 / 16.0)), ang.pitch);
+			AngleMod360(angle - (45.0 / 16.0)), ang.pitch, 40.0);
 		SpawnMissileAngles(MinotaurFX1,
-			AngleMod360(angle + (45.0 / 16.0)), ang.pitch);
+			AngleMod360(angle + (45.0 / 16.0)), ang.pitch, 40.0);
 	}
 }
 
@@ -168,7 +168,7 @@ final void A_MinotaurAtk2()
 
 final void A_MinotaurAtk3()
 {
-	Actor A;
+	EntityEx A;
 
 	if (!Target)
 	{

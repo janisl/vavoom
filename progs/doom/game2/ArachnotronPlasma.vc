@@ -50,6 +50,7 @@ defaultproperties
 	bDropOff = true;
 	bActivatePCross = true;
 	bNoTeleport = true;
+	bRandomise = true;
 	IdleState = S_ARACH_PLAZ;
 	DeathState = S_ARACH_PLEX;
 	SightSound = 'baby/attack';
