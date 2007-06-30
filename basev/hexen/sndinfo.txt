@@ -151,6 +151,7 @@ $alias world/quake				Earthquake
 $alias world/thunder			ThunderCrash
 $alias misc/chat				Chat
 $alias misc/chat2				Chat
+$alias misc/teleport			Teleport
 
 //==========================================================================
 //
