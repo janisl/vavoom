@@ -33,12 +33,12 @@ class WeaponClericFire : Weapon;
 
 final void A_CFlameAttack()
 {
-	Actor mo;
+	EntityEx mo;
 
-	mo = Player(Owner.Player).SpawnPlayerMissile(CFlameMissile);
+	mo = Actor(Owner).SpawnPlayerMissile(CFlameMissile);
 	if (mo)
 	{
-		mo._Special1 = 2;
+		Actor(mo)._Special1 = 2;
 	}
 
 	Player(Owner.Player).Mana[HexenDefs::MANA_2] -=

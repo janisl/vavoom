@@ -100,7 +100,7 @@ final void A_FHammerThrow()
 	}
 	Player(Owner.Player).Mana[HexenDefs::MANA_2] -=
 		WeaponManaUse(Owner.Player.PClass, Player(Owner.Player).ReadyWeapon);
-	Player(Owner.Player).SpawnPlayerMissile(HammerMissile);
+	Actor(Owner).SpawnPlayerMissile(HammerMissile);
 }
 
 __states__

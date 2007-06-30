@@ -81,9 +81,9 @@ final void A_SigilShowFlash()
 
 final void A_FireSigil()
 {
-	Actor		sigil;
+	EntityEx	sigil;
 	float		angle;
-	Actor		sigilspread;
+	EntityEx	sigilspread;
 	int			i;
 	TVec		dir;
 	EntityEx	AimTarget;
@@ -96,17 +96,17 @@ final void A_FireSigil()
 
 	if (Player(Owner.Player).Sigil == 4)
 	{
-		Player(Owner.Player).SpawnPlayerMissile(SpectralLightningBigBall1);
+		Actor(Owner).SpawnPlayerMissile(SpectralLightningBigBall1);
 	}
 	else if (Player(Owner.Player).Sigil == 3)
 	{
-		Player(Owner.Player).SpawnPlayerMissile(SpectralLightningBigV1);
+		Actor(Owner).SpawnPlayerMissile(SpectralLightningBigV1);
 	}
 	else if (Player(Owner.Player).Sigil == 2)
 	{
 		for (i = 0; i < 20; i++)
 		{
-			sigilspread = Player(Owner.Player).SpawnPlayerMissileAngle(
+			sigilspread = Actor(Owner).SpawnPlayerMissileAngle(
 				SpectralLightningBall1,
 				Owner.Angles.yaw - 90.0 + itof(i) * (45.0 / 4.0));
 			angle = sigilspread.Angles.yaw;
@@ -116,11 +116,11 @@ final void A_FireSigil()
 	}
 	else if (Player(Owner.Player).Sigil == 1)
 	{
-		Player(Owner.Player).SpawnPlayerMissile(SpectralLightningH1);
+		Actor(Owner).SpawnPlayerMissile(SpectralLightningH1);
 	}
 	else
 	{
-		sigil = StrifeLevelInfo(Level).Spawn(SpectralLightningSpot,
+		sigil = Spawn(SpectralLightningSpot,
 			Owner.Origin + vector(0.0, 0.0, 32.0));
 
 		if (sigil.SightSound)

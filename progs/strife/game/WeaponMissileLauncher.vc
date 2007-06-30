@@ -40,7 +40,7 @@ final void A_FireMissile()
 		(Random() - Random()) * 45.0 / 4.0 / itof(1 << (Player(Owner.Player).Accuracy * 5 / 100)));
 	Player(Owner.Player).Ammo[Ammo]--;
 	Owner.SetState(Actor(Owner).MissileState);
-	Player(Owner.Player).SpawnPlayerMissile(MiniMissile);
+	Actor(Owner).SpawnPlayerMissile(MiniMissile);
 	Owner.Angles.yaw = savedangle;
 }
 

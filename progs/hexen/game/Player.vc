@@ -2963,11 +2963,11 @@ void UseArtiTele()
 
 void UseArtiPig()
 {
-	SpawnPlayerMissile(PorkFX);
-	SpawnPlayerMissileAngle(PorkFX, AngleMod360(MO.Angles.yaw - 7.5));
-	SpawnPlayerMissileAngle(PorkFX, AngleMod360(MO.Angles.yaw + 7.5));
-	SpawnPlayerMissileAngle(PorkFX, AngleMod360(MO.Angles.yaw - 15.0));
-	SpawnPlayerMissileAngle(PorkFX, AngleMod360(MO.Angles.yaw + 15.0));
+	Actor(MO).SpawnPlayerMissile(PorkFX);
+	Actor(MO).SpawnPlayerMissileAngle(PorkFX, AngleMod360(MO.Angles.yaw - 7.5));
+	Actor(MO).SpawnPlayerMissileAngle(PorkFX, AngleMod360(MO.Angles.yaw + 7.5));
+	Actor(MO).SpawnPlayerMissileAngle(PorkFX, AngleMod360(MO.Angles.yaw - 15.0));
+	Actor(MO).SpawnPlayerMissileAngle(PorkFX, AngleMod360(MO.Angles.yaw + 15.0));
 }
 
 //==========================================================================
@@ -3043,9 +3043,9 @@ bool UseArtiHealRadius()
 
 void UseArtiSummon()
 {
-	Actor mo;
+	EntityEx mo;
 
-	mo = SpawnPlayerMissile(SummoningDoll);
+	mo = Actor(MO).SpawnPlayerMissile(SummoningDoll);
 	if (mo)
 	{
 		mo.Target = Actor(MO);
@@ -3177,193 +3177,13 @@ void UseArtiPoisonBag()
 
 void UseArtiTeleportOther()
 {
-	Actor mo;
+	EntityEx mo;
 
-	mo = SpawnPlayerMissile(TelOtherFX1);
+	mo = Actor(MO).SpawnPlayerMissile(TelOtherFX1);
 	if (mo)
 	{
 		mo.Target = Actor(MO);
 	}
-}
-
-//==========================================================================
-//
-//  SpawnPlayerMissileEx
-//
-//  Tries to aim at a nearby monster
-//
-//==========================================================================
-
-Actor SpawnPlayerMissileEx(class<Actor> type, out EntityEx AimTarget)
-{
-	Actor MissileMobj;
-	TAVec angles;
-	TVec vforward;
-	TVec org;
-
-	// Try to find a target
-	angles = MO.Angles;
-	AimTarget = Actor(MO).Aim(vforward, 16.0 * 64.0);
-	VectorAngles(&vforward, &angles);
-	org = MO.Origin;
-	if (type == LightningFloor)
-	{
-		org.z = Actor::ONFLOORZ;
-		angles.pitch = 0.0;
-		vforward.z = 0.0;
-		vforward = Normalise(vforward);
-	}
-	else if (type == LightningCeiling)
-	{
-		org.z = Actor::ONCEILINGZ;
-		angles.pitch = 0.0;
-		vforward.z = 0.0;
-		vforward = Normalise(vforward);
-	}
-	else
-	{
-		org.z = MO.Origin.z + 4.0 * 8.0 - tan(MO.Angles.pitch);
-		org.z -= MO.FloorClip;
-	}
-	MissileMobj = HexenLevelInfo(Level).Spawn(type, org);
-	MissileMobj.Target = Actor(MO);
-	MissileMobj.Angles = angles;
-	MissileMobj.Velocity = vforward * MissileMobj.Speed;
-	if (MissileMobj.Class == MageWandMissile ||
-		MissileMobj.Class == CFlameMissile)
-	{
-		// Ultra-fast ripper spawning missile
-		MissileMobj.Origin += MissileMobj.Velocity * Level.Game.frametime / 8.0;
-	}
-	else
-	{
-		// Normal missile
-		MissileMobj.Origin += MissileMobj.Velocity * Level.Game.frametime / 2.0;
-	}
-	if (!MissileMobj.TryMove(MissileMobj.Origin))
-	{
-		// Exploded immediately
-		MissileMobj.ExplodeMissile();
-		return none;
-	}
-	return MissileMobj;
-}
-
-//==========================================================================
-//
-//  SpawnPlayerMissile
-//
-//  Tries to aim at a nearby monster
-//
-//==========================================================================
-
-Actor SpawnPlayerMissile(class<Actor> type)
-{
-	Actor MissileMobj;
-	TAVec angles;
-	TVec vforward;
-	TVec org;
-
-	// Try to find a target
-	angles = MO.Angles;
-	Actor(MO).Aim(vforward, 16.0 * 64.0);
-	VectorAngles(&vforward, &angles);
-	org = MO.Origin;
-	if (type == LightningFloor)
-	{
-		org.z = Actor::ONFLOORZ;
-		angles.pitch = 0.0;
-		vforward.z = 0.0;
-		vforward = Normalise(vforward);
-	}
-	else if (type == LightningCeiling)
-	{
-		org.z = Actor::ONCEILINGZ;
-		angles.pitch = 0.0;
-		vforward.z = 0.0;
-		vforward = Normalise(vforward);
-	}
-	else
-	{
-		org.z = MO.Origin.z + 4.0 * 8.0 - tan(MO.Angles.pitch);
-		org.z -= MO.FloorClip;
-	}
-	MissileMobj = HexenLevelInfo(Level).Spawn(type, org);
-	MissileMobj.Target = Actor(MO);
-	MissileMobj.Angles = angles;
-	MissileMobj.Velocity = vforward * MissileMobj.Speed;
-	if (MissileMobj.Class == MageWandMissile ||
-		MissileMobj.Class == CFlameMissile)
-	{
-		// Ultra-fast ripper spawning missile
-		MissileMobj.Origin += MissileMobj.Velocity * Level.Game.frametime / 8.0;
-	}
-	else
-	{
-		// Normal missile
-		MissileMobj.Origin += MissileMobj.Velocity * Level.Game.frametime / 2.0;
-	}
-	if (!MissileMobj.TryMove(MissileMobj.Origin))
-	{
-		// Exploded immediately
-		MissileMobj.ExplodeMissile();
-		return none;
-	}
-	return MissileMobj;
-}
-
-//===========================================================================
-//
-//  SpawnPlayerMissileAngle
-//
-//===========================================================================
-
-Actor SpawnPlayerMissileAngle(class<Actor> type, float angle)
-{
-	TAVec angles;
-	TVec vforward;
-	Actor th;
-	TVec org;
-
-	//
-	// see which target is to be aimed at
-	//
-	Actor(MO).Aim(vforward, 16.0 * 64.0, angle);
-	VectorAngles(&vforward, &angles);
-	org = MO.Origin;
-	org.z = MO.Origin.z + 4.0 * 8.0 - tan(MO.Angles.pitch);
-	org.z -= MO.FloorClip;
-	th = HexenLevelInfo(Level).Spawn(type, org);
-	th.Target = Actor(MO);
-	th.Angles = angles;
-	th.Velocity = vforward * th.Speed;
-	return th.CheckMissileSpawn() ? th : none;
-}
-
-//===========================================================================
-//
-//  SpawnPlayerMissileAngleXYZ
-//
-//===========================================================================
-
-Actor SpawnPlayerMissileAngleXYZ(TVec org, class<Actor> type, float angle)
-{
-	Actor th;
-	TAVec angles;
-	TVec vforward;
-
-	//
-	// see which target is to be aimed at
-	//
-	Actor(MO).Aim(vforward, 16.0 * 64.0, angle);
-	VectorAngles(&vforward, &angles);
-	org.z += 4.0 * 8.0 - tan(MO.Angles.pitch);
-	org.z -= MO.FloorClip;
-	th = HexenLevelInfo(Level).Spawn(type, org);
-	th.Target = Actor(MO);
-	th.Angles = angles;
-	th.Velocity = vforward * th.Speed;
-	return th.CheckMissileSpawn() ? th : none;
 }
 
 //============================================================================

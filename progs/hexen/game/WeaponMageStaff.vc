@@ -33,9 +33,9 @@ class WeaponMageStaff : Weapon;
 
 void MStaffSpawn(float angle)
 {
-	Actor mo;
+	EntityEx	mo;
 
-	mo = Player(Owner.Player).SpawnPlayerMissileAngle(MageStaffFX2, angle);
+	mo = Actor(Owner).SpawnPlayerMissileAngle(MageStaffFX2, angle);
 	if (mo)
 	{
 		mo.Target = Actor(Owner);

@@ -3441,6 +3441,103 @@ final EntityEx SpawnSubMissile(class<EntityEx> type, EntityEx AInstigator)
 	return other;
 }
 
+//==========================================================================
+//
+//  SpawnPlayerMissile
+//
+//==========================================================================
+
+final EntityEx SpawnPlayerMissile(class<EntityEx> type)
+{
+	EntityEx	AimTarget;
+
+	return SpawnPlayerMissileEx(type, false, AimTarget);
+}
+
+//==========================================================================
+//
+//  SpawnPlayerMissileAngle
+//
+//==========================================================================
+
+final EntityEx SpawnPlayerMissileAngle(class<EntityEx> type, float angle)
+{
+	EntityEx	AimTarget;
+
+	return SpawnPlayerMissileEx(type, false, AimTarget, angle);
+}
+
+//===========================================================================
+//
+//  SpawnPlayerMissileAngleXYZ
+//
+//===========================================================================
+
+final EntityEx SpawnPlayerMissileAngleXYZ(TVec org, class<EntityEx> type,
+	float angle)
+{
+	EntityEx	AimTarget;
+
+	return SpawnPlayerMissileEx(type, false, AimTarget, angle, org);
+}
+
+//==========================================================================
+//
+//  SpawnPlayerMissileEx
+//
+//  Tries to aim at a nearby monster
+//
+//==========================================================================
+
+final EntityEx SpawnPlayerMissileEx(class<EntityEx> type, bool RetExploded,
+	out EntityEx AimTarget, optional float angle, optional TVec SpawnOrg)
+{
+	EntityEx	A;
+	TVec		dir;
+	TVec		org;
+
+	// Try to find a target
+	if (specified_angle)
+	{
+		AimTarget = Aim(dir, 16.0 * 64.0, angle);
+	}
+	else
+	{
+		AimTarget = Aim(dir, 16.0 * 64.0);
+	}
+
+	org = specified_SpawnOrg ? SpawnOrg : Origin;
+	if (type.default.bIgnoreFloorStep)
+	{
+		org.z = ONFLOORZ;
+		dir.z = 0.0;
+		dir = Normalise(dir);
+	}
+	else if (type.default.bIgnoreCeilingStep)
+	{
+		org.z = ONCEILINGZ;
+		dir.z = 0.0;
+		dir = Normalise(dir);
+	}
+	else
+	{
+		org.z += 32.0 - tan(Angles.pitch);
+		org.z -= FloorClip;
+	}
+	A = Spawn(type, org);
+
+	if (A.SightSound)
+	{
+		A.PlaySound(A.SightSound, CHAN_VOICE);
+	}
+
+	A.Target = self;
+	A.Velocity = dir * A.Speed;
+	VectorAngles(&dir, &A.Angles);
+
+	return A.CheckMissileSpawn() || RetExploded ? A : none;
+}
+
 float GetBaseViewHeight()
 {
 	return 0.0;

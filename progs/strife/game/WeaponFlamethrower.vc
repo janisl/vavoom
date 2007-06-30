@@ -33,14 +33,14 @@ class WeaponFlamethrower : Weapon;
 
 final void A_FireFlamethrower()
 {
-	Actor A;
+	EntityEx A;
 
 	Owner.SetState(Actor(Owner).MissileState);
 	Player(Owner.Player).Ammo[Ammo]--;
 	Owner.Angles.yaw = AngleMod360(Owner.Angles.yaw +
 		(Random() - Random()) * 45.0 / 8.0);
 	Owner.Player.bFixAngle = true;
-	A = Player(Owner.Player).SpawnPlayerMissile(FlameMissile);
+	A = Actor(Owner).SpawnPlayerMissile(FlameMissile);
 	if (A)
 	{
 		A.Velocity.z += 20.0 * 35.0 / 5.0;

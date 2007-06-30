@@ -51,8 +51,8 @@ final void A_MLightningAttack()
 	LightningFloor fmo;
 	LightningCeiling cmo;
 
-	fmo = LightningFloor(Player(Owner.Player).SpawnPlayerMissile(LightningFloor));
-	cmo = LightningCeiling(Player(Owner.Player).SpawnPlayerMissile(LightningCeiling));
+	fmo = LightningFloor(Actor(Owner).SpawnPlayerMissile(LightningFloor));
+	cmo = LightningCeiling(Actor(Owner).SpawnPlayerMissile(LightningCeiling));
 	if (fmo)
 	{
 		fmo.ZigZagCount = 0;

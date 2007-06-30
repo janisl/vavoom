@@ -34,7 +34,7 @@ class WeaponMissile : Weapon;
 final void A_FireMissile()
 {
 	Player(Owner.Player).Ammo[Weapon(self).Ammo]--;
-	Player(Owner.Player).SpawnPlayerMissile(Rocket);
+	Actor(Owner).SpawnPlayerMissile(Rocket);
 }
 
 __states__

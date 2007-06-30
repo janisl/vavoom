@@ -62,7 +62,7 @@ final void A_FireMacePL1B()
 
 final void A_FireMacePL1()
 {
-	Actor ball;
+	EntityEx	ball;
 
 	if (P_Random() < 28)
 	{
@@ -80,7 +80,7 @@ final void A_FireMacePL1()
 		AngleMod360(Owner.Angles.yaw + (Random() - 0.5) * 45.0 / 4.0));
 	if (ball)
 	{
-		ball.Special1 = 16;	// tics till dropoff
+		Actor(ball).Special1 = 16;	// tics till dropoff
 	}
 }
 
@@ -92,11 +92,11 @@ final void A_FireMacePL1()
 
 final void A_FireMacePL2()
 {
-	Actor		A;
+	EntityEx	A;
 	EntityEx	AimTarget;
 
 	Player(Owner.Player).Ammo[am_mace] -= Level.Game.deathmatch ? USE_MACE_AMMO_1 : USE_MACE_AMMO_2;
-	A = Actor(Owner).SpawnPlayerMissileEx(MaceFX4, AimTarget);
+	A = Actor(Owner).SpawnPlayerMissileEx(MaceFX4, false, AimTarget);
 	if (A)
 	{
 		A.Velocity.x += Owner.Velocity.x;

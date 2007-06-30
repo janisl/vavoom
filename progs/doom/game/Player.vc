@@ -2098,35 +2098,6 @@ void SetPlayerRunState()
 	}
 }
 
-//==========================================================================
-//
-//  SpawnPlayerMissile
-//
-//  Tries to aim at a nearby monster
-//
-//==========================================================================
-
-Actor SpawnPlayerMissile(class<Actor> type)
-{
-	Actor A;
-	TVec dir;
-
-	Actor(MO).Aim(dir, 16.0 * 64.0);
-
-	A = Level.Spawn(type, MO.Origin + vector(0.0, 0.0, 32.0 - MO.FloorClip));
-
-	if (A.SightSound)
-		A.PlaySound(A.SightSound, CHAN_VOICE);
-
-	A.Target = Actor(MO);
-	A.Velocity = dir * A.Speed;
-	VectorAngles(&dir, &A.Angles);
-
-	A.CheckMissileSpawn();
-
-	return A;
-}
-
 //***************************************************************************
 //
 //  WEAPON UTILITES

@@ -37,15 +37,15 @@ final void A_FSwordAttack()
 		WeaponManaUse(Owner.Player.PClass, Player(Owner.Player).ReadyWeapon);
 	Player(Owner.Player).Mana[HexenDefs::MANA_2] -=
 		WeaponManaUse(Owner.Player.PClass, Player(Owner.Player).ReadyWeapon);
-	Player(Owner.Player).SpawnPlayerMissileAngleXYZ(Owner.Origin + vector(0.0, 0.0, -10.0),
+	Actor(Owner).SpawnPlayerMissileAngleXYZ(Owner.Origin + vector(0.0, 0.0, -10.0),
 		FSwordMissile, AngleMod360(Owner.Angles.yaw + 45.0 / 4.0));
-	Player(Owner.Player).SpawnPlayerMissileAngleXYZ(Owner.Origin + vector(0.0, 0.0, -5.0),
+	Actor(Owner).SpawnPlayerMissileAngleXYZ(Owner.Origin + vector(0.0, 0.0, -5.0),
 		FSwordMissile, AngleMod360(Owner.Angles.yaw + 45.0 / 8.0));
-	Player(Owner.Player).SpawnPlayerMissileAngleXYZ(Owner.Origin, FSwordMissile,
+	Actor(Owner).SpawnPlayerMissileAngleXYZ(Owner.Origin, FSwordMissile,
 		Owner.Angles.yaw);
-	Player(Owner.Player).SpawnPlayerMissileAngleXYZ(Owner.Origin + vector(0.0, 0.0, 5.0),
+	Actor(Owner).SpawnPlayerMissileAngleXYZ(Owner.Origin + vector(0.0, 0.0, 5.0),
 		FSwordMissile, AngleMod360(Owner.Angles.yaw - 45.0 / 8.0));
-	Player(Owner.Player).SpawnPlayerMissileAngleXYZ(Owner.Origin + vector(0.0, 0.0, 10.0),
+	Actor(Owner).SpawnPlayerMissileAngleXYZ(Owner.Origin + vector(0.0, 0.0, 10.0),
 		FSwordMissile, AngleMod360(Owner.Angles.yaw - 45.0 / 4.0));
 	Owner.PlaySound('FighterSwordFire', CHAN_WEAPON);
 }

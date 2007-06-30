@@ -33,7 +33,7 @@ class WeaponMageWand : Weapon;
 
 final void A_MWandAttack()
 {
-	Player(Owner.Player).SpawnPlayerMissile(MageWandMissile);
+	Actor(Owner).SpawnPlayerMissile(MageWandMissile);
 	Owner.PlaySound('MageWandFire', CHAN_WEAPON);
 }
 

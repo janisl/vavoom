@@ -56,7 +56,7 @@ final void A_FireBlasterPL1()
 
 final void A_FireBlasterPL2()
 {
-	Actor A;
+	EntityEx	A;
 
 	Player(Owner.Player).Ammo[am_blaster] -=
 		Level.Game.deathmatch ? USE_BLSR_AMMO_1 : USE_BLSR_AMMO_2;

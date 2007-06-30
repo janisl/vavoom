@@ -33,14 +33,14 @@ class WeaponClericHoly : Weapon;
 
 final void A_CHolyAttack()
 {
-	Actor		A;
+	EntityEx	A;
 	EntityEx	AimTarget;
 
 	Player(Owner.Player).Mana[HexenDefs::MANA_1] -=
 		WeaponManaUse(Owner.Player.PClass, Player(Owner.Player).ReadyWeapon);
 	Player(Owner.Player).Mana[HexenDefs::MANA_2] -=
 		WeaponManaUse(Owner.Player.PClass, Player(Owner.Player).ReadyWeapon);
-	A = Player(Owner.Player).SpawnPlayerMissileEx(HolyMissile, AimTarget);
+	A = Actor(Owner).SpawnPlayerMissileEx(HolyMissile, false, AimTarget);
 	if (A)
 	{
 		A.Tracer = AimTarget;

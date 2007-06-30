@@ -45,7 +45,7 @@ final void A_BFGsound()
 final void A_FireBFG()
 {
 	Player(Owner.Player).Ammo[Weapon(self).Ammo] -= MainGameInfo(Level.Game).BFGCELLS;
-	Player(Owner.Player).SpawnPlayerMissile(BFGBall);
+	Actor(Owner).SpawnPlayerMissile(BFGBall);
 }
 
 __states__

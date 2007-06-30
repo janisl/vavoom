@@ -38,7 +38,7 @@ final void A_FirePlasma()
 		Owner.Player.SetViewState(ps_flash, Weapon(self).FlashState);
 	else
 		Owner.Player.SetViewState(ps_flash, WeaponPlasma::S_PLASMAFLASH2);
-	Player(Owner.Player).SpawnPlayerMissile(PlasmaBall);
+	Actor(Owner).SpawnPlayerMissile(PlasmaBall);
 }
 
 __states__

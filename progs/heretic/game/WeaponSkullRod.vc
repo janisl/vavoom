@@ -33,7 +33,7 @@ class WeaponSkullRod : Weapon;
 
 final void A_FireSkullRodPL1()
 {
-	Actor A;
+	EntityEx	A;
 
 	if (Player(Owner.Player).Ammo[am_skullrod] < USE_SKRD_AMMO_1)
 	{
@@ -60,30 +60,31 @@ final void A_FireSkullRodPL1()
 
 final void A_FireSkullRodPL2()
 {
+	HornRodFX2	A;
 	EntityEx	AimTarget;
 
 	Player(Owner.Player).Ammo[am_skullrod] -=
 		Level.Game.deathmatch ? USE_SKRD_AMMO_1 : USE_SKRD_AMMO_2;
-	Actor(Owner).SpawnPlayerMissileEx(HornRodFX2, AimTarget);
+	A = HornRodFX2(Actor(Owner).SpawnPlayerMissileEx(HornRodFX2, true, AimTarget));
 	// Use MissileMobj instead of the return value from
 	// SpawnPlayerMissile because we need to give info to the mobj
 	// even if it exploded immediately.
 	if (Level.Game.netgame)
 	{
 		// Multi-player game
-		HornRodFX2(MainGameInfo(Level.Game).MissileMobj).RainColour = Owner.Player.GetPlayerNum();
+		A.RainColour = Owner.Player.GetPlayerNum();
 	}
 	else
 	{
 		// Always use red missiles in single player games
-		HornRodFX2(MainGameInfo(Level.Game).MissileMobj).RainColour = 2;
+		A.RainColour = 2;
 	}
 	if (AimTarget)
 	{
-		MainGameInfo(Level.Game).MissileMobj.Tracer = AimTarget;
-		MainGameInfo(Level.Game).MissileMobj.bSeekerMissile = true;
+		A.Tracer = AimTarget;
+		A.bSeekerMissile = true;
 	}
-	MainGameInfo(Level.Game).MissileMobj.PlaySound('weapons/hornrodpowshoot', CHAN_WEAPON);
+	A.PlaySound('weapons/hornrodpowshoot', CHAN_WEAPON);
 }
 
 __states__

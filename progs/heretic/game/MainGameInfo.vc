@@ -60,8 +60,6 @@ string KeyText[NUMKEYS];
 string AmmoText[NUMAMMO * 2];
 string keymsg[NUMKEYS];
 
-Actor MissileMobj;
-
 bool shareware;
 bool respawnmonsters;
 

@@ -102,19 +102,19 @@ final void A_CStaffCheck()
 
 final void A_CStaffAttack()
 {
-	Actor mo;
-	PlayerPawn playPawn;
+	EntityEx	mo;
+	PlayerPawn	playPawn;
 
 	Player(Owner.Player).Mana[HexenDefs::MANA_1] -=
 		WeaponManaUse(Owner.Player.PClass, Player(Owner.Player).ReadyWeapon);
 	playPawn = PlayerPawn(Owner);
-	mo = Player(Owner.Player).SpawnPlayerMissileAngle(CStaffMissile,
+	mo = Actor(Owner).SpawnPlayerMissileAngle(CStaffMissile,
 		playPawn.Angles.yaw - (45.0 / 15.0));
 	if (mo)
 	{
 		CStaffMissile(mo).WeaveXY = 32;
 	}
-	mo = Player(Owner.Player).SpawnPlayerMissileAngle(CStaffMissile,
+	mo = Actor(Owner).SpawnPlayerMissileAngle(CStaffMissile,
 		playPawn.Angles.yaw + (45.0 / 15.0));
 	if (mo)
 	{
