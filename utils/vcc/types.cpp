@@ -1462,7 +1462,7 @@ bool VMethod::Define()
 
 		ParamTypes[i] = type;
 		ParamFlags[i] = TModifiers::ParmAttr(P.Modifiers);
-		if (ParamFlags[i] & FPARM_Optional && ParamFlags[i] & FPARM_Out)
+		if ((ParamFlags[i] & FPARM_Optional) && (ParamFlags[i] & FPARM_Out))
 		{
 			ParseError(P.Loc, "Modifiers optional and out are mutually exclusive");
 		}
@@ -1505,12 +1505,23 @@ bool VMethod::Define()
 			ParseError(Loc, "Method redefined with different number of arguments");
 			Ret = false;
 		}
-		else for (int i = 0; i < NumParams; i++)
-			if (!SuperMethod->ParamTypes[i].Equals(ParamTypes[i]))
+		else
+		{
+			for (int i = 0; i < NumParams; i++)
 			{
-				ParseError(Loc, "Type of argument %d differs from base class", i + 1);
-				Ret = false;
+				if (!SuperMethod->ParamTypes[i].Equals(ParamTypes[i]))
+				{
+					ParseError(Loc, "Type of argument %d differs from base class", i + 1);
+					Ret = false;
+				}
+				if ((SuperMethod->ParamFlags[i] ^ ParamFlags[i]) &
+					(FPARM_Optional | FPARM_Out))
+				{
+					ParseError(Loc, "Modifiers of argument %d differs from base class", i + 1);
+					Ret = false;
+				}
 			}
+		}
 
 		//	Inherit network flags
 		Flags |= SuperMethod->Flags & FUNC_NetFlags;
