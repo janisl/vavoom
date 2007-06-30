@@ -178,13 +178,13 @@ void TouchSpecial(Actor Toucher)
 		{
 			SetDormantArtifact();
 			PlaySound('PickupArtifact', CHAN_ITEM);
-			Toucher.Player.cprint(MainGameInfo(Level.Game).artifactMessages[ArtifactType]);
+			Toucher.Player.cprint(PickupMessage);
 		}
 		else
 		{
 			// Puzzle item
 			PlaySound('PickupItem', CHAN_ITEM, 1.0, ATTN_NONE);
-			Toucher.Player.cprint(MainGameInfo(Level.Game).artifactMessages[ArtifactType]);
+			Toucher.Player.cprint(PickupMessage);
 			if (!Level.Game.netgame || Level.Game.deathmatch)
 			{
 				// Remove puzzle items if not cooperative netplay

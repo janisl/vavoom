@@ -37,6 +37,6 @@ defaultproperties
 {
 	AmmoType = am_skullrod;
 	AmmoCount = 20;
-	StringIndex = 8;
 	IdleState = S_AMS1_1;
+	PickupMessage = "$txt_ammoskullrod1";
 }

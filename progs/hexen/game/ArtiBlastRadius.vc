@@ -43,4 +43,5 @@ defaultproperties
 {
 	ArtifactType = HexenDefs::arti_blastradius;
 	IdleState = S_ARTI_BLAST1;
+	PickupMessage = "$txt_artiblastradius";
 }

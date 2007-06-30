@@ -54,10 +54,6 @@ int GetAmmoChange[NUMAMMO];
 int WeaponValue[NUMWEAPONS];
 int maxammo[NUMAMMO];
 
-string ArtifactText[HereticDefs::NUMARTIFACTS];
-string WeaponText[NUMWEAPONS];
-string KeyText[NUMKEYS];
-string AmmoText[NUMAMMO * 2];
 string keymsg[NUMKEYS];
 
 bool shareware;
@@ -577,44 +573,6 @@ defaultproperties
 	maxammo[3] = 200;	// skull rod
 	maxammo[4] = 20;	// phoenix rod
 	maxammo[5] = 150;	// mace
-
-	ArtifactText[0] = "";
-	ArtifactText[1] = "$txt_artiinvulnerability";
-	ArtifactText[2] = "$txt_artiinvisibility";
-	ArtifactText[3] = "$txt_artihealth";
-	ArtifactText[4] = "$txt_artisuperhealth";
-	ArtifactText[5] = "$txt_artitomeofpower";
-	ArtifactText[6] = "$txt_artitorch";
-	ArtifactText[7] = "$txt_artifirebomb";
-	ArtifactText[8] = "$txt_artiegg";
-	ArtifactText[9] = "$txt_artifly";
-	ArtifactText[10] = "$txt_artiteleport";
-
-	WeaponText[0] = "";
-	WeaponText[1] = "";
-	WeaponText[2] = "$txt_wpncrossbow";
-	WeaponText[3] = "$txt_wpnblaster";
-	WeaponText[4] = "$txt_wpnskullrod";
-	WeaponText[5] = "$txt_wpnphoenixrod";
-	WeaponText[6] = "$txt_wpnmace";
-	WeaponText[7] = "$txt_wpngauntlets";
-
-	KeyText[0] = "$txt_gotyellowkey";
-	KeyText[1] = "$txt_gotgreenkey";
-	KeyText[2] = "$txt_gotbluekey";
-
-	AmmoText[0] = "$txt_ammogoldwand1";
-	AmmoText[1] = "$txt_ammogoldwand2";
-	AmmoText[2] = "$txt_ammomace1";
-	AmmoText[3] = "$txt_ammomace2";
-	AmmoText[4] = "$txt_ammocrossbow1";
-	AmmoText[5] = "$txt_ammocrossbow2";
-	AmmoText[6] = "$txt_ammoblaster1";
-	AmmoText[7] = "$txt_ammoblaster2";
-	AmmoText[8] = "$txt_ammoskullrod1";
-	AmmoText[9] = "$txt_ammoskullrod2";
-	AmmoText[10] = "$txt_ammophoenixrod1";
-	AmmoText[11] = "$txt_ammophoenixrod2";
 
 	keymsg[0] = "$txt_needyellowkey";
 	keymsg[1] = "$txt_needgreenkey";

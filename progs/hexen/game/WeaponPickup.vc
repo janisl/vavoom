@@ -126,7 +126,7 @@ void TouchSpecial(Actor Toucher)
 		}
 	}
 
-	Toucher.Player.cprint(MainGameInfo(Level.Game).weaponMessages[WeaponClass * 2 + WeaponType - 1]);
+	Toucher.Player.cprint(PickupMessage);
 	if (Special)
 	{
 		Level.ExecuteActionSpecial(Special, Args[0], Args[1], Args[2],

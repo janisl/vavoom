@@ -39,4 +39,5 @@ defaultproperties
 	WeaponClass = HexenDefs::PCLASS_MAGE;
 	WeaponType = HexenDefs::WP_SECOND;
 	IdleState = S_COS1;
+	PickupMessage = "$txt_weapon_m2";
 }

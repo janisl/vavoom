@@ -51,7 +51,7 @@ void TouchSpecial(Actor Toucher)
 	{
 		return;
 	}
-	Toucher.Player.cprint(MainGameInfo(Level.Game).manaText[ManaType]);
+	Toucher.Player.cprint(PickupMessage);
 	if (Special)
 	{
 		Level.ExecuteActionSpecial(Special, Args[0], Args[1], Args[2], Args[3],

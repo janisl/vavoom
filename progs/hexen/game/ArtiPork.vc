@@ -43,4 +43,5 @@ defaultproperties
 {
 	ArtifactType = HexenDefs::arti_egg;
 	IdleState = S_ARTI_EGGC1;
+	PickupMessage = "$txt_artiegg2";
 }

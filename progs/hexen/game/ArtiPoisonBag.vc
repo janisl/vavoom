@@ -36,4 +36,5 @@ defaultproperties
 {
 	ArtifactType = HexenDefs::arti_poisonbag;
 	IdleState = S_ARTI_PSBG1;
+	PickupMessage = "$txt_artipoisonbag";
 }

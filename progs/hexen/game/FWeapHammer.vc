@@ -37,4 +37,5 @@ defaultproperties
 	WeaponClass = HexenDefs::PCLASS_FIGHTER;
 	WeaponType = HexenDefs::WP_THIRD;
 	IdleState = S_HAMM;
+	PickupMessage = "$txt_weapon_f3";
 }

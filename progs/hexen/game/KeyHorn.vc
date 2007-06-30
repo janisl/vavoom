@@ -36,4 +36,5 @@ defaultproperties
 {
 	KeyType = HexenDefs::KEY_9;
 	IdleState = S_KEY9;
+	PickupMessage = "$txt_key_horn";
 }

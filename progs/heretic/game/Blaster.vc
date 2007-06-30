@@ -36,4 +36,5 @@ defaultproperties
 {
 	WeaponType = wp_blaster;
 	IdleState = S_BLSR;
+	PickupMessage = "$txt_wpnblaster";
 }

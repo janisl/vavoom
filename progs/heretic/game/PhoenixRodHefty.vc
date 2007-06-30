@@ -38,6 +38,6 @@ defaultproperties
 {
 	AmmoType = am_phoenixrod;
 	AmmoCount = 10;
-	StringIndex = 11;
 	IdleState = S_AMP2_1;
+	PickupMessage = "$txt_ammophoenixrod2";
 }

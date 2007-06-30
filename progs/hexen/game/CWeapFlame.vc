@@ -44,4 +44,5 @@ defaultproperties
 	WeaponClass = HexenDefs::PCLASS_CLERIC;
 	WeaponType = HexenDefs::WP_THIRD;
 	IdleState = S_CFLAME1;
+	PickupMessage = "$txt_weapon_c3";
 }

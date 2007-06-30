@@ -36,4 +36,5 @@ defaultproperties
 {
 	ArtifactType = HexenDefs::arti_boostmana;
 	IdleState = S_ARTI_MANA;
+	PickupMessage = "$txt_artiboostmana";
 }

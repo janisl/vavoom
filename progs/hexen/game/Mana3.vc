@@ -52,4 +52,5 @@ defaultproperties
 	ManaType = HexenDefs::MANA_BOTH;
 	ManaCount = 20;
 	IdleState = S_MANA3_1;
+	PickupMessage = "$txt_mana_both";
 }

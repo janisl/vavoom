@@ -36,4 +36,5 @@ defaultproperties
 {
 	ArtifactType = HereticDefs::arti_tomeofpower;
 	IdleState = S_ARTI_PWBK1;
+	PickupMessage = "$txt_artitomeofpower";
 }

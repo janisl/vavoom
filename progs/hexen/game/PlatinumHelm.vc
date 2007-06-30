@@ -36,4 +36,5 @@ defaultproperties
 {
 	ArmorType = HexenDefs::ARMOR_HELMET;
 	IdleState = S_ARMOR_3;
+	PickupMessage = "$txt_armor3";
 }

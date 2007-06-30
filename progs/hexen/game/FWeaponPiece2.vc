@@ -37,4 +37,5 @@ defaultproperties
 	PieceClass = HexenDefs::PCLASS_FIGHTER;
 	PieceValue = WPIECE2;
 	IdleState = S_FSWORD2;
+	PickupMessage = "$txt_quietus_piece";
 }

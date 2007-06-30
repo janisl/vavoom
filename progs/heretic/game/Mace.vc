@@ -58,4 +58,5 @@ defaultproperties
 {
 	WeaponType = wp_mace;
 	IdleState = S_WMCE;
+	PickupMessage = "$txt_wpnmace";
 }

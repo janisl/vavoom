@@ -37,4 +37,5 @@ defaultproperties
 	PieceClass = HexenDefs::PCLASS_CLERIC;
 	PieceValue = WPIECE3;
 	IdleState = S_CHOLY3;
+	PickupMessage = "$txt_wraithverge_piece";
 }

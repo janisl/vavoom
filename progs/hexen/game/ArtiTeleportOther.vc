@@ -39,4 +39,5 @@ defaultproperties
 {
 	ArtifactType = HexenDefs::arti_teleportother;
 	IdleState = S_ARTI_TELOTHER1;
+	PickupMessage = "$txt_artiteleportother";
 }

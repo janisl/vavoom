@@ -44,4 +44,5 @@ defaultproperties
 	WeaponClass = HexenDefs::PCLASS_MAGE;
 	WeaponType = HexenDefs::WP_THIRD;
 	IdleState = S_MW_LIGHTNING1;
+	PickupMessage = "$txt_weapon_m3";
 }

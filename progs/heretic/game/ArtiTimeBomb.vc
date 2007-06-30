@@ -36,4 +36,5 @@ defaultproperties
 {
 	ArtifactType = HereticDefs::arti_firebomb;
 	IdleState = S_ARTI_FBMB1;
+	PickupMessage = "$txt_artifirebomb";
 }

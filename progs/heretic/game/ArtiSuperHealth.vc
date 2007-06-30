@@ -36,4 +36,5 @@ defaultproperties
 {
 	ArtifactType = HereticDefs::arti_superhealth;
 	IdleState = S_ARTI_SPHL1;
+	PickupMessage = "$txt_artisuperhealth";
 }

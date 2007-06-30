@@ -26,6 +26,8 @@
 class Pickup : Actor
 	abstract;
 
+string PickupMessage;
+
 //==========================================================================
 //
 //  A_RestoreSpecialThing1

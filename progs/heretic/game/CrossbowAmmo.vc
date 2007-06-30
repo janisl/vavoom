@@ -36,6 +36,6 @@ defaultproperties
 {
 	AmmoType = am_crossbow;
 	AmmoCount = 5;
-	StringIndex = 4;
 	IdleState = S_AMC1;
+	PickupMessage = "$txt_ammocrossbow1";
 }

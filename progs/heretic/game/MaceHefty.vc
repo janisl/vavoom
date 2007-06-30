@@ -36,6 +36,6 @@ defaultproperties
 {
 	AmmoType = am_mace;
 	AmmoCount = 100;
-	StringIndex = 3;
 	IdleState = S_AMM2;
+	PickupMessage = "$txt_ammomace2";
 }

@@ -45,4 +45,5 @@ defaultproperties
 {
 	KeyType = key_blue;
 	IdleState = S_BKYY1;
+	PickupMessage = "$txt_gotbluekey";
 }

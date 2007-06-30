@@ -39,4 +39,5 @@ defaultproperties
 {
 	ArtifactType = HereticDefs::arti_teleport;
 	IdleState = S_ARTI_ATLP1;
+	PickupMessage = "$txt_artiteleport";
 }

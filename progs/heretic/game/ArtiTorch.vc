@@ -38,4 +38,5 @@ defaultproperties
 {
 	ArtifactType = HereticDefs::arti_torch;
 	IdleState = S_ARTI_TRCH1;
+	PickupMessage = "$txt_artitorch";
 }

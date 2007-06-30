@@ -36,4 +36,5 @@ defaultproperties
 {
 	WeaponType = wp_skullrod;
 	IdleState = S_WSKL;
+	PickupMessage = "$txt_wpnskullrod";
 }

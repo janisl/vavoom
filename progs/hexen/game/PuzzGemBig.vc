@@ -36,4 +36,5 @@ defaultproperties
 {
 	ArtifactType = HexenDefs::arti_puzzgembig;
 	IdleState = S_ARTIPUZZGEMBIG;
+	PickupMessage = "$txt_artipuzzgembig";
 }

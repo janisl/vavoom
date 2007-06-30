@@ -37,4 +37,5 @@ defaultproperties
 	ArtifactType = HexenDefs::arti_summon;
 	IdleState = S_ARTI_SUMMON;
 	DormantState = S_DORMANTARTI2_1;
+	PickupMessage = "$txt_artisummon";
 }

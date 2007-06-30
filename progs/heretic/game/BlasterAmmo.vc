@@ -38,6 +38,6 @@ defaultproperties
 {
 	AmmoType = am_blaster;
 	AmmoCount = 10;
-	StringIndex = 6;
 	IdleState = S_AMB1_1;
+	PickupMessage = "$txt_ammoblaster1";
 }

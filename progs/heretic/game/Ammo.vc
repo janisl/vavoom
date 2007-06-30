@@ -28,7 +28,6 @@ class Ammo : Pickup
 
 int AmmoType;
 int AmmoCount;
-int StringIndex;	// FIXME
 
 //==========================================================================
 //
@@ -54,7 +53,7 @@ void TouchSpecial(Actor Toucher)
 	{
 		return;
 	}
-	Toucher.Player.cprint(MainGameInfo(Level.Game).AmmoText[StringIndex]);
+	Toucher.Player.cprint(PickupMessage);
 	if (Special)
 	{
 		Level.ExecuteActionSpecial(Special, Args[0], Args[1], Args[2], Args[3],

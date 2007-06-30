@@ -36,4 +36,5 @@ defaultproperties
 {
 	KeyType = HexenDefs::KEY_6;
 	IdleState = S_KEY6;
+	PickupMessage = "$txt_key_dungeon";
 }

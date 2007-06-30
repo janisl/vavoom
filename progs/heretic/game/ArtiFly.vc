@@ -39,4 +39,5 @@ defaultproperties
 {
 	ArtifactType = HereticDefs::arti_fly;
 	IdleState = S_ARTI_SOAR1;
+	PickupMessage = "$txt_artifly";
 }

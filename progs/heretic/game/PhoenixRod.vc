@@ -36,4 +36,5 @@ defaultproperties
 {
 	WeaponType = wp_phoenixrod;
 	IdleState = S_WPHX;
+	PickupMessage = "$txt_wpnphoenixrod";
 }

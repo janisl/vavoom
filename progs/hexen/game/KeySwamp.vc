@@ -36,4 +36,5 @@ defaultproperties
 {
 	KeyType = HexenDefs::KEY_A;
 	IdleState = S_KEYA;
+	PickupMessage = "$txt_key_swamp";
 }

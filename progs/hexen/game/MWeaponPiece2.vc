@@ -37,4 +37,5 @@ defaultproperties
 	PieceClass = HexenDefs::PCLASS_MAGE;
 	PieceValue = WPIECE2;
 	IdleState = S_MSTAFF2;
+	PickupMessage = "$txt_bloodscourge_piece";
 }

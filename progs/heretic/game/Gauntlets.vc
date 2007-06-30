@@ -36,4 +36,5 @@ defaultproperties
 {
 	WeaponType = wp_gauntlets;
 	IdleState = S_WGNT;
+	PickupMessage = "$txt_wpngauntlets";
 }

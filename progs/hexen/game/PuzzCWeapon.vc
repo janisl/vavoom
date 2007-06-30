@@ -35,4 +35,5 @@ defaultproperties
 {
 	ArtifactType = HexenDefs::arti_puzzcweapon;
 	IdleState = S_ARTIPUZZCWEAPON;
+	PickupMessage = "$txt_artipuzzcweapon";
 }

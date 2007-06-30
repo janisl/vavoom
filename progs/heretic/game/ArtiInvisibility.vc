@@ -38,4 +38,5 @@ defaultproperties
 	bCanRespawn = false;
 	Alpha = 0.666;
 	IdleState = S_ARTI_INVS1;
+	PickupMessage = "$txt_artiinvisibility";
 }

@@ -144,7 +144,7 @@ void TouchSpecial(Actor Toucher)
 	}
 	else
 	{
-		Toucher.Player.cprint(MainGameInfo(Level.Game).weaponPieceText[PieceClass]);
+		Toucher.Player.cprint(PickupMessage);
 		Toucher.PlaySound('PickupWeapon', CHAN_ITEM, 1.0, ATTN_NONE);	//FIXME must be PickupPiece
 	}
 }

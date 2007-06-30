@@ -38,6 +38,6 @@ defaultproperties
 {
 	AmmoType = am_goldwand;
 	AmmoCount = 50;
-	StringIndex = 1;
 	IdleState = S_AMG2_1;
+	PickupMessage = "$txt_ammogoldwand2";
 }

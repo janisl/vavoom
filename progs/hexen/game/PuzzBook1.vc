@@ -36,4 +36,5 @@ defaultproperties
 {
 	ArtifactType = HexenDefs::arti_puzzbook1;
 	IdleState = S_ARTIPUZZBOOK1;
+	PickupMessage = "$txt_artipuzzbook1";
 }

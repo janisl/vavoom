@@ -42,4 +42,5 @@ defaultproperties
 {
 	ArtifactType = HexenDefs::arti_puzzgear2;
 	IdleState = S_ARTIPUZZGEAR2_1;
+	PickupMessage = "$txt_artipuzzgear";
 }

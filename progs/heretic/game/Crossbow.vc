@@ -36,4 +36,5 @@ defaultproperties
 {
 	WeaponType = wp_crossbow;
 	IdleState = S_WBOW;
+	PickupMessage = "$txt_wpncrossbow";
 }

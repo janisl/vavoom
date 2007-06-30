@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ArtiHealingRadius:Artifact
+class ArtiHealingRadius : Artifact
 	__mobjinfo__(10120);
 
 __states__
@@ -50,4 +50,5 @@ defaultproperties
 {
 	ArtifactType = HexenDefs::arti_healingradius;
 	IdleState = S_ARTI_HEALRAD1;
+	PickupMessage = "$txt_artihealingradius";
 }

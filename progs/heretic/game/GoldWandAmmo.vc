@@ -36,6 +36,6 @@ defaultproperties
 {
 	AmmoType = am_goldwand;
 	AmmoCount = 10;
-	StringIndex = 0;
 	IdleState = S_AMG1;
+	PickupMessage = "$txt_ammogoldwand1";
 }
