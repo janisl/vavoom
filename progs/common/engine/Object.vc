@@ -1416,7 +1416,7 @@ native static final bool StrStartsWith(string Str, string Check);
 //  Checks if string ends with given string
 native static final bool StrEndsWith(string Str, string Check);
 //  Replaces substrings with another string
-native static final string StrReplace(string Search, string Replacement);
+native static final string StrReplace(string Str, string Search, string Replacement);
 
 //
 //  Printing to console
