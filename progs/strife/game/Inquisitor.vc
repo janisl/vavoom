@@ -144,7 +144,7 @@ final void A_InquisitorGrenade()
 		A.Angles.yaw += 45.0 / 16.0;
 		A.Velocity.x = A.Speed * cos(A.Angles.yaw);
 		A.Velocity.y = A.Speed * sin(A.Angles.yaw);
-		A.Velocity.z += 170.0 * 35.0;	//weeeeeeeeeee!!!!
+		A.Velocity.z += 15.0 * 35.0;	//weeeeeeeeeee!!!!
 	}
 }
 

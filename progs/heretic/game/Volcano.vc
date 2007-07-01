@@ -60,7 +60,7 @@ final void A_VolcanoBlast()
 		blast.Angles.yaw = angle;
 		blast.Velocity.x = cos(angle) * 35.0;
 		blast.Velocity.y = sin(angle) * 35.0;
-		blast.Velocity.z = (7.5 + Random() * 12.0) * 35.0;
+		blast.Velocity.z = (2.5 + Random() * 4.0) * 35.0;
 		blast.PlaySound('world/volcano/shoot', CHAN_VOICE);
 		blast.CheckMissileSpawn();
 	}

@@ -72,7 +72,7 @@ final void A_VolcBallImpact()
 		tiny.Angles.yaw = angle;
 		tiny.Velocity.x = 0.7 * cos(angle) * 35.0;
 		tiny.Velocity.y = 0.7 * sin(angle) * 35.0;
-		tiny.Velocity.z = (3.0 + Random() * 6.0) * 35.0;
+		tiny.Velocity.z = (1.0 + Random() * 2.0) * 35.0;
 		tiny.CheckMissileSpawn();
 	}
 }
