@@ -146,7 +146,7 @@ void VisibilityChanged(bool bNewVisibility)
 void Tick(float DeltaTime)
 {
 	pagetime -= DeltaTime;
-	if (demosequence == -1 || (!ClGame.MenuActive() && pagetime < 0.0))
+	if (demosequence == -1 || (/*!ClGame.MenuActive() &&*/ pagetime < 0.0))
 	{
 		AdvanceDemo();
 	}
