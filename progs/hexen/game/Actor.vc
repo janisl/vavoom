@@ -1129,7 +1129,7 @@ bool Touch(Entity InOther)
 			// Class bosses not flagged boss so they can be blasted
 			if (!Other.bIsPlayer && !Other.bBoss && !ClassBoss(Other))
 			{
-				Other.Damage(self, Target, 10);
+				Other.Damage(self, Target, 10, DamageType);
 				return true;
 			}
 		}
@@ -1160,7 +1160,7 @@ bool Touch(Entity InOther)
 				SpawnRipperBlood();
 			}
 			damage = ((P_Random() & 3) + 2) * MissileDamage;
-			Other.Damage(self, Target, damage);
+			Other.Damage(self, Target, damage, DamageType);
 			if (Other.bPushable && !bCannotPush)
 			{
 				// Push thing
@@ -1184,7 +1184,7 @@ bool Touch(Entity InOther)
 			{
 				Other.SpawnBloodSplatter(Origin, damage);
 			}
-			Other.Damage(self, Target, damage);
+			Other.Damage(self, Target, damage, DamageType);
 		}
 		return false;
 	}

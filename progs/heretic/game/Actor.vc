@@ -915,7 +915,7 @@ bool Touch(Entity InOther)
 			}
 			PlaySound('misc/ripslop', CHAN_VOICE);
 			damage = ((P_Random() & 3) + 2) * MissileDamage;
-			Other.Damage(self, Target, damage);
+			Other.Damage(self, Target, damage, DamageType);
 			if (Other.bPushable && !bCannotPush)
 			{
 				// Push	thing
@@ -933,7 +933,7 @@ bool Touch(Entity InOther)
 			{
 				Other.SpawnBloodSplatter(Origin, damage);
 			}
-			Other.Damage(self, Target, damage);
+			Other.Damage(self, Target, damage, DamageType);
 		}
 		// don't traverse any more
 		return false;

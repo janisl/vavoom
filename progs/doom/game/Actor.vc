@@ -1021,7 +1021,7 @@ bool Touch(Entity InOther)
 
 		// damage / explode
 		damage = ((P_Random() % 8) + 1) * MissileDamage;
-		Other.Damage(self, Target, damage);
+		Other.Damage(self, Target, damage, DamageType);
 		// don't traverse any more
 		return false;
 	}
