@@ -33,11 +33,11 @@ class PowerCoupling : Decoration
 //
 //==========================================================================
 
-void Died(EntityEx source)
+void Died(EntityEx source, EntityEx inflictor)
 {
 	int i;
 
-	::Died(source);
+	::Died(source, inflictor);
 
 	for (i = 0; i < MAXPLAYERS; ++i)
 	{

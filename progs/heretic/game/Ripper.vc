@@ -26,6 +26,26 @@
 class Ripper : Projectile
 	__scriptid__(157);
 
+//==========================================================================
+//
+//  DoSpecialDamage
+//
+//==========================================================================
+
+int DoSpecialDamage(EntityEx victim, EntityEx source, int damage)
+{
+	if (victim.Class == Ironlich)
+	{
+		// Less damage to Ironlich bosses
+		damage = P_Random() & 1;
+		if (!damage)
+		{
+			return -1;
+		}
+	}
+	return ::DoSpecialDamage(victim, source, damage);
+}
+
 __states__
 {
 	S_RIPPER1('FX18', 12, 4.0 / 35.0, S_RIPPER2) = none

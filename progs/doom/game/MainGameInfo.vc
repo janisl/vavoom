@@ -1256,6 +1256,7 @@ defaultproperties
 	LevelInfoClass = DoomLevelInfo;
 	bNoClipIgnoreFloor = true;
 	TeleportFogClass = TeleportFog;
+	DefaultKickBack = 150.0;
 
 	WeaponClasses[0] = WeaponFist;
 	WeaponClasses[1] = WeaponPistol;

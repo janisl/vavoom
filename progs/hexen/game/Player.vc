@@ -36,12 +36,6 @@ const int MAXHEALTH			= 100;
 const int MAXMORPHHEALTH	= 30;
 const float VIEWHEIGHT		= 48.0;
 
-//
-// Player internal flags, for cheats and debug.
-//
-const int CF_NOCLIP			= 1;	// No clipping, walk through barriers.
-const int CF_GODMODE		= 2;	// No damage, no health loss.
-
 // 16 pixels of bob
 const float MAXBOB			= 16.0;
 
@@ -85,10 +79,6 @@ int Arti;	// artitype_t to use
 float FlyHeight;
 
 int ArtifactCount;
-
-// Bit flags, for cheats and debug.
-// See cheat_t, above.
-int Cheats;
 
 // Refired shots are less accurate.
 int Refire;
@@ -3854,6 +3844,82 @@ void ClientExplosion(int etype, TVec org)
 	dl->colour = HexenDefs.default.ecolours[etype];
 	dl->die = Level.XLevel.Time + 0.5;
 	dl->decay = 300.0;
+}
+
+//==========================================================================
+//
+//  GetWeaponKickBack
+//
+//==========================================================================
+
+float GetWeaponKickBack()
+{
+	//	Hexen weapons have no kickback at all.
+	return 0.0;
+}
+
+//==========================================================================
+//
+//  HaveInvulnerabilityPower
+//
+//==========================================================================
+
+bool HaveInvulnerabilityPower()
+{
+	return !!Powers[pw_invulnerability];
+}
+
+//==========================================================================
+//
+//  ArmorAbsorbDamage
+//
+//==========================================================================
+
+int ArmorAbsorbDamage(EntityEx inflictor, EntityEx source, int damage,
+	name DmgType)
+{
+	float saved;
+	float savedPercent;
+	int i;
+
+	savedPercent = MainGameInfo(Level.Game).AutoArmorSave[PClass]
+		+ ArmorPoints[HexenDefs::ARMOR_ARMOR]
+		+ ArmorPoints[HexenDefs::ARMOR_SHIELD]
+		+ ArmorPoints[HexenDefs::ARMOR_HELMET]
+		+ ArmorPoints[HexenDefs::ARMOR_AMULET];
+	if (savedPercent)
+	{
+		// armor absorbed some damage
+		if (savedPercent > 100.0)
+		{
+			savedPercent = 100.0;
+		}
+		for (i = 0; i < HexenDefs::NUMARMOR; i++)
+		{
+			if (ArmorPoints[i])
+			{
+				ArmorPoints[i] -= itof(damage) *
+					MainGameInfo(Level.Game).ArmorIncrement[PClass * HexenDefs::NUMARMOR + i] / 300.0;
+				if (ArmorPoints[i] < 2.0)
+				{
+					ArmorPoints[i] = 0.0;
+				}
+			}
+		}
+		saved = itof(damage) * savedPercent / 100.0;
+		if (saved > savedPercent * 2.0)
+		{
+			saved = savedPercent * 2.0;
+		}
+		damage -= ftoi(saved);
+	}
+	if (damage >= Health
+		&& ((Level.Game.gameskill == sk_baby) || Level.Game.deathmatch) && !MorphTime)
+	{
+		// Try to use some inventory health
+		Actor(MO).AutoUseHealth(damage - Health + 1);
+	}
+	return damage;
 }
 
 defaultproperties

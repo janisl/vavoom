@@ -25,6 +25,23 @@
 
 class PhoenixFX2 : Projectile;
 
+//==========================================================================
+//
+//  DoSpecialDamage
+//
+//==========================================================================
+
+int DoSpecialDamage(EntityEx victim, EntityEx source, int damage)
+{
+	// Flame thrower
+	if (victim.Player && P_Random() < 128)
+	{
+		// Freeze player for a bit
+		victim.ReactionTime += 0.125;
+	}
+	return ::DoSpecialDamage(victim, source, damage);
+}
+
 //===========================================================================
 //
 //  A_FlameEnd

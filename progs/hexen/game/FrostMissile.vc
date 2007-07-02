@@ -32,11 +32,11 @@ bool bShardSpawnDown;
 
 //==========================================================================
 //
-//  InflictorModifyDamage
+//  DoSpecialDamage
 //
 //==========================================================================
 
-int InflictorModifyDamage(Actor victim, Actor source, int damage)
+int DoSpecialDamage(EntityEx victim, EntityEx source, int damage)
 {
 	switch (_Special2)
 	{

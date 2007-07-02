@@ -28,19 +28,19 @@ class PorkFX : Projectile
 
 //==========================================================================
 //
-//  InflictorModifyDamage
+//  DoSpecialDamage
 //
 //==========================================================================
 
-int InflictorModifyDamage(Actor victim, Actor source, int damage)
+int DoSpecialDamage(EntityEx victim, EntityEx source, int damage)
 {
 	if (victim.bIsPlayer)
 	{
-		victim.MorphPlayer();
+		Actor(victim).MorphPlayer();
 	}
 	else
 	{
-		victim.MorphMonster();
+		Actor(victim).MorphMonster();
 	}
 	return -1;	// Always return
 }

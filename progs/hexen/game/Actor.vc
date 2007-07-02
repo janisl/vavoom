@@ -37,11 +37,8 @@ bool bSpawnFloat;		// spawn random float z
 bool bRip;				// missile rips through solid targets
 bool bPushable;			// can be pushed by other moving mobjs
 bool bBoss;				// mobj is a major boss
-bool bFireDamage;		// does fire damage
-bool bNoDamageThrust;	// does not thrust target when damaging
 bool bNonShootable;		// mobj is totally non-shootable,
 						// but still considered solid
-bool bDamageInvulnerable;	// These inflictors aren't foiled by invulnerability
 bool bNoMorph;			// Won't morph into a pig.
 
 int _Special1;	// Special info
@@ -413,9 +410,16 @@ Actor ActiveMinotaur()
 //
 //==========================================================================
 
-void Died(EntityEx source)
+void Died(EntityEx source, EntityEx inflictor)
 {
 	int dummy[5];
+
+	if (source && (source.bIsPlayer) &&
+		(Player(source.Player).ReadyWeapon == HexenDefs::WP_FOURTH))
+	{
+		// Always extreme death from fourth weapon
+		Health = -5000;
+	}
 
 	bShootable = false;
 	bNoGravity = false;
@@ -761,290 +765,6 @@ void AutoUseHealth(int saveHealth)
 
 //==========================================================================
 //
-//  Damage
-//
-//  Damages both enemies and players
-//  inflictor is the thing that caused the damage - creature or missile,
-// can be NULL (slime, etc)
-//  source is the thing to target after taking damage - creature or NULL
-//  Source and inflictor are the same for melee attacks
-//  source can be null for barrel explosions and other environmental stuff
-//
-//==========================================================================
-
-void Damage(EntityEx inflictor, EntityEx source, int damage,
-	optional name DmgType)
-{
-	float saved;
-	float savedPercent;
-	Actor master;
-	int i;
-
-	if (!bShootable)
-	{
-		// Shouldn't happen
-		return;
-	}
-	if (Health <= 0)
-	{
-		if (inflictor && Actor(inflictor).bIceDamage)
-		{
-			return;
-		}
-		else if (bIceCorpse)	// frozen
-		{
-			StateTime = 0.1;
-			Velocity.x = 0.0;
-			Velocity.y = 0.0;
-		}
-		return;
-	}
-	if (bInvulnerable && damage < 10000)
-	{
-		// mobj is invulnerable
-		if (bIsPlayer)
-			return;	// for player, no exceptions
-		if (!inflictor || !Actor(inflictor).bDamageInvulnerable)
-			return;
-	}
-	if (bIsPlayer)
-	{
-		if (damage < 1000 && ((Player(Player).Cheats & Player::CF_GODMODE)
-				|| Player(Player).Powers[pw_invulnerability]))
-		{
-			return;
-		}
-	}
-	if (bSkullFly)
-	{
-		Velocity = vector(0.0, 0.0, 0.0);
-		SetState(SeeState);
-	}
-	if (bDormant)
-	{
-		// Invulnerable, and won't wake up
-		return;
-	}
-	if (bIsPlayer && Level.Game.gameskill == sk_baby)
-	{
-		// Take half damage in trainer mode
-		damage >>= 1;
-	}
-	// Special damage types
-	if (inflictor)
-	{
-		damage = Actor(inflictor).InflictorModifyDamage(self, Actor(source), damage);
-		if (damage < 0)
-		{
-			return;
-		}
-	}
-	// Push the	target
-	if (inflictor && (!source || !source.bIsPlayer) &&
-		!Actor(inflictor).bNoDamageThrust)
-	{
-		TVec dir;
-		float thrust;
-
-		thrust = itof(damage) / Mass * 656.25;
-		dir = Normalise(GetCentre() - inflictor.GetCentre());
-		Velocity += dir * thrust;
-	}
-
-	//
-	// player specific
-	//
-	if (bIsPlayer)
-	{
-		//	End of game hell hack.
-		if ((Sector->special & SECSPEC_BASE_MASK) ==
-			SECSPEC_DamageSuperHellslimeExit && damage >= Health)
-		{
-			damage = Health - 1;
-		}
-
-		savedPercent = MainGameInfo(Level.Game).AutoArmorSave[Player.PClass]
-			+ Player(Player).ArmorPoints[HexenDefs::ARMOR_ARMOR]
-			+ Player(Player).ArmorPoints[HexenDefs::ARMOR_SHIELD]
-			+ Player(Player).ArmorPoints[HexenDefs::ARMOR_HELMET]
-			+ Player(Player).ArmorPoints[HexenDefs::ARMOR_AMULET];
-		if (savedPercent)
-		{
-			// armor absorbed some damage
-			if (savedPercent > 100.0)
-			{
-				savedPercent = 100.0;
-			}
-			for (i = 0; i < HexenDefs::NUMARMOR; i++)
-			{
-				if (Player(Player).ArmorPoints[i])
-				{
-					Player(Player).ArmorPoints[i] -= itof(damage) *
-						MainGameInfo(Level.Game).ArmorIncrement[Player.PClass * HexenDefs::NUMARMOR + i] / 300.0;
-					if (Player(Player).ArmorPoints[i] < 2.0)
-					{
-						Player(Player).ArmorPoints[i] = 0.0;
-					}
-				}
-			}
-			saved = itof(damage) * savedPercent / 100.0;
-			if (saved > savedPercent * 2.0)
-			{
-				saved = savedPercent * 2.0;
-			}
-			damage -= ftoi(saved);
-		}
-		if (damage >= Player.Health
-			&& ((Level.Game.gameskill == sk_baby) || Level.Game.deathmatch) && !Player(Player).MorphTime)
-		{
-			// Try to use some inventory health
-			AutoUseHealth(damage - Health + 1);
-		}
-		Player.Health -= damage;	// mirror mobj health here for Dave
-		if (Player.Health < 0)
-		{
-			Player.Health = 0;
-		}
-		Player(Player).Attacker = Actor(source);
-		Player(Player).DamageFlash += itof(damage) / 35.0;	// add damage after armor / invuln
-		if (Player(Player).DamageFlash > 3.0)
-		{
-			Player(Player).DamageFlash = 3.0;	// teleport stomp does 10k points...
-		}
-	}
-
-	//
-	// do the damage
-	//
-	Health -= damage;
-	if (Health <= 0)
-	{
-		// Death
-		if (inflictor)
-		{
-			// check for special fire damage or ice damage deaths
-			if (Actor(inflictor).bFireDamage)
-			{
-				if (bIsPlayer && !Player(Player).MorphTime)
-				{
-					// Check for flame death
-					if (Health > -50 && damage > 25)
-					{
-						bFireDamage = true;
-					}
-				}
-				else
-				{
-					bFireDamage = true;
-				}
-			}
-			else if (Actor(inflictor).bIceDamage)
-			{
-				bIceDamage = true;
-			}
-		}
-		if (MinotaurFriend(source))
-		{
-			// Minotaur's kills go to his master
-			master = Actor(Actor(source).Tracer);
-			// Make sure still alive and not a pointer to fighter head
-			if (master && master.bIsPlayer && (master.Player.MO == master))
-			{
-				source = master;
-			}
-		}
-		if (source && (source.bIsPlayer) &&
-			(Player(source.Player).ReadyWeapon == HexenDefs::WP_FOURTH))
-		{
-			// Always extreme death from fourth weapon
-			Health = -5000;
-		}
-		Died(source);
-		return;
-	}
-	if ((Random() < PainChance) && !bSkullFly)
-	{
-		if (inflictor && (inflictor.Class == LightningFloor ||
-			inflictor.Class == LightningZap))
-		{
-			if (P_Random() < 96)
-			{
-				bJustHit = true;	// fight back!
-				SetState(PainState);
-			}
-			else
-			{
-				// "electrocute" the target
-				bFullBright = true;
-				if (bCountKill && P_Random() < 128
-					&& !GetSoundPlayingInfo(self, GetSoundID('PuppyBeat')))
-				{
-					if ((Class == Centaur) ||
-						(Class == CentaurLeader) ||
-						(Class == Ettin))
-					{
-						PlaySound('PuppyBeat', CHAN_VOICE);
-					}
-				}
-			}
-		}
-		else
-		{
-			bJustHit = true;	// fight back!
-			SetState(PainState);
-			if (inflictor && inflictor.Class == PoisonCloud)
-			{
-				if (bCountKill && P_Random() < 128
-					&& !GetSoundPlayingInfo(self, GetSoundID('PuppyBeat')))
-				{
-					if ((Class == Centaur) ||
-						(Class == CentaurLeader) ||
-						(Class == Ettin))
-					{
-						PlaySound('PuppyBeat', CHAN_VOICE);
-					}
-				}
-			}
-		}
-	}
-	//FIXME
-	if (!Pawn(self))
-	{
-		return;
-	}
-	Pawn(self).ReactionCount = 0;	// we're awake now...
-	if (!Pawn(self).Threshold && source && !Actor(source).bBoss &&
-		!(Class == Bishop) && !(Class == MinotaurFriend))
-	{
-		// Target actor is not intent on another actor,
-		// so make him chase after source
-		if ((Class == Centaur && source.Class == CentaurLeader) ||
-			(Class == CentaurLeader && source.Class == Centaur))
-		{
-			return;
-		}
-		Target = Actor(source);
-		Pawn(self).Threshold = BASETHRESHOLD;
-		if (State == IdleState && SeeState)
-		{
-			SetState(SeeState);
-		}
-	}
-}
-
-//==========================================================================
-//
-//  InflictorModifyDamage
-//
-//==========================================================================
-
-int InflictorModifyDamage(Actor victim, Actor source, int damage)
-{
-	return damage;
-}
-
-//==========================================================================
-//
 //  PoisonPlayer - Sets up all data concerning poisoning
 //
 //==========================================================================
@@ -1128,7 +848,7 @@ void PoisonDamage(Actor source, int damage, bool playPainSound)
 				bIceDamage = true;
 			}
 		}
-		Died(source);
+		Died(source, inflictor);
 		return;
 	}
 	if (!(XLevel.TicTime & 63) && playPainSound)

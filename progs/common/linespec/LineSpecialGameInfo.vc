@@ -57,6 +57,8 @@ bool			bUseHexenPolyobjTypes;
 bool			bNoClipIgnoreFloor;
 //	Use blood splatter like in Raven games.
 bool			bBloodSplatter;
+//	Don't do damage thrust to the invulnerable players
+bool			bNoDamageThrustInvulnerable;
 
 float			windTab[3];
 float			pushTab[5];
@@ -70,6 +72,8 @@ float			air_control;
 
 float			TeleFogHeight;
 class<EntityEx>	TeleportFogClass;
+
+float			DefaultKickBack;
 
 //==========================================================================
 //

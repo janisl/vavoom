@@ -26,6 +26,12 @@
 class PlayerEx : BasePlayer
 	abstract;
 
+//
+// Player internal flags, for cheats and debug.
+//
+const int CF_NOCLIP			= 1;	// No clipping, walk through barriers.
+const int CF_GODMODE		= 2;	// No damage, no health loss.
+
 // For screen flashing (red or bright).
 float			DamageFlash;
 float			BonusFlash;
@@ -49,6 +55,37 @@ float			LastSectorDamageTime;
 
 float			HazardTime;
 float			LastHazardTime;
+
+// Bit flags, for cheats and debug.
+// See cheat_t, above.
+int				Cheats;
+
+replication
+{
+	reliable if (!bIsClient)
+		Cheats;
+}
+
+float GetWeaponKickBack()
+{
+	return 0.0;
+}
+
+bool IsStaffLevel2()
+{
+	return false;
+}
+
+bool HaveInvulnerabilityPower()
+{
+	return false;
+}
+
+int ArmorAbsorbDamage(EntityEx inflictor, EntityEx source, int damage,
+	name DmgType)
+{
+	return damage;
+}
 
 defaultproperties
 {

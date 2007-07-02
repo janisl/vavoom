@@ -28,15 +28,15 @@ class PoisonDart : Projectile
 
 //==========================================================================
 //
-//  InflictorModifyDamage
+//  DoSpecialDamage
 //
 //==========================================================================
 
-int InflictorModifyDamage(Actor victim, Actor source, int damage)
+int DoSpecialDamage(EntityEx victim, EntityEx source, int damage)
 {
 	if (victim.bIsPlayer)
 	{
-		victim.PoisonPlayer(source, 20);
+		Actor(victim).PoisonPlayer(Actor(source), 20);
 		damage >>= 1;
 	}
 	return damage;

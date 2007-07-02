@@ -191,6 +191,7 @@ defaultproperties
 	bBoss = true;
 	bNoMorph = true;
 	bNoRadiusDamage = true;
+	bNeverTarget = true;
 	IdleState = S_SRCR1_LOOK1;
 	SeeState = S_SRCR1_WALK1;
 	MissileState = S_SRCR1_ATK1;

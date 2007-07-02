@@ -38,13 +38,6 @@ const float
 	FLIGHTTIME 		= 60.0,
 	CHICKENTIME 	= 40.0;
 
-//
-// Player internal flags, for cheats and debug.
-//
-const int
-	CF_NOCLIP		= 1,	// No clipping, walk through barriers.
-	CF_GODMODE		= 2;	// No damage, no health loss.
-
 // 16 pixels of bob
 const float MAXBOB	= 16.0;
 
@@ -93,10 +86,6 @@ int ArtifactCount;
 int Refire;
 
 bool Backpack;
-
-// Bit flags, for cheats and debug.
-// See cheat_t, above.
-int Cheats;
 
 // Is wp_nochange if not changing.
 int PendingWeapon;
@@ -3151,6 +3140,83 @@ void ClientExplosion(int etype, TVec org)
 	dl->colour = HereticDefs.default.ecolours[etype];
 	dl->die = Level.XLevel.Time + 0.5;
 	dl->decay = 300.0;
+}
+
+//==========================================================================
+//
+//  GetWeaponKickBack
+//
+//==========================================================================
+
+float GetWeaponKickBack()
+{
+	//	No kickback from gauntlets.
+	if (ReadyWeapon != wp_gauntlets)
+	{
+		return 150.0;
+	}
+	return 0.0;
+}
+
+//==========================================================================
+//
+//  IsStaffLevel2
+//
+//==========================================================================
+
+bool IsStaffLevel2()
+{
+	return Powers[pw_weaponlevel2] && ReadyWeapon == wp_staff;
+}
+
+//==========================================================================
+//
+//  HaveInvulnerabilityPower
+//
+//==========================================================================
+
+bool HaveInvulnerabilityPower()
+{
+	return !!Powers[pw_invulnerability];
+}
+
+//==========================================================================
+//
+//  ArmorAbsorbDamage
+//
+//==========================================================================
+
+int ArmorAbsorbDamage(EntityEx inflictor, EntityEx source, int damage,
+	name DmgType)
+{
+	int saved;
+
+	if (ArmorType)
+	{
+		if (ArmorType == 1)
+		{
+			saved = damage >> 1;
+		}
+		else
+		{
+			saved = (damage >> 1) + (damage >> 2);
+		}
+		if (ArmorPoints <= saved)
+		{
+			// armor is used up
+			saved = ArmorPoints;
+			ArmorType = 0;
+		}
+		ArmorPoints -= saved;
+		damage -= saved;
+	}
+	if (damage >= Health && ((Level.Game.gameskill == sk_baby) ||
+		Level.Game.deathmatch) && !ChickenTime)
+	{
+		// Try to use some inventory health
+		Actor(MO).AutoUseHealth(damage - Health + 1);
+	}
+	return damage;
 }
 
 defaultproperties

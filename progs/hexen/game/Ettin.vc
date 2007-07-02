@@ -120,4 +120,5 @@ defaultproperties
 	AttackSound = 'EttinAttack';
 	PainSound = 'EttinPain';
 	DeathSound = 'EttinDeath';
+	HowlSound = 'PuppyBeat';
 }

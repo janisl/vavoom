@@ -57,6 +57,17 @@ float GetReflectedAngle(EntityEx Other)
 
 //==========================================================================
 //
+//  OkayToSwitchTarget
+//
+//==========================================================================
+
+bool OkayToSwitchTarget(EntityEx source)
+{
+	return ::OkayToSwitchTarget(source) && !Centaur(source);
+}
+
+//==========================================================================
+//
 //  A_CentaurAttack
 //
 //==========================================================================
@@ -211,4 +222,5 @@ defaultproperties
 	AttackSound = 'CentaurAttack';
 	PainSound = 'CentaurPain';
 	DeathSound = 'CentaurDeath';
+	HowlSound = 'PuppyBeat';
 }

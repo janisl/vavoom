@@ -27,6 +27,22 @@ class RainPillar : Projectile;
 
 state AirDeathState;
 
+//==========================================================================
+//
+//  DoSpecialDamage
+//
+//==========================================================================
+
+int DoSpecialDamage(EntityEx victim, EntityEx source, int damage)
+{
+	if (Actor(victim).bBoss)
+	{
+		// Decrease damage for bosses
+		damage = (P_Random() & 7) + 1;
+	}
+	return ::DoSpecialDamage(victim, source, damage);
+}
+
 //===========================================================================
 //
 //  A_RainImpact

@@ -30,11 +30,11 @@ int WeaveZ;
 
 //==========================================================================
 //
-//  InflictorModifyDamage
+//  DoSpecialDamage
 //
 //==========================================================================
 
-int InflictorModifyDamage(Actor victim, Actor source, int damage)
+int DoSpecialDamage(EntityEx victim, EntityEx source, int damage)
 {
 	// Bishops are just too nasty
 	return damage >> 1;

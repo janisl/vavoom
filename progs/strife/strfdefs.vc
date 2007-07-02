@@ -127,15 +127,6 @@ enum
 	NUMINVITEMS
 };
 
-//
-// Player internal flags, for cheats and debug.
-//
-enum
-{
-	CF_NOCLIP		= 1,	// No clipping, walk through barriers.
-	CF_GODMODE		= 2		// No damage, no health loss.
-};
-
 //  Dynamic light effects
 enum
 {

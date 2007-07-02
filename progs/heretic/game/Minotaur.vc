@@ -35,6 +35,23 @@ state FloorFireAttackState2;
 
 //==========================================================================
 //
+//  DoSpecialDamage
+//
+//==========================================================================
+
+int DoSpecialDamage(EntityEx victim, EntityEx source, int damage)
+{
+	if (bSkullFly)
+	{
+		// Slam only when in charge mode
+		MinotaurSlam(Actor(victim));
+		return -1;
+	}
+	return ::DoSpecialDamage(victim, source, damage);
+}
+
+//==========================================================================
+//
 //	DropStuff
 //
 //==========================================================================
@@ -293,6 +310,8 @@ defaultproperties
 	bBoss = true;
 	bNoMorph = true;
 	bNoRadiusDamage = true;
+	bNeverTarget = true;
+	bSkullFlyInvulnerable = true;
 	IdleState = S_MNTR_LOOK1;
 	SeeState = S_MNTR_WALK1;
 	MeleeState = S_MNTR_ATK1_1;

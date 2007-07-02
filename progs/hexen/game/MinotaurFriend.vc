@@ -46,16 +46,27 @@ float ChargeSpeed;
 
 //==========================================================================
 //
-//  InflictorModifyDamage
+//  IsServant
 //
 //==========================================================================
 
-int InflictorModifyDamage(Actor victim, Actor source, int damage)
+bool IsServant()
+{
+	return true;
+}
+
+//==========================================================================
+//
+//  DoSpecialDamage
+//
+//==========================================================================
+
+int DoSpecialDamage(EntityEx victim, EntityEx source, int damage)
 {
 	if (bSkullFly)
 	{
 		// Slam only when in charge mode
-		victim.MinotaurSlam(self);
+		Actor(victim).MinotaurSlam(self);
 		return -1;
 	}
 	return damage;
@@ -67,9 +78,9 @@ int InflictorModifyDamage(Actor victim, Actor source, int damage)
 //
 //==========================================================================
 
-void Died(EntityEx source)
+void Died(EntityEx source, EntityEx inflictor)
 {
-	::Died(source);
+	::Died(source, inflictor);
 	if (Tracer && Tracer.Health > 0)
 	{
 		if (!Actor(Tracer).ActiveMinotaur())
@@ -601,4 +612,5 @@ defaultproperties
 	DeathSound = 'MaulatorDeath';
 	bActivateMCross = false;
 	bCheckNoMonsters = false;	// We want minoaturs also in deathmatch
+	bNoTargetSwitch = true;
 }

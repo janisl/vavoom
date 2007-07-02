@@ -422,7 +422,7 @@ final void A_Dying()
 	}
 	if (Health <= 0)
 	{
-		Died(Target);
+		Died(Target, none);
 	}
 }
 

@@ -26,6 +26,23 @@
 class PhoenixFX1 : Projectile
 	__scriptid__(163);
 
+//==========================================================================
+//
+//  DoSpecialDamage
+//
+//==========================================================================
+
+int DoSpecialDamage(EntityEx victim, EntityEx source, int damage)
+{
+	if (victim.Class == Sorcerer2 && P_Random() < 96)
+	{
+		// D'Sparil teleports away
+		Sorcerer2(victim).DSparilTeleport();
+		return -1;
+	}
+	return ::DoSpecialDamage(victim, source, damage);
+}
+
 //===========================================================================
 //
 //  A_PhoenixPuff
@@ -71,6 +88,8 @@ defaultproperties
 	MissileDamage = 20;
 	bThruGhost = true;
 	bActivateImpact = true;
+	bFireDamage = true;
+	bConditionalFireDamage = true;
 	IdleState = S_PHOENIXFX1_1;
 	DeathState = S_PHOENIXFXI1_1;
 	SightSound = 'weapons/phoenixshoot';

@@ -29,8 +29,6 @@ class Actor : EntityEx
 bool bTeleport;			// don't cross lines or look at heights
 bool bNoDeathmatch;
 bool bMonster;
-bool bNeverTarget;
-bool bNoGrudge;
 bool bNoGravKill;
 bool bBoss;
 bool bNoRespawn;
@@ -801,7 +799,7 @@ final void SendExplosion2(int etype, TVec org)
 //
 //==========================================================================
 
-void Died(EntityEx source)
+void Died(EntityEx source, EntityEx inflictor)
 {
 	bShootable = false;
 	bFloat = false;
@@ -910,131 +908,6 @@ void Died(EntityEx source)
 
 void DropStuff()
 {
-}
-
-//==========================================================================
-//
-//	Damage
-//
-//  Damages both enemies and players.
-//  "inflictor" is the thing that caused the damage, creature or missile,
-// can be NULL (slime, etc).
-//  "source" is the thing to target after taking damage, creature or NULL.
-//  Source and inflictor are the same for melee attacks. Source can be NULL
-// for slime, barrel explosions and other environmental stuff.
-//
-//==========================================================================
-
-void Damage(EntityEx inflictor, EntityEx source, int damage,
-	optional name DmgType)
-{
-	int saved;
-
-	if (!bShootable)
-		return;	// shouldn't happen...
-
-	if (Health <= 0)
-		return;
-
-	if (bSkullFly)
-	{
-		Velocity = vector(0.0, 0.0, 0.0);
-		SetState(SeeState);
-	}
-	if (bDormant)
-	{
-		// Invulnerable, and won't wake up
-		return;
-	}
-
-	if (bIsPlayer && Level.Game.gameskill == sk_baby)
-		damage >>= 1;	// take half damage in trainer mode
-
-	// Some close combat weapons should not
-	// inflict thrust and push the victim out of reach,
-	// thus kick away unless using the chainsaw.
-	if (inflictor && bColideWithThings &&
-		(!source || !source.bIsPlayer ||
-			Player(source.Player).ReadyWeapon != DoomDefs::wp_chainsaw))
-	{
-		Velocity += (500.0 * itof(damage) / Mass) *
-			Normalise(GetCentre() - inflictor.GetCentre());
-	}
-
-	// player specific
-	if (bIsPlayer)
-	{
-		//	End of game hell hack.
-		if ((Sector->special & SECSPEC_BASE_MASK) ==
-			SECSPEC_DamageSuperHellslimeExit && damage >= Health)
-		{
-			damage = Health - 1;
-		}
-
-		// Below certain threshold,
-		// ignore damage in GOD mode, or with INVUL power.
-		if (damage < 1000 && ((Player(Player).Cheats & Player::CF_GODMODE) ||
-			Player(Player).Powers[pw_invulnerability]))
-		{
-			return;
-		}
-
-		if (Player(Player).ArmorType)
-		{
-			if (Player(Player).ArmorType == 1)
-				saved = damage / 3;
-			else
-				saved = damage / 2;
-
-			if (Player(Player).ArmorPoints <= saved)
-			{
-				// armor is used up
-				saved = Player(Player).ArmorPoints;
-				Player(Player).ArmorType = 0;
-			}
-			Player(Player).ArmorPoints -= saved;
-			damage -= saved;
-		}
-		Player.Health -= damage;	// mirror mobj health here for Dave
-		if (Player.Health < 0)
-			Player.Health = 0;
-
-		Player(Player).Attacker = Actor(source);
-		Player(Player).DamageFlash += itof(damage) / 35.0;	// add damage after armor / invuln
-
-		if (Player(Player).DamageFlash > 3.0)
-			Player(Player).DamageFlash = 3.0;	// teleport stomp does 10k points...
-	}
-
-	// do the damage    
-	Health -= damage;
-	if (Health <= 0)
-	{
-		Died(source);
-		return;
-	}
-
-	if ((Random() < PainChance) && !bSkullFly)
-	{
-		bJustHit = true;	// fight back!
-		SetState(PainState);
-	}
-
-	ReactionCount = 0;	// we're awake now...
-
-	if ((!Threshold || bNoGrudge) &&
-		source && source != self && !Actor(source).bNeverTarget)
-	{
-		// if not intent on another player,
-		// chase after this one
-		Target = Actor(source);
-		Threshold = BASETHRESHOLD;
-		if (State == IdleState && SeeState)
-		{
-			SetState(SeeState);
-		}
-	}
-
 }
 
 //==========================================================================

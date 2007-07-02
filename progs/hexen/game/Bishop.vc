@@ -254,6 +254,7 @@ defaultproperties
 	bNoBlood = true;
 	bFloorClip = false;
 	bActivateMCross = false;
+	bNoTargetSwitch = true;
 	IdleState = S_BISHOP_LOOK1;
 	BlurState = S_BISHOP_BLUR1;
 	SeeState = S_BISHOP_WALK1;

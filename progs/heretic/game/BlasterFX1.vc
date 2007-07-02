@@ -25,6 +25,26 @@
 
 class BlasterFX1 : Projectile;
 
+//==========================================================================
+//
+//  DoSpecialDamage
+//
+//==========================================================================
+
+int DoSpecialDamage(EntityEx victim, EntityEx source, int damage)
+{
+	if (victim.Class == Ironlich)
+	{
+		// Less damage to Ironlich bosses
+		damage = P_Random() & 1;
+		if (!damage)
+		{
+			return -1;
+		}
+	}
+	return ::DoSpecialDamage(victim, source, damage);
+}
+
 //===========================================================================
 //
 //  A_SpawnRippers

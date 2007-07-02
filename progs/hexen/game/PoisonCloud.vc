@@ -30,18 +30,18 @@ int BobIndex;
 
 //==========================================================================
 //
-//  InflictorModifyDamage
+//  DoSpecialDamage
 //
 //==========================================================================
 
-int InflictorModifyDamage(Actor victim, Actor source, int damage)
+int DoSpecialDamage(EntityEx victim, EntityEx source, int damage)
 {
 	if (victim.bIsPlayer)
 	{
 		if (Player(victim.Player).PoisonCount < 4)
 		{
-			victim.PoisonDamage(source, 15 + (P_Random() & 15), false);	// Don't play painsound
-			victim.PoisonPlayer(source, 50);
+			Actor(victim).PoisonDamage(Actor(source), 15 + (P_Random() & 15), false);	// Don't play painsound
+			Actor(victim).PoisonPlayer(Actor(source), 50);
 			victim.PlaySound('*poison', CHAN_VOICE);
 		}
 		return -1;
@@ -139,6 +139,7 @@ defaultproperties
 	bColideWithThings = false;
 	bNoDamageThrust = true;
 	bDamageInvulnerable = true;
+	bHowlVictims = true;
 	IdleState = S_POISONCLOUD1;
 	DeathState = S_POISONCLOUD_X1;
 	DeathSound = 'PoisonShroomDeath';

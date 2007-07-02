@@ -529,6 +529,7 @@ defaultproperties
 	bBloodSplatter = true;
 	TeleFogHeight = Actor::TELEFOGHEIGHT;
 	TeleportFogClass = TeleportFog;
+	DefaultKickBack = 150.0;
 
 	WeaponClasses[0] = WeaponStaff;
 	WeaponClasses[1] = WeaponGoldWand;

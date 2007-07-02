@@ -272,6 +272,7 @@ defaultproperties
 	MissileDamage = 9;
 	bNoBlood = true;
 	bBoss = true;
+	bNeverTarget = true;
 	bTelestomp = false;
 	IdleState = S_SORC_SPAWN1;
 	SeeState = S_SORC_WALK1;

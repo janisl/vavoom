@@ -323,6 +323,7 @@ defaultproperties
 	bFloat = true;
 	bNoBlood = true;
 	bBoss = true;
+	bNeverTarget = true;
 	bFloorClip = false;
 	bTelestomp = false;
 	bActivatePushWall = false;

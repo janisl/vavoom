@@ -26,6 +26,38 @@
 class MaceFX4 : MaceFX3
 	__scriptid__(153);
 
+//==========================================================================
+//
+//  DoSpecialDamage
+//
+//==========================================================================
+
+int DoSpecialDamage(EntityEx victim, EntityEx source, int damage)
+{
+	if (Actor(victim).bBoss || victim.Class == Ironlich)
+	{
+		// Don't allow cheap boss kills
+	}
+	else if (victim.bIsPlayer)
+	{
+		// Player specific checks
+		if (Player(victim.Player).Powers[pw_invulnerability])
+		{
+			// Can't hurt invulnerable players
+		}
+		else if (Actor(victim).AutoUseChaosDevice())
+		{
+			// Player was saved using chaos device
+			return -1;
+		}
+		else
+			damage = 10000;	// Something's gonna die
+	}
+	else
+		damage = 10000;	// Something's gonna die
+	return ::DoSpecialDamage(victim, source, damage);
+}
+
 //===========================================================================
 //
 //  A_DeathBallImpact

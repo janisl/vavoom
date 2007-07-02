@@ -27,15 +27,15 @@ class TelOtherFX1 : Projectile;
 
 //==========================================================================
 //
-//  InflictorModifyDamage
+//  DoSpecialDamage
 //
 //==========================================================================
 
-int InflictorModifyDamage(Actor victim, Actor source, int damage)
+int DoSpecialDamage(EntityEx victim, EntityEx source, int damage)
 {
-	if (victim.bCountKill && !victim.bBoss && !Serpent(victim))
+	if (victim.bCountKill && !Actor(victim).bBoss && !Serpent(victim))
 	{
-		victim.TeleportOther();
+		Actor(victim).TeleportOther();
 	}
 	return -1;
 }

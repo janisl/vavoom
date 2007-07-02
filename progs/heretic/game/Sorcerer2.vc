@@ -32,6 +32,17 @@ state DeathLoopState;
 
 //==========================================================================
 //
+//  OkayToSwitchTarget
+//
+//==========================================================================
+
+bool OkayToSwitchTarget(EntityEx source)
+{
+	return ::OkayToSwitchTarget(source) && source.Class != Wizard;
+}
+
+//==========================================================================
+//
 //  A_SorRise
 //
 //==========================================================================
@@ -314,6 +325,7 @@ defaultproperties
 	bBoss = true;
 	bNoMorph = true;
 	bNoRadiusDamage = true;
+	bNeverTarget = true;
 	RiseState = S_SOR2_RISE1;
 	IdleState = S_SOR2_LOOK1;
 	SeeState = S_SOR2_WALK1;

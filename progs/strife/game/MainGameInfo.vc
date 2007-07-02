@@ -609,6 +609,7 @@ defaultproperties
 	AcsHelper = 'strfhelp';
 	GenericConScript = 'script00';
 	TeleportFogClass = TeleportFog;
+	DefaultKickBack = 100.0;
 
 	WeaponClasses[0] = WeaponPunch;
 	WeaponClasses[1] = WeaponCrossbow;

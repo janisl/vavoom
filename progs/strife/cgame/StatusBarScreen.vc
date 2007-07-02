@@ -272,7 +272,7 @@ void SB_DrawMainBar()
 	// health percentage
 	SB_DrawSmallNum(BAR_X + 76, BAR_Y + 162, cl.Health);
 
-	if (cl.Cheats & StrifeDefs::CF_GODMODE)
+	if (cl.Cheats & Player::CF_GODMODE)
 	{
 		R_FillRect(BAR_X + 49, BAR_Y + 172, 200, 2, 0xffffff00);
 		R_FillRect(BAR_X + 49, BAR_Y + 175, 200, 2, 0xffffff00);

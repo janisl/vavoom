@@ -39,9 +39,6 @@ bool bUnknown2;			//8000000
 bool bNoDeathmatch;
 bool bSpawnFlag8;
 bool bSpawnFlag9;
-bool bPoisonDamage;		// Does poison damage (doesn't gib enemies).
-bool bFireDamage;		// Causes fire damage.
-bool bDisruptDamage;	// Disrupts enemies.
 bool bInCombat;			// Actors in combat won't talk
 bool bLookAllAround;	// Actor can see all around.
 
@@ -385,12 +382,18 @@ final void SendExplosion(int etype, TVec org)
 //
 //==========================================================================
 
-void Died(EntityEx source)
+void Died(EntityEx source, EntityEx inflictor)
 {
 	int SpeechNum;
 	RogueConSpeech *Speech;
 	class<Actor> DropItemType;
 	Actor A;
+
+	if (inflictor && Actor(inflictor).bPoisonDamage)
+	{
+		//	Prevent gibing animation.
+		Health = -1;
+	}
 
 	if (bIsPlayer && Level.bDeathSlideShow)
 	{
@@ -615,203 +618,14 @@ void AutoUseArmor()
 
 //==========================================================================
 //
-//  Damage
-//
-//  Damages both enemies and players.
-//  "inflictor" is the thing that caused the damage, creature or missile,
-// can be NULL (slime, etc).
-//  "source" is the thing to target after taking damage, creature or NULL.
-//  Source and inflictor are the same for melee attacks. Source can be NULL
-// for slime, barrel explosions and other environmental stuff.
+//  OkayToSwitchTarget
 //
 //==========================================================================
 
-void Damage(EntityEx inflictor, EntityEx source, int damage, optional name DmgType)
+bool OkayToSwitchTarget(EntityEx source)
 {
-	int saved;
-
-	if (!bShootable)
-		return;	// shouldn't happen...
-
-	if (Health <= 0)
-		return;
-
-	//	Spectral targets only take damage from spectral projectiles.
-	if (bSpectral)
-	{
-		if (!inflictor || !Actor(inflictor).bSpectral)
-		{
-			if (MissileState)
-			{
-				SetState(MissileState);
-			}
-			return;
-		}
-	}
-
-	if (bSkullFly)
-	{
-		Velocity = vector(0.0, 0.0, 0.0);
-		SetState(SeeState);
-	}
-	if (bDormant)
-	{
-		// Invulnerable, and won't wake up
-		return;
-	}
-
-	if (bIsPlayer && Level.Game.gameskill == sk_baby)
-		damage >>= 1;	// take half damage in trainer mode
-
-	if (inflictor)
-	{
-		damage = Actor(inflictor).DoSpecialDamage(self, damage);
-		if (damage == -1)
-		{
-			return;
-		}
-	}
-	damage = TakeSpecialDamage(Actor(inflictor), Actor(source), damage);
-	if (damage == -1)
-	{
-		return;
-	}
-
-	// Some close combat weapons should not
-	// inflict thrust and push the victim out of reach,
-	// thus kick away unless using the chainsaw.
-	if (inflictor && bColideWithThings)
-	{
-		Velocity += (500.0 * itof(damage > 100 ? 100 : damage) / Mass) *
-			Normalise(GetCentre() - inflictor.GetCentre());
-	}
-
-	if (inflictor && Actor(inflictor).bPoisonDamage && bNoBlood)
-	{
-		// Don't damage actors that don't take poison damage
-		return;
-	}
-
-	if (inflictor && inflictor.Class == InquisitorShot && Class == Inquisitor)
-	{
-		// Inquisitor grenades don't damage inquisitors
-		return;
-	}
-
-	// player specific
-	if (bIsPlayer)
-	{
-		if (inflictor && Actor(inflictor).bFireDamage && Player(Player).Powers[pw_ironfeet])
-		{
-			// If the player wears an environmental suit it's not
-			// damaged by fire damage
-			return;
-		}
-
-		//	End of game hell hack.
-		if ((Sector->special & SECSPEC_BASE_MASK) ==
-			SECSPEC_DamageSuperHellslimeExit && damage >= Health)
-		{
-			damage = Health - 1;
-		}
-
-		// Below certain threshold,
-		// ignore damage in GOD mode, or with INVUL power.
-		if (damage < 1000 && ((Player(Player).Cheats & StrifeDefs::CF_GODMODE) ||
-			Player(Player).Powers[pw_invulnerability]))
-		{
-			return;
-		}
-
-		if (Player(Player).ArmorType)
-		{
-			if (Player(Player).ArmorType == 1)
-				saved = damage / 3;
-			else
-				saved = damage / 2;
-
-			if (Player(Player).ArmorPoints <= saved)
-			{
-				// armor is used up
-				saved = Player(Player).ArmorPoints;
-				Player(Player).ArmorType = 0;
-				// Try to use some inventory armor
-				AutoUseArmor();
-			}
-			Player(Player).ArmorPoints -= saved;
-			damage -= saved;
-		}
-		if (Player.Health < 50 || damage >= Player.Health)
-		{
-			// Try to use some inventory health
-			AutoUseHealth(damage - Health + 1);
-		}
-		Player.Health -= damage;	// mirror mobj health here for Dave
-		if (Player.Health < 0)
-			Player.Health = 0;
-
-		Player(Player).Attacker = Actor(source);
-		Player(Player).DamageFlash += itof(damage) / 35.0;	// add damage after armor / invuln
-
-		if (Player(Player).DamageFlash > 3.0)
-			Player(Player).DamageFlash = 3.0;	// teleport stomp does 10k points...
-	}
-
-	// do the damage    
-	Health -= damage;
-	if (Health <= 0)
-	{
-		if (inflictor)
-		{
-			if (Actor(inflictor).bPoisonDamage)
-			{
-				//	Prevent gibing animation.
-				Health = -1;
-			}
-			else if (Actor(inflictor).bFireDamage)
-			{
-				bFireDamage = true;
-			}
-			else if (Actor(inflictor).bDisruptDamage)
-			{
-				bDisruptDamage = true;
-			}
-		}
-		Died(source);
-		return;
-	}
-
-	if ((Random() < PainChance) && !bSkullFly)
-	{
-		bJustHit = true;	// fight back!
-		SetState(PainState);
-	}
-
-	ReactionCount = 0;	// we're awake now...
-
-	if ((!Threshold) && source && source != self &&
-		(Level.Game.deathmatch || Actor(source).bFriendly != bFriendly))
-	{
-		// if not intent on another player,
-		// chase after this one
-		Target = Actor(source);
-		Threshold = BASETHRESHOLD;
-		if (State == IdleState && SeeState)
-		{
-			SetState(SeeState);
-		}
-	}
-}
-
-//==========================================================================
-//
-//  DoSpecialDamage
-//
-//==========================================================================
-
-int DoSpecialDamage(Actor Victim, int damage)
-{
-	return damage;
+	return ::OkayToSwitchTarget(source) &&
+		(Level.Game.deathmatch || Actor(source).bFriendly != bFriendly);
 }
 
 //==========================================================================
@@ -820,8 +634,13 @@ int DoSpecialDamage(Actor Victim, int damage)
 //
 //==========================================================================
 
-int TakeSpecialDamage(Actor inflictor, Actor source, int damage)
+int TakeSpecialDamage(EntityEx inflictor, EntityEx source, int damage)
 {
+	if (inflictor && Actor(inflictor).bPoisonDamage && bNoBlood)
+	{
+		// Don't damage actors that don't take poison damage
+		return -1;
+	}
 	return damage;
 }
 

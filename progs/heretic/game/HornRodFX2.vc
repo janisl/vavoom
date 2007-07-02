@@ -27,6 +27,23 @@ class HornRodFX2 : Projectile;
 
 int RainColour;
 
+//==========================================================================
+//
+//  DoSpecialDamage
+//
+//==========================================================================
+
+int DoSpecialDamage(EntityEx victim, EntityEx source, int damage)
+{
+	if (victim.Class == Sorcerer2 && P_Random() < 96)
+	{
+		// D'Sparil teleports away
+		Sorcerer2(victim).DSparilTeleport();
+		return -1;
+	}
+	return ::DoSpecialDamage(victim, source, damage);
+}
+
 //===========================================================================
 //
 //  A_SkullRodPL2Seek

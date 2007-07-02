@@ -79,6 +79,7 @@ name			ActiveSound;
 name			AttackSound;
 name			PainSound;
 name			DeathSound;
+name			HowlSound;
 
 //	Flags
 bool bSpecial;			// call P_SpecialThing when touched
@@ -139,6 +140,18 @@ bool bRandomise;		//	Randomise initial state time
 bool bFullVolDeath;		//	Play missile death sound at full volume
 bool bExploCount;		//	Use explosion counters.
 bool bSpectral;			// Can be killed only with Sigil
+bool bDamageInvulnerable;	// These inflictors aren't foiled by invulnerability
+bool bSkullFlyInvulnerable;	//	Invulnerable during skull fly attack
+bool bNoDamageThrust;	// does not thrust target when damaging
+bool bConditionalFireDamage;
+bool bDisruptDamage;	// Disrupts enemies.
+bool bFireDamage;		// does fire damage
+bool bPoisonDamage;		// Does poison damage (doesn't gib enemies).
+bool bLightning;		//	Electrocutes victims
+bool bHowlVictims;		//	Make victims play howl sound when damaged
+bool bNoGrudge;
+bool bNeverTarget;		//	Neve switch target to this actor
+bool bNoTargetSwitch;	//	Never switches target until current one is dead
 
 //  Params
 float			Speed;
@@ -196,6 +209,9 @@ float			MeleeRange;
 
 int				ExploCountSpec1;
 int				ExploCountSpec2;		// Timer for active sound
+int				Special1;	// Special info
+
+name			DamageType;
 
 //==========================================================================
 //
@@ -3538,6 +3554,337 @@ final EntityEx SpawnPlayerMissileEx(class<EntityEx> type, bool RetExploded,
 	return A.CheckMissileSpawn() || RetExploded ? A : none;
 }
 
+//==========================================================================
+//
+//	Damage
+//
+//  Damages both enemies and players.
+//  "inflictor" is the thing that caused the damage, creature or missile,
+// can be NULL (slime, etc).
+//  "source" is the thing to target after taking damage, creature or NULL.
+//  Source and inflictor are the same for melee attacks. Source can be NULL
+// for slime, barrel explosions and other environmental stuff.
+//
+//==========================================================================
+
+final void Damage(EntityEx inflictor, EntityEx source, int damage,
+	optional name DmgType)
+{
+	if (!bShootable)
+	{
+		// shouldn't happen...
+		return;
+	}
+
+	if (Health <= 0)
+	{
+		if (inflictor && inflictor.bIceDamage)
+		{
+			return;
+		}
+		else if (bIceCorpse)	// frozen
+		{
+			StateTime = 0.1;
+			Velocity.x = 0.0;
+			Velocity.y = 0.0;
+		}
+		return;
+	}
+
+	if (bInvulnerable && damage < 10000)
+	{
+		// Actor is invulnerable
+		if (bIsPlayer)
+		{
+			if (LineSpecialGameInfo(Level.Game).bNoDamageThrustInvulnerable)
+			{
+				// For player, no exceptions
+				return;
+			}
+		}
+		else if (!inflictor || !inflictor.bDamageInvulnerable)
+		{
+			return;
+		}
+	}
+
+	//	Spectral targets only take damage from spectral projectiles.
+	if (bSpectral)
+	{
+		if (!inflictor || !inflictor.bSpectral)
+		{
+			if (MissileState)
+			{
+				SetState(MissileState);
+			}
+			return;
+		}
+	}
+
+	if (bSkullFly)
+	{
+		if (bSkullFlyInvulnerable)
+		{
+			// Invulnerable during charge attack
+			return;
+		}
+		Velocity = vector(0.0, 0.0, 0.0);
+		SetState(SeeState);
+	}
+
+	if (bDormant)
+	{
+		// Invulnerable, and won't wake up
+		return;
+	}
+
+	if (bIsPlayer && Level.Game.gameskill == sk_baby)
+	{
+		// Take half damage in trainer mode
+		damage >>= 1;
+	}
+
+	// Special damage types
+	if (inflictor)
+	{
+		damage = inflictor.DoSpecialDamage(self, source, damage);
+		if (damage == -1)
+		{
+			return;
+		}
+	}
+
+	damage = TakeSpecialDamage(inflictor, source, damage);
+	if (damage == -1)
+	{
+		return;
+	}
+
+	//	Push the target unless using a weapon that should not inflict
+	// thrust
+	if (inflictor && inflictor != self && bColideWithThings &&
+		!inflictor.bNoDamageThrust)
+	{
+		float kickback;
+		if (!source || !source.bIsPlayer)
+		{
+			kickback = LineSpecialGameInfo(Level.Game).DefaultKickBack;
+		}
+		else
+		{
+			kickback = PlayerEx(source.Player).GetWeaponKickBack();
+		}
+		if (kickback)
+		{
+			TVec dir;
+			float thrust;
+
+			thrust = kickback / 8.0 * itof(damage) / Mass;
+			if (thrust < 0.0 || thrust > 10.0)
+			{
+				thrust = 10.0;
+			}
+			dir = GetCentre() - inflictor.GetCentre();
+			if (source && source.bIsPlayer && (source == inflictor) &&
+				PlayerEx(source.Player).IsStaffLevel2())
+			{
+				// Staff power level 2
+				dir.z = 0.0;
+				Velocity += 35.0 * 10.0 * Normalise(dir);
+				Velocity.z += 35.0 * 5.0;
+			}
+			else
+			{
+				Velocity += 35.0 * thrust * Normalise(dir);
+			}
+		}
+	}
+
+	// player specific
+	if (bIsPlayer)
+	{
+		//	End of game hell hack.
+		if ((Sector->special & SECSPEC_BASE_MASK) ==
+			SECSPEC_DamageSuperHellslimeExit && damage >= Health)
+		{
+			damage = Health - 1;
+		}
+
+		// Below certain threshold, ignore damage in GOD mode, or with INVUL power.
+		if (damage < 1000 && ((PlayerEx(Player).Cheats & PlayerEx::CF_GODMODE) ||
+			PlayerEx(Player).HaveInvulnerabilityPower()))
+		{
+			return;
+		}
+
+		damage = PlayerEx(Player).ArmorAbsorbDamage(inflictor, source,
+			damage, DmgType);
+		if (damage == -1)
+		{
+			return;
+		}
+
+		Player.Health -= damage;	// mirror mobj health here for Dave
+		if (Player.Health < 0)
+		{
+			Player.Health = 0;
+		}
+		PlayerEx(Player).Attacker = source;
+		PlayerEx(Player).DamageFlash += itof(damage) / 35.0;	// add damage after armor / invuln
+		if (PlayerEx(Player).DamageFlash > 3.0)
+		{
+			PlayerEx(Player).DamageFlash = 3.0;	// teleport stomp does 10k points...
+		}
+	}
+
+	// do the damage    
+	Health -= damage;
+	if (Health <= 0)
+	{
+		// Death
+		Special1 = damage;
+		// check for special fire damage or ice damage deaths
+		if (DmgType == 'Fire' || (inflictor && inflictor.bFireDamage))
+		{
+			if (bIsPlayer && !PlayerIsMorphed())
+			{
+				// Check for flame death
+				if (!inflictor || !inflictor.bConditionalFireDamage ||
+					(Health > -50 && damage > 25))
+				{
+					bFireDamage = true;
+					DamageType = 'Fire';
+				}
+			}
+			else
+			{
+				bFireDamage = true;
+				DamageType = 'Fire';
+			}
+		}
+		else if (DmgType == 'Ice' || (inflictor && inflictor.bIceDamage))
+		{
+			bIceDamage = true;
+			DamageType = 'Ice';
+		}
+		else if (DmgType == 'Disintegrate' || (inflictor && inflictor.bDisruptDamage))
+		{
+			bDisruptDamage = true;
+			DamageType = 'Disintegrate';
+		}
+		else
+		{
+			DamageType = DmgType;
+		}
+		if (source && source.IsServant())
+		{
+			// Minotaur's kills go to his master
+			EntityEx master = source.Tracer;
+			// Make sure still alive and not a pointer to fighter head
+			if (master && master.bIsPlayer && (master.Player.MO == master))
+			{
+				source = master;
+			}
+		}
+		Died(source, inflictor);
+		return;
+	}
+
+	if ((Random() < PainChance) && !bSkullFly)
+	{
+		if (inflictor && inflictor.bLightning)
+		{
+			if (P_Random() < 96)
+			{
+				bJustHit = true;	// fight back!
+				SetState(PainState);
+			}
+			else
+			{
+				// "electrocute" the target
+				bFullBright = true;
+				if (HowlSound && bCountKill && P_Random() < 128 &&
+					!GetSoundPlayingInfo(self, GetSoundID(HowlSound)))
+				{
+					PlaySound(HowlSound, CHAN_VOICE);
+				}
+			}
+		}
+		else
+		{
+			bJustHit = true;	// fight back!
+			SetState(PainState);
+			if (inflictor && inflictor.bHowlVictims)
+			{
+				if (HowlSound && bCountKill && P_Random() < 128 &&
+					!GetSoundPlayingInfo(self, GetSoundID(HowlSound)))
+				{
+					PlaySound(HowlSound, CHAN_VOICE);
+				}
+			}
+		}
+	}
+
+	ReactionCount = 0;	// we're awake now...
+
+	if (source)
+	{
+		if (source == Target)
+		{
+			Threshold = BASETHRESHOLD;
+			if (State == IdleState && SeeState)
+			{
+				SetState(SeeState);
+			}
+		}
+		else if (OkayToSwitchTarget(source))
+		{
+			// Target actor is not intent on another actor,
+			// so make him chase after source
+			Target = source;
+			Threshold = BASETHRESHOLD;
+			if (State == IdleState && SeeState)
+			{
+				SetState(SeeState);
+			}
+		}
+	}
+}
+
+//==========================================================================
+//
+//  DoSpecialDamage
+//
+//==========================================================================
+
+int DoSpecialDamage(EntityEx victim, EntityEx source, int damage)
+{
+	return damage;
+}
+
+//==========================================================================
+//
+//  TakeSpecialDamage
+//
+//==========================================================================
+
+int TakeSpecialDamage(EntityEx inflictor, EntityEx source, int damage)
+{
+	return damage;
+}
+
+//==========================================================================
+//
+//  OkayToSwitchTarget
+//
+//==========================================================================
+
+bool OkayToSwitchTarget(EntityEx source)
+{
+	return (!Threshold || bNoGrudge) && !source.bNeverTarget &&
+		!bNoTargetSwitch;
+}
+
 float GetBaseViewHeight()
 {
 	return 0.0;
@@ -3602,6 +3949,11 @@ bool IsMaster(EntityEx Other)
 
 void DoMissileExplosionEffects()
 {
+}
+
+bool IsServant()
+{
+	return false;
 }
 
 //**************************************************************************
@@ -3765,16 +4117,7 @@ float GetPlayerViewHeight()
 	return 0.0;
 }
 
-//==========================================================================
-//
-//  Damage
-//
-//	'Falling'
-//	'Telefrag'
-//
-//==========================================================================
-
-void Damage(EntityEx inflictor, EntityEx source, int damage, optional name DmgType)
+void Died(EntityEx source, EntityEx inflictor)
 {
 }
 

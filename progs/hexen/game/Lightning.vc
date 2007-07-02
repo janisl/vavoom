@@ -274,4 +274,5 @@ defaultproperties
 	MissileDamage = 8;
 	Effects = HexenDefs::EF_DL_BLUE;
 	ZagSpeed = 1.0;
+	bLightning = true;
 }

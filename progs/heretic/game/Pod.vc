@@ -31,6 +31,22 @@ Actor Generator;
 
 //==========================================================================
 //
+//  Died
+//
+//==========================================================================
+
+void Died(EntityEx source, EntityEx inflictor)
+{
+	if (source && source.Class != Pod)
+	{
+		// Make sure players get frags for chain-reaction kills
+		Target = source;
+	}
+	::Died(source, inflictor);
+}
+
+//==========================================================================
+//
 //  A_PodPain
 //
 //==========================================================================

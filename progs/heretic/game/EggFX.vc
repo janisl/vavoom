@@ -26,6 +26,25 @@
 class EggFX : Projectile
 	__scriptid__(40);
 
+//==========================================================================
+//
+//  DoSpecialDamage
+//
+//==========================================================================
+
+int DoSpecialDamage(EntityEx victim, EntityEx source, int damage)
+{
+	if (victim.bIsPlayer)
+	{
+		Actor(victim).ChickenMorphPlayer();
+	}
+	else
+	{
+		Actor(victim).ChickenMorph();
+	}
+	return -1;	// Always return
+}
+
 __states__
 {
 	S_EGGFX1('EGGM', 0, 4.0 / 35.0, S_EGGFX2) = none

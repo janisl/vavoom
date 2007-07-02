@@ -34,7 +34,7 @@ class Macil2 : Macil1
 //
 //============================================================================
 
-int TakeSpecialDamage(Actor inflictor, Actor source, int damage)
+int TakeSpecialDamage(EntityEx inflictor, EntityEx source, int damage)
 {
 	if (SpectralLightningV1(inflictor))
 		return -1;

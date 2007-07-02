@@ -62,10 +62,6 @@ int ArmorPoints;
 bool Backpack;
 bool Communicator;
 
-// Bit flags, for cheats and debug.
-// See cheat_t, above.
-int Cheats;
-
 int Ammo[StrifeDefs::NUMAMMO];
 int MaxAmmo[StrifeDefs::NUMAMMO];
 int ReadyAmmo;
@@ -97,8 +93,8 @@ replication
 {
 	reliable if (!bIsClient)
 		ReadyAmmo, Sigil, Accuracy, Stamina, Keys, InvFirst, InvCursor,
-		Objectives, ArmorType, ArmorPoints, Cheats, Ammo, MaxAmmo,
-		WeaponOwned, Inventory, Backpack, Communicator;
+		Objectives, ArmorType, ArmorPoints, Ammo, MaxAmmo, WeaponOwned,
+		Inventory, Backpack, Communicator;
 
 	unreliable if (!bIsClient)
 		ClientBlood, ClientExplosion;
@@ -1380,7 +1376,7 @@ void PlayerInSpecialSector(float deltaTime)
 			break;
 		case SECSPEC_DamageSuperHellslimeExit:
 			//	EXIT SUPER DAMAGE! (for E1M8 finale)
-			Cheats &= ~StrifeDefs::CF_GODMODE;
+			Cheats &= ~CF_GODMODE;
 	
 			if (Level.XLevel.Time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
@@ -1839,7 +1835,7 @@ void PlayerTick(float deltaTime)
 	MO.Angles = ViewAngles;
 
 	// fixme: do this in the cheat code
-	if (Cheats & StrifeDefs::CF_NOCLIP)
+	if (Cheats & CF_NOCLIP)
 	{
 		MO.bColideWithThings = false;
 		MO.bColideWithWorld = false;
@@ -2456,8 +2452,8 @@ void P_UseLines()
 
 void Cheat_God()
 {
-	Cheats ^= StrifeDefs::CF_GODMODE;
-	if (Cheats & StrifeDefs::CF_GODMODE)
+	Cheats ^= CF_GODMODE;
+	if (Cheats & CF_GODMODE)
 	{
 		if (MO)
 			MO.Health = GOD_HEALTH;
@@ -2476,8 +2472,8 @@ void Cheat_God()
 
 void Cheat_NoClip()
 {
-	Cheats ^= StrifeDefs::CF_NOCLIP;
-	if (Cheats & StrifeDefs::CF_NOCLIP)
+	Cheats ^= CF_NOCLIP;
+	if (Cheats & CF_NOCLIP)
 		cprint("No Clipping Mode ON");
 	else
 		cprint("No Clipping Mode OFF");
@@ -2683,6 +2679,72 @@ void ClientSlideshow2()
 void ClientFinaleType(int Type)
 {
 	ClientGameBaseEx(ClGame).SetFinaleType(Type);
+}
+
+//==========================================================================
+//
+//  GetWeaponKickBack
+//
+//==========================================================================
+
+float GetWeaponKickBack()
+{
+	return 100.0;
+}
+
+//==========================================================================
+//
+//  HaveInvulnerabilityPower
+//
+//==========================================================================
+
+bool HaveInvulnerabilityPower()
+{
+	return !!Powers[pw_invulnerability];
+}
+
+//==========================================================================
+//
+//  ArmorAbsorbDamage
+//
+//==========================================================================
+
+int ArmorAbsorbDamage(EntityEx inflictor, EntityEx source, int damage,
+	name DmgType)
+{
+	int saved;
+
+	if (inflictor && Actor(inflictor).bFireDamage && Powers[pw_ironfeet])
+	{
+		// If the player wears an environmental suit it's not
+		// damaged by fire damage
+		return -1;
+	}
+
+	if (ArmorType)
+	{
+		if (ArmorType == 1)
+			saved = damage / 3;
+		else
+			saved = damage / 2;
+
+		if (ArmorPoints <= saved)
+		{
+			// armor is used up
+			saved = ArmorPoints;
+			ArmorType = 0;
+			// Try to use some inventory armor
+			Actor(MO).AutoUseArmor();
+		}
+		ArmorPoints -= saved;
+		damage -= saved;
+	}
+	if (Health < 50 || damage >= Health)
+	{
+		// Try to use some inventory health
+		Actor(MO).AutoUseHealth(damage - Health + 1);
+	}
+	return damage;
 }
 
 defaultproperties
