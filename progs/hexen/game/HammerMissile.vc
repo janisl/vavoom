@@ -64,7 +64,7 @@ defaultproperties
 	Height = 20.0;
 	Speed = 875.0;
 	MissileDamage = 10;
-	bFireDamage = true;
+	DamageType = 'Fire';
 	IdleState = S_HAMMER_MISSILE_1;
 	DeathState = S_HAMMER_MISSILE_X1;
 	DeathSound = 'FighterHammerExplode';

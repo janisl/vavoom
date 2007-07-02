@@ -389,7 +389,7 @@ void Died(EntityEx source, EntityEx inflictor)
 	class<Actor> DropItemType;
 	Actor A;
 
-	if (inflictor && Actor(inflictor).bPoisonDamage)
+	if (inflictor && inflictor.bNoExtremeDeath)
 	{
 		//	Prevent gibing animation.
 		Health = -1;
@@ -470,7 +470,7 @@ void Died(EntityEx source, EntityEx inflictor)
 #endif
 	}
 
-	if (bFireDamage && FireDeathState)
+	if (DamageType == 'Fire' && FireDeathState)
 	{
 		SetState(FireDeathState);
 		if (bIsPlayer)
@@ -480,7 +480,7 @@ void Died(EntityEx source, EntityEx inflictor)
 			Player.SetViewState(ps_flash, none);
 		}
 	}
-	else if (bDisruptDamage && DisruptDeathState)
+	else if (DamageType == 'Disintegrate' && DisruptDeathState)
 	{
 		SetState(DisruptDeathState);
 		PlaySound('human/disrupt', CHAN_BODY);
@@ -636,7 +636,7 @@ bool OkayToSwitchTarget(EntityEx source)
 
 int TakeSpecialDamage(EntityEx inflictor, EntityEx source, int damage)
 {
-	if (inflictor && Actor(inflictor).bPoisonDamage && bNoBlood)
+	if (inflictor && inflictor.bNoExtremeDeath && bNoBlood)
 	{
 		// Don't damage actors that don't take poison damage
 		return -1;

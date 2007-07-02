@@ -44,7 +44,7 @@ defaultproperties
 	Height = 8.0;
 	Speed = 70.0;
 	MissileDamage = 4;
-	bFireDamage = true;
+	DamageType = 'Fire';
 	bActivateImpact = false;
 	bActivatePCross = false;
 	IdleState = S_FIREBALL1_1;

@@ -77,7 +77,7 @@ defaultproperties
 {
 	Radius = 6.0;
 	MissileDamage = 2;
-	bFireDamage = true;
+	DamageType = 'Fire';
 	bActivateImpact = false;
 	bActivatePCross = false;
 	IdleState = S_CIRCLE_FLAME1;

@@ -473,7 +473,7 @@ void Died(EntityEx source, EntityEx inflictor)
 		Player(Player).Powers[pw_weaponlevel2] = 0.0;
 		Player.PlayerState = PST_DEAD;
 		Player(Player).DropWeapon();
-		if (bFireDamage)
+		if (DamageType == 'Fire')
 		{
 			// Player flame death
 			SetState(PlayerPawn(self).FireDeathState);
@@ -790,17 +790,6 @@ void SpawnRipperBlood()
 	th.Velocity.x = Velocity.x / 2.0;
 	th.Velocity.y = Velocity.y / 2.0;
 	th.StateTime += Random() * 0.1;
-}
-
-//===========================================================================
-//
-//  GetDamageTypeInflictor
-//
-//===========================================================================
-
-EntityEx GetDamageTypeInflictor(name DamageType)
-{
-	return DamageType == 'lava' ? HereticLevelInfo(Level).GLavaInflictor : none;
 }
 
 //===========================================================================

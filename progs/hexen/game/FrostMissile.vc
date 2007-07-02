@@ -155,7 +155,7 @@ defaultproperties
 	Height = 8.0;
 	Speed = 875.0;
 	MissileDamage = 1;
-	bIceDamage = true;
+	DamageType = 'Ice';
 	IdleState = S_SHARDFX1_1;
 	DeathState = S_SHARDFXE1_1;
 	DeathSound = 'MageShardsExplode';

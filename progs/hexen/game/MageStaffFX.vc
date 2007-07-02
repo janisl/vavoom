@@ -86,7 +86,7 @@ defaultproperties
 	Speed = 700.0;
 	MissileDamage = 6;
 	bRip = true;
-	bFireDamage = true;
+	DamageType = 'Fire';
 	IdleState = S_MSTAFF_FX1_1;
 	DeathState = S_MSTAFF_FX_X1;
 	DeathSound = 'MageStaffExplode';

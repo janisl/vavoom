@@ -51,9 +51,8 @@ final void A_FireBlaster1()
 		rot.roll = 0.0;
 		dir = RotateDirectionVector(aimDir, rot);
 		damage = 5 * (P_Random() % 3 + 1);
-		Actor(Owner).bDisruptDamage = true;
-		Actor(Owner).LineAttack(dir, MAULERRANGE, damage, MaulerPuff);
-		Actor(Owner).bDisruptDamage = false;
+		Actor(Owner).LineAttack(dir, MAULERRANGE, damage, MaulerPuff,,,
+			'Disintegrate');
 	}
 	Owner.Effects |= StrifeDefs::EF_DL_MUZZLEFLASH;
 }

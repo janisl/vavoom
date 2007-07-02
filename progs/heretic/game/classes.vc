@@ -51,8 +51,6 @@
 #include "Key.vc"
 #include "Ammo.vc"
 
-#include "LavaInflictor.vc"
-
 #include "SoundSequence.vc"
 #include "SoundSequenceSlot.vc"
 #include "AmbientSoundSequence.vc"

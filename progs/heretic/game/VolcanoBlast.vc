@@ -96,7 +96,7 @@ defaultproperties
 	Speed = 70.0;
 	Gravity = 0.125;
 	MissileDamage = 2;
-	bFireDamage = true;
+	DamageType = 'Fire';
 	bNoGravity = false;
 	IdleState = S_VOLCANOBALL1;
 	DeathState = S_VOLCANOBALLX1;

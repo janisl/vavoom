@@ -34,7 +34,7 @@ class BurnableTree : Decoration
 
 final void A_TreeDeath()
 {
-	if (!bFireDamage)
+	if (DamageType != 'Fire')
 	{
 		Height *= 4.0;
 		bShootable = true;

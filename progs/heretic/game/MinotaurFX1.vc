@@ -56,7 +56,7 @@ defaultproperties
 	Height = 6.0;
 	Speed = 700.0;
 	MissileDamage = 3;
-	bFireDamage = true;
+	DamageType = 'Fire';
 	IdleState = S_MNTRFX1_1;
 	DeathState = S_MNTRFXI1_1;
 	Effects = HereticDefs::EF_DL_WHITE;

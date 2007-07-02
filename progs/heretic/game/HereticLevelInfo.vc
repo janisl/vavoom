@@ -44,8 +44,6 @@ const int
 	MTF_GCOOP		= 0x0200,
 	MTF_GDEATHMATCH	= 0x0400;
 
-Actor GLavaInflictor;
-
 Actor bodyque[BODYQUESIZE];
 int bodyqueslot;
 
@@ -67,7 +65,6 @@ void SpawnSpecials()
 {
 	::SpawnSpecials();
 
-	InitLava();
 	CloseWeapons();
 }
 
@@ -637,17 +634,6 @@ void AddBossSpot(float x, float y, float angle)
 	BossSpot[BossSpotCount].z = 0.0;	//FIXME
 	BossSpot_angle[BossSpotCount] = angle;
 	BossSpotCount++;
-}
-
-//==========================================================================
-//
-//  InitLava
-//
-//==========================================================================
-
-void InitLava()
-{
-	GLavaInflictor = Spawn(LavaInflictor, vector(0.0, 0.0, 0.0));
 }
 
 //==========================================================================

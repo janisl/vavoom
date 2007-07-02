@@ -75,7 +75,7 @@ defaultproperties
 	Height = 10.0;
 	Speed = 490.0;
 	MissileDamage = 1;
-	bIceDamage = true;
+	DamageType = 'Ice';
 	bActivateImpact = false;
 	bActivatePCross = false;
 	IdleState = S_ICEGUY_FX1;

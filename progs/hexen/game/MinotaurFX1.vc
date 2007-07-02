@@ -43,7 +43,7 @@ defaultproperties
 	Height = 6.0;
 	Speed = 700.0;
 	MissileDamage = 3;
-	bFireDamage = true;
+	DamageType = 'Fire';
 	bActivateImpact = false;
 	bActivatePCross = false;
 	IdleState = S_MNTRFX1_1;

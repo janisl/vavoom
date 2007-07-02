@@ -42,5 +42,5 @@ defaultproperties
 	DeathState = S_ARROW2_X;
 	SightSound = 'misc/swish';
 	ActiveSound = 'misc/swish';
-	bPoisonDamage = true;
+	bNoExtremeDeath = true;
 }

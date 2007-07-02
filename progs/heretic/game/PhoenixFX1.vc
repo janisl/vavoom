@@ -88,7 +88,7 @@ defaultproperties
 	MissileDamage = 20;
 	bThruGhost = true;
 	bActivateImpact = true;
-	bFireDamage = true;
+	DamageType = 'Fire';
 	bConditionalFireDamage = true;
 	IdleState = S_PHOENIXFX1_1;
 	DeathState = S_PHOENIXFXI1_1;

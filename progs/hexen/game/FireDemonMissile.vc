@@ -42,7 +42,7 @@ defaultproperties
 	Speed = 350.0;
 	MissileDamage = 1;
 	bFloorClip = true;
-	bFireDamage = true;
+	DamageType = 'Fire';
 	IdleState = S_FIRED_FX6_1;
 	DeathState = S_FIRED_FX6_2;
 	DeathSound = 'FireDemonMissileHit';

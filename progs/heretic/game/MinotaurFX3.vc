@@ -48,7 +48,7 @@ defaultproperties
 	Radius = 8.0;
 	Height = 16.0;
 	MissileDamage = 4;
-	bFireDamage = true;
+	DamageType = 'Fire';
 	IdleState = S_MNTRFX3_1;
 	DeathState = S_MNTRFXI2_1;
 	DeathSound = 'minotaur/fx3hit';

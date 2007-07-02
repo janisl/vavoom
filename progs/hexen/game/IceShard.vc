@@ -46,7 +46,7 @@ defaultproperties
 	Height = 8.0;
 	Speed = 875.0;
 	MissileDamage = 1;
-	bIceDamage = true;
+	DamageType = 'Ice';
 	bActivateImpact = false;
 	bActivatePCross = false;
 	IdleState = S_ICESHARD1;

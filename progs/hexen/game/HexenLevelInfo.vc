@@ -51,21 +51,6 @@ int bodyqueslot;
 Actor corpseQueue[CORPSEQUEUESIZE];
 int corpseQueueSlot;
 
-Actor GLavaInflictor;
-
-//============================================================================
-//
-//  SpawnSpecials
-//
-//============================================================================
-
-void SpawnSpecials()
-{
-	::SpawnSpecials();
-
-	InitLava();
-}
-
 //==========================================================================
 //
 //  PolyThrustMobj
@@ -579,17 +564,6 @@ void SpawnMapThing(mthing_t * mthing)
 		dprint("SpawnMapThing: Unknown type %i at (%f, %f)",
 			mthing->type, mthing->x, mthing->y);
 	}
-}
-
-//==========================================================================
-//
-//  InitLava
-//
-//==========================================================================
-
-void InitLava()
-{
-	GLavaInflictor = Spawn(LavaInflictor, vector(0.0, 0.0, 0.0));
 }
 
 defaultproperties

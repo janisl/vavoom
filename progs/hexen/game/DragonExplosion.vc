@@ -46,7 +46,7 @@ defaultproperties
 	Height = 8.0;
 	bHidden = true;
 	bNoTeleport = true;
-	bFireDamage = true;
+	DamageType = 'Fire';
 	bNoGravity = false;
 	IdleState = S_DRAGON_FX2_1;
 	DeathSound = 'DragonFireballExplode';

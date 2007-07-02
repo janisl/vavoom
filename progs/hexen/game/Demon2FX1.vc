@@ -47,7 +47,7 @@ defaultproperties
 	Height = 6.0;
 	Speed = 525.0;
 	MissileDamage = 5;
-	bFireDamage = true;
+	DamageType = 'Fire';
 	IdleState = S_DEMON2FX_MOVE1;
 	DeathState = S_DEMON2FX_BOOM1;
 	DeathSound = 'DemonMissileExplode';

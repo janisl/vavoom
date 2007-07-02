@@ -89,7 +89,7 @@ defaultproperties
 	Height = 8.0;
 	Speed = 350.0;
 	MissileDamage = 2;
-	bFireDamage = true;
+	DamageType = 'Fire';
 	bActivateImpact = true;
 	IdleState = S_PHOENIXFX2_1;
 	DeathState = S_PHOENIXFXI2_1;

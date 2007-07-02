@@ -82,7 +82,7 @@ defaultproperties
 	Speed = 490.0;
 	MissileDamage = 5;
 	bFloorClip = true;
-	bFireDamage = true;
+	DamageType = 'Fire';
 	IdleState = S_WRTHFX_MOVE1;
 	DeathState = S_WRTHFX_BOOM1;
 	DeathSound = 'WraithMissileExplode';

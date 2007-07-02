@@ -51,7 +51,7 @@ defaultproperties
 	Speed = 350.0;
 	MissileDamage = 1;
 	bNoGravity = false;
-	bIceDamage = true;
+	DamageType = 'Ice';
 	bActivateImpact = false;
 	bActivatePCross = false;
 	IdleState = S_ICEGUY_FX2_1;

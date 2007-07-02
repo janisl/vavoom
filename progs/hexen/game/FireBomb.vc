@@ -45,7 +45,7 @@ defaultproperties
 	Alpha = 0.666;
 	bNoGravity = true;
 	bNoPassMobj = true;
-	bFireDamage = true;
+	DamageType = 'Fire';
 	bDamageInvulnerable = true;
 	IdleState = S_FIREBOMB1;
 	DeathSound = 'FlechetteExplode';

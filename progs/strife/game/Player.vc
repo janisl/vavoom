@@ -1393,8 +1393,7 @@ void PlayerInSpecialSector(float deltaTime)
 			if (Level.XLevel.Time - LastSectorDamageTime >= 16.0 / 35.0)
 			{
 				LastSectorDamageTime = Level.XLevel.Time;
-				//MO.Damage(GLavaInflictor, none, 5);
-				Actor(MO).Damage(none, none, 5);
+				Actor(MO).Damage(none, none, 5, 'Fire');
 				Actor(MO).HitFloorType();
 			}
 			break;
@@ -1402,8 +1401,7 @@ void PlayerInSpecialSector(float deltaTime)
 			if (Level.XLevel.Time - LastSectorDamageTime >= 16.0 / 35.0)
 			{
 				LastSectorDamageTime = Level.XLevel.Time;
-				//MO.Damage(GLavaInflictor, none, 8);
-				Actor(MO).Damage(none, none, 8);
+				Actor(MO).Damage(none, none, 8, 'Fire');
 				Actor(MO).HitFloorType();
 			}
 			break;
@@ -1412,8 +1410,7 @@ void PlayerInSpecialSector(float deltaTime)
 			if (Level.XLevel.Time - LastSectorDamageTime >= 16.0 / 35.0)
 			{
 				LastSectorDamageTime = Level.XLevel.Time;
-				//MO.Damage(GLavaInflictor, none, 5);
-				Actor(MO).Damage(none, none, 5);
+				Actor(MO).Damage(none, none, 5, 'Fire');
 				Actor(MO).HitFloorType();
 			}
 			break;
@@ -1600,7 +1597,7 @@ void PlayerInContents(float deltaTime)
 			Level.XLevel.Time - LastSectorDamageTime >= 32.0 / 35.0)
 		{
 			LastSectorDamageTime = Level.XLevel.Time;
-			Actor(MO).Damage(none, none, 10);
+			Actor(MO).Damage(none, none, 10, 'Fire');
 		}
 		break;
 
@@ -2714,7 +2711,7 @@ int ArmorAbsorbDamage(EntityEx inflictor, EntityEx source, int damage,
 {
 	int saved;
 
-	if (inflictor && Actor(inflictor).bFireDamage && Powers[pw_ironfeet])
+	if (inflictor && inflictor.DamageType == 'Fire' && Powers[pw_ironfeet])
 	{
 		// If the player wears an environmental suit it's not
 		// damaged by fire damage

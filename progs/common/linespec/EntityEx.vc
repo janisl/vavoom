@@ -125,8 +125,7 @@ bool bSlide;			// slides against walls
 bool bReflective;		// reflects missiles
 bool bSeekerMissile;	// is a seeker (for reflection)
 bool bNoExplodeFloor;	//	Don't explode when hitting the floor
-bool bIceDamage;		// does ice damage
-bool bIceCorpse;		// a frozen corpse (for blasting)
+bool bIceCorpse;		//	a frozen corpse (for blasting)
 bool bExplodeOnWater;	//	Explode on water surfaces
 bool bCanBounceWater;	//	Bounce on water surfaces
 bool bFallingFriction;	//	Apply friction while falling
@@ -144,9 +143,7 @@ bool bDamageInvulnerable;	// These inflictors aren't foiled by invulnerability
 bool bSkullFlyInvulnerable;	//	Invulnerable during skull fly attack
 bool bNoDamageThrust;	// does not thrust target when damaging
 bool bConditionalFireDamage;
-bool bDisruptDamage;	// Disrupts enemies.
-bool bFireDamage;		// does fire damage
-bool bPoisonDamage;		// Does poison damage (doesn't gib enemies).
+bool bNoExtremeDeath;	// Does never gib enemies.
 bool bLightning;		//	Electrocutes victims
 bool bHowlVictims;		//	Make victims play howl sound when damaged
 bool bNoGrudge;
@@ -806,7 +803,7 @@ final bool HitFloor(float DeltaTime)
 	{
 		// Spawn splashes, etc.
 		HitFloorType();
-		if (bIceDamage && vdot < -DEFAULT_GRAVITY * 0.25)
+		if (DamageType == 'Ice' && vdot < -DEFAULT_GRAVITY * 0.25)
 		{
 			StateTime = 0.1;
 			Velocity = vector(0.0, 0.0, 0.0);
@@ -1013,7 +1010,7 @@ float GetReflectedAngle(EntityEx Other)
 
 final void Crash()
 {
-	if (CrashState && bCorpse && !bIceDamage)
+	if (CrashState && bCorpse && DamageType != 'Ice')
 	{
 		SetState(CrashState);
 	}
@@ -1304,8 +1301,7 @@ final bool HitFloorType()
 	if (TInfo->DamageAmount && bIsPlayer &&
 		XLevel.TicTime & TInfo->DamageTimeMask)
 	{
-		Damage(GetDamageTypeInflictor(TInfo->DamageType), none,
-			TInfo->DamageAmount, TInfo->DamageType);
+		Damage(none, none, TInfo->DamageAmount, TInfo->DamageType);
 	}
 
 	SInfo = GetSplashInfo(TInfo->Splash);
@@ -3578,7 +3574,7 @@ final void Damage(EntityEx inflictor, EntityEx source, int damage,
 
 	if (Health <= 0)
 	{
-		if (inflictor && inflictor.bIceDamage)
+		if (inflictor && DmgType == 'Ice')
 		{
 			return;
 		}
@@ -3744,7 +3740,7 @@ final void Damage(EntityEx inflictor, EntityEx source, int damage,
 		// Death
 		Special1 = damage;
 		// check for special fire damage or ice damage deaths
-		if (DmgType == 'Fire' || (inflictor && inflictor.bFireDamage))
+		if (DmgType == 'Fire')
 		{
 			if (bIsPlayer && !PlayerIsMorphed())
 			{
@@ -3752,25 +3748,13 @@ final void Damage(EntityEx inflictor, EntityEx source, int damage,
 				if (!inflictor || !inflictor.bConditionalFireDamage ||
 					(Health > -50 && damage > 25))
 				{
-					bFireDamage = true;
 					DamageType = 'Fire';
 				}
 			}
 			else
 			{
-				bFireDamage = true;
 				DamageType = 'Fire';
 			}
-		}
-		else if (DmgType == 'Ice' || (inflictor && inflictor.bIceDamage))
-		{
-			bIceDamage = true;
-			DamageType = 'Ice';
-		}
-		else if (DmgType == 'Disintegrate' || (inflictor && inflictor.bDisruptDamage))
-		{
-			bDisruptDamage = true;
-			DamageType = 'Disintegrate';
 		}
 		else
 		{
@@ -3888,11 +3872,6 @@ bool OkayToSwitchTarget(EntityEx source)
 float GetBaseViewHeight()
 {
 	return 0.0;
-}
-
-EntityEx GetDamageTypeInflictor(name DamageType)
-{
-	return none;
 }
 
 bool PlayerIsMorphed()

@@ -154,7 +154,7 @@ defaultproperties
 	Speed = 7000.0;
 	MissileDamage = 8;
 	bHidden = true;
-	bFireDamage = true;
+	DamageType = 'Fire';
 	bBlaster = true;
 	IdleState = S_CFLAME_MISSILE1;
 	DeathState = S_CFLAME_MISSILE_X;

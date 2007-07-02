@@ -39,7 +39,7 @@ defaultproperties
 	Speed = 1225.0;
 	MissileDamage = 10;
 	bActivateImpact = true;
-	bDisruptDamage = true;
+	DamageType = 'Disintegrate';
 	IdleState = S_TORPEDO_WAV1;
 	DeathState = S_TORPEDO_WAV3;
 	Effects = StrifeDefs::EF_DL_GREEN;

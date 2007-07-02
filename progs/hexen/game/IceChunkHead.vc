@@ -60,7 +60,7 @@ defaultproperties
 	bWindThrust = false;
 	bFloorClip = false;
 	bSlide = false;
-	bIceDamage = true;	// used to force blue palette
+	DamageType = 'Ice';	// used to force blue palette
 	bNoBlockmap = true;
 	bNoPassMobj = true;
 	bCannotPush = true;

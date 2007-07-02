@@ -83,7 +83,7 @@ defaultproperties
 	Height = 10.0;
 	Speed = 420.0;
 	BounceType = BOUNCE_Hexen;
-	bFireDamage = true;
+	DamageType = 'Fire';
 	bNoGravity = false;
 	bNoTeleport = false;
 	bActivateImpact = false;

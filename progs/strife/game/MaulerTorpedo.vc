@@ -73,7 +73,7 @@ defaultproperties
 	Speed = 700.0;
 	MissileDamage = 1;
 	bActivateImpact = true;
-	bDisruptDamage = true;
+	DamageType = 'Disintegrate';
 	IdleState = S_TORPEDO_1;
 	DeathState = S_TORPEDO_X1;
 	SightSound = 'weapons/mauler2fire';

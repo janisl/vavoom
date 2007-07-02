@@ -94,7 +94,7 @@ defaultproperties
 	Height = 8.0;
 	Speed = 595.0;
 	MissileDamage = 4;
-	bFireDamage = true;
+	DamageType = 'Fire';
 	bSeekerMissile = true;
 	IdleState = S_MSTAFF_FX2_1;
 	DeathState = S_MSTAFF_FX2_X1;

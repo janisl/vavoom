@@ -58,7 +58,7 @@ defaultproperties
 	Speed = 525.0;
 	MissileDamage = 4;
 	bNoGravity = false;
-	bFireDamage = true;
+	DamageType = 'Fire';
 	bActivateImpact = true;
 	IdleState = S_FLAMEFX_1;
 	DeathState = S_FLAMEFX_X1;

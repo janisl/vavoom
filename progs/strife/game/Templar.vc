@@ -50,9 +50,7 @@ final void A_TemplarAttack()
 		dir = aimDir;
 		VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0 / 2.0);
 		damage = ((P_Random() % 5) + 1) * 3;
-		bDisruptDamage = true;
-		LineAttack(dir, MAULERRANGE, damage, MaulerPuff);
-		bDisruptDamage = false;
+		LineAttack(dir, MAULERRANGE, damage, MaulerPuff,,, 'Disintegrate');
 	}
 	Effects |= StrifeDefs::EF_DL_MUZZLEFLASH;
 }

@@ -72,7 +72,7 @@ defaultproperties
 	Height = 10.0;
 	Speed = 840.0;
 	MissileDamage = 6;
-	bFireDamage = true;
+	DamageType = 'Fire';
 	bActivateImpact = false;
 	bActivatePCross = false;
 	IdleState = S_DRAGON_FX1_1;

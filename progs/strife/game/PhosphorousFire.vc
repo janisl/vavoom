@@ -100,7 +100,7 @@ defaultproperties
 {
 	ReactionCount = 120;
 	bNoGravity = false;
-	bFireDamage = true;
+	DamageType = 'Fire';
 	IdleState = S_GRENADE_FLAME_1;
 	DeathState = S_GRENADE_FLAME_X1;
 	Effects = StrifeDefs::EF_DL_MISSILE;

@@ -1465,7 +1465,7 @@ void PlayerInSpecialSector(float deltaTime)
 			if (Level.XLevel.Time - LastSectorDamageTime >= 16.0 / 35.0)
 			{
 				LastSectorDamageTime = Level.XLevel.Time;
-				Actor(MO).Damage(HexenLevelInfo(Level).GLavaInflictor, none, 5);
+				Actor(MO).Damage(none, none, 5, 'Fire');
 				Actor(MO).HitFloorType();
 				MO.PlaySound('LavaSizzle', CHAN_BODY);
 			}
@@ -1474,7 +1474,7 @@ void PlayerInSpecialSector(float deltaTime)
 			if (Level.XLevel.Time - LastSectorDamageTime >= 16.0 / 35.0)
 			{
 				LastSectorDamageTime = Level.XLevel.Time;
-				Actor(MO).Damage(HexenLevelInfo(Level).GLavaInflictor, none, 8);
+				Actor(MO).Damage(none, none, 8, 'Fire');
 				Actor(MO).HitFloorType();
 				MO.PlaySound('LavaSizzle', CHAN_BODY);
 			}
@@ -1484,7 +1484,7 @@ void PlayerInSpecialSector(float deltaTime)
 			if (Level.XLevel.Time - LastSectorDamageTime >= 16.0 / 35.0)
 			{
 				LastSectorDamageTime = Level.XLevel.Time;
-				Actor(MO).Damage(HexenLevelInfo(Level).GLavaInflictor, none, 5);
+				Actor(MO).Damage(none, none, 5, 'Fire');
 				Actor(MO).HitFloorType();
 				MO.PlaySound('LavaSizzle', CHAN_BODY);
 			}
@@ -1663,7 +1663,7 @@ void PlayerOnSpecialFlat(VTerrainInfo* floorType)
 		itof(floorType->DamageTimeMask + 1) / 35.0)
 	{
 		LastSectorDamageTime = Level.XLevel.Time;
-		Actor(MO).Damage(HexenLevelInfo(Level).GLavaInflictor, none, 10);
+		Actor(MO).Damage(none, none, 10, 'Fire');
 		MO.PlaySound('LavaSizzle', CHAN_BODY);
 	}
 }
@@ -1686,7 +1686,7 @@ void PlayerInContents(float deltaTime)
 		if (Level.XLevel.Time - LastSectorDamageTime >= 32.0 / 35.0)
 		{
 			LastSectorDamageTime = Level.XLevel.Time;
-			Actor(MO).Damage(HexenLevelInfo(Level).GLavaInflictor, none, 10);
+			Actor(MO).Damage(none, none, 10, 'Fire');
 			MO.PlaySound('LavaSizzle', CHAN_BODY);
 		}
 		break;
@@ -2036,7 +2036,7 @@ void DeathPlayerTick(float deltaTime)
 #endif
 		}
 	}
-	else if (!Actor(MO).bIceDamage)
+	else if (Actor(MO).DamageType != 'Ice')
 	{
 		// Fall to ground (if not frozen)
 		DeltaViewHeight = 0.0;
@@ -2556,7 +2556,7 @@ void PaletteFlash()
 		CShifts[CSHIFT_Poison] = RGBA(56, 118, 46, Amount);
 	}
 
-	if (Actor(MO).bIceDamage)
+	if (Actor(MO).DamageType == 'Ice')
 	{
 		// Frozen player
 		CShifts[CSHIFT_Damage] = RGBA(2, 2, 255, 113);

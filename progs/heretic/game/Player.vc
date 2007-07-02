@@ -1264,7 +1264,7 @@ void PlayerInSpecialSector(float deltaTime)
 			if (Level.XLevel.Time - LastSectorDamageTime >= 16.0 / 35.0)
 			{
 				LastSectorDamageTime = Level.XLevel.Time;
-				Actor(MO).Damage(HereticLevelInfo(Level).GLavaInflictor, none, 5);
+				Actor(MO).Damage(none, none, 5, 'Fire');
 				Actor(MO).HitFloorType();
 			}
 			break;
@@ -1272,7 +1272,7 @@ void PlayerInSpecialSector(float deltaTime)
 			if (Level.XLevel.Time - LastSectorDamageTime >= 16.0 / 35.0)
 			{
 				LastSectorDamageTime = Level.XLevel.Time;
-				Actor(MO).Damage(HereticLevelInfo(Level).GLavaInflictor, none, 8);
+				Actor(MO).Damage(none, none, 8, 'Fire');
 				Actor(MO).HitFloorType();
 			}
 			break;
@@ -1281,7 +1281,7 @@ void PlayerInSpecialSector(float deltaTime)
 			if (Level.XLevel.Time - LastSectorDamageTime >= 16.0 / 35.0)
 			{
 				LastSectorDamageTime = Level.XLevel.Time;
-				Actor(MO).Damage(HereticLevelInfo(Level).GLavaInflictor, none, 5);
+				Actor(MO).Damage(none, none, 5, 'Fire');
 				Actor(MO).HitFloorType();
 			}
 			break;
@@ -1460,7 +1460,7 @@ void PlayerInContents(float deltaTime)
 		if (Level.XLevel.Time - LastSectorDamageTime >= 32.0 / 35.0)
 		{
 			LastSectorDamageTime = Level.XLevel.Time;
-			Actor(MO).Damage(HereticLevelInfo(Level).GLavaInflictor, none, 10);
+			Actor(MO).Damage(none, none, 10, 'Fire');
 		}
 		break;
 
