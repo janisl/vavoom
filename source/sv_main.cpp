@@ -1376,6 +1376,12 @@ void SV_ConnectBot(const char *name)
 	guard(SV_ConnectBot);
 	int				i;
 
+	if (!sv.active)
+	{
+		GCon->Log("Game is not running");
+		return;
+	}
+
 	if (svs.num_connected >= svs.max_clients)
 	{
 		GCon->Log("Server is full");
