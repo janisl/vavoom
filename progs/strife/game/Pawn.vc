@@ -532,6 +532,12 @@ final void A_BurnScream()
 {
 	DeathSound = 'human/imonfire';
 	A_Scream();
+	if (bIsPlayer)
+	{
+		Player.SetViewState(ps_weapon,
+			Weapon(Player.ViewEnt).FireDeathWaveState);
+		Player.SetViewState(ps_flash, none);
+	}
 }
 
 //==========================================================================
@@ -897,7 +903,10 @@ __states__
 	S_BURN23('BURN', 20, 7.0 / 35.0, S_BURN24) = none
 	S_BURN24('BURN', 21, 700.0 / 35.0, none) { /*FIXME A_Dying();*/ }
 
-	S_DISRUPT1('DISR', 0, 5.0 / 35.0, S_DISRUPT2) = none
+	S_DISRUPT1('DISR', 0, 5.0 / 35.0, S_DISRUPT2)
+	{
+		PlaySound('human/disrupt', CHAN_BODY);
+	}
 	S_DISRUPT2('DISR', 1, 5.0 / 35.0, S_DISRUPT3) = none
 	S_DISRUPT3('DISR', 2, 5.0 / 35.0, S_DISRUPT4) = none
 	S_DISRUPT4('DISR', 3, 5.0 / 35.0, S_DISRUPT5) = A_Fall

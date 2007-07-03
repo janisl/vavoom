@@ -87,6 +87,18 @@ int ArmorAbsorbDamage(EntityEx inflictor, EntityEx source, int damage,
 	return damage;
 }
 
+bool IsWeaponAlwaysExtremeDeath()
+{
+}
+
+void StartDeathSlideShow()
+{
+}
+
+void DropWeapon()
+{
+}
+
 defaultproperties
 {
 }

@@ -393,104 +393,62 @@ final void SendExplosion(int etype, TVec org)
 
 //==========================================================================
 //
-//  Died
+//	KilledByPlayer
 //
 //==========================================================================
 
-void Died(EntityEx source, EntityEx inflictor)
+void KilledByPlayer(EntityEx source)
 {
-	bShootable = false;
-	bNoGravity = false;
-	bFloat = false;
-	bSkullFly = false;
-	bDropOff = true;
-	bCorpse = true;
-	bNoPassMobj = true;
-	Height /= 4.0;
-	if (bCountKill && Special)
-	{
-		// Initiate monster death actions
-		Level.ExecuteActionSpecial(Special, Args[0], Args[1], Args[2],
-			Args[3], Args[4], NULL, 0, self);
-	}
-	if (source && source.bIsPlayer)
-	{
-		if (bCountKill)
-		{
-			// Count for intermission
-			source.Player.KillCount++;
-		}
-		if (bIsPlayer)
-		{
-			if (source.Player.bIsBot)
-			{
-				Player(source.Player).Bot.Killed(self);
-			}
-
-			if (Player.bIsBot)
-			{
-				Player(Player).Bot.Died(Actor(source));
-			}
-
-			// Frag stuff
-			if (self == source)
-			{
-				// Self-frag
-				Player.FragsStats[Player.GetPlayerNum()]--;
-				Player.Frags--;
-			}
-			else
-			{
-				source.Player.FragsStats[Player.GetPlayerNum()]++;
-				source.Player.Frags++;
-				source.PlaySound('misc/frag', CHAN_ITEM);
-				if (Player(source.Player).ChickenTime)
-				{
-					// Make a super chicken
-					Player(source.Player).GivePower(pw_weaponlevel2);
-				}
-			}
-		}
-	}
-	else if (!Level.Game.netgame && bCountKill)
-	{
-		// Count all monster deaths
-		Level.Game.Players[0].KillCount++;
-	}
-	if (bCountKill)
-		Level.CurrentKills++;
+	// Check for frag changes
 	if (bIsPlayer)
 	{
-		if (!source)
+		if (source.Player.bIsBot)
+		{
+			Player(source.Player).Bot.Killed(self);
+		}
+
+		if (Player.bIsBot)
+		{
+			Player(Player).Bot.Died(Actor(source));
+		}
+
+		// Frag stuff
+		if (self == source)
 		{
 			// Self-frag
 			Player.FragsStats[Player.GetPlayerNum()]--;
 			Player.Frags--;
 		}
-		bSolid = false;
-		bFly = false;
-		Player(Player).Powers[pw_flight] = 0.0;
-		Player(Player).Powers[pw_weaponlevel2] = 0.0;
-		Player.PlayerState = PST_DEAD;
-		Player(Player).DropWeapon();
-		if (DamageType == 'Fire')
+		else
 		{
-			// Player flame death
-			SetState(PlayerPawn(self).FireDeathState);
-			return;
+			source.Player.FragsStats[Player.GetPlayerNum()]++;
+			source.Player.Frags++;
+			source.PlaySound('misc/frag', CHAN_ITEM);
+			if (Player(source.Player).ChickenTime)
+			{
+				// Make a super chicken
+				Player(source.Player).GivePower(pw_weaponlevel2);
+			}
 		}
 	}
-	if (Health < GibsHealth && GibsDeathState)
+}
+
+//==========================================================================
+//
+//	PlayerKilled
+//
+//==========================================================================
+
+void PlayerKilled(EntityEx source, EntityEx inflictor)
+{
+	// Count environment kills against you
+	if (!source)
 	{
-		// Extreme death
-		SetState(GibsDeathState);
+		Player.FragsStats[Player.GetPlayerNum()]--;
+		Player.Frags--;
 	}
-	else
-	{
-		// Normal death
-		SetState(DeathState);
-	}
-	StateTime -= Random() * 0.1;
+	Player(Player).Powers[pw_flight] = 0.0;
+	Player(Player).Powers[pw_weaponlevel2] = 0.0;
 }
 
 //==========================================================================

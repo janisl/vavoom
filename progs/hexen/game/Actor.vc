@@ -395,171 +395,54 @@ Actor ActiveMinotaur()
 
 //==========================================================================
 //
-//  Died
+//	KilledByPlayer
 //
 //==========================================================================
 
-void Died(EntityEx source, EntityEx inflictor)
+void KilledByPlayer(EntityEx source)
 {
-	int dummy[5];
-
-	if (source && (source.bIsPlayer) &&
-		(Player(source.Player).ReadyWeapon == HexenDefs::WP_FOURTH))
-	{
-		// Always extreme death from fourth weapon
-		Health = -5000;
-	}
-
-	bShootable = false;
-	bNoGravity = false;
-	bFloat = false;
-	bSkullFly = false;
-	bDropOff = true;
-	bCorpse = true;
-	bNoPassMobj = true;
-	Height /= 4.0;
-	if ((bCountKill || Class == ZBell) && Special)
-	{
-		// Initiate monster death actions
-		if (Class == Heresiarch)
-		{
-			XLevel.StartACS(Special, 0, 0, 0, 0, self, NULL, 0, false, false);
-		}
-		else
-		{
-			Level.ExecuteActionSpecial(Special, Args[0], Args[1], Args[2],
-				Args[3], Args[4], NULL, 0, self);
-		}
-	}
-	if (source && source.bIsPlayer)
-	{	// Check for frag changes
-		if (bIsPlayer)
-		{
-			if (source.Player.bIsBot)
-			{
-				Player(source.Player).Bot.Killed(self);
-			}
-
-			if (Player.bIsBot)
-			{
-				Player(Player).Bot.Died(Actor(source));
-			}
-
-			if (self == source)
-			{
-				// Self-frag
-				Player.FragsStats[Player.GetPlayerNum()]--;
-				Player.Frags--;
-			}
-			else
-			{
-				source.Player.FragsStats[Player.GetPlayerNum()]++;
-				source.Player.Frags++;
-			}
-		}
-	}
-	if (bCountKill)
-		Level.CurrentKills++;
+	// Check for frag changes
 	if (bIsPlayer)
 	{
-		// Player death
-		if (!source)
+		if (source.Player.bIsBot)
+		{
+			Player(source.Player).Bot.Killed(self);
+		}
+
+		if (Player.bIsBot)
+		{
+			Player(Player).Bot.Died(Actor(source));
+		}
+
+		if (self == source)
 		{
 			// Self-frag
 			Player.FragsStats[Player.GetPlayerNum()]--;
 			Player.Frags--;
 		}
-		bSolid = false;
-		bFly = false;
-		Player(Player).Powers[pw_flight] = 0.0;
-		Player.PlayerState = PST_DEAD;
-		Player(Player).DropWeapon();
-		if (DamageType == 'Fire')
-		{
-			// Player flame death
-			PlaySound('*burndeath', CHAN_VOICE);
-			switch (Player.PClass)
-			{
-			case HexenDefs::PCLASS_FIGHTER:
-				SetState(S_PLAY_F_FDTH1);
-				return;
-			case HexenDefs::PCLASS_CLERIC:
-				SetState(S_PLAY_C_FDTH1);
-				return;
-			case HexenDefs::PCLASS_MAGE:
-				SetState(S_PLAY_M_FDTH1);
-				return;
-			default:
-				break;
-			}
-		}
-		if (DamageType == 'Ice')
-		{
-			// Player ice death
-			Translation = 0;	//no translation
-			bIceCorpse  = true;
-			SetState(IceDeathState);
-			return;
-		}
-	}
-	if (DamageType == 'Fire')
-	{
-		if (Class == FighterBoss)
- 		{
-			PlaySound('PlayerFighterBurnDeath', CHAN_VOICE);
-			SetState(S_PLAY_F_FDTH1);
-			return;
- 		}
- 		if (Class == ClericBoss)
-		{
-			PlaySound('PlayerClericBurnDeath', CHAN_VOICE);
-			SetState(S_PLAY_C_FDTH1);
-			return;
-		}
-		if (Class == MageBoss)
-		{
-			PlaySound('PlayerMageBurnDeath', CHAN_VOICE);
-			SetState(S_PLAY_M_FDTH1);
-			return;
-		}
-		if (Class == TreeDestructible)
-		{
-			SetState(S_ZTREEDES_X1);
-			Height = 24.0;
-			PlaySound('TreeExplode', CHAN_VOICE);
-			return;
-		}
-	}
-	if (DamageType == 'Ice' && IceDeathState)
-	{
-		bIceCorpse = true;
-		SetState(IceDeathState);
-		return;
-	}
-
-	if (Class == TreeDestructible)
-	{
-		Height = 24.0;
-	}
-	if (Health < GibsHealth && GibsDeathState)
-	{
-		// Extreme death
-		SetState(GibsDeathState);
-	}
-	else
-	{	// Normal death
-		if ((Class == FireDemon) && (Origin.z <= FloorZ + 2.0) &&
-			GibsDeathState)
-		{
-			// This is to fix the imps' staying in fall state
-			SetState(GibsDeathState);
-		}
 		else
 		{
-			SetState(DeathState);
+			source.Player.FragsStats[Player.GetPlayerNum()]++;
+			source.Player.Frags++;
 		}
 	}
-	StateTime -= Random() * 0.1;
+}
+
+//==========================================================================
+//
+//	PlayerKilled
+//
+//==========================================================================
+
+void PlayerKilled(EntityEx source, EntityEx inflictor)
+{
+	// Count environment kills against you
+	if (!source)
+	{
+		Player.FragsStats[Player.GetPlayerNum()]--;
+		Player.Frags--;
+	}
+	Player(Player).Powers[pw_flight] = 0.0;
 }
 
 //==========================================================================
@@ -2199,40 +2082,7 @@ void ClientTick(float DeltaTime)
 __states__
 {
 	S_FREETARGMOBJ('ACLO', 4, 1050.0 / 35.0, none) = A_FreeTargMobj
-	S_ZTREEDES_X1('TRDT', 7 | FF_FULLBRIGHT, 5.0 / 35.0, S_ZTREEDES_X2) = none
-	S_ZTREEDES_X2('TRDT', 8 | FF_FULLBRIGHT, 5.0 / 35.0, S_ZTREEDES_X3) = none
-	S_ZTREEDES_X3('TRDT', 9 | FF_FULLBRIGHT, 5.0 / 35.0, S_ZTREEDES_X4) = none
-	S_ZTREEDES_X4('TRDT', 10 | FF_FULLBRIGHT, 5.0 / 35.0, S_ZTREEDES_X5) = none
-	S_ZTREEDES_X5('TRDT', 11 | FF_FULLBRIGHT, 5.0 / 35.0, S_ZTREEDES_X6) = none
-	S_ZTREEDES_X6('TRDT', 12 | FF_FULLBRIGHT, 5.0 / 35.0, S_ZTREEDES_X7) = A_Explode
-	S_ZTREEDES_X7('TRDT', 13 | FF_FULLBRIGHT, 5.0 / 35.0, S_ZTREEDES_X8) = none
-	S_ZTREEDES_X8('TRDT', 14, 5.0 / 35.0, S_ZTREEDES_X9) = none
-	S_ZTREEDES_X9('TRDT', 15, 5.0 / 35.0, S_ZTREEDES_X10) = none
-	S_ZTREEDES_X10('TRDT', 16, -1.0, none) = none
 	S_GIBS1('GIBS', 0, -1.0, none) = none
-	S_PLAY_F_FDTH1('FDTH', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_F_FDTH2) = none
-	S_PLAY_F_FDTH2('FDTH', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH3) = none
-	S_PLAY_C_FDTH1('FDTH', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_C_FDTH2) = none
-	S_PLAY_C_FDTH2('FDTH', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH3) = none
-	S_PLAY_M_FDTH1('FDTH', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_M_FDTH2) = none
-	S_PLAY_M_FDTH2('FDTH', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH3) = none
-	S_PLAY_FDTH3('FDTH', 6 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH4) = none
-	S_PLAY_FDTH4('FDTH', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH5) = A_Scream
-	S_PLAY_FDTH5('FDTH', 8 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH6) = none
-	S_PLAY_FDTH6('FDTH', 9 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH7) = none
-	S_PLAY_FDTH7('FDTH', 10 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH8) = none
-	S_PLAY_FDTH8('FDTH', 11 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH9) = none
-	S_PLAY_FDTH9('FDTH', 12 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH10) = none
-	S_PLAY_FDTH10('FDTH', 13 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH11) = none
-	S_PLAY_FDTH11('FDTH', 14 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH12) = none
-	S_PLAY_FDTH12('FDTH', 15 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH13) = none
-	S_PLAY_FDTH13('FDTH', 16 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH14) = none
-	S_PLAY_FDTH14('FDTH', 17 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH15) = none
-	S_PLAY_FDTH15('FDTH', 18 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH16) = A_NoBlocking
-	S_PLAY_FDTH16('FDTH', 19 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH17) = none
-	S_PLAY_FDTH17('FDTH', 20 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH18) = none
-	S_PLAY_FDTH18('FDTH', 21 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH19) = none
-	S_PLAY_FDTH19('ACLO', 4, 35.0 / 35.0, S_PLAY_FDTH19) = A_CheckBurnGone
 	S_PLAY_FDTH20('ACLO', 4, 8.0 / 35.0, none) = none
 }
 

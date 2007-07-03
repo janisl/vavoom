@@ -380,6 +380,8 @@ final void A_FreezeDeath()
 	bNoPassMobj = false;
 	Height *= 4.0;
 	PlaySound('FreezeDeath', CHAN_VOICE);
+	Translation = 0;	//no translation
+	bIceCorpse = true;
 
 	if (bIsPlayer)
 	{

@@ -384,119 +384,12 @@ final void SendExplosion(int etype, TVec org)
 
 void Died(EntityEx source, EntityEx inflictor)
 {
+	::Died(source, inflictor);
+
 	int SpeechNum;
 	RogueConSpeech *Speech;
 	class<Actor> DropItemType;
 	Actor A;
-
-	if (inflictor && inflictor.bNoExtremeDeath)
-	{
-		//	Prevent gibing animation.
-		Health = -1;
-	}
-
-	if (bIsPlayer && Level.bDeathSlideShow)
-	{
-		//	Start sad finale.
-		Player(Player).ClientFinaleType(1);
-		Level.Completed(-1, -1, 0);
-	}
-
-	bShootable = false;
-	bFloat = false;
-	bSkullFly = false;
-
-	if (!bSpawnCeiling)
-		bNoGravity = false;
-
-	bDropOff = true;
-	bCorpse = true;
-	bNoPassMobj = true;
-	Height /= 4.0;
-
-	if (bCountKill && Special)
-	{
-		// Initiate monster death actions
-		Level.ExecuteActionSpecial(Special, Args[0], Args[1], Args[2], Args[3],
-			Args[4], NULL, 0, self);
-	}
-	if (source && source.bIsPlayer)
-	{
-		// count for intermission
-		if (bCountKill)
-			source.Player.KillCount++;
-
-		if (bIsPlayer)
-		{
-			source.Player.FragsStats[Player.GetPlayerNum()]++;
-			if (source == self)
-			{
-				Player.Frags--;
-			}
-			else
-			{
-				source.Player.Frags++;
-			}
-		}
-	}
-	else if (!Level.Game.netgame && bCountKill)
-	{
-		// count all monster deaths,
-		// even those caused by other monsters
-		Level.Game.Players[0].KillCount++;
-	}
-	if (bCountKill)
-		Level.CurrentKills++;
-
-	if (bIsPlayer)
-	{
-		// count environment kills against you
-		if (!source)
-		{
-			Player.FragsStats[Player.GetPlayerNum()]++;
-			Player.Frags--;
-		}
-
-		bSolid = false;
-		Player.PlayerState = PST_DEAD;
-		Player(Player).DropWeapon();
-#ifdef FIXME
-		if (Player == Level.Game.Players[consoleplayer] && automapactive)
-		{
-			// don't die in auto map,
-			// switch view prior to dying
-			AM_Stop();
-		}
-#endif
-	}
-
-	if (DamageType == 'Fire' && FireDeathState)
-	{
-		SetState(FireDeathState);
-		if (bIsPlayer)
-		{
-			Player.SetViewState(ps_weapon,
-				Weapon(Player.ViewEnt).FireDeathWaveState);
-			Player.SetViewState(ps_flash, none);
-		}
-	}
-	else if (DamageType == 'Disintegrate' && DisruptDeathState)
-	{
-		SetState(DisruptDeathState);
-		PlaySound('human/disrupt', CHAN_BODY);
-	}
-	else if (Health < GibsHealth && GibsDeathState)
-	{
-		SetState(GibsDeathState);
-	}
-	else
-	{
-		SetState(DeathState);
-	}
-	StateTime -= Random() * 0.1;
-
-	if (StateTime < 0.1)
-		StateTime = 0.1;
 
 	SpeechNum = GetSpeech();
 	if (SpeechNum)
@@ -553,6 +446,45 @@ void Died(EntityEx source, EntityEx inflictor)
 		A.Velocity.y = (Random() - Random()) * 35.0;
 		A.Velocity.z = (5.0 + Random() * 4.0) * 35.0;
 		A.bDropped = true;	// special versions of items
+	}
+}
+
+//==========================================================================
+//
+//	KilledByPlayer
+//
+//==========================================================================
+
+void KilledByPlayer(EntityEx source)
+{
+	// Check for frag changes
+	if (bIsPlayer)
+	{
+		source.Player.FragsStats[Player.GetPlayerNum()]++;
+		if (source == self)
+		{
+			Player.Frags--;
+		}
+		else
+		{
+			source.Player.Frags++;
+		}
+	}
+}
+
+//==========================================================================
+//
+//	PlayerKilled
+//
+//==========================================================================
+
+void PlayerKilled(EntityEx source, EntityEx inflictor)
+{
+	// Count environment kills against you
+	if (!source)
+	{
+		Player.FragsStats[Player.GetPlayerNum()]++;
+		Player.Frags--;
 	}
 }
 

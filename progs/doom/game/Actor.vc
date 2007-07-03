@@ -29,7 +29,6 @@ class Actor : EntityEx
 bool bTeleport;			// don't cross lines or look at heights
 bool bNoDeathmatch;
 bool bMonster;
-bool bNoGravKill;
 bool bBoss;
 bool bNoRespawn;
 bool bFaster;
@@ -795,109 +794,51 @@ final void SendExplosion2(int etype, TVec org)
 
 //==========================================================================
 //
-//	Died
+//	KilledByPlayer
 //
 //==========================================================================
 
-void Died(EntityEx source, EntityEx inflictor)
+void KilledByPlayer(EntityEx source)
 {
-	bShootable = false;
-	bFloat = false;
-	bSkullFly = false;
-
-	if (!bNoGravKill)
-		bNoGravity = false;
-
-	bDropOff = true;
-	bCorpse = true;
-	bNoPassMobj = true;
-	Height /= 4.0;
-
-	if (bCountKill && Special)
-	{
-		// Initiate monster death actions
-		Level.ExecuteActionSpecial(Special, Args[0], Args[1], Args[2],
-			Args[3], Args[4], NULL, 0, self);
-	}
-	if (source && source.bIsPlayer)
-	{
-		// count for intermission
-		if (bCountKill)
-			source.Player.KillCount++;
-
-		if (bIsPlayer)
-		{
-			if (source.Player.bIsBot)
-			{
-				Player(source.Player).Bot.Killed(self);
-			}
-
-			if (Player.bIsBot)
-			{
-				Player(Player).Bot.Died(Actor(source));
-			}
-
-			source.Player.FragsStats[Player.GetPlayerNum()]++;
-			if (source == self)
-			{
-				Player.Frags--;
-			}
-			else
-			{
-				source.Player.Frags++;
-			}
-		}
-	}
-	else if (!Level.Game.netgame && bCountKill)
-	{
-		// count all monster deaths,
-		// even those caused by other monsters
-		Level.Game.Players[0].KillCount++;
-	}
-	if (bCountKill)
-		Level.CurrentKills++;
-
+	// Check for frag changes
 	if (bIsPlayer)
 	{
-		// count environment kills against you
-		if (!source)
+		if (source.Player.bIsBot)
 		{
-			Player.FragsStats[Player.GetPlayerNum()]++;
+			Player(source.Player).Bot.Killed(self);
+		}
+
+		if (Player.bIsBot)
+		{
+			Player(Player).Bot.Died(Actor(source));
+		}
+
+		source.Player.FragsStats[Player.GetPlayerNum()]++;
+		if (source == self)
+		{
 			Player.Frags--;
 		}
-
-		bSolid = false;
-		Player.PlayerState = PST_DEAD;
-		Player(Player).DropWeapon();
-#ifdef FIXME
-		if (Player == Players[consoleplayer] && automapactive)
+		else
 		{
-			// don't die in auto map,
-			// switch view prior to dying
-			AM_Stop();
+			source.Player.Frags++;
 		}
-#endif
 	}
+}
 
-	if (Health < GibsHealth && GibsDeathState)
+//==========================================================================
+//
+//	PlayerKilled
+//
+//==========================================================================
+
+void PlayerKilled(EntityEx source, EntityEx inflictor)
+{
+	// Count environment kills against you
+	if (!source)
 	{
-		if (bFixedModel)
-		{
-			bFixedModel = false;
-			ModelSkin = "";
-		}
-		SetState(GibsDeathState);
+		Player.FragsStats[Player.GetPlayerNum()]++;
+		Player.Frags--;
 	}
-	else
-	{
-		SetState(DeathState);
-	}
-	StateTime -= Random() * 0.1;
-
-	if (StateTime < 0.1)
-		StateTime = 0.1;
-
-	DropStuff();
 }
 
 //==========================================================================

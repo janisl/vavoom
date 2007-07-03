@@ -78,6 +78,26 @@ final float GetReflectedAngle(EntityEx Other)
 	return angle;
 }
 
+//==========================================================================
+//
+//  Died
+//
+//==========================================================================
+
+void Died(EntityEx source, EntityEx inflictor)
+{
+	//	For Heresiarch special is actually the script to be executed.
+	int Script = Special;
+	Special = 0;
+
+	::Died(source, inflictor);
+
+	if (Script)
+	{
+		XLevel.StartACS(Script, 0, 0, 0, 0, self, NULL, 0, false, false);
+	}
+}
+
 //============================================================================
 //
 // Set balls to slow mode - actor is sorcerer

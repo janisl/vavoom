@@ -52,6 +52,7 @@ defaultproperties
 	bSpawnCeiling = true;
 	bNoGravity = true;
 	bNoBlood = true;
+	bNoGravKill = true;
 	IdleState = S_TURRET;
 	SeeState = S_TURRET_ACTIVE;
 	MissileState = S_TURRET_ATK1;

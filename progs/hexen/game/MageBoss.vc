@@ -92,6 +92,29 @@ __states__
 	S_MAGE_XDIE9('MAGE', 23, -1.0, none) = none
 	S_MAGE_ICE('MAGE', 24, 5.0 / 35.0, S_MAGE_ICE2) = A_FreezeDeath
 	S_MAGE_ICE2('MAGE', 24, 1.0 / 35.0, S_MAGE_ICE2) = A_FreezeDeathChunks
+	S_PLAY_M_FDTH1('FDTH', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_M_FDTH2)
+	{
+		PlaySound('PlayerMageBurnDeath', CHAN_VOICE);
+	}
+	S_PLAY_M_FDTH2('FDTH', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH3) = none
+	S_PLAY_FDTH3('FDTH', 6 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH4) = none
+	S_PLAY_FDTH4('FDTH', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH5) = A_Scream
+	S_PLAY_FDTH5('FDTH', 8 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH6) = none
+	S_PLAY_FDTH6('FDTH', 9 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH7) = none
+	S_PLAY_FDTH7('FDTH', 10 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH8) = none
+	S_PLAY_FDTH8('FDTH', 11 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH9) = none
+	S_PLAY_FDTH9('FDTH', 12 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH10) = none
+	S_PLAY_FDTH10('FDTH', 13 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH11) = none
+	S_PLAY_FDTH11('FDTH', 14 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH12) = none
+	S_PLAY_FDTH12('FDTH', 15 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH13) = none
+	S_PLAY_FDTH13('FDTH', 16 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH14) = none
+	S_PLAY_FDTH14('FDTH', 17 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH15) = none
+	S_PLAY_FDTH15('FDTH', 18 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH16) = A_NoBlocking
+	S_PLAY_FDTH16('FDTH', 19 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH17) = none
+	S_PLAY_FDTH17('FDTH', 20 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH18) = none
+	S_PLAY_FDTH18('FDTH', 21 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH19) = none
+	S_PLAY_FDTH19('ACLO', 4, 35.0 / 35.0, S_PLAY_FDTH19) = A_CheckBurnGone
+	S_PLAY_FDTH20('ACLO', 4, 8.0 / 35.0, none) = none
 }
 
 defaultproperties
@@ -110,6 +133,7 @@ defaultproperties
 	PainState = S_MAGE_PAIN;
 	DeathState = S_MAGE_DIE1;
 	GibsDeathState = S_MAGE_XDIE1;
+	FireDeathState = S_PLAY_M_FDTH1;
 	IceDeathState = S_MAGE_ICE;
 	PainSound = 'PlayerMagePain';
 	DeathSound = 'PlayerMageCrazyDeath';

@@ -3922,6 +3922,18 @@ int ArmorAbsorbDamage(EntityEx inflictor, EntityEx source, int damage,
 	return damage;
 }
 
+//==========================================================================
+//
+//  IsWeaponAlwaysExtremeDeath
+//
+//==========================================================================
+
+bool IsWeaponAlwaysExtremeDeath()
+{
+	// Always extreme death from fourth weapon
+	return ReadyWeapon == HexenDefs::WP_FOURTH;
+}
+
 defaultproperties
 {
 }

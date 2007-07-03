@@ -27,7 +27,6 @@ class PlayerPawn : Pawn
 	abstract;
 
 state Attack2State;
-state FireDeathState;
 
 bool bSafeToRemove;
 
