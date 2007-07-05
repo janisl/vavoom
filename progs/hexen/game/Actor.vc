@@ -34,95 +34,12 @@ const float TELEFOGHEIGHT	= 32.0;
 const float BONUSADD		= 0.2;
 
 bool bSpawnFloat;		// spawn random float z
-bool bRip;				// missile rips through solid targets
-bool bPushable;			// can be pushed by other moving mobjs
-bool bBoss;				// mobj is a major boss
-bool bNonShootable;		// mobj is totally non-shootable,
-						// but still considered solid
 bool bNoMorph;			// Won't morph into a pig.
 
 int _Special1;	// Special info
 int _Special2;	// Special info
 float Special2f;
 class<Actor> SpecialCID;
-
-//===========================================================================
-//
-//  SetInstigator
-//
-//===========================================================================
-
-void SetInstigator(Entity NewInstigator)
-{
-	Target = Actor(NewInstigator);
-}
-
-//===========================================================================
-//
-//  PlaySightSound
-//
-//===========================================================================
-
-void PlaySightSound()
-{
-	if (SightSound)
-	{
-		PlaySound(SightSound, CHAN_VOICE);
-	}
-}
-
-//===========================================================================
-//
-//  SetDropped
-//
-//===========================================================================
-
-void SetDropped()
-{
-	bDropped = true;
-}
-
-//===========================================================================
-//
-//  StartFloatBob
-//
-//===========================================================================
-
-void StartFloatBob(Entity Src)
-{
-	if (bFloatBob)
-	{
-		Origin.z = Src.Origin.z - Src.FloorZ;
-		SetOrigin2(Origin);
-	}
-}
-
-//===========================================================================
-//
-//  ThingDestroy
-//
-//===========================================================================
-
-bool ThingDestroy()
-{
-	if (bShootable)
-	{
-		Damage(none, none, 10000);
-		return true;
-	}
-	return false;
-}
-
-//===========================================================================
-//
-//  ThingDamage
-//
-//===========================================================================
-
-void ThingDamage(int Amount)
-{
-	Damage(none, none, Amount);
-}
 
 //===========================================================================
 //
@@ -148,28 +65,6 @@ bool IsTeleportSpot2()
 
 //===========================================================================
 //
-//  CanTeleport
-//
-//===========================================================================
-
-bool CanTeleport()
-{
-	return !bNoTeleport;
-}
-
-//===========================================================================
-//
-//  SetPainState
-//
-//===========================================================================
-
-void SetPainState()
-{
-	SetState(PainState);
-}
-
-//===========================================================================
-//
 //  IsPointPusher
 //
 //===========================================================================
@@ -188,28 +83,6 @@ bool IsPointPusher()
 bool IsPointPuller()
 {
 	return !!PointPuller(self);
-}
-
-//===========================================================================
-//
-//  CanWindThrust
-//
-//===========================================================================
-
-bool CanWindThrust()
-{
-	return bWindThrust;
-}
-
-//===========================================================================
-//
-//  GetPlayerViewHeight
-//
-//===========================================================================
-
-float GetPlayerViewHeight()
-{
-	return Player(Player).ViewHeight;
 }
 
 //==========================================================================
@@ -233,6 +106,13 @@ int HITDICE(int a)
 
 void OnMapSpawn(mthing_t * mthing)
 {
+	if (Level.Game.gameskill == sk_nightmare)
+	{
+		ReactionCount = 0;
+	}
+
+	LastLook = P_Random() % MAXPLAYERS;
+
 	bCheckLineBlocking = false;
 	bCheckLineBlockMonsters = false;
 	if (!bMissile)
@@ -309,7 +189,7 @@ void OnMapSpawn(mthing_t * mthing)
 		{
 			StateTime = 0.1 + Random() * StateTime;
 		}
-		if (bCountKill)
+		if (bMonster)
 		{
 			// Quantize angle to 45 degree increments
 			Angles.yaw = itof(45 * (mthing->angle / 45));
@@ -357,7 +237,7 @@ void OnMapSpawn(mthing_t * mthing)
 void Destroyed()
 {
 	// Remove from creature queue
-	if (bCountKill && bCorpse)
+	if (bMonster && bCorpse)
 	{
 		A_DeQueueCorpse();
 	}
@@ -381,7 +261,7 @@ Actor ActiveMinotaur()
 	{
 		if (mo.Health <= 0)
 			continue;
-		if (!mo.bCountKill)
+		if (!mo.bMonster)
 			continue;	// for morphed minotaurs
 		if (mo.bCorpse)
 			continue;
@@ -532,7 +412,7 @@ bool MorphMonster()
 
 	if (bIsPlayer)
 		return false;
-	if (!bCountKill)
+	if (!bMonster)
 		return false;
 	if (bBoss)
 		return false;
@@ -913,7 +793,7 @@ void TeleportOther()
 	else
 	{
 		// If death action, run it upon teleport
-		if (bCountKill && Special)
+		if (bMonster && Special)
 		{
 			RemoveFromTIDList();
 			Level.ExecuteActionSpecial(Special, Args[0], Args[1], Args[2],
@@ -923,245 +803,6 @@ void TeleportOther()
 
 		// Send all monsters to deathmatch spots
 		TeleportToDeathmatchStarts();
-	}
-}
-
-//==========================================================================
-//
-//	Touch
-//
-//==========================================================================
-
-bool Touch(Entity InOther)
-{
-	bool solid;
-	int damage;
-	Actor Other;
-
-	Other = Actor(InOther);
-	if (!Other.bSolid && !Other.bSpecial && !Other.bShootable)
-		return true;
-
-	// Check for skulls slamming into things
-	if (bSkullFly)
-	{
-		if (Class == MinotaurFriend)
-		{
-			// Slamming minotaurs shouldn't move non-creatures
-			if (!Other.bCountKill)
-			{
-				return false;
-			}
-		}
-		damage = ((P_Random() % 8) + 1) * MissileDamage;
-		Other.Damage(self, self, damage);
-		bSkullFly = false;
-		Velocity = vector(0.0, 0.0, 0.0);
-		SetState(SeeState);
-		return false;
-	}
-	// Check for blasted thing running into another
-	if (bBlasted && Other.bShootable)
-	{
-		if (!Other.bBoss && Other.bCountKill)
-		{
-			Other.Velocity.x += Velocity.x;
-			Other.Velocity.y += Velocity.y;
-			if ((Other.Velocity.x + Other.Velocity.y) > 3.0 * 35.0)
-			{
-				damage = (ftoi(Mass) / 100) + 1;
-				Other.Damage(self, self, damage);
-				damage = (ftoi(Other.Mass) / 100) + 1;
-				Damage(Other, Other, damage >> 2);
-			}
-			return false;
-		}
-	}
-	// Check for missile
-	if (bMissile)
-	{
-		// Check for a non-shootable mobj
-		if (Other.bNonShootable)
-		{
-			return true;
-		}
-		if (BounceType == BOUNCE_Hexen)
-		{
-			if (Target == Other || !Other.bSolid)
-			{
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-		}
-		if (Class == MageStaffFX2 && Other != Target)
-		{
-			// Class bosses not flagged boss so they can be blasted
-			if (!Other.bIsPlayer && !Other.bBoss && !ClassBoss(Other))
-			{
-				Other.Damage(self, Target, 10, DamageType);
-				return true;
-			}
-		}
-		if (Target && Target.Class == Other.Class)
-		{
-			// Don't hit same species as originator
-			if (Other == Target)
-			{
-				// Don't missile self
-				return true;
-			}
-			if (!Other.bIsPlayer)
-			{
-				// Hit same species as originator, explode, no damage
-				return false;
-			}
-		}
-		if (!Other.bShootable)
-		{
-			// Didn't do any damage
-			return !Other.bSolid;
-		}
-		if (bRip)
-		{
-			if (!Other.bNoBlood && !Other.bReflective && !Other.bInvulnerable)
-			{
-				// Ok to spawn some blood
-				SpawnRipperBlood();
-			}
-			damage = ((P_Random() & 3) + 2) * MissileDamage;
-			Other.Damage(self, Target, damage, DamageType);
-			if (Other.bPushable && !bCannotPush)
-			{
-				// Push thing
-				Other.Velocity.x += Velocity.x / 4.0;
-				Other.Velocity.y += Velocity.y / 4.0;
-			}
-//WHAT A FUCK IS THIS???????			numspechit = 0;
-			return true;
-		}
-		// Do damage
-		damage = ((P_Random() % 8) + 1) * MissileDamage;
-		if (damage)
-		{
-			if (!Other.bNoBlood && !Other.bReflective &&
-				!Other.bInvulnerable &&
-				!(Class == TelOtherFX1) &&
-				!(Class == TelOtherFX2) &&
-				!(Class == TelOtherFX3) &&
-				!(Class == TelOtherFX4) &&
-				!(Class == TelOtherFX5) && (P_Random() < 192))
-			{
-				Other.SpawnBloodSplatter(Origin, damage);
-			}
-			Other.Damage(self, Target, damage, DamageType);
-		}
-		return false;
-	}
-	if (Other.bPushable && !bCannotPush)
-	{
-		// Push thing
-		Other.Velocity.x += Velocity.x / 4.0;
-		Other.Velocity.y += Velocity.y / 4.0;
-	}
-	// Check for special thing
-	if (Other.bSpecial)
-	{
-		solid = Other.bSolid;
-		Pickup(Other).TouchSpecial(self);	// Can remove thing
-		return !solid;
-	}
-	return !Other.bSolid;
-}
-
-//===========================================================================
-//
-//	CheckForPushSpecial
-//
-//===========================================================================
-
-void CheckForPushSpecial(line_t * line, int side)
-{
-	if (line->special)
-	{
-		if (bActivatePushWall)
-		{
-			HexenLevelInfo(Level).ActivateLine(line, self, side, SPAC_PUSH);
-		}
-		else if (bActivateImpact)
-		{
-			HexenLevelInfo(Level).ActivateLine(line,
-				bMissile ? Actor(Target) : self, side, SPAC_IMPACT);
-		}
-	}
-}
-
-//==========================================================================
-//
-//	BlockedByLine
-//
-//==========================================================================
-
-void BlockedByLine(line_t * ld)
-{
-	if (bBlasted)
-	{
-		Damage(none, none, ftoi(Mass) >> 5);
-	}
-	CheckForPushSpecial(ld, 0);
-}
-
-//==========================================================================
-//
-//  PushLine
-//
-//==========================================================================
-
-void PushLine(tmtrace_t* tmtrace)
-{
-	if (bColideWithWorld)
-	{
-		int numSpecHitTemp;
-		line_t *ld;
-		int side;
-
-		if (bBlasted)
-		{
-			Damage(none, none, ftoi(Mass) >> 5);
-		}
-		numSpecHitTemp = tmtrace->NumSpecHit;
-		while (numSpecHitTemp > 0)
-		{
-			numSpecHitTemp--;
-			// see if the line was crossed
-			ld = tmtrace->SpecHit[numSpecHitTemp];
-			side = PointOnPlaneSide(Origin, ld);
-			CheckForPushSpecial(ld, side);
-		}
-	}
-}
-
-//==========================================================================
-//
-//	CrossSpecialLine
-//
-//==========================================================================
-
-void CrossSpecialLine(line_t *ld, int side)
-{
-	if (bIsPlayer)
-	{
-		HexenLevelInfo(Level).ActivateLine(ld, self, side, SPAC_CROSS);
-	}
-	else if (bActivateMCross)
-	{
-		HexenLevelInfo(Level).ActivateLine(ld, self, side, SPAC_MCROSS);
-	}
-	else if (bActivatePCross)
-	{
-		HexenLevelInfo(Level).ActivateLine(ld, self, side, SPAC_PCROSS);
 	}
 }
 
@@ -1767,6 +1408,7 @@ final void A_FreeTargMobj()
 	bShootable = false;
 	bFloat = false;
 	bCountKill = false;
+	bMonster = false;
 	bSkullFly = false;
 	bDropOff = true;
 	bNoGravity = true;

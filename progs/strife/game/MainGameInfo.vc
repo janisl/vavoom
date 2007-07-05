@@ -542,9 +542,11 @@ void TranslateThing(mthing_t* mthing)
 
 	// translate the spawn flags to Hexen format.
 	flags = mthing->options;
-	mthing->options = (flags & 0xf) | 0x7e0;
+	mthing->options = (flags & 0x7) | 0x7e0;
 	if (flags & 0x10)
 		mthing->options &= ~StrifeLevelInfo::MTF_GSINGLE;
+	if (flags & 0x08)
+		mthing->options |= LineSpecialLevelInfo::MTF_STANDSTILL;
 	if (mthing->type >= 118 && mthing->type <= 127)
 	{
 		//	Map start spots, i.e. player starts.

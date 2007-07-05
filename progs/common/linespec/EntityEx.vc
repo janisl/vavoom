@@ -150,6 +150,17 @@ bool bNoGrudge;
 bool bNeverTarget;		//	Neve switch target to this actor
 bool bNoTargetSwitch;	//	Never switches target until current one is dead
 bool bNoGravKill;		//	Doesn't set NoGravity to false when killed
+bool bFaster;
+bool bFastMelee;
+bool bStanding;			// Don't walk around.
+bool bBoss;				// mobj is a major boss
+bool bNonShootable;		// mobj is totally non-shootable,
+						// but still considered solid
+bool bThruGhost;		// missile will pass through ghosts
+bool bRip;				// missile rips through solid targets
+bool bPushable;			// can be pushed by other moving mobjs
+bool bBloodlessImpact;	//	Don't spawn blood when hitting a thing
+bool bMonster;
 
 //  Params
 float			Speed;
@@ -4009,6 +4020,474 @@ void Died(EntityEx source, EntityEx inflictor)
 	DropStuff();
 }
 
+//==========================================================================
+//
+//	GetStateTime
+//
+//==========================================================================
+
+final float GetStateTime(state AState, float AStateTime)
+{
+	if (Level.Game.fastparm)
+	{
+		if (bFaster && StateIsInRange(AState, SeeState, none, 8))
+		{
+			AStateTime /= 2.0;
+		}
+		if (bFastMelee && StateIsInRange(AState, MeleeState, none, 3))
+		{
+			AStateTime /= 2.0;
+		}
+	}
+	return AStateTime;
+}
+
+//==========================================================================
+//
+//  NightmareRespawn
+//
+//==========================================================================
+
+final void NightmareRespawn()
+{
+	float x;
+	float y;
+	float z;
+	EntityEx A;
+
+	x = SpawnPoint.x;
+	y = SpawnPoint.y;
+
+	// somthing is occupying it's position?
+	if (!CheckPosition(vector(x, y, ONFLOORZ)))
+		return;	// no respwan
+
+	// spawn a teleport fog at old spot
+	A = Spawn(LineSpecialGameInfo(Level.Game).TeleportFogClass,
+		vector(Origin.x, Origin.y, ONFLOORZ));
+	A.Origin.z += LineSpecialGameInfo(Level.Game).TeleFogHeight;
+	A.PlaySound('misc/teleport', CHAN_BODY);
+
+	// spawn a teleport fog at the new spot
+	A = Spawn(LineSpecialGameInfo(Level.Game).TeleportFogClass,
+		vector(x, y, ONFLOORZ));
+	A.Origin.z += LineSpecialGameInfo(Level.Game).TeleFogHeight;
+	A.PlaySound('misc/teleport', CHAN_BODY);
+
+	// spawn the new monster
+
+	// spawn it
+	if (bSpawnCeiling)
+		z = ONCEILINGZ;
+	else
+		z = ONFLOORZ;
+
+	// inherit attributes from deceased one
+	A = Spawn(class<EntityEx>(Class), vector(x, y, z));
+	Level.CopyMThing(&SpawnPoint, &A.SpawnPoint);
+	A.Angles.yaw = itof(45 * (SpawnPoint.angle / 45));
+
+	if (SpawnPoint.options & LineSpecialLevelInfo::MTF_AMBUSH)
+		A.bAmbush = true;
+	if (SpawnPoint.options & LineSpecialLevelInfo::MTF_STANDSTILL)
+		A.bStanding = true;
+
+	A.ReactionCount = 18;
+
+	// remove the old monster
+	Destroy();
+}
+
+//==========================================================================
+//
+//	Touch
+//
+//==========================================================================
+
+bool Touch(Entity InOther)
+{
+	bool solid;
+	int damage;
+	EntityEx Other;
+
+	Other = EntityEx(InOther);
+
+	//	For Korax Arena
+	if (Other.IsTouched(self))
+		return !Other.bSolid && !Other.bSpecial && !Other.bShootable;
+		
+	if (!Other.bSolid && !Other.bSpecial && !Other.bShootable)
+		return true;
+
+	// check for skulls slamming into things
+	if (bSkullFly)
+	{
+		return Slam(Other);
+	}
+
+	// Check for blasted thing running into another
+	if (bBlasted && Other.bShootable)
+	{
+		if (!Other.bBoss && Other.bCountKill)
+		{
+			Other.Velocity.x += Velocity.x;
+			Other.Velocity.y += Velocity.y;
+			if ((Other.Velocity.x + Other.Velocity.y) > 3.0 * 35.0)
+			{
+				damage = (ftoi(Mass) / 100) + 1;
+				Other.Damage(self, self, damage);
+				damage = (ftoi(Other.Mass) / 100) + 1;
+				Damage(Other, Other, damage >> 2);
+			}
+			return false;
+		}
+	}
+
+	// missiles can hit other things
+	if (bMissile)
+	{
+		// Check for a non-shootable mobj
+		if (Other.bNonShootable)
+		{
+			return true;
+		}
+		// Check for passing through a ghost
+		if (Other.Alpha < 1.0 && bThruGhost)
+		{
+			return true;
+		}
+
+		if ((BounceType == BOUNCE_Doom || BounceType == BOUNCE_Hexen) &&
+			MissileDamage == 0)
+		{
+			return Target == Other || !Other.bSolid;
+		}
+
+		switch (SpecialMissileHit(Other))
+		{
+		case 0:
+			return false;
+		case 1:
+			return true;
+		}
+
+		if (Target && Target.GetSpecies() == Other.GetSpecies())
+		{
+			// Don't hit same species as originator.
+			if (Other == Target)
+			{
+				// Don't missile self
+				return true;
+			}
+			if (!Other.bIsPlayer)
+			{
+				// Explode, but do no damage.
+				// Let players missile other players.
+				return false;
+			}
+		}
+
+		if (!Other.bShootable)
+		{
+			// didn't do any damage
+			return !Other.bSolid;
+		}
+
+		//	Don't hit spectres with non-sigil weapons.
+		if (Other.bSpectral && !bSpectral)
+		{
+			return true;
+		}
+
+		if (bRip)
+		{
+			if (!Other.bNoBlood && !Other.bReflective && !Other.bInvulnerable)
+			{
+				// Ok to spawn some blood
+				SpawnRipperBlood();
+			}
+			PlaySound('misc/ripslop', CHAN_BODY);
+			damage = ((P_Random() & 3) + 2) * MissileDamage;
+			Other.Damage(self, Target, damage, DamageType);
+			if (Other.bPushable && !bCannotPush)
+			{
+				// Push thing
+				Other.Velocity.x += Velocity.x / 4.0;
+				Other.Velocity.y += Velocity.y / 4.0;
+			}
+//WHAT A FUCK IS THIS???????			numspechit = 0;
+			return true;
+		}
+
+		// damage / explode
+		damage = ((P_Random() % 8) + 1) * MissileDamage;
+		if (damage > 0)
+		{
+			if (LineSpecialGameInfo(Level.Game).bBloodSplatter &&
+				!Other.bNoBlood && !Other.bReflective &&
+				!Other.bInvulnerable && !Other.bDormant &&
+				!bBloodlessImpact && P_Random() < 192)
+			{
+				Other.SpawnBloodSplatter(Origin, damage);
+			}
+			Other.Damage(self, Target, damage, DamageType);
+		}
+		// don't traverse any more
+		return false;
+	}
+
+	if (Other.bPushable && !bCannotPush)
+	{
+		// Push thing
+		Other.Velocity.x += Velocity.x / 4.0;
+		Other.Velocity.y += Velocity.y / 4.0;
+	}
+
+	solid = Other.bSolid;
+
+	// check for special pickup
+	if (Other.bSpecial)
+	{
+		Other.TouchSpecial(self);	// Can remove thing
+	}
+
+	return !solid;
+}
+
+//==========================================================================
+//
+//	IsTouched
+//
+//	For Korax Arena
+//
+//==========================================================================
+
+bool IsTouched(Entity Toucher)
+{
+	return false;
+}
+
+//===========================================================================
+//
+//	Slam
+//
+//===========================================================================
+
+bool Slam(EntityEx Other)
+{
+	bSkullFly = false;
+	Velocity = vector(0.0, 0.0, 0.0);
+	if (!bDormant)
+	{
+		int damage = ((P_Random() % 8) + 1) * MissileDamage;
+		Other.Damage(self, self, damage, 'Melee');
+		SetState(SeeState ? SeeState : IdleState);
+	}
+	else
+	{
+		SetState(IdleState);
+		StateTime = -1.0;
+	}
+	return false;	// stop moving
+}
+
+//==========================================================================
+//
+//	SpecialMissileHit
+//
+//==========================================================================
+
+int SpecialMissileHit(EntityEx Other)
+{
+	return -1;
+}
+
+//==========================================================================
+//
+//	GetSpecies
+//
+//==========================================================================
+
+class<EntityEx> GetSpecies()
+{
+	return class<EntityEx>(Class);
+}
+
+//===========================================================================
+//
+//	CheckForPushSpecial
+//
+//===========================================================================
+
+final void CheckForPushSpecial(line_t* line, int side)
+{
+	if (line->special)
+	{
+		if (bActivatePushWall)
+		{
+			LineSpecialLevelInfo(Level).ActivateLine(line, self, side, SPAC_PUSH);
+		}
+		else if (bActivateImpact)
+		{
+			LineSpecialLevelInfo(Level).ActivateLine(line,
+				bMissile ? Target : self, side, SPAC_IMPACT);
+		}
+	}
+}
+
+//==========================================================================
+//
+//	BlockedByLine
+//
+//==========================================================================
+
+final void BlockedByLine(line_t* ld)
+{
+	if (bBlasted)
+	{
+		Damage(none, none, ftoi(Mass) >> 5);
+	}
+	CheckForPushSpecial(ld, 0);
+}
+
+//==========================================================================
+//
+//  PushLine
+//
+//==========================================================================
+
+final void PushLine(tmtrace_t* tmtrace)
+{
+	if (bColideWithWorld)
+	{
+		int numSpecHitTemp;
+		line_t *ld;
+		int side;
+
+		if (bBlasted)
+		{
+			Damage(none, none, ftoi(Mass) >> 5);
+		}
+		numSpecHitTemp = tmtrace->NumSpecHit;
+		while (numSpecHitTemp > 0)
+		{
+			numSpecHitTemp--;
+			// see if the line was crossed
+			ld = tmtrace->SpecHit[numSpecHitTemp];
+			side = PointOnPlaneSide(Origin, ld);
+			CheckForPushSpecial(ld, side);
+		}
+	}
+}
+
+//==========================================================================
+//
+//	CrossSpecialLine
+//
+//==========================================================================
+
+final void CrossSpecialLine(line_t *ld, int side)
+{
+	if (bIsPlayer)
+	{
+		LineSpecialLevelInfo(Level).ActivateLine(ld, self, side, SPAC_CROSS);
+	}
+	else if (bActivateMCross)
+	{
+		LineSpecialLevelInfo(Level).ActivateLine(ld, self, side, SPAC_MCROSS);
+	}
+	else if (bActivatePCross)
+	{
+		LineSpecialLevelInfo(Level).ActivateLine(ld, self, side, SPAC_PCROSS);
+	}
+	else if (ld->special == LNSPEC_Teleport ||
+		ld->special == LNSPEC_TeleportNoFog ||
+		ld->special == LNSPEC_TeleportLine)
+	{
+		//	Teleport hack
+		LineSpecialLevelInfo(Level).ActivateLine(ld, self, side, SPAC_MCROSS);
+	}
+}
+
+//==========================================================================
+//
+//	Activate
+//
+//==========================================================================
+
+bool Activate()
+{
+	if (bMonster)
+	{
+		// Monster
+		if (bDormant)
+		{
+			bDormant = false;
+			StateTime = 0.1;
+			return true;
+		}
+	}
+	return false;
+}
+
+//==========================================================================
+//
+//	Deactivate
+//
+//==========================================================================
+
+bool Deactivate()
+{
+	if (bMonster)
+	{
+		// Monster
+		if (!bDormant)
+		{
+			bDormant = true;
+			StateTime = -1.0;
+			return true;
+		}
+	}
+	return false;
+}
+
+//==========================================================================
+//
+//  FaceMovementDirection
+//
+//==========================================================================
+
+final void FaceMovementDirection()
+{
+	switch (MoveDir)
+	{
+	case DI_EAST:
+		Angles.yaw = 0.0;
+		break;
+	case DI_NORTHEAST:
+		Angles.yaw = 45.0;
+		break;
+	case DI_NORTH:
+		Angles.yaw = 90.0;
+		break;
+	case DI_NORTHWEST:
+		Angles.yaw = 135.0;
+		break;
+	case DI_WEST:
+		Angles.yaw = 180.0;
+		break;
+	case DI_SOUTHWEST:
+		Angles.yaw = 225.0;
+		break;
+	case DI_SOUTH:
+		Angles.yaw = 270.0;
+		break;
+	case DI_SOUTHEAST:
+		Angles.yaw = 315.0;
+		break;
+	}
+}
+
 float GetBaseViewHeight()
 {
 	return 0.0;
@@ -4038,6 +4517,10 @@ void SpawnBloodSplatter(TVec hit_point, int damage)
 }
 
 void SpawnBloodSplatter2(TVec hit_point)
+{
+}
+
+void SpawnRipperBlood()
 {
 }
 
@@ -4075,79 +4558,24 @@ bool IsServant()
 	return false;
 }
 
+void KilledByPlayer(EntityEx source)
+{
+}
+
+void PlayerKilled(EntityEx source, EntityEx inflictor)
+{
+}
+
+void DropStuff()
+{
+}
+
+void TouchSpecial(EntityEx Toucher)
+{
+}
+
 //**************************************************************************
 //**************************************************************************
-
-//==========================================================================
-//
-//  SetInstigator
-//
-//==========================================================================
-
-void SetInstigator(Entity NewInstigator)
-{
-}
-
-//==========================================================================
-//
-//  PlaySightSound
-//
-//==========================================================================
-
-void PlaySightSound()
-{
-}
-
-//==========================================================================
-//
-//  SetDropped
-//
-//==========================================================================
-
-void SetDropped()
-{
-}
-
-//==========================================================================
-//
-//  StartFloatBob
-//
-//==========================================================================
-
-void StartFloatBob(Entity Src)
-{
-}
-
-//==========================================================================
-//
-//  SaveFloatBobOffset
-//
-//==========================================================================
-
-void SaveFloatBobOffset()
-{
-}
-
-//==========================================================================
-//
-//  ThingDestroy
-//
-//==========================================================================
-
-bool ThingDestroy()
-{
-	return false;
-}
-
-//==========================================================================
-//
-//  ThingDamage
-//
-//==========================================================================
-
-void ThingDamage(int Amount)
-{
-}
 
 //==========================================================================
 //
@@ -4173,27 +4601,6 @@ bool IsTeleportSpot2()
 
 //==========================================================================
 //
-//  CanTeleport
-//
-//==========================================================================
-
-bool CanTeleport()
-{
-	return false;
-}
-
-//==========================================================================
-//
-//  SetPainState
-//
-//==========================================================================
-
-void SetPainState()
-{
-}
-
-//==========================================================================
-//
 //  IsPointPusher
 //
 //==========================================================================
@@ -4212,40 +4619,6 @@ bool IsPointPusher()
 bool IsPointPuller()
 {
 	return false;
-}
-
-//==========================================================================
-//
-//  CanWindThrust
-//
-//==========================================================================
-
-bool CanWindThrust()
-{
-	return false;
-}
-
-//==========================================================================
-//
-//  GetPlayerViewHeight
-//
-//==========================================================================
-
-float GetPlayerViewHeight()
-{
-	return 0.0;
-}
-
-void KilledByPlayer(EntityEx source)
-{
-}
-
-void PlayerKilled(EntityEx source, EntityEx inflictor)
-{
-}
-
-void DropStuff()
-{
 }
 
 defaultproperties

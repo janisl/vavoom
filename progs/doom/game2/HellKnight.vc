@@ -27,6 +27,17 @@ class HellKnight : BaronOfHell
 	__mobjinfo__(69)
 	__scriptid__(113);
 
+//==========================================================================
+//
+//	GetSpecies
+//
+//==========================================================================
+
+class<EntityEx> GetSpecies()
+{
+	return BaronOfHell;
+}
+
 __states__
 {
 	S_BOS2_STND('BOS2', 0, 10.0 / 35.0, S_BOS2_STND2) = A_Look

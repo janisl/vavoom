@@ -67,7 +67,7 @@ final void A_FAxeAttack()
 		{
 			Owner.PlaySound('FighterHammerMiss', CHAN_WEAPON);
 		}
-		if (AimTarget.bCountKill || AimTarget.bIsPlayer)
+		if (AimTarget.bMonster || AimTarget.bIsPlayer)
 		{
 			AimTarget.Thrust(angles.yaw, power);
 		}

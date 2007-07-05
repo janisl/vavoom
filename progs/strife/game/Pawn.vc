@@ -33,58 +33,6 @@ bool bCkeckNoMonsters;
 
 //==========================================================================
 //
-//	OnMapSpawn
-//
-//==========================================================================
-
-void OnMapSpawn(mthing_t *mthing)
-{
-	if (bCkeckNoMonsters && Level.Game.nomonsters)
-	{
-		Destroy();
-		return;
-	}
-	::OnMapSpawn(mthing);
-}
-
-//==========================================================================
-//
-//	Activate
-//
-//==========================================================================
-
-bool Activate()
-{
-	// Monster
-	if (bDormant)
-	{
-		bDormant = false;
-		StateTime = 0.1;
-		return true;
-	}
-	return false;
-}
-
-//==========================================================================
-//
-//	Deactivate
-//
-//==========================================================================
-
-bool Deactivate()
-{
-	// Monster
-	if (!bDormant)
-	{
-		bDormant = true;
-		StateTime = -1.0;
-		return true;
-	}
-	return false;
-}
-
-//==========================================================================
-//
 //	CheckRobotRange
 //
 //==========================================================================
@@ -928,6 +876,7 @@ defaultproperties
 	bSolid = true;
 	bShootable = true;
 	bCountKill = true;
+	bMonster = true;
 	bCkeckNoMonsters = true;
 	bActivateMCross = true;
 	bActivatePushWall = true;

@@ -38,7 +38,7 @@ int QuestID;
 //
 //==========================================================================
 
-bool ValidTouch(Actor Toucher)
+bool ValidTouch(EntityEx Toucher)
 {
 	if (!Toucher.bIsPlayer)
 	{
@@ -92,7 +92,7 @@ void HideSpecial()
 //
 //==========================================================================
 
-void TouchSpecial(Actor Toucher)
+void TouchSpecial(EntityEx Toucher)
 {
 	if (!ValidTouch(Toucher))
 	{
@@ -100,7 +100,7 @@ void TouchSpecial(Actor Toucher)
 		return;
 	}
 
-	if (!HandlePickup(Toucher))
+	if (!HandlePickup(Actor(Toucher)))
 	{
 		return;
 	}

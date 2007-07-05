@@ -326,7 +326,6 @@ EXTRA_DIST = compile.bat \
 	game/BlasterSmoke.vc \
 	game/Effect.vc \
 	game/BrownPillar.vc \
-	game/LavaInflictor.vc \
 	game/Mummy.vc \
 	game/Chandelier.vc \
 	game/CrossbowFX1.vc \

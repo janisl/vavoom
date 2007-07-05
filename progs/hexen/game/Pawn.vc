@@ -26,104 +26,6 @@
 class Pawn : Actor
 	abstract;
 
-bool bCheckNoMonsters;		// Don't spawn if monsters are disabled
-
-//==========================================================================
-//
-//	OnMapSpawn
-//
-//==========================================================================
-
-void OnMapSpawn(mthing_t * mthing)
-{
-	if (bCheckNoMonsters && Level.Game.nomonsters)
-	{
-		Destroy();
-		return;
-	}
-	if (Level.Game.gameskill == sk_nightmare)
-	{
-		ReactionCount = 0;
-	}
-
-	LastLook = P_Random() % MAXPLAYERS;
-
-	::OnMapSpawn(mthing);
-}
-
-//==========================================================================
-//
-//	Activate
-//
-//==========================================================================
-
-bool Activate()
-{
-	// Monster
-	if (bDormant)
-	{
-		bDormant = false;
-		StateTime = 0.1;
-		return true;
-	}
-	return false;
-}
-
-//==========================================================================
-//
-//	Deactivate
-//
-//==========================================================================
-
-bool Deactivate()
-{
-	// Monster
-	if (!bDormant)
-	{
-		bDormant = true;
-		StateTime = -1.0;
-		return true;
-	}
-	return false;
-}
-
-//==========================================================================
-//
-//  FaceMovementDirection
-//
-//==========================================================================
-
-void FaceMovementDirection()
-{
-	switch (MoveDir)
-	{
-	case DI_EAST:
-		Angles.yaw = 0.0;
-		break;
-	case DI_NORTHEAST:
-		Angles.yaw = 45.0;
-		break;
-	case DI_NORTH:
-		Angles.yaw = 90.0;
-		break;
-	case DI_NORTHWEST:
-		Angles.yaw = 135.0;
-		break;
-	case DI_WEST:
-		Angles.yaw = 180.0;
-		break;
-	case DI_SOUTHWEST:
-		Angles.yaw = 225.0;
-		break;
-	case DI_SOUTH:
-		Angles.yaw = 270.0;
-		break;
-	case DI_SOUTHEAST:
-		Angles.yaw = 315.0;
-		break;
-	}
-}
-
 //============================================================================
 //
 //  IsNotAttackingMaster
@@ -391,7 +293,7 @@ final void A_FreezeDeath()
 	}
 	else
 	{
-		if (bCountKill && Special)
+		if (bMonster && Special)
 		{
 			// Initiate monster death actions
 			Level.ExecuteActionSpecial(Special, Args[0], Args[1], Args[2],
@@ -484,9 +386,9 @@ defaultproperties
 	bSolid = true;
 	bShootable = true;
 	bCountKill = true;
+	bMonster = true;
 	bFloorClip = true;
 	bTelestomp = true;
 	bActivatePushWall = true;
 	bActivateMCross = true;
-	bCheckNoMonsters = true;
 }

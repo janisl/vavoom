@@ -56,7 +56,7 @@ bool Touch(Entity InOther)
 	// Check for blasted thing running into another
 	if (bBlasted && Other.bShootable)
 	{
-		if (!Other.bBoss && Other.bCountKill)
+		if (!Other.bBoss && Other.bMonster)
 		{
 			Other.Velocity.x += Velocity.x;
 			Other.Velocity.y += Velocity.y;
@@ -98,7 +98,7 @@ bool Touch(Entity InOther)
 		{
 			PlaySound('MageLightningZap', CHAN_VOICE);
 		}
-		if (Other.bCountKill && P_Random() < 64
+		if (Other.bMonster && P_Random() < 64
 			&& !GetSoundPlayingInfo(Other,
 				GetSoundID('PuppyBeat')))
 		{

@@ -36,7 +36,7 @@ class ZSuitOfArmor : Decoration
 
 final void A_SoAExplode()
 {
-	Actor A;
+	EntityEx A;
 	int i;
 
 	for (i = 0; i < 10; i++)
@@ -53,8 +53,12 @@ final void A_SoAExplode()
 	}
 	if (Args[0])
 	{
-		// Spawn an item
-		Spawn(class<Actor>(FindClassFromScriptId(Args[0])), Origin);
+		// Spawn an item. Don't spawn monsters it they are disabled.
+		class<EntityEx> Cls = class<EntityEx>(FindClassFromScriptId(Args[0]));
+		if (Cls && (!Level.Game.nomonsters || !Cls.default.bMonster))
+		{
+			Spawn(Cls, Origin, vector(0.0, 0.0, 0.0));
+		}
 	}
 	A.PlaySound('SuitofArmorBreak', CHAN_VOICE);
 	Destroy();

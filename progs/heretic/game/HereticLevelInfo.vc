@@ -31,19 +31,6 @@ const int MAX_MACE_SPOTS	= 8;
 
 const int BODYQUESIZE		= 32;
 
-const int
-	MTF_EASY		= 0x0001,	// Skill flags.
-	MTF_NORMAL		= 0x0002,
-	MTF_HARD		= 0x0004,
-	MTF_AMBUSH		= 0x0008,	// Deaf monsters/do not react to sound.
-	MTF_DORMANT		= 0x0010,	// The thing is dormant
-	MTF_FIGHTER		= 0x0020,	// Thing appearing in player classes
-	MTF_CLERIC		= 0x0040,
-	MTF_MAGE		= 0x0080,
-	MTF_GSINGLE		= 0x0100,	// Appearing in game modes
-	MTF_GCOOP		= 0x0200,
-	MTF_GDEATHMATCH	= 0x0400;
-
 Actor bodyque[BODYQUESIZE];
 int bodyqueslot;
 
@@ -170,7 +157,7 @@ int ThingCount(int type, int tid)
 			}
 			else if (moType == Ent.Class)
 			{
-				if (Ent.bCountKill && Ent.Health <= 0)
+				if (Ent.bMonster && Ent.Health <= 0)
 				{
 					// Don't count dead monsters
 					continue;
@@ -189,7 +176,7 @@ int ThingCount(int type, int tid)
 				// Doesn't match
 				continue;
 			}
-			if (Ent.bCountKill && Ent.Health <= 0)
+			if (Ent.bMonster && Ent.Health <= 0)
 			{
 				// Don't count dead monsters
 				continue;
@@ -569,6 +556,10 @@ void SpawnMapThing(mthing_t * mthing)
 		AddMaceSpot(mthing->x, mthing->y);
 		return;
 	}
+	if (Level.Game.nomonsters && moClass.default.bMonster)
+	{
+		return;
+	}
 
 	A = Spawn(moClass,,, mthing);
 }
@@ -650,7 +641,7 @@ void P_Massacre()
 
 	foreach AllThinkers(Actor, mo)
 	{
-		if (mo.bCountKill && mo.Health > 0)
+		if (mo.bMonster && mo.Health > 0)
 		{
 			mo.Damage(none, none, 10000);
 		}

@@ -29,11 +29,11 @@ class Knight : Pawn
 
 //==========================================================================
 //
-//	DropStuff
+//	NoBlockingSet
 //
 //==========================================================================
 
-void DropStuff()
+void NoBlockingSet()
 {
 	DropItem(CrossbowAmmo, 5, 0.328125);
 }

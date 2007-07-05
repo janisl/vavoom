@@ -35,7 +35,7 @@ int ManaCount;
 //
 //==========================================================================
 
-void TouchSpecial(Actor Toucher)
+void TouchSpecial(EntityEx Toucher)
 {
 	if (!Toucher.bPickUp)
 	{

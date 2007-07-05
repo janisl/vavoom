@@ -80,7 +80,7 @@ final void A_CStaffCheck()
 		pmo.LineAttack(vforward, 1.5 * Actor::MELEERANGE, damage, CStaffPuff);
 		pmo.Angles.yaw = atan2(AimTarget.Origin.y - pmo.Origin.y,
 			AimTarget.Origin.x - pmo.Origin.x);
-		if ((AimTarget.bIsPlayer || AimTarget.bCountKill) &&
+		if ((AimTarget.bIsPlayer || AimTarget.bMonster) &&
 			!AimTarget.bDormant && !AimTarget.bInvulnerable)
 		{
 			newLife = Owner.Player.Health + (damage >> 3);

@@ -558,7 +558,6 @@ EXTRA_DIST = compile.bat \
 	game/Pottery3.vc \
 	game/FogPatch.vc \
 	game/ClericBoss.vc \
-	game/LavaInflictor.vc \
 	game/ZShrub2.vc \
 	game/CorpseBloodDrip.vc \
 	game/TableShit5.vc \

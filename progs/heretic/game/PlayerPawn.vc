@@ -49,9 +49,9 @@ final void A_AddPlayerCorpse()
 
 defaultproperties
 {
+	bMonster = false;
 	bCountKill = false;
 	bActivateMCross = false;
-	bCheckNoMonsters = false;
 	bDropOff = true;
 	bOnmobjCopyVel = true;
 }

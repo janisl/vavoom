@@ -214,7 +214,7 @@ void Tick(float DeltaTime)
 			float speed;
 			float pushangle;
 
-			if (EntityEx(thing).CanWindThrust() && thing.bColideWithWorld)
+			if (EntityEx(thing).bWindThrust && thing.bColideWithWorld)
 			{
 				sx = X;
 				sy = Y;
@@ -244,7 +244,7 @@ void Tick(float DeltaTime)
 	{
 		if (thing.Sector != sec)
 			continue;
-		if (!thing.CanWindThrust() || !thing.bColideWithWorld)
+		if (!thing.bWindThrust || !thing.bColideWithWorld)
 			continue;
 		if (Type == PUSHER_Wind)
 		{
@@ -281,7 +281,7 @@ void Tick(float DeltaTime)
 					yspeed = Ymag;
 				}
 				else if (thing.bIsPlayer &&
-					thing.Origin.z + thing.GetPlayerViewHeight() < ht) // underwater
+					thing.Origin.z + PlayerEx(thing.Player).ViewHeight < ht) // underwater
 				{
 					xspeed = 0;
 					yspeed = 0; // no force

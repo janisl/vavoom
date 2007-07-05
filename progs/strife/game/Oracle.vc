@@ -38,7 +38,7 @@ final void A_OracleDeath()
 
 	foreach AllThinkers(AlienSpectre3, A)
 	{
-		if (A && A.bCountKill && A.Health > 0)
+		if (A && A.bMonster && A.Health > 0)
 		{
 			A.Target = Target;
 			A.SetState(A.SeeState);

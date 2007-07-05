@@ -3072,11 +3072,11 @@ void UseArtiBlastRadius()
 		{
 			// Let these special cases go
 		}
-		else if (mo.bCountKill && (mo.Health <= 0))
+		else if (mo.bMonster && (mo.Health <= 0))
 		{
 			continue;
 		}
-		else if (!mo.bCountKill && !mo.bIsPlayer && !mo.bMissile)
+		else if (!mo.bMonster && !mo.bIsPlayer && !mo.bMissile)
 		{
 			// Must be monster, player, or missile
 			continue;
@@ -3697,7 +3697,7 @@ int P_Massacre()
 	count = 0;
 	foreach MO.AllThinkers(Actor, mo)
 	{
-		if (mo.bCountKill && mo.Health > 0)
+		if (mo.bMonster && mo.Health > 0)
 		{
 			mo.bNonShootable = false;
 			mo.bInvulnerable = false;

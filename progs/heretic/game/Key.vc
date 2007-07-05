@@ -44,7 +44,7 @@ void OnMapSpawn(mthing_t *mthing)
 //
 //==========================================================================
 
-void TouchSpecial(Actor Toucher)
+void TouchSpecial(EntityEx Toucher)
 {
 	if (!Toucher.bPickUp)
 	{

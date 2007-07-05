@@ -33,7 +33,7 @@ class TelOtherFX1 : Projectile;
 
 int DoSpecialDamage(EntityEx victim, EntityEx source, int damage)
 {
-	if (victim.bCountKill && !Actor(victim).bBoss && !Serpent(victim))
+	if (victim.bMonster && !Actor(victim).bBoss && !Serpent(victim))
 	{
 		Actor(victim).TeleportOther();
 	}
@@ -136,6 +136,7 @@ defaultproperties
 	MissileDamage = 10001;
 	bActivateImpact = false;
 	bActivatePCross = false;
+	bBloodlessImpact = true;
 	IdleState = S_TELO_FX1;
 	DeathState = S_TELO_FX9;
 }

@@ -1222,7 +1222,7 @@ void TranslateThing(mthing_t* mthing)
 	flags = mthing->options;
 	mthing->options = (flags & 0xf) | 0x7e0;
 	if (flags & 0x10)
-		mthing->options &= ~MTF_GSINGLE;
+		mthing->options &= ~LineSpecialLevelInfo::MTF_GSINGLE;
 }
 
 //==========================================================================

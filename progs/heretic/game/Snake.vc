@@ -29,11 +29,11 @@ class Snake : Pawn
 
 //==========================================================================
 //
-//	DropStuff
+//	NoBlockingSet
 //
 //==========================================================================
 
-void DropStuff()
+void NoBlockingSet()
 {
 	DropItem(PhoenixRodAmmo, 5, 0.328125);
 }

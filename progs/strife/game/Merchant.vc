@@ -100,6 +100,7 @@ defaultproperties
 	Mass = 5000.0;
 	PainChance = 0.5859375;
 	bCountKill = false;
+	bMonster = false;
 	bCkeckNoMonsters = false;
 	bActivateMCross = false;
 	bNoDeathmatch = true;

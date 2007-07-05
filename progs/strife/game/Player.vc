@@ -2557,7 +2557,7 @@ int P_Massacre()
 	count = 0;
 	foreach MO.AllThinkers(Actor, mo)
 	{
-		if (mo.bCountKill && (mo.Health > 0))
+		if (mo.bMonster && (mo.Health > 0))
 		{
 			mo.Damage(none, none, 10000);
 			count++;

@@ -88,7 +88,7 @@ void HideSpecialThing()
 //
 //==========================================================================
 
-void TouchSpecial(Actor Toucher)
+void TouchSpecial(EntityEx Toucher)
 {
 }
 

@@ -30,6 +30,23 @@ const int
 	FASTDARK		= 15,
 	SLOWDARK		= 35;
 
+//
+// Map things flags
+//
+const int
+	MTF_EASY		= 0x0001,	// Skill flags.
+	MTF_NORMAL		= 0x0002,
+	MTF_HARD		= 0x0004,
+	MTF_AMBUSH		= 0x0008,	// Deaf monsters/do not react to sound.
+	MTF_DORMANT		= 0x0010,	// The thing is dormant
+	MTF_FIGHTER		= 0x0020,	// Thing appearing in player classes
+	MTF_CLERIC		= 0x0040,
+	MTF_MAGE		= 0x0080,
+	MTF_GSINGLE		= 0x0100,	// Appearing in game modes
+	MTF_GCOOP		= 0x0200,
+	MTF_GDEATHMATCH	= 0x0400,
+	MTF_STANDSTILL	= 0x4000;
+
 name			DefaultDoorSound;
 name			DefaultCeilingSound;
 name			DefaultSilentCeilingSound;
@@ -359,7 +376,7 @@ bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 			//	Only teleport when crossing the front side of a line
 			buttonSuccess = EV_Teleport(Arg1, Arg2, Arg3, Arg4, Arg5, A, Line,
 				true);
-			A.SetPainState();
+			A.SetState(A.PainState);
 		}
 		break;
 	case LNSPEC_CeilingLowerByValue:
@@ -454,12 +471,12 @@ bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 	case LNSPEC_ThingDamage:
 		if (Arg1)
 		{
-			A.ThingDamage(Arg1);
+			A.Damage(none, none, Arg1, ModToDamageType(Arg2));
 		}
 		else
 		{
 			// If arg1 is zero, then guarantee a kill
-			A.ThingDamage(10000);
+			A.Damage(none, none, 10000, ModToDamageType(Arg2));
 		}
 		buttonSuccess = 1;
 		break;
@@ -2865,6 +2882,10 @@ bool EV_ThingProjectile(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 	{
 		return false;
 	}
+	if (Level.Game.nomonsters && moType.default.bMonster)
+	{
+		return false;
+	}
 	angle = itof(Arg3) * (360.0 / 256.0);
 	speed = itof(Arg4) / 8.0;
 	vspeed = itof(Arg5) / 8.0;
@@ -2872,13 +2893,16 @@ bool EV_ThingProjectile(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 		A = FindMobjFromTID(tid, &searcher))
 	{
 		newA = Spawn(moType, A.Origin);
-		newA.PlaySightSound();
-		newA.SetInstigator(A);	// Originator
+		if (newA.SightSound)
+		{
+			newA.PlaySound(newA.SightSound, CHAN_VOICE);
+		}
+		newA.Target = EntityEx(A);	// Originator
 		newA.Angles.yaw = angle;
 		newA.Velocity.x = speed * cos(angle) * 35.0;
 		newA.Velocity.y = speed * sin(angle) * 35.0;
 		newA.Velocity.z = vspeed * 35.0;
-		newA.SetDropped();	// Don't respawn
+		newA.bDropped = true;	// Don't respawn
 		if (gravity)
 		{
 			newA.bNoGravity = false;
@@ -2918,12 +2942,20 @@ bool EV_ThingSpawn(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5, bool fog)
 	{
 		return false;
 	}
+	if (Level.Game.nomonsters && moType.default.bMonster)
+	{
+		return false;
+	}
 	angle = itof(Arg3) * 360.0 / 256.0;
 	for (A = FindMobjFromTID(tid, &searcher); A;
 		A = FindMobjFromTID(tid, &searcher))
 	{
 		newAct = Spawn(moType, A.Origin);
-		newAct.StartFloatBob(A);
+		if (newAct.bFloatBob)
+		{
+			newAct.Origin.z = A.Origin.z - A.FloorZ;
+			newAct.SetOrigin2(newAct.Origin);
+		}
 		if (newAct.TestLocation() == false)
 		{
 			// Didn't fit
@@ -2938,8 +2970,11 @@ bool EV_ThingSpawn(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5, bool fog)
 			{
 				SpawnTeleportFog(A.Origin);
 			}
-			newAct.SetDropped();	// Don't respawn
-			newAct.SaveFloatBobOffset();
+			newAct.bDropped = true;	// Don't respawn
+			if (newAct.bFloatBob)
+			{
+				newAct.Special1f = newAct.Origin.z - newAct.FloorZ;
+			}
 			success = true;
 		}
 	}
@@ -3036,8 +3071,9 @@ bool EV_ThingDestroy(int tid)
 	for (A = EntityEx(FindMobjFromTID(tid, &searcher)); A;
 		A = EntityEx(FindMobjFromTID(tid, &searcher)))
 	{
-		if (A.ThingDestroy())
+		if (A.bShootable)
 		{
+			A.Damage(none, none, 10000, '');
 			success = true;
 		}
 	}
@@ -3059,7 +3095,7 @@ bool EV_ThingDestroy(int tid)
 bool EV_ForceField(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 	EntityEx A)
 {
-	A.ThingDamage(16);
+	A.Damage(none, none, 16, '');
 	A.Velocity.x += 7.8125 * cos(A.Angles.yaw + 180.0) * 35.0;
 	A.Velocity.y += 7.8125 * sin(A.Angles.yaw + 180.0) * 35.0;
 	return true;
@@ -3132,7 +3168,7 @@ bool EV_Teleport(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 		// Teleport function called with an invalid mobj
 		return false;
 	}
-	if (!thing.CanTeleport())
+	if (thing.bNoTeleport)
 	{
 		return false;
 	}
@@ -3446,7 +3482,7 @@ bool EV_SilentLineTeleport(line_t *line, int side, EntityEx thing, int id,
 	int searcher;
 	line_t *l;
 
-	if (side || !thing.CanTeleport() || !line)
+	if (side || thing.bNoTeleport || !line)
 	{
 		return false;
 	}
@@ -3832,6 +3868,53 @@ line_t* FindLine(int lineTag, int *searchPosition)
 	}
 	*searchPosition = -1;
 	return NULL;
+}
+
+//==========================================================================
+//
+//	SpawnTeleportFog
+//
+//==========================================================================
+
+name ModToDamageType(int Mod)
+{
+	switch (Mod)
+	{
+	case 9:
+		return 'BFGSplash';
+	case 12:
+		return 'Drowning';
+	case 13:
+		return 'Slime';
+	case 14:
+		return 'Fire';
+	case 15:
+		return 'Crush';
+	case 16:
+		return 'Telefrag';
+	case 17:
+		return 'Falling';
+	case 18:
+		return 'Suicide';
+	case 20:
+		return 'Exit';
+	case 22:
+		return 'Melee';
+	case 23:
+		return 'Railgun';
+	case 24:
+		return 'Ice';
+	case 25:
+		return 'Disintegrate';
+	case 26:
+		return 'Poison';
+	case 27:
+		return 'Electric';
+	case 1000:
+		return 'Massacre';
+	default:
+		return '';
+	}
 }
 
 //==========================================================================

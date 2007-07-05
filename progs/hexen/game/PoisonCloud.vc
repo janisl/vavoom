@@ -46,7 +46,7 @@ int DoSpecialDamage(EntityEx victim, EntityEx source, int damage)
 		}
 		return -1;
 	}
-	else if (!victim.bCountKill)
+	else if (!victim.bMonster)
 	{
 		// only damage monsters/players with the poison cloud
 		return -1;

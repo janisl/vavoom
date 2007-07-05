@@ -31,8 +31,6 @@ const float
 	MAULERRANGE		= (33.0 * 64.0),
 	ROBOTRANGE		= 264.0;
 
-bool bStanding;			// Don't walk around.
-//	MOVEMENT FLAGS
 bool bNeutral;			// Neutral characters (peasants and beggars)
 bool bStandMustSeeTarget;		//COUNTITEM	800000
 bool bUnknown2;			//8000000
@@ -47,89 +45,6 @@ name ClassName;
 // Identifier in conversation scripts, originaly index into mobjinfo.
 int ConversationID;
 int CurrentSpeech;	// Current speech index.
-
-//===========================================================================
-//
-//  SetInstigator
-//
-//===========================================================================
-
-void SetInstigator(Entity NewInstigator)
-{
-	Target = Actor(NewInstigator);
-}
-
-//===========================================================================
-//
-//  PlaySightSound
-//
-//===========================================================================
-
-void PlaySightSound()
-{
-	if (SightSound)
-	{
-		PlaySound(SightSound, CHAN_VOICE);
-	}
-}
-
-//===========================================================================
-//
-//  SetDropped
-//
-//===========================================================================
-
-void SetDropped()
-{
-	bDropped = true;
-}
-
-//===========================================================================
-//
-//  StartFloatBob
-//
-//===========================================================================
-
-void StartFloatBob(Entity Src)
-{
-}
-
-//===========================================================================
-//
-//  SaveFloatBobOffset
-//
-//===========================================================================
-
-void SaveFloatBobOffset()
-{
-}
-
-//===========================================================================
-//
-//  ThingDestroy
-//
-//===========================================================================
-
-bool ThingDestroy()
-{
-	if (bShootable)
-	{
-		Damage(none, none, 10000);
-		return true;
-	}
-	return false;
-}
-
-//===========================================================================
-//
-//  ThingDamage
-//
-//===========================================================================
-
-void ThingDamage(int Amount)
-{
-	Damage(none, none, Amount);
-}
 
 //===========================================================================
 //
@@ -155,28 +70,6 @@ bool IsTeleportSpot2()
 
 //===========================================================================
 //
-//  CanTeleport
-//
-//===========================================================================
-
-bool CanTeleport()
-{
-	return !bNoTeleport;
-}
-
-//===========================================================================
-//
-//  SetPainState
-//
-//===========================================================================
-
-void SetPainState()
-{
-	SetState(PainState);
-}
-
-//===========================================================================
-//
 //  IsPointPusher
 //
 //===========================================================================
@@ -197,35 +90,13 @@ bool IsPointPuller()
 	return !!PointPuller(self);
 }
 
-//===========================================================================
-//
-//  CanWindThrust
-//
-//===========================================================================
-
-bool CanWindThrust()
-{
-	return bWindThrust;
-}
-
-//===========================================================================
-//
-//  GetPlayerViewHeight
-//
-//===========================================================================
-
-float GetPlayerViewHeight()
-{
-	return Player(Player).ViewHeight;
-}
-
 //==========================================================================
 //
 //  TouchSpecial
 //
 //==========================================================================
 
-void TouchSpecial(Actor Toucher)
+void TouchSpecial(EntityEx Toucher)
 {
 }
 
@@ -311,7 +182,7 @@ void OnMapSpawn(mthing_t * mthing)
 			Level.TotalKills++;
 
 		Angles.yaw = itof(45 * (mthing->angle / 45));
-		if (mthing->options & StrifeLevelInfo::MTF_AMBUSH)
+		if (mthing->options & StrifeLevelInfo::MTF_STANDSTILL)
 		{
 			bStanding = true;
 		}
@@ -574,231 +445,6 @@ int TakeSpecialDamage(EntityEx inflictor, EntityEx source, int damage)
 		return -1;
 	}
 	return damage;
-}
-
-//==========================================================================
-//
-//  NightmareRespawn
-//
-//==========================================================================
-
-void NightmareRespawn()
-{
-	float x;
-	float y;
-	float z;
-	Actor A;
-	mthing_t *mthing;
-
-	x = SpawnPoint.x;
-	y = SpawnPoint.y;
-
-	// somthing is occupying it's position?
-	if (!CheckPosition(vector(x, y, ONFLOORZ)))
-		return;	// no respwan
-
-	// spawn a teleport fog at old spot
-	// because of removal of the body?
-	A = Spawn(TeleportFog, vector(Origin.x, Origin.y, ONFLOORZ));
-
-	// initiate teleport sound
-	A.PlaySound('misc/teleport', CHAN_BODY);
-
-	// spawn a teleport fog at the new spot
-	A = Spawn(TeleportFog, vector(x, y, ONFLOORZ));
-
-	A.PlaySound('misc/teleport', CHAN_BODY);
-
-	// spawn the new monster
-	mthing = &SpawnPoint;
-
-	// spawn it
-	if (bSpawnCeiling)
-		z = ONCEILINGZ;
-	else
-		z = ONFLOORZ;
-
-	// inherit attributes from deceased one
-	A = Spawn(class<Actor>(Class), vector(x, y, z));
-	Level.CopyMThing(&SpawnPoint, &A.SpawnPoint);
-	A.Angles.yaw = itof(45 * (mthing->angle / 45));
-
-	if (mthing->options & StrifeLevelInfo::MTF_AMBUSH)
-		A.bStanding = true;
-
-	A.ReactionCount = 18;
-
-	// remove the old monster,
-	Destroy();
-}
-
-//==========================================================================
-//
-//	Touch
-//
-//==========================================================================
-
-bool Touch(Entity InOther)
-{
-	bool solid;
-	int damage;
-	Actor Other;
-
-	Other = Actor(InOther);
-	if (!Other.bSolid && !Other.bSpecial && !Other.bShootable)
-		return true;
-
-	// check for skulls slamming into things
-	if (bSkullFly)
-	{
-		damage = ((P_Random() % 8) + 1) * MissileDamage;
-		Other.Damage(self, self, damage);
-		bSkullFly = false;
-		Velocity = vector(0.0, 0.0, 0.0);
-		SetState(IdleState);
-		return false;	// stop moving
-	}
-
-	// missiles can hit other things
-	if (bMissile)
-	{
-		if (Target && (Target.Class == Other.Class))
-		{
-			// Don't hit same species as originator.
-			if (Other == Target)
-				return true;
-
-			if (Other.Class != StrifePlayer)
-			{
-				// Explode, but do no damage.
-				// Let players missile other players.
-				return false;
-			}
-		}
-
-		//	Don't hit spectres with non-sigil weapons.
-		if (Other.bSpectral && !bSpectral)
-		{
-			return true;
-		}
-
-		if (!Other.bShootable)
-		{
-			// didn't do any damage
-			return !Other.bSolid;
-		}
-
-		// damage / explode
-		damage = ((P_Random() % 4) + 1) * MissileDamage;
-		Other.Damage(self, Target, damage, DamageType);
-		// don't traverse any more
-		return false;
-	}
-
-	// check for special pickup
-	if (Other.bSpecial)
-	{
-		solid = Other.bSolid;
-		Other.TouchSpecial(self);
-		return !solid;
-	}
-
-	//return !Other.bSolid || Other.bNoClip;
-	return !Other.bSolid;
-}
-
-//===========================================================================
-//
-//	CheckForPushSpecial
-//
-//===========================================================================
-
-void CheckForPushSpecial(line_t * line, int side)
-{
-	if (line->special)
-	{
-		if (bActivatePushWall)
-		{
-			StrifeLevelInfo(Level).ActivateLine(line, self, side, SPAC_PUSH);
-		}
-		else if (bActivateImpact)
-		{
-			StrifeLevelInfo(Level).ActivateLine(line,
-				bMissile ? Actor(Target) : self, side, SPAC_IMPACT);
-		}
-	}
-}
-
-//==========================================================================
-//
-//	BlockedByLine
-//
-//==========================================================================
-
-void BlockedByLine(line_t * ld)
-{
-	if (bBlasted)
-	{
-		Damage(none, none, ftoi(Mass) >> 5);
-	}
-	CheckForPushSpecial(ld, 0);
-}
-
-//==========================================================================
-//
-//  PushLine
-//
-//==========================================================================
-
-void PushLine(tmtrace_t* tmtrace)
-{
-	if (bColideWithWorld)
-	{
-		int numSpecHitTemp;
-		line_t *ld;
-		int side;
-
-		if (bBlasted)
-		{
-			Damage(none, none, ftoi(Mass) >> 5);
-		}
-		numSpecHitTemp = tmtrace->NumSpecHit;
-		while (numSpecHitTemp > 0)
-		{
-			numSpecHitTemp--;
-			// see if the line was crossed
-			ld = tmtrace->SpecHit[numSpecHitTemp];
-			side = PointOnPlaneSide(Origin, ld);
-			CheckForPushSpecial(ld, side);
-		}
-	}
-}
-
-//==========================================================================
-//
-//	CrossSpecialLine
-//
-//==========================================================================
-
-void CrossSpecialLine(line_t *ld, int side)
-{
-	if (bIsPlayer)
-	{
-		StrifeLevelInfo(Level).ActivateLine(ld, self, side, SPAC_CROSS);
-	}
-	else if (bActivateMCross)
-	{
-		StrifeLevelInfo(Level).ActivateLine(ld, self, side, SPAC_MCROSS);
-	}
-	else if (bActivatePCross)
-	{
-		StrifeLevelInfo(Level).ActivateLine(ld, self, side, SPAC_PCROSS);
-	}
-	else if (ld->special == LNSPEC_Teleport)
-	{
-		//	Teleport hack
-		StrifeLevelInfo(Level).ActivateLine(ld, self, side, SPAC_MCROSS);
-	}
 }
 
 //===========================================================================
@@ -1180,7 +826,7 @@ void Tick(float deltaTime)
 	else
 	{
 		// check for nightmare respawn
-		if (!bCountKill)
+		if (!bMonster)
 			return;
 
 		if (!MainGameInfo(Level.Game).respawnmonsters)

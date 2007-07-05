@@ -137,7 +137,7 @@ int ThingCount(int type, int tid)
 			}
 			else if (moType == Ent.Class)
 			{
-				if (Ent.bCountKill && Ent.Health <= 0)
+				if (Ent.bMonster && Ent.Health <= 0)
 				{
 					// Don't count dead monsters
 					continue;
@@ -156,7 +156,7 @@ int ThingCount(int type, int tid)
 				// Doesn't match
 				continue;
 			}
-			if (Ent.bCountKill && Ent.Health <= 0)
+			if (Ent.bMonster && Ent.Health <= 0)
 			{
 				// Don't count dead monsters
 				continue;
@@ -610,6 +610,10 @@ void SpawnMapThing(mthing_t * mthing)
 	moClass = class<Actor>(FindClassFromEditorId(mthing->type));
 	if (moClass)
 	{
+		if (Level.Game.nomonsters && moClass.default.bMonster)
+		{
+			return;
+		}
 		// spawn it
 		A = Spawn(moClass,,, mthing);
 	}
@@ -636,7 +640,7 @@ int P_Massacre()
 	count = 0;
 	foreach AllThinkers(Actor, mo)
 	{
-		if (mo.bCountKill && (mo.Health > 0))
+		if (mo.bMonster && (mo.Health > 0))
 		{
 			mo.Damage(none, none, 10000);
 			count++;

@@ -30,24 +30,6 @@
 import shared;
 import linespec;
 
-//
-// Map things flags
-//
-enum
-{
-	MTF_EASY		= 0x0001,	// Skill flags.
-	MTF_NORMAL		= 0x0002,
-	MTF_HARD		= 0x0004,
-	MTF_AMBUSH		= 0x0008,	// Deaf monsters/do not react to sound.
-	MTF_DORMANT		= 0x0010,	// The thing is dormant
-	MTF_FIGHTER		= 0x0020,	// Thing appearing in player classes
-	MTF_CLERIC		= 0x0040,
-	MTF_MAGE		= 0x0080,
-	MTF_GSINGLE		= 0x0100,	// Appearing in game modes
-	MTF_GCOOP		= 0x0200,
-	MTF_GDEATHMATCH	= 0x0400
-};
-
 // CONSTANTS ---------------------------------------------------------------
 
 enum

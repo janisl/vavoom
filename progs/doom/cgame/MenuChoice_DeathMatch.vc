@@ -36,5 +36,4 @@ defaultproperties
 	EnumNames[0] = "Cooperative";
 	EnumNames[1] = "Deathmatch";
 	EnumNames[2] = "Deathmatch2";
-	EnumNames[3] = "Deathmatch3";
 }

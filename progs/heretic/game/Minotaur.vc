@@ -52,11 +52,11 @@ int DoSpecialDamage(EntityEx victim, EntityEx source, int damage)
 
 //==========================================================================
 //
-//	DropStuff
+//	NoBlockingSet
 //
 //==========================================================================
 
-void DropStuff()
+void NoBlockingSet()
 {
 	DropItem(ArtiSuperHealth, 0, 0.19921875);
 	DropItem(PhoenixRodAmmo, 10, 0.328125);

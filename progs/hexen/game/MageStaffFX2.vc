@@ -36,7 +36,7 @@ bool RoughCheckThing(Entity Other)
 	float angle;
 	Actor link = Actor(Other);
 	
-	if (!(link.bCountKill || link.bIsPlayer) || link == Target ||
+	if (!(link.bMonster || link.bIsPlayer) || link == Target ||
 		link.bDormant)
 	{
 		return false;
@@ -59,6 +59,26 @@ bool RoughCheckThing(Entity Other)
 		}
 	}
 	return false;
+}
+
+//==========================================================================
+//
+//	SpecialMissileHit
+//
+//==========================================================================
+
+int SpecialMissileHit(EntityEx Other)
+{
+	if (Other != Target)
+	{
+		// Class bosses not flagged boss so they can be blasted
+		if (!Other.bIsPlayer && !Other.bBoss && !ClassBoss(Other))
+		{
+			Other.Damage(self, Target, 10, DamageType);
+			return 1;
+		}
+	}
+	return -1;
 }
 
 //==========================================================================

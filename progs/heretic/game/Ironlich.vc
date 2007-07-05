@@ -29,11 +29,11 @@ class Ironlich : Pawn
 
 //==========================================================================
 //
-//	DropStuff
+//	NoBlockingSet
 //
 //==========================================================================
 
-void DropStuff()
+void NoBlockingSet()
 {
 	DropItem(BlasterAmmo, 10, 0.328125);
 	DropItem(ArtifactEgg, 0, 0.19921875);

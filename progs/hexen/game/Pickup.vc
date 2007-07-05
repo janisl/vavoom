@@ -34,7 +34,7 @@ string PickupMessage;
 //
 //==========================================================================
 
-void TouchSpecial(Actor Toucher)
+void TouchSpecial(EntityEx Toucher)
 {
 }
 

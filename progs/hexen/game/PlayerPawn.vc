@@ -44,7 +44,7 @@ bool RoughCheckThing(Entity Other)
 	{
 		return false;
 	}
-	if (!link.bCountKill && (!link.bIsPlayer || link == self))
+	if (!link.bMonster && (!link.bIsPlayer || link == self))
 	{
 		return false;
 	}
@@ -75,8 +75,8 @@ defaultproperties
 {
 	ReactionCount = 0;
 	bCountKill = false;
+	bMonster = false;
 	bActivateMCross = false;
-	bCheckNoMonsters = false;
 	bDropOff = true;
 	bWindThrust = true;
 	bSlide = true;

@@ -30,106 +30,10 @@ const float TELEFOGHEIGHT 	= 32.0;
 
 const float BONUSADD		= 0.2;
 
-bool bThruGhost;		// missile will pass through ghosts
 bool bSpawnFloat;		// spawn random float z
-bool bRip;				// missile rips through solid targets
-bool bPushable;			// can be pushed by other moving mobjs
-bool bBoss;				// mobj is a major boss
 bool bNoMorph;			// Don't morph into chicken.
 
 class<Actor> SpecialCID;
-
-//===========================================================================
-//
-//  SetInstigator
-//
-//===========================================================================
-
-void SetInstigator(Entity NewInstigator)
-{
-	Target = Actor(NewInstigator);
-}
-
-//===========================================================================
-//
-//  PlaySightSound
-//
-//===========================================================================
-
-void PlaySightSound()
-{
-	if (SightSound)
-	{
-		PlaySound(SightSound, CHAN_VOICE);
-	}
-}
-
-//===========================================================================
-//
-//  SetDropped
-//
-//===========================================================================
-
-void SetDropped()
-{
-	bDropped = true;
-}
-
-//===========================================================================
-//
-//  StartFloatBob
-//
-//===========================================================================
-
-void StartFloatBob(Entity Src)
-{
-	if (bFloatBob)
-	{
-		Origin.z = Src.Origin.z - Src.FloorZ;
-		SetOrigin2(Origin);
-	}
-}
-
-//===========================================================================
-//
-//  SaveFloatBobOffset
-//
-//===========================================================================
-
-void SaveFloatBobOffset()
-{
-	if (bFloatBob)
-	{
-		Special1f = Origin.z - FloorZ;
-	}
-}
-
-//===========================================================================
-//
-//  ThingDestroy
-//
-//===========================================================================
-
-bool ThingDestroy()
-{
-	if (bShootable)
-	{
-		Damage(none, none, 10000);
-		return true;
-	}
-	return false;
-}
-
-//===========================================================================
-//
-//  ThingDamage
-//
-//===========================================================================
-
-void ThingDamage(int Amount)
-{
-	Damage(none, none, Amount);
-}
 
 //===========================================================================
 //
@@ -155,28 +59,6 @@ bool IsTeleportSpot2()
 
 //===========================================================================
 //
-//  CanTeleport
-//
-//===========================================================================
-
-bool CanTeleport()
-{
-	return !bNoTeleport;
-}
-
-//===========================================================================
-//
-//  SetPainState
-//
-//===========================================================================
-
-void SetPainState()
-{
-	SetState(PainState);
-}
-
-//===========================================================================
-//
 //  IsPointPusher
 //
 //===========================================================================
@@ -195,28 +77,6 @@ bool IsPointPusher()
 bool IsPointPuller()
 {
 	return !!PointPuller(self);
-}
-
-//===========================================================================
-//
-//  CanWindThrust
-//
-//===========================================================================
-
-bool CanWindThrust()
-{
-	return bWindThrust;
-}
-
-//===========================================================================
-//
-//  GetPlayerViewHeight
-//
-//===========================================================================
-
-float GetPlayerViewHeight()
-{
-	return Player(Player).ViewHeight;
 }
 
 //==========================================================================
@@ -319,6 +179,9 @@ void OnMapSpawn(mthing_t * mthing)
 		if (bCountKill)
 		{
 			Level.TotalKills++;
+		}
+		if (bMonster)
+		{
 			Level.CopyMThing(mthing, &SpawnPoint);
 		}
 		if (bCountItem)
@@ -752,254 +615,6 @@ void SpawnRipperBlood()
 
 //===========================================================================
 //
-//  NightmareRespawn
-//
-//===========================================================================
-
-void NightmareRespawn()
-{
-	float x, y, z;
-	Actor A;
-
-	x = SpawnPoint.x;
-	y = SpawnPoint.y;
-
-	if (!CheckPosition(vector(x, y, ONFLOORZ)))
-		return;	// somthing is occupying it's position
-
-	// spawn a teleport fog at old spot
-	A = Spawn(TeleportFog, vector(Origin.x, Origin.y, ONFLOORZ));
-	A.Origin.z += TELEFOGHEIGHT;
-	A.PlaySound('misc/teleport', CHAN_VOICE);
-
-	// spawn a teleport fog at the new spot
-	A = Spawn(TeleportFog, vector(x, y, ONFLOORZ));
-	A.Origin.z += TELEFOGHEIGHT;
-	A.PlaySound('misc/teleport', CHAN_VOICE);
-
-	// spawn the new monster
-
-	// spawn it
-	if (bSpawnCeiling)
-		z = ONCEILINGZ;
-	else
-		z = ONFLOORZ;
-	A = Spawn(class<Actor>(Class), vector(x, y, z));
-	Level.CopyMThing(&SpawnPoint, &A.SpawnPoint);
-	A.Angles.yaw = itof(45 * (SpawnPoint.angle / 45));
-	if (SpawnPoint.options & HereticLevelInfo::MTF_AMBUSH)
-		A.bAmbush = true;
-
-	A.ReactionCount = 18;
-
-	// remove the old monster
-	Destroy();
-}
-
-//==========================================================================
-//
-//	Touch
-//
-//==========================================================================
-
-bool Touch(Entity InOther)
-{
-	bool solid;
-	int damage;
-	Actor Other;
-
-	Other = Actor(InOther);
-	if (!Other.bSolid && !Other.bSpecial && !Other.bShootable)
-		return true;
-
-	// check for skulls slamming into things
-	if (bSkullFly)
-	{
-		damage = ((P_Random() % 8) + 1) * MissileDamage;
-		Other.Damage(self, self, damage);
-		bSkullFly = false;
-		Velocity = vector(0.0, 0.0, 0.0);
-		SetState(SeeState);
-		return false;
-	}
-
-	// missiles can hit other things
-	if (bMissile)
-	{
-		// Check for passing through a ghost
-		if (Other.Alpha < 1.0 && bThruGhost)
-		{
-			return true;
-		}
-
-		if (Target && Target.Class == Other.Class)
-		{
-			// Don't hit same species as originator
-			if (Other == Target)
-			{
-				// Don't missile self
-				return true;
-			}
-			if (Other.Class != HereticPlayer)
-			{
-				// Hit same species as originator, explode, no damage
-				return false;
-			}
-		}
-
-		if (!Other.bShootable)
-		{
-			// didn't do any damage
-			return !Other.bSolid;
-		}
-
-		if (bRip)
-		{
-			if (!Other.bNoBlood)
-			{
-				// Ok to spawn some blood
-				SpawnRipperBlood();
-			}
-			PlaySound('misc/ripslop', CHAN_VOICE);
-			damage = ((P_Random() & 3) + 2) * MissileDamage;
-			Other.Damage(self, Target, damage, DamageType);
-			if (Other.bPushable && !bCannotPush)
-			{
-				// Push	thing
-				Other.Velocity.x += Velocity.x / 4.0;
-				Other.Velocity.y += Velocity.y / 4.0;
-			}
-//WTAT A FUCK IS THIS???????			numspechit = 0;
-			return true;
-		}
-		// Do damage
-		damage = ((P_Random() % 8) + 1) * MissileDamage;
-		if (damage)
-		{
-			if (!Other.bNoBlood && P_Random() < 192)
-			{
-				Other.SpawnBloodSplatter(Origin, damage);
-			}
-			Other.Damage(self, Target, damage, DamageType);
-		}
-		// don't traverse any more
-		return false;
-	}
-
-	if (Other.bPushable && !bCannotPush)
-	{
-		// Push thing
-		Other.Velocity.x += Velocity.x / 4.0;
-		Other.Velocity.y += Velocity.y / 4.0;
-	}
-
-	// check for special pickup
-	if (Other.bSpecial)
-	{
-		solid = Other.bSolid;
-		Pickup(Other).TouchSpecial(self);
-		return !solid;
-	}
-
-	return !Other.bSolid;
-}
-
-//===========================================================================
-//
-//	CheckForPushSpecial
-//
-//===========================================================================
-
-void CheckForPushSpecial(line_t * line, int side)
-{
-	if (line->special)
-	{
-		if (bActivatePushWall)
-		{
-			HereticLevelInfo(Level).ActivateLine(line, self, side, SPAC_PUSH);
-		}
-		else if (bActivateImpact)
-		{
-			HereticLevelInfo(Level).ActivateLine(line,
-				bMissile ? Actor(Target) : self, side, SPAC_IMPACT);
-		}
-	}
-}
-
-//==========================================================================
-//
-//	BlockedByLine
-//
-//==========================================================================
-
-void BlockedByLine(line_t * ld)
-{
-	if (bBlasted)
-	{
-		Damage(none, none, ftoi(Mass) >> 5);
-	}
-	CheckForPushSpecial(ld, 0);
-}
-
-//==========================================================================
-//
-//  PushLine
-//
-//==========================================================================
-
-void PushLine(tmtrace_t* tmtrace)
-{
-	if (bColideWithWorld)
-	{
-		int numSpecHitTemp;
-		line_t *ld;
-		int side;
-
-		if (bBlasted)
-		{
-			Damage(none, none, ftoi(Mass) >> 5);
-		}
-		numSpecHitTemp = tmtrace->NumSpecHit;
-		while (numSpecHitTemp > 0)
-		{
-			numSpecHitTemp--;
-			// see if the line was crossed
-			ld = tmtrace->SpecHit[numSpecHitTemp];
-			side = PointOnPlaneSide(Origin, ld);
-			CheckForPushSpecial(ld, side);
-		}
-	}
-}
-
-//==========================================================================
-//
-//	CrossSpecialLine
-//
-//==========================================================================
-
-void CrossSpecialLine(line_t *ld, int side)
-{
-	if (bIsPlayer)
-	{
-		HereticLevelInfo(Level).ActivateLine(ld, self, side, SPAC_CROSS);
-	}
-	else if (bActivateMCross)
-	{
-		HereticLevelInfo(Level).ActivateLine(ld, self, side, SPAC_MCROSS);
-	}
-	else if (bActivatePCross)
-	{
-		HereticLevelInfo(Level).ActivateLine(ld, self, side, SPAC_PCROSS);
-	}
-	else if (ld->special == LNSPEC_Teleport)
-	{
-		//	Teleport hack
-		HereticLevelInfo(Level).ActivateLine(ld, self, side, SPAC_MCROSS);
-	}
-}
-
-//===========================================================================
-//
 //	SpawnBlasterEffects
 //
 //===========================================================================
@@ -1058,7 +673,7 @@ void Tick(float deltaTime)
 	else
 	{
 		// Check for monster respawn
-		if (!bCountKill)
+		if (!bMonster)
 		{
 			return;
 		}

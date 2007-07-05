@@ -46,7 +46,7 @@ void OnHitFloor()
 
 final void A_PotteryExplode()
 {
-	Actor A;
+	EntityEx A;
 	int i;
 
 	for (i = (P_Random() & 3) + 3; i; i--)
@@ -70,8 +70,12 @@ final void A_PotteryExplode()
 	A.PlaySound('PotteryExplode', CHAN_VOICE);
 	if (Args[0])
 	{
-		// Spawn an item
-		Spawn(class<Actor>(FindClassFromScriptId(Args[0])), Origin);
+		// Spawn an item. Don't spawn monsters it they are disabled.
+		class<EntityEx> Cls = class<EntityEx>(FindClassFromScriptId(Args[0]));
+		if (Cls && (!Level.Game.nomonsters || !Cls.default.bMonster))
+		{
+			Spawn(Cls, Origin, vector(0.0, 0.0, 0.0));
+		}
 	}
 }
 

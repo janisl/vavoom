@@ -33,7 +33,7 @@ class EnchantedShield : Pickup
 //
 //==========================================================================
 
-void TouchSpecial(Actor Toucher)
+void TouchSpecial(EntityEx Toucher)
 {
 	int i;
 	name sound;

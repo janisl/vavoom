@@ -35,7 +35,7 @@ int WeaponType;
 //
 //==========================================================================
 
-void TouchSpecial(Actor Toucher)
+void TouchSpecial(EntityEx Toucher)
 {
 	bool remove;
 	bool gaveMana;

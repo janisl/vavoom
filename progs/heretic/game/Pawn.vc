@@ -26,60 +26,6 @@
 class Pawn : Actor
 	abstract;
 
-bool bCheckNoMonsters;
-
-//==========================================================================
-//
-//	OnMapSpawn
-//
-//==========================================================================
-
-void OnMapSpawn(mthing_t *mthing)
-{
-	if (bCheckNoMonsters && Level.Game.nomonsters)
-	{
-		Destroy();
-		return;
-	}
-	::OnMapSpawn(mthing);
-}
-
-//==========================================================================
-//
-//	Activate
-//
-//==========================================================================
-
-bool Activate()
-{
-	// Monster
-	if (bDormant)
-	{
-		bDormant = false;
-		StateTime = 0.1;
-		return true;
-	}
-	return false;
-}
-
-//==========================================================================
-//
-//	Deactivate
-//
-//==========================================================================
-
-bool Deactivate()
-{
-	// Monster
-	if (!bDormant)
-	{
-		bDormant = true;
-		StateTime = -1.0;
-		return true;
-	}
-	return false;
-}
-
 //==========================================================================
 //
 //  A_Look
@@ -305,11 +251,11 @@ final void A_Pain()
 
 //==========================================================================
 //
-//	DropStuff
+//	NoBlockingSet
 //
 //==========================================================================
 
-void DropStuff()
+void NoBlockingSet()
 {
 }
 
@@ -348,7 +294,7 @@ final void A_NoBlocking()
 {
 	bSolid = false;
 	// Check for monsters dropping things
-	DropStuff();
+	NoBlockingSet();
 }
 
 //==========================================================================
@@ -450,8 +396,8 @@ defaultproperties
 	bSolid = true;
 	bShootable = true;
 	bCountKill = true;
+	bMonster = true;
 	bFloorClip = true;
 	bActivateMCross = true;
 	bActivatePushWall = true;
-	bCheckNoMonsters = true;
 }

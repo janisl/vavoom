@@ -102,7 +102,6 @@ defaultproperties
 	bActivateMCross = true;
 	bActivatePushWall = true;
 	bFloorClip = true;
-	ImuneMissileType = BaronBall;
 	IdleState = S_BOSS_STND;
 	SeeState = S_BOSS_RUN1;
 	MeleeState = S_BOSS_ATK1;
