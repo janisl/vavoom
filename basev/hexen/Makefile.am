@@ -1,0 +1,24 @@
+hexendir = $(datadir)/vavoom/basev/hexen
+
+nobase_hexen_DATA = basepak.pk3
+
+EXTRA_DIST = \
+	graphics/croshai1.lmp \
+	graphics/croshai2.lmp \
+	graphics/croshai3.lmp \
+	graphics/fonta30.lmp \
+	graphics/fonta63.lmp \
+	palette.pcx \
+	basepak.ls.in \
+	language.en \
+	animdefs.txt \
+	mapinfo.txt \
+	skyboxes.txt \
+	sndinfo.txt \
+	terrain.txt
+
+VLUMPY = ../../utils/bin/vlumpy$(EXEEXT)
+
+basepak.pk3: basepak.ls $(VLUMPY) \
+		progs/shared.dat progs/clprogs.dat progs/svprogs.dat
+	$(VLUMPY) $<
