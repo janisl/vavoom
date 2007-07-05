@@ -89,6 +89,7 @@ int ArmorAbsorbDamage(EntityEx inflictor, EntityEx source, int damage,
 
 bool IsWeaponAlwaysExtremeDeath()
 {
+	return false;
 }
 
 void StartDeathSlideShow()
