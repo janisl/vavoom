@@ -2926,13 +2926,14 @@ bool EV_ThingProjectile(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 
 bool EV_ThingSpawn(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5, bool fog)
 {
-	int			tid;
-	float		angle;
-	Entity		A;
-	EntityEx	newAct;
+	int				tid;
+	float			angle;
+	Entity			A;
+	EntityEx		newAct;
 	class<EntityEx>	moType;
-	int			searcher;
-	bool		success;
+	int				searcher;
+	bool			success;
+	EntityEx		fogAct;
 
 	success = false;
 	searcher = -1;
@@ -2968,7 +2969,10 @@ bool EV_ThingSpawn(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5, bool fog)
 				newAct.InsertIntoTIDList(Arg4);
 			if (fog == true)
 			{
-				SpawnTeleportFog(A.Origin);
+				fogAct = Spawn(LineSpecialGameInfo(Game).TeleportFogClass,
+					A.Origin + vector(0.0, 0.0,
+					LineSpecialGameInfo(Game).TeleFogHeight));
+				fogAct.PlaySound('misc/teleport', CHAN_VOICE);
 			}
 			newAct.bDropped = true;	// Don't respawn
 			if (newAct.bFloatBob)
@@ -3872,7 +3876,7 @@ line_t* FindLine(int lineTag, int *searchPosition)
 
 //==========================================================================
 //
-//	SpawnTeleportFog
+//	ModToDamageType
 //
 //==========================================================================
 
@@ -3919,12 +3923,134 @@ name ModToDamageType(int Mod)
 
 //==========================================================================
 //
-//	SpawnTeleportFog
+//  PolyThrustMobj
 //
 //==========================================================================
 
-void SpawnTeleportFog(TVec Org)
+final void PolyThrustMobj(Entity Other, TVec thrustDir, polyobj_t* po)
 {
+	float force;
+	PolyobjThinker pe;
+
+	if (!EntityEx(Other).bShootable && !Other.bIsPlayer)
+	{
+		return;
+	}
+
+	pe = PolyobjThinker(po->SpecialData);
+	if (pe)
+	{
+		force = pe.thrust_force;
+		if (force < 1.0)
+		{
+			force = 1.0;
+		}
+		else if (force > 128.0)
+		{
+			force = 128.0;
+		}
+	}
+	else
+	{
+		force = 1.0;
+	}
+
+	Other.Velocity += force * thrustDir;
+	if (po->bCrush)
+	{
+		TVec testPos;
+
+		testPos = Other.Origin + force * thrustDir * Game.frametime;
+		if (!Other.CheckPosition(testPos))
+		{
+			EntityEx(Other).Damage(none, none, 3, 'Crush');
+		}
+	}
+}
+
+//==========================================================================
+//
+//  PolyBusy
+//
+//==========================================================================
+
+final bool PolyBusy(int polyobj)
+{
+	polyobj_t *poly;
+
+	poly = XLevel.GetPolyobj(polyobj);
+	if (!poly->SpecialData)
+	{
+		return false;
+	}
+	else
+	{
+		return true;
+	}
+}
+
+//==========================================================================
+//
+//	ThingCount
+//
+//==========================================================================
+
+final int ThingCount(int type, int tid)
+{
+	int					count;
+	int					searcher;
+	EntityEx			Ent;
+	class<EntityEx>		moType;
+
+	if (!(type + tid))
+	{
+		// Nothing to count
+		return 0;
+	}
+	moType = class<EntityEx>(FindClassFromScriptId(type));
+	count = 0;
+	searcher = -1;
+	if (tid)
+	{
+		// Count TID things
+		for (Ent = EntityEx(FindMobjFromTID(tid, &searcher)); Ent != none;
+			Ent = EntityEx(FindMobjFromTID(tid, &searcher)))
+		{
+			if (type == 0)
+			{
+				// Just count TIDs
+				count++;
+			}
+			else if (moType == Ent.Class)
+			{
+				if (Ent.bMonster && Ent.Health <= 0)
+				{
+					// Don't count dead monsters
+					continue;
+				}
+				count++;
+			}
+		}
+	}
+	else if (moType)
+	{
+		// Count only types
+		foreach AllThinkers(moType, Ent)
+		{
+			if (Ent.Class != moType)
+			{
+				// Doesn't match
+				continue;
+			}
+			if (Ent.bMonster && Ent.Health <= 0)
+			{
+				// Don't count dead monsters
+				continue;
+			}
+			count++;
+		}
+	}
+	return count;
 }
 
 //==========================================================================

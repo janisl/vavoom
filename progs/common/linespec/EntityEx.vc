@@ -2252,6 +2252,7 @@ final bool Teleport(TVec Dst, float angle, bool DstFog, bool SrcFog,
 
 final bool MoveThing(TVec Pos, bool Fog)
 {
+	EntityEx fogAct;
 	TVec OldOrg = Origin;
 
 	UnlinkFromWorld();
@@ -2261,8 +2262,15 @@ final bool MoveThing(TVec Pos, bool Fog)
 	{
 		if (Fog)
 		{
-			LineSpecialLevelInfo(Level).SpawnTeleportFog(Pos);
-			LineSpecialLevelInfo(Level).SpawnTeleportFog(OldOrg);
+			fogAct = Spawn(LineSpecialGameInfo(Level.Game).TeleportFogClass,
+				Pos + vector(0.0, 0.0,
+				LineSpecialGameInfo(Level.Game).TeleFogHeight));
+			fogAct.PlaySound('misc/teleport', CHAN_VOICE);
+
+			fogAct = Spawn(LineSpecialGameInfo(Level.Game).TeleportFogClass,
+				OldOrg + vector(0.0, 0.0,
+				LineSpecialGameInfo(Level.Game).TeleFogHeight));
+			fogAct.PlaySound('misc/teleport', CHAN_VOICE);
 		}
 		return true;
 	}
