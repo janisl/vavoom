@@ -54,7 +54,7 @@ if test "x$AR" = "x"; then
 fi
 AC_SUBST([AR])
 
-if test "x$enable_debug" == "xyes"; then
+if test "x$enable_debug" = "xyes"; then
 	CFLAGS="$CFLAGS -W -Wall"
 	CXXFLAGS="$CXXFLAGS -W -Wall"
 	LDFLAGS="$LDFLAGS -W -Wall"
@@ -219,7 +219,7 @@ dnl
 dnl  **** Add debug / development flags ****
 dnl
 
-if test "x$enable_zone_debug" == "xyes"; then
+if test "x$enable_zone_debug" = "xyes"; then
 	CPPFLAGS="$CPPFLAGS -W -Wall -DZONE_DEBUG=1"
 fi
 
