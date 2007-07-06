@@ -125,7 +125,7 @@ final void A_SorcUpdateBallAngle()
 final void A_SorcOffense2()
 {
 	float ang1;
-	Actor mo;
+	EntityEx mo;
 	float delta, index;
 	float dist;
 
@@ -136,7 +136,7 @@ final void A_SorcOffense2()
 	mo = Actor(Target).SpawnMissileAngle(SorcFX4, ang1, 0.0);
 	if (mo)
 	{
-		mo._Special2 = 35 * 5 / 2;	// 5 seconds
+		Actor(mo)._Special2 = 35 * 5 / 2;	// 5 seconds
 		dist = Target.Target.DistTo2(mo);
 		dist = dist / mo.Speed;
 		if (dist < 1.0)

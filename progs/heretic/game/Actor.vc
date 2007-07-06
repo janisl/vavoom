@@ -619,69 +619,6 @@ bool SectorChanged(int CrushChange)
 
 //==========================================================================
 //
-//  SeekerMissile
-//
-//  The missile Tracer field must be Actor target. Returns true if
-// target was tracked, false if not.
-//
-//==========================================================================
-
-bool SeekerMissile(float thresh, float turnMax)
-{
-	int dir;
-	float dist;
-	float delta;
-	float angle;
-
-	if (!Tracer)
-	{
-		return false;
-	}
-	if (!Tracer.bShootable)
-	{
-		// Target died
-		Tracer = none;
-		return false;
-	}
-	dir = FaceActor(Actor(Tracer), delta);
-	if (delta > thresh)
-	{
-		delta /= 2.0;
-		if (delta > turnMax)
-		{
-			delta = turnMax;
-		}
-	}
-	if (dir)
-	{
-		// Turn clockwise
-		Angles.yaw = AngleMod360(Angles.yaw + delta);
-	}
-	else
-	{
-		// Turn counter clockwise
-		Angles.yaw = AngleMod360(Angles.yaw - delta);
-	}
-	angle = Angles.yaw;
-	Velocity.x = Speed * cos(angle);
-	Velocity.y = Speed * sin(angle);
-	if (Origin.z + Height < Tracer.Origin.z ||
-		Tracer.Origin.z + Tracer.Height < Origin.z)
-	{
-		// Need to seek vertically
-		dist = DistTo2(Tracer);
-		dist = dist / Speed;
-		if (dist < 1.0)
-		{
-			dist = 1.0;
-		}
-		Velocity.z = (Tracer.Origin.z - Origin.z) / dist;
-	}
-	return true;
-}
-
-//==========================================================================
-//
 //  HaveFlightPower
 //
 //==========================================================================

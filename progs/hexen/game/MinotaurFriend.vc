@@ -468,13 +468,13 @@ final void A_MinotaurAtk2()
 		momz = mo.Velocity.z;
 		angle = mo.Angles.yaw;
 		SpawnMissileAngle(MinotaurFX1,
-			AngleMod360(angle - (45.0 / 8.0)), momz);
+			AngleMod360(angle - (45.0 / 8.0)), momz, 40.0);
 		SpawnMissileAngle(MinotaurFX1,
-			AngleMod360(angle + (45.0 / 8.0)), momz);
+			AngleMod360(angle + (45.0 / 8.0)), momz, 40.0);
 		SpawnMissileAngle(MinotaurFX1,
-			AngleMod360(angle - (45.0 / 16.0)), momz);
+			AngleMod360(angle - (45.0 / 16.0)), momz, 40.0);
 		SpawnMissileAngle(MinotaurFX1,
-			AngleMod360(angle + (45.0 / 16.0)), momz);
+			AngleMod360(angle + (45.0 / 16.0)), momz, 40.0);
 	}
 }
 

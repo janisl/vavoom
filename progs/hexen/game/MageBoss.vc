@@ -34,9 +34,9 @@ class MageBoss : ClassBoss
 
 void MStaffSpawn2(float angle)
 {
-	Actor mo;
+	EntityEx mo;
 
-	mo = SpawnMissileAngle(MageStaffFX2, angle, 0.0);
+	mo = SpawnMissileAngle(MageStaffFX2, angle, 0.0, 40.0);
 	if (mo)
 	{
 		mo.Target = self;

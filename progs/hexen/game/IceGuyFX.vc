@@ -44,12 +44,12 @@ final void A_IceGuyMissilePuff()
 
 final void A_IceGuyMissileExplode()
 {
-	Actor mo;
+	EntityEx mo;
 	int i;
 
 	for (i = 0; i < 8; i++)
 	{
-		mo = SpawnMissileAngle(IceGuyFX2, itof(i) * 45.0, -0.3 * 35.0);
+		mo = SpawnMissileAngle(IceGuyFX2, itof(i) * 45.0, -0.3 * 35.0, 3.0);
 		if (mo)
 		{
 			mo.Target = Target;

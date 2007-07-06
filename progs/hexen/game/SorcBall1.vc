@@ -35,7 +35,7 @@ class SorcBall1 : SorcBall;
 
 final void A_SorcOffense1()
 {
-	Actor mo;
+	EntityEx mo;
 	float ang1, ang2;
 
 	ang1 = AngleMod360(Angles.yaw + 70.0);

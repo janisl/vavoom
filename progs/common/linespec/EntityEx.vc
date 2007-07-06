@@ -3461,6 +3461,75 @@ final EntityEx SpawnMissileAngles(class<EntityEx> type, float yaw, float pitch,
 
 //==========================================================================
 //
+//  SpawnMissileAngle
+//
+//  Returns NULL if the missile exploded immediately, otherwise returns
+// a Actor reference to the missile.
+//
+//==========================================================================
+
+final EntityEx SpawnMissileAngle(class<EntityEx> type, float angle,
+	float momz, optional float SpawnHeight)
+{
+	TVec org;
+	EntityEx mo;
+
+	org = Origin;
+	if (specified_SpawnHeight)
+	{
+		org.z = Origin.z + SpawnHeight;
+	}
+	else if (type.default.bIgnoreFloorStep)
+	{
+		// Minotaur floor fire missile
+		org.z = ONFLOORZ + FloorClip;
+	}
+	else
+	{
+		org.z = Origin.z + 32.0;
+	}
+	org.z -= FloorClip;
+	mo = Spawn(type, org);
+	if (mo.SightSound)
+	{
+		mo.PlaySound(mo.SightSound, CHAN_VOICE);
+	}
+	mo.Target = self;	// Originator
+	mo.Angles.yaw = angle;
+	mo.Velocity.x = mo.Speed * cos(angle);
+	mo.Velocity.y = mo.Speed * sin(angle);
+	mo.Velocity.z = momz;
+	return mo.CheckMissileSpawn() ? mo : none;
+}
+
+//==========================================================================
+//
+//  SpawnMissileAngleSpeed
+//
+//  Returns NULL if the missile exploded immediately, otherwise returns
+// a Actor reference to the missile.
+//
+//==========================================================================
+
+final EntityEx SpawnMissileAngleSpeed(class<EntityEx> type, float angle,
+	float momz, float speed)
+{
+	TVec org;
+	EntityEx mo;
+
+	org = Origin;
+	org.z -= FloorClip;
+	mo = Spawn(type, org);
+	mo.Tracer = self;	// Originator
+	mo.Angles.yaw = angle;
+	mo.Velocity.x = speed * cos(angle);
+	mo.Velocity.y = speed * sin(angle);
+	mo.Velocity.z = momz;
+	return mo.CheckMissileSpawn() ? mo : none;
+}
+
+//==========================================================================
+//
 //	SpawnSubMissile
 //
 //==========================================================================
@@ -4640,6 +4709,70 @@ void OnMapSpawn(mthing_t* mthing)
 				itof(mthing->arg1) * 8.0 : LightRadius, LightColour);
 		}
 	}
+}
+
+//==========================================================================
+//
+//  SeekerMissile
+//
+//  The missile Tracer field must be Actor target. Returns true if
+// target was tracked, false if not.
+//
+//==========================================================================
+
+final bool SeekerMissile(float thresh, float turnMax)
+{
+	int dir;
+	float dist;
+	float delta;
+	float angle;
+
+	if (!Tracer)
+	{
+		return false;
+	}
+	if (!Tracer.bShootable)
+	{
+		// Target died
+		Tracer = none;
+		return false;
+	}
+	dir = FaceActor(Tracer, delta);
+	if (delta > thresh)
+	{
+		delta /= 2.0;
+		if (delta > turnMax)
+		{
+			delta = turnMax;
+		}
+	}
+	if (dir)
+	{
+		// Turn clockwise
+		Angles.yaw = AngleMod360(Angles.yaw + delta);
+	}
+	else
+	{
+		// Turn counter clockwise
+		Angles.yaw = AngleMod360(Angles.yaw - delta);
+	}
+	angle = Angles.yaw;
+	Velocity.x = Speed * cos(angle);
+	Velocity.y = Speed * sin(angle);
+	if (Origin.z + Height < Tracer.Origin.z ||
+		Tracer.Origin.z + Tracer.Height < Origin.z)
+	{
+		// Need to seek vertically
+		dist = DistTo2(Tracer);
+		dist = dist / Speed;
+		if (dist < 1.0)
+		{
+			dist = 1.0;
+		}
+		Velocity.z = (Tracer.Origin.z + Tracer.Height / 2.0 -
+			Origin.z - Height / 2.0) / dist;
+	}
+	return true;
 }
 
 float GetBaseViewHeight()

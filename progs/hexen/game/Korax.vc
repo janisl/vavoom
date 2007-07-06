@@ -402,7 +402,7 @@ final void A_KoraxCommand()
 
 final void A_KoraxBonePop()
 {
-	Actor mo;
+	EntityEx mo;
 
 	// Spawn 6 spirits equalangularly
 	mo = SpawnMissileAngle(KoraxSpirit, 60.0 * 0.0, 5.0 * 35.0);
