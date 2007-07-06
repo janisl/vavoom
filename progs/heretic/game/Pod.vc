@@ -124,6 +124,7 @@ defaultproperties
 	bNoMorph = true;
 	bOnmobjCopyVel = true;
 	bCantAutoAim = true;
+	bNoBlockMonst = true;
 	IdleState = S_POD_WAIT1;
 	PainState = S_POD_PAIN1;
 	DeathState = S_POD_DIE1;

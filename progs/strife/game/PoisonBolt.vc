@@ -36,6 +36,7 @@ defaultproperties
 	Radius = 10.0;
 	Height = 10.0;
 	Speed = 1050.0;
+	MaxStepHeight = 4.0;
 	MissileDamage = 500;
 	bActivateImpact = true;
 	IdleState = S_ARROW2;

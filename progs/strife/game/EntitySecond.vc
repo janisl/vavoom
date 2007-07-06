@@ -74,6 +74,7 @@ defaultproperties
 	bInCombat = true;
 	bUnknown2 = true;
 	bSpectral = true;
+	bNoBlockMonst = true;
 	IdleState = S_SUBENT_LOOK;
 	SeeState = S_SUBENT_RUN1;
 	MeleeState = S_SUBENT_MELEE1;

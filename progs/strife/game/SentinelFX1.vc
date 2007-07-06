@@ -41,6 +41,7 @@ defaultproperties
 	Radius = 10.0;
 	Height = 8.0;
 	Speed = 1400.0;
+	MaxStepHeight = 4.0;
 	IdleState = S_SENTINEL_SHOT_1;
 	DeathState = S_SENTINEL_SHOT_X5;
 }

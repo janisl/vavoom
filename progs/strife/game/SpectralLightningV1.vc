@@ -39,6 +39,7 @@ defaultproperties
 	Radius = 8.0;
 	Height = 24.0;
 	Speed = 770.0;
+	MaxStepHeight = 4.0;
 	MissileDamage = 100;
 	bSpectral = true;
 	IdleState = S_SIGIL_FX4_1;

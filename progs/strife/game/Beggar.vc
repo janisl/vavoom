@@ -62,6 +62,7 @@ defaultproperties
 	Height = 56.0;
 	Mass = 100.0;
 	StepSpeed = 3.0;
+	MaxStepHeight = 16.0;
 	PainChance = 0.9765625;
 	bNeutral = true;
 	IdleState = S_BEGGAR_STAND;

@@ -46,6 +46,7 @@ defaultproperties
 	Height = 13.0;
 	Mass = 15.0;
 	Speed = 875.0;
+	MaxStepHeight = 4.0;
 	ReactionCount = 15;
 	bNoGravity = false;
 	IdleState = S_INQUISITOR_GRENADE_1;

@@ -48,6 +48,7 @@ __states__
 
 defaultproperties
 {
+	MaxStepHeight = 4.0;
 	bActivateImpact = false;
 	IdleState = S_ROBOT_MISSILE2_1;
 	SightSound = 'bishop/misl';

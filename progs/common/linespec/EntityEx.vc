@@ -161,6 +161,11 @@ bool bRip;				// missile rips through solid targets
 bool bPushable;			// can be pushed by other moving mobjs
 bool bBloodlessImpact;	//	Don't spawn blood when hitting a thing
 bool bMonster;
+bool bNoDeathmatch;
+bool bTeleport;			// don't cross lines or look at heights
+bool bSpawnFloat;		// spawn random float z
+bool bNoMorph;			// Don't morph into chicken/pig.
+bool bNoBlockMonst;		// Can cross ML_BLOCKMONSTERS lines
 
 //  Params
 float			Speed;
@@ -224,6 +229,12 @@ name			DamageType;
 
 float			DeathHeight;
 float			BurnHeight;
+
+name			ClassName;		//	For Strife
+
+// Identifier in conversation scripts, originaly index into mobjinfo.
+int				ConversationID;
+int				CurrentSpeech;	// Current speech index.
 
 //==========================================================================
 //
@@ -4496,6 +4507,141 @@ final void FaceMovementDirection()
 	}
 }
 
+//==========================================================================
+//
+//	OnMapSpawn
+//
+//==========================================================================
+
+void OnMapSpawn(mthing_t* mthing)
+{
+	if (bNoDeathmatch && Level.Game.deathmatch)
+	{
+		Destroy();
+		return;
+	}
+
+	if (Level.Game.gameskill == sk_nightmare)
+	{
+		ReactionCount = 0;
+	}
+
+	LastLook = P_Random() % MAXPLAYERS;
+
+	bCheckLineBlocking = false;
+	bCheckLineBlockMonsters = false;
+	if (!bMissile)
+	{
+		bCheckLineBlocking = true;
+		if (!bNoBlockMonst)
+		{
+			bCheckLineBlockMonsters = true;
+		}
+	}
+
+	//	Set the state, but do not use SetState, because action routines can't
+	// be called yet.  If the spawnstate has an action routine, it will not
+	// be called.
+	SetInitialState(IdleState);
+
+	if (mthing)
+	{
+		float x;
+		float y;
+		float z;
+
+		Level.CopyMThing(mthing, &SpawnPoint);
+
+		x = mthing->x;
+		y = mthing->y;
+		if (bSpawnCeiling)
+		{
+			z = ONCEILINGZ;
+		}
+		else if (bSpawnFloat)
+		{
+			z = FLOATRANDZ;
+		}
+		else if (bFloatBob)
+		{
+			z = mthing->height;
+		}
+		else
+		{
+			z = ONFLOORZ;
+		}
+		SetOrigin2(vector(x, y, z));
+		if (z == ONFLOORZ)
+		{
+			Origin.z += mthing->height;
+		}
+		else if (z == ONCEILINGZ)
+		{
+			Origin.z -= mthing->height;
+		}
+		LinkToWorld();
+
+		TID = mthing->tid;
+		Special = mthing->special;
+		Args[0] = mthing->arg1;
+		Args[1] = mthing->arg2;
+		Args[2] = mthing->arg3;
+		Args[3] = mthing->arg4;
+		Args[4] = mthing->arg5;
+		if (bFloatBob)
+		{
+			// Seed random starting index for bobbing motion
+			Health = P_Random();
+			Special1f = mthing->height;
+		}
+		if (StateTime > 0.0)
+		{
+			StateTime = 0.1 + Random() * StateTime;
+		}
+		if (bCountKill)
+		{
+			Level.TotalKills++;
+		}
+		if (bCountItem)
+		{
+			Level.TotalItems++;
+		}
+
+		Angles.yaw = itof(AngleIncrements() * (mthing->angle /
+			AngleIncrements()));
+		if (mthing->options & LineSpecialLevelInfo::MTF_AMBUSH)
+		{
+			bAmbush = true;
+		}
+		if (mthing->options & LineSpecialLevelInfo::MTF_STANDSTILL)
+		{
+			bStanding = true;
+		}
+		if (mthing->options & LineSpecialLevelInfo::MTF_DORMANT)
+		{
+			SetDormant();
+		}
+	}
+	else
+	{
+		SetOrigin2(Origin);
+	}
+
+	if (bStaticLight && mthing && !TID)
+	{
+		if (LightColour == 0xffffffff)
+		{
+			Level.AddStaticLight(Origin + LightOffset, mthing->arg1 ?
+				itof(mthing->arg1) * 8.0 : LightRadius);
+		}
+		else
+		{
+			Level.AddStaticLightRGB(Origin + LightOffset, mthing->arg1 ?
+				itof(mthing->arg1) * 8.0 : LightRadius, LightColour);
+		}
+	}
+}
+
 float GetBaseViewHeight()
 {
 	return 0.0;
@@ -4627,6 +4773,29 @@ bool IsPointPusher()
 bool IsPointPuller()
 {
 	return false;
+}
+
+//==========================================================================
+//
+//  AngleIncrements
+//
+//==========================================================================
+
+int AngleIncrements()
+{
+	return 45;
+}
+
+//==========================================================================
+//
+//  SetDormant
+//
+//==========================================================================
+
+void SetDormant()
+{
+	bDormant = true;
+	StateTime = -1.0;
 }
 
 defaultproperties

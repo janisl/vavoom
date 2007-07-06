@@ -64,6 +64,7 @@ defaultproperties
 	Height = 56.0;
 	Mass = 100.0;
 	PainChance = 1.0;
+	MaxStepHeight = 16.0;
 	bDropOff = true;
 	bFriendly = true;
 	IdleState = S_PLAY;

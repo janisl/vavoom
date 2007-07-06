@@ -130,6 +130,7 @@ defaultproperties
 	bInCombat = true;
 	bNoBlood = true;
 	bNoDeathmatch = true;
+	bNoBlockMonst = true;
 	IdleState = S_LOREMASTER_LOOK1;
 	SeeState = S_LOREMASTER_RUN1;
 	MeleeState = S_LOREMASTER_ATK1_1;

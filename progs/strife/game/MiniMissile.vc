@@ -42,6 +42,7 @@ defaultproperties
 	Radius = 10.0;
 	Height = 14.0;
 	Speed = 700.0;
+	MaxStepHeight = 4.0;
 	MissileDamage = 10;
 	bActivateImpact = true;
 	IdleState = S_MINI_MISSILE;

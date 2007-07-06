@@ -90,6 +90,7 @@ defaultproperties
 	bFloat = true;
 	bInCombat = true;
 	bNoBlood = true;
+	bNoBlockMonst = true;
 	IdleState = S_SENTINEL_LOOK;
 	SeeState = S_SENTINEL_RUN1;
 	MissileState = S_SENTINEL_ATK1;

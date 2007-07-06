@@ -61,4 +61,5 @@ __states__
 
 defaultproperties
 {
+	MaxStepHeight = 16.0;
 }

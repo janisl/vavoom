@@ -34,17 +34,10 @@ const float
 bool bNeutral;			// Neutral characters (peasants and beggars)
 bool bStandMustSeeTarget;		//COUNTITEM	800000
 bool bUnknown2;			//8000000
-bool bNoDeathmatch;
 bool bSpawnFlag8;
 bool bSpawnFlag9;
 bool bInCombat;			// Actors in combat won't talk
 bool bLookAllAround;	// Actor can see all around.
-
-name ClassName;
-
-// Identifier in conversation scripts, originaly index into mobjinfo.
-int ConversationID;
-int CurrentSpeech;	// Current speech index.
 
 //===========================================================================
 //
@@ -98,118 +91,6 @@ bool IsPointPuller()
 
 void TouchSpecial(EntityEx Toucher)
 {
-}
-
-//==========================================================================
-//
-//	OnMapSpawn
-//
-//==========================================================================
-
-void OnMapSpawn(mthing_t * mthing)
-{
-	if (bNoDeathmatch && Level.Game.deathmatch)
-	{
-		Destroy();
-		return;
-	}
-
-	bCheckLineBlocking = false;
-	bCheckLineBlockMonsters = false;
-	if (!bMissile)
-	{
-		bCheckLineBlocking = true;
-		if (Class != StrifePlayer && !bSpectral)
-		{
-			bCheckLineBlockMonsters = true;
-		}
-	}
-
-	if (bMissile)
-	{
-		MaxStepHeight = 4.0;
-	}
-	else if (bNoBlood)
-	{
-		MaxStepHeight = 24.0;
-	}
-
-	if (Level.Game.gameskill == sk_nightmare)
-	{
-		ReactionCount = 0;
-	}
-
-	LastLook = P_Random() % MAXPLAYERS;
-	// do not set the state with P_SetMobjState,
-	// because action routines can not be called yet
-	SetInitialState(IdleState);
-
-	if (mthing)
-	{
-		float x;
-		float y;
-		float z;
-
-		Level.CopyMThing(mthing, &SpawnPoint);
-
-		x = mthing->x;
-		y = mthing->y;
-		if (bSpawnCeiling)
-			z = ONCEILINGZ;
-		else
-			z = ONFLOORZ;
-		SetOrigin2(vector(x, y, z));
-		if (z == ONFLOORZ)
-		{
-			Origin.z += mthing->height;
-		}
-		else if (z == ONCEILINGZ)
-		{
-			Origin.z -= mthing->height;
-		}
-		LinkToWorld();
-
-		TID = mthing->tid;
-		Special = mthing->special;
-		Args[0] = mthing->arg1;
-		Args[1] = mthing->arg2;
-		Args[2] = mthing->arg3;
-		Args[3] = mthing->arg4;
-		Args[4] = mthing->arg5;
-		if (StateTime > 0.0)
-			StateTime = 0.1 + Random() * StateTime;
-		if (bCountKill)
-			Level.TotalKills++;
-
-		Angles.yaw = itof(45 * (mthing->angle / 45));
-		if (mthing->options & StrifeLevelInfo::MTF_STANDSTILL)
-		{
-			bStanding = true;
-		}
-		if (mthing->options & StrifeLevelInfo::MTF_DORMANT)
-		{
-			bDormant = true;
-			StateTime = -1.0;
-		}
-	}
-	else
-	{
-		SetOrigin2(Origin);
-	}
-
-	if (bStaticLight && mthing && !TID)
-	{
-		if (LightColour == 0xffffffff)
-		{
-			Level.AddStaticLight(Origin + LightOffset, mthing->arg1 ?
-				itof(mthing->arg1) * 8.0 : LightRadius);
-		}
-		else
-		{
-			Level.AddStaticLightRGB(Origin + LightOffset, mthing->arg1 ?
-				itof(mthing->arg1) * 8.0 : LightRadius, LightColour);
-		}
-	}
 }
 
 //==========================================================================
@@ -1595,7 +1476,7 @@ defaultproperties
 	Radius = 20.0;
 	Height = 16.0;
 	Mass = 100.0;
-	MaxStepHeight = 16.0;
+	MaxStepHeight = 24.0;
 	MaxDropoffHeight = 32.0;
 	LightOffset = vector(0.0, 0.0, 0.0);
 	LightColour = 0xffffffff;

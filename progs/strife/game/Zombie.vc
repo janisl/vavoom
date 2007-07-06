@@ -38,6 +38,7 @@ defaultproperties
 	Radius = 20.0;
 	Height = 56.0;
 	Mass = 100.0;
+	MaxStepHeight = 16.0;
 	Translation = 1;
 	IdleState = S_PEASANT2_STAND;
 	PainState = S_PEASANT2_PAIN;

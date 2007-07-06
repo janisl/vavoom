@@ -37,6 +37,7 @@ defaultproperties
 	Radius = 13.0;
 	Height = 13.0;
 	Speed = 1225.0;
+	MaxStepHeight = 4.0;
 	MissileDamage = 10;
 	bActivateImpact = true;
 	DamageType = 'Disintegrate';

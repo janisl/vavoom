@@ -84,6 +84,7 @@ defaultproperties
 	ReactionCount = 70;
 	Alpha = 0.333;
 	bNoGravity = false;
+	bNoBlockMonst = true;
 	IdleState = S_SIGIL_FLOOR_1;
 	DeathState = S_ZAP1_0;
 }

@@ -64,6 +64,7 @@ defaultproperties
 	Mass = 100.0;
 	StepSpeed = 4.0;
 	PainChance = 0.78125;
+	MaxStepHeight = 16.0;
 	bNeutral = true;
 	IdleState = S_PEASANT_STAND;
 	IdleRightState = S_PEASANT_WALK1;

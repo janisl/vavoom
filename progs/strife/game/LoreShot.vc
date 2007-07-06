@@ -69,6 +69,7 @@ defaultproperties
 	Radius = 10.0;
 	Height = 14.0;
 	Speed = 700.0;
+	MaxStepHeight = 4.0;
 	MissileDamage = 2;
 	IdleState = S_LOREMASTER_CHAIN;
 	DeathState = S_LOREMASTER_CHAIN_X;

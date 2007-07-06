@@ -51,6 +51,7 @@ defaultproperties
 	Height = 13.0;
 	Mass = 20.0;
 	Speed = 525.0;
+	MaxStepHeight = 4.0;
 	ReactionCount = 30;
 	MissileDamage = 1;
 	bNoGravity = false;

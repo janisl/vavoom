@@ -85,6 +85,7 @@ defaultproperties
 	bUnknown2 = true;
 	bSpectral = true;
 	bNoDeathmatch = true;
+	bNoBlockMonst = true;
 	IdleState = S_SPECTER_LOOK1;
 	SeeState = S_SPECTER_RUN1;
 	MeleeState = S_SPECTER_MELEE1;

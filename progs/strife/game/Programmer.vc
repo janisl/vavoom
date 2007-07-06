@@ -114,6 +114,7 @@ defaultproperties
 	bFloat = true;
 	bNoBlood = true;
 	bNoDeathmatch = true;
+	bNoBlockMonst = true;
 	IdleState = S_PROGRAMMER_LOOK1;
 	SeeState = S_PROGRAMMER_RUN1;
 	MeleeState = S_PROGRAMMER_ATK1_1;

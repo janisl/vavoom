@@ -46,6 +46,7 @@ defaultproperties
 	Height = 16.0;
 	Mass = 100.0;
 	StepSpeed = 13.0;
+	MaxStepHeight = 16.0;
 	bSolid = false;
 	bShootable = false;
 	bInCombat = true;
