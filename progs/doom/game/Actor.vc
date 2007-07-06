@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Actor : EntityEx
+class Actor : ScriptedEntity
 	abstract;
 
 bool bDehackedSpecial;	// Old style special handling

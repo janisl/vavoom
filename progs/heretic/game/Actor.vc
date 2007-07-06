@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Actor : EntityEx
+class Actor : ScriptedEntity
 	abstract;
 
 const float TELEFOGHEIGHT 	= 32.0;

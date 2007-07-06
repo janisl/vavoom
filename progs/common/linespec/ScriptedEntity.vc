@@ -7,7 +7,7 @@
 //**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
 //**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**    $Id: classes.vc 1583 2006-06-27 19:05:42Z dj_jl $
+//**    $Id$
 //**
 //**    Copyright (C) 1999-2006 Jānis Legzdiņš
 //**
@@ -22,47 +22,15 @@
 //**  GNU General Public License for more details.
 //**
 //**************************************************************************
+//**
+//**	Class for Actor state action methods. This will eventually be
+//**  renamed to Actor.
+//**
+//**************************************************************************
 
-import engine;
+class ScriptedEntity : EntityEx
+	abstract;
 
-enum
+defaultproperties
 {
-	CHAN_AUTO,
-	CHAN_VOICE,
-	CHAN_WEAPON,
-	CHAN_ITEM,
-	CHAN_BODY
-};
-
-#include "EntityEx.vc"
-#include "ScriptedEntity.vc"
-#include "PlayerEx.vc"
-
-#include "LineSpecialLevelInfo.vc"
-#include "LineSpecialGameInfo.vc"
-#include "SectorThinker.vc"
-#include "SectorMover.vc"
-#include "VerticalDoor.vc"
-#include "TextureChangeDoor.vc"
-#include "CeilingMover.vc"
-#include "CeilingWaggle.vc"
-#include "FloorMover.vc"
-#include "FloorWaggle.vc"
-#include "StairStepMover.vc"
-#include "Platform.vc"
-#include "Pillar.vc"
-#include "Elevator.vc"
-#include "PolyobjThinker.vc"
-#include "PolyobjRotator.vc"
-#include "PolyobjMover.vc"
-#include "PolyobjDoor.vc"
-#include "Lighting.vc"
-#include "FireFlicker.vc"
-#include "GlowingLight.vc"
-#include "LightFlash.vc"
-#include "Strobe.vc"
-#include "PhasedLight.vc"
-#include "LightEffect.vc"
-#include "Scroller.vc"
-#include "PlaneWatcher.vc"
-#include "Pusher.vc"
+}

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Actor : EntityEx
+class Actor : ScriptedEntity
 	abstract;
 
 const float MORPHTIME 		= 40.0;
