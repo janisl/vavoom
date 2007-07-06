@@ -256,6 +256,7 @@ class	VState;
 class	VConstant;
 class	VStruct;
 class	VClass;
+class	VNetObjectsMap;
 struct	mobjinfo_t;
 
 class	VObject;

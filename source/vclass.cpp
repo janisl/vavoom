@@ -1172,11 +1172,13 @@ bool VField::IdenticalValue(const vuint8* Val1, const vuint8* Val2,
 //
 //==========================================================================
 
-void VField::NetSerialiseValue(VStream& Strm, vuint8* Data, const VField::FType& Type)
+bool VField::NetSerialiseValue(VStream& Strm, VNetObjectsMap* Map,
+	vuint8* Data, const VField::FType& Type)
 {
 	guard(VField::NetSerialiseValue);
 	VField::FType IntType;
 	int InnerSize;
+	bool Ret = true;
 	switch (Type.Type)
 	{
 	case TYPE_Int:
@@ -1208,9 +1210,8 @@ void VField::NetSerialiseValue(VStream& Strm, vuint8* Data, const VField::FType&
 		Strm << *(float*)Data;
 		break;
 
-	//FIXME this will work only for the local connection.
 	case TYPE_Name:
-		Strm << *(vint32*)Data;
+		Ret = Map->SerialiseName(Strm, *(VName*)Data);
 		break;
 
 	case TYPE_Vector:
@@ -1270,44 +1271,20 @@ void VField::NetSerialiseValue(VStream& Strm, vuint8* Data, const VField::FType&
 		Strm << *(VStr*)Data;
 		break;
 
+	case TYPE_Class:
+		Ret = Map->SerialiseClass(Strm, *(VClass**)Data);
+		break;
+
 	case TYPE_State:
-		if (Strm.IsLoading())
-		{
-			vuint32 ClassId;
-			Strm.SerialiseInt(ClassId, GNetClassLookup.Num());
-			if (ClassId)
-			{
-				vuint32 StateId;
-				Strm.SerialiseInt(StateId,
-					GNetClassLookup[ClassId]->StatesLookup.Num());
-				*(VState**)Data = GNetClassLookup[ClassId]->StatesLookup[StateId];
-			}
-			else
-			{
-				*(VState**)Data = NULL;
-			}
-		}
-		else
-		{
-			if (*(VState**)Data)
-			{
-				vuint32 ClassId = ((VClass*)(*(VState**)Data)->Outer)->NetId;
-				vuint32 StateId = (*(VState**)Data)->NetId;
-				checkSlow(ClassId);
-				Strm.SerialiseInt(ClassId, GNetClassLookup.Num());
-				Strm.SerialiseInt(StateId,
-					((VClass*)(*(VState**)Data)->Outer)->StatesLookup.Num());
-			}
-			else
-			{
-				vuint32 NoClass = 0;
-				Strm.SerialiseInt(NoClass, GNetClassLookup.Num());
-			}
-		}
+		Ret = Map->SerialiseState(Strm, *(VState**)Data);
+		break;
+
+	case TYPE_Reference:
+		Ret = Map->SerialiseObject(Strm, *(VObject**)Data);
 		break;
 
 	case TYPE_Struct:
-		Type.Struct->NetSerialiseObject(Strm, Data);
+		Ret = Type.Struct->NetSerialiseObject(Strm, Map, Data);
 		break;
 
 	case TYPE_Array:
@@ -1316,13 +1293,17 @@ void VField::NetSerialiseValue(VStream& Strm, vuint8* Data, const VField::FType&
 		InnerSize = IntType.GetSize();
 		for (int i = 0; i < Type.ArrayDim; i++)
 		{
-			NetSerialiseValue(Strm, Data + i * InnerSize, IntType);
+			if (!NetSerialiseValue(Strm, Map, Data + i * InnerSize, IntType))
+			{
+				Ret = false;
+			}
 		}
 		break;
 
 	default:
 		Sys_Error("Replication of field type %d is not supported", Type.Type);
 	}
+	return Ret;
 	unguard;
 }
 
@@ -2456,19 +2437,25 @@ bool VStruct::IdenticalObject(const vuint8* Val1, const vuint8* Val2)
 //
 //==========================================================================
 
-void VStruct::NetSerialiseObject(VStream& Strm, vuint8* Data)
+bool VStruct::NetSerialiseObject(VStream& Strm, VNetObjectsMap* Map,
+	vuint8* Data)
 {
 	guard(VStruct::NetSerialiseObject);
+	bool Ret = true;
 	//	Serialise parent struct's fields.
 	if (ParentStruct)
 	{
-		ParentStruct->NetSerialiseObject(Strm, Data);
+		Ret = ParentStruct->NetSerialiseObject(Strm, Map, Data);
 	}
 	//	Serialise fields.
 	for (VField* F = Fields; F; F = F->Next)
 	{
-		VField::NetSerialiseValue(Strm, Data + F->Ofs, F->Type);
+		if (!VField::NetSerialiseValue(Strm, Map, Data + F->Ofs, F->Type))
+		{
+			Ret = false;
+		}
 	}
+	return Ret;
 	unguardf(("(%s)", *Name));
 }
 

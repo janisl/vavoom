@@ -97,11 +97,13 @@ bool VBasePlayer::ExecuteNetMethod(VMethod* Func)
 			case TYPE_Byte:
 			case TYPE_Bool:
 			case TYPE_Name:
-				VField::NetSerialiseValue(Msg, (vuint8*)&Param->i, Func->ParamTypes[i]);
+				VField::NetSerialiseValue(Msg, Net->ObjMap, (vuint8*)&Param->i,
+					Func->ParamTypes[i]);
 				Param++;
 				break;
 			case TYPE_Float:
-				VField::NetSerialiseValue(Msg, (vuint8*)&Param->f, Func->ParamTypes[i]);
+				VField::NetSerialiseValue(Msg, Net->ObjMap, (vuint8*)&Param->f,
+					Func->ParamTypes[i]);
 				Param++;
 				break;
 			case TYPE_String:
@@ -109,7 +111,8 @@ bool VBasePlayer::ExecuteNetMethod(VMethod* Func)
 			case TYPE_Reference:
 			case TYPE_Class:
 			case TYPE_State:
-				VField::NetSerialiseValue(Msg, (vuint8*)&Param->p, Func->ParamTypes[i]);
+				VField::NetSerialiseValue(Msg, Net->ObjMap, (vuint8*)&Param->p,
+					Func->ParamTypes[i]);
 				Param++;
 				break;
 			case TYPE_Vector:
@@ -118,7 +121,8 @@ bool VBasePlayer::ExecuteNetMethod(VMethod* Func)
 					Vec.x = Param[0].f;
 					Vec.y = Param[1].f;
 					Vec.z = Param[2].f;
-					VField::NetSerialiseValue(Msg, (vuint8*)&Vec, Func->ParamTypes[i]);
+					VField::NetSerialiseValue(Msg, Net->ObjMap, (vuint8*)&Vec,
+						Func->ParamTypes[i]);
 					Param += 3;
 				}
 				break;

@@ -184,7 +184,8 @@ void VPlayerChannel::Update()
 				}
 				Msg.WriteInt(F->NetIndex, Plr->GetClass()->NumNetFields);
 				Msg.WriteInt(i, F->Type.ArrayDim);
-				VField::NetSerialiseValue(Msg, Data + F->Ofs + i * InnerSize, IntType);
+				VField::NetSerialiseValue(Msg, Connection->ObjMap,
+					Data + F->Ofs + i * InnerSize, IntType);
 				VField::CopyFieldValue(Data + F->Ofs + i * InnerSize,
 					OldData + F->Ofs + i * InnerSize, IntType);
 			}
@@ -192,7 +193,8 @@ void VPlayerChannel::Update()
 		else
 		{
 			Msg.WriteInt(F->NetIndex, Plr->GetClass()->NumNetFields);
-			VField::NetSerialiseValue(Msg, Data + F->Ofs, F->Type);
+			VField::NetSerialiseValue(Msg, Connection->ObjMap, Data + F->Ofs,
+				F->Type);
 			VField::CopyFieldValue(Data + F->Ofs, OldData + F->Ofs, F->Type);
 		}
 	}
@@ -232,12 +234,13 @@ void VPlayerChannel::ParsePacket(VMessageIn& Msg)
 				int Idx = Msg.ReadInt(F->Type.ArrayDim);
 				VField::FType IntType = F->Type;
 				IntType.Type = F->Type.ArrayInnerType;
-				VField::NetSerialiseValue(Msg, (vuint8*)Plr + F->Ofs +
-					Idx * IntType.GetSize(), IntType);
+				VField::NetSerialiseValue(Msg, Connection->ObjMap,
+					(vuint8*)Plr + F->Ofs + Idx * IntType.GetSize(), IntType);
 			}
 			else
 			{
-				VField::NetSerialiseValue(Msg, (vuint8*)Plr + F->Ofs, F->Type);
+				VField::NetSerialiseValue(Msg, Connection->ObjMap,
+					(vuint8*)Plr + F->Ofs, F->Type);
 			}
 			continue;
 		}
@@ -266,11 +269,13 @@ void VPlayerChannel::ParsePacket(VMessageIn& Msg)
 				case TYPE_Byte:
 				case TYPE_Bool:
 				case TYPE_Name:
-					VField::NetSerialiseValue(Msg, (vuint8*)&pr_stackPtr->i, Func->ParamTypes[i]);
+					VField::NetSerialiseValue(Msg, Connection->ObjMap,
+						(vuint8*)&pr_stackPtr->i, Func->ParamTypes[i]);
 					pr_stackPtr++;
 					break;
 				case TYPE_Float:
-					VField::NetSerialiseValue(Msg, (vuint8*)&pr_stackPtr->f, Func->ParamTypes[i]);
+					VField::NetSerialiseValue(Msg, Connection->ObjMap,
+						(vuint8*)&pr_stackPtr->f, Func->ParamTypes[i]);
 					pr_stackPtr++;
 					break;
 				case TYPE_String:
@@ -278,13 +283,15 @@ void VPlayerChannel::ParsePacket(VMessageIn& Msg)
 				case TYPE_Reference:
 				case TYPE_Class:
 				case TYPE_State:
-					VField::NetSerialiseValue(Msg, (vuint8*)&pr_stackPtr->p, Func->ParamTypes[i]);
+					VField::NetSerialiseValue(Msg, Connection->ObjMap,
+						(vuint8*)&pr_stackPtr->p, Func->ParamTypes[i]);
 					pr_stackPtr++;
 					break;
 				case TYPE_Vector:
 					{
 						TVec Vec;
-						VField::NetSerialiseValue(Msg, (vuint8*)&Vec, Func->ParamTypes[i]);
+						VField::NetSerialiseValue(Msg, Connection->ObjMap,
+							(vuint8*)&Vec, Func->ParamTypes[i]);
 						PR_Pushv(Vec);
 					}
 					break;

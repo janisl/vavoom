@@ -182,6 +182,7 @@ void VThinkerChannel::Update()
 
 	EvalCondValues(Thinker, Thinker->GetClass(), FieldCondValues);
 	vuint8* Data = (vuint8*)Thinker;
+	VObject* NullObj = NULL;
 
 	VMessageOut Msg(this);
 	Msg.bReliable = true;
@@ -243,22 +244,51 @@ void VThinkerChannel::Update()
 			int InnerSize = IntType.GetSize();
 			for (int i = 0; i < F->Type.ArrayDim; i++)
 			{
-				if (VField::IdenticalValue(FieldValue + i * InnerSize,
-					OldData + F->Ofs + i * InnerSize, IntType))
+				vuint8* Val = FieldValue + i * InnerSize;
+				vuint8* OldVal = OldData + F->Ofs + i * InnerSize;
+				if (VField::IdenticalValue(Val, OldVal, IntType))
 				{
 					continue;
 				}
+
+				//	If it's an object reference that cannot be serialised,
+				// send it as NULL reference.
+				if (IntType.Type == TYPE_Reference &&
+					!Connection->ObjMap->CanSerialiseObject(*(VObject**)Val))
+				{
+					if (!*(VObject**)OldVal)
+					{
+						//	Already sent as NULL
+						continue;
+					}
+					Val = (vuint8*)&NullObj;
+				}
+
 				Msg.WriteInt(F->NetIndex, Thinker->GetClass()->NumNetFields);
 				Msg.WriteInt(i, F->Type.ArrayDim);
-				VField::NetSerialiseValue(Msg, FieldValue + i * InnerSize, IntType);
-				VField::CopyFieldValue(FieldValue + i * InnerSize,
-					OldData + F->Ofs + i * InnerSize, IntType);
+				VField::NetSerialiseValue(Msg, Connection->ObjMap, Val,
+					IntType);
+				VField::CopyFieldValue(Val, OldVal, IntType);
 			}
 		}
 		else
 		{
+			//	If it's an object reference that cannot be serialised, send it
+			// as NULL reference.
+			if (F->Type.Type == TYPE_Reference &&
+				!Connection->ObjMap->CanSerialiseObject(*(VObject**)FieldValue))
+			{
+				if (!*(VObject**)(OldData + F->Ofs))
+				{
+					//	Already sent as NULL
+					continue;
+				}
+				FieldValue = (vuint8*)&NullObj;
+			}
+
 			Msg.WriteInt(F->NetIndex, Thinker->GetClass()->NumNetFields);
-			VField::NetSerialiseValue(Msg, FieldValue, F->Type);
+			VField::NetSerialiseValue(Msg, Connection->ObjMap, FieldValue,
+				F->Type);
 			VField::CopyFieldValue(FieldValue, OldData + F->Ofs, F->Type);
 		}
 	}
@@ -331,12 +361,14 @@ void VThinkerChannel::ParsePacket(VMessageIn& Msg)
 				int Idx = Msg.ReadInt(F->Type.ArrayDim);
 				VField::FType IntType = F->Type;
 				IntType.Type = F->Type.ArrayInnerType;
-				VField::NetSerialiseValue(Msg, (vuint8*)Thinker + F->Ofs +
-					Idx * IntType.GetSize(), IntType);
+				VField::NetSerialiseValue(Msg, Connection->ObjMap,
+					(vuint8*)Thinker + F->Ofs + Idx * IntType.GetSize(),
+					IntType);
 			}
 			else
 			{
-				VField::NetSerialiseValue(Msg, (vuint8*)Thinker + F->Ofs, F->Type);
+				VField::NetSerialiseValue(Msg, Connection->ObjMap,
+					(vuint8*)Thinker + F->Ofs, F->Type);
 			}
 			continue;
 		}
@@ -365,29 +397,34 @@ void VThinkerChannel::ParsePacket(VMessageIn& Msg)
 				case TYPE_Byte:
 				case TYPE_Bool:
 				case TYPE_Name:
-					VField::NetSerialiseValue(Msg, (vuint8*)&pr_stackPtr->i, Func->ParamTypes[i]);
+					VField::NetSerialiseValue(Msg, Connection->ObjMap,
+						(vuint8*)&pr_stackPtr->i, Func->ParamTypes[i]);
 					pr_stackPtr++;
 					break;
 				case TYPE_Float:
-					VField::NetSerialiseValue(Msg, (vuint8*)&pr_stackPtr->f, Func->ParamTypes[i]);
+					VField::NetSerialiseValue(Msg, Connection->ObjMap,
+						(vuint8*)&pr_stackPtr->f, Func->ParamTypes[i]);
 					pr_stackPtr++;
 					break;
 				case TYPE_String:
 					pr_stackPtr->p = NULL;
-					VField::NetSerialiseValue(Msg, (vuint8*)&pr_stackPtr->p, Func->ParamTypes[i]);
+					VField::NetSerialiseValue(Msg, Connection->ObjMap,
+						(vuint8*)&pr_stackPtr->p, Func->ParamTypes[i]);
 					pr_stackPtr++;
 					break;
 				case TYPE_Pointer:
 				case TYPE_Reference:
 				case TYPE_Class:
 				case TYPE_State:
-					VField::NetSerialiseValue(Msg, (vuint8*)&pr_stackPtr->p, Func->ParamTypes[i]);
+					VField::NetSerialiseValue(Msg, Connection->ObjMap,
+						(vuint8*)&pr_stackPtr->p, Func->ParamTypes[i]);
 					pr_stackPtr++;
 					break;
 				case TYPE_Vector:
 					{
 						TVec Vec;
-						VField::NetSerialiseValue(Msg, (vuint8*)&Vec, Func->ParamTypes[i]);
+						VField::NetSerialiseValue(Msg, Connection->ObjMap,
+							(vuint8*)&Vec, Func->ParamTypes[i]);
 						PR_Pushv(Vec);
 					}
 					break;

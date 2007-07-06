@@ -297,6 +297,7 @@ public:
 	vuint32								AckSequence;
 	vuint32								UnreliableSendSequence;
 	vuint32								UnreliableReceiveSequence;
+	VNetObjectsMap*						ObjMap;
 
 private:
 	vuint8*								UpdatePvs;
@@ -375,6 +376,20 @@ class VServerNetContext : public VNetContext
 public:
 	//	VNetContext interface
 	VLevel* GetLevel();
+};
+
+class VNetObjectsMap
+{
+public:
+	VNetConnection*		Connection;
+
+	VNetObjectsMap();
+	VNetObjectsMap(VNetConnection*);
+	bool CanSerialiseObject(VObject*);
+	bool SerialiseName(VStream&, VName&);
+	bool SerialiseObject(VStream&, VObject*&);
+	bool SerialiseClass(VStream&, VClass*&);
+	bool SerialiseState(VStream&, VState*&);
 };
 
 //	Global access to the low-level networking services.

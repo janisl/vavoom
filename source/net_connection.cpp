@@ -73,6 +73,9 @@ VNetConnection::VNetConnection(VSocketPublic* ANetCon, VNetContext* AContext,
 	memset(Channels, 0, sizeof(Channels));
 	memset(InSequence, 0, sizeof(InSequence));
 	memset(OutSequence, 0, sizeof(OutSequence));
+
+	ObjMap = new VNetObjectsMap(this);
+
 	CreateChannel(CHANNEL_Control, CHANIDX_General);
 	CreateChannel(CHANNEL_Player, CHANIDX_Player);
 	CreateChannel(CHANNEL_Level, CHANIDX_Level);
