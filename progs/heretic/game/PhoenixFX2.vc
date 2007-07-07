@@ -93,5 +93,5 @@ defaultproperties
 	bActivateImpact = true;
 	IdleState = S_PHOENIXFX2_1;
 	DeathState = S_PHOENIXFXI2_1;
-	Effects = HereticDefs::EF_DL_WHITE;
+	Effects = EF_DL_WHITE;
 }

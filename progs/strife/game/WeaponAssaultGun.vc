@@ -55,7 +55,7 @@ final void A_FireRiffle()
 	}
 	damage = 4 * (P_Random() % 3 + 1);
 	Actor(Owner).LineAttack(dir, MISSILERANGE, damage, StrifePuff);
-	Owner.Effects |= StrifeDefs::EF_DL_MUZZLEFLASH;
+	Owner.Effects |= EF_DL_MUZZLEFLASH;
 }
 
 __states__

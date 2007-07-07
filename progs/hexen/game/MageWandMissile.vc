@@ -50,5 +50,5 @@ defaultproperties
 	bBlaster = true;
 	IdleState = S_MWAND_MISSILE1;
 	DeathState = S_MWANDPUFF1;
-	Effects = HexenDefs::EF_DL_BLUE;
+	Effects = EF_DL_BLUE;
 }

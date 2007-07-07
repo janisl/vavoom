@@ -42,5 +42,5 @@ defaultproperties
 	IdleState = S_CENTAUR_FX1;
 	DeathState = S_CENTAUR_FX_X1;
 	DeathSound = 'CentaurMissileExplode';
-	Effects = HexenDefs::EF_DL_BLUE;
+	Effects = EF_DL_BLUE;
 }

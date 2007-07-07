@@ -52,5 +52,5 @@ defaultproperties
 	IdleState = S_ICESHARD1;
 	DeathState = S_SHARDFXE1_1;
 	DeathSound = 'MageShardsExplode';
-	Effects = HexenDefs::EF_DL_BLUE;
+	Effects = EF_DL_BLUE;
 }

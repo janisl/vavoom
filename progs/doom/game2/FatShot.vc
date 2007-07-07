@@ -53,5 +53,5 @@ defaultproperties
 	DeathState = S_FATSHOTX1;
 	SightSound = 'fatso/attack';
 	DeathSound = 'fatso/shotx';
-	Effects = DoomDefs::EF_DL_RBALL;
+	Effects = EF_DL_RED;
 }

@@ -119,5 +119,5 @@ defaultproperties
 	bNoGravity = true;
 	bNoPassMobj = true;
 	IdleState = S_FIRE1;
-	Effects = DoomDefs::EF_DL_MISSILE;
+	Effects = EF_DL_WHITE;
 }

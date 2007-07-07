@@ -54,7 +54,6 @@ defaultproperties
 	ReactionCount = 0;
 	bCountKill = false;
 	bMonster = false;
-	bCkeckNoMonsters = false;
 	bActivateMCross = false;
 	bWindThrust = true;
 	bSlide = true;

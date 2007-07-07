@@ -328,6 +328,7 @@ defaultproperties
 	bTelestomp = false;
 	bActivatePushWall = false;
 	bActivateMCross = false;
+	bFullVolActive = true;
 	IdleState = S_DRAGON_LOOK1;
 	SeeState = S_DRAGON_INIT;
 	MissileState = S_DRAGON_ATK1;

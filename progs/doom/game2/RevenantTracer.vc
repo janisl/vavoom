@@ -99,5 +99,5 @@ defaultproperties
 	DeathState = S_TRACEEXP1;
 	SightSound = 'skeleton/attack';
 	DeathSound = 'skeleton/tracex';
-	Effects = DoomDefs::EF_DL_RBALL;
+	Effects = EF_DL_RED;
 }

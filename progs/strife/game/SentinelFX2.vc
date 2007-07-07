@@ -30,5 +30,5 @@ defaultproperties
 	MissileDamage = 1;
 	DeathState = S_SENTINEL_SHOT_X1;
 	SightSound = 'sentinel/plasma';
-	Effects = StrifeDefs::EF_DL_RED;
+	Effects = EF_DL_RED;
 }

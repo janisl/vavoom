@@ -460,12 +460,12 @@ void TouchSpecial(EntityEx Toucher)
 
 void DoMissileExplosionEffects()
 {
-	if (!(Effects & DoomDefs::EF_ROCKET) && (Effects & DoomDefs::EF_DLIGHT_MASK))
+	if (!(Effects & EF_ROCKET) && (Effects & EF_DLIGHT_MASK))
 	{
-		SendExplosion2(Effects & DoomDefs::EF_DLIGHT_MASK, Origin);
-		Effects &= ~DoomDefs::EF_DLIGHT_MASK;
+		SendExplosion2(Effects & EF_DLIGHT_MASK, Origin);
+		Effects &= ~EF_DLIGHT_MASK;
 	}
-	Effects &= ~DoomDefs::EF_ROCKET;
+	Effects &= ~EF_ROCKET;
 }
 
 //==========================================================================
@@ -675,222 +675,6 @@ bool FindOther()
 
 //==========================================================================
 //
-//	A_Look
-//
-//  Stay in state until a player is sighted
-//
-//==========================================================================
-
-final void A_Look()
-{
-	Actor targ;
-
-	Threshold = 0;	// any shot will wake up
-	targ = Actor(Sector->SoundTarget);
-
-	if (targ && targ.bShootable)
-	{
-		Target = targ;
-
-		if (bAmbush)
-		{
-			if (!CanSee(Target))
-			{
-				if (!LookForPlayers(false))
-					return;
-			}
-		}
-	}
-	else
-	{
-		if (!LookForPlayers(false))
-			return;
-	}
-
-	// go into chase state
-	if (SightSound)
-	{
-		PlaySound(SightSound, CHAN_VOICE, 1.0, bBoss ? ATTN_NONE : ATTN_NORMAL);
-	}
-
-	SetState(SeeState);
-}
-
-//==========================================================================
-//
-//	A_Chase
-//
-//  Actor has a melee attack, so it tries to close as fast as possible
-//
-//==========================================================================
-
-final void A_Chase()
-{
-	float delta;
-
-	if (ReactionCount)
-	{
-		ReactionCount--;
-	}
-
-	//  Remove muzzle flash
-	if ((Effects & DoomDefs::EF_DLIGHT_MASK) == DoomDefs::EF_DL_MUZZLEFLASH)
-	{
-		Effects &= ~DoomDefs::EF_DLIGHT_MASK;
-	}
-
-	// modify target threshold
-	if (Threshold)
-	{
-		if (!Target || Target.Health <= 0)
-		{
-			Threshold = 0;
-		}
-		else
-		{
-			Threshold--;
-		}
-	}
-
-/*	if (fastparm)
-	{ // Monsters move faster in nightmare mode
-		actor->tics -= actor->tics / 2;
-		if (actor->tics < 3)
-		{
-			actor->tics = 3;
-		}
-	}
-*/
-	// turn towards movement direction if not there yet
-	if (MoveDir < 8)
-	{
-		Angles.yaw = itof(ftoi(Angles.yaw / 45.0)) * 45.0;
-
-		delta = AngleMod180(Angles.yaw - itof(MoveDir) * 45.0);
-
-		if (delta > 0.0)
-		{
-			Angles.yaw -= 45.0;
-		}
-		else if (delta < 0.0)
-		{
-			Angles.yaw += 45.0;
-		}
-	}
-
-	if (!Target || !Target.bShootable)
-	{
-		// look for a new target
-		if (LookForPlayers(true))
-		{
-			return;	// got a new target
-		}
-		SetState(IdleState);
-		return;
-	}
-
-	// do not attack twice in a row
-	if (bJustAttacked)
-	{
-		bJustAttacked = false;
-		if (!Level.Game.fastparm)
-		{
-			NewChaseDir();
-		}
-		return;
-	}
-
-	// check for melee attack
-	if (MeleeState && CheckMeleeRange())
-	{
-		if (AttackSound)
-		{
-			PlaySound(AttackSound, CHAN_WEAPON);
-		}
-		SetState(MeleeState);
-		return;
-	}
-
-	// check for missile attack
-	if (MissileState)
-	{
-		if (Level.Game.fastparm || !MoveCount)
-		{
-			if (CheckMissileRange())
-			{
-				SetState(MissileState);
-				bJustAttacked = true;
-				return;
-			}
-		}
-	}
-
-	// possibly choose another target
-	if (Level.Game.netgame && !Threshold)
-	{
-		if (!CanSee(Target))
-		{
-			if (LookForPlayers(true))
-				return;	// got a new target
-		}
-	}
-
-	// chase towards player
-	if (--MoveCount < 0 || !StepMove())
-	{
-		NewChaseDir();
-	}
-
-	// make active sound
-	if (ActiveSound && P_Random() < 3)
-	{
-		PlaySound(ActiveSound, CHAN_VOICE);
-	}
-}
-
-//==========================================================================
-//
-//	A_FaceTarget
-//
-//==========================================================================
-
-final void A_FaceTarget()
-{
-	if (!Target)
-		return;
-
-	bAmbush = false;
-
-	Angles.yaw = atan2(Target.Origin.y - Origin.y, Target.Origin.x - Origin.x);
-
-	if (Target.Alpha < 1.0)
-	{
-		Angles.yaw = AngleMod360(Angles.yaw + (Random() - Random()) * 45.0);
-	}
-}
-
-//==========================================================================
-//
-//  A_Pain
-//
-//==========================================================================
-
-final void A_Pain()
-{
-	//  Remove muzzle flash
-	if ((Effects & DoomDefs::EF_DLIGHT_MASK) == DoomDefs::EF_DL_MUZZLEFLASH)
-	{
-		Effects &= ~DoomDefs::EF_DLIGHT_MASK;
-	}
-
-	if (PainSound)
-	{
-		PlaySound(PainSound, CHAN_VOICE);
-	}
-}
-
-//==========================================================================
-//
 //  A_Explode
 //
 //  Rocket and barrel explosion.
@@ -920,56 +704,7 @@ final void A_Explode()
 	}
 
 	//  Clear old dynamic light effect
-	Effects &= ~DoomDefs::EF_DLIGHT_MASK;
-}
-
-//==========================================================================
-//
-//	A_Scream
-//
-//  Death sound.
-//
-//==========================================================================
-
-final void A_Scream()
-{
-	//  Remove muzzle flash
-	if ((Effects & DoomDefs::EF_DLIGHT_MASK) == DoomDefs::EF_DL_MUZZLEFLASH)
-	{
-		Effects &= ~DoomDefs::EF_DLIGHT_MASK;
-	}
-
-	if (DeathSound)
-	{
-		// Check for bosses.
-		PlaySound(DeathSound, CHAN_VOICE, 1.0, bBoss ? ATTN_NONE : ATTN_NORMAL);
-	}
-}
-
-//==========================================================================
-//
-//	A_XScream
-//
-//  Explode death sound.
-//
-//==========================================================================
-
-final void A_XScream()
-{
-	//  Remove muzzle flash
-	if ((Effects & DoomDefs::EF_DLIGHT_MASK) == DoomDefs::EF_DL_MUZZLEFLASH)
-	{
-		Effects &= ~DoomDefs::EF_DLIGHT_MASK;
-	}
-
-	if (bIsPlayer)
-	{
-		PlaySound('*gibbed', CHAN_BODY);
-	}
-	else
-	{
-		PlaySound('misc/gibbed', CHAN_BODY);
-	}
+	Effects &= ~EF_DLIGHT_MASK;
 }
 
 //==========================================================================
@@ -983,9 +718,9 @@ final void A_XScream()
 final void A_Fall()
 {
 	//  Remove muzzle flash
-	if ((Effects & DoomDefs::EF_DLIGHT_MASK) == DoomDefs::EF_DL_MUZZLEFLASH)
+	if ((Effects & EF_DLIGHT_MASK) == EF_DL_MUZZLEFLASH)
 	{
-		Effects &= ~DoomDefs::EF_DLIGHT_MASK;
+		Effects &= ~EF_DLIGHT_MASK;
 	}
 
 	// actor is on ground, it can be walked over
@@ -1093,7 +828,7 @@ final void A_SPosAttack()
 		LineAttack(dir, MISSILERANGE, damage, BulletPuff);
 	}
 
-	Effects |= DoomDefs::EF_DL_MUZZLEFLASH;
+	Effects |= EF_DL_MUZZLEFLASH;
 }
 
 //==========================================================================
@@ -1297,12 +1032,12 @@ void ClientTick(float DeltaTime)
 	dlight_t*	dl;
 	TVec		fv;
 
-	switch (Effects & DoomDefs::EF_DLIGHT_MASK)
+	switch (Effects & EF_DLIGHT_MASK)
 	{
-	case DoomDefs::EF_DL_NONE:
+	case EF_DL_NONE:
 		break;
 
-	case DoomDefs::EF_DL_MISSILE:
+	case EF_DL_WHITE:
 		dl = AllocDlight(self);
 		dl->origin = Origin;
 		dl->radius = 200.0;
@@ -1310,7 +1045,7 @@ void ClientTick(float DeltaTime)
 		dl->die = XLevel.Time + 0.1;
 		break;
 
-	case DoomDefs::EF_DL_RBALL:
+	case EF_DL_RED:
 		dl = AllocDlight(self);
 		dl->origin = Origin;
 		dl->radius = 200.0;
@@ -1318,7 +1053,7 @@ void ClientTick(float DeltaTime)
 		dl->die = XLevel.Time + 0.1;
 		break;
 
-	case DoomDefs::EF_DL_GBALL:
+	case EF_DL_GREEN:
 		dl = AllocDlight(self);
 		dl->origin = Origin;
 		dl->radius = 200.0;
@@ -1326,7 +1061,7 @@ void ClientTick(float DeltaTime)
 		dl->die = XLevel.Time + 0.1;
 		break;
 
-	case DoomDefs::EF_DL_PLASMA:
+	case EF_DL_BLUE:
 		dl = AllocDlight(self);
 		dl->origin = Origin;
 		dl->radius = 200.0;
@@ -1334,7 +1069,7 @@ void ClientTick(float DeltaTime)
 		dl->die = XLevel.Time + 0.1;
 		break;
 
-	case DoomDefs::EF_DL_MUZZLEFLASH:
+	case EF_DL_MUZZLEFLASH:
 		dl = AllocDlight(self);
 		dl->origin = Origin;
 		dl->origin.z += 48.0;
@@ -1347,7 +1082,7 @@ void ClientTick(float DeltaTime)
 		dl->die = XLevel.Time + 0.1;
 	}
 
-	if (Effects & DoomDefs::EF_ROCKET)
+	if (Effects & EF_ROCKET)
 	{
 		int i;
 		particle_t *p;
@@ -1398,14 +1133,4 @@ __states__
 
 defaultproperties
 {
-	Health = 1000;
-	GibsHealth = -1000;
-	ReactionCount = 8;
-	Radius = 20.0;
-	Height = 16.0;
-	Mass = 100.0;
-	MaxStepHeight = 24.0;
-	LightOffset = vector(0.0, 0.0, 0.0);
-	LightColour = 0xffffffff;
-	LightRadius = 128.0;
 }

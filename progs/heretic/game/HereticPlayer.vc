@@ -93,7 +93,7 @@ __states__
 	S_PLAY_PAIN('PLAY', 6, 4.0 / 35.0, S_PLAY_PAIN2) = none
 	S_PLAY_PAIN2('PLAY', 6, 4.0 / 35.0, S_PLAY) = A_Pain
 	S_PLAY_DIE1('PLAY', 7, 6.0 / 35.0, S_PLAY_DIE2) = none
-	S_PLAY_DIE2('PLAY', 8, 6.0 / 35.0, S_PLAY_DIE3) = A_Scream
+	S_PLAY_DIE2('PLAY', 8, 6.0 / 35.0, S_PLAY_DIE3) = A_PlayerScream
 	S_PLAY_DIE3('PLAY', 9, 6.0 / 35.0, S_PLAY_DIE4) = none
 	S_PLAY_DIE4('PLAY', 10, 6.0 / 35.0, S_PLAY_DIE5) = none
 	S_PLAY_DIE5('PLAY', 11, 6.0 / 35.0, S_PLAY_DIE6) = A_NoBlocking
@@ -101,7 +101,7 @@ __states__
 	S_PLAY_DIE7('PLAY', 13, 6.0 / 35.0, S_PLAY_DIE8) = none
 	S_PLAY_DIE8('PLAY', 14, 6.0 / 35.0, S_PLAY_DIE9) = none
 	S_PLAY_DIE9('PLAY', 15, -1.0, none) = A_AddPlayerCorpse
-	S_PLAY_XDIE1('PLAY', 16, 5.0 / 35.0, S_PLAY_XDIE2) = A_Scream
+	S_PLAY_XDIE1('PLAY', 16, 5.0 / 35.0, S_PLAY_XDIE2) = A_PlayerScream
 	S_PLAY_XDIE2('PLAY', 17, 5.0 / 35.0, S_PLAY_XDIE3) = A_SkullPop
 	S_PLAY_XDIE3('PLAY', 18, 5.0 / 35.0, S_PLAY_XDIE4) = A_NoBlocking
 	S_PLAY_XDIE4('PLAY', 19, 5.0 / 35.0, S_PLAY_XDIE5) = none
@@ -113,7 +113,7 @@ __states__
 	S_PLAY_FDTH1('FDTH', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH2) = A_FlameSnd
 	S_PLAY_FDTH2('FDTH', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH3) = none
 	S_PLAY_FDTH3('FDTH', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH4) = none
-	S_PLAY_FDTH4('FDTH', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH5) = A_Scream
+	S_PLAY_FDTH4('FDTH', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH5) = A_PlayerScream
 	S_PLAY_FDTH5('FDTH', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH6) = none
 	S_PLAY_FDTH6('FDTH', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH7) = none
 	S_PLAY_FDTH7('FDTH', 6 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH8) = A_FlameSnd

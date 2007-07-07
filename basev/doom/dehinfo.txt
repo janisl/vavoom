@@ -236,15 +236,15 @@ code_pointers
 	FireBFG			WeaponBFG			A_FireBFG
 	BFGSpray		BFGShot				A_BFGSpray
 	Explode			Actor				A_Explode
-	Pain			Actor				A_Pain
+	Pain			ScriptedEntity		A_Pain
 	PlayerScream	DoomPlayer			A_PlayerScream
 	Fall			Actor				A_Fall
-	XScream			Actor				A_XScream
-	Look			Actor				A_Look
-	Chase			Actor				A_Chase
-	FaceTarget		Actor				A_FaceTarget
+	XScream			ScriptedEntity		A_XScream
+	Look			ScriptedEntity		A_Look
+	Chase			ScriptedEntity		A_Chase
+	FaceTarget		ScriptedEntity		A_FaceTarget
 	PosAttack		Zombieman			A_PosAttack
-	Scream			Actor				A_Scream
+	Scream			ScriptedEntity		A_Scream
 	SPosAttack		Actor				A_SPosAttack
 	VileChase		ArchVile			A_VileChase
 	VileStart		ArchVile			A_VileStart

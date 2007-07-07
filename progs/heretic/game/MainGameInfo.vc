@@ -527,6 +527,7 @@ defaultproperties
 	LevelInfoClass = HereticLevelInfo;
 	bUseHexenPolyobjTypes = true;
 	bBloodSplatter = true;
+	bNightmareFastChase = true;
 	TeleFogHeight = Actor::TELEFOGHEIGHT;
 	TeleportFogClass = TeleportFog;
 	DefaultKickBack = 150.0;

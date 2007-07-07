@@ -46,5 +46,5 @@ defaultproperties
 	DeathState = S_ZAP1_6;
 	SightSound = 'weapons/sigil';
 	DeathSound = 'weapons/sigilhit';
-	Effects = StrifeDefs::EF_DL_MISSILE;
+	Effects = EF_DL_WHITE;
 }

@@ -72,5 +72,5 @@ defaultproperties
 	MissileDamage = 10;
 	IdleState = S_SOR2FX2_1;
 	DeathState = S_SOR2FXI2_1;
-	Effects = HereticDefs::EF_DL_BLUE;
+	Effects = EF_DL_BLUE;
 }

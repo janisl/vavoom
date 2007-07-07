@@ -364,6 +364,7 @@ defaultproperties
 	bUseHexenPolyobjTypes = true;
 	bBloodSplatter = true;
 	bNoDamageThrustInvulnerable = true;
+	bNightmareFastChase = true;
 	TeleFogHeight = Actor::TELEFOGHEIGHT;
 	TeleportFogClass = TeleportFog;
 	DefaultKickBack = 150.0;

@@ -64,5 +64,5 @@ defaultproperties
 	IdleState = S_SORCFX4_1;
 	DeathState = S_SORCFX4_D1;
 	DeathSound = 'SorcererBallExplode';
-	Effects = HexenDefs::EF_DL_WHITE;
+	Effects = EF_DL_WHITE;
 }

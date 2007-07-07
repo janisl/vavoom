@@ -60,5 +60,5 @@ defaultproperties
 	DeathState = S_RBALLX1;
 	SightSound = 'caco/attack';
 	DeathSound = 'caco/shotx';
-	Effects = DoomDefs::EF_DL_RBALL;
+	Effects = EF_DL_RED;
 }

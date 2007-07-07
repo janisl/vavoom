@@ -75,5 +75,5 @@ defaultproperties
 	IdleState = S_REDAXE1;
 	DeathState = S_REDAXEX1;
 	DeathSound = 'hknight/hit';
-	Effects = HereticDefs::EF_DL_RED;
+	Effects = EF_DL_RED;
 }

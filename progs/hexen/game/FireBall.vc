@@ -50,5 +50,5 @@ defaultproperties
 	IdleState = S_FIREBALL1_1;
 	DeathState = S_FIREBALL1_X1;
 	DeathSound = 'Fireball';
-	Effects = HexenDefs::EF_DL_RED;
+	Effects = EF_DL_RED;
 }

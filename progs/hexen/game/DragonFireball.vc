@@ -78,5 +78,5 @@ defaultproperties
 	IdleState = S_DRAGON_FX1_1;
 	DeathState = S_DRAGON_FX1_X1;
 	DeathSound = 'DragonFireballExplode';
-	Effects = HexenDefs::EF_DL_WHITE;
+	Effects = EF_DL_WHITE;
 }

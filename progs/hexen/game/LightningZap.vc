@@ -158,5 +158,5 @@ defaultproperties
 	bLightning = true;
 	IdleState = S_LIGHTNING_ZAP1;
 	DeathState = S_LIGHTNING_ZAP_X8;
-	Effects = HexenDefs::EF_DL_BLUE;
+	Effects = EF_DL_BLUE;
 }

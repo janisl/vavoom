@@ -294,6 +294,7 @@ defaultproperties
 	bBoss = true;
 	bNeverTarget = true;
 	bTelestomp = false;
+	bFullVolActive = true;
 	IdleState = S_SORC_SPAWN1;
 	SeeState = S_SORC_WALK1;
 	MissileState = S_SORC_ATK2_1;

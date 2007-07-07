@@ -263,7 +263,7 @@ defaultproperties
 	DeathState = S_BISHOP_DEATH1;
 	IceDeathState = S_BISHOP_ICE;
 	SightSound = 'BishopSight';
-	ActiveSound = 'BishopActive';
+	ActiveSound = 'BishopActiveSounds';
 	AttackSound = 'BishopAttack';
 	PainSound = 'BishopPain';
 	DeathSound = 'BishopDeath';

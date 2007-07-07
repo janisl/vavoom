@@ -64,5 +64,5 @@ defaultproperties
 	IdleState = S_FLAMEFX_1;
 	DeathState = S_FLAMEFX_X1;
 	SightSound = 'weapons/flamethrower';
-	Effects = StrifeDefs::EF_DL_MISSILE;
+	Effects = EF_DL_WHITE;
 }

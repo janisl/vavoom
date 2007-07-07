@@ -38,7 +38,7 @@ final void A_Lights()
 	SendExplosion2(Effects, Origin + vector(0.0, 0.0, Height * 0.5));
 
 	//  Clear old dynamic light effect
-	Effects &= ~DoomDefs::EF_DLIGHT_MASK;
+	Effects &= ~EF_DLIGHT_MASK;
 }
 
 __states__
@@ -64,5 +64,5 @@ defaultproperties
 	bNoGravity = true;
 	bNoPassMobj = true;
 	IdleState = S_TFOG;
-	Effects = DoomDefs::EF_DL_GBALL;
+	Effects = EF_DL_GREEN;
 }

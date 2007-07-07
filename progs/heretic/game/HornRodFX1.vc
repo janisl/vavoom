@@ -50,5 +50,5 @@ defaultproperties
 	DeathState = S_HRODFXI1_1;
 	SightSound = 'weapons/hornrodshoot';
 	DeathSound = 'weapons/hornrodhit';
-	Effects = HereticDefs::EF_DL_RED;
+	Effects = EF_DL_RED;
 }

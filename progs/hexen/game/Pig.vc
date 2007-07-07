@@ -192,7 +192,7 @@ defaultproperties
 	DeathState = S_PIG_DIE1;
 	IceDeathState = S_PIG_ICE;
 	SightSound = 'PigActive1';
-	ActiveSound = 'PigActive1';
+	ActiveSound = 'PigActive';
 	PainSound = 'PigPain';
 	DeathSound = 'PigDeath';
 }

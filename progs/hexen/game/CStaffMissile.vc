@@ -85,5 +85,5 @@ defaultproperties
 	IdleState = S_CSTAFF_MISSILE1;
 	DeathState = S_CSTAFF_MISSILE_X1;
 	DeathSound = 'ClericCStaffExplode';
-	Effects = HexenDefs::EF_DL_GREEN;
+	Effects = EF_DL_GREEN;
 }

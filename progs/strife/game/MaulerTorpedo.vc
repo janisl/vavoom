@@ -79,5 +79,5 @@ defaultproperties
 	DeathState = S_TORPEDO_X1;
 	SightSound = 'weapons/mauler2fire';
 	DeathSound = 'weapons/mauler2hit';
-	Effects = StrifeDefs::EF_DL_GREEN;
+	Effects = EF_DL_GREEN;
 }

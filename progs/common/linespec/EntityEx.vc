@@ -58,6 +58,22 @@ enum
 	BOUNCE_Hexen
 };
 
+//  Dynamic light effects
+enum
+{
+	EF_DL_NONE,
+	EF_DL_WHITE,
+	EF_DL_RED,
+	EF_DL_GREEN,
+	EF_DL_BLUE,
+	EF_DL_MAGENTA,
+	EF_DL_MUZZLEFLASH,
+	EF_DL_DARK
+};
+
+const int EF_DLIGHT_MASK	= 0x07;
+const int EF_ROCKET			= 0x08;
+
 //  States
 state			IdleState;
 state			SeeState;
@@ -72,6 +88,9 @@ state			FireDeathState;
 state			DisruptDeathState;
 state			CrashState;
 state			RaiseState;
+state			IdleRightState;
+state			IdleLeftState;
+state			WalkState;
 
 //	Sounds
 name			SightSound;
@@ -166,6 +185,11 @@ bool bTeleport;			// don't cross lines or look at heights
 bool bSpawnFloat;		// spawn random float z
 bool bNoMorph;			// Don't morph into chicken/pig.
 bool bNoBlockMonst;		// Can cross ML_BLOCKMONSTERS lines
+bool bLookAllAround;	// Actor can see all around.
+bool bNeutral;			// Neutral characters (peasants and beggars)
+bool bStandMustSeeTarget;	//COUNTITEM	800000
+bool bInCombat;			// Actors in combat won't talk
+bool bFullVolActive;	//	Play active sound at full volume
 
 //  Params
 float			Speed;
@@ -4775,6 +4799,21 @@ final bool SeekerMissile(float thresh, float turnMax)
 	return true;
 }
 
+//==========================================================================
+//
+//  PlayActiveSound
+//
+//==========================================================================
+
+void PlayActiveSound()
+{
+	if (ActiveSound)
+	{
+		PlaySound(ActiveSound, CHAN_VOICE, 1.0,
+			bFullVolActive ? ATTN_NONE : ATTN_NORMAL);
+	}
+}
+
 float GetBaseViewHeight()
 {
 	return 0.0;
@@ -4933,6 +4972,16 @@ void SetDormant()
 
 defaultproperties
 {
+	Health = 1000;
+	GibsHealth = -1000;
+	ReactionCount = 8;
+	Radius = 20.0;
+	Height = 16.0;
+	Mass = 100.0;
+	MaxStepHeight = 24.0;
+	LightOffset = vector(0.0, 0.0, 0.0);
+	LightColour = 0xffffffff;
+	LightRadius = 128.0;
 	MissileChance = 200.0;
 	FloatSpeed = 140.0;
 	BounceFactor = 0.7;

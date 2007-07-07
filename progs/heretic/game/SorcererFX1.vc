@@ -60,5 +60,5 @@ defaultproperties
 	DamageType = 'Fire';
 	IdleState = S_SRCRFX1_1;
 	DeathState = S_SRCRFXI1_1;
-	Effects = HereticDefs::EF_DL_WHITE;
+	Effects = EF_DL_WHITE;
 }

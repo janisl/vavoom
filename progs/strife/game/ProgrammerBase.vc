@@ -44,5 +44,5 @@ defaultproperties
 	bColideWithWorld = false;
 	bNoBlood = true;
 	IdleState = S_PROGRAMMER_BASE_1;
-	ExplodeEffect = StrifeDefs::EF_DL_MISSILE;
+	ExplodeEffect = EF_DL_WHITE;
 }

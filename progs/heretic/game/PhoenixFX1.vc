@@ -94,5 +94,5 @@ defaultproperties
 	DeathState = S_PHOENIXFXI1_1;
 	SightSound = 'weapons/phoenixshoot';
 	DeathSound = 'weapons/phoenixhit';
-	Effects = HereticDefs::EF_DL_RED;
+	Effects = EF_DL_RED;
 }

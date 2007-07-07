@@ -2282,3 +2282,57 @@
   I continued renaming.
 13.06.2007
   I finished renaming.
+14.06.2007
+  I changed the way Heretic's key gizmos are handled.
+  Today is Vavoom's birthday, time for a release.
+
+******************************************************************************
+                            VERSION 1.24
+******************************************************************************
+
+15.06.2007
+  I'm gonna start common code from Actor classes to the EntityEx class. This
+ way it will be easier to maintain it.
+  I moved common Actor fields to EntityEx class.
+16.06.2007
+  I created PlayerEx class that will have common Player class code.
+17.06.2007
+  I merged Actor's main physics methods.
+18.06.2007
+  I merged other Actor's core physics methods.
+19.06.2007
+  I merged methods for bouncing, splashes and friction.
+20.06.2007
+  I merged falling damage types and made them MAPINFO configurable, merged
+ radius damage.
+21.06.2007
+  I merged aiming and shooting methods.
+22.06.2007
+  I cleaned up aiming and shooting and created aiming method to handle aiming
+ used by Hexen's close range weapons.
+25.06.2007
+  I changed AimEx to return line target as a result and direction in an out
+ parameter.
+26.06.2007
+  I got rid of per-object line target field, merged teleport move and added
+ a damage type parameter to the Damage method.
+27.06.2007
+  I fixed Doom 2 finale cast.
+  I merged teleport, various movement related methods, melee and missile range
+ checks, looking for a player or monster.
+28.06.2007
+  I merged basic monster AI utilities, spawning of missiles.
+29.06.2007
+  I merged spawning of payer's missiles.
+30.06.2007
+  I fixed wrong prototype for StrReplace method, got rid of pickup message
+ arrays in Heretic and Hexen.
+01.07.2007
+  I started to merge Damage methods.
+02.07.2007
+  I merged damage methods, replaced damage flags with damage type field, got
+ rid of LavaInflictor class.
+03.07.2007
+  I merged death methods.
+04.07.2007
+  I merged nightmare respawn, touch and line hit event methods.

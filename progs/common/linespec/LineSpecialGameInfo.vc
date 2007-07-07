@@ -59,6 +59,8 @@ bool			bNoClipIgnoreFloor;
 bool			bBloodSplatter;
 //	Don't do damage thrust to the invulnerable players
 bool			bNoDamageThrustInvulnerable;
+//	Monsters move faster in nightmare mode.
+bool			bNightmareFastChase;
 
 float			windTab[3];
 float			pushTab[5];

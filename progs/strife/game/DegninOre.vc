@@ -56,5 +56,5 @@ defaultproperties
 	DeathState = S_ORE_X;
 	DeathSound = 'ore/explode';
 	ItemType = StrifeDefs::ITEM_DegninOre;
-	ExplodeEffect = StrifeDefs::EF_DL_MISSILE;
+	ExplodeEffect = EF_DL_WHITE;
 }

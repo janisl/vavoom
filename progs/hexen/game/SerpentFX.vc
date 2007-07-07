@@ -61,5 +61,5 @@ defaultproperties
 	IdleState = S_SERPENT_FX1;
 	DeathState = S_SERPENT_FX_X1;
 	DeathSound = 'SerpentFXHit';
-	Effects = HexenDefs::EF_DL_GREEN;
+	Effects = EF_DL_GREEN;
 }

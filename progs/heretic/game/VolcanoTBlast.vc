@@ -50,5 +50,5 @@ defaultproperties
 	bNoGravity = false;
 	IdleState = S_VOLCANOTBALL1;
 	DeathState = S_VOLCANOTBALLX1;
-	Effects = HereticDefs::EF_DL_RED;
+	Effects = EF_DL_RED;
 }

@@ -101,5 +101,5 @@ defaultproperties
 	IdleState = S_VOLCANOBALL1;
 	DeathState = S_VOLCANOBALLX1;
 	DeathSound = 'world/volcano/blast';
-	Effects = HereticDefs::EF_DL_RED;
+	Effects = EF_DL_RED;
 }

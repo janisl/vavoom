@@ -83,5 +83,5 @@ defaultproperties
 	IdleState = S_FSWORD_MISSILE1;
 	DeathState = S_FSWORD_MISSILE_X1;
 	DeathSound = 'FighterSwordExplode';
-	Effects = HexenDefs::EF_DL_GREEN;
+	Effects = EF_DL_GREEN;
 }

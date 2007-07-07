@@ -68,5 +68,5 @@ defaultproperties
 	IdleState = S_HAMMER_MISSILE_1;
 	DeathState = S_HAMMER_MISSILE_X1;
 	DeathSound = 'FighterHammerExplode';
-	Effects = HexenDefs::EF_DL_RED;
+	Effects = EF_DL_RED;
 }

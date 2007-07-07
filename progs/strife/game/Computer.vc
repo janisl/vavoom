@@ -63,5 +63,5 @@ defaultproperties
 	DeathSound = 'misc/explosion';
 	bGiveQuest = true;
 	QuestID = QUEST_BlownUpComputer;
-	Effects = StrifeDefs::EF_DL_GREEN;
+	Effects = EF_DL_GREEN;
 }

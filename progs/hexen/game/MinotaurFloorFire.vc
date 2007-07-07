@@ -42,5 +42,5 @@ defaultproperties
 	bActivateImpact = false;
 	bActivatePCross = false;
 	DeathState = S_MNTRFXI2_1;
-	Effects = HexenDefs::EF_DL_WHITE;
+	Effects = EF_DL_WHITE;
 }

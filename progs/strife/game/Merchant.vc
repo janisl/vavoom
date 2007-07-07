@@ -101,7 +101,6 @@ defaultproperties
 	PainChance = 0.5859375;
 	bCountKill = false;
 	bMonster = false;
-	bCkeckNoMonsters = false;
 	bActivateMCross = false;
 	bNoDeathmatch = true;
 	IdleState = S_MERCHANDER_STAND1;

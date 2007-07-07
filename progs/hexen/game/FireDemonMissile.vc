@@ -46,5 +46,5 @@ defaultproperties
 	IdleState = S_FIRED_FX6_1;
 	DeathState = S_FIRED_FX6_2;
 	DeathSound = 'FireDemonMissileHit';
-	Effects = HexenDefs::EF_DL_WHITE;
+	Effects = EF_DL_WHITE;
 }

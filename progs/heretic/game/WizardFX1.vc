@@ -58,5 +58,5 @@ defaultproperties
 	MissileDamage = 3;
 	IdleState = S_WIZFX1_1;
 	DeathState = S_WIZFXI1_1;
-	Effects = HereticDefs::EF_DL_MAGENTA;
+	Effects = EF_DL_MAGENTA;
 }

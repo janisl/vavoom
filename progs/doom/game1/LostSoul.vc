@@ -97,5 +97,5 @@ defaultproperties
 	AttackSound = 'skull/melee';
 	PainSound = 'skull/pain';
 	DeathSound = 'skull/death';
-	Effects = DoomDefs::EF_DL_MISSILE;
+	Effects = EF_DL_WHITE;
 }

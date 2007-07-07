@@ -178,5 +178,5 @@ defaultproperties
 	ActiveSound = 'crusader/active';
 	PainSound = 'crusader/pain';
 	DeathSound = 'crusader/death';
-	ExplodeEffect = StrifeDefs::EF_DL_MISSILE;
+	ExplodeEffect = EF_DL_WHITE;
 }

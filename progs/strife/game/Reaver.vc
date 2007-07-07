@@ -55,7 +55,7 @@ __states__
 	S_REAVER_DIE8('ROB1', 16 | FF_FULLBRIGHT, 6.0 / 35.0, S_REAVER_DIE9) = A_Explode32
 	S_REAVER_DIE9('ROB1', 17, -1.0, none) = none
 	S_REAVER_XDIE1('ROB1', 11 | FF_FULLBRIGHT, 5.0 / 35.0, S_REAVER_XDIE2) = A_XDying
-	S_REAVER_XDIE2('ROB1', 12 | FF_FULLBRIGHT, 5.0 / 35.0, S_REAVER_XDIE3) = A_XScream
+	S_REAVER_XDIE2('ROB1', 12 | FF_FULLBRIGHT, 5.0 / 35.0, S_REAVER_XDIE3) = A_XXScream
 	S_REAVER_XDIE3('ROB1', 13 | FF_FULLBRIGHT, 5.0 / 35.0, S_REAVER_XDIE4) = A_XDying
 	S_REAVER_XDIE4('ROB1', 14 | FF_FULLBRIGHT, 5.0 / 35.0, S_REAVER_XDIE5) = A_Fall
 	S_REAVER_XDIE5('ROB1', 15 | FF_FULLBRIGHT, 5.0 / 35.0, S_REAVER_XDIE6) = A_XDying
@@ -85,5 +85,5 @@ defaultproperties
 	ActiveSound = 'reaver/active';
 	PainSound = 'reaver/pain';
 	DeathSound = 'reaver/death';
-	ExplodeEffect = StrifeDefs::EF_DL_MISSILE;
+	ExplodeEffect = EF_DL_WHITE;
 }

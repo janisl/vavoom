@@ -82,5 +82,5 @@ defaultproperties
 	bWindThrust = true;
 	IdleState = S_BEASTBALL1;
 	DeathState = S_BEASTBALLX1;
-	Effects = HereticDefs::EF_DL_RED;
+	Effects = EF_DL_RED;
 }

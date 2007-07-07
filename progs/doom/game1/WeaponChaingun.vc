@@ -50,7 +50,7 @@ final void A_FireCGun()
 
 	Actor(Owner).Aim(dir, 16.0 * 64.0);
 	GunShot(Actor(Owner), !Player(Owner.Player).Refire, dir);
-	Owner.Effects |= DoomDefs::EF_DL_MUZZLEFLASH;
+	Owner.Effects |= EF_DL_MUZZLEFLASH;
 }
 
 __states__

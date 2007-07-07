@@ -38,7 +38,7 @@ final void A_Lights()
 	SendExplosion(Effects, Origin + vector(0.0, 0.0, Height * 0.5));
 
 	//  Clear old dynamic light effect
-	Effects &= ~StrifeDefs::EF_DLIGHT_MASK;
+	Effects &= ~EF_DLIGHT_MASK;
 }
 
 __states__
@@ -59,5 +59,5 @@ defaultproperties
 {
 	Alpha = 0.333;
 	IdleState = S_TFOG1;
-	Effects = StrifeDefs::EF_DL_MISSILE;
+	Effects = EF_DL_WHITE;
 }

@@ -153,6 +153,9 @@ $alias misc/chat				Chat
 $alias misc/chat2				Chat
 $alias misc/teleport			Teleport
 
+$random BishopActiveSounds		{ BishopActive BishopSight }
+$random PigActive				{ PigActive1 PigActive2 }
+
 //==========================================================================
 //
 //  Menu sounds

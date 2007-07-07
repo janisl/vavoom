@@ -57,5 +57,5 @@ defaultproperties
 	MissileDamage = 3;
 	IdleState = S_SNAKEPRO_B1;
 	DeathState = S_SNAKEPRO_BX1;
-	Effects = HereticDefs::EF_DL_WHITE;
+	Effects = EF_DL_WHITE;
 }

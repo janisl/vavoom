@@ -38,7 +38,7 @@ final void A_Lights()
 	SendExplosion(Effects, Origin + vector(0.0, 0.0, Height * 0.5));
 
 	//  Clear old dynamic light effect
-	Effects &= ~HereticDefs::EF_DLIGHT_MASK;
+	Effects &= ~EF_DLIGHT_MASK;
 }
 
 __states__
@@ -61,5 +61,5 @@ __states__
 defaultproperties
 {
 	IdleState = S_TFOG1;
-	Effects = HereticDefs::EF_DL_BLUE;
+	Effects = EF_DL_BLUE;
 }

@@ -48,7 +48,7 @@ final void A_FireShotgun()
 	{
 		GunShot(Actor(Owner), false, dir);
 	}
-	Owner.Effects |= DoomDefs::EF_DL_MUZZLEFLASH;
+	Owner.Effects |= EF_DL_MUZZLEFLASH;
 }
 
 __states__

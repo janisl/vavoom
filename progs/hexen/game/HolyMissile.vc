@@ -126,5 +126,5 @@ defaultproperties
 	bActivatePCross = false;
 	IdleState = S_HOLY_MISSILE1;
 	DeathState = S_HOLY_MISSILE_X;
-	Effects = HexenDefs::EF_DL_WHITE;
+	Effects = EF_DL_WHITE;
 }

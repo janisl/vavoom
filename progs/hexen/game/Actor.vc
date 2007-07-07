@@ -892,10 +892,10 @@ bool HaveSpeedPower()
 
 void DoMissileExplosionEffects()
 {
-	if (Effects & HexenDefs::EF_DLIGHT_MASK)
+	if (Effects & EF_DLIGHT_MASK)
 	{
-		SendExplosion(Effects & HexenDefs::EF_DLIGHT_MASK, Origin);
-		Effects &= ~HexenDefs::EF_DLIGHT_MASK;
+		SendExplosion(Effects & EF_DLIGHT_MASK, Origin);
+		Effects &= ~EF_DLIGHT_MASK;
 	}
 }
 
@@ -1096,39 +1096,6 @@ final void A_UnHideThing()
 	bHidden = false;
 }
 
-//==========================================================================
-//
-//  A_Pain
-//
-//==========================================================================
-
-final void A_Pain()
-{
-	if (bIsPlayer && !Player(Player).MorphTime)
-	{
-		if (Health < 25)
-		{
-			PlaySound('*pain25', CHAN_VOICE);
-		}
-		else if (Health < 50)
-		{
-			PlaySound('*pain50', CHAN_VOICE);
-		}
-		else if (Health < 75)
-		{
-			PlaySound('*pain75', CHAN_VOICE);
-		}
-		else
-		{
-			PlaySound('*pain100', CHAN_VOICE);
-		}
-	}
-	else if (PainSound)
-	{
-		PlaySound(PainSound, CHAN_VOICE);
-	}
-}
-
 //============================================================================
 //
 //  A_FreeTargMobj
@@ -1158,40 +1125,32 @@ final void A_FreeTargMobj()
 
 //============================================================================
 //
-//  A_Scream
+//  A_PlayerScream
 //
 //============================================================================
 
-final void A_Scream()
+final void A_PlayerScream()
 {
-	StopSound(CHAN_AUTO);
-	if (bIsPlayer && !Player(Player).MorphTime)
+	// Handle the different player death screams
+	if (Velocity.z <= -39.0 * 35.0)
 	{
-		// Handle the different player death screams
-		if (Velocity.z <= -39.0 * 35.0)
-		{
-			// Falling splat
-			PlaySound('*splat', CHAN_VOICE);
-		}
-		else if (Health > -50)
-		{
-			// Normal death sound
-			PlaySound('*death', CHAN_VOICE);
-		}
-		else if (Health > -100)
-		{
-			// Crazy death sound
-			PlaySound('*crazydeath', CHAN_VOICE);
-		}
-		else
-		{
-			// Extreme death sound
-			PlaySound('*xdeath', CHAN_VOICE);
-		}
+		// Falling splat
+		PlaySound('*splat', CHAN_VOICE);
+	}
+	else if (Health > -50)
+	{
+		// Normal death sound
+		PlaySound('*death', CHAN_VOICE);
+	}
+	else if (Health > -100)
+	{
+		// Crazy death sound
+		PlaySound('*crazydeath', CHAN_VOICE);
 	}
 	else
 	{
-		PlaySound(DeathSound, CHAN_VOICE);
+		// Extreme death sound
+		PlaySound('*xdeath', CHAN_VOICE);
 	}
 }
 
@@ -1418,12 +1377,12 @@ void ClientTick(float DeltaTime)
 {
 	dlight_t *dl;
 
-	switch (Effects & HexenDefs::EF_DLIGHT_MASK)
+	switch (Effects & EF_DLIGHT_MASK)
 	{
-	case HexenDefs::EF_DL_NONE:
+	case EF_DL_NONE:
 		break;
 
-	case HexenDefs::EF_DL_WHITE:
+	case EF_DL_WHITE:
 		dl = AllocDlight(self);
 		dl->origin = Origin;
 		dl->radius = 200.0;
@@ -1431,7 +1390,7 @@ void ClientTick(float DeltaTime)
 		dl->die = XLevel.Time + 0.1;
 		break;
 
-	case HexenDefs::EF_DL_RED:
+	case EF_DL_RED:
 		dl = AllocDlight(self);
 		dl->origin = Origin;
 		dl->radius = 200.0;
@@ -1439,7 +1398,7 @@ void ClientTick(float DeltaTime)
 		dl->die = XLevel.Time + 0.1;
 		break;
 
-	case HexenDefs::EF_DL_GREEN:
+	case EF_DL_GREEN:
 		dl = AllocDlight(self);
 		dl->origin = Origin;
 		dl->radius = 200.0;
@@ -1447,7 +1406,7 @@ void ClientTick(float DeltaTime)
 		dl->die = XLevel.Time + 0.1;
 		break;
 
-	case HexenDefs::EF_DL_BLUE:
+	case EF_DL_BLUE:
 		dl = AllocDlight(self);
 		dl->origin = Origin;
 		dl->radius = 200.0;
@@ -1466,15 +1425,5 @@ __states__
 
 defaultproperties
 {
-	Health = 1000;
-	GibsHealth = -1000;
-	ReactionCount = 8;
-	Radius = 20.0;
-	Height = 16.0;
-	Mass = 100.0;
-	MaxStepHeight = 24.0;
 	SoundClass = 'fighter';
-	LightOffset = vector(0.0, 0.0, 0.0);
-	LightColour = 0xffffffff;
-	LightRadius = 128.0;
 }

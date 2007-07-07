@@ -81,5 +81,5 @@ defaultproperties
 	MissileDamage = 4;
 	IdleState = S_MUMMYFX1_1;
 	DeathState = S_MUMMYFXI1_1;
-	Effects = HereticDefs::EF_DL_WHITE;
+	Effects = EF_DL_WHITE;
 }

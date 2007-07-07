@@ -54,7 +54,7 @@ final void A_PosAttack()
 
 	LineAttack(dir, MISSILERANGE, damage, BulletPuff);
 
-	Effects |= DoomDefs::EF_DL_MUZZLEFLASH;
+	Effects |= EF_DL_MUZZLEFLASH;
 }
 
 //==========================================================================

@@ -61,5 +61,5 @@ defaultproperties
 	bWindThrust = true;
 	IdleState = S_SNAKEPRO_A1;
 	DeathState = S_SNAKEPRO_AX1;
-	Effects = HereticDefs::EF_DL_MAGENTA;
+	Effects = EF_DL_MAGENTA;
 }

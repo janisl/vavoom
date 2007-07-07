@@ -52,6 +52,6 @@ defaultproperties
 	IdleState = S_MNTRFX3_1;
 	DeathState = S_MNTRFXI2_1;
 	DeathSound = 'minotaur/fx3hit';
-	Effects = HereticDefs::EF_DL_WHITE;
+	Effects = EF_DL_WHITE;
 	bIgnoreFloorStep = true;
 }

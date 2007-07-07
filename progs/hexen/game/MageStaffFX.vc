@@ -90,5 +90,5 @@ defaultproperties
 	IdleState = S_MSTAFF_FX1_1;
 	DeathState = S_MSTAFF_FX_X1;
 	DeathSound = 'MageStaffExplode';
-	Effects = HexenDefs::EF_DL_RED;
+	Effects = EF_DL_RED;
 }

@@ -47,5 +47,5 @@ defaultproperties
 	IdleState = S_DEMONFX_MOVE1;
 	DeathState = S_DEMONFX_BOOM1;
 	DeathSound = 'DemonMissileExplode';
-	Effects = HexenDefs::EF_DL_WHITE;
+	Effects = EF_DL_WHITE;
 }

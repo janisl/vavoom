@@ -101,7 +101,7 @@ defaultproperties
 	IdleState = S_BISHFX1_1;
 	DeathState = S_BISHFXI1_1;
 	DeathSound = 'BishopMissileExplode';
-	Effects = HexenDefs::EF_DL_GREEN;
+	Effects = EF_DL_GREEN;
 	WeaveXY = 0;
 	WeaveZ = 16;
 }

@@ -43,5 +43,5 @@ defaultproperties
 	DamageType = 'Disintegrate';
 	IdleState = S_TORPEDO_WAV1;
 	DeathState = S_TORPEDO_WAV3;
-	Effects = StrifeDefs::EF_DL_GREEN;
+	Effects = EF_DL_GREEN;
 }

@@ -46,5 +46,5 @@ defaultproperties
 	IdleState = S_CRBOWFX3;
 	DeathState = S_CRBOWFXI3_1;
 	DeathSound = 'weapons/bowhit';
-	Effects = HereticDefs::EF_DL_GREEN;
+	Effects = EF_DL_GREEN;
 }

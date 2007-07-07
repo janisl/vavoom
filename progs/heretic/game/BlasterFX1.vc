@@ -91,5 +91,5 @@ defaultproperties
 	IdleState = S_BLASTERFX1_1;
 	DeathState = S_BLASTERFXI1_1;
 	DeathSound = 'weapons/blasterhit';
-	Effects = HereticDefs::EF_DL_BLUE;
+	Effects = EF_DL_BLUE;
 }

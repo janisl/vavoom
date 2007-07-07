@@ -71,5 +71,5 @@ defaultproperties
 	IdleState = S_SPINAXE1;
 	DeathState = S_SPINAXEX1;
 	DeathSound = 'hknight/hit';
-	Effects = HereticDefs::EF_DL_GREEN;
+	Effects = EF_DL_GREEN;
 }

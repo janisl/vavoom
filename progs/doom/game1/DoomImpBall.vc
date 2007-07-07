@@ -60,5 +60,5 @@ defaultproperties
 	DeathState = S_TBALLX1;
 	SightSound = 'imp/attack';
 	DeathSound = 'imp/shotx';
-	Effects = DoomDefs::EF_DL_RBALL;
+	Effects = EF_DL_RED;
 }

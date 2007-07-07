@@ -85,5 +85,5 @@ defaultproperties
 	LifeTime = 3;
 	BoltHeight = 48.0;
 	IdleState = S_KBOLT1;
-	Effects = HexenDefs::EF_DL_WHITE;
+	Effects = EF_DL_WHITE;
 }

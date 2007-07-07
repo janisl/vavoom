@@ -97,10 +97,10 @@ int HITDICE(int a)
 
 void DoMissileExplosionEffects()
 {
-	if (Effects & HereticDefs::EF_DLIGHT_MASK)
+	if (Effects & EF_DLIGHT_MASK)
 	{
-		SendExplosion(Effects & HereticDefs::EF_DLIGHT_MASK, Origin);
-		Effects &= ~HereticDefs::EF_DLIGHT_MASK;
+		SendExplosion(Effects & EF_DLIGHT_MASK, Origin);
+		Effects &= ~EF_DLIGHT_MASK;
 	}
 }
 
@@ -664,44 +664,32 @@ final void A_FreeTargMobj()
 
 //==========================================================================
 //
-//  A_Scream
+//  A_PlayerScream
 //
 //==========================================================================
 
-final void A_Scream()
+final void A_PlayerScream()
 {
-	if (bIsPlayer)
+	// Handle the different player death screams
+	if (Special1 < 10)
 	{
-		// Handle the different player death screams
-		if (Special1 < 10)
-		{
-			// Wimpy death sound
-			PlaySound('*wimpydeath', CHAN_VOICE);
-		}
-		else if (Health > -50)
-		{
-			// Normal death sound
-			PlaySound(DeathSound, CHAN_VOICE);
-		}
-		else if (Health > -100)
-		{
-			// Crazy death sound
-			PlaySound('*crazydeath', CHAN_VOICE);
-		}
-		else
-		{
-			// Extreme death sound
-			PlaySound('*gibbed', CHAN_VOICE);
-		}
+		// Wimpy death sound
+		PlaySound('*wimpydeath', CHAN_VOICE);
 	}
-	else if (Class == ChickenPlayer || Class == Sorcerer1 || Class == Minotaur)
+	else if (Health > -50)
 	{
-		// Make boss death sounds full volume
-		PlaySound(DeathSound, CHAN_VOICE, 1.0, ATTN_NONE);
+		// Normal death sound
+		PlaySound(DeathSound, CHAN_VOICE);
+	}
+	else if (Health > -100)
+	{
+		// Crazy death sound
+		PlaySound('*crazydeath', CHAN_VOICE);
 	}
 	else
 	{
-		PlaySound(DeathSound, CHAN_VOICE);
+		// Extreme death sound
+		PlaySound('*gibbed', CHAN_VOICE);
 	}
 }
 
@@ -741,11 +729,11 @@ final void A_Explode()
 	}
 	if (Class == ActivatedTimeBomb)
 	{
-		SendExplosion(HereticDefs::EF_DL_WHITE, Origin);
+		SendExplosion(EF_DL_WHITE, Origin);
 	}
 	if (Class == Pod)
 	{
-		SendExplosion(HereticDefs::EF_DL_GREEN, Origin);
+		SendExplosion(EF_DL_GREEN, Origin);
 	}
 	if (ExplodeEffect)
 	{
@@ -771,7 +759,7 @@ void SpawnPuff(TVec org, float Range, class<EntityEx> PuffType, bool HitThing)
 		A = Spawn(BlasterPuff2, org);
 		A.PlaySound('weapons/blastershoot', CHAN_VOICE);
 
-		SendExplosion(HereticDefs::EF_DL_BLUE, org);
+		SendExplosion(EF_DL_BLUE, org);
 	}
 	else
 	{
@@ -791,11 +779,11 @@ void SpawnPuff(TVec org, float Range, class<EntityEx> PuffType, bool HitThing)
 		}
 		if (PuffType == GoldWandPuff1)
 		{
-			SendExplosion(HereticDefs::EF_DL_WHITE, org);
+			SendExplosion(EF_DL_WHITE, org);
 		}
 		if (PuffType == BlasterPuff1)
 		{
-			SendExplosion(HereticDefs::EF_DL_BLUE, org);
+			SendExplosion(EF_DL_BLUE, org);
 		}
 	}
 }
@@ -810,12 +798,12 @@ void ClientTick(float DeltaTime)
 {
 	dlight_t *dl;
 
-	switch (Effects & HereticDefs::EF_DLIGHT_MASK)
+	switch (Effects & EF_DLIGHT_MASK)
 	{
-	case HereticDefs::EF_DL_NONE:
+	case EF_DL_NONE:
 		break;
 
-	case HereticDefs::EF_DL_WHITE:
+	case EF_DL_WHITE:
 		dl = AllocDlight(self);
 		dl->origin = Origin;
 		dl->radius = 200.0;
@@ -823,7 +811,7 @@ void ClientTick(float DeltaTime)
 		dl->die = XLevel.Time + 0.1;
 		break;
 
-	case HereticDefs::EF_DL_RED:
+	case EF_DL_RED:
 		dl = AllocDlight(self);
 		dl->origin = Origin;
 		dl->radius = 200.0;
@@ -831,7 +819,7 @@ void ClientTick(float DeltaTime)
 		dl->die = XLevel.Time + 0.1;
 		break;
 
-	case HereticDefs::EF_DL_GREEN:
+	case EF_DL_GREEN:
 		dl = AllocDlight(self);
 		dl->origin = Origin;
 		dl->radius = 200.0;
@@ -839,7 +827,7 @@ void ClientTick(float DeltaTime)
 		dl->die = XLevel.Time + 0.1;
 		break;
 
-	case HereticDefs::EF_DL_BLUE:
+	case EF_DL_BLUE:
 		dl = AllocDlight(self);
 		dl->origin = Origin;
 		dl->radius = 200.0;
@@ -847,7 +835,7 @@ void ClientTick(float DeltaTime)
 		dl->die = XLevel.Time + 0.1;
 		break;
 
-	case HereticDefs::EF_DL_MAGENTA:
+	case EF_DL_MAGENTA:
 		dl = AllocDlight(self);
 		dl->origin = Origin;
 		dl->radius = 200.0;
@@ -864,14 +852,4 @@ __states__
 
 defaultproperties
 {
-	Health = 1000;
-	GibsHealth = -1000;
-	ReactionCount = 8;
-	Radius = 20.0;
-	Height = 16.0;
-	Mass = 100.0;
-	MaxStepHeight = 24.0;
-	LightOffset = vector(0.0, 0.0, 0.0);
-	LightColour = 0xffffffff;
-	LightRadius = 128.0;
 }

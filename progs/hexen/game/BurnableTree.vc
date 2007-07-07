@@ -55,5 +55,5 @@ defaultproperties
 	bSolid = true;
 	bShootable = true;
 	bNoBlood = true;
-	ExplodeEffect = HexenDefs::EF_DL_WHITE;
+	ExplodeEffect = EF_DL_WHITE;
 }

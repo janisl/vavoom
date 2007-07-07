@@ -326,6 +326,7 @@ defaultproperties
 	bNoMorph = true;
 	bNoRadiusDamage = true;
 	bNeverTarget = true;
+	bFullVolActive = true;
 	RiseState = S_SOR2_RISE1;
 	IdleState = S_SOR2_LOOK1;
 	SeeState = S_SOR2_WALK1;

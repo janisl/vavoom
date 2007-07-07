@@ -59,7 +59,7 @@ __states__
 {
 	S_KLAX('KLAX', 0, 5.0 / 35.0, S_KLAX) { Effects = 0; A_CheckAlarm(); }
 	S_KLAX_ACT1('KLAX', 1, 6.0 / 35.0, S_KLAX_ACT2) { Effects = 0; A_AlarmActive(); }
-	S_KLAX_ACT2('KLAX', 2, 60.0 / 35.0, S_KLAX_ACT1) { Effects = StrifeDefs::EF_DL_RED; }
+	S_KLAX_ACT2('KLAX', 2, 60.0 / 35.0, S_KLAX_ACT1) { Effects = EF_DL_RED; }
 }
 
 defaultproperties

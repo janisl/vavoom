@@ -54,7 +54,7 @@ final void A_FireBlaster1()
 		Actor(Owner).LineAttack(dir, MAULERRANGE, damage, MaulerPuff,,,
 			'Disintegrate');
 	}
-	Owner.Effects |= StrifeDefs::EF_DL_MUZZLEFLASH;
+	Owner.Effects |= EF_DL_MUZZLEFLASH;
 }
 
 //==========================================================================
