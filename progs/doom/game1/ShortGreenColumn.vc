@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ShortRedColumn : Actor
+class ShortGreenColumn : Actor
 	__mobjinfo__(31);
 
 __states__
