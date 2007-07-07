@@ -29,16 +29,13 @@ class WolfensteinSS : ChaingunGuy
 
 //==========================================================================
 //
-//	DropStuff
+//	NoBlockingSet
 //
 //==========================================================================
 
-void DropStuff()
+void NoBlockingSet()
 {
-	Actor A;
-
-	A = Spawn(Clip, vector(Origin.x, Origin.y, FloorZ));
-	A.bDropped = true;	// special versions of items
+	DropItem(Clip, 0, 1.0);
 }
 
 __states__

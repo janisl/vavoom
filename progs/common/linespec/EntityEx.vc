@@ -4004,6 +4004,13 @@ bool OkayToSwitchTarget(EntityEx source)
 
 void Died(EntityEx source, EntityEx inflictor)
 {
+	if (source)
+	{
+		//	Set Target to the thing that killed it. It's needed for Strife's
+		// special dropped items.
+		Target = source;
+	}
+
 	if (inflictor && inflictor.bNoExtremeDeath)
 	{
 		//	Prevent gibing animation.
@@ -4128,8 +4135,6 @@ void Died(EntityEx source, EntityEx inflictor)
 	{
 		StateTime = 1.0 / 35.0;
 	}
-
-	DropStuff();
 }
 
 //==========================================================================
@@ -4814,6 +4819,55 @@ void PlayActiveSound()
 	}
 }
 
+//==========================================================================
+//
+//  DropItem
+//
+//==========================================================================
+
+final void DropItem(class<EntityEx> type, int amount, float chance)
+{
+	EntityEx	A;
+
+	if (Random() > chance)
+	{
+		return;
+	}
+	A = Spawn(type, Origin + vector(0.0, 0.0, Height / 2.0));
+	if (!A.ItemSpecialDropAction(Target))
+	{
+		A.Velocity.x = (Random() - Random()) * 35.0;
+		A.Velocity.y = (Random() - Random()) * 35.0;
+		A.Velocity.z = (5.0 + Random() * 4.0) * 35.0;
+		A.bDropped = true;	// special versions of items
+		if (amount)
+		{
+			A.SetItemAmount(amount);
+		}
+	}
+}
+
+//==========================================================================
+//
+//	NoBlockingSet
+//
+//==========================================================================
+
+bool ItemSpecialDropAction(EntityEx Source)
+{
+	return false;
+}
+
+//==========================================================================
+//
+//	NoBlockingSet
+//
+//==========================================================================
+
+void NoBlockingSet()
+{
+}
+
 float GetBaseViewHeight()
 {
 	return 0.0;
@@ -4892,12 +4946,17 @@ void PlayerKilled(EntityEx source, EntityEx inflictor)
 {
 }
 
-void DropStuff()
+void TouchSpecial(EntityEx Toucher)
 {
 }
 
-void TouchSpecial(EntityEx Toucher)
+void SetItemAmount(int Amount)
 {
+}
+
+int GetSpeech()
+{
+	return 0;
 }
 
 //**************************************************************************

@@ -450,6 +450,66 @@ final void A_XXScream()
 	}
 }
 
+//==========================================================================
+//
+//  A_NoBlocking
+//
+//  Unset blocking.
+//
+//==========================================================================
+
+final void A_NoBlocking()
+{
+	int					SpeechNum;
+	RogueConSpeech*		Speech;
+	class<EntityEx>		DropItemType;
+
+	//  Remove muzzle flash
+	if ((Effects & EF_DLIGHT_MASK) == EF_DL_MUZZLEFLASH)
+	{
+		Effects &= ~EF_DLIGHT_MASK;
+	}
+
+	// actor is on ground, it can be walked over
+	bSolid = false;
+
+	SpeechNum = GetSpeech();
+	if (SpeechNum)
+	{
+		//	Drop stuff as determined by conversation.
+		if (SpeechNum < 0)
+		{
+			Speech = &XLevel.GenericSpeeches[-SpeechNum - 1];
+		}
+		else
+		{
+			Speech = &XLevel.LevelSpeeches[SpeechNum - 1];
+		}
+		DropItemType = LineSpecialLevelInfo(Level).GetClassFromID(Speech->DropItem);
+		if (DropItemType)
+		{
+			DropItem(DropItemType, 0, 1.0);
+			return;
+		}
+	}
+
+	// Check for monsters dropping things
+	NoBlockingSet();
+}
+
+//==========================================================================
+//
+//	A_Fall
+//
+//	For compatibility
+//
+//==========================================================================
+
+final void A_Fall()
+{
+	A_NoBlocking();
+}
+
 defaultproperties
 {
 }

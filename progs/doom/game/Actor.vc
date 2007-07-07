@@ -539,16 +539,6 @@ void PlayerKilled(EntityEx source, EntityEx inflictor)
 
 //==========================================================================
 //
-//	DropStuff
-//
-//==========================================================================
-
-void DropStuff()
-{
-}
-
-//==========================================================================
-//
 //	GetBaseViewHeight
 //
 //==========================================================================
@@ -705,29 +695,6 @@ final void A_Explode()
 
 	//  Clear old dynamic light effect
 	Effects &= ~EF_DLIGHT_MASK;
-}
-
-//==========================================================================
-//
-//	A_Fall
-//
-//  Unset blocking.
-//
-//==========================================================================
-
-final void A_Fall()
-{
-	//  Remove muzzle flash
-	if ((Effects & EF_DLIGHT_MASK) == EF_DL_MUZZLEFLASH)
-	{
-		Effects &= ~EF_DLIGHT_MASK;
-	}
-
-	// actor is on ground, it can be walked over
-	bSolid = false;
-
-	// So change this if corpse objects
-	// are meant to be obstacles.
 }
 
 //==========================================================================

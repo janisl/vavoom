@@ -126,79 +126,6 @@ final void SendExplosion(int etype, TVec org)
 
 //==========================================================================
 //
-//	Died
-//
-//==========================================================================
-
-void Died(EntityEx source, EntityEx inflictor)
-{
-	::Died(source, inflictor);
-
-	int SpeechNum;
-	RogueConSpeech *Speech;
-	class<Actor> DropItemType;
-	Actor A;
-
-	SpeechNum = GetSpeech();
-	if (SpeechNum)
-	{
-		//	Drop stuff as determined by conversation.
-		if (SpeechNum < 0)
-		{
-			Speech = &XLevel.GenericSpeeches[-SpeechNum - 1];
-		}
-		else
-		{
-			Speech = &XLevel.LevelSpeeches[SpeechNum - 1];
-		}
-		DropItemType = StrifeLevelInfo(Level).GetClassFromID(Speech->DropItem);
-		if (DropItemType)
-		{
-			A = Spawn(DropItemType, Origin + vector(0.0, 0.0, Height / 2.0));
-
-			if (Pickup(A) && Pickup(A).bDropAutoGive)
-			{
-				Pickup(A).HandlePickup(Actor(source));
-				A.Destroy();
-			}
-			else
-			{
-				A.Velocity.x = (Random() - Random()) * 35.0;
-				A.Velocity.y = (Random() - Random()) * 35.0;
-				A.Velocity.z = (5.0 + Random() * 4.0) * 35.0;
-				A.bDropped = true;	// special versions of items
-			}
-		}
-	}
-	//  This class of rebel always drops a clip, unless it already did.
-	if (Class == Rebel1 && !ClipOfBullets(A))
-	{
-		A = Spawn(ClipOfBullets, Origin + vector(0.0, 0.0, Height / 2.0));
-		A.Velocity.x = (Random() - Random()) * 35.0;
-		A.Velocity.y = (Random() - Random()) * 35.0;
-		A.Velocity.z = (5.0 + Random() * 4.0) * 35.0;
-		A.bDropped = true;	// special versions of items
-	}
-	if (Class == Crusader)
-	{
-		A = Spawn(EnergyPod, Origin + vector(0.0, 0.0, Height / 2.0));
-		A.Velocity.x = (Random() - Random()) * 35.0;
-		A.Velocity.y = (Random() - Random()) * 35.0;
-		A.Velocity.z = (5.0 + Random() * 4.0) * 35.0;
-		A.bDropped = true;	// special versions of items
-	}
-	if (Class == StrifeBishop)
-	{
-		A = Spawn(CrateOfMissiles, Origin + vector(0.0, 0.0, Height / 2.0));
-		A.Velocity.x = (Random() - Random()) * 35.0;
-		A.Velocity.y = (Random() - Random()) * 35.0;
-		A.Velocity.z = (5.0 + Random() * 4.0) * 35.0;
-		A.bDropped = true;	// special versions of items
-	}
-}
-
-//==========================================================================
-//
 //	KilledByPlayer
 //
 //==========================================================================
@@ -917,26 +844,6 @@ final void A_Explode2()
 	{
 		SendExplosion(ExplodeEffect, Origin);
 	}
-}
-
-//==========================================================================
-//
-//  A_Fall
-//
-//  Unset blocking.
-//
-//==========================================================================
-
-final void A_Fall()
-{
-	//  Remove muzzle flash
-	if ((Effects & EF_DLIGHT_MASK) == EF_DL_MUZZLEFLASH)
-	{
-		Effects &= ~EF_DLIGHT_MASK;
-	}
-
-	// actor is on ground, it can be walked over
-	bSolid = false;
 }
 
 //==========================================================================

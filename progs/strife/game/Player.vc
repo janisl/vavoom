@@ -1033,7 +1033,7 @@ bool GivePower(int power)
 
 void GiveQuest(int QuestID)
 {
-	class<Actor>	QClass;
+	class<EntityEx>	QClass;
 	QuestItem		QInfo;
 	
 	if (Quests & (1 << QuestID))

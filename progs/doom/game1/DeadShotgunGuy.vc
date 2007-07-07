@@ -28,11 +28,11 @@ class DeadShotgunGuy : ShotgunGuy
 
 //==========================================================================
 //
-//	DropStuff
+//	NoBlockingSet
 //
 //==========================================================================
 
-void DropStuff()
+void NoBlockingSet()
 {
 }
 

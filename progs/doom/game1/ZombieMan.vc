@@ -59,19 +59,13 @@ final void A_PosAttack()
 
 //==========================================================================
 //
-//	DropStuff
+//	NoBlockingSet
 //
 //==========================================================================
 
-void DropStuff()
+void NoBlockingSet()
 {
-	Actor A;
-
-	A = Spawn(Clip, Origin + vector(0.0, 0.0, Height / 2.0));
-	A.Velocity.x = (Random() - Random()) * 35.0;
-	A.Velocity.y = (Random() - Random()) * 35.0;
-	A.Velocity.z = (5.0 + Random() * 4.0) * 35.0;
-	A.bDropped = true;	// special versions of items
+	DropItem(Clip, 0, 1.0);
 }
 
 __states__

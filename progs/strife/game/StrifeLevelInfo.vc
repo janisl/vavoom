@@ -619,7 +619,7 @@ void StartSpeech(int SpeechNum)
 //
 //==========================================================================
 
-class<Actor> GetClassFromID(int ID)
+class<EntityEx> GetClassFromID(int ID)
 {
 	switch (ID)
 	{
@@ -760,7 +760,7 @@ class<Actor> GetClassFromID(int ID)
 
 int CheckForNeededItem(Actor A, int ID, int Amount)
 {
-	class<Actor> CID;
+	class<EntityEx> CID;
 	int i;
 
 	//	Get class ID.
@@ -822,7 +822,7 @@ void ConChoiceImpulse(int ChoiceNum)
 	int Item1;
 	int Item2;
 	int Item3;
-	class<Actor> ItemType;
+	class<EntityEx> ItemType;
 	Pickup Item;
 	bool GaveItem;
 

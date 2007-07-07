@@ -26,6 +26,17 @@
 class Rebel1 : Rebel
 	__mobjinfo__(9);
 
+//==========================================================================
+//
+//	NoBlockingSet
+//
+//==========================================================================
+
+void NoBlockingSet()
+{
+	DropItem(ClipOfBullets, 0, 1.0);
+}
+
 defaultproperties
 {
 	ConversationID = 43;

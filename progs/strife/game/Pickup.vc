@@ -165,6 +165,23 @@ __states__
 	}
 }
 
+//==========================================================================
+//
+//	NoBlockingSet
+//
+//==========================================================================
+
+bool ItemSpecialDropAction(EntityEx Source)
+{
+	if (bDropAutoGive)
+	{
+		HandlePickup(Actor(Source));
+		Destroy();
+		return true;
+	}
+	return false;
+}
+
 defaultproperties
 {
 	bSpecial = true;

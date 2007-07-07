@@ -76,6 +76,17 @@ void TouchSpecial(EntityEx Toucher)
 	Toucher.PlaySound('misc/i_pkup', CHAN_ITEM);
 }
 
+//==========================================================================
+//
+//  SetItemAmount
+//
+//==========================================================================
+
+void SetItemAmount(int Amount)
+{
+	AmmoCount = Amount;
+}
+
 defaultproperties
 {
 }
