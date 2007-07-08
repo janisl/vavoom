@@ -26,9 +26,42 @@
 class Sorcerer2 : Pawn
 	__scriptid__(143);
 
-state RiseState;
-state TeleportState;
-state DeathLoopState;
+state		RiseState;
+state		TeleportState;
+state		DeathLoopState;
+
+int			BossSpotCount;
+BossSpot	FirstBossSpot;
+
+//==========================================================================
+//
+//	BeginPlay
+//
+//==========================================================================
+
+void BeginPlay()
+{
+	BossSpot		Prev;
+	BossSpot		Spot;
+
+	::BeginPlay();
+
+	BossSpotCount = 0;
+	FirstBossSpot = none;
+	Prev = none;
+	foreach AllThinkers(BossSpot, Spot)
+	{
+		if (FirstBossSpot)
+		{
+			Prev.NextSpot = Spot;
+		}
+		else
+		{
+			FirstBossSpot = Spot;
+		}
+		Prev = Spot;
+	}
+}
 
 //==========================================================================
 //
@@ -71,36 +104,52 @@ final void A_SorSightSnd()
 
 final void DSparilTeleport()
 {
-	int i;
-	float x;
-	float y;
-	TVec PrevOrg;
-	TVec dir;
-	Actor fog;
+	int			i;
+	TVec		PrevOrg;
+	TVec		dir;
+	BossSpot	Spot;
+	BossSpot	Initial;
+	Actor		fog;
 
-	if (!HereticLevelInfo(Level).BossSpotCount)
+	if (!BossSpotCount)
 	{
 		// No spots
 		return;
 	}
-	i = P_Random();
-	do
+	i = P_Random() % BossSpotCount;
+	for (Spot = FirstBossSpot; i > 0; i--)
 	{
-		i++;
-		x = HereticLevelInfo(Level).BossSpot[i % HereticLevelInfo(Level).BossSpotCount].x;
-		y = HereticLevelInfo(Level).BossSpot[i % HereticLevelInfo(Level).BossSpotCount].y;
-		dir = HereticLevelInfo(Level).BossSpot[i % HereticLevelInfo(Level).BossSpotCount] - Origin;
+		Spot = Spot.NextSpot;
 	}
+
+	dir = Spot.Origin - Origin;
+	dir.z = 0.0;
+	Initial = Spot;
 	while (Length(dir) < 128.0);
+	{
+		Spot = Spot.NextSpot;
+		if (!Spot)
+		{
+			Spot = FirstBossSpot;
+		}
+		if (Spot == Initial)
+		{
+			//	Avoid infinite loop if all spots are too close.
+			return;
+		}
+		dir = Spot.Origin - Origin;
+		dir.z = 0.0;
+	}
+
 	PrevOrg = Origin;
-	if (TeleportMove(vector(x, y, Origin.z)))
+	if (TeleportMove(Spot.Origin))
 	{
 		fog = Spawn(Sorcerer2Telefade, PrevOrg);
 		fog.PlaySound('misc/teleport', CHAN_VOICE);
 		SetState(TeleportState);
 		PlaySound('misc/teleport', CHAN_VOICE);
 		Origin.z = FloorZ;
-		Angles.yaw = HereticLevelInfo(Level).BossSpot_angle[i % HereticLevelInfo(Level).BossSpotCount];
+		Angles.yaw = Spot.Angles.yaw;
 		Velocity = vector(0.0, 0.0, 0.0);
 	}
 }
@@ -115,7 +164,7 @@ final void A_Srcr2Decide()
 {
 	float chance;
 
-	if (!HereticLevelInfo(Level).BossSpotCount)
+	if (!BossSpotCount)
 	{
 		// No spots
 		return;

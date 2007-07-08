@@ -25,18 +25,12 @@
 
 class HereticLevelInfo : LineSpecialLevelInfo;
 
-const int MAX_BOSS_SPOTS	= 8;
-
 const int MAX_MACE_SPOTS	= 8;
 
 const int BODYQUESIZE		= 32;
 
 Actor bodyque[BODYQUESIZE];
 int bodyqueslot;
-
-int BossSpotCount;
-TVec BossSpot[MAX_BOSS_SPOTS];
-float BossSpot_angle[MAX_BOSS_SPOTS];
 
 int MaceSpotCount;
 float MaceSpot_x[MAX_MACE_SPOTS];
@@ -296,16 +290,17 @@ bool A_LocalQuake(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
 
 //==========================================================================
 //
-//  SpawnMapThing
+//	SpawnMapThing
+//
+//	The fields of the mapthing should already be in host byte order.
 //
 //==========================================================================
 
 void SpawnMapThing(mthing_t * mthing)
 {
-	int bit;
-	Actor A;
-	int spawnMask;
-	class<Actor> moClass;
+	int				spawnMask;
+	EntityEx		A;
+	class<EntityEx>	moClass;
 
 	if (mthing->type <= 0)
 	{
@@ -339,13 +334,6 @@ void SpawnMapThing(mthing_t * mthing)
 		return;
 	}
 
-	// Check for boss spots
-	if (mthing->type == 56)	// Monster_BossSpot
-	{
-		AddBossSpot(mthing->x, mthing->y, itof(45 * (mthing->angle / 45)));
-		return;
-	}
-
 	// Check current game type with spawn flags
 	if (Level.Game.netgame == false)
 	{
@@ -366,12 +354,12 @@ void SpawnMapThing(mthing_t * mthing)
 
 	// check for apropriate skill level
 	if (Game.gameskill == sk_baby)
-		bit = 1;
+		spawnMask = 1;
 	else if (Game.gameskill == sk_nightmare)
-		bit = 4;
+		spawnMask = 4;
 	else
-		bit = 1 << (Game.gameskill - 1);
-	if (!(mthing->options & bit))
+		spawnMask = 1 << (Game.gameskill - 1);
+	if (!(mthing->options & spawnMask))
 		return;
 
 	// find which type to spawn
@@ -460,25 +448,6 @@ void CloseWeapons()
 	spot = P_Random() % MaceSpotCount;
 	Spawn(Mace, vector(MaceSpot_x[spot], MaceSpot_y[spot],
 		Actor::ONFLOORZ));
-}
-
-//==========================================================================
-//
-//  P_AddBossSpot
-//
-//==========================================================================
-
-void AddBossSpot(float x, float y, float angle)
-{
-	if (BossSpotCount == MAX_BOSS_SPOTS)
-	{
-		Error("Too many boss spots.");
-	}
-	BossSpot[BossSpotCount].x = x;
-	BossSpot[BossSpotCount].y = y;
-	BossSpot[BossSpotCount].z = 0.0;	//FIXME
-	BossSpot_angle[BossSpotCount] = angle;
-	BossSpotCount++;
 }
 
 //==========================================================================

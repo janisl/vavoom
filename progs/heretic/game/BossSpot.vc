@@ -24,7 +24,10 @@
 //**************************************************************************
 
 class BossSpot : Actor
+	__mobjinfo__(56)
 	__scriptid__(141);
+
+BossSpot		NextSpot;
 
 defaultproperties
 {
