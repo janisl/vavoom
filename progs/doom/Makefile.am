@@ -326,6 +326,7 @@ EXTRA_DIST = compile.bat \
 	game2/BossBrain.vc \
 	game2/BossEye.vc \
 	game2/BossTarget.vc \
+	game2/BrainState.vc \
 	game2/ChaingunGuy.vc \
 	game2/CommanderKeen.vc \
 	game2/FatShot.vc \

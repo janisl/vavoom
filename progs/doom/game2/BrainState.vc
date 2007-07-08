@@ -23,28 +23,32 @@
 //**
 //**************************************************************************
 
-#include "Megasphere.vc"
-#include "SuperShotgun.vc"
+class BrainState : Thinker;
 
-#include "WeaponSuperShotgun.vc"
+array<EntityEx>		Targets;
+int					TargetOn;
+bool				bEasy;
 
-#include "ChaingunGuy.vc"
-#include "WolfensteinSS.vc"
-#include "HellKnight.vc"
-#include "ArachnotronPlasma.vc"
-#include "Arachnotron.vc"
-#include "PainElemental.vc"
-#include "RevenantTracerSmoke.vc"
-#include "RevenantTracer.vc"
-#include "Revenant.vc"
-#include "FatShot.vc"
-#include "Fatso.vc"
-#include "ArchvileFire.vc"
-#include "Archvile.vc"
-#include "BossTarget.vc"
-#include "SpawnFire.vc"
-#include "SpawnShot.vc"
-#include "BossBrain.vc"
-#include "BossEye.vc"
-#include "BrainState.vc"
-#include "CommanderKeen.vc"
+//==========================================================================
+//
+//	FindTargets
+//
+//==========================================================================
+
+void FindTargets()
+{
+	BossTarget		m;
+
+	// find all the target spots
+	Targets.Num = 0;
+	foreach AllThinkers(BossTarget, m)
+	{
+		Targets.Num = Targets.Num + 1;
+		Targets[Targets.Num - 1] = m;
+	}
+	TargetOn = 0;
+}
+
+defaultproperties
+{
+}

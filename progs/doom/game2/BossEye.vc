@@ -36,17 +36,7 @@ class BossEye : Actor
 
 final void A_BrainAwake()
 {
-	Actor m;
-
-	// find all the target spots
-	DoomLevelInfo(Level).NumBrainTargets = 0;
-	foreach AllThinkers(BossTarget, m)
-	{
-		DoomLevelInfo(Level).BrainTargets[DoomLevelInfo(Level).NumBrainTargets] = m;
-		DoomLevelInfo(Level).NumBrainTargets++;
-	}
-	DoomLevelInfo(Level).BrainTargetOn = 0;
-
+	//	Do just a sound, like in Boom.
 	PlaySound('brain/sight', CHAN_VOICE, 1.0, ATTN_NONE);
 }
 
@@ -60,24 +50,58 @@ final void A_BrainAwake()
 
 final void A_BrainSpit()
 {
-	Actor targ;
-	EntityEx A;
+	BrainState		BState;
+	EntityEx		targ;
+	EntityEx		A;
+	float			Frac;
 
-	DoomLevelInfo(Level).bBrainEasy = !DoomLevelInfo(Level).bBrainEasy;
-	if (Level.Game.gameskill <= sk_easy && !DoomLevelInfo(Level).bBrainEasy)
+	//	Find brain state object, create it if not found.
+	BState = none;
+	foreach AllThinkers(BrainState, BState)
+	{
+		break;
+	}
+	if (!BState)
+	{
+		BState = Spawn(BrainState);
+		BState.FindTargets();
+	}
+
+	if (!BState.Targets.Num)
+	{
+		//	No brain targets placed on a map.
 		return;
+	}
+
+	BState.bEasy = !BState.bEasy;
+	if (Level.Game.gameskill <= sk_easy && !BState.bEasy)
+	{
+		return;
+	}
 
 	// shoot a cube at current target
-	targ = DoomLevelInfo(Level).BrainTargets[DoomLevelInfo(Level).BrainTargetOn];
-	DoomLevelInfo(Level).BrainTargetOn = (DoomLevelInfo(Level).BrainTargetOn + 1) % DoomLevelInfo(Level).NumBrainTargets;
+	targ = BState.Targets[BState.TargetOn];
+	BState.TargetOn = (BState.TargetOn + 1) % BState.Targets.Num;
 
 	// spawn brain missile
 	A = SpawnMissile(targ, SpawnShot);
 	if (A)
 	{
 		A.Target = targ;
-		A.ReactionCount = ftoi((targ.Origin.y - Origin.y) /
-			A.Velocity.y / A.StateTime);
+		//	Prevent division by 0
+		if (!A.Velocity.x && !A.Velocity.y)
+		{
+			Frac = 0.0;
+		}
+		else if (fabs(A.Velocity.x) > fabs(A.Velocity.y))
+		{
+			Frac = (targ.Origin.x - Origin.x) / A.Velocity.x;
+		}
+		else
+		{
+			Frac = (targ.Origin.y - Origin.y) / A.Velocity.y;
+		}
+		A.ReactionCount = ftoi(Frac / GetStateDuration(A.State));
 	}
 
 	PlaySound('brain/spit', CHAN_WEAPON, 1.0, ATTN_NONE);
