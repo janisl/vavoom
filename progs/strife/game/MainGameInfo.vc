@@ -547,12 +547,6 @@ void TranslateThing(mthing_t* mthing)
 		mthing->options &= ~StrifeLevelInfo::MTF_GSINGLE;
 	if (flags & 0x08)
 		mthing->options |= LineSpecialLevelInfo::MTF_STANDSTILL;
-	if (mthing->type >= 118 && mthing->type <= 127)
-	{
-		//	Map start spots, i.e. player starts.
-		mthing->arg1 = mthing->type - 117;
-		mthing->type = 1;
-	}
 }
 
 //==========================================================================

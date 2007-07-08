@@ -27,7 +27,7 @@ class StrifeLevelInfo : LineSpecialLevelInfo;
 
 const int BODYQUESIZE	= 32;
 
-Actor bodyque[BODYQUESIZE];
+EntityEx bodyque[BODYQUESIZE];
 int bodyqueslot;
 
 //==========================================================================
@@ -40,9 +40,9 @@ bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 	int Arg4, int Arg5, line_t* Line, int Side, Entity E)
 {
 	bool buttonSuccess;
-	Actor A;
+	EntityEx A;
 
-	A = Actor(E);
+	A = EntityEx(E);
 	buttonSuccess = false;
 	switch (Special)
 	{
@@ -78,7 +78,7 @@ bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 //
 //==========================================================================
 
-bool CheckActivation(int activationType, line_t * line, Actor A)
+bool CheckActivation(int activationType, line_t * line, EntityEx A)
 {
 	int lineActivation;
 	bool noway;
@@ -167,7 +167,7 @@ bool ActivateLine(line_t* Line, EntityEx A, int Side, int ActivationType)
 	bool buttonSuccess;
 	bool changeBack;
 
-	if (!CheckActivation(ActivationType, Line, Actor(A)))
+	if (!CheckActivation(ActivationType, Line, A))
 	{
 		return false;
 	}
@@ -253,7 +253,7 @@ bool CheckLock(Entity user, int lock, bool door)
 //
 //==========================================================================
 
-bool EV_SendToCommunicator(Actor A, int Arg1, int Arg2, int Arg3, int Arg4,
+bool EV_SendToCommunicator(EntityEx A, int Arg1, int Arg2, int Arg3, int Arg4,
 	int Arg5, int side)
 {
 	if (Arg2 && side)
@@ -288,7 +288,7 @@ bool EV_SendToCommunicator(Actor A, int Arg1, int Arg2, int Arg3, int Arg4,
 //==========================================================================
 
 bool EV_BreakGlass(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
-	line_t* Line, Actor A)
+	line_t* Line, EntityEx A)
 {
 	bool	switched;
 	bool	quest1;
@@ -296,7 +296,7 @@ bool EV_BreakGlass(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 	float	x;
 	float	y;
 	int		i;
-	Actor	glass;
+	EntityEx	glass;
 	float	an;
 	float	speed;
 
@@ -330,7 +330,7 @@ bool EV_BreakGlass(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 
 		for (i = 0; i < 7; i++)
 		{
-			glass = Spawn(Blood, vector(x, y, Actor::ONFLOORZ));
+			glass = Spawn(Blood, vector(x, y, EntityEx::ONFLOORZ));
 			glass.bColideWithThings = false;
 			glass.bColideWithWorld = false;
 			glass.Origin.z += 24.0;
@@ -356,7 +356,7 @@ bool EV_BreakGlass(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 				{
 					if (Game.Players[i] && Game.Players[i].bSpawned)
 					{
-						A = Actor(Game.Players[i].MO);
+						A = EntityEx(Game.Players[i].MO);
 						break;
 					}
 				}
@@ -395,14 +395,14 @@ bool EV_BreakGlass(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 bool A_LocalQuake(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
 {
 	QuakeFocus focus;
-	Actor target;
+	EntityEx target;
 	int lastfound = 0;
 	int success = false;
 
 	// Find all quake foci
 	do
 	{
-		target = Actor(FindMobjFromTID(Arg5, &lastfound));
+		target = EntityEx(FindMobjFromTID(Arg5, &lastfound));
 		if (target)
 		{
 			focus = QuakeFocus(Spawn(QuakeFocus, target.Origin));
@@ -421,106 +421,14 @@ bool A_LocalQuake(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
 	return success;
 }
 
-//==========================================================================
-//
-//  SpawnMapThing
-//
-//  The fields of the mapthing should already be in host byte order.
-//
-//==========================================================================
-
-void SpawnMapThing(mthing_t * mthing)
-{
-	int bit;
-	Actor A;
-	int spawnMask;
-	class<Actor> moClass;
-
-	if (mthing->type <= 0)
-		return;
-
-	// count deathmatch start positions
-	if (mthing->type == 11)
-	{
-		if (NumDeathmatchStarts < MAXDEATHMATCHSTARTS)
-		{
-			CopyMThing(mthing, &DeathmatchStarts[NumDeathmatchStarts]);
-			NumDeathmatchStarts++;
-		}
-		return;
-	}
-
-	// check for players specially
-	if (mthing->type <= 8)
-	{
-		// save spots for respawning in network games
-		CopyMThing(mthing, &PlayerStarts[mthing->arg1 * MAXPLAYERS +
-			mthing->type - 1]);
-		return;
-	}
-
-	if (mthing->type >= 1400 && mthing->type < 1410)
-	{
-		XLevel.PointInSector(vector(mthing->x,
-			mthing->y, 0.0))->seqType = mthing->type - 1400;
-		return;
-	}
-
-	// Check current game type with spawn flags
-	if (Game.netgame == false)
-	{
-		spawnMask = MTF_GSINGLE;
-	}
-	else if (Game.deathmatch)
-	{
-		spawnMask = MTF_GDEATHMATCH;
-	}
-	else
-	{
-		spawnMask = MTF_GCOOP;
-	}
-	if (!(mthing->options & spawnMask))
-	{
-		return;
-	}
-
-	// check for apropriate skill level
-	if (Game.gameskill == sk_baby)
-		bit = 1;
-	else if (Game.gameskill == sk_nightmare)
-		bit = 4;
-	else
-		bit = 1 << (Game.gameskill - 1);
-
-	if (!(mthing->options & bit))
-		return;
-
-	// find which type to spawn
-	moClass = class<Actor>(FindClassFromEditorId(mthing->type));
-	if (moClass)
-	{
-		if (Level.Game.nomonsters && moClass.default.bMonster)
-		{
-			return;
-		}
-		// spawn it
-		A = Spawn(moClass,,, mthing);
-	}
-	else
-	{
-		dprint("SpawnMapThing: Unknown type %d at (%f, %f)",
-			mthing->type, mthing->x, mthing->y);
-	}
-}
-
 //**************************************************************************
 //
 //	CONVERSATION STUFF
 //
 //**************************************************************************
 
-Actor CurrentSpeaker;
-Actor CurrentSpeakingTo;
+EntityEx CurrentSpeaker;
+EntityEx CurrentSpeakingTo;
 float OldSpeakerAngle;
 int CurrentSpeechIndex;
 bool ConversationSlideshow;
@@ -531,7 +439,7 @@ bool ConversationSlideshow;
 //
 //==========================================================================
 
-bool StartConversation(Actor User, Actor UseOn)
+bool StartConversation(EntityEx User, EntityEx UseOn)
 {
 	int SpeechNum;
 
@@ -758,7 +666,7 @@ class<EntityEx> GetClassFromID(int ID)
 //
 //==========================================================================
 
-int CheckForNeededItem(Actor A, int ID, int Amount)
+int CheckForNeededItem(EntityEx A, int ID, int Amount)
 {
 	class<EntityEx> CID;
 	int i;
@@ -963,4 +871,6 @@ defaultproperties
 	DefaultStairStepSound = 'Floor';
 	DefaultPlatformSound = 'Platform';
 	bTeleportNewMapBothSides = true;
+	bCheckStrifeStartSpots = true;
+	ExtPlayersBase = 5;
 }

@@ -27,7 +27,7 @@ class DoomLevelInfo : LineSpecialLevelInfo;
 
 const int BODYQUESIZE				= 32;
 
-Actor bodyque[BODYQUESIZE];
+EntityEx bodyque[BODYQUESIZE];
 int bodyqueslot;
 
 //==========================================================================
@@ -345,14 +345,14 @@ bool CheckLock(Entity user, int lock, bool door)
 bool A_LocalQuake(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
 {
 	QuakeFocus focus;
-	Actor target;
+	EntityEx target;
 	int lastfound = 0;
 	int success = false;
 
 	// Find all quake foci
 	do
 	{
-		target = Actor(FindMobjFromTID(Arg5, &lastfound));
+		target = EntityEx(FindMobjFromTID(Arg5, &lastfound));
 		if (target)
 		{
 			focus = QuakeFocus(Spawn(QuakeFocus, target.Origin));
@@ -373,109 +373,6 @@ bool A_LocalQuake(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
 
 //==========================================================================
 //
-//	SpawnMapThing
-//
-//	The fields of the mapthing should already be in host byte order.
-//
-//==========================================================================
-
-void SpawnMapThing(mthing_t * mthing)
-{
-	int				spawnMask;
-	EntityEx		A;
-	class<EntityEx>	moClass;
-
-	if (mthing->type <= 0)
-	{
-		return;
-	}
-
-	// count deathmatch start positions
-	if (mthing->type == 11)
-	{
-		if (NumDeathmatchStarts < MAXDEATHMATCHSTARTS)
-		{
-			CopyMThing(mthing, &DeathmatchStarts[NumDeathmatchStarts]);
-			NumDeathmatchStarts++;
-		}
-		return;
-	}
-
-	// check for players specially
-	if (mthing->type <= 4)
-	{
-		// save spots for respawning in network games
-		CopyMThing(mthing, &PlayerStarts[mthing->arg1 * MAXPLAYERS +
-			mthing->type - 1]);
-		return;
-	}
-	if (mthing->type >= 4001 && mthing->type <= 4004)
-	{
-		// save spots for respawning in network games
-		CopyMThing(mthing, &PlayerStarts[mthing->arg1 * MAXPLAYERS +
-			mthing->type - 4001 + 4]);
-		//	Change type to range 5-8.
-		PlayerStarts[mthing->arg1 * MAXPLAYERS +
-			mthing->type - 4001 + 4].type -= 4000 - 4;
-		return;
-	}
-
-	if (mthing->type >= 1400 && mthing->type < 1410)
-	{
-		XLevel.PointInSector(vector(mthing->x,
-			mthing->y, 0.0))->seqType = mthing->type - 1400;
-		return;
-	}
-
-	// Check current game type with spawn flags
-	if (Game.netgame == false)
-	{
-		spawnMask = MTF_GSINGLE;
-	}
-	else if (Game.deathmatch)
-	{
-		spawnMask = MTF_GDEATHMATCH;
-	}
-	else
-	{
-		spawnMask = MTF_GCOOP;
-	}
-	if (!(mthing->options & spawnMask))
-	{
-		return;
-	}
-
-	// check for apropriate skill level
-	if (Game.gameskill == sk_baby)
-		spawnMask = 1;
-	else if (Game.gameskill == sk_nightmare)
-		spawnMask = 4;
-	else
-		spawnMask = 1 << (Game.gameskill - 1);
-
-	if (!(mthing->options & spawnMask))
-		return;
-
-	// find which type to spawn
-	moClass = class<Actor>(FindClassFromEditorId(mthing->type));
-	if (moClass)
-	{
-		if (Level.Game.nomonsters && moClass.default.bMonster)
-		{
-			return;
-		}
-		// spawn it
-		A = Spawn(moClass,,, mthing);
-	}
-	else
-	{
-		dprint("SpawnMapThing: Unknown type %d at (%f, %f)",
-			mthing->type, mthing->x, mthing->y);
-	}
-}
-
-//==========================================================================
-//
 //  P_Massacre
 //
 //  Kills all monsters.
@@ -485,10 +382,10 @@ void SpawnMapThing(mthing_t * mthing)
 int P_Massacre()
 {
 	int count;
-	Actor mo;
+	EntityEx mo;
 
 	count = 0;
-	foreach AllThinkers(Actor, mo)
+	foreach AllThinkers(EntityEx, mo)
 	{
 		if (mo.bMonster && (mo.Health > 0))
 		{

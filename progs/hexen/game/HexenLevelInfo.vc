@@ -28,11 +28,11 @@ class HexenLevelInfo : LineSpecialLevelInfo;
 const int BODYQUESIZE			= 32;
 const int CORPSEQUEUESIZE		= 64;
 
-Actor bodyque[BODYQUESIZE];
+EntityEx bodyque[BODYQUESIZE];
 int bodyqueslot;
 
 // Corpse queue for monsters
-Actor corpseQueue[CORPSEQUEUESIZE];
+EntityEx corpseQueue[CORPSEQUEUESIZE];
 int corpseQueueSlot;
 
 //==========================================================================
@@ -45,9 +45,9 @@ bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 	int Arg4, int Arg5, line_t* Line, int Side, Entity E)
 {
 	bool buttonSuccess;
-	Actor A;
+	EntityEx A;
 
-	A = Actor(E);
+	A = EntityEx(E);
 	buttonSuccess = false;
 	switch (Special)
 	{
@@ -74,7 +74,7 @@ bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 //
 //==========================================================================
 
-bool CheckActivation(int activationType, line_t * line, Actor A)
+bool CheckActivation(int activationType, line_t * line, EntityEx A)
 {
 	int lineActivation;
 
@@ -124,7 +124,7 @@ bool ActivateLine(line_t* Line, EntityEx A, int Side, int ActivationType)
 	bool repeat;
 	bool buttonSuccess;
 
-	if (!CheckActivation(ActivationType, Line, Actor(A)))
+	if (!CheckActivation(ActivationType, Line, A))
 	{
 		return false;
 	}
@@ -200,14 +200,14 @@ bool CheckLock(Entity A, int lock, bool door)
 bool A_LocalQuake(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
 {
 	QuakeFocus focus;
-	Actor target;
+	EntityEx target;
 	int lastfound = 0;
 	int success = false;
 
 	// Find all quake foci
 	do
 	{
-		target = Actor(FindMobjFromTID(Arg5, &lastfound));
+		target = EntityEx(FindMobjFromTID(Arg5, &lastfound));
 		if (target)
 		{
 			focus = QuakeFocus(Spawn(QuakeFocus, target.Origin));
@@ -233,7 +233,7 @@ bool A_LocalQuake(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
 //==========================================================================
 
 bool EV_LineSearchForPuzzleItem(int Arg1, int Arg2, int Arg3, int Arg4,
-	int Arg5, Actor A)
+	int Arg5, EntityEx A)
 {
 	int i;
 	int type, arti;
@@ -275,106 +275,22 @@ bool EV_LineSearchForPuzzleItem(int Arg1, int Arg2, int Arg3, int Arg4,
 
 //==========================================================================
 //
-// SpawnMapThing
-//
-// The fields of the mapthing should already be in host byte order.
+//  GetClassSpawnFlags
 //
 //==========================================================================
 
-void SpawnMapThing(mthing_t * mthing)
+int GetPClassSpawnFlags()
 {
-	int spawnMask;
-	Actor A;
-	class<Actor> moClass;
-
-	if (mthing->type <= 0)
-		return;
-
-	// Count deathmatch start positions
-	if (mthing->type == 11)
-	{
-		if (NumDeathmatchStarts < MAXDEATHMATCHSTARTS)
-		{
-			CopyMThing(mthing, &DeathmatchStarts[NumDeathmatchStarts]);
-			NumDeathmatchStarts++;
-		}
-		return;
-	}
-
-	// Check for player starts 1 to 4
-	if (mthing->type <= 4)
-	{
-		CopyMThing(mthing, &PlayerStarts[mthing->arg1 * MAXPLAYERS +
-			mthing->type - 1]);
-		return;
-	}
-	// Check for player starts 5 to 8
-	if (mthing->type >= 9100 && mthing->type <= 9103)
-	{
-		mthing->type = 5 + mthing->type - 9100;	// Translate to 5 - 8
-		CopyMThing(mthing, &PlayerStarts[mthing->arg1 * MAXPLAYERS +
-			mthing->type - 1]);
-		return;
-	}
-
-	if (mthing->type >= 1400 && mthing->type < 1410)
-	{
-		XLevel.PointInSector(vector(mthing->x,
-			mthing->y, 0.0))->seqType = mthing->type - 1400;
-		return;
-	}
-
-	// Check current game type with spawn flags
-	if (Game.netgame == false)
-	{
-		spawnMask = MTF_GSINGLE;
-	}
-	else if (Game.deathmatch)
-	{
-		spawnMask = MTF_GDEATHMATCH;
-	}
-	else
-	{
-		spawnMask = MTF_GCOOP;
-	}
-	if (!(mthing->options & spawnMask))
-	{
-		return;
-	}
-
-	// Check current skill with spawn flags
-	if (Game.gameskill == sk_baby || Game.gameskill == sk_easy)
-	{
-		spawnMask = MTF_EASY;
-	}
-	else if (Game.gameskill == sk_hard || Game.gameskill == sk_nightmare)
-	{
-		spawnMask = MTF_HARD;
-	}
-	else
-	{
-		spawnMask = MTF_NORMAL;
-	}
-	if (!(mthing->options & spawnMask))
-	{
-		return;
-	}
-
-	// Check current character classes with spawn flags
 	if (!Game.netgame)
 	{
 		// Single player
-		if (!(mthing->options & MainGameInfo(Game).classFlags[GetCvar('class')]))
-		{
-			// Not for current class
-			return;
-		}
+		return MainGameInfo(Game).classFlags[GetCvar('class')];
 	}
 #ifdef FIXME	//  Because of client/server and in-game joining we can't do this
 	else if (!deathmatch)
 	{
 		// Cooperative
-		spawnMask = 0;
+		int spawnMask = 0;
 		for (i = 0; i < MAXPLAYERS; i++)
 		{
 			if (GPlayers[i])
@@ -382,32 +298,13 @@ void SpawnMapThing(mthing_t * mthing)
 				spawnMask |= classFlags[PlayerClass[i]];
 			}
 		}
-		if (!(mthing->options & spawnMask))
-		{
-			return;
-		}
+		return spawnMask;
 	}
 #endif
-
-	// Find which type to spawn
-	moClass = class<Actor>(FindClassFromEditorId(mthing->type));
-	if (moClass)
-	{
-		if (Level.Game.nomonsters && moClass.default.bMonster)
-		{
-			return;
-		}
-		// spawn it
-		A = Spawn(moClass,,, mthing);
-	}
-	else
-	{
-		// Can't find thing type
-		dprint("SpawnMapThing: Unknown type %i at (%f, %f)",
-			mthing->type, mthing->x, mthing->y);
-	}
+	return 0;
 }
 
 defaultproperties
 {
+	ExtPlayersBase = 9100;
 }

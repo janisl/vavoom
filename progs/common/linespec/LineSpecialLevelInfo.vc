@@ -56,6 +56,9 @@ name			DefaultStairStepSound;
 name			DefaultPlatformSound;
 
 bool			bTeleportNewMapBothSides;
+bool			bCheckStrifeStartSpots;
+
+int				ExtPlayersBase;
 
 //==========================================================================
 //
@@ -4055,6 +4058,137 @@ final int ThingCount(int type, int tid)
 
 //==========================================================================
 //
+//	SpawnMapThing
+//
+//	The fields of the mapthing should already be in host byte order.
+//
+//==========================================================================
+
+final void SpawnMapThing(mthing_t* mthing)
+{
+	int				spawnMask;
+	EntityEx		A;
+	class<EntityEx>	moClass;
+
+	if (mthing->type <= 0)
+	{
+		return;
+	}
+
+	// count deathmatch start positions
+	if (mthing->type == 11)
+	{
+		if (NumDeathmatchStarts < MAXDEATHMATCHSTARTS)
+		{
+			CopyMThing(mthing, &DeathmatchStarts[NumDeathmatchStarts]);
+			NumDeathmatchStarts++;
+		}
+		return;
+	}
+
+	if (bCheckStrifeStartSpots && mthing->type >= 118 && mthing->type <= 127)
+	{
+		//	Map start spots, i.e. player starts.
+		mthing->arg1 = mthing->type - 117;
+		mthing->type = 1;
+	}
+
+	// Check for player starts 1 to 4
+	if (mthing->type <= 4)
+	{
+		// save spots for respawning in network games
+		CopyMThing(mthing, &PlayerStarts[mthing->arg1 * MAXPLAYERS +
+			mthing->type - 1]);
+		return;
+	}
+	// Check for player starts 5 to 8
+	if (mthing->type >= ExtPlayersBase && mthing->type < ExtPlayersBase + 4)
+	{
+		//	Change type to range 5-8.
+		mthing->type = 5 + mthing->type - ExtPlayersBase;
+		// save spots for respawning in network games
+		CopyMThing(mthing, &PlayerStarts[mthing->arg1 * MAXPLAYERS +
+			mthing->type - 1]);
+		return;
+	}
+
+	if (mthing->type >= 1400 && mthing->type < 1410)
+	{
+		XLevel.PointInSector(vector(mthing->x,
+			mthing->y, 0.0))->seqType = mthing->type - 1400;
+		return;
+	}
+
+	// Check current game type with spawn flags
+	if (Game.netgame == false)
+	{
+		spawnMask = MTF_GSINGLE;
+	}
+	else if (Game.deathmatch)
+	{
+		spawnMask = MTF_GDEATHMATCH;
+	}
+	else
+	{
+		spawnMask = MTF_GCOOP;
+	}
+	if (!(mthing->options & spawnMask))
+	{
+		return;
+	}
+
+	// Check current skill with spawn flags
+	if (Game.gameskill == sk_baby || Game.gameskill == sk_easy)
+	{
+		spawnMask = MTF_EASY;
+	}
+	else if (Game.gameskill == sk_hard || Game.gameskill == sk_nightmare)
+	{
+		spawnMask = MTF_HARD;
+	}
+	else
+	{
+		spawnMask = MTF_NORMAL;
+	}
+	if (!(mthing->options & spawnMask))
+	{
+		return;
+	}
+
+	// Check current character classes with spawn flags
+	spawnMask = GetPClassSpawnFlags();
+	if (spawnMask && !(mthing->options & spawnMask))
+	{
+		// Not for current class
+		return;
+	}
+
+	// find which type to spawn
+	moClass = class<EntityEx>(FindClassFromEditorId(mthing->type));
+	if (!moClass)
+	{
+		// Can't find thing type
+		dprint("SpawnMapThing: Unknown type %d at (%f, %f)",
+			mthing->type, mthing->x, mthing->y);
+		return;
+	}
+
+	if (!CheckShareware(moClass))
+	{
+		// Don't place on map in shareware version
+		return;
+	}
+	if (Level.Game.nomonsters && moClass.default.bMonster)
+	{
+		return;
+	}
+
+	// spawn it
+	A = Spawn(moClass,,, mthing);
+}
+
+//==========================================================================
+//
 //  CheckLock
 //
 //==========================================================================
@@ -4096,6 +4230,29 @@ class<EntityEx> GetClassFromID(int Type)
 	return none;
 }
 
+//==========================================================================
+//
+//  GetClassSpawnFlags
+//
+//==========================================================================
+
+int GetPClassSpawnFlags()
+{
+	return 0;
+}
+
+//==========================================================================
+//
+//  CheckShareware
+//
+//==========================================================================
+
+bool CheckShareware(class<EntityEx> moClass)
+{
+	return true;
+}
+
 defaultproperties
 {
+	ExtPlayersBase = 4001;
 }

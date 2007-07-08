@@ -130,9 +130,9 @@ void TouchSpecial(EntityEx Toucher)
 //
 //==========================================================================
 
-bool GiveItemTo(Actor Toucher)
+bool GiveItemTo(EntityEx Toucher)
 {
-	if (!HandlePickup(Toucher))
+	if (!HandlePickup(Actor(Toucher)))
 	{
 		return false;
 	}
@@ -153,7 +153,7 @@ __states__
 	}
 	S_DORMANT_PICKUP2('', 0, -1.0, none)
 	{
-		Actor A;
+		EntityEx A;
 
 		bHidden = false;
 		bSpecial = true;
