@@ -1477,6 +1477,7 @@ native static final class FindClass(name Name);
 native static final bool StateIsInRange(state State, state Start, state End,
 	int MaxDepth);
 native static final name GetStateSpriteName(state State);
+native static final float GetStateDuration(state State);
 native static final VAnimDoorDef* FindAnimDoor(int BaseTex);
 native static final string GetLangString(name Id);
 native static final int RGB(byte r, byte g, byte b);
