@@ -214,6 +214,7 @@ EXTRA_DIST = compile.bat \
 	game/Mace.vc \
 	game/MaceAmmo.vc \
 	game/MaceHefty.vc \
+	game/MaceSpawner.vc \
 	game/Minotaur.vc \
 	game/MinotaurFX1.vc \
 	game/MinotaurFX2.vc \

@@ -25,29 +25,10 @@
 
 class HereticLevelInfo : LineSpecialLevelInfo;
 
-const int MAX_MACE_SPOTS	= 8;
-
 const int BODYQUESIZE		= 32;
 
 Actor bodyque[BODYQUESIZE];
 int bodyqueslot;
-
-int MaceSpotCount;
-float MaceSpot_x[MAX_MACE_SPOTS];
-float MaceSpot_y[MAX_MACE_SPOTS];
-
-//==========================================================================
-//
-//  SpawnSpecials
-//
-//==========================================================================
-
-void SpawnSpecials()
-{
-	::SpawnSpecials();
-
-	CloseWeapons();
-}
 
 //==========================================================================
 //
@@ -392,62 +373,12 @@ void SpawnMapThing(mthing_t * mthing)
 			return;
 		}
 	}
-	if (moClass == Mace)
-	{
-		// Put in the mace spot list
-		AddMaceSpot(mthing->x, mthing->y);
-		return;
-	}
 	if (Level.Game.nomonsters && moClass.default.bMonster)
 	{
 		return;
 	}
 
 	A = Spawn(moClass,,, mthing);
-}
-
-//===========================================================================
-//
-//  AddMaceSpot
-//
-//===========================================================================
-
-void AddMaceSpot(float x, float y)
-{
-	if (MaceSpotCount == MAX_MACE_SPOTS)
-	{
-		Error("Too many mace spots.");
-	}
-	MaceSpot_x[MaceSpotCount] = x;
-	MaceSpot_y[MaceSpotCount] = y;
-	MaceSpotCount++;
-}
-
-//===========================================================================
-//
-//  CloseWeapons
-//
-//  Called at level load after things are loaded.
-//
-//===========================================================================
-
-void CloseWeapons()
-{
-	int spot;
-
-	if (!MaceSpotCount)
-	{
-		// No maces placed
-		return;
-	}
-	if (!Level.Game.deathmatch && P_Random() < 64)
-	{
-		// Sometimes doesn't show up if not in deathmatch
-		return;
-	}
-	spot = P_Random() % MaceSpotCount;
-	Spawn(Mace, vector(MaceSpot_x[spot], MaceSpot_y[spot],
-		Actor::ONFLOORZ));
 }
 
 //==========================================================================

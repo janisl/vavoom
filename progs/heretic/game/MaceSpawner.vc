@@ -23,59 +23,76 @@
 //**
 //**************************************************************************
 
-class Mace : WeaponPickup;
-
-EntityEx		FirstSpot;
-int				SpotCount;
+class MaceSpawner : Actor
+	__mobjinfo__(2002);
 
 //==========================================================================
 //
-//  A_RestoreSpecialThing1
+//	A_SpawnMace
 //
-//  Chooses the next spot to place the mace.
+//	This is implemented using state so that mace spots spawned by ACS
+// scripts work properly. Uses Target to link them.
 //
 //==========================================================================
 
-void A_RestoreSpecialThing1()
+final void A_SpawnMace()
 {
-	DoRespawn();
-
-	::A_RestoreSpecialThing1();
-}
-
-//==========================================================================
-//
-//  DoRespawn
-//
-//  Chooses the next spot to place the mace.
-//
-//==========================================================================
-
-void DoRespawn()
-{
-	int				SpotIdx;
+	EntityEx		Prev;
 	EntityEx		Spot;
+	EntityEx		First;
+	int				SpotCount;
+	Mace			M;
 
-	// Do random mace placement
-	SpotIdx = P_Random() % SpotCount;
-	for (Spot = FirstSpot; SpotIdx > 0; SpotIdx--)
+	if (Target)
 	{
-		Spot = Spot.Target;
+		//	Already done.
+		return;
 	}
 
-	UnlinkFromWorld();
-	Origin = Spot.Origin;
-	LinkToWorld();
+	//	Link all mace spots.
+	Prev = none;
+	First = none;
+	SpotCount = 0;
+	foreach AllThinkers(MaceSpawner, Spot)
+	{
+		if (Prev)
+		{
+			Prev.Target = Spot;
+		}
+		else
+		{
+			First = Spot;
+		}
+		Prev = Spot;
+		SpotCount++;
+	}
+	Prev.Target = First;
+
+	if (!SpotCount)
+	{
+		// No maces placed
+		return;
+	}
+	if (!Level.Game.deathmatch && P_Random() < 64)
+	{
+		// Sometimes doesn't show up if not in deathmatch
+		return;
+	}
+	M = Spawn(Mace);
+	M.SpotCount = SpotCount;
+	M.FirstSpot = First;
+	M.DoRespawn();
 }
 
 __states__
 {
-	S_WMCE('WMCE', 0, -1.0, none) = none
+	S0('TNT1', 0, 0.03, S1) = none
+	S1('TNT1', 0, -1.0, none) = A_SpawnMace
 }
 
 defaultproperties
 {
-	WeaponType = wp_mace;
-	IdleState = S_WMCE;
-	PickupMessage = "$txt_wpnmace";
+	bHidden = true;
+	bNoBlockmap = true;
+	IdleState = S0;
 }

@@ -103,6 +103,7 @@
 #include "MaceFX2.vc"
 #include "MaceFX4.vc"
 #include "WeaponMace.vc"
+#include "MaceSpawner.vc"
 #include "BeakPuff.vc"
 #include "WeaponBeak.vc"
 
