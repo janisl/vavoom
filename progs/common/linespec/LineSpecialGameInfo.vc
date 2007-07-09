@@ -48,6 +48,7 @@ const int
 	COPY_FLOOR_PLANE_TYPE = 9510,
 	COPY_CEILING_PLANE_TYPE = 9511;
 
+
 float			contents_alpha[9];
 
 bool			bUseHexenPolyobjTypes;
@@ -61,6 +62,8 @@ bool			bBloodSplatter;
 bool			bNoDamageThrustInvulnerable;
 //	Monsters move faster in nightmare mode.
 bool			bNightmareFastChase;
+
+bool			respawnmonsters;
 
 float			windTab[3];
 float			pushTab[5];
@@ -76,6 +79,8 @@ float			TeleFogHeight;
 class<EntityEx>	TeleportFogClass;
 
 float			DefaultKickBack;
+
+class<EntityEx>	BloodClass;
 
 //==========================================================================
 //

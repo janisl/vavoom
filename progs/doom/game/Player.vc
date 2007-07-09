@@ -2717,7 +2717,7 @@ void ClientGunShot(TVec org)
 		p->vel.x = 32.0 * (Random() - 0.5);
 		p->vel.y = 32.0 * (Random() - 0.5);
 		p->vel.z = 32.0 * (Random() - 0.5);
-		p->type = DoomDefs::pt_static;
+		p->type = LineSpecialLevelInfo::pt_static;
 	}
 }
 
@@ -2746,7 +2746,7 @@ void ClientBlood(TVec org, int damage)
 		p->vel.x = 32.0 * (Random() - 0.5);
 		p->vel.y = 32.0 * (Random() - 0.5);
 		p->vel.z = 32.0 * (Random() - 0.5);
-		p->type = DoomDefs::pt_static;
+		p->type = LineSpecialLevelInfo::pt_static;
 	}
 }
 
@@ -2772,11 +2772,11 @@ void ClientExplosion(TVec org)
 		p->ramp = Random() * 4.0;
 		if (i & 1)
 		{
-			p->type = DoomDefs::pt_explode;
+			p->type = LineSpecialLevelInfo::pt_explode;
 		}
 		else
 		{
-			p->type = DoomDefs::pt_explode2;
+			p->type = LineSpecialLevelInfo::pt_explode2;
 		}
 		p->org.x = org.x + ((Random() * 32.0) - 16.0);
 		p->org.y = org.y + ((Random() * 32.0) - 16.0);

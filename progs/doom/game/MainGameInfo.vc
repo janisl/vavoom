@@ -54,8 +54,6 @@ int clipammo[DoomDefs::NUMAMMO];
 bool shareware;
 #endif
 
-bool respawnmonsters;
-
 int INITIAL_HEALTH;
 int INITIAL_AMMO;
 int GOD_HEALTH;
@@ -1257,6 +1255,7 @@ defaultproperties
 	bNoClipIgnoreFloor = true;
 	TeleportFogClass = TeleportFog;
 	DefaultKickBack = 150.0;
+	BloodClass = Blood;
 
 	WeaponClasses[0] = WeaponFist;
 	WeaponClasses[1] = WeaponPistol;

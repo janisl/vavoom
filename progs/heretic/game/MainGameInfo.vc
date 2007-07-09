@@ -57,7 +57,6 @@ int maxammo[NUMAMMO];
 string keymsg[NUMKEYS];
 
 bool shareware;
-bool respawnmonsters;
 
 //==========================================================================
 //
@@ -531,6 +530,7 @@ defaultproperties
 	TeleFogHeight = Actor::TELEFOGHEIGHT;
 	TeleportFogClass = TeleportFog;
 	DefaultKickBack = 150.0;
+	BloodClass = Blood;
 
 	WeaponClasses[0] = WeaponStaff;
 	WeaponClasses[1] = WeaponGoldWand;

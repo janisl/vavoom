@@ -368,6 +368,7 @@ defaultproperties
 	TeleFogHeight = Actor::TELEFOGHEIGHT;
 	TeleportFogClass = TeleportFog;
 	DefaultKickBack = 150.0;
+	BloodClass = Blood;
 
 	WeaponClasses[0] = WeaponFighterPunch;
 	WeaponClasses[1] = WeaponClericMace;

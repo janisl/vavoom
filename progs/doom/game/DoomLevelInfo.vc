@@ -372,10 +372,10 @@ void UpdateParticle(particle_t * p, float DeltaTime)
 
 	switch (p->type)
 	{
-	case DoomDefs::pt_static:
+	case pt_static:
 		break;
 
-	case DoomDefs::pt_explode:
+	case pt_explode:
 		p->ramp += time2;
 		if (p->ramp >= 16.0)
 			p->die = -1.0;
@@ -387,7 +387,7 @@ void UpdateParticle(particle_t * p, float DeltaTime)
 		p->vel.z -= grav;
 		break;
 
-	case DoomDefs::pt_explode2:
+	case pt_explode2:
 		p->ramp += time3;
 		if (p->ramp >= 16.0)
 			p->die = -1.0;

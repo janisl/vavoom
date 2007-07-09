@@ -47,6 +47,13 @@ const int
 	MTF_GDEATHMATCH	= 0x0400,
 	MTF_STANDSTILL	= 0x4000;
 
+enum
+{
+	pt_static,
+	pt_explode,
+	pt_explode2
+};
+
 name			DefaultDoorSound;
 name			DefaultCeilingSound;
 name			DefaultSilentCeilingSound;

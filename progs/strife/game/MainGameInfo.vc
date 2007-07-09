@@ -49,8 +49,6 @@ class<KeyPickup> KeyCID[StrifeDefs::NUMKEYS];
 
 int maxammo[StrifeDefs::NUMAMMO];
 
-bool respawnmonsters;
-
 int MaxInvItem[StrifeDefs::NUMINVITEMS];
 
 //==========================================================================
@@ -606,6 +604,7 @@ defaultproperties
 	GenericConScript = 'script00';
 	TeleportFogClass = TeleportFog;
 	DefaultKickBack = 100.0;
+	BloodClass = Blood;
 
 	WeaponClasses[0] = WeaponPunch;
 	WeaponClasses[1] = WeaponCrossbow;
