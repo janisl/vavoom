@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class HealthPickup : Actor
+class HealthPickup : Pickup
 	abstract;
 
 int HealthAmount;

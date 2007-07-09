@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class HealthBonus : Actor
+class HealthBonus : Pickup
 	__mobjinfo__(2014)
 	__scriptid__(152);
 

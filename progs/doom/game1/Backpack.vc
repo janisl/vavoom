@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Backpack : Actor
+class Backpack : Pickup
 	__mobjinfo__(8)
 	__scriptid__(144);
 

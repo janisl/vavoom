@@ -28,8 +28,6 @@ class Actor : ScriptedEntity
 
 const float TELEFOGHEIGHT 	= 32.0;
 
-const float BONUSADD		= 0.2;
-
 class<Actor> SpecialCID;
 
 //===========================================================================

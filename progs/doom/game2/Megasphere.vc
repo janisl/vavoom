@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Megasphere : Actor
+class Megasphere : Pickup
 	__mobjinfo__(83)
 	__scriptid__(132);
 

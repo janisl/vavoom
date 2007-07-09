@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class PlasmaRifle : WeaponPickup
+class PlasmaRifle : Weapon
 	__mobjinfo__(2004)
 	__scriptid__(30);
 

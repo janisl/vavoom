@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Weapon : Actor;
+class Weapon : Pickup;
 
 const float LOWERSPEED		= 6.0;
 const float RAISESPEED		= 6.0;
@@ -38,6 +38,37 @@ state ReadyState;
 state AttackState;
 state FlashState;
 int PlayerModelVersion;
+
+int WeaponType;
+
+//==========================================================================
+//
+//	BecomeItem
+//
+//==========================================================================
+
+void BecomeItem()
+{
+	UnlinkFromWorld();
+	bHidden = true;
+	bNoBlockmap = true;
+	LinkToWorld();
+}
+
+//==========================================================================
+//
+//	HandlePickup
+//
+//==========================================================================
+
+bool HandlePickup(Actor Toucher)
+{
+	if (!Player(Toucher.Player).GiveWeapon(WeaponType, bDropped))
+		return false;
+	Toucher.Player.cprint(PickupMessage);
+	Toucher.PlaySound('misc/w_pkup', CHAN_ITEM);
+	return true;
+}
 
 //===========================================================================
 //
@@ -284,7 +315,5 @@ __states__
 
 defaultproperties
 {
-	bHidden = true;
-	bNoBlockmap = true;
 	Ammo = DoomDefs::am_noammo;
 }

@@ -759,7 +759,7 @@ bool GiveKey(int key)
 	{
 		return false;
 	}
-	BonusFlash += Actor::BONUSADD;
+	BonusFlash += Pickup::BONUSADD;
 	Keys |= 1 << key;
 	return true;
 }

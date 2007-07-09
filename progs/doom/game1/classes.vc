@@ -64,7 +64,6 @@
 #include "Shell.vc"
 #include "ShellBox.vc"
 #include "Backpack.vc"
-#include "WeaponPickup.vc"
 #include "BFG9000.vc"
 #include "Chaingun.vc"
 #include "Chainsaw.vc"

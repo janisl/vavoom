@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ArmorBonus : Actor
+class ArmorBonus : Pickup
 	__mobjinfo__(2015)
 	__scriptid__(22);
 

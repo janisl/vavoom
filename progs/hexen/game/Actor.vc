@@ -31,8 +31,6 @@ const float MAULATORTIME 	= 25.0;
 
 const float TELEFOGHEIGHT	= 32.0;
 
-const float BONUSADD		= 0.2;
-
 int _Special1;	// Special info
 int _Special2;	// Special info
 float Special2f;

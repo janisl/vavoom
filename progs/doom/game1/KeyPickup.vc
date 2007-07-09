@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class KeyPickup : Actor
+class KeyPickup : Pickup
 	abstract;
 
 int KeyType;

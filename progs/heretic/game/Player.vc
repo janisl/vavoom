@@ -541,7 +541,7 @@ bool GiveWeapon(int weapon)
 		{
 			return false;
 		}
-		BonusFlash += Actor::BONUSADD;
+		BonusFlash += Pickup::BONUSADD;
 		WeaponOwned[weapon] = true;
 		GiveAmmo(MainGameInfo(Level.Game).WeaponClasses[weapon].default.Ammo,
 			MainGameInfo(Level.Game).WeaponClasses[weapon].default.GetAmmoCount);
@@ -632,7 +632,7 @@ bool GiveKey(int key)
 	{
 		return false;
 	}
-	BonusFlash = Actor::BONUSADD;
+	BonusFlash = Pickup::BONUSADD;
 	Keys |= 1 << key;
 	return true;
 }

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class AmmoPickup : Actor
+class AmmoPickup : Pickup
 	abstract;
 
 int AmmoType;

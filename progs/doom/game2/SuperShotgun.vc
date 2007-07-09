@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class SuperShotgun : WeaponPickup
+class SuperShotgun : Weapon
 	__mobjinfo__(82)
 	__scriptid__(33);
 

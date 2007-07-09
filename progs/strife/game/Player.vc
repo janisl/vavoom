@@ -815,8 +815,8 @@ void InvLeft()
 
 void InvUse()
 {
-	bool	itemUsed;
-	Actor	A;
+	bool		itemUsed;
+	EntityEx	A;
 
 	if (!Inventory[InvCursor])
 	{
@@ -943,12 +943,12 @@ void AdjustInvFirst()
 //
 //==========================================================================
 
-Actor InvThrow()
+EntityEx InvThrow()
 {
 	class<InventoryItem>	ItemType;
-	int		Amount;
-	Actor	Item;
-	TVec	Dir;
+	int				Amount;
+	EntityEx		Item;
+	TVec			Dir;
 
 	if (!Inventory[InvCursor])
 	{

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class PowerupPickup : Actor
+class PowerupPickup : Pickup
 	abstract;
 
 int PowerType;

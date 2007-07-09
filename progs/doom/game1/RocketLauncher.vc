@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class RocketLauncher : WeaponPickup
+class RocketLauncher : Weapon
 	__mobjinfo__(2003)
 	__scriptid__(29);
 

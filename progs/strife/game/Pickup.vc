@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Pickup : Actor
+class Pickup : Inventory
 	abstract;
 
 bool bDropAutoGive;
@@ -31,6 +31,172 @@ bool bGiveQuest;
 name PickupSound;
 string PickupString;
 int QuestID;
+
+bool bUnknown2;			//8000000
+
+//==========================================================================
+//
+//	Tick
+//
+//==========================================================================
+
+void Tick(float deltaTime)
+{
+	//  In my deathmatch mode remove dropped weapons after 30 seconds
+	// because otherwise they are spawned fastar than player(s) can pick 
+	// them up and the game is going slower and slower and slower ...
+	if (bDropped && (Level.Game.deathmatch == 3))
+	{
+		MoveCount++;
+		if (MoveCount >= 30 * 35)
+		{
+			Destroy();
+			return;
+		}
+	}
+
+	if (!Physics(deltaTime))
+	{
+		return;
+	}
+
+	// cycle through states,
+	// calling action functions at transitions
+	if (StateTime != -1.0)
+	{
+		if (!AdvanceState(deltaTime))
+			return;	// freed itself
+	}
+	else
+	{
+		// check for nightmare respawn
+		if (!bMonster)
+			return;
+
+		if (!MainGameInfo(Level.Game).respawnmonsters)
+			return;
+
+		MoveCount++;
+
+		if (MoveCount < 12 * 35)
+			return;
+
+		if (XLevel.TicTime & 31)
+			return;
+
+		if (P_Random() > 4)
+			return;
+
+		NightmareRespawn();
+	}
+}
+
+//==========================================================================
+//
+//	SectorChanged
+//
+//==========================================================================
+
+bool SectorChanged(int CrushChange)
+{
+	Actor A;
+
+	if (HeightClip())
+	{
+		return true;
+	}
+
+	//	Crunch dropped items
+	if (bDropped)
+	{
+		Destroy();
+		return true;
+	}
+
+	if (!bShootable)
+	{
+		//	Assume it is bloody gibs or something
+		return true;
+	}
+
+	if (CrushChange && !(XLevel.TicTime & 3))
+	{
+		Damage(none, none, CrushChange);
+
+		// spray blood in a random direction
+		A = Spawn(Blood, Origin + vector(0.0, 0.0, Height / 2.0));
+		A.Velocity.x = (Random() - Random()) * 16.0 * 35.0;
+		A.Velocity.y = (Random() - Random()) * 16.0 * 35.0;
+	}
+	return false;	//don't fit
+}
+
+//==========================================================================
+//
+//	ClientTick
+//
+//==========================================================================
+
+void ClientTick(float DeltaTime)
+{
+	dlight_t* dl;
+	TVec fv;
+
+	switch (Effects & EF_DLIGHT_MASK)
+	{
+	case EF_DL_NONE:
+		break;
+
+	case EF_DL_WHITE:
+		dl = AllocDlight(self);
+		dl->origin = Origin;
+		dl->radius = 200.0;
+		dl->colour = RGB(255, 255, 255);
+		dl->die = XLevel.Time + 0.1;
+		break;
+
+	case EF_DL_RED:
+		dl = AllocDlight(self);
+		dl->origin = Origin;
+		dl->radius = 200.0;
+		dl->colour = RGB(255, 0, 0);
+		dl->die = XLevel.Time + 0.1;
+		break;
+
+	case EF_DL_GREEN:
+		dl = AllocDlight(self);
+		dl->origin = Origin;
+		dl->radius = 200.0;
+		dl->colour = RGB(0, 255, 0);
+		dl->die = XLevel.Time + 0.1;
+		break;
+
+	case EF_DL_BLUE:
+		dl = AllocDlight(self);
+		dl->origin = Origin;
+		dl->radius = 200.0;
+		dl->colour = RGB(0, 0, 255);
+		dl->die = XLevel.Time + 0.1;
+		break;
+
+	case EF_DL_MUZZLEFLASH:
+		dl = AllocDlight(self);
+		dl->origin = Origin;
+		dl->origin.z += 48.0;
+		AngleVector(&Angles, &fv);
+
+		dl->origin = dl->origin + 18.0 * fv;
+		dl->radius = 200.0 + Random() * 31.0;
+		dl->colour = 0xffffffff;
+		dl->minlight = 32.0;
+		dl->die = XLevel.Time + 0.1;
+	}
+}
+
+__states__
+{
+	S_TOKENS('TOKN', 0, -1.0, none) = none
+}
 
 //==========================================================================
 //
@@ -180,6 +346,105 @@ bool ItemSpecialDropAction(EntityEx Source)
 		return true;
 	}
 	return false;
+}
+
+//==========================================================================
+//
+//	A_RemoveForceField
+//
+//==========================================================================
+
+final void A_RemoveForceField()
+{
+	int i;
+	line_t* line;
+
+	bSpecial = false;
+	for (i = 0; i < Sector->linecount; i++)
+	{
+		line = Sector->lines[i];
+		if (line->backsector && line->special == LNSPEC_ForceField)
+		{
+			line->flags &= ~(ML_BLOCKING|ML_BLOCKEVERYTHING);
+			line->special = 0;
+			XLevel.Sides[line->sidenum[0]].midtexture = 0;
+			XLevel.Sides[line->sidenum[1]].midtexture = 0;
+		}
+	}
+}
+
+//==========================================================================
+//
+//	A_Explode192
+//
+//==========================================================================
+
+final void A_Explode192()
+{
+	RadiusAttack(Target, 192, 192.0, false);
+	if (DeathSound)
+		PlaySound(DeathSound, CHAN_VOICE);
+
+	if (ExplodeEffect)
+	{
+		SendExplosion(ExplodeEffect, Origin);
+	}
+}
+
+//==========================================================================
+//
+//  SendExplosion
+//
+//==========================================================================
+
+final void SendExplosion(int etype, TVec org)
+{
+	int i;
+
+	for (i = 0; i < MAXPLAYERS; i++)
+	{
+		if (!Level.Game.Players[i])
+			continue;
+		if (!Level.Game.Players[i].bSpawned)
+			continue;
+		Player(Level.Game.Players[i]).ClientExplosion(etype, org);
+	}
+}
+
+//==========================================================================
+//
+//	A_SetShadow
+//
+//==========================================================================
+
+final void A_SetShadow()
+{
+	bUnknown2 = true;
+	Alpha = 0.333;
+}
+
+//==========================================================================
+//
+//	A_ClearShadow
+//
+//==========================================================================
+
+final void A_ClearShadow()
+{
+	bUnknown2 = false;
+	Alpha = 1.0;
+}
+
+//==========================================================================
+//
+//	A_BeShadowyFoe
+//
+//==========================================================================
+
+final void A_BeShadowyFoe()
+{
+	Alpha = 0.333;
+	bFriendly = false;
 }
 
 defaultproperties

@@ -36,6 +36,7 @@ enum
 
 #include "EntityEx.vc"
 #include "ScriptedEntity.vc"
+#include "Inventory.vc"
 #include "PlayerEx.vc"
 
 #include "LineSpecialLevelInfo.vc"

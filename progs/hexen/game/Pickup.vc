@@ -23,10 +23,237 @@
 //**
 //**************************************************************************
 
-class Pickup : Actor
+class Pickup : Inventory
 	abstract;
 
 string PickupMessage;
+
+const float BONUSADD		= 0.2;
+
+//==========================================================================
+//
+//  AngleIncrements
+//
+//==========================================================================
+
+int AngleIncrements()
+{
+	return bMonster ? 45 : 1;
+}
+
+//==========================================================================
+//
+//	Tick
+//
+//==========================================================================
+
+void Tick(float deltaTime)
+{
+	if (!Physics(deltaTime))
+	{
+		return;
+	}
+	// Cycle through states, calling action functions at transitions
+	if (!AdvanceState(deltaTime))
+	{
+		// mobj was removed
+		return;
+	}
+}
+
+//==========================================================================
+//
+//	SetDormant
+//
+//==========================================================================
+
+void SetDormant()
+{
+	bDormant = true;
+	StateTime = -1.0;
+}
+
+//==========================================================================
+//
+//	SectorChanged
+//
+//==========================================================================
+
+bool SectorChanged(int CrushChange)
+{
+	Actor B;
+
+	if (HeightClip())
+	{
+		return true;
+	}
+
+	//	Crunch dropped items
+	if (bDropped)
+	{
+		Destroy();
+		return true;
+	}
+
+	if (!bShootable)
+	{
+		//	Assume it is bloody gibs or something
+		return true;
+	}
+
+	if (CrushChange && !(XLevel.TicTime & 3))
+	{
+		Damage(none, none, CrushChange);
+
+		// spray blood in a random direction
+		if (!bNoBlood && !bInvulnerable)
+		{
+			B = Spawn(Blood, Origin + vector(0.0, 0.0, Height / 2.0));
+			B.Velocity.x = (Random() - Random()) * 16.0 * 35.0;
+			B.Velocity.y = (Random() - Random()) * 16.0 * 35.0;
+		}
+	}
+	return false;	//don't fit
+}
+
+//==========================================================================
+//
+//  Blast
+//
+//==========================================================================
+
+void Blast(Actor source, float strength)
+{
+	float angle;
+	float ang;
+	Actor A;
+	float x;
+	float y;
+	float z;
+
+	angle = atan2(Origin.y - source.Origin.y, Origin.x - source.Origin.x);
+	if (strength < Player::BLAST_FULLSTRENGTH)
+	{
+		Velocity.x = strength * cos(angle) * 35.0;
+		Velocity.y = strength * sin(angle) * 35.0;
+		if (bIsPlayer)
+		{
+			// Players handled automatically
+		}
+		else
+		{
+			bSlide = true;
+			bBlasted = true;
+		}
+	}
+	else	// full strength blast from artifact
+	{
+		if (bMissile)
+		{
+			if (SorcBall(self))
+			{
+				// don't blast sorcerer balls
+				return;
+			}
+			else if (MageStaffFX2(self))
+			{
+				// Reflect to originator
+				Tracer = Target;
+				Target = source;
+			}
+		}
+		if (Class == HolySpirit)
+		{
+			if (Tracer == source)
+			{
+				Tracer = Target;
+				Target = source;
+			}
+		}
+		Velocity.x = Player::BLAST_SPEED * cos(angle) * 35.0;
+		Velocity.y = Player::BLAST_SPEED * sin(angle) * 35.0;
+
+		// Spawn blast puff
+		ang = atan2(source.Origin.y - Origin.y, source.Origin.x - Origin.x);
+		x = Origin.x + (Radius + 1.0) * cos(ang);
+		y = Origin.y + (Radius + 1.0) * sin(ang);
+		z = Origin.z - FloorClip + Height / 2.0;
+		A = Spawn(BlastEffect, vector(x, y, z));
+		if (A)
+		{
+			A.Velocity.x = Velocity.x;
+			A.Velocity.y = Velocity.y;
+		}
+
+		if (bMissile)
+		{
+			Velocity.z = 8.0 * 35.0;
+			A.Velocity.z = Velocity.z;
+		}
+		else
+		{
+			Velocity.z = 1000.0 / Mass * 35.0;
+		}
+		if (bIsPlayer)
+		{
+			// Players handled automatically
+		}
+		else
+		{
+			bSlide = true;
+			bBlasted = true;
+		}
+	}
+}
+
+//==========================================================================
+//
+//	ClientTick
+//
+//==========================================================================
+
+void ClientTick(float DeltaTime)
+{
+	dlight_t *dl;
+
+	switch (Effects & EF_DLIGHT_MASK)
+	{
+	case EF_DL_NONE:
+		break;
+
+	case EF_DL_WHITE:
+		dl = AllocDlight(self);
+		dl->origin = Origin;
+		dl->radius = 200.0;
+		dl->colour = RGB(255, 255, 255);
+		dl->die = XLevel.Time + 0.1;
+		break;
+
+	case EF_DL_RED:
+		dl = AllocDlight(self);
+		dl->origin = Origin;
+		dl->radius = 200.0;
+		dl->colour = RGB(255, 0, 0);
+		dl->die = XLevel.Time + 0.1;
+		break;
+
+	case EF_DL_GREEN:
+		dl = AllocDlight(self);
+		dl->origin = Origin;
+		dl->radius = 200.0;
+		dl->colour = RGB(0, 255, 0);
+		dl->die = XLevel.Time + 0.1;
+		break;
+
+	case EF_DL_BLUE:
+		dl = AllocDlight(self);
+		dl->origin = Origin;
+		dl->radius = 200.0;
+		dl->colour = RGB(0, 0, 255);
+		dl->die = XLevel.Time + 0.1;
+		break;
+	}
+}
 
 //==========================================================================
 //
@@ -91,6 +318,28 @@ void HideSpecial()
 	bSpecial = false;
 	bHidden = true;
 	SetState(S_HIDESPECIAL1);
+}
+
+//==========================================================================
+//
+//  A_HideThing
+//
+//==========================================================================
+
+final void A_HideThing()
+{
+	bHidden = true;
+}
+
+//==========================================================================
+//
+//  A_UnHideThing
+//
+//==========================================================================
+
+final void A_UnHideThing()
+{
+	bHidden = false;
 }
 
 defaultproperties

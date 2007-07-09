@@ -54,7 +54,7 @@ bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 			Arg4, Arg5, mo);
 		break;*/
 
-	case 49:	//	Break glass.
+	case LNSPEC_BreakGlass:
 		buttonSuccess = EV_BreakGlass(Arg1, Arg2, Arg3, Arg4, Arg5,
 			Line, A);
 		break;
@@ -150,55 +150,6 @@ bool CheckActivation(int activationType, line_t * line, EntityEx A)
 		}
 		if (noway)
 			return false;
-	}
-	return true;
-}
-
-//==========================================================================
-//
-//  ActivateLine
-//
-//==========================================================================
-
-bool ActivateLine(line_t* Line, EntityEx A, int Side, int ActivationType)
-{
-	int lineActivation;
-	bool repeat;
-	bool buttonSuccess;
-	bool changeBack;
-
-	if (!CheckActivation(ActivationType, Line, A))
-	{
-		return false;
-	}
-
-	lineActivation = GET_SPAC(Line->flags);
-	if (lineActivation == SPAC_PTOUCH)
-	{
-		lineActivation = ActivationType;
-	}
-	repeat = Line->flags & ML_REPEAT_SPECIAL;
-	buttonSuccess = ExecuteActionSpecial(Line->special, Line->arg1,
-		Line->arg2, Line->arg3, Line->arg4, Line->arg5, Line, Side, A);
-	changeBack = Line->special == 49 && (Line->flags & ML_TWOSIDED) && buttonSuccess;
-	if ((lineActivation == SPAC_USE || lineActivation == SPAC_IMPACT ||
-		lineActivation == SPAC_USETHROUGH) && buttonSuccess)
-	{
-		ChangeSwitchTexture(Line, repeat,
-			Line->special == LNSPEC_ExitNormal ||
-			Line->special == LNSPEC_ExitSecret ||
-			Line->special == LNSPEC_TeleportNewMap ||
-			Line->special == LNSPEC_TeleportEndGame
-			? 'switches/exitbutn' : 'switches/normbutn');
-	}
-	if (changeBack)
-	{
-		XLevel.Sides[Line->sidenum[1]].midtexture = XLevel.Sides[Line->sidenum[0]].midtexture;
-	}
-	if (!repeat && buttonSuccess)
-	{
-		// clear the special on non-retriggerable lines
-		Line->special = 0;
 	}
 	return true;
 }

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Soulsphere : Actor
+class Soulsphere : Pickup
 	__mobjinfo__(2013)
 	__scriptid__(25);
 

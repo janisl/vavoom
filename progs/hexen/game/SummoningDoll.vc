@@ -35,7 +35,7 @@ class SummoningDoll : Projectile;
 
 final void A_Summon()
 {
-	Actor A;
+	EntityEx A;
 
 	A = Spawn(MinotaurFriend, Origin);
 	if (A)

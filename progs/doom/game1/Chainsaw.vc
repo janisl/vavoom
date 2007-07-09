@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Chainsaw : WeaponPickup
+class Chainsaw : Weapon
 	__mobjinfo__(2005)
 	__scriptid__(32);
 

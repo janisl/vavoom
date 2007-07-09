@@ -454,6 +454,8 @@ enum
 	LNSPEC_CeilingCrushRaiseAndStay,
 	LNSPEC_FloorCrushStop,
 
+	LNSPEC_BreakGlass = 49,
+
 	LNSPEC_PlatPerpetualRaise = 60,
 	LNSPEC_PlatStop,
 	LNSPEC_PlatDownWaitUpStay,

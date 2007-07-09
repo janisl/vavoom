@@ -145,50 +145,6 @@ bool CheckActivation(int activationType, line_t * line, EntityEx A)
 
 //==========================================================================
 //
-//  ActivateLine
-//
-//==========================================================================
-
-bool ActivateLine(line_t* Line, EntityEx A, int Side, int ActivationType)
-{
-	int lineActivation;
-	bool repeat;
-	bool buttonSuccess;
-
-	if (!CheckActivation(ActivationType, Line, A))
-	{
-		return false;
-	}
-
-	lineActivation = GET_SPAC(Line->flags);
-	if (lineActivation == SPAC_PTOUCH)
-	{
-		lineActivation = ActivationType;
-	}
-	repeat = Line->flags & ML_REPEAT_SPECIAL;
-	buttonSuccess = ExecuteActionSpecial(Line->special, Line->arg1,
-		Line->arg2, Line->arg3, Line->arg4, Line->arg5, Line, Side, A);
-
-	if ((lineActivation == SPAC_USE || lineActivation == SPAC_IMPACT ||
-		lineActivation == SPAC_USETHROUGH) && buttonSuccess)
-	{
-		ChangeSwitchTexture(Line, repeat,
-			Line->special == LNSPEC_ExitNormal ||
-			Line->special == LNSPEC_ExitSecret ||
-			Line->special == LNSPEC_TeleportNewMap ||
-			Line->special == LNSPEC_TeleportEndGame
-			? 'switches/exitbutn' : 'switches/normbutn');
-	}
-	if (!repeat && buttonSuccess)
-	{
-		// clear the special on non-retriggerable lines
-		Line->special = 0;
-	}
-	return true;
-}
-
-//==========================================================================
-//
 //  CheckLock
 //
 //==========================================================================

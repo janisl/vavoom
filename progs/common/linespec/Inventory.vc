@@ -23,25 +23,8 @@
 //**
 //**************************************************************************
 
-class WeaponPickup : Actor
+class Inventory : ScriptedEntity
 	abstract;
-
-int WeaponType;
-
-//==========================================================================
-//
-//	HandlePickup
-//
-//==========================================================================
-
-bool HandlePickup(Actor Toucher)
-{
-	if (!Player(Toucher.Player).GiveWeapon(WeaponType, bDropped))
-		return false;
-	Toucher.Player.cprint(PickupMessage);
-	Toucher.PlaySound('misc/w_pkup', CHAN_ITEM);
-	return true;
-}
 
 defaultproperties
 {
