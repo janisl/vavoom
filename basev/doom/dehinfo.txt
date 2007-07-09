@@ -34,31 +34,31 @@ states
 	WeaponPlasma			First	7
 	WeaponBFG				First	9
 	Blood					First	3
-	Puff					First	4
-	ImpMissile				First	5
-	CacodemonMissile		First	5
-	PlasmaShot				First	7
+	BulletPuff				First	4
+	DoomImpBall				First	5
+	CacodemonBall			First	5
+	PlasmaBall				First	7
 	Rocket					First	1
-	BFGShot					First	8
-	ExtraBFG				First	4
+	BFGBall					First	8
+	BFGExtra				First	4
 	Rocket					Death	3
 	TeleportFog				First	12
-	ItemRespawnFog			First	7
+	ItemFog					First	7
 	DoomPlayer				First	25
-	Zombieman				First	33
+	ZombieMan				First	33
 	ShotgunGuy				First	34
-	ArchVile				First	40
+	Archvile				First	40
 	ArchvileFire			First	30
 	RevenantTracerSmoke		First	5
 	RevenantTracer			First	5
 	Revenant				First	36
-	MancubusMissile			First	5
-	Mancubus				First	44
+	FatShot					First	5
+	Fatso					First	44
 	ChaingunGuy				First	36
-	Imp						First	33
+	DoomImp					First	33
 	Demon					First	27
 	Cacodemon				First	20
-	BruiserShot				First	5
+	BaronBall				First	5
 	BaronOfHell				First	29
 	HellKnight				First	29
 	LostSoul				First	16
@@ -67,56 +67,56 @@ states
 	ArachnotronPlasma		First	7
 	Cyberdemon				First	27
 	PainElemental			First	25
-	WolfSS					First	37
+	WolfensteinSS			First	37
 	CommanderKeen			First	15
 	BossBrain				First	6
 	BossEye					First	3
 	SpawnShot				First	4
 	SpawnFire				First	8
 	Rocket					Extra	3
-	ItemArmor1				First	2
-	ItemArmor2				First	2
-	Barrel					First	7
+	GreenArmor				First	2
+	BlueArmor				First	2
+	ExplosiveBarrel			First	7
 	BurningBarrel			First	3
-	ItemHealthBonus			First	6
-	ItemArmorBonus			First	6
-	ItemKeyBlueCard			First	2
-	ItemKeyRedCard			First	2
-	ItemKeyYellowCard		First	2
-	ItemKeyBlueSkull		First	2
-	ItemKeyRedSkull			First	2
-	ItemKeyYellowSkull		First	2
-	ItemStimPack			First	1
-	ItemMedikit				First	1
-	ItemSoulSphere			First	6
-	ItemInvulnerability		First	4
-	ItemBerserk				First	1
-	ItemInvisibility		First	4
-	ItemMegaSphere			First	4
-	ItemRadiationSuit		First	1
-	ItemComputerMap			First	6
-	ItemInfrared			First	2
-	ItemAmmoBulletClip		First	1
-	ItemAmmoBulletBox		First	1
-	ItemAmmoRocket			First	1
-	ItemAmmoRocketBox		First	1
-	ItemAmmoCells			First	1
-	ItemAmmoCellsPack		First	1
-	ItemAmmoShells			First	1
-	ItemAmmoShellsBox		First	1
-	ItemBackpack			First	1
-	ItemWeaponBFG			First	1
-	ItemWeaponChaingun		First	1
-	ItemWeaponChainsaw		First	1
-	ItemWeaponRocketLauncher	First	1
-	ItemWeaponPlasmaGun		First	1
-	ItemWeaponShotgun		First	1
-	ItemWeaponSuperShotgun	First	1
-	ColumnLamp				First	1
+	HealthBonus				First	6
+	ArmorBonus				First	6
+	BlueCard				First	2
+	RedCard					First	2
+	YellowCard				First	2
+	BlueSkull				First	2
+	RedSkull				First	2
+	YellowSkull				First	2
+	Stimpack				First	1
+	Medikit					First	1
+	Soulsphere				First	6
+	InvulnerabilitySphere	First	4
+	Berserk					First	1
+	BlurSphere				First	4
+	Megasphere				First	4
+	RadSuit					First	1
+	Allmap					First	6
+	Infrared				First	2
+	Clip					First	1
+	ClipBox					First	1
+	RocketAmmo				First	1
+	RocketBox				First	1
+	Cell					First	1
+	CellPack				First	1
+	Shell					First	1
+	ShellBox				First	1
+	Backpack				First	1
+	BFG9000					First	1
+	Chaingun				First	1
+	Chainsaw				First	1
+	RocketLauncher			First	1
+	PlasmaRifle				First	1
+	Shotgun					First	1
+	SuperShotgun			First	1
+	Column					First	1
 	DoomUnusedStates		First	1
 	BloodyTwitch			First	4
 	DoomUnusedStates		Death	2
-	HeadsOnStick			First	1
+	HeadsOnAStick			First	1
 	Actor					First	1
 	HeadOnAStick			First	1
 	HeadCandles				First	2
@@ -127,33 +127,33 @@ states
 	Meat4					First	1
 	Meat5					First	1
 	Stalagtite				First	1
-	ColumnGreenTall			First	1
-	ColumnGreenShort		First	1
-	ColumnRedTall			First	1
-	ColumnRedShort			First	1
-	CandleStick				First	1
+	TallGreenColumn			First	1
+	ShortGreenColumn		First	1
+	TallRedColumn			First	1
+	ShortRedColumn			First	1
+	Candlestick				First	1
 	Candelabra				First	1
-	ColumnWithSkull			First	1
-	BurnedTree				First	1
+	SkullColumn				First	1
+	TorchTree				First	1
 	BigTree					First	1
 	TechPillar				First	1
 	EvilEye					First	4
 	FloatingSkull			First	3
-	ColumnWithHearth		First	2
-	TorchBlue				First	4
-	TorchGreen				First	4
-	TorchRed				First	4
-	TorchBlueShort			First	4
-	TorchGreenShort			First	4
-	TorchRedShort			First	4
-	HangingNoGuts			First	1
-	HangingNoBrain			First	1
-	HangingTorsoLookDown	First	1
-	HangingTorsoSkull		First	1
-	HangingTorsoLookUp		First	1
-	HangingTorsoNoBrain		First	1
+	HeartColumn				First	2
+	BlueTorch				First	4
+	GreenTorch				First	4
+	RedTorch				First	4
+	ShortBlueTorch			First	4
+	ShortGreenTorch			First	4
+	ShortRedTorch			First	4
+	HangNoGuts				First	1
+	HangBNoBrain			First	1
+	HangTLookingDown		First	1
+	HangTSkull				First	1
+	HangTLookingUp			First	1
+	HangTNoBrain			First	1
 	ColonGibs				First	1
-	SmallPool				First	1
+	SmallBloodPool			First	1
 	BrainStem				First	1
 	TechLamp				First	4
 	TechLamp2				First	4
@@ -234,22 +234,22 @@ code_pointers
 	FirePlasma		WeaponPlasma		A_FirePlasma
 	BFGsound		WeaponBFG			A_BFGsound
 	FireBFG			WeaponBFG			A_FireBFG
-	BFGSpray		BFGShot				A_BFGSpray
+	BFGSpray		BFGBall				A_BFGSpray
 	Explode			Actor				A_Explode
 	Pain			ScriptedEntity		A_Pain
 	PlayerScream	DoomPlayer			A_PlayerScream
-	Fall			Actor				A_Fall
+	Fall			ScriptedEntity		A_Fall
 	XScream			ScriptedEntity		A_XScream
 	Look			ScriptedEntity		A_Look
 	Chase			ScriptedEntity		A_Chase
 	FaceTarget		ScriptedEntity		A_FaceTarget
-	PosAttack		Zombieman			A_PosAttack
+	PosAttack		ZombieMan			A_PosAttack
 	Scream			ScriptedEntity		A_Scream
 	SPosAttack		Actor				A_SPosAttack
-	VileChase		ArchVile			A_VileChase
-	VileStart		ArchVile			A_VileStart
-	VileTarget		ArchVile			A_VileTarget
-	VileAttack		ArchVile			A_VileAttack
+	VileChase		Archvile			A_VileChase
+	VileStart		Archvile			A_VileStart
+	VileTarget		Archvile			A_VileTarget
+	VileAttack		Archvile			A_VileAttack
 	StartFire		ArchvileFire		A_StartFire
 	Fire			ArchvileFire		A_Fire
 	FireCrackle		ArchvileFire		A_FireCrackle
@@ -257,14 +257,14 @@ code_pointers
 	SkelWhoosh		Revenant			A_SkelWhoosh
 	SkelFist		Revenant			A_SkelFist
 	SkelMissile		Revenant			A_SkelMissile
-	FatRaise		Mancubus			A_FatRaise
-	FatAttack1		Mancubus			A_FatAttack1
-	FatAttack2		Mancubus			A_FatAttack2
-	FatAttack3		Mancubus			A_FatAttack3
+	FatRaise		Fatso				A_FatRaise
+	FatAttack1		Fatso				A_FatAttack1
+	FatAttack2		Fatso				A_FatAttack2
+	FatAttack3		Fatso				A_FatAttack3
 	BossDeath		Actor				A_BossDeath
 	CPosAttack		ChaingunGuy			A_CPosAttack
 	CPosRefire		ChaingunGuy			A_CPosRefire
-	TroopAttack		Imp					A_TroopAttack
+	TroopAttack		DoomImp				A_TroopAttack
 	SargAttack		Demon				A_SargAttack
 	HeadAttack		Cacodemon			A_HeadAttack
 	BruisAttack		BaronOfHell			A_BruisAttack
@@ -406,126 +406,126 @@ sounds
 things
 {
 	DoomPlayer
-	Zombieman
+	ZombieMan
 	ShotgunGuy
-	ArchVile
+	Archvile
 	ArchvileFire
 	Revenant
 	RevenantTracer
 	RevenantTracerSmoke
-	Mancubus
-	MancubusMissile
+	Fatso
+	FatShot
 	ChaingunGuy
-	Imp
+	DoomImp
 	Demon
-	Shadows
+	Spectre
 	Cacodemon
 	BaronOfHell
-	BruiserShot
+	BaronBall
 	HellKnight
 	LostSoul
 	SpiderMastermind
 	Arachnotron
 	Cyberdemon
 	PainElemental
-	WolfSS
+	WolfensteinSS
 	CommanderKeen
 	BossBrain
 	BossEye
 	BossTarget
 	SpawnShot
 	SpawnFire
-	Barrel
-	ImpMissile
-	CacodemonMissile
+	ExplosiveBarrel
+	DoomImpBall
+	CacodemonBall
 	Rocket
-	PlasmaShot
-	BFGShot
+	PlasmaBall
+	BFGBall
 	ArachnotronPlasma
-	Puff
+	BulletPuff
 	Blood
 	TeleportFog
-	ItemRespawnFog
-	TeleportSpot
-	ExtraBFG
-	ItemArmor1
-	ItemArmor2
-	ItemHealthBonus
-	ItemArmorBonus
-	ItemKeyBlueCard
-	ItemKeyRedCard
-	ItemKeyYellowCard
-	ItemKeyYellowSkull
-	ItemKeyRedSkull
-	ItemKeyBlueSkull
-	ItemStimPack
-	ItemMedikit
-	ItemSoulSphere
-	ItemInvulnerability
-	ItemBerserk
-	ItemInvisibility
-	ItemRadiationSuit
-	ItemComputerMap
-	ItemInfrared
-	ItemMegaSphere
-	ItemAmmoBulletClip
-	ItemAmmoBulletBox
-	ItemAmmoRocket
-	ItemAmmoRocketBox
-	ItemAmmoCells
-	ItemAmmoCellsPack
-	ItemAmmoShells
-	ItemAmmoShellsBox
-	ItemBackpack
-	ItemWeaponBFG
-	ItemWeaponChaingun
-	ItemWeaponChainsaw
-	ItemWeaponRocketLauncher
-	ItemWeaponPlasmaGun
-	ItemWeaponShotgun
-	ItemWeaponSuperShotgun
+	ItemFog
+	TeleportDest
+	BFGExtra
+	GreenArmor
+	BlueArmor
+	HealthBonus
+	ArmorBonus
+	BlueCard
+	RedCard
+	YellowCard
+	YellowSkull
+	RedSkull
+	BlueSkull
+	Stimpack
+	Medikit
+	Soulsphere
+	InvulnerabilitySphere
+	Berserk
+	BlurSphere
+	RadSuit
+	Allmap
+	Infrared
+	Megasphere
+	Clip
+	ClipBox
+	RocketAmmo
+	RocketBox
+	Cell
+	CellPack
+	Shell
+	ShellBox
+	Backpack
+	BFG9000
+	Chaingun
+	Chainsaw
+	RocketLauncher
+	PlasmaRifle
+	Shotgun
+	SuperShotgun
 	TechLamp
 	TechLamp2
-	ColumnLamp
-	ColumnGreenTall
-	ColumnGreenShort
-	ColumnRedTall
-	ColumnRedShort
-	ColumnWithSkull
-	ColumnWithHearth
+	Column
+	TallGreenColumn
+	ShortGreenColumn
+	TallRedColumn
+	ShortRedColumn
+	SkullColumn
+	HeartColumn
 	EvilEye
 	FloatingSkull
-	BurnedTree
-	TorchBlue
-	TorchGreen
-	TorchRed
-	TorchBlueShort
-	TorchGreenShort
-	TorchRedShort
+	TorchTree
+	BlueTorch
+	GreenTorch
+	RedTorch
+	ShortBlueTorch
+	ShortGreenTorch
+	ShortRedTorch
 	Stalagtite
 	TechPillar
-	CandleStick
+	Candlestick
 	Candelabra
 	BloodyTwitch
 	Meat2
 	Meat3
 	Meat4
 	Meat5
-	Meat2NoBlock
-	Meat4NoBlock
-	Meat3NoBlock
-	Meat5NoBlock
-	BloodyTwitchNoBlock
+	NonsolidMeat2
+	NonsolidMeat4
+	NonsolidMeat3
+	NonsolidMeat5
+	NonsolidTwitch
 	DeadCacodemon
-	DeadPlayer
-	DeadZombieman
+	DeadMarine
+	DeadZombieMan
 	DeadDemon
 	DeadLostSoul
-	DeadImp
+	DeadDoomImp
 	DeadShotgunGuy
-	DeadPlayerGibs
-	DeadPlayerGibs2
-	HeadsOnStick
+	GibbedMarine
+	GibbedMarineExtra
+	HeadsOnAStick
 	Gibs
 	HeadOnAStick
 	HeadCandles
@@ -533,14 +533,14 @@ things
 	LiveStick
 	BigTree
 	BurningBarrel
-	HangingNoGuts
-	HangingNoBrain
-	HangingTorsoLookDown
-	HangingTorsoSkull
-	HangingTorsoLookUp
-	HangingTorsoNoBrain
+	HangNoGuts
+	HangBNoBrain
+	HangTLookingDown
+	HangTSkull
+	HangTLookingUp
+	HangTNoBrain
 	ColonGibs
-	SmallPool
+	SmallBloodPool
 	BrainStem
 }
 

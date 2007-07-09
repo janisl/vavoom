@@ -114,5 +114,5 @@ EXTRA_DIST = \
 
 VLUMPY = ../../utils/bin/vlumpy$(EXEEXT)
 
-basepak.pk3: basepak.ls language.en $(VLUMPY)
+basepak.pk3: basepak.ls $(EXTRA_DIST) $(VLUMPY)
 	$(VLUMPY) $<
