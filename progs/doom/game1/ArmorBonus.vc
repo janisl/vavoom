@@ -33,7 +33,7 @@ class ArmorBonus : Pickup
 //
 //==========================================================================
 
-bool HandlePickup(Actor Toucher)
+bool HandlePickup(EntityEx Toucher)
 {
 	Player(Toucher.Player).ArmorPoints++;	// can go over 100%
 	if (Player(Toucher.Player).ArmorPoints > 200)

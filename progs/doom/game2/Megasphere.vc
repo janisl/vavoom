@@ -35,7 +35,7 @@ const int MEGASPHERE_HEALTH		= 200;
 //
 //==========================================================================
 
-bool HandlePickup(Actor Toucher)
+bool HandlePickup(EntityEx Toucher)
 {
 	Toucher.Player.Health = MEGASPHERE_HEALTH;
 	Toucher.Health = Toucher.Player.Health;

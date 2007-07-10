@@ -34,7 +34,7 @@ int HealthAmount;
 //
 //==========================================================================
 
-bool HandlePickup(Actor Toucher)
+bool HandlePickup(EntityEx Toucher)
 {
 	if (!Player(Toucher.Player).GiveBody(HealthAmount, Player::MAXHEALTH))
 		return false;

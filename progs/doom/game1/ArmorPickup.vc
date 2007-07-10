@@ -34,7 +34,7 @@ int ArmorClass;
 //
 //==========================================================================
 
-bool HandlePickup(Actor Toucher)
+bool HandlePickup(EntityEx Toucher)
 {
 	if (!Player(Toucher.Player).GiveArmor(ArmorClass))
 		return false;

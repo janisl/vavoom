@@ -33,7 +33,7 @@ class HealthBonus : Pickup
 //
 //==========================================================================
 
-bool HandlePickup(Actor Toucher)
+bool HandlePickup(EntityEx Toucher)
 {
 	Toucher.Player.Health++;	// can go over 100%
 	if (Toucher.Player.Health > 200)

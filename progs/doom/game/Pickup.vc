@@ -56,7 +56,7 @@ void HideSpecial()
 //
 //==========================================================================
 
-bool HandlePickup(Actor Toucher)
+bool HandlePickup(EntityEx Toucher)
 {
 	return false;
 }
@@ -367,7 +367,7 @@ bool HandleDehackedPickup(EntityEx Toucher)
 //
 //==========================================================================
 
-void TouchSpecial(EntityEx Toucher)
+final void TouchSpecial(EntityEx Toucher)
 {
 	if (!Toucher.bPickUp)
 	{

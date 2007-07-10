@@ -35,7 +35,7 @@ int AmmoCount;
 //
 //==========================================================================
 
-bool HandlePickup(Actor Toucher)
+bool HandlePickup(EntityEx Toucher)
 {
 	if (bDropped)
 	{

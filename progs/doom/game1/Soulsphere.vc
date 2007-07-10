@@ -36,7 +36,7 @@ const int SOULSPHERE_HEALTH		= 100;
 //
 //==========================================================================
 
-bool HandlePickup(Actor Toucher)
+bool HandlePickup(EntityEx Toucher)
 {
 	Toucher.Player.Health += SOULSPHERE_HEALTH;
 	if (Toucher.Player.Health > SOULSPHERE_MAX)

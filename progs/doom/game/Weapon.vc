@@ -61,7 +61,7 @@ void BecomeItem()
 //
 //==========================================================================
 
-bool HandlePickup(Actor Toucher)
+bool HandlePickup(EntityEx Toucher)
 {
 	if (!Player(Toucher.Player).GiveWeapon(WeaponType, bDropped))
 		return false;

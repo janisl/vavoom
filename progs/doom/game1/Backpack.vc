@@ -33,7 +33,7 @@ class Backpack : Pickup
 //
 //==========================================================================
 
-bool HandlePickup(Actor Toucher)
+bool HandlePickup(EntityEx Toucher)
 {
 	int i;
 
