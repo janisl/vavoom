@@ -31,6 +31,38 @@ state DormantState;
 
 //==========================================================================
 //
+//  HandlePickup
+//
+//==========================================================================
+
+bool HandlePickup(EntityEx Toucher)
+{
+	return Player(Toucher.Player).GiveArtifact(ArtifactType);
+}
+
+//==========================================================================
+//
+//	HidePickup
+//
+//==========================================================================
+
+void HidePickup()
+{
+	//  Removes the bSpecial flag and initiates the artifact pickup animation.
+	bSpecial = false;
+	if (Level.Game.deathmatch && !bDropped)
+	{
+		SetState(DormantState);
+	}
+	else
+	{
+		// Don't respawn
+		SetState(S_DEADARTI1);
+	}
+}
+
+//==========================================================================
+//
 //  A_RestoreArtifact
 //
 //==========================================================================
@@ -125,77 +157,9 @@ __states__
 	S_DEADARTI10('ACLO', 0, 3.0 / 35.0, none) = none
 }
 
-//==========================================================================
-//
-//  SetDormantArtifact
-//
-//  Removes the bSpecial flag and initiates the artifact pickup animation.
-//
-//==========================================================================
-
-void SetDormantArtifact()
-{
-	bSpecial = false;
-	if (Level.Game.deathmatch && !bDropped)
-	{
-		SetState(DormantState);
-	}
-	else
-	{
-		// Don't respawn
-		SetState(S_DEADARTI1);
-	}
-}
-
-//==========================================================================
-//
-//  TouchSpecial
-//
-//==========================================================================
-
-void TouchSpecial(EntityEx Toucher)
-{
-	if (!Toucher.bPickUp)
-	{
-		// Can't be picked up by toucher
-		return;
-	}
-	if (Toucher.Health <= 0)
-	{
-		// Toucher is dead
-		return;
-	}
-	if (Player(Toucher.Player).GiveArtifact(ArtifactType))
-	{
-		if (Special)
-		{
-			Level.ExecuteActionSpecial(Special, Args[0], Args[1], Args[2],
-				Args[3], Args[4], NULL, 0, Toucher);
-			Special = 0;
-		}
-		Player(Toucher.Player).BonusFlash += BONUSADD;
-		if (ArtifactType < HexenDefs::arti_firstpuzzitem)
-		{
-			SetDormantArtifact();
-			PlaySound('PickupArtifact', CHAN_ITEM);
-			Toucher.Player.cprint(PickupMessage);
-		}
-		else
-		{
-			// Puzzle item
-			PlaySound('PickupItem', CHAN_ITEM, 1.0, ATTN_NONE);
-			Toucher.Player.cprint(PickupMessage);
-			if (!Level.Game.netgame || Level.Game.deathmatch)
-			{
-				// Remove puzzle items if not cooperative netplay
-				Destroy();
-			}
-		}
-	}
-}
-
 defaultproperties
 {
 	bFloatBob = true;
 	DormantState = S_DORMANTARTI1_1;
+	PickupSound = 'PickupArtifact';
 }

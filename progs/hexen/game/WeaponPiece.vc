@@ -34,29 +34,20 @@ const int
 int PieceClass;
 int PieceValue;
 
+bool gaveWeapon;
+bool remove;
+
 //==========================================================================
 //
-//  TouchSpecial
+//  HandlePickup
 //
 //==========================================================================
 
-void TouchSpecial(EntityEx Toucher)
+bool HandlePickup(EntityEx Toucher)
 {
-	bool remove;
 	bool checkAssembled;
-	bool gaveWeapon;
 	int gaveMana;
 
-	if (!Toucher.bPickUp)
-	{
-		// Can't be picked up by toucher
-		return;
-	}
-	if (Toucher.Health <= 0)
-	{
-		// Toucher is dead
-		return;
-	}
 	remove = true;
 	checkAssembled = true;
 	gaveWeapon = false;
@@ -66,14 +57,14 @@ void TouchSpecial(EntityEx Toucher)
 		if (Level.Game.netgame && !Level.Game.deathmatch)
 		{
 			// Can't pick up wrong-class weapons in coop netplay
-			return;
+			return false;
 		}
 		checkAssembled = false;
 		gaveMana = Player(Toucher.Player).GiveMana(HexenDefs::MANA_BOTH, 20);
 		if (!gaveMana)
 		{
 			// Didn't need the mana, so don't pick it up
-			return;
+			return false;
 		}
 	}
 	else if (Level.Game.netgame && !Level.Game.deathmatch)
@@ -82,7 +73,7 @@ void TouchSpecial(EntityEx Toucher)
 		if (Player(Toucher.Player).Pieces & PieceValue)
 		{
 			// Already has the piece
-			return;
+			return false;
 		}
 		PieceValue = MainGameInfo(Level.Game).pieceValueTrans[PieceValue];
 		Player(Toucher.Player).GiveMana(HexenDefs::MANA_BOTH, 20);
@@ -98,31 +89,13 @@ void TouchSpecial(EntityEx Toucher)
 			if (!gaveMana)
 			{
 				// Didn't need the mana, so don't pick it up
-				return;
+				return false;
 			}
 			checkAssembled = false;
 		}
 	}
 
 	// Pick up the weapon piece
-	if (Special)
-	{
-		Level.ExecuteActionSpecial(Special, Args[0], Args[1], Args[2], Args[3],
-			Args[4], NULL, 0, Toucher);
-		Special = 0;
-	}
-	if (remove)
-	{
-		if (Level.Game.deathmatch && !bDropped)
-		{
-			HideSpecial();
-		}
-		else
-		{
-			Destroy();
-		}
-	}
-	Player(Toucher.Player).BonusFlash += BONUSADD;
 
 	// Check if fourth weapon assembled
 	if (checkAssembled)
@@ -135,21 +108,70 @@ void TouchSpecial(EntityEx Toucher)
 			Player(Toucher.Player).PendingWeapon = HexenDefs::WP_FOURTH;
 		}
 	}
+	return true;
+}
 
+//==========================================================================
+//
+//	GetPickupMessage
+//
+//==========================================================================
+
+string GetPickupMessage()
+{
 	if (gaveWeapon)
 	{
-		Toucher.Player.cprint(MainGameInfo(Level.Game).fourthWeaponText[PieceClass]);
+		return MainGameInfo(Level.Game).fourthWeaponText[PieceClass];
+	}
+	else
+	{
+		return ::GetPickupMessage();
+	}
+}
+
+//==========================================================================
+//
+//	HidePickup
+//
+//==========================================================================
+
+void HidePickup()
+{
+	if (remove)
+	{
+		if (Level.Game.deathmatch && !bDropped)
+		{
+			HideSpecial();
+		}
+		else
+		{
+			Destroy();
+		}
+	}
+}
+
+//==========================================================================
+//
+//	PlayPickupSound
+//
+//==========================================================================
+
+void PlayPickupSound(EntityEx Toucher)
+{
+	if (gaveWeapon)
+	{
 		// Play the build-sound full volume for all players
 		Toucher.PlaySound('WeaponBuild', CHAN_ITEM, 1.0, ATTN_NONE);
 	}
 	else
 	{
-		Toucher.Player.cprint(PickupMessage);
-		Toucher.PlaySound('PickupWeapon', CHAN_ITEM, 1.0, ATTN_NONE);	//FIXME must be PickupPiece
+		::PlayPickupSound(Toucher);
 	}
 }
 
 defaultproperties
 {
 	bFloatBob = true;
+	PickupSound = 'PickupWeapon';
+	bFullVolPickupSound = true;
 }

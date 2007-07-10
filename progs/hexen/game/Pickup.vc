@@ -26,7 +26,10 @@
 class Pickup : Inventory
 	abstract;
 
-string PickupMessage;
+string			PickupMessage;
+name			PickupSound;
+
+bool			bFullVolPickupSound;
 
 const float BONUSADD		= 0.2;
 
@@ -47,8 +50,81 @@ int AngleIncrements()
 //
 //==========================================================================
 
-void TouchSpecial(EntityEx Toucher)
+final void TouchSpecial(EntityEx Toucher)
 {
+	if (!Toucher.bPickUp)
+	{
+		// Can't be picked up by toucher
+		return;
+	}
+	if (Toucher.Health <= 0)
+	{
+		// Toucher is dead
+		return;
+	}
+
+	if (!HandlePickup(Toucher))
+	{
+		return;
+	}
+
+	Toucher.Player.cprint(GetPickupMessage());
+	if (Special)
+	{
+		Level.ExecuteActionSpecial(Special, Args[0], Args[1], Args[2], Args[3],
+			Args[4], NULL, 0, Toucher);
+		Special = 0;
+	}
+	HidePickup();
+	Player(Toucher.Player).BonusFlash += BONUSADD;
+	PlayPickupSound(Toucher);
+}
+
+//==========================================================================
+//
+//	HandlePickup
+//
+//==========================================================================
+
+bool HandlePickup(EntityEx Toucher)
+{
+	return false;
+}
+
+//==========================================================================
+//
+//	GetPickupMessage
+//
+//==========================================================================
+
+string GetPickupMessage()
+{
+	return PickupMessage;
+}
+
+//==========================================================================
+//
+//	HidePickup
+//
+//==========================================================================
+
+void HidePickup()
+{
+}
+
+//==========================================================================
+//
+//	PlayPickupSound
+//
+//==========================================================================
+
+void PlayPickupSound(EntityEx Toucher)
+{
+	if (PickupSound)
+	{
+		Toucher.PlaySound(PickupSound, CHAN_ITEM, 1.0,
+			bFullVolPickupSound ? ATTN_NONE : ATTN_NORMAL);
+	}
 }
 
 //==========================================================================
@@ -133,4 +209,5 @@ defaultproperties
 	Height = 32.0;
 	bSpecial = true;
 	bNoPassMobj = true;
+	PickupSound = 'PickupItem';
 }

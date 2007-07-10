@@ -31,33 +31,23 @@ int ManaCount;
 
 //==========================================================================
 //
-//  TouchSpecial
+//  HandlePickup
 //
 //==========================================================================
 
-void TouchSpecial(EntityEx Toucher)
+bool HandlePickup(EntityEx Toucher)
 {
-	if (!Toucher.bPickUp)
-	{
-		// Can't be picked up by toucher
-		return;
-	}
-	if (Toucher.Health <= 0)
-	{
-		// Toucher is dead
-		return;
-	}
-	if (!Player(Toucher.Player).GiveMana(ManaType, ManaCount))
-	{
-		return;
-	}
-	Toucher.Player.cprint(PickupMessage);
-	if (Special)
-	{
-		Level.ExecuteActionSpecial(Special, Args[0], Args[1], Args[2], Args[3],
-			Args[4], NULL, 0, Toucher);
-		Special = 0;
-	}
+	return Player(Toucher.Player).GiveMana(ManaType, ManaCount);
+}
+
+//==========================================================================
+//
+//	HidePickup
+//
+//==========================================================================
+
+void HidePickup()
+{
 	if (Level.Game.deathmatch && !bDropped)
 	{
 		HideSpecial();
@@ -66,8 +56,6 @@ void TouchSpecial(EntityEx Toucher)
 	{
 		Destroy();
 	}
-	Player(Toucher.Player).BonusFlash += BONUSADD;
-	Toucher.PlaySound('PickupItem', CHAN_ITEM);
 }
 
 defaultproperties

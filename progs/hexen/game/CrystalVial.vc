@@ -29,33 +29,23 @@ class CrystalVial : Pickup
 
 //==========================================================================
 //
-//  TouchSpecial
+//  HandlePickup
 //
 //==========================================================================
 
-void TouchSpecial(EntityEx Toucher)
+bool HandlePickup(EntityEx Toucher)
 {
-	if (!Toucher.bPickUp)
-	{
-		// Can't be picked up by toucher
-		return;
-	}
-	if (Toucher.Health <= 0)
-	{
-		// Toucher is dead
-		return;
-	}
-	if (!Player(Toucher.Player).GiveBody(10))
-	{
-		return;
-	}
-	Toucher.Player.cprint("CRYSTAL VIAL");
-	if (Special)
-	{
-		Level.ExecuteActionSpecial(Special, Args[0], Args[1], Args[2], Args[3],
-			Args[4], NULL, 0, Toucher);
-		Special = 0;
-	}
+	return Player(Toucher.Player).GiveBody(10);
+}
+
+//==========================================================================
+//
+//	HidePickup
+//
+//==========================================================================
+
+void HidePickup()
+{
 	if (Level.Game.deathmatch && !bDropped)
 	{
 		HideSpecial();
@@ -64,8 +54,6 @@ void TouchSpecial(EntityEx Toucher)
 	{
 		Destroy();
 	}
-	Player(Toucher.Player).BonusFlash += BONUSADD;
-	Toucher.PlaySound('PickupItem', CHAN_ITEM);
 }
 
 __states__
@@ -79,4 +67,5 @@ defaultproperties
 {
 	bFloatBob = true;
 	IdleState = S_ITEM_PTN1_1;
+	PickupMessage = "$txt_itemhealth";
 }

@@ -29,28 +29,19 @@ class WeaponPickup : Pickup
 int WeaponClass;
 int WeaponType;
 
+bool remove;
+
 //==========================================================================
 //
-//  TouchSpecial
+//  HandlePickup
 //
 //==========================================================================
 
-void TouchSpecial(EntityEx Toucher)
+bool HandlePickup(EntityEx Toucher)
 {
-	bool remove;
 	bool gaveMana;
 	bool gaveWeapon;
 
-	if (!Toucher.bPickUp)
-	{
-		// Can't be picked up by toucher
-		return;
-	}
-	if (Toucher.Health <= 0)
-	{
-		// Toucher is dead
-		return;
-	}
 	remove = true;
 	if (Toucher.Player.PClass != WeaponClass)
 	{
@@ -58,20 +49,20 @@ void TouchSpecial(EntityEx Toucher)
 		if (Level.Game.netgame && !Level.Game.deathmatch)
 		{
 			// Can't pick up weapons for other classes in coop netplay
-			return;
+			return false;
 		}
 		if (WeaponType == HexenDefs::WP_SECOND)
 		{
 			if (!Player(Toucher.Player).GiveMana(HexenDefs::MANA_1, 25))
 			{
-				return;
+				return false;
 			}
 		}
 		else
 		{
 			if (!Player(Toucher.Player).GiveMana(HexenDefs::MANA_2, 25))
 			{
-				return;
+				return false;
 			}
 		}
 	}
@@ -80,7 +71,7 @@ void TouchSpecial(EntityEx Toucher)
 		// Cooperative net-game
 		if (Player(Toucher.Player).WeaponOwned[WeaponType])
 		{
-			return;
+			return false;
 		}
 		Player(Toucher.Player).WeaponOwned[WeaponType] = true;
 		if (WeaponType == HexenDefs::WP_SECOND)
@@ -122,18 +113,20 @@ void TouchSpecial(EntityEx Toucher)
 		if (!gaveWeapon && !gaveMana)
 		{
 			// Player didn't need the weapon or any mana
-			return;
+			return false;
 		}
 	}
+	return true;
+}
 
-	Toucher.Player.cprint(PickupMessage);
-	if (Special)
-	{
-		Level.ExecuteActionSpecial(Special, Args[0], Args[1], Args[2],
-			Args[3], Args[4], NULL, 0, Toucher);
-		Special = 0;
-	}
+//==========================================================================
+//
+//	HidePickup
+//
+//==========================================================================
 
+void HidePickup()
+{
 	if (remove)
 	{
 		if (Level.Game.deathmatch && !bDropped)
@@ -145,11 +138,9 @@ void TouchSpecial(EntityEx Toucher)
 			Destroy();
 		}
 	}
-
-	Player(Toucher.Player).BonusFlash += BONUSADD;
-	Toucher.PlaySound('PickupWeapon', CHAN_ITEM);
 }
 
 defaultproperties
 {
+	PickupSound = 'PickupWeapon';
 }

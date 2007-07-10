@@ -26,8 +26,25 @@
 class PuzzleItem : Artifact
 	abstract;
 
+//==========================================================================
+//
+//	HidePickup
+//
+//==========================================================================
+
+void HidePickup()
+{
+	if (!Level.Game.netgame || Level.Game.deathmatch)
+	{
+		// Remove puzzle items if not cooperative netplay
+		Destroy();
+	}
+}
+
 defaultproperties
 {
 	bFloatBob = false;
 	bNoGravity = true;
+	PickupSound = 'PickupItem';
+	bFullVolPickupSound = true;
 }
