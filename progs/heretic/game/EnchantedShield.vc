@@ -29,42 +29,23 @@ class EnchantedShield : Pickup
 
 //==========================================================================
 //
-//  TouchSpecial
+//  HandlePickup
 //
 //==========================================================================
 
-void TouchSpecial(EntityEx Toucher)
+bool HandlePickup(EntityEx Toucher)
 {
-	int i;
-	name sound;
+	return Player(Toucher.Player).GiveArmor(2);
+}
 
-	if (!Toucher.bPickUp)
-	{
-		// can't remove thing
-		return;
-	}
-	if (Toucher.Health <= 0)
-	{
-		// Toucher is dead
-		return;
-	}
-	sound = 'misc/i_pkup';
-	if (!Player(Toucher.Player).GiveArmor(2))
-	{
-		return;
-	}
-	Toucher.Player.cprint("$txt_itemshield2");
-	if (Special)
-	{
-		Level.ExecuteActionSpecial(Special, Args[0], Args[1], Args[2], Args[3],
-			Args[4], NULL, 0, Toucher);
-		Special = 0;
-	}
-	if (bCountItem)
-	{
-		Toucher.Player.ItemCount++;
-		Level.CurrentItems++;
-	}
+//==========================================================================
+//
+//	HidePickup
+//
+//==========================================================================
+
+void HidePickup()
+{
 	if (Level.Game.deathmatch && !bDropped)
 	{
 		HideSpecialThing();
@@ -73,8 +54,6 @@ void TouchSpecial(EntityEx Toucher)
 	{
 		Destroy();
 	}
-	Player(Toucher.Player).BonusFlash += BONUSADD;
-	Toucher.PlaySound(sound, CHAN_ITEM);
 }
 
 __states__
@@ -86,4 +65,5 @@ defaultproperties
 {
 	bFloatBob = true;
 	IdleState = S_ITEM_SHD2_1;
+	PickupMessage = "$txt_itemshield2";
 }

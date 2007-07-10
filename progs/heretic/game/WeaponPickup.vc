@@ -30,37 +30,23 @@ int WeaponType;
 
 //==========================================================================
 //
-//  TouchSpecial
+//  HandlePickup
 //
 //==========================================================================
 
-void TouchSpecial(EntityEx Toucher)
+bool HandlePickup(EntityEx Toucher)
 {
-	if (!Toucher.bPickUp)
-	{
-		// can't remove thing
-		return;
-	}
-	if (Toucher.Health <= 0)
-	{
-		// Toucher is dead
-		return;
-	}
-	if (!Player(Toucher.Player).GiveWeapon(WeaponType))
-	{
-		return;
-	}
-	Toucher.Player.cprint(PickupMessage);
-	if (Special)
-	{
-		Level.ExecuteActionSpecial(Special, Args[0], Args[1], Args[2], Args[3],
-			Args[4], NULL, 0, Toucher);
-		Special = 0;
-	}
-	if (bCountItem)
-	{
-		Toucher.Player.ItemCount++;
-	}
+	return Player(Toucher.Player).GiveWeapon(WeaponType);
+}
+
+//==========================================================================
+//
+//	HidePickup
+//
+//==========================================================================
+
+void HidePickup()
+{
 	if (Level.Game.deathmatch && !bDropped)
 	{
 		HideSpecialThing();
@@ -69,10 +55,9 @@ void TouchSpecial(EntityEx Toucher)
 	{
 		Destroy();
 	}
-	Player(Toucher.Player).BonusFlash += BONUSADD;
-	Toucher.PlaySound('misc/w_pkup', CHAN_ITEM);
 }
 
 defaultproperties
 {
+	PickupSound = 'misc/w_pkup';
 }

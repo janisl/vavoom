@@ -28,7 +28,89 @@ class Pickup : Inventory
 
 const float BONUSADD		= 0.2;
 
-string PickupMessage;
+bool			bNetGameStay;
+
+string			PickupMessage;
+name			PickupSound;
+
+//==========================================================================
+//
+//  HideSpecialThing
+//
+//==========================================================================
+
+void HideSpecialThing()
+{
+	bSpecial = false;
+	bHidden = true;
+	SetState(S_HIDESPECIAL1);
+}
+
+//==========================================================================
+//
+//  TouchSpecial
+//
+//==========================================================================
+
+final void TouchSpecial(EntityEx Toucher)
+{
+	if (!Toucher.bPickUp)
+	{
+		// can't remove thing
+		return;
+	}
+	if (Toucher.Health <= 0)
+	{
+		// Toucher is dead
+		return;
+	}
+
+	if (!HandlePickup(Toucher))
+	{
+		return;
+	}
+
+	Toucher.Player.cprint(PickupMessage);
+	if (Special)
+	{
+		Level.ExecuteActionSpecial(Special, Args[0], Args[1], Args[2], Args[3],
+			Args[4], NULL, 0, Toucher);
+		Special = 0;
+	}
+	if (Level.Game.netgame && bNetGameStay)
+	{
+		return;
+	}
+	if (bCountItem)
+	{
+		Toucher.Player.ItemCount++;
+		Level.CurrentItems++;
+	}
+	HidePickup();
+	Player(Toucher.Player).BonusFlash += BONUSADD;
+	Toucher.PlaySound(PickupSound, CHAN_ITEM);
+}
+
+//==========================================================================
+//
+//	HandlePickup
+//
+//==========================================================================
+
+bool HandlePickup(EntityEx Toucher)
+{
+	return false;
+}
+
+//==========================================================================
+//
+//	HidePickup
+//
+//==========================================================================
+
+void HidePickup()
+{
+}
 
 //==========================================================================
 //
@@ -71,32 +153,10 @@ __states__
 	S_HIDESPECIAL11('ACLO', 3, 4.0 / 35.0, none) = A_RestoreSpecialThing2
 }
 
-//==========================================================================
-//
-//  HideSpecialThing
-//
-//==========================================================================
-
-void HideSpecialThing()
-{
-	bSpecial = false;
-	bHidden = true;
-	SetState(S_HIDESPECIAL1);
-}
-
-//==========================================================================
-//
-//  TouchSpecial
-//
-//==========================================================================
-
-void TouchSpecial(EntityEx Toucher)
-{
-}
-
 defaultproperties
 {
 	Height = 32.0;
 	bSpecial = true;
 	bNoPassMobj = true;
+	PickupSound = 'misc/i_pkup';
 }

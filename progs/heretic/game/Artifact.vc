@@ -102,14 +102,24 @@ __states__
 
 //==========================================================================
 //
-//  SetDormantArtifact
-//
-//  Removes the bSpecial flag, and initiates the artifact pickup animation.
+//  HandlePickup
 //
 //==========================================================================
 
-void SetDormantArtifact()
+bool HandlePickup(EntityEx Toucher)
 {
+	return Player(Toucher.Player).GiveArtifact(ArtifactType);
+}
+
+//==========================================================================
+//
+//	HidePickup
+//
+//==========================================================================
+
+void HidePickup()
+{
+	//  Removes the bSpecial flag, and initiates the artifact pickup animation.
 	bSpecial = false;
 	if (Level.Game.deathmatch && bCanRespawn)
 	{
@@ -120,42 +130,6 @@ void SetDormantArtifact()
 		// Don't respawn
 		SetState(S_DEADARTI1);
 	}
-	PlaySound('misc/p_pkup', CHAN_ITEM);
-}
-
-//==========================================================================
-//
-//  TouchSpecial
-//
-//==========================================================================
-
-void TouchSpecial(EntityEx Toucher)
-{
-	if (!Toucher.bPickUp)
-	{
-		// can't remove thing
-		return;
-	}
-	if (Toucher.Health <= 0)
-	{
-		// Toucher is dead
-		return;
-	}
-	if (Player(Toucher.Player).GiveArtifact(ArtifactType))
-	{
-		Toucher.Player.cprint(PickupMessage);
-		if (Special)
-		{
-			Level.ExecuteActionSpecial(Special, Args[0], Args[1], Args[2], Args[3],
-				Args[4], NULL, 0, Toucher);
-			Special = 0;
-		}
-		if (bCountItem)
-		{
-			Toucher.Player.ItemCount++;
-		}
-		SetDormantArtifact();
-	}
 }
 
 defaultproperties
@@ -163,4 +137,5 @@ defaultproperties
 	bCountItem = true;
 	bFloatBob = true;
 	bCanRespawn = true;
+	PickupSound = 'misc/p_pkup';
 }

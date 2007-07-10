@@ -40,45 +40,29 @@ void OnMapSpawn(mthing_t *mthing)
 
 //==========================================================================
 //
-//  TouchSpecial
+//  HandlePickup
 //
 //==========================================================================
 
-void TouchSpecial(EntityEx Toucher)
+bool HandlePickup(EntityEx Toucher)
 {
-	if (!Toucher.bPickUp)
-	{
-		// can't remove thing
-		return;
-	}
-	if (Toucher.Health <= 0)
-	{
-		// Toucher is dead
-		return;
-	}
-	if (Player(Toucher.Player).GiveKey(KeyType))
-	{
-		Toucher.Player.cprint(PickupMessage);
-	}
-	if (Special)
-	{
-		Level.ExecuteActionSpecial(Special, Args[0], Args[1], Args[2], Args[3],
-			Args[4], NULL, 0, Toucher);
-		Special = 0;
-	}
-	if (Level.Game.netgame)
-	{
-		return;
-	}
-	if (bCountItem)
-	{
-		Toucher.Player.ItemCount++;
-	}
+	return Player(Toucher.Player).GiveKey(KeyType) ||
+		!Level.Game.netgame || Special;
+}
+
+//==========================================================================
+//
+//	HidePickup
+//
+//==========================================================================
+
+void HidePickup()
+{
 	Destroy();
-	Player(Toucher.Player).BonusFlash += BONUSADD;
-	Toucher.PlaySound('misc/k_pkup', CHAN_ITEM);
 }
 
 defaultproperties
 {
+	PickupSound = 'misc/k_pkup';
+	bNetGameStay = true;
 }
