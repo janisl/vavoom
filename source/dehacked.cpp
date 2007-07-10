@@ -1488,6 +1488,10 @@ void ProcessDehackedFiles()
 		//	Class name
 		sc->ExpectString();
 		VClass* StatesClass = VClass::FindClass(*sc->String);
+		if (!StatesClass)
+		{
+			Sys_Error("No such class %s", *sc->String);
+		}
 		//	Starting state specifier
 		VState* S = NULL;
 		VState** pState = NULL;
