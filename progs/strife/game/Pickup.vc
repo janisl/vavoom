@@ -63,7 +63,7 @@ bool ValidTouch(EntityEx Toucher)
 //
 //==========================================================================
 
-bool HandlePickup(Actor Toucher)
+bool HandlePickup(EntityEx Toucher)
 {
 	Toucher.Player.cprint("Unimplemented pickup %n", ClassName);
 	return true;
@@ -94,7 +94,7 @@ void HideSpecial()
 //
 //==========================================================================
 
-void TouchSpecial(EntityEx Toucher)
+final void TouchSpecial(EntityEx Toucher)
 {
 	if (!ValidTouch(Toucher))
 	{
@@ -102,7 +102,7 @@ void TouchSpecial(EntityEx Toucher)
 		return;
 	}
 
-	if (!HandlePickup(Actor(Toucher)))
+	if (!HandlePickup(Toucher))
 	{
 		return;
 	}
@@ -134,7 +134,7 @@ void TouchSpecial(EntityEx Toucher)
 
 bool GiveItemTo(EntityEx Toucher)
 {
-	if (!HandlePickup(Actor(Toucher)))
+	if (!HandlePickup(Toucher))
 	{
 		return false;
 	}

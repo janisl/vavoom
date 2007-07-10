@@ -31,7 +31,7 @@ class GunTraining : Pickup;
 //
 //==========================================================================
 
-bool HandlePickup(Actor Toucher)
+bool HandlePickup(EntityEx Toucher)
 {
 	Player(Toucher.Player).Accuracy += 10;
 	return true;

@@ -31,7 +31,7 @@ class CloseDoor222 : Pickup;
 //
 //==========================================================================
 
-bool HandlePickup(Actor Toucher)
+bool HandlePickup(EntityEx Toucher)
 {
 	return Level.ExecuteActionSpecial(LNSPEC_DoorClose, 222, 16, 0, 0, 0,
 		NULL, 0, Toucher);

@@ -34,7 +34,7 @@ int KeyType;
 //
 //==========================================================================
 
-bool HandlePickup(Actor Toucher)
+bool HandlePickup(EntityEx Toucher)
 {
 	Player(Toucher.Player).GiveKey(KeyType);
 	return true;

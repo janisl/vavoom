@@ -31,7 +31,7 @@ class SlideshowStarter : Pickup;
 //
 //==========================================================================
 
-bool HandlePickup(Actor Toucher)
+bool HandlePickup(EntityEx Toucher)
 {
 	if (XLevel.MapName == 'map03')
 	{

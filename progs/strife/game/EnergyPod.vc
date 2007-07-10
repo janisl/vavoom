@@ -33,7 +33,7 @@ class EnergyPod : AmmoPickup
 //
 //==========================================================================
 
-bool HandlePickup(Actor Toucher)
+bool HandlePickup(EntityEx Toucher)
 {
 	if (bDropped)
 		AmmoCount = 40;

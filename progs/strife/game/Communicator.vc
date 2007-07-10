@@ -32,7 +32,7 @@ class Communicator : Pickup
 //
 //==========================================================================
 
-bool HandlePickup(Actor Toucher)
+bool HandlePickup(EntityEx Toucher)
 {
 	Player(Toucher.Player).Communicator = true;
 	return true;

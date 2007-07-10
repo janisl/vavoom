@@ -37,7 +37,7 @@ int Ammo2Count;
 //
 //==========================================================================
 
-bool HandlePickup(Actor Toucher)
+bool HandlePickup(EntityEx Toucher)
 {
 	return Player(Toucher.Player).GiveWeapon(WeaponType, Weapon2Type, bDropped,
 		Ammo1Count, Ammo2Count);

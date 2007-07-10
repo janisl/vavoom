@@ -33,7 +33,7 @@ class AmmoSatchel : Pickup
 //
 //==========================================================================
 
-bool HandlePickup(Actor Toucher)
+bool HandlePickup(EntityEx Toucher)
 {
 	Player(Toucher.Player).Backpack = true;
 	Player(Toucher.Player).GiveAmmo(StrifeDefs::am_clip, 10);

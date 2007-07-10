@@ -31,7 +31,7 @@ class RaiseAlarm : Pickup;
 //
 //==========================================================================
 
-bool HandlePickup(Actor Toucher)
+bool HandlePickup(EntityEx Toucher)
 {
 	if (Toucher)
 	{

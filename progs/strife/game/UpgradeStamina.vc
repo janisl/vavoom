@@ -31,7 +31,7 @@ class UpgradeStamina : InventoryItem;
 //
 //==========================================================================
 
-bool HandlePickup(Actor Toucher)
+bool HandlePickup(EntityEx Toucher)
 {
 	bool		Ret;
 

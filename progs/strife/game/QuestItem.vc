@@ -34,7 +34,7 @@ string QuestMessage;
 //
 //==========================================================================
 
-bool HandlePickup(Actor Toucher)
+bool HandlePickup(EntityEx Toucher)
 {
 	return true;
 }

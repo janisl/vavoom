@@ -35,7 +35,7 @@ int ItemAmount;
 //
 //==========================================================================
 
-bool HandlePickup(Actor Toucher)
+bool HandlePickup(EntityEx Toucher)
 {
 	return Player(Toucher.Player).GiveInvItem(ItemType, ItemAmount);
 }

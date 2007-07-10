@@ -34,7 +34,7 @@ bool			bRebelSpawned;
 //
 //==========================================================================
 
-bool HandlePickup(Actor Toucher)
+bool HandlePickup(EntityEx Toucher)
 {
 	//	Can't pick it up if already started to spawn rebels.
 	if (bRebelSpawned)

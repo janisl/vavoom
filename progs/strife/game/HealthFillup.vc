@@ -31,7 +31,7 @@ class HealthFillup : Pickup;
 //
 //==========================================================================
 
-bool HandlePickup(Actor Toucher)
+bool HandlePickup(EntityEx Toucher)
 {
 	int			Amount;
 	int			Max;
