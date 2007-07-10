@@ -68,6 +68,7 @@ txt_artipuzzgear = "CLOCK GEAR";
 txt_usepuzzlefailed = "YOU CANNOT USE THIS HERE";
 
 //	Items
+txt_itemhealth = "CRYSTAL VIAL";
 txt_armor1 = "MESH ARMOR";
 txt_armor2 = "FALCON SHIELD";
 txt_armor3 = "PLATINUM HELMET";
