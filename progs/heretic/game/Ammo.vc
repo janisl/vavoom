@@ -31,11 +31,11 @@ int AmmoCount;
 
 //==========================================================================
 //
-//  HandlePickup
+//  TryPickup
 //
 //==========================================================================
 
-bool HandlePickup(EntityEx Toucher)
+bool TryPickup(EntityEx Toucher)
 {
 	return Player(Toucher.Player).GiveAmmo(AmmoType, AmmoCount);
 }

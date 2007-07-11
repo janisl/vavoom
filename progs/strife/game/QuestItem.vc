@@ -30,11 +30,11 @@ string QuestMessage;
 
 //==========================================================================
 //
-//	HandlePickup
+//	TryPickup
 //
 //==========================================================================
 
-bool HandlePickup(EntityEx Toucher)
+bool TryPickup(EntityEx Toucher)
 {
 	return true;
 }

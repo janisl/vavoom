@@ -27,11 +27,11 @@ class AmmoFillup : Pickup;
 
 //==========================================================================
 //
-//	HandlePickup
+//	TryPickup
 //
 //==========================================================================
 
-bool HandlePickup(EntityEx Toucher)
+bool TryPickup(EntityEx Toucher)
 {
 	if (Player(Toucher.Player).Ammo[StrifeDefs::am_clip] < 50)
 	{

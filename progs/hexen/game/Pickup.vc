@@ -63,7 +63,7 @@ final void TouchSpecial(EntityEx Toucher)
 		return;
 	}
 
-	if (!HandlePickup(Toucher))
+	if (!TryPickup(Toucher))
 	{
 		return;
 	}
@@ -82,11 +82,11 @@ final void TouchSpecial(EntityEx Toucher)
 
 //==========================================================================
 //
-//	HandlePickup
+//	TryPickup
 //
 //==========================================================================
 
-bool HandlePickup(EntityEx Toucher)
+bool TryPickup(EntityEx Toucher)
 {
 	return false;
 }

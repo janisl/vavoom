@@ -61,11 +61,11 @@ bool ValidTouch(EntityEx Toucher)
 
 //==========================================================================
 //
-//	HandlePickup
+//	TryPickup
 //
 //==========================================================================
 
-bool HandlePickup(EntityEx Toucher)
+bool TryPickup(EntityEx Toucher)
 {
 	Toucher.Player.cprint("Unimplemented pickup %n", ClassName);
 	return true;
@@ -104,7 +104,7 @@ final void TouchSpecial(EntityEx Toucher)
 		return;
 	}
 
-	if (!HandlePickup(Toucher))
+	if (!TryPickup(Toucher))
 	{
 		return;
 	}
@@ -139,7 +139,7 @@ final void TouchSpecial(EntityEx Toucher)
 
 bool GiveItemTo(EntityEx Toucher)
 {
-	if (!HandlePickup(Toucher))
+	if (!TryPickup(Toucher))
 	{
 		return false;
 	}
@@ -182,7 +182,7 @@ bool ItemSpecialDropAction(EntityEx Source)
 {
 	if (bDropAutoGive)
 	{
-		HandlePickup(Actor(Source));
+		TryPickup(Actor(Source));
 		Destroy();
 		return true;
 	}

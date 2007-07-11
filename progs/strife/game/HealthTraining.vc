@@ -27,11 +27,11 @@ class HealthTraining : Pickup;
 
 //==========================================================================
 //
-//	HandlePickup
+//	TryPickup
 //
 //==========================================================================
 
-bool HandlePickup(EntityEx Toucher)
+bool TryPickup(EntityEx Toucher)
 {
 	Player(Toucher.Player).Stamina += 10;
 	Player(Toucher.Player).GiveBody(200);

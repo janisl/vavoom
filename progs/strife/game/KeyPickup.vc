@@ -30,11 +30,11 @@ int KeyType;
 
 //==========================================================================
 //
-//	HandlePickup
+//	TryPickup
 //
 //==========================================================================
 
-bool HandlePickup(EntityEx Toucher)
+bool TryPickup(EntityEx Toucher)
 {
 	Player(Toucher.Player).GiveKey(KeyType);
 	return true;

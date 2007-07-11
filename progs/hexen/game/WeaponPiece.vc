@@ -38,11 +38,11 @@ bool gaveWeapon;
 
 //==========================================================================
 //
-//  HandlePickup
+//  TryPickup
 //
 //==========================================================================
 
-bool HandlePickup(EntityEx Toucher)
+bool TryPickup(EntityEx Toucher)
 {
 	bool checkAssembled;
 	int gaveMana;

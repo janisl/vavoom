@@ -27,11 +27,11 @@ class HealthFillup : Pickup;
 
 //==========================================================================
 //
-//	HandlePickup
+//	TryPickup
 //
 //==========================================================================
 
-bool HandlePickup(EntityEx Toucher)
+bool TryPickup(EntityEx Toucher)
 {
 	int			Amount;
 	int			Max;

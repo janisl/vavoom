@@ -30,13 +30,13 @@ int WeaponType;
 
 //==========================================================================
 //
-//  HandlePickup
+//  TryPickup
 //
 //  Returns true if the weapon or its ammo was accepted.
 //
 //==========================================================================
 
-bool HandlePickup(EntityEx Toucher)
+bool TryPickup(EntityEx Toucher)
 {
 	bool gaveAmmo;
 	bool gaveWeapon;

@@ -27,15 +27,15 @@ class UpgradeStamina : InventoryItem;
 
 //==========================================================================
 //
-//	HandlePickup
+//	TryPickup
 //
 //==========================================================================
 
-bool HandlePickup(EntityEx Toucher)
+bool TryPickup(EntityEx Toucher)
 {
 	bool		Ret;
 
-	Ret = ::HandlePickup(Toucher);
+	Ret = ::TryPickup(Toucher);
 	if (Ret && !bDropped)
 	{
 		Player(Toucher.Player).GiveInvItem(StrifeDefs::ITEM_Accuracy, 1);

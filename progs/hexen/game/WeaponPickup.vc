@@ -31,11 +31,11 @@ int WeaponType;
 
 //==========================================================================
 //
-//  HandlePickup
+//  TryPickup
 //
 //==========================================================================
 
-bool HandlePickup(EntityEx Toucher)
+bool TryPickup(EntityEx Toucher)
 {
 	bool gaveMana;
 	bool gaveWeapon;

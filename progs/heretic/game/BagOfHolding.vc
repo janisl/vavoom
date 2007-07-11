@@ -29,11 +29,11 @@ class BagOfHolding : Pickup
 
 //==========================================================================
 //
-//  HandlePickup
+//  TryPickup
 //
 //==========================================================================
 
-bool HandlePickup(EntityEx Toucher)
+bool TryPickup(EntityEx Toucher)
 {
 	Player(Toucher.Player).Backpack = true;
 	Player(Toucher.Player).GiveAmmo(am_goldwand, 10);

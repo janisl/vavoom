@@ -101,11 +101,11 @@ bool GiveWeapon(EntityEx Toucher)
 
 //==========================================================================
 //
-//	HandlePickup
+//	TryPickup
 //
 //==========================================================================
 
-bool HandlePickup(EntityEx Toucher)
+bool TryPickup(EntityEx Toucher)
 {
 	// leave placed weapons forever on net games
 	if (ShouldStay() && !bDropped && Player(Toucher.Player).WeaponOwned[WeaponType])

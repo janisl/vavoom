@@ -27,11 +27,11 @@ class RaiseAlarm : Pickup;
 
 //==========================================================================
 //
-//	HandlePickup
+//	TryPickup
 //
 //==========================================================================
 
-bool HandlePickup(EntityEx Toucher)
+bool TryPickup(EntityEx Toucher)
 {
 	if (Toucher)
 	{

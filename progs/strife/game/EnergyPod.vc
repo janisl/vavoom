@@ -29,15 +29,15 @@ class EnergyPod : AmmoPickup
 
 //==========================================================================
 //
-//	HandlePickup
+//	TryPickup
 //
 //==========================================================================
 
-bool HandlePickup(EntityEx Toucher)
+bool TryPickup(EntityEx Toucher)
 {
 	if (bDropped)
 		AmmoCount = 40;
-	return ::HandlePickup(Toucher);
+	return ::TryPickup(Toucher);
 }
 
 __states__

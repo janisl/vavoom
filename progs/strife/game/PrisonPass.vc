@@ -27,13 +27,13 @@ class PrisonPass : InventoryItem;
 
 //==========================================================================
 //
-//	HandlePickup
+//	TryPickup
 //
 //==========================================================================
 
-bool HandlePickup(EntityEx Toucher)
+bool TryPickup(EntityEx Toucher)
 {
-	::HandlePickup(Toucher);
+	::TryPickup(Toucher);
 	Level.ExecuteActionSpecial(LNSPEC_DoorOpen, 223, 16, 0, 0, 0, NULL, 0,
 		Toucher);
 	return true;

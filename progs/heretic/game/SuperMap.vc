@@ -29,11 +29,11 @@ class SuperMap : Pickup
 
 //==========================================================================
 //
-//  HandlePickup
+//  TryPickup
 //
 //==========================================================================
 
-bool HandlePickup(EntityEx Toucher)
+bool TryPickup(EntityEx Toucher)
 {
 	return Player(Toucher.Player).GiveItem(IT_ALL_MAP);
 }
