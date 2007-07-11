@@ -32,11 +32,39 @@ int WeaponType;
 //
 //  HandlePickup
 //
+//  Returns true if the weapon or its ammo was accepted.
+//
 //==========================================================================
 
 bool HandlePickup(EntityEx Toucher)
 {
-	return Player(Toucher.Player).GiveWeapon(WeaponType);
+	bool gaveAmmo;
+	bool gaveWeapon;
+
+	// Cooperative net-game
+	if (ShouldStay() && !bDropped && Player(Toucher.Player).WeaponOwned[WeaponType])
+	{
+		return false;
+	}
+
+	gaveAmmo = Player(Toucher.Player).GiveAmmo(MainGameInfo(Level.Game).WeaponClasses[WeaponType].default.Ammo,
+		MainGameInfo(Level.Game).WeaponClasses[WeaponType].default.GetAmmoCount);
+	if (Player(Toucher.Player).WeaponOwned[WeaponType])
+	{
+		gaveWeapon = false;
+	}
+	else
+	{
+		gaveWeapon = true;
+		Player(Toucher.Player).WeaponOwned[WeaponType] = true;
+		if (MainGameInfo(Level.Game).WeaponValue[WeaponType] >
+			MainGameInfo(Level.Game).WeaponValue[Player(Toucher.Player).ReadyWeapon])
+		{
+			// Only switch to more powerful weapons
+			Player(Toucher.Player).PendingWeapon = WeaponType;
+		}
+	}
+	return (gaveWeapon || gaveAmmo);
 }
 
 //==========================================================================
@@ -55,6 +83,17 @@ void HidePickup()
 	{
 		Destroy();
 	}
+}
+
+//==========================================================================
+//
+//	ShouldStay
+//
+//==========================================================================
+
+bool ShouldStay()
+{
+	return Level.Game.netgame && !Level.Game.deathmatch;
 }
 
 defaultproperties

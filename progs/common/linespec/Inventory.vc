@@ -112,13 +112,13 @@ final void RemoveFromOwner()
 
 //==========================================================================
 //
-//	ShoudStay
+//	ShouldStay
 //
 //	Returns true if item should stay after it's been picked up.
 //
 //==========================================================================
 
-bool ShoudStay()
+bool ShouldStay()
 {
 	return false;
 }

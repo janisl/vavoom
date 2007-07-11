@@ -523,53 +523,6 @@ bool GiveAmmo(int ammo, int count)
 
 //==========================================================================
 //
-//  GiveWeapon
-//
-//  Returns true if the weapon or its ammo was accepted.
-//
-//==========================================================================
-
-bool GiveWeapon(int weapon)
-{
-	bool gaveAmmo;
-	bool gaveWeapon;
-
-	if (Level.Game.netgame && !Level.Game.deathmatch)
-	{
-		// Cooperative net-game
-		if (WeaponOwned[weapon])
-		{
-			return false;
-		}
-		BonusFlash += Pickup::BONUSADD;
-		WeaponOwned[weapon] = true;
-		GiveAmmo(MainGameInfo(Level.Game).WeaponClasses[weapon].default.Ammo,
-			MainGameInfo(Level.Game).WeaponClasses[weapon].default.GetAmmoCount);
-		PendingWeapon = weapon;
-		MO.PlaySound('misc/w_pkup', CHAN_ITEM);
-		return false;
-	}
-	gaveAmmo = GiveAmmo(MainGameInfo(Level.Game).WeaponClasses[weapon].default.Ammo,
-		MainGameInfo(Level.Game).WeaponClasses[weapon].default.GetAmmoCount);
-	if (WeaponOwned[weapon])
-	{
-		gaveWeapon = false;
-	}
-	else
-	{
-		gaveWeapon = true;
-		WeaponOwned[weapon] = true;
-		if (MainGameInfo(Level.Game).WeaponValue[weapon] > MainGameInfo(Level.Game).WeaponValue[ReadyWeapon])
-		{
-			// Only switch to more powerful weapons
-			PendingWeapon = weapon;
-		}
-	}
-	return (gaveWeapon || gaveAmmo);
-}
-
-//==========================================================================
-//
 //  GiveBody
 //
 //  Returns false if the body isn't needed at all.
@@ -632,7 +585,6 @@ bool GiveKey(int key)
 	{
 		return false;
 	}
-	BonusFlash = Pickup::BONUSADD;
 	Keys |= 1 << key;
 	return true;
 }

@@ -33,14 +33,98 @@ int Ammo2Count;
 
 //==========================================================================
 //
+//  GiveWeapon
+//
+//  The weapon name may have a MF_DROPPED flag ored in.
+//
+//==========================================================================
+
+bool GiveWeapon(EntityEx Toucher)
+{
+	int AmmoType;
+	int Ammo2Type;
+	bool gaveammo;
+	bool gaveammo2;
+	bool gaveweapon;
+
+	AmmoType = MainGameInfo(Level.Game).WeaponClasses[WeaponType].default.Ammo;
+	Ammo2Type = MainGameInfo(Level.Game).WeaponClasses[WeaponType].default.Ammo;
+
+	if (AmmoType != StrifeDefs::am_noammo)
+	{
+		// give one clip with a dropped weapon,
+		// two clips with a found weapon
+		if (ShouldStay() && !bDropped && Level.Game.deathmatch)
+			gaveammo = Player(Toucher.Player).GiveAmmo(AmmoType, Ammo1Count * 2);
+		else if (bDropped)
+			gaveammo = Player(Toucher.Player).GiveAmmo(AmmoType, Ammo1Count / 2);
+		else
+			gaveammo = Player(Toucher.Player).GiveAmmo(AmmoType, Ammo1Count);
+	}
+	else
+	{
+		gaveammo = false;
+	}
+
+	if (Weapon2Type != -1 && Ammo2Type != StrifeDefs::am_noammo &&
+		AmmoType != Ammo2Type && Ammo2Count)
+	{
+		// give one clip with a dropped weapon,
+		// two clips with a found weapon
+		if (ShouldStay() && !bDropped && Level.Game.deathmatch)
+			gaveammo2 = Player(Toucher.Player).GiveAmmo(Ammo2Type, Ammo2Count * 2);
+		else if (bDropped)
+			gaveammo2 = Player(Toucher.Player).GiveAmmo(Ammo2Type, Ammo2Count / 2);
+		else
+			gaveammo2 = Player(Toucher.Player).GiveAmmo(Ammo2Type, Ammo2Count);
+	}
+	else
+	{
+		gaveammo2 = false;
+	}
+
+	if (Player(Toucher.Player).WeaponOwned[WeaponType])
+	{
+		gaveweapon = false;
+	}
+	else
+	{
+		gaveweapon = true;
+		Player(Toucher.Player).WeaponOwned[WeaponType] = true;
+		if (Weapon2Type != -1)
+			Player(Toucher.Player).WeaponOwned[Weapon2Type] = true;
+		Player(Toucher.Player).PendingWeapon = WeaponType;
+	}
+
+	return (gaveweapon || gaveammo || gaveammo2);
+}
+
+//==========================================================================
+//
 //	HandlePickup
 //
 //==========================================================================
 
 bool HandlePickup(EntityEx Toucher)
 {
-	return Player(Toucher.Player).GiveWeapon(WeaponType, Weapon2Type, bDropped,
-		Ammo1Count, Ammo2Count);
+	// leave placed weapons forever on net games
+	if (ShouldStay() && !bDropped && Player(Toucher.Player).WeaponOwned[WeaponType])
+	{
+		return false;
+	}
+
+	return GiveWeapon(Toucher);
+}
+
+//==========================================================================
+//
+//	ShouldStay
+//
+//==========================================================================
+
+bool ShouldStay()
+{
+	return Level.Game.netgame && Level.Game.deathmatch < 2;
 }
 
 defaultproperties

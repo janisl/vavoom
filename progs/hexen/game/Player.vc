@@ -759,7 +759,6 @@ bool GiveKey(int key)
 	{
 		return false;
 	}
-	BonusFlash += Pickup::BONUSADD;
 	Keys |= 1 << key;
 	return true;
 }

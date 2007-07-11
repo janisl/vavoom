@@ -28,16 +28,6 @@ class Key : Pickup
 
 int KeyType;
 
-void OnMapSpawn(mthing_t *mthing)
-{
-	if (Level.Game.deathmatch)
-	{
-		Destroy();
-		return;
-	}
-	::OnMapSpawn(mthing);
-}
-
 //==========================================================================
 //
 //  HandlePickup
@@ -47,7 +37,7 @@ void OnMapSpawn(mthing_t *mthing)
 bool HandlePickup(EntityEx Toucher)
 {
 	return Player(Toucher.Player).GiveKey(KeyType) ||
-		!Level.Game.netgame || Special;
+		!ShouldStay() || Special;
 }
 
 //==========================================================================
@@ -61,8 +51,19 @@ void HidePickup()
 	Destroy();
 }
 
+//==========================================================================
+//
+//	ShouldStay
+//
+//==========================================================================
+
+bool ShouldStay()
+{
+	return Level.Game.netgame;
+}
+
 defaultproperties
 {
 	PickupSound = 'misc/k_pkup';
-	bNetGameStay = true;
+	bNoDeathmatch = true;
 }

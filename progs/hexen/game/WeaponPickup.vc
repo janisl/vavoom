@@ -29,8 +29,6 @@ class WeaponPickup : Pickup
 int WeaponClass;
 int WeaponType;
 
-bool remove;
-
 //==========================================================================
 //
 //  HandlePickup
@@ -42,11 +40,10 @@ bool HandlePickup(EntityEx Toucher)
 	bool gaveMana;
 	bool gaveWeapon;
 
-	remove = true;
 	if (Toucher.Player.PClass != WeaponClass)
 	{
 		// Wrong class, but try to pick up for mana
-		if (Level.Game.netgame && !Level.Game.deathmatch)
+		if (ShouldStay())
 		{
 			// Can't pick up weapons for other classes in coop netplay
 			return false;
@@ -65,58 +62,38 @@ bool HandlePickup(EntityEx Toucher)
 				return false;
 			}
 		}
+		return true;
 	}
-	else if (Level.Game.netgame && !Level.Game.deathmatch)
+
+	// Cooperative net-game
+	if (ShouldStay() && !bDropped && Player(Toucher.Player).WeaponOwned[WeaponType])
 	{
-		// Cooperative net-game
-		if (Player(Toucher.Player).WeaponOwned[WeaponType])
-		{
-			return false;
-		}
-		Player(Toucher.Player).WeaponOwned[WeaponType] = true;
-		if (WeaponType == HexenDefs::WP_SECOND)
-		{
-			Player(Toucher.Player).GiveMana(HexenDefs::MANA_1, 25);
-		}
-		else
-		{
-			Player(Toucher.Player).GiveMana(HexenDefs::MANA_2, 25);
-		}
-		Player(Toucher.Player).PendingWeapon = WeaponType;
-		remove = false;
+		return false;
+	}
+
+	if (WeaponType == HexenDefs::WP_SECOND)
+	{
+		gaveMana = Player(Toucher.Player).GiveMana(HexenDefs::MANA_1, 25);
 	}
 	else
 	{
-		// Deathmatch or single player game
-		if (WeaponType == HexenDefs::WP_SECOND)
+		gaveMana = Player(Toucher.Player).GiveMana(HexenDefs::MANA_2, 25);
+	}
+	if (Player(Toucher.Player).WeaponOwned[WeaponType])
+	{
+		gaveWeapon = false;
+	}
+	else
+	{
+		gaveWeapon = true;
+		Player(Toucher.Player).WeaponOwned[WeaponType] = true;
+		if (WeaponType > Player(Toucher.Player).ReadyWeapon)
 		{
-			gaveMana = Player(Toucher.Player).GiveMana(HexenDefs::MANA_1, 25);
-		}
-		else
-		{
-			gaveMana = Player(Toucher.Player).GiveMana(HexenDefs::MANA_2, 25);
-		}
-		if (Player(Toucher.Player).WeaponOwned[WeaponType])
-		{
-			gaveWeapon = false;
-		}
-		else
-		{
-			gaveWeapon = true;
-			Player(Toucher.Player).WeaponOwned[WeaponType] = true;
-			if (WeaponType > Player(Toucher.Player).ReadyWeapon)
-			{
-				// Only switch to more powerful weapons
-				Player(Toucher.Player).PendingWeapon = WeaponType;
-			}
-		}
-		if (!gaveWeapon && !gaveMana)
-		{
-			// Player didn't need the weapon or any mana
-			return false;
+			// Only switch to more powerful weapons
+			Player(Toucher.Player).PendingWeapon = WeaponType;
 		}
 	}
-	return true;
+	return gaveWeapon || gaveMana;
 }
 
 //==========================================================================
@@ -127,7 +104,7 @@ bool HandlePickup(EntityEx Toucher)
 
 void HidePickup()
 {
-	if (remove)
+	if (bDropped || !ShouldStay())
 	{
 		if (Level.Game.deathmatch && !bDropped)
 		{
@@ -138,6 +115,17 @@ void HidePickup()
 			Destroy();
 		}
 	}
+}
+
+//==========================================================================
+//
+//	ShouldStay
+//
+//==========================================================================
+
+bool ShouldStay()
+{
+	return Level.Game.netgame && !Level.Game.deathmatch;
 }
 
 defaultproperties

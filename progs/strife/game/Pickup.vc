@@ -26,6 +26,8 @@
 class Pickup : Inventory
 	abstract;
 
+const float BONUSADD		= 0.2;
+
 bool bDropAutoGive;
 bool bGiveQuest;
 name PickupSound;
@@ -119,8 +121,11 @@ final void TouchSpecial(EntityEx Toucher)
 			Args[4], NULL, 0, Toucher);
 		Special = 0;
 	}
-	HideSpecial();
-	Player(Toucher.Player).BonusFlash += Player::BONUSADD;
+	if (bDropped || !ShouldStay())
+	{
+		HideSpecial();
+	}
+	Player(Toucher.Player).BonusFlash += BONUSADD;
 	Toucher.PlaySound(PickupSound, CHAN_ITEM);
 }
 

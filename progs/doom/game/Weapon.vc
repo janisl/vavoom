@@ -55,7 +55,7 @@ bool TryPickup(EntityEx Toucher)
 	int ammoCount;
 
 	// leave placed weapons forever on net games
-	if (ShoudStay() && !bDropped && Player(Toucher.Player).WeaponOwned[WeaponType])
+	if (ShouldStay() && !bDropped && Player(Toucher.Player).WeaponOwned[WeaponType])
 	{
 		return false;
 	}
@@ -68,7 +68,7 @@ bool TryPickup(EntityEx Toucher)
 	{
 		// give one clip with a dropped weapon,
 		// two clips with a found weapon
-		if (ShoudStay() && !bDropped && Level.Game.deathmatch)
+		if (ShouldStay() && !bDropped && Level.Game.deathmatch)
 		{
 			gaveammo = Player(Toucher.Player).GiveAmmo(ammoType, 5 * ammoCount);
 		}
@@ -95,11 +95,11 @@ bool TryPickup(EntityEx Toucher)
 
 //==========================================================================
 //
-//	ShoudStay
+//	ShouldStay
 //
 //==========================================================================
 
-bool ShoudStay()
+bool ShouldStay()
 {
 	return Level.Game.netgame && Level.Game.deathmatch < 2;
 }

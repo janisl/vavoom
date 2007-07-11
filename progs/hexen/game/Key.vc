@@ -36,7 +36,7 @@ int KeyType;
 
 bool HandlePickup(EntityEx Toucher)
 {
-	return Player(Toucher.Player).GiveKey(KeyType);
+	return Player(Toucher.Player).GiveKey(KeyType) || !ShouldStay();
 }
 
 //==========================================================================
@@ -47,7 +47,7 @@ bool HandlePickup(EntityEx Toucher)
 
 void HidePickup()
 {
-	if (!Level.Game.netgame)
+	if (bDropped || !ShouldStay())
 	{
 		// Only remove keys in single player game
 		if (Level.Game.deathmatch && !bDropped)
@@ -59,6 +59,17 @@ void HidePickup()
 			Destroy();
 		}
 	}
+}
+
+//==========================================================================
+//
+//	ShouldStay
+//
+//==========================================================================
+
+bool ShouldStay()
+{
+	return Level.Game.netgame;
 }
 
 defaultproperties

@@ -28,8 +28,6 @@ class Pickup : Inventory
 
 const float BONUSADD		= 0.2;
 
-bool			bNetGameStay;
-
 string			PickupMessage;
 name			PickupSound;
 
@@ -77,16 +75,15 @@ final void TouchSpecial(EntityEx Toucher)
 			Args[4], NULL, 0, Toucher);
 		Special = 0;
 	}
-	if (Level.Game.netgame && bNetGameStay)
-	{
-		return;
-	}
 	if (bCountItem)
 	{
 		Toucher.Player.ItemCount++;
 		Level.CurrentItems++;
 	}
-	HidePickup();
+	if (bDropped || !ShouldStay())
+	{
+		HidePickup();
+	}
 	Player(Toucher.Player).BonusFlash += BONUSADD;
 	Toucher.PlaySound(PickupSound, CHAN_ITEM);
 }

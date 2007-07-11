@@ -44,8 +44,6 @@ const int
 	INITIAL_AMMO	= 50,
 	GOD_HEALTH		= 100;
 
-const float BONUSADD		= 0.2;
-
 const int INVERSECOLOURMAP	= 32;
 
 const float USERANGE		= 64.0;
@@ -523,94 +521,6 @@ bool GiveAmmo(int ammo, int num)
 	}
 
 	return true;
-}
-
-//==========================================================================
-//
-//  GiveWeapon
-//
-//  The weapon name may have a MF_DROPPED flag ored in.
-//
-//==========================================================================
-
-bool GiveWeapon(int weapon, int weapon2, bool dropped, int ammo1, int ammo2)
-{
-	int AmmoType;
-	int Ammo2Type;
-	bool gaveammo;
-	bool gaveammo2;
-	bool gaveweapon;
-
-	AmmoType = MainGameInfo(Level.Game).WeaponClasses[weapon].default.Ammo;
-	Ammo2Type = MainGameInfo(Level.Game).WeaponClasses[weapon].default.Ammo;
-	if (Level.Game.netgame && (Level.Game.deathmatch < 2) && !dropped)
-	{
-		// leave placed weapons forever on net games
-		if (WeaponOwned[weapon])
-			return false;
-
-		BonusFlash += BONUSADD;
-		WeaponOwned[weapon] = true;
-
-		if (Level.Game.deathmatch)
-			GiveAmmo(AmmoType, ammo1 * 2);
-		else
-			GiveAmmo(AmmoType, ammo1);
-		PendingWeapon = weapon;
-
-		if (weapon2 != -1)
-		{
-			WeaponOwned[weapon2] = true;
-			if (AmmoType != Ammo2Type)
-			{
-				if (Level.Game.deathmatch)
-					GiveAmmo(Ammo2Type, ammo2 * 2);
-				else
-					GiveAmmo(Ammo2Type, ammo2);
-			}
-		}
-
-		MO.PlaySound('misc/w_pkup', CHAN_ITEM);
-		return false;
-	}
-
-	if (AmmoType != StrifeDefs::am_noammo)
-	{
-		// give one clip with a dropped weapon,
-		// two clips with a found weapon
-		if (dropped)
-			gaveammo = GiveAmmo(AmmoType, ammo1 / 2);
-		else
-			gaveammo = GiveAmmo(AmmoType, ammo1);
-	}
-	else
-		gaveammo = false;
-
-	if (weapon2 != -1 && Ammo2Type != StrifeDefs::am_noammo &&
-		AmmoType != Ammo2Type && ammo2)
-	{
-		// give one clip with a dropped weapon,
-		// two clips with a found weapon
-		if (dropped)
-			gaveammo2 = GiveAmmo(Ammo2Type, ammo2 / 2);
-		else
-			gaveammo2 = GiveAmmo(Ammo2Type, ammo2);
-	}
-	else
-		gaveammo2 = false;
-
-	if (WeaponOwned[weapon])
-		gaveweapon = false;
-	else
-	{
-		gaveweapon = true;
-		WeaponOwned[weapon] = true;
-		if (weapon2 != -1)
-			WeaponOwned[weapon2] = true;
-		PendingWeapon = weapon;
-	}
-
-	return (gaveweapon || gaveammo || gaveammo2);
 }
 
 //==========================================================================

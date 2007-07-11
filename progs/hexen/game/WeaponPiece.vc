@@ -35,7 +35,6 @@ int PieceClass;
 int PieceValue;
 
 bool gaveWeapon;
-bool remove;
 
 //==========================================================================
 //
@@ -48,13 +47,12 @@ bool HandlePickup(EntityEx Toucher)
 	bool checkAssembled;
 	int gaveMana;
 
-	remove = true;
 	checkAssembled = true;
 	gaveWeapon = false;
 	if (Toucher.Player.PClass != PieceClass)
 	{
 		// Wrong class, but try to pick up for mana
-		if (Level.Game.netgame && !Level.Game.deathmatch)
+		if (ShouldStay())
 		{
 			// Can't pick up wrong-class weapons in coop netplay
 			return false;
@@ -66,47 +64,40 @@ bool HandlePickup(EntityEx Toucher)
 			// Didn't need the mana, so don't pick it up
 			return false;
 		}
+		return true;
 	}
-	else if (Level.Game.netgame && !Level.Game.deathmatch)
+
+	if (ShouldStay() && (Player(Toucher.Player).Pieces & PieceValue))
 	{
-		// Cooperative net-game
-		if (Player(Toucher.Player).Pieces & PieceValue)
-		{
-			// Already has the piece
-			return false;
-		}
+		// Already has the piece
+		return false;
+	}
+
+	gaveMana = Player(Toucher.Player).GiveMana(HexenDefs::MANA_BOTH, 20);
+	if (ShouldStay())
+	{
 		PieceValue = MainGameInfo(Level.Game).pieceValueTrans[PieceValue];
-		Player(Toucher.Player).GiveMana(HexenDefs::MANA_BOTH, 20);
-		remove = false;
 	}
-	else
+
+	if ((Player(Toucher.Player).Pieces & PieceValue) == PieceValue)
 	{
-		// Deathmatch or single player game
-		gaveMana = Player(Toucher.Player).GiveMana(HexenDefs::MANA_BOTH, 20);
-		if (Player(Toucher.Player).Pieces & PieceValue)
+		// Already has the piece, check if mana needed
+		if (!gaveMana)
 		{
-			// Already has the piece, check if mana needed
-			if (!gaveMana)
-			{
-				// Didn't need the mana, so don't pick it up
-				return false;
-			}
-			checkAssembled = false;
+			// Didn't need the mana, so don't pick it up
+			return false;
 		}
 	}
 
 	// Pick up the weapon piece
 
 	// Check if fourth weapon assembled
-	if (checkAssembled)
+	Player(Toucher.Player).Pieces |= PieceValue;
+	if (Player(Toucher.Player).Pieces == (WPIECE1 | WPIECE2 | WPIECE3))
 	{
-		Player(Toucher.Player).Pieces |= PieceValue;
-		if (Player(Toucher.Player).Pieces == (WPIECE1 | WPIECE2 | WPIECE3))
-		{
-			gaveWeapon = true;
-			Player(Toucher.Player).WeaponOwned[HexenDefs::WP_FOURTH] = true;
-			Player(Toucher.Player).PendingWeapon = HexenDefs::WP_FOURTH;
-		}
+		gaveWeapon = true;
+		Player(Toucher.Player).WeaponOwned[HexenDefs::WP_FOURTH] = true;
+		Player(Toucher.Player).PendingWeapon = HexenDefs::WP_FOURTH;
 	}
 	return true;
 }
@@ -137,7 +128,7 @@ string GetPickupMessage()
 
 void HidePickup()
 {
-	if (remove)
+	if (bDropped || !ShouldStay())
 	{
 		if (Level.Game.deathmatch && !bDropped)
 		{
@@ -167,6 +158,17 @@ void PlayPickupSound(EntityEx Toucher)
 	{
 		::PlayPickupSound(Toucher);
 	}
+}
+
+//==========================================================================
+//
+//	ShouldStay
+//
+//==========================================================================
+
+bool ShouldStay()
+{
+	return Level.Game.netgame && !Level.Game.deathmatch;
 }
 
 defaultproperties

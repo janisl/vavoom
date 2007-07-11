@@ -102,7 +102,7 @@ final void TouchSpecial(EntityEx Toucher)
 	}
 	Toucher.Player.cprint(PickupMessage);
 	Toucher.PlaySound(PickupSound, CHAN_ITEM);
-	if (bDropped || !ShoudStay())
+	if (bDropped || !ShouldStay())
 	{
 		HideSpecial();
 	}
@@ -154,7 +154,7 @@ final void TouchDehackedSpecial(EntityEx Toucher)
 		Level.CurrentItems++;
 	}
 	Toucher.PlaySound(Item.PickupSound, CHAN_ITEM);
-	if (bDropped || !Item.ShoudStay())
+	if (bDropped || !Item.ShouldStay())
 	{
 		// only respawn items in deathmatch
 		if ((Level.Game.deathmatch == 2) && !bDropped && !Item.bNoRespawn)

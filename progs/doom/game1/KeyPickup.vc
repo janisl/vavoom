@@ -36,7 +36,7 @@ int			KeyType;
 
 bool TryPickup(EntityEx Toucher)
 {
-	if ((Player(Toucher.Player).Keys & (1 << KeyType)) && ShoudStay())
+	if ((Player(Toucher.Player).Keys & (1 << KeyType)) && ShouldStay())
 	{
 		return false;
 	}
@@ -46,11 +46,11 @@ bool TryPickup(EntityEx Toucher)
 
 //==========================================================================
 //
-//	ShoudStay
+//	ShouldStay
 //
 //==========================================================================
 
-bool ShoudStay()
+bool ShouldStay()
 {
 	return Level.Game.netgame;
 }
