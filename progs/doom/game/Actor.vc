@@ -26,11 +26,6 @@
 class Actor : ScriptedEntity
 	abstract;
 
-bool bDehackedSpecial;	// Old style special handling
-bool bNoRespawn;
-
-string PickupMessage;
-
 //===========================================================================
 //
 //  IsTeleportSpot
@@ -77,332 +72,11 @@ bool IsPointPuller()
 
 //==========================================================================
 //
-//	HideSpecial
+//	TouchDehackedSpecial
 //
 //==========================================================================
 
-void HideSpecial()
-{
-	// only respawn items in deathmatch
-	if ((Level.Game.deathmatch == 2) && !bDropped && !bNoRespawn)
-	{
-		SetState(S_DORMANT_PICKUP1);
-	}
-	else
-	{
-		Destroy();
-	}
-}
-
-//==========================================================================
-//
-//	HandlePickup
-//
-//==========================================================================
-
-bool HandlePickup(EntityEx Toucher)
-{
-	return false;
-}
-
-//==========================================================================
-//
-//	HandleDehackedPickup
-//
-//==========================================================================
-
-bool HandleDehackedPickup(EntityEx Toucher)
-{
-	int i;
-	name sound = 'misc/i_pkup';
-	class<Pickup>	ItemType = none;
-
-	// Identify by sprite.
-	// armor
-	name SpriteName = GetStateSpriteName(State);
-	if (SpriteName == 'arm1')
-	{
-		if (!Player(Toucher.Player).GiveArmor(1))
-			return false;
-		Toucher.Player.cprint("$gotarmor");
-	}
-	else if (SpriteName == 'arm2')
-	{
-		if (!Player(Toucher.Player).GiveArmor(2))
-			return false;
-		Toucher.Player.cprint("$gotmega");
-	}
-		// bonus items
-	else if (SpriteName == 'bon1')
-	{
-		Toucher.Player.Health++;	// can go over 100%
-		if (Toucher.Player.Health > 200)
-			Toucher.Player.Health = 200;
-		Toucher.Health = Toucher.Player.Health;
-		Toucher.Player.cprint("$goththbonus");
-	}
-	else if (SpriteName == 'bon2')
-	{
-		Player(Toucher.Player).ArmorPoints++;	// can go over 100%
-		if (Player(Toucher.Player).ArmorPoints > 200)
-			Player(Toucher.Player).ArmorPoints = 200;
-		if (!Player(Toucher.Player).ArmorType)
-			Player(Toucher.Player).ArmorType = 1;
-		Toucher.Player.cprint("$gotarmbonus");
-	}
-	else if (SpriteName == 'soul')
-	{
-		Toucher.Player.Health += MainGameInfo(Level.Game).SOULSPHERE_HEALTH;
-		if (Toucher.Player.Health > MainGameInfo(Level.Game).SOULSPHERE_MAX)
-			Toucher.Player.Health = MainGameInfo(Level.Game).SOULSPHERE_MAX;
-		Toucher.Player.MO.Health = Toucher.Player.Health;
-		Toucher.Player.cprint("$gotsuper");
-		sound = 'misc/p_pkup';
-	}
-	else if (SpriteName == 'mega')
-	{
-		Toucher.Player.Health = MainGameInfo(Level.Game).MEGASPHERE_HEALTH;
-		Toucher.Health = Toucher.Player.Health;
-		Player(Toucher.Player).GiveArmor(2);
-		Toucher.Player.cprint("$gotmsphere");
-		sound = 'misc/p_pkup';
-	}
-		// cards
-		// leave cards for everyone
-	else if (SpriteName == 'bkey')
-	{
-		if (Player(Toucher.Player).GiveCard(it_bluecard))
-			Toucher.Player.cprint("$gotbluecard");
-		if (Level.Game.netgame)
-			return false;
-	}
-	else if (SpriteName == 'ykey')
-	{
-		if (Player(Toucher.Player).GiveCard(it_yellowcard))
-			Toucher.Player.cprint("$gotyelwcard");
-		if (Level.Game.netgame)
-			return false;
-	}
-	else if (SpriteName == 'rkey')
-	{
-		if (Player(Toucher.Player).GiveCard(it_redcard))
-			Toucher.Player.cprint("$gotredcard");
-		if (Level.Game.netgame)
-			return false;
-	}
-	else if (SpriteName == 'bsku')
-	{
-		if (Player(Toucher.Player).GiveCard(it_blueskull))
-			Toucher.Player.cprint("$gotblueskul");
-		if (Level.Game.netgame)
-			return false;
-	}
-	else if (SpriteName == 'ysku')
-	{
-		if (Player(Toucher.Player).GiveCard(it_yellowskull))
-			Toucher.Player.cprint("$gotyelwskul");
-		if (Level.Game.netgame)
-			return false;
-	}
-	else if (SpriteName == 'rsku')
-	{
-		if (Player(Toucher.Player).GiveCard(it_redskull))
-			Toucher.Player.cprint("$gotredskull");
-		if (Level.Game.netgame)
-			return false;
-	}
-		// medikits, heals
-	else if (SpriteName == 'stim')
-	{
-		if (!Player(Toucher.Player).GiveBody(10, Player::MAXHEALTH))
-			return false;
-		Toucher.Player.cprint("$gotstim");
-	}
-	else if (SpriteName == 'medi')
-	{
-		if (!Player(Toucher.Player).GiveBody(25, Player::MAXHEALTH))
-			return false;
-
-		if (Toucher.Player.Health < 25)
-			Toucher.Player.cprint("$gotmedineed");
-		else
-			Toucher.Player.cprint("$gotmedikit");
-	}
-		// power ups
-	else if (SpriteName == 'pinv')
-	{
-		if (!Player(Toucher.Player).GivePower(pw_invulnerability))
-			return false;
-		Toucher.Player.cprint("$gotinvul");
-		sound = 'misc/p_pkup';
-	}
-	else if (SpriteName == 'pstr')
-	{
-		if (!Player(Toucher.Player).GivePower(pw_strength))
-			return false;
-		Toucher.Player.cprint("$gotberserk");
-		sound = 'misc/p_pkup';
-	}
-	else if (SpriteName == 'pins')
-	{
-		if (!Player(Toucher.Player).GivePower(pw_invisibility))
-			return false;
-		Toucher.Player.cprint("$gotinvis");
-		sound = 'misc/p_pkup';
-	}
-	else if (SpriteName == 'suit')
-	{
-		if (!Player(Toucher.Player).GivePower(pw_ironfeet))
-			return false;
-		Toucher.Player.cprint("$gotsuit");
-		sound = 'misc/p_pkup';
-	}
-	else if (SpriteName == 'pvis')
-	{
-		if (!Player(Toucher.Player).GivePower(pw_infrared))
-			return false;
-		Toucher.Player.cprint("$gotvisor");
-		sound = 'misc/p_pkup';
-	}
-		//  Items
-	else if (SpriteName == 'pmap')
-	{
-		if (!Player(Toucher.Player).GiveItem(IT_ALL_MAP))
-			return false;
-		Toucher.Player.cprint("$gotmap");
-		sound = 'misc/p_pkup';
-	}
-		// ammo
-	else if (SpriteName == 'clip')
-	{
-		ItemType = Clip;
-	}
-	else if (SpriteName == 'ammo')
-	{
-		ItemType = ClipBox;
-	}
-	else if (SpriteName == 'rock')
-	{
-		if (!Player(Toucher.Player).GiveAmmo(RocketAmmo, RocketAmmo.default.Amount))
-			return false;
-		Toucher.Player.cprint("$gotrocket");
-	}
-	else if (SpriteName == 'brok')
-	{
-		if (!Player(Toucher.Player).GiveAmmo(RocketAmmo, 5 * RocketAmmo.default.Amount))
-			return false;
-		Toucher.Player.cprint("$gotrockbox");
-	}
-	else if (SpriteName == 'cell')
-	{
-		if (!Player(Toucher.Player).GiveAmmo(Cell, Cell.default.Amount))
-			return false;
-		Toucher.Player.cprint("$gotcell");
-	}
-	else if (SpriteName == 'celp')
-	{
-		if (!Player(Toucher.Player).GiveAmmo(Cell, 5 * Cell.default.Amount))
-			return false;
-		Toucher.Player.cprint("$gotcellbox");
-	}
-	else if (SpriteName == 'shel')
-	{
-		if (!Player(Toucher.Player).GiveAmmo(Shell, Shell.default.Amount))
-			return false;
-		Toucher.Player.cprint("$gotshells");
-	}
-	else if (SpriteName == 'sbox')
-	{
-		if (!Player(Toucher.Player).GiveAmmo(Shell, 5 * Shell.default.Amount))
-			return false;
-		Toucher.Player.cprint("$gotshellbox");
-	}
-	else if (SpriteName == 'bpak')
-	{
-		if (!Player(Toucher.Player).Backpack)
-		{
-			Player(Toucher.Player).Backpack = true;
-			for (i = 0; i < DoomDefs::NUMAMMO; i++)
-			{
-				Player(Toucher.Player).GiveAmmo(MainGameInfo(Level.Game).AmmoClasses[i], 0);
-				Toucher.FindInventory(MainGameInfo(Level.Game).AmmoClasses[i]).MaxAmount *= 2;
-			}
-		}
-		for (i = 0; i < DoomDefs::NUMAMMO; i++)
-		{
-			Player(Toucher.Player).GiveAmmo(MainGameInfo(Level.Game).AmmoClasses[i],
-				MainGameInfo(Level.Game).AmmoClasses[i].default.Amount);
-		}
-		Toucher.Player.cprint("$gotbackpack");
-	}
-		// weapons
-	else if (SpriteName == 'bfug')
-	{
-		if (!Player(Toucher.Player).GiveWeapon(DoomDefs::wp_bfg, false))
-			return false;
-		Toucher.Player.cprint("$gotbfg9000");
-		sound = 'misc/w_pkup';
-	}
-	else if (SpriteName == 'mgun')
-	{
-		if (!Player(Toucher.Player).GiveWeapon(DoomDefs::wp_chaingun, bDropped))
-			return false;
-		Toucher.Player.cprint("$gotchaingun");
-		sound = 'misc/w_pkup';
-	}
-	else if (SpriteName == 'csaw')
-	{
-		if (!Player(Toucher.Player).GiveWeapon(DoomDefs::wp_chainsaw, false))
-			return false;
-		Toucher.Player.cprint("$gotchainsaw");
-		sound = 'misc/w_pkup';
-	}
-	else if (SpriteName == 'laun')
-	{
-		if (!Player(Toucher.Player).GiveWeapon(DoomDefs::wp_missile, false))
-			return false;
-		Toucher.Player.cprint("$gotlauncher");
-		sound = 'misc/w_pkup';
-	}
-	else if (SpriteName == 'plas')
-	{
-		if (!Player(Toucher.Player).GiveWeapon(DoomDefs::wp_plasma, false))
-			return false;
-		Toucher.Player.cprint("$gotplasma");
-		sound = 'misc/w_pkup';
-	}
-	else if (SpriteName == 'shot')
-	{
-		if (!Player(Toucher.Player).GiveWeapon(DoomDefs::wp_shotgun, bDropped))
-			return false;
-		Toucher.Player.cprint("$gotshotgun");
-		sound = 'misc/w_pkup';
-	}
-	else if (SpriteName == 'sgn2')
-	{
-		if (!Player(Toucher.Player).GiveWeapon(DoomDefs::wp_supershotgun, bDropped))
-			return false;
-		Toucher.Player.cprint("$gotshotgun2");
-		sound = 'misc/w_pkup';
-	}
-	if (ItemType)
-	{
-		Pickup Item = Spawn(ItemType);
-		bool Ret = Item.HandlePickup(Toucher);
-		Item.Destroy();
-		return Ret;
-	}
-	Toucher.PlaySound(sound, CHAN_ITEM);
-	return true;
-}
-
-//==========================================================================
-//
-//	TouchSpecial
-//
-//==========================================================================
-
-void TouchSpecial(EntityEx Toucher)
+final void TouchDehackedSpecial(EntityEx Toucher)
 {
 	if (!Toucher.bPickUp)
 	{
@@ -412,22 +86,23 @@ void TouchSpecial(EntityEx Toucher)
 	// Dead thing touching.
 	// Can happen with a sliding player corpse.
 	if (Toucher.Health <= 0)
+	{
 		return;
+	}
 
-	if (bDehackedSpecial)
+	class<Pickup> ItemType = DoomLevelInfo(Level).GetDehackedItemType(self);
+	if (!ItemType)
 	{
-		if (!HandleDehackedPickup(Toucher))
-		{
-			return;
-		}
+		return;
 	}
-	else
+	Pickup Item = Spawn(ItemType);
+	Item.bDropped = bDropped;
+	if (!Item.HandlePickup(Toucher))
 	{
-		if (!HandlePickup(Toucher))
-		{
-			return;
-		}
+		Item.Destroy();
+		return;
 	}
+
 	if (Special)
 	{
 		Level.ExecuteActionSpecial(Special, Args[0], Args[1], Args[2], Args[3],
@@ -439,8 +114,17 @@ void TouchSpecial(EntityEx Toucher)
 		Toucher.Player.ItemCount++;
 		Level.CurrentItems++;
 	}
-	HideSpecial();
+	// only respawn items in deathmatch
+	if ((Level.Game.deathmatch == 2) && !bDropped && !Item.bNoRespawn)
+	{
+		SetState(S_DORMANT_PICKUP1);
+	}
+	else
+	{
+		Destroy();
+	}
 	Player(Toucher.Player).BonusFlash += Player::BONUSADD;
+	Item.Destroy();
 }
 
 //==========================================================================

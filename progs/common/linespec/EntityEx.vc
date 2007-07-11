@@ -192,6 +192,7 @@ bool bNeutral;			// Neutral characters (peasants and beggars)
 bool bStandMustSeeTarget;	//COUNTITEM	800000
 bool bInCombat;			// Actors in combat won't talk
 bool bFullVolActive;	//	Play active sound at full volume
+bool bDehackedSpecial;	// Old style special handling
 
 //  Params
 float			Speed;
@@ -4376,7 +4377,14 @@ bool Touch(Entity InOther)
 	// check for special pickup
 	if (Other.bSpecial)
 	{
-		Other.TouchSpecial(self);	// Can remove thing
+		if (Other.bDehackedSpecial)
+		{
+			Other.TouchDehackedSpecial(self);
+		}
+		else
+		{
+			Other.TouchSpecial(self);	// Can remove thing
+		}
 	}
 
 	return !solid;
@@ -5201,6 +5209,10 @@ void PlayerKilled(EntityEx source, EntityEx inflictor)
 }
 
 void TouchSpecial(EntityEx Toucher)
+{
+}
+
+void TouchDehackedSpecial(EntityEx Toucher)
 {
 }
 

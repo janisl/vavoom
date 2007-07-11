@@ -401,6 +401,177 @@ void UpdateParticle(particle_t * p, float DeltaTime)
 	}
 }
 
+//==========================================================================
+//
+//	GetDehackedItemType
+//
+//==========================================================================
+
+class<Pickup> GetDehackedItemType(EntityEx Item)
+{
+	// Identify by sprite.
+	// armor
+	name SpriteName = GetStateSpriteName(Item.State);
+	if (SpriteName == 'arm1')
+	{
+		return GreenArmor;
+	}
+	if (SpriteName == 'arm2')
+	{
+		return BlueArmor;
+	}
+		// bonus items
+	if (SpriteName == 'bon1')
+	{
+		return HealthBonus;
+	}
+	if (SpriteName == 'bon2')
+	{
+		return ArmorBonus;
+	}
+	if (SpriteName == 'soul')
+	{
+		return Soulsphere;
+	}
+	if (SpriteName == 'mega')
+	{
+		return Megasphere;
+	}
+
+	// cards
+	if (SpriteName == 'bkey')
+	{
+		return BlueCard;
+	}
+	if (SpriteName == 'ykey')
+	{
+		return YellowCard;
+	}
+	if (SpriteName == 'rkey')
+	{
+		return RedCard;
+	}
+	if (SpriteName == 'bsku')
+	{
+		return BlueSkull;
+	}
+	if (SpriteName == 'ysku')
+	{
+		return YellowSkull;
+	}
+	if (SpriteName == 'rsku')
+	{
+		return RedSkull;
+	}
+
+	// medikits, heals
+	if (SpriteName == 'stim')
+	{
+		return Stimpack;
+	}
+	if (SpriteName == 'medi')
+	{
+		return Medikit;
+	}
+
+	// power ups
+	if (SpriteName == 'pinv')
+	{
+		return InvulnerabilitySphere;
+	}
+	if (SpriteName == 'pstr')
+	{
+		return Berserk;
+	}
+	if (SpriteName == 'pins')
+	{
+		return BlurSphere;
+	}
+	if (SpriteName == 'suit')
+	{
+		return RadSuit;
+	}
+	if (SpriteName == 'pvis')
+	{
+		return Infrared;
+	}
+
+	//  Items
+	if (SpriteName == 'pmap')
+	{
+		return Allmap;
+	}
+
+	// ammo
+	if (SpriteName == 'clip')
+	{
+		return Clip;
+	}
+	if (SpriteName == 'ammo')
+	{
+		return ClipBox;
+	}
+	if (SpriteName == 'rock')
+	{
+		return RocketAmmo;
+	}
+	if (SpriteName == 'brok')
+	{
+		return RocketBox;
+	}
+	if (SpriteName == 'cell')
+	{
+		return Cell;
+	}
+	if (SpriteName == 'celp')
+	{
+		return CellPack;
+	}
+	if (SpriteName == 'shel')
+	{
+		return Shell;
+	}
+	if (SpriteName == 'sbox')
+	{
+		return ShellBox;
+	}
+	if (SpriteName == 'bpak')
+	{
+		return Backpack;
+	}
+
+	// weapons
+	if (SpriteName == 'bfug')
+	{
+		return BFG9000;
+	}
+	if (SpriteName == 'mgun')
+	{
+		return Chaingun;
+	}
+	if (SpriteName == 'csaw')
+	{
+		return Chainsaw;
+	}
+	if (SpriteName == 'laun')
+	{
+		return RocketLauncher;
+	}
+	if (SpriteName == 'plas')
+	{
+		return PlasmaRifle;
+	}
+	if (SpriteName == 'shot')
+	{
+		return Shotgun;
+	}
+	if (SpriteName == 'sgn2')
+	{
+		return SuperShotgun;
+	}
+	return none;
+}
+
 defaultproperties
 {
 	DefaultDoorSound = 'DoorNormal';
