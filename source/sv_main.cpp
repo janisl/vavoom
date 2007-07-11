@@ -254,6 +254,8 @@ static bool IsRelevant(VThinker* Th, VNetConnection* Connection)
 	VEntity* Ent = Cast<VEntity>(Th);
 	if (!Ent)
 		return false;
+	if (Ent->GetTopOwner() == Connection->Owner->MO)
+		return true;
 	if (Ent->EntityFlags & VEntity::EF_Hidden)
 		return false;
 	if (!Connection->CheckFatPVS(Ent->SubSector))

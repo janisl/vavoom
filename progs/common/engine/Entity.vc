@@ -191,8 +191,12 @@ replication
 		Origin, Angles, FloorClip, State, StateTime,
 		SpriteType, ModelSkin, ModelVersion, Alpha, Translation, Effects,
 		bHidden, bFullBright, bFixedModel, bNetLocalPlayer, NetID;
+
 	reliable if (Role == ROLE_Authority && bFixedModel)
 		FixedModelName;
+
+	reliable if (Role == ROLE_Authority && bNetOwner)
+		Owner;
 }
 
 //

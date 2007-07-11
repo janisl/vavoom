@@ -45,6 +45,7 @@ byte					RemoteRole;
 
 bool					bAlwaysRelevant;	//	Always updated
 readonly bool			bNetInitial;		//	Initial update
+readonly bool			bNetOwner;			//	Is owned by current player.
 
 replication
 {

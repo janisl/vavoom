@@ -52,6 +52,7 @@ class VThinker : public VObject
 	{
 		TF_AlwaysRelevant			= 0x00000001,
 		TF_NetInitial				= 0x00000002,
+		TF_NetOwner					= 0x00000004,
 	};
 	vuint32			ThinkerFlags;
 

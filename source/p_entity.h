@@ -224,6 +224,16 @@ class VEntity : public VThinker
 	void DestroyThinker();
 	void AddedToLevel();
 
+	VEntity* GetTopOwner()
+	{
+		VEntity* Ret = this;
+		while (Ret->Owner)
+		{
+			Ret = Ret->Owner;
+		}
+		return Ret;
+	}
+
 	void eventOnMapSpawn(mthing_t* mthing)
 	{
 		P_PASS_SELF;

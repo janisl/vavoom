@@ -106,7 +106,6 @@ void CL_SetUpLocalPlayer(VSocketPublic* Sock)
 	cl = (VBasePlayer*)VObject::StaticSpawnObject(
 		VClass::FindClass("Player"));
 	cl->PlayerFlags |= VBasePlayer::PF_IsClient;
-	cl->ViewEnt = Spawn<VEntity>();
 	cl->ClGame = GClGame;
 	GClGame->cl = cl;
 

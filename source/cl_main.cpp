@@ -329,7 +329,6 @@ void CL_Disconnect()
 	if (!host_standalone && cl)
 	{
 		delete cl->Net;
-		cl->ViewEnt->ConditionalDestroy();
 		cl->ConditionalDestroy();
 		cl = NULL;
 	}

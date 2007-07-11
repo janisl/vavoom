@@ -180,6 +180,18 @@ void VThinkerChannel::Update()
 		return;
 	}
 
+	VEntity* Ent = Cast<VEntity>(Thinker);
+
+	//	Set up thinker flags that can be used by field condition.
+	if (NewObj)
+	{
+		Thinker->ThinkerFlags |= VThinker::TF_NetInitial;
+	}
+	if (Ent && Ent->GetTopOwner() == Connection->Owner->MO)
+	{
+		Thinker->ThinkerFlags |= VThinker::TF_NetOwner;
+	}
+
 	EvalCondValues(Thinker, Thinker->GetClass(), FieldCondValues);
 	vuint8* Data = (vuint8*)Thinker;
 	VObject* NullObj = NULL;
@@ -192,11 +204,9 @@ void VThinkerChannel::Update()
 		Msg.bOpen = true;
 		Msg.WriteInt(Thinker->GetClass()->NetId, VMemberBase::GNetClassLookup.Num());
 		NewObj = false;
-		Thinker->ThinkerFlags |= VThinker::TF_NetInitial;
 	}
 
 	TAVec SavedAngles;
-	VEntity* Ent = Cast<VEntity>(Thinker);
 	if (Ent)
 	{
 		SavedAngles = Ent->Angles;
@@ -306,6 +316,7 @@ void VThinkerChannel::Update()
 
 	//	Clear temporary networking flags.
 	Thinker->ThinkerFlags &= ~VThinker::TF_NetInitial;
+	Thinker->ThinkerFlags &= ~VThinker::TF_NetOwner;
 	unguard;
 }
 
