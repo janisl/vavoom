@@ -371,10 +371,10 @@ class VClass : public VMemberBase
 private:
 	// Internal per-object variables.
 	vuint32			ObjectFlags;		// Private EObjectFlags used by object manager.
-	VClass*			LinkNext;			// Next class in linked list
 
 	friend class VMemberBase;
 public:
+	VClass*			LinkNext;			// Next class in linked list
 	VClass*			ParentClass;
 
 	vint32			ClassSize;
