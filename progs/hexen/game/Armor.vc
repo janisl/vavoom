@@ -39,24 +39,6 @@ bool TryPickup(EntityEx Toucher)
 	return Player(Toucher.Player).GiveArmor(ArmorType, -1);
 }
 
-//==========================================================================
-//
-//	HidePickup
-//
-//==========================================================================
-
-void HidePickup()
-{
-	if (Level.Game.deathmatch && !bDropped)
-	{
-		HideSpecial();
-	}
-	else
-	{
-		Destroy();
-	}
-}
-
 defaultproperties
 {
 	bNoGravity = true;

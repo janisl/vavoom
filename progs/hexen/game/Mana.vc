@@ -40,24 +40,6 @@ bool TryPickup(EntityEx Toucher)
 	return Player(Toucher.Player).GiveMana(ManaType, ManaCount);
 }
 
-//==========================================================================
-//
-//	HidePickup
-//
-//==========================================================================
-
-void HidePickup()
-{
-	if (Level.Game.deathmatch && !bDropped)
-	{
-		HideSpecial();
-	}
-	else
-	{
-		Destroy();
-	}
-}
-
 defaultproperties
 {
 	Health = 10;

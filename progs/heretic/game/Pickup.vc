@@ -30,6 +30,7 @@ const float BONUSADD		= 0.2;
 
 string			PickupMessage;
 name			PickupSound;
+bool			bFancyPickup;
 
 //==========================================================================
 //
@@ -107,6 +108,42 @@ bool TryPickup(EntityEx Toucher)
 
 void HidePickup()
 {
+	if (bFancyPickup)
+	{
+		//  Removes the bSpecial flag, and initiates the artifact pickup animation.
+		bSpecial = false;
+		if (ShouldRespawn() && !bDropped)
+		{
+			SetState(S_DORMANTARTI1);
+		}
+		else
+		{
+			// Don't respawn
+			SetState(S_DEADARTI1);
+		}
+	}
+	else
+	{
+		if (ShouldRespawn() && !bDropped)
+		{
+			HideSpecialThing();
+		}
+		else
+		{
+			Destroy();
+		}
+	}
+}
+
+//==========================================================================
+//
+//	ShouldRespawn
+//
+//==========================================================================
+
+bool ShouldRespawn()
+{
+	return Level.Game.deathmatch;
 }
 
 //==========================================================================
@@ -135,8 +172,76 @@ final void A_RestoreSpecialThing2()
 	SetState(IdleState);
 }
 
+//==========================================================================
+//
+//  A_HideThing
+//
+//==========================================================================
+
+final void A_HideThing()
+{
+	bHidden = true;
+}
+
+//==========================================================================
+//
+//  A_UnHideThing
+//
+//==========================================================================
+
+final void A_UnHideThing()
+{
+	bHidden = false;
+}
+
+//==========================================================================
+//
+//  A_RestoreArtifact
+//
+//==========================================================================
+
+final void A_RestoreArtifact()
+{
+	bSpecial = true;
+	SetState(IdleState);
+	PlaySound('misc/spawn', CHAN_VOICE);
+}
+
 __states__
 {
+	S_DORMANTARTI1('ACLO', 3, 3.0 / 35.0, S_DORMANTARTI2) = none
+	S_DORMANTARTI2('ACLO', 2, 3.0 / 35.0, S_DORMANTARTI3) = none
+	S_DORMANTARTI3('ACLO', 3, 3.0 / 35.0, S_DORMANTARTI4) = none
+	S_DORMANTARTI4('ACLO', 2, 3.0 / 35.0, S_DORMANTARTI5) = none
+	S_DORMANTARTI5('ACLO', 1, 3.0 / 35.0, S_DORMANTARTI6) = none
+	S_DORMANTARTI6('ACLO', 2, 3.0 / 35.0, S_DORMANTARTI7) = none
+	S_DORMANTARTI7('ACLO', 1, 3.0 / 35.0, S_DORMANTARTI8) = none
+	S_DORMANTARTI8('ACLO', 0, 3.0 / 35.0, S_DORMANTARTI9) = none
+	S_DORMANTARTI9('ACLO', 1, 3.0 / 35.0, S_DORMANTARTI10) = none
+	S_DORMANTARTI10('ACLO', 0, 3.0 / 35.0, S_DORMANTARTI11) = none
+	S_DORMANTARTI11('ACLO', 0, 1400.0 / 35.0, S_DORMANTARTI12) = A_HideThing
+	S_DORMANTARTI12('ACLO', 0, 3.0 / 35.0, S_DORMANTARTI13) = A_UnHideThing
+	S_DORMANTARTI13('ACLO', 1, 3.0 / 35.0, S_DORMANTARTI14) = none
+	S_DORMANTARTI14('ACLO', 0, 3.0 / 35.0, S_DORMANTARTI15) = none
+	S_DORMANTARTI15('ACLO', 1, 3.0 / 35.0, S_DORMANTARTI16) = none
+	S_DORMANTARTI16('ACLO', 2, 3.0 / 35.0, S_DORMANTARTI17) = none
+	S_DORMANTARTI17('ACLO', 1, 3.0 / 35.0, S_DORMANTARTI18) = none
+	S_DORMANTARTI18('ACLO', 2, 3.0 / 35.0, S_DORMANTARTI19) = none
+	S_DORMANTARTI19('ACLO', 3, 3.0 / 35.0, S_DORMANTARTI20) = none
+	S_DORMANTARTI20('ACLO', 2, 3.0 / 35.0, S_DORMANTARTI21) = none
+	S_DORMANTARTI21('ACLO', 3, 3.0 / 35.0, none) = A_RestoreArtifact
+
+	S_DEADARTI1('ACLO', 3, 3.0 / 35.0, S_DEADARTI2) = none
+	S_DEADARTI2('ACLO', 2, 3.0 / 35.0, S_DEADARTI3) = none
+	S_DEADARTI3('ACLO', 3, 3.0 / 35.0, S_DEADARTI4) = none
+	S_DEADARTI4('ACLO', 2, 3.0 / 35.0, S_DEADARTI5) = none
+	S_DEADARTI5('ACLO', 1, 3.0 / 35.0, S_DEADARTI6) = none
+	S_DEADARTI6('ACLO', 2, 3.0 / 35.0, S_DEADARTI7) = none
+	S_DEADARTI7('ACLO', 1, 3.0 / 35.0, S_DEADARTI8) = none
+	S_DEADARTI8('ACLO', 0, 3.0 / 35.0, S_DEADARTI9) = none
+	S_DEADARTI9('ACLO', 1, 3.0 / 35.0, S_DEADARTI10) = none
+	S_DEADARTI10('ACLO', 0, 3.0 / 35.0, none) = none
+
 	S_HIDESPECIAL1('ACLO', 4, 1400.0 / 35.0, S_HIDESPECIAL2) = none
 	S_HIDESPECIAL2('ACLO', 0, 4.0 / 35.0, S_HIDESPECIAL3) { A_RestoreSpecialThing1(); }
 	S_HIDESPECIAL3('ACLO', 1, 4.0 / 35.0, S_HIDESPECIAL4) = none

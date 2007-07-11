@@ -38,24 +38,6 @@ bool TryPickup(EntityEx Toucher)
 	return Player(Toucher.Player).GiveItem(IT_ALL_MAP);
 }
 
-//==========================================================================
-//
-//	HidePickup
-//
-//==========================================================================
-
-void HidePickup()
-{
-	if (Level.Game.deathmatch && !bDropped)
-	{
-		HideSpecialThing();
-	}
-	else
-	{
-		Destroy();
-	}
-}
-
 __states__
 {
 	S_ITEM_SPMP1('SPMP', 0, -1.0, none) = none

@@ -38,24 +38,6 @@ bool TryPickup(EntityEx Toucher)
 	return Player(Toucher.Player).GiveBody(10);
 }
 
-//==========================================================================
-//
-//	HidePickup
-//
-//==========================================================================
-
-void HidePickup()
-{
-	if (Level.Game.deathmatch && !bDropped)
-	{
-		HideSpecialThing();
-	}
-	else
-	{
-		Destroy();
-	}
-}
-
 __states__
 {
 	S_ITEM_PTN1_1('PTN1', 0, 3.0 / 35.0, S_ITEM_PTN1_2) = none

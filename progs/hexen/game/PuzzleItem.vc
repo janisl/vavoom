@@ -28,17 +28,25 @@ class PuzzleItem : Artifact
 
 //==========================================================================
 //
-//	HidePickup
+//	ShouldStay
 //
 //==========================================================================
 
-void HidePickup()
+bool ShouldStay()
 {
-	if (!Level.Game.netgame || Level.Game.deathmatch)
-	{
-		// Remove puzzle items if not cooperative netplay
-		Destroy();
-	}
+	return Level.Game.netgame && !Level.Game.deathmatch;
+}
+
+//==========================================================================
+//
+//	ShouldRespawn
+//
+//==========================================================================
+
+bool ShouldRespawn()
+{
+	// Remove puzzle items if not cooperative netplay
+	return false;
 }
 
 defaultproperties
@@ -47,4 +55,5 @@ defaultproperties
 	bNoGravity = true;
 	PickupSound = 'PickupItem';
 	bFullVolPickupSound = true;
+	bFancyPickup = false;
 }

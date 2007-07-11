@@ -39,6 +39,6 @@ defaultproperties
 {
 	ArtifactType = HexenDefs::arti_fly;
 	IdleState = S_ARTI_SOAR1;
-	DormantState = S_DORMANTARTI2_1;
+	bDormant2Min = true;
 	PickupMessage = "$txt_artifly";
 }

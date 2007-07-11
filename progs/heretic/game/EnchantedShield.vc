@@ -38,24 +38,6 @@ bool TryPickup(EntityEx Toucher)
 	return Player(Toucher.Player).GiveArmor(2);
 }
 
-//==========================================================================
-//
-//	HidePickup
-//
-//==========================================================================
-
-void HidePickup()
-{
-	if (Level.Game.deathmatch && !bDropped)
-	{
-		HideSpecialThing();
-	}
-	else
-	{
-		Destroy();
-	}
-}
-
 __states__
 {
 	S_ITEM_SHD2_1('SHD2', 0, -1.0, none) = none
