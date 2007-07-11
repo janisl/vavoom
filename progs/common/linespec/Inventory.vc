@@ -110,6 +110,19 @@ final void RemoveFromOwner()
 	Inventory = none;
 }
 
+//==========================================================================
+//
+//	ShoudStay
+//
+//	Returns true if item should stay after it's been picked up.
+//
+//==========================================================================
+
+bool ShoudStay()
+{
+	return false;
+}
+
 defaultproperties
 {
 }
