@@ -43,17 +43,65 @@ int WeaponType;
 
 //==========================================================================
 //
-//	HandlePickup
+//	TryPickup
 //
 //==========================================================================
 
-bool HandlePickup(EntityEx Toucher)
+bool TryPickup(EntityEx Toucher)
 {
-	if (!Player(Toucher.Player).GiveWeapon(WeaponType, bDropped))
+	bool gaveammo;
+	bool gaveweapon;
+	class<AmmoPickup> ammoType;
+	int ammoCount;
+
+	// leave placed weapons forever on net games
+	if (ShoudStay() && !bDropped && Player(Toucher.Player).WeaponOwned[WeaponType])
+	{
 		return false;
-	Toucher.Player.cprint(PickupMessage);
-	Toucher.PlaySound('misc/w_pkup', CHAN_ITEM);
-	return true;
+	}
+
+	ammoType = MainGameInfo(Level.Game).WeaponClasses[WeaponType].default.AmmoType;
+	ammoCount = ammoType ? ammoType.default.Amount : 0;
+
+	gaveammo = false;
+	if (ammoType)
+	{
+		// give one clip with a dropped weapon,
+		// two clips with a found weapon
+		if (ShoudStay() && !bDropped && Level.Game.deathmatch)
+		{
+			gaveammo = Player(Toucher.Player).GiveAmmo(ammoType, 5 * ammoCount);
+		}
+		else if (bDropped)
+		{
+			gaveammo = Player(Toucher.Player).GiveAmmo(ammoType, 1 * ammoCount);
+		}
+		else
+		{
+			gaveammo = Player(Toucher.Player).GiveAmmo(ammoType, 2 * ammoCount);
+		}
+	}
+
+	gaveweapon = false;
+	if (!Player(Toucher.Player).WeaponOwned[WeaponType])
+	{
+		gaveweapon = true;
+		Player(Toucher.Player).WeaponOwned[WeaponType] = true;
+		Player(Toucher.Player).PendingWeapon = WeaponType;
+	}
+
+	return gaveweapon || gaveammo;
+}
+
+//==========================================================================
+//
+//	ShoudStay
+//
+//==========================================================================
+
+bool ShoudStay()
+{
+	return Level.Game.netgame && Level.Game.deathmatch < 2;
 }
 
 //===========================================================================
@@ -321,4 +369,5 @@ __states__
 
 defaultproperties
 {
+	PickupSound = 'misc/w_pkup';
 }

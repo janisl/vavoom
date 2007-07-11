@@ -29,17 +29,13 @@ class Allmap : Pickup
 
 //==========================================================================
 //
-//	HandlePickup
+//	TryPickup
 //
 //==========================================================================
 
-bool HandlePickup(EntityEx Toucher)
+bool TryPickup(EntityEx Toucher)
 {
-	if (!Player(Toucher.Player).GiveItem(IT_ALL_MAP))
-		return false;
-	Toucher.Player.cprint(PickupMessage);
-	Toucher.PlaySound('misc/p_pkup', CHAN_ITEM);
-	return true;
+	return Player(Toucher.Player).GiveItem(IT_ALL_MAP);
 }
 
 __states__
@@ -60,4 +56,5 @@ defaultproperties
 	bFloorClip = true;
 	IdleState = S_PMAP;
 	PickupMessage = "$gotmap";
+	PickupSound = 'misc/p_pkup';
 }

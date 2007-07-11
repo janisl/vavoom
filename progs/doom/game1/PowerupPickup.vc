@@ -30,19 +30,16 @@ int PowerType;
 
 //==========================================================================
 //
-//	HandlePickup
+//	TryPickup
 //
 //==========================================================================
 
-bool HandlePickup(EntityEx Toucher)
+bool TryPickup(EntityEx Toucher)
 {
-	if (!Player(Toucher.Player).GivePower(PowerType))
-		return false;
-	Toucher.Player.cprint(PickupMessage);
-	Toucher.PlaySound('misc/p_pkup', CHAN_ITEM);
-	return true;
+	return Player(Toucher.Player).GivePower(PowerType);
 }
 
 defaultproperties
 {
+	PickupSound = 'misc/p_pkup';
 }

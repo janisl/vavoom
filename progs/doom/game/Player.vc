@@ -35,8 +35,6 @@ const float IRONTIME		= 60.0;
 // 16 pixels of bob
 const float MAXBOB			= 16.0;
 
-const float BONUSADD		= 0.2;
-
 const int INVERSECOLOURMAP	= 32;
 
 const float USERANGE		= 64.0;
@@ -102,6 +100,7 @@ float sb_face_lastattackdown;
 int sb_faceindex;
 
 BotPlayer Bot;
+Inventory SavedInventory;
 
 replication
 {
@@ -367,6 +366,7 @@ void SpawnPlayer(mthing_t * mthing)
 	float z;
 	Actor PP;
 	bool ResetInventory = false;
+	Inventory Item;
 
 	if (PlayerState == PST_REBORN)
 	{
@@ -407,16 +407,22 @@ void SpawnPlayer(mthing_t * mthing)
 	for (i = 0; i < DoomDefs::NUMWEAPONS; i++)
 		sb_oldweaponsowned[i] = WeaponOwned[i];
 
+	PP.Inventory = SavedInventory;
+	for (Item = PP.Inventory; Item; Item = Item.Inventory)
+	{
+		Item.Owner = MO;
+	}
+
 	if (ResetInventory)
 	{
+		while (PP.Inventory)
+		{
+			PP.Inventory.Destroy();
+		}
 		GiveAmmo(Clip, 0);
-		EntityEx(MO).FindInventory(Clip).Amount = MainGameInfo(Level.Game).INITIAL_AMMO;
+		PP.FindInventory(Clip).Amount = MainGameInfo(Level.Game).INITIAL_AMMO;
 
 		SetWeapon(DoomDefs::wp_pistol);
-	}
-	else
-	{
-		ViewEnt.Owner = MO;
 	}
 
 	// setup gun psprite
@@ -494,6 +500,7 @@ void PlayerExitMap(bool clusterChange)
 	FixedColourmap = 0;		// cancel ir gogles
 	DamageFlash = 0.0;		// no palette changes
 	BonusFlash = 0.0;
+	SavedInventory = EntityEx(MO).Inventory;
 }
 
 //==========================================================================
@@ -591,64 +598,6 @@ bool GiveAmmo(class<AmmoPickup> ammo, int num)
 
 //==========================================================================
 //
-//  GiveWeapon
-//
-//  The weapon name may have a MF_DROPPED flag ored in.
-//
-//==========================================================================
-
-bool GiveWeapon(int weapon, bool dropped)
-{
-	bool gaveammo;
-	bool gaveweapon;
-	class<AmmoPickup> ammoType;
-	int ammoCount;
-
-	ammoType = MainGameInfo(Level.Game).WeaponClasses[weapon].default.AmmoType;
-	ammoCount = ammoType ? ammoType.default.Amount : 0;
-	if (Level.Game.netgame && (Level.Game.deathmatch < 2) && !dropped)
-	{
-		// leave placed weapons forever on net games
-		if (WeaponOwned[weapon])
-			return false;
-
-		BonusFlash += BONUSADD;
-		WeaponOwned[weapon] = true;
-
-		if (Level.Game.deathmatch)
-			GiveAmmo(ammoType, 5 * ammoCount);
-		else
-			GiveAmmo(ammoType, 2 * ammoCount);
-		PendingWeapon = weapon;
-
-		MO.PlaySound('misc/w_pkup', CHAN_ITEM);
-		return false;
-	}
-
-	gaveammo = false;
-	if (ammoType)
-	{
-		// give one clip with a dropped weapon,
-		// two clips with a found weapon
-		if (dropped)
-			gaveammo = GiveAmmo(ammoType, 1 * ammoCount);
-		else
-			gaveammo = GiveAmmo(ammoType, 2 * ammoCount);
-	}
-
-	gaveweapon = false;
-	if (!WeaponOwned[weapon])
-	{
-		gaveweapon = true;
-		WeaponOwned[weapon] = true;
-		PendingWeapon = weapon;
-	}
-
-	return (gaveweapon || gaveammo);
-}
-
-//==========================================================================
-//
 //	GiveBody
 //
 //	Returns false if the body isn't needed at all
@@ -717,22 +666,6 @@ bool GiveArmor2(int armortype, int num, int max)
 	{
 		ArmorType = armortype;
 	}
-	return true;
-}
-
-//==========================================================================
-//
-//	GiveCard
-//
-//==========================================================================
-
-bool GiveCard(int card)
-{
-	if (Keys & (1 << card))
-		return false;
-
-	BonusFlash = BONUSADD;
-	Keys |= 1 << card;
 	return true;
 }
 

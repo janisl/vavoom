@@ -97,7 +97,7 @@ final void TouchDehackedSpecial(EntityEx Toucher)
 	}
 	Pickup Item = Spawn(ItemType);
 	Item.bDropped = bDropped;
-	if (!Item.HandlePickup(Toucher))
+	if (!Item.TryPickup(Toucher))
 	{
 		Item.Destroy();
 		return;
@@ -114,16 +114,20 @@ final void TouchDehackedSpecial(EntityEx Toucher)
 		Toucher.Player.ItemCount++;
 		Level.CurrentItems++;
 	}
-	// only respawn items in deathmatch
-	if ((Level.Game.deathmatch == 2) && !bDropped && !Item.bNoRespawn)
+	Toucher.PlaySound(Item.PickupSound, CHAN_ITEM);
+	if (bDropped || !Item.ShoudStay())
 	{
-		SetState(S_DORMANT_PICKUP1);
+		// only respawn items in deathmatch
+		if ((Level.Game.deathmatch == 2) && !bDropped && !Item.bNoRespawn)
+		{
+			SetState(S_DORMANT_PICKUP1);
+		}
+		else
+		{
+			Destroy();
+		}
 	}
-	else
-	{
-		Destroy();
-	}
-	Player(Toucher.Player).BonusFlash += Player::BONUSADD;
+	Player(Toucher.Player).BonusFlash += Pickup::BONUSADD;
 	Item.Destroy();
 }
 

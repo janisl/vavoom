@@ -32,18 +32,16 @@ const int SOULSPHERE_HEALTH		= 100;
 
 //==========================================================================
 //
-//	HandlePickup
+//	TryPickup
 //
 //==========================================================================
 
-bool HandlePickup(EntityEx Toucher)
+bool TryPickup(EntityEx Toucher)
 {
 	Toucher.Player.Health += SOULSPHERE_HEALTH;
 	if (Toucher.Player.Health > SOULSPHERE_MAX)
 		Toucher.Player.Health = SOULSPHERE_MAX;
 	Toucher.Health = Toucher.Player.Health;
-	Toucher.Player.cprint(PickupMessage);
-	Toucher.PlaySound('misc/p_pkup', CHAN_ITEM);
 	return true;
 }
 
@@ -66,4 +64,5 @@ defaultproperties
 	bFloorClip = true;
 	IdleState = S_SOUL;
 	PickupMessage = "$gotsuper";
+	PickupSound = 'misc/p_pkup';
 }

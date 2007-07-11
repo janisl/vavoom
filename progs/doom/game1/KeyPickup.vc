@@ -26,24 +26,36 @@
 class KeyPickup : Pickup
 	abstract;
 
-int KeyType;
+int			KeyType;
 
 //==========================================================================
 //
-//	HandlePickup
+//	TryPickup
 //
 //==========================================================================
 
-bool HandlePickup(EntityEx Toucher)
+bool TryPickup(EntityEx Toucher)
 {
-	if (Player(Toucher.Player).GiveCard(KeyType))
-		Toucher.Player.cprint(PickupMessage);
-	if (Level.Game.netgame)
+	if ((Player(Toucher.Player).Keys & (1 << KeyType)) && ShoudStay())
+	{
 		return false;
-	Toucher.PlaySound('misc/k_pkup', CHAN_ITEM);
+	}
+	Player(Toucher.Player).Keys |= 1 << KeyType;
 	return true;
+}
+
+//==========================================================================
+//
+//	ShoudStay
+//
+//==========================================================================
+
+bool ShoudStay()
+{
+	return Level.Game.netgame;
 }
 
 defaultproperties
 {
+	PickupSound = 'misc/k_pkup';
 }

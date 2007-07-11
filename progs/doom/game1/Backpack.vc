@@ -29,11 +29,11 @@ class Backpack : Pickup
 
 //==========================================================================
 //
-//	HandlePickup
+//	TryPickup
 //
 //==========================================================================
 
-bool HandlePickup(EntityEx Toucher)
+bool TryPickup(EntityEx Toucher)
 {
 	int i;
 
@@ -51,8 +51,6 @@ bool HandlePickup(EntityEx Toucher)
 		Player(Toucher.Player).GiveAmmo(MainGameInfo(Level.Game).AmmoClasses[i],
 			MainGameInfo(Level.Game).AmmoClasses[i].default.Amount);
 	}
-	Toucher.Player.cprint(PickupMessage);
-	Toucher.PlaySound('misc/i_pkup', CHAN_ITEM);
 	return true;
 }
 

@@ -29,19 +29,17 @@ class ArmorBonus : Pickup
 
 //==========================================================================
 //
-//	HandlePickup
+//	TryPickup
 //
 //==========================================================================
 
-bool HandlePickup(EntityEx Toucher)
+bool TryPickup(EntityEx Toucher)
 {
 	Player(Toucher.Player).ArmorPoints++;	// can go over 100%
 	if (Player(Toucher.Player).ArmorPoints > 200)
 		Player(Toucher.Player).ArmorPoints = 200;
 	if (!Player(Toucher.Player).ArmorType)
 		Player(Toucher.Player).ArmorType = 1;
-	Toucher.Player.cprint(PickupMessage);
-	Toucher.PlaySound('misc/i_pkup', CHAN_ITEM);
 	return true;
 }
 
