@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ClipBox : AmmoPickup
+class ClipBox : Clip
 	__mobjinfo__(2048)
 	__scriptid__(139);
 
@@ -34,11 +34,7 @@ __states__
 
 defaultproperties
 {
-	bSpecial = true;
-	bNoPassMobj = true;
-	bFloorClip = true;
 	IdleState = S_AMMO;
-	AmmoType = DoomDefs::am_clip;
-	AmmoCount = 50;
+	Amount = 50;
 	PickupMessage = "$gotclipbox";
 }

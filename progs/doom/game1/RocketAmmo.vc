@@ -39,6 +39,7 @@ defaultproperties
 	bFloorClip = true;
 	IdleState = S_ROCK;
 	AmmoType = DoomDefs::am_misl;
-	AmmoCount = 1;
+	Amount = 1;
+	MaxAmount = 50;
 	PickupMessage = "$gotrocket";
 }

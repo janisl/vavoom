@@ -69,8 +69,7 @@ int ReadyWeapon;
 // Is wp_nochange if not changing.
 int PendingWeapon;
 
-int Ammo[DoomDefs::NUMAMMO];
-int MaxAmmo[DoomDefs::NUMAMMO];
+//AmmoPickup Ammo[DoomDefs::NUMAMMO];
 int ReadyAmmo;
 
 // Armor type is 0-2.
@@ -108,7 +107,7 @@ replication
 {
 	reliable if (!bIsClient)
 		ArmorPoints, SBFlags, sb_faceindex, ReadyWeapon, ReadyAmmo,
-		Ammo, MaxAmmo, WeaponOwned;
+		/*Ammo, */WeaponOwned;
 
 	unreliable if (!bIsClient)
 		ClientGunShot, ClientBlood, ClientExplosion, ClientExplosion2;
@@ -410,6 +409,9 @@ void SpawnPlayer(mthing_t * mthing)
 
 	if (ResetInventory)
 	{
+		GiveAmmo(Clip, 0);
+		EntityEx(MO).FindInventory(Clip).Amount = MainGameInfo(Level.Game).INITIAL_AMMO;
+
 		SetWeapon(DoomDefs::wp_pistol);
 	}
 	else
@@ -459,11 +461,6 @@ void PlayerReborn()
 	bAttackDown = true;
 	PlayerState = PST_LIVE;
 	Health = MainGameInfo(Level.Game).INITIAL_HEALTH;
-	Ammo[DoomDefs::am_clip] = MainGameInfo(Level.Game).INITIAL_AMMO;
-	MaxAmmo[DoomDefs::am_clip] = MainGameInfo(Level.Game).maxammo[DoomDefs::am_clip];
-	MaxAmmo[DoomDefs::am_shell] = MainGameInfo(Level.Game).maxammo[DoomDefs::am_shell];
-	MaxAmmo[DoomDefs::am_misl] = MainGameInfo(Level.Game).maxammo[DoomDefs::am_misl];
-	MaxAmmo[DoomDefs::am_cell] = MainGameInfo(Level.Game).maxammo[DoomDefs::am_cell];
 	WeaponOwned[DoomDefs::wp_fist] = true;
 	WeaponOwned[DoomDefs::wp_pistol] = true;
 	LocalQuakeHappening = 0;
@@ -507,19 +504,29 @@ void PlayerExitMap(bool clusterChange)
 //
 //==========================================================================
 
-bool GiveAmmo(int ammo, int num)
+bool GiveAmmo(class<AmmoPickup> ammo, int num)
 {
-	int oldammo;
-	int max;
+	int				oldammo;
+	int				max;
+	AmmoPickup		AmmoItem;
 
-	if (ammo == DoomDefs::am_noammo)
+	if (!ammo)
 		return false;
 
-	if (ammo < 0 || ammo > DoomDefs::NUMAMMO)
-		Error("P_GiveAmmo: bad type %i", ammo);
-
-	max = MaxAmmo[ammo];
-	if (Ammo[ammo] == max)
+	AmmoItem = AmmoPickup(EntityEx(MO).FindInventory(ammo));
+	if (!AmmoItem)
+	{
+		AmmoItem = Level.Spawn(ammo);
+		AmmoItem.BecomeItem();
+		AmmoItem.AddToOwner(EntityEx(MO));
+		AmmoItem.Amount = 0;
+	}
+	if (!num)
+	{
+		return false;
+	}
+	max = AmmoItem.MaxAmount;
+	if (AmmoItem.Amount == max)
 		return false;
 
 	if (Level.Game.gameskill == sk_baby || Level.Game.gameskill == sk_nightmare)
@@ -529,11 +536,11 @@ bool GiveAmmo(int ammo, int num)
 		num <<= 1;
 	}
 
-	oldammo = Ammo[ammo];
-	Ammo[ammo] += num;
+	oldammo = AmmoItem.Amount;
+	AmmoItem.Amount += num;
 
-	if (Ammo[ammo] > max)
-		Ammo[ammo] = max;
+	if (AmmoItem.Amount > max)
+		AmmoItem.Amount = max;
 
 	// If non zero ammo, 
 	// don't change up weapons,
@@ -544,9 +551,8 @@ bool GiveAmmo(int ammo, int num)
 	// We were down to zero,
 	// so select a new weapon.
 	// Preferences are not user selectable.
-	switch (ammo)
+	if (ammo == Clip)
 	{
-	case DoomDefs::am_clip:
 		if (ReadyWeapon == DoomDefs::wp_fist)
 		{
 			if (WeaponOwned[DoomDefs::wp_chaingun])
@@ -554,32 +560,30 @@ bool GiveAmmo(int ammo, int num)
 			else
 				PendingWeapon = DoomDefs::wp_pistol;
 		}
-		break;
-
-	case DoomDefs::am_shell:
+	}
+	else if (ammo == Shell)
+	{
 		if (ReadyWeapon == DoomDefs::wp_fist || ReadyWeapon == DoomDefs::wp_pistol)
 		{
 			if (WeaponOwned[DoomDefs::wp_shotgun])
 				PendingWeapon = DoomDefs::wp_shotgun;
 		}
-		break;
-
-	case DoomDefs::am_cell:
+	}
+	else if (ammo == Cell)
+	{
 		if (ReadyWeapon == DoomDefs::wp_fist || ReadyWeapon == DoomDefs::wp_pistol)
 		{
 			if (WeaponOwned[DoomDefs::wp_plasma])
 				PendingWeapon = DoomDefs::wp_plasma;
 		}
-		break;
-
-	case DoomDefs::am_misl:
+	}
+	else if (ammo == RocketAmmo)
+	{
 		if (ReadyWeapon == DoomDefs::wp_fist)
 		{
 			if (WeaponOwned[DoomDefs::wp_missile])
 				PendingWeapon = DoomDefs::wp_missile;
 		}
-	default:
-		break;
 	}
 
 	return true;
@@ -597,11 +601,11 @@ bool GiveWeapon(int weapon, bool dropped)
 {
 	bool gaveammo;
 	bool gaveweapon;
-	int ammoType;
+	class<AmmoPickup> ammoType;
 	int ammoCount;
 
-	ammoType = MainGameInfo(Level.Game).WeaponClasses[weapon].default.Ammo;
-	ammoCount = MainGameInfo(Level.Game).clipammo[ammoType];
+	ammoType = MainGameInfo(Level.Game).WeaponClasses[weapon].default.AmmoType;
+	ammoCount = ammoType ? ammoType.default.Amount : 0;
 	if (Level.Game.netgame && (Level.Game.deathmatch < 2) && !dropped)
 	{
 		// leave placed weapons forever on net games
@@ -622,7 +626,7 @@ bool GiveWeapon(int weapon, bool dropped)
 	}
 
 	gaveammo = false;
-	if (ammoType != DoomDefs::am_noammo)
+	if (ammoType)
 	{
 		// give one clip with a dropped weapon,
 		// two clips with a found weapon
@@ -2063,10 +2067,10 @@ void SetViewPos()
 	if ((Cheats & CF_GODMODE) || Powers[pw_invulnerability])
 		SBFlags |= DoomDefs::SBF_GOD_MODE;
 
-	if (Weapon(ViewEnt).Ammo == DoomDefs::am_noammo)
+	if (!Weapon(ViewEnt).AmmoType)
 		ReadyAmmo = 1994;	// means "n/a"
 	else
-		ReadyAmmo = Ammo[Weapon(ViewEnt).Ammo];
+		ReadyAmmo = EntityEx(MO).FindInventory(Weapon(ViewEnt).AmmoType).Amount;
 
 	ClientSetViewOrg(ViewOrg.x, ViewOrg.y, ViewOrg.z);
 }
@@ -2108,7 +2112,7 @@ void SetWeapon(int NewWeapon)
 	ViewEnt = Weapon(DoomLevelInfo(Level).Spawn(
 		MainGameInfo(Level.Game).WeaponClasses[NewWeapon], vector(0.0, 0.0, 0.0)));
 	Weapon(ViewEnt).BecomeItem();
-	ViewEnt.Owner = MO;
+	Weapon(ViewEnt).AddToOwner(EntityEx(MO));
 	MO.ModelVersion = Weapon(ViewEnt).PlayerModelVersion;
 }
 
@@ -2241,10 +2245,10 @@ void MovePsprites(float deltaTime)
 
 int CheckAmmo()
 {
-	int ammo;
+	class<Inventory> ammo;
 	int count;
 
-	ammo = Weapon(ViewEnt).Ammo;
+	ammo = Weapon(ViewEnt).AmmoType;
 
 	// Minimal amount for one shot varies.
 	if (ReadyWeapon == DoomDefs::wp_bfg)
@@ -2258,7 +2262,7 @@ int CheckAmmo()
 
 	// Some do not need ammunition anyway.
 	// Return if current ammunition sufficient.
-	if (ammo == DoomDefs::am_noammo || Ammo[ammo] >= count)
+	if (!ammo || EntityEx(MO).FindInventory(ammo).Amount >= count)
 		return true;
 
 	// Out of ammo, pick a weapon to change to.
@@ -2266,28 +2270,29 @@ int CheckAmmo()
 	do
 	{
 #ifndef DOOM2
-		if (WeaponOwned[DoomDefs::wp_plasma] && Ammo[DoomDefs::am_cell] && (!MainGameInfo(Level.Game).shareware))
+		if (WeaponOwned[DoomDefs::wp_plasma] && EntityEx(MO).FindInventory(Cell).Amount &&
+			(!MainGameInfo(Level.Game).shareware))
 #else
-		if (WeaponOwned[DoomDefs::wp_plasma] && Ammo[DoomDefs::am_cell])
+		if (WeaponOwned[DoomDefs::wp_plasma] && EntityEx(MO).FindInventory(Cell).Amount)
 #endif
 		{
 			PendingWeapon = DoomDefs::wp_plasma;
 		}
 #ifdef DOOM2
-		else if (WeaponOwned[DoomDefs::wp_supershotgun] && Ammo[DoomDefs::am_shell] > 2)
+		else if (WeaponOwned[DoomDefs::wp_supershotgun] && EntityEx(MO).FindInventory(Shell).Amount > 2)
 		{
 			PendingWeapon = DoomDefs::wp_supershotgun;
 		}
 #endif
-		else if (WeaponOwned[DoomDefs::wp_chaingun] && Ammo[DoomDefs::am_clip])
+		else if (WeaponOwned[DoomDefs::wp_chaingun] && EntityEx(MO).FindInventory(Clip).Amount)
 		{
 			PendingWeapon = DoomDefs::wp_chaingun;
 		}
-		else if (WeaponOwned[DoomDefs::wp_shotgun] && Ammo[DoomDefs::am_shell])
+		else if (WeaponOwned[DoomDefs::wp_shotgun] && EntityEx(MO).FindInventory(Shell).Amount)
 		{
 			PendingWeapon = DoomDefs::wp_shotgun;
 		}
-		else if (Ammo[DoomDefs::am_clip])
+		else if (EntityEx(MO).FindInventory(Clip).Amount)
 		{
 			PendingWeapon = DoomDefs::wp_pistol;
 		}
@@ -2295,14 +2300,16 @@ int CheckAmmo()
 		{
 			PendingWeapon = DoomDefs::wp_chainsaw;
 		}
-		else if (WeaponOwned[DoomDefs::wp_missile] && Ammo[DoomDefs::am_misl])
+		else if (WeaponOwned[DoomDefs::wp_missile] && EntityEx(MO).FindInventory(RocketAmmo).Amount)
 		{
 			PendingWeapon = DoomDefs::wp_missile;
 		}
 #ifdef DOOM2
-		else if (WeaponOwned[DoomDefs::wp_bfg] && Ammo[DoomDefs::am_cell] > MainGameInfo(Level.Game).BFGCELLS)
+		else if (WeaponOwned[DoomDefs::wp_bfg] &&
+			EntityEx(MO).FindInventory(Cell).Amount > MainGameInfo(Level.Game).BFGCELLS)
 #else
-		else if (WeaponOwned[DoomDefs::wp_bfg] && Ammo[DoomDefs::am_cell] > MainGameInfo(Level.Game).BFGCELLS &&
+		else if (WeaponOwned[DoomDefs::wp_bfg] &&
+			EntityEx(MO).FindInventory(Cell).Amount > MainGameInfo(Level.Game).BFGCELLS &&
 			(!MainGameInfo(Level.Game).shareware))
 #endif
 		{
@@ -2611,19 +2618,33 @@ void Cheat_Gimme()
 		WeaponOwned[DoomDefs::wp_grenade] = true;
 #endif
 
+	GiveAmmo(Clip, 0);
+	GiveAmmo(Shell, 0);
+	GiveAmmo(RocketAmmo, 0);
+	GiveAmmo(Cell, 0);
+
 	// Backpack
 	if (i1 & GIMME_BACKPACK)
-		Backpack = true;
+	{
+		if (!Backpack)
+		{
+			Backpack = true;
+			EntityEx(MO).FindInventory(Clip).MaxAmount *= 2;
+			EntityEx(MO).FindInventory(Shell).MaxAmount *= 2;
+			EntityEx(MO).FindInventory(RocketAmmo).MaxAmount *= 2;
+			EntityEx(MO).FindInventory(Cell).MaxAmount *= 2;
+		}
+	}
 
 	// Ammo
 	if (i1 & GIMME_BULLETS)
-		Ammo[DoomDefs::am_clip] = MainGameInfo(Level.Game).maxammo[DoomDefs::am_clip] * (Backpack ? 2 : 1);
+		EntityEx(MO).FindInventory(Clip).Amount = EntityEx(MO).FindInventory(Clip).MaxAmount;
 	if (i1 & GIMME_SHELLS)
-		Ammo[DoomDefs::am_shell] = MainGameInfo(Level.Game).maxammo[DoomDefs::am_shell] * (Backpack ? 2 : 1);
+		EntityEx(MO).FindInventory(Shell).Amount = EntityEx(MO).FindInventory(Shell).MaxAmount;
 	if (i1 & GIMME_ROCKETS)
-		Ammo[DoomDefs::am_misl] = MainGameInfo(Level.Game).maxammo[DoomDefs::am_misl] * (Backpack ? 2 : 1);
+		EntityEx(MO).FindInventory(RocketAmmo).Amount = EntityEx(MO).FindInventory(RocketAmmo).MaxAmount;
 	if (i1 & GIMME_CELLS)
-		Ammo[DoomDefs::am_cell] = MainGameInfo(Level.Game).maxammo[DoomDefs::am_cell] * (Backpack ? 2 : 1);
+		EntityEx(MO).FindInventory(Cell).Amount = EntityEx(MO).FindInventory(Cell).MaxAmount;
 
 	// Keys
 	if (i1 & GIMME_BLUECARD)

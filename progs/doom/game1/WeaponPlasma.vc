@@ -33,7 +33,7 @@ class WeaponPlasma : Weapon;
 
 final void A_FirePlasma()
 {
-	Player(Owner.Player).Ammo[Weapon(self).Ammo]--;
+	DecAmmo(1);
 	if (!(P_Random() & 1))
 		Owner.Player.SetViewState(ps_flash, Weapon(self).FlashState);
 	else
@@ -54,7 +54,7 @@ __states__
 
 defaultproperties
 {
-	Ammo = DoomDefs::am_cell;
+	AmmoType = Cell;
 	UpState = S_PLASMAUP;
 	DownState = S_PLASMADOWN;
 	ReadyState = S_PLASMA;

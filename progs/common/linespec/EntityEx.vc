@@ -262,6 +262,15 @@ name			ClassName;		//	For Strife
 int				ConversationID;
 int				CurrentSpeech;	// Current speech index.
 
+//	Actor's inventory
+Inventory		Inventory;
+
+replication
+{
+	reliable if (Role == ROLE_Authority && bNetOwner)
+		Inventory;
+}
+
 //==========================================================================
 //
 //  SetOrigin2
@@ -5091,6 +5100,26 @@ final void ClientTick(float DeltaTime)
 			p->vel.z = 16.0 * (Random() - 0.5);
 		}
 	}
+}
+
+//==========================================================================
+//
+//	FindInventory
+//
+//==========================================================================
+
+final Inventory FindInventory(class<Inventory> ItemClass)
+{
+	Inventory	Check;
+
+	for (Check = Inventory; Check; Check = Check.Inventory)
+	{
+		if (Check.Class == ItemClass)
+		{
+			return Check;
+		}
+	}
+	return none;
 }
 
 float GetBaseViewHeight()

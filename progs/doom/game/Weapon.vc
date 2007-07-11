@@ -31,7 +31,7 @@ const float RAISESPEED		= 6.0;
 const float WEAPONBOTTOM	= 128.0;
 const float WEAPONTOP		= 32.0;
 
-int Ammo;
+class<AmmoPickup> AmmoType;
 state UpState;
 state DownState;
 state ReadyState;
@@ -40,20 +40,6 @@ state FlashState;
 int PlayerModelVersion;
 
 int WeaponType;
-
-//==========================================================================
-//
-//	BecomeItem
-//
-//==========================================================================
-
-void BecomeItem()
-{
-	UnlinkFromWorld();
-	bHidden = true;
-	bNoBlockmap = true;
-	LinkToWorld();
-}
 
 //==========================================================================
 //
@@ -94,6 +80,22 @@ final void GunShot(Actor A, int accurate, TVec dir)
 	damage = 5 * (P_Random() % 3 + 1);
 
 	A.LineAttack(dir, MISSILERANGE, damage, BulletPuff);
+}
+
+//==========================================================================
+//
+//	DecAmmo
+//
+//==========================================================================
+
+void DecAmmo(int Count)
+{
+	if (!AmmoType)
+	{
+		return;
+	}
+	Inventory Item = EntityEx(Owner).FindInventory(AmmoType);
+	Item.Amount -= Count;
 }
 
 //===========================================================================
@@ -167,20 +169,24 @@ final void A_WeaponReady()
 
 final void A_Lower()
 {
+	Player		P;
+
+	//	Make a local copy since SetWeapon will clear Owner.
+	P = Player(Owner.Player);
 	//	FIXME!!
 	if (Level.Game.frametime < 1.0 / 35.0)
-		Owner.Player.ViewStates[ps_weapon].SY += LOWERSPEED;
+		P.ViewStates[ps_weapon].SY += LOWERSPEED;
 	else
-		Owner.Player.ViewStates[ps_weapon].SY += LOWERSPEED * 35.0 * Level.Game.frametime;
+		P.ViewStates[ps_weapon].SY += LOWERSPEED * 35.0 * Level.Game.frametime;
 
 	// Is already down.
-	if (Owner.Player.ViewStates[ps_weapon].SY < WEAPONBOTTOM)
+	if (P.ViewStates[ps_weapon].SY < WEAPONBOTTOM)
 		return;
 
 	// Player is dead.
-	if (Owner.Player.PlayerState == PST_DEAD)
+	if (P.PlayerState == PST_DEAD)
 	{
-		Owner.Player.ViewStates[ps_weapon].SY = WEAPONBOTTOM;
+		P.ViewStates[ps_weapon].SY = WEAPONBOTTOM;
 
 		// don't bring weapon back up
 		return;
@@ -188,16 +194,16 @@ final void A_Lower()
 
 	// The old weapon has been lowered off the screen,
 	// so change the weapon and start raising it
-	if (!Owner.Player.Health)
+	if (!P.Health)
 	{
 		// Player is dead, so keep the weapon off screen.
-		Owner.Player.SetViewState(ps_weapon, none);
+		P.SetViewState(ps_weapon, none);
 		return;
 	}
 
-	Player(Owner.Player).SetWeapon(Player(Owner.Player).PendingWeapon);
+	P.SetWeapon(P.PendingWeapon);
 
-	Player(Owner.Player).BringUpWeapon();
+	P.BringUpWeapon();
 }
 
 //===========================================================================
@@ -315,5 +321,4 @@ __states__
 
 defaultproperties
 {
-	Ammo = DoomDefs::am_noammo;
 }

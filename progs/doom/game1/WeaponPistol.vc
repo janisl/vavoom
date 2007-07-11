@@ -38,7 +38,7 @@ final void A_FirePistol()
 	Owner.PlaySound('weapons/pistol', CHAN_WEAPON);
 
 	Owner.SetState(DoomPlayer::S_PLAY_ATK2);
-	Player(Owner.Player).Ammo[Weapon(self).Ammo]--;
+	DecAmmo(1);
 
 	Owner.Player.SetViewState(ps_flash, Weapon(self).FlashState);
 
@@ -61,7 +61,7 @@ __states__
 
 defaultproperties
 {
-	Ammo = DoomDefs::am_clip;
+	AmmoType = Clip;
 	UpState = S_PISTOLUP;
 	DownState = S_PISTOLDOWN;
 	ReadyState = S_PISTOL;

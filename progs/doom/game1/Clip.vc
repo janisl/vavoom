@@ -39,6 +39,7 @@ defaultproperties
 	bFloorClip = true;
 	IdleState = S_CLIP;
 	AmmoType = DoomDefs::am_clip;
-	AmmoCount = 10;
+	Amount = 10;
+	MaxAmount = 200;
 	PickupMessage = "$gotclip";
 }

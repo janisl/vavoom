@@ -41,11 +41,15 @@ bool HandlePickup(EntityEx Toucher)
 	{
 		Player(Toucher.Player).Backpack = true;
 		for (i = 0; i < DoomDefs::NUMAMMO; i++)
-			Player(Toucher.Player).MaxAmmo[i] *= 2;
+		{
+			Player(Toucher.Player).GiveAmmo(MainGameInfo(Level.Game).AmmoClasses[i], 0);
+			Toucher.FindInventory(MainGameInfo(Level.Game).AmmoClasses[i]).MaxAmount *= 2;
+		}
 	}
 	for (i = 0; i < DoomDefs::NUMAMMO; i++)
 	{
-		Player(Toucher.Player).GiveAmmo(i, MainGameInfo(Level.Game).clipammo[i]);
+		Player(Toucher.Player).GiveAmmo(MainGameInfo(Level.Game).AmmoClasses[i],
+			MainGameInfo(Level.Game).AmmoClasses[i].default.Amount);
 	}
 	Toucher.Player.cprint(PickupMessage);
 	Toucher.PlaySound('misc/i_pkup', CHAN_ITEM);

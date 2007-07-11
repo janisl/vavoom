@@ -39,7 +39,7 @@ final void A_FireShotgun()
 	Owner.PlaySound('weapons/shotgf', CHAN_WEAPON);
 	Owner.SetState(DoomPlayer::S_PLAY_ATK2);
 
-	Player(Owner.Player).Ammo[Weapon(self).Ammo]--;
+	DecAmmo(1);
 
 	Owner.Player.SetViewState(ps_flash, Weapon(self).FlashState);
 
@@ -71,7 +71,7 @@ __states__
 
 defaultproperties
 {
-	Ammo = DoomDefs::am_shell;
+	AmmoType = Shell;
 	UpState = S_SGUNUP;
 	DownState = S_SGUNDOWN;
 	ReadyState = S_SGUN;

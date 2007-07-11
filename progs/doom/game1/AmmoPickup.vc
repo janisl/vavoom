@@ -27,7 +27,6 @@ class AmmoPickup : Pickup
 	abstract;
 
 int AmmoType;
-int AmmoCount;
 
 //==========================================================================
 //
@@ -39,12 +38,12 @@ bool HandlePickup(EntityEx Toucher)
 {
 	if (bDropped)
 	{
-		if (!Player(Toucher.Player).GiveAmmo(AmmoType, AmmoCount / 2))
+		if (!Player(Toucher.Player).GiveAmmo(MainGameInfo(Level.Game).AmmoClasses[AmmoType], Amount / 2))
 			return false;
 	}
 	else
 	{
-		if (!Player(Toucher.Player).GiveAmmo(AmmoType, AmmoCount))
+		if (!Player(Toucher.Player).GiveAmmo(MainGameInfo(Level.Game).AmmoClasses[AmmoType], Amount))
 			return false;
 	}
 	Toucher.Player.cprint(PickupMessage);

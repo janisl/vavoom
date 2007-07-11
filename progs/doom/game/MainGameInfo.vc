@@ -41,14 +41,12 @@ struct spec_trans_t
 
 spec_trans_t spec_trans_tab[NUM_SPECIALS];
 
+class<AmmoPickup> AmmoClasses[DoomDefs::NUMAMMO + 2];
 class<Weapon> WeaponClasses[DoomDefs::NUMWEAPONS];
 int WeaponOrder[DoomDefs::NUMWEAPONS];
 
 int botskill;
 BotPlayer::botinfo_t botinfo[30];
-
-int maxammo[DoomDefs::NUMAMMO];
-int clipammo[DoomDefs::NUMAMMO];
 
 #ifndef DOOM2
 bool shareware;
@@ -1290,15 +1288,10 @@ defaultproperties
 
 	botskill = 2;
 
-	maxammo[0] = 200;
-	maxammo[1] = 50;
-	maxammo[2] = 300;
-	maxammo[3] = 50;
-
-	clipammo[0] = 10;
-	clipammo[1] = 4;
-	clipammo[2] = 20;
-	clipammo[3] = 1;
+	AmmoClasses[0] = Clip;
+	AmmoClasses[1] = Shell;
+	AmmoClasses[2] = Cell;
+	AmmoClasses[3] = RocketAmmo;
 
 	INITIAL_HEALTH = 100;
 	INITIAL_AMMO = 50;

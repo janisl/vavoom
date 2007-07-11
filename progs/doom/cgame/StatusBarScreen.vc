@@ -364,16 +364,29 @@ void SB_DrawMainBar()
 	}
 
 	// ammo count (all four kinds)
-	SB_DrawSmallNum(ST_AMMO0X, ST_AMMO0Y, cl.Ammo[0]);
-	SB_DrawSmallNum(ST_AMMO1X, ST_AMMO1Y, cl.Ammo[1]);
-	SB_DrawSmallNum(ST_AMMO2X, ST_AMMO2Y, cl.Ammo[2]);
-	SB_DrawSmallNum(ST_AMMO3X, ST_AMMO3Y, cl.Ammo[3]);
+	DrawAmmo(ST_AMMO0X, ST_AMMO0Y, ST_MAXAMMO0X, ST_MAXAMMO0Y, Clip);
+	DrawAmmo(ST_AMMO1X, ST_AMMO1Y, ST_MAXAMMO1X, ST_MAXAMMO1Y, Shell);
+	DrawAmmo(ST_AMMO2X, ST_AMMO2Y, ST_MAXAMMO2X, ST_MAXAMMO2Y, Cell);
+	DrawAmmo(ST_AMMO3X, ST_AMMO3Y, ST_MAXAMMO3X, ST_MAXAMMO3Y, RocketAmmo);
+}
 
-	// max ammo count (all four kinds)
-	SB_DrawSmallNum(ST_MAXAMMO0X, ST_MAXAMMO0Y, cl.MaxAmmo[0]);
-	SB_DrawSmallNum(ST_MAXAMMO1X, ST_MAXAMMO1Y, cl.MaxAmmo[1]);
-	SB_DrawSmallNum(ST_MAXAMMO2X, ST_MAXAMMO2Y, cl.MaxAmmo[2]);
-	SB_DrawSmallNum(ST_MAXAMMO3X, ST_MAXAMMO3Y, cl.MaxAmmo[3]);
+//==========================================================================
+//
+//	DrawAmmo
+//
+//==========================================================================
+
+void DrawAmmo(int CountX, int CountY, int MaxX, int MaxY,
+	class<Inventory> AmmoClass)
+{
+	Inventory		Item;
+
+	Item = cl.MO ? EntityEx(cl.MO).FindInventory(AmmoClass) : none;
+	// ammo count
+	SB_DrawSmallNum(CountX, CountY, Item ? Item.Amount : 0);
+	// max ammo count
+	SB_DrawSmallNum(MaxX, MaxY, Item ? Item.MaxAmount :
+		AmmoClass.default.MaxAmount);
 }
 
 //==========================================================================

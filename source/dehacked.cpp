@@ -62,6 +62,7 @@ static int						value;
 static TArray<VName>			Sprites;
 static TArray<VClass*>			EntClasses;
 static TArray<VClass*>			WeaponClasses;
+static TArray<VClass*>			AmmoClasses;
 static TArray<VState*>			States;
 static TArray<VState*>			CodePtrStates;
 static TArray<VMethod*>			StateActions;
@@ -164,6 +165,21 @@ static bool ParseParam()
 
 //==========================================================================
 //
+//	GetClassFieldInt
+//
+//==========================================================================
+
+static int GetClassFieldInt(VClass* Class, const char* FieldName)
+{
+	guard(GetClassFieldInt);
+	VField* F = Class->FindFieldChecked(FieldName);
+	int* Ptr = (int*)(Class->Defaults + F->Ofs);
+	return *Ptr;
+	unguard;
+}
+
+//==========================================================================
+//
 //	GetClassFieldState
 //
 //==========================================================================
@@ -234,9 +250,25 @@ static void SetClassFieldName(VClass* Class, const char* FieldName,
 static void SetClassFieldState(VClass* Class, const char* FieldName,
 	VState* Value)
 {
-	guard(SetClassFieldInt);
+	guard(SetClassFieldState);
 	VField* F = Class->FindFieldChecked(FieldName);
 	VState** Ptr = (VState**)(Class->Defaults + F->Ofs);
+	*Ptr = Value;
+	unguard;
+}
+
+//==========================================================================
+//
+//	SetClassFieldClass
+//
+//==========================================================================
+
+static void SetClassFieldClass(VClass* Class, const char* FieldName,
+	VClass* Value)
+{
+	guard(SetClassFieldClass);
+	VField* F = Class->FindFieldChecked(FieldName);
+	VClass** Ptr = (VClass**)(Class->Defaults + F->Ofs);
 	*Ptr = Value;
 	unguard;
 }
@@ -769,27 +801,43 @@ static void ReadAmmo(int num)
 {
 	guard(ReadAmmo);
 	//	Check index.
-	if (num >= 4 || num < 0)
+	if (num >= AmmoClasses.Num() || num < 0)
 	{
 		dprintf("WARNING! Invalid ammo num %d\n", num);
 		while (ParseParam());
 		return;
 	}
 
+	VClass* Ammo = AmmoClasses[num];
 	while (ParseParam())
 	{
 		if (!VStr::ICmp(String, "Max ammo"))
 		{
-			SetClassFieldInt(GameInfoClass, "maxammo", value, num);
+			SetClassFieldInt(Ammo, "MaxAmount", value);
 		}
 		else if (!VStr::ICmp(String, "Per ammo"))
 		{
-			SetClassFieldInt(GameInfoClass, "clipammo", value, num);
+			SetClassFieldInt(Ammo, "Amount", value);
 		}
 		else
 		{
 			dprintf("WARNING! Invalid ammo param %s\n", String);
 		}
+	}
+
+	//	Fix up amounts in derived classes
+	for (VClass* C = VMemberBase::GClasses; C; C = C->LinkNext)
+	{
+		if (!C->IsChildOf(Ammo))
+		{
+			continue;
+		}
+		if (C == Ammo)
+		{
+			continue;
+		}
+		SetClassFieldInt(C, "Amount", GetClassFieldInt(Ammo, "Amount") * 5);
+		SetClassFieldInt(C, "MaxAmount", GetClassFieldInt(Ammo, "MaxAmount"));
 	}
 	unguard;
 }
@@ -816,7 +864,8 @@ static void ReadWeapon(int num)
 	{
 		if (!VStr::ICmp(String, "Ammo type"))
 		{
-			SetClassFieldInt(Weapon, "Ammo", value);
+			SetClassFieldClass(Weapon, "AmmoType",
+				value < AmmoClasses.Num() ? AmmoClasses[value] : NULL);
 		}
 		else if (!VStr::ICmp(String, "Deselect frame"))
 		{
@@ -1628,6 +1677,20 @@ void ProcessDehackedFiles()
 			sc->Error(va("No such class %s", *sc->String));
 		}
 		WeaponClasses.Append(C);
+	}
+
+	//	Create list of ammo classes.
+	sc->Expect("ammo");
+	sc->Expect("{");
+	while (!sc->Check("}"))
+	{
+		sc->ExpectString();
+		VClass* C = VClass::FindClass(*sc->String);
+		if (!C)
+		{
+			sc->Error(va("No such class %s", *sc->String));
+		}
+		AmmoClasses.Append(C);
 	}
 
 	//	Set original thing heights.

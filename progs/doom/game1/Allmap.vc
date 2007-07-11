@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Allmap : Actor
+class Allmap : Pickup
 	__mobjinfo__(2026)
 	__scriptid__(137);
 
@@ -33,7 +33,7 @@ class Allmap : Actor
 //
 //==========================================================================
 
-bool HandlePickup(Actor Toucher)
+bool HandlePickup(EntityEx Toucher)
 {
 	if (!Player(Toucher.Player).GiveItem(IT_ALL_MAP))
 		return false;

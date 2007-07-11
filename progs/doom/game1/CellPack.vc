@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class CellPack : AmmoPickup
+class CellPack : Cell
 	__mobjinfo__(17)
 	__scriptid__(142);
 
@@ -34,11 +34,7 @@ __states__
 
 defaultproperties
 {
-	bSpecial = true;
-	bNoPassMobj = true;
-	bFloorClip = true;
 	IdleState = S_CELP;
-	AmmoType = DoomDefs::am_cell;
-	AmmoCount = 100;
+	Amount = 100;
 	PickupMessage = "$gotcellbox";
 }

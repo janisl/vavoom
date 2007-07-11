@@ -558,6 +558,15 @@ weapons
 	WeaponSuperShotgun
 }
 
+//	Ammo class names
+ammo
+{
+	Clip
+	Shell
+	Cell
+	RocketAmmo
+}
+
 //	Original thing heights
 heights
 {

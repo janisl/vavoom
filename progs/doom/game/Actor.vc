@@ -100,7 +100,7 @@ void HideSpecial()
 //
 //==========================================================================
 
-bool HandlePickup(Actor Toucher)
+bool HandlePickup(EntityEx Toucher)
 {
 	return false;
 }
@@ -115,6 +115,7 @@ bool HandleDehackedPickup(EntityEx Toucher)
 {
 	int i;
 	name sound = 'misc/i_pkup';
+	class<Pickup>	ItemType = none;
 
 	// Identify by sprite.
 	// armor
@@ -274,66 +275,45 @@ bool HandleDehackedPickup(EntityEx Toucher)
 		// ammo
 	else if (SpriteName == 'clip')
 	{
-		if (bDropped)
-		{
-			if (!Player(Toucher.Player).GiveAmmo(DoomDefs::am_clip,
-				MainGameInfo(Level.Game).clipammo[DoomDefs::am_clip] / 2))
-				return false;
-		}
-		else
-		{
-			if (!Player(Toucher.Player).GiveAmmo(DoomDefs::am_clip,
-				MainGameInfo(Level.Game).clipammo[DoomDefs::am_clip]))
-				return false;
-		}
-		Toucher.Player.cprint("$gotclip");
+		ItemType = Clip;
 	}
 	else if (SpriteName == 'ammo')
 	{
-		if (!Player(Toucher.Player).GiveAmmo(DoomDefs::am_clip,
-			5 * MainGameInfo(Level.Game).clipammo[DoomDefs::am_clip]))
-			return false;
-		Toucher.Player.cprint("$gotclipbox");
+		ItemType = ClipBox;
 	}
 	else if (SpriteName == 'rock')
 	{
-		if (!Player(Toucher.Player).GiveAmmo(DoomDefs::am_misl,
-			MainGameInfo(Level.Game).clipammo[DoomDefs::am_misl]))
+		if (!Player(Toucher.Player).GiveAmmo(RocketAmmo, RocketAmmo.default.Amount))
 			return false;
 		Toucher.Player.cprint("$gotrocket");
 	}
 	else if (SpriteName == 'brok')
 	{
-		if (!Player(Toucher.Player).GiveAmmo(DoomDefs::am_misl,
-			5 * MainGameInfo(Level.Game).clipammo[DoomDefs::am_misl]))
+		if (!Player(Toucher.Player).GiveAmmo(RocketAmmo, 5 * RocketAmmo.default.Amount))
 			return false;
 		Toucher.Player.cprint("$gotrockbox");
 	}
 	else if (SpriteName == 'cell')
 	{
-		if (!Player(Toucher.Player).GiveAmmo(DoomDefs::am_cell,
-			MainGameInfo(Level.Game).clipammo[DoomDefs::am_cell]))
+		if (!Player(Toucher.Player).GiveAmmo(Cell, Cell.default.Amount))
 			return false;
 		Toucher.Player.cprint("$gotcell");
 	}
 	else if (SpriteName == 'celp')
 	{
-		if (!Player(Toucher.Player).GiveAmmo(DoomDefs::am_cell,
-			5 * MainGameInfo(Level.Game).clipammo[DoomDefs::am_cell]))
+		if (!Player(Toucher.Player).GiveAmmo(Cell, 5 * Cell.default.Amount))
 			return false;
 		Toucher.Player.cprint("$gotcellbox");
 	}
 	else if (SpriteName == 'shel')
 	{
-		if (!Player(Toucher.Player).GiveAmmo(DoomDefs::am_shell,
-			MainGameInfo(Level.Game).clipammo[DoomDefs::am_shell]))
+		if (!Player(Toucher.Player).GiveAmmo(Shell, Shell.default.Amount))
 			return false;
 		Toucher.Player.cprint("$gotshells");
 	}
 	else if (SpriteName == 'sbox')
 	{
-		if (!Player(Toucher.Player).GiveAmmo(DoomDefs::am_shell,
-			5 * MainGameInfo(Level.Game).clipammo[DoomDefs::am_shell]))
+		if (!Player(Toucher.Player).GiveAmmo(Shell, 5 * Shell.default.Amount))
 			return false;
 		Toucher.Player.cprint("$gotshellbox");
 	}
@@ -343,11 +323,15 @@ bool HandleDehackedPickup(EntityEx Toucher)
 		{
 			Player(Toucher.Player).Backpack = true;
 			for (i = 0; i < DoomDefs::NUMAMMO; i++)
-				Player(Toucher.Player).MaxAmmo[i] *= 2;
+			{
+				Player(Toucher.Player).GiveAmmo(MainGameInfo(Level.Game).AmmoClasses[i], 0);
+				Toucher.FindInventory(MainGameInfo(Level.Game).AmmoClasses[i]).MaxAmount *= 2;
+			}
 		}
 		for (i = 0; i < DoomDefs::NUMAMMO; i++)
 		{
-			Player(Toucher.Player).GiveAmmo(i, MainGameInfo(Level.Game).clipammo[i]);
+			Player(Toucher.Player).GiveAmmo(MainGameInfo(Level.Game).AmmoClasses[i],
+				MainGameInfo(Level.Game).AmmoClasses[i].default.Amount);
 		}
 		Toucher.Player.cprint("$gotbackpack");
 	}
@@ -401,6 +385,13 @@ bool HandleDehackedPickup(EntityEx Toucher)
 		Toucher.Player.cprint("$gotshotgun2");
 		sound = 'misc/w_pkup';
 	}
+	if (ItemType)
+	{
+		Pickup Item = Spawn(ItemType);
+		bool Ret = Item.HandlePickup(Toucher);
+		Item.Destroy();
+		return Ret;
+	}
 	Toucher.PlaySound(sound, CHAN_ITEM);
 	return true;
 }
@@ -432,7 +423,7 @@ void TouchSpecial(EntityEx Toucher)
 	}
 	else
 	{
-		if (!HandlePickup(Actor(Toucher)))
+		if (!HandlePickup(Toucher))
 		{
 			return;
 		}

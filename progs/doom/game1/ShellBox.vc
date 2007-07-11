@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ShellBox : AmmoPickup
+class ShellBox : Shell
 	__mobjinfo__(2049)
 	__scriptid__(143);
 
@@ -34,11 +34,7 @@ __states__
 
 defaultproperties
 {
-	bSpecial = true;
-	bNoPassMobj = true;
-	bFloorClip = true;
 	IdleState = S_SBOX;
-	AmmoType = DoomDefs::am_shell;
-	AmmoCount = 20;
+	Amount = 20;
 	PickupMessage = "$gotshellbox";
 }

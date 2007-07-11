@@ -26,6 +26,90 @@
 class Inventory : ScriptedEntity
 	abstract;
 
+int		Amount;
+int		MaxAmount;
+
+replication
+{
+	reliable if (Role == ROLE_Authority && bNetOwner)
+		Amount, MaxAmount;
+}
+
+//==========================================================================
+//
+//	Destroyed
+//
+//==========================================================================
+
+void Destroyed()
+{
+	if (Role == ROLE_Authority)
+	{
+		RemoveFromOwner();
+	}
+	::Destroyed();
+}
+
+//==========================================================================
+//
+//	BecomeItem
+//
+//==========================================================================
+
+final void BecomeItem()
+{
+	UnlinkFromWorld();
+	bHidden = true;
+	bNoBlockmap = true;
+	LinkToWorld();
+}
+
+//==========================================================================
+//
+//	AddToOwner
+//
+//==========================================================================
+
+final void AddToOwner(EntityEx NewOwner)
+{
+	if (Owner)
+	{
+		RemoveFromOwner();
+	}
+
+	EntityEx Prev = NewOwner;
+	while (Prev.Inventory)
+	{
+		Prev = Prev.Inventory;
+	}
+	Prev.Inventory = self;
+	Inventory = none;
+	Owner = NewOwner;
+}
+
+//==========================================================================
+//
+//	RemoveFromOwner
+//
+//==========================================================================
+
+final void RemoveFromOwner()
+{
+	if (!Owner)
+	{
+		return;
+	}
+
+	EntityEx Prev = EntityEx(Owner);
+	while (Prev && Prev.Inventory != self)
+	{
+		Prev = Prev.Inventory;
+	}
+	Prev.Inventory = Inventory;
+	Owner = none;
+	Inventory = none;
+}
+
 defaultproperties
 {
 }

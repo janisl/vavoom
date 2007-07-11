@@ -33,7 +33,7 @@ class WeaponMissile : Weapon;
 
 final void A_FireMissile()
 {
-	Player(Owner.Player).Ammo[Weapon(self).Ammo]--;
+	DecAmmo(1);
 	Actor(Owner).SpawnPlayerMissile(Rocket);
 }
 
@@ -53,7 +53,7 @@ __states__
 
 defaultproperties
 {
-	Ammo = DoomDefs::am_misl;
+	AmmoType = RocketAmmo;
 	UpState = S_MISSILEUP;
 	DownState = S_MISSILEDOWN;
 	ReadyState = S_MISSILE;

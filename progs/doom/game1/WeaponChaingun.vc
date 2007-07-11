@@ -37,11 +37,11 @@ final void A_FireCGun()
 
 	Owner.PlaySound('weapons/chngun', CHAN_WEAPON);
 
-	if (!Player(Owner.Player).Ammo[Weapon(self).Ammo])
+	if (AmmoType && !EntityEx(Owner).FindInventory(AmmoType).Amount)
 		return;
 
 	Owner.SetState(DoomPlayer::S_PLAY_ATK2);
-	Player(Owner.Player).Ammo[Weapon(self).Ammo]--;
+	DecAmmo(1);
 
 	if (Owner.Player.ViewStates[ps_weapon].State == Weapon(self).AttackState)
 		Owner.Player.SetViewState(ps_flash, Weapon(self).FlashState);
@@ -67,7 +67,7 @@ __states__
 
 defaultproperties
 {
-	Ammo = DoomDefs::am_clip;
+	AmmoType = Clip;
 	UpState = S_CHAINUP;
 	DownState = S_CHAINDOWN;
 	ReadyState = S_CHAIN;

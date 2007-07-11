@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class RocketBox : AmmoPickup
+class RocketBox : RocketAmmo
 	__mobjinfo__(2046)
 	__scriptid__(141);
 
@@ -34,11 +34,7 @@ __states__
 
 defaultproperties
 {
-	bSpecial = true;
-	bNoPassMobj = true;
-	bFloorClip = true;
 	IdleState = S_BROK;
-	AmmoType = DoomDefs::am_misl;
-	AmmoCount = 5;
+	Amount = 5;
 	PickupMessage = "$gotrockbox";
 }

@@ -90,7 +90,6 @@ __states__
 
 defaultproperties
 {
-	Ammo = DoomDefs::am_noammo;
 	UpState = S_SAWUP;
 	DownState = S_SAWDOWN;
 	ReadyState = S_SAW;

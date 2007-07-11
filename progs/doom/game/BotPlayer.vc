@@ -277,7 +277,7 @@ float AngleTo(TVec dest)
 bool CheckItem(Actor item)
 {
 	int weapon;
-	int ammo;
+	class<AmmoPickup> ammo;
 
 	bNewItemIsWeapon = false;
 	bNewItemIsPowerup = false;
@@ -297,8 +297,8 @@ bool CheckItem(Actor item)
 			return true;
 
 		// If we have no more room for the ammo it gives
-		if (player.Ammo[MainGameInfo(player.Level.Game).WeaponClasses[weapon].default.Ammo] ==
-				MainGameInfo(player.Level.Game).maxammo[MainGameInfo(player.Level.Game).WeaponClasses[weapon].default.Ammo])
+		if (botmo.FindInventory(MainGameInfo(player.Level.Game).WeaponClasses[weapon].default.AmmoType).Amount ==
+			botmo.FindInventory(MainGameInfo(player.Level.Game).WeaponClasses[weapon].default.AmmoType).MaxAmount)
 			return false;
 
 		// Can't pick it up because we have it and it's not a dropped weapon
@@ -307,10 +307,10 @@ bool CheckItem(Actor item)
 	}
 
 	ammo = AmmoFromItem(item);
-	if (ammo != -1)
+	if (ammo && botmo.FindInventory(ammo))
 	{
 		// If we have no more room for the ammo it gives
-		if (player.Ammo[ammo] >= MainGameInfo(player.Level.Game).maxammo[ammo])
+		if (botmo.FindInventory(ammo).Amount >= botmo.FindInventory(ammo).MaxAmount)
 			return false;
 	}
 
@@ -556,13 +556,13 @@ int WeapFromItem(Actor item)
 //
 //==========================================================================
 
-int AmmoFromItem(Actor item)
+class<AmmoPickup> AmmoFromItem(Actor item)
 {
 	if (AmmoPickup(item))
 	{
-		return AmmoPickup(item).AmmoType;
+		return MainGameInfo(item.Level.Game).AmmoClasses[AmmoPickup(item).AmmoType];
 	}
-	return -1;
+	return none;
 }
 
 //==========================================================================
