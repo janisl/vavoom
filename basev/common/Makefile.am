@@ -8,10 +8,11 @@ EXTRA_DIST = \
 	x11r6rgb.txt \
 	startup.vs \
 	terrain.txt \
+	sprites/tnt1a0.lmp \
 	textures/-noflat-.png
 
 VLUMPY = ../../utils/bin/vlumpy$(EXEEXT)
 
-basepak.pk3: basepak.ls $(VLUMPY) \
+basepak.pk3: basepak.ls $(EXTRA_DIST) $(VLUMPY) \
 		progs/engine.dat progs/linespec.dat
 	$(VLUMPY) $<
