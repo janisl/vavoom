@@ -115,10 +115,13 @@ final void TouchDehackedSpecial(EntityEx Toucher)
 		Level.CurrentItems++;
 	}
 	Toucher.PlaySound(Item.PickupSound, CHAN_ITEM);
-	if (bDropped || !Item.ShouldStay())
+	if (bDropped)
 	{
-		// only respawn items in deathmatch
-		if (!bDropped && Item.ShouldRespawn())
+		Destroy();
+	}
+	else if (!Item.ShouldStay())
+	{
+		if (Item.ShouldRespawn())
 		{
 			bHidden = true;
 			bSpecial = false;
@@ -130,7 +133,11 @@ final void TouchDehackedSpecial(EntityEx Toucher)
 		}
 	}
 	Player(Toucher.Player).BonusFlash += Pickup::BONUSADD;
-	Item.Destroy();
+	//	Destroy item if it wasn't added to the toucher's inventory.
+	if (!Item.Owner)
+	{
+		Item.Destroy();
+	}
 }
 
 //==========================================================================

@@ -73,25 +73,6 @@ bool TryPickup(EntityEx Toucher)
 
 //==========================================================================
 //
-//	HideSpecial
-//
-//==========================================================================
-
-final void HideSpecial()
-{
-	// only respawn items in deathmatch
-	if (ShouldRespawn() && !bDropped)
-	{
-		Hide();
-	}
-	else
-	{
-		Destroy();
-	}
-}
-
-//==========================================================================
-//
 //	TouchSpecial
 //
 //==========================================================================
@@ -121,10 +102,7 @@ final void TouchSpecial(EntityEx Toucher)
 			Args[4], NULL, 0, Toucher);
 		Special = 0;
 	}
-	if (bDropped || !ShouldStay())
-	{
-		HideSpecial();
-	}
+	GoAwayAndDie();
 	Player(Toucher.Player).BonusFlash += BONUSADD;
 	Toucher.PlaySound(PickupSound, CHAN_ITEM);
 }

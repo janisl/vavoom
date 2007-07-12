@@ -33,24 +33,6 @@ name			PickupSound;
 
 //==========================================================================
 //
-//	HideSpecial
-//
-//==========================================================================
-
-final void HideSpecial()
-{
-	if (ShouldRespawn() && !bDropped)
-	{
-		Hide();
-	}
-	else
-	{
-		Destroy();
-	}
-}
-
-//==========================================================================
-//
 //	TryPickup
 //
 //==========================================================================
@@ -98,10 +80,7 @@ final void TouchSpecial(EntityEx Toucher)
 	}
 	Toucher.Player.cprint(PickupMessage);
 	Toucher.PlaySound(PickupSound, CHAN_ITEM);
-	if (bDropped || !ShouldStay())
-	{
-		HideSpecial();
-	}
+	GoAwayAndDie();
 	Player(Toucher.Player).BonusFlash += BONUSADD;
 }
 
@@ -150,10 +129,13 @@ final void TouchDehackedSpecial(EntityEx Toucher)
 		Level.CurrentItems++;
 	}
 	Toucher.PlaySound(Item.PickupSound, CHAN_ITEM);
-	if (bDropped || !Item.ShouldStay())
+	if (bDropped)
 	{
-		// only respawn items in deathmatch
-		if (!bDropped && Item.ShouldRespawn())
+		Destroy();
+	}
+	else if (!Item.ShouldStay())
+	{
+		if (Item.ShouldRespawn())
 		{
 			bHidden = true;
 			bSpecial = false;
@@ -165,7 +147,11 @@ final void TouchDehackedSpecial(EntityEx Toucher)
 		}
 	}
 	Player(Toucher.Player).BonusFlash += BONUSADD;
-	Item.Destroy();
+	//	Destroy item if it wasn't added to the toucher's inventory.
+	if (!Item.Owner)
+	{
+		Item.Destroy();
+	}
 }
 
 defaultproperties

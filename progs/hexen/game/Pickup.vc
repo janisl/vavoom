@@ -75,10 +75,7 @@ final void TouchSpecial(EntityEx Toucher)
 			Args[4], NULL, 0, Toucher);
 		Special = 0;
 	}
-	if (bDropped || !ShouldStay())
-	{
-		HidePickup();
-	}
+	GoAwayAndDie();
 	Player(Toucher.Player).BonusFlash += BONUSADD;
 	PlayPickupSound(Toucher);
 }
@@ -103,31 +100,6 @@ bool TryPickup(EntityEx Toucher)
 string GetPickupMessage()
 {
 	return PickupMessage;
-}
-
-//==========================================================================
-//
-//	HidePickup
-//
-//==========================================================================
-
-final void HidePickup()
-{
-	if (bPickupFlash)
-	{
-		//  Initiate the artifact pickup animation.
-		Spawn(PickupFlash, Origin);
-	}
-	if (ShouldRespawn() && !bDropped)
-	{
-		Hide();
-	}
-	else
-	{
-		bSpecial = false;
-		// Don't respawn
-		Destroy();
-	}
 }
 
 //==========================================================================

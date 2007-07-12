@@ -144,6 +144,60 @@ bool ShouldRespawn()
 
 //==========================================================================
 //
+//	GoAway
+//
+//==========================================================================
+
+final bool GoAway()
+{
+	//	Never respawn dropped items.
+	if (bDropped)
+	{
+		if (bPickupFlash)
+		{
+			//  Initiate the artifact pickup animation.
+			Spawn(PickupFlash, Origin);
+		}
+		return false;
+	}
+
+	if (!ShouldStay())
+	{
+		if (bPickupFlash)
+		{
+			//  Initiate the artifact pickup animation.
+			Spawn(PickupFlash, Origin);
+		}
+		if (ShouldRespawn())
+		{
+			Hide();
+		}
+		else
+		{
+			// Don't respawn
+			return false;
+		}
+	}
+	return true;
+}
+
+//==========================================================================
+//
+//	GoAwayAndDie
+//
+//==========================================================================
+
+final void GoAwayAndDie()
+{
+	if (!GoAway())
+	{
+		bSpecial = false;
+		SetState(S_HOLDANDDESTROY);
+	}
+}
+
+//==========================================================================
+//
 //	Hide
 //
 //==========================================================================
@@ -244,6 +298,9 @@ __states__
 
 	//	Invisible state for held items
 	S_HELD('TNT1', 0, -1.0, none) = none
+
+	//	Will destroy item as soon as possible
+	S_HOLDANDDESTROY('TNT1', 0, 0.01, none) = none
 }
 
 defaultproperties
