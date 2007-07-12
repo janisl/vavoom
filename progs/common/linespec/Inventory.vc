@@ -28,6 +28,7 @@ class Inventory : ScriptedEntity
 
 int		Amount;
 int		MaxAmount;
+float	RespawnTime;
 
 //	Originally these didn't respawn in deathmatch
 bool	bBigPowerup;
