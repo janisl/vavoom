@@ -73,6 +73,7 @@ void InitNewGame(int skill)
 	respawnmonsters = skill == sk_nightmare || GetCvar('RespawnMonsters');
 	nomonsters = GetCvar('NoMonsters');
 	fastparm = skill == sk_nightmare || GetCvar('Fast');
+	bRespawnItems = !!GetCvar('deathmatch');
 }
 
 //==========================================================================

@@ -524,8 +524,7 @@ bool GiveAmmo(class<AmmoPickup> ammo, int num)
 	if (!AmmoItem)
 	{
 		AmmoItem = Level.Spawn(ammo);
-		AmmoItem.BecomeItem();
-		AmmoItem.AddToOwner(EntityEx(MO));
+		AmmoItem.AttachToOwner(EntityEx(MO));
 		AmmoItem.Amount = 0;
 	}
 	if (!num)
@@ -2042,10 +2041,9 @@ void SetWeapon(int NewWeapon)
 	{
 		ViewEnt.Destroy();
 	}
-	ViewEnt = Weapon(DoomLevelInfo(Level).Spawn(
-		MainGameInfo(Level.Game).WeaponClasses[NewWeapon], vector(0.0, 0.0, 0.0)));
-	Weapon(ViewEnt).BecomeItem();
-	Weapon(ViewEnt).AddToOwner(EntityEx(MO));
+	ViewEnt = DoomLevelInfo(Level).Spawn(
+		MainGameInfo(Level.Game).WeaponClasses[NewWeapon], vector(0.0, 0.0, 0.0));
+	Weapon(ViewEnt).AttachToOwner(EntityEx(MO));
 	MO.ModelVersion = Weapon(ViewEnt).PlayerModelVersion;
 }
 

@@ -64,6 +64,8 @@ bool			bNoDamageThrustInvulnerable;
 bool			bNightmareFastChase;
 
 bool			respawnmonsters;
+bool			bRespawnItems;
+bool			bRespawnBigItems;
 
 float			windTab[3];
 float			pushTab[5];

@@ -41,7 +41,7 @@ defaultproperties
 	bSpecial = true;
 	bNoPassMobj = true;
 	bCountItem = true;
-	bNoRespawn = true;
+	bBigPowerup = true;
 	bFloorClip = true;
 	IdleState = S_PINS;
 	PowerType = pw_invisibility;

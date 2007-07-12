@@ -274,6 +274,25 @@ replication
 
 //==========================================================================
 //
+//  Destroyed
+//
+//==========================================================================
+
+void Destroyed()
+{
+	if (Role == ROLE_Authority)
+	{
+		//	Remove inventory.
+		while (Inventory)
+		{
+			Inventory.Destroy();
+		}
+	}
+	::Destroyed();
+}
+
+//==========================================================================
+//
 //  SetOrigin2
 //
 //==========================================================================
@@ -5108,6 +5127,54 @@ final void ClientTick(float DeltaTime)
 			p->vel.z = 16.0 * (Random() - 0.5);
 		}
 	}
+}
+
+//==========================================================================
+//
+//	AddInventory
+//
+//==========================================================================
+
+void AddInventory(Inventory Item)
+{
+	if (Item.Owner)
+	{
+		if (Item.Owner == self)
+		{
+			//	Already in the inventory.
+			return;
+		}
+		//	Remove from current owner's inventory.
+		EntityEx(Item.Owner).RemoveInventory(Item);
+	}
+
+	//	Add it at the top of the inventory.
+	Item.Inventory = Inventory;
+	Inventory = Item;
+
+	//	Set itsm's owner
+	Item.Owner = self;
+}
+
+//==========================================================================
+//
+//	RemoveInventory
+//
+//==========================================================================
+
+void RemoveInventory(Inventory Item)
+{
+	//	Find previous item or owner itself, if it's the first item.
+	EntityEx Prev = self;
+	while (Prev && Prev.Inventory != Item)
+	{
+		Prev = Prev.Inventory;
+	}
+
+	//	Unlink and remove owner.
+	Prev.Inventory = Item.Inventory;
+	Item.DetachedFromOwner();
+	Item.Owner = none;
 }
 
 //==========================================================================

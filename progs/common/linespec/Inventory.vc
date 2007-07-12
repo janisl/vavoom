@@ -29,6 +29,9 @@ class Inventory : ScriptedEntity
 int		Amount;
 int		MaxAmount;
 
+//	Originally these didn't respawn in deathmatch
+bool	bBigPowerup;
+
 replication
 {
 	reliable if (Role == ROLE_Authority && bNetOwner)
@@ -45,7 +48,11 @@ void Destroyed()
 {
 	if (Role == ROLE_Authority)
 	{
-		RemoveFromOwner();
+		if (Owner)
+		{
+			EntityEx(Owner).RemoveInventory(self);
+		}
+		Inventory = none;
 	}
 	::Destroyed();
 }
@@ -62,52 +69,46 @@ final void BecomeItem()
 	bHidden = true;
 	bNoBlockmap = true;
 	LinkToWorld();
+	SetState(S_HELD);
 }
 
 //==========================================================================
 //
-//	AddToOwner
+//	BecomePickup
 //
 //==========================================================================
 
-final void AddToOwner(EntityEx NewOwner)
+final void BecomePickup()
 {
-	if (Owner)
-	{
-		RemoveFromOwner();
-	}
-
-	EntityEx Prev = NewOwner;
-	while (Prev.Inventory)
-	{
-		Prev = Prev.Inventory;
-	}
-	Prev.Inventory = self;
-	Inventory = none;
-	Owner = NewOwner;
+	UnlinkFromWorld();
+	bHidden = false;
+	bNoBlockmap = false;
+	LinkToWorld();
+	SetState(IdleState);
 }
 
 //==========================================================================
 //
-//	RemoveFromOwner
+//	AttachToOwner
 //
 //==========================================================================
 
-final void RemoveFromOwner()
+final void AttachToOwner(EntityEx NewOwner)
 {
-	if (!Owner)
-	{
-		return;
-	}
+	BecomeItem();
+	NewOwner.AddInventory(self);
+}
 
-	EntityEx Prev = EntityEx(Owner);
-	while (Prev && Prev.Inventory != self)
-	{
-		Prev = Prev.Inventory;
-	}
-	Prev.Inventory = Inventory;
-	Owner = none;
-	Inventory = none;
+//==========================================================================
+//
+//	DetachedFromOwner
+//
+//	Event called when item is being removed from Owner's inventory.
+//
+//==========================================================================
+
+void DetachedFromOwner()
+{
 }
 
 //==========================================================================
@@ -121,6 +122,27 @@ final void RemoveFromOwner()
 bool ShouldStay()
 {
 	return false;
+}
+
+//==========================================================================
+//
+//	ShouldRespawn
+//
+//==========================================================================
+
+bool ShouldRespawn()
+{
+	if (bBigPowerup && !LineSpecialGameInfo(Level.Game).bRespawnBigItems)
+	{
+		return false;
+	}
+	return LineSpecialGameInfo(Level.Game).bRespawnItems;
+}
+
+__states__
+{
+	//	Invisible state for held items
+	S_HELD('TNT1', 0, -1.0, none) = none
 }
 
 defaultproperties

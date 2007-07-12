@@ -28,9 +28,6 @@ class Pickup : Inventory
 
 const float BONUSADD		= 0.2;
 
-bool bDehackedSpecial;	// Old style special handling
-bool bNoRespawn;
-
 string			PickupMessage;
 name			PickupSound;
 
@@ -43,7 +40,7 @@ name			PickupSound;
 final void HideSpecial()
 {
 	// only respawn items in deathmatch
-	if ((Level.Game.deathmatch == 2) && !bDropped && !bNoRespawn)
+	if (ShouldRespawn() && !bDropped)
 	{
 		SetState(S_DORMANT_PICKUP1);
 	}
@@ -157,7 +154,7 @@ final void TouchDehackedSpecial(EntityEx Toucher)
 	if (bDropped || !Item.ShouldStay())
 	{
 		// only respawn items in deathmatch
-		if ((Level.Game.deathmatch == 2) && !bDropped && !Item.bNoRespawn)
+		if (!bDropped && Item.ShouldRespawn())
 		{
 			SetState(S_DORMANT_PICKUP1);
 		}
