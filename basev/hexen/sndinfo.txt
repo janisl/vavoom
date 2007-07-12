@@ -152,6 +152,7 @@ $alias world/thunder			ThunderCrash
 $alias misc/chat				Chat
 $alias misc/chat2				Chat
 $alias misc/teleport			Teleport
+$alias misc/spawn				Respawn
 
 $random BishopActiveSounds		{ BishopActive BishopSight }
 $random PigActive				{ PigActive1 PigActive2 }
