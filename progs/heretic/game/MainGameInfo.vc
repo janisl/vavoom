@@ -528,6 +528,7 @@ defaultproperties
 	bUseHexenPolyobjTypes = true;
 	bBloodSplatter = true;
 	bNightmareFastChase = true;
+	bRavenStylePickupRespawn = true;
 	TeleFogHeight = Actor::TELEFOGHEIGHT;
 	TeleportFogClass = TeleportFog;
 	DefaultKickBack = 150.0;

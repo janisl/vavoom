@@ -120,6 +120,8 @@ final void TouchDehackedSpecial(EntityEx Toucher)
 		// only respawn items in deathmatch
 		if (!bDropped && Item.ShouldRespawn())
 		{
+			bHidden = true;
+			bSpecial = false;
 			SetState(S_DORMANT_PICKUP1);
 		}
 		else
@@ -577,11 +579,7 @@ __states__
 {
 	S_GIBS('POL5', 0, -1.0, none) = none
 
-	S_DORMANT_PICKUP1('', 0, 30.0, S_DORMANT_PICKUP2)
-	{
-		bHidden = true;
-		bSpecial = false;
-	}
+	S_DORMANT_PICKUP1('', 0, 30.0, S_DORMANT_PICKUP2) = none
 	S_DORMANT_PICKUP2('', 0, -1.0, none)
 	{
 		EntityEx	A;

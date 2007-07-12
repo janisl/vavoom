@@ -56,6 +56,6 @@ defaultproperties
 	bCountItem = true;
 	bFloatBob = true;
 	bCanRespawn = true;
-	bFancyPickup = true;
+	bPickupFlash = true;
 	PickupSound = 'misc/p_pkup';
 }

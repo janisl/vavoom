@@ -55,5 +55,5 @@ defaultproperties
 	bNoGravity = true;
 	PickupSound = 'PickupItem';
 	bFullVolPickupSound = true;
-	bFancyPickup = false;
+	bPickupFlash = false;
 }

@@ -62,6 +62,8 @@ bool			bBloodSplatter;
 bool			bNoDamageThrustInvulnerable;
 //	Monsters move faster in nightmare mode.
 bool			bNightmareFastChase;
+//	Use pickup respawn effects like in Raven's games.
+bool			bRavenStylePickupRespawn;
 
 bool			respawnmonsters;
 bool			bRespawnItems;

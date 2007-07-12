@@ -42,6 +42,6 @@ bool TryPickup(EntityEx Toucher)
 defaultproperties
 {
 	bFloatBob = true;
-	bFancyPickup = true;
+	bPickupFlash = true;
 	PickupSound = 'PickupArtifact';
 }

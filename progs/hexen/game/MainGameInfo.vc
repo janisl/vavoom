@@ -366,6 +366,7 @@ defaultproperties
 	bBloodSplatter = true;
 	bNoDamageThrustInvulnerable = true;
 	bNightmareFastChase = true;
+	bRavenStylePickupRespawn = true;
 	TeleFogHeight = Actor::TELEFOGHEIGHT;
 	TeleportFogClass = TeleportFog;
 	DefaultKickBack = 150.0;

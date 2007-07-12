@@ -30,7 +30,6 @@ string			PickupMessage;
 name			PickupSound;
 
 bool			bFullVolPickupSound;
-bool			bFancyPickup;
 
 const float BONUSADD		= 0.2;
 
@@ -114,36 +113,18 @@ string GetPickupMessage()
 
 final void HidePickup()
 {
+	if (bPickupFlash)
+	{
+		//  Initiate the artifact pickup animation.
+		Spawn(PickupFlash, Origin);
+	}
 	if (ShouldRespawn() && !bDropped)
 	{
-		if (bFancyPickup)
-		{
-			//  Removes the bSpecial flag and initiates the artifact pickup animation.
-			bSpecial = false;
-			Spawn(PickupFlash, Origin);
-			bHidden = true;
-			SetState(S_HIDESPECIAL1);
-			StateTime = 40.0 + 30.0 / 35.0;
-			if (RespawnTime)
-			{
-				StateTime = RespawnTime;
-			}
-		}
-		else
-		{
-			bSpecial = false;
-			bHidden = true;
-			SetState(S_HIDESPECIAL1);
-		}
+		Hide();
 	}
 	else
 	{
-		if (bFancyPickup)
-		{
-			//  Initiate the artifact pickup animation.
-			bSpecial = false;
-			Spawn(PickupFlash, Origin);
-		}
+		bSpecial = false;
 		// Don't respawn
 		Destroy();
 	}
@@ -162,22 +143,6 @@ void PlayPickupSound(EntityEx Toucher)
 		Toucher.PlaySound(PickupSound, CHAN_ITEM, 1.0,
 			bFullVolPickupSound ? ATTN_NONE : ATTN_NORMAL);
 	}
-}
-
-__states__
-{
-	//	Hide for 40 secs
-	S_HIDESPECIAL1('ACLO', 4, 1400.0 / 35.0, S_HIDESPECIAL2) = none
-	S_HIDESPECIAL2('ACLO', 0, 4.0 / 35.0, S_HIDESPECIAL3) = A_RestoreSpecialThing1
-	S_HIDESPECIAL3('ACLO', 1, 4.0 / 35.0, S_HIDESPECIAL4) = none
-	S_HIDESPECIAL4('ACLO', 0, 4.0 / 35.0, S_HIDESPECIAL5) = none
-	S_HIDESPECIAL5('ACLO', 1, 4.0 / 35.0, S_HIDESPECIAL6) = none
-	S_HIDESPECIAL6('ACLO', 2, 4.0 / 35.0, S_HIDESPECIAL7) = none
-	S_HIDESPECIAL7('ACLO', 1, 4.0 / 35.0, S_HIDESPECIAL8) = none
-	S_HIDESPECIAL8('ACLO', 2, 4.0 / 35.0, S_HIDESPECIAL9) = none
-	S_HIDESPECIAL9('ACLO', 3, 4.0 / 35.0, S_HIDESPECIAL10) = none
-	S_HIDESPECIAL10('ACLO', 2, 4.0 / 35.0, S_HIDESPECIAL11) = none
-	S_HIDESPECIAL11('ACLO', 3, 4.0 / 35.0, none) = A_RestoreSpecialThing2
 }
 
 defaultproperties
