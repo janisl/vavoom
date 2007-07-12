@@ -140,6 +140,46 @@ bool ShouldRespawn()
 	return LineSpecialGameInfo(Level.Game).bRespawnItems;
 }
 
+//==========================================================================
+//
+//  DoRespawn
+//
+//==========================================================================
+
+bool DoRespawn()
+{
+	return true;
+}
+
+//==========================================================================
+//
+//  A_RestoreSpecialThing1
+//
+//  Make a special thing visible again.
+//
+//==========================================================================
+
+final void A_RestoreSpecialThing1()
+{
+	bHidden = false;
+	if (DoRespawn())
+	{
+		PlaySound('misc/spawn', CHAN_VOICE);
+	}
+}
+
+//==========================================================================
+//
+//  A_RestoreSpecialThing2
+//
+//==========================================================================
+
+final void A_RestoreSpecialThing2()
+{
+	bSpecial = true;
+	SetState(IdleState);
+}
+
 __states__
 {
 	//	Invisible state for held items

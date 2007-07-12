@@ -95,12 +95,12 @@ bool TryPickup(EntityEx Toucher)
 
 void HidePickup()
 {
-	if (bFancyPickup)
+	if (ShouldRespawn() && !bDropped)
 	{
-		//  Removes the bSpecial flag, and initiates the artifact pickup animation.
-		Spawn(PickupFlash, Origin);
-		if (ShouldRespawn() && !bDropped)
+		if (bFancyPickup)
 		{
+			//  Removes the bSpecial flag, and initiates the artifact pickup animation.
+			Spawn(PickupFlash, Origin);
 			bSpecial = false;
 			bHidden = true;
 			SetState(S_HIDESPECIAL1);
@@ -108,55 +108,27 @@ void HidePickup()
 		}
 		else
 		{
-			// Don't respawn
-			Destroy();
-		}
-	}
-	else
-	{
-		if (ShouldRespawn() && !bDropped)
-		{
 			bSpecial = false;
 			bHidden = true;
 			SetState(S_HIDESPECIAL1);
 		}
-		else
-		{
-			Destroy();
-		}
 	}
-}
-
-//==========================================================================
-//
-//  A_RestoreSpecialThing1
-//
-//  Make a special thing visible again.
-//
-//==========================================================================
-
-void A_RestoreSpecialThing1()
-{
-	bHidden = false;
-	PlaySound('misc/spawn', CHAN_VOICE);
-}
-
-//==========================================================================
-//
-//  A_RestoreSpecialThing2
-//
-//==========================================================================
-
-final void A_RestoreSpecialThing2()
-{
-	bSpecial = true;
-	SetState(IdleState);
+	else
+	{
+		if (bFancyPickup)
+		{
+			//  Initiate the artifact pickup animation.
+			Spawn(PickupFlash, Origin);
+		}
+		// Don't respawn
+		Destroy();
+	}
 }
 
 __states__
 {
 	S_HIDESPECIAL1('ACLO', 4, 1400.0 / 35.0, S_HIDESPECIAL2) = none
-	S_HIDESPECIAL2('ACLO', 0, 4.0 / 35.0, S_HIDESPECIAL3) { A_RestoreSpecialThing1(); }
+	S_HIDESPECIAL2('ACLO', 0, 4.0 / 35.0, S_HIDESPECIAL3) = A_RestoreSpecialThing1
 	S_HIDESPECIAL3('ACLO', 1, 4.0 / 35.0, S_HIDESPECIAL4) = none
 	S_HIDESPECIAL4('ACLO', 0, 4.0 / 35.0, S_HIDESPECIAL5) = none
 	S_HIDESPECIAL5('ACLO', 1, 4.0 / 35.0, S_HIDESPECIAL6) = none

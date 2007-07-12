@@ -30,42 +30,31 @@ int				SpotCount;
 
 //==========================================================================
 //
-//  A_RestoreSpecialThing1
-//
-//  Chooses the next spot to place the mace.
-//
-//==========================================================================
-
-void A_RestoreSpecialThing1()
-{
-	DoRespawn();
-
-	::A_RestoreSpecialThing1();
-}
-
-//==========================================================================
-//
 //  DoRespawn
 //
 //  Chooses the next spot to place the mace.
 //
 //==========================================================================
 
-void DoRespawn()
+bool DoRespawn()
 {
 	int				SpotIdx;
 	EntityEx		Spot;
 
 	// Do random mace placement
-	SpotIdx = P_Random() % SpotCount;
-	for (Spot = FirstSpot; SpotIdx > 0; SpotIdx--)
+	if (SpotCount)
 	{
-		Spot = Spot.Target;
-	}
+		SpotIdx = P_Random() % SpotCount;
+		for (Spot = FirstSpot; SpotIdx > 0; SpotIdx--)
+		{
+			Spot = Spot.Target;
+		}
 
-	UnlinkFromWorld();
-	Origin = Spot.Origin;
-	LinkToWorld();
+		UnlinkFromWorld();
+		Origin = Spot.Origin;
+		LinkToWorld();
+	}
+	return true;
 }
 
 __states__

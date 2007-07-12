@@ -114,13 +114,13 @@ string GetPickupMessage()
 
 final void HidePickup()
 {
-	if (bFancyPickup)
+	if (ShouldRespawn() && !bDropped)
 	{
-		//  Removes the bSpecial flag and initiates the artifact pickup animation.
-		bSpecial = false;
-		Spawn(PickupFlash, Origin);
-		if (ShouldRespawn() && !bDropped)
+		if (bFancyPickup)
 		{
+			//  Removes the bSpecial flag and initiates the artifact pickup animation.
+			bSpecial = false;
+			Spawn(PickupFlash, Origin);
 			bHidden = true;
 			SetState(S_HIDESPECIAL1);
 			StateTime = 40.0 + 30.0 / 35.0;
@@ -131,22 +131,21 @@ final void HidePickup()
 		}
 		else
 		{
-			// Don't respawn
-			Destroy();
-		}
-	}
-	else
-	{
-		if (ShouldRespawn() && !bDropped)
-		{
 			bSpecial = false;
 			bHidden = true;
 			SetState(S_HIDESPECIAL1);
 		}
-		else
+	}
+	else
+	{
+		if (bFancyPickup)
 		{
-			Destroy();
+			//  Initiate the artifact pickup animation.
+			bSpecial = false;
+			Spawn(PickupFlash, Origin);
 		}
+		// Don't respawn
+		Destroy();
 	}
 }
 
@@ -163,32 +162,6 @@ void PlayPickupSound(EntityEx Toucher)
 		Toucher.PlaySound(PickupSound, CHAN_ITEM, 1.0,
 			bFullVolPickupSound ? ATTN_NONE : ATTN_NORMAL);
 	}
-}
-
-//==========================================================================
-//
-//  A_RestoreSpecialThing1
-//
-//  Make a special thing visible again.
-//
-//==========================================================================
-
-final void A_RestoreSpecialThing1()
-{
-	bHidden = false;
-	PlaySound('Respawn', CHAN_VOICE);
-}
-
-//==========================================================================
-//
-//  A_RestoreSpecialThing2
-//
-//==========================================================================
-
-final void A_RestoreSpecialThing2()
-{
-	bSpecial = true;
-	SetState(IdleState);
 }
 
 __states__
