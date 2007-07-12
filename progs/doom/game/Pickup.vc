@@ -39,7 +39,6 @@ name			PickupSound;
 
 final void HideSpecial()
 {
-	// only respawn items in deathmatch
 	if (ShouldRespawn() && !bDropped)
 	{
 		SetState(S_DORMANT_PICKUP1);
@@ -169,8 +168,6 @@ final void TouchDehackedSpecial(EntityEx Toucher)
 
 __states__
 {
-	S_GIBS('POL5', 0, -1.0, none) = none
-
 	S_DORMANT_PICKUP1('', 0, 30.0, S_DORMANT_PICKUP2)
 	{
 		bHidden = true;
@@ -178,7 +175,7 @@ __states__
 	}
 	S_DORMANT_PICKUP2('', 0, -1.0, none)
 	{
-		Actor A;
+		EntityEx	A;
 
 		bHidden = false;
 		bSpecial = true;

@@ -584,7 +584,7 @@ __states__
 	}
 	S_DORMANT_PICKUP2('', 0, -1.0, none)
 	{
-		Actor A;
+		EntityEx	A;
 
 		bHidden = false;
 		bSpecial = true;

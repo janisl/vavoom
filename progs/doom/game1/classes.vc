@@ -26,7 +26,6 @@
 #include "BulletPuff.vc"
 #include "Blood.vc"
 #include "TeleportFog.vc"
-#include "ItemFog.vc"
 #include "TeleportDest.vc"
 #include "TeleportDest2.vc"
 #include "TeleportDest3.vc"

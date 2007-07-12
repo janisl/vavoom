@@ -60,7 +60,6 @@
 #include "StrifeSpark.vc"
 #include "Blood.vc"
 #include "TeleportFog.vc"
-#include "ItemFog.vc"
 #include "Meat.vc"
 #include "Junk.vc"
 #include "FireDroplet.vc"

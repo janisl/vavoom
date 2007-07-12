@@ -38,6 +38,7 @@ enum
 #include "ScriptedEntity.vc"
 #include "Inventory.vc"
 #include "PickupFlash.vc"
+#include "ItemFog.vc"
 #include "PlayerEx.vc"
 
 #include "LineSpecialLevelInfo.vc"
