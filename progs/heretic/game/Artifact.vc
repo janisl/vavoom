@@ -37,7 +37,12 @@ bool bCanRespawn;
 
 bool TryPickup(EntityEx Toucher)
 {
-	return Player(Toucher.Player).GiveArtifact(ArtifactType);
+	if (Player(Toucher.Player).GiveArtifact(ArtifactType))
+	{
+		GoAwayAndDie();
+		return true;
+	}
+	return false;
 }
 
 //==========================================================================

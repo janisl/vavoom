@@ -37,7 +37,12 @@ int ItemAmount;
 
 bool TryPickup(EntityEx Toucher)
 {
-	return Player(Toucher.Player).GiveInvItem(ItemType, ItemAmount);
+	if (Player(Toucher.Player).GiveInvItem(ItemType, ItemAmount))
+	{
+		GoAwayAndDie();
+		return true;
+	}
+	return false;
 }
 
 defaultproperties

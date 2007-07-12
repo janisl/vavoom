@@ -67,7 +67,6 @@ final void TouchSpecial(EntityEx Toucher)
 		Toucher.Player.ItemCount++;
 		Level.CurrentItems++;
 	}
-	GoAwayAndDie();
 	Player(Toucher.Player).BonusFlash += BONUSADD;
 	Toucher.PlaySound(PickupSound, CHAN_ITEM);
 }

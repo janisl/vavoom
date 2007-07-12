@@ -51,6 +51,7 @@ bool TryPickup(EntityEx Toucher)
 		Player(Toucher.Player).GiveAmmo(MainGameInfo(Level.Game).AmmoClasses[i],
 			MainGameInfo(Level.Game).AmmoClasses[i].default.Amount);
 	}
+	GoAwayAndDie();
 	return true;
 }
 

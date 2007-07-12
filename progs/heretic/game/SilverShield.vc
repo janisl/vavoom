@@ -35,7 +35,12 @@ class SilverShield : Pickup
 
 bool TryPickup(EntityEx Toucher)
 {
-	return Player(Toucher.Player).GiveArmor(1);
+	if (Player(Toucher.Player).GiveArmor(1))
+	{
+		GoAwayAndDie();
+		return true;
+	}
+	return false;
 }
 
 __states__

@@ -113,7 +113,12 @@ bool TryPickup(EntityEx Toucher)
 		return false;
 	}
 
-	return GiveWeapon(Toucher);
+	if (GiveWeapon(Toucher))
+	{
+		GoAwayAndDie();
+		return true;
+	}
+	return false;
 }
 
 //==========================================================================

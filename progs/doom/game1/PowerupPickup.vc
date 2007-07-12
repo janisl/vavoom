@@ -36,7 +36,12 @@ int PowerType;
 
 bool TryPickup(EntityEx Toucher)
 {
-	return Player(Toucher.Player).GivePower(PowerType);
+	if (Player(Toucher.Player).GivePower(PowerType))
+	{
+		GoAwayAndDie();
+		return true;
+	}
+	return false;
 }
 
 defaultproperties

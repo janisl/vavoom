@@ -33,8 +33,13 @@ class CloseDoor222 : Pickup;
 
 bool TryPickup(EntityEx Toucher)
 {
-	return Level.ExecuteActionSpecial(LNSPEC_DoorClose, 222, 16, 0, 0, 0,
-		NULL, 0, Toucher);
+	if (Level.ExecuteActionSpecial(LNSPEC_DoorClose, 222, 16, 0, 0, 0,
+		NULL, 0, Toucher))
+	{
+		GoAwayAndDie();
+		return true;
+	}
+	return false;
 }
 
 defaultproperties

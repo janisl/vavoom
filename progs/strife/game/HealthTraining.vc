@@ -35,6 +35,7 @@ bool TryPickup(EntityEx Toucher)
 {
 	Player(Toucher.Player).Stamina += 10;
 	Player(Toucher.Player).GiveBody(200);
+	GoAwayAndDie();
 	return true;
 }
 

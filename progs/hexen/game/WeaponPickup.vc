@@ -62,6 +62,7 @@ bool TryPickup(EntityEx Toucher)
 				return false;
 			}
 		}
+		GoAwayAndDie();
 		return true;
 	}
 
@@ -92,6 +93,10 @@ bool TryPickup(EntityEx Toucher)
 			// Only switch to more powerful weapons
 			Player(Toucher.Player).PendingWeapon = WeaponType;
 		}
+	}
+	if (gaveWeapon || gaveMana)
+	{
+		GoAwayAndDie();
 	}
 	return gaveWeapon || gaveMana;
 }

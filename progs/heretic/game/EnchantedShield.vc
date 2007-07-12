@@ -35,7 +35,12 @@ class EnchantedShield : Pickup
 
 bool TryPickup(EntityEx Toucher)
 {
-	return Player(Toucher.Player).GiveArmor(2);
+	if (Player(Toucher.Player).GiveArmor(2))
+	{
+		GoAwayAndDie();
+		return true;
+	}
+	return false;
 }
 
 __states__

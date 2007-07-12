@@ -36,7 +36,12 @@ int ArmorClass;
 
 bool TryPickup(EntityEx Toucher)
 {
-	return Player(Toucher.Player).GiveArmor(ArmorClass);
+	if (Player(Toucher.Player).GiveArmor(ArmorClass))
+	{
+		GoAwayAndDie();
+		return true;
+	}
+	return false;
 }
 
 defaultproperties

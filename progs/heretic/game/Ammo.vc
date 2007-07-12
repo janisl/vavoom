@@ -37,7 +37,12 @@ int AmmoCount;
 
 bool TryPickup(EntityEx Toucher)
 {
-	return Player(Toucher.Player).GiveAmmo(AmmoType, AmmoCount);
+	if (Player(Toucher.Player).GiveAmmo(AmmoType, AmmoCount))
+	{
+		GoAwayAndDie();
+		return true;
+	}
+	return false;
 }
 
 //==========================================================================

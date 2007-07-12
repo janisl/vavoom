@@ -36,7 +36,12 @@ int HealthAmount;
 
 bool TryPickup(EntityEx Toucher)
 {
-	return Player(Toucher.Player).GiveBody(HealthAmount, Player::MAXHEALTH);
+	if (Player(Toucher.Player).GiveBody(HealthAmount, Player::MAXHEALTH))
+	{
+		GoAwayAndDie();
+		return true;
+	}
+	return false;
 }
 
 defaultproperties

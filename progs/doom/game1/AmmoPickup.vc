@@ -36,16 +36,14 @@ int AmmoType;
 
 bool TryPickup(EntityEx Toucher)
 {
-	if (bDropped)
+	if (Player(Toucher.Player).GiveAmmo(
+		MainGameInfo(Level.Game).AmmoClasses[AmmoType],
+		bDropped ? Amount / 2 : Amount))
 	{
-		return Player(Toucher.Player).GiveAmmo(
-			MainGameInfo(Level.Game).AmmoClasses[AmmoType], Amount / 2);
+		GoAwayAndDie();
+		return true;
 	}
-	else
-	{
-		return Player(Toucher.Player).GiveAmmo(
-			MainGameInfo(Level.Game).AmmoClasses[AmmoType], Amount);
-	}
+	return false;
 }
 
 defaultproperties

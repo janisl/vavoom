@@ -36,6 +36,7 @@ string QuestMessage;
 
 bool TryPickup(EntityEx Toucher)
 {
+	GoAwayAndDie();
 	return true;
 }
 

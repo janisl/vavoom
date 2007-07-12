@@ -40,6 +40,7 @@ bool TryPickup(EntityEx Toucher)
 		Player(Toucher.Player).ArmorPoints = 200;
 	if (!Player(Toucher.Player).ArmorType)
 		Player(Toucher.Player).ArmorType = 1;
+	GoAwayAndDie();
 	return true;
 }
 

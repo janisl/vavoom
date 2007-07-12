@@ -64,6 +64,7 @@ bool TryPickup(EntityEx Toucher)
 			// Didn't need the mana, so don't pick it up
 			return false;
 		}
+		GoAwayAndDie();
 		return true;
 	}
 
@@ -99,6 +100,7 @@ bool TryPickup(EntityEx Toucher)
 		Player(Toucher.Player).WeaponOwned[HexenDefs::WP_FOURTH] = true;
 		Player(Toucher.Player).PendingWeapon = HexenDefs::WP_FOURTH;
 	}
+	GoAwayAndDie();
 	return true;
 }
 

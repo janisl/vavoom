@@ -80,7 +80,6 @@ final void TouchSpecial(EntityEx Toucher)
 	}
 	Toucher.Player.cprint(PickupMessage);
 	Toucher.PlaySound(PickupSound, CHAN_ITEM);
-	GoAwayAndDie();
 	Player(Toucher.Player).BonusFlash += BONUSADD;
 }
 

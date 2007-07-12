@@ -34,6 +34,7 @@ class GunTraining : Pickup;
 bool TryPickup(EntityEx Toucher)
 {
 	Player(Toucher.Player).Accuracy += 10;
+	GoAwayAndDie();
 	return true;
 }
 

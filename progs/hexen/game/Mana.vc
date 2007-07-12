@@ -37,7 +37,12 @@ int ManaCount;
 
 bool TryPickup(EntityEx Toucher)
 {
-	return Player(Toucher.Player).GiveMana(ManaType, ManaCount);
+	if (Player(Toucher.Player).GiveMana(ManaType, ManaCount))
+	{
+		GoAwayAndDie();
+		return true;
+	}
+	return false;
 }
 
 defaultproperties

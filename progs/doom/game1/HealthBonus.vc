@@ -39,6 +39,7 @@ bool TryPickup(EntityEx Toucher)
 	if (Toucher.Player.Health > 200)
 		Toucher.Player.Health = 200;
 	Toucher.Health = Toucher.Player.Health;
+	GoAwayAndDie();
 	return true;
 }
 

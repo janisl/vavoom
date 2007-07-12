@@ -90,6 +90,11 @@ bool TryPickup(EntityEx Toucher)
 		Player(Toucher.Player).PendingWeapon = WeaponType;
 	}
 
+	if (gaveweapon || gaveammo)
+	{
+		GoAwayAndDie();
+	}
+
 	return gaveweapon || gaveammo;
 }
 

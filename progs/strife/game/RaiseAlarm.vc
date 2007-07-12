@@ -38,6 +38,7 @@ bool TryPickup(EntityEx Toucher)
 		StrifeLevelInfo(Level).NoiseAlert(Toucher, Toucher);
 		Toucher.Player.cprint("You Fool!  You\'ve set off the alarm.");
 	}
+	GoAwayAndDie();
 	return true;
 }
 

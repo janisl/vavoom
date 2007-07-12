@@ -35,7 +35,12 @@ class CrystalVial : Pickup
 
 bool TryPickup(EntityEx Toucher)
 {
-	return Player(Toucher.Player).GiveBody(10);
+	if (Player(Toucher.Player).GiveBody(10))
+	{
+		GoAwayAndDie();
+		return true;
+	}
+	return false;
 }
 
 __states__

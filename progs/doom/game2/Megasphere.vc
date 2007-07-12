@@ -40,6 +40,7 @@ bool TryPickup(EntityEx Toucher)
 	Toucher.Player.Health = MEGASPHERE_HEALTH;
 	Toucher.Health = Toucher.Player.Health;
 	Player(Toucher.Player).GiveArmor(2);
+	GoAwayAndDie();
 	return true;
 }
 

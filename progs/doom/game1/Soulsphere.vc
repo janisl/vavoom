@@ -42,6 +42,7 @@ bool TryPickup(EntityEx Toucher)
 	if (Toucher.Player.Health > SOULSPHERE_MAX)
 		Toucher.Player.Health = SOULSPHERE_MAX;
 	Toucher.Health = Toucher.Player.Health;
+	GoAwayAndDie();
 	return true;
 }
 

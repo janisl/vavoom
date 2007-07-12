@@ -37,6 +37,7 @@ int KeyType;
 bool TryPickup(EntityEx Toucher)
 {
 	Player(Toucher.Player).GiveKey(KeyType);
+	GoAwayAndDie();
 	return true;
 }
 
