@@ -34,7 +34,7 @@ __states__
 defaultproperties
 {
 	ConversationID = 157;
-	PickupString = "$txt_factorykey";
+	PickupMessage = "$txt_factorykey";
 	bNoDeathmatch = true;
 	IdleState = S_FACTORY_KEY;
 	KeyType = StrifeDefs::KEY_FactoryKey;

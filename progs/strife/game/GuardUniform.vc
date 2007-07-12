@@ -34,7 +34,7 @@ __states__
 defaultproperties
 {
 	ConversationID = 162;
-	PickupString = "$txt_guarduniform";
+	PickupMessage = "$txt_guarduniform";
 	IdleState = S_GUARD_UNIFORM;
 	ItemType = StrifeDefs::ITEM_GuardUniform;
 	bGiveQuest = true;

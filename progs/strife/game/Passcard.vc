@@ -34,7 +34,7 @@ __states__
 defaultproperties
 {
 	ConversationID = 135;
-	PickupString = "$txt_passcard";
+	PickupMessage = "$txt_passcard";
 	bNoDeathmatch = true;
 	IdleState = S_PASSCARD;
 	KeyType = StrifeDefs::KEY_Passcard;

@@ -36,6 +36,7 @@ bool TryPickup(EntityEx Toucher)
 {
 	Player(Toucher.Player).Communicator = true;
 	GoAwayAndDie();
+	GiveQuest(Toucher);
 	return true;
 }
 
@@ -47,7 +48,7 @@ __states__
 defaultproperties
 {
 	ConversationID = 176;
-	PickupString = "$txt_communicator";
+	PickupMessage = "$txt_communicator";
 	bNoDeathmatch = true;
 	IdleState = S_COMMUNICATOR;
 }

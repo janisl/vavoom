@@ -726,8 +726,8 @@ void ConChoiceImpulse(int ChoiceNum)
 		ItemType = GetClassFromID(Choice->GiveItem);
 		if (ItemType)
 		{
-			Item = Pickup(Spawn(ItemType, vector(0.0, 0.0, 0.0)));
-			GaveItem = Item.GiveItemTo(CurrentSpeakingTo);
+			Item = Pickup(Spawn(ItemType));
+			GaveItem = Item.TryPickup(CurrentSpeakingTo);
 			Item.Destroy();
 		}
 	}

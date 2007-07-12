@@ -34,7 +34,7 @@ __states__
 defaultproperties
 {
 	ConversationID = 142;
-	PickupString = "$txt_goldkey";
+	PickupMessage = "$txt_goldkey";
 	bNoDeathmatch = true;
 	IdleState = S_GOLD_KEY;
 	KeyType = StrifeDefs::KEY_GoldKey;

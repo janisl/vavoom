@@ -34,7 +34,7 @@ __states__
 defaultproperties
 {
 	ConversationID = 177;
-	PickupString = "$txt_hegrenades";
+	PickupMessage = "$txt_hegrenades";
 	IdleState = S_GRENADE_HE;
 	AmmoType = StrifeDefs::am_grenade1;
 	AmmoCount = 6;

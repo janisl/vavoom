@@ -28,7 +28,7 @@ class InterrogatorReport : InventoryItem;
 defaultproperties
 {
 	ConversationID = 308;
-	PickupString = "$txt_report";
+	PickupMessage = "$txt_report";
 	IdleState = S_TOKENS;
 	ItemType = StrifeDefs::ITEM_Report;
 }

@@ -34,7 +34,7 @@ __states__
 defaultproperties
 {
 	ConversationID = 155;
-	PickupString = "$txt_corekey";
+	PickupMessage = "$txt_corekey";
 	bNoDeathmatch = true;
 	IdleState = S_CORE_KEY;
 	KeyType = StrifeDefs::KEY_CoreKey;

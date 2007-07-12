@@ -26,66 +26,9 @@
 class Pickup : Inventory
 	abstract;
 
-const float BONUSADD		= 0.2;
-
-string			PickupMessage;
-name			PickupSound;
-
-//==========================================================================
-//
-//  TouchSpecial
-//
-//==========================================================================
-
-final void TouchSpecial(EntityEx Toucher)
-{
-	if (!Toucher.bPickUp)
-	{
-		// can't remove thing
-		return;
-	}
-	if (Toucher.Health <= 0)
-	{
-		// Toucher is dead
-		return;
-	}
-
-	if (!TryPickup(Toucher))
-	{
-		return;
-	}
-
-	Toucher.Player.cprint(PickupMessage);
-	if (Special)
-	{
-		Level.ExecuteActionSpecial(Special, Args[0], Args[1], Args[2], Args[3],
-			Args[4], NULL, 0, Toucher);
-		Special = 0;
-	}
-	if (bCountItem)
-	{
-		Toucher.Player.ItemCount++;
-		Level.CurrentItems++;
-	}
-	Player(Toucher.Player).BonusFlash += BONUSADD;
-	Toucher.PlaySound(PickupSound, CHAN_ITEM);
-}
-
-//==========================================================================
-//
-//	TryPickup
-//
-//==========================================================================
-
-bool TryPickup(EntityEx Toucher)
-{
-	return false;
-}
-
 defaultproperties
 {
 	Height = 32.0;
 	bSpecial = true;
 	bNoPassMobj = true;
-	PickupSound = 'misc/i_pkup';
 }

@@ -34,7 +34,7 @@ __states__
 defaultproperties
 {
 	ConversationID = 152;
-	PickupString = "$txt_chapelkey";
+	PickupMessage = "$txt_chapelkey";
 	bNoDeathmatch = true;
 	IdleState = S_CHAPEL_KEY;
 	KeyType = StrifeDefs::KEY_ChapelKey;

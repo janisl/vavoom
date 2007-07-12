@@ -34,7 +34,7 @@ __states__
 defaultproperties
 {
 	ConversationID = 189;
-	PickupString = "$txt_assaultgun";
+	PickupMessage = "$txt_assaultgun";
 	IdleState = S_ASSAULT_GUN2;
 	WeaponType = StrifeDefs::wp_riffle;
 	Ammo1Count = 20;

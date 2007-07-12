@@ -26,14 +26,23 @@
 class Inventory : ScriptedEntity
 	abstract;
 
-int		Amount;
-int		MaxAmount;
-float	RespawnTime;
+const float BONUSADD		= 0.2;
+
+int				Amount;
+int				MaxAmount;
+string			PickupMessage;
+name			PickupSound;
+float			RespawnTime;
+int				QuestID;
 
 //	Originally these didn't respawn in deathmatch
-bool	bBigPowerup;
+bool			bBigPowerup;
 //	Spawn PickuFlash when picked up.
-bool	bPickupFlash;
+bool			bPickupFlash;
+//	Play pickup sound at full volume
+bool			bFullVolPickupSound;
+//	Should give quest when picked up
+bool			bGiveQuest;
 
 replication
 {
@@ -112,6 +121,52 @@ final void AttachToOwner(EntityEx NewOwner)
 
 void DetachedFromOwner()
 {
+}
+
+//==========================================================================
+//
+//	TouchSpecial
+//
+//==========================================================================
+
+final void TouchSpecial(EntityEx Toucher)
+{
+	if (!Toucher.bPickUp)
+	{
+		// Can't be picked up by toucher
+		return;
+	}
+	if (Toucher.Health <= 0)
+	{
+		// Toucher is dead
+		return;
+	}
+
+	if (!TryPickup(Toucher))
+	{
+		return;
+	}
+
+	Toucher.Player.cprint(GetPickupMessage());
+	PlayPickupSound(Toucher);
+	PlayerEx(Toucher.Player).BonusFlash += BONUSADD;
+	DoPickupSpecial(Toucher);
+	if (bCountItem)
+	{
+		Toucher.Player.ItemCount++;
+		Level.CurrentItems++;
+	}
+}
+
+//==========================================================================
+//
+//	TryPickup
+//
+//==========================================================================
+
+bool TryPickup(EntityEx Toucher)
+{
+	return false;
 }
 
 //==========================================================================
@@ -228,6 +283,62 @@ final void Hide()
 
 //==========================================================================
 //
+//	GetPickupMessage
+//
+//==========================================================================
+
+string GetPickupMessage()
+{
+	return PickupMessage;
+}
+
+//==========================================================================
+//
+//	DoPickupSpecial
+//
+//==========================================================================
+
+void DoPickupSpecial(EntityEx Toucher)
+{
+	if (Special)
+	{
+		Level.ExecuteActionSpecial(Special, Args[0], Args[1], Args[2],
+			Args[3], Args[4], NULL, 0, Toucher);
+		Special = 0;
+	}
+}
+
+//==========================================================================
+//
+//	PlayPickupSound
+//
+//==========================================================================
+
+void PlayPickupSound(EntityEx Toucher)
+{
+	if (PickupSound)
+	{
+		Toucher.PlaySound(PickupSound, CHAN_ITEM, 1.0,
+			bFullVolPickupSound ? ATTN_NONE : ATTN_NORMAL);
+	}
+}
+
+//==========================================================================
+//
+//	GiveQuest
+//
+//==========================================================================
+
+final void GiveQuest(EntityEx Toucher)
+{
+	if (bGiveQuest)
+	{
+		PlayerEx(Toucher.Player).GiveQuest(QuestID);
+	}
+}
+
+//==========================================================================
+//
 //  DoRespawn
 //
 //==========================================================================
@@ -305,4 +416,6 @@ __states__
 
 defaultproperties
 {
+	PickupMessage = "You got a pickup";
+	PickupSound = 'misc/i_pkup';
 }

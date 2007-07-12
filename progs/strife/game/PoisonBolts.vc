@@ -34,7 +34,7 @@ __states__
 defaultproperties
 {
 	ConversationID = 185;
-	PickupString = "$txt_poisonbolts";
+	PickupMessage = "$txt_poisonbolts";
 	IdleState = S_ARROWS_POISON;
 	AmmoType = StrifeDefs::am_poison_arrow;
 	AmmoCount = 10;

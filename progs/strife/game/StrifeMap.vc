@@ -36,7 +36,7 @@ __states__
 defaultproperties
 {
 	ConversationID = 164;
-	PickupString = "$txt_strifemap";
+	PickupMessage = "$txt_strifemap";
 	IdleState = S_MAP_1;
 	ItemType = StrifeDefs::ITEM_Map;
 }

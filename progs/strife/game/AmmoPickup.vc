@@ -41,6 +41,7 @@ bool TryPickup(EntityEx Toucher)
 		bDropped ? AmmoCount / 2 : AmmoCount))
 	{
 		GoAwayAndDie();
+		GiveQuest(Toucher);
 		return true;
 	}
 	return false;

@@ -33,7 +33,7 @@ __states__
 defaultproperties
 {
 	ConversationID = 140;
-	PickupString = "$txt_power2key";
+	PickupMessage = "$txt_power2key";
 	IdleState = S_POWER2_KEY;
 	KeyType = StrifeDefs::KEY_Power2Key;
 }

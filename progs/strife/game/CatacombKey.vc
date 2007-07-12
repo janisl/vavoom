@@ -33,7 +33,7 @@ __states__
 defaultproperties
 {
 	ConversationID = 153;
-	PickupString = "$txt_catacombkey";
+	PickupMessage = "$txt_catacombkey";
 	IdleState = S_CATACOMB_KEY;
 	KeyType = StrifeDefs::KEY_CatacombKey;
 	bGiveQuest = true;

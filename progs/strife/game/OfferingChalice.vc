@@ -34,7 +34,7 @@ __states__
 defaultproperties
 {
 	ConversationID = 174;
-	PickupString = "$txt_offeringchalice";
+	PickupMessage = "$txt_offeringchalice";
 	Radius = 10.0;
 	Height = 8.0;
 	bDropped = true;

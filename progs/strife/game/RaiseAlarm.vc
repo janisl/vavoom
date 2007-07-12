@@ -39,13 +39,14 @@ bool TryPickup(EntityEx Toucher)
 		Toucher.Player.cprint("You Fool!  You\'ve set off the alarm.");
 	}
 	GoAwayAndDie();
+	GiveQuest(Toucher);
 	return true;
 }
 
 defaultproperties
 {
 	ConversationID = 301;
-	PickupString = "alarm";
+	PickupMessage = "alarm";
 	IdleState = S_TOKENS;
 	bDropAutoGive = true;
 }

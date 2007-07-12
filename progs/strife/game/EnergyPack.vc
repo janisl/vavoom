@@ -36,7 +36,7 @@ __states__
 defaultproperties
 {
 	ConversationID = 184;
-	PickupString = "$txt_energypack";
+	PickupMessage = "$txt_energypack";
 	IdleState = S_ENERGY_PACK_1;
 	AmmoType = StrifeDefs::am_cell;
 	AmmoCount = 100;

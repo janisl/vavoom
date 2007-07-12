@@ -34,7 +34,7 @@ __states__
 defaultproperties
 {
 	ConversationID = 125;
-	PickupString = "$txt_medpatch";
+	PickupMessage = "$txt_medpatch";
 	Mass = 20.0;
 	IdleState = S_MED_PATCH;
 	ItemType = StrifeDefs::ITEM_MedPatch;

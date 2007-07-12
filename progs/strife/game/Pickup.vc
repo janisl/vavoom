@@ -26,107 +26,9 @@
 class Pickup : Inventory
 	abstract;
 
-const float BONUSADD		= 0.2;
-
 bool bDropAutoGive;
-bool bGiveQuest;
-name PickupSound;
-string PickupString;
-int QuestID;
 
 bool bUnknown2;			//8000000
-
-//==========================================================================
-//
-//	ValidTouch
-//
-//==========================================================================
-
-bool ValidTouch(EntityEx Toucher)
-{
-	if (!Toucher.bIsPlayer)
-	{
-		// can't remove thing
-		return false;
-	}
-	// Dead thing touching.
-	// Can happen with a sliding player corpse.
-	if (Toucher.Health <= 0)
-	{
-		return false;
-	}
-
-	return true;
-}
-
-//==========================================================================
-//
-//	TryPickup
-//
-//==========================================================================
-
-bool TryPickup(EntityEx Toucher)
-{
-	Toucher.Player.cprint("Unimplemented pickup %n", ClassName);
-	return true;
-}
-
-//==========================================================================
-//
-//	TouchSpecial
-//
-//==========================================================================
-
-final void TouchSpecial(EntityEx Toucher)
-{
-	if (!ValidTouch(Toucher))
-	{
-		// can't remove thing
-		return;
-	}
-
-	if (!TryPickup(Toucher))
-	{
-		return;
-	}
-
-	if (bGiveQuest)
-	{
-		Player(Toucher.Player).GiveQuest(QuestID);
-	}
-
-	Toucher.Player.cprint(PickupString);
-	if (Special)
-	{
-		Level.ExecuteActionSpecial(Special, Args[0], Args[1], Args[2], Args[3],
-			Args[4], NULL, 0, Toucher);
-		Special = 0;
-	}
-	Player(Toucher.Player).BonusFlash += BONUSADD;
-	Toucher.PlaySound(PickupSound, CHAN_ITEM);
-}
-
-//==========================================================================
-//
-//	GiveItemTo
-//
-//	Used by conversation scripts.
-//
-//==========================================================================
-
-bool GiveItemTo(EntityEx Toucher)
-{
-	if (!TryPickup(Toucher))
-	{
-		return false;
-	}
-
-	if (bGiveQuest)
-	{
-		Player(Toucher.Player).GiveQuest(QuestID);
-	}
-	return true;
-}
 
 //==========================================================================
 //
@@ -254,6 +156,4 @@ defaultproperties
 	bSpecial = true;
 	bFloorClip = true;
 	bNoPassMobj = true;
-	PickupSound = 'misc/i_pkup';
-	PickupString = "Item";
 }

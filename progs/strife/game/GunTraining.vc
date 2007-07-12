@@ -35,6 +35,7 @@ bool TryPickup(EntityEx Toucher)
 {
 	Player(Toucher.Player).Accuracy += 10;
 	GoAwayAndDie();
+	GiveQuest(Toucher);
 	return true;
 }
 

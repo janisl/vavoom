@@ -59,4 +59,5 @@ defaultproperties
 	bSlide = true;
 	bTelestomp = true;
 	bNoBlockMonst = true;
+	bPickUp = true;
 }

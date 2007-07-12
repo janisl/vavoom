@@ -52,7 +52,7 @@ __states__
 defaultproperties
 {
 	ConversationID = 309;
-	PickupString = "Toughness";
+	PickupMessage = "Toughness";
 	IdleState = S_TOUGHNESS;
 	ItemType = StrifeDefs::ITEM_Toughness;
 }

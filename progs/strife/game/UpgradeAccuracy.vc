@@ -33,7 +33,7 @@ __states__
 defaultproperties
 {
 	ConversationID = 310;
-	PickupString = "Accuracy";
+	PickupMessage = "Accuracy";
 	IdleState = S_ACCURACY;
 	ItemType = StrifeDefs::ITEM_Accuracy;
 }

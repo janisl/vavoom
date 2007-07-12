@@ -38,7 +38,7 @@ __states__
 defaultproperties
 {
 	ConversationID = 160;
-	PickupString = "$txt_shadowarmor";
+	PickupMessage = "$txt_shadowarmor";
 	Mass = 2.0;
 	IdleState = S_SHADOW_ARMOR1;
 	ItemType = StrifeDefs::ITEM_ShadowArmor;

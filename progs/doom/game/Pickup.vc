@@ -26,63 +26,6 @@
 class Pickup : Inventory
 	abstract;
 
-const float BONUSADD		= 0.2;
-
-string			PickupMessage;
-name			PickupSound;
-
-//==========================================================================
-//
-//	TryPickup
-//
-//==========================================================================
-
-bool TryPickup(EntityEx Toucher)
-{
-	return false;
-}
-
-//==========================================================================
-//
-//	TouchSpecial
-//
-//==========================================================================
-
-final void TouchSpecial(EntityEx Toucher)
-{
-	if (!Toucher.bPickUp)
-	{
-		// can't remove thing
-		return;
-	}
-	// Dead thing touching.
-	// Can happen with a sliding player corpse.
-	if (Toucher.Health <= 0)
-	{
-		return;
-	}
-
-	if (!TryPickup(Actor(Toucher)))
-	{
-		return;
-	}
-
-	if (Special)
-	{
-		Level.ExecuteActionSpecial(Special, Args[0], Args[1], Args[2], Args[3],
-			Args[4], NULL, 0, Toucher);
-		Special = 0;
-	}
-	if (bCountItem)
-	{
-		Toucher.Player.ItemCount++;
-		Level.CurrentItems++;
-	}
-	Toucher.Player.cprint(PickupMessage);
-	Toucher.PlaySound(PickupSound, CHAN_ITEM);
-	Player(Toucher.Player).BonusFlash += BONUSADD;
-}
-
 //==========================================================================
 //
 //	TouchDehackedSpecial
@@ -127,7 +70,10 @@ final void TouchDehackedSpecial(EntityEx Toucher)
 		Toucher.Player.ItemCount++;
 		Level.CurrentItems++;
 	}
+	Toucher.Player.cprint(Item.GetPickupMessage());
 	Toucher.PlaySound(Item.PickupSound, CHAN_ITEM);
+	Player(Toucher.Player).BonusFlash += BONUSADD;
+
 	if (bDropped)
 	{
 		Destroy();
@@ -145,7 +91,6 @@ final void TouchDehackedSpecial(EntityEx Toucher)
 			Destroy();
 		}
 	}
-	Player(Toucher.Player).BonusFlash += BONUSADD;
 	//	Destroy item if it wasn't added to the toucher's inventory.
 	if (!Item.Owner)
 	{
@@ -155,5 +100,4 @@ final void TouchDehackedSpecial(EntityEx Toucher)
 
 defaultproperties
 {
-	PickupSound = 'misc/i_pkup';
 }

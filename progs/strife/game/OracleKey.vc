@@ -34,7 +34,7 @@ __states__
 defaultproperties
 {
 	ConversationID = 145;
-	PickupString = "$txt_oraclekey";
+	PickupMessage = "$txt_oraclekey";
 	bNoDeathmatch = true;
 	IdleState = S_ORACLE_KEY;
 	KeyType = StrifeDefs::KEY_OracleKey;

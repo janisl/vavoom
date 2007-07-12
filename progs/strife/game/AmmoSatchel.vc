@@ -44,6 +44,7 @@ bool TryPickup(EntityEx Toucher)
 	Player(Toucher.Player).GiveAmmo(StrifeDefs::am_grenade1, 6);
 	Player(Toucher.Player).GiveAmmo(StrifeDefs::am_grenade2, 4);
 	GoAwayAndDie();
+	GiveQuest(Toucher);
 	return true;
 }
 
@@ -55,6 +56,6 @@ __states__
 defaultproperties
 {
 	ConversationID = 187;
-	PickupString = "$txt_ammosatchel";
+	PickupMessage = "$txt_ammosatchel";
 	IdleState = S_BACKPACK;
 }

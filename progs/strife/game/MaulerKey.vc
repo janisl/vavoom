@@ -34,7 +34,7 @@ __states__
 defaultproperties
 {
 	ConversationID = 156;
-	PickupString = "$txt_maulerkey";
+	PickupMessage = "$txt_maulerkey";
 	bNoDeathmatch = true;
 	IdleState = S_MAULER_KEY;
 	KeyType = StrifeDefs::KEY_MaulerKey;

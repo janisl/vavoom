@@ -34,7 +34,7 @@ __states__
 defaultproperties
 {
 	ConversationID = 168;
-	PickupString = "$txt_coin";
+	PickupMessage = "$txt_coin";
 	Mass = 99999.0;
 	bDropped = true;
 	bNoDeathmatch = true;

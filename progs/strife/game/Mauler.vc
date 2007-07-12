@@ -34,7 +34,7 @@ __states__
 defaultproperties
 {
 	ConversationID = 193;
-	PickupString = "$txt_mauler";
+	PickupMessage = "$txt_mauler";
 	IdleState = S_MAULER;
 	WeaponType = StrifeDefs::wp_blaster;
 	Weapon2Type = StrifeDefs::wp_blaster2;

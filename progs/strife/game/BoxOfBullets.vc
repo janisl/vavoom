@@ -35,7 +35,7 @@ __states__
 defaultproperties
 {
 	ConversationID = 180;
-	PickupString = "$txt_boxofbullets";
+	PickupMessage = "$txt_boxofbullets";
 	IdleState = S_AMMO;
 	AmmoType = StrifeDefs::am_clip;
 	AmmoCount = 50;

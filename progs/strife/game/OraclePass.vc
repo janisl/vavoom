@@ -33,7 +33,7 @@ __states__
 defaultproperties
 {
 	ConversationID = 311;
-	PickupString = "$txt_oraclepass";
+	PickupMessage = "$txt_oraclepass";
 	IdleState = S_ORACLE_PASS;
 	ItemType = StrifeDefs::ITEM_OraclePass;
 	bGiveQuest = true;

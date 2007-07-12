@@ -34,7 +34,7 @@ __states__
 defaultproperties
 {
 	ConversationID = 194;
-	PickupString = "$txt_strifecrossbow";
+	PickupMessage = "$txt_strifecrossbow";
 	IdleState = S_CROSSBOW;
 	WeaponType = StrifeDefs::wp_crossbow;
 	Weapon2Type = StrifeDefs::wp_crossbow2;

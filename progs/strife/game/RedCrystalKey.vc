@@ -34,7 +34,7 @@ __states__
 defaultproperties
 {
 	ConversationID = 150;
-	PickupString = "$txt_redcrystal";
+	PickupMessage = "$txt_redcrystal";
 	bNoDeathmatch = true;
 	IdleState = S_RED_CRYSTAL_KEY;
 	KeyType = StrifeDefs::KEY_RedCrystalKey;

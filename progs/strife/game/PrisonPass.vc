@@ -42,7 +42,7 @@ bool TryPickup(EntityEx Toucher)
 defaultproperties
 {
 	ConversationID = 304;
-	PickupString = "$txt_prisonpass";
+	PickupMessage = "$txt_prisonpass";
 	IdleState = S_TOKENS;
 	ItemType = StrifeDefs::ITEM_PrisonPass;
 	bGiveQuest = true;

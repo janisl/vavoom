@@ -34,7 +34,7 @@ __states__
 defaultproperties
 {
 	ConversationID = 126;
-	PickupString = "$txt_medicalkit";
+	PickupMessage = "$txt_medicalkit";
 	Mass = 15.0;
 	IdleState = S_MEDICAL_KIT;
 	ItemType = StrifeDefs::ITEM_MedicalKit;
