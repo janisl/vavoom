@@ -1485,6 +1485,8 @@ native static final string GetLangString(name Id);
 native static final int RGB(byte r, byte g, byte b);
 native static final int RGBA(byte r, byte g, byte b, byte a);
 native static final bool ClassIsChildOf(class SomeClass, class BaseClass);
+native static final name GetClassName(class C);
+native static final class GetClassParent(class C);
 
 //==========================================================================
 //

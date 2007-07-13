@@ -1067,3 +1067,15 @@ IMPLEMENT_FUNCTION(VObject, ClassIsChildOf)
 	P_GET_PTR(VClass, SomeClass);
 	RET_BOOL(SomeClass->IsChildOf(BaseClass));
 }
+
+IMPLEMENT_FUNCTION(VObject, GetClassName)
+{
+	P_GET_PTR(VClass, SomeClass);
+	RET_NAME(SomeClass->Name);
+}
+
+IMPLEMENT_FUNCTION(VObject, GetClassParent)
+{
+	P_GET_PTR(VClass, SomeClass);
+	RET_PTR(SomeClass->ParentClass);
+}
