@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class SilverShield : Pickup
+class SilverShield : Inventory
 	__mobjinfo__(85)
 	__scriptid__(68);
 
@@ -50,6 +50,9 @@ __states__
 
 defaultproperties
 {
+	Height = 32.0;
+	bSpecial = true;
+	bNoPassMobj = true;
 	bFloatBob = true;
 	IdleState = S_ITEM_SHLD1;
 	PickupMessage = "$txt_itemshield1";

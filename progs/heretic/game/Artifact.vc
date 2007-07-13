@@ -23,11 +23,10 @@
 //**
 //**************************************************************************
 
-class Artifact : Pickup
+class Artifact : Inventory
 	abstract;
 
 int ArtifactType;
-bool bCanRespawn;
 
 //==========================================================================
 //
@@ -45,22 +44,13 @@ bool TryPickup(EntityEx Toucher)
 	return false;
 }
 
-//==========================================================================
-//
-//	ShouldRespawn
-//
-//==========================================================================
-
-bool ShouldRespawn()
-{
-	return Level.Game.deathmatch && bCanRespawn;
-}
-
 defaultproperties
 {
+	Height = 32.0;
+	bSpecial = true;
+	bNoPassMobj = true;
 	bCountItem = true;
 	bFloatBob = true;
-	bCanRespawn = true;
 	bPickupFlash = true;
 	PickupSound = 'misc/p_pkup';
 }

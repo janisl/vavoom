@@ -45,7 +45,6 @@
 #include "PointPusher.vc"
 #include "PointPuller.vc"
 
-#include "Pickup.vc"
 #include "Artifact.vc"
 #include "WeaponPickup.vc"
 #include "Key.vc"

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class EnchantedShield : Pickup
+class EnchantedShield : Inventory
 	__mobjinfo__(31)
 	__scriptid__(69);
 
@@ -50,6 +50,9 @@ __states__
 
 defaultproperties
 {
+	Height = 32.0;
+	bSpecial = true;
+	bNoPassMobj = true;
 	bFloatBob = true;
 	IdleState = S_ITEM_SHD2_1;
 	PickupMessage = "$txt_itemshield2";

@@ -35,7 +35,7 @@ __states__
 defaultproperties
 {
 	ArtifactType = HereticDefs::arti_invisibility;
-	bCanRespawn = false;
+	bBigPowerup = true;
 	Alpha = 0.666;
 	IdleState = S_ARTI_INVS1;
 	PickupMessage = "$txt_artiinvisibility";

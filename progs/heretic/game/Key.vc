@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Key : Pickup
+class Key : Inventory
 	abstract;
 
 int KeyType;
@@ -58,6 +58,9 @@ bool ShouldStay()
 
 defaultproperties
 {
+	Height = 32.0;
+	bSpecial = true;
+	bNoPassMobj = true;
 	PickupSound = 'misc/k_pkup';
 	bNoDeathmatch = true;
 }

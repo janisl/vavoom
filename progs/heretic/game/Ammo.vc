@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Ammo : Pickup
+class Ammo : Inventory
 	abstract;
 
 int AmmoType;
@@ -58,4 +58,7 @@ void SetItemAmount(int Amount)
 
 defaultproperties
 {
+	Height = 32.0;
+	bSpecial = true;
+	bNoPassMobj = true;
 }
