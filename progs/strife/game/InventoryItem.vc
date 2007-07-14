@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class InventoryItem : Pickup
+class InventoryItem : Inventory
 	abstract;
 
 int ItemType;
@@ -48,5 +48,8 @@ bool TryPickup(EntityEx Toucher)
 
 defaultproperties
 {
+	bSpecial = true;
+	bFloorClip = true;
+	bNoPassMobj = true;
 	ItemAmount = 1;
 }

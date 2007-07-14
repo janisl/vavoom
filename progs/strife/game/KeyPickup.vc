@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class KeyPickup : Pickup
+class KeyPickup : Inventory
 	abstract;
 
 int KeyType;
@@ -44,5 +44,8 @@ bool TryPickup(EntityEx Toucher)
 
 defaultproperties
 {
+	bSpecial = true;
+	bFloorClip = true;
+	bNoPassMobj = true;
 	PickupSound = 'misc/k_pkup';
 }

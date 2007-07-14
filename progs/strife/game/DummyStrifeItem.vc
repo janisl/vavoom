@@ -28,7 +28,7 @@
 //**
 //**************************************************************************
 
-class DummyStrifeItem : Pickup
+class DummyStrifeItem : Inventory
 	abstract;
 
 __states__

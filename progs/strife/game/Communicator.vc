@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Communicator : Pickup
+class Communicator : Inventory
 	__mobjinfo__(206);
 
 //==========================================================================
@@ -49,6 +49,9 @@ defaultproperties
 {
 	ConversationID = 176;
 	PickupMessage = "$txt_communicator";
+	bSpecial = true;
+	bFloorClip = true;
+	bNoPassMobj = true;
 	bNoDeathmatch = true;
 	IdleState = S_COMMUNICATOR;
 }

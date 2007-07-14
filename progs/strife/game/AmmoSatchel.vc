@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class AmmoSatchel : Pickup
+class AmmoSatchel : Inventory
 	__mobjinfo__(183)
 	__scriptid__(144);
 
@@ -55,6 +55,9 @@ __states__
 
 defaultproperties
 {
+	bSpecial = true;
+	bFloorClip = true;
+	bNoPassMobj = true;
 	ConversationID = 187;
 	PickupMessage = "$txt_ammosatchel";
 	IdleState = S_BACKPACK;

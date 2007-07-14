@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class QuestItem : Pickup
+class QuestItem : Inventory
 	abstract;
 
 string QuestMessage;
@@ -48,7 +48,8 @@ __states__
 
 defaultproperties
 {
-	IdleState = S_TOKENS;
-	bSpecial = false;
+	bFloorClip = true;
+	bNoPassMobj = true;
 	bGiveQuest = true;
+	IdleState = S_TOKENS;
 }

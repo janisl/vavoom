@@ -682,7 +682,7 @@ void ConChoiceImpulse(int ChoiceNum)
 	int Item2;
 	int Item3;
 	class<EntityEx> ItemType;
-	Pickup Item;
+	Inventory Item;
 	bool GaveItem;
 
 	if (ConversationSlideshow)
@@ -726,7 +726,7 @@ void ConChoiceImpulse(int ChoiceNum)
 		ItemType = GetClassFromID(Choice->GiveItem);
 		if (ItemType)
 		{
-			Item = Pickup(Spawn(ItemType));
+			Item = Inventory(Spawn(ItemType));
 			GaveItem = Item.TryPickup(CurrentSpeakingTo);
 			Item.Destroy();
 		}
