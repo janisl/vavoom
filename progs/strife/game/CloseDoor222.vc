@@ -41,11 +41,11 @@ bool TryPickup(EntityEx Toucher)
 
 //==========================================================================
 //
-//	ItemSpecialDropAction
+//	SpecialDropAction
 //
 //==========================================================================
 
-bool ItemSpecialDropAction(EntityEx Dropper)
+bool SpecialDropAction(EntityEx Dropper)
 {
 	Level.ExecuteActionSpecial(LNSPEC_DoorClose, 222, 16, 0, 0, 0, NULL, 0,
 		Dropper.Target);

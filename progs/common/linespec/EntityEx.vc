@@ -4878,28 +4878,22 @@ final void DropItem(class<EntityEx> type, int amount, float chance)
 		return;
 	}
 	A = Spawn(type, Origin + vector(0.0, 0.0, Height / 2.0));
-	if (!A.ItemSpecialDropAction(self))
+	A.bDropped = true;	// special versions of items
+	if (Inventory(A))
 	{
-		A.Velocity.x = (Random() - Random()) * 35.0;
-		A.Velocity.y = (Random() - Random()) * 35.0;
-		A.Velocity.z = (5.0 + Random() * 4.0) * 35.0;
-		A.bDropped = true;	// special versions of items
-		if (amount)
+		Inventory Item = Inventory(A);
+		if (amount > 0)
 		{
 			A.SetItemAmount(amount);
 		}
+		if (Item.SpecialDropAction(self))
+		{
+			return;
+		}
 	}
-}
-
-//==========================================================================
-//
-//	NoBlockingSet
-//
-//==========================================================================
-
-bool ItemSpecialDropAction(EntityEx Source)
-{
-	return false;
+	A.Velocity.x = (Random() - Random()) * 35.0;
+	A.Velocity.y = (Random() - Random()) * 35.0;
+	A.Velocity.z = (5.0 + Random() * 4.0) * 35.0;
 }
 
 //==========================================================================

@@ -40,11 +40,11 @@ bool TryPickup(EntityEx Toucher)
 
 //==========================================================================
 //
-//	ItemSpecialDropAction
+//	SpecialDropAction
 //
 //==========================================================================
 
-bool ItemSpecialDropAction(EntityEx Dropper)
+bool SpecialDropAction(EntityEx Dropper)
 {
 	StrifeLevelInfo(Level).NoiseAlert(Dropper.Target, Dropper.Target);
 	Dropper.Target.Player.cprint("You Fool!  You\'ve set off the alarm.");

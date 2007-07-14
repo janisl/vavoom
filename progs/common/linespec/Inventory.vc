@@ -350,6 +350,17 @@ bool DoRespawn()
 
 //==========================================================================
 //
+//	SpecialDropAction
+//
+//==========================================================================
+
+bool SpecialDropAction(EntityEx Source)
+{
+	return false;
+}
+
+//==========================================================================
+//
 //  A_RestoreSpecialThing1
 //
 //  Make a special thing visible again.
