@@ -193,6 +193,7 @@ bool bStandMustSeeTarget;	//COUNTITEM	800000
 bool bInCombat;			// Actors in combat won't talk
 bool bFullVolActive;	//	Play active sound at full volume
 bool bDehackedSpecial;	// Old style special handling
+bool bUnknown2;			//8000000
 
 //  Params
 float			Speed;

@@ -28,8 +28,6 @@ class Pickup : Inventory
 
 bool bDropAutoGive;
 
-bool bUnknown2;			//8000000
-
 //==========================================================================
 //
 //	NoBlockingSet
@@ -45,105 +43,6 @@ bool ItemSpecialDropAction(EntityEx Source)
 		return true;
 	}
 	return false;
-}
-
-//==========================================================================
-//
-//	A_RemoveForceField
-//
-//==========================================================================
-
-final void A_RemoveForceField()
-{
-	int i;
-	line_t* line;
-
-	bSpecial = false;
-	for (i = 0; i < Sector->linecount; i++)
-	{
-		line = Sector->lines[i];
-		if (line->backsector && line->special == LNSPEC_ForceField)
-		{
-			line->flags &= ~(ML_BLOCKING|ML_BLOCKEVERYTHING);
-			line->special = 0;
-			XLevel.Sides[line->sidenum[0]].midtexture = 0;
-			XLevel.Sides[line->sidenum[1]].midtexture = 0;
-		}
-	}
-}
-
-//==========================================================================
-//
-//	A_Explode192
-//
-//==========================================================================
-
-final void A_Explode192()
-{
-	RadiusAttack(Target, 192, 192.0, false);
-	if (DeathSound)
-		PlaySound(DeathSound, CHAN_VOICE);
-
-	if (ExplodeEffect)
-	{
-		SendExplosion(ExplodeEffect, Origin);
-	}
-}
-
-//==========================================================================
-//
-//  SendExplosion
-//
-//==========================================================================
-
-final void SendExplosion(int etype, TVec org)
-{
-	int i;
-
-	for (i = 0; i < MAXPLAYERS; i++)
-	{
-		if (!Level.Game.Players[i])
-			continue;
-		if (!Level.Game.Players[i].bSpawned)
-			continue;
-		Player(Level.Game.Players[i]).ClientExplosion(etype, org);
-	}
-}
-
-//==========================================================================
-//
-//	A_SetShadow
-//
-//==========================================================================
-
-final void A_SetShadow()
-{
-	bUnknown2 = true;
-	Alpha = 0.333;
-}
-
-//==========================================================================
-//
-//	A_ClearShadow
-//
-//==========================================================================
-
-final void A_ClearShadow()
-{
-	bUnknown2 = false;
-	Alpha = 1.0;
-}
-
-//==========================================================================
-//
-//	A_BeShadowyFoe
-//
-//==========================================================================
-
-final void A_BeShadowyFoe()
-{
-	Alpha = 0.333;
-	bFriendly = false;
 }
 
 __states__

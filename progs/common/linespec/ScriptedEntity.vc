@@ -510,6 +510,67 @@ final void A_Fall()
 	A_NoBlocking();
 }
 
+//==========================================================================
+//
+//	A_RemoveForceField
+//
+//==========================================================================
+
+final void A_RemoveForceField()
+{
+	int i;
+	line_t* line;
+
+	bSpecial = false;
+	for (i = 0; i < Sector->linecount; i++)
+	{
+		line = Sector->lines[i];
+		if (line->backsector && line->special == LNSPEC_ForceField)
+		{
+			line->flags &= ~(ML_BLOCKING|ML_BLOCKEVERYTHING);
+			line->special = 0;
+			XLevel.Sides[line->sidenum[0]].midtexture = 0;
+			XLevel.Sides[line->sidenum[1]].midtexture = 0;
+		}
+	}
+}
+
+//==========================================================================
+//
+//	A_SetShadow
+//
+//==========================================================================
+
+final void A_SetShadow()
+{
+	bUnknown2 = true;
+	Alpha = 0.333;
+}
+
+//==========================================================================
+//
+//	A_ClearShadow
+//
+//==========================================================================
+
+final void A_ClearShadow()
+{
+	bUnknown2 = false;
+	Alpha = 1.0;
+}
+
+//==========================================================================
+//
+//	A_BeShadowyFoe
+//
+//==========================================================================
+
+final void A_BeShadowyFoe()
+{
+	Alpha = 0.333;
+	bFriendly = false;
+}
+
 defaultproperties
 {
 }
