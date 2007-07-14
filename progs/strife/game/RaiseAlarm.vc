@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class RaiseAlarm : Pickup;
+class RaiseAlarm : DummyStrifeItem;
 
 //==========================================================================
 //
@@ -33,13 +33,22 @@ class RaiseAlarm : Pickup;
 
 bool TryPickup(EntityEx Toucher)
 {
-	if (Toucher)
-	{
-		StrifeLevelInfo(Level).NoiseAlert(Toucher, Toucher);
-		Toucher.Player.cprint("You Fool!  You\'ve set off the alarm.");
-	}
+	StrifeLevelInfo(Level).NoiseAlert(Toucher, Toucher);
 	GoAwayAndDie();
-	GiveQuest(Toucher);
+	return true;
+}
+
+//==========================================================================
+//
+//	ItemSpecialDropAction
+//
+//==========================================================================
+
+bool ItemSpecialDropAction(EntityEx Dropper)
+{
+	StrifeLevelInfo(Level).NoiseAlert(Dropper.Target, Dropper.Target);
+	Dropper.Target.Player.cprint("You Fool!  You\'ve set off the alarm.");
+	Destroy();
 	return true;
 }
 
@@ -47,6 +56,4 @@ defaultproperties
 {
 	ConversationID = 301;
 	PickupMessage = "alarm";
-	IdleState = S_TOKENS;
-	bDropAutoGive = true;
 }

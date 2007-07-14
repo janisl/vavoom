@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class OpenDoor224 : Pickup;
+class OpenDoor224 : DummyStrifeItem;
 
 //==========================================================================
 //
@@ -33,19 +33,27 @@ class OpenDoor224 : Pickup;
 
 bool TryPickup(EntityEx Toucher)
 {
-	if (Level.ExecuteActionSpecial(LNSPEC_DoorOpen, 224, 16, 0, 0, 0,
-		NULL, 0, Toucher))
-	{
-		GoAwayAndDie();
-		GiveQuest(Toucher);
-		return true;
-	}
-	return false;
+	Level.ExecuteActionSpecial(LNSPEC_DoorOpen, 224, 16, 0, 0, 0, NULL, 0,
+		Toucher);
+	GoAwayAndDie();
+	return true;
+}
+
+//==========================================================================
+//
+//	ItemSpecialDropAction
+//
+//==========================================================================
+
+bool ItemSpecialDropAction(EntityEx Dropper)
+{
+	Level.ExecuteActionSpecial(LNSPEC_DoorOpen, 224, 16, 0, 0, 0, NULL, 0,
+		Dropper.Target);
+	Destroy();
+	return true;
 }
 
 defaultproperties
 {
 	ConversationID = 305;
-	IdleState = S_TOKENS;
-	bDropAutoGive = true;
 }

@@ -26,30 +26,6 @@
 class Pickup : Inventory
 	abstract;
 
-bool bDropAutoGive;
-
-//==========================================================================
-//
-//	NoBlockingSet
-//
-//==========================================================================
-
-bool ItemSpecialDropAction(EntityEx Source)
-{
-	if (bDropAutoGive)
-	{
-		TryPickup(Actor(Source));
-		Destroy();
-		return true;
-	}
-	return false;
-}
-
-__states__
-{
-	S_TOKENS('TOKN', 0, -1.0, none) = none
-}
-
 defaultproperties
 {
 	bSpecial = true;

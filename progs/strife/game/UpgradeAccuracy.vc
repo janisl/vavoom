@@ -23,17 +23,27 @@
 //**
 //**************************************************************************
 
-class UpgradeAccuracy : InventoryItem;
+class UpgradeAccuracy : DummyStrifeItem;
 
-__states__
+//==========================================================================
+//
+//	TryPickup
+//
+//==========================================================================
+
+bool TryPickup(EntityEx Toucher)
 {
-	S_ACCURACY('GUNT', 0, -1.0, none) = none
+	if (!Toucher.Player || Player(Toucher.Player).Accuracy >= 100)
+	{
+		return false;
+	}
+	Player(Toucher.Player).Accuracy += 10;
+	GoAwayAndDie();
+	return true;
 }
 
 defaultproperties
 {
-	ConversationID = 310;
-	PickupMessage = "Accuracy";
-	IdleState = S_ACCURACY;
-	ItemType = StrifeDefs::ITEM_Accuracy;
+	ConversationID = 307;
+	IdleState = S_TOKENS;
 }

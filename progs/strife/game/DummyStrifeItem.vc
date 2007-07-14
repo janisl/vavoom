@@ -22,48 +22,22 @@
 //**  GNU General Public License for more details.
 //**
 //**************************************************************************
+//**
+//**	Base class for special items that are used by conversation scrpts
+//**  to perform some action.
+//**
+//**************************************************************************
 
-class HealthFillup : DummyStrifeItem;
+class DummyStrifeItem : Pickup
+	abstract;
 
-//==========================================================================
-//
-//	TryPickup
-//
-//==========================================================================
-
-bool TryPickup(EntityEx Toucher)
+__states__
 {
-	int			Amount;
-	int			Max;
-
-	switch (Level.Game.gameskill)
-	{
-	case sk_baby:
-	case sk_nightmare:
-		Amount = 100;
-		break;
-	case sk_easy:
-		Amount = 75;
-		break;
-	case sk_medium:
-	case sk_hard:
-		Amount = 50;
-		break;
-	}
-	Max = Player::MAXHEALTH + Player(Toucher.Player).Stamina;
-	Amount = Max * Amount / 100;
-	if (Toucher.Player.Health >= Amount)
-	{
-		return false;
-	}
-	Player(Toucher.Player).GiveBody(Amount - Toucher.Player.Health);
-	GoAwayAndDie();
-	return true;
+	S_TOKENS('TOKN', 0, -1.0, none) = none
 }
 
 defaultproperties
 {
-	ConversationID = 299;
-	ClassName = 'Health';
+	bSpecial = true;
 	IdleState = S_TOKENS;
 }

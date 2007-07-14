@@ -39,6 +39,11 @@ bool TryPickup(EntityEx Toucher)
 	return true;
 }
 
+__states__
+{
+	S_TOKENS('TOKN', 0, -1.0, none) = none
+}
+
 defaultproperties
 {
 	ConversationID = 304;

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class CloseDoor222 : Pickup;
+class CloseDoor222 : DummyStrifeItem;
 
 //==========================================================================
 //
@@ -33,19 +33,29 @@ class CloseDoor222 : Pickup;
 
 bool TryPickup(EntityEx Toucher)
 {
-	if (Level.ExecuteActionSpecial(LNSPEC_DoorClose, 222, 16, 0, 0, 0,
-		NULL, 0, Toucher))
-	{
-		GoAwayAndDie();
-		GiveQuest(Toucher);
-		return true;
-	}
-	return false;
+	Level.ExecuteActionSpecial(LNSPEC_DoorClose, 222, 16, 0, 0, 0, NULL, 0,
+		Toucher);
+	GoAwayAndDie();
+	return true;
+}
+
+//==========================================================================
+//
+//	ItemSpecialDropAction
+//
+//==========================================================================
+
+bool ItemSpecialDropAction(EntityEx Dropper)
+{
+	Level.ExecuteActionSpecial(LNSPEC_DoorClose, 222, 16, 0, 0, 0, NULL, 0,
+		Dropper.Target);
+	Dropper.Target.Player.cprint("You\'re dead!  You set off the alarm.");
+	StrifeLevelInfo(Level).NoiseAlert(Dropper.Target, Dropper.Target);
+	Destroy();
+	return true;
 }
 
 defaultproperties
 {
 	ConversationID = 303;
-	IdleState = S_TOKENS;
-	bDropAutoGive = true;
 }

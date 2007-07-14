@@ -33,6 +33,7 @@
 #include "Player.vc"
 
 #include "Pickup.vc"
+#include "DummyStrifeItem.vc"
 #include "Projectile.vc"
 #include "Effect.vc"
 #include "Decoration.vc"

@@ -565,11 +565,11 @@ class<EntityEx> GetClassFromID(int ID)
 	case 303:	return CloseDoor222;
 	case 304:	return PrisonPass;
 	case 305:	return OpenDoor224;
-	case 306:	return HealthTraining;
-	case 307:	return GunTraining;
+	case 306:	return UpgradeStamina;
+	case 307:	return UpgradeAccuracy;
 	case 308:	return InterrogatorReport;
-	case 309:	return UpgradeStamina;
-	case 310:	return UpgradeAccuracy;
+	case 309:	return HealthTraining;
+	case 310:	return GunTraining;
 	case 311:	return OraclePass;
 	case 312:	return QuestItem1;
 	case 313:	return QuestItem2;

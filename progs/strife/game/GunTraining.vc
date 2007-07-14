@@ -23,24 +23,17 @@
 //**
 //**************************************************************************
 
-class GunTraining : Pickup;
+class GunTraining : InventoryItem;
 
-//==========================================================================
-//
-//	TryPickup
-//
-//==========================================================================
-
-bool TryPickup(EntityEx Toucher)
+__states__
 {
-	Player(Toucher.Player).Accuracy += 10;
-	GoAwayAndDie();
-	GiveQuest(Toucher);
-	return true;
+	S_ACCURACY('GUNT', 0, -1.0, none) = none
 }
 
 defaultproperties
 {
-	ConversationID = 307;
-	IdleState = S_TOKENS;
+	ConversationID = 310;
+	PickupMessage = "Accuracy";
+	IdleState = S_ACCURACY;
+	ItemType = StrifeDefs::ITEM_Accuracy;
 }

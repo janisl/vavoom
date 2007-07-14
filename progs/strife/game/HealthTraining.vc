@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class HealthTraining : Pickup;
+class HealthTraining : InventoryItem;
 
 //==========================================================================
 //
@@ -33,15 +33,27 @@ class HealthTraining : Pickup;
 
 bool TryPickup(EntityEx Toucher)
 {
-	Player(Toucher.Player).Stamina += 10;
-	Player(Toucher.Player).GiveBody(200);
-	GoAwayAndDie();
-	GiveQuest(Toucher);
-	return true;
+	bool		Ret;
+
+	Ret = ::TryPickup(Toucher);
+	if (Ret && !bDropped)
+	{
+		Player(Toucher.Player).GiveInvItem(StrifeDefs::ITEM_Accuracy, 1);
+		Player(Toucher.Player).GiveInvItem(StrifeDefs::ITEM_Coin,
+			Player(Toucher.Player).Accuracy * 5 + 300);
+	}
+	return Ret;
+}
+
+__states__
+{
+	S_TOUGHNESS('HELT', 0, -1.0, none) = none
 }
 
 defaultproperties
 {
-	ConversationID = 306;
-	IdleState = S_TOKENS;
+	ConversationID = 309;
+	PickupMessage = "Toughness";
+	IdleState = S_TOUGHNESS;
+	ItemType = StrifeDefs::ITEM_Toughness;
 }

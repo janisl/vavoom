@@ -4878,7 +4878,7 @@ final void DropItem(class<EntityEx> type, int amount, float chance)
 		return;
 	}
 	A = Spawn(type, Origin + vector(0.0, 0.0, Height / 2.0));
-	if (!A.ItemSpecialDropAction(Target))
+	if (!A.ItemSpecialDropAction(self))
 	{
 		A.Velocity.x = (Random() - Random()) * 35.0;
 		A.Velocity.y = (Random() - Random()) * 35.0;

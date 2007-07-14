@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class AmmoFillup : Pickup;
+class AmmoFillup : DummyStrifeItem;
 
 //==========================================================================
 //
@@ -37,7 +37,6 @@ bool TryPickup(EntityEx Toucher)
 	{
 		Player(Toucher.Player).Ammo[StrifeDefs::am_clip] = 50;
 		GoAwayAndDie();
-		GiveQuest(Toucher);
 		return true;
 	}
 	else
@@ -50,5 +49,4 @@ defaultproperties
 {
 	ConversationID = 298;
 	ClassName = 'Ammo';
-	IdleState = S_TOKENS;
 }

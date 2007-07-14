@@ -653,8 +653,8 @@ defaultproperties
 	InvItemCID[19] = BrokenPowerCoupling;
 	InvItemCID[20] = PrisonPass;
 	InvItemCID[21] = InterrogatorReport;
-	InvItemCID[22] = UpgradeStamina;
-	InvItemCID[23] = UpgradeAccuracy;
+	InvItemCID[22] = HealthTraining;
+	InvItemCID[23] = GunTraining;
 	InvItemCID[24] = OraclePass;
 
 	KeyCID[0] = BaseKey;

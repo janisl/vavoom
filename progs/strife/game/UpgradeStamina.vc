@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class UpgradeStamina : InventoryItem;
+class UpgradeStamina : DummyStrifeItem;
 
 //==========================================================================
 //
@@ -33,26 +33,24 @@ class UpgradeStamina : InventoryItem;
 
 bool TryPickup(EntityEx Toucher)
 {
-	bool		Ret;
-
-	Ret = ::TryPickup(Toucher);
-	if (Ret && !bDropped)
+	if (!Toucher.Player)
 	{
-		Player(Toucher.Player).GiveInvItem(StrifeDefs::ITEM_Accuracy, 1);
-		Player(Toucher.Player).GiveInvItem(StrifeDefs::ITEM_Coin, Player(Toucher.Player).Accuracy * 5 + 300);
+		return false;
 	}
-	return Ret;
-}
 
-__states__
-{
-	S_TOUGHNESS('HELT', 0, -1.0, none) = none
+	Player(Toucher.Player).Stamina += Amount;
+	if (Player(Toucher.Player).Stamina >= MaxAmount)
+	{
+		Player(Toucher.Player).Stamina = MaxAmount;
+	}
+	Player(Toucher.Player).GiveBody(200);
+	GoAwayAndDie();
+	return true;
 }
 
 defaultproperties
 {
-	ConversationID = 309;
-	PickupMessage = "Toughness";
-	IdleState = S_TOUGHNESS;
-	ItemType = StrifeDefs::ITEM_Toughness;
+	ConversationID = 306;
+	Amount = 10;
+	MaxAmount = 100;
 }

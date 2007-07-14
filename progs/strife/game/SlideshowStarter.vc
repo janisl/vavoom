@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class SlideshowStarter : Pickup;
+class SlideshowStarter : DummyStrifeItem;
 
 //==========================================================================
 //
@@ -45,12 +45,10 @@ bool TryPickup(EntityEx Toucher)
 		Player(Toucher.Player).GiveQuest(QUEST_VisitOracle);
 	}
 	GoAwayAndDie();
-	GiveQuest(Toucher);
 	return true;
 }
 
 defaultproperties
 {
 	ConversationID = 343;
-	IdleState = S_TOKENS;
 }
