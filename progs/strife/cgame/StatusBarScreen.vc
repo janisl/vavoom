@@ -337,10 +337,11 @@ void SB_DrawMainBar()
 		R_DrawPic(BAR_X + 253, BAR_Y + 175, pic_sigil[cl.Sigil]);
 	}
 
-	if (cl.ReadyAmmo != StrifeDefs::am_noammo)
+	if (cl.ReadyAmmo && cl.MO)
 	{
-		SB_DrawSmallNum(BAR_X + 310, BAR_Y + 162, cl.Ammo[cl.ReadyAmmo].Amount);
-		R_DrawPic(BAR_X + 290, BAR_Y + 181, pic_ammo[cl.ReadyAmmo]);
+		AmmoPickup AmmoItem = AmmoPickup(EntityEx(cl.MO).FindInventory(cl.ReadyAmmo));
+		SB_DrawSmallNum(BAR_X + 310, BAR_Y + 162, AmmoItem.Amount);
+		R_DrawPic(BAR_X + 290, BAR_Y + 181, pic_ammo[AmmoItem.AmmoType]);
 	}
 
 	if (bShowWeapons)
@@ -371,11 +372,13 @@ void SB_DrawMainBar()
 		{
 			R_DrawPic(BAR_X + 75, BAR_Y + 142, pic_blaster);
 		}
-		for (i = 0; i < StrifeDefs::NUMAMMO; i++)
-		{
-			SB_DrawSmallNum(BAR_X + 205, BAR_Y + AmmoPosY[i], cl.Ammo[i] ? cl.Ammo[i].Amount : 0);
-			SB_DrawSmallNum(BAR_X + 238, BAR_Y + AmmoPosY[i], cl.Ammo[i] ? cl.Ammo[i].MaxAmount : 0);
-		}
+		DrawAmmo(ClipOfBullets, AmmoPosY[0]);
+		DrawAmmo(ElectricBolts, AmmoPosY[1]);
+		DrawAmmo(PoisonBolts, AmmoPosY[2]);
+		DrawAmmo(EnergyPod, AmmoPosY[3]);
+		DrawAmmo(MiniMissiles, AmmoPosY[4]);
+		DrawAmmo(HEGrenadeRounds, AmmoPosY[5]);
+		DrawAmmo(PhosphorusGrenadeRounds, AmmoPosY[6]);
 		SB_DrawSmallNum(BAR_X + 267, BAR_Y + 84, cl.Accuracy);
 		SB_DrawSmallNum(BAR_X + 267, BAR_Y + 108, cl.Stamina);
 		NumKeys = 0;
@@ -430,6 +433,20 @@ void SB_DrawMainBar()
 //
 //==========================================================================
 
+void DrawAmmo(class<Inventory> Type, int Y)
+{
+	Inventory AmmoItem = cl.MO ? EntityEx(cl.MO).FindInventory(Type) : none;
+	SB_DrawSmallNum(BAR_X + 205, BAR_Y + Y, AmmoItem ? AmmoItem.Amount : 0);
+	SB_DrawSmallNum(BAR_X + 238, BAR_Y + Y,
+		AmmoItem ? AmmoItem.MaxAmount : Type.default.MaxAmount);
+}
+
+//==========================================================================
+//
+//	SB_DrawFullscreenStats
+//
+//==========================================================================
+
 void SB_DrawFullscreenStats()
 {
 	int Idx;
@@ -457,10 +474,11 @@ void SB_DrawFullscreenStats()
 	}
 
 	// ready weapon ammo with icon
-	if (cl.ReadyAmmo != StrifeDefs::am_noammo)
+	if (cl.ReadyAmmo && cl.MO)
 	{
-		SB_DrawTallNum(635, 450, cl.Ammo[cl.ReadyAmmo].Amount, 0.7);
-		R_DrawPic2(575, 450, pic_ammo[cl.ReadyAmmo], 0.7);
+		AmmoPickup AmmoItem = AmmoPickup(EntityEx(cl.MO).FindInventory(cl.ReadyAmmo));
+		SB_DrawTallNum(635, 450, AmmoItem.Amount, 0.7);
+		R_DrawPic2(575, 450, pic_ammo[AmmoItem.AmmoType], 0.7);
 	}
 
 	Idx = 0;
@@ -511,11 +529,13 @@ void SB_DrawFullscreenStats()
 		{
 			R_DrawPic(BAR_X + 75, BAR_Y + 182, pic_blaster);
 		}
-		for (i = 0; i < StrifeDefs::NUMAMMO; i++)
-		{
-			SB_DrawSmallNum(BAR_X + 205, BAR_Y + 40 + AmmoPosY[i], cl.Ammo[i] ? cl.Ammo[i].Amount : 0);
-			SB_DrawSmallNum(BAR_X + 238, BAR_Y + 40 + AmmoPosY[i], cl.Ammo[i] ? cl.Ammo[i].MaxAmount : 0);
-		}
+		DrawAmmo(ClipOfBullets, AmmoPosY[0]);
+		DrawAmmo(ElectricBolts, AmmoPosY[1]);
+		DrawAmmo(PoisonBolts, AmmoPosY[2]);
+		DrawAmmo(EnergyPod, AmmoPosY[3]);
+		DrawAmmo(MiniMissiles, AmmoPosY[4]);
+		DrawAmmo(HEGrenadeRounds, AmmoPosY[5]);
+		DrawAmmo(PhosphorusGrenadeRounds, AmmoPosY[6]);
 		SB_DrawSmallNum(BAR_X + 267, BAR_Y + 124, cl.Accuracy);
 		SB_DrawSmallNum(BAR_X + 267, BAR_Y + 148, cl.Stamina);
 		NumKeys = 0;

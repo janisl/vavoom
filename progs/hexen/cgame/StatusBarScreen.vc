@@ -462,7 +462,9 @@ void SB_DrawMainBar()
 	}
 
 	//  Mana
-	if (!cl.Mana[0] || cl.Mana[0].Amount == 0)
+	Inventory ManaItem1 = cl.MO ? EntityEx(cl.MO).FindInventory(Mana1) : none;
+	Inventory ManaItem2 = cl.MO ? EntityEx(cl.MO).FindInventory(Mana2) : none;
+	if (!ManaItem1 || ManaItem1.Amount == 0)
 	{
 		// Draw Dim Mana icon
 		sb_mana1 = 0;
@@ -471,7 +473,7 @@ void SB_DrawMainBar()
 	{
 		sb_mana1 = 1;
 	}
-	if (!cl.Mana[1] || cl.Mana[1].Amount == 0)
+	if (!ManaItem2 || ManaItem2.Amount == 0)
 	{
 		// Draw Dim Mana icon
 		sb_mana2 = 0;
@@ -507,14 +509,16 @@ void SB_DrawMainBar()
 		sb_manaVial1 = 1;
 		sb_manaVial2 = 1;
 	}
-	SB_DrawMNumber(BAR_X + 79, BAR_Y + 20, cl.Mana[0] ? cl.Mana[0].Amount : 0);
-	SB_DrawMNumber(BAR_X + 111, BAR_Y + 20, cl.Mana[1] ? cl.Mana[1].Amount : 0);
+	SB_DrawMNumber(BAR_X + 79, BAR_Y + 20, ManaItem1 ? ManaItem1.Amount : 0);
+	SB_DrawMNumber(BAR_X + 111, BAR_Y + 20, ManaItem2 ? ManaItem2.Amount : 0);
 	R_DrawPic(BAR_X + 77, BAR_Y + 3, pic_manadim1[sb_mana1]);
 	R_DrawPic(BAR_X + 110, BAR_Y + 3, pic_manadim2[sb_mana2]);
 	R_DrawPic(BAR_X + 94, BAR_Y + 3, pic_manavial1[sb_manaVial1]);
 	R_DrawPic(BAR_X + 102, BAR_Y + 3, pic_manavial2[sb_manaVial2]);
-	R_ShadeRect(BAR_X + 95, BAR_Y + 4, 3, 22 - (22 * (cl.Mana[0] ? cl.Mana[0].Amount : 0)) / (cl.Mana[0] ? cl.Mana[0].MaxAmount : 1), 0.99);
-	R_ShadeRect(BAR_X + 103, BAR_Y + 4, 3, 22 - (22 * (cl.Mana[1] ? cl.Mana[1].Amount : 0)) / (cl.Mana[1] ? cl.Mana[1].MaxAmount : 1), 0.99);
+	R_ShadeRect(BAR_X + 95, BAR_Y + 4, 3, 22 -
+		(ManaItem1 ? 22 * ManaItem1.Amount / ManaItem1.MaxAmount : 0), 0.99);
+	R_ShadeRect(BAR_X + 103, BAR_Y + 4, 3, 22 -
+		(ManaItem2 ? 22 * ManaItem2.Amount / ManaItem2.MaxAmount : 0), 0.99);
 
 	// Ready artifact
 	if (cl.ArtifactFlash)
@@ -684,7 +688,9 @@ void SB_DrawFullscreenStats()
 	}
 
 	//  Mana
-	if (!cl.Mana[0] || cl.Mana[0].Amount == 0)
+	Inventory ManaItem1 = cl.MO ? EntityEx(cl.MO).FindInventory(Mana1) : none;
+	Inventory ManaItem2 = cl.MO ? EntityEx(cl.MO).FindInventory(Mana2) : none;
+	if (!ManaItem1 || ManaItem1.Amount == 0)
 	{
 		// Draw Dim Mana icon
 		sb_mana1 = 0;
@@ -693,7 +699,7 @@ void SB_DrawFullscreenStats()
 	{
 		sb_mana1 = 1;
 	}
-	if (!cl.Mana[1] || cl.Mana[1].Amount == 0)
+	if (!ManaItem2 || ManaItem2.Amount == 0)
 	{
 		// Draw Dim Mana icon
 		sb_mana2 = 0;
@@ -722,8 +728,8 @@ void SB_DrawFullscreenStats()
 	{
 	}
 
-	SB_DrawMNumber(600, 446, cl.Mana[0] ? cl.Mana[0].Amount : 0);
-	SB_DrawMNumber(600, 462, cl.Mana[1] ? cl.Mana[1].Amount : 0);
+	SB_DrawMNumber(600, 446, ManaItem1 ? ManaItem1.Amount : 0);
+	SB_DrawMNumber(600, 462, ManaItem2 ? ManaItem2.Amount : 0);
 	R_DrawPic(584, 440, pic_manadim1[sb_mana1]);
 	R_DrawPic(584, 456, pic_manadim2[sb_mana2]);
 }

@@ -61,7 +61,7 @@ bool Backpack;
 bool Communicator;
 
 AmmoPickup Ammo[StrifeDefs::NUMAMMO];
-int ReadyAmmo;
+class<AmmoPickup> ReadyAmmo;
 
 int Accuracy;
 int Stamina;
@@ -2020,7 +2020,7 @@ void SetViewPos()
 
 	ViewAngles = MO.Angles;
 
-	ReadyAmmo = Weapon(ViewEnt).Ammo;
+	ReadyAmmo = MainGameInfo(Level.Game).AmmoClasses[Weapon(ViewEnt).Ammo];
 
 	PaletteFlash();
 
