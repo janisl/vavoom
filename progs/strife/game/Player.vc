@@ -61,7 +61,6 @@ bool Backpack;
 bool Communicator;
 
 AmmoPickup Ammo[StrifeDefs::NUMAMMO];
-int MaxAmmo[StrifeDefs::NUMAMMO];
 int ReadyAmmo;
 
 int Accuracy;
@@ -93,8 +92,8 @@ replication
 {
 	reliable if (!bIsClient)
 		ReadyAmmo, Sigil, Accuracy, Stamina, Keys, InvFirst, InvCursor,
-		Objectives, ArmorType, ArmorPoints, Ammo, MaxAmmo, WeaponOwned,
-		Inventory, Backpack, Communicator;
+		Objectives, ArmorType, ArmorPoints, Ammo, WeaponOwned, Inventory,
+		Backpack, Communicator;
 
 	unreliable if (!bIsClient)
 		ClientBlood, ClientExplosion;
@@ -408,13 +407,6 @@ void PlayerReborn()
 	PlayerState = PST_LIVE;
 	Health = INITIAL_HEALTH;
 	WeaponOwned[StrifeDefs::wp_fist] = true;
-	MaxAmmo[StrifeDefs::am_clip] = MainGameInfo(Level.Game).maxammo[StrifeDefs::am_clip];
-	MaxAmmo[StrifeDefs::am_electric_arrow] = MainGameInfo(Level.Game).maxammo[StrifeDefs::am_electric_arrow];
-	MaxAmmo[StrifeDefs::am_poison_arrow] = MainGameInfo(Level.Game).maxammo[StrifeDefs::am_poison_arrow];
-	MaxAmmo[StrifeDefs::am_cell] = MainGameInfo(Level.Game).maxammo[StrifeDefs::am_cell];
-	MaxAmmo[StrifeDefs::am_misl] = MainGameInfo(Level.Game).maxammo[StrifeDefs::am_misl];
-	MaxAmmo[StrifeDefs::am_grenade1] = MainGameInfo(Level.Game).maxammo[StrifeDefs::am_grenade1];
-	MaxAmmo[StrifeDefs::am_grenade2] = MainGameInfo(Level.Game).maxammo[StrifeDefs::am_grenade2];
 
 	LocalQuakeHappening = 0;
 }
@@ -463,7 +455,6 @@ void PlayerExitMap(bool clusterChange)
 bool GiveAmmo(int ammo, int num)
 {
 	int oldammo;
-	int max;
 
 	if (ammo == StrifeDefs::am_noammo)
 		return false;
@@ -480,8 +471,7 @@ bool GiveAmmo(int ammo, int num)
 		AmmoItem.AttachToOwner(EntityEx(MO));
 		Ammo[ammo] = AmmoItem;
 	}
-	max = Backpack ? MainGameInfo(Level.Game).maxammo[ammo] * 2 : MainGameInfo(Level.Game).maxammo[ammo];
-	if (AmmoItem.Amount == max)
+	if (AmmoItem.Amount == AmmoItem.MaxAmount)
 		return false;
 
 	if (Level.Game.gameskill == sk_baby || Level.Game.gameskill == sk_nightmare)
@@ -494,8 +484,8 @@ bool GiveAmmo(int ammo, int num)
 	oldammo = AmmoItem.Amount;
 	AmmoItem.Amount += num;
 
-	if (AmmoItem.Amount > max)
-		AmmoItem.Amount = max;
+	if (AmmoItem.Amount > AmmoItem.MaxAmount)
+		AmmoItem.Amount = AmmoItem.MaxAmount;
 
 	// If non zero ammo, 
 	// don't change up weapons,
@@ -2421,7 +2411,12 @@ void Cheat_Gimme()
 	// Backpack
 	if (Cmd_CheckParm("Backpack"))
 	{
-		Backpack = true;
+		Inventory I = Level.Spawn(AmmoSatchel);
+		I.bDropped = true;
+		if (!I.TryPickup(EntityEx(MO)))
+		{
+			I.Destroy();
+		}
 	}
 
 	// Weapons
@@ -2439,7 +2434,7 @@ void Cheat_Gimme()
 		for (i = 0; i < StrifeDefs::NUMAMMO; i++)
 		{
 			GiveAmmo(i, 0);
-			Ammo[i].Amount = MainGameInfo(Level.Game).maxammo[i] * (Backpack ? 2 : 1);
+			Ammo[i].Amount = Ammo[i].MaxAmount;
 		}
 	}
 

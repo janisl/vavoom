@@ -35,7 +35,17 @@ class AmmoSatchel : Inventory
 
 bool TryPickup(EntityEx Toucher)
 {
-	Player(Toucher.Player).Backpack = true;
+	int i;
+
+	if (!Player(Toucher.Player).Backpack)
+	{
+		for (i = 0; i < StrifeDefs::NUMAMMO; i++)
+		{
+			Player(Toucher.Player).GiveAmmo(i, 0);
+			Player(Toucher.Player).Ammo[i].MaxAmount *= 2;
+		}
+		Player(Toucher.Player).Backpack = true;
+	}
 	Player(Toucher.Player).GiveAmmo(StrifeDefs::am_clip, 10);
 	Player(Toucher.Player).GiveAmmo(StrifeDefs::am_electric_arrow, 4);
 	Player(Toucher.Player).GiveAmmo(StrifeDefs::am_poison_arrow, 2);

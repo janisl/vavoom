@@ -40,4 +40,5 @@ defaultproperties
 	IdleState = S_ENERGY_POD_1;
 	AmmoType = StrifeDefs::am_cell;
 	Amount = 20;
+	MaxAmount = 400;
 }

@@ -374,7 +374,7 @@ void SB_DrawMainBar()
 		for (i = 0; i < StrifeDefs::NUMAMMO; i++)
 		{
 			SB_DrawSmallNum(BAR_X + 205, BAR_Y + AmmoPosY[i], cl.Ammo[i] ? cl.Ammo[i].Amount : 0);
-			SB_DrawSmallNum(BAR_X + 238, BAR_Y + AmmoPosY[i], cl.MaxAmmo[i] * (cl.Backpack ? 2 : 1));
+			SB_DrawSmallNum(BAR_X + 238, BAR_Y + AmmoPosY[i], cl.Ammo[i] ? cl.Ammo[i].MaxAmount : 0);
 		}
 		SB_DrawSmallNum(BAR_X + 267, BAR_Y + 84, cl.Accuracy);
 		SB_DrawSmallNum(BAR_X + 267, BAR_Y + 108, cl.Stamina);
@@ -514,7 +514,7 @@ void SB_DrawFullscreenStats()
 		for (i = 0; i < StrifeDefs::NUMAMMO; i++)
 		{
 			SB_DrawSmallNum(BAR_X + 205, BAR_Y + 40 + AmmoPosY[i], cl.Ammo[i] ? cl.Ammo[i].Amount : 0);
-			SB_DrawSmallNum(BAR_X + 238, BAR_Y + 40 + AmmoPosY[i], cl.MaxAmmo[i] * (cl.Backpack ? 2 : 1));
+			SB_DrawSmallNum(BAR_X + 238, BAR_Y + 40 + AmmoPosY[i], cl.Ammo[i] ? cl.Ammo[i].MaxAmount : 0);
 		}
 		SB_DrawSmallNum(BAR_X + 267, BAR_Y + 124, cl.Accuracy);
 		SB_DrawSmallNum(BAR_X + 267, BAR_Y + 148, cl.Stamina);

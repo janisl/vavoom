@@ -513,8 +513,8 @@ void SB_DrawMainBar()
 	R_DrawPic(BAR_X + 110, BAR_Y + 3, pic_manadim2[sb_mana2]);
 	R_DrawPic(BAR_X + 94, BAR_Y + 3, pic_manavial1[sb_manaVial1]);
 	R_DrawPic(BAR_X + 102, BAR_Y + 3, pic_manavial2[sb_manaVial2]);
-	R_ShadeRect(BAR_X + 95, BAR_Y + 4, 3, 22 - (22 * (cl.Mana[0] ? cl.Mana[0].Amount : 0)) / HexenDefs::MAX_MANA, 0.99);
-	R_ShadeRect(BAR_X + 103, BAR_Y + 4, 3, 22 - (22 * (cl.Mana[1] ? cl.Mana[1].Amount : 0)) / HexenDefs::MAX_MANA, 0.99);
+	R_ShadeRect(BAR_X + 95, BAR_Y + 4, 3, 22 - (22 * (cl.Mana[0] ? cl.Mana[0].Amount : 0)) / (cl.Mana[0] ? cl.Mana[0].MaxAmount : 1), 0.99);
+	R_ShadeRect(BAR_X + 103, BAR_Y + 4, 3, 22 - (22 * (cl.Mana[1] ? cl.Mana[1].Amount : 0)) / (cl.Mana[1] ? cl.Mana[1].MaxAmount : 1), 0.99);
 
 	// Ready artifact
 	if (cl.ArtifactFlash)

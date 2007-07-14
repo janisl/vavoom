@@ -39,4 +39,5 @@ defaultproperties
 	IdleState = S_BULLETS;
 	AmmoType = StrifeDefs::am_clip;
 	Amount = 10;
+	MaxAmount = 250;
 }

@@ -39,4 +39,5 @@ defaultproperties
 	IdleState = S_MINI_MISSILES;
 	AmmoType = StrifeDefs::am_misl;
 	Amount = 4;
+	MaxAmount = 100;
 }

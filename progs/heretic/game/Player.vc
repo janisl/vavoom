@@ -493,7 +493,6 @@ void PlayerExitMap(bool clusterChange)
 bool GiveAmmo(int ammo, int count)
 {
 	int prevAmmo;
-	int max;
 
 	if (ammo == am_noammo)
 	{
@@ -503,7 +502,6 @@ bool GiveAmmo(int ammo, int count)
 	{
 		Error("GiveAmmo: bad type %i", ammo);
 	}
-	max = Backpack ? MainGameInfo(Level.Game).maxammo[ammo] * 2 : MainGameInfo(Level.Game).maxammo[ammo];
 	AmmoPickup AmmoItem = Ammo[ammo];
 	if (!AmmoItem)
 	{
@@ -516,7 +514,7 @@ bool GiveAmmo(int ammo, int count)
 	{
 		return true;
 	}
-	if (AmmoItem.Amount == max)
+	if (AmmoItem.Amount == AmmoItem.MaxAmount)
 	{
 		return false;
 	}
@@ -528,9 +526,9 @@ bool GiveAmmo(int ammo, int count)
 	prevAmmo = AmmoItem.Amount;
 
 	AmmoItem.Amount += count;
-	if (AmmoItem.Amount > max)
+	if (AmmoItem.Amount > AmmoItem.MaxAmount)
 	{
-		AmmoItem.Amount = max;
+		AmmoItem.Amount = AmmoItem.MaxAmount;
 	}
 	if (prevAmmo)
 	{
@@ -2910,7 +2908,15 @@ void Cheat_Gimme()
 
 		ArmorPoints = 200;
 		ArmorType = 2;
-		Backpack = true;
+		if (!Backpack)
+		{
+			for (i = 0; i < 6 /*NUMAMMO2 */ ; i++)
+			{
+				GiveAmmo(i, 0);
+				Ammo[i].MaxAmount *= 2;
+			}
+			Backpack = true;
+		}
 		for (i = 0; i < NUMWEAPONS - 1; i++)
 		{
 			WeaponOwned[i] = true;
@@ -2923,8 +2929,7 @@ void Cheat_Gimme()
 		}
 		for (i = 0; i < 6 /*NUMAMMO2 */ ; i++)
 		{
-			GiveAmmo(i, 0);
-			Ammo[i].Amount = MainGameInfo(Level.Game).maxammo[i] * 2;
+			Ammo[i].Amount = Ammo[i].MaxAmount;
 		}
 		cprint("ALL WEAPONS");
 	}

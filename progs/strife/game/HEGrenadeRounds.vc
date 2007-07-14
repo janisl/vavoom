@@ -38,4 +38,5 @@ defaultproperties
 	IdleState = S_GRENADE_HE;
 	AmmoType = StrifeDefs::am_grenade1;
 	Amount = 6;
+	MaxAmount = 30;
 }

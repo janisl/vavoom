@@ -38,4 +38,5 @@ defaultproperties
 	IdleState = S_ARROWS_POISON;
 	AmmoType = StrifeDefs::am_poison_arrow;
 	Amount = 10;
+	MaxAmount = 25;
 }

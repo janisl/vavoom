@@ -38,4 +38,5 @@ defaultproperties
 	IdleState = S_ARROWS_ELECTRIC;
 	AmmoType = StrifeDefs::am_electric_arrow;
 	Amount = 20;
+	MaxAmount = 50;
 }

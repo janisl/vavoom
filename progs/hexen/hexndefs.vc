@@ -58,8 +58,6 @@ enum
 	MANA_NONE
 };
 
-enum { MAX_MANA		= 200 };
-
 enum
 {
 	ARMOR_ARMOR,

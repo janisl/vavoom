@@ -53,7 +53,6 @@ int botskill;
 
 int GetAmmoChange[NUMAMMO];
 int WeaponValue[NUMWEAPONS];
-int maxammo[NUMAMMO];
 
 string keymsg[NUMKEYS];
 
@@ -571,13 +570,6 @@ defaultproperties
 	WeaponValue[6] = 8;	// mace
 	WeaponValue[7] = 2;	// gauntlets
 	WeaponValue[8] = 0;	// beak
-
-	maxammo[0] = 100;	// gold wand
-	maxammo[1] = 50;	// crossbow
-	maxammo[2] = 200;	// blaster
-	maxammo[3] = 200;	// skull rod
-	maxammo[4] = 20;	// phoenix rod
-	maxammo[5] = 150;	// mace
 
 	keymsg[0] = "$txt_needyellowkey";
 	keymsg[1] = "$txt_needgreenkey";

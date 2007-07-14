@@ -48,8 +48,6 @@ int WeaponOrder[StrifeDefs::NUMWEAPONS];
 class<InventoryItem> InvItemCID[StrifeDefs::NUMINVITEMS];
 class<KeyPickup> KeyCID[StrifeDefs::NUMKEYS];
 
-int maxammo[StrifeDefs::NUMAMMO];
-
 int MaxInvItem[StrifeDefs::NUMINVITEMS];
 
 //==========================================================================
@@ -685,14 +683,6 @@ defaultproperties
 	KeyCID[24] = FactoryKey;
 	KeyCID[25] = MineKey;
 	KeyCID[26] = NewKey5;
-
-	maxammo[StrifeDefs::am_clip] = 250;
-	maxammo[StrifeDefs::am_electric_arrow] = 50;
-	maxammo[StrifeDefs::am_poison_arrow] = 25;
-	maxammo[StrifeDefs::am_cell] = 400;
-	maxammo[StrifeDefs::am_misl] = 100;
-	maxammo[StrifeDefs::am_grenade1] = 30;
-	maxammo[StrifeDefs::am_grenade2] = 16;
 
 	MaxInvItem[StrifeDefs::ITEM_MedPatch] = 20;
 	MaxInvItem[StrifeDefs::ITEM_MedicalKit] = 15;
