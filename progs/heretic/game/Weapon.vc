@@ -73,6 +73,17 @@ void WeaponLevel2Fade() { }
 
 //==========================================================================
 //
+//	DecAmmo
+//
+//==========================================================================
+
+void DecAmmo(int Count)
+{
+	Player(Owner.Player).Ammo[Ammo].Amount -= Count;
+}
+
+//==========================================================================
+//
 //  HITDICE
 //
 //  Most damage in HERETIC and HEXEN defined using HITDICE

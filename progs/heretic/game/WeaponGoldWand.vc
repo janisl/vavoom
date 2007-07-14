@@ -36,7 +36,7 @@ final void A_FireGoldWandPL1()
 	int damage;
 	TVec dir;
 
-	Player(Owner.Player).Ammo[am_goldwand] -= USE_GWND_AMMO_1;
+	DecAmmo(USE_GWND_AMMO_1);
 	damage = 7 + (P_Random() & 7);
 	Actor(Owner).Aim(dir, 16.0 * 64.0);
 	if (Player(Owner.Player).Refire)
@@ -61,8 +61,7 @@ final void A_FireGoldWandPL2()
 	TAVec angles;
 	TVec dir;
 
-	Player(Owner.Player).Ammo[am_goldwand] -=
-		Level.Game.deathmatch ? USE_GWND_AMMO_1 : USE_GWND_AMMO_2;
+	DecAmmo(Level.Game.deathmatch ? USE_GWND_AMMO_1 : USE_GWND_AMMO_2);
 	Actor(Owner).Aim(dir, 16.0 * 64.0);
 	VectorAngles(&dir, &angles);
 	Actor(Owner).SpawnMissileAngles(GoldWandFX2,

@@ -51,6 +51,17 @@ bool bRaiseNoiseAlert;
 
 //===========================================================================
 //
+//  DecAmmo
+//
+//===========================================================================
+
+final void DecAmmo(int Count)
+{
+	Player(Owner.Player).Ammo[Ammo].Amount -= Count;
+}
+
+//===========================================================================
+//
 //  A_WeaponReady
 //
 //  The player can fire the weapon or change to another weapon at this time.

@@ -41,7 +41,7 @@ final void A_FireBlaster1()
 
 	Owner.PlaySound('weapons/mauler1', CHAN_WEAPON);
 
-	Player(Owner.Player).Ammo[Ammo] -= 20;
+	DecAmmo(20);
 
 	Actor(Owner).Aim(aimDir, 16.0 * 64.0);
 	for (i = 0; i < 20; i++)
@@ -79,7 +79,7 @@ final void A_FireBlasterSound()
 final void A_FireBlaster2()
 {
 	Owner.SetState(Actor(Owner).MissileState);
-	Player(Owner.Player).Ammo[Ammo] -= 30;
+	DecAmmo(30);
 	Actor(Owner).SpawnPlayerMissile(MaulerTorpedo);
 	Actor(Owner).Damage(none, Actor(Owner), 20);
 	Actor(Owner).Thrust(Owner.Angles.yaw + 180.0, 125.0 / 16.0);

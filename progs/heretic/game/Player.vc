@@ -58,7 +58,7 @@ int SBFlags;
 
 int ArmorPoints;
 
-int Ammo[NUMAMMO];
+AmmoPickup Ammo[NUMAMMO];
 int ReadyAmmo;
 
 float ChickenTime;	// player is a chicken if > 0
@@ -104,6 +104,7 @@ int NewTorch;	// used in the torch flicker effect.
 int NewTorchDelta;
 
 BotPlayer Bot;
+Inventory SavedInventory;
 
 bool onground;
 
@@ -338,6 +339,7 @@ void SpawnPlayer(mthing_t * mthing)
 	float x, y, z;
 	Actor A;
 	bool ResetInventory = false;
+	Inventory Item;
 
 	if (PlayerState == PST_REBORN)
 	{
@@ -373,9 +375,22 @@ void SpawnPlayer(mthing_t * mthing)
 	ViewHeight = VIEWHEIGHT;
 	ViewAngles = A.Angles;
 	bFixAngle = true;
+
+	A.Inventory = SavedInventory;
+	for (Item = A.Inventory; Item; Item = Item.Inventory)
+	{
+		Item.Owner = MO;
+	}
+
 	if (ResetInventory)
 	{
+		while (A.Inventory)
+		{
+			A.Inventory.Destroy();
+		}
 		SetWeapon(wp_goldwand);
+		GiveAmmo(am_goldwand, 0);
+		Ammo[am_goldwand].Amount = 50;
 	}
 	else
 	{
@@ -415,7 +430,6 @@ void PlayerReborn()
 	Health = MAXHEALTH;
 	WeaponOwned[wp_staff] = true;
 	WeaponOwned[wp_goldwand] = true;
-	Ammo[am_goldwand] = 50;
 	LocalQuakeHappening = 0;
 }
 
@@ -464,6 +478,7 @@ void PlayerExitMap(bool clusterChange)
 	BonusFlash = 0.0;
 	Rain1 = none;
 	Rain2 = none;
+	SavedInventory = EntityEx(MO).Inventory;
 }
 
 //==========================================================================
@@ -489,7 +504,19 @@ bool GiveAmmo(int ammo, int count)
 		Error("GiveAmmo: bad type %i", ammo);
 	}
 	max = Backpack ? MainGameInfo(Level.Game).maxammo[ammo] * 2 : MainGameInfo(Level.Game).maxammo[ammo];
-	if (Ammo[ammo] == max)
+	AmmoPickup AmmoItem = Ammo[ammo];
+	if (!AmmoItem)
+	{
+		AmmoItem = Level.Spawn(MainGameInfo(Level.Game).AmmoClasses[ammo]);
+		AmmoItem.AttachToOwner(EntityEx(MO));
+		AmmoItem.Amount = 0;
+		Ammo[ammo] = AmmoItem;
+	}
+	if (!count)
+	{
+		return true;
+	}
+	if (AmmoItem.Amount == max)
 	{
 		return false;
 	}
@@ -498,12 +525,12 @@ bool GiveAmmo(int ammo, int count)
 		// extra ammo in baby mode and nightmare mode
 		count += count >> 1;
 	}
-	prevAmmo = Ammo[ammo];
+	prevAmmo = AmmoItem.Amount;
 
-	Ammo[ammo] += count;
-	if (Ammo[ammo] > max)
+	AmmoItem.Amount += count;
+	if (AmmoItem.Amount > max)
 	{
-		Ammo[ammo] = max;
+		AmmoItem.Amount = max;
 	}
 	if (prevAmmo)
 	{
@@ -2185,7 +2212,7 @@ void SetViewPos()
 	}
 
 	if (ReadyWeapon > 0 && ReadyWeapon < 7)
-		ReadyAmmo = Ammo[Weapon(ViewEnt).Ammo];
+		ReadyAmmo = Ammo[Weapon(ViewEnt).Ammo].Amount;
 	else
 		ReadyAmmo = 0;
 
@@ -2626,7 +2653,7 @@ bool CheckAmmo()
 
 	ammo = Weapon(ViewEnt).Ammo;
 	count = GetAmmoUse(ReadyWeapon);
-	if (ammo == am_noammo || Ammo[ammo] >= count)
+	if (ammo == am_noammo || Ammo[ammo].Amount >= count)
 	{
 		return true;
 	}
@@ -2634,26 +2661,26 @@ bool CheckAmmo()
 	do
 	{
 		if (WeaponOwned[wp_skullrod] &&
-			Ammo[am_skullrod] > GetAmmoUse(wp_skullrod))
+			Ammo[am_skullrod].Amount > GetAmmoUse(wp_skullrod))
 		{
 			PendingWeapon = wp_skullrod;
 		}
 		else if (WeaponOwned[wp_blaster] &&
-			Ammo[am_blaster] > GetAmmoUse(wp_blaster))
+			Ammo[am_blaster].Amount > GetAmmoUse(wp_blaster))
 		{
 			PendingWeapon = wp_blaster;
 		}
 		else if (WeaponOwned[wp_crossbow] &&
-			Ammo[am_crossbow] > GetAmmoUse(wp_crossbow))
+			Ammo[am_crossbow].Amount > GetAmmoUse(wp_crossbow))
 		{
 			PendingWeapon = wp_crossbow;
 		}
 		else if (WeaponOwned[wp_mace] &&
-			Ammo[am_mace] > GetAmmoUse(wp_mace))
+			Ammo[am_mace].Amount > GetAmmoUse(wp_mace))
 		{
 			PendingWeapon = wp_mace;
 		}
-		else if (Ammo[am_goldwand] > GetAmmoUse(wp_goldwand))
+		else if (Ammo[am_goldwand].Amount > GetAmmoUse(wp_goldwand))
 		{
 			PendingWeapon = wp_goldwand;
 		}
@@ -2662,7 +2689,7 @@ bool CheckAmmo()
 			PendingWeapon = wp_gauntlets;
 		}
 		else if (WeaponOwned[wp_phoenixrod] &&
-			Ammo[am_phoenixrod] > GetAmmoUse(wp_phoenixrod))
+			Ammo[am_phoenixrod].Amount > GetAmmoUse(wp_phoenixrod))
 		{
 			PendingWeapon = wp_phoenixrod;
 		}
@@ -2896,7 +2923,8 @@ void Cheat_Gimme()
 		}
 		for (i = 0; i < 6 /*NUMAMMO2 */ ; i++)
 		{
-			Ammo[i] = MainGameInfo(Level.Game).maxammo[i] * 2;
+			GiveAmmo(i, 0);
+			Ammo[i].Amount = MainGameInfo(Level.Game).maxammo[i] * 2;
 		}
 		cprint("ALL WEAPONS");
 	}

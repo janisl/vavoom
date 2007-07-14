@@ -53,10 +53,7 @@ final void A_MStaffAttack()
 {
 	float angle;
 
-	Player(Owner.Player).Mana[HexenDefs::MANA_1] -=
-		WeaponManaUse(Owner.Player.PClass, Player(Owner.Player).ReadyWeapon);
-	Player(Owner.Player).Mana[HexenDefs::MANA_2] -=
-		WeaponManaUse(Owner.Player.PClass, Player(Owner.Player).ReadyWeapon);
+	DecMana();
 	angle = Owner.Angles.yaw;
 
 	MStaffSpawn(angle);

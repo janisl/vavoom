@@ -43,8 +43,7 @@ final void A_FireConePL1()
 	EntityEx		AimTarget;
 
 	pmo = Actor(Owner);
-	Player(Owner.Player).Mana[HexenDefs::MANA_1] -=
-		WeaponManaUse(Owner.Player.PClass, Player(Owner.Player).ReadyWeapon);
+	DecMana();
 	pmo.PlaySound('MageShardsFire', CHAN_WEAPON);
 
 	damage = 90 + (P_Random() & 15);

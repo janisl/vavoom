@@ -339,7 +339,7 @@ void SB_DrawMainBar()
 
 	if (cl.ReadyAmmo != StrifeDefs::am_noammo)
 	{
-		SB_DrawSmallNum(BAR_X + 310, BAR_Y + 162, cl.Ammo[cl.ReadyAmmo]);
+		SB_DrawSmallNum(BAR_X + 310, BAR_Y + 162, cl.Ammo[cl.ReadyAmmo].Amount);
 		R_DrawPic(BAR_X + 290, BAR_Y + 181, pic_ammo[cl.ReadyAmmo]);
 	}
 
@@ -373,7 +373,7 @@ void SB_DrawMainBar()
 		}
 		for (i = 0; i < StrifeDefs::NUMAMMO; i++)
 		{
-			SB_DrawSmallNum(BAR_X + 205, BAR_Y + AmmoPosY[i], cl.Ammo[i]);
+			SB_DrawSmallNum(BAR_X + 205, BAR_Y + AmmoPosY[i], cl.Ammo[i] ? cl.Ammo[i].Amount : 0);
 			SB_DrawSmallNum(BAR_X + 238, BAR_Y + AmmoPosY[i], cl.MaxAmmo[i] * (cl.Backpack ? 2 : 1));
 		}
 		SB_DrawSmallNum(BAR_X + 267, BAR_Y + 84, cl.Accuracy);
@@ -459,7 +459,7 @@ void SB_DrawFullscreenStats()
 	// ready weapon ammo with icon
 	if (cl.ReadyAmmo != StrifeDefs::am_noammo)
 	{
-		SB_DrawTallNum(635, 450, cl.Ammo[cl.ReadyAmmo], 0.7);
+		SB_DrawTallNum(635, 450, cl.Ammo[cl.ReadyAmmo].Amount, 0.7);
 		R_DrawPic2(575, 450, pic_ammo[cl.ReadyAmmo], 0.7);
 	}
 
@@ -513,7 +513,7 @@ void SB_DrawFullscreenStats()
 		}
 		for (i = 0; i < StrifeDefs::NUMAMMO; i++)
 		{
-			SB_DrawSmallNum(BAR_X + 205, BAR_Y + 40 + AmmoPosY[i], cl.Ammo[i]);
+			SB_DrawSmallNum(BAR_X + 205, BAR_Y + 40 + AmmoPosY[i], cl.Ammo[i] ? cl.Ammo[i].Amount : 0);
 			SB_DrawSmallNum(BAR_X + 238, BAR_Y + 40 + AmmoPosY[i], cl.MaxAmmo[i] * (cl.Backpack ? 2 : 1));
 		}
 		SB_DrawSmallNum(BAR_X + 267, BAR_Y + 124, cl.Accuracy);

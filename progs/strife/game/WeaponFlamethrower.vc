@@ -36,7 +36,7 @@ final void A_FireFlamethrower()
 	EntityEx A;
 
 	Owner.SetState(Actor(Owner).MissileState);
-	Player(Owner.Player).Ammo[Ammo]--;
+	DecAmmo(1);
 	Owner.Angles.yaw = AngleMod360(Owner.Angles.yaw +
 		(Random() - Random()) * 45.0 / 8.0);
 	Owner.Player.bFixAngle = true;

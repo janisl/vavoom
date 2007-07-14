@@ -44,6 +44,7 @@ struct spec_trans_t
 
 spec_trans_t spec_trans_tab[NUM_SPECIALS];
 
+class<AmmoPickup> AmmoClasses[NUMAMMO + 2];
 class<Weapon> WeaponClasses[NUMWEAPONS];
 int WeaponOrder[NUMWEAPONS];
 
@@ -583,4 +584,11 @@ defaultproperties
 	keymsg[2] = "$txt_needbluekey";
 
 	botskill = 2;
+
+	AmmoClasses[0] = GoldWandAmmo;
+	AmmoClasses[1] = CrossbowAmmo;
+	AmmoClasses[2] = BlasterAmmo;
+	AmmoClasses[3] = SkullRodAmmo;
+	AmmoClasses[4] = PhoenixRodAmmo;
+	AmmoClasses[5] = MaceAmmo;
 }

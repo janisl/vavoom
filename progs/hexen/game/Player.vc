@@ -59,7 +59,7 @@ int TotalArmorPoints;
 float ArmorPoints[HexenDefs::NUMARMOR];
 int ArmorPerc[HexenDefs::NUMARMOR];
 
-int Mana[HexenDefs::NUMMANA];
+Mana Mana[HexenDefs::NUMMANA];
 
 int Keys;
 
@@ -107,6 +107,7 @@ bool bShadow;
 bool bDontDraw;
 
 BotPlayer Bot;
+Inventory SavedInventory;
 
 bool onground;
 
@@ -190,8 +191,10 @@ void SpawnClient()
 				WeaponOwned[j] = true;
 			}
 		}
-		Mana[HexenDefs::MANA_1] = 25;
-		Mana[HexenDefs::MANA_2] = 25;
+		GiveMana(HexenDefs::MANA_1, 0);
+		GiveMana(HexenDefs::MANA_2, 0);
+		Mana[HexenDefs::MANA_1].Amount = 25;
+		Mana[HexenDefs::MANA_2].Amount = 25;
 		if (bestWeapon)
 		{
 			// Bring up the best weapon
@@ -283,8 +286,10 @@ void NetGameReborn()
 			WeaponOwned[i] = true;
 		}
 	}
-	Mana[HexenDefs::MANA_1] = 25;
-	Mana[HexenDefs::MANA_2] = 25;
+	GiveMana(HexenDefs::MANA_1, 0);
+	GiveMana(HexenDefs::MANA_2, 0);
+	Mana[HexenDefs::MANA_1].Amount = 25;
+	Mana[HexenDefs::MANA_2].Amount = 25;
 	if (bestWeapon)
 	{
 		// Bring up the best weapon
@@ -459,6 +464,7 @@ void SpawnPlayer(mthing_t * mthing)
 	float x, y, z;
 	PlayerPawn pp;
 	bool ResetInventory = false;
+	Inventory Item;
 
 	if (PlayerState == PST_REBORN)
 	{
@@ -518,8 +524,19 @@ void SpawnPlayer(mthing_t * mthing)
 	ViewHeight = VIEWHEIGHT;
 	ViewAngles = pp.Angles;
 	bFixAngle = true;
+
+	pp.Inventory = SavedInventory;
+	for (Item = pp.Inventory; Item; Item = Item.Inventory)
+	{
+		Item.Owner = MO;
+	}
+
 	if (ResetInventory)
 	{
+		while (pp.Inventory)
+		{
+			pp.Inventory.Destroy();
+		}
 		SetWeapon(HexenDefs::WP_FIRST);
 	}
 	else
@@ -620,6 +637,7 @@ void PlayerExitMap(bool clusterChange)
 	DamageFlash = 0.0;	// No palette changes
 	BonusFlash = 0.0;
 	PoisonCount = 0;
+	SavedInventory = EntityEx(MO).Inventory;
 }
 
 //==========================================================================
@@ -649,7 +667,15 @@ bool GiveMana(int mana, int count)
 	{
 		Error("Actor::GiveMana: bad type %i", mana);
 	}
-	if (Mana[mana] == HexenDefs::MAX_MANA)
+	Mana ManaItem = Mana[mana];
+	if (!ManaItem)
+	{
+		ManaItem = Level.Spawn(MainGameInfo(Level.Game).ManaClasses[mana]);
+		ManaItem.Amount = 0;
+		ManaItem.AttachToOwner(EntityEx(MO));
+		Mana[mana] = ManaItem;
+	}
+	if (ManaItem.Amount == HexenDefs::MAX_MANA)
 	{
 		return false;
 	}
@@ -658,12 +684,12 @@ bool GiveMana(int mana, int count)
 		// extra mana in baby mode and nightmare mode
 		count += count >> 1;
 	}
-	prevMana = Mana[mana];
+	prevMana = ManaItem.Amount;
 
-	Mana[mana] += count;
-	if (Mana[mana] > HexenDefs::MAX_MANA)
+	ManaItem.Amount += count;
+	if (ManaItem.Amount > HexenDefs::MAX_MANA)
 	{
-		Mana[mana] = HexenDefs::MAX_MANA;
+		ManaItem.Amount = HexenDefs::MAX_MANA;
 	}
 	if (prevMana <= 0)
 	{
@@ -3310,12 +3336,12 @@ bool CheckMana()
 	count = WeaponManaUse(PClass, ReadyWeapon);
 	if (mana == HexenDefs::MANA_BOTH)
 	{
-		if (Mana[HexenDefs::MANA_1] >= count && Mana[HexenDefs::MANA_2] >= count)
+		if (Mana[HexenDefs::MANA_1].Amount >= count && Mana[HexenDefs::MANA_2].Amount >= count)
 		{
 			return true;
 		}
 	}
-	else if (mana == HexenDefs::MANA_NONE || Mana[mana] >= count)
+	else if (mana == HexenDefs::MANA_NONE || Mana[mana].Amount >= count)
 	{
 		return true;
 	}
@@ -3323,18 +3349,18 @@ bool CheckMana()
 	do
 	{
 		if (WeaponOwned[HexenDefs::WP_THIRD] &&
-			Mana[HexenDefs::MANA_2] >= WeaponManaUse(PClass, HexenDefs::WP_THIRD))
+			Mana[HexenDefs::MANA_2].Amount >= WeaponManaUse(PClass, HexenDefs::WP_THIRD))
 		{
 			PendingWeapon = HexenDefs::WP_THIRD;
 		}
 		else if (WeaponOwned[HexenDefs::WP_SECOND] &&
-			Mana[HexenDefs::MANA_1] >= WeaponManaUse(PClass, HexenDefs::WP_SECOND))
+			Mana[HexenDefs::MANA_1].Amount >= WeaponManaUse(PClass, HexenDefs::WP_SECOND))
 		{
 			PendingWeapon = HexenDefs::WP_SECOND;
 		}
 		else if (WeaponOwned[HexenDefs::WP_FOURTH] &&
-			Mana[HexenDefs::MANA_1] >= WeaponManaUse(PClass, HexenDefs::WP_FOURTH) &&
-			Mana[HexenDefs::MANA_2] >= WeaponManaUse(PClass, HexenDefs::WP_FOURTH))
+			Mana[HexenDefs::MANA_1].Amount >= WeaponManaUse(PClass, HexenDefs::WP_FOURTH) &&
+			Mana[HexenDefs::MANA_2].Amount >= WeaponManaUse(PClass, HexenDefs::WP_FOURTH))
 		{
 			PendingWeapon = HexenDefs::WP_FOURTH;
 		}
@@ -3630,7 +3656,8 @@ void Cheat_Gimme()
 		}
 		for (i = 0; i < HexenDefs::NUMMANA; i++)
 		{
-			Mana[i] = HexenDefs::MAX_MANA;
+			GiveMana(i, 0);
+			Mana[i].Amount = HexenDefs::MAX_MANA;
 		}
 		Pieces = 7;
 		cprint("ALL WEAPONS");

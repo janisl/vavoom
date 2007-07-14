@@ -41,8 +41,7 @@ final void A_CFlameAttack()
 		Actor(mo)._Special1 = 2;
 	}
 
-	Player(Owner.Player).Mana[HexenDefs::MANA_2] -=
-		WeaponManaUse(Owner.Player.PClass, Player(Owner.Player).ReadyWeapon);
+	DecMana();
 	Owner.PlaySound('ClericFlameFire', CHAN_WEAPON);
 }
 

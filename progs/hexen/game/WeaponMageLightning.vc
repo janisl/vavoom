@@ -66,8 +66,7 @@ final void A_MLightningAttack()
 		cmo.A_LightningZap();
 	}
 	Owner.PlaySound('MageLightningFire', CHAN_WEAPON);
-	Player(Owner.Player).Mana[HexenDefs::MANA_2] -= WeaponManaUse(Owner.Player.PClass,
-		Player(Owner.Player).ReadyWeapon);
+	DecMana();
 }
 
 __states__

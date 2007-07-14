@@ -38,7 +38,7 @@ final void A_FireElectricArrow()
 	savedangle = Owner.Angles.yaw;
 	Owner.Angles.yaw = AngleMod360(Owner.Angles.yaw +
 		(Random() - Random()) * 45.0 / 8.0 / itof(1 << (Player(Owner.Player).Accuracy * 5 / 100)));
-	Player(Owner.Player).Ammo[Ammo]--;
+	DecAmmo(1);
 	Owner.SetState(Actor(Owner).MissileState);
 	Actor(Owner).SpawnPlayerMissile(ElectricBolt);
 	Owner.Angles.yaw = savedangle;
@@ -58,7 +58,7 @@ final void A_FirePoisonArrow()
 	savedangle = Owner.Angles.yaw;
 	Owner.Angles.yaw = AngleMod360(Owner.Angles.yaw +
 		(Random() - Random()) * 45.0 / 8.0 / itof(1 << (Player(Owner.Player).Accuracy * 5 / 100)));
-	Player(Owner.Player).Ammo[Ammo]--;
+	DecAmmo(1);
 	Owner.SetState(Actor(Owner).MissileState);
 	Actor(Owner).SpawnPlayerMissile(PoisonBolt);
 	Owner.Angles.yaw = savedangle;

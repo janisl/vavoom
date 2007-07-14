@@ -35,11 +35,11 @@ final void A_FireSkullRodPL1()
 {
 	EntityEx	A;
 
-	if (Player(Owner.Player).Ammo[am_skullrod] < USE_SKRD_AMMO_1)
+	if (Player(Owner.Player).Ammo[am_skullrod].Amount < USE_SKRD_AMMO_1)
 	{
 		return;
 	}
-	Player(Owner.Player).Ammo[am_skullrod] -= USE_SKRD_AMMO_1;
+	DecAmmo(USE_SKRD_AMMO_1);
 	A = Actor(Owner).SpawnPlayerMissile(HornRodFX1);
 	// Randomize the first frame
 	if (A && P_Random() > 128)
@@ -63,8 +63,7 @@ final void A_FireSkullRodPL2()
 	HornRodFX2	A;
 	EntityEx	AimTarget;
 
-	Player(Owner.Player).Ammo[am_skullrod] -=
-		Level.Game.deathmatch ? USE_SKRD_AMMO_1 : USE_SKRD_AMMO_2;
+	DecAmmo(Level.Game.deathmatch ? USE_SKRD_AMMO_1 : USE_SKRD_AMMO_2);
 	A = HornRodFX2(Actor(Owner).SpawnPlayerMissileEx(HornRodFX2, true, AimTarget));
 	// Use MissileMobj instead of the return value from
 	// SpawnPlayerMissile because we need to give info to the mobj

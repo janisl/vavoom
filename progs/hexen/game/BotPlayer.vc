@@ -289,8 +289,8 @@ bool CheckItem(Actor item)
 			return true;
 
 		// If we have no more room for the mana it gives
-		if ((weapon == HexenDefs::WP_SECOND && player.Mana[HexenDefs::MANA_1] == HexenDefs::MAX_MANA) ||
-			(weapon == HexenDefs::WP_THIRD && player.Mana[HexenDefs::MANA_2] == HexenDefs::MAX_MANA))
+		if ((weapon == HexenDefs::WP_SECOND && player.Mana[HexenDefs::MANA_1].Amount == HexenDefs::MAX_MANA) ||
+			(weapon == HexenDefs::WP_THIRD && player.Mana[HexenDefs::MANA_2].Amount == HexenDefs::MAX_MANA))
 			return false;
 	}
 
@@ -304,8 +304,8 @@ bool CheckItem(Actor item)
 			return true;
 
 		// If we have no more room for the mana it gives
-		if (player.Mana[HexenDefs::MANA_1] == HexenDefs::MAX_MANA &&
-			player.Mana[HexenDefs::MANA_2] == HexenDefs::MAX_MANA)
+		if (player.Mana[HexenDefs::MANA_1].Amount == HexenDefs::MAX_MANA &&
+			player.Mana[HexenDefs::MANA_2].Amount == HexenDefs::MAX_MANA)
 			return false;
 	}
 
@@ -313,12 +313,12 @@ bool CheckItem(Actor item)
 	if (mana != -1)
 	{
 		// If we have no more room for the mana it gives
-		if (mana == HexenDefs::MANA_1 && player.Mana[HexenDefs::MANA_1] == HexenDefs::MAX_MANA)
+		if (mana == HexenDefs::MANA_1 && player.Mana[HexenDefs::MANA_1].Amount == HexenDefs::MAX_MANA)
 			return false;
-		if (mana == HexenDefs::MANA_2 && player.Mana[HexenDefs::MANA_2] == HexenDefs::MAX_MANA)
+		if (mana == HexenDefs::MANA_2 && player.Mana[HexenDefs::MANA_2].Amount == HexenDefs::MAX_MANA)
 			return false;
-		if (mana == HexenDefs::MANA_BOTH && player.Mana[HexenDefs::MANA_1] == HexenDefs::MAX_MANA &&
-			player.Mana[HexenDefs::MANA_2] == HexenDefs::MAX_MANA)
+		if (mana == HexenDefs::MANA_BOTH && player.Mana[HexenDefs::MANA_1].Amount == HexenDefs::MAX_MANA &&
+			player.Mana[HexenDefs::MANA_2].Amount == HexenDefs::MAX_MANA)
 			return false;
 	}
 

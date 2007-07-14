@@ -41,6 +41,7 @@ struct spec_trans_t
 
 spec_trans_t spec_trans_tab[NUM_SPECIALS];
 
+class<AmmoPickup> AmmoClasses[StrifeDefs::NUMAMMO + 2];
 class<Weapon> WeaponClasses[StrifeDefs::NUMWEAPONS];
 int WeaponOrder[StrifeDefs::NUMWEAPONS];
 
@@ -718,4 +719,12 @@ defaultproperties
 	MaxInvItem[StrifeDefs::ITEM_Toughness] = 100;
 	MaxInvItem[StrifeDefs::ITEM_Accuracy] = 100;
 	MaxInvItem[StrifeDefs::ITEM_OraclePass] = 1;
+
+	AmmoClasses[0] = ClipOfBullets;
+	AmmoClasses[1] = ElectricBolts;
+	AmmoClasses[2] = PoisonBolts;
+	AmmoClasses[3] = EnergyPod;
+	AmmoClasses[4] = MiniMissiles;
+	AmmoClasses[5] = HEGrenadeRounds;
+	AmmoClasses[6] = PhosphorusGrenadeRounds;
 }

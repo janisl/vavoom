@@ -51,6 +51,28 @@ int WeaponManaUse(int pclass, int num)
 	return MainGameInfo(Level.Game).WeaponManaUseTable[(pclass << 2) + num];
 }
 
+//==========================================================================
+//
+//  DecMana
+//
+//==========================================================================
+
+void DecMana()
+{
+	if (Mana == HexenDefs::MANA_BOTH)
+	{
+		Player(Owner.Player).Mana[HexenDefs::MANA_1].Amount -=
+			WeaponManaUse(Owner.Player.PClass, Player(Owner.Player).ReadyWeapon);
+		Player(Owner.Player).Mana[HexenDefs::MANA_2].Amount -=
+			WeaponManaUse(Owner.Player.PClass, Player(Owner.Player).ReadyWeapon);
+	}
+	else
+	{
+		Player(Owner.Player).Mana[Mana].Amount -=
+			WeaponManaUse(Owner.Player.PClass, Player(Owner.Player).ReadyWeapon);
+	}
+}
+
 state GetUpState()
 {
 	return UpState;

@@ -89,8 +89,7 @@ final void A_CStaffCheck()
 			Owner.Player.Health = newLife;
 			Owner.Player.SetViewState(ps_weapon, Attack2State);
 		}
-		Player(Owner.Player).Mana[HexenDefs::MANA_1] -=
-			WeaponManaUse(Owner.Player.PClass, Player(Owner.Player).ReadyWeapon);
+		DecMana();
 	}
 }
 
@@ -105,8 +104,7 @@ final void A_CStaffAttack()
 	EntityEx	mo;
 	PlayerPawn	playPawn;
 
-	Player(Owner.Player).Mana[HexenDefs::MANA_1] -=
-		WeaponManaUse(Owner.Player.PClass, Player(Owner.Player).ReadyWeapon);
+	DecMana();
 	playPawn = PlayerPawn(Owner);
 	mo = Actor(Owner).SpawnPlayerMissileAngle(CStaffMissile,
 		playPawn.Angles.yaw - (45.0 / 15.0));

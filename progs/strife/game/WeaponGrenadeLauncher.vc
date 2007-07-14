@@ -48,9 +48,9 @@ final void A_FireGrenade()
 	{
 		grenadetype = PhosphorousGrenade;
 	}
-	if (Player(Owner.Player).Ammo[Ammo] < 1)
+	if (Player(Owner.Player).Ammo[Ammo].Amount < 1)
 		return;
-	Player(Owner.Player).Ammo[Ammo]--;
+	DecAmmo(1);
 
 	// Make it flash
 	if (Owner.Player.ViewStates[ps_weapon].State == AttackState)

@@ -37,7 +37,7 @@ final void A_FireBlasterPL1()
 	float bulletslope;
 	TVec dir;
 
-	Player(Owner.Player).Ammo[am_blaster] -= USE_BLSR_AMMO_1;
+	DecAmmo(USE_BLSR_AMMO_1);
 	Actor(Owner).Aim(dir, 16.0 * 64.0);
 	damage = HITDICE(4);
 	if (Player(Owner.Player).Refire)
@@ -58,8 +58,7 @@ final void A_FireBlasterPL2()
 {
 	EntityEx	A;
 
-	Player(Owner.Player).Ammo[am_blaster] -=
-		Level.Game.deathmatch ? USE_BLSR_AMMO_1 : USE_BLSR_AMMO_2;
+	DecAmmo(Level.Game.deathmatch ? USE_BLSR_AMMO_1 : USE_BLSR_AMMO_2);
 	A = Actor(Owner).SpawnPlayerMissile(BlasterFX1);
 	if (A)
 	{

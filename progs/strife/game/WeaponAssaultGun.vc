@@ -43,7 +43,7 @@ final void A_FireRiffle()
 		return;
 
 	Owner.SetState(Actor(Owner).MissileState);
-	Player(Owner.Player).Ammo[Ammo]--;
+	DecAmmo(1);
 
 	Actor(Owner).Aim(dir, 16.0 * 64.0);
 	if (Player(Owner.Player).Refire)

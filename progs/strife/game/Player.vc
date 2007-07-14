@@ -60,7 +60,7 @@ int ArmorPoints;
 bool Backpack;
 bool Communicator;
 
-int Ammo[StrifeDefs::NUMAMMO];
+AmmoPickup Ammo[StrifeDefs::NUMAMMO];
 int MaxAmmo[StrifeDefs::NUMAMMO];
 int ReadyAmmo;
 
@@ -86,6 +86,8 @@ int Sigil;
 
 // Is wp_nochange if not changing.
 int PendingWeapon;
+
+Inventory SavedInventory;
 
 replication
 {
@@ -319,6 +321,7 @@ void SpawnPlayer(mthing_t * mthing)
 
 	Actor A;
 	bool ResetInventory = false;
+	Inventory Item;
 
 	if (PlayerState == PST_REBORN)
 	{
@@ -354,8 +357,18 @@ void SpawnPlayer(mthing_t * mthing)
 	ViewAngles = A.Angles;
 	bFixAngle = true;
 
+	A.Inventory = SavedInventory;
+	for (Item = A.Inventory; Item; Item = Item.Inventory)
+	{
+		Item.Owner = MO;
+	}
+
 	if (ResetInventory)
 	{
+		while (A.Inventory)
+		{
+			A.Inventory.Destroy();
+		}
 		SetWeapon(StrifeDefs::wp_fist);
 	}
 	else
@@ -436,6 +449,7 @@ void PlayerExitMap(bool clusterChange)
 	FixedColourmap = 0;		// cancel ir gogles
 	DamageFlash = 0.0;		// no palette changes
 	BonusFlash = 0.0;
+	SavedInventory = EntityEx(MO).Inventory;
 }
 
 //==========================================================================
@@ -458,8 +472,16 @@ bool GiveAmmo(int ammo, int num)
 //      I_Error ("P_GiveAmmo: bad type %i", ammo);
 		Error("P_GiveAmmo: bad type");
 
+	AmmoPickup AmmoItem = Ammo[ammo];
+	if (!AmmoItem)
+	{
+		AmmoItem = Level.Spawn(MainGameInfo(Level.Game).AmmoClasses[ammo]);
+		AmmoItem.Amount = 0;
+		AmmoItem.AttachToOwner(EntityEx(MO));
+		Ammo[ammo] = AmmoItem;
+	}
 	max = Backpack ? MainGameInfo(Level.Game).maxammo[ammo] * 2 : MainGameInfo(Level.Game).maxammo[ammo];
-	if (Ammo[ammo] == max)
+	if (AmmoItem.Amount == max)
 		return false;
 
 	if (Level.Game.gameskill == sk_baby || Level.Game.gameskill == sk_nightmare)
@@ -469,11 +491,11 @@ bool GiveAmmo(int ammo, int num)
 		num <<= 1;
 	}
 
-	oldammo = Ammo[ammo];
-	Ammo[ammo] += num;
+	oldammo = AmmoItem.Amount;
+	AmmoItem.Amount += num;
 
-	if (Ammo[ammo] > max)
-		Ammo[ammo] = max;
+	if (AmmoItem.Amount > max)
+		AmmoItem.Amount = max;
 
 	// If non zero ammo, 
 	// don't change up weapons,
@@ -2109,7 +2131,7 @@ void ChangeWeapon(int newweapon)
 		count = 30;
 	else
 		count = 1;
-	if (ammo != StrifeDefs::am_noammo && Ammo[ammo] < count)
+	if (ammo != StrifeDefs::am_noammo && Ammo[ammo].Amount < count)
 		return;
 
 	if (WeaponOwned[newweapon] && newweapon != ReadyWeapon)
@@ -2194,7 +2216,7 @@ int CheckAmmo()
 
 	// Some do not need ammunition anyway.
 	// Return if current ammunition sufficient.
-	if (ammo == StrifeDefs::am_noammo || Ammo[ammo] >= count)
+	if (ammo == StrifeDefs::am_noammo || Ammo[ammo].Amount >= count)
 		return true;
 
 	// Out of ammo, pick a weapon to change to.
@@ -2416,7 +2438,8 @@ void Cheat_Gimme()
 	{
 		for (i = 0; i < StrifeDefs::NUMAMMO; i++)
 		{
-			Ammo[i] = MainGameInfo(Level.Game).maxammo[i] * (Backpack ? 2 : 1);
+			GiveAmmo(i, 0);
+			Ammo[i].Amount = MainGameInfo(Level.Game).maxammo[i] * (Backpack ? 2 : 1);
 		}
 	}
 

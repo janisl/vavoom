@@ -41,7 +41,7 @@ void WeaponLevel2Fade()
 		Owner.Player.ViewStates[ps_weapon].State != UpState2)
 	{
 		Owner.Player.SetViewState(ps_weapon, ReadyState);
-		Player(Owner.Player).Ammo[am_phoenixrod] -= USE_PHRD_AMMO_2;
+		DecAmmo(USE_PHRD_AMMO_2);
 		Player(Owner.Player).Refire = 0;
 	}
 }
@@ -56,7 +56,7 @@ final void A_FirePhoenixPL1()
 {
 	TVec vforward;
 
-	Player(Owner.Player).Ammo[am_phoenixrod] -= USE_PHRD_AMMO_1;
+	DecAmmo(USE_PHRD_AMMO_1);
 	Actor(Owner).SpawnPlayerMissile(PhoenixFX1);
 	AngleVector(&Owner.Angles, &vforward);
 	Owner.Velocity -= vforward * 140.0;
@@ -119,7 +119,7 @@ final void A_FirePhoenixPL2()
 
 final void A_ShutdownPhoenixPL2()
 {
-	Player(Owner.Player).Ammo[am_phoenixrod] -= USE_PHRD_AMMO_2;
+	DecAmmo(USE_PHRD_AMMO_2);
 }
 
 __states__
