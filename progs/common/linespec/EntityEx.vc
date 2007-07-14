@@ -4884,7 +4884,23 @@ final void DropItem(class<EntityEx> type, int amount, float chance)
 		Inventory Item = Inventory(A);
 		if (amount > 0)
 		{
-			A.SetItemAmount(amount);
+			Item.Amount = amount;
+		}
+		else if (Ammo(Item))
+		{
+			//	Half ammo when dropped by bad guys.
+			if (Item.DropAmount)
+			{
+				Item.Amount = Item.DropAmount;
+			}
+			else
+			{
+				Item.Amount = Item.Amount / 2;
+				if (Item.Amount < 1)
+				{
+					Item.Amount = 1;
+				}
+			}
 		}
 		if (Item.SpecialDropAction(self))
 		{
@@ -5224,6 +5240,18 @@ final void TouchDehackedSpecial(EntityEx Toucher)
 	}
 	Inventory Item = Spawn(ItemType);
 	Item.bDropped = bDropped;
+	if (bDropped)
+	{
+		if (Ammo(Item))
+		{
+			//	Half ammo when dropped by bad guys.
+			Item.Amount = Item.Amount / 2;
+			if (Item.Amount < 1)
+			{
+				Item.Amount = 1;
+			}
+		}
+	}
 	if (!Item.TryPickup(Toucher))
 	{
 		Item.Destroy();
@@ -5347,10 +5375,6 @@ void PlayerKilled(EntityEx source, EntityEx inflictor)
 }
 
 void TouchSpecial(EntityEx Toucher)
-{
-}
-
-void SetItemAmount(int Amount)
 {
 }
 

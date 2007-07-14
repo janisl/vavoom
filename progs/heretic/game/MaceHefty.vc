@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MaceHefty : Ammo
+class MaceHefty : MaceAmmo
 	__mobjinfo__(16)
 	__scriptid__(36);
 
@@ -34,8 +34,7 @@ __states__
 
 defaultproperties
 {
-	AmmoType = am_mace;
-	AmmoCount = 100;
+	Amount = 100;
 	IdleState = S_AMM2;
 	PickupMessage = "$txt_ammomace2";
 }

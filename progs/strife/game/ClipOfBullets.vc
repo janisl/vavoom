@@ -38,5 +38,5 @@ defaultproperties
 	PickupMessage = "$txt_clipofbullets";
 	IdleState = S_BULLETS;
 	AmmoType = StrifeDefs::am_clip;
-	AmmoCount = 10;
+	Amount = 10;
 }

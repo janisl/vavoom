@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class SkullRodAmmo : Ammo
+class SkullRodAmmo : AmmoPickup
 	__mobjinfo__(20)
 	__scriptid__(158);
 
@@ -36,7 +36,7 @@ __states__
 defaultproperties
 {
 	AmmoType = am_skullrod;
-	AmmoCount = 20;
+	Amount = 20;
 	IdleState = S_AMS1_1;
 	PickupMessage = "$txt_ammoskullrod1";
 }

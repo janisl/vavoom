@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class GoldWandAmmo : Ammo
+class GoldWandAmmo : AmmoPickup
 	__mobjinfo__(10)
 	__scriptid__(11);
 
@@ -35,7 +35,7 @@ __states__
 defaultproperties
 {
 	AmmoType = am_goldwand;
-	AmmoCount = 10;
+	Amount = 10;
 	IdleState = S_AMG1;
 	PickupMessage = "$txt_ammogoldwand1";
 }

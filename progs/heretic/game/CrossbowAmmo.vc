@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class CrossbowAmmo : Ammo
+class CrossbowAmmo : AmmoPickup
 	__mobjinfo__(18)
 	__scriptid__(33);
 
@@ -35,7 +35,7 @@ __states__
 defaultproperties
 {
 	AmmoType = am_crossbow;
-	AmmoCount = 5;
+	Amount = 5;
 	IdleState = S_AMC1;
 	PickupMessage = "$txt_ammocrossbow1";
 }

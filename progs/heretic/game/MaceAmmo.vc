@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MaceAmmo : Ammo
+class MaceAmmo : AmmoPickup
 	__mobjinfo__(13)
 	__scriptid__(35);
 
@@ -35,7 +35,7 @@ __states__
 defaultproperties
 {
 	AmmoType = am_mace;
-	AmmoCount = 20;
+	Amount = 20;
 	IdleState = S_AMM1;
 	PickupMessage = "$txt_ammomace1";
 }

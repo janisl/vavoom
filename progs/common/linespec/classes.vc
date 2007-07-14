@@ -39,6 +39,7 @@ enum
 #include "Inventory.vc"
 #include "PickupFlash.vc"
 #include "ItemFog.vc"
+#include "Ammo.vc"
 #include "PlayerEx.vc"
 
 #include "LineSpecialLevelInfo.vc"

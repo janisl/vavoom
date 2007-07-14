@@ -37,5 +37,5 @@ defaultproperties
 	PickupMessage = "$txt_electricbolts";
 	IdleState = S_ARROWS_ELECTRIC;
 	AmmoType = StrifeDefs::am_electric_arrow;
-	AmmoCount = 20;
+	Amount = 20;
 }

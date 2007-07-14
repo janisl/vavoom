@@ -49,7 +49,7 @@ final bool EnemyCloseEnough()
 
 void NoBlockingSet()
 {
-	DropItem(EnergyPod, 0, 1.0);
+	DropItem(EnergyPod, 20, 1.0);
 }
 
 //==========================================================================

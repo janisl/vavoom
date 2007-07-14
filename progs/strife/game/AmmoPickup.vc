@@ -23,11 +23,10 @@
 //**
 //**************************************************************************
 
-class AmmoPickup : Inventory
+class AmmoPickup : Ammo
 	abstract;
 
 int AmmoType;
-int AmmoCount;
 
 //==========================================================================
 //
@@ -37,8 +36,7 @@ int AmmoCount;
 
 bool TryPickup(EntityEx Toucher)
 {
-	if (Player(Toucher.Player).GiveAmmo(AmmoType,
-		bDropped ? AmmoCount / 2 : AmmoCount))
+	if (Player(Toucher.Player).GiveAmmo(AmmoType, Amount))
 	{
 		GoAwayAndDie();
 		GiveQuest(Toucher);

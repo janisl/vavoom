@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class PhoenixRodAmmo : Ammo
+class PhoenixRodAmmo : AmmoPickup
 	__mobjinfo__(22)
 	__scriptid__(161);
 
@@ -37,7 +37,7 @@ __states__
 defaultproperties
 {
 	AmmoType = am_phoenixrod;
-	AmmoCount = 1;
+	Amount = 1;
 	IdleState = S_AMP1_1;
 	PickupMessage = "$txt_ammophoenixrod1";
 }

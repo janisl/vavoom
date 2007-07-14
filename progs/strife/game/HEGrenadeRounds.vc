@@ -37,5 +37,5 @@ defaultproperties
 	PickupMessage = "$txt_hegrenades";
 	IdleState = S_GRENADE_HE;
 	AmmoType = StrifeDefs::am_grenade1;
-	AmmoCount = 6;
+	Amount = 6;
 }

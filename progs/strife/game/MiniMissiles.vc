@@ -38,5 +38,5 @@ defaultproperties
 	PickupMessage = "$txt_minimissiles";
 	IdleState = S_MINI_MISSILES;
 	AmmoType = StrifeDefs::am_misl;
-	AmmoCount = 4;
+	Amount = 4;
 }

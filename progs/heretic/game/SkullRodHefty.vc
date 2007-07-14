@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class SkullRodHefty : Ammo
+class SkullRodHefty : SkullRodAmmo
 	__mobjinfo__(21)
 	__scriptid__(159);
 
@@ -35,8 +35,7 @@ __states__
 
 defaultproperties
 {
-	AmmoType = am_skullrod;
-	AmmoCount = 100;
+	Amount = 100;
 	IdleState = S_AMS2_1;
 	PickupMessage = "$txt_ammoskullrod2";
 }

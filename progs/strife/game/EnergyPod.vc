@@ -27,19 +27,6 @@ class EnergyPod : AmmoPickup
 	__mobjinfo__(2047)
 	__scriptid__(75);
 
-//==========================================================================
-//
-//	TryPickup
-//
-//==========================================================================
-
-bool TryPickup(EntityEx Toucher)
-{
-	if (bDropped)
-		AmmoCount = 40;
-	return ::TryPickup(Toucher);
-}
-
 __states__
 {
 	S_ENERGY_POD_1('BRY1', 0, 6.0 / 35.0, S_ENERGY_POD_2) = none
@@ -52,5 +39,5 @@ defaultproperties
 	PickupMessage = "$txt_energypod";
 	IdleState = S_ENERGY_POD_1;
 	AmmoType = StrifeDefs::am_cell;
-	AmmoCount = 20;
+	Amount = 20;
 }

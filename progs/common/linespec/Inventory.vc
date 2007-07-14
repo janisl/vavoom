@@ -30,6 +30,7 @@ const float BONUSADD		= 0.2;
 
 int				Amount;
 int				MaxAmount;
+int				DropAmount;
 string			PickupMessage;
 name			PickupSound;
 float			RespawnTime;

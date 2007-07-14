@@ -534,9 +534,9 @@ int WeapFromItem(Actor item)
 
 int AmmoFromItem(Actor item)
 {
-	if (Ammo(item))
+	if (AmmoPickup(item))
 	{
-		return Ammo(item).AmmoType;
+		return AmmoPickup(item).AmmoType;
 	}
 	return -1;
 }

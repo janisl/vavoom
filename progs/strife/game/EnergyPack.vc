@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class EnergyPack : AmmoPickup
+class EnergyPack : EnergyPod
 	__mobjinfo__(17)
 	__scriptid__(142);
 
@@ -38,6 +38,5 @@ defaultproperties
 	ConversationID = 184;
 	PickupMessage = "$txt_energypack";
 	IdleState = S_ENERGY_PACK_1;
-	AmmoType = StrifeDefs::am_cell;
-	AmmoCount = 100;
+	Amount = 100;
 }

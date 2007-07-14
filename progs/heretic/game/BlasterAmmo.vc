@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class BlasterAmmo : Ammo
+class BlasterAmmo : AmmoPickup
 	__mobjinfo__(54)
 	__scriptid__(37);
 
@@ -37,7 +37,7 @@ __states__
 defaultproperties
 {
 	AmmoType = am_blaster;
-	AmmoCount = 10;
+	Amount = 10;
 	IdleState = S_AMB1_1;
 	PickupMessage = "$txt_ammoblaster1";
 }

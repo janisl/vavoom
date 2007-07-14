@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class BoxOfBullets : AmmoPickup
+class BoxOfBullets : ClipOfBullets
 	__mobjinfo__(2048)
 	__scriptid__(139);
 
@@ -37,6 +37,5 @@ defaultproperties
 	ConversationID = 180;
 	PickupMessage = "$txt_boxofbullets";
 	IdleState = S_AMMO;
-	AmmoType = StrifeDefs::am_clip;
-	AmmoCount = 50;
+	Amount = 50;
 }

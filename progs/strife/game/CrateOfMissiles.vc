@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class CrateOfMissiles : AmmoPickup
+class CrateOfMissiles : MiniMissiles
 	__mobjinfo__(2046)
 	__scriptid__(141);
 
@@ -37,6 +37,5 @@ defaultproperties
 	ConversationID = 182;
 	PickupMessage = "$txt_crateofmissiles";
 	IdleState = S_CRATE_OF_MISSILES;
-	AmmoType = StrifeDefs::am_misl;
-	AmmoCount = 20;
+	Amount = 20;
 }
