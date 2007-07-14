@@ -47,7 +47,6 @@
 #include "SoundSequence.vc"
 #include "SoundSequenceSlot.vc"
 
-#include "Pickup.vc"
 #include "CrystalVial.vc"
 #include "Artifact.vc"
 #include "ArtiHealth.vc"

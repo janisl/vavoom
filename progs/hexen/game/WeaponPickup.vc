@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class WeaponPickup : Pickup
+class WeaponPickup : Inventory
 	abstract;
 
 int WeaponClass;
@@ -114,5 +114,8 @@ bool ShouldStay()
 
 defaultproperties
 {
+	Height = 32.0;
+	bSpecial = true;
+	bNoPassMobj = true;
 	PickupSound = 'PickupWeapon';
 }

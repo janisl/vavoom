@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Mana : Pickup
+class Mana : Inventory
 	abstract;
 
 int ManaType;
@@ -49,5 +49,8 @@ defaultproperties
 {
 	Health = 10;
 	Radius = 8.0;
+	Height = 32.0;
+	bSpecial = true;
+	bNoPassMobj = true;
 	bFloatBob = true;
 }
