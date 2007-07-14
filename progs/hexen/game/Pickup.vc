@@ -26,17 +26,6 @@
 class Pickup : Inventory
 	abstract;
 
-//==========================================================================
-//
-//  AngleIncrements
-//
-//==========================================================================
-
-int AngleIncrements()
-{
-	return bMonster ? 45 : 1;
-}
-
 defaultproperties
 {
 	Height = 32.0;

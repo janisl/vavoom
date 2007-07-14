@@ -5352,7 +5352,8 @@ bool IsPointPuller()
 
 int AngleIncrements()
 {
-	return 45;
+	return bMonster ? 45 : LineSpecialGameInfo(
+		Level.Game).NonMonsterAngleIncrements;
 }
 
 //==========================================================================

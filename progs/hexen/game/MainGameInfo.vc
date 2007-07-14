@@ -371,6 +371,7 @@ defaultproperties
 	TeleportFogClass = TeleportFog;
 	DefaultKickBack = 150.0;
 	BloodClass = Blood;
+	NonMonsterAngleIncrements = 1;
 
 	WeaponClasses[0] = WeaponFighterPunch;
 	WeaponClasses[1] = WeaponClericMace;
