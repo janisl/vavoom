@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Soulsphere : Pickup
+class Soulsphere : Inventory
 	__mobjinfo__(2013)
 	__scriptid__(25);
 

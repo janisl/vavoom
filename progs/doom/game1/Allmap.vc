@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Allmap : Pickup
+class Allmap : Inventory
 	__mobjinfo__(2026)
 	__scriptid__(137);
 

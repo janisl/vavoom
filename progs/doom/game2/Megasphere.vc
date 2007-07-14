@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Megasphere : Pickup
+class Megasphere : Inventory
 	__mobjinfo__(83)
 	__scriptid__(132);
 

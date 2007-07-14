@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ArmorBonus : Pickup
+class ArmorBonus : Inventory
 	__mobjinfo__(2015)
 	__scriptid__(22);
 

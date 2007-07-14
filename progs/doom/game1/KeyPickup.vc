@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class KeyPickup : Pickup
+class KeyPickup : Inventory
 	abstract;
 
 int			KeyType;

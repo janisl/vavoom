@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class HealthBonus : Pickup
+class HealthBonus : Inventory
 	__mobjinfo__(2014)
 	__scriptid__(152);
 

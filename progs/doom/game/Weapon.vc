@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Weapon : Pickup;
+class Weapon : Inventory;
 
 const float LOWERSPEED		= 6.0;
 const float RAISESPEED		= 6.0;

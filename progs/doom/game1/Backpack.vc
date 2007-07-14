@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Backpack : Pickup
+class Backpack : Inventory
 	__mobjinfo__(8)
 	__scriptid__(144);
 

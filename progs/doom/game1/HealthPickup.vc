@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class HealthPickup : Pickup
+class HealthPickup : Inventory
 	abstract;
 
 int HealthAmount;

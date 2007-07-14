@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class PowerupPickup : Pickup
+class PowerupPickup : Inventory
 	abstract;
 
 int PowerType;
