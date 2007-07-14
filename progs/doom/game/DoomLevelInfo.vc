@@ -407,7 +407,7 @@ void UpdateParticle(particle_t * p, float DeltaTime)
 //
 //==========================================================================
 
-class<Pickup> GetDehackedItemType(EntityEx Item)
+class<Inventory> GetDehackedItemType(EntityEx Item)
 {
 	// Identify by sprite.
 	// armor

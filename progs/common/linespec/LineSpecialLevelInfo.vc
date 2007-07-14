@@ -4311,6 +4311,17 @@ bool CheckActivation(int activationType, line_t * line, EntityEx A)
 	return false;
 }
 
+//==========================================================================
+//
+//  GetDehackedItemType
+//
+//==========================================================================
+
+class<Inventory> GetDehackedItemType(EntityEx Ent)
+{
+	return none;
+}
+
 defaultproperties
 {
 	ExtPlayersBase = 4001;
