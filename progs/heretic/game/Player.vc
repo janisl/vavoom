@@ -532,9 +532,9 @@ bool GiveAmmo(class<Ammo> ammo, int count)
 	}
 	if (ReadyWeapon == wp_staff || ReadyWeapon == wp_gauntlets)
 	{
-		if (WeaponOwned[MainGameInfo(Level.Game).GetAmmoChange[AmmoPickup(AmmoItem).AmmoType]])
+		if (WeaponOwned[AmmoPickup(AmmoItem).GetAmmoChange])
 		{
-			PendingWeapon = MainGameInfo(Level.Game).GetAmmoChange[AmmoPickup(AmmoItem).AmmoType];
+			PendingWeapon = AmmoPickup(AmmoItem).GetAmmoChange;
 		}
 	}
 	return true;
@@ -2896,6 +2896,8 @@ void Cheat_NoClip()
 
 void Cheat_Gimme()
 {
+	class<Inventory>	Cls;
+
 	if (Cmd_CheckParm("weapons"))
 	{
 		int i;
@@ -2921,9 +2923,19 @@ void Cheat_Gimme()
 			WeaponOwned[wp_phoenixrod] = false;
 			WeaponOwned[wp_mace] = false;
 		}
-		for (i = 0; i < NUMAMMO; i++)
+		foreach AllClasses(Ammo, Cls)
 		{
-			Inventory AmmoItem = EntityEx(MO).FindInventory(MainGameInfo(Level.Game).AmmoClasses[i]);
+			//	Only direct descendants.
+			if (GetClassParent(Cls) != AmmoPickup)
+			{
+				continue;
+			}
+			Inventory AmmoItem = EntityEx(MO).FindInventory(Cls);
+			if (!AmmoItem)
+			{
+				AmmoItem = Level.Spawn(Cls);
+				AmmoItem.AttachToOwner(EntityEx(MO));
+			}
 			AmmoItem.Amount = AmmoItem.MaxAmount;
 		}
 		cprint("ALL WEAPONS");

@@ -2400,7 +2400,8 @@ void Cheat_NoClip()
 
 void Cheat_Gimme()
 {
-	int i;
+	int					i;
+	class<Inventory>	Cls;
 
 	// Backpack
 	if (Cmd_CheckParm("Backpack"))
@@ -2425,10 +2426,19 @@ void Cheat_Gimme()
 	// Ammo
 	if (Cmd_CheckParm("Ammo"))
 	{
-		for (i = 0; i < StrifeDefs::NUMAMMO; i++)
+		foreach AllClasses(Ammo, Cls)
 		{
-			GiveAmmo(MainGameInfo(Level.Game).AmmoClasses[i], 0);
-			Inventory AmmoItem = EntityEx(MO).FindInventory(MainGameInfo(Level.Game).AmmoClasses[i]);
+			//	Only direct descendants.
+			if (GetClassParent(Cls) != AmmoPickup)
+			{
+				continue;
+			}
+			Inventory AmmoItem = EntityEx(MO).FindInventory(Cls);
+			if (!AmmoItem)
+			{
+				AmmoItem = Level.Spawn(Cls);
+				AmmoItem.AttachToOwner(EntityEx(MO));
+			}
 			AmmoItem.Amount = AmmoItem.MaxAmount;
 		}
 	}

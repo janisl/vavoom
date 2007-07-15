@@ -38,7 +38,6 @@ defaultproperties
 	bNoPassMobj = true;
 	bFloorClip = true;
 	IdleState = S_SHEL;
-	AmmoType = DoomDefs::am_shell;
 	Amount = 4;
 	MaxAmount = 50;
 	PickupMessage = "$gotshells";

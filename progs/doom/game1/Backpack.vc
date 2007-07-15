@@ -35,21 +35,28 @@ class Backpack : Inventory
 
 bool TryPickup(EntityEx Toucher)
 {
-	int i;
+	class<AmmoPickup>	Cls;
 
-	if (!Player(Toucher.Player).Backpack)
+	if (!Player(Toucher.Player).bBackpack)
 	{
-		Player(Toucher.Player).Backpack = true;
-		for (i = 0; i < DoomDefs::NUMAMMO; i++)
+		Player(Toucher.Player).bBackpack = true;
+		foreach AllClasses(Ammo, Cls)
 		{
-			Player(Toucher.Player).GiveAmmo(MainGameInfo(Level.Game).AmmoClasses[i], 0);
-			Toucher.FindInventory(MainGameInfo(Level.Game).AmmoClasses[i]).MaxAmount *= 2;
+			//	Only direct descendants.
+			if (GetClassParent(Cls) != AmmoPickup)
+			{
+				continue;
+			}
+			Inventory AmmoItem = Toucher.FindInventory(Cls);
+			if (!AmmoItem)
+			{
+				AmmoItem = Spawn(Cls);
+				AmmoItem.AttachToOwner(Toucher);
+				AmmoItem.Amount = 0;
+			}
+			AmmoItem.MaxAmount *= 2;
+			Player(Toucher.Player).GiveAmmo(Cls, Cls.default.Amount);
 		}
-	}
-	for (i = 0; i < DoomDefs::NUMAMMO; i++)
-	{
-		Player(Toucher.Player).GiveAmmo(MainGameInfo(Level.Game).AmmoClasses[i],
-			MainGameInfo(Level.Game).AmmoClasses[i].default.Amount);
 	}
 	GoAwayAndDie();
 	return true;

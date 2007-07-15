@@ -98,7 +98,7 @@ state GetAttackState()
 	return Player(Owner.Player).Refire ? HoldAttackState : AttackState;
 }
 
-void GotMana(int InMana)
+void GotMana(Ammo InMana)
 {
 }
 

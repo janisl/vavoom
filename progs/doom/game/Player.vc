@@ -50,7 +50,7 @@ const int MAXHEALTH					= 100;
 
 int ArmorPoints;
 
-bool Backpack;
+bool bBackpack;
 
 // Power ups. invinc and invis are tic counters.
 float Powers[NUMPOWERS];
@@ -2391,10 +2391,6 @@ const int
 	GIMME_CHAINSAW			= 0x00000020,
 	GIMME_SUPERSHOTGUN		= 0x00000040,
 	GIMME_BACKPACK			= 0x00000080,
-	GIMME_BULLETS			= 0x00000100,
-	GIMME_SHELLS			= 0x00000200,
-	GIMME_ROCKETS			= 0x00000400,
-	GIMME_CELLS				= 0x00000800,
 	GIMME_BLUECARD			= 0x00001000,
 	GIMME_BLUESKULL			= 0x00002000,
 	GIMME_YELLOWCARD		= 0x00004000,
@@ -2425,21 +2421,8 @@ const int
 
 void Cheat_Gimme()
 {
-	int i1;
-
-/*	if (Cmd_Argc() == 1)
-    {
-       	C_Printf("GIMME [All] [Health] [Health2] [Armor] [Armor2]\n");
-        C_Printf(" [Weapons] [Shotgun] [Chaingun] [Launcher] [Plasma]\n");
-        C_Printf(" [BFG] [Chainsaw] [SuperShotgun] [Backpack]\n");
-        C_Printf(" [Ammo] [Bullets] [Shells] [Rockets] [Cells]\n");
-		C_Printf(" [Keys] [BlueCard] [YellowCard] [RedCard]\n");
-        C_Printf(" [BlueSkull] [YellowSkull] [RedSkull]\n");
-        C_Printf(" [Powers] [Invulnerability] [Bersek]\n");
-        C_Printf(" [Invisibility] [Suit] [AllMap] [LiteAmp]\n");
-        C_Printf(":Gives you all that you need\n");
-        return;
-    }*/
+	int					i1;
+	class<Inventory>	Cls;
 
 	i1 = 0;
 	// All
@@ -2470,18 +2453,6 @@ void Cheat_Gimme()
 	// Backpack
 	if (Cmd_CheckParm("Backpack"))
 		i1 |= GIMME_BACKPACK;
-
-	// Ammo
-	if (Cmd_CheckParm("Ammo"))
-		i1 |= GIMME_AMMO;
-	if (Cmd_CheckParm("Bullets"))
-		i1 |= GIMME_BULLETS;
-	if (Cmd_CheckParm("Shells"))
-		i1 |= GIMME_SHELLS;
-	if (Cmd_CheckParm("Rockets"))
-		i1 |= GIMME_ROCKETS;
-	if (Cmd_CheckParm("Cells"))
-		i1 |= GIMME_CELLS;
 
 	// Keys
 	if (Cmd_CheckParm("Keys"))
@@ -2549,33 +2520,39 @@ void Cheat_Gimme()
 		WeaponOwned[DoomDefs::wp_grenade] = true;
 #endif
 
-	GiveAmmo(Clip, 0);
-	GiveAmmo(Shell, 0);
-	GiveAmmo(RocketAmmo, 0);
-	GiveAmmo(Cell, 0);
-
 	// Backpack
 	if (i1 & GIMME_BACKPACK)
 	{
 		if (!Backpack)
 		{
-			Backpack = true;
-			EntityEx(MO).FindInventory(Clip).MaxAmount *= 2;
-			EntityEx(MO).FindInventory(Shell).MaxAmount *= 2;
-			EntityEx(MO).FindInventory(RocketAmmo).MaxAmount *= 2;
-			EntityEx(MO).FindInventory(Cell).MaxAmount *= 2;
+			Backpack Pack = Level.Spawn(Backpack);
+			Pack.bDropped = true;
+			if (!Pack.TryPickup(EntityEx(MO)))
+			{
+				Pack.Destroy();
+			}
 		}
 	}
 
 	// Ammo
-	if (i1 & GIMME_BULLETS)
-		EntityEx(MO).FindInventory(Clip).Amount = EntityEx(MO).FindInventory(Clip).MaxAmount;
-	if (i1 & GIMME_SHELLS)
-		EntityEx(MO).FindInventory(Shell).Amount = EntityEx(MO).FindInventory(Shell).MaxAmount;
-	if (i1 & GIMME_ROCKETS)
-		EntityEx(MO).FindInventory(RocketAmmo).Amount = EntityEx(MO).FindInventory(RocketAmmo).MaxAmount;
-	if (i1 & GIMME_CELLS)
-		EntityEx(MO).FindInventory(Cell).Amount = EntityEx(MO).FindInventory(Cell).MaxAmount;
+	if (Cmd_CheckParm("Ammo"))
+	{
+		foreach AllClasses(Ammo, Cls)
+		{
+			//	Only direct descendants.
+			if (GetClassParent(Cls) != AmmoPickup)
+			{
+				continue;
+			}
+			Inventory AmmoItem = EntityEx(MO).FindInventory(Cls);
+			if (!AmmoItem)
+			{
+				AmmoItem = Level.Spawn(Cls);
+				AmmoItem.AttachToOwner(EntityEx(MO));
+			}
+			AmmoItem.Amount = AmmoItem.MaxAmount;
+		}
+	}
 
 	// Keys
 	if (i1 & GIMME_BLUECARD)

@@ -72,21 +72,6 @@ enum
 	wp_nochange
 };
 
-// Ammunition types defined.
-enum
-{
-	am_goldwand,
-	am_crossbow,
-	am_blaster,
-	am_skullrod,
-	am_phoenixrod,
-	am_mace,
-
-	NUMAMMO,
-
-	am_noammo	// staff, gauntlets
-};
-
 enum
 {
 	key_yellow,

@@ -37,7 +37,7 @@ defaultproperties
 	ConversationID = 179;
 	PickupMessage = "$txt_clipofbullets";
 	IdleState = S_BULLETS;
-	AmmoType = StrifeDefs::am_clip;
 	Amount = 10;
 	MaxAmount = 250;
+	IconName = 'i_blit';
 }

@@ -35,15 +35,26 @@ class BagOfHolding : Inventory
 
 bool TryPickup(EntityEx Toucher)
 {
-	int i;
+	class<AmmoPickup>	Cls;
 
 	if (!Player(Toucher.Player).Backpack)
 	{
 		Player(Toucher.Player).Backpack = true;
-		for (i = 0; i < NUMAMMO; i++)
+		foreach AllClasses(Ammo, Cls)
 		{
-			Player(Toucher.Player).GiveAmmo(MainGameInfo(Level.Game).AmmoClasses[i], 0);
-			Toucher.FindInventory(MainGameInfo(Level.Game).AmmoClasses[i]).MaxAmount *= 2;
+			//	Only direct descendants.
+			if (GetClassParent(Cls) != AmmoPickup)
+			{
+				continue;
+			}
+			Inventory AmmoItem = Toucher.FindInventory(Cls);
+			if (!AmmoItem)
+			{
+				AmmoItem = Spawn(Cls);
+				AmmoItem.AttachToOwner(Toucher);
+				AmmoItem.Amount = 0;
+			}
+			AmmoItem.MaxAmount *= 2;
 		}
 	}
 	Player(Toucher.Player).GiveAmmo(GoldWandAmmo, 10);

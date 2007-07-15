@@ -36,7 +36,7 @@ defaultproperties
 	ConversationID = 185;
 	PickupMessage = "$txt_poisonbolts";
 	IdleState = S_ARROWS_POISON;
-	AmmoType = StrifeDefs::am_poison_arrow;
 	Amount = 10;
 	MaxAmount = 25;
+	IconName = 'i_pqrl';
 }

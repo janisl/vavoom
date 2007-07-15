@@ -37,7 +37,7 @@ defaultproperties
 	ConversationID = 181;
 	PickupMessage = "$txt_minimissiles";
 	IdleState = S_MINI_MISSILES;
-	AmmoType = StrifeDefs::am_misl;
 	Amount = 4;
 	MaxAmount = 100;
+	IconName = 'i_rokt';
 }

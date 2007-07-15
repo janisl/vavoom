@@ -41,7 +41,6 @@ struct spec_trans_t
 
 spec_trans_t spec_trans_tab[NUM_SPECIALS];
 
-class<AmmoPickup> AmmoClasses[DoomDefs::NUMAMMO + 2];
 class<Weapon> WeaponClasses[DoomDefs::NUMWEAPONS];
 int WeaponOrder[DoomDefs::NUMWEAPONS];
 
@@ -1288,11 +1287,6 @@ defaultproperties
 #endif
 
 	botskill = 2;
-
-	AmmoClasses[0] = Clip;
-	AmmoClasses[1] = Shell;
-	AmmoClasses[2] = Cell;
-	AmmoClasses[3] = RocketAmmo;
 
 	INITIAL_HEALTH = 100;
 	INITIAL_AMMO = 50;

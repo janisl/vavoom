@@ -34,9 +34,9 @@ __states__
 
 defaultproperties
 {
-	AmmoType = am_mace;
 	Amount = 20;
 	MaxAmount = 150;
 	IdleState = S_AMM1;
 	PickupMessage = "$txt_ammomace1";
+	GetAmmoChange = wp_mace;
 }

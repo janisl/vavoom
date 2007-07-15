@@ -38,7 +38,6 @@ defaultproperties
 	bNoPassMobj = true;
 	bFloorClip = true;
 	IdleState = S_CELL;
-	AmmoType = DoomDefs::am_cell;
 	Amount = 20;
 	MaxAmount = 300;
 	PickupMessage = "$gotcell";

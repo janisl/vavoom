@@ -56,7 +56,6 @@ int pic_blaster;
 int pic_sigil[5];
 int pic_i_comm;
 int pic_key[StrifeDefs::NUMKEYS];
-int pic_ammo[StrifeDefs::NUMAMMO];
 int pic_backpack;
 //For Icons in Fullscreen HUD
 int pic_tallnum[10];
@@ -67,7 +66,6 @@ int pic_armor2;
 int LoadedLog;
 string LogText;
 
-int AmmoPosY[StrifeDefs::NUMAMMO];
 string KeyNames[StrifeDefs::NUMKEYS];
 
 //==========================================================================
@@ -163,13 +161,6 @@ void StartMap()
 	pic_sigil[3] = R_RegisterPic('i_sgl4');
 	pic_sigil[4] = R_RegisterPic('i_sgl5');
 	pic_i_comm = R_RegisterPic('i_comm');
-	pic_ammo[StrifeDefs::am_clip] = R_RegisterPic('i_blit');
-	pic_ammo[StrifeDefs::am_electric_arrow] = R_RegisterPic('i_xqrl');
-	pic_ammo[StrifeDefs::am_poison_arrow] = R_RegisterPic('i_pqrl');
-	pic_ammo[StrifeDefs::am_cell] = R_RegisterPic('i_bry1');
-	pic_ammo[StrifeDefs::am_misl] = R_RegisterPic('i_rokt');
-	pic_ammo[StrifeDefs::am_grenade1] = R_RegisterPic('i_grn1');
-	pic_ammo[StrifeDefs::am_grenade2] = R_RegisterPic('i_grn2');
 	pic_backpack = R_RegisterPic('i_bkpk');
 	//For Icons in Fullscreen HUD
 	pic_medpack = R_RegisterPic('mdkta0');
@@ -341,7 +332,7 @@ void SB_DrawMainBar()
 	{
 		AmmoPickup AmmoItem = AmmoPickup(EntityEx(cl.MO).FindInventory(cl.ReadyAmmo));
 		SB_DrawSmallNum(BAR_X + 310, BAR_Y + 162, AmmoItem.Amount);
-		R_DrawPic(BAR_X + 290, BAR_Y + 181, pic_ammo[AmmoItem.AmmoType]);
+		R_DrawPic(BAR_X + 290, BAR_Y + 181, R_RegisterPic(AmmoItem.IconName));
 	}
 
 	if (bShowWeapons)
@@ -372,13 +363,13 @@ void SB_DrawMainBar()
 		{
 			R_DrawPic(BAR_X + 75, BAR_Y + 142, pic_blaster);
 		}
-		DrawAmmo(ClipOfBullets, AmmoPosY[0]);
-		DrawAmmo(ElectricBolts, AmmoPosY[1]);
-		DrawAmmo(PoisonBolts, AmmoPosY[2]);
-		DrawAmmo(EnergyPod, AmmoPosY[3]);
-		DrawAmmo(MiniMissiles, AmmoPosY[4]);
-		DrawAmmo(HEGrenadeRounds, AmmoPosY[5]);
-		DrawAmmo(PhosphorusGrenadeRounds, AmmoPosY[6]);
+		DrawAmmo(ClipOfBullets, 75);
+		DrawAmmo(ElectricBolts, 99);
+		DrawAmmo(PoisonBolts, 91);
+		DrawAmmo(EnergyPod, 139);
+		DrawAmmo(MiniMissiles, 131);
+		DrawAmmo(HEGrenadeRounds, 115);
+		DrawAmmo(PhosphorusGrenadeRounds, 123);
 		SB_DrawSmallNum(BAR_X + 267, BAR_Y + 84, cl.Accuracy);
 		SB_DrawSmallNum(BAR_X + 267, BAR_Y + 108, cl.Stamina);
 		NumKeys = 0;
@@ -478,7 +469,7 @@ void SB_DrawFullscreenStats()
 	{
 		AmmoPickup AmmoItem = AmmoPickup(EntityEx(cl.MO).FindInventory(cl.ReadyAmmo));
 		SB_DrawTallNum(635, 450, AmmoItem.Amount, 0.7);
-		R_DrawPic2(575, 450, pic_ammo[AmmoItem.AmmoType], 0.7);
+		R_DrawPic2(575, 450, R_RegisterPic(AmmoItem.IconName), 0.7);
 	}
 
 	Idx = 0;
@@ -529,13 +520,13 @@ void SB_DrawFullscreenStats()
 		{
 			R_DrawPic(BAR_X + 75, BAR_Y + 182, pic_blaster);
 		}
-		DrawAmmo(ClipOfBullets, AmmoPosY[0]);
-		DrawAmmo(ElectricBolts, AmmoPosY[1]);
-		DrawAmmo(PoisonBolts, AmmoPosY[2]);
-		DrawAmmo(EnergyPod, AmmoPosY[3]);
-		DrawAmmo(MiniMissiles, AmmoPosY[4]);
-		DrawAmmo(HEGrenadeRounds, AmmoPosY[5]);
-		DrawAmmo(PhosphorusGrenadeRounds, AmmoPosY[6]);
+		DrawAmmo(ClipOfBullets, 75);
+		DrawAmmo(ElectricBolts, 99);
+		DrawAmmo(PoisonBolts, 91);
+		DrawAmmo(EnergyPod, 139);
+		DrawAmmo(MiniMissiles, 131);
+		DrawAmmo(HEGrenadeRounds, 115);
+		DrawAmmo(PhosphorusGrenadeRounds, 123);
 		SB_DrawSmallNum(BAR_X + 267, BAR_Y + 124, cl.Accuracy);
 		SB_DrawSmallNum(BAR_X + 267, BAR_Y + 148, cl.Stamina);
 		NumKeys = 0;
@@ -651,13 +642,6 @@ defaultproperties
 	bTickEnabled = true;
 	Width = 640;
 	Height = 480;
-	AmmoPosY[0] = 75;
-	AmmoPosY[1] = 99;
-	AmmoPosY[2] = 91;
-	AmmoPosY[3] = 139;
-	AmmoPosY[4] = 131;
-	AmmoPosY[5] = 115;
-	AmmoPosY[6] = 123;
 	KeyNames[0] = "Base Key";
 	KeyNames[1] = "Govs Key";
 	KeyNames[2] = "Passcard";

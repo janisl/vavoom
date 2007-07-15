@@ -214,9 +214,9 @@ state GetAttackState()
 //
 //==========================================================================
 
-void GotMana(int InMana)
+void GotMana(Ammo InMana)
 {
-	if (InMana == HexenDefs::MANA_1)
+	if (InMana.Class == Mana1)
 	{
 		Owner.Player.SetViewState(ps_weapon, S_FAXEREADY_G);
 	}

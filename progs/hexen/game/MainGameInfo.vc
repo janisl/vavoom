@@ -28,7 +28,6 @@ class MainGameInfo : LineSpecialGameInfo;
 const int NUMTOTALBOTS		= 24;
 const int NUMBOTTYPES		= 24;
 
-class<Mana> ManaClasses[HexenDefs::NUMMANA + 3];
 class<Weapon> WeaponClasses[HexenDefs::NUMWEAPONS * HexenDefs::NUMCLASSES];
 
 BotPlayer::botinfo_t botinfo[NUMTOTALBOTS];
@@ -438,7 +437,4 @@ defaultproperties
 	classFlags[2] = HexenLevelInfo::MTF_MAGE;
 
 	botskill = 2;
-
-	ManaClasses[0] = Mana1;
-	ManaClasses[1] = Mana2;
 }

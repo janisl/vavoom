@@ -47,22 +47,6 @@ enum
 	wp_nochange
 };
 
-// Ammunition types defined.
-enum
-{
-	am_clip,
-	am_electric_arrow,
-	am_poison_arrow,
-	am_cell,
-	am_misl,
-	am_grenade1,
-	am_grenade2,
-
-	NUMAMMO,
-
-	am_noammo	// Unlimited for chainsaw / fist.
-};
-
 enum
 {
 	KEY_BaseKey,

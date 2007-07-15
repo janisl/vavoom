@@ -51,14 +51,6 @@ enum
 
 enum
 {
-	MANA_1,
-	MANA_2,
-	NUMMANA,
-	MANA_NONE
-};
-
-enum
-{
 	ARMOR_ARMOR,
 	ARMOR_SHIELD,
 	ARMOR_HELMET,

@@ -44,14 +44,12 @@ struct spec_trans_t
 
 spec_trans_t spec_trans_tab[NUM_SPECIALS];
 
-class<AmmoPickup> AmmoClasses[NUMAMMO + 2];
 class<Weapon> WeaponClasses[NUMWEAPONS];
 int WeaponOrder[NUMWEAPONS];
 
 BotPlayer::botinfo_t botinfo[NUMTOTALBOTS];
 int botskill;
 
-int GetAmmoChange[NUMAMMO];
 int WeaponValue[NUMWEAPONS];
 
 string keymsg[NUMKEYS];
@@ -554,13 +552,6 @@ defaultproperties
 	WeaponOrder[7] = wp_mace;
 	WeaponOrder[8] = wp_beak;
 
-	GetAmmoChange[0] = wp_goldwand;
-	GetAmmoChange[1] = wp_crossbow;
-	GetAmmoChange[2] = wp_blaster;
-	GetAmmoChange[3] = wp_skullrod;
-	GetAmmoChange[4] = wp_phoenixrod;
-	GetAmmoChange[5] = wp_mace;
-
 	WeaponValue[0] = 1;	// staff
 	WeaponValue[1] = 3;	// goldwand
 	WeaponValue[2] = 4;	// crossbow
@@ -576,11 +567,4 @@ defaultproperties
 	keymsg[2] = "$txt_needbluekey";
 
 	botskill = 2;
-
-	AmmoClasses[0] = GoldWandAmmo;
-	AmmoClasses[1] = CrossbowAmmo;
-	AmmoClasses[2] = BlasterAmmo;
-	AmmoClasses[3] = SkullRodAmmo;
-	AmmoClasses[4] = PhoenixRodAmmo;
-	AmmoClasses[5] = MaceAmmo;
 }

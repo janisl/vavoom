@@ -42,7 +42,6 @@ __states__
 
 defaultproperties
 {
-	ManaType = HexenDefs::MANA_1;
 	Amount = 15;
 	IdleState = S_MANA1_1;
 	PickupMessage = "$txt_mana_1";

@@ -34,9 +34,9 @@ __states__
 
 defaultproperties
 {
-	AmmoType = am_goldwand;
 	Amount = 10;
 	MaxAmount = 100;
 	IdleState = S_AMG1;
 	PickupMessage = "$txt_ammogoldwand1";
+	GetAmmoChange = wp_goldwand;
 }
