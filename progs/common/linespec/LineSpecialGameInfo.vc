@@ -66,6 +66,8 @@ bool			bNightmareFastChase;
 bool			bRavenStylePickupRespawn;
 //	Give double ammo in baby and nightmare skills
 bool			bBabyNightmareDoubleAmmo;
+//	Wether to give extra ammo in nightmare mode
+bool			bNightmareExtraAmmo;
 
 bool			respawnmonsters;
 bool			bRespawnItems;
@@ -1086,4 +1088,5 @@ defaultproperties
 
 	air_control = 1.0 / 256.0;
 	NonMonsterAngleIncrements = 45;
+	bNightmareExtraAmmo = true;
 }

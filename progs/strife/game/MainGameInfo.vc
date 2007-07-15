@@ -605,6 +605,7 @@ defaultproperties
 	DefaultKickBack = 100.0;
 	BloodClass = Blood;
 	bBabyNightmareDoubleAmmo = true;
+	bNightmareExtraAmmo = false;
 
 	WeaponClasses[0] = WeaponPunch;
 	WeaponClasses[1] = WeaponCrossbow;

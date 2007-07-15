@@ -64,7 +64,9 @@ bool TryPickup(EntityEx Toucher)
 	{
 		return false;
 	}
-	if (Level.Game.gameskill == sk_baby || Level.Game.gameskill == sk_nightmare)
+	if (Level.Game.gameskill == sk_baby ||
+		(Level.Game.gameskill == sk_nightmare &&
+		LineSpecialGameInfo(Level.Game).bNightmareExtraAmmo))
 	{
 		// extra ammo in baby mode and nightmare mode
 		if (LineSpecialGameInfo(Level.Game).bBabyNightmareDoubleAmmo)
