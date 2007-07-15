@@ -542,11 +542,17 @@ bool GiveAmmo(class<Ammo> ammo, int count)
 
 void GotAmmo(Ammo NewAmmo)
 {
+	int			i;
+
 	if (ReadyWeapon == wp_staff || ReadyWeapon == wp_gauntlets)
 	{
-		if (WeaponOwned[AmmoPickup(NewAmmo).GetAmmoChange])
+		for (i = 0; i < NUMWEAPONS; i++)
 		{
-			PendingWeapon = AmmoPickup(NewAmmo).GetAmmoChange;
+			if (WeaponOwned[i] &&
+				MainGameInfo(Level.Game).WeaponClasses[i].default.AmmoType == NewAmmo.Class)
+			{
+				PendingWeapon = i;
+			}
 		}
 	}
 }

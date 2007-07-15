@@ -38,5 +38,4 @@ defaultproperties
 	MaxAmount = 150;
 	IdleState = S_AMM1;
 	PickupMessage = "$txt_ammomace1";
-	GetAmmoChange = wp_mace;
 }

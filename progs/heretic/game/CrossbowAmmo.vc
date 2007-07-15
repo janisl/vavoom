@@ -38,5 +38,4 @@ defaultproperties
 	MaxAmount = 50;
 	IdleState = S_AMC1;
 	PickupMessage = "$txt_ammocrossbow1";
-	GetAmmoChange = wp_crossbow;
 }

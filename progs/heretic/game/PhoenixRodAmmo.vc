@@ -40,5 +40,4 @@ defaultproperties
 	MaxAmount = 20;
 	IdleState = S_AMP1_1;
 	PickupMessage = "$txt_ammophoenixrod1";
-	GetAmmoChange = wp_phoenixrod;
 }

@@ -39,5 +39,4 @@ defaultproperties
 	MaxAmount = 200;
 	IdleState = S_AMS1_1;
 	PickupMessage = "$txt_ammoskullrod1";
-	GetAmmoChange = wp_skullrod;
 }

@@ -38,5 +38,4 @@ defaultproperties
 	MaxAmount = 100;
 	IdleState = S_AMG1;
 	PickupMessage = "$txt_ammogoldwand1";
-	GetAmmoChange = wp_goldwand;
 }
