@@ -269,7 +269,6 @@ bool CheckItem(Actor item)
 {
 	int weapon;
 	int piece;
-	int mana;
 
 	bNewItemIsWeapon = false;
 	bNewItemIsPowerup = false;
@@ -311,12 +310,10 @@ bool CheckItem(Actor item)
 			return false;
 	}
 
-	mana = ManaFromItem(item);
-	if (mana != -1)
+	if (Ammo(item))
 	{
 		// If we have no more room for the mana it gives
-		class<Mana> ManaType = MainGameInfo(botmo.Level.Game).ManaClasses[mana];
-		Inventory ManaItem = botmo.FindInventory(ManaType);
+		Inventory ManaItem = botmo.FindInventory(Ammo(item).GetParentAmmo());
 		if (ManaItem && ManaItem.Amount == ManaItem.MaxAmount)
 			return false;
 	}
@@ -558,24 +555,6 @@ int WeapPieceFromItem(Actor item)
 		WeaponPiece(item).PieceClass == player.PClass)
 	{
 		return WeaponPiece(item).PieceValue;
-	}
-	return -1;
-}
-
-//==========================================================================
-//
-//	ManaFromItem
-//
-//
-// Returns an mana type from an actor
-//
-//==========================================================================
-
-int ManaFromItem(Actor item)
-{
-	if (Mana(item))
-	{
-		return Mana(item).ManaType;
 	}
 	return -1;
 }

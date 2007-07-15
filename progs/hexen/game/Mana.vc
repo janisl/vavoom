@@ -36,7 +36,7 @@ int ManaType;
 
 bool TryPickup(EntityEx Toucher)
 {
-	if (Player(Toucher.Player).GiveMana(MainGameInfo(Level.Game).ManaClasses[ManaType], Amount))
+	if (Player(Toucher.Player).GiveMana(GetParentAmmo(), Amount))
 	{
 		GoAwayAndDie();
 		return true;

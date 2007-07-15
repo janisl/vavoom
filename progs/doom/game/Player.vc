@@ -511,11 +511,11 @@ void PlayerExitMap(bool clusterChange)
 //
 //==========================================================================
 
-bool GiveAmmo(class<AmmoPickup> ammo, int num)
+bool GiveAmmo(class<Ammo> ammo, int num)
 {
 	int				oldammo;
 	int				max;
-	AmmoPickup		AmmoItem;
+	Ammo			AmmoItem;
 
 	if (!ammo)
 		return false;

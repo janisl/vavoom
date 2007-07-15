@@ -36,8 +36,7 @@ int AmmoType;
 
 bool TryPickup(EntityEx Toucher)
 {
-	if (Player(Toucher.Player).GiveAmmo(
-		MainGameInfo(Level.Game).AmmoClasses[AmmoType], Amount))
+	if (Player(Toucher.Player).GiveAmmo(GetParentAmmo(), Amount))
 	{
 		GoAwayAndDie();
 		return true;

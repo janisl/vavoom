@@ -297,12 +297,10 @@ bool CheckItem(Actor item)
 			return false;
 	}
 
-	ammo = AmmoFromItem(item);
-	if (ammo != -1)
+	if (Ammo(item))
 	{
 		// If we have no more room for the ammo it gives
-		class<AmmoPickup> AmmoType = MainGameInfo(botmo.Level.Game).AmmoClasses[ammo];
-		Inventory AmmoItem = botmo.FindInventory(AmmoType);
+		Inventory AmmoItem = botmo.FindInventory(Ammo(item).GetParentAmmo());
 		if (AmmoItem && AmmoItem.Amount >= AmmoItem.MaxAmount)
 			return false;
 	}
@@ -521,24 +519,6 @@ int WeapFromItem(Actor item)
 	if (WeaponPickup(item))
 	{
 		return WeaponPickup(item).WeaponType;
-	}
-	return -1;
-}
-
-//==========================================================================
-//
-//	AmmoFromItem
-//
-//
-// Returns an ammo type from an actor
-//
-//==========================================================================
-
-int AmmoFromItem(Actor item)
-{
-	if (AmmoPickup(item))
-	{
-		return AmmoPickup(item).AmmoType;
 	}
 	return -1;
 }

@@ -277,7 +277,6 @@ float AngleTo(TVec dest)
 bool CheckItem(Actor item)
 {
 	int weapon;
-	class<AmmoPickup> ammo;
 
 	bNewItemIsWeapon = false;
 	bNewItemIsPowerup = false;
@@ -306,11 +305,11 @@ bool CheckItem(Actor item)
 			return false;
 	}
 
-	ammo = AmmoFromItem(item);
-	if (ammo && botmo.FindInventory(ammo))
+	if (Ammo(item))
 	{
+		Inventory AmmoItem = botmo.FindInventory(Ammo(item).GetParentAmmo());
 		// If we have no more room for the ammo it gives
-		if (botmo.FindInventory(ammo).Amount >= botmo.FindInventory(ammo).MaxAmount)
+		if (AmmoItem && AmmoItem.Amount >= AmmoItem.MaxAmount)
 			return false;
 	}
 
@@ -545,24 +544,6 @@ int WeapFromItem(Actor item)
 		return Weapon(item).WeaponType;
 	}
 	return -1;
-}
-
-//==========================================================================
-//
-//	AmmoFromItem
-//
-//
-// Returns an ammo type from an actor
-//
-//==========================================================================
-
-class<AmmoPickup> AmmoFromItem(Actor item)
-{
-	if (AmmoPickup(item))
-	{
-		return MainGameInfo(item.Level.Game).AmmoClasses[AmmoPickup(item).AmmoType];
-	}
-	return none;
 }
 
 //==========================================================================

@@ -647,7 +647,7 @@ void PlayerExitMap(bool clusterChange)
 //
 //==========================================================================
 
-bool GiveMana(class<Mana> mana, int count)
+bool GiveMana(class<Ammo> mana, int count)
 {
 	int prevMana;
 
@@ -655,7 +655,7 @@ bool GiveMana(class<Mana> mana, int count)
 	{
 		return false;
 	}
-	Mana ManaItem = Mana(EntityEx(MO).FindInventory(mana));
+	Ammo ManaItem = Ammo(EntityEx(MO).FindInventory(mana));
 	if (!ManaItem)
 	{
 		ManaItem = Level.Spawn(mana);
@@ -680,7 +680,7 @@ bool GiveMana(class<Mana> mana, int count)
 	}
 	if (prevMana <= 0)
 	{
-		Weapon(ViewEnt).GotMana(mana.default.ManaType);
+		Weapon(ViewEnt).GotMana(Mana(ManaItem).ManaType);
 	}
 	return true;
 }

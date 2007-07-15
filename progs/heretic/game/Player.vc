@@ -489,7 +489,7 @@ void PlayerExitMap(bool clusterChange)
 //
 //==========================================================================
 
-bool GiveAmmo(class<AmmoPickup> ammo, int count)
+bool GiveAmmo(class<Ammo> ammo, int count)
 {
 	int prevAmmo;
 
@@ -497,7 +497,7 @@ bool GiveAmmo(class<AmmoPickup> ammo, int count)
 	{
 		return false;
 	}
-	AmmoPickup AmmoItem = AmmoPickup(EntityEx(MO).FindInventory(ammo));
+	Ammo AmmoItem = Ammo(EntityEx(MO).FindInventory(ammo));
 	if (!AmmoItem)
 	{
 		AmmoItem = Level.Spawn(ammo);
@@ -532,9 +532,9 @@ bool GiveAmmo(class<AmmoPickup> ammo, int count)
 	}
 	if (ReadyWeapon == wp_staff || ReadyWeapon == wp_gauntlets)
 	{
-		if (WeaponOwned[MainGameInfo(Level.Game).GetAmmoChange[ammo.default.AmmoType]])
+		if (WeaponOwned[MainGameInfo(Level.Game).GetAmmoChange[AmmoPickup(AmmoItem).AmmoType]])
 		{
-			PendingWeapon = MainGameInfo(Level.Game).GetAmmoChange[ammo.default.AmmoType];
+			PendingWeapon = MainGameInfo(Level.Game).GetAmmoChange[AmmoPickup(AmmoItem).AmmoType];
 		}
 	}
 	return true;

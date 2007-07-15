@@ -451,14 +451,14 @@ void PlayerExitMap(bool clusterChange)
 //
 //==========================================================================
 
-bool GiveAmmo(class<AmmoPickup> ammo, int num)
+bool GiveAmmo(class<Ammo> ammo, int num)
 {
 	int oldammo;
 
 	if (!ammo)
 		return false;
 
-	AmmoPickup AmmoItem = AmmoPickup(EntityEx(MO).FindInventory(ammo));
+	Ammo AmmoItem = Ammo(EntityEx(MO).FindInventory(ammo));
 	if (!AmmoItem)
 	{
 		AmmoItem = Level.Spawn(ammo);
