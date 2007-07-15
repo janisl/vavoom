@@ -54,48 +54,93 @@ bool TryPickup(EntityEx Toucher)
 	int oldammo;
 
 	Ammo AmmoItem = Ammo(Toucher.FindInventory(GetParentAmmo()));
-	if (!AmmoItem)
+	if (AmmoItem)
 	{
-		AmmoItem = Spawn(GetParentAmmo());
-		AmmoItem.AttachToOwner(Toucher);
-		AmmoItem.Amount = 0;
-	}
-	if (AmmoItem.Amount == AmmoItem.MaxAmount)
-	{
-		return false;
-	}
-	if (Level.Game.gameskill == sk_baby ||
-		(Level.Game.gameskill == sk_nightmare &&
-		LineSpecialGameInfo(Level.Game).bNightmareExtraAmmo))
-	{
-		// extra ammo in baby mode and nightmare mode
-		if (LineSpecialGameInfo(Level.Game).bBabyNightmareDoubleAmmo)
+		if (AmmoItem.Amount == AmmoItem.MaxAmount)
 		{
-			Amount <<= 1;
+			return false;
+		}
+
+		int ReceiveAmount = Amount;
+		if (Level.Game.gameskill == sk_baby ||
+			(Level.Game.gameskill == sk_nightmare &&
+			LineSpecialGameInfo(Level.Game).bNightmareExtraAmmo))
+		{
+			// extra ammo in baby mode and nightmare mode
+			if (LineSpecialGameInfo(Level.Game).bBabyNightmareDoubleAmmo)
+			{
+				ReceiveAmount <<= 1;
+			}
+			else
+			{
+				ReceiveAmount += ReceiveAmount >> 1;
+			}
+		}
+
+		oldammo = AmmoItem.Amount;
+
+		AmmoItem.Amount += ReceiveAmount;
+		if (AmmoItem.Amount > AmmoItem.MaxAmount)
+		{
+			AmmoItem.Amount = AmmoItem.MaxAmount;
+		}
+
+		//	If non zero ammo, don't change up weapons,
+		// player was lower on purpose.
+		if (oldammo <= 0)
+		{
+			PlayerEx(Toucher.Player).GotAmmo(AmmoItem);
+		}
+		GoAwayAndDie();
+		GiveQuest(Toucher);
+		return true;
+	}
+	else
+	{
+		int NewAmount = Amount;
+		if (Level.Game.gameskill == sk_baby ||
+			(Level.Game.gameskill == sk_nightmare &&
+			LineSpecialGameInfo(Level.Game).bNightmareExtraAmmo))
+		{
+			// extra ammo in baby mode and nightmare mode
+			if (LineSpecialGameInfo(Level.Game).bBabyNightmareDoubleAmmo)
+			{
+				NewAmount <<= 1;
+			}
+			else
+			{
+				NewAmount += NewAmount >> 1;
+			}
+		}
+
+		if (GetClassParent(Class) == Ammo)
+		{
+			if (GoAway())
+			{
+				//	Must create a copy
+				AmmoItem = Spawn(GetParentAmmo());
+			}
+			else
+			{
+				//	Use this one
+				AmmoItem = self;
+			}
 		}
 		else
 		{
-			Amount += Amount >> 1;
+			AmmoItem = Spawn(GetParentAmmo());
+			GoAwayAndDie();
 		}
+		AmmoItem.Amount = NewAmount;
+		AmmoItem.AttachToOwner(Toucher);
+		//	Don't pick up more ammo that you can carry.
+		if (AmmoItem.Amount > AmmoItem.MaxAmount)
+		{
+			AmmoItem.Amount = AmmoItem.MaxAmount;
+		}
+		GiveQuest(Toucher);
+		return true;
 	}
-
-	oldammo = AmmoItem.Amount;
-
-	AmmoItem.Amount += Amount;
-	if (AmmoItem.Amount > AmmoItem.MaxAmount)
-	{
-		AmmoItem.Amount = AmmoItem.MaxAmount;
-	}
-
-	//	If non zero ammo, don't change up weapons,
-	// player was lower on purpose.
-	if (oldammo <= 0)
-	{
-		PlayerEx(Toucher.Player).GotAmmo(AmmoItem);
-	}
-	GoAwayAndDie();
-	GiveQuest(Toucher);
-	return true;
 }
 
 defaultproperties
