@@ -42,15 +42,15 @@ bool TryPickup(EntityEx Toucher)
 		Player(Toucher.Player).Backpack = true;
 		for (i = 0; i < NUMAMMO; i++)
 		{
-			Player(Toucher.Player).GiveAmmo(i, 0);
-			Player(Toucher.Player).Ammo[i].MaxAmount *= 2;
+			Player(Toucher.Player).GiveAmmo(MainGameInfo(Level.Game).AmmoClasses[i], 0);
+			Toucher.FindInventory(MainGameInfo(Level.Game).AmmoClasses[i]).MaxAmount *= 2;
 		}
 	}
-	Player(Toucher.Player).GiveAmmo(am_goldwand, 10);
-	Player(Toucher.Player).GiveAmmo(am_blaster, 10);
-	Player(Toucher.Player).GiveAmmo(am_crossbow, 5);
-	Player(Toucher.Player).GiveAmmo(am_skullrod, 20);
-	Player(Toucher.Player).GiveAmmo(am_phoenixrod, 1);
+	Player(Toucher.Player).GiveAmmo(GoldWandAmmo, 10);
+	Player(Toucher.Player).GiveAmmo(BlasterAmmo, 10);
+	Player(Toucher.Player).GiveAmmo(CrossbowAmmo, 5);
+	Player(Toucher.Player).GiveAmmo(SkullRodAmmo, 20);
+	Player(Toucher.Player).GiveAmmo(PhoenixRodAmmo, 1);
 	GoAwayAndDie();
 	return true;
 }

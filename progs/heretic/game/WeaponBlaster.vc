@@ -88,7 +88,7 @@ __states__
 
 defaultproperties
 {
-	Ammo = am_blaster;
+	AmmoType = BlasterAmmo;
 	GetAmmoCount = 30;
 	AmmoUsePL1 = USE_BLSR_AMMO_1;
 	AmmoUsePL2 = USE_BLSR_AMMO_2;

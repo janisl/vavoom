@@ -41,18 +41,19 @@ bool TryPickup(EntityEx Toucher)
 	{
 		for (i = 0; i < StrifeDefs::NUMAMMO; i++)
 		{
-			Player(Toucher.Player).GiveAmmo(i, 0);
-			Player(Toucher.Player).Ammo[i].MaxAmount *= 2;
+			Player(Toucher.Player).GiveAmmo(MainGameInfo(Level.Game).AmmoClasses[i], 0);
+			Inventory AmmoItem = Toucher.FindInventory(MainGameInfo(Level.Game).AmmoClasses[i]);
+			AmmoItem.MaxAmount *= 2;
 		}
 		Player(Toucher.Player).Backpack = true;
 	}
-	Player(Toucher.Player).GiveAmmo(StrifeDefs::am_clip, 10);
-	Player(Toucher.Player).GiveAmmo(StrifeDefs::am_electric_arrow, 4);
-	Player(Toucher.Player).GiveAmmo(StrifeDefs::am_poison_arrow, 2);
-	Player(Toucher.Player).GiveAmmo(StrifeDefs::am_cell, 20);
-	Player(Toucher.Player).GiveAmmo(StrifeDefs::am_misl, 4);
-	Player(Toucher.Player).GiveAmmo(StrifeDefs::am_grenade1, 6);
-	Player(Toucher.Player).GiveAmmo(StrifeDefs::am_grenade2, 4);
+	Player(Toucher.Player).GiveAmmo(ClipOfBullets, 10);
+	Player(Toucher.Player).GiveAmmo(ElectricBolts, 4);
+	Player(Toucher.Player).GiveAmmo(PoisonBolts, 2);
+	Player(Toucher.Player).GiveAmmo(EnergyPod, 20);
+	Player(Toucher.Player).GiveAmmo(MiniMissiles, 4);
+	Player(Toucher.Player).GiveAmmo(HEGrenadeRounds, 6);
+	Player(Toucher.Player).GiveAmmo(PhosphorusGrenadeRounds, 4);
 	GoAwayAndDie();
 	GiveQuest(Toucher);
 	return true;

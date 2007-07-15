@@ -73,7 +73,7 @@ __states__
 
 defaultproperties
 {
-	Mana = HexenDefs::MANA_2;
+	ManaType2 = Mana2;
 	UpState = S_CFLAMEUP;
 	DownState = S_CFLAMEDOWN;
 	ReadyState = S_CFLAMEREADY1;

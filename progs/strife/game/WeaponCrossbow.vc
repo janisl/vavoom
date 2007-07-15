@@ -100,7 +100,7 @@ __states__
 
 defaultproperties
 {
-	Ammo = StrifeDefs::am_electric_arrow;
+	AmmoType = ElectricBolts;
 	UpState = S_XBOWUP;
 	DownState = S_XBOWDOWN;
 	ReadyState = S_XBOW;
@@ -113,7 +113,7 @@ class WeaponCrossbow2 : WeaponCrossbow;
 
 defaultproperties
 {
-	Ammo = StrifeDefs::am_poison_arrow;
+	AmmoType = PoisonBolts;
 	UpState = S_XBOWPOISONUP;
 	DownState = S_XBOWPOISONDOWN;
 	ReadyState = S_XBOWPOISON;

@@ -36,7 +36,7 @@ final void A_FireMacePL1B()
 	Actor ball;
 	float angle;
 
-	if (Player(Owner.Player).Ammo[am_mace].Amount < USE_MACE_AMMO_1)
+	if (EntityEx(Owner).FindInventory(MaceAmmo).Amount < USE_MACE_AMMO_1)
 	{
 		return;
 	}
@@ -69,7 +69,7 @@ final void A_FireMacePL1()
 		A_FireMacePL1B();
 		return;
 	}
-	if (Player(Owner.Player).Ammo[am_mace].Amount < USE_MACE_AMMO_1)
+	if (EntityEx(Owner).FindInventory(MaceAmmo).Amount < USE_MACE_AMMO_1)
 	{
 		return;
 	}
@@ -134,7 +134,7 @@ __states__
 
 defaultproperties
 {
-	Ammo = am_mace;
+	AmmoType = MaceAmmo;
 	GetAmmoCount = 50;
 	AmmoUsePL1 = USE_MACE_AMMO_1;
 	AmmoUsePL2 = USE_MACE_AMMO_2;

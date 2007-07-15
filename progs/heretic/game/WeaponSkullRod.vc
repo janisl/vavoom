@@ -35,7 +35,7 @@ final void A_FireSkullRodPL1()
 {
 	EntityEx	A;
 
-	if (Player(Owner.Player).Ammo[am_skullrod].Amount < USE_SKRD_AMMO_1)
+	if (EntityEx(Owner).FindInventory(SkullRodAmmo).Amount < USE_SKRD_AMMO_1)
 	{
 		return;
 	}
@@ -107,7 +107,7 @@ __states__
 
 defaultproperties
 {
-	Ammo = am_skullrod;
+	AmmoType = SkullRodAmmo;
 	GetAmmoCount = 50;
 	AmmoUsePL1 = USE_SKRD_AMMO_1;
 	AmmoUsePL2 = USE_SKRD_AMMO_2;

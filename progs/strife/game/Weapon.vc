@@ -38,7 +38,7 @@ const float RAISESPEED		= 6.0;
 const float WEAPONBOTTOM	= 128.0;
 const float WEAPONTOP		= 32.0;
 
-int Ammo;
+class<AmmoPickup> AmmoType;
 state UpState;
 state DownState;
 state ReadyState;
@@ -57,7 +57,7 @@ bool bRaiseNoiseAlert;
 
 final void DecAmmo(int Count)
 {
-	Player(Owner.Player).Ammo[Ammo].Amount -= Count;
+	EntityEx(Owner).FindInventory(AmmoType).Amount -= Count;
 }
 
 //===========================================================================

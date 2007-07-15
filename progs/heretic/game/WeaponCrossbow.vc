@@ -103,7 +103,7 @@ __states__
 
 defaultproperties
 {
-	Ammo = am_crossbow;
+	AmmoType = CrossbowAmmo;
 	GetAmmoCount = 10;
 	AmmoUsePL1 = USE_CBOW_AMMO_1;
 	AmmoUsePL2 = USE_CBOW_AMMO_2;

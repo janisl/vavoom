@@ -39,7 +39,7 @@ final void A_FireRiffle()
 
 	Owner.PlaySound('weapons/assaultgun', CHAN_WEAPON);
 
-	if (!Player(Owner.Player).Ammo[Ammo])
+	if (!EntityEx(Owner).FindInventory(AmmoType).Amount)
 		return;
 
 	Owner.SetState(Actor(Owner).MissileState);
@@ -72,7 +72,7 @@ __states__
 
 defaultproperties
 {
-	Ammo = StrifeDefs::am_clip;
+	AmmoType = ClipOfBullets;
 	UpState = S_RIFFLEUP;
 	DownState = S_RIFFLEDOWN;
 	ReadyState = S_RIFFLE;

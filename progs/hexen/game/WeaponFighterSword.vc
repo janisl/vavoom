@@ -79,7 +79,8 @@ __states__
 
 defaultproperties
 {
-	Mana = HexenDefs::MANA_BOTH;
+	ManaType1 = Mana1;
+	ManaType2 = Mana2;
 	UpState = S_FSWORDUP;
 	DownState = S_FSWORDDOWN;
 	ReadyState = S_FSWORDREADY;

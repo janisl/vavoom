@@ -140,7 +140,7 @@ __states__
 
 defaultproperties
 {
-	Ammo = am_phoenixrod;
+	AmmoType = PhoenixRodAmmo;
 	GetAmmoCount = 2;
 	AmmoUsePL1 = USE_PHRD_AMMO_1;
 	AmmoUsePL2 = USE_PHRD_AMMO_2;

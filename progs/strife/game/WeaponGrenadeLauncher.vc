@@ -48,7 +48,7 @@ final void A_FireGrenade()
 	{
 		grenadetype = PhosphorousGrenade;
 	}
-	if (Player(Owner.Player).Ammo[Ammo].Amount < 1)
+	if (EntityEx(Owner).FindInventory(AmmoType).Amount < 1)
 		return;
 	DecAmmo(1);
 
@@ -116,7 +116,7 @@ __states__
 
 defaultproperties
 {
-	Ammo = StrifeDefs::am_grenade1;
+	AmmoType = HEGrenadeRounds;
 	UpState = S_GRENADEUP;
 	DownState = S_GRENADEDOWN;
 	ReadyState = S_GRENADE;
@@ -129,7 +129,7 @@ class WeaponGrenadeLauncher2 : WeaponGrenadeLauncher;
 
 defaultproperties
 {
-	Ammo = StrifeDefs::am_grenade2;
+	AmmoType = PhosphorusGrenadeRounds;
 	UpState = S_GRENADEHIGHUP;
 	DownState = S_GRENADEHIGHDOWN;
 	ReadyState = S_GRENADEHIGH;

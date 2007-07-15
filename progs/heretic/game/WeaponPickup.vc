@@ -47,7 +47,8 @@ bool TryPickup(EntityEx Toucher)
 		return false;
 	}
 
-	gaveAmmo = Player(Toucher.Player).GiveAmmo(MainGameInfo(Level.Game).WeaponClasses[WeaponType].default.Ammo,
+	gaveAmmo = Player(Toucher.Player).GiveAmmo(
+		MainGameInfo(Level.Game).WeaponClasses[WeaponType].default.AmmoType,
 		MainGameInfo(Level.Game).WeaponClasses[WeaponType].default.GetAmmoCount);
 	if (Player(Toucher.Player).WeaponOwned[WeaponType])
 	{

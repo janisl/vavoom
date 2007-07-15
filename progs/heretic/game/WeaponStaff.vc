@@ -133,7 +133,6 @@ __states__
 
 defaultproperties
 {
-	Ammo = am_noammo;
 	UpState = S_STAFFUP;
 	DownState = S_STAFFDOWN;
 	ReadyState = S_STAFFREADY;

@@ -49,7 +49,7 @@ const int
 	USE_MACE_AMMO_1 = 1,
 	USE_MACE_AMMO_2 = 5;
 
-int Ammo;
+class<AmmoPickup> AmmoType;
 int GetAmmoCount;
 int AmmoUsePL1;
 int AmmoUsePL2;
@@ -79,7 +79,7 @@ void WeaponLevel2Fade() { }
 
 void DecAmmo(int Count)
 {
-	Player(Owner.Player).Ammo[Ammo].Amount -= Count;
+	EntityEx(Owner).FindInventory(AmmoType).Amount -= Count;
 }
 
 //==========================================================================

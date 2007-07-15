@@ -58,7 +58,6 @@ int SBFlags;
 
 int ArmorPoints;
 
-AmmoPickup Ammo[NUMAMMO];
 int ReadyAmmo;
 
 float ChickenTime;	// player is a chicken if > 0
@@ -389,8 +388,8 @@ void SpawnPlayer(mthing_t * mthing)
 			A.Inventory.Destroy();
 		}
 		SetWeapon(wp_goldwand);
-		GiveAmmo(am_goldwand, 0);
-		Ammo[am_goldwand].Amount = 50;
+		GiveAmmo(GoldWandAmmo, 0);
+		EntityEx(MO).FindInventory(GoldWandAmmo).Amount = 50;
 	}
 	else
 	{
@@ -490,25 +489,20 @@ void PlayerExitMap(bool clusterChange)
 //
 //==========================================================================
 
-bool GiveAmmo(int ammo, int count)
+bool GiveAmmo(class<AmmoPickup> ammo, int count)
 {
 	int prevAmmo;
 
-	if (ammo == am_noammo)
+	if (!ammo)
 	{
 		return false;
 	}
-	if (ammo < 0 || ammo > NUMAMMO)
-	{
-		Error("GiveAmmo: bad type %i", ammo);
-	}
-	AmmoPickup AmmoItem = Ammo[ammo];
+	AmmoPickup AmmoItem = AmmoPickup(EntityEx(MO).FindInventory(ammo));
 	if (!AmmoItem)
 	{
-		AmmoItem = Level.Spawn(MainGameInfo(Level.Game).AmmoClasses[ammo]);
+		AmmoItem = Level.Spawn(ammo);
 		AmmoItem.AttachToOwner(EntityEx(MO));
 		AmmoItem.Amount = 0;
-		Ammo[ammo] = AmmoItem;
 	}
 	if (!count)
 	{
@@ -538,9 +532,9 @@ bool GiveAmmo(int ammo, int count)
 	}
 	if (ReadyWeapon == wp_staff || ReadyWeapon == wp_gauntlets)
 	{
-		if (WeaponOwned[MainGameInfo(Level.Game).GetAmmoChange[ammo]])
+		if (WeaponOwned[MainGameInfo(Level.Game).GetAmmoChange[ammo.default.AmmoType]])
 		{
-			PendingWeapon = MainGameInfo(Level.Game).GetAmmoChange[ammo];
+			PendingWeapon = MainGameInfo(Level.Game).GetAmmoChange[ammo.default.AmmoType];
 		}
 	}
 	return true;
@@ -2210,7 +2204,7 @@ void SetViewPos()
 	}
 
 	if (ReadyWeapon > 0 && ReadyWeapon < 7)
-		ReadyAmmo = Ammo[Weapon(ViewEnt).Ammo].Amount;
+		ReadyAmmo = EntityEx(MO).FindInventory(Weapon(ViewEnt).AmmoType).Amount;
 	else
 		ReadyAmmo = 0;
 
@@ -2646,12 +2640,12 @@ int GetAmmoUse(int Weapon)
 
 bool CheckAmmo()
 {
-	int ammo;
+	class<AmmoPickup> ammo;
 	int count;
 
-	ammo = Weapon(ViewEnt).Ammo;
+	ammo = Weapon(ViewEnt).AmmoType;
 	count = GetAmmoUse(ReadyWeapon);
-	if (ammo == am_noammo || Ammo[ammo].Amount >= count)
+	if (!ammo || EntityEx(MO).FindInventory(ammo).Amount >= count)
 	{
 		return true;
 	}
@@ -2659,26 +2653,26 @@ bool CheckAmmo()
 	do
 	{
 		if (WeaponOwned[wp_skullrod] &&
-			Ammo[am_skullrod].Amount > GetAmmoUse(wp_skullrod))
+			EntityEx(MO).FindInventory(SkullRodAmmo).Amount > GetAmmoUse(wp_skullrod))
 		{
 			PendingWeapon = wp_skullrod;
 		}
 		else if (WeaponOwned[wp_blaster] &&
-			Ammo[am_blaster].Amount > GetAmmoUse(wp_blaster))
+			EntityEx(MO).FindInventory(BlasterAmmo).Amount > GetAmmoUse(wp_blaster))
 		{
 			PendingWeapon = wp_blaster;
 		}
 		else if (WeaponOwned[wp_crossbow] &&
-			Ammo[am_crossbow].Amount > GetAmmoUse(wp_crossbow))
+			EntityEx(MO).FindInventory(CrossbowAmmo).Amount > GetAmmoUse(wp_crossbow))
 		{
 			PendingWeapon = wp_crossbow;
 		}
 		else if (WeaponOwned[wp_mace] &&
-			Ammo[am_mace].Amount > GetAmmoUse(wp_mace))
+			EntityEx(MO).FindInventory(MaceAmmo).Amount > GetAmmoUse(wp_mace))
 		{
 			PendingWeapon = wp_mace;
 		}
-		else if (Ammo[am_goldwand].Amount > GetAmmoUse(wp_goldwand))
+		else if (EntityEx(MO).FindInventory(GoldWandAmmo).Amount > GetAmmoUse(wp_goldwand))
 		{
 			PendingWeapon = wp_goldwand;
 		}
@@ -2687,7 +2681,7 @@ bool CheckAmmo()
 			PendingWeapon = wp_gauntlets;
 		}
 		else if (WeaponOwned[wp_phoenixrod] &&
-			Ammo[am_phoenixrod].Amount > GetAmmoUse(wp_phoenixrod))
+			EntityEx(MO).FindInventory(PhoenixRodAmmo).Amount > GetAmmoUse(wp_phoenixrod))
 		{
 			PendingWeapon = wp_phoenixrod;
 		}
@@ -2910,12 +2904,12 @@ void Cheat_Gimme()
 		ArmorType = 2;
 		if (!Backpack)
 		{
-			for (i = 0; i < 6 /*NUMAMMO2 */ ; i++)
+			BagOfHolding Bag = Level.Spawn(BagOfHolding);
+			Bag.bDropped = true;
+			if (!Bag.TryPickup(EntityEx(MO)))
 			{
-				GiveAmmo(i, 0);
-				Ammo[i].MaxAmount *= 2;
+				Bag.Destroy();
 			}
-			Backpack = true;
 		}
 		for (i = 0; i < NUMWEAPONS - 1; i++)
 		{
@@ -2927,9 +2921,10 @@ void Cheat_Gimme()
 			WeaponOwned[wp_phoenixrod] = false;
 			WeaponOwned[wp_mace] = false;
 		}
-		for (i = 0; i < 6 /*NUMAMMO2 */ ; i++)
+		for (i = 0; i < NUMAMMO; i++)
 		{
-			Ammo[i].Amount = Ammo[i].MaxAmount;
+			Inventory AmmoItem = EntityEx(MO).FindInventory(MainGameInfo(Level.Game).AmmoClasses[i]);
+			AmmoItem.Amount = AmmoItem.MaxAmount;
 		}
 		cprint("ALL WEAPONS");
 	}

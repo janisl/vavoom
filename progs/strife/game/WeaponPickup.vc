@@ -41,16 +41,20 @@ int Ammo2Count;
 
 bool GiveWeapon(EntityEx Toucher)
 {
-	int AmmoType;
-	int Ammo2Type;
+	class<AmmoPickup> AmmoType;
+	class<AmmoPickup> Ammo2Type;
 	bool gaveammo;
 	bool gaveammo2;
 	bool gaveweapon;
 
-	AmmoType = MainGameInfo(Level.Game).WeaponClasses[WeaponType].default.Ammo;
-	Ammo2Type = MainGameInfo(Level.Game).WeaponClasses[WeaponType].default.Ammo;
+	AmmoType = MainGameInfo(Level.Game).WeaponClasses[WeaponType].default.AmmoType;
+	Ammo2Type = none;
+	if (Weapon2Type != -1)
+	{
+		Ammo2Type = MainGameInfo(Level.Game).WeaponClasses[Weapon2Type].default.AmmoType;
+	}
 
-	if (AmmoType != StrifeDefs::am_noammo)
+	if (AmmoType)
 	{
 		// give one clip with a dropped weapon,
 		// two clips with a found weapon
@@ -66,8 +70,7 @@ bool GiveWeapon(EntityEx Toucher)
 		gaveammo = false;
 	}
 
-	if (Weapon2Type != -1 && Ammo2Type != StrifeDefs::am_noammo &&
-		AmmoType != Ammo2Type && Ammo2Count)
+	if (Weapon2Type != -1 && Ammo2Type && AmmoType != Ammo2Type && Ammo2Count)
 	{
 		// give one clip with a dropped weapon,
 		// two clips with a found weapon

@@ -165,7 +165,6 @@ __states__
 
 defaultproperties
 {
-	Ammo = am_noammo;
 	UpState = S_GAUNTLETUP;
 	DownState = S_GAUNTLETDOWN;
 	ReadyState = S_GAUNTLETREADY;

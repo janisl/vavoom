@@ -60,7 +60,7 @@ __states__
 
 defaultproperties
 {
-	Ammo = StrifeDefs::am_misl;
+	AmmoType = MiniMissiles;
 	UpState = S_MISSILEUP;
 	DownState = S_MISSILEDOWN;
 	ReadyState = S_MISSILE;

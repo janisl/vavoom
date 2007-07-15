@@ -59,8 +59,6 @@ int TotalArmorPoints;
 float ArmorPoints[HexenDefs::NUMARMOR];
 int ArmorPerc[HexenDefs::NUMARMOR];
 
-Mana Mana[HexenDefs::NUMMANA];
-
 int Keys;
 
 // Power ups. invinc and invis are tic counters.
@@ -114,8 +112,8 @@ bool onground;
 replication
 {
 	reliable if (!bIsClient)
-		SBFlags, TotalArmorPoints, InventoryTime, ArtifactFlash, ReadyArtifact,
-		InvPtr, InvCurPos, InventorySlotNum, ArmorPerc, Mana, Inventory;
+		SBFlags, TotalArmorPoints, InventoryTime, ArtifactFlash,
+		ReadyArtifact, InvPtr, InvCurPos, InventorySlotNum, ArmorPerc, Inventory;
 
 	unreliable if (!bIsClient)
 		ClientBlood, ClientExplosion;
@@ -191,10 +189,10 @@ void SpawnClient()
 				WeaponOwned[j] = true;
 			}
 		}
-		GiveMana(HexenDefs::MANA_1, 0);
-		GiveMana(HexenDefs::MANA_2, 0);
-		Mana[HexenDefs::MANA_1].Amount = 25;
-		Mana[HexenDefs::MANA_2].Amount = 25;
+		GiveMana(Mana1, 0);
+		GiveMana(Mana2, 0);
+		EntityEx(MO).FindInventory(Mana1).Amount = 25;
+		EntityEx(MO).FindInventory(Mana2).Amount = 25;
 		if (bestWeapon)
 		{
 			// Bring up the best weapon
@@ -286,10 +284,10 @@ void NetGameReborn()
 			WeaponOwned[i] = true;
 		}
 	}
-	GiveMana(HexenDefs::MANA_1, 0);
-	GiveMana(HexenDefs::MANA_2, 0);
-	Mana[HexenDefs::MANA_1].Amount = 25;
-	Mana[HexenDefs::MANA_2].Amount = 25;
+	GiveMana(Mana1, 0);
+	GiveMana(Mana2, 0);
+	EntityEx(MO).FindInventory(Mana1).Amount = 25;
+	EntityEx(MO).FindInventory(Mana2).Amount = 25;
 	if (bestWeapon)
 	{
 		// Bring up the best weapon
@@ -649,31 +647,20 @@ void PlayerExitMap(bool clusterChange)
 //
 //==========================================================================
 
-bool GiveMana(int mana, int count)
+bool GiveMana(class<Mana> mana, int count)
 {
 	int prevMana;
 
-	if (mana == HexenDefs::MANA_NONE)
+	if (!mana)
 	{
 		return false;
 	}
-	if (mana == HexenDefs::MANA_BOTH)
-	{
-		//	Give both types. Do this here to simplify other code.
-		// Use bitwise or to make sure bot types are given.
-		return GiveMana(HexenDefs::MANA_1, count) | GiveMana(HexenDefs::MANA_2, count);
-	}
-	if (mana < 0 || mana >= HexenDefs::NUMMANA)
-	{
-		Error("Actor::GiveMana: bad type %i", mana);
-	}
-	Mana ManaItem = Mana[mana];
+	Mana ManaItem = Mana(EntityEx(MO).FindInventory(mana));
 	if (!ManaItem)
 	{
-		ManaItem = Level.Spawn(MainGameInfo(Level.Game).ManaClasses[mana]);
+		ManaItem = Level.Spawn(mana);
 		ManaItem.Amount = 0;
 		ManaItem.AttachToOwner(EntityEx(MO));
-		Mana[mana] = ManaItem;
 	}
 	if (ManaItem.Amount == ManaItem.MaxAmount)
 	{
@@ -693,7 +680,7 @@ bool GiveMana(int mana, int count)
 	}
 	if (prevMana <= 0)
 	{
-		Weapon(ViewEnt).GotMana(mana);
+		Weapon(ViewEnt).GotMana(mana.default.ManaType);
 	}
 	return true;
 }
@@ -2884,7 +2871,8 @@ bool UseArtifact(int arti)
 		}
 		break;
 	case HexenDefs::arti_boostmana:
-		if (!GiveMana(HexenDefs::MANA_BOTH, Mana3.default.MaxAmount))
+		if (!(GiveMana(Mana1, Mana1.default.MaxAmount) |
+			GiveMana(Mana2, Mana2.default.MaxAmount)))
 		{
 			return false;
 		}
@@ -3035,8 +3023,8 @@ bool UseArtiHealRadius()
 			break;
 		case HexenDefs::PCLASS_MAGE:	// Radius mana boost
 			amount = 50 + (P_Random() % 50);
-			if ((Player(P.Player).GiveMana(HexenDefs::MANA_1, amount)) ||
-				(Player(P.Player).GiveMana(HexenDefs::MANA_2, amount)))
+			if ((Player(P.Player).GiveMana(Mana1, amount)) ||
+				(Player(P.Player).GiveMana(Mana2, amount)))
 			{
 				effective = true;
 				P.PlaySound('MysticIncant', CHAN_ITEM);
@@ -3329,19 +3317,22 @@ void MovePsprites(float deltaTime)
 
 bool CheckMana()
 {
-	int mana;
+	class<Mana> mana1;
+	class<Mana> mana2;
 	int count;
 
-	mana = Weapon(ViewEnt).Mana;
+	mana1 = Weapon(ViewEnt).ManaType1;
+	mana2 = Weapon(ViewEnt).ManaType2;
 	count = WeaponManaUse(PClass, ReadyWeapon);
-	if (mana == HexenDefs::MANA_BOTH)
+	if (mana2)
 	{
-		if (Mana[HexenDefs::MANA_1].Amount >= count && Mana[HexenDefs::MANA_2].Amount >= count)
+		if (EntityEx(MO).FindInventory(mana1).Amount >= count &&
+			EntityEx(MO).FindInventory(mana2).Amount >= count)
 		{
 			return true;
 		}
 	}
-	else if (mana == HexenDefs::MANA_NONE || Mana[mana].Amount >= count)
+	else if (!mana1 || EntityEx(MO).FindInventory(mana1).Amount >= count)
 	{
 		return true;
 	}
@@ -3349,18 +3340,18 @@ bool CheckMana()
 	do
 	{
 		if (WeaponOwned[HexenDefs::WP_THIRD] &&
-			Mana[HexenDefs::MANA_2].Amount >= WeaponManaUse(PClass, HexenDefs::WP_THIRD))
+			EntityEx(MO).FindInventory(Mana2).Amount >= WeaponManaUse(PClass, HexenDefs::WP_THIRD))
 		{
 			PendingWeapon = HexenDefs::WP_THIRD;
 		}
 		else if (WeaponOwned[HexenDefs::WP_SECOND] &&
-			Mana[HexenDefs::MANA_1].Amount >= WeaponManaUse(PClass, HexenDefs::WP_SECOND))
+			EntityEx(MO).FindInventory(Mana1).Amount >= WeaponManaUse(PClass, HexenDefs::WP_SECOND))
 		{
 			PendingWeapon = HexenDefs::WP_SECOND;
 		}
 		else if (WeaponOwned[HexenDefs::WP_FOURTH] &&
-			Mana[HexenDefs::MANA_1].Amount >= WeaponManaUse(PClass, HexenDefs::WP_FOURTH) &&
-			Mana[HexenDefs::MANA_2].Amount >= WeaponManaUse(PClass, HexenDefs::WP_FOURTH))
+			EntityEx(MO).FindInventory(Mana1).Amount >= WeaponManaUse(PClass, HexenDefs::WP_FOURTH) &&
+			EntityEx(MO).FindInventory(Mana2).Amount >= WeaponManaUse(PClass, HexenDefs::WP_FOURTH))
 		{
 			PendingWeapon = HexenDefs::WP_FOURTH;
 		}
@@ -3656,8 +3647,9 @@ void Cheat_Gimme()
 		}
 		for (i = 0; i < HexenDefs::NUMMANA; i++)
 		{
-			GiveMana(i, 0);
-			Mana[i].Amount = Mana[i].MaxAmount;
+			GiveMana(MainGameInfo(Level.Game).ManaClasses[i], 0);
+			Inventory ManaItem = EntityEx(MO).FindInventory(MainGameInfo(Level.Game).ManaClasses[i]);
+			ManaItem.Amount = ManaItem.MaxAmount;
 		}
 		Pieces = 7;
 		cprint("ALL WEAPONS");

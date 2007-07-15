@@ -32,7 +32,8 @@ const float RAISESPEED		= 6.0;
 const float WEAPONBOTTOM	= 128.0;
 const float WEAPONTOP		= 32.0;
 
-int Mana;
+class<Mana> ManaType1;
+class<Mana> ManaType2;
 state UpState;
 state DownState;
 state ReadyState;
@@ -59,16 +60,14 @@ int WeaponManaUse(int pclass, int num)
 
 void DecMana()
 {
-	if (Mana == HexenDefs::MANA_BOTH)
+	if (ManaType1)
 	{
-		Player(Owner.Player).Mana[HexenDefs::MANA_1].Amount -=
-			WeaponManaUse(Owner.Player.PClass, Player(Owner.Player).ReadyWeapon);
-		Player(Owner.Player).Mana[HexenDefs::MANA_2].Amount -=
+		EntityEx(Owner).FindInventory(ManaType1).Amount -=
 			WeaponManaUse(Owner.Player.PClass, Player(Owner.Player).ReadyWeapon);
 	}
-	else
+	if (ManaType2)
 	{
-		Player(Owner.Player).Mana[Mana].Amount -=
+		EntityEx(Owner).FindInventory(ManaType2).Amount -=
 			WeaponManaUse(Owner.Player.PClass, Player(Owner.Player).ReadyWeapon);
 	}
 }

@@ -50,14 +50,14 @@ bool TryPickup(EntityEx Toucher)
 		}
 		if (WeaponType == HexenDefs::WP_SECOND)
 		{
-			if (!Player(Toucher.Player).GiveMana(HexenDefs::MANA_1, 25))
+			if (!Player(Toucher.Player).GiveMana(Mana1, 25))
 			{
 				return false;
 			}
 		}
 		else
 		{
-			if (!Player(Toucher.Player).GiveMana(HexenDefs::MANA_2, 25))
+			if (!Player(Toucher.Player).GiveMana(Mana2, 25))
 			{
 				return false;
 			}
@@ -74,11 +74,11 @@ bool TryPickup(EntityEx Toucher)
 
 	if (WeaponType == HexenDefs::WP_SECOND)
 	{
-		gaveMana = Player(Toucher.Player).GiveMana(HexenDefs::MANA_1, 25);
+		gaveMana = Player(Toucher.Player).GiveMana(Mana1, 25);
 	}
 	else
 	{
-		gaveMana = Player(Toucher.Player).GiveMana(HexenDefs::MANA_2, 25);
+		gaveMana = Player(Toucher.Player).GiveMana(Mana2, 25);
 	}
 	if (Player(Toucher.Player).WeaponOwned[WeaponType])
 	{

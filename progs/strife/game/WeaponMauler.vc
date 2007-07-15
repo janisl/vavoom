@@ -118,7 +118,7 @@ __states__
 
 defaultproperties
 {
-	Ammo = StrifeDefs::am_cell;
+	AmmoType = EnergyPod;
 	UpState = S_BLASTERUP;
 	DownState = S_BLASTERDOWN;
 	ReadyState = S_BLASTER;

@@ -85,7 +85,6 @@ __states__
 
 defaultproperties
 {
-	Ammo = StrifeDefs::am_noammo;
 	UpState = S_PUNCHUP;
 	DownState = S_PUNCHDOWN;
 	ReadyState = S_PUNCH;

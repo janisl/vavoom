@@ -95,7 +95,7 @@ __states__
 
 defaultproperties
 {
-	Ammo = am_goldwand;
+	AmmoType = GoldWandAmmo;
 	GetAmmoCount = 25;
 	AmmoUsePL1 = USE_GWND_AMMO_1;
 	AmmoUsePL2 = USE_GWND_AMMO_2;

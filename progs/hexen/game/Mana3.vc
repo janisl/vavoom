@@ -23,9 +23,26 @@
 //**
 //**************************************************************************
 
-class Mana3 : Mana
+class Mana3 : Inventory
 	__mobjinfo__(8004)
 	__scriptid__(75);
+
+//==========================================================================
+//
+//  TryPickup
+//
+//==========================================================================
+
+bool TryPickup(EntityEx Toucher)
+{
+	if (Player(Toucher.Player).GiveMana(Mana1, Amount) |
+		Player(Toucher.Player).GiveMana(Mana2, Amount))
+	{
+		GoAwayAndDie();
+		return true;
+	}
+	return false;
+}
 
 __states__
 {
@@ -49,7 +66,13 @@ __states__
 
 defaultproperties
 {
-	ManaType = HexenDefs::MANA_BOTH;
+	Health = 10;
+	Radius = 8.0;
+	Height = 32.0;
+	MaxAmount = 200;
+	bSpecial = true;
+	bNoPassMobj = true;
+	bFloatBob = true;
 	Amount = 20;
 	IdleState = S_MANA3_1;
 	PickupMessage = "$txt_mana_both";

@@ -50,7 +50,6 @@ __states__
 
 defaultproperties
 {
-	Mana = HexenDefs::MANA_NONE;
 	UpState = S_MWANDUP;
 	DownState = S_MWANDDOWN;
 	ReadyState = S_MWANDREADY;

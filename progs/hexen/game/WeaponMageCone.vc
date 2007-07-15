@@ -94,7 +94,7 @@ __states__
 
 defaultproperties
 {
-	Mana = HexenDefs::MANA_1;
+	ManaType1 = Mana1;
 	UpState = S_CONEUP;
 	DownState = S_CONEDOWN;
 	ReadyState = S_CONEREADY;

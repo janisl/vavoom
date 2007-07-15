@@ -59,7 +59,7 @@ __states__
 
 defaultproperties
 {
-	Ammo = StrifeDefs::am_cell;
+	AmmoType = EnergyPod;
 	UpState = S_FLAMEUP;
 	DownState = S_FLAMEDOWN;
 	ReadyState = S_FLAME;

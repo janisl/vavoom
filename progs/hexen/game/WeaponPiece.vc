@@ -58,7 +58,8 @@ bool TryPickup(EntityEx Toucher)
 			return false;
 		}
 		checkAssembled = false;
-		gaveMana = Player(Toucher.Player).GiveMana(HexenDefs::MANA_BOTH, 20);
+		gaveMana = Player(Toucher.Player).GiveMana(Mana1, 20) |
+			Player(Toucher.Player).GiveMana(Mana2, 20);
 		if (!gaveMana)
 		{
 			// Didn't need the mana, so don't pick it up
@@ -74,7 +75,8 @@ bool TryPickup(EntityEx Toucher)
 		return false;
 	}
 
-	gaveMana = Player(Toucher.Player).GiveMana(HexenDefs::MANA_BOTH, 20);
+	gaveMana = Player(Toucher.Player).GiveMana(Mana1, 20) |
+		Player(Toucher.Player).GiveMana(Mana2, 20);
 	if (ShouldStay())
 	{
 		PieceValue = MainGameInfo(Level.Game).pieceValueTrans[PieceValue];

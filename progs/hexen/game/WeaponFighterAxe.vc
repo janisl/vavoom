@@ -46,7 +46,7 @@ final void A_FAxeAttack()
 
 	damage = 40 + (P_Random() & 15) + (P_Random() & 7);
 	power = 0.0;
-	if (Player(Owner.Player).Mana[HexenDefs::MANA_1].Amount > 0)
+	if (EntityEx(Owner).FindInventory(Mana1).Amount > 0)
 	{
 		damage <<= 1;
 		power = 6.0;
@@ -85,9 +85,9 @@ final void A_FAxeAttack()
 
 	if (useMana == 2)
 	{
-		Player(Owner.Player).Mana[HexenDefs::MANA_1].Amount -=
+		EntityEx(Owner).FindInventory(Mana1).Amount -=
 			WeaponManaUse(Owner.Player.PClass, Player(Owner.Player).ReadyWeapon);
-		if (Player(Owner.Player).Mana[HexenDefs::MANA_1].Amount <= 0)
+		if (EntityEx(Owner).FindInventory(Mana1).Amount <= 0)
 		{
 			Owner.Player.SetViewState(ps_weapon, NoMoreManaState);
 		}
@@ -143,7 +143,7 @@ __states__
 
 state GetUpState()
 {
-	if (Player(Owner.Player).Mana[HexenDefs::MANA_1])
+	if (EntityEx(Owner).FindInventory(Mana1).Amount > 0)
 	{
 		return S_FAXEUP_G;
 	}
@@ -161,7 +161,7 @@ state GetUpState()
 
 state GetDownState()
 {
-	if (Player(Owner.Player).Mana[HexenDefs::MANA_1])
+	if (EntityEx(Owner).FindInventory(Mana1).Amount > 0)
 	{
 		return S_FAXEDOWN_G;
 	}
@@ -179,7 +179,7 @@ state GetDownState()
 
 state GetReadyState()
 {
-	if (Player(Owner.Player).Mana[HexenDefs::MANA_1])
+	if (EntityEx(Owner).FindInventory(Mana1).Amount > 0)
 	{
 		return S_FAXEREADY_G;
 	}
@@ -197,7 +197,7 @@ state GetReadyState()
 
 state GetAttackState()
 {
-	if (Player(Owner.Player).Mana[HexenDefs::MANA_1].Amount > 0)
+	if (EntityEx(Owner).FindInventory(Mana1).Amount > 0)
 	{
 		// Glowing axe
 		return S_FAXEATK_G1;
@@ -224,7 +224,6 @@ void GotMana(int InMana)
 
 defaultproperties
 {
-	Mana = HexenDefs::MANA_NONE;
 	UpState = S_FAXEUP;
 	DownState = S_FAXEDOWN;
 	ReadyState = S_FAXEREADY;

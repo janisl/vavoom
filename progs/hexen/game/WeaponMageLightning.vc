@@ -112,7 +112,7 @@ __states__
 
 defaultproperties
 {
-	Mana = HexenDefs::MANA_2;
+	ManaType1 = Mana2;
 	UpState = S_MLIGHTNINGUP;
 	DownState = S_MLIGHTNINGDOWN;
 	ReadyState = S_MLIGHTNINGREADY;

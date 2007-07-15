@@ -33,10 +33,11 @@ class AmmoFillup : DummyStrifeItem;
 
 bool TryPickup(EntityEx Toucher)
 {
-	Player(Toucher.Player).GiveAmmo(StrifeDefs::am_clip, 0);
-	if (Player(Toucher.Player).Ammo[StrifeDefs::am_clip].Amount < 50)
+	Player(Toucher.Player).GiveAmmo(ClipOfBullets, 0);
+	Inventory AmmoItem = Toucher.FindInventory(ClipOfBullets);
+	if (AmmoItem.Amount < 50)
 	{
-		Player(Toucher.Player).Ammo[StrifeDefs::am_clip].Amount = 50;
+		AmmoItem.Amount = 50;
 		GoAwayAndDie();
 		return true;
 	}

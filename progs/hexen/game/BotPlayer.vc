@@ -289,8 +289,10 @@ bool CheckItem(Actor item)
 			return true;
 
 		// If we have no more room for the mana it gives
-		if ((weapon == HexenDefs::WP_SECOND && player.Mana[HexenDefs::MANA_1].Amount == player.Mana[HexenDefs::MANA_1].MaxAmount) ||
-			(weapon == HexenDefs::WP_THIRD && player.Mana[HexenDefs::MANA_2].Amount == player.Mana[HexenDefs::MANA_2].MaxAmount))
+		if ((weapon == HexenDefs::WP_SECOND &&
+			botmo.FindInventory(Mana1).Amount == botmo.FindInventory(Mana1).MaxAmount) ||
+			(weapon == HexenDefs::WP_THIRD &&
+			botmo.FindInventory(Mana2).Amount == botmo.FindInventory(Mana2).MaxAmount))
 			return false;
 	}
 
@@ -304,8 +306,8 @@ bool CheckItem(Actor item)
 			return true;
 
 		// If we have no more room for the mana it gives
-		if (player.Mana[HexenDefs::MANA_1].Amount == player.Mana[HexenDefs::MANA_1].MaxAmount &&
-			player.Mana[HexenDefs::MANA_2].Amount == player.Mana[HexenDefs::MANA_2].MaxAmount)
+		if (botmo.FindInventory(Mana1).Amount == botmo.FindInventory(Mana1).MaxAmount &&
+			botmo.FindInventory(Mana2).Amount == botmo.FindInventory(Mana2).MaxAmount)
 			return false;
 	}
 
@@ -313,15 +315,18 @@ bool CheckItem(Actor item)
 	if (mana != -1)
 	{
 		// If we have no more room for the mana it gives
-		if (mana == HexenDefs::MANA_1 &&
-			player.Mana[HexenDefs::MANA_1].Amount == player.Mana[HexenDefs::MANA_1].MaxAmount)
+		class<Mana> ManaType = MainGameInfo(botmo.Level.Game).ManaClasses[mana];
+		Inventory ManaItem = botmo.FindInventory(ManaType);
+		if (ManaItem && ManaItem.Amount == ManaItem.MaxAmount)
 			return false;
-		if (mana == HexenDefs::MANA_2 &&
-			player.Mana[HexenDefs::MANA_2].Amount == player.Mana[HexenDefs::MANA_2].MaxAmount)
-			return false;
-		if (mana == HexenDefs::MANA_BOTH &&
-			player.Mana[HexenDefs::MANA_1].Amount == player.Mana[HexenDefs::MANA_1].MaxAmount &&
-			player.Mana[HexenDefs::MANA_2].Amount == player.Mana[HexenDefs::MANA_2].MaxAmount)
+	}
+	if (Mana3(item))
+	{
+		Inventory ManaItem1 = botmo.FindInventory(Mana1);
+		Inventory ManaItem2 = botmo.FindInventory(Mana2);
+		if (ManaItem1 && ManaItem2 &&
+			ManaItem1.Amount == ManaItem1.MaxAmount &&
+			ManaItem2.Amount == ManaItem2.MaxAmount)
 			return false;
 	}
 

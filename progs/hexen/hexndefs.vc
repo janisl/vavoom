@@ -54,7 +54,6 @@ enum
 	MANA_1,
 	MANA_2,
 	NUMMANA,
-	MANA_BOTH,
 	MANA_NONE
 };
 

@@ -134,7 +134,6 @@ __states__
 
 defaultproperties
 {
-	Ammo = am_noammo;
 	UpState = S_BEAKUP;
 	DownState = S_BEAKDOWN;
 	ReadyState = S_BEAKREADY;
