@@ -680,9 +680,20 @@ bool GiveMana(class<Ammo> mana, int count)
 	}
 	if (prevMana <= 0)
 	{
-		Weapon(ViewEnt).GotMana(ManaItem);
+		GotAmmo(ManaItem);
 	}
 	return true;
+}
+
+//==========================================================================
+//
+//	GotAmmo
+//
+//==========================================================================
+
+void GotAmmo(Ammo NewAmmo)
+{
+	Weapon(ViewEnt).GotMana(NewAmmo);
 }
 
 //==========================================================================

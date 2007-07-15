@@ -26,22 +26,6 @@
 class Mana : Ammo
 	abstract;
 
-//==========================================================================
-//
-//  TryPickup
-//
-//==========================================================================
-
-bool TryPickup(EntityEx Toucher)
-{
-	if (Player(Toucher.Player).GiveMana(GetParentAmmo(), Amount))
-	{
-		GoAwayAndDie();
-		return true;
-	}
-	return false;
-}
-
 defaultproperties
 {
 	Health = 10;

@@ -35,6 +35,7 @@ string			PickupMessage;
 name			PickupSound;
 float			RespawnTime;
 int				QuestID;
+name			IconName;
 
 //	Originally these didn't respawn in deathmatch
 bool			bBigPowerup;

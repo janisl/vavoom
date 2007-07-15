@@ -530,14 +530,25 @@ bool GiveAmmo(class<Ammo> ammo, int count)
 		// ammo of the type just given
 		return true;
 	}
+	GotAmmo(AmmoItem);
+	return true;
+}
+
+//==========================================================================
+//
+//	GotAmmo
+//
+//==========================================================================
+
+void GotAmmo(Ammo NewAmmo)
+{
 	if (ReadyWeapon == wp_staff || ReadyWeapon == wp_gauntlets)
 	{
-		if (WeaponOwned[AmmoPickup(AmmoItem).GetAmmoChange])
+		if (WeaponOwned[AmmoPickup(NewAmmo).GetAmmoChange])
 		{
-			PendingWeapon = AmmoPickup(AmmoItem).GetAmmoChange;
+			PendingWeapon = AmmoPickup(NewAmmo).GetAmmoChange;
 		}
 	}
-	return true;
 }
 
 //==========================================================================

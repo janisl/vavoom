@@ -32,7 +32,7 @@ class Ammo : Inventory
 //
 //==========================================================================
 
-class<Ammo> GetParentAmmo()
+final class<Ammo> GetParentAmmo()
 {
 	class Ret = Class;
 	//	Get parent class that is direct descendant of game-specific ammo
@@ -42,6 +42,59 @@ class<Ammo> GetParentAmmo()
 		Ret = GetClassParent(Ret);
 	}
 	return class<Ammo>(Ret);
+}
+
+//==========================================================================
+//
+//	TryPickup
+//
+//==========================================================================
+
+bool TryPickup(EntityEx Toucher)
+{
+	int oldammo;
+
+	Ammo AmmoItem = Ammo(Toucher.FindInventory(GetParentAmmo()));
+	if (!AmmoItem)
+	{
+		AmmoItem = Spawn(GetParentAmmo());
+		AmmoItem.AttachToOwner(Toucher);
+		AmmoItem.Amount = 0;
+	}
+	if (AmmoItem.Amount == AmmoItem.MaxAmount)
+	{
+		return false;
+	}
+	if (Level.Game.gameskill == sk_baby || Level.Game.gameskill == sk_nightmare)
+	{
+		// extra ammo in baby mode and nightmare mode
+		if (LineSpecialGameInfo(Level.Game).bBabyNightmareDoubleAmmo)
+		{
+			Amount <<= 1;
+		}
+		else
+		{
+			Amount += Amount >> 1;
+		}
+	}
+
+	oldammo = AmmoItem.Amount;
+
+	AmmoItem.Amount += Amount;
+	if (AmmoItem.Amount > AmmoItem.MaxAmount)
+	{
+		AmmoItem.Amount = AmmoItem.MaxAmount;
+	}
+
+	//	If non zero ammo, don't change up weapons,
+	// player was lower on purpose.
+	if (oldammo <= 0)
+	{
+		PlayerEx(Toucher.Player).GotAmmo(AmmoItem);
+	}
+	GoAwayAndDie();
+	GiveQuest(Toucher);
+	return true;
 }
 
 defaultproperties

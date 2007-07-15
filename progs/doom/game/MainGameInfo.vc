@@ -1251,6 +1251,7 @@ defaultproperties
 {
 	LevelInfoClass = DoomLevelInfo;
 	bNoClipIgnoreFloor = true;
+	bBabyNightmareDoubleAmmo = true;
 	TeleportFogClass = TeleportFog;
 	DefaultKickBack = 150.0;
 	BloodClass = Blood;

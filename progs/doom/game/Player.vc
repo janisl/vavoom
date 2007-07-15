@@ -554,10 +554,22 @@ bool GiveAmmo(class<Ammo> ammo, int num)
 	if (oldammo)
 		return true;
 
+	GotAmmo(AmmoItem);
+	return true;
+}
+
+//==========================================================================
+//
+//	GotAmmo
+//
+//==========================================================================
+
+void GotAmmo(Ammo NewAmmo)
+{
 	// We were down to zero,
 	// so select a new weapon.
 	// Preferences are not user selectable.
-	if (ammo == Clip)
+	if (Clip(NewAmmo))
 	{
 		if (ReadyWeapon == DoomDefs::wp_fist)
 		{
@@ -567,7 +579,7 @@ bool GiveAmmo(class<Ammo> ammo, int num)
 				PendingWeapon = DoomDefs::wp_pistol;
 		}
 	}
-	else if (ammo == Shell)
+	else if (Shell(NewAmmo))
 	{
 		if (ReadyWeapon == DoomDefs::wp_fist || ReadyWeapon == DoomDefs::wp_pistol)
 		{
@@ -575,7 +587,7 @@ bool GiveAmmo(class<Ammo> ammo, int num)
 				PendingWeapon = DoomDefs::wp_shotgun;
 		}
 	}
-	else if (ammo == Cell)
+	else if (Cell(NewAmmo))
 	{
 		if (ReadyWeapon == DoomDefs::wp_fist || ReadyWeapon == DoomDefs::wp_pistol)
 		{
@@ -583,7 +595,7 @@ bool GiveAmmo(class<Ammo> ammo, int num)
 				PendingWeapon = DoomDefs::wp_plasma;
 		}
 	}
-	else if (ammo == RocketAmmo)
+	else if (RocketAmmo(NewAmmo))
 	{
 		if (ReadyWeapon == DoomDefs::wp_fist)
 		{
@@ -591,8 +603,6 @@ bool GiveAmmo(class<Ammo> ammo, int num)
 				PendingWeapon = DoomDefs::wp_missile;
 		}
 	}
-
-	return true;
 }
 
 //==========================================================================

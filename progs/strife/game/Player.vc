@@ -486,11 +486,22 @@ bool GiveAmmo(class<Ammo> ammo, int num)
 	// player was lower on purpose.
 	if (oldammo)
 		return true;
+	GotAmmo(AmmoItem);
+	return true;
+}
 
+//==========================================================================
+//
+//	GotAmmo
+//
+//==========================================================================
+
+void GotAmmo(Ammo NewAmmo)
+{
 	// We were down to zero,
 	// so select a new weapon.
 	// Preferences are not user selectable.
-	if (ammo == ClipOfBullets)
+	if (ClipOfBullets(NewAmmo))
 	{
 		if (ReadyWeapon == StrifeDefs::wp_fist)
 		{
@@ -498,7 +509,7 @@ bool GiveAmmo(class<Ammo> ammo, int num)
 				PendingWeapon = StrifeDefs::wp_riffle;
 		}
 	}
-	else if (ammo == ElectricBolts)
+	else if (ElectricBolts(NewAmmo))
 	{
 		if (ReadyWeapon == StrifeDefs::wp_fist)
 		{
@@ -506,7 +517,7 @@ bool GiveAmmo(class<Ammo> ammo, int num)
 				PendingWeapon = StrifeDefs::wp_crossbow;
 		}
 	}
-	else if (ammo == EnergyPod)
+	else if (EnergyPod(NewAmmo))
 	{
 		if (ReadyWeapon == StrifeDefs::wp_fist)
 		{
@@ -514,7 +525,7 @@ bool GiveAmmo(class<Ammo> ammo, int num)
 				PendingWeapon = StrifeDefs::wp_flame;
 		}
 	}
-	else if (ammo == MiniMissiles)
+	else if (MiniMissiles(NewAmmo))
 	{
 		if (ReadyWeapon == StrifeDefs::wp_fist)
 		{
@@ -522,8 +533,6 @@ bool GiveAmmo(class<Ammo> ammo, int num)
 				PendingWeapon = StrifeDefs::wp_missile;
 		}
 	}
-
-	return true;
 }
 
 //==========================================================================

@@ -28,22 +28,6 @@ class AmmoPickup : Ammo
 
 int			GetAmmoChange;
 
-//==========================================================================
-//
-//  TryPickup
-//
-//==========================================================================
-
-bool TryPickup(EntityEx Toucher)
-{
-	if (Player(Toucher.Player).GiveAmmo(GetParentAmmo(), Amount))
-	{
-		GoAwayAndDie();
-		return true;
-	}
-	return false;
-}
-
 defaultproperties
 {
 	Height = 32.0;

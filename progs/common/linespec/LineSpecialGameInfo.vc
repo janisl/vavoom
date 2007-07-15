@@ -64,6 +64,8 @@ bool			bNoDamageThrustInvulnerable;
 bool			bNightmareFastChase;
 //	Use pickup respawn effects like in Raven's games.
 bool			bRavenStylePickupRespawn;
+//	Give double ammo in baby and nightmare skills
+bool			bBabyNightmareDoubleAmmo;
 
 bool			respawnmonsters;
 bool			bRespawnItems;

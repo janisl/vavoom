@@ -26,25 +26,6 @@
 class AmmoPickup : Ammo
 	abstract;
 
-name		IconName;
-
-//==========================================================================
-//
-//	TryPickup
-//
-//==========================================================================
-
-bool TryPickup(EntityEx Toucher)
-{
-	if (Player(Toucher.Player).GiveAmmo(GetParentAmmo(), Amount))
-	{
-		GoAwayAndDie();
-		GiveQuest(Toucher);
-		return true;
-	}
-	return false;
-}
-
 defaultproperties
 {
 	bSpecial = true;
