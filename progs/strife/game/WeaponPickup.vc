@@ -41,8 +41,8 @@ int Ammo2Count;
 
 bool GiveWeapon(EntityEx Toucher)
 {
-	class<AmmoPickup> AmmoType;
-	class<AmmoPickup> Ammo2Type;
+	class<Ammo> AmmoType;
+	class<Ammo> Ammo2Type;
 	bool gaveammo;
 	bool gaveammo2;
 	bool gaveweapon;

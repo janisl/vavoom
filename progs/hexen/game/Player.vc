@@ -3328,8 +3328,8 @@ void MovePsprites(float deltaTime)
 
 bool CheckMana()
 {
-	class<Mana> mana1;
-	class<Mana> mana2;
+	class<Ammo> mana1;
+	class<Ammo> mana2;
 	int count;
 
 	mana1 = Weapon(ViewEnt).ManaType1;
@@ -3661,7 +3661,7 @@ void Cheat_Gimme()
 		foreach AllClasses(Ammo, Cls)
 		{
 			//	Only direct descendants.
-			if (GetClassParent(Cls) != Mana)
+			if (GetClassParent(Cls) != Ammo)
 			{
 				continue;
 			}

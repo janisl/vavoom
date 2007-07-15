@@ -53,7 +53,6 @@
 #include "RadSuit.vc"
 #include "Infrared.vc"
 #include "Allmap.vc"
-#include "AmmoPickup.vc"
 #include "Clip.vc"
 #include "ClipBox.vc"
 #include "RocketAmmo.vc"

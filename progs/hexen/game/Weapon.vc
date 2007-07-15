@@ -32,8 +32,8 @@ const float RAISESPEED		= 6.0;
 const float WEAPONBOTTOM	= 128.0;
 const float WEAPONTOP		= 32.0;
 
-class<Mana> ManaType1;
-class<Mana> ManaType2;
+class<Ammo> ManaType1;
+class<Ammo> ManaType2;
 state UpState;
 state DownState;
 state ReadyState;

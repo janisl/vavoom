@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class HEGrenadeRounds : AmmoPickup
+class HEGrenadeRounds : Ammo
 	__mobjinfo__(152);
 
 __states__
@@ -39,4 +39,7 @@ defaultproperties
 	Amount = 6;
 	MaxAmount = 30;
 	IconName = 'i_grn1';
+	bSpecial = true;
+	bFloorClip = true;
+	bNoPassMobj = true;
 }

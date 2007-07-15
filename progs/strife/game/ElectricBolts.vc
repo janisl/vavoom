@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ElectricBolts : AmmoPickup
+class ElectricBolts : Ammo
 	__mobjinfo__(114);
 
 __states__
@@ -39,4 +39,7 @@ defaultproperties
 	Amount = 20;
 	MaxAmount = 50;
 	IconName = 'i_xqrl';
+	bSpecial = true;
+	bFloorClip = true;
+	bNoPassMobj = true;
 }

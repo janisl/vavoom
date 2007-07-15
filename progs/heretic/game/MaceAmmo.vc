@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MaceAmmo : AmmoPickup
+class MaceAmmo : Ammo
 	__mobjinfo__(13)
 	__scriptid__(35);
 
@@ -34,8 +34,11 @@ __states__
 
 defaultproperties
 {
+	Height = 32.0;
 	Amount = 20;
 	MaxAmount = 150;
+	bSpecial = true;
+	bNoPassMobj = true;
 	IdleState = S_AMM1;
 	PickupMessage = "$txt_ammomace1";
 }

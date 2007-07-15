@@ -520,7 +520,7 @@ bool GiveAmmo(class<Ammo> ammo, int num)
 	if (!ammo)
 		return false;
 
-	AmmoItem = AmmoPickup(EntityEx(MO).FindInventory(ammo));
+	AmmoItem = Ammo(EntityEx(MO).FindInventory(ammo));
 	if (!AmmoItem)
 	{
 		AmmoItem = Level.Spawn(ammo);
@@ -2550,7 +2550,7 @@ void Cheat_Gimme()
 		foreach AllClasses(Ammo, Cls)
 		{
 			//	Only direct descendants.
-			if (GetClassParent(Cls) != AmmoPickup)
+			if (GetClassParent(Cls) != Ammo)
 			{
 				continue;
 			}

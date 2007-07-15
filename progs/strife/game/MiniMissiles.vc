@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MiniMissiles : AmmoPickup
+class MiniMissiles : Ammo
 	__mobjinfo__(2010)
 	__scriptid__(140);
 
@@ -40,4 +40,7 @@ defaultproperties
 	Amount = 4;
 	MaxAmount = 100;
 	IconName = 'i_rokt';
+	bSpecial = true;
+	bFloorClip = true;
+	bNoPassMobj = true;
 }

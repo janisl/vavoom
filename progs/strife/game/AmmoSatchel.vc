@@ -35,14 +35,14 @@ class AmmoSatchel : Inventory
 
 bool TryPickup(EntityEx Toucher)
 {
-	class<AmmoPickup>	Cls;
+	class<Ammo>	Cls;
 
 	if (!Player(Toucher.Player).Backpack)
 	{
 		foreach AllClasses(Ammo, Cls)
 		{
 			//	Only direct descendants.
-			if (GetClassParent(Cls) != AmmoPickup)
+			if (GetClassParent(Cls) != Ammo)
 			{
 				continue;
 			}

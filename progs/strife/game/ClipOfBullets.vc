@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ClipOfBullets : AmmoPickup
+class ClipOfBullets : Ammo
 	__mobjinfo__(2007)
 	__scriptid__(11);
 
@@ -40,4 +40,7 @@ defaultproperties
 	Amount = 10;
 	MaxAmount = 250;
 	IconName = 'i_blit';
+	bSpecial = true;
+	bFloorClip = true;
+	bNoPassMobj = true;
 }

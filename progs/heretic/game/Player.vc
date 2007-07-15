@@ -2657,7 +2657,7 @@ int GetAmmoUse(int Weapon)
 
 bool CheckAmmo()
 {
-	class<AmmoPickup> ammo;
+	class<Ammo> ammo;
 	int count;
 
 	ammo = Weapon(ViewEnt).AmmoType;
@@ -2943,7 +2943,7 @@ void Cheat_Gimme()
 		foreach AllClasses(Ammo, Cls)
 		{
 			//	Only direct descendants.
-			if (GetClassParent(Cls) != AmmoPickup)
+			if (GetClassParent(Cls) != Ammo)
 			{
 				continue;
 			}

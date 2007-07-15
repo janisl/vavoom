@@ -104,7 +104,6 @@
 #include "FalconShield.vc"
 #include "PlatinumHelm.vc"
 #include "AmuletOfWarding.vc"
-#include "Mana.vc"
 #include "Mana1.vc"
 #include "Mana2.vc"
 #include "Mana3.vc"

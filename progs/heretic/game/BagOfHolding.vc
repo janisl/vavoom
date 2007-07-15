@@ -35,7 +35,7 @@ class BagOfHolding : Inventory
 
 bool TryPickup(EntityEx Toucher)
 {
-	class<AmmoPickup>	Cls;
+	class<Ammo>	Cls;
 
 	if (!Player(Toucher.Player).Backpack)
 	{
@@ -43,7 +43,7 @@ bool TryPickup(EntityEx Toucher)
 		foreach AllClasses(Ammo, Cls)
 		{
 			//	Only direct descendants.
-			if (GetClassParent(Cls) != AmmoPickup)
+			if (GetClassParent(Cls) != Ammo)
 			{
 				continue;
 			}

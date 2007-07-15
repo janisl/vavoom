@@ -38,7 +38,7 @@ const float RAISESPEED		= 6.0;
 const float WEAPONBOTTOM	= 128.0;
 const float WEAPONTOP		= 32.0;
 
-class<AmmoPickup> AmmoType;
+class<Ammo> AmmoType;
 state UpState;
 state DownState;
 state ReadyState;

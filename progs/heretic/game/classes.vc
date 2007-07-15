@@ -48,7 +48,6 @@
 #include "Artifact.vc"
 #include "WeaponPickup.vc"
 #include "Key.vc"
-#include "Ammo.vc"
 
 #include "SoundSequence.vc"
 #include "SoundSequenceSlot.vc"

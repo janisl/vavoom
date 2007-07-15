@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class CrossbowAmmo : AmmoPickup
+class CrossbowAmmo : Ammo
 	__mobjinfo__(18)
 	__scriptid__(33);
 
@@ -34,8 +34,11 @@ __states__
 
 defaultproperties
 {
+	Height = 32.0;
 	Amount = 5;
 	MaxAmount = 50;
+	bSpecial = true;
+	bNoPassMobj = true;
 	IdleState = S_AMC1;
 	PickupMessage = "$txt_ammocrossbow1";
 }

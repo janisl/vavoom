@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class PhosphorusGrenadeRounds : AmmoPickup
+class PhosphorusGrenadeRounds : Ammo
 	__mobjinfo__(153);
 
 __states__
@@ -39,4 +39,7 @@ defaultproperties
 	Amount = 4;
 	MaxAmount = 16;
 	IconName = 'i_grn2';
+	bSpecial = true;
+	bFloorClip = true;
+	bNoPassMobj = true;
 }

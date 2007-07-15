@@ -31,7 +31,7 @@ const float RAISESPEED		= 6.0;
 const float WEAPONBOTTOM	= 128.0;
 const float WEAPONTOP		= 32.0;
 
-class<AmmoPickup> AmmoType;
+class<Ammo> AmmoType;
 state UpState;
 state DownState;
 state ReadyState;
@@ -51,7 +51,7 @@ bool TryPickup(EntityEx Toucher)
 {
 	bool gaveammo;
 	bool gaveweapon;
-	class<AmmoPickup> ammoType;
+	class<Ammo> ammoType;
 	int ammoCount;
 
 	// leave placed weapons forever on net games

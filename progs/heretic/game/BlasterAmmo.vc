@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class BlasterAmmo : AmmoPickup
+class BlasterAmmo : Ammo
 	__mobjinfo__(54)
 	__scriptid__(37);
 
@@ -36,8 +36,11 @@ __states__
 
 defaultproperties
 {
+	Height = 32.0;
 	Amount = 10;
 	MaxAmount = 200;
+	bSpecial = true;
+	bNoPassMobj = true;
 	IdleState = S_AMB1_1;
 	PickupMessage = "$txt_ammoblaster1";
 }

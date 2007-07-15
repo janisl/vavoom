@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class PoisonBolts : AmmoPickup
+class PoisonBolts : Ammo
 	__mobjinfo__(115);
 
 __states__
@@ -39,4 +39,7 @@ defaultproperties
 	Amount = 10;
 	MaxAmount = 25;
 	IconName = 'i_pqrl';
+	bSpecial = true;
+	bFloorClip = true;
+	bNoPassMobj = true;
 }

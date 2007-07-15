@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class RocketAmmo : AmmoPickup
+class RocketAmmo : Ammo
 	__mobjinfo__(2010)
 	__scriptid__(140);
 

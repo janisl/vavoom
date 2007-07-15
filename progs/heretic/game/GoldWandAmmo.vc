@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class GoldWandAmmo : AmmoPickup
+class GoldWandAmmo : Ammo
 	__mobjinfo__(10)
 	__scriptid__(11);
 
@@ -34,8 +34,11 @@ __states__
 
 defaultproperties
 {
+	Height = 32.0;
 	Amount = 10;
 	MaxAmount = 100;
+	bSpecial = true;
+	bNoPassMobj = true;
 	IdleState = S_AMG1;
 	PickupMessage = "$txt_ammogoldwand1";
 }

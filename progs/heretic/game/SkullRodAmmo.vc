@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class SkullRodAmmo : AmmoPickup
+class SkullRodAmmo : Ammo
 	__mobjinfo__(20)
 	__scriptid__(158);
 
@@ -35,8 +35,11 @@ __states__
 
 defaultproperties
 {
+	Height = 32.0;
 	Amount = 20;
 	MaxAmount = 200;
+	bSpecial = true;
+	bNoPassMobj = true;
 	IdleState = S_AMS1_1;
 	PickupMessage = "$txt_ammoskullrod1";
 }

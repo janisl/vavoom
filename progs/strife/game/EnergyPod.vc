@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class EnergyPod : AmmoPickup
+class EnergyPod : Ammo
 	__mobjinfo__(2047)
 	__scriptid__(75);
 
@@ -41,4 +41,7 @@ defaultproperties
 	Amount = 20;
 	MaxAmount = 400;
 	IconName = 'i_bry1';
+	bSpecial = true;
+	bFloorClip = true;
+	bNoPassMobj = true;
 }

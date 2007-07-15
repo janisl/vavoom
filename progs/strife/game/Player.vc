@@ -60,7 +60,7 @@ int ArmorPoints;
 bool Backpack;
 bool Communicator;
 
-class<AmmoPickup> ReadyAmmo;
+class<Ammo> ReadyAmmo;
 
 int Accuracy;
 int Stamina;
@@ -2094,7 +2094,7 @@ void BringUpWeapon()
 
 void ChangeWeapon(int newweapon)
 {
-	class<AmmoPickup> ammo;
+	class<Ammo> ammo;
 	int count;
 
 	if (newweapon == StrifeDefs::wp_crossbow && WeaponOwned[StrifeDefs::wp_crossbow2] &&
@@ -2191,7 +2191,7 @@ void MovePsprites(float deltaTime)
 
 int CheckAmmo()
 {
-	class<AmmoPickup> ammo;
+	class<Ammo> ammo;
 	int count;
 
 	ammo = Weapon(ViewEnt).AmmoType;
@@ -2438,7 +2438,7 @@ void Cheat_Gimme()
 		foreach AllClasses(Ammo, Cls)
 		{
 			//	Only direct descendants.
-			if (GetClassParent(Cls) != AmmoPickup)
+			if (GetClassParent(Cls) != Ammo)
 			{
 				continue;
 			}

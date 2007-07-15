@@ -49,7 +49,7 @@ const int
 	USE_MACE_AMMO_1 = 1,
 	USE_MACE_AMMO_2 = 5;
 
-class<AmmoPickup> AmmoType;
+class<Ammo> AmmoType;
 int GetAmmoCount;
 int AmmoUsePL1;
 int AmmoUsePL2;

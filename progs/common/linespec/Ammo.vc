@@ -35,9 +35,8 @@ class Ammo : Inventory
 final class<Ammo> GetParentAmmo()
 {
 	class Ret = Class;
-	//	Get parent class that is direct descendant of game-specific ammo
-	// class.
-	while (GetClassParent(GetClassParent(Ret)) != Ammo)
+	//	Get parent class that is direct descendant of Ammo class.
+	while (GetClassParent(Ret) != Ammo)
 	{
 		Ret = GetClassParent(Ret);
 	}
