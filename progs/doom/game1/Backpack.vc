@@ -47,15 +47,27 @@ bool TryPickup(EntityEx Toucher)
 			{
 				continue;
 			}
-			Inventory AmmoItem = Toucher.FindInventory(Cls);
+			Ammo AmmoItem = Ammo(Toucher.FindInventory(Cls));
 			if (!AmmoItem)
 			{
 				AmmoItem = Spawn(Cls);
 				AmmoItem.AttachToOwner(Toucher);
 				AmmoItem.Amount = 0;
 			}
-			AmmoItem.MaxAmount *= 2;
-			Player(Toucher.Player).GiveAmmo(Cls, Cls.default.Amount);
+			AmmoItem.MaxAmount = AmmoItem.BackpackMaxAmount;
+			Player(Toucher.Player).GiveAmmo(Cls, AmmoItem.BackpackAmount);
+		}
+	}
+	else
+	{
+		foreach AllClasses(Ammo, Cls)
+		{
+			//	Only direct descendants.
+			if (GetClassParent(Cls) != Ammo)
+			{
+				continue;
+			}
+			Player(Toucher.Player).GiveAmmo(Cls, Cls.default.BackpackAmount);
 		}
 	}
 	GoAwayAndDie();

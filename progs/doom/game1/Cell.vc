@@ -37,5 +37,7 @@ defaultproperties
 	IdleState = S_CELL;
 	Amount = 20;
 	MaxAmount = 300;
+	BackpackAmount = 20;
+	BackpackMaxAmount = 600;
 	PickupMessage = "$gotcell";
 }

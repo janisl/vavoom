@@ -26,6 +26,9 @@
 class Ammo : Inventory
 	abstract;
 
+int				BackpackAmount;
+int				BackpackMaxAmount;
+
 //==========================================================================
 //
 //	GetParentAmmo
@@ -108,7 +111,6 @@ bool HandlePickup(Inventory Item)
 
 Inventory CreateCopy(EntityEx Toucher)
 {
-	Ammo Copy;
 	int NewAmount = Amount;
 	if (Level.Game.gameskill == sk_baby ||
 		(Level.Game.gameskill == sk_nightmare &&
@@ -125,18 +127,10 @@ Inventory CreateCopy(EntityEx Toucher)
 		}
 	}
 
+	Inventory Copy;
 	if (GetClassParent(Class) == Ammo)
 	{
-		if (GoAway())
-		{
-			//	Must create a copy
-			Copy = Spawn(GetParentAmmo());
-		}
-		else
-		{
-			//	Use this one
-			Copy = self;
-		}
+		Copy = ::CreateCopy(Toucher);
 	}
 	else
 	{

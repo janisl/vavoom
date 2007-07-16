@@ -37,6 +37,8 @@ defaultproperties
 	Height = 32.0;
 	Amount = 10;
 	MaxAmount = 100;
+	BackpackAmount = 10;
+	BackpackMaxAmount = 200;
 	IdleState = S_AMG1;
 	PickupMessage = "$txt_ammogoldwand1";
 }

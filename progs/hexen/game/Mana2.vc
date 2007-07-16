@@ -54,6 +54,8 @@ defaultproperties
 	Height = 32.0;
 	Amount = 15;
 	MaxAmount = 200;
+	BackpackAmount = 15;
+	BackpackMaxAmount = 200;
 	bFloatBob = true;
 	IdleState = S_MANA2_1;
 	PickupMessage = "$txt_mana_2";

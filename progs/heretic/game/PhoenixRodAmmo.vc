@@ -39,6 +39,8 @@ defaultproperties
 	Height = 32.0;
 	Amount = 1;
 	MaxAmount = 20;
+	BackpackAmount = 1;
+	BackpackMaxAmount = 40;
 	IdleState = S_AMP1_1;
 	PickupMessage = "$txt_ammophoenixrod1";
 }

@@ -38,6 +38,8 @@ defaultproperties
 	Height = 32.0;
 	Amount = 20;
 	MaxAmount = 200;
+	BackpackAmount = 20;
+	BackpackMaxAmount = 400;
 	IdleState = S_AMS1_1;
 	PickupMessage = "$txt_ammoskullrod1";
 }

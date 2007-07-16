@@ -37,5 +37,7 @@ defaultproperties
 	IdleState = S_SHEL;
 	Amount = 4;
 	MaxAmount = 50;
+	BackpackAmount = 4;
+	BackpackMaxAmount = 100;
 	PickupMessage = "$gotshells";
 }

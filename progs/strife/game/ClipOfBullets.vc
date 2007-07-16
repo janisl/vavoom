@@ -37,6 +37,8 @@ defaultproperties
 	ConversationID = 179;
 	Amount = 10;
 	MaxAmount = 250;
+	BackpackAmount = 10;
+	BackpackMaxAmount = 500;
 	IconName = 'i_blit';
 	bFloorClip = true;
 	IdleState = S_BULLETS;

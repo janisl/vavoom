@@ -36,6 +36,8 @@ defaultproperties
 	ConversationID = 186;
 	Amount = 20;
 	MaxAmount = 50;
+	BackpackAmount = 4;
+	BackpackMaxAmount = 100;
 	IconName = 'i_xqrl';
 	bFloorClip = true;
 	IdleState = S_ARROWS_ELECTRIC;

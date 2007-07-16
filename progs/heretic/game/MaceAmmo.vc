@@ -37,6 +37,8 @@ defaultproperties
 	Height = 32.0;
 	Amount = 20;
 	MaxAmount = 150;
+	BackpackAmount = 0;
+	BackpackMaxAmount = 300;
 	IdleState = S_AMM1;
 	PickupMessage = "$txt_ammomace1";
 }

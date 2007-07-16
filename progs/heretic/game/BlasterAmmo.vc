@@ -39,6 +39,8 @@ defaultproperties
 	Height = 32.0;
 	Amount = 10;
 	MaxAmount = 200;
+	BackpackAmount = 10;
+	BackpackMaxAmount = 400;
 	IdleState = S_AMB1_1;
 	PickupMessage = "$txt_ammoblaster1";
 }

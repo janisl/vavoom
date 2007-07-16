@@ -814,10 +814,12 @@ static void ReadAmmo(int num)
 		if (!VStr::ICmp(String, "Max ammo"))
 		{
 			SetClassFieldInt(Ammo, "MaxAmount", value);
+			SetClassFieldInt(Ammo, "BackpackMaxAmount", value * 2);
 		}
 		else if (!VStr::ICmp(String, "Per ammo"))
 		{
 			SetClassFieldInt(Ammo, "Amount", value);
+			SetClassFieldInt(Ammo, "BackpackAmount", value);
 		}
 		else
 		{
@@ -838,6 +840,8 @@ static void ReadAmmo(int num)
 		}
 		SetClassFieldInt(C, "Amount", GetClassFieldInt(Ammo, "Amount") * 5);
 		SetClassFieldInt(C, "MaxAmount", GetClassFieldInt(Ammo, "MaxAmount"));
+		SetClassFieldInt(C, "BackpackAmount", GetClassFieldInt(Ammo, "BackpackAmount") * 5);
+		SetClassFieldInt(C, "BackpackMaxAmount", GetClassFieldInt(Ammo, "BackpackMaxAmount"));
 	}
 	unguard;
 }

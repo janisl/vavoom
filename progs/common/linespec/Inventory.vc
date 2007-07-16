@@ -204,6 +204,20 @@ bool TryPickup(EntityEx Toucher)
 
 bool HandlePickup(Inventory Item)
 {
+	if (Item.Class == Class)
+	{
+		if (Amount < MaxAmount)
+		{
+			Amount += Item.Amount;
+			if (Amount > MaxAmount)
+			{
+				Amount = MaxAmount;
+			}
+			Item.bPickupGood = true;
+		}
+		return true;
+	}
+
 	if (Inventory)
 	{
 		return Inventory.HandlePickup(Item);
@@ -219,7 +233,20 @@ bool HandlePickup(Inventory Item)
 
 Inventory CreateCopy(EntityEx Toucher)
 {
-	return none;
+	Inventory Copy;
+	if (GoAway())
+	{
+		//	Must create a copy
+		Copy = Spawn(class<Inventory>(Class));
+		Copy.Amount = Amount;
+		Copy.MaxAmount = MaxAmount;
+	}
+	else
+	{
+		//	Use this one
+		Copy = self;
+	}
+	return Copy;
 }
 
 //==========================================================================

@@ -36,6 +36,8 @@ defaultproperties
 	ConversationID = 177;
 	Amount = 6;
 	MaxAmount = 30;
+	BackpackAmount = 6;
+	BackpackMaxAmount = 60;
 	IconName = 'i_grn1';
 	bFloorClip = true;
 	IdleState = S_GRENADE_HE;

@@ -2533,14 +2533,11 @@ void Cheat_Gimme()
 	// Backpack
 	if (i1 & GIMME_BACKPACK)
 	{
-		if (!Backpack)
+		Backpack Pack = Level.Spawn(Backpack);
+		Pack.bDropped = true;
+		if (!Pack.TryPickup(EntityEx(MO)))
 		{
-			Backpack Pack = Level.Spawn(Backpack);
-			Pack.bDropped = true;
-			if (!Pack.TryPickup(EntityEx(MO)))
-			{
-				Pack.Destroy();
-			}
+			Pack.Destroy();
 		}
 	}
 

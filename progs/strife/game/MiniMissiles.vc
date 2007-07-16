@@ -37,6 +37,8 @@ defaultproperties
 	ConversationID = 181;
 	Amount = 4;
 	MaxAmount = 100;
+	BackpackAmount = 4;
+	BackpackMaxAmount = 200;
 	IconName = 'i_rokt';
 	bFloorClip = true;
 	IdleState = S_MINI_MISSILES;

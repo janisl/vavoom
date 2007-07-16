@@ -47,21 +47,29 @@ bool TryPickup(EntityEx Toucher)
 			{
 				continue;
 			}
-			Inventory AmmoItem = Toucher.FindInventory(Cls);
+			Ammo AmmoItem = Ammo(Toucher.FindInventory(Cls));
 			if (!AmmoItem)
 			{
 				AmmoItem = Spawn(Cls);
 				AmmoItem.AttachToOwner(Toucher);
 				AmmoItem.Amount = 0;
 			}
-			AmmoItem.MaxAmount *= 2;
+			AmmoItem.MaxAmount = AmmoItem.BackpackMaxAmount;
+			Player(Toucher.Player).GiveAmmo(Cls, AmmoItem.BackpackAmount);
 		}
 	}
-	Player(Toucher.Player).GiveAmmo(GoldWandAmmo, 10);
-	Player(Toucher.Player).GiveAmmo(BlasterAmmo, 10);
-	Player(Toucher.Player).GiveAmmo(CrossbowAmmo, 5);
-	Player(Toucher.Player).GiveAmmo(SkullRodAmmo, 20);
-	Player(Toucher.Player).GiveAmmo(PhoenixRodAmmo, 1);
+	else
+	{
+		foreach AllClasses(Ammo, Cls)
+		{
+			//	Only direct descendants.
+			if (GetClassParent(Cls) != Ammo)
+			{
+				continue;
+			}
+			Player(Toucher.Player).GiveAmmo(Cls, Cls.default.BackpackAmount);
+		}
+	}
 	GoAwayAndDie();
 	return true;
 }

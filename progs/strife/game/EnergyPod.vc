@@ -38,6 +38,8 @@ defaultproperties
 	ConversationID = 183;
 	Amount = 20;
 	MaxAmount = 400;
+	BackpackAmount = 20;
+	BackpackMaxAmount = 800;
 	IconName = 'i_bry1';
 	bFloorClip = true;
 	IdleState = S_ENERGY_POD_1;

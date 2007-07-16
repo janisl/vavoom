@@ -37,6 +37,8 @@ defaultproperties
 	Height = 32.0;
 	Amount = 5;
 	MaxAmount = 50;
+	BackpackAmount = 5;
+	BackpackMaxAmount = 100;
 	IdleState = S_AMC1;
 	PickupMessage = "$txt_ammocrossbow1";
 }
