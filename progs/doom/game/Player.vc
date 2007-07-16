@@ -50,8 +50,6 @@ const int MAXHEALTH					= 100;
 
 int ArmorPoints;
 
-bool bBackpack;
-
 // Power ups. invinc and invis are tic counters.
 float Powers[NUMPOWERS];
 

@@ -60,6 +60,8 @@ float			LastHazardTime;
 // See cheat_t, above.
 int				Cheats;
 
+bool			bBackpack;
+
 replication
 {
 	reliable if (!bIsClient)

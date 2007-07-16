@@ -84,8 +84,6 @@ int ArtifactCount;
 // Refired shots are less accurate.
 int Refire;
 
-bool Backpack;
-
 // Is wp_nochange if not changing.
 int PendingWeapon;
 
@@ -2921,14 +2919,11 @@ void Cheat_Gimme()
 
 		ArmorPoints = 200;
 		ArmorType = 2;
-		if (!Backpack)
+		BagOfHolding Bag = Level.Spawn(BagOfHolding);
+		Bag.bDropped = true;
+		if (!Bag.TryPickup(EntityEx(MO)))
 		{
-			BagOfHolding Bag = Level.Spawn(BagOfHolding);
-			Bag.bDropped = true;
-			if (!Bag.TryPickup(EntityEx(MO)))
-			{
-				Bag.Destroy();
-			}
+			Bag.Destroy();
 		}
 		for (i = 0; i < NUMWEAPONS - 1; i++)
 		{
