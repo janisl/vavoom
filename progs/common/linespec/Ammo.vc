@@ -45,23 +45,22 @@ final class<Ammo> GetParentAmmo()
 
 //==========================================================================
 //
-//	TryPickup
+//	HandlePickup
 //
 //==========================================================================
 
-bool TryPickup(EntityEx Toucher)
+bool HandlePickup(Inventory Item)
 {
-	int oldammo;
-
-	Ammo AmmoItem = Ammo(Toucher.FindInventory(GetParentAmmo()));
-	if (AmmoItem)
+	if (Item.Class == Class ||
+		(Ammo(Item) && Ammo(Item).GetParentAmmo() == Class))
 	{
-		if (AmmoItem.Amount == AmmoItem.MaxAmount)
+		if (Amount == MaxAmount)
 		{
-			return false;
+			//	We're full.
+			return true;
 		}
 
-		int ReceiveAmount = Amount;
+		int ReceiveAmount = Item.Amount;
 		if (Level.Game.gameskill == sk_baby ||
 			(Level.Game.gameskill == sk_nightmare &&
 			LineSpecialGameInfo(Level.Game).bNightmareExtraAmmo))
@@ -77,26 +76,50 @@ bool TryPickup(EntityEx Toucher)
 			}
 		}
 
-		oldammo = AmmoItem.Amount;
+		int oldammo = Amount;
 
-		AmmoItem.Amount += ReceiveAmount;
-		if (AmmoItem.Amount > AmmoItem.MaxAmount)
+		Amount += ReceiveAmount;
+		if (Amount > MaxAmount)
 		{
-			AmmoItem.Amount = AmmoItem.MaxAmount;
+			Amount = MaxAmount;
 		}
 
 		//	If non zero ammo, don't change up weapons,
 		// player was lower on purpose.
-		if (oldammo <= 0)
+		if (oldammo <= 0 && Owner.Player)
 		{
-			PlayerEx(Toucher.Player).GotAmmo(AmmoItem);
+			PlayerEx(Owner.Player).GotAmmo(self);
+		}
+		Item.bPickupGood = true;
+		return true;
+	}
+	if (Inventory)
+	{
+		return Inventory.HandlePickup(Item);
+	}
+	return false;
+}
+
+//==========================================================================
+//
+//	TryPickup
+//
+//==========================================================================
+
+bool TryPickup(EntityEx Toucher)
+{
+	bPickupGood = false;
+	if (Toucher.Inventory && Toucher.Inventory.HandlePickup(self))
+	{
+		if (!bPickupGood)
+		{
+			return false;
 		}
 		GoAwayAndDie();
-		GiveQuest(Toucher);
-		return true;
 	}
 	else
 	{
+		Ammo Copy;
 		int NewAmount = Amount;
 		if (Level.Game.gameskill == sk_baby ||
 			(Level.Game.gameskill == sk_nightmare &&
@@ -118,29 +141,30 @@ bool TryPickup(EntityEx Toucher)
 			if (GoAway())
 			{
 				//	Must create a copy
-				AmmoItem = Spawn(GetParentAmmo());
+				Copy = Spawn(GetParentAmmo());
 			}
 			else
 			{
 				//	Use this one
-				AmmoItem = self;
+				Copy = self;
 			}
 		}
 		else
 		{
-			AmmoItem = Spawn(GetParentAmmo());
+			Copy = Spawn(GetParentAmmo());
 			GoAwayAndDie();
 		}
-		AmmoItem.Amount = NewAmount;
-		AmmoItem.AttachToOwner(Toucher);
+		Copy.Amount = NewAmount;
 		//	Don't pick up more ammo that you can carry.
-		if (AmmoItem.Amount > AmmoItem.MaxAmount)
+		if (Copy.Amount > Copy.MaxAmount)
 		{
-			AmmoItem.Amount = AmmoItem.MaxAmount;
+			Copy.Amount = Copy.MaxAmount;
 		}
-		GiveQuest(Toucher);
-		return true;
+
+		Copy.AttachToOwner(Toucher);
 	}
+	GiveQuest(Toucher);
+	return true;
 }
 
 defaultproperties

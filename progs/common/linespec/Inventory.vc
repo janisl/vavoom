@@ -45,6 +45,8 @@ bool			bPickupFlash;
 bool			bFullVolPickupSound;
 //	Should give quest when picked up
 bool			bGiveQuest;
+//	Used by HandlePickup.
+bool			bPickupGood;
 
 replication
 {
@@ -168,6 +170,25 @@ final void TouchSpecial(EntityEx Toucher)
 
 bool TryPickup(EntityEx Toucher)
 {
+	return false;
+}
+
+//==========================================================================
+//
+//	HandlePickup
+//
+//	Called for each item in touchers in ventory. Returns true if pickup
+// should be interrupted. Sets bPickupGood to true if pickup should be
+// considered successful.
+//
+//==========================================================================
+
+bool HandlePickup(Inventory Item)
+{
+	if (Inventory)
+	{
+		return Inventory.HandlePickup(Item);
+	}
 	return false;
 }
 
