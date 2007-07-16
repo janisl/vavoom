@@ -35,9 +35,11 @@ bool TryPickup(EntityEx Toucher)
 {
 	class<Ammo>	Cls;
 
-	if (!PlayerEx(Toucher.Player).bBackpack)
+	if (!Toucher.FindInventory(class<Inventory>(Class)))
 	{
-		PlayerEx(Toucher.Player).bBackpack = true;
+		Inventory Tmp = Spawn(class<Inventory>(Class));
+		Tmp.AttachToOwner(Toucher);
+
 		foreach AllClasses(Ammo, Cls)
 		{
 			//	Only direct descendants.
