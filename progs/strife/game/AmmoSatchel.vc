@@ -76,9 +76,7 @@ __states__
 
 defaultproperties
 {
-	bSpecial = true;
 	bFloorClip = true;
-	bNoPassMobj = true;
 	ConversationID = 187;
 	PickupMessage = "$txt_ammosatchel";
 	IdleState = S_BACKPACK;

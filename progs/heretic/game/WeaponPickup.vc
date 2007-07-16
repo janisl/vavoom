@@ -86,7 +86,5 @@ bool ShouldStay()
 defaultproperties
 {
 	Height = 32.0;
-	bSpecial = true;
-	bNoPassMobj = true;
 	PickupSound = 'misc/w_pkup';
 }

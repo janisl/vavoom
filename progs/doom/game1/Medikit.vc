@@ -34,9 +34,6 @@ __states__
 
 defaultproperties
 {
-	bSpecial = true;
-	bNoPassMobj = true;
-	bFloorClip = true;
 	IdleState = S_MEDI;
 	HealthAmount = 25;
 	PickupMessage = "$gotmedikit";

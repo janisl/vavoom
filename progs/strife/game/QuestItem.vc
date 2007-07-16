@@ -48,8 +48,6 @@ __states__
 
 defaultproperties
 {
-	bFloorClip = true;
-	bNoPassMobj = true;
 	bGiveQuest = true;
 	IdleState = S_TOKENS;
 }

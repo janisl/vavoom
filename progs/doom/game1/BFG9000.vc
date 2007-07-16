@@ -34,9 +34,6 @@ __states__
 
 defaultproperties
 {
-	bSpecial = true;
-	bNoPassMobj = true;
-	bFloorClip = true;
 	IdleState = S_BFUG;
 	WeaponType = DoomDefs::wp_bfg;
 	PickupMessage = "$gotbfg9000";

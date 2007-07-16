@@ -38,11 +38,8 @@ __states__
 defaultproperties
 {
 	Alpha = 0.666;
-	bSpecial = true;
-	bNoPassMobj = true;
 	bCountItem = true;
 	bBigPowerup = true;
-	bFloorClip = true;
 	IdleState = S_PINS;
 	PowerType = pw_invisibility;
 	PickupMessage = "$gotinvis";

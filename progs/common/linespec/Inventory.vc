@@ -480,6 +480,10 @@ __states__
 
 defaultproperties
 {
+	Amount = 1;
+	MaxAmount = 1;
+	bSpecial = true;
+	bNoPassMobj = true;
 	PickupMessage = "You got a pickup";
 	PickupSound = 'misc/i_pkup';
 }

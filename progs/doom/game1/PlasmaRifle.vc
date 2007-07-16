@@ -34,9 +34,6 @@ __states__
 
 defaultproperties
 {
-	bSpecial = true;
-	bNoPassMobj = true;
-	bFloorClip = true;
 	IdleState = S_PLAS;
 	WeaponType = DoomDefs::wp_plasma;
 	PickupMessage = "$gotplasma";

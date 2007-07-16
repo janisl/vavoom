@@ -48,8 +48,6 @@ bool TryPickup(EntityEx Toucher)
 
 defaultproperties
 {
-	bSpecial = true;
 	bFloorClip = true;
-	bNoPassMobj = true;
 	ItemAmount = 1;
 }

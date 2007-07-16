@@ -35,12 +35,10 @@ __states__
 defaultproperties
 {
 	ConversationID = 181;
-	PickupMessage = "$txt_minimissiles";
-	IdleState = S_MINI_MISSILES;
 	Amount = 4;
 	MaxAmount = 100;
 	IconName = 'i_rokt';
-	bSpecial = true;
 	bFloorClip = true;
-	bNoPassMobj = true;
+	IdleState = S_MINI_MISSILES;
+	PickupMessage = "$txt_minimissiles";
 }

@@ -39,8 +39,6 @@ defaultproperties
 	Height = 32.0;
 	Amount = 10;
 	MaxAmount = 200;
-	bSpecial = true;
-	bNoPassMobj = true;
 	IdleState = S_AMB1_1;
 	PickupMessage = "$txt_ammoblaster1";
 }

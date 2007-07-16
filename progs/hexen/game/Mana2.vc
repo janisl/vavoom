@@ -54,8 +54,6 @@ defaultproperties
 	Height = 32.0;
 	Amount = 15;
 	MaxAmount = 200;
-	bSpecial = true;
-	bNoPassMobj = true;
 	bFloatBob = true;
 	IdleState = S_MANA2_1;
 	PickupMessage = "$txt_mana_2";

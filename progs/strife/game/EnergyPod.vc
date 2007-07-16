@@ -36,12 +36,10 @@ __states__
 defaultproperties
 {
 	ConversationID = 183;
-	PickupMessage = "$txt_energypod";
-	IdleState = S_ENERGY_POD_1;
 	Amount = 20;
 	MaxAmount = 400;
 	IconName = 'i_bry1';
-	bSpecial = true;
 	bFloorClip = true;
-	bNoPassMobj = true;
+	IdleState = S_ENERGY_POD_1;
+	PickupMessage = "$txt_energypod";
 }

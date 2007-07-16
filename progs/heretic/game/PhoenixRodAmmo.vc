@@ -39,8 +39,6 @@ defaultproperties
 	Height = 32.0;
 	Amount = 1;
 	MaxAmount = 20;
-	bSpecial = true;
-	bNoPassMobj = true;
 	IdleState = S_AMP1_1;
 	PickupMessage = "$txt_ammophoenixrod1";
 }

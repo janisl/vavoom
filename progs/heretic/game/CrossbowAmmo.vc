@@ -37,8 +37,6 @@ defaultproperties
 	Height = 32.0;
 	Amount = 5;
 	MaxAmount = 50;
-	bSpecial = true;
-	bNoPassMobj = true;
 	IdleState = S_AMC1;
 	PickupMessage = "$txt_ammocrossbow1";
 }

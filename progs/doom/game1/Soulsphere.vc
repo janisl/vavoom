@@ -59,10 +59,7 @@ __states__
 defaultproperties
 {
 	Alpha = 0.666;
-	bSpecial = true;
-	bNoPassMobj = true;
 	bCountItem = true;
-	bFloorClip = true;
 	IdleState = S_SOUL;
 	PickupMessage = "$gotsuper";
 	PickupSound = 'misc/p_pkup';

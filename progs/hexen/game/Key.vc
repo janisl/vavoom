@@ -59,7 +59,5 @@ defaultproperties
 {
 	Radius = 8.0;
 	Height = 32.0;
-	bSpecial = true;
-	bNoPassMobj = true;
 	PickupSound = 'PickupKey';
 }

@@ -44,8 +44,6 @@ bool TryPickup(EntityEx Toucher)
 
 defaultproperties
 {
-	bSpecial = true;
 	bFloorClip = true;
-	bNoPassMobj = true;
 	PickupSound = 'misc/k_pkup';
 }

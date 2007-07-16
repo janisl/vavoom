@@ -38,6 +38,5 @@ __states__
 
 defaultproperties
 {
-	bSpecial = true;
 	IdleState = S_TOKENS;
 }

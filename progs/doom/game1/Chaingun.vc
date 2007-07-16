@@ -34,9 +34,6 @@ __states__
 
 defaultproperties
 {
-	bSpecial = true;
-	bNoPassMobj = true;
-	bFloorClip = true;
 	IdleState = S_MGUN;
 	WeaponType = DoomDefs::wp_chaingun;
 	PickupMessage = "$gotchaingun";

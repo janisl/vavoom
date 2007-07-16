@@ -34,12 +34,10 @@ __states__
 defaultproperties
 {
 	ConversationID = 177;
-	PickupMessage = "$txt_hegrenades";
-	IdleState = S_GRENADE_HE;
 	Amount = 6;
 	MaxAmount = 30;
 	IconName = 'i_grn1';
-	bSpecial = true;
 	bFloorClip = true;
-	bNoPassMobj = true;
+	IdleState = S_GRENADE_HE;
+	PickupMessage = "$txt_hegrenades";
 }

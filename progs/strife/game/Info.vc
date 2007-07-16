@@ -34,8 +34,6 @@ defaultproperties
 {
 	ConversationID = 300;
 	PickupMessage = "$txt_info";
-	bSpecial = true;
 	bFloorClip = true;
-	bNoPassMobj = true;
 	IdleState = S_TOKENS;
 }

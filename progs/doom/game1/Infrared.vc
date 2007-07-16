@@ -35,10 +35,7 @@ __states__
 
 defaultproperties
 {
-	bSpecial = true;
-	bNoPassMobj = true;
 	bCountItem = true;
-	bFloorClip = true;
 	IdleState = S_PVIS;
 	PowerType = pw_infrared;
 	PickupMessage = "$gotvisor";

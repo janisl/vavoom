@@ -49,9 +49,6 @@ defaultproperties
 {
 	ConversationID = 176;
 	PickupMessage = "$txt_communicator";
-	bSpecial = true;
-	bFloorClip = true;
-	bNoPassMobj = true;
 	bNoDeathmatch = true;
 	IdleState = S_COMMUNICATOR;
 }

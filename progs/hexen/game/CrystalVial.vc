@@ -53,8 +53,6 @@ __states__
 defaultproperties
 {
 	Height = 32.0;
-	bSpecial = true;
-	bNoPassMobj = true;
 	bFloatBob = true;
 	IdleState = S_ITEM_PTN1_1;
 	PickupMessage = "$txt_itemhealth";

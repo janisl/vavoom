@@ -34,12 +34,10 @@ __states__
 defaultproperties
 {
 	ConversationID = 185;
-	PickupMessage = "$txt_poisonbolts";
-	IdleState = S_ARROWS_POISON;
 	Amount = 10;
 	MaxAmount = 25;
 	IconName = 'i_pqrl';
-	bSpecial = true;
 	bFloorClip = true;
-	bNoPassMobj = true;
+	IdleState = S_ARROWS_POISON;
+	PickupMessage = "$txt_poisonbolts";
 }

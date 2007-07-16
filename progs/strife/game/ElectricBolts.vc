@@ -34,12 +34,10 @@ __states__
 defaultproperties
 {
 	ConversationID = 186;
-	PickupMessage = "$txt_electricbolts";
-	IdleState = S_ARROWS_ELECTRIC;
 	Amount = 20;
 	MaxAmount = 50;
 	IconName = 'i_xqrl';
-	bSpecial = true;
 	bFloorClip = true;
-	bNoPassMobj = true;
+	IdleState = S_ARROWS_ELECTRIC;
+	PickupMessage = "$txt_electricbolts";
 }

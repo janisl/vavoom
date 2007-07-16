@@ -55,10 +55,7 @@ __states__
 
 defaultproperties
 {
-	bSpecial = true;
-	bNoPassMobj = true;
 	bCountItem = true;
-	bFloorClip = true;
 	IdleState = S_PMAP;
 	PickupMessage = "$gotmap";
 	PickupSound = 'misc/p_pkup';

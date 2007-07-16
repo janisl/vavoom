@@ -70,8 +70,6 @@ defaultproperties
 	Radius = 8.0;
 	Height = 32.0;
 	MaxAmount = 200;
-	bSpecial = true;
-	bNoPassMobj = true;
 	bFloatBob = true;
 	Amount = 20;
 	IdleState = S_MANA3_1;

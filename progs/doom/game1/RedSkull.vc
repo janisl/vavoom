@@ -35,10 +35,7 @@ __states__
 
 defaultproperties
 {
-	bSpecial = true;
-	bNoPassMobj = true;
 	bNoDeathmatch = true;
-	bFloorClip = true;
 	IdleState = S_RSKULL;
 	KeyType = it_redskull;
 	PickupMessage = "$gotredskull";

@@ -56,10 +56,7 @@ __states__
 defaultproperties
 {
 	Alpha = 0.9;
-	bSpecial = true;
-	bNoPassMobj = true;
 	bCountItem = true;
-	bFloorClip = true;
 	IdleState = S_BON1;
 	PickupMessage = "$goththbonus";
 }

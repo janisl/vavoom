@@ -74,8 +74,6 @@ __states__
 defaultproperties
 {
 	Height = 32.0;
-	bSpecial = true;
-	bNoPassMobj = true;
 	bCountItem = true;
 	bFloatBob = true;
 	IdleState = S_ITEM_BAGH1;
