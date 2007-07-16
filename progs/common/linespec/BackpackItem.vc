@@ -1,0 +1,143 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class BackpackItem : Inventory;
+
+//==========================================================================
+//
+//	TryPickup
+//
+//==========================================================================
+
+bool TryPickup(EntityEx Toucher)
+{
+	class<Ammo>	Cls;
+
+	if (!PlayerEx(Toucher.Player).bBackpack)
+	{
+		PlayerEx(Toucher.Player).bBackpack = true;
+		foreach AllClasses(Ammo, Cls)
+		{
+			//	Only direct descendants.
+			if (GetClassParent(Cls) != Ammo)
+			{
+				continue;
+			}
+			Ammo AmmoItem = Ammo(Toucher.FindInventory(Cls));
+			if (!AmmoItem)
+			{
+				AmmoItem = Spawn(Cls);
+				AmmoItem.AttachToOwner(Toucher);
+				AmmoItem.Amount = 0;
+			}
+			AmmoItem.MaxAmount = AmmoItem.BackpackMaxAmount;
+			if (AmmoItem.Amount == AmmoItem.MaxAmount)
+			{
+				continue;
+			}
+			int num = AmmoItem.BackpackAmount;
+			if (!num)
+			{
+				continue;
+			}
+			if (Level.Game.gameskill == sk_baby ||
+				(Level.Game.gameskill == sk_nightmare &&
+				LineSpecialGameInfo(Level.Game).bNightmareExtraAmmo))
+			{
+				// extra ammo in baby mode and nightmare mode
+				if (LineSpecialGameInfo(Level.Game).bBabyNightmareDoubleAmmo)
+				{
+					num <<= 1;
+				}
+				else
+				{
+					num += num >> 1;
+				}
+			}
+			int oldammo = AmmoItem.Amount;
+			AmmoItem.Amount += num;
+			if (AmmoItem.Amount > AmmoItem.MaxAmount)
+			{
+				AmmoItem.Amount = AmmoItem.MaxAmount;
+			}
+			if (oldammo <= 0)
+			{
+				PlayerEx(Toucher.Player).GotAmmo(AmmoItem);
+			}
+		}
+	}
+	else
+	{
+		foreach AllClasses(Ammo, Cls)
+		{
+			//	Only direct descendants.
+			if (GetClassParent(Cls) != Ammo)
+			{
+				continue;
+			}
+			Ammo AmmoItem2 = Ammo(Toucher.FindInventory(Cls));
+			if (AmmoItem2.Amount == AmmoItem2.MaxAmount)
+			{
+				continue;
+			}
+			int num = AmmoItem2.BackpackAmount;
+			if (!num)
+			{
+				continue;
+			}
+			if (Level.Game.gameskill == sk_baby ||
+				(Level.Game.gameskill == sk_nightmare &&
+				LineSpecialGameInfo(Level.Game).bNightmareExtraAmmo))
+			{
+				// extra ammo in baby mode and nightmare mode
+				if (LineSpecialGameInfo(Level.Game).bBabyNightmareDoubleAmmo)
+				{
+					num <<= 1;
+				}
+				else
+				{
+					num += num >> 1;
+				}
+			}
+			int oldammo = AmmoItem2.Amount;
+			AmmoItem2.Amount += num;
+			if (AmmoItem2.Amount > AmmoItem2.MaxAmount)
+			{
+				AmmoItem2.Amount = AmmoItem2.MaxAmount;
+			}
+			if (oldammo <= 0)
+			{
+				PlayerEx(Toucher.Player).GotAmmo(AmmoItem2);
+			}
+		}
+	}
+	GoAwayAndDie();
+	GiveQuest(Toucher);
+	return true;
+}
+
+defaultproperties
+{
+}
