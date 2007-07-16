@@ -3249,7 +3249,7 @@ void SetWeapon(int NewWeapon)
 	ViewEnt = Weapon(HexenLevelInfo(Level).Spawn(
 		MainGameInfo(Level.Game).WeaponClasses[
 		NewWeapon * HexenDefs::NUMCLASSES + PClass], vector(0.0, 0.0, 0.0)));
-	ViewEnt.Owner = MO;
+	Weapon(ViewEnt).AttachToOwner(EntityEx(MO));
 	PSpriteSY = Weapon(ViewEnt).PSpriteSY;
 }
 

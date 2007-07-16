@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class SkullRod : WeaponPickup
+class SkullRod : Weapon
 	__mobjinfo__(2004)
 	__scriptid__(30);
 

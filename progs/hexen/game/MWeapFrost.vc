@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MWeapFrost : WeaponPickup
+class MWeapFrost : Weapon
 	__mobjinfo__(53)
 	__scriptid__(36);
 

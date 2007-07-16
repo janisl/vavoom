@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Crossbow : WeaponPickup
+class Crossbow : Weapon
 	__mobjinfo__(2001)
 	__scriptid__(27);
 

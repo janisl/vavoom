@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class AssaultGunStanding : WeaponPickup
+class AssaultGunStanding : Weapon
 	__mobjinfo__(2006);
 
 __states__

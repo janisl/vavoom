@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Weapon : Actor;
+class Weapon : Inventory;
 
 const float
 	MELEERANGE		= 64.0,
@@ -48,6 +48,116 @@ state FlashState;
 state FireDeathWaveState;
 
 bool bRaiseNoiseAlert;
+
+int WeaponType;
+int Weapon2Type;
+int Ammo1Count;
+int Ammo2Count;
+
+//==========================================================================
+//
+//  GiveWeapon
+//
+//  The weapon name may have a MF_DROPPED flag ored in.
+//
+//==========================================================================
+
+bool GiveWeapon(EntityEx Toucher)
+{
+	class<Ammo> AmmoType;
+	class<Ammo> Ammo2Type;
+	bool gaveammo;
+	bool gaveammo2;
+	bool gaveweapon;
+
+	AmmoType = MainGameInfo(Level.Game).WeaponClasses[WeaponType].default.AmmoType;
+	Ammo2Type = none;
+	if (Weapon2Type != -1)
+	{
+		Ammo2Type = MainGameInfo(Level.Game).WeaponClasses[Weapon2Type].default.AmmoType;
+	}
+
+	if (AmmoType)
+	{
+		// give one clip with a dropped weapon,
+		// two clips with a found weapon
+		if (ShouldStay() && !bDropped && Level.Game.deathmatch)
+			gaveammo = Player(Toucher.Player).GiveAmmo(AmmoType, Ammo1Count * 2);
+		else if (bDropped)
+			gaveammo = Player(Toucher.Player).GiveAmmo(AmmoType, Ammo1Count / 2);
+		else
+			gaveammo = Player(Toucher.Player).GiveAmmo(AmmoType, Ammo1Count);
+	}
+	else
+	{
+		gaveammo = false;
+	}
+
+	if (Weapon2Type != -1 && Ammo2Type && AmmoType != Ammo2Type && Ammo2Count)
+	{
+		// give one clip with a dropped weapon,
+		// two clips with a found weapon
+		if (ShouldStay() && !bDropped && Level.Game.deathmatch)
+			gaveammo2 = Player(Toucher.Player).GiveAmmo(Ammo2Type, Ammo2Count * 2);
+		else if (bDropped)
+			gaveammo2 = Player(Toucher.Player).GiveAmmo(Ammo2Type, Ammo2Count / 2);
+		else
+			gaveammo2 = Player(Toucher.Player).GiveAmmo(Ammo2Type, Ammo2Count);
+	}
+	else
+	{
+		gaveammo2 = false;
+	}
+
+	if (Player(Toucher.Player).WeaponOwned[WeaponType])
+	{
+		gaveweapon = false;
+	}
+	else
+	{
+		gaveweapon = true;
+		Player(Toucher.Player).WeaponOwned[WeaponType] = true;
+		if (Weapon2Type != -1)
+			Player(Toucher.Player).WeaponOwned[Weapon2Type] = true;
+		Player(Toucher.Player).PendingWeapon = WeaponType;
+	}
+
+	return (gaveweapon || gaveammo || gaveammo2);
+}
+
+//==========================================================================
+//
+//	TryPickup
+//
+//==========================================================================
+
+bool TryPickup(EntityEx Toucher)
+{
+	// leave placed weapons forever on net games
+	if (ShouldStay() && !bDropped && Player(Toucher.Player).WeaponOwned[WeaponType])
+	{
+		return false;
+	}
+
+	if (GiveWeapon(Toucher))
+	{
+		GoAwayAndDie();
+		GiveQuest(Toucher);
+		return true;
+	}
+	return false;
+}
+
+//==========================================================================
+//
+//	ShouldStay
+//
+//==========================================================================
+
+bool ShouldStay()
+{
+	return Level.Game.netgame && Level.Game.deathmatch < 2;
+}
 
 //===========================================================================
 //
@@ -160,9 +270,10 @@ final void A_Lower()
 		return;
 	}
 
+	Entity Tmp = Owner;
 	Player(Owner.Player).SetWeapon(Player(Owner.Player).PendingWeapon);
 
-	Player(Owner.Player).BringUpWeapon();
+	Player(Tmp.Player).BringUpWeapon();
 }
 
 //===========================================================================
@@ -302,8 +413,9 @@ __states__
 
 defaultproperties
 {
-	bHidden = true;
-	bNoBlockmap = true;
 	bRaiseNoiseAlert = true;
+	bFloorClip = true;
+	PickupSound = 'misc/w_pkup';
+	Weapon2Type = -1;
 	FireDeathWaveState = S_WAVE1;
 }

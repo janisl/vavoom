@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class PhoenixRod : WeaponPickup
+class PhoenixRod : Weapon
 	__mobjinfo__(2003)
 	__scriptid__(29);
 

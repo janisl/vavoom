@@ -82,7 +82,6 @@
 #include "PuzzGear2.vc"
 #include "PuzzGear3.vc"
 #include "PuzzGear4.vc"
-#include "WeaponPickup.vc"
 #include "FWeapAxe.vc"
 #include "FWeapHammer.vc"
 #include "CWeapStaff.vc"

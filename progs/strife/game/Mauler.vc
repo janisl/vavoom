@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Mauler : WeaponPickup
+class Mauler : Weapon
 	__mobjinfo__(2004);
 
 __states__

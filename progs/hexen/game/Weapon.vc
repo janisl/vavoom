@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Weapon : Actor
+class Weapon : Inventory
 	abstract;
 
 const float LOWERSPEED		= 6.0;
@@ -40,6 +40,92 @@ state ReadyState;
 state AttackState;
 state HoldAttackState;
 float PSpriteSY;		// Y-adjustment value for full screen
+
+int WeaponClass;
+int WeaponType;
+
+//==========================================================================
+//
+//  TryPickup
+//
+//==========================================================================
+
+bool TryPickup(EntityEx Toucher)
+{
+	bool gaveMana;
+	bool gaveWeapon;
+
+	if (Toucher.Player.PClass != WeaponClass)
+	{
+		// Wrong class, but try to pick up for mana
+		if (ShouldStay())
+		{
+			// Can't pick up weapons for other classes in coop netplay
+			return false;
+		}
+		if (WeaponType == HexenDefs::WP_SECOND)
+		{
+			if (!Player(Toucher.Player).GiveMana(Mana1, 25))
+			{
+				return false;
+			}
+		}
+		else
+		{
+			if (!Player(Toucher.Player).GiveMana(Mana2, 25))
+			{
+				return false;
+			}
+		}
+		GoAwayAndDie();
+		return true;
+	}
+
+	// Cooperative net-game
+	if (ShouldStay() && !bDropped && Player(Toucher.Player).WeaponOwned[WeaponType])
+	{
+		return false;
+	}
+
+	if (WeaponType == HexenDefs::WP_SECOND)
+	{
+		gaveMana = Player(Toucher.Player).GiveMana(Mana1, 25);
+	}
+	else
+	{
+		gaveMana = Player(Toucher.Player).GiveMana(Mana2, 25);
+	}
+	if (Player(Toucher.Player).WeaponOwned[WeaponType])
+	{
+		gaveWeapon = false;
+	}
+	else
+	{
+		gaveWeapon = true;
+		Player(Toucher.Player).WeaponOwned[WeaponType] = true;
+		if (WeaponType > Player(Toucher.Player).ReadyWeapon)
+		{
+			// Only switch to more powerful weapons
+			Player(Toucher.Player).PendingWeapon = WeaponType;
+		}
+	}
+	if (gaveWeapon || gaveMana)
+	{
+		GoAwayAndDie();
+	}
+	return gaveWeapon || gaveMana;
+}
+
+//==========================================================================
+//
+//	ShouldStay
+//
+//==========================================================================
+
+bool ShouldStay()
+{
+	return Level.Game.netgame && !Level.Game.deathmatch;
+}
 
 //==========================================================================
 //
@@ -206,8 +292,9 @@ final void A_Lower()
 		Owner.Player.SetViewState(ps_weapon, none);
 		return;
 	}
+	Entity Tmp = Owner;//FIXME temporary hack.
 	Player(Owner.Player).SetWeapon(Player(Owner.Player).PendingWeapon);
-	Player(Owner.Player).BringUpWeapon();
+	Player(Tmp.Player).BringUpWeapon();
 }
 
 //==========================================================================
@@ -263,6 +350,6 @@ __states__
 
 defaultproperties
 {
-	bHidden = true;
-	bNoBlockmap = true;
+	Height = 32.0;
+	PickupSound = 'PickupWeapon';
 }

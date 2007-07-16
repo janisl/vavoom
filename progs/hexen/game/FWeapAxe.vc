@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class FWeapAxe : WeaponPickup
+class FWeapAxe : Weapon
 	__mobjinfo__(8010)
 	__scriptid__(27);
 

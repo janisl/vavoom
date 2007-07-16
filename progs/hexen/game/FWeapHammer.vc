@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class FWeapHammer : WeaponPickup
+class FWeapHammer : Weapon
 	__mobjinfo__(123)
 	__scriptid__(28);
 

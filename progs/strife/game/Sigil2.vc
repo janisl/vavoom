@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Sigil2 : WeaponPickup
+class Sigil2 : Weapon
 	__mobjinfo__(78);
 
 __states__

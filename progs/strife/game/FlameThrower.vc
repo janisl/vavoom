@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class FlameThrower : WeaponPickup
+class FlameThrower : Weapon
 	__mobjinfo__(2005);
 
 __states__

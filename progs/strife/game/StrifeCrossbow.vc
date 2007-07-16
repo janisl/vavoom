@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class StrifeCrossbow : WeaponPickup
+class StrifeCrossbow : Weapon
 	__mobjinfo__(2001);
 
 __states__

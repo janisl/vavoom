@@ -533,10 +533,9 @@ float GetAngle()
 
 int WeapFromItem(Actor item)
 {
-	if (WeaponPickup(item) && 
-		WeaponPickup(item).WeaponClass == player.PClass)
+	if (Weapon(item) && Weapon(item).WeaponClass == player.PClass)
 	{
-		return WeaponPickup(item).WeaponType;
+		return Weapon(item).WeaponType;
 	}
 	return -1;
 }

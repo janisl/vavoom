@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Blaster : WeaponPickup
+class Blaster : Weapon
 	__mobjinfo__(53)
 	__scriptid__(28);
 

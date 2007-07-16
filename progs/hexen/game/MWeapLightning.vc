@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MWeapLightning : WeaponPickup
+class MWeapLightning : Weapon
 	__mobjinfo__(8040);
 
 __states__

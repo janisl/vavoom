@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class CWeapFlame : WeaponPickup
+class CWeapFlame : Weapon
 	__mobjinfo__(8009);
 
 __states__

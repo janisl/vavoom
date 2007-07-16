@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class AssaultGun : WeaponPickup
+class AssaultGun : Weapon
 	__mobjinfo__(2002);
 
 __states__

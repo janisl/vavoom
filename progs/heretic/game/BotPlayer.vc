@@ -516,9 +516,9 @@ float GetAngle()
 
 int WeapFromItem(Actor item)
 {
-	if (WeaponPickup(item))
+	if (Weapon(item))
 	{
-		return WeaponPickup(item).WeaponType;
+		return Weapon(item).WeaponType;
 	}
 	return -1;
 }

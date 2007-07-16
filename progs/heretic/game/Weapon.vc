@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Weapon : Actor
+class Weapon : Inventory
 	abstract;
 
 const float MELEERANGE		= 64.0;
@@ -70,6 +70,63 @@ bool bInShareware;
 
 void WeaponLevel2Init() { }
 void WeaponLevel2Fade() { }
+
+int WeaponType;
+
+//==========================================================================
+//
+//  TryPickup
+//
+//  Returns true if the weapon or its ammo was accepted.
+//
+//==========================================================================
+
+bool TryPickup(EntityEx Toucher)
+{
+	bool gaveAmmo;
+	bool gaveWeapon;
+
+	// Cooperative net-game
+	if (ShouldStay() && !bDropped && Player(Toucher.Player).WeaponOwned[WeaponType])
+	{
+		return false;
+	}
+
+	gaveAmmo = Player(Toucher.Player).GiveAmmo(
+		MainGameInfo(Level.Game).WeaponClasses[WeaponType].default.AmmoType,
+		MainGameInfo(Level.Game).WeaponClasses[WeaponType].default.GetAmmoCount);
+	if (Player(Toucher.Player).WeaponOwned[WeaponType])
+	{
+		gaveWeapon = false;
+	}
+	else
+	{
+		gaveWeapon = true;
+		Player(Toucher.Player).WeaponOwned[WeaponType] = true;
+		if (MainGameInfo(Level.Game).WeaponValue[WeaponType] >
+			MainGameInfo(Level.Game).WeaponValue[Player(Toucher.Player).ReadyWeapon])
+		{
+			// Only switch to more powerful weapons
+			Player(Toucher.Player).PendingWeapon = WeaponType;
+		}
+	}
+	if (gaveWeapon || gaveAmmo)
+	{
+		GoAwayAndDie();
+	}
+	return (gaveWeapon || gaveAmmo);
+}
+
+//==========================================================================
+//
+//	ShouldStay
+//
+//==========================================================================
+
+bool ShouldStay()
+{
+	return Level.Game.netgame && !Level.Game.deathmatch;
+}
 
 //==========================================================================
 //
@@ -273,7 +330,7 @@ __states__
 
 defaultproperties
 {
-	bHidden = true;
-	bNoBlockmap = true;
+	Height = 32.0;
+	PickupSound = 'misc/w_pkup';
 	bInShareware = true;
 }

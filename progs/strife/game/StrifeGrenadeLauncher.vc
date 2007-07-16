@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class StrifeGrenadeLauncher : WeaponPickup
+class StrifeGrenadeLauncher : Weapon
 	__mobjinfo__(154);
 
 __states__

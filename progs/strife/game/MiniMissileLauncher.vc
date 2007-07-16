@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MiniMissileLauncher : WeaponPickup
+class MiniMissileLauncher : Weapon
 	__mobjinfo__(2003);
 
 __states__
