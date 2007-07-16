@@ -170,7 +170,26 @@ final void TouchSpecial(EntityEx Toucher)
 
 bool TryPickup(EntityEx Toucher)
 {
-	return false;
+	bPickupGood = false;
+	if (Toucher.Inventory && Toucher.Inventory.HandlePickup(self))
+	{
+		if (!bPickupGood)
+		{
+			return false;
+		}
+		GoAwayAndDie();
+	}
+	else
+	{
+		Inventory Copy = CreateCopy(Toucher);
+		if (!Copy)
+		{
+			return false;
+		}
+		Copy.AttachToOwner(Toucher);
+	}
+	GiveQuest(Toucher);
+	return true;
 }
 
 //==========================================================================
@@ -190,6 +209,17 @@ bool HandlePickup(Inventory Item)
 		return Inventory.HandlePickup(Item);
 	}
 	return false;
+}
+
+//==========================================================================
+//
+//	CreateCopy
+//
+//==========================================================================
+
+Inventory CreateCopy(EntityEx Toucher)
+{
+	return none;
 }
 
 //==========================================================================

@@ -102,69 +102,54 @@ bool HandlePickup(Inventory Item)
 
 //==========================================================================
 //
-//	TryPickup
+//	CreateCopy
 //
 //==========================================================================
 
-bool TryPickup(EntityEx Toucher)
+Inventory CreateCopy(EntityEx Toucher)
 {
-	bPickupGood = false;
-	if (Toucher.Inventory && Toucher.Inventory.HandlePickup(self))
+	Ammo Copy;
+	int NewAmount = Amount;
+	if (Level.Game.gameskill == sk_baby ||
+		(Level.Game.gameskill == sk_nightmare &&
+		LineSpecialGameInfo(Level.Game).bNightmareExtraAmmo))
 	{
-		if (!bPickupGood)
+		// extra ammo in baby mode and nightmare mode
+		if (LineSpecialGameInfo(Level.Game).bBabyNightmareDoubleAmmo)
 		{
-			return false;
-		}
-		GoAwayAndDie();
-	}
-	else
-	{
-		Ammo Copy;
-		int NewAmount = Amount;
-		if (Level.Game.gameskill == sk_baby ||
-			(Level.Game.gameskill == sk_nightmare &&
-			LineSpecialGameInfo(Level.Game).bNightmareExtraAmmo))
-		{
-			// extra ammo in baby mode and nightmare mode
-			if (LineSpecialGameInfo(Level.Game).bBabyNightmareDoubleAmmo)
-			{
-				NewAmount <<= 1;
-			}
-			else
-			{
-				NewAmount += NewAmount >> 1;
-			}
-		}
-
-		if (GetClassParent(Class) == Ammo)
-		{
-			if (GoAway())
-			{
-				//	Must create a copy
-				Copy = Spawn(GetParentAmmo());
-			}
-			else
-			{
-				//	Use this one
-				Copy = self;
-			}
+			NewAmount <<= 1;
 		}
 		else
 		{
-			Copy = Spawn(GetParentAmmo());
-			GoAwayAndDie();
+			NewAmount += NewAmount >> 1;
 		}
-		Copy.Amount = NewAmount;
-		//	Don't pick up more ammo that you can carry.
-		if (Copy.Amount > Copy.MaxAmount)
-		{
-			Copy.Amount = Copy.MaxAmount;
-		}
-
-		Copy.AttachToOwner(Toucher);
 	}
-	GiveQuest(Toucher);
-	return true;
+
+	if (GetClassParent(Class) == Ammo)
+	{
+		if (GoAway())
+		{
+			//	Must create a copy
+			Copy = Spawn(GetParentAmmo());
+		}
+		else
+		{
+			//	Use this one
+			Copy = self;
+		}
+	}
+	else
+	{
+		Copy = Spawn(GetParentAmmo());
+		GoAwayAndDie();
+	}
+	Copy.Amount = NewAmount;
+	//	Don't pick up more ammo that you can carry.
+	if (Copy.Amount > Copy.MaxAmount)
+	{
+		Copy.Amount = Copy.MaxAmount;
+	}
+	return Copy;
 }
 
 defaultproperties
