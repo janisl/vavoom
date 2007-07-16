@@ -607,17 +607,17 @@ defaultproperties
 	bBabyNightmareDoubleAmmo = true;
 	bNightmareExtraAmmo = false;
 
-	WeaponClasses[0] = WeaponPunch;
-	WeaponClasses[1] = WeaponCrossbow;
-	WeaponClasses[2] = WeaponAssaultGun;
-	WeaponClasses[3] = WeaponMissileLauncher;
-	WeaponClasses[4] = WeaponGrenadeLauncher;
-	WeaponClasses[5] = WeaponFlamethrower;
-	WeaponClasses[6] = WeaponMauler;
-	WeaponClasses[7] = WeaponSigil;
-	WeaponClasses[8] = WeaponCrossbow2;
-	WeaponClasses[9] = WeaponGrenadeLauncher2;
-	WeaponClasses[10] = WeaponMauler2;
+	WeaponClasses[0] = PunchDagger;
+	WeaponClasses[1] = StrifeCrossbow;
+	WeaponClasses[2] = AssaultGun;
+	WeaponClasses[3] = MiniMissileLauncher;
+	WeaponClasses[4] = StrifeGrenadeLauncher;
+	WeaponClasses[5] = FlameThrower;
+	WeaponClasses[6] = Mauler;
+	WeaponClasses[7] = Sigil1;
+	WeaponClasses[8] = StrifeCrossbow2;
+	WeaponClasses[9] = StrifeGrenadeLauncher2;
+	WeaponClasses[10] = Mauler2;
 
 	WeaponOrder[0] = StrifeDefs::wp_fist;
 	WeaponOrder[1] = StrifeDefs::wp_crossbow;

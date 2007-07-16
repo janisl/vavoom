@@ -1256,19 +1256,19 @@ defaultproperties
 	DefaultKickBack = 150.0;
 	BloodClass = Blood;
 
-	WeaponClasses[0] = WeaponFist;
-	WeaponClasses[1] = WeaponPistol;
-	WeaponClasses[2] = WeaponShotgun;
-	WeaponClasses[3] = WeaponChaingun;
-	WeaponClasses[4] = WeaponMissile;
-	WeaponClasses[5] = WeaponPlasma;
-	WeaponClasses[6] = WeaponBFG;
-	WeaponClasses[7] = WeaponChainsaw;
+	WeaponClasses[0] = Fist;
+	WeaponClasses[1] = Pistol;
+	WeaponClasses[2] = Shotgun;
+	WeaponClasses[3] = Chaingun;
+	WeaponClasses[4] = RocketLauncher;
+	WeaponClasses[5] = PlasmaRifle;
+	WeaponClasses[6] = BFG9000;
+	WeaponClasses[7] = Chainsaw;
 #ifdef DOOM2
-	WeaponClasses[8] = WeaponSuperShotgun;
+	WeaponClasses[8] = SuperShotgun;
 #endif
 #ifdef GRENADE_LAUNCHER
-	WeaponClasses[9] = WeaponGrenade;
+	WeaponClasses[9] = GrenadeLauncher;
 #endif
 
 	WeaponOrder[0] = DoomDefs::wp_fist;

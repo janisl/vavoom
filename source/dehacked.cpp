@@ -1553,6 +1553,19 @@ void ProcessDehackedFiles()
 			S = StatesClass->NetStates;
 			pState = &StatesClass->NetStates;
 		}
+		else if (sc->Check("Spawn"))
+		{
+			S = GetClassFieldState(StatesClass, "IdleState");
+			pState = &StatesClass->NetStates;
+			while (*pState && *pState != S)
+			{
+				pState = &(*pState)->NetNext;
+			}
+			if (!pState)
+			{
+				sc->Error("Bad state");
+			}
+		}
 		else if (sc->Check("Death"))
 		{
 			S = GetClassFieldState(StatesClass, "DeathState");

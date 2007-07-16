@@ -26,16 +26,63 @@
 class AssaultGun : Weapon
 	__mobjinfo__(2002);
 
+//==========================================================================
+//
+//	A_FireRiffle
+//
+//==========================================================================
+
+final void A_FireRiffle()
+{
+	TVec dir;
+	TAVec angles;
+	int damage;
+
+	Owner.PlaySound('weapons/assaultgun', CHAN_WEAPON);
+
+	if (!EntityEx(Owner).FindInventory(AmmoType).Amount)
+		return;
+
+	Owner.SetState(Actor(Owner).MissileState);
+	DecAmmo(1);
+
+	Actor(Owner).Aim(dir, 16.0 * 64.0);
+	if (Player(Owner.Player).Refire)
+	{
+		VectorAngles(&dir, &angles);
+		angles.yaw = AngleMod360(angles.yaw +
+			(Random() - Random()) * 45.0 / 2.0 / itof(1 << (Player(Owner.Player).Accuracy * 5 / 100)));
+		AngleVector(&angles, &dir);
+	}
+	damage = 4 * (P_Random() % 3 + 1);
+	Actor(Owner).LineAttack(dir, MISSILERANGE, damage, StrifePuff);
+	Owner.Effects |= EF_DL_MUZZLEFLASH;
+}
+
 __states__
 {
+	S_RIFFLE('RIFG', 0, 1.0 / 35.0, S_RIFFLE) = A_WeaponReady
+	S_RIFFLEDOWN('RIFG', 1, 1.0 / 35.0, S_RIFFLEDOWN) = A_Lower
+	S_RIFFLEUP('RIFG', 0, 1.0 / 35.0, S_RIFFLEUP) = A_Raise
+	S_RIFFLE1('RIFF', 0, 3.0 / 35.0, S_RIFFLE2) = A_FireRiffle
+	S_RIFFLE2('RIFF', 1, 3.0 / 35.0, S_RIFFLE3) = A_FireRiffle
+	S_RIFFLE3('RIFG', 3, 3.0 / 35.0, S_RIFFLE4) = A_FireRiffle
+	S_RIFFLE4('RIFG', 2, 0.0 / 35.0, S_RIFFLE5) = A_ReFire
+	S_RIFFLE5('RIFG', 1, 2.0 / 35.0, S_RIFFLE) = A_Light0
 	S_ASSAULT_GUN1('RIFL', 0, -1.0, none) = none
 }
 
 defaultproperties
 {
-	ConversationID = 188;
-	PickupMessage = "assault gun";
-	IdleState = S_ASSAULT_GUN1;
 	WeaponType = StrifeDefs::wp_riffle;
+	AmmoType = ClipOfBullets;
+	ConversationID = 188;
+	PickupMessage = "$txt_assaultgun";
 	Ammo1Count = 20;
+	IdleState = S_ASSAULT_GUN1;
+	UpState = S_RIFFLEUP;
+	DownState = S_RIFFLEDOWN;
+	ReadyState = S_RIFFLE;
+	AttackState = S_RIFFLE1;
+	FlashState = S_LIGHTDONE;
 }

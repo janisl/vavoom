@@ -2102,10 +2102,10 @@ void ChangeWeapon(int newweapon)
 #endif
 
 #ifdef GRENADE_LAUNCHER
-	if (newweapon == wp_missile && WeaponOwned[wp_grenade] &&
-		ReadyWeapon != wp_grenade)
+	if (newweapon == DoomDefs::wp_missile && WeaponOwned[DoomDefs::wp_grenade] &&
+		ReadyWeapon != DoomDefs::wp_grenade)
 	{
-		newweapon = wp_grenade;
+		newweapon = DoomDefs::wp_grenade;
 	}
 #endif
 

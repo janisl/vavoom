@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class WeaponFighterPunch : Weapon;
+class FWeapFist : Weapon;
 
 state Attack2State;
 int PunchCount;
@@ -117,11 +117,11 @@ __states__
 
 defaultproperties
 {
+	PSpriteSY = 0.0;
 	UpState = S_PUNCHUP;
 	DownState = S_PUNCHDOWN;
 	ReadyState = S_PUNCHREADY;
 	AttackState = S_PUNCHATK1_1;
 	Attack2State = S_PUNCHATK2_1;
 	HoldAttackState = S_PUNCHATK1_1;
-	PSpriteSY = 0.0;
 }

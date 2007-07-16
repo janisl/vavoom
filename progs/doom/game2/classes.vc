@@ -26,8 +26,6 @@
 #include "Megasphere.vc"
 #include "SuperShotgun.vc"
 
-#include "WeaponSuperShotgun.vc"
-
 #include "ChaingunGuy.vc"
 #include "WolfensteinSS.vc"
 #include "HellKnight.vc"

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class WeaponPigSnout : Weapon;
+class Snout : Weapon;
 
 state SniffState;
 
@@ -81,11 +81,11 @@ __states__
 
 defaultproperties
 {
+	PSpriteSY = 10.0;
 	UpState = S_SNOUTUP;
 	DownState = S_SNOUTDOWN;
 	ReadyState = S_SNOUTREADY;
 	AttackState = S_SNOUTATK1;
 	HoldAttackState = S_SNOUTATK1;
 	SniffState = S_SNOUTSNIFF;
-	PSpriteSY = 10.0;
 }

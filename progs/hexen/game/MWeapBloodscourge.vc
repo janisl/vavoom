@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class WeaponMageStaff : Weapon;
+class MWeapBloodscourge : Weapon;
 
 //==========================================================================
 //
@@ -151,10 +151,10 @@ defaultproperties
 {
 	ManaType1 = Mana1;
 	ManaType2 = Mana2;
+	PSpriteSY = 20.0;
 	UpState = S_MSTAFFUP;
 	DownState = S_MSTAFFDOWN;
 	ReadyState = S_MSTAFFREADY;
 	AttackState = S_MSTAFFATK_1;
 	HoldAttackState = S_MSTAFFATK_1;
-	PSpriteSY = 20.0;
 }

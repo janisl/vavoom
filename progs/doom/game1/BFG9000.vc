@@ -27,14 +27,53 @@ class BFG9000 : Weapon
 	__mobjinfo__(2006)
 	__scriptid__(31);
 
+//===========================================================================
+//
+//  A_BFGsound
+//
+//===========================================================================
+
+final void A_BFGsound()
+{
+	Owner.PlaySound('weapons/bfgf', CHAN_WEAPON);
+}
+
+//===========================================================================
+//
+//  A_FireBFG
+//
+//===========================================================================
+
+final void A_FireBFG()
+{
+	DecAmmo(MainGameInfo(Level.Game).BFGCELLS);
+	Actor(Owner).SpawnPlayerMissile(BFGBall);
+}
+
 __states__
 {
+	S_BFG('BFGG', 0, 1.0 / 35.0, S_BFG) = A_WeaponReady
+	S_BFGDOWN('BFGG', 0, 1.0 / 35.0, S_BFGDOWN) = A_Lower
+	S_BFGUP('BFGG', 0, 1.0 / 35.0, S_BFGUP) = A_Raise
+	S_BFG1('BFGG', 0, 20.0 / 35.0, S_BFG2) = A_BFGsound
+	S_BFG2('BFGG', 1, 10.0 / 35.0, S_BFG3) = A_GunFlash
+	S_BFG3('BFGG', 1, 10.0 / 35.0, S_BFG4) = A_FireBFG
+	S_BFG4('BFGG', 1, 20.0 / 35.0, S_BFG) = A_ReFire
+	S_BFGFLASH1('BFGF', 0 | FF_FULLBRIGHT, 11.0 / 35.0, S_BFGFLASH2) = A_Light1
+	S_BFGFLASH2('BFGF', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_LIGHTDONE) = A_Light2
 	S_BFUG('BFUG', 0, -1.0, none) = none
 }
 
 defaultproperties
 {
-	IdleState = S_BFUG;
 	WeaponType = DoomDefs::wp_bfg;
+	AmmoType = Cell;
+	PlayerModelVersion = 7;
 	PickupMessage = "$gotbfg9000";
+	IdleState = S_BFUG;
+	UpState = S_BFGUP;
+	DownState = S_BFGDOWN;
+	ReadyState = S_BFG;
+	AttackState = S_BFG1;
+	FlashState = S_BFGFLASH1;
 }

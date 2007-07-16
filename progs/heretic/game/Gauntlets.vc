@@ -27,14 +27,159 @@ class Gauntlets : Weapon
 	__mobjinfo__(2005)
 	__scriptid__(32);
 
+//==========================================================================
+//
+//	WeaponLevel2Init
+//
+//==========================================================================
+
+void WeaponLevel2Init()
+{
+	Owner.Player.SetViewState(ps_weapon, ReadyState2);
+}
+
+//==========================================================================
+//
+//	WeaponLevel2Fade
+//
+//==========================================================================
+
+void WeaponLevel2Fade()
+{
+	Player(Owner.Player).PendingWeapon = Player(Owner.Player).ReadyWeapon;
+}
+
+//===========================================================================
+//
+//  A_GauntletAttack
+//
+//===========================================================================
+
+final void A_GauntletAttack()
+{
+	float			angle;
+	int				damage;
+	float			slope;
+	int				randVal;
+	float			dist;
+	TAVec			angles;
+	TVec			dir;
+	class<Actor>	PuffType;
+	EntityEx		AimTarget;
+
+	Owner.Player.ViewStates[ps_weapon].SX = Random() * 4.0 - 2.0;
+	Owner.Player.ViewStates[ps_weapon].SY = WEAPONTOP + Random() * 4.0;
+	angles = Owner.Angles;
+	if (Player(Owner.Player).Powers[pw_weaponlevel2])
+	{
+		damage = HITDICE(2);
+		dist = 4.0 * MELEERANGE;
+		angles.yaw = AngleMod360(angles.yaw +
+			(Random() - Random()) * 45.0 / 16.0);
+		PuffType = GauntletPuff2;
+	}
+	else
+	{
+		damage = HITDICE(2);
+		dist = MELEERANGE + 0.00001;
+		angles.yaw = AngleMod360(angles.yaw +
+			(Random() - Random()) * 45.0 / 8.0);
+		PuffType = GauntletPuff1;
+	}
+	AimTarget = Actor(Owner).AimLineAttack(dir, angles, dist);
+	Actor(Owner).LineAttack(dir, dist, damage, PuffType);
+	if (!AimTarget)
+	{
+		if (P_Random() > 64)
+		{
+			Owner.Player.ExtraLight = !Owner.Player.ExtraLight;
+		}
+		Owner.PlaySound('weapons/gauntletson', CHAN_WEAPON);
+		return;
+	}
+	randVal = P_Random();
+	if (randVal < 64)
+	{
+		Owner.Player.ExtraLight = 0;
+	}
+	else if (randVal < 160)
+	{
+		Owner.Player.ExtraLight = 1;
+	}
+	else
+	{
+		Owner.Player.ExtraLight = 2;
+	}
+	if (Player(Owner.Player).Powers[pw_weaponlevel2])
+	{
+		Player(Owner.Player).GiveBody(damage >> 1);
+		Owner.PlaySound('weapons/gauntletspowhit', CHAN_WEAPON);
+	}
+	else
+	{
+		Owner.PlaySound('weapons/gauntletshit', CHAN_WEAPON);
+	}
+	// turn to face target
+	angle = atan2(AimTarget.Origin.y - Owner.Origin.y,
+		AimTarget.Origin.x - Owner.Origin.x);
+	if (AngleMod360(angle - Owner.Angles.yaw) > 180.0)
+	{
+		if (AngleMod360(angle - Owner.Angles.yaw) < 360.0 - 90.0 / 20.0)
+			Owner.Angles.yaw = AngleMod360(angle + 90.0 / 21.0);
+		else
+			Owner.Angles.yaw = AngleMod360(Owner.Angles.yaw - 90.0 / 20.0);
+	}
+	else
+	{
+		if (AngleMod360(angle - Owner.Angles.yaw) > 90.0 / 20.0)
+			Owner.Angles.yaw = AngleMod360(angle - 90.0 / 21.0);
+		else
+			Owner.Angles.yaw = AngleMod360(Owner.Angles.yaw + 90.0 / 20.0);
+	}
+	Actor(Owner).bJustAttacked = true;
+}
+
 __states__
 {
+	S_GAUNTLETREADY('GAUN', 0, 1.0 / 35.0, S_GAUNTLETREADY) = A_WeaponReady
+	S_GAUNTLETDOWN('GAUN', 0, 1.0 / 35.0, S_GAUNTLETDOWN) = A_Lower
+	S_GAUNTLETUP('GAUN', 0, 1.0 / 35.0, S_GAUNTLETUP) = A_Raise
+	S_GAUNTLETREADY2_1('GAUN', 6, 4.0 / 35.0, S_GAUNTLETREADY2_2) = A_WeaponReady
+	S_GAUNTLETREADY2_2('GAUN', 7, 4.0 / 35.0, S_GAUNTLETREADY2_3) = A_WeaponReady
+	S_GAUNTLETREADY2_3('GAUN', 8, 4.0 / 35.0, S_GAUNTLETREADY2_1) = A_WeaponReady
+	S_GAUNTLETDOWN2('GAUN', 6, 1.0 / 35.0, S_GAUNTLETDOWN2) = A_Lower
+	S_GAUNTLETUP2('GAUN', 6, 1.0 / 35.0, S_GAUNTLETUP2) = A_Raise
+	S_GAUNTLETATK1_1('GAUN', 1, 4.0 / 35.0, S_GAUNTLETATK1_2) = none
+	S_GAUNTLETATK1_2('GAUN', 2, 4.0 / 35.0, S_GAUNTLETATK1_3) = none
+	S_GAUNTLETATK1_3('GAUN', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_GAUNTLETATK1_4) = A_GauntletAttack
+	S_GAUNTLETATK1_4('GAUN', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_GAUNTLETATK1_5) = A_GauntletAttack
+	S_GAUNTLETATK1_5('GAUN', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_GAUNTLETATK1_6) = A_GauntletAttack
+	S_GAUNTLETATK1_6('GAUN', 2, 4.0 / 35.0, S_GAUNTLETATK1_7) = A_ReFire
+	S_GAUNTLETATK1_7('GAUN', 1, 4.0 / 35.0, S_GAUNTLETREADY) = A_Light0
+	S_GAUNTLETATK2_1('GAUN', 9, 4.0 / 35.0, S_GAUNTLETATK2_2) = none
+	S_GAUNTLETATK2_2('GAUN', 10, 4.0 / 35.0, S_GAUNTLETATK2_3) = none
+	S_GAUNTLETATK2_3('GAUN', 11 | FF_FULLBRIGHT, 4.0 / 35.0, S_GAUNTLETATK2_4) = A_GauntletAttack
+	S_GAUNTLETATK2_4('GAUN', 12 | FF_FULLBRIGHT, 4.0 / 35.0, S_GAUNTLETATK2_5) = A_GauntletAttack
+	S_GAUNTLETATK2_5('GAUN', 13 | FF_FULLBRIGHT, 4.0 / 35.0, S_GAUNTLETATK2_6) = A_GauntletAttack
+	S_GAUNTLETATK2_6('GAUN', 10, 4.0 / 35.0, S_GAUNTLETATK2_7) = A_ReFire
+	S_GAUNTLETATK2_7('GAUN', 9, 4.0 / 35.0, S_GAUNTLETREADY2_1) = A_Light0
 	S_WGNT('WGNT', 0, -1.0, none) = none
 }
 
 defaultproperties
 {
 	WeaponType = wp_gauntlets;
-	IdleState = S_WGNT;
+	PSpriteSY = 15.0;
 	PickupMessage = "$txt_wpngauntlets";
+	IdleState = S_WGNT;
+	UpState = S_GAUNTLETUP;
+	DownState = S_GAUNTLETDOWN;
+	ReadyState = S_GAUNTLETREADY;
+	AttackState = S_GAUNTLETATK1_1;
+	HoldAttackState = S_GAUNTLETATK1_3;
+	UpState2 = S_GAUNTLETUP2;
+	DownState2 = S_GAUNTLETDOWN2;
+	ReadyState2 = S_GAUNTLETREADY2_1;
+	AttackState2 = S_GAUNTLETATK2_1;
+	HoldAttackState2 = S_GAUNTLETATK2_3;
 }

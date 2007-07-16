@@ -24,15 +24,15 @@ states
 {
 	//	S_NULL is implicit
 	Weapon					First	1
-	WeaponFist				First	8
-	WeaponPistol			First	8
-	WeaponShotgun			First	14
-	WeaponSuperShotgun		First	17
-	WeaponChaingun			First	8
-	WeaponMissile			First	10
-	WeaponChainsaw			First	7
-	WeaponPlasma			First	7
-	WeaponBFG				First	9
+	Fist					First	8
+	Pistol					First	8
+	Shotgun					First	14
+	SuperShotgun			First	17
+	Chaingun				First	8
+	RocketLauncher			First	10
+	Chainsaw				First	7
+	PlasmaRifle				First	7
+	BFG9000					First	9
 	Blood					First	3
 	BulletPuff				First	4
 	DoomImpBall				First	5
@@ -105,13 +105,13 @@ states
 	Shell					First	1
 	ShellBox				First	1
 	Backpack				First	1
-	BFG9000					First	1
-	Chaingun				First	1
-	Chainsaw				First	1
-	RocketLauncher			First	1
-	PlasmaRifle				First	1
-	Shotgun					First	1
-	SuperShotgun			First	1
+	BFG9000					Spawn	1
+	Chaingun				Spawn	1
+	Chainsaw				Spawn	1
+	RocketLauncher			Spawn	1
+	PlasmaRifle				Spawn	1
+	Shotgun					Spawn	1
+	SuperShotgun			Spawn	1
 	Column					First	1
 	DoomUnusedStates		First	1
 	BloodyTwitch			First	4
@@ -221,19 +221,19 @@ code_pointers
 	Light0			Weapon				A_Light0
 	Light1			Weapon				A_Light1
 	Light2			Weapon				A_Light2
-	Punch			WeaponFist			A_Punch
-	Saw				WeaponChainsaw		A_Saw
-	FirePistol		WeaponPistol		A_FirePistol
-	FireShotgun		WeaponShotgun		A_FireShotgun
-	FireShotgun2	WeaponSuperShotgun	A_FireShotgun2
-	OpenShotgun2	WeaponSuperShotgun	A_OpenShotgun2
-	LoadShotgun2	WeaponSuperShotgun	A_LoadShotgun2
-	CloseShotgun2	WeaponSuperShotgun	A_CloseShotgun2
-	FireCGun		WeaponChaingun		A_FireCGun
-	FireMissile		WeaponMissile		A_FireMissile
-	FirePlasma		WeaponPlasma		A_FirePlasma
-	BFGsound		WeaponBFG			A_BFGsound
-	FireBFG			WeaponBFG			A_FireBFG
+	Punch			Fist				A_Punch
+	Saw				Chainsaw			A_Saw
+	FirePistol		Pistol				A_FirePistol
+	FireShotgun		Shotgun				A_FireShotgun
+	FireShotgun2	SuperShotgun		A_FireShotgun2
+	OpenShotgun2	SuperShotgun		A_OpenShotgun2
+	LoadShotgun2	SuperShotgun		A_LoadShotgun2
+	CloseShotgun2	SuperShotgun		A_CloseShotgun2
+	FireCGun		Chaingun			A_FireCGun
+	FireMissile		RocketLauncher		A_FireMissile
+	FirePlasma		PlasmaRifle			A_FirePlasma
+	BFGsound		BFG9000				A_BFGsound
+	FireBFG			BFG9000				A_FireBFG
 	BFGSpray		BFGBall				A_BFGSpray
 	Explode			Actor				A_Explode
 	Pain			ScriptedEntity		A_Pain
@@ -547,15 +547,15 @@ things
 //	Weapon class names
 weapons
 {
-	WeaponFist
-	WeaponPistol
-	WeaponShotgun
-	WeaponChaingun
-	WeaponMissile
-	WeaponPlasma
-	WeaponBFG
-	WeaponChainsaw
-	WeaponSuperShotgun
+	Fist
+	Pistol
+	Shotgun
+	Chaingun
+	RocketLauncher
+	PlasmaRifle
+	BFG9000
+	Chainsaw
+	SuperShotgun
 }
 
 //	Ammo class names

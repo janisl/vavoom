@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class WeaponBeak : Weapon;
+class Beak : Weapon;
 
 //===========================================================================
 //
@@ -134,6 +134,7 @@ __states__
 
 defaultproperties
 {
+	PSpriteSY = 15.0;
 	UpState = S_BEAKUP;
 	DownState = S_BEAKDOWN;
 	ReadyState = S_BEAKREADY;
@@ -144,5 +145,4 @@ defaultproperties
 	ReadyState2 = S_BEAKREADY;
 	AttackState2 = S_BEAKATK2_1;
 	HoldAttackState2 = S_BEAKATK2_1;
-	PSpriteSY = 15.0;
 }

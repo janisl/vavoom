@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class AssaultGunStanding : Weapon
+class AssaultGunStanding : AssaultGun
 	__mobjinfo__(2006);
 
 __states__
@@ -34,8 +34,5 @@ __states__
 defaultproperties
 {
 	ConversationID = 189;
-	PickupMessage = "$txt_assaultgun";
 	IdleState = S_ASSAULT_GUN2;
-	WeaponType = StrifeDefs::wp_riffle;
-	Ammo1Count = 20;
 }

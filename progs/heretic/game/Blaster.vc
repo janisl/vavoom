@@ -27,14 +27,86 @@ class Blaster : Weapon
 	__mobjinfo__(53)
 	__scriptid__(28);
 
+//===========================================================================
+//
+//  A_FireBlasterPL1
+//
+//===========================================================================
+
+final void A_FireBlasterPL1()
+{
+	int damage;
+	float bulletslope;
+	TVec dir;
+
+	DecAmmo(USE_BLSR_AMMO_1);
+	Actor(Owner).Aim(dir, 16.0 * 64.0);
+	damage = HITDICE(4);
+	if (Player(Owner.Player).Refire)
+	{
+		VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0 / 8.0);
+	}
+	Actor(Owner).LineAttack(dir, MISSILERANGE, damage, BlasterPuff1);
+	Owner.PlaySound('weapons/blastershoot', CHAN_WEAPON);
+}
+
+//===========================================================================
+//
+//  A_FireBlasterPL2
+//
+//===========================================================================
+
+final void A_FireBlasterPL2()
+{
+	EntityEx	A;
+
+	DecAmmo(Level.Game.deathmatch ? USE_BLSR_AMMO_1 : USE_BLSR_AMMO_2);
+	A = Actor(Owner).SpawnPlayerMissile(BlasterFX1);
+	if (A)
+	{
+		A.bBlaster = true;
+	}
+	Owner.PlaySound('weapons/blastershoot', CHAN_WEAPON);
+}
+
 __states__
 {
+	S_BLASTERREADY('BLSR', 0, 1.0 / 35.0, S_BLASTERREADY) = A_WeaponReady
+	S_BLASTERDOWN('BLSR', 0, 1.0 / 35.0, S_BLASTERDOWN) = A_Lower
+	S_BLASTERUP('BLSR', 0, 1.0 / 35.0, S_BLASTERUP) = A_Raise
+	S_BLASTERATK1_1('BLSR', 1, 3.0 / 35.0, S_BLASTERATK1_2) = none
+	S_BLASTERATK1_2('BLSR', 2, 3.0 / 35.0, S_BLASTERATK1_3) = none
+	S_BLASTERATK1_3('BLSR', 3, 2.0 / 35.0, S_BLASTERATK1_4) = A_FireBlasterPL1
+	S_BLASTERATK1_4('BLSR', 2, 2.0 / 35.0, S_BLASTERATK1_5) = none
+	S_BLASTERATK1_5('BLSR', 1, 2.0 / 35.0, S_BLASTERATK1_6) = none
+	S_BLASTERATK1_6('BLSR', 0, 0.0 / 35.0, S_BLASTERREADY) = A_ReFire
+	S_BLASTERATK2_1('BLSR', 1, 0.0 / 35.0, S_BLASTERATK2_2) = none
+	S_BLASTERATK2_2('BLSR', 2, 0.0 / 35.0, S_BLASTERATK2_3) = none
+	S_BLASTERATK2_3('BLSR', 3, 3.0 / 35.0, S_BLASTERATK2_4) = A_FireBlasterPL2
+	S_BLASTERATK2_4('BLSR', 2, 4.0 / 35.0, S_BLASTERATK2_5) = none
+	S_BLASTERATK2_5('BLSR', 1, 4.0 / 35.0, S_BLASTERATK2_6) = none
+	S_BLASTERATK2_6('BLSR', 0, 0.0 / 35.0, S_BLASTERREADY) = A_ReFire
 	S_BLSR('WBLS', 0, -1.0, none) = none
 }
 
 defaultproperties
 {
 	WeaponType = wp_blaster;
-	IdleState = S_BLSR;
+	AmmoType = BlasterAmmo;
+	GetAmmoCount = 30;
+	AmmoUsePL1 = USE_BLSR_AMMO_1;
+	AmmoUsePL2 = USE_BLSR_AMMO_2;
+	PSpriteSY = 15.0;
 	PickupMessage = "$txt_wpnblaster";
+	IdleState = S_BLSR;
+	UpState = S_BLASTERUP;
+	DownState = S_BLASTERDOWN;
+	ReadyState = S_BLASTERREADY;
+	AttackState = S_BLASTERATK1_1;
+	HoldAttackState = S_BLASTERATK1_3;
+	UpState2 = S_BLASTERUP;
+	DownState2 = S_BLASTERDOWN;
+	ReadyState2 = S_BLASTERREADY;
+	AttackState2 = S_BLASTERATK2_1;
+	HoldAttackState2 = S_BLASTERATK2_3;
 }

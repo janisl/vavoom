@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class WeaponPunch : Weapon;
+class PunchDagger : Weapon;
 
 //==========================================================================
 //
@@ -85,10 +85,10 @@ __states__
 
 defaultproperties
 {
+	bRaiseNoiseAlert = false;
 	UpState = S_PUNCHUP;
 	DownState = S_PUNCHDOWN;
 	ReadyState = S_PUNCH;
 	AttackState = S_PUNCH1;
 	FlashState = S_LIGHTDONE;
-	bRaiseNoiseAlert = false;
 }

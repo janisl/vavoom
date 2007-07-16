@@ -27,14 +27,140 @@ class PhoenixRod : Weapon
 	__mobjinfo__(2003)
 	__scriptid__(29);
 
+int FlameCount;	// for flame thrower duration
+
+state Attack2ShutdownState;
+
+//==========================================================================
+//
+//	WeaponLevel2Fade
+//
+//==========================================================================
+
+void WeaponLevel2Fade()
+{
+	if (Owner.Player.ViewStates[ps_weapon].State != ReadyState2 &&
+		Owner.Player.ViewStates[ps_weapon].State != UpState2)
+	{
+		Owner.Player.SetViewState(ps_weapon, ReadyState);
+		DecAmmo(USE_PHRD_AMMO_2);
+		Player(Owner.Player).Refire = 0;
+	}
+}
+
+//===========================================================================
+//
+//  A_FirePhoenixPL1
+//
+//===========================================================================
+
+final void A_FirePhoenixPL1()
+{
+	TVec vforward;
+
+	DecAmmo(USE_PHRD_AMMO_1);
+	Actor(Owner).SpawnPlayerMissile(PhoenixFX1);
+	AngleVector(&Owner.Angles, &vforward);
+	Owner.Velocity -= vforward * 140.0;
+}
+
+//===========================================================================
+//
+//  A_InitPhoenixPL2
+//
+//===========================================================================
+
+final void A_InitPhoenixPL2()
+{
+	FlameCount = 10 * 35;
+}
+
+//===========================================================================
+//
+//  A_FirePhoenixPL2
+//
+//  Flame thrower effect.
+//
+//===========================================================================
+
+final void A_FirePhoenixPL2()
+{
+	Actor A;
+	TVec dir;
+	TVec org;
+
+	if (--FlameCount == 0)
+	{
+		// Out of flame
+		Owner.Player.SetViewState(ps_weapon, Attack2ShutdownState);
+		Player(Owner.Player).Refire = 0;
+		return;
+	}
+	org.x = Owner.Origin.x + (Random() - Random()) * 2.0;
+	org.y = Owner.Origin.y + (Random() - Random()) * 2.0;
+	org.z = Owner.Origin.z + 26.0 - sin(Owner.Angles.pitch);
+	org.z -= Owner.FloorClip;
+	A = HereticLevelInfo(Level).Spawn(PhoenixFX2, org);
+	A.Target = Actor(Owner);
+	A.Angles.yaw = Owner.Angles.yaw;
+	A.Angles.pitch = Owner.Angles.pitch;
+	AngleVector(&A.Angles, &dir);
+	A.Velocity = Owner.Velocity + A.Speed * dir;
+	if (!Player(Owner.Player).Refire || !(XLevel.TicTime % 38))
+	{
+		Owner.PlaySound('weapons/phoenixpowshoot', CHAN_WEAPON);
+	}
+	A.CheckMissileSpawn();
+}
+
+//===========================================================================
+//
+//  A_ShutdownPhoenixPL2
+//
+//===========================================================================
+
+final void A_ShutdownPhoenixPL2()
+{
+	DecAmmo(USE_PHRD_AMMO_2);
+}
+
 __states__
 {
+	S_PHOENIXREADY('PHNX', 0, 1.0 / 35.0, S_PHOENIXREADY) = A_WeaponReady
+	S_PHOENIXDOWN('PHNX', 0, 1.0 / 35.0, S_PHOENIXDOWN) = A_Lower
+	S_PHOENIXUP('PHNX', 0, 1.0 / 35.0, S_PHOENIXUP) = A_Raise
+	S_PHOENIXATK1_1('PHNX', 1, 5.0 / 35.0, S_PHOENIXATK1_2) = none
+	S_PHOENIXATK1_2('PHNX', 2, 7.0 / 35.0, S_PHOENIXATK1_3) = A_FirePhoenixPL1
+	S_PHOENIXATK1_3('PHNX', 3, 4.0 / 35.0, S_PHOENIXATK1_4) = none
+	S_PHOENIXATK1_4('PHNX', 1, 4.0 / 35.0, S_PHOENIXATK1_5) = none
+	S_PHOENIXATK1_5('PHNX', 1, 0.0 / 35.0, S_PHOENIXREADY) = A_ReFire
+	S_PHOENIXATK2_1('PHNX', 1, 3.0 / 35.0, S_PHOENIXATK2_2) = A_InitPhoenixPL2
+	S_PHOENIXATK2_2('PHNX', 2 | FF_FULLBRIGHT, 1.0 / 35.0, S_PHOENIXATK2_3) = A_FirePhoenixPL2
+	S_PHOENIXATK2_3('PHNX', 1, 4.0 / 35.0, S_PHOENIXATK2_4) = A_ReFire
+	S_PHOENIXATK2_4('PHNX', 1, 4.0 / 35.0, S_PHOENIXREADY) = A_ShutdownPhoenixPL2
 	S_WPHX('WPHX', 0, -1.0, none) = none
 }
 
 defaultproperties
 {
 	WeaponType = wp_phoenixrod;
-	IdleState = S_WPHX;
+	AmmoType = PhoenixRodAmmo;
+	GetAmmoCount = 2;
+	AmmoUsePL1 = USE_PHRD_AMMO_1;
+	AmmoUsePL2 = USE_PHRD_AMMO_2;
+	PSpriteSY = 15.0;
+	bInShareware = false;
 	PickupMessage = "$txt_wpnphoenixrod";
+	IdleState = S_WPHX;
+	UpState = S_PHOENIXUP;
+	DownState = S_PHOENIXDOWN;
+	ReadyState = S_PHOENIXREADY;
+	AttackState = S_PHOENIXATK1_1;
+	HoldAttackState = S_PHOENIXATK1_1;
+	UpState2 = S_PHOENIXUP;
+	DownState2 = S_PHOENIXDOWN;
+	ReadyState2 = S_PHOENIXREADY;
+	AttackState2 = S_PHOENIXATK2_1;
+	HoldAttackState2 = S_PHOENIXATK2_2;
+	Attack2ShutdownState = S_PHOENIXATK2_4;
 }

@@ -121,22 +121,15 @@
 #include "BrainStem.vc"
 #include "DoomUnusedStates.vc"
 
-#include "WeaponFist.vc"
-#include "WeaponPistol.vc"
-#include "WeaponShotgun.vc"
-#include "WeaponChaingun.vc"
+#include "Fist.vc"
+#include "Pistol.vc"
 #include "Rocket.vc"
-#include "WeaponMissile.vc"
 #include "PlasmaBall.vc"
-#include "WeaponPlasma.vc"
 #include "BFGExtra.vc"
 #include "BFGBall.vc"
-#include "WeaponBFG.vc"
-#include "WeaponChainsaw.vc"
 #ifdef GRENADE_LAUNCHER
 #include "GrenadeLauncher.vc"
 #include "Grenade.vc"
-#include "WeaponGrenade.vc"
 #endif
 
 #include "DoomPlayer.vc"

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class WeaponClericHoly : Weapon;
+class CWeapWraithverge : Weapon;
 
 //============================================================================
 //
@@ -102,10 +102,10 @@ defaultproperties
 {
 	ManaType1 = Mana1;
 	ManaType2 = Mana2;
+	PSpriteSY = 0.0;
 	UpState = S_CHOLYUP;
 	DownState = S_CHOLYDOWN;
 	ReadyState = S_CHOLYREADY;
 	AttackState = S_CHOLYATK_1;
 	HoldAttackState = S_CHOLYATK_1;
-	PSpriteSY = 0.0;
 }

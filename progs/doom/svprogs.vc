@@ -32,6 +32,8 @@ import linespec;
 
 // CONSTANTS ---------------------------------------------------------------
 
+//#define GRENADE_LAUNCHER
+
 enum
 {
 	CONTENTS_EMPTY,

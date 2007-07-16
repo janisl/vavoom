@@ -26,16 +26,50 @@
 class FlameThrower : Weapon
 	__mobjinfo__(2005);
 
+//==========================================================================
+//
+//	A_FireFlamethrower
+//
+//==========================================================================
+
+final void A_FireFlamethrower()
+{
+	EntityEx A;
+
+	Owner.SetState(Actor(Owner).MissileState);
+	DecAmmo(1);
+	Owner.Angles.yaw = AngleMod360(Owner.Angles.yaw +
+		(Random() - Random()) * 45.0 / 8.0);
+	Owner.Player.bFixAngle = true;
+	A = Actor(Owner).SpawnPlayerMissile(FlameMissile);
+	if (A)
+	{
+		A.Velocity.z += 20.0 * 35.0 / 5.0;
+	}
+}
+
 __states__
 {
+	S_FLAME('FLMT', 0, 3.0 / 35.0, S_FLAME01) = A_WeaponReady
+	S_FLAME01('FLMT', 1, 3.0 / 35.0, S_FLAME) = A_WeaponReady
+	S_FLAMEDOWN('FLMT', 0, 1.0 / 35.0, S_FLAMEDOWN) = A_Lower
+	S_FLAMEUP('FLMT', 0, 1.0 / 35.0, S_FLAMEUP) = A_Raise
+	S_FLAME1('FLMF', 0, 2.0 / 35.0, S_FLAME2) = A_FireFlamethrower
+	S_FLAME2('FLMF', 1, 3.0 / 35.0, S_FLAME) = A_ReFire
 	S_FLAME_THROWER('FLAM', 0, -1.0, none) = none
 }
 
 defaultproperties
 {
+	WeaponType = StrifeDefs::wp_flame;
+	AmmoType = EnergyPod;
 	ConversationID = 190;
 	PickupMessage = "$txt_flamer";
-	IdleState = S_FLAME_THROWER;
-	WeaponType = StrifeDefs::wp_flame;
 	Ammo1Count = 100;
+	UpState = S_FLAMEUP;
+	DownState = S_FLAMEDOWN;
+	ReadyState = S_FLAME;
+	AttackState = S_FLAME1;
+	FlashState = S_LIGHTDONE;
+	IdleState = S_FLAME_THROWER;
 }

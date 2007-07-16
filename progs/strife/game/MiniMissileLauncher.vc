@@ -26,16 +26,50 @@
 class MiniMissileLauncher : Weapon
 	__mobjinfo__(2003);
 
+//==========================================================================
+//
+//	A_FireMissile
+//
+//==========================================================================
+
+final void A_FireMissile()
+{
+	float savedangle;
+
+	savedangle = Owner.Angles.yaw;
+	Owner.Angles.yaw = AngleMod360(Owner.Angles.yaw +
+		(Random() - Random()) * 45.0 / 4.0 / itof(1 << (Player(Owner.Player).Accuracy * 5 / 100)));
+	DecAmmo(1);
+	Owner.SetState(Actor(Owner).MissileState);
+	Actor(Owner).SpawnPlayerMissile(MiniMissile);
+	Owner.Angles.yaw = savedangle;
+}
+
 __states__
 {
+	S_MISSILE('MMIS', 0, 1.0 / 35.0, S_MISSILE) = A_WeaponReady
+	S_MISSILEDOWN('MMIS', 0, 1.0 / 35.0, S_MISSILEDOWN) = A_Lower
+	S_MISSILEUP('MMIS', 0, 1.0 / 35.0, S_MISSILEUP) = A_Raise
+	S_MISSILE1('MMIS', 0, 4.0 / 35.0, S_MISSILE2) = A_FireMissile
+	S_MISSILE2('MMIS', 1, 4.0 / 35.0, S_MISSILE3) = A_Light1
+	S_MISSILE3('MMIS', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_MISSILE4) = none
+	S_MISSILE4('MMIS', 3 | FF_FULLBRIGHT, 2.0 / 35.0, S_MISSILE5) = A_Light2
+	S_MISSILE5('MMIS', 4 | FF_FULLBRIGHT, 2.0 / 35.0, S_MISSILE6) = none
+	S_MISSILE6('MMIS', 5 | FF_FULLBRIGHT, 2.0 / 35.0, S_MISSILE7) = A_Light0
+	S_MISSILE7('MMIS', 5, 0.0 / 35.0, S_MISSILE) = A_ReFire
 	S_MISSILE_LAUNCHER('MMSL', 0, -1.0, none) = none
 }
 
 defaultproperties
 {
+	WeaponType = StrifeDefs::wp_missile;
+	AmmoType = MiniMissiles;
 	ConversationID = 192;
 	PickupMessage = "$txt_mmlauncher";
-	IdleState = S_MISSILE_LAUNCHER;
-	WeaponType = StrifeDefs::wp_missile;
 	Ammo1Count = 8;
+	IdleState = S_MISSILE_LAUNCHER;
+	UpState = S_MISSILEUP;
+	DownState = S_MISSILEDOWN;
+	ReadyState = S_MISSILE;
+	AttackState = S_MISSILE1;
 }

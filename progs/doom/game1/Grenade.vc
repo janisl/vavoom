@@ -42,7 +42,7 @@ defaultproperties
 	Speed = 600.0;
 	MissileDamage = 20;
 	bNoGravity = false;
-	bBounce = true;
+	BounceType = BOUNCE_Doom;
 	IdleState = S_GRENADE;
 	DeathState = S_EXPLODE1;
 	SightSound = 'weapons/rocklf';

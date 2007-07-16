@@ -27,14 +27,57 @@ class Chaingun : Weapon
 	__mobjinfo__(2002)
 	__scriptid__(28);
 
+//===========================================================================
+//
+//  A_FireCGun
+//
+//===========================================================================
+
+final void A_FireCGun()
+{
+	TVec dir;
+
+	Owner.PlaySound('weapons/chngun', CHAN_WEAPON);
+
+	if (AmmoType && !EntityEx(Owner).FindInventory(AmmoType).Amount)
+		return;
+
+	Owner.SetState(DoomPlayer::S_PLAY_ATK2);
+	DecAmmo(1);
+
+	if (Owner.Player.ViewStates[ps_weapon].State == Weapon(self).AttackState)
+		Owner.Player.SetViewState(ps_flash, Weapon(self).FlashState);
+	else
+		Owner.Player.SetViewState(ps_flash, S_CHAINFLASH2);
+
+	Actor(Owner).Aim(dir, 16.0 * 64.0);
+	GunShot(Actor(Owner), !Player(Owner.Player).Refire, dir);
+	Owner.Effects |= EF_DL_MUZZLEFLASH;
+}
+
 __states__
 {
+	S_CHAIN('CHGG', 0, 1.0 / 35.0, S_CHAIN) = A_WeaponReady
+	S_CHAINDOWN('CHGG', 0, 1.0 / 35.0, S_CHAINDOWN) = A_Lower
+	S_CHAINUP('CHGG', 0, 1.0 / 35.0, S_CHAINUP) = A_Raise
+	S_CHAIN1('CHGG', 0, 4.0 / 35.0, S_CHAIN2) = A_FireCGun
+	S_CHAIN2('CHGG', 1, 4.0 / 35.0, S_CHAIN3) = A_FireCGun
+	S_CHAIN3('CHGG', 1, 0.0 / 35.0, S_CHAIN) = A_ReFire
+	S_CHAINFLASH1('CHGF', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_LIGHTDONE) = A_Light1
+	S_CHAINFLASH2('CHGF', 1 | FF_FULLBRIGHT, 5.0 / 35.0, S_LIGHTDONE) = A_Light2
 	S_MGUN('MGUN', 0, -1.0, none) = none
 }
 
 defaultproperties
 {
-	IdleState = S_MGUN;
 	WeaponType = DoomDefs::wp_chaingun;
+	AmmoType = Clip;
+	PlayerModelVersion = 4;
 	PickupMessage = "$gotchaingun";
+	IdleState = S_MGUN;
+	UpState = S_CHAINUP;
+	DownState = S_CHAINDOWN;
+	ReadyState = S_CHAIN;
+	AttackState = S_CHAIN1;
+	FlashState = S_CHAINFLASH1;
 }

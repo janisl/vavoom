@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class WeaponClericMace : Weapon;
+class CWeapMace : Weapon;
 
 //===========================================================================
 //
@@ -86,10 +86,10 @@ __states__
 
 defaultproperties
 {
+	PSpriteSY = -8.0;
 	UpState = S_CMACEUP;
 	DownState = S_CMACEDOWN;
 	ReadyState = S_CMACEREADY;
 	AttackState = S_CMACEATK_1;
 	HoldAttackState = S_CMACEATK_1;
-	PSpriteSY = -8.0;
 }

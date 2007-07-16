@@ -27,14 +27,78 @@ class Chainsaw : Weapon
 	__mobjinfo__(2005)
 	__scriptid__(32);
 
+//===========================================================================
+//
+//  A_Saw
+//
+//===========================================================================
+
+final void A_Saw()
+{
+	float		angle;
+	int			damage;
+	TAVec		aimAng;
+	TVec		dir;
+	EntityEx	AimTarget;
+
+	damage = 2 * (P_Random() % 10 + 1);
+	aimAng = Owner.Angles;
+	aimAng.yaw = AngleMod360(aimAng.yaw + (Random() -
+		Random()) * 45.0 / 8.0);
+
+	// use meleerange + 1 se the puff doesn't skip the flash
+	AimTarget = Actor(Owner).AimLineAttack(dir, aimAng, Actor::MELEERANGE + 0.00001);
+	Actor(Owner).LineAttack(dir, Actor::MELEERANGE + 0.00001, damage, BulletPuff);
+
+	if (!AimTarget)
+	{
+		Owner.PlaySound('weapons/sawfull', CHAN_WEAPON);
+		return;
+	}
+	Owner.PlaySound('weapons/sawhit', CHAN_WEAPON);
+
+	// turn to face target
+	angle = atan2(AimTarget.Origin.y - Owner.Origin.y,
+		AimTarget.Origin.x - Owner.Origin.x);
+	if (AngleMod360(angle - Owner.Angles.yaw) > 180.0)
+	{
+		if (AngleMod360(angle - Owner.Angles.yaw) < -90.0 / 20.0)
+			Owner.Angles.yaw = angle + 90.0 / 21.0;
+		else
+			Owner.Angles.yaw = Owner.Angles.yaw - 90.0 / 20.0;
+	}
+	else
+	{
+		if (AngleMod360(angle - Owner.Angles.yaw) > 90.0 / 20.0)
+			Owner.Angles.yaw = angle - 90.0 / 21.0;
+		else
+			Owner.Angles.yaw += 90.0 / 20.0;
+	}
+	Owner.Angles.yaw = AngleMod360(Owner.Angles.yaw);
+	Actor(Owner).bJustAttacked = true;
+	Owner.Player.bFixAngle = true;
+}
+
 __states__
 {
+	S_SAW('SAWG', 2, 4.0 / 35.0, S_SAWB) = A_WeaponReady
+	S_SAWB('SAWG', 3, 4.0 / 35.0, S_SAW) = A_WeaponReady
+	S_SAWDOWN('SAWG', 2, 1.0 / 35.0, S_SAWDOWN) = A_Lower
+	S_SAWUP('SAWG', 2, 1.0 / 35.0, S_SAWUP) = A_Raise
+	S_SAW1('SAWG', 0, 4.0 / 35.0, S_SAW2) = A_Saw
+	S_SAW2('SAWG', 1, 4.0 / 35.0, S_SAW3) = A_Saw
+	S_SAW3('SAWG', 1, 0.0 / 35.0, S_SAW) = A_ReFire
 	S_CSAW('CSAW', 0, -1.0, none) = none
 }
 
 defaultproperties
 {
-	IdleState = S_CSAW;
 	WeaponType = DoomDefs::wp_chainsaw;
+	PlayerModelVersion = 8;
 	PickupMessage = "$gotchainsaw";
+	IdleState = S_CSAW;
+	UpState = S_SAWUP;
+	DownState = S_SAWDOWN;
+	ReadyState = S_SAW;
+	AttackState = S_SAW1;
 }

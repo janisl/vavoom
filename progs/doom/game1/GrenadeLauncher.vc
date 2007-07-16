@@ -23,18 +23,77 @@
 //**
 //**************************************************************************
 
-class GrenadeLauncher : WeaponPickup
+class GrenadeLauncher : Weapon
 	__mobjinfo__(90);
+
+//===========================================================================
+//
+//  A_FireGrenade
+//
+//===========================================================================
+
+final void A_FireGrenade()
+{
+	Actor A;
+
+	DecAmmo(1);
+
+	A = Spawn(Grenade, Player.MO.Origin + vector(0.0, 0.0, 32.0));
+
+	if (A.SightSound)
+		A.PlaySound(A.SightSound, CHAN_VOICE);
+
+	A.Target = EntityEx(Player.MO);
+
+	//  See which target is to be aimed at
+	if (Player.MO.Angles.pitch)
+	{
+		TVec v_forward;
+		TVec v_right;
+		TVec v_up;
+
+		AngleVectors(&Player.MO.Angles, &v_forward, &v_right, &v_up);
+		A.Velocity = v_forward * A.Speed + v_up * A.Speed / 3.0 +
+			((Random() - 0.5) * 20.0) * v_right +
+			((Random() - 0.5) * 20.0) * v_up;
+	}
+	else
+	{
+		EntityEx(Player.MO).Aim(A.Velocity, 16.0 * 64.0);
+		A.Velocity = A.Velocity * A.Speed;
+		A.Velocity.z = A.Speed / 3.0;
+	}
+	VectorAngles(&A.Velocity, &A.Angles);
+
+	A.CheckMissileSpawn();
+}
 
 __states__
 {
+	//  Weapon in player view
+	S_GRENLAUNCH('GRLG', 0, 1.0 / 35.0, S_GRENLAUNCH) = A_WeaponReady
+	S_GRENLAUNCHDOWN('GRLG', 0, 1.0 / 35.0, S_GRENLAUNCHDOWN) = A_Lower
+	S_GRENLAUNCHUP('GRLG', 0, 1.0 / 35.0, S_GRENLAUNCHUP) = A_Raise
+	S_GRENLAUNCH1('GRLG', 1, 8.0 / 35.0, S_GRENLAUNCH2) = A_GunFlash
+	S_GRENLAUNCH2('GRLG', 1, 12.0 / 35.0, S_GRENLAUNCH3) = A_FireGrenade
+	S_GRENLAUNCH3('GRLG', 1, 0.0 / 35.0, S_GRENLAUNCH) = A_ReFire
+	S_GRENLAUNCHFLASH1('GRLF', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_GRENLAUNCHFLASH2) = A_Light1
+	S_GRENLAUNCHFLASH2('GRLF', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_GRENLAUNCHFLASH3) = none
+	S_GRENLAUNCHFLASH3('GRLF', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_GRENLAUNCHFLASH4) = A_Light2
+	S_GRENLAUNCHFLASH4('GRLF', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_LIGHTDONE) = A_Light2
 	//  Weapon on ground
 	S_GLAUNCH('GLAU', 0, -1.0, none) = none
 }
 
 defaultproperties
 {
-	IdleState = S_GLAUNCH;
-	WeaponType = wp_grenade;
+	WeaponType = DoomDefs::wp_grenade;
+	AmmoType = RocketAmmo;
 	PickupMessage = "Piched up a grenade launcher";
+	IdleState = S_GLAUNCH;
+	UpState = S_GRENLAUNCHUP;
+	DownState = S_GRENLAUNCHDOWN;
+	ReadyState = S_GRENLAUNCH;
+	AttackState = S_GRENLAUNCH1;
+	FlashState = S_GRENLAUNCHFLASH1;
 }

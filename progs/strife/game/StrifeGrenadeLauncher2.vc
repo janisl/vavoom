@@ -23,37 +23,15 @@
 //**
 //**************************************************************************
 
-class WeaponMageWand : Weapon;
-
-//==========================================================================
-//
-//  A_MWandAttack
-//
-//==========================================================================
-
-final void A_MWandAttack()
-{
-	Actor(Owner).SpawnPlayerMissile(MageWandMissile);
-	Owner.PlaySound('MageWandFire', CHAN_WEAPON);
-}
-
-__states__
-{
-	S_MWANDREADY('MWND', 0, 1.0 / 35.0, S_MWANDREADY) = A_WeaponReady
-	S_MWANDDOWN('MWND', 0, 1.0 / 35.0, S_MWANDDOWN) = A_Lower
-	S_MWANDUP('MWND', 0, 1.0 / 35.0, S_MWANDUP) = A_Raise
-	S_MWANDATK_1('MWND', 0, 6.0 / 35.0, S_MWANDATK_2) = none
-	S_MWANDATK_2('MWND', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_MWANDATK_3, 0, 48) = A_MWandAttack
-	S_MWANDATK_3('MWND', 0, 3.0 / 35.0, S_MWANDATK_4, 0, 40) = none
-	S_MWANDATK_4('MWND', 0, 3.0 / 35.0, S_MWANDREADY, 0, 36) = A_ReFire
-}
+class StrifeGrenadeLauncher2 : StrifeGrenadeLauncher;
 
 defaultproperties
 {
-	UpState = S_MWANDUP;
-	DownState = S_MWANDDOWN;
-	ReadyState = S_MWANDREADY;
-	AttackState = S_MWANDATK_1;
-	HoldAttackState = S_MWANDATK_1;
-	PSpriteSY = 9.0;
+	AmmoType = PhosphorusGrenadeRounds;
+	UpState = S_GRENADEHIGHUP;
+	DownState = S_GRENADEHIGHDOWN;
+	ReadyState = S_GRENADEHIGH;
+	AttackState = S_GRENADEHIGH1;
+	FlashState = S_GRENADEHIGHFLASH1;
+	FlashState2 = S_GRENADEHIGHFLASH3;
 }
