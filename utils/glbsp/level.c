@@ -340,7 +340,7 @@ void GetThings(void)
   {
     // Note: no error if no things exist, even though technically a map
     // will be unplayable without the player starts.
-    PrintWarn("Couldn't find any Things");
+    PrintWarn("Couldn't find any Things!\n");
     return;
   }
 
@@ -382,7 +382,7 @@ void GetThingsHexen(void)
   {
     // Note: no error if no things exist, even though technically a map
     // will be unplayable without the player starts.
-    PrintWarn("Couldn't find any Things");
+    PrintWarn("Couldn't find any Things!\n");
     return;
   }
 
@@ -1524,7 +1524,7 @@ void SaveZDFormat(node_t *root_node)
 //
 void LoadLevel(void)
 {
-  char message[256];
+  char *message;
 
   const char *level_name = GetLevelName();
 
@@ -1537,13 +1537,12 @@ void LoadLevel(void)
   lev_doing_hexen = (FindLevelLump("BEHAVIOR") != NULL);
 
   if (lev_doing_normal)
-    sprintf(message, "Building normal and GL nodes on %s", level_name);
+    message = UtilFormat("Building normal and GL nodes on %s%s",
+        level_name, lev_doing_hexen ? " (Hexen)" : "");
   else
-    sprintf(message, "Building GL nodes on %s", level_name);
+    message = UtilFormat("Building GL nodes on %s%s",
+        level_name, lev_doing_hexen ? " (Hexen)" : "");
  
-  if (lev_doing_hexen)
-    strcat(message, " (Hexen)");
-
   lev_doing_hexen |= cur_info->force_hexen;
 
   DisplaySetBarText(1, message);
@@ -1551,6 +1550,8 @@ void LoadLevel(void)
   PrintVerbose("\n\n");
   PrintMsg("%s\n", message);
   PrintVerbose("\n");
+
+  UtilFree(message);
 
   GetVertices();
   GetSectors();
@@ -1637,7 +1638,7 @@ void PutGLChecksum(void)
 {
   uint32_g crc;
   lump_t *lump;
-  char num_buf[32];
+  char num_buf[64];
 
   Adler32_Begin(&crc);
 
@@ -1653,7 +1654,7 @@ void PutGLChecksum(void)
 
   Adler32_Finish(&crc);
 
-  sprintf(num_buf, "0x%08x", crc);
+  snprintf(num_buf, sizeof(num_buf), "0x%08x", crc);
 
   AddGLTextLine("CHECKSUM", num_buf);
 }
@@ -1763,9 +1764,13 @@ void SaveLevel(node_t *root_node)
   // keyword support (v5.0 of the specs)
   AddGLTextLine("BUILDER", "glBSP " GLBSP_VER);
   {
-    const char *time_str = UtilTimeString();
+    char *time_str = UtilTimeString();
+
     if (time_str)
+    {
       AddGLTextLine("TIME", time_str);
+      UtilFree(time_str);
+    }
   }
 
   // this must be done _after_ the normal nodes have been built,

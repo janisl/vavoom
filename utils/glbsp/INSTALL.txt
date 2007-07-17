@@ -32,7 +32,7 @@ just copy the glbsp (or glBSPX) executable where you want it.
 Command-line glBSP
 ------------------
 
-Unix/Linux: make
+Unix/Linux: make -f Makefile.unx
 MacOS X:    make -f Makefile.osx
 
 MSDOS with DJGPP: make -f Makefile.dj
@@ -77,6 +77,16 @@ MacOS X:    make -f GUI_osx.mak
 Windows with MinGW: mingw32-make -f GUI_w32.mak
 
 Windows with Dev-C++: open the GUI.dev project file.
+
+
+CVS Users
+---------
+
+The source checked out of CVS does not contain the autoconf configure
+script and several files that it needs.  You will need automake and
+autoconf to generate them, like this:
+
+    make -f Makefile.cvs
 
 
 Building FLTK 1.1.6

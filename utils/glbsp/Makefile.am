@@ -29,9 +29,11 @@ libglbsp_a_SOURCES = \
 	wad.c      \
 	wad.h
 EXTRA_DIST = \
+	AUTHORS.txt \
 	CHANGES.txt \
 	COPYING.txt \
 	INSTALL.txt \
 	README.txt \
 	TODO.txt \
+	TRICKS.txt \
 	USAGE.txt

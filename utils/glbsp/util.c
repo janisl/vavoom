@@ -32,7 +32,7 @@
 #include "util.h"
 
 #ifdef WIN32
-#include <Windows.h>
+#include <windows.h>
 #else
 #include <time.h>
 #endif
@@ -124,6 +124,38 @@ char *UtilStrNDup(const char *str, int size)
   return result;
 }
 
+char *UtilFormat(const char *str, ...)
+{
+  /* Algorithm: keep doubling the allocated buffer size
+   * until the output fits. Based on code by Darren Salt.
+   */
+  char *buf = NULL;
+  int buf_size = 128;
+  
+  for (;;)
+  {
+    va_list args;
+    int out_len;
+
+    buf_size *= 2;
+
+    buf = realloc(buf, buf_size);
+    if (!buf)
+      FatalError("Out of memory (formatting string)");
+
+    va_start(args, str);
+    out_len = vsnprintf(buf, buf_size, str, args);
+    va_end(args);
+
+    // old versions of vsnprintf() simply return -1 when
+    // the output doesn't fit.
+    if (out_len < 0 || out_len >= buf_size)
+      continue;
+
+    return buf;
+  }
+}
+
 int UtilStrCaseCmp(const char *A, const char *B)
 {
   for (; *A || *B; A++, B++)
@@ -199,30 +231,24 @@ int UtilFileExists(const char *filename)
 //
 // UtilTimeString
 //
-const char *UtilTimeString(void)
+char *UtilTimeString(void)
 {
 #ifdef WIN32
 
   SYSTEMTIME sys_time;
 
-  static char str_buf[200];
-
   GetSystemTime(&sys_time);
 
-  sprintf(str_buf, "%04d-%02d-%02d %02d:%02d:%02d.%04d",
+  return UtilFormat("%04d-%02d-%02d %02d:%02d:%02d.%04d",
       sys_time.wYear, sys_time.wMonth, sys_time.wDay,
       sys_time.wHour, sys_time.wMinute, sys_time.wSecond,
       sys_time.wMilliseconds * 10);
-
-  return str_buf;
 
 #else // LINUX or MACOSX
 
   time_t epoch_time;
   struct tm *calend_time;
 
-  static char str_buf[200];
- 
   if (time(&epoch_time) == (time_t)-1)
     return NULL;
 
@@ -230,14 +256,11 @@ const char *UtilTimeString(void)
   if (! calend_time)
     return NULL;
 
-  sprintf(str_buf, "%04d-%02d-%02d %02d:%02d:%02d.%04d",
+  return UtilFormat("%04d-%02d-%02d %02d:%02d:%02d.%04d",
       calend_time->tm_year + 1900, calend_time->tm_mon + 1,
       calend_time->tm_mday,
       calend_time->tm_hour, calend_time->tm_min,
       calend_time->tm_sec,  0);
-
-  return str_buf;
-
 #endif  
 }
 

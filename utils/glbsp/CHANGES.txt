@@ -2,6 +2,24 @@
 CHANGELOG
 =========
 
+Changes in V2.22  (XX May 2007)
+-------------------------------
+
+ - level name detection: allow some variation in the order of
+   the level lumps (thanks to Darren Salt for the patch).
+
+ - fixed potential crash in GlbspParseArgs and GlbspCheckInfo
+   (it depends on the compiler).
+ 
+ - avoid some potential buffer overflows in printf calls.
+
+ - added TRICKS.txt document to source package which describes
+   various map tricks and how glBSP handles them.
+ 
+ - improved directory layout, with main glbsp code in the 'src'
+   directory.
+ 
+
 Changes in V2.20  (14th September 2005)
 ---------------------------------------
 
@@ -49,7 +67,7 @@ Changes in V2.20  (14th September 2005)
  - added code to detect the 'One-Sided Window' effect, where a
    one-sided linedef can be looked through from behind (e.g. MAP07
    in 10SECTO2.WAD).  When found, a miniseg is added along the back
-   side of the wall.
+   side of the wall.  Based on an idea by Graham Jackson.
 
  - fixed a bug with the overlapping linedef detection.
 

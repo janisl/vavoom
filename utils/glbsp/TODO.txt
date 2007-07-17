@@ -2,11 +2,14 @@
 TODO
 ====
 
++  fix all the makefiles / project files for the new
+   directory layout.
 
-LATER / IDEAS
-=============
+   Especially: always build code in 'src' as libglbsp.a
+   and make the cmdline and gui binaries link to that.
 
--  simplify callback interface.
--  Autoconf / Automake.
--  MacOS X: Project builder setup for glBSPX.
+   >> make xming makefiles (cmdline and GUI)
+
+   >> move outdated makefiles/projects into 'old' dir
+
 

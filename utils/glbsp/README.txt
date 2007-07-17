@@ -15,8 +15,8 @@ very easy for an OpenGL DOOM engine to compute the polygons needed for
 drawing the levels.
 
 There are many DOOM ports that understand the GL Nodes which glBSP
-creates, including: EDGE, Doomsday (JDOOM), ZDoomGL, Vavoom, Doom3D
-and PrBoom.  See the links below.
+creates, including: EDGE, Doomsday (JDOOM), PrBoom, Vavoom, ZDoomGL,
+Legacy 2.0, and Doom3D.  See the links below.
 
 
 Status
@@ -75,17 +75,20 @@ The EDGE homepage can be found here:
 The DoomsDay (JDOOM) homepage is here:
    http://www.doomsdayhq.com/
 
-ZDoomGL is known to hang out around here:
-   http://zdoomgl.mancubus.net/
+Look here for PrBOOM:
+   http://prboom.sourceforge.net/
+
+Legacy info can be found here:
+   http://legacy.newdoom.com/
 
 The Vavoom site is here:
    http://www.vavoom-engine.com/
 
+ZDoomGL is known to hang out around here:
+   http://zdoomgl.mancubus.net/
+
 The Doom3D site can be found here:
    http://doomworld.com/doom3d/
-
-Look here for PrBOOM:
-   http://prboom.sourceforge.net/
 
 
 Acknowledgements
@@ -99,6 +102,8 @@ Lee Killough and André Majorel, for giving their permission to put
 glBSP under the GNU GPL.
 
 Janis Legzdinsh for fixing many problems with Hexen wads.
+
+Darren Salt has sent in numerous patches.
 
 Jaakko Keränen, who gave some useful feedback on the "GL Friendly
 Nodes" specification.

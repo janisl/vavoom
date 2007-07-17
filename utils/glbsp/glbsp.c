@@ -42,8 +42,6 @@ const nodebuildinfo_t *cur_info = NULL;
 const nodebuildfuncs_t *cur_funcs = NULL;
 volatile nodebuildcomms_t *cur_comms = NULL;
 
-static char glbsp_message_buf[1024];
-
 
 const nodebuildinfo_t default_buildinfo =
 {
@@ -139,7 +137,7 @@ glbsp_ret_e GlbspParseArgs(nodebuildinfo_t *info,
   int got_output = FALSE;
 
   cur_comms = comms;
-  SetErrorMsg(NULL);
+  SetErrorMsg("(Unknown Problem)");
 
   while (argc > 0)
   {
@@ -292,8 +290,7 @@ glbsp_ret_e GlbspParseArgs(nodebuildinfo_t *info,
     // The -hexen option is only kept for backwards compatibility
     HANDLE_BOOLEAN("hexen", force_hexen)
 
-    sprintf(glbsp_message_buf, "Unknown option: %s", argv[0]);
-    SetErrorMsg(glbsp_message_buf);
+    SetErrorMsg("Unknown option: %s", argv[0]);
 
     cur_comms = NULL;
     return GLBSP_E_BadArgs;
@@ -307,7 +304,7 @@ glbsp_ret_e GlbspCheckInfo(nodebuildinfo_t *info,
     volatile nodebuildcomms_t *comms)
 {
   cur_comms = comms;
-  SetErrorMsg(NULL);
+  SetErrorMsg("(Unknown Problem)");
 
   info->same_filenames = FALSE;
   info->missing_output = FALSE;
@@ -477,7 +474,7 @@ static glbsp_ret_e HandleLevel(void)
 glbsp_ret_e GlbspBuildNodes(const nodebuildinfo_t *info,
     const nodebuildfuncs_t *funcs, volatile nodebuildcomms_t *comms)
 {
-  char strbuf[256];
+  char *file_msg;
 
   glbsp_ret_e ret = GLBSP_E_OK;
 
@@ -531,12 +528,14 @@ glbsp_ret_e GlbspBuildNodes(const nodebuildinfo_t *info,
   DisplayOpen(DIS_BUILDPROGRESS);
   DisplaySetTitle("glBSP Build Progress");
 
-  sprintf(strbuf, "File: %s", cur_info->input_file);
+  file_msg = UtilFormat("File: %s", cur_info->input_file);
  
-  DisplaySetBarText(2, strbuf);
+  DisplaySetBarText(2, file_msg);
   DisplaySetBarLimit(2, CountLevels() * 10);
   DisplaySetBar(2, 0);
 
+  UtilFree(file_msg);
+  
   cur_comms->file_pos = 0;
   
   // loop over each level in the wad

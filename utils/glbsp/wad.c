@@ -117,6 +117,7 @@ static int CheckLevelName(const char *name)
 // CheckLevelLumpName
 //
 // Tests if the entry name is one of the level lumps.
+// Returns index after header (1..N), or zero if no match.
 //
 static int CheckLevelLumpName(const char *name)
 {
@@ -125,10 +126,10 @@ static int CheckLevelLumpName(const char *name)
   for (i=0; i < NUM_LEVEL_LUMPS; i++)
   {
     if (strcmp(name, level_lumps[i]) == 0)
-      return TRUE;
+      return 1 + i;
   }
-  
-  return FALSE;
+ 
+  return 0;
 }
 
 
@@ -260,25 +261,22 @@ static int ReadHeader(const char *filename)
 {
   size_t len;
   raw_wad_header_t header;
-  char strbuf[1024];
 
   len = fread(&header, sizeof(header), 1, in_file);
 
   if (len != 1)
   {
-    sprintf(strbuf, "Trouble reading wad header for %s [%s]", 
+    SetErrorMsg("Trouble reading wad header for %s [%s]", 
       filename, strerror(errno));
 
-    SetErrorMsg(strbuf);
     return FALSE;
   }
 
   if (! CheckMagic(header.type))
   {
-    sprintf(strbuf, "%s does not appear to be a wad file (bad magic)", 
+    SetErrorMsg("%s does not appear to be a wad file (bad magic)", 
         filename);
 
-    SetErrorMsg(strbuf);
     return FALSE;
   }
 
@@ -345,12 +343,23 @@ static void DetermineLevelNames(void)
 
   for (L=wad.dir_head; L; L=L->next)
   {
+    int matched = 0;
+
+    // skip known lumps (these are never valid level names)
+    if (CheckLevelLumpName(L->name))
+      continue;
+
     // check if the next four lumps after the current lump match the
-    // level-lump names.
-    //
+    // level-lump names. Order doesn't matter, but repeats do.
     for (i=0, N=L->next; (i < 4) && N; i++, N=N->next)
-      if (strcmp(N->name, level_lumps[i]) != 0)
+    {
+      int idx = CheckLevelLumpName(N->name);
+
+      if (!idx || idx > 8 /* SECTORS */ || (matched & (1<<idx)))
         break;
+
+      matched |= (1<<idx);
+    }
 
     if (i != 4)
       continue;
@@ -362,7 +371,7 @@ static void DetermineLevelNames(void)
     // check for duplicate levels (ignored)
     if (CheckLevelName(L->name))
     {
-      PrintWarn("Level name '%s' found twice in wad\n", L->name);
+      PrintWarn("Level name '%s' found twice in wad - Skipped\n", L->name);
       continue;
     }
 
@@ -672,12 +681,12 @@ lump_t *CreateGLMarker(void)
   lump_t *level = wad.current_level;
   lump_t *cur;
 
-  char name_buf[16];
+  char name_buf[32];
   boolean_g long_name = FALSE;
 
   if (strlen(level->name) <= 5)
   {
-    sprintf(name_buf, "GL_%s", level->name);
+    snprintf(name_buf, sizeof(name_buf), "GL_%s", level->name);
   }
   else
   {
@@ -824,7 +833,7 @@ static void WriteLumpData(lump_t *lump)
 # endif
   
   if (ftell(out_file) != lump->new_start)
-    PrintWarn("Consistency failure writing %s (%08X, %08X\n", 
+    PrintWarn("Consistency failure writing %s (%08lX, %08X\n", 
       lump->name, ftell(out_file), lump->new_start);
  
   if (lump->length == 0)
@@ -929,7 +938,7 @@ static int WriteDirectory(void)
   
   if (ftell(out_file) != wad.dir_start)
     PrintWarn("Consistency failure writing lump directory "
-      "(%08X,%08X)\n", ftell(out_file), wad.dir_start);
+      "(%08lX,%08X)\n", ftell(out_file), wad.dir_start);
 
   for (cur=wad.dir_head; cur; cur=cur->next)
   {
@@ -1253,7 +1262,7 @@ int CheckLevelLumpZero(lump_t *lump)
 glbsp_ret_e ReadWadFile(const char *filename)
 {
   int check;
-  char strbuf[1024];
+  char *read_msg;
 
   // open input wad file & read header
   in_file = fopen(filename, "rb");
@@ -1261,12 +1270,10 @@ glbsp_ret_e ReadWadFile(const char *filename)
   if (! in_file)
   {
     if (errno == ENOENT)
-      sprintf(strbuf, "Cannot open WAD file: %s", filename); 
+      SetErrorMsg("Cannot open WAD file: %s", filename); 
     else
-      sprintf(strbuf, "Cannot open WAD file: %s [%s]", filename, 
+      SetErrorMsg("Cannot open WAD file: %s [%s]", filename, 
           strerror(errno));
-
-    SetErrorMsg(strbuf);
 
     return GLBSP_E_ReadError;
   }
@@ -1288,11 +1295,13 @@ glbsp_ret_e ReadWadFile(const char *filename)
   DisplayOpen(DIS_FILEPROGRESS);
   DisplaySetTitle("glBSP Reading Wad");
   
-  sprintf(strbuf, "Reading: %s", filename);
+  read_msg = UtilFormat("Reading: %s", filename);
 
-  DisplaySetBarText(1, strbuf);
+  DisplaySetBarText(1, read_msg);
   DisplaySetBarLimit(1, CountLumpTypes(LUMP_READ_ME, LUMP_READ_ME));
   DisplaySetBar(1, 0);
+
+  UtilFree(read_msg);
 
   cur_comms->file_pos = 0;
 
@@ -1317,7 +1326,7 @@ glbsp_ret_e ReadWadFile(const char *filename)
 glbsp_ret_e WriteWadFile(const char *filename)
 {
   int check1, check2;
-  char strbuf[1024];
+  char *write_msg;
 
   PrintMsg("\n");
   PrintMsg("Saving WAD as %s\n", filename);
@@ -1332,10 +1341,8 @@ glbsp_ret_e WriteWadFile(const char *filename)
 
   if (! out_file)
   {
-    sprintf(strbuf, "Cannot create WAD file: %s [%s]", filename,
+    SetErrorMsg("Cannot create WAD file: %s [%s]", filename,
         strerror(errno));
-
-    SetErrorMsg(strbuf);
 
     return GLBSP_E_WriteError;
   }
@@ -1345,11 +1352,13 @@ glbsp_ret_e WriteWadFile(const char *filename)
   DisplayOpen(DIS_FILEPROGRESS);
   DisplaySetTitle("glBSP Writing Wad");
   
-  sprintf(strbuf, "Writing: %s", filename);
+  write_msg = UtilFormat("Writing: %s", filename);
 
-  DisplaySetBarText(1, strbuf);
+  DisplaySetBarText(1, write_msg);
   DisplaySetBarLimit(1, CountLumpTypes(LUMP_IGNORE_ME, 0));
   DisplaySetBar(1, 0);
+
+  UtilFree(write_msg);
 
   cur_comms->file_pos = 0;
 
@@ -1563,7 +1572,7 @@ void ReportOneOverflow(const lump_t *lump, int limit, boolean_g hard)
     case LIMIT_VERTEXES: PrintMsg("Number of Vertices %s.\n", msg); break;
     case LIMIT_SECTORS:  PrintMsg("Number of Sectors %s.\n", msg); break;
     case LIMIT_SIDEDEFS: PrintMsg("Number of Sidedefs %s\n", msg); break;
-    case LIMIT_LINEDEFS: PrintMsg("Number of Linedefs\n", msg); break;
+    case LIMIT_LINEDEFS: PrintMsg("Number of Linedefs %s\n", msg); break;
 
     case LIMIT_SEGS:     PrintMsg("Number of Segs %s.\n", msg); break;
     case LIMIT_SSECTORS: PrintMsg("Number of Subsectors %s.\n", msg); break;
@@ -1633,12 +1642,12 @@ void ReportV5Switches(void)
 {
   lump_t *cur;
 
-  int saw_zdbsp = FALSE;
-
   PrintMsg(
     "V5 FORMAT UPGRADES.  The following levels require a Doom port\n"
     "which supports V5 GL-Nodes, otherwise they will fail (or crash).\n\n"
   );
+
+  int saw_zdbsp = FALSE;
 
   for (cur=wad.dir_head; cur; cur=cur->next)
   {
