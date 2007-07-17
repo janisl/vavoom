@@ -362,7 +362,7 @@ void SpawnPlayer(mthing_t * mthing)
 	float x;
 	float y;
 	float z;
-	Actor PP;
+	DoomPlayer PP;
 	bool ResetInventory = false;
 	Inventory Item;
 
@@ -417,13 +417,27 @@ void SpawnPlayer(mthing_t * mthing)
 		{
 			PP.Inventory.Destroy();
 		}
-		GiveAmmo(Clip, 0);
-		PP.FindInventory(Clip).Amount = MainGameInfo(Level.Game).INITIAL_AMMO;
-
-		WeaponOwned[DoomDefs::wp_fist] = Level.Spawn(Fist);
-		WeaponOwned[DoomDefs::wp_fist].AttachToOwner(PP);
-		WeaponOwned[DoomDefs::wp_pistol] = Level.Spawn(Pistol);
-		WeaponOwned[DoomDefs::wp_pistol].AttachToOwner(PP);
+		for (i = 0; i < PP.InitialInventory.Num; i++)
+		{
+			Item = Level.Spawn(PP.InitialInventory[i].Type);
+			if (PP.InitialInventory[i].Amount)
+			{
+				//	Temporary hack for Dehacked support.
+				if (PP.InitialInventory[i].Type == Clip)
+				{
+					Item.Amount = MainGameInfo(Level.Game).INITIAL_AMMO;
+				}
+				else
+				{
+					Item.Amount = PP.InitialInventory[i].Amount;
+				}
+			}
+			Item.AttachToOwner(PP);
+			if (WeaponEx(Item))
+			{
+				WeaponOwned[WeaponEx(Item).WeaponType] = WeaponEx(Item);
+			}
+		}
 		SetWeapon(DoomDefs::wp_pistol);
 	}
 

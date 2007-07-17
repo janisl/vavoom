@@ -25,6 +25,14 @@
 
 class DoomPlayer : Actor;
 
+struct InitInvInfo
+{
+	class<Inventory>	Type;
+	int					Amount;
+};
+
+array<InitInvInfo>		InitialInventory;
+
 //==========================================================================
 //
 //  A_PlayerScream
@@ -107,4 +115,9 @@ defaultproperties
 	GibsDeathState = S_PLAY_XDIE1;
 	PainSound = '*pain100';
 	DeathSound = '*death';
+
+	InitialInventory.Num = 3;
+	InitialInventory[0].Type = Clip; InitialInventory[0].Amount = 50;
+	InitialInventory[1].Type = Fist;
+	InitialInventory[2].Type = Pistol;
 }

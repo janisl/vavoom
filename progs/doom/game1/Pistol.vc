@@ -61,6 +61,7 @@ __states__
 
 defaultproperties
 {
+	WeaponType = DoomDefs::wp_pistol;
 	AmmoType = Clip;
 	UpState = S_PISTOLUP;
 	DownState = S_PISTOLDOWN;
