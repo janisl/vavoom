@@ -99,7 +99,10 @@ bool TryPickup(EntityEx Toucher)
 	if (Player(Toucher.Player).Pieces == (WPIECE1 | WPIECE2 | WPIECE3))
 	{
 		gaveWeapon = true;
-		Player(Toucher.Player).WeaponOwned[HexenDefs::WP_FOURTH] = true;
+		Player(Toucher.Player).WeaponOwned[HexenDefs::WP_FOURTH] = Level.Spawn(
+			MainGameInfo(Level.Game).WeaponClasses[HexenDefs::WP_FOURTH * HexenDefs::NUMCLASSES +
+			Toucher.Player.PClass]);
+		Player(Toucher.Player).WeaponOwned[HexenDefs::WP_FOURTH].AttachToOwner(Toucher);
 		Player(Toucher.Player).PendingWeapon = HexenDefs::WP_FOURTH;
 	}
 	GoAwayAndDie();

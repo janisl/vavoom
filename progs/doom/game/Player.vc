@@ -58,7 +58,7 @@ int Keys;
 // Refired shots are less accurate.
 int Refire;
 
-bool WeaponOwned[DoomDefs::NUMWEAPONS];
+WeaponEx WeaponOwned[DoomDefs::NUMWEAPONS];
 
 int ReadyWeapon;
 
@@ -81,7 +81,7 @@ int SBFlags;
 float sb_facetime;
 
 // used for evil grin
-bool sb_oldweaponsowned[DoomDefs::NUMWEAPONS];
+WeaponEx sb_oldweaponsowned[DoomDefs::NUMWEAPONS];
 
 // used to use appopriately pained face
 int sb_oldhealth;
@@ -420,6 +420,10 @@ void SpawnPlayer(mthing_t * mthing)
 		GiveAmmo(Clip, 0);
 		PP.FindInventory(Clip).Amount = MainGameInfo(Level.Game).INITIAL_AMMO;
 
+		WeaponOwned[DoomDefs::wp_fist] = Level.Spawn(Fist);
+		WeaponOwned[DoomDefs::wp_fist].AttachToOwner(PP);
+		WeaponOwned[DoomDefs::wp_pistol] = Level.Spawn(Pistol);
+		WeaponOwned[DoomDefs::wp_pistol].AttachToOwner(PP);
 		SetWeapon(DoomDefs::wp_pistol);
 	}
 
@@ -465,8 +469,6 @@ void PlayerReborn()
 	bAttackDown = true;
 	PlayerState = PST_LIVE;
 	Health = MainGameInfo(Level.Game).INITIAL_HEALTH;
-	WeaponOwned[DoomDefs::wp_fist] = true;
-	WeaponOwned[DoomDefs::wp_pistol] = true;
 	LocalQuakeHappening = 0;
 }
 
@@ -2045,13 +2047,7 @@ void SetWeapon(int NewWeapon)
 {
 	ReadyWeapon = NewWeapon;
 	PendingWeapon = DoomDefs::wp_nochange;
-	if (ViewEnt)
-	{
-		ViewEnt.Destroy();
-	}
-	ViewEnt = DoomLevelInfo(Level).Spawn(
-		MainGameInfo(Level.Game).WeaponClasses[NewWeapon], vector(0.0, 0.0, 0.0));
-	WeaponEx(ViewEnt).AttachToOwner(EntityEx(MO));
+	ViewEnt = WeaponOwned[ReadyWeapon];
 	MO.ModelVersion = WeaponEx(ViewEnt).PlayerModelVersion;
 }
 
@@ -2391,13 +2387,6 @@ void Cheat_NoClip()
 //==========================================================================
 
 const int
-	GIMME_SHOTGUN			= 0x00000001,
-	GIMME_CHAINGUN			= 0x00000002,
-	GIMME_LAUNCHER			= 0x00000004,
-	GIMME_PLASMA			= 0x00000008,
-	GIMME_BFG				= 0x00000010,
-	GIMME_CHAINSAW			= 0x00000020,
-	GIMME_SUPERSHOTGUN		= 0x00000040,
 	GIMME_BACKPACK			= 0x00000080,
 	GIMME_BLUECARD			= 0x00001000,
 	GIMME_BLUESKULL			= 0x00002000,
@@ -2415,20 +2404,13 @@ const int
 	GIMME_HEALTH2			= 0x02000000,
 	GIMME_ARMOR				= 0x04000000,
 	GIMME_ARMOR2			= 0x08000000,
-#ifdef GRENADE_LAUNCHER
-	GIMME_GRENADE			= 0x10000000,
-
-	GIMME_WEAPONS			= 0x1000007f,
-#else
-	GIMME_WEAPONS			= 0x0000007f,
-#endif
-	GIMME_AMMO				= 0x00000f00,
 	GIMME_KEYS				= 0x0003f000,
 	GIMME_POWERS			= 0x00fc0000,
 	GIMME_ALL				= 0xffffffff;
 
 void Cheat_Gimme()
 {
+	int					i;
 	int					i1;
 	class<Inventory>	Cls;
 
@@ -2437,27 +2419,6 @@ void Cheat_Gimme()
 	if (Cmd_CheckParm("All"))
 		i1 |= GIMME_ALL;
 
-	// Weapons
-	if (Cmd_CheckParm("Weapons"))
-		i1 |= GIMME_WEAPONS;
-	if (Cmd_CheckParm("Shotgun"))
-		i1 |= GIMME_SHOTGUN;
-	if (Cmd_CheckParm("Chaingun"))
-		i1 |= GIMME_CHAINGUN;
-	if (Cmd_CheckParm("Launcher"))
-		i1 |= GIMME_LAUNCHER;
-	if (Cmd_CheckParm("Plasma"))
-		i1 |= GIMME_PLASMA;
-	if (Cmd_CheckParm("BFG"))
-		i1 |= GIMME_BFG;
-	if (Cmd_CheckParm("Chainsaw"))
-		i1 |= GIMME_CHAINSAW;
-	if (Cmd_CheckParm("SuperShotgun"))
-		i1 |= GIMME_SUPERSHOTGUN;
-#ifdef GRENADE_LAUNCHER
-	if (Cmd_CheckParm("Grenade"))
-		i1 |= GIMME_GRENADE;
-#endif
 	// Backpack
 	if (Cmd_CheckParm("Backpack"))
 		i1 |= GIMME_BACKPACK;
@@ -2507,26 +2468,17 @@ void Cheat_Gimme()
 		i1 |= GIMME_ARMOR2;
 
 	// Weapons
-	if (i1 & GIMME_SHOTGUN)
-		WeaponOwned[DoomDefs::wp_shotgun] = true;
-	if (i1 & GIMME_CHAINGUN)
-		WeaponOwned[DoomDefs::wp_chaingun] = true;
-	if (i1 & GIMME_LAUNCHER)
-		WeaponOwned[DoomDefs::wp_missile] = true;
-	if (i1 & GIMME_PLASMA)
-		WeaponOwned[DoomDefs::wp_plasma] = true;
-	if (i1 & GIMME_BFG)
-		WeaponOwned[DoomDefs::wp_bfg] = true;
-	if (i1 & GIMME_CHAINSAW)
-		WeaponOwned[DoomDefs::wp_chainsaw] = true;
-#ifdef DOOM2
-	if (i1 & GIMME_SUPERSHOTGUN)
-		WeaponOwned[DoomDefs::wp_supershotgun] = true;
-#endif
-#ifdef GRENADE_LAUNCHER
-	if (i1 & GIMME_GRENADE)
-		WeaponOwned[DoomDefs::wp_grenade] = true;
-#endif
+	if (Cmd_CheckParm("Weapons"))
+	{
+		for (i = 0; i < DoomDefs::NUMWEAPONS; i++)
+		{
+			if (!WeaponOwned[i])
+			{
+				WeaponOwned[i] = Level.Spawn(MainGameInfo(Level.Game).WeaponClasses[i]);
+				WeaponOwned[i].AttachToOwner(EntityEx(MO));
+			}
+		}
+	}
 
 	// Backpack
 	if (i1 & GIMME_BACKPACK)

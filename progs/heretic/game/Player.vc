@@ -87,7 +87,7 @@ int Refire;
 // Is wp_nochange if not changing.
 int PendingWeapon;
 
-bool WeaponOwned[NUMWEAPONS];
+WeaponEx WeaponOwned[NUMWEAPONS];
 int ReadyWeapon;
 
 // Armor type is 0-2.
@@ -385,9 +385,13 @@ void SpawnPlayer(mthing_t * mthing)
 		{
 			A.Inventory.Destroy();
 		}
-		SetWeapon(wp_goldwand);
 		GiveAmmo(GoldWandAmmo, 0);
 		EntityEx(MO).FindInventory(GoldWandAmmo).Amount = 50;
+		WeaponOwned[wp_staff] = Level.Spawn(Staff);
+		WeaponOwned[wp_staff].AttachToOwner(A);
+		WeaponOwned[wp_goldwand] = Level.Spawn(GoldWand);
+		WeaponOwned[wp_goldwand].AttachToOwner(A);
+		SetWeapon(wp_goldwand);
 	}
 	else
 	{
@@ -425,8 +429,6 @@ void PlayerReborn()
 	bAttackDown = true;
 	PlayerState = PST_LIVE;
 	Health = MAXHEALTH;
-	WeaponOwned[wp_staff] = true;
-	WeaponOwned[wp_goldwand] = true;
 	LocalQuakeHappening = 0;
 }
 
@@ -2531,13 +2533,7 @@ void SetWeapon(int NewWeapon)
 	ReadyWeapon = NewWeapon;
 	PendingWeapon = wp_nochange;
 
-	if (ViewEnt)
-	{
-		ViewEnt.Destroy();
-	}
-	ViewEnt = WeaponEx(HereticLevelInfo(Level).Spawn(
-		MainGameInfo(Level.Game).WeaponClasses[NewWeapon], vector(0.0, 0.0, 0.0)));
-	WeaponEx(ViewEnt).AttachToOwner(EntityEx(MO));
+	ViewEnt = WeaponOwned[ReadyWeapon];
 	PSpriteSY = WeaponEx(ViewEnt).PSpriteSY;
 }
 
@@ -2927,13 +2923,16 @@ void Cheat_Gimme()
 		}
 		for (i = 0; i < NUMWEAPONS - 1; i++)
 		{
-			WeaponOwned[i] = true;
-		}
-		if (MainGameInfo(Level.Game).shareware)
-		{
-			WeaponOwned[wp_skullrod] = false;
-			WeaponOwned[wp_phoenixrod] = false;
-			WeaponOwned[wp_mace] = false;
+			if (!WeaponOwned[i])
+			{
+				if (MainGameInfo(Level.Game).shareware &&
+					!MainGameInfo(Level.Game).WeaponClasses[i].default.bInShareware)
+				{
+					continue;
+				}
+				WeaponOwned[i] = Level.Spawn(MainGameInfo(Level.Game).WeaponClasses[i]);
+				WeaponOwned[i].AttachToOwner(EntityEx(MO));
+			}
 		}
 		foreach AllClasses(Ammo, Cls)
 		{
@@ -3094,7 +3093,10 @@ void Cheat_NoWeapons()
 	}
 	for (i = 1; i < 8; i++)
 	{
-		WeaponOwned[i] = false;
+		if (WeaponOwned[i])
+		{
+			WeaponOwned[i].Destroy();
+		}
 	}
 	PendingWeapon = wp_staff;
 	cprint("CHEATER - YOU DON'T DESERVE WEAPONS");

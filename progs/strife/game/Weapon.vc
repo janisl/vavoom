@@ -117,9 +117,15 @@ bool GiveWeapon(EntityEx Toucher)
 	else
 	{
 		gaveweapon = true;
-		Player(Toucher.Player).WeaponOwned[WeaponType] = true;
+		Player(Toucher.Player).WeaponOwned[WeaponType] =
+			Spawn(MainGameInfo(Level.Game).WeaponClasses[WeaponType]);
+		Player(Toucher.Player).WeaponOwned[WeaponType].AttachToOwner(Toucher);
 		if (Weapon2Type != -1)
-			Player(Toucher.Player).WeaponOwned[Weapon2Type] = true;
+		{
+			Player(Toucher.Player).WeaponOwned[Weapon2Type] =
+				Spawn(MainGameInfo(Level.Game).WeaponClasses[Weapon2Type]);
+			Player(Toucher.Player).WeaponOwned[Weapon2Type].AttachToOwner(Toucher);
+		}
 		Player(Toucher.Player).PendingWeapon = WeaponType;
 	}
 

@@ -102,7 +102,9 @@ bool TryPickup(EntityEx Toucher)
 	else
 	{
 		gaveWeapon = true;
-		Player(Toucher.Player).WeaponOwned[WeaponType] = true;
+		Player(Toucher.Player).WeaponOwned[WeaponType] =
+			Spawn(class<WeaponEx>(Class));
+		Player(Toucher.Player).WeaponOwned[WeaponType].AttachToOwner(Toucher);
 		if (WeaponType > Player(Toucher.Player).ReadyWeapon)
 		{
 			// Only switch to more powerful weapons

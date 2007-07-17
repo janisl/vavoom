@@ -5215,6 +5215,38 @@ final Inventory FindInventory(class<Inventory> ItemClass)
 
 //==========================================================================
 //
+//	GiveInventoryType
+//
+//==========================================================================
+
+final Inventory GiveInventoryType(class<Inventory> Type)
+{
+	Inventory Item = Spawn(Type);
+	Item.bDropped = true;
+	if (!Item.TryPickup(self))
+	{
+		Item.Destroy();
+		return none;
+	}
+	return Item;
+}
+
+//==========================================================================
+//
+//	DestroyAllInventory
+//
+//==========================================================================
+
+final void DestroyAllInventory()
+{
+	while (Inventory)
+	{
+		Inventory.Destroy();
+	}
+}
+
+//==========================================================================
+//
 //	TouchDehackedSpecial
 //
 //==========================================================================

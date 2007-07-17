@@ -87,7 +87,9 @@ bool TryPickup(EntityEx Toucher)
 	if (!Player(Toucher.Player).WeaponOwned[WeaponType])
 	{
 		gaveweapon = true;
-		Player(Toucher.Player).WeaponOwned[WeaponType] = true;
+		Player(Toucher.Player).WeaponOwned[WeaponType] =
+			Spawn(MainGameInfo(Level.Game).WeaponClasses[WeaponType]);
+		Player(Toucher.Player).WeaponOwned[WeaponType].AttachToOwner(Toucher);
 		Player(Toucher.Player).PendingWeapon = WeaponType;
 	}
 

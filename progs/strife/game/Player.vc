@@ -76,7 +76,7 @@ float Powers[NUMPOWERS];
 // Refired shots are less accurate.
 int Refire;
 
-bool WeaponOwned[StrifeDefs::NUMWEAPONS];
+WeaponEx WeaponOwned[StrifeDefs::NUMWEAPONS];
 
 int ReadyWeapon;
 int Sigil;
@@ -366,6 +366,8 @@ void SpawnPlayer(mthing_t * mthing)
 		{
 			A.Inventory.Destroy();
 		}
+		WeaponOwned[StrifeDefs::wp_fist] = Level.Spawn(PunchDagger);
+		WeaponOwned[StrifeDefs::wp_fist].AttachToOwner(A);
 		SetWeapon(StrifeDefs::wp_fist);
 	}
 	else
@@ -404,7 +406,6 @@ void PlayerReborn()
 	bAttackDown = true;
 	PlayerState = PST_LIVE;
 	Health = INITIAL_HEALTH;
-	WeaponOwned[StrifeDefs::wp_fist] = true;
 
 	LocalQuakeHappening = 0;
 }
@@ -548,7 +549,11 @@ void GiveSigilPiece()
 		Sigil = 0;
 	else
 		Sigil++;
-	WeaponOwned[StrifeDefs::wp_sigil] = true;
+	if (!WeaponOwned[StrifeDefs::wp_sigil])
+	{
+		WeaponOwned[StrifeDefs::wp_sigil] = Level.Spawn(Sigil1);
+		WeaponOwned[StrifeDefs::wp_sigil].AttachToOwner(EntityEx(MO));
+	}
 	PendingWeapon = StrifeDefs::wp_sigil;
 	MO.PlaySound('weapons/sigilcharge', CHAN_WEAPON);
 }
@@ -2427,7 +2432,11 @@ void Cheat_Gimme()
 	{
 		for (i = 0; i < StrifeDefs::NUMWEAPONS; i++)
 		{
-			WeaponOwned[i] = true;
+			if (!WeaponOwned[i])
+			{
+				WeaponOwned[i] = Level.Spawn(MainGameInfo(Level.Game).WeaponClasses[i]);
+				WeaponOwned[i].AttachToOwner(EntityEx(MO));
+			}
 		}
 	}
 

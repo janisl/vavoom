@@ -420,11 +420,11 @@ int CheckInventory(name ItemName)
 	//	Weapons.
 	if (ItemName == 'FlameThrower')
 	{
-		return Player(Player).WeaponOwned[StrifeDefs::wp_flame];
+		return !!Player(Player).WeaponOwned[StrifeDefs::wp_flame];
 	}
 	if (ItemName == 'Sigil')
 	{
-		return Player(Player).WeaponOwned[StrifeDefs::wp_sigil];
+		return !!Player(Player).WeaponOwned[StrifeDefs::wp_sigil];
 	}
 
 	//	Inventory items.

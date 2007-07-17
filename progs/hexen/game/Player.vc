@@ -87,7 +87,7 @@ int Pieces;	// Fourth Weapon pieces
 int PendingWeapon;
 int ReadyWeapon;
 
-bool WeaponOwned[HexenDefs::NUMWEAPONS];
+WeaponEx WeaponOwned[HexenDefs::NUMWEAPONS];
 
 int PoisonCount;	// screen flash for poison damage
 float LastPoisonTime;
@@ -146,7 +146,7 @@ void SpawnClient()
 	int j;
 	int oldKeys;
 	int oldPieces;
-	bool oldWeaponowned[HexenDefs::NUMWEAPONS];
+	WeaponEx oldWeaponowned[HexenDefs::NUMWEAPONS];
 	bool playerWasReborn;
 	int bestWeapon;
 
@@ -186,7 +186,7 @@ void SpawnClient()
 			if (oldWeaponowned[j])
 			{
 				bestWeapon = j;
-				WeaponOwned[j] = true;
+				WeaponOwned[j] = oldWeaponowned[j];
 			}
 		}
 		GiveMana(Mana1, 0);
@@ -213,7 +213,7 @@ void SpawnClient()
 void NetGameReborn()
 {
 	int i;
-	bool oldWeaponowned[HexenDefs::NUMWEAPONS];
+	WeaponEx oldWeaponowned[HexenDefs::NUMWEAPONS];
 	int oldKeys;
 	int oldPieces;
 	bool foundSpot;
@@ -281,7 +281,7 @@ void NetGameReborn()
 		if (oldWeaponowned[i])
 		{
 			bestWeapon = i;
-			WeaponOwned[i] = true;
+			WeaponOwned[i] = oldWeaponowned[i];
 		}
 	}
 	GiveMana(Mana1, 0);
@@ -535,6 +535,9 @@ void SpawnPlayer(mthing_t * mthing)
 		{
 			pp.Inventory.Destroy();
 		}
+		WeaponOwned[HexenDefs::WP_FIRST] = Level.Spawn(
+			MainGameInfo(Level.Game).WeaponClasses[HexenDefs::WP_FIRST * HexenDefs::NUMCLASSES + PClass]);
+		WeaponOwned[HexenDefs::WP_FIRST].AttachToOwner(EntityEx(MO));
 		SetWeapon(HexenDefs::WP_FIRST);
 	}
 	else
@@ -578,7 +581,6 @@ void PlayerReborn()
 	bAttackDown = true;
 	PlayerState = PST_LIVE;
 	Health = MAXHEALTH;
-	WeaponOwned[HexenDefs::WP_FIRST] = true;
 	LocalQuakeHappening = 0;
 }
 
@@ -3242,14 +3244,7 @@ void SetWeapon(int NewWeapon)
 	ReadyWeapon = NewWeapon;
 	PendingWeapon = HexenDefs::wp_nochange;
 
-	if (ViewEnt)
-	{
-		ViewEnt.Destroy();
-	}
-	ViewEnt = WeaponEx(HexenLevelInfo(Level).Spawn(
-		MainGameInfo(Level.Game).WeaponClasses[
-		NewWeapon * HexenDefs::NUMCLASSES + PClass], vector(0.0, 0.0, 0.0)));
-	WeaponEx(ViewEnt).AttachToOwner(EntityEx(MO));
+	ViewEnt = WeaponOwned[ReadyWeapon];
 	PSpriteSY = WeaponEx(ViewEnt).PSpriteSY;
 }
 
@@ -3656,7 +3651,12 @@ void Cheat_Gimme()
 		}
 		for (i = 0; i < HexenDefs::NUMWEAPONS; i++)
 		{
-			WeaponOwned[i] = true;
+			if (!WeaponOwned[i])
+			{
+				WeaponOwned[i] = Level.Spawn(
+					MainGameInfo(Level.Game).WeaponClasses[i * HexenDefs::NUMCLASSES + PClass]);
+				WeaponOwned[i].AttachToOwner(EntityEx(MO));
+			}
 		}
 		foreach AllClasses(Ammo, Cls)
 		{
@@ -3795,7 +3795,10 @@ void Cheat_NoWeapons()
 	}
 	for (i = 1; i < 4; i++)
 	{
-		WeaponOwned[i] = false;
+		if (WeaponOwned[i])
+		{
+			WeaponOwned[i].Destroy();
+		}
 	}
 	PendingWeapon = HexenDefs::WP_FIRST;
 	Pieces = 0;
