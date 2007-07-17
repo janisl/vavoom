@@ -775,8 +775,8 @@ void BotAim()
 	*/
 
 	// Fix me: Implement botskill, accuracy, and intelligence
-	if ((player.PClass == HexenDefs::PCLASS_FIGHTER && player.ReadyWeapon >= HexenDefs::WP_THIRD) ||
-		(player.PClass == HexenDefs::PCLASS_CLERIC && player.ReadyWeapon >= HexenDefs::WP_SECOND) ||
+	if ((player.PClass == HexenDefs::PCLASS_FIGHTER && player.ReadyWeapon.WeaponType >= HexenDefs::WP_THIRD) ||
+		(player.PClass == HexenDefs::PCLASS_CLERIC && player.ReadyWeapon.WeaponType >= HexenDefs::WP_SECOND) ||
 		(player.PClass == HexenDefs::PCLASS_MAGE))
 	{
 		// Projectile weapons
@@ -1161,7 +1161,7 @@ void Move(float deltaTime)
 		if (item)
 		{
 			if (bItemIsPowerup ||
-				(bItemIsWeapon && player.ReadyWeapon == HexenDefs::WP_FIRST))
+				(bItemIsWeapon && player.ReadyWeapon.WeaponType == HexenDefs::WP_FIRST))
 			{
 				Roam();
 				return;
@@ -1178,7 +1178,7 @@ void Move(float deltaTime)
 			sidemove = -sidemove;
 
 		if (CheckTo(enemy.Origin) && dist >
-				combatdist[player.PClass * HexenDefs::NUMWEAPONS + player.ReadyWeapon])
+				combatdist[player.PClass * HexenDefs::NUMWEAPONS + player.ReadyWeapon.WeaponType])
 			forwardmove = FORWARDRUN;
 		else
 			forwardmove = -FORWARDRUN;

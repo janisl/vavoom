@@ -90,7 +90,7 @@ bool TryPickup(EntityEx Toucher)
 		Player(Toucher.Player).WeaponOwned[WeaponType] =
 			Spawn(MainGameInfo(Level.Game).WeaponClasses[WeaponType]);
 		Player(Toucher.Player).WeaponOwned[WeaponType].AttachToOwner(Toucher);
-		Player(Toucher.Player).PendingWeapon = WeaponType;
+		Player(Toucher.Player).PendingWeapon = Player(Toucher.Player).WeaponOwned[WeaponType];
 	}
 
 	if (gaveweapon || gaveammo)
@@ -174,7 +174,7 @@ final void A_WeaponReady()
 		Owner.SetState(Actor(Owner).IdleState);
 	}
 
-	if (Player(Owner.Player).ReadyWeapon == DoomDefs::wp_chainsaw &&
+	if (Player(Owner.Player).ReadyWeapon.WeaponType == DoomDefs::wp_chainsaw &&
 		Owner.Player.ViewStates[ps_weapon].State == ReadyState)
 	{
 		Owner.PlaySound('weapons/sawidle', CHAN_WEAPON);
@@ -182,7 +182,7 @@ final void A_WeaponReady()
 
 	// check for change
 	//  if player is dead, put the weapon away
-	if (Player(Owner.Player).PendingWeapon != DoomDefs::wp_nochange || !Owner.Player.Health)
+	if (Player(Owner.Player).PendingWeapon || !Owner.Player.Health)
 	{
 		// change weapon
 		//  (pending weapon should allready be validated)
@@ -194,8 +194,9 @@ final void A_WeaponReady()
 	//  the missile launcher and bfg do not auto fire
 	if (Owner.Player.Buttons & BT_ATTACK)
 	{
-		if (!Owner.Player.bAttackDown || (Player(Owner.Player).ReadyWeapon != DoomDefs::wp_missile &&
-			Player(Owner.Player).ReadyWeapon != DoomDefs::wp_bfg))
+		if (!Owner.Player.bAttackDown ||
+			(Player(Owner.Player).ReadyWeapon.WeaponType != DoomDefs::wp_missile &&
+			Player(Owner.Player).ReadyWeapon.WeaponType != DoomDefs::wp_bfg))
 		{
 			Owner.Player.bAttackDown = true;
 			Player(Owner.Player).FireWeapon();
@@ -257,7 +258,7 @@ final void A_Lower()
 		return;
 	}
 
-	P.SetWeapon(P.PendingWeapon);
+	P.SetWeapon(P.PendingWeapon.WeaponType);
 
 	P.BringUpWeapon();
 }
@@ -300,8 +301,8 @@ final void A_ReFire()
 {
 	// check for fire
 	//  (if a weaponchange is pending, let it go through instead)
-	if ((Owner.Player.Buttons & BT_ATTACK)
-		&& Player(Owner.Player).PendingWeapon == DoomDefs::wp_nochange && Owner.Player.Health)
+	if ((Owner.Player.Buttons & BT_ATTACK) &&
+		!Player(Owner.Player).PendingWeapon && Owner.Player.Health)
 	{
 		Player(Owner.Player).Refire++;
 		Player(Owner.Player).FireWeapon();

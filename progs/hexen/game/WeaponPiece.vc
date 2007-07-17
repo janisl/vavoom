@@ -103,7 +103,7 @@ bool TryPickup(EntityEx Toucher)
 			MainGameInfo(Level.Game).WeaponClasses[HexenDefs::WP_FOURTH * HexenDefs::NUMCLASSES +
 			Toucher.Player.PClass]);
 		Player(Toucher.Player).WeaponOwned[HexenDefs::WP_FOURTH].AttachToOwner(Toucher);
-		Player(Toucher.Player).PendingWeapon = HexenDefs::WP_FOURTH;
+		Player(Toucher.Player).PendingWeapon = Player(Toucher.Player).WeaponOwned[HexenDefs::WP_FOURTH];
 	}
 	GoAwayAndDie();
 	return true;

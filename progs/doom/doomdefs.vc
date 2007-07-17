@@ -44,10 +44,7 @@ enum
 	wp_grenade,
 #endif
 
-	NUMWEAPONS,
-
-	// No pending weapon change.
-	wp_nochange
+	NUMWEAPONS
 };
 
 enum

@@ -100,6 +100,7 @@ __states__
 
 defaultproperties
 {
+	WeaponType = HexenDefs::WP_FOURTH;
 	ManaType1 = Mana1;
 	ManaType2 = Mana2;
 	PSpriteSY = 0.0;

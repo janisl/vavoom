@@ -66,10 +66,7 @@ enum
 	wp_gauntlets,
 	wp_beak,
 
-	NUMWEAPONS,
-
-	// No pending weapon change.
-	wp_nochange
+	NUMWEAPONS
 };
 
 enum

@@ -105,10 +105,10 @@ bool TryPickup(EntityEx Toucher)
 		Player(Toucher.Player).WeaponOwned[WeaponType] =
 			Spawn(class<WeaponEx>(Class));
 		Player(Toucher.Player).WeaponOwned[WeaponType].AttachToOwner(Toucher);
-		if (WeaponType > Player(Toucher.Player).ReadyWeapon)
+		if (WeaponType > Player(Toucher.Player).ReadyWeapon.WeaponType)
 		{
 			// Only switch to more powerful weapons
-			Player(Toucher.Player).PendingWeapon = WeaponType;
+			Player(Toucher.Player).PendingWeapon = Player(Toucher.Player).WeaponOwned[WeaponType];
 		}
 	}
 	if (gaveWeapon || gaveMana)
@@ -151,12 +151,12 @@ void DecMana()
 	if (ManaType1)
 	{
 		EntityEx(Owner).FindInventory(ManaType1).Amount -=
-			WeaponManaUse(Owner.Player.PClass, Player(Owner.Player).ReadyWeapon);
+			WeaponManaUse(Owner.Player.PClass, Player(Owner.Player).ReadyWeapon.WeaponType);
 	}
 	if (ManaType2)
 	{
 		EntityEx(Owner).FindInventory(ManaType2).Amount -=
-			WeaponManaUse(Owner.Player.PClass, Player(Owner.Player).ReadyWeapon);
+			WeaponManaUse(Owner.Player.PClass, Player(Owner.Player).ReadyWeapon.WeaponType);
 	}
 }
 
@@ -225,8 +225,7 @@ final void A_WeaponReady()
 		Owner.SetState(Actor(Owner).IdleState);
 	}
 	// Put the weapon away if the player has a pending weapon or has died.
-	if (Player(Owner.Player).PendingWeapon != HexenDefs::wp_nochange ||
-		!Owner.Player.Health)
+	if (Player(Owner.Player).PendingWeapon || !Owner.Player.Health)
 	{
 		Owner.Player.SetViewState(ps_weapon, GetDownState());
 		return;
@@ -295,7 +294,7 @@ final void A_Lower()
 		return;
 	}
 	Entity Tmp = Owner;//FIXME temporary hack.
-	Player(Owner.Player).SetWeapon(Player(Owner.Player).PendingWeapon);
+	Player(Owner.Player).SetWeapon(Player(Owner.Player).PendingWeapon.WeaponType);
 	Player(Tmp.Player).BringUpWeapon();
 }
 
@@ -332,7 +331,7 @@ final void A_Raise()
 final void A_ReFire()
 {
 	if ((Owner.Player.Buttons & BT_ATTACK) &&
-		Player(Owner.Player).PendingWeapon == HexenDefs::wp_nochange && Owner.Player.Health)
+		!Player(Owner.Player).PendingWeapon && Owner.Player.Health)
 	{
 		Player(Owner.Player).Refire++;
 		Player(Owner.Player).FireWeapon();

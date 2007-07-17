@@ -78,11 +78,11 @@ int Refire;
 
 WeaponEx WeaponOwned[StrifeDefs::NUMWEAPONS];
 
-int ReadyWeapon;
+WeaponEx ReadyWeapon;
 int Sigil;
 
 // Is wp_nochange if not changing.
-int PendingWeapon;
+WeaponEx PendingWeapon;
 
 Inventory SavedInventory;
 
@@ -503,34 +503,34 @@ void GotAmmo(Ammo NewAmmo)
 	// Preferences are not user selectable.
 	if (ClipOfBullets(NewAmmo))
 	{
-		if (ReadyWeapon == StrifeDefs::wp_fist)
+		if (ReadyWeapon.WeaponType == StrifeDefs::wp_fist)
 		{
 			if (WeaponOwned[StrifeDefs::wp_riffle])
-				PendingWeapon = StrifeDefs::wp_riffle;
+				PendingWeapon = WeaponOwned[StrifeDefs::wp_riffle];
 		}
 	}
 	else if (ElectricBolts(NewAmmo))
 	{
-		if (ReadyWeapon == StrifeDefs::wp_fist)
+		if (ReadyWeapon.WeaponType == StrifeDefs::wp_fist)
 		{
 			if (WeaponOwned[StrifeDefs::wp_crossbow])
-				PendingWeapon = StrifeDefs::wp_crossbow;
+				PendingWeapon = WeaponOwned[StrifeDefs::wp_crossbow];
 		}
 	}
 	else if (EnergyPod(NewAmmo))
 	{
-		if (ReadyWeapon == StrifeDefs::wp_fist)
+		if (ReadyWeapon.WeaponType == StrifeDefs::wp_fist)
 		{
 			if (WeaponOwned[StrifeDefs::wp_flame])
-				PendingWeapon = StrifeDefs::wp_flame;
+				PendingWeapon = WeaponOwned[StrifeDefs::wp_flame];
 		}
 	}
 	else if (MiniMissiles(NewAmmo))
 	{
-		if (ReadyWeapon == StrifeDefs::wp_fist)
+		if (ReadyWeapon.WeaponType == StrifeDefs::wp_fist)
 		{
 			if (WeaponOwned[StrifeDefs::wp_missile])
-				PendingWeapon = StrifeDefs::wp_missile;
+				PendingWeapon = WeaponOwned[StrifeDefs::wp_missile];
 		}
 	}
 }
@@ -554,7 +554,7 @@ void GiveSigilPiece()
 		WeaponOwned[StrifeDefs::wp_sigil] = Level.Spawn(Sigil1);
 		WeaponOwned[StrifeDefs::wp_sigil].AttachToOwner(EntityEx(MO));
 	}
-	PendingWeapon = StrifeDefs::wp_sigil;
+	PendingWeapon = WeaponOwned[StrifeDefs::wp_sigil];
 	MO.PlaySound('weapons/sigilcharge', CHAN_WEAPON);
 }
 
@@ -1645,7 +1645,7 @@ void PrevWeapon()
 	CurIdx = 0;
 	for (i = 0; i < StrifeDefs::NUMWEAPONS; i++)
 	{
-		if (ReadyWeapon == MainGameInfo(Level.Game).WeaponOrder[i])
+		if (ReadyWeapon.WeaponType == MainGameInfo(Level.Game).WeaponOrder[i])
 		{
 			CurIdx = i;
 			break;
@@ -1656,7 +1656,7 @@ void PrevWeapon()
 		NewWeap = MainGameInfo(Level.Game).WeaponOrder[(CurIdx + i) % StrifeDefs::NUMWEAPONS];
 		if (WeaponOwned[NewWeap])
 		{
-			PendingWeapon = NewWeap;
+			PendingWeapon = WeaponOwned[NewWeap];
 			return;
 		}
 	}
@@ -1677,7 +1677,7 @@ void NextWeapon()
 	CurIdx = 0;
 	for (i = 0; i < StrifeDefs::NUMWEAPONS; i++)
 	{
-		if (ReadyWeapon == MainGameInfo(Level.Game).WeaponOrder[i])
+		if (ReadyWeapon.WeaponType == MainGameInfo(Level.Game).WeaponOrder[i])
 		{
 			CurIdx = i;
 			break;
@@ -1688,7 +1688,7 @@ void NextWeapon()
 		NewWeap = MainGameInfo(Level.Game).WeaponOrder[(CurIdx + i) % StrifeDefs::NUMWEAPONS];
 		if (WeaponOwned[NewWeap])
 		{
-			PendingWeapon = NewWeap;
+			PendingWeapon = WeaponOwned[NewWeap];
 			return;
 		}
 	}
@@ -2059,15 +2059,9 @@ void SetPlayerRunState()
 
 void SetWeapon(int NewWeapon)
 {
-	ReadyWeapon = NewWeapon;
-	PendingWeapon = StrifeDefs::wp_nochange;
-	if (ViewEnt)
-	{
-		ViewEnt.Destroy();
-	}
-	ViewEnt = WeaponEx(StrifeLevelInfo(Level).Spawn(
-		MainGameInfo(Level.Game).WeaponClasses[NewWeapon], vector(0.0, 0.0, 0.0)));
-	WeaponEx(ViewEnt).AttachToOwner(EntityEx(MO));
+	ReadyWeapon = WeaponOwned[NewWeapon];
+	PendingWeapon = none;
+	ViewEnt = ReadyWeapon;
 }
 
 //===========================================================================
@@ -2081,7 +2075,7 @@ void SetWeapon(int NewWeapon)
 
 void BringUpWeapon()
 {
-	PendingWeapon = StrifeDefs::wp_nochange;
+	PendingWeapon = none;
 	ViewStates[ps_weapon].SY = WeaponEx::WEAPONBOTTOM;
 
 	SetViewState(ps_weapon, WeaponEx(ViewEnt).UpState);
@@ -2102,17 +2096,17 @@ void ChangeWeapon(int newweapon)
 	int count;
 
 	if (newweapon == StrifeDefs::wp_crossbow && WeaponOwned[StrifeDefs::wp_crossbow2] &&
-		(ReadyWeapon == StrifeDefs::wp_crossbow || !EntityEx(MO).FindInventory(ElectricBolts).Amount))
+		(ReadyWeapon.WeaponType == StrifeDefs::wp_crossbow || !EntityEx(MO).FindInventory(ElectricBolts).Amount))
 	{
 		newweapon = StrifeDefs::wp_crossbow2;
 	}
 	if (newweapon == StrifeDefs::wp_grenade && WeaponOwned[StrifeDefs::wp_grenade2] &&
-		(ReadyWeapon == StrifeDefs::wp_grenade || !EntityEx(MO).FindInventory(HEGrenadeRounds).Amount))
+		(ReadyWeapon.WeaponType == StrifeDefs::wp_grenade || !EntityEx(MO).FindInventory(HEGrenadeRounds).Amount))
 	{
 		newweapon = StrifeDefs::wp_grenade2;
 	}
 	if (newweapon == StrifeDefs::wp_blaster && WeaponOwned[StrifeDefs::wp_blaster2] &&
-		ReadyWeapon == StrifeDefs::wp_blaster)
+		ReadyWeapon.WeaponType == StrifeDefs::wp_blaster)
 	{
 		newweapon = StrifeDefs::wp_blaster2;
 	}
@@ -2128,9 +2122,9 @@ void ChangeWeapon(int newweapon)
 	if (ammo && EntityEx(MO).FindInventory(ammo).Amount < count)
 		return;
 
-	if (WeaponOwned[newweapon] && newweapon != ReadyWeapon)
+	if (WeaponOwned[newweapon] && newweapon != ReadyWeapon.WeaponType)
 	{
-		PendingWeapon = newweapon;
+		PendingWeapon = WeaponOwned[newweapon];
 	}
 }
 
@@ -2201,9 +2195,9 @@ int CheckAmmo()
 	ammo = WeaponEx(ViewEnt).AmmoType;
 
 	// Minimal amount for one shot varies.
-	if (ReadyWeapon == StrifeDefs::wp_blaster)
+	if (ReadyWeapon.WeaponType == StrifeDefs::wp_blaster)
 		count = 20;
-	else if (ReadyWeapon == StrifeDefs::wp_blaster2)
+	else if (ReadyWeapon.WeaponType == StrifeDefs::wp_blaster2)
 		count = 30;
 	else
 		count = 1;	// Regular.
@@ -2220,30 +2214,30 @@ int CheckAmmo()
 		if (WeaponOwned[StrifeDefs::wp_flame] &&
 			EntityEx(MO).FindInventory(EnergyPod).Amount)
 		{
-			PendingWeapon = StrifeDefs::wp_flame;
+			PendingWeapon = WeaponOwned[StrifeDefs::wp_flame];
 		}
 		else if (WeaponOwned[StrifeDefs::wp_riffle] &&
 			EntityEx(MO).FindInventory(ClipOfBullets).Amount)
 		{
-			PendingWeapon = StrifeDefs::wp_riffle;
+			PendingWeapon = WeaponOwned[StrifeDefs::wp_riffle];
 		}
 		else if (WeaponOwned[StrifeDefs::wp_crossbow] &&
 			EntityEx(MO).FindInventory(ElectricBolts).Amount)
 		{
-			PendingWeapon = StrifeDefs::wp_crossbow;
+			PendingWeapon = WeaponOwned[StrifeDefs::wp_crossbow];
 		}
 		else if (WeaponOwned[StrifeDefs::wp_missile] &&
 			EntityEx(MO).FindInventory(MiniMissiles).Amount)
 		{
-			PendingWeapon = StrifeDefs::wp_missile;
+			PendingWeapon = WeaponOwned[StrifeDefs::wp_missile];
 		}
 		else
 		{
 			// If everything fails.
-			PendingWeapon = StrifeDefs::wp_fist;
+			PendingWeapon = WeaponOwned[StrifeDefs::wp_fist];
 		}
 	}
-	while (PendingWeapon == StrifeDefs::wp_nochange);
+	while (!PendingWeapon);
 
 	// Now set appropriate weapon overlay.
 	SetViewState(ps_weapon, WeaponEx(ViewEnt).DownState);

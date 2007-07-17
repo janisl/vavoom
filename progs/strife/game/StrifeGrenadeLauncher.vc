@@ -41,7 +41,7 @@ final void A_FireGrenade()
 	float an;
 	float tworadii;
 
-	if (Player(Owner.Player).ReadyWeapon == StrifeDefs::wp_grenade)
+	if (Player(Owner.Player).ReadyWeapon.WeaponType == StrifeDefs::wp_grenade)
 	{
 		grenadetype = HEGrenade;
 	}

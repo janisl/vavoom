@@ -26,6 +26,9 @@
 class Weapon : Inventory
 	abstract;
 
+//	Switch away if got ammo for more powerfull weapon.
+bool			bWimpyWeapon;
+
 defaultproperties
 {
 }

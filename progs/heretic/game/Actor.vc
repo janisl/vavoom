@@ -270,7 +270,7 @@ bool ChickenMorphPlayer()
 	fog.PlaySound('misc/teleport', CHAN_VOICE);
 
 	chicken = Spawn(ChickenPlayer, Origin);
-	chicken.Special1 = Player(Player).ReadyWeapon;
+	chicken.Special1 = Player(Player).ReadyWeapon.WeaponType;
 	chicken.Angles.yaw = Angles.yaw;
 	chicken.Player = Player;
 	chicken.bIsPlayer = true;

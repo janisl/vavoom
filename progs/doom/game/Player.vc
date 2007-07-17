@@ -60,10 +60,10 @@ int Refire;
 
 WeaponEx WeaponOwned[DoomDefs::NUMWEAPONS];
 
-int ReadyWeapon;
+WeaponEx ReadyWeapon;
 
 // Is wp_nochange if not changing.
-int PendingWeapon;
+WeaponEx PendingWeapon;
 
 //AmmoPickup Ammo[DoomDefs::NUMAMMO];
 int ReadyAmmo;
@@ -585,36 +585,36 @@ void GotAmmo(Ammo NewAmmo)
 	// Preferences are not user selectable.
 	if (Clip(NewAmmo))
 	{
-		if (ReadyWeapon == DoomDefs::wp_fist)
+		if (ReadyWeapon.bWimpyWeapon)
 		{
 			if (WeaponOwned[DoomDefs::wp_chaingun])
-				PendingWeapon = DoomDefs::wp_chaingun;
+				PendingWeapon = WeaponOwned[DoomDefs::wp_chaingun];
 			else
-				PendingWeapon = DoomDefs::wp_pistol;
+				PendingWeapon = WeaponOwned[DoomDefs::wp_pistol];
 		}
 	}
 	else if (Shell(NewAmmo))
 	{
-		if (ReadyWeapon == DoomDefs::wp_fist || ReadyWeapon == DoomDefs::wp_pistol)
+		if (ReadyWeapon.bWimpyWeapon)
 		{
 			if (WeaponOwned[DoomDefs::wp_shotgun])
-				PendingWeapon = DoomDefs::wp_shotgun;
+				PendingWeapon = WeaponOwned[DoomDefs::wp_shotgun];
 		}
 	}
 	else if (Cell(NewAmmo))
 	{
-		if (ReadyWeapon == DoomDefs::wp_fist || ReadyWeapon == DoomDefs::wp_pistol)
+		if (ReadyWeapon.bWimpyWeapon)
 		{
 			if (WeaponOwned[DoomDefs::wp_plasma])
-				PendingWeapon = DoomDefs::wp_plasma;
+				PendingWeapon = WeaponOwned[DoomDefs::wp_plasma];
 		}
 	}
 	else if (RocketAmmo(NewAmmo))
 	{
-		if (ReadyWeapon == DoomDefs::wp_fist)
+		if (ReadyWeapon.WeaponType == DoomDefs::wp_fist)
 		{
 			if (WeaponOwned[DoomDefs::wp_missile])
-				PendingWeapon = DoomDefs::wp_missile;
+				PendingWeapon = WeaponOwned[DoomDefs::wp_missile];
 		}
 	}
 }
@@ -746,8 +746,8 @@ bool GivePower(int power)
 	{
 		GiveBody(100, MAXHEALTH);
 		Powers[power] = 1.0;
-		if (ReadyWeapon != DoomDefs::wp_fist)
-			PendingWeapon = DoomDefs::wp_fist;
+		if (ReadyWeapon.WeaponType != DoomDefs::wp_fist)
+			PendingWeapon = WeaponOwned[DoomDefs::wp_fist];
 		return true;
 	}
 
@@ -781,8 +781,8 @@ bool GivePower2(int power, float duration, float max)
 	}
 	if (power == pw_strength)
 	{
-		if (ReadyWeapon != DoomDefs::wp_fist)
-			PendingWeapon = DoomDefs::wp_fist;
+		if (ReadyWeapon.WeaponType != DoomDefs::wp_fist)
+			PendingWeapon = WeaponOwned[DoomDefs::wp_fist];
 	}
 
 	return true;
@@ -1429,7 +1429,7 @@ void PrevWeapon()
 	CurIdx = 0;
 	for (i = 0; i < DoomDefs::NUMWEAPONS; i++)
 	{
-		if (ReadyWeapon == MainGameInfo(Level.Game).WeaponOrder[i])
+		if (ReadyWeapon.WeaponType == MainGameInfo(Level.Game).WeaponOrder[i])
 		{
 			CurIdx = i;
 			break;
@@ -1445,7 +1445,7 @@ void PrevWeapon()
 			NewWeap != DoomDefs::wp_bfg) || !MainGameInfo(Level.Game).shareware))
 #endif
 		{
-			PendingWeapon = NewWeap;
+			PendingWeapon = WeaponOwned[NewWeap];
 			return;
 		}
 	}
@@ -1466,7 +1466,7 @@ void NextWeapon()
 	CurIdx = 0;
 	for (i = 0; i < DoomDefs::NUMWEAPONS; i++)
 	{
-		if (ReadyWeapon == MainGameInfo(Level.Game).WeaponOrder[i])
+		if (ReadyWeapon.WeaponType == MainGameInfo(Level.Game).WeaponOrder[i])
 		{
 			CurIdx = i;
 			break;
@@ -1482,7 +1482,7 @@ void NextWeapon()
 			NewWeap != DoomDefs::wp_bfg) || !MainGameInfo(Level.Game).shareware))
 #endif
 		{
-			PendingWeapon = NewWeap;
+			PendingWeapon = WeaponOwned[NewWeap];
 			return;
 		}
 	}
@@ -2059,9 +2059,9 @@ void SetPlayerRunState()
 
 void SetWeapon(int NewWeapon)
 {
-	ReadyWeapon = NewWeapon;
-	PendingWeapon = DoomDefs::wp_nochange;
-	ViewEnt = WeaponOwned[ReadyWeapon];
+	ReadyWeapon = WeaponOwned[NewWeapon];
+	PendingWeapon = none;
+	ViewEnt = ReadyWeapon;
 	MO.ModelVersion = WeaponEx(ViewEnt).PlayerModelVersion;
 }
 
@@ -2076,10 +2076,10 @@ void SetWeapon(int NewWeapon)
 
 void BringUpWeapon()
 {
-	if (ReadyWeapon == DoomDefs::wp_chainsaw)
+	if (ReadyWeapon.WeaponType == DoomDefs::wp_chainsaw)
 		MO.PlaySound('weapons/sawup', CHAN_WEAPON);
 
-	PendingWeapon = DoomDefs::wp_nochange;
+	PendingWeapon = none;
 	ViewStates[ps_weapon].SY = WeaponEx::WEAPONBOTTOM;
 
 	SetViewState(ps_weapon, WeaponEx(ViewEnt).UpState);
@@ -2098,14 +2098,14 @@ void BringUpWeapon()
 void ChangeWeapon(int newweapon)
 {
 	if (newweapon == DoomDefs::wp_fist && WeaponOwned[DoomDefs::wp_chainsaw] &&
-		ReadyWeapon != DoomDefs::wp_chainsaw)
+		ReadyWeapon.WeaponType != DoomDefs::wp_chainsaw)
 	{
 		newweapon = DoomDefs::wp_chainsaw;
 	}
 
 #ifdef DOOM2
 	if (newweapon == DoomDefs::wp_shotgun && WeaponOwned[DoomDefs::wp_supershotgun] &&
-		ReadyWeapon != DoomDefs::wp_supershotgun)
+		ReadyWeapon.WeaponType != DoomDefs::wp_supershotgun)
 	{
 		newweapon = DoomDefs::wp_supershotgun;
 	}
@@ -2119,15 +2119,15 @@ void ChangeWeapon(int newweapon)
 	}
 #endif
 
-	if (WeaponOwned[newweapon] && newweapon != ReadyWeapon)
+	if (WeaponOwned[newweapon] && newweapon != ReadyWeapon.WeaponType)
 	{
 #ifdef DOOM2
-		PendingWeapon = newweapon;
+		PendingWeapon = WeaponOwned[newweapon];
 #else
 		// Do not go to plasma or BFG in shareware, even if cheated.
 		if ((newweapon != DoomDefs::wp_plasma && newweapon != DoomDefs::wp_bfg) || !MainGameInfo(Level.Game).shareware)
 		{
-			PendingWeapon = newweapon;
+			PendingWeapon = WeaponOwned[newweapon];
 		}
 #endif
 	}
@@ -2200,12 +2200,10 @@ int CheckAmmo()
 	ammo = WeaponEx(ViewEnt).AmmoType;
 
 	// Minimal amount for one shot varies.
-	if (ReadyWeapon == DoomDefs::wp_bfg)
+	if (ReadyWeapon.WeaponType == DoomDefs::wp_bfg)
 		count = MainGameInfo(Level.Game).BFGCELLS;
-#ifdef DOOM2
-	else if (ReadyWeapon == DoomDefs::wp_supershotgun)
+	else if (ReadyWeapon.WeaponType == DoomDefs::wp_supershotgun)
 		count = 2;	// Double barrel.
-#endif
 	else
 		count = 1;	// Regular.
 
@@ -2225,33 +2223,33 @@ int CheckAmmo()
 		if (WeaponOwned[DoomDefs::wp_plasma] && EntityEx(MO).FindInventory(Cell).Amount)
 #endif
 		{
-			PendingWeapon = DoomDefs::wp_plasma;
+			PendingWeapon = WeaponOwned[DoomDefs::wp_plasma];
 		}
 #ifdef DOOM2
 		else if (WeaponOwned[DoomDefs::wp_supershotgun] && EntityEx(MO).FindInventory(Shell).Amount > 2)
 		{
-			PendingWeapon = DoomDefs::wp_supershotgun;
+			PendingWeapon = WeaponOwned[DoomDefs::wp_supershotgun];
 		}
 #endif
 		else if (WeaponOwned[DoomDefs::wp_chaingun] && EntityEx(MO).FindInventory(Clip).Amount)
 		{
-			PendingWeapon = DoomDefs::wp_chaingun;
+			PendingWeapon = WeaponOwned[DoomDefs::wp_chaingun];
 		}
 		else if (WeaponOwned[DoomDefs::wp_shotgun] && EntityEx(MO).FindInventory(Shell).Amount)
 		{
-			PendingWeapon = DoomDefs::wp_shotgun;
+			PendingWeapon = WeaponOwned[DoomDefs::wp_shotgun];
 		}
 		else if (EntityEx(MO).FindInventory(Clip).Amount)
 		{
-			PendingWeapon = DoomDefs::wp_pistol;
+			PendingWeapon = WeaponOwned[DoomDefs::wp_pistol];
 		}
 		else if (WeaponOwned[DoomDefs::wp_chainsaw])
 		{
-			PendingWeapon = DoomDefs::wp_chainsaw;
+			PendingWeapon = WeaponOwned[DoomDefs::wp_chainsaw];
 		}
 		else if (WeaponOwned[DoomDefs::wp_missile] && EntityEx(MO).FindInventory(RocketAmmo).Amount)
 		{
-			PendingWeapon = DoomDefs::wp_missile;
+			PendingWeapon = WeaponOwned[DoomDefs::wp_missile];
 		}
 #ifdef DOOM2
 		else if (WeaponOwned[DoomDefs::wp_bfg] &&
@@ -2262,15 +2260,15 @@ int CheckAmmo()
 			(!MainGameInfo(Level.Game).shareware))
 #endif
 		{
-			PendingWeapon = DoomDefs::wp_bfg;
+			PendingWeapon = WeaponOwned[DoomDefs::wp_bfg];
 		}
 		else
 		{
 			// If everything fails.
-			PendingWeapon = DoomDefs::wp_fist;
+			PendingWeapon = WeaponOwned[DoomDefs::wp_fist];
 		}
 	}
-	while (PendingWeapon == DoomDefs::wp_nochange);
+	while (!PendingWeapon);
 
 	// Now set appropriate weapon overlay.
 	SetViewState(ps_weapon, WeaponEx(ViewEnt).DownState);
@@ -2721,7 +2719,7 @@ void ClientExplosion2(int etype, TVec org)
 float GetWeaponKickBack()
 {
 	//	No kickback from chainsaw.
-	if (ReadyWeapon != DoomDefs::wp_chainsaw)
+	if (ReadyWeapon.WeaponType != DoomDefs::wp_chainsaw)
 		return 100.0;
 	return 0.0;
 }

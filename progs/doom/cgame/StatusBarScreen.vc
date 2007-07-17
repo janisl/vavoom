@@ -418,19 +418,22 @@ void SB_DrawFullscreenStats()
 
 	// ready weapon ammo with icon
 	SB_DrawTallNum(ST_TDAMMOX, ST_TDAMMOY, cl.ReadyAmmo, 0.6, false);
-	if ((cl.ReadyWeapon == DoomDefs::wp_pistol) || (cl.ReadyWeapon == DoomDefs::wp_chaingun))
+	if ((cl.ReadyWeapon.WeaponType == DoomDefs::wp_pistol) ||
+		(cl.ReadyWeapon.WeaponType == DoomDefs::wp_chaingun))
 	{
 		R_DrawPic(ST_TDAMMOX - 60, ST_TDAMMOY + 15, pic_ammoicon[0]);
 	}
-	else if ((cl.ReadyWeapon == DoomDefs::wp_shotgun) || (cl.ReadyWeapon == DoomDefs::wp_supershotgun))
+	else if ((cl.ReadyWeapon.WeaponType == DoomDefs::wp_shotgun) ||
+		(cl.ReadyWeapon.WeaponType == DoomDefs::wp_supershotgun))
 	{
 		R_DrawPic(ST_TDAMMOX - 60, ST_TDAMMOY + 15, pic_ammoicon[1]);
 	}
-	else if ((cl.ReadyWeapon == DoomDefs::wp_plasma) || (cl.ReadyWeapon == DoomDefs::wp_bfg))
+	else if ((cl.ReadyWeapon.WeaponType == DoomDefs::wp_plasma) ||
+		(cl.ReadyWeapon.WeaponType == DoomDefs::wp_bfg))
 	{
 		R_DrawPic(ST_TDAMMOX - 60, ST_TDAMMOY + 15, pic_ammoicon[2]);
 	}
-	else if ((cl.ReadyWeapon == DoomDefs::wp_missile)) //|| (cl.ReadyWeapon & wp_grenade))
+	else if ((cl.ReadyWeapon.WeaponType == DoomDefs::wp_missile)) //|| (cl.ReadyWeapon & wp_grenade))
 	{
 		R_DrawPic(ST_TDAMMOX - 60, ST_TDAMMOY + 15, pic_ammoicon[3]);
 	}

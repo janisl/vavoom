@@ -74,6 +74,7 @@ __states__
 
 defaultproperties
 {
+	bWimpyWeapon = true;
 	UpState = S_PUNCHUP;
 	DownState = S_PUNCHDOWN;
 	ReadyState = S_PUNCH;

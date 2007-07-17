@@ -43,10 +43,7 @@ enum
 	WP_THIRD,
 	WP_FOURTH,
 
-	NUMWEAPONS,
-
-	// No pending weapon change.
-	wp_nochange = -1
+	NUMWEAPONS
 };
 
 enum

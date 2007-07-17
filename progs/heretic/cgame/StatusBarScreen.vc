@@ -332,7 +332,7 @@ void SB_DrawMainBar()
 		{
 			//  Ammo
 			SB_DrawNumber9(BAR_X + 109, BAR_Y + 4, cl.ReadyAmmo);
-			R_DrawPic(BAR_X + 111, BAR_Y + 14, pic_ammoicon[cl.ReadyWeapon - 1]);
+			R_DrawPic(BAR_X + 111, BAR_Y + 14, pic_ammoicon[cl.ReadyWeapon.WeaponType - 1]);
 		}
 
 		//  Ready artifact
@@ -421,7 +421,7 @@ void SB_DrawFullscreenStats()
 	if (cl.ReadyAmmo)
 	{
 		SB_DrawNumber9(610, 456, cl.ReadyAmmo);
-		R_DrawPic(590, 454, pic_ammoicon[cl.ReadyWeapon - 1]);
+		R_DrawPic(590, 454, pic_ammoicon[cl.ReadyWeapon.WeaponType - 1]);
 	}
 
 	//  Keys

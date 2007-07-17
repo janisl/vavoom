@@ -63,6 +63,7 @@ defaultproperties
 {
 	WeaponType = DoomDefs::wp_pistol;
 	AmmoType = Clip;
+	bWimpyWeapon = true;
 	UpState = S_PISTOLUP;
 	DownState = S_PISTOLDOWN;
 	ReadyState = S_PISTOL;

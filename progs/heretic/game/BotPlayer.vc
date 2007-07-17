@@ -740,7 +740,7 @@ void BotAim()
 	*/
 
 	// Fix me: Implement botskill, accuracy, and intelligence
-	switch (player.ReadyWeapon)
+	switch (player.ReadyWeapon.WeaponType)
 	{
 		// Splash weapons
 	case wp_phoenixrod:
@@ -1139,7 +1139,7 @@ void Move(float deltaTime)
 		if (item)
 		{
 			if (bItemIsPowerup ||
-				(bItemIsWeapon && player.ReadyWeapon == wp_goldwand))
+				(bItemIsWeapon && player.ReadyWeapon.WeaponType == wp_goldwand))
 			{
 				Roam();
 				return;
@@ -1155,7 +1155,7 @@ void Move(float deltaTime)
 		if (!CheckPath(an, 48.0)) // We're blocked, so go the other way!
 			sidemove = -sidemove;
 
-		if (CheckTo(enemy.Origin) && dist > combatdist[player.ReadyWeapon])
+		if (CheckTo(enemy.Origin) && dist > combatdist[player.ReadyWeapon.WeaponType])
 			forwardmove = FORWARDRUN;
 		else
 			forwardmove = -FORWARDRUN;
@@ -1193,7 +1193,7 @@ void Attack()
 	if (!Check_LOS(enemy, SHOOTFOV))
 		return;
 
-	switch (player.ReadyWeapon)
+	switch (player.ReadyWeapon.WeaponType)
 	{
 	case wp_gauntlets:
 		// Double tap the chaingun for extreme accuracy

@@ -784,7 +784,7 @@ void BotAim()
 	*/
 
 	// Fix me: Implement botskill, accuracy, and intelligence
-	switch (player.ReadyWeapon)
+	switch (player.ReadyWeapon.WeaponType)
 	{
 		// Splash weapons
 	case DoomDefs::wp_missile:
@@ -1183,7 +1183,7 @@ void Move(float deltaTime)
 		if (item)
 		{
 			if (bItemIsPowerup ||
-				(bItemIsWeapon && player.ReadyWeapon == DoomDefs::wp_pistol))
+				(bItemIsWeapon && player.ReadyWeapon.WeaponType == DoomDefs::wp_pistol))
 			{
 				Roam();
 				return;
@@ -1199,7 +1199,7 @@ void Move(float deltaTime)
 		if (!CheckPath(an, 48.0)) // We're blocked, so go the other way!
 			sidemove = -sidemove;
 
-		if (CheckTo(enemy.Origin) && dist > combatdist[player.ReadyWeapon])
+		if (CheckTo(enemy.Origin) && dist > combatdist[player.ReadyWeapon.WeaponType])
 			forwardmove = FORWARDRUN;
 		else
 			forwardmove = -FORWARDRUN;
@@ -1237,7 +1237,7 @@ void Attack()
 	if (!Check_LOS(enemy, SHOOTFOV))
 		return;
 
-	switch (player.ReadyWeapon)
+	switch (player.ReadyWeapon.WeaponType)
 	{
 	case DoomDefs::wp_chaingun:
 		// Double tap the chaingun for extreme accuracy

@@ -126,7 +126,7 @@ bool GiveWeapon(EntityEx Toucher)
 				Spawn(MainGameInfo(Level.Game).WeaponClasses[Weapon2Type]);
 			Player(Toucher.Player).WeaponOwned[Weapon2Type].AttachToOwner(Toucher);
 		}
-		Player(Toucher.Player).PendingWeapon = WeaponType;
+		Player(Toucher.Player).PendingWeapon = Player(Toucher.Player).WeaponOwned[WeaponType];
 	}
 
 	return (gaveweapon || gaveammo || gaveammo2);
@@ -197,7 +197,7 @@ final void A_WeaponReady()
 		Owner.SetState(Actor(Owner).IdleState);
 	}
 
-	if (Player(Owner.Player).ReadyWeapon == StrifeDefs::wp_flame &&
+	if (Player(Owner.Player).ReadyWeapon.WeaponType == StrifeDefs::wp_flame &&
 		Owner.Player.ViewStates[ps_weapon].State == ReadyState)
 	{
 		Owner.PlaySound('weapons/flameidle', CHAN_WEAPON);
@@ -205,7 +205,7 @@ final void A_WeaponReady()
 
 	// check for change
 	//  if player is dead, put the weapon away
-	if (Player(Owner.Player).PendingWeapon != StrifeDefs::wp_nochange || !Owner.Player.Health)
+	if (Player(Owner.Player).PendingWeapon || !Owner.Player.Health)
 	{
 		// change weapon
 		//  (pending weapon should allready be validated)
@@ -217,7 +217,8 @@ final void A_WeaponReady()
 	//  the missile launcher and bfg do not auto fire
 	if (Owner.Player.Buttons & BT_ATTACK)
 	{
-		if (!Owner.Player.bAttackDown || (Player(Owner.Player).ReadyWeapon != StrifeDefs::wp_missile))
+		if (!Owner.Player.bAttackDown ||
+			(Player(Owner.Player).ReadyWeapon.WeaponType != StrifeDefs::wp_missile))
 		{
 			Owner.Player.bAttackDown = true;
 			Player(Owner.Player).FireWeapon();
@@ -277,10 +278,9 @@ final void A_Lower()
 		return;
 	}
 
-	Entity Tmp = Owner;
-	Player(Owner.Player).SetWeapon(Player(Owner.Player).PendingWeapon);
+	Player(Owner.Player).SetWeapon(Player(Owner.Player).PendingWeapon.WeaponType);
 
-	Player(Tmp.Player).BringUpWeapon();
+	Player(Owner.Player).BringUpWeapon();
 }
 
 //===========================================================================
@@ -321,8 +321,8 @@ final void A_ReFire()
 {
 	// check for fire
 	//  (if a weaponchange is pending, let it go through instead)
-	if ((Owner.Player.Buttons & BT_ATTACK)
-		&& Player(Owner.Player).PendingWeapon == StrifeDefs::wp_nochange && Owner.Player.Health)
+	if ((Owner.Player.Buttons & BT_ATTACK) &&
+		!Player(Owner.Player).PendingWeapon && Owner.Player.Health)
 	{
 		Player(Owner.Player).Refire++;
 		Player(Owner.Player).FireWeapon();

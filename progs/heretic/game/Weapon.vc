@@ -106,10 +106,10 @@ bool TryPickup(EntityEx Toucher)
 			Spawn(MainGameInfo(Level.Game).WeaponClasses[WeaponType]);
 		Player(Toucher.Player).WeaponOwned[WeaponType].AttachToOwner(Toucher);
 		if (MainGameInfo(Level.Game).WeaponValue[WeaponType] >
-			MainGameInfo(Level.Game).WeaponValue[Player(Toucher.Player).ReadyWeapon])
+			MainGameInfo(Level.Game).WeaponValue[Player(Toucher.Player).ReadyWeapon.WeaponType])
 		{
 			// Only switch to more powerful weapons
-			Player(Toucher.Player).PendingWeapon = WeaponType;
+			Player(Toucher.Player).PendingWeapon = Player(Toucher.Player).WeaponOwned[WeaponType];
 		}
 	}
 	if (gaveWeapon || gaveAmmo)
@@ -180,7 +180,7 @@ final void A_WeaponReady()
 	}
 	// Put the weapon away if the player has a pending weapon or has
 	// died.
-	if (Player(Owner.Player).PendingWeapon != wp_nochange || !Owner.Player.Health)
+	if (Player(Owner.Player).PendingWeapon || !Owner.Player.Health)
 	{
 		if (Player(Owner.Player).Powers[pw_weaponlevel2])
 		{
@@ -196,7 +196,8 @@ final void A_WeaponReady()
 	// Check for fire.  The phoenix rod does not auto fire.
 	if (Owner.Player.Buttons & BT_ATTACK)
 	{
-		if (!Owner.Player.bAttackDown || (Player(Owner.Player).ReadyWeapon != wp_phoenixrod))
+		if (!Owner.Player.bAttackDown ||
+			(Player(Owner.Player).ReadyWeapon.WeaponType != wp_phoenixrod))
 		{
 			Owner.Player.bAttackDown = true;
 			Player(Owner.Player).FireWeapon();
@@ -298,8 +299,8 @@ final void A_Raise()
 
 final void A_ReFire()
 {
-	if ((Owner.Player.Buttons & BT_ATTACK)
-		&& Player(Owner.Player).PendingWeapon == wp_nochange && Owner.Player.Health)
+	if ((Owner.Player.Buttons & BT_ATTACK) &&
+		!Player(Owner.Player).PendingWeapon && Owner.Player.Health)
 	{
 		Player(Owner.Player).Refire++;
 		Player(Owner.Player).FireWeapon();

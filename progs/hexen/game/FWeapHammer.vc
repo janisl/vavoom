@@ -80,7 +80,7 @@ final void A_FHammerAttack()
 	}
 
 	if (EntityEx(Owner).FindInventory(Mana2).Amount <
-		WeaponManaUse(Owner.Player.PClass, Player(Owner.Player).ReadyWeapon))
+		WeaponManaUse(Owner.Player.PClass, Player(Owner.Player).ReadyWeapon.WeaponType))
 	{
 		// Don't spawn a hammer if the player doesn't have enough mana
 		bThrowHammer = false;
@@ -101,7 +101,7 @@ final void A_FHammerThrow()
 		return;
 	}
 	EntityEx(Owner).FindInventory(Mana2).Amount -=
-		WeaponManaUse(Owner.Player.PClass, Player(Owner.Player).ReadyWeapon);
+		WeaponManaUse(Owner.Player.PClass, Player(Owner.Player).ReadyWeapon.WeaponType);
 	Actor(Owner).SpawnPlayerMissile(HammerMissile);
 }
 

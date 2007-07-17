@@ -85,10 +85,10 @@ int ArtifactCount;
 int Refire;
 
 // Is wp_nochange if not changing.
-int PendingWeapon;
+WeaponEx PendingWeapon;
 
 WeaponEx WeaponOwned[NUMWEAPONS];
-int ReadyWeapon;
+WeaponEx ReadyWeapon;
 
 // Armor type is 0-2.
 int ArmorType;
@@ -544,14 +544,14 @@ void GotAmmo(Ammo NewAmmo)
 {
 	int			i;
 
-	if (ReadyWeapon == wp_staff || ReadyWeapon == wp_gauntlets)
+	if (ReadyWeapon.WeaponType == wp_staff || ReadyWeapon.WeaponType == wp_gauntlets)
 	{
 		for (i = 0; i < NUMWEAPONS; i++)
 		{
 			if (WeaponOwned[i] &&
 				MainGameInfo(Level.Game).WeaponClasses[i].default.AmmoType == NewAmmo.Class)
 			{
-				PendingWeapon = i;
+				PendingWeapon = WeaponOwned[i];
 			}
 		}
 	}
@@ -1505,7 +1505,7 @@ void PrevWeapon()
 	CurIdx = 0;
 	for (i = 0; i < NUMWEAPONS; i++)
 	{
-		if (ReadyWeapon == MainGameInfo(Level.Game).WeaponOrder[i])
+		if (ReadyWeapon.WeaponType == MainGameInfo(Level.Game).WeaponOrder[i])
 		{
 			CurIdx = i;
 			break;
@@ -1516,7 +1516,7 @@ void PrevWeapon()
 		NewWeap = MainGameInfo(Level.Game).WeaponOrder[(CurIdx + i) % NUMWEAPONS];
 		if (WeaponOwned[NewWeap])
 		{
-			PendingWeapon = NewWeap;
+			PendingWeapon = WeaponOwned[NewWeap];
 			return;
 		}
 	}
@@ -1537,7 +1537,7 @@ void NextWeapon()
 	CurIdx = 0;
 	for (i = 0; i < NUMWEAPONS; i++)
 	{
-		if (ReadyWeapon == MainGameInfo(Level.Game).WeaponOrder[i])
+		if (ReadyWeapon.WeaponType == MainGameInfo(Level.Game).WeaponOrder[i])
 		{
 			CurIdx = i;
 			break;
@@ -1550,7 +1550,7 @@ void NextWeapon()
 			(MainGameInfo(Level.Game).WeaponClasses[NewWeap].default.bInShareware ||
 			!MainGameInfo(Level.Game).shareware))
 		{
-			PendingWeapon = NewWeap;
+			PendingWeapon = WeaponOwned[NewWeap];
 			return;
 		}
 	}
@@ -1579,17 +1579,17 @@ void PlayerImpulse()
 		// the middle of an attack.
 		newweapon = impulse - 1;
 		if (newweapon == wp_staff && WeaponOwned[wp_gauntlets]
-			&& !(ReadyWeapon == wp_gauntlets))
+			&& !(ReadyWeapon.WeaponType == wp_gauntlets))
 		{
 			newweapon = wp_gauntlets;
 		}
 		if (WeaponOwned[newweapon] &&
-			newweapon != ReadyWeapon)
+			newweapon != ReadyWeapon.WeaponType)
 		{
 			if (MainGameInfo(Level.Game).WeaponClasses[newweapon].default.bInShareware ||
 				!MainGameInfo(Level.Game).shareware)
 			{
-				PendingWeapon = newweapon;
+				PendingWeapon = WeaponOwned[newweapon];
 			}
 		}
 	}
@@ -2220,7 +2220,7 @@ void SetViewPos()
 		SBFlags |= HereticDefs::SBF_INVENTORY_OPEN;
 	}
 
-	if (ReadyWeapon > 0 && ReadyWeapon < 7)
+	if (ReadyWeapon.WeaponType > 0 && ReadyWeapon.WeaponType < 7)
 		ReadyAmmo = EntityEx(MO).FindInventory(WeaponEx(ViewEnt).AmmoType).Amount;
 	else
 		ReadyAmmo = 0;
@@ -2530,10 +2530,10 @@ void UseArtiFireBomb()
 
 void SetWeapon(int NewWeapon)
 {
-	ReadyWeapon = NewWeapon;
-	PendingWeapon = wp_nochange;
+	ReadyWeapon = WeaponOwned[NewWeapon];
+	PendingWeapon = none;
 
-	ViewEnt = WeaponOwned[ReadyWeapon];
+	ViewEnt = ReadyWeapon;
 	PSpriteSY = WeaponEx(ViewEnt).PSpriteSY;
 }
 
@@ -2547,8 +2547,8 @@ void SetWeapon(int NewWeapon)
 
 void BringUpWeapon()
 {
-	SetWeapon(ReadyWeapon);
-	if (ReadyWeapon == wp_gauntlets)
+	SetWeapon(ReadyWeapon.WeaponType);
+	if (ReadyWeapon.WeaponType == wp_gauntlets)
 	{
 		MO.PlaySound('weapons/gauntletsactivate', CHAN_WEAPON);
 	}
@@ -2655,7 +2655,7 @@ bool CheckAmmo()
 	int count;
 
 	ammo = WeaponEx(ViewEnt).AmmoType;
-	count = GetAmmoUse(ReadyWeapon);
+	count = GetAmmoUse(ReadyWeapon.WeaponType);
 	if (!ammo || EntityEx(MO).FindInventory(ammo).Amount >= count)
 	{
 		return true;
@@ -2666,42 +2666,42 @@ bool CheckAmmo()
 		if (WeaponOwned[wp_skullrod] &&
 			EntityEx(MO).FindInventory(SkullRodAmmo).Amount > GetAmmoUse(wp_skullrod))
 		{
-			PendingWeapon = wp_skullrod;
+			PendingWeapon = WeaponOwned[wp_skullrod];
 		}
 		else if (WeaponOwned[wp_blaster] &&
 			EntityEx(MO).FindInventory(BlasterAmmo).Amount > GetAmmoUse(wp_blaster))
 		{
-			PendingWeapon = wp_blaster;
+			PendingWeapon = WeaponOwned[wp_blaster];
 		}
 		else if (WeaponOwned[wp_crossbow] &&
 			EntityEx(MO).FindInventory(CrossbowAmmo).Amount > GetAmmoUse(wp_crossbow))
 		{
-			PendingWeapon = wp_crossbow;
+			PendingWeapon = WeaponOwned[wp_crossbow];
 		}
 		else if (WeaponOwned[wp_mace] &&
 			EntityEx(MO).FindInventory(MaceAmmo).Amount > GetAmmoUse(wp_mace))
 		{
-			PendingWeapon = wp_mace;
+			PendingWeapon = WeaponOwned[wp_mace];
 		}
 		else if (EntityEx(MO).FindInventory(GoldWandAmmo).Amount > GetAmmoUse(wp_goldwand))
 		{
-			PendingWeapon = wp_goldwand;
+			PendingWeapon = WeaponOwned[wp_goldwand];
 		}
 		else if (WeaponOwned[wp_gauntlets])
 		{
-			PendingWeapon = wp_gauntlets;
+			PendingWeapon = WeaponOwned[wp_gauntlets];
 		}
 		else if (WeaponOwned[wp_phoenixrod] &&
 			EntityEx(MO).FindInventory(PhoenixRodAmmo).Amount > GetAmmoUse(wp_phoenixrod))
 		{
-			PendingWeapon = wp_phoenixrod;
+			PendingWeapon = WeaponOwned[wp_phoenixrod];
 		}
 		else
 		{
-			PendingWeapon = wp_staff;
+			PendingWeapon = WeaponOwned[wp_staff];
 		}
 	}
-	while (PendingWeapon == wp_nochange);
+	while (!PendingWeapon);
 	if (Powers[pw_weaponlevel2])
 	{
 		SetViewState(ps_weapon, WeaponEx(ViewEnt).DownState2);
@@ -2742,7 +2742,7 @@ void FireWeapon()
 	}
 	SetViewState(ps_weapon, attackState);
 	HereticLevelInfo(Level).NoiseAlert(Actor(MO), Actor(MO));
-	if (ReadyWeapon == wp_gauntlets && !Refire)
+	if (ReadyWeapon.WeaponType == wp_gauntlets && !Refire)
 	{
 		// Play the sound for the initial gauntlet attack
 		MO.PlaySound('weapons/gauntletsuse', CHAN_WEAPON);
@@ -3098,7 +3098,7 @@ void Cheat_NoWeapons()
 			WeaponOwned[i].Destroy();
 		}
 	}
-	PendingWeapon = wp_staff;
+	PendingWeapon = WeaponOwned[wp_staff];
 	cprint("CHEATER - YOU DON'T DESERVE WEAPONS");
 }
 
@@ -3157,7 +3157,7 @@ void ClientExplosion(int etype, TVec org)
 float GetWeaponKickBack()
 {
 	//	No kickback from gauntlets.
-	if (ReadyWeapon != wp_gauntlets)
+	if (ReadyWeapon.WeaponType != wp_gauntlets)
 	{
 		return 150.0;
 	}
@@ -3172,7 +3172,7 @@ float GetWeaponKickBack()
 
 bool IsStaffLevel2()
 {
-	return Powers[pw_weaponlevel2] && ReadyWeapon == wp_staff;
+	return Powers[pw_weaponlevel2] && ReadyWeapon.WeaponType == wp_staff;
 }
 
 //==========================================================================
