@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Mace : Weapon;
+class Mace : WeaponEx;
 
 EntityEx		FirstSpot;
 int				SpotCount;

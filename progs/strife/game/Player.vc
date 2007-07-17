@@ -2019,7 +2019,7 @@ void SetViewPos()
 
 	ViewAngles = MO.Angles;
 
-	ReadyAmmo = Weapon(ViewEnt).AmmoType;
+	ReadyAmmo = WeaponEx(ViewEnt).AmmoType;
 
 	PaletteFlash();
 
@@ -2060,9 +2060,9 @@ void SetWeapon(int NewWeapon)
 	{
 		ViewEnt.Destroy();
 	}
-	ViewEnt = Weapon(StrifeLevelInfo(Level).Spawn(
+	ViewEnt = WeaponEx(StrifeLevelInfo(Level).Spawn(
 		MainGameInfo(Level.Game).WeaponClasses[NewWeapon], vector(0.0, 0.0, 0.0)));
-	Weapon(ViewEnt).AttachToOwner(EntityEx(MO));
+	WeaponEx(ViewEnt).AttachToOwner(EntityEx(MO));
 }
 
 //===========================================================================
@@ -2077,9 +2077,9 @@ void SetWeapon(int NewWeapon)
 void BringUpWeapon()
 {
 	PendingWeapon = StrifeDefs::wp_nochange;
-	ViewStates[ps_weapon].SY = Weapon::WEAPONBOTTOM;
+	ViewStates[ps_weapon].SY = WeaponEx::WEAPONBOTTOM;
 
-	SetViewState(ps_weapon, Weapon(ViewEnt).UpState);
+	SetViewState(ps_weapon, WeaponEx(ViewEnt).UpState);
 }
 
 //==========================================================================
@@ -2139,7 +2139,7 @@ void ChangeWeapon(int newweapon)
 
 void DropWeapon()
 {
-	SetViewState(ps_weapon, Weapon(ViewEnt).DownState);
+	SetViewState(ps_weapon, WeaponEx(ViewEnt).DownState);
 }
 
 //===========================================================================
@@ -2193,7 +2193,7 @@ int CheckAmmo()
 	class<Ammo> ammo;
 	int count;
 
-	ammo = Weapon(ViewEnt).AmmoType;
+	ammo = WeaponEx(ViewEnt).AmmoType;
 
 	// Minimal amount for one shot varies.
 	if (ReadyWeapon == StrifeDefs::wp_blaster)
@@ -2241,7 +2241,7 @@ int CheckAmmo()
 	while (PendingWeapon == StrifeDefs::wp_nochange);
 
 	// Now set appropriate weapon overlay.
-	SetViewState(ps_weapon, Weapon(ViewEnt).DownState);
+	SetViewState(ps_weapon, WeaponEx(ViewEnt).DownState);
 
 	return false;
 }
@@ -2260,8 +2260,8 @@ void FireWeapon()
 	}
 
 	MO.SetState(Actor(MO).MeleeState);
-	SetViewState(ps_weapon, Weapon(ViewEnt).AttackState);
-	if (Weapon(ViewEnt).bRaiseNoiseAlert)
+	SetViewState(ps_weapon, WeaponEx(ViewEnt).AttackState);
+	if (WeaponEx(ViewEnt).bRaiseNoiseAlert)
 		StrifeLevelInfo(Level).NoiseAlert(Actor(MO), Actor(MO));
 }
 

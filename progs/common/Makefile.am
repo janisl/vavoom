@@ -27,6 +27,8 @@ EXTRA_DIST = \
 	engine/Thinker.vc \
 	engine/Window.vc \
 	engine/WorldInfo.vc \
+	linespec/Ammo.vc \
+	linespec/BackpackItem.vc \
 	linespec/classes.vc \
 	linespec/CeilingMover.vc \
 	linespec/CeilingWaggle.vc \
@@ -36,6 +38,7 @@ EXTRA_DIST = \
 	linespec/FloorMover.vc \
 	linespec/FloorWaggle.vc \
 	linespec/GlowingLight.vc \
+	linespec/Inventory.vc \
 	linespec/LightFlash.vc \
 	linespec/Lighting.vc \
 	linespec/LightEffect.vc \
@@ -58,4 +61,5 @@ EXTRA_DIST = \
 	linespec/StairStepMover.vc \
 	linespec/Strobe.vc \
 	linespec/TextureChangeDoor.vc \
-	linespec/VerticalDoor.vc
+	linespec/VerticalDoor.vc \
+	linespec/Weapon.vc

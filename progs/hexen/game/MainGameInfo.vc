@@ -28,7 +28,7 @@ class MainGameInfo : LineSpecialGameInfo;
 const int NUMTOTALBOTS		= 24;
 const int NUMBOTTYPES		= 24;
 
-class<Weapon> WeaponClasses[HexenDefs::NUMWEAPONS * HexenDefs::NUMCLASSES];
+class<WeaponEx> WeaponClasses[HexenDefs::NUMWEAPONS * HexenDefs::NUMCLASSES];
 
 BotPlayer::botinfo_t botinfo[NUMTOTALBOTS];
 int botskill;

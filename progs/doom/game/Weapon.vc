@@ -23,7 +23,8 @@
 //**
 //**************************************************************************
 
-class Weapon : Inventory;
+class WeaponEx : Weapon
+	abstract;
 
 const float LOWERSPEED		= 6.0;
 const float RAISESPEED		= 6.0;
@@ -172,7 +173,7 @@ final void A_WeaponReady()
 	}
 
 	if (Player(Owner.Player).ReadyWeapon == DoomDefs::wp_chainsaw &&
-		Owner.Player.ViewStates[ps_weapon].State == Weapon(self).ReadyState)
+		Owner.Player.ViewStates[ps_weapon].State == ReadyState)
 	{
 		Owner.PlaySound('weapons/sawidle', CHAN_WEAPON);
 	}
@@ -183,7 +184,7 @@ final void A_WeaponReady()
 	{
 		// change weapon
 		//  (pending weapon should allready be validated)
-		Owner.Player.SetViewState(ps_weapon, Weapon(self).DownState);
+		Owner.Player.SetViewState(ps_weapon, DownState);
 		return;
 	}
 
@@ -282,7 +283,7 @@ final void A_Raise()
 
 	// The weapon has been raised all the way,
 	//  so change to the ready state.
-	Owner.Player.SetViewState(ps_weapon, Weapon(self).ReadyState);
+	Owner.Player.SetViewState(ps_weapon, ReadyState);
 }
 
 //===========================================================================
@@ -330,7 +331,7 @@ final void A_CheckReload()
 final void A_GunFlash()
 {
 	Owner.SetState(DoomPlayer::S_PLAY_ATK2);
-	Owner.Player.SetViewState(ps_flash, Weapon(self).FlashState);
+	Owner.Player.SetViewState(ps_flash, FlashState);
 }
 
 //===========================================================================

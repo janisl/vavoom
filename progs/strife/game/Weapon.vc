@@ -23,7 +23,8 @@
 //**
 //**************************************************************************
 
-class Weapon : Inventory;
+class WeaponEx : Weapon
+	abstract;
 
 const float
 	MELEERANGE		= 64.0,

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Blaster : Weapon
+class Blaster : WeaponEx
 	__mobjinfo__(53)
 	__scriptid__(28);
 

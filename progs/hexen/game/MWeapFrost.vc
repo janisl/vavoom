@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MWeapFrost : Weapon
+class MWeapFrost : WeaponEx
 	__mobjinfo__(53)
 	__scriptid__(36);
 

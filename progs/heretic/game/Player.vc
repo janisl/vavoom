@@ -2219,7 +2219,7 @@ void SetViewPos()
 	}
 
 	if (ReadyWeapon > 0 && ReadyWeapon < 7)
-		ReadyAmmo = EntityEx(MO).FindInventory(Weapon(ViewEnt).AmmoType).Amount;
+		ReadyAmmo = EntityEx(MO).FindInventory(WeaponEx(ViewEnt).AmmoType).Amount;
 	else
 		ReadyAmmo = 0;
 
@@ -2493,7 +2493,7 @@ bool UseArtiTomeOfPower()
 		{
 			return false;
 		}
-		Weapon(ViewEnt).WeaponLevel2Init();
+		WeaponEx(ViewEnt).WeaponLevel2Init();
 	}
 	return true;
 }
@@ -2535,10 +2535,10 @@ void SetWeapon(int NewWeapon)
 	{
 		ViewEnt.Destroy();
 	}
-	ViewEnt = Weapon(HereticLevelInfo(Level).Spawn(
+	ViewEnt = WeaponEx(HereticLevelInfo(Level).Spawn(
 		MainGameInfo(Level.Game).WeaponClasses[NewWeapon], vector(0.0, 0.0, 0.0)));
-	Weapon(ViewEnt).AttachToOwner(EntityEx(MO));
-	PSpriteSY = Weapon(ViewEnt).PSpriteSY;
+	WeaponEx(ViewEnt).AttachToOwner(EntityEx(MO));
+	PSpriteSY = WeaponEx(ViewEnt).PSpriteSY;
 }
 
 //===========================================================================
@@ -2556,14 +2556,14 @@ void BringUpWeapon()
 	{
 		MO.PlaySound('weapons/gauntletsactivate', CHAN_WEAPON);
 	}
-	ViewStates[ps_weapon].SY = Weapon::WEAPONBOTTOM;
+	ViewStates[ps_weapon].SY = WeaponEx::WEAPONBOTTOM;
 	if (Powers[pw_weaponlevel2])
 	{
-		SetViewState(ps_weapon, Weapon(ViewEnt).UpState2);
+		SetViewState(ps_weapon, WeaponEx(ViewEnt).UpState2);
 	}
 	else
 	{
-		SetViewState(ps_weapon, Weapon(ViewEnt).UpState);
+		SetViewState(ps_weapon, WeaponEx(ViewEnt).UpState);
 	}
 }
 
@@ -2579,11 +2579,11 @@ void DropWeapon()
 {
 	if (Powers[pw_weaponlevel2])
 	{
-		SetViewState(ps_weapon, Weapon(ViewEnt).DownState2);
+		SetViewState(ps_weapon, WeaponEx(ViewEnt).DownState2);
 	}
 	else
 	{
-		SetViewState(ps_weapon, Weapon(ViewEnt).DownState);
+		SetViewState(ps_weapon, WeaponEx(ViewEnt).DownState);
 	}
 }
 
@@ -2658,7 +2658,7 @@ bool CheckAmmo()
 	class<Ammo> ammo;
 	int count;
 
-	ammo = Weapon(ViewEnt).AmmoType;
+	ammo = WeaponEx(ViewEnt).AmmoType;
 	count = GetAmmoUse(ReadyWeapon);
 	if (!ammo || EntityEx(MO).FindInventory(ammo).Amount >= count)
 	{
@@ -2708,11 +2708,11 @@ bool CheckAmmo()
 	while (PendingWeapon == wp_nochange);
 	if (Powers[pw_weaponlevel2])
 	{
-		SetViewState(ps_weapon, Weapon(ViewEnt).DownState2);
+		SetViewState(ps_weapon, WeaponEx(ViewEnt).DownState2);
 	}
 	else
 	{
-		SetViewState(ps_weapon, Weapon(ViewEnt).DownState);
+		SetViewState(ps_weapon, WeaponEx(ViewEnt).DownState);
 	}
 	return false;
 }
@@ -2735,14 +2735,14 @@ void FireWeapon()
 	if (Powers[pw_weaponlevel2])
 	{
 		attackState = Refire ?
-			Weapon(ViewEnt).HoldAttackState2 :
-			Weapon(ViewEnt).AttackState2;
+			WeaponEx(ViewEnt).HoldAttackState2 :
+			WeaponEx(ViewEnt).AttackState2;
 	}
 	else
 	{
 		attackState = Refire ?
-			Weapon(ViewEnt).HoldAttackState :
-			Weapon(ViewEnt).AttackState;
+			WeaponEx(ViewEnt).HoldAttackState :
+			WeaponEx(ViewEnt).AttackState;
 	}
 	SetViewState(ps_weapon, attackState);
 	HereticLevelInfo(Level).NoiseAlert(Actor(MO), Actor(MO));
@@ -2762,8 +2762,8 @@ void FireWeapon()
 void ActivateBeak()
 {
 	SetWeapon(wp_beak);
-	ViewStates[ps_weapon].SY = Weapon::WEAPONTOP;
-	SetViewState(ps_weapon, Weapon(ViewEnt).ReadyState);
+	ViewStates[ps_weapon].SY = WeaponEx::WEAPONTOP;
+	SetViewState(ps_weapon, WeaponEx(ViewEnt).ReadyState);
 }
 
 //===========================================================================
@@ -2780,8 +2780,8 @@ void PostChickenWeapon(int weapon)
 		weapon = wp_staff;
 	}
 	SetWeapon(weapon);
-	ViewStates[ps_weapon].SY = Weapon::WEAPONBOTTOM;
-	SetViewState(ps_weapon, Weapon(ViewEnt).UpState);
+	ViewStates[ps_weapon].SY = WeaponEx::WEAPONBOTTOM;
+	SetViewState(ps_weapon, WeaponEx(ViewEnt).UpState);
 }
 
 //===========================================================================
@@ -2792,7 +2792,7 @@ void PostChickenWeapon(int weapon)
 
 void UpdateBeak()
 {
-	ViewStates[ps_weapon].SY = Weapon::WEAPONTOP + itof(ChickenPeck) / 2.0;
+	ViewStates[ps_weapon].SY = WeaponEx::WEAPONTOP + itof(ChickenPeck) / 2.0;
 }
 
 //===========================================================================
@@ -2803,7 +2803,7 @@ void UpdateBeak()
 
 void WeaponLevel2Fade()
 {
-	Weapon(ViewEnt).WeaponLevel2Fade();
+	WeaponEx(ViewEnt).WeaponLevel2Fade();
 }
 
 //==========================================================================

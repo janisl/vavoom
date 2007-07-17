@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Pistol : Weapon;
+class Pistol : WeaponEx;
 
 //===========================================================================
 //
@@ -40,7 +40,7 @@ final void A_FirePistol()
 	Owner.SetState(DoomPlayer::S_PLAY_ATK2);
 	DecAmmo(1);
 
-	Owner.Player.SetViewState(ps_flash, Weapon(self).FlashState);
+	Owner.Player.SetViewState(ps_flash, FlashState);
 
 	Actor(Owner).Aim(dir, 16.0 * 64.0);
 	GunShot(Actor(Owner), !Player(Owner.Player).Refire, dir);

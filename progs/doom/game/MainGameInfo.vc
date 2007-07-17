@@ -41,7 +41,7 @@ struct spec_trans_t
 
 spec_trans_t spec_trans_tab[NUM_SPECIALS];
 
-class<Weapon> WeaponClasses[DoomDefs::NUMWEAPONS];
+class<WeaponEx> WeaponClasses[DoomDefs::NUMWEAPONS];
 int WeaponOrder[DoomDefs::NUMWEAPONS];
 
 int botskill;

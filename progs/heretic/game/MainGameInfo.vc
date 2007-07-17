@@ -44,7 +44,7 @@ struct spec_trans_t
 
 spec_trans_t spec_trans_tab[NUM_SPECIALS];
 
-class<Weapon> WeaponClasses[NUMWEAPONS];
+class<WeaponEx> WeaponClasses[NUMWEAPONS];
 int WeaponOrder[NUMWEAPONS];
 
 BotPlayer::botinfo_t botinfo[NUMTOTALBOTS];

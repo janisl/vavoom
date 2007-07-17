@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class FWeapAxe : Weapon
+class FWeapAxe : WeaponEx
 	__mobjinfo__(8010)
 	__scriptid__(27);
 

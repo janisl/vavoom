@@ -693,7 +693,7 @@ bool GiveMana(class<Ammo> mana, int count)
 
 void GotAmmo(Ammo NewAmmo)
 {
-	Weapon(ViewEnt).GotMana(NewAmmo);
+	WeaponEx(ViewEnt).GotMana(NewAmmo);
 }
 
 //==========================================================================
@@ -1921,7 +1921,7 @@ void MorphPlayerThink()
 	if (!(MO.Velocity.x + MO.Velocity.y) && P_Random() < 64)
 	{
 		// Snout sniff
-		Weapon(ViewEnt).SnoutSniff();
+		WeaponEx(ViewEnt).SnoutSniff();
 		MO.PlaySound('PigActive1', CHAN_VOICE);	// snort
 		return;
 	}
@@ -3246,11 +3246,11 @@ void SetWeapon(int NewWeapon)
 	{
 		ViewEnt.Destroy();
 	}
-	ViewEnt = Weapon(HexenLevelInfo(Level).Spawn(
+	ViewEnt = WeaponEx(HexenLevelInfo(Level).Spawn(
 		MainGameInfo(Level.Game).WeaponClasses[
 		NewWeapon * HexenDefs::NUMCLASSES + PClass], vector(0.0, 0.0, 0.0)));
-	Weapon(ViewEnt).AttachToOwner(EntityEx(MO));
-	PSpriteSY = Weapon(ViewEnt).PSpriteSY;
+	WeaponEx(ViewEnt).AttachToOwner(EntityEx(MO));
+	PSpriteSY = WeaponEx(ViewEnt).PSpriteSY;
 }
 
 //==========================================================================
@@ -3264,8 +3264,8 @@ void SetWeapon(int NewWeapon)
 void BringUpWeapon()
 {
 	PendingWeapon = HexenDefs::wp_nochange;
-	ViewStates[ps_weapon].SY = Weapon::WEAPONBOTTOM;
-	SetViewState(ps_weapon, Weapon(ViewEnt).GetUpState());
+	ViewStates[ps_weapon].SY = WeaponEx::WEAPONBOTTOM;
+	SetViewState(ps_weapon, WeaponEx(ViewEnt).GetUpState());
 }
 
 //==========================================================================
@@ -3278,7 +3278,7 @@ void BringUpWeapon()
 
 void DropWeapon()
 {
-	SetViewState(ps_weapon, Weapon(ViewEnt).GetDownState());
+	SetViewState(ps_weapon, WeaponEx(ViewEnt).GetDownState());
 }
 
 //==========================================================================
@@ -3332,8 +3332,8 @@ bool CheckMana()
 	class<Ammo> mana2;
 	int count;
 
-	mana1 = Weapon(ViewEnt).ManaType1;
-	mana2 = Weapon(ViewEnt).ManaType2;
+	mana1 = WeaponEx(ViewEnt).ManaType1;
+	mana2 = WeaponEx(ViewEnt).ManaType2;
 	count = WeaponManaUse(PClass, ReadyWeapon);
 	if (mana2)
 	{
@@ -3372,7 +3372,7 @@ bool CheckMana()
 		}
 	}
 	while (PendingWeapon == HexenDefs::wp_nochange);
-	SetViewState(ps_weapon, Weapon(ViewEnt).GetDownState());
+	SetViewState(ps_weapon, WeaponEx(ViewEnt).GetDownState());
 	return false;
 }
 
@@ -3389,7 +3389,7 @@ void FireWeapon()
 		return;
 	}
 	MO.SetState(Actor(MO).MissileState);
-	SetViewState(ps_weapon, Weapon(ViewEnt).GetAttackState());
+	SetViewState(ps_weapon, WeaponEx(ViewEnt).GetAttackState());
 	HexenLevelInfo(Level).NoiseAlert(Actor(MO), Actor(MO));
 }
 
@@ -3401,9 +3401,9 @@ void FireWeapon()
 
 void ActivateMorphWeapon()
 {
-	ViewStates[ps_weapon].SY = Weapon::WEAPONTOP;
+	ViewStates[ps_weapon].SY = WeaponEx::WEAPONTOP;
 	SetWeapon(HexenDefs::WP_FIRST);	// Snout is the first weapon
-	SetViewState(ps_weapon, Weapon(ViewEnt).ReadyState);
+	SetViewState(ps_weapon, WeaponEx(ViewEnt).ReadyState);
 }
 
 //==========================================================================
@@ -3415,8 +3415,8 @@ void ActivateMorphWeapon()
 void PostMorphWeapon(int weapon)
 {
 	SetWeapon(weapon);
-	ViewStates[ps_weapon].SY = Weapon::WEAPONBOTTOM;
-	SetViewState(ps_weapon, Weapon(ViewEnt).UpState);
+	ViewStates[ps_weapon].SY = WeaponEx::WEAPONBOTTOM;
+	SetViewState(ps_weapon, WeaponEx(ViewEnt).UpState);
 }
 
 //==========================================================================

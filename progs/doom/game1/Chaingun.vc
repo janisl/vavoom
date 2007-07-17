@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Chaingun : Weapon
+class Chaingun : WeaponEx
 	__mobjinfo__(2002)
 	__scriptid__(28);
 
@@ -45,8 +45,8 @@ final void A_FireCGun()
 	Owner.SetState(DoomPlayer::S_PLAY_ATK2);
 	DecAmmo(1);
 
-	if (Owner.Player.ViewStates[ps_weapon].State == Weapon(self).AttackState)
-		Owner.Player.SetViewState(ps_flash, Weapon(self).FlashState);
+	if (Owner.Player.ViewStates[ps_weapon].State == AttackState)
+		Owner.Player.SetViewState(ps_flash, FlashState);
 	else
 		Owner.Player.SetViewState(ps_flash, S_CHAINFLASH2);
 

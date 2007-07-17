@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Crossbow : Weapon
+class Crossbow : WeaponEx
 	__mobjinfo__(2001)
 	__scriptid__(27);
 

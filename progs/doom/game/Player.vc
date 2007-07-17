@@ -2007,10 +2007,10 @@ void SetViewPos()
 	if ((Cheats & CF_GODMODE) || Powers[pw_invulnerability])
 		SBFlags |= DoomDefs::SBF_GOD_MODE;
 
-	if (!Weapon(ViewEnt).AmmoType)
+	if (!WeaponEx(ViewEnt).AmmoType)
 		ReadyAmmo = 1994;	// means "n/a"
 	else
-		ReadyAmmo = EntityEx(MO).FindInventory(Weapon(ViewEnt).AmmoType).Amount;
+		ReadyAmmo = EntityEx(MO).FindInventory(WeaponEx(ViewEnt).AmmoType).Amount;
 
 	ClientSetViewOrg(ViewOrg.x, ViewOrg.y, ViewOrg.z);
 }
@@ -2051,8 +2051,8 @@ void SetWeapon(int NewWeapon)
 	}
 	ViewEnt = DoomLevelInfo(Level).Spawn(
 		MainGameInfo(Level.Game).WeaponClasses[NewWeapon], vector(0.0, 0.0, 0.0));
-	Weapon(ViewEnt).AttachToOwner(EntityEx(MO));
-	MO.ModelVersion = Weapon(ViewEnt).PlayerModelVersion;
+	WeaponEx(ViewEnt).AttachToOwner(EntityEx(MO));
+	MO.ModelVersion = WeaponEx(ViewEnt).PlayerModelVersion;
 }
 
 //===========================================================================
@@ -2070,10 +2070,10 @@ void BringUpWeapon()
 		MO.PlaySound('weapons/sawup', CHAN_WEAPON);
 
 	PendingWeapon = DoomDefs::wp_nochange;
-	ViewStates[ps_weapon].SY = Weapon::WEAPONBOTTOM;
+	ViewStates[ps_weapon].SY = WeaponEx::WEAPONBOTTOM;
 
-	SetViewState(ps_weapon, Weapon(ViewEnt).UpState);
-	MO.ModelVersion = Weapon(ViewEnt).PlayerModelVersion;
+	SetViewState(ps_weapon, WeaponEx(ViewEnt).UpState);
+	MO.ModelVersion = WeaponEx(ViewEnt).PlayerModelVersion;
 }
 
 //==========================================================================
@@ -2133,7 +2133,7 @@ void ChangeWeapon(int newweapon)
 
 void DropWeapon()
 {
-	SetViewState(ps_weapon, Weapon(ViewEnt).DownState);
+	SetViewState(ps_weapon, WeaponEx(ViewEnt).DownState);
 }
 
 //===========================================================================
@@ -2187,7 +2187,7 @@ int CheckAmmo()
 	class<Inventory> ammo;
 	int count;
 
-	ammo = Weapon(ViewEnt).AmmoType;
+	ammo = WeaponEx(ViewEnt).AmmoType;
 
 	// Minimal amount for one shot varies.
 	if (ReadyWeapon == DoomDefs::wp_bfg)
@@ -2263,7 +2263,7 @@ int CheckAmmo()
 	while (PendingWeapon == DoomDefs::wp_nochange);
 
 	// Now set appropriate weapon overlay.
-	SetViewState(ps_weapon, Weapon(ViewEnt).DownState);
+	SetViewState(ps_weapon, WeaponEx(ViewEnt).DownState);
 
 	return false;
 }
@@ -2282,7 +2282,7 @@ void FireWeapon()
 	}
 
 	MO.SetState(Actor(MO).MeleeState);
-	SetViewState(ps_weapon, Weapon(ViewEnt).AttackState);
+	SetViewState(ps_weapon, WeaponEx(ViewEnt).AttackState);
 	DoomLevelInfo(Level).NoiseAlert(Actor(MO), Actor(MO));
 }
 

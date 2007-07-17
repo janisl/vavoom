@@ -41,7 +41,7 @@ struct spec_trans_t
 
 spec_trans_t spec_trans_tab[NUM_SPECIALS];
 
-class<Weapon> WeaponClasses[StrifeDefs::NUMWEAPONS];
+class<WeaponEx> WeaponClasses[StrifeDefs::NUMWEAPONS];
 int WeaponOrder[StrifeDefs::NUMWEAPONS];
 
 class<InventoryItem> InvItemCID[StrifeDefs::NUMINVITEMS];

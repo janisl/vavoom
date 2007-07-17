@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Weapon : Inventory
+class WeaponEx : Weapon
 	abstract;
 
 const float LOWERSPEED		= 6.0;

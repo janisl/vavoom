@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class FWeapHammer : Weapon
+class FWeapHammer : WeaponEx
 	__mobjinfo__(123)
 	__scriptid__(28);
 

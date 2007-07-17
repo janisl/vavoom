@@ -41,6 +41,7 @@ enum
 #include "ItemFog.vc"
 #include "Ammo.vc"
 #include "BackpackItem.vc"
+#include "Weapon.vc"
 #include "PlayerEx.vc"
 
 #include "LineSpecialLevelInfo.vc"

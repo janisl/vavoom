@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Gauntlets : Weapon
+class Gauntlets : WeaponEx
 	__mobjinfo__(2005)
 	__scriptid__(32);
 

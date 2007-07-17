@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class CWeapStaff : Weapon
+class CWeapStaff : WeaponEx
 	__mobjinfo__(10)
 	__scriptid__(32);
 
