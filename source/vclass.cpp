@@ -784,7 +784,7 @@ void VField::CopyFieldValue(const vuint8* Src, vuint8* Dst,
 		IntType.Type = Type.ArrayInnerType;
 		InnerSize = IntType.GetSize();
 		ADst.SetNum(ASrc.Num(), IntType);
-		for (int i = 0; i < Type.ArrayDim; i++)
+		for (int i = 0; i < ASrc.Num(); i++)
 		{
 			CopyFieldValue(ASrc.Ptr() + i * InnerSize,
 				ADst.Ptr() + i * InnerSize, IntType);
