@@ -112,6 +112,98 @@ bool ShouldStay()
 	return Level.Game.netgame && Level.Game.deathmatch < 2;
 }
 
+//==========================================================================
+//
+//	CheckAmmo
+//
+//	Returns true if there is enough ammo to shoot.
+// If not, selects the next weapon to use.
+//
+//==========================================================================
+
+bool CheckAmmo(bool AutoSwitch, optional bool RequireAmmo)
+{
+	class<Inventory>	ammo;
+	int					count;
+
+	ammo = AmmoType;
+
+	// Minimal amount for one shot varies.
+	if (WeaponType == DoomDefs::wp_bfg)
+		count = MainGameInfo(Level.Game).BFGCELLS;
+	else if (WeaponType == DoomDefs::wp_supershotgun)
+		count = 2;	// Double barrel.
+	else
+		count = 1;	// Regular.
+
+	// Some do not need ammunition anyway.
+	// Return if current ammunition sufficient.
+	if (!ammo || EntityEx(Owner).FindInventory(ammo).Amount >= count)
+		return true;
+
+	if (!AutoSwitch)
+	{
+		return false;
+	}
+
+	// Out of ammo, pick a weapon to change to.
+	// Preferences are set here.
+	do
+	{
+		if (Player(Owner.Player).WeaponOwned[DoomDefs::wp_plasma] &&
+			Player(Owner.Player).WeaponOwned[DoomDefs::wp_plasma].CheckAmmo(false))
+		{
+			Player(Owner.Player).PendingWeapon = Player(Owner.Player).WeaponOwned[DoomDefs::wp_plasma];
+		}
+		else if (Player(Owner.Player).WeaponOwned[DoomDefs::wp_supershotgun] &&
+			Player(Owner.Player).WeaponOwned[DoomDefs::wp_supershotgun].CheckAmmo(false))
+		{
+			Player(Owner.Player).PendingWeapon = Player(Owner.Player).WeaponOwned[DoomDefs::wp_supershotgun];
+		}
+		else if (Player(Owner.Player).WeaponOwned[DoomDefs::wp_chaingun] &&
+			Player(Owner.Player).WeaponOwned[DoomDefs::wp_chaingun].CheckAmmo(false))
+		{
+			Player(Owner.Player).PendingWeapon = Player(Owner.Player).WeaponOwned[DoomDefs::wp_chaingun];
+		}
+		else if (Player(Owner.Player).WeaponOwned[DoomDefs::wp_shotgun] &&
+			Player(Owner.Player).WeaponOwned[DoomDefs::wp_shotgun].CheckAmmo(false))
+		{
+			Player(Owner.Player).PendingWeapon = Player(Owner.Player).WeaponOwned[DoomDefs::wp_shotgun];
+		}
+		else if (Player(Owner.Player).WeaponOwned[DoomDefs::wp_pistol] &&
+			Player(Owner.Player).WeaponOwned[DoomDefs::wp_pistol].CheckAmmo(false))
+		{
+			Player(Owner.Player).PendingWeapon = Player(Owner.Player).WeaponOwned[DoomDefs::wp_pistol];
+		}
+		else if (Player(Owner.Player).WeaponOwned[DoomDefs::wp_chainsaw] &&
+			Player(Owner.Player).WeaponOwned[DoomDefs::wp_chainsaw].CheckAmmo(false))
+		{
+			Player(Owner.Player).PendingWeapon = Player(Owner.Player).WeaponOwned[DoomDefs::wp_chainsaw];
+		}
+		else if (Player(Owner.Player).WeaponOwned[DoomDefs::wp_missile] &&
+			Player(Owner.Player).WeaponOwned[DoomDefs::wp_missile].CheckAmmo(false))
+		{
+			Player(Owner.Player).PendingWeapon = Player(Owner.Player).WeaponOwned[DoomDefs::wp_missile];
+		}
+		else if (Player(Owner.Player).WeaponOwned[DoomDefs::wp_bfg] &&
+			Player(Owner.Player).WeaponOwned[DoomDefs::wp_bfg].CheckAmmo(false))
+		{
+			Player(Owner.Player).PendingWeapon = Player(Owner.Player).WeaponOwned[DoomDefs::wp_bfg];
+		}
+		else
+		{
+			// If everything fails.
+			Player(Owner.Player).PendingWeapon = Player(Owner.Player).WeaponOwned[DoomDefs::wp_fist];
+		}
+	}
+	while (!Player(Owner.Player).PendingWeapon);
+
+	// Now set appropriate weapon overlay.
+	Player(Owner.Player).SetViewState(ps_weapon, DownState);
+
+	return false;
+}
+
 //===========================================================================
 //
 //  GunShot
@@ -310,7 +402,7 @@ final void A_ReFire()
 	else
 	{
 		Player(Owner.Player).Refire = 0;
-		Player(Owner.Player).CheckAmmo();
+		CheckAmmo(true);
 	}
 }
 
@@ -322,7 +414,7 @@ final void A_ReFire()
 
 final void A_CheckReload()
 {
-	Player(Owner.Player).CheckAmmo();
+	CheckAmmo(true);
 }
 
 //===========================================================================

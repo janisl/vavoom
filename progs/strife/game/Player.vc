@@ -2178,73 +2178,6 @@ void MovePsprites(float deltaTime)
 	ViewStates[ps_flash].SY = ViewStates[ps_weapon].SY;
 }
 
-//==========================================================================
-//
-//  CheckAmmo
-//
-//  Returns true if there is enough ammo to shoot.
-// If not, selects the next weapon to use.
-//
-//==========================================================================
-
-int CheckAmmo()
-{
-	class<Ammo> ammo;
-	int count;
-
-	ammo = WeaponEx(ViewEnt).AmmoType;
-
-	// Minimal amount for one shot varies.
-	if (ReadyWeapon.WeaponType == StrifeDefs::wp_blaster)
-		count = 20;
-	else if (ReadyWeapon.WeaponType == StrifeDefs::wp_blaster2)
-		count = 30;
-	else
-		count = 1;	// Regular.
-
-	// Some do not need ammunition anyway.
-	// Return if current ammunition sufficient.
-	if (!ammo || EntityEx(MO).FindInventory(ammo).Amount >= count)
-		return true;
-
-	// Out of ammo, pick a weapon to change to.
-	// Preferences are set here.
-	do
-	{
-		if (WeaponOwned[StrifeDefs::wp_flame] &&
-			EntityEx(MO).FindInventory(EnergyPod).Amount)
-		{
-			PendingWeapon = WeaponOwned[StrifeDefs::wp_flame];
-		}
-		else if (WeaponOwned[StrifeDefs::wp_riffle] &&
-			EntityEx(MO).FindInventory(ClipOfBullets).Amount)
-		{
-			PendingWeapon = WeaponOwned[StrifeDefs::wp_riffle];
-		}
-		else if (WeaponOwned[StrifeDefs::wp_crossbow] &&
-			EntityEx(MO).FindInventory(ElectricBolts).Amount)
-		{
-			PendingWeapon = WeaponOwned[StrifeDefs::wp_crossbow];
-		}
-		else if (WeaponOwned[StrifeDefs::wp_missile] &&
-			EntityEx(MO).FindInventory(MiniMissiles).Amount)
-		{
-			PendingWeapon = WeaponOwned[StrifeDefs::wp_missile];
-		}
-		else
-		{
-			// If everything fails.
-			PendingWeapon = WeaponOwned[StrifeDefs::wp_fist];
-		}
-	}
-	while (!PendingWeapon);
-
-	// Now set appropriate weapon overlay.
-	SetViewState(ps_weapon, WeaponEx(ViewEnt).DownState);
-
-	return false;
-}
-
 //===========================================================================
 //
 //  FireWeapon
@@ -2253,7 +2186,7 @@ int CheckAmmo()
 
 void FireWeapon()
 {
-	if (!CheckAmmo())
+	if (!ReadyWeapon.CheckAmmo(true))
 	{
 		return;
 	}

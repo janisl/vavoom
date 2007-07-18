@@ -40,6 +40,8 @@ state ReadyState;
 state AttackState;
 state HoldAttackState;
 float PSpriteSY;		// Y-adjustment value for full screen
+int ManaUse;
+bool bManaOptional;
 
 int WeaponClass;
 int WeaponType;
@@ -131,13 +133,69 @@ bool ShouldStay()
 
 //==========================================================================
 //
-//  WeaponManaUse
+//  CheckAmmo
+//
+//  Returns true if there is enough mana to shoot.  If not, selects the
+// next weapon to use.
 //
 //==========================================================================
 
-int WeaponManaUse(int pclass, int num)
+bool CheckAmmo(bool AutoSwitch, optional bool RequireAmmo)
 {
-	return MainGameInfo(Level.Game).WeaponManaUseTable[(pclass << 2) + num];
+	class<Ammo> mana1;
+	class<Ammo> mana2;
+	int count;
+
+	if (!RequireAmmo && bManaOptional)
+	{
+		return true;
+	}
+	mana1 = ManaType1;
+	mana2 = ManaType2;
+	count = ManaUse;
+	bool Good = true;
+	if (mana1 && EntityEx(Owner).FindInventory(mana1).Amount < count)
+	{
+		Good = false;
+	}
+	if (mana2 && EntityEx(Owner).FindInventory(mana2).Amount < count)
+	{
+		Good = false;
+	}
+	if (Good)
+	{
+		return true;
+	}
+	if (!AutoSwitch)
+	{
+		return false;
+	}
+	// out of mana, pick a weapon to change to
+	do
+	{
+		if (Player(Owner.Player).WeaponOwned[HexenDefs::WP_THIRD] &&
+			Player(Owner.Player).WeaponOwned[HexenDefs::WP_THIRD].CheckAmmo(false))
+		{
+			Player(Owner.Player).PendingWeapon = Player(Owner.Player).WeaponOwned[HexenDefs::WP_THIRD];
+		}
+		else if (Player(Owner.Player).WeaponOwned[HexenDefs::WP_SECOND] &&
+			Player(Owner.Player).WeaponOwned[HexenDefs::WP_SECOND].CheckAmmo(false))
+		{
+			Player(Owner.Player).PendingWeapon = Player(Owner.Player).WeaponOwned[HexenDefs::WP_SECOND];
+		}
+		else if (Player(Owner.Player).WeaponOwned[HexenDefs::WP_FOURTH] &&
+			Player(Owner.Player).WeaponOwned[HexenDefs::WP_FOURTH].CheckAmmo(false))
+		{
+			Player(Owner.Player).PendingWeapon = Player(Owner.Player).WeaponOwned[HexenDefs::WP_FOURTH];
+		}
+		else
+		{
+			Player(Owner.Player).PendingWeapon = Player(Owner.Player).WeaponOwned[HexenDefs::WP_FIRST];
+		}
+	}
+	while (!Player(Owner.Player).PendingWeapon);
+	Player(Owner.Player).SetViewState(ps_weapon, GetDownState());
+	return false;
 }
 
 //==========================================================================
@@ -150,13 +208,11 @@ void DecMana()
 {
 	if (ManaType1)
 	{
-		EntityEx(Owner).FindInventory(ManaType1).Amount -=
-			WeaponManaUse(Owner.Player.PClass, Player(Owner.Player).ReadyWeapon.WeaponType);
+		EntityEx(Owner).FindInventory(ManaType1).Amount -= ManaUse;
 	}
 	if (ManaType2)
 	{
-		EntityEx(Owner).FindInventory(ManaType2).Amount -=
-			WeaponManaUse(Owner.Player.PClass, Player(Owner.Player).ReadyWeapon.WeaponType);
+		EntityEx(Owner).FindInventory(ManaType2).Amount -= ManaUse;
 	}
 }
 
@@ -339,7 +395,7 @@ final void A_ReFire()
 	else
 	{
 		Player(Owner.Player).Refire = 0;
-		Player(Owner.Player).CheckMana();
+		CheckAmmo(true);
 	}
 }
 

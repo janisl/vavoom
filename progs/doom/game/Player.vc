@@ -2183,86 +2183,6 @@ void MovePsprites(float deltaTime)
 	ViewStates[ps_flash].SY = ViewStates[ps_weapon].SY;
 }
 
-//==========================================================================
-//
-//  CheckAmmo
-//
-//  Returns true if there is enough ammo to shoot.
-// If not, selects the next weapon to use.
-//
-//==========================================================================
-
-int CheckAmmo()
-{
-	class<Inventory> ammo;
-	int count;
-
-	ammo = WeaponEx(ViewEnt).AmmoType;
-
-	// Minimal amount for one shot varies.
-	if (ReadyWeapon.WeaponType == DoomDefs::wp_bfg)
-		count = MainGameInfo(Level.Game).BFGCELLS;
-	else if (ReadyWeapon.WeaponType == DoomDefs::wp_supershotgun)
-		count = 2;	// Double barrel.
-	else
-		count = 1;	// Regular.
-
-	// Some do not need ammunition anyway.
-	// Return if current ammunition sufficient.
-	if (!ammo || EntityEx(MO).FindInventory(ammo).Amount >= count)
-		return true;
-
-	// Out of ammo, pick a weapon to change to.
-	// Preferences are set here.
-	do
-	{
-		if (WeaponOwned[DoomDefs::wp_plasma] && EntityEx(MO).FindInventory(Cell).Amount)
-		{
-			PendingWeapon = WeaponOwned[DoomDefs::wp_plasma];
-		}
-		else if (WeaponOwned[DoomDefs::wp_supershotgun] && EntityEx(MO).FindInventory(Shell).Amount > 2)
-		{
-			PendingWeapon = WeaponOwned[DoomDefs::wp_supershotgun];
-		}
-		else if (WeaponOwned[DoomDefs::wp_chaingun] && EntityEx(MO).FindInventory(Clip).Amount)
-		{
-			PendingWeapon = WeaponOwned[DoomDefs::wp_chaingun];
-		}
-		else if (WeaponOwned[DoomDefs::wp_shotgun] && EntityEx(MO).FindInventory(Shell).Amount)
-		{
-			PendingWeapon = WeaponOwned[DoomDefs::wp_shotgun];
-		}
-		else if (EntityEx(MO).FindInventory(Clip).Amount)
-		{
-			PendingWeapon = WeaponOwned[DoomDefs::wp_pistol];
-		}
-		else if (WeaponOwned[DoomDefs::wp_chainsaw])
-		{
-			PendingWeapon = WeaponOwned[DoomDefs::wp_chainsaw];
-		}
-		else if (WeaponOwned[DoomDefs::wp_missile] && EntityEx(MO).FindInventory(RocketAmmo).Amount)
-		{
-			PendingWeapon = WeaponOwned[DoomDefs::wp_missile];
-		}
-		else if (WeaponOwned[DoomDefs::wp_bfg] &&
-			EntityEx(MO).FindInventory(Cell).Amount > MainGameInfo(Level.Game).BFGCELLS)
-		{
-			PendingWeapon = WeaponOwned[DoomDefs::wp_bfg];
-		}
-		else
-		{
-			// If everything fails.
-			PendingWeapon = WeaponOwned[DoomDefs::wp_fist];
-		}
-	}
-	while (!PendingWeapon);
-
-	// Now set appropriate weapon overlay.
-	SetViewState(ps_weapon, WeaponEx(ViewEnt).DownState);
-
-	return false;
-}
-
 //===========================================================================
 //
 //  FireWeapon
@@ -2271,7 +2191,7 @@ int CheckAmmo()
 
 void FireWeapon()
 {
-	if (!CheckAmmo())
+	if (!ReadyWeapon.CheckAmmo(true))
 	{
 		return;
 	}

@@ -49,7 +49,7 @@ final void A_FireGrenade()
 	{
 		grenadetype = PhosphorousGrenade;
 	}
-	if (EntityEx(Owner).FindInventory(AmmoType).Amount < 1)
+	if (!CheckAmmo(false))
 		return;
 	DecAmmo(1);
 

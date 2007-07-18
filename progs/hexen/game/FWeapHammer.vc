@@ -79,8 +79,7 @@ final void A_FHammerAttack()
 		}
 	}
 
-	if (EntityEx(Owner).FindInventory(Mana2).Amount <
-		WeaponManaUse(Owner.Player.PClass, Player(Owner.Player).ReadyWeapon.WeaponType))
+	if (!CheckAmmo(false, true))
 	{
 		// Don't spawn a hammer if the player doesn't have enough mana
 		bThrowHammer = false;
@@ -100,8 +99,7 @@ final void A_FHammerThrow()
 	{
 		return;
 	}
-	EntityEx(Owner).FindInventory(Mana2).Amount -=
-		WeaponManaUse(Owner.Player.PClass, Player(Owner.Player).ReadyWeapon.WeaponType);
+	DecMana();
 	Actor(Owner).SpawnPlayerMissile(HammerMissile);
 }
 
@@ -131,6 +129,7 @@ defaultproperties
 	WeaponType = HexenDefs::WP_THIRD;
 	Slot = 3;
 	SelectionOrder = 900;
+	ManaUse = 3;
 	PSpriteSY = -10.0;
 	HammerRange = Actor::MELEERANGE + Actor::MELEERANGE / 2.0;
 	PickupMessage = "$txt_weapon_f3";

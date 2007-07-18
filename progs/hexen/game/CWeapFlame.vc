@@ -87,6 +87,7 @@ defaultproperties
 	Slot = 3;
 	SelectionOrder = 1000;
 	ManaType2 = Mana2;
+	ManaUse = 4;
 	PSpriteSY = 10.0;
 	bNoGravity = true;
 	PickupMessage = "$txt_weapon_c3";

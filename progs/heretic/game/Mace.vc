@@ -68,7 +68,7 @@ final void A_FireMacePL1B()
 	Actor ball;
 	float angle;
 
-	if (EntityEx(Owner).FindInventory(MaceAmmo).Amount < USE_MACE_AMMO_1)
+	if (!CheckAmmo(false))
 	{
 		return;
 	}
@@ -101,7 +101,7 @@ final void A_FireMacePL1()
 		A_FireMacePL1B();
 		return;
 	}
-	if (EntityEx(Owner).FindInventory(MaceAmmo).Amount < USE_MACE_AMMO_1)
+	if (!CheckAmmo(false))
 	{
 		return;
 	}

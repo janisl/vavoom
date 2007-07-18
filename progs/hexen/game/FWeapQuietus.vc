@@ -84,6 +84,7 @@ defaultproperties
 	SelectionOrder = 2900;
 	ManaType1 = Mana1;
 	ManaType2 = Mana2;
+	ManaUse = 14;
 	PSpriteSY = 10.0;
 	UpState = S_FSWORDUP;
 	DownState = S_FSWORDDOWN;

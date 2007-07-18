@@ -104,6 +104,7 @@ defaultproperties
 	Slot = 2;
 	SelectionOrder = 1700;
 	ManaType1 = Mana1;
+	ManaUse = 3;
 	PSpriteSY = 20.0;
 	PickupMessage = "$txt_weapon_m2";
 	IdleState = S_COS1;

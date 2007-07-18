@@ -40,7 +40,7 @@ final void A_FireRiffle()
 
 	Owner.PlaySound('weapons/assaultgun', CHAN_WEAPON);
 
-	if (!EntityEx(Owner).FindInventory(AmmoType).Amount)
+	if (!CheckAmmo(false))
 		return;
 
 	Owner.SetState(Actor(Owner).MissileState);

@@ -154,6 +154,7 @@ defaultproperties
 	SelectionOrder = 3100;
 	ManaType1 = Mana1;
 	ManaType2 = Mana2;
+	ManaUse = 15;
 	PSpriteSY = 20.0;
 	UpState = S_MSTAFFUP;
 	DownState = S_MSTAFFDOWN;

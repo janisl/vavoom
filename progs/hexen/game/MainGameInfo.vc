@@ -46,8 +46,6 @@ float ArmorMax[HexenDefs::NUMCLASSES];
 
 int pieceValueTrans[5];
 
-int WeaponManaUseTable[HexenDefs::NUMCLASSES * HexenDefs::NUMWEAPONS];
-
 int classFlags[3];
 
 bool randomclass;
@@ -426,11 +424,6 @@ defaultproperties
 	pieceValueTrans[2] = WeaponPiece::WPIECE2 | WeaponPiece::WPIECE3;	// WPIECE2 (2)
 	pieceValueTrans[3] = 0;	// 3: never
 	pieceValueTrans[4] = WeaponPiece::WPIECE3;	// WPIECE3 (4)
-
-	WeaponManaUseTable[0] = 0; WeaponManaUseTable[1] = 2; WeaponManaUseTable[2] = 3; WeaponManaUseTable[3] = 14;	//  Fighter
-	WeaponManaUseTable[4] = 0; WeaponManaUseTable[5] = 1; WeaponManaUseTable[6] = 4; WeaponManaUseTable[7] = 18;	//  Priest
-	WeaponManaUseTable[8] = 0; WeaponManaUseTable[9] = 3; WeaponManaUseTable[10] = 5; WeaponManaUseTable[11] = 15;	//  Mage
-	WeaponManaUseTable[12] = 0; WeaponManaUseTable[13] = 0; WeaponManaUseTable[14] = 0; WeaponManaUseTable[15] = 0;	//  Pig
 
 	classFlags[0] = HexenLevelInfo::MTF_FIGHTER;
 	classFlags[1] = HexenLevelInfo::MTF_CLERIC;

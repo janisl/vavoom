@@ -3316,76 +3316,13 @@ void MovePsprites(float deltaTime)
 
 //==========================================================================
 //
-//  CheckMana
-//
-//  Returns true if there is enough mana to shoot.  If not, selects the
-// next weapon to use.
-//
-//==========================================================================
-
-bool CheckMana()
-{
-	class<Ammo> mana1;
-	class<Ammo> mana2;
-	int count;
-
-	mana1 = WeaponEx(ViewEnt).ManaType1;
-	mana2 = WeaponEx(ViewEnt).ManaType2;
-	count = WeaponManaUse(PClass, ReadyWeapon.WeaponType);
-	if (!mana1 || EntityEx(MO).FindInventory(mana1).Amount >= count)
-	{
-		return true;
-	}
-	else if (!mana2 || EntityEx(MO).FindInventory(mana2).Amount >= count)
-	{
-		return true;
-	}
-	else
-	{
-		if (!mana1 || EntityEx(MO).FindInventory(mana1).Amount >= count &&
-			!mana2 || EntityEx(MO).FindInventory(mana2).Amount >= count)
-		{
-			return true;
-		}
-	}	
-	// out of mana, pick a weapon to change to
-	do
-	{
-		if (WeaponOwned[HexenDefs::WP_THIRD] &&
-			EntityEx(MO).FindInventory(Mana2).Amount >= WeaponManaUse(PClass, HexenDefs::WP_THIRD))
-		{
-			PendingWeapon = WeaponOwned[HexenDefs::WP_THIRD];
-		}
-		else if (WeaponOwned[HexenDefs::WP_SECOND] &&
-			EntityEx(MO).FindInventory(Mana1).Amount >= WeaponManaUse(PClass, HexenDefs::WP_SECOND))
-		{
-			PendingWeapon = WeaponOwned[HexenDefs::WP_SECOND];
-		}
-		else if (WeaponOwned[HexenDefs::WP_FOURTH] &&
-			EntityEx(MO).FindInventory(Mana1).Amount >= WeaponManaUse(PClass, HexenDefs::WP_FOURTH) &&
-			EntityEx(MO).FindInventory(Mana2).Amount >= WeaponManaUse(PClass, HexenDefs::WP_FOURTH))
-		{
-			PendingWeapon = WeaponOwned[HexenDefs::WP_FOURTH];
-		}
-		else
-		{
-			PendingWeapon = WeaponOwned[HexenDefs::WP_FIRST];
-		}
-	}
-	while (!PendingWeapon);
-	SetViewState(ps_weapon, WeaponEx(ViewEnt).GetDownState());
-	return false;
-}
-
-//==========================================================================
-//
 //  FireWeapon
 //
 //==========================================================================
 
 void FireWeapon()
 {
-	if (!CheckMana())
+	if (!ReadyWeapon.CheckAmmo(true))
 	{
 		return;
 	}
@@ -3586,17 +3523,6 @@ bool UsePuzzleItem(int itemType)
 		break;	// Stop searching
 	}
 	return PuzzleActivated;
-}
-
-//==========================================================================
-//
-//  WeaponManaUse
-//
-//==========================================================================
-
-int WeaponManaUse(int pclass, int num)
-{
-	return MainGameInfo(Level.Game).WeaponManaUseTable[(pclass << 2) + num];
 }
 
 //==========================================================================

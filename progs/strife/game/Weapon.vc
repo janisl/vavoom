@@ -166,6 +166,78 @@ bool ShouldStay()
 	return Level.Game.netgame && Level.Game.deathmatch < 2;
 }
 
+//==========================================================================
+//
+//  CheckAmmo
+//
+//  Returns true if there is enough ammo to shoot.
+// If not, selects the next weapon to use.
+//
+//==========================================================================
+
+bool CheckAmmo(bool AutoSwitch, optional bool RequireAmmo)
+{
+	class<Ammo>		ammo;
+	int				count;
+
+	ammo = AmmoType;
+
+	// Minimal amount for one shot varies.
+	if (WeaponType == StrifeDefs::wp_blaster)
+		count = 20;
+	else if (WeaponType == StrifeDefs::wp_blaster2)
+		count = 30;
+	else
+		count = 1;	// Regular.
+
+	// Some do not need ammunition anyway.
+	// Return if current ammunition sufficient.
+	if (!ammo || EntityEx(Owner).FindInventory(ammo).Amount >= count)
+		return true;
+
+	if (!AutoSwitch)
+	{
+		return false;
+	}
+
+	// Out of ammo, pick a weapon to change to.
+	// Preferences are set here.
+	do
+	{
+		if (Player(Owner.Player).WeaponOwned[StrifeDefs::wp_flame] &&
+			Player(Owner.Player).WeaponOwned[StrifeDefs::wp_flame].CheckAmmo(false))
+		{
+			Player(Owner.Player).PendingWeapon = Player(Owner.Player).WeaponOwned[StrifeDefs::wp_flame];
+		}
+		else if (Player(Owner.Player).WeaponOwned[StrifeDefs::wp_riffle] &&
+			Player(Owner.Player).WeaponOwned[StrifeDefs::wp_riffle].CheckAmmo(false))
+		{
+			Player(Owner.Player).PendingWeapon = Player(Owner.Player).WeaponOwned[StrifeDefs::wp_riffle];
+		}
+		else if (Player(Owner.Player).WeaponOwned[StrifeDefs::wp_crossbow] &&
+			Player(Owner.Player).WeaponOwned[StrifeDefs::wp_crossbow].CheckAmmo(false))
+		{
+			Player(Owner.Player).PendingWeapon = Player(Owner.Player).WeaponOwned[StrifeDefs::wp_crossbow];
+		}
+		else if (Player(Owner.Player).WeaponOwned[StrifeDefs::wp_missile] &&
+			Player(Owner.Player).WeaponOwned[StrifeDefs::wp_missile].CheckAmmo(false))
+		{
+			Player(Owner.Player).PendingWeapon = Player(Owner.Player).WeaponOwned[StrifeDefs::wp_missile];
+		}
+		else
+		{
+			// If everything fails.
+			Player(Owner.Player).PendingWeapon = Player(Owner.Player).WeaponOwned[StrifeDefs::wp_fist];
+		}
+	}
+	while (!Player(Owner.Player).PendingWeapon);
+
+	// Now set appropriate weapon overlay.
+	Player(Owner.Player).SetViewState(ps_weapon, DownState);
+
+	return false;
+}
+
 //===========================================================================
 //
 //  DecAmmo
@@ -330,7 +402,7 @@ final void A_ReFire()
 	else
 	{
 		Player(Owner.Player).Refire = 0;
-		Player(Owner.Player).CheckAmmo();
+		CheckAmmo(true);
 	}
 }
 
@@ -342,7 +414,7 @@ final void A_ReFire()
 
 final void A_CheckReload()
 {
-	Player(Owner.Player).CheckAmmo();
+	CheckAmmo(true);
 }
 
 //===========================================================================

@@ -105,6 +105,7 @@ defaultproperties
 	SelectionOrder = 3000;
 	ManaType1 = Mana1;
 	ManaType2 = Mana2;
+	ManaUse = 18;
 	PSpriteSY = 0.0;
 	UpState = S_CHOLYUP;
 	DownState = S_CHOLYDOWN;

@@ -34,6 +34,11 @@ int				SelectionOrder;
 //	Switch away if got ammo for more powerfull weapon.
 bool			bWimpyWeapon;
 
+bool CheckAmmo(bool AutoSwitch, optional bool RequireAmmo)
+{
+	return false;
+}
+
 defaultproperties
 {
 }

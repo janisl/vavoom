@@ -37,7 +37,7 @@ final void A_FireSkullRodPL1()
 {
 	EntityEx	A;
 
-	if (EntityEx(Owner).FindInventory(SkullRodAmmo).Amount < USE_SKRD_AMMO_1)
+	if (!CheckAmmo(false))
 	{
 		return;
 	}
