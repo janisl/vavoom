@@ -94,7 +94,7 @@ bool GiveWeapon(EntityEx Toucher)
 		gaveammo = false;
 	}
 
-	if (Weapon2Type != -1 && Ammo2Type && AmmoType != Ammo2Type && Ammo2Count)
+	if (Weapon2Type != -1 && Ammo2Type && AmmoType != Ammo2Type)
 	{
 		// give one clip with a dropped weapon,
 		// two clips with a found weapon
@@ -201,36 +201,9 @@ bool CheckAmmo(bool AutoSwitch, optional bool RequireAmmo)
 	}
 
 	// Out of ammo, pick a weapon to change to.
-	// Preferences are set here.
-	do
-	{
-		if (Player(Owner.Player).WeaponOwned[StrifeDefs::wp_flame] &&
-			Player(Owner.Player).WeaponOwned[StrifeDefs::wp_flame].CheckAmmo(false))
-		{
-			Player(Owner.Player).PendingWeapon = Player(Owner.Player).WeaponOwned[StrifeDefs::wp_flame];
-		}
-		else if (Player(Owner.Player).WeaponOwned[StrifeDefs::wp_riffle] &&
-			Player(Owner.Player).WeaponOwned[StrifeDefs::wp_riffle].CheckAmmo(false))
-		{
-			Player(Owner.Player).PendingWeapon = Player(Owner.Player).WeaponOwned[StrifeDefs::wp_riffle];
-		}
-		else if (Player(Owner.Player).WeaponOwned[StrifeDefs::wp_crossbow] &&
-			Player(Owner.Player).WeaponOwned[StrifeDefs::wp_crossbow].CheckAmmo(false))
-		{
-			Player(Owner.Player).PendingWeapon = Player(Owner.Player).WeaponOwned[StrifeDefs::wp_crossbow];
-		}
-		else if (Player(Owner.Player).WeaponOwned[StrifeDefs::wp_missile] &&
-			Player(Owner.Player).WeaponOwned[StrifeDefs::wp_missile].CheckAmmo(false))
-		{
-			Player(Owner.Player).PendingWeapon = Player(Owner.Player).WeaponOwned[StrifeDefs::wp_missile];
-		}
-		else
-		{
-			// If everything fails.
-			Player(Owner.Player).PendingWeapon = Player(Owner.Player).WeaponOwned[StrifeDefs::wp_fist];
-		}
-	}
-	while (!Player(Owner.Player).PendingWeapon);
+	WeaponEx Best = WeaponEx(Player(Owner.Player).BestWeapon());
+
+	Player(Owner.Player).PendingWeapon = Best;
 
 	// Now set appropriate weapon overlay.
 	Player(Owner.Player).SetViewState(ps_weapon, DownState);

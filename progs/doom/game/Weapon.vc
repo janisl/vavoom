@@ -147,56 +147,9 @@ bool CheckAmmo(bool AutoSwitch, optional bool RequireAmmo)
 	}
 
 	// Out of ammo, pick a weapon to change to.
-	// Preferences are set here.
-	do
-	{
-		if (Player(Owner.Player).WeaponOwned[DoomDefs::wp_plasma] &&
-			Player(Owner.Player).WeaponOwned[DoomDefs::wp_plasma].CheckAmmo(false))
-		{
-			Player(Owner.Player).PendingWeapon = Player(Owner.Player).WeaponOwned[DoomDefs::wp_plasma];
-		}
-		else if (Player(Owner.Player).WeaponOwned[DoomDefs::wp_supershotgun] &&
-			Player(Owner.Player).WeaponOwned[DoomDefs::wp_supershotgun].CheckAmmo(false))
-		{
-			Player(Owner.Player).PendingWeapon = Player(Owner.Player).WeaponOwned[DoomDefs::wp_supershotgun];
-		}
-		else if (Player(Owner.Player).WeaponOwned[DoomDefs::wp_chaingun] &&
-			Player(Owner.Player).WeaponOwned[DoomDefs::wp_chaingun].CheckAmmo(false))
-		{
-			Player(Owner.Player).PendingWeapon = Player(Owner.Player).WeaponOwned[DoomDefs::wp_chaingun];
-		}
-		else if (Player(Owner.Player).WeaponOwned[DoomDefs::wp_shotgun] &&
-			Player(Owner.Player).WeaponOwned[DoomDefs::wp_shotgun].CheckAmmo(false))
-		{
-			Player(Owner.Player).PendingWeapon = Player(Owner.Player).WeaponOwned[DoomDefs::wp_shotgun];
-		}
-		else if (Player(Owner.Player).WeaponOwned[DoomDefs::wp_pistol] &&
-			Player(Owner.Player).WeaponOwned[DoomDefs::wp_pistol].CheckAmmo(false))
-		{
-			Player(Owner.Player).PendingWeapon = Player(Owner.Player).WeaponOwned[DoomDefs::wp_pistol];
-		}
-		else if (Player(Owner.Player).WeaponOwned[DoomDefs::wp_chainsaw] &&
-			Player(Owner.Player).WeaponOwned[DoomDefs::wp_chainsaw].CheckAmmo(false))
-		{
-			Player(Owner.Player).PendingWeapon = Player(Owner.Player).WeaponOwned[DoomDefs::wp_chainsaw];
-		}
-		else if (Player(Owner.Player).WeaponOwned[DoomDefs::wp_missile] &&
-			Player(Owner.Player).WeaponOwned[DoomDefs::wp_missile].CheckAmmo(false))
-		{
-			Player(Owner.Player).PendingWeapon = Player(Owner.Player).WeaponOwned[DoomDefs::wp_missile];
-		}
-		else if (Player(Owner.Player).WeaponOwned[DoomDefs::wp_bfg] &&
-			Player(Owner.Player).WeaponOwned[DoomDefs::wp_bfg].CheckAmmo(false))
-		{
-			Player(Owner.Player).PendingWeapon = Player(Owner.Player).WeaponOwned[DoomDefs::wp_bfg];
-		}
-		else
-		{
-			// If everything fails.
-			Player(Owner.Player).PendingWeapon = Player(Owner.Player).WeaponOwned[DoomDefs::wp_fist];
-		}
-	}
-	while (!Player(Owner.Player).PendingWeapon);
+	WeaponEx Best = WeaponEx(Player(Owner.Player).BestWeapon());
+
+	Player(Owner.Player).PendingWeapon = Best;
 
 	// Now set appropriate weapon overlay.
 	Player(Owner.Player).SetViewState(ps_weapon, DownState);

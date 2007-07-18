@@ -170,30 +170,11 @@ bool CheckAmmo(bool AutoSwitch, optional bool RequireAmmo)
 	{
 		return false;
 	}
+
 	// out of mana, pick a weapon to change to
-	do
-	{
-		if (Player(Owner.Player).WeaponOwned[HexenDefs::WP_THIRD] &&
-			Player(Owner.Player).WeaponOwned[HexenDefs::WP_THIRD].CheckAmmo(false))
-		{
-			Player(Owner.Player).PendingWeapon = Player(Owner.Player).WeaponOwned[HexenDefs::WP_THIRD];
-		}
-		else if (Player(Owner.Player).WeaponOwned[HexenDefs::WP_SECOND] &&
-			Player(Owner.Player).WeaponOwned[HexenDefs::WP_SECOND].CheckAmmo(false))
-		{
-			Player(Owner.Player).PendingWeapon = Player(Owner.Player).WeaponOwned[HexenDefs::WP_SECOND];
-		}
-		else if (Player(Owner.Player).WeaponOwned[HexenDefs::WP_FOURTH] &&
-			Player(Owner.Player).WeaponOwned[HexenDefs::WP_FOURTH].CheckAmmo(false))
-		{
-			Player(Owner.Player).PendingWeapon = Player(Owner.Player).WeaponOwned[HexenDefs::WP_FOURTH];
-		}
-		else
-		{
-			Player(Owner.Player).PendingWeapon = Player(Owner.Player).WeaponOwned[HexenDefs::WP_FIRST];
-		}
-	}
-	while (!Player(Owner.Player).PendingWeapon);
+	WeaponEx Best = WeaponEx(Player(Owner.Player).BestWeapon());
+
+	Player(Owner.Player).PendingWeapon = Best;
 	Player(Owner.Player).SetViewState(ps_weapon, GetDownState());
 	return false;
 }

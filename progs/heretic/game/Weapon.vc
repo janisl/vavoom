@@ -162,50 +162,11 @@ bool CheckAmmo(bool AutoSwitch, optional bool RequireAmmo)
 	{
 		return false;
 	}
+
 	// out of ammo, pick a weapon to change to
-	do
-	{
-		if (Player(Owner.Player).WeaponOwned[wp_skullrod] &&
-			Player(Owner.Player).WeaponOwned[wp_skullrod].CheckAmmo(false))
-		{
-			Player(Owner.Player).PendingWeapon = Player(Owner.Player).WeaponOwned[wp_skullrod];
-		}
-		else if (Player(Owner.Player).WeaponOwned[wp_blaster] &&
-			Player(Owner.Player).WeaponOwned[wp_blaster].CheckAmmo(false))
-		{
-			Player(Owner.Player).PendingWeapon = Player(Owner.Player).WeaponOwned[wp_blaster];
-		}
-		else if (Player(Owner.Player).WeaponOwned[wp_crossbow] &&
-			Player(Owner.Player).WeaponOwned[wp_crossbow].CheckAmmo(false))
-		{
-			Player(Owner.Player).PendingWeapon = Player(Owner.Player).WeaponOwned[wp_crossbow];
-		}
-		else if (Player(Owner.Player).WeaponOwned[wp_mace] &&
-			Player(Owner.Player).WeaponOwned[wp_mace].CheckAmmo(false))
-		{
-			Player(Owner.Player).PendingWeapon = Player(Owner.Player).WeaponOwned[wp_mace];
-		}
-		else if (Player(Owner.Player).WeaponOwned[wp_goldwand] &&
-			Player(Owner.Player).WeaponOwned[wp_goldwand].CheckAmmo(false))
-		{
-			Player(Owner.Player).PendingWeapon = Player(Owner.Player).WeaponOwned[wp_goldwand];
-		}
-		else if (Player(Owner.Player).WeaponOwned[wp_gauntlets] &&
-			Player(Owner.Player).WeaponOwned[wp_gauntlets].CheckAmmo(false))
-		{
-			Player(Owner.Player).PendingWeapon = Player(Owner.Player).WeaponOwned[wp_gauntlets];
-		}
-		else if (Player(Owner.Player).WeaponOwned[wp_phoenixrod] &&
-			Player(Owner.Player).WeaponOwned[wp_phoenixrod].CheckAmmo(false))
-		{
-			Player(Owner.Player).PendingWeapon = Player(Owner.Player).WeaponOwned[wp_phoenixrod];
-		}
-		else
-		{
-			Player(Owner.Player).PendingWeapon = Player(Owner.Player).WeaponOwned[wp_staff];
-		}
-	}
-	while (!Player(Owner.Player).PendingWeapon);
+	WeaponEx Best = WeaponEx(Player(Owner.Player).BestWeapon());
+
+	Player(Owner.Player).PendingWeapon = Best;
 	if (Player(Owner.Player).Powers[pw_weaponlevel2])
 	{
 		Player(Owner.Player).SetViewState(ps_weapon, DownState2);

@@ -66,6 +66,42 @@ replication
 		Cheats;
 }
 
+//==========================================================================
+//
+//	BestWeapon
+//
+//	Returns best weapon to use
+//
+//==========================================================================
+
+Weapon BestWeapon()
+{
+	Weapon Best = none;
+	Inventory Item;
+	for (Item = EntityEx(MO).Inventory; Item; Item = Item.Inventory)
+	{
+		//	Must be a weapon
+		Weapon Wpn = Weapon(Item);
+		if (!Wpn)
+		{
+			continue;
+		}
+		//	Check if best one is better that this one.
+		if (Best && Wpn.SelectionOrder > Best.SelectionOrder)
+		{
+			continue;
+		}
+		//	Make sure it has enough ammo.
+		if (!Wpn.CheckAmmo(false))
+		{
+			continue;
+		}
+		//	Good one.
+		Best = Wpn;
+	}
+	return Best;
+}
+
 float GetWeaponKickBack()
 {
 	return 0.0;
