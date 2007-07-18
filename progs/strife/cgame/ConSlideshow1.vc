@@ -53,7 +53,7 @@ void PlayPage()
 	{
 	case 0:
 		BackPic.Handle = R_RegisterPic('ss2f1');
-		CmdBuf_AddText("music loop d_dark");
+		ChangeMusic(va("%n", 'd_dark'));
 		LocalSound('svox/mac10');
 		PicTimer = 9.0;
 		PageNum = 1;
