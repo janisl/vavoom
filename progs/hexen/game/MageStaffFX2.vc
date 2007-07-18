@@ -34,7 +34,7 @@ class MageStaffFX2 : Projectile;
 bool RoughCheckThing(Entity Other)
 {
 	float angle;
-	Actor link = Actor(Other);
+	EntityEx link = EntityEx(Other);
 	
 	if (!(link.bMonster || link.bIsPlayer) || link == Target ||
 		link.bDormant)

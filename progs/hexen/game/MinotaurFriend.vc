@@ -137,7 +137,7 @@ bool MorphMonster()
 
 bool RoughCheckThing(Entity Other)
 {
-	Actor link = Actor(Other);
+	EntityEx link = EntityEx(Other);
 	
 	if (!link.bMonster && (!link.bIsPlayer || link == Tracer))
 	{

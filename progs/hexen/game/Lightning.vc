@@ -39,14 +39,14 @@ float ZagSpeed;
 bool Touch(Entity InOther)
 {
 	int damage;
-	Actor Other;
+	EntityEx Other;
 
 	if (!bMissile)
 	{
 		return false;
 	}
 
-	Other = Actor(InOther);
+	Other = EntityEx(InOther);
 	// Check for a non-shootable mobj
 	if (!Other.bShootable || Other.bNonShootable)
 	{

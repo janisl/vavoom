@@ -3332,18 +3332,22 @@ bool CheckMana()
 	mana1 = WeaponEx(ViewEnt).ManaType1;
 	mana2 = WeaponEx(ViewEnt).ManaType2;
 	count = WeaponManaUse(PClass, ReadyWeapon.WeaponType);
-	if (mana2)
-	{
-		if (EntityEx(MO).FindInventory(mana1).Amount >= count &&
-			EntityEx(MO).FindInventory(mana2).Amount >= count)
-		{
-			return true;
-		}
-	}
-	else if (!mana1 || EntityEx(MO).FindInventory(mana1).Amount >= count)
+	if (!mana1 || EntityEx(MO).FindInventory(mana1).Amount >= count)
 	{
 		return true;
 	}
+	else if (!mana2 || EntityEx(MO).FindInventory(mana2).Amount >= count)
+	{
+		return true;
+	}
+	else
+	{
+		if (!mana1 || EntityEx(MO).FindInventory(mana1).Amount >= count &&
+			!mana2 || EntityEx(MO).FindInventory(mana2).Amount >= count)
+		{
+			return true;
+		}
+	}	
 	// out of mana, pick a weapon to change to
 	do
 	{
