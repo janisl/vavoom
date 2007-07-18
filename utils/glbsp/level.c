@@ -1654,7 +1654,7 @@ void PutGLChecksum(void)
 
   Adler32_Finish(&crc);
 
-  snprintf(num_buf, sizeof(num_buf), "0x%08x", crc);
+  sprintf(num_buf, "0x%08x", crc);
 
   AddGLTextLine("CHECKSUM", num_buf);
 }
