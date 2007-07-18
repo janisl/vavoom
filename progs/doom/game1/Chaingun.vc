@@ -71,6 +71,8 @@ __states__
 defaultproperties
 {
 	WeaponType = DoomDefs::wp_chaingun;
+	Slot = 4;
+	SelectionOrder = 700;
 	AmmoType = Clip;
 	PlayerModelVersion = 4;
 	PickupMessage = "$gotchaingun";

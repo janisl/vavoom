@@ -129,6 +129,8 @@ defaultproperties
 {
 	WeaponClass = HexenDefs::PCLASS_FIGHTER;
 	WeaponType = HexenDefs::WP_THIRD;
+	Slot = 3;
+	SelectionOrder = 900;
 	PSpriteSY = -10.0;
 	HammerRange = Actor::MELEERANGE + Actor::MELEERANGE / 2.0;
 	PickupMessage = "$txt_weapon_f3";

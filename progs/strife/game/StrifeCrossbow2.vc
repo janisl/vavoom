@@ -27,6 +27,8 @@ class StrifeCrossbow2 : StrifeCrossbow;
 
 defaultproperties
 {
+	Slot = 2;
+	SelectionOrder = 2700;
 	AmmoType = PoisonBolts;
 	UpState = S_XBOWPOISONUP;
 	DownState = S_XBOWPOISONDOWN;

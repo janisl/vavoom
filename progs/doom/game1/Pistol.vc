@@ -62,6 +62,8 @@ __states__
 defaultproperties
 {
 	WeaponType = DoomDefs::wp_pistol;
+	Slot = 2;
+	SelectionOrder = 1900;
 	AmmoType = Clip;
 	bWimpyWeapon = true;
 	UpState = S_PISTOLUP;

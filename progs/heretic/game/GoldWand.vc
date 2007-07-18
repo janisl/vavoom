@@ -96,6 +96,8 @@ __states__
 defaultproperties
 {
 	WeaponType = wp_goldwand;
+	Slot = 2;
+	SelectionOrder = 2000;
 	AmmoType = GoldWandAmmo;
 	GetAmmoCount = 25;
 	AmmoUsePL1 = USE_GWND_AMMO_1;

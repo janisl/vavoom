@@ -123,6 +123,8 @@ defaultproperties
 {
 	WeaponClass = HexenDefs::PCLASS_MAGE;
 	WeaponType = HexenDefs::WP_THIRD;
+	Slot = 3;
+	SelectionOrder = 1100;
 	ManaType1 = Mana2;
 	PSpriteSY = 20.0;
 	bNoGravity = true;

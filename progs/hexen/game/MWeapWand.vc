@@ -50,6 +50,8 @@ __states__
 
 defaultproperties
 {
+	Slot = 1;
+	SelectionOrder = 3600;
 	PSpriteSY = 9.0;
 	UpState = S_MWANDUP;
 	DownState = S_MWANDDOWN;

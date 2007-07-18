@@ -111,6 +111,8 @@ __states__
 defaultproperties
 {
 	WeaponType = wp_skullrod;
+	Slot = 5;
+	SelectionOrder = 200;
 	AmmoType = SkullRodAmmo;
 	GetAmmoCount = 50;
 	AmmoUsePL1 = USE_SKRD_AMMO_1;

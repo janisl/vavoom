@@ -104,7 +104,7 @@ replication
 {
 	reliable if (!bIsClient)
 		ArmorPoints, SBFlags, sb_faceindex, ReadyWeapon, ReadyAmmo,
-		/*Ammo, */WeaponOwned;
+		WeaponOwned;
 
 	unreliable if (!bIsClient)
 		ClientGunShot, ClientBlood, ClientExplosion, ClientExplosion2;
@@ -2216,21 +2216,14 @@ int CheckAmmo()
 	// Preferences are set here.
 	do
 	{
-#ifndef DOOM2
-		if (WeaponOwned[DoomDefs::wp_plasma] && EntityEx(MO).FindInventory(Cell).Amount &&
-			(!MainGameInfo(Level.Game).shareware))
-#else
 		if (WeaponOwned[DoomDefs::wp_plasma] && EntityEx(MO).FindInventory(Cell).Amount)
-#endif
 		{
 			PendingWeapon = WeaponOwned[DoomDefs::wp_plasma];
 		}
-#ifdef DOOM2
 		else if (WeaponOwned[DoomDefs::wp_supershotgun] && EntityEx(MO).FindInventory(Shell).Amount > 2)
 		{
 			PendingWeapon = WeaponOwned[DoomDefs::wp_supershotgun];
 		}
-#endif
 		else if (WeaponOwned[DoomDefs::wp_chaingun] && EntityEx(MO).FindInventory(Clip).Amount)
 		{
 			PendingWeapon = WeaponOwned[DoomDefs::wp_chaingun];
@@ -2251,14 +2244,8 @@ int CheckAmmo()
 		{
 			PendingWeapon = WeaponOwned[DoomDefs::wp_missile];
 		}
-#ifdef DOOM2
 		else if (WeaponOwned[DoomDefs::wp_bfg] &&
 			EntityEx(MO).FindInventory(Cell).Amount > MainGameInfo(Level.Game).BFGCELLS)
-#else
-		else if (WeaponOwned[DoomDefs::wp_bfg] &&
-			EntityEx(MO).FindInventory(Cell).Amount > MainGameInfo(Level.Game).BFGCELLS &&
-			(!MainGameInfo(Level.Game).shareware))
-#endif
 		{
 			PendingWeapon = WeaponOwned[DoomDefs::wp_bfg];
 		}

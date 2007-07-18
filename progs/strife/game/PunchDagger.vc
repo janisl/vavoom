@@ -85,6 +85,8 @@ __states__
 
 defaultproperties
 {
+	Slot = 1;
+	SelectionOrder = 3900;
 	bRaiseNoiseAlert = false;
 	UpState = S_PUNCHUP;
 	DownState = S_PUNCHDOWN;

@@ -84,6 +84,8 @@ defaultproperties
 {
 	WeaponClass = HexenDefs::PCLASS_CLERIC;
 	WeaponType = HexenDefs::WP_THIRD;
+	Slot = 3;
+	SelectionOrder = 1000;
 	ManaType2 = Mana2;
 	PSpriteSY = 10.0;
 	bNoGravity = true;

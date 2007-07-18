@@ -62,6 +62,8 @@ __states__
 defaultproperties
 {
 	WeaponType = StrifeDefs::wp_flame;
+	Slot = 6;
+	SelectionOrder = 2100;
 	AmmoType = EnergyPod;
 	ConversationID = 190;
 	PickupMessage = "$txt_flamer";

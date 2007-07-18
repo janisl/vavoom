@@ -74,6 +74,8 @@ __states__
 
 defaultproperties
 {
+	Slot = 1;
+	SelectionOrder = 3700;
 	bWimpyWeapon = true;
 	UpState = S_PUNCHUP;
 	DownState = S_PUNCHDOWN;

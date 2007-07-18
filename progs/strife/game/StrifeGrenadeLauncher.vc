@@ -120,6 +120,8 @@ defaultproperties
 {
 	WeaponType = StrifeDefs::wp_grenade;
 	Weapon2Type = StrifeDefs::wp_grenade2;
+	Slot = 5;
+	SelectionOrder = 2400;
 	AmmoType = HEGrenadeRounds;
 	ConversationID = 195;
 	PickupMessage = "$txt_glauncher";

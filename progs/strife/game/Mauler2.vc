@@ -27,6 +27,8 @@ class Mauler2 : Mauler;
 
 defaultproperties
 {
+	Slot = 7;
+	SelectionOrder = 3300;
 	UpState = S_BLASTERTORPEDOUP;
 	DownState = S_BLASTERTORPEDODOWN;
 	ReadyState = S_BLASTERTORPEDO;

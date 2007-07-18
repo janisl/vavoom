@@ -27,6 +27,8 @@ class StrifeGrenadeLauncher2 : StrifeGrenadeLauncher;
 
 defaultproperties
 {
+	Slot = 5;
+	SelectionOrder = 3200;
 	AmmoType = PhosphorusGrenadeRounds;
 	UpState = S_GRENADEHIGHUP;
 	DownState = S_GRENADEHIGHDOWN;

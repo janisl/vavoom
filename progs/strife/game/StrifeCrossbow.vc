@@ -104,6 +104,8 @@ defaultproperties
 {
 	WeaponType = StrifeDefs::wp_crossbow;
 	Weapon2Type = StrifeDefs::wp_crossbow2;
+	Slot = 2;
+	SelectionOrder = 1200;
 	AmmoType = ElectricBolts;
 	bRaiseNoiseAlert = false;
 	ConversationID = 194;

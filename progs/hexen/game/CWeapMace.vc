@@ -86,6 +86,8 @@ __states__
 
 defaultproperties
 {
+	Slot = 1;
+	SelectionOrder = 3500;
 	PSpriteSY = -8.0;
 	UpState = S_CMACEUP;
 	DownState = S_CMACEDOWN;

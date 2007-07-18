@@ -134,6 +134,8 @@ __states__
 
 defaultproperties
 {
+	Slot = 1;
+	SelectionOrder = 10000;
 	PSpriteSY = 15.0;
 	UpState = S_BEAKUP;
 	DownState = S_BEAKDOWN;

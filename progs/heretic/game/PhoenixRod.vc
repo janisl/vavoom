@@ -144,6 +144,8 @@ __states__
 defaultproperties
 {
 	WeaponType = wp_phoenixrod;
+	Slot = 6;
+	SelectionOrder = 2600;
 	AmmoType = PhoenixRodAmmo;
 	GetAmmoCount = 2;
 	AmmoUsePL1 = USE_PHRD_AMMO_1;

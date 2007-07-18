@@ -58,6 +58,8 @@ __states__
 defaultproperties
 {
 	WeaponType = DoomDefs::wp_plasma;
+	Slot = 6;
+	SelectionOrder = 100;
 	AmmoType = Cell;
 	PlayerModelVersion = 6;
 	PickupMessage = "$gotplasma";

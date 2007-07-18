@@ -94,6 +94,8 @@ __states__
 defaultproperties
 {
 	WeaponType = DoomDefs::wp_chainsaw;
+	Slot = 1;
+	SelectionOrder = 2200;
 	PlayerModelVersion = 8;
 	PickupMessage = "$gotchainsaw";
 	IdleState = S_CSAW;

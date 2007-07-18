@@ -26,6 +26,11 @@
 class Weapon : Inventory
 	abstract;
 
+//	Weapon slot this weapon is placed in.
+int				Slot;
+//	Weapons with lower values have greater priority
+int				SelectionOrder;
+
 //	Switch away if got ammo for more powerfull weapon.
 bool			bWimpyWeapon;
 

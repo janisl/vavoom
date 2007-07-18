@@ -120,6 +120,8 @@ __states__
 defaultproperties
 {
 	WeaponType = DoomDefs::wp_supershotgun;
+	Slot = 3;
+	SelectionOrder = 400;
 	AmmoType = Shell;
 	PlayerModelVersion = 9;
 	PickupMessage = "$gotshotgun2";

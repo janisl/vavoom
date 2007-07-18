@@ -133,6 +133,8 @@ __states__
 
 defaultproperties
 {
+	Slot = 1;
+	SelectionOrder = 3800;
 	PSpriteSY = 0.0;
 	UpState = S_STAFFUP;
 	DownState = S_STAFFDOWN;

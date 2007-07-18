@@ -229,6 +229,8 @@ defaultproperties
 {
 	WeaponClass = HexenDefs::PCLASS_FIGHTER;
 	WeaponType = HexenDefs::WP_SECOND;
+	Slot = 2;
+	SelectionOrder = 1500;
 	PSpriteSY = -12.0;
 	AxeRange = 9.0 * Actor::MELEERANGE / 4.0;
 	PickupMessage = "$txt_weapon_f2";

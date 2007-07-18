@@ -169,6 +169,8 @@ __states__
 defaultproperties
 {
 	WeaponType = wp_gauntlets;
+	Slot = 1;
+	SelectionOrder = 2300;
 	PSpriteSY = 15.0;
 	PickupMessage = "$txt_wpngauntlets";
 	IdleState = S_WGNT;

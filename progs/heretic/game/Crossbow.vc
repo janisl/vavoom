@@ -107,6 +107,8 @@ __states__
 defaultproperties
 {
 	WeaponType = wp_crossbow;
+	Slot = 3;
+	SelectionOrder = 800;
 	AmmoType = CrossbowAmmo;
 	GetAmmoCount = 10;
 	AmmoUsePL1 = USE_CBOW_AMMO_1;

@@ -198,6 +198,8 @@ __states__
 defaultproperties
 {
 	WeaponType = StrifeDefs::wp_sigil;
+	Slot = 8;
+	SelectionOrder = 4000;
 	ConversationID = 196;
 	PickupMessage = "$txt_sigil";
 	IdleState = S_SIGIL_1;
