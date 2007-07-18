@@ -102,6 +102,174 @@ Weapon BestWeapon()
 	return Best;
 }
 
+//==========================================================================
+//
+//	GetSlotChangeWeapon
+//
+//==========================================================================
+
+Weapon GetSlotChangeWeapon(int Slot, Weapon Current, bool bCheckAmmo)
+{
+	if (Current && Current.Slot != Slot)
+	{
+		//	Current one is from different slot, so just ignore it.
+		Current = none;
+	}
+
+	Weapon Best = none;
+	Weapon NextBest = none;
+	Inventory Item;
+	for (Item = EntityEx(MO).Inventory; Item; Item = Item.Inventory)
+	{
+		//	Must be a weapon
+		Weapon Wpn = Weapon(Item);
+		if (!Wpn)
+		{
+			continue;
+		}
+		//	Check if it's for the needed slot.
+		if (Wpn.Slot != Slot)
+		{
+			continue;
+		}
+		//	Skip current one.
+		if (Wpn == Current)
+		{
+			continue;
+		}
+		//	See if it has enough ammo
+		if (bCheckAmmo && !Wpn.CheckAmmo(false))
+		{
+			continue;
+		}
+		//	See if this is the best one.
+		if (!Best || Best.SelectionOrder > Wpn.SelectionOrder)
+		{
+			Best = Wpn;
+		}
+		//	See if this one is best next choice after the current one.
+		if (Current && Wpn.SelectionOrder > Current.SelectionOrder &&
+			(!NextBest || NextBest.SelectionOrder > Wpn.SelectionOrder))
+		{
+			NextBest = Wpn;
+		}
+	}
+
+	if (NextBest)
+	{
+		return NextBest;
+	}
+	return Best;
+}
+
+//==========================================================================
+//
+//	GetPrevWeapon
+//
+//==========================================================================
+
+Weapon GetPrevWeapon(Weapon Current, bool bCheckAmmo)
+{
+	Weapon Best = none;
+	Weapon NextBest = none;
+	Inventory Item;
+	for (Item = EntityEx(MO).Inventory; Item; Item = Item.Inventory)
+	{
+		//	Must be a weapon
+		Weapon Wpn = Weapon(Item);
+		if (!Wpn)
+		{
+			continue;
+		}
+		//	Skip current one.
+		if (Wpn == Current)
+		{
+			continue;
+		}
+		//	See if it has enough ammo
+		if (bCheckAmmo && !Wpn.CheckAmmo(false))
+		{
+			continue;
+		}
+		//	See if this is the best one to be selected if we need to wrap.
+		if (!Best || Best.Slot < Wpn.Slot || (Best.Slot == Wpn.Slot &&
+			Best.SelectionOrder > Wpn.SelectionOrder))
+		{
+			Best = Wpn;
+		}
+		//	See if this one is best next choice after the current one.
+		if (Current && (Wpn.Slot < Current.Slot ||
+				(Wpn.Slot == Current.Slot &&
+					Wpn.SelectionOrder > Current.SelectionOrder)) &&
+			(!NextBest || Wpn.Slot > NextBest.Slot ||
+				(Wpn.Slot == NextBest.Slot &&
+					Wpn.SelectionOrder < NextBest.SelectionOrder)))
+		{
+			NextBest = Wpn;
+		}
+	}
+
+	if (NextBest)
+	{
+		return NextBest;
+	}
+	return Best;
+}
+
+//==========================================================================
+//
+//	GetNextWeapon
+//
+//==========================================================================
+
+Weapon GetNextWeapon(Weapon Current, bool bCheckAmmo)
+{
+	Weapon Best = none;
+	Weapon NextBest = none;
+	Inventory Item;
+	for (Item = EntityEx(MO).Inventory; Item; Item = Item.Inventory)
+	{
+		//	Must be a weapon
+		Weapon Wpn = Weapon(Item);
+		if (!Wpn)
+		{
+			continue;
+		}
+		//	Skip current one.
+		if (Wpn == Current)
+		{
+			continue;
+		}
+		//	See if it has enough ammo
+		if (bCheckAmmo && !Wpn.CheckAmmo(false))
+		{
+			continue;
+		}
+		//	See if this is the best one to be selected if we need to wrap.
+		if (!Best || Best.Slot > Wpn.Slot || (Best.Slot == Wpn.Slot &&
+			Best.SelectionOrder < Wpn.SelectionOrder))
+		{
+			Best = Wpn;
+		}
+		//	See if this one is best next choice after the current one.
+		if (Current && (Wpn.Slot > Current.Slot ||
+				(Wpn.Slot == Current.Slot &&
+					Wpn.SelectionOrder < Current.SelectionOrder)) &&
+			(!NextBest || Wpn.Slot < NextBest.Slot ||
+				(Wpn.Slot == NextBest.Slot &&
+					Wpn.SelectionOrder > NextBest.SelectionOrder)))
+		{
+			NextBest = Wpn;
+		}
+	}
+
+	if (NextBest)
+	{
+		return NextBest;
+	}
+	return Best;
+}
+
 float GetWeaponKickBack()
 {
 	return 0.0;

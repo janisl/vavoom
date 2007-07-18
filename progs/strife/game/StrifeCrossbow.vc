@@ -111,7 +111,6 @@ defaultproperties
 	ConversationID = 194;
 	PickupMessage = "$txt_strifecrossbow";
 	Ammo1Count = 8;
-	Ammo2Count = 0;
 	IdleState = S_CROSSBOW;
 	UpState = S_XBOWUP;
 	DownState = S_XBOWDOWN;

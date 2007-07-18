@@ -1764,19 +1764,14 @@ void PlayerInContents(float deltaTime)
 
 void PrevWeapon()
 {
-	int			i;
-	int			NewWeap;
-
 	if (MorphTime)
-		return;
-	for (i = HexenDefs::NUMWEAPONS - 1; i > 0; i--)
 	{
-		NewWeap = (ReadyWeapon.WeaponType + i) % HexenDefs::NUMWEAPONS;
-		if (WeaponOwned[NewWeap])
-		{
-			PendingWeapon = WeaponOwned[NewWeap];
-			return;
-		}
+		return;
+	}
+	WeaponEx Best = WeaponEx(GetPrevWeapon(ReadyWeapon, true));
+	if (Best && Best != ReadyWeapon)
+	{
+		PendingWeapon = Best;
 	}
 }
 
@@ -1788,19 +1783,14 @@ void PrevWeapon()
 
 void NextWeapon()
 {
-	int			i;
-	int			NewWeap;
-
 	if (MorphTime)
-		return;
-	for (i = 1; i < HexenDefs::NUMWEAPONS; i++)
 	{
-		NewWeap = (ReadyWeapon.WeaponType + i) % HexenDefs::NUMWEAPONS;
-		if (WeaponOwned[NewWeap])
-		{
-			PendingWeapon = WeaponOwned[NewWeap];
-			return;
-		}
+		return;
+	}
+	WeaponEx Best = WeaponEx(GetNextWeapon(ReadyWeapon, true));
+	if (Best && Best != ReadyWeapon)
+	{
+		PendingWeapon = Best;
 	}
 }
 
@@ -1824,10 +1814,10 @@ void PlayerImpulse()
 		// The actual changing of the weapon is done when the weapon
 		// psprite can do it (A_WeaponReady), so it doesn't happen in
 		// the middle of an attack.
-		if (WeaponOwned[impulse - 1] &&
-			impulse - 1 != ReadyWeapon.WeaponType && !MorphTime)
+		WeaponEx NewWpn = WeaponEx(GetSlotChangeWeapon(impulse, ReadyWeapon, false));
+		if (NewWpn && NewWpn != ReadyWeapon && !MorphTime)
 		{
-			PendingWeapon = WeaponOwned[impulse - 1];
+			PendingWeapon = NewWpn;
 		}
 	}
 	else if (impulse == 13)

@@ -1422,32 +1422,10 @@ void DeathPlayerTick(float deltaTime)
 
 void PrevWeapon()
 {
-	int			i;
-	int			CurIdx;
-	int			NewWeap;
-
-	CurIdx = 0;
-	for (i = 0; i < DoomDefs::NUMWEAPONS; i++)
+	WeaponEx Best = WeaponEx(GetPrevWeapon(ReadyWeapon, true));
+	if (Best && Best != ReadyWeapon)
 	{
-		if (ReadyWeapon.WeaponType == MainGameInfo(Level.Game).WeaponOrder[i])
-		{
-			CurIdx = i;
-			break;
-		}
-	}
-	for (i = DoomDefs::NUMWEAPONS - 1; i > 0; i--)
-	{
-		NewWeap = MainGameInfo(Level.Game).WeaponOrder[(CurIdx + i) % DoomDefs::NUMWEAPONS];
-#ifdef DOOM2
-		if (WeaponOwned[NewWeap])
-#else
-		if (WeaponOwned[NewWeap] && ((NewWeap != DoomDefs::wp_plasma &&
-			NewWeap != DoomDefs::wp_bfg) || !MainGameInfo(Level.Game).shareware))
-#endif
-		{
-			PendingWeapon = WeaponOwned[NewWeap];
-			return;
-		}
+		PendingWeapon = Best;
 	}
 }
 
@@ -1459,32 +1437,10 @@ void PrevWeapon()
 
 void NextWeapon()
 {
-	int			i;
-	int			CurIdx;
-	int			NewWeap;
-
-	CurIdx = 0;
-	for (i = 0; i < DoomDefs::NUMWEAPONS; i++)
+	WeaponEx Best = WeaponEx(GetNextWeapon(ReadyWeapon, true));
+	if (Best && Best != ReadyWeapon)
 	{
-		if (ReadyWeapon.WeaponType == MainGameInfo(Level.Game).WeaponOrder[i])
-		{
-			CurIdx = i;
-			break;
-		}
-	}
-	for (i = 1; i < DoomDefs::NUMWEAPONS; i++)
-	{
-		NewWeap = MainGameInfo(Level.Game).WeaponOrder[(CurIdx + i) % DoomDefs::NUMWEAPONS];
-#ifdef DOOM2
-		if (WeaponOwned[NewWeap])
-#else
-		if (WeaponOwned[NewWeap] && ((NewWeap != DoomDefs::wp_plasma &&
-			NewWeap != DoomDefs::wp_bfg) || !MainGameInfo(Level.Game).shareware))
-#endif
-		{
-			PendingWeapon = WeaponOwned[NewWeap];
-			return;
-		}
+		PendingWeapon = Best;
 	}
 }
 
@@ -2097,39 +2053,10 @@ void BringUpWeapon()
 
 void ChangeWeapon(int newweapon)
 {
-	if (newweapon == DoomDefs::wp_fist && WeaponOwned[DoomDefs::wp_chainsaw] &&
-		ReadyWeapon.WeaponType != DoomDefs::wp_chainsaw)
+	WeaponEx NewWpn = WeaponEx(GetSlotChangeWeapon(newweapon + 1, ReadyWeapon, false));
+	if (NewWpn && NewWpn != ReadyWeapon)
 	{
-		newweapon = DoomDefs::wp_chainsaw;
-	}
-
-#ifdef DOOM2
-	if (newweapon == DoomDefs::wp_shotgun && WeaponOwned[DoomDefs::wp_supershotgun] &&
-		ReadyWeapon.WeaponType != DoomDefs::wp_supershotgun)
-	{
-		newweapon = DoomDefs::wp_supershotgun;
-	}
-#endif
-
-#ifdef GRENADE_LAUNCHER
-	if (newweapon == DoomDefs::wp_missile && WeaponOwned[DoomDefs::wp_grenade] &&
-		ReadyWeapon != DoomDefs::wp_grenade)
-	{
-		newweapon = DoomDefs::wp_grenade;
-	}
-#endif
-
-	if (WeaponOwned[newweapon] && newweapon != ReadyWeapon.WeaponType)
-	{
-#ifdef DOOM2
-		PendingWeapon = WeaponOwned[newweapon];
-#else
-		// Do not go to plasma or BFG in shareware, even if cheated.
-		if ((newweapon != DoomDefs::wp_plasma && newweapon != DoomDefs::wp_bfg) || !MainGameInfo(Level.Game).shareware)
-		{
-			PendingWeapon = WeaponOwned[newweapon];
-		}
-#endif
+		PendingWeapon = NewWpn;
 	}
 }
 

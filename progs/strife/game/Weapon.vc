@@ -53,18 +53,21 @@ bool bRaiseNoiseAlert;
 int WeaponType;
 int Weapon2Type;
 int Ammo1Count;
-int Ammo2Count;
 
 //==========================================================================
 //
-//  GiveWeapon
-//
-//  The weapon name may have a MF_DROPPED flag ored in.
+//	TryPickup
 //
 //==========================================================================
 
-bool GiveWeapon(EntityEx Toucher)
+bool TryPickup(EntityEx Toucher)
 {
+	// leave placed weapons forever on net games
+	if (ShouldStay() && !bDropped && Player(Toucher.Player).WeaponOwned[WeaponType])
+	{
+		return false;
+	}
+
 	class<Ammo> AmmoType;
 	class<Ammo> Ammo2Type;
 	bool gaveammo;
@@ -98,6 +101,7 @@ bool GiveWeapon(EntityEx Toucher)
 	{
 		// give one clip with a dropped weapon,
 		// two clips with a found weapon
+		int Ammo2Count = MainGameInfo(Level.Game).WeaponClasses[Weapon2Type].default.Ammo1Count;
 		if (ShouldStay() && !bDropped && Level.Game.deathmatch)
 			gaveammo2 = Player(Toucher.Player).GiveAmmo(Ammo2Type, Ammo2Count * 2);
 		else if (bDropped)
@@ -129,24 +133,7 @@ bool GiveWeapon(EntityEx Toucher)
 		Player(Toucher.Player).PendingWeapon = Player(Toucher.Player).WeaponOwned[WeaponType];
 	}
 
-	return (gaveweapon || gaveammo || gaveammo2);
-}
-
-//==========================================================================
-//
-//	TryPickup
-//
-//==========================================================================
-
-bool TryPickup(EntityEx Toucher)
-{
-	// leave placed weapons forever on net games
-	if (ShouldStay() && !bDropped && Player(Toucher.Player).WeaponOwned[WeaponType])
-	{
-		return false;
-	}
-
-	if (GiveWeapon(Toucher))
+	if (gaveweapon || gaveammo || gaveammo2)
 	{
 		GoAwayAndDie();
 		GiveQuest(Toucher);

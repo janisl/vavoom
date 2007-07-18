@@ -126,7 +126,6 @@ defaultproperties
 	ConversationID = 195;
 	PickupMessage = "$txt_glauncher";
 	Ammo1Count = 12;
-	Ammo2Count = 0;
 	IdleState = S_GRENADE_LAUNCHER;
 	UpState = S_GRENADEUP;
 	DownState = S_GRENADEDOWN;

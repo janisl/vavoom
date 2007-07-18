@@ -27,6 +27,7 @@ class Mauler2 : Mauler;
 
 defaultproperties
 {
+	WeaponType = StrifeDefs::wp_blaster2;
 	Slot = 7;
 	SelectionOrder = 3300;
 	UpState = S_BLASTERTORPEDOUP;

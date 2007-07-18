@@ -1498,27 +1498,14 @@ void PlayerInContents(float deltaTime)
 
 void PrevWeapon()
 {
-	int			i;
-	int			CurIdx;
-	int			NewWeap;
-
-	CurIdx = 0;
-	for (i = 0; i < NUMWEAPONS; i++)
+	if (ChickenTime)
 	{
-		if (ReadyWeapon.WeaponType == MainGameInfo(Level.Game).WeaponOrder[i])
-		{
-			CurIdx = i;
-			break;
-		}
+		return;
 	}
-	for (i = NUMWEAPONS - 1; i > 0; i--)
+	WeaponEx Best = WeaponEx(GetPrevWeapon(ReadyWeapon, true));
+	if (Best && Best != ReadyWeapon)
 	{
-		NewWeap = MainGameInfo(Level.Game).WeaponOrder[(CurIdx + i) % NUMWEAPONS];
-		if (WeaponOwned[NewWeap])
-		{
-			PendingWeapon = WeaponOwned[NewWeap];
-			return;
-		}
+		PendingWeapon = Best;
 	}
 }
 
@@ -1530,29 +1517,14 @@ void PrevWeapon()
 
 void NextWeapon()
 {
-	int			i;
-	int			CurIdx;
-	int			NewWeap;
-
-	CurIdx = 0;
-	for (i = 0; i < NUMWEAPONS; i++)
+	if (ChickenTime)
 	{
-		if (ReadyWeapon.WeaponType == MainGameInfo(Level.Game).WeaponOrder[i])
-		{
-			CurIdx = i;
-			break;
-		}
+		return;
 	}
-	for (i = 1; i < NUMWEAPONS; i++)
+	WeaponEx Best = WeaponEx(GetNextWeapon(ReadyWeapon, true));
+	if (Best && Best != ReadyWeapon)
 	{
-		NewWeap = MainGameInfo(Level.Game).WeaponOrder[(CurIdx + i) % NUMWEAPONS];
-		if (WeaponOwned[NewWeap] &&
-			(MainGameInfo(Level.Game).WeaponClasses[NewWeap].default.bInShareware ||
-			!MainGameInfo(Level.Game).shareware))
-		{
-			PendingWeapon = WeaponOwned[NewWeap];
-			return;
-		}
+		PendingWeapon = Best;
 	}
 }
 
@@ -1572,25 +1544,13 @@ void PlayerImpulse()
 
 	if (impulse <= NUMWEAPONS)
 	{
-		int newweapon;
-
 		// The actual changing of the weapon is done when the weapon
 		// psprite can do it (A_WeaponReady), so it doesn't happen in
 		// the middle of an attack.
-		newweapon = impulse - 1;
-		if (newweapon == wp_staff && WeaponOwned[wp_gauntlets]
-			&& !(ReadyWeapon.WeaponType == wp_gauntlets))
+		WeaponEx NewWpn = WeaponEx(GetSlotChangeWeapon(impulse, ReadyWeapon, false));
+		if (NewWpn && NewWpn != ReadyWeapon && !ChickenTime)
 		{
-			newweapon = wp_gauntlets;
-		}
-		if (WeaponOwned[newweapon] &&
-			newweapon != ReadyWeapon.WeaponType)
-		{
-			if (MainGameInfo(Level.Game).WeaponClasses[newweapon].default.bInShareware ||
-				!MainGameInfo(Level.Game).shareware)
-			{
-				PendingWeapon = WeaponOwned[newweapon];
-			}
+			PendingWeapon = NewWpn;
 		}
 	}
 	else if (impulse == 13)

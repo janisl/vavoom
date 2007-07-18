@@ -1638,27 +1638,10 @@ void DeathPlayerTick(float deltaTime)
 
 void PrevWeapon()
 {
-	int			i;
-	int			CurIdx;
-	int			NewWeap;
-
-	CurIdx = 0;
-	for (i = 0; i < StrifeDefs::NUMWEAPONS; i++)
+	WeaponEx Best = WeaponEx(GetPrevWeapon(ReadyWeapon, true));
+	if (Best && Best != ReadyWeapon)
 	{
-		if (ReadyWeapon.WeaponType == MainGameInfo(Level.Game).WeaponOrder[i])
-		{
-			CurIdx = i;
-			break;
-		}
-	}
-	for (i = StrifeDefs::NUMWEAPONS - 1; i > 0; i--)
-	{
-		NewWeap = MainGameInfo(Level.Game).WeaponOrder[(CurIdx + i) % StrifeDefs::NUMWEAPONS];
-		if (WeaponOwned[NewWeap])
-		{
-			PendingWeapon = WeaponOwned[NewWeap];
-			return;
-		}
+		PendingWeapon = Best;
 	}
 }
 
@@ -1670,27 +1653,10 @@ void PrevWeapon()
 
 void NextWeapon()
 {
-	int			i;
-	int			CurIdx;
-	int			NewWeap;
-
-	CurIdx = 0;
-	for (i = 0; i < StrifeDefs::NUMWEAPONS; i++)
+	WeaponEx Best = WeaponEx(GetNextWeapon(ReadyWeapon, true));
+	if (Best && Best != ReadyWeapon)
 	{
-		if (ReadyWeapon.WeaponType == MainGameInfo(Level.Game).WeaponOrder[i])
-		{
-			CurIdx = i;
-			break;
-		}
-	}
-	for (i = 1; i < StrifeDefs::NUMWEAPONS; i++)
-	{
-		NewWeap = MainGameInfo(Level.Game).WeaponOrder[(CurIdx + i) % StrifeDefs::NUMWEAPONS];
-		if (WeaponOwned[NewWeap])
-		{
-			PendingWeapon = WeaponOwned[NewWeap];
-			return;
-		}
+		PendingWeapon = Best;
 	}
 }
 
@@ -2092,39 +2058,10 @@ void BringUpWeapon()
 
 void ChangeWeapon(int newweapon)
 {
-	class<Ammo> ammo;
-	int count;
-
-	if (newweapon == StrifeDefs::wp_crossbow && WeaponOwned[StrifeDefs::wp_crossbow2] &&
-		(ReadyWeapon.WeaponType == StrifeDefs::wp_crossbow || !EntityEx(MO).FindInventory(ElectricBolts).Amount))
+	WeaponEx NewWpn = WeaponEx(GetSlotChangeWeapon(newweapon + 1, ReadyWeapon, false));
+	if (NewWpn && NewWpn != ReadyWeapon)
 	{
-		newweapon = StrifeDefs::wp_crossbow2;
-	}
-	if (newweapon == StrifeDefs::wp_grenade && WeaponOwned[StrifeDefs::wp_grenade2] &&
-		(ReadyWeapon.WeaponType == StrifeDefs::wp_grenade || !EntityEx(MO).FindInventory(HEGrenadeRounds).Amount))
-	{
-		newweapon = StrifeDefs::wp_grenade2;
-	}
-	if (newweapon == StrifeDefs::wp_blaster && WeaponOwned[StrifeDefs::wp_blaster2] &&
-		ReadyWeapon.WeaponType == StrifeDefs::wp_blaster)
-	{
-		newweapon = StrifeDefs::wp_blaster2;
-	}
-
-	//	Check if we have ammo.
-	ammo = MainGameInfo(Level.Game).WeaponClasses[newweapon].default.AmmoType;
-	if (newweapon == StrifeDefs::wp_blaster)
-		count = 20;
-	else if (newweapon == StrifeDefs::wp_blaster2)
-		count = 30;
-	else
-		count = 1;
-	if (ammo && EntityEx(MO).FindInventory(ammo).Amount < count)
-		return;
-
-	if (WeaponOwned[newweapon] && newweapon != ReadyWeapon.WeaponType)
-	{
-		PendingWeapon = WeaponOwned[newweapon];
+		PendingWeapon = NewWpn;
 	}
 }
 

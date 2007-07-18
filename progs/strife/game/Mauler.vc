@@ -128,7 +128,6 @@ defaultproperties
 	ConversationID = 193;
 	PickupMessage = "$txt_mauler";
 	Ammo1Count = 40;
-	Ammo2Count = 0;
 	IdleState = S_MAULER;
 	UpState = S_BLASTERUP;
 	DownState = S_BLASTERDOWN;
