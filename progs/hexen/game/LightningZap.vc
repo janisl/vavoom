@@ -36,9 +36,9 @@ Lightning LightningOwner;	//	Lightning missile that spawned zap.
 bool Touch(Entity InOther)
 {
 	int damage;
-	Actor Other;
+	EntityEx Other;
 
-	Other = Actor(InOther);
+	Other = EntityEx(InOther);
 	if (!Other.bSolid && !Other.bSpecial && !Other.bShootable)
 		return true;
 
