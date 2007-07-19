@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Sigil5 : WeaponEx
+class Sigil5 : Sigil
 	__mobjinfo__(81);
 
 __states__
@@ -36,5 +36,4 @@ defaultproperties
 	ConversationID = 200;
 	PickupMessage = "$txt_sigil";
 	IdleState = S_SIGIL_5;
-	WeaponType = StrifeDefs::wp_sigil;
 }

@@ -614,7 +614,7 @@ defaultproperties
 	WeaponClasses[4] = StrifeGrenadeLauncher;
 	WeaponClasses[5] = FlameThrower;
 	WeaponClasses[6] = Mauler;
-	WeaponClasses[7] = Sigil1;
+	WeaponClasses[7] = Sigil;
 	WeaponClasses[8] = StrifeCrossbow2;
 	WeaponClasses[9] = StrifeGrenadeLauncher2;
 	WeaponClasses[10] = Mauler2;

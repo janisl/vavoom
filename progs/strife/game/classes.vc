@@ -166,6 +166,7 @@
 #include "StrifeCrossbow2.vc"
 #include "StrifeGrenadeLauncher.vc"
 #include "StrifeGrenadeLauncher2.vc"
+#include "Sigil.vc"
 #include "Sigil1.vc"
 #include "Sigil2.vc"
 #include "Sigil3.vc"

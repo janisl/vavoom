@@ -325,7 +325,7 @@ void SB_DrawMainBar()
 
 	if (cl.WeaponOwned[StrifeDefs::wp_sigil])
 	{
-		R_DrawPic(BAR_X + 253, BAR_Y + 175, pic_sigil[cl.Sigil]);
+		R_DrawPic(BAR_X + 253, BAR_Y + 175, pic_sigil[cl.SigilPieces]);
 	}
 
 	if (cl.ReadyAmmo && cl.MO)
@@ -489,7 +489,7 @@ void SB_DrawFullscreenStats()
 
 	if (cl.WeaponOwned[StrifeDefs::wp_sigil])
 	{
-		R_DrawPic2(530, 450, pic_sigil[cl.Sigil], 0.6);
+		R_DrawPic2(530, 450, pic_sigil[cl.SigilPieces], 0.6);
 	}
 
 	if (bShowWeapons)

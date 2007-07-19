@@ -351,7 +351,7 @@ final void A_BossDeath()
 		Player(Target.Player).Accuracy += 10;
 		Player(Target.Player).Stamina += 10;
 		Player(Target.Player).GiveBody(200);
-		if (Player(Target.Player).Sigil == 4)
+		if (Player(Target.Player).SigilPieces == 4)
 		{
 			Player(Target.Player).SetObjectives(85);
 			Player(Target.Player).ClientVoice(85);

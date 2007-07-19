@@ -447,6 +447,7 @@ EXTRA_DIST = compile.bat \
 	game/SeveredHand.vc \
 	game/ShadowArmor.vc \
 	game/ShortBush.vc \
+	game/Sigil.vc \
 	game/Sigil1.vc \
 	game/Sigil2.vc \
 	game/Sigil3.vc \

@@ -79,7 +79,7 @@ int Refire;
 WeaponEx WeaponOwned[StrifeDefs::NUMWEAPONS];
 
 WeaponEx ReadyWeapon;
-int Sigil;
+int SigilPieces;
 
 // Is wp_nochange if not changing.
 WeaponEx PendingWeapon;
@@ -89,7 +89,7 @@ Inventory SavedInventory;
 replication
 {
 	reliable if (!bIsClient)
-		ReadyAmmo, Sigil, Accuracy, Stamina, Keys, InvFirst, InvCursor,
+		ReadyAmmo, SigilPieces, Accuracy, Stamina, Keys, InvFirst, InvCursor,
 		Objectives, ArmorType, ArmorPoints, WeaponOwned, Inventory,
 		Communicator;
 
@@ -544,14 +544,14 @@ void GotAmmo(Ammo NewAmmo)
 void GiveSigilPiece()
 {
 	if (!WeaponOwned[StrifeDefs::wp_sigil])
-		Sigil = 0;
-	else if (Sigil == 4)
-		Sigil = 0;
+		SigilPieces = 0;
+	else if (SigilPieces == 4)
+		SigilPieces = 0;
 	else
-		Sigil++;
+		SigilPieces++;
 	if (!WeaponOwned[StrifeDefs::wp_sigil])
 	{
-		WeaponOwned[StrifeDefs::wp_sigil] = Level.Spawn(Sigil1);
+		WeaponOwned[StrifeDefs::wp_sigil] = Level.Spawn(Sigil);
 		WeaponOwned[StrifeDefs::wp_sigil].AttachToOwner(EntityEx(MO));
 	}
 	PendingWeapon = WeaponOwned[StrifeDefs::wp_sigil];
