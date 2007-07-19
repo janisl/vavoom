@@ -94,9 +94,9 @@ defaultproperties
 	WeaponType = wp_blaster;
 	Slot = 4;
 	SelectionOrder = 500;
-	AmmoType = BlasterAmmo;
-	GetAmmoCount = 30;
-	AmmoUsePL1 = USE_BLSR_AMMO_1;
+	AmmoType1 = BlasterAmmo;
+	AmmoUse1 = USE_BLSR_AMMO_1;
+	AmmoGive1 = 30;
 	AmmoUsePL2 = USE_BLSR_AMMO_2;
 	PSpriteSY = 15.0;
 	PickupMessage = "$txt_wpnblaster";

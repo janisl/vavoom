@@ -29,12 +29,6 @@ class WeaponEx : Weapon
 const float MELEERANGE		= 64.0;
 const float MISSILERANGE	= (32.0 * 64.0);
 
-const float LOWERSPEED		= 6.0;
-const float RAISESPEED		= 6.0;
-
-const float WEAPONBOTTOM	= 128.0;
-const float WEAPONTOP		= 32.0;
-
 const int
 	USE_GWND_AMMO_1	= 1,
 	USE_GWND_AMMO_2 = 1,
@@ -49,16 +43,8 @@ const int
 	USE_MACE_AMMO_1 = 1,
 	USE_MACE_AMMO_2 = 5;
 
-class<Ammo> AmmoType;
-int GetAmmoCount;
-int AmmoUsePL1;
 int AmmoUsePL2;
 
-state UpState;
-state DownState;
-state ReadyState;
-state AttackState;
-state HoldAttackState;
 state UpState2;
 state DownState2;
 state ReadyState2;
@@ -93,8 +79,8 @@ bool TryPickup(EntityEx Toucher)
 	}
 
 	gaveAmmo = Player(Toucher.Player).GiveAmmo(
-		MainGameInfo(Level.Game).WeaponClasses[WeaponType].default.AmmoType,
-		MainGameInfo(Level.Game).WeaponClasses[WeaponType].default.GetAmmoCount);
+		MainGameInfo(Level.Game).WeaponClasses[WeaponType].default.AmmoType1,
+		MainGameInfo(Level.Game).WeaponClasses[WeaponType].default.AmmoGive1);
 	if (Player(Toucher.Player).WeaponOwned[WeaponType])
 	{
 		gaveWeapon = false;
@@ -144,14 +130,14 @@ bool CheckAmmo(bool AutoSwitch, optional bool RequireAmmo)
 	class<Ammo>		ammo;
 	int				count;
 
-	ammo = AmmoType;
+	ammo = AmmoType1;
 	if (Player(Owner.Player).Powers[pw_weaponlevel2] && !Level.Game.deathmatch)
 	{
 		count = AmmoUsePL2;
 	}
 	else
 	{
-		count = AmmoUsePL1;
+		count = AmmoUse1;
 	}
 
 	if (!ammo || EntityEx(Owner).FindInventory(ammo).Amount >= count)
@@ -186,7 +172,10 @@ bool CheckAmmo(bool AutoSwitch, optional bool RequireAmmo)
 
 void DecAmmo(int Count)
 {
-	EntityEx(Owner).FindInventory(AmmoType).Amount -= Count;
+	if (AmmoType1)
+	{
+		EntityEx(Owner).FindInventory(AmmoType1).Amount -= Count;
+	}
 }
 
 //==========================================================================

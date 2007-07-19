@@ -44,7 +44,7 @@ final void A_FireRiffle()
 		return;
 
 	Owner.SetState(Actor(Owner).MissileState);
-	DecAmmo(1);
+	DecAmmo();
 
 	Actor(Owner).Aim(dir, 16.0 * 64.0);
 	if (Player(Owner.Player).Refire)
@@ -77,10 +77,11 @@ defaultproperties
 	WeaponType = StrifeDefs::wp_riffle;
 	Slot = 3;
 	SelectionOrder = 600;
-	AmmoType = ClipOfBullets;
+	AmmoType1 = ClipOfBullets;
+	AmmoUse1 = 1;
+	AmmoGive1 = 20;
 	ConversationID = 188;
 	PickupMessage = "$txt_assaultgun";
-	Ammo1Count = 20;
 	IdleState = S_ASSAULT_GUN1;
 	UpState = S_RIFFLEUP;
 	DownState = S_RIFFLEDOWN;

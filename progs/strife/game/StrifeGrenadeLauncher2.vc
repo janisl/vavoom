@@ -30,7 +30,9 @@ defaultproperties
 	WeaponType = StrifeDefs::wp_grenade2;
 	Slot = 5;
 	SelectionOrder = 3200;
-	AmmoType = PhosphorusGrenadeRounds;
+	AmmoType1 = PhosphorusGrenadeRounds;
+	AmmoUse1 = 1;
+	AmmoGive1 = 0;
 	UpState = S_GRENADEHIGHUP;
 	DownState = S_GRENADEHIGHDOWN;
 	ReadyState = S_GRENADEHIGH;

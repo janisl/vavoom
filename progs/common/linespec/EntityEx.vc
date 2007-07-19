@@ -4902,6 +4902,20 @@ final void DropItem(class<EntityEx> type, int amount, float chance)
 				}
 			}
 		}
+		else if (Weapon(Item))
+		{
+			//	The same fror dropped weapons.
+			Weapon(Item).AmmoGive1 = Weapon(Item).AmmoGive1 / 2;
+			if (Weapon(Item).AmmoGive1 < 1)
+			{
+				Weapon(Item).AmmoGive1 = 1;
+			}
+			Weapon(Item).AmmoGive2 = Weapon(Item).AmmoGive2 / 2;
+			if (Weapon(Item).AmmoGive2 < 1)
+			{
+				Weapon(Item).AmmoGive2 = 1;
+			}
+		}
 		if (Item.SpecialDropAction(self))
 		{
 			return;

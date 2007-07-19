@@ -82,9 +82,10 @@ defaultproperties
 	WeaponType = HexenDefs::WP_FOURTH;
 	Slot = 4;
 	SelectionOrder = 2900;
-	ManaType1 = Mana1;
-	ManaType2 = Mana2;
-	ManaUse = 14;
+	AmmoType1 = Mana1;
+	AmmoType2 = Mana2;
+	AmmoUse1 = 14;
+	AmmoUse2 = 14;
 	PSpriteSY = 10.0;
 	UpState = S_FSWORDUP;
 	DownState = S_FSWORDDOWN;

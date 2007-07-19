@@ -166,8 +166,9 @@ defaultproperties
 	WeaponType = HexenDefs::WP_SECOND;
 	Slot = 2;
 	SelectionOrder = 1600;
-	ManaType1 = Mana1;
-	ManaUse = 1;
+	AmmoType1 = Mana1;
+	AmmoUse1 = 1;
+	AmmoGive1 = 25;
 	PSpriteSY = 10.0;
 	PickupMessage = "$txt_weapon_c2";
 	UpState = S_CSTAFFUP;

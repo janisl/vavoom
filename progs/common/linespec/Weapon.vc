@@ -26,6 +26,29 @@
 class Weapon : Inventory
 	abstract;
 
+const float LOWERSPEED		= 6.0;
+const float RAISESPEED		= 6.0;
+
+const float WEAPONBOTTOM	= 128.0;
+const float WEAPONTOP		= 32.0;
+
+//	Type of ammo weapon needs to operate.
+class<Ammo>		AmmoType1;
+class<Ammo>		AmmoType2;
+//	How much ammo to give when picked up.
+int				AmmoGive1;
+int				AmmoGive2;
+//	How much ammo used in each shot.
+int				AmmoUse1;
+int				AmmoUse2;
+
+state			UpState;
+state			DownState;
+state			ReadyState;
+state			AttackState;
+state			HoldAttackState;
+state			FlashState;
+
 //	Weapon slot this weapon is placed in.
 int				Slot;
 //	Weapons with lower values have greater priority

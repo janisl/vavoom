@@ -42,7 +42,7 @@ final void A_FireBlaster1()
 
 	Owner.PlaySound('weapons/mauler1', CHAN_WEAPON);
 
-	DecAmmo(20);
+	DecAmmo();
 
 	Actor(Owner).Aim(aimDir, 16.0 * 64.0);
 	for (i = 0; i < 20; i++)
@@ -80,7 +80,7 @@ final void A_FireBlasterSound()
 final void A_FireBlaster2()
 {
 	Owner.SetState(Actor(Owner).MissileState);
-	DecAmmo(30);
+	DecAmmo();
 	Actor(Owner).SpawnPlayerMissile(MaulerTorpedo);
 	Actor(Owner).Damage(none, Actor(Owner), 20);
 	Actor(Owner).Thrust(Owner.Angles.yaw + 180.0, 125.0 / 16.0);
@@ -124,10 +124,11 @@ defaultproperties
 	Weapon2Type = StrifeDefs::wp_blaster2;
 	Slot = 7;
 	SelectionOrder = 300;
-	AmmoType = EnergyPod;
+	AmmoType1 = EnergyPod;
+	AmmoUse1 = 20;
+	AmmoGive1 = 40;
 	ConversationID = 193;
 	PickupMessage = "$txt_mauler";
-	Ammo1Count = 40;
 	IdleState = S_MAULER;
 	UpState = S_BLASTERUP;
 	DownState = S_BLASTERDOWN;

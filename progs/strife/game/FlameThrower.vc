@@ -37,7 +37,7 @@ final void A_FireFlamethrower()
 	EntityEx A;
 
 	Owner.SetState(Actor(Owner).MissileState);
-	DecAmmo(1);
+	DecAmmo();
 	Owner.Angles.yaw = AngleMod360(Owner.Angles.yaw +
 		(Random() - Random()) * 45.0 / 8.0);
 	Owner.Player.bFixAngle = true;
@@ -64,10 +64,11 @@ defaultproperties
 	WeaponType = StrifeDefs::wp_flame;
 	Slot = 6;
 	SelectionOrder = 2100;
-	AmmoType = EnergyPod;
+	AmmoType1 = EnergyPod;
+	AmmoUse1 = 1;
+	AmmoGive1 = 100;
 	ConversationID = 190;
 	PickupMessage = "$txt_flamer";
-	Ammo1Count = 100;
 	UpState = S_FLAMEUP;
 	DownState = S_FLAMEDOWN;
 	ReadyState = S_FLAME;

@@ -60,7 +60,9 @@ defaultproperties
 	WeaponType = DoomDefs::wp_plasma;
 	Slot = 6;
 	SelectionOrder = 100;
-	AmmoType = Cell;
+	AmmoType1 = Cell;
+	AmmoUse1 = 1;
+	AmmoGive1 = 40;
 	PlayerModelVersion = 6;
 	PickupMessage = "$gotplasma";
 	IdleState = S_PLAS;

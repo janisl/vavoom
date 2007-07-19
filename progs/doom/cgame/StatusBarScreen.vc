@@ -292,6 +292,11 @@ void SB_DrawMainBar()
 	R_FillRectWithFlat(0, 448, 640, 32, 'floor7_2');
 #endif
 
+	if (!cl.MO)
+	{
+		return;
+	}
+
 	//  background
 	R_DrawPic(ST_BGX, ST_BGY, pic_bar);
 
@@ -312,7 +317,17 @@ void SB_DrawMainBar()
 		R_DrawPic(ST_ARMSBGX, ST_ARMSBGY, pic_arms);
 		for (i = 0; i < 6; i++)
 		{
-			if (cl.WeaponOwned[i + 1])
+			bool HaveWeapon = false;
+			Inventory Item;
+			for (Item = EntityEx(cl.MO).Inventory; Item; Item = Item.Inventory)
+			{
+				if (Weapon(Item) && Weapon(Item).Slot == i + 2)
+				{
+					HaveWeapon = true;
+					break;
+				}
+			}
+			if (HaveWeapon)
 			{
 				R_DrawPic(ST_ARMSX + (i % 3) * ST_ARMSXSPACE,
 					ST_ARMSY + (i / 3) * ST_ARMSYSPACE, pic_yellownum[i + 2]);
@@ -381,7 +396,7 @@ void DrawAmmo(int CountX, int CountY, int MaxX, int MaxY,
 {
 	Inventory		Item;
 
-	Item = cl.MO ? EntityEx(cl.MO).FindInventory(AmmoClass) : none;
+	Item = EntityEx(cl.MO).FindInventory(AmmoClass);
 	// ammo count
 	SB_DrawSmallNum(CountX, CountY, Item ? Item.Amount : 0);
 	// max ammo count

@@ -129,8 +129,11 @@ defaultproperties
 	WeaponType = HexenDefs::WP_THIRD;
 	Slot = 3;
 	SelectionOrder = 900;
-	ManaUse = 3;
+	AmmoType1 = Mana2;
+	AmmoUse1 = 3;
+	AmmoGive1 = 25;
 	PSpriteSY = -10.0;
+	bManaOptional = true;
 	HammerRange = Actor::MELEERANGE + Actor::MELEERANGE / 2.0;
 	PickupMessage = "$txt_weapon_f3";
 	IdleState = S_HAMM;

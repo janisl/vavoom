@@ -46,7 +46,7 @@ final void A_BFGsound()
 
 final void A_FireBFG()
 {
-	DecAmmo(MainGameInfo(Level.Game).BFGCELLS);
+	DecAmmo(BFG9000.default.AmmoUse1);
 	Actor(Owner).SpawnPlayerMissile(BFGBall);
 }
 
@@ -69,7 +69,9 @@ defaultproperties
 	WeaponType = DoomDefs::wp_bfg;
 	Slot = 7;
 	SelectionOrder = 2800;
-	AmmoType = Cell;
+	AmmoType1 = Cell;
+	AmmoUse1 = 40;
+	AmmoGive1 = 40;
 	PlayerModelVersion = 7;
 	PickupMessage = "$gotbfg9000";
 	IdleState = S_BFUG;

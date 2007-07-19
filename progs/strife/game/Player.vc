@@ -1990,7 +1990,7 @@ void SetViewPos()
 
 	ViewAngles = MO.Angles;
 
-	ReadyAmmo = WeaponEx(ViewEnt).AmmoType;
+	ReadyAmmo = WeaponEx(ViewEnt).AmmoType1;
 
 	PaletteFlash();
 

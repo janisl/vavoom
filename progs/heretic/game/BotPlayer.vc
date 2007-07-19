@@ -288,8 +288,8 @@ bool CheckItem(Actor item)
 			return true;
 
 		// If we have no more room for the ammo it gives
-		if (botmo.FindInventory(MainGameInfo(player.Level.Game).WeaponClasses[weapon].default.AmmoType).Amount ==
-			botmo.FindInventory(MainGameInfo(player.Level.Game).WeaponClasses[weapon].default.AmmoType).MaxAmount)
+		if (botmo.FindInventory(MainGameInfo(player.Level.Game).WeaponClasses[weapon].default.AmmoType1).Amount ==
+			botmo.FindInventory(MainGameInfo(player.Level.Game).WeaponClasses[weapon].default.AmmoType1).MaxAmount)
 			return false;
 
 		// Can't pick it up because we have it and it's not a dropped weapon

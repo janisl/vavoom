@@ -109,9 +109,9 @@ defaultproperties
 	WeaponType = wp_crossbow;
 	Slot = 3;
 	SelectionOrder = 800;
-	AmmoType = CrossbowAmmo;
-	GetAmmoCount = 10;
-	AmmoUsePL1 = USE_CBOW_AMMO_1;
+	AmmoType1 = CrossbowAmmo;
+	AmmoUse1 = USE_CBOW_AMMO_1;
+	AmmoGive1 = 10;
 	AmmoUsePL2 = USE_CBOW_AMMO_2;
 	PSpriteSY = 15.0;
 	PickupMessage = "$txt_wpncrossbow";

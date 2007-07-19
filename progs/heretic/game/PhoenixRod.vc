@@ -146,9 +146,9 @@ defaultproperties
 	WeaponType = wp_phoenixrod;
 	Slot = 6;
 	SelectionOrder = 2600;
-	AmmoType = PhoenixRodAmmo;
-	GetAmmoCount = 2;
-	AmmoUsePL1 = USE_PHRD_AMMO_1;
+	AmmoType1 = PhoenixRodAmmo;
+	AmmoUse1 = USE_PHRD_AMMO_1;
+	AmmoGive1 = 2;
 	AmmoUsePL2 = USE_PHRD_AMMO_2;
 	PSpriteSY = 15.0;
 	bInShareware = false;

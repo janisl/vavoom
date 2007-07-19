@@ -26,21 +26,7 @@
 class WeaponEx : Weapon
 	abstract;
 
-const float LOWERSPEED		= 6.0;
-const float RAISESPEED		= 6.0;
-
-const float WEAPONBOTTOM	= 128.0;
-const float WEAPONTOP		= 32.0;
-
-class<Ammo> ManaType1;
-class<Ammo> ManaType2;
-state UpState;
-state DownState;
-state ReadyState;
-state AttackState;
-state HoldAttackState;
 float PSpriteSY;		// Y-adjustment value for full screen
-int ManaUse;
 bool bManaOptional;
 
 int WeaponClass;
@@ -67,7 +53,7 @@ bool TryPickup(EntityEx Toucher)
 		}
 		if (WeaponType == HexenDefs::WP_SECOND)
 		{
-			if (!Player(Toucher.Player).GiveMana(Mana1, 25))
+			if (!Player(Toucher.Player).GiveMana(Mana1, AmmoGive1))
 			{
 				return false;
 			}
@@ -142,23 +128,16 @@ bool ShouldStay()
 
 bool CheckAmmo(bool AutoSwitch, optional bool RequireAmmo)
 {
-	class<Ammo> mana1;
-	class<Ammo> mana2;
-	int count;
-
 	if (!RequireAmmo && bManaOptional)
 	{
 		return true;
 	}
-	mana1 = ManaType1;
-	mana2 = ManaType2;
-	count = ManaUse;
 	bool Good = true;
-	if (mana1 && EntityEx(Owner).FindInventory(mana1).Amount < count)
+	if (AmmoType1 && EntityEx(Owner).FindInventory(AmmoType1).Amount < AmmoUse1)
 	{
 		Good = false;
 	}
-	if (mana2 && EntityEx(Owner).FindInventory(mana2).Amount < count)
+	if (AmmoType2 && EntityEx(Owner).FindInventory(AmmoType2).Amount < AmmoUse2)
 	{
 		Good = false;
 	}
@@ -187,13 +166,13 @@ bool CheckAmmo(bool AutoSwitch, optional bool RequireAmmo)
 
 void DecMana()
 {
-	if (ManaType1)
+	if (AmmoType1)
 	{
-		EntityEx(Owner).FindInventory(ManaType1).Amount -= ManaUse;
+		EntityEx(Owner).FindInventory(AmmoType1).Amount -= AmmoUse1;
 	}
-	if (ManaType2)
+	if (AmmoType2)
 	{
-		EntityEx(Owner).FindInventory(ManaType2).Amount -= ManaUse;
+		EntityEx(Owner).FindInventory(AmmoType2).Amount -= AmmoUse2;
 	}
 }
 

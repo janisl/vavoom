@@ -33,26 +33,12 @@ const float
 	MAULERRANGE		= (33.0 * 64.0),
 	ROBOTRANGE		= 264.0;
 
-const float LOWERSPEED		= 6.0;
-const float RAISESPEED		= 6.0;
-
-const float WEAPONBOTTOM	= 128.0;
-const float WEAPONTOP		= 32.0;
-
-class<Ammo> AmmoType;
-state UpState;
-state DownState;
-state ReadyState;
-state AttackState;
-state HoldAttackState;
-state FlashState;
 state FireDeathWaveState;
 
 bool bRaiseNoiseAlert;
 
 int WeaponType;
 int Weapon2Type;
-int Ammo1Count;
 
 //==========================================================================
 //
@@ -74,23 +60,19 @@ bool TryPickup(EntityEx Toucher)
 	bool gaveammo2;
 	bool gaveweapon;
 
-	AmmoType = MainGameInfo(Level.Game).WeaponClasses[WeaponType].default.AmmoType;
+	AmmoType = MainGameInfo(Level.Game).WeaponClasses[WeaponType].default.AmmoType1;
 	Ammo2Type = none;
 	if (Weapon2Type != -1)
 	{
-		Ammo2Type = MainGameInfo(Level.Game).WeaponClasses[Weapon2Type].default.AmmoType;
+		Ammo2Type = MainGameInfo(Level.Game).WeaponClasses[Weapon2Type].default.AmmoType1;
 	}
 
 	if (AmmoType)
 	{
-		// give one clip with a dropped weapon,
-		// two clips with a found weapon
 		if (ShouldStay() && !bDropped && Level.Game.deathmatch)
-			gaveammo = Player(Toucher.Player).GiveAmmo(AmmoType, Ammo1Count * 2);
-		else if (bDropped)
-			gaveammo = Player(Toucher.Player).GiveAmmo(AmmoType, Ammo1Count / 2);
+			gaveammo = Player(Toucher.Player).GiveAmmo(AmmoType, AmmoGive1 * 2);
 		else
-			gaveammo = Player(Toucher.Player).GiveAmmo(AmmoType, Ammo1Count);
+			gaveammo = Player(Toucher.Player).GiveAmmo(AmmoType, AmmoGive1);
 	}
 	else
 	{
@@ -99,13 +81,9 @@ bool TryPickup(EntityEx Toucher)
 
 	if (Weapon2Type != -1 && Ammo2Type && AmmoType != Ammo2Type)
 	{
-		// give one clip with a dropped weapon,
-		// two clips with a found weapon
-		int Ammo2Count = MainGameInfo(Level.Game).WeaponClasses[Weapon2Type].default.Ammo1Count;
+		int Ammo2Count = MainGameInfo(Level.Game).WeaponClasses[Weapon2Type].default.AmmoGive1;
 		if (ShouldStay() && !bDropped && Level.Game.deathmatch)
 			gaveammo2 = Player(Toucher.Player).GiveAmmo(Ammo2Type, Ammo2Count * 2);
-		else if (bDropped)
-			gaveammo2 = Player(Toucher.Player).GiveAmmo(Ammo2Type, Ammo2Count / 2);
 		else
 			gaveammo2 = Player(Toucher.Player).GiveAmmo(Ammo2Type, Ammo2Count);
 	}
@@ -164,23 +142,12 @@ bool ShouldStay()
 
 bool CheckAmmo(bool AutoSwitch, optional bool RequireAmmo)
 {
-	class<Ammo>		ammo;
-	int				count;
-
-	ammo = AmmoType;
-
-	// Minimal amount for one shot varies.
-	if (WeaponType == StrifeDefs::wp_blaster)
-		count = 20;
-	else if (WeaponType == StrifeDefs::wp_blaster2)
-		count = 30;
-	else
-		count = 1;	// Regular.
-
 	// Some do not need ammunition anyway.
 	// Return if current ammunition sufficient.
-	if (!ammo || EntityEx(Owner).FindInventory(ammo).Amount >= count)
+	if (!AmmoType1 || EntityEx(Owner).FindInventory(AmmoType1).Amount >= AmmoUse1)
+	{
 		return true;
+	}
 
 	if (!AutoSwitch)
 	{
@@ -204,9 +171,12 @@ bool CheckAmmo(bool AutoSwitch, optional bool RequireAmmo)
 //
 //===========================================================================
 
-final void DecAmmo(int Count)
+final void DecAmmo()
 {
-	EntityEx(Owner).FindInventory(AmmoType).Amount -= Count;
+	if (AmmoType1)
+	{
+		EntityEx(Owner).FindInventory(AmmoType1).Amount -= AmmoUse1;
+	}
 }
 
 //===========================================================================

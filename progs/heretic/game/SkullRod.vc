@@ -113,9 +113,9 @@ defaultproperties
 	WeaponType = wp_skullrod;
 	Slot = 5;
 	SelectionOrder = 200;
-	AmmoType = SkullRodAmmo;
-	GetAmmoCount = 50;
-	AmmoUsePL1 = USE_SKRD_AMMO_1;
+	AmmoType1 = SkullRodAmmo;
+	AmmoUse1 = USE_SKRD_AMMO_1;
+	AmmoGive1 = 50;
 	AmmoUsePL2 = USE_SKRD_AMMO_2;
 	PSpriteSY = 15.0;
 	bInShareware = false;

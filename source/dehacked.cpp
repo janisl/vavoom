@@ -70,6 +70,7 @@ static TArray<VCodePtrInfo>		CodePtrs;
 static TArray<VName>			Sounds;
 
 static VClass*					GameInfoClass;
+static VClass*					BfgClass;
 
 static TArray<FReplacedString>	SfxNames;
 static TArray<FReplacedString>	MusicNames;
@@ -189,6 +190,21 @@ static VState* GetClassFieldState(VClass* Class, const char* FieldName)
 	guard(GetClassFieldInt);
 	VField* F = Class->FindFieldChecked(FieldName);
 	VState** Ptr = (VState**)(Class->Defaults + F->Ofs);
+	return *Ptr;
+	unguard;
+}
+
+//==========================================================================
+//
+//	GetClassFieldClass
+//
+//==========================================================================
+
+static VClass* GetClassFieldClass(VClass* Class, const char* FieldName)
+{
+	guard(GetClassFieldClass);
+	VField* F = Class->FindFieldChecked(FieldName);
+	VClass** Ptr = (VClass**)(Class->Defaults + F->Ofs);
 	return *Ptr;
 	unguard;
 }
@@ -843,6 +859,20 @@ static void ReadAmmo(int num)
 		SetClassFieldInt(C, "BackpackAmount", GetClassFieldInt(Ammo, "BackpackAmount") * 5);
 		SetClassFieldInt(C, "BackpackMaxAmount", GetClassFieldInt(Ammo, "BackpackMaxAmount"));
 	}
+
+	//	Fix up amounts in weapon classes.
+	for (int i = 0; i < WeaponClasses.Num(); i++)
+	{
+		VClass* C = WeaponClasses[i];
+		if (GetClassFieldClass(C, "AmmoType1") == Ammo)
+		{
+			SetClassFieldInt(C, "AmmoGive1", GetClassFieldInt(Ammo, "Amount") * 2);
+		}
+		if (GetClassFieldClass(C, "AmmoType2") == Ammo)
+		{
+			SetClassFieldInt(C, "AmmoGive2", GetClassFieldInt(Ammo, "Amount") * 2);
+		}
+	}
 	unguard;
 }
 
@@ -868,8 +898,20 @@ static void ReadWeapon(int num)
 	{
 		if (!VStr::ICmp(String, "Ammo type"))
 		{
-			SetClassFieldClass(Weapon, "AmmoType",
-				value < AmmoClasses.Num() ? AmmoClasses[value] : NULL);
+			if (value < AmmoClasses.Num())
+			{
+				SetClassFieldClass(Weapon, "AmmoType1", AmmoClasses[value]);
+				SetClassFieldInt(Weapon, "AmmoGive1",
+					GetClassFieldInt(AmmoClasses[value], "Amount") * 2);
+				if (GetClassFieldInt(Weapon, "AmmoUse1") == 0)
+				{
+					SetClassFieldInt(Weapon, "AmmoUse1", 1);
+				}
+			}
+			else
+			{
+				SetClassFieldClass(Weapon, "AmmoType1", NULL);
+			}
 		}
 		else if (!VStr::ICmp(String, "Deselect frame"))
 		{
@@ -1080,7 +1122,7 @@ static void ReadMisc(int)
 		else if (!VStr::ICmp(String, "IDKFA Armor Class"));//	Cheat removed
 		else if (!VStr::ICmp(String, "BFG Cells/Shot"))
 		{
-			SetClassFieldInt(GameInfoClass, "BFGCELLS", value);
+			SetClassFieldInt(BfgClass, "AmmoUse1", value);
 		}
 		else if (!VStr::ICmp(String, "Monsters Infight"));	//	What's that?
 		else dprintf("WARNING! Invalid misc %s\n", String);
@@ -1726,6 +1768,7 @@ void ProcessDehackedFiles()
 	}
 
 	GameInfoClass = VClass::FindClass("MainGameInfo");
+	BfgClass = VClass::FindClass("BFG9000");
 
 	delete sc;
 
@@ -1763,6 +1806,7 @@ void ProcessDehackedFiles()
 		//	Set all classes to use old style pickup handling.
 		SetClassFieldBool(EntClasses[i], "bDehackedSpecial", true);
 	}
+	SetClassFieldBool(GameInfoClass, "bDehacked", true);
 
 	//	Do string replacement.
 	GSoundManager->ReplaceSoundLumpNames(SfxNames);

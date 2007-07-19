@@ -549,7 +549,7 @@ void GotAmmo(Ammo NewAmmo)
 		for (i = 0; i < NUMWEAPONS; i++)
 		{
 			if (WeaponOwned[i] &&
-				MainGameInfo(Level.Game).WeaponClasses[i].default.AmmoType == NewAmmo.Class)
+				MainGameInfo(Level.Game).WeaponClasses[i].default.AmmoType1 == NewAmmo.Class)
 			{
 				PendingWeapon = WeaponOwned[i];
 			}
@@ -2181,7 +2181,7 @@ void SetViewPos()
 	}
 
 	if (ReadyWeapon.WeaponType > 0 && ReadyWeapon.WeaponType < 7)
-		ReadyAmmo = EntityEx(MO).FindInventory(WeaponEx(ViewEnt).AmmoType).Amount;
+		ReadyAmmo = EntityEx(MO).FindInventory(WeaponEx(ViewEnt).AmmoType1).Amount;
 	else
 		ReadyAmmo = 0;
 

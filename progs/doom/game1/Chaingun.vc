@@ -73,7 +73,9 @@ defaultproperties
 	WeaponType = DoomDefs::wp_chaingun;
 	Slot = 4;
 	SelectionOrder = 700;
-	AmmoType = Clip;
+	AmmoType1 = Clip;
+	AmmoUse1 = 1;
+	AmmoGive1 = 20;
 	PlayerModelVersion = 4;
 	PickupMessage = "$gotchaingun";
 	IdleState = S_MGUN;

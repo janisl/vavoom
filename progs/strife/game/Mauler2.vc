@@ -30,6 +30,8 @@ defaultproperties
 	WeaponType = StrifeDefs::wp_blaster2;
 	Slot = 7;
 	SelectionOrder = 3300;
+	AmmoUse1 = 30;
+	AmmoGive1 = 0;
 	UpState = S_BLASTERTORPEDOUP;
 	DownState = S_BLASTERTORPEDODOWN;
 	ReadyState = S_BLASTERTORPEDO;

@@ -59,7 +59,9 @@ defaultproperties
 	WeaponType = DoomDefs::wp_missile;
 	Slot = 5;
 	SelectionOrder = 2500;
-	AmmoType = RocketAmmo;
+	AmmoType1 = RocketAmmo;
+	AmmoUse1 = 1;
+	AmmoGive1 = 2;
 	PlayerModelVersion = 5;
 	PickupMessage = "$gotlauncher";
 	IdleState = S_LAUN;

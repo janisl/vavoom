@@ -230,10 +230,11 @@ defaultproperties
 	WeaponType = HexenDefs::WP_SECOND;
 	Slot = 2;
 	SelectionOrder = 1500;
-	ManaType1 = Mana1;
-	bManaOptional = true;
-	ManaUse = 2;
+	AmmoType1 = Mana1;
+	AmmoUse1 = 2;
+	AmmoGive1 = 25;
 	PSpriteSY = -12.0;
+	bManaOptional = true;
 	AxeRange = 9.0 * Actor::MELEERANGE / 4.0;
 	PickupMessage = "$txt_weapon_f2";
 	IdleState = S_AXE;

@@ -98,9 +98,9 @@ defaultproperties
 	WeaponType = wp_goldwand;
 	Slot = 2;
 	SelectionOrder = 2000;
-	AmmoType = GoldWandAmmo;
-	GetAmmoCount = 25;
-	AmmoUsePL1 = USE_GWND_AMMO_1;
+	AmmoType1 = GoldWandAmmo;
+	AmmoUse1 = USE_GWND_AMMO_1;
+	AmmoGive1 = 25;
 	AmmoUsePL2 = USE_GWND_AMMO_2;
 	PSpriteSY = 5.0;
 	UpState = S_GOLDWANDUP;

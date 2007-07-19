@@ -26,18 +26,6 @@
 class WeaponEx : Weapon
 	abstract;
 
-const float LOWERSPEED		= 6.0;
-const float RAISESPEED		= 6.0;
-
-const float WEAPONBOTTOM	= 128.0;
-const float WEAPONTOP		= 32.0;
-
-class<Ammo> AmmoType;
-state UpState;
-state DownState;
-state ReadyState;
-state AttackState;
-state FlashState;
 int PlayerModelVersion;
 
 int WeaponType;
@@ -61,25 +49,18 @@ bool TryPickup(EntityEx Toucher)
 		return false;
 	}
 
-	ammoType = MainGameInfo(Level.Game).WeaponClasses[WeaponType].default.AmmoType;
-	ammoCount = ammoType ? ammoType.default.Amount : 0;
+	ammoType = MainGameInfo(Level.Game).WeaponClasses[WeaponType].default.AmmoType1;
 
 	gaveammo = false;
 	if (ammoType)
 	{
-		// give one clip with a dropped weapon,
-		// two clips with a found weapon
 		if (ShouldStay() && !bDropped && Level.Game.deathmatch)
 		{
-			gaveammo = Player(Toucher.Player).GiveAmmo(ammoType, 5 * ammoCount);
-		}
-		else if (bDropped)
-		{
-			gaveammo = Player(Toucher.Player).GiveAmmo(ammoType, 1 * ammoCount);
+			gaveammo = Player(Toucher.Player).GiveAmmo(ammoType, 5 * AmmoGive1 / 2);
 		}
 		else
 		{
-			gaveammo = Player(Toucher.Player).GiveAmmo(ammoType, 2 * ammoCount);
+			gaveammo = Player(Toucher.Player).GiveAmmo(ammoType, AmmoGive1);
 		}
 	}
 
@@ -123,22 +104,9 @@ bool ShouldStay()
 
 bool CheckAmmo(bool AutoSwitch, optional bool RequireAmmo)
 {
-	class<Inventory>	ammo;
-	int					count;
-
-	ammo = AmmoType;
-
-	// Minimal amount for one shot varies.
-	if (WeaponType == DoomDefs::wp_bfg)
-		count = MainGameInfo(Level.Game).BFGCELLS;
-	else if (WeaponType == DoomDefs::wp_supershotgun)
-		count = 2;	// Double barrel.
-	else
-		count = 1;	// Regular.
-
 	// Some do not need ammunition anyway.
 	// Return if current ammunition sufficient.
-	if (!ammo || EntityEx(Owner).FindInventory(ammo).Amount >= count)
+	if (!AmmoType1 || EntityEx(Owner).FindInventory(AmmoType1).Amount >= AmmoUse1)
 		return true;
 
 	if (!AutoSwitch)
@@ -191,12 +159,19 @@ final void GunShot(Actor A, int accurate, TVec dir)
 
 void DecAmmo(int Count)
 {
-	if (!AmmoType)
+	if (!AmmoType1)
 	{
 		return;
 	}
-	Inventory Item = EntityEx(Owner).FindInventory(AmmoType);
-	Item.Amount -= Count;
+	Inventory Item = EntityEx(Owner).FindInventory(AmmoType1);
+	if (MainGameInfo(Level.Game).bDehacked)
+	{
+		Item.Amount -= Count;
+	}
+	else
+	{
+		Item.Amount -= AmmoUse1;
+	}
 }
 
 //===========================================================================

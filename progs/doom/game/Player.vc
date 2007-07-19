@@ -1979,10 +1979,10 @@ void SetViewPos()
 	if ((Cheats & CF_GODMODE) || Powers[pw_invulnerability])
 		SBFlags |= DoomDefs::SBF_GOD_MODE;
 
-	if (!WeaponEx(ViewEnt).AmmoType)
+	if (!WeaponEx(ViewEnt).AmmoType1)
 		ReadyAmmo = 1994;	// means "n/a"
 	else
-		ReadyAmmo = EntityEx(MO).FindInventory(WeaponEx(ViewEnt).AmmoType).Amount;
+		ReadyAmmo = EntityEx(MO).FindInventory(WeaponEx(ViewEnt).AmmoType1).Amount;
 
 	ClientSetViewOrg(ViewOrg.x, ViewOrg.y, ViewOrg.z);
 }

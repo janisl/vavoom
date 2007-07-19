@@ -39,7 +39,7 @@ final void A_FireMissile()
 	savedangle = Owner.Angles.yaw;
 	Owner.Angles.yaw = AngleMod360(Owner.Angles.yaw +
 		(Random() - Random()) * 45.0 / 4.0 / itof(1 << (Player(Owner.Player).Accuracy * 5 / 100)));
-	DecAmmo(1);
+	DecAmmo();
 	Owner.SetState(Actor(Owner).MissileState);
 	Actor(Owner).SpawnPlayerMissile(MiniMissile);
 	Owner.Angles.yaw = savedangle;
@@ -65,10 +65,11 @@ defaultproperties
 	WeaponType = StrifeDefs::wp_missile;
 	Slot = 4;
 	SelectionOrder = 1800;
-	AmmoType = MiniMissiles;
+	AmmoType1 = MiniMissiles;
+	AmmoUse1 = 1;
+	AmmoGive1 = 8;
 	ConversationID = 192;
 	PickupMessage = "$txt_mmlauncher";
-	Ammo1Count = 8;
 	IdleState = S_MISSILE_LAUNCHER;
 	UpState = S_MISSILEUP;
 	DownState = S_MISSILEDOWN;

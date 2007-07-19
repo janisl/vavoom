@@ -86,8 +86,9 @@ defaultproperties
 	WeaponType = HexenDefs::WP_THIRD;
 	Slot = 3;
 	SelectionOrder = 1000;
-	ManaType2 = Mana2;
-	ManaUse = 4;
+	AmmoType1 = Mana2;
+	AmmoUse1 = 4;
+	AmmoGive1 = 25;
 	PSpriteSY = 10.0;
 	bNoGravity = true;
 	PickupMessage = "$txt_weapon_c3";

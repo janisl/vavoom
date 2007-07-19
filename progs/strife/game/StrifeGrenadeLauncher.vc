@@ -51,7 +51,7 @@ final void A_FireGrenade()
 	}
 	if (!CheckAmmo(false))
 		return;
-	DecAmmo(1);
+	DecAmmo();
 
 	// Make it flash
 	if (Owner.Player.ViewStates[ps_weapon].State == AttackState)
@@ -122,10 +122,11 @@ defaultproperties
 	Weapon2Type = StrifeDefs::wp_grenade2;
 	Slot = 5;
 	SelectionOrder = 2400;
-	AmmoType = HEGrenadeRounds;
+	AmmoType1 = HEGrenadeRounds;
+	AmmoUse1 = 1;
+	AmmoGive1 = 12;
 	ConversationID = 195;
 	PickupMessage = "$txt_glauncher";
-	Ammo1Count = 12;
 	IdleState = S_GRENADE_LAUNCHER;
 	UpState = S_GRENADEUP;
 	DownState = S_GRENADEDOWN;

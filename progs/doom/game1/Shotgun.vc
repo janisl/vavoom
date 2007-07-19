@@ -77,7 +77,9 @@ defaultproperties
 	WeaponType = DoomDefs::wp_shotgun;
 	Slot = 3;
 	SelectionOrder = 1300;
-	AmmoType = Shell;
+	AmmoType1 = Shell;
+	AmmoUse1 = 1;
+	AmmoGive1 = 8;
 	PlayerModelVersion = 3;
 	PickupMessage = "$gotshotgun";
 	IdleState = S_SHOT;
