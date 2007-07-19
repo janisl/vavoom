@@ -276,8 +276,6 @@ float AngleTo(TVec dest)
 
 bool CheckItem(Actor item)
 {
-	int weapon;
-
 	bNewItemIsWeapon = false;
 	bNewItemIsPowerup = false;
 //?????
@@ -286,18 +284,18 @@ bool CheckItem(Actor item)
 	if (!item.bSpecial)
 		return false;
 
-	weapon = WeapFromItem(item);
-	if (weapon != -1)
+	Weapon Wpn = Weapon(item);
+	if (Wpn)
 	{
 		bNewItemIsWeapon = true;
 
 		// If we don't have the weapon, pick it up
-		if (!player.WeaponOwned[weapon])
+		if (!botmo.FindInventory(class<Inventory>(Wpn.Class)))
 			return true;
 
 		// If we have no more room for the ammo it gives
-		if (botmo.FindInventory(MainGameInfo(player.Level.Game).WeaponClasses[weapon].default.AmmoType1).Amount ==
-			botmo.FindInventory(MainGameInfo(player.Level.Game).WeaponClasses[weapon].default.AmmoType1).MaxAmount)
+		if (botmo.FindInventory(Wpn.AmmoType1).Amount ==
+			botmo.FindInventory(Wpn.AmmoType1).MaxAmount)
 			return false;
 
 		// Can't pick it up because we have it and it's not a dropped weapon
@@ -527,23 +525,6 @@ void SetAngle(float an)
 float GetAngle()
 {
 	return angle;
-}
-
-//==========================================================================
-//
-//	WeapFromItem
-//
-//	Returns a weapon type from an actor
-//
-//==========================================================================
-
-int WeapFromItem(Actor item)
-{
-	if (WeaponEx(item))
-	{
-		return WeaponEx(item).WeaponType;
-	}
-	return -1;
 }
 
 //==========================================================================

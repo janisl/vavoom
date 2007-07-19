@@ -728,8 +728,10 @@ bool GivePower(int power)
 	{
 		GiveBody(100, MAXHEALTH);
 		Powers[power] = 1.0;
-		if (ReadyWeapon.WeaponType != DoomDefs::wp_fist)
-			PendingWeapon = WeaponOwned[DoomDefs::wp_fist];
+		if (!Fist(ReadyWeapon))
+		{
+			PendingWeapon = WeaponEx(EntityEx(MO).FindInventory(Fist));
+		}
 		return true;
 	}
 
@@ -763,8 +765,10 @@ bool GivePower2(int power, float duration, float max)
 	}
 	if (power == pw_strength)
 	{
-		if (ReadyWeapon.WeaponType != DoomDefs::wp_fist)
-			PendingWeapon = WeaponOwned[DoomDefs::wp_fist];
+		if (!Fist(ReadyWeapon))
+		{
+			PendingWeapon = WeaponEx(EntityEx(MO).FindInventory(Fist));
+		}
 	}
 
 	return true;
