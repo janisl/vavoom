@@ -133,11 +133,11 @@ bool CheckAmmo(bool AutoSwitch, optional bool RequireAmmo)
 		return true;
 	}
 	bool Good = true;
-	if (AmmoType1 && EntityEx(Owner).FindInventory(AmmoType1).Amount < AmmoUse1)
+	if (Ammo1 && Ammo1.Amount < AmmoUse1)
 	{
 		Good = false;
 	}
-	if (AmmoType2 && EntityEx(Owner).FindInventory(AmmoType2).Amount < AmmoUse2)
+	if (Ammo2 && Ammo2.Amount < AmmoUse2)
 	{
 		Good = false;
 	}
@@ -166,13 +166,13 @@ bool CheckAmmo(bool AutoSwitch, optional bool RequireAmmo)
 
 void DecMana()
 {
-	if (AmmoType1)
+	if (Ammo1)
 	{
-		EntityEx(Owner).FindInventory(AmmoType1).Amount -= AmmoUse1;
+		Ammo1.Amount -= AmmoUse1;
 	}
-	if (AmmoType2)
+	if (Ammo2)
 	{
-		EntityEx(Owner).FindInventory(AmmoType2).Amount -= AmmoUse2;
+		Ammo2.Amount -= AmmoUse2;
 	}
 }
 

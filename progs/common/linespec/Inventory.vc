@@ -109,7 +109,7 @@ final void BecomePickup()
 //
 //==========================================================================
 
-final void AttachToOwner(EntityEx NewOwner)
+void AttachToOwner(EntityEx NewOwner)
 {
 	BecomeItem();
 	NewOwner.AddInventory(self);

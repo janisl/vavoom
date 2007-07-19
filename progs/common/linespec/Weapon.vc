@@ -57,6 +57,47 @@ int				SelectionOrder;
 //	Switch away if got ammo for more powerfull weapon.
 bool			bWimpyWeapon;
 
+//	Runtime in-inventory references.
+Ammo			Ammo1;
+Ammo			Ammo2;
+
+//==========================================================================
+//
+//	AttachToOwner
+//
+//==========================================================================
+
+void AttachToOwner(EntityEx NewOwner)
+{
+	::AttachToOwner(NewOwner);
+
+	//	Set up references to ammo items since they are used a lots.
+	if (AmmoType1)
+	{
+		Ammo1 = Ammo(NewOwner.FindInventory(AmmoType1));
+		if (!Ammo1)
+		{
+			FatalError("Owner has no ammo type %s", GetClassName(AmmoType1));
+		}
+	}
+	else
+	{
+		Ammo1 = none;
+	}
+	if (AmmoType2)
+	{
+		Ammo2 = Ammo(NewOwner.FindInventory(AmmoType2));
+		if (!Ammo2)
+		{
+			FatalError("Owner has no ammo type %s", GetClassName(AmmoType2));
+		}
+	}
+	else
+	{
+		Ammo2 = none;
+	}
+}
+
 bool CheckAmmo(bool AutoSwitch, optional bool RequireAmmo)
 {
 	return false;

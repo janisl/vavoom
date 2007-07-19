@@ -106,8 +106,10 @@ bool CheckAmmo(bool AutoSwitch, optional bool RequireAmmo)
 {
 	// Some do not need ammunition anyway.
 	// Return if current ammunition sufficient.
-	if (!AmmoType1 || EntityEx(Owner).FindInventory(AmmoType1).Amount >= AmmoUse1)
+	if (!Ammo1 || Ammo1.Amount >= AmmoUse1)
+	{
 		return true;
+	}
 
 	if (!AutoSwitch)
 	{
@@ -159,18 +161,17 @@ final void GunShot(Actor A, int accurate, TVec dir)
 
 void DecAmmo(int Count)
 {
-	if (!AmmoType1)
+	if (!Ammo1)
 	{
 		return;
 	}
-	Inventory Item = EntityEx(Owner).FindInventory(AmmoType1);
 	if (MainGameInfo(Level.Game).bDehacked)
 	{
-		Item.Amount -= Count;
+		Ammo1.Amount -= Count;
 	}
 	else
 	{
-		Item.Amount -= AmmoUse1;
+		Ammo1.Amount -= AmmoUse1;
 	}
 }
 

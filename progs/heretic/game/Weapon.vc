@@ -127,10 +127,8 @@ bool ShouldStay()
 
 bool CheckAmmo(bool AutoSwitch, optional bool RequireAmmo)
 {
-	class<Ammo>		ammo;
 	int				count;
 
-	ammo = AmmoType1;
 	if (Player(Owner.Player).Powers[pw_weaponlevel2] && !Level.Game.deathmatch)
 	{
 		count = AmmoUsePL2;
@@ -140,7 +138,7 @@ bool CheckAmmo(bool AutoSwitch, optional bool RequireAmmo)
 		count = AmmoUse1;
 	}
 
-	if (!ammo || EntityEx(Owner).FindInventory(ammo).Amount >= count)
+	if (!Ammo1 || Ammo1.Amount >= count)
 	{
 		return true;
 	}
@@ -172,9 +170,9 @@ bool CheckAmmo(bool AutoSwitch, optional bool RequireAmmo)
 
 void DecAmmo(int Count)
 {
-	if (AmmoType1)
+	if (Ammo1)
 	{
-		EntityEx(Owner).FindInventory(AmmoType1).Amount -= Count;
+		Ammo1.Amount -= Count;
 	}
 }
 

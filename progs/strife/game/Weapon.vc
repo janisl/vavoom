@@ -144,7 +144,7 @@ bool CheckAmmo(bool AutoSwitch, optional bool RequireAmmo)
 {
 	// Some do not need ammunition anyway.
 	// Return if current ammunition sufficient.
-	if (!AmmoType1 || EntityEx(Owner).FindInventory(AmmoType1).Amount >= AmmoUse1)
+	if (!Ammo1 || Ammo1.Amount >= AmmoUse1)
 	{
 		return true;
 	}
@@ -173,9 +173,9 @@ bool CheckAmmo(bool AutoSwitch, optional bool RequireAmmo)
 
 final void DecAmmo()
 {
-	if (AmmoType1)
+	if (Ammo1)
 	{
-		EntityEx(Owner).FindInventory(AmmoType1).Amount -= AmmoUse1;
+		Ammo1.Amount -= AmmoUse1;
 	}
 }
 
