@@ -583,38 +583,12 @@ void GotAmmo(Ammo NewAmmo)
 	// We were down to zero,
 	// so select a new weapon.
 	// Preferences are not user selectable.
-	if (Clip(NewAmmo))
+	if (ReadyWeapon.bWimpyWeapon)
 	{
-		if (ReadyWeapon.bWimpyWeapon)
+		WeaponEx Best = WeaponEx(BestWeapon(class<Ammo>(NewAmmo.Class)));
+		if (Best && Best.SelectionOrder < ReadyWeapon.SelectionOrder)
 		{
-			if (WeaponOwned[DoomDefs::wp_chaingun])
-				PendingWeapon = WeaponOwned[DoomDefs::wp_chaingun];
-			else
-				PendingWeapon = WeaponOwned[DoomDefs::wp_pistol];
-		}
-	}
-	else if (Shell(NewAmmo))
-	{
-		if (ReadyWeapon.bWimpyWeapon)
-		{
-			if (WeaponOwned[DoomDefs::wp_shotgun])
-				PendingWeapon = WeaponOwned[DoomDefs::wp_shotgun];
-		}
-	}
-	else if (Cell(NewAmmo))
-	{
-		if (ReadyWeapon.bWimpyWeapon)
-		{
-			if (WeaponOwned[DoomDefs::wp_plasma])
-				PendingWeapon = WeaponOwned[DoomDefs::wp_plasma];
-		}
-	}
-	else if (RocketAmmo(NewAmmo))
-	{
-		if (ReadyWeapon.WeaponType == DoomDefs::wp_fist)
-		{
-			if (WeaponOwned[DoomDefs::wp_missile])
-				PendingWeapon = WeaponOwned[DoomDefs::wp_missile];
+			PendingWeapon = Best;
 		}
 	}
 }

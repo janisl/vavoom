@@ -501,36 +501,12 @@ void GotAmmo(Ammo NewAmmo)
 	// We were down to zero,
 	// so select a new weapon.
 	// Preferences are not user selectable.
-	if (ClipOfBullets(NewAmmo))
+	if (ReadyWeapon.bWimpyWeapon)
 	{
-		if (ReadyWeapon.WeaponType == StrifeDefs::wp_fist)
+		WeaponEx Best = WeaponEx(BestWeapon(class<Ammo>(NewAmmo.Class)));
+		if (Best && Best.SelectionOrder < ReadyWeapon.SelectionOrder)
 		{
-			if (WeaponOwned[StrifeDefs::wp_riffle])
-				PendingWeapon = WeaponOwned[StrifeDefs::wp_riffle];
-		}
-	}
-	else if (ElectricBolts(NewAmmo))
-	{
-		if (ReadyWeapon.WeaponType == StrifeDefs::wp_fist)
-		{
-			if (WeaponOwned[StrifeDefs::wp_crossbow])
-				PendingWeapon = WeaponOwned[StrifeDefs::wp_crossbow];
-		}
-	}
-	else if (EnergyPod(NewAmmo))
-	{
-		if (ReadyWeapon.WeaponType == StrifeDefs::wp_fist)
-		{
-			if (WeaponOwned[StrifeDefs::wp_flame])
-				PendingWeapon = WeaponOwned[StrifeDefs::wp_flame];
-		}
-	}
-	else if (MiniMissiles(NewAmmo))
-	{
-		if (ReadyWeapon.WeaponType == StrifeDefs::wp_fist)
-		{
-			if (WeaponOwned[StrifeDefs::wp_missile])
-				PendingWeapon = WeaponOwned[StrifeDefs::wp_missile];
+			PendingWeapon = Best;
 		}
 	}
 }

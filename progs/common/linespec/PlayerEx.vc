@@ -74,7 +74,7 @@ replication
 //
 //==========================================================================
 
-Weapon BestWeapon()
+Weapon BestWeapon(optional class<Ammo> AmmoType)
 {
 	Weapon Best = none;
 	Inventory Item;
@@ -88,6 +88,11 @@ Weapon BestWeapon()
 		}
 		//	Check if best one is better that this one.
 		if (Best && Wpn.SelectionOrder > Best.SelectionOrder)
+		{
+			continue;
+		}
+		//	Possibly limit to specific ammo type.
+		if (AmmoType && Wpn.AmmoType1 != AmmoType)
 		{
 			continue;
 		}
