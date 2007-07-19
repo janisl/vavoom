@@ -32,6 +32,123 @@ float AxeRange;
 
 //==========================================================================
 //
+//	GetUpState
+//
+//==========================================================================
+
+state GetUpState()
+{
+	return Ammo1.Amount > 0 ? S_FAXEUP_G : UpState;
+}
+
+//==========================================================================
+//
+//	GetDownState
+//
+//==========================================================================
+
+state GetDownState()
+{
+	return Ammo1.Amount > 0 ? S_FAXEDOWN_G : DownState;
+}
+
+//==========================================================================
+//
+//	GetReadyState
+//
+//==========================================================================
+
+state GetReadyState()
+{
+	return Ammo1.Amount > 0 ? S_FAXEREADY_G : ReadyState;
+}
+
+//==========================================================================
+//
+//	GetAttackState
+//
+//==========================================================================
+
+state GetAttackState()
+{
+	return Ammo1.Amount > 0 ? S_FAXEATK_G1 :	// Glowing axe
+		Player(Owner.Player).Refire ? HoldAttackState : AttackState;
+}
+
+//==========================================================================
+//
+//  A_FAxeCheckReady
+//
+//==========================================================================
+
+final void A_FAxeCheckReady()
+{
+	if (Ammo1.Amount > 0)
+	{
+		Owner.Player.SetViewState(ps_weapon, S_FAXEREADY_G);
+	}
+	else
+	{
+		A_WeaponReady();
+	}
+}
+
+//==========================================================================
+//
+//  A_FAxeCheckReadyG
+//
+//==========================================================================
+
+final void A_FAxeCheckReadyG()
+{
+	if (Ammo1.Amount <= 0)
+	{
+		Owner.Player.SetViewState(ps_weapon, S_FAXEREADY);
+	}
+	else
+	{
+		A_WeaponReady();
+	}
+}
+
+//==========================================================================
+//
+//  A_FAxeCheckUp
+//
+//==========================================================================
+
+final void A_FAxeCheckUp()
+{
+	if (Ammo1.Amount > 0)
+	{
+		Owner.Player.SetViewState(ps_weapon, S_FAXEUP_G);
+	}
+	else
+	{
+		A_Raise();
+	}
+}
+
+//==========================================================================
+//
+//  A_FAxeCheckUpG
+//
+//==========================================================================
+
+final void A_FAxeCheckUpG()
+{
+	if (Ammo1.Amount <= 0)
+	{
+		Owner.Player.SetViewState(ps_weapon, S_FAXEUP);
+	}
+	else
+	{
+		A_Raise();
+	}
+}
+
+//==========================================================================
+//
 //  A_FAxeAttack
 //
 //==========================================================================
@@ -95,98 +212,11 @@ final void A_FAxeAttack()
 	}
 }
 
-//==========================================================================
-//
-//	GetUpState
-//
-//==========================================================================
-
-state GetUpState()
-{
-	if (EntityEx(Owner).FindInventory(Mana1).Amount > 0)
-	{
-		return S_FAXEUP_G;
-	}
-	else
-	{
-		return UpState;
-	}
-}
-
-//==========================================================================
-//
-//	GetDownState
-//
-//==========================================================================
-
-state GetDownState()
-{
-	if (EntityEx(Owner).FindInventory(Mana1).Amount > 0)
-	{
-		return S_FAXEDOWN_G;
-	}
-	else
-	{
-		return DownState;
-	}
-}
-
-//==========================================================================
-//
-//	GetReadyState
-//
-//==========================================================================
-
-state GetReadyState()
-{
-	if (EntityEx(Owner).FindInventory(Mana1).Amount > 0)
-	{
-		return S_FAXEREADY_G;
-	}
-	else
-	{
-		return ReadyState;
-	}
-}
-
-//==========================================================================
-//
-//	GetAttackState
-//
-//==========================================================================
-
-state GetAttackState()
-{
-	if (EntityEx(Owner).FindInventory(Mana1).Amount > 0)
-	{
-		// Glowing axe
-		return S_FAXEATK_G1;
-	}
-	else
-	{
-		return Player(Owner.Player).Refire ? HoldAttackState : AttackState;
-	}
-}
-
-//==========================================================================
-//
-//	GotMana
-//
-//==========================================================================
-
-void GotMana(Ammo InMana)
-{
-	if (InMana.Class == Mana1)
-	{
-		Owner.Player.SetViewState(ps_weapon, S_FAXEREADY_G);
-	}
-}
-
 __states__
 {
-	S_FAXEREADY('FAXE', 0, 1.0 / 35.0, S_FAXEREADY) = A_WeaponReady
+	S_FAXEREADY('FAXE', 0, 1.0 / 35.0, S_FAXEREADY) = A_FAxeCheckReady
 	S_FAXEDOWN('FAXE', 0, 1.0 / 35.0, S_FAXEDOWN) = A_Lower
-	S_FAXEUP('FAXE', 0, 1.0 / 35.0, S_FAXEUP) = A_Raise
+	S_FAXEUP('FAXE', 0, 1.0 / 35.0, S_FAXEUP) = A_FAxeCheckUp
 	S_FAXEATK_1('FAXE', 1, 4.0 / 35.0, S_FAXEATK_2, 15, 32) = none
 	S_FAXEATK_2('FAXE', 2, 3.0 / 35.0, S_FAXEATK_3, 15, 32) = none
 	S_FAXEATK_3('FAXE', 3, 2.0 / 35.0, S_FAXEATK_4, 15, 32) = none
@@ -200,14 +230,14 @@ __states__
 	S_FAXEATK_11('FAXE', 0, 1.0 / 35.0, S_FAXEATK_12, 0, 44) = none
 	S_FAXEATK_12('FAXE', 0, 1.0 / 35.0, S_FAXEATK_13, 0, 36) = none
 	S_FAXEATK_13('FAXE', 0, 1.0 / 35.0, S_FAXEREADY) = none
-	S_FAXEREADY_G('FAXE', 11, 1.0 / 35.0, S_FAXEREADY_G1) = A_WeaponReady
-	S_FAXEREADY_G1('FAXE', 11, 1.0 / 35.0, S_FAXEREADY_G2) = A_WeaponReady
-	S_FAXEREADY_G2('FAXE', 11, 1.0 / 35.0, S_FAXEREADY_G3) = A_WeaponReady
-	S_FAXEREADY_G3('FAXE', 12, 1.0 / 35.0, S_FAXEREADY_G4) = A_WeaponReady
-	S_FAXEREADY_G4('FAXE', 12, 1.0 / 35.0, S_FAXEREADY_G5) = A_WeaponReady
-	S_FAXEREADY_G5('FAXE', 12, 1.0 / 35.0, S_FAXEREADY_G) = A_WeaponReady
+	S_FAXEREADY_G('FAXE', 11, 1.0 / 35.0, S_FAXEREADY_G1) = A_FAxeCheckReadyG
+	S_FAXEREADY_G1('FAXE', 11, 1.0 / 35.0, S_FAXEREADY_G2) = A_FAxeCheckReadyG
+	S_FAXEREADY_G2('FAXE', 11, 1.0 / 35.0, S_FAXEREADY_G3) = A_FAxeCheckReadyG
+	S_FAXEREADY_G3('FAXE', 12, 1.0 / 35.0, S_FAXEREADY_G4) = A_FAxeCheckReadyG
+	S_FAXEREADY_G4('FAXE', 12, 1.0 / 35.0, S_FAXEREADY_G5) = A_FAxeCheckReadyG
+	S_FAXEREADY_G5('FAXE', 12, 1.0 / 35.0, S_FAXEREADY_G) = A_FAxeCheckReadyG
 	S_FAXEDOWN_G('FAXE', 11, 1.0 / 35.0, S_FAXEDOWN_G) = A_Lower
-	S_FAXEUP_G('FAXE', 11, 1.0 / 35.0, S_FAXEUP_G) = A_Raise
+	S_FAXEUP_G('FAXE', 11, 1.0 / 35.0, S_FAXEUP_G) = A_FAxeCheckUpG
 	S_FAXEATK_G1('FAXE', 13, 4.0 / 35.0, S_FAXEATK_G2, 15, 32) = none
 	S_FAXEATK_G2('FAXE', 14, 3.0 / 35.0, S_FAXEATK_G3, 15, 32) = none
 	S_FAXEATK_G3('FAXE', 15, 2.0 / 35.0, S_FAXEATK_G4, 15, 32) = none

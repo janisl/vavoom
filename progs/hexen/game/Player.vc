@@ -697,7 +697,6 @@ bool GiveMana(class<Ammo> mana, int count)
 
 void GotAmmo(Ammo NewAmmo)
 {
-	WeaponEx(ViewEnt).GotMana(NewAmmo);
 }
 
 //==========================================================================
