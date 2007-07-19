@@ -78,9 +78,7 @@ bool TryPickup(EntityEx Toucher)
 		return false;
 	}
 
-	gaveAmmo = Player(Toucher.Player).GiveAmmo(
-		MainGameInfo(Level.Game).WeaponClasses[WeaponType].default.AmmoType1,
-		MainGameInfo(Level.Game).WeaponClasses[WeaponType].default.AmmoGive1);
+	gaveAmmo = Player(Toucher.Player).GiveAmmo(AmmoType1, AmmoGive1);
 	if (Player(Toucher.Player).WeaponOwned[WeaponType])
 	{
 		gaveWeapon = false;
@@ -91,7 +89,8 @@ bool TryPickup(EntityEx Toucher)
 		Player(Toucher.Player).WeaponOwned[WeaponType] =
 			Spawn(MainGameInfo(Level.Game).WeaponClasses[WeaponType]);
 		Player(Toucher.Player).WeaponOwned[WeaponType].AttachToOwner(Toucher);
-		if (MainGameInfo(Level.Game).WeaponValue[WeaponType] >
+		if (!Player(Toucher.Player).ReadyWeapon ||
+			MainGameInfo(Level.Game).WeaponValue[WeaponType] >
 			MainGameInfo(Level.Game).WeaponValue[Player(Toucher.Player).ReadyWeapon.WeaponType])
 		{
 			// Only switch to more powerful weapons

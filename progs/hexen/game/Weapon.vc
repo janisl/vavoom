@@ -51,19 +51,9 @@ bool TryPickup(EntityEx Toucher)
 			// Can't pick up weapons for other classes in coop netplay
 			return false;
 		}
-		if (WeaponType == HexenDefs::WP_SECOND)
+		if (!Player(Toucher.Player).GiveMana(AmmoType1, AmmoGive1))
 		{
-			if (!Player(Toucher.Player).GiveMana(Mana1, AmmoGive1))
-			{
-				return false;
-			}
-		}
-		else
-		{
-			if (!Player(Toucher.Player).GiveMana(Mana2, 25))
-			{
-				return false;
-			}
+			return false;
 		}
 		GoAwayAndDie();
 		return true;
@@ -75,14 +65,7 @@ bool TryPickup(EntityEx Toucher)
 		return false;
 	}
 
-	if (WeaponType == HexenDefs::WP_SECOND)
-	{
-		gaveMana = Player(Toucher.Player).GiveMana(Mana1, 25);
-	}
-	else
-	{
-		gaveMana = Player(Toucher.Player).GiveMana(Mana2, 25);
-	}
+	gaveMana = Player(Toucher.Player).GiveMana(AmmoType1, AmmoGive1);
 	if (Player(Toucher.Player).WeaponOwned[WeaponType])
 	{
 		gaveWeapon = false;
@@ -93,7 +76,8 @@ bool TryPickup(EntityEx Toucher)
 		Player(Toucher.Player).WeaponOwned[WeaponType] =
 			Spawn(class<WeaponEx>(Class));
 		Player(Toucher.Player).WeaponOwned[WeaponType].AttachToOwner(Toucher);
-		if (WeaponType > Player(Toucher.Player).ReadyWeapon.WeaponType)
+		if (!Player(Toucher.Player).ReadyWeapon ||
+			WeaponType > Player(Toucher.Player).ReadyWeapon.WeaponType)
 		{
 			// Only switch to more powerful weapons
 			Player(Toucher.Player).PendingWeapon = Player(Toucher.Player).WeaponOwned[WeaponType];

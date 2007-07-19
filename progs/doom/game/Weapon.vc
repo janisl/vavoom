@@ -49,7 +49,7 @@ bool TryPickup(EntityEx Toucher)
 		return false;
 	}
 
-	ammoType = MainGameInfo(Level.Game).WeaponClasses[WeaponType].default.AmmoType1;
+	ammoType = AmmoType1;
 
 	gaveammo = false;
 	if (ammoType)

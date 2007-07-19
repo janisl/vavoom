@@ -366,8 +366,13 @@ void SpawnPlayer(mthing_t * mthing)
 		{
 			A.Inventory.Destroy();
 		}
-		WeaponOwned[StrifeDefs::wp_fist] = Level.Spawn(PunchDagger);
-		WeaponOwned[StrifeDefs::wp_fist].AttachToOwner(A);
+		WeaponEx Wpn = Level.Spawn(PunchDagger);
+		Wpn.AmmoGive1 = 0;
+		Wpn.AmmoGive2 = 0;
+		if (!Wpn.TryPickup(A))
+		{
+			Wpn.Destroy();
+		}
 		SetWeapon(StrifeDefs::wp_fist);
 	}
 	else
@@ -2274,8 +2279,13 @@ void Cheat_Gimme()
 		{
 			if (!WeaponOwned[i])
 			{
-				WeaponOwned[i] = Level.Spawn(MainGameInfo(Level.Game).WeaponClasses[i]);
-				WeaponOwned[i].AttachToOwner(EntityEx(MO));
+				WeaponEx Wpn = Level.Spawn(MainGameInfo(Level.Game).WeaponClasses[i]);
+				Wpn.AmmoGive1 = 0;
+				Wpn.AmmoGive2 = 0;
+				if (!Wpn.TryPickup(EntityEx(MO)))
+				{
+					Wpn.Destroy();
+				}
 			}
 		}
 	}
@@ -2294,9 +2304,16 @@ void Cheat_Gimme()
 			if (!AmmoItem)
 			{
 				AmmoItem = Level.Spawn(Cls);
-				AmmoItem.AttachToOwner(EntityEx(MO));
+				if (!AmmoItem.TryPickup(EntityEx(MO)))
+				{
+					AmmoItem.Destroy();
+					AmmoItem = none;
+				}
 			}
-			AmmoItem.Amount = AmmoItem.MaxAmount;
+			if (AmmoItem)
+			{
+				AmmoItem.Amount = AmmoItem.MaxAmount;
+			}
 		}
 	}
 

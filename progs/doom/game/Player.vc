@@ -432,13 +432,21 @@ void SpawnPlayer(mthing_t * mthing)
 					Item.Amount = PP.InitialInventory[i].Amount;
 				}
 			}
-			Item.AttachToOwner(PP);
-			if (WeaponEx(Item))
+			if (Weapon(Item))
 			{
-				WeaponOwned[WeaponEx(Item).WeaponType] = WeaponEx(Item);
+				//	For better control empty weapon's ammo.
+				Weapon(Item).AmmoGive1 = 0;
+				Weapon(Item).AmmoGive2 = 0;
+			}
+			if (!Item.TryPickup(PP))
+			{
+				Item.Destroy();
+			}
+			else if (Weapon(Item) && Weapon(Item).CheckAmmo(false))
+			{
+				SetWeapon(WeaponEx(Item).WeaponType);
 			}
 		}
-		SetWeapon(DoomDefs::wp_pistol);
 	}
 
 	// setup gun psprite
@@ -2294,8 +2302,13 @@ void Cheat_Gimme()
 		{
 			if (!WeaponOwned[i])
 			{
-				WeaponOwned[i] = Level.Spawn(MainGameInfo(Level.Game).WeaponClasses[i]);
-				WeaponOwned[i].AttachToOwner(EntityEx(MO));
+				WeaponEx Wpn = Level.Spawn(MainGameInfo(Level.Game).WeaponClasses[i]);
+				Wpn.AmmoGive1 = 0;
+				Wpn.AmmoGive2 = 0;
+				if (!Wpn.TryPickup(EntityEx(MO)))
+				{
+					Wpn.Destroy();
+				}
 			}
 		}
 	}
@@ -2325,9 +2338,16 @@ void Cheat_Gimme()
 			if (!AmmoItem)
 			{
 				AmmoItem = Level.Spawn(Cls);
-				AmmoItem.AttachToOwner(EntityEx(MO));
+				if (!AmmoItem.TryPickup(EntityEx(MO)))
+				{
+					AmmoItem.Destroy();
+					AmmoItem = none;
+				}
 			}
-			AmmoItem.Amount = AmmoItem.MaxAmount;
+			if (AmmoItem)
+			{
+				AmmoItem.Amount = AmmoItem.MaxAmount;
+			}
 		}
 	}
 
