@@ -81,7 +81,7 @@ int SBFlags;
 float sb_facetime;
 
 // used for evil grin
-WeaponEx sb_oldweaponsowned[DoomDefs::NUMWEAPONS];
+bool sb_GotWeapon;
 
 // used to use appopriately pained face
 int sb_oldhealth;
@@ -402,8 +402,7 @@ void SpawnPlayer(mthing_t * mthing)
 
 	sb_faceindex = 0;
 	sb_oldhealth = -1;
-	for (i = 0; i < DoomDefs::NUMWEAPONS; i++)
-		sb_oldweaponsowned[i] = WeaponOwned[i];
+	sb_GotWeapon = false;
 
 	PP.Inventory = SavedInventory;
 	for (Item = PP.Inventory; Item; Item = Item.Inventory)
@@ -444,7 +443,7 @@ void SpawnPlayer(mthing_t * mthing)
 			}
 			else if (Weapon(Item) && Weapon(Item).CheckAmmo(false))
 			{
-				SetWeapon(WeaponEx(Item).WeaponType);
+				SetWeapon(WeaponEx(Item));
 			}
 		}
 	}
@@ -1795,13 +1794,10 @@ void UpdateFaceWidget(float FrameTime)
 			// picking up bonus
 			doevilgrin = false;
 
-			for (i = 0; i < DoomDefs::NUMWEAPONS; i++)
+			if (sb_GotWeapon)
 			{
-				if (sb_oldweaponsowned[i] != WeaponOwned[i])
-				{
-					doevilgrin = true;
-					sb_oldweaponsowned[i] = WeaponOwned[i];
-				}
+				doevilgrin = true;
+				sb_GotWeapon = false;
 			}
 			if (doevilgrin)
 			{
@@ -1999,12 +1995,12 @@ void SetPlayerRunState()
 //
 //==========================================================================
 
-void SetWeapon(int NewWeapon)
+void SetWeapon(WeaponEx NewWeapon)
 {
-	ReadyWeapon = WeaponOwned[NewWeapon];
+	ReadyWeapon = NewWeapon;
 	PendingWeapon = none;
 	ViewEnt = ReadyWeapon;
-	MO.ModelVersion = WeaponEx(ViewEnt).PlayerModelVersion;
+	MO.ModelVersion = ReadyWeapon.PlayerModelVersion;
 }
 
 //===========================================================================
@@ -2304,15 +2300,12 @@ void Cheat_Gimme()
 	{
 		for (i = 0; i < DoomDefs::NUMWEAPONS; i++)
 		{
-			if (!WeaponOwned[i])
+			WeaponEx Wpn = Level.Spawn(MainGameInfo(Level.Game).WeaponClasses[i]);
+			Wpn.AmmoGive1 = 0;
+			Wpn.AmmoGive2 = 0;
+			if (!Wpn.TryPickup(EntityEx(MO)))
 			{
-				WeaponEx Wpn = Level.Spawn(MainGameInfo(Level.Game).WeaponClasses[i]);
-				Wpn.AmmoGive1 = 0;
-				Wpn.AmmoGive2 = 0;
-				if (!Wpn.TryPickup(EntityEx(MO)))
-				{
-					Wpn.Destroy();
-				}
+				Wpn.Destroy();
 			}
 		}
 	}

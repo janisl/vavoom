@@ -280,7 +280,7 @@ final void A_Lower()
 		return;
 	}
 
-	Player(Owner.Player).SetWeapon(Player(Owner.Player).PendingWeapon.WeaponType);
+	Player(Owner.Player).SetWeapon(Player(Owner.Player).PendingWeapon);
 
 	Player(Owner.Player).BringUpWeapon();
 }

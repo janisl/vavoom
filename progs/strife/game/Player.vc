@@ -373,7 +373,7 @@ void SpawnPlayer(mthing_t * mthing)
 		{
 			Wpn.Destroy();
 		}
-		SetWeapon(StrifeDefs::wp_fist);
+		SetWeapon(WeaponEx(A.FindInventory(PunchDagger)));
 	}
 	else
 	{
@@ -524,18 +524,23 @@ void GotAmmo(Ammo NewAmmo)
 
 void GiveSigilPiece()
 {
-	if (!WeaponOwned[StrifeDefs::wp_sigil])
+	WeaponEx Wpn = WeaponEx(EntityEx(MO).FindInventory(Sigil));
+	if (!Wpn)
 		SigilPieces = 0;
 	else if (SigilPieces == 4)
 		SigilPieces = 0;
 	else
 		SigilPieces++;
-	if (!WeaponOwned[StrifeDefs::wp_sigil])
+	if (!Wpn)
 	{
-		WeaponOwned[StrifeDefs::wp_sigil] = Level.Spawn(Sigil);
-		WeaponOwned[StrifeDefs::wp_sigil].AttachToOwner(EntityEx(MO));
+		Wpn = Level.Spawn(Sigil);
+		if (!Wpn.TryPickup(EntityEx(MO)))
+		{
+			Wpn.Destroy();
+			return;
+		}
 	}
-	PendingWeapon = WeaponOwned[StrifeDefs::wp_sigil];
+	PendingWeapon = Wpn;
 	MO.PlaySound('weapons/sigilcharge', CHAN_WEAPON);
 }
 
@@ -2004,9 +2009,9 @@ void SetPlayerRunState()
 //
 //==========================================================================
 
-void SetWeapon(int NewWeapon)
+void SetWeapon(WeaponEx NewWeapon)
 {
-	ReadyWeapon = WeaponOwned[NewWeapon];
+	ReadyWeapon = NewWeapon;
 	PendingWeapon = none;
 	ViewEnt = ReadyWeapon;
 }
@@ -2277,15 +2282,12 @@ void Cheat_Gimme()
 	{
 		for (i = 0; i < StrifeDefs::NUMWEAPONS; i++)
 		{
-			if (!WeaponOwned[i])
+			WeaponEx Wpn = Level.Spawn(MainGameInfo(Level.Game).WeaponClasses[i]);
+			Wpn.AmmoGive1 = 0;
+			Wpn.AmmoGive2 = 0;
+			if (!Wpn.TryPickup(EntityEx(MO)))
 			{
-				WeaponEx Wpn = Level.Spawn(MainGameInfo(Level.Game).WeaponClasses[i]);
-				Wpn.AmmoGive1 = 0;
-				Wpn.AmmoGive2 = 0;
-				if (!Wpn.TryPickup(EntityEx(MO)))
-				{
-					Wpn.Destroy();
-				}
+				Wpn.Destroy();
 			}
 		}
 	}

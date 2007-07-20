@@ -242,7 +242,7 @@ bool MorphPlayer()
 	fog.PlaySound('Teleport', CHAN_VOICE);
 
 	beastMo = Spawn(PigPlayer, Origin);
-	beastMo._Special1 = Player(Player).ReadyWeapon.WeaponType;
+	beastMo.Tracer = Player(Player).ReadyWeapon;
 	beastMo.Angles = Angles;
 	beastMo.Player = Player;
 	beastMo.bIsPlayer = true;

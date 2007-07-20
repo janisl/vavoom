@@ -290,7 +290,7 @@ final void A_Lower()
 		return;
 	}
 	Entity Tmp = Owner;//FIXME temporary hack.
-	Player(Owner.Player).SetWeapon(Player(Owner.Player).PendingWeapon.WeaponType);
+	Player(Owner.Player).SetWeapon(Player(Owner.Player).PendingWeapon);
 	Player(Tmp.Player).BringUpWeapon();
 }
 

@@ -279,7 +279,7 @@ final void A_Lower()
 		return;
 	}
 
-	P.SetWeapon(P.PendingWeapon.WeaponType);
+	P.SetWeapon(P.PendingWeapon);
 
 	P.BringUpWeapon();
 }

@@ -420,11 +420,11 @@ int CheckInventory(name ItemName)
 	//	Weapons.
 	if (ItemName == 'FlameThrower')
 	{
-		return !!Player(Player).WeaponOwned[StrifeDefs::wp_flame];
+		return !!FindInventory(FlameThrower);
 	}
 	if (ItemName == 'Sigil')
 	{
-		return !!Player(Player).WeaponOwned[StrifeDefs::wp_sigil];
+		return !!FindInventory(Sigil);
 	}
 
 	//	Inventory items.
@@ -575,7 +575,7 @@ int CheckInventory(name ItemName)
 
 int GetSigilPieces()
 {
-	if (bIsPlayer && Player(Player).WeaponOwned[StrifeDefs::wp_sigil])
+	if (bIsPlayer && FindInventory(Sigil))
 	{
 		return Player(Player).SigilPieces + 1;
 	}

@@ -256,6 +256,11 @@ void SB_DrawMainBar()
 	// draw something in the blank spaces
 	R_FillRectWithFlat(0, 448, 640, 32, 'f_pave01');
 
+	if (!cl.MO)
+	{
+		return;
+	}
+
 	//  background
 	R_DrawPic(BAR_X + 0, BAR_Y + 168, pic_invback);
 	R_DrawPic(BAR_X + 0, BAR_Y + 160, pic_invtop);
@@ -323,7 +328,7 @@ void SB_DrawMainBar()
 		}
 	}
 
-	if (cl.WeaponOwned[StrifeDefs::wp_sigil])
+	if (EntityEx(cl.MO).FindInventory(Sigil))
 	{
 		R_DrawPic(BAR_X + 253, BAR_Y + 175, pic_sigil[cl.SigilPieces]);
 	}
@@ -339,27 +344,27 @@ void SB_DrawMainBar()
 	{
 		R_DrawPic2(BAR_X + 0, BAR_Y + 56, pic_invpbak, 0.666);
 		R_DrawPic(BAR_X + 0, BAR_Y + 56, pic_invpop);
-		if (cl.WeaponOwned[StrifeDefs::wp_crossbow])
+		if (EntityEx(cl.MO).FindInventory(StrifeCrossbow))
 		{
 			R_DrawPic(BAR_X + 38, BAR_Y + 86, pic_crossbow);
 		}
-		if (cl.WeaponOwned[StrifeDefs::wp_riffle])
+		if (EntityEx(cl.MO).FindInventory(AssaultGun))
 		{
 			R_DrawPic(BAR_X + 40, BAR_Y + 107, pic_riffle);
 		}
-		if (cl.WeaponOwned[StrifeDefs::wp_missile])
+		if (EntityEx(cl.MO).FindInventory(MiniMissileLauncher))
 		{
 			R_DrawPic(BAR_X + 39, BAR_Y + 131, pic_missile);
 		}
-		if (cl.WeaponOwned[StrifeDefs::wp_grenade])
+		if (EntityEx(cl.MO).FindInventory(StrifeGrenadeLauncher))
 		{
 			R_DrawPic(BAR_X + 78, BAR_Y + 87, pic_grenade);
 		}
-		if (cl.WeaponOwned[StrifeDefs::wp_flame])
+		if (EntityEx(cl.MO).FindInventory(FlameThrower))
 		{
 			R_DrawPic(BAR_X + 80, BAR_Y + 117, pic_flame);
 		}
-		if (cl.WeaponOwned[StrifeDefs::wp_blaster])
+		if (EntityEx(cl.MO).FindInventory(Mauler))
 		{
 			R_DrawPic(BAR_X + 75, BAR_Y + 142, pic_blaster);
 		}
@@ -426,7 +431,7 @@ void SB_DrawMainBar()
 
 void DrawAmmo(class<Inventory> Type, int Y)
 {
-	Inventory AmmoItem = cl.MO ? EntityEx(cl.MO).FindInventory(Type) : none;
+	Inventory AmmoItem = EntityEx(cl.MO).FindInventory(Type);
 	SB_DrawSmallNum(BAR_X + 205, BAR_Y + Y, AmmoItem ? AmmoItem.Amount : 0);
 	SB_DrawSmallNum(BAR_X + 238, BAR_Y + Y,
 		AmmoItem ? AmmoItem.MaxAmount : Type.default.MaxAmount);
@@ -487,7 +492,7 @@ void SB_DrawFullscreenStats()
 		}
 	}
 
-	if (cl.WeaponOwned[StrifeDefs::wp_sigil])
+	if (EntityEx(cl.MO).FindInventory(Sigil))
 	{
 		R_DrawPic2(530, 450, pic_sigil[cl.SigilPieces], 0.6);
 	}
@@ -496,27 +501,27 @@ void SB_DrawFullscreenStats()
 	{
 		R_DrawPic2(BAR_X + 0, BAR_Y + 96, pic_invpbak, 0.666);
 		R_DrawPic(BAR_X + 0, BAR_Y + 96, pic_invpop);
-		if (cl.WeaponOwned[StrifeDefs::wp_crossbow])
+		if (EntityEx(cl.MO).FindInventory(StrifeCrossbow))
 		{
 			R_DrawPic(BAR_X + 38, BAR_Y + 126, pic_crossbow);
 		}
-		if (cl.WeaponOwned[StrifeDefs::wp_riffle])
+		if (EntityEx(cl.MO).FindInventory(AssaultGun))
 		{
 			R_DrawPic(BAR_X + 40, BAR_Y + 147, pic_riffle);
 		}
-		if (cl.WeaponOwned[StrifeDefs::wp_missile])
+		if (EntityEx(cl.MO).FindInventory(MiniMissileLauncher))
 		{
 			R_DrawPic(BAR_X + 39, BAR_Y + 171, pic_missile);
 		}
-		if (cl.WeaponOwned[StrifeDefs::wp_grenade])
+		if (EntityEx(cl.MO).FindInventory(StrifeGrenadeLauncher))
 		{
 			R_DrawPic(BAR_X + 78, BAR_Y + 127, pic_grenade);
 		}
-		if (cl.WeaponOwned[StrifeDefs::wp_flame])
+		if (EntityEx(cl.MO).FindInventory(FlameThrower))
 		{
 			R_DrawPic(BAR_X + 80, BAR_Y + 157, pic_flame);
 		}
-		if (cl.WeaponOwned[StrifeDefs::wp_blaster])
+		if (EntityEx(cl.MO).FindInventory(Mauler))
 		{
 			R_DrawPic(BAR_X + 75, BAR_Y + 182, pic_blaster);
 		}

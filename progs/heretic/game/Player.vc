@@ -406,7 +406,7 @@ void SpawnPlayer(mthing_t * mthing)
 		{
 			Wpn.Destroy();
 		}
-		SetWeapon(wp_goldwand);
+		SetWeapon(WeaponEx(A.FindInventory(GoldWand)));
 	}
 	else
 	{
@@ -480,7 +480,7 @@ void PlayerExitMap(bool clusterChange)
 	}
 	if (ChickenTime)
 	{
-		SetWeapon(Actor(MO).Special1);	// Restore weapon
+		SetWeapon(WeaponEx(Actor(MO).Tracer));	// Restore weapon
 		ChickenTime = 0.0;
 	}
 	Items = 0;
@@ -1678,7 +1678,7 @@ bool UndoPlayerChicken()
 	Powers[pw_weaponlevel2] = 0.0;
 	A.Health = MAXHEALTH;
 	Health = A.Health;
-	PostChickenWeapon(Actor(MO).Special1);
+	PostChickenWeapon(WeaponEx(Actor(MO).Tracer));
 
 	fog = HereticLevelInfo(Level).Spawn(TeleportFog, MO.Origin + vector(
 		20.0 * cos(MO.Angles.yaw), 20.0 * sin(MO.Angles.yaw), Actor::TELEFOGHEIGHT));
@@ -2498,9 +2498,9 @@ void UseArtiFireBomb()
 //
 //==========================================================================
 
-void SetWeapon(int NewWeapon)
+void SetWeapon(WeaponEx NewWeapon)
 {
-	ReadyWeapon = WeaponOwned[NewWeapon];
+	ReadyWeapon = NewWeapon;
 	PendingWeapon = none;
 
 	ViewEnt = ReadyWeapon;
@@ -2517,7 +2517,7 @@ void SetWeapon(int NewWeapon)
 
 void BringUpWeapon()
 {
-	SetWeapon(ReadyWeapon.WeaponType);
+	SetWeapon(ReadyWeapon);
 	if (ReadyWeapon.WeaponType == wp_gauntlets)
 	{
 		MO.PlaySound('weapons/gauntletsactivate', CHAN_WEAPON);
@@ -2633,7 +2633,12 @@ void FireWeapon()
 
 void ActivateBeak()
 {
-	SetWeapon(wp_beak);
+	WeaponEx Wpn = Level.Spawn(Beak);
+	if (!Wpn.TryPickup(EntityEx(MO)))
+	{
+		Wpn.Destroy();
+	}
+	SetWeapon(WeaponEx(EntityEx(MO).FindInventory(Beak)));
 	ViewStates[ps_weapon].SY = WeaponEx::WEAPONTOP;
 	SetViewState(ps_weapon, WeaponEx(ViewEnt).ReadyState);
 }
@@ -2644,13 +2649,9 @@ void ActivateBeak()
 //
 //===========================================================================
 
-void PostChickenWeapon(int weapon)
+void PostChickenWeapon(WeaponEx weapon)
 {
-	if (weapon == wp_beak)
-	{
-		// Should never happen
-		weapon = wp_staff;
-	}
+	ReadyWeapon.Destroy();
 	SetWeapon(weapon);
 	ViewStates[ps_weapon].SY = WeaponEx::WEAPONBOTTOM;
 	SetViewState(ps_weapon, WeaponEx(ViewEnt).UpState);
@@ -2799,20 +2800,17 @@ void Cheat_Gimme()
 		}
 		for (i = 0; i < NUMWEAPONS - 1; i++)
 		{
-			if (!WeaponOwned[i])
+			if (MainGameInfo(Level.Game).shareware &&
+				!MainGameInfo(Level.Game).WeaponClasses[i].default.bInShareware)
 			{
-				if (MainGameInfo(Level.Game).shareware &&
-					!MainGameInfo(Level.Game).WeaponClasses[i].default.bInShareware)
-				{
-					continue;
-				}
-				WeaponEx Wpn = Level.Spawn(MainGameInfo(Level.Game).WeaponClasses[i]);
-				Wpn.AmmoGive1 = 0;
-				Wpn.AmmoGive2 = 0;
-				if (!Wpn.TryPickup(EntityEx(MO)))
-				{
-					Wpn.Destroy();
-				}
+				continue;
+			}
+			WeaponEx Wpn = Level.Spawn(MainGameInfo(Level.Game).WeaponClasses[i]);
+			Wpn.AmmoGive1 = 0;
+			Wpn.AmmoGive2 = 0;
+			if (!Wpn.TryPickup(EntityEx(MO)))
+			{
+				Wpn.Destroy();
 			}
 		}
 		foreach AllClasses(Ammo, Cls)
@@ -2973,20 +2971,33 @@ void Cheat_Morph()
 
 void Cheat_NoWeapons()
 {
-	int i;
-
 	if (ChickenTime)
 	{
 		return;
 	}
-	for (i = 1; i < 8; i++)
+	//	Find weakest weapon.
+	Inventory Item;
+	WeaponEx Weakest = none;
+	for (Item = EntityEx(MO).Inventory; Item; Item = Item.Inventory)
 	{
-		if (WeaponOwned[i])
+		if (Weapon(Item) && (!Weakest ||
+			Weakest.SelectionOrder < Weapon(Item).SelectionOrder))
 		{
-			WeaponOwned[i].Destroy();
+			Weakest = WeaponEx(Item);
 		}
 	}
-	PendingWeapon = WeaponOwned[wp_staff];
+	//	Removed all others.
+	for (Item = EntityEx(MO).Inventory; Item; )
+	{
+		Inventory Next = Item.Inventory;
+		if (Weapon(Item) && Item != Weakest)
+		{
+			Item.Destroy();
+		}
+		Item = Next;
+	}
+	SetWeapon(Weakest);
+	PendingWeapon = Weakest;
 	cprint("CHEATER - YOU DON'T DESERVE WEAPONS");
 }
 
