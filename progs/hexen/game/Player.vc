@@ -87,8 +87,6 @@ int Pieces;	// Fourth Weapon pieces
 WeaponEx PendingWeapon;
 WeaponEx ReadyWeapon;
 
-WeaponEx WeaponOwned[HexenDefs::NUMWEAPONS];
-
 int PoisonCount;	// screen flash for poison damage
 float LastPoisonTime;
 Actor Poisoner;		// none for non-player mobjs
@@ -191,7 +189,6 @@ void SpawnClient()
 						bestWeapon = WeaponEx(Item);
 					}
 					Item.AttachToOwner(EntityEx(MO));
-					WeaponOwned[WeaponEx(Item).WeaponType] = WeaponEx(Item);
 				}
 				Item = Next;
 			}
@@ -292,7 +289,6 @@ void NetGameReborn()
 				bestWeapon = WeaponEx(Item);
 			}
 			Item.AttachToOwner(EntityEx(MO));
-			WeaponOwned[WeaponEx(Item).WeaponType] = WeaponEx(Item);
 		}
 	}
 	GiveMana(Mana1, 0);

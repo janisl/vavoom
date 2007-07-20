@@ -728,7 +728,10 @@ void ConChoiceImpulse(int ChoiceNum)
 		{
 			Item = Inventory(Spawn(ItemType));
 			GaveItem = Item.TryPickup(CurrentSpeakingTo);
-			Item.Destroy();
+			if (!GaveItem)
+			{
+				Item.Destroy();
+			}
 		}
 	}
 	if (GaveItem)

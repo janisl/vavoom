@@ -58,15 +58,10 @@ int Keys;
 // Refired shots are less accurate.
 int Refire;
 
-WeaponEx WeaponOwned[DoomDefs::NUMWEAPONS];
-
 WeaponEx ReadyWeapon;
 
 // Is wp_nochange if not changing.
 WeaponEx PendingWeapon;
-
-//AmmoPickup Ammo[DoomDefs::NUMAMMO];
-int ReadyAmmo;
 
 // Armor type is 0-2.
 int ArmorType;
@@ -103,8 +98,7 @@ Inventory SavedInventory;
 replication
 {
 	reliable if (!bIsClient)
-		ArmorPoints, SBFlags, sb_faceindex, ReadyWeapon, ReadyAmmo,
-		WeaponOwned;
+		ArmorPoints, SBFlags, sb_faceindex, ReadyWeapon;
 
 	unreliable if (!bIsClient)
 		ClientGunShot, ClientBlood, ClientExplosion, ClientExplosion2;
@@ -1960,11 +1954,6 @@ void SetViewPos()
 	SBFlags = Keys;
 	if ((Cheats & CF_GODMODE) || Powers[pw_invulnerability])
 		SBFlags |= DoomDefs::SBF_GOD_MODE;
-
-	if (!WeaponEx(ViewEnt).AmmoType1)
-		ReadyAmmo = 1994;	// means "n/a"
-	else
-		ReadyAmmo = EntityEx(MO).FindInventory(WeaponEx(ViewEnt).AmmoType1).Amount;
 
 	ClientSetViewOrg(ViewOrg.x, ViewOrg.y, ViewOrg.z);
 }

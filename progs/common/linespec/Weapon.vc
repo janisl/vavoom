@@ -61,6 +61,12 @@ bool			bWimpyWeapon;
 Ammo			Ammo1;
 Ammo			Ammo2;
 
+replication
+{
+	reliable if (Role == ROLE_Authority && bNetOwner)
+		Ammo1, Ammo2;
+}
+
 //==========================================================================
 //
 //	AttachToOwner

@@ -76,8 +76,6 @@ float Powers[NUMPOWERS];
 // Refired shots are less accurate.
 int Refire;
 
-WeaponEx WeaponOwned[StrifeDefs::NUMWEAPONS];
-
 WeaponEx ReadyWeapon;
 int SigilPieces;
 
@@ -90,8 +88,7 @@ replication
 {
 	reliable if (!bIsClient)
 		ReadyAmmo, SigilPieces, Accuracy, Stamina, Keys, InvFirst, InvCursor,
-		Objectives, ArmorType, ArmorPoints, WeaponOwned, Inventory,
-		Communicator;
+		Objectives, ArmorType, ArmorPoints, Inventory, Communicator;
 
 	unreliable if (!bIsClient)
 		ClientBlood, ClientExplosion;

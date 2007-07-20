@@ -40,9 +40,6 @@ int WeaponType;
 
 bool TryPickup(EntityEx Toucher)
 {
-	bool gaveMana;
-	bool gaveWeapon;
-
 	if (Toucher.Player.PClass != WeaponClass)
 	{
 		// Wrong class, but try to pick up for mana
@@ -59,35 +56,33 @@ bool TryPickup(EntityEx Toucher)
 		return true;
 	}
 
-	// Cooperative net-game
-	if (ShouldStay() && !bDropped && Player(Toucher.Player).WeaponOwned[WeaponType])
+	Inventory Wpn = Toucher.FindInventory(class<Inventory>(Class));
+
+	if (Wpn)
 	{
-		return false;
+		// Cooperative net-game
+		if (ShouldStay() && !bDropped)
+		{
+			return false;
+		}
+		bool gaveMana = Player(Toucher.Player).GiveMana(AmmoType1, AmmoGive1);
+		if (gaveMana)
+		{
+			GoAwayAndDie();
+		}
+		return gaveMana;
 	}
 
-	gaveMana = Player(Toucher.Player).GiveMana(AmmoType1, AmmoGive1);
-	if (Player(Toucher.Player).WeaponOwned[WeaponType])
+	Player(Toucher.Player).GiveMana(AmmoType1, AmmoGive1);
+	Wpn = CreateCopy(Toucher);
+	Wpn.AttachToOwner(Toucher);
+	if (!Player(Toucher.Player).ReadyWeapon ||
+		WeaponType > Player(Toucher.Player).ReadyWeapon.WeaponType)
 	{
-		gaveWeapon = false;
+		// Only switch to more powerful weapons
+		Player(Toucher.Player).PendingWeapon = WeaponEx(Wpn);
 	}
-	else
-	{
-		gaveWeapon = true;
-		Player(Toucher.Player).WeaponOwned[WeaponType] =
-			Spawn(class<WeaponEx>(Class));
-		Player(Toucher.Player).WeaponOwned[WeaponType].AttachToOwner(Toucher);
-		if (!Player(Toucher.Player).ReadyWeapon ||
-			WeaponType > Player(Toucher.Player).ReadyWeapon.WeaponType)
-		{
-			// Only switch to more powerful weapons
-			Player(Toucher.Player).PendingWeapon = Player(Toucher.Player).WeaponOwned[WeaponType];
-		}
-	}
-	if (gaveWeapon || gaveMana)
-	{
-		GoAwayAndDie();
-	}
-	return gaveWeapon || gaveMana;
+	return true;
 }
 
 //==========================================================================
@@ -289,9 +284,8 @@ final void A_Lower()
 		Owner.Player.SetViewState(ps_weapon, none);
 		return;
 	}
-	Entity Tmp = Owner;//FIXME temporary hack.
 	Player(Owner.Player).SetWeapon(Player(Owner.Player).PendingWeapon);
-	Player(Tmp.Player).BringUpWeapon();
+	Player(Owner.Player).BringUpWeapon();
 }
 
 //==========================================================================

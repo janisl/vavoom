@@ -199,12 +199,6 @@ void SB_DrawTallNum(int x, int y, int num, float alpha, bool perc)
 	int neg;
 	picinfo_t info;
 
-	// if non-number, do not draw it
-	if (num == 1994)
-	{
-		return;
-	}
-
 	if (perc)
 	{
 		R_DrawPic2(x, y, pic_percent, alpha);
@@ -301,7 +295,10 @@ void SB_DrawMainBar()
 	R_DrawPic(ST_BGX, ST_BGY, pic_bar);
 
 	// ready weapon ammo
-	SB_DrawTallNum(ST_AMMOX, ST_AMMOY, cl.ReadyAmmo, 1.0, false);
+	if (cl.ReadyWeapon.Ammo1)
+	{
+		SB_DrawTallNum(ST_AMMOX, ST_AMMOY, cl.ReadyWeapon.Ammo1.Amount, 1.0, false);
+	}
 
 	// health percentage
 	SB_DrawTallNum(ST_HEALTHX, ST_HEALTHY, cl.Health, 1.0, true);
@@ -432,7 +429,10 @@ void SB_DrawFullscreenStats()
 	}
 
 	// ready weapon ammo with icon
-	SB_DrawTallNum(ST_TDAMMOX, ST_TDAMMOY, cl.ReadyAmmo, 0.6, false);
+	if (cl.ReadyWeapon.Ammo1)
+	{
+		SB_DrawTallNum(ST_TDAMMOX, ST_TDAMMOY, cl.ReadyWeapon.Ammo1.Amount, 0.6, false);
+	}
 	if ((cl.ReadyWeapon.WeaponType == DoomDefs::wp_pistol) ||
 		(cl.ReadyWeapon.WeaponType == DoomDefs::wp_chaingun))
 	{

@@ -69,39 +69,34 @@ int WeaponType;
 
 bool TryPickup(EntityEx Toucher)
 {
-	bool gaveAmmo;
-	bool gaveWeapon;
+	Inventory Wpn = Toucher.FindInventory(class<Inventory>(Class));
 
-	// Cooperative net-game
-	if (ShouldStay() && !bDropped && Player(Toucher.Player).WeaponOwned[WeaponType])
+	if (Wpn)
 	{
-		return false;
-	}
-
-	gaveAmmo = Player(Toucher.Player).GiveAmmo(AmmoType1, AmmoGive1);
-	if (Player(Toucher.Player).WeaponOwned[WeaponType])
-	{
-		gaveWeapon = false;
-	}
-	else
-	{
-		gaveWeapon = true;
-		Player(Toucher.Player).WeaponOwned[WeaponType] =
-			Spawn(MainGameInfo(Level.Game).WeaponClasses[WeaponType]);
-		Player(Toucher.Player).WeaponOwned[WeaponType].AttachToOwner(Toucher);
-		if (!Player(Toucher.Player).ReadyWeapon ||
-			MainGameInfo(Level.Game).WeaponValue[WeaponType] >
-			MainGameInfo(Level.Game).WeaponValue[Player(Toucher.Player).ReadyWeapon.WeaponType])
+		// Cooperative net-game
+		if (ShouldStay() && !bDropped)
 		{
-			// Only switch to more powerful weapons
-			Player(Toucher.Player).PendingWeapon = Player(Toucher.Player).WeaponOwned[WeaponType];
+			return false;
 		}
+		bool gaveAmmo = Player(Toucher.Player).GiveAmmo(AmmoType1, AmmoGive1);
+		if (gaveAmmo)
+		{
+			GoAwayAndDie();
+		}
+		return gaveAmmo;
 	}
-	if (gaveWeapon || gaveAmmo)
+
+	Player(Toucher.Player).GiveAmmo(AmmoType1, AmmoGive1);
+	Wpn = CreateCopy(Toucher);
+	Wpn.AttachToOwner(Toucher);
+	if (!Player(Toucher.Player).ReadyWeapon ||
+		MainGameInfo(Level.Game).WeaponValue[WeaponType] >
+		MainGameInfo(Level.Game).WeaponValue[Player(Toucher.Player).ReadyWeapon.WeaponType])
 	{
-		GoAwayAndDie();
+		// Only switch to more powerful weapons
+		Player(Toucher.Player).PendingWeapon = WeaponEx(Wpn);
 	}
-	return (gaveWeapon || gaveAmmo);
+	return true;
 }
 
 //==========================================================================

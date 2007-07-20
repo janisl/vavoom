@@ -87,7 +87,6 @@ int Refire;
 // Is wp_nochange if not changing.
 WeaponEx PendingWeapon;
 
-WeaponEx WeaponOwned[NUMWEAPONS];
 WeaponEx ReadyWeapon;
 
 // Armor type is 0-2.

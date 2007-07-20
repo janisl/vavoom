@@ -38,48 +38,51 @@ int WeaponType;
 
 bool TryPickup(EntityEx Toucher)
 {
-	bool gaveammo;
-	bool gaveweapon;
-	class<Ammo> ammoType;
-	int ammoCount;
+	Inventory Wpn = Toucher.FindInventory(class<Inventory>(Class));
 
-	// leave placed weapons forever on net games
-	if (ShouldStay() && !bDropped && Player(Toucher.Player).WeaponOwned[WeaponType])
+	if (Wpn)
 	{
-		return false;
+		// leave placed weapons forever on net games
+		if (ShouldStay() && !bDropped)
+		{
+			return false;
+		}
+		bool gaveammo = false;
+		if (AmmoType1)
+		{
+			if (ShouldStay() && !bDropped && Level.Game.deathmatch)
+			{
+				gaveammo = Player(Toucher.Player).GiveAmmo(AmmoType1, 5 * AmmoGive1 / 2);
+			}
+			else
+			{
+				gaveammo = Player(Toucher.Player).GiveAmmo(AmmoType1, AmmoGive1);
+			}
+		}
+		if (gaveammo)
+		{
+			GoAwayAndDie();
+		}
+		return gaveammo;
 	}
 
-	ammoType = AmmoType1;
-
-	gaveammo = false;
-	if (ammoType)
+	if (AmmoType1)
 	{
 		if (ShouldStay() && !bDropped && Level.Game.deathmatch)
 		{
-			gaveammo = Player(Toucher.Player).GiveAmmo(ammoType, 5 * AmmoGive1 / 2);
+			Player(Toucher.Player).GiveAmmo(AmmoType1, 5 * AmmoGive1 / 2);
 		}
 		else
 		{
-			gaveammo = Player(Toucher.Player).GiveAmmo(ammoType, AmmoGive1);
+			Player(Toucher.Player).GiveAmmo(AmmoType1, AmmoGive1);
 		}
 	}
 
-	gaveweapon = false;
-	if (!Player(Toucher.Player).WeaponOwned[WeaponType])
-	{
-		gaveweapon = true;
-		Player(Toucher.Player).WeaponOwned[WeaponType] =
-			Spawn(MainGameInfo(Level.Game).WeaponClasses[WeaponType]);
-		Player(Toucher.Player).WeaponOwned[WeaponType].AttachToOwner(Toucher);
-		Player(Toucher.Player).PendingWeapon = Player(Toucher.Player).WeaponOwned[WeaponType];
-	}
+	Wpn = CreateCopy(Toucher);
+	Wpn.AttachToOwner(Toucher);
+	Player(Toucher.Player).PendingWeapon = WeaponEx(Wpn);
 
-	if (gaveweapon || gaveammo)
-	{
-		GoAwayAndDie();
-	}
-
-	return gaveweapon || gaveammo;
+	return true;
 }
 
 //==========================================================================
