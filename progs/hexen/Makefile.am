@@ -188,6 +188,7 @@ EXTRA_DIST = compile.bat \
 	game/CFlameFloor.vc \
 	game/CFlameMissile.vc \
 	game/ClericPlayer.vc \
+	game/ClericWeaponPiece.vc \
 	game/CrystalVial.vc \
 	game/CStaffMissile.vc \
 	game/CStaffPuff.vc \
@@ -217,6 +218,7 @@ EXTRA_DIST = compile.bat \
 	game/DragonFireball.vc \
 	game/FalconShield.vc \
 	game/FighterPlayer.vc \
+	game/FighterWeaponPiece.vc \
 	game/FireBall.vc \
 	game/FrostMissile.vc \
 	game/FSwordFlame.vc \
@@ -257,6 +259,7 @@ EXTRA_DIST = compile.bat \
 	game/LightningFloor.vc \
 	game/LightningZap.vc \
 	game/MagePlayer.vc \
+	game/MageWeaponPiece.vc \
 	game/Mana1.vc \
 	game/Mana2.vc \
 	game/Mana3.vc \

@@ -28,8 +28,6 @@ class MainGameInfo : LineSpecialGameInfo;
 const int NUMTOTALBOTS		= 24;
 const int NUMBOTTYPES		= 24;
 
-class<WeaponEx> WeaponClasses[HexenDefs::NUMWEAPONS * HexenDefs::NUMCLASSES];
-
 BotPlayer::botinfo_t botinfo[NUMTOTALBOTS];
 int botskill;
 
@@ -39,7 +37,6 @@ float ArmorIncrement[HexenDefs::NUMCLASSES * HexenDefs::NUMARMOR];
 //
 //  Pickup messages
 //
-string fourthWeaponText[3];
 string TextKeyLockedMessages[HexenDefs::NUMKEYS];
 
 float ArmorMax[HexenDefs::NUMCLASSES];
@@ -371,23 +368,6 @@ defaultproperties
 	BloodClass = Blood;
 	NonMonsterAngleIncrements = 1;
 
-	WeaponClasses[0] = FWeapFist;
-	WeaponClasses[1] = CWeapMace;
-	WeaponClasses[2] = MWeapWand;
-	WeaponClasses[3] = Snout;
-	WeaponClasses[4] = FWeapAxe;
-	WeaponClasses[5] = CWeapStaff;
-	WeaponClasses[6] = MWeapFrost;
-	WeaponClasses[7] = Snout;
-	WeaponClasses[8] = FWeapHammer;
-	WeaponClasses[9] = CWeapFlame;
-	WeaponClasses[10] = MWeapLightning;
-	WeaponClasses[11] = Snout;
-	WeaponClasses[12] = FWeapQuietus;
-	WeaponClasses[13] = CWeapWraithverge;
-	WeaponClasses[14] = MWeapBloodscourge;
-	WeaponClasses[15] = Snout;
-
 	AutoArmorSave[0] = 15.0;
 	AutoArmorSave[1] = 10.0;
 	AutoArmorSave[2] = 5.0;
@@ -397,10 +377,6 @@ defaultproperties
 	ArmorIncrement[4] = 10.0; ArmorIncrement[5] = 25.0; ArmorIncrement[6] = 5.0; ArmorIncrement[7] = 20.0;
 	ArmorIncrement[8] = 5.0; ArmorIncrement[9] = 15.0; ArmorIncrement[10] = 10.0; ArmorIncrement[11] = 25.0;
 	ArmorIncrement[12] = 0.0; ArmorIncrement[13] = 0.0; ArmorIncrement[14] = 0.0; ArmorIncrement[15] = 0.0;
-
-	fourthWeaponText[0] = "$txt_weapon_f4";
-	fourthWeaponText[1] = "$txt_weapon_c4";
-	fourthWeaponText[2] = "$txt_weapon_m4";
 
 	TextKeyLockedMessages[0] = "$txt_need_key_steel";
 	TextKeyLockedMessages[1] = "$txt_need_key_cave";

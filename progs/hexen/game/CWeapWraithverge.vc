@@ -109,6 +109,7 @@ defaultproperties
 	AmmoUse1 = 18;
 	AmmoUse2 = 18;
 	PSpriteSY = 0.0;
+	PickupMessage = "$txt_weapon_c4";
 	UpState = S_CHOLYUP;
 	DownState = S_CHOLYDOWN;
 	ReadyState = S_CHOLYREADY;

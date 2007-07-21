@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class FWeaponPiece1 : WeaponPiece
+class FWeaponPiece1 : FighterWeaponPiece
 	__mobjinfo__(12)
 	__scriptid__(29);
 
@@ -34,8 +34,6 @@ __states__
 
 defaultproperties
 {
-	PieceClass = HexenDefs::PCLASS_FIGHTER;
 	PieceValue = WPIECE1;
 	IdleState = S_FSWORD1;
-	PickupMessage = "$txt_quietus_piece";
 }

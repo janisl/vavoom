@@ -158,6 +158,7 @@ defaultproperties
 	AmmoUse1 = 15;
 	AmmoUse2 = 15;
 	PSpriteSY = 20.0;
+	PickupMessage = "$txt_weapon_m4";
 	UpState = S_MSTAFFUP;
 	DownState = S_MSTAFFDOWN;
 	ReadyState = S_MSTAFFREADY;

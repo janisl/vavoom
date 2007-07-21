@@ -87,6 +87,7 @@ defaultproperties
 	AmmoUse1 = 14;
 	AmmoUse2 = 14;
 	PSpriteSY = 10.0;
+	PickupMessage = "$txt_weapon_f4";
 	UpState = S_FSWORDUP;
 	DownState = S_FSWORDDOWN;
 	ReadyState = S_FSWORDREADY;

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MWeaponPiece2 : WeaponPiece
+class MWeaponPiece2 : MageWeaponPiece
 	__mobjinfo__(22)
 	__scriptid__(38);
 
@@ -34,8 +34,6 @@ __states__
 
 defaultproperties
 {
-	PieceClass = HexenDefs::PCLASS_MAGE;
 	PieceValue = WPIECE2;
 	IdleState = S_MSTAFF2;
-	PickupMessage = "$txt_bloodscourge_piece";
 }

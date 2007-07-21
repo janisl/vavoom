@@ -3589,6 +3589,7 @@ void Cheat_NoClip()
 void Cheat_Gimme()
 {
 	class<Inventory>	Cls;
+	class<WeaponEx>		WpnCls;
 
 	if (Cmd_CheckParm("weapons"))
 	{
@@ -3598,10 +3599,14 @@ void Cheat_Gimme()
 		{
 			ArmorPoints[i] = MainGameInfo(Level.Game).ArmorIncrement[PClass * HexenDefs::NUMARMOR + i];
 		}
-		for (i = 0; i < HexenDefs::NUMWEAPONS; i++)
+		foreach AllClasses(WeaponEx, WpnCls)
 		{
-			WeaponEx Wpn = Level.Spawn(
-				MainGameInfo(Level.Game).WeaponClasses[i * HexenDefs::NUMCLASSES + PClass]);
+			if (!WpnCls.default.ReadyState)
+			{
+				//	Abstract class.
+				continue;
+			}
+			WeaponEx Wpn = Level.Spawn(WpnCls);
 			Wpn.AmmoGive1 = 0;
 			Wpn.AmmoGive2 = 0;
 			if (!Wpn.TryPickup(EntityEx(MO)))

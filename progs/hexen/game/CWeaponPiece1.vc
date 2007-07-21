@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class CWeaponPiece1 : WeaponPiece
+class CWeaponPiece1 : ClericWeaponPiece
 	__mobjinfo__(18)
 	__scriptid__(33);
 
@@ -34,8 +34,6 @@ __states__
 
 defaultproperties
 {
-	PieceClass = HexenDefs::PCLASS_CLERIC;
 	PieceValue = WPIECE1;
 	IdleState = S_CHOLY1;
-	PickupMessage = "$txt_wraithverge_piece";
 }
