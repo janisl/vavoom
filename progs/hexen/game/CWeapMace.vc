@@ -86,6 +86,7 @@ __states__
 
 defaultproperties
 {
+	WeaponClass = HexenDefs::PCLASS_CLERIC;
 	Slot = 1;
 	SelectionOrder = 3500;
 	PSpriteSY = -8.0;

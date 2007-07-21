@@ -102,4 +102,7 @@ defaultproperties
 	IceDeathState = S_CPLAY_ICE;
 	PainSound = 'PlayerClericPain';
 	SoundClass = 'cleric';
+
+	InitialInventory.Num = 1;
+	InitialInventory[0].Type = CWeapMace; InitialInventory[0].Amount = 1;
 }

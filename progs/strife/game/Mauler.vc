@@ -121,7 +121,7 @@ __states__
 defaultproperties
 {
 	WeaponType = StrifeDefs::wp_blaster;
-	Weapon2Type = StrifeDefs::wp_blaster2;
+	Weapon2Type = Mauler2;
 	Slot = 7;
 	SelectionOrder = 300;
 	AmmoType1 = EnergyPod;

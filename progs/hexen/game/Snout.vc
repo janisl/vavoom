@@ -81,6 +81,7 @@ __states__
 
 defaultproperties
 {
+	WeaponClass = HexenDefs::PCLASS_PIG;
 	Slot = 1;
 	SelectionOrder = 10000;
 	PSpriteSY = 10.0;

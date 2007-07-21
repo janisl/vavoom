@@ -78,4 +78,7 @@ defaultproperties
 	DisruptDeathState = S_DISRUPT1;
 	PainSound = '*pain100';
 	DeathSound = '*death';
+
+	InitialInventory.Num = 1;
+	InitialInventory[0].Type = PunchDagger; InitialInventory[0].Amount = 1;
 }

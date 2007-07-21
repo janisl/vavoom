@@ -98,4 +98,7 @@ defaultproperties
 	IceDeathState = S_MPLAY_ICE;
 	PainSound = 'PlayerMagePain';
 	SoundClass = 'mage';
+
+	InitialInventory.Num = 1;
+	InitialInventory[0].Type = MWeapWand; InitialInventory[0].Amount = 1;
 }

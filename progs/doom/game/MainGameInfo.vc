@@ -41,9 +41,6 @@ struct spec_trans_t
 
 spec_trans_t spec_trans_tab[NUM_SPECIALS];
 
-class<WeaponEx> WeaponClasses[DoomDefs::NUMWEAPONS];
-int WeaponOrder[DoomDefs::NUMWEAPONS];
-
 int botskill;
 BotPlayer::botinfo_t botinfo[30];
 
@@ -1256,37 +1253,6 @@ defaultproperties
 	TeleportFogClass = TeleportFog;
 	DefaultKickBack = 150.0;
 	BloodClass = Blood;
-
-	WeaponClasses[0] = Fist;
-	WeaponClasses[1] = Pistol;
-	WeaponClasses[2] = Shotgun;
-	WeaponClasses[3] = Chaingun;
-	WeaponClasses[4] = RocketLauncher;
-	WeaponClasses[5] = PlasmaRifle;
-	WeaponClasses[6] = BFG9000;
-	WeaponClasses[7] = Chainsaw;
-#ifdef DOOM2
-	WeaponClasses[8] = SuperShotgun;
-#endif
-#ifdef GRENADE_LAUNCHER
-	WeaponClasses[9] = GrenadeLauncher;
-#endif
-
-	WeaponOrder[0] = DoomDefs::wp_fist;
-	WeaponOrder[1] = DoomDefs::wp_chainsaw;
-	WeaponOrder[2] = DoomDefs::wp_pistol;
-	WeaponOrder[3] = DoomDefs::wp_shotgun;
-	WeaponOrder[4] = DoomDefs::wp_supershotgun;
-	WeaponOrder[5] = DoomDefs::wp_chaingun;
-	WeaponOrder[6] = DoomDefs::wp_missile;
-#ifdef GRENADE_LAUNCHER
-	WeaponOrder[7] = DoomDefs::wp_grenade;
-	WeaponOrder[8] = DoomDefs::wp_plasma;
-	WeaponOrder[9] = DoomDefs::wp_bfg;
-#else
-	WeaponOrder[7] = DoomDefs::wp_plasma;
-	WeaponOrder[8] = DoomDefs::wp_bfg;
-#endif
 
 	botskill = 2;
 

@@ -312,8 +312,8 @@ void SpawnPlayer(mthing_t * mthing)
 	float x;
 	float y;
 	float z;
-
-	Actor A;
+	int i;
+	PlayerPawn A;
 	bool ResetInventory = false;
 	Inventory Item;
 
@@ -363,14 +363,25 @@ void SpawnPlayer(mthing_t * mthing)
 		{
 			A.Inventory.Destroy();
 		}
-		WeaponEx Wpn = Level.Spawn(PunchDagger);
-		Wpn.AmmoGive1 = 0;
-		Wpn.AmmoGive2 = 0;
-		if (!Wpn.TryPickup(A))
+		for (i = 0; i < A.InitialInventory.Num; i++)
 		{
-			Wpn.Destroy();
+			Item = Level.Spawn(A.InitialInventory[i].Type);
+			Item.Amount = A.InitialInventory[i].Amount;
+			if (Weapon(Item))
+			{
+				//	For better control empty weapon's ammo.
+				Weapon(Item).AmmoGive1 = 0;
+				Weapon(Item).AmmoGive2 = 0;
+			}
+			if (!Item.TryPickup(A))
+			{
+				Item.Destroy();
+			}
+			else if (Weapon(Item) && Weapon(Item).CheckAmmo(false))
+			{
+				SetWeapon(WeaponEx(Item));
+			}
 		}
-		SetWeapon(WeaponEx(A.FindInventory(PunchDagger)));
 	}
 	else
 	{
@@ -2262,6 +2273,7 @@ void Cheat_Gimme()
 {
 	int					i;
 	class<Inventory>	Cls;
+	class<WeaponEx>		WpnCls;
 
 	// Backpack
 	if (Cmd_CheckParm("Backpack"))
@@ -2277,9 +2289,18 @@ void Cheat_Gimme()
 	// Weapons
 	if (Cmd_CheckParm("Weapons"))
 	{
-		for (i = 0; i < StrifeDefs::NUMWEAPONS; i++)
+		foreach AllClasses(Weapon, WpnCls)
 		{
-			WeaponEx Wpn = Level.Spawn(MainGameInfo(Level.Game).WeaponClasses[i]);
+			if (!WpnCls.default.RaiseState)
+			{
+				//	Abstract base class.
+				continue;
+			}
+			if (WpnCls.default.bCheatNotWeapon)
+			{
+				continue;
+			}
+			WeaponEx Wpn = Level.Spawn(WpnCls);
 			Wpn.AmmoGive1 = 0;
 			Wpn.AmmoGive2 = 0;
 			if (!Wpn.TryPickup(EntityEx(MO)))

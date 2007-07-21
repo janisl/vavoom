@@ -38,7 +38,8 @@ state FireDeathWaveState;
 bool bRaiseNoiseAlert;
 
 int WeaponType;
-int Weapon2Type;
+class<WeaponEx> Weapon2Type;
+bool bCheatNotWeapon;
 
 //==========================================================================
 //
@@ -64,9 +65,9 @@ bool TryPickup(EntityEx Toucher)
 		bool gaveweapon;
 		AmmoType = AmmoType1;
 		Ammo2Type = none;
-		if (Weapon2Type != -1)
+		if (Weapon2Type)
 		{
-			Ammo2Type = MainGameInfo(Level.Game).WeaponClasses[Weapon2Type].default.AmmoType1;
+			Ammo2Type = Weapon2Type.default.AmmoType1;
 		}
 		if (AmmoType)
 		{
@@ -79,9 +80,9 @@ bool TryPickup(EntityEx Toucher)
 		{
 			gaveammo = false;
 		}
-		if (Weapon2Type != -1 && Ammo2Type && AmmoType != Ammo2Type)
+		if (Weapon2Type && Ammo2Type && AmmoType != Ammo2Type)
 		{
-			int Ammo2Count = MainGameInfo(Level.Game).WeaponClasses[Weapon2Type].default.AmmoGive1;
+			int Ammo2Count = Weapon2Type.default.AmmoGive1;
 			if (ShouldStay() && !bDropped && Level.Game.deathmatch)
 				gaveammo2 = Player(Toucher.Player).GiveAmmo(Ammo2Type, Ammo2Count * 2);
 			else
@@ -107,9 +108,9 @@ bool TryPickup(EntityEx Toucher)
 
 	AmmoType = AmmoType1;
 	Ammo2Type = none;
-	if (Weapon2Type != -1)
+	if (Weapon2Type)
 	{
-		Ammo2Type = MainGameInfo(Level.Game).WeaponClasses[Weapon2Type].default.AmmoType1;
+		Ammo2Type = Weapon2Type.default.AmmoType1;
 	}
 
 	if (AmmoType)
@@ -124,9 +125,9 @@ bool TryPickup(EntityEx Toucher)
 		gaveammo = false;
 	}
 
-	if (Weapon2Type != -1 && Ammo2Type && AmmoType != Ammo2Type)
+	if (Weapon2Type && Ammo2Type && AmmoType != Ammo2Type)
 	{
-		int Ammo2Count = MainGameInfo(Level.Game).WeaponClasses[Weapon2Type].default.AmmoGive1;
+		int Ammo2Count = Weapon2Type.default.AmmoGive1;
 		if (ShouldStay() && !bDropped && Level.Game.deathmatch)
 			gaveammo2 = Player(Toucher.Player).GiveAmmo(Ammo2Type, Ammo2Count * 2);
 		else
@@ -139,9 +140,9 @@ bool TryPickup(EntityEx Toucher)
 
 	Wpn = CreateCopy(Toucher);
 	Wpn.AttachToOwner(Toucher);
-	if (Weapon2Type != -1)
+	if (Weapon2Type)
 	{
-		WeaponEx Wpn2 = Spawn(MainGameInfo(Level.Game).WeaponClasses[Weapon2Type]);
+		WeaponEx Wpn2 = Spawn(Weapon2Type);
 		Wpn2.AttachToOwner(Toucher);
 	}
 	Player(Toucher.Player).PendingWeapon = WeaponEx(Wpn);
@@ -455,6 +456,5 @@ defaultproperties
 	bRaiseNoiseAlert = true;
 	bFloorClip = true;
 	PickupSound = 'misc/w_pkup';
-	Weapon2Type = -1;
 	FireDeathWaveState = S_WAVE1;
 }

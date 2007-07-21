@@ -100,6 +100,7 @@ __states__
 
 defaultproperties
 {
+	WeaponClass = HexenDefs::PCLASS_CLERIC;
 	WeaponType = HexenDefs::WP_FOURTH;
 	Slot = 4;
 	SelectionOrder = 3000;

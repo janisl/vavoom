@@ -26,6 +26,14 @@
 class PlayerPawn : Pawn
 	abstract;
 
+struct InitInvInfo
+{
+	class<Inventory>	Type;
+	int					Amount;
+};
+
+array<InitInvInfo>		InitialInventory;
+
 //==========================================================================
 //
 //  A_PlayerScream

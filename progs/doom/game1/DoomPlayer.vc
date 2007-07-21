@@ -118,6 +118,6 @@ defaultproperties
 
 	InitialInventory.Num = 3;
 	InitialInventory[0].Type = Clip; InitialInventory[0].Amount = 50;
-	InitialInventory[1].Type = Fist;
-	InitialInventory[2].Type = Pistol;
+	InitialInventory[1].Type = Fist; InitialInventory[1].Amount = 1;
+	InitialInventory[2].Type = Pistol; InitialInventory[2].Amount = 1;
 }

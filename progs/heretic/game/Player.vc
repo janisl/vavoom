@@ -333,8 +333,9 @@ bool CheckSpot(mthing_t * mthing)
 void SpawnPlayer(mthing_t * mthing)
 {
 	float		x, y, z;
-	Actor		A;
+	PlayerPawn	A;
 	bool		ResetInventory = false;
+	int			i;
 	Inventory	Item;
 	WeaponEx	Wpn;
 
@@ -385,31 +386,25 @@ void SpawnPlayer(mthing_t * mthing)
 		{
 			A.Inventory.Destroy();
 		}
-		Item = Level.Spawn(GoldWandAmmo);
-		Item.Amount = 50;
-		if (!Item.TryPickup(A))
+		for (i = 0; i < A.InitialInventory.Num; i++)
 		{
-			Item.Destroy();
+			Item = Level.Spawn(A.InitialInventory[i].Type);
+			Item.Amount = A.InitialInventory[i].Amount;
+			if (Weapon(Item))
+			{
+				//	For better control empty weapon's ammo.
+				Weapon(Item).AmmoGive1 = 0;
+				Weapon(Item).AmmoGive2 = 0;
+			}
+			if (!Item.TryPickup(A))
+			{
+				Item.Destroy();
+			}
+			else if (Weapon(Item) && Weapon(Item).CheckAmmo(false))
+			{
+				SetWeapon(WeaponEx(Item));
+			}
 		}
-		Wpn = Level.Spawn(Staff);
-		Wpn.AmmoGive1 = 0;
-		Wpn.AmmoGive2 = 0;
-		if (!Wpn.TryPickup(A))
-		{
-			Wpn.Destroy();
-		}
-		Wpn = Level.Spawn(GoldWand);
-		Wpn.AmmoGive1 = 0;
-		Wpn.AmmoGive2 = 0;
-		if (!Wpn.TryPickup(A))
-		{
-			Wpn.Destroy();
-		}
-		SetWeapon(WeaponEx(A.FindInventory(GoldWand)));
-	}
-	else
-	{
-		ViewEnt.Owner = MO;
 	}
 	SetupPsprites();	// setup gun psprite
 	if (Level.Game.deathmatch)
@@ -2784,6 +2779,7 @@ void Cheat_NoClip()
 void Cheat_Gimme()
 {
 	class<Inventory>	Cls;
+	class<WeaponEx>		WpnCls;
 
 	if (Cmd_CheckParm("weapons"))
 	{
@@ -2796,21 +2792,6 @@ void Cheat_Gimme()
 		if (!Bag.TryPickup(EntityEx(MO)))
 		{
 			Bag.Destroy();
-		}
-		for (i = 0; i < NUMWEAPONS - 1; i++)
-		{
-			if (MainGameInfo(Level.Game).shareware &&
-				!MainGameInfo(Level.Game).WeaponClasses[i].default.bInShareware)
-			{
-				continue;
-			}
-			WeaponEx Wpn = Level.Spawn(MainGameInfo(Level.Game).WeaponClasses[i]);
-			Wpn.AmmoGive1 = 0;
-			Wpn.AmmoGive2 = 0;
-			if (!Wpn.TryPickup(EntityEx(MO)))
-			{
-				Wpn.Destroy();
-			}
 		}
 		foreach AllClasses(Ammo, Cls)
 		{
@@ -2832,6 +2813,25 @@ void Cheat_Gimme()
 			if (AmmoItem)
 			{
 				AmmoItem.Amount = AmmoItem.MaxAmount;
+			}
+		}
+		foreach AllClasses(Weapon, WpnCls)
+		{
+			if (!WpnCls.default.ReadyState)
+			{
+				//	Abstract base class.
+			}
+			if (MainGameInfo(Level.Game).shareware &&
+				!WpnCls.default.bInShareware)
+			{
+				continue;
+			}
+			WeaponEx Wpn = Level.Spawn(WpnCls);
+			Wpn.AmmoGive1 = 0;
+			Wpn.AmmoGive2 = 0;
+			if (!Wpn.TryPickup(EntityEx(MO)))
+			{
+				Wpn.Destroy();
 			}
 		}
 		cprint("ALL WEAPONS");

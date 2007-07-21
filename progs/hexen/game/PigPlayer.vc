@@ -62,4 +62,7 @@ defaultproperties
 	PainSound = 'PigPain';
 	DeathSound = 'PigDeath';
 	SoundClass = 'pig';
+
+	InitialInventory.Num = 1;
+	InitialInventory[0].Type = Snout; InitialInventory[0].Amount = 1;
 }

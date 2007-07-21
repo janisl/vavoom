@@ -129,4 +129,7 @@ defaultproperties
 	IceDeathState = S_FPLAY_ICE;
 	PainSound = 'PlayerFighterPain';
 	SoundClass = 'fighter';
+
+	InitialInventory.Num = 1;
+	InitialInventory[0].Type = FWeapFist; InitialInventory[0].Amount = 1;
 }

@@ -44,13 +44,8 @@ struct spec_trans_t
 
 spec_trans_t spec_trans_tab[NUM_SPECIALS];
 
-class<WeaponEx> WeaponClasses[NUMWEAPONS];
-int WeaponOrder[NUMWEAPONS];
-
 BotPlayer::botinfo_t botinfo[NUMTOTALBOTS];
 int botskill;
-
-int WeaponValue[NUMWEAPONS];
 
 string keymsg[NUMKEYS];
 
@@ -531,36 +526,6 @@ defaultproperties
 	TeleportFogClass = TeleportFog;
 	DefaultKickBack = 150.0;
 	BloodClass = Blood;
-
-	WeaponClasses[0] = Staff;
-	WeaponClasses[1] = GoldWand;
-	WeaponClasses[2] = Crossbow;
-	WeaponClasses[3] = Blaster;
-	WeaponClasses[4] = SkullRod;
-	WeaponClasses[5] = PhoenixRod;
-	WeaponClasses[6] = Mace;
-	WeaponClasses[7] = Gauntlets;
-	WeaponClasses[8] = Beak;
-
-	WeaponOrder[0] = wp_staff;
-	WeaponOrder[1] = wp_gauntlets;
-	WeaponOrder[2] = wp_goldwand;
-	WeaponOrder[3] = wp_crossbow;
-	WeaponOrder[4] = wp_blaster;
-	WeaponOrder[5] = wp_skullrod;
-	WeaponOrder[6] = wp_phoenixrod;
-	WeaponOrder[7] = wp_mace;
-	WeaponOrder[8] = wp_beak;
-
-	WeaponValue[0] = 1;	// staff
-	WeaponValue[1] = 3;	// goldwand
-	WeaponValue[2] = 4;	// crossbow
-	WeaponValue[3] = 5;	// blaster
-	WeaponValue[4] = 6;	// skullrod
-	WeaponValue[5] = 7;	// phoenixrod
-	WeaponValue[6] = 8;	// mace
-	WeaponValue[7] = 2;	// gauntlets
-	WeaponValue[8] = 0;	// beak
 
 	keymsg[0] = "$txt_needyellowkey";
 	keymsg[1] = "$txt_needgreenkey";

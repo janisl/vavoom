@@ -198,6 +198,7 @@ defaultproperties
 	WeaponType = StrifeDefs::wp_sigil;
 	Slot = 8;
 	SelectionOrder = 4000;
+	bCheatNotWeapon = true;
 	UpState = S_SIGILUP;
 	DownState = S_SIGILDOWN;
 	ReadyState = S_SIGIL;

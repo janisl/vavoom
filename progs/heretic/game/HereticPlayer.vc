@@ -154,4 +154,9 @@ defaultproperties
 	FireDeathState = S_PLAY_FDTH1;
 	PainSound = '*pain100';
 	DeathSound = '*death';
+
+	InitialInventory.Num = 3;
+	InitialInventory[0].Type = GoldWandAmmo; InitialInventory[0].Amount = 50;
+	InitialInventory[1].Type = Staff; InitialInventory[1].Amount = 1;
+	InitialInventory[2].Type = GoldWand; InitialInventory[2].Amount = 1;
 }

@@ -90,8 +90,9 @@ bool TryPickup(EntityEx Toucher)
 	Wpn = CreateCopy(Toucher);
 	Wpn.AttachToOwner(Toucher);
 	if (!Player(Toucher.Player).ReadyWeapon ||
-		MainGameInfo(Level.Game).WeaponValue[WeaponType] >
-		MainGameInfo(Level.Game).WeaponValue[Player(Toucher.Player).ReadyWeapon.WeaponType])
+		Weapon(Wpn).Slot > Player(Toucher.Player).ReadyWeapon.Slot ||
+		(Weapon(Wpn).Slot == Player(Toucher.Player).ReadyWeapon.Slot &&
+		Weapon(Wpn).SelectionOrder < Player(Toucher.Player).ReadyWeapon.SelectionOrder))
 	{
 		// Only switch to more powerful weapons
 		Player(Toucher.Player).PendingWeapon = WeaponEx(Wpn);

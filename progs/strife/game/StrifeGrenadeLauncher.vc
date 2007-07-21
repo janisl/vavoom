@@ -119,7 +119,7 @@ __states__
 defaultproperties
 {
 	WeaponType = StrifeDefs::wp_grenade;
-	Weapon2Type = StrifeDefs::wp_grenade2;
+	Weapon2Type = StrifeGrenadeLauncher2;
 	Slot = 5;
 	SelectionOrder = 2400;
 	AmmoType1 = HEGrenadeRounds;
