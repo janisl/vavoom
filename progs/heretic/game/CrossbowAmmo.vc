@@ -41,4 +41,5 @@ defaultproperties
 	BackpackMaxAmount = 100;
 	IdleState = S_AMC1;
 	PickupMessage = "$txt_ammocrossbow1";
+	IconName = 'inambow';
 }

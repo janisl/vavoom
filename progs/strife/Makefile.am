@@ -177,7 +177,6 @@ EXTRA_DIST = compile.bat \
 	game/AlienSpiderLight.vc \
 	game/AmmoFiller.vc \
 	game/AmmoFillup.vc \
-	game/AmmoPickup.vc \
 	game/AmmoSatchel.vc \
 	game/Anvil.vc \
 	game/Armorer.vc \
@@ -232,6 +231,7 @@ EXTRA_DIST = compile.bat \
 	game/DeadStrifePlayer.vc \
 	game/Decoration.vc \
 	game/DegninOre.vc \
+	game/DummyStrifeItem.vc \
 	game/Ear.vc \
 	game/Effect.vc \
 	game/ElectricBolt.vc \
@@ -273,7 +273,6 @@ EXTRA_DIST = compile.bat \
 	game/InquisitorArm.vc \
 	game/InquisitorShot.vc \
 	game/InventoryItem.vc \
-	game/ItemFog.vc \
 	game/Junk.vc \
 	game/KeyPickup.vc \
 	game/KlaxonWarningLight.vc \
@@ -295,6 +294,7 @@ EXTRA_DIST = compile.bat \
 	game/MapSpot.vc \
 	game/MapSpotGravity.vc \
 	game/Mauler.vc \
+	game/Mauler2.vc \
 	game/MaulerKey.vc \
 	game/MaulerPuff.vc \
 	game/MaulerTorpedo.vc \
@@ -353,7 +353,6 @@ EXTRA_DIST = compile.bat \
 	game/PhosphorousFire.vc \
 	game/PhosphorousGrenade.vc \
 	game/PhosphorusGrenadeRounds.vc \
-	game/Pickup.vc \
 	game/PileOfGuts.vc \
 	game/PillarAlienPower.vc \
 	game/PillarAztec.vc \
@@ -382,6 +381,7 @@ EXTRA_DIST = compile.bat \
 	game/Programmer.vc \
 	game/ProgrammerBase.vc \
 	game/Projectile.vc \
+	game/PunchDagger.vc \
 	game/QuakeFocus.vc \
 	game/QuestItem.vc \
 	game/QuestItem1.vc \
@@ -496,7 +496,9 @@ EXTRA_DIST = compile.bat \
 	game/StrifeBurningBarrel.vc \
 	game/StrifeCandelabra.vc \
 	game/StrifeCrossbow.vc \
+	game/StrifeCrossbow2.vc \
 	game/StrifeGrenadeLauncher.vc \
+	game/StrifeGrenadeLauncher2.vc \
 	game/StrifeHumanoid.vc \
 	game/StrifeLevelInfo.vc \
 	game/StrifeMap.vc \
@@ -538,16 +540,11 @@ EXTRA_DIST = compile.bat \
 	game/WaterSplash.vc \
 	game/WaterSplashBase.vc \
 	game/Weapon.vc \
-	game/WeaponAssaultGun.vc \
-	game/WeaponCrossbow.vc \
-	game/WeaponFlamethrower.vc \
-	game/WeaponGrenadeLauncher.vc \
-	game/WeaponMauler.vc \
-	game/WeaponMissileLauncher.vc \
-	game/WeaponPickup.vc \
-	game/WeaponPunch.vc \
-	game/WeaponSigil.vc \
 	game/WeaponSmith.vc \
 	game/WoodenBarrel.vc \
 	game/Zombie.vc \
 	game/ZombieSpawner.vc
+
+MOSTLYCLEANFILES = \
+	$(OUTDIR)/shared.dat $(OUTDIR)/svprogs.dat $(OUTDIR)/clprogs.dat \
+	$(OUTDIR)/shared.txt $(OUTDIR)/svprogs.txt $(OUTDIR)/clprogs.txt

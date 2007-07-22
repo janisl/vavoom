@@ -55,7 +55,6 @@ int pic_minus;
 int pic_lame;
 int pic_bignum[10];
 int bignumwidth[10];
-int pic_ammoicon[6];
 int pic_ykey;
 int pic_gkey;
 int pic_bkey;
@@ -120,12 +119,6 @@ void StartMap()
 	}
 	pic_minus = R_RegisterPic('negnum');
 	pic_lame = R_RegisterPic('lame');
-	pic_ammoicon[0] = R_RegisterPic('inamgld');
-	pic_ammoicon[1] = R_RegisterPic('inambow');
-	pic_ammoicon[2] = R_RegisterPic('inambst');
-	pic_ammoicon[3] = R_RegisterPic('inamram');
-	pic_ammoicon[4] = R_RegisterPic('inampnx');
-	pic_ammoicon[5] = R_RegisterPic('inamlob');
 	pic_ykey = R_RegisterPic('ykeyicon');
 	pic_gkey = R_RegisterPic('gkeyicon');
 	pic_bkey = R_RegisterPic('bkeyicon');
@@ -328,11 +321,11 @@ void SB_DrawMainBar()
 			SB_DrawNumber9(BAR_X + 61, BAR_Y + 12, health);
 		}
 
-		if (cl.ReadyAmmo)
+		if (cl.ReadyWeapon.Ammo1)
 		{
 			//  Ammo
-			SB_DrawNumber9(BAR_X + 109, BAR_Y + 4, cl.ReadyAmmo);
-			R_DrawPic(BAR_X + 111, BAR_Y + 14, pic_ammoicon[cl.ReadyWeapon.WeaponType - 1]);
+			SB_DrawNumber9(BAR_X + 109, BAR_Y + 4, cl.ReadyWeapon.Ammo1.Amount);
+			R_DrawPic(BAR_X + 111, BAR_Y + 14, R_RegisterPic(cl.ReadyWeapon.Ammo1.IconName));
 		}
 
 		//  Ready artifact
@@ -418,10 +411,10 @@ void SB_DrawFullscreenStats()
 	}
 
 	//  Ammo
-	if (cl.ReadyAmmo)
+	if (cl.ReadyWeapon.Ammo1)
 	{
-		SB_DrawNumber9(610, 456, cl.ReadyAmmo);
-		R_DrawPic(590, 454, pic_ammoicon[cl.ReadyWeapon.WeaponType - 1]);
+		SB_DrawNumber9(610, 456, cl.ReadyWeapon.Ammo1.Amount);
+		R_DrawPic(590, 454, R_RegisterPic(cl.ReadyWeapon.Ammo1.IconName));
 	}
 
 	//  Keys

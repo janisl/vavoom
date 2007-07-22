@@ -42,4 +42,5 @@ defaultproperties
 	BackpackMaxAmount = 400;
 	IdleState = S_AMS1_1;
 	PickupMessage = "$txt_ammoskullrod1";
+	IconName = 'inamram';
 }

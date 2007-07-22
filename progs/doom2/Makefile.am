@@ -21,3 +21,7 @@ EXTRA_DIST = compile.bat \
 	clprogs.vc \
 	shared.vc \
 	svprogs.vc
+
+MOSTLYCLEANFILES = \
+	$(OUTDIR)/shared.dat $(OUTDIR)/svprogs.dat $(OUTDIR)/clprogs.dat \
+	$(OUTDIR)/shared.txt $(OUTDIR)/svprogs.txt $(OUTDIR)/clprogs.txt

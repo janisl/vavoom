@@ -43,4 +43,5 @@ defaultproperties
 	BackpackMaxAmount = 400;
 	IdleState = S_AMB1_1;
 	PickupMessage = "$txt_ammoblaster1";
+	IconName = 'inambst';
 }

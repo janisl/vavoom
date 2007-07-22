@@ -41,4 +41,5 @@ defaultproperties
 	BackpackMaxAmount = 300;
 	IdleState = S_AMM1;
 	PickupMessage = "$txt_ammomace1";
+	IconName = 'inamlob';
 }

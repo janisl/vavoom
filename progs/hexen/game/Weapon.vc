@@ -30,7 +30,6 @@ float PSpriteSY;		// Y-adjustment value for full screen
 bool bManaOptional;
 
 int WeaponClass;
-int WeaponType;
 
 //==========================================================================
 //
@@ -77,7 +76,7 @@ bool TryPickup(EntityEx Toucher)
 	Wpn = CreateCopy(Toucher);
 	Wpn.AttachToOwner(Toucher);
 	if (!Player(Toucher.Player).ReadyWeapon ||
-		WeaponType > Player(Toucher.Player).ReadyWeapon.WeaponType)
+		Slot > Player(Toucher.Player).ReadyWeapon.Slot)
 	{
 		// Only switch to more powerful weapons
 		Player(Toucher.Player).PendingWeapon = WeaponEx(Wpn);

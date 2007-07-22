@@ -193,10 +193,12 @@ EXTRA_DIST = compile.bat \
 	game/CStaffMissile.vc \
 	game/CStaffPuff.vc \
 	game/CWeapFlame.vc \
+	game/CWeapMace.vc \
 	game/CWeaponPiece1.vc \
 	game/CWeaponPiece2.vc \
 	game/CWeaponPiece3.vc \
 	game/CWeapStaff.vc \
+	game/CWeapWraithverge.vc \
 	game/Demon1.vc \
 	game/Demon1Chunk1.vc \
 	game/Demon1Chunk2.vc \
@@ -224,10 +226,12 @@ EXTRA_DIST = compile.bat \
 	game/FSwordFlame.vc \
 	game/FSwordMissile.vc \
 	game/FWeapAxe.vc \
+	game/FWeapFist.vc \
 	game/FWeapHammer.vc \
 	game/FWeaponPiece1.vc \
 	game/FWeaponPiece2.vc \
 	game/FWeaponPiece3.vc \
+	game/FWeapQuietus.vc \
 	game/GlassShard.vc \
 	game/Heresiarch.vc \
 	game/HolySpirit.vc \
@@ -271,11 +275,13 @@ EXTRA_DIST = compile.bat \
 	game/MinotaurFX3.vc \
 	game/MinotaurSmoke.vc \
 	game/MinotaurSmokeExit.vc \
+	game/MWeapBloodscourge.vc \
 	game/MWeapFrost.vc \
 	game/MWeapLightning.vc \
 	game/MWeaponPiece1.vc \
 	game/MWeaponPiece2.vc \
 	game/MWeaponPiece3.vc \
+	game/MWeapWand.vc \
 	game/PigPlayer.vc \
 	game/PlatinumHelm.vc \
 	game/Player.vc \
@@ -317,6 +323,7 @@ EXTRA_DIST = compile.bat \
 	game/SGShard7.vc \
 	game/SGShard8.vc \
 	game/SGShard9.vc \
+	game/Snout.vc \
 	game/SorcBall.vc \
 	game/SorcBall1.vc \
 	game/SorcBall2.vc \
@@ -340,21 +347,7 @@ EXTRA_DIST = compile.bat \
 	game/TelOtherFX4.vc \
 	game/TelOtherFX5.vc \
 	game/Weapon.vc \
-	game/WeaponClericHoly.vc \
-	game/WeaponClericFire.vc \
-	game/WeaponClericMace.vc \
-	game/WeaponClericStaff.vc \
-	game/WeaponFighterAxe.vc \
-	game/WeaponFighterHammer.vc \
-	game/WeaponFighterPunch.vc \
-	game/WeaponFighterSword.vc \
-	game/WeaponMageCone.vc \
-	game/WeaponMageLightning.vc \
-	game/WeaponMageStaff.vc \
-	game/WeaponMageWand.vc \
-	game/WeaponPickup.vc \
 	game/WeaponPiece.vc \
-	game/WeaponPigSnout.vc \
 	game/Wraith.vc \
 	game/WraithBuried.vc \
 	game/WraithFX1.vc \
@@ -440,7 +433,6 @@ EXTRA_DIST = compile.bat \
 	game/ZBannerTattered.vc \
 	game/ZStatueGargoyleDarkRedShort.vc \
 	game/Pottery1.vc \
-	game/Mana.vc \
 	game/FireDemonRock3.vc \
 	game/ZRock2.vc \
 	game/ZStalagmiteIceLarge.vc \
@@ -522,7 +514,6 @@ EXTRA_DIST = compile.bat \
 	game/Leaf1.vc \
 	game/ZStatueGargoyleBlueShort.vc \
 	game/Key.vc \
-	game/Pickup.vc \
 	game/ZStalagmiteIceMedium.vc \
 	game/AxePuffGlow.vc \
 	game/PunchPuff.vc \
@@ -614,3 +605,7 @@ EXTRA_DIST = compile.bat \
 	game/HexenWorldInfo.vc \
 	game/SoundSequence.vc \
 	game/SoundSequenceSlot.vc
+
+MOSTLYCLEANFILES = \
+	$(OUTDIR)/shared.dat $(OUTDIR)/svprogs.dat $(OUTDIR)/clprogs.dat \
+	$(OUTDIR)/shared.txt $(OUTDIR)/svprogs.txt $(OUTDIR)/clprogs.txt

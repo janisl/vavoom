@@ -39,12 +39,14 @@ EXTRA_DIST = \
 	linespec/FloorWaggle.vc \
 	linespec/GlowingLight.vc \
 	linespec/Inventory.vc \
+	linespec/ItemFog.vc \
 	linespec/LightFlash.vc \
 	linespec/Lighting.vc \
 	linespec/LightEffect.vc \
 	linespec/LineSpecialGameInfo.vc \
 	linespec/LineSpecialLevelInfo.vc \
 	linespec/PhasedLight.vc \
+	linespec/PickupFlash.vc \
 	linespec/Pillar.vc \
 	linespec/PlaneWatcher.vc \
 	linespec/Platform.vc \
@@ -63,3 +65,7 @@ EXTRA_DIST = \
 	linespec/TextureChangeDoor.vc \
 	linespec/VerticalDoor.vc \
 	linespec/Weapon.vc
+
+MOSTLYCLEANFILES = \
+	$(OUTDIR)/engine.dat $(OUTDIR)/engine.txt \
+	$(OUTDIR)/linespec.dat $(OUTDIR)/linespec.txt

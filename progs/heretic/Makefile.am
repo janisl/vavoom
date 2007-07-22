@@ -168,20 +168,27 @@ EXTRA_DIST = compile.bat \
 	game/ArtiTomeOfPower.vc \
 	game/ArtiTorch.vc \
 	game/BagOfHolding.vc \
+	game/Beak.vc \
+	game/BeakPowered.vc \
 	game/Blaster.vc \
 	game/BlasterAmmo.vc \
 	game/BlasterHefty.vc \
+	game/BlasterPowered.vc \
 	game/Crossbow.vc \
 	game/CrossbowAmmo.vc \
 	game/CrossbowHefty.vc \
+	game/CrossbowPowered.vc \
 	game/CrystalVial.vc \
 	game/EggFX.vc \
 	game/EnchantedShield.vc \
 	game/Gauntlets.vc \
+	game/GauntletsPowered.vc \
+	game/GoldWand.vc \
 	game/GoldWandAmmo.vc \
 	game/GoldWandFX1.vc \
 	game/GoldWandFX2.vc \
 	game/GoldWandHefty.vc \
+	game/GoldWandPowered.vc \
 	game/GoldWandPuff1.vc \
 	game/GoldWandPuff2.vc \
 	game/HeadFX1.vc \
@@ -214,6 +221,7 @@ EXTRA_DIST = compile.bat \
 	game/Mace.vc \
 	game/MaceAmmo.vc \
 	game/MaceHefty.vc \
+	game/MacePowered.vc \
 	game/MaceSpawner.vc \
 	game/Minotaur.vc \
 	game/MinotaurFX1.vc \
@@ -223,6 +231,7 @@ EXTRA_DIST = compile.bat \
 	game/PhoenixRod.vc \
 	game/PhoenixRodAmmo.vc \
 	game/PhoenixRodHefty.vc \
+	game/PhoenixRodPowered.vc \
 	game/RainPillar.vc \
 	game/RainPlayer2.vc \
 	game/RainPlayer3.vc \
@@ -232,6 +241,7 @@ EXTRA_DIST = compile.bat \
 	game/SkullRod.vc \
 	game/SkullRodAmmo.vc \
 	game/SkullRodHefty.vc \
+	game/SkullRodPowered.vc \
 	game/SnakeProjA.vc \
 	game/SnakeProjB.vc \
 	game/Sorcerer1.vc \
@@ -243,6 +253,8 @@ EXTRA_DIST = compile.bat \
 	game/SorcererFX1.vc \
 	game/SoundSequence.vc \
 	game/SoundSequenceSlot.vc \
+	game/Staff.vc \
+	game/StaffPowered.vc \
 	game/SuperMap.vc \
 	game/TeleGlitter1.vc \
 	game/TeleGlitter2.vc \
@@ -271,10 +283,8 @@ EXTRA_DIST = compile.bat \
 	game/StaticLightSource.vc \
 	game/Barrel.vc \
 	game/StalagmiteLarge.vc \
-	game/WeaponGoldWand.vc \
 	game/MummyGhost.vc \
 	game/BurnBallFB.vc \
-	game/WeaponCrossbow.vc \
 	game/SludgeChunk.vc \
 	game/MummyLeaderGhost.vc \
 	game/HangingCorpse.vc \
@@ -282,21 +292,16 @@ EXTRA_DIST = compile.bat \
 	game/Key.vc \
 	game/KnightGhost.vc \
 	game/Puffy.vc \
-	game/Pickup.vc \
 	game/classes.vc \
 	game/SkullHang70.vc \
 	game/HereticPlayer.vc \
 	game/Projectile.vc \
 	game/Wizard.vc \
-	game/WeaponGauntlets.vc \
 	game/QuakeFocus.vc \
 	game/StaffPuff2.vc \
-	game/WeaponBlaster.vc \
 	game/Beast.vc \
 	game/MummySoul.vc \
 	game/SoundWind.vc \
-	game/WeaponBeak.vc \
-	game/WeaponStaff.vc \
 	game/CrossbowFX3.vc \
 	game/PlayerPawn.vc \
 	game/Blood.vc \
@@ -340,22 +345,18 @@ EXTRA_DIST = compile.bat \
 	game/Knight.vc \
 	game/SkullHang45.vc \
 	game/Weapon.vc \
-	game/WeaponPhoenixRod.vc \
 	game/Moss2.vc \
 	game/StaticRGBLightSource.vc \
-	game/WeaponSkullRod.vc \
 	game/MaceFX1.vc \
 	game/StaffPuff.vc \
 	game/PhoenixFX2.vc \
 	game/PhoenixPuff.vc \
 	game/SkullHang60.vc \
 	game/WallTorch.vc \
-	game/Ammo.vc \
 	game/StalactiteLarge.vc \
 	game/MaceFX4.vc \
 	game/BossSpot.vc \
 	game/PointPuller.vc \
-	game/WeaponMace.vc \
 	game/StalagmiteSmall.vc \
 	game/MapSpot.vc \
 	game/WaterSplashBase.vc \
@@ -370,5 +371,8 @@ EXTRA_DIST = compile.bat \
 	game/SlimeSplash.vc \
 	game/CrossbowFX2.vc \
 	game/HereticWorldInfo.vc \
-	game/BotPlayer.vc \
-	game/WeaponPickup.vc
+	game/BotPlayer.vc
+
+MOSTLYCLEANFILES = \
+	$(OUTDIR)/shared.dat $(OUTDIR)/svprogs.dat $(OUTDIR)/clprogs.dat \
+	$(OUTDIR)/shared.txt $(OUTDIR)/svprogs.txt $(OUTDIR)/clprogs.txt

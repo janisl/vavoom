@@ -183,7 +183,6 @@ EXTRA_DIST = compile.bat \
 	game/Weapon.vc \
 	game1/classes.vc \
 	game1/Allmap.vc \
-	game1/AmmoPickup.vc \
 	game1/ArmorBonus.vc \
 	game1/ArmorPickup.vc \
 	game1/Backpack.vc \
@@ -232,6 +231,7 @@ EXTRA_DIST = compile.bat \
 	game1/DoomUnusedStates.vc \
 	game1/EvilEye.vc \
 	game1/ExplosiveBarrel.vc \
+	game1/Fist.vc \
 	game1/FloatingSkull.vc \
 	game1/GibbedMarine.vc \
 	game1/GibbedMarineExtra.vc \
@@ -254,7 +254,6 @@ EXTRA_DIST = compile.bat \
 	game1/HeartColumn.vc \
 	game1/Infrared.vc \
 	game1/InvulnerabilitySphere.vc \
-	game1/ItemFog.vc \
 	game1/KeyPickup.vc \
 	game1/LiveStick.vc \
 	game1/LostSoul.vc \
@@ -268,6 +267,7 @@ EXTRA_DIST = compile.bat \
 	game1/NonsolidMeat4.vc \
 	game1/NonsolidMeat5.vc \
 	game1/NonsolidTwitch.vc \
+	game1/Pistol.vc \
 	game1/PlasmaBall.vc \
 	game1/PlasmaRifle.vc \
 	game1/PowerupPickup.vc \
@@ -305,16 +305,6 @@ EXTRA_DIST = compile.bat \
 	game1/TeleportDest3.vc \
 	game1/TeleportFog.vc \
 	game1/TorchTree.vc \
-	game1/WeaponBFG.vc \
-	game1/WeaponChaingun.vc \
-	game1/WeaponChainsaw.vc \
-	game1/WeaponFist.vc \
-	game1/WeaponGrenade.vc \
-	game1/WeaponMissile.vc \
-	game1/WeaponPickup.vc \
-	game1/WeaponPistol.vc \
-	game1/WeaponPlasma.vc \
-	game1/WeaponShotgun.vc \
 	game1/YellowCard.vc \
 	game1/YellowSkull.vc \
 	game1/ZombieMan.vc \
@@ -340,5 +330,8 @@ EXTRA_DIST = compile.bat \
 	game2/SpawnFire.vc \
 	game2/SpawnShot.vc \
 	game2/SuperShotgun.vc \
-	game2/WeaponSuperShotgun.vc \
 	game2/WolfensteinSS.vc
+
+MOSTLYCLEANFILES = \
+	$(OUTDIR)/shared.dat $(OUTDIR)/svprogs.dat $(OUTDIR)/clprogs.dat \
+	$(OUTDIR)/shared.txt $(OUTDIR)/svprogs.txt $(OUTDIR)/clprogs.txt
