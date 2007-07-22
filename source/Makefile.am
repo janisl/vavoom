@@ -568,3 +568,5 @@ EXTRA_DIST = \
 	gl_x.cpp \
 	template.cpp \
 	template.h
+
+CLEANFILES = $(bin_SCRIPTS)

@@ -11,3 +11,5 @@ VLUMPY = ../../utils/bin/vlumpy$(EXEEXT)
 
 basepak.pk3: basepak.ls $(VLUMPY)
 	$(VLUMPY) $<
+
+MOSTLYCLEANFILES = basepak.pk3

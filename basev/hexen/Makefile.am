@@ -22,3 +22,5 @@ VLUMPY = ../../utils/bin/vlumpy$(EXEEXT)
 basepak.pk3: basepak.ls $(VLUMPY) \
 		progs/shared.dat progs/clprogs.dat progs/svprogs.dat
 	$(VLUMPY) $<
+
+MOSTLYCLEANFILES = basepak.pk3

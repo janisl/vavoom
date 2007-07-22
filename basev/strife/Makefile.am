@@ -84,3 +84,5 @@ basepak.pk3: basepak.ls $(VLUMPY) \
 
 strfhelp.o: $(srcdir)/../../utils/editing/acs/*.acs $(ACC)
 	$(ACC) $(srcdir)/../../utils/editing/acs/strfhelp.acs strfhelp.o
+
+MOSTLYCLEANFILES = basepak.pk3 strfhelp.o
