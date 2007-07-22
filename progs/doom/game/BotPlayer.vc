@@ -177,8 +177,6 @@ botinfo_t info;			// Aiming, name, perfection, yadda yadda
 
 int angerlevel;
 
-float combatdist[DoomDefs::NUMWEAPONS + 1]; //different for each weapon.
-
 float angle;			// The wanted angle that the bot tries to get every tic.
 
 //==========================================================================
@@ -765,16 +763,12 @@ void BotAim()
 	*/
 
 	// Fix me: Implement botskill, accuracy, and intelligence
-	switch (player.ReadyWeapon.WeaponType)
+	if (player.ReadyWeapon.bBotProjectile)
 	{
 		// Splash weapons
-	case DoomDefs::wp_missile:
-//	case wp_grenlauncher:
 //		bot->SetAngle(R_PointToAngle2(MO->x, MO->y, enemy->x, enemy->y));
-//		break;
 
 		// Projectile weapons
-	case DoomDefs::wp_plasma:
 		switch (info.intelect)
 		{
 		case bsk_verypoor:
@@ -797,18 +791,15 @@ void BotAim()
 			Error("Unknown bot skill level: %d", info.accuracy);
 			return;
 		}
-
-		break;
+	}
+	else if (player.ReadyWeapon.bBotBfg)
+	{
 		// BFG9000
-	case DoomDefs::wp_bfg:
 		SetAngle(AngleTo(enemy.Origin));
-		break;
-
+	}
+	else
+	{
 		// Instant weapons
-	case DoomDefs::wp_chainsaw:
-	case DoomDefs::wp_fist:
-	default:
-
 		switch (info.accuracy)
 		{
 		case bsk_verypoor:
@@ -1164,7 +1155,7 @@ void Move(float deltaTime)
 		if (item)
 		{
 			if (bItemIsPowerup ||
-				(bItemIsWeapon && player.ReadyWeapon.WeaponType == DoomDefs::wp_pistol))
+				(bItemIsWeapon && player.ReadyWeapon.bWimpyWeapon))
 			{
 				Roam();
 				return;
@@ -1180,7 +1171,7 @@ void Move(float deltaTime)
 		if (!CheckPath(an, 48.0)) // We're blocked, so go the other way!
 			sidemove = -sidemove;
 
-		if (CheckTo(enemy.Origin) && dist > combatdist[player.ReadyWeapon.WeaponType])
+		if (CheckTo(enemy.Origin) && dist > player.ReadyWeapon.BotCombatDist)
 			forwardmove = FORWARDRUN;
 		else
 			forwardmove = -FORWARDRUN;
@@ -1218,16 +1209,12 @@ void Attack()
 	if (!Check_LOS(enemy, SHOOTFOV))
 		return;
 
-	switch (player.ReadyWeapon.WeaponType)
+	if (Chaingun(player.ReadyWeapon))
 	{
-	case DoomDefs::wp_chaingun:
 		// Double tap the chaingun for extreme accuracy
 		if (info.accuracy == bsk_supreme)
 			if (t_fire)
 				return;
-		break;
-	default:
-		break;
 	}
 
 	player.Buttons |= BT_ATTACK;
@@ -1390,32 +1377,6 @@ void OnBeginPlay()
 	info.anticip = SkillLower(binfo->anticip, 4 - botskill);
 	info.reaction = SkillLower(binfo->reaction, 4 - botskill);
 	player.UserInfo = binfo->userinfo;
-
-	// Setup combat distance tables
-	if (player.Level.Game.deathmatch)
-	{
-		combatdist[DoomDefs::wp_fist]			= 1.0;
-		combatdist[DoomDefs::wp_chainsaw]		= 1.0;
-		combatdist[DoomDefs::wp_pistol]		= 256.0;
-		combatdist[DoomDefs::wp_shotgun]		= 192.0;
-		combatdist[DoomDefs::wp_supershotgun]	= 128.0;
-		combatdist[DoomDefs::wp_chaingun]		= 256.0;
-		combatdist[DoomDefs::wp_missile]		= SAFE_SELF_MISDIST * 2.0;
-		combatdist[DoomDefs::wp_plasma]		= 384.0;
-		combatdist[DoomDefs::wp_bfg]			= 384.0;
-	}
-	else
-	{
-		combatdist[DoomDefs::wp_fist]			= 1.0;
-		combatdist[DoomDefs::wp_chainsaw]		= 1.0;
-		combatdist[DoomDefs::wp_pistol]		= 256.0 / 2.0;
-		combatdist[DoomDefs::wp_shotgun]		= 192.0 / 2.0;
-		combatdist[DoomDefs::wp_supershotgun]	= 128.0 / 2.0;
-		combatdist[DoomDefs::wp_chaingun]		= 256.0 / 2.0;
-		combatdist[DoomDefs::wp_missile]		= SAFE_SELF_MISDIST * 2.0 / 2.0;
-		combatdist[DoomDefs::wp_plasma]		= 384.0 / 2.0;
-		combatdist[DoomDefs::wp_bfg]			= 384.0 / 2.0;
-	}
 }
 
 //==========================================================================

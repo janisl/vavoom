@@ -28,8 +28,6 @@ class WeaponEx : Weapon
 
 int PlayerModelVersion;
 
-int WeaponType;
-
 //==========================================================================
 //
 //	TryPickup
@@ -198,10 +196,9 @@ final void A_WeaponReady()
 		Owner.SetState(Actor(Owner).IdleState);
 	}
 
-	if (Player(Owner.Player).ReadyWeapon.WeaponType == DoomDefs::wp_chainsaw &&
-		Owner.Player.ViewStates[ps_weapon].State == ReadyState)
+	if (ReadySound && Owner.Player.ViewStates[ps_weapon].State == ReadyState)
 	{
-		Owner.PlaySound('weapons/sawidle', CHAN_WEAPON);
+		Owner.PlaySound(ReadySound, CHAN_WEAPON);
 	}
 
 	// check for change
@@ -219,8 +216,7 @@ final void A_WeaponReady()
 	if (Owner.Player.Buttons & BT_ATTACK)
 	{
 		if (!Owner.Player.bAttackDown ||
-			(Player(Owner.Player).ReadyWeapon.WeaponType != DoomDefs::wp_missile &&
-			Player(Owner.Player).ReadyWeapon.WeaponType != DoomDefs::wp_bfg))
+			!Player(Owner.Player).ReadyWeapon.bNoAutoFire)
 		{
 			Owner.Player.bAttackDown = true;
 			Player(Owner.Player).FireWeapon();
@@ -403,4 +399,5 @@ __states__
 defaultproperties
 {
 	PickupSound = 'misc/w_pkup';
+	Kickback = 100.0;
 }

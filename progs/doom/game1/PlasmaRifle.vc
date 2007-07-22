@@ -57,7 +57,6 @@ __states__
 
 defaultproperties
 {
-	WeaponType = DoomDefs::wp_plasma;
 	Slot = 6;
 	SelectionOrder = 100;
 	AmmoType1 = Cell;
@@ -65,6 +64,8 @@ defaultproperties
 	AmmoGive1 = 40;
 	PlayerModelVersion = 6;
 	PickupMessage = "$gotplasma";
+	BotCombatDist = 384.0;
+	bBotProjectile = true;
 	IdleState = S_PLAS;
 	UpState = S_PLASMAUP;
 	DownState = S_PLASMADOWN;

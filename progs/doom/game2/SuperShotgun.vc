@@ -119,7 +119,6 @@ __states__
 
 defaultproperties
 {
-	WeaponType = DoomDefs::wp_supershotgun;
 	Slot = 3;
 	SelectionOrder = 400;
 	AmmoType1 = Shell;
@@ -127,6 +126,7 @@ defaultproperties
 	AmmoGive1 = 8;
 	PlayerModelVersion = 9;
 	PickupMessage = "$gotshotgun2";
+	BotCombatDist = 128.0;
 	IdleState = S_SHOT2;
 	UpState = S_DSGUNUP;
 	DownState = S_DSGUNDOWN;

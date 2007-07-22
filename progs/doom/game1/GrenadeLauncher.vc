@@ -87,7 +87,6 @@ __states__
 
 defaultproperties
 {
-	WeaponType = DoomDefs::wp_grenade;
 	Slot = 5;
 	SelectionOrder = 2600;
 	AmmoType = RocketAmmo;

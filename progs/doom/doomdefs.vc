@@ -27,26 +27,6 @@ import engine;
 
 class DoomDefs : Object;
 
-//#define GRENADE_LAUNCHER
-
-enum
-{
-	wp_fist,
-	wp_pistol,
-	wp_shotgun,
-	wp_chaingun,
-	wp_missile,
-	wp_plasma,
-	wp_bfg,
-	wp_chainsaw,
-	wp_supershotgun,
-#ifdef GRENADE_LAUNCHER
-	wp_grenade,
-#endif
-
-	NUMWEAPONS
-};
-
 enum
 {
 	SBF_BLUE_CARD		= 0x00000001,

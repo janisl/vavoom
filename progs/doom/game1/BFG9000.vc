@@ -66,7 +66,6 @@ __states__
 
 defaultproperties
 {
-	WeaponType = DoomDefs::wp_bfg;
 	Slot = 7;
 	SelectionOrder = 2800;
 	AmmoType1 = Cell;
@@ -74,6 +73,9 @@ defaultproperties
 	AmmoGive1 = 40;
 	PlayerModelVersion = 7;
 	PickupMessage = "$gotbfg9000";
+	BotCombatDist = 384.0;
+	bNoAutoFire = true;
+	bBotBfg = true;
 	IdleState = S_BFUG;
 	UpState = S_BFGUP;
 	DownState = S_BFGDOWN;

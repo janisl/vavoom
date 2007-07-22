@@ -56,7 +56,6 @@ __states__
 
 defaultproperties
 {
-	WeaponType = DoomDefs::wp_missile;
 	Slot = 5;
 	SelectionOrder = 2500;
 	AmmoType1 = RocketAmmo;
@@ -64,6 +63,8 @@ defaultproperties
 	AmmoGive1 = 2;
 	PlayerModelVersion = 5;
 	PickupMessage = "$gotlauncher";
+	BotCombatDist = 256.0;
+	bBotProjectile = true;
 	IdleState = S_LAUN;
 	UpState = S_MISSILEUP;
 	DownState = S_MISSILEDOWN;

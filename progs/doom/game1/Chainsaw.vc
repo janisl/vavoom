@@ -93,14 +93,18 @@ __states__
 
 defaultproperties
 {
-	WeaponType = DoomDefs::wp_chainsaw;
 	Slot = 1;
 	SelectionOrder = 2200;
 	PlayerModelVersion = 8;
 	PickupMessage = "$gotchainsaw";
+	BotCombatDist = 1.0;
+	Kickback = 0.0;
+	bBotMelee = true;
 	IdleState = S_CSAW;
 	UpState = S_SAWUP;
 	DownState = S_SAWDOWN;
 	ReadyState = S_SAW;
 	AttackState = S_SAW1;
+	UpSound = 'weapons/sawup';
+	ReadySound = 'weapons/sawidle';
 }

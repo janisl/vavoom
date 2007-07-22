@@ -49,17 +49,35 @@ state			AttackState;
 state			HoldAttackState;
 state			FlashState;
 
+name			UpSound;
+name			ReadySound;
+
 //	Weapon slot this weapon is placed in.
 int				Slot;
 //	Weapons with lower values have greater priority
 int				SelectionOrder;
+//	Kickback from this weapon
+float			Kickback;
+
+float			BotCombatDist;
 
 //	Switch away if got ammo for more powerfull weapon.
 bool			bWimpyWeapon;
+//	Don't auto fire
+bool			bNoAutoFire;
+//	This is a powered up version of another weapon
+bool			bPoweredUp;
+//	It's a melee weapon
+bool			bBotMelee;
+//	It's a projectile weapon
+bool			bBotProjectile;
+//	It's a BFG
+bool			bBotBfg;
 
 //	Runtime in-inventory references.
 Ammo			Ammo1;
 Ammo			Ammo2;
+Weapon			SisterWeapon;
 
 replication
 {

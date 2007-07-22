@@ -70,7 +70,6 @@ __states__
 
 defaultproperties
 {
-	WeaponType = DoomDefs::wp_chaingun;
 	Slot = 4;
 	SelectionOrder = 700;
 	AmmoType1 = Clip;
@@ -78,6 +77,7 @@ defaultproperties
 	AmmoGive1 = 20;
 	PlayerModelVersion = 4;
 	PickupMessage = "$gotchaingun";
+	BotCombatDist = 256.0;
 	IdleState = S_MGUN;
 	UpState = S_CHAINUP;
 	DownState = S_CHAINDOWN;

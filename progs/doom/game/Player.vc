@@ -2000,8 +2000,10 @@ void SetWeapon(WeaponEx NewWeapon)
 
 void BringUpWeapon()
 {
-	if (ReadyWeapon.WeaponType == DoomDefs::wp_chainsaw)
-		MO.PlaySound('weapons/sawup', CHAN_WEAPON);
+	if (ReadyWeapon.UpSound)
+	{
+		MO.PlaySound(ReadyWeapon.UpSound, CHAN_WEAPON);
+	}
 
 	PendingWeapon = none;
 	ViewStates[ps_weapon].SY = WeaponEx::WEAPONBOTTOM;
@@ -2534,10 +2536,7 @@ void ClientExplosion2(int etype, TVec org)
 
 float GetWeaponKickBack()
 {
-	//	No kickback from chainsaw.
-	if (ReadyWeapon.WeaponType != DoomDefs::wp_chainsaw)
-		return 100.0;
-	return 0.0;
+	return ReadyWeapon.Kickback;
 }
 
 //==========================================================================
