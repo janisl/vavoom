@@ -61,7 +61,6 @@ __states__
 
 defaultproperties
 {
-	WeaponType = StrifeDefs::wp_flame;
 	Slot = 6;
 	SelectionOrder = 2100;
 	AmmoType1 = EnergyPod;
@@ -75,4 +74,5 @@ defaultproperties
 	AttackState = S_FLAME1;
 	FlashState = S_LIGHTDONE;
 	IdleState = S_FLAME_THROWER;
+	ReadySound = 'weapons/flameidle';
 }

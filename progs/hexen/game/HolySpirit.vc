@@ -332,6 +332,7 @@ defaultproperties
 	bDamageInvulnerable = true;
 	bExplodeOnSky = true;
 	bNoExplodeFloor = true;
+	bExtremeDeath = true;
 	IdleState = S_HOLY_FX1;
 	DeathState = S_HOLY_FX_X1;
 	DeathSound = 'SpiritDie';

@@ -54,6 +54,8 @@ defaultproperties
 	Slot = 1;
 	SelectionOrder = 3600;
 	PSpriteSY = 9.0;
+	BotCombatDist = 192.0;
+	bBotProjectile = true;
 	UpState = S_MWANDUP;
 	DownState = S_MWANDDOWN;
 	ReadyState = S_MWANDREADY;

@@ -62,7 +62,6 @@ __states__
 
 defaultproperties
 {
-	WeaponType = StrifeDefs::wp_missile;
 	Slot = 4;
 	SelectionOrder = 1800;
 	AmmoType1 = MiniMissiles;
@@ -70,6 +69,7 @@ defaultproperties
 	AmmoGive1 = 8;
 	ConversationID = 192;
 	PickupMessage = "$txt_mmlauncher";
+	bNoAutoFire = true;
 	IdleState = S_MISSILE_LAUNCHER;
 	UpState = S_MISSILEUP;
 	DownState = S_MISSILEDOWN;

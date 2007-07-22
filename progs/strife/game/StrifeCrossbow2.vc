@@ -27,7 +27,6 @@ class StrifeCrossbow2 : StrifeCrossbow;
 
 defaultproperties
 {
-	WeaponType = StrifeDefs::wp_crossbow2;
 	Slot = 2;
 	SelectionOrder = 2700;
 	AmmoType1 = PoisonBolts;

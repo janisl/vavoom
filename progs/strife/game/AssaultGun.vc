@@ -74,7 +74,6 @@ __states__
 
 defaultproperties
 {
-	WeaponType = StrifeDefs::wp_riffle;
 	Slot = 3;
 	SelectionOrder = 600;
 	AmmoType1 = ClipOfBullets;

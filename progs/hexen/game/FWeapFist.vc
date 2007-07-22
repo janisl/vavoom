@@ -120,6 +120,7 @@ defaultproperties
 	Slot = 1;
 	SelectionOrder = 3400;
 	PSpriteSY = 0.0;
+	BotCombatDist = 48.0;
 	UpState = S_PUNCHUP;
 	DownState = S_PUNCHDOWN;
 	ReadyState = S_PUNCHREADY;

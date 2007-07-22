@@ -29,6 +29,7 @@ defaultproperties
 {
 	SisterWeaponType = Staff;
 	bPoweredUp = true;
+	bStaff2Kickback = true;
 	UpState = S_STAFFUP2;
 	DownState = S_STAFFDOWN2;
 	ReadyState = S_STAFFREADY2_1;

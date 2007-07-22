@@ -29,6 +29,18 @@ class Gauntlets : WeaponEx
 
 //===========================================================================
 //
+//  A_GauntletSound
+//
+//===========================================================================
+
+final void A_GauntletSound()
+{
+	// Play the sound for the initial gauntlet attack
+	Owner.PlaySound('weapons/gauntletsuse', CHAN_WEAPON);
+}
+
+//===========================================================================
+//
 //  A_GauntletAttack
 //
 //===========================================================================
@@ -127,14 +139,14 @@ __states__
 	S_GAUNTLETREADY2_3('GAUN', 8, 4.0 / 35.0, S_GAUNTLETREADY2_1) = A_WeaponReady
 	S_GAUNTLETDOWN2('GAUN', 6, 1.0 / 35.0, S_GAUNTLETDOWN2) = A_Lower
 	S_GAUNTLETUP2('GAUN', 6, 1.0 / 35.0, S_GAUNTLETUP2) = A_Raise
-	S_GAUNTLETATK1_1('GAUN', 1, 4.0 / 35.0, S_GAUNTLETATK1_2) = none
+	S_GAUNTLETATK1_1('GAUN', 1, 4.0 / 35.0, S_GAUNTLETATK1_2) = A_GauntletSound
 	S_GAUNTLETATK1_2('GAUN', 2, 4.0 / 35.0, S_GAUNTLETATK1_3) = none
 	S_GAUNTLETATK1_3('GAUN', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_GAUNTLETATK1_4) = A_GauntletAttack
 	S_GAUNTLETATK1_4('GAUN', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_GAUNTLETATK1_5) = A_GauntletAttack
 	S_GAUNTLETATK1_5('GAUN', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_GAUNTLETATK1_6) = A_GauntletAttack
 	S_GAUNTLETATK1_6('GAUN', 2, 4.0 / 35.0, S_GAUNTLETATK1_7) = A_ReFire
 	S_GAUNTLETATK1_7('GAUN', 1, 4.0 / 35.0, S_GAUNTLETREADY) = A_Light0
-	S_GAUNTLETATK2_1('GAUN', 9, 4.0 / 35.0, S_GAUNTLETATK2_2) = none
+	S_GAUNTLETATK2_1('GAUN', 9, 4.0 / 35.0, S_GAUNTLETATK2_2) = A_GauntletSound
 	S_GAUNTLETATK2_2('GAUN', 10, 4.0 / 35.0, S_GAUNTLETATK2_3) = none
 	S_GAUNTLETATK2_3('GAUN', 11 | FF_FULLBRIGHT, 4.0 / 35.0, S_GAUNTLETATK2_4) = A_GauntletAttack
 	S_GAUNTLETATK2_4('GAUN', 12 | FF_FULLBRIGHT, 4.0 / 35.0, S_GAUNTLETATK2_5) = A_GauntletAttack
@@ -146,17 +158,20 @@ __states__
 
 defaultproperties
 {
-	WeaponType = wp_gauntlets;
 	Slot = 1;
 	SelectionOrder = 2300;
 	PSpriteSY = 15.0;
 	PickupMessage = "$txt_wpngauntlets";
 	SisterWeaponType = GauntletsPowered;
+	Kickback = 0.0;
+	BotCombatDist = 1.0;
 	bWimpyWeapon = true;
+	bBotMelee = true;
 	IdleState = S_WGNT;
 	UpState = S_GAUNTLETUP;
 	DownState = S_GAUNTLETDOWN;
 	ReadyState = S_GAUNTLETREADY;
 	AttackState = S_GAUNTLETATK1_1;
 	HoldAttackState = S_GAUNTLETATK1_3;
+	UpSound = 'weapons/gauntletsactivate';
 }

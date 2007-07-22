@@ -80,6 +80,7 @@ defaultproperties
 	Height = 8.0;
 	Speed = 1050.0;
 	MissileDamage = 8;
+	bExtremeDeath = true;
 	IdleState = S_FSWORD_MISSILE1;
 	DeathState = S_FSWORD_MISSILE_X1;
 	DeathSound = 'FighterSwordExplode';

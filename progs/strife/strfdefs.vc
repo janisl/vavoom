@@ -29,23 +29,6 @@ class StrifeDefs : Object;
 
 enum
 {
-	wp_fist,
-	wp_crossbow,
-	wp_riffle,
-	wp_missile,
-	wp_grenade,
-	wp_flame,
-	wp_blaster,
-	wp_sigil,
-	wp_crossbow2,
-	wp_grenade2,
-	wp_blaster2,
-
-	NUMWEAPONS
-};
-
-enum
-{
 	KEY_BaseKey,
 	KEY_GovsKey,
 	KEY_Passcard,

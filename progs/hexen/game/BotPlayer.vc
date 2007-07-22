@@ -168,8 +168,6 @@ botinfo_t info;			// Aiming, name, perfection, yadda yadda
 
 int angerlevel;
 
-float combatdist[HexenDefs::NUMWEAPONS * HexenDefs::NUMCLASSES]; //different for each weapon.
-
 float angle;			// The wanted angle that the bot tries to get every tic.
 
 //==========================================================================
@@ -755,9 +753,7 @@ void BotAim()
 	*/
 
 	// Fix me: Implement botskill, accuracy, and intelligence
-	if ((player.PClass == HexenDefs::PCLASS_FIGHTER && player.ReadyWeapon.WeaponType >= HexenDefs::WP_THIRD) ||
-		(player.PClass == HexenDefs::PCLASS_CLERIC && player.ReadyWeapon.WeaponType >= HexenDefs::WP_SECOND) ||
-		(player.PClass == HexenDefs::PCLASS_MAGE))
+	if (player.ReadyWeapon.bBotProjectile)
 	{
 		// Projectile weapons
 		switch (info.intelect)
@@ -1140,8 +1136,7 @@ void Move(float deltaTime)
 		// Check if we'd rather pick up something than fight
 		if (item)
 		{
-			if (bItemIsPowerup ||
-				(bItemIsWeapon && player.ReadyWeapon.WeaponType == HexenDefs::WP_FIRST))
+			if (bItemIsPowerup)
 			{
 				Roam();
 				return;
@@ -1157,8 +1152,7 @@ void Move(float deltaTime)
 		if (!CheckPath(an, 48.0)) // We're blocked, so go the other way!
 			sidemove = -sidemove;
 
-		if (CheckTo(enemy.Origin) && dist >
-				combatdist[player.PClass * HexenDefs::NUMWEAPONS + player.ReadyWeapon.WeaponType])
+		if (CheckTo(enemy.Origin) && dist > player.ReadyWeapon.BotCombatDist)
 			forwardmove = FORWARDRUN;
 		else
 			forwardmove = -FORWARDRUN;
@@ -1356,38 +1350,6 @@ void OnBeginPlay()
 	info.anticip = SkillLower(binfo->anticip, 4 - botskill);
 	info.reaction = SkillLower(binfo->reaction, 4 - botskill);
 	player.UserInfo = binfo->userinfo;
-
-	// Setup combat distance tables
-	if (player.Level.Game.deathmatch)
-	{
-		combatdist[HexenDefs::WP_FIRST]		= 48.0;
-		combatdist[HexenDefs::WP_SECOND]		= 48.0;
-		combatdist[HexenDefs::WP_THIRD]		= 192.0;
-		combatdist[HexenDefs::WP_FOURTH]		= 256.0;
-		combatdist[4 + HexenDefs::WP_FIRST]	= 48.0;
-		combatdist[4 + HexenDefs::WP_SECOND]	= 192.0;
-		combatdist[4 + HexenDefs::WP_THIRD]	= 256.0;
-		combatdist[4 + HexenDefs::WP_FOURTH]	= 384.0;
-		combatdist[8 + HexenDefs::WP_FIRST]	= 192.0;
-		combatdist[8 + HexenDefs::WP_SECOND]	= 256.0;
-		combatdist[8 + HexenDefs::WP_THIRD]	= 384.0;
-		combatdist[8 + HexenDefs::WP_FOURTH]	= 384.0;
-	}
-	else
-	{
-		combatdist[HexenDefs::WP_FIRST]		= 48.0;
-		combatdist[HexenDefs::WP_SECOND]		= 48.0;
-		combatdist[HexenDefs::WP_THIRD]		= 192.0 / 2.0;
-		combatdist[HexenDefs::WP_FOURTH]		= 256.0 / 2.0;
-		combatdist[4 + HexenDefs::WP_FIRST]	= 48.0;
-		combatdist[4 + HexenDefs::WP_SECOND]	= 192.0 / 2.0;
-		combatdist[4 + HexenDefs::WP_THIRD]	= 256.0 / 2.0;
-		combatdist[4 + HexenDefs::WP_FOURTH]	= 384.0 / 2.0;
-		combatdist[8 + HexenDefs::WP_FIRST]	= 192.0 / 2.0;
-		combatdist[8 + HexenDefs::WP_SECOND]	= 256.0 / 2.0;
-		combatdist[8 + HexenDefs::WP_THIRD]	= 384.0 / 2.0;
-		combatdist[8 + HexenDefs::WP_FOURTH]	= 384.0 / 2.0;
-	}
 }
 
 //==========================================================================

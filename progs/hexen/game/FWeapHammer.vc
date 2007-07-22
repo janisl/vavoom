@@ -126,16 +126,17 @@ __states__
 defaultproperties
 {
 	WeaponClass = HexenDefs::PCLASS_FIGHTER;
-	WeaponType = HexenDefs::WP_THIRD;
 	Slot = 3;
 	SelectionOrder = 900;
 	AmmoType1 = Mana2;
 	AmmoUse1 = 3;
 	AmmoGive1 = 25;
 	PSpriteSY = -10.0;
-	bManaOptional = true;
 	HammerRange = Actor::MELEERANGE + Actor::MELEERANGE / 2.0;
 	PickupMessage = "$txt_weapon_f3";
+	BotCombatDist = 192.0;
+	bManaOptional = true;
+	bBotProjectile = true;
 	IdleState = S_HAMM;
 	UpState = S_FHAMMERUP;
 	DownState = S_FHAMMERDOWN;

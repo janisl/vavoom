@@ -37,7 +37,6 @@ state FireDeathWaveState;
 
 bool bRaiseNoiseAlert;
 
-int WeaponType;
 class<WeaponEx> Weapon2Type;
 bool bCheatNotWeapon;
 
@@ -230,10 +229,9 @@ final void A_WeaponReady()
 		Owner.SetState(Actor(Owner).IdleState);
 	}
 
-	if (Player(Owner.Player).ReadyWeapon.WeaponType == StrifeDefs::wp_flame &&
-		Owner.Player.ViewStates[ps_weapon].State == ReadyState)
+	if (ReadySound && Owner.Player.ViewStates[ps_weapon].State == ReadyState)
 	{
-		Owner.PlaySound('weapons/flameidle', CHAN_WEAPON);
+		Owner.PlaySound(ReadySound, CHAN_WEAPON);
 	}
 
 	// check for change
@@ -251,7 +249,7 @@ final void A_WeaponReady()
 	if (Owner.Player.Buttons & BT_ATTACK)
 	{
 		if (!Owner.Player.bAttackDown ||
-			(Player(Owner.Player).ReadyWeapon.WeaponType != StrifeDefs::wp_missile))
+			!Player(Owner.Player).ReadyWeapon.bNoAutoFire)
 		{
 			Owner.Player.bAttackDown = true;
 			Player(Owner.Player).FireWeapon();

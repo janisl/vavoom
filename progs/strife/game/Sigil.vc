@@ -195,7 +195,6 @@ __states__
 
 defaultproperties
 {
-	WeaponType = StrifeDefs::wp_sigil;
 	Slot = 8;
 	SelectionOrder = 4000;
 	bCheatNotWeapon = true;

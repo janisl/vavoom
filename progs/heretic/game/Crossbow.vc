@@ -106,7 +106,6 @@ __states__
 
 defaultproperties
 {
-	WeaponType = wp_crossbow;
 	Slot = 3;
 	SelectionOrder = 800;
 	AmmoType1 = CrossbowAmmo;
@@ -115,6 +114,7 @@ defaultproperties
 	PSpriteSY = 15.0;
 	PickupMessage = "$txt_wpncrossbow";
 	SisterWeaponType = CrossbowPowered;
+	BotCombatDist = 192.0;
 	IdleState = S_WBOW;
 	UpState = S_CRBOWUP;
 	DownState = S_CRBOWDOWN;

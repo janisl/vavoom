@@ -27,7 +27,6 @@ class StrifeGrenadeLauncher2 : StrifeGrenadeLauncher;
 
 defaultproperties
 {
-	WeaponType = StrifeDefs::wp_grenade2;
 	Slot = 5;
 	SelectionOrder = 3200;
 	AmmoType1 = PhosphorusGrenadeRounds;

@@ -115,7 +115,9 @@ defaultproperties
 	SelectionOrder = 3800;
 	PSpriteSY = 0.0;
 	SisterWeaponType = StaffPowered;
+	BotCombatDist = 1.0;
 	bWimpyWeapon = true;
+	bBotMelee = true;
 	UpState = S_STAFFUP;
 	DownState = S_STAFFDOWN;
 	ReadyState = S_STAFFREADY;

@@ -111,7 +111,8 @@ replication
 {
 	reliable if (!bIsClient)
 		SBFlags, TotalArmorPoints, InventoryTime, ArtifactFlash,
-		ReadyArtifact, InvPtr, InvCurPos, InventorySlotNum, ArmorPerc, Inventory;
+		ReadyArtifact, InvPtr, InvCurPos, InventorySlotNum, ArmorPerc,
+		Inventory, ReadyWeapon;
 
 	unreliable if (!bIsClient)
 		ClientBlood, ClientExplosion;
@@ -1830,7 +1831,7 @@ void PlayerImpulse()
 	Impulse = 0;
 	Arti = 0;
 
-	if (impulse <= HexenDefs::NUMWEAPONS)
+	if (impulse <= 4)
 	{
 		// The actual changing of the weapon is done when the weapon
 		// psprite can do it (A_WeaponReady), so it doesn't happen in
@@ -2632,7 +2633,6 @@ void SetViewPos()
 	PaletteFlash();
 
 	SBFlags = Keys;
-	SBFlags |= ReadyWeapon.WeaponType << HexenDefs::SBF_WPN_SHIFT;
 	SBFlags |= Pieces << HexenDefs::SBF_PIECES_SHIFT;
 	if (Powers[pw_flight])
 	{
@@ -3951,7 +3951,7 @@ int ArmorAbsorbDamage(EntityEx inflictor, EntityEx source, int damage,
 bool IsWeaponAlwaysExtremeDeath()
 {
 	// Always extreme death from fourth weapon
-	return ReadyWeapon.WeaponType == HexenDefs::WP_FOURTH;
+	return ReadyWeapon.bExtremeDeath;
 }
 
 defaultproperties

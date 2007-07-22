@@ -165,6 +165,7 @@ bool bSkullFlyInvulnerable;	//	Invulnerable during skull fly attack
 bool bNoDamageThrust;	// does not thrust target when damaging
 bool bConditionalFireDamage;
 bool bNoExtremeDeath;	// Does never gib enemies.
+bool bExtremeDeath;		// Always gibs enemies.
 bool bLightning;		//	Electrocutes victims
 bool bHowlVictims;		//	Make victims play howl sound when damaged
 bool bNoGrudge;

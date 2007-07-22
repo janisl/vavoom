@@ -124,16 +124,18 @@ __states__
 
 defaultproperties
 {
-	WeaponType = wp_phoenixrod;
 	Slot = 6;
 	SelectionOrder = 2600;
 	AmmoType1 = PhoenixRodAmmo;
 	AmmoUse1 = USE_PHRD_AMMO_1;
 	AmmoGive1 = 2;
 	PSpriteSY = 15.0;
-	bInShareware = false;
 	PickupMessage = "$txt_wpnphoenixrod";
 	SisterWeaponType = PhoenixRodPowered;
+	BotCombatDist = 256.0;
+	bInShareware = false;
+	bNoAutoFire = true;
+	bBotProjectile = true;
 	IdleState = S_WPHX;
 	UpState = S_PHOENIXUP;
 	DownState = S_PHOENIXDOWN;

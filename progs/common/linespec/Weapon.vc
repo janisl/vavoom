@@ -67,6 +67,10 @@ bool			bWimpyWeapon;
 bool			bNoAutoFire;
 //	This is a powered up version of another weapon
 bool			bPoweredUp;
+//	Does Heretic staff level 2 style kickback.
+bool			bStaff2Kickback;
+//	Always use extreme death
+bool			bExtremeDeath;
 //	It's a melee weapon
 bool			bBotMelee;
 //	It's a projectile weapon

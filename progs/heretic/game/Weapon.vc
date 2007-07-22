@@ -48,8 +48,6 @@ class<WeaponEx> SisterWeaponType;
 float PSpriteSY;
 bool bInShareware;
 
-int WeaponType;
-
 //==========================================================================
 //
 //  TryPickup
@@ -210,7 +208,7 @@ final void A_WeaponReady()
 	if (Owner.Player.Buttons & BT_ATTACK)
 	{
 		if (!Owner.Player.bAttackDown ||
-			(Player(Owner.Player).ReadyWeapon.WeaponType != wp_phoenixrod))
+			!Player(Owner.Player).ReadyWeapon.bNoAutoFire)
 		{
 			Owner.Player.bAttackDown = true;
 			Player(Owner.Player).FireWeapon();
@@ -342,4 +340,5 @@ defaultproperties
 	Height = 32.0;
 	PickupSound = 'misc/w_pkup';
 	bInShareware = true;
+	Kickback = 150.0;
 }

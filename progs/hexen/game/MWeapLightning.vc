@@ -122,7 +122,6 @@ __states__
 defaultproperties
 {
 	WeaponClass = HexenDefs::PCLASS_MAGE;
-	WeaponType = HexenDefs::WP_THIRD;
 	Slot = 3;
 	SelectionOrder = 1100;
 	AmmoType1 = Mana2;
@@ -131,6 +130,8 @@ defaultproperties
 	PSpriteSY = 20.0;
 	bNoGravity = true;
 	PickupMessage = "$txt_weapon_m3";
+	BotCombatDist = 384.0;
+	bBotProjectile = true;
 	IdleState = S_MW_LIGHTNING1;
 	UpState = S_MLIGHTNINGUP;
 	DownState = S_MLIGHTNINGDOWN;

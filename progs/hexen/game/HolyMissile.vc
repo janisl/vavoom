@@ -124,6 +124,7 @@ defaultproperties
 	MissileDamage = 4;
 	bActivateImpact = false;
 	bActivatePCross = false;
+	bExtremeDeath = true;
 	IdleState = S_HOLY_MISSILE1;
 	DeathState = S_HOLY_MISSILE_X;
 	Effects = EF_DL_WHITE;

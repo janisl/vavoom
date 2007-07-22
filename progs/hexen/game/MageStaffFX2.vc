@@ -116,6 +116,7 @@ defaultproperties
 	MissileDamage = 4;
 	DamageType = 'Fire';
 	bSeekerMissile = true;
+	bExtremeDeath = true;
 	IdleState = S_MSTAFF_FX2_1;
 	DeathState = S_MSTAFF_FX2_X1;
 	DeathSound = 'MageStaffExplode';

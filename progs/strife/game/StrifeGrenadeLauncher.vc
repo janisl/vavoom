@@ -41,7 +41,7 @@ final void A_FireGrenade()
 	float an;
 	float tworadii;
 
-	if (Player(Owner.Player).ReadyWeapon.WeaponType == StrifeDefs::wp_grenade)
+	if (Class == StrifeGrenadeLauncher)
 	{
 		grenadetype = HEGrenade;
 	}
@@ -118,7 +118,6 @@ __states__
 
 defaultproperties
 {
-	WeaponType = StrifeDefs::wp_grenade;
 	Weapon2Type = StrifeGrenadeLauncher2;
 	Slot = 5;
 	SelectionOrder = 2400;

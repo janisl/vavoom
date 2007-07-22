@@ -131,6 +131,8 @@ defaultproperties
 	SelectionOrder = 10000;
 	PSpriteSY = 15.0;
 	SisterWeaponType = BeakPowered;
+	BotCombatDist = 1.0;
+	bBotMelee = true;
 	UpState = S_BEAKUP;
 	DownState = S_BEAKDOWN;
 	ReadyState = S_BEAKREADY;

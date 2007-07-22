@@ -56,21 +56,6 @@ enum
 
 enum
 {
-	wp_staff,
-	wp_goldwand,
-	wp_crossbow,
-	wp_blaster,
-	wp_skullrod,
-	wp_phoenixrod,
-	wp_mace,
-	wp_gauntlets,
-	wp_beak,
-
-	NUMWEAPONS
-};
-
-enum
-{
 	key_yellow,
 	key_green,
 	key_blue,

@@ -110,7 +110,6 @@ __states__
 
 defaultproperties
 {
-	WeaponType = wp_skullrod;
 	Slot = 5;
 	SelectionOrder = 200;
 	AmmoType1 = SkullRodAmmo;
@@ -120,6 +119,8 @@ defaultproperties
 	bInShareware = false;
 	PickupMessage = "$txt_wpnskullrod";
 	SisterWeaponType = SkullRodPowered;
+	BotCombatDist = 384.0;
+	bBotProjectile = true;
 	IdleState = S_WSKL;
 	UpState = S_HORNRODUP;
 	DownState = S_HORNRODDOWN;

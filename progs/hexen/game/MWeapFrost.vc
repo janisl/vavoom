@@ -100,7 +100,6 @@ __states__
 defaultproperties
 {
 	WeaponClass = HexenDefs::PCLASS_MAGE;
-	WeaponType = HexenDefs::WP_SECOND;
 	Slot = 2;
 	SelectionOrder = 1700;
 	AmmoType1 = Mana1;
@@ -108,6 +107,8 @@ defaultproperties
 	AmmoGive1 = 25;
 	PSpriteSY = 20.0;
 	PickupMessage = "$txt_weapon_m2";
+	BotCombatDist = 256.0;
+	bBotProjectile = true;
 	IdleState = S_COS1;
 	UpState = S_CONEUP;
 	DownState = S_CONEDOWN;

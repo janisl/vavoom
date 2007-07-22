@@ -168,8 +168,6 @@ botinfo_t info;			// Aiming, name, perfection, yadda yadda
 
 int angerlevel;
 
-float combatdist[NUMWEAPONS + 1]; //different for each weapon.
-
 float angle;			// The wanted angle that the bot tries to get every tic.
 
 //==========================================================================
@@ -720,15 +718,12 @@ void BotAim()
 	*/
 
 	// Fix me: Implement botskill, accuracy, and intelligence
-	switch (player.ReadyWeapon.WeaponType)
+	if (player.ReadyWeapon.bBotProjectile)
 	{
 		// Splash weapons
-	case wp_phoenixrod:
 //		bot->SetAngle(R_PointToAngle2(MO->x, MO->y, enemy->x, enemy->y));
-//		break;
 
 		// Projectile weapons
-	case wp_skullrod:
 		switch (info.intelect)
 		{
 		case bsk_verypoor:
@@ -751,19 +746,10 @@ void BotAim()
 			Error("Unknown bot skill level: %d", info.accuracy);
 			return;
 		}
-
-		break;
-		// BFG9000
-	case wp_mace:
-		SetAngle(AngleTo(enemy.Origin));
-		break;
-
+	}
+	else
+	{
 		// Instant weapons
-	case wp_staff:
-	case wp_gauntlets:
-	case wp_beak:
-	default:
-
 		switch (info.accuracy)
 		{
 		case bsk_verypoor:
@@ -1119,7 +1105,7 @@ void Move(float deltaTime)
 		if (item)
 		{
 			if (bItemIsPowerup ||
-				(bItemIsWeapon && player.ReadyWeapon.WeaponType == wp_goldwand))
+				(bItemIsWeapon && player.ReadyWeapon.bWimpyWeapon))
 			{
 				Roam();
 				return;
@@ -1135,7 +1121,7 @@ void Move(float deltaTime)
 		if (!CheckPath(an, 48.0)) // We're blocked, so go the other way!
 			sidemove = -sidemove;
 
-		if (CheckTo(enemy.Origin) && dist > combatdist[player.ReadyWeapon.WeaponType])
+		if (CheckTo(enemy.Origin) && dist > player.ReadyWeapon.BotCombatDist)
 			forwardmove = FORWARDRUN;
 		else
 			forwardmove = -FORWARDRUN;
@@ -1172,18 +1158,6 @@ void Attack()
 	// No point in firing if we won't hit them
 	if (!Check_LOS(enemy, SHOOTFOV))
 		return;
-
-	switch (player.ReadyWeapon.WeaponType)
-	{
-	case wp_gauntlets:
-		// Double tap the chaingun for extreme accuracy
-		if (info.accuracy == bsk_supreme)
-			if (t_fire)
-				return;
-		break;
-	default:
-		break;
-	}
 
 	player.Buttons |= BT_ATTACK;
 }
@@ -1345,32 +1319,6 @@ void OnBeginPlay()
 	info.anticip = SkillLower(binfo->anticip, 4 - botskill);
 	info.reaction = SkillLower(binfo->reaction, 4 - botskill);
 	player.UserInfo = binfo->userinfo;
-
-	// Setup combat distance tables
-	if (player.Level.Game.deathmatch)
-	{
-		combatdist[wp_staff]		= 1.0;
-		combatdist[wp_gauntlets]	= 1.0;
-		combatdist[wp_goldwand]		= 256.0;
-		combatdist[wp_crossbow]		= 192.0;
-		combatdist[wp_blaster]		= 256.0;
-		combatdist[wp_skullrod]		= 384.0;
-		combatdist[wp_phoenixrod]	= SAFE_SELF_MISDIST * 2.0;
-		combatdist[wp_mace]			= 384.0;
-		combatdist[wp_beak]			= 1.0;
-	}
-	else
-	{
-		combatdist[wp_staff]		= 1.0;
-		combatdist[wp_gauntlets]	= 1.0;
-		combatdist[wp_goldwand]		= 256.0 / 2.0;
-		combatdist[wp_crossbow]		= 192.0 / 2.0;
-		combatdist[wp_blaster]		= 256.0 / 2.0;
-		combatdist[wp_skullrod]		= 384.0 / 2.0;
-		combatdist[wp_phoenixrod]	= SAFE_SELF_MISDIST * 2.0 / 2.0;
-		combatdist[wp_mace]			= 384.0 / 2.0;
-		combatdist[wp_beak]			= 1.0;
-	}
 }
 
 //==========================================================================

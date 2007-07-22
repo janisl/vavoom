@@ -58,8 +58,6 @@ int SBFlags;
 
 int ArmorPoints;
 
-int ReadyAmmo;
-
 float ChickenTime;	// player is a chicken if > 0
 
 // Power ups. invinc and invis are timers.
@@ -107,7 +105,7 @@ bool onground;
 replication
 {
 	reliable if (!bIsClient)
-		SBFlags, ArmorPoints, ReadyAmmo, ArtifactFlash, InvPtr, InvCurPos,
+		SBFlags, ArmorPoints, ArtifactFlash, InvPtr, InvCurPos,
 		ReadyArtifact, InventorySlotNum, ReadyWeapon, Inventory;
 
 	unreliable if (!bIsClient)
@@ -1546,7 +1544,7 @@ void PlayerImpulse()
 	Impulse = 0;
 	Arti = 0;
 
-	if (impulse <= NUMWEAPONS)
+	if (impulse <= 7)
 	{
 		// The actual changing of the weapon is done when the weapon
 		// psprite can do it (A_WeaponReady), so it doesn't happen in
@@ -2184,11 +2182,6 @@ void SetViewPos()
 		SBFlags |= HereticDefs::SBF_INVENTORY_OPEN;
 	}
 
-	if (ReadyWeapon.WeaponType > 0 && ReadyWeapon.WeaponType < 7)
-		ReadyAmmo = EntityEx(MO).FindInventory(WeaponEx(ViewEnt).AmmoType1).Amount;
-	else
-		ReadyAmmo = 0;
-
 	ClientSetViewOrg(ViewOrg.x, ViewOrg.y, ViewOrg.z);
 }
 
@@ -2521,9 +2514,9 @@ void SetWeapon(WeaponEx NewWeapon)
 void BringUpWeapon()
 {
 	SetWeapon(ReadyWeapon);
-	if (ReadyWeapon.WeaponType == wp_gauntlets)
+	if (ReadyWeapon.UpSound)
 	{
-		MO.PlaySound('weapons/gauntletsactivate', CHAN_WEAPON);
+		MO.PlaySound(ReadyWeapon.UpSound, CHAN_WEAPON);
 	}
 	ViewStates[ps_weapon].SY = WeaponEx::WEAPONBOTTOM;
 	SetViewState(ps_weapon, WeaponEx(ViewEnt).UpState);
@@ -2598,11 +2591,6 @@ void FireWeapon()
 		WeaponEx(ViewEnt).AttackState;
 	SetViewState(ps_weapon, attackState);
 	HereticLevelInfo(Level).NoiseAlert(Actor(MO), Actor(MO));
-	if (ReadyWeapon.WeaponType == wp_gauntlets && !Refire)
-	{
-		// Play the sound for the initial gauntlet attack
-		MO.PlaySound('weapons/gauntletsuse', CHAN_WEAPON);
-	}
 }
 
 //===========================================================================
@@ -3053,12 +3041,7 @@ void ClientExplosion(int etype, TVec org)
 
 float GetWeaponKickBack()
 {
-	//	No kickback from gauntlets.
-	if (ReadyWeapon.WeaponType != wp_gauntlets)
-	{
-		return 150.0;
-	}
-	return 0.0;
+	return ReadyWeapon.Kickback;
 }
 
 //==========================================================================
@@ -3069,7 +3052,7 @@ float GetWeaponKickBack()
 
 bool IsStaffLevel2()
 {
-	return Powers[pw_weaponlevel2] && ReadyWeapon.WeaponType == wp_staff;
+	return ReadyWeapon.bStaff2Kickback;
 }
 
 //==========================================================================

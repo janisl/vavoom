@@ -120,7 +120,6 @@ __states__
 
 defaultproperties
 {
-	WeaponType = StrifeDefs::wp_blaster;
 	Weapon2Type = Mauler2;
 	Slot = 7;
 	SelectionOrder = 300;

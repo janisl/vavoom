@@ -102,7 +102,6 @@ __states__
 
 defaultproperties
 {
-	WeaponType = StrifeDefs::wp_crossbow;
 	Weapon2Type = StrifeCrossbow2;
 	Slot = 2;
 	SelectionOrder = 1200;
