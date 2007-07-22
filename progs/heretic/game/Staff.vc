@@ -25,28 +25,6 @@
 
 class Staff : WeaponEx;
 
-//==========================================================================
-//
-//	WeaponLevel2Init
-//
-//==========================================================================
-
-void WeaponLevel2Init()
-{
-	Owner.Player.SetViewState(ps_weapon, ReadyState2);
-}
-
-//==========================================================================
-//
-//	WeaponLevel2Fade
-//
-//==========================================================================
-
-void WeaponLevel2Fade()
-{
-	Player(Owner.Player).PendingWeapon = Player(Owner.Player).ReadyWeapon;
-}
-
 //===========================================================================
 //
 //  A_StaffAttackPL1
@@ -136,15 +114,11 @@ defaultproperties
 	Slot = 1;
 	SelectionOrder = 3800;
 	PSpriteSY = 0.0;
+	SisterWeaponType = StaffPowered;
 	bWimpyWeapon = true;
 	UpState = S_STAFFUP;
 	DownState = S_STAFFDOWN;
 	ReadyState = S_STAFFREADY;
 	AttackState = S_STAFFATK1_1;
 	HoldAttackState = S_STAFFATK1_1;
-	UpState2 = S_STAFFUP2;
-	DownState2 = S_STAFFDOWN2;
-	ReadyState2 = S_STAFFREADY2_1;
-	AttackState2 = S_STAFFATK2_1;
-	HoldAttackState2 = S_STAFFATK2_1;
 }

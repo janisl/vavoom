@@ -29,25 +29,6 @@ class PhoenixRod : WeaponEx
 
 int FlameCount;	// for flame thrower duration
 
-state Attack2ShutdownState;
-
-//==========================================================================
-//
-//	WeaponLevel2Fade
-//
-//==========================================================================
-
-void WeaponLevel2Fade()
-{
-	if (Owner.Player.ViewStates[ps_weapon].State != ReadyState2 &&
-		Owner.Player.ViewStates[ps_weapon].State != UpState2)
-	{
-		Owner.Player.SetViewState(ps_weapon, ReadyState);
-		DecAmmo(USE_PHRD_AMMO_2);
-		Player(Owner.Player).Refire = 0;
-	}
-}
-
 //===========================================================================
 //
 //  A_FirePhoenixPL1
@@ -92,7 +73,7 @@ final void A_FirePhoenixPL2()
 	if (--FlameCount == 0)
 	{
 		// Out of flame
-		Owner.Player.SetViewState(ps_weapon, Attack2ShutdownState);
+		Owner.Player.SetViewState(ps_weapon, S_PHOENIXATK2_4);
 		Player(Owner.Player).Refire = 0;
 		return;
 	}
@@ -149,20 +130,14 @@ defaultproperties
 	AmmoType1 = PhoenixRodAmmo;
 	AmmoUse1 = USE_PHRD_AMMO_1;
 	AmmoGive1 = 2;
-	AmmoUsePL2 = USE_PHRD_AMMO_2;
 	PSpriteSY = 15.0;
 	bInShareware = false;
 	PickupMessage = "$txt_wpnphoenixrod";
+	SisterWeaponType = PhoenixRodPowered;
 	IdleState = S_WPHX;
 	UpState = S_PHOENIXUP;
 	DownState = S_PHOENIXDOWN;
 	ReadyState = S_PHOENIXREADY;
 	AttackState = S_PHOENIXATK1_1;
 	HoldAttackState = S_PHOENIXATK1_1;
-	UpState2 = S_PHOENIXUP;
-	DownState2 = S_PHOENIXDOWN;
-	ReadyState2 = S_PHOENIXREADY;
-	AttackState2 = S_PHOENIXATK2_1;
-	HoldAttackState2 = S_PHOENIXATK2_2;
-	Attack2ShutdownState = S_PHOENIXATK2_4;
 }

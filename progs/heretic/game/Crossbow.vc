@@ -112,18 +112,13 @@ defaultproperties
 	AmmoType1 = CrossbowAmmo;
 	AmmoUse1 = USE_CBOW_AMMO_1;
 	AmmoGive1 = 10;
-	AmmoUsePL2 = USE_CBOW_AMMO_2;
 	PSpriteSY = 15.0;
 	PickupMessage = "$txt_wpncrossbow";
+	SisterWeaponType = CrossbowPowered;
 	IdleState = S_WBOW;
 	UpState = S_CRBOWUP;
 	DownState = S_CRBOWDOWN;
 	ReadyState = S_CRBOW1;
 	AttackState = S_CRBOWATK1_1;
 	HoldAttackState = S_CRBOWATK1_1;
-	UpState2 = S_CRBOWUP;
-	DownState2 = S_CRBOWDOWN;
-	ReadyState2 = S_CRBOW1;
-	AttackState2 = S_CRBOWATK2_1;
-	HoldAttackState2 = S_CRBOWATK2_1;
 }

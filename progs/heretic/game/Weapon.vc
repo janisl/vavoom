@@ -43,19 +43,10 @@ const int
 	USE_MACE_AMMO_1 = 1,
 	USE_MACE_AMMO_2 = 5;
 
-int AmmoUsePL2;
-
-state UpState2;
-state DownState2;
-state ReadyState2;
-state AttackState2;
-state HoldAttackState2;
+class<WeaponEx> SisterWeaponType;
 
 float PSpriteSY;
 bool bInShareware;
-
-void WeaponLevel2Init() { }
-void WeaponLevel2Fade() { }
 
 int WeaponType;
 
@@ -89,6 +80,12 @@ bool TryPickup(EntityEx Toucher)
 	Player(Toucher.Player).GiveAmmo(AmmoType1, AmmoGive1);
 	Wpn = CreateCopy(Toucher);
 	Wpn.AttachToOwner(Toucher);
+	if (SisterWeaponType)
+	{
+		SisterWeapon = Spawn(SisterWeaponType);
+		SisterWeapon.AttachToOwner(Toucher);
+		SisterWeapon.SisterWeapon = WeaponEx(Wpn);
+	}
 	if (!Player(Toucher.Player).ReadyWeapon ||
 		Weapon(Wpn).Slot > Player(Toucher.Player).ReadyWeapon.Slot ||
 		(Weapon(Wpn).Slot == Player(Toucher.Player).ReadyWeapon.Slot &&
@@ -124,9 +121,9 @@ bool CheckAmmo(bool AutoSwitch, optional bool RequireAmmo)
 {
 	int				count;
 
-	if (Player(Owner.Player).Powers[pw_weaponlevel2] && !Level.Game.deathmatch)
+	if (bPoweredUp && Level.Game.deathmatch && SisterWeapon)
 	{
-		count = AmmoUsePL2;
+		count = SisterWeapon.AmmoUse1;
 	}
 	else
 	{
@@ -146,14 +143,7 @@ bool CheckAmmo(bool AutoSwitch, optional bool RequireAmmo)
 	WeaponEx Best = WeaponEx(Player(Owner.Player).BestWeapon());
 
 	Player(Owner.Player).PendingWeapon = Best;
-	if (Player(Owner.Player).Powers[pw_weaponlevel2])
-	{
-		Player(Owner.Player).SetViewState(ps_weapon, DownState2);
-	}
-	else
-	{
-		Player(Owner.Player).SetViewState(ps_weapon, DownState);
-	}
+	Player(Owner.Player).SetViewState(ps_weapon, DownState);
 	return false;
 }
 
@@ -212,14 +202,7 @@ final void A_WeaponReady()
 	// died.
 	if (Player(Owner.Player).PendingWeapon || !Owner.Player.Health)
 	{
-		if (Player(Owner.Player).Powers[pw_weaponlevel2])
-		{
-			Owner.Player.SetViewState(ps_weapon, DownState2);
-		}
-		else
-		{
-			Owner.Player.SetViewState(ps_weapon, DownState);
-		}
+		Owner.Player.SetViewState(ps_weapon, DownState);
 		return;
 	}
 
@@ -309,14 +292,7 @@ final void A_Raise()
 		return;
 	}
 	Owner.Player.ViewStates[ps_weapon].SY = WEAPONTOP;
-	if (Player(Owner.Player).Powers[pw_weaponlevel2])
-	{
-		Owner.Player.SetViewState(ps_weapon, ReadyState2);
-	}
-	else
-	{
-		Owner.Player.SetViewState(ps_weapon, ReadyState);
-	}
+	Owner.Player.SetViewState(ps_weapon, ReadyState);
 }
 
 //===========================================================================

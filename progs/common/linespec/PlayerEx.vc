@@ -76,6 +76,7 @@ replication
 
 Weapon BestWeapon(optional class<Ammo> AmmoType)
 {
+	bool Powered = HaveTomeOfPower();
 	Weapon Best = none;
 	Inventory Item;
 	for (Item = EntityEx(MO).Inventory; Item; Item = Item.Inventory)
@@ -93,6 +94,15 @@ Weapon BestWeapon(optional class<Ammo> AmmoType)
 		}
 		//	Possibly limit to specific ammo type.
 		if (AmmoType && Wpn.AmmoType1 != AmmoType)
+		{
+			continue;
+		}
+		//	Check if it's for the current tome of power state.
+		if (Powered && Wpn.SisterWeapon && Wpn.SisterWeapon.bPoweredUp)
+		{
+			continue;
+		}
+		if (!Powered && Wpn.bPoweredUp)
 		{
 			continue;
 		}
@@ -121,6 +131,7 @@ Weapon GetSlotChangeWeapon(int Slot, Weapon Current, bool bCheckAmmo)
 		Current = none;
 	}
 
+	bool Powered = HaveTomeOfPower();
 	Weapon Best = none;
 	Weapon NextBest = none;
 	Inventory Item;
@@ -139,6 +150,15 @@ Weapon GetSlotChangeWeapon(int Slot, Weapon Current, bool bCheckAmmo)
 		}
 		//	Skip current one.
 		if (Wpn == Current)
+		{
+			continue;
+		}
+		//	Check if it's for the current tome of power state.
+		if (Powered && Wpn.SisterWeapon && Wpn.SisterWeapon.bPoweredUp)
+		{
+			continue;
+		}
+		if (!Powered && Wpn.bPoweredUp)
 		{
 			continue;
 		}
@@ -175,6 +195,7 @@ Weapon GetSlotChangeWeapon(int Slot, Weapon Current, bool bCheckAmmo)
 
 Weapon GetPrevWeapon(Weapon Current, bool bCheckAmmo)
 {
+	bool Powered = HaveTomeOfPower();
 	Weapon Best = none;
 	Weapon NextBest = none;
 	Inventory Item;
@@ -188,6 +209,15 @@ Weapon GetPrevWeapon(Weapon Current, bool bCheckAmmo)
 		}
 		//	Skip current one.
 		if (Wpn == Current)
+		{
+			continue;
+		}
+		//	Check if it's for the current tome of power state.
+		if (Powered && Wpn.SisterWeapon && Wpn.SisterWeapon.bPoweredUp)
+		{
+			continue;
+		}
+		if (!Powered && Wpn.bPoweredUp)
 		{
 			continue;
 		}
@@ -229,6 +259,7 @@ Weapon GetPrevWeapon(Weapon Current, bool bCheckAmmo)
 
 Weapon GetNextWeapon(Weapon Current, bool bCheckAmmo)
 {
+	bool Powered = HaveTomeOfPower();
 	Weapon Best = none;
 	Weapon NextBest = none;
 	Inventory Item;
@@ -242,6 +273,15 @@ Weapon GetNextWeapon(Weapon Current, bool bCheckAmmo)
 		}
 		//	Skip current one.
 		if (Wpn == Current)
+		{
+			continue;
+		}
+		//	Check if it's for the current tome of power state.
+		if (Powered && Wpn.SisterWeapon && Wpn.SisterWeapon.bPoweredUp)
+		{
+			continue;
+		}
+		if (!Powered && Wpn.bPoweredUp)
 		{
 			continue;
 		}
@@ -315,6 +355,11 @@ void GiveQuest(int QuestID)
 
 void GotAmmo(Ammo NewAmmo)
 {
+}
+
+bool HaveTomeOfPower()
+{
+	return false;
 }
 
 defaultproperties

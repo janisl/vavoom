@@ -50,14 +50,7 @@ final void A_BeakReady()
 		// Chicken beak attack
 		Owner.Player.bAttackDown = true;
 		Owner.SetState(Actor(Owner).MissileState);
-		if (Player(Owner.Player).Powers[pw_weaponlevel2])
-		{
-			Owner.Player.SetViewState(ps_weapon, AttackState2);
-		}
-		else
-		{
-			Owner.Player.SetViewState(ps_weapon, AttackState);
-		}
+		Owner.Player.SetViewState(ps_weapon, AttackState);
 		HereticLevelInfo(Level).NoiseAlert(Actor(Owner), Actor(Owner));
 	}
 	else
@@ -137,14 +130,10 @@ defaultproperties
 	Slot = 1;
 	SelectionOrder = 10000;
 	PSpriteSY = 15.0;
+	SisterWeaponType = BeakPowered;
 	UpState = S_BEAKUP;
 	DownState = S_BEAKDOWN;
 	ReadyState = S_BEAKREADY;
 	AttackState = S_BEAKATK1_1;
 	HoldAttackState = S_BEAKATK1_1;
-	UpState2 = S_BEAKUP;
-	DownState2 = S_BEAKDOWN;
-	ReadyState2 = S_BEAKREADY;
-	AttackState2 = S_BEAKATK2_1;
-	HoldAttackState2 = S_BEAKATK2_1;
 }

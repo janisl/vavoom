@@ -27,28 +27,6 @@ class Gauntlets : WeaponEx
 	__mobjinfo__(2005)
 	__scriptid__(32);
 
-//==========================================================================
-//
-//	WeaponLevel2Init
-//
-//==========================================================================
-
-void WeaponLevel2Init()
-{
-	Owner.Player.SetViewState(ps_weapon, ReadyState2);
-}
-
-//==========================================================================
-//
-//	WeaponLevel2Fade
-//
-//==========================================================================
-
-void WeaponLevel2Fade()
-{
-	Player(Owner.Player).PendingWeapon = Player(Owner.Player).ReadyWeapon;
-}
-
 //===========================================================================
 //
 //  A_GauntletAttack
@@ -70,7 +48,7 @@ final void A_GauntletAttack()
 	Owner.Player.ViewStates[ps_weapon].SX = Random() * 4.0 - 2.0;
 	Owner.Player.ViewStates[ps_weapon].SY = WEAPONTOP + Random() * 4.0;
 	angles = Owner.Angles;
-	if (Player(Owner.Player).Powers[pw_weaponlevel2])
+	if (bPoweredUp)
 	{
 		damage = HITDICE(2);
 		dist = 4.0 * MELEERANGE;
@@ -110,7 +88,7 @@ final void A_GauntletAttack()
 	{
 		Owner.Player.ExtraLight = 2;
 	}
-	if (Player(Owner.Player).Powers[pw_weaponlevel2])
+	if (bPoweredUp)
 	{
 		Player(Owner.Player).GiveBody(damage >> 1);
 		Owner.PlaySound('weapons/gauntletspowhit', CHAN_WEAPON);
@@ -173,6 +151,7 @@ defaultproperties
 	SelectionOrder = 2300;
 	PSpriteSY = 15.0;
 	PickupMessage = "$txt_wpngauntlets";
+	SisterWeaponType = GauntletsPowered;
 	bWimpyWeapon = true;
 	IdleState = S_WGNT;
 	UpState = S_GAUNTLETUP;
@@ -180,9 +159,4 @@ defaultproperties
 	ReadyState = S_GAUNTLETREADY;
 	AttackState = S_GAUNTLETATK1_1;
 	HoldAttackState = S_GAUNTLETATK1_3;
-	UpState2 = S_GAUNTLETUP2;
-	DownState2 = S_GAUNTLETDOWN2;
-	ReadyState2 = S_GAUNTLETREADY2_1;
-	AttackState2 = S_GAUNTLETATK2_1;
-	HoldAttackState2 = S_GAUNTLETATK2_3;
 }

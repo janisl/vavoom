@@ -2459,7 +2459,16 @@ bool UseArtiTomeOfPower()
 		{
 			return false;
 		}
-		WeaponEx(ViewEnt).WeaponLevel2Init();
+		WeaponEx Wpn = ReadyWeapon;
+		WeaponEx Sist = WeaponEx(ReadyWeapon.SisterWeapon);
+		if (Sist && Sist.bPoweredUp)
+		{
+			SetWeapon(Sist);
+			if (Sist.ReadyState != Wpn.ReadyState)
+			{
+				SetViewState(ps_weapon, Sist.ReadyState);
+			}
+		}
 	}
 	return true;
 }
@@ -2517,14 +2526,7 @@ void BringUpWeapon()
 		MO.PlaySound('weapons/gauntletsactivate', CHAN_WEAPON);
 	}
 	ViewStates[ps_weapon].SY = WeaponEx::WEAPONBOTTOM;
-	if (Powers[pw_weaponlevel2])
-	{
-		SetViewState(ps_weapon, WeaponEx(ViewEnt).UpState2);
-	}
-	else
-	{
-		SetViewState(ps_weapon, WeaponEx(ViewEnt).UpState);
-	}
+	SetViewState(ps_weapon, WeaponEx(ViewEnt).UpState);
 }
 
 //===========================================================================
@@ -2537,14 +2539,7 @@ void BringUpWeapon()
 
 void DropWeapon()
 {
-	if (Powers[pw_weaponlevel2])
-	{
-		SetViewState(ps_weapon, WeaponEx(ViewEnt).DownState2);
-	}
-	else
-	{
-		SetViewState(ps_weapon, WeaponEx(ViewEnt).DownState);
-	}
+	SetViewState(ps_weapon, WeaponEx(ViewEnt).DownState);
 }
 
 //===========================================================================
@@ -2598,18 +2593,9 @@ void FireWeapon()
 		return;
 	}
 	MO.SetState(PlayerPawn(MO).Attack2State);
-	if (Powers[pw_weaponlevel2])
-	{
-		attackState = Refire ?
-			WeaponEx(ViewEnt).HoldAttackState2 :
-			WeaponEx(ViewEnt).AttackState2;
-	}
-	else
-	{
-		attackState = Refire ?
-			WeaponEx(ViewEnt).HoldAttackState :
-			WeaponEx(ViewEnt).AttackState;
-	}
+	attackState = Refire ?
+		WeaponEx(ViewEnt).HoldAttackState :
+		WeaponEx(ViewEnt).AttackState;
 	SetViewState(ps_weapon, attackState);
 	HereticLevelInfo(Level).NoiseAlert(Actor(MO), Actor(MO));
 	if (ReadyWeapon.WeaponType == wp_gauntlets && !Refire)
@@ -2670,7 +2656,20 @@ void UpdateBeak()
 
 void WeaponLevel2Fade()
 {
-	WeaponEx(ViewEnt).WeaponLevel2Fade();
+	if (!ReadyWeapon.bPoweredUp)
+	{
+		return;
+	}
+	WeaponEx Wpn = ReadyWeapon;
+	WeaponEx Sist = WeaponEx(ReadyWeapon.SisterWeapon);
+	if (Sist)
+	{
+		SetWeapon(Sist);
+		if (Sist.ReadyState != Wpn.ReadyState)
+		{
+			SetViewState(ps_weapon, Sist.ReadyState);
+		}
+	}
 }
 
 //==========================================================================
@@ -3082,6 +3081,17 @@ bool IsStaffLevel2()
 bool HaveInvulnerabilityPower()
 {
 	return !!Powers[pw_invulnerability];
+}
+
+//==========================================================================
+//
+//  HaveTomeOfPower
+//
+//==========================================================================
+
+bool HaveTomeOfPower()
+{
+	return !!Powers[pw_weaponlevel2];
 }
 
 //==========================================================================
