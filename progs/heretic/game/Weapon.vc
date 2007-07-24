@@ -50,49 +50,48 @@ bool bInShareware;
 
 //==========================================================================
 //
-//  TryPickup
+//	CreateCopy
+//
+//==========================================================================
+
+Inventory CreateCopy(EntityEx Toucher)
+{
+	AddAmmo(Toucher, AmmoType1, AmmoGive1);
+	Inventory Copy = ::CreateCopy(Toucher);
+	if (SisterWeaponType)
+	{
+		SisterWeapon = Spawn(SisterWeaponType);
+		SisterWeapon.AttachToOwner(Toucher);
+		SisterWeapon.SisterWeapon = WeaponEx(Copy);
+	}
+	if (!Player(Toucher.Player).ReadyWeapon ||
+		Weapon(Copy).Slot > Player(Toucher.Player).ReadyWeapon.Slot ||
+		(Weapon(Copy).Slot == Player(Toucher.Player).ReadyWeapon.Slot &&
+		Weapon(Copy).SelectionOrder < Player(Toucher.Player).ReadyWeapon.SelectionOrder))
+	{
+		// Only switch to more powerful weapons
+		Player(Toucher.Player).PendingWeapon = WeaponEx(Copy);
+	}
+	return Copy;
+}
+
+//==========================================================================
+//
+//  PickupForAmmo
 //
 //  Returns true if the weapon or its ammo was accepted.
 //
 //==========================================================================
 
-bool TryPickup(EntityEx Toucher)
+bool PickupForAmmo(Weapon ExistingWeapon)
 {
-	Inventory Wpn = Toucher.FindInventory(class<Inventory>(Class));
-
-	if (Wpn)
+	// Cooperative net-game
+	if (ShouldStay() && !bDropped)
 	{
-		// Cooperative net-game
-		if (ShouldStay() && !bDropped)
-		{
-			return false;
-		}
-		bool gaveAmmo = Player(Toucher.Player).GiveAmmo(AmmoType1, AmmoGive1);
-		if (gaveAmmo)
-		{
-			GoAwayAndDie();
-		}
-		return gaveAmmo;
+		return false;
 	}
-
-	Player(Toucher.Player).GiveAmmo(AmmoType1, AmmoGive1);
-	Wpn = CreateCopy(Toucher);
-	Wpn.AttachToOwner(Toucher);
-	if (SisterWeaponType)
-	{
-		SisterWeapon = Spawn(SisterWeaponType);
-		SisterWeapon.AttachToOwner(Toucher);
-		SisterWeapon.SisterWeapon = WeaponEx(Wpn);
-	}
-	if (!Player(Toucher.Player).ReadyWeapon ||
-		Weapon(Wpn).Slot > Player(Toucher.Player).ReadyWeapon.Slot ||
-		(Weapon(Wpn).Slot == Player(Toucher.Player).ReadyWeapon.Slot &&
-		Weapon(Wpn).SelectionOrder < Player(Toucher.Player).ReadyWeapon.SelectionOrder))
-	{
-		// Only switch to more powerful weapons
-		Player(Toucher.Player).PendingWeapon = WeaponEx(Wpn);
-	}
-	return true;
+	bool gaveAmmo = AddExistingAmmo(ExistingWeapon.Ammo1, AmmoGive1);
+	return gaveAmmo;
 }
 
 //==========================================================================

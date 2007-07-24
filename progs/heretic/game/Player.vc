@@ -491,19 +491,19 @@ void PlayerExitMap(bool clusterChange)
 //
 //  GiveAmmo
 //
-//  Returns true if the player accepted the ammo, false if it was
-// refused (player has maxammo[ammo]).
+//  Returns true if the player accepted the ammo, false if it was refused.
 //
 //==========================================================================
 
 bool GiveAmmo(class<Ammo> ammo, int count)
 {
-	int prevAmmo;
+	int oldammo;
 
 	if (!ammo)
 	{
 		return false;
 	}
+
 	Ammo AmmoItem = Ammo(EntityEx(MO).FindInventory(ammo));
 	if (!AmmoItem)
 	{
@@ -513,31 +513,39 @@ bool GiveAmmo(class<Ammo> ammo, int count)
 	}
 	if (!count)
 	{
-		return true;
+		return false;
 	}
 	if (AmmoItem.Amount == AmmoItem.MaxAmount)
 	{
 		return false;
 	}
-	if (Level.Game.gameskill == sk_baby || Level.Game.gameskill == sk_nightmare)
+
+	if (Level.Game.gameskill == sk_baby ||
+		(Level.Game.gameskill == sk_nightmare &&
+		LineSpecialGameInfo(Level.Game).bNightmareExtraAmmo))
 	{
 		// extra ammo in baby mode and nightmare mode
-		count += count >> 1;
+		if (LineSpecialGameInfo(Level.Game).bBabyNightmareDoubleAmmo)
+		{
+			count <<= 1;
+		}
+		else
+		{
+			count += count >> 1;
+		}
 	}
-	prevAmmo = AmmoItem.Amount;
 
+	oldammo = AmmoItem.Amount;
 	AmmoItem.Amount += count;
 	if (AmmoItem.Amount > AmmoItem.MaxAmount)
 	{
 		AmmoItem.Amount = AmmoItem.MaxAmount;
 	}
-	if (prevAmmo)
+
+	if (oldammo <= 0)
 	{
-		// Don't attempt to change weapons if the player already had
-		// ammo of the type just given
-		return true;
+		GotAmmo(AmmoItem);
 	}
-	GotAmmo(AmmoItem);
 	return true;
 }
 

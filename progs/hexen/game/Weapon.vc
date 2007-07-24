@@ -33,6 +33,24 @@ int WeaponClass;
 
 //==========================================================================
 //
+//	CreateCopy
+//
+//==========================================================================
+
+Inventory CreateCopy(EntityEx Toucher)
+{
+	AddAmmo(Toucher, AmmoType1, AmmoGive1);
+	Inventory Copy = ::CreateCopy(Toucher);
+	if (!Player(Toucher.Player).ReadyWeapon ||
+		Slot > Player(Toucher.Player).ReadyWeapon.Slot)
+	{
+		// Only switch to more powerful weapons
+		Player(Toucher.Player).PendingWeapon = WeaponEx(Copy);
+	}
+}
+
+//==========================================================================
+//
 //  TryPickup
 //
 //==========================================================================
@@ -42,46 +60,46 @@ bool TryPickup(EntityEx Toucher)
 	if (Toucher.Player.PClass != WeaponClass)
 	{
 		// Wrong class, but try to pick up for mana
-		if (ShouldStay())
-		{
-			// Can't pick up weapons for other classes in coop netplay
-			return false;
-		}
-		if (!Player(Toucher.Player).GiveMana(AmmoType1, AmmoGive1))
-		{
-			return false;
-		}
-		GoAwayAndDie();
-		return true;
-	}
-
-	Inventory Wpn = Toucher.FindInventory(class<Inventory>(Class));
-
-	if (Wpn)
-	{
-		// Cooperative net-game
 		if (ShouldStay() && !bDropped)
 		{
 			return false;
 		}
-		bool gaveMana = Player(Toucher.Player).GiveMana(AmmoType1, AmmoGive1);
+		bool gaveMana = false;
+		if (AddAmmo(Toucher, AmmoType1, AmmoGive1))
+		{
+			gaveMana = true;
+		}
+		if (AddAmmo(Toucher, AmmoType2, AmmoGive2))
+		{
+			gaveMana = true;
+		}
 		if (gaveMana)
 		{
 			GoAwayAndDie();
+			GiveQuest(Toucher);
+			return true;
 		}
-		return gaveMana;
+		return false;
 	}
 
-	Player(Toucher.Player).GiveMana(AmmoType1, AmmoGive1);
-	Wpn = CreateCopy(Toucher);
-	Wpn.AttachToOwner(Toucher);
-	if (!Player(Toucher.Player).ReadyWeapon ||
-		Slot > Player(Toucher.Player).ReadyWeapon.Slot)
+	return ::TryPickup(Toucher);
+}
+
+//==========================================================================
+//
+//  PickupForAmmo
+//
+//==========================================================================
+
+bool PickupForAmmo(Weapon ExistingWeapon)
+{
+	// Cooperative net-game
+	if (ShouldStay() && !bDropped)
 	{
-		// Only switch to more powerful weapons
-		Player(Toucher.Player).PendingWeapon = WeaponEx(Wpn);
+		return false;
 	}
-	return true;
+	bool gaveMana = AddExistingAmmo(ExistingWeapon.Ammo1, AmmoGive1);
+	return gaveMana;
 }
 
 //==========================================================================

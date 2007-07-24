@@ -669,45 +669,60 @@ void PlayerExitMap(bool clusterChange)
 //
 //  GiveMana
 //
-//  Returns true if the player accepted the mana, false if it was
-// refused (player has MAX_MANA).
+//  Returns true if the player accepted the mana, false if it was refused.
 //
 //==========================================================================
 
-bool GiveMana(class<Ammo> mana, int count)
+bool GiveMana(class<Ammo> ammo, int count)
 {
-	int prevMana;
+	int oldammo;
 
-	if (!mana)
+	if (!ammo)
 	{
 		return false;
 	}
-	Ammo ManaItem = Ammo(EntityEx(MO).FindInventory(mana));
-	if (!ManaItem)
+
+	Ammo AmmoItem = Ammo(EntityEx(MO).FindInventory(ammo));
+	if (!AmmoItem)
 	{
-		ManaItem = Level.Spawn(mana);
-		ManaItem.Amount = 0;
-		ManaItem.AttachToOwner(EntityEx(MO));
+		AmmoItem = Level.Spawn(ammo);
+		AmmoItem.AttachToOwner(EntityEx(MO));
+		AmmoItem.Amount = 0;
 	}
-	if (ManaItem.Amount == ManaItem.MaxAmount)
+	if (!count)
 	{
 		return false;
 	}
-	if (Level.Game.gameskill == sk_baby || Level.Game.gameskill == sk_nightmare)
+	if (AmmoItem.Amount == AmmoItem.MaxAmount)
 	{
-		// extra mana in baby mode and nightmare mode
-		count += count >> 1;
+		return false;
 	}
-	prevMana = ManaItem.Amount;
 
-	ManaItem.Amount += count;
-	if (ManaItem.Amount > ManaItem.MaxAmount)
+	if (Level.Game.gameskill == sk_baby ||
+		(Level.Game.gameskill == sk_nightmare &&
+		LineSpecialGameInfo(Level.Game).bNightmareExtraAmmo))
 	{
-		ManaItem.Amount = ManaItem.MaxAmount;
+		// extra ammo in baby mode and nightmare mode
+		if (LineSpecialGameInfo(Level.Game).bBabyNightmareDoubleAmmo)
+		{
+			count <<= 1;
+		}
+		else
+		{
+			count += count >> 1;
+		}
 	}
-	if (prevMana <= 0)
+
+	oldammo = AmmoItem.Amount;
+	AmmoItem.Amount += count;
+	if (AmmoItem.Amount > AmmoItem.MaxAmount)
 	{
-		GotAmmo(ManaItem);
+		AmmoItem.Amount = AmmoItem.MaxAmount;
+	}
+
+	if (oldammo <= 0)
+	{
+		GotAmmo(AmmoItem);
 	}
 	return true;
 }

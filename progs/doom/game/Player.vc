@@ -523,50 +523,57 @@ void PlayerExitMap(bool clusterChange)
 //
 //==========================================================================
 
-bool GiveAmmo(class<Ammo> ammo, int num)
+bool GiveAmmo(class<Ammo> ammo, int count)
 {
-	int				oldammo;
-	int				max;
-	Ammo			AmmoItem;
+	int oldammo;
 
 	if (!ammo)
+	{
 		return false;
+	}
 
-	AmmoItem = Ammo(EntityEx(MO).FindInventory(ammo));
+	Ammo AmmoItem = Ammo(EntityEx(MO).FindInventory(ammo));
 	if (!AmmoItem)
 	{
 		AmmoItem = Level.Spawn(ammo);
 		AmmoItem.AttachToOwner(EntityEx(MO));
 		AmmoItem.Amount = 0;
 	}
-	if (!num)
+	if (!count)
 	{
 		return false;
 	}
-	max = AmmoItem.MaxAmount;
-	if (AmmoItem.Amount == max)
-		return false;
-
-	if (Level.Game.gameskill == sk_baby || Level.Game.gameskill == sk_nightmare)
+	if (AmmoItem.Amount == AmmoItem.MaxAmount)
 	{
-		// give double ammo in trainer mode,
-		// you'll need in nightmare
-		num <<= 1;
+		return false;
+	}
+
+	if (Level.Game.gameskill == sk_baby ||
+		(Level.Game.gameskill == sk_nightmare &&
+		LineSpecialGameInfo(Level.Game).bNightmareExtraAmmo))
+	{
+		// extra ammo in baby mode and nightmare mode
+		if (LineSpecialGameInfo(Level.Game).bBabyNightmareDoubleAmmo)
+		{
+			count <<= 1;
+		}
+		else
+		{
+			count += count >> 1;
+		}
 	}
 
 	oldammo = AmmoItem.Amount;
-	AmmoItem.Amount += num;
+	AmmoItem.Amount += count;
+	if (AmmoItem.Amount > AmmoItem.MaxAmount)
+	{
+		AmmoItem.Amount = AmmoItem.MaxAmount;
+	}
 
-	if (AmmoItem.Amount > max)
-		AmmoItem.Amount = max;
-
-	// If non zero ammo, 
-	// don't change up weapons,
-	// player was lower on purpose.
-	if (oldammo)
-		return true;
-
-	GotAmmo(AmmoItem);
+	if (oldammo <= 0)
+	{
+		GotAmmo(AmmoItem);
+	}
 	return true;
 }
 
