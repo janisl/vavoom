@@ -30,9 +30,11 @@ defaultproperties
 	SisterWeaponType = Staff;
 	bPoweredUp = true;
 	bStaff2Kickback = true;
+	bReadySndHalf = true;
 	UpState = S_STAFFUP2;
 	DownState = S_STAFFDOWN2;
 	ReadyState = S_STAFFREADY2_1;
 	AttackState = S_STAFFATK2_1;
 	HoldAttackState = S_STAFFATK2_1;
+	ReadySound = 'weapons/staffcrackle';
 }

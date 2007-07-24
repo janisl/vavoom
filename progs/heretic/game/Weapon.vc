@@ -46,43 +46,21 @@ const int
 float PSpriteSY;
 bool bInShareware;
 
-//===========================================================================
+//==========================================================================
 //
-//  CheckAmmo
+//	AttachToOwner
 //
-//  Returns true if there is enough ammo to shoot.  If not, selects the
-// next weapon to use.
-//
-//===========================================================================
+//==========================================================================
 
-bool CheckAmmo(bool AutoSwitch, optional bool RequireAmmo)
+void AttachToOwner(EntityEx NewOwner)
 {
-	int				count;
-
+	::AttachToOwner(NewOwner);
+	//	In deathmatch powered-up weapons use the same amount of ammo per
+	// shot as non-powered ones.
 	if (bPoweredUp && Level.Game.deathmatch && SisterWeapon)
 	{
-		count = SisterWeapon.AmmoUse1;
+		AmmoUse1 = SisterWeapon.AmmoUse1;
 	}
-	else
-	{
-		count = AmmoUse1;
-	}
-
-	if (!Ammo1 || Ammo1.Amount >= count)
-	{
-		return true;
-	}
-	if (!AutoSwitch)
-	{
-		return false;
-	}
-
-	// out of ammo, pick a weapon to change to
-	WeaponEx Best = WeaponEx(Player(Owner.Player).BestWeapon());
-
-	Player(Owner.Player).PendingWeapon = Best;
-	Player(Owner.Player).SetViewState(ps_weapon, DownState);
-	return false;
 }
 
 //==========================================================================
@@ -114,157 +92,35 @@ final int HITDICE(int a)
 
 //===========================================================================
 //
-//  A_WeaponReady
-//
-//  The player can fire the weapon or change to another weapon at this time.
+//  ActivateChickenbeak
 //
 //===========================================================================
 
-final void A_WeaponReady()
+bool ActivateChickenbeak()
 {
-	float angle;
-
 	if (Player(Owner.Player).ChickenTime)
 	{
 		// Change to the chicken beak
 		Player(Owner.Player).ActivateBeak();
-		return;
+		return true;
 	}
+	return false;
+}
+
+//===========================================================================
+//
+//  StopFiringAnimation
+//
+//===========================================================================
+
+void StopFiringAnimation()
+{
 	// Change player from attack state
 	if (Owner.State == Actor(Owner).MissileState ||
-		Owner.State == PlayerPawn(Owner).Attack2State)
+		Owner.State == Actor(Owner).MeleeState)
 	{
 		Owner.SetState(Actor(Owner).IdleState);
 	}
-	// Put the weapon away if the player has a pending weapon or has
-	// died.
-	if (Player(Owner.Player).PendingWeapon || !Owner.Player.Health)
-	{
-		Owner.Player.SetViewState(ps_weapon, DownState);
-		return;
-	}
-
-	// Check for fire.  The phoenix rod does not auto fire.
-	if (Owner.Player.Buttons & BT_ATTACK)
-	{
-		if (!Owner.Player.bAttackDown ||
-			!Player(Owner.Player).ReadyWeapon.bNoAutoFire)
-		{
-			Owner.Player.bAttackDown = true;
-			Player(Owner.Player).FireWeapon();
-			return;
-		}
-	}
-	else
-	{
-		Owner.Player.bAttackDown = false;
-	}
-
-	// Bob the weapon based on movement speed.
-	angle = AngleMod360(180.0 * XLevel.Time);
-	Owner.Player.ViewStates[ps_weapon].SX = 1.0 + Player(Owner.Player).Bob * cos(angle);
-	if (angle >= 180.0)
-	{
-		angle -= 180.0;
-	}
-	Owner.Player.ViewStates[ps_weapon].SY = WEAPONTOP + Player(Owner.Player).Bob * sin(angle);
-}
-
-//===========================================================================
-//
-//  A_Lower
-//
-//===========================================================================
-
-final void A_Lower()
-{
-	if (Player(Owner.Player).ChickenTime)
-	{
-		Owner.Player.ViewStates[ps_weapon].SY = WEAPONBOTTOM;
-	}
-	else
-	{
-		// FIXME!!
-		if (Level.Game.frametime < 1.0 / 35.0)
-			Owner.Player.ViewStates[ps_weapon].SY += LOWERSPEED;
-		else
-			Owner.Player.ViewStates[ps_weapon].SY += LOWERSPEED * 35.0 * Level.Game.frametime;
-	}
-	if (Owner.Player.ViewStates[ps_weapon].SY < WEAPONBOTTOM)
-	{
-		// Not lowered all the way yet
-		return;
-	}
-	if (Owner.Player.PlayerState == PST_DEAD)
-	{
-		// Player is dead, so don't bring up a pending weapon
-		Owner.Player.ViewStates[ps_weapon].SY = WEAPONBOTTOM;
-		return;
-	}
-	if (!Owner.Player.Health)
-	{
-		// Player is dead, so keep the weapon off screen
-		Owner.Player.SetViewState(ps_weapon, none);
-		return;
-	}
-	Player(Owner.Player).ReadyWeapon = Player(Owner.Player).PendingWeapon;
-	Player(Owner.Player).BringUpWeapon();
-}
-
-//===========================================================================
-//
-//  A_Raise
-//
-//===========================================================================
-
-final void A_Raise()
-{
-	//	FIXME!!
-	if (Level.Game.frametime < 1.0 / 35.0)
-		Owner.Player.ViewStates[ps_weapon].SY -= RAISESPEED;
-	else
-		Owner.Player.ViewStates[ps_weapon].SY -= RAISESPEED * 35.0 * Level.Game.frametime;
-	if (Owner.Player.ViewStates[ps_weapon].SY > WEAPONTOP)
-	{
-		// Not raised all the way yet
-		return;
-	}
-	Owner.Player.ViewStates[ps_weapon].SY = WEAPONTOP;
-	Owner.Player.SetViewState(ps_weapon, ReadyState);
-}
-
-//===========================================================================
-//
-//  A_ReFire
-//
-//  The player can re fire the weapon without lowering it entirely.
-//
-//===========================================================================
-
-final void A_ReFire()
-{
-	if ((Owner.Player.Buttons & BT_ATTACK) &&
-		!Player(Owner.Player).PendingWeapon && Owner.Player.Health)
-	{
-		Player(Owner.Player).Refire++;
-		Player(Owner.Player).FireWeapon();
-	}
-	else
-	{
-		Player(Owner.Player).Refire = 0;
-		CheckAmmo(true);
-	}
-}
-
-//===========================================================================
-//
-//  A_Light0
-//
-//===========================================================================
-
-final void A_Light0()
-{
-	Owner.Player.ExtraLight = 0;
 }
 
 //

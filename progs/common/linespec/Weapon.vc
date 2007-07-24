@@ -73,6 +73,12 @@ bool			bPoweredUp;
 bool			bStaff2Kickback;
 //	Always use extreme death
 bool			bExtremeDeath;
+//	Ammo is optional
+bool			bAmmoOptional;
+//	Half a chance to play the reay sound.
+bool			bReadySndHalf;
+//	Don't bob weapon.
+bool			bDontBob;
 //	It's a melee weapon
 bool			bBotMelee;
 //	It's a projectile weapon
@@ -316,9 +322,319 @@ bool ShouldStay()
 	return LineSpecialGameInfo(Level.Game).bWeaponsStay;
 }
 
+//==========================================================================
+//
+//	GetUpState
+//
+//==========================================================================
+
+state GetUpState()
+{
+	return UpState;
+}
+
+//==========================================================================
+//
+//	GetDownState
+//
+//==========================================================================
+
+state GetDownState()
+{
+	return DownState;
+}
+
+//==========================================================================
+//
+//	GetReadyState
+//
+//==========================================================================
+
+state GetReadyState()
+{
+	return ReadyState;
+}
+
+//==========================================================================
+//
+//	GetAttackState
+//
+//==========================================================================
+
+state GetAttackState(bool Hold)
+{
+	return Hold && HoldAttackState ? HoldAttackState : AttackState;
+}
+
+//==========================================================================
+//
+//  CheckAmmo
+//
+//  Returns true if there is enough mana to shoot.  If not, selects the
+// next weapon to use.
+//
+//==========================================================================
+
 bool CheckAmmo(bool AutoSwitch, optional bool RequireAmmo)
 {
+	if (!RequireAmmo && bAmmoOptional)
+	{
+		return true;
+	}
+	bool Good = true;
+	if (Ammo1 && Ammo1.Amount < AmmoUse1)
+	{
+		Good = false;
+	}
+	if (Ammo2 && Ammo2.Amount < AmmoUse2)
+	{
+		Good = false;
+	}
+	if (Good)
+	{
+		return true;
+	}
+
+	if (!AutoSwitch)
+	{
+		return false;
+	}
+
+	// out of ammo, pick a weapon to change to
+	Weapon Best = PlayerEx(Owner.Player).BestWeapon();
+
+	PlayerEx(Owner.Player).PendingWeapon = Best;
+	Owner.Player.SetViewState(ps_weapon, GetDownState());
 	return false;
+}
+
+//==========================================================================
+//
+//  A_WeaponReady
+//
+//  The player can fire the weapon or change to another weapon at this time.
+// Follows after getting weapon up, or after previous attack/fire sequence.
+//
+//==========================================================================
+
+final void A_WeaponReady()
+{
+	float angle;
+
+	if (ActivateChickenbeak())
+	{
+		return;
+	}
+	StopFiringAnimation();
+
+	if (Owner.Player.ViewStates[ps_weapon].State == ReadyState &&
+		ReadySound && (!bReadySndHalf || Random() < 0.5))
+	{
+		Owner.PlaySound(ReadySound, CHAN_WEAPON);
+	}
+
+	// Put the weapon away if the player has a pending weapon or has died.
+	if (PlayerEx(Owner.Player).PendingWeapon || !Owner.Player.Health)
+	{
+		Owner.Player.SetViewState(ps_weapon, GetDownState());
+		return;
+	}
+
+	// Check for fire.
+	if (Owner.Player.Buttons & BT_ATTACK)
+	{
+		if (!Owner.Player.bAttackDown ||
+			!PlayerEx(Owner.Player).ReadyWeapon.bNoAutoFire)
+		{
+			Owner.Player.bAttackDown = true;
+			PlayerEx(Owner.Player).FireWeapon();
+			return;
+		}
+	}
+	else
+	{
+		Owner.Player.bAttackDown = false;
+	}
+
+	if (!bDontBob)
+	{
+		// bob the weapon based on movement speed
+		angle = AngleMod360(180.0 * XLevel.Time);
+		Owner.Player.ViewStates[ps_weapon].SX = 1.0 +
+			PlayerEx(Owner.Player).Bob * cos(angle);
+		if (angle >= 180.0)
+		{
+			angle -= 180.0;
+		}
+		Owner.Player.ViewStates[ps_weapon].SY = WEAPONTOP +
+			PlayerEx(Owner.Player).Bob * sin(angle);
+	}
+}
+
+//==========================================================================
+//
+//  A_Lower
+//
+//  Lowers current weapon, and changes weapon at bottom.
+//
+//==========================================================================
+
+final void A_Lower()
+{
+	if (EntityEx(Owner).PlayerIsMorphed())
+	{
+		Owner.Player.ViewStates[ps_weapon].SY = WEAPONBOTTOM;
+	}
+	else
+	{
+		//	FIXME!!
+		if (Level.Game.frametime < 1.0 / 35.0)
+		{
+			Owner.Player.ViewStates[ps_weapon].SY += LOWERSPEED;
+		}
+		else
+		{
+			Owner.Player.ViewStates[ps_weapon].SY += LOWERSPEED * 35.0 *
+				Level.Game.frametime;
+		}
+	}
+
+	if (Owner.Player.ViewStates[ps_weapon].SY < WEAPONBOTTOM)
+	{
+		// Not lowered all the way yet
+		return;
+	}
+
+	if (Owner.Player.PlayerState == PST_DEAD)
+	{
+		// Player is dead, so don't bring up a pending weapon
+		Owner.Player.ViewStates[ps_weapon].SY = WEAPONBOTTOM;
+		return;
+	}
+
+	if (!Owner.Player.Health)
+	{
+		// Player is dead, so keep the weapon off screen.
+		Owner.Player.SetViewState(ps_weapon, none);
+		return;
+	}
+
+	//	Clear flash state, needed for Strife.
+	Owner.Player.SetViewState(ps_flash, none);
+
+	PlayerEx(Owner.Player).SetWeapon(PlayerEx(Owner.Player).PendingWeapon);
+	PlayerEx(Owner.Player).BringUpWeapon();
+}
+
+//==========================================================================
+//
+//  A_Raise
+//
+//==========================================================================
+
+final void A_Raise()
+{
+	//	FIXME!!
+	if (Level.Game.frametime < 1.0 / 35.0)
+		Owner.Player.ViewStates[ps_weapon].SY -= RAISESPEED;
+	else
+		Owner.Player.ViewStates[ps_weapon].SY -= RAISESPEED * 35.0 * Level.Game.frametime;
+	if (Owner.Player.ViewStates[ps_weapon].SY > WEAPONTOP)
+	{
+		// Not raised all the way yet
+		return;
+	}
+	Owner.Player.ViewStates[ps_weapon].SY = WEAPONTOP;
+	Owner.Player.SetViewState(ps_weapon, GetReadyState());
+}
+
+//===========================================================================
+//
+//  A_ReFire
+//
+//  The player can re-fire the weapon without lowering it entirely.
+//
+//===========================================================================
+
+final void A_ReFire()
+{
+	if ((Owner.Player.Buttons & BT_ATTACK) &&
+		!PlayerEx(Owner.Player).PendingWeapon && Owner.Player.Health)
+	{
+		PlayerEx(Owner.Player).Refire++;
+		PlayerEx(Owner.Player).FireWeapon();
+	}
+	else
+	{
+		PlayerEx(Owner.Player).Refire = 0;
+		CheckAmmo(true);
+	}
+}
+
+//===========================================================================
+//
+//  A_CheckReload
+//
+//===========================================================================
+
+final void A_CheckReload()
+{
+	CheckAmmo(true);
+}
+
+//===========================================================================
+//
+//  A_GunFlash
+//
+//===========================================================================
+
+final void A_GunFlash()
+{
+	Owner.SetState(EntityEx(Owner).MissileState);//FIXME
+	Owner.Player.SetViewState(ps_flash, FlashState);
+}
+
+//===========================================================================
+//
+//  A_Light0
+//
+//===========================================================================
+
+final void A_Light0()
+{
+	Owner.Player.ExtraLight = 0;
+	Owner.Effects &= ~EF_DLIGHT_MASK;
+}
+
+//===========================================================================
+//
+//  A_Light1
+//
+//===========================================================================
+
+final void A_Light1()
+{
+	Owner.Player.ExtraLight = 1;
+}
+
+//===========================================================================
+//
+//  A_Light2
+//
+//===========================================================================
+
+final void A_Light2()
+{
+	Owner.Player.ExtraLight = 2;
+}
+
+bool ActivateChickenbeak()
+{
+	return false;
+}
+
+void StopFiringAnimation()
+{
 }
 
 defaultproperties

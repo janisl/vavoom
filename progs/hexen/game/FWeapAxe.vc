@@ -69,10 +69,10 @@ state GetReadyState()
 //
 //==========================================================================
 
-state GetAttackState()
+state GetAttackState(bool Hold)
 {
 	return Ammo1.Amount > 0 ? S_FAXEATK_G1 :	// Glowing axe
-		Player(Owner.Player).Refire ? HoldAttackState : AttackState;
+		Hold ? HoldAttackState : AttackState;
 }
 
 //==========================================================================
@@ -263,7 +263,7 @@ defaultproperties
 	AmmoUse1 = 2;
 	AmmoGive1 = 25;
 	PSpriteSY = -12.0;
-	bManaOptional = true;
+	bAmmoOptional = true;
 	AxeRange = 9.0 * Actor::MELEERANGE / 4.0;
 	PickupMessage = "$txt_weapon_f2";
 	BotCombatDist = 48.0;

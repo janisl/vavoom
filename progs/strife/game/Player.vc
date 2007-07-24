@@ -71,9 +71,6 @@ int Inventory[StrifeDefs::NUMINVITEMS];
 // Power ups. invinc and invis are timers.
 float Powers[NUMPOWERS];
 
-// Refired shots are less accurate.
-int Refire;
-
 int SigilPieces;
 
 Inventory SavedInventory;

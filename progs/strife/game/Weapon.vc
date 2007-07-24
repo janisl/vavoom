@@ -39,40 +39,6 @@ bool bRaiseNoiseAlert;
 
 bool bCheatNotWeapon;
 
-//==========================================================================
-//
-//  CheckAmmo
-//
-//  Returns true if there is enough ammo to shoot.
-// If not, selects the next weapon to use.
-//
-//==========================================================================
-
-bool CheckAmmo(bool AutoSwitch, optional bool RequireAmmo)
-{
-	// Some do not need ammunition anyway.
-	// Return if current ammunition sufficient.
-	if (!Ammo1 || Ammo1.Amount >= AmmoUse1)
-	{
-		return true;
-	}
-
-	if (!AutoSwitch)
-	{
-		return false;
-	}
-
-	// Out of ammo, pick a weapon to change to.
-	WeaponEx Best = WeaponEx(Player(Owner.Player).BestWeapon());
-
-	Player(Owner.Player).PendingWeapon = Best;
-
-	// Now set appropriate weapon overlay.
-	Player(Owner.Player).SetViewState(ps_weapon, DownState);
-
-	return false;
-}
-
 //===========================================================================
 //
 //  DecAmmo
@@ -89,215 +55,18 @@ final void DecAmmo()
 
 //===========================================================================
 //
-//  A_WeaponReady
-//
-//  The player can fire the weapon or change to another weapon at this time.
-// Follows after getting weapon up, or after previous attack/fire sequence.
+//  StopFiringAnimation
 //
 //===========================================================================
 
-final void A_WeaponReady()
+void StopFiringAnimation()
 {
-	float angle;
-
 	// get out of attack state
 	if (Owner.State == Actor(Owner).MeleeState ||
 		Owner.State == Actor(Owner).MissileState)
 	{
 		Owner.SetState(Actor(Owner).IdleState);
 	}
-
-	if (ReadySound && Owner.Player.ViewStates[ps_weapon].State == ReadyState)
-	{
-		Owner.PlaySound(ReadySound, CHAN_WEAPON);
-	}
-
-	// check for change
-	//  if player is dead, put the weapon away
-	if (Player(Owner.Player).PendingWeapon || !Owner.Player.Health)
-	{
-		// change weapon
-		//  (pending weapon should allready be validated)
-		Owner.Player.SetViewState(ps_weapon, DownState);
-		return;
-	}
-
-	// check for fire
-	//  the missile launcher and bfg do not auto fire
-	if (Owner.Player.Buttons & BT_ATTACK)
-	{
-		if (!Owner.Player.bAttackDown ||
-			!Player(Owner.Player).ReadyWeapon.bNoAutoFire)
-		{
-			Owner.Player.bAttackDown = true;
-			Player(Owner.Player).FireWeapon();
-			return;
-		}
-	}
-	else
-		Owner.Player.bAttackDown = false;
-
-	// bob the weapon based on movement speed
-	angle = AngleMod360(180.0 * XLevel.Time);
-	Owner.Player.ViewStates[ps_weapon].SX = 1.0 + Player(Owner.Player).Bob * cos(angle);
-	if (angle >= 180.0)
-	{
-		angle -= 180.0;
-	}
-	Owner.Player.ViewStates[ps_weapon].SY = WEAPONTOP + Player(Owner.Player).Bob * sin(angle);
-}
-
-//===========================================================================
-//
-//  A_Lower
-//
-//  Lowers current weapon, and changes weapon at bottom.
-//
-//===========================================================================
-
-final void A_Lower()
-{
-	//	FIXME!!
-	if (Level.Game.frametime < 1.0 / 35.0)
-		Owner.Player.ViewStates[ps_weapon].SY += LOWERSPEED;
-	else
-		Owner.Player.ViewStates[ps_weapon].SY += LOWERSPEED * 35.0 * Level.Game.frametime;
-
-	// Is already down.
-	if (Owner.Player.ViewStates[ps_weapon].SY < WEAPONBOTTOM)
-		return;
-
-	// Player is dead.
-	if (Owner.Player.PlayerState == PST_DEAD)
-	{
-		Owner.Player.ViewStates[ps_weapon].SY = WEAPONBOTTOM;
-
-		// don't bring weapon back up
-		return;
-	}
-
-	Owner.Player.SetViewState(ps_flash, none);
-
-	// The old weapon has been lowered off the screen,
-	// so change the weapon and start raising it
-	if (!Owner.Player.Health)
-	{
-		// Player is dead, so keep the weapon off screen.
-		Owner.Player.SetViewState(ps_weapon, none);
-		return;
-	}
-
-	Player(Owner.Player).SetWeapon(Player(Owner.Player).PendingWeapon);
-
-	Player(Owner.Player).BringUpWeapon();
-}
-
-//===========================================================================
-//
-//  A_Raise
-//
-//===========================================================================
-
-final void A_Raise()
-{
-	//	FIXME!!
-	if (Level.Game.frametime < 1.0 / 35.0)
-		Owner.Player.ViewStates[ps_weapon].SY -= RAISESPEED;
-	else
-		Owner.Player.ViewStates[ps_weapon].SY -= RAISESPEED * 35.0 * Level.Game.frametime;
-
-	if (Owner.Player.ViewStates[ps_weapon].SY > WEAPONTOP)
-	{
-		return;
-	}
-
-	Owner.Player.ViewStates[ps_weapon].SY = WEAPONTOP;
-
-	// The weapon has been raised all the way,
-	//  so change to the ready state.
-	Owner.Player.SetViewState(ps_weapon, ReadyState);
-}
-
-//===========================================================================
-//
-//  A_ReFire
-//
-//  The player can re-fire the weapon without lowering it entirely.
-//
-//===========================================================================
-
-final void A_ReFire()
-{
-	// check for fire
-	//  (if a weaponchange is pending, let it go through instead)
-	if ((Owner.Player.Buttons & BT_ATTACK) &&
-		!Player(Owner.Player).PendingWeapon && Owner.Player.Health)
-	{
-		Player(Owner.Player).Refire++;
-		Player(Owner.Player).FireWeapon();
-	}
-	else
-	{
-		Player(Owner.Player).Refire = 0;
-		CheckAmmo(true);
-	}
-}
-
-//===========================================================================
-//
-//  A_CheckReload
-//
-//===========================================================================
-
-final void A_CheckReload()
-{
-	CheckAmmo(true);
-}
-
-//===========================================================================
-//
-//  A_GunFlash
-//
-//===========================================================================
-
-final void A_GunFlash()
-{
-	Owner.SetState(Actor(Owner).MissileState);
-	Owner.Player.SetViewState(ps_flash, FlashState);
-}
-
-//===========================================================================
-//
-//  A_Light0
-//
-//===========================================================================
-
-final void A_Light0()
-{
-	Owner.Player.ExtraLight = 0;
-	Owner.Effects &= ~EF_DLIGHT_MASK;
-}
-
-//===========================================================================
-//
-//  A_Light1
-//
-//===========================================================================
-
-final void A_Light1()
-{
-	Owner.Player.ExtraLight = 1;
-}
-
-//===========================================================================
-//
-//  A_Light2
-//
-//===========================================================================
-
-final void A_Light2()
-{
-	Owner.Player.ExtraLight = 2;
 }
 
 //==========================================================================

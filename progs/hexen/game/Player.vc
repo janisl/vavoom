@@ -78,9 +78,6 @@ float FlyHeight;
 
 int ArtifactCount;
 
-// Refired shots are less accurate.
-int Refire;
-
 int Pieces;	// Fourth Weapon pieces
 
 int PoisonCount;	// screen flash for poison damage
@@ -3349,7 +3346,7 @@ void FireWeapon()
 		return;
 	}
 	MO.SetState(Actor(MO).MissileState);
-	SetViewState(ps_weapon, WeaponEx(ViewEnt).GetAttackState());
+	SetViewState(ps_weapon, WeaponEx(ViewEnt).GetAttackState(Refire));
 	HexenLevelInfo(Level).NoiseAlert(Actor(MO), Actor(MO));
 }
 

@@ -55,9 +55,6 @@ float Powers[NUMPOWERS];
 
 int Keys;
 
-// Refired shots are less accurate.
-int Refire;
-
 // Armor type is 0-2.
 int ArmorType;
 

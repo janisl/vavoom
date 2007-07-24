@@ -63,6 +63,9 @@ int				Cheats;
 Weapon			ReadyWeapon;
 Weapon			PendingWeapon;	// Is none if not changing.
 
+// Refired shots are less accurate.
+int				Refire;
+
 replication
 {
 	reliable if (!bIsClient)
@@ -363,6 +366,18 @@ void GotAmmo(Ammo NewAmmo)
 bool HaveTomeOfPower()
 {
 	return false;
+}
+
+void FireWeapon()
+{
+}
+
+void SetWeapon(Weapon Wpn)
+{
+}
+
+void BringUpWeapon()
+{
 }
 
 defaultproperties

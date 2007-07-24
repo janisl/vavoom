@@ -85,6 +85,7 @@ defaultproperties
 	Slot = 1;
 	SelectionOrder = 10000;
 	PSpriteSY = 10.0;
+	bDontBob = true;
 	UpState = S_SNOUTUP;
 	DownState = S_SNOUTDOWN;
 	ReadyState = S_SNOUTREADY;

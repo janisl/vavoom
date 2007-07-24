@@ -88,15 +88,7 @@ __states__
 	S_STAFFREADY('STFF', 0, 1.0 / 35.0, S_STAFFREADY) = A_WeaponReady
 	S_STAFFDOWN('STFF', 0, 1.0 / 35.0, S_STAFFDOWN) = A_Lower
 	S_STAFFUP('STFF', 0, 1.0 / 35.0, S_STAFFUP) = A_Raise
-	S_STAFFREADY2_1('STFF', 3, 4.0 / 35.0, S_STAFFREADY2_2)
-	{
-		// Check for staff PL2 active sound
-		if (Random() < 0.5)
-		{
-			Owner.PlaySound('weapons/staffcrackle', CHAN_WEAPON);
-		}
-		A_WeaponReady();
-	}
+	S_STAFFREADY2_1('STFF', 3, 4.0 / 35.0, S_STAFFREADY2_2) = A_WeaponReady
 	S_STAFFREADY2_2('STFF', 4, 4.0 / 35.0, S_STAFFREADY2_3) = A_WeaponReady
 	S_STAFFREADY2_3('STFF', 5, 4.0 / 35.0, S_STAFFREADY2_1) = A_WeaponReady
 	S_STAFFDOWN2('STFF', 3, 1.0 / 35.0, S_STAFFDOWN2) = A_Lower

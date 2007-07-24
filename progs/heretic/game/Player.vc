@@ -79,9 +79,6 @@ float FlyHeight;
 float InventoryTime;
 int ArtifactCount;
 
-// Refired shots are less accurate.
-int Refire;
-
 // Armor type is 0-2.
 int ArmorType;
 
@@ -2588,7 +2585,7 @@ void FireWeapon()
 	{
 		return;
 	}
-	MO.SetState(PlayerPawn(MO).Attack2State);
+	MO.SetState(PlayerPawn(MO).MeleeState);
 	attackState = Refire ?
 		WeaponEx(ViewEnt).HoldAttackState :
 		WeaponEx(ViewEnt).AttackState;
