@@ -120,7 +120,7 @@ __states__
 
 defaultproperties
 {
-	Weapon2Type = Mauler2;
+	SisterWeaponType = Mauler2;
 	Slot = 7;
 	SelectionOrder = 300;
 	AmmoType1 = EnergyPod;

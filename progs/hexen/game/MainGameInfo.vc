@@ -96,6 +96,7 @@ void InitNewGame(int skill)
 	fastparm = gameskill == sk_nightmare || GetCvar('Fast');
 	randomclass = GetCvar('RandomClass');
 	bRespawnItems = !!GetCvar('deathmatch');
+	bWeaponsStay = netgame && !GetCvar('deathmatch');
 }
 
 //==========================================================================

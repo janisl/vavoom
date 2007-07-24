@@ -60,10 +60,13 @@ float			LastHazardTime;
 // See cheat_t, above.
 int				Cheats;
 
+Weapon			ReadyWeapon;
+Weapon			PendingWeapon;	// Is none if not changing.
+
 replication
 {
 	reliable if (!bIsClient)
-		Cheats;
+		Cheats, ReadyWeapon;
 }
 
 //==========================================================================

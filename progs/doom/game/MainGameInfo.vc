@@ -84,6 +84,7 @@ void InitNewGame(int skill)
 	nomonsters = GetCvar('NoMonsters');
 	fastparm = skill == sk_nightmare || GetCvar('Fast');
 	bRespawnItems = GetCvar('deathmatch') >= 2;
+	bWeaponsStay = netgame && GetCvar('deathmatch') < 2;
 }
 
 //==========================================================================
@@ -1250,6 +1251,7 @@ defaultproperties
 	LevelInfoClass = DoomLevelInfo;
 	bNoClipIgnoreFloor = true;
 	bBabyNightmareDoubleAmmo = true;
+	bAlwaysSwitchNewWeapon = true;
 	TeleportFogClass = TeleportFog;
 	DefaultKickBack = 150.0;
 	BloodClass = Blood;

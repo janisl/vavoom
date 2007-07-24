@@ -37,82 +37,7 @@ state FireDeathWaveState;
 
 bool bRaiseNoiseAlert;
 
-class<WeaponEx> Weapon2Type;
 bool bCheatNotWeapon;
-
-//==========================================================================
-//
-//	CreateCopy
-//
-//==========================================================================
-
-Inventory CreateCopy(EntityEx Toucher)
-{
-	class<Ammo> AmmoType;
-	class<Ammo> Ammo2Type;
-
-	AmmoType = AmmoType1;
-	Ammo2Type = none;
-	if (Weapon2Type)
-	{
-		Ammo2Type = Weapon2Type.default.AmmoType1;
-	}
-
-	if (AmmoType)
-	{
-		if (ShouldStay() && !bDropped && Level.Game.deathmatch)
-			AddAmmo(Toucher, AmmoType, AmmoGive1 * 2);
-		else
-			AddAmmo(Toucher, AmmoType, AmmoGive1);
-	}
-
-	if (Weapon2Type && Ammo2Type && AmmoType != Ammo2Type)
-	{
-		int Ammo2Count = Weapon2Type.default.AmmoGive1;
-		if (ShouldStay() && !bDropped && Level.Game.deathmatch)
-			AddAmmo(Toucher, Ammo2Type, Ammo2Count * 2);
-		else
-			AddAmmo(Toucher, Ammo2Type, Ammo2Count);
-	}
-
-	Inventory Copy = ::CreateCopy(Toucher);
-	if (Weapon2Type)
-	{
-		WeaponEx Wpn2 = Spawn(Weapon2Type);
-		Wpn2.AttachToOwner(Toucher);
-	}
-	Player(Toucher.Player).PendingWeapon = WeaponEx(Copy);
-	return Copy;
-}
-
-//==========================================================================
-//
-//	PickupForAmmo
-//
-//==========================================================================
-
-bool PickupForAmmo(Weapon ExistingWeapon)
-{
-	// leave placed weapons forever on net games
-	if (ShouldStay() && !bDropped)
-	{
-		return false;
-	}
-	bool gaveammo = false;
-	gaveammo = AddExistingAmmo(ExistingWeapon.Ammo1, AmmoGive1);
-	return gaveammo;
-}
-
-//==========================================================================
-//
-//	ShouldStay
-//
-//==========================================================================
-
-bool ShouldStay()
-{
-	return Level.Game.netgame && Level.Game.deathmatch < 2;
-}
 
 //==========================================================================
 //
@@ -406,6 +331,5 @@ defaultproperties
 {
 	bRaiseNoiseAlert = true;
 	bFloorClip = true;
-	PickupSound = 'misc/w_pkup';
 	FireDeathWaveState = S_WAVE1;
 }

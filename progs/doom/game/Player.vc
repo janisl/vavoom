@@ -58,11 +58,6 @@ int Keys;
 // Refired shots are less accurate.
 int Refire;
 
-WeaponEx ReadyWeapon;
-
-// Is wp_nochange if not changing.
-WeaponEx PendingWeapon;
-
 // Armor type is 0-2.
 int ArmorType;
 
@@ -98,7 +93,7 @@ Inventory SavedInventory;
 replication
 {
 	reliable if (!bIsClient)
-		ArmorPoints, SBFlags, sb_faceindex, ReadyWeapon;
+		ArmorPoints, SBFlags, sb_faceindex;
 
 	unreliable if (!bIsClient)
 		ClientGunShot, ClientBlood, ClientExplosion, ClientExplosion2;
@@ -1988,12 +1983,12 @@ void SetPlayerRunState()
 //
 //==========================================================================
 
-void SetWeapon(WeaponEx NewWeapon)
+void SetWeapon(Weapon NewWeapon)
 {
 	ReadyWeapon = NewWeapon;
 	PendingWeapon = none;
 	ViewEnt = ReadyWeapon;
-	MO.ModelVersion = ReadyWeapon.PlayerModelVersion;
+	MO.ModelVersion = WeaponEx(ReadyWeapon).PlayerModelVersion;
 }
 
 //===========================================================================

@@ -43,67 +43,8 @@ const int
 	USE_MACE_AMMO_1 = 1,
 	USE_MACE_AMMO_2 = 5;
 
-class<WeaponEx> SisterWeaponType;
-
 float PSpriteSY;
 bool bInShareware;
-
-//==========================================================================
-//
-//	CreateCopy
-//
-//==========================================================================
-
-Inventory CreateCopy(EntityEx Toucher)
-{
-	AddAmmo(Toucher, AmmoType1, AmmoGive1);
-	Inventory Copy = ::CreateCopy(Toucher);
-	if (SisterWeaponType)
-	{
-		SisterWeapon = Spawn(SisterWeaponType);
-		SisterWeapon.AttachToOwner(Toucher);
-		SisterWeapon.SisterWeapon = WeaponEx(Copy);
-	}
-	if (!Player(Toucher.Player).ReadyWeapon ||
-		Weapon(Copy).Slot > Player(Toucher.Player).ReadyWeapon.Slot ||
-		(Weapon(Copy).Slot == Player(Toucher.Player).ReadyWeapon.Slot &&
-		Weapon(Copy).SelectionOrder < Player(Toucher.Player).ReadyWeapon.SelectionOrder))
-	{
-		// Only switch to more powerful weapons
-		Player(Toucher.Player).PendingWeapon = WeaponEx(Copy);
-	}
-	return Copy;
-}
-
-//==========================================================================
-//
-//  PickupForAmmo
-//
-//  Returns true if the weapon or its ammo was accepted.
-//
-//==========================================================================
-
-bool PickupForAmmo(Weapon ExistingWeapon)
-{
-	// Cooperative net-game
-	if (ShouldStay() && !bDropped)
-	{
-		return false;
-	}
-	bool gaveAmmo = AddExistingAmmo(ExistingWeapon.Ammo1, AmmoGive1);
-	return gaveAmmo;
-}
-
-//==========================================================================
-//
-//	ShouldStay
-//
-//==========================================================================
-
-bool ShouldStay()
-{
-	return Level.Game.netgame && !Level.Game.deathmatch;
-}
 
 //===========================================================================
 //
@@ -337,7 +278,6 @@ __states__
 defaultproperties
 {
 	Height = 32.0;
-	PickupSound = 'misc/w_pkup';
 	bInShareware = true;
 	Kickback = 150.0;
 }

@@ -333,11 +333,11 @@ void SB_DrawMainBar()
 		R_DrawPic(BAR_X + 253, BAR_Y + 175, pic_sigil[cl.SigilPieces]);
 	}
 
-	if (cl.ReadyAmmo && cl.MO)
+	if (cl.ReadyWeapon && cl.ReadyWeapon.Ammo1)
 	{
-		Inventory AmmoItem = EntityEx(cl.MO).FindInventory(cl.ReadyAmmo);
-		SB_DrawSmallNum(BAR_X + 310, BAR_Y + 162, AmmoItem.Amount);
-		R_DrawPic(BAR_X + 290, BAR_Y + 181, R_RegisterPic(AmmoItem.IconName));
+		SB_DrawSmallNum(BAR_X + 310, BAR_Y + 162, cl.ReadyWeapon.Ammo1.Amount);
+		R_DrawPic(BAR_X + 290, BAR_Y + 181,
+			R_RegisterPic(cl.ReadyWeapon.Ammo1.IconName));
 	}
 
 	if (bShowWeapons)
@@ -470,11 +470,10 @@ void SB_DrawFullscreenStats()
 	}
 
 	// ready weapon ammo with icon
-	if (cl.ReadyAmmo && cl.MO)
+	if (cl.ReadyWeapon && cl.ReadyWeapon.Ammo1)
 	{
-		Inventory AmmoItem = EntityEx(cl.MO).FindInventory(cl.ReadyAmmo);
-		SB_DrawTallNum(635, 450, AmmoItem.Amount, 0.7);
-		R_DrawPic2(575, 450, R_RegisterPic(AmmoItem.IconName), 0.7);
+		SB_DrawTallNum(635, 450, cl.ReadyWeapon.Ammo1.Amount, 0.7);
+		R_DrawPic2(575, 450, R_RegisterPic(cl.ReadyWeapon.Ammo1.IconName), 0.7);
 	}
 
 	Idx = 0;

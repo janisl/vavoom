@@ -102,7 +102,7 @@ __states__
 
 defaultproperties
 {
-	Weapon2Type = StrifeCrossbow2;
+	SisterWeaponType = StrifeCrossbow2;
 	Slot = 2;
 	SelectionOrder = 1200;
 	AmmoType1 = ElectricBolts;

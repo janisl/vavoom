@@ -59,8 +59,6 @@ int ArmorPoints;
 
 bool Communicator;
 
-class<Ammo> ReadyAmmo;
-
 int Accuracy;
 int Stamina;
 
@@ -76,18 +74,14 @@ float Powers[NUMPOWERS];
 // Refired shots are less accurate.
 int Refire;
 
-WeaponEx ReadyWeapon;
 int SigilPieces;
-
-// Is wp_nochange if not changing.
-WeaponEx PendingWeapon;
 
 Inventory SavedInventory;
 
 replication
 {
 	reliable if (!bIsClient)
-		ReadyAmmo, SigilPieces, Accuracy, Stamina, Keys, InvFirst, InvCursor,
+		SigilPieces, Accuracy, Stamina, Keys, InvFirst, InvCursor,
 		Objectives, ArmorType, ArmorPoints, Inventory, Communicator;
 
 	unreliable if (!bIsClient)
@@ -1999,8 +1993,6 @@ void SetViewPos()
 
 	ViewAngles = MO.Angles;
 
-	ReadyAmmo = WeaponEx(ViewEnt).AmmoType1;
-
 	PaletteFlash();
 
 	ClientSetViewOrg(ViewOrg.x, ViewOrg.y, ViewOrg.z);
@@ -2032,7 +2024,7 @@ void SetPlayerRunState()
 //
 //==========================================================================
 
-void SetWeapon(WeaponEx NewWeapon)
+void SetWeapon(Weapon NewWeapon)
 {
 	ReadyWeapon = NewWeapon;
 	PendingWeapon = none;

@@ -82,11 +82,6 @@ int ArtifactCount;
 // Refired shots are less accurate.
 int Refire;
 
-// Is wp_nochange if not changing.
-WeaponEx PendingWeapon;
-
-WeaponEx ReadyWeapon;
-
 // Armor type is 0-2.
 int ArmorType;
 
@@ -106,7 +101,7 @@ replication
 {
 	reliable if (!bIsClient)
 		SBFlags, ArmorPoints, ArtifactFlash, InvPtr, InvCurPos,
-		ReadyArtifact, InventorySlotNum, ReadyWeapon, Inventory;
+		ReadyArtifact, InventorySlotNum, Inventory;
 
 	unreliable if (!bIsClient)
 		ClientBlood, ClientExplosion;
@@ -2460,8 +2455,8 @@ bool UseArtiTomeOfPower()
 		{
 			return false;
 		}
-		WeaponEx Wpn = ReadyWeapon;
-		WeaponEx Sist = WeaponEx(ReadyWeapon.SisterWeapon);
+		Weapon Wpn = ReadyWeapon;
+		Weapon Sist = ReadyWeapon.SisterWeapon;
 		if (Sist && Sist.bPoweredUp)
 		{
 			SetWeapon(Sist);
@@ -2502,7 +2497,7 @@ void UseArtiFireBomb()
 //
 //==========================================================================
 
-void SetWeapon(WeaponEx NewWeapon)
+void SetWeapon(Weapon NewWeapon)
 {
 	ReadyWeapon = NewWeapon;
 	PendingWeapon = none;
@@ -2656,8 +2651,8 @@ void WeaponLevel2Fade()
 	{
 		return;
 	}
-	WeaponEx Wpn = ReadyWeapon;
-	WeaponEx Sist = WeaponEx(ReadyWeapon.SisterWeapon);
+	Weapon Wpn = ReadyWeapon;
+	Weapon Sist = ReadyWeapon.SisterWeapon;
 	if (Sist)
 	{
 		SetWeapon(Sist);

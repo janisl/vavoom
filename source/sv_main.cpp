@@ -1456,6 +1456,7 @@ COMMAND(Map)
 
 	// Set up a bunch of globals
 	gameskill = (skill_t)(int)Skill;
+	GGameInfo->netgame = svs.max_clients > 1;
 	GGameInfo->eventInitNewGame(gameskill);
 
 	SV_SpawnServer(mapname, true);

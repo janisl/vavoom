@@ -68,10 +68,13 @@ bool			bRavenStylePickupRespawn;
 bool			bBabyNightmareDoubleAmmo;
 //	Wether to give extra ammo in nightmare mode
 bool			bNightmareExtraAmmo;
+//	Always to switch to a newly picked up weapon.
+bool			bAlwaysSwitchNewWeapon;
 
 bool			respawnmonsters;
 bool			bRespawnItems;
 bool			bRespawnBigItems;
+bool			bWeaponsStay;
 
 float			windTab[3];
 float			pushTab[5];

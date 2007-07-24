@@ -30,64 +30,6 @@ int PlayerModelVersion;
 
 //==========================================================================
 //
-//	CreateCopy
-//
-//==========================================================================
-
-Inventory CreateCopy(EntityEx Toucher)
-{
-	if (AmmoType1)
-	{
-		if (ShouldStay() && !bDropped && Level.Game.deathmatch)
-		{
-			AddAmmo(Toucher, AmmoType1, 5 * AmmoGive1 / 2);
-		}
-		else
-		{
-			AddAmmo(Toucher, AmmoType1, AmmoGive1);
-		}
-	}
-
-	Inventory Copy = ::CreateCopy(Toucher);
-	Player(Toucher.Player).PendingWeapon = WeaponEx(Copy);
-	return Copy;
-}
-
-//==========================================================================
-//
-//	PickupForAmmo
-//
-//==========================================================================
-
-bool PickupForAmmo(Weapon ExistingWeapon)
-{
-	// leave placed weapons forever on net games
-	if (ShouldStay() && !bDropped)
-	{
-		return false;
-	}
-
-	bool gaveammo = false;
-	if (AmmoGive1 > 0)
-	{
-		gaveammo = AddExistingAmmo(ExistingWeapon.Ammo1, AmmoGive1);
-	}
-	return gaveammo;
-}
-
-//==========================================================================
-//
-//	ShouldStay
-//
-//==========================================================================
-
-bool ShouldStay()
-{
-	return Level.Game.netgame && Level.Game.deathmatch < 2;
-}
-
-//==========================================================================
-//
 //	CheckAmmo
 //
 //	Returns true if there is enough ammo to shoot.
@@ -390,6 +332,5 @@ __states__
 
 defaultproperties
 {
-	PickupSound = 'misc/w_pkup';
 	Kickback = 100.0;
 }

@@ -69,6 +69,7 @@ void InitNewGame(int skill)
 	nomonsters = GetCvar('NoMonsters');
 	fastparm = skill == sk_nightmare || GetCvar('Fast');
 	bRespawnItems = !!GetCvar('deathmatch');
+	bWeaponsStay = netgame && GetCvar('deathmatch') < 2;
 }
 
 //==========================================================================
@@ -603,6 +604,7 @@ defaultproperties
 	BloodClass = Blood;
 	bBabyNightmareDoubleAmmo = true;
 	bNightmareExtraAmmo = false;
+	bAlwaysSwitchNewWeapon = true;
 
 	InvItemCID[0] = MedPatch;
 	InvItemCID[1] = MedicalKit;

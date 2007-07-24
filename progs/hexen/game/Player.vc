@@ -83,10 +83,6 @@ int Refire;
 
 int Pieces;	// Fourth Weapon pieces
 
-// Is wp_nochange if not changing.
-WeaponEx PendingWeapon;
-WeaponEx ReadyWeapon;
-
 int PoisonCount;	// screen flash for poison damage
 float LastPoisonTime;
 Actor Poisoner;		// none for non-player mobjs
@@ -112,7 +108,7 @@ replication
 	reliable if (!bIsClient)
 		SBFlags, TotalArmorPoints, InventoryTime, ArtifactFlash,
 		ReadyArtifact, InvPtr, InvCurPos, InventorySlotNum, ArmorPerc,
-		Inventory, ReadyWeapon;
+		Inventory;
 
 	unreliable if (!bIsClient)
 		ClientBlood, ClientExplosion;
@@ -3267,7 +3263,7 @@ void AdjustPlayerAngle(EntityEx AimTarget)
 //
 //==========================================================================
 
-void SetWeapon(WeaponEx NewWeapon)
+void SetWeapon(Weapon NewWeapon)
 {
 	ReadyWeapon = NewWeapon;
 	PendingWeapon = none;

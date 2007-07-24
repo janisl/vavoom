@@ -27,6 +27,7 @@ class StrifeCrossbow2 : StrifeCrossbow;
 
 defaultproperties
 {
+	SisterWeaponType = StrifeCrossbow;
 	Slot = 2;
 	SelectionOrder = 2700;
 	AmmoType1 = PoisonBolts;

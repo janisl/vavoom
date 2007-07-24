@@ -27,6 +27,7 @@ class Mauler2 : Mauler;
 
 defaultproperties
 {
+	SisterWeaponType = Mauler;
 	Slot = 7;
 	SelectionOrder = 3300;
 	AmmoUse1 = 30;

@@ -33,24 +33,6 @@ int WeaponClass;
 
 //==========================================================================
 //
-//	CreateCopy
-//
-//==========================================================================
-
-Inventory CreateCopy(EntityEx Toucher)
-{
-	AddAmmo(Toucher, AmmoType1, AmmoGive1);
-	Inventory Copy = ::CreateCopy(Toucher);
-	if (!Player(Toucher.Player).ReadyWeapon ||
-		Slot > Player(Toucher.Player).ReadyWeapon.Slot)
-	{
-		// Only switch to more powerful weapons
-		Player(Toucher.Player).PendingWeapon = WeaponEx(Copy);
-	}
-}
-
-//==========================================================================
-//
 //  TryPickup
 //
 //==========================================================================
@@ -65,11 +47,11 @@ bool TryPickup(EntityEx Toucher)
 			return false;
 		}
 		bool gaveMana = false;
-		if (AddAmmo(Toucher, AmmoType1, AmmoGive1))
+		if (Player(Toucher.Player).GiveMana(AmmoType1, AmmoGive1))
 		{
 			gaveMana = true;
 		}
-		if (AddAmmo(Toucher, AmmoType2, AmmoGive2))
+		if (Player(Toucher.Player).GiveMana(AmmoType2, AmmoGive2))
 		{
 			gaveMana = true;
 		}
@@ -83,34 +65,6 @@ bool TryPickup(EntityEx Toucher)
 	}
 
 	return ::TryPickup(Toucher);
-}
-
-//==========================================================================
-//
-//  PickupForAmmo
-//
-//==========================================================================
-
-bool PickupForAmmo(Weapon ExistingWeapon)
-{
-	// Cooperative net-game
-	if (ShouldStay() && !bDropped)
-	{
-		return false;
-	}
-	bool gaveMana = AddExistingAmmo(ExistingWeapon.Ammo1, AmmoGive1);
-	return gaveMana;
-}
-
-//==========================================================================
-//
-//	ShouldStay
-//
-//==========================================================================
-
-bool ShouldStay()
-{
-	return Level.Game.netgame && !Level.Game.deathmatch;
 }
 
 //==========================================================================
@@ -359,5 +313,4 @@ __states__
 defaultproperties
 {
 	Height = 32.0;
-	PickupSound = 'PickupWeapon';
 }
