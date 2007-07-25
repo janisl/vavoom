@@ -54,8 +54,8 @@ defaultproperties
 	PainChance = 1.0;
 	IdleState = S_PIGPLAY;
 	SeeState = S_PIGPLAY_RUN1;
+	MeleeState = S_PIGPLAY_ATK1;
 	MissileState = S_PIGPLAY_ATK1;
-	AttackEndState = S_PIGPLAY_ATK1;
 	PainState = S_PIGPLAY_PAIN;
 	DeathState = S_PIGPLAY_DIE1;
 	IceDeathState = S_PIGPLAY_ICE;

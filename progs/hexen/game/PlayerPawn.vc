@@ -34,8 +34,6 @@ struct InitInvInfo
 
 array<InitInvInfo>		InitialInventory;
 
-state AttackEndState;
-
 //===========================================================================
 //
 //  RoughCheckThing

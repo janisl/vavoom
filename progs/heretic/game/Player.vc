@@ -2585,7 +2585,7 @@ void FireWeapon()
 	{
 		return;
 	}
-	MO.SetState(PlayerPawn(MO).MeleeState);
+	MO.SetState(PlayerPawn(MO).MissileState);
 	attackState = Refire ?
 		WeaponEx(ViewEnt).HoldAttackState :
 		WeaponEx(ViewEnt).AttackState;

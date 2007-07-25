@@ -312,6 +312,7 @@ public:
 	DECLARE_FUNCTION(SpawnObject)
 	DECLARE_FUNCTION(FindClass)
 	DECLARE_FUNCTION(StateIsInRange)
+	DECLARE_FUNCTION(StateIsInSequence)
 	DECLARE_FUNCTION(GetStateSpriteName)
 	DECLARE_FUNCTION(GetStateDuration)
 	DECLARE_FUNCTION(FindAnimDoor)

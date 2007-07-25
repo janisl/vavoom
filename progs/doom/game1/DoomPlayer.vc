@@ -108,8 +108,8 @@ defaultproperties
 	bNoBlockMonst = true;
 	IdleState = S_PLAY;
 	SeeState = S_PLAY_RUN1;
-	MeleeState = S_PLAY_ATK1;
-	MissileState = S_PLAY_ATK2;
+	MeleeState = S_PLAY_ATK2;
+	MissileState = S_PLAY_ATK1;
 	PainState = S_PLAY_PAIN;
 	DeathState = S_PLAY_DIE1;
 	GibsDeathState = S_PLAY_XDIE1;

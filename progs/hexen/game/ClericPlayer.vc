@@ -93,8 +93,8 @@ defaultproperties
 	bPickUp = true;
 	IdleState = S_CPLAY;
 	SeeState = S_CPLAY_RUN1;
+	MeleeState = S_CPLAY_ATK1;
 	MissileState = S_CPLAY_ATK1;
-	AttackEndState = S_CPLAY_ATK3;
 	PainState = S_CPLAY_PAIN;
 	DeathState = S_CPLAY_DIE1;
 	GibsDeathState = S_CPLAY_XDIE1;

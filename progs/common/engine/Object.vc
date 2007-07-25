@@ -1478,6 +1478,7 @@ native static final Object SpawnObject(class cid);
 native static final class FindClass(name Name);
 native static final bool StateIsInRange(state State, state Start, state End,
 	int MaxDepth);
+native static final bool StateIsInSequence(state State, state Start);
 native static final name GetStateSpriteName(state State);
 native static final float GetStateDuration(state State);
 native static final VAnimDoorDef* FindAnimDoor(int BaseTex);

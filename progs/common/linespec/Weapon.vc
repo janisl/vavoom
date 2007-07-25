@@ -425,7 +425,12 @@ final void A_WeaponReady()
 	{
 		return;
 	}
-	StopFiringAnimation();
+	// get out of attack state
+	if (StateIsInSequence(Owner.State, EntityEx(Owner).MissileState) ||
+		StateIsInSequence(Owner.State, EntityEx(Owner).MeleeState))
+	{
+		Owner.SetState(EntityEx(Owner).IdleState);
+	}
 
 	if (Owner.Player.ViewStates[ps_weapon].State == ReadyState &&
 		ReadySound && (!bReadySndHalf || Random() < 0.5))
@@ -590,7 +595,7 @@ final void A_CheckReload()
 
 final void A_GunFlash()
 {
-	Owner.SetState(EntityEx(Owner).MissileState);//FIXME
+	Owner.SetState(EntityEx(Owner).MeleeState);
 	Owner.Player.SetViewState(ps_flash, FlashState);
 }
 

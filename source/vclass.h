@@ -274,6 +274,7 @@ public:
 	void Serialise(VStream&);
 
 	bool IsInRange(VState*, VState*, int);
+	bool IsInSequence(VState*);
 
 	friend inline VStream& operator<<(VStream& Strm, VState*& Obj)
 	{ return Strm << *(VMemberBase**)&Obj; }

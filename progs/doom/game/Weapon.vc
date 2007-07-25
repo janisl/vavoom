@@ -76,22 +76,6 @@ void DecAmmo(int Count)
 	}
 }
 
-//===========================================================================
-//
-//  StopFiringAnimation
-//
-//===========================================================================
-
-void StopFiringAnimation()
-{
-	// get out of attack state
-	if (Owner.State == Actor(Owner).MissileState ||
-		Owner.State == DoomPlayer::S_PLAY_ATK2)
-	{
-		Owner.SetState(Actor(Owner).IdleState);
-	}
-}
-
 __states__
 {
 	S_LIGHTDONE('SHTG', 4, 0.0 / 35.0, none) = A_Light0

@@ -2126,7 +2126,7 @@ void FireWeapon()
 		return;
 	}
 
-	MO.SetState(Actor(MO).MeleeState);
+	MO.SetState(Actor(MO).MissileState);
 	SetViewState(ps_weapon, WeaponEx(ViewEnt).AttackState);
 	if (WeaponEx(ViewEnt).bRaiseNoiseAlert)
 		StrifeLevelInfo(Level).NoiseAlert(Actor(MO), Actor(MO));

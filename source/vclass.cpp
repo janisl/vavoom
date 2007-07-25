@@ -2051,6 +2051,27 @@ bool VState::IsInRange(VState* Start, VState* End, int MaxDepth)
 
 //==========================================================================
 //
+//	VState::IsInSequence
+//
+//==========================================================================
+
+bool VState::IsInSequence(VState* Start)
+{
+	guard(VState::IsInRange);
+	for (VState* check = Start; check;
+		check = check->Next == check->NextState ? check->Next : NULL)
+	{
+		if (check == this)
+		{
+			return true;
+		}
+	}
+	return false;
+	unguard;
+}
+
+//==========================================================================
+//
 //	VConstant::VConstant
 //
 //==========================================================================

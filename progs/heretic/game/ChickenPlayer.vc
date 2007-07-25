@@ -60,6 +60,7 @@ defaultproperties
 	bTelestomp = true;
 	IdleState = S_CHICPLAY;
 	SeeState = S_CHICPLAY_RUN1;
+	MeleeState = S_CHICPLAY_ATK1;
 	MissileState = S_CHICPLAY_ATK1;
 	PainState = S_CHICPLAY_PAIN;
 	DeathState = S_CHICPLAY_DIE1;
