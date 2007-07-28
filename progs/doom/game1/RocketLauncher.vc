@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class RocketLauncher : WeaponEx
+class RocketLauncher : DoomWeapon
 	__mobjinfo__(2003)
 	__scriptid__(29);
 

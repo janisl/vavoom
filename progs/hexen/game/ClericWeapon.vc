@@ -23,32 +23,10 @@
 //**
 //**************************************************************************
 
-#include "Actor.vc"
-#include "MainGameInfo.vc"
-#include "DoomLevelInfo.vc"
-#include "DoomWorldInfo.vc"
-#include "DoomWeapon.vc"
-#include "Player.vc"
-#include "BotPlayer.vc"
+class ClericWeapon : HexenWeapon
+	abstract;
 
-#include "WaterSplash.vc"
-#include "WaterSplashBase.vc"
-#include "LavaSplash.vc"
-#include "LavaSmoke.vc"
-#include "SludgeChunk.vc"
-#include "SludgeSplash.vc"
-#include "BloodSplash.vc"
-#include "BloodSplashBase.vc"
-#include "SlimeChunk.vc"
-#include "SlimeSplash.vc"
-#include "MapSpot.vc"
-#include "MapSpotGravity.vc"
-#include "QuakeFocus.vc"
-#include "StaticLightSource.vc"
-#include "StaticRGBLightSource.vc"
-#include "SecurityCamera.vc"
-#include "PointPusher.vc"
-#include "PointPuller.vc"
-
-#include "SoundSequence.vc"
-#include "SoundSequenceSlot.vc"
+defaultproperties
+{
+	Height = 32.0;
+}

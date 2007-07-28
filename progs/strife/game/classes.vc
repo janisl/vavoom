@@ -29,7 +29,7 @@
 #include "StrifeWorldInfo.vc"
 #include "Pawn.vc"
 #include "PlayerPawn.vc"
-#include "Weapon.vc"
+#include "StrifeWeapon.vc"
 #include "Player.vc"
 
 #include "DummyStrifeItem.vc"

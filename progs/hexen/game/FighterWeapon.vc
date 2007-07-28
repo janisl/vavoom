@@ -23,77 +23,8 @@
 //**
 //**************************************************************************
 
-class WeaponEx : Weapon
+class FighterWeapon : HexenWeapon
 	abstract;
-
-float PSpriteSY;		// Y-adjustment value for full screen
-
-int WeaponClass;
-
-//==========================================================================
-//
-//  TryPickup
-//
-//==========================================================================
-
-bool TryPickup(EntityEx Toucher)
-{
-	if (Toucher.Player.PClass != WeaponClass)
-	{
-		// Wrong class, but try to pick up for mana
-		if (ShouldStay() && !bDropped)
-		{
-			return false;
-		}
-		bool gaveMana = false;
-		if (Player(Toucher.Player).GiveMana(AmmoType1, AmmoGive1))
-		{
-			gaveMana = true;
-		}
-		if (Player(Toucher.Player).GiveMana(AmmoType2, AmmoGive2))
-		{
-			gaveMana = true;
-		}
-		if (gaveMana)
-		{
-			GoAwayAndDie();
-			GiveQuest(Toucher);
-			return true;
-		}
-		return false;
-	}
-
-	return ::TryPickup(Toucher);
-}
-
-//==========================================================================
-//
-//  DecMana
-//
-//==========================================================================
-
-void DecMana()
-{
-	if (Ammo1)
-	{
-		Ammo1.Amount -= AmmoUse1;
-	}
-	if (Ammo2)
-	{
-		Ammo2.Amount -= AmmoUse2;
-	}
-}
-
-// FIXME
-void SnoutSniff()
-{
-}
-
-// UNUSED
-__states__
-{
-	S_LIGHTDONE('FPCH', 0, 0.0 / 35.0, none) = A_Light0
-}
 
 defaultproperties
 {

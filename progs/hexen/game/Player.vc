@@ -138,7 +138,7 @@ void SpawnClient()
 	int oldKeys;
 	int oldPieces;
 	bool playerWasReborn;
-	WeaponEx bestWeapon;
+	Weapon bestWeapon;
 	EntityEx OldMO = EntityEx(MO);
 	Inventory Item;
 
@@ -175,12 +175,12 @@ void SpawnClient()
 			for (Item = OldMO.Inventory; Item; )
 			{
 				Inventory Next = Item.Inventory;
-				if (WeaponEx(Item))
+				if (Weapon(Item))
 				{
 					if (!bestWeapon || bestWeapon.SelectionOrder >
-						WeaponEx(Item).SelectionOrder)
+						Weapon(Item).SelectionOrder)
 					{
-						bestWeapon = WeaponEx(Item);
+						bestWeapon = Weapon(Item);
 					}
 					Item.AttachToOwner(EntityEx(MO));
 				}
@@ -214,7 +214,7 @@ void NetGameReborn()
 	int oldKeys;
 	int oldPieces;
 	bool foundSpot;
-	WeaponEx bestWeapon;
+	Weapon bestWeapon;
 	EntityEx OldMO = EntityEx(MO);
 	Inventory Item;
 
@@ -275,12 +275,12 @@ void NetGameReborn()
 	bestWeapon = none;
 	for (Item = OldMO.Inventory; Item; Item = Item.Inventory)
 	{
-		if (WeaponEx(Item))
+		if (Weapon(Item))
 		{
 			if (!bestWeapon || bestWeapon.SelectionOrder >
-				WeaponEx(Item).SelectionOrder)
+				Weapon(Item).SelectionOrder)
 			{
-				bestWeapon = WeaponEx(Item);
+				bestWeapon = Weapon(Item);
 			}
 			Item.AttachToOwner(EntityEx(MO));
 		}
@@ -554,7 +554,7 @@ void SpawnPlayer(mthing_t * mthing)
 			}
 			else if (Weapon(Item) && Weapon(Item).CheckAmmo(false))
 			{
-				SetWeapon(WeaponEx(Item));
+				SetWeapon(Weapon(Item));
 			}
 		}
 	}
@@ -645,7 +645,7 @@ void PlayerExitMap(bool clusterChange)
 
 	if (MorphTime)
 	{
-		SetWeapon(WeaponEx(Actor(MO).Tracer));	// Restore weapon
+		SetWeapon(Weapon(Actor(MO).Tracer));	// Restore weapon
 		MorphTime = 0.0;
 	}
 	MO.Angles.pitch = 0.0;
@@ -1798,7 +1798,7 @@ void PrevWeapon()
 	{
 		return;
 	}
-	WeaponEx Best = WeaponEx(GetPrevWeapon(ReadyWeapon, true));
+	Weapon Best = GetPrevWeapon(ReadyWeapon, true);
 	if (Best && Best != ReadyWeapon)
 	{
 		PendingWeapon = Best;
@@ -1817,7 +1817,7 @@ void NextWeapon()
 	{
 		return;
 	}
-	WeaponEx Best = WeaponEx(GetNextWeapon(ReadyWeapon, true));
+	Weapon Best = GetNextWeapon(ReadyWeapon, true);
 	if (Best && Best != ReadyWeapon)
 	{
 		PendingWeapon = Best;
@@ -1844,7 +1844,7 @@ void PlayerImpulse()
 		// The actual changing of the weapon is done when the weapon
 		// psprite can do it (A_WeaponReady), so it doesn't happen in
 		// the middle of an attack.
-		WeaponEx NewWpn = WeaponEx(GetSlotChangeWeapon(impulse, ReadyWeapon, false));
+		Weapon NewWpn = GetSlotChangeWeapon(impulse, ReadyWeapon, false);
 		if (NewWpn && NewWpn != ReadyWeapon && !MorphTime)
 		{
 			PendingWeapon = NewWpn;
@@ -1945,7 +1945,7 @@ void MorphPlayerThink()
 	if (!(MO.Velocity.x + MO.Velocity.y) && P_Random() < 64)
 	{
 		// Snout sniff
-		WeaponEx(ViewEnt).SnoutSniff();
+		Snout(ViewEnt).SnoutSniff();
 		MO.PlaySound('PigActive1', CHAN_VOICE);	// snort
 		return;
 	}
@@ -2011,7 +2011,7 @@ bool UndoPlayerMorph()
 	Health = A.Health;
 	PClass = BaseClass;
 	SetPlayerColour();
-	PostMorphWeapon(WeaponEx(Actor(MO).Tracer));
+	PostMorphWeapon(Weapon(Actor(MO).Tracer));
 
 	fog = HexenLevelInfo(Level).Spawn(TeleportFog, MO.Origin + vector(20.0 * cos(MO.Angles.yaw),
 		20.0 * sin(MO.Angles.yaw), Actor::TELEFOGHEIGHT));
@@ -3266,7 +3266,7 @@ void SetWeapon(Weapon NewWeapon)
 	PendingWeapon = none;
 
 	ViewEnt = ReadyWeapon;
-	PSpriteSY = WeaponEx(ViewEnt).PSpriteSY;
+	PSpriteSY = Weapon(ViewEnt).PSpriteSY;
 }
 
 //==========================================================================
@@ -3280,8 +3280,8 @@ void SetWeapon(Weapon NewWeapon)
 void BringUpWeapon()
 {
 	PendingWeapon = none;
-	ViewStates[ps_weapon].SY = WeaponEx::WEAPONBOTTOM;
-	SetViewState(ps_weapon, WeaponEx(ViewEnt).GetUpState());
+	ViewStates[ps_weapon].SY = Weapon::WEAPONBOTTOM;
+	SetViewState(ps_weapon, Weapon(ViewEnt).GetUpState());
 }
 
 //==========================================================================
@@ -3294,7 +3294,7 @@ void BringUpWeapon()
 
 void DropWeapon()
 {
-	SetViewState(ps_weapon, WeaponEx(ViewEnt).GetDownState());
+	SetViewState(ps_weapon, Weapon(ViewEnt).GetDownState());
 }
 
 //==========================================================================
@@ -3346,7 +3346,7 @@ void FireWeapon()
 		return;
 	}
 	MO.SetState(Actor(MO).MissileState);
-	SetViewState(ps_weapon, WeaponEx(ViewEnt).GetAttackState(Refire));
+	SetViewState(ps_weapon, Weapon(ViewEnt).GetAttackState(Refire));
 	HexenLevelInfo(Level).NoiseAlert(Actor(MO), Actor(MO));
 }
 
@@ -3358,14 +3358,14 @@ void FireWeapon()
 
 void ActivateMorphWeapon()
 {
-	ViewStates[ps_weapon].SY = WeaponEx::WEAPONTOP;
-	WeaponEx Wpn = Level.Spawn(Snout);
+	ViewStates[ps_weapon].SY = Weapon::WEAPONTOP;
+	Weapon Wpn = Level.Spawn(Snout);
 	if (!Wpn.TryPickup(EntityEx(MO)))
 	{
 		Wpn.Destroy();
 	}
-	SetWeapon(WeaponEx(EntityEx(MO).FindInventory(Snout)));	// Snout is the first weapon
-	SetViewState(ps_weapon, WeaponEx(ViewEnt).ReadyState);
+	SetWeapon(Weapon(EntityEx(MO).FindInventory(Snout)));	// Snout is the first weapon
+	SetViewState(ps_weapon, Weapon(ViewEnt).ReadyState);
 }
 
 //==========================================================================
@@ -3374,12 +3374,12 @@ void ActivateMorphWeapon()
 //
 //==========================================================================
 
-void PostMorphWeapon(WeaponEx weapon)
+void PostMorphWeapon(Weapon weapon)
 {
 	ReadyWeapon.Destroy();
 	SetWeapon(weapon);
-	ViewStates[ps_weapon].SY = WeaponEx::WEAPONBOTTOM;
-	SetViewState(ps_weapon, WeaponEx(ViewEnt).UpState);
+	ViewStates[ps_weapon].SY = Weapon::WEAPONBOTTOM;
+	SetViewState(ps_weapon, Weapon(ViewEnt).UpState);
 }
 
 //==========================================================================
@@ -3597,7 +3597,7 @@ void Cheat_NoClip()
 void Cheat_Gimme()
 {
 	class<Inventory>	Cls;
-	class<WeaponEx>		WpnCls;
+	class<Weapon>		WpnCls;
 
 	if (Cmd_CheckParm("weapons"))
 	{
@@ -3607,14 +3607,14 @@ void Cheat_Gimme()
 		{
 			ArmorPoints[i] = MainGameInfo(Level.Game).ArmorIncrement[PClass * HexenDefs::NUMARMOR + i];
 		}
-		foreach AllClasses(WeaponEx, WpnCls)
+		foreach AllClasses(Weapon, WpnCls)
 		{
 			if (!WpnCls.default.ReadyState)
 			{
 				//	Abstract class.
 				continue;
 			}
-			WeaponEx Wpn = Level.Spawn(WpnCls);
+			Weapon Wpn = Level.Spawn(WpnCls);
 			Wpn.AmmoGive1 = 0;
 			Wpn.AmmoGive2 = 0;
 			if (!Wpn.TryPickup(EntityEx(MO)))
@@ -3764,13 +3764,13 @@ void Cheat_NoWeapons()
 	}
 	//	Find weakest weapon.
 	Inventory Item;
-	WeaponEx Weakest = none;
+	Weapon Weakest = none;
 	for (Item = EntityEx(MO).Inventory; Item; Item = Item.Inventory)
 	{
 		if (Weapon(Item) && (!Weakest ||
 			Weakest.SelectionOrder < Weapon(Item).SelectionOrder))
 		{
-			Weakest = WeaponEx(Item);
+			Weakest = Weapon(Item);
 		}
 	}
 	//	Removed all others.

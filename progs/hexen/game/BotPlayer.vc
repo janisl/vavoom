@@ -275,13 +275,13 @@ bool CheckItem(Actor item)
 	if (!item.bSpecial)
 		return false;
 
-	WeaponEx Wpn = WeaponEx(item);
+	Weapon Wpn = Weapon(item);
 	if (Wpn)
 	{
 		bNewItemIsWeapon = true;
 
 		// If we don't have the weapon, pick it up
-		if (Wpn.WeaponClass == player.PClass &&
+		if (HexenWeapon(Wpn).WeaponClass == player.PClass &&
 			!botmo.FindInventory(class<Inventory>(Wpn.Class)))
 			return true;
 

@@ -29,7 +29,10 @@
 #include "HexenWorldInfo.vc"
 #include "Pawn.vc"
 #include "PlayerPawn.vc"
-#include "Weapon.vc"
+#include "HexenWeapon.vc"
+#include "FighterWeapon.vc"
+#include "ClericWeapon.vc"
+#include "MageWeapon.vc"
 #include "Player.vc"
 #include "BotPlayer.vc"
 

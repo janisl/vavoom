@@ -23,101 +23,65 @@
 //**
 //**************************************************************************
 
-class WeaponEx : Weapon
+class HexenWeapon : Weapon
 	abstract;
 
-const float MELEERANGE		= 64.0;
-const float MISSILERANGE	= (32.0 * 64.0);
-
-const int
-	USE_GWND_AMMO_1	= 1,
-	USE_GWND_AMMO_2 = 1,
-	USE_CBOW_AMMO_1 = 1,
-	USE_CBOW_AMMO_2 = 1,
-	USE_BLSR_AMMO_1 = 1,
-	USE_BLSR_AMMO_2 = 5,
-	USE_SKRD_AMMO_1 = 1,
-	USE_SKRD_AMMO_2 = 5,
-	USE_PHRD_AMMO_1 = 1,
-	USE_PHRD_AMMO_2 = 1,
-	USE_MACE_AMMO_1 = 1,
-	USE_MACE_AMMO_2 = 5;
-
-float PSpriteSY;
-bool bInShareware;
+int WeaponClass;
 
 //==========================================================================
 //
-//	AttachToOwner
+//  TryPickup
 //
 //==========================================================================
 
-void AttachToOwner(EntityEx NewOwner)
+bool TryPickup(EntityEx Toucher)
 {
-	::AttachToOwner(NewOwner);
-	//	In deathmatch powered-up weapons use the same amount of ammo per
-	// shot as non-powered ones.
-	if (bPoweredUp && Level.Game.deathmatch && SisterWeapon)
+	if (Toucher.Player.PClass != WeaponClass)
 	{
-		AmmoUse1 = SisterWeapon.AmmoUse1;
+		// Wrong class, but try to pick up for mana
+		if (ShouldStay() && !bDropped)
+		{
+			return false;
+		}
+		bool gaveMana = false;
+		if (Player(Toucher.Player).GiveMana(AmmoType1, AmmoGive1))
+		{
+			gaveMana = true;
+		}
+		if (Player(Toucher.Player).GiveMana(AmmoType2, AmmoGive2))
+		{
+			gaveMana = true;
+		}
+		if (gaveMana)
+		{
+			GoAwayAndDie();
+			GiveQuest(Toucher);
+			return true;
+		}
+		return false;
 	}
+
+	return ::TryPickup(Toucher);
 }
 
 //==========================================================================
 //
-//	DecAmmo
+//  DecMana
 //
 //==========================================================================
 
-void DecAmmo(int Count)
+void DecMana()
 {
 	if (Ammo1)
 	{
-		Ammo1.Amount -= Count;
+		Ammo1.Amount -= AmmoUse1;
 	}
-}
-
-//==========================================================================
-//
-//  HITDICE
-//
-//  Most damage in HERETIC and HEXEN defined using HITDICE
-//
-//==========================================================================
-
-final int HITDICE(int a)
-{
-	return (1 + (P_Random() & 7)) * a;
-}
-
-//===========================================================================
-//
-//  ActivateChickenbeak
-//
-//===========================================================================
-
-bool ActivateChickenbeak()
-{
-	if (Player(Owner.Player).ChickenTime)
+	if (Ammo2)
 	{
-		// Change to the chicken beak
-		Player(Owner.Player).ActivateBeak();
-		return true;
+		Ammo2.Amount -= AmmoUse2;
 	}
-	return false;
-}
-
-//
-//	UNUSED
-//
-__states__
-{
-	S_LIGHTDONE('STFF', 0, 0.0 / 35.0, none) = A_Light0
 }
 
 defaultproperties
 {
-	Height = 32.0;
-	bInShareware = true;
-	Kickback = 150.0;
 }

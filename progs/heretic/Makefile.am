@@ -209,6 +209,7 @@ EXTRA_DIST = compile.bat \
 	game/HereticSoundSequence8.vc \
 	game/HereticSoundSequence9.vc \
 	game/HereticSoundSequence10.vc \
+	game/HereticWeapon.vc \
 	game/HornRodFX1.vc \
 	game/HornRodFX2.vc \
 	game/Ironlich.vc \
@@ -344,7 +345,6 @@ EXTRA_DIST = compile.bat \
 	game/PointPusher.vc \
 	game/Knight.vc \
 	game/SkullHang45.vc \
-	game/Weapon.vc \
 	game/Moss2.vc \
 	game/StaticRGBLightSource.vc \
 	game/MaceFX1.vc \

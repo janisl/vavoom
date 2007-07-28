@@ -159,6 +159,7 @@ EXTRA_DIST = compile.bat \
 	game/BloodSplashBase.vc \
 	game/BotPlayer.vc \
 	game/DoomLevelInfo.vc \
+	game/DoomWeapon.vc \
 	game/DoomWorldInfo.vc \
 	game/LavaSmoke.vc \
 	game/LavaSplash.vc \
@@ -180,7 +181,6 @@ EXTRA_DIST = compile.bat \
 	game/StaticRGBLightSource.vc \
 	game/WaterSplash.vc \
 	game/WaterSplashBase.vc \
-	game/Weapon.vc \
 	game1/classes.vc \
 	game1/Allmap.vc \
 	game1/ArmorBonus.vc \

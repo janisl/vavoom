@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Crossbow : WeaponEx
+class Crossbow : HereticWeapon
 	__mobjinfo__(2001)
 	__scriptid__(27);
 

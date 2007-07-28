@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Chaingun : WeaponEx
+class Chaingun : DoomWeapon
 	__mobjinfo__(2002)
 	__scriptid__(28);
 

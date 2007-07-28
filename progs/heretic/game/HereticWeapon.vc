@@ -1,0 +1,122 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class HereticWeapon : Weapon
+	abstract;
+
+const float MELEERANGE		= 64.0;
+const float MISSILERANGE	= (32.0 * 64.0);
+
+const int
+	USE_GWND_AMMO_1	= 1,
+	USE_GWND_AMMO_2 = 1,
+	USE_CBOW_AMMO_1 = 1,
+	USE_CBOW_AMMO_2 = 1,
+	USE_BLSR_AMMO_1 = 1,
+	USE_BLSR_AMMO_2 = 5,
+	USE_SKRD_AMMO_1 = 1,
+	USE_SKRD_AMMO_2 = 5,
+	USE_PHRD_AMMO_1 = 1,
+	USE_PHRD_AMMO_2 = 1,
+	USE_MACE_AMMO_1 = 1,
+	USE_MACE_AMMO_2 = 5;
+
+bool bInShareware;
+
+//==========================================================================
+//
+//	AttachToOwner
+//
+//==========================================================================
+
+void AttachToOwner(EntityEx NewOwner)
+{
+	::AttachToOwner(NewOwner);
+	//	In deathmatch powered-up weapons use the same amount of ammo per
+	// shot as non-powered ones.
+	if (bPoweredUp && Level.Game.deathmatch && SisterWeapon)
+	{
+		AmmoUse1 = SisterWeapon.AmmoUse1;
+	}
+}
+
+//==========================================================================
+//
+//	DecAmmo
+//
+//==========================================================================
+
+void DecAmmo(int Count)
+{
+	if (Ammo1)
+	{
+		Ammo1.Amount -= Count;
+	}
+}
+
+//==========================================================================
+//
+//  HITDICE
+//
+//  Most damage in HERETIC and HEXEN defined using HITDICE
+//
+//==========================================================================
+
+final int HITDICE(int a)
+{
+	return (1 + (P_Random() & 7)) * a;
+}
+
+//===========================================================================
+//
+//  ActivateChickenbeak
+//
+//===========================================================================
+
+bool ActivateChickenbeak()
+{
+	if (Player(Owner.Player).ChickenTime)
+	{
+		// Change to the chicken beak
+		Player(Owner.Player).ActivateBeak();
+		return true;
+	}
+	return false;
+}
+
+//
+//	UNUSED
+//
+__states__
+{
+	S_LIGHTDONE('STFF', 0, 0.0 / 35.0, none) = A_Light0
+}
+
+defaultproperties
+{
+	Height = 32.0;
+	bInShareware = true;
+	Kickback = 150.0;
+}

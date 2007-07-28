@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Snout : WeaponEx;
+class Snout : HexenWeapon;
 
 state SniffState;
 

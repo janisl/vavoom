@@ -23,66 +23,63 @@
 //**
 //**************************************************************************
 
-class WeaponEx : Weapon
+class DoomWeapon : Weapon
 	abstract;
 
-const float
-	MELEERANGE		= 64.0,
-	PUNCHRANGE		= 80.0,
-	MISSILERANGE	= (32.0 * 64.0),
-	MAULERRANGE		= (33.0 * 64.0),
-	ROBOTRANGE		= 264.0;
-
-state FireDeathWaveState;
-
-bool bRaiseNoiseAlert;
-
-bool bCheatNotWeapon;
-
 //===========================================================================
 //
-//  DecAmmo
+//  GunShot
 //
 //===========================================================================
 
-final void DecAmmo()
+final void GunShot(Actor A, int accurate, TVec dir)
 {
-	if (Ammo1)
+	int damage;
+
+	//  Make a copy of angles because inacurate shoot will modify them
+	if (!accurate)
+	{
+		TAVec angles;
+
+		VectorAngles(&dir, &angles);
+		angles.yaw = AngleMod360(angles.yaw +
+			(Random() - Random()) * 45.0 / 8.0);
+		AngleVector(&angles, &dir);
+	}
+
+	damage = 5 * (P_Random() % 3 + 1);
+
+	A.LineAttack(dir, MISSILERANGE, damage, BulletPuff);
+}
+
+//==========================================================================
+//
+//	DecAmmo
+//
+//==========================================================================
+
+void DecAmmo(int Count)
+{
+	if (!Ammo1)
+	{
+		return;
+	}
+	if (MainGameInfo(Level.Game).bDehacked)
+	{
+		Ammo1.Amount -= Count;
+	}
+	else
 	{
 		Ammo1.Amount -= AmmoUse1;
 	}
 }
 
-//==========================================================================
-//
-//	A_ClearFlash
-//
-//==========================================================================
-
-final void A_ClearFlash()
-{
-	Owner.Player.SetViewState(ps_flash, none);
-}
-
 __states__
 {
-	S_LIGHTDONE('', 0, 0.0 / 35.0, none) = A_Light0
-	S_WAVE1('WAVE', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_WAVE2) = none
-	S_WAVE2('WAVE', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_WAVE3) = none
-	S_WAVE3('WAVE', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_WAVE4) = none
-	S_WAVE4('WAVE', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_WAVE1) = none
-	S_RBPY_1('RBPY', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_RBPY_2) = none
-	S_RBPY_2('RBPY', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_RBPY_3) = none
-	S_RBPY_3('RBPY', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_RBPY_4) = none
-	S_RBPY_4('RBPY', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_RBPY_1) = none
-	S_TARGETER1('TRGT', 0, -1.0, none) = none
-	S_TARGETER2('TRGT', 1, -1.0, none) = none
-	S_TARGETER3('TRGT', 2, -1.0, none) = none
+	S_LIGHTDONE('SHTG', 4, 0.0 / 35.0, none) = A_Light0
 }
 
 defaultproperties
 {
-	bRaiseNoiseAlert = true;
-	bFloorClip = true;
-	FireDeathWaveState = S_WAVE1;
+	Kickback = 100.0;
 }

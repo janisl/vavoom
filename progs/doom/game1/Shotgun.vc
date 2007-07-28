@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Shotgun : WeaponEx
+class Shotgun : DoomWeapon
 	__mobjinfo__(2001)
 	__scriptid__(27);
 

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class SuperShotgun : WeaponEx
+class SuperShotgun : DoomWeapon
 	__mobjinfo__(82)
 	__scriptid__(33);
 

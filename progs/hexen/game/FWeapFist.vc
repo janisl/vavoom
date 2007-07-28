@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class FWeapFist : WeaponEx;
+class FWeapFist : FighterWeapon;
 
 state Attack2State;
 int PunchCount;

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Chainsaw : WeaponEx
+class Chainsaw : DoomWeapon
 	__mobjinfo__(2005)
 	__scriptid__(32);
 

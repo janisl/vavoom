@@ -370,7 +370,7 @@ void SpawnPlayer(mthing_t * mthing)
 			}
 			else if (Weapon(Item) && Weapon(Item).CheckAmmo(false))
 			{
-				SetWeapon(WeaponEx(Item));
+				SetWeapon(Weapon(Item));
 			}
 		}
 	}
@@ -522,7 +522,7 @@ void GotAmmo(Ammo NewAmmo)
 	// Preferences are not user selectable.
 	if (ReadyWeapon.bWimpyWeapon)
 	{
-		WeaponEx Best = WeaponEx(BestWeapon(class<Ammo>(NewAmmo.Class)));
+		Weapon Best = BestWeapon(class<Ammo>(NewAmmo.Class));
 		if (Best && Best.SelectionOrder < ReadyWeapon.SelectionOrder)
 		{
 			PendingWeapon = Best;
@@ -538,7 +538,7 @@ void GotAmmo(Ammo NewAmmo)
 
 void GiveSigilPiece()
 {
-	WeaponEx Wpn = WeaponEx(EntityEx(MO).FindInventory(Sigil));
+	Weapon Wpn = Weapon(EntityEx(MO).FindInventory(Sigil));
 	if (!Wpn)
 		SigilPieces = 0;
 	else if (SigilPieces == 4)
@@ -1638,7 +1638,7 @@ void DeathPlayerTick(float deltaTime)
 
 void PrevWeapon()
 {
-	WeaponEx Best = WeaponEx(GetPrevWeapon(ReadyWeapon, true));
+	Weapon Best = GetPrevWeapon(ReadyWeapon, true);
 	if (Best && Best != ReadyWeapon)
 	{
 		PendingWeapon = Best;
@@ -1653,7 +1653,7 @@ void PrevWeapon()
 
 void NextWeapon()
 {
-	WeaponEx Best = WeaponEx(GetNextWeapon(ReadyWeapon, true));
+	Weapon Best = GetNextWeapon(ReadyWeapon, true);
 	if (Best && Best != ReadyWeapon)
 	{
 		PendingWeapon = Best;
@@ -2040,9 +2040,9 @@ void SetWeapon(Weapon NewWeapon)
 void BringUpWeapon()
 {
 	PendingWeapon = none;
-	ViewStates[ps_weapon].SY = WeaponEx::WEAPONBOTTOM;
+	ViewStates[ps_weapon].SY = Weapon::WEAPONBOTTOM;
 
-	SetViewState(ps_weapon, WeaponEx(ViewEnt).UpState);
+	SetViewState(ps_weapon, Weapon(ViewEnt).UpState);
 }
 
 //==========================================================================
@@ -2056,7 +2056,7 @@ void BringUpWeapon()
 
 void ChangeWeapon(int newweapon)
 {
-	WeaponEx NewWpn = WeaponEx(GetSlotChangeWeapon(newweapon + 1, ReadyWeapon, false));
+	Weapon NewWpn = GetSlotChangeWeapon(newweapon + 1, ReadyWeapon, false);
 	if (NewWpn && NewWpn != ReadyWeapon)
 	{
 		PendingWeapon = NewWpn;
@@ -2073,7 +2073,7 @@ void ChangeWeapon(int newweapon)
 
 void DropWeapon()
 {
-	SetViewState(ps_weapon, WeaponEx(ViewEnt).DownState);
+	SetViewState(ps_weapon, Weapon(ViewEnt).DownState);
 }
 
 //===========================================================================
@@ -2127,8 +2127,8 @@ void FireWeapon()
 	}
 
 	MO.SetState(Actor(MO).MissileState);
-	SetViewState(ps_weapon, WeaponEx(ViewEnt).AttackState);
-	if (WeaponEx(ViewEnt).bRaiseNoiseAlert)
+	SetViewState(ps_weapon, Weapon(ViewEnt).AttackState);
+	if (StrifeWeapon(ViewEnt).bRaiseNoiseAlert)
 		StrifeLevelInfo(Level).NoiseAlert(Actor(MO), Actor(MO));
 }
 
@@ -2277,7 +2277,7 @@ void Cheat_Gimme()
 {
 	int					i;
 	class<Inventory>	Cls;
-	class<WeaponEx>		WpnCls;
+	class<Weapon>		WpnCls;
 
 	// Backpack
 	if (Cmd_CheckParm("Backpack"))
@@ -2304,7 +2304,7 @@ void Cheat_Gimme()
 			{
 				continue;
 			}
-			WeaponEx Wpn = Level.Spawn(WpnCls);
+			Weapon Wpn = Level.Spawn(WpnCls);
 			Wpn.AmmoGive1 = 0;
 			Wpn.AmmoGive2 = 0;
 			if (!Wpn.TryPickup(EntityEx(MO)))

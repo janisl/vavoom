@@ -61,6 +61,12 @@ int				SelectionOrder;
 //	Kickback from this weapon
 float			Kickback;
 
+// Y-adjustment value for full screen
+float			PSpriteSY;
+
+//	For displaying weapon with player model.
+int				PlayerModelVersion;
+
 float			BotCombatDist;
 
 //	Switch away if got ammo for more powerfull weapon.
@@ -85,6 +91,8 @@ bool			bBotMelee;
 bool			bBotProjectile;
 //	It's a BFG
 bool			bBotBfg;
+//	Not considered a weapon by gimme cheat
+bool			bCheatNotWeapon;
 
 //	Runtime in-inventory references.
 Ammo			Ammo1;

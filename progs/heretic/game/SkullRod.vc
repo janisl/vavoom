@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class SkullRod : WeaponEx
+class SkullRod : HereticWeapon
 	__mobjinfo__(2004)
 	__scriptid__(30);
 

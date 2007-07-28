@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class StrifeGrenadeLauncher : WeaponEx
+class StrifeGrenadeLauncher : StrifeWeapon
 	__mobjinfo__(154);
 
 state FlashState2;

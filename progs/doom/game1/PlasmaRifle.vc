@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class PlasmaRifle : WeaponEx
+class PlasmaRifle : DoomWeapon
 	__mobjinfo__(2004)
 	__scriptid__(30);
 

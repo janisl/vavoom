@@ -505,6 +505,7 @@ EXTRA_DIST = compile.bat \
 	game/StrifePlayer.vc \
 	game/StrifePuff.vc \
 	game/StrifeSpark.vc \
+	game/StrifeWeapon.vc \
 	game/StrifeWorldInfo.vc \
 	game/SurgeryCrab.vc \
 	game/SurgeryKit.vc \
@@ -539,7 +540,6 @@ EXTRA_DIST = compile.bat \
 	game/WaterFountain.vc \
 	game/WaterSplash.vc \
 	game/WaterSplashBase.vc \
-	game/Weapon.vc \
 	game/WeaponSmith.vc \
 	game/WoodenBarrel.vc \
 	game/Zombie.vc \

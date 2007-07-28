@@ -31,12 +31,12 @@ const int
 	WPIECE2			= 2,
 	WPIECE3			= 4;
 
-int PieceClass;
-int PieceValue;
-class<WeaponEx> WeaponType;
-WeaponEx GivenWeapon;
+int				PieceClass;
+int				PieceValue;
+class<Weapon>	WeaponType;
+Weapon			GivenWeapon;
 
-bool gaveWeapon;
+bool			gaveWeapon;
 
 //==========================================================================
 //
@@ -101,7 +101,7 @@ bool TryPickup(EntityEx Toucher)
 	if (Player(Toucher.Player).Pieces == (WPIECE1 | WPIECE2 | WPIECE3))
 	{
 		gaveWeapon = true;
-		WeaponEx Wpn = Level.Spawn(WeaponType);
+		Weapon Wpn = Level.Spawn(WeaponType);
 		if (!Wpn.TryPickup(Toucher))
 		{
 			Wpn.Destroy();

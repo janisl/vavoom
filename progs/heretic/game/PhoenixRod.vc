@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class PhoenixRod : WeaponEx
+class PhoenixRod : HereticWeapon
 	__mobjinfo__(2003)
 	__scriptid__(29);
 

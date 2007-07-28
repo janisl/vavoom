@@ -327,7 +327,7 @@ void SpawnPlayer(mthing_t * mthing)
 	bool		ResetInventory = false;
 	int			i;
 	Inventory	Item;
-	WeaponEx	Wpn;
+	Weapon		Wpn;
 
 	if (PlayerState == PST_REBORN)
 	{
@@ -392,7 +392,7 @@ void SpawnPlayer(mthing_t * mthing)
 			}
 			else if (Weapon(Item) && Weapon(Item).CheckAmmo(false))
 			{
-				SetWeapon(WeaponEx(Item));
+				SetWeapon(Weapon(Item));
 			}
 		}
 	}
@@ -464,7 +464,7 @@ void PlayerExitMap(bool clusterChange)
 	}
 	if (ChickenTime)
 	{
-		SetWeapon(WeaponEx(Actor(MO).Tracer));	// Restore weapon
+		SetWeapon(Weapon(Actor(MO).Tracer));	// Restore weapon
 		ChickenTime = 0.0;
 	}
 	Items = 0;
@@ -551,7 +551,7 @@ void GotAmmo(Ammo NewAmmo)
 {
 	if (ReadyWeapon.bWimpyWeapon)
 	{
-		WeaponEx Best = WeaponEx(BestWeapon(class<Ammo>(NewAmmo.Class)));
+		Weapon Best = BestWeapon(class<Ammo>(NewAmmo.Class));
 		if (Best && Best.SelectionOrder < ReadyWeapon.SelectionOrder)
 		{
 			PendingWeapon = Best;
@@ -1504,7 +1504,7 @@ void PrevWeapon()
 	{
 		return;
 	}
-	WeaponEx Best = WeaponEx(GetPrevWeapon(ReadyWeapon, true));
+	Weapon Best = GetPrevWeapon(ReadyWeapon, true);
 	if (Best && Best != ReadyWeapon)
 	{
 		PendingWeapon = Best;
@@ -1523,7 +1523,7 @@ void NextWeapon()
 	{
 		return;
 	}
-	WeaponEx Best = WeaponEx(GetNextWeapon(ReadyWeapon, true));
+	Weapon Best = GetNextWeapon(ReadyWeapon, true);
 	if (Best && Best != ReadyWeapon)
 	{
 		PendingWeapon = Best;
@@ -1549,7 +1549,7 @@ void PlayerImpulse()
 		// The actual changing of the weapon is done when the weapon
 		// psprite can do it (A_WeaponReady), so it doesn't happen in
 		// the middle of an attack.
-		WeaponEx NewWpn = WeaponEx(GetSlotChangeWeapon(impulse, ReadyWeapon, false));
+		Weapon NewWpn = GetSlotChangeWeapon(impulse, ReadyWeapon, false);
 		if (NewWpn && NewWpn != ReadyWeapon && !ChickenTime)
 		{
 			PendingWeapon = NewWpn;
@@ -1670,7 +1670,7 @@ bool UndoPlayerChicken()
 	Powers[pw_weaponlevel2] = 0.0;
 	A.Health = MAXHEALTH;
 	Health = A.Health;
-	PostChickenWeapon(WeaponEx(Actor(MO).Tracer));
+	PostChickenWeapon(Weapon(Actor(MO).Tracer));
 
 	fog = HereticLevelInfo(Level).Spawn(TeleportFog, MO.Origin + vector(
 		20.0 * cos(MO.Angles.yaw), 20.0 * sin(MO.Angles.yaw), Actor::TELEFOGHEIGHT));
@@ -2500,7 +2500,7 @@ void SetWeapon(Weapon NewWeapon)
 	PendingWeapon = none;
 
 	ViewEnt = ReadyWeapon;
-	PSpriteSY = WeaponEx(ViewEnt).PSpriteSY;
+	PSpriteSY = Weapon(ViewEnt).PSpriteSY;
 }
 
 //===========================================================================
@@ -2518,8 +2518,8 @@ void BringUpWeapon()
 	{
 		MO.PlaySound(ReadyWeapon.UpSound, CHAN_WEAPON);
 	}
-	ViewStates[ps_weapon].SY = WeaponEx::WEAPONBOTTOM;
-	SetViewState(ps_weapon, WeaponEx(ViewEnt).UpState);
+	ViewStates[ps_weapon].SY = Weapon::WEAPONBOTTOM;
+	SetViewState(ps_weapon, Weapon(ViewEnt).UpState);
 }
 
 //===========================================================================
@@ -2532,7 +2532,7 @@ void BringUpWeapon()
 
 void DropWeapon()
 {
-	SetViewState(ps_weapon, WeaponEx(ViewEnt).DownState);
+	SetViewState(ps_weapon, Weapon(ViewEnt).DownState);
 }
 
 //===========================================================================
@@ -2587,8 +2587,8 @@ void FireWeapon()
 	}
 	MO.SetState(PlayerPawn(MO).MissileState);
 	attackState = Refire ?
-		WeaponEx(ViewEnt).HoldAttackState :
-		WeaponEx(ViewEnt).AttackState;
+		Weapon(ViewEnt).HoldAttackState :
+		Weapon(ViewEnt).AttackState;
 	SetViewState(ps_weapon, attackState);
 	HereticLevelInfo(Level).NoiseAlert(Actor(MO), Actor(MO));
 }
@@ -2601,14 +2601,14 @@ void FireWeapon()
 
 void ActivateBeak()
 {
-	WeaponEx Wpn = Level.Spawn(Beak);
+	Weapon Wpn = Level.Spawn(Beak);
 	if (!Wpn.TryPickup(EntityEx(MO)))
 	{
 		Wpn.Destroy();
 	}
-	SetWeapon(WeaponEx(EntityEx(MO).FindInventory(Beak)));
-	ViewStates[ps_weapon].SY = WeaponEx::WEAPONTOP;
-	SetViewState(ps_weapon, WeaponEx(ViewEnt).ReadyState);
+	SetWeapon(Weapon(EntityEx(MO).FindInventory(Beak)));
+	ViewStates[ps_weapon].SY = Weapon::WEAPONTOP;
+	SetViewState(ps_weapon, Weapon(ViewEnt).ReadyState);
 }
 
 //===========================================================================
@@ -2617,12 +2617,12 @@ void ActivateBeak()
 //
 //===========================================================================
 
-void PostChickenWeapon(WeaponEx weapon)
+void PostChickenWeapon(Weapon weapon)
 {
 	ReadyWeapon.Destroy();
 	SetWeapon(weapon);
-	ViewStates[ps_weapon].SY = WeaponEx::WEAPONBOTTOM;
-	SetViewState(ps_weapon, WeaponEx(ViewEnt).UpState);
+	ViewStates[ps_weapon].SY = Weapon::WEAPONBOTTOM;
+	SetViewState(ps_weapon, Weapon(ViewEnt).UpState);
 }
 
 //===========================================================================
@@ -2633,7 +2633,7 @@ void PostChickenWeapon(WeaponEx weapon)
 
 void UpdateBeak()
 {
-	ViewStates[ps_weapon].SY = WeaponEx::WEAPONTOP + itof(ChickenPeck) / 2.0;
+	ViewStates[ps_weapon].SY = Weapon::WEAPONTOP + itof(ChickenPeck) / 2.0;
 }
 
 //===========================================================================
@@ -2766,7 +2766,7 @@ void Cheat_NoClip()
 void Cheat_Gimme()
 {
 	class<Inventory>	Cls;
-	class<WeaponEx>		WpnCls;
+	class<Weapon>		WpnCls;
 
 	if (Cmd_CheckParm("weapons"))
 	{
@@ -2809,11 +2809,11 @@ void Cheat_Gimme()
 				//	Abstract base class.
 			}
 			if (MainGameInfo(Level.Game).shareware &&
-				!WpnCls.default.bInShareware)
+				!class<HereticWeapon>(WpnCls).default.bInShareware)
 			{
 				continue;
 			}
-			WeaponEx Wpn = Level.Spawn(WpnCls);
+			Weapon Wpn = Level.Spawn(WpnCls);
 			Wpn.AmmoGive1 = 0;
 			Wpn.AmmoGive2 = 0;
 			if (!Wpn.TryPickup(EntityEx(MO)))
@@ -2963,13 +2963,13 @@ void Cheat_NoWeapons()
 	}
 	//	Find weakest weapon.
 	Inventory Item;
-	WeaponEx Weakest = none;
+	Weapon Weakest = none;
 	for (Item = EntityEx(MO).Inventory; Item; Item = Item.Inventory)
 	{
 		if (Weapon(Item) && (!Weakest ||
 			Weakest.SelectionOrder < Weapon(Item).SelectionOrder))
 		{
-			Weakest = WeaponEx(Item);
+			Weakest = Weapon(Item);
 		}
 	}
 	//	Removed all others.
