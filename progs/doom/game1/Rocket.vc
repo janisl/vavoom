@@ -84,5 +84,8 @@ defaultproperties
 	ExtraState = S_BRAINEXPLODE1;
 	SightSound = 'weapons/rocklf';
 	DeathSound = 'weapons/rocklx';
-	Effects = EF_DL_WHITE | EF_ROCKET;
+	bDynamicLight = true;
+	bLeaveTrail = true;
+	DLightColour = RGB(195, 79, 0);
+	DLightRadius = 200.0;
 }

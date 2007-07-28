@@ -43,4 +43,5 @@ defaultproperties
 	IdleState = S_RAINPLR2_1;
 	DeathState = S_RAINPLR2X_1;
 	AirDeathState = S_RAINAIRXPLR2_1;
+	DLightColour = RGB(236, 164, 3);
 }

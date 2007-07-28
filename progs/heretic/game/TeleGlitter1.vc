@@ -56,5 +56,8 @@ defaultproperties
 	bMissile = true;
 	bNoBlockmap = true;
 	bNoGravity = true;
+	bDynamicLight = true;
 	IdleState = S_TELEGLITTER1_1;
+	DLightColour = RGB(255, 179, 179);
+	DLightRadius = 100.0;
 }

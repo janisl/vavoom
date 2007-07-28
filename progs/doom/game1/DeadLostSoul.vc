@@ -44,6 +44,7 @@ defaultproperties
 	bFloat = false;
 	bTriggerHappy = false;
 	bNoGravKill = false;
+	bDynamicLight = false;
 	SeeState = none;
 	MissileState = none;
 	PainState = none;
@@ -52,7 +53,6 @@ defaultproperties
 	AttackSound = '';
 	PainSound = '';
 	DeathSound = '';
-	Effects = 0;
 
 	IdleState = S_SKULL_DIE6;
 	bFloorClip = true;

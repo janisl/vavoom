@@ -50,6 +50,7 @@ final void A_MaceBallImpact2()
 		bNoGravity = true;
 		BounceType = BOUNCE_None;
 		Gravity = 1.0;
+		SendExplosion(RGB(255, 128, 0), Origin);
 	}
 	else
 	{
@@ -92,6 +93,7 @@ defaultproperties
 {
 	Speed = 350.0;
 	MissileDamage = 6;
+	bDynamicLight = false;
 	IdleState = S_MACEFX2_1;
 	DeathState = S_MACEFXI2_1;
 }

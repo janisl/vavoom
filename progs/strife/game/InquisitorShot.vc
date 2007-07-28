@@ -53,5 +53,5 @@ defaultproperties
 	DeathState = S_INQUISITOR_GRENADE_X1;
 	SightSound = 'inquisitor/attack';
 	DeathSound = 'inquisitor/atkexplode';
-	ExplodeEffect = EF_DL_WHITE;
+	ExplodeEffect = RGB(239, 239, 0);
 }

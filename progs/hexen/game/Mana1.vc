@@ -50,6 +50,9 @@ defaultproperties
 	BackpackAmount = 15;
 	BackpackMaxAmount = 200;
 	bFloatBob = true;
+	bDynamicLight = true;
+	DLightColour = RGB(74, 77, 196);
+	DLightRadius = 100.0;
 	IdleState = S_MANA1_1;
 	PickupMessage = "$txt_mana_1";
 }

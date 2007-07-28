@@ -35,10 +35,10 @@ class TeleportFog : Actor;
 
 final void A_Lights()
 {
-	SendExplosion2(Effects, Origin + vector(0.0, 0.0, Height * 0.5));
+	SendExplosion2(DLightColour, Origin + vector(0.0, 0.0, Height * 0.5));
 
 	//  Clear old dynamic light effect
-	Effects &= ~EF_DLIGHT_MASK;
+	bDynamicLight = false;
 }
 
 __states__
@@ -64,5 +64,7 @@ defaultproperties
 	bNoGravity = true;
 	bNoPassMobj = true;
 	IdleState = S_TFOG;
-	Effects = EF_DL_GREEN;
+	bDynamicLight = true;
+	DLightColour = RGB(75, 159, 63);
+	DLightRadius = 200.0;
 }

@@ -44,7 +44,7 @@ array<InitInvInfo>		InitialInventory;
 
 bool RoughCheckThing(Entity Other)
 {
-	Actor link = Actor(Other);
+	EntityEx link = EntityEx(Other);
 	
 	if (!bIsPlayer)
 	{
@@ -62,7 +62,7 @@ bool RoughCheckThing(Entity Other)
 	{
 		return false;
 	}
-	if (link.IsA('Minotaur') && link.Tracer == self)
+	if (link.IsA('MinotaurFriend') && link.Tracer == self)
 	{
 		return false;
 	}

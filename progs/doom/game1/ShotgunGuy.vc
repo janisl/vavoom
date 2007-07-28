@@ -92,6 +92,7 @@ defaultproperties
 	bActivateMCross = true;
 	bActivatePushWall = true;
 	bFloorClip = true;
+	DLightColour = RGB(195, 79, 0);
 	IdleState = S_SPOS_STND;
 	SeeState = S_SPOS_RUN1;
 	MissileState = S_SPOS_ATK1;

@@ -96,4 +96,5 @@ defaultproperties
 	ActiveSound = 'rebel/active';
 	PainSound = 'rebel/pain';
 	DeathSound = 'rebel/death';
+	DLightColour = RGB(203, 111, 0);	
 }

@@ -59,7 +59,7 @@ final void A_RiffleAttack()
 	VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0 / 2.0);
 	damage = ((P_Random() % 5) + 1) * 3;
 	LineAttack(dir, MISSILERANGE, damage, StrifePuff);
-	Effects |= EF_DL_MUZZLEFLASH;
+	bMuzzleFlash = true;
 }
 
 //==========================================================================
@@ -150,7 +150,7 @@ final void A_RobotMissile()
 		damage = ((P_Random() % 8) + 1) * 3;
 		LineAttack(dir, MISSILERANGE, damage, StrifePuff);
 	}
-	Effects |= EF_DL_MUZZLEFLASH;
+	bMuzzleFlash = true;
 }
 
 //==========================================================================

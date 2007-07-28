@@ -59,5 +59,6 @@ defaultproperties
 	bWindThrust = true;
 	IdleState = S_IMPFX1;
 	DeathState = S_IMPFXI1;
-	Effects = EF_DL_WHITE;
+	DLightColour = RGB(213, 118, 4);
+	DLightRadius = 200.0;
 }

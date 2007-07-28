@@ -55,13 +55,13 @@ final void A_VileChase()
 			float maxdist;
 			bool check;
 
-			if (!Actor(Other).bCorpse)
+			if (!Other.bCorpse)
 				continue;	// not a monster
 
-			if (Actor(Other).StateTime != -1.0)
+			if (Other.StateTime != -1.0)
 				continue;	// not lying still yet
 
-			if (!Actor(Other).RaiseState)
+			if (!EntityEx(Other).RaiseState)
 				continue;	// monster doesn't have a raise state
 
 			maxdist = Other.Radius + Radius;
@@ -73,7 +73,7 @@ final void A_VileChase()
 			if (!CanSee(Other))
 				continue;	//  Con't see, possibly in other region
 
-			Actor CorpseHit = Actor(Other);
+			EntityEx CorpseHit = EntityEx(Other);
 			CorpseHit.Velocity.x = 0.0;
 			CorpseHit.Velocity.y = 0.0;
 			float OldHeight = CorpseHit.Height;

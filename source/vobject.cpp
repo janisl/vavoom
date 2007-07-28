@@ -1020,6 +1020,13 @@ IMPLEMENT_FUNCTION(VObject, StateIsInRange)
 	RET_BOOL(State->IsInRange(Start, End, MaxDepth));
 }
 
+IMPLEMENT_FUNCTION(VObject, StateIsInSequence)
+{
+	P_GET_PTR(VState, Start);
+	P_GET_PTR(VState, State);
+	RET_BOOL(State->IsInSequence(Start));
+}
+
 IMPLEMENT_FUNCTION(VObject, GetStateSpriteName)
 {
 	P_GET_PTR(VState, State);

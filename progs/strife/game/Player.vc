@@ -2288,6 +2288,7 @@ void Cheat_Gimme()
 		{
 			I.Destroy();
 		}
+		cprint("EXTRA AMMO");
 	}
 
 	// Weapons
@@ -2298,7 +2299,6 @@ void Cheat_Gimme()
 			if (!WpnCls.default.RaiseState)
 			{
 				//	Abstract base class.
-				continue;
 			}
 			if (WpnCls.default.bCheatNotWeapon)
 			{
@@ -2312,6 +2312,7 @@ void Cheat_Gimme()
 				Wpn.Destroy();
 			}
 		}
+		cprint("ALL WEAPONS");
 	}
 
 	// Ammo
@@ -2339,12 +2340,14 @@ void Cheat_Gimme()
 				AmmoItem.Amount = AmmoItem.MaxAmount;
 			}
 		}
+		cprint("FULL AMMO");
 	}
 
 	// Keys
 	if (Cmd_CheckParm("Keys"))
 	{
 		Keys = 0x03ffffff;
+		cprint("ALL KEYS");
 	}
 
 	// Health
@@ -2352,24 +2355,30 @@ void Cheat_Gimme()
 	{
 		Health = MAXHEALTH + Stamina;
 		MO.Health = MAXHEALTH + Stamina;
+		cprint("FULL HEALTH");
 	}
 
 	// Comm unit
 	if (Cmd_CheckParm("CommUnit"))
 	{
 		Communicator = true;
+		cprint("YOU GOT IT");
 	}
 
 	// Sigil piece
 	if (Cmd_CheckParm("Sigil"))
 	{
 		GiveSigilPiece();
+		cprint("SIGIL PIECE");
 	}
 
 	// Quest items.
 	for (i = 0; i < NUMQUESTS; i++)
 		if (Cmd_CheckParm(va("Quest%d", i + 1)))
+		{
 			GiveQuest(i);
+			cprint("YOU GOT IT");
+		}
 }
 
 //==========================================================================
@@ -2442,14 +2451,14 @@ void ClientBlood(TVec org, int damage)
 //
 //==========================================================================
 
-void ClientExplosion(int etype, TVec org)
+void ClientExplosion(int colour, TVec org)
 {
 	dlight_t* dl;
 
 	dl = Level.AllocDlight(none);
 	dl->origin = org;
 	dl->radius = 350.0;
-	dl->colour = StrifeDefs.default.ecolours[etype];
+	dl->colour = colour;
 	dl->die = Level.XLevel.Time + 0.5;
 	dl->decay = 300.0;
 }

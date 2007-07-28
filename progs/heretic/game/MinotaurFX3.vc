@@ -52,6 +52,7 @@ defaultproperties
 	IdleState = S_MNTRFX3_1;
 	DeathState = S_MNTRFXI2_1;
 	DeathSound = 'minotaur/fx3hit';
-	Effects = EF_DL_WHITE;
+	DLightColour = RGB(255, 128, 0);
+	DLightRadius = 200.0;
 	bIgnoreFloorStep = true;
 }

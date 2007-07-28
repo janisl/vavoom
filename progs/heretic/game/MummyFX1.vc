@@ -81,5 +81,6 @@ defaultproperties
 	MissileDamage = 4;
 	IdleState = S_MUMMYFX1_1;
 	DeathState = S_MUMMYFXI1_1;
-	Effects = EF_DL_WHITE;
+	DLightColour = RGB(251, 221, 123);
+	DLightRadius = 200.0;
 }

@@ -55,7 +55,8 @@ final void A_FireBlaster1()
 		Actor(Owner).LineAttack(dir, MAULERRANGE, damage, MaulerPuff,,,
 			'Disintegrate');
 	}
-	Owner.Effects |= EF_DL_MUZZLEFLASH;
+	EntityEx(Owner).bMuzzleFlash = true;
+	EntityEx(Owner).DLightColour = RGB(203, 111, 0);
 }
 
 //==========================================================================

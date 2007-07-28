@@ -132,6 +132,9 @@ defaultproperties
 	PickupMessage = "$txt_weapon_m3";
 	BotCombatDist = 384.0;
 	bBotProjectile = true;
+	bDynamicLight = true;
+	DLightColour = RGB(74, 77, 196);
+	DLightRadius = 100.0;
 	IdleState = S_MW_LIGHTNING1;
 	UpState = S_MLIGHTNINGUP;
 	DownState = S_MLIGHTNINGDOWN;

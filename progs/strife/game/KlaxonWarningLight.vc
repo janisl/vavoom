@@ -57,9 +57,9 @@ final void A_AlarmActive()
 
 __states__
 {
-	S_KLAX('KLAX', 0, 5.0 / 35.0, S_KLAX) { Effects = 0; A_CheckAlarm(); }
-	S_KLAX_ACT1('KLAX', 1, 6.0 / 35.0, S_KLAX_ACT2) { Effects = 0; A_AlarmActive(); }
-	S_KLAX_ACT2('KLAX', 2, 60.0 / 35.0, S_KLAX_ACT1) { Effects = EF_DL_RED; }
+	S_KLAX('KLAX', 0, 5.0 / 35.0, S_KLAX) { bDynamicLight = false; A_CheckAlarm(); }
+	S_KLAX_ACT1('KLAX', 1, 6.0 / 35.0, S_KLAX_ACT2) { bDynamicLight = false; A_AlarmActive(); }
+	S_KLAX_ACT2('KLAX', 2, 60.0 / 35.0, S_KLAX_ACT1) { bDynamicLight = true; }
 }
 
 defaultproperties
@@ -71,4 +71,6 @@ defaultproperties
 	bNoGravity = true;
 	IdleState = S_KLAX;
 	SeeState = S_KLAX_ACT1;
+	DLightColour = RGB(191, 0, 0);
+	DLightRadius = 200.0;
 }

@@ -52,5 +52,6 @@ defaultproperties
 	IdleState = S_ICESHARD1;
 	DeathState = S_SHARDFXE1_1;
 	DeathSound = 'MageShardsExplode';
-	Effects = EF_DL_BLUE;
+	DLightColour = RGB(74, 77, 196);
+	DLightRadius = 200.0;
 }

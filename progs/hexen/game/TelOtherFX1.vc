@@ -137,6 +137,8 @@ defaultproperties
 	bActivateImpact = false;
 	bActivatePCross = false;
 	bBloodlessImpact = true;
+	DLightColour = RGB(243, 0, 0);
+	DLightRadius = 100.0;
 	IdleState = S_TELO_FX1;
 	DeathState = S_TELO_FX9;
 }

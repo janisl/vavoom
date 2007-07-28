@@ -86,5 +86,6 @@ defaultproperties
 	IdleState = S_WRTHFX_MOVE1;
 	DeathState = S_WRTHFX_BOOM1;
 	DeathSound = 'WraithMissileExplode';
-	Effects = EF_DL_RED;
+	DLightColour = RGB(244, 14, 3);
+	DLightRadius = 200.0;
 }

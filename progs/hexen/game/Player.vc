@@ -3862,14 +3862,14 @@ void ClientBlood(TVec org, int damage)
 //
 //==========================================================================
 
-void ClientExplosion(int etype, TVec org)
+void ClientExplosion(int colour, TVec org)
 {
 	dlight_t *dl;
 
 	dl = Level.AllocDlight(none);
 	dl->origin = org;
 	dl->radius = 350.0;
-	dl->colour = HexenDefs.default.ecolours[etype];
+	dl->colour = colour;
 	dl->die = Level.XLevel.Time + 0.5;
 	dl->decay = 300.0;
 }

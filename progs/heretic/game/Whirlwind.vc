@@ -92,6 +92,7 @@ defaultproperties
 	IdleState = S_HEADFX4_1;
 	DeathState = S_HEADFXI4_1;
 	bExploCount = true;
+	bDynamicLight = false;
 	ExploCountSpec2 = 50;
 	ExploCountSpec1 = 60;
 }

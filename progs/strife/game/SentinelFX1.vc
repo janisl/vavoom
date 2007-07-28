@@ -42,6 +42,8 @@ defaultproperties
 	Height = 8.0;
 	Speed = 1400.0;
 	MaxStepHeight = 4.0;
+	DLightColour = RGB(163, 23, 23);
+	DLightRadius = 200.0;
 	IdleState = S_SENTINEL_SHOT_1;
 	DeathState = S_SENTINEL_SHOT_X5;
 }

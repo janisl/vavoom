@@ -34,4 +34,5 @@ defaultproperties
 	bDropOff = true;
 	bNoTeleport = true;
 	bActivatePCross = true;
+	bDynamicLight = true;
 }

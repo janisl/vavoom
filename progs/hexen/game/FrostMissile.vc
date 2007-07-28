@@ -159,4 +159,6 @@ defaultproperties
 	IdleState = S_SHARDFX1_1;
 	DeathState = S_SHARDFXE1_1;
 	DeathSound = 'MageShardsExplode';
+	DLightColour = RGB(74, 77, 196);
+	DLightRadius = 90.0;
 }

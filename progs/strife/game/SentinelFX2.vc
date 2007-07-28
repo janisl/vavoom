@@ -28,7 +28,7 @@ class SentinelFX2 : SentinelFX1;
 defaultproperties
 {
 	MissileDamage = 1;
+	DLightRadius = 100.0;
 	DeathState = S_SENTINEL_SHOT_X1;
 	SightSound = 'sentinel/plasma';
-	Effects = EF_DL_RED;
 }

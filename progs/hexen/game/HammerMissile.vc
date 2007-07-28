@@ -68,5 +68,6 @@ defaultproperties
 	IdleState = S_HAMMER_MISSILE_1;
 	DeathState = S_HAMMER_MISSILE_X1;
 	DeathSound = 'FighterHammerExplode';
-	Effects = EF_DL_RED;
+	DLightColour = RGB(244, 14, 3);
+	DLightRadius = 200.0;
 }

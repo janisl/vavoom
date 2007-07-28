@@ -81,5 +81,6 @@ defaultproperties
 	IdleState = S_ICEGUY_FX1;
 	DeathState = S_ICEGUY_FX_X1;
 	DeathSound = 'IceGuyMissileExplode';
-	Effects = EF_DL_BLUE;
+	DLightColour = RGB(74, 77, 196);
+	DLightRadius = 200.0;
 }

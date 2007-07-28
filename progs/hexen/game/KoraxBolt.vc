@@ -85,5 +85,6 @@ defaultproperties
 	LifeTime = 3;
 	BoltHeight = 48.0;
 	IdleState = S_KBOLT1;
-	Effects = EF_DL_WHITE;
+	DLightColour = RGB(58, 158, 239);
+	DLightRadius = 200.0;
 }

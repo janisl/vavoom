@@ -99,5 +99,7 @@ defaultproperties
 	DeathState = S_TRACEEXP1;
 	SightSound = 'skeleton/attack';
 	DeathSound = 'skeleton/tracex';
-	Effects = EF_DL_RED;
+	bDynamicLight = true;
+	DLightColour = RGB(155, 51, 51);
+	DLightRadius = 200.0;
 }

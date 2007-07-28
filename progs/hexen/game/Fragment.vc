@@ -28,6 +28,7 @@ class Fragment : Projectile
 
 defaultproperties
 {
+	bDynamicLight = false;
 	bActivateImpact = false;
 	bActivatePCross = false;
 }

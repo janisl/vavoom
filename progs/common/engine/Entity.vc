@@ -101,8 +101,6 @@ int				Translation;
 
 float			FloorClip;	// value to use for floor clipping
 
-int				Effects;
-
 native readonly subsector_t*	SubSector;
 native readonly sector_t*		Sector;
 
@@ -189,7 +187,7 @@ replication
 {
 	reliable if (Role == ROLE_Authority)
 		Origin, Angles, FloorClip, State, StateTime,
-		SpriteType, ModelSkin, ModelVersion, Alpha, Translation, Effects,
+		SpriteType, ModelSkin, ModelVersion, Alpha, Translation,
 		bHidden, bFullBright, bFixedModel, bNetLocalPlayer, NetID;
 
 	reliable if (Role == ROLE_Authority && bFixedModel)

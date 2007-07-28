@@ -61,5 +61,6 @@ defaultproperties
 	bHidden = true;
 	bNoBlockmap = true;
 	bNoPassMobj = true;
+	bDynamicLight = false;
 	IdleState = S_ZLEAFSPAWNER;
 }

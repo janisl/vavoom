@@ -50,5 +50,6 @@ defaultproperties
 	bBlaster = true;
 	IdleState = S_MWAND_MISSILE1;
 	DeathState = S_MWANDPUFF1;
-	Effects = EF_DL_BLUE;
+	DLightColour = RGB(91, 94, 211);
+	DLightRadius = 200.0;
 }

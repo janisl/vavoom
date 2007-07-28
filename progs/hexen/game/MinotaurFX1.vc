@@ -48,5 +48,6 @@ defaultproperties
 	bActivatePCross = false;
 	IdleState = S_MNTRFX1_1;
 	DeathState = S_MNTRFXI1_1;
-	Effects = EF_DL_WHITE;
+	DLightColour = RGB(255, 128, 0);
+	DLightRadius = 200.0;
 }

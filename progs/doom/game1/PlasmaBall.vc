@@ -56,5 +56,7 @@ defaultproperties
 	DeathState = S_PLASEXP;
 	SightSound = 'weapons/plasmaf';
 	DeathSound = 'weapons/plasmax';
-	Effects = EF_DL_BLUE;
+	bDynamicLight = true;
+	DLightColour = RGB(115, 115, 255);
+	DLightRadius = 200.0;
 }

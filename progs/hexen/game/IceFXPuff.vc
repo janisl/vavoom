@@ -41,5 +41,7 @@ defaultproperties
 	Alpha = 0.333;
 	bDropOff = true;
 	bNoTeleport = true;
+	DLightColour = RGB(74, 77, 196);
+	DLightRadius = 100.0;
 	IdleState = S_ICEFX_PUFF1;
 }

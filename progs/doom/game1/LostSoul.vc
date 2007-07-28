@@ -97,5 +97,7 @@ defaultproperties
 	AttackSound = 'skull/melee';
 	PainSound = 'skull/pain';
 	DeathSound = 'skull/death';
-	Effects = EF_DL_WHITE;
+	bDynamicLight = true;
+	DLightColour = RGB(179, 0, 0);
+	DLightRadius = 200.0;
 }

@@ -108,8 +108,6 @@ class VEntity : public VThinker
 
 	float			FloorClip;		// value to use for floor clipping
 
-	int				Effects;
-
 	subsector_t*	SubSector;
 	sector_t*		Sector;
 

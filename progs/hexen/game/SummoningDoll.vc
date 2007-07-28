@@ -78,6 +78,7 @@ defaultproperties
 	bNoGravity = false;
 	bActivateImpact = false;
 	bActivatePCross = false;
+	bDynamicLight = false;
 	IdleState = S_SUMMON_FX1_1;
 	DeathState = S_SUMMON_FX2_1;
 }

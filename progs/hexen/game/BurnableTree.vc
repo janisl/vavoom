@@ -45,7 +45,10 @@ final void A_TreeDeath()
 	}
 	else
 	{
+		bDynamicLight = true;
+		DLightColour = RGB(255, 127, 0);
 		SetState(MeleeState);
+		SendExplosion(DLightColour, Origin);
 	}
 }
 
@@ -55,5 +58,4 @@ defaultproperties
 	bSolid = true;
 	bShootable = true;
 	bNoBlood = true;
-	ExplodeEffect = EF_DL_WHITE;
 }

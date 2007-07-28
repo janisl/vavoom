@@ -293,6 +293,7 @@ defaultproperties
 	bDropOff = true;
 	bFloat = true;
 	bInvulnerable = true;
+	bDynamicLight = true;
 	IdleState = S_FIRED_SPAWN1;
 	SeeState = S_FIRED_LOOK4;
 	MissileState = S_FIRED_ATTACK1;
@@ -305,5 +306,6 @@ defaultproperties
 	ActiveSound = 'FireDemonActive';
 	PainSound = 'FireDemonPain';
 	DeathSound = 'FireDemonDeath';
-	Effects = EF_DL_WHITE;
+	DLightColour = RGB(255, 178, 6);
+	DLightRadius = 200.0;
 }

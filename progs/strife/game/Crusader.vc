@@ -189,5 +189,5 @@ defaultproperties
 	ActiveSound = 'crusader/active';
 	PainSound = 'crusader/pain';
 	DeathSound = 'crusader/death';
-	ExplodeEffect = EF_DL_WHITE;
+	ExplodeEffect = RGB(187, 59, 0);
 }

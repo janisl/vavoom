@@ -55,5 +55,7 @@ defaultproperties
 	DeathState = S_ARACH_PLEX;
 	SightSound = 'baby/attack';
 	DeathSound = 'baby/shotx';
-	Effects = EF_DL_WHITE;
+	bDynamicLight = true;
+	DLightColour = RGB(215, 187, 67);
+	DLightRadius = 200.0;
 }

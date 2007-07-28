@@ -84,5 +84,6 @@ defaultproperties
 	bThruGhost = true;
 	IdleState = S_HEADFX1_1;
 	DeathState = S_HEADFXI1_1;
-	Effects = EF_DL_BLUE;
+	DLightColour = RGB(6, 9, 159);
+	DLightRadius = 200.0;
 }

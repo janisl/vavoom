@@ -58,7 +58,8 @@ final void A_FireShotgun2()
 		damage = 5 * (P_Random() % 3 + 1);
 		Actor(Owner).LineAttack(dir, Actor::MISSILERANGE, damage, BulletPuff);
 	}
-	Owner.Effects |= EF_DL_MUZZLEFLASH;
+	EntityEx(Owner).bMuzzleFlash = true;
+	EntityEx(Owner).DLightColour = RGB(195, 79, 0);
 }
 
 //===========================================================================

@@ -61,5 +61,6 @@ defaultproperties
 	IdleState = S_SERPENT_FX1;
 	DeathState = S_SERPENT_FX_X1;
 	DeathSound = 'SerpentFXHit';
-	Effects = EF_DL_GREEN;
+	DLightColour = RGB(42, 252, 42);
+	DLightRadius = 200.0;
 }

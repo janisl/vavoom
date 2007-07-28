@@ -54,7 +54,7 @@ final void A_PosAttack()
 
 	LineAttack(dir, MISSILERANGE, damage, BulletPuff);
 
-	Effects |= EF_DL_MUZZLEFLASH;
+	bMuzzleFlash = false;
 }
 
 //==========================================================================
@@ -121,6 +121,7 @@ defaultproperties
 	bActivateMCross = true;
 	bActivatePushWall = true;
 	bFloorClip = true;
+	DLightColour = RGB(195, 79, 0);
 	IdleState = S_POSS_STND;
 	SeeState = S_POSS_RUN1;
 	MissileState = S_POSS_ATK1;

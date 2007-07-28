@@ -126,7 +126,7 @@ string GetPickupMessage()
 {
 	if (gaveWeapon)
 	{
-		return GivenWeapon.PickupMessage;
+		return Inventory(GivenWeapon).PickupMessage;
 	}
 	else
 	{

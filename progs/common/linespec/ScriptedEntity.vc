@@ -141,9 +141,9 @@ final void A_Walk()
 	float	delta;
 
 	//  Remove muzzle flash
-	if ((Effects & EF_DLIGHT_MASK) == EF_DL_MUZZLEFLASH)
+	if (bMuzzleFlash)
 	{
-		Effects &= ~EF_DLIGHT_MASK;
+		bMuzzleFlash = false;
 	}
 
 	bInCombat = false;
@@ -197,9 +197,9 @@ final void A_Chase()
 	}
 
 	//  Remove muzzle flash
-	if ((Effects & EF_DLIGHT_MASK) == EF_DL_MUZZLEFLASH)
+	if (bMuzzleFlash)
 	{
-		Effects &= ~EF_DLIGHT_MASK;
+		bMuzzleFlash = false;
 	}
 
 	bInCombat = true;
@@ -345,9 +345,9 @@ final void A_FaceTarget()
 final void A_Pain()
 {
 	//  Remove muzzle flash
-	if ((Effects & EF_DLIGHT_MASK) == EF_DL_MUZZLEFLASH)
+	if (bMuzzleFlash)
 	{
-		Effects &= ~EF_DLIGHT_MASK;
+		bMuzzleFlash = false;
 	}
 
 	if (bIsPlayer && !PlayerIsMorphed())
@@ -386,9 +386,10 @@ final void A_Pain()
 final void A_Scream()
 {
 	//  Remove muzzle flash & other light effects
-	if (Effects & EF_DLIGHT_MASK)
+	if (bDynamicLight || bMuzzleFlash)
 	{
-		Effects &= ~EF_DLIGHT_MASK;
+		bDynamicLight = false;
+		bMuzzleFlash = false;
 	}
 
 	if (DeathSound)
@@ -409,9 +410,9 @@ final void A_Scream()
 final void A_XScream()
 {
 	//  Remove muzzle flash
-	if ((Effects & EF_DLIGHT_MASK) == EF_DL_MUZZLEFLASH)
+	if (bMuzzleFlash)
 	{
-		Effects &= ~EF_DLIGHT_MASK;
+		bMuzzleFlash = false;
 	}
 
 	if (bIsPlayer)
@@ -435,9 +436,9 @@ final void A_XScream()
 final void A_XXScream()
 {
 	//  Remove muzzle flash
-	if ((Effects & EF_DLIGHT_MASK) == EF_DL_MUZZLEFLASH)
+	if (bMuzzleFlash)
 	{
-		Effects &= ~EF_DLIGHT_MASK;
+		bMuzzleFlash = false;
 	}
 
 	if (!bNoBlood || !DeathSound)
@@ -465,9 +466,9 @@ final void A_NoBlocking()
 	class<EntityEx>		DropItemType;
 
 	//  Remove muzzle flash
-	if ((Effects & EF_DLIGHT_MASK) == EF_DL_MUZZLEFLASH)
+	if (bMuzzleFlash)
 	{
-		Effects &= ~EF_DLIGHT_MASK;
+		bMuzzleFlash = false;
 	}
 
 	// actor is on ground, it can be walked over

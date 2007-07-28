@@ -45,5 +45,6 @@ defaultproperties
 	DeathState = S_CRBOWFXI1_1;
 	SightSound = 'weapons/bowshoot';
 	DeathSound = 'weapons/bowhit';
-	Effects = EF_DL_GREEN;
+	DLightColour = RGB(91, 191, 79);
+	DLightRadius = 200.0;
 }

@@ -80,5 +80,6 @@ defaultproperties
 	IdleState = S_HEADFX3_1;
 	GrownState = S_HEADFX3_4;
 	DeathState = S_HEADFXI3_1;
-	Effects = EF_DL_WHITE;
+	DLightColour = RGB(255, 95, 0);
+	DLightRadius = 200.0;
 }

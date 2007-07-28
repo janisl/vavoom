@@ -102,6 +102,7 @@ defaultproperties
 	bNoBlockmap = false;
 	bDropOff = false;
 	bNoGravity = false;
+	bDynamicLight = false;
 	IdleState = S_POTTERYBIT_1;
 	DeathState = S_POTTERYBIT_EX0;
 }

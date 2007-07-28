@@ -75,5 +75,6 @@ defaultproperties
 	IdleState = S_REDAXE1;
 	DeathState = S_REDAXEX1;
 	DeathSound = 'hknight/hit';
-	Effects = EF_DL_RED;
+	DLightColour = RGB(239, 0, 0);
+	DLightRadius = 200.0;
 }

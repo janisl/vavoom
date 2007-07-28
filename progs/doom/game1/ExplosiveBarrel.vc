@@ -50,4 +50,5 @@ defaultproperties
 	IdleState = S_BAR1;
 	DeathState = S_BEXP;
 	DeathSound = 'world/barrelx';
+	DLightColour = RGB(203, 87, 7);
 }

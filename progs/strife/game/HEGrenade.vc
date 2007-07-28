@@ -59,6 +59,7 @@ defaultproperties
 	bBounceOnActors = true;
 	bNoBounceSound = true;
 	bExplodeOnWater = true;
+	bDynamicLight = false;
 	BounceType = BOUNCE_Doom;
 	BounceCount = 2;
 	BounceFactor = 0.5;
@@ -66,5 +67,5 @@ defaultproperties
 	DeathState = S_GRENADE_HE_X1;
 	SightSound = 'weapons/hegrenadeshoot';
 	DeathSound = 'weapons/hegrenadebang';
-	ExplodeEffect = EF_DL_WHITE;
+	ExplodeEffect = RGB(239, 239, 0);
 }

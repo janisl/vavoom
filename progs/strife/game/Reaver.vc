@@ -85,5 +85,5 @@ defaultproperties
 	ActiveSound = 'reaver/active';
 	PainSound = 'reaver/pain';
 	DeathSound = 'reaver/death';
-	ExplodeEffect = EF_DL_WHITE;
+	ExplodeEffect = RGB(187, 59, 0);
 }

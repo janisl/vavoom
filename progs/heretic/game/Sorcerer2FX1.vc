@@ -80,5 +80,6 @@ defaultproperties
 	MissileDamage = 1;
 	IdleState = S_SOR2FX1_1;
 	DeathState = S_SOR2FXI1_1;
-	Effects = EF_DL_BLUE;
+	DLightColour = RGB(80, 80, 253);
+	DLightRadius = 200.0;
 }

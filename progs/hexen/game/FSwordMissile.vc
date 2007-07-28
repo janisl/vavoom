@@ -84,5 +84,6 @@ defaultproperties
 	IdleState = S_FSWORD_MISSILE1;
 	DeathState = S_FSWORD_MISSILE_X1;
 	DeathSound = 'FighterSwordExplode';
-	Effects = EF_DL_GREEN;
+	DLightColour = RGB(68, 159, 58);
+	DLightRadius = 90.0;
 }

@@ -53,5 +53,7 @@ defaultproperties
 	DeathState = S_FATSHOTX1;
 	SightSound = 'fatso/attack';
 	DeathSound = 'fatso/shotx';
-	Effects = EF_DL_RED;
+	bDynamicLight = true;
+	DLightColour = RGB(255, 31, 31);
+	DLightRadius = 200.0;
 }

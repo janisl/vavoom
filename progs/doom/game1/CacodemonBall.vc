@@ -60,5 +60,7 @@ defaultproperties
 	DeathState = S_RBALLX1;
 	SightSound = 'caco/attack';
 	DeathSound = 'caco/shotx';
-	Effects = EF_DL_RED;
+	bDynamicLight = true;
+	DLightColour = RGB(195, 79, 0);
+	DLightRadius = 200.0;
 }

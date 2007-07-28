@@ -66,6 +66,8 @@ defaultproperties
 	MissileDamage = 1;
 	bActivateImpact = false;
 	bActivatePCross = false;
+	DLightColour = RGB(149, 112, 1);
+	DLightRadius = 200.0;
 	IdleState = S_EGGFX1;
 	DeathState = S_EGGFXI1_1;
 }

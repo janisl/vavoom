@@ -63,5 +63,7 @@ defaultproperties
 	DeathSound = 'misc/explosion';
 	bGiveQuest = true;
 	QuestID = QUEST_BlownUpComputer;
-	Effects = EF_DL_GREEN;
+	bDynamicLight = true;
+	DLightColour = RGB(91, 155, 55);
+	DLightRadius = 200.0;
 }

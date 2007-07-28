@@ -96,10 +96,10 @@ void TouchSpecial(EntityEx Toucher)
 
 void DoMissileExplosionEffects()
 {
-	if (Effects & EF_DLIGHT_MASK)
+	if (bDynamicLight)
 	{
-		SendExplosion(Effects & EF_DLIGHT_MASK, Origin);
-		Effects &= ~EF_DLIGHT_MASK;
+		SendExplosion(DLightColour, Origin);
+		bDynamicLight = false;
 	}
 }
 
@@ -109,7 +109,7 @@ void DoMissileExplosionEffects()
 //
 //==========================================================================
 
-final void SendExplosion(int etype, TVec org)
+final void SendExplosion(int colour, TVec org)
 {
 	int i;
 
@@ -119,7 +119,7 @@ final void SendExplosion(int etype, TVec org)
 			continue;
 		if (!Level.Game.Players[i].bSpawned)
 			continue;
-		Player(Level.Game.Players[i]).ClientExplosion(etype, org);
+		Player(Level.Game.Players[i]).ClientExplosion(colour, org);
 	}
 }
 

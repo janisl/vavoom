@@ -47,5 +47,6 @@ defaultproperties
 	IdleState = S_DEMONFX_MOVE1;
 	DeathState = S_DEMONFX_BOOM1;
 	DeathSound = 'DemonMissileExplode';
-	Effects = EF_DL_WHITE;
+	DLightColour = RGB(234, 147, 5);
+	DLightRadius = 200.0;
 }

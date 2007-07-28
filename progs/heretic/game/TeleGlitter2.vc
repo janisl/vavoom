@@ -38,4 +38,5 @@ __states__
 defaultproperties
 {
 	IdleState = S_TELEGLITTER2_1;
+	DLightColour = RGB(192, 196, 208);
 }

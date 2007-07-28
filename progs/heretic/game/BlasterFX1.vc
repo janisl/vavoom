@@ -91,5 +91,7 @@ defaultproperties
 	IdleState = S_BLASTERFX1_1;
 	DeathState = S_BLASTERFXI1_1;
 	DeathSound = 'weapons/blasterhit';
-	Effects = EF_DL_BLUE;
+	bDynamicLight = true;
+	DLightColour = RGB(80, 164, 252);
+	DLightRadius = 200.0;
 }

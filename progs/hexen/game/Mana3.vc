@@ -72,6 +72,9 @@ defaultproperties
 	MaxAmount = 200;
 	bFloatBob = true;
 	Amount = 20;
+	bDynamicLight = true;
+	DLightColour = RGB(255, 0, 0);
+	DLightRadius = 100.0;
 	IdleState = S_MANA3_1;
 	PickupMessage = "$txt_mana_both";
 }

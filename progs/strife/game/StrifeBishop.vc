@@ -125,5 +125,4 @@ defaultproperties
 	ActiveSound = 'bishop/active';
 	PainSound = 'bishop/pain';
 	DeathSound = 'bishop/death';
-	ExplodeEffect = EF_DL_WHITE;
 }

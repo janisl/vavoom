@@ -127,5 +127,6 @@ defaultproperties
 	bExtremeDeath = true;
 	IdleState = S_HOLY_MISSILE1;
 	DeathState = S_HOLY_MISSILE_X;
-	Effects = EF_DL_WHITE;
+	DLightColour = RGB(221, 221, 221);
+	DLightRadius = 200.0;
 }

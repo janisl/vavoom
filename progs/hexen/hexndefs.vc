@@ -120,12 +120,4 @@ int ecolours[8];
 
 defaultproperties
 {
-	ecolours[0] = 0;						// EF_DL_NONE
-	ecolours[1] = RGBA(255, 255, 255, 255);	// EF_DL_WHITE
-	ecolours[2] = RGBA(255, 32, 32, 255);	// EF_DL_RED
-	ecolours[3] = RGBA(32, 255, 32, 255);	// EF_DL_GREEN
-	ecolours[4] = RGBA(32, 32, 255, 255);	// EF_DL_BLUE
-	ecolours[5] = RGBA(255, 0, 255, 255);	// EF_DL_MAGENTA
-	ecolours[6] = 0;						// EF_DL_MUZZLEFLASH
-	ecolours[7] = RGBA(1, 1, 1, 255);    	// EF_DL_DARK
 }

@@ -616,7 +616,7 @@ final void A_GunFlash()
 final void A_Light0()
 {
 	Owner.Player.ExtraLight = 0;
-	Owner.Effects &= ~EF_DLIGHT_MASK;
+	EntityEx(Owner).bMuzzleFlash = false;
 }
 
 //===========================================================================

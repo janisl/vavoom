@@ -90,5 +90,6 @@ defaultproperties
 	IdleState = S_SORCFX3_1;
 	DeathState = S_BISHMORPH1;
 	SightSound = 'SorcererBishopSpawn';
-	Effects = EF_DL_WHITE;
+	DLightColour = RGB(8, 175, 8);
+	DLightRadius = 200.0;
 }

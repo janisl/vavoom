@@ -60,5 +60,6 @@ defaultproperties
 	DamageType = 'Fire';
 	IdleState = S_SRCRFX1_1;
 	DeathState = S_SRCRFXI1_1;
-	Effects = EF_DL_WHITE;
+	DLightColour = RGB(192, 95, 21);
+	DLightRadius = 200.0;
 }

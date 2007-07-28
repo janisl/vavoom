@@ -69,5 +69,5 @@ defaultproperties
 	IdleState = S_TECH_BARREL;
 	DeathState = S_TECH_BARREL_X1;
 	DeathSound = 'world/barrelx';
-	ExplodeEffect = EF_DL_WHITE;
+	ExplodeEffect = RGB(239, 239, 0);
 }

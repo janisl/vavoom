@@ -78,5 +78,6 @@ defaultproperties
 	IdleState = S_DRAGON_FX1_1;
 	DeathState = S_DRAGON_FX1_X1;
 	DeathSound = 'DragonFireballExplode';
-	Effects = EF_DL_WHITE;
+	DLightColour = RGB(255, 128, 0);
+	DLightRadius = 200.0;
 }

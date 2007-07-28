@@ -43,5 +43,6 @@ defaultproperties
 	DamageType = 'Disintegrate';
 	IdleState = S_TORPEDO_WAV1;
 	DeathState = S_TORPEDO_WAV3;
-	Effects = EF_DL_GREEN;
+	DLightColour = RGB(63, 123, 35);
+	DLightRadius = 200.0;
 }

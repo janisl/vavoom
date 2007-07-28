@@ -272,7 +272,8 @@ defaultproperties
 	Height = 40.0;
 	Speed = 875.0;
 	MissileDamage = 8;
-	Effects = EF_DL_BLUE;
+	DLightColour = RGB(58, 158, 239);
+	DLightRadius = 200.0;
 	ZagSpeed = 1.0;
 	bLightning = true;
 }

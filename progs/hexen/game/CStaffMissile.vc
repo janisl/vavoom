@@ -85,5 +85,6 @@ defaultproperties
 	IdleState = S_CSTAFF_MISSILE1;
 	DeathState = S_CSTAFF_MISSILE_X1;
 	DeathSound = 'ClericCStaffExplode';
-	Effects = EF_DL_GREEN;
+	DLightColour = RGB(3, 234, 3);
+	DLightRadius = 200.0;
 }

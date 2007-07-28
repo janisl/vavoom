@@ -82,7 +82,7 @@ final void A_InquisitorChase()
 			if (/*Radius &&*/Origin.z + Height + 54.0 < CeilingZ)
 			{
 				SetState(JumpState);
-				Effects = EF_DL_BLUE;
+				bDynamicLight = true;
 			}
 			else
 				//	Don't let him jump while under a low ceiling
@@ -101,7 +101,7 @@ final void A_InquisitorChase()
 		if (TestMobjZ())
 		{
 			SetState(JumpState);
-			Effects = EF_DL_BLUE;
+			bDynamicLight = true;
 		}
 		else
 			return;
@@ -210,7 +210,7 @@ final void A_InquisitorJump()
 		SetState(SeeState2);
 		ReactionCount = 0;
 		bNoGravity = false;
-		Effects = EF_DL_NONE;
+		bDynamicLight = false;
 		return;
 	}
 	PlaySound(JumpSound, CHAN_BODY);
@@ -297,5 +297,7 @@ defaultproperties
 	ActiveSound = 'inquisitor/active';
 	JumpSound = 'inquisitor/jump';
 	DeathSound = 'inquisitor/death';
-	ExplodeEffect = EF_DL_WHITE;
+	DLightColour = RGB(151, 155, 203);
+	DLightRadius = 200.0;
+	ExplodeEffect = RGB(203, 111, 0);
 }

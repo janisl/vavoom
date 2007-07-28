@@ -61,5 +61,6 @@ defaultproperties
 	bWindThrust = true;
 	IdleState = S_SNAKEPRO_A1;
 	DeathState = S_SNAKEPRO_AX1;
-	Effects = EF_DL_MAGENTA;
+	DLightColour = RGB(151, 143, 219);
+	DLightRadius = 200.0;
 }

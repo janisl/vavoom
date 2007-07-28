@@ -50,4 +50,5 @@ defaultproperties
 	bNoGravity = false;
 	IdleState = S_DRAGON_FX2_1;
 	DeathSound = 'DragonFireballExplode';
+	ExplodeEffect  = RGB(255, 95, 0);
 }

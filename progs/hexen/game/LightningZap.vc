@@ -158,5 +158,6 @@ defaultproperties
 	bLightning = true;
 	IdleState = S_LIGHTNING_ZAP1;
 	DeathState = S_LIGHTNING_ZAP_X8;
-	Effects = EF_DL_BLUE;
+	DLightColour = RGB(58, 158, 239);
+	DLightRadius = 200.0;
 }

@@ -50,5 +50,6 @@ defaultproperties
 	IdleState = S_FIREBALL1_1;
 	DeathState = S_FIREBALL1_X1;
 	DeathSound = 'Fireball';
-	Effects = EF_DL_RED;
+	DLightColour = RGB(255, 128, 0);
+	DLightRadius = 200.0;
 }

@@ -94,5 +94,6 @@ defaultproperties
 	DeathState = S_PHOENIXFXI1_1;
 	SightSound = 'weapons/phoenixshoot';
 	DeathSound = 'weapons/phoenixhit';
-	Effects = EF_DL_RED;
+	DLightColour = RGB(255, 95, 0);
+	DLightRadius = 200.0;
 }

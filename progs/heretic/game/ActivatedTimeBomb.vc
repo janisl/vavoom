@@ -47,4 +47,5 @@ defaultproperties
 	bNoPassMobj = true;
 	IdleState = S_FIREBOMB1;
 	DeathSound = 'misc/timebomb';
+	ExplodeEffect = RGB(255, 128, 0);
 }

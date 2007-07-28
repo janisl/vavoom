@@ -101,5 +101,6 @@ defaultproperties
 	IdleState = S_VOLCANOBALL1;
 	DeathState = S_VOLCANOBALLX1;
 	DeathSound = 'world/volcano/blast';
-	Effects = EF_DL_RED;
+	DLightColour = RGB(255, 128, 0);
+	DLightRadius = 200.0;
 }

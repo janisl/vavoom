@@ -64,5 +64,6 @@ defaultproperties
 	IdleState = S_SORCFX4_1;
 	DeathState = S_SORCFX4_D1;
 	DeathSound = 'SorcererBallExplode';
-	Effects = EF_DL_WHITE;
+	DLightColour = RGB(149, 16, 189);
+	DLightRadius = 100.0;
 }

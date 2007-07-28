@@ -46,5 +46,6 @@ defaultproperties
 	IdleState = S_FIRED_FX6_1;
 	DeathState = S_FIRED_FX6_2;
 	DeathSound = 'FireDemonMissileHit';
-	Effects = EF_DL_WHITE;
+	DLightColour = RGB(255, 195, 26);
+	DLightRadius = 200.0;
 }

@@ -51,7 +51,7 @@ final void A_CPosAttack()
 	damage = ((P_Random() % 5) + 1) * 3;
 	LineAttack(dir, MISSILERANGE, damage, BulletPuff);
 
-	Effects |= EF_DL_MUZZLEFLASH;
+	bMuzzleFlash = true;
 }
 
 //==========================================================================
@@ -143,6 +143,7 @@ defaultproperties
 	bActivateMCross = true;
 	bActivatePushWall = true;
 	bFloorClip = true;
+	DLightColour = RGB(195, 79, 0);
 	IdleState = S_CPOS_STND;
 	SeeState = S_CPOS_RUN1;
 	MissileState = S_CPOS_ATK1;

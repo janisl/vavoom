@@ -197,6 +197,8 @@ defaultproperties
 	bColideWithThings = false;
 	bActivateImpact = false;
 	bActivatePCross = false;
+	DLightColour = RGB(221, 221, 221);
+	DLightRadius = 200.0;
 	IdleState = S_KSPIRIT_ROAM1;
 	DeathState = S_KSPIRIT_DEATH1;
 }

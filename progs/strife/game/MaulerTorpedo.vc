@@ -79,5 +79,6 @@ defaultproperties
 	DeathState = S_TORPEDO_X1;
 	SightSound = 'weapons/mauler2fire';
 	DeathSound = 'weapons/mauler2hit';
-	Effects = EF_DL_GREEN;
+	DLightColour = RGB(79, 143, 55);
+	DLightRadius = 200.0;
 }

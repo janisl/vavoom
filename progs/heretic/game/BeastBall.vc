@@ -82,5 +82,6 @@ defaultproperties
 	bWindThrust = true;
 	IdleState = S_BEASTBALL1;
 	DeathState = S_BEASTBALLX1;
-	Effects = EF_DL_RED;
+	DLightColour = RGB(255, 128, 0);
+	DLightRadius = 200.0;
 }

@@ -50,7 +50,7 @@ final void A_Explode192()
 //
 //==========================================================================
 
-final void SendExplosion(int etype, TVec org)
+final void SendExplosion(int colour, TVec org)
 {
 	int i;
 
@@ -60,7 +60,7 @@ final void SendExplosion(int etype, TVec org)
 			continue;
 		if (!Level.Game.Players[i].bSpawned)
 			continue;
-		Player(Level.Game.Players[i]).ClientExplosion(etype, org);
+		Player(Level.Game.Players[i]).ClientExplosion(colour, org);
 	}
 }
 
@@ -94,5 +94,5 @@ defaultproperties
 	DeathState = S_ORE_X;
 	DeathSound = 'ore/explode';
 	ItemType = StrifeDefs::ITEM_DegninOre;
-	ExplodeEffect = EF_DL_WHITE;
+	ExplodeEffect = RGB(235, 231, 0);
 }

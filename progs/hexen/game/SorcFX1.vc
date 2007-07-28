@@ -97,5 +97,6 @@ defaultproperties
 	GibsDeathState = S_SORCFX1_D1;
 	SightSound = 'SorcererBallBounce';
 	DeathSound = 'SorcererHeadScream';
-	Effects = EF_DL_WHITE;
+	DLightColour = RGB(255, 128, 0);
+	DLightRadius = 200.0;
 }

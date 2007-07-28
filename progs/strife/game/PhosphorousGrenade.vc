@@ -63,6 +63,7 @@ defaultproperties
 	bBounceOnActors = true;
 	bNoBounceSound = true;
 	bExplodeOnWater = true;
+	bDynamicLight = false;
 	IdleState = S_GRENADE_FIRE_1;
 	DeathState = S_GRENADE_FIRE_X1;
 	SightSound = 'weapons/phgrenadeshoot';

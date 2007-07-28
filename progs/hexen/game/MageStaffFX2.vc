@@ -120,5 +120,6 @@ defaultproperties
 	IdleState = S_MSTAFF_FX2_1;
 	DeathState = S_MSTAFF_FX2_X1;
 	DeathSound = 'MageStaffExplode';
-	Effects = EF_DL_RED;
+	DLightColour = RGB(255, 63, 0);
+	DLightRadius = 200.0;
 }

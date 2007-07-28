@@ -129,4 +129,5 @@ defaultproperties
 	PainState = S_POD_PAIN1;
 	DeathState = S_POD_DIE1;
 	DeathSound = 'world/podexplode';
+	ExplodeEffect = RGB(103, 223, 95);
 }

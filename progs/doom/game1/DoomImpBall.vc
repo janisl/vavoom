@@ -60,5 +60,7 @@ defaultproperties
 	DeathState = S_TBALLX1;
 	SightSound = 'imp/attack';
 	DeathSound = 'imp/shotx';
-	Effects = EF_DL_RED;
+	bDynamicLight = true;
+	DLightColour = RGB(215, 95, 11);
+	DLightRadius = 200.0;
 }

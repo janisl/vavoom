@@ -58,22 +58,6 @@ enum
 	BOUNCE_Hexen
 };
 
-//  Dynamic light effects
-enum
-{
-	EF_DL_NONE,
-	EF_DL_WHITE,
-	EF_DL_RED,
-	EF_DL_GREEN,
-	EF_DL_BLUE,
-	EF_DL_MAGENTA,
-	EF_DL_MUZZLEFLASH,
-	EF_DL_DARK
-};
-
-const int EF_DLIGHT_MASK	= 0x07;
-const int EF_ROCKET			= 0x08;
-
 //  States
 state			IdleState;
 state			SeeState;
@@ -133,6 +117,9 @@ bool bCannotPush;		// cannot push other pushable mobjs
 bool bSmallSplash;		// Always use small splash
 bool bNoSplash;			// Things that don't splash
 bool bStaticLight;		// Static light source.
+bool bDynamicLight;		// Dynamic light source.
+bool bMuzzleFlash;		// Muzzle flash effect.
+bool bLeaveTrail;		// Leave particles trail.
 bool bTriggerHappy;
 bool bBlaster;
 bool bFloatBob;			// use float bobbing z movement
@@ -244,6 +231,9 @@ TVec			LightOffset;
 int				LightColour;
 float			LightRadius;
 
+// Dynamic light parameters.
+int				DLightColour;
+float			DLightRadius;
 int				ExplodeEffect;
 
 float			Special1f;
@@ -5072,74 +5062,31 @@ final void ClientTick(float DeltaTime)
 	int			c;
 	int			count;
 
-	switch (Effects & EF_DLIGHT_MASK)
+	if (bDynamicLight)
 	{
-	case EF_DL_NONE:
-		break;
-
-	case EF_DL_WHITE:
+		// Update dynamic lights
 		dl = AllocDlight(self);
 		dl->origin = Origin;
-		dl->radius = 200.0;
-		dl->colour = RGB(255, 255, 255);
+		dl->radius = DLightRadius;
+		dl->colour = DLightColour;
 		dl->die = XLevel.Time + 0.1;
-		break;
+	}
 
-	case EF_DL_RED:
-		dl = AllocDlight(self);
-		dl->origin = Origin;
-		dl->radius = 200.0;
-		dl->colour = RGB(255, 0, 0);
-		dl->die = XLevel.Time + 0.1;
-		break;
-
-	case EF_DL_GREEN:
-		dl = AllocDlight(self);
-		dl->origin = Origin;
-		dl->radius = 200.0;
-		dl->colour = RGB(0, 255, 0);
-		dl->die = XLevel.Time + 0.1;
-		break;
-
-	case EF_DL_BLUE:
-		dl = AllocDlight(self);
-		dl->origin = Origin;
-		dl->radius = 200.0;
-		dl->colour = RGB(0, 0, 255);
-		dl->die = XLevel.Time + 0.1;
-		break;
-
-	case EF_DL_MAGENTA:
-		dl = AllocDlight(self);
-		dl->origin = Origin;
-		dl->radius = 200.0;
-		dl->colour = RGB(255, 0, 255);
-		dl->die = XLevel.Time + 0.1;
-		break;
-
-	case EF_DL_MUZZLEFLASH:
+	if (bMuzzleFlash)
+	{
 		dl = AllocDlight(self);
 		dl->origin = Origin;
 		dl->origin.z += 48.0;
 		AngleVector(&Angles, &fv);
 
 		dl->origin = dl->origin + 18.0 * fv;
-		dl->radius = 200.0 + Random() * 31.0;
-		dl->colour = 0xffffffff;
+		dl->radius = DLightRadius + Random() * 31.0;
+		dl->colour = DLightColour;
 		dl->minlight = 32.0;
 		dl->die = XLevel.Time + 0.1;
-		break;
-
-	case EF_DL_DARK:
-		dl = AllocDlight(self);
-		dl->origin = Origin;
-		dl->radius = 200.0;
-		dl->colour = RGB(1, 1, 1);
-		dl->die = XLevel.Time + 0.1;
-		break;
 	}
-
-	if (Effects & EF_ROCKET)
+	
+	if (bLeaveTrail)
 	{
 		count = ftoi(DeltaTime * 256.0);
 		for (i = 0; i < count; i++)
@@ -5530,6 +5477,8 @@ defaultproperties
 	LightOffset = vector(0.0, 0.0, 0.0);
 	LightColour = 0xffffffff;
 	LightRadius = 128.0;
+	DLightColour = 0xffffffff;
+	DLightRadius = 200.0;
 	MissileChance = 200.0;
 	FloatSpeed = 140.0;
 	BounceFactor = 0.7;

@@ -55,4 +55,6 @@ defaultproperties
 	bActivateImpact = false;
 	bActivatePCross = false;
 	IdleState = S_ICEGUY_FX2_1;
+	DLightColour = RGB(74, 77, 196);
+	DLightRadius = 90.0;	
 }

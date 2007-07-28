@@ -57,5 +57,6 @@ defaultproperties
 	MissileDamage = 3;
 	IdleState = S_SNAKEPRO_B1;
 	DeathState = S_SNAKEPRO_BX1;
-	Effects = EF_DL_WHITE;
+	DLightColour = RGB(255, 128, 0);
+	DLightRadius = 200.0;
 }

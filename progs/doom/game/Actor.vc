@@ -78,12 +78,12 @@ bool IsPointPuller()
 
 void DoMissileExplosionEffects()
 {
-	if (!(Effects & EF_ROCKET) && (Effects & EF_DLIGHT_MASK))
+	if (!EntityEx(self).bLeaveTrail && bDynamicLight)
 	{
-		SendExplosion2(Effects & EF_DLIGHT_MASK, Origin);
-		Effects &= ~EF_DLIGHT_MASK;
+		SendExplosion2(DLightColour, Origin);
+		bDynamicLight = false;
 	}
-	Effects &= ~EF_ROCKET;
+	EntityEx(self).bLeaveTrail = false;
 }
 
 //==========================================================================
@@ -92,7 +92,7 @@ void DoMissileExplosionEffects()
 //
 //==========================================================================
 
-final void SendExplosion2(int etype, TVec org)
+final void SendExplosion2(int colour, TVec org)
 {
 	int i;
 
@@ -102,7 +102,7 @@ final void SendExplosion2(int etype, TVec org)
 			continue;
 		if (!Level.Game.Players[i].bSpawned)
 			continue;
-		Player(Level.Game.Players[i]).ClientExplosion2(etype, org);
+		Player(Level.Game.Players[i]).ClientExplosion2(colour, org);
 	}
 }
 
@@ -213,12 +213,12 @@ final void A_Explode()
 			continue;
 		if (!Level.Game.Players[i].bSpawned)
 			continue;
-		Player(Level.Game.Players[i]).ClientExplosion(
+		Player(Level.Game.Players[i]).ClientExplosion(DLightColour,
 			Origin + vector(0.0, 0.0, Height * 0.5));
 	}
 
 	//  Clear old dynamic light effect
-	Effects &= ~EF_DLIGHT_MASK;
+	bDynamicLight = false;
 }
 
 //==========================================================================
@@ -319,7 +319,7 @@ final void A_SPosAttack()
 		LineAttack(dir, MISSILERANGE, damage, BulletPuff);
 	}
 
-	Effects |= EF_DL_MUZZLEFLASH;
+	bMuzzleFlash = true;
 }
 
 //==========================================================================

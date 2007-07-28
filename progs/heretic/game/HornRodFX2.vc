@@ -212,5 +212,6 @@ defaultproperties
 	DeathState = S_HRODFXI2_1;
 	SightSound = 'weapons/hornrodshoot';
 	DeathSound = 'weapons/hornrodpowhit';
-	Effects = EF_DL_RED;
+	DLightColour = RGB(255, 74, 74);
+	DLightRadius = 200.0;
 }

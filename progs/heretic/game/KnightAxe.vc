@@ -71,5 +71,6 @@ defaultproperties
 	IdleState = S_SPINAXE1;
 	DeathState = S_SPINAXEX1;
 	DeathSound = 'hknight/hit';
-	Effects = EF_DL_GREEN;
+	DLightColour = RGB(67, 147, 55);
+	DLightRadius = 200.0;
 }

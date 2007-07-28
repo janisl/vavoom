@@ -101,7 +101,8 @@ defaultproperties
 	IdleState = S_BISHFX1_1;
 	DeathState = S_BISHFXI1_1;
 	DeathSound = 'BishopMissileExplode';
-	Effects = EF_DL_GREEN;
+	DLightColour = RGB(8, 175, 8);
+	DLightRadius = 200.0;
 	WeaveXY = 0;
 	WeaveZ = 16;
 }

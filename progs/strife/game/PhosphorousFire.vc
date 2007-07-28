@@ -103,5 +103,5 @@ defaultproperties
 	DamageType = 'Fire';
 	IdleState = S_GRENADE_FLAME_1;
 	DeathState = S_GRENADE_FLAME_X1;
-	Effects = EF_DL_WHITE;
+	ExplodeEffect = RGB(199, 91, 0);
 }

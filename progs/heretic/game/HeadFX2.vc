@@ -44,5 +44,6 @@ defaultproperties
 	MissileDamage = 3;
 	IdleState = S_HEADFX2_1;
 	DeathState = S_HEADFXI2_1;
-	Effects = EF_DL_BLUE;
+	DLightColour = RGB(6, 9, 159);
+	DLightRadius = 100.0;
 }

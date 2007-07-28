@@ -158,4 +158,5 @@ defaultproperties
 	AttackSound = 'acolyte/rifle';
 	PainSound = 'acolyte/pain';
 	DeathSound = 'acolyte/death';
+	DLightColour = RGB(203, 111, 0);
 }

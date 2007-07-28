@@ -64,5 +64,6 @@ defaultproperties
 	IdleState = S_FLAMEFX_1;
 	DeathState = S_FLAMEFX_X1;
 	SightSound = 'weapons/flamethrower';
-	Effects = EF_DL_WHITE;
+	DLightColour = RGB(211, 131, 0);
+	DLightRadius = 200.0;
 }

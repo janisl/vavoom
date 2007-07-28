@@ -45,5 +45,6 @@ defaultproperties
 	bActivateImpact = true;
 	IdleState = S_GWANDFX2_1;
 	DeathState = S_GWANDFXI1_1;
-	Effects = EF_DL_WHITE;
+	DLightColour = RGB(252, 187, 57);
+	DLightRadius = 200.0;
 }

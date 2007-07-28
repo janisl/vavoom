@@ -39,9 +39,10 @@ defaultproperties
 	MaxStepHeight = 4.0;
 	MissileDamage = 500;
 	bActivateImpact = true;
+	bNoExtremeDeath = true;
+	bDynamicLight = false;
 	IdleState = S_ARROW2;
 	DeathState = S_ARROW2_X;
 	SightSound = 'misc/swish';
 	ActiveSound = 'misc/swish';
-	bNoExtremeDeath = true;
 }

@@ -95,10 +95,10 @@ int HITDICE(int a)
 
 void DoMissileExplosionEffects()
 {
-	if (Effects & EF_DLIGHT_MASK)
+	if (bDynamicLight)
 	{
-		SendExplosion(Effects & EF_DLIGHT_MASK, Origin);
-		Effects &= ~EF_DLIGHT_MASK;
+		SendExplosion(DLightColour, Origin);
+		bDynamicLight = false;
 	}
 }
 
@@ -108,7 +108,7 @@ void DoMissileExplosionEffects()
 //
 //==========================================================================
 
-final void SendExplosion(int etype, TVec org)
+final void SendExplosion(int colour, TVec org)
 {
 	int i;
 
@@ -118,7 +118,7 @@ final void SendExplosion(int etype, TVec org)
 			continue;
 		if (!Level.Game.Players[i].bSpawned)
 			continue;
-		Player(Level.Game.Players[i]).ClientExplosion(etype, org);
+		Player(Level.Game.Players[i]).ClientExplosion(colour, org);
 	}
 }
 
@@ -624,14 +624,6 @@ final void A_Explode()
 	{
 		HitFloorType();
 	}
-	if (Class == ActivatedTimeBomb)
-	{
-		SendExplosion(EF_DL_WHITE, Origin);
-	}
-	if (Class == Pod)
-	{
-		SendExplosion(EF_DL_GREEN, Origin);
-	}
 	if (ExplodeEffect)
 	{
 		SendExplosion(ExplodeEffect, Origin);
@@ -656,7 +648,7 @@ void SpawnPuff(TVec org, float Range, class<EntityEx> PuffType, bool HitThing)
 		A = Spawn(BlasterPuff2, org);
 		A.PlaySound('weapons/blastershoot', CHAN_VOICE);
 
-		SendExplosion(EF_DL_BLUE, org);
+		SendExplosion(RGB(80, 164, 252), org);
 	}
 	else
 	{
@@ -676,11 +668,11 @@ void SpawnPuff(TVec org, float Range, class<EntityEx> PuffType, bool HitThing)
 		}
 		if (PuffType == GoldWandPuff1)
 		{
-			SendExplosion(EF_DL_WHITE, org);
+			SendExplosion(RGB(252, 187, 57), org);
 		}
 		if (PuffType == BlasterPuff1)
 		{
-			SendExplosion(EF_DL_BLUE, org);
+			SendExplosion(RGB(80, 164, 252), org);
 		}
 	}
 }

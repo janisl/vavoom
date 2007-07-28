@@ -58,5 +58,6 @@ defaultproperties
 	DeathState = S_ZAP1_1;
 	SightSound = 'weapons/sigil';
 	DeathSound = 'weapons/sigilhit';
-	Effects = EF_DL_WHITE;
+	DLightColour = RGB(151, 155, 203);
+	DLightRadius = 200.0;
 }

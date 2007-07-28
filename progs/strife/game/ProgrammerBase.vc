@@ -44,5 +44,5 @@ defaultproperties
 	bColideWithWorld = false;
 	bNoBlood = true;
 	IdleState = S_PROGRAMMER_BASE_1;
-	ExplodeEffect = EF_DL_WHITE;
+	ExplodeEffect = RGB(239, 239, 0);
 }

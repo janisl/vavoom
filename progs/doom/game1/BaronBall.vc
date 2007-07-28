@@ -56,9 +56,12 @@ defaultproperties
 	bActivatePCross = true;
 	bNoTeleport = true;
 	bRandomise = true;
+	bDynamicLight = true;
 	IdleState = S_BRBALL1;
 	DeathState = S_BRBALLX1;
 	SightSound = 'baron/attack';
 	DeathSound = 'baron/shotx';
-	Effects = EF_DL_GREEN;
+	bDynamicLight = true;
+	DLightColour = RGB(91, 191, 79);
+	DLightRadius = 200.0;
 }

@@ -49,5 +49,6 @@ defaultproperties
 	DeathState = S_MISSILE_X1;
 	SightSound = 'weapons/minimissile';
 	DeathSound = 'weapons/minimissilehit';
-	Effects = EF_DL_WHITE;
+	DLightColour = RGB(215, 179, 0);
+	DLightRadius = 200.0;
 }

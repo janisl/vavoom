@@ -93,5 +93,6 @@ defaultproperties
 	bActivateImpact = true;
 	IdleState = S_PHOENIXFX2_1;
 	DeathState = S_PHOENIXFXI2_1;
-	Effects = EF_DL_WHITE;
+	DLightColour = RGB(255, 159, 0);
+	DLightRadius = 200.0;
 }

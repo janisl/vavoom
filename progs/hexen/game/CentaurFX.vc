@@ -42,5 +42,6 @@ defaultproperties
 	IdleState = S_CENTAUR_FX1;
 	DeathState = S_CENTAUR_FX_X1;
 	DeathSound = 'CentaurMissileExplode';
-	Effects = EF_DL_BLUE;
+	DLightColour = RGB(41, 119, 233);
+	DLightRadius = 200.0;
 }

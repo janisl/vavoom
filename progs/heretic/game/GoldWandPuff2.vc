@@ -36,5 +36,6 @@ __states__
 defaultproperties
 {
 	bPuffOnActors = true;
+	bDynamicLight = true;
 	IdleState = S_GWANDPUFF2_1;
 }
