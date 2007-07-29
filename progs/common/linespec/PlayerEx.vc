@@ -321,16 +321,6 @@ Weapon GetNextWeapon(Weapon Current, bool bCheckAmmo)
 	return Best;
 }
 
-float GetWeaponKickBack()
-{
-	return 0.0;
-}
-
-bool IsStaffLevel2()
-{
-	return false;
-}
-
 bool HaveInvulnerabilityPower()
 {
 	return false;

@@ -3818,7 +3818,7 @@ final void Damage(EntityEx inflictor, EntityEx source, int damage,
 		}
 		else
 		{
-			kickback = PlayerEx(source.Player).GetWeaponKickBack();
+			kickback = PlayerEx(source.Player).ReadyWeapon.Kickback;
 		}
 		if (kickback)
 		{
@@ -3837,7 +3837,7 @@ final void Damage(EntityEx inflictor, EntityEx source, int damage,
 				dir = vector(1.0, 0.0, 0.0);
 			}
 			if (source && source.bIsPlayer && (source == inflictor) &&
-				PlayerEx(source.Player).IsStaffLevel2())
+				PlayerEx(source.Player).ReadyWeapon.bStaff2Kickback)
 			{
 				// Staff power level 2
 				dir.z = 0.0;

@@ -59,4 +59,5 @@ defaultproperties
 {
 	bFloorClip = true;
 	FireDeathWaveState = S_WAVE1;
+	Kickback = 100.0;
 }
