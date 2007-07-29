@@ -78,8 +78,6 @@ float FlyHeight;
 
 int ArtifactCount;
 
-int Pieces;	// Fourth Weapon pieces
-
 int PoisonCount;	// screen flash for poison damage
 float LastPoisonTime;
 Actor Poisoner;		// none for non-player mobjs
@@ -136,7 +134,6 @@ void PutClientIntoServer()
 void SpawnClient()
 {
 	int oldKeys;
-	int oldPieces;
 	bool playerWasReborn;
 	Weapon bestWeapon;
 	EntityEx OldMO = EntityEx(MO);
@@ -149,7 +146,6 @@ void SpawnClient()
 	{
 		// Cooperative net-play, retain keys and weapons
 		oldKeys = Keys;
-		oldPieces = Pieces;
 		playerWasReborn = (PlayerState == PST_REBORN);
 	}
 
@@ -168,7 +164,6 @@ void SpawnClient()
 	{
 		// Restore keys and weapons when reborn in co-op
 		Keys = oldKeys;
-		Pieces = oldPieces;
 		bestWeapon = none;
 		if (OldMO)
 		{
@@ -182,6 +177,10 @@ void SpawnClient()
 					{
 						bestWeapon = Weapon(Item);
 					}
+					Item.AttachToOwner(EntityEx(MO));
+				}
+				else if (FourthWeaponHolder(Item))
+				{
 					Item.AttachToOwner(EntityEx(MO));
 				}
 				Item = Next;
@@ -212,7 +211,6 @@ void NetGameReborn()
 {
 	int i;
 	int oldKeys;
-	int oldPieces;
 	bool foundSpot;
 	Weapon bestWeapon;
 	EntityEx OldMO = EntityEx(MO);
@@ -236,7 +234,6 @@ void NetGameReborn()
 
 	// Cooperative net-play, retain keys and weapons
 	oldKeys = Keys;
-	oldPieces = Pieces;
 
 	foundSpot = false;
 	if (CheckSpot(&Level.PlayerStarts[Level.Game.RebornPosition * MAXPLAYERS +
@@ -271,7 +268,6 @@ void NetGameReborn()
 
 	// Restore keys and weapons
 	Keys = oldKeys;
-	Pieces = oldPieces;
 	bestWeapon = none;
 	for (Item = OldMO.Inventory; Item; Item = Item.Inventory)
 	{
@@ -282,6 +278,10 @@ void NetGameReborn()
 			{
 				bestWeapon = Weapon(Item);
 			}
+			Item.AttachToOwner(EntityEx(MO));
+		}
+		else if (FourthWeaponHolder(Item))
+		{
 			Item.AttachToOwner(EntityEx(MO));
 		}
 	}
@@ -2641,7 +2641,6 @@ void SetViewPos()
 	PaletteFlash();
 
 	SBFlags = Keys;
-	SBFlags |= Pieces << HexenDefs::SBF_PIECES_SHIFT;
 	if (Powers[pw_flight])
 	{
 		if (Powers[pw_flight] > BLINKTHRESHOLD ||
@@ -3596,8 +3595,10 @@ void Cheat_NoClip()
 
 void Cheat_Gimme()
 {
-	class<Inventory>	Cls;
-	class<Weapon>		WpnCls;
+	class<Inventory>			Cls;
+	class<Weapon>				WpnCls;
+	class<FourthWeaponPiece>	PieceCls;
+	Inventory					Inv;
 
 	if (Cmd_CheckParm("weapons"))
 	{
@@ -3644,7 +3645,27 @@ void Cheat_Gimme()
 				AmmoItem.Amount = AmmoItem.MaxAmount;
 			}
 		}
-		Pieces = 7;
+		foreach AllClasses(FourthWeaponPiece, PieceCls)
+		{
+			if (!PieceCls.default.IdleState)
+			{
+				//	Abstract class.
+				continue;
+			}
+			if (PieceCls.default.PieceClass != PClass)
+			{
+				//	Wrong class.
+				continue;
+			}
+			FourthWeaponHolder Hold = FourthWeaponHolder(
+				EntityEx(MO).FindInventory(FourthWeaponHolder));
+			if (!Hold)
+			{
+				Hold = Level.Spawn(FourthWeaponHolder);
+				Hold.AttachToOwner(EntityEx(MO));
+			}
+			Hold.PieceMask = 7;
+		}
 		cprint("ALL WEAPONS");
 	}
 	if (Cmd_CheckParm("health"))
@@ -3777,7 +3798,7 @@ void Cheat_NoWeapons()
 	for (Item = EntityEx(MO).Inventory; Item; )
 	{
 		Inventory Next = Item.Inventory;
-		if (Weapon(Item) && Item != Weakest)
+		if ((Weapon(Item) && Item != Weakest) || FourthWeaponHolder(Item))
 		{
 			Item.Destroy();
 		}
@@ -3785,7 +3806,6 @@ void Cheat_NoWeapons()
 	}
 	SetWeapon(Weakest);
 	PendingWeapon = Weakest;
-	Pieces = 0;
 	cprint("CHEATER - YOU DON'T DESERVE WEAPONS");
 }
 

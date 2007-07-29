@@ -443,6 +443,11 @@ void SB_DrawMainBar()
 	SB_DrawBackground();
 	R_DrawPic(BAR_X + 38, BAR_Y + 1, pic_statbar);
 
+	if (!cl.MO)
+	{
+		return;
+	}
+
 	// Frags / health
 	if (ClGame.deathmatch)
 	{
@@ -462,8 +467,8 @@ void SB_DrawMainBar()
 	}
 
 	//  Mana
-	Inventory ManaItem1 = cl.MO ? EntityEx(cl.MO).FindInventory(Mana1) : none;
-	Inventory ManaItem2 = cl.MO ? EntityEx(cl.MO).FindInventory(Mana2) : none;
+	Inventory ManaItem1 = EntityEx(cl.MO).FindInventory(Mana1);
+	Inventory ManaItem2 = EntityEx(cl.MO).FindInventory(Mana2);
 	if (!ManaItem1 || ManaItem1.Amount == 0)
 	{
 		// Draw Dim Mana icon
@@ -507,18 +512,21 @@ void SB_DrawMainBar()
 	}
 
 	// Weapon Pieces
-	if ((cl.SBFlags & HexenDefs::SBF_PIECES_MASK) != HexenDefs::SBF_PIECES_MASK)
+	FourthWeaponHolder Hold = FourthWeaponHolder(
+		EntityEx(cl.MO).FindInventory(FourthWeaponHolder));
+	int Pieces = Hold ? Hold.PieceMask : 0;
+	if (Pieces != 7)
 	{
 		R_DrawPic(BAR_X + 190, BAR_Y + 1, pic_wpslot);
-		if (cl.SBFlags & HexenDefs::SBF_PIECE1)
+		if (Pieces & FourthWeaponPiece::WPIECE1)
 		{
 			R_DrawPic(BAR_X + wppiecex[0], BAR_Y + 1, pic_wppiece[0]);
 		}
-		if (cl.SBFlags & HexenDefs::SBF_PIECE2)
+		if (Pieces & FourthWeaponPiece::WPIECE2)
 		{
 			R_DrawPic(BAR_X + wppiecex[1], BAR_Y + 1, pic_wppiece[1]);
 		}
-		if (cl.SBFlags & HexenDefs::SBF_PIECE3)
+		if (Pieces & FourthWeaponPiece::WPIECE3)
 		{
 			R_DrawPic(BAR_X + wppiecex[2], BAR_Y + 1, pic_wppiece[2]);
 		}

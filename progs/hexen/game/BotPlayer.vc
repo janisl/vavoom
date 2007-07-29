@@ -296,8 +296,12 @@ bool CheckItem(Actor item)
 		bNewItemIsWeapon = true;
 
 		// If we don't have the weapon, pick it up
-		if (!(player.Pieces & piece))
+		FourthWeaponHolder Hold = FourthWeaponHolder(
+			botmo.FindInventory(FourthWeaponHolder));
+		if (!Hold || (Hold.PieceMask & piece) != piece)
+		{
 			return true;
+		}
 
 		// If we have no more room for the mana it gives
 		if (botmo.FindInventory(Mana1).Amount == botmo.FindInventory(Mana1).MaxAmount &&
@@ -528,10 +532,10 @@ float GetAngle()
 
 int WeapPieceFromItem(Actor item)
 {
-	if (WeaponPiece(item) &&
-		WeaponPiece(item).PieceClass == player.PClass)
+	if (FourthWeaponPiece(item) &&
+		FourthWeaponPiece(item).PieceClass == player.PClass)
 	{
-		return WeaponPiece(item).PieceValue;
+		return FourthWeaponPiece(item).PieceValue;
 	}
 	return -1;
 }

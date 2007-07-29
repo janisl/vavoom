@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class WeaponPiece : Inventory
+class FourthWeaponPiece : Inventory
 	abstract;
 
 const int
@@ -46,8 +46,9 @@ bool			gaveWeapon;
 
 bool TryPickup(EntityEx Toucher)
 {
-	bool checkAssembled;
-	int gaveMana;
+	bool			checkAssembled;
+	int				gaveMana;
+	Inventory		Inv;
 
 	checkAssembled = true;
 	gaveWeapon = false;
@@ -71,7 +72,16 @@ bool TryPickup(EntityEx Toucher)
 		return true;
 	}
 
-	if (ShouldStay() && (Player(Toucher.Player).Pieces & PieceValue))
+	FourthWeaponHolder Hold = FourthWeaponHolder(
+		Toucher.FindInventory(FourthWeaponHolder));
+	if (!Hold)
+	{
+		Hold = Spawn(FourthWeaponHolder);
+		Hold.AttachToOwner(Toucher);
+		Hold.PieceMask = 0;
+	}
+
+	if (ShouldStay() && (Hold.PieceMask & PieceValue))
 	{
 		// Already has the piece
 		return false;
@@ -81,10 +91,10 @@ bool TryPickup(EntityEx Toucher)
 		Player(Toucher.Player).GiveMana(Mana2, 20);
 	if (ShouldStay())
 	{
-		PieceValue = MainGameInfo(Level.Game).pieceValueTrans[PieceValue];
+		PieceValue = GetPieceValueTrans(PieceValue);
 	}
 
-	if ((Player(Toucher.Player).Pieces & PieceValue) == PieceValue)
+	if ((Hold.PieceMask & PieceValue) == PieceValue)
 	{
 		// Already has the piece, check if mana needed
 		if (!gaveMana)
@@ -97,8 +107,8 @@ bool TryPickup(EntityEx Toucher)
 	// Pick up the weapon piece
 
 	// Check if fourth weapon assembled
-	Player(Toucher.Player).Pieces |= PieceValue;
-	if (Player(Toucher.Player).Pieces == (WPIECE1 | WPIECE2 | WPIECE3))
+	Hold.PieceMask |= PieceValue;
+	if (Hold.PieceMask == (WPIECE1 | WPIECE2 | WPIECE3))
 	{
 		gaveWeapon = true;
 		Weapon Wpn = Level.Spawn(WeaponType);
@@ -162,6 +172,27 @@ void PlayPickupSound(EntityEx Toucher)
 bool ShouldStay()
 {
 	return Level.Game.netgame && !Level.Game.deathmatch;
+}
+
+//==========================================================================
+//
+//	GetPieceValueTrans
+//
+//==========================================================================
+
+final int GetPieceValueTrans(int Val)
+{
+	switch (Val)
+	{
+	case WPIECE1:
+		return WPIECE1 | WPIECE2 | WPIECE3;
+	case WPIECE2:
+		return WPIECE2 | WPIECE3;
+	case WPIECE3:
+		return WPIECE3;
+	}
+	//	Should not happen.
+	return 0;
 }
 
 defaultproperties

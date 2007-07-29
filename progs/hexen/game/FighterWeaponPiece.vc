@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class FighterWeaponPiece : WeaponPiece
+class FighterWeaponPiece : FourthWeaponPiece
 	abstract;
 
 defaultproperties

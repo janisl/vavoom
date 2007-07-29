@@ -41,8 +41,6 @@ string TextKeyLockedMessages[HexenDefs::NUMKEYS];
 
 float ArmorMax[HexenDefs::NUMCLASSES];
 
-int pieceValueTrans[5];
-
 int classFlags[3];
 
 bool randomclass;
@@ -395,12 +393,6 @@ defaultproperties
 	ArmorMax[1] = 18.0;
 	ArmorMax[2] = 16.0;
 	ArmorMax[3] = 1.0;
-
-	pieceValueTrans[0] = 0;	// 0: never
-	pieceValueTrans[1] = WeaponPiece::WPIECE1 | WeaponPiece::WPIECE2 | WeaponPiece::WPIECE3;	// WPIECE1 (1)
-	pieceValueTrans[2] = WeaponPiece::WPIECE2 | WeaponPiece::WPIECE3;	// WPIECE2 (2)
-	pieceValueTrans[3] = 0;	// 3: never
-	pieceValueTrans[4] = WeaponPiece::WPIECE3;	// WPIECE3 (4)
 
 	classFlags[0] = HexenLevelInfo::MTF_FIGHTER;
 	classFlags[1] = HexenLevelInfo::MTF_CLERIC;

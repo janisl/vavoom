@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MageWeaponPiece : WeaponPiece
+class MageWeaponPiece : FourthWeaponPiece
 	abstract;
 
 defaultproperties

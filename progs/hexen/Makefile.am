@@ -224,6 +224,8 @@ EXTRA_DIST = compile.bat \
 	game/FighterWeapon.vc \
 	game/FighterWeaponPiece.vc \
 	game/FireBall.vc \
+	game/FourthWeaponHolder.vc \
+	game/FourthWeaponPiece.vc \
 	game/FrostMissile.vc \
 	game/FSwordFlame.vc \
 	game/FSwordMissile.vc \
@@ -350,7 +352,6 @@ EXTRA_DIST = compile.bat \
 	game/TelOtherFX3.vc \
 	game/TelOtherFX4.vc \
 	game/TelOtherFX5.vc \
-	game/WeaponPiece.vc \
 	game/Wraith.vc \
 	game/WraithBuried.vc \
 	game/WraithFX1.vc \

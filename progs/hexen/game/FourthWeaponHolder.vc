@@ -22,95 +22,23 @@
 //**  GNU General Public License for more details.
 //**
 //**************************************************************************
+//**
+//**	Holds info about picked up fourth weapon pieces.
+//**
+//**************************************************************************
 
-import engine;
+class FourthWeaponHolder : Inventory;
 
-class HexenDefs : Object;
+int				PieceMask;
 
-enum
+replication
 {
-	PCLASS_FIGHTER,
-	PCLASS_CLERIC,
-	PCLASS_MAGE,
-	PCLASS_PIG,
-	NUMCLASSES
-};
-
-enum
-{
-	ARMOR_ARMOR,
-	ARMOR_SHIELD,
-	ARMOR_HELMET,
-	ARMOR_AMULET,
-	NUMARMOR
-};
-
-enum
-{
-	arti_none,
-	arti_invulnerability,
-	arti_health,
-	arti_superhealth,
-	arti_healingradius,
-	arti_summon,
-	arti_torch,
-	arti_egg,
-	arti_fly,
-	arti_blastradius,
-	arti_poisonbag,
-	arti_teleportother,
-	arti_speed,
-	arti_boostmana,
-	arti_boostarmor,
-	arti_teleport,
-	// Puzzle artifacts
-	arti_firstpuzzitem,
-	arti_puzzskull = arti_firstpuzzitem,
-	arti_puzzgembig,
-	arti_puzzgemred,
-	arti_puzzgemgreen1,
-	arti_puzzgemgreen2,
-	arti_puzzgemblue1,
-	arti_puzzgemblue2,
-	arti_puzzbook1,
-	arti_puzzbook2,
-	arti_puzzskull2,
-	arti_puzzfweapon,
-	arti_puzzcweapon,
-	arti_puzzmweapon,
-	arti_puzzgear1,
-	arti_puzzgear2,
-	arti_puzzgear3,
-	arti_puzzgear4,
-	NUMARTIFACTS
-};
-
-enum
-{
-	KEY_1,
-	KEY_2,
-	KEY_3,
-	KEY_4,
-	KEY_5,
-	KEY_6,
-	KEY_7,
-	KEY_8,
-	KEY_9,
-	KEY_A,
-	KEY_B,
-	NUMKEYS
-};
-
-enum
-{
-	SBF_KEYS_MASK		= 0x000007ff,
-	SBF_POWER_FLIGHT	= 0x00010000,
-	SBF_POWER_SPEED		= 0x00020000,
-	SBF_POWER_INVULN	= 0x00040000,
-	SBF_POWER_MINOTAUR	= 0x00080000,
-	SBF_IN_FLIGHT		= 0x00100000
-};
+	reliable if (Role == ROLE_Authority && bNetOwner)
+		PieceMask;
+}
 
 defaultproperties
 {
+	bNoBlockmap = true;
+	bHidden = true;
 }

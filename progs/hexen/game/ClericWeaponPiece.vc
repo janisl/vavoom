@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ClericWeaponPiece : WeaponPiece
+class ClericWeaponPiece : FourthWeaponPiece
 	abstract;
 
 defaultproperties
