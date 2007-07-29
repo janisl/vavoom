@@ -35,7 +35,7 @@ class PlasmaRifle : DoomWeapon
 
 final void A_FirePlasma()
 {
-	DecAmmo(1);
+	DepleteAmmo(, 1);
 	if (!(P_Random() & 1))
 		Owner.Player.SetViewState(ps_flash, FlashState);
 	else

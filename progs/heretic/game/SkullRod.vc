@@ -37,11 +37,10 @@ final void A_FireSkullRodPL1()
 {
 	EntityEx	A;
 
-	if (!CheckAmmo(false))
+	if (!DepleteAmmo())
 	{
 		return;
 	}
-	DecAmmo(USE_SKRD_AMMO_1);
 	A = Actor(Owner).SpawnPlayerMissile(HornRodFX1);
 	// Randomize the first frame
 	if (A && P_Random() > 128)
@@ -65,7 +64,7 @@ final void A_FireSkullRodPL2()
 	HornRodFX2	A;
 	EntityEx	AimTarget;
 
-	DecAmmo(Level.Game.deathmatch ? USE_SKRD_AMMO_1 : USE_SKRD_AMMO_2);
+	DepleteAmmo();
 	A = HornRodFX2(Actor(Owner).SpawnPlayerMissileEx(HornRodFX2, true, AimTarget));
 	// Use MissileMobj instead of the return value from
 	// SpawnPlayerMissile because we need to give info to the mobj
@@ -113,7 +112,7 @@ defaultproperties
 	Slot = 5;
 	SelectionOrder = 200;
 	AmmoType1 = SkullRodAmmo;
-	AmmoUse1 = USE_SKRD_AMMO_1;
+	AmmoUse1 = 1;
 	AmmoGive1 = 50;
 	PSpriteSY = 15.0;
 	bInShareware = false;

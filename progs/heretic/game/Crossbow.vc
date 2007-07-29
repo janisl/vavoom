@@ -35,7 +35,7 @@ class Crossbow : HereticWeapon
 
 final void A_FireCrossbowPL1()
 {
-	DecAmmo(USE_CBOW_AMMO_1);
+	DepleteAmmo();
 	Actor(Owner).SpawnPlayerMissile(CrossbowFX1);
 	Actor(Owner).SpawnPlayerMissileAngle(CrossbowFX3,
 		AngleMod360(Owner.Angles.yaw - (45.0 / 10.0)));
@@ -51,7 +51,7 @@ final void A_FireCrossbowPL1()
 
 final void A_FireCrossbowPL2()
 {
-	DecAmmo(Level.Game.deathmatch ? USE_CBOW_AMMO_1 : USE_CBOW_AMMO_2);
+	DepleteAmmo();
 	Actor(Owner).SpawnPlayerMissile(CrossbowFX2);
 	Actor(Owner).SpawnPlayerMissileAngle(CrossbowFX2,
 		AngleMod360(Owner.Angles.yaw - (45.0 / 10.0)));
@@ -109,7 +109,7 @@ defaultproperties
 	Slot = 3;
 	SelectionOrder = 800;
 	AmmoType1 = CrossbowAmmo;
-	AmmoUse1 = USE_CBOW_AMMO_1;
+	AmmoUse1 = 1;
 	AmmoGive1 = 10;
 	PSpriteSY = 15.0;
 	PickupMessage = "$txt_wpncrossbow";

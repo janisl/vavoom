@@ -55,8 +55,6 @@ int SOULSPHERE_MAX;
 int SOULSPHERE_HEALTH;
 int MEGASPHERE_HEALTH;
 
-bool bDehacked;
-
 //==========================================================================
 //
 //	Init

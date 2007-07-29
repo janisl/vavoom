@@ -36,7 +36,7 @@ final void A_CHolyAttack()
 	EntityEx	A;
 	EntityEx	AimTarget;
 
-	DecMana();
+	DepleteAmmo();
 	A = Actor(Owner).SpawnPlayerMissileEx(HolyMissile, false, AimTarget);
 	if (A)
 	{

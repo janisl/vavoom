@@ -52,28 +52,6 @@ final void GunShot(Actor A, int accurate, TVec dir)
 	A.LineAttack(dir, MISSILERANGE, damage, BulletPuff);
 }
 
-//==========================================================================
-//
-//	DecAmmo
-//
-//==========================================================================
-
-void DecAmmo(int Count)
-{
-	if (!Ammo1)
-	{
-		return;
-	}
-	if (MainGameInfo(Level.Game).bDehacked)
-	{
-		Ammo1.Amount -= Count;
-	}
-	else
-	{
-		Ammo1.Amount -= AmmoUse1;
-	}
-}
-
 __states__
 {
 	S_LIGHTDONE('SHTG', 4, 0.0 / 35.0, none) = A_Light0

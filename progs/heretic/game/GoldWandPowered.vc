@@ -27,7 +27,7 @@ class GoldWandPowered : GoldWand;
 
 defaultproperties
 {
-	AmmoUse1 = USE_GWND_AMMO_2;
+	AmmoUse1 = 1;
 	AmmoGive1 = 0;
 	SisterWeaponType = GoldWand;
 	bPoweredUp = true;

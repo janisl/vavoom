@@ -35,7 +35,7 @@ class RocketLauncher : DoomWeapon
 
 final void A_FireMissile()
 {
-	DecAmmo(1);
+	DepleteAmmo(, 1);
 	Actor(Owner).SpawnPlayerMissile(Rocket);
 }
 

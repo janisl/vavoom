@@ -27,7 +27,7 @@ class MacePowered : Mace;
 
 defaultproperties
 {
-	AmmoUse1 = USE_MACE_AMMO_2;
+	AmmoUse1 = 5;
 	AmmoGive1 = 0;
 	SisterWeaponType = Mace;
 	bPoweredUp = true;

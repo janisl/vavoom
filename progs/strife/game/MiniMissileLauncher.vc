@@ -39,7 +39,7 @@ final void A_FireMissile()
 	savedangle = Owner.Angles.yaw;
 	Owner.Angles.yaw = AngleMod360(Owner.Angles.yaw +
 		(Random() - Random()) * 45.0 / 4.0 / itof(1 << (Player(Owner.Player).Accuracy * 5 / 100)));
-	DecAmmo();
+	DepleteAmmo();
 	Owner.SetState(Actor(Owner).MissileState);
 	Actor(Owner).SpawnPlayerMissile(MiniMissile);
 	Owner.Angles.yaw = savedangle;

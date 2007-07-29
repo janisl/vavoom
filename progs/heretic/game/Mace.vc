@@ -72,7 +72,7 @@ final void A_FireMacePL1B()
 	{
 		return;
 	}
-	DecAmmo(USE_MACE_AMMO_1);
+	DepleteAmmo();
 	ball = HereticLevelInfo(Level).Spawn(MaceFX2, Owner.Origin +
 		vector(0.0, 0.0, 28.0 - Owner.FloorClip));
 	ball.Velocity.z = (2.0 + 173.0 * -tan(Owner.Angles.pitch) / 32.0) * 35.0;
@@ -101,11 +101,10 @@ final void A_FireMacePL1()
 		A_FireMacePL1B();
 		return;
 	}
-	if (!CheckAmmo(false))
+	if (!DepleteAmmo())
 	{
 		return;
 	}
-	DecAmmo(USE_MACE_AMMO_1);
 	Owner.Player.ViewStates[ps_weapon].SX = Random() * 4.0 - 2.0;
 	Owner.Player.ViewStates[ps_weapon].SY = WEAPONTOP + Random() * 4.0;
 	ball = Actor(Owner).SpawnPlayerMissileAngle(MaceFX1,
@@ -127,7 +126,7 @@ final void A_FireMacePL2()
 	EntityEx	A;
 	EntityEx	AimTarget;
 
-	DecAmmo(Level.Game.deathmatch ? USE_MACE_AMMO_1 : USE_MACE_AMMO_2);
+	DepleteAmmo();
 	A = Actor(Owner).SpawnPlayerMissileEx(MaceFX4, false, AimTarget);
 	if (A)
 	{
@@ -170,7 +169,7 @@ defaultproperties
 	Slot = 7;
 	SelectionOrder = 1400;
 	AmmoType1 = MaceAmmo;
-	AmmoUse1 = USE_MACE_AMMO_1;
+	AmmoUse1 = 1;
 	AmmoGive1 = 50;
 	PSpriteSY = 15.0;
 	PickupMessage = "$txt_wpnmace";

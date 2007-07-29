@@ -53,7 +53,7 @@ final void A_MStaffAttack()
 {
 	float angle;
 
-	DecMana();
+	DepleteAmmo();
 	angle = Owner.Angles.yaw;
 
 	MStaffSpawn(angle);

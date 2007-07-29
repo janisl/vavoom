@@ -27,7 +27,6 @@ class Actor : ScriptedEntity
 	abstract;
 
 const float
-	PUNCHRANGE		= 80.0,
 	MAULERRANGE		= (33.0 * 64.0),
 	ROBOTRANGE		= 264.0;
 

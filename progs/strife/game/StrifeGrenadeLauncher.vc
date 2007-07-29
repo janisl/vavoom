@@ -49,9 +49,8 @@ final void A_FireGrenade()
 	{
 		grenadetype = PhosphorousGrenade;
 	}
-	if (!CheckAmmo(false))
+	if (!DepleteAmmo())
 		return;
-	DecAmmo();
 
 	// Make it flash
 	if (Owner.Player.ViewStates[ps_weapon].State == AttackState)

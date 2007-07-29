@@ -85,6 +85,9 @@ bool			bAmmoOptional;
 bool			bReadySndHalf;
 //	Don't bob weapon.
 bool			bDontBob;
+//	Doesn't allert monsters when fired.
+bool			bNoAlert;
+
 //	It's a melee weapon
 bool			bBotMelee;
 //	It's a projectile weapon
@@ -414,6 +417,46 @@ bool CheckAmmo(bool AutoSwitch, optional bool RequireAmmo)
 	PlayerEx(Owner.Player).PendingWeapon = Best;
 	Owner.Player.SetViewState(ps_weapon, GetDownState());
 	return false;
+}
+
+//==========================================================================
+//
+//	DepleteAmmo
+//
+//==========================================================================
+
+final bool DepleteAmmo(optional bool CheckEnough, optional int DehackedUse)
+{
+	//	Default parameter values
+	if (!specified_CheckEnough)
+	{
+		CheckEnough = true;
+	}
+	if (!specified_DehackedUse)
+	{
+		DehackedUse = AmmoUse1;
+	}
+
+	if (CheckEnough && !CheckAmmo(false))
+	{
+		return false;
+	}
+	if (Ammo1)
+	{
+		if (LineSpecialGameInfo(Level.Game).bDehacked)
+		{
+			Ammo1.Amount -= DehackedUse;
+		}
+		else
+		{
+			Ammo1.Amount -= AmmoUse1;
+		}
+	}
+	if (Ammo2)
+	{
+		Ammo2.Amount -= AmmoUse2;
+	}
+	return true;
 }
 
 //==========================================================================

@@ -204,7 +204,7 @@ final void A_FAxeAttack()
 
 	if (useMana == 2)
 	{
-		DecMana();
+		DepleteAmmo(false);
 		if (!CheckAmmo(false, true))
 		{
 			Owner.Player.SetViewState(ps_weapon, NoMoreManaState);

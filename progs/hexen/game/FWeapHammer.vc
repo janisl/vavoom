@@ -99,7 +99,7 @@ final void A_FHammerThrow()
 	{
 		return;
 	}
-	DecMana();
+	DepleteAmmo(false);
 	Actor(Owner).SpawnPlayerMissile(HammerMissile);
 }
 

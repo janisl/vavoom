@@ -36,7 +36,7 @@ final void A_FireGoldWandPL1()
 	int damage;
 	TVec dir;
 
-	DecAmmo(USE_GWND_AMMO_1);
+	DepleteAmmo();
 	damage = 7 + (P_Random() & 7);
 	Actor(Owner).Aim(dir, 16.0 * 64.0);
 	if (Player(Owner.Player).Refire)
@@ -61,7 +61,7 @@ final void A_FireGoldWandPL2()
 	TAVec angles;
 	TVec dir;
 
-	DecAmmo(Level.Game.deathmatch ? USE_GWND_AMMO_1 : USE_GWND_AMMO_2);
+	DepleteAmmo();
 	Actor(Owner).Aim(dir, 16.0 * 64.0);
 	VectorAngles(&dir, &angles);
 	Actor(Owner).SpawnMissileAngles(GoldWandFX2,
@@ -98,7 +98,7 @@ defaultproperties
 	Slot = 2;
 	SelectionOrder = 2000;
 	AmmoType1 = GoldWandAmmo;
-	AmmoUse1 = USE_GWND_AMMO_1;
+	AmmoUse1 = 1;
 	AmmoGive1 = 25;
 	PSpriteSY = 5.0;
 	SisterWeaponType = GoldWandPowered;

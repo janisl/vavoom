@@ -27,7 +27,7 @@ class BlasterPowered : Blaster;
 
 defaultproperties
 {
-	AmmoUse1 = USE_BLSR_AMMO_2;
+	AmmoUse1 = 5;
 	AmmoGive1 = 0;
 	SisterWeaponType = Blaster;
 	bPoweredUp = true;

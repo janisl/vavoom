@@ -27,7 +27,7 @@ class PhoenixRodPowered : PhoenixRod;
 
 defaultproperties
 {
-	AmmoUse1 = USE_PHRD_AMMO_2;
+	AmmoUse1 = 1;
 	AmmoGive1 = 0;
 	SisterWeaponType = PhoenixRod;
 	bPoweredUp = true;

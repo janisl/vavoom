@@ -40,11 +40,10 @@ final void A_FireRiffle()
 
 	Owner.PlaySound('weapons/assaultgun', CHAN_WEAPON);
 
-	if (!CheckAmmo(false))
+	if (!DepleteAmmo())
 		return;
 
 	Owner.SetState(Actor(Owner).MissileState);
-	DecAmmo();
 
 	Actor(Owner).Aim(dir, 16.0 * 64.0);
 	if (Player(Owner.Player).Refire)

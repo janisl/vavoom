@@ -39,7 +39,7 @@ final void A_FirePhoenixPL1()
 {
 	TVec vforward;
 
-	DecAmmo(USE_PHRD_AMMO_1);
+	DepleteAmmo();
 	Actor(Owner).SpawnPlayerMissile(PhoenixFX1);
 	AngleVector(&Owner.Angles, &vforward);
 	Owner.Velocity -= vforward * 140.0;
@@ -102,7 +102,7 @@ final void A_FirePhoenixPL2()
 
 final void A_ShutdownPhoenixPL2()
 {
-	DecAmmo(USE_PHRD_AMMO_2);
+	DepleteAmmo();
 }
 
 __states__
@@ -127,7 +127,7 @@ defaultproperties
 	Slot = 6;
 	SelectionOrder = 2600;
 	AmmoType1 = PhoenixRodAmmo;
-	AmmoUse1 = USE_PHRD_AMMO_1;
+	AmmoUse1 = 1;
 	AmmoGive1 = 2;
 	PSpriteSY = 15.0;
 	PickupMessage = "$txt_wpnphoenixrod";

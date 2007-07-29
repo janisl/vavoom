@@ -33,7 +33,7 @@ class FWeapQuietus : FighterWeapon;
 
 final void A_FSwordAttack()
 {
-	DecMana();
+	DepleteAmmo();
 	Actor(Owner).SpawnPlayerMissileAngleXYZ(Owner.Origin + vector(0.0, 0.0, -10.0),
 		FSwordMissile, AngleMod360(Owner.Angles.yaw + 45.0 / 4.0));
 	Actor(Owner).SpawnPlayerMissileAngleXYZ(Owner.Origin + vector(0.0, 0.0, -5.0),

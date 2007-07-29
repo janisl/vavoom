@@ -295,7 +295,7 @@ void SB_DrawMainBar()
 	R_DrawPic(ST_BGX, ST_BGY, pic_bar);
 
 	// ready weapon ammo
-	if (cl.ReadyWeapon.Ammo1)
+	if (cl.ReadyWeapon && cl.ReadyWeapon.Ammo1)
 	{
 		SB_DrawTallNum(ST_AMMOX, ST_AMMOY, cl.ReadyWeapon.Ammo1.Amount, 1.0, false);
 	}

@@ -67,7 +67,7 @@ final void A_MLightningAttack()
 		cmo.A_LightningZap();
 	}
 	Owner.PlaySound('MageLightningFire', CHAN_WEAPON);
-	DecMana();
+	DepleteAmmo();
 }
 
 __states__

@@ -26,30 +26,7 @@
 class StrifeWeapon : Weapon
 	abstract;
 
-const float
-	MELEERANGE		= 64.0,
-	PUNCHRANGE		= 80.0,
-	MISSILERANGE	= (32.0 * 64.0),
-	MAULERRANGE		= (33.0 * 64.0),
-	ROBOTRANGE		= 264.0;
-
 state FireDeathWaveState;
-
-bool bRaiseNoiseAlert;
-
-//===========================================================================
-//
-//  DecAmmo
-//
-//===========================================================================
-
-final void DecAmmo()
-{
-	if (Ammo1)
-	{
-		Ammo1.Amount -= AmmoUse1;
-	}
-}
 
 //==========================================================================
 //
@@ -80,7 +57,6 @@ __states__
 
 defaultproperties
 {
-	bRaiseNoiseAlert = true;
 	bFloorClip = true;
 	FireDeathWaveState = S_WAVE1;
 }

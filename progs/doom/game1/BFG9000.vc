@@ -46,7 +46,7 @@ final void A_BFGsound()
 
 final void A_FireBFG()
 {
-	DecAmmo(BFG9000.default.AmmoUse1);
+	DepleteAmmo(, BFG9000.default.AmmoUse1);
 	Actor(Owner).SpawnPlayerMissile(BFGBall);
 }
 

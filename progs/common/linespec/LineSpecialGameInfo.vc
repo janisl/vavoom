@@ -71,6 +71,8 @@ bool			bNightmareExtraAmmo;
 //	Always to switch to a newly picked up weapon.
 bool			bAlwaysSwitchNewWeapon;
 
+bool			bDehacked;
+
 bool			respawnmonsters;
 bool			bRespawnItems;
 bool			bRespawnBigItems;

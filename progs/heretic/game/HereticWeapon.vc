@@ -26,23 +26,6 @@
 class HereticWeapon : Weapon
 	abstract;
 
-const float MELEERANGE		= 64.0;
-const float MISSILERANGE	= (32.0 * 64.0);
-
-const int
-	USE_GWND_AMMO_1	= 1,
-	USE_GWND_AMMO_2 = 1,
-	USE_CBOW_AMMO_1 = 1,
-	USE_CBOW_AMMO_2 = 1,
-	USE_BLSR_AMMO_1 = 1,
-	USE_BLSR_AMMO_2 = 5,
-	USE_SKRD_AMMO_1 = 1,
-	USE_SKRD_AMMO_2 = 5,
-	USE_PHRD_AMMO_1 = 1,
-	USE_PHRD_AMMO_2 = 1,
-	USE_MACE_AMMO_1 = 1,
-	USE_MACE_AMMO_2 = 5;
-
 bool bInShareware;
 
 //==========================================================================
@@ -59,20 +42,6 @@ void AttachToOwner(EntityEx NewOwner)
 	if (bPoweredUp && Level.Game.deathmatch && SisterWeapon)
 	{
 		AmmoUse1 = SisterWeapon.AmmoUse1;
-	}
-}
-
-//==========================================================================
-//
-//	DecAmmo
-//
-//==========================================================================
-
-void DecAmmo(int Count)
-{
-	if (Ammo1)
-	{
-		Ammo1.Amount -= Count;
 	}
 }
 
@@ -104,14 +73,6 @@ bool ActivateChickenbeak()
 		return true;
 	}
 	return false;
-}
-
-//
-//	UNUSED
-//
-__states__
-{
-	S_LIGHTDONE('STFF', 0, 0.0 / 35.0, none) = A_Light0
 }
 
 defaultproperties

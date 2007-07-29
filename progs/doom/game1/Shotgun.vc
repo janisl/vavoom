@@ -41,7 +41,7 @@ final void A_FireShotgun()
 	Owner.PlaySound('weapons/shotgf', CHAN_WEAPON);
 	Owner.SetState(DoomPlayer::S_PLAY_ATK2);
 
-	DecAmmo(1);
+	DepleteAmmo(, 1);
 
 	Owner.Player.SetViewState(ps_flash, FlashState);
 

@@ -39,7 +39,7 @@ final void A_FireBlasterPL1()
 	float bulletslope;
 	TVec dir;
 
-	DecAmmo(USE_BLSR_AMMO_1);
+	DepleteAmmo();
 	Actor(Owner).Aim(dir, 16.0 * 64.0);
 	damage = HITDICE(4);
 	if (Player(Owner.Player).Refire)
@@ -60,7 +60,7 @@ final void A_FireBlasterPL2()
 {
 	EntityEx	A;
 
-	DecAmmo(Level.Game.deathmatch ? USE_BLSR_AMMO_1 : USE_BLSR_AMMO_2);
+	DepleteAmmo();
 	A = Actor(Owner).SpawnPlayerMissile(BlasterFX1);
 	if (A)
 	{
@@ -94,7 +94,7 @@ defaultproperties
 	Slot = 4;
 	SelectionOrder = 500;
 	AmmoType1 = BlasterAmmo;
-	AmmoUse1 = USE_BLSR_AMMO_1;
+	AmmoUse1 = 1;
 	AmmoGive1 = 30;
 	PSpriteSY = 15.0;
 	PickupMessage = "$txt_wpnblaster";

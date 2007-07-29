@@ -64,24 +64,6 @@ bool TryPickup(EntityEx Toucher)
 	return ::TryPickup(Toucher);
 }
 
-//==========================================================================
-//
-//  DecMana
-//
-//==========================================================================
-
-void DecMana()
-{
-	if (Ammo1)
-	{
-		Ammo1.Amount -= AmmoUse1;
-	}
-	if (Ammo2)
-	{
-		Ammo2.Amount -= AmmoUse2;
-	}
-}
-
 defaultproperties
 {
 }

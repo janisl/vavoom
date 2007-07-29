@@ -25,6 +25,8 @@
 
 class PunchDagger : StrifeWeapon;
 
+const float PUNCHRANGE		= 80.0;
+
 //==========================================================================
 //
 //	A_Punch
@@ -87,7 +89,7 @@ defaultproperties
 {
 	Slot = 1;
 	SelectionOrder = 3900;
-	bRaiseNoiseAlert = false;
+	bNoAlert = true;
 	UpState = S_PUNCHUP;
 	DownState = S_PUNCHDOWN;
 	ReadyState = S_PUNCH;

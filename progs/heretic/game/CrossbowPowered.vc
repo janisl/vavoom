@@ -27,7 +27,7 @@ class CrossbowPowered : Crossbow;
 
 defaultproperties
 {
-	AmmoUse1 = USE_CBOW_AMMO_2;
+	AmmoUse1 = 1;
 	AmmoGive1 = 0;
 	SisterWeaponType = Crossbow;
 	bPoweredUp = true;
