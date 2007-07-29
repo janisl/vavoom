@@ -55,8 +55,6 @@ enum
 	SBF_INVENTORY_OPEN	= 0x00000080
 };
 
-int ecolours[8];
-
 defaultproperties
 {
 }

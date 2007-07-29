@@ -67,7 +67,6 @@ enum
 
 int ramp1[16];
 int ramp2[16];
-int ecolours[8];
 
 defaultproperties
 {

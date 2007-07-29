@@ -91,9 +91,6 @@ enum
 	NUMINVITEMS
 };
 
-//  Dynamic light effects
-int ecolours[8];
-
 defaultproperties
 {
 }
