@@ -58,23 +58,6 @@ final int HITDICE(int a)
 	return (1 + (P_Random() & 7)) * a;
 }
 
-//===========================================================================
-//
-//  ActivateChickenbeak
-//
-//===========================================================================
-
-bool ActivateChickenbeak()
-{
-	if (Player(Owner.Player).ChickenTime)
-	{
-		// Change to the chicken beak
-		Player(Owner.Player).ActivateBeak();
-		return true;
-	}
-	return false;
-}
-
 defaultproperties
 {
 	Height = 32.0;

@@ -472,10 +472,6 @@ final void A_WeaponReady()
 {
 	float angle;
 
-	if (ActivateChickenbeak())
-	{
-		return;
-	}
 	// get out of attack state
 	if (StateIsInSequence(Owner.State, EntityEx(Owner).MissileState) ||
 		StateIsInSequence(Owner.State, EntityEx(Owner).MeleeState))
@@ -682,15 +678,6 @@ final void A_Light1()
 final void A_Light2()
 {
 	Owner.Player.ExtraLight = 2;
-}
-
-bool ActivateChickenbeak()
-{
-	return false;
-}
-
-void StopFiringAnimation()
-{
 }
 
 defaultproperties
