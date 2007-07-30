@@ -41,6 +41,7 @@ defaultproperties
 	Height = 8.0;
 	Mass = 1.0;
 	Speed = 17920.0;
+	MaxAmount = 1;
 //	bUnknown5 = true;
 	bDropped = true;
 	IdleState = S_BROKEN_POWER_COUPLING;

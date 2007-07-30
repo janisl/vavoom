@@ -37,6 +37,7 @@ defaultproperties
 	ConversationID = 129;
 	PickupMessage = "$txt_metalarmor";
 	Mass = 3.0;
+	MaxAmount = 3;
 	IdleState = S_METAL_ARMOR;
 	ItemType = StrifeDefs::ITEM_MetalArmor;
 }

@@ -97,6 +97,8 @@ class<EntityEx>	BloodClass;
 
 int				NonMonsterAngleIncrements;
 
+int				InvDefaultMaxAmount;
+
 //==========================================================================
 //
 //  MakeSlope
@@ -1094,4 +1096,5 @@ defaultproperties
 	air_control = 1.0 / 256.0;
 	NonMonsterAngleIncrements = 45;
 	bNightmareExtraAmmo = true;
+	InvDefaultMaxAmount = 25;
 }

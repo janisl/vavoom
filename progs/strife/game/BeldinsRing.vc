@@ -36,6 +36,7 @@ defaultproperties
 	PickupMessage = "$txt_beldinsring";
 	IdleState = S_RING;
 	ItemType = StrifeDefs::ITEM_Ring;
+	MaxAmount = 1;
 	bGiveQuest = true;
 	QuestID = QUEST_KilledBeldin;
 }

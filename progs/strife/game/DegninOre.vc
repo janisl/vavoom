@@ -86,6 +86,7 @@ defaultproperties
 	Radius = 16.0;
 	Height = 8.0;
 	Mass = 10.0;
+	MaxAmount = 10;
 	bSolid = true;
 	bShootable = true;
 	bInCombat = true;

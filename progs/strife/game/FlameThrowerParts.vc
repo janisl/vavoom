@@ -34,6 +34,7 @@ defaultproperties
 {
 	ConversationID = 191;
 	PickupMessage = "$txt_fthrowerparts";
+	MaxAmount = 1;
 	IdleState = S_FLAME_THROWER_PARTS;
 	ItemType = StrifeDefs::ITEM_FlameThrowerParts;
 }

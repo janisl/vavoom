@@ -36,6 +36,7 @@ defaultproperties
 	ConversationID = 126;
 	PickupMessage = "$txt_medicalkit";
 	Mass = 15.0;
+	MaxAmount = 15;
 	IdleState = S_MEDICAL_KIT;
 	ItemType = StrifeDefs::ITEM_MedicalKit;
 }

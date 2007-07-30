@@ -44,8 +44,6 @@ spec_trans_t spec_trans_tab[NUM_SPECIALS];
 class<InventoryItem> InvItemCID[StrifeDefs::NUMINVITEMS];
 class<KeyPickup> KeyCID[StrifeDefs::NUMKEYS];
 
-int MaxInvItem[StrifeDefs::NUMINVITEMS];
-
 //==========================================================================
 //
 //	Init
@@ -659,30 +657,4 @@ defaultproperties
 	KeyCID[24] = FactoryKey;
 	KeyCID[25] = MineKey;
 	KeyCID[26] = NewKey5;
-
-	MaxInvItem[StrifeDefs::ITEM_MedPatch] = 20;
-	MaxInvItem[StrifeDefs::ITEM_MedicalKit] = 15;
-	MaxInvItem[StrifeDefs::ITEM_SurgeryKit] = 5;
-	MaxInvItem[StrifeDefs::ITEM_DegninOre] = 10;
-	MaxInvItem[StrifeDefs::ITEM_MetalArmor] = 3;
-	MaxInvItem[StrifeDefs::ITEM_LeatherArmor] = 5;
-	MaxInvItem[StrifeDefs::ITEM_ShadowArmor] = 2;
-	MaxInvItem[StrifeDefs::ITEM_EnvironmentalSuit] = 5;
-	MaxInvItem[StrifeDefs::ITEM_GuardUniform] = 1;
-	MaxInvItem[StrifeDefs::ITEM_OfficersUniform] = 1;
-	MaxInvItem[StrifeDefs::ITEM_Map] = 1;
-	MaxInvItem[StrifeDefs::ITEM_Scanner] = 1;
-	MaxInvItem[StrifeDefs::ITEM_TeleporterBeacon] = 1;
-	MaxInvItem[StrifeDefs::ITEM_Targeter] = 5;
-	MaxInvItem[StrifeDefs::ITEM_Coin] = 0x7fffffff;
-	MaxInvItem[StrifeDefs::ITEM_Ring] = 1;
-	MaxInvItem[StrifeDefs::ITEM_OfferingChalice] = 1;
-	MaxInvItem[StrifeDefs::ITEM_Ear] = 1;
-	MaxInvItem[StrifeDefs::ITEM_FlameThrowerParts] = 1;
-	MaxInvItem[StrifeDefs::ITEM_BrokenPowerCoupling] = 1;
-	MaxInvItem[StrifeDefs::ITEM_PrisonPass] = 1;
-	MaxInvItem[StrifeDefs::ITEM_Report] = 1;
-	MaxInvItem[StrifeDefs::ITEM_Toughness] = 100;
-	MaxInvItem[StrifeDefs::ITEM_Accuracy] = 100;
-	MaxInvItem[StrifeDefs::ITEM_OraclePass] = 1;
 }

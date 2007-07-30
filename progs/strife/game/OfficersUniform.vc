@@ -35,6 +35,7 @@ defaultproperties
 {
 	ConversationID = 163;
 	PickupMessage = "$txt_officersuniform";
+	MaxAmount = 1;
 	bNoDeathmatch = true;
 	IdleState = S_OFFICERS_UNIFORM;
 	ItemType = StrifeDefs::ITEM_OfficersUniform;

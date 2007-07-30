@@ -35,8 +35,9 @@ defaultproperties
 {
 	ConversationID = 162;
 	PickupMessage = "$txt_guarduniform";
+	QuestID = QUEST_GotGuardUniform;
+	MaxAmount = 1;
+	bGiveQuest = true;
 	IdleState = S_GUARD_UNIFORM;
 	ItemType = StrifeDefs::ITEM_GuardUniform;
-	bGiveQuest = true;
-	QuestID = QUEST_GotGuardUniform;
 }

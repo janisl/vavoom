@@ -37,6 +37,7 @@ defaultproperties
 	PickupMessage = "$txt_offeringchalice";
 	Radius = 10.0;
 	Height = 8.0;
+	MaxAmount = 1;
 	bDropped = true;
 	IdleState = S_CHALICE;
 	ItemType = StrifeDefs::ITEM_OfferingChalice;

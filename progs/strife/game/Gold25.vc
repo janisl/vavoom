@@ -35,9 +35,9 @@ defaultproperties
 {
 	ConversationID = 170;
 	PickupMessage = "$txt_25gold";
+	Amount = 25;
 	bDropped = true;
 	bNoDeathmatch = true;
 	IdleState = S_GOLD25;
 	ItemType = StrifeDefs::ITEM_Coin;
-	ItemAmount = 25;
 }

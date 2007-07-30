@@ -54,6 +54,7 @@ defaultproperties
 {
 	ConversationID = 309;
 	PickupMessage = "Toughness";
+	MaxAmount = 100;
 	IdleState = S_TOUGHNESS;
 	ItemType = StrifeDefs::ITEM_Toughness;
 }

@@ -48,6 +48,7 @@ defaultproperties
 {
 	ConversationID = 304;
 	PickupMessage = "$txt_prisonpass";
+	MaxAmount = 1;
 	IdleState = S_TOKENS;
 	ItemType = StrifeDefs::ITEM_PrisonPass;
 	bGiveQuest = true;

@@ -34,10 +34,10 @@ defaultproperties
 {
 	ConversationID = 172;
 	PickupMessage = "$txt_300gold";
+	Amount = 300;
 	bDropped = true;
 	IdleState = S_TOKENS;
 	ItemType = StrifeDefs::ITEM_Coin;
-	ItemAmount = 300;
 	bGiveQuest = true;
 	QuestID = QUEST_Prison;
 }

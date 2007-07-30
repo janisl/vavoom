@@ -642,7 +642,7 @@ bool GiveItem(int item)
 bool GiveInvItem(int item, int amount)
 {
 	if (Inventory[item] &&
-		Inventory[item].Amount >= MainGameInfo(Level.Game).MaxInvItem[item])
+		Inventory[item].Amount >= Inventory[item].MaxAmount)
 	{
 		return false;
 	}
@@ -653,9 +653,9 @@ bool GiveInvItem(int item, int amount)
 		Inventory[item].Amount = 0;
 	}
 	Inventory[item].Amount += amount;
-	if (Inventory[item].Amount > MainGameInfo(Level.Game).MaxInvItem[item])
+	if (Inventory[item].Amount > Inventory[item].MaxAmount)
 	{
-		Inventory[item].Amount = MainGameInfo(Level.Game).MaxInvItem[item];
+		Inventory[item].Amount = Inventory[item].MaxAmount;
 	}
 	while (!Inventory[InvCursor] && InvCursor < StrifeDefs::NUMINVITEMS - 1)
 	{

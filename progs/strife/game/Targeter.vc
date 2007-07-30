@@ -36,6 +36,7 @@ defaultproperties
 	ConversationID = 167;
 	PickupMessage = "$txt_targeter";
 	Mass = 5.0;
+	MaxAmount = 5;
 	IdleState = S_TARGETER;
 	ItemType = StrifeDefs::ITEM_Targeter;
 }

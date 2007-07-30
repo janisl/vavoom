@@ -124,6 +124,7 @@ defaultproperties
 	Radius = 16.0;
 	Height = 8.0;
 	Mass = 3.0;
+	MaxAmount = 1;
 	bDropped = true;
 	IdleState = S_BEACON;
 	SeeState = S_BEACON_1;

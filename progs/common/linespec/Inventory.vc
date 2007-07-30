@@ -28,6 +28,8 @@ class Inventory : ScriptedEntity
 
 const float BONUSADD		= 0.2;
 
+const int DefMaxAmount		= -2;
+
 int				Amount;
 int				MaxAmount;
 int				DropAmount;
@@ -66,6 +68,10 @@ void OnMapSpawn(mthing_t* mthing)
 	{
 		//	Non-placed items are dropped by default.
 		bDropped = true;
+	}
+	if (MaxAmount == DefMaxAmount)
+	{
+		MaxAmount = LineSpecialGameInfo(Level.Game).InvDefaultMaxAmount;
 	}
 	::OnMapSpawn(mthing);
 }

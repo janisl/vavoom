@@ -37,6 +37,7 @@ defaultproperties
 	ConversationID = 161;
 	PickupMessage = "$txt_envsuit";
 	Mass = 5.0;
+	MaxAmount = 5;
 	IdleState = S_ENV_SUIT;
 	ItemType = StrifeDefs::ITEM_EnvironmentalSuit;
 }

@@ -36,6 +36,7 @@ defaultproperties
 	ConversationID = 168;
 	PickupMessage = "$txt_coin";
 	Mass = 99999.0;
+	MaxAmount = 0x7fffffff;
 	bDropped = true;
 	bNoDeathmatch = true;
 	IdleState = S_COIN;

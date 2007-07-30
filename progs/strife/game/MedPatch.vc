@@ -36,6 +36,7 @@ defaultproperties
 	ConversationID = 125;
 	PickupMessage = "$txt_medpatch";
 	Mass = 20.0;
+	MaxAmount = 20;
 	IdleState = S_MED_PATCH;
 	ItemType = StrifeDefs::ITEM_MedPatch;
 }

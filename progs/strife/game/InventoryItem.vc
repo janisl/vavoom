@@ -27,7 +27,6 @@ class InventoryItem : Inventory
 	abstract;
 
 int ItemType;
-int ItemAmount;
 
 //==========================================================================
 //
@@ -37,7 +36,7 @@ int ItemAmount;
 
 bool TryPickup(EntityEx Toucher)
 {
-	if (Player(Toucher.Player).GiveInvItem(ItemType, ItemAmount))
+	if (Player(Toucher.Player).GiveInvItem(ItemType, Amount))
 	{
 		GoAwayAndDie();
 		GiveQuest(Toucher);
@@ -49,5 +48,4 @@ bool TryPickup(EntityEx Toucher)
 defaultproperties
 {
 	bFloorClip = true;
-	ItemAmount = 1;
 }

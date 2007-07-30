@@ -34,6 +34,7 @@ defaultproperties
 {
 	ConversationID = 308;
 	PickupMessage = "$txt_report";
+	MaxAmount = 1;
 	IdleState = S_TOKENS;
 	ItemType = StrifeDefs::ITEM_Report;
 }

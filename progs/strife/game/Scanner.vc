@@ -37,6 +37,7 @@ defaultproperties
 	ConversationID = 165;
 	PickupMessage = "$txt_scanner";
 	Mass = 1.0;
+	MaxAmount = 1;
 	IdleState = S_SCANNER_1;
 	ItemType = StrifeDefs::ITEM_Scanner;
 }
