@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ArtifactEgg : Artifact
+class ArtiEgg : Artifact
 	__mobjinfo__(30)
 	__scriptid__(14);
 

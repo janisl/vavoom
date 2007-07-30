@@ -48,12 +48,6 @@ const int MAXHEALTH	= 100;
 
 const float USERANGE	= 64.0;
 
-struct inventory_t
-{
-	int type;
-	int count;
-};
-
 int SBFlags;
 
 int ArmorPoints;
@@ -68,7 +62,7 @@ int Keys;
 int ArtifactFlash;
 int InvPtr;
 int InvCurPos;
-inventory_t Inventory[HereticDefs::NUMARTIFACTS];
+Artifact Inventory[HereticDefs::NUMARTIFACTS];
 
 int ReadyArtifact;
 int InventorySlotNum;
@@ -445,7 +439,7 @@ void PlayerExitMap(bool clusterChange)
 
 	for (i = 0; i < InventorySlotNum; i++)
 	{
-		Inventory[i].count = 1;
+		Inventory[i].Amount = 1;
 	}
 	ArtifactCount = InventorySlotNum;
 
@@ -731,24 +725,25 @@ bool GiveArtifact(int arti)
 	int i;
 
 	i = 0;
-	while (Inventory[i].type != arti && i < InventorySlotNum)
+	while (i < InventorySlotNum && Inventory[i].ArtifactType != arti)
 	{
 		i++;
 	}
 	if (i == InventorySlotNum)
 	{
-		Inventory[i].count = 1;
-		Inventory[i].type = arti;
+		Inventory[i] = Level.Spawn(MainGameInfo(Level.Game).ArtiClasses[arti]);
+		Inventory[i].AttachToOwner(EntityEx(MO));
+		Inventory[i].Amount = 1;
 		InventorySlotNum++;
 	}
 	else
 	{
-		if (Inventory[i].count >= 16)
+		if (Inventory[i].Amount >= 16)
 		{
 			// Player already has 16 of this item
 			return false;
 		}
-		Inventory[i].count++;
+		Inventory[i].Amount++;
 	}
 	if (ArtifactCount == 0)
 	{
@@ -828,7 +823,7 @@ void InventoryRight()
 
 void InventoryUse()
 {
-	ReadyArtifact = Inventory[InvPtr].type;
+	ReadyArtifact = Inventory[InvPtr].ArtifactType;
 	// flag to denote that it's okay to use an artifact
 	if (InventoryTime)
 	{
@@ -855,7 +850,7 @@ void InventoryTick(float deltaTime)
 		if (InventoryTime <= 0.0)
 		{
 			InventoryTime = 0.0;
-			ReadyArtifact = Inventory[InvPtr].type;
+			ReadyArtifact = Inventory[InvPtr].ArtifactType;
 		}
 	}
 	if (ArtifactFlash)
@@ -2197,7 +2192,7 @@ void PlayerUseArtifact(int arti)
 
 	for (i = 0; i < InventorySlotNum; i++)
 	{
-		if (Inventory[i].type == arti)
+		if (Inventory[i].ArtifactType == arti)
 		{
 			// Found match - try to use
 			if (UseArtifact(arti))
@@ -2246,7 +2241,7 @@ void PlayerNextArtifact()
 			InvCurPos = 6;
 		}
 	}
-	ReadyArtifact = Inventory[InvPtr].type;
+	ReadyArtifact = Inventory[InvPtr].ArtifactType;
 }
 
 //==========================================================================
@@ -2260,15 +2255,14 @@ void PlayerRemoveArtifact(int slot)
 	int i;
 
 	ArtifactCount--;
-	if (!(--Inventory[slot].count))
+	if (!(--Inventory[slot].Amount))
 	{
 		// Used last of a type - compact the artifact list
 		ReadyArtifact = HereticDefs::arti_none;
-		Inventory[slot].type = HereticDefs::arti_none;
+		Inventory[slot].Destroy();
 		for (i = slot + 1; i < InventorySlotNum; i++)
 		{
-			Inventory[i - 1].type = Inventory[i].type;
-			Inventory[i - 1].count = Inventory[i].count;
+			Inventory[i - 1] = Inventory[i];
 		}
 		InventorySlotNum--;
 		// Set position markers and get next ReadyArtifact
@@ -2289,7 +2283,7 @@ void PlayerRemoveArtifact(int slot)
 		{
 			InvPtr = 0;
 		}
-		ReadyArtifact = Inventory[InvPtr].type;
+		ReadyArtifact = Inventory[InvPtr].ArtifactType;
 	}
 }
 
