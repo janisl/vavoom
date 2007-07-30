@@ -66,7 +66,7 @@ int Keys;
 
 int InvFirst;
 int InvCursor;
-int Inventory[StrifeDefs::NUMINVITEMS];
+InventoryItem Inventory[StrifeDefs::NUMINVITEMS];
 
 // Power ups. invinc and invis are timers.
 float Powers[NUMPOWERS];
@@ -641,14 +641,21 @@ bool GiveItem(int item)
 
 bool GiveInvItem(int item, int amount)
 {
-	if (Inventory[item] >= MainGameInfo(Level.Game).MaxInvItem[item])
+	if (Inventory[item] &&
+		Inventory[item].Amount >= MainGameInfo(Level.Game).MaxInvItem[item])
 	{
 		return false;
 	}
-	Inventory[item] += amount;
-	if (Inventory[item] > MainGameInfo(Level.Game).MaxInvItem[item])
+	if (!Inventory[item])
 	{
-		Inventory[item] = MainGameInfo(Level.Game).MaxInvItem[item];
+		Inventory[item] = Level.Spawn(MainGameInfo(Level.Game).InvItemCID[item]);
+		Inventory[item].AttachToOwner(EntityEx(MO));
+		Inventory[item].Amount = 0;
+	}
+	Inventory[item].Amount += amount;
+	if (Inventory[item].Amount > MainGameInfo(Level.Game).MaxInvItem[item])
+	{
+		Inventory[item].Amount = MainGameInfo(Level.Game).MaxInvItem[item];
 	}
 	while (!Inventory[InvCursor] && InvCursor < StrifeDefs::NUMINVITEMS - 1)
 	{
@@ -670,11 +677,16 @@ bool GiveInvItem(int item, int amount)
 
 bool RemoveInvItem(int item, int amount)
 {
-	if (Inventory[item] < amount)
+	if (!Inventory[item] || Inventory[item].Amount < amount)
 	{
 		return false;
 	}
-	Inventory[item] -= amount;
+	Inventory[item].Amount -= amount;
+	if (!Inventory[item].Amount)
+	{
+		Inventory[item].Destroy();
+		Inventory[item] = none;
+	}
 	while (!Inventory[InvCursor] && InvCursor < StrifeDefs::NUMINVITEMS - 1)
 	{
 		InvCursor++;
@@ -781,7 +793,7 @@ void InvUse()
 
 	case StrifeDefs::ITEM_TeleporterBeacon:
 		//	Increase item count because ItemThrow also decreases it.
-		Inventory[StrifeDefs::ITEM_TeleporterBeacon]++;
+		Inventory[StrifeDefs::ITEM_TeleporterBeacon].Amount++;
 		A = InvThrow();
 		if (A)
 		{
@@ -791,7 +803,7 @@ void InvUse()
 		}
 		else
 		{
-			Inventory[StrifeDefs::ITEM_TeleporterBeacon]--;
+			Inventory[StrifeDefs::ITEM_TeleporterBeacon].Amount--;
 		}
 		break;
 
@@ -884,20 +896,23 @@ EntityEx InvThrow()
 	ItemType = MainGameInfo(Level.Game).InvItemCID[InvCursor];
 	Amount = 1;
 	//	Gold is dropped with maximal throwable amount.
-	if (InvCursor == StrifeDefs::ITEM_Coin && Inventory[InvCursor] >= 50)
+	if (InvCursor == StrifeDefs::ITEM_Coin)
 	{
-		ItemType = Gold50;
-		Amount = 50;
-	}
-	else if (InvCursor == StrifeDefs::ITEM_Coin && Inventory[InvCursor] >= 25)
-	{
-		ItemType = Gold25;
-		Amount = 25;
-	}
-	else if (InvCursor == StrifeDefs::ITEM_Coin && Inventory[InvCursor] >= 10)
-	{
-		ItemType = Gold10;
-		Amount = 10;
+		if (Inventory[InvCursor].Amount >= 50)
+		{
+			ItemType = Gold50;
+			Amount = 50;
+		}
+		else if (Inventory[InvCursor].Amount >= 25)
+		{
+			ItemType = Gold25;
+			Amount = 25;
+		}
+		else if (Inventory[InvCursor].Amount >= 10)
+		{
+			ItemType = Gold10;
+			Amount = 10;
+		}
 	}
 
 	AngleVector(&MO.Angles, &Dir);

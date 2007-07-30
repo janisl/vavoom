@@ -175,7 +175,7 @@ void AutoUseHealth(int saveHealth)
 	for (i = 0; i < StrifeDefs::NUMINVITEMS - 1; i++)
 	{
 		if (Player(Player).Inventory[i] && i == StrifeDefs::ITEM_MedicalKit
-			&& Player(Player).Inventory[i] * 25 >= saveHealth)
+			&& Player(Player).Inventory[i].Amount * 25 >= saveHealth)
 		{
 			// Use medical kits
 			Health += 25;
@@ -183,7 +183,7 @@ void AutoUseHealth(int saveHealth)
 			Player.MO.PlaySound('misc/invuse', CHAN_BODY);
 		}
 		else if (Player(Player).Inventory[i] && i == StrifeDefs::ITEM_MedPatch
-			&& Player(Player).Inventory[i] * 10 >= saveHealth)
+			&& Player(Player).Inventory[i].Amount * 10 >= saveHealth)
 		{
 			Health += 10;
 			Player(Player).RemoveInvItem(i, 1);
@@ -429,11 +429,11 @@ int CheckInventory(name ItemName)
 	//	Inventory items.
 	if (ItemName == 'OfferingChalice')
 	{
-		return Player(Player).Inventory[StrifeDefs::ITEM_OfferingChalice];
+		return !!FindInventory(OfferingChalice);
 	}
 	if (ItemName == 'OfficersUniform')
 	{
-		return Player(Player).Inventory[StrifeDefs::ITEM_OfficersUniform];
+		return !!FindInventory(OfficersUniform);
 	}
 
 	//	Quest items.

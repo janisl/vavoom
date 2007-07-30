@@ -323,7 +323,7 @@ void SB_DrawMainBar()
 				R_DrawPic(BAR_X + 42 + 35 * Idx, BAR_Y + 180, pic_invcurs);
 			}
 			R_DrawPic(BAR_X + 48 + Idx * 35, BAR_Y + 182, pic_inv[i]);
-			SB_DrawSmallNum(BAR_X + 76 + Idx * 35, BAR_Y + 192, cl.Inventory[i]);
+			SB_DrawSmallNum(BAR_X + 76 + Idx * 35, BAR_Y + 192, cl.Inventory[i].Amount);
 			Idx++;
 		}
 	}
@@ -486,7 +486,7 @@ void SB_DrawFullscreenStats()
 				R_DrawPic2(225 + 35 * Idx, 450, pic_invcurs, 0.6);
 			}
 			R_DrawPic(231 + Idx * 35, 452, pic_inv[i]);
-			SB_DrawSmallNum(259 + Idx * 35, 462, cl.Inventory[i]);
+			SB_DrawSmallNum(259 + Idx * 35, 462, cl.Inventory[i].Amount);
 			Idx++;
 		}
 	}

@@ -629,7 +629,8 @@ int CheckForNeededItem(EntityEx A, int ID, int Amount)
 	{
 		if (MainGameInfo(Game).InvItemCID[i] == CID)
 		{
-			return Player(A.Player).Inventory[i] < Amount ? -2 : i;
+			return !Player(A.Player).Inventory[i] ||
+				Player(A.Player).Inventory[i].Amount < Amount ? -2 : i;
 		}
 	}
 	//	Check keys.
