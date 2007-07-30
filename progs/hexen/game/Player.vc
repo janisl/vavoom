@@ -47,12 +47,6 @@ const float BLAST_RADIUS_DIST	= 255.0;
 const float BLAST_FULLSTRENGTH	= 0.0038909912;
 const float BLAST_SPEED			= 20.0;
 
-struct inventory_t
-{
-	int type;
-	int count;
-};
-
 int SBFlags;
 
 int TotalArmorPoints;
@@ -71,7 +65,7 @@ int ReadyArtifact;
 int InvPtr;
 int InvCurPos;
 int InventorySlotNum;
-inventory_t Inventory[HexenDefs::NUMARTIFACTS];
+Artifact Inventory[HexenDefs::NUMARTIFACTS];
 int Arti;	// artitype_t to use
 
 float FlyHeight;
@@ -912,7 +906,7 @@ bool GiveArtifact(int arti)
 
 	slidePointer = false;
 	i = 0;
-	while (Inventory[i].type != arti && i < InventorySlotNum)
+	while (i < InventorySlotNum && Inventory[i].ArtifactType != arti)
 	{
 		i++;
 	}
@@ -921,8 +915,8 @@ bool GiveArtifact(int arti)
 		if (arti < HexenDefs::arti_firstpuzzitem)
 		{
 			i = 0;
-			while (Inventory[i].type < HexenDefs::arti_firstpuzzitem
-				&& i < InventorySlotNum)
+			while (i < InventorySlotNum &&
+				Inventory[i].ArtifactType < HexenDefs::arti_firstpuzzitem)
 			{
 				i++;
 			}
@@ -930,14 +924,14 @@ bool GiveArtifact(int arti)
 			{
 				for (j = InventorySlotNum; j > i; j--)
 				{
-					Inventory[j].count = Inventory[j - 1].count;
-					Inventory[j].type = Inventory[j - 1].type;
+					Inventory[j] = Inventory[j - 1];
 					slidePointer = true;
 				}
 			}
 		}
-		Inventory[i].count = 1;
-		Inventory[i].type = arti;
+		Inventory[i] = Level.Spawn(MainGameInfo(Level.Game).ArtiClasses[arti]);
+		Inventory[i].AttachToOwner(EntityEx(MO));
+		Inventory[i].Amount = 1;
 		InventorySlotNum++;
 	}
 	else
@@ -947,12 +941,12 @@ bool GiveArtifact(int arti)
 			// Can't carry more than 1 puzzle item in coop netplay
 			return false;
 		}
-		if (Inventory[i].count >= 25)
+		if (Inventory[i].Amount >= 25)
 		{
 			// Player already has 25 of this item
 			return false;
 		}
-		Inventory[i].count++;
+		Inventory[i].Amount++;
 	}
 	if (!ArtifactCount)
 	{
@@ -1039,7 +1033,7 @@ void InventoryRight()
 
 void InventoryUse()
 {
-	ReadyArtifact = Inventory[InvPtr].type;
+	ReadyArtifact = Inventory[InvPtr] ? Inventory[InvPtr].ArtifactType : 0;
 	// flag to denote that it's okay to use an artifact
 	if (InventoryTime)
 	{
@@ -1066,7 +1060,7 @@ void InventoryTick(float deltaTime)
 		if (InventoryTime <= 0.0)
 		{
 			InventoryTime = 0.0;
-			ReadyArtifact = Inventory[InvPtr].type;
+			ReadyArtifact = Inventory[InvPtr].ArtifactType;
 		}
 	}
 	if (ArtifactFlash)
@@ -2720,7 +2714,7 @@ void PlayerUseArtifact(int arti)
 
 	for (i = 0; i < InventorySlotNum; i++)
 	{
-		if (Inventory[i].type == arti)
+		if (Inventory[i].ArtifactType == arti)
 		{
 			// Found match - try to use
 			if (UseArtifact(arti))
@@ -2776,7 +2770,7 @@ void PlayerNextArtifact()
 			InvCurPos = 6;
 		}
 	}
-	ReadyArtifact = Inventory[InvPtr].type;
+	ReadyArtifact = Inventory[InvPtr].ArtifactType;
 }
 
 //==========================================================================
@@ -2790,15 +2784,14 @@ void PlayerRemoveArtifact(int slot)
 	int i;
 
 	ArtifactCount--;
-	if (!(--Inventory[slot].count))
+	if (!(--Inventory[slot].Amount))
 	{
 		// Used last of a type - compact the artifact list
 		ReadyArtifact = HexenDefs::arti_none;
-		Inventory[slot].type = HexenDefs::arti_none;
+		Inventory[slot].Destroy();
 		for (i = slot + 1; i < InventorySlotNum; i++)
 		{
-			Inventory[i - 1].type = Inventory[i].type;
-			Inventory[i - 1].count = Inventory[i].count;
+			Inventory[i - 1] = Inventory[i];
 		}
 		InventorySlotNum--;
 		// Set position markers and get next ReadyArtifact
@@ -2819,7 +2812,7 @@ void PlayerRemoveArtifact(int slot)
 		{
 			InvPtr = 0;
 		}
-		ReadyArtifact = Inventory[InvPtr].type;
+		ReadyArtifact = Inventory[InvPtr].ArtifactType;
 	}
 }
 

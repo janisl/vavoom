@@ -327,15 +327,15 @@ void AutoUseHealth(int saveHealth)
 	superCount = 0;
 	for (i = 0; i < Player(Player).InventorySlotNum; i++)
 	{
-		if (Player(Player).Inventory[i].type == HexenDefs::arti_health)
+		if (Player(Player).Inventory[i].ArtifactType == HexenDefs::arti_health)
 		{
 			normalSlot = i;
-			normalCount = Player(Player).Inventory[i].count;
+			normalCount = Player(Player).Inventory[i].Amount;
 		}
-		else if (Player(Player).Inventory[i].type == HexenDefs::arti_superhealth)
+		else if (Player(Player).Inventory[i].ArtifactType == HexenDefs::arti_superhealth)
 		{
 			superSlot = i;
-			superCount = Player(Player).Inventory[i].count;
+			superCount = Player(Player).Inventory[i].Amount;
 		}
 	}
 	if ((Level.Game.gameskill == sk_baby) && (normalCount * 25 >= saveHealth))

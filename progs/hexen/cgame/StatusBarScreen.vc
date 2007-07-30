@@ -508,7 +508,7 @@ void SB_DrawMainBar()
 	else if (cl.ReadyArtifact > 0)
 	{
 		R_DrawPic(BAR_X + 143, BAR_Y + 2, pic_arti[cl.ReadyArtifact]);
-		SB_DrawINumber(BAR_X + 166, BAR_Y + 23, cl.Inventory[cl.InvPtr].count);
+		SB_DrawINumber(BAR_X + 166, BAR_Y + 23, cl.Inventory[cl.InvPtr].Amount);
 	}
 
 	// Weapon Pieces
@@ -590,11 +590,10 @@ void SB_DrawInventoryBar()
 	x = cl.InvPtr - cl.InvCurPos;
 	for (i = 0; i < 7; i++)
 	{
-		if (cl.InventorySlotNum > x + i &&
-			cl.Inventory[x + i].type != HexenDefs::arti_none)
+		if (cl.InventorySlotNum > x + i && cl.Inventory[x + i])
 		{
-			R_DrawPic(BAR_X + 50 + i * 31, BAR_Y + 2, pic_arti[cl.Inventory[x + i].type]);
-			SB_DrawINumber(BAR_X + 71 + i * 31, BAR_Y + 24, cl.Inventory[x + i].count);
+			R_DrawPic(BAR_X + 50 + i * 31, BAR_Y + 2, pic_arti[cl.Inventory[x + i].ArtifactType]);
+			SB_DrawINumber(BAR_X + 71 + i * 31, BAR_Y + 24, cl.Inventory[x + i].Amount);
 		}
 	}
 
@@ -644,12 +643,11 @@ void SB_DrawFullscreenStats()
 		for (i = 0; i < 7; i++)
 		{
 			R_DrawPic2(210 + i * 31, 448, pic_arti[0], 0.6);
-			if (cl.InventorySlotNum > x + i &&
-				cl.Inventory[x + i].type != HexenDefs::arti_none)
+			if (cl.InventorySlotNum > x + i && cl.Inventory[x + i])
 			{
 				R_DrawPic(209 + i * 31, 447,
-					pic_arti[cl.Inventory[x + i].type]);
-				SB_DrawINumber(229 + i * 31, 468, cl.Inventory[x + i].count);
+					pic_arti[cl.Inventory[x + i].ArtifactType]);
+				SB_DrawINumber(229 + i * 31, 468, cl.Inventory[x + i].Amount);
 			}
 		}
 		R_DrawPic(210 + cl.InvCurPos * 31, 447, pic_selectbox);
@@ -667,7 +665,7 @@ void SB_DrawFullscreenStats()
 		//  Ready artifact
 		R_DrawPic2(546, 440, pic_arti[0], 0.6);
 		R_DrawPic(544, 440, pic_arti[cl.ReadyArtifact]);
-		SB_DrawINumber(567, 462, cl.Inventory[cl.InvPtr].count);
+		SB_DrawINumber(567, 462, cl.Inventory[cl.InvPtr].Amount);
 	}
 
 	//  Mana
