@@ -50,5 +50,6 @@ defaultproperties
 	MaxAmount = DefMaxAmount;
 	bFloatBob = true;
 	bPickupFlash = true;
+	bInvBar = true;
 	PickupSound = 'PickupArtifact';
 }

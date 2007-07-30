@@ -51,5 +51,6 @@ defaultproperties
 	bCountItem = true;
 	bFloatBob = true;
 	bPickupFlash = true;
+	bInvBar = true;
 	PickupSound = 'misc/p_pkup';
 }

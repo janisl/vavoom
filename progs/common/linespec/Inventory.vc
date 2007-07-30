@@ -49,6 +49,8 @@ bool			bFullVolPickupSound;
 bool			bGiveQuest;
 //	Used by HandlePickup.
 bool			bPickupGood;
+//	Can be displayed in the inventory bar
+bool			bInvBar;
 
 replication
 {

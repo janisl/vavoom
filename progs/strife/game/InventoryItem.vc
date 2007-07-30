@@ -48,4 +48,5 @@ bool TryPickup(EntityEx Toucher)
 defaultproperties
 {
 	bFloorClip = true;
+	bInvBar = true;
 }
