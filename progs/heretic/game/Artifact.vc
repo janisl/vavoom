@@ -36,12 +36,38 @@ int ArtifactType;
 
 bool TryPickup(EntityEx Toucher)
 {
-	if (Player(Toucher.Player).GiveArtifact(ArtifactType))
+	int i;
+
+	i = 0;
+	while (i < Player(Toucher.Player).InventorySlotNum &&
+		Player(Toucher.Player).Inventory[i].ArtifactType != ArtifactType)
 	{
-		GoAwayAndDie();
-		return true;
+		i++;
 	}
-	return false;
+	if (i == Player(Toucher.Player).InventorySlotNum)
+	{
+		Player(Toucher.Player).Inventory[i] = Spawn(MainGameInfo(Level.Game).ArtiClasses[ArtifactType]);
+		Player(Toucher.Player).Inventory[i].AttachToOwner(Toucher);
+		Player(Toucher.Player).Inventory[i].Amount = 1;
+		Player(Toucher.Player).InventorySlotNum++;
+	}
+	else
+	{
+		if (Player(Toucher.Player).Inventory[i].Amount >=
+			Player(Toucher.Player).Inventory[i].MaxAmount)
+		{
+			// Player already has 16 of this item
+			return false;
+		}
+		Player(Toucher.Player).Inventory[i].Amount++;
+	}
+	if (Player(Toucher.Player).ArtifactCount == 0)
+	{
+		Player(Toucher.Player).ReadyArtifact = ArtifactType;
+	}
+	Player(Toucher.Player).ArtifactCount++;
+	GoAwayAndDie();
+	return true;
 }
 
 defaultproperties

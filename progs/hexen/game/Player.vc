@@ -892,81 +892,6 @@ bool GivePower(int power)
 
 //==========================================================================
 //
-//  GiveArtifact
-//
-//  Returns true if artifact accepted.
-//
-//==========================================================================
-
-bool GiveArtifact(int arti)
-{
-	int i;
-	int j;
-	bool slidePointer;
-
-	slidePointer = false;
-	i = 0;
-	while (i < InventorySlotNum && Inventory[i].ArtifactType != arti)
-	{
-		i++;
-	}
-	if (i == InventorySlotNum)
-	{
-		if (arti < HexenDefs::arti_firstpuzzitem)
-		{
-			i = 0;
-			while (i < InventorySlotNum &&
-				Inventory[i].ArtifactType < HexenDefs::arti_firstpuzzitem)
-			{
-				i++;
-			}
-			if (i != InventorySlotNum)
-			{
-				for (j = InventorySlotNum; j > i; j--)
-				{
-					Inventory[j] = Inventory[j - 1];
-					slidePointer = true;
-				}
-			}
-		}
-		Inventory[i] = Level.Spawn(MainGameInfo(Level.Game).ArtiClasses[arti]);
-		Inventory[i].AttachToOwner(EntityEx(MO));
-		Inventory[i].Amount = 1;
-		InventorySlotNum++;
-	}
-	else
-	{
-		if (arti >= HexenDefs::arti_firstpuzzitem && Level.Game.netgame && !Level.Game.deathmatch)
-		{
-			// Can't carry more than 1 puzzle item in coop netplay
-			return false;
-		}
-		if (Inventory[i].Amount >= 25)
-		{
-			// Player already has 25 of this item
-			return false;
-		}
-		Inventory[i].Amount++;
-	}
-	if (!ArtifactCount)
-	{
-		ReadyArtifact = arti;
-	}
-	else if (slidePointer && i <= InvPtr)
-	{
-		InvPtr++;
-		InvCurPos++;
-		if (InvCurPos > 6)
-		{
-			InvCurPos = 6;
-		}
-	}
-	ArtifactCount++;
-	return true;
-}
-
-//==========================================================================
-//
 //  InventoryLeft
 //
 //==========================================================================
@@ -3689,7 +3614,7 @@ void Cheat_Gimme()
 		{
 			for (j = 0; j < 25; j++)
 			{
-				GiveArtifact(i);
+				EntityEx(MO).GiveInventoryType(MainGameInfo(Level.Game).ArtiClasses[i]);
 			}
 		}
 		cprint("ALL ARTIFACTS");
@@ -3700,7 +3625,7 @@ void Cheat_Gimme()
 
 		for (i = HexenDefs::arti_firstpuzzitem; i < HexenDefs::NUMARTIFACTS; i++)
 		{
-			GiveArtifact(i);
+			EntityEx(MO).GiveInventoryType(MainGameInfo(Level.Game).ArtiClasses[i]);
 		}
 		cprint("ALL ARTIFACTS");
 	}

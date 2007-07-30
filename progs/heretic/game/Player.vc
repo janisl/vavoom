@@ -714,47 +714,6 @@ bool GiveItem(int item)
 
 //==========================================================================
 //
-//  GiveArtifact
-//
-//  Returns true if artifact accepted.
-//
-//==========================================================================
-
-bool GiveArtifact(int arti)
-{
-	int i;
-
-	i = 0;
-	while (i < InventorySlotNum && Inventory[i].ArtifactType != arti)
-	{
-		i++;
-	}
-	if (i == InventorySlotNum)
-	{
-		Inventory[i] = Level.Spawn(MainGameInfo(Level.Game).ArtiClasses[arti]);
-		Inventory[i].AttachToOwner(EntityEx(MO));
-		Inventory[i].Amount = 1;
-		InventorySlotNum++;
-	}
-	else
-	{
-		if (Inventory[i].Amount >= 16)
-		{
-			// Player already has 16 of this item
-			return false;
-		}
-		Inventory[i].Amount++;
-	}
-	if (ArtifactCount == 0)
-	{
-		ReadyArtifact = arti;
-	}
-	ArtifactCount++;
-	return true;
-}
-
-//==========================================================================
-//
 //  InventoryLeft
 //
 //==========================================================================
@@ -2863,7 +2822,7 @@ void Cheat_Gimme()
 			}
 			for (j = 0; j < 16; j++)
 			{
-				GiveArtifact(i);
+				EntityEx(MO).GiveInventoryType(MainGameInfo(Level.Game).ArtiClasses[i]);
 			}
 		}
 		cprint("YOU GOT IT");

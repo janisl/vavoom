@@ -529,7 +529,7 @@ defaultproperties
 	TeleportFogClass = TeleportFog;
 	DefaultKickBack = 150.0;
 	BloodClass = Blood;
-	InvDefaultMaxAmount = 10;
+	InvDefaultMaxAmount = 16;
 
 	keymsg[0] = "$txt_needyellowkey";
 	keymsg[1] = "$txt_needgreenkey";

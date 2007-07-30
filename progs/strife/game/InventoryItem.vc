@@ -36,13 +36,36 @@ int ItemType;
 
 bool TryPickup(EntityEx Toucher)
 {
-	if (Player(Toucher.Player).GiveInvItem(ItemType, Amount))
+	if (Player(Toucher.Player).Inventory[ItemType] &&
+		Player(Toucher.Player).Inventory[ItemType].Amount >= Player(Toucher.Player).Inventory[ItemType].MaxAmount)
 	{
-		GoAwayAndDie();
-		GiveQuest(Toucher);
-		return true;
+		return false;
 	}
-	return false;
+	if (!Player(Toucher.Player).Inventory[ItemType])
+	{
+		Player(Toucher.Player).Inventory[ItemType] = Spawn(MainGameInfo(Level.Game).InvItemCID[ItemType]);
+		Player(Toucher.Player).Inventory[ItemType].AttachToOwner(EntityEx(Player(Toucher.Player).MO));
+		Player(Toucher.Player).Inventory[ItemType].Amount = 0;
+	}
+	Player(Toucher.Player).Inventory[ItemType].Amount += Amount;
+	if (Player(Toucher.Player).Inventory[ItemType].Amount > Player(Toucher.Player).Inventory[ItemType].MaxAmount)
+	{
+		Player(Toucher.Player).Inventory[ItemType].Amount = Player(Toucher.Player).Inventory[ItemType].MaxAmount;
+	}
+	while (!Player(Toucher.Player).Inventory[Player(Toucher.Player).InvCursor] &&
+		Player(Toucher.Player).InvCursor < StrifeDefs::NUMINVITEMS - 1)
+	{
+		Player(Toucher.Player).InvCursor++;
+	}
+	while (!Player(Toucher.Player).Inventory[Player(Toucher.Player).InvCursor] &&
+		Player(Toucher.Player).InvCursor > 0)
+	{
+		Player(Toucher.Player).InvCursor--;
+	}
+	Player(Toucher.Player).AdjustInvFirst();
+	GoAwayAndDie();
+	GiveQuest(Toucher);
+	return true;
 }
 
 defaultproperties

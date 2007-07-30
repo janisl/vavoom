@@ -635,42 +635,6 @@ bool GiveItem(int item)
 
 //==========================================================================
 //
-//	GiveInvItem
-//
-//==========================================================================
-
-bool GiveInvItem(int item, int amount)
-{
-	if (Inventory[item] &&
-		Inventory[item].Amount >= Inventory[item].MaxAmount)
-	{
-		return false;
-	}
-	if (!Inventory[item])
-	{
-		Inventory[item] = Level.Spawn(MainGameInfo(Level.Game).InvItemCID[item]);
-		Inventory[item].AttachToOwner(EntityEx(MO));
-		Inventory[item].Amount = 0;
-	}
-	Inventory[item].Amount += amount;
-	if (Inventory[item].Amount > Inventory[item].MaxAmount)
-	{
-		Inventory[item].Amount = Inventory[item].MaxAmount;
-	}
-	while (!Inventory[InvCursor] && InvCursor < StrifeDefs::NUMINVITEMS - 1)
-	{
-		InvCursor++;
-	}
-	while (!Inventory[InvCursor] && InvCursor > 0)
-	{
-		InvCursor--;
-	}
-	AdjustInvFirst();
-	return true;
-}
-
-//==========================================================================
-//
 //	RemoveInvItem
 //
 //==========================================================================

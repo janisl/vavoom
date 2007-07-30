@@ -36,12 +36,71 @@ int ArtifactType;
 
 bool TryPickup(EntityEx Toucher)
 {
-	if (Player(Toucher.Player).GiveArtifact(ArtifactType))
+	int i;
+	int j;
+	bool slidePointer;
+
+	slidePointer = false;
+	i = 0;
+	while (i < Player(Toucher.Player).InventorySlotNum &&
+		Player(Toucher.Player).Inventory[i].ArtifactType != ArtifactType)
 	{
-		GoAwayAndDie();
-		return true;
+		i++;
 	}
-	return false;
+	if (i == Player(Toucher.Player).InventorySlotNum)
+	{
+		if (ArtifactType < HexenDefs::arti_firstpuzzitem)
+		{
+			i = 0;
+			while (i < Player(Toucher.Player).InventorySlotNum &&
+				Player(Toucher.Player).Inventory[i].ArtifactType < HexenDefs::arti_firstpuzzitem)
+			{
+				i++;
+			}
+			if (i != Player(Toucher.Player).InventorySlotNum)
+			{
+				for (j = Player(Toucher.Player).InventorySlotNum; j > i; j--)
+				{
+					Player(Toucher.Player).Inventory[j] = Player(Toucher.Player).Inventory[j - 1];
+					slidePointer = true;
+				}
+			}
+		}
+		Player(Toucher.Player).Inventory[i] = Level.Spawn(MainGameInfo(Level.Game).ArtiClasses[ArtifactType]);
+		Player(Toucher.Player).Inventory[i].AttachToOwner(Toucher);
+		Player(Toucher.Player).Inventory[i].Amount = 1;
+		Player(Toucher.Player).InventorySlotNum++;
+	}
+	else
+	{
+		if (ArtifactType >= HexenDefs::arti_firstpuzzitem && Level.Game.netgame && !Level.Game.deathmatch)
+		{
+			// Can't carry more than 1 puzzle item in coop netplay
+			return false;
+		}
+		if (Player(Toucher.Player).Inventory[i].Amount >= Player(Toucher.Player).Inventory[i].MaxAmount)
+		{
+			// Player already has 25 of this item
+			return false;
+		}
+		Player(Toucher.Player).Inventory[i].Amount++;
+	}
+	if (!Player(Toucher.Player).ArtifactCount)
+	{
+		Player(Toucher.Player).ReadyArtifact = ArtifactType;
+	}
+	else if (slidePointer && i <= Player(Toucher.Player).InvPtr)
+	{
+		Player(Toucher.Player).InvPtr++;
+		Player(Toucher.Player).InvCurPos++;
+		if (Player(Toucher.Player).InvCurPos > 6)
+		{
+			Player(Toucher.Player).InvCurPos = 6;
+		}
+	}
+	Player(Toucher.Player).ArtifactCount++;
+	GoAwayAndDie();
+	return true;
 }
 
 defaultproperties

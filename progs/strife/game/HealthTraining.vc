@@ -33,16 +33,18 @@ class HealthTraining : InventoryItem;
 
 bool TryPickup(EntityEx Toucher)
 {
-	bool		Ret;
-
-	Ret = ::TryPickup(Toucher);
-	if (Ret && !bDropped)
+	if (::TryPickup(Toucher))
 	{
-		Player(Toucher.Player).GiveInvItem(StrifeDefs::ITEM_Accuracy, 1);
-		Player(Toucher.Player).GiveInvItem(StrifeDefs::ITEM_Coin,
-			Player(Toucher.Player).Accuracy * 5 + 300);
+		Toucher.GiveInventoryType(GunTraining);
+		Inventory Item = Spawn(Coin);
+		Item.Amount = Player(Toucher.Player).Accuracy * 5 + 300;
+		if (!Item.TryPickup(Toucher))
+		{
+			Item.Destroy();
+		}
+		return true;
 	}
-	return Ret;
+	return false;
 }
 
 __states__
