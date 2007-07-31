@@ -201,7 +201,7 @@ bool EV_LineSearchForPuzzleItem(int Arg1, int Arg2, int Arg3, int Arg4,
 		return false;
 
 	// Search player's inventory for puzzle items
-	for (i = 0; i < Player(A.Player).ArtifactCount; i++)
+	for (i = 0; i < Player(A.Player).InventorySlotNum; i++)
 	{
 		arti = Player(A.Player).Inventory[i].ArtifactType;
 		type = arti - HexenDefs::arti_firstpuzzitem;

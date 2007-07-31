@@ -505,9 +505,9 @@ void SB_DrawMainBar()
 	{
 		R_DrawPic(BAR_X + 148, BAR_Y + 3, pic_artiflash[cl.ArtifactFlash]);
 	}
-	else if (cl.ReadyArtifact > 0)
+	else if (cl.Inventory[cl.InvPtr])
 	{
-		R_DrawPic(BAR_X + 143, BAR_Y + 2, pic_arti[cl.ReadyArtifact]);
+		R_DrawPic(BAR_X + 143, BAR_Y + 2, pic_arti[cl.Inventory[cl.InvPtr].ArtifactType]);
 		SB_DrawINumber(BAR_X + 166, BAR_Y + 23, cl.Inventory[cl.InvPtr].Amount);
 	}
 
@@ -660,11 +660,11 @@ void SB_DrawFullscreenStats()
 			R_DrawPic(428, 447, pic_invgemr[!(ClGame.GLevel.TicTime & 4) ? 0 : 1]);
 		}
 	}
-	else if (cl.ReadyArtifact > 0)
+	else if (cl.Inventory[cl.InvPtr])
 	{
 		//  Ready artifact
 		R_DrawPic2(546, 440, pic_arti[0], 0.6);
-		R_DrawPic(544, 440, pic_arti[cl.ReadyArtifact]);
+		R_DrawPic(544, 440, pic_arti[cl.Inventory[cl.InvPtr].ArtifactType]);
 		SB_DrawINumber(567, 462, cl.Inventory[cl.InvPtr].Amount);
 	}
 

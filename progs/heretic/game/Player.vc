@@ -63,15 +63,10 @@ int ArtifactFlash;
 int InvPtr;
 int InvCurPos;
 Artifact Inventory[HereticDefs::NUMARTIFACTS];
-
-int ReadyArtifact;
 int InventorySlotNum;
-int Arti;	// artitype_t to use
+float InventoryTime;
 
 float FlyHeight;
-
-float InventoryTime;
-int ArtifactCount;
 
 // Armor type is 0-2.
 int ArmorType;
@@ -92,7 +87,7 @@ replication
 {
 	reliable if (!bIsClient)
 		SBFlags, ArmorPoints, ArtifactFlash, InvPtr, InvCurPos,
-		ReadyArtifact, InventorySlotNum, Inventory;
+		InventorySlotNum, Inventory;
 
 	unreliable if (!bIsClient)
 		ClientBlood, ClientExplosion;
@@ -441,7 +436,6 @@ void PlayerExitMap(bool clusterChange)
 	{
 		Inventory[i].Amount = 1;
 	}
-	ArtifactCount = InventorySlotNum;
 
 	if (!Level.Game.deathmatch)
 	{
@@ -780,17 +774,17 @@ void InventoryRight()
 //
 //==========================================================================
 
-void InventoryUse()
+int InventoryUse()
 {
-	ReadyArtifact = Inventory[InvPtr].ArtifactType;
 	// flag to denote that it's okay to use an artifact
 	if (InventoryTime)
 	{
 		InventoryTime = 0.0;
+		return 0;
 	}
 	else
 	{
-		Arti = ReadyArtifact;
+		return Inventory[InvPtr] ? Inventory[InvPtr].ArtifactType : 0;
 	}
 }
 
@@ -809,7 +803,6 @@ void InventoryTick(float deltaTime)
 		if (InventoryTime <= 0.0)
 		{
 			InventoryTime = 0.0;
-			ReadyArtifact = Inventory[InvPtr].ArtifactType;
 		}
 	}
 	if (ArtifactFlash)
@@ -1496,7 +1489,7 @@ void PlayerImpulse()
 
 	impulse = Impulse;
 	Impulse = 0;
-	Arti = 0;
+	int Arti = 0;
 
 	if (impulse <= 7)
 	{
@@ -1519,7 +1512,7 @@ void PlayerImpulse()
 	}
 	else if (impulse == 15)
 	{
-		InventoryUse();
+		Arti = InventoryUse();
 	}
 	// Heretic artifact hot keys
 	else if (impulse == 11)
@@ -2200,7 +2193,6 @@ void PlayerNextArtifact()
 			InvCurPos = 6;
 		}
 	}
-	ReadyArtifact = Inventory[InvPtr].ArtifactType;
 }
 
 //==========================================================================
@@ -2213,11 +2205,9 @@ void PlayerRemoveArtifact(int slot)
 {
 	int i;
 
-	ArtifactCount--;
 	if (!(--Inventory[slot].Amount))
 	{
 		// Used last of a type - compact the artifact list
-		ReadyArtifact = HereticDefs::arti_none;
 		Inventory[slot].Destroy();
 		for (i = slot + 1; i < InventorySlotNum; i++)
 		{
@@ -2242,7 +2232,6 @@ void PlayerRemoveArtifact(int slot)
 		{
 			InvPtr = 0;
 		}
-		ReadyArtifact = Inventory[InvPtr].ArtifactType;
 	}
 }
 

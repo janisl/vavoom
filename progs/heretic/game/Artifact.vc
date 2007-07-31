@@ -61,11 +61,6 @@ bool TryPickup(EntityEx Toucher)
 		}
 		Player(Toucher.Player).Inventory[i].Amount++;
 	}
-	if (Player(Toucher.Player).ArtifactCount == 0)
-	{
-		Player(Toucher.Player).ReadyArtifact = ArtifactType;
-	}
-	Player(Toucher.Player).ArtifactCount++;
 	GoAwayAndDie();
 	return true;
 }

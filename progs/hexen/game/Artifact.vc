@@ -85,11 +85,7 @@ bool TryPickup(EntityEx Toucher)
 		}
 		Player(Toucher.Player).Inventory[i].Amount++;
 	}
-	if (!Player(Toucher.Player).ArtifactCount)
-	{
-		Player(Toucher.Player).ReadyArtifact = ArtifactType;
-	}
-	else if (slidePointer && i <= Player(Toucher.Player).InvPtr)
+	if (slidePointer && i <= Player(Toucher.Player).InvPtr)
 	{
 		Player(Toucher.Player).InvPtr++;
 		Player(Toucher.Player).InvCurPos++;
@@ -98,7 +94,6 @@ bool TryPickup(EntityEx Toucher)
 			Player(Toucher.Player).InvCurPos = 6;
 		}
 	}
-	Player(Toucher.Player).ArtifactCount++;
 	GoAwayAndDie();
 	return true;
 }

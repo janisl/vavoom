@@ -59,18 +59,13 @@ int Keys;
 float Powers[NUMPOWERS];
 
 float InventoryTime;
-
 int ArtifactFlash;
-int ReadyArtifact;
 int InvPtr;
 int InvCurPos;
 int InventorySlotNum;
 Artifact Inventory[HexenDefs::NUMARTIFACTS];
-int Arti;	// artitype_t to use
 
 float FlyHeight;
-
-int ArtifactCount;
 
 int PoisonCount;	// screen flash for poison damage
 float LastPoisonTime;
@@ -96,8 +91,7 @@ replication
 {
 	reliable if (!bIsClient)
 		SBFlags, TotalArmorPoints, InventoryTime, ArtifactFlash,
-		ReadyArtifact, InvPtr, InvCurPos, InventorySlotNum, ArmorPerc,
-		Inventory;
+		InvPtr, InvCurPos, InventorySlotNum, ArmorPerc, Inventory;
 
 	unreliable if (!bIsClient)
 		ClientBlood, ClientExplosion;
@@ -956,17 +950,17 @@ void InventoryRight()
 //
 //==========================================================================
 
-void InventoryUse()
+int InventoryUse()
 {
-	ReadyArtifact = Inventory[InvPtr] ? Inventory[InvPtr].ArtifactType : 0;
 	// flag to denote that it's okay to use an artifact
 	if (InventoryTime)
 	{
 		InventoryTime = 0.0;
+		return 0;
 	}
 	else
 	{
-		Arti = ReadyArtifact;
+		return Inventory[InvPtr] ? Inventory[InvPtr].ArtifactType : 0;
 	}
 }
 
@@ -985,7 +979,6 @@ void InventoryTick(float deltaTime)
 		if (InventoryTime <= 0.0)
 		{
 			InventoryTime = 0.0;
-			ReadyArtifact = Inventory[InvPtr].ArtifactType;
 		}
 	}
 	if (ArtifactFlash)
@@ -1756,7 +1749,7 @@ void PlayerImpulse()
 
 	impulse = Impulse;
 	Impulse = 0;
-	Arti = 0;
+	int Arti = 0;
 
 	if (impulse <= 4)
 	{
@@ -1779,7 +1772,7 @@ void PlayerImpulse()
 	}
 	else if (impulse == 15)
 	{
-		InventoryUse();
+		Arti = InventoryUse();
 	}
 	else if (impulse == 16)
 	{
@@ -2695,7 +2688,6 @@ void PlayerNextArtifact()
 			InvCurPos = 6;
 		}
 	}
-	ReadyArtifact = Inventory[InvPtr].ArtifactType;
 }
 
 //==========================================================================
@@ -2708,11 +2700,9 @@ void PlayerRemoveArtifact(int slot)
 {
 	int i;
 
-	ArtifactCount--;
 	if (!(--Inventory[slot].Amount))
 	{
 		// Used last of a type - compact the artifact list
-		ReadyArtifact = HexenDefs::arti_none;
 		Inventory[slot].Destroy();
 		for (i = slot + 1; i < InventorySlotNum; i++)
 		{
@@ -2737,7 +2727,6 @@ void PlayerRemoveArtifact(int slot)
 		{
 			InvPtr = 0;
 		}
-		ReadyArtifact = Inventory[InvPtr].ArtifactType;
 	}
 }
 
