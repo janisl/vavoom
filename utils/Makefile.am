@@ -1,4 +1,4 @@
-SUBDIRS = acc fixmd2 glbsp glvis vcc vlumpy
+SUBDIRS = acc fixmd2 glbsp glvis vcc vlaunch vlumpy
 EXTRA_DIST = \
 	editing/acs/strfhelp.acs \
 	editing/acs/stspec.acs \
@@ -15,11 +15,4 @@ EXTRA_DIST = \
 	editing/wauthor/vdoom2.wcf \
 	editing/wauthor/vheretic.wcf \
 	editing/wauthor/vhexen.wcf \
-	editing/wauthor/vstrife.wcf \
-	vlaunch/main.cpp \
-	vlaunch/main.dfm \
-	vlaunch/main.h \
-	vlaunch/vlaunch.bpr \
-	vlaunch/vlaunch.cpp \
-	vlaunch/vlaunch.dsk \
-	vlaunch/vlaunch.res
+	editing/wauthor/vstrife.wcf

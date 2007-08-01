@@ -33,6 +33,7 @@ AC_ARG_ENABLE([zone-debug], AS_HELP_STRING([--enable-zone-debug], [Enable memory
 AC_ARG_ENABLE([client], AS_HELP_STRING([--disable-client], [Don't build client executable]))
 AC_ARG_ENABLE([server], AS_HELP_STRING([--disable-server], [Don't build dedicated server executable]))
 AC_ARG_ENABLE([asm], AS_HELP_STRING([--disable-asm], [Disable assembly-language code]))
+AC_ARG_ENABLE([launcher], AS_HELP_STRING([--disable-launcher], [Don't build launcher]))
 
 dnl
 dnl  **** Basic checks ****
@@ -125,6 +126,60 @@ TIMIDITY_CPPFLAGS=${CPPFLAGS}
 
 AC_SUBST([TIMIDITY_CXXFLAGS])
 AC_SUBST([TIMIDITY_CPPFLAGS])
+
+dnl
+dnl  **** Check for wxWidgets if launcher is enabled ****
+dnl
+
+if test "x$enable_launcher" != "xno"; then
+
+WXCONFIG=wx-config
+AC_ARG_WITH(wx-config,
+[[  --with-wx-config=FILE     Use the given path to wx-config when determining
+                            wxWidgets configuration; defaults to "wx-config"]],
+[
+    if test "$withval" != "yes" -a "$withval" != ""; then
+        WXCONFIG=$withval
+    fi
+])
+
+wxversion=0
+
+AC_DEFUN([WXTEST],
+[
+	AC_REQUIRE([AC_PROG_AWK])
+	AC_MSG_CHECKING([wxWidgets version])
+	if wxversion=`$WXCONFIG --version`; then
+		AC_MSG_RESULT([$wxversion])
+	else
+		AC_MSG_RESULT([not found])
+		AC_MSG_ERROR([wxWidgets is required. Try --with-wx-config.])
+	fi])
+
+# Call WXTEST func
+WXTEST
+
+# Verify minimus requires
+vers=`echo $wxversion | $AWK 'BEGIN { FS = "."; } { printf "% d", ($1 * 1000 + $2) * 1000 + $3;}'`
+if test -n "$vers" && test "$vers" -ge 2003003; then
+	WX_CPPFLAGS="`$WXCONFIG --cppflags`"
+	WX_CXXFLAGS="`$WXCONFIG --cxxflags | sed -e 's/-fno-exceptions//'`"
+	WX_LIBS="`$WXCONFIG --libs`"
+else
+	AC_MSG_ERROR([wxWidgets 2.3.3 or newer is required])
+fi
+
+LAUNCHER_CXXFLAGS="$CXXFLAGS $WX_CPPFLAGS"
+LAUNCHER_CPPFLAGS="$CPPFLAGS $WX_CPPFLAGS"
+LAUNCHER_LDFLAGS=${LDFLAGS}
+LAUNCHER_LIBS="$LIBS $WX_LIBS"
+
+AC_SUBST([LAUNCHER_CXXFLAGS])
+AC_SUBST([LAUNCHER_CPPFLAGS])
+AC_SUBST([LAUNCHER_LDFLAGS])
+AC_SUBST([LAUNCHER_LIBS])
+
+fi
 
 dnl
 dnl  **** Check wehter we need to use libm ****
@@ -628,4 +683,5 @@ AC_OUTPUT([
 	utils/glbsp/Makefile
 	utils/glvis/Makefile
 	utils/vcc/Makefile
+	utils/vlaunch/Makefile
 	utils/vlumpy/Makefile])
