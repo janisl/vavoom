@@ -52,15 +52,10 @@ bool TryPickup(EntityEx Toucher)
 	{
 		Player(Toucher.Player).Inventory[ItemType].Amount = Player(Toucher.Player).Inventory[ItemType].MaxAmount;
 	}
-	while (!Player(Toucher.Player).Inventory[Player(Toucher.Player).InvCursor] &&
-		Player(Toucher.Player).InvCursor < StrifeDefs::NUMINVITEMS - 1)
+	if (!Player(Toucher.Player).InvCursor)
 	{
-		Player(Toucher.Player).InvCursor++;
-	}
-	while (!Player(Toucher.Player).Inventory[Player(Toucher.Player).InvCursor] &&
-		Player(Toucher.Player).InvCursor > 0)
-	{
-		Player(Toucher.Player).InvCursor--;
+		Player(Toucher.Player).InvCursor = Player(Toucher.Player).Inventory[ItemType];
+		Player(Toucher.Player).InvFirst = Player(Toucher.Player).Inventory[ItemType];
 	}
 	Player(Toucher.Player).AdjustInvFirst();
 	GoAwayAndDie();

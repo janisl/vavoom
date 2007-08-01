@@ -179,14 +179,14 @@ void AutoUseHealth(int saveHealth)
 		{
 			// Use medical kits
 			Health += 25;
-			Player(Player).RemoveInvItem(i, 1);
+			Player(Player).RemoveInvItem(Player(Player).Inventory[i], 1);
 			Player.MO.PlaySound('misc/invuse', CHAN_BODY);
 		}
 		else if (Player(Player).Inventory[i] && i == StrifeDefs::ITEM_MedPatch
 			&& Player(Player).Inventory[i].Amount * 10 >= saveHealth)
 		{
 			Health += 10;
-			Player(Player).RemoveInvItem(i, 1);
+			Player(Player).RemoveInvItem(Player(Player).Inventory[i], 1);
 			Player.MO.PlaySound('misc/invuse', CHAN_BODY);
 		}
 	}
@@ -210,13 +210,13 @@ void AutoUseArmor()
 		{
 			// Use metal armor
 			Player(Player).GiveArmor(2);
-			Player(Player).RemoveInvItem(i, 1);
+			Player(Player).RemoveInvItem(Player(Player).Inventory[i], 1);
 		}
 		else if (Player(Player).Inventory[i] && i == StrifeDefs::ITEM_LeatherArmor)
 		{
 			// Use leather armor
 			Player(Player).GiveArmor(1);
-			Player(Player).RemoveInvItem(i, 1);
+			Player(Player).RemoveInvItem(Player(Player).Inventory[i], 1);
 		}
 	}
 }

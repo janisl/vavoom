@@ -64,8 +64,8 @@ int Stamina;
 
 int Keys;
 
-int InvFirst;
-int InvCursor;
+Inventory InvFirst;
+Inventory InvCursor;
 InventoryItem Inventory[StrifeDefs::NUMINVITEMS];
 
 // Power ups. invinc and invis are timers.
@@ -639,27 +639,35 @@ bool GiveItem(int item)
 //
 //==========================================================================
 
-bool RemoveInvItem(int item, int amount)
+bool RemoveInvItem(Inventory Item, int amount)
 {
-	if (!Inventory[item] || Inventory[item].Amount < amount)
+	if (!Item || Item.Amount < amount)
 	{
 		return false;
 	}
-	Inventory[item].Amount -= amount;
-	if (!Inventory[item].Amount)
+	Item.Amount -= amount;
+	if (!Item.Amount)
 	{
-		Inventory[item].Destroy();
-		Inventory[item] = none;
+		if (Item == InvCursor)
+		{
+			InvCursor = Item.NextInv();
+			if (!InvCursor)
+			{
+				InvCursor = Item.PrevInv();
+			}
+		}
+		if (Item == InvFirst)
+		{
+			InvFirst = Item.NextInv();
+			if (!InvFirst)
+			{
+				InvFirst = Item.PrevInv();
+			}
+		}
+		Inventory[InventoryItem(Item).ItemType] = none;
+		Item.Destroy();
+		AdjustInvFirst();
 	}
-	while (!Inventory[InvCursor] && InvCursor < StrifeDefs::NUMINVITEMS - 1)
-	{
-		InvCursor++;
-	}
-	while (!Inventory[InvCursor] && InvCursor > 0)
-	{
-		InvCursor--;
-	}
-	AdjustInvFirst();
 	return true;
 }
 
@@ -671,18 +679,14 @@ bool RemoveInvItem(int item, int amount)
 
 void InvRight()
 {
-	if (InvCursor < StrifeDefs::NUMINVITEMS - 1)
+	if (InvCursor)
 	{
-		InvCursor++;
-		while (!Inventory[InvCursor] && InvCursor < StrifeDefs::NUMINVITEMS - 1)
+		Inventory Next = InvCursor.NextInv();
+		if (Next)
 		{
-			InvCursor++;
+			InvCursor = Next;
+			AdjustInvFirst();
 		}
-		while (!Inventory[InvCursor] && InvCursor > 0)
-		{
-			InvCursor--;
-		}
-		AdjustInvFirst();
 	}
 }
 
@@ -694,18 +698,14 @@ void InvRight()
 
 void InvLeft()
 {
-	if (InvCursor > 0)
+	if (InvCursor)
 	{
-		InvCursor--;
-		while (!Inventory[InvCursor] && InvCursor > 0)
+		Inventory Prev = InvCursor.PrevInv();
+		if (Prev)
 		{
-			InvCursor--;
+			InvCursor = Prev;
+			AdjustInvFirst();
 		}
-		while (!Inventory[InvCursor] && InvCursor < StrifeDefs::NUMINVITEMS - 1)
-		{
-			InvCursor++;
-		}
-		AdjustInvFirst();
 	}
 }
 
@@ -720,12 +720,12 @@ void InvUse()
 	bool		itemUsed;
 	EntityEx	A;
 
-	if (!Inventory[InvCursor])
+	if (!InvCursor)
 	{
 		return;
 	}
 	itemUsed = false;
-	switch (InvCursor)
+	switch (InventoryItem(InvCursor).ItemType)
 	{
 	case StrifeDefs::ITEM_MedPatch:
 		itemUsed = GiveBody(10);
@@ -794,48 +794,40 @@ void InvUse()
 
 void AdjustInvFirst()
 {
-	int FirstIdx;
-	int CursIdx;
-	int Idx;
-	int i;
+	Inventory Item;
 
-	if (InvFirst > InvCursor)
+print("I %p %p", InvCursor, InvFirst);
+	if (!InvCursor)
 	{
-		InvFirst = InvCursor;
-	}
-	if (!Inventory[InvCursor])
-	{
+		InvFirst = none;
 		return;
 	}
-	FirstIdx = 0;
-	CursIdx = 0;
-	Idx = 0;
-	for (i = 0; i < StrifeDefs::NUMINVITEMS; i++)
+
+	//	Count how many items are following the current one, also make sure
+	// that first is not after this one.
+	int NumFollowing = 0;
+	for (Item = InvCursor.NextInv(); Item; Item = Item.NextInv())
 	{
-		if (i == InvFirst)
-			FirstIdx = Idx;
-		if (i == InvCursor)
-			CursIdx = Idx;
-		if (Inventory[i])
-			Idx++;
-	}
-	while (FirstIdx - CursIdx > 5)
-	{
-		InvFirst--;
-		FirstIdx--;
-		while (!Inventory[InvFirst] && InvFirst > 0)
+		NumFollowing++;
+		if (InvFirst == Item)
 		{
-			InvFirst--;
+			InvFirst = InvCursor;
 		}
 	}
-	while (FirstIdx - CursIdx < -5)
+	int FirstOffs = 0;
+	for (Item = InvCursor; Item && Item != InvFirst; Item = Item.PrevInv())
 	{
-		InvFirst++;
-		FirstIdx++;
-		while (!Inventory[InvFirst] && InvFirst < StrifeDefs::NUMINVITEMS - 1)
-		{
-			InvFirst++;
-		}
+		FirstOffs++;
+	}
+	while (FirstOffs > 5)
+	{
+		InvFirst = InvFirst.NextInv();
+		FirstOffs--;
+	}
+	while (NumFollowing + FirstOffs < 5 && InvFirst.PrevInv())
+	{
+		InvFirst = InvFirst.PrevInv();
+		FirstOffs++;
 	}
 }
 
@@ -852,27 +844,27 @@ EntityEx InvThrow()
 	EntityEx		Item;
 	TVec			Dir;
 
-	if (!Inventory[InvCursor])
+	if (!InvCursor)
 	{
 		return none;
 	}
 
-	ItemType = MainGameInfo(Level.Game).InvItemCID[InvCursor];
+	ItemType = MainGameInfo(Level.Game).InvItemCID[InventoryItem(InvCursor).ItemType];
 	Amount = 1;
 	//	Gold is dropped with maximal throwable amount.
-	if (InvCursor == StrifeDefs::ITEM_Coin)
+	if (InventoryItem(InvCursor).ItemType == StrifeDefs::ITEM_Coin)
 	{
-		if (Inventory[InvCursor].Amount >= 50)
+		if (InvCursor.Amount >= 50)
 		{
 			ItemType = Gold50;
 			Amount = 50;
 		}
-		else if (Inventory[InvCursor].Amount >= 25)
+		else if (InvCursor.Amount >= 25)
 		{
 			ItemType = Gold25;
 			Amount = 25;
 		}
-		else if (Inventory[InvCursor].Amount >= 10)
+		else if (InvCursor.Amount >= 10)
 		{
 			ItemType = Gold10;
 			Amount = 10;

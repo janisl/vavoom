@@ -249,9 +249,9 @@ void SB_DrawTallNum(int x, int y, int num, float alpha)
 
 void SB_DrawMainBar()
 {
-	int Idx;
 	int i;
 	int NumKeys;
+	Inventory Item;
 
 	// draw something in the blank spaces
 	R_FillRectWithFlat(0, 448, 640, 32, 'f_pave01');
@@ -313,19 +313,16 @@ void SB_DrawMainBar()
 		SB_DrawSmallNum(BAR_X + 24, BAR_Y + 192, cl.ArmorPoints);
 	}
 
-	Idx = 0;
-	for (i = cl.InvFirst; Idx < 6 && i < StrifeDefs::NUMINVITEMS; i++)
+	Item = cl.InvFirst;
+	for (i = 0; Item && i < 6; i++)
 	{
-		if (cl.Inventory[i])
+		if (cl.InvCursor == Item)
 		{
-			if (cl.InvCursor == i)
-			{
-				R_DrawPic(BAR_X + 42 + 35 * Idx, BAR_Y + 180, pic_invcurs);
-			}
-			R_DrawPic(BAR_X + 48 + Idx * 35, BAR_Y + 182, pic_inv[i]);
-			SB_DrawSmallNum(BAR_X + 76 + Idx * 35, BAR_Y + 192, cl.Inventory[i].Amount);
-			Idx++;
+			R_DrawPic(BAR_X + 42 + 35 * i, BAR_Y + 180, pic_invcurs);
 		}
+		R_DrawPic(BAR_X + 48 + i * 35, BAR_Y + 182, pic_inv[InventoryItem(Item).ItemType]);
+		SB_DrawSmallNum(BAR_X + 76 + i * 35, BAR_Y + 192, Item.Amount);
+		Item = Item.NextInv();
 	}
 
 	if (EntityEx(cl.MO).FindInventory(Sigil))
@@ -445,9 +442,9 @@ void DrawAmmo(class<Inventory> Type, int Y)
 
 void SB_DrawFullscreenStats()
 {
-	int Idx;
 	int i;
 	int NumKeys;
+	Inventory Item;
 
 	// health
 	SB_DrawTallNum(70, 450, cl.Health, 0.7);
@@ -476,19 +473,16 @@ void SB_DrawFullscreenStats()
 		R_DrawPic2(575, 450, R_RegisterPic(cl.ReadyWeapon.Ammo1.IconName), 0.7);
 	}
 
-	Idx = 0;
-	for (i = cl.InvFirst; Idx < 6 && i < StrifeDefs::NUMINVITEMS; i++)
+	Item = cl.InvFirst;
+	for (i = 0; i < 6 && Item; i++)
 	{
-		if (cl.Inventory[i])
+		if (cl.InvCursor == Item)
 		{
-			if (cl.InvCursor == i)
-			{
-				R_DrawPic2(225 + 35 * Idx, 450, pic_invcurs, 0.6);
-			}
-			R_DrawPic(231 + Idx * 35, 452, pic_inv[i]);
-			SB_DrawSmallNum(259 + Idx * 35, 462, cl.Inventory[i].Amount);
-			Idx++;
+			R_DrawPic2(225 + 35 * i, 450, pic_invcurs, 0.6);
 		}
+		R_DrawPic(231 + i * 35, 452, pic_inv[InventoryItem(Item).ItemType]);
+		SB_DrawSmallNum(259 + i * 35, 462, Item.Amount);
+		Item = Item.NextInv();
 	}
 
 	if (EntityEx(cl.MO).FindInventory(Sigil))
