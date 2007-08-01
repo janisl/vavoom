@@ -2724,22 +2724,6 @@ void PlayerRemoveArtifact(int slot)
 
 	if (!(--Inventory[slot].Amount))
 	{
-		if (InvPtr == Inventory[slot])
-		{
-			InvPtr = Inventory[slot].PrevInv();
-			if (!InvPtr)
-			{
-				InvPtr = Inventory[slot].NextInv();
-			}
-		}
-		if (InvFirst == Inventory[slot])
-		{
-			InvFirst = Inventory[slot].PrevInv();
-			if (!InvFirst)
-			{
-				InvFirst = Inventory[slot].NextInv();
-			}
-		}
 		// Used last of a type - compact the artifact list
 		Inventory[slot].Destroy();
 		for (i = slot + 1; i < InventorySlotNum; i++)
@@ -2747,7 +2731,6 @@ void PlayerRemoveArtifact(int slot)
 			Inventory[i - 1] = Inventory[i];
 		}
 		InventorySlotNum--;
-		AdjustInvFirst();
 	}
 }
 

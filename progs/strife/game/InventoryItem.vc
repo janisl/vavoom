@@ -28,24 +28,6 @@ class InventoryItem : Inventory
 
 int ItemType;
 
-//==========================================================================
-//
-//	CreateCopy
-//
-//==========================================================================
-
-Inventory CreateCopy(EntityEx Toucher)
-{
-	Inventory Item = ::CreateCopy(Toucher);
-	Player(Toucher.Player).Inventory[ItemType] = InventoryItem(Item);
-	if (!Player(Toucher.Player).InvCursor)
-	{
-		Player(Toucher.Player).InvCursor = Item;
-		Player(Toucher.Player).InvFirst = Item;
-	}
-	return Item;
-}
-
 defaultproperties
 {
 	bFloorClip = true;

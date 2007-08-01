@@ -38,6 +38,59 @@ bool bSafeToRemove;
 
 //==========================================================================
 //
+//	AddInventory
+//
+//==========================================================================
+
+void AddInventory(Inventory Item)
+{
+	::AddInventory(Item);
+	if (Item.bInvBar)
+	{
+		Player(Player).Inventory[Player(Player).InventorySlotNum] =
+			Artifact(Item);
+		Player(Player).InventorySlotNum++;
+		if (!Player(Player).InvPtr)
+		{
+			Player(Player).InvPtr = Item;
+			Player(Player).InvFirst = Item;
+		}
+	}
+}
+
+//==========================================================================
+//
+//	RemoveInventory
+//
+//==========================================================================
+
+void RemoveInventory(Inventory Item)
+{
+	if (Player(Player).InvPtr == Item)
+	{
+		Player(Player).InvPtr = Item.PrevInv();
+		if (!Player(Player).InvPtr)
+		{
+			Player(Player).InvPtr = Item.NextInv();
+		}
+	}
+	if (Player(Player).InvFirst == Item)
+	{
+		Player(Player).InvFirst = Item.PrevInv();
+		if (!Player(Player).InvFirst)
+		{
+			Player(Player).InvFirst = Item.NextInv();
+		}
+	}
+	::RemoveInventory(Item);
+	if (Item.bInvBar)
+	{
+		Player(Player).AdjustInvFirst();
+	}
+}
+
+//==========================================================================
+//
 //	A_AddPlayerCorpse
 //
 //==========================================================================

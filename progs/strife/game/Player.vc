@@ -648,25 +648,8 @@ bool RemoveInvItem(Inventory Item, int amount)
 	Item.Amount -= amount;
 	if (!Item.Amount)
 	{
-		if (Item == InvCursor)
-		{
-			InvCursor = Item.NextInv();
-			if (!InvCursor)
-			{
-				InvCursor = Item.PrevInv();
-			}
-		}
-		if (Item == InvFirst)
-		{
-			InvFirst = Item.NextInv();
-			if (!InvFirst)
-			{
-				InvFirst = Item.PrevInv();
-			}
-		}
 		Inventory[InventoryItem(Item).ItemType] = none;
 		Item.Destroy();
-		AdjustInvFirst();
 	}
 	return true;
 }

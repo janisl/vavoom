@@ -36,6 +36,58 @@ array<InitInvInfo>		InitialInventory;
 
 //==========================================================================
 //
+//	AddInventory
+//
+//==========================================================================
+
+void AddInventory(Inventory Item)
+{
+	::AddInventory(Item);
+	if (Item.bInvBar)
+	{
+		Player(Player).Inventory[InventoryItem(Item).ItemType] =
+			InventoryItem(Item);
+		if (!Player(Player).InvCursor)
+		{
+			Player(Player).InvCursor = Item;
+			Player(Player).InvFirst = Item;
+		}
+	}
+}
+
+//==========================================================================
+//
+//	RemoveInventory
+//
+//==========================================================================
+
+void RemoveInventory(Inventory Item)
+{
+	if (Item == Player(Player).InvCursor)
+	{
+		Player(Player).InvCursor = Item.NextInv();
+		if (!Player(Player).InvCursor)
+		{
+			Player(Player).InvCursor = Item.PrevInv();
+		}
+	}
+	if (Item == Player(Player).InvFirst)
+	{
+		Player(Player).InvFirst = Item.NextInv();
+		if (!Player(Player).InvFirst)
+		{
+			Player(Player).InvFirst = Item.PrevInv();
+		}
+	}
+	::RemoveInventory(Item);
+	if (Item.bInvBar)
+	{
+		Player(Player).AdjustInvFirst();
+	}
+}
+
+//==========================================================================
+//
 //  A_PlayerScream
 //
 //  Player death sound

@@ -28,25 +28,6 @@ class Artifact : Inventory
 
 int ArtifactType;
 
-//==========================================================================
-//
-//	CreateCopy
-//
-//==========================================================================
-
-Inventory CreateCopy(EntityEx Toucher)
-{
-	Inventory Item = ::CreateCopy(Toucher);
-	Player(Toucher.Player).Inventory[Player(Toucher.Player).InventorySlotNum] = Artifact(Item);
-	Player(Toucher.Player).InventorySlotNum++;
-	if (!Player(Toucher.Player).InvPtr)
-	{
-		Player(Toucher.Player).InvPtr = Item;
-		Player(Toucher.Player).InvFirst = Item;
-	}
-	return Item;
-}
-
 defaultproperties
 {
 	Height = 32.0;
