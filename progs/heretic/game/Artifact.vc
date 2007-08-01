@@ -50,6 +50,11 @@ bool TryPickup(EntityEx Toucher)
 		Player(Toucher.Player).Inventory[i].AttachToOwner(Toucher);
 		Player(Toucher.Player).Inventory[i].Amount = 1;
 		Player(Toucher.Player).InventorySlotNum++;
+		if (!Player(Toucher.Player).InvPtr)
+		{
+			Player(Toucher.Player).InvPtr = Player(Toucher.Player).Inventory[i];
+			Player(Toucher.Player).InvFirst = Player(Toucher.Player).Inventory[i];
+		}
 	}
 	else
 	{

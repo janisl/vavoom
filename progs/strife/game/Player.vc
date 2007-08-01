@@ -796,7 +796,6 @@ void AdjustInvFirst()
 {
 	Inventory Item;
 
-print("I %p %p", InvCursor, InvFirst);
 	if (!InvCursor)
 	{
 		InvFirst = none;

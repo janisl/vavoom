@@ -333,10 +333,10 @@ void SB_DrawMainBar()
 		{
 			R_DrawPic(BAR_X + 182, BAR_Y + 3, pic_artiflash[cl.ArtifactFlash - 1]);
 		}
-		else if (cl.Inventory[cl.InvPtr])
+		else if (cl.InvPtr)
 		{
-			R_DrawPic(BAR_X + 179, BAR_Y + 2, pic_arti[cl.Inventory[cl.InvPtr].ArtifactType - 1]);
-			SB_DrawINumber(BAR_X + 201, BAR_Y + 24, cl.Inventory[cl.InvPtr].Amount);
+			R_DrawPic(BAR_X + 179, BAR_Y + 2, pic_arti[Artifact(cl.InvPtr).ArtifactType - 1]);
+			SB_DrawINumber(BAR_X + 201, BAR_Y + 24, cl.InvPtr.Amount);
 		}
 
 		//  Keys
@@ -358,26 +358,25 @@ void SB_DrawMainBar()
 	}
 	else
 	{
-		int x;
-
 		//  Inventory
 		R_DrawPic(BAR_X + 34, BAR_Y + 2, pic_invbar);
-		x = cl.InvPtr - cl.InvCurPos;
-		for (i = 0; i < 7; i++)
+		Inventory Item = cl.InvFirst;
+		for (i = 0; Item && i < 7; i++)
 		{
-			if (cl.InventorySlotNum > x + i && cl.Inventory[x + i])
+			R_DrawPic(BAR_X + 50 + i * 31, BAR_Y + 2,
+				pic_arti[Artifact(Item).ArtifactType - 1]);
+			SB_DrawINumber(BAR_X + 69 + i * 31, BAR_Y + 24, Item.Amount);
+			if (Item == cl.InvPtr)
 			{
-				R_DrawPic(BAR_X + 50 + i * 31, BAR_Y + 2,
-					pic_arti[cl.Inventory[x + i].ArtifactType - 1]);
-				SB_DrawINumber(BAR_X + 69 + i * 31, BAR_Y + 24, cl.Inventory[x + i].Amount);
+				R_DrawPic(BAR_X + 50 + i * 31, BAR_Y + 31, pic_selectbox);
 			}
+			Item = Item.NextInv();
 		}
-		R_DrawPic(BAR_X + 50 + cl.InvCurPos * 31, BAR_Y + 31, pic_selectbox);
-		if (x != 0)
+		if (cl.InvFirst && cl.InvFirst.PrevInv())
 		{
 			R_DrawPic(BAR_X + 38, BAR_Y + 1, pic_invgeml[!(ClGame.GLevel.TicTime & 4) ? 0 : 1]);
 		}
-		if ((cl.InventorySlotNum - x > 7))
+		if (Item)
 		{
 			R_DrawPic(BAR_X + 269, BAR_Y + 1, pic_invgemr[!(ClGame.GLevel.TicTime & 4) ? 0 : 1]);
 		}
@@ -393,7 +392,6 @@ void SB_DrawMainBar()
 void SB_DrawFullscreenStats()
 {
 	int i;
-	int x;
 
 	//  Health
 	SB_DrawNumber12(50, 450, cl.Health);
@@ -433,34 +431,37 @@ void SB_DrawFullscreenStats()
 	if (cl.SBFlags & HereticDefs::SBF_INVENTORY_OPEN)
 	{
 		//  Inventory
-		x = cl.InvPtr - cl.InvCurPos;
+		Inventory Item = cl.InvFirst;
 		for (i = 0; i < 7; i++)
 		{
 			R_DrawPic2(210 + i * 31, 448, pic_artibox, 0.6);
-			if (cl.InventorySlotNum > x + i &&
-				cl.Inventory[x + i])
+			if (Item)
 			{
 				R_DrawPic(210 + i * 31, 448,
-					pic_arti[cl.Inventory[x + i].ArtifactType - 1]);
-				SB_DrawINumber(229 + i * 31, 470, cl.Inventory[x + i].Amount);
+					pic_arti[Artifact(Item).ArtifactType - 1]);
+				SB_DrawINumber(229 + i * 31, 470, Item.Amount);
+				if (Item == cl.InvPtr)
+				{
+					R_DrawPic(210 + i * 31, 477, pic_selectbox);
+				}
+				Item = Item.NextInv();
 			}
 		}
-		R_DrawPic(210 + cl.InvCurPos * 31, 477, pic_selectbox);
-		if (x != 0)
+		if (cl.InvFirst && cl.InvFirst.PrevInv())
 		{
 			R_DrawPic(198, 447, pic_invgeml[!(ClGame.GLevel.TicTime & 4) ? 0 : 1]);
 		}
-		if (cl.InventorySlotNum - x > 7)
+		if (Item)
 		{
 			R_DrawPic(429, 447, pic_invgemr[!(ClGame.GLevel.TicTime & 4) ? 0 : 1]);
 		}
 	}
-	else if (cl.Inventory[cl.InvPtr])
+	else if (cl.InvPtr)
 	{
 		//  Ready artifact
 		R_DrawPic2(546, 440, pic_artibox, 0.6);
-		R_DrawPic(546, 440, pic_arti[cl.Inventory[cl.InvPtr].ArtifactType - 1]);
-		SB_DrawINumber(567, 462, cl.Inventory[cl.InvPtr].Amount);
+		R_DrawPic(546, 440, pic_arti[Artifact(cl.InvPtr).ArtifactType - 1]);
+		SB_DrawINumber(567, 462, cl.InvPtr.Amount);
 	}
 }
 

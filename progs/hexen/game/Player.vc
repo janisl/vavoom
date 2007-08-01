@@ -60,8 +60,8 @@ float Powers[NUMPOWERS];
 
 float InventoryTime;
 int ArtifactFlash;
-int InvPtr;
-int InvCurPos;
+Inventory InvPtr;
+Inventory InvFirst;
 int InventorySlotNum;
 Artifact Inventory[HexenDefs::NUMARTIFACTS];
 
@@ -91,7 +91,7 @@ replication
 {
 	reliable if (!bIsClient)
 		SBFlags, TotalArmorPoints, InventoryTime, ArtifactFlash,
-		InvPtr, InvCurPos, InventorySlotNum, ArmorPerc, Inventory;
+		InvPtr, InvFirst, InventorySlotNum, ArmorPerc, Inventory;
 
 	unreliable if (!bIsClient)
 		ClientBlood, ClientExplosion;
@@ -898,18 +898,11 @@ void InventoryLeft()
 		return;
 	}
 	InventoryTime = 5.0;
-	InvPtr--;
-	if (InvPtr < 0)
+	Inventory Prev = InvPtr.PrevInv();
+	if (Prev)
 	{
-		InvPtr = 0;
-	}
-	else
-	{
-		InvCurPos--;
-		if (InvCurPos < 0)
-		{
-			InvCurPos = 0;
-		}
+		InvPtr = Prev;
+		AdjustInvFirst();
 	}
 }
 
@@ -927,20 +920,11 @@ void InventoryRight()
 		return;
 	}
 	InventoryTime = 5.0;
-	InvPtr++;
-	if (InvPtr >= InventorySlotNum)
+	Inventory Next = InvPtr.NextInv();
+	if (Next)
 	{
-		InvPtr--;
-		if (InvPtr < 0)
-			InvPtr = 0;
-	}
-	else
-	{
-		InvCurPos++;
-		if (InvCurPos > 6)
-		{
-			InvCurPos = 6;
-		}
+		InvPtr = Next;
+		AdjustInvFirst();
 	}
 }
 
@@ -960,7 +944,7 @@ int InventoryUse()
 	}
 	else
 	{
-		return Inventory[InvPtr] ? Inventory[InvPtr].ArtifactType : 0;
+		return InvPtr ? Artifact(InvPtr).ArtifactType : 0;
 	}
 }
 
@@ -984,6 +968,50 @@ void InventoryTick(float deltaTime)
 	if (ArtifactFlash)
 	{
 		ArtifactFlash--;
+	}
+}
+
+//==========================================================================
+//
+//	AdjustInvFirst
+//
+//==========================================================================
+
+void AdjustInvFirst()
+{
+	Inventory Item;
+
+	if (!InvPtr)
+	{
+		InvFirst = none;
+		return;
+	}
+
+	//	Count how many items are following the current one, also make sure
+	// that first is not after this one.
+	int NumFollowing = 0;
+	for (Item = InvPtr.NextInv(); Item; Item = Item.NextInv())
+	{
+		NumFollowing++;
+		if (InvFirst == Item)
+		{
+			InvFirst = InvPtr;
+		}
+	}
+	int FirstOffs = 0;
+	for (Item = InvPtr; Item && Item != InvFirst; Item = Item.PrevInv())
+	{
+		FirstOffs++;
+	}
+	while (FirstOffs > 5)
+	{
+		InvFirst = InvFirst.NextInv();
+		FirstOffs--;
+	}
+	while (NumFollowing + FirstOffs < 5 && InvFirst.PrevInv())
+	{
+		InvFirst = InvFirst.PrevInv();
+		FirstOffs++;
 	}
 }
 
@@ -2074,8 +2102,8 @@ void DeathPlayerTick(float deltaTime)
 	if (Buttons & BT_USE)
 	{
 		WeaponCShift = 0;
-		InvPtr = 0;
-		InvCurPos = 0;
+		InvPtr = none;
+		InvFirst = none;
 		NewTorch = 0;
 		NewTorchDelta = 0;
 		PlayerState = PST_REBORN;
@@ -2667,27 +2695,21 @@ void PlayerUseArtifact(int arti)
 
 void PlayerNextArtifact()
 {
-	InvPtr--;
-	if (InvPtr < 6)
+	if (!InvPtr)
 	{
-		InvCurPos--;
-		if (InvCurPos < 0)
+		return;
+	}
+	Inventory NewPtr = InvPtr.PrevInv();
+	if (!NewPtr)
+	{
+		NewPtr = InvPtr;
+		while (NewPtr.NextInv())
 		{
-			InvCurPos = 0;
+			NewPtr = NewPtr.NextInv();
 		}
 	}
-	if (InvPtr < 0)
-	{
-		InvPtr = InventorySlotNum - 1;
-		if (InvPtr < 6)
-		{
-			InvCurPos = InvPtr;
-		}
-		else
-		{
-			InvCurPos = 6;
-		}
-	}
+	InvPtr = NewPtr;
+	AdjustInvFirst();
 }
 
 //==========================================================================
@@ -2702,6 +2724,22 @@ void PlayerRemoveArtifact(int slot)
 
 	if (!(--Inventory[slot].Amount))
 	{
+		if (InvPtr == Inventory[slot])
+		{
+			InvPtr = Inventory[slot].PrevInv();
+			if (!InvPtr)
+			{
+				InvPtr = Inventory[slot].NextInv();
+			}
+		}
+		if (InvFirst == Inventory[slot])
+		{
+			InvFirst = Inventory[slot].PrevInv();
+			if (!InvFirst)
+			{
+				InvFirst = Inventory[slot].NextInv();
+			}
+		}
 		// Used last of a type - compact the artifact list
 		Inventory[slot].Destroy();
 		for (i = slot + 1; i < InventorySlotNum; i++)
@@ -2709,24 +2747,7 @@ void PlayerRemoveArtifact(int slot)
 			Inventory[i - 1] = Inventory[i];
 		}
 		InventorySlotNum--;
-		// Set position markers and get next ReadyArtifact
-		InvPtr--;
-		if (InvPtr < 6)
-		{
-			InvCurPos--;
-			if (InvCurPos < 0)
-			{
-				InvCurPos = 0;
-			}
-		}
-		if (InvPtr >= InventorySlotNum)
-		{
-			InvPtr = InventorySlotNum - 1;
-		}
-		if (InvPtr < 0)
-		{
-			InvPtr = 0;
-		}
+		AdjustInvFirst();
 	}
 }
 
