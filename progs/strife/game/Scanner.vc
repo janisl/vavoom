@@ -38,6 +38,7 @@ defaultproperties
 	PickupMessage = "$txt_scanner";
 	Mass = 1.0;
 	MaxAmount = 1;
+	IconName = 'i_pmup';
 	IdleState = S_SCANNER_1;
 	ItemType = StrifeDefs::ITEM_Scanner;
 }

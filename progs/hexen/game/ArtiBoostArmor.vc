@@ -42,6 +42,7 @@ __states__
 defaultproperties
 {
 	ArtifactType = HexenDefs::arti_boostarmor;
-	IdleState = S_ARTI_ARMOR1;
 	PickupMessage = "$txt_artiboostarmor";
+	IconName = 'artibrac';
+	IdleState = S_ARTI_ARMOR1;
 }

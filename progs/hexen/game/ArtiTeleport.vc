@@ -38,6 +38,7 @@ __states__
 defaultproperties
 {
 	ArtifactType = HexenDefs::arti_teleport;
-	IdleState = S_ARTI_ATLP1;
 	PickupMessage = "$txt_artiteleport";
+	IconName = 'artiatlp';
+	IdleState = S_ARTI_ATLP1;
 }

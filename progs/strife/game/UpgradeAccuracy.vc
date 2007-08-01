@@ -33,11 +33,11 @@ class UpgradeAccuracy : DummyStrifeItem;
 
 bool TryPickup(EntityEx Toucher)
 {
-	if (!Toucher.Player || Player(Toucher.Player).Accuracy >= 100)
+	if (!Toucher.Player || Player(Toucher.Player).Accuracy >= MaxAmount)
 	{
 		return false;
 	}
-	Player(Toucher.Player).Accuracy += 10;
+	Player(Toucher.Player).Accuracy += Amount;
 	GoAwayAndDie();
 	return true;
 }
@@ -45,5 +45,6 @@ bool TryPickup(EntityEx Toucher)
 defaultproperties
 {
 	ConversationID = 307;
-	IdleState = S_TOKENS;
+	Amount = 10;
+	MaxAmount = 100;
 }

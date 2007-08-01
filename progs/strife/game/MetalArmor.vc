@@ -38,6 +38,7 @@ defaultproperties
 	PickupMessage = "$txt_metalarmor";
 	Mass = 3.0;
 	MaxAmount = 3;
+	IconName = 'i_arm1';
 	IdleState = S_METAL_ARMOR;
 	ItemType = StrifeDefs::ITEM_MetalArmor;
 }

@@ -35,6 +35,7 @@ __states__
 defaultproperties
 {
 	ArtifactType = HexenDefs::arti_puzzskull;
-	IdleState = S_ARTIPUZZSKULL;
 	PickupMessage = "$txt_artipuzzskull";
+	IconName = 'artiskll';
+	IdleState = S_ARTIPUZZSKULL;
 }

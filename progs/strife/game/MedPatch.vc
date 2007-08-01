@@ -37,6 +37,7 @@ defaultproperties
 	PickupMessage = "$txt_medpatch";
 	Mass = 20.0;
 	MaxAmount = 20;
+	IconName = 'i_stmp';
 	IdleState = S_MED_PATCH;
 	ItemType = StrifeDefs::ITEM_MedPatch;
 }

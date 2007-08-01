@@ -41,6 +41,7 @@ defaultproperties
 	PickupMessage = "$txt_shadowarmor";
 	Mass = 2.0;
 	MaxAmount = 2;
+	IconName = 'i_shd1';
 	IdleState = S_SHADOW_ARMOR1;
 	ItemType = StrifeDefs::ITEM_ShadowArmor;
 }

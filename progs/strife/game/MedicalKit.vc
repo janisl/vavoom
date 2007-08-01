@@ -37,6 +37,7 @@ defaultproperties
 	PickupMessage = "$txt_medicalkit";
 	Mass = 15.0;
 	MaxAmount = 15;
+	IconName = 'i_mdkt';
 	IdleState = S_MEDICAL_KIT;
 	ItemType = StrifeDefs::ITEM_MedicalKit;
 }

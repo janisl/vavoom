@@ -35,6 +35,7 @@ __states__
 defaultproperties
 {
 	ArtifactType = HexenDefs::arti_boostmana;
-	IdleState = S_ARTI_MANA;
 	PickupMessage = "$txt_artiboostmana";
+	IconName = 'artibman';
+	IdleState = S_ARTI_MANA;
 }

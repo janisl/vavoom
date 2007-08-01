@@ -125,6 +125,7 @@ defaultproperties
 	Height = 8.0;
 	Mass = 3.0;
 	MaxAmount = 1;
+	IconName = 'i_beac';
 	bDropped = true;
 	IdleState = S_BEACON;
 	SeeState = S_BEACON_1;

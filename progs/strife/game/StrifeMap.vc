@@ -38,6 +38,7 @@ defaultproperties
 	ConversationID = 164;
 	PickupMessage = "$txt_strifemap";
 	MaxAmount = 1;
+	IconName = 'i_pmup';//"I_PMAP', - pic doesn't exist.
 	IdleState = S_MAP_1;
 	ItemType = StrifeDefs::ITEM_Map;
 }

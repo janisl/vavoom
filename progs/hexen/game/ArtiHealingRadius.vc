@@ -49,6 +49,7 @@ __states__
 defaultproperties
 {
 	ArtifactType = HexenDefs::arti_healingradius;
-	IdleState = S_ARTI_HEALRAD1;
 	PickupMessage = "$txt_artihealingradius";
+	IconName = 'artihrad';
+	IdleState = S_ARTI_HEALRAD1;
 }

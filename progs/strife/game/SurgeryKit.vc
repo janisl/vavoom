@@ -38,6 +38,7 @@ defaultproperties
 	PickupMessage = "$txt_surgerykit";
 	Mass = 5.0;
 	MaxAmount = 5;
+	IconName = 'i_full';
 	IdleState = S_FULL_HEALTH;
 	ItemType = StrifeDefs::ITEM_SurgeryKit;
 }

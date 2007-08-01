@@ -41,6 +41,7 @@ __states__
 defaultproperties
 {
 	ArtifactType = HexenDefs::arti_puzzgear1;
-	IdleState = S_ARTIPUZZGEAR_1;
 	PickupMessage = "$txt_artipuzzgear";
+	IconName = 'artigear';
+	IdleState = S_ARTIPUZZGEAR_1;
 }

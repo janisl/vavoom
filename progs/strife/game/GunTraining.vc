@@ -35,6 +35,7 @@ defaultproperties
 	ConversationID = 310;
 	PickupMessage = "Accuracy";
 	MaxAmount = 100;
+	IconName = 'i_gunt';
 	IdleState = S_ACCURACY;
 	ItemType = StrifeDefs::ITEM_Accuracy;
 }

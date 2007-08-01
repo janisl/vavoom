@@ -45,7 +45,6 @@ int pic_invpbak2;
 int pic_pause;
 int pic_yellownum[11];
 int pic_graynum[11];
-int pic_inv[StrifeDefs::NUMINVITEMS];
 int pic_invcurs;
 int pic_crossbow;
 int pic_riffle;
@@ -94,31 +93,6 @@ void StartMap()
 	pic_yellownum[10] = R_RegisterPic('invfony%');
 	pic_graynum[10] = R_RegisterPic('invfong%');
 
-	pic_inv[0] = R_RegisterPic('i_stmp');
-	pic_inv[1] = R_RegisterPic('i_mdkt');
-	pic_inv[2] = R_RegisterPic('i_full');
-	pic_inv[3] = R_RegisterPic('i_xprk');
-	pic_inv[4] = R_RegisterPic('i_arm1');
-	pic_inv[5] = R_RegisterPic('i_arm2');
-	pic_inv[6] = R_RegisterPic('i_shd1');
-	pic_inv[7] = R_RegisterPic('i_mask');
-	pic_inv[8] = R_RegisterPic('i_unif');
-	pic_inv[9] = R_RegisterPic('i_ofic');
-	pic_inv[10] = R_RegisterPic('i_pmup');//"I_PMAP', - pic doesn't exist.
-	pic_inv[11] = R_RegisterPic('i_pmup');
-	pic_inv[12] = R_RegisterPic('i_beac');
-	pic_inv[13] = R_RegisterPic('i_targ');
-	pic_inv[14] = R_RegisterPic('i_coin');
-	pic_inv[15] = R_RegisterPic('i_ring');
-	pic_inv[16] = R_RegisterPic('i_relc');
-	pic_inv[17] = R_RegisterPic('i_ears');
-	pic_inv[18] = R_RegisterPic('i_bflm');
-	pic_inv[19] = R_RegisterPic('i_coup');
-	pic_inv[20] = R_RegisterPic('i_tokn');
-	pic_inv[21] = R_RegisterPic('i_tokn');
-	pic_inv[22] = R_RegisterPic('i_helt');
-	pic_inv[23] = R_RegisterPic('i_gunt');
-	pic_inv[24] = R_RegisterPic('i_otok');
 	pic_invcurs = R_RegisterPic('invcurs');
 
 	pic_key[0] = R_RegisterPic('i_fusl');
@@ -304,11 +278,11 @@ void SB_DrawMainBar()
 	{
 		if (cl.ArmorType == 2)
 		{
-			R_DrawPic(BAR_X + 8, BAR_Y + 175, pic_inv[StrifeDefs::ITEM_MetalArmor]);
+			R_DrawPic(BAR_X + 8, BAR_Y + 175, R_RegisterPic('i_arm1'));
 		}
 		else
 		{
-			R_DrawPic(BAR_X + 8, BAR_Y + 175, pic_inv[StrifeDefs::ITEM_LeatherArmor]);
+			R_DrawPic(BAR_X + 8, BAR_Y + 175, R_RegisterPic('i_arm2'));
 		}
 		SB_DrawSmallNum(BAR_X + 24, BAR_Y + 192, cl.ArmorPoints);
 	}
@@ -320,7 +294,8 @@ void SB_DrawMainBar()
 		{
 			R_DrawPic(BAR_X + 42 + 35 * i, BAR_Y + 180, pic_invcurs);
 		}
-		R_DrawPic(BAR_X + 48 + i * 35, BAR_Y + 182, pic_inv[InventoryItem(Item).ItemType]);
+		R_DrawPic(BAR_X + 48 + i * 35, BAR_Y + 182,
+			R_RegisterPic(Item.IconName));
 		SB_DrawSmallNum(BAR_X + 76 + i * 35, BAR_Y + 192, Item.Amount);
 		Item = Item.NextInv();
 	}
@@ -480,7 +455,7 @@ void SB_DrawFullscreenStats()
 		{
 			R_DrawPic2(225 + 35 * i, 450, pic_invcurs, 0.6);
 		}
-		R_DrawPic(231 + i * 35, 452, pic_inv[InventoryItem(Item).ItemType]);
+		R_DrawPic(231 + i * 35, 452, R_RegisterPic(Item.IconName));
 		SB_DrawSmallNum(259 + i * 35, 462, Item.Amount);
 		Item = Item.NextInv();
 	}

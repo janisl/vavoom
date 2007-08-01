@@ -37,6 +37,7 @@ __states__
 defaultproperties
 {
 	ArtifactType = HexenDefs::arti_health;
-	IdleState = S_ARTI_PTN2_1;
 	PickupMessage = "$txt_artihealth";
+	IconName = 'artiptn2';
+	IdleState = S_ARTI_PTN2_1;
 }

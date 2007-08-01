@@ -38,7 +38,8 @@ __states__
 defaultproperties
 {
 	ArtifactType = HexenDefs::arti_fly;
-	IdleState = S_ARTI_SOAR1;
 	PickupMessage = "$txt_artifly";
 	RespawnTime = 120.0 + 30.0 / 35.0;
+	IconName = 'artisoar';
+	IdleState = S_ARTI_SOAR1;
 }

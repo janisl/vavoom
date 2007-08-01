@@ -38,6 +38,7 @@ defaultproperties
 	PickupMessage = "$txt_leatherarmor";
 	Mass = 5.0;
 	MaxAmount = 5;
+	IconName = 'i_arm2';
 	IdleState = S_LEATHER_ARMOR;
 	ItemType = StrifeDefs::ITEM_LeatherArmor;
 }

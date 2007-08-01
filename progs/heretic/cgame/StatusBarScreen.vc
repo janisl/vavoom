@@ -59,7 +59,6 @@ int pic_ykey;
 int pic_gkey;
 int pic_bkey;
 int pic_artiflash[4];
-int pic_arti[10];
 int pic_artibox;
 int pic_invbar;
 int pic_selectbox;
@@ -127,16 +126,6 @@ void StartMap()
 	pic_artiflash[1] = R_RegisterPic('useartib');
 	pic_artiflash[2] = R_RegisterPic('useartic');
 	pic_artiflash[3] = R_RegisterPic('useartid');
-	pic_arti[0] = R_RegisterPic('artiinvu');	// invulnerability
-	pic_arti[1] = R_RegisterPic('artiinvs');	// invisibility
-	pic_arti[2] = R_RegisterPic('artiptn2');	// health
-	pic_arti[3] = R_RegisterPic('artisphl');	// superhealth
-	pic_arti[4] = R_RegisterPic('artipwbk');	// tomeofpower
-	pic_arti[5] = R_RegisterPic('artitrch');	// torch
-	pic_arti[6] = R_RegisterPic('artifbmb');	// firebomb
-	pic_arti[7] = R_RegisterPic('artieggc');	// egg
-	pic_arti[8] = R_RegisterPic('artisoar');	// fly
-	pic_arti[9] = R_RegisterPic('artiatlp');	// teleport
 	pic_artibox = R_RegisterPic('artibox');
 	pic_invbar = R_RegisterPic('invbar');
 	pic_selectbox = R_RegisterPic('selectbo');
@@ -331,11 +320,13 @@ void SB_DrawMainBar()
 		//  Ready artifact
 		if (cl.ArtifactFlash)
 		{
-			R_DrawPic(BAR_X + 182, BAR_Y + 3, pic_artiflash[cl.ArtifactFlash - 1]);
+			R_DrawPic(BAR_X + 182, BAR_Y + 3,
+				pic_artiflash[cl.ArtifactFlash - 1]);
 		}
 		else if (cl.InvPtr)
 		{
-			R_DrawPic(BAR_X + 179, BAR_Y + 2, pic_arti[Artifact(cl.InvPtr).ArtifactType - 1]);
+			R_DrawPic(BAR_X + 179, BAR_Y + 2,
+				R_RegisterPic(cl.InvPtr.IconName));
 			SB_DrawINumber(BAR_X + 201, BAR_Y + 24, cl.InvPtr.Amount);
 		}
 
@@ -364,7 +355,7 @@ void SB_DrawMainBar()
 		for (i = 0; Item && i < 7; i++)
 		{
 			R_DrawPic(BAR_X + 50 + i * 31, BAR_Y + 2,
-				pic_arti[Artifact(Item).ArtifactType - 1]);
+				R_RegisterPic(Item.IconName));
 			SB_DrawINumber(BAR_X + 69 + i * 31, BAR_Y + 24, Item.Amount);
 			if (Item == cl.InvPtr)
 			{
@@ -438,7 +429,7 @@ void SB_DrawFullscreenStats()
 			if (Item)
 			{
 				R_DrawPic(210 + i * 31, 448,
-					pic_arti[Artifact(Item).ArtifactType - 1]);
+					R_RegisterPic(Item.IconName));
 				SB_DrawINumber(229 + i * 31, 470, Item.Amount);
 				if (Item == cl.InvPtr)
 				{
@@ -460,7 +451,7 @@ void SB_DrawFullscreenStats()
 	{
 		//  Ready artifact
 		R_DrawPic2(546, 440, pic_artibox, 0.6);
-		R_DrawPic(546, 440, pic_arti[Artifact(cl.InvPtr).ArtifactType - 1]);
+		R_DrawPic(546, 440, R_RegisterPic(cl.InvPtr.IconName));
 		SB_DrawINumber(567, 462, cl.InvPtr.Amount);
 	}
 }

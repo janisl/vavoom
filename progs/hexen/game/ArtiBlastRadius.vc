@@ -42,6 +42,7 @@ __states__
 defaultproperties
 {
 	ArtifactType = HexenDefs::arti_blastradius;
-	IdleState = S_ARTI_BLAST1;
 	PickupMessage = "$txt_artiblastradius";
+	IconName = 'artiblst';
+	IdleState = S_ARTI_BLAST1;
 }

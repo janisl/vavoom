@@ -87,6 +87,7 @@ defaultproperties
 	Height = 8.0;
 	Mass = 10.0;
 	MaxAmount = 10;
+	IconName = 'i_xprk';
 	bSolid = true;
 	bShootable = true;
 	bInCombat = true;

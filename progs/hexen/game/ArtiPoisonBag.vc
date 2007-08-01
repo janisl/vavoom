@@ -35,6 +35,7 @@ __states__
 defaultproperties
 {
 	ArtifactType = HexenDefs::arti_poisonbag;
-	IdleState = S_ARTI_PSBG1;
 	PickupMessage = "$txt_artipoisonbag";
+	IconName = 'artipsbg';
+	IdleState = S_ARTI_PSBG1;
 }

@@ -37,6 +37,7 @@ defaultproperties
 	PickupMessage = "$txt_coin";
 	Mass = 99999.0;
 	MaxAmount = 0x7fffffff;
+	IconName = 'i_coin';
 	bDropped = true;
 	bNoDeathmatch = true;
 	IdleState = S_COIN;

@@ -42,6 +42,7 @@ __states__
 defaultproperties
 {
 	ArtifactType = HexenDefs::arti_speed;
-	IdleState = S_ARTI_BOOTS1;
 	PickupMessage = "$txt_artispeed";
+	IconName = 'artisped';
+	IdleState = S_ARTI_BOOTS1;
 }

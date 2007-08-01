@@ -35,6 +35,7 @@ defaultproperties
 	ConversationID = 175;
 	PickupMessage = "$txt_ear";
 	MaxAmount = 1;
+	IconName = 'i_ears';
 	IdleState = S_EAR;
 	ItemType = StrifeDefs::ITEM_Ear;
 	bGiveQuest = true;

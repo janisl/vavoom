@@ -35,8 +35,9 @@ __states__
 defaultproperties
 {
 	ArtifactType = HereticDefs::arti_invisibility;
-	bBigPowerup = true;
-	Alpha = 0.666;
-	IdleState = S_ARTI_INVS1;
 	PickupMessage = "$txt_artiinvisibility";
+	IconName = 'artiinvs';
+	Alpha = 0.666;
+	bBigPowerup = true;
+	IdleState = S_ARTI_INVS1;
 }
