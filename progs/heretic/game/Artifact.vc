@@ -30,44 +30,21 @@ int ArtifactType;
 
 //==========================================================================
 //
-//  TryPickup
+//	CreateCopy
 //
 //==========================================================================
 
-bool TryPickup(EntityEx Toucher)
+Inventory CreateCopy(EntityEx Toucher)
 {
-	int i;
-
-	i = 0;
-	while (i < Player(Toucher.Player).InventorySlotNum &&
-		Player(Toucher.Player).Inventory[i].ArtifactType != ArtifactType)
+	Inventory Item = ::CreateCopy(Toucher);
+	Player(Toucher.Player).Inventory[Player(Toucher.Player).InventorySlotNum] = Artifact(Item);
+	Player(Toucher.Player).InventorySlotNum++;
+	if (!Player(Toucher.Player).InvPtr)
 	{
-		i++;
+		Player(Toucher.Player).InvPtr = Item;
+		Player(Toucher.Player).InvFirst = Item;
 	}
-	if (i == Player(Toucher.Player).InventorySlotNum)
-	{
-		Player(Toucher.Player).Inventory[i] = Spawn(MainGameInfo(Level.Game).ArtiClasses[ArtifactType]);
-		Player(Toucher.Player).Inventory[i].AttachToOwner(Toucher);
-		Player(Toucher.Player).Inventory[i].Amount = 1;
-		Player(Toucher.Player).InventorySlotNum++;
-		if (!Player(Toucher.Player).InvPtr)
-		{
-			Player(Toucher.Player).InvPtr = Player(Toucher.Player).Inventory[i];
-			Player(Toucher.Player).InvFirst = Player(Toucher.Player).Inventory[i];
-		}
-	}
-	else
-	{
-		if (Player(Toucher.Player).Inventory[i].Amount >=
-			Player(Toucher.Player).Inventory[i].MaxAmount)
-		{
-			// Player already has 16 of this item
-			return false;
-		}
-		Player(Toucher.Player).Inventory[i].Amount++;
-	}
-	GoAwayAndDie();
-	return true;
+	return Item;
 }
 
 defaultproperties

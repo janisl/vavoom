@@ -30,37 +30,20 @@ int ItemType;
 
 //==========================================================================
 //
-//	TryPickup
+//	CreateCopy
 //
 //==========================================================================
 
-bool TryPickup(EntityEx Toucher)
+Inventory CreateCopy(EntityEx Toucher)
 {
-	if (Player(Toucher.Player).Inventory[ItemType] &&
-		Player(Toucher.Player).Inventory[ItemType].Amount >= Player(Toucher.Player).Inventory[ItemType].MaxAmount)
-	{
-		return false;
-	}
-	if (!Player(Toucher.Player).Inventory[ItemType])
-	{
-		Player(Toucher.Player).Inventory[ItemType] = Spawn(MainGameInfo(Level.Game).InvItemCID[ItemType]);
-		Player(Toucher.Player).Inventory[ItemType].AttachToOwner(EntityEx(Player(Toucher.Player).MO));
-		Player(Toucher.Player).Inventory[ItemType].Amount = 0;
-	}
-	Player(Toucher.Player).Inventory[ItemType].Amount += Amount;
-	if (Player(Toucher.Player).Inventory[ItemType].Amount > Player(Toucher.Player).Inventory[ItemType].MaxAmount)
-	{
-		Player(Toucher.Player).Inventory[ItemType].Amount = Player(Toucher.Player).Inventory[ItemType].MaxAmount;
-	}
+	Inventory Item = ::CreateCopy(Toucher);
+	Player(Toucher.Player).Inventory[ItemType] = InventoryItem(Item);
 	if (!Player(Toucher.Player).InvCursor)
 	{
-		Player(Toucher.Player).InvCursor = Player(Toucher.Player).Inventory[ItemType];
-		Player(Toucher.Player).InvFirst = Player(Toucher.Player).Inventory[ItemType];
+		Player(Toucher.Player).InvCursor = Item;
+		Player(Toucher.Player).InvFirst = Item;
 	}
-	Player(Toucher.Player).AdjustInvFirst();
-	GoAwayAndDie();
-	GiveQuest(Toucher);
-	return true;
+	return Item;
 }
 
 defaultproperties
