@@ -465,6 +465,47 @@ bool SpecialDropAction(EntityEx Source)
 
 //==========================================================================
 //
+//	PrevInv
+//
+//	Return previous item with bInvBar flag set.
+//
+//==========================================================================
+
+Inventory PrevInv()
+{
+	Inventory Item = Inventory;
+	while (Item && !Item.bInvBar)
+	{
+		Item = Item.Inventory;
+	}
+	return Item;
+}
+
+//==========================================================================
+//
+//	NextInv
+//
+//	Return next item with bInvBar flag set.
+//
+//==========================================================================
+
+Inventory NextInv()
+{
+	Inventory Ret = none;
+	Inventory Item = EntityEx(Owner).Inventory;
+	while (Item && Item != self)
+	{
+		if (Item.bInvBar)
+		{
+			Ret = Item;
+		}
+		Item = Item.Inventory;
+	}
+	return Ret;
+}
+
+//==========================================================================
+//
 //  A_RestoreSpecialThing1
 //
 //  Make a special thing visible again.
