@@ -30,24 +30,6 @@ int ArtifactType;
 
 //==========================================================================
 //
-//	HandlePickup
-//
-//==========================================================================
-
-bool HandlePickup(Inventory Item)
-{
-	if (Item.Class == Class && ArtifactType >= HexenDefs::arti_firstpuzzitem &&
-		Level.Game.netgame && !Level.Game.deathmatch)
-	{
-		// Can't carry more than 1 puzzle item in coop netplay
-		return true;
-	}
-
-	return ::HandlePickup(Item);
-}
-
-//==========================================================================
-//
 //	CreateCopy
 //
 //==========================================================================
