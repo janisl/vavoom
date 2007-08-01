@@ -343,17 +343,13 @@ bool ChickenMorph()
 
 bool AutoUseChaosDevice()
 {
-	int i;
-
-	for (i = 0; i < Player(Player).InventorySlotNum; i++)
+	Inventory Item = FindInventory(ArtiTeleport);
+	if (Item)
 	{
-		if (Player(Player).Inventory[i].ArtifactType == HereticDefs::arti_teleport)
-		{
-			Player(Player).PlayerUseArtifact(HereticDefs::arti_teleport);
-			Health = (Health + 1) / 2;
-			Player.Health = Health;
-			return true;
-		}
+		Player(Player).PlayerUseArtifact(HereticDefs::arti_teleport);
+		Health = (Health + 1) / 2;
+		Player.Health = Health;
+		return true;
 	}
 	return false;
 }
@@ -368,48 +364,31 @@ void AutoUseHealth(int saveHealth)
 {
 	int i;
 	int count;
-	int normalCount;
-	int normalSlot;
-	int superCount;
-	int superSlot;
 
-	normalCount = 0;
-	superCount = 0;
-	for (i = 0; i < Player(Player).InventorySlotNum; i++)
-	{
-		if (Player(Player).Inventory[i].ArtifactType == HereticDefs::arti_health)
-		{
-			normalSlot = i;
-			normalCount = Player(Player).Inventory[i].Amount;
-		}
-		else if (Player(Player).Inventory[i].ArtifactType == HereticDefs::arti_superhealth)
-		{
-			superSlot = i;
-			superCount = Player(Player).Inventory[i].Amount;
-		}
-	}
-	if ((Level.Game.gameskill == sk_baby) && (normalCount * 25 >= saveHealth))
+	Inventory normal = FindInventory(ArtiHealth);
+	Inventory super = FindInventory(ArtiSuperHealth);
+	if ((Level.Game.gameskill == sk_baby) && (normal.Amount * 25 >= saveHealth))
 	{
 		// Use quartz flasks
 		count = (saveHealth + 24) / 25;
 		for (i = 0; i < count; i++)
 		{
 			Health += 25;
-			Player(Player).PlayerRemoveArtifact(normalSlot);
+			Player(Player).PlayerRemoveArtifact(normal);
 		}
 	}
-	else if (superCount * 100 >= saveHealth)
+	else if (super.Amount * 100 >= saveHealth)
 	{
 		// Use mystic urns
 		count = (saveHealth + 99) / 100;
 		for (i = 0; i < count; i++)
 		{
 			Health += 100;
-			Player(Player).PlayerRemoveArtifact(superSlot);
+			Player(Player).PlayerRemoveArtifact(super);
 		}
 	}
-	else if ((Level.Game.gameskill == sk_baby)
-		&& (superCount * 100 + normalCount * 25 >= saveHealth))
+	else if ((Level.Game.gameskill == sk_baby) &&
+		(super.Amount * 100 + normal.Amount * 25 >= saveHealth))
 	{
 		// Use mystic urns and quartz flasks
 		count = (saveHealth + 24) / 25;
@@ -417,7 +396,7 @@ void AutoUseHealth(int saveHealth)
 		for (i = 0; i < count; i++)
 		{
 			Health += 25;
-			Player(Player).PlayerRemoveArtifact(normalSlot);
+			Player(Player).PlayerRemoveArtifact(normal);
 		}
 		count = (saveHealth + 99) / 100;
 		for (i = 0; i < count; i++)
@@ -426,7 +405,7 @@ void AutoUseHealth(int saveHealth)
 			//  I found a bug. There must be used superSlot, not normalSlot.
 			//  Also if player used all quartz flasks, superSlot may be
 			// invalid, so it must be found again.
-			Player(Player).PlayerRemoveArtifact(superSlot);
+			Player(Player).PlayerRemoveArtifact(super);
 		}
 	}
 	Player.Health = Health;

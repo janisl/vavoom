@@ -45,16 +45,10 @@ bool bSafeToRemove;
 void AddInventory(Inventory Item)
 {
 	::AddInventory(Item);
-	if (Item.bInvBar)
+	if (bIsPlayer && Item.bInvBar && !Player(Player).InvPtr)
 	{
-		Player(Player).Inventory[Player(Player).InventorySlotNum] =
-			Artifact(Item);
-		Player(Player).InventorySlotNum++;
-		if (!Player(Player).InvPtr)
-		{
-			Player(Player).InvPtr = Item;
-			Player(Player).InvFirst = Item;
-		}
+		Player(Player).InvPtr = Item;
+		Player(Player).InvFirst = Item;
 	}
 }
 
@@ -66,24 +60,27 @@ void AddInventory(Inventory Item)
 
 void RemoveInventory(Inventory Item)
 {
-	if (Player(Player).InvPtr == Item)
+	if (bIsPlayer)
 	{
-		Player(Player).InvPtr = Item.PrevInv();
-		if (!Player(Player).InvPtr)
+		if (Player(Player).InvPtr == Item)
 		{
-			Player(Player).InvPtr = Item.NextInv();
+			Player(Player).InvPtr = Item.PrevInv();
+			if (!Player(Player).InvPtr)
+			{
+				Player(Player).InvPtr = Item.NextInv();
+			}
 		}
-	}
-	if (Player(Player).InvFirst == Item)
-	{
-		Player(Player).InvFirst = Item.PrevInv();
-		if (!Player(Player).InvFirst)
+		if (Player(Player).InvFirst == Item)
 		{
-			Player(Player).InvFirst = Item.NextInv();
+			Player(Player).InvFirst = Item.PrevInv();
+			if (!Player(Player).InvFirst)
+			{
+				Player(Player).InvFirst = Item.NextInv();
+			}
 		}
 	}
 	::RemoveInventory(Item);
-	if (Item.bInvBar)
+	if (bIsPlayer && Item.bInvBar)
 	{
 		Player(Player).AdjustInvFirst();
 	}

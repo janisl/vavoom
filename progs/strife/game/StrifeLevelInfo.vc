@@ -629,8 +629,8 @@ int CheckForNeededItem(EntityEx A, int ID, int Amount)
 	{
 		if (MainGameInfo(Game).InvItemCID[i] == CID)
 		{
-			return !Player(A.Player).Inventory[i] ||
-				Player(A.Player).Inventory[i].Amount < Amount ? -2 : i;
+			Inventory Item = A.FindInventory(class<Inventory>(CID));
+			return !Item || Item.Amount < Amount ? -2 : i;
 		}
 	}
 	//	Check keys.
@@ -738,11 +738,23 @@ void ConChoiceImpulse(int ChoiceNum)
 	if (GaveItem)
 	{
 		if (Item1 != -1)
-			Player(CurrentSpeakingTo.Player).RemoveInvItem(Player(CurrentSpeakingTo.Player).Inventory[Item1], Choice->NeedAmount1);
+		{
+			Player(CurrentSpeakingTo.Player).RemoveInvItem(
+				CurrentSpeakingTo.FindInventory(class<Inventory>(
+				GetClassFromID(Choice->NeedItem1))), Choice->NeedAmount1);
+		}
 		if (Item2 != -1)
-			Player(CurrentSpeakingTo.Player).RemoveInvItem(Player(CurrentSpeakingTo.Player).Inventory[Item2], Choice->NeedAmount2);
+		{
+			Player(CurrentSpeakingTo.Player).RemoveInvItem(
+				CurrentSpeakingTo.FindInventory(class<Inventory>(
+				GetClassFromID(Choice->NeedItem2))), Choice->NeedAmount2);
+		}
 		if (Item3 != -1)
-			Player(CurrentSpeakingTo.Player).RemoveInvItem(Player(CurrentSpeakingTo.Player).Inventory[Item3], Choice->NeedAmount3);
+		{
+			Player(CurrentSpeakingTo.Player).RemoveInvItem(
+				CurrentSpeakingTo.FindInventory(class<Inventory>(
+				GetClassFromID(Choice->NeedItem3))), Choice->NeedAmount3);
+		}
 	}
 	if (Choice->Objectives)
 	{

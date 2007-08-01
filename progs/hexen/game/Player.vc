@@ -62,8 +62,6 @@ float InventoryTime;
 int ArtifactFlash;
 Inventory InvPtr;
 Inventory InvFirst;
-int InventorySlotNum;
-Artifact Inventory[HexenDefs::NUMARTIFACTS];
 
 float FlyHeight;
 
@@ -91,7 +89,7 @@ replication
 {
 	reliable if (!bIsClient)
 		SBFlags, TotalArmorPoints, InventoryTime, ArtifactFlash,
-		InvPtr, InvFirst, InventorySlotNum, ArmorPerc, Inventory;
+		InvPtr, InvFirst, ArmorPerc;
 
 	unreliable if (!bIsClient)
 		ClientBlood, ClientExplosion;
@@ -898,11 +896,14 @@ void InventoryLeft()
 		return;
 	}
 	InventoryTime = 5.0;
-	Inventory Prev = InvPtr.PrevInv();
-	if (Prev)
+	if (InvPtr)
 	{
-		InvPtr = Prev;
-		AdjustInvFirst();
+		Inventory Prev = InvPtr.PrevInv();
+		if (Prev)
+		{
+			InvPtr = Prev;
+			AdjustInvFirst();
+		}
 	}
 }
 
@@ -920,11 +921,14 @@ void InventoryRight()
 		return;
 	}
 	InventoryTime = 5.0;
-	Inventory Next = InvPtr.NextInv();
-	if (Next)
+	if (InvPtr)
 	{
-		InvPtr = Next;
-		AdjustInvFirst();
+		Inventory Next = InvPtr.NextInv();
+		if (Next)
+		{
+			InvPtr = Next;
+			AdjustInvFirst();
+		}
 	}
 }
 
@@ -2656,33 +2660,28 @@ void SetViewPos()
 
 void PlayerUseArtifact(int arti)
 {
-	int i;
-
-	for (i = 0; i < InventorySlotNum; i++)
+	Inventory Item = EntityEx(MO).FindInventory(MainGameInfo(Level.Game).ArtiClasses[arti]);
+	if (Item)
 	{
-		if (Inventory[i].ArtifactType == arti)
+		// Found match - try to use
+		if (UseArtifact(arti))
 		{
-			// Found match - try to use
-			if (UseArtifact(arti))
+			// Artifact was used - remove it from inventory
+			PlayerRemoveArtifact(Item);
+			if (arti < HexenDefs::arti_firstpuzzitem)
 			{
-				// Artifact was used - remove it from inventory
-				PlayerRemoveArtifact(i);
-				if (arti < HexenDefs::arti_firstpuzzitem)
-				{
-					MO.PlaySound('UseArtifact', CHAN_ITEM);
-				}
-				else
-				{
-					MO.PlaySound('PuzzleSuccess', CHAN_ITEM);
-				}
-				ArtifactFlash = 4;
+				MO.PlaySound('UseArtifact', CHAN_ITEM);
 			}
-			else if (arti < HexenDefs::arti_firstpuzzitem)
+			else
 			{
-				// Unable to use artifact, advance pointer
-				PlayerNextArtifact();
+				MO.PlaySound('PuzzleSuccess', CHAN_ITEM);
 			}
-			break;
+			ArtifactFlash = 4;
+		}
+		else if (arti < HexenDefs::arti_firstpuzzitem)
+		{
+			// Unable to use artifact, advance pointer
+			PlayerNextArtifact();
 		}
 	}
 }
@@ -2718,19 +2717,12 @@ void PlayerNextArtifact()
 //
 //==========================================================================
 
-void PlayerRemoveArtifact(int slot)
+void PlayerRemoveArtifact(Inventory Item)
 {
-	int i;
-
-	if (!(--Inventory[slot].Amount))
+	if (!(--Item.Amount))
 	{
 		// Used last of a type - compact the artifact list
-		Inventory[slot].Destroy();
-		for (i = slot + 1; i < InventorySlotNum; i++)
-		{
-			Inventory[i - 1] = Inventory[i];
-		}
-		InventorySlotNum--;
+		Item.Destroy();
 	}
 }
 

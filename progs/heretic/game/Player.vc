@@ -62,8 +62,6 @@ int Keys;
 int ArtifactFlash;
 Inventory InvFirst;
 Inventory InvPtr;
-Artifact Inventory[HereticDefs::NUMARTIFACTS];
-int InventorySlotNum;
 float InventoryTime;
 
 float FlyHeight;
@@ -86,8 +84,7 @@ bool onground;
 replication
 {
 	reliable if (!bIsClient)
-		SBFlags, ArmorPoints, ArtifactFlash, InvFirst, InvPtr,
-		InventorySlotNum, Inventory;
+		SBFlags, ArmorPoints, ArtifactFlash, InvFirst, InvPtr;
 
 	unreliable if (!bIsClient)
 		ClientBlood, ClientExplosion;
@@ -431,10 +428,14 @@ void PlayerReborn()
 void PlayerExitMap(bool clusterChange)
 {
 	int i;
+	Inventory Item;
 
-	for (i = 0; i < InventorySlotNum; i++)
+	for (Item = EntityEx(MO).Inventory; Item; Item = Item.Inventory)
 	{
-		Inventory[i].Amount = 1;
+		if (Item.bInvBar)
+		{
+			Item.Amount = 1;
+		}
 	}
 
 	if (!Level.Game.deathmatch)
@@ -721,11 +722,14 @@ void InventoryLeft()
 	}
 
 	InventoryTime = 5.0;
-	Inventory Prev = InvPtr.PrevInv();
-	if (Prev)
+	if (InvPtr)
 	{
-		InvPtr = Prev;
-		AdjustInvFirst();
+		Inventory Prev = InvPtr.PrevInv();
+		if (Prev)
+		{
+			InvPtr = Prev;
+			AdjustInvFirst();
+		}
 	}
 }
 
@@ -744,11 +748,14 @@ void InventoryRight()
 	}
 
 	InventoryTime = 5.0;
-	Inventory Next = InvPtr.NextInv();
-	if (Next)
+	if (InvPtr)
 	{
-		InvPtr = Next;
-		AdjustInvFirst();
+		Inventory Next = InvPtr.NextInv();
+		if (Next)
+		{
+			InvPtr = Next;
+			AdjustInvFirst();
+		}
 	}
 }
 
@@ -2168,26 +2175,21 @@ void SetViewPos()
 
 void PlayerUseArtifact(int arti)
 {
-	int i;
-
-	for (i = 0; i < InventorySlotNum; i++)
+	Inventory Item = EntityEx(MO).FindInventory(MainGameInfo(Level.Game).ArtiClasses[arti]);
+	if (Item)
 	{
-		if (Inventory[i].ArtifactType == arti)
+		// Found match - try to use
+		if (UseArtifact(arti))
 		{
-			// Found match - try to use
-			if (UseArtifact(arti))
-			{
-				// Artifact was used - remove it from inventory
-				PlayerRemoveArtifact(i);
-				MO.PlaySound('misc/invuse', CHAN_ITEM);
-				ArtifactFlash = 4;
-			}
-			else
-			{
-				// Unable to use artifact, advance pointer
-				PlayerNextArtifact();
-			}
-			break;
+			// Artifact was used - remove it from inventory
+			PlayerRemoveArtifact(Item);
+			MO.PlaySound('misc/invuse', CHAN_ITEM);
+			ArtifactFlash = 4;
+		}
+		else
+		{
+			// Unable to use artifact, advance pointer
+			PlayerNextArtifact();
 		}
 	}
 }
@@ -2223,19 +2225,12 @@ void PlayerNextArtifact()
 //
 //==========================================================================
 
-void PlayerRemoveArtifact(int slot)
+void PlayerRemoveArtifact(Inventory Item)
 {
-	int i;
-
-	if (!(--Inventory[slot].Amount))
+	if (!(--Item.Amount))
 	{
 		// Used last of a type - compact the artifact list
-		Inventory[slot].Destroy();
-		for (i = slot + 1; i < InventorySlotNum; i++)
-		{
-			Inventory[i - 1] = Inventory[i];
-		}
-		InventorySlotNum--;
+		Item.Destroy();
 	}
 }
 

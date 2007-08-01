@@ -192,7 +192,7 @@ bool A_LocalQuake(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
 bool EV_LineSearchForPuzzleItem(int Arg1, int Arg2, int Arg3, int Arg4,
 	int Arg5, EntityEx A)
 {
-	int i;
+	Inventory Item;
 	int type, arti;
 
 	if (!A)
@@ -201,9 +201,11 @@ bool EV_LineSearchForPuzzleItem(int Arg1, int Arg2, int Arg3, int Arg4,
 		return false;
 
 	// Search player's inventory for puzzle items
-	for (i = 0; i < Player(A.Player).InventorySlotNum; i++)
+	for (Item = A.Inventory; Item; Item = Item.Inventory)
 	{
-		arti = Player(A.Player).Inventory[i].ArtifactType;
+		if (!Artifact(Item))
+			continue;
+		arti = Artifact(Item).ArtifactType;
 		type = arti - HexenDefs::arti_firstpuzzitem;
 		if (type < 0)
 			continue;
@@ -213,7 +215,7 @@ bool EV_LineSearchForPuzzleItem(int Arg1, int Arg2, int Arg3, int Arg4,
 			if (Player(A.Player).UseArtifact(arti))
 			{
 				// A puzzle item was found for the line
-				Player(A.Player).PlayerRemoveArtifact(i);
+				Player(A.Player).PlayerRemoveArtifact(Item);
 				if (arti < HexenDefs::arti_firstpuzzitem)
 				{
 					A.PlaySound('UseArtifact', CHAN_ITEM);

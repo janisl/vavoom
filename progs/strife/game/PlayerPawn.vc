@@ -43,15 +43,10 @@ array<InitInvInfo>		InitialInventory;
 void AddInventory(Inventory Item)
 {
 	::AddInventory(Item);
-	if (Item.bInvBar)
+	if (bIsPlayer && Item.bInvBar && !Player(Player).InvCursor)
 	{
-		Player(Player).Inventory[InventoryItem(Item).ItemType] =
-			InventoryItem(Item);
-		if (!Player(Player).InvCursor)
-		{
-			Player(Player).InvCursor = Item;
-			Player(Player).InvFirst = Item;
-		}
+		Player(Player).InvCursor = Item;
+		Player(Player).InvFirst = Item;
 	}
 }
 
@@ -63,24 +58,27 @@ void AddInventory(Inventory Item)
 
 void RemoveInventory(Inventory Item)
 {
-	if (Item == Player(Player).InvCursor)
+	if (bIsPlayer)
 	{
-		Player(Player).InvCursor = Item.NextInv();
-		if (!Player(Player).InvCursor)
+		if (Item == Player(Player).InvCursor)
 		{
-			Player(Player).InvCursor = Item.PrevInv();
+			Player(Player).InvCursor = Item.NextInv();
+			if (!Player(Player).InvCursor)
+			{
+				Player(Player).InvCursor = Item.PrevInv();
+			}
 		}
-	}
-	if (Item == Player(Player).InvFirst)
-	{
-		Player(Player).InvFirst = Item.NextInv();
-		if (!Player(Player).InvFirst)
+		if (Item == Player(Player).InvFirst)
 		{
-			Player(Player).InvFirst = Item.PrevInv();
+			Player(Player).InvFirst = Item.NextInv();
+			if (!Player(Player).InvFirst)
+			{
+				Player(Player).InvFirst = Item.PrevInv();
+			}
 		}
 	}
 	::RemoveInventory(Item);
-	if (Item.bInvBar)
+	if (bIsPlayer && Item.bInvBar)
 	{
 		Player(Player).AdjustInvFirst();
 	}

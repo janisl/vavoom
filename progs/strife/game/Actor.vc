@@ -169,25 +169,31 @@ void PlayerKilled(EntityEx source, EntityEx inflictor)
 
 void AutoUseHealth(int saveHealth)
 {
-	int i, j;
-	int count;
+	int i;
 
-	for (i = 0; i < StrifeDefs::NUMINVITEMS - 1; i++)
+	Inventory Item = FindInventory(MedicalKit);
+	if (Item && Item.Amount * 25 >= saveHealth)
 	{
-		if (Player(Player).Inventory[i] && i == StrifeDefs::ITEM_MedicalKit
-			&& Player(Player).Inventory[i].Amount * 25 >= saveHealth)
+		// Use medical kits
+		i = (saveHealth + 24) / 25;
+		while (i--)
 		{
-			// Use medical kits
 			Health += 25;
-			Player(Player).RemoveInvItem(Player(Player).Inventory[i], 1);
-			Player.MO.PlaySound('misc/invuse', CHAN_BODY);
+			saveHealth -= 25;
+			Player(Player).RemoveInvItem(Item, 1);
+			PlaySound('misc/invuse', CHAN_BODY);
 		}
-		else if (Player(Player).Inventory[i] && i == StrifeDefs::ITEM_MedPatch
-			&& Player(Player).Inventory[i].Amount * 10 >= saveHealth)
+	}
+	
+	Item = FindInventory(MedPatch);
+	if (saveHealth > 0 && Item && Item.Amount * 10 >= saveHealth)
+	{
+		i = (saveHealth + 9) / 10;
+		while (i--)
 		{
 			Health += 10;
-			Player(Player).RemoveInvItem(Player(Player).Inventory[i], 1);
-			Player.MO.PlaySound('misc/invuse', CHAN_BODY);
+			Player(Player).RemoveInvItem(Item, 1);
+			PlaySound('misc/invuse', CHAN_BODY);
 		}
 	}
 	Player.Health = Health;
@@ -201,22 +207,21 @@ void AutoUseHealth(int saveHealth)
 
 void AutoUseArmor()
 {
-	int i;
-	int count;
-
-	for (i = 0; i < StrifeDefs::NUMINVITEMS - 1; i++)
+	Inventory Item = FindInventory(MetalArmor);
+	if (Item)
 	{
-		if (Player(Player).Inventory[i] && i == StrifeDefs::ITEM_MetalArmor)
-		{
-			// Use metal armor
-			Player(Player).GiveArmor(2);
-			Player(Player).RemoveInvItem(Player(Player).Inventory[i], 1);
-		}
-		else if (Player(Player).Inventory[i] && i == StrifeDefs::ITEM_LeatherArmor)
+		// Use metal armor
+		Player(Player).GiveArmor(2);
+		Player(Player).RemoveInvItem(Item, 1);
+	}
+	else
+	{
+		Item = FindInventory(LeatherArmor);
+		if (Item)
 		{
 			// Use leather armor
 			Player(Player).GiveArmor(1);
-			Player(Player).RemoveInvItem(Player(Player).Inventory[i], 1);
+			Player(Player).RemoveInvItem(Item, 1);
 		}
 	}
 }

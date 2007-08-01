@@ -66,7 +66,7 @@ int Keys;
 
 Inventory InvFirst;
 Inventory InvCursor;
-InventoryItem Inventory[StrifeDefs::NUMINVITEMS];
+//InventoryItem Inventory[StrifeDefs::NUMINVITEMS];
 
 // Power ups. invinc and invis are timers.
 float Powers[NUMPOWERS];
@@ -79,7 +79,7 @@ replication
 {
 	reliable if (!bIsClient)
 		SigilPieces, Accuracy, Stamina, Keys, InvFirst, InvCursor,
-		Objectives, ArmorType, ArmorPoints, Inventory, Communicator;
+		Objectives, ArmorType, ArmorPoints, Communicator;
 
 	unreliable if (!bIsClient)
 		ClientBlood, ClientExplosion;
@@ -648,7 +648,6 @@ bool RemoveInvItem(Inventory Item, int amount)
 	Item.Amount -= amount;
 	if (!Item.Amount)
 	{
-		Inventory[InventoryItem(Item).ItemType] = none;
 		Item.Destroy();
 	}
 	return true;
@@ -740,7 +739,7 @@ void InvUse()
 
 	case StrifeDefs::ITEM_TeleporterBeacon:
 		//	Increase item count because ItemThrow also decreases it.
-		Inventory[StrifeDefs::ITEM_TeleporterBeacon].Amount++;
+		EntityEx(MO).FindInventory(TeleporterBeacon).Amount++;
 		A = InvThrow();
 		if (A)
 		{
@@ -750,7 +749,7 @@ void InvUse()
 		}
 		else
 		{
-			Inventory[StrifeDefs::ITEM_TeleporterBeacon].Amount--;
+			EntityEx(MO).FindInventory(TeleporterBeacon).Amount--;
 		}
 		break;
 
