@@ -6,10 +6,14 @@ LIBS=@LAUNCHER_LIBS@
 
 bin_PROGRAMS = ../bin/vlaunch
 
-___bin_vlaunch_SOURCES = main.cpp main.h vlaunch.cpp
+___bin_vlaunch_SOURCES = vlaunch.cpp
 
 EXTRA_DIST = \
-	main.dfm \
 	vlaunch.bpr \
 	vlaunch.dsk \
-	vlaunch.res
+	vlaunch.ico \
+	vlaunch.rc \
+	vlaunch.res \
+	vlaunch.sln \
+	vlaunch.vcproj \
+	vlaunch.xpm
