@@ -26,12 +26,10 @@
 // HEADER FILES ------------------------------------------------------------
 
 #include "wx/wxprec.h"
-#ifdef __BORLANDC__
-#pragma hdrstop
-#endif
 #ifndef WX_PRECOMP
 #include "wx/wx.h"
 #endif
+#include "wx/config.h"
 
 // MACROS ------------------------------------------------------------------
 
@@ -39,7 +37,8 @@
 
 enum
 {
-    Minimal_Quit = wxID_EXIT
+	VLaunch_Run = wxID_HIGHEST,
+	VLaunch_Exit = wxID_EXIT,
 };
 
 //
@@ -49,8 +48,10 @@ class VMain : public wxFrame
 {
 public:
     VMain();
+	~VMain();
 
-    void OnQuit(wxCommandEvent& event);
+    void OnRun(wxCommandEvent& event);
+    void OnExit(wxCommandEvent& event);
 
 private:
     DECLARE_EVENT_TABLE()
@@ -78,7 +79,8 @@ public:
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 BEGIN_EVENT_TABLE(VMain, wxFrame)
-    EVT_MENU(Minimal_Quit,  VMain::OnQuit)
+    EVT_BUTTON(VLaunch_Run,  VMain::OnRun)
+    EVT_BUTTON(VLaunch_Exit,  VMain::OnExit)
 END_EVENT_TABLE()
 
 IMPLEMENT_APP(VLaunchApp)
@@ -92,189 +94,43 @@ IMPLEMENT_APP(VLaunchApp)
 //==========================================================================
 
 VMain::VMain()
-: wxFrame(NULL, wxID_ANY, wxT("Vavoom launcher"), wxDefaultPosition, wxSize(400, 300),
+: wxFrame(NULL, wxID_ANY, wxT("Vavoom launcher"), wxDefaultPosition, wxDefaultSize,
 	wxDEFAULT_FRAME_STYLE & ~ (wxRESIZE_BORDER | wxRESIZE_BOX | wxMAXIMIZE_BOX))
 {
+	SetClientSize(447, 314);
 	wxPanel* panel = new wxPanel(this);
 
-//	new wxCheckBox(panel, -1, wxT("Test label"), wxPoint(20, 50));
+	new wxButton(panel, VLaunch_Run, wxT("Run"), wxPoint(376, 248), wxSize(65, 25));
+	new wxButton(panel, VLaunch_Exit, wxT("Exit"), wxPoint(376, 280), wxSize(65, 25));
 }
 
 //==========================================================================
 //
-//	VMain::OnQuit
+//	VMain::~VMain
 //
 //==========================================================================
 
-void VMain::OnQuit(wxCommandEvent&)
+VMain::~VMain()
 {
-	Close(true);
-}
-
-//==========================================================================
-//
-//	VLaunchApp::OnInit
-//
-//==========================================================================
-
-bool VLaunchApp::OnInit()
-{
-	if (!wxApp::OnInit())
-		return false;
-
-	//	Create our main frame object and show it.
-	VMain* frame = new VMain();
-	frame->Show(true);
-	return true;
-}
-
-#if 0
-#include <Classes.hpp>
-#include <Controls.hpp>
-#include <StdCtrls.hpp>
-#include <Forms.hpp>
-#include <ExtCtrls.hpp>
-#include <Graphics.hpp>
-#include <jpeg.hpp>
-#include <registry.hpp>
-//---------------------------------------------------------------------------
-class TLauncherForm : public TForm
-{
-__published:	// IDE-managed Components
-	TButton *RunButton;
-	TComboBox *Game;
-	TLabel *Label1;
-	TButton *ExitButton;
-	TLabel *Label2;
-	TComboBox *RendererBox;
-	TGroupBox *GroupBox1;
-	TCheckBox *CheckBoxNoSound;
-	TCheckBox *CheckBoxNoSfx;
-	TCheckBox *CheckBoxNo3DSound;
-	TCheckBox *CheckBoxNoMusic;
-	TCheckBox *CheckBoxNoCDAudio;
-	TGroupBox *GroupBox2;
-	TCheckBox *CheckBoxNoMouse;
-	TCheckBox *CheckBoxNoJoy;
-	TGroupBox *GroupBox3;
-	TCheckBox *CheckBoxNoLan;
-	TCheckBox *CheckBoxNoUDP;
-	TCheckBox *CheckBoxNoIPX;
-	TEdit *EditIPAddress;
-	TLabel *Label3;
-	TLabel *Label4;
-	TEdit *EditPort;
-	TGroupBox *GroupBox4;
-	TCheckBox *CheckBoxDebug;
-	TImage *Image1;
-	TLabel *Label5;
-	TEdit *EditFiles;
-	TLabel *Label6;
-	TEdit *EditMisc;
-	TLabel *Label7;
-	TEdit *EditProgs;
-	TCheckBox *CheckBoxUseOpenAL;
-	TLabel *Label8;
-	TEdit *EditGame;
-	TCheckBox *CheckBoxDevGame;
-	void __fastcall RunButtonClick(TObject *Sender);
-	void __fastcall ExitButtonClick(TObject *Sender);
-	void __fastcall FormCreate(TObject *Sender);
-	void __fastcall FormDestroy(TObject *Sender);
-private:	// User declarations
-public:		// User declarations
-	__fastcall TLauncherForm(TComponent* Owner);
-	TRegistry	*Reg;
-};
-//---------------------------------------------------------------------------
-extern PACKAGE TLauncherForm *LauncherForm;
-//---------------------------------------------------------------------------
-#endif
-
-#if 0
-//---------------------------------------------------------------------------
-#pragma package(smart_init)
-#pragma resource "*.dfm"
-TLauncherForm *LauncherForm;
-//---------------------------------------------------------------------------
-__fastcall TLauncherForm::TLauncherForm(TComponent* Owner)
-	: TForm(Owner)
-{
-}
-//---------------------------------------------------------------------------
-void __fastcall TLauncherForm::FormCreate(TObject *Sender)
-{
-	Reg = new TRegistry;
-	Reg->OpenKey("\\Software\\JL\\vlaunch", true);
-	try
+	wxConfigBase* Conf = wxConfigBase::Get();
+	if (Conf)
 	{
-		Game->ItemIndex = Reg->ReadInteger("Game");
-		RendererBox->ItemIndex = Reg->ReadInteger("Renderer");
-		CheckBoxNoSound->Checked = Reg->ReadInteger("NoSound");
-		CheckBoxNoSfx->Checked = Reg->ReadInteger("NoSfx");
-		CheckBoxNo3DSound->Checked = Reg->ReadInteger("No3DSound");
-		CheckBoxNoMusic->Checked = Reg->ReadInteger("NoMusic");
-		CheckBoxNoCDAudio->Checked = Reg->ReadInteger("NoCDAudio");
-		CheckBoxNoLan->Checked = Reg->ReadInteger("NoLAN");
-		CheckBoxNoUDP->Checked = Reg->ReadInteger("NoUDP");
-		CheckBoxNoIPX->Checked = Reg->ReadInteger("NoIPX");
-		EditIPAddress->Text = Reg->ReadString("IPAddress");
-		EditPort->Text = Reg->ReadString("Port");
-		CheckBoxNoMouse->Checked = Reg->ReadInteger("NoMouse");
-		CheckBoxNoJoy->Checked = Reg->ReadInteger("NoJoy");
-		CheckBoxDebug->Checked = Reg->ReadInteger("Debug");
-		EditFiles->Text = Reg->ReadString("Files");
-		EditProgs->Text = Reg->ReadString("Progs");
-		EditMisc->Text = Reg->ReadString("Options");
-		CheckBoxUseOpenAL->Checked = Reg->ReadInteger("UseOpenAL");
-		EditGame->Text = Reg->ReadString("CustomGame");
-		CheckBoxDevGame->Checked = Reg->ReadInteger("DevGame");
-	}
-	catch (...)
-	{
-		if (Game->ItemIndex < 0)
-			Game->ItemIndex = 0;
-		if (RendererBox->ItemIndex < 0)
-			RendererBox->ItemIndex = 0;
 	}
 }
-//---------------------------------------------------------------------------
-void __fastcall TLauncherForm::FormDestroy(TObject *Sender)
-{
-	Reg->WriteInteger("Game", Game->ItemIndex);
-	Reg->WriteInteger("Renderer", RendererBox->ItemIndex);
-	Reg->WriteInteger("NoSound", CheckBoxNoSound->Checked);
-	Reg->WriteInteger("NoSfx", CheckBoxNoSfx->Checked);
-	Reg->WriteInteger("No3DSound", CheckBoxNo3DSound->Checked);
-	Reg->WriteInteger("NoMusic", CheckBoxNoMusic->Checked);
-	Reg->WriteInteger("NoCDAudio", CheckBoxNoCDAudio->Checked);
-	Reg->WriteInteger("UseOpenAL", CheckBoxUseOpenAL->Checked);
-	Reg->WriteInteger("NoLAN", CheckBoxNoLan->Checked);
-	Reg->WriteInteger("NoUDP", CheckBoxNoUDP->Checked);
-	Reg->WriteInteger("NoIPX", CheckBoxNoIPX->Checked);
-	Reg->WriteString("IPAddress", EditIPAddress->Text);
-	Reg->WriteString("Port", EditPort->Text);
-	Reg->WriteInteger("NoMouse", CheckBoxNoMouse->Checked);
-	Reg->WriteInteger("NoJoy", CheckBoxNoJoy->Checked);
-	Reg->WriteInteger("Debug", CheckBoxDebug->Checked);
-	Reg->WriteString("CustomGame", EditGame->Text);
-	Reg->WriteInteger("DevGame", CheckBoxDevGame->Checked);
-	Reg->WriteString("Files", EditFiles->Text);
-	Reg->WriteString("Progs", EditProgs->Text);
-	Reg->WriteString("Options", EditMisc->Text);
-	delete Reg;
-}
-//---------------------------------------------------------------------------
-void __fastcall TLauncherForm::RunButtonClick(TObject *Sender)
-{
-	STARTUPINFO			StartInfo;
-	PROCESS_INFORMATION	ProcInfo;
-	char				CmdLine[1024];
-	int					len;
 
+//==========================================================================
+//
+//	VMain::OnRun
+//
+//==========================================================================
+
+void VMain::OnRun(wxCommandEvent&)
+{
 	//	Create command line
+	wxString CmdLine = wxT("Vavoom95");
+
+#if 0
 #define CAT(opt)	strcat(CmdLine, " "opt)
-	strcpy(CmdLine, "Vavoom95");
 	switch (Game->ItemIndex)
 	{
 	 case 1:
@@ -319,7 +175,7 @@ void __fastcall TLauncherForm::RunButtonClick(TObject *Sender)
 	if (CheckBoxNoLan->Checked)		CAT("-nolan");
 	if (CheckBoxNoUDP->Checked)		CAT("-noudp");
 	if (CheckBoxNoIPX->Checked)		CAT("-noipx");
-	len = EditIPAddress->GetTextLen();
+	int len = EditIPAddress->GetTextLen();
 	if (len)
 	{
 		len++;
@@ -401,6 +257,8 @@ void __fastcall TLauncherForm::RunButtonClick(TObject *Sender)
 	ShowCursor(false);
 
 	//	Run game
+	STARTUPINFO			StartInfo;
+	PROCESS_INFORMATION	ProcInfo;
 	memset(&StartInfo, 0, sizeof(StartInfo));
 	memset(&ProcInfo, 0 , sizeof(ProcInfo));
 	StartInfo.cb = sizeof(StartInfo);
@@ -422,6 +280,166 @@ void __fastcall TLauncherForm::RunButtonClick(TObject *Sender)
 
 	//	Show cursor
 	ShowCursor(true);
+#endif
+	wxMessageBox(CmdLine);
+}
+
+//==========================================================================
+//
+//	VMain::OnExit
+//
+//==========================================================================
+
+void VMain::OnExit(wxCommandEvent&)
+{
+	Close(true);
+}
+
+//==========================================================================
+//
+//	VLaunchApp::OnInit
+//
+//==========================================================================
+
+bool VLaunchApp::OnInit()
+{
+	if (!wxApp::OnInit())
+		return false;
+
+	//	Needed for config
+	SetVendorName(wxT("JL"));
+
+	//	Create our main frame object and show it.
+	VMain* frame = new VMain();
+	frame->Show(true);
+	return true;
+}
+
+#if 0
+#include <Classes.hpp>
+#include <Controls.hpp>
+#include <StdCtrls.hpp>
+#include <Forms.hpp>
+#include <ExtCtrls.hpp>
+#include <Graphics.hpp>
+#include <jpeg.hpp>
+//---------------------------------------------------------------------------
+class TLauncherForm : public TForm
+{
+__published:	// IDE-managed Components
+	TComboBox *Game;
+	TLabel *Label1;
+	TButton *ExitButton;
+	TLabel *Label2;
+	TComboBox *RendererBox;
+	TGroupBox *GroupBox1;
+	TCheckBox *CheckBoxNoSound;
+	TCheckBox *CheckBoxNoSfx;
+	TCheckBox *CheckBoxNo3DSound;
+	TCheckBox *CheckBoxNoMusic;
+	TCheckBox *CheckBoxNoCDAudio;
+	TGroupBox *GroupBox2;
+	TCheckBox *CheckBoxNoMouse;
+	TCheckBox *CheckBoxNoJoy;
+	TGroupBox *GroupBox3;
+	TCheckBox *CheckBoxNoLan;
+	TCheckBox *CheckBoxNoUDP;
+	TCheckBox *CheckBoxNoIPX;
+	TEdit *EditIPAddress;
+	TLabel *Label3;
+	TLabel *Label4;
+	TEdit *EditPort;
+	TGroupBox *GroupBox4;
+	TCheckBox *CheckBoxDebug;
+	TImage *Image1;
+	TLabel *Label5;
+	TEdit *EditFiles;
+	TLabel *Label6;
+	TEdit *EditMisc;
+	TLabel *Label7;
+	TEdit *EditProgs;
+	TCheckBox *CheckBoxUseOpenAL;
+	TLabel *Label8;
+	TEdit *EditGame;
+	TCheckBox *CheckBoxDevGame;
+	void __fastcall RunButtonClick(TObject *Sender);
+	void __fastcall ExitButtonClick(TObject *Sender);
+	void __fastcall FormCreate(TObject *Sender);
+	void __fastcall FormDestroy(TObject *Sender);
+private:	// User declarations
+public:		// User declarations
+	__fastcall TLauncherForm(TComponent* Owner);
+	TRegistry	*Reg;
+};
+//---------------------------------------------------------------------------
+extern PACKAGE TLauncherForm *LauncherForm;
+//---------------------------------------------------------------------------
+#endif
+
+#if 0
+TLauncherForm *LauncherForm;
+//---------------------------------------------------------------------------
+void __fastcall TLauncherForm::FormCreate(TObject *Sender)
+{
+	Reg = new TRegistry;
+	Reg->OpenKey("\\Software\\JL\\vlaunch", true);
+	try
+	{
+		Game->ItemIndex = Reg->ReadInteger("Game");
+		RendererBox->ItemIndex = Reg->ReadInteger("Renderer");
+		CheckBoxNoSound->Checked = Reg->ReadInteger("NoSound");
+		CheckBoxNoSfx->Checked = Reg->ReadInteger("NoSfx");
+		CheckBoxNo3DSound->Checked = Reg->ReadInteger("No3DSound");
+		CheckBoxNoMusic->Checked = Reg->ReadInteger("NoMusic");
+		CheckBoxNoCDAudio->Checked = Reg->ReadInteger("NoCDAudio");
+		CheckBoxNoLan->Checked = Reg->ReadInteger("NoLAN");
+		CheckBoxNoUDP->Checked = Reg->ReadInteger("NoUDP");
+		CheckBoxNoIPX->Checked = Reg->ReadInteger("NoIPX");
+		EditIPAddress->Text = Reg->ReadString("IPAddress");
+		EditPort->Text = Reg->ReadString("Port");
+		CheckBoxNoMouse->Checked = Reg->ReadInteger("NoMouse");
+		CheckBoxNoJoy->Checked = Reg->ReadInteger("NoJoy");
+		CheckBoxDebug->Checked = Reg->ReadInteger("Debug");
+		EditFiles->Text = Reg->ReadString("Files");
+		EditProgs->Text = Reg->ReadString("Progs");
+		EditMisc->Text = Reg->ReadString("Options");
+		CheckBoxUseOpenAL->Checked = Reg->ReadInteger("UseOpenAL");
+		EditGame->Text = Reg->ReadString("CustomGame");
+		CheckBoxDevGame->Checked = Reg->ReadInteger("DevGame");
+	}
+	catch (...)
+	{
+		if (Game->ItemIndex < 0)
+			Game->ItemIndex = 0;
+		if (RendererBox->ItemIndex < 0)
+			RendererBox->ItemIndex = 0;
+	}
+}
+//---------------------------------------------------------------------------
+void __fastcall TLauncherForm::FormDestroy(TObject *Sender)
+{
+	Reg->WriteInteger("Game", Game->ItemIndex);
+	Reg->WriteInteger("Renderer", RendererBox->ItemIndex);
+	Reg->WriteInteger("NoSound", CheckBoxNoSound->Checked);
+	Reg->WriteInteger("NoSfx", CheckBoxNoSfx->Checked);
+	Reg->WriteInteger("No3DSound", CheckBoxNo3DSound->Checked);
+	Reg->WriteInteger("NoMusic", CheckBoxNoMusic->Checked);
+	Reg->WriteInteger("NoCDAudio", CheckBoxNoCDAudio->Checked);
+	Reg->WriteInteger("UseOpenAL", CheckBoxUseOpenAL->Checked);
+	Reg->WriteInteger("NoLAN", CheckBoxNoLan->Checked);
+	Reg->WriteInteger("NoUDP", CheckBoxNoUDP->Checked);
+	Reg->WriteInteger("NoIPX", CheckBoxNoIPX->Checked);
+	Reg->WriteString("IPAddress", EditIPAddress->Text);
+	Reg->WriteString("Port", EditPort->Text);
+	Reg->WriteInteger("NoMouse", CheckBoxNoMouse->Checked);
+	Reg->WriteInteger("NoJoy", CheckBoxNoJoy->Checked);
+	Reg->WriteInteger("Debug", CheckBoxDebug->Checked);
+	Reg->WriteString("CustomGame", EditGame->Text);
+	Reg->WriteInteger("DevGame", CheckBoxDevGame->Checked);
+	Reg->WriteString("Files", EditFiles->Text);
+	Reg->WriteString("Progs", EditProgs->Text);
+	Reg->WriteString("Options", EditMisc->Text);
+	delete Reg;
 }
 //---------------------------------------------------------------------------
 void __fastcall TLauncherForm::ExitButtonClick(TObject *Sender)
@@ -431,25 +449,8 @@ void __fastcall TLauncherForm::ExitButtonClick(TObject *Sender)
 //---------------------------------------------------------------------------
 
 object LauncherForm: TLauncherForm
-  Left = 212
-  Top = 97
-  BorderIcons = [biSystemMenu, biMinimize]
-  BorderStyle = bsSingle
-  Caption = 'Vavoom launcher'
-  ClientHeight = 314
-  ClientWidth = 447
-  Color = clBtnFace
-  Font.Charset = DEFAULT_CHARSET
-  Font.Color = clWindowText
-  Font.Height = -11
-  Font.Name = 'MS Sans Serif'
-  Font.Style = []
-  OldCreateOrder = False
-  ShowHint = True
   OnCreate = FormCreate
   OnDestroy = FormDestroy
-  PixelsPerInch = 96
-  TextHeight = 13
   object Label1: TLabel
     Left = 24
     Top = 240
@@ -937,16 +938,6 @@ object LauncherForm: TLauncherForm
     Height = 13
     Caption = 'Custom game:'
   end
-  object RunButton: TButton
-    Left = 376
-    Top = 248
-    Width = 65
-    Height = 25
-    Hint = 'Launch Vavoom'
-    Caption = 'Run'
-    TabOrder = 9
-    OnClick = RunButtonClick
-  end
   object Game: TComboBox
     Left = 56
     Top = 240
@@ -967,16 +958,6 @@ object LauncherForm: TLauncherForm
       'Heretic'
       'Hexen'
       'Strife')
-  end
-  object ExitButton: TButton
-    Left = 376
-    Top = 280
-    Width = 65
-    Height = 25
-    Hint = 'Exit launcher'
-    Caption = 'Exit'
-    TabOrder = 10
-    OnClick = ExitButtonClick
   end
   object RendererBox: TComboBox
     Left = 56
