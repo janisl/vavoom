@@ -226,9 +226,9 @@ final Ammo AddAmmo(EntityEx Toucher, class<Ammo> AmmoType, int count)
 		return none;
 	}
 
-	if (Level.Game.gameskill == sk_baby ||
+	if (!bIgnoreSkill && (Level.Game.gameskill == sk_baby ||
 		(Level.Game.gameskill == sk_nightmare &&
-		LineSpecialGameInfo(Level.Game).bNightmareExtraAmmo))
+		LineSpecialGameInfo(Level.Game).bNightmareExtraAmmo)))
 	{
 		// extra ammo in baby mode and nightmare mode
 		if (LineSpecialGameInfo(Level.Game).bBabyNightmareDoubleAmmo)
@@ -279,9 +279,9 @@ final bool AddExistingAmmo(Ammo AmmoItem, int count)
 		return false;
 	}
 
-	if (Level.Game.gameskill == sk_baby ||
+	if (!bIgnoreSkill && (Level.Game.gameskill == sk_baby ||
 		(Level.Game.gameskill == sk_nightmare &&
-		LineSpecialGameInfo(Level.Game).bNightmareExtraAmmo))
+		LineSpecialGameInfo(Level.Game).bNightmareExtraAmmo)))
 	{
 		// extra ammo in baby mode and nightmare mode
 		if (LineSpecialGameInfo(Level.Game).bBabyNightmareDoubleAmmo)

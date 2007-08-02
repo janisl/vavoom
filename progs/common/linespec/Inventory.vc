@@ -58,6 +58,8 @@ bool			bInvBar;
 bool			bKeepDepleted;
 //	This item cannot be tossed out
 bool			bUndroppable;
+//	Ignore skill level when giving this item
+bool			bIgnoreSkill;
 
 replication
 {

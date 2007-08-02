@@ -405,6 +405,7 @@ void SpawnPlayer(mthing_t * mthing)
 		for (i = 0; i < PP.InitialInventory.Num; i++)
 		{
 			Item = Level.Spawn(PP.InitialInventory[i].Type);
+			Item.bIgnoreSkill = true;
 			//	Temporary hack for Dehacked support.
 			if (PP.InitialInventory[i].Type == Clip)
 			{
