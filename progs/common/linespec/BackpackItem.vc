@@ -26,6 +26,9 @@
 class BackpackItem : Inventory
 	abstract;
 
+//	A depleeted backpack will not give any ammo.
+bool			bDepleeted;
+
 //==========================================================================
 //
 //	HandlePickup
@@ -50,7 +53,7 @@ bool HandlePickup(Inventory Item)
 				continue;
 			}
 			int num = Ammo(AmmoItem).default.BackpackAmount;
-			if (!num)
+			if (!num || BackpackItem(Item).bDepleeted)
 			{
 				continue;
 			}
@@ -124,7 +127,7 @@ Inventory CreateCopy(EntityEx Toucher)
 			continue;
 		}
 		int num = AmmoItem.default.BackpackAmount;
-		if (!num)
+		if (!num || bDepleeted)
 		{
 			continue;
 		}
@@ -187,6 +190,20 @@ void DetachedFromOwner()
 			AmmoItem.Amount = AmmoItem.MaxAmount;
 		}
 	}
+}
+
+//==========================================================================
+//
+//	CreateTossable
+//
+//==========================================================================
+
+Inventory CreateTossable()
+{
+	//	Set depleeted flag to prevent cheating.
+	Inventory Copy = ::CreateTossable();
+	BackpackItem(Copy).bDepleeted = true;
+	return Copy;
 }
 
 defaultproperties

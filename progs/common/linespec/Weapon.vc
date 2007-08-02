@@ -151,6 +151,38 @@ Inventory CreateCopy(EntityEx Toucher)
 
 //==========================================================================
 //
+//	CreateTossable
+//
+//==========================================================================
+
+Inventory CreateTossable()
+{
+	//	Drop the wapon that is meant to be placed in a level, i.e. that
+	// normaly gives you ammo.
+	if (SisterWeapon && !default.AmmoGive1 && !default.AmmoGive2 &&
+		(SisterWeapon.default.AmmoGive1 > 0 ||
+		SisterWeapon.default.AmmoGive2 > 0))
+	{
+		return SisterWeapon.CreateTossable();
+	}
+
+	Weapon Copy = Weapon(::CreateTossable());
+	if (Copy)
+	{
+		//	If weapon has a sister weapon, remove it too.
+		if (SisterWeapon)
+		{
+			SisterWeapon.Destroy();
+		}
+		//	Dropped weapons don't have ammo to prevent cheating.
+		Copy.AmmoGive1 = 0;
+		Copy.AmmoGive2 = 0;
+	}
+	return Copy;
+}
+
+//==========================================================================
+//
 //	AttachToOwner
 //
 //==========================================================================
@@ -331,6 +363,36 @@ bool PickupForAmmo(Weapon ExistingWeapon)
 bool ShouldStay()
 {
 	return LineSpecialGameInfo(Level.Game).bWeaponsStay;
+}
+
+//==========================================================================
+//
+//	Use
+//
+//	Using a weapon makes it active.
+//
+//==========================================================================
+
+bool Use(bool Pickup)
+{
+	//	Can't directly use powered up weapon.
+	if (bPoweredUp)
+	{
+		return false;
+	}
+
+	//	See which weapon to use.
+	Weapon UseWpn = self;
+	if (SisterWeapon && SisterWeapon.bPoweredUp &&
+		PlayerEx(Owner.Player).HaveTomeOfPower())
+	{
+		UseWpn = SisterWeapon;
+	}
+	if (Owner.bIsPlayer && PlayerEx(Owner.Player).ReadyWeapon != UseWpn)
+	{
+		PlayerEx(Owner.Player).PendingWeapon = UseWpn;
+	}
+	return false;
 }
 
 //==========================================================================
