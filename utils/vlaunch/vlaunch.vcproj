@@ -78,7 +78,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="wxmsw28ud_core.lib wxbase28ud.lib wxtiffd.lib wxjpegd.lib wxpngd.lib wxzlibd.lib wxregexud.lib wxexpatd.lib winmm.lib comctl32.lib rpcrt4.lib wsock32.lib odbc32.lib"
-				OutputFile="vc_mswud\minimal.exe"
+				OutputFile="vc_mswud\vlaunch.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories=".\..\..\..\wxWidgets-2.8.4\lib\vc_lib"
@@ -278,7 +278,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="wxmsw28u_core.lib wxbase28u.lib wxtiff.lib wxjpeg.lib wxpng.lib wxzlib.lib wxregexu.lib wxexpat.lib winmm.lib comctl32.lib rpcrt4.lib wsock32.lib odbc32.lib"
-				OutputFile="vc_mswu\minimal.exe"
+				OutputFile="vc_mswu\vlaunch.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories=".\..\..\..\wxWidgets-2.8.4\lib\vc_lib"
