@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ArtiSpeedBoots : Artifact
+class ArtiSpeedBoots : Inventory
 	__mobjinfo__(8002)
 	__scriptid__(13);
 
@@ -52,7 +52,13 @@ __states__
 
 defaultproperties
 {
+	Height = 32.0;
+	MaxAmount = DefMaxAmount;
+	PickupSound = 'PickupArtifact';
 	PickupMessage = "$txt_artispeed";
 	IconName = 'artisped';
+	bFloatBob = true;
+	bPickupFlash = true;
+	bInvBar = true;
 	IdleState = S_ARTI_BOOTS1;
 }

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ArtiBlastRadius : Artifact
+class ArtiBlastRadius : Inventory
 	__mobjinfo__(10110)
 	__scriptid__(74);
 
@@ -110,7 +110,13 @@ __states__
 
 defaultproperties
 {
+	Height = 32.0;
+	MaxAmount = DefMaxAmount;
+	PickupSound = 'PickupArtifact';
 	PickupMessage = "$txt_artiblastradius";
 	IconName = 'artiblst';
+	bFloatBob = true;
+	bPickupFlash = true;
+	bInvBar = true;
 	IdleState = S_ARTI_BLAST1;
 }

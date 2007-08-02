@@ -166,7 +166,6 @@ EXTRA_DIST = compile.bat \
 	game/ArtiBoostArmor.vc \
 	game/ArtiBoostMana.vc \
 	game/ArtiDarkServant.vc \
-	game/Artifact.vc \
 	game/ArtiFly.vc \
 	game/ArtiHealingRadius.vc \
 	game/ArtiHealth.vc \

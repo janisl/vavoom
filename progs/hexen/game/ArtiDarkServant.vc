@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ArtiDarkServant : Artifact
+class ArtiDarkServant : Inventory
 	__mobjinfo__(86)
 	__scriptid__(16);
 
@@ -53,8 +53,14 @@ __states__
 
 defaultproperties
 {
+	Height = 32.0;
+	MaxAmount = DefMaxAmount;
+	PickupSound = 'PickupArtifact';
 	PickupMessage = "$txt_artisummon";
 	RespawnTime = 120.0 + 30.0 / 35.0;
 	IconName = 'artisumn';
+	bFloatBob = true;
+	bPickupFlash = true;
+	bInvBar = true;
 	IdleState = S_ARTI_SUMMON;
 }

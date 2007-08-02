@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ArtiBoostArmor : Artifact
+class ArtiBoostArmor : Inventory
 	__mobjinfo__(8041)
 	__scriptid__(22);
 
@@ -63,7 +63,13 @@ __states__
 
 defaultproperties
 {
+	Height = 32.0;
+	MaxAmount = DefMaxAmount;
+	PickupSound = 'PickupArtifact';
 	PickupMessage = "$txt_artiboostarmor";
 	IconName = 'artibrac';
+	bFloatBob = true;
+	bPickupFlash = true;
+	bInvBar = true;
 	IdleState = S_ARTI_ARMOR1;
 }

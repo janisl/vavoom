@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ArtiBoostMana : Artifact
+class ArtiBoostMana : Inventory
 	__mobjinfo__(8003)
 	__scriptid__(26);
 
@@ -46,7 +46,13 @@ __states__
 
 defaultproperties
 {
+	Height = 32.0;
+	MaxAmount = DefMaxAmount;
+	PickupSound = 'PickupArtifact';
 	PickupMessage = "$txt_artiboostmana";
 	IconName = 'artibman';
+	bFloatBob = true;
+	bPickupFlash = true;
+	bInvBar = true;
 	IdleState = S_ARTI_MANA;
 }

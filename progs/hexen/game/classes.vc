@@ -51,7 +51,6 @@
 #include "SoundSequenceSlot.vc"
 
 #include "CrystalVial.vc"
-#include "Artifact.vc"
 #include "ArtiHealth.vc"
 #include "ArtiFly.vc"
 #include "ArtiInvulnerability.vc"

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ArtiPork : Artifact
+class ArtiPork : Inventory
 	__mobjinfo__(30)
 	__scriptid__(14);
 
@@ -61,7 +61,13 @@ __states__
 
 defaultproperties
 {
+	Height = 32.0;
+	MaxAmount = DefMaxAmount;
+	PickupSound = 'PickupArtifact';
 	PickupMessage = "$txt_artiegg2";
 	IconName = 'artipork';
+	bFloatBob = true;
+	bPickupFlash = true;
+	bInvBar = true;
 	IdleState = S_ARTI_EGGC1;
 }

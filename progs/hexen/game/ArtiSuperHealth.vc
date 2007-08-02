@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ArtiSuperHealth : Artifact
+class ArtiSuperHealth : Inventory
 	__mobjinfo__(32)
 	__scriptid__(25);
 
@@ -45,7 +45,13 @@ __states__
 
 defaultproperties
 {
+	Height = 32.0;
+	MaxAmount = DefMaxAmount;
+	PickupSound = 'PickupArtifact';
 	PickupMessage = "$txt_artisuperhealth";
 	IconName = 'artisphl';
+	bFloatBob = true;
+	bPickupFlash = true;
+	bInvBar = true;
 	IdleState = S_ARTI_SPHL1;
 }

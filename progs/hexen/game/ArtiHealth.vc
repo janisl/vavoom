@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ArtiHealth : Artifact
+class ArtiHealth : Inventory
 	__mobjinfo__(82)
 	__scriptid__(24);
 
@@ -47,7 +47,13 @@ __states__
 
 defaultproperties
 {
+	Height = 32.0;
+	MaxAmount = DefMaxAmount;
+	PickupSound = 'PickupArtifact';
 	PickupMessage = "$txt_artihealth";
 	IconName = 'artiptn2';
+	bFloatBob = true;
+	bPickupFlash = true;
+	bInvBar = true;
 	IdleState = S_ARTI_PTN2_1;
 }

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class PuzzleItem : Artifact
+class PuzzleItem : Inventory
 	abstract;
 
 int				PuzzleItemNumber;
@@ -89,9 +89,10 @@ bool Use(bool Pickup)
 
 defaultproperties
 {
-	bFloatBob = false;
-	bNoGravity = true;
+	Height = 32.0;
+	MaxAmount = DefMaxAmount;
 	PickupSound = 'PickupItem';
+	bNoGravity = true;
+	bInvBar = true;
 	bFullVolPickupSound = true;
-	bPickupFlash = false;
 }

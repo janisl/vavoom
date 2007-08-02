@@ -2667,7 +2667,7 @@ void PlayerUseArtifact(Inventory Item)
 //
 //==========================================================================
 
-void PlayerUseArtifactType(class<Artifact> arti)
+void PlayerUseArtifactType(class<Inventory> arti)
 {
 	Inventory Item = EntityEx(MO).FindInventory(arti);
 	if (Item)

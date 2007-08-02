@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ArtiPoisonBag : Artifact
+class ArtiPoisonBag : Inventory
 	__mobjinfo__(8000)
 	__scriptid__(72);
 
@@ -87,7 +87,13 @@ __states__
 
 defaultproperties
 {
+	Height = 32.0;
+	MaxAmount = DefMaxAmount;
+	PickupSound = 'PickupArtifact';
 	PickupMessage = "$txt_artipoisonbag";
 	IconName = 'artipsbg';
+	bFloatBob = true;
+	bPickupFlash = true;
+	bInvBar = true;
 	IdleState = S_ARTI_PSBG1;
 }

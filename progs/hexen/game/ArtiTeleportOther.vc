@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ArtiTeleportOther : Artifact
+class ArtiTeleportOther : Inventory
 	__mobjinfo__(10040)
 	__scriptid__(17);
 
@@ -55,7 +55,13 @@ __states__
 
 defaultproperties
 {
+	Height = 32.0;
+	MaxAmount = DefMaxAmount;
+	PickupSound = 'PickupArtifact';
 	PickupMessage = "$txt_artiteleportother";
 	IconName = 'artitelo';
+	bFloatBob = true;
+	bPickupFlash = true;
+	bInvBar = true;
 	IdleState = S_ARTI_TELOTHER1;
 }
