@@ -33,10 +33,6 @@
 #include "wx/wx.h"
 #endif
 
-#if !defined(__WXMSW__) && !defined(__WXPM__)
-#include "vlaunch.xpm"
-#endif
-
 // MACROS ------------------------------------------------------------------
 
 // TYPES -------------------------------------------------------------------
@@ -46,6 +42,9 @@ enum
     Minimal_Quit = wxID_EXIT
 };
 
+//
+//	Main frame of the launcher.
+//
 class VMain : public wxFrame
 {
 public:
@@ -57,6 +56,9 @@ private:
     DECLARE_EVENT_TABLE()
 };
 
+//
+//	Launcher application class.
+//
 class VLaunchApp : public wxApp
 {
 public:
@@ -93,13 +95,9 @@ VMain::VMain()
 : wxFrame(NULL, wxID_ANY, wxT("Vavoom launcher"), wxDefaultPosition, wxSize(400, 300),
 	wxDEFAULT_FRAME_STYLE & ~ (wxRESIZE_BORDER | wxRESIZE_BOX | wxMAXIMIZE_BOX))
 {
-	SetIcon(wxICON(mainicon));
-
-	CreateStatusBar();
-
 	wxPanel* panel = new wxPanel(this);
 
-	new wxCheckBox(panel, -1, wxT("Test label"), wxPoint(20, 50));
+//	new wxCheckBox(panel, -1, wxT("Test label"), wxPoint(20, 50));
 }
 
 //==========================================================================
@@ -108,7 +106,7 @@ VMain::VMain()
 //
 //==========================================================================
 
-void VMain::OnQuit(wxCommandEvent& WXUNUSED(event))
+void VMain::OnQuit(wxCommandEvent&)
 {
 	Close(true);
 }
@@ -124,7 +122,8 @@ bool VLaunchApp::OnInit()
 	if (!wxApp::OnInit())
 		return false;
 
-	VMain *frame = new VMain();
+	//	Create our main frame object and show it.
+	VMain* frame = new VMain();
 	frame->Show(true);
 	return true;
 }
