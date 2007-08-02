@@ -76,6 +76,56 @@ Inventory CreateCopy(EntityEx Toucher)
 	}
 }
 
+//==========================================================================
+//
+//	CreateTossable
+//
+//==========================================================================
+
+Inventory CreateTossable()
+{
+	Inventory Copy;
+
+	if (bUndroppable || !Owner || Amount <= 0)
+	{
+		return none;
+	}
+	//	Gold is dropped with maximal throwable amount.
+	if (Amount >= 50)
+	{
+		Copy = Spawn(Gold50);
+		Amount -= 50;
+	}
+	else if (Amount >= 25)
+	{
+		Copy = Spawn(Gold25);
+		Amount -= 25;
+	}
+	else if (Amount >= 10)
+	{
+		Copy = Spawn(Gold10);
+		Amount -= 10;
+	}
+	else if (Amount > 1 || bKeepDepleted)
+	{
+		Copy = Spawn(Coin);
+		Amount -= 1;
+	}
+	else
+	{
+		Copy = self;
+		BecomePickup();
+	}
+	Copy.DropTime = 1.0;
+	Copy.bSpecial = false;
+	Copy.bSolid = false;
+	if (Copy != self && Amount <= 0 && !bKeepDepleted)
+	{
+		Destroy();
+	}
+	return Copy;
+}
+
 __states__
 {
 	S_COIN('COIN', 0, -1.0, none) = none

@@ -762,9 +762,6 @@ void AdjustInvFirst()
 
 EntityEx InvThrow()
 {
-	class<Inventory>	ItemType;
-	int				Amount;
-	EntityEx		Item;
 	TVec			Dir;
 
 	if (!InvCursor)
@@ -772,36 +769,17 @@ EntityEx InvThrow()
 		return none;
 	}
 
-	ItemType = class<Inventory>(InvCursor.Class);
-	Amount = 1;
-	//	Gold is dropped with maximal throwable amount.
-	if (Coin(InvCursor))
-	{
-		if (InvCursor.Amount >= 50)
-		{
-			ItemType = Gold50;
-			Amount = 50;
-		}
-		else if (InvCursor.Amount >= 25)
-		{
-			ItemType = Gold25;
-			Amount = 25;
-		}
-		else if (InvCursor.Amount >= 10)
-		{
-			ItemType = Gold10;
-			Amount = 10;
-		}
-	}
-
 	AngleVector(&MO.Angles, &Dir);
 	Dir.z = 0.0;
 	Dir = Normalise(Dir);
-	Item = StrifeLevelInfo(Level).Spawn(ItemType, MO.Origin + vector(0.0, 0.0, 32.0) +
-		Dir * (MO.Radius + 36.0));
-	Item.Velocity = Dir * 64.0;
-	//	Remove item.
-	RemoveInvItem(InvCursor, Amount);
+	Inventory Item = InvCursor.CreateTossable();
+	if (Item)
+	{
+		Item.SetOrigin2(MO.Origin + vector(0.0, 0.0, 32.0) +
+			Dir * (MO.Radius + 32.0));
+		Item.Angles.yaw = MO.Angles.yaw;
+		Item.Velocity = Dir * 128.0;
+	}
 	return Item;
 }
 

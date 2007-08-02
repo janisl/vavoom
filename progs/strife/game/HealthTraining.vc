@@ -60,5 +60,6 @@ defaultproperties
 	IconName = 'i_helt';
 	bFloorClip = true;
 	bInvBar = true;
+	bUndroppable = true;
 	IdleState = S_TOUGHNESS;
 }

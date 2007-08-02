@@ -38,5 +38,6 @@ defaultproperties
 	IconName = 'i_gunt';
 	bFloorClip = true;
 	bInvBar = true;
+	bUndroppable = true;
 	IdleState = S_ACCURACY;
 }

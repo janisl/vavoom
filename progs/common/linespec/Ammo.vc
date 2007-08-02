@@ -148,4 +148,5 @@ Inventory CreateCopy(EntityEx Toucher)
 
 defaultproperties
 {
+	bKeepDepleted = true;
 }

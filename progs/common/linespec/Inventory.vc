@@ -37,6 +37,7 @@ string			PickupMessage;
 float			RespawnTime;
 int				QuestID;
 name			IconName;
+float			DropTime;
 
 name			PickupSound;
 name			UseSound;
@@ -53,6 +54,10 @@ bool			bGiveQuest;
 bool			bPickupGood;
 //	Can be displayed in the inventory bar
 bool			bInvBar;
+//	Keep item in inventory even if amount is 0
+bool			bKeepDepleted;
+//	This item cannot be tossed out
+bool			bUndroppable;
 
 replication
 {
@@ -101,6 +106,27 @@ void Destroyed()
 
 //==========================================================================
 //
+//	Tick
+//
+//==========================================================================
+
+void Tick(float DeltaTime)
+{
+	::Tick(DeltaTime);
+	if (DropTime)
+	{
+		DropTime -= DeltaTime;
+		if (DropTime <= 0.0)
+		{
+			DropTime = 0.0;
+			bSpecial = default.bSpecial;
+			bSolid = default.bSolid;
+		}
+	}
+}
+
+//==========================================================================
+//
 //	BecomeItem
 //
 //==========================================================================
@@ -122,6 +148,10 @@ final void BecomeItem()
 
 final void BecomePickup()
 {
+	if (Owner)
+	{
+		EntityEx(Owner).RemoveInventory(self);
+	}
 	UnlinkFromWorld();
 	bHidden = false;
 	bNoBlockmap = false;
@@ -272,6 +302,45 @@ Inventory CreateCopy(EntityEx Toucher)
 		//	Use this one
 		Copy = self;
 	}
+	return Copy;
+}
+
+//==========================================================================
+//
+//	CreateTossable
+//
+//	Create item suitable fro dropping.
+//
+//==========================================================================
+
+Inventory CreateTossable()
+{
+	if (!IdleState)
+	{
+		//	This item has no spawn state so it cannot be seen.
+		return none;
+	}
+	if (bUndroppable || !Owner || Amount <= 0)
+	{
+		return none;
+	}
+
+	if (Amount == 1 && !bKeepDepleted)
+	{
+		//	Drop the current one.
+		BecomePickup();
+		DropTime = 1.0;
+		bSpecial = false;
+		bSolid = false;
+		return self;
+	}
+
+	Inventory Copy = Spawn(class<Inventory>(Class));
+	Copy.Amount = 1;
+	Copy.MaxAmount = MaxAmount;
+	Copy.DropTime = 1.0;
+	Copy.bSpecial = false;
+	Copy.bSolid = false;
 	return Copy;
 }
 
