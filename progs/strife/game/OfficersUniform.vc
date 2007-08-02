@@ -39,5 +39,4 @@ defaultproperties
 	IconName = 'i_ofic';
 	bNoDeathmatch = true;
 	IdleState = S_OFFICERS_UNIFORM;
-	ItemType = StrifeDefs::ITEM_OfficersUniform;
 }

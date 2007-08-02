@@ -59,5 +59,4 @@ defaultproperties
 	MaxAmount = 100;
 	IconName = 'i_helt';
 	IdleState = S_TOUGHNESS;
-	ItemType = StrifeDefs::ITEM_Toughness;
 }

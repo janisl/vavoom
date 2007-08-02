@@ -27,6 +27,17 @@ class EnvironmentalSuit : InventoryItem
 	__mobjinfo__(2025)
 	__scriptid__(136);
 
+//==========================================================================
+//
+//	Use
+//
+//==========================================================================
+
+bool Use(bool Pickup)
+{
+	return Player(Owner.Player).GivePower(pw_ironfeet);
+}
+
 __states__
 {
 	S_ENV_SUIT('MASK', 0, -1.0, none) = none
@@ -40,5 +51,4 @@ defaultproperties
 	MaxAmount = 5;
 	IconName = 'i_mask';
 	IdleState = S_ENV_SUIT;
-	ItemType = StrifeDefs::ITEM_EnvironmentalSuit;
 }

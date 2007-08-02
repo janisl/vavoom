@@ -46,6 +46,30 @@ bool TryPickup(EntityEx Toucher)
 
 //==========================================================================
 //
+//	Use
+//
+//==========================================================================
+
+bool Use(bool Pickup)
+{
+	//	Increase item count because ItemThrow also decreases it.
+	Amount++;
+	EntityEx A = Player(Owner.Player).InvThrow();
+	if (A)
+	{
+		A.SetState(A.SeeState);
+		A.Target = EntityEx(Owner);
+		return true;
+	}
+	else
+	{
+		Amount--;
+	}
+	return false;
+}
+
+//==========================================================================
+//
 //	A_SummonRebel
 //
 //==========================================================================
@@ -129,5 +153,4 @@ defaultproperties
 	bDropped = true;
 	IdleState = S_BEACON;
 	SeeState = S_BEACON_1;
-	ItemType = StrifeDefs::ITEM_TeleporterBeacon;
 }

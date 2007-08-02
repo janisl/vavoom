@@ -46,7 +46,6 @@ defaultproperties
 //	bUnknown5 = true;
 	bDropped = true;
 	IdleState = S_BROKEN_POWER_COUPLING;
-	ItemType = StrifeDefs::ITEM_BrokenPowerCoupling;
 	bGiveQuest = true;
 	QuestID = QUEST_GotBrokenPowerCoupling;
 }

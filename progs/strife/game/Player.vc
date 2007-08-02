@@ -699,72 +699,13 @@ void InvLeft()
 
 void InvUse()
 {
-	bool		itemUsed;
-	EntityEx	A;
-
 	if (!InvCursor)
 	{
 		return;
 	}
-	itemUsed = false;
-	switch (InventoryItem(InvCursor).ItemType)
+	if (InvCursor.Use(false))
 	{
-	case StrifeDefs::ITEM_MedPatch:
-		itemUsed = GiveBody(10);
-		break;
-
-	case StrifeDefs::ITEM_MedicalKit:
-		itemUsed = GiveBody(25);
-		break;
-
-	case StrifeDefs::ITEM_SurgeryKit:
-		itemUsed = GiveBody(100);
-		break;
-
-	case StrifeDefs::ITEM_MetalArmor:
-		itemUsed = GiveArmor(2);
-		break;
-
-	case StrifeDefs::ITEM_LeatherArmor:
-		itemUsed = GiveArmor(1);
-		break;
-
-	case StrifeDefs::ITEM_ShadowArmor:
-		itemUsed = GivePower(pw_invisibility);
-		break;
-
-	case StrifeDefs::ITEM_EnvironmentalSuit:
-		itemUsed = GivePower(pw_ironfeet);
-		break;
-
-	case StrifeDefs::ITEM_TeleporterBeacon:
-		//	Increase item count because ItemThrow also decreases it.
-		InvCursor.Amount++;
-		A = InvThrow();
-		if (A)
-		{
-			A.SetState(A.SeeState);
-			A.Target = Actor(MO);
-			itemUsed = true;
-		}
-		else
-		{
-			InvCursor.Amount--;
-		}
-		break;
-
-	case StrifeDefs::ITEM_Map:
-		itemUsed = GiveItem(IT_ALL_MAP);
-		break;
-
-/*	ITEM_Scanner,
-	ITEM_Targeter,*/
-	default:
-		itemUsed = InvCursor.Use(false);
-	}
-	//	Remove item if it was used.
-	if (itemUsed)
-	{
+		//	Remove item if it was used.
 		MO.PlaySound('misc/invuse', CHAN_BODY);
 		RemoveInvItem(InvCursor, 1);
 	}
@@ -835,7 +776,7 @@ EntityEx InvThrow()
 	ItemType = class<InventoryItem>(InvCursor.Class);
 	Amount = 1;
 	//	Gold is dropped with maximal throwable amount.
-	if (InventoryItem(InvCursor).ItemType == StrifeDefs::ITEM_Coin)
+	if (Coin(InvCursor))
 	{
 		if (InvCursor.Amount >= 50)
 		{

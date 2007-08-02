@@ -26,6 +26,17 @@
 class MedPatch : InventoryItem
 	__mobjinfo__(2011);
 
+//==========================================================================
+//
+//	Use
+//
+//==========================================================================
+
+bool Use(bool Pickup)
+{
+	return Player(Owner.Player).GiveBody(10);
+}
+
 __states__
 {
 	S_MED_PATCH('STMP', 0, -1.0, none) = none
@@ -39,5 +50,4 @@ defaultproperties
 	MaxAmount = 20;
 	IconName = 'i_stmp';
 	IdleState = S_MED_PATCH;
-	ItemType = StrifeDefs::ITEM_MedPatch;
 }

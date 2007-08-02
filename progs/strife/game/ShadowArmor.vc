@@ -27,6 +27,17 @@ class ShadowArmor : InventoryItem
 	__mobjinfo__(2024)
 	__scriptid__(135);
 
+//==========================================================================
+//
+//	Use
+//
+//==========================================================================
+
+bool Use(bool Pickup)
+{
+	return Player(Owner.Player).GivePower(pw_invisibility);
+}
+
 __states__
 {
 	S_SHADOW_ARMOR1('SHD1', 0, 17.0 / 35.0, S_SHADOW_ARMOR2) = A_ClearShadow
@@ -43,5 +54,4 @@ defaultproperties
 	MaxAmount = 2;
 	IconName = 'i_shd1';
 	IdleState = S_SHADOW_ARMOR1;
-	ItemType = StrifeDefs::ITEM_ShadowArmor;
 }

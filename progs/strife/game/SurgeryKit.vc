@@ -26,6 +26,17 @@
 class SurgeryKit : InventoryItem
 	__mobjinfo__(83);
 
+//==========================================================================
+//
+//	Use
+//
+//==========================================================================
+
+bool Use(bool Pickup)
+{
+	return Player(Owner.Player).GiveBody(100);
+}
+
 __states__
 {
 	S_FULL_HEALTH('FULL', 0, 35.0 / 35.0, S_FULL_HEALTH2) = none
@@ -40,5 +51,4 @@ defaultproperties
 	MaxAmount = 5;
 	IconName = 'i_full';
 	IdleState = S_FULL_HEALTH;
-	ItemType = StrifeDefs::ITEM_SurgeryKit;
 }

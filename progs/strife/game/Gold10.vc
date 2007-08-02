@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Gold10 : MoneyPickup
+class Gold10 : Coin
 	__mobjinfo__(138);
 
 __states__
@@ -36,8 +36,5 @@ defaultproperties
 	ConversationID = 169;
 	PickupMessage = "$txt_10gold";
 	Amount = 10;
-	bDropped = true;
-	bNoDeathmatch = true;
 	IdleState = S_GOLD10;
-	ItemType = StrifeDefs::ITEM_Coin;
 }

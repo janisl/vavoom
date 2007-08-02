@@ -27,6 +27,17 @@ class MetalArmor : InventoryItem
 	__mobjinfo__(2019)
 	__scriptid__(69);
 
+//==========================================================================
+//
+//	Use
+//
+//==========================================================================
+
+bool Use(bool Pickup)
+{
+	return Player(Owner.Player).GiveArmor(2);
+}
+
 __states__
 {
 	S_METAL_ARMOR('ARM1', 0, -1.0, none) = none
@@ -40,5 +51,4 @@ defaultproperties
 	MaxAmount = 3;
 	IconName = 'i_arm1';
 	IdleState = S_METAL_ARMOR;
-	ItemType = StrifeDefs::ITEM_MetalArmor;
 }

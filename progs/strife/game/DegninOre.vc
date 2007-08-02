@@ -95,6 +95,5 @@ defaultproperties
 	IdleState = S_ORE;
 	DeathState = S_ORE_X;
 	DeathSound = 'ore/explode';
-	ItemType = StrifeDefs::ITEM_DegninOre;
 	ExplodeEffect = RGB(235, 231, 0);
 }

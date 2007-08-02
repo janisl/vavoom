@@ -26,6 +26,17 @@
 class MedicalKit : InventoryItem
 	__mobjinfo__(2012);
 
+//==========================================================================
+//
+//	Use
+//
+//==========================================================================
+
+bool Use(bool Pickup)
+{
+	return Player(Owner.Player).GiveBody(25);
+}
+
 __states__
 {
 	S_MEDICAL_KIT('MDKT', 0, -1.0, none) = none
@@ -39,5 +50,4 @@ defaultproperties
 	MaxAmount = 15;
 	IconName = 'i_mdkt';
 	IdleState = S_MEDICAL_KIT;
-	ItemType = StrifeDefs::ITEM_MedicalKit;
 }

@@ -23,8 +23,58 @@
 //**
 //**************************************************************************
 
-class Coin : MoneyPickup
+class Coin : InventoryItem
 	__mobjinfo__(93);
+
+//==========================================================================
+//
+//	HandlePickup
+//
+//==========================================================================
+
+bool HandlePickup(Inventory Item)
+{
+	if (Coin(Item))
+	{
+		if (Amount < MaxAmount)
+		{
+			Amount += Item.Amount;
+			if (Amount > MaxAmount)
+			{
+				Amount = MaxAmount;
+			}
+			Item.bPickupGood = true;
+		}
+		return true;
+	}
+
+	if (Inventory)
+	{
+		return Inventory.HandlePickup(Item);
+	}
+	return false;
+}
+
+//==========================================================================
+//
+//	CreateCopy
+//
+//==========================================================================
+
+Inventory CreateCopy(EntityEx Toucher)
+{
+	if (Class == Coin)
+	{
+		return ::CreateCopy(Toucher);
+	}
+	else
+	{
+		Inventory Copy = Spawn(Coin);
+		Copy.Amount = Amount;
+		GoAwayAndDie();
+		return Copy;
+	}
+}
 
 __states__
 {
@@ -35,11 +85,9 @@ defaultproperties
 {
 	ConversationID = 168;
 	PickupMessage = "$txt_coin";
-	Mass = 99999.0;
 	MaxAmount = 0x7fffffff;
 	IconName = 'i_coin';
 	bDropped = true;
 	bNoDeathmatch = true;
 	IdleState = S_COIN;
-	ItemType = StrifeDefs::ITEM_Coin;
 }

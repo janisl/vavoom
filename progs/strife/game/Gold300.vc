@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Gold300 : MoneyPickup;
+class Gold300 : Coin;
 
 __states__
 {
@@ -35,9 +35,7 @@ defaultproperties
 	ConversationID = 172;
 	PickupMessage = "$txt_300gold";
 	Amount = 300;
-	bDropped = true;
 	IdleState = S_TOKENS;
-	ItemType = StrifeDefs::ITEM_Coin;
 	bGiveQuest = true;
 	QuestID = QUEST_Prison;
 }

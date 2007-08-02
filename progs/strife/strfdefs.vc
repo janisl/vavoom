@@ -60,37 +60,6 @@ enum
 	NUMKEYS
 };
 
-enum
-{
-	ITEM_MedPatch,
-	ITEM_MedicalKit,
-	ITEM_SurgeryKit,
-	ITEM_DegninOre,
-	ITEM_MetalArmor,
-	ITEM_LeatherArmor,
-	ITEM_ShadowArmor,
-	ITEM_EnvironmentalSuit,
-	ITEM_GuardUniform,
-	ITEM_OfficersUniform,
-	ITEM_Map,
-	ITEM_Scanner,
-	ITEM_TeleporterBeacon,
-	ITEM_Targeter,
-	ITEM_Coin,
-	ITEM_Ring,
-	ITEM_OfferingChalice,
-	ITEM_Ear,
-	ITEM_FlameThrowerParts,
-	ITEM_BrokenPowerCoupling,
-	ITEM_PrisonPass,
-	ITEM_Report,
-	ITEM_Toughness,
-	ITEM_Accuracy,
-	ITEM_OraclePass,
-
-	NUMINVITEMS
-};
-
 defaultproperties
 {
 }

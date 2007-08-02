@@ -312,7 +312,6 @@ EXTRA_DIST = compile.bat \
 	game/MiniMissile.vc \
 	game/MiniMissileLauncher.vc \
 	game/MiniMissiles.vc \
-	game/MoneyPickup.vc \
 	game/Mug.vc \
 	game/NewKey5.vc \
 	game/OfferingChalice.vc \

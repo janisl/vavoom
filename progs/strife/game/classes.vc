@@ -93,7 +93,6 @@
 
 #include "InventoryItem.vc"
 #include "KeyPickup.vc"
-#include "MoneyPickup.vc"
 #include "MedPatch.vc"
 #include "MedicalKit.vc"
 #include "SurgeryKit.vc"

@@ -40,5 +40,4 @@ defaultproperties
 	IconName = 'i_unif';
 	bGiveQuest = true;
 	IdleState = S_GUARD_UNIFORM;
-	ItemType = StrifeDefs::ITEM_GuardUniform;
 }

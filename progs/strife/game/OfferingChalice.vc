@@ -41,7 +41,6 @@ defaultproperties
 	IconName = 'i_relc';
 	bDropped = true;
 	IdleState = S_CHALICE;
-	ItemType = StrifeDefs::ITEM_OfferingChalice;
 	bGiveQuest = true;
 	QuestID = QUEST_StoleChalice;
 }

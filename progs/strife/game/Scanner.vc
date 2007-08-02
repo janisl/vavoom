@@ -26,6 +26,18 @@
 class Scanner : InventoryItem
 	__mobjinfo__(2027);
 
+//==========================================================================
+//
+//	Use
+//
+//==========================================================================
+
+bool Use(bool Pickup)
+{
+	Owner.Player.cprint("Unimplemented item");
+	return false;
+}
+
 __states__
 {
 	S_SCANNER_1('PMUP', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_SCANNER_2) = none
@@ -40,5 +52,4 @@ defaultproperties
 	MaxAmount = 1;
 	IconName = 'i_pmup';
 	IdleState = S_SCANNER_1;
-	ItemType = StrifeDefs::ITEM_Scanner;
 }
