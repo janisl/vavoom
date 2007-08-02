@@ -2644,14 +2644,7 @@ void PlayerUseArtifact(Inventory Item)
 	{
 		// Artifact was used - remove it from inventory
 		PlayerRemoveArtifact(Item);
-		if (!PuzzleItem(Item))
-		{
-			MO.PlaySound('UseArtifact', CHAN_ITEM);
-		}
-		else
-		{
-			MO.PlaySound('PuzzleSuccess', CHAN_ITEM);
-		}
+		MO.PlaySound(Item.UseSound, CHAN_ITEM);
 		ArtifactFlash = 4;
 	}
 	else if (!PuzzleItem(Item))
@@ -2754,11 +2747,11 @@ void AdjustPlayerAngle(EntityEx AimTarget)
 	bFixAngle = true;
 }
 
-//****************************************************************************
+//**************************************************************************
 //
 //  WEAPON UTILITES
 //
-//****************************************************************************
+//**************************************************************************
 
 //==========================================================================
 //

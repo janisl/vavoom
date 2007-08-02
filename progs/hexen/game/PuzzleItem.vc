@@ -93,4 +93,5 @@ defaultproperties
 	bNoGravity = true;
 	bInvBar = true;
 	bFullVolPickupSound = true;
+	UseSound = 'PuzzleSuccess';
 }

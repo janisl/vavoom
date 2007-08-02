@@ -2180,7 +2180,7 @@ void PlayerUseArtifact(Inventory Item)
 	{
 		// Artifact was used - remove it from inventory
 		PlayerRemoveArtifact(Item);
-		MO.PlaySound('misc/invuse', CHAN_ITEM);
+		MO.PlaySound(Item.UseSound, CHAN_ITEM);
 		ArtifactFlash = 4;
 	}
 	else

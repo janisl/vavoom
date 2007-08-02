@@ -705,7 +705,7 @@ void InvUse()
 	if (InvCursor.Use(false))
 	{
 		//	Remove item if it was used.
-		MO.PlaySound('misc/invuse', CHAN_BODY);
+		MO.PlaySound(InvCursor.UseSound, CHAN_BODY);
 		RemoveInvItem(InvCursor, 1);
 	}
 }

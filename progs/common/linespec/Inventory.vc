@@ -34,10 +34,12 @@ int				Amount;
 int				MaxAmount;
 int				DropAmount;
 string			PickupMessage;
-name			PickupSound;
 float			RespawnTime;
 int				QuestID;
 name			IconName;
+
+name			PickupSound;
+name			UseSound;
 
 //	Originally these didn't respawn in deathmatch
 bool			bBigPowerup;
@@ -589,4 +591,5 @@ defaultproperties
 	bNoPassMobj = true;
 	PickupMessage = "You got a pickup";
 	PickupSound = 'misc/i_pkup';
+	UseSound = 'misc/invuse';
 }
