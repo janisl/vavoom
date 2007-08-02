@@ -45,7 +45,6 @@
 #include "PointPusher.vc"
 #include "PointPuller.vc"
 
-#include "Artifact.vc"
 #include "Key.vc"
 
 #include "SoundSequence.vc"

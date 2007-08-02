@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ArtiTorch : Artifact
+class ArtiTorch : Inventory
 	__mobjinfo__(33)
 	__scriptid__(73);
 
@@ -47,7 +47,14 @@ __states__
 
 defaultproperties
 {
+	Height = 32.0;
+	MaxAmount = DefMaxAmount;
+	PickupSound = 'misc/p_pkup';
 	PickupMessage = "$txt_artitorch";
 	IconName = 'artitrch';
+	bCountItem = true;
+	bFloatBob = true;
+	bPickupFlash = true;
+	bInvBar = true;
 	IdleState = S_ARTI_TRCH1;
 }

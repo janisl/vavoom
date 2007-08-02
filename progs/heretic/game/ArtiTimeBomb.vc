@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ArtiTimeBomb : Artifact
+class ArtiTimeBomb : Inventory
 	__mobjinfo__(34)
 	__scriptid__(72);
 
@@ -50,7 +50,14 @@ __states__
 
 defaultproperties
 {
+	Height = 32.0;
+	MaxAmount = DefMaxAmount;
+	PickupSound = 'misc/p_pkup';
 	PickupMessage = "$txt_artifirebomb";
 	IconName = 'artifbmb';
+	bCountItem = true;
+	bFloatBob = true;
+	bPickupFlash = true;
+	bInvBar = true;
 	IdleState = S_ARTI_FBMB1;
 }

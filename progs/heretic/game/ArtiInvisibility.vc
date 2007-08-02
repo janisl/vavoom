@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ArtiInvisibility : Artifact
+class ArtiInvisibility : Inventory
 	__mobjinfo__(75)
 	__scriptid__(135);
 
@@ -45,9 +45,16 @@ __states__
 
 defaultproperties
 {
+	Height = 32.0;
+	Alpha = 0.666;
+	MaxAmount = DefMaxAmount;
+	PickupSound = 'misc/p_pkup';
 	PickupMessage = "$txt_artiinvisibility";
 	IconName = 'artiinvs';
-	Alpha = 0.666;
+	bCountItem = true;
+	bFloatBob = true;
+	bPickupFlash = true;
+	bInvBar = true;
 	bBigPowerup = true;
 	IdleState = S_ARTI_INVS1;
 }

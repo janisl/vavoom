@@ -157,7 +157,6 @@ EXTRA_DIST = compile.bat \
 	game/ActivatedTimeBomb.vc \
 	game/AmbientSoundSequence.vc \
 	game/ArtiEgg.vc \
-	game/Artifact.vc \
 	game/ArtiFly.vc \
 	game/ArtiHealth.vc \
 	game/ArtiInvisibility.vc \

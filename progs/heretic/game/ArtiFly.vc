@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ArtiFly : Artifact
+class ArtiFly : Inventory
 	__mobjinfo__(83)
 	__scriptid__(15);
 
@@ -57,7 +57,14 @@ __states__
 
 defaultproperties
 {
+	Height = 32.0;
+	MaxAmount = DefMaxAmount;
+	PickupSound = 'misc/p_pkup';
 	PickupMessage = "$txt_artifly";
 	IconName = 'artisoar';
+	bCountItem = true;
+	bFloatBob = true;
+	bPickupFlash = true;
+	bInvBar = true;
 	IdleState = S_ARTI_SOAR1;
 }
