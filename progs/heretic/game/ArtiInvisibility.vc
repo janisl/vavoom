@@ -45,7 +45,6 @@ __states__
 
 defaultproperties
 {
-	Height = 32.0;
 	Alpha = 0.666;
 	MaxAmount = DefMaxAmount;
 	PickupSound = 'misc/p_pkup';

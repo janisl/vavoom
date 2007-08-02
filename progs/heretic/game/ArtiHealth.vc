@@ -47,7 +47,6 @@ __states__
 
 defaultproperties
 {
-	Height = 32.0;
 	MaxAmount = DefMaxAmount;
 	PickupSound = 'misc/p_pkup';
 	PickupMessage = "$txt_artihealth";

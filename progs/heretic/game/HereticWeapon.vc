@@ -60,7 +60,6 @@ final int HITDICE(int a)
 
 defaultproperties
 {
-	Height = 32.0;
 	bInShareware = true;
 	Kickback = 150.0;
 }

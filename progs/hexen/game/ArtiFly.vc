@@ -57,7 +57,6 @@ __states__
 
 defaultproperties
 {
-	Height = 32.0;
 	MaxAmount = DefMaxAmount;
 	PickupSound = 'PickupArtifact';
 	PickupMessage = "$txt_artifly";

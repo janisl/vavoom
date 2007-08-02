@@ -89,9 +89,7 @@ bool Use(bool Pickup)
 
 defaultproperties
 {
-	Height = 32.0;
 	MaxAmount = DefMaxAmount;
-	PickupSound = 'PickupItem';
 	bNoGravity = true;
 	bInvBar = true;
 	bFullVolPickupSound = true;

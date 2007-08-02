@@ -28,5 +28,4 @@ class MageWeapon : HexenWeapon
 
 defaultproperties
 {
-	Height = 32.0;
 }

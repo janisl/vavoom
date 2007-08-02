@@ -36,7 +36,6 @@ __states__
 
 defaultproperties
 {
-	Height = 32.0;
 	Amount = 1;
 	MaxAmount = 20;
 	BackpackAmount = 1;

@@ -28,5 +28,4 @@ class ClericWeapon : HexenWeapon
 
 defaultproperties
 {
-	Height = 32.0;
 }

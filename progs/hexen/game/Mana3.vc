@@ -68,7 +68,7 @@ defaultproperties
 {
 	Health = 10;
 	Radius = 8.0;
-	Height = 32.0;
+	Height = 8.0;
 	MaxAmount = 200;
 	bFloatBob = true;
 	Amount = 20;
