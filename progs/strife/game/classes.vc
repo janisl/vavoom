@@ -91,7 +91,6 @@
 #include "SpectralLightningHTail.vc"
 #include "SpectralLightningSpot.vc"
 
-#include "InventoryItem.vc"
 #include "KeyPickup.vc"
 #include "MedPatch.vc"
 #include "MedicalKit.vc"

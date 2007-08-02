@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class HealthTraining : InventoryItem;
+class HealthTraining : Inventory;
 
 //==========================================================================
 //
@@ -58,5 +58,7 @@ defaultproperties
 	PickupMessage = "Toughness";
 	MaxAmount = 100;
 	IconName = 'i_helt';
+	bFloorClip = true;
+	bInvBar = true;
 	IdleState = S_TOUGHNESS;
 }

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class BeldinsRing : InventoryItem;
+class BeldinsRing : Inventory;
 
 __states__
 {
@@ -37,6 +37,8 @@ defaultproperties
 	IdleState = S_RING;
 	MaxAmount = 1;
 	IconName = 'i_ring';
+	bFloorClip = true;
+	bInvBar = true;
 	bGiveQuest = true;
 	QuestID = QUEST_KilledBeldin;
 }

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Targeter : InventoryItem
+class Targeter : Inventory
 	__mobjinfo__(207);
 
 //==========================================================================
@@ -50,5 +50,7 @@ defaultproperties
 	Mass = 5.0;
 	MaxAmount = 5;
 	IconName = 'i_targ';
+	bFloorClip = true;
+	bInvBar = true;
 	IdleState = S_TARGETER;
 }

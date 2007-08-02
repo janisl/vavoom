@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class OfferingChalice : InventoryItem
+class OfferingChalice : Inventory
 	__mobjinfo__(205);
 
 __states__
@@ -40,6 +40,8 @@ defaultproperties
 	MaxAmount = 1;
 	IconName = 'i_relc';
 	bDropped = true;
+	bFloorClip = true;
+	bInvBar = true;
 	IdleState = S_CHALICE;
 	bGiveQuest = true;
 	QuestID = QUEST_StoleChalice;

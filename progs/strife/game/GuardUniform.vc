@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class GuardUniform : InventoryItem
+class GuardUniform : Inventory
 	__mobjinfo__(90);
 
 __states__
@@ -38,6 +38,8 @@ defaultproperties
 	QuestID = QUEST_GotGuardUniform;
 	MaxAmount = 1;
 	IconName = 'i_unif';
+	bFloorClip = true;
+	bInvBar = true;
 	bGiveQuest = true;
 	IdleState = S_GUARD_UNIFORM;
 }

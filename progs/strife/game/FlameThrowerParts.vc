@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class FlameThrowerParts : InventoryItem;
+class FlameThrowerParts : Inventory;
 
 __states__
 {
@@ -36,5 +36,7 @@ defaultproperties
 	PickupMessage = "$txt_fthrowerparts";
 	MaxAmount = 1;
 	IconName = 'i_bflm';
+	bFloorClip = true;
+	bInvBar = true;
 	IdleState = S_FLAME_THROWER_PARTS;
 }

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Ear : InventoryItem;
+class Ear : Inventory;
 
 __states__
 {
@@ -37,6 +37,8 @@ defaultproperties
 	MaxAmount = 1;
 	IconName = 'i_ears';
 	IdleState = S_EAR;
+	bFloorClip = true;
+	bInvBar = true;
 	bGiveQuest = true;
 	QuestID = QUEST_GotDerwinsEar;
 }

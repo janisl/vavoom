@@ -66,7 +66,6 @@ int Keys;
 
 Inventory InvFirst;
 Inventory InvCursor;
-//InventoryItem Inventory[StrifeDefs::NUMINVITEMS];
 
 // Power ups. invinc and invis are timers.
 float Powers[NUMPOWERS];
@@ -763,7 +762,7 @@ void AdjustInvFirst()
 
 EntityEx InvThrow()
 {
-	class<InventoryItem>	ItemType;
+	class<Inventory>	ItemType;
 	int				Amount;
 	EntityEx		Item;
 	TVec			Dir;
@@ -773,7 +772,7 @@ EntityEx InvThrow()
 		return none;
 	}
 
-	ItemType = class<InventoryItem>(InvCursor.Class);
+	ItemType = class<Inventory>(InvCursor.Class);
 	Amount = 1;
 	//	Gold is dropped with maximal throwable amount.
 	if (Coin(InvCursor))

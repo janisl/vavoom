@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class StrifeMap : InventoryItem
+class StrifeMap : Inventory
 	__mobjinfo__(2026)
 	__scriptid__(137);
 
@@ -50,5 +50,7 @@ defaultproperties
 	PickupMessage = "$txt_strifemap";
 	MaxAmount = 1;
 	IconName = 'i_pmup';//"I_PMAP', - pic doesn't exist.
+	bFloorClip = true;
+	bInvBar = true;
 	IdleState = S_MAP_1;
 }

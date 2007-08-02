@@ -272,7 +272,6 @@ EXTRA_DIST = compile.bat \
 	game/Inquisitor.vc \
 	game/InquisitorArm.vc \
 	game/InquisitorShot.vc \
-	game/InventoryItem.vc \
 	game/Junk.vc \
 	game/KeyPickup.vc \
 	game/KlaxonWarningLight.vc \

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MedicalKit : InventoryItem
+class MedicalKit : Inventory
 	__mobjinfo__(2012);
 
 //==========================================================================
@@ -49,5 +49,7 @@ defaultproperties
 	Mass = 15.0;
 	MaxAmount = 15;
 	IconName = 'i_mdkt';
+	bFloorClip = true;
+	bInvBar = true;
 	IdleState = S_MEDICAL_KIT;
 }

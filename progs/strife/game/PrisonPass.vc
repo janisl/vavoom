@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class PrisonPass : InventoryItem;
+class PrisonPass : Inventory;
 
 //==========================================================================
 //
@@ -52,5 +52,7 @@ defaultproperties
 	IconName = 'i_tokn';
 	IdleState = S_TOKENS;
 	bGiveQuest = true;
+	bFloorClip = true;
+	bInvBar = true;
 	QuestID = QUEST_GotPrisonPass;
 }

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class DegninOre : InventoryItem
+class DegninOre : Inventory
 	__mobjinfo__(59);
 
 //==========================================================================
@@ -92,6 +92,8 @@ defaultproperties
 	bShootable = true;
 	bInCombat = true;
 	bNoBlood = true;
+	bFloorClip = true;
+	bInvBar = true;
 	IdleState = S_ORE;
 	DeathState = S_ORE_X;
 	DeathSound = 'ore/explode';

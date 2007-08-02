@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Coin : InventoryItem
+class Coin : Inventory
 	__mobjinfo__(93);
 
 //==========================================================================
@@ -89,5 +89,7 @@ defaultproperties
 	IconName = 'i_coin';
 	bDropped = true;
 	bNoDeathmatch = true;
+	bFloorClip = true;
+	bInvBar = true;
 	IdleState = S_COIN;
 }

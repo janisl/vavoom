@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MetalArmor : InventoryItem
+class MetalArmor : Inventory
 	__mobjinfo__(2019)
 	__scriptid__(69);
 
@@ -50,5 +50,7 @@ defaultproperties
 	Mass = 3.0;
 	MaxAmount = 3;
 	IconName = 'i_arm1';
+	bFloorClip = true;
+	bInvBar = true;
 	IdleState = S_METAL_ARMOR;
 }

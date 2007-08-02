@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class GunTraining : InventoryItem;
+class GunTraining : Inventory;
 
 __states__
 {
@@ -36,5 +36,7 @@ defaultproperties
 	PickupMessage = "Accuracy";
 	MaxAmount = 100;
 	IconName = 'i_gunt';
+	bFloorClip = true;
+	bInvBar = true;
 	IdleState = S_ACCURACY;
 }

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class BrokenPowerCoupling : InventoryItem
+class BrokenPowerCoupling : Inventory
 	__mobjinfo__(226);
 
 __states__
@@ -45,6 +45,8 @@ defaultproperties
 	IconName = 'i_coup';
 //	bUnknown5 = true;
 	bDropped = true;
+	bFloorClip = true;
+	bInvBar = true;
 	IdleState = S_BROKEN_POWER_COUPLING;
 	bGiveQuest = true;
 	QuestID = QUEST_GotBrokenPowerCoupling;

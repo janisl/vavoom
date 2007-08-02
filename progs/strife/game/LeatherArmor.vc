@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class LeatherArmor : InventoryItem
+class LeatherArmor : Inventory
 	__mobjinfo__(2018)
 	__scriptid__(68);
 
@@ -50,5 +50,7 @@ defaultproperties
 	Mass = 5.0;
 	MaxAmount = 5;
 	IconName = 'i_arm2';
+	bFloorClip = true;
+	bInvBar = true;
 	IdleState = S_LEATHER_ARMOR;
 }

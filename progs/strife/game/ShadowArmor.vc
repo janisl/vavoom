@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ShadowArmor : InventoryItem
+class ShadowArmor : Inventory
 	__mobjinfo__(2024)
 	__scriptid__(135);
 
@@ -53,5 +53,7 @@ defaultproperties
 	Mass = 2.0;
 	MaxAmount = 2;
 	IconName = 'i_shd1';
+	bFloorClip = true;
+	bInvBar = true;
 	IdleState = S_SHADOW_ARMOR1;
 }

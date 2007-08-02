@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class OfficersUniform : InventoryItem
+class OfficersUniform : Inventory
 	__mobjinfo__(52);
 
 __states__
@@ -38,5 +38,7 @@ defaultproperties
 	MaxAmount = 1;
 	IconName = 'i_ofic';
 	bNoDeathmatch = true;
+	bFloorClip = true;
+	bInvBar = true;
 	IdleState = S_OFFICERS_UNIFORM;
 }

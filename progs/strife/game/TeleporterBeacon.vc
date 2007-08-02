@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class TeleporterBeacon : InventoryItem
+class TeleporterBeacon : Inventory
 	__mobjinfo__(10);
 
 bool			bRebelSpawned;
@@ -151,6 +151,8 @@ defaultproperties
 	MaxAmount = 1;
 	IconName = 'i_beac';
 	bDropped = true;
+	bFloorClip = true;
+	bInvBar = true;
 	IdleState = S_BEACON;
 	SeeState = S_BEACON_1;
 }

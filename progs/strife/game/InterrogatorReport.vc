@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class InterrogatorReport : InventoryItem;
+class InterrogatorReport : Inventory;
 
 __states__
 {
@@ -36,5 +36,7 @@ defaultproperties
 	PickupMessage = "$txt_report";
 	MaxAmount = 1;
 	IconName = 'i_tokn';
+	bFloorClip = true;
+	bInvBar = true;
 	IdleState = S_TOKENS;
 }

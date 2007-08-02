@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Scanner : InventoryItem
+class Scanner : Inventory
 	__mobjinfo__(2027);
 
 //==========================================================================
@@ -51,5 +51,7 @@ defaultproperties
 	Mass = 1.0;
 	MaxAmount = 1;
 	IconName = 'i_pmup';
+	bFloorClip = true;
+	bInvBar = true;
 	IdleState = S_SCANNER_1;
 }
