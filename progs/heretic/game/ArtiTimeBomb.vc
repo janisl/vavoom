@@ -27,6 +27,22 @@ class ArtiTimeBomb : Artifact
 	__mobjinfo__(34)
 	__scriptid__(72);
 
+//==========================================================================
+//
+//	Use
+//
+//==========================================================================
+
+bool Use(bool Pickup)
+{
+	float angle = Owner.Angles.yaw;
+	Actor A = Spawn(ActivatedTimeBomb,
+		Owner.Origin + vector(24.0 * cos(angle), 24.0 * sin(angle),
+		-Owner.FloorClip));
+	A.Target = EntityEx(Owner);
+	return true;
+}
+
 __states__
 {
 	S_ARTI_FBMB1('FBMB', 4, 350.0 / 35.0, S_ARTI_FBMB1) = none
@@ -34,7 +50,6 @@ __states__
 
 defaultproperties
 {
-	ArtifactType = HereticDefs::arti_firebomb;
 	PickupMessage = "$txt_artifirebomb";
 	IconName = 'artifbmb';
 	IdleState = S_ARTI_FBMB1;

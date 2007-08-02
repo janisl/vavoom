@@ -27,6 +27,17 @@ class ArtiTorch : Artifact
 	__mobjinfo__(33)
 	__scriptid__(73);
 
+//==========================================================================
+//
+//	Use
+//
+//==========================================================================
+
+bool Use(bool Pickup)
+{
+	return Player(Owner.Player).GivePower(pw_infrared);
+}
+
 __states__
 {
 	S_ARTI_TRCH1('TRCH', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_ARTI_TRCH2) = none
@@ -36,7 +47,6 @@ __states__
 
 defaultproperties
 {
-	ArtifactType = HereticDefs::arti_torch;
 	PickupMessage = "$txt_artitorch";
 	IconName = 'artitrch';
 	IdleState = S_ARTI_TRCH1;

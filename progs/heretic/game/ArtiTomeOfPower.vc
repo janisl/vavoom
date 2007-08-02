@@ -27,6 +27,50 @@ class ArtiTomeOfPower : Artifact
 	__mobjinfo__(86)
 	__scriptid__(134);
 
+//==========================================================================
+//
+//	Use
+//
+//==========================================================================
+
+bool Use(bool Pickup)
+{
+	if (Player(Owner.Player).ChickenTime)
+	{
+		// Attempt to undo chicken
+		if (Player(Owner.Player).UndoPlayerChicken() == false)
+		{
+			// Failed
+			EntityEx(Owner).Damage(none, none, 10000);
+		}
+		else
+		{
+			// Succeeded
+			Player(Owner.Player).ChickenTime = 0.0;
+			Owner.PlaySound('*evillaugh', CHAN_ITEM);
+		}
+	}
+	else
+	{
+		if (!Player(Owner.Player).GivePower(pw_weaponlevel2))
+		{
+			return false;
+		}
+		Weapon Wpn = Player(Owner.Player).ReadyWeapon;
+		Weapon Sist = Player(Owner.Player).ReadyWeapon.SisterWeapon;
+		if (Sist && Sist.bPoweredUp)
+		{
+			Player(Owner.Player).SetWeapon(Sist);
+			if (Sist.ReadyState != Wpn.ReadyState)
+			{
+				Player(Owner.Player).SetViewState(ps_weapon,
+					Sist.ReadyState);
+			}
+		}
+	}
+	return true;
+}
+
 __states__
 {
 	S_ARTI_PWBK1('PWBK', 0, 350.0 / 35.0, S_ARTI_PWBK1) = none
@@ -34,7 +78,6 @@ __states__
 
 defaultproperties
 {
-	ArtifactType = HereticDefs::arti_tomeofpower;
 	PickupMessage = "$txt_artitomeofpower";
 	IconName = 'artipwbk';
 	IdleState = S_ARTI_PWBK1;

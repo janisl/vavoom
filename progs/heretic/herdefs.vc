@@ -29,22 +29,6 @@ class HereticDefs : Object;
 
 enum
 {
-	arti_none,
-	arti_invulnerability,
-	arti_invisibility,
-	arti_health,
-	arti_superhealth,
-	arti_tomeofpower,
-	arti_torch,
-	arti_firebomb,
-	arti_egg,
-	arti_fly,
-	arti_teleport,
-	NUMARTIFACTS
-};
-
-enum
-{
 	SBF_KEY_YELLOW		= 0x00000001,
 	SBF_KEY_GREEN		= 0x00000002,
 	SBF_KEY_BLUE		= 0x00000004,

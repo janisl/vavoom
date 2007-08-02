@@ -27,6 +27,17 @@ class ArtiSuperHealth : Artifact
 	__mobjinfo__(32)
 	__scriptid__(25);
 
+//==========================================================================
+//
+//	Use
+//
+//==========================================================================
+
+bool Use(bool Pickup)
+{
+	return Player(Owner.Player).GiveBody(100);
+}
+
 __states__
 {
 	S_ARTI_SPHL1('SPHL', 0, 350.0 / 35.0, S_ARTI_SPHL1) = none
@@ -34,7 +45,6 @@ __states__
 
 defaultproperties
 {
-	ArtifactType = HereticDefs::arti_superhealth;
 	PickupMessage = "$txt_artisuperhealth";
 	IconName = 'artisphl';
 	IdleState = S_ARTI_SPHL1;

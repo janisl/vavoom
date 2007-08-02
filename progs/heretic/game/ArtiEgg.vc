@@ -27,6 +27,26 @@ class ArtiEgg : Artifact
 	__mobjinfo__(30)
 	__scriptid__(14);
 
+//==========================================================================
+//
+//	Use
+//
+//==========================================================================
+
+bool Use(bool Pickup)
+{
+	EntityEx(Owner).SpawnPlayerMissile(EggFX);
+	EntityEx(Owner).SpawnPlayerMissileAngle(EggFX,
+		AngleMod360(Owner.Angles.yaw - 7.5));
+	EntityEx(Owner).SpawnPlayerMissileAngle(EggFX,
+		AngleMod360(Owner.Angles.yaw + 7.5));
+	EntityEx(Owner).SpawnPlayerMissileAngle(EggFX,
+		AngleMod360(Owner.Angles.yaw - 15.0));
+	EntityEx(Owner).SpawnPlayerMissileAngle(EggFX,
+		AngleMod360(Owner.Angles.yaw + 15.0));
+	return true;
+}
+
 __states__
 {
 	S_ARTI_EGGC1('EGGC', 0, 6.0 / 35.0, S_ARTI_EGGC2) = none
@@ -37,7 +57,6 @@ __states__
 
 defaultproperties
 {
-	ArtifactType = HereticDefs::arti_egg;
 	PickupMessage = "$txt_artiegg";
 	IconName = 'artieggc';
 	IdleState = S_ARTI_EGGC1;

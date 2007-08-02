@@ -26,8 +26,6 @@
 class Artifact : Inventory
 	abstract;
 
-int ArtifactType;
-
 defaultproperties
 {
 	Height = 32.0;
