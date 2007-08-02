@@ -739,7 +739,7 @@ void InvUse()
 
 	case StrifeDefs::ITEM_TeleporterBeacon:
 		//	Increase item count because ItemThrow also decreases it.
-		EntityEx(MO).FindInventory(TeleporterBeacon).Amount++;
+		InvCursor.Amount++;
 		A = InvThrow();
 		if (A)
 		{
@@ -749,7 +749,7 @@ void InvUse()
 		}
 		else
 		{
-			EntityEx(MO).FindInventory(TeleporterBeacon).Amount--;
+			InvCursor.Amount--;
 		}
 		break;
 
@@ -759,6 +759,8 @@ void InvUse()
 
 /*	ITEM_Scanner,
 	ITEM_Targeter,*/
+	default:
+		itemUsed = InvCursor.Use(false);
 	}
 	//	Remove item if it was used.
 	if (itemUsed)

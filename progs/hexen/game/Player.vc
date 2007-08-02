@@ -2646,7 +2646,7 @@ void SetViewPos()
 void PlayerUseArtifact(Inventory Item)
 {
 	// Found match - try to use
-	if (UseArtifact(Artifact(Item).ArtifactType))
+	if (UseArtifact(Item))
 	{
 		// Artifact was used - remove it from inventory
 		PlayerRemoveArtifact(Item);
@@ -2730,12 +2730,12 @@ void PlayerRemoveArtifact(Inventory Item)
 //
 //==========================================================================
 
-bool UseArtifact(int arti)
+bool UseArtifact(Inventory Arti)
 {
 	int i;
 	int count;
 
-	switch (arti)
+	switch (Artifact(Arti).ArtifactType)
 	{
 	case HexenDefs::arti_health:
 		if (!GiveBody(25))
@@ -2839,7 +2839,8 @@ bool UseArtifact(int arti)
 	case HexenDefs::arti_puzzgear2:
 	case HexenDefs::arti_puzzgear3:
 	case HexenDefs::arti_puzzgear4:
-		if (UsePuzzleItem(arti - HexenDefs::arti_firstpuzzitem))
+		if (UsePuzzleItem(Artifact(Arti).ArtifactType -
+			HexenDefs::arti_firstpuzzitem))
 		{
 			return true;
 		}
@@ -2850,7 +2851,7 @@ bool UseArtifact(int arti)
 		}
 		break;
 	default:
-		return false;
+		return Arti.Use(false);
 	}
 	return true;
 }
