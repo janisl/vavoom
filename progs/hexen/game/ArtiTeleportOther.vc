@@ -27,6 +27,24 @@ class ArtiTeleportOther : Artifact
 	__mobjinfo__(10040)
 	__scriptid__(17);
 
+//==========================================================================
+//
+//	Use
+//
+//==========================================================================
+
+bool Use(bool Pickup)
+{
+	EntityEx mo;
+
+	mo = EntityEx(Owner).SpawnPlayerMissile(TelOtherFX1);
+	if (mo)
+	{
+		mo.Target = EntityEx(Owner);
+	}
+	return true;
+}
+
 __states__
 {
 	S_ARTI_TELOTHER1('TELO', 0, 5.0 / 35.0, S_ARTI_TELOTHER2) = none
@@ -37,7 +55,6 @@ __states__
 
 defaultproperties
 {
-	ArtifactType = HexenDefs::arti_teleportother;
 	PickupMessage = "$txt_artiteleportother";
 	IconName = 'artitelo';
 	IdleState = S_ARTI_TELOTHER1;

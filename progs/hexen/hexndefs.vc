@@ -47,46 +47,6 @@ enum
 
 enum
 {
-	arti_none,
-	arti_invulnerability,
-	arti_health,
-	arti_superhealth,
-	arti_healingradius,
-	arti_summon,
-	arti_torch,
-	arti_egg,
-	arti_fly,
-	arti_blastradius,
-	arti_poisonbag,
-	arti_teleportother,
-	arti_speed,
-	arti_boostmana,
-	arti_boostarmor,
-	arti_teleport,
-	// Puzzle artifacts
-	arti_firstpuzzitem,
-	arti_puzzskull = arti_firstpuzzitem,
-	arti_puzzgembig,
-	arti_puzzgemred,
-	arti_puzzgemgreen1,
-	arti_puzzgemgreen2,
-	arti_puzzgemblue1,
-	arti_puzzgemblue2,
-	arti_puzzbook1,
-	arti_puzzbook2,
-	arti_puzzskull2,
-	arti_puzzfweapon,
-	arti_puzzcweapon,
-	arti_puzzmweapon,
-	arti_puzzgear1,
-	arti_puzzgear2,
-	arti_puzzgear3,
-	arti_puzzgear4,
-	NUMARTIFACTS
-};
-
-enum
-{
 	KEY_1,
 	KEY_2,
 	KEY_3,

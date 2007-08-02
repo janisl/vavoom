@@ -27,6 +27,26 @@ class ArtiFly : Artifact
 	__mobjinfo__(83)
 	__scriptid__(15);
 
+//==========================================================================
+//
+//	Use
+//
+//==========================================================================
+
+bool Use(bool Pickup)
+{
+	if (!Player(Owner.Player).GivePower(pw_flight))
+	{
+		return false;
+	}
+	if (Owner.Velocity.z <= -35.0 * 35.0)
+	{
+		// stop falling scream
+		Owner.StopSound(CHAN_AUTO);
+	}
+	return true;
+}
+
 __states__
 {
 	S_ARTI_SOAR1('SOAR', 0, 5.0 / 35.0, S_ARTI_SOAR2) = none
@@ -37,7 +57,6 @@ __states__
 
 defaultproperties
 {
-	ArtifactType = HexenDefs::arti_fly;
 	PickupMessage = "$txt_artifly";
 	RespawnTime = 120.0 + 30.0 / 35.0;
 	IconName = 'artisoar';

@@ -33,7 +33,7 @@ __states__
 
 defaultproperties
 {
-	ArtifactType = HexenDefs::arti_puzzmweapon;
+	PuzzleItemNumber = 12;
 	PickupMessage = "$txt_artipuzzmweapon";
 	IconName = 'artimwep';
 	IdleState = S_ARTIPUZZMWEAPON;

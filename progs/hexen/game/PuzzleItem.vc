@@ -26,6 +26,8 @@
 class PuzzleItem : Artifact
 	abstract;
 
+int				PuzzleItemNumber;
+
 //==========================================================================
 //
 //	HandlePickup
@@ -64,6 +66,25 @@ bool ShouldRespawn()
 {
 	// Remove puzzle items if not cooperative netplay
 	return false;
+}
+
+//==========================================================================
+//
+//	Use
+//
+//==========================================================================
+
+bool Use(bool Pickup)
+{
+	if (Player(Owner.Player).UsePuzzleItem(PuzzleItemNumber))
+	{
+		return true;
+	}
+	else
+	{
+		Player(Owner.Player).centreprint("$txt_usepuzzlefailed");
+		return false;
+	}
 }
 
 defaultproperties

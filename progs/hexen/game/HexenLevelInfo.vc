@@ -193,7 +193,6 @@ bool EV_LineSearchForPuzzleItem(int Arg1, int Arg2, int Arg3, int Arg4,
 	int Arg5, EntityEx A)
 {
 	Inventory Item;
-	int type, arti;
 
 	if (!A)
 		return false;
@@ -203,27 +202,16 @@ bool EV_LineSearchForPuzzleItem(int Arg1, int Arg2, int Arg3, int Arg4,
 	// Search player's inventory for puzzle items
 	for (Item = A.Inventory; Item; Item = Item.Inventory)
 	{
-		if (!Artifact(Item))
+		if (!PuzzleItem(Item))
 			continue;
-		arti = Artifact(Item).ArtifactType;
-		type = arti - HexenDefs::arti_firstpuzzitem;
-		if (type < 0)
-			continue;
-		if (type == Arg1)
+		if (PuzzleItem(Item).PuzzleItemNumber == Arg1)
 		{
 			// A puzzle item was found for the line
 			if (Player(A.Player).UseArtifact(Item))
 			{
 				// A puzzle item was found for the line
 				Player(A.Player).PlayerRemoveArtifact(Item);
-				if (arti < HexenDefs::arti_firstpuzzitem)
-				{
-					A.PlaySound('UseArtifact', CHAN_ITEM);
-				}
-				else
-				{
-					A.PlaySound('PuzzleSuccess', CHAN_ITEM);
-				}
+				A.PlaySound('PuzzleSuccess', CHAN_ITEM);
 				Player(A.Player).ArtifactFlash = 4;
 				return true;
 			}

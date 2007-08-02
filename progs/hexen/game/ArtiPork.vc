@@ -27,6 +27,26 @@ class ArtiPork : Artifact
 	__mobjinfo__(30)
 	__scriptid__(14);
 
+//==========================================================================
+//
+//	Use
+//
+//==========================================================================
+
+bool Use(bool Pickup)
+{
+	EntityEx(Owner).SpawnPlayerMissile(PorkFX);
+	EntityEx(Owner).SpawnPlayerMissileAngle(PorkFX,
+		AngleMod360(Owner.Angles.yaw - 7.5));
+	EntityEx(Owner).SpawnPlayerMissileAngle(PorkFX,
+		AngleMod360(Owner.Angles.yaw + 7.5));
+	EntityEx(Owner).SpawnPlayerMissileAngle(PorkFX,
+		AngleMod360(Owner.Angles.yaw - 15.0));
+	EntityEx(Owner).SpawnPlayerMissileAngle(PorkFX,
+		AngleMod360(Owner.Angles.yaw + 15.0));
+	return true;
+}
+
 __states__
 {
 	S_ARTI_EGGC1('PORK', 0, 5.0 / 35.0, S_ARTI_EGGC2) = none
@@ -41,7 +61,6 @@ __states__
 
 defaultproperties
 {
-	ArtifactType = HexenDefs::arti_egg;
 	PickupMessage = "$txt_artiegg2";
 	IconName = 'artipork';
 	IdleState = S_ARTI_EGGC1;

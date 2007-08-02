@@ -800,7 +800,7 @@ final void SendExplosion(int colour, TVec org)
 //
 //==========================================================================
 
-void Blast(Actor source, float strength)
+final void Blast(Actor source, float strength)
 {
 	float angle;
 	float ang;
@@ -810,7 +810,7 @@ void Blast(Actor source, float strength)
 	float z;
 
 	angle = atan2(Origin.y - source.Origin.y, Origin.x - source.Origin.x);
-	if (strength < Player::BLAST_FULLSTRENGTH)
+	if (strength < ArtiBlastRadius::BLAST_FULLSTRENGTH)
 	{
 		Velocity.x = strength * cos(angle) * 35.0;
 		Velocity.y = strength * sin(angle) * 35.0;
@@ -848,8 +848,8 @@ void Blast(Actor source, float strength)
 				Target = source;
 			}
 		}
-		Velocity.x = Player::BLAST_SPEED * cos(angle) * 35.0;
-		Velocity.y = Player::BLAST_SPEED * sin(angle) * 35.0;
+		Velocity.x = ArtiBlastRadius::BLAST_SPEED * cos(angle) * 35.0;
+		Velocity.y = ArtiBlastRadius::BLAST_SPEED * sin(angle) * 35.0;
 
 		// Spawn blast puff
 		ang = atan2(source.Origin.y - Origin.y, source.Origin.x - Origin.x);

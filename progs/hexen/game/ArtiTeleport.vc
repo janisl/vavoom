@@ -27,6 +27,42 @@ class ArtiTeleport : Artifact
 	__mobjinfo__(36)
 	__scriptid__(18);
 
+//==========================================================================
+//
+//	Use
+//
+//==========================================================================
+
+bool Use(bool Pickup)
+{
+	int i;
+	float destX;
+	float destY;
+	float destAngle;
+
+	if (Level.Game.deathmatch)
+	{
+		i = P_Random() % Level.NumDeathmatchStarts;
+		destX = Level.DeathmatchStarts[i].x;
+		destY = Level.DeathmatchStarts[i].y;
+		destAngle = itof(45 * (Level.DeathmatchStarts[i].angle / 45));
+	}
+	else
+	{
+		destX = Level.PlayerStarts[0].x;
+		destY = Level.PlayerStarts[0].y;
+		destAngle = itof(45 * (Level.PlayerStarts[0].angle / 45));
+	}
+	EntityEx(Owner).Teleport(vector(destX, destY, EntityEx::ONFLOORZ),
+		destAngle, true, true, false);
+	if (Player(Owner.Player).MorphTime)
+	{
+		// Teleporting away will undo any morph effects (pig)
+		Player(Owner.Player).UndoPlayerMorph();
+	}
+	return true;
+}
+
 __states__
 {
 	S_ARTI_ATLP1('ATLP', 0, 4.0 / 35.0, S_ARTI_ATLP2) = none
@@ -37,7 +73,6 @@ __states__
 
 defaultproperties
 {
-	ArtifactType = HexenDefs::arti_teleport;
 	PickupMessage = "$txt_artiteleport";
 	IconName = 'artiatlp';
 	IdleState = S_ARTI_ATLP1;

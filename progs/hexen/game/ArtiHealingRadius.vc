@@ -26,6 +26,73 @@
 class ArtiHealingRadius : Artifact
 	__mobjinfo__(10120);
 
+const float HEAL_RADIUS_DIST	= 255.0;
+
+//==========================================================================
+//
+//	Use
+//
+//  Do class specific effect for everyone in radius
+//
+//==========================================================================
+
+bool Use(bool Pickup)
+{
+	PlayerPawn P;
+	float dist;
+	int effective = false;
+	int amount;
+
+	foreach AllThinkers(PlayerPawn, P)
+	{
+		if (!P.bIsPlayer)
+			continue;
+		if (P.Health <= 0)
+			continue;
+		dist = Owner.DistTo(P);
+		if (dist > HEAL_RADIUS_DIST)
+		{
+			// Out of range
+			continue;
+		}
+
+		switch (Player(Owner.Player).PClass)
+		{
+		case HexenDefs::PCLASS_FIGHTER:	// Radius armor boost
+			if ((Player(P.Player).GiveArmor(HexenDefs::ARMOR_ARMOR, 1)) ||
+				(Player(P.Player).GiveArmor(HexenDefs::ARMOR_SHIELD, 1)) ||
+				(Player(P.Player).GiveArmor(HexenDefs::ARMOR_HELMET, 1)) ||
+				(Player(P.Player).GiveArmor(HexenDefs::ARMOR_AMULET, 1)))
+			{
+				effective = true;
+				P.PlaySound('MysticIncant', CHAN_ITEM);
+			}
+			break;
+		case HexenDefs::PCLASS_CLERIC:	// Radius heal
+			amount = 50 + (P_Random() % 50);
+			if (Player(P.Player).GiveBody(amount))
+			{
+				effective = true;
+				P.PlaySound('MysticIncant', CHAN_ITEM);
+			}
+			break;
+		case HexenDefs::PCLASS_MAGE:	// Radius mana boost
+			amount = 50 + (P_Random() % 50);
+			if ((Player(P.Player).GiveMana(Mana1, amount)) ||
+				(Player(P.Player).GiveMana(Mana2, amount)))
+			{
+				effective = true;
+				P.PlaySound('MysticIncant', CHAN_ITEM);
+			}
+			break;
+		case HexenDefs::PCLASS_PIG:
+		default:
+			break;
+		}
+	}
+	return effective;
+}
+
 __states__
 {
 	S_ARTI_HEALRAD1('HRAD', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_ARTI_HEALRAD2) = none
@@ -48,7 +115,6 @@ __states__
 
 defaultproperties
 {
-	ArtifactType = HexenDefs::arti_healingradius;
 	PickupMessage = "$txt_artihealingradius";
 	IconName = 'artihrad';
 	IdleState = S_ARTI_HEALRAD1;

@@ -27,6 +27,59 @@ class ArtiPoisonBag : Artifact
 	__mobjinfo__(8000)
 	__scriptid__(72);
 
+//==========================================================================
+//
+//	Use
+//
+//==========================================================================
+
+bool Use(bool Pickup)
+{
+	float angle;
+	Actor bomb;
+
+	angle = Owner.Angles.yaw;
+	if (Player(Owner.Player).PClass == HexenDefs::PCLASS_CLERIC)
+	{
+		bomb = Spawn(PoisonBag, Owner.Origin + vector(16.0 * cos(angle),
+			24.0 * sin(angle), 8.0 - Owner.FloorClip));
+		if (bomb)
+		{
+			bomb.Target = EntityEx(Owner);
+		}
+	}
+	else if (Player(Owner.Player).PClass == HexenDefs::PCLASS_MAGE)
+	{
+		bomb = Spawn(FireBomb, Owner.Origin + vector(16.0 * cos(angle),
+			24.0 * sin(angle), 8.0 - Owner.FloorClip));
+		if (bomb)
+		{
+			bomb.Target = EntityEx(Owner);
+		}
+	}
+	else	// PCLASS_FIGHTER, obviously (also pig, not so obviously)
+	{
+		bomb = Spawn(ThrowingBomb, Owner.Origin +
+			vector(0.0, 0.0, 35.0 - Owner.FloorClip));
+		if (bomb)
+		{
+			bomb.Angles.yaw = AngleMod360(Owner.Angles.yaw +
+				(Random() * 2.0 - 1.0) * 45.0 / 8.0);
+			bomb.Velocity.z =
+				(4.0 + 173.0 * -tan(Owner.Angles.pitch) / 16.0) * 35.0;
+			bomb.Origin.z += 173.0 * -tan(Owner.Angles.pitch) / 16.0;
+			bomb.Velocity.x += bomb.Speed * cos(bomb.Angles.yaw);
+			bomb.Velocity.y += bomb.Speed * sin(bomb.Angles.yaw);
+			bomb.Velocity.x += Owner.Velocity.x / 2.0;
+			bomb.Velocity.y += Owner.Velocity.y / 2.0;
+			bomb.Target = EntityEx(Owner);
+			bomb.StateTime -= Random() * 0.1;
+			bomb.CheckMissileSpawn();
+		}
+	}
+	return true;
+}
+
 __states__
 {
 	S_ARTI_PSBG1('PSBG', 0, -1.0, none) = none
@@ -34,7 +87,6 @@ __states__
 
 defaultproperties
 {
-	ArtifactType = HexenDefs::arti_poisonbag;
 	PickupMessage = "$txt_artipoisonbag";
 	IconName = 'artipsbg';
 	IdleState = S_ARTI_PSBG1;

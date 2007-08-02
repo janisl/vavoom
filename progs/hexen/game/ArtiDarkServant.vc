@@ -27,6 +27,25 @@ class ArtiDarkServant : Artifact
 	__mobjinfo__(86)
 	__scriptid__(16);
 
+//==========================================================================
+//
+//	Use
+//
+//==========================================================================
+
+bool Use(bool Pickup)
+{
+	EntityEx mo;
+
+	mo = EntityEx(Owner).SpawnPlayerMissile(SummoningDoll);
+	if (mo)
+	{
+		mo.Target = EntityEx(Owner);
+		mo.Velocity.z = 5.0 * 35.0;
+	}
+	return true;
+}
+
 __states__
 {
 	S_ARTI_SUMMON('SUMN', 0, 350.0 / 35.0, S_ARTI_SUMMON) = none
@@ -34,7 +53,6 @@ __states__
 
 defaultproperties
 {
-	ArtifactType = HexenDefs::arti_summon;
 	PickupMessage = "$txt_artisummon";
 	RespawnTime = 120.0 + 30.0 / 35.0;
 	IconName = 'artisumn';

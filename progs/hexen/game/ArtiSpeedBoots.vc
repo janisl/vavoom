@@ -27,6 +27,17 @@ class ArtiSpeedBoots : Artifact
 	__mobjinfo__(8002)
 	__scriptid__(13);
 
+//==========================================================================
+//
+//	Use
+//
+//==========================================================================
+
+bool Use(bool Pickup)
+{
+	return Player(Owner.Player).GivePower(pw_speed);
+}
+
 __states__
 {
 	S_ARTI_BOOTS1('SPED', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_ARTI_BOOTS2) = none
@@ -41,7 +52,6 @@ __states__
 
 defaultproperties
 {
-	ArtifactType = HexenDefs::arti_speed;
 	PickupMessage = "$txt_artispeed";
 	IconName = 'artisped';
 	IdleState = S_ARTI_BOOTS1;

@@ -27,6 +27,18 @@ class ArtiBoostMana : Artifact
 	__mobjinfo__(8003)
 	__scriptid__(26);
 
+//==========================================================================
+//
+//	Use
+//
+//==========================================================================
+
+bool Use(bool Pickup)
+{
+	return Player(Owner.Player).GiveMana(Mana1, Mana1.default.MaxAmount) |
+		Player(Owner.Player).GiveMana(Mana2, Mana2.default.MaxAmount);
+}
+
 __states__
 {
 	S_ARTI_MANA('BMAN', 0 | FF_FULLBRIGHT, -1.0, none) = none
@@ -34,7 +46,6 @@ __states__
 
 defaultproperties
 {
-	ArtifactType = HexenDefs::arti_boostmana;
 	PickupMessage = "$txt_artiboostmana";
 	IconName = 'artibman';
 	IdleState = S_ARTI_MANA;
