@@ -440,7 +440,7 @@ void PlayerExitMap(bool clusterChange)
 
 	if (!Level.Game.deathmatch)
 	{
-		PlayerUseArtifact(HereticDefs::arti_fly);
+		PlayerUseArtifactType(ArtiFly);
 	}
 
 	for (i = 0; i < NUMPOWERS; i++)
@@ -765,17 +765,17 @@ void InventoryRight()
 //
 //==========================================================================
 
-int InventoryUse()
+Inventory InventoryUse()
 {
 	// flag to denote that it's okay to use an artifact
 	if (InventoryTime)
 	{
 		InventoryTime = 0.0;
-		return 0;
+		return none;
 	}
 	else
 	{
-		return InvPtr ? Artifact(InvPtr).ArtifactType : 0;
+		return InvPtr;
 	}
 }
 
@@ -1019,7 +1019,7 @@ void MovePlayer(float deltaTime)
 	}
 	else if (fly > 0.0)
 	{
-		PlayerUseArtifact(HereticDefs::arti_fly);
+		PlayerUseArtifactType(ArtiFly);
 	}
 	if (MO.bFly)
 	{
@@ -1524,7 +1524,7 @@ void PlayerImpulse()
 
 	impulse = Impulse;
 	Impulse = 0;
-	int Arti = 0;
+	Inventory Arti = none;
 
 	if (impulse <= 7)
 	{
@@ -1554,7 +1554,7 @@ void PlayerImpulse()
 	{
 		if (!Powers[pw_weaponlevel2])
 		{
-			Arti = HereticDefs::arti_tomeofpower;
+			Arti = EntityEx(MO).FindInventory(ArtiTomeOfPower);
 		}
 	}
 	else if (impulse == 16)
@@ -2173,24 +2173,35 @@ void SetViewPos()
 //
 //==========================================================================
 
-void PlayerUseArtifact(int arti)
+void PlayerUseArtifact(Inventory Item)
 {
-	Inventory Item = EntityEx(MO).FindInventory(MainGameInfo(Level.Game).ArtiClasses[arti]);
+	// Found match - try to use
+	if (UseArtifact(Artifact(Item).ArtifactType))
+	{
+		// Artifact was used - remove it from inventory
+		PlayerRemoveArtifact(Item);
+		MO.PlaySound('misc/invuse', CHAN_ITEM);
+		ArtifactFlash = 4;
+	}
+	else
+	{
+		// Unable to use artifact, advance pointer
+		PlayerNextArtifact();
+	}
+}
+
+//==========================================================================
+//
+//  PlayerUseArtifact
+//
+//==========================================================================
+
+void PlayerUseArtifactType(class<Artifact> arti)
+{
+	Inventory Item = EntityEx(MO).FindInventory(arti);
 	if (Item)
 	{
-		// Found match - try to use
-		if (UseArtifact(arti))
-		{
-			// Artifact was used - remove it from inventory
-			PlayerRemoveArtifact(Item);
-			MO.PlaySound('misc/invuse', CHAN_ITEM);
-			ArtifactFlash = 4;
-		}
-		else
-		{
-			// Unable to use artifact, advance pointer
-			PlayerNextArtifact();
-		}
+		PlayerUseArtifact(Item);
 	}
 }
 
@@ -2798,19 +2809,29 @@ void Cheat_Gimme()
 	}
 	if (Cmd_CheckParm("artifacts"))
 	{
-		int i;
+		// All artifacts
 		int j;
 
-		// All artifacts
-		for (i = HereticDefs::arti_none + 1; i < HereticDefs::NUMARTIFACTS; i++)
+		foreach AllClasses(Inventory, Cls)
 		{
-			if (MainGameInfo(Level.Game).shareware && (i == HereticDefs::arti_superhealth || i == HereticDefs::arti_teleport))
+			if (!Cls.default.bInvBar)
+			{
+				//	Not an artifact
+				continue;
+			}
+			if (!Cls.default.IdleState)
+			{
+				//	Abstract class.
+				continue;
+			}
+			if (MainGameInfo(Level.Game).shareware &&
+				(Cls == ArtiSuperHealth || Cls == ArtiTeleport))
 			{
 				continue;
 			}
 			for (j = 0; j < 16; j++)
 			{
-				EntityEx(MO).GiveInventoryType(MainGameInfo(Level.Game).ArtiClasses[i]);
+				EntityEx(MO).GiveInventoryType(Cls);
 			}
 		}
 		cprint("YOU GOT IT");

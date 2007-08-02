@@ -41,7 +41,6 @@ struct spec_trans_t
 
 spec_trans_t spec_trans_tab[NUM_SPECIALS];
 
-class<InventoryItem> InvItemCID[StrifeDefs::NUMINVITEMS];
 class<KeyPickup> KeyCID[StrifeDefs::NUMKEYS];
 
 //==========================================================================
@@ -603,32 +602,6 @@ defaultproperties
 	bBabyNightmareDoubleAmmo = true;
 	bNightmareExtraAmmo = false;
 	bAlwaysSwitchNewWeapon = true;
-
-	InvItemCID[0] = MedPatch;
-	InvItemCID[1] = MedicalKit;
-	InvItemCID[2] = SurgeryKit;
-	InvItemCID[3] = DegninOre;
-	InvItemCID[4] = MetalArmor;
-	InvItemCID[5] = LeatherArmor;
-	InvItemCID[6] = ShadowArmor;
-	InvItemCID[7] = EnvironmentalSuit;
-	InvItemCID[8] = GuardUniform;
-	InvItemCID[9] = OfficersUniform;
-	InvItemCID[10] = StrifeMap;
-	InvItemCID[11] = Scanner;
-	InvItemCID[12] = TeleporterBeacon;
-	InvItemCID[13] = Targeter;
-	InvItemCID[14] = Coin;
-	InvItemCID[15] = BeldinsRing;
-	InvItemCID[16] = OfferingChalice;
-	InvItemCID[17] = Ear;
-	InvItemCID[18] = FlameThrowerParts;
-	InvItemCID[19] = BrokenPowerCoupling;
-	InvItemCID[20] = PrisonPass;
-	InvItemCID[21] = InterrogatorReport;
-	InvItemCID[22] = HealthTraining;
-	InvItemCID[23] = GunTraining;
-	InvItemCID[24] = OraclePass;
 
 	KeyCID[0] = BaseKey;
 	KeyCID[1] = GovsKey;

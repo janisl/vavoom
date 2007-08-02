@@ -346,7 +346,7 @@ bool AutoUseChaosDevice()
 	Inventory Item = FindInventory(ArtiTeleport);
 	if (Item)
 	{
-		Player(Player).PlayerUseArtifact(HereticDefs::arti_teleport);
+		Player(Player).PlayerUseArtifact(Item);
 		Health = (Health + 1) / 2;
 		Player.Health = Health;
 		return true;

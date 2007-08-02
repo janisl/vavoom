@@ -47,8 +47,6 @@ bool randomclass;
 
 Actor PuffSpawned;
 
-class<Artifact> ArtiClasses[HexenDefs::NUMARTIFACTS];
-
 //==========================================================================
 //
 //	Init
@@ -399,41 +397,6 @@ defaultproperties
 	classFlags[0] = HexenLevelInfo::MTF_FIGHTER;
 	classFlags[1] = HexenLevelInfo::MTF_CLERIC;
 	classFlags[2] = HexenLevelInfo::MTF_MAGE;
-
-	ArtiClasses[0] = none;
-	ArtiClasses[1] = ArtiInvulnerability;
-	ArtiClasses[2] = ArtiHealth;
-	ArtiClasses[3] = ArtiSuperHealth;
-	ArtiClasses[4] = ArtiHealingRadius;
-	ArtiClasses[5] = ArtiDarkServant;
-	ArtiClasses[6] = ArtiTorch;
-	ArtiClasses[7] = ArtiPork;
-	ArtiClasses[8] = ArtiFly;
-	ArtiClasses[9] = ArtiBlastRadius;
-	ArtiClasses[10] = ArtiPoisonBag;
-	ArtiClasses[11] = ArtiTeleportOther;
-	ArtiClasses[12] = ArtiSpeedBoots;
-	ArtiClasses[13] = ArtiBoostMana;
-	ArtiClasses[14] = ArtiBoostArmor;
-	ArtiClasses[15] = ArtiTeleport;
-	// Puzzle artifacts
-	ArtiClasses[16] = PuzzSkull;
-	ArtiClasses[17] = PuzzGemBig;
-	ArtiClasses[18] = PuzzGemRed;
-	ArtiClasses[19] = PuzzGemGreen1;
-	ArtiClasses[20] = PuzzGemGreen2;
-	ArtiClasses[21] = PuzzGemBlue1;
-	ArtiClasses[22] = PuzzGemBlue2;
-	ArtiClasses[23] = PuzzBook1;
-	ArtiClasses[24] = PuzzBook2;
-	ArtiClasses[25] = PuzzFlameMask;
-	ArtiClasses[26] = PuzzFWeapon;
-	ArtiClasses[27] = PuzzCWeapon;
-	ArtiClasses[28] = PuzzMWeapon;
-	ArtiClasses[29] = PuzzGear1;
-	ArtiClasses[30] = PuzzGear2;
-	ArtiClasses[31] = PuzzGear3;
-	ArtiClasses[32] = PuzzGear4;
 
 	botskill = 2;
 }

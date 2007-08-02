@@ -51,8 +51,6 @@ string keymsg[NUMKEYS];
 
 bool shareware;
 
-class<Artifact> ArtiClasses[HereticDefs::NUMARTIFACTS];
-
 //==========================================================================
 //
 //	Init
@@ -534,18 +532,6 @@ defaultproperties
 	keymsg[0] = "$txt_needyellowkey";
 	keymsg[1] = "$txt_needgreenkey";
 	keymsg[2] = "$txt_needbluekey";
-
-	ArtiClasses[0] = none;
-	ArtiClasses[1] = ArtiInvulnerability;
-	ArtiClasses[2] = ArtiInvisibility;
-	ArtiClasses[3] = ArtiHealth;
-	ArtiClasses[4] = ArtiSuperHealth;
-	ArtiClasses[5] = ArtiTomeOfPower;
-	ArtiClasses[6] = ArtiTorch;
-	ArtiClasses[7] = ArtiTimeBomb;
-	ArtiClasses[8] = ArtiEgg;
-	ArtiClasses[9] = ArtiFly;
-	ArtiClasses[10] = ArtiTeleport;
 
 	botskill = 2;
 }

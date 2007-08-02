@@ -625,13 +625,10 @@ int CheckForNeededItem(EntityEx A, int ID, int Amount)
 	//	Get class ID.
 	CID = GetClassFromID(ID);
 	//	Check inventory items.
-	for (i = 0; i < StrifeDefs::NUMINVITEMS; i++)
+	if (class<Inventory>(CID) && class<Inventory>(CID).default.bInvBar)
 	{
-		if (MainGameInfo(Game).InvItemCID[i] == CID)
-		{
-			Inventory Item = A.FindInventory(class<Inventory>(CID));
-			return !Item || Item.Amount < Amount ? -2 : i;
-		}
+		Inventory Item = A.FindInventory(class<Inventory>(CID));
+		return !Item || Item.Amount < Amount ? -2 : 0;
 	}
 	//	Check keys.
 	for (i = 0; i < StrifeDefs::NUMKEYS; i++)

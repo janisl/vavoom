@@ -623,7 +623,7 @@ void PlayerExitMap(bool clusterChange)
 			for (i = 0; i < 25; i++)
 			{
 				Powers[pw_flight] = 0.0;
-				PlayerUseArtifact(HexenDefs::arti_fly);
+				PlayerUseArtifactType(ArtiFly);
 			}
 			Powers[pw_flight] = 0.0;
 		}
@@ -938,17 +938,17 @@ void InventoryRight()
 //
 //==========================================================================
 
-int InventoryUse()
+Inventory InventoryUse()
 {
 	// flag to denote that it's okay to use an artifact
 	if (InventoryTime)
 	{
 		InventoryTime = 0.0;
-		return 0;
+		return none;
 	}
 	else
 	{
-		return InvPtr ? Artifact(InvPtr).ArtifactType : 0;
+		return InvPtr;
 	}
 }
 
@@ -1126,7 +1126,7 @@ void MovePlayer(float deltaTime)
 	}
 	else if (fly > 0.0)
 	{
-		PlayerUseArtifact(HexenDefs::arti_fly);
+		PlayerUseArtifactType(ArtiFly);
 	}
 	if (MO.bFly)
 	{
@@ -1781,7 +1781,7 @@ void PlayerImpulse()
 
 	impulse = Impulse;
 	Impulse = 0;
-	int Arti = 0;
+	Inventory Arti = none;
 
 	if (impulse <= 4)
 	{
@@ -1821,55 +1821,40 @@ void PlayerImpulse()
 	// Hexen artifact hot keys
 	if (!Arti)
 	{
-		if (impulse == 11)
+		if (impulse == 12 && (Health < MAXHEALTH))
 		{
-			Arti = HexenDefs::NUMARTIFACTS;
-		}
-		else if (impulse == 12 && (Health < MAXHEALTH))
-		{
-			Arti = HexenDefs::arti_health;
+			Arti = EntityEx(MO).FindInventory(ArtiHealth);
 		}
 		else if (impulse == 10)
 		{
-			Arti = HexenDefs::arti_poisonbag;
+			Arti = EntityEx(MO).FindInventory(ArtiPoisonBag);
 		}
 		else if (impulse == 9)
 		{
-			Arti = HexenDefs::arti_blastradius;
+			Arti = EntityEx(MO).FindInventory(ArtiBlastRadius);
 		}
 		else if (impulse == 8)
 		{
-			Arti = HexenDefs::arti_teleport;
+			Arti = EntityEx(MO).FindInventory(ArtiTeleport);
 		}
 		else if (impulse == 7)
 		{
-			Arti = HexenDefs::arti_teleportother;
+			Arti = EntityEx(MO).FindInventory(ArtiTeleportOther);
 		}
 		else if (impulse == 6)
 		{
-			Arti = HexenDefs::arti_egg;
+			Arti = EntityEx(MO).FindInventory(ArtiPork);
 		}
 		else if (impulse == 5 && !Powers[pw_invulnerability])
 		{
-			Arti = HexenDefs::arti_invulnerability;
+			Arti = EntityEx(MO).FindInventory(ArtiInvulnerability);
 		}
 	}
 
 	if (Arti)
 	{
 		// Use an artifact
-		if (Arti == HexenDefs::NUMARTIFACTS)
-		{
-			// use one of each artifact (except puzzle artifacts)
-			for (i = 1; i < HexenDefs::arti_firstpuzzitem; i++)
-			{
-				PlayerUseArtifact(i);
-			}
-		}
-		else
-		{
-			PlayerUseArtifact(Arti);
-		}
+		PlayerUseArtifact(Arti);
 	}
 }
 
@@ -2658,31 +2643,42 @@ void SetViewPos()
 //
 //==========================================================================
 
-void PlayerUseArtifact(int arti)
+void PlayerUseArtifact(Inventory Item)
 {
-	Inventory Item = EntityEx(MO).FindInventory(MainGameInfo(Level.Game).ArtiClasses[arti]);
+	// Found match - try to use
+	if (UseArtifact(Artifact(Item).ArtifactType))
+	{
+		// Artifact was used - remove it from inventory
+		PlayerRemoveArtifact(Item);
+		if (Artifact(Item).ArtifactType < HexenDefs::arti_firstpuzzitem)
+		{
+			MO.PlaySound('UseArtifact', CHAN_ITEM);
+		}
+		else
+		{
+			MO.PlaySound('PuzzleSuccess', CHAN_ITEM);
+		}
+		ArtifactFlash = 4;
+	}
+	else if (Artifact(Item).ArtifactType < HexenDefs::arti_firstpuzzitem)
+	{
+		// Unable to use artifact, advance pointer
+		PlayerNextArtifact();
+	}
+}
+
+//==========================================================================
+//
+//  PlayerUseArtifact
+//
+//==========================================================================
+
+void PlayerUseArtifactType(class<Artifact> arti)
+{
+	Inventory Item = EntityEx(MO).FindInventory(arti);
 	if (Item)
 	{
-		// Found match - try to use
-		if (UseArtifact(arti))
-		{
-			// Artifact was used - remove it from inventory
-			PlayerRemoveArtifact(Item);
-			if (arti < HexenDefs::arti_firstpuzzitem)
-			{
-				MO.PlaySound('UseArtifact', CHAN_ITEM);
-			}
-			else
-			{
-				MO.PlaySound('PuzzleSuccess', CHAN_ITEM);
-			}
-			ArtifactFlash = 4;
-		}
-		else if (arti < HexenDefs::arti_firstpuzzitem)
-		{
-			// Unable to use artifact, advance pointer
-			PlayerNextArtifact();
-		}
+		PlayerUseArtifact(Item);
 	}
 }
 
@@ -3592,25 +3588,42 @@ void Cheat_Gimme()
 	}
 	if (Cmd_CheckParm("artifacts"))
 	{
-		int i;
-		int j;
-
-		for (i = HexenDefs::arti_none + 1; i < HexenDefs::arti_firstpuzzitem; i++)
+		foreach AllClasses(Inventory, Cls)
 		{
+			int j;
+
+			if (!Cls.default.bInvBar)
+			{
+				//	Not an inventory item.
+				continue;
+			}
+			if (!Cls.default.IdleState)
+			{
+				//	Abstract class
+				continue;
+			}
+			if (ClassIsChildOf(Cls, PuzzleItem))
+			{
+				//	Not puzzle items.
+				continue;
+			}
 			for (j = 0; j < 25; j++)
 			{
-				EntityEx(MO).GiveInventoryType(MainGameInfo(Level.Game).ArtiClasses[i]);
+				EntityEx(MO).GiveInventoryType(Cls);
 			}
 		}
 		cprint("ALL ARTIFACTS");
 	}
 	if (Cmd_CheckParm("puzzles"))
 	{
-		int i;
-
-		for (i = HexenDefs::arti_firstpuzzitem; i < HexenDefs::NUMARTIFACTS; i++)
+		foreach AllClasses(PuzzleItem, Cls)
 		{
-			EntityEx(MO).GiveInventoryType(MainGameInfo(Level.Game).ArtiClasses[i]);
+			if (!Cls.default.IdleState)
+			{
+				//	Abstract class
+				continue;
+			}
+			EntityEx(MO).GiveInventoryType(Cls);
 		}
 		cprint("ALL ARTIFACTS");
 	}
