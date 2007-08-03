@@ -107,6 +107,8 @@ END_EVENT_TABLE()
 
 IMPLEMENT_APP(VLaunchApp)
 
+#include "vavoom.xpm"
+
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
@@ -122,7 +124,7 @@ VMain::VMain()
 	SetClientSize(447, 314);
 	wxPanel* panel = new wxPanel(this);
 
-	new wxStaticBitmap(panel, -1, wxBitmap(), wxPoint(0, 0), wxSize(447, 105));
+	new wxStaticBitmap(panel, -1, wxBitmap(vavoom_xpm), wxPoint(0, 0), wxSize(447, 105));
 
 	new wxStaticText(panel, -1, wxT("Game:"), wxPoint(24, 240), wxSize(31, 13));
 	wxString GameChoices[8];
