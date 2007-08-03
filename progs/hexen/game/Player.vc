@@ -39,8 +39,6 @@ const float VIEWHEIGHT		= 48.0;
 // 16 pixels of bob
 const float MAXBOB			= 16.0;
 
-const float USERANGE			= 64.0;
-
 int SBFlags;
 
 int TotalArmorPoints;
@@ -2638,7 +2636,7 @@ void SetViewPos()
 //
 //==========================================================================
 
-void PlayerUseArtifact(Inventory Item)
+bool PlayerUseArtifact(Inventory Item)
 {
 	// Found match - try to use
 	if (UseArtifact(Item))
@@ -2647,12 +2645,14 @@ void PlayerUseArtifact(Inventory Item)
 		PlayerRemoveArtifact(Item);
 		MO.PlaySound(Item.UseSound, CHAN_ITEM);
 		ArtifactFlash = 4;
+		return true;
 	}
 	else if (!PuzzleItem(Item))
 	{
 		// Unable to use artifact, advance pointer
 		PlayerNextArtifact();
 	}
+	return false;
 }
 
 //==========================================================================
@@ -2963,91 +2963,6 @@ void P_UseLines()
 			break;
 		}
 	}
-}
-
-//==========================================================================
-//
-//  UsePuzzleItem
-//
-//  USING A PUZZLE ITEM
-//
-//  Returns true if the puzzle item was used on a line or a thing.
-//
-//==========================================================================
-
-bool UsePuzzleItem(int itemType)
-{
-	float x1, y1, x2, y2;
-	int PuzzleItemType;
-	bool PuzzleActivated;
-	TVec PuzzleUseDir;
-	intercept_t * in;
-
-	PuzzleItemType = itemType;
-	PuzzleActivated = false;
-	AngleVector(&MO.Angles, &PuzzleUseDir);
-	x1 = MO.Origin.x;
-	y1 = MO.Origin.y;
-	x2 = x1 + USERANGE * PuzzleUseDir.x;
-	y2 = y1 + USERANGE * PuzzleUseDir.y;
-	foreach MO.PathTraverse(in, x1, y1, x2, y2, PT_ADDLINES | PT_ADDTHINGS)
-	{
-		Actor mobj;
-		TVec hit_point;
-		opening_t *open;
-
-		if (in->bIsALine)
-		{
-			// Check line
-			hit_point = MO.Origin + (USERANGE * in->frac) * PuzzleUseDir;
-			if (in->line->special != LNSPEC_UsePuzzleItem)
-			{
-				open = LineOpenings(in->line, hit_point);
-				if (!open || open->range <= 0.0)
-				{
-					if (MO.bIsPlayer)
-					{
-						MO.PlaySound('*puzzfail', CHAN_VOICE);
-					}
-					break;	// can't use through a wall
-				}
-				continue;	// Continue searching
-			}
-			if (PointOnPlaneSide(MO.Origin, in->line) == 1)
-			{
-				// Don't use back sides
-				break;
-			}
-			if (PuzzleItemType != in->line->arg1)
-			{
-				// Item type doesn't match
-				break;
-			}
-			MO.XLevel.StartACS(in->line->arg2, 0, in->line->arg3, in->line->arg4,
-				in->line->arg5, MO, in->line, 0, false, false);
-			in->line->special = 0;
-			PuzzleActivated = true;
-			break;	// Stop searching
-		}
-		// Check thing
-		mobj = Actor(in->Thing);
-		if (mobj.Special != LNSPEC_UsePuzzleItem)
-		{
-			// Wrong special
-			continue;
-		}
-		if (PuzzleItemType != mobj.Args[0])
-		{
-			// Item type doesn't match
-			continue;
-		}
-		MO.XLevel.StartACS(mobj.Args[1], 0, mobj.Args[2], mobj.Args[3], mobj.Args[4],
-			MO, NULL, 0, false, false);
-		mobj.Special = 0;
-		PuzzleActivated = true;
-		break;	// Stop searching
-	}
-	return PuzzleActivated;
 }
 
 //==========================================================================

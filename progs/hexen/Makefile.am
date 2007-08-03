@@ -307,7 +307,6 @@ EXTRA_DIST = compile.bat \
 	game/PuzzGemGreen1.vc \
 	game/PuzzGemGreen2.vc \
 	game/PuzzGemRed.vc \
-	game/PuzzleItem.vc \
 	game/PuzzMWeapon.vc \
 	game/PuzzSkull.vc \
 	game/PuzzGear4.vc \

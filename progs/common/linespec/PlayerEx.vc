@@ -32,6 +32,8 @@ class PlayerEx : BasePlayer
 const int CF_NOCLIP			= 1;	// No clipping, walk through barriers.
 const int CF_GODMODE		= 2;	// No damage, no health loss.
 
+const float USERANGE		= 64.0;
+
 // For screen flashing (red or bright).
 float			DamageFlash;
 float			BonusFlash;
@@ -321,6 +323,86 @@ Weapon GetNextWeapon(Weapon Current, bool bCheckAmmo)
 	return Best;
 }
 
+//==========================================================================
+//
+//  UsePuzzleItem
+//
+//  USING A PUZZLE ITEM
+//
+//  Returns true if the puzzle item was used on a line or a thing.
+//
+//==========================================================================
+
+final bool UsePuzzleItem(int PuzzleItemType)
+{
+	float x1, y1, x2, y2;
+	TVec PuzzleUseDir;
+	intercept_t * in;
+
+	AngleVector(&MO.Angles, &PuzzleUseDir);
+	x1 = MO.Origin.x;
+	y1 = MO.Origin.y;
+	x2 = x1 + USERANGE * PuzzleUseDir.x;
+	y2 = y1 + USERANGE * PuzzleUseDir.y;
+	foreach MO.PathTraverse(in, x1, y1, x2, y2, PT_ADDLINES | PT_ADDTHINGS)
+	{
+		EntityEx mobj;
+		TVec hit_point;
+		opening_t *open;
+
+		if (in->bIsALine)
+		{
+			// Check line
+			hit_point = MO.Origin + (USERANGE * in->frac) * PuzzleUseDir;
+			if (in->line->special != LNSPEC_UsePuzzleItem)
+			{
+				open = LineOpenings(in->line, hit_point);
+				if (!open || open->range <= 0.0)
+				{
+					if (MO.bIsPlayer)
+					{
+						MO.PlaySound('*puzzfail', CHAN_VOICE);
+					}
+					break;	// can't use through a wall
+				}
+				continue;	// Continue searching
+			}
+			if (PointOnPlaneSide(MO.Origin, in->line) == 1)
+			{
+				// Don't use back sides
+				break;
+			}
+			if (PuzzleItemType != in->line->arg1)
+			{
+				// Item type doesn't match
+				break;
+			}
+			MO.XLevel.StartACS(in->line->arg2, 0, in->line->arg3,
+				in->line->arg4, in->line->arg5, MO, in->line, 0, false,
+				false);
+			in->line->special = 0;
+			return true;	// Stop searching
+		}
+		// Check thing
+		mobj = EntityEx(in->Thing);
+		if (mobj.Special != LNSPEC_UsePuzzleItem)
+		{
+			// Wrong special
+			continue;
+		}
+		if (PuzzleItemType != mobj.Args[0])
+		{
+			// Item type doesn't match
+			continue;
+		}
+		MO.XLevel.StartACS(mobj.Args[1], 0, mobj.Args[2], mobj.Args[3],
+			mobj.Args[4], MO, NULL, 0, false, false);
+		mobj.Special = 0;
+		return true;	// Stop searching
+	}
+	return false;
+}
+
 bool HaveInvulnerabilityPower()
 {
 	return false;
@@ -368,6 +450,11 @@ void SetWeapon(Weapon Wpn)
 
 void BringUpWeapon()
 {
+}
+
+bool PlayerUseArtifact(Inventory Item)
+{
+	return false;
 }
 
 defaultproperties

@@ -46,8 +46,6 @@ const int
 
 const int MAXHEALTH	= 100;
 
-const float USERANGE	= 64.0;
-
 int SBFlags;
 
 int ArmorPoints;
@@ -2174,7 +2172,7 @@ void SetViewPos()
 //
 //==========================================================================
 
-void PlayerUseArtifact(Inventory Item)
+bool PlayerUseArtifact(Inventory Item)
 {
 	// Found match - try to use
 	if (UseArtifact(Item))
@@ -2183,12 +2181,14 @@ void PlayerUseArtifact(Inventory Item)
 		PlayerRemoveArtifact(Item);
 		MO.PlaySound(Item.UseSound, CHAN_ITEM);
 		ArtifactFlash = 4;
+		return true;
 	}
 	else
 	{
 		// Unable to use artifact, advance pointer
 		PlayerNextArtifact();
 	}
+	return false;
 }
 
 //==========================================================================

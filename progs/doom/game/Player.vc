@@ -37,8 +37,6 @@ const float MAXBOB			= 16.0;
 
 const int INVERSECOLOURMAP	= 32;
 
-const float USERANGE		= 64.0;
-
 const float ST_STRAIGHTFACETIME		= 0.5;
 const float ST_TURNTIME				= 1.0;
 const float ST_EVILGRINTIME			= 2.0;

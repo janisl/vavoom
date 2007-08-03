@@ -76,13 +76,13 @@ bool ShouldRespawn()
 
 bool Use(bool Pickup)
 {
-	if (Player(Owner.Player).UsePuzzleItem(PuzzleItemNumber))
+	if (PlayerEx(Owner.Player).UsePuzzleItem(PuzzleItemNumber))
 	{
 		return true;
 	}
 	else
 	{
-		Player(Owner.Player).centreprint("$txt_usepuzzlefailed");
+		Owner.Player.centreprint("$txt_usepuzzlefailed");
 		return false;
 	}
 }
