@@ -43,6 +43,7 @@ enum
 #include "BackpackItem.vc"
 #include "Weapon.vc"
 #include "PuzzleItem.vc"
+#include "Key.vc"
 #include "PlayerEx.vc"
 
 #include "LineSpecialLevelInfo.vc"

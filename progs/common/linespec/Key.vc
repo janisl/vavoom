@@ -23,42 +23,9 @@
 //**
 //**************************************************************************
 
-class HereticKey : Key
+class Key : Inventory
 	abstract;
-
-int KeyType;
-
-//==========================================================================
-//
-//  TryPickup
-//
-//==========================================================================
-
-bool TryPickup(EntityEx Toucher)
-{
-	if (Player(Toucher.Player).GiveKey(KeyType) ||
-		!ShouldStay() || Special)
-	{
-		GoAwayAndDie();
-		return true;
-	}
-	return false;
-}
-
-//==========================================================================
-//
-//	ShouldStay
-//
-//==========================================================================
-
-bool ShouldStay()
-{
-	return Level.Game.netgame;
-}
 
 defaultproperties
 {
-	Height = 32.0;
-	PickupSound = 'misc/k_pkup';
-	bNoDeathmatch = true;
 }

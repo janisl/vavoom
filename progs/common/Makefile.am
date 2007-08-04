@@ -40,6 +40,7 @@ EXTRA_DIST = \
 	linespec/GlowingLight.vc \
 	linespec/Inventory.vc \
 	linespec/ItemFog.vc \
+	linespec/Key.vc \
 	linespec/LightFlash.vc \
 	linespec/Lighting.vc \
 	linespec/LightEffect.vc \

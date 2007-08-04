@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class DoomKey : Inventory
+class DoomKey : Key
 	abstract;
 
 int			KeyType;

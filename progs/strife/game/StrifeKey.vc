@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class StrifeKey : Inventory
+class StrifeKey : Key
 	abstract;
 
 int KeyType;
