@@ -2,13 +2,9 @@ VCC=../../utils/bin/vcc$(EXEEXT)
 OUTDIR=../../basev/strife/progs
 COMMON_PROGS_DIR=../../basev/common/progs
 
-noinst_DATA = $(OUTDIR)/shared.dat $(OUTDIR)/svprogs.dat $(OUTDIR)/clprogs.dat
+noinst_DATA = $(OUTDIR)/svprogs.dat $(OUTDIR)/clprogs.dat
 
-$(OUTDIR)/shared.dat: $(VCC) $(srcdir)/*.vc $(COMMON_PROGS_DIR)/engine.dat
-	@mkdir -p $(OUTDIR)
-	$(VCC) -P$(COMMON_PROGS_DIR) -P$(OUTDIR) $(srcdir)/strfdefs.vc $@
-
-$(OUTDIR)/svprogs.dat: $(VCC) $(OUTDIR)/shared.dat $(srcdir)/*.vc $(srcdir)/game/*.vc \
+$(OUTDIR)/svprogs.dat: $(VCC) $(srcdir)/*.vc $(srcdir)/game/*.vc \
 		$(COMMON_PROGS_DIR)/linespec.dat
 	$(VCC) -P$(COMMON_PROGS_DIR) -P$(OUTDIR) $(srcdir)/svprogs.vc $@
 
@@ -17,7 +13,6 @@ $(OUTDIR)/clprogs.dat: $(VCC) $(OUTDIR)/svprogs.dat $(srcdir)/*.vc $(srcdir)/cga
 
 EXTRA_DIST = compile.bat \
 	clprogs.vc \
-	strfdefs.vc \
 	svprogs.vc \
 	cgame/MenuChoice_SpanDrawing.vc \
 	cgame/MenuChoice_LoadGame.vc \
@@ -544,5 +539,5 @@ EXTRA_DIST = compile.bat \
 	game/ZombieSpawner.vc
 
 MOSTLYCLEANFILES = \
-	$(OUTDIR)/shared.dat $(OUTDIR)/svprogs.dat $(OUTDIR)/clprogs.dat \
-	$(OUTDIR)/shared.txt $(OUTDIR)/svprogs.txt $(OUTDIR)/clprogs.txt
+	$(OUTDIR)/svprogs.dat $(OUTDIR)/svprogs.txt \
+	$(OUTDIR)/clprogs.dat $(OUTDIR)/clprogs.txt

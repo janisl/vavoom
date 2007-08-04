@@ -79,7 +79,7 @@ VLUMPY = ../../utils/bin/vlumpy$(EXEEXT)
 ACC = ../../utils/bin/acc$(EXEEXT)
 
 basepak.pk3: basepak.ls $(VLUMPY) \
-		progs/shared.dat progs/clprogs.dat progs/svprogs.dat strfhelp.o
+		progs/clprogs.dat progs/svprogs.dat strfhelp.o
 	$(VLUMPY) $<
 
 strfhelp.o: $(srcdir)/../../utils/editing/acs/*.acs $(ACC)

@@ -69,7 +69,6 @@ graphics/fontb57.lmp	@srcdir@/graphics/fontb57.lmp
 graphics/fontb58.lmp	@srcdir@/graphics/fontb58.lmp
 
 //	Progs
-progs/shared.dat		progs/shared.dat
 progs/clprogs.dat		progs/clprogs.dat
 progs/svprogs.dat		progs/svprogs.dat
 

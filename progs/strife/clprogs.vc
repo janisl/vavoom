@@ -27,7 +27,6 @@
 //**
 //**************************************************************************
 
-import shared;
 import svprogs;
 
 #include "cgame/classes.vc"
