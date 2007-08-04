@@ -35,7 +35,7 @@ defaultproperties
 {
 	ConversationID = 149;
 	PickupMessage = "$txt_brasskey";
-	bNoDeathmatch = true;
+	StrifeName = "Brass Key";
+	IconName = 'i_ky3b';
 	IdleState = S_BRASS_KEY;
-	KeyType = StrifeDefs::KEY_BrassKey;
 }

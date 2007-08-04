@@ -58,18 +58,6 @@ enum
 	CSHIFT_Power
 };
 
-enum
-{
-	it_bluecard,
-	it_yellowcard,
-	it_redcard,
-	it_blueskull,
-	it_yellowskull,
-	it_redskull,
-
-	NUMCARDS
-};
-
 // Power up artifacts.
 enum
 {

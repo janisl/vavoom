@@ -34,7 +34,7 @@ __states__
 
 defaultproperties
 {
-	KeyType = HexenDefs::KEY_8;
-	IdleState = S_KEY8;
 	PickupMessage = "$txt_key_rusted";
+	IconName = 'keyslot8';
+	IdleState = S_KEY8;
 }

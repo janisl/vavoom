@@ -34,7 +34,7 @@ __states__
 
 defaultproperties
 {
-	KeyType = HexenDefs::KEY_2;
-	IdleState = S_KEY2;
 	PickupMessage = "$txt_key_cave";
+	IconName = 'keyslot2';
+	IdleState = S_KEY2;
 }

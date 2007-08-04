@@ -35,9 +35,9 @@ defaultproperties
 {
 	ConversationID = 138;
 	PickupMessage = "$txt_severedhand";
-	bNoDeathmatch = true;
+	StrifeName = "Severed Hand";
+	IconName = 'i_hand';
 	IdleState = S_SEVERED_HAND;
-	KeyType = StrifeDefs::KEY_SeveredHand;
 	bGiveQuest = true;
 	QuestID = QUEST_GotSeveredHand;
 }

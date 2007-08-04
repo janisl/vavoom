@@ -54,7 +54,6 @@ int pic_flame;
 int pic_blaster;
 int pic_sigil[5];
 int pic_i_comm;
-int pic_key[StrifeDefs::NUMKEYS];
 int pic_backpack;
 //For Icons in Fullscreen HUD
 int pic_tallnum[10];
@@ -65,7 +64,7 @@ int pic_armor2;
 int LoadedLog;
 string LogText;
 
-string KeyNames[StrifeDefs::NUMKEYS];
+class<StrifeKey> KeyCID[30];
 
 //==========================================================================
 //
@@ -94,34 +93,6 @@ void StartMap()
 	pic_graynum[10] = R_RegisterPic('invfong%');
 
 	pic_invcurs = R_RegisterPic('invcurs');
-
-	pic_key[0] = R_RegisterPic('i_fusl');
-	pic_key[1] = R_RegisterPic('i_rebl');
-	pic_key[2] = R_RegisterPic('i_tpas');
-	pic_key[3] = R_RegisterPic('i_crd1');
-	pic_key[4] = R_RegisterPic('i_pris');
-	pic_key[5] = R_RegisterPic('i_hand');
-	pic_key[6] = R_RegisterPic('i_pwr1');
-	pic_key[7] = R_RegisterPic('i_pwr2');
-	pic_key[8] = R_RegisterPic('i_ky1g');
-	pic_key[9] = R_RegisterPic('i_pwr3');
-	pic_key[10] = R_RegisterPic('i_crd2');
-	pic_key[11] = R_RegisterPic('i_ky2s');
-	pic_key[12] = R_RegisterPic('i_orac');
-	pic_key[13] = R_RegisterPic('i_gyid');
-	pic_key[14] = R_RegisterPic('i_fubr');
-	pic_key[15] = R_RegisterPic('i_ware');
-	pic_key[16] = R_RegisterPic('i_ky3b');
-	pic_key[17] = R_RegisterPic('i_rcry');
-	pic_key[18] = R_RegisterPic('i_bcry');
-	pic_key[19] = R_RegisterPic('i_chap');
-	pic_key[20] = R_RegisterPic('i_tunl');
-	pic_key[21] = R_RegisterPic('i_seck');
-	pic_key[22] = R_RegisterPic('i_goid');
-	pic_key[23] = R_RegisterPic('i_bltk');
-	pic_key[24] = R_RegisterPic('i_proc');
-	pic_key[25] = R_RegisterPic('i_mine');
-	pic_key[26] = R_RegisterPic('i_bltk');
 
 	pic_crossbow = R_RegisterPic('cbowa0');
 	pic_riffle = R_RegisterPic('rifla0');
@@ -350,9 +321,9 @@ void SB_DrawMainBar()
 		SB_DrawSmallNum(BAR_X + 267, BAR_Y + 84, cl.Accuracy);
 		SB_DrawSmallNum(BAR_X + 267, BAR_Y + 108, cl.Stamina);
 		NumKeys = 0;
-		for (i = 0; i < StrifeDefs::NUMKEYS; i++)
+		for (Item = EntityEx(cl.MO).Inventory; Item; Item = Item.Inventory)
 		{
-			if (cl.Keys & (1 << i))
+			if (Key(Item))
 			{
 				NumKeys++;
 			}
@@ -369,14 +340,15 @@ void SB_DrawMainBar()
 		R_DrawPic(BAR_X + 0, BAR_Y + 56, pic_invpop2);
 		for (i = 0; i < 10; i++)
 		{
-			if (cl.Keys & (1 << (i + KeysPage * 10)))
+			Item = EntityEx(cl.MO).FindInventory(KeyCID[i + KeysPage * 10]);
+			if (Item)
 			{
-				R_DrawPic(BAR_X + 20 + (i / 5) * 140, BAR_Y + 60 + (i % 5) * 18,
-					pic_key[i + KeysPage * 10]);
+				R_DrawPic(BAR_X + 20 + (i / 5) * 140,
+					BAR_Y + 60 + (i % 5) * 18, R_RegisterPic(Item.IconName));
 				T_SetFont(font_yellow);
 				T_SetAlign(hleft, vtop);
-				T_DrawText(BAR_X + 40 + (i / 5) * 140, BAR_Y + 64 + (i % 5) * 18,
-					KeyNames[i + KeysPage * 10]);
+				T_DrawText(BAR_X + 40 + (i / 5) * 140,
+					BAR_Y + 64 + (i % 5) * 18, StrifeKey(Item).StrifeName);
 			}
 		}
 	}
@@ -503,9 +475,9 @@ void SB_DrawFullscreenStats()
 		SB_DrawSmallNum(BAR_X + 267, BAR_Y + 124, cl.Accuracy);
 		SB_DrawSmallNum(BAR_X + 267, BAR_Y + 148, cl.Stamina);
 		NumKeys = 0;
-		for (i = 0; i < StrifeDefs::NUMKEYS; i++)
+		for (Item = EntityEx(cl.MO).Inventory; Item; Item = Item.Inventory)
 		{
-			if (cl.Keys & (1 << i))
+			if (Key(Item))
 			{
 				NumKeys++;
 			}
@@ -522,14 +494,15 @@ void SB_DrawFullscreenStats()
 		R_DrawPic(BAR_X + 0, BAR_Y + 96, pic_invpop2);
 		for (i = 0; i < 10; i++)
 		{
-			if (cl.Keys & (1 << (i + KeysPage * 10)))
+			Item = EntityEx(cl.MO).FindInventory(KeyCID[i + KeysPage * 10]);
+			if (Item)
 			{
-				R_DrawPic(BAR_X + 20 + (i / 5) * 140, BAR_Y + 100 + (i % 5) * 18,
-					pic_key[i + KeysPage * 10]);
+				R_DrawPic(BAR_X + 20 + (i / 5) * 140,
+					BAR_Y + 100 + (i % 5) * 18, R_RegisterPic(Item.IconName));
 				T_SetFont(font_yellow);
 				T_SetAlign(hleft, vtop);
-				T_DrawText(BAR_X + 40 + (i / 5) * 140, BAR_Y + 104 + (i % 5) * 18,
-					KeyNames[i + KeysPage * 10]);
+				T_DrawText(BAR_X + 40 + (i / 5) * 140,
+					BAR_Y + 104 + (i % 5) * 18, StrifeKey(Item).StrifeName);
 			}
 		}
 	}
@@ -615,31 +588,31 @@ defaultproperties
 	bTickEnabled = true;
 	Width = 640;
 	Height = 480;
-	KeyNames[0] = "Base Key";
-	KeyNames[1] = "Govs Key";
-	KeyNames[2] = "Passcard";
-	KeyNames[3] = "ID Badge";
-	KeyNames[4] = "Prison Key";
-	KeyNames[5] = "Severed Hand";
-	KeyNames[6] = "Power1 Key";
-	KeyNames[7] = "Power2 Key";
-	KeyNames[8] = "Gold Key";
-	KeyNames[9] = "Power3 Key";
-	KeyNames[10] = "ID Card";
-	KeyNames[11] = "Silver Key";
-	KeyNames[12] = "Oracle Key";
-	KeyNames[13] = "Military ID";
-	KeyNames[14] = "Order Key";
-	KeyNames[15] = "Warehouse Key";
-	KeyNames[16] = "Brass Key";
-	KeyNames[17] = "Red Crystal Key";
-	KeyNames[18] = "Blue Crystal Key";
-	KeyNames[19] = "Chapel Key";
-	KeyNames[20] = "Catacomb Key";
-	KeyNames[21] = "Security Key";
-	KeyNames[22] = "Core Key";
-	KeyNames[23] = "Mauler Key";
-	KeyNames[24] = "Factory Key";
-	KeyNames[25] = "Mine Key";
-	KeyNames[26] = "New Key 5";
+	KeyCID[0] = BaseKey;
+	KeyCID[1] = GovsKey;
+	KeyCID[2] = Passcard;
+	KeyCID[3] = IDBadge;
+	KeyCID[4] = PrisonKey;
+	KeyCID[5] = SeveredHand;
+	KeyCID[6] = Power1Key;
+	KeyCID[7] = Power2Key;
+	KeyCID[8] = GoldKey;
+	KeyCID[9] = Power3Key;
+	KeyCID[10] = IDCard;
+	KeyCID[11] = SilverKey;
+	KeyCID[12] = OracleKey;
+	KeyCID[13] = MilitaryID;
+	KeyCID[14] = OrderKey;
+	KeyCID[15] = WarehouseKey;
+	KeyCID[16] = BrassKey;
+	KeyCID[17] = RedCrystalKey;
+	KeyCID[18] = BlueCrystalKey;
+	KeyCID[19] = ChapelKey;
+	KeyCID[20] = CatacombKey;
+	KeyCID[21] = SecurityKey;
+	KeyCID[22] = CoreKey;
+	KeyCID[23] = MaulerKey;
+	KeyCID[24] = FactoryKey;
+	KeyCID[25] = MineKey;
+	KeyCID[26] = NewKey5;
 }

@@ -34,7 +34,7 @@ __states__
 
 defaultproperties
 {
-	KeyType = HexenDefs::KEY_7;
-	IdleState = S_KEY7;
 	PickupMessage = "$txt_key_silver";
+	IconName = 'keyslot7';
+	IdleState = S_KEY7;
 }

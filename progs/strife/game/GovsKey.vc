@@ -34,6 +34,7 @@ defaultproperties
 {
 	ConversationID = 134;
 	PickupMessage = "$txt_govskey";
+	StrifeName = "Govs Key";
+	IconName = 'i_rebl';
 	IdleState = S_GOVS_KEY;
-	KeyType = StrifeDefs::KEY_GovsKey;
 }

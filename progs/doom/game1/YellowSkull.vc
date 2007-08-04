@@ -35,8 +35,6 @@ __states__
 
 defaultproperties
 {
-	bNoDeathmatch = true;
 	IdleState = S_YSKULL;
-	KeyType = it_yellowskull;
 	PickupMessage = "$gotyelwskul";
 }

@@ -35,7 +35,7 @@ defaultproperties
 {
 	ConversationID = 135;
 	PickupMessage = "$txt_passcard";
-	bNoDeathmatch = true;
+	StrifeName = "Passcard";
+	IconName = 'i_tpas';
 	IdleState = S_PASSCARD;
-	KeyType = StrifeDefs::KEY_Passcard;
 }

@@ -34,6 +34,7 @@ defaultproperties
 {
 	ConversationID = 141;
 	PickupMessage = "$txt_power3key";
+	StrifeName = "Power3 Key";
+	IconName = 'i_pwr3';
 	IdleState = S_POWER3_KEY;
-	KeyType = StrifeDefs::KEY_Power3Key;
 }

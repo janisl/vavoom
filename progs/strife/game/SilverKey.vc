@@ -35,7 +35,7 @@ defaultproperties
 {
 	ConversationID = 144;
 	PickupMessage = "$txt_silverkey";
-	bNoDeathmatch = true;
+	StrifeName = "Silver Key";
+	IconName = 'i_ky2s';
 	IdleState = S_SILVER_KEY;
-	KeyType = StrifeDefs::KEY_SilverKey;
 }

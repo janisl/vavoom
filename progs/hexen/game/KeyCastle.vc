@@ -33,7 +33,7 @@ __states__
 
 defaultproperties
 {
-	KeyType = HexenDefs::KEY_B;
-	IdleState = S_KEYB;
 	PickupMessage = "$txt_key_castle";
+	IconName = 'keyslotb';
+	IdleState = S_KEYB;
 }

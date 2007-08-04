@@ -47,23 +47,6 @@ enum
 
 enum
 {
-	KEY_1,
-	KEY_2,
-	KEY_3,
-	KEY_4,
-	KEY_5,
-	KEY_6,
-	KEY_7,
-	KEY_8,
-	KEY_9,
-	KEY_A,
-	KEY_B,
-	NUMKEYS
-};
-
-enum
-{
-	SBF_KEYS_MASK		= 0x000007ff,
 	SBF_POWER_FLIGHT	= 0x00010000,
 	SBF_POWER_SPEED		= 0x00020000,
 	SBF_POWER_INVULN	= 0x00040000,

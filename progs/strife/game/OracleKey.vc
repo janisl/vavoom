@@ -35,7 +35,7 @@ defaultproperties
 {
 	ConversationID = 145;
 	PickupMessage = "$txt_oraclekey";
-	bNoDeathmatch = true;
+	StrifeName = "Oracle Key";
+	IconName = 'i_orac';
 	IdleState = S_ORACLE_KEY;
-	KeyType = StrifeDefs::KEY_OracleKey;
 }

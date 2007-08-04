@@ -55,8 +55,6 @@ float ChickenTime;	// player is a chicken if > 0
 // Power ups. invinc and invis are timers.
 float Powers[NUMPOWERS];
 
-int Keys;
-
 int ArtifactFlash;
 Inventory InvFirst;
 Inventory InvPtr;
@@ -312,6 +310,7 @@ void SpawnPlayer(mthing_t * mthing)
 	int			i;
 	Inventory	Item;
 	Weapon		Wpn;
+	class<Inventory>	Cls;
 
 	if (PlayerState == PST_REBORN)
 	{
@@ -385,7 +384,15 @@ void SpawnPlayer(mthing_t * mthing)
 	if (Level.Game.deathmatch)
 	{
 		// Give all keys in death match mode
-		Keys = 7;
+		foreach AllClasses(Key, Cls)
+		{
+			if (!Cls.default.IdleState)
+			{
+				//	Abstract class
+				continue;
+			}
+			EntityEx(MO).GiveInventoryType(Cls);
+		}
 	}
 	if (bIsBot)
 	{
@@ -448,7 +455,15 @@ void PlayerExitMap(bool clusterChange)
 	}
 	if (clusterChange)
 	{
-		Keys = 0;
+		for (Item = EntityEx(MO).Inventory; Item;)
+		{
+			Inventory Next = Item.Inventory;
+			if (Key(Item))
+			{
+				Item.Destroy();
+			}
+			Item = Next;
+		}
 	}
 	if (ChickenTime)
 	{
@@ -2119,7 +2134,6 @@ void SetViewPos()
 
 	PaletteFlash();
 
-	SBFlags = Keys;
 	if (Cheats & CF_GODMODE)
 		SBFlags |= HereticDefs::SBF_GOD_MODE;
 	if (Powers[pw_flight])
@@ -2562,7 +2576,15 @@ void Cheat_Gimme()
 	}
 	if (Cmd_CheckParm("keys"))
 	{
-		Keys = 7;
+		foreach AllClasses(Key, Cls)
+		{
+			if (!Cls.default.IdleState)
+			{
+				//	Abstract class
+				continue;
+			}
+			EntityEx(MO).GiveInventoryType(Cls);
+		}
 		cprint("ALL KEYS");
 	}
 	if (Cmd_CheckParm("artifacts"))

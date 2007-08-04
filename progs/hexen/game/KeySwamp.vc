@@ -34,7 +34,7 @@ __states__
 
 defaultproperties
 {
-	KeyType = HexenDefs::KEY_A;
-	IdleState = S_KEYA;
 	PickupMessage = "$txt_key_swamp";
+	IconName = 'keyslota';
+	IdleState = S_KEYA;
 }

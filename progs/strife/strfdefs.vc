@@ -27,39 +27,6 @@ import engine;
 
 class StrifeDefs : Object;
 
-enum
-{
-	KEY_BaseKey,
-	KEY_GovsKey,
-	KEY_Passcard,
-	KEY_IDBadge,
-	KEY_PrisonKey,
-	KEY_SeveredHand,
-	KEY_Power1Key,
-	KEY_Power2Key,
-	KEY_GoldKey,
-	KEY_Power3Key,
-	KEY_IDCard,
-	KEY_SilverKey,
-	KEY_OracleKey,
-	KEY_MilitaryID,
-	KEY_OrderKey,
-	KEY_WarehouseKey,
-	KEY_BrassKey,
-	KEY_RedCrystalKey,
-	KEY_BlueCrystalKey,
-	KEY_ChapelKey,
-	KEY_CatacombKey,
-	KEY_SecurityKey,
-	KEY_CoreKey,
-	KEY_MaulerKey,
-	KEY_FactoryKey,
-	KEY_MineKey,
-	KEY_NewKey5,
-
-	NUMKEYS
-};
-
 defaultproperties
 {
 }

@@ -35,7 +35,7 @@ defaultproperties
 {
 	ConversationID = 151;
 	PickupMessage = "$txt_bluecrystal";
-	bNoDeathmatch = true;
+	StrifeName = "Blue Crystal Key";
+	IconName = 'i_bcry';
 	IdleState = S_BLUE_CRYSTAL_KEY;
-	KeyType = StrifeDefs::KEY_BlueCrystalKey;
 }

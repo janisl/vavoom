@@ -66,7 +66,6 @@ int pic_wppiece[3];
 int wppiecex[3];
 
 int pic_keybar;
-int pic_key[HexenDefs::NUMKEYS];
 int pic_armor[HexenDefs::NUMARMOR];
 
 int pic_invbar;
@@ -220,10 +219,6 @@ void StartMap()
 	//  KEY BAR
 	//
 	pic_keybar = R_RegisterPic('keybar');
-	for (i = 0; i < HexenDefs::NUMKEYS; i++)
-	{
-		pic_key[i] = R_RegisterPic(StrToName(va("keyslot%x", i + 1)));
-	}
 	for (i = 0; i < HexenDefs::NUMARMOR; i++)
 	{
 		pic_armor[i] = R_RegisterPic(StrToName(va("armslot%d", i + 1)));
@@ -518,16 +513,19 @@ void SB_DrawKeyBar()
 {
 	int i;
 	int num;
+	Inventory Item;
 
 	SB_DrawBackground();
 	R_DrawPic(BAR_X + 38, BAR_Y + 1, pic_keybar);
 
 	//  Keys
-	for (i = 0, num = 0; i < HexenDefs::NUMKEYS && num < 5; i++)
+	Item = EntityEx(cl.MO).Inventory;
+	for (num = 0; Item && num < 5; Item = Item.Inventory)
 	{
-		if (cl.SBFlags & (1 << i))
+		if (Key(Item))
 		{
-			R_DrawPic(BAR_X + 46 + num * 20, BAR_Y + 3, pic_key[i]);
+			R_DrawPic(BAR_X + 46 + num * 20, BAR_Y + 3,
+				R_RegisterPic(Item.IconName));
 			num++;
 		}
 	}

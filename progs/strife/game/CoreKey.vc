@@ -35,7 +35,7 @@ defaultproperties
 {
 	ConversationID = 155;
 	PickupMessage = "$txt_corekey";
-	bNoDeathmatch = true;
+	StrifeName = "Core Key";
+	IconName = 'i_goid';
 	IdleState = S_CORE_KEY;
-	KeyType = StrifeDefs::KEY_CoreKey;
 }

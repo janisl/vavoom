@@ -159,7 +159,8 @@ bool CheckLock(Entity user, int lock, bool door)
 	{
 		return true;
 	}
-	if (!(Player(user.Player).Keys & (1 << (lock - 1))))
+	if (!(EntityEx(user).FindInventory(MainGameInfo(Game).KeyClasses[
+		lock - 1])))
 	{
 		user.Player.centreprint(MainGameInfo(Game).keymsg[lock - 1]);
 		user.PlaySound('*usefail', CHAN_VOICE);

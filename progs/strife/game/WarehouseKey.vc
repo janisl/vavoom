@@ -35,7 +35,7 @@ defaultproperties
 {
 	ConversationID = 148;
 	PickupMessage = "$txt_warehousekey";
-	bNoDeathmatch = true;
+	StrifeName = "Warehouse Key";
+	IconName = 'i_ware';
 	IdleState = S_WAREHOUSE_KEY;
-	KeyType = StrifeDefs::KEY_WarehouseKey;
 }

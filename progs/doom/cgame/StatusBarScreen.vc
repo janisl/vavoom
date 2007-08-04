@@ -348,29 +348,29 @@ void SB_DrawMainBar()
 	SB_DrawTallNum(ST_ARMORX, ST_ARMORY, cl.ArmorPoints, 1.0, true);
 
 	// keyboxes 0-2
-	if (cl.SBFlags & DoomDefs::SBF_BLUE_SKULL)
+	if (EntityEx(cl.MO).FindInventory(BlueSkull))
 	{
 		R_DrawPic(ST_KEY0X, ST_KEY0Y, pic_keys[3]);
 	}
-	else if (cl.SBFlags & DoomDefs::SBF_BLUE_CARD)
+	else if (EntityEx(cl.MO).FindInventory(BlueCard))
 	{
 		R_DrawPic(ST_KEY0X, ST_KEY0Y, pic_keys[0]);
 	}
 
-	if (cl.SBFlags & DoomDefs::SBF_YELLOW_SKULL)
+	if (EntityEx(cl.MO).FindInventory(YellowSkull))
 	{
 		R_DrawPic(ST_KEY1X, ST_KEY1Y, pic_keys[4]);
 	}
-	else if (cl.SBFlags & DoomDefs::SBF_YELLOW_CARD)
+	else if (EntityEx(cl.MO).FindInventory(YellowCard))
 	{
 		R_DrawPic(ST_KEY1X, ST_KEY1Y, pic_keys[1]);
 	}
 
-	if (cl.SBFlags & DoomDefs::SBF_RED_SKULL)
+	if (EntityEx(cl.MO).FindInventory(RedSkull))
 	{
 		R_DrawPic(ST_KEY2X, ST_KEY2Y, pic_keys[5]);
 	}
-	else if (cl.SBFlags & DoomDefs::SBF_RED_CARD)
+	else if (EntityEx(cl.MO).FindInventory(RedCard))
 	{
 		R_DrawPic(ST_KEY2X, ST_KEY2Y, pic_keys[2]);
 	}
@@ -451,29 +451,29 @@ void SB_DrawFullscreenStats()
 	}
 
 	// keys
-	if (cl.SBFlags & DoomDefs::SBF_BLUE_SKULL)
+	if (EntityEx(cl.MO).FindInventory(BlueSkull))
 	{
 		R_DrawPic(460, 470, pic_keys[3]);
 	}
-	else if (cl.SBFlags & DoomDefs::SBF_BLUE_CARD)
+	else if (EntityEx(cl.MO).FindInventory(BlueCard))
 	{
 		R_DrawPic(460, 470, pic_keys[0]);
 	}
 
-	if (cl.SBFlags & DoomDefs::SBF_YELLOW_SKULL)
+	if (EntityEx(cl.MO).FindInventory(YellowSkull))
 	{
 		R_DrawPic(440, 470, pic_keys[4]);
 	}
-	else if (cl.SBFlags & DoomDefs::SBF_YELLOW_CARD)
+	else if (EntityEx(cl.MO).FindInventory(YellowCard))
 	{
 		R_DrawPic(440, 470, pic_keys[1]);
 	}
 
-	if (cl.SBFlags & DoomDefs::SBF_RED_SKULL)
+	if (EntityEx(cl.MO).FindInventory(RedSkull))
 	{
 		R_DrawPic(420, 470, pic_keys[5]);
 	}
-	else if (cl.SBFlags & DoomDefs::SBF_RED_CARD)
+	else if (EntityEx(cl.MO).FindInventory(RedCard))
 	{
 		R_DrawPic(420, 470, pic_keys[2]);
 	}

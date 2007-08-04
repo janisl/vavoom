@@ -61,8 +61,6 @@ bool Communicator;
 int Accuracy;
 int Stamina;
 
-int Keys;
-
 Inventory InvFirst;
 Inventory InvCursor;
 
@@ -76,7 +74,7 @@ Inventory SavedInventory;
 replication
 {
 	reliable if (!bIsClient)
-		SigilPieces, Accuracy, Stamina, Keys, InvFirst, InvCursor,
+		SigilPieces, Accuracy, Stamina, InvFirst, InvCursor,
 		Objectives, ArmorType, ArmorPoints, Communicator;
 
 	unreliable if (!bIsClient)
@@ -305,6 +303,7 @@ void SpawnPlayer(mthing_t * mthing)
 	PlayerPawn A;
 	bool ResetInventory = false;
 	Inventory Item;
+	class<Inventory> Cls;
 
 	if (PlayerState == PST_REBORN)
 	{
@@ -384,7 +383,15 @@ void SpawnPlayer(mthing_t * mthing)
 	// give all cards in death match mode
 	if (Level.Game.deathmatch)
 	{
-		Keys = 0x3f;
+		foreach AllClasses(Key, Cls)
+		{
+			if (!Cls.default.IdleState)
+			{
+				//	Abstract class
+				continue;
+			}
+			A.GiveInventoryType(Cls);
+		}
 	}
 
 	// wake up the status bar
@@ -424,6 +431,7 @@ void PlayerReborn()
 void PlayerExitMap(bool clusterChange)
 {
 	int i;
+	Inventory Item;
 
 	for (i = 0; i < NUMPOWERS; i++)
 	{
@@ -433,7 +441,15 @@ void PlayerExitMap(bool clusterChange)
 
 	if (clusterChange)
 	{
-		Keys = 0;
+		for (Item = EntityEx(MO).Inventory; Item;)
+		{
+			Inventory Next = Item.Inventory;
+			if (Key(Item))
+			{
+				Item.Destroy();
+			}
+			Item = Next;
+		}
 	}
 
 	Items = 0;
@@ -2178,7 +2194,15 @@ void Cheat_Gimme()
 	// Keys
 	if (Cmd_CheckParm("Keys"))
 	{
-		Keys = 0x03ffffff;
+		foreach AllClasses(Key, Cls)
+		{
+			if (!Cls.default.IdleState)
+			{
+				//	Abstract class
+				continue;
+			}
+			EntityEx(MO).GiveInventoryType(Cls);
+		}
 		cprint("ALL KEYS");
 	}
 

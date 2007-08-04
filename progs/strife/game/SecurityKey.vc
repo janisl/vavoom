@@ -34,6 +34,7 @@ defaultproperties
 {
 	ConversationID = 154;
 	PickupMessage = "$txt_securitykey";
+	StrifeName = "Security Key";
+	IconName = 'i_seck';
 	IdleState = S_SECURITY_KEY;
-	KeyType = StrifeDefs::KEY_SecurityKey;
 }

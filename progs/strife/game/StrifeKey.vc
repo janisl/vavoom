@@ -26,21 +26,10 @@
 class StrifeKey : Key
 	abstract;
 
-int KeyType;
-
-//==========================================================================
-//
-//	CreateCopy
-//
-//==========================================================================
-
-Inventory CreateCopy(EntityEx Toucher)
-{
-	Player(Toucher.Player).Keys |= 1 << KeyType;
-	return ::CreateCopy(Toucher);
-}
+string			StrifeName;
 
 defaultproperties
 {
+	bNoDeathmatch = true;
 	bFloorClip = true;
 }

@@ -35,7 +35,7 @@ defaultproperties
 {
 	ConversationID = 156;
 	PickupMessage = "$txt_maulerkey";
-	bNoDeathmatch = true;
+	StrifeName = "Mauler Key";
+	IconName = 'i_bltk';
 	IdleState = S_MAULER_KEY;
-	KeyType = StrifeDefs::KEY_MaulerKey;
 }

@@ -34,8 +34,9 @@ defaultproperties
 {
 	ConversationID = 137;
 	PickupMessage = "$txt_prisonkey";
+	StrifeName = "Prison Key";
+	IconName = 'i_pris';
 	IdleState = S_PRISON_KEY;
-	KeyType = StrifeDefs::KEY_PrisonKey;
 	bGiveQuest = true;
 	QuestID = QUEST_GotPrisonKey;
 }

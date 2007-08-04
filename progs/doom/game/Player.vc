@@ -51,8 +51,6 @@ int ArmorPoints;
 // Power ups. invinc and invis are tic counters.
 float Powers[NUMPOWERS];
 
-int Keys;
-
 // Armor type is 0-2.
 int ArmorType;
 
@@ -349,6 +347,7 @@ void SpawnPlayer(mthing_t * mthing)
 	DoomPlayer PP;
 	bool ResetInventory = false;
 	Inventory Item;
+	class<Inventory> Cls;
 
 	if (PlayerState == PST_REBORN)
 	{
@@ -436,7 +435,15 @@ void SpawnPlayer(mthing_t * mthing)
 	// give all cards in death match mode
 	if (Level.Game.deathmatch)
 	{
-		Keys = 0x3f;
+		foreach AllClasses(Key, Cls)
+		{
+			if (!Cls.default.IdleState)
+			{
+				//	Abstract class
+				continue;
+			}
+			EntityEx(MO).GiveInventoryType(Cls);
+		}
 	}
 
 	// wake up the status bar
@@ -486,10 +493,19 @@ void PlayerReborn()
 void PlayerExitMap(bool clusterChange)
 {
 	int i;
+	Inventory Item;
 
 	if (clusterChange)
 	{
-		Keys = 0;
+		for (Item = EntityEx(MO).Inventory; Item;)
+		{
+			Inventory Next = Item.Inventory;
+			if (Key(Item))
+			{
+				Item.Destroy();
+			}
+			Item = Next;
+		}
 	}
 
 	for (i = 0; i < NUMPOWERS; i++)
@@ -1946,7 +1962,6 @@ void SetViewPos()
 
 	UpdateFaceWidget(Level.Game.frametime);
 
-	SBFlags = Keys;
 	if ((Cheats & CF_GODMODE) || Powers[pw_invulnerability])
 		SBFlags |= DoomDefs::SBF_GOD_MODE;
 
@@ -2201,13 +2216,6 @@ void Cheat_NoClip()
 //==========================================================================
 
 const int
-	GIMME_BACKPACK			= 0x00000080,
-	GIMME_BLUECARD			= 0x00001000,
-	GIMME_BLUESKULL			= 0x00002000,
-	GIMME_YELLOWCARD		= 0x00004000,
-	GIMME_YELLOWSKULL		= 0x00008000,
-	GIMME_REDCARD			= 0x00010000,
-	GIMME_REDSKULL			= 0x00020000,
 	GIMME_INVULNERABILITY	= 0x00040000,
 	GIMME_STRENGTH			= 0x00080000,
 	GIMME_INVISIBILITY		= 0x00100000,
@@ -2232,26 +2240,6 @@ void Cheat_Gimme()
 	// All
 	if (Cmd_CheckParm("All"))
 		i1 |= GIMME_ALL;
-
-	// Backpack
-	if (Cmd_CheckParm("Backpack"))
-		i1 |= GIMME_BACKPACK;
-
-	// Keys
-	if (Cmd_CheckParm("Keys"))
-		i1 |= GIMME_KEYS;
-	if (Cmd_CheckParm("BlueCard"))
-		i1 |= GIMME_BLUECARD;
-	if (Cmd_CheckParm("BlueSkull"))
-		i1 |= GIMME_BLUESKULL;
-	if (Cmd_CheckParm("YellowCard"))
-		i1 |= GIMME_YELLOWCARD;
-	if (Cmd_CheckParm("YellowSkull"))
-		i1 |= GIMME_YELLOWSKULL;
-	if (Cmd_CheckParm("RedCard"))
-		i1 |= GIMME_REDCARD;
-	if (Cmd_CheckParm("RedSkull"))
-		i1 |= GIMME_REDSKULL;
 
 	// Powers
 	if (Cmd_CheckParm("Powers"))
@@ -2302,7 +2290,7 @@ void Cheat_Gimme()
 	}
 
 	// Backpack
-	if (i1 & GIMME_BACKPACK)
+	if (Cmd_CheckParm("Backpack"))
 	{
 		Backpack Pack = Level.Spawn(Backpack);
 		Pack.bDropped = true;
@@ -2340,18 +2328,18 @@ void Cheat_Gimme()
 	}
 
 	// Keys
-	if (i1 & GIMME_BLUECARD)
-		Keys |= 1 << it_bluecard;
-	if (i1 & GIMME_YELLOWCARD)
-		Keys |= 1 << it_yellowcard;
-	if (i1 & GIMME_REDCARD)
-		Keys |= 1 << it_redcard;
-	if (i1 & GIMME_BLUESKULL)
-		Keys |= 1 << it_blueskull;
-	if (i1 & GIMME_YELLOWSKULL)
-		Keys |= 1 << it_yellowskull;
-	if (i1 & GIMME_REDSKULL)
-		Keys |= 1 << it_redskull;
+	if (Cmd_CheckParm("Keys"))
+	{
+		foreach AllClasses(Key, Cls)
+		{
+			if (!Cls.default.IdleState)
+			{
+				//	Abstract class
+				continue;
+			}
+			EntityEx(MO).GiveInventoryType(Cls);
+		}
+	}
 
 	// Powers
 	if (i1 & GIMME_INVULNERABILITY)

@@ -26,22 +26,8 @@
 class HexenKey : Key
 	abstract;
 
-int KeyType;
-
-//==========================================================================
-//
-//	CreateCopy
-//
-//==========================================================================
-
-Inventory CreateCopy(EntityEx Toucher)
-{
-	Player(Toucher.Player).Keys |= 1 << KeyType;
-	return ::CreateCopy(Toucher);
-}
-
 defaultproperties
 {
 	Radius = 8.0;
-	Height = 32.0;
+	Height = 20.0;
 }

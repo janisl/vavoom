@@ -35,7 +35,7 @@ defaultproperties
 {
 	ConversationID = 157;
 	PickupMessage = "$txt_factorykey";
-	bNoDeathmatch = true;
+	StrifeName = "Factory Key";
+	IconName = 'i_proc';
 	IdleState = S_FACTORY_KEY;
-	KeyType = StrifeDefs::KEY_FactoryKey;
 }

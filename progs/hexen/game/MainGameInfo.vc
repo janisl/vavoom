@@ -37,7 +37,7 @@ float ArmorIncrement[HexenDefs::NUMCLASSES * HexenDefs::NUMARMOR];
 //
 //  Pickup messages
 //
-string TextKeyLockedMessages[HexenDefs::NUMKEYS];
+string TextKeyLockedMessages[11];
 
 float ArmorMax[HexenDefs::NUMCLASSES];
 
@@ -46,6 +46,8 @@ int classFlags[3];
 bool randomclass;
 
 Actor PuffSpawned;
+
+class<HexenKey> KeyClasses[11];
 
 //==========================================================================
 //
@@ -397,6 +399,18 @@ defaultproperties
 	classFlags[0] = HexenLevelInfo::MTF_FIGHTER;
 	classFlags[1] = HexenLevelInfo::MTF_CLERIC;
 	classFlags[2] = HexenLevelInfo::MTF_MAGE;
+
+	KeyClasses[0] = KeySteel;
+	KeyClasses[1] = KeyCave;
+	KeyClasses[2] = KeyAxe;
+	KeyClasses[3] = KeyFire;
+	KeyClasses[4] = KeyEmerald;
+	KeyClasses[5] = KeyDungeon;
+	KeyClasses[6] = KeySilver;
+	KeyClasses[7] = KeyRusted;
+	KeyClasses[8] = KeyHorn;
+	KeyClasses[9] = KeySwamp;
+	KeyClasses[10] = KeyCastle;
 
 	botskill = 2;
 }

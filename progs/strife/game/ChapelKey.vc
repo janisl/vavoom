@@ -35,7 +35,7 @@ defaultproperties
 {
 	ConversationID = 152;
 	PickupMessage = "$txt_chapelkey";
-	bNoDeathmatch = true;
+	StrifeName = "Chapel Key";
+	IconName = 'i_chap';
 	IdleState = S_CHAPEL_KEY;
-	KeyType = StrifeDefs::KEY_ChapelKey;
 }

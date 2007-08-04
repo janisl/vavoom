@@ -34,8 +34,9 @@ defaultproperties
 {
 	ConversationID = 153;
 	PickupMessage = "$txt_catacombkey";
+	StrifeName = "Catacomb Key";
+	IconName = 'i_tunl';
 	IdleState = S_CATACOMB_KEY;
-	KeyType = StrifeDefs::KEY_CatacombKey;
 	bGiveQuest = true;
 	QuestID = QUEST_GotCatacombKey;
 }

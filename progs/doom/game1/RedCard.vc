@@ -35,8 +35,6 @@ __states__
 
 defaultproperties
 {
-	bNoDeathmatch = true;
 	IdleState = S_RKEY;
-	KeyType = it_redcard;
 	PickupMessage = "$gotredcard";
 }

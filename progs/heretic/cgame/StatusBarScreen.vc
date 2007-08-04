@@ -331,15 +331,15 @@ void SB_DrawMainBar()
 		}
 
 		//  Keys
-		if (cl.SBFlags & HereticDefs::SBF_KEY_YELLOW)
+		if (EntityEx(cl.MO).FindInventory(KeyYellow))
 		{
 			R_DrawPic(BAR_X + 153, BAR_Y + 6, pic_ykey);
 		}
-		if (cl.SBFlags & HereticDefs::SBF_KEY_GREEN)
+		if (EntityEx(cl.MO).FindInventory(KeyGreen))
 		{
 			R_DrawPic(BAR_X + 153, BAR_Y + 14, pic_gkey);
 		}
-		if (cl.SBFlags & HereticDefs::SBF_KEY_BLUE)
+		if (EntityEx(cl.MO).FindInventory(KeyBlue))
 		{
 			R_DrawPic(BAR_X + 153, BAR_Y + 22, pic_bkey);
 		}
@@ -406,15 +406,15 @@ void SB_DrawFullscreenStats()
 	}
 
 	//  Keys
-	if (cl.SBFlags & HereticDefs::SBF_KEY_YELLOW)
+	if (EntityEx(cl.MO).FindInventory(KeyYellow))
 	{
 		R_DrawPic(580, 444, pic_ykey);
 	}
-	if (cl.SBFlags & HereticDefs::SBF_KEY_GREEN)
+	if (EntityEx(cl.MO).FindInventory(KeyGreen))
 	{
 		R_DrawPic(580, 452, pic_gkey);
 	}
-	if (cl.SBFlags & HereticDefs::SBF_KEY_BLUE)
+	if (EntityEx(cl.MO).FindInventory(KeyBlue))
 	{
 		R_DrawPic(580, 460, pic_bkey);
 	}

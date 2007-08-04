@@ -35,7 +35,7 @@ defaultproperties
 {
 	ConversationID = 143;
 	PickupMessage = "$txt_idcard";
-	bNoDeathmatch = true;
+	StrifeName = "ID Card";
+	IconName = 'i_crd2';
 	IdleState = S_ID_CARD;
-	KeyType = StrifeDefs::KEY_IDCard;
 }

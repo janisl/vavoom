@@ -34,6 +34,7 @@ defaultproperties
 {
 	ConversationID = 159;
 	PickupMessage = "$txt_newkey5";
+	StrifeName = "New Key 5";
+	IconName = 'i_bltk';
 	IdleState = S_MAULER_KEY;
-	KeyType = StrifeDefs::KEY_NewKey5;
 }

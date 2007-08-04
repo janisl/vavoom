@@ -35,7 +35,7 @@ defaultproperties
 {
 	ConversationID = 136;
 	PickupMessage = "$txt_idbadge";
-	bNoDeathmatch = true;
+	StrifeName = "ID Badge";
+	IconName = 'i_crd1';
 	IdleState = S_ID_BADGE;
-	KeyType = StrifeDefs::KEY_IDBadge;
 }

@@ -34,7 +34,7 @@ __states__
 
 defaultproperties
 {
-	KeyType = HexenDefs::KEY_5;
-	IdleState = S_KEY5;
 	PickupMessage = "$txt_key_emerald";
+	IconName = 'keyslot5';
+	IdleState = S_KEY5;
 }

@@ -35,7 +35,7 @@ defaultproperties
 {
 	ConversationID = 147;
 	PickupMessage = "$txt_orderkey";
-	bNoDeathmatch = true;
+	StrifeName = "Order Key";
+	IconName = 'i_fubr';
 	IdleState = S_ORDER_KEY;
-	KeyType = StrifeDefs::KEY_OrderKey;
 }

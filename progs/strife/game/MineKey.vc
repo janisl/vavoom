@@ -35,7 +35,7 @@ defaultproperties
 {
 	ConversationID = 158;
 	PickupMessage = "$txt_minekey";
-	bNoDeathmatch = true;
+	StrifeName = "Mine Key";
+	IconName = 'i_mine';
 	IdleState = S_MINE_KEY;
-	KeyType = StrifeDefs::KEY_MineKey;
 }

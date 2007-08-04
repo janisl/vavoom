@@ -174,7 +174,8 @@ bool CheckLock(Entity user, int lock, bool door)
 	if (lock <= 32)
 	{
 		//	Regular keys.
-		if (!(Player(user.Player).Keys & (1 << (lock - 1))))
+		if (!(EntityEx(user).FindInventory(
+			MainGameInfo(Game).KeyCID[lock - 1])))
 		{
 			user.Player.centreprint("$txt_needkey");
 			user.PlaySound('*grunt', CHAN_VOICE);
@@ -619,11 +620,10 @@ class<EntityEx> GetClassFromID(int ID)
 
 int CheckForNeededItem(EntityEx A, int ID, int Amount)
 {
-	class<EntityEx> CID;
 	int i;
 
 	//	Get class ID.
-	CID = GetClassFromID(ID);
+	class<EntityEx> CID = GetClassFromID(ID);
 	//	Check inventory items.
 	if (class<Inventory>(CID) && class<Inventory>(CID).default.bInvBar)
 	{
@@ -631,12 +631,10 @@ int CheckForNeededItem(EntityEx A, int ID, int Amount)
 		return !Item || Item.Amount < Amount ? -2 : 0;
 	}
 	//	Check keys.
-	for (i = 0; i < StrifeDefs::NUMKEYS; i++)
+	Inventory Item = A.FindInventory(class<Inventory>(CID));
+	if (Item)
 	{
-		if (MainGameInfo(Game).KeyCID[i] == CID)
-		{
-			return Player(A.Player).Keys & (1 << i) ? -1 : -2;
-		}
+		return -1;
 	}
 	//	Check quests.
 	if (ID >= 312 && ID <= 342)
@@ -648,7 +646,7 @@ int CheckForNeededItem(EntityEx A, int ID, int Amount)
 	{
 		return Player(A.Player).Communicator ? -1 : -2;
 	}
-	return -1;
+	return -2;
 }
 
 //==========================================================================

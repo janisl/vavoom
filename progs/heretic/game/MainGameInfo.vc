@@ -47,9 +47,11 @@ spec_trans_t spec_trans_tab[NUM_SPECIALS];
 BotPlayer::botinfo_t botinfo[NUMTOTALBOTS];
 int botskill;
 
-string keymsg[NUMKEYS];
+string keymsg[3];
 
 bool shareware;
+
+class<HereticKey> KeyClasses[3];
 
 //==========================================================================
 //
@@ -226,16 +228,16 @@ void InitTranslationTables()
 	SetLineTrans(23, LNSPEC_FloorLowerToLowest, -1, 8, 0, 0, 0, SPAC_USE, false);
 	SetLineTrans(24, LNSPEC_FloorRaiseToLowestCeiling, -1, 8, 0, 0, 0, SPAC_IMPACT, false);
 	SetLineTrans(25, LNSPEC_CeilingCrushAndRaiseA, -1, 8, 8, 10, 0, SPAC_CROSS, false);
-	SetLineTrans(26, LNSPEC_DoorLockedRaise, 0, 16, 150, key_blue + 1, 0, SPAC_USE, true);
-	SetLineTrans(27, LNSPEC_DoorLockedRaise, 0, 16, 150, key_yellow + 1, 0, SPAC_USE, true);
-	SetLineTrans(28, LNSPEC_DoorLockedRaise, 0, 16, 150, key_green + 1, 0, SPAC_USE, true);
+	SetLineTrans(26, LNSPEC_DoorLockedRaise, 0, 16, 150, 3, 0, SPAC_USE, true);
+	SetLineTrans(27, LNSPEC_DoorLockedRaise, 0, 16, 150, 1, 0, SPAC_USE, true);
+	SetLineTrans(28, LNSPEC_DoorLockedRaise, 0, 16, 150, 2, 0, SPAC_USE, true);
 	SetLineTrans(29, LNSPEC_DoorRaise, -1, 16, 150, 0, 0, SPAC_USE, false);
 
 	SetLineTrans(30, LNSPEC_FloorRaiseByTexture, -1, 8, 0, 0, 0, SPAC_CROSS, false);
 	SetLineTrans(31, LNSPEC_DoorOpen, 0, 16, 0, 0, 0, SPAC_USE, false);
-	SetLineTrans(32, LNSPEC_DoorLockedRaise, 0, 16, 0, key_blue + 1, 0, SPAC_USE, false);
-	SetLineTrans(33, LNSPEC_DoorLockedRaise, 0, 16, 0, key_green + 1, 0, SPAC_USE, false);
-	SetLineTrans(34, LNSPEC_DoorLockedRaise, 0, 16, 0, key_yellow + 1, 0, SPAC_USE, false);
+	SetLineTrans(32, LNSPEC_DoorLockedRaise, 0, 16, 0, 3, 0, SPAC_USE, false);
+	SetLineTrans(33, LNSPEC_DoorLockedRaise, 0, 16, 0, 2, 0, SPAC_USE, false);
+	SetLineTrans(34, LNSPEC_DoorLockedRaise, 0, 16, 0, 1, 0, SPAC_USE, false);
 	SetLineTrans(35, LNSPEC_LightChangeToValue, -1, 35, 0, 0, 0, SPAC_CROSS, false);
 	SetLineTrans(36, LNSPEC_FloorLowerToHighest, -1, 32, 136, 0, 0, SPAC_CROSS, false);
 	SetLineTrans(37, LNSPEC_FloorLowerToLowestChange, -1, 8, 0, 0, 0, SPAC_CROSS, false);
@@ -532,6 +534,10 @@ defaultproperties
 	keymsg[0] = "$txt_needyellowkey";
 	keymsg[1] = "$txt_needgreenkey";
 	keymsg[2] = "$txt_needbluekey";
+
+	KeyClasses[0] = KeyYellow;
+	KeyClasses[1] = KeyGreen;
+	KeyClasses[2] = KeyBlue;
 
 	botskill = 2;
 }

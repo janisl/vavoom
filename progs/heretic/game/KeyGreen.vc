@@ -43,7 +43,6 @@ __states__
 
 defaultproperties
 {
-	KeyType = key_green;
 	IdleState = S_AKYY1;
 	PickupMessage = "$txt_gotgreenkey";
 }

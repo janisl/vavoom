@@ -41,7 +41,7 @@ struct spec_trans_t
 
 spec_trans_t spec_trans_tab[NUM_SPECIALS];
 
-class<StrifeKey> KeyCID[StrifeDefs::NUMKEYS];
+class<StrifeKey> KeyCID[27];
 
 //==========================================================================
 //
@@ -257,7 +257,7 @@ void InitTranslationTables()
 	SetLineTrans(151, LNSPEC_DoorLockedRaise, -1, 64, 0, 9, 0, SPAC_USE, true);
 	SetLineTrans(152, LNSPEC_DoorLockedRaise, -1, 64, 0, 17, 0, SPAC_USE, true);
 	SetLineTrans(153, LNSPEC_DoorLockedRaise, -1, 64, 0, 12, 0, SPAC_USE, true);
-	SetLineTrans(154, LNSPEC_ACSLockedExecute, 0, 0, 154, -1, 1 + StrifeDefs::KEY_GoldKey, SPAC_USE, true);
+	SetLineTrans(154, LNSPEC_ACSLockedExecute, 0, 0, 154, -1, 9, SPAC_USE, true);
 	SetLineTrans(155, LNSPEC_PlatUpWaitDownStay, -1, 32, 105, 0, 0, SPAC_USE, true);
 	SetLineTrans(156, LNSPEC_DoorLockedRaise, 0, 16, 0, 17, 0, SPAC_USE, false);
 	SetLineTrans(157, LNSPEC_DoorLockedRaise, 0, 16, 0, 12, 0, SPAC_USE, false);
@@ -282,7 +282,7 @@ void InitTranslationTables()
 	SetLineTrans(174, LNSPEC_ACSExecuteWithResult, 0, 174, -1, 0, 0, SPAC_CROSS, false);
 	SetLineTrans(175, LNSPEC_ACSExecuteWithResult, 0, 175, -1, 0, 0, SPAC_CROSS, true);
 	SetLineTrans(176, LNSPEC_DoorLockedRaise, -1, 16, 0, 10, 0, SPAC_USE, true);
-	SetLineTrans(177, LNSPEC_ACSLockedExecute, 0, 0, 177, -1, 1 + StrifeDefs::KEY_Power3Key, SPAC_USE, true);
+	SetLineTrans(177, LNSPEC_ACSLockedExecute, 0, 0, 177, -1, 10, SPAC_USE, true);
 	SetLineTrans(178, LNSPEC_StairsGeneric, -1, 16, 16, 0, 0, SPAC_CROSS, false);
 	SetLineTrans(179, LNSPEC_CeilingLowerAndCrush, -1, 8, 1, 0, 0, SPAC_CROSS, false);
 
@@ -295,11 +295,11 @@ void InitTranslationTables()
 	SetLineTrans(186, LNSPEC_ACSExecuteWithResult, 0, 186, -1, 0, 0, SPAC_CROSS, true);
 	SetLineTrans(187, LNSPEC_ACSExecuteWithResult, 0, 187, -1, 0, 0, SPAC_CROSS, true);
 	SetLineTrans(188, LNSPEC_ACSExecuteWithResult, 0, 188, -1, 0, 0, SPAC_CROSS, true);
-	SetLineTrans(189, LNSPEC_ACSLockedExecute, 0, 0, 189, -1, 1 + StrifeDefs::KEY_OracleKey, SPAC_USE, false);
+	SetLineTrans(189, LNSPEC_ACSLockedExecute, 0, 0, 189, -1, 13, SPAC_USE, false);
 
-	SetLineTrans(190, LNSPEC_DoorLockedRaise, 0, 16, 150, 1 + StrifeDefs::KEY_MilitaryID, 0, SPAC_USE, true);
-	SetLineTrans(191, LNSPEC_DoorLockedRaise, -1, 16, 0, 1 + StrifeDefs::KEY_MilitaryID, 0, SPAC_USE, true);
-	SetLineTrans(192, LNSPEC_DoorLockedRaise, -1, 16, 0, 1 + StrifeDefs::KEY_WarehouseKey, 0, SPAC_USE, false);
+	SetLineTrans(190, LNSPEC_DoorLockedRaise, 0, 16, 150, 14, 0, SPAC_USE, true);
+	SetLineTrans(191, LNSPEC_DoorLockedRaise, -1, 16, 0, 14, 0, SPAC_USE, true);
+	SetLineTrans(192, LNSPEC_DoorLockedRaise, -1, 16, 0, 16, 0, SPAC_USE, false);
 	SetLineTrans(193, LNSPEC_ACSExecuteWithResult, 0, 193, -1, 0, 0, SPAC_CROSS, true);
 	SetLineTrans(194, LNSPEC_ACSExecuteWithResult, 0, 194, -1, 0, 0, SPAC_USE, false);
 	SetLineTrans(195, LNSPEC_TeleportZombieChanger, 0, -1, 0, 0, 0, SPAC_MCROSS, true);
@@ -328,9 +328,9 @@ void InitTranslationTables()
 	SetLineTrans(216, LNSPEC_ACSExecuteWithResult, 0, 216, -1, 0, 0, SPAC_CROSS, true);
 	SetLineTrans(217, LNSPEC_DoorLockedRaise, 0, 16, 150, 23, 0, SPAC_USE, true);
 	//  218 W1 Clear NonBlock Quest UNUSED
-	SetLineTrans(219, LNSPEC_ACSLockedExecute, 0, 0, 219, -1, 1 + StrifeDefs::KEY_RedCrystalKey, SPAC_USE, false);
+	SetLineTrans(219, LNSPEC_ACSLockedExecute, 0, 0, 219, -1, 18, SPAC_USE, false);
 
-	SetLineTrans(220, LNSPEC_ACSLockedExecute, 0, 0, 220, -1, 1 + StrifeDefs::KEY_BlueCrystalKey, SPAC_USE, false);
+	SetLineTrans(220, LNSPEC_ACSLockedExecute, 0, 0, 220, -1, 19, SPAC_USE, false);
 	SetLineTrans(221, LNSPEC_DoorLockedRaise, 0, 16, 150, 24, 0, SPAC_USE, true);
 	SetLineTrans(222, LNSPEC_DoorLockedRaise, -1, 16, 0, 25, 0, SPAC_USE, false); // ??? Realy a key?
 	SetLineTrans(223, LNSPEC_DoorLockedRaise, -1, 16, 0, 26, 0, SPAC_USE, true);
