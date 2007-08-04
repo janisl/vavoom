@@ -41,7 +41,7 @@ struct spec_trans_t
 
 spec_trans_t spec_trans_tab[NUM_SPECIALS];
 
-class<KeyPickup> KeyCID[StrifeDefs::NUMKEYS];
+class<StrifeKey> KeyCID[StrifeDefs::NUMKEYS];
 
 //==========================================================================
 //

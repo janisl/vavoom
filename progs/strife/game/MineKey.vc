@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MineKey : KeyPickup
+class MineKey : StrifeKey
 	__mobjinfo__(235);
 
 __states__

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class YellowCard : KeyPickup
+class YellowCard : DoomKey
 	__mobjinfo__(6)
 	__scriptid__(87);
 

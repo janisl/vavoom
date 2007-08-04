@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class BrassKey : KeyPickup
+class BrassKey : StrifeKey
 	__mobjinfo__(39);
 
 __states__

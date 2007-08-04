@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Key : Inventory
+class HexenKey : Inventory
 	abstract;
 
 int KeyType;

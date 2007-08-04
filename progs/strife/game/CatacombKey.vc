@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class CatacombKey : KeyPickup;
+class CatacombKey : StrifeKey;
 
 __states__
 {

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class BlueCard : KeyPickup
+class BlueCard : DoomKey
 	__mobjinfo__(5)
 	__scriptid__(85);
 

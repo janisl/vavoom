@@ -91,7 +91,7 @@
 #include "SpectralLightningHTail.vc"
 #include "SpectralLightningSpot.vc"
 
-#include "KeyPickup.vc"
+#include "StrifeKey.vc"
 #include "MedPatch.vc"
 #include "MedicalKit.vc"
 #include "SurgeryKit.vc"

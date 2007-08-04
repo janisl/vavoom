@@ -237,6 +237,7 @@ EXTRA_DIST = compile.bat \
 	game/FWeapQuietus.vc \
 	game/GlassShard.vc \
 	game/Heresiarch.vc \
+	game/HexenKey.vc \
 	game/HexenWeapon.vc \
 	game/HolySpirit.vc \
 	game/HWaterDrip.vc \
@@ -515,7 +516,6 @@ EXTRA_DIST = compile.bat \
 	game/BloodPool.vc \
 	game/Leaf1.vc \
 	game/ZStatueGargoyleBlueShort.vc \
-	game/Key.vc \
 	game/ZStalagmiteIceMedium.vc \
 	game/AxePuffGlow.vc \
 	game/PunchPuff.vc \

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class WarehouseKey : KeyPickup
+class WarehouseKey : StrifeKey
 	__mobjinfo__(166);
 
 __states__

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class SecurityKey : KeyPickup;
+class SecurityKey : StrifeKey;
 
 __states__
 {

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class KeyEmerald : Key
+class KeyEmerald : HexenKey
 	__mobjinfo__(8034)
 	__scriptid__(89);
 

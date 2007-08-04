@@ -167,12 +167,27 @@ EXTRA_DIST = compile.bat \
 	game/ArtiTomeOfPower.vc \
 	game/ArtiTorch.vc \
 	game/BagOfHolding.vc \
+	game/Barrel.vc \
 	game/Beak.vc \
 	game/BeakPowered.vc \
+	game/BeakPuff.vc \
+	game/BeastBall.vc \
 	game/Blaster.vc \
 	game/BlasterAmmo.vc \
+	game/BlasterFX1.vc \
 	game/BlasterHefty.vc \
 	game/BlasterPowered.vc \
+	game/BlasterPuff1.vc \
+	game/BlasterPuff2.vc \
+	game/BlasterSmoke.vc \
+	game/Blood.vc \
+	game/BloodSplash.vc \
+	game/BloodSplashBase.vc \
+	game/BloodSplatter.vc \
+	game/BloodySkull.vc \
+	game/BotPlayer.vc \
+	game/BrownPillar.vc \
+	game/BurnBall.vc \
 	game/Crossbow.vc \
 	game/CrossbowAmmo.vc \
 	game/CrossbowHefty.vc \
@@ -190,6 +205,7 @@ EXTRA_DIST = compile.bat \
 	game/GoldWandPowered.vc \
 	game/GoldWandPuff1.vc \
 	game/GoldWandPuff2.vc \
+	game/HangingCorpse.vc \
 	game/HeadFX1.vc \
 	game/HeadFX2.vc \
 	game/HeadFX3.vc \
@@ -198,6 +214,9 @@ EXTRA_DIST = compile.bat \
 	game/HereticImpChunk1.vc \
 	game/HereticImpChunk2.vc \
 	game/HereticImpLeader.vc \
+	game/HereticKey.vc \
+	game/HereticLevelInfo.vc \
+	game/HereticPlayer.vc \
 	game/HereticSoundSequence1.vc \
 	game/HereticSoundSequence2.vc \
 	game/HereticSoundSequence3.vc \
@@ -209,6 +228,7 @@ EXTRA_DIST = compile.bat \
 	game/HereticSoundSequence9.vc \
 	game/HereticSoundSequence10.vc \
 	game/HereticWeapon.vc \
+	game/HereticWorldInfo.vc \
 	game/HornRodFX1.vc \
 	game/HornRodFX2.vc \
 	game/Ironlich.vc \
@@ -267,9 +287,7 @@ EXTRA_DIST = compile.bat \
 	game/Whirlwind.vc \
 	game/WizardFX1.vc \
 	\
-	game/BlasterFX1.vc \
 	game/VolcanoTBlast.vc \
-	game/BloodSplatter.vc \
 	game/SerpentTorch.vc \
 	game/Actor.vc \
 	game/KnightAxe.vc \
@@ -281,20 +299,15 @@ EXTRA_DIST = compile.bat \
 	game/MainGameInfo.vc \
 	game/SkullHang35.vc \
 	game/StaticLightSource.vc \
-	game/Barrel.vc \
 	game/StalagmiteLarge.vc \
 	game/MummyGhost.vc \
 	game/BurnBallFB.vc \
 	game/SludgeChunk.vc \
 	game/MummyLeaderGhost.vc \
-	game/HangingCorpse.vc \
-	game/HereticLevelInfo.vc \
-	game/Key.vc \
 	game/KnightGhost.vc \
 	game/Puffy.vc \
 	game/classes.vc \
 	game/SkullHang70.vc \
-	game/HereticPlayer.vc \
 	game/Projectile.vc \
 	game/Wizard.vc \
 	game/QuakeFocus.vc \
@@ -304,34 +317,24 @@ EXTRA_DIST = compile.bat \
 	game/SoundWind.vc \
 	game/CrossbowFX3.vc \
 	game/PlayerPawn.vc \
-	game/Blood.vc \
 	game/GauntletPuff1.vc \
-	game/BloodSplash.vc \
 	game/SoundWaterfall.vc \
 	game/PhoenixFX1.vc \
 	game/PodGenerator.vc \
 	game/LavaSplash.vc \
 	game/Clink.vc \
 	game/SludgeSplash.vc \
-	game/BlasterPuff2.vc \
-	game/BurnBall.vc \
 	game/Snake.vc \
-	game/BloodySkull.vc \
 	game/FireBrazier.vc \
-	game/BeastBall.vc \
 	game/StalactiteSmall.vc \
-	game/BlasterPuff1.vc \
 	game/MummyLeader.vc \
 	game/ChickenPlayer.vc \
 	game/LavaSmoke.vc \
 	game/Pod.vc \
-	game/BeakPuff.vc \
 	game/Moss1.vc \
 	game/MaceFX3.vc \
 	game/VolcanoBlast.vc \
-	game/BlasterSmoke.vc \
 	game/Effect.vc \
-	game/BrownPillar.vc \
 	game/Mummy.vc \
 	game/Chandelier.vc \
 	game/CrossbowFX1.vc \
@@ -364,13 +367,10 @@ EXTRA_DIST = compile.bat \
 	game/Player.vc \
 	game/Volcano.vc \
 	game/WaterSplash.vc \
-	game/BloodSplashBase.vc \
 	game/SlimeChunk.vc \
 	game/KeyGizmoGreen.vc \
 	game/SlimeSplash.vc \
-	game/CrossbowFX2.vc \
-	game/HereticWorldInfo.vc \
-	game/BotPlayer.vc
+	game/CrossbowFX2.vc
 
 MOSTLYCLEANFILES = \
 	$(OUTDIR)/shared.dat $(OUTDIR)/svprogs.dat $(OUTDIR)/clprogs.dat \

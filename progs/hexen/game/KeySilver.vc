@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class KeySilver : Key
+class KeySilver : HexenKey
 	__mobjinfo__(8036)
 	__scriptid__(91);
 

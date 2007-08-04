@@ -111,7 +111,7 @@
 #include "Mana1.vc"
 #include "Mana2.vc"
 #include "Mana3.vc"
-#include "Key.vc"
+#include "HexenKey.vc"
 #include "KeySteel.vc"
 #include "KeyCave.vc"
 #include "KeyAxe.vc"

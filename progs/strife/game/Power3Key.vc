@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Power3Key : KeyPickup;
+class Power3Key : StrifeKey;
 
 __states__
 {

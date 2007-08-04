@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class IDBadge : KeyPickup
+class IDBadge : StrifeKey
 	__mobjinfo__(184);
 
 __states__

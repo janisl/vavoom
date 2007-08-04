@@ -30,6 +30,7 @@
 #include "Pawn.vc"
 #include "PlayerPawn.vc"
 #include "HereticWeapon.vc"
+#include "HereticKey.vc"
 #include "Player.vc"
 #include "BotPlayer.vc"
 
@@ -44,8 +45,6 @@
 #include "StaticRGBLightSource.vc"
 #include "PointPusher.vc"
 #include "PointPuller.vc"
-
-#include "Key.vc"
 
 #include "SoundSequence.vc"
 #include "SoundSequenceSlot.vc"

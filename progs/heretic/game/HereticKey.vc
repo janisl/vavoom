@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Key : Inventory
+class HereticKey : Inventory
 	abstract;
 
 int KeyType;

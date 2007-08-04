@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class KeyCave : Key
+class KeyCave : HexenKey
 	__mobjinfo__(8031)
 	__scriptid__(86);
 

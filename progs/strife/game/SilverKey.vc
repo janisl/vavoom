@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class SilverKey : KeyPickup
+class SilverKey : StrifeKey
 	__mobjinfo__(38);
 
 __states__

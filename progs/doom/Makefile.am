@@ -227,6 +227,7 @@ EXTRA_DIST = compile.bat \
 	game1/Demon.vc \
 	game1/DoomImp.vc \
 	game1/DoomImpBall.vc \
+	game1/DoomKey.vc \
 	game1/DoomPlayer.vc \
 	game1/DoomUnusedStates.vc \
 	game1/EvilEye.vc \
@@ -254,7 +255,6 @@ EXTRA_DIST = compile.bat \
 	game1/HeartColumn.vc \
 	game1/Infrared.vc \
 	game1/InvulnerabilitySphere.vc \
-	game1/KeyPickup.vc \
 	game1/LiveStick.vc \
 	game1/LostSoul.vc \
 	game1/Meat2.vc \

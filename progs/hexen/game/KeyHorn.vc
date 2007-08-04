@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class KeyHorn : Key
+class KeyHorn : HexenKey
 	__mobjinfo__(8038)
 	__scriptid__(93);
 

@@ -273,7 +273,6 @@ EXTRA_DIST = compile.bat \
 	game/InquisitorArm.vc \
 	game/InquisitorShot.vc \
 	game/Junk.vc \
-	game/KeyPickup.vc \
 	game/KlaxonWarningLight.vc \
 	game/KneelingGyu.vc \
 	game/LargeTorch.vc \
@@ -498,6 +497,7 @@ EXTRA_DIST = compile.bat \
 	game/StrifeGrenadeLauncher.vc \
 	game/StrifeGrenadeLauncher2.vc \
 	game/StrifeHumanoid.vc \
+	game/StrifeKey.vc \
 	game/StrifeLevelInfo.vc \
 	game/StrifeMap.vc \
 	game/StrifePlayer.vc \

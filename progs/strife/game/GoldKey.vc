@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class GoldKey : KeyPickup
+class GoldKey : StrifeKey
 	__mobjinfo__(40);
 
 __states__

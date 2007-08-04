@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class KeyDungeon : Key
+class KeyDungeon : HexenKey
 	__mobjinfo__(8035)
 	__scriptid__(90);
 

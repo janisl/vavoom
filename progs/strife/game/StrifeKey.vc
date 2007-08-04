@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class KeyPickup : Inventory
+class StrifeKey : Inventory
 	abstract;
 
 int KeyType;

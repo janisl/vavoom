@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class KeyPickup : Inventory
+class DoomKey : Inventory
 	abstract;
 
 int			KeyType;

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class IDCard : KeyPickup
+class IDCard : StrifeKey
 	__mobjinfo__(13);
 
 __states__

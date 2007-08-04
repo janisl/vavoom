@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class FactoryKey : KeyPickup
+class FactoryKey : StrifeKey
 	__mobjinfo__(234);
 
 __states__

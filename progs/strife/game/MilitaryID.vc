@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MilitaryID : KeyPickup;
+class MilitaryID : StrifeKey;
 
 __states__
 {

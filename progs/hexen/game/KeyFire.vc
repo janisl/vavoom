@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class KeyFire : Key
+class KeyFire : HexenKey
 	__mobjinfo__(8033)
 	__scriptid__(88);
 

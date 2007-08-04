@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MaulerKey : KeyPickup
+class MaulerKey : StrifeKey
 	__mobjinfo__(233);
 
 __states__

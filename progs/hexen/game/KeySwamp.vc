@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class KeySwamp : Key
+class KeySwamp : HexenKey
 	__mobjinfo__(8039)
 	__scriptid__(94);
 

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class OracleKey : KeyPickup
+class OracleKey : StrifeKey
 	__mobjinfo__(61);
 
 __states__

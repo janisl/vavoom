@@ -35,7 +35,7 @@
 #include "BlueArmor.vc"
 #include "HealthBonus.vc"
 #include "ArmorBonus.vc"
-#include "KeyPickup.vc"
+#include "DoomKey.vc"
 #include "BlueCard.vc"
 #include "RedCard.vc"
 #include "YellowCard.vc"

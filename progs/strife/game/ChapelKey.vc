@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ChapelKey : KeyPickup
+class ChapelKey : StrifeKey
 	__mobjinfo__(195);
 
 __states__

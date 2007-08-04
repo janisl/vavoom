@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class RedCard : KeyPickup
+class RedCard : DoomKey
 	__mobjinfo__(13)
 	__scriptid__(86);
 

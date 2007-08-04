@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class BlueCrystalKey : KeyPickup
+class BlueCrystalKey : StrifeKey
 	__mobjinfo__(193);
 
 __states__

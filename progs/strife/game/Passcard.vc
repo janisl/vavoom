@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Passcard : KeyPickup
+class Passcard : StrifeKey
 	__mobjinfo__(185);
 
 __states__

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class OrderKey : KeyPickup
+class OrderKey : StrifeKey
 	__mobjinfo__(86);
 
 __states__

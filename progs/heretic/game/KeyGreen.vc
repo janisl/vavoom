@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class KeyGreen : Key
+class KeyGreen : HereticKey
 	__mobjinfo__(73)
 	__scriptid__(86);
 

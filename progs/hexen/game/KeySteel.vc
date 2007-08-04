@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class KeySteel : Key
+class KeySteel : HexenKey
 	__mobjinfo__(8030)
 	__scriptid__(85);
 

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class PrisonKey : KeyPickup;
+class PrisonKey : StrifeKey;
 
 __states__
 {

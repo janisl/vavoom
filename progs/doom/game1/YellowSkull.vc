@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class YellowSkull : KeyPickup
+class YellowSkull : DoomKey
 	__mobjinfo__(39)
 	__scriptid__(88);
 

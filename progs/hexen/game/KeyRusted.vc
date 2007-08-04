@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class KeyRusted : Key
+class KeyRusted : HexenKey
 	__mobjinfo__(8037)
 	__scriptid__(92);
 

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class KeyCastle : Key
+class KeyCastle : HexenKey
 	__mobjinfo__(8200);
 
 __states__

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class GovsKey : KeyPickup;
+class GovsKey : StrifeKey;
 
 __states__
 {

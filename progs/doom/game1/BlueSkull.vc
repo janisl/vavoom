@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class BlueSkull : KeyPickup
+class BlueSkull : DoomKey
 	__mobjinfo__(40)
 	__scriptid__(90);
 
