@@ -736,21 +736,33 @@ void ConChoiceImpulse(int ChoiceNum)
 	{
 		if (Item1 != -1)
 		{
-			Player(CurrentSpeakingTo.Player).RemoveInvItem(
-				CurrentSpeakingTo.FindInventory(class<Inventory>(
-				GetClassFromID(Choice->NeedItem1))), Choice->NeedAmount1);
+			Item = CurrentSpeakingTo.FindInventory(
+				class<Inventory>(GetClassFromID(Choice->NeedItem1)));
+			Item.Amount -= Choice->NeedAmount1;
+			if (Item.Amount <= 0)
+			{
+				Item.Destroy();
+			}
 		}
 		if (Item2 != -1)
 		{
-			Player(CurrentSpeakingTo.Player).RemoveInvItem(
-				CurrentSpeakingTo.FindInventory(class<Inventory>(
-				GetClassFromID(Choice->NeedItem2))), Choice->NeedAmount2);
+			Item = CurrentSpeakingTo.FindInventory(
+				class<Inventory>(GetClassFromID(Choice->NeedItem2)));
+			Item.Amount -= Choice->NeedAmount2;
+			if (Item.Amount <= 0)
+			{
+				Item.Destroy();
+			}
 		}
 		if (Item3 != -1)
 		{
-			Player(CurrentSpeakingTo.Player).RemoveInvItem(
-				CurrentSpeakingTo.FindInventory(class<Inventory>(
-				GetClassFromID(Choice->NeedItem3))), Choice->NeedAmount3);
+			Item = CurrentSpeakingTo.FindInventory(
+				class<Inventory>(GetClassFromID(Choice->NeedItem3)));
+			Item.Amount -= Choice->NeedAmount3;
+			if (Item.Amount <= 0)
+			{
+				Item.Destroy();
+			}
 		}
 	}
 	if (Choice->Objectives)

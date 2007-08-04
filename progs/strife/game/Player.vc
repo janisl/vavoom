@@ -634,26 +634,6 @@ bool GiveItem(int item)
 
 //==========================================================================
 //
-//	RemoveInvItem
-//
-//==========================================================================
-
-bool RemoveInvItem(Inventory Item, int amount)
-{
-	if (!Item || Item.Amount < amount)
-	{
-		return false;
-	}
-	Item.Amount -= amount;
-	if (!Item.Amount)
-	{
-		Item.Destroy();
-	}
-	return true;
-}
-
-//==========================================================================
-//
 //	InvRight
 //
 //==========================================================================
@@ -702,12 +682,7 @@ void InvUse()
 	{
 		return;
 	}
-	if (InvCursor.Use(false))
-	{
-		//	Remove item if it was used.
-		MO.PlaySound(InvCursor.UseSound, CHAN_BODY);
-		RemoveInvItem(InvCursor, 1);
-	}
+	EntityEx(MO).UseInventory(InvCursor);
 }
 
 //==========================================================================

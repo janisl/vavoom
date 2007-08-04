@@ -328,7 +328,11 @@ void AutoUseHealth(int saveHealth)
 		for (i = 0; i < count; i++)
 		{
 			Health += 25;
-			Player(Player).PlayerRemoveArtifact(normal);
+			if (!(--normal.Amount))
+			{
+				// Used last of a type - compact the artifact list
+				normal.Destroy();
+			}
 		}
 	}
 	else if (super.Amount * 100 >= saveHealth)
@@ -338,7 +342,11 @@ void AutoUseHealth(int saveHealth)
 		for (i = 0; i < count; i++)
 		{
 			Health += 100;
-			Player(Player).PlayerRemoveArtifact(super);
+			if (!(--super.Amount))
+			{
+				// Used last of a type - compact the artifact list
+				super.Destroy();
+			}
 		}
 	}
 	else if ((Level.Game.gameskill == sk_baby)
@@ -350,14 +358,22 @@ void AutoUseHealth(int saveHealth)
 		for (i = 0; i < count; i++)
 		{
 			Health += 25;
-			Player(Player).PlayerRemoveArtifact(normal);
+			if (!(--normal.Amount))
+			{
+				// Used last of a type - compact the artifact list
+				normal.Destroy();
+			}
 		}
 		count = (saveHealth + 99) / 100;
 		for (i = 0; i < count; i++)
 		{
 			Health += 100;
 			// The same as in HERETIC
-			Player(Player).PlayerRemoveArtifact(super);
+			if (!(--super.Amount))
+			{
+				// Used last of a type - compact the artifact list
+				super.Destroy();
+			}
 		}
 	}
 	Player.Health = Health;

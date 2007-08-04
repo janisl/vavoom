@@ -86,6 +86,22 @@ void RemoveInventory(Inventory Item)
 
 //==========================================================================
 //
+//	InvUse
+//
+//==========================================================================
+
+bool UseInventory(Inventory Item)
+{
+	if (!::UseInventory(Item))
+	{
+		return false;
+	}
+	PlaySound(Item.UseSound, CHAN_BODY);
+	return true;
+}
+
+//==========================================================================
+//
 //  A_PlayerScream
 //
 //  Player death sound

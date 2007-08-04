@@ -452,11 +452,6 @@ void BringUpWeapon()
 {
 }
 
-bool PlayerUseArtifact(Inventory Item)
-{
-	return false;
-}
-
 defaultproperties
 {
 }

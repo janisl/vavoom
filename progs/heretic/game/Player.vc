@@ -1572,7 +1572,7 @@ void PlayerImpulse()
 	if (Arti)
 	{
 		// Use an artifact
-		PlayerUseArtifact(Arti);
+		EntityEx(MO).UseInventory(Arti);
 	}
 }
 
@@ -2172,37 +2172,12 @@ void SetViewPos()
 //
 //==========================================================================
 
-bool PlayerUseArtifact(Inventory Item)
-{
-	// Found match - try to use
-	if (UseArtifact(Item))
-	{
-		// Artifact was used - remove it from inventory
-		PlayerRemoveArtifact(Item);
-		MO.PlaySound(Item.UseSound, CHAN_ITEM);
-		ArtifactFlash = 4;
-		return true;
-	}
-	else
-	{
-		// Unable to use artifact, advance pointer
-		PlayerNextArtifact();
-	}
-	return false;
-}
-
-//==========================================================================
-//
-//  PlayerUseArtifact
-//
-//==========================================================================
-
 void PlayerUseArtifactType(class<Inventory> arti)
 {
 	Inventory Item = EntityEx(MO).FindInventory(arti);
 	if (Item)
 	{
-		PlayerUseArtifact(Item);
+		EntityEx(MO).UseInventory(Item);
 	}
 }
 
@@ -2229,34 +2204,6 @@ void PlayerNextArtifact()
 	}
 	InvPtr = NewPtr;
 	AdjustInvFirst();
-}
-
-//==========================================================================
-//
-//  PlayerRemoveArtifact
-//
-//==========================================================================
-
-void PlayerRemoveArtifact(Inventory Item)
-{
-	if (!(--Item.Amount))
-	{
-		// Used last of a type - compact the artifact list
-		Item.Destroy();
-	}
-}
-
-//==========================================================================
-//
-//  UseArtifact
-//
-//  Returns true if the artifact was used.
-//
-//==========================================================================
-
-bool UseArtifact(Inventory Arti)
-{
-	return Arti.Use(false);
 }
 
 //**************************************************************************
@@ -2610,7 +2557,7 @@ void Cheat_Gimme()
 		else
 		{
 			Inventory Tmp = Level.Spawn(ArtiTomeOfPower);
-			UseArtifact(Tmp);
+			Tmp.Use(false);
 			Tmp.Destroy();
 			cprint("POWER ON");
 		}

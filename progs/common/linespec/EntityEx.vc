@@ -5209,6 +5209,37 @@ final void DestroyAllInventory()
 
 //==========================================================================
 //
+//	UseInventory
+//
+//==========================================================================
+
+bool UseInventory(Inventory Item)
+{
+	//	Don't use items if you are dead.
+	if (Health <= 0)
+	{
+		return false;
+	}
+	//	Don't use item if don't actually have it.
+	if (Item.Amount <= 0)
+	{
+		return false;
+	}
+	if (!Item.Use(false))
+	{
+		return false;
+	}
+	//	Item was used - remove it from inventory
+	Item.Amount--;
+	if (Item.Amount <= 0 && !Item.bKeepDepleted)
+	{
+		Item.Destroy();
+	}
+	return true;
+}
+
+//==========================================================================
+//
 //	TouchDehackedSpecial
 //
 //==========================================================================

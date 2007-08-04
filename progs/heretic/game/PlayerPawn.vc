@@ -88,6 +88,26 @@ void RemoveInventory(Inventory Item)
 
 //==========================================================================
 //
+//  PlayerUseArtifact
+//
+//==========================================================================
+
+bool UseInventory(Inventory Item)
+{
+	// Found match - try to use
+	if (!::UseInventory(Item))
+	{
+		// Unable to use artifact, advance pointer
+		Player(Player).PlayerNextArtifact();
+		return false;
+	}
+	PlaySound(Item.UseSound, CHAN_ITEM);
+	Player(Player).ArtifactFlash = 4;
+	return true;
+}
+
+//==========================================================================
+//
 //	A_AddPlayerCorpse
 //
 //==========================================================================

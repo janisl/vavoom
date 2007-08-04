@@ -346,7 +346,7 @@ bool AutoUseChaosDevice()
 	Inventory Item = FindInventory(ArtiTeleport);
 	if (Item)
 	{
-		Player(Player).PlayerUseArtifact(Item);
+		UseInventory(Item);
 		Health = (Health + 1) / 2;
 		Player.Health = Health;
 		return true;
@@ -374,7 +374,10 @@ void AutoUseHealth(int saveHealth)
 		for (i = 0; i < count; i++)
 		{
 			Health += 25;
-			Player(Player).PlayerRemoveArtifact(normal);
+			if (!(--normal.Amount))
+			{
+				normal.Destroy();
+			}
 		}
 	}
 	else if (super.Amount * 100 >= saveHealth)
@@ -384,7 +387,10 @@ void AutoUseHealth(int saveHealth)
 		for (i = 0; i < count; i++)
 		{
 			Health += 100;
-			Player(Player).PlayerRemoveArtifact(super);
+			if (!(--super.Amount))
+			{
+				super.Destroy();
+			}
 		}
 	}
 	else if ((Level.Game.gameskill == sk_baby) &&
@@ -396,7 +402,10 @@ void AutoUseHealth(int saveHealth)
 		for (i = 0; i < count; i++)
 		{
 			Health += 25;
-			Player(Player).PlayerRemoveArtifact(normal);
+			if (!(--normal.Amount))
+			{
+				normal.Destroy();
+			}
 		}
 		count = (saveHealth + 99) / 100;
 		for (i = 0; i < count; i++)
@@ -405,7 +414,10 @@ void AutoUseHealth(int saveHealth)
 			//  I found a bug. There must be used superSlot, not normalSlot.
 			//  Also if player used all quartz flasks, superSlot may be
 			// invalid, so it must be found again.
-			Player(Player).PlayerRemoveArtifact(super);
+			if (!(--super.Amount))
+			{
+				super.Destroy();
+			}
 		}
 	}
 	Player.Health = Health;

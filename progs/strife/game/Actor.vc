@@ -180,7 +180,10 @@ void AutoUseHealth(int saveHealth)
 		{
 			Health += 25;
 			saveHealth -= 25;
-			Player(Player).RemoveInvItem(Item, 1);
+			if (!(--Item.Amount))
+			{
+				Item.Destroy();
+			}
 			PlaySound('misc/invuse', CHAN_BODY);
 		}
 	}
@@ -192,7 +195,10 @@ void AutoUseHealth(int saveHealth)
 		while (i--)
 		{
 			Health += 10;
-			Player(Player).RemoveInvItem(Item, 1);
+			if (!(--Item.Amount))
+			{
+				Item.Destroy();
+			}
 			PlaySound('misc/invuse', CHAN_BODY);
 		}
 	}
@@ -212,7 +218,10 @@ void AutoUseArmor()
 	{
 		// Use metal armor
 		Player(Player).GiveArmor(2);
-		Player(Player).RemoveInvItem(Item, 1);
+		if (!(--Item.Amount))
+		{
+			Item.Destroy();
+		}
 	}
 	else
 	{
@@ -221,7 +230,10 @@ void AutoUseArmor()
 		{
 			// Use leather armor
 			Player(Player).GiveArmor(1);
-			Player(Player).RemoveInvItem(Item, 1);
+			if (!(--Item.Amount))
+			{
+				Item.Destroy();
+			}
 		}
 	}
 }
