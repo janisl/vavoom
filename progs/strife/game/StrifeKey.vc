@@ -36,10 +36,19 @@ int KeyType;
 
 bool TryPickup(EntityEx Toucher)
 {
-	Player(Toucher.Player).GiveKey(KeyType);
-	GoAwayAndDie();
-	GiveQuest(Toucher);
-	return true;
+	if (Player(Toucher.Player).Keys & (1 << KeyType))
+	{
+		GoAwayAndDie();
+		GiveQuest(Toucher);
+		return true;
+	}
+	else
+	{
+		Player(Toucher.Player).Keys |= 1 << KeyType;
+		GoAwayAndDie();
+		GiveQuest(Toucher);
+		return true;
+	}
 }
 
 defaultproperties

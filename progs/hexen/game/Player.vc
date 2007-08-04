@@ -786,22 +786,6 @@ bool GiveArmor(int armortype, int amount)
 
 //==========================================================================
 //
-//  GiveKey
-//
-//==========================================================================
-
-bool GiveKey(int key)
-{
-	if (Keys & (1 << key))
-	{
-		return false;
-	}
-	Keys |= 1 << key;
-	return true;
-}
-
-//==========================================================================
-//
 //  GivePower
 //
 //  Returns true if power accepted.

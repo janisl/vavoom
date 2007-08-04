@@ -36,13 +36,21 @@ int			KeyType;
 
 bool TryPickup(EntityEx Toucher)
 {
-	if ((Player(Toucher.Player).Keys & (1 << KeyType)) && ShouldStay())
+	if (Player(Toucher.Player).Keys & (1 << KeyType))
 	{
-		return false;
+		if (ShouldStay())
+		{
+			return false;
+		}
+		GoAwayAndDie();
+		return true;
 	}
-	Player(Toucher.Player).Keys |= 1 << KeyType;
-	GoAwayAndDie();
-	return true;
+	else
+	{
+		Player(Toucher.Player).Keys |= 1 << KeyType;
+		GoAwayAndDie();
+		return true;
+	}
 }
 
 //==========================================================================
