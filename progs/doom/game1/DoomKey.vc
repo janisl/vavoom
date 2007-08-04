@@ -30,41 +30,16 @@ int			KeyType;
 
 //==========================================================================
 //
-//	TryPickup
+//	CreateCopy
 //
 //==========================================================================
 
-bool TryPickup(EntityEx Toucher)
+Inventory CreateCopy(EntityEx Toucher)
 {
-	if (Player(Toucher.Player).Keys & (1 << KeyType))
-	{
-		if (ShouldStay())
-		{
-			return false;
-		}
-		GoAwayAndDie();
-		return true;
-	}
-	else
-	{
-		Player(Toucher.Player).Keys |= 1 << KeyType;
-		GoAwayAndDie();
-		return true;
-	}
-}
-
-//==========================================================================
-//
-//	ShouldStay
-//
-//==========================================================================
-
-bool ShouldStay()
-{
-	return Level.Game.netgame;
+	Player(Toucher.Player).Keys |= 1 << KeyType;
+	return ::CreateCopy(Toucher);
 }
 
 defaultproperties
 {
-	PickupSound = 'misc/k_pkup';
 }

@@ -26,6 +26,44 @@
 class Key : Inventory
 	abstract;
 
+//==========================================================================
+//
+//	HandlePickup
+//
+//==========================================================================
+
+bool HandlePickup(Inventory Item)
+{
+	if (Item.Class == Class)
+	{
+		//	In sinle player keys are always picked up, even if you
+		// already have one.
+		if (!Level.Game.netgame)
+		{
+			Item.bPickupGood = true;
+		}
+		return true;
+	}
+
+	if (Inventory)
+	{
+		return Inventory.HandlePickup(Item);
+	}
+	return false;
+}
+
+//==========================================================================
+//
+//	ShouldStay
+//
+//==========================================================================
+
+bool ShouldStay()
+{
+	return Level.Game.netgame;
+}
+
 defaultproperties
 {
+	PickupSound = 'misc/k_pkup';
 }
