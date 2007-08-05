@@ -266,6 +266,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\lockdefs.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\source\mapinfo.cpp"
 				>
 			</File>
@@ -424,6 +428,10 @@
 			</File>
 			<File
 				RelativePath="..\source\level.h"
+				>
+			</File>
+			<File
+				RelativePath="..\source\lockdefs.h"
 				>
 			</File>
 			<File
