@@ -577,6 +577,10 @@ int CheckForNeededItem(EntityEx A, int ID, int Amount)
 {
 	int i;
 
+	if (!ID)
+	{
+		return -1;
+	}
 	//	Get class ID.
 	class<EntityEx> CID = GetClassFromID(ID);
 	//	Check inventory items.
