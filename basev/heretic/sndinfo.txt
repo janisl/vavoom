@@ -290,6 +290,7 @@ misc/k_pkup						keyup
 misc/invuse						artiuse
 misc/frag						gfrag
 $alias misc/w_pkup				*weaponlaugh
+$alias misc/keytry				*usefail
 $limit misc/invuse 1
 $limit misc/frag 1
 

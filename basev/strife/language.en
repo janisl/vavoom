@@ -1,6 +1,18 @@
 [en default]
 
 txt_needkey = "You don't have the key";
+txt_need_passcard = "You need a passcard";
+txt_need_passcard_door = "You need a pass card key to open this door";
+txt_need_idcard = "You need an ID card";
+txt_need_prisonkey = "You don't have the key to the prison";
+txt_need_handprint = "Hand print not on file";
+txt_need_goldkey = "You need the Gold Key";
+txt_need_idbadge = "You need an ID Badge";
+txt_need_idbadge_door = "You need an ID Badge to open this door";
+txt_need_silverkey = "You need the Silver Key";
+txt_need_brasskey = "You need the Brass Key";
+txt_need_redcrystal = "You need the Red Crystal";
+txt_need_bluecrystal = "You need the Blue Crystal";
 
 //	Quest messages
 txt_quest_14 = "You've Blown Up the Crystal";

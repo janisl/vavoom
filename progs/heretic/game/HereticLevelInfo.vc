@@ -159,14 +159,20 @@ bool CheckLock(Entity user, int lock, bool door)
 	{
 		return true;
 	}
-	if (!(EntityEx(user).FindInventory(MainGameInfo(Game).KeyClasses[
-		lock - 1])))
+	LockDef* Lock = GetLockDef(lock);
+	if (!Lock)
 	{
-		user.Player.centreprint(MainGameInfo(Game).keymsg[lock - 1]);
-		user.PlaySound('*usefail', CHAN_VOICE);
+		user.Player.centreprint("That doesn't seam to work");
+		user.PlaySound('misc/keytry', CHAN_VOICE);
 		return false;
 	}
-	return true;
+	if (CheckLockDef(Lock, EntityEx(user)))
+	{
+		return true;
+	}
+	user.Player.centreprint(door ? Lock->Message : Lock->RemoteMessage);
+	user.PlaySound(Lock->LockedSound, CHAN_VOICE);
+	return false;
 }
 
 //==========================================================================

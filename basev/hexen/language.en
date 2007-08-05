@@ -17,6 +17,7 @@ txt_key_rusted = "RUSTED KEY";
 txt_key_horn = "HORN KEY";
 txt_key_swamp = "SWAMP KEY";
 txt_key_castle = "CASTLE KEY";
+pd_allkeys = "You need all keys";
 
 //	Locked door messages
 txt_need_key_steel = "YOU NEED THE STEEL KEY";

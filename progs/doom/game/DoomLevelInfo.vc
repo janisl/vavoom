@@ -161,138 +161,20 @@ bool CheckLock(Entity user, int lock, bool door)
 	{
 		return true;
 	}
-
-	switch (lock)
+	LockDef* Lock = GetLockDef(lock);
+	if (!Lock)
 	{
-	case 2:	// Blue Lock
-		if (!EntityEx(user).FindInventory(BlueCard))
-		{
-			user.Player.centreprint(door ? "$pd_bluec" : "$pd_blueco");
-			user.PlaySound('*grunt', CHAN_VOICE);
-			return false;
-		}
-		break;
-
-	case 1:	// Red Lock
-		if (!EntityEx(user).FindInventory(RedCard))
-		{
-			user.Player.centreprint(door ? "$pd_redc" : "$pd_redco");
-			user.PlaySound('*grunt', CHAN_VOICE);
-			return false;
-		}
-		break;
-
-	case 3:	// Yellow Lock
-		if (!EntityEx(user).FindInventory(YellowCard))
-		{
-			user.Player.centreprint(door ? "$pd_yellowc" : "$pd_yellowco");
-			user.PlaySound('*grunt', CHAN_VOICE);
-			return false;
-		}
-		break;
-
-	case 5:	// Blue Lock
-		if (!EntityEx(user).FindInventory(BlueSkull))
-		{
-			user.Player.centreprint(door ? "$pd_blues" : "$pd_blueso");
-			user.PlaySound('*grunt', CHAN_VOICE);
-			return false;
-		}
-		break;
-
-	case 4:	// Red Lock
-		if (!EntityEx(user).FindInventory(RedSkull))
-		{
-			user.Player.centreprint(door ? "$pd_reds" : "$pd_redso");
-			user.PlaySound('*grunt', CHAN_VOICE);
-			return false;
-		}
-		break;
-
-	case 6:	// Yellow Lock
-		if (!EntityEx(user).FindInventory(YellowSkull))
-		{
-			user.Player.centreprint(door ? "$pd_yellows" : "$pd_yellowso");
-			user.PlaySound('*grunt', CHAN_VOICE);
-			return false;
-		}
-		break;
-
-	case 100:	// Any key
-	case 128 + 100:	// Any key
-		if (!EntityEx(user).FindInventory(BlueCard) &&
-			!EntityEx(user).FindInventory(BlueSkull) &&
-			!EntityEx(user).FindInventory(RedCard) &&
-			!EntityEx(user).FindInventory(RedSkull) &&
-			!EntityEx(user).FindInventory(YellowCard) &&
-			!EntityEx(user).FindInventory(YellowSkull))
-		{
-			user.Player.centreprint(door ? "$pd_any" : "$pd_anyobj");
-			user.PlaySound('*grunt', CHAN_VOICE);
-			return false;
-		}
-		break;
-
-	case 101:	// All keys
-		if (!EntityEx(user).FindInventory(BlueCard) ||
-			!EntityEx(user).FindInventory(BlueSkull) ||
-			!EntityEx(user).FindInventory(RedCard) ||
-			!EntityEx(user).FindInventory(RedSkull) ||
-			!EntityEx(user).FindInventory(YellowCard) ||
-			!EntityEx(user).FindInventory(YellowSkull))
-		{
-			user.Player.centreprint(door ? "$pd_all6" : "$pd_all6o");
-			user.PlaySound('*grunt', CHAN_VOICE);
-			return false;
-		}
-		break;
-
-	case 128 + 2:	// Blue Lock
-		if (!EntityEx(user).FindInventory(BlueCard) &&
-			!EntityEx(user).FindInventory(BlueSkull))
-		{
-			user.Player.centreprint(door ? "$pd_bluek" : "$pd_blueo");
-			user.PlaySound('*grunt', CHAN_VOICE);
-			return false;
-		}
-		break;
-
-	case 128 + 1:	// Red Lock
-		if (!EntityEx(user).FindInventory(RedCard) &&
-			!EntityEx(user).FindInventory(RedSkull))
-		{
-			user.Player.centreprint(door ? "$pd_redk" : "$pd_redo");
-			user.PlaySound('*grunt', CHAN_VOICE);
-			return false;
-		}
-		break;
-
-	case 128 + 3:	// Yellow Lock
-		if (!EntityEx(user).FindInventory(YellowCard) &&
-			!EntityEx(user).FindInventory(YellowSkull))
-		{
-			user.Player.centreprint(door ? "$pd_yellowk" : "$pd_yellowo");
-			user.PlaySound('*grunt', CHAN_VOICE);
-			return false;
-		}
-		break;
-
-	case 128 + 101:	// All keys
-		if ((!EntityEx(user).FindInventory(BlueCard) &&
-			!EntityEx(user).FindInventory(BlueSkull)) ||
-			(!EntityEx(user).FindInventory(RedCard) &&
-			!EntityEx(user).FindInventory(RedSkull)) ||
-			(!EntityEx(user).FindInventory(YellowCard) &&
-			!EntityEx(user).FindInventory(YellowSkull)))
-		{
-			user.Player.centreprint(door ? "$pd_all3" : "$pd_all3o");
-			user.PlaySound('*grunt', CHAN_VOICE);
-			return false;
-		}
-		break;
+		user.Player.centreprint("That doesn't seam to work");
+		user.PlaySound('misc/keytry', CHAN_VOICE);
+		return false;
 	}
-
-	return true;
+	if (CheckLockDef(Lock, EntityEx(user)))
+	{
+		return true;
+	}
+	user.Player.centreprint(door ? Lock->Message : Lock->RemoteMessage);
+	user.PlaySound(Lock->LockedSound, CHAN_VOICE);
+	return false;
 }
 
 //===========================================================================

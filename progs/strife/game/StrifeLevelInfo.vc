@@ -171,32 +171,28 @@ bool CheckLock(Entity user, int lock, bool door)
 		return true;
 	}
 
-	if (lock <= 32)
+	LockDef* Lock = GetLockDef(lock);
+	if (!Lock)
 	{
-		//	Regular keys.
-		if (!(EntityEx(user).FindInventory(
-			MainGameInfo(Game).KeyCID[lock - 1])))
+		if (lock == 103)
 		{
-			user.Player.centreprint("$txt_needkey");
-			user.PlaySound('*grunt', CHAN_VOICE);
-			return false;
+			user.Player.centreprint(
+				"THIS AREA IS ONLY AVAILABLE IN THE RETAIL VERSION OF STRIFE");
 		}
-	}
-	else if (lock == 102)
-	{
-		user.Player.centreprint("That doesn\'t seem to work");
-		user.PlaySound('*grunt', CHAN_VOICE);
+		else
+		{
+			user.Player.centreprint("That doesn't seam to work");
+		}
+		user.PlaySound('misc/keytry', CHAN_VOICE);
 		return false;
 	}
-	else if (lock == 103)
+	if (CheckLockDef(Lock, EntityEx(user)))
 	{
-		user.Player.centreprint(
-			"THIS AREA IS ONLY AVAILABLE IN THE RETAIL VERSION OF STRIFE");
-		user.PlaySound('*grunt', CHAN_VOICE);
-		return false;
+		return true;
 	}
-
-	return true;
+	user.Player.centreprint(door ? Lock->Message : Lock->RemoteMessage);
+	user.PlaySound(Lock->LockedSound, CHAN_VOICE);
+	return false;
 }
 
 //==========================================================================

@@ -72,6 +72,7 @@
 #include "automap.h"
 #include "level.h"		//	Level data
 #include "mapinfo.h"
+#include "lockdefs.h"
 #include "host.h"
 #include "r_public.h"
 #include "text.h"

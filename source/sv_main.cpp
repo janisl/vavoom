@@ -138,6 +138,7 @@ void SV_Init()
 
 	P_InitSwitchList();
 	P_InitTerrainTypes();
+	InitLockDefs();
 	unguard;
 }
 
@@ -161,8 +162,9 @@ void SV_Shutdown()
 			GPlayersBase[i]->ConditionalDestroy();
 		}
 	}
-	
+
 	P_FreeTerrainTypes();
+	ShutdownLockDefs();
 	svs.serverinfo.Clean();
 
 	delete ServerNetContext;

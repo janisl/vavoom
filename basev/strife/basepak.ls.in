@@ -76,9 +76,10 @@ progs/svprogs.dat		progs/svprogs.dat
 acs/strfhelp.o			strfhelp.o
 
 //	Scripts
+animdefs.txt			@srcdir@/animdefs.txt
+lockdefs.txt			@srcdir@/lockdefs.txt
 mapinfo.txt				@srcdir@/mapinfo.txt
 skyboxes.txt			@srcdir@/skyboxes.txt
-animdefs.txt			@srcdir@/animdefs.txt
 sndinfo.txt				@srcdir@/sndinfo.txt
 sndseq.txt				@srcdir@/sndseq.txt
 terrain.txt				@srcdir@/terrain.txt

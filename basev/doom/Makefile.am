@@ -108,6 +108,7 @@ EXTRA_DIST = \
 	animated.lmp \
 	animdefs.txt \
 	dehinfo.txt \
+	lockdefs.txt \
 	skyboxes.txt \
 	sndinfo.txt \
 	sndseq.txt

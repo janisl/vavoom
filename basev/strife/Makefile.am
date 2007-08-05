@@ -69,6 +69,7 @@ EXTRA_DIST = \
 	basepak.ls.in \
 	language.en \
 	animdefs.txt \
+	lockdefs.txt \
 	mapinfo.txt \
 	skyboxes.txt \
 	sndinfo.txt \

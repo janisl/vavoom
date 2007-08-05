@@ -19,3 +19,4 @@ x11r6rgb.txt			@srcdir@/x11r6rgb.txt
 
 //	Base scripts
 terrain.txt				@srcdir@/terrain.txt
+lockdefs.txt			@srcdir@/lockdefs.txt

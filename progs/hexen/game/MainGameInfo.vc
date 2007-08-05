@@ -34,11 +34,6 @@ int botskill;
 float AutoArmorSave[HexenDefs::NUMCLASSES];
 float ArmorIncrement[HexenDefs::NUMCLASSES * HexenDefs::NUMARMOR];
 
-//
-//  Pickup messages
-//
-string TextKeyLockedMessages[11];
-
 float ArmorMax[HexenDefs::NUMCLASSES];
 
 int classFlags[3];
@@ -46,8 +41,6 @@ int classFlags[3];
 bool randomclass;
 
 Actor PuffSpawned;
-
-class<HexenKey> KeyClasses[11];
 
 //==========================================================================
 //
@@ -379,18 +372,6 @@ defaultproperties
 	ArmorIncrement[8] = 5.0; ArmorIncrement[9] = 15.0; ArmorIncrement[10] = 10.0; ArmorIncrement[11] = 25.0;
 	ArmorIncrement[12] = 0.0; ArmorIncrement[13] = 0.0; ArmorIncrement[14] = 0.0; ArmorIncrement[15] = 0.0;
 
-	TextKeyLockedMessages[0] = "$txt_need_key_steel";
-	TextKeyLockedMessages[1] = "$txt_need_key_cave";
-	TextKeyLockedMessages[2] = "$txt_need_key_axe";
-	TextKeyLockedMessages[3] = "$txt_need_key_fire";
-	TextKeyLockedMessages[4] = "$txt_need_key_emerald";
-	TextKeyLockedMessages[5] = "$txt_need_key_dungeon";
-	TextKeyLockedMessages[6] = "$txt_need_key_silver";
-	TextKeyLockedMessages[7] = "$txt_need_key_rusted";
-	TextKeyLockedMessages[8] = "$txt_need_key_horn";
-	TextKeyLockedMessages[9] = "$txt_need_key_swamp";
-	TextKeyLockedMessages[10] = "$txt_need_key_castle";
-
 	ArmorMax[0] = 20.0;
 	ArmorMax[1] = 18.0;
 	ArmorMax[2] = 16.0;
@@ -399,18 +380,6 @@ defaultproperties
 	classFlags[0] = HexenLevelInfo::MTF_FIGHTER;
 	classFlags[1] = HexenLevelInfo::MTF_CLERIC;
 	classFlags[2] = HexenLevelInfo::MTF_MAGE;
-
-	KeyClasses[0] = KeySteel;
-	KeyClasses[1] = KeyCave;
-	KeyClasses[2] = KeyAxe;
-	KeyClasses[3] = KeyFire;
-	KeyClasses[4] = KeyEmerald;
-	KeyClasses[5] = KeyDungeon;
-	KeyClasses[6] = KeySilver;
-	KeyClasses[7] = KeyRusted;
-	KeyClasses[8] = KeyHorn;
-	KeyClasses[9] = KeySwamp;
-	KeyClasses[10] = KeyCastle;
 
 	botskill = 2;
 }

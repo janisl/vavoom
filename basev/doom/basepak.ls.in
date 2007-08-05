@@ -111,6 +111,7 @@ animated.lmp			@srcdir@/animated.lmp
 //	Scripts
 animdefs.txt			@srcdir@/animdefs.txt
 dehinfo.txt				@srcdir@/dehinfo.txt
+lockdefs.txt			@srcdir@/lockdefs.txt
 sndinfo.txt				@srcdir@/sndinfo.txt
 sndseq.txt				@srcdir@/sndseq.txt
 skyboxes.txt			@srcdir@/skyboxes.txt

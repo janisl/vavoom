@@ -5,9 +5,10 @@ nobase_common_DATA = basepak.pk3
 EXTRA_DIST = \
 	basepak.ls.in \
 	default.cfg \
-	x11r6rgb.txt \
+	lockdefs.txt \
 	startup.vs \
 	terrain.txt \
+	x11r6rgb.txt \
 	sprites/tnt1a0.lmp \
 	textures/-noflat-.png
 

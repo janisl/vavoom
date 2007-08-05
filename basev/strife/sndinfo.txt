@@ -386,6 +386,7 @@ misc/mask						dsmask
 misc/invuse						dsitemup
 misc/secret						dsyeah
 misc/chat						dsradio
+$alias misc/keytry				*usefail
 
 //==========================================================================
 //

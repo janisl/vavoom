@@ -1,0 +1,214 @@
+Lock 1
+{
+	BaseKey
+	Message "$txt_needkey"
+	MapColor 150 150 150
+}
+
+
+Lock 2
+{
+	GovsKey
+	Message "$txt_needkey"
+	MapColor 150 150 150
+}
+
+
+Lock 3
+{
+	Passcard
+	RemoteMessage "$txt_need_passcard"
+	Message "$txt_need_passcard_door"
+	MapColor 128 266 150
+}
+
+
+Lock 4
+{
+	IDBadge
+	Message "$txt_need_idcard"
+	MapColor 255 128 0
+}
+
+
+Lock 5
+{
+	PrisonKey
+	Message "$txt_need_prisonkey"
+	MapColor 0 255 0
+}
+
+
+Lock 6
+{
+	SeveredHand
+	Message "$txt_need_handprint"
+	MapColor 255 151 100
+}
+
+
+Lock 7
+{
+	Power1Key
+	Message "$txt_needkey"
+	MapColor 150 150 150
+}
+
+
+Lock 8
+{
+	Power2Key
+	Message "$txt_needkey"
+	MapColor 150 150 150
+}
+
+
+Lock 9
+{
+	Power3Key
+	Message "$txt_needkey"
+	MapColor 150 150 150
+}
+
+
+Lock 10
+{
+	GoldKey
+	Message "$txt_need_goldkey"
+	MapColor 255 200 0
+}
+
+
+Lock 11
+{
+	IDCard
+	RemoteMessage "$txt_need_idbadge"
+	Message "$txt_need_idbadge_door"
+	MapColor 200 0 0
+}
+
+Lock 12
+{
+	SilverKey
+	Message "$txt_need_silverkey"
+	MapColor 150 150 150
+}
+
+Lock 13
+{
+	OracleKey
+	Message "$txt_needkey"
+	MapColor 150 150 150
+}
+
+Lock 14
+{
+	MilitaryID
+	Message "$txt_needkey"
+	MapColor 150 150 150
+}
+
+Lock 15
+{
+	OrderKey
+	Message "$txt_needkey"
+	MapColor 150 150 150
+}
+
+Lock 16
+{
+	WarehouseKey
+	Message "$txt_needkey"
+	MapColor 150 150 150
+}
+
+Lock 17
+{
+	BrassKey
+	Message "$txt_need_brasskey"
+	MapColor 150 75 0
+}
+
+Lock 18
+{
+	RedCrystalKey
+	Message "$txt_need_redcrystal"
+	MapColor 150 150 150
+}
+
+Lock 19
+{
+	BlueCrystalKey
+	Message "$txt_need_bluecrystal"
+	MapColor 150 150 150
+}
+
+Lock 20
+{
+	ChapelKey
+	Message "$txt_needkey"
+	MapColor 150 150 150
+}
+
+Lock 21
+{
+	CatacombKey
+	Message "$txt_needkey"
+	MapColor 150 150 150
+}
+
+Lock 22
+{
+	SecurityKey
+	Message "$txt_needkey"
+	MapColor 150 150 150
+}
+
+Lock 23
+{
+	CoreKey
+	Message "$txt_needkey"
+	MapColor 150 150 150
+}
+
+Lock 24
+{
+	MaulerKey
+	Message "$txt_needkey"
+	MapColor 150 150 150
+}
+
+Lock 25
+{
+	FactoryKey
+	Message "$txt_needkey"
+ 	MapColor 150 150 150
+}
+
+Lock 26
+{
+	MineKey
+	Message "$txt_needkey"
+	MapColor 150 150 150
+}
+
+Lock 27
+{
+	NewKey5
+	Message "$txt_needkey"
+	MapColor 150 150 150
+}
+
+Lock 50
+{
+	PrisonPass
+	Message "$txt_needkey"
+	MapColor 150 150 150
+}
+
+Lock 51
+{
+	OraclePass
+	Message "$txt_needkey"
+	MapColor 150 150 150
+}

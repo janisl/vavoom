@@ -41,8 +41,6 @@ struct spec_trans_t
 
 spec_trans_t spec_trans_tab[NUM_SPECIALS];
 
-class<StrifeKey> KeyCID[27];
-
 //==========================================================================
 //
 //	Init
@@ -602,32 +600,4 @@ defaultproperties
 	bBabyNightmareDoubleAmmo = true;
 	bNightmareExtraAmmo = false;
 	bAlwaysSwitchNewWeapon = true;
-
-	KeyCID[0] = BaseKey;
-	KeyCID[1] = GovsKey;
-	KeyCID[2] = Passcard;
-	KeyCID[3] = IDBadge;
-	KeyCID[4] = PrisonKey;
-	KeyCID[5] = SeveredHand;
-	KeyCID[6] = Power1Key;
-	KeyCID[7] = Power2Key;
-	KeyCID[8] = GoldKey;
-	KeyCID[9] = Power3Key;
-	KeyCID[10] = IDCard;
-	KeyCID[11] = SilverKey;
-	KeyCID[12] = OracleKey;
-	KeyCID[13] = MilitaryID;
-	KeyCID[14] = OrderKey;
-	KeyCID[15] = WarehouseKey;
-	KeyCID[16] = BrassKey;
-	KeyCID[17] = RedCrystalKey;
-	KeyCID[18] = BlueCrystalKey;
-	KeyCID[19] = ChapelKey;
-	KeyCID[20] = CatacombKey;
-	KeyCID[21] = SecurityKey;
-	KeyCID[22] = CoreKey;
-	KeyCID[23] = MaulerKey;
-	KeyCID[24] = FactoryKey;
-	KeyCID[25] = MineKey;
-	KeyCID[26] = NewKey5;
 }

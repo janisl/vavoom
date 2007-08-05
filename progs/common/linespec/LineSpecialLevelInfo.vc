@@ -4297,6 +4297,51 @@ bool CheckLock(Entity user, int lock, bool door)
 //
 //==========================================================================
 
+bool CheckLockDef(LockDef* Lock, EntityEx User)
+{
+	int			i;
+	int			j;
+	Inventory	Item;
+
+	//	Empty lock list means check for any key.
+	if (!Lock->Locks.Num)
+	{
+		for (Item = User.Inventory; Item; Item = Item.Inventory)
+		{
+			if (Key(Item))
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
+	for (i = 0; i < Lock->Locks.Num; i++)
+	{
+		bool Good = false;
+		for (j = 0; j < Lock->Locks[i].AnyKeyList.Num; j++)
+		{
+			if (User.FindInventory(class<Inventory>(
+				Lock->Locks[i].AnyKeyList[j])))
+			{
+				Good = true;
+				break;
+			}
+		}
+		if (!Good)
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
+//==========================================================================
+//
+//  GetDefaultDoorSound
+//
+//==========================================================================
+
 name GetDefaultDoorSound(sector_t* Sector)
 {
 	return DefaultDoorSound;

@@ -1,0 +1,50 @@
+Lock 1
+{
+	KeyGreen
+	Message "$txt_needgreenkey"
+	MapColor 0 255 0
+}
+
+Lock 2
+{
+	KeyBlue
+	Message "$txt_needbluekey"
+	MapColor 0 0 255
+}
+
+Lock 3
+{
+	KeyYellow
+	Message "$txt_needyellowkey"
+	MapColor 255 255 0
+}
+
+Lock 129
+{
+	KeyGreen
+	Message "$txt_needgreenkey"
+	MapColor 0 255 0
+}
+
+Lock 130
+{
+	KeyBlue
+	Message "$txt_needbluekey"
+	MapColor 0 0 255
+}
+
+Lock 131
+{
+	KeyYellow
+	Message "$txt_needyellowkey"
+	MapColor 255 255 0
+}
+
+Lock 101
+{
+	KeyGreen
+	KeyBlue
+	KeyYellow
+	Message "$pd_all3"
+	Message "$pd_all3o"
+}

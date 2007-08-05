@@ -1,0 +1,117 @@
+Lock 1
+{
+	RedCard
+	Message "$pd_redc"
+	RemoteMessage "$pd_redco"
+	MapColor 255 0 0
+}
+
+Lock 2
+{
+	BlueCard
+	Message "$pd_bluec"
+	RemoteMessage "$pd_blueco"
+	MapColor 0 0 255
+}
+
+Lock 3
+{
+	YellowCard
+	Message "$pd_yellowc"
+	RemoteMessage "$pd_yellowco"
+	MapColor 255 255 0
+}
+
+Lock 4
+{
+	RedSkull
+	Message "$pd_reds"
+	RemoteMessage "$pd_redso"
+	MapColor 255 0 0
+}
+
+Lock 5
+{
+	BlueSkull
+	Message "$pd_blues"
+	RemoteMessage "$pd_blueso"
+	MapColor 0 0 255
+}
+
+Lock 6
+{
+	YellowSkull
+	Message "$pd_yellows"
+	RemoteMessage "$pd_yellowso"
+	MapColor 255 255 0
+}
+
+Lock 101
+{
+	BlueCard
+	BlueSkull
+	RedCard
+	RedSkull
+	YellowCard
+	YellowSkull
+	Message "$pd_all6"
+	RemoteMessage "$pd_all6o"
+}
+
+Lock 129
+{
+	Any { RedCard RedSkull }
+	Message "$pd_redk"
+	RemoteMessage "$pd_redo"
+	MapColor 255 0 0
+}
+
+Lock 130
+{
+	Any { BlueCard BlueSkull }
+	Message "$pd_bluek"
+	RemoteMessage "$pd_blueo"
+	MapColor 0 0 255
+}
+
+Lock 131
+{
+	Any { YellowCard YellowSkull }
+	Message "$pd_yellowk"
+	RemoteMessage "$pd_yellowo"
+	MapColor 255 255 0
+}
+
+Lock 132
+{
+	Any { RedCard RedSkull }
+	Message "$pd_redk"
+	RemoteMessage "$pd_redo"
+	MapColor 255 0 0
+}
+
+Lock 133
+{
+	Any { BlueCard BlueSkull }
+	Message "$pd_bluek"
+	RemoteMessage "$pd_blueo"
+	MapColor 0 0 255
+}
+
+Lock 134
+{
+	Any { YellowCard YellowSkull }
+	Message "$pd_yellowk"
+	RemoteMessage "$pd_yellowo"
+	MapColor 255 255 0
+}
+
+
+Lock 229
+{
+	Any { BlueCard BlueSkull }
+	Any { RedCard RedSkull }
+	Any { YellowCard YellowSkull }
+	Message "$pd_all3"
+	RemoteMessage "$pd_all3o"
+}

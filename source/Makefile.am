@@ -111,6 +111,8 @@ _____MAIN_EXE__SOURCES = \
 	language.h \
 	level.cpp \
 	level.h \
+	lockdefs.cpp \
+	lockdefs.h \
 	map.h \
 	mapinfo.cpp \
 	mapinfo.h \
@@ -449,6 +451,7 @@ _____SERVER_EXE__SOURCES = \
 	infostr.cpp \
 	language.cpp \
 	level.cpp \
+	lockdefs.cpp \
 	mapinfo.cpp \
 	maths.cpp \
 	misc.cpp \

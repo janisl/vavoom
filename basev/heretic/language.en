@@ -4,6 +4,8 @@
 txt_gotyellowkey = "YELLOW KEY";
 txt_gotgreenkey = "GREEN KEY";
 txt_gotbluekey = "BLUE KEY";
+pd_all3 = "You need all three keys to open this door";
+pd_all3o = "You need all three keys to activate this object";
 
 //	Artifacts
 txt_artihealth = "QUARTZ FLASK";

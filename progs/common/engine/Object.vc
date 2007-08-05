@@ -1130,6 +1130,20 @@ struct EpisodeDef
 	string		Key;
 };
 
+struct LockGroup
+{
+	array<class>		AnyKeyList;
+};
+
+struct LockDef
+{
+	array<LockGroup>	Locks;
+	string				Message;
+	string				RemoteMessage;
+	int					MapColour;
+	name				LockedSound;
+};
+
 //**************************************************************************
 
 //  Keys and buttons
@@ -1488,6 +1502,7 @@ native static final int RGBA(byte r, byte g, byte b, byte a);
 native static final bool ClassIsChildOf(class SomeClass, class BaseClass);
 native static final name GetClassName(class C);
 native static final class GetClassParent(class C);
+native static final LockDef* GetLockDef(int Lock);
 
 //==========================================================================
 //

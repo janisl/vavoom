@@ -312,6 +312,8 @@ $limit misc/p_pkup 1
 $pitchshift misc/i_pkup 0
 $pitchshift misc/k_pkup 0
 
+$alias misc/keytry				*usefail
+
 //  Unused
 misc/unused						dsskldth
 
