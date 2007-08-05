@@ -91,6 +91,12 @@
 
 #define NUMALIAS			3 // Number of antialiased lines.
 
+enum
+{
+	LNSPEC_DoorLockedRaise = 13,
+	LNSPEC_ACSLockedExecute = 83,
+};
+
 // TYPES -------------------------------------------------------------------
 
 struct fpoint_t
@@ -1207,7 +1213,19 @@ static void AM_drawWalls()
 		{
 			if ((line.flags & LINE_NEVERSEE) && !am_cheating)
 				continue;
-			if (!line.backsector)
+			if (line.special == LNSPEC_DoorLockedRaise &&
+				GetLockDef(line.arg4) &&
+				GetLockDef(line.arg4)->MapColour)
+			{
+				AM_drawMline(&l, GetLockDef(line.arg4)->MapColour);
+			}
+			else if (line.special == LNSPEC_ACSLockedExecute &&
+				GetLockDef(line.arg5) &&
+				GetLockDef(line.arg5)->MapColour)
+			{
+				AM_drawMline(&l, GetLockDef(line.arg5)->MapColour);
+			}
+			else if (!line.backsector)
 			{
 				AM_drawMline(&l, WallColour);
 			}
