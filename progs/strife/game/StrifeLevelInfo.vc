@@ -156,47 +156,6 @@ bool CheckActivation(int activationType, line_t * line, EntityEx A)
 
 //==========================================================================
 //
-//  CheckLock
-//
-//==========================================================================
-
-bool CheckLock(Entity user, int lock, bool door)
-{
-	if (!user.bIsPlayer)
-	{
-		return false;
-	}
-	if (!lock)
-	{
-		return true;
-	}
-
-	LockDef* Lock = GetLockDef(lock);
-	if (!Lock)
-	{
-		if (lock == 103)
-		{
-			user.Player.centreprint(
-				"THIS AREA IS ONLY AVAILABLE IN THE RETAIL VERSION OF STRIFE");
-		}
-		else
-		{
-			user.Player.centreprint("That doesn't seam to work");
-		}
-		user.PlaySound('misc/keytry', CHAN_VOICE);
-		return false;
-	}
-	if (CheckLockDef(Lock, EntityEx(user)))
-	{
-		return true;
-	}
-	user.Player.centreprint(door ? Lock->Message : Lock->RemoteMessage);
-	user.PlaySound(Lock->LockedSound, CHAN_VOICE);
-	return false;
-}
-
-//==========================================================================
-//
 //  EV_SendToCommunicator
 //
 //==========================================================================
@@ -843,4 +802,5 @@ defaultproperties
 	bTeleportNewMapBothSides = true;
 	bCheckStrifeStartSpots = true;
 	ExtPlayersBase = 5;
+	Lock103Message = "THIS AREA IS ONLY AVAILABLE IN THE RETAIL VERSION OF STRIFE";
 }

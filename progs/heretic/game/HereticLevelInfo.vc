@@ -144,38 +144,6 @@ bool CheckActivation(int activationType, line_t * line, EntityEx A)
 }
 
 //==========================================================================
-//
-//  CheckLock
-//
-//==========================================================================
-
-bool CheckLock(Entity user, int lock, bool door)
-{
-	if (!user.bIsPlayer)
-	{
-		return false;
-	}
-	if (!lock)
-	{
-		return true;
-	}
-	LockDef* Lock = GetLockDef(lock);
-	if (!Lock)
-	{
-		user.Player.centreprint("That doesn't seam to work");
-		user.PlaySound('misc/keytry', CHAN_VOICE);
-		return false;
-	}
-	if (CheckLockDef(Lock, EntityEx(user)))
-	{
-		return true;
-	}
-	user.Player.centreprint(door ? Lock->Message : Lock->RemoteMessage);
-	user.PlaySound(Lock->LockedSound, CHAN_VOICE);
-	return false;
-}
-
-//==========================================================================
 //==========================================================================
 //
 //                              EVENTS

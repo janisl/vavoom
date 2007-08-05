@@ -108,38 +108,6 @@ bool CheckActivation(int activationType, line_t * line, EntityEx A)
 	return true;
 }
 
-//============================================================================
-//
-//	CheckLock
-//
-//============================================================================
-
-bool CheckLock(Entity A, int lock, bool door)
-{
-	if (!A.bIsPlayer)
-	{
-		return false;
-	}
-	if (!lock)
-	{
-		return true;
-	}
-	LockDef* Lock = GetLockDef(lock);
-	if (!Lock)
-	{
-		A.Player.centreprint("That doesn't seam to work");
-		A.PlaySound('misc/keytry', CHAN_VOICE);
-		return false;
-	}
-	if (CheckLockDef(Lock, EntityEx(A)))
-	{
-		return true;
-	}
-	A.Player.centreprint(door ? Lock->Message : Lock->RemoteMessage);
-	A.PlaySound(Lock->LockedSound, CHAN_VOICE);
-	return false;
-}
-
 //===========================================================================
 // Quake variables
 //
