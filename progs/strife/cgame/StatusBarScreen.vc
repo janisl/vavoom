@@ -329,7 +329,7 @@ void SB_DrawMainBar()
 			}
 		}
 		SB_DrawSmallNum(BAR_X + 267, BAR_Y + 132, NumKeys);
-		if (cl.Communicator)
+		if (EntityEx(cl.MO).FindInventory(Communicator))
 		{
 			R_DrawPic(BAR_X + 280, BAR_Y + 130, pic_i_comm);
 		}
@@ -483,7 +483,7 @@ void SB_DrawFullscreenStats()
 			}
 		}
 		SB_DrawSmallNum(BAR_X + 267, BAR_Y + 172, NumKeys);
-		if (cl.Communicator)
+		if (EntityEx(cl.MO).FindInventory(Communicator))
 		{
 			R_DrawPic(BAR_X + 280, BAR_Y + 170, pic_i_comm);
 		}

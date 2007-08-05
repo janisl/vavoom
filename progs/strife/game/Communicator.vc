@@ -26,20 +26,6 @@
 class Communicator : Inventory
 	__mobjinfo__(206);
 
-//==========================================================================
-//
-//	TryPickup
-//
-//==========================================================================
-
-bool TryPickup(EntityEx Toucher)
-{
-	Player(Toucher.Player).Communicator = true;
-	GoAwayAndDie();
-	GiveQuest(Toucher);
-	return true;
-}
-
 __states__
 {
 	S_COMMUNICATOR('COMM', 0, -1.0, none) = none

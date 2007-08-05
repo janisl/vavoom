@@ -56,8 +56,6 @@ int Objectives;
 int ArmorType;
 int ArmorPoints;
 
-bool Communicator;
-
 int Accuracy;
 int Stamina;
 
@@ -75,7 +73,7 @@ replication
 {
 	reliable if (!bIsClient)
 		SigilPieces, Accuracy, Stamina, InvFirst, InvCursor,
-		Objectives, ArmorType, ArmorPoints, Communicator;
+		Objectives, ArmorType, ArmorPoints;
 
 	unreliable if (!bIsClient)
 		ClientBlood, ClientExplosion;
@@ -2217,7 +2215,7 @@ void Cheat_Gimme()
 	// Comm unit
 	if (Cmd_CheckParm("CommUnit"))
 	{
-		Communicator = true;
+		EntityEx(MO).GiveInventoryType(Communicator);
 		cprint("YOU GOT IT");
 	}
 

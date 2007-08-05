@@ -166,7 +166,7 @@ bool EV_SendToCommunicator(EntityEx A, int Arg1, int Arg2, int Arg3, int Arg4,
 	if (Arg2 && side)
 		return false;
 
-	if (A && A.bIsPlayer && Player(A.Player).Communicator)
+	if (A && A.bIsPlayer && A.FindInventory(Communicator))
 	{
 		if (!Arg4)
 		{
@@ -599,11 +599,6 @@ int CheckForNeededItem(EntityEx A, int ID, int Amount)
 	if (ID >= 312 && ID <= 342)
 	{
 		return Player(A.Player).Quests & (1 << (ID - 312)) ? -1 : -2;
-	}
-	//	Check Communicator.
-	if (CID == Communicator)
-	{
-		return Player(A.Player).Communicator ? -1 : -2;
 	}
 	return -2;
 }
