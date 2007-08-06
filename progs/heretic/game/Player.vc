@@ -53,7 +53,7 @@ int ArmorPoints;
 float ChickenTime;	// player is a chicken if > 0
 
 // Power ups. invinc and invis are timers.
-float Powers[NUMPOWERS];
+Powerup Powers[NUMPOWERS];
 
 int ArtifactFlash;
 Inventory InvFirst;
@@ -451,7 +451,11 @@ void PlayerExitMap(bool clusterChange)
 
 	for (i = 0; i < NUMPOWERS; i++)
 	{
-		Powers[i] = 0.0;
+		if (Powers[i])
+		{
+			Powers[i].Destroy();
+			Powers[i] = none;
+		}
 	}
 	if (clusterChange)
 	{
@@ -624,45 +628,51 @@ bool GiveArmor(int armortype)
 
 bool GivePower(int power)
 {
+	if (!Powers[power])
+	{
+		Powers[power] = Level.Spawn(DummyPowerup);
+		Powers[power].AttachToOwner(EntityEx(MO));
+	}
+
 	if (power == pw_invulnerability)
 	{
-		if (Powers[power] > BLINKTHRESHOLD)
+		if (Powers[power].DurationTime > BLINKTHRESHOLD)
 		{
 			// Already have it
 			return false;
 		}
-		Powers[power] = INVULNTIME;
+		Powers[power].DurationTime = INVULNTIME;
 		return true;
 	}
 	if (power == pw_weaponlevel2)
 	{
-		if (Powers[power] > BLINKTHRESHOLD)
+		if (Powers[power].DurationTime > BLINKTHRESHOLD)
 		{
 			// Already have it
 			return false;
 		}
-		Powers[power] = WPNLEV2TIME;
+		Powers[power].DurationTime = WPNLEV2TIME;
 		return true;
 	}
 	if (power == pw_invisibility)
 	{
-		if (Powers[power] > BLINKTHRESHOLD)
+		if (Powers[power].DurationTime > BLINKTHRESHOLD)
 		{
 			// Already have it
 			return false;
 		}
-		Powers[power] = INVISTIME;
+		Powers[power].DurationTime = INVISTIME;
 		MO.Alpha = 0.666;
 		return true;
 	}
 	if (power == pw_flight)
 	{
-		if (Powers[power] > BLINKTHRESHOLD)
+		if (Powers[power].DurationTime > BLINKTHRESHOLD)
 		{
 			// Already have it
 			return false;
 		}
-		Powers[power] = FLIGHTTIME;
+		Powers[power].DurationTime = FLIGHTTIME;
 		MO.bFly = true;
 		MO.bNoGravity = true;
 		if (MO.Origin.z <= MO.FloorZ)
@@ -673,19 +683,19 @@ bool GivePower(int power)
 	}
 	if (power == pw_infrared)
 	{
-		if (Powers[power] > BLINKTHRESHOLD)
+		if (Powers[power].DurationTime > BLINKTHRESHOLD)
 		{
 			// Already have it
 			return false;
 		}
-		Powers[power] = INFRATIME;
+		Powers[power].DurationTime = INFRATIME;
 		return true;
 	}
-	if (Powers[power])
+	if (Powers[power].DurationTime)
 	{
 		return false;	// already got it
 	}
-	Powers[power] = 1.0;
+	Powers[power].DurationTime = 1.0;
 	return true;
 }
 
@@ -1647,7 +1657,11 @@ bool UndoPlayerChicken()
 		A.bNoGravity = true;
 	}
 	ChickenTime = 0.0;
-	Powers[pw_weaponlevel2] = 0.0;
+	if (Powers[pw_weaponlevel2])
+	{
+		Powers[pw_weaponlevel2].Destroy();
+		Powers[pw_weaponlevel2] = none;
+	}
 	A.Health = MAXHEALTH;
 	Health = A.Health;
 	PostChickenWeapon(Weapon(Actor(MO).Tracer));
@@ -1909,34 +1923,42 @@ void PlayerTick(float deltaTime)
 
 	if (Powers[pw_invulnerability])
 	{
-		Powers[pw_invulnerability] -= deltaTime;
-		if (Powers[pw_invulnerability] <= 0.0)
-			Powers[pw_invulnerability] = 0.0;
+		Powers[pw_invulnerability].DurationTime -= deltaTime;
+		if (Powers[pw_invulnerability].DurationTime <= 0.0)
+		{
+			Powers[pw_invulnerability].Destroy();
+			Powers[pw_invulnerability] = none;
+		}
 	}
 
 	if (Powers[pw_invisibility])
 	{
-		Powers[pw_invisibility] -= deltaTime;
-		if (Powers[pw_invisibility] <= 0.0)
+		Powers[pw_invisibility].DurationTime -= deltaTime;
+		if (Powers[pw_invisibility].DurationTime <= 0.0)
 		{
-			Powers[pw_invisibility] = 0.0;
+			Powers[pw_invisibility].Destroy();
+			Powers[pw_invisibility] = none;
 			MO.Alpha = 1.0;
 		}
 	}
 
 	if (Powers[pw_infrared])
 	{
-		Powers[pw_infrared] -= deltaTime;
-		if (Powers[pw_infrared] <= 0.0)
-			Powers[pw_infrared] = 0.0;
+		Powers[pw_infrared].DurationTime -= deltaTime;
+		if (Powers[pw_infrared].DurationTime <= 0.0)
+		{
+			Powers[pw_infrared].Destroy();
+			Powers[pw_infrared] = none;
+		}
 	}
 
 	if (Powers[pw_flight])
 	{
-		Powers[pw_flight] -= deltaTime;
-		if (Powers[pw_flight] <= 0.0)
+		Powers[pw_flight].DurationTime -= deltaTime;
+		if (Powers[pw_flight].DurationTime <= 0.0)
 		{
-			Powers[pw_flight] = 0.0;
+			Powers[pw_flight].Destroy();
+			Powers[pw_flight] = none;
 			if (MO.Origin.z != MO.FloorZ)
 			{
 //FIXME             player->centreing = true;
@@ -1949,10 +1971,11 @@ void PlayerTick(float deltaTime)
 
 	if (Powers[pw_weaponlevel2])
 	{
-		Powers[pw_weaponlevel2] -= deltaTime;
-		if (Powers[pw_weaponlevel2] <= 0.0)
+		Powers[pw_weaponlevel2].DurationTime -= deltaTime;
+		if (Powers[pw_weaponlevel2].DurationTime <= 0.0)
 		{
-			Powers[pw_weaponlevel2] = 0.0;
+			Powers[pw_weaponlevel2].Destroy();
+			Powers[pw_weaponlevel2] = none;
 			WeaponLevel2Fade();
 		}
 	}
@@ -1987,17 +2010,17 @@ void PlayerTick(float deltaTime)
 	// Handling colourmaps.
 	if (Powers[pw_invulnerability])
 	{
-		if (Powers[pw_invulnerability] > 4.0 ||
-			(ftoi(4.0 * Powers[pw_invulnerability]) & 1))
+		if (Powers[pw_invulnerability].DurationTime > 4.0 ||
+			(ftoi(4.0 * Powers[pw_invulnerability].DurationTime) & 1))
 			FixedColourmap = INVERSECOLOURMAP;
 		else
 			FixedColourmap = 0;
 	}
 	else if (Powers[pw_infrared])
 	{
-		if (Powers[pw_infrared] <= BLINKTHRESHOLD)
+		if (Powers[pw_infrared].DurationTime <= BLINKTHRESHOLD)
 		{
-			if (ftoi(4.0 * Powers[pw_infrared]) & 1)
+			if (ftoi(4.0 * Powers[pw_infrared].DurationTime) & 1)
 			{
 				FixedColourmap = 0;
 			}
@@ -2138,16 +2161,16 @@ void SetViewPos()
 		SBFlags |= HereticDefs::SBF_GOD_MODE;
 	if (Powers[pw_flight])
 	{
-		if (Powers[pw_flight] > BLINKTHRESHOLD ||
-			!(ftoi(2.0 * Powers[pw_flight]) & 1))
+		if (Powers[pw_flight].DurationTime > BLINKTHRESHOLD ||
+			!(ftoi(2.0 * Powers[pw_flight].DurationTime) & 1))
 		{
 			SBFlags |= HereticDefs::SBF_POWER_FLIGHT;
 		}
 	}
 	if (Powers[pw_weaponlevel2] && !ChickenTime)
 	{
-		if (Powers[pw_weaponlevel2] > BLINKTHRESHOLD ||
-			!(ftoi(2.0 * Powers[pw_weaponlevel2]) & 1))
+		if (Powers[pw_weaponlevel2].DurationTime > BLINKTHRESHOLD ||
+			!(ftoi(2.0 * Powers[pw_weaponlevel2].DurationTime) & 1))
 		{
 			SBFlags |= HereticDefs::SBF_POWER_BOOK;
 		}
@@ -2549,12 +2572,14 @@ void Cheat_Gimme()
 	{
 		if (Powers[pw_weaponlevel2])
 		{
-			Powers[pw_weaponlevel2] = 0.0;
+			Powers[pw_weaponlevel2].Destroy();
+			Powers[pw_weaponlevel2] = none;
 			cprint("POWER OFF");
 		}
 		else
 		{
 			Inventory Tmp = Level.Spawn(ArtiTomeOfPower);
+			Tmp.AttachToOwner(EntityEx(MO));
 			Tmp.Use(false);
 			Tmp.Destroy();
 			cprint("POWER ON");

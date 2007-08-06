@@ -63,7 +63,7 @@ Inventory InvFirst;
 Inventory InvCursor;
 
 // Power ups. invinc and invis are timers.
-float Powers[NUMPOWERS];
+Powerup Powers[NUMPOWERS];
 
 int SigilPieces;
 
@@ -433,8 +433,11 @@ void PlayerExitMap(bool clusterChange)
 
 	for (i = 0; i < NUMPOWERS; i++)
 	{
-		if(i != pw_ironfeet || pw_invisibility/*|| ITEM_Targeter*/)
-			Powers[i] = 0.0;
+		if (Powers[i] && i != pw_ironfeet && i != pw_invisibility)
+		{
+			Powers[i].Destroy();
+			Powers[i] = none;
+		}
 	}
 
 	if (clusterChange)
@@ -765,35 +768,41 @@ EntityEx InvThrow()
 
 bool GivePower(int power)
 {
+	if (!Powers[power])
+	{
+		Powers[power] = Level.Spawn(DummyPowerup);
+		Powers[power].AttachToOwner(EntityEx(MO));
+	}
+
 	if (power == pw_invulnerability)
 	{
-		Powers[power] = INVULNTIME;
+		Powers[power].DurationTime = INVULNTIME;
 		return true;
 	}
 
 	if (power == pw_invisibility)
 	{
-		Powers[power] = INVISTIME;
+		Powers[power].DurationTime = INVISTIME;
 		MO.Alpha = 0.1;
 		return true;
 	}
 
 	if (power == pw_infrared)
 	{
-		Powers[power] = INFRATIME;
+		Powers[power].DurationTime = INFRATIME;
 		return true;
 	}
 
 	if (power == pw_ironfeet)
 	{
-		Powers[power] = IRONTIME;
+		Powers[power].DurationTime = IRONTIME;
 		return true;
 	}
 
-	if (Powers[power])
+	if (Powers[power].DurationTime)
 		return false;	// already got it
 
-	Powers[power] = 1.0;
+	Powers[power].DurationTime = 1.0;
 	return true;
 }
 
@@ -1653,26 +1662,33 @@ void PlayerTick(float deltaTime)
 
 	if (Powers[pw_invulnerability])
 	{
-		Powers[pw_invulnerability] -= deltaTime;
-		if (Powers[pw_invulnerability] <= 0.0)
-			Powers[pw_invulnerability] = 0.0;
+		Powers[pw_invulnerability].DurationTime -= deltaTime;
+		if (Powers[pw_invulnerability].DurationTime <= 0.0)
+		{
+			Powers[pw_invulnerability].Destroy();
+			Powers[pw_invulnerability] = none;
+		}
 	}
 
 	if (Powers[pw_invisibility])
 	{
-		Powers[pw_invisibility] -= deltaTime;
-		if (Powers[pw_invisibility] <= 0.0)
+		Powers[pw_invisibility].DurationTime -= deltaTime;
+		if (Powers[pw_invisibility].DurationTime <= 0.0)
 		{
-			Powers[pw_invisibility] = 0.0;
+			Powers[pw_invisibility].Destroy();
+			Powers[pw_invisibility] = none;
 			MO.Alpha = 1.0;
 		}
 	}
 
 	if (Powers[pw_infrared])
 	{
-		Powers[pw_infrared] -= deltaTime;
-		if (Powers[pw_infrared] <= 0.0)
-			Powers[pw_infrared] = 0.0;
+		Powers[pw_infrared].DurationTime -= deltaTime;
+		if (Powers[pw_infrared].DurationTime <= 0.0)
+		{
+			Powers[pw_infrared].Destroy();
+			Powers[pw_infrared] = none;
+		}
 	}
 
 	if (Powers[pw_ironfeet])
@@ -1683,9 +1699,12 @@ void PlayerTick(float deltaTime)
 				MO.PlaySound('misc/mask', CHAN_VOICE);
 		}
 
-		Powers[pw_ironfeet] -= deltaTime;
-		if (Powers[pw_ironfeet] <= 0.0)
-			Powers[pw_ironfeet] = 0.0;
+		Powers[pw_ironfeet].DurationTime -= deltaTime;
+		if (Powers[pw_ironfeet].DurationTime <= 0.0)
+		{
+			Powers[pw_ironfeet].Destroy();
+			Powers[pw_ironfeet] = none;
+		}
 	}
 
 	if (DamageFlash)
@@ -1718,16 +1737,16 @@ void PlayerTick(float deltaTime)
 	// Handling colourmaps.
 	if (Powers[pw_invulnerability])
 	{
-		if (Powers[pw_invulnerability] > 4.0 ||
-			(ftoi(4.0 * Powers[pw_invulnerability]) & 1))
+		if (Powers[pw_invulnerability].DurationTime > 4.0 ||
+			(ftoi(4.0 * Powers[pw_invulnerability].DurationTime) & 1))
 			FixedColourmap = INVERSECOLOURMAP;
 		else
 			FixedColourmap = 0;
 	}
 	else if (Powers[pw_infrared])
 	{
-		if (Powers[pw_infrared] > 4.0 ||
-			(ftoi(4.0 * Powers[pw_infrared]) & 1))
+		if (Powers[pw_infrared].DurationTime > 4.0 ||
+			(ftoi(4.0 * Powers[pw_infrared].DurationTime) & 1))
 		{
 			// almost full bright
 			FixedColourmap = 1;

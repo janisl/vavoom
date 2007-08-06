@@ -49,7 +49,7 @@ const int MAXHEALTH					= 100;
 int ArmorPoints;
 
 // Power ups. invinc and invis are tic counters.
-float Powers[NUMPOWERS];
+Powerup Powers[NUMPOWERS];
 
 // Armor type is 0-2.
 int ArmorType;
@@ -510,7 +510,11 @@ void PlayerExitMap(bool clusterChange)
 
 	for (i = 0; i < NUMPOWERS; i++)
 	{
-		Powers[i] = 0.0;
+		if (Powers[i])
+		{
+			Powers[i].Destroy();
+			Powers[i] = none;
+		}
 	}
 	Items = 0;
 	MO.Angles.pitch = 0.0;
@@ -703,35 +707,41 @@ bool GiveItem(int item)
 
 bool GivePower(int power)
 {
+	if (!Powers[power])
+	{
+		Powers[power] = Level.Spawn(DummyPowerup);
+		Powers[power].AttachToOwner(EntityEx(MO));
+	}
+
 	if (power == pw_invulnerability)
 	{
-		Powers[power] = INVULNTIME;
+		Powers[power].DurationTime = INVULNTIME;
 		return true;
 	}
 
 	if (power == pw_invisibility)
 	{
-		Powers[power] = INVISTIME;
+		Powers[power].DurationTime = INVISTIME;
 		MO.Alpha = 0.1;
 		return true;
 	}
 
 	if (power == pw_infrared)
 	{
-		Powers[power] = INFRATIME;
+		Powers[power].DurationTime = INFRATIME;
 		return true;
 	}
 
 	if (power == pw_ironfeet)
 	{
-		Powers[power] = IRONTIME;
+		Powers[power].DurationTime = IRONTIME;
 		return true;
 	}
 
 	if (power == pw_strength)
 	{
 		GiveBody(100, MAXHEALTH);
-		Powers[power] = 1.0;
+		Powers[power].DurationTime = 1.0;
 		if (!Fist(ReadyWeapon))
 		{
 			PendingWeapon = Weapon(EntityEx(MO).FindInventory(Fist));
@@ -739,42 +749,10 @@ bool GivePower(int power)
 		return true;
 	}
 
-	if (Powers[power])
+	if (Powers[power].DurationTime)
 		return false;	// already got it
 
-	Powers[power] = 1.0;
-	return true;
-}
-
-//==========================================================================
-//
-//	GivePower2
-//
-//==========================================================================
-
-bool GivePower2(int power, float duration, float max)
-{
-	if (Powers[power] >= max)
-		return false;	// already got it
-
-	Powers[power] += duration;
-	if (Powers[power] >= max)
-	{
-		Powers[power] = max;
-	}
-
-	if (power == pw_invisibility)
-	{
-		MO.Alpha = 0.1;
-	}
-	if (power == pw_strength)
-	{
-		if (!Fist(ReadyWeapon))
-		{
-			PendingWeapon = Weapon(EntityEx(MO).FindInventory(Fist));
-		}
-	}
-
+	Powers[power].DurationTime = 1.0;
 	return true;
 }
 
@@ -1568,37 +1546,47 @@ void PlayerTick(float deltaTime)
 
 	//  Strength counts up to diminish fade.
 	if (Powers[pw_strength])
-		Powers[pw_strength] += deltaTime;
+		Powers[pw_strength].DurationTime += deltaTime;
 
 	if (Powers[pw_invulnerability])
 	{
-		Powers[pw_invulnerability] -= deltaTime;
-		if (Powers[pw_invulnerability] <= 0.0)
-			Powers[pw_invulnerability] = 0.0;
+		Powers[pw_invulnerability].DurationTime -= deltaTime;
+		if (Powers[pw_invulnerability].DurationTime <= 0.0)
+		{
+			Powers[pw_invulnerability].Destroy();
+			Powers[pw_invulnerability] = none;
+		}
 	}
 
 	if (Powers[pw_invisibility])
 	{
-		Powers[pw_invisibility] -= deltaTime;
-		if (Powers[pw_invisibility] <= 0.0)
+		Powers[pw_invisibility].DurationTime -= deltaTime;
+		if (Powers[pw_invisibility].DurationTime <= 0.0)
 		{
-			Powers[pw_invisibility] = 0.0;
+			Powers[pw_invisibility].Destroy();
+			Powers[pw_invisibility] = none;
 			MO.Alpha = 1.0;
 		}
 	}
 
 	if (Powers[pw_infrared])
 	{
-		Powers[pw_infrared] -= deltaTime;
-		if (Powers[pw_infrared] <= 0.0)
-			Powers[pw_infrared] = 0.0;
+		Powers[pw_infrared].DurationTime -= deltaTime;
+		if (Powers[pw_infrared].DurationTime <= 0.0)
+		{
+			Powers[pw_infrared].Destroy();
+			Powers[pw_infrared] = none;
+		}
 	}
 
 	if (Powers[pw_ironfeet])
 	{
-		Powers[pw_ironfeet] -= deltaTime;
-		if (Powers[pw_ironfeet] <= 0.0)
-			Powers[pw_ironfeet] = 0.0;
+		Powers[pw_ironfeet].DurationTime -= deltaTime;
+		if (Powers[pw_ironfeet].DurationTime <= 0.0)
+		{
+			Powers[pw_ironfeet].Destroy();
+			Powers[pw_ironfeet] = none;
+		}
 	}
 
 	if (DamageFlash)
@@ -1630,16 +1618,16 @@ void PlayerTick(float deltaTime)
 	// Handling colourmaps.
 	if (Powers[pw_invulnerability])
 	{
-		if (Powers[pw_invulnerability] > 4.0 ||
-			(ftoi(4.0 * Powers[pw_invulnerability]) & 1))
+		if (Powers[pw_invulnerability].DurationTime > 4.0 ||
+			(ftoi(4.0 * Powers[pw_invulnerability].DurationTime) & 1))
 			FixedColourmap = INVERSECOLOURMAP;
 		else
 			FixedColourmap = 0;
 	}
 	else if (Powers[pw_infrared])
 	{
-		if (Powers[pw_infrared] > 4.0 ||
-			(ftoi(4.0 * Powers[pw_infrared]) & 1))
+		if (Powers[pw_infrared].DurationTime > 4.0 ||
+			(ftoi(4.0 * Powers[pw_infrared].DurationTime) & 1))
 		{
 			// almost full bright
 			FixedColourmap = 1;
@@ -1722,7 +1710,7 @@ void PaletteFlash()
 	if (Powers[pw_strength])
 	{
 		// slowly fade the berzerk out
-		int Amount = 12 - ftoi(Powers[pw_strength] / 2.0);
+		int Amount = 12 - ftoi(Powers[pw_strength].DurationTime / 2.0);
 		if (Amount > 0)
 		{
 			Amount = (Amount + 7) >> 3;
@@ -1731,7 +1719,8 @@ void PaletteFlash()
 	}
 
 	CShifts[CSHIFT_Power] = 0;
-	if (Powers[pw_ironfeet] > 4.0 || ftoi(4.0 * Powers[pw_ironfeet]) & 1)
+	if (Powers[pw_ironfeet] && (Powers[pw_ironfeet].DurationTime > 4.0 ||
+		ftoi(4.0 * Powers[pw_ironfeet].DurationTime) & 1))
 	{
 		CShifts[CSHIFT_Power] = RGBA(0, 255, 0, 32);
 	}

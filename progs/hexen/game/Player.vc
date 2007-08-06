@@ -46,7 +46,7 @@ float ArmorPoints[HexenDefs::NUMARMOR];
 int ArmorPerc[HexenDefs::NUMARMOR];
 
 // Power ups. invinc and invis are tic counters.
-float Powers[NUMPOWERS];
+Powerup Powers[NUMPOWERS];
 
 float InventoryTime;
 int ArtifactFlash;
@@ -591,19 +591,25 @@ void PlayerReborn()
 void PlayerExitMap(bool clusterChange)
 {
 	int i;
-	float flightPower;
 	Inventory Item;
 
 	// Strip all current powers (retain flight)
-	flightPower = Powers[pw_flight];
 	for (i = 0; i < NUMPOWERS; i++)
-		Powers[i] = 0.0;
-//  memset(Powers, 0, sizeof(Powers));
-	Powers[pw_flight] = flightPower;
+	{
+		if (i != pw_flight && Powers[i])
+		{
+			Powers[i].Destroy();
+			Powers[i] = none;
+		}
+	}
 
 	if (Level.Game.deathmatch)
 	{
-		Powers[pw_flight] = 0.0;
+		if (Powers[pw_flight])
+		{
+			Powers[pw_flight].Destroy();
+			Powers[pw_flight] = none;
+		}
 	}
 	else
 	{
@@ -621,12 +627,16 @@ void PlayerExitMap(bool clusterChange)
 			}
 
 			// Strip flight artifact
-			for (i = 0; i < 25; i++)
+			Item = EntityEx(MO).FindInventory(ArtiFly);
+			if (Item)
 			{
-				Powers[pw_flight] = 0.0;
-				PlayerUseArtifactType(ArtiFly);
+				Item.Destroy();
 			}
-			Powers[pw_flight] = 0.0;
+			if (Powers[pw_flight])
+			{
+				Powers[pw_flight].Destroy();
+				Powers[pw_flight] = none;
+			}
 		}
 	}
 
@@ -802,14 +812,20 @@ bool GiveArmor(int armortype, int amount)
 
 bool GivePower(int power)
 {
+	if (!Powers[power])
+	{
+		Powers[power] = Level.Spawn(DummyPowerup);
+		Powers[power].AttachToOwner(EntityEx(MO));
+	}
+
 	if (power == pw_invulnerability)
 	{
-		if (Powers[power] > BLINKTHRESHOLD)
+		if (Powers[power].DurationTime > BLINKTHRESHOLD)
 		{
 			// Already have it
 			return false;
 		}
-		Powers[power] = INVULNTIME;
+		Powers[power].DurationTime = INVULNTIME;
 		Actor(MO).bInvulnerable = true;
 		if (PClass == HexenDefs::PCLASS_MAGE)
 		{
@@ -819,12 +835,12 @@ bool GivePower(int power)
 	}
 	if (power == pw_flight)
 	{
-		if (Powers[power] > BLINKTHRESHOLD)
+		if (Powers[power].DurationTime > BLINKTHRESHOLD)
 		{
 			// Already have it
 			return false;
 		}
-		Powers[power] = FLIGHTTIME;
+		Powers[power].DurationTime = FLIGHTTIME;
 		MO.bFly = true;
 		MO.bNoGravity = true;
 		if (MO.Origin.z <= MO.FloorZ)
@@ -835,35 +851,35 @@ bool GivePower(int power)
 	}
 	if (power == pw_infrared)
 	{
-		if (Powers[power] > BLINKTHRESHOLD)
+		if (Powers[power].DurationTime > BLINKTHRESHOLD)
 		{
 			// Already have it
 			return false;
 		}
-		Powers[power] = INFRATIME;
+		Powers[power].DurationTime = INFRATIME;
 		return true;
 	}
 	if (power == pw_speed)
 	{
-		if (Powers[power] > BLINKTHRESHOLD)
+		if (Powers[power].DurationTime > BLINKTHRESHOLD)
 		{
 			// Already have it
 			return false;
 		}
-		Powers[power] = SPEEDTIME;
+		Powers[power].DurationTime = SPEEDTIME;
 		return true;
 	}
 	if (power == pw_minotaur)
 	{
 		// Doesn't matter if already have power, renew ticker
-		Powers[power] = Actor::MAULATORTIME;
+		Powers[power].DurationTime = Actor::MAULATORTIME;
 		return true;
 	}
-	if (Powers[power])
+	if (Powers[power].DurationTime)
 	{
 		return false;	// already got it
 	}
-	Powers[power] = 1.0;
+	Powers[power].DurationTime = 1.0;
 	return true;
 }
 
@@ -2309,10 +2325,11 @@ void PlayerTick(float deltaTime)
 				MO.Alpha = 1.0;
 			}
 		}
-		Powers[pw_invulnerability] -= deltaTime;
-		if (Powers[pw_invulnerability] <= 0.0)
+		Powers[pw_invulnerability].DurationTime -= deltaTime;
+		if (Powers[pw_invulnerability].DurationTime <= 0.0)
 		{
-			Powers[pw_invulnerability] = 0.0;
+			Powers[pw_invulnerability].Destroy();
+			Powers[pw_invulnerability] = none;
 			Actor(MO).bInvulnerable = false;
 			Actor(MO).bReflective = false;
 			if (PClass == HexenDefs::PCLASS_CLERIC)
@@ -2325,31 +2342,41 @@ void PlayerTick(float deltaTime)
 
 	if (Powers[pw_minotaur])
 	{
-		Powers[pw_minotaur] -= deltaTime;
-		if (Powers[pw_minotaur] <= 0.0)
-			Powers[pw_minotaur] = 0.0;
+		Powers[pw_minotaur].DurationTime -= deltaTime;
+		if (Powers[pw_minotaur].DurationTime <= 0.0)
+		{
+			Powers[pw_minotaur].Destroy();
+			Powers[pw_minotaur] = none;
+		}
 	}
 
 	if (Powers[pw_infrared])
 	{
-		Powers[pw_infrared] -= deltaTime;
-		if (Powers[pw_infrared] <= 0.0)
-			Powers[pw_infrared] = 0.0;
+		Powers[pw_infrared].DurationTime -= deltaTime;
+		if (Powers[pw_infrared].DurationTime <= 0.0)
+		{
+			Powers[pw_infrared].Destroy();
+			Powers[pw_infrared] = none;
+		}
 	}
 
 	if (Powers[pw_speed])
 	{
-		Powers[pw_speed] -= deltaTime;
-		if (Powers[pw_speed] <= 0.0)
-			Powers[pw_speed] = 0.0;
+		Powers[pw_speed].DurationTime -= deltaTime;
+		if (Powers[pw_speed].DurationTime <= 0.0)
+		{
+			Powers[pw_speed].Destroy();
+			Powers[pw_speed] = none;
+		}
 	}
 
 	if (Powers[pw_flight] && Level.Game.netgame)
 	{
-		Powers[pw_flight] -= deltaTime;
-		if (Powers[pw_flight] <= 0.0)
+		Powers[pw_flight].DurationTime -= deltaTime;
+		if (Powers[pw_flight].DurationTime <= 0.0)
 		{
-			Powers[pw_flight] = 0.0;
+			Powers[pw_flight].Destroy();
+			Powers[pw_flight] = none;
 			if (MO.Origin.z != MO.FloorZ)
 			{
 //FIXME             centreing = true;
@@ -2400,9 +2427,9 @@ void PlayerTick(float deltaTime)
 	// Handling colourmaps.
 	if (Powers[pw_infrared])
 	{
-		if (Powers[pw_infrared] <= BLINKTHRESHOLD)
+		if (Powers[pw_infrared].DurationTime <= BLINKTHRESHOLD)
 		{
-			if (ftoi(Powers[pw_infrared] * 35.0) & 8)
+			if (ftoi(Powers[pw_infrared].DurationTime * 35.0) & 8)
 			{
 				FixedColourmap = 0;
 			}
@@ -2556,32 +2583,32 @@ void SetViewPos()
 
 	if (Powers[pw_flight])
 	{
-		if (Powers[pw_flight] > BLINKTHRESHOLD ||
-			!(ftoi(Powers[pw_flight] * 35.0) & 16))
+		if (Powers[pw_flight].DurationTime > BLINKTHRESHOLD ||
+			!(ftoi(Powers[pw_flight].DurationTime * 35.0) & 16))
 		{
 			SBFlags |= HexenDefs::SBF_POWER_FLIGHT;
 		}
 	}
 	if (Powers[pw_speed])
 	{
-		if (Powers[pw_speed] > BLINKTHRESHOLD ||
-			!(ftoi(Powers[pw_speed] * 35.0) & 16))
+		if (Powers[pw_speed].DurationTime > BLINKTHRESHOLD ||
+			!(ftoi(Powers[pw_speed].DurationTime * 35.0) & 16))
 		{
 			SBFlags |= HexenDefs::SBF_POWER_SPEED;
 		}
 	}
 	if (Powers[pw_invulnerability])
 	{
-		if (Powers[pw_invulnerability] > BLINKTHRESHOLD ||
-			!(ftoi(Powers[pw_invulnerability] * 35.0) & 16))
+		if (Powers[pw_invulnerability].DurationTime > BLINKTHRESHOLD ||
+			!(ftoi(Powers[pw_invulnerability].DurationTime * 35.0) & 16))
 		{
 			SBFlags |= HexenDefs::SBF_POWER_INVULN;
 		}
 	}
 	if (Powers[pw_minotaur])
 	{
-		if (Powers[pw_minotaur] > BLINKTHRESHOLD ||
-			!(ftoi(Powers[pw_minotaur] * 35.0) & 16))
+		if (Powers[pw_minotaur].DurationTime > BLINKTHRESHOLD ||
+			!(ftoi(Powers[pw_minotaur].DurationTime * 35.0) & 16))
 		{
 			SBFlags |= HexenDefs::SBF_POWER_MINOTAUR;
 		}

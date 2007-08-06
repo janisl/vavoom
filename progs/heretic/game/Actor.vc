@@ -178,8 +178,16 @@ void PlayerKilled(EntityEx source, EntityEx inflictor)
 		Player.FragsStats[Player.GetPlayerNum()]--;
 		Player.Frags--;
 	}
-	Player(Player).Powers[pw_flight] = 0.0;
-	Player(Player).Powers[pw_weaponlevel2] = 0.0;
+	if (Player(Player).Powers[pw_flight])
+	{
+		Player(Player).Powers[pw_flight].Destroy();
+		Player(Player).Powers[pw_flight] = none;
+	}
+	if (Player(Player).Powers[pw_weaponlevel2])
+	{
+		Player(Player).Powers[pw_weaponlevel2].Destroy();
+		Player(Player).Powers[pw_weaponlevel2] = none;
+	}
 }
 
 //==========================================================================
@@ -279,8 +287,16 @@ bool ChickenMorphPlayer()
 	Player.MO = chicken;
 	Player(Player).ArmorPoints = 0;
 	Player(Player).ArmorType = 0;
-	Player(Player).Powers[pw_invisibility] = 0.0;
-	Player(Player).Powers[pw_weaponlevel2] = 0.0;
+	if (Player(Player).Powers[pw_invisibility])
+	{
+		Player(Player).Powers[pw_invisibility].Destroy();
+		Player(Player).Powers[pw_invisibility] = none;
+	}
+	if (Player(Player).Powers[pw_weaponlevel2])
+	{
+		Player(Player).Powers[pw_weaponlevel2].Destroy();
+		Player(Player).Powers[pw_weaponlevel2] = none;
+	}
 	chicken.bFly = bFly;
 	Player(Player).ChickenTime = Player::CHICKENTIME;
 	Player(Player).ActivateBeak();

@@ -187,7 +187,11 @@ void PlayerKilled(EntityEx source, EntityEx inflictor)
 		Player.FragsStats[Player.GetPlayerNum()]--;
 		Player.Frags--;
 	}
-	Player(Player).Powers[pw_flight] = 0.0;
+	if (Player(Player).Powers[pw_flight])
+	{
+		Player(Player).Powers[pw_flight].Destroy();
+		Player(Player).Powers[pw_flight] = none;
+	}
 }
 
 //==========================================================================
