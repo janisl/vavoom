@@ -64,6 +64,8 @@ bool			bKeepDepleted;
 bool			bUndroppable;
 //	Ignore skill level when giving this item
 bool			bIgnoreSkill;
+//	Automaticly use when picked up.
+bool			bAutoActivate;
 
 replication
 {
@@ -241,6 +243,29 @@ bool TryPickup(EntityEx Toucher)
 		}
 		GoAwayAndDie();
 	}
+	else if (MaxAmount == 0)
+	{
+		//	A special case: Items with max amount of 0 can be picked up if
+		// they are autoactivate-able.
+		if (!bAutoActivate)
+		{
+			return false;
+		}
+
+		//	Put it in the inventory long enoung to be used.
+		Toucher.AddInventory(self);
+		bool UseGood = Use(true);
+		Toucher.RemoveInventory(self);
+
+		if (UseGood)
+		{
+			GoAwayAndDie();
+		}
+		else
+		{
+			return false;
+		}
+	}
 	else
 	{
 		Inventory Copy = CreateCopy(Toucher);
@@ -249,6 +274,15 @@ bool TryPickup(EntityEx Toucher)
 			return false;
 		}
 		Copy.AttachToOwner(Toucher);
+		if (bAutoActivate && Copy.Use(true))
+		{
+			Copy.Amount--;
+			if (Copy.Amount <= 0)
+			{
+				Copy.bSpecial = false;
+				Copy.SetState(S_HOLDANDDESTROY);
+			}
+		}
 	}
 	GiveQuest(Toucher);
 	return true;
