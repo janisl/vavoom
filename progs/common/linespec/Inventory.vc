@@ -66,6 +66,8 @@ bool			bUndroppable;
 bool			bIgnoreSkill;
 //	Automaticly use when picked up.
 bool			bAutoActivate;
+//	For auto activate items always pick up the item, even if it wasn't used.
+bool			bAlwaysPickup;
 
 replication
 {
@@ -257,7 +259,7 @@ bool TryPickup(EntityEx Toucher)
 		bool UseGood = Use(true);
 		Toucher.RemoveInventory(self);
 
-		if (UseGood)
+		if (UseGood || bAlwaysPickup)
 		{
 			GoAwayAndDie();
 		}
