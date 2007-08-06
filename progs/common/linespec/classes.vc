@@ -44,6 +44,7 @@ enum
 #include "Weapon.vc"
 #include "PuzzleItem.vc"
 #include "Key.vc"
+#include "Powerup.vc"
 #include "PlayerEx.vc"
 
 #include "LineSpecialLevelInfo.vc"

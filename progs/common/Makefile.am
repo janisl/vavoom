@@ -56,6 +56,7 @@ EXTRA_DIST = \
 	linespec/PolyobjMover.vc \
 	linespec/PolyobjRotator.vc \
 	linespec/PolyobjThinker.vc \
+	linespec/Powerup.vc \
 	linespec/Pusher.vc \
 	linespec/PuzzleItem.vc \
 	linespec/ScriptedEntity.vc \

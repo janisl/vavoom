@@ -22,6 +22,10 @@
 //**  GNU General Public License for more details.
 //**
 //**************************************************************************
+//**
+//**	Base class for all items that a player can carry.
+//**
+//**************************************************************************
 
 class Inventory : ScriptedEntity
 	abstract;
