@@ -27,7 +27,6 @@ class Player : PlayerEx;
 
 const float VIEWHEIGHT		= 41.0;
 
-const float INVULNTIME		= 30.0;
 const float INVISTIME		= 60.0;
 const float INFRATIME		= 120.0;
 const float IRONTIME		= 60.0;

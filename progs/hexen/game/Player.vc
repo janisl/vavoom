@@ -25,9 +25,6 @@
 
 class Player : PlayerEx;
 
-const float BLINKTHRESHOLD	= 4.0;
-
-const float INVULNTIME		= 30.0;
 const float INFRATIME		= 120.0;
 const float FLIGHTTIME 		= 60.0;
 const float SPEEDTIME 		= 45.0;

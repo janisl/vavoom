@@ -27,8 +27,6 @@ class Player : PlayerEx;
 
 const float VIEWHEIGHT		= 41.0;
 
-const float BLINKTHRESHOLD 	= 4.0;
-
 const float
 	INVISTIME		= 60.0,
 	INFRATIME		= 120.0,

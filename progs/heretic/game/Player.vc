@@ -28,10 +28,7 @@ class Player : PlayerEx;
 const int MAXCHICKENHEALTH	= 30;
 const float VIEWHEIGHT		= 41.0;
 
-const float BLINKTHRESHOLD	= 4.0;
-
 const float
-	INVULNTIME		= 30.0,
 	INVISTIME		= 60.0,
 	INFRATIME		= 120.0,
 	WPNLEV2TIME 	= 40.0,

@@ -33,6 +33,46 @@ class Powerup : Inventory
 float			DurationTime;
 name			Mode;
 
+//==========================================================================
+//
+//	HandlePickup
+//
+//==========================================================================
+
+bool HandlePickup(Inventory Item)
+{
+	if (Item.Class == Class)
+	{
+		Powerup Pow = Powerup(Item);
+		//	Permanent powerups can be always picked up.
+		if (!Pow.DurationTime)
+		{
+			Item.bPickupGood = true;
+			return true;
+		}
+		//	Don't pick it up if not yet blinking unless it should always be
+		// picked up.
+		if (DurationTime > PlayerEx::BLINKTHRESHOLD && !Item.bAlwaysPickup)
+		{
+			//	Already have it.
+			return true;
+		}
+		//	Only increase effect time.
+		if (DurationTime < Pow.DurationTime)
+		{
+			DurationTime = Pow.DurationTime;
+		}
+		Item.bPickupGood = true;
+		return true;
+	}
+
+	if (Inventory)
+	{
+		return Inventory.HandlePickup(Item);
+	}
+	return false;
+}
+
 defaultproperties
 {
 }

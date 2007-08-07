@@ -27,4 +27,5 @@ class PowerInvulnerable : Powerup;
 
 defaultproperties
 {
+	DurationTime = PlayerEx::INVULNTIME;
 }
