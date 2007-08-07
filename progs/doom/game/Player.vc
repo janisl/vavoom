@@ -58,8 +58,6 @@ int ArmorType;
 //  FACE WIDGET DATA
 //
 
-int SBFlags;
-
 // count until face changes
 float sb_facetime;
 
@@ -86,7 +84,7 @@ Inventory SavedInventory;
 replication
 {
 	reliable if (!bIsClient)
-		ArmorPoints, SBFlags, sb_faceindex;
+		ArmorPoints, sb_faceindex;
 
 	unreliable if (!bIsClient)
 		ClientGunShot, ClientBlood, ClientExplosion, ClientExplosion2;
@@ -711,12 +709,6 @@ bool GivePower(int power)
 	{
 		Powers[power] = Level.Spawn(DummyPowerup);
 		Powers[power].AttachToOwner(EntityEx(MO));
-	}
-
-	if (power == pw_invulnerability)
-	{
-		Powers[power].DurationTime = INVULNTIME;
-		return true;
 	}
 
 	if (power == pw_invisibility)
@@ -1548,13 +1540,14 @@ void PlayerTick(float deltaTime)
 	if (Powers[pw_strength])
 		Powers[pw_strength].DurationTime += deltaTime;
 
-	if (Powers[pw_invulnerability])
+	PowerInvulnerable Pw = PowerInvulnerable(EntityEx(MO).FindInventory(
+		PowerInvulnerable));
+	if (Pw)
 	{
-		Powers[pw_invulnerability].DurationTime -= deltaTime;
-		if (Powers[pw_invulnerability].DurationTime <= 0.0)
+		Pw.DurationTime -= deltaTime;
+		if (Pw.DurationTime <= 0.0)
 		{
-			Powers[pw_invulnerability].Destroy();
-			Powers[pw_invulnerability] = none;
+			Pw.Destroy();
 		}
 	}
 
@@ -1616,10 +1609,11 @@ void PlayerTick(float deltaTime)
 	}
 
 	// Handling colourmaps.
-	if (Powers[pw_invulnerability])
+	PowerInvulnerable Invul = PowerInvulnerable(EntityEx(MO).FindInventory(
+		PowerInvulnerable));
+	if (Invul)
 	{
-		if (Powers[pw_invulnerability].DurationTime > 4.0 ||
-			(ftoi(4.0 * Powers[pw_invulnerability].DurationTime) & 1))
+		if (Invul.DurationTime > 4.0 || (ftoi(4.0 * Invul.DurationTime) & 1))
 			FixedColourmap = INVERSECOLOURMAP;
 		else
 			FixedColourmap = 0;
@@ -1901,7 +1895,8 @@ void UpdateFaceWidget(float FrameTime)
 	if (sb_face_priority < 5)
 	{
 		// invulnerability
-		if ((Cheats & CF_GODMODE) || Powers[pw_invulnerability])
+		if ((Cheats & CF_GODMODE) ||
+			EntityEx(MO).FindInventory(PowerInvulnerable))
 		{
 			sb_face_priority = 4;
 
@@ -1950,9 +1945,6 @@ void SetViewPos()
 	PaletteFlash();
 
 	UpdateFaceWidget(Level.Game.frametime);
-
-	if ((Cheats & CF_GODMODE) || Powers[pw_invulnerability])
-		SBFlags |= DoomDefs::SBF_GOD_MODE;
 
 	ClientSetViewOrg(ViewOrg.x, ViewOrg.y, ViewOrg.z);
 }
@@ -2332,7 +2324,7 @@ void Cheat_Gimme()
 
 	// Powers
 	if (i1 & GIMME_INVULNERABILITY)
-		GivePower(pw_invulnerability);
+		EntityEx(MO).GiveInventoryType(PowerInvulnerable);
 	if (i1 & GIMME_STRENGTH)
 		GivePower(pw_strength);
 	if (i1 & GIMME_INVISIBILITY)
@@ -2511,7 +2503,7 @@ void ClientExplosion2(int colour, TVec org)
 
 bool HaveInvulnerabilityPower()
 {
-	return !!Powers[pw_invulnerability];
+	return !!EntityEx(MO).FindInventory(PowerInvulnerable);
 }
 
 //==========================================================================

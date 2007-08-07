@@ -51,7 +51,6 @@ enum
 // Power up artifacts.
 enum
 {
-	pw_invulnerability,
 	pw_invisibility,
 	pw_infrared,
 	pw_weaponlevel2,

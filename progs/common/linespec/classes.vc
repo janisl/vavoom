@@ -45,6 +45,7 @@ enum
 #include "PuzzleItem.vc"
 #include "Key.vc"
 #include "Powerup.vc"
+#include "PowerInvulnerable.vc"
 #include "PlayerEx.vc"
 
 #include "LineSpecialLevelInfo.vc"

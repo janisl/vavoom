@@ -818,21 +818,6 @@ bool GivePower(int power)
 		Powers[power].AttachToOwner(EntityEx(MO));
 	}
 
-	if (power == pw_invulnerability)
-	{
-		if (Powers[power].DurationTime > BLINKTHRESHOLD)
-		{
-			// Already have it
-			return false;
-		}
-		Powers[power].DurationTime = INVULNTIME;
-		Actor(MO).bInvulnerable = true;
-		if (PClass == HexenDefs::PCLASS_MAGE)
-		{
-			Actor(MO).bReflective = true;
-		}
-		return true;
-	}
 	if (power == pw_flight)
 	{
 		if (Powers[power].DurationTime > BLINKTHRESHOLD)
@@ -1846,7 +1831,8 @@ void PlayerImpulse()
 		{
 			Arti = EntityEx(MO).FindInventory(ArtiPork);
 		}
-		else if (impulse == 5 && !Powers[pw_invulnerability])
+		else if (impulse == 5 &&
+			!EntityEx(MO).FindInventory(PowerInvulnerable))
 		{
 			Arti = EntityEx(MO).FindInventory(ArtiInvulnerability);
 		}
@@ -2274,7 +2260,8 @@ void PlayerTick(float deltaTime)
 
 	// Counters, time dependend power ups.
 
-	if (Powers[pw_invulnerability])
+	Powerup Pw = Powerup(EntityEx(MO).FindInventory(PowerInvulnerable));
+	if (Pw)
 	{
 		if (PClass == HexenDefs::PCLASS_CLERIC)
 		{
@@ -2325,11 +2312,10 @@ void PlayerTick(float deltaTime)
 				MO.Alpha = 1.0;
 			}
 		}
-		Powers[pw_invulnerability].DurationTime -= deltaTime;
-		if (Powers[pw_invulnerability].DurationTime <= 0.0)
+		Pw.DurationTime -= deltaTime;
+		if (Pw.DurationTime <= 0.0)
 		{
-			Powers[pw_invulnerability].Destroy();
-			Powers[pw_invulnerability] = none;
+			Pw.Destroy();
 			Actor(MO).bInvulnerable = false;
 			Actor(MO).bReflective = false;
 			if (PClass == HexenDefs::PCLASS_CLERIC)
@@ -2595,14 +2581,6 @@ void SetViewPos()
 			!(ftoi(Powers[pw_speed].DurationTime * 35.0) & 16))
 		{
 			SBFlags |= HexenDefs::SBF_POWER_SPEED;
-		}
-	}
-	if (Powers[pw_invulnerability])
-	{
-		if (Powers[pw_invulnerability].DurationTime > BLINKTHRESHOLD ||
-			!(ftoi(Powers[pw_invulnerability].DurationTime * 35.0) & 16))
-		{
-			SBFlags |= HexenDefs::SBF_POWER_INVULN;
 		}
 	}
 	if (Powers[pw_minotaur])
@@ -3308,7 +3286,7 @@ void ClientExplosion(int colour, TVec org)
 
 bool HaveInvulnerabilityPower()
 {
-	return !!Powers[pw_invulnerability];
+	return !!EntityEx(MO).FindInventory(PowerInvulnerable);
 }
 
 //==========================================================================

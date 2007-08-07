@@ -27,11 +27,6 @@ import engine;
 
 class DoomDefs : Object;
 
-enum
-{
-	SBF_GOD_MODE		= 0x00000040
-};
-
 //
 //  FACE WIDGET MACROS
 //

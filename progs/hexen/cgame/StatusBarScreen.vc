@@ -719,7 +719,9 @@ void SB_DrawIcons()
 	}
 
 	// Defensive power
-	if (cl.SBFlags & HexenDefs::SBF_POWER_INVULN)
+	Powerup Pw = Powerup(EntityEx(cl.MO).FindInventory(PowerInvulnerable));
+	if (Pw && (Pw.DurationTime > Player::BLINKTHRESHOLD ||
+		!(ftoi(Pw.DurationTime * 35.0) & 16)))
 	{
 		R_DrawPic(580, 19, pic_shld[(ClGame.GLevel.TicTime / 3) & 15]);
 	}

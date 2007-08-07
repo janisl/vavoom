@@ -23,35 +23,7 @@
 //**
 //**************************************************************************
 
-import engine;
-
-class HexenDefs : Object;
-
-enum
-{
-	PCLASS_FIGHTER,
-	PCLASS_CLERIC,
-	PCLASS_MAGE,
-	PCLASS_PIG,
-	NUMCLASSES
-};
-
-enum
-{
-	ARMOR_ARMOR,
-	ARMOR_SHIELD,
-	ARMOR_HELMET,
-	ARMOR_AMULET,
-	NUMARMOR
-};
-
-enum
-{
-	SBF_POWER_FLIGHT	= 0x00010000,
-	SBF_POWER_SPEED		= 0x00020000,
-	SBF_POWER_MINOTAUR	= 0x00080000,
-	SBF_IN_FLIGHT		= 0x00100000
-};
+class PowerInvulnerable : Powerup;
 
 defaultproperties
 {

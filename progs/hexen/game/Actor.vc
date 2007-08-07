@@ -231,7 +231,7 @@ bool MorphPlayer()
 	Actor beastMo;
 	int i;
 
-	if (Player(Player).Powers[pw_invulnerability])
+	if (FindInventory(PowerInvulnerable))
 	{
 		// Immune when invulnerable
 		return (false);
@@ -391,7 +391,8 @@ void AutoUseHealth(int saveHealth)
 
 void PoisonPlayer(Actor poisoner, int poison)
 {
-	if ((Player(Player).Cheats & Player::CF_GODMODE) || Player(Player).Powers[pw_invulnerability])
+	if ((Player(Player).Cheats & Player::CF_GODMODE) ||
+		FindInventory(PowerInvulnerable))
 	{
 		return;
 	}
@@ -430,8 +431,8 @@ void PoisonDamage(Actor source, int damage, bool playPainSound)
 		// Take half damage in trainer mode
 		damage >>= 1;
 	}
-	if (damage < 1000 && ((Player(Player).Cheats & Player::CF_GODMODE)
-			|| Player(Player).Powers[pw_invulnerability]))
+	if (damage < 1000 && ((Player(Player).Cheats & Player::CF_GODMODE) ||
+		FindInventory(PowerInvulnerable)))
 	{
 		return;
 	}

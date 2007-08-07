@@ -634,16 +634,6 @@ bool GivePower(int power)
 		Powers[power].AttachToOwner(EntityEx(MO));
 	}
 
-	if (power == pw_invulnerability)
-	{
-		if (Powers[power].DurationTime > BLINKTHRESHOLD)
-		{
-			// Already have it
-			return false;
-		}
-		Powers[power].DurationTime = INVULNTIME;
-		return true;
-	}
 	if (power == pw_weaponlevel2)
 	{
 		if (Powers[power].DurationTime > BLINKTHRESHOLD)
@@ -1921,13 +1911,13 @@ void PlayerTick(float deltaTime)
 
 	// Counters, time dependend power ups.
 
-	if (Powers[pw_invulnerability])
+	Powerup Pw = Powerup(EntityEx(MO).FindInventory(PowerInvulnerable));
+	if (Pw)
 	{
-		Powers[pw_invulnerability].DurationTime -= deltaTime;
-		if (Powers[pw_invulnerability].DurationTime <= 0.0)
+		Pw.DurationTime -= deltaTime;
+		if (Pw.DurationTime <= 0.0)
 		{
-			Powers[pw_invulnerability].Destroy();
-			Powers[pw_invulnerability] = none;
+			Pw.Destroy();
 		}
 	}
 
@@ -2008,10 +1998,11 @@ void PlayerTick(float deltaTime)
 	}
 
 	// Handling colourmaps.
-	if (Powers[pw_invulnerability])
+	Pw = Powerup(EntityEx(MO).FindInventory(PowerInvulnerable));
+	if (Pw)
 	{
-		if (Powers[pw_invulnerability].DurationTime > 4.0 ||
-			(ftoi(4.0 * Powers[pw_invulnerability].DurationTime) & 1))
+		if (Pw.DurationTime > 4.0 ||
+			(ftoi(4.0 * Pw.DurationTime) & 1))
 			FixedColourmap = INVERSECOLOURMAP;
 		else
 			FixedColourmap = 0;
@@ -2808,7 +2799,7 @@ void ClientExplosion(int colour, TVec org)
 
 bool HaveInvulnerabilityPower()
 {
-	return !!Powers[pw_invulnerability];
+	return !!EntityEx(MO).FindInventory(PowerInvulnerable);
 }
 
 //==========================================================================

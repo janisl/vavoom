@@ -268,7 +268,7 @@ bool ChickenMorphPlayer()
 		}
 		return false;
 	}
-	if (Player(Player).Powers[pw_invulnerability])
+	if (FindInventory(PowerInvulnerable))
 	{
 		// Immune when invulnerable
 		return false;

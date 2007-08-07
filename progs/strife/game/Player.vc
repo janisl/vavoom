@@ -30,7 +30,6 @@ const float VIEWHEIGHT		= 41.0;
 const float BLINKTHRESHOLD 	= 4.0;
 
 const float
-	INVULNTIME		= 30.0,
 	INVISTIME		= 60.0,
 	INFRATIME		= 120.0,
 	IRONTIME		= 60.0;
@@ -772,12 +771,6 @@ bool GivePower(int power)
 	{
 		Powers[power] = Level.Spawn(DummyPowerup);
 		Powers[power].AttachToOwner(EntityEx(MO));
-	}
-
-	if (power == pw_invulnerability)
-	{
-		Powers[power].DurationTime = INVULNTIME;
-		return true;
 	}
 
 	if (power == pw_invisibility)
@@ -1660,16 +1653,6 @@ void PlayerTick(float deltaTime)
 
 	//  Counters, time dependend power ups.
 
-	if (Powers[pw_invulnerability])
-	{
-		Powers[pw_invulnerability].DurationTime -= deltaTime;
-		if (Powers[pw_invulnerability].DurationTime <= 0.0)
-		{
-			Powers[pw_invulnerability].Destroy();
-			Powers[pw_invulnerability] = none;
-		}
-	}
-
 	if (Powers[pw_invisibility])
 	{
 		Powers[pw_invisibility].DurationTime -= deltaTime;
@@ -1735,15 +1718,7 @@ void PlayerTick(float deltaTime)
 	}
 
 	// Handling colourmaps.
-	if (Powers[pw_invulnerability])
-	{
-		if (Powers[pw_invulnerability].DurationTime > 4.0 ||
-			(ftoi(4.0 * Powers[pw_invulnerability].DurationTime) & 1))
-			FixedColourmap = INVERSECOLOURMAP;
-		else
-			FixedColourmap = 0;
-	}
-	else if (Powers[pw_infrared])
+	if (Powers[pw_infrared])
 	{
 		if (Powers[pw_infrared].DurationTime > 4.0 ||
 			(ftoi(4.0 * Powers[pw_infrared].DurationTime) & 1))
@@ -2399,7 +2374,7 @@ void ClientFinaleType(int Type)
 
 bool HaveInvulnerabilityPower()
 {
-	return !!Powers[pw_invulnerability];
+	return !!EntityEx(MO).FindInventory(PowerInvulnerable);
 }
 
 //==========================================================================
