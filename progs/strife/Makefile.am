@@ -6,6 +6,7 @@ noinst_DATA = $(OUTDIR)/svprogs.dat $(OUTDIR)/clprogs.dat
 
 $(OUTDIR)/svprogs.dat: $(VCC) $(srcdir)/*.vc $(srcdir)/game/*.vc \
 		$(COMMON_PROGS_DIR)/linespec.dat
+	@mkdir -p $(OUTDIR)
 	$(VCC) -P$(COMMON_PROGS_DIR) -P$(OUTDIR) $(srcdir)/svprogs.vc $@
 
 $(OUTDIR)/clprogs.dat: $(VCC) $(OUTDIR)/svprogs.dat $(srcdir)/*.vc $(srcdir)/cgame/*.vc
