@@ -73,6 +73,30 @@ bool HandlePickup(Inventory Item)
 	return false;
 }
 
+//==========================================================================
+//
+//	CreateCopy
+//
+//==========================================================================
+
+Inventory CreateCopy(EntityEx Toucher)
+{
+	Owner = Toucher;
+	InitEffect();
+	Owner = none;
+	return self;
+}
+
+//==========================================================================
+//
+//	InitEffect
+//
+//==========================================================================
+
+void InitEffect()
+{
+}
+
 defaultproperties
 {
 }

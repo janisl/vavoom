@@ -456,6 +456,11 @@ void BringUpWeapon()
 {
 }
 
+name GetInvulnerabilityMode()
+{
+	return '';
+}
+
 defaultproperties
 {
 }
