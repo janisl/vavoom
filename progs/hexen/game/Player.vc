@@ -2564,6 +2564,7 @@ void SetViewPos()
 
 	PaletteFlash();
 
+	SBFlags = 0;
 	if (Powers[pw_flight])
 	{
 		if (Powers[pw_flight].DurationTime > BLINKTHRESHOLD ||

@@ -2146,6 +2146,7 @@ void SetViewPos()
 
 	PaletteFlash();
 
+	SBFlags = 0;
 	if (Cheats & CF_GODMODE)
 		SBFlags |= HereticDefs::SBF_GOD_MODE;
 	if (Powers[pw_flight])

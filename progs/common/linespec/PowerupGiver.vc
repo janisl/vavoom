@@ -22,28 +22,48 @@
 //**  GNU General Public License for more details.
 //**
 //**************************************************************************
+//**
+//**	Base class for items that give owner a powerup when activated.
+//**
+//**************************************************************************
 
-class InvulnerabilitySphere : PowerupGiver
-	__mobjinfo__(2022)
-	__scriptid__(133);
+class PowerupGiver : Inventory
+	abstract;
 
-__states__
+class<Powerup>	PowerupType;
+//	Non-0 to override powerup's default time.
+float			EffectTime;
+name			Mode;
+
+//==========================================================================
+//
+//	Use
+//
+//==========================================================================
+
+bool Use(bool Pickup)
 {
-	S_PINV('PINV', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_PINV2) = none
-	S_PINV2('PINV', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_PINV3) = none
-	S_PINV3('PINV', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_PINV4) = none
-	S_PINV4('PINV', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_PINV) = none
+	Powerup Pw = Spawn(PowerupType);
+	if (EffectTime)
+	{
+		Pw.DurationTime = EffectTime;
+	}
+	if (Mode)
+	{
+		Pw.Mode = Mode;
+	}
+	Pw.bAlwaysPickup = bAlwaysPickup;
+	if (!Pw.TryPickup(EntityEx(Owner)))
+	{
+		Pw.Destroy();
+		return false;
+	}
+	return true;
 }
 
 defaultproperties
 {
-	Alpha = 0.666;
-	PowerupType = PowerInvulnerable;
-	PickupMessage = "$gotinvul";
-	MaxAmount = 0;
-	bCountItem = true;
-	bBigPowerup = true;
-	bAutoActivate = true;
-	bAlwaysPickup = true;
-	IdleState = S_PINV;
+	MaxAmount = DefMaxAmount;
+	bInvBar = true;
+	PickupSound = 'misc/p_pkup';
 }
