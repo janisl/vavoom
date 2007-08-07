@@ -67,7 +67,6 @@ public:
 	wxTextCtrl*		EditGame;
 	wxCheckBox*		CheckBoxDevGame;
 	wxTextCtrl*		EditFiles;
-	wxTextCtrl*		EditProgs;
 	wxTextCtrl*		EditMisc;
 
     VMain();
@@ -122,17 +121,19 @@ VMain::VMain()
 : wxFrame(NULL, wxID_ANY, wxT("Vavoom launcher"), wxDefaultPosition, wxDefaultSize,
 	wxDEFAULT_FRAME_STYLE & ~ (wxRESIZE_BORDER | wxRESIZE_BOX | wxMAXIMIZE_BOX))
 {
-	SetClientSize(447, 364);
 	wxPanel* panel = new wxPanel(this);
+	wxBoxSizer* mainsizer = new wxBoxSizer(wxVERTICAL);
 
-	new wxStaticBitmap(panel, -1, wxBitmap(vavoom_xpm), wxPoint(0, 0), wxSize(447, 105));
+	mainsizer->Add(new wxStaticBitmap(panel, -1, wxBitmap(vavoom_xpm)));
 
-	wxNotebook* nbook = new wxNotebook(panel, -1, wxPoint(0, 105), wxSize(447, 229));
+	wxNotebook* nbook = new wxNotebook(panel, -1, wxPoint(0, 105), wxSize(447, 232));
+	mainsizer->Add(nbook);
 
 	wxPanel* page = new wxPanel(nbook);
 	nbook->AddPage(page, wxT("Main"));
+	wxFlexGridSizer* gsizer = new wxFlexGridSizer(2);
 
-	new wxStaticText(page, -1, wxT("Game:"), wxPoint(24, 130), wxSize(31, 13));
+	gsizer->Add(new wxStaticText(page, -1, wxT("Game:")), 0, wxALL, 4);
 	wxString GameChoices[8];
 	GameChoices[0] = wxT("(Autodetect)");
 	GameChoices[1] = wxT("Doom");
@@ -142,55 +143,93 @@ VMain::VMain()
 	GameChoices[5] = wxT("Heretic");
 	GameChoices[6] = wxT("Hexen");
 	GameChoices[7] = wxT("Strife");
-	Game = new wxComboBox(page, -1, GameChoices[0], wxPoint(56, 130), wxSize(97, 21), 8, GameChoices, wxCB_READONLY);
+	Game = new wxComboBox(page, -1, GameChoices[0], wxDefaultPosition, wxDefaultSize, 8, GameChoices, wxCB_READONLY);
+	gsizer->Add(Game, 0, wxALL, 4);
 
-	new wxStaticText(page, -1, wxT("Renderer:"), wxPoint(8, 154), wxSize(47, 13));
+	gsizer->Add(new wxStaticText(page, -1, wxT("Renderer:")), 0, wxALL, 4);
 	wxString RendChoices[3];
 	RendChoices[0] = wxT("Software");
 	RendChoices[1] = wxT("OpenGL");
 	RendChoices[2] = wxT("Direct3D");
-	RendererBox = new wxComboBox(page, -1, RendChoices[0], wxPoint(56, 154), wxSize(97, 21), 3, RendChoices, wxCB_READONLY);
+	RendererBox = new wxComboBox(page, -1, RendChoices[0], wxDefaultPosition, wxDefaultSize, 3, RendChoices, wxCB_READONLY);
+	gsizer->Add(RendererBox, 0, wxALL, 4);
 
-	wxPanel* grp = new wxPanel(page, 3, 2, 129, 121);
-	new wxStaticBox(grp, -1, wxT("Sound"), wxPoint(0, 0), wxSize(129, 121));
-	CheckBoxNoSound = new wxCheckBox(grp, -1, wxT("Disable all sound"), wxPoint(8, 16), wxSize(105, 17));
-	CheckBoxNoSfx = new wxCheckBox(grp, -1, wxT("No sounds"), wxPoint(8, 32), wxSize(105, 17));
-	CheckBoxNo3DSound = new wxCheckBox(grp, -1, wxT("No 3D sound"), wxPoint(8, 48), wxSize(105, 17));
-	CheckBoxNoMusic = new wxCheckBox(grp, -1, wxT("No music"), wxPoint(8, 64), wxSize(105, 17));
-	CheckBoxNoCDAudio = new wxCheckBox(grp, -1, wxT("No CD audio"), wxPoint(8, 80), wxSize(105, 17));
-	CheckBoxUseOpenAL = new wxCheckBox(grp, -1, wxT("Use OpenAL"), wxPoint(8, 96), wxSize(97, 17));
+	gsizer->Add(new wxStaticText(page, -1, wxT("Custom game:")), 0, wxALL, 4);
+	EditGame = new wxTextCtrl(page, -1, wxT(""), wxDefaultPosition, wxSize(128, -1));
+	gsizer->Add(EditGame, 0, wxALL, 4);
+	CheckBoxDevGame = new wxCheckBox(page, -1, wxT("Development mode"));
+	gsizer->AddSpacer(1);
+	gsizer->Add(CheckBoxDevGame, 0, wxALL, 4);
+	gsizer->Add(new wxStaticText(page, -1, wxT("Files:")), 0, wxALL, 4);
+	EditFiles = new wxTextCtrl(page, -1, wxT(""), wxDefaultPosition, wxSize(200, -1));
+	gsizer->Add(EditFiles, 0, wxALL, 4);
+	CheckBoxDebug = new wxCheckBox(page, -1, wxT("Create debug file"));
+	gsizer->AddSpacer(1);
+	gsizer->Add(CheckBoxDebug, 0, wxALL, 4);
+	gsizer->Add(new wxStaticText(page, -1, wxT("Other options:")), 0, wxALL, 4);
+	EditMisc = new wxTextCtrl(page, -1, wxT(""), wxDefaultPosition, wxSize(209, -1));
+	gsizer->Add(EditMisc, 0, wxALL, 4);
+	page->SetSizer(gsizer);
+	gsizer->Layout();
 
-	grp = new wxPanel(page, 139, 2, 161, 105);
-	new wxStaticBox(grp, -1, wxT("Network"), wxPoint(0, 0), wxSize(161, 105));
-	CheckBoxNoLan = new wxCheckBox(grp, -1, wxT("Disable all LAN drivers"), wxPoint(8, 16), wxSize(129, 17));
-	CheckBoxNoUDP = new wxCheckBox(grp, -1, wxT("Disable TCP/IP driver"), wxPoint(8, 32), wxSize(129, 17));
-	CheckBoxNoIPX = new wxCheckBox(grp, -1, wxT("Disable IPX driver"), wxPoint(8, 48), wxSize(129, 17));
-	new wxStaticText(grp, -1, wxT("IP address:"), wxPoint(8, 64), wxSize(53, 13));
-	EditIPAddress = new wxTextCtrl(grp, -1, wxT(""), wxPoint(8, 80), wxSize(97, 21));
-	new wxStaticText(grp, -1, wxT("Port:"), wxPoint(112, 64), wxSize(22, 13));
-	EditPort = new wxTextCtrl(grp, -1, wxT(""), wxPoint(112, 80), wxSize(41, 21));
+	//	Sound options
+	page = new wxPanel(nbook);
+	nbook->AddPage(page, wxT("Sound"));
+	wxBoxSizer* bsizer = new wxBoxSizer(wxVERTICAL);
+	CheckBoxNoSound = new wxCheckBox(page, -1, wxT("Disable all sound"));
+	bsizer->Add(CheckBoxNoSound, 0, wxALL, 4);
+	CheckBoxNoSfx = new wxCheckBox(page, -1, wxT("No sounds"));
+	bsizer->Add(CheckBoxNoSfx, 0, wxALL, 4);
+	CheckBoxNo3DSound = new wxCheckBox(page, -1, wxT("No 3D sound"));
+	bsizer->Add(CheckBoxNo3DSound, 0, wxALL, 4);
+	CheckBoxNoMusic = new wxCheckBox(page, -1, wxT("No music"));
+	bsizer->Add(CheckBoxNoMusic, 0, wxALL, 4);
+	CheckBoxNoCDAudio = new wxCheckBox(page, -1, wxT("No CD audio"));
+	bsizer->Add(CheckBoxNoCDAudio, 0, wxALL, 4);
+	CheckBoxUseOpenAL = new wxCheckBox(page, -1, wxT("Use OpenAL"));
+	bsizer->Add(CheckBoxUseOpenAL, 0, wxALL, 4);
+	page->SetSizer(bsizer);
+	bsizer->Layout();
 
-	grp = new wxPanel(page, 307, 2, 129, 57);
-	new wxStaticBox(grp, -1, wxT("Input"), wxPoint(0, 0), wxSize(129, 57));
-	CheckBoxNoMouse = new wxCheckBox(grp, -1, wxT("Disable mouse"), wxPoint(8, 16), wxSize(97, 17));
-	CheckBoxNoJoy = new wxCheckBox(grp, -1, wxT("Disable joystick"), wxPoint(8, 32), wxSize(97, 17));
+	//	Input options
+	page = new wxPanel(nbook);
+	nbook->AddPage(page, wxT("Input"));
+	bsizer = new wxBoxSizer(wxVERTICAL);
+	CheckBoxNoMouse = new wxCheckBox(page, -1, wxT("Disable mouse"));
+	bsizer->Add(CheckBoxNoMouse, 0, wxALL, 4);
+	CheckBoxNoJoy = new wxCheckBox(page, -1, wxT("Disable joystick"));
+	bsizer->Add(CheckBoxNoJoy, 0, wxALL, 4);
+	page->SetSizer(bsizer);
+	bsizer->Layout();
 
-	grp = new wxPanel(page, 307, 66, 129, 41);
-	new wxStaticBox(grp, -1, wxT("Misc"), wxPoint(0, 0), wxSize(129, 41));
-	CheckBoxDebug = new wxCheckBox(grp, -1, wxT("Create debug file"), wxPoint(8, 16), wxSize(105, 17));
+	//	Network options
+	page = new wxPanel(nbook);
+	nbook->AddPage(page, wxT("Network"));
+	gsizer = new wxFlexGridSizer(2);
+	CheckBoxNoLan = new wxCheckBox(page, -1, wxT("Disable all LAN drivers"));
+	gsizer->AddSpacer(1);
+	gsizer->Add(CheckBoxNoLan, 0, wxALL, 4);
+	CheckBoxNoUDP = new wxCheckBox(page, -1, wxT("Disable TCP/IP driver"));
+	gsizer->AddSpacer(1);
+	gsizer->Add(CheckBoxNoUDP, 0, wxALL, 4);
+	CheckBoxNoIPX = new wxCheckBox(page, -1, wxT("Disable IPX driver"));
+	gsizer->AddSpacer(1);
+	gsizer->Add(CheckBoxNoIPX, 0, wxALL, 4);
+	gsizer->Add(new wxStaticText(page, -1, wxT("IP address:")), 0, wxALL, 4);
+	EditIPAddress = new wxTextCtrl(page, -1, wxT(""), wxDefaultPosition, wxSize(128, -1));
+	gsizer->Add(EditIPAddress, 0, wxALL, 4);
+	gsizer->Add(new wxStaticText(page, -1, wxT("Port:")), 0, wxALL, 4);
+	EditPort = new wxTextCtrl(page, -1, wxT(""), wxDefaultPosition, wxSize(48, -1));
+	gsizer->Add(EditPort, 0, wxALL, 4);
+	page->SetSizer(gsizer);
+	gsizer->Layout();
 
-	new wxStaticText(page, -1, wxT("Custom game:"), wxPoint(152, 114), wxSize(70, 13));
-	EditGame = new wxTextCtrl(page, -1, wxT(""), wxPoint(224, 114), wxSize(97, 21));
-	CheckBoxDevGame = new wxCheckBox(page, -1, wxT("Development mode"), wxPoint(328, 114), wxSize(113, 17));
-	new wxStaticText(page, -1, wxT("Files:"), wxPoint(160, 138), wxSize(24, 13));
-	EditFiles = new wxTextCtrl(page, -1, wxT(""), wxPoint(184, 138), wxSize(185, 21));
-	new wxStaticText(page, -1, wxT("Progs:"), wxPoint(8, 178), wxSize(30, 13));
-	EditProgs = new wxTextCtrl(page, -1, wxT(""), wxPoint(40, 178), wxSize(113, 21));
-	new wxStaticText(page, -1, wxT("Other options:"), wxPoint(160, 162), wxSize(66, 13));
-	EditMisc = new wxTextCtrl(page, -1, wxT(""), wxPoint(160, 178), wxSize(209, 21));
-
-	new wxButton(panel, VLaunch_Run, wxT("Run"), wxPoint(306, 337), wxSize(65, 25));
-	new wxButton(panel, VLaunch_Exit, wxT("Exit"), wxPoint(376, 337), wxSize(65, 25));
+	bsizer = new wxBoxSizer(wxHORIZONTAL);
+	bsizer->Add(new wxButton(panel, VLaunch_Run, wxT("Run")), 0, wxALL, 4);
+	bsizer->Add(new wxButton(panel, VLaunch_Exit, wxT("Exit")), 0, wxALL, 4);
+	mainsizer->Add(bsizer, 0, wxALIGN_RIGHT);
+	panel->SetSizer(mainsizer);
+	mainsizer->SetSizeHints(this);
 
 	//	Load saved settings.
 	wxConfigBase* Conf = wxConfigBase::Get();
@@ -213,7 +252,6 @@ VMain::VMain()
 	EditGame->SetValue(Conf->Read(wxT("CustomGame"), wxT("")));
 	CheckBoxDevGame->SetValue(!!Conf->Read(wxT("DevGame"), 0l));
 	EditFiles->SetValue(Conf->Read(wxT("Files"), wxT("")));
-	EditProgs->SetValue(Conf->Read(wxT("Progs"), wxT("")));
 	EditMisc->SetValue(Conf->Read(wxT("Options"), wxT("")));
 }
 
@@ -246,7 +284,6 @@ VMain::~VMain()
 	Conf->Write(wxT("CustomGame"), EditGame->GetValue());
 	Conf->Write(wxT("DevGame"), CheckBoxDevGame->IsChecked());
 	Conf->Write(wxT("Files"), EditFiles->GetValue());
-	Conf->Write(wxT("Progs"), EditProgs->GetValue());
 	Conf->Write(wxT("Options"), EditMisc->GetValue());
 }
 
@@ -345,8 +382,6 @@ void VMain::OnRun(wxCommandEvent&)
 	}
 	if (EditFiles->GetValue().Length())
 		CmdLine += wxT(" -file ") + EditFiles->GetValue();
-	if (EditProgs->GetValue().Length())
-		CmdLine += wxT(" -progs ") + EditProgs->GetValue();
 	if (EditMisc->GetValue().Length())
 		CmdLine += wxT(" ") + EditMisc->GetValue();
 
