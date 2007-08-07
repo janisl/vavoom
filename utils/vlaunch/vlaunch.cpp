@@ -126,7 +126,7 @@ VMain::VMain()
 
 	mainsizer->Add(new wxStaticBitmap(panel, -1, wxBitmap(vavoom_xpm)));
 
-	wxNotebook* nbook = new wxNotebook(panel, -1, wxPoint(0, 105), wxSize(447, 232));
+	wxNotebook* nbook = new wxNotebook(panel, -1, wxPoint(0, 105), wxSize(447, 270));
 	mainsizer->Add(nbook);
 
 	wxPanel* page = new wxPanel(nbook);
