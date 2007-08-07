@@ -46,7 +46,7 @@ bool Use(bool Pickup)
 	Powerup Pw = Spawn(PowerupType);
 	if (EffectTime)
 	{
-		Pw.DurationTime = EffectTime;
+		Pw.EffectTime = EffectTime;
 	}
 	if (Mode)
 	{

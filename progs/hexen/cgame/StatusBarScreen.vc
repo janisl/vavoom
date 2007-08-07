@@ -720,8 +720,8 @@ void SB_DrawIcons()
 
 	// Defensive power
 	Powerup Pw = Powerup(EntityEx(cl.MO).FindInventory(PowerInvulnerable));
-	if (Pw && (Pw.DurationTime > Player::BLINKTHRESHOLD ||
-		!(ftoi(Pw.DurationTime * 35.0) & 16)))
+	if (Pw && (Pw.EffectTime > Player::BLINKTHRESHOLD ||
+		!(ftoi(Pw.EffectTime * 35.0) & 16)))
 	{
 		R_DrawPic(580, 19, pic_shld[(ClGame.GLevel.TicTime / 3) & 15]);
 	}

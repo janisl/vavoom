@@ -78,5 +78,5 @@ void EndEffect()
 
 defaultproperties
 {
-	DurationTime = 30.0;
+	EffectTime = 30.0;
 }

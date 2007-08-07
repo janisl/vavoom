@@ -30,7 +30,7 @@
 class Powerup : Inventory
 	abstract;
 
-float			DurationTime;
+float			EffectTime;
 name			Mode;
 
 //==========================================================================
@@ -47,6 +47,31 @@ void Destroyed()
 
 //==========================================================================
 //
+//	Tick
+//
+//==========================================================================
+
+void Tick(float DeltaTime)
+{
+	//	Powerup cannot exist without an owner.
+	if (!Owner)
+	{
+		Destroy();
+		return;
+	}
+
+	if (EffectTime > 0.0)
+	{
+		EffectTime -= DeltaTime;
+		if (EffectTime <= 0.0)
+		{
+			Destroy();
+		}
+	}
+}
+
+//==========================================================================
+//
 //	HandlePickup
 //
 //==========================================================================
@@ -57,22 +82,22 @@ bool HandlePickup(Inventory Item)
 	{
 		Powerup Pow = Powerup(Item);
 		//	Permanent powerups can be always picked up.
-		if (!Pow.DurationTime)
+		if (!Pow.EffectTime)
 		{
 			Item.bPickupGood = true;
 			return true;
 		}
 		//	Don't pick it up if not yet blinking unless it should always be
 		// picked up.
-		if (DurationTime > PlayerEx::BLINKTHRESHOLD && !Item.bAlwaysPickup)
+		if (EffectTime > PlayerEx::BLINKTHRESHOLD && !Item.bAlwaysPickup)
 		{
 			//	Already have it.
 			return true;
 		}
 		//	Only increase effect time.
-		if (DurationTime < Pow.DurationTime)
+		if (EffectTime < Pow.EffectTime)
 		{
-			DurationTime = Pow.DurationTime;
+			EffectTime = Pow.EffectTime;
 		}
 		Item.bPickupGood = true;
 		return true;
@@ -125,6 +150,10 @@ defaultproperties
 
 //	A temporary class for non-converted powerups.
 class DummyPowerup : Powerup;
+
+void Tick(float DeltaTime)
+{
+}
 
 defaultproperties
 {

@@ -712,27 +712,27 @@ bool GivePower(int power)
 
 	if (power == pw_invisibility)
 	{
-		Powers[power].DurationTime = INVISTIME;
+		Powers[power].EffectTime = INVISTIME;
 		MO.Alpha = 0.1;
 		return true;
 	}
 
 	if (power == pw_infrared)
 	{
-		Powers[power].DurationTime = INFRATIME;
+		Powers[power].EffectTime = INFRATIME;
 		return true;
 	}
 
 	if (power == pw_ironfeet)
 	{
-		Powers[power].DurationTime = IRONTIME;
+		Powers[power].EffectTime = IRONTIME;
 		return true;
 	}
 
 	if (power == pw_strength)
 	{
 		GiveBody(100, MAXHEALTH);
-		Powers[power].DurationTime = 1.0;
+		Powers[power].EffectTime = 1.0;
 		if (!Fist(ReadyWeapon))
 		{
 			PendingWeapon = Weapon(EntityEx(MO).FindInventory(Fist));
@@ -740,10 +740,10 @@ bool GivePower(int power)
 		return true;
 	}
 
-	if (Powers[power].DurationTime)
+	if (Powers[power].EffectTime)
 		return false;	// already got it
 
-	Powers[power].DurationTime = 1.0;
+	Powers[power].EffectTime = 1.0;
 	return true;
 }
 
@@ -1537,23 +1537,12 @@ void PlayerTick(float deltaTime)
 
 	//  Strength counts up to diminish fade.
 	if (Powers[pw_strength])
-		Powers[pw_strength].DurationTime += deltaTime;
-
-	PowerInvulnerable Pw = PowerInvulnerable(EntityEx(MO).FindInventory(
-		PowerInvulnerable));
-	if (Pw)
-	{
-		Pw.DurationTime -= deltaTime;
-		if (Pw.DurationTime <= 0.0)
-		{
-			Pw.Destroy();
-		}
-	}
+		Powers[pw_strength].EffectTime += deltaTime;
 
 	if (Powers[pw_invisibility])
 	{
-		Powers[pw_invisibility].DurationTime -= deltaTime;
-		if (Powers[pw_invisibility].DurationTime <= 0.0)
+		Powers[pw_invisibility].EffectTime -= deltaTime;
+		if (Powers[pw_invisibility].EffectTime <= 0.0)
 		{
 			Powers[pw_invisibility].Destroy();
 			Powers[pw_invisibility] = none;
@@ -1563,8 +1552,8 @@ void PlayerTick(float deltaTime)
 
 	if (Powers[pw_infrared])
 	{
-		Powers[pw_infrared].DurationTime -= deltaTime;
-		if (Powers[pw_infrared].DurationTime <= 0.0)
+		Powers[pw_infrared].EffectTime -= deltaTime;
+		if (Powers[pw_infrared].EffectTime <= 0.0)
 		{
 			Powers[pw_infrared].Destroy();
 			Powers[pw_infrared] = none;
@@ -1573,8 +1562,8 @@ void PlayerTick(float deltaTime)
 
 	if (Powers[pw_ironfeet])
 	{
-		Powers[pw_ironfeet].DurationTime -= deltaTime;
-		if (Powers[pw_ironfeet].DurationTime <= 0.0)
+		Powers[pw_ironfeet].EffectTime -= deltaTime;
+		if (Powers[pw_ironfeet].EffectTime <= 0.0)
 		{
 			Powers[pw_ironfeet].Destroy();
 			Powers[pw_ironfeet] = none;
@@ -1612,15 +1601,15 @@ void PlayerTick(float deltaTime)
 		PowerInvulnerable));
 	if (Invul)
 	{
-		if (Invul.DurationTime > 4.0 || (ftoi(4.0 * Invul.DurationTime) & 1))
+		if (Invul.EffectTime > 4.0 || (ftoi(4.0 * Invul.EffectTime) & 1))
 			FixedColourmap = INVERSECOLOURMAP;
 		else
 			FixedColourmap = 0;
 	}
 	else if (Powers[pw_infrared])
 	{
-		if (Powers[pw_infrared].DurationTime > 4.0 ||
-			(ftoi(4.0 * Powers[pw_infrared].DurationTime) & 1))
+		if (Powers[pw_infrared].EffectTime > 4.0 ||
+			(ftoi(4.0 * Powers[pw_infrared].EffectTime) & 1))
 		{
 			// almost full bright
 			FixedColourmap = 1;
@@ -1703,7 +1692,7 @@ void PaletteFlash()
 	if (Powers[pw_strength])
 	{
 		// slowly fade the berzerk out
-		int Amount = 12 - ftoi(Powers[pw_strength].DurationTime / 2.0);
+		int Amount = 12 - ftoi(Powers[pw_strength].EffectTime / 2.0);
 		if (Amount > 0)
 		{
 			Amount = (Amount + 7) >> 3;
@@ -1712,8 +1701,8 @@ void PaletteFlash()
 	}
 
 	CShifts[CSHIFT_Power] = 0;
-	if (Powers[pw_ironfeet] && (Powers[pw_ironfeet].DurationTime > 4.0 ||
-		ftoi(4.0 * Powers[pw_ironfeet].DurationTime) & 1))
+	if (Powers[pw_ironfeet] && (Powers[pw_ironfeet].EffectTime > 4.0 ||
+		ftoi(4.0 * Powers[pw_ironfeet].EffectTime) & 1))
 	{
 		CShifts[CSHIFT_Power] = RGBA(0, 255, 0, 32);
 	}

@@ -633,33 +633,33 @@ bool GivePower(int power)
 
 	if (power == pw_weaponlevel2)
 	{
-		if (Powers[power].DurationTime > BLINKTHRESHOLD)
+		if (Powers[power].EffectTime > BLINKTHRESHOLD)
 		{
 			// Already have it
 			return false;
 		}
-		Powers[power].DurationTime = WPNLEV2TIME;
+		Powers[power].EffectTime = WPNLEV2TIME;
 		return true;
 	}
 	if (power == pw_invisibility)
 	{
-		if (Powers[power].DurationTime > BLINKTHRESHOLD)
+		if (Powers[power].EffectTime > BLINKTHRESHOLD)
 		{
 			// Already have it
 			return false;
 		}
-		Powers[power].DurationTime = INVISTIME;
+		Powers[power].EffectTime = INVISTIME;
 		MO.Alpha = 0.666;
 		return true;
 	}
 	if (power == pw_flight)
 	{
-		if (Powers[power].DurationTime > BLINKTHRESHOLD)
+		if (Powers[power].EffectTime > BLINKTHRESHOLD)
 		{
 			// Already have it
 			return false;
 		}
-		Powers[power].DurationTime = FLIGHTTIME;
+		Powers[power].EffectTime = FLIGHTTIME;
 		MO.bFly = true;
 		MO.bNoGravity = true;
 		if (MO.Origin.z <= MO.FloorZ)
@@ -670,19 +670,19 @@ bool GivePower(int power)
 	}
 	if (power == pw_infrared)
 	{
-		if (Powers[power].DurationTime > BLINKTHRESHOLD)
+		if (Powers[power].EffectTime > BLINKTHRESHOLD)
 		{
 			// Already have it
 			return false;
 		}
-		Powers[power].DurationTime = INFRATIME;
+		Powers[power].EffectTime = INFRATIME;
 		return true;
 	}
-	if (Powers[power].DurationTime)
+	if (Powers[power].EffectTime)
 	{
 		return false;	// already got it
 	}
-	Powers[power].DurationTime = 1.0;
+	Powers[power].EffectTime = 1.0;
 	return true;
 }
 
@@ -1908,20 +1908,10 @@ void PlayerTick(float deltaTime)
 
 	// Counters, time dependend power ups.
 
-	Powerup Pw = Powerup(EntityEx(MO).FindInventory(PowerInvulnerable));
-	if (Pw)
-	{
-		Pw.DurationTime -= deltaTime;
-		if (Pw.DurationTime <= 0.0)
-		{
-			Pw.Destroy();
-		}
-	}
-
 	if (Powers[pw_invisibility])
 	{
-		Powers[pw_invisibility].DurationTime -= deltaTime;
-		if (Powers[pw_invisibility].DurationTime <= 0.0)
+		Powers[pw_invisibility].EffectTime -= deltaTime;
+		if (Powers[pw_invisibility].EffectTime <= 0.0)
 		{
 			Powers[pw_invisibility].Destroy();
 			Powers[pw_invisibility] = none;
@@ -1931,8 +1921,8 @@ void PlayerTick(float deltaTime)
 
 	if (Powers[pw_infrared])
 	{
-		Powers[pw_infrared].DurationTime -= deltaTime;
-		if (Powers[pw_infrared].DurationTime <= 0.0)
+		Powers[pw_infrared].EffectTime -= deltaTime;
+		if (Powers[pw_infrared].EffectTime <= 0.0)
 		{
 			Powers[pw_infrared].Destroy();
 			Powers[pw_infrared] = none;
@@ -1941,8 +1931,8 @@ void PlayerTick(float deltaTime)
 
 	if (Powers[pw_flight])
 	{
-		Powers[pw_flight].DurationTime -= deltaTime;
-		if (Powers[pw_flight].DurationTime <= 0.0)
+		Powers[pw_flight].EffectTime -= deltaTime;
+		if (Powers[pw_flight].EffectTime <= 0.0)
 		{
 			Powers[pw_flight].Destroy();
 			Powers[pw_flight] = none;
@@ -1958,8 +1948,8 @@ void PlayerTick(float deltaTime)
 
 	if (Powers[pw_weaponlevel2])
 	{
-		Powers[pw_weaponlevel2].DurationTime -= deltaTime;
-		if (Powers[pw_weaponlevel2].DurationTime <= 0.0)
+		Powers[pw_weaponlevel2].EffectTime -= deltaTime;
+		if (Powers[pw_weaponlevel2].EffectTime <= 0.0)
 		{
 			Powers[pw_weaponlevel2].Destroy();
 			Powers[pw_weaponlevel2] = none;
@@ -1995,20 +1985,20 @@ void PlayerTick(float deltaTime)
 	}
 
 	// Handling colourmaps.
-	Pw = Powerup(EntityEx(MO).FindInventory(PowerInvulnerable));
+	Powerup Pw = Powerup(EntityEx(MO).FindInventory(PowerInvulnerable));
 	if (Pw)
 	{
-		if (Pw.DurationTime > 4.0 ||
-			(ftoi(4.0 * Pw.DurationTime) & 1))
+		if (Pw.EffectTime > 4.0 ||
+			(ftoi(4.0 * Pw.EffectTime) & 1))
 			FixedColourmap = INVERSECOLOURMAP;
 		else
 			FixedColourmap = 0;
 	}
 	else if (Powers[pw_infrared])
 	{
-		if (Powers[pw_infrared].DurationTime <= BLINKTHRESHOLD)
+		if (Powers[pw_infrared].EffectTime <= BLINKTHRESHOLD)
 		{
-			if (ftoi(4.0 * Powers[pw_infrared].DurationTime) & 1)
+			if (ftoi(4.0 * Powers[pw_infrared].EffectTime) & 1)
 			{
 				FixedColourmap = 0;
 			}
@@ -2150,16 +2140,16 @@ void SetViewPos()
 		SBFlags |= HereticDefs::SBF_GOD_MODE;
 	if (Powers[pw_flight])
 	{
-		if (Powers[pw_flight].DurationTime > BLINKTHRESHOLD ||
-			!(ftoi(2.0 * Powers[pw_flight].DurationTime) & 1))
+		if (Powers[pw_flight].EffectTime > BLINKTHRESHOLD ||
+			!(ftoi(2.0 * Powers[pw_flight].EffectTime) & 1))
 		{
 			SBFlags |= HereticDefs::SBF_POWER_FLIGHT;
 		}
 	}
 	if (Powers[pw_weaponlevel2] && !ChickenTime)
 	{
-		if (Powers[pw_weaponlevel2].DurationTime > BLINKTHRESHOLD ||
-			!(ftoi(2.0 * Powers[pw_weaponlevel2].DurationTime) & 1))
+		if (Powers[pw_weaponlevel2].EffectTime > BLINKTHRESHOLD ||
+			!(ftoi(2.0 * Powers[pw_weaponlevel2].EffectTime) & 1))
 		{
 			SBFlags |= HereticDefs::SBF_POWER_BOOK;
 		}

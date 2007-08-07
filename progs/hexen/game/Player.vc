@@ -817,12 +817,12 @@ bool GivePower(int power)
 
 	if (power == pw_flight)
 	{
-		if (Powers[power].DurationTime > BLINKTHRESHOLD)
+		if (Powers[power].EffectTime > BLINKTHRESHOLD)
 		{
 			// Already have it
 			return false;
 		}
-		Powers[power].DurationTime = FLIGHTTIME;
+		Powers[power].EffectTime = FLIGHTTIME;
 		MO.bFly = true;
 		MO.bNoGravity = true;
 		if (MO.Origin.z <= MO.FloorZ)
@@ -833,35 +833,35 @@ bool GivePower(int power)
 	}
 	if (power == pw_infrared)
 	{
-		if (Powers[power].DurationTime > BLINKTHRESHOLD)
+		if (Powers[power].EffectTime > BLINKTHRESHOLD)
 		{
 			// Already have it
 			return false;
 		}
-		Powers[power].DurationTime = INFRATIME;
+		Powers[power].EffectTime = INFRATIME;
 		return true;
 	}
 	if (power == pw_speed)
 	{
-		if (Powers[power].DurationTime > BLINKTHRESHOLD)
+		if (Powers[power].EffectTime > BLINKTHRESHOLD)
 		{
 			// Already have it
 			return false;
 		}
-		Powers[power].DurationTime = SPEEDTIME;
+		Powers[power].EffectTime = SPEEDTIME;
 		return true;
 	}
 	if (power == pw_minotaur)
 	{
 		// Doesn't matter if already have power, renew ticker
-		Powers[power].DurationTime = Actor::MAULATORTIME;
+		Powers[power].EffectTime = Actor::MAULATORTIME;
 		return true;
 	}
-	if (Powers[power].DurationTime)
+	if (Powers[power].EffectTime)
 	{
 		return false;	// already got it
 	}
-	Powers[power].DurationTime = 1.0;
+	Powers[power].EffectTime = 1.0;
 	return true;
 }
 
@@ -2309,17 +2309,12 @@ void PlayerTick(float deltaTime)
 				MO.Alpha = 1.0;
 			}
 		}
-		Pw.DurationTime -= deltaTime;
-		if (Pw.DurationTime <= 0.0)
-		{
-			Pw.Destroy();
-		}
 	}
 
 	if (Powers[pw_minotaur])
 	{
-		Powers[pw_minotaur].DurationTime -= deltaTime;
-		if (Powers[pw_minotaur].DurationTime <= 0.0)
+		Powers[pw_minotaur].EffectTime -= deltaTime;
+		if (Powers[pw_minotaur].EffectTime <= 0.0)
 		{
 			Powers[pw_minotaur].Destroy();
 			Powers[pw_minotaur] = none;
@@ -2328,8 +2323,8 @@ void PlayerTick(float deltaTime)
 
 	if (Powers[pw_infrared])
 	{
-		Powers[pw_infrared].DurationTime -= deltaTime;
-		if (Powers[pw_infrared].DurationTime <= 0.0)
+		Powers[pw_infrared].EffectTime -= deltaTime;
+		if (Powers[pw_infrared].EffectTime <= 0.0)
 		{
 			Powers[pw_infrared].Destroy();
 			Powers[pw_infrared] = none;
@@ -2338,8 +2333,8 @@ void PlayerTick(float deltaTime)
 
 	if (Powers[pw_speed])
 	{
-		Powers[pw_speed].DurationTime -= deltaTime;
-		if (Powers[pw_speed].DurationTime <= 0.0)
+		Powers[pw_speed].EffectTime -= deltaTime;
+		if (Powers[pw_speed].EffectTime <= 0.0)
 		{
 			Powers[pw_speed].Destroy();
 			Powers[pw_speed] = none;
@@ -2348,8 +2343,8 @@ void PlayerTick(float deltaTime)
 
 	if (Powers[pw_flight] && Level.Game.netgame)
 	{
-		Powers[pw_flight].DurationTime -= deltaTime;
-		if (Powers[pw_flight].DurationTime <= 0.0)
+		Powers[pw_flight].EffectTime -= deltaTime;
+		if (Powers[pw_flight].EffectTime <= 0.0)
 		{
 			Powers[pw_flight].Destroy();
 			Powers[pw_flight] = none;
@@ -2403,9 +2398,9 @@ void PlayerTick(float deltaTime)
 	// Handling colourmaps.
 	if (Powers[pw_infrared])
 	{
-		if (Powers[pw_infrared].DurationTime <= BLINKTHRESHOLD)
+		if (Powers[pw_infrared].EffectTime <= BLINKTHRESHOLD)
 		{
-			if (ftoi(Powers[pw_infrared].DurationTime * 35.0) & 8)
+			if (ftoi(Powers[pw_infrared].EffectTime * 35.0) & 8)
 			{
 				FixedColourmap = 0;
 			}
@@ -2560,24 +2555,24 @@ void SetViewPos()
 	SBFlags = 0;
 	if (Powers[pw_flight])
 	{
-		if (Powers[pw_flight].DurationTime > BLINKTHRESHOLD ||
-			!(ftoi(Powers[pw_flight].DurationTime * 35.0) & 16))
+		if (Powers[pw_flight].EffectTime > BLINKTHRESHOLD ||
+			!(ftoi(Powers[pw_flight].EffectTime * 35.0) & 16))
 		{
 			SBFlags |= HexenDefs::SBF_POWER_FLIGHT;
 		}
 	}
 	if (Powers[pw_speed])
 	{
-		if (Powers[pw_speed].DurationTime > BLINKTHRESHOLD ||
-			!(ftoi(Powers[pw_speed].DurationTime * 35.0) & 16))
+		if (Powers[pw_speed].EffectTime > BLINKTHRESHOLD ||
+			!(ftoi(Powers[pw_speed].EffectTime * 35.0) & 16))
 		{
 			SBFlags |= HexenDefs::SBF_POWER_SPEED;
 		}
 	}
 	if (Powers[pw_minotaur])
 	{
-		if (Powers[pw_minotaur].DurationTime > BLINKTHRESHOLD ||
-			!(ftoi(Powers[pw_minotaur].DurationTime * 35.0) & 16))
+		if (Powers[pw_minotaur].EffectTime > BLINKTHRESHOLD ||
+			!(ftoi(Powers[pw_minotaur].EffectTime * 35.0) & 16))
 		{
 			SBFlags |= HexenDefs::SBF_POWER_MINOTAUR;
 		}
