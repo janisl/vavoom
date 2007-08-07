@@ -1,4 +1,7 @@
-SUBDIRS = acc fixmd2 glbsp glvis vcc vlaunch vlumpy
+SUBDIRS = acc fixmd2 glbsp glvis vcc vlumpy
+if LAUNCHER
+SUBDIRS += vlaunch
+endif
 EXTRA_DIST = \
 	editing/acs/strfhelp.acs \
 	editing/acs/stspec.acs \

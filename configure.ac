@@ -49,6 +49,7 @@ AC_PROG_CPP
 AC_PROG_RANLIB
 AC_PROG_INSTALL
 AM_PROG_AS
+AC_PROG_AWK
 
 if test "x$AR" = "x"; then
 	AR="ar"
@@ -145,19 +146,13 @@ AC_ARG_WITH(wx-config,
 
 wxversion=0
 
-AC_DEFUN([WXTEST],
-[
-	AC_REQUIRE([AC_PROG_AWK])
-	AC_MSG_CHECKING([wxWidgets version])
-	if wxversion=`$WXCONFIG --version`; then
-		AC_MSG_RESULT([$wxversion])
-	else
-		AC_MSG_RESULT([not found])
-		AC_MSG_ERROR([wxWidgets is required. Try --with-wx-config.])
-	fi])
-
-# Call WXTEST func
-WXTEST
+AC_MSG_CHECKING([wxWidgets version])
+if wxversion=`$WXCONFIG --version`; then
+	AC_MSG_RESULT([$wxversion])
+else
+	AC_MSG_RESULT([not found])
+	AC_MSG_ERROR([wxWidgets is required. Try --with-wx-config or --disable-launcher.])
+fi
 
 # Verify minimus requires
 vers=`echo $wxversion | $AWK 'BEGIN { FS = "."; } { printf "% d", ($1 * 1000 + $2) * 1000 + $3;}'`
@@ -617,6 +612,7 @@ AM_CONDITIONAL(MAIN_VORBIS, test x$MAIN_VORBIS = xTRUE)
 AM_CONDITIONAL(MAIN_MP3, test x$MAIN_MP3 = xTRUE)
 AM_CONDITIONAL(MAIN_MIKMOD, test x$MAIN_MIKMOD = xTRUE)
 AM_CONDITIONAL(MAIN_FLAC, test x$MAIN_FLAC = xTRUE)
+AM_CONDITIONAL(LAUNCHER, test "x$enable_launcher" != "xno")
 
 dnl
 dnl  **** Build and instalation targets ****
