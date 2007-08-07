@@ -47,7 +47,36 @@ void InitEffect()
 	}
 }
 
+//==========================================================================
+//
+//	EndEffect
+//
+//==========================================================================
+
+void EndEffect()
+{
+	if (!Owner)
+	{
+		return;
+	}
+
+	EntityEx(Owner).bInvulnerable = false;
+	if (Mode == 'Reflective')
+	{
+		EntityEx(Owner).bReflective = false;
+	}
+	else if (Mode == 'Ghost')
+	{
+		EntityEx(Owner).bNonShootable = false;
+		Owner.Alpha = 1.0;
+	}
+	else if (Mode == 'Initial')
+	{
+		Owner.Alpha = 1.0;
+	}
+}
+
 defaultproperties
 {
-	DurationTime = PlayerEx::INVULNTIME;
+	DurationTime = 30.0;
 }

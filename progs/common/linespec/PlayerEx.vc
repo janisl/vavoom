@@ -36,8 +36,6 @@ const float USERANGE		= 64.0;
 
 const float BLINKTHRESHOLD	= 4.0;
 
-const float INVULNTIME		= 30.0;
-
 // For screen flashing (red or bright).
 float			DamageFlash;
 float			BonusFlash;

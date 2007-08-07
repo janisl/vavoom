@@ -2313,13 +2313,6 @@ void PlayerTick(float deltaTime)
 		if (Pw.DurationTime <= 0.0)
 		{
 			Pw.Destroy();
-			Actor(MO).bInvulnerable = false;
-			Actor(MO).bReflective = false;
-			if (PClass == HexenDefs::PCLASS_CLERIC)
-			{
-				Actor(MO).bNonShootable = false;
-				MO.Alpha = 1.0;
-			}
 		}
 	}
 

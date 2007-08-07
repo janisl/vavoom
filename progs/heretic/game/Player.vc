@@ -1915,7 +1915,6 @@ void PlayerTick(float deltaTime)
 		if (Pw.DurationTime <= 0.0)
 		{
 			Pw.Destroy();
-			EntityEx(MO).bInvulnerable = false;
 		}
 	}
 
