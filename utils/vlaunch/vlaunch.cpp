@@ -30,6 +30,7 @@
 #include "wx/wx.h"
 #endif
 #include "wx/config.h"
+#include "wx/notebook.h"
 
 // MACROS ------------------------------------------------------------------
 
@@ -121,12 +122,17 @@ VMain::VMain()
 : wxFrame(NULL, wxID_ANY, wxT("Vavoom launcher"), wxDefaultPosition, wxDefaultSize,
 	wxDEFAULT_FRAME_STYLE & ~ (wxRESIZE_BORDER | wxRESIZE_BOX | wxMAXIMIZE_BOX))
 {
-	SetClientSize(447, 314);
+	SetClientSize(447, 364);
 	wxPanel* panel = new wxPanel(this);
 
 	new wxStaticBitmap(panel, -1, wxBitmap(vavoom_xpm), wxPoint(0, 0), wxSize(447, 105));
 
-	new wxStaticText(panel, -1, wxT("Game:"), wxPoint(24, 240), wxSize(31, 13));
+	wxNotebook* nbook = new wxNotebook(panel, -1, wxPoint(0, 105), wxSize(447, 229));
+
+	wxPanel* page = new wxPanel(nbook);
+	nbook->AddPage(page, wxT("Main"));
+
+	new wxStaticText(page, -1, wxT("Game:"), wxPoint(24, 130), wxSize(31, 13));
 	wxString GameChoices[8];
 	GameChoices[0] = wxT("(Autodetect)");
 	GameChoices[1] = wxT("Doom");
@@ -136,16 +142,16 @@ VMain::VMain()
 	GameChoices[5] = wxT("Heretic");
 	GameChoices[6] = wxT("Hexen");
 	GameChoices[7] = wxT("Strife");
-	Game = new wxComboBox(panel, -1, GameChoices[0], wxPoint(56, 240), wxSize(97, 21), 8, GameChoices, wxCB_READONLY);
+	Game = new wxComboBox(page, -1, GameChoices[0], wxPoint(56, 130), wxSize(97, 21), 8, GameChoices, wxCB_READONLY);
 
-	new wxStaticText(panel, -1, wxT("Renderer:"), wxPoint(8, 264), wxSize(47, 13));
+	new wxStaticText(page, -1, wxT("Renderer:"), wxPoint(8, 154), wxSize(47, 13));
 	wxString RendChoices[3];
 	RendChoices[0] = wxT("Software");
 	RendChoices[1] = wxT("OpenGL");
 	RendChoices[2] = wxT("Direct3D");
-	RendererBox = new wxComboBox(panel, -1, RendChoices[0], wxPoint(56, 264), wxSize(97, 21), 3, RendChoices, wxCB_READONLY);
+	RendererBox = new wxComboBox(page, -1, RendChoices[0], wxPoint(56, 154), wxSize(97, 21), 3, RendChoices, wxCB_READONLY);
 
-	wxPanel* grp = new wxPanel(panel, 8, 112, 129, 121);
+	wxPanel* grp = new wxPanel(page, 3, 2, 129, 121);
 	new wxStaticBox(grp, -1, wxT("Sound"), wxPoint(0, 0), wxSize(129, 121));
 	CheckBoxNoSound = new wxCheckBox(grp, -1, wxT("Disable all sound"), wxPoint(8, 16), wxSize(105, 17));
 	CheckBoxNoSfx = new wxCheckBox(grp, -1, wxT("No sounds"), wxPoint(8, 32), wxSize(105, 17));
@@ -154,7 +160,7 @@ VMain::VMain()
 	CheckBoxNoCDAudio = new wxCheckBox(grp, -1, wxT("No CD audio"), wxPoint(8, 80), wxSize(105, 17));
 	CheckBoxUseOpenAL = new wxCheckBox(grp, -1, wxT("Use OpenAL"), wxPoint(8, 96), wxSize(97, 17));
 
-	grp = new wxPanel(panel, 144, 112, 161, 105);
+	grp = new wxPanel(page, 139, 2, 161, 105);
 	new wxStaticBox(grp, -1, wxT("Network"), wxPoint(0, 0), wxSize(161, 105));
 	CheckBoxNoLan = new wxCheckBox(grp, -1, wxT("Disable all LAN drivers"), wxPoint(8, 16), wxSize(129, 17));
 	CheckBoxNoUDP = new wxCheckBox(grp, -1, wxT("Disable TCP/IP driver"), wxPoint(8, 32), wxSize(129, 17));
@@ -164,27 +170,27 @@ VMain::VMain()
 	new wxStaticText(grp, -1, wxT("Port:"), wxPoint(112, 64), wxSize(22, 13));
 	EditPort = new wxTextCtrl(grp, -1, wxT(""), wxPoint(112, 80), wxSize(41, 21));
 
-	grp = new wxPanel(panel, 312, 112, 129, 57);
+	grp = new wxPanel(page, 307, 2, 129, 57);
 	new wxStaticBox(grp, -1, wxT("Input"), wxPoint(0, 0), wxSize(129, 57));
 	CheckBoxNoMouse = new wxCheckBox(grp, -1, wxT("Disable mouse"), wxPoint(8, 16), wxSize(97, 17));
 	CheckBoxNoJoy = new wxCheckBox(grp, -1, wxT("Disable joystick"), wxPoint(8, 32), wxSize(97, 17));
 
-	grp = new wxPanel(panel, 312, 176, 129, 41);
+	grp = new wxPanel(page, 307, 66, 129, 41);
 	new wxStaticBox(grp, -1, wxT("Misc"), wxPoint(0, 0), wxSize(129, 41));
 	CheckBoxDebug = new wxCheckBox(grp, -1, wxT("Create debug file"), wxPoint(8, 16), wxSize(105, 17));
 
-	new wxStaticText(panel, -1, wxT("Custom game:"), wxPoint(152, 224), wxSize(70, 13));
-	EditGame = new wxTextCtrl(panel, -1, wxT(""), wxPoint(224, 224), wxSize(97, 21));
-	CheckBoxDevGame = new wxCheckBox(panel, -1, wxT("Development mode"), wxPoint(328, 224), wxSize(113, 17));
-	new wxStaticText(panel, -1, wxT("Files:"), wxPoint(160, 248), wxSize(24, 13));
-	EditFiles = new wxTextCtrl(panel, -1, wxT(""), wxPoint(184, 248), wxSize(185, 21));
-	new wxStaticText(panel, -1, wxT("Progs:"), wxPoint(8, 288), wxSize(30, 13));
-	EditProgs = new wxTextCtrl(panel, -1, wxT(""), wxPoint(40, 288), wxSize(113, 21));
-	new wxStaticText(panel, -1, wxT("Other options:"), wxPoint(160, 272), wxSize(66, 13));
-	EditMisc = new wxTextCtrl(panel, -1, wxT(""), wxPoint(160, 288), wxSize(209, 21));
+	new wxStaticText(page, -1, wxT("Custom game:"), wxPoint(152, 114), wxSize(70, 13));
+	EditGame = new wxTextCtrl(page, -1, wxT(""), wxPoint(224, 114), wxSize(97, 21));
+	CheckBoxDevGame = new wxCheckBox(page, -1, wxT("Development mode"), wxPoint(328, 114), wxSize(113, 17));
+	new wxStaticText(page, -1, wxT("Files:"), wxPoint(160, 138), wxSize(24, 13));
+	EditFiles = new wxTextCtrl(page, -1, wxT(""), wxPoint(184, 138), wxSize(185, 21));
+	new wxStaticText(page, -1, wxT("Progs:"), wxPoint(8, 178), wxSize(30, 13));
+	EditProgs = new wxTextCtrl(page, -1, wxT(""), wxPoint(40, 178), wxSize(113, 21));
+	new wxStaticText(page, -1, wxT("Other options:"), wxPoint(160, 162), wxSize(66, 13));
+	EditMisc = new wxTextCtrl(page, -1, wxT(""), wxPoint(160, 178), wxSize(209, 21));
 
-	new wxButton(panel, VLaunch_Run, wxT("Run"), wxPoint(376, 248), wxSize(65, 25));
-	new wxButton(panel, VLaunch_Exit, wxT("Exit"), wxPoint(376, 280), wxSize(65, 25));
+	new wxButton(panel, VLaunch_Run, wxT("Run"), wxPoint(306, 337), wxSize(65, 25));
+	new wxButton(panel, VLaunch_Exit, wxT("Exit"), wxPoint(376, 337), wxSize(65, 25));
 
 	//	Load saved settings.
 	wxConfigBase* Conf = wxConfigBase::Get();
