@@ -25,6 +25,12 @@
 
 class PowerInvulnerable : Powerup;
 
+// For cleric's invulnerability effect
+bool			bAltShadow;
+bool			bShadow;
+bool			bDontDraw;
+int				PrevTicTime;
+
 //==========================================================================
 //
 //	InitEffect
@@ -44,6 +50,155 @@ void InitEffect()
 	if (Mode == 'Reflective')
 	{
 		EntityEx(Owner).bReflective = true;
+	}
+}
+
+//==========================================================================
+//
+//	DoEffect
+//
+//==========================================================================
+
+void DoEffect()
+{
+	::DoEffect();
+
+	if (!Owner)
+	{
+		return;
+	}
+
+	int TicTime = ftoi(Level.XLevel.Time * 35.0);
+	if (TicTime == PrevTicTime)
+	{
+		return;
+	}
+	PrevTicTime = TicTime;
+
+	if (Mode == 'Ghost')
+	{
+		if (!(TicTime & 7) && bShadow && !bDontDraw)
+		{
+			bShadow = false;
+			if (!bAltShadow)
+			{
+				bDontDraw = true;
+				EntityEx(Owner).bNonShootable = true;
+			}
+		}
+		if (!(TicTime & 31))
+		{
+			if (bDontDraw)
+			{
+				if (!bShadow)
+				{
+					bShadow = true;
+					bAltShadow = true;
+				}
+				else
+				{
+					bDontDraw = false;
+					EntityEx(Owner).bNonShootable = false;
+				}
+			}
+			else
+			{
+				bShadow = true;
+				bAltShadow = false;
+			}
+		}
+		if (bDontDraw)
+		{
+			Owner.Alpha = 0.0;
+		}
+		else if (bShadow)
+		{
+			Owner.Alpha = 0.333;
+		}
+		else if (bAltShadow)
+		{
+			Owner.Alpha = 0.666;
+		}
+		else
+		{
+			Owner.Alpha = 1.0;
+		}
+	}
+
+	/*if (Mode == 'Ghost')
+	{
+		if (!(TicTime & 7) && Owner.Alpha > 0.0 && Owner.Alpha < 1.0)
+		{
+			if (Owner.Alpha == 0.666)
+			{
+				Owner.Alpha = 0.333;
+			}
+			else
+			{
+				Owner.Alpha = 0.0;
+				EntityEx(Owner).bNonShootable = true;
+			}
+		}
+		if (!(TicTime & 31))
+		{
+			if (Owner.Alpha == 0.0)
+			{
+				Owner.Alpha = 0.333;
+				EntityEx(Owner).bNonShootable = false;
+			}
+			else
+			{
+				Owner.Alpha = 0.666;
+			}
+		}
+	}*/
+
+	if (Mode == 'Initial')
+	{
+		if (!(TicTime & 1) && Owner.Alpha > 0.0 && Owner.Alpha < 1.0)
+		{
+			if (Owner.Alpha == 0.666)
+			{
+				Owner.Alpha = 0.333;
+			}
+			else
+			{
+				Owner.Alpha = 0.0;
+			}
+		}
+		if (!(TicTime & 2))
+		{
+			if (Owner.Alpha == 0.0)
+			{
+				Owner.Alpha = 0.333;
+			}
+			else
+			{
+				Owner.Alpha = 0.666;
+			}
+		}
+		if (!(TicTime & 3) && Owner.Alpha > 0.0 && Owner.Alpha < 1.0)
+		{
+			if (Owner.Alpha == 0.666)
+			{
+				Owner.Alpha = 0.333;
+			}
+			else
+			{
+				Owner.Alpha = 0.0;
+			}
+		}
+		if (!(TicTime & 4))
+		{
+			if (Owner.Alpha == 0.0)
+			{
+				Owner.Alpha = 0.333;
+			}
+			else
+			{
+				Owner.Alpha = 0.666;
+			}
+		}
 	}
 }
 

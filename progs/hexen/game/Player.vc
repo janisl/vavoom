@@ -62,11 +62,6 @@ int NewTorchDelta;
 int WeaponCShift;
 float MorphTime;	// player is a pig if > 0
 
-// For cleric's invulnerability effect
-bool bAltShadow;
-bool bShadow;
-bool bDontDraw;
-
 BotPlayer Bot;
 Inventory SavedInventory;
 
@@ -2256,60 +2251,6 @@ void PlayerTick(float deltaTime)
 	MovePsprites(deltaTime);
 
 	// Counters, time dependend power ups.
-
-	Powerup Pw = Powerup(EntityEx(MO).FindInventory(PowerInvulnerable));
-	if (Pw)
-	{
-		if (PClass == HexenDefs::PCLASS_CLERIC)
-		{
-			if (!(Level.XLevel.TicTime & 7) && bShadow && !bDontDraw)
-			{
-				bShadow = false;
-				if (!bAltShadow)
-				{
-					bDontDraw = true;
- 					Actor(MO).bNonShootable = true;
-				}
-			}
-			if (!(Level.XLevel.TicTime & 31))
-			{
-				if (bDontDraw)
-				{
-					if (!bShadow)
-					{
-						bShadow = true;
- 						bAltShadow = true;
-					}
-					else
-					{
-						bDontDraw = false;
- 						Actor(MO).bNonShootable = false;
-					}
-				}
-				else
-				{
-					bShadow = true;
-					bAltShadow = false;
-				}
-			}
-			if (bDontDraw)
-			{
-				MO.Alpha = 0.0;
-			}
-			else if (bShadow)
-			{
-				MO.Alpha = 0.333;
-			}
-			else if (bAltShadow)
-			{
-				MO.Alpha = 0.666;
-			}
-			else
-			{
-				MO.Alpha = 1.0;
-			}
-		}
-	}
 
 	if (Powers[pw_minotaur])
 	{

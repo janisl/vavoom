@@ -33,6 +33,12 @@ class Powerup : Inventory
 float			EffectTime;
 name			Mode;
 
+replication
+{
+	reliable if (Role == ROLE_Authority && bNetOwner)
+		EffectTime, Mode;
+}
+
 //==========================================================================
 //
 //	Destroyed

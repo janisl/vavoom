@@ -4935,6 +4935,14 @@ void NoBlockingSet()
 
 void Tick(float deltaTime)
 {
+	Inventory		Item;
+
+	//	Handle powerup effects.
+	for (Item = Inventory; Item && Item.Owner == self; Item = Item.Inventory)
+	{
+		Item.DoEffect();
+	}
+
 	if (!Physics(deltaTime))
 	{
 		return;
