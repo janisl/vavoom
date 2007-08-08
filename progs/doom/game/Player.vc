@@ -727,17 +727,6 @@ bool GivePower(int power)
 		return true;
 	}
 
-	if (power == pw_strength)
-	{
-		GiveBody(100, MAXHEALTH);
-		Powers[power].EffectTime = 1.0;
-		if (!Fist(ReadyWeapon))
-		{
-			PendingWeapon = Weapon(EntityEx(MO).FindInventory(Fist));
-		}
-		return true;
-	}
-
 	if (Powers[power].EffectTime)
 		return false;	// already got it
 
@@ -1533,10 +1522,6 @@ void PlayerTick(float deltaTime)
 
 	//  Counters, time dependend power ups.
 
-	//  Strength counts up to diminish fade.
-	if (Powers[pw_strength])
-		Powers[pw_strength].EffectTime += deltaTime;
-
 	if (Powers[pw_invisibility])
 	{
 		Powers[pw_invisibility].EffectTime -= deltaTime;
@@ -1676,15 +1661,10 @@ void PaletteFlash()
 	}
 
 	CShifts[CSHIFT_Berserk] = 0;
-	if (Powers[pw_strength])
+	Powerup Pw = Powerup(EntityEx(MO).FindInventory(PowerStrength));
+	if (Pw)
 	{
-		// slowly fade the berzerk out
-		int Amount = 12 - ftoi(Powers[pw_strength].EffectTime / 2.0);
-		if (Amount > 0)
-		{
-			Amount = (Amount + 7) >> 3;
-			CShifts[CSHIFT_Berserk] = RGBA(255, 0, 0, (Amount + 1) * 28);
-		}
+		CShifts[CSHIFT_Berserk] = Pw.GetBlend();
 	}
 
 	CShifts[CSHIFT_Power] = 0;
@@ -2300,7 +2280,7 @@ void Cheat_Gimme()
 	if (i1 & GIMME_INVULNERABILITY)
 		EntityEx(MO).GiveInventoryType(PowerInvulnerable);
 	if (i1 & GIMME_STRENGTH)
-		GivePower(pw_strength);
+		EntityEx(MO).GiveInventoryType(PowerStrength);
 	if (i1 & GIMME_INVISIBILITY)
 		GivePower(pw_invisibility);
 	if (i1 & GIMME_IRONFEET)

@@ -47,6 +47,7 @@ enum
 #include "Powerup.vc"
 #include "PowerupGiver.vc"
 #include "PowerInvulnerable.vc"
+#include "PowerStrength.vc"
 #include "PlayerEx.vc"
 
 #include "LineSpecialLevelInfo.vc"

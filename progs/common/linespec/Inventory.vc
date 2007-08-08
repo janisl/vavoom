@@ -73,6 +73,8 @@ bool			bIgnoreSkill;
 bool			bAutoActivate;
 //	For auto activate items always pick up the item, even if it wasn't used.
 bool			bAlwaysPickup;
+//	Keep powerup while travelingbetween levels in a hub
+bool			bHubPower;
 
 replication
 {
@@ -641,6 +643,17 @@ bool Use(bool Pickup)
 
 void DoEffect()
 {
+}
+
+//==========================================================================
+//
+//	GetBlend
+//
+//==========================================================================
+
+int GetBlend()
+{
+	return 0;
 }
 
 //==========================================================================

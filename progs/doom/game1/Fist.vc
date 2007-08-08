@@ -40,7 +40,7 @@ final void A_Punch()
 
 	damage = (P_Random() % 10 + 1) << 1;
 
-	if (Player(Owner.Player).Powers[pw_strength])
+	if (EntityEx(Owner).FindInventory(PowerStrength))
 		damage *= 10;
 
 	aimAngles = Owner.Angles;
