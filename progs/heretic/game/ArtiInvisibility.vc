@@ -23,20 +23,9 @@
 //**
 //**************************************************************************
 
-class ArtiInvisibility : Inventory
+class ArtiInvisibility : PowerupGiver
 	__mobjinfo__(75)
 	__scriptid__(135);
-
-//==========================================================================
-//
-//	Use
-//
-//==========================================================================
-
-bool Use(bool Pickup)
-{
-	return Player(Owner.Player).GivePower(pw_invisibility);
-}
 
 __states__
 {
@@ -46,14 +35,12 @@ __states__
 defaultproperties
 {
 	Alpha = 0.666;
-	MaxAmount = DefMaxAmount;
-	PickupSound = 'misc/p_pkup';
+	PowerupType = PowerGhost;
 	PickupMessage = "$txt_artiinvisibility";
 	IconName = 'artiinvs';
 	bCountItem = true;
 	bFloatBob = true;
 	bPickupFlash = true;
-	bInvBar = true;
 	bBigPowerup = true;
 	IdleState = S_ARTI_INVS1;
 }

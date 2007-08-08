@@ -27,7 +27,6 @@ class Player : PlayerEx;
 
 const float VIEWHEIGHT		= 41.0;
 
-const float INVISTIME		= 60.0;
 const float INFRATIME		= 120.0;
 const float IRONTIME		= 60.0;
 
@@ -706,13 +705,6 @@ bool GivePower(int power)
 	{
 		Powers[power] = Level.Spawn(DummyPowerup);
 		Powers[power].AttachToOwner(EntityEx(MO));
-	}
-
-	if (power == pw_invisibility)
-	{
-		Powers[power].EffectTime = INVISTIME;
-		MO.Alpha = 0.1;
-		return true;
 	}
 
 	if (power == pw_infrared)
@@ -1522,13 +1514,13 @@ void PlayerTick(float deltaTime)
 
 	//  Counters, time dependend power ups.
 
-	if (Powers[pw_invisibility])
+	Powerup Pw = Powerup(EntityEx(MO).FindInventory(PowerInvisibility));
+	if (Pw)
 	{
-		Powers[pw_invisibility].EffectTime -= deltaTime;
-		if (Powers[pw_invisibility].EffectTime <= 0.0)
+		Pw.EffectTime -= deltaTime;
+		if (Pw.EffectTime <= 0.0)
 		{
-			Powers[pw_invisibility].Destroy();
-			Powers[pw_invisibility] = none;
+			Pw.Destroy();
 			MO.Alpha = 1.0;
 		}
 	}
@@ -2282,7 +2274,7 @@ void Cheat_Gimme()
 	if (i1 & GIMME_STRENGTH)
 		EntityEx(MO).GiveInventoryType(PowerStrength);
 	if (i1 & GIMME_INVISIBILITY)
-		GivePower(pw_invisibility);
+		EntityEx(MO).GiveInventoryType(PowerInvisibility);
 	if (i1 & GIMME_IRONFEET)
 		GivePower(pw_ironfeet);
 	if (i1 & GIMME_INFRARED)

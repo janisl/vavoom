@@ -56,7 +56,10 @@ EXTRA_DIST = \
 	linespec/PolyobjMover.vc \
 	linespec/PolyobjRotator.vc \
 	linespec/PolyobjThinker.vc \
+	linespec/PowerGhost.vc \
+	linespec/PowerInvisibility.vc \
 	linespec/PowerInvulnerable.vc \
+	linespec/PowerShadow.vc \
 	linespec/PowerStrength.vc \
 	linespec/Powerup.vc \
 	linespec/PowerupGiver.vc \

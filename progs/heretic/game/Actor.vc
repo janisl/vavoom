@@ -287,10 +287,10 @@ bool ChickenMorphPlayer()
 	Player.MO = chicken;
 	Player(Player).ArmorPoints = 0;
 	Player(Player).ArmorType = 0;
-	if (Player(Player).Powers[pw_invisibility])
+	Powerup Pw = Powerup(FindInventory(PowerGhost));
+	if (Pw)
 	{
-		Player(Player).Powers[pw_invisibility].Destroy();
-		Player(Player).Powers[pw_invisibility] = none;
+		Pw.Destroy();
 	}
 	if (Player(Player).Powers[pw_weaponlevel2])
 	{

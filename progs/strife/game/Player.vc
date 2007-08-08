@@ -28,7 +28,6 @@ class Player : PlayerEx;
 const float VIEWHEIGHT		= 41.0;
 
 const float
-	INVISTIME		= 60.0,
 	INFRATIME		= 120.0,
 	IRONTIME		= 60.0;
 
@@ -426,9 +425,18 @@ void PlayerExitMap(bool clusterChange)
 	int i;
 	Inventory Item;
 
+	for (Item = EntityEx(MO).Inventory; Item; )
+	{
+		Inventory Next = Item.Inventory;
+		if (Powerup(Item) && Item.Class != DummyPowerup && !Item.bHubPower)
+		{
+			Item.Destroy();
+		}
+		Item = Next;
+	}
 	for (i = 0; i < NUMPOWERS; i++)
 	{
-		if (Powers[i] && i != pw_ironfeet && i != pw_invisibility)
+		if (Powers[i] && i != pw_ironfeet)
 		{
 			Powers[i].Destroy();
 			Powers[i] = none;
@@ -767,13 +775,6 @@ bool GivePower(int power)
 	{
 		Powers[power] = Level.Spawn(DummyPowerup);
 		Powers[power].AttachToOwner(EntityEx(MO));
-	}
-
-	if (power == pw_invisibility)
-	{
-		Powers[power].EffectTime = INVISTIME;
-		MO.Alpha = 0.1;
-		return true;
 	}
 
 	if (power == pw_infrared)
@@ -1649,13 +1650,13 @@ void PlayerTick(float deltaTime)
 
 	//  Counters, time dependend power ups.
 
-	if (Powers[pw_invisibility])
+	Powerup Pw = Powerup(EntityEx(MO).FindInventory(PowerShadow));
+	if (Pw)
 	{
-		Powers[pw_invisibility].EffectTime -= deltaTime;
-		if (Powers[pw_invisibility].EffectTime <= 0.0)
+		Pw.EffectTime -= deltaTime;
+		if (Pw.EffectTime <= 0.0)
 		{
-			Powers[pw_invisibility].Destroy();
-			Powers[pw_invisibility] = none;
+			Pw.Destroy();
 			MO.Alpha = 1.0;
 		}
 	}

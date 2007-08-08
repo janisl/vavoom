@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class BlurSphere : PowerupPickup
+class BlurSphere : PowerupGiver
 	__mobjinfo__(2024)
 	__scriptid__(135);
 
@@ -38,9 +38,12 @@ __states__
 defaultproperties
 {
 	Alpha = 0.666;
+	PowerupType = PowerInvisibility;
+	PickupMessage = "$gotinvis";
+	MaxAmount = 0;
 	bCountItem = true;
 	bBigPowerup = true;
+	bAutoActivate = true;
+	bAlwaysPickup = true;
 	IdleState = S_PINS;
-	PowerType = pw_invisibility;
-	PickupMessage = "$gotinvis";
 }

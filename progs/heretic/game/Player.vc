@@ -29,7 +29,6 @@ const int MAXCHICKENHEALTH	= 30;
 const float VIEWHEIGHT		= 41.0;
 
 const float
-	INVISTIME		= 60.0,
 	INFRATIME		= 120.0,
 	WPNLEV2TIME 	= 40.0,
 	FLIGHTTIME 		= 60.0,
@@ -636,17 +635,6 @@ bool GivePower(int power)
 			return false;
 		}
 		Powers[power].EffectTime = WPNLEV2TIME;
-		return true;
-	}
-	if (power == pw_invisibility)
-	{
-		if (Powers[power].EffectTime > BLINKTHRESHOLD)
-		{
-			// Already have it
-			return false;
-		}
-		Powers[power].EffectTime = INVISTIME;
-		MO.Alpha = 0.666;
 		return true;
 	}
 	if (power == pw_flight)
@@ -1905,13 +1893,13 @@ void PlayerTick(float deltaTime)
 
 	// Counters, time dependend power ups.
 
-	if (Powers[pw_invisibility])
+	Powerup Pw = Powerup(EntityEx(MO).FindInventory(PowerGhost));
+	if (Pw)
 	{
-		Powers[pw_invisibility].EffectTime -= deltaTime;
-		if (Powers[pw_invisibility].EffectTime <= 0.0)
+		Pw.EffectTime -= deltaTime;
+		if (Pw.EffectTime <= 0.0)
 		{
-			Powers[pw_invisibility].Destroy();
-			Powers[pw_invisibility] = none;
+			Pw.Destroy();
 			MO.Alpha = 1.0;
 		}
 	}

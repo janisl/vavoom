@@ -23,26 +23,19 @@
 //**
 //**************************************************************************
 
-class ShadowArmor : PowerupGiver
-	__mobjinfo__(2024)
-	__scriptid__(135);
+class PowerGhost : PowerInvisibility;
 
-__states__
+//==========================================================================
+//
+//	InitEffect
+//
+//==========================================================================
+
+void InitEffect()
 {
-	S_SHADOW_ARMOR1('SHD1', 0, 17.0 / 35.0, S_SHADOW_ARMOR2) = A_ClearShadow
-	S_SHADOW_ARMOR2('SHD1', 0, 17.0 / 35.0, S_SHADOW_ARMOR3) = A_BeShadowyFoe
-	S_SHADOW_ARMOR3('SHD1', 0, 17.0 / 35.0, S_SHADOW_ARMOR4) = A_SetShadow
-	S_SHADOW_ARMOR4('SHD1', 0, 17.0 / 35.0, S_SHADOW_ARMOR1) = A_BeShadowyFoe
+	Owner.Alpha = 0.666;
 }
 
 defaultproperties
 {
-	ConversationID = 160;
-	PowerupType = PowerShadow;
-	MaxAmount = 2;
-	PickupMessage = "$txt_shadowarmor";
-	PickupSound = 'misc/i_pkup';
-	IconName = 'i_shd1';
-	bFloorClip = true;
-	IdleState = S_SHADOW_ARMOR1;
 }
