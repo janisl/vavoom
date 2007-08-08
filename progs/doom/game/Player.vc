@@ -34,8 +34,6 @@ const float IRONTIME		= 60.0;
 // 16 pixels of bob
 const float MAXBOB			= 16.0;
 
-const int INVERSECOLOURMAP	= 32;
-
 const float ST_STRAIGHTFACETIME		= 0.5;
 const float ST_TURNTIME				= 1.0;
 const float ST_EVILGRINTIME			= 2.0;
@@ -1597,16 +1595,7 @@ void PlayerTick(float deltaTime)
 	}
 
 	// Handling colourmaps.
-	PowerInvulnerable Invul = PowerInvulnerable(EntityEx(MO).FindInventory(
-		PowerInvulnerable));
-	if (Invul)
-	{
-		if (Invul.EffectTime > 4.0 || (ftoi(4.0 * Invul.EffectTime) & 1))
-			FixedColourmap = INVERSECOLOURMAP;
-		else
-			FixedColourmap = 0;
-	}
-	else if (Powers[pw_infrared])
+	if (Powers[pw_infrared] && FixedColourmap != Inventory::INVERSECOLOURMAP)
 	{
 		if (Powers[pw_infrared].EffectTime > 4.0 ||
 			(ftoi(4.0 * Powers[pw_infrared].EffectTime) & 1))
@@ -1617,8 +1606,6 @@ void PlayerTick(float deltaTime)
 		else
 			FixedColourmap = 0;
 	}
-	else
-		FixedColourmap = 0;
 }
 
 //==========================================================================

@@ -98,6 +98,7 @@ class<EntityEx>	BloodClass;
 int				NonMonsterAngleIncrements;
 
 int				InvDefaultMaxAmount;
+int				DefaultInvulnBlendColour;
 
 //==========================================================================
 //

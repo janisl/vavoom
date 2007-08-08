@@ -33,6 +33,7 @@ class PowerupGiver : Inventory
 class<Powerup>	PowerupType;
 //	Non-0 to override powerup's default time.
 float			EffectTime;
+int				BlendColour;
 name			Mode;
 
 //==========================================================================
@@ -47,6 +48,10 @@ bool Use(bool Pickup)
 	if (EffectTime)
 	{
 		Pw.EffectTime = EffectTime;
+	}
+	if (BlendColour)
+	{
+		Pw.BlendColour = BlendColour;
 	}
 	if (Mode)
 	{

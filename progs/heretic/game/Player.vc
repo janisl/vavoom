@@ -38,9 +38,6 @@ const float
 // 16 pixels of bob
 const float MAXBOB	= 16.0;
 
-const int
-	INVERSECOLOURMAP	= 32;
-
 const int MAXHEALTH	= 100;
 
 int SBFlags;
@@ -1985,16 +1982,7 @@ void PlayerTick(float deltaTime)
 	}
 
 	// Handling colourmaps.
-	Powerup Pw = Powerup(EntityEx(MO).FindInventory(PowerInvulnerable));
-	if (Pw)
-	{
-		if (Pw.EffectTime > 4.0 ||
-			(ftoi(4.0 * Pw.EffectTime) & 1))
-			FixedColourmap = INVERSECOLOURMAP;
-		else
-			FixedColourmap = 0;
-	}
-	else if (Powers[pw_infrared])
+	if (Powers[pw_infrared] && FixedColourmap != Inventory::INVERSECOLOURMAP)
 	{
 		if (Powers[pw_infrared].EffectTime <= BLINKTHRESHOLD)
 		{
@@ -2031,8 +2019,6 @@ void PlayerTick(float deltaTime)
 			}
 		}
 	}
-	else
-		FixedColourmap = 0;
 }
 
 //==========================================================================

@@ -39,6 +39,11 @@ int				PrevTicTime;
 
 void InitEffect()
 {
+	if (!BlendColour)
+	{
+		BlendColour = LineSpecialGameInfo(
+			Level.Game).DefaultInvulnBlendColour;
+	}
 	//	If we don't have any specific mode, set it to the default of the
 	// player class.
 	if (!Mode)

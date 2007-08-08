@@ -1253,6 +1253,7 @@ defaultproperties
 	TeleportFogClass = TeleportFog;
 	DefaultKickBack = 150.0;
 	BloodClass = Blood;
+	DefaultInvulnBlendColour = Inventory::INVERSECOLOUR;
 
 	botskill = 2;
 

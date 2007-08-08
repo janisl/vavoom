@@ -152,7 +152,7 @@ final void A_SigilFlash()
 {
 	//Player.MiscTime = 10;
 	Actor(Owner).Damage(none, none, 5);
-	Owner.Player.FixedColourmap = Player::INVERSECOLOURMAP;
+	Owner.Player.FixedColourmap = INVERSECOLOURMAP;
 }
 
 __states__

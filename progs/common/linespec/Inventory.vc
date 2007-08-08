@@ -34,6 +34,11 @@ const float BONUSADD		= 0.2;
 
 const int DefMaxAmount		= -2;
 
+//	Special values for powerup's blend colour.
+const int INVERSECOLOUR		= 0x00123456;
+
+const int INVERSECOLOURMAP	= 32;
+
 int				Amount;
 int				MaxAmount;
 int				DropAmount;

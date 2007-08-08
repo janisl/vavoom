@@ -31,6 +31,7 @@ class Powerup : Inventory
 	abstract;
 
 float			EffectTime;
+int				BlendColour;
 name			Mode;
 
 replication
@@ -138,6 +139,36 @@ Inventory CreateCopy(EntityEx Toucher)
 
 void InitEffect()
 {
+}
+
+//==========================================================================
+//
+//	DoEffect
+//
+//==========================================================================
+
+void DoEffect()
+{
+	if (!Owner)
+	{
+		return;
+	}
+
+	if (EffectTime > 0.0)
+	{
+		if (EffectTime > 4.0 || (ftoi(4.0 * EffectTime) & 1))
+		{
+			if (BlendColour == INVERSECOLOUR)
+			{
+				Owner.Player.FixedColourmap = INVERSECOLOURMAP;
+			}
+		}
+		else if (BlendColour == INVERSECOLOUR &&
+			Owner.Player.FixedColourmap == INVERSECOLOURMAP)
+		{
+			Owner.Player.FixedColourmap = 0;
+		}
+	}
 }
 
 //==========================================================================

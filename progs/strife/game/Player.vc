@@ -41,8 +41,6 @@ const int
 	INITIAL_AMMO	= 50,
 	GOD_HEALTH		= 100;
 
-const int INVERSECOLOURMAP	= 32;
-
 const float USETHINGRANGE	= 128.0;
 
 int Quests;
