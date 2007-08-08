@@ -154,7 +154,7 @@ void DoEffect()
 		return;
 	}
 
-	if (EffectTime > 0.0)
+	if (EffectTime > 0.0 && Owner.Player)
 	{
 		if (EffectTime > 4.0 || (ftoi(4.0 * EffectTime) & 1))
 		{

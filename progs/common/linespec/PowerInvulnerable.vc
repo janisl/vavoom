@@ -46,7 +46,7 @@ void InitEffect()
 	}
 	//	If we don't have any specific mode, set it to the default of the
 	// player class.
-	if (!Mode)
+	if (!Mode && Owner.bIsPlayer)
 	{
 		Mode = PlayerEx(Owner.Player).GetInvulnerabilityMode();
 	}
@@ -233,6 +233,11 @@ void EndEffect()
 	else if (Mode == 'Initial')
 	{
 		Owner.Alpha = 1.0;
+	}
+
+	if (Owner.Player)
+	{
+		Owner.Player.FixedColourmap = 0;
 	}
 }
 
