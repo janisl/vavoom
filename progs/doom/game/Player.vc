@@ -1883,8 +1883,7 @@ void UpdateFaceWidget(float FrameTime)
 	if (sb_face_priority < 5)
 	{
 		// invulnerability
-		if ((Cheats & CF_GODMODE) ||
-			EntityEx(MO).FindInventory(PowerInvulnerable))
+		if ((Cheats & CF_GODMODE) || EntityEx(MO).bInvulnerable)
 		{
 			sb_face_priority = 4;
 
@@ -2481,17 +2480,6 @@ void ClientExplosion2(int colour, TVec org)
 	dl->colour = colour;
 	dl->die = Level.XLevel.Time + 0.5;
 	dl->decay = 300.0;
-}
-
-//==========================================================================
-//
-//  HaveInvulnerabilityPower
-//
-//==========================================================================
-
-bool HaveInvulnerabilityPower()
-{
-	return !!EntityEx(MO).FindInventory(PowerInvulnerable);
 }
 
 //==========================================================================

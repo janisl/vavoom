@@ -3862,8 +3862,8 @@ final void Damage(EntityEx inflictor, EntityEx source, int damage,
 		}
 
 		// Below certain threshold, ignore damage in GOD mode, or with INVUL power.
-		if (damage < 1000 && ((PlayerEx(Player).Cheats & PlayerEx::CF_GODMODE) ||
-			PlayerEx(Player).HaveInvulnerabilityPower()))
+		if (damage < 1000 && (bInvulnerable ||
+			(PlayerEx(Player).Cheats & PlayerEx::CF_GODMODE)))
 		{
 			return;
 		}

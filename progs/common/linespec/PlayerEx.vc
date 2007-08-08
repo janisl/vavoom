@@ -405,11 +405,6 @@ final bool UsePuzzleItem(int PuzzleItemType)
 	return false;
 }
 
-bool HaveInvulnerabilityPower()
-{
-	return false;
-}
-
 int ArmorAbsorbDamage(EntityEx inflictor, EntityEx source, int damage,
 	name DmgType)
 {

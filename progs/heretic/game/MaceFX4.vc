@@ -41,7 +41,7 @@ int DoSpecialDamage(EntityEx victim, EntityEx source, int damage)
 	else if (victim.bIsPlayer)
 	{
 		// Player specific checks
-		if (victim.FindInventory(PowerInvulnerable))
+		if (victim.bInvulnerable)
 		{
 			// Can't hurt invulnerable players
 		}
