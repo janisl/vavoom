@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class RadSuit : PowerupPickup
+class RadSuit : PowerupGiver
 	__mobjinfo__(2025)
 	__scriptid__(136);
 
@@ -34,7 +34,10 @@ __states__
 
 defaultproperties
 {
-	IdleState = S_SUIT;
-	PowerType = pw_ironfeet;
+	PowerupType = PowerIronFeet;
 	PickupMessage = "$gotsuit";
+	MaxAmount = 0;
+	bAutoActivate = true;
+	bAlwaysPickup = true;
+	IdleState = S_SUIT;
 }

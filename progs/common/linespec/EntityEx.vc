@@ -3868,6 +3868,16 @@ final void Damage(EntityEx inflictor, EntityEx source, int damage,
 			return;
 		}
 
+		if (Inventory)
+		{
+			int NewDmg = damage;
+			Inventory.AbsorbDamage(damage, DmgType, NewDmg);
+			damage = NewDmg;
+			if (damage <= 0)
+			{
+				return;
+			}
+		}
 		damage = PlayerEx(Player).ArmorAbsorbDamage(inflictor, source,
 			damage, DmgType);
 		if (damage == -1)

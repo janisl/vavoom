@@ -22,50 +22,53 @@
 //**  GNU General Public License for more details.
 //**
 //**************************************************************************
-//**
-//**    DOOM and DOOM II progs
-//**
-//**************************************************************************
 
-import shared;
-import linespec;
+class PowerMask : PowerIronFeet;
 
-// CONSTANTS ---------------------------------------------------------------
+//==========================================================================
+//
+//	DoEffect
+//
+//==========================================================================
 
-//#define GRENADE_LAUNCHER
-
-enum
+void DoEffect()
 {
-	CONTENTS_EMPTY,
-	CONTENTS_WATER,
-	CONTENTS_LAVA,
-	CONTENTS_NUKAGE,
-	CONTENTS_SLIME,
-	CONTENTS_HELLSLIME,
-	CONTENTS_BLOOD,
-	CONTENTS_SLUDGE,
-	CONTENTS_HAZARD,
+	::DoEffect();
 
-	CONTENTS_SOLID = -1
-};
+	if (!Owner)
+	{
+		return;
+	}
 
-enum
+	if (!(Level.XLevel.TicTime & 0x3f))
+	{
+		Owner.PlaySound('misc/mask', CHAN_VOICE);
+	}
+}
+
+//==========================================================================
+//
+//	AbsorbDamage
+//
+//==========================================================================
+
+void AbsorbDamage(int damage, name DmgType, out int NewDamage)
 {
-	CSHIFT_Contents,
-	CSHIFT_Damage,
-	CSHIFT_Bonus,
-	CSHIFT_Power
-};
+	if (DmgType == 'Fire')
+	{
+		// If the player wears an environmental suit it's not
+		// damaged by fire damage
+		NewDamage = 0;
+	}
+	else
+	{
+		::AbsorbDamage(damage, DmgType, NewDamage);
+	}
+}
 
-// Power up artifacts.
-enum
+defaultproperties
 {
-	pw_infrared,
-	NUMPOWERS
-};
-
-#include "game/classes.vc"
-
-#include "game1/classes.vc"
-
-#include "game2/classes.vc"
+	EffectTime = 80.0;
+	BlendColour = 0;
+	bHubPower = true;
+}

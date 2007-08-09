@@ -22,50 +22,29 @@
 //**  GNU General Public License for more details.
 //**
 //**************************************************************************
-//**
-//**    DOOM and DOOM II progs
-//**
-//**************************************************************************
 
-import shared;
-import linespec;
+class PowerIronFeet : Powerup;
 
-// CONSTANTS ---------------------------------------------------------------
+//==========================================================================
+//
+//	AbsorbDamage
+//
+//==========================================================================
 
-//#define GRENADE_LAUNCHER
-
-enum
+void AbsorbDamage(int damage, name DmgType, out int NewDamage)
 {
-	CONTENTS_EMPTY,
-	CONTENTS_WATER,
-	CONTENTS_LAVA,
-	CONTENTS_NUKAGE,
-	CONTENTS_SLIME,
-	CONTENTS_HELLSLIME,
-	CONTENTS_BLOOD,
-	CONTENTS_SLUDGE,
-	CONTENTS_HAZARD,
+	if (DmgType == 'Drowning')
+	{
+		NewDamage = 0;
+	}
+	else
+	{
+		::AbsorbDamage(damage, DmgType, NewDamage);
+	}
+}
 
-	CONTENTS_SOLID = -1
-};
-
-enum
+defaultproperties
 {
-	CSHIFT_Contents,
-	CSHIFT_Damage,
-	CSHIFT_Bonus,
-	CSHIFT_Power
-};
-
-// Power up artifacts.
-enum
-{
-	pw_infrared,
-	NUMPOWERS
-};
-
-#include "game/classes.vc"
-
-#include "game1/classes.vc"
-
-#include "game2/classes.vc"
+	EffectTime = 60.0;
+	BlendColour = RGBA(0, 255, 0, 32);
+}

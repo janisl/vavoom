@@ -34,7 +34,6 @@ import linespec;
 // Power up artifacts.
 enum
 {
-	pw_ironfeet,
 	pw_infrared,
 	NUMPOWERS
 };

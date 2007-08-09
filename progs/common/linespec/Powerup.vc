@@ -156,7 +156,8 @@ void DoEffect()
 
 	if (EffectTime > 0.0 && Owner.Player)
 	{
-		if (EffectTime > 4.0 || (ftoi(4.0 * EffectTime) & 1))
+		if (EffectTime > PlayerEx::BLINKTHRESHOLD ||
+			(ftoi(4.0 * EffectTime) & 1))
 		{
 			if (BlendColour == INVERSECOLOUR)
 			{
@@ -179,6 +180,28 @@ void DoEffect()
 
 void EndEffect()
 {
+}
+
+//==========================================================================
+//
+//	GetBlend
+//
+//==========================================================================
+
+int GetBlend()
+{
+	if (EffectTime <= PlayerEx::BLINKTHRESHOLD &&
+		!(ftoi(4.0 * EffectTime) & 1))
+	{
+		return 0;
+	}
+
+	if (BlendColour == INVERSECOLOUR)
+	{
+		return 0;
+	}
+
+	return BlendColour;
 }
 
 defaultproperties

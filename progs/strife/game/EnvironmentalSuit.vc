@@ -23,20 +23,9 @@
 //**
 //**************************************************************************
 
-class EnvironmentalSuit : Inventory
+class EnvironmentalSuit : PowerupGiver
 	__mobjinfo__(2025)
 	__scriptid__(136);
-
-//==========================================================================
-//
-//	Use
-//
-//==========================================================================
-
-bool Use(bool Pickup)
-{
-	return Player(Owner.Player).GivePower(pw_ironfeet);
-}
 
 __states__
 {
@@ -46,11 +35,11 @@ __states__
 defaultproperties
 {
 	ConversationID = 161;
+	PowerupType = PowerMask;
 	PickupMessage = "$txt_envsuit";
-	Mass = 5.0;
+	PickupSound = 'misc/i_pkup';
 	MaxAmount = 5;
 	IconName = 'i_mask';
 	bFloorClip = true;
-	bInvBar = true;
 	IdleState = S_ENV_SUIT;
 }

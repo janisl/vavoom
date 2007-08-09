@@ -658,6 +658,20 @@ int GetBlend()
 
 //==========================================================================
 //
+//	AbsorbDamage
+//
+//==========================================================================
+
+void AbsorbDamage(int damage, name DmgType, out int NewDamage)
+{
+	if (Inventory)
+	{
+		Inventory.AbsorbDamage(damage, DmgType, NewDamage);
+	}
+}
+
+//==========================================================================
+//
 //  A_RestoreSpecialThing1
 //
 //  Make a special thing visible again.

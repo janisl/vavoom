@@ -28,8 +28,7 @@ class Player : PlayerEx;
 const float VIEWHEIGHT		= 41.0;
 
 const float
-	INFRATIME		= 120.0,
-	IRONTIME		= 60.0;
+	INFRATIME		= 120.0;
 
 // 16 pixels of bob
 const float MAXBOB			= 16.0;
@@ -436,7 +435,7 @@ void PlayerExitMap(bool clusterChange)
 	}
 	for (i = 0; i < NUMPOWERS; i++)
 	{
-		if (Powers[i] && i != pw_ironfeet)
+		if (Powers[i])
 		{
 			Powers[i].Destroy();
 			Powers[i] = none;
@@ -783,12 +782,6 @@ bool GivePower(int power)
 		return true;
 	}
 
-	if (power == pw_ironfeet)
-	{
-		Powers[power].EffectTime = IRONTIME;
-		return true;
-	}
-
 	if (Powers[power].EffectTime)
 		return false;	// already got it
 
@@ -1106,6 +1099,17 @@ void PlayerInSpecialSector(float deltaTime)
 		MO.PlaySound('misc/secret', CHAN_VOICE);
 	}
 
+	//	Search for iron feet power. Any subclass will do.
+	Inventory IronFeet = EntityEx(MO).Inventory;
+	while (IronFeet)
+	{
+		if (PowerIronFeet(IronFeet))
+		{
+			break;
+		}
+		IronFeet = IronFeet.Inventory;
+	}
+
 	// Has hitten ground.
 	if (MO.Sector->special >= SECSPEC_LightFlicker &&
 		MO.Sector->special <= 255)
@@ -1113,7 +1117,7 @@ void PlayerInSpecialSector(float deltaTime)
 		switch (MO.Sector->special)
 		{
 		case SECSPEC_DamageHellslime:
-			if (!Powers[pw_ironfeet] &&
+			if (!IronFeet &&
 				Level.XLevel.Time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
 				LastSectorDamageTime = Level.XLevel.Time;
@@ -1121,7 +1125,7 @@ void PlayerInSpecialSector(float deltaTime)
 			}
 			break;
 		case SECSPEC_DamageSludge:
-			if (!Powers[pw_ironfeet] &&
+			if (!IronFeet &&
 				Level.XLevel.Time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
 				LastSectorDamageTime = Level.XLevel.Time;
@@ -1129,7 +1133,7 @@ void PlayerInSpecialSector(float deltaTime)
 			}
 			break;
 		case SECSPEC_DamageNukage:
-			if (!Powers[pw_ironfeet] &&
+			if (!IronFeet &&
 				Level.XLevel.Time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
 				LastSectorDamageTime = Level.XLevel.Time;
@@ -1138,7 +1142,7 @@ void PlayerInSpecialSector(float deltaTime)
 			break;
 		case SECSPEC_DamageSuperHellslime:
 		case SECSPEC_LightStrobeFastDamage:
-			if ((!Powers[pw_ironfeet] || (P_Random() < 5)) &&
+			if ((!IronFeet || (P_Random() < 5)) &&
 				Level.XLevel.Time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
 				LastSectorDamageTime = Level.XLevel.Time;
@@ -1186,14 +1190,14 @@ void PlayerInSpecialSector(float deltaTime)
 			}
 			break;
 		case SECSPEC_DamageHazard:
-			if (!Powers[pw_ironfeet])
+			if (!IronFeet)
 				HazardTime += 2.0 * deltaTime;
 			break;
 		case SECSPEC_DamageInstantDeath:
 			Actor(MO).Damage(none, none, 999);
 			break;
 		case SECSPEC_DamageSuperHazard:
-			if (!Powers[pw_ironfeet])
+			if (!IronFeet)
 				HazardTime += 4.0 * deltaTime;
 			break;
 		}
@@ -1204,7 +1208,7 @@ void PlayerInSpecialSector(float deltaTime)
 		switch (MO.Sector->special & SECSPEC_DAMAGE_MASK)
 		{
 		case 0x0100:
-			if (!Powers[pw_ironfeet] &&
+			if (!IronFeet &&
 				Level.XLevel.Time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
 				LastSectorDamageTime = Level.XLevel.Time;
@@ -1212,7 +1216,7 @@ void PlayerInSpecialSector(float deltaTime)
 			}
 			break;
 		case 0x0200:
-			if (!Powers[pw_ironfeet] &&
+			if (!IronFeet &&
 				Level.XLevel.Time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
 				LastSectorDamageTime = Level.XLevel.Time;
@@ -1220,7 +1224,7 @@ void PlayerInSpecialSector(float deltaTime)
 			}
 			break;
 		case 0x0300:
-			if ((!Powers[pw_ironfeet] || (P_Random() < 5)) &&
+			if ((!IronFeet || (P_Random() < 5)) &&
 				Level.XLevel.Time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
 				LastSectorDamageTime = Level.XLevel.Time;
@@ -1235,7 +1239,7 @@ void PlayerInSpecialSector(float deltaTime)
 	{
 		if (MO.Sector->Damage < 20)
 		{
-			if (!Powers[pw_ironfeet] &&
+			if (!IronFeet &&
 				Level.XLevel.Time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
 				LastSectorDamageTime = Level.XLevel.Time;
@@ -1244,7 +1248,7 @@ void PlayerInSpecialSector(float deltaTime)
 		}
 		else if (MO.Sector->Damage < 50)
 		{
-			if ((!Powers[pw_ironfeet] || (P_Random() < 5)) &&
+			if ((!IronFeet || (P_Random() < 5)) &&
 				Level.XLevel.Time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
 				LastSectorDamageTime = Level.XLevel.Time;
@@ -1361,10 +1365,22 @@ void PlayerInContents(float deltaTime)
 	{
 		return;
 	}
+
+	//	Search for iron feet power. Any subclass will do.
+	Inventory IronFeet = EntityEx(MO).Inventory;
+	while (IronFeet)
+	{
+		if (PowerIronFeet(IronFeet))
+		{
+			break;
+		}
+		IronFeet = IronFeet.Inventory;
+	}
+
 	switch (MO.WaterType)
 	{
 	case CONTENTS_LAVA:
-		if (!Powers[pw_ironfeet] &&
+		if (!IronFeet &&
 			Level.XLevel.Time - LastSectorDamageTime >= 32.0 / 35.0)
 		{
 			LastSectorDamageTime = Level.XLevel.Time;
@@ -1373,7 +1389,7 @@ void PlayerInContents(float deltaTime)
 		break;
 
 	case CONTENTS_NUKAGE:
-		if (!Powers[pw_ironfeet] &&
+		if (!IronFeet &&
 			Level.XLevel.Time - LastSectorDamageTime >= 32.0 / 35.0)
 		{
 			LastSectorDamageTime = Level.XLevel.Time;
@@ -1382,7 +1398,7 @@ void PlayerInContents(float deltaTime)
 		break;
 
 	case CONTENTS_SLIME:
-		if (!Powers[pw_ironfeet] &&
+		if (!IronFeet &&
 			Level.XLevel.Time - LastSectorDamageTime >= 32.0 / 35.0)
 		{
 			LastSectorDamageTime = Level.XLevel.Time;
@@ -1391,7 +1407,7 @@ void PlayerInContents(float deltaTime)
 		break;
 
 	case CONTENTS_HELLSLIME:
-		if ((!Powers[pw_ironfeet] || (P_Random() < 5)) &&
+		if ((!IronFeet || (P_Random() < 5)) &&
 			Level.XLevel.Time - LastSectorDamageTime >= 32.0 / 35.0)
 		{
 			LastSectorDamageTime = Level.XLevel.Time;
@@ -1400,7 +1416,7 @@ void PlayerInContents(float deltaTime)
 		break;
 
 	case CONTENTS_SLUDGE:
-		if (!Powers[pw_ironfeet] &&
+		if (!IronFeet &&
 			Level.XLevel.Time - LastSectorDamageTime >= 32.0 / 35.0)
 		{
 			LastSectorDamageTime = Level.XLevel.Time;
@@ -1409,7 +1425,10 @@ void PlayerInContents(float deltaTime)
 		break;
 
 	case CONTENTS_HAZARD:
-		HazardTime += 2.0 * deltaTime;
+		if (!IronFeet)
+		{
+			HazardTime += 2.0 * deltaTime;
+		}
 		break;
 	}
 }
@@ -1657,22 +1676,6 @@ void PlayerTick(float deltaTime)
 		{
 			Powers[pw_infrared].Destroy();
 			Powers[pw_infrared] = none;
-		}
-	}
-
-	if (Powers[pw_ironfeet])
-	{
-		if(P_Random() < 10)
-		{
-			if(P_Random() < 5 || !(Level.XLevel.TicTime & 0x1f))
-				MO.PlaySound('misc/mask', CHAN_VOICE);
-		}
-
-		Powers[pw_ironfeet].EffectTime -= deltaTime;
-		if (Powers[pw_ironfeet].EffectTime <= 0.0)
-		{
-			Powers[pw_ironfeet].Destroy();
-			Powers[pw_ironfeet] = none;
 		}
 	}
 
@@ -2362,13 +2365,6 @@ int ArmorAbsorbDamage(EntityEx inflictor, EntityEx source, int damage,
 	name DmgType)
 {
 	int saved;
-
-	if (inflictor && inflictor.DamageType == 'Fire' && Powers[pw_ironfeet])
-	{
-		// If the player wears an environmental suit it's not
-		// damaged by fire damage
-		return -1;
-	}
 
 	if (ArmorType)
 	{

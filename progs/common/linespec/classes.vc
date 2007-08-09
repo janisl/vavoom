@@ -51,6 +51,8 @@ enum
 #include "PowerInvisibility.vc"
 #include "PowerGhost.vc"
 #include "PowerShadow.vc"
+#include "PowerIronFeet.vc"
+#include "PowerMask.vc"
 #include "PlayerEx.vc"
 
 #include "LineSpecialLevelInfo.vc"
