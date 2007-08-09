@@ -70,6 +70,8 @@ Weapon			PendingWeapon;	// Is none if not changing.
 // Refired shots are less accurate.
 int				Refire;
 
+float			FlyHeight;
+
 replication
 {
 	reliable if (!bIsClient)

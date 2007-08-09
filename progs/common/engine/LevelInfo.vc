@@ -76,6 +76,7 @@ bool			bFallingDamage;
 bool			bOldFallingDamage;
 bool			bStrifeFallingDamage;
 bool			bMonsterFallingDamage;
+bool			bClusterHub;
 readonly bool	bBegunPlay;
 
 int				TotalKills;

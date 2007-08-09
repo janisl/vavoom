@@ -4042,6 +4042,16 @@ bool OkayToSwitchTarget(EntityEx source)
 
 void Died(EntityEx source, EntityEx inflictor)
 {
+	Inventory	Item;
+
+	//	Notify actor's items.
+	for (Item = Inventory; Item;)
+	{
+		Inventory Next = Item.Inventory;
+		Item.OwnerDied();
+		Item = Next;
+	}
+
 	if (source)
 	{
 		//	Set Target to the thing that killed it. It's needed for Strife's

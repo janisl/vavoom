@@ -52,7 +52,6 @@ enum
 enum
 {
 	pw_weaponlevel2,
-	pw_flight,
 	NUMPOWERS
 };
 

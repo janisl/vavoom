@@ -187,11 +187,6 @@ void PlayerKilled(EntityEx source, EntityEx inflictor)
 		Player.FragsStats[Player.GetPlayerNum()]--;
 		Player.Frags--;
 	}
-	if (Player(Player).Powers[pw_flight])
-	{
-		Player(Player).Powers[pw_flight].Destroy();
-		Player(Player).Powers[pw_flight] = none;
-	}
 }
 
 //==========================================================================
@@ -765,7 +760,7 @@ float GetBaseViewHeight()
 
 bool HaveFlightPower()
 {
-	return !!Player(Player).Powers[pw_flight];
+	return !!FindInventory(PowerFlight);
 }
 
 //==========================================================================

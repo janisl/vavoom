@@ -23,29 +23,9 @@
 //**
 //**************************************************************************
 
-class ArtiFly : Inventory
+class ArtiFly : PowerupGiver
 	__mobjinfo__(83)
 	__scriptid__(15);
-
-//==========================================================================
-//
-//	Use
-//
-//==========================================================================
-
-bool Use(bool Pickup)
-{
-	if (!Player(Owner.Player).GivePower(pw_flight))
-	{
-		return false;
-	}
-	if (Owner.Velocity.z <= -35.0 * 35.0)
-	{
-		// stop falling scream
-		Owner.StopSound(CHAN_AUTO);
-	}
-	return true;
-}
 
 __states__
 {
@@ -57,13 +37,11 @@ __states__
 
 defaultproperties
 {
-	MaxAmount = DefMaxAmount;
-	PickupSound = 'PickupArtifact';
+	PowerupType = PowerFlight;
 	PickupMessage = "$txt_artifly";
 	RespawnTime = 120.0 + 30.0 / 35.0;
 	IconName = 'artisoar';
 	bFloatBob = true;
 	bPickupFlash = true;
-	bInvBar = true;
 	IdleState = S_ARTI_SOAR1;
 }

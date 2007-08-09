@@ -55,6 +55,7 @@ enum
 #include "PowerMask.vc"
 #include "PowerLightAmp.vc"
 #include "PowerTorch.vc"
+#include "PowerFlight.vc"
 #include "PlayerEx.vc"
 
 #include "LineSpecialLevelInfo.vc"

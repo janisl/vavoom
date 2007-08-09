@@ -25,7 +25,6 @@
 
 class Player : PlayerEx;
 
-const float FLIGHTTIME 		= 60.0;
 const float SPEEDTIME 		= 45.0;
 
 const int MAXHEALTH			= 100;
@@ -48,8 +47,6 @@ float InventoryTime;
 int ArtifactFlash;
 Inventory InvPtr;
 Inventory InvFirst;
-
-float FlyHeight;
 
 int PoisonCount;	// screen flash for poison damage
 float LastPoisonTime;
@@ -581,25 +578,27 @@ void PlayerExitMap(bool clusterChange)
 	int i;
 	Inventory Item;
 
-	// Strip all current powers (retain flight)
+	// Strip all current powers
+	for (Item = EntityEx(MO).Inventory; Item;)
+	{
+		Inventory Next = Item.Inventory;
+		if (Powerup(Item) && (Level.Game.deathmatch || clusterChange ||
+			!Item.bHubPower) && Item.Class != DummyPowerup)
+		{
+			Item.Destroy();
+		}
+		Item = Next;
+	}
 	for (i = 0; i < NUMPOWERS; i++)
 	{
-		if (i != pw_flight && Powers[i])
+		if (Powers[i])
 		{
 			Powers[i].Destroy();
 			Powers[i] = none;
 		}
 	}
 
-	if (Level.Game.deathmatch)
-	{
-		if (Powers[pw_flight])
-		{
-			Powers[pw_flight].Destroy();
-			Powers[pw_flight] = none;
-		}
-	}
-	else
+	if (!Level.Game.deathmatch)
 	{
 		if (clusterChange)
 		{	// Entering new cluster
@@ -619,11 +618,6 @@ void PlayerExitMap(bool clusterChange)
 			if (Item)
 			{
 				Item.Destroy();
-			}
-			if (Powers[pw_flight])
-			{
-				Powers[pw_flight].Destroy();
-				Powers[pw_flight] = none;
 			}
 		}
 	}
@@ -806,22 +800,6 @@ bool GivePower(int power)
 		Powers[power].AttachToOwner(EntityEx(MO));
 	}
 
-	if (power == pw_flight)
-	{
-		if (Powers[power].EffectTime > BLINKTHRESHOLD)
-		{
-			// Already have it
-			return false;
-		}
-		Powers[power].EffectTime = FLIGHTTIME;
-		MO.bFly = true;
-		MO.bNoGravity = true;
-		if (MO.Origin.z <= MO.FloorZ)
-		{
-			FlyHeight = 10.0;	// thrust the player in the air a bit
-		}
-		return (true);
-	}
 	if (power == pw_speed)
 	{
 		if (Powers[power].EffectTime > BLINKTHRESHOLD)
@@ -1033,7 +1011,8 @@ void MovePlayer(float deltaTime)
 		forward *= 1.5;
 		side *= 1.5;
 	}
-	if ((!Powers[pw_flight] || MO.Origin.z <= MO.FloorZ) &&
+	if ((!EntityEx(MO).FindInventory(PowerFlight) ||
+		MO.Origin.z <= MO.FloorZ) &&
 		Actor(MO).GetFriction() < Actor::FRICTION_NORMAL * 0.5)
 	{
 		forward *= 0.5;
@@ -1066,7 +1045,7 @@ void MovePlayer(float deltaTime)
 	}
 
 	fly = FlyMove / 16.0;
-	if (fly && Powers[pw_flight])
+	if (fly && EntityEx(MO).FindInventory(PowerFlight))
 	{
 		if (FlyMove != TOCENTRE)
 		{
@@ -1260,7 +1239,8 @@ void WaterJump()
 
 void ThrustPlayer(float angle, float move, float deltaTime)
 {
-	if (!(Powers[pw_flight] && !(MO.Origin.z <= MO.FloorZ)) &&
+	if (!(EntityEx(MO).FindInventory(PowerFlight) &&
+		!(MO.Origin.z <= MO.FloorZ)) &&
 		(Actor(MO).GetFloorType()->Friction < Actor::FRICTION_NORMAL ||
 		(MO.Sector->special & SECSPEC_BASE_MASK) == SECSPEC_FrictionLow))
 	{
@@ -2256,22 +2236,6 @@ void PlayerTick(float deltaTime)
 		}
 	}
 
-	if (Powers[pw_flight] && Level.Game.netgame)
-	{
-		Powers[pw_flight].EffectTime -= deltaTime;
-		if (Powers[pw_flight].EffectTime <= 0.0)
-		{
-			Powers[pw_flight].Destroy();
-			Powers[pw_flight] = none;
-			if (MO.Origin.z != MO.FloorZ)
-			{
-//FIXME             centreing = true;
-			}
-			MO.bFly = false;
-			MO.bNoGravity = false;
-		}
-	}
-
 	if (PoisonCount && Level.XLevel.Time - LastPoisonTime >= 0.5)
 	{
 		PoisonCount -= 5;
@@ -2428,14 +2392,6 @@ void SetViewPos()
 	PaletteFlash();
 
 	SBFlags = 0;
-	if (Powers[pw_flight])
-	{
-		if (Powers[pw_flight].EffectTime > BLINKTHRESHOLD ||
-			!(ftoi(Powers[pw_flight].EffectTime * 35.0) & 16))
-		{
-			SBFlags |= HexenDefs::SBF_POWER_FLIGHT;
-		}
-	}
 	if (Powers[pw_speed])
 	{
 		if (Powers[pw_speed].EffectTime > BLINKTHRESHOLD ||
@@ -2451,10 +2407,6 @@ void SetViewPos()
 		{
 			SBFlags |= HexenDefs::SBF_POWER_MINOTAUR;
 		}
-	}
-	if (MO.bFly)
-	{
-		SBFlags |= HexenDefs::SBF_IN_FLIGHT;
 	}
 
 	TotalArmorPoints = ftoi((MainGameInfo(Level.Game).AutoArmorSave[PClass]

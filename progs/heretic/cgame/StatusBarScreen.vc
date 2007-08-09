@@ -466,11 +466,18 @@ void SB_DrawIcons()
 {
 	int frame;
 
+	if (!cl.MO)
+	{
+		return;
+	}
+
 	//  Artifact rotating icons
-	if (cl.SBFlags & HereticDefs::SBF_POWER_FLIGHT)
+	Powerup Pw = Powerup(EntityEx(cl.MO).FindInventory(PowerFlight));
+	if (Pw && Pw.EffectTime > Player::BLINKTHRESHOLD ||
+		!(ftoi(2.0 * Pw.EffectTime) & 1))
 	{
 		frame = (ClGame.GLevel.TicTime / 3) & 15;
-		if (cl.SBFlags & HereticDefs::SBF_IN_FLIGHT)
+		if (cl.MO.bFly)
 		{
 			if (hitCentreFrame && frame != 15 && frame != 0)
 			{

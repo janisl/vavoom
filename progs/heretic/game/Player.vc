@@ -30,7 +30,6 @@ const float VIEWHEIGHT		= 41.0;
 
 const float
 	WPNLEV2TIME 	= 40.0,
-	FLIGHTTIME 		= 60.0,
 	CHICKENTIME 	= 40.0;
 
 // 16 pixels of bob
@@ -51,8 +50,6 @@ int ArtifactFlash;
 Inventory InvFirst;
 Inventory InvPtr;
 float InventoryTime;
-
-float FlyHeight;
 
 // Armor type is 0-2.
 int ArmorType;
@@ -633,22 +630,6 @@ bool GivePower(int power)
 		Powers[power].EffectTime = WPNLEV2TIME;
 		return true;
 	}
-	if (power == pw_flight)
-	{
-		if (Powers[power].EffectTime > BLINKTHRESHOLD)
-		{
-			// Already have it
-			return false;
-		}
-		Powers[power].EffectTime = FLIGHTTIME;
-		MO.bFly = true;
-		MO.bNoGravity = true;
-		if (MO.Origin.z <= MO.FloorZ)
-		{
-			FlyHeight = 10.0;	// thrust the player in the air a bit
-		}
-		return true;
-	}
 	if (Powers[power].EffectTime)
 	{
 		return false;	// already got it
@@ -822,7 +803,8 @@ void AdjustInvFirst()
 
 void ThrustPlayer(float angle, float move, float deltaTime)
 {
-	if (Powers[pw_flight] && !(MO.Origin.z <= MO.FloorZ))
+	if (EntityEx(MO).FindInventory(PowerFlight) &&
+		!(MO.Origin.z <= MO.FloorZ))
 	{
 		MO.Velocity.x += move * cos(angle) * deltaTime;
 		MO.Velocity.y += move * sin(angle) * deltaTime;
@@ -961,7 +943,7 @@ void MovePlayer(float deltaTime)
 	}
 
 	fly = FlyMove / 16.0;
-	if (fly && Powers[pw_flight])
+	if (fly && EntityEx(MO).FindInventory(PowerFlight))
 	{
 		if (FlyMove != TOCENTRE)
 		{
@@ -1877,23 +1859,6 @@ void PlayerTick(float deltaTime)
 
 	// Counters, time dependend power ups.
 
-	if (Powers[pw_flight])
-	{
-		Powers[pw_flight].EffectTime -= deltaTime;
-		if (Powers[pw_flight].EffectTime <= 0.0)
-		{
-			Powers[pw_flight].Destroy();
-			Powers[pw_flight] = none;
-			if (MO.Origin.z != MO.FloorZ)
-			{
-//FIXME             player->centreing = true;
-			}
-
-			MO.bFly = false;
-			MO.bNoGravity = false;
-		}
-	}
-
 	if (Powers[pw_weaponlevel2])
 	{
 		Powers[pw_weaponlevel2].EffectTime -= deltaTime;
@@ -2036,14 +2001,6 @@ void SetViewPos()
 	SBFlags = 0;
 	if (Cheats & CF_GODMODE)
 		SBFlags |= HereticDefs::SBF_GOD_MODE;
-	if (Powers[pw_flight])
-	{
-		if (Powers[pw_flight].EffectTime > BLINKTHRESHOLD ||
-			!(ftoi(2.0 * Powers[pw_flight].EffectTime) & 1))
-		{
-			SBFlags |= HereticDefs::SBF_POWER_FLIGHT;
-		}
-	}
 	if (Powers[pw_weaponlevel2] && !ChickenTime)
 	{
 		if (Powers[pw_weaponlevel2].EffectTime > BLINKTHRESHOLD ||
@@ -2051,10 +2008,6 @@ void SetViewPos()
 		{
 			SBFlags |= HereticDefs::SBF_POWER_BOOK;
 		}
-	}
-	if (MO.bFly)
-	{
-		SBFlags |= HereticDefs::SBF_IN_FLIGHT;
 	}
 	if (InventoryTime)
 	{

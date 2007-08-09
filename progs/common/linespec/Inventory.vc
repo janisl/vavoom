@@ -672,6 +672,16 @@ void AbsorbDamage(int damage, name DmgType, out int NewDamage)
 
 //==========================================================================
 //
+//	OwnerDied
+//
+//==========================================================================
+
+void OwnerDied()
+{
+}
+
+//==========================================================================
+//
 //  A_RestoreSpecialThing1
 //
 //  Make a special thing visible again.

@@ -57,12 +57,6 @@ enum
 	CSHIFT_Power
 };
 
-// Power up artifacts.
-enum
-{
-	NUMPOWERS
-};
-
 #include "game/classes.vc"
 
 #include "game1/classes.vc"

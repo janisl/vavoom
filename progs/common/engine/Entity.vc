@@ -186,9 +186,9 @@ Entity			Owner;
 replication
 {
 	reliable if (Role == ROLE_Authority)
-		Origin, Angles, FloorClip, State, StateTime,
-		SpriteType, ModelSkin, ModelVersion, Alpha, Translation,
-		bHidden, bFullBright, bFixedModel, bNetLocalPlayer, NetID;
+		Origin, Angles, FloorClip, State, StateTime, SpriteType, ModelSkin,
+		ModelVersion, Alpha, Translation, bFly, bHidden, bFullBright,
+		bFixedModel, bNetLocalPlayer, NetID;
 
 	reliable if (Role == ROLE_Authority && bFixedModel)
 		FixedModelName;

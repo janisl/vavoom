@@ -68,6 +68,8 @@ VLevelInfo::VLevelInfo()
 void VLevelInfo::SetMapInfo(const mapInfo_t& Info)
 {
 	guard(VLevelInfo::SetMapInfo);
+	const VClusterDef* CInfo = P_GetClusterDef(Info.Cluster);
+
 	LevelName = Info.Name;
 	LevelNum = Info.LevelNum;
 	Cluster = Info.Cluster;
@@ -134,6 +136,9 @@ void VLevelInfo::SetMapInfo(const mapInfo_t& Info)
 		LevelInfoFlags |= LIF_OldFallingDamage;
 	if (Info.Flags & MAPINFOF_StrifeFallingDamage)
 		LevelInfoFlags |= LIF_StrifeFallingDamage;
+
+	if (CInfo->Flags & CLUSTERF_Hub)
+		LevelInfoFlags |= LIF_ClusterHub;
 	unguard;
 }
 
