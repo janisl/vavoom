@@ -2,7 +2,6 @@
 glBSP and Map-Tricks/Errors
 ===========================
 
-
 1. Self-referencing Lines
 
 This trick involves linedefs with the same sector reference
@@ -15,6 +14,7 @@ the following special physics effects:
   1. invisible walkways (self-ref sector floor is higher)
   2. deep water (self-ref sector floor is lower)
   3. force fields (self-ref sector blocks movement)
+  4. railings you can jump over.
  
 glBSP detects these lines and does two things: prevents
 spurious warnings about mismatched sectors, and adjusts
@@ -41,7 +41,7 @@ Engines should also detect overlapping lines and emulate
 the trick (by rendering the additional mid-masked textures).
 
 
-3. One-sided Windows
+3. One-Sided Windows
 
 This trick uses a one-sided linedef where a two-sided linedef
 should be, so the back of the one-sided line faces into a
@@ -51,18 +51,17 @@ line when viewed from the back.  When viewed from the front,
 the one-sided linedef acted normally (blocked your view).
 
 glBSP can detect many usages of this trick (although not 100%
-since that would require much more expensive analysis).
+since that would require much more expensive analysis).  It
+has to be explicitly enabled with the -windowfx option (or
+for libglbsp via a field in nodebuildinfo_t).
 
-When found, glBSP will add a MINISEG along the back of the
-one-sided linedef.  This miniseg will be partnered with the
-normal seg on the front side (via the 'partner' fields in the
-gl_seg structure).  This is the only time that minisegs are
-used on existing linedefs or partnered with normal segs.
+When found, glBSP will add a REAL seg along the back of the
+one-sided linedef.  This is the only time that segs are
+placed on a linedef with no corresponding sidedef.
 
-Engines should detect this (i.e. miniseg on a one-sided line)
-and emulate the trick accordingly.  Depending on how your
-renderer does occlusion culling, it may not be necessary
-to do anything special.
+Engines should detect that and emulate the trick accordingly.
+Depending on how your renderer does occlusion culling, it may
+not be necessary to do anything special.
 
 
 4. Missing Lowers/Uppers
@@ -109,4 +108,7 @@ Other map errors are more serious and cause structural
 problems, like degenerate subsectors (which contain only
 one or two segs).  There is nothing glBSP or the engine
 can do in these cases.
+
+
+---------------------------------------------------------------------------
 

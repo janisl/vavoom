@@ -2,7 +2,7 @@
 // LEVEL : Level structure read/write functions.
 //------------------------------------------------------------------------
 //
-//  GL-Friendly Node Builder (C) 2000-2005 Andrew Apted
+//  GL-Friendly Node Builder (C) 2000-2007 Andrew Apted
 //
 //  Based on 'BSP 2.3' by Colin Reed, Lee Killough and others.
 //
@@ -604,6 +604,9 @@ void GetLinedefsHexen(void)
       line->left->ref_count++;
       line->left->on_special |= (line->type > 0) ? 1 : 0;
     }
+
+    line->self_ref = (line->left && line->right &&
+        (line->left->sector == line->right->sector));
 
     line->index = i;
   }
@@ -1611,7 +1614,9 @@ void LoadLevel(void)
   }
 
   DetectOverlappingLines();
-  DetectWindowEffects();
+
+  if (cur_info->window_fx)
+    DetectWindowEffects();
 }
 
 //
@@ -1629,6 +1634,30 @@ void FreeLevel(void)
   FreeNodes();
   FreeStaleNodes();
   FreeWallTips();
+}
+
+//
+// PutGLOptions
+//
+void PutGLOptions(void)
+{
+  char option_buf[128];
+
+  sprintf(option_buf, "-v%d -factor %d", cur_info->spec_version, cur_info->factor);
+
+  if (cur_info->fast         ) strcat(option_buf, " -f");
+  if (cur_info->force_normal ) strcat(option_buf, " -n");
+  if (cur_info->merge_vert   ) strcat(option_buf, " -m");
+  if (cur_info->pack_sides   ) strcat(option_buf, " -p");
+  if (cur_info->prune_sect   ) strcat(option_buf, " -u");
+  if (cur_info->skip_self_ref) strcat(option_buf, " -s");
+  if (cur_info->window_fx    ) strcat(option_buf, " -y");
+
+  if (cur_info->no_normal) strcat(option_buf, " -xn");
+  if (cur_info->no_reject) strcat(option_buf, " -xr");
+  if (cur_info->no_prune ) strcat(option_buf, " -xu");
+
+  AddGLTextLine("OPTIONS", option_buf);
 }
 
 //
@@ -1763,6 +1792,7 @@ void SaveLevel(node_t *root_node)
 
   // keyword support (v5.0 of the specs)
   AddGLTextLine("BUILDER", "glBSP " GLBSP_VER);
+  PutGLOptions();
   {
     char *time_str = UtilTimeString();
 

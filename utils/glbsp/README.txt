@@ -2,7 +2,7 @@
 README for glBSP
 ================
 
-by Andrew Apted.  13th September 2005.
+by Andrew Apted.  JULY 2007
 
 
 Introduction
@@ -22,7 +22,7 @@ Legacy 2.0, and Doom3D.  See the links below.
 Status
 ------
 
-The current version of glBSP is 2.20.  It has been tested and known to
+The current version of glBSP is 2.24.  It has been tested and known to
 work on numerous large wads, including DOOM I, DOOM II, TeamTNT's
 Eternal III, Fanatic's QDOOM, and many others.
 
@@ -30,7 +30,7 @@ Eternal III, Fanatic's QDOOM, and many others.
 Copyright
 ---------
 
-glBSP is Copyright (C) 2000-2005 Andrew Apted.  It was originally
+glBSP is Copyright (C) 2000-2007 Andrew Apted.  It was originally
 based on "BSP 2.3" (C) Colin Reed and Lee Killough, which was created
 from the basic theory stated in DEU5 (OBJECTS.C) by Raphael Quinet.
 
@@ -44,10 +44,10 @@ License
 -------
 
 Thanks to Lee Killough and André Majorel (former maintainer of BSP,
-and former Miss Venezuela, respectively), glBSP is under the GNU
-General Public License (GPL).  See the file 'COPYING.txt' in the
-source package (or go to http://www.gnu.org) for the full text, but
-to summarise:
+and devil-may-care French flying ace, respectively), glBSP is under
+the GNU General Public License (GPL).  See the file 'COPYING.txt' in
+the source package (or go to http://www.gnu.org) for the full text,
+but to summarise:
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

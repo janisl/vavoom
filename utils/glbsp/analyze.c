@@ -2,7 +2,7 @@
 // ANALYZE : Analyzing level structures
 //------------------------------------------------------------------------
 //
-//  GL-Friendly Node Builder (C) 2000-2005 Andrew Apted
+//  GL-Friendly Node Builder (C) 2000-2007 Andrew Apted
 //
 //  Based on 'BSP 2.3' by Colin Reed, Lee Killough and others.
 //
@@ -42,7 +42,7 @@
 
 #define DEBUG_WALLTIPS   0
 #define DEBUG_POLYOBJ    0
-#define DEBUG_WINDOW_FX  0   
+#define DEBUG_WINDOW_FX  0
 
 #define POLY_BOX_SZ  10
 
@@ -759,15 +759,20 @@ void TestForWindowEffect(linedef_t *L)
 
   int cast_horiz = fabs(dx) < fabs(dy) ? 1 : 0;
 
-  float_g best_dist = 999999.0;
-  boolean_g best_open = FALSE;
-  int best_line = -1;
+  float_g back_dist = 999999.0;
+  sector_t * back_open = NULL;
+  int back_line = -1;
+
+  float_g front_dist = 999999.0;
+  sector_t * front_open = NULL;
+  int front_line = -1;
 
   for (i=0; i < num_linedefs; i++)
   {
     linedef_t *N = lev_linedefs[i];
 
     float_g dist;
+    boolean_g is_front;
     sidedef_t *hit_side;
 
     float_g dx2, dy2;
@@ -789,14 +794,13 @@ void TestForWindowEffect(linedef_t *L)
 
       dist = (N->start->x + (my - N->start->y) * dx2 / dy2) - mx;
 
-      if ((dy > 0) == (dist > 0))
-        continue;
+      is_front = ((dy > 0) == (dist > 0)) ? TRUE : FALSE;
 
       dist = fabs(dist);
       if (dist < DIST_EPSILON)  // too close (overlapping lines ?)
         continue;
 
-      hit_side = ((dy > 0) == (dy2 > 0)) ? N->right : N->left;
+      hit_side = ((dy > 0) ^ (dy2 > 0) ^ !is_front) ? N->right : N->left;
     }
     else  /* vert */
     {
@@ -812,33 +816,47 @@ void TestForWindowEffect(linedef_t *L)
 
       dist = (N->start->y + (mx - N->start->x) * dy2 / dx2) - my;
 
-      if ((dx > 0) != (dist > 0))
-        continue;
+      is_front = ((dx > 0) != (dist > 0)) ? TRUE : FALSE;
 
       dist = fabs(dist);
-      if (dist < DIST_EPSILON)  // too close (overlapping lines ?)
-        continue;
 
-      hit_side = ((dx > 0) == (dx2 > 0)) ? N->right : N->left;
+      hit_side = ((dx > 0) ^ (dx2 > 0) ^ !is_front) ? N->right : N->left;
     }
 
-    if (dist < best_dist)
+    if (dist < DIST_EPSILON)  // too close (overlapping lines ?)
+      continue;
+
+    if (is_front)
     {
-      best_dist = dist;
-      best_open = (hit_side && hit_side->sector) ? TRUE : FALSE;
-      best_line = i;
+      if (dist < front_dist)
+      {
+        front_dist = dist;
+        front_open = hit_side ? hit_side->sector : NULL;
+        front_line = i;
+      }
+    }
+    else
+    {
+      if (dist < back_dist)
+      {
+        back_dist = dist;
+        back_open = hit_side ? hit_side->sector : NULL;
+        back_line = i;
+      }
     }
   }
 
 #if DEBUG_WINDOW_FX
-  PrintDebug("best line: %d  best dist: %1.1f  best_open: %s\n",
-      best_line, best_dist, best_open ? "OPEN" : "CLOSED");
+  PrintDebug("back line: %d  back dist: %1.1f  back_open: %s\n",
+      back_line, back_dist, back_open ? "OPEN" : "CLOSED");
+  PrintDebug("front line: %d  front dist: %1.1f  front_open: %s\n",
+      front_line, front_dist, front_open ? "OPEN" : "CLOSED");
 #endif
 
-  if (best_open)
+  if (back_open && front_open && L->right->sector == front_open)
   {
-    L->window_effect = 1;
-    PrintMiniWarn("Linedef %d is one-sided but faces into a sector.\n", L->index);
+    L->window_effect = back_open;
+    PrintMiniWarn("Linedef #%d seems to be a One-Sided Window (back faces sector #%d).\n", L->index, back_open->index);
   }
 }
 
@@ -934,6 +952,9 @@ void CalculateWallTips(void)
   for (i=0; i < num_linedefs; i++)
   {
     linedef_t *line = lev_linedefs[i];
+
+    if (line->self_ref && cur_info->skip_self_ref)
+      continue;
 
     float_g x1 = line->start->x;
     float_g y1 = line->start->y;

@@ -2,7 +2,7 @@
 // GLBSP.H : Interface to Node Builder
 //------------------------------------------------------------------------
 //
-//  GL-Friendly Node Builder (C) 2000-2005 Andrew Apted
+//  GL-Friendly Node Builder (C) 2000-2007 Andrew Apted
 //
 //  Based on 'BSP 2.3' by Colin Reed, Lee Killough and others.
 //
@@ -22,8 +22,8 @@
 #define __GLBSP_GLBSP_H__
 
 
-#define GLBSP_VER  "2.22"
-#define GLBSP_VER_HEX  0x222
+#define GLBSP_VER  "2.24"
+#define GLBSP_VER_HEX  0x224
 
 
 // certain GCC attributes can be useful
@@ -103,6 +103,8 @@ typedef struct nodebuildinfo_s
   boolean_g prune_sect;
   boolean_g no_prune;
   boolean_g merge_vert;
+  boolean_g skip_self_ref;
+  boolean_g window_fx;
 
   int block_limit;
 

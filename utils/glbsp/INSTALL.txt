@@ -2,151 +2,97 @@
 Compiling glBSP
 ===============
 
-by Andrew Apted.  13th September 2005.
+by Andrew Apted.  JULY 2007
 
 
-glBSP comes in three flavours: a text/command-line utility "glbsp",
-a graphical/GUI version "glBSPX", and it can be compiled as a
-library for other programs to use: "libglbsp".
+glBSP comes in three flavors: a command-line utility "glbsp", a
+graphical/GUI version "glBSPX", and a library for programs to use
+called: "libglbsp".  The source code is structured so that both
+programs link against the library, hence libglbsp is always built.
 
-Currently the following operating systems are supported: Unix (Linux),
-Windows (95/98/etc), MacOS X, and DOS.  All flavours are supported in
-all systems except for glBSPX and the plugin under DOS.
-
-There are two compiling methods: using a makefile, and using an IDE.
-Currently the Unix, MacOS X and DOS versions all use makefiles, and
-under Windows there are project files for Dev-C++ (see the "Links"
-below) and for Microsoft MSVC.NET 2002, as well as makefiles for
-MinGW + MingwSYS.
-
-The GUI version (glBSPX) requires a graphical toolkit called FLTK
-(Fast Light Tool Kit) version 1.1.6.  Other versions may work, but
+The GUI version, glBSPX, requires a graphical toolkit called FLTK
+(Fast Light Tool Kit) version 1.1.7.  Other versions may work, but
 you're on your own there.  See the "Links" section below if you
 need to download it.  
 
-The Unix makefiles support a "make install", which has to be done
-as root.  None of the other methods have an automatic installation:
-just copy the glbsp (or glBSPX) executable where you want it.
+Sorry to say, but there is no support for compiling with an IDE
+(like Dev-C++ or Visual Studio) in this release.  The directory
+layout was improved when the code moved to the SVN repository,
+but unfortunately this broke all the existing project files.
 
 
-Command-line glBSP
-------------------
+NOTE WELL: glBSP is under the GNU General Public License (GPL),
+           hence you cannot use the library (libglbsp) in your
+           own program unless it is also under the GPL.
 
-Unix/Linux: make -f Makefile.unx
-MacOS X:    make -f Makefile.osx
-
-MSDOS with DJGPP: make -f Makefile.dj
-
-Windows with MinGW: mingw32-make -f Makefile.w32
-
-Windows with Dev-C++:  open the Cmdline.dev project file.
-Windows with MSVC.NET: open the Cmdline.vcproj project file.
+           The file COPYING.txt contains a copy of the GPL
+           license, and there is a lot of useful information
+           at this web page: http://www.gnu.org/licenses/
 
 
-Plugin Library
---------------
-
-The plugin version of glBSP is a special version that can be used
-within other programs, e.g. a DOOM engine.  The result of the build 
-is a library file: libglbsp.a (libglbsp.lib for VC++ under Win32).
-
-Unix/Linux: make -f Plugin_unx.mak
-MacOS X:    make -f Plugin_osx.mak
-
-Windows with MinGW: mingw32-make -f Plugin_w32.mak
-
-Windows with Dev-C++:  open the Plugin.dev project file.
-Windows with MSVC.NET: open the Plugin.vcproj project file.
-
-NOTE WELL:
-    Since glBSP is under the GNU General Public License (GPL), it
-    can only be incorporated into other programs that are also
-    under the GPL.  See the file COPYING.txt for all the details.
-
-
-Graphical version: glBSPX
--------------------------
-
-glBSPX is the GUI version of glBSP, written in C++ and requires the
-FLTK toolkit, version 1.1.6.  FLTK needs to be built before trying
-to build glBSPX: see the next section for some guidelines.
-
-Unix/Linux: make -f GUI_unx.mak
-MacOS X:    make -f GUI_osx.mak
-
-Windows with MinGW: mingw32-make -f GUI_w32.mak
-
-Windows with Dev-C++: open the GUI.dev project file.
-
-
-CVS Users
----------
-
-The source checked out of CVS does not contain the autoconf configure
-script and several files that it needs.  You will need automake and
-autoconf to generate them, like this:
-
-    make -f Makefile.cvs
-
-
-Building FLTK 1.1.6
+Linux / Unix Builds
 -------------------
 
-Unix / Linux:
+The makefile is called "Makefile.unx".  You may need to open it
+in an editor and edit some stuff near the top, especially if you
+want to use another compiler (only GNU GCC has been well tested)
+or to change the directory where FLTK can be found.
 
-    Use the normal method (configure, make, make install).  Make sure the
-    static library is built (although dynamic should work).  Since OpenGL
-    isn't needed, I usually configure with "--disable-gl".
+To build the library and command-line program:
 
-MacOS X:
+   > make -f Makefile.unx
 
-    Similar, but should use "./configure --prefix=$HOME" (that's where the
-    glBSPX makefile expects to find it).  Edit fltk/makefile.osx if it has
-    been installed somewhere else.  Also I've only tested the static
-    library.
-    
-Windows:
+To build the GUI version:
 
-    Using MinGW: copy the makefiles/makeinclude.mingw31 file to be
-    ./makeinclude, and copy makefiles/config.h to top level.  I then
-    edit config.h to remove OpenGL, PNG and JPEG support.  You may
-    need to changes some / characters to \ in makeinclude and in
-    src/Makefile.  Ignore the top level Makefile, cd into src and
-    invoke mingw32-make.
+   > make -f Makefile.unx glBSPX
 
-    Note that the glBSPX project/make files assume that fltk-1.1.6
-    and glbsp-2.20 are in the same directory.
+To install the command-line program and manual page:
+
+   > sudo make -f Makefile.unx install
 
 
-Success Stories
----------------
+Windows Builds
+--------------
 
-The command line version has run successfully on these platforms:
+The makefile is called "Makefile.w32" and uses the MinGW tools
+(see the link below) for compiling, and you may need MSYS too.
+You will also need the ZLIB library (version 1.2.3) and should
+compile it first.
 
-   +  Linux 2.1.126, libc5, GCC 2.7.2.1.
-   +  Linux 2.2.18, glibc 2.2, GCC 2.95.2.
-   +  Linux 2.4.22-PPC, glibc 2.3.1, GCC 3.2.2.
+To build the library and command-line program:
 
-   +  MacOS X (10.2.4) with GCC 3.1.
+   > mingw32-make -f Makefile.w32
 
-   +  Win32, with Dev-C++ and MinGW.
-   +  Win32, with MSVC.NET 2002.
+There is no support yet for building the GUI binary natively
+under Windows (sorry).
 
-   +  MSDOS 6.22, with DJGPP 2.02.
 
-   +  IRIX 6.5.
-   +  Digital Unix 4.0.
+Cross-Compiling Win32 Binaries
+------------------------------
+
+The "Makefile.xming" makefile lets you compile Win32 binaries
+without leaving the comfort of Linux.  You will need to compile
+FLTK and ZLIB libraries first (maybe edit the makefile to set
+their location).
+
+To build the library and command-line program:
+
+   > make -f Makefile.xming
+
+To build the GUI version:
+
+   > make -f Makefile.xming glBSPX.exe
 
 
 Links
 -----
-
-Dev-C++ (an open source IDE for Windows) home page:
-    http://dev-cpp.sourceforge.net
 
 Minimum GNU Windows compiler:
     http://www.mingw.org
 
 Fast Light Toolkit home page:
     http://www.fltk.org
+
+ZLib Compression library:
+    http://www.zlib.net
 

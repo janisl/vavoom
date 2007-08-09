@@ -2,22 +2,47 @@
 CHANGELOG
 =========
 
-Changes in V2.22  (XX May 2007)
--------------------------------
+Changes in V2.24  (26th July 2007)
+----------------------------------
 
  - level name detection: allow some variation in the order of
    the level lumps (thanks to Darren Salt for the patch).
 
- - fixed potential crash in GlbspParseArgs and GlbspCheckInfo
-   (it depends on the compiler).
- 
+ - fixed potential crash passing NULL to the SetErrorMsg()
+   function (it depended on the compiler).
+
  - avoid some potential buffer overflows in printf calls.
 
- - added TRICKS.txt document to source package which describes
-   various map tricks and how glBSP handles them.
+ - abbreviations for most cmdline options, generally using single
+   letters (like -f for -fast, -n for -normal).  Negative options
+   use an 'x' prefix (like -xr for -noreject, -xu for -noprune).
+
+ - reduced default blockmap limit to 16000 (was 44000), since the
+   existing limit could never be reached (they overflow at 65536,
+   hence the absolute minimum is around 65535/3 = 21845, assuming
+   no compression).
+
+ - added TRICKS.txt document which describes various map tricks
+   and how glBSP handles them.
+ 
+ - added new option "-windowfx" to enable the test for the
+   One-Sided Window trick, which is now disabled by default.
+   The test was made more robust by checking both sides of the
+   linedef.  Most importantly, the seg added to the back side
+   is now a REAL seg (not a MINISEG like before, as that caused
+   many problems).
+ 
+ - new option in nodebuildinfo_t "skip_self_ref" which means no
+   segs are created for self-referencing linedefs.  The default
+   is FALSE (disabled).  When enabled, the engine needs to find
+   self-referencing linedefs and render their middle textures
+   with special code (e.g. treat them similar to sprites).
  
  - improved directory layout, with main glbsp code in the 'src'
-   directory.
+   directory.  Unfortunately this made all of the IDE Project
+   files invalid, so they have been removed.  The existing
+   Makefiles have been fixed and consolidated, so each type of
+   target (lib/cmdline/gui) is handled in the same makefile.
  
 
 Changes in V2.20  (14th September 2005)

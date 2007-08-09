@@ -2,7 +2,7 @@
 // WAD : WAD read/write functions.
 //------------------------------------------------------------------------
 //
-//  GL-Friendly Node Builder (C) 2000-2005 Andrew Apted
+//  GL-Friendly Node Builder (C) 2000-2007 Andrew Apted
 //
 //  Based on 'BSP 2.3' by Colin Reed, Lee Killough and others.
 //
@@ -1641,6 +1641,7 @@ void ReportOverflows(boolean_g hard)
 void ReportV5Switches(void)
 {
   lump_t *cur;
+
   int saw_zdbsp = FALSE;
 
   PrintMsg(
