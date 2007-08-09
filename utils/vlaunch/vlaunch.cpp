@@ -108,6 +108,7 @@ END_EVENT_TABLE()
 IMPLEMENT_APP(VLaunchApp)
 
 #include "vavoom.xpm"
+#include "vlaunch.xpm"
 
 // CODE --------------------------------------------------------------------
 
@@ -121,6 +122,8 @@ VMain::VMain()
 : wxFrame(NULL, wxID_ANY, wxT("Vavoom launcher"), wxDefaultPosition, wxDefaultSize,
 	wxDEFAULT_FRAME_STYLE & ~ (wxRESIZE_BORDER | wxRESIZE_BOX | wxMAXIMIZE_BOX))
 {
+	SetIcon(wxICON(vlaunch));
+
 	wxPanel* panel = new wxPanel(this);
 	wxBoxSizer* mainsizer = new wxBoxSizer(wxVERTICAL);
 
