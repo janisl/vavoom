@@ -25,10 +25,6 @@
 
 class PowerInvisibility : Powerup;
 
-void Tick(float DeltaTime)
-{
-}
-
 //==========================================================================
 //
 //	InitEffect
@@ -38,6 +34,45 @@ void Tick(float DeltaTime)
 void InitEffect()
 {
 	Owner.Alpha = 0.2;
+}
+
+//==========================================================================
+//
+//	DoEffect
+//
+//==========================================================================
+
+void DoEffect()
+{
+	::DoEffect();
+	//	Re-init effect every tic since other PowerInvisibility powers may
+	// interfere with this one.
+	InitEffect();
+}
+
+//==========================================================================
+//
+//	EndEffect
+//
+//==========================================================================
+
+void EndEffect()
+{
+	if (!Owner)
+	{
+		return;
+	}
+
+	Owner.Alpha = 1.0;
+	//	If there are other invisibility powers, reinit their effect.
+	Inventory Item;
+	for (Item = EntityEx(Owner).Inventory; Item; Item = Item.Inventory)
+	{
+		if (PowerInvisibility(Item))
+		{
+			PowerInvisibility(Item).InitEffect();
+		}
+	}
 }
 
 defaultproperties

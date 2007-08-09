@@ -25,6 +25,46 @@
 
 class PowerShadow : PowerInvisibility;
 
+int				ShadowStage;
+
+//==========================================================================
+//
+//	HandlePickup
+//
+//	If player already has it, picking it up again makes him completely
+// ivisible.
+//
+//==========================================================================
+
+bool HandlePickup(Inventory Item)
+{
+	if (ShadowStage == 0 && Item.Class == Class)
+	{
+		Powerup Pow = Powerup(Item);
+		//	Permanent powerups can be always picked up.
+		if (!Pow.EffectTime)
+		{
+			Item.bPickupGood = true;
+			return true;
+		}
+		//	Only increase effect time.
+		if (EffectTime < Pow.EffectTime)
+		{
+			EffectTime = Pow.EffectTime;
+		}
+		//	Go to stage 2
+		ShadowStage = 1;
+		Item.bPickupGood = true;
+		return true;
+	}
+
+	if (Inventory)
+	{
+		return Inventory.HandlePickup(Item);
+	}
+	return false;
+}
+
 //==========================================================================
 //
 //	InitEffect
@@ -33,7 +73,7 @@ class PowerShadow : PowerInvisibility;
 
 void InitEffect()
 {
-	Owner.Alpha = 0.1;
+	Owner.Alpha = ShadowStage == 0 ? 0.25 : 0.0;
 }
 
 defaultproperties

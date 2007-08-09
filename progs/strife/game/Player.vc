@@ -1650,17 +1650,6 @@ void PlayerTick(float deltaTime)
 
 	//  Counters, time dependend power ups.
 
-	Powerup Pw = Powerup(EntityEx(MO).FindInventory(PowerShadow));
-	if (Pw)
-	{
-		Pw.EffectTime -= deltaTime;
-		if (Pw.EffectTime <= 0.0)
-		{
-			Pw.Destroy();
-			MO.Alpha = 1.0;
-		}
-	}
-
 	if (Powers[pw_infrared])
 	{
 		Powers[pw_infrared].EffectTime -= deltaTime;
