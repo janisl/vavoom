@@ -60,9 +60,11 @@ EXTRA_DIST = \
 	linespec/PowerInvisibility.vc \
 	linespec/PowerInvulnerable.vc \
 	linespec/PowerIronFeet.vc \
+	linespec/PowerLightAmp.vc \
 	linespec/PowerMask.vc \
 	linespec/PowerShadow.vc \
 	linespec/PowerStrength.vc \
+	linespec/PowerTorch.vc \
 	linespec/Powerup.vc \
 	linespec/PowerupGiver.vc \
 	linespec/Pusher.vc \

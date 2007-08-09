@@ -55,9 +55,6 @@ int Stamina;
 Inventory InvFirst;
 Inventory InvCursor;
 
-// Power ups. invinc and invis are timers.
-Powerup Powers[NUMPOWERS];
-
 int SigilPieces;
 
 Inventory SavedInventory;
@@ -421,25 +418,17 @@ void PlayerReborn()
 
 void PlayerExitMap(bool clusterChange)
 {
-	int i;
-	Inventory Item;
+	Inventory	Item;
 
 	for (Item = EntityEx(MO).Inventory; Item; )
 	{
 		Inventory Next = Item.Inventory;
-		if (Powerup(Item) && Item.Class != DummyPowerup && !Item.bHubPower)
+		if (Powerup(Item) && (Level.Game.deathmatch || clusterChange ||
+			!Item.bHubPower))
 		{
 			Item.Destroy();
 		}
 		Item = Next;
-	}
-	for (i = 0; i < NUMPOWERS; i++)
-	{
-		if (Powers[i])
-		{
-			Powers[i].Destroy();
-			Powers[i] = none;
-		}
 	}
 
 	if (clusterChange)
@@ -760,33 +749,6 @@ EntityEx InvThrow()
 		Item.Velocity = Dir * 128.0;
 	}
 	return Item;
-}
-
-//==========================================================================
-//
-//	GivePower
-//
-//==========================================================================
-
-bool GivePower(int power)
-{
-	if (!Powers[power])
-	{
-		Powers[power] = Level.Spawn(DummyPowerup);
-		Powers[power].AttachToOwner(EntityEx(MO));
-	}
-
-	if (power == pw_infrared)
-	{
-		Powers[power].EffectTime = INFRATIME;
-		return true;
-	}
-
-	if (Powers[power].EffectTime)
-		return false;	// already got it
-
-	Powers[power].EffectTime = 1.0;
-	return true;
 }
 
 //==========================================================================
@@ -1669,16 +1631,6 @@ void PlayerTick(float deltaTime)
 
 	//  Counters, time dependend power ups.
 
-	if (Powers[pw_infrared])
-	{
-		Powers[pw_infrared].EffectTime -= deltaTime;
-		if (Powers[pw_infrared].EffectTime <= 0.0)
-		{
-			Powers[pw_infrared].Destroy();
-			Powers[pw_infrared] = none;
-		}
-	}
-
 	if (DamageFlash)
 	{
 		DamageFlash -= deltaTime;
@@ -1705,21 +1657,6 @@ void PlayerTick(float deltaTime)
 			Actor(MO).Damage(none, none, 5);
 		}
 	}
-
-	// Handling colourmaps.
-	if (Powers[pw_infrared])
-	{
-		if (Powers[pw_infrared].EffectTime > 4.0 ||
-			(ftoi(4.0 * Powers[pw_infrared].EffectTime) & 1))
-		{
-			// almost full bright
-			FixedColourmap = 1;
-		}
-		else
-			FixedColourmap = 0;
-	}
-	else
-		FixedColourmap = 0;
 }
 
 //==========================================================================

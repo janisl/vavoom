@@ -270,7 +270,6 @@ EXTRA_DIST = compile.bat \
 	game1/Pistol.vc \
 	game1/PlasmaBall.vc \
 	game1/PlasmaRifle.vc \
-	game1/PowerupPickup.vc \
 	game1/RadSuit.vc \
 	game1/RedCard.vc \
 	game1/RedSkull.vc \

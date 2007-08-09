@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Infrared : PowerupPickup
+class Infrared : PowerupGiver
 	__mobjinfo__(2045)
 	__scriptid__(138);
 
@@ -35,8 +35,11 @@ __states__
 
 defaultproperties
 {
+	PowerupType = PowerLightAmp;
+	MaxAmount = 0;
+	bAutoActivate = true;
+	bAlwaysPickup = true;
 	bCountItem = true;
 	IdleState = S_PVIS;
-	PowerType = pw_infrared;
 	PickupMessage = "$gotvisor";
 }

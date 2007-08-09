@@ -23,20 +23,9 @@
 //**
 //**************************************************************************
 
-class ArtiTorch : Inventory
+class ArtiTorch : PowerupGiver
 	__mobjinfo__(33)
 	__scriptid__(73);
-
-//==========================================================================
-//
-//	Use
-//
-//==========================================================================
-
-bool Use(bool Pickup)
-{
-	return Player(Owner.Player).GivePower(pw_infrared);
-}
 
 __states__
 {
@@ -47,13 +36,11 @@ __states__
 
 defaultproperties
 {
-	MaxAmount = DefMaxAmount;
-	PickupSound = 'misc/p_pkup';
+	PowerupType = PowerTorch;
 	PickupMessage = "$txt_artitorch";
 	IconName = 'artitrch';
 	bCountItem = true;
 	bFloatBob = true;
 	bPickupFlash = true;
-	bInvBar = true;
 	IdleState = S_ARTI_TRCH1;
 }

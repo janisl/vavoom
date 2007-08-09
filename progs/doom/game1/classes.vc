@@ -46,7 +46,6 @@
 #include "Stimpack.vc"
 #include "Medikit.vc"
 #include "Soulsphere.vc"
-#include "PowerupPickup.vc"
 #include "InvulnerabilitySphere.vc"
 #include "Berserk.vc"
 #include "BlurSphere.vc"

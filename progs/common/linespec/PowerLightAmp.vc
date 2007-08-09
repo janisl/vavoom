@@ -23,28 +23,49 @@
 //**
 //**************************************************************************
 
-class PowerupPickup : Inventory
-	abstract;
-
-int PowerType;
+class PowerLightAmp : Powerup;
 
 //==========================================================================
 //
-//	TryPickup
+//	DoEffect
 //
 //==========================================================================
 
-bool TryPickup(EntityEx Toucher)
+void DoEffect()
 {
-	if (Player(Toucher.Player).GivePower(PowerType))
+	::DoEffect();
+	if (Owner && Owner.bIsPlayer &&
+		Owner.Player.FixedColourmap  != Inventory::INVERSECOLOURMAP)
 	{
-		GoAwayAndDie();
-		return true;
+		if (EffectTime > PlayerEx::BLINKTHRESHOLD ||
+			(ftoi(4.0 * EffectTime) & 1))
+		{
+			// almost full bright
+			Owner.Player.FixedColourmap = 1;
+		}
+		else
+		{
+			Owner.Player.FixedColourmap = 0;
+		}
 	}
-	return false;
+}
+
+//==========================================================================
+//
+//	EndEffect
+//
+//==========================================================================
+
+void EndEffect()
+{
+	if (Owner && Owner.bIsPlayer &&
+		Owner.Player.FixedColourmap  != Inventory::INVERSECOLOURMAP)
+	{
+		Owner.Player.FixedColourmap = 0;
+	}
 }
 
 defaultproperties
 {
-	PickupSound = 'misc/p_pkup';
+	EffectTime = 120.0;
 }

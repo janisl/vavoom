@@ -25,7 +25,6 @@
 
 class Player : PlayerEx;
 
-const float INFRATIME		= 120.0;
 const float FLIGHTTIME 		= 60.0;
 const float SPEEDTIME 		= 45.0;
 
@@ -55,9 +54,6 @@ float FlyHeight;
 int PoisonCount;	// screen flash for poison damage
 float LastPoisonTime;
 Actor Poisoner;		// none for non-player mobjs
-
-int NewTorch;	// used in the torch flicker effect.
-int NewTorchDelta;
 
 int WeaponCShift;
 float MorphTime;	// player is a pig if > 0
@@ -825,16 +821,6 @@ bool GivePower(int power)
 			FlyHeight = 10.0;	// thrust the player in the air a bit
 		}
 		return (true);
-	}
-	if (power == pw_infrared)
-	{
-		if (Powers[power].EffectTime > BLINKTHRESHOLD)
-		{
-			// Already have it
-			return false;
-		}
-		Powers[power].EffectTime = INFRATIME;
-		return true;
 	}
 	if (power == pw_speed)
 	{
@@ -2072,8 +2058,6 @@ void DeathPlayerTick(float deltaTime)
 		WeaponCShift = 0;
 		InvPtr = none;
 		InvFirst = none;
-		NewTorch = 0;
-		NewTorchDelta = 0;
 		PlayerState = PST_REBORN;
 		Actor(MO)._Special1 = PClass;
 		if (Actor(MO)._Special1 > 2)
@@ -2262,16 +2246,6 @@ void PlayerTick(float deltaTime)
 		}
 	}
 
-	if (Powers[pw_infrared])
-	{
-		Powers[pw_infrared].EffectTime -= deltaTime;
-		if (Powers[pw_infrared].EffectTime <= 0.0)
-		{
-			Powers[pw_infrared].Destroy();
-			Powers[pw_infrared] = none;
-		}
-	}
-
 	if (Powers[pw_speed])
 	{
 		Powers[pw_speed].EffectTime -= deltaTime;
@@ -2335,46 +2309,6 @@ void PlayerTick(float deltaTime)
 			Actor(MO).Damage(none, none, 5);
 		}
 	}
-
-	// Handling colourmaps.
-	if (Powers[pw_infrared])
-	{
-		if (Powers[pw_infrared].EffectTime <= BLINKTHRESHOLD)
-		{
-			if (ftoi(Powers[pw_infrared].EffectTime * 35.0) & 8)
-			{
-				FixedColourmap = 0;
-			}
-			else
-			{
-				FixedColourmap = 1;
-			}
-		}
-		else if (!(Level.XLevel.TicTime & 16))
-		{
-			if (NewTorch)
-			{
-				if (FixedColourmap + NewTorchDelta > 7 ||
-					FixedColourmap + NewTorchDelta < 1 ||
-					FixedColourmap == NewTorch)
-				{
-					NewTorch = 0;
-				}
-				else
-				{
-					FixedColourmap += NewTorchDelta;
-				}
-			}
-			else
-			{
-				NewTorch = (P_Random() & 7) + 1;
-				NewTorchDelta = (NewTorch == FixedColourmap) ? 0 :
-					((NewTorch > FixedColourmap) ? 1 : -1);
-			}
-		}
-	}
-	else
-		FixedColourmap = 0;
 }
 
 //==========================================================================

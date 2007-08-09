@@ -31,13 +31,6 @@ import linespec;
 
 // CONSTANTS ---------------------------------------------------------------
 
-// Power up artifacts.
-enum
-{
-	pw_infrared,
-	NUMPOWERS
-};
-
 enum
 {
 	CONTENTS_EMPTY,

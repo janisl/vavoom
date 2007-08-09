@@ -22,49 +22,58 @@
 //**  GNU General Public License for more details.
 //**
 //**************************************************************************
-//**
-//**    DOOM and DOOM II progs
-//**
-//**************************************************************************
 
-import shared;
-import linespec;
+class PowerTorch : PowerLightAmp;
 
-// CONSTANTS ---------------------------------------------------------------
+int				NewTorch;
+int				NewTorchDelta;
 
-//#define GRENADE_LAUNCHER
+//==========================================================================
+//
+//	DoEffect
+//
+//==========================================================================
 
-enum
+void DoEffect()
 {
-	CONTENTS_EMPTY,
-	CONTENTS_WATER,
-	CONTENTS_LAVA,
-	CONTENTS_NUKAGE,
-	CONTENTS_SLIME,
-	CONTENTS_HELLSLIME,
-	CONTENTS_BLOOD,
-	CONTENTS_SLUDGE,
-	CONTENTS_HAZARD,
+	if (!Owner || !Owner.bIsPlayer)
+	{
+		return;
+	}
 
-	CONTENTS_SOLID = -1
-};
+	if (EffectTime <= PlayerEx::BLINKTHRESHOLD ||
+		Owner.Player.FixedColourmap == Inventory::INVERSECOLOURMAP)
+	{
+		::DoEffect();
+	}
+	else if (!(ftoi(2.0 * Level.XLevel.Time) & 1))
+	{
+		int PrevCMap = Owner.Player.FixedColourmap;
+		::DoEffect();
+		Owner.Player.FixedColourmap = PrevCMap;
+		if (NewTorch)
+		{
+			if (Owner.Player.FixedColourmap + NewTorchDelta > 7 ||
+				Owner.Player.FixedColourmap + NewTorchDelta < 1 ||
+				Owner.Player.FixedColourmap == NewTorch)
+			{
+				NewTorch = 0;
+			}
+			else
+			{
+				Owner.Player.FixedColourmap += NewTorchDelta;
+			}
+		}
+		else
+		{
+			NewTorch = (P_Random() & 7) + 1;
+			NewTorchDelta =
+				(NewTorch == Owner.Player.FixedColourmap) ? 0 :
+				((NewTorch > Owner.Player.FixedColourmap) ? 1 : -1);
+		}
+	}
+}
 
-enum
+defaultproperties
 {
-	CSHIFT_Contents,
-	CSHIFT_Damage,
-	CSHIFT_Bonus,
-	CSHIFT_Power
-};
-
-// Power up artifacts.
-enum
-{
-	NUMPOWERS
-};
-
-#include "game/classes.vc"
-
-#include "game1/classes.vc"
-
-#include "game2/classes.vc"
+}

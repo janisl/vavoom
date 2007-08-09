@@ -51,7 +51,6 @@ enum
 // Power up artifacts.
 enum
 {
-	pw_infrared,
 	pw_weaponlevel2,
 	pw_flight,
 	NUMPOWERS

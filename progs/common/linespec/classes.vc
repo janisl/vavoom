@@ -53,6 +53,8 @@ enum
 #include "PowerShadow.vc"
 #include "PowerIronFeet.vc"
 #include "PowerMask.vc"
+#include "PowerLightAmp.vc"
+#include "PowerTorch.vc"
 #include "PlayerEx.vc"
 
 #include "LineSpecialLevelInfo.vc"
