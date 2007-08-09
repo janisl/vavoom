@@ -151,7 +151,13 @@ VMain::VMain()
 	RendChoices[0] = wxT("Software");
 	RendChoices[1] = wxT("OpenGL");
 	RendChoices[2] = wxT("Direct3D");
-	RendererBox = new wxComboBox(page, -1, RendChoices[0], wxDefaultPosition, wxDefaultSize, 3, RendChoices, wxCB_READONLY);
+	RendererBox = new wxComboBox(page, -1, RendChoices[1], wxDefaultPosition, wxDefaultSize,
+#ifdef _WIN32
+		3,
+#else
+		2,
+#endif
+		RendChoices, wxCB_READONLY);
 	gsizer->Add(RendererBox, 0, wxALL, 4);
 
 	gsizer->Add(new wxStaticText(page, -1, wxT("Custom game:")), 0, wxALL, 4);
