@@ -23,33 +23,28 @@
 //**
 //**************************************************************************
 
-import engine;
+class PowerSpeed : Powerup;
 
-class HexenDefs : Object;
+//==========================================================================
+//
+//	GetSpeedFactor
+//
+//==========================================================================
 
-enum
+float GetSpeedFactor()
 {
-	PCLASS_FIGHTER,
-	PCLASS_CLERIC,
-	PCLASS_MAGE,
-	PCLASS_PIG,
-	NUMCLASSES
-};
-
-enum
-{
-	ARMOR_ARMOR,
-	ARMOR_SHIELD,
-	ARMOR_HELMET,
-	ARMOR_AMULET,
-	NUMARMOR
-};
-
-enum
-{
-	SBF_POWER_MINOTAUR	= 0x00080000
-};
+	if (Inventory)
+	{
+		return Speed * Inventory.GetSpeedFactor();
+	}
+	else
+	{
+		return Speed;
+	}
+}
 
 defaultproperties
 {
+	Speed = 1.5;
+	EffectTime = 45.0;
 }

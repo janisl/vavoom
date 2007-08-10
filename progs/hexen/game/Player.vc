@@ -25,8 +25,6 @@
 
 class Player : PlayerEx;
 
-const float SPEEDTIME 		= 45.0;
-
 const int MAXHEALTH			= 100;
 const int MAXMORPHHEALTH	= 30;
 const float VIEWHEIGHT		= 48.0;
@@ -800,16 +798,6 @@ bool GivePower(int power)
 		Powers[power].AttachToOwner(EntityEx(MO));
 	}
 
-	if (power == pw_speed)
-	{
-		if (Powers[power].EffectTime > BLINKTHRESHOLD)
-		{
-			// Already have it
-			return false;
-		}
-		Powers[power].EffectTime = SPEEDTIME;
-		return true;
-	}
 	if (power == pw_minotaur)
 	{
 		// Doesn't matter if already have power, renew ticker
@@ -1005,11 +993,12 @@ void MovePlayer(float deltaTime)
 		break;
 	}
 
-	if (Powers[pw_speed] && !MorphTime)
+	if (EntityEx(MO).Inventory && !MorphTime)
 	{
 		// Adjust for a player with a speed artifact
-		forward *= 1.5;
-		side *= 1.5;
+		float SpeedFactor = EntityEx(MO).Inventory.GetSpeedFactor();
+		forward *= SpeedFactor;
+		side *= SpeedFactor;
 	}
 	if ((!EntityEx(MO).FindInventory(PowerFlight) ||
 		MO.Origin.z <= MO.FloorZ) &&
@@ -1180,11 +1169,12 @@ void WaterMove(float deltaTime)
 		break;
 	}
 
-	if (Powers[pw_speed] && !MorphTime)
+	if (EntityEx(MO).Inventory && !MorphTime)
 	{
 		// Adjust for a player with a speed artifact
-		forward *= 1.5;
-		side *= 1.5;
+		float SpeedFactor = EntityEx(MO).Inventory.GetSpeedFactor();
+		forward *= SpeedFactor;
+		side *= SpeedFactor;
 	}
 
 	wishvel = vforward * forward + vright * side;
@@ -2124,8 +2114,8 @@ void PlayerTick(float deltaTime)
 			WaterMove(deltaTime);
 		else
 			MovePlayer(deltaTime);
-		if (Powers[pw_speed] && !(Level.XLevel.TicTime & 1) &&
-			Length(MO.Velocity) > 12.0 * 35.0)
+		if (EntityEx(MO).FindInventory(PowerSpeed) &&
+			!(Level.XLevel.TicTime & 1) && Length(MO.Velocity) > 12.0 * 35.0)
 		{
 			speedA = HexenLevelInfo(Level).Spawn(PlayerSpeed, MO.Origin);
 			if (speedA)
@@ -2223,16 +2213,6 @@ void PlayerTick(float deltaTime)
 		{
 			Powers[pw_minotaur].Destroy();
 			Powers[pw_minotaur] = none;
-		}
-	}
-
-	if (Powers[pw_speed])
-	{
-		Powers[pw_speed].EffectTime -= deltaTime;
-		if (Powers[pw_speed].EffectTime <= 0.0)
-		{
-			Powers[pw_speed].Destroy();
-			Powers[pw_speed] = none;
 		}
 	}
 
@@ -2392,14 +2372,6 @@ void SetViewPos()
 	PaletteFlash();
 
 	SBFlags = 0;
-	if (Powers[pw_speed])
-	{
-		if (Powers[pw_speed].EffectTime > BLINKTHRESHOLD ||
-			!(ftoi(Powers[pw_speed].EffectTime * 35.0) & 16))
-		{
-			SBFlags |= HexenDefs::SBF_POWER_SPEED;
-		}
-	}
 	if (Powers[pw_minotaur])
 	{
 		if (Powers[pw_minotaur].EffectTime > BLINKTHRESHOLD ||

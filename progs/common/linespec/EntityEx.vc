@@ -2279,7 +2279,7 @@ final bool Teleport(TVec Dst, float angle, bool DstFog, bool SrcFog,
 	if (!KeepDir)
 	{
 		if (bIsPlayer && !FindInventory(PowerWeaponLevel2) &&
-			!HaveSpeedPower())
+			!FindInventory(PowerSpeed))
 		{
 			//	Don't move for a bit, freeze player for about .5 sec
 			ReactionTime = 0.5;
@@ -5384,11 +5384,6 @@ void SpawnBloodSplatter2(TVec hit_point)
 
 void SpawnRipperBlood()
 {
-}
-
-bool HaveSpeedPower()
-{
-	return false;
 }
 
 bool IsNotAttackingMaster(EntityEx Other)

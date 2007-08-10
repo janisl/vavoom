@@ -57,6 +57,7 @@ enum
 #include "PowerTorch.vc"
 #include "PowerFlight.vc"
 #include "PowerWeaponLevel2.vc"
+#include "PowerSpeed.vc"
 #include "PlayerEx.vc"
 
 #include "LineSpecialLevelInfo.vc"

@@ -682,6 +682,24 @@ void OwnerDied()
 
 //==========================================================================
 //
+//	GetSpeedFactor
+//
+//==========================================================================
+
+float GetSpeedFactor()
+{
+	if (Inventory)
+	{
+		return Inventory.GetSpeedFactor();
+	}
+	else
+	{
+		return 1.0;
+	}
+}
+
+//==========================================================================
+//
 //  A_RestoreSpecialThing1
 //
 //  Make a special thing visible again.

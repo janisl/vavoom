@@ -23,20 +23,9 @@
 //**
 //**************************************************************************
 
-class ArtiSpeedBoots : Inventory
+class ArtiSpeedBoots : PowerupGiver
 	__mobjinfo__(8002)
 	__scriptid__(13);
-
-//==========================================================================
-//
-//	Use
-//
-//==========================================================================
-
-bool Use(bool Pickup)
-{
-	return Player(Owner.Player).GivePower(pw_speed);
-}
 
 __states__
 {
@@ -52,12 +41,10 @@ __states__
 
 defaultproperties
 {
-	MaxAmount = DefMaxAmount;
-	PickupSound = 'PickupArtifact';
+	PowerupType = PowerSpeed;
 	PickupMessage = "$txt_artispeed";
 	IconName = 'artisped';
 	bFloatBob = true;
 	bPickupFlash = true;
-	bInvBar = true;
 	IdleState = S_ARTI_BOOTS1;
 }
