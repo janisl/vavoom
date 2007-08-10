@@ -219,14 +219,3 @@ int GetBlend()
 defaultproperties
 {
 }
-
-//	A temporary class for non-converted powerups.
-class DummyPowerup : Powerup;
-
-void Tick(float DeltaTime)
-{
-}
-
-defaultproperties
-{
-}
