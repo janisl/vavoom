@@ -758,17 +758,6 @@ float GetBaseViewHeight()
 //
 //==========================================================================
 
-bool HaveFlightPower()
-{
-	return !!FindInventory(PowerFlight);
-}
-
-//==========================================================================
-//
-//  HaveFlightPower
-//
-//==========================================================================
-
 bool HaveSpeedPower()
 {
 	return !!Player(Player).Powers[pw_speed];

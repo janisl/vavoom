@@ -68,6 +68,7 @@ EXTRA_DIST = \
 	linespec/PowerTorch.vc \
 	linespec/Powerup.vc \
 	linespec/PowerupGiver.vc \
+	linespec/PowerWeaponLevel2.vc \
 	linespec/Pusher.vc \
 	linespec/PuzzleItem.vc \
 	linespec/ScriptedEntity.vc \

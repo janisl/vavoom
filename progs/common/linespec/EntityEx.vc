@@ -2236,7 +2236,7 @@ final bool Teleport(TVec Dst, float angle, bool DstFog, bool SrcFog,
 	}
 	if (bIsPlayer)
 	{
-		if (HaveFlightPower() && aboveFloor)
+		if (FindInventory(PowerFlight) && aboveFloor)
 		{
 			Origin.z = Origin.z + aboveFloor;
 			if (Origin.z + Height > CeilingZ)
@@ -2278,7 +2278,8 @@ final bool Teleport(TVec Dst, float angle, bool DstFog, bool SrcFog,
 	}
 	if (!KeepDir)
 	{
-		if (bIsPlayer && !HaveWeaponLevel2Power() && !HaveSpeedPower())
+		if (bIsPlayer && !FindInventory(PowerWeaponLevel2) &&
+			!HaveSpeedPower())
 		{
 			//	Don't move for a bit, freeze player for about .5 sec
 			ReactionTime = 0.5;
@@ -5383,16 +5384,6 @@ void SpawnBloodSplatter2(TVec hit_point)
 
 void SpawnRipperBlood()
 {
-}
-
-bool HaveFlightPower()
-{
-	return false;
-}
-
-bool HaveWeaponLevel2Power()
-{
-	return false;
 }
 
 bool HaveSpeedPower()

@@ -48,11 +48,4 @@ enum
 	CSHIFT_Bonus
 };
 
-// Power up artifacts.
-enum
-{
-	pw_weaponlevel2,
-	NUMPOWERS
-};
-
 #include "game/classes.vc"

@@ -260,7 +260,7 @@ void SB_DrawMainBar()
 	//  Background
 	R_DrawPic(BAR_X, BAR_Y, pic_barback);
 
-	if (cl.SBFlags & HereticDefs::SBF_GOD_MODE)
+	if (cl.Cheats & Player::CF_GODMODE)
 	{
 		//  God mode
 		R_DrawPic(BAR_X + 16, BAR_Y + 9, pic_god1);
@@ -295,7 +295,7 @@ void SB_DrawMainBar()
 		R_ShadeRect(BAR_X + 19 + i, BAR_Y + 32, 1, 10, itof(9 + 15 - i) / 32.0);
 	}
 
-	if (!(cl.SBFlags & HereticDefs::SBF_INVENTORY_OPEN))
+	if (!cl.InventoryTime)
 	{
 		//  Main interface
 		R_DrawPic(BAR_X + 34, BAR_Y + 2, pic_mainbar);
@@ -419,7 +419,7 @@ void SB_DrawFullscreenStats()
 		R_DrawPic(580, 460, pic_bkey);
 	}
 
-	if (cl.SBFlags & HereticDefs::SBF_INVENTORY_OPEN)
+	if (cl.InventoryTime)
 	{
 		//  Inventory
 		Inventory Item = cl.InvFirst;
@@ -473,8 +473,8 @@ void SB_DrawIcons()
 
 	//  Artifact rotating icons
 	Powerup Pw = Powerup(EntityEx(cl.MO).FindInventory(PowerFlight));
-	if (Pw && Pw.EffectTime > Player::BLINKTHRESHOLD ||
-		!(ftoi(2.0 * Pw.EffectTime) & 1))
+	if (Pw && (Pw.EffectTime > Player::BLINKTHRESHOLD ||
+		!(ftoi(2.0 * Pw.EffectTime) & 1)))
 	{
 		frame = (ClGame.GLevel.TicTime / 3) & 15;
 		if (cl.MO.bFly)
@@ -499,7 +499,9 @@ void SB_DrawIcons()
 		R_DrawPic(20, 17, pic_flight[frame]);
 	}
 
-	if (cl.SBFlags & HereticDefs::SBF_POWER_BOOK)
+	Pw = Powerup(EntityEx(cl.MO).FindInventory(PowerWeaponLevel2));
+	if (Pw && !cl.ChickenTime && (Pw.EffectTime > Player::BLINKTHRESHOLD ||
+		!(ftoi(2.0 * Pw.EffectTime) & 1)))
 	{
 		R_DrawPic(620, 17, pic_book[(ClGame.GLevel.TicTime / 3) & 15]);
 	}

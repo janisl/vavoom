@@ -29,7 +29,6 @@ const int MAXCHICKENHEALTH	= 30;
 const float VIEWHEIGHT		= 41.0;
 
 const float
-	WPNLEV2TIME 	= 40.0,
 	CHICKENTIME 	= 40.0;
 
 // 16 pixels of bob
@@ -37,14 +36,9 @@ const float MAXBOB	= 16.0;
 
 const int MAXHEALTH	= 100;
 
-int SBFlags;
-
 int ArmorPoints;
 
 float ChickenTime;	// player is a chicken if > 0
-
-// Power ups. invinc and invis are timers.
-Powerup Powers[NUMPOWERS];
 
 int ArtifactFlash;
 Inventory InvFirst;
@@ -66,7 +60,8 @@ bool onground;
 replication
 {
 	reliable if (!bIsClient)
-		SBFlags, ArmorPoints, ArtifactFlash, InvFirst, InvPtr;
+		ArmorPoints, ArtifactFlash, InvFirst, InvPtr, InventoryTime,
+		ChickenTime;
 
 	unreliable if (!bIsClient)
 		ClientBlood, ClientExplosion;
@@ -435,13 +430,15 @@ void PlayerExitMap(bool clusterChange)
 		PlayerUseArtifactType(ArtiFly);
 	}
 
-	for (i = 0; i < NUMPOWERS; i++)
+	for (Item = EntityEx(MO).Inventory; Item;)
 	{
-		if (Powers[i])
+		Inventory Next = Item.Inventory;
+		if (Powerup(Item) && (Level.Game.deathmatch || clusterChange ||
+			!Item.bHubPower))
 		{
-			Powers[i].Destroy();
-			Powers[i] = none;
+			Item.Destroy();
 		}
+		Item = Next;
 	}
 	if (clusterChange)
 	{
@@ -601,40 +598,6 @@ bool GiveArmor(int armortype)
 	}
 	ArmorType = armortype;
 	ArmorPoints = hits;
-	return true;
-}
-
-//==========================================================================
-//
-//  GivePower
-//
-//  Returns true if power accepted.
-//
-//==========================================================================
-
-bool GivePower(int power)
-{
-	if (!Powers[power])
-	{
-		Powers[power] = Level.Spawn(DummyPowerup);
-		Powers[power].AttachToOwner(EntityEx(MO));
-	}
-
-	if (power == pw_weaponlevel2)
-	{
-		if (Powers[power].EffectTime > BLINKTHRESHOLD)
-		{
-			// Already have it
-			return false;
-		}
-		Powers[power].EffectTime = WPNLEV2TIME;
-		return true;
-	}
-	if (Powers[power].EffectTime)
-	{
-		return false;	// already got it
-	}
-	Powers[power].EffectTime = 1.0;
 	return true;
 }
 
@@ -1500,7 +1463,7 @@ void PlayerImpulse()
 	// Heretic artifact hot keys
 	else if (impulse == 11)
 	{
-		if (!Powers[pw_weaponlevel2])
+		if (!EntityEx(MO).FindInventory(PowerWeaponLevel2))
 		{
 			Arti = EntityEx(MO).FindInventory(ArtiTomeOfPower);
 		}
@@ -1597,10 +1560,10 @@ bool UndoPlayerChicken()
 		A.bNoGravity = true;
 	}
 	ChickenTime = 0.0;
-	if (Powers[pw_weaponlevel2])
+	Inventory Pw = EntityEx(MO).FindInventory(PowerWeaponLevel2);
+	if (Pw)
 	{
-		Powers[pw_weaponlevel2].Destroy();
-		Powers[pw_weaponlevel2] = none;
+		Pw.Destroy();
 	}
 	A.Health = MAXHEALTH;
 	Health = A.Health;
@@ -1859,17 +1822,6 @@ void PlayerTick(float deltaTime)
 
 	// Counters, time dependend power ups.
 
-	if (Powers[pw_weaponlevel2])
-	{
-		Powers[pw_weaponlevel2].EffectTime -= deltaTime;
-		if (Powers[pw_weaponlevel2].EffectTime <= 0.0)
-		{
-			Powers[pw_weaponlevel2].Destroy();
-			Powers[pw_weaponlevel2] = none;
-			WeaponLevel2Fade();
-		}
-	}
-
 	if (DamageFlash)
 	{
 		DamageFlash -= deltaTime;
@@ -1997,22 +1949,6 @@ void SetViewPos()
 	}
 
 	PaletteFlash();
-
-	SBFlags = 0;
-	if (Cheats & CF_GODMODE)
-		SBFlags |= HereticDefs::SBF_GOD_MODE;
-	if (Powers[pw_weaponlevel2] && !ChickenTime)
-	{
-		if (Powers[pw_weaponlevel2].EffectTime > BLINKTHRESHOLD ||
-			!(ftoi(2.0 * Powers[pw_weaponlevel2].EffectTime) & 1))
-		{
-			SBFlags |= HereticDefs::SBF_POWER_BOOK;
-		}
-	}
-	if (InventoryTime)
-	{
-		SBFlags |= HereticDefs::SBF_INVENTORY_OPEN;
-	}
 
 	ClientSetViewOrg(ViewOrg.x, ViewOrg.y, ViewOrg.z);
 }
@@ -2211,30 +2147,6 @@ void UpdateBeak()
 	ViewStates[ps_weapon].SY = Weapon::WEAPONTOP + itof(ChickenPeck) / 2.0;
 }
 
-//===========================================================================
-//
-//  WeaponLevel2Fade
-//
-//===========================================================================
-
-void WeaponLevel2Fade()
-{
-	if (!ReadyWeapon.bPoweredUp)
-	{
-		return;
-	}
-	Weapon Wpn = ReadyWeapon;
-	Weapon Sist = ReadyWeapon.SisterWeapon;
-	if (Sist)
-	{
-		SetWeapon(Sist);
-		if (Sist.ReadyState != Wpn.ReadyState)
-		{
-			SetViewState(ps_weapon, Sist.ReadyState);
-		}
-	}
-}
-
 //==========================================================================
 //
 //  P_UseLines
@@ -2400,18 +2312,15 @@ void Cheat_Gimme()
 	}
 	if (Cmd_CheckParm("power"))
 	{
-		if (Powers[pw_weaponlevel2])
+		Inventory Pw = EntityEx(MO).FindInventory(PowerWeaponLevel2);
+		if (Pw)
 		{
-			Powers[pw_weaponlevel2].Destroy();
-			Powers[pw_weaponlevel2] = none;
+			Pw.Destroy();
 			cprint("POWER OFF");
 		}
 		else
 		{
-			Inventory Tmp = Level.Spawn(ArtiTomeOfPower);
-			Tmp.AttachToOwner(EntityEx(MO));
-			Tmp.Use(false);
-			Tmp.Destroy();
+			EntityEx(MO).GiveInventoryType(PowerWeaponLevel2);
 			cprint("POWER ON");
 		}
 	}
@@ -2628,17 +2537,6 @@ void ClientExplosion(int colour, TVec org)
 	dl->colour = colour;
 	dl->die = Level.XLevel.Time + 0.5;
 	dl->decay = 300.0;
-}
-
-//==========================================================================
-//
-//  HaveTomeOfPower
-//
-//==========================================================================
-
-bool HaveTomeOfPower()
-{
-	return !!Powers[pw_weaponlevel2];
 }
 
 //==========================================================================

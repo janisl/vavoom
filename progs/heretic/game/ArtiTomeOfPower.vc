@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ArtiTomeOfPower : Inventory
+class ArtiTomeOfPower : PowerupGiver
 	__mobjinfo__(86)
 	__scriptid__(134);
 
@@ -49,26 +49,12 @@ bool Use(bool Pickup)
 			Player(Owner.Player).ChickenTime = 0.0;
 			Owner.PlaySound('*evillaugh', CHAN_ITEM);
 		}
+		return true;
 	}
 	else
 	{
-		if (!Player(Owner.Player).GivePower(pw_weaponlevel2))
-		{
-			return false;
-		}
-		Weapon Wpn = Player(Owner.Player).ReadyWeapon;
-		Weapon Sist = Player(Owner.Player).ReadyWeapon.SisterWeapon;
-		if (Sist && Sist.bPoweredUp)
-		{
-			Player(Owner.Player).SetWeapon(Sist);
-			if (Sist.ReadyState != Wpn.ReadyState)
-			{
-				Player(Owner.Player).SetViewState(ps_weapon,
-					Sist.ReadyState);
-			}
-		}
+		return ::Use(Pickup);
 	}
-	return true;
 }
 
 __states__
@@ -78,13 +64,11 @@ __states__
 
 defaultproperties
 {
-	MaxAmount = DefMaxAmount;
-	PickupSound = 'misc/p_pkup';
+	PowerupType = PowerWeaponLevel2;
 	PickupMessage = "$txt_artitomeofpower";
 	IconName = 'artipwbk';
 	bCountItem = true;
 	bFloatBob = true;
 	bPickupFlash = true;
-	bInvBar = true;
 	IdleState = S_ARTI_PWBK1;
 }

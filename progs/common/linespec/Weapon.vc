@@ -384,7 +384,7 @@ bool Use(bool Pickup)
 	//	See which weapon to use.
 	Weapon UseWpn = self;
 	if (SisterWeapon && SisterWeapon.bPoweredUp &&
-		PlayerEx(Owner.Player).HaveTomeOfPower())
+		EntityEx(Owner).FindInventory(PowerWeaponLevel2))
 	{
 		UseWpn = SisterWeapon;
 	}
@@ -519,6 +519,25 @@ final bool DepleteAmmo(optional bool CheckEnough, optional int DehackedUse)
 		Ammo2.Amount -= AmmoUse2;
 	}
 	return true;
+}
+
+//===========================================================================
+//
+//	EndPowerup
+//
+//===========================================================================
+
+final void EndPowerup()
+{
+	if (SisterWeapon)
+	{
+		PlayerEx(Owner.Player).SetWeapon(SisterWeapon);
+		if (SisterWeapon.GetReadyState() != GetReadyState())
+		{
+			PlayerEx(Owner.Player).SetViewState(ps_weapon,
+				SisterWeapon.GetReadyState());
+		}
+	}
 }
 
 //==========================================================================

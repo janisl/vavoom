@@ -158,7 +158,7 @@ void KilledByPlayer(EntityEx source)
 			if (Player(source.Player).ChickenTime)
 			{
 				// Make a super chicken
-				Player(source.Player).GivePower(pw_weaponlevel2);
+				source.GiveInventoryType(PowerWeaponLevel2);
 			}
 		}
 	}
@@ -177,11 +177,6 @@ void PlayerKilled(EntityEx source, EntityEx inflictor)
 	{
 		Player.FragsStats[Player.GetPlayerNum()]--;
 		Player.Frags--;
-	}
-	if (Player(Player).Powers[pw_weaponlevel2])
-	{
-		Player(Player).Powers[pw_weaponlevel2].Destroy();
-		Player(Player).Powers[pw_weaponlevel2] = none;
 	}
 }
 
@@ -256,10 +251,10 @@ bool ChickenMorphPlayer()
 	if (Player(Player).ChickenTime)
 	{
 		if ((Player(Player).ChickenTime < Player::CHICKENTIME - 1.0) &&
-			!Player(Player).Powers[pw_weaponlevel2])
+			!FindInventory(PowerWeaponLevel2))
 		{
 			// Make a super chicken
-			Player(Player).GivePower(pw_weaponlevel2);
+			GiveInventoryType(PowerWeaponLevel2);
 		}
 		return false;
 	}
@@ -282,15 +277,15 @@ bool ChickenMorphPlayer()
 	Player.MO = chicken;
 	Player(Player).ArmorPoints = 0;
 	Player(Player).ArmorType = 0;
-	Powerup Pw = Powerup(FindInventory(PowerGhost));
+	Inventory Pw = FindInventory(PowerGhost);
 	if (Pw)
 	{
 		Pw.Destroy();
 	}
-	if (Player(Player).Powers[pw_weaponlevel2])
+	Pw = FindInventory(PowerWeaponLevel2);
+	if (Pw)
 	{
-		Player(Player).Powers[pw_weaponlevel2].Destroy();
-		Player(Player).Powers[pw_weaponlevel2] = none;
+		Pw.Destroy();
 	}
 	chicken.bFly = bFly;
 	Player(Player).ChickenTime = Player::CHICKENTIME;
@@ -514,28 +509,6 @@ void SpawnBlasterEffects()
 float GetBaseViewHeight()
 {
 	return Player::VIEWHEIGHT;
-}
-
-//==========================================================================
-//
-//  HaveFlightPower
-//
-//==========================================================================
-
-bool HaveFlightPower()
-{
-	return !!FindInventory(PowerFlight);
-}
-
-//==========================================================================
-//
-//  HaveWeaponLevel2Power
-//
-//==========================================================================
-
-bool HaveWeaponLevel2Power()
-{
-	return !!Player(Player).Powers[pw_weaponlevel2];
 }
 
 //==========================================================================
