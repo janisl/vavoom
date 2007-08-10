@@ -10,7 +10,6 @@ graphics/fonta30.lmp	@srcdir@/graphics/fonta30.lmp
 graphics/fonta63.lmp	@srcdir@/graphics/fonta63.lmp
 
 //	Progs
-progs/shared.dat		progs/shared.dat
 progs/clprogs.dat		progs/clprogs.dat
 progs/svprogs.dat		progs/svprogs.dat
 
