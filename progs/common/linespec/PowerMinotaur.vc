@@ -23,28 +23,9 @@
 //**
 //**************************************************************************
 
-import engine;
-
-class HexenDefs : Object;
-
-enum
-{
-	PCLASS_FIGHTER,
-	PCLASS_CLERIC,
-	PCLASS_MAGE,
-	PCLASS_PIG,
-	NUMCLASSES
-};
-
-enum
-{
-	ARMOR_ARMOR,
-	ARMOR_SHIELD,
-	ARMOR_HELMET,
-	ARMOR_AMULET,
-	NUMARMOR
-};
+class PowerMinotaur : Powerup;
 
 defaultproperties
 {
+	EffectTime = 25.0;
 }

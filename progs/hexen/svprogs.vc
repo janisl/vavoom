@@ -52,13 +52,6 @@ enum
 	CSHIFT_Weapon
 };
 
-// Power up artifacts.
-enum
-{
-	pw_minotaur,
-	NUMPOWERS
-};
-
 // TYPES -------------------------------------------------------------------
 
 #include "game/classes.vc"

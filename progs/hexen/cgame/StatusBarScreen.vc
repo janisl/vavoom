@@ -736,7 +736,9 @@ void SB_DrawIcons()
 	}
 
 	// Minotaur Active
-	if (cl.SBFlags & HexenDefs::SBF_POWER_MINOTAUR)
+	Pw = Powerup(EntityEx(cl.MO).FindInventory(PowerMinotaur));
+	if (Pw && (Pw.EffectTime > Player::BLINKTHRESHOLD ||
+		!(ftoi(Pw.EffectTime * 35.0) & 16)))
 	{
 		R_DrawPic(620, 19, pic_mino[(ClGame.GLevel.TicTime / 3) & 15]);
 	}

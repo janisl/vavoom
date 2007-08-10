@@ -32,14 +32,9 @@ const float VIEWHEIGHT		= 48.0;
 // 16 pixels of bob
 const float MAXBOB			= 16.0;
 
-int SBFlags;
-
 int TotalArmorPoints;
 float ArmorPoints[HexenDefs::NUMARMOR];
 int ArmorPerc[HexenDefs::NUMARMOR];
-
-// Power ups. invinc and invis are tic counters.
-Powerup Powers[NUMPOWERS];
 
 float InventoryTime;
 int ArtifactFlash;
@@ -61,8 +56,8 @@ bool onground;
 replication
 {
 	reliable if (!bIsClient)
-		SBFlags, TotalArmorPoints, InventoryTime, ArtifactFlash,
-		InvPtr, InvFirst, ArmorPerc;
+		TotalArmorPoints, InventoryTime, ArtifactFlash, InvPtr, InvFirst,
+		ArmorPerc;
 
 	unreliable if (!bIsClient)
 		ClientBlood, ClientExplosion;
@@ -581,19 +576,11 @@ void PlayerExitMap(bool clusterChange)
 	{
 		Inventory Next = Item.Inventory;
 		if (Powerup(Item) && (Level.Game.deathmatch || clusterChange ||
-			!Item.bHubPower) && Item.Class != DummyPowerup)
+			!Item.bHubPower))
 		{
 			Item.Destroy();
 		}
 		Item = Next;
-	}
-	for (i = 0; i < NUMPOWERS; i++)
-	{
-		if (Powers[i])
-		{
-			Powers[i].Destroy();
-			Powers[i] = none;
-		}
 	}
 
 	if (!Level.Game.deathmatch)
@@ -779,36 +766,6 @@ bool GiveArmor(int armortype, int amount)
 			return false;
 		}
 	}
-	return true;
-}
-
-//==========================================================================
-//
-//  GivePower
-//
-//  Returns true if power accepted.
-//
-//==========================================================================
-
-bool GivePower(int power)
-{
-	if (!Powers[power])
-	{
-		Powers[power] = Level.Spawn(DummyPowerup);
-		Powers[power].AttachToOwner(EntityEx(MO));
-	}
-
-	if (power == pw_minotaur)
-	{
-		// Doesn't matter if already have power, renew ticker
-		Powers[power].EffectTime = Actor::MAULATORTIME;
-		return true;
-	}
-	if (Powers[power].EffectTime)
-	{
-		return false;	// already got it
-	}
-	Powers[power].EffectTime = 1.0;
 	return true;
 }
 
@@ -2204,17 +2161,7 @@ void PlayerTick(float deltaTime)
 	// cycle psprites
 	MovePsprites(deltaTime);
 
-	// Counters, time dependend power ups.
-
-	if (Powers[pw_minotaur])
-	{
-		Powers[pw_minotaur].EffectTime -= deltaTime;
-		if (Powers[pw_minotaur].EffectTime <= 0.0)
-		{
-			Powers[pw_minotaur].Destroy();
-			Powers[pw_minotaur] = none;
-		}
-	}
+	// Counters
 
 	if (PoisonCount && Level.XLevel.Time - LastPoisonTime >= 0.5)
 	{
@@ -2370,16 +2317,6 @@ void SetViewPos()
 	ViewAngles = MO.Angles;
 
 	PaletteFlash();
-
-	SBFlags = 0;
-	if (Powers[pw_minotaur])
-	{
-		if (Powers[pw_minotaur].EffectTime > BLINKTHRESHOLD ||
-			!(ftoi(Powers[pw_minotaur].EffectTime * 35.0) & 16))
-		{
-			SBFlags |= HexenDefs::SBF_POWER_MINOTAUR;
-		}
-	}
 
 	TotalArmorPoints = ftoi((MainGameInfo(Level.Game).AutoArmorSave[PClass]
 			+ ArmorPoints[HexenDefs::ARMOR_ARMOR]

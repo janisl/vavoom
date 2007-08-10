@@ -99,11 +99,10 @@ void Died(EntityEx source, EntityEx inflictor)
 	::Died(source, inflictor);
 	if (Tracer && Tracer.Health > 0)
 	{
-		if (!Actor(Tracer).ActiveMinotaur() &&
-			Player(Tracer.Player).Powers[pw_minotaur])
+		Inventory Power = Tracer.FindInventory(PowerMinotaur);
+		if (!Actor(Tracer).ActiveMinotaur() && Power)
 		{
-			Player(Tracer.Player).Powers[pw_minotaur].Destroy();
-			Player(Tracer.Player).Powers[pw_minotaur] = none;
+			Power.Destroy();
 		}
 	}
 }
@@ -121,11 +120,10 @@ bool MorphMonster()
 		// check for turning off minotaur power for active icon
 		if (Tracer && Tracer.Health > 0)
 		{
-			if (!Actor(Tracer).ActiveMinotaur() &&
-				Player(Tracer.Player).Powers[pw_minotaur])
+			Inventory Power = Tracer.FindInventory(PowerMinotaur);
+			if (!Actor(Tracer).ActiveMinotaur() && Power)
 			{
-				Player(Tracer.Player).Powers[pw_minotaur].Destroy();
-				Player(Tracer.Player).Powers[pw_minotaur] = none;
+				Power.Destroy();
 			}
 		}
 		return true;

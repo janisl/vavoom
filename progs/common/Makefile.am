@@ -63,6 +63,7 @@ EXTRA_DIST = \
 	linespec/PowerIronFeet.vc \
 	linespec/PowerLightAmp.vc \
 	linespec/PowerMask.vc \
+	linespec/PowerMinotaur.vc \
 	linespec/PowerShadow.vc \
 	linespec/PowerSpeed.vc \
 	linespec/PowerStrength.vc \
