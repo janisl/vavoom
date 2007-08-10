@@ -1,0 +1,94 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class PowerWeaponLevel2 : Powerup;
+
+//==========================================================================
+//
+//	InitEffect
+//
+//==========================================================================
+
+void InitEffect()
+{
+	if (!Owner.bIsPlayer)
+	{
+		return;
+	}
+
+	Weapon Wpn = PlayerEx(Owner.Player).ReadyWeapon;
+	if (!Wpn)
+	{
+		return;
+	}
+
+	Weapon Sist = PlayerEx(Owner.Player).ReadyWeapon.SisterWeapon;
+	if (!Sist)
+	{
+		return;
+	}
+
+	if (!Sist.bPoweredUp)
+	{
+		return;
+	}
+
+	PlayerEx(Owner.Player).SetWeapon(Sist);
+	if (Sist.GetReadyState() != Wpn.GetReadyState())
+	{
+		PlayerEx(Owner.Player).SetViewState(ps_weapon, Sist.GetReadyState());
+	}
+}
+
+//==========================================================================
+//
+//	EndEffect
+//
+//==========================================================================
+
+void EndEffect()
+{
+	if (!Owner || !Owner.bIsPlayer)
+	{
+		return;
+	}
+
+	PlayerEx P = PlayerEx(Owner.Player);
+	if (P.ReadyWeapon && P.ReadyWeapon.bPoweredUp)
+	{
+		P.ReadyWeapon.EndPowerup();
+	}
+	//	Make sure pending weapon is not a powered-up version of a weapon.
+	if (P.PendingWeapon && P.PendingWeapon.bPoweredUp &&
+		P.PendingWeapon.SisterWeapon)
+	{
+		P.PendingWeapon = P.PendingWeapon.SisterWeapon;
+	}
+}
+
+defaultproperties
+{
+	EffectTime = 40.0;
+}
