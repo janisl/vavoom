@@ -23,19 +23,8 @@
 //**
 //**************************************************************************
 
-class MedPatch : Inventory
+class MedPatch : HealthPickup
 	__mobjinfo__(2011);
-
-//==========================================================================
-//
-//	Use
-//
-//==========================================================================
-
-bool Use(bool Pickup)
-{
-	return EntityEx(Owner).GiveBody(10);
-}
 
 __states__
 {
@@ -44,12 +33,12 @@ __states__
 
 defaultproperties
 {
+	Health = 10;
 	ConversationID = 125;
 	PickupMessage = "$txt_medpatch";
 	Mass = 20.0;
 	MaxAmount = 20;
 	IconName = 'i_stmp';
 	bFloorClip = true;
-	bInvBar = true;
 	IdleState = S_MED_PATCH;
 }

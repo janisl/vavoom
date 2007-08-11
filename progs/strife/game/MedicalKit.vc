@@ -23,19 +23,8 @@
 //**
 //**************************************************************************
 
-class MedicalKit : Inventory
+class MedicalKit : HealthPickup
 	__mobjinfo__(2012);
-
-//==========================================================================
-//
-//	Use
-//
-//==========================================================================
-
-bool Use(bool Pickup)
-{
-	return EntityEx(Owner).GiveBody(25);
-}
 
 __states__
 {
@@ -44,12 +33,12 @@ __states__
 
 defaultproperties
 {
+	Health = 25;
 	ConversationID = 126;
 	PickupMessage = "$txt_medicalkit";
 	Mass = 15.0;
 	MaxAmount = 15;
 	IconName = 'i_mdkt';
 	bFloorClip = true;
-	bInvBar = true;
 	IdleState = S_MEDICAL_KIT;
 }

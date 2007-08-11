@@ -23,19 +23,8 @@
 //**
 //**************************************************************************
 
-class SurgeryKit : Inventory
+class SurgeryKit : HealthPickup
 	__mobjinfo__(83);
-
-//==========================================================================
-//
-//	Use
-//
-//==========================================================================
-
-bool Use(bool Pickup)
-{
-	return EntityEx(Owner).GiveBody(100);
-}
 
 __states__
 {
@@ -45,12 +34,12 @@ __states__
 
 defaultproperties
 {
+	Health = 100;
 	ConversationID = 127;
 	PickupMessage = "$txt_surgerykit";
 	Mass = 5.0;
 	MaxAmount = 5;
 	IconName = 'i_full';
 	bFloorClip = true;
-	bInvBar = true;
 	IdleState = S_FULL_HEALTH;
 }

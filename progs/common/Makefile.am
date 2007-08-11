@@ -39,6 +39,7 @@ EXTRA_DIST = \
 	linespec/FloorWaggle.vc \
 	linespec/GlowingLight.vc \
 	linespec/Health.vc \
+	linespec/HealthPickup.vc \
 	linespec/Inventory.vc \
 	linespec/ItemFog.vc \
 	linespec/Key.vc \

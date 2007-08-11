@@ -23,20 +23,9 @@
 //**
 //**************************************************************************
 
-class ArtiHealth : Inventory
+class ArtiHealth : HealthPickup
 	__mobjinfo__(82)
 	__scriptid__(24);
-
-//==========================================================================
-//
-//	Use
-//
-//==========================================================================
-
-bool Use(bool Pickup)
-{
-	return EntityEx(Owner).GiveBody(25);
-}
 
 __states__
 {
@@ -47,13 +36,12 @@ __states__
 
 defaultproperties
 {
-	MaxAmount = DefMaxAmount;
+	Health = 25;
 	PickupSound = 'misc/p_pkup';
 	PickupMessage = "$txt_artihealth";
 	IconName = 'artiptn2';
 	bCountItem = true;
 	bFloatBob = true;
 	bPickupFlash = true;
-	bInvBar = true;
 	IdleState = S_ARTI_PTN2_1;
 }

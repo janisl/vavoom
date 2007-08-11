@@ -1,0 +1,94 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class HealthPickup : Inventory
+	abstract;
+
+//==========================================================================
+//
+//	CreateCopy
+//
+//==========================================================================
+
+Inventory CreateCopy(EntityEx Toucher)
+{
+	Inventory Copy = ::CreateCopy(Toucher);
+	Copy.Health = Health;
+	return Copy;
+}
+
+//==========================================================================
+//
+//	CreateTossable
+//
+//==========================================================================
+
+Inventory CreateTossable()
+{
+	Inventory Copy = ::CreateTossable();
+	if (Copy)
+	{
+		Copy.Health = Health;
+	}
+	return Copy;
+}
+
+//==========================================================================
+//
+//	HandlePickup
+//
+//==========================================================================
+
+bool HandlePickup(Inventory Item)
+{
+	//	Health pickups of the same type but with different health amount are 
+	// considerer different items.
+	if (Item.Health == Health)
+	{
+		return ::HandlePickup(Item);
+	}
+	if (Inventory)
+	{
+		return Inventory.HandlePickup(Item);
+	}
+	return false;
+}
+
+//==========================================================================
+//
+//	Use
+//
+//==========================================================================
+
+bool Use(bool Pickup)
+{
+	return EntityEx(Owner).GiveBody(Health);
+}
+
+defaultproperties
+{
+	MaxAmount = DefMaxAmount;
+	bInvBar = true;
+}

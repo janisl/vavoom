@@ -60,6 +60,7 @@ enum
 #include "PowerSpeed.vc"
 #include "PowerMinotaur.vc"
 #include "Health.vc"
+#include "HealthPickup.vc"
 #include "PlayerEx.vc"
 
 #include "LineSpecialLevelInfo.vc"
