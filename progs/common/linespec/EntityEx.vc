@@ -5269,6 +5269,29 @@ bool UseInventory(Inventory Item)
 
 //==========================================================================
 //
+//	ObtainInventory
+//
+//==========================================================================
+
+void ObtainInventory(EntityEx Other)
+{
+	//	Actor should not have any inventory.
+	if (Inventory)
+	{
+		Error("ObtainInventory called while still having an inventory");
+	}
+
+	Inventory = Other.Inventory;
+	Other.Inventory = none;
+	Inventory Item;
+	for (Item = Inventory; Item; Item = Item.Inventory)
+	{
+		Item.Owner = self;
+	}
+}
+
+//==========================================================================
+//
 //	TouchDehackedSpecial
 //
 //==========================================================================
@@ -5348,6 +5371,69 @@ final void TouchDehackedSpecial(EntityEx Toucher)
 	{
 		Item.Destroy();
 	}
+}
+
+//==========================================================================
+//
+//	GiveBody
+//
+//	Returns false if the body isn't needed at all.
+//
+//==========================================================================
+
+final bool GiveBody(int num)
+{
+	int		max;
+
+	if (bIsPlayer)
+	{
+		max = PlayerEx(Player).GetMaxHealth();
+		if (num < 0)
+		{
+			//	For Strife negative body sets you to the percentage of your
+			// full health
+			num = max * -num / 100;
+			if (Player.Health < num)
+			{
+				Player.Health = num;
+				Health = num;
+				return true;
+			}
+		}
+		else if (Player.Health < max)
+		{
+			Player.Health += num;
+			if (Player.Health > max)
+			{
+				Player.Health = max;
+			}
+			Health = Player.Health;
+			return true;
+		}
+	}
+	else
+	{
+		max = default.Health;
+		if (num < 0)
+		{
+			num = max * -num / 100;
+			if (Health < num)
+			{
+				Health = num;
+				return true;
+			}
+		}
+		else if (Health < max)
+		{
+			Health += num;
+			if (Health > max)
+			{
+				Health = max;
+			}
+			return true;
+		}
+	}
+	return false;
 }
 
 float GetBaseViewHeight()

@@ -102,7 +102,7 @@ final void A_GauntletAttack()
 	}
 	if (bPoweredUp)
 	{
-		Player(Owner.Player).GiveBody(damage >> 1);
+		EntityEx(Owner).GiveBody(damage >> 1);
 		Owner.PlaySound('weapons/gauntletspowhit', CHAN_WEAPON);
 	}
 	else

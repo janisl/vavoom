@@ -282,14 +282,13 @@ void GiveInventory(name ItemName, int Amount)
 	//	Stamina upgrade.
 	if (ItemName == 'UpgradeStamina')
 	{
-		Player(Player).Stamina += 10;
-		Player(Player).GiveBody(200);
+		GiveInventoryType(UpgradeStamina);
 	}
 
 	//	Accuracy upgrade.
 	if (ItemName == 'UpgradeAccuracy')
 	{
-		Player(Player).Accuracy += 10;
+		GiveInventoryType(UpgradeAccuracy);
 	}
 
 	//	Quest items.

@@ -34,7 +34,7 @@ class MedPatch : Inventory
 
 bool Use(bool Pickup)
 {
-	return Player(Owner.Player).GiveBody(10);
+	return EntityEx(Owner).GiveBody(10);
 }
 
 __states__

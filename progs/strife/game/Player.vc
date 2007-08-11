@@ -567,23 +567,13 @@ void GiveSigilPiece()
 
 //==========================================================================
 //
-//	GiveBody
-//
-//	Returns false if the body isn't needed at all
+//	GetMaxHealth
 //
 //==========================================================================
 
-bool GiveBody(int num)
+int GetMaxHealth()
 {
-	if (Health >= MAXHEALTH + Stamina)
-		return false;
-
-	Health += num;
-	if (Health > MAXHEALTH + Stamina)
-		Health = MAXHEALTH + Stamina;
-	MO.Health = Health;
-
-	return true;
+	return MAXHEALTH + Stamina;
 }
 
 //==========================================================================

@@ -36,7 +36,7 @@ class Berserk : Inventory
 bool TryPickup(EntityEx Toucher)
 {
 	Toucher.GiveInventoryType(PowerStrength);
-	Player(Toucher.Player).GiveBody(100, Player::MAXHEALTH);
+	Toucher.GiveBody(100);
 	if (!Fist(Player(Toucher.Player).ReadyWeapon))
 	{
 		Player(Toucher.Player).PendingWeapon =

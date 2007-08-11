@@ -34,7 +34,7 @@ class MedicalKit : Inventory
 
 bool Use(bool Pickup)
 {
-	return Player(Owner.Player).GiveBody(25);
+	return EntityEx(Owner).GiveBody(25);
 }
 
 __states__

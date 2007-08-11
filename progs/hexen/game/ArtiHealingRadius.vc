@@ -70,7 +70,7 @@ bool Use(bool Pickup)
 			break;
 		case HexenDefs::PCLASS_CLERIC:	// Radius heal
 			amount = 50 + (P_Random() % 50);
-			if (Player(P.Player).GiveBody(amount))
+			if (P.GiveBody(amount))
 			{
 				effective = true;
 				P.PlaySound('MysticIncant', CHAN_ITEM);

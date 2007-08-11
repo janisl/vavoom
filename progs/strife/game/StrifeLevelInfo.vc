@@ -271,9 +271,8 @@ bool EV_BreakGlass(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 			if (A && A.bIsPlayer)
 			{
 				Player(A.Player).GiveQuest(QUEST_FreedWorkers);
-				Player(A.Player).Accuracy += 10;
-				Player(A.Player).Stamina += 10;
-				Player(A.Player).GiveBody(200);
+				A.GiveInventoryType(UpgradeAccuracy);
+				A.GiveInventoryType(UpgradeStamina);
 			}
 		}
 	}

@@ -601,27 +601,13 @@ void GotAmmo(Ammo NewAmmo)
 
 //==========================================================================
 //
-//	GiveBody
-//
-//	Returns false if the body isn't needed at all
+//	GetMaxHealth
 //
 //==========================================================================
 
-bool GiveBody(int num, int max)
+int GetMaxHealth()
 {
-	if (MO.Health >= max)
-	{
-		return false;
-	}
-
-	MO.Health += num;
-	if (MO.Health > max)
-	{
-		MO.Health = max;
-	}
-	Health = MO.Health;
-
-	return true;
+	return MAXHEALTH;
 }
 
 //==========================================================================

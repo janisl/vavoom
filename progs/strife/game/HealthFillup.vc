@@ -34,7 +34,6 @@ class HealthFillup : DummyStrifeItem;
 bool TryPickup(EntityEx Toucher)
 {
 	int			Amount;
-	int			Max;
 
 	switch (Level.Game.gameskill)
 	{
@@ -50,13 +49,10 @@ bool TryPickup(EntityEx Toucher)
 		Amount = 50;
 		break;
 	}
-	Max = Player::MAXHEALTH + Player(Toucher.Player).Stamina;
-	Amount = Max * Amount / 100;
-	if (Toucher.Player.Health >= Amount)
+	if (!Toucher.GiveBody(-Amount))
 	{
 		return false;
 	}
-	Player(Toucher.Player).GiveBody(Amount - Toucher.Player.Health);
 	GoAwayAndDie();
 	return true;
 }

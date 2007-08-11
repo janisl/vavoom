@@ -696,32 +696,17 @@ void GotAmmo(Ammo NewAmmo)
 
 //==========================================================================
 //
-//  GiveBody
-//
-//  Returns false if the body isn't needed at all.
+//	GetMaxHealth
 //
 //==========================================================================
 
-bool GiveBody(int num)
+int GetMaxHealth()
 {
-	int max;
-
-	max = MAXHEALTH;
 	if (MorphTime)
 	{
-		max = MAXMORPHHEALTH;
+		return MAXMORPHHEALTH;
 	}
-	if (Health >= max)
-	{
-		return false;
-	}
-	Health += num;
-	if (Health > max)
-	{
-		Health = max;
-	}
-	MO.Health = Health;
-	return true;
+	return MAXHEALTH;
 }
 
 //==========================================================================
