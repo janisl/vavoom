@@ -31,6 +31,7 @@ EXTRA_DIST = \
 	linespec/Armor.vc \
 	linespec/BackpackItem.vc \
 	linespec/BasicArmor.vc \
+	linespec/BasicArmorBonus.vc \
 	linespec/BasicArmorPickup.vc \
 	linespec/classes.vc \
 	linespec/CeilingMover.vc \
