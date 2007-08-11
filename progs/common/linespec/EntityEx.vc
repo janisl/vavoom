@@ -258,6 +258,8 @@ int				CurrentSpeech;	// Current speech index.
 //	Actor's inventory
 Inventory		Inventory;
 
+float			FloatBobPhase;
+
 replication
 {
 	reliable if (Role == ROLE_Authority && bNetOwner)
@@ -450,7 +452,9 @@ bool Physics(float DeltaTime)
 			Origin.z = ONFLOORZ;
 			LinkToWorld();
 		}
-		Origin.z = FloorZ + Special1f + Level.Game.FloatBobOffsets[(Health++) & 63];
+		FloatBobPhase += DeltaTime;
+		Origin.z = FloorZ + Special1f +
+			Level.Game.FloatBobOffsets[ftoi(FloatBobPhase * 35.0) & 63];
 	}
 	else if (!bNoPassMobj && !bMissile)
 	{
@@ -4745,7 +4749,7 @@ void OnMapSpawn(mthing_t* mthing)
 		if (bFloatBob)
 		{
 			// Seed random starting index for bobbing motion
-			Health = P_Random();
+			FloatBobPhase = Random() * 256.0 / 35.0;
 			Special1f = mthing->height;
 		}
 		if (StateTime > 0.0)
