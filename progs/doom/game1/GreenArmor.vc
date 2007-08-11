@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class GreenArmor : ArmorPickup
+class GreenArmor : BasicArmorPickup
 	__mobjinfo__(2018)
 	__scriptid__(68);
 
@@ -35,7 +35,8 @@ __states__
 
 defaultproperties
 {
-	IdleState = S_ARM1;
-	ArmorClass = 1;
+	SaveAmount = 100;
+	SavePercent = 1.0 / 3.0;
 	PickupMessage = "$gotarmor";
+	IdleState = S_ARM1;
 }

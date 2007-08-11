@@ -578,32 +578,6 @@ int GetMaxHealth()
 
 //==========================================================================
 //
-//	GiveArmor
-//
-//	Returns false if the armor is worse than the current armor.
-//
-//==========================================================================
-
-bool GiveArmor(int armortype)
-{
-	int hits;
-	BasicArmor Armor = BasicArmor(EntityEx(MO).FindInventory(BasicArmor));
-
-	hits = armortype * 100;
-	if (Armor.Amount >= hits)
-		return false;	// don't pick up
-
-	if (armortype == 1)
-		Armor.SavePercent = 1.0 / 3.0;
-	else
-		Armor.SavePercent = 1.0 / 2.0;
-	Armor.Amount = hits;
-
-	return true;
-}
-
-//==========================================================================
-//
 //  GiveItem
 //
 //==========================================================================

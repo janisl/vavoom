@@ -217,7 +217,7 @@ void AutoUseArmor()
 	if (Item)
 	{
 		// Use metal armor
-		Player(Player).GiveArmor(2);
+		Item.Use(false);
 		if (!(--Item.Amount))
 		{
 			Item.Destroy();
@@ -229,7 +229,7 @@ void AutoUseArmor()
 		if (Item)
 		{
 			// Use leather armor
-			Player(Player).GiveArmor(1);
+			Item.Use(false);
 			if (!(--Item.Amount))
 			{
 				Item.Destroy();

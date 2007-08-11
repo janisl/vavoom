@@ -23,20 +23,9 @@
 //**
 //**************************************************************************
 
-class LeatherArmor : Inventory
+class LeatherArmor : BasicArmorPickup
 	__mobjinfo__(2018)
 	__scriptid__(68);
-
-//==========================================================================
-//
-//	Use
-//
-//==========================================================================
-
-bool Use(bool Pickup)
-{
-	return Player(Owner.Player).GiveArmor(1);
-}
 
 __states__
 {
@@ -46,6 +35,8 @@ __states__
 defaultproperties
 {
 	ConversationID = 130;
+	SaveAmount = 100;
+	SavePercent = 1.0 / 3.0;
 	PickupMessage = "$txt_leatherarmor";
 	Mass = 5.0;
 	MaxAmount = 5;

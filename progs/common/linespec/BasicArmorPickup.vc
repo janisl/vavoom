@@ -23,27 +23,63 @@
 //**
 //**************************************************************************
 
-class ArmorPickup : Inventory
+class BasicArmorPickup : Armor
 	abstract;
 
-int ArmorClass;
+int				SaveAmount;
+float			SavePercent;
 
 //==========================================================================
 //
-//	TryPickup
+//	CreateCopy
 //
 //==========================================================================
 
-bool TryPickup(EntityEx Toucher)
+Inventory CreateCopy(EntityEx Toucher)
 {
-	if (Player(Toucher.Player).GiveArmor(ArmorClass))
+	BasicArmorPickup Copy = BasicArmorPickup(::CreateCopy(Toucher));
+	if (Copy)
 	{
-		GoAwayAndDie();
-		return true;
+		Copy.SaveAmount = SaveAmount;
+		Copy.SavePercent = SavePercent;
 	}
-	return false;
+	return Copy;
+}
+
+//==========================================================================
+//
+//	Use
+//
+//==========================================================================
+
+bool Use(bool Pickup)
+{
+	BasicArmor Armor = BasicArmor(EntityEx(Owner).FindInventory(BasicArmor));
+	if (!Armor)
+	{
+		Armor = Spawn(BasicArmor);
+		Armor.AttachToOwner(EntityEx(Owner));
+	}
+	else
+	{
+		//	Can't use it if owner has more armor that is given by this one.
+		if (Armor.Amount >= SaveAmount)
+		{
+			return false;
+		}
+		//	Don't use if you are picking it up and already have some.
+		if (Pickup && Armor.Amount > 0 && MaxAmount > 0)
+		{
+			return false;
+		}
+	}
+	Armor.SavePercent = SavePercent;
+	Armor.Amount = SaveAmount;
+	return true;
 }
 
 defaultproperties
 {
+	MaxAmount = 0;
+	bAutoActivate = true;
 }

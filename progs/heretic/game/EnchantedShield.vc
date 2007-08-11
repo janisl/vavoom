@@ -23,25 +23,9 @@
 //**
 //**************************************************************************
 
-class EnchantedShield : Inventory
+class EnchantedShield : BasicArmorPickup
 	__mobjinfo__(31)
 	__scriptid__(69);
-
-//==========================================================================
-//
-//  TryPickup
-//
-//==========================================================================
-
-bool TryPickup(EntityEx Toucher)
-{
-	if (Player(Toucher.Player).GiveArmor(2))
-	{
-		GoAwayAndDie();
-		return true;
-	}
-	return false;
-}
 
 __states__
 {
@@ -51,7 +35,9 @@ __states__
 defaultproperties
 {
 	Height = 32.0;
+	SaveAmount = 200;
+	SavePercent = 0.75;
+	PickupMessage = "$txt_itemshield2";
 	bFloatBob = true;
 	IdleState = S_ITEM_SHD2_1;
-	PickupMessage = "$txt_itemshield2";
 }

@@ -30,7 +30,6 @@
 #include "TeleportDest2.vc"
 #include "TeleportDest3.vc"
 
-#include "ArmorPickup.vc"
 #include "GreenArmor.vc"
 #include "BlueArmor.vc"
 #include "HealthBonus.vc"

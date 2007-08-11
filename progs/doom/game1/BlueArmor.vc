@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class BlueArmor : ArmorPickup
+class BlueArmor : BasicArmorPickup
 	__mobjinfo__(2019)
 	__scriptid__(69);
 
@@ -35,7 +35,8 @@ __states__
 
 defaultproperties
 {
-	IdleState = S_ARM2;
-	ArmorClass = 2;
+	SaveAmount = 200;
+	SavePercent = 1.0 / 2.0;
 	PickupMessage = "$gotmega";
+	IdleState = S_ARM2;
 }

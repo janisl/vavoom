@@ -23,25 +23,9 @@
 //**
 //**************************************************************************
 
-class SilverShield : Inventory
+class SilverShield : BasicArmorPickup
 	__mobjinfo__(85)
 	__scriptid__(68);
-
-//==========================================================================
-//
-//  TryPickup
-//
-//==========================================================================
-
-bool TryPickup(EntityEx Toucher)
-{
-	if (Player(Toucher.Player).GiveArmor(1))
-	{
-		GoAwayAndDie();
-		return true;
-	}
-	return false;
-}
 
 __states__
 {
@@ -51,7 +35,9 @@ __states__
 defaultproperties
 {
 	Height = 32.0;
+	SaveAmount = 100;
+	SavePercent = 0.5;
+	PickupMessage = "$txt_itemshield1";
 	bFloatBob = true;
 	IdleState = S_ITEM_SHLD1;
-	PickupMessage = "$txt_itemshield1";
 }

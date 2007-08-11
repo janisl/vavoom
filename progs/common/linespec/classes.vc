@@ -63,6 +63,7 @@ enum
 #include "HealthPickup.vc"
 #include "Armor.vc"
 #include "BasicArmor.vc"
+#include "BasicArmorPickup.vc"
 #include "PlayerEx.vc"
 
 #include "LineSpecialLevelInfo.vc"
