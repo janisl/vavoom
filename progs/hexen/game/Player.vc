@@ -485,6 +485,11 @@ void SpawnPlayer(mthing_t * mthing)
 		{
 			pp.Inventory.Destroy();
 		}
+
+		BasicArmor BArmor = Level.Spawn(BasicArmor);
+		BArmor.Amount = 0;
+		BArmor.AttachToOwner(pp);
+
 		for (i = 0; i < pp.InitialInventory.Num; i++)
 		{
 			Item = Level.Spawn(pp.InitialInventory[i].Type);

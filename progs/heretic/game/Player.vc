@@ -36,17 +36,12 @@ const float MAXBOB	= 16.0;
 
 const int MAXHEALTH	= 100;
 
-int ArmorPoints;
-
 float ChickenTime;	// player is a chicken if > 0
 
 int ArtifactFlash;
 Inventory InvFirst;
 Inventory InvPtr;
 float InventoryTime;
-
-// Armor type is 0-2.
-int ArmorType;
 
 int ChickenPeck;	// chicken peck countdown
 Actor Rain1;	// active rain maker 1
@@ -60,8 +55,7 @@ bool onground;
 replication
 {
 	reliable if (!bIsClient)
-		ArmorPoints, ArtifactFlash, InvFirst, InvPtr, InventoryTime,
-		ChickenTime;
+		ArtifactFlash, InvFirst, InvPtr, InventoryTime, ChickenTime;
 
 	unreliable if (!bIsClient)
 		ClientBlood, ClientExplosion;
@@ -340,6 +334,11 @@ void SpawnPlayer(mthing_t * mthing)
 		{
 			A.Inventory.Destroy();
 		}
+
+		BasicArmor BArmor = Level.Spawn(BasicArmor);
+		BArmor.Amount = 0;
+		BArmor.AttachToOwner(A);
+
 		for (i = 0; i < A.InitialInventory.Num; i++)
 		{
 			Item = Level.Spawn(A.InitialInventory[i].Type);
@@ -575,14 +574,22 @@ int GetMaxHealth()
 bool GiveArmor(int armortype)
 {
 	int hits;
+	BasicArmor Armor = BasicArmor(EntityEx(MO).FindInventory(BasicArmor));
 
 	hits = armortype * 100;
-	if (ArmorPoints >= hits)
+	if (Armor.Amount >= hits)
 	{
 		return false;
 	}
-	ArmorType = armortype;
-	ArmorPoints = hits;
+	if (armortype == 1)
+	{
+		Armor.SavePercent = 0.5;
+	}
+	else
+	{
+		Armor.SavePercent = 0.75;
+	}
+	Armor.Amount = hits;
 	return true;
 }
 
@@ -2244,14 +2251,8 @@ void Cheat_Gimme()
 	{
 		int i;
 
-		ArmorPoints = 200;
-		ArmorType = 2;
-		BagOfHolding Bag = Level.Spawn(BagOfHolding);
-		Bag.bDropped = true;
-		if (!Bag.TryPickup(EntityEx(MO)))
-		{
-			Bag.Destroy();
-		}
+		EntityEx(MO).GiveInventoryType(EnchantedShield);
+		EntityEx(MO).GiveInventoryType(BagOfHolding);
 		foreach AllClasses(Ammo, Cls)
 		{
 			//	Only direct descendants.
@@ -2534,24 +2535,18 @@ int ArmorAbsorbDamage(EntityEx inflictor, EntityEx source, int damage,
 	name DmgType)
 {
 	int saved;
+	BasicArmor Armor = BasicArmor(EntityEx(MO).FindInventory(BasicArmor));
 
-	if (ArmorType)
+	if (Armor.SavePercent)
 	{
-		if (ArmorType == 1)
-		{
-			saved = damage >> 1;
-		}
-		else
-		{
-			saved = (damage >> 1) + (damage >> 2);
-		}
-		if (ArmorPoints <= saved)
+		saved = ftoi(itof(damage) * Armor.SavePercent);
+		if (Armor.Amount <= saved)
 		{
 			// armor is used up
-			saved = ArmorPoints;
-			ArmorType = 0;
+			saved = Armor.Amount;
+			Armor.SavePercent = 0.0;
 		}
-		ArmorPoints -= saved;
+		Armor.Amount -= saved;
 		damage -= saved;
 	}
 	if (damage >= Health && ((Level.Game.gameskill == sk_baby) ||

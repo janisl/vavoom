@@ -45,10 +45,6 @@ int Quests;
 
 int Objectives;
 
-// Armor type is 0-2.
-int ArmorType;
-int ArmorPoints;
-
 int Accuracy;
 int Stamina;
 
@@ -62,8 +58,7 @@ Inventory SavedInventory;
 replication
 {
 	reliable if (!bIsClient)
-		SigilPieces, Accuracy, Stamina, InvFirst, InvCursor,
-		Objectives, ArmorType, ArmorPoints;
+		SigilPieces, Accuracy, Stamina, InvFirst, InvCursor, Objectives;
 
 	unreliable if (!bIsClient)
 		ClientBlood, ClientExplosion;
@@ -339,6 +334,11 @@ void SpawnPlayer(mthing_t * mthing)
 		{
 			A.Inventory.Destroy();
 		}
+
+		BasicArmor BArmor = Level.Spawn(BasicArmor);
+		BArmor.Amount = 0;
+		BArmor.AttachToOwner(A);
+
 		for (i = 0; i < A.InitialInventory.Num; i++)
 		{
 			Item = Level.Spawn(A.InitialInventory[i].Type);
@@ -587,13 +587,17 @@ int GetMaxHealth()
 bool GiveArmor(int armortype)
 {
 	int hits;
+	BasicArmor Armor = BasicArmor(EntityEx(MO).FindInventory(BasicArmor));
 
 	hits = armortype * 100;
-	if (ArmorPoints >= hits)
+	if (Armor.Amount >= hits)
 		return false;	// don't pick up
 
-	ArmorType = armortype;
-	ArmorPoints = hits;
+	if (armortype == 1)
+		Armor.SavePercent = 1.0 / 3.0;
+	else
+		Armor.SavePercent = 1.0 / 2.0;
+	Armor.Amount = hits;
 
 	return true;
 }
@@ -2292,23 +2296,21 @@ int ArmorAbsorbDamage(EntityEx inflictor, EntityEx source, int damage,
 	name DmgType)
 {
 	int saved;
+	BasicArmor Armor = BasicArmor(EntityEx(MO).FindInventory(BasicArmor));
 
-	if (ArmorType)
+	if (Armor.SavePercent)
 	{
-		if (ArmorType == 1)
-			saved = damage / 3;
-		else
-			saved = damage / 2;
+		saved = ftoi(itof(damage) * Armor.SavePercent);
 
-		if (ArmorPoints <= saved)
+		if (Armor.Amount <= saved)
 		{
 			// armor is used up
-			saved = ArmorPoints;
-			ArmorType = 0;
+			saved = Armor.Amount;
+			Armor.SavePercent = 0.0;
 			// Try to use some inventory armor
 			Actor(MO).AutoUseArmor();
 		}
-		ArmorPoints -= saved;
+		Armor.Amount -= saved;
 		damage -= saved;
 	}
 	if (Health < 50 || damage >= Health)

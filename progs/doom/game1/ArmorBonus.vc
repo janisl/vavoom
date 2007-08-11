@@ -35,11 +35,12 @@ class ArmorBonus : Inventory
 
 bool TryPickup(EntityEx Toucher)
 {
-	Player(Toucher.Player).ArmorPoints++;	// can go over 100%
-	if (Player(Toucher.Player).ArmorPoints > 200)
-		Player(Toucher.Player).ArmorPoints = 200;
-	if (!Player(Toucher.Player).ArmorType)
-		Player(Toucher.Player).ArmorType = 1;
+	BasicArmor Armor = BasicArmor(Toucher.FindInventory(BasicArmor));
+	Armor.Amount++;	// can go over 100%
+	if (Armor.Amount > 200)
+		Armor.Amount = 200;
+	if (!Armor.SavePercent)
+		Armor.SavePercent = 1.0 / 3.0;
 	GoAwayAndDie();
 	return true;
 }

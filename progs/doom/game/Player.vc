@@ -39,11 +39,6 @@ const int ST_MUCHPAIN				= 20;
 
 const int MAXHEALTH					= 100;
 
-int ArmorPoints;
-
-// Armor type is 0-2.
-int ArmorType;
-
 //
 //  FACE WIDGET DATA
 //
@@ -74,7 +69,7 @@ Inventory SavedInventory;
 replication
 {
 	reliable if (!bIsClient)
-		ArmorPoints, sb_faceindex;
+		sb_faceindex;
 
 	unreliable if (!bIsClient)
 		ClientGunShot, ClientBlood, ClientExplosion, ClientExplosion2;
@@ -387,6 +382,11 @@ void SpawnPlayer(mthing_t * mthing)
 		{
 			PP.Inventory.Destroy();
 		}
+
+		BasicArmor BArmor = Level.Spawn(BasicArmor);
+		BArmor.Amount = 0;
+		BArmor.AttachToOwner(PP);
+
 		for (i = 0; i < PP.InitialInventory.Num; i++)
 		{
 			Item = Level.Spawn(PP.InitialInventory[i].Type);
@@ -621,40 +621,18 @@ int GetMaxHealth()
 bool GiveArmor(int armortype)
 {
 	int hits;
+	BasicArmor Armor = BasicArmor(EntityEx(MO).FindInventory(BasicArmor));
 
 	hits = armortype * 100;
-	if (ArmorPoints >= hits)
+	if (Armor.Amount >= hits)
 		return false;	// don't pick up
 
-	ArmorType = armortype;
-	ArmorPoints = hits;
+	if (armortype == 1)
+		Armor.SavePercent = 1.0 / 3.0;
+	else
+		Armor.SavePercent = 1.0 / 2.0;
+	Armor.Amount = hits;
 
-	return true;
-}
-
-//==========================================================================
-//
-//	GiveArmor2
-//
-//	Returns false if the armor is worse than the current armor.
-//
-//==========================================================================
-
-bool GiveArmor2(int armortype, int num, int max)
-{
-	if (ArmorPoints >= max)
-	{
-		return false;	// don't pick up
-	}
-	ArmorPoints += num;
-	if (ArmorPoints > max)
-	{
-		ArmorPoints = max;
-	}
-	if (ArmorType < armortype)
-	{
-		ArmorType = armortype;
-	}
 	return true;
 }
 
@@ -2229,15 +2207,13 @@ void Cheat_Gimme()
 	}
 
 	// Armor
-	if ((i1 & GIMME_ARMOR) && (ArmorPoints < 100))
+	if (i1 & GIMME_ARMOR)
 	{
-		ArmorType = 1;
-		ArmorPoints = 100;
+		EntityEx(MO).GiveInventoryType(GreenArmor);
 	}
 	if (i1 & GIMME_ARMOR2)
 	{
-		ArmorType = 2;
-		ArmorPoints = 200;
+		EntityEx(MO).GiveInventoryType(BlueArmor);
 	}
 	cprint("YOU GOT IT");
 }
@@ -2383,21 +2359,19 @@ int ArmorAbsorbDamage(EntityEx inflictor, EntityEx source, int damage,
 	name DmgType)
 {
 	int saved;
+	BasicArmor Armor = BasicArmor(EntityEx(MO).FindInventory(BasicArmor));
 
-	if (ArmorType)
+	if (Armor.SavePercent)
 	{
-		if (ArmorType == 1)
-			saved = damage / 3;
-		else
-			saved = damage / 2;
+		saved = ftoi(itof(damage) * Armor.SavePercent);
 
-		if (ArmorPoints <= saved)
+		if (Armor.Amount <= saved)
 		{
 			// armor is used up
-			saved = ArmorPoints;
-			ArmorType = 0;
+			saved = Armor.Amount;
+			Armor.SavePercent = 0.0;
 		}
-		ArmorPoints -= saved;
+		Armor.Amount -= saved;
 		damage -= saved;
 	}
 	return damage;

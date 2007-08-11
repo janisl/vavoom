@@ -309,6 +309,7 @@ bool CheckItem(Actor item)
 			return false;
 	}
 
+	BasicArmor Armor = BasicArmor(botmo.FindInventory(BasicArmor));
 	if ((item.Class == Stimpack || item.Class == Medikit) &&
 		(botmo.Health >= Player::MAXHEALTH))
 		return false;
@@ -320,14 +321,14 @@ bool CheckItem(Actor item)
 	if (item.Class == Soulsphere && (botmo.Health >= 2 * Player::MAXHEALTH))
 		return false;
 #endif
-	if (item.Class == GreenArmor && (player.ArmorPoints >= 100))
+	if (item.Class == GreenArmor && (Armor.Amount >= 100))
 		return false;
 #ifdef DOOM2
 	if ((item.Class == BlueArmor || item.Class == Megasphere) &&
-		(player.ArmorPoints >= 200))
+		(Armor.Amount >= 200))
 		return false;
 #else
-	if ((item.Class == BlueArmor) && (player.ArmorPoints >= 200))
+	if ((item.Class == BlueArmor) && (Armor.Amount >= 200))
 		return false;
 #endif
 

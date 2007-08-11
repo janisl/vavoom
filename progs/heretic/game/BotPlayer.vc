@@ -302,9 +302,10 @@ bool CheckItem(Actor item)
 
 	if (item.Class == CrystalVial && (botmo.Health >= Player::MAXHEALTH))
 		return false;
-	if (item.Class == SilverShield && (player.ArmorPoints >= 100))
+	BasicArmor Armor = BasicArmor(botmo.FindInventory(BasicArmor));
+	if (item.Class == SilverShield && (Armor.Amount >= 100))
 		return false;
-	if (item.Class == EnchantedShield && (player.ArmorPoints >= 200))
+	if (item.Class == EnchantedShield && (Armor.Amount >= 200))
 		return false;
 
 	// Guess we're okay

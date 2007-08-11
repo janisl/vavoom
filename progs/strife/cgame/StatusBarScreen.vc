@@ -245,9 +245,10 @@ void SB_DrawMainBar()
 	}
 
 	// armor percentage
-	if (cl.ArmorPoints > 0)
+	BasicArmor Armor = BasicArmor(EntityEx(cl.MO).FindInventory(BasicArmor));
+	if (Armor.Amount > 0)
 	{
-		if (cl.ArmorType == 2)
+		if (Armor.SavePercent == 0.5)
 		{
 			R_DrawPic(BAR_X + 8, BAR_Y + 175, R_RegisterPic('i_arm1'));
 		}
@@ -255,7 +256,7 @@ void SB_DrawMainBar()
 		{
 			R_DrawPic(BAR_X + 8, BAR_Y + 175, R_RegisterPic('i_arm2'));
 		}
-		SB_DrawSmallNum(BAR_X + 24, BAR_Y + 192, cl.ArmorPoints);
+		SB_DrawSmallNum(BAR_X + 24, BAR_Y + 192, Armor.Amount);
 	}
 
 	Item = cl.InvFirst;
@@ -398,12 +399,13 @@ void SB_DrawFullscreenStats()
 	R_DrawPic2(20, 465, pic_medpack, 0.7);
 
 	// armor
-	if (cl.ArmorPoints > 0)
+	BasicArmor Armor = BasicArmor(EntityEx(cl.MO).FindInventory(BasicArmor));
+	if (Armor.Amount > 0)
 	{
-		SB_DrawTallNum(164, 450, cl.ArmorPoints, 0.7);
+		SB_DrawTallNum(164, 450, Armor.Amount, 0.7);
 
 		// armor type
-		if (cl.ArmorType == 2)
+		if (Armor.SavePercent == 0.5)
 		{
 			R_DrawPic2(110, 465, pic_armor2, 0.7);
 		}

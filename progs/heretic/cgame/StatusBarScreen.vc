@@ -345,7 +345,9 @@ void SB_DrawMainBar()
 		}
 
 		//  Armor
-		SB_DrawNumber9(BAR_X + 228, BAR_Y + 12, cl.ArmorPoints);
+		BasicArmor Armor = BasicArmor(EntityEx(cl.MO).FindInventory(
+			BasicArmor));
+		SB_DrawNumber9(BAR_X + 228, BAR_Y + 12, Armor.Amount);
 	}
 	else
 	{
@@ -389,7 +391,8 @@ void SB_DrawFullscreenStats()
 	R_DrawPic(30, 494, pic_health);
 
 	//  Armorpoints
-	SB_DrawNumber12(140, 450, cl.ArmorPoints);
+	BasicArmor Armor = BasicArmor(EntityEx(cl.MO).FindInventory(BasicArmor));
+	SB_DrawNumber12(140, 450, Armor.Amount);
 	R_DrawPic(120, 490, pic_armor2);
 
 	//  Frags

@@ -345,7 +345,8 @@ void SB_DrawMainBar()
 	R_DrawPic(ST_FACESX, ST_FACESY, pic_faces[cl.sb_faceindex]);
 
 	// armor percentage
-	SB_DrawTallNum(ST_ARMORX, ST_ARMORY, cl.ArmorPoints, 1.0, true);
+	BasicArmor Armor = BasicArmor(EntityEx(cl.MO).FindInventory(BasicArmor));
+	SB_DrawTallNum(ST_ARMORX, ST_ARMORY, Armor.Amount, 1.0, true);
 
 	// keyboxes 0-2
 	if (EntityEx(cl.MO).FindInventory(BlueSkull))
@@ -414,11 +415,12 @@ void SB_DrawFullscreenStats()
 	R_DrawPic(ST_TDHEALTHX - 60, ST_TDHEALTHY + 15, pic_health);
 
 	// armor
-	if (cl.ArmorPoints)
+	BasicArmor Armor = BasicArmor(EntityEx(cl.MO).FindInventory(BasicArmor));
+	if (Armor.Amount)
 	{
-		SB_DrawTallNum(ST_TDARMORX, ST_TDARMORY, cl.ArmorPoints, 0.6, false);
+		SB_DrawTallNum(ST_TDARMORX, ST_TDARMORY, Armor.Amount, 0.6, false);
 
-		if (cl.ArmorPoints > 100)
+		if (Armor.Amount > 100)
 		{
 			R_DrawPic(ST_TDARMORX - 60, ST_TDARMORY + 15, pic_armor2);
 		}
