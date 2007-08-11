@@ -51,9 +51,6 @@ bool shareware;
 int INITIAL_HEALTH;
 int INITIAL_AMMO;
 int GOD_HEALTH;
-int SOULSPHERE_MAX;
-int SOULSPHERE_HEALTH;
-int MEGASPHERE_HEALTH;
 
 //==========================================================================
 //
@@ -1260,7 +1257,4 @@ defaultproperties
 	INITIAL_HEALTH = 100;
 	INITIAL_AMMO = 50;
 	GOD_HEALTH = 100;
-	SOULSPHERE_MAX = 200;
-	SOULSPHERE_HEALTH = 100;
-	MEGASPHERE_HEALTH = 200;
 }

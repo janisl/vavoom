@@ -24,6 +24,7 @@
 //**************************************************************************
 
 #include "Megasphere.vc"
+#include "MegasphereHealth.vc"
 #include "SuperShotgun.vc"
 
 #include "ChaingunGuy.vc"

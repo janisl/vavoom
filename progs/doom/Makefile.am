@@ -322,6 +322,7 @@ EXTRA_DIST = compile.bat \
 	game2/Fatso.vc \
 	game2/HellKnight.vc \
 	game2/Megasphere.vc \
+	game2/MegasphereHealth.vc \
 	game2/PainElemental.vc \
 	game2/Revenant.vc \
 	game2/RevenantTracer.vc \

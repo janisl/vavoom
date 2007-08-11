@@ -71,6 +71,8 @@ static TArray<VName>			Sounds;
 
 static VClass*					GameInfoClass;
 static VClass*					BfgClass;
+static VClass*					SoulsphereClass;
+static VClass*					MegaHealthClass;
 
 static TArray<FReplacedString>	SfxNames;
 static TArray<FReplacedString>	MusicNames;
@@ -1102,15 +1104,16 @@ static void ReadMisc(int)
 		else if (!VStr::ICmp(String, "Blue Armor Class"));
 		else if (!VStr::ICmp(String, "Max Soulsphere"))
 		{
-			SetClassFieldInt(GameInfoClass, "SOULSPHERE_MAX", value);
+			SetClassFieldInt(SoulsphereClass, "MaxAmount", value);
 		}
 		else if (!VStr::ICmp(String, "Soulsphere Health"))
 		{
-			SetClassFieldInt(GameInfoClass, "SOULSPHERE_HEALTH", value);
+			SetClassFieldInt(SoulsphereClass, "Amount", value);
 		}
 		else if (!VStr::ICmp(String, "Megasphere Health"))
 		{
-			SetClassFieldInt(GameInfoClass, "MEGASPHERE_HEALTH", value);
+			SetClassFieldInt(MegaHealthClass, "Amount", value);
+			SetClassFieldInt(MegaHealthClass, "MaxAmount", value);
 		}
 		else if (!VStr::ICmp(String, "God Mode Health"))
 		{
@@ -1769,6 +1772,8 @@ void ProcessDehackedFiles()
 
 	GameInfoClass = VClass::FindClass("MainGameInfo");
 	BfgClass = VClass::FindClass("BFG9000");
+	SoulsphereClass = VClass::FindClass("Soulsphere");
+	MegaHealthClass = VClass::FindClass("MegasphereHealth");
 
 	delete sc;
 

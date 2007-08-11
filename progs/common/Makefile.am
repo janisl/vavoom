@@ -38,6 +38,7 @@ EXTRA_DIST = \
 	linespec/FloorMover.vc \
 	linespec/FloorWaggle.vc \
 	linespec/GlowingLight.vc \
+	linespec/Health.vc \
 	linespec/Inventory.vc \
 	linespec/ItemFog.vc \
 	linespec/Key.vc \

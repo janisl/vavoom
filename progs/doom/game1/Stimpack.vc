@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Stimpack : HealthPickup
+class Stimpack : Health
 	__mobjinfo__(2011)
 	__scriptid__(23);
 
@@ -35,6 +35,6 @@ __states__
 defaultproperties
 {
 	IdleState = S_STIM;
-	HealthAmount = 10;
+	Amount = 10;
 	PickupMessage = "$gotstim";
 }

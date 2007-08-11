@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Medikit : HealthPickup
+class Medikit : Health
 	__mobjinfo__(2012)
 	__scriptid__(24);
 
@@ -35,7 +35,8 @@ __states__
 defaultproperties
 {
 	IdleState = S_MEDI;
-	HealthAmount = 25;
+	Amount = 25;
+	LowHealth = 10;
 	PickupMessage = "$gotmedikit";
-	//"$gotmedineed"
+	LowHealthMessage = "$gotmedineed";
 }

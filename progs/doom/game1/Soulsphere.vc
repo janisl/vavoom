@@ -23,28 +23,9 @@
 //**
 //**************************************************************************
 
-class Soulsphere : Inventory
+class Soulsphere : Health
 	__mobjinfo__(2013)
 	__scriptid__(25);
-
-const int SOULSPHERE_MAX		= 200;
-const int SOULSPHERE_HEALTH		= 100;
-
-//==========================================================================
-//
-//	TryPickup
-//
-//==========================================================================
-
-bool TryPickup(EntityEx Toucher)
-{
-	Toucher.Player.Health += SOULSPHERE_HEALTH;
-	if (Toucher.Player.Health > SOULSPHERE_MAX)
-		Toucher.Player.Health = SOULSPHERE_MAX;
-	Toucher.Health = Toucher.Player.Health;
-	GoAwayAndDie();
-	return true;
-}
 
 __states__
 {
@@ -59,7 +40,10 @@ __states__
 defaultproperties
 {
 	Alpha = 0.666;
+	Amount = 100;
+	MaxAmount = 200;
 	bCountItem = true;
+	bAlwaysPickup = true;
 	IdleState = S_SOUL;
 	PickupMessage = "$gotsuper";
 	PickupSound = 'misc/p_pkup';

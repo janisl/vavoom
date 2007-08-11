@@ -23,25 +23,9 @@
 //**
 //**************************************************************************
 
-class CrystalVial : Inventory
+class CrystalVial : Health
 	__mobjinfo__(81)
 	__scriptid__(23);
-
-//==========================================================================
-//
-//  TryPickup
-//
-//==========================================================================
-
-bool TryPickup(EntityEx Toucher)
-{
-	if (Toucher.GiveBody(10))
-	{
-		GoAwayAndDie();
-		return true;
-	}
-	return false;
-}
 
 __states__
 {
@@ -53,6 +37,7 @@ __states__
 defaultproperties
 {
 	Height = 32.0;
+	Amount = 10;
 	bFloatBob = true;
 	IdleState = S_ITEM_PTN1_1;
 	PickupMessage = "$txt_itemhealth";

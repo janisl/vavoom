@@ -42,7 +42,6 @@
 #include "YellowSkull.vc"
 #include "RedSkull.vc"
 #include "BlueSkull.vc"
-#include "HealthPickup.vc"
 #include "Stimpack.vc"
 #include "Medikit.vc"
 #include "Soulsphere.vc"

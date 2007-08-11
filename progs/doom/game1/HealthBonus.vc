@@ -23,25 +23,9 @@
 //**
 //**************************************************************************
 
-class HealthBonus : Inventory
+class HealthBonus : Health
 	__mobjinfo__(2014)
 	__scriptid__(152);
-
-//==========================================================================
-//
-//	TryPickup
-//
-//==========================================================================
-
-bool TryPickup(EntityEx Toucher)
-{
-	Toucher.Player.Health++;	// can go over 100%
-	if (Toucher.Player.Health > 200)
-		Toucher.Player.Health = 200;
-	Toucher.Health = Toucher.Player.Health;
-	GoAwayAndDie();
-	return true;
-}
 
 __states__
 {
@@ -56,7 +40,10 @@ __states__
 defaultproperties
 {
 	Alpha = 0.9;
-	bCountItem = true;
-	IdleState = S_BON1;
+	Amount = 1;
+	MaxAmount = 200;
 	PickupMessage = "$goththbonus";
+	bCountItem = true;
+	bAlwaysPickup = true;
+	IdleState = S_BON1;
 }

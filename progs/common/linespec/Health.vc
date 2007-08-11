@@ -23,10 +23,11 @@
 //**
 //**************************************************************************
 
-class HealthPickup : Inventory
-	abstract;
+class Health : Inventory;
 
-int HealthAmount;
+int				PrevHealth;
+int				LowHealth;
+string			LowHealthMessage;
 
 //==========================================================================
 //
@@ -36,14 +37,63 @@ int HealthAmount;
 
 bool TryPickup(EntityEx Toucher)
 {
-	if (Toucher.GiveBody(HealthAmount))
+	if (Toucher.bIsPlayer)
 	{
+		PrevHealth = Toucher.Health;
+		int max = MaxAmount;
+		if (!max)
+		{
+			max = PlayerEx(Toucher.Player).GetMaxHealth();
+		}
+		if (Toucher.Player.Health >= max)
+		{
+			//	You should be able to pick up health bonuses even at
+			// full health.
+			if (bAlwaysPickup)
+			{
+				GoAwayAndDie();
+				return true;
+			}
+			return false;
+		}
+		Toucher.Player.Health += Amount;
+		if (Toucher.Player.Health > max)
+		{
+			Toucher.Player.Health = max;
+		}
+		Toucher.Health = Toucher.Player.Health;
 		GoAwayAndDie();
 		return true;
 	}
-	return false;
+	else
+	{
+		PrevHealth = 0x7fffffff;
+		if (Toucher.GiveBody(Amount) || bAlwaysPickup)
+		{
+			GoAwayAndDie();
+			return true;
+		}
+		return false;
+	}
+}
+
+//==========================================================================
+//
+//	GetPickupMessage
+//
+//==========================================================================
+
+string GetPickupMessage()
+{
+	if (PrevHealth < LowHealth && LowHealthMessage)
+	{
+		return LowHealthMessage;
+	}
+	return ::GetPickupMessage();
 }
 
 defaultproperties
 {
+	Amount = 1;
+	MaxAmount = 0;
 }
