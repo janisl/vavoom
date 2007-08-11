@@ -2534,21 +2534,6 @@ void ClientExplosion(int colour, TVec org)
 int ArmorAbsorbDamage(EntityEx inflictor, EntityEx source, int damage,
 	name DmgType)
 {
-	int saved;
-	BasicArmor Armor = BasicArmor(EntityEx(MO).FindInventory(BasicArmor));
-
-	if (Armor.SavePercent)
-	{
-		saved = ftoi(itof(damage) * Armor.SavePercent);
-		if (Armor.Amount <= saved)
-		{
-			// armor is used up
-			saved = Armor.Amount;
-			Armor.SavePercent = 0.0;
-		}
-		Armor.Amount -= saved;
-		damage -= saved;
-	}
 	if (damage >= Health && ((Level.Game.gameskill == sk_baby) ||
 		Level.Game.deathmatch) && !ChickenTime)
 	{

@@ -2295,24 +2295,6 @@ void ClientFinaleType(int Type)
 int ArmorAbsorbDamage(EntityEx inflictor, EntityEx source, int damage,
 	name DmgType)
 {
-	int saved;
-	BasicArmor Armor = BasicArmor(EntityEx(MO).FindInventory(BasicArmor));
-
-	if (Armor.SavePercent)
-	{
-		saved = ftoi(itof(damage) * Armor.SavePercent);
-
-		if (Armor.Amount <= saved)
-		{
-			// armor is used up
-			saved = Armor.Amount;
-			Armor.SavePercent = 0.0;
-			// Try to use some inventory armor
-			Actor(MO).AutoUseArmor();
-		}
-		Armor.Amount -= saved;
-		damage -= saved;
-	}
 	if (Health < 50 || damage >= Health)
 	{
 		// Try to use some inventory health

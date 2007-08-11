@@ -27,6 +27,77 @@ class BasicArmor : Armor;
 
 float			SavePercent;
 
+//==========================================================================
+//
+//	CreateCopy
+//
+//==========================================================================
+
+Inventory CreateCopy(EntityEx Toucher)
+{
+	//	I don't see why we need this, but for compatibility purposes it's
+	// here.
+	BasicArmor Copy = Spawn(BasicArmor);
+	Copy.Amount = Amount;
+	Copy.MaxAmount = MaxAmount;
+	Copy.SavePercent = SavePercent ? SavePercent : 1.0 / 3.0;
+	Copy.IconName = IconName;
+	GoAwayAndDie();
+	return Copy;
+}
+
+//==========================================================================
+//
+//	HandlePickup
+//
+//==========================================================================
+
+bool HandlePickup(Inventory Item)
+{
+	if (Item.Class == Class)
+	{
+		//	You shouldn't be picking up BasicArmor anyway.
+		return true;
+	}
+	if (Inventory)
+	{
+		return Inventory.HandlePickup(Item);
+	}
+	return false;
+}
+
+//==========================================================================
+//
+//	AbsorbDamage
+//
+//==========================================================================
+
+void AbsorbDamage(int damage, name DmgType, out int NewDamage)
+{
+	if (DmgType != 'Drowning')
+	{
+		int saved = ftoi(itof(damage) * SavePercent);
+		if (Amount <= saved)
+		{
+			saved = Amount;
+		}
+		Amount -= saved;
+		NewDamage -= saved;
+		if (Amount == 0)
+		{
+			// armor is used up
+			SavePercent = 0.0;
+			// Try to use some inventory armor
+			EntityEx(Owner).AutoUseArmor();
+		}
+		damage = NewDamage;
+	}
+	if (Inventory)
+	{
+		Inventory.AbsorbDamage(damage, DmgType, NewDamage);
+	}
+}
+
 defaultproperties
 {
 	bKeepDepleted = true;

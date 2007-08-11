@@ -2349,34 +2349,6 @@ void ClientExplosion2(int colour, TVec org)
 	dl->decay = 300.0;
 }
 
-//==========================================================================
-//
-//  ArmorAbsorbDamage
-//
-//==========================================================================
-
-int ArmorAbsorbDamage(EntityEx inflictor, EntityEx source, int damage,
-	name DmgType)
-{
-	int saved;
-	BasicArmor Armor = BasicArmor(EntityEx(MO).FindInventory(BasicArmor));
-
-	if (Armor.SavePercent)
-	{
-		saved = ftoi(itof(damage) * Armor.SavePercent);
-
-		if (Armor.Amount <= saved)
-		{
-			// armor is used up
-			saved = Armor.Amount;
-			Armor.SavePercent = 0.0;
-		}
-		Armor.Amount -= saved;
-		damage -= saved;
-	}
-	return damage;
-}
-
 defaultproperties
 {
 }
