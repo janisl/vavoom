@@ -387,6 +387,9 @@ misc/invuse						dsitemup
 misc/secret						dsyeah
 misc/chat						dsradio
 $alias misc/keytry				*usefail
+$alias misc/health_pkup			misc/i_pkup
+$alias misc/armor_pkup			misc/i_pkup
+$alias misc/ammo_pkup			misc/i_pkup
 
 //==========================================================================
 //

@@ -305,6 +305,9 @@ misc/i_pkup						dsitemup
 misc/k_pkup						dsitemup
 misc/w_pkup						dswpnup
 misc/p_pkup						dsgetpow
+$alias misc/health_pkup			misc/i_pkup
+$alias misc/armor_pkup			misc/i_pkup
+$alias misc/ammo_pkup			misc/i_pkup
 $limit misc/i_pkup 1
 $limit misc/k_pkup 1
 $limit misc/w_pkup 1

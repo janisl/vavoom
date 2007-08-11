@@ -96,4 +96,5 @@ defaultproperties
 {
 	Amount = 1;
 	MaxAmount = 0;
+	PickupSound = 'misc/health_pkup';
 }

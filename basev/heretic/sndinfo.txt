@@ -291,6 +291,9 @@ misc/invuse						artiuse
 misc/frag						gfrag
 $alias misc/w_pkup				*weaponlaugh
 $alias misc/keytry				*usefail
+$alias misc/health_pkup			misc/i_pkup
+$alias misc/armor_pkup			misc/i_pkup
+$alias misc/ammo_pkup			misc/i_pkup
 $limit misc/invuse 1
 $limit misc/frag 1
 
