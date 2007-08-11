@@ -61,6 +61,8 @@ enum
 #include "PowerMinotaur.vc"
 #include "Health.vc"
 #include "HealthPickup.vc"
+#include "Armor.vc"
+#include "BasicArmor.vc"
 #include "PlayerEx.vc"
 
 #include "LineSpecialLevelInfo.vc"

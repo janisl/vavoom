@@ -28,7 +28,9 @@ EXTRA_DIST = \
 	engine/Window.vc \
 	engine/WorldInfo.vc \
 	linespec/Ammo.vc \
+	linespec/Armor.vc \
 	linespec/BackpackItem.vc \
+	linespec/BasicArmor.vc \
 	linespec/classes.vc \
 	linespec/CeilingMover.vc \
 	linespec/CeilingWaggle.vc \
