@@ -23,7 +23,7 @@ sprites
 states
 {
 	//	S_NULL is implicit
-	WeaponEx				First	1
+	DoomWeapon				First	1
 	Fist					First	8
 	Pistol					First	8
 	Shotgun					First	14
@@ -212,15 +212,15 @@ code_pointer_states
 code_pointers
 {
 	//	NULL is implicit
-	WeaponReady		WeaponEx			A_WeaponReady
-	Lower			WeaponEx			A_Lower
-	Raise			WeaponEx			A_Raise
-	ReFire			WeaponEx			A_ReFire
-	CheckReload		WeaponEx			A_CheckReload
-	GunFlash		WeaponEx			A_GunFlash
-	Light0			WeaponEx			A_Light0
-	Light1			WeaponEx			A_Light1
-	Light2			WeaponEx			A_Light2
+	WeaponReady		Weapon				A_WeaponReady
+	Lower			Weapon				A_Lower
+	Raise			Weapon				A_Raise
+	ReFire			Weapon				A_ReFire
+	CheckReload		Weapon				A_CheckReload
+	GunFlash		Weapon				A_GunFlash
+	Light0			Weapon				A_Light0
+	Light1			Weapon				A_Light1
+	Light2			Weapon				A_Light2
 	Punch			Fist				A_Punch
 	Saw				Chainsaw			A_Saw
 	FirePistol		Pistol				A_FirePistol
