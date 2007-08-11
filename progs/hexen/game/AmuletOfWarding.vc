@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class AmuletOfWarding : Armor
+class AmuletOfWarding : ArmorPickup
 	__mobjinfo__(8008)
 	__scriptid__(71);
 

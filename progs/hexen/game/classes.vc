@@ -103,7 +103,7 @@
 #include "MWeaponPiece1.vc"
 #include "MWeaponPiece2.vc"
 #include "MWeaponPiece3.vc"
-#include "Armor.vc"
+#include "ArmorPickup.vc"
 #include "MeshArmor.vc"
 #include "FalconShield.vc"
 #include "PlatinumHelm.vc"

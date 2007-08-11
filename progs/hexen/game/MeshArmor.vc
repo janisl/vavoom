@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MeshArmor : Armor
+class MeshArmor : ArmorPickup
 	__mobjinfo__(8005)
 	__scriptid__(68);
 

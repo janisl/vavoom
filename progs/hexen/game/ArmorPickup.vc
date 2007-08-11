@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Armor : Inventory
+class ArmorPickup : Inventory
 	abstract;
 
 int ArmorType;

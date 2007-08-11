@@ -161,7 +161,10 @@ EXTRA_DIST = compile.bat \
 	cgame/MenuChoice_DrawFPS.vc \
 	cgame/MenuChoice_D3DModelLights.vc \
 	\
+	game/Actor.vc \
 	game/AmuletOfWarding.vc \
+	game/ArmorPickup.vc \
+	game/Arrow.vc \
 	game/ArtiBlastRadius.vc \
 	game/ArtiBoostArmor.vc \
 	game/ArtiBoostMana.vc \
@@ -177,6 +180,9 @@ EXTRA_DIST = compile.bat \
 	game/ArtiTeleport.vc \
 	game/ArtiTeleportOther.vc \
 	game/ArtiTorch.vc \
+	game/AxeBlood.vc \
+	game/AxePuff.vc \
+	game/AxePuffGlow.vc \
 	game/Bishop.vc \
 	game/BishopBlur.vc \
 	game/BishopFX.vc \
@@ -358,7 +364,92 @@ EXTRA_DIST = compile.bat \
 	game/WraithFX3.vc \
 	game/WraithFX4.vc \
 	game/WraithFX5.vc \
+	game/ZArmorChunk.vc \
+	game/ZBannerTattered.vc \
+	game/ZBarrel.vc \
+	game/ZBell.vc \
+	game/ZBlueCandle.vc \
+	game/ZBucket.vc \
+	game/ZCandle.vc \
+	game/ZCauldron.vc \
+	game/ZCauldronUnlit.vc \
+	game/ZChainBit32.vc \
+	game/ZChainBit64.vc \
+	game/ZChainEndHearth.vc \
+	game/ZChainEndHook1.vc \
+	game/ZChainEndHook2.vc \
+	game/ZChainEndSkull.vc \
+	game/ZChainEndSpike.vc \
+	game/ZChandelier.vc \
+	game/ZChandelierUnlit.vc \
 	game/ZCorpseHanging.vc \
+	game/ZCorpseKabob.vc \
+	game/ZCorpseLynched.vc \
+	game/ZCorpseLynchedNoHeart.vc \
+	game/ZCorpseSitting.vc \
+	game/ZCorpseSleeping.vc \
+	game/ZFireBull.vc \
+	game/ZFireBullUnlit.vc \
+	game/ZGemPedestal.vc \
+	game/ZIronMaiden.vc \
+	game/ZLog.vc \
+	game/ZMossCeiling1.vc \
+	game/ZMossCeiling2.vc \
+	game/ZPoisonShroom.vc \
+	game/ZRock1.vc \
+	game/ZRock2.vc \
+	game/ZRock3.vc \
+	game/ZRock4.vc \
+	game/ZRockBlack.vc \
+	game/ZRockBrown1.vc \
+	game/ZRockBrown2.vc \
+	game/ZRubble1.vc \
+	game/ZRubble2.vc \
+	game/ZRubble3.vc \
+	game/ZShroomLarge1.vc \
+	game/ZShroomLarge2.vc \
+	game/ZShroomLarge3.vc \
+	game/ZShroomSmall1.vc \
+	game/ZShroomSmall2.vc \
+	game/ZShroomSmall3.vc \
+	game/ZShroomSmall4.vc \
+	game/ZShroomSmall5.vc \
+	game/ZShrub1.vc \
+	game/ZShrub2.vc \
+	game/ZStalactiteIceLarge.vc \
+	game/ZStalactiteIceMedium.vc \
+	game/ZStalactiteIceSmall.vc \
+	game/ZStalactiteIceTiny.vc \
+	game/ZStalactiteLarge.vc \
+	game/ZStalactiteMedium.vc \
+	game/ZStalactiteSmall.vc \
+	game/ZStalagmiteIceLarge.vc \
+	game/ZStalagmiteIceMedium.vc \
+	game/ZStalagmiteIceSmall.vc \
+	game/ZStalagmiteIceTiny.vc \
+	game/ZStalagmiteLarge.vc \
+	game/ZStalagmiteMedium.vc \
+	game/ZStalagmitePillar.vc \
+	game/ZStalagmiteSmall.vc \
+	game/ZStatueGargoyleBlueShort.vc \
+	game/ZStatueGargoyleBlueTall.vc \
+	game/ZStatueGargoyleDarkRedShort.vc \
+	game/ZStatueGargoyleDarkRedTall.vc \
+	game/ZStatueGargoyleGreenShort.vc \
+	game/ZStatueGargoyleGreenTall.vc \
+	game/ZStatueGargoyleRedShort.vc \
+	game/ZStatueGargoyleRedTall.vc \
+	game/ZStatueGargoyleRustShort.vc \
+	game/ZStatueGargoyleRustTall.vc \
+	game/ZStatueGargoyleStripeTall.vc \
+	game/ZStatueGargoyleTanShort.vc \
+	game/ZStatueGargoyleTanTall.vc \
+	game/ZStumpBare.vc \
+	game/ZStumpBurned.vc \
+	game/ZStumpSwamp1.vc \
+	game/ZStumpSwamp2.vc \
+	game/ZSuitOfArmor.vc \
+	game/ZSwampVine.vc \
 	game/ZTombstoneBigCross.vc \
 	game/ZTombstoneBrianP.vc \
 	game/ZTombstoneBrianR.vc \
@@ -366,57 +457,53 @@ EXTRA_DIST = compile.bat \
 	game/ZTombstoneRIP.vc \
 	game/ZTombstoneShane.vc \
 	game/ZTombstoneSmallCross.vc \
+	game/ZTree.vc \
+	game/ZTreeDead.vc \
+	game/ZTreeGnarled1.vc \
+	game/ZTreeGnarled2.vc \
+	game/ZTreeLarge1.vc \
+	game/ZTreeLarge2.vc \
 	game/ZTreeSwamp120.vc \
 	game/ZTreeSwamp150.vc \
 	game/ZTwinedTorch.vc \
 	game/ZTwinedTorchUnlit.vc \
+	game/ZVasePillar.vc \
+	game/ZWallTorch.vc \
+	game/ZWallTorchUnlit.vc \
+	game/ZWingedStatue.vc \
+	game/ZWingedStatueNoSkull.vc \
+	game/ZXmasTree.vc \
 	\
 	game/TreeDestructible.vc \
-	game/ZShroomSmall3.vc \
-	game/Armor.vc \
-	game/Actor.vc \
-	game/ZStatueGargoyleBlueTall.vc \
 	game/Dirt4.vc \
 	game/StaticLightSource.vc \
-	game/ZArmorChunk.vc \
 	game/BatSpawner.vc \
 	game/CircleFlame.vc \
+	game/Pottery1.vc \
 	game/EttinMace.vc \
-	game/ZRock1.vc \
 	game/FireDemonRock2.vc \
 	game/SludgeChunk.vc \
 	game/Rock2.vc \
-	game/ZRockBrown1.vc \
-	game/ZTreeLarge2.vc \
 	game/FireDemonSplotch2.vc \
 	game/FireDemon.vc \
 	game/TeleSmoke.vc \
 	game/FogPatchMedium.vc \
 	game/ClassBoss.vc \
-	game/ZChainEndSpike.vc \
-	game/ZStumpSwamp2.vc \
 	game/classes.vc \
 	game/PoisonCloud.vc \
-	game/ZShroomLarge2.vc \
 	game/Pawn.vc \
-	game/ZStalagmiteIceSmall.vc \
 	game/Projectile.vc \
-	game/ZStumpBurned.vc \
 	game/FlameSmallTemp.vc \
-	game/ZSwampVine.vc \
 	game/PotteryBit.vc \
-	game/ZChainEndHook2.vc \
 	game/QuakeFocus.vc \
 	game/TableShit7.vc \
 	game/CentaurLeader.vc \
 	game/FireThing.vc \
 	game/TableShit10.vc \
-	game/ZRubble3.vc \
 	game/SnoutPuff.vc \
 	game/MainGameInfo.vc \
 	game/SoundWaterfall.vc \
 	game/MageStaffFX.vc \
-	game/ZCorpseLynched.vc \
 	game/LavaSplash.vc \
 	game/FireDemonMissile.vc \
 	game/Blood.vc \
@@ -425,136 +512,74 @@ EXTRA_DIST = compile.bat \
 	game/Pig.vc \
 	game/Carcas.vc \
 	game/Dirt5.vc \
-	game/ZStalactiteIceMedium.vc \
 	game/BurnableTree.vc \
 	game/IceChunkHead.vc \
 	game/HexenLevelInfo.vc \
-	game/ZShroomSmall4.vc \
 	game/FogPatchSmall.vc \
 	game/FireBomb.vc \
 	game/Effect.vc \
-	game/ZBannerTattered.vc \
-	game/ZStatueGargoyleDarkRedShort.vc \
-	game/Pottery1.vc \
 	game/FireDemonRock3.vc \
-	game/ZRock2.vc \
-	game/ZStalagmiteIceLarge.vc \
 	game/Rock3.vc \
-	game/ZStalagmiteMedium.vc \
-	game/ZRockBrown2.vc \
-	game/ZCorpseSitting.vc \
 	game/FlamePuff2.vc \
 	game/BridgeBall.vc \
-	game/ZChandelier.vc \
 	game/StaticRGBLightSource.vc \
-	game/ZStalactiteMedium.vc \
-	game/ZTree.vc \
 	game/HammerPuff.vc \
-	game/ZShroomLarge3.vc \
 	game/MageBoss.vc \
-	game/ZChandelierUnlit.vc \
-	game/Arrow.vc \
 	game/TableShit8.vc \
-	game/ZStalagmiteIceTiny.vc \
 	game/CentaurSword.vc \
 	game/PoisonBag.vc \
-	game/ZSuitOfArmor.vc \
-	game/AxeBlood.vc \
 	game/TableShit3.vc \
 	game/Fragment.vc \
-	game/ZBucket.vc \
-	game/ZStatueGargoyleDarkRedTall.vc \
 	game/FogPatchLarge.vc \
-	game/ZStatueGargoyleTanTall.vc \
 	game/PointPuller.vc \
 	game/MageStaffFX2.vc \
-	game/ZShroomSmall5.vc \
 	game/IceChunk.vc \
 	game/Dirt6.vc \
-	game/ZStalagmitePillar.vc \
 	game/CentaurShield.vc \
-	game/ZChainEndHearth.vc \
 	game/ThrustFloorUp.vc \
 	game/ThrowingBomb.vc \
 	game/FlamePuff.vc \
 	game/FireDemonRock4.vc \
-	game/ZRock3.vc \
 	game/MapSpot.vc \
 	game/Dirt1.vc \
 	game/Ettin.vc \
 	game/Bat.vc \
-	game/ZRockBlack.vc \
-	game/ZMossCeiling1.vc \
-	game/Dart.vc \
-	game/ZStumpBare.vc \
-	game/ZBell.vc \
 	game/HolyMissile.vc \
-	game/ZStalactiteIceSmall.vc \
 	game/TableShit9.vc \
 	game/CentaurMash.vc \
 	game/FlameSmall.vc \
-	game/ZStalactiteIceTiny.vc \
 	game/BloodSplatter.vc \
-	game/ZCorpseLynchedNoHeart.vc \
 	game/MageWandSmoke.vc \
 	game/Decoration.vc \
 	game/Pottery2.vc \
-	game/ZPoisonShroom.vc \
-	game/ZWallTorch.vc \
 	game/Dirt2.vc \
-	game/ZStatueGargoyleStripeTall.vc \
-	game/AxePuff.vc \
-	game/ZShrub1.vc \
-	game/ZChainEndSkull.vc \
 	game/DirtClump.vc \
-	game/ZTreeDead.vc \
 	game/TableShit4.vc \
 	game/BrassTorch.vc \
 	game/Dirt3.vc \
 	game/FogSpawner.vc \
-	game/ZVasePillar.vc \
 	game/BloodPool.vc \
 	game/Leaf1.vc \
-	game/ZStatueGargoyleBlueShort.vc \
-	game/ZStalagmiteIceMedium.vc \
-	game/AxePuffGlow.vc \
 	game/PunchPuff.vc \
 	game/HammerMissile.vc \
-	game/ZStatueGargoyleRedShort.vc \
-	game/ZTreeGnarled1.vc \
-	game/ZShroomSmall1.vc \
-	game/ZStalactiteIceLarge.vc \
 	game/FireDemonRock5.vc \
-	game/ZRock4.vc \
 	game/Leaf2.vc \
-	game/ZStatueGargoyleTanShort.vc \
 	game/FighterBoss.vc \
-	game/ZStalactiteSmall.vc \
 	game/BlastEffect.vc \
 	game/Bridge.vc \
 	game/ThrustFloorDown.vc \
-	game/ZStatueGargoyleGreenTall.vc \
 	game/BloodSplash.vc \
 	game/Centaur.vc \
-	game/ZStatueGargoyleRustShort.vc \
-	game/ZMossCeiling2.vc \
+	game/Dart.vc \
 	game/CorpseBit.vc \
 	game/EttinMash.vc \
 	game/SludgeSplash.vc \
 	game/FlameLarge.vc \
-	game/ZRubble1.vc \
 	game/MageWandPuff.vc \
-	game/ZFireBullUnlit.vc \
-	game/ZCorpseSleeping.vc \
-	game/ZIronMaiden.vc \
-	game/ZChainBit32.vc \
 	game/LavaSmoke.vc \
-	game/ZXmasTree.vc \
-	game/ZStatueGargoyleRustTall.vc \
 	game/Pottery3.vc \
 	game/FogPatch.vc \
 	game/ClericBoss.vc \
-	game/ZShrub2.vc \
 	game/CorpseBloodDrip.vc \
 	game/TableShit5.vc \
 	game/FlameLargeTemp.vc \
@@ -564,42 +589,17 @@ EXTRA_DIST = compile.bat \
 	game/Rock1.vc \
 	game/FireDemonRock1.vc \
 	game/FireDemonSplotch1.vc \
-	game/ZStatueGargoyleGreenShort.vc \
 	game/HolyTail.vc \
-	game/ZWingedStatue.vc \
-	game/ZFireBull.vc \
 	game/IceShard.vc \
-	game/ZStalactiteLarge.vc \
-	game/ZTreeGnarled2.vc \
-	game/ZShroomSmall2.vc \
-	game/ZCauldronUnlit.vc \
-	game/ZStalagmiteSmall.vc \
-	game/ZChainBit64.vc \
-	game/ZLog.vc \
 	game/HolyMissilePuff.vc \
-	game/ZStatueGargoyleRedTall.vc \
-	game/ZWallTorchUnlit.vc \
 	game/MageWandMissile.vc \
 	game/PoisonDart.vc \
-	game/ZBarrel.vc \
 	game/Gibs.vc \
-	game/ZCorpseKabob.vc \
-	game/ZCandle.vc \
-	game/ZTreeLarge1.vc \
 	game/ProjectileBlade.vc \
 	game/RipperBall.vc \
-	game/ZBlueCandle.vc \
-	game/ZStumpSwamp1.vc \
 	game/TableShit1.vc \
-	game/ZShroomLarge1.vc \
-	game/ZCauldron.vc \
-	game/ZChainEndHook1.vc \
 	game/TableShit6.vc \
-	game/ZRubble2.vc \
-	game/ZWingedStatueNoSkull.vc \
-	game/ZGemPedestal.vc \
 	game/WaterSplash.vc \
-	game/ZStalagmiteLarge.vc \
 	game/BloodSplashBase.vc \
 	game/WaterSplashBase.vc \
 	game/SlimeChunk.vc \

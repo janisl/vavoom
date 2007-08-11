@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class FalconShield : Armor
+class FalconShield : ArmorPickup
 	__mobjinfo__(8006)
 	__scriptid__(69);
 

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class PlatinumHelm : Armor
+class PlatinumHelm : ArmorPickup
 	__mobjinfo__(8007)
 	__scriptid__(70);
 
