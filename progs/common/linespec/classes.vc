@@ -59,6 +59,7 @@ enum
 #include "PowerWeaponLevel2.vc"
 #include "PowerSpeed.vc"
 #include "PowerMinotaur.vc"
+#include "PowerScanner.vc"
 #include "Health.vc"
 #include "HealthPickup.vc"
 #include "Armor.vc"

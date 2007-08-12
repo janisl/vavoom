@@ -106,6 +106,8 @@ txt_energypod = "You picked up the energy pod.";
 txt_energypack = "You picked up the energy pack.";
 txt_ammosatchel = "You picked up the ammo satchel";
 
+txt_needmap = "The scanner won't work without a map!";
+
 //	Level names
 shustr_1 = "AREA  1: sanctuary";
 shustr_2 = "AREA  2: town";

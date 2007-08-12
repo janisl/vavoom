@@ -23,43 +23,38 @@
 //**
 //**************************************************************************
 
-class Scanner : PowerupGiver
-	__mobjinfo__(2027);
+class PowerScanner : Powerup;
 
 //==========================================================================
 //
-//	Use
+//	InitEffect
 //
 //==========================================================================
 
-bool Use(bool Pickup)
+void InitEffect()
 {
-	if (!Owner.bIsPlayer)
+	if (Owner.bIsPlayer)
 	{
-		return false;
+		Owner.Player.bAutomapShowThings = true;
 	}
-	if (!Owner.Player.bAutomapRevealed)
-	{
-		Owner.Player.cprint("$txt_needmap");
-		return false;
-	}
-	return ::Use(Pickup);
 }
 
-__states__
+//==========================================================================
+//
+//	EndEffect
+//
+//==========================================================================
+
+void EndEffect()
 {
-	S_SCANNER_1('PMUP', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_SCANNER_2) = none
-	S_SCANNER_2('PMUP', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_SCANNER_1) = none
+	if (Owner && Owner.bIsPlayer)
+	{
+		Owner.Player.bAutomapShowThings = false;
+	}
 }
 
 defaultproperties
 {
-	ConversationID = 165;
-	PowerupType = PowerScanner;
-	PickupMessage = "$txt_scanner";
-	PickupSound = 'misc/i_pkup';
-	MaxAmount = 1;
-	IconName = 'i_pmup';
-	bFloorClip = true;
-	IdleState = S_SCANNER_1;
+	EffectTime = 80.0;
+	bHubPower = true;
 }
