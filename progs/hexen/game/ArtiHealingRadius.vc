@@ -64,7 +64,7 @@ bool Use(bool Pickup)
 			GaveArmor = false;
 			for (i = 0; i < 4; i++)
 			{
-				ArmorPickup Armor = Spawn(ArmorPickup);
+				HexenArmor Armor = Spawn(HexenArmor);
 				Armor.Health = i;
 				Armor.Amount = 1;
 				if (Armor.TryPickup(P))

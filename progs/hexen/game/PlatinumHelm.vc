@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class PlatinumHelm : ArmorPickup
+class PlatinumHelm : HexenArmor
 	__mobjinfo__(8007)
 	__scriptid__(70);
 
@@ -34,8 +34,10 @@ __states__
 
 defaultproperties
 {
+	Height = 32.0;
 	Health = 2;	//	Armor type
 	Amount = 0;
 	PickupMessage = "$txt_armor3";
+	bNoGravity = true;
 	IdleState = S_ARMOR_3;
 }

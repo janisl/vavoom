@@ -31,8 +31,6 @@ const int NUMBOTTYPES		= 24;
 BotPlayer::botinfo_t botinfo[NUMTOTALBOTS];
 int botskill;
 
-float ArmorMax[HexenDefs::NUMCLASSES];
-
 int classFlags[3];
 
 bool randomclass;
@@ -358,11 +356,6 @@ defaultproperties
 	DefaultKickBack = 150.0;
 	BloodClass = Blood;
 	NonMonsterAngleIncrements = 1;
-
-	ArmorMax[0] = 20.0;
-	ArmorMax[1] = 18.0;
-	ArmorMax[2] = 16.0;
-	ArmorMax[3] = 1.0;
 
 	classFlags[0] = HexenLevelInfo::MTF_FIGHTER;
 	classFlags[1] = HexenLevelInfo::MTF_CLERIC;

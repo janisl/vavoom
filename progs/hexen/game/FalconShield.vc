@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class FalconShield : ArmorPickup
+class FalconShield : HexenArmor
 	__mobjinfo__(8006)
 	__scriptid__(69);
 
@@ -34,8 +34,10 @@ __states__
 
 defaultproperties
 {
+	Height = 32.0;
 	Health = 1;	//	Armor type
 	Amount = 0;
 	PickupMessage = "$txt_armor2";
+	bNoGravity = true;
 	IdleState = S_ARMOR_2;
 }

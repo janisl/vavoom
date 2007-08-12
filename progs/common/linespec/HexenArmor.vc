@@ -28,6 +28,114 @@ class HexenArmor : Armor;
 float			Slots[5];
 float			SlotsIncrement[4];
 
+//==========================================================================
+//
+//  TryPickup
+//
+//==========================================================================
+
+bool TryPickup(EntityEx Toucher)
+{
+	HexenArmor HArmor = HexenArmor(Toucher.FindInventory(HexenArmor));
+	if (HArmor.AddArmorToSlot(Toucher, Health, Amount))
+	{
+		GoAwayAndDie();
+		return true;
+	}
+	return false;
+}
+
+//==========================================================================
+//
+//  AddArmorToSlot
+//
+//  Returns false if the armor is worse than the current armor.
+//
+//==========================================================================
+
+bool AddArmorToSlot(EntityEx Toucher, int armortype, int amount)
+{
+	float hits;
+
+	if (amount <= 0)
+	{
+		hits = SlotsIncrement[armortype];
+		if (Slots[armortype] >= hits)
+		{
+			return false;
+		}
+		else
+		{
+			Slots[armortype] = hits;
+		}
+	}
+	else
+	{
+		hits = itof(amount) * 5.0;
+		float total = Slots[0] + Slots[1] + Slots[2] + Slots[3] + Slots[4];
+		float max = SlotsIncrement[0] + SlotsIncrement[1] +
+			SlotsIncrement[2] + SlotsIncrement[3] + SlotsIncrement[4] + 20.0;
+		if (total < max)
+		{
+			Slots[armortype] += hits;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
+//==========================================================================
+//
+//	AbsorbDamage
+//
+//==========================================================================
+
+void AbsorbDamage(int damage, name DmgType, out int NewDamage)
+{
+	float saved;
+	float savedPercent;
+	int i;
+
+	if (DmgType != 'Drowning')
+	{
+		savedPercent = Slots[0] + Slots[1] + Slots[2] + Slots[3] + Slots[4];
+		if (savedPercent)
+		{
+			// armor absorbed some damage
+			if (savedPercent > 100.0)
+			{
+				savedPercent = 100.0;
+			}
+			for (i = 0; i < 4; i++)
+			{
+				if (Slots[i])
+				{
+					Slots[i] -= itof(damage) * SlotsIncrement[i] / 300.0;
+					if (Slots[i] < 2.0)
+					{
+						Slots[i] = 0.0;
+					}
+				}
+			}
+			saved = itof(damage) * savedPercent / 100.0;
+			if (saved > savedPercent * 2.0)
+			{
+				saved = savedPercent * 2.0;
+			}
+			NewDamage -= ftoi(saved);
+			damage = NewDamage;
+		}
+	}
+
+	if (Inventory)
+	{
+		Inventory.AbsorbDamage(damage, DmgType, NewDamage);
+	}
+}
+
 defaultproperties
 {
 }

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class AmuletOfWarding : ArmorPickup
+class AmuletOfWarding : HexenArmor
 	__mobjinfo__(8008)
 	__scriptid__(71);
 
@@ -34,8 +34,10 @@ __states__
 
 defaultproperties
 {
+	Height = 32.0;
 	Health = 3;	//	Armor type
 	Amount = 0;
 	PickupMessage = "$txt_armor4";
+	bNoGravity = true;
 	IdleState = S_ARMOR_4;
 }
