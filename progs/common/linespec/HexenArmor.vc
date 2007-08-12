@@ -30,19 +30,53 @@ float			SlotsIncrement[4];
 
 //==========================================================================
 //
-//  TryPickup
+//	HandlePickup
 //
 //==========================================================================
 
-bool TryPickup(EntityEx Toucher)
+bool HandlePickup(Inventory Item)
 {
-	HexenArmor HArmor = HexenArmor(Toucher.FindInventory(HexenArmor));
-	if (HArmor.AddArmorToSlot(Toucher, Health, Amount))
+	if (HexenArmor(Item))
 	{
-		GoAwayAndDie();
+		if (AddArmorToSlot(EntityEx(Owner), Item.Health, Item.Amount))
+		{
+			Item.bPickupGood = true;
+		}
 		return true;
 	}
+
+	if (Inventory)
+	{
+		return Inventory.HandlePickup(Item);
+	}
 	return false;
+}
+
+//==========================================================================
+//
+//	CreateCopy
+//
+//==========================================================================
+
+Inventory CreateCopy(EntityEx Toucher)
+{
+	HexenArmor Copy = Spawn(HexenArmor);
+	Copy.AddArmorToSlot(Toucher, Health, Amount);
+	GoAwayAndDie();
+	return Copy;
+}
+
+//==========================================================================
+//
+//	CreateTossable
+//
+//	You can't drop it, ever.
+//
+//==========================================================================
+
+Inventory CreateTossable()
+{
+	return none;
 }
 
 //==========================================================================
@@ -56,6 +90,11 @@ bool TryPickup(EntityEx Toucher)
 bool AddArmorToSlot(EntityEx Toucher, int armortype, int amount)
 {
 	float hits;
+
+	if (armortype < 0 || armortype > 3)
+	{
+		return false;
+	}
 
 	if (amount <= 0)
 	{
@@ -138,4 +177,6 @@ void AbsorbDamage(int damage, name DmgType, out int NewDamage)
 
 defaultproperties
 {
+	bUndroppable = true;
+	bKeepDepleted = true;
 }
