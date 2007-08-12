@@ -37,7 +37,7 @@ bool Use(bool Pickup)
 {
 	int i;
 	int count = 0;
-	for (i = 0; i < HexenDefs::NUMARMOR; i++)
+	for (i = 0; i < 4; i++)
 	{
 		// 1 point per armor type
 		count += Player(Owner.Player).GiveArmor(i, 1);

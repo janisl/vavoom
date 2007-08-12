@@ -36,15 +36,6 @@ enum
 	NUMCLASSES
 };
 
-enum
-{
-	ARMOR_ARMOR,
-	ARMOR_SHIELD,
-	ARMOR_HELMET,
-	ARMOR_AMULET,
-	NUMARMOR
-};
-
 defaultproperties
 {
 }

@@ -32,7 +32,7 @@ BotPlayer::botinfo_t botinfo[NUMTOTALBOTS];
 int botskill;
 
 float AutoArmorSave[HexenDefs::NUMCLASSES];
-float ArmorIncrement[HexenDefs::NUMCLASSES * HexenDefs::NUMARMOR];
+float ArmorIncrement[HexenDefs::NUMCLASSES * 4];
 
 float ArmorMax[HexenDefs::NUMCLASSES];
 

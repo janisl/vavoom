@@ -66,7 +66,7 @@ int pic_wppiece[3];
 int wppiecex[3];
 
 int pic_keybar;
-int pic_armor[HexenDefs::NUMARMOR];
+int pic_armor[4];
 
 int pic_invbar;
 int pic_selectbox;
@@ -219,7 +219,7 @@ void StartMap()
 	//  KEY BAR
 	//
 	pic_keybar = R_RegisterPic('keybar');
-	for (i = 0; i < HexenDefs::NUMARMOR; i++)
+	for (i = 0; i < 4; i++)
 	{
 		pic_armor[i] = R_RegisterPic(StrToName(va("armslot%d", i + 1)));
 	}
@@ -502,12 +502,9 @@ void SB_DrawMainBar()
 	// Armor
 	HexenArmor HArmor = HexenArmor(EntityEx(cl.MO).FindInventory(
 		HexenArmor));
-	int TotalArmorPoints =
-		ftoi((MainGameInfo.default.AutoArmorSave[cl.PClass] +
-		HArmor.Slots[HexenDefs::ARMOR_ARMOR] +
-		HArmor.Slots[HexenDefs::ARMOR_SHIELD] +
-		HArmor.Slots[HexenDefs::ARMOR_HELMET] +
-		HArmor.Slots[HexenDefs::ARMOR_AMULET]) / 5.0);
+	int TotalArmorPoints = ftoi((HArmor.Slots[0] + HArmor.Slots[1] +
+		HArmor.Slots[2] + HArmor.Slots[3] +
+		MainGameInfo.default.AutoArmorSave[cl.PClass]) / 5.0);
 	SB_DrawNumber9(BAR_X + 250, BAR_Y + 15, TotalArmorPoints, 0);
 }
 
@@ -541,7 +538,7 @@ void SB_DrawKeyBar()
 	//  Armor
 	HexenArmor HArmor = HexenArmor(EntityEx(cl.MO).FindInventory(
 		HexenArmor));
-	for (i = 0; i < HexenDefs::NUMARMOR; i++)
+	for (i = 0; i < 4; i++)
 	{
 		float ArmorPerc;
 		if (!HArmor.Slots[i])
@@ -549,12 +546,12 @@ void SB_DrawKeyBar()
 			continue;
 		}
 		else if (HArmor.Slots[i] <=
-			(MainGameInfo.default.ArmorIncrement[cl.PClass * HexenDefs::NUMARMOR + i] / 4.0))
+			(MainGameInfo.default.ArmorIncrement[cl.PClass * 4 + i] / 4.0))
 		{
 			ArmorPerc = 0.333;
 		}
 		else if (HArmor.Slots[i] <=
-			(MainGameInfo.default.ArmorIncrement[cl.PClass * HexenDefs::NUMARMOR + i] / 2.0))
+			(MainGameInfo.default.ArmorIncrement[cl.PClass * 4 + i] / 2.0))
 		{
 			ArmorPerc = 0.666;
 		}
@@ -623,12 +620,9 @@ void SB_DrawFullscreenStats()
 	// Armor
 	HexenArmor HArmor = HexenArmor(EntityEx(cl.MO).FindInventory(
 		HexenArmor));
-	int TotalArmorPoints =
-		ftoi((MainGameInfo.default.AutoArmorSave[cl.PClass] +
-		HArmor.Slots[HexenDefs::ARMOR_ARMOR] +
-		HArmor.Slots[HexenDefs::ARMOR_SHIELD] +
-		HArmor.Slots[HexenDefs::ARMOR_HELMET] +
-		HArmor.Slots[HexenDefs::ARMOR_AMULET]) / 5.0);
+	int TotalArmorPoints = ftoi((HArmor.Slots[0] + HArmor.Slots[1] +
+		HArmor.Slots[2] + HArmor.Slots[3] +
+		MainGameInfo.default.AutoArmorSave[cl.PClass]) / 5.0);
 	SB_DrawNumber12(140, 450, TotalArmorPoints);
 	R_DrawPic(120, 490, pic_armor2);
 

@@ -249,7 +249,7 @@ bool MorphPlayer()
 	Player.Health = beastMo.Health;
 	Player.MO = beastMo;
 	HexenArmor HArmor = HexenArmor(FindInventory(HexenArmor));
-	for (i = 0; i < HexenDefs::NUMARMOR; i++)
+	for (i = 0; i < 4; i++)
 	{
 		HArmor.Slots[i] = 0.0;
 	}

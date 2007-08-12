@@ -42,6 +42,8 @@ bool Use(bool Pickup)
 	float dist;
 	int effective = false;
 	int amount;
+	int i;
+	bool GaveArmor;
 
 	foreach AllThinkers(PlayerPawn, P)
 	{
@@ -59,10 +61,15 @@ bool Use(bool Pickup)
 		switch (Player(Owner.Player).PClass)
 		{
 		case HexenDefs::PCLASS_FIGHTER:	// Radius armor boost
-			if ((Player(P.Player).GiveArmor(HexenDefs::ARMOR_ARMOR, 1)) ||
-				(Player(P.Player).GiveArmor(HexenDefs::ARMOR_SHIELD, 1)) ||
-				(Player(P.Player).GiveArmor(HexenDefs::ARMOR_HELMET, 1)) ||
-				(Player(P.Player).GiveArmor(HexenDefs::ARMOR_AMULET, 1)))
+			GaveArmor = false;
+			for (i = 0; i < 4; i++)
+			{
+				if (Player(P.Player).GiveArmor(i, 1))
+				{
+					GaveArmor = true;
+				}
+			}
+			if (GaveArmor)
 			{
 				effective = true;
 				P.PlaySound('MysticIncant', CHAN_ITEM);

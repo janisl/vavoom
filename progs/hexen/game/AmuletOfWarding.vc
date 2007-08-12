@@ -34,7 +34,8 @@ __states__
 
 defaultproperties
 {
-	ArmorType = HexenDefs::ARMOR_AMULET;
-	IdleState = S_ARMOR_4;
+	Health = 3;	//	Armor type
+	Amount = 0;
 	PickupMessage = "$txt_armor4";
+	IdleState = S_ARMOR_4;
 }
