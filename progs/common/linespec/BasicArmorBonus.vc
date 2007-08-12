@@ -45,6 +45,10 @@ bool Use(bool Pickup)
 		Armor.Amount = 0;
 		Armor.AttachToOwner(EntityEx(Owner));
 	}
+	if (Armor.Amount >= MaxSaveAmount)
+	{
+		return false;
+	}
 	Armor.Amount += SaveAmount;
 	if (Armor.Amount > MaxSaveAmount)
 	{
