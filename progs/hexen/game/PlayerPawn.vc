@@ -32,6 +32,7 @@ struct InitInvInfo
 	int					Amount;
 };
 
+float					HexenArmor[5];
 array<InitInvInfo>		InitialInventory;
 
 //==========================================================================

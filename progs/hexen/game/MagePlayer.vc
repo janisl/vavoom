@@ -86,6 +86,11 @@ defaultproperties
 	Radius = 16.0;
 	Height = 64.0;
 	PainChance = 1.0;
+	HexenArmor[0] = 5.0;
+	HexenArmor[1] = 5.0;
+	HexenArmor[2] = 15.0;
+	HexenArmor[3] = 10.0;
+	HexenArmor[4] = 25.0;
 	bPickUp = true;
 	IdleState = S_MPLAY;
 	SeeState = S_MPLAY_RUN1;

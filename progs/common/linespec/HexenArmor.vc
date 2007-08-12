@@ -25,7 +25,8 @@
 
 class HexenArmor : Armor;
 
-float			Slots[4];
+float			Slots[5];
+float			SlotsIncrement[4];
 
 defaultproperties
 {

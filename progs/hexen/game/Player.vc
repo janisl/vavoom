@@ -483,6 +483,11 @@ void SpawnPlayer(mthing_t * mthing)
 
 		HexenArmor HArmor = Level.Spawn(HexenArmor);
 		HArmor.AttachToOwner(pp);
+		HArmor.Slots[4] = pp.HexenArmor[0];
+		HArmor.SlotsIncrement[0] = pp.HexenArmor[1];
+		HArmor.SlotsIncrement[1] = pp.HexenArmor[2];
+		HArmor.SlotsIncrement[2] = pp.HexenArmor[3];
+		HArmor.SlotsIncrement[3] = pp.HexenArmor[4];
 
 		BasicArmor BArmor = Level.Spawn(BasicArmor);
 		BArmor.Amount = 0;
@@ -710,50 +715,6 @@ int GetMaxHealth()
 		return MAXMORPHHEALTH;
 	}
 	return MAXHEALTH;
-}
-
-//==========================================================================
-//
-//  GiveArmor
-//
-//  Returns false if the armor is worse than the current armor.
-//
-//==========================================================================
-
-bool GiveArmor(int armortype, int amount)
-{
-	float hits;
-	float totalArmor;
-
-	HexenArmor HArmor = HexenArmor(EntityEx(MO).FindInventory(HexenArmor));
-	if (amount <= 0)
-	{
-		hits = MainGameInfo(Level.Game).ArmorIncrement[PClass * 4 + armortype];
-		if (HArmor.Slots[armortype] >= hits)
-		{
-			return false;
-		}
-		else
-		{
-			HArmor.Slots[armortype] = hits;
-		}
-	}
-	else
-	{
-		hits = itof(amount) * 5.0;
-		totalArmor = HArmor.Slots[0] + HArmor.Slots[1] +
-			HArmor.Slots[2] + HArmor.Slots[3] +
-			MainGameInfo(Level.Game).AutoArmorSave[PClass];
-		if (totalArmor < MainGameInfo(Level.Game).ArmorMax[PClass] * 5.0)
-		{
-			HArmor.Slots[armortype] += hits;
-		}
-		else
-		{
-			return false;
-		}
-	}
-	return true;
 }
 
 //==========================================================================
@@ -2649,7 +2610,7 @@ void Cheat_Gimme()
 			HexenArmor));
 		for (i = 0; i < 4; i++)
 		{
-			HArmor.Slots[i] = MainGameInfo(Level.Game).ArmorIncrement[PClass * 4 + i];
+			HArmor.Slots[i] = HArmor.SlotsIncrement[i];
 		}
 		foreach AllClasses(Weapon, WpnCls)
 		{
@@ -2978,7 +2939,7 @@ int ArmorAbsorbDamage(EntityEx inflictor, EntityEx source, int damage,
 
 	HexenArmor HArmor = HexenArmor(EntityEx(MO).FindInventory(HexenArmor));
 	savedPercent = HArmor.Slots[0] + HArmor.Slots[1] + HArmor.Slots[2] +
-		HArmor.Slots[3] + MainGameInfo(Level.Game).AutoArmorSave[PClass];
+		HArmor.Slots[3] + HArmor.Slots[4];
 	if (savedPercent)
 	{
 		// armor absorbed some damage
@@ -2991,7 +2952,7 @@ int ArmorAbsorbDamage(EntityEx inflictor, EntityEx source, int damage,
 			if (HArmor.Slots[i])
 			{
 				HArmor.Slots[i] -= itof(damage) *
-					MainGameInfo(Level.Game).ArmorIncrement[PClass * 4 + i] / 300.0;
+					HArmor.SlotsIncrement[i] / 300.0;
 				if (HArmor.Slots[i] < 2.0)
 				{
 					HArmor.Slots[i] = 0.0;

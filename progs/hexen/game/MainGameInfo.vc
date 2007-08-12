@@ -31,9 +31,6 @@ const int NUMBOTTYPES		= 24;
 BotPlayer::botinfo_t botinfo[NUMTOTALBOTS];
 int botskill;
 
-float AutoArmorSave[HexenDefs::NUMCLASSES];
-float ArmorIncrement[HexenDefs::NUMCLASSES * 4];
-
 float ArmorMax[HexenDefs::NUMCLASSES];
 
 int classFlags[3];
@@ -361,16 +358,6 @@ defaultproperties
 	DefaultKickBack = 150.0;
 	BloodClass = Blood;
 	NonMonsterAngleIncrements = 1;
-
-	AutoArmorSave[0] = 15.0;
-	AutoArmorSave[1] = 10.0;
-	AutoArmorSave[2] = 5.0;
-	AutoArmorSave[3] = 0.0;
-
-	ArmorIncrement[0] = 25.0; ArmorIncrement[1] = 20.0; ArmorIncrement[2] = 15.0; ArmorIncrement[3] = 5.0;
-	ArmorIncrement[4] = 10.0; ArmorIncrement[5] = 25.0; ArmorIncrement[6] = 5.0; ArmorIncrement[7] = 20.0;
-	ArmorIncrement[8] = 5.0; ArmorIncrement[9] = 15.0; ArmorIncrement[10] = 10.0; ArmorIncrement[11] = 25.0;
-	ArmorIncrement[12] = 0.0; ArmorIncrement[13] = 0.0; ArmorIncrement[14] = 0.0; ArmorIncrement[15] = 0.0;
 
 	ArmorMax[0] = 20.0;
 	ArmorMax[1] = 18.0;

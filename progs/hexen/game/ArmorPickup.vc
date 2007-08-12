@@ -27,13 +27,56 @@ class ArmorPickup : HexenArmor;
 
 //==========================================================================
 //
+//  GiveArmor
+//
+//  Returns false if the armor is worse than the current armor.
+//
+//==========================================================================
+
+bool GiveArmor(EntityEx Toucher, int armortype, int amount)
+{
+	float hits;
+	float totalArmor;
+
+	HexenArmor HArmor = HexenArmor(Toucher.FindInventory(HexenArmor));
+	if (amount <= 0)
+	{
+		hits = HArmor.SlotsIncrement[armortype];
+		if (HArmor.Slots[armortype] >= hits)
+		{
+			return false;
+		}
+		else
+		{
+			HArmor.Slots[armortype] = hits;
+		}
+	}
+	else
+	{
+		hits = itof(amount) * 5.0;
+		totalArmor = HArmor.Slots[0] + HArmor.Slots[1] +
+			HArmor.Slots[2] + HArmor.Slots[3] + HArmor.Slots[4];
+		if (totalArmor < MainGameInfo(Level.Game).ArmorMax[Toucher.Player.PClass] * 5.0)
+		{
+			HArmor.Slots[armortype] += hits;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
+//==========================================================================
+//
 //  TryPickup
 //
 //==========================================================================
 
 bool TryPickup(EntityEx Toucher)
 {
-	if (Player(Toucher.Player).GiveArmor(Health, Amount))
+	if (GiveArmor(Toucher, Health, Amount))
 	{
 		GoAwayAndDie();
 		return true;

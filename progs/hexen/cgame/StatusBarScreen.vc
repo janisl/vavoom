@@ -378,7 +378,7 @@ void SB_DrawMNumber(int x, int y, int num)
 	if (num > 0)
 	{
 		x = x + 12;
-    
+
 		// draw the new number
 		while (num)
 		{
@@ -502,9 +502,9 @@ void SB_DrawMainBar()
 	// Armor
 	HexenArmor HArmor = HexenArmor(EntityEx(cl.MO).FindInventory(
 		HexenArmor));
-	int TotalArmorPoints = ftoi((HArmor.Slots[0] + HArmor.Slots[1] +
-		HArmor.Slots[2] + HArmor.Slots[3] +
-		MainGameInfo.default.AutoArmorSave[cl.PClass]) / 5.0);
+	int TotalArmorPoints = !HArmor ? 0 :
+		ftoi((HArmor.Slots[0] + HArmor.Slots[1] + HArmor.Slots[2] +
+		HArmor.Slots[3] + HArmor.Slots[4]) / 5.0);
 	SB_DrawNumber9(BAR_X + 250, BAR_Y + 15, TotalArmorPoints, 0);
 }
 
@@ -541,17 +541,15 @@ void SB_DrawKeyBar()
 	for (i = 0; i < 4; i++)
 	{
 		float ArmorPerc;
-		if (!HArmor.Slots[i])
+		if (!HArmor || !HArmor.Slots[i])
 		{
 			continue;
 		}
-		else if (HArmor.Slots[i] <=
-			(MainGameInfo.default.ArmorIncrement[cl.PClass * 4 + i] / 4.0))
+		else if (HArmor.Slots[i] <= (HArmor.SlotsIncrement[i] / 4.0))
 		{
 			ArmorPerc = 0.333;
 		}
-		else if (HArmor.Slots[i] <=
-			(MainGameInfo.default.ArmorIncrement[cl.PClass * 4 + i] / 2.0))
+		else if (HArmor.Slots[i] <= (HArmor.SlotsIncrement[i] / 2.0))
 		{
 			ArmorPerc = 0.666;
 		}
@@ -620,9 +618,9 @@ void SB_DrawFullscreenStats()
 	// Armor
 	HexenArmor HArmor = HexenArmor(EntityEx(cl.MO).FindInventory(
 		HexenArmor));
-	int TotalArmorPoints = ftoi((HArmor.Slots[0] + HArmor.Slots[1] +
-		HArmor.Slots[2] + HArmor.Slots[3] +
-		MainGameInfo.default.AutoArmorSave[cl.PClass]) / 5.0);
+	int TotalArmorPoints = !HArmor ? 0 :
+		ftoi((HArmor.Slots[0] + HArmor.Slots[1] + HArmor.Slots[2] +
+		HArmor.Slots[3] + HArmor.Slots[4]) / 5.0);
 	SB_DrawNumber12(140, 450, TotalArmorPoints);
 	R_DrawPic(120, 490, pic_armor2);
 
