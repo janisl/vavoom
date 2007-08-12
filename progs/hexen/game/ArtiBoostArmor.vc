@@ -36,17 +36,23 @@ class ArtiBoostArmor : Inventory
 bool Use(bool Pickup)
 {
 	int i;
-	int count = 0;
+	bool good = false;
 	for (i = 0; i < 4; i++)
 	{
 		// 1 point per armor type
-		count += Player(Owner.Player).GiveArmor(i, 1);
+		ArmorPickup Armor = Spawn(ArmorPickup);
+		Armor.Health = i;
+		Armor.Amount = 1;
+		if (Armor.TryPickup(EntityEx(Owner)))
+		{
+			good = true;
+		}
+		else
+		{
+			Armor.Destroy();
+		}
 	}
-	if (!count)
-	{
-		return false;
-	}
-	return true;
+	return good;
 }
 
 __states__

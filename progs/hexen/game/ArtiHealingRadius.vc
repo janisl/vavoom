@@ -64,9 +64,16 @@ bool Use(bool Pickup)
 			GaveArmor = false;
 			for (i = 0; i < 4; i++)
 			{
-				if (Player(P.Player).GiveArmor(i, 1))
+				ArmorPickup Armor = Spawn(ArmorPickup);
+				Armor.Health = i;
+				Armor.Amount = 1;
+				if (Armor.TryPickup(P))
 				{
 					GaveArmor = true;
+				}
+				else
+				{
+					Armor.Destroy();
 				}
 			}
 			if (GaveArmor)
