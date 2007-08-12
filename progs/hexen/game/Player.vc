@@ -32,10 +32,6 @@ const float VIEWHEIGHT		= 48.0;
 // 16 pixels of bob
 const float MAXBOB			= 16.0;
 
-int TotalArmorPoints;
-float ArmorPoints[HexenDefs::NUMARMOR];
-int ArmorPerc[HexenDefs::NUMARMOR];
-
 float InventoryTime;
 int ArtifactFlash;
 Inventory InvPtr;
@@ -56,8 +52,7 @@ bool onground;
 replication
 {
 	reliable if (!bIsClient)
-		TotalArmorPoints, InventoryTime, ArtifactFlash, InvPtr, InvFirst,
-		ArmorPerc;
+		InventoryTime, ArtifactFlash, InvPtr, InvFirst;
 
 	unreliable if (!bIsClient)
 		ClientBlood, ClientExplosion;
@@ -486,6 +481,9 @@ void SpawnPlayer(mthing_t * mthing)
 			pp.Inventory.Destroy();
 		}
 
+		HexenArmor HArmor = Level.Spawn(HexenArmor);
+		HArmor.AttachToOwner(pp);
+
 		BasicArmor BArmor = Level.Spawn(BasicArmor);
 		BArmor.Amount = 0;
 		BArmor.AttachToOwner(pp);
@@ -727,29 +725,30 @@ bool GiveArmor(int armortype, int amount)
 	float hits;
 	float totalArmor;
 
-	if (amount == -1)
+	HexenArmor HArmor = HexenArmor(EntityEx(MO).FindInventory(HexenArmor));
+	if (amount <= 0)
 	{
 		hits = MainGameInfo(Level.Game).ArmorIncrement[PClass * HexenDefs::NUMARMOR + armortype];
-		if (ArmorPoints[armortype] >= hits)
+		if (HArmor.Slots[armortype] >= hits)
 		{
 			return false;
 		}
 		else
 		{
-			ArmorPoints[armortype] = hits;
+			HArmor.Slots[armortype] = hits;
 		}
 	}
 	else
 	{
 		hits = itof(amount) * 5.0;
-		totalArmor = ArmorPoints[HexenDefs::ARMOR_ARMOR]
-			+ ArmorPoints[HexenDefs::ARMOR_SHIELD]
-			+ ArmorPoints[HexenDefs::ARMOR_HELMET]
-			+ ArmorPoints[HexenDefs::ARMOR_AMULET]
+		totalArmor = HArmor.Slots[HexenDefs::ARMOR_ARMOR]
+			+ HArmor.Slots[HexenDefs::ARMOR_SHIELD]
+			+ HArmor.Slots[HexenDefs::ARMOR_HELMET]
+			+ HArmor.Slots[HexenDefs::ARMOR_AMULET]
 			+ MainGameInfo(Level.Game).AutoArmorSave[PClass];
 		if (totalArmor < MainGameInfo(Level.Game).ArmorMax[PClass] * 5.0)
 		{
-			ArmorPoints[armortype] += hits;
+			HArmor.Slots[armortype] += hits;
 		}
 		else
 		{
@@ -2308,33 +2307,6 @@ void SetViewPos()
 
 	PaletteFlash();
 
-	TotalArmorPoints = ftoi((MainGameInfo(Level.Game).AutoArmorSave[PClass]
-			+ ArmorPoints[HexenDefs::ARMOR_ARMOR]
-			+ ArmorPoints[HexenDefs::ARMOR_SHIELD]
-			+ ArmorPoints[HexenDefs::ARMOR_HELMET]
-			+ ArmorPoints[HexenDefs::ARMOR_AMULET]) / 5.0);
-	for (i = 0; i < HexenDefs::NUMARMOR; i++)
-	{
-		if (!ArmorPoints[i])
-		{
-			ArmorPerc[i] = 100;
-		}
-		else if (ArmorPoints[i] <=
-			(MainGameInfo(Level.Game).ArmorIncrement[PClass * HexenDefs::NUMARMOR + i] / 4.0))
-		{
-			ArmorPerc[i] = 66;
-		}
-		else if (ArmorPoints[i] <=
-			(MainGameInfo(Level.Game).ArmorIncrement[PClass * HexenDefs::NUMARMOR + i] / 2.0))
-		{
-			ArmorPerc[i] = 33;
-		}
-		else
-		{
-			ArmorPerc[i] = 0;
-		}
-	}
-
 	ClientSetViewOrg(ViewOrg.x, ViewOrg.y, ViewOrg.z);
 }
 
@@ -2675,9 +2647,11 @@ void Cheat_Gimme()
 	{
 		int i;
 
+		HexenArmor HArmor = HexenArmor(EntityEx(MO).FindInventory(
+			HexenArmor));
 		for (i = 0; i < HexenDefs::NUMARMOR; i++)
 		{
-			ArmorPoints[i] = MainGameInfo(Level.Game).ArmorIncrement[PClass * HexenDefs::NUMARMOR + i];
+			HArmor.Slots[i] = MainGameInfo(Level.Game).ArmorIncrement[PClass * HexenDefs::NUMARMOR + i];
 		}
 		foreach AllClasses(Weapon, WpnCls)
 		{
@@ -2934,9 +2908,10 @@ void Cheat_Class()
 	}
 	//FIXME it doesn't work like this.
 	PClass = pclass;
+	HexenArmor HArmor = HexenArmor(EntityEx(MO).FindInventory(HexenArmor));
 	for (i = 0; i < HexenDefs::NUMARMOR; i++)
 	{
-		ArmorPoints[i] = 0.0;
+		HArmor.Slots[i] = 0.0;
 	}
 	BaseClass = pclass;
 	//PostMorphWeapon(HexenDefs::WP_FIRST);
@@ -3003,11 +2978,12 @@ int ArmorAbsorbDamage(EntityEx inflictor, EntityEx source, int damage,
 	float savedPercent;
 	int i;
 
-	savedPercent = MainGameInfo(Level.Game).AutoArmorSave[PClass]
-		+ ArmorPoints[HexenDefs::ARMOR_ARMOR]
-		+ ArmorPoints[HexenDefs::ARMOR_SHIELD]
-		+ ArmorPoints[HexenDefs::ARMOR_HELMET]
-		+ ArmorPoints[HexenDefs::ARMOR_AMULET];
+	HexenArmor HArmor = HexenArmor(EntityEx(MO).FindInventory(HexenArmor));
+	savedPercent = MainGameInfo(Level.Game).AutoArmorSave[PClass] +
+		HArmor.Slots[HexenDefs::ARMOR_ARMOR] +
+		HArmor.Slots[HexenDefs::ARMOR_SHIELD] +
+		HArmor.Slots[HexenDefs::ARMOR_HELMET] +
+		HArmor.Slots[HexenDefs::ARMOR_AMULET];
 	if (savedPercent)
 	{
 		// armor absorbed some damage
@@ -3017,13 +2993,13 @@ int ArmorAbsorbDamage(EntityEx inflictor, EntityEx source, int damage,
 		}
 		for (i = 0; i < HexenDefs::NUMARMOR; i++)
 		{
-			if (ArmorPoints[i])
+			if (HArmor.Slots[i])
 			{
-				ArmorPoints[i] -= itof(damage) *
+				HArmor.Slots[i] -= itof(damage) *
 					MainGameInfo(Level.Game).ArmorIncrement[PClass * HexenDefs::NUMARMOR + i] / 300.0;
-				if (ArmorPoints[i] < 2.0)
+				if (HArmor.Slots[i] < 2.0)
 				{
-					ArmorPoints[i] = 0.0;
+					HArmor.Slots[i] = 0.0;
 				}
 			}
 		}

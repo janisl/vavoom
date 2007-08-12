@@ -500,7 +500,15 @@ void SB_DrawMainBar()
 	}
 
 	// Armor
-	SB_DrawNumber9(BAR_X + 250, BAR_Y + 15, cl.TotalArmorPoints, 0);
+	HexenArmor HArmor = HexenArmor(EntityEx(cl.MO).FindInventory(
+		HexenArmor));
+	int TotalArmorPoints =
+		ftoi((MainGameInfo.default.AutoArmorSave[cl.PClass] +
+		HArmor.Slots[HexenDefs::ARMOR_ARMOR] +
+		HArmor.Slots[HexenDefs::ARMOR_SHIELD] +
+		HArmor.Slots[HexenDefs::ARMOR_HELMET] +
+		HArmor.Slots[HexenDefs::ARMOR_AMULET]) / 5.0);
+	SB_DrawNumber9(BAR_X + 250, BAR_Y + 15, TotalArmorPoints, 0);
 }
 
 //==========================================================================
@@ -531,10 +539,30 @@ void SB_DrawKeyBar()
 	}
 
 	//  Armor
+	HexenArmor HArmor = HexenArmor(EntityEx(cl.MO).FindInventory(
+		HexenArmor));
 	for (i = 0; i < HexenDefs::NUMARMOR; i++)
 	{
-		R_DrawPic2(BAR_X + 150 + 31 * i, BAR_Y + 3, pic_armor[i],
-			1.0 - itof(cl.ArmorPerc[i]) / 100.0);
+		float ArmorPerc;
+		if (!HArmor.Slots[i])
+		{
+			continue;
+		}
+		else if (HArmor.Slots[i] <=
+			(MainGameInfo.default.ArmorIncrement[cl.PClass * HexenDefs::NUMARMOR + i] / 4.0))
+		{
+			ArmorPerc = 0.333;
+		}
+		else if (HArmor.Slots[i] <=
+			(MainGameInfo.default.ArmorIncrement[cl.PClass * HexenDefs::NUMARMOR + i] / 2.0))
+		{
+			ArmorPerc = 0.666;
+		}
+		else
+		{
+			ArmorPerc = 1.0;
+		}
+		R_DrawPic2(BAR_X + 150 + 31 * i, BAR_Y + 3, pic_armor[i], ArmorPerc);
 	}
 }
 
@@ -593,7 +621,15 @@ void SB_DrawFullscreenStats()
 	R_DrawPic(30, 494, pic_health);
 
 	// Armor
-	SB_DrawNumber12(140, 450, cl.TotalArmorPoints);
+	HexenArmor HArmor = HexenArmor(EntityEx(cl.MO).FindInventory(
+		HexenArmor));
+	int TotalArmorPoints =
+		ftoi((MainGameInfo.default.AutoArmorSave[cl.PClass] +
+		HArmor.Slots[HexenDefs::ARMOR_ARMOR] +
+		HArmor.Slots[HexenDefs::ARMOR_SHIELD] +
+		HArmor.Slots[HexenDefs::ARMOR_HELMET] +
+		HArmor.Slots[HexenDefs::ARMOR_AMULET]) / 5.0);
+	SB_DrawNumber12(140, 450, TotalArmorPoints);
 	R_DrawPic(120, 490, pic_armor2);
 
 	//  Frags
@@ -693,8 +729,8 @@ void SB_DrawIcons()
 
 	// Wings of wrath
 	Powerup Pw = Powerup(EntityEx(cl.MO).FindInventory(PowerFlight));
-	if (Pw && Pw.EffectTime > Player::BLINKTHRESHOLD ||
-		!(ftoi(Pw.EffectTime * 35.0) & 16))
+	if (Pw && (Pw.EffectTime > Player::BLINKTHRESHOLD ||
+		!(ftoi(Pw.EffectTime * 35.0) & 16)))
 	{
 		frame = (ClGame.GLevel.TicTime / 3) & 15;
 		if (cl.MO.bFly)

@@ -44,6 +44,7 @@ EXTRA_DIST = \
 	linespec/GlowingLight.vc \
 	linespec/Health.vc \
 	linespec/HealthPickup.vc \
+	linespec/HexenArmor.vc \
 	linespec/Inventory.vc \
 	linespec/ItemFog.vc \
 	linespec/Key.vc \
