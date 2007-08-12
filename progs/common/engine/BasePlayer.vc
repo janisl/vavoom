@@ -48,6 +48,8 @@ bool					bUseDown;
 bool					bDidSecret;	// True if secret level has been done.
 readonly private bool	bCentreing;
 readonly bool			bIsClient;	// Player on client side
+bool					bAutomapRevealed;
+bool					bAutomapShowThings;
 
 native readonly private void* Net;
 
@@ -80,8 +82,6 @@ TAVec					ViewAngles;
 // This is only used between levels,
 // mo->health is used during levels.
 int						Health;
-
-int						Items;
 
 // Frags, kills of other players.
 int						Frags;
@@ -119,12 +119,13 @@ PlayerReplicationInfo	PlayerReplicationInfo;
 replication
 {
 	reliable if (!bIsClient)
-		Health, Items, Frags, ExtraLight, FixedColourmap, CShifts, PSpriteSY,
+		Health, Frags, ExtraLight, FixedColourmap, CShifts, PSpriteSY,
 		KillCount, ItemCount, SecretCount, ViewStates, ViewEnt, ViewEntAlpha,
-		ClientNum, WorldTimer, MO;
+		ClientNum, WorldTimer, MO, bAutomapRevealed, bAutomapShowThings;
 
 	unreliable if (!bIsClient)
-		ClientStartSound, ClientStopSound, ClientForceLightning, ClientSetViewOrg;
+		ClientStartSound, ClientStopSound, ClientForceLightning,
+		ClientSetViewOrg;
 
 	reliable if (!bIsClient)
 		ClientStartSequence, ClientAddSequenceChoice, ClientStopSequence,

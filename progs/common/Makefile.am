@@ -53,6 +53,7 @@ EXTRA_DIST = \
 	linespec/LightEffect.vc \
 	linespec/LineSpecialGameInfo.vc \
 	linespec/LineSpecialLevelInfo.vc \
+	linespec/MapRevealer.vc \
 	linespec/PhasedLight.vc \
 	linespec/PickupFlash.vc \
 	linespec/Pillar.vc \

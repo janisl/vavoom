@@ -443,6 +443,8 @@ void SpawnPlayer(mthing_t * mthing)
 	}
 
 	SetClientModel();
+
+	UpdateRevealedMap();
 }
 
 //==========================================================================
@@ -506,7 +508,6 @@ void PlayerExitMap(bool clusterChange)
 		}
 	}
 
-	Items = 0;
 	MO.Angles.pitch = 0.0;
 	MO.Alpha = 1.0;	// cancel invisibility
 	ExtraLight = 0;			// cancel gun flashes
@@ -608,23 +609,6 @@ void GotAmmo(Ammo NewAmmo)
 int GetMaxHealth()
 {
 	return MAXHEALTH;
-}
-
-//==========================================================================
-//
-//  GiveItem
-//
-//==========================================================================
-
-bool GiveItem(int item)
-{
-	if (Items & item)
-	{
-		return false;	// already got it
-	}
-
-	Items |= item;
-	return true;
 }
 
 //==========================================================================
@@ -2166,7 +2150,7 @@ void Cheat_Gimme()
 
 	//  Items
 	if (i1 & GIMME_ALLMAP)
-		GiveItem(IT_ALL_MAP);
+		EntityEx(MO).GiveInventoryType(Allmap);
 
 	// Health
 	if ((i1 & GIMME_HEALTH) && (Health < 100))

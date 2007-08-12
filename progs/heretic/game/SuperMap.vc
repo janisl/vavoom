@@ -23,25 +23,9 @@
 //**
 //**************************************************************************
 
-class SuperMap : Inventory
+class SuperMap : MapRevealer
 	__mobjinfo__(35)
 	__scriptid__(137);
-
-//==========================================================================
-//
-//  TryPickup
-//
-//==========================================================================
-
-bool TryPickup(EntityEx Toucher)
-{
-	if (Player(Toucher.Player).GiveItem(IT_ALL_MAP))
-	{
-		GoAwayAndDie();
-		return true;
-	}
-	return false;
-}
 
 __states__
 {
@@ -51,8 +35,8 @@ __states__
 defaultproperties
 {
 	Height = 32.0;
+	PickupMessage = "$txt_itemsupermap";
 	bCountItem = true;
 	bFloatBob = true;
 	IdleState = S_ITEM_SPMP1;
-	PickupMessage = "$txt_itemsupermap";
 }

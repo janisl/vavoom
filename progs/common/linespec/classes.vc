@@ -66,6 +66,7 @@ enum
 #include "BasicArmorPickup.vc"
 #include "BasicArmorBonus.vc"
 #include "HexenArmor.vc"
+#include "MapRevealer.vc"
 #include "PlayerEx.vc"
 
 #include "LineSpecialLevelInfo.vc"

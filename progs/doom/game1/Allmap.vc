@@ -23,25 +23,9 @@
 //**
 //**************************************************************************
 
-class Allmap : Inventory
+class Allmap : MapRevealer
 	__mobjinfo__(2026)
 	__scriptid__(137);
-
-//==========================================================================
-//
-//	TryPickup
-//
-//==========================================================================
-
-bool TryPickup(EntityEx Toucher)
-{
-	if (Player(Toucher.Player).GiveItem(IT_ALL_MAP))
-	{
-		GoAwayAndDie();
-		return true;
-	}
-	return false;
-}
 
 __states__
 {

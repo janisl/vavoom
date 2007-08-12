@@ -211,11 +211,6 @@ enum
 	SPF_NOBLOCKSHOOT	= 4
 };
 
-//
-//  Player items
-//
-enum { IT_ALL_MAP			= 1 };
-
 const int MAX_TID_COUNT		= 200;
 
 const float ATTN_NONE		= 0.0;

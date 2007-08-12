@@ -1256,7 +1256,7 @@ static void AM_drawWalls()
 				AM_drawMline(&l, TSWallColour);
 			}
 		}
-		else if (cl->Items & IT_ALL_MAP)
+		else if (cl->PlayerFlags & VBasePlayer::PF_AutomapRevealed)
 		{
 			if (!(line.flags & LINE_NEVERSEE))
 				AM_drawMline(&l, PowerWallColour);
@@ -1634,7 +1634,8 @@ void AM_Drawer()
 	}
 	AM_drawWalls();
 	AM_drawPlayers();
-	if (am_cheating == 2)
+	if (am_cheating == 2 ||
+		(cl->PlayerFlags & VBasePlayer::PF_AutomapShowThings))
 	{
 		AM_drawThings(ThingColour);
 	}

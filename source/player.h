@@ -87,6 +87,8 @@ class VBasePlayer : public VObject
 		PF_DidSecret	= 0x0040,	// True if secret level has been done.
 		PF_Centreing	= 0x0080,
 		PF_IsClient		= 0x0100,	// Player on client side
+		PF_AutomapRevealed		= 0x0200,
+		PF_AutomapShowThings	= 0x0400,
 	};
 	vuint32			PlayerFlags;
 
@@ -97,7 +99,7 @@ class VBasePlayer : public VObject
 	VStr			PlayerName;
 	vuint8			BaseClass;
 	vuint8			PClass;			// player class type
-	int				Colour;
+	vint32			Colour;
 
 	// Copied from cmd, needed for PROGS, which supports only 4 byte ints
 	float			ClientForwardMove;	// *2048 for move
@@ -109,7 +111,7 @@ class VBasePlayer : public VObject
 	vuint8			Impulse;		// weapon changes, inventory, etc
 
 	VEntity*		MO;
-	int				PlayerState;
+	vint32			PlayerState;
 
 	// Determine POV,
 	//  including viewpoint bobbing during movement.
@@ -120,18 +122,16 @@ class VBasePlayer : public VObject
 
 	// This is only used between levels,
 	// mo->health is used during levels.
-	int				Health;
-
-	int				Items;
+	vint32			Health;
 
 	// Frags, kills of other players.
-	int				Frags;
-	int				FragsStats[MAXPLAYERS];
+	vint32			Frags;
+	vint32			FragsStats[MAXPLAYERS];
 
 	// For intermission stats.
-	int				KillCount;
-	int				ItemCount;
-	int				SecretCount;
+	vint32			KillCount;
+	vint32			ItemCount;
+	vint32			SecretCount;
 
 	// So gun flashes light up areas.
 	vuint8			ExtraLight;

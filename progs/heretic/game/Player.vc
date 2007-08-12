@@ -378,6 +378,8 @@ void SpawnPlayer(mthing_t * mthing)
 	{
 		Bot.OnSpawn();
 	}
+
+	UpdateRevealedMap();
 }
 
 //==========================================================================
@@ -456,7 +458,6 @@ void PlayerExitMap(bool clusterChange)
 		SetWeapon(Weapon(Actor(MO).Tracer));	// Restore weapon
 		ChickenTime = 0.0;
 	}
-	Items = 0;
 	MO.Angles.pitch = 0.0;
 	MO.Alpha = 1.0;	// cancel invisibility
 	ExtraLight = 0;	// cancel gun flashes
@@ -561,22 +562,6 @@ int GetMaxHealth()
 		return MAXCHICKENHEALTH;
 	}
 	return MAXHEALTH;
-}
-
-//==========================================================================
-//
-//  GiveItem
-//
-//==========================================================================
-
-bool GiveItem(int item)
-{
-	if (Items & item)
-	{
-		return false;	// already got it
-	}
-	Items |= item;
-	return true;
 }
 
 //==========================================================================

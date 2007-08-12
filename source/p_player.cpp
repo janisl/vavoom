@@ -363,9 +363,10 @@ IMPLEMENT_FUNCTION(VBasePlayer, ClearPlayer)
 	Self->ViewOrg = TVec(0, 0, 0);
 	Self->PlayerFlags &= ~VBasePlayer::PF_FixAngle;
 	Self->Health = 0;
-	Self->Items = 0;
 	Self->PlayerFlags &= ~VBasePlayer::PF_AttackDown;
 	Self->PlayerFlags &= ~VBasePlayer::PF_UseDown;
+	Self->PlayerFlags &= ~VBasePlayer::PF_AutomapRevealed;
+	Self->PlayerFlags &= ~VBasePlayer::PF_AutomapShowThings;
 	Self->ExtraLight = 0;
 	Self->FixedColourmap = 0;
 	memset(Self->CShifts, 0, sizeof(Self->CShifts));

@@ -72,6 +72,8 @@ int				Refire;
 
 float			FlyHeight;
 
+array<name>		RevealedMaps;
+
 replication
 {
 	reliable if (!bIsClient)
@@ -405,6 +407,72 @@ final bool UsePuzzleItem(int PuzzleItemType)
 		return true;	// Stop searching
 	}
 	return false;
+}
+
+//==========================================================================
+//
+//  AddRevealedMap
+//
+//==========================================================================
+
+bool AddRevealedMap()
+{
+	int			i;
+
+	bAutomapRevealed = true;
+	for (i = 0; i < RevealedMaps.Num; i++)
+	{
+		if (RevealedMaps[i] == Level.XLevel.MapName)
+		{
+			//	Already revealed.
+			return false;
+		}
+	}
+	RevealedMaps.Num = RevealedMaps.Num + 1;
+	RevealedMaps[RevealedMaps.Num - 1] = Level.XLevel.MapName;
+	return true;
+}
+
+//==========================================================================
+//
+//  RemoveRevealedMap
+//
+//==========================================================================
+
+void RemoveRevealedMap()
+{
+	int			i;
+
+	bAutomapRevealed = false;
+	for (i = 0; i < RevealedMaps.Num; i++)
+	{
+		if (RevealedMaps[i] == Level.XLevel.MapName)
+		{
+			RevealedMaps.Remove(i);
+			return;
+		}
+	}
+}
+
+//==========================================================================
+//
+//  UpdateRevealedMap
+//
+//==========================================================================
+
+void UpdateRevealedMap()
+{
+	int			i;
+
+	bAutomapRevealed = false;
+	for (i = 0; i < RevealedMaps.Num; i++)
+	{
+		if (RevealedMaps[i] == Level.XLevel.MapName)
+		{
+			bAutomapRevealed = true;
+			return;
+		}
+	}
 }
 
 int ArmorAbsorbDamage(EntityEx inflictor, EntityEx source, int damage,
