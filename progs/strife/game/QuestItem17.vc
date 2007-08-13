@@ -28,5 +28,4 @@ class QuestItem17 : QuestItem;
 defaultproperties
 {
 	ConversationID = 328;
-	QuestID = QUEST_VisitOracle;
 }

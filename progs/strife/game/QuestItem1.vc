@@ -28,5 +28,4 @@ class QuestItem1 : QuestItem;
 defaultproperties
 {
 	ConversationID = 312;
-	QuestID = QUEST_KilledBeldin;
 }

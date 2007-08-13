@@ -28,5 +28,4 @@ class QuestItem22 : QuestItem;
 defaultproperties
 {
 	ConversationID = 333;
-	QuestID = QUEST_KillMacil;
 }

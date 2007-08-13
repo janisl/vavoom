@@ -28,5 +28,4 @@ class QuestItem19 : QuestItem;
 defaultproperties
 {
 	ConversationID = 330;
-	QuestID = QUEST_DestroyComputer;
 }

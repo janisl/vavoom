@@ -36,9 +36,8 @@ defaultproperties
 	PickupMessage = "$txt_ear";
 	MaxAmount = 1;
 	IconName = 'i_ears';
+	GiveQuestType = QuestItem9;
 	IdleState = S_EAR;
 	bFloorClip = true;
 	bInvBar = true;
-	bGiveQuest = true;
-	QuestID = QUEST_GotDerwinsEar;
 }

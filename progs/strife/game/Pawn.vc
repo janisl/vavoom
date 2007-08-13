@@ -291,7 +291,8 @@ final void A_BossDeath()
 		if (!Target)
 			return;
 
-		Player(Target.Player).GiveQuest(QUEST_KilledBishop);
+		Target.Player.cprint("$txt_killed_bishop");
+		Target.GiveInventoryType(QuestItem21);
 		Player(Target.Player).SetObjectives(74);
 		Player(Target.Player).ClientVoice(74);
 	}
@@ -301,13 +302,14 @@ final void A_BossDeath()
 		if (!Target)
 			return;
 
-		Player(Target.Player).GiveQuest(QUEST_KilledOracle);
-		if (Player(Target.Player).Quests & (1 << QUEST_KilledBishop))
+		Target.Player.cprint("$txt_killed_oracle");
+		Target.GiveInventoryType(QuestItem23);
+		if (Target.FindInventory(QuestItem21))
 		{
 			//	If the Bishop is dead, set quest item 22
-			Player(Target.Player).GiveQuest(QUEST_KillMacil);
+			Target.GiveInventoryType(QuestItem22);
 		}
-		if (Player(Target.Player).Quests & (1 << QUEST_KilledLoremaster))
+		if (Target.FindInventory(QuestItem24))
 		{
 			Player(Target.Player).SetObjectives(85);
 			Player(Target.Player).ClientVoice(85);
@@ -325,8 +327,9 @@ final void A_BossDeath()
 		if (!Target)
 			return;
 
-		Player(Target.Player).GiveQuest(QUEST_KilledMacil);
-		if (Player(Target.Player).Quests & (1 << QUEST_Factory))
+		Target.Player.cprint("$txt_killed_macil");
+		Target.GiveInventoryType(QuestItem24);
+		if (Target.FindInventory(QuestItem25))
 		{
 			Player(Target.Player).SetObjectives(106);
 			Player(Target.Player).ClientVoice(106);
@@ -343,7 +346,8 @@ final void A_BossDeath()
 		if (!Target)
 			return;
 
-		Player(Target.Player).GiveQuest(QUEST_KilledLoremaster);
+		Target.Player.cprint("$txt_killed_loremaster");
+		Target.GiveInventoryType(QuestItem26);
 		Target.GiveInventoryType(UpgradeAccuracy);
 		Target.GiveInventoryType(UpgradeStamina);
 		if (GetSigilPieces() == 5)
@@ -364,7 +368,7 @@ final void A_BossDeath()
 		if (!Target)
 			return;
 
-		if (Player(Target.Player).Quests & (1 << QUEST_Factory))
+		if (Target.FindInventory(QuestItem25))
 		{
 			Player(Target.Player).ClientFinaleType(0);
 		}

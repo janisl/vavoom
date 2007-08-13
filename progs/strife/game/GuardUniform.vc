@@ -35,11 +35,10 @@ defaultproperties
 {
 	ConversationID = 162;
 	PickupMessage = "$txt_guarduniform";
-	QuestID = QUEST_GotGuardUniform;
+	GiveQuestType = QuestItem15;
 	MaxAmount = 1;
 	IconName = 'i_unif';
 	bFloorClip = true;
 	bInvBar = true;
-	bGiveQuest = true;
 	IdleState = S_GUARD_UNIFORM;
 }

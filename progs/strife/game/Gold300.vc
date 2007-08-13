@@ -35,7 +35,6 @@ defaultproperties
 	ConversationID = 172;
 	PickupMessage = "$txt_300gold";
 	Amount = 300;
+	GiveQuestType = QuestItem3;
 	IdleState = S_TOKENS;
-	bGiveQuest = true;
-	QuestID = QUEST_Prison;
 }

@@ -36,7 +36,6 @@ defaultproperties
 	PickupMessage = "$txt_prisonkey";
 	StrifeName = "Prison Key";
 	IconName = 'i_pris';
+	GiveQuestType = QuestItem11;
 	IdleState = S_PRISON_KEY;
-	bGiveQuest = true;
-	QuestID = QUEST_GotPrisonKey;
 }

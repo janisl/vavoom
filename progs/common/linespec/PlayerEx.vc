@@ -494,10 +494,6 @@ void DropWeapon()
 {
 }
 
-void GiveQuest(int QuestID)
-{
-}
-
 void GotAmmo(Ammo NewAmmo)
 {
 }

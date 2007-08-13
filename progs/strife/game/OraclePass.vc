@@ -39,6 +39,5 @@ defaultproperties
 	IdleState = S_ORACLE_PASS;
 	bFloorClip = true;
 	bInvBar = true;
-	bGiveQuest = true;
-	QuestID = QUEST_GotOraclePass;
+	GiveQuestType = QuestItem18;
 }

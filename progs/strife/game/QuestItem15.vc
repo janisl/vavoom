@@ -28,5 +28,4 @@ class QuestItem15 : QuestItem;
 defaultproperties
 {
 	ConversationID = 326;
-	QuestID = QUEST_GotGuardUniform;
 }

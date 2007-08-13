@@ -41,8 +41,6 @@ const int
 
 const float USETHINGRANGE	= 128.0;
 
-int Quests;
-
 int Objectives;
 
 int Accuracy;
@@ -671,28 +669,6 @@ EntityEx InvThrow()
 		Item.Velocity = Dir * 128.0;
 	}
 	return Item;
-}
-
-//==========================================================================
-//
-//	GiveQuest
-//
-//==========================================================================
-
-void GiveQuest(int QuestID)
-{
-	class<EntityEx>	QClass;
-	QuestItem		QInfo;
-	
-	if (Quests & (1 << QuestID))
-		cprint("Already have quest %d", QuestID);
-	Quests |= 1 << QuestID;
-	cprint("Got quest %d, quests %x", QuestID, Quests);
-	QClass = StrifeLevelInfo(Level).GetClassFromID(312 + QuestID);
-	QInfo = QuestItem(StrifeLevelInfo(Level).Spawn(QClass, vector(0.0, 0.0, 0.0)));
-	if (QInfo.QuestMessage)
-		cprint(QInfo.QuestMessage);
-	QInfo.Destroy();
 }
 
 //==========================================================================
@@ -2073,10 +2049,11 @@ void Cheat_Gimme()
 	}
 
 	// Quest items.
-	for (i = 0; i < NUMQUESTS; i++)
+	for (i = 0; i < 31; i++)
 		if (Cmd_CheckParm(va("Quest%d", i + 1)))
 		{
-			GiveQuest(i);
+			EntityEx(MO).GiveInventoryType(class<Inventory>(FindClass(
+				StrToName(va("QuestItem%d", i)))));
 			cprint("YOU GOT IT");
 		}
 }

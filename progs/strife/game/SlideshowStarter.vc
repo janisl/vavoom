@@ -42,7 +42,7 @@ bool TryPickup(EntityEx Toucher)
 	{
 		StrifeLevelInfo(Level).ConversationSlideshow = true;
 		Player(Toucher.Player).ClientSlideshow2();
-		Player(Toucher.Player).GiveQuest(QUEST_VisitOracle);
+		Toucher.GiveInventoryType(QuestItem17);
 	}
 	GoAwayAndDie();
 	return true;

@@ -270,7 +270,7 @@ bool EV_BreakGlass(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 			}
 			if (A && A.bIsPlayer)
 			{
-				Player(A.Player).GiveQuest(QUEST_FreedWorkers);
+				A.GiveInventoryType(QuestItem29);
 				A.GiveInventoryType(UpgradeAccuracy);
 				A.GiveInventoryType(UpgradeStamina);
 			}
@@ -593,11 +593,6 @@ int CheckForNeededItem(EntityEx A, int ID, int Amount)
 	if (Item)
 	{
 		return -1;
-	}
-	//	Check quests.
-	if (ID >= 312 && ID <= 342)
-	{
-		return Player(A.Player).Quests & (1 << (ID - 312)) ? -1 : -2;
 	}
 	return -2;
 }

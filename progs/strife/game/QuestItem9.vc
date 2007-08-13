@@ -28,5 +28,4 @@ class QuestItem9 : QuestItem;
 defaultproperties
 {
 	ConversationID = 320;
-	QuestID = QUEST_GotDerwinsEar;
 }

@@ -28,5 +28,4 @@ class QuestItem11 : QuestItem;
 defaultproperties
 {
 	ConversationID = 322;
-	QuestID = QUEST_GotPrisonKey;
 }

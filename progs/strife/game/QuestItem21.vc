@@ -28,6 +28,4 @@ class QuestItem21 : QuestItem;
 defaultproperties
 {
 	ConversationID = 332;
-	QuestMessage = "$txt_killed_bishop";
-	QuestID = QUEST_KilledBishop;
 }

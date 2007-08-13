@@ -122,6 +122,7 @@ defaultproperties
 {
 	Health = 50;
 	Mass = 99999999.0;
+	Speed = 14.0;	//	Quest type
 	bSolid = true;
 	bShootable = true;
 	bNoGravity = true;
@@ -131,6 +132,4 @@ defaultproperties
 	DeathState = S_CRYSTAL_X1;
 	ActiveSound = 'misc/reactor';
 	DeathSound = 'misc/explosion';
-	bGiveQuest = true;
-	QuestID = QUEST_BlownUpCrystal;
 }

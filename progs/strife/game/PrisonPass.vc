@@ -39,6 +39,20 @@ bool TryPickup(EntityEx Toucher)
 	return true;
 }
 
+//==========================================================================
+//
+//	SpecialDropAction
+//
+//==========================================================================
+
+bool SpecialDropAction(EntityEx Source)
+{
+	Level.ExecuteActionSpecial(LNSPEC_DoorOpen, 223, 16, 0, 0, 0, NULL, 0,
+		Source);
+	Destroy();
+	return true;
+}
+
 __states__
 {
 	S_TOKENS('TOKN', 0, -1.0, none) = none
@@ -50,9 +64,8 @@ defaultproperties
 	PickupMessage = "$txt_prisonpass";
 	MaxAmount = 1;
 	IconName = 'i_tokn';
+	GiveQuestType = QuestItem10;
 	IdleState = S_TOKENS;
-	bGiveQuest = true;
 	bFloorClip = true;
 	bInvBar = true;
-	QuestID = QUEST_GotPrisonPass;
 }

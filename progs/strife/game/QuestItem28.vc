@@ -28,5 +28,4 @@ class QuestItem28 : QuestItem;
 defaultproperties
 {
 	ConversationID = 339;
-	QuestID = QUEST_GotCatacombKey;
 }

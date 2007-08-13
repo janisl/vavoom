@@ -48,6 +48,7 @@ defaultproperties
 	Radius = 20.0;
 	Height = 76.0;
 	Mass = 10000000.0;
+	Speed = 16.0;	//	Quest type
 	bSolid = true;
 	bShootable = true;
 	bInCombat = true;
@@ -56,6 +57,4 @@ defaultproperties
 	IdleState = S_GATES_1;
 	DeathState = S_GATES_X1;
 	DeathSound = 'misc/explosion';
-	bGiveQuest = true;
-	QuestID = QUEST_BlownUpGates;
 }

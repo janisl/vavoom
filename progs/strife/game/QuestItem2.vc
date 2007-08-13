@@ -28,5 +28,4 @@ class QuestItem2 : QuestItem;
 defaultproperties
 {
 	ConversationID = 313;
-	QuestID = QUEST_StoleChalice;
 }

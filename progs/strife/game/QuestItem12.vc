@@ -28,5 +28,4 @@ class QuestItem12 : QuestItem;
 defaultproperties
 {
 	ConversationID = 323;
-	QuestID = QUEST_GotSeveredHand;
 }

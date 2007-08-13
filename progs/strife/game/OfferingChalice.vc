@@ -39,10 +39,9 @@ defaultproperties
 	Height = 8.0;
 	MaxAmount = 1;
 	IconName = 'i_relc';
+	GiveQuestType = QuestItem2;
 	bDropped = true;
 	bFloorClip = true;
 	bInvBar = true;
 	IdleState = S_CHALICE;
-	bGiveQuest = true;
-	QuestID = QUEST_StoleChalice;
 }

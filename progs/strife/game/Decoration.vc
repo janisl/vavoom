@@ -26,9 +26,6 @@
 class Decoration : Actor
 	abstract;
 
-bool bGiveQuest;
-int QuestID;
-
 //==========================================================================
 //
 //	A_QuestObjectDeath
@@ -46,9 +43,13 @@ final void A_QuestObjectDeath()
 
 	//	Give quest item for destroying important object.
 	//	Basicly all object using this function does this.
-	if (bGiveQuest)
+	int QuestType = ftoi(Speed);
+	class<QuestItem> QClass = class<QuestItem>(FindClass(
+		StrToName(va("QuestItem%d", QuestType))));
+	if (QClass)
 	{
-		Player(Level.Game.Players[0]).GiveQuest(QuestID);
+		EntityEx(Level.Game.Players[0].MO).GiveInventoryType(QClass);
+		Level.Game.Players[0].cprint(va("$txt_quest_%d", QuestType));
 	}
 }
 

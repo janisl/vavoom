@@ -43,11 +43,10 @@ defaultproperties
 	Speed = 17920.0;
 	MaxAmount = 1;
 	IconName = 'i_coup';
+	GiveQuestType = QuestItem8;
 //	bUnknown5 = true;
 	bDropped = true;
 	bFloorClip = true;
 	bInvBar = true;
 	IdleState = S_BROKEN_POWER_COUPLING;
-	bGiveQuest = true;
-	QuestID = QUEST_GotBrokenPowerCoupling;
 }

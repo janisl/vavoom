@@ -28,5 +28,4 @@ class QuestItem31 : QuestItem;
 defaultproperties
 {
 	ConversationID = 342;
-	QuestID = QUEST_31;
 }

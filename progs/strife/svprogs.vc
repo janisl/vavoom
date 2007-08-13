@@ -54,43 +54,6 @@ enum
 	CSHIFT_Hazard
 };
 
-enum
-{
-	QUEST_KilledBeldin,//1
-	QUEST_StoleChalice,
-	QUEST_Prison,
-	QUEST_GovPowerCoupling,
-	QUEST_GovDerwin,
-	QUEST_BrokePowerCoupling,
-	QUEST_7,
-	QUEST_GotBrokenPowerCoupling,
-	QUEST_GotDerwinsEar,
-	QUEST_GotPrisonPass,//10
-	QUEST_GotPrisonKey,
-	QUEST_GotSeveredHand,
-	QUEST_FreedPrisoners,
-	QUEST_BlownUpCrystal,
-	QUEST_GotGuardUniform,
-	QUEST_BlownUpGates,
-	QUEST_VisitOracle,
-	QUEST_GotOraclePass,
-	QUEST_DestroyComputer,
-	QUEST_20,//20
-	QUEST_KilledBishop,
-	QUEST_KillMacil,
-	QUEST_KilledOracle,
-	QUEST_KilledMacil,
-	QUEST_Factory,
-	QUEST_KilledLoremaster,
-	QUEST_BlownUpComputer,
-	QUEST_GotCatacombKey,
-	QUEST_FreedWorkers,
-	QUEST_30,//30
-	QUEST_31,
-
-	NUMQUESTS
-};
-
 // TYPES -------------------------------------------------------------------
 
 #include "game/classes.vc"

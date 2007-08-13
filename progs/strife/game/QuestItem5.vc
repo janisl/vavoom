@@ -28,6 +28,5 @@ class QuestItem5 : QuestItem;
 defaultproperties
 {
 	ConversationID = 316;
-	QuestMessage = "quest5";
-	QuestID = QUEST_GovDerwin;
+	StrifeName = "quest5";
 }

@@ -294,127 +294,127 @@ void GiveInventory(name ItemName, int Amount)
 	//	Quest items.
 	if (ItemName == 'QuestItem1')
 	{
-		Player(Player).GiveQuest(QUEST_KilledBeldin);
+		GiveInventoryType(QuestItem1);
 	}
 	if (ItemName == 'QuestItem2')
 	{
-		Player(Player).GiveQuest(QUEST_StoleChalice);
+		GiveInventoryType(QuestItem2);
 	}
 	if (ItemName == 'QuestItem3')
 	{
-		Player(Player).GiveQuest(QUEST_Prison);
+		GiveInventoryType(QuestItem3);
 	}
 	if (ItemName == 'QuestItem4')
 	{
-		Player(Player).GiveQuest(QUEST_GovPowerCoupling);
+		GiveInventoryType(QuestItem4);
 	}
 	if (ItemName == 'QuestItem5')
 	{
-		Player(Player).GiveQuest(QUEST_GovDerwin);
+		GiveInventoryType(QuestItem5);
 	}
 	if (ItemName == 'QuestItem6')
 	{
-		Player(Player).GiveQuest(QUEST_BrokePowerCoupling);
+		GiveInventoryType(QuestItem6);
 	}
 	if (ItemName == 'QuestItem7')
 	{
-		Player(Player).GiveQuest(QUEST_7);
+		GiveInventoryType(QuestItem7);
 	}
 	if (ItemName == 'QuestItem8')
 	{
-		Player(Player).GiveQuest(QUEST_GotBrokenPowerCoupling);
+		GiveInventoryType(QuestItem8);
 	}
 	if (ItemName == 'QuestItem9')
 	{
-		Player(Player).GiveQuest(QUEST_GotDerwinsEar);
+		GiveInventoryType(QuestItem9);
 	}
 	if (ItemName == 'QuestItem10')
 	{
-		Player(Player).GiveQuest(QUEST_GotPrisonPass);
+		GiveInventoryType(QuestItem10);
 	}
 	if (ItemName == 'QuestItem11')
 	{
-		Player(Player).GiveQuest(QUEST_GotPrisonKey);
+		GiveInventoryType(QuestItem11);
 	}
 	if (ItemName == 'QuestItem12')
 	{
-		Player(Player).GiveQuest(QUEST_GotSeveredHand);
+		GiveInventoryType(QuestItem12);
 	}
 	if (ItemName == 'QuestItem13')
 	{
-		Player(Player).GiveQuest(QUEST_FreedPrisoners);
+		GiveInventoryType(QuestItem13);
 	}
 	if (ItemName == 'QuestItem14')
 	{
-		Player(Player).GiveQuest(QUEST_BlownUpCrystal);
+		GiveInventoryType(QuestItem14);
 	}
 	if (ItemName == 'QuestItem15')
 	{
-		Player(Player).GiveQuest(QUEST_GotGuardUniform);
+		GiveInventoryType(QuestItem15);
 	}
 	if (ItemName == 'QuestItem16')
 	{
-		Player(Player).GiveQuest(QUEST_BlownUpGates);
+		GiveInventoryType(QuestItem16);
 	}
 	if (ItemName == 'QuestItem17')
 	{
-		Player(Player).GiveQuest(QUEST_VisitOracle);
+		GiveInventoryType(QuestItem17);
 	}
 	if (ItemName == 'QuestItem18')
 	{
-		Player(Player).GiveQuest(QUEST_GotOraclePass);
+		GiveInventoryType(QuestItem18);
 	}
 	if (ItemName == 'QuestItem19')
 	{
-		Player(Player).GiveQuest(QUEST_DestroyComputer);
+		GiveInventoryType(QuestItem19);
 	}
 	if (ItemName == 'QuestItem20')
 	{
-		Player(Player).GiveQuest(QUEST_20);
+		GiveInventoryType(QuestItem20);
 	}
 	if (ItemName == 'QuestItem21')
 	{
-		Player(Player).GiveQuest(QUEST_KilledBishop);
+		GiveInventoryType(QuestItem21);
 	}
 	if (ItemName == 'QuestItem22')
 	{
-		Player(Player).GiveQuest(QUEST_KillMacil);
+		GiveInventoryType(QuestItem22);
 	}
 	if (ItemName == 'QuestItem23')
 	{
-		Player(Player).GiveQuest(QUEST_KilledOracle);
+		GiveInventoryType(QuestItem23);
 	}
 	if (ItemName == 'QuestItem24')
 	{
-		Player(Player).GiveQuest(QUEST_KilledMacil);
+		GiveInventoryType(QuestItem24);
 	}
 	if (ItemName == 'QuestItem25')
 	{
-		Player(Player).GiveQuest(QUEST_Factory);
+		GiveInventoryType(QuestItem25);
 	}
 	if (ItemName == 'QuestItem26')
 	{
-		Player(Player).GiveQuest(QUEST_KilledLoremaster);
+		GiveInventoryType(QuestItem26);
 	}
 	if (ItemName == 'QuestItem27')
 	{
-		Player(Player).GiveQuest(QUEST_BlownUpComputer);
+		GiveInventoryType(QuestItem27);
 	}
 	if (ItemName == 'QuestItem28')
 	{
-		Player(Player).GiveQuest(QUEST_GotCatacombKey);
+		GiveInventoryType(QuestItem28);
 	}
 	if (ItemName == 'QuestItem29')
 	{
-		Player(Player).GiveQuest(QUEST_FreedWorkers);
+		GiveInventoryType(QuestItem29);
 	}
 	if (ItemName == 'QuestItem30')
 	{
-		Player(Player).GiveQuest(QUEST_30);
+		GiveInventoryType(QuestItem30);
 	}
 	if (ItemName == 'QuestItem31')
 	{
-		Player(Player).GiveQuest(QUEST_31);
+		GiveInventoryType(QuestItem31);
 	}
 }
 
@@ -455,127 +455,127 @@ int CheckInventory(name ItemName)
 	//	Quest items.
 	if (ItemName == 'QuestItem1')
 	{
-		return Player(Player).Quests & (1 << 0) ? 1 : 0;
+		return !!FindInventory(QuestItem1);
 	}
 	if (ItemName == 'QuestItem2')
 	{
-		return Player(Player).Quests & (1 << 1) ? 1 : 0;
+		return !!FindInventory(QuestItem2);
 	}
 	if (ItemName == 'QuestItem3')
 	{
-		return Player(Player).Quests & (1 << 2) ? 1 : 0;
+		return !!FindInventory(QuestItem3);
 	}
 	if (ItemName == 'QuestItem4')
 	{
-		return Player(Player).Quests & (1 << 3) ? 1 : 0;
+		return !!FindInventory(QuestItem4);
 	}
 	if (ItemName == 'QuestItem5')
 	{
-		return Player(Player).Quests & (1 << 4) ? 1 : 0;
+		return !!FindInventory(QuestItem5);
 	}
 	if (ItemName == 'QuestItem6')
 	{
-		return Player(Player).Quests & (1 << 5) ? 1 : 0;
+		return !!FindInventory(QuestItem6);
 	}
 	if (ItemName == 'QuestItem7')
 	{
-		return Player(Player).Quests & (1 << 6) ? 1 : 0;
+		return !!FindInventory(QuestItem7);
 	}
 	if (ItemName == 'QuestItem8')
 	{
-		return Player(Player).Quests & (1 << 7) ? 1 : 0;
+		return !!FindInventory(QuestItem8);
 	}
 	if (ItemName == 'QuestItem9')
 	{
-		return Player(Player).Quests & (1 << 8) ? 1 : 0;
+		return !!FindInventory(QuestItem9);
 	}
 	if (ItemName == 'QuestItem10')
 	{
-		return Player(Player).Quests & (1 << 9) ? 1 : 0;
+		return !!FindInventory(QuestItem10);
 	}
 	if (ItemName == 'QuestItem11')
 	{
-		return Player(Player).Quests & (1 << 10) ? 1 : 0;
+		return !!FindInventory(QuestItem11);
 	}
 	if (ItemName == 'QuestItem12')
 	{
-		return Player(Player).Quests & (1 << 11) ? 1 : 0;
+		return !!FindInventory(QuestItem12);
 	}
 	if (ItemName == 'QuestItem13')
 	{
-		return Player(Player).Quests & (1 << 12) ? 1 : 0;
+		return !!FindInventory(QuestItem13);
 	}
 	if (ItemName == 'QuestItem14')
 	{
-		return Player(Player).Quests & (1 << 13) ? 1 : 0;
+		return !!FindInventory(QuestItem14);
 	}
 	if (ItemName == 'QuestItem15')
 	{
-		return Player(Player).Quests & (1 << 14) ? 1 : 0;
+		return !!FindInventory(QuestItem15);
 	}
 	if (ItemName == 'QuestItem16')
 	{
-		return Player(Player).Quests & (1 << 15) ? 1 : 0;
+		return !!FindInventory(QuestItem16);
 	}
 	if (ItemName == 'QuestItem17')
 	{
-		return Player(Player).Quests & (1 << 16) ? 1 : 0;
+		return !!FindInventory(QuestItem17);
 	}
 	if (ItemName == 'QuestItem18')
 	{
-		return Player(Player).Quests & (1 << 17) ? 1 : 0;
+		return !!FindInventory(QuestItem18);
 	}
 	if (ItemName == 'QuestItem19')
 	{
-		return Player(Player).Quests & (1 << 18) ? 1 : 0;
+		return !!FindInventory(QuestItem19);
 	}
 	if (ItemName == 'QuestItem20')
 	{
-		return Player(Player).Quests & (1 << 19) ? 1 : 0;
+		return !!FindInventory(QuestItem20);
 	}
 	if (ItemName == 'QuestItem21')
 	{
-		return Player(Player).Quests & (1 << 20) ? 1 : 0;
+		return !!FindInventory(QuestItem21);
 	}
 	if (ItemName == 'QuestItem22')
 	{
-		return Player(Player).Quests & (1 << 21) ? 1 : 0;
+		return !!FindInventory(QuestItem22);
 	}
 	if (ItemName == 'QuestItem23')
 	{
-		return Player(Player).Quests & (1 << 22) ? 1 : 0;
+		return !!FindInventory(QuestItem23);
 	}
 	if (ItemName == 'QuestItem24')
 	{
-		return Player(Player).Quests & (1 << 23) ? 1 : 0;
+		return !!FindInventory(QuestItem24);
 	}
 	if (ItemName == 'QuestItem25')
 	{
-		return Player(Player).Quests & (1 << 24) ? 1 : 0;
+		return !!FindInventory(QuestItem25);
 	}
 	if (ItemName == 'QuestItem26')
 	{
-		return Player(Player).Quests & (1 << 25) ? 1 : 0;
+		return !!FindInventory(QuestItem26);
 	}
 	if (ItemName == 'QuestItem27')
 	{
-		return Player(Player).Quests & (1 << 26) ? 1 : 0;
+		return !!FindInventory(QuestItem27);
 	}
 	if (ItemName == 'QuestItem28')
 	{
-		return Player(Player).Quests & (1 << 27) ? 1 : 0;
+		return !!FindInventory(QuestItem28);
 	}
 	if (ItemName == 'QuestItem29')
 	{
-		return Player(Player).Quests & (1 << 28) ? 1 : 0;
+		return !!FindInventory(QuestItem29);
 	}
 	if (ItemName == 'QuestItem30')
 	{
-		return Player(Player).Quests & (1 << 29) ? 1 : 0;
+		return !!FindInventory(QuestItem30);
 	}
 	if (ItemName == 'QuestItem31')
 	{
-		return Player(Player).Quests & (1 << 30) ? 1 : 0;
+		return !!FindInventory(QuestItem31);
 	}
 
 	//	I don't know what it is.

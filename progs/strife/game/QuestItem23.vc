@@ -28,6 +28,4 @@ class QuestItem23 : QuestItem;
 defaultproperties
 {
 	ConversationID = 334;
-	QuestMessage = "$txt_killed_oracle";
-	QuestID = QUEST_KilledOracle;
 }

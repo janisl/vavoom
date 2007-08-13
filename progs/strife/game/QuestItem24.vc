@@ -28,6 +28,4 @@ class QuestItem24 : QuestItem;
 defaultproperties
 {
 	ConversationID = 335;
-	QuestMessage = "$txt_killed_macil";
-	QuestID = QUEST_KilledMacil;
 }

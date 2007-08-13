@@ -28,5 +28,4 @@ class QuestItem8 : QuestItem;
 defaultproperties
 {
 	ConversationID = 319;
-	QuestID = QUEST_GotBrokenPowerCoupling;
 }

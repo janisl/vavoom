@@ -37,7 +37,6 @@ defaultproperties
 	PickupMessage = "$txt_severedhand";
 	StrifeName = "Severed Hand";
 	IconName = 'i_hand';
+	GiveQuestType = QuestItem12;
 	IdleState = S_SEVERED_HAND;
-	bGiveQuest = true;
-	QuestID = QUEST_GotSeveredHand;
 }

@@ -28,6 +28,5 @@ class QuestItem4 : QuestItem;
 defaultproperties
 {
 	ConversationID = 315;
-	QuestMessage = "quest4";
-	QuestID = QUEST_GovPowerCoupling;
+	StrifeName = "quest4";
 }

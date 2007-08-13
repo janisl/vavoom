@@ -39,42 +39,42 @@ const int INVERSECOLOUR		= 0x00123456;
 
 const int INVERSECOLOURMAP	= 32;
 
-int				Amount;
-int				MaxAmount;
-int				DropAmount;
-string			PickupMessage;
-float			RespawnTime;
-int				QuestID;
-name			IconName;
-float			DropTime;
+int					Amount;
+int					MaxAmount;
+int					DropAmount;
+string				PickupMessage;
+float				RespawnTime;
+class<Inventory>	GiveQuestType;
+name				IconName;
+float				DropTime;
 
-name			PickupSound;
-name			UseSound;
+name				PickupSound;
+name				UseSound;
+
+string				StrifeName;
 
 //	Originally these didn't respawn in deathmatch
-bool			bBigPowerup;
+bool				bBigPowerup;
 //	Spawn PickuFlash when picked up.
-bool			bPickupFlash;
+bool				bPickupFlash;
 //	Play pickup sound at full volume
-bool			bFullVolPickupSound;
-//	Should give quest when picked up
-bool			bGiveQuest;
+bool				bFullVolPickupSound;
 //	Used by HandlePickup.
-bool			bPickupGood;
+bool				bPickupGood;
 //	Can be displayed in the inventory bar
-bool			bInvBar;
+bool				bInvBar;
 //	Keep item in inventory even if amount is 0
-bool			bKeepDepleted;
+bool				bKeepDepleted;
 //	This item cannot be tossed out
-bool			bUndroppable;
+bool				bUndroppable;
 //	Ignore skill level when giving this item
-bool			bIgnoreSkill;
+bool				bIgnoreSkill;
 //	Automaticly use when picked up.
-bool			bAutoActivate;
+bool				bAutoActivate;
 //	For auto activate items always pick up the item, even if it wasn't used.
-bool			bAlwaysPickup;
+bool				bAlwaysPickup;
 //	Keep powerup while travelingbetween levels in a hub
-bool			bHubPower;
+bool				bHubPower;
 
 replication
 {
@@ -555,9 +555,9 @@ void PlayPickupSound(EntityEx Toucher)
 
 final void GiveQuest(EntityEx Toucher)
 {
-	if (bGiveQuest)
+	if (GiveQuestType)
 	{
-		PlayerEx(Toucher.Player).GiveQuest(QuestID);
+		Toucher.GiveInventoryType(GiveQuestType);
 	}
 }
 

@@ -28,6 +28,5 @@ class QuestItem6 : QuestItem;
 defaultproperties
 {
 	ConversationID = 317;
-	QuestMessage = "quest6";
-	QuestID = QUEST_BrokePowerCoupling;
+	StrifeName = "quest6";
 }
