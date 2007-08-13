@@ -272,9 +272,10 @@ void SB_DrawMainBar()
 		Item = Item.NextInv();
 	}
 
-	if (EntityEx(cl.MO).FindInventory(Sigil))
+	Sigil S = Sigil(EntityEx(cl.MO).FindInventory(Sigil));
+	if (S)
 	{
-		R_DrawPic(BAR_X + 253, BAR_Y + 175, pic_sigil[cl.SigilPieces]);
+		R_DrawPic(BAR_X + 253, BAR_Y + 175, pic_sigil[S.NumPieces - 1]);
 	}
 
 	if (cl.ReadyWeapon && cl.ReadyWeapon.Ammo1)
@@ -434,9 +435,10 @@ void SB_DrawFullscreenStats()
 		Item = Item.NextInv();
 	}
 
-	if (EntityEx(cl.MO).FindInventory(Sigil))
+	Sigil S = Sigil(EntityEx(cl.MO).FindInventory(Sigil));
+	if (S)
 	{
-		R_DrawPic2(530, 450, pic_sigil[cl.SigilPieces], 0.6);
+		R_DrawPic2(530, 450, pic_sigil[S.NumPieces - 1], 0.6);
 	}
 
 	if (bShowWeapons)

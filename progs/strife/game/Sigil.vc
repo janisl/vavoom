@@ -25,6 +25,8 @@
 
 class Sigil : StrifeWeapon;
 
+int				NumPieces;
+
 //==========================================================================
 //
 //	SetSigilSprite
@@ -33,7 +35,7 @@ class Sigil : StrifeWeapon;
 
 void SetSigilSprite()
 {
-	switch (Player(Owner.Player).SigilPieces)
+	switch (NumPieces - 1)
 	{
 	case 1:
 		Owner.Player.SetViewState(ps_flash, S_SIGIL01);
@@ -88,21 +90,21 @@ final void A_FireSigil()
 	TVec		dir;
 	EntityEx	AimTarget;
 
-	Actor(Owner).Damage(none, Actor(Owner), (Player(Owner.Player).SigilPieces + 1) * 4);
+	Actor(Owner).Damage(none, Actor(Owner), NumPieces * 4);
 	angle = Owner.Angles.yaw + 180.0;
 	Owner.Velocity.x += 4.0 * 35.0 * cos(angle);
 	Owner.Velocity.y += 4.0 * 35.0 * sin(angle);
 	StrifeLevelInfo(Level).NoiseAlert(Actor(Owner), Actor(Owner));
 
-	if (Player(Owner.Player).SigilPieces == 4)
+	if (NumPieces == 5)
 	{
 		Actor(Owner).SpawnPlayerMissile(SpectralLightningBigBall1);
 	}
-	else if (Player(Owner.Player).SigilPieces == 3)
+	else if (NumPieces == 4)
 	{
 		Actor(Owner).SpawnPlayerMissile(SpectralLightningBigV1);
 	}
-	else if (Player(Owner.Player).SigilPieces == 2)
+	else if (NumPieces == 3)
 	{
 		for (i = 0; i < 20; i++)
 		{
@@ -114,7 +116,7 @@ final void A_FireSigil()
 			sigilspread.Velocity.y = sigilspread.Speed * sin(angle);
 		}
 	}
-	else if (Player(Owner.Player).SigilPieces == 1)
+	else if (NumPieces == 2)
 	{
 		Actor(Owner).SpawnPlayerMissile(SpectralLightningH1);
 	}
@@ -197,6 +199,7 @@ defaultproperties
 {
 	Slot = 8;
 	SelectionOrder = 4000;
+	IconName = 'i_sgl1';
 	bCheatNotWeapon = true;
 	UpState = S_SIGILUP;
 	DownState = S_SIGILDOWN;

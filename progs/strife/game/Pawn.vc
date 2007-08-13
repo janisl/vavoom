@@ -350,7 +350,7 @@ final void A_BossDeath()
 		Player(Target.Player).GiveQuest(QUEST_KilledLoremaster);
 		Target.GiveInventoryType(UpgradeAccuracy);
 		Target.GiveInventoryType(UpgradeStamina);
-		if (Player(Target.Player).SigilPieces == 4)
+		if (GetSigilPieces() == 5)
 		{
 			Player(Target.Player).SetObjectives(85);
 			Player(Target.Player).ClientVoice(85);

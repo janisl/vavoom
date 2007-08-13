@@ -590,9 +590,10 @@ int CheckInventory(name ItemName)
 
 int GetSigilPieces()
 {
-	if (bIsPlayer && FindInventory(Sigil))
+	Sigil S = Sigil(FindInventory(Sigil));
+	if (S)
 	{
-		return Player(Player).SigilPieces + 1;
+		return S.NumPieces;
 	}
 	return 0;
 }

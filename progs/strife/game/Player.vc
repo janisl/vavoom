@@ -51,14 +51,12 @@ int Stamina;
 Inventory InvFirst;
 Inventory InvCursor;
 
-int SigilPieces;
-
 Inventory SavedInventory;
 
 replication
 {
 	reliable if (!bIsClient)
-		SigilPieces, Accuracy, Stamina, InvFirst, InvCursor, Objectives;
+		Accuracy, Stamina, InvFirst, InvCursor, Objectives;
 
 	unreliable if (!bIsClient)
 		ClientBlood, ClientExplosion;
@@ -546,13 +544,7 @@ void GotAmmo(Ammo NewAmmo)
 
 void GiveSigilPiece()
 {
-	Weapon Wpn = Weapon(EntityEx(MO).FindInventory(Sigil));
-	if (!Wpn)
-		SigilPieces = 0;
-	else if (SigilPieces == 4)
-		SigilPieces = 0;
-	else
-		SigilPieces++;
+	Sigil Wpn = Sigil(EntityEx(MO).FindInventory(Sigil));
 	if (!Wpn)
 	{
 		Wpn = Level.Spawn(Sigil);
@@ -562,6 +554,12 @@ void GiveSigilPiece()
 			return;
 		}
 	}
+	if (!Wpn.NumPieces)
+		Wpn.NumPieces = 1;
+	else if (Wpn.NumPieces == 5)
+		Wpn.NumPieces = 1;
+	else
+		Wpn.NumPieces++;
 	PendingWeapon = Wpn;
 	MO.PlaySound('weapons/sigilcharge', CHAN_WEAPON);
 }
