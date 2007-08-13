@@ -52,7 +52,6 @@ int pic_missile;
 int pic_grenade;
 int pic_flame;
 int pic_blaster;
-int pic_sigil[5];
 int pic_i_comm;
 int pic_backpack;
 //For Icons in Fullscreen HUD
@@ -100,11 +99,6 @@ void StartMap()
 	pic_grenade = R_RegisterPic('grnda0');
 	pic_flame = R_RegisterPic('flama0');
 	pic_blaster = R_RegisterPic('trpda0');
-	pic_sigil[0] = R_RegisterPic('i_sgl1');
-	pic_sigil[1] = R_RegisterPic('i_sgl2');
-	pic_sigil[2] = R_RegisterPic('i_sgl3');
-	pic_sigil[3] = R_RegisterPic('i_sgl4');
-	pic_sigil[4] = R_RegisterPic('i_sgl5');
 	pic_i_comm = R_RegisterPic('i_comm');
 	pic_backpack = R_RegisterPic('i_bkpk');
 	//For Icons in Fullscreen HUD
@@ -275,7 +269,7 @@ void SB_DrawMainBar()
 	Sigil S = Sigil(EntityEx(cl.MO).FindInventory(Sigil));
 	if (S)
 	{
-		R_DrawPic(BAR_X + 253, BAR_Y + 175, pic_sigil[S.NumPieces - 1]);
+		R_DrawPic(BAR_X + 253, BAR_Y + 175, R_RegisterPic(S.IconName));
 	}
 
 	if (cl.ReadyWeapon && cl.ReadyWeapon.Ammo1)
@@ -438,7 +432,7 @@ void SB_DrawFullscreenStats()
 	Sigil S = Sigil(EntityEx(cl.MO).FindInventory(Sigil));
 	if (S)
 	{
-		R_DrawPic2(530, 450, pic_sigil[S.NumPieces - 1], 0.6);
+		R_DrawPic2(530, 450, R_RegisterPic(S.IconName), 0.6);
 	}
 
 	if (bShowWeapons)

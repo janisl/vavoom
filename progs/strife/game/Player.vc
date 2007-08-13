@@ -538,34 +538,6 @@ void GotAmmo(Ammo NewAmmo)
 
 //==========================================================================
 //
-//	GiveSigilPiece
-//
-//==========================================================================
-
-void GiveSigilPiece()
-{
-	Sigil Wpn = Sigil(EntityEx(MO).FindInventory(Sigil));
-	if (!Wpn)
-	{
-		Wpn = Level.Spawn(Sigil);
-		if (!Wpn.TryPickup(EntityEx(MO)))
-		{
-			Wpn.Destroy();
-			return;
-		}
-	}
-	if (!Wpn.NumPieces)
-		Wpn.NumPieces = 1;
-	else if (Wpn.NumPieces == 5)
-		Wpn.NumPieces = 1;
-	else
-		Wpn.NumPieces++;
-	PendingWeapon = Wpn;
-	MO.PlaySound('weapons/sigilcharge', CHAN_WEAPON);
-}
-
-//==========================================================================
-//
 //	GetMaxHealth
 //
 //==========================================================================
@@ -2092,7 +2064,11 @@ void Cheat_Gimme()
 	// Sigil piece
 	if (Cmd_CheckParm("Sigil"))
 	{
-		GiveSigilPiece();
+		Sigil S = Level.Spawn(Sigil);
+		if (!S.SpecialDropAction(none))
+		{
+			S.Destroy();
+		}
 		cprint("SIGIL PIECE");
 	}
 

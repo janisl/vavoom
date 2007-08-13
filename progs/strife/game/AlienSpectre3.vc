@@ -26,6 +26,17 @@
 class AlienSpectre3 : AlienSpectre1
 	__mobjinfo__(76);
 
+//==========================================================================
+//
+//	NoBlockingSet
+//
+//==========================================================================
+
+void NoBlockingSet()
+{
+	DropItem(Sigil3, 0, 1.0);
+}
+
 __states__
 {
 	S_SPECTER3_LOOK1('ALN1', 0, 5.0 / 35.0, S_SPECTER3_LOOK2) = none

@@ -291,7 +291,6 @@ final void A_BossDeath()
 		if (!Target)
 			return;
 
-		Player(Target.Player).GiveSigilPiece();
 		Player(Target.Player).GiveQuest(QUEST_KilledBishop);
 		Player(Target.Player).SetObjectives(74);
 		Player(Target.Player).ClientVoice(74);
@@ -302,7 +301,6 @@ final void A_BossDeath()
 		if (!Target)
 			return;
 
-		Player(Target.Player).GiveSigilPiece();
 		Player(Target.Player).GiveQuest(QUEST_KilledOracle);
 		if (Player(Target.Player).Quests & (1 << QUEST_KilledBishop))
 		{
@@ -327,7 +325,6 @@ final void A_BossDeath()
 		if (!Target)
 			return;
 
-		Player(Target.Player).GiveSigilPiece();
 		Player(Target.Player).GiveQuest(QUEST_KilledMacil);
 		if (Player(Target.Player).Quests & (1 << QUEST_Factory))
 		{
@@ -346,7 +343,6 @@ final void A_BossDeath()
 		if (!Target)
 			return;
 
-		Player(Target.Player).GiveSigilPiece();
 		Player(Target.Player).GiveQuest(QUEST_KilledLoremaster);
 		Target.GiveInventoryType(UpgradeAccuracy);
 		Target.GiveInventoryType(UpgradeStamina);

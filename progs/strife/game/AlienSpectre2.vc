@@ -26,6 +26,17 @@
 class AlienSpectre2 : AlienSpectre1
 	__mobjinfo__(75);
 
+//==========================================================================
+//
+//	NoBlockingSet
+//
+//==========================================================================
+
+void NoBlockingSet()
+{
+	DropItem(Sigil2, 0, 1.0);
+}
+
 __states__
 {
 	S_SPECTER2_ATK1('ALN1', 5, 4.0 / 35.0, S_SPECTER2_ATK2) = A_FaceTarget

@@ -28,6 +28,17 @@ class Programmer : Pawn
 
 //==========================================================================
 //
+//	NoBlockingSet
+//
+//==========================================================================
+
+void NoBlockingSet()
+{
+	DropItem(Sigil1, 0, 1.0);
+}
+
+//==========================================================================
+//
 //	A_ProgrammerMelee
 //
 //==========================================================================
@@ -58,7 +69,6 @@ final void A_ProgrammerDeath()
 	TossUpObject(ProgrammerBase);
 
 	//	Give Silil piece to the player.
-	Player(Target.Player).GiveSigilPiece();
 	Target.Player.cprint("You\'ve Killed the Programmer!");
 }
 

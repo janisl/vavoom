@@ -34,6 +34,8 @@ __states__
 defaultproperties
 {
 	ConversationID = 197;
+	NumPieces = 2;
+	IconName = 'i_sgl2';
 	PickupMessage = "$txt_sigil";
 	IdleState = S_SIGIL_2;
 }
