@@ -100,6 +100,8 @@ int				NonMonsterAngleIncrements;
 int				InvDefaultMaxAmount;
 int				DefaultInvulnBlendColour;
 
+float			IceMoveFactor;
+
 //==========================================================================
 //
 //  MakeSlope
@@ -1098,4 +1100,5 @@ defaultproperties
 	NonMonsterAngleIncrements = 45;
 	bNightmareExtraAmmo = true;
 	InvDefaultMaxAmount = 25;
+	IceMoveFactor = 0.5;
 }

@@ -288,6 +288,7 @@ bool ChickenMorphPlayer()
 	{
 		Pw.Destroy();
 	}
+	chicken.ObtainInventory(self);
 	chicken.bFly = bFly;
 	Player(Player).ChickenTime = Player::CHICKENTIME;
 	Player(Player).ActivateBeak();

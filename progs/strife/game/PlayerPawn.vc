@@ -43,9 +43,9 @@ array<InitInvInfo>		InitialInventory;
 void AddInventory(Inventory Item)
 {
 	::AddInventory(Item);
-	if (bIsPlayer && Item.bInvBar && !Player(Player).InvCursor)
+	if (bIsPlayer && Item.bInvBar && !Player(Player).InvPtr)
 	{
-		Player(Player).InvCursor = Item;
+		Player(Player).InvPtr = Item;
 		Player(Player).InvFirst = Item;
 	}
 }
@@ -60,12 +60,12 @@ void RemoveInventory(Inventory Item)
 {
 	if (bIsPlayer)
 	{
-		if (Item == Player(Player).InvCursor)
+		if (Item == Player(Player).InvPtr)
 		{
-			Player(Player).InvCursor = Item.NextInv();
-			if (!Player(Player).InvCursor)
+			Player(Player).InvPtr = Item.NextInv();
+			if (!Player(Player).InvPtr)
 			{
-				Player(Player).InvCursor = Item.PrevInv();
+				Player(Player).InvPtr = Item.PrevInv();
 			}
 		}
 		if (Item == Player(Player).InvFirst)

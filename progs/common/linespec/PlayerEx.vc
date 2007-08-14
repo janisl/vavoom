@@ -33,8 +33,12 @@ const int CF_NOCLIP			= 1;	// No clipping, walk through barriers.
 const int CF_GODMODE		= 2;	// No damage, no health loss.
 
 const float USERANGE		= 64.0;
+const float USETHINGRANGE	= 128.0;
 
 const float BLINKTHRESHOLD	= 4.0;
+
+// 16 pixels of bob
+const float MAXBOB			= 16.0;
 
 // For screen flashing (red or bright).
 float			DamageFlash;
@@ -74,10 +78,921 @@ float			FlyHeight;
 
 array<name>		RevealedMaps;
 
+Inventory		InvFirst;
+Inventory		InvPtr;
+float			InventoryTime;
+int				ArtifactFlash;
+
+Inventory		SavedInventory;
+
+bool			onground;
+
+int				NoRunHealth;
+
 replication
 {
 	reliable if (!bIsClient)
-		Cheats, ReadyWeapon;
+		Cheats, ReadyWeapon, InvFirst, InvPtr, InventoryTime, ArtifactFlash;
+}
+
+//==========================================================================
+//
+//  ThrustPlayer
+//
+//  Moves the given origin along a given angle.
+//
+//==========================================================================
+
+final void ThrustPlayer(float angle, float move, float deltaTime)
+{
+	if ((!EntityEx(MO).FindInventory(PowerFlight) ||
+		MO.Origin.z <= MO.FloorZ) &&
+		((EntityEx(MO).GetFloorType()->Friction &&
+		EntityEx(MO).GetFloorType()->Friction < EntityEx::FRICTION_NORMAL) ||
+		(MO.Sector->special & SECSPEC_BASE_MASK) == SECSPEC_FrictionLow))
+	{
+		move *= LineSpecialGameInfo(Level.Game).IceMoveFactor;
+	}
+	MO.Velocity.x += move * cos(angle) * deltaTime;
+	MO.Velocity.y += move * sin(angle) * deltaTime;
+}
+
+//==========================================================================
+//
+//  CalcHeight
+//
+//  Calculate the walking / running height adjustment
+//
+//==========================================================================
+
+final void CalcHeight(float deltaTime)
+{
+	float angle;
+	float bob;
+
+	// Regular movement bobbing
+	// (needs to be calculated for gun swing even if not on ground)
+	Bob = MO.Velocity.x * MO.Velocity.x + MO.Velocity.y * MO.Velocity.y;
+	Bob /= 4.0 * 35.0 * 35.0;
+	if (Bob > MAXBOB)
+		Bob = MAXBOB;
+
+	if (MO.bFly && !onground)
+	{
+		Bob = 0.5;
+	}
+
+	angle = 180.0 * 35.0 / 10.0 * Level.XLevel.Time;
+	bob = Bob / 2.0 * sin(angle);
+
+	// move viewheight
+	if (PlayerState == PST_LIVE)
+	{
+		ViewHeight += DeltaViewHeight * deltaTime;
+
+		if (ViewHeight > EntityEx(MO).GetBaseViewHeight())
+		{
+			ViewHeight = EntityEx(MO).GetBaseViewHeight();
+			DeltaViewHeight = 0.0;
+		}
+
+		if (ViewHeight < EntityEx(MO).GetBaseViewHeight() / 2.0)
+		{
+			ViewHeight = EntityEx(MO).GetBaseViewHeight() / 2.0;
+			if (DeltaViewHeight <= 0.0)
+				DeltaViewHeight = 0.00001;
+		}
+
+		if (DeltaViewHeight)
+		{
+			DeltaViewHeight += 256.0 * deltaTime;
+			if (!DeltaViewHeight)
+				DeltaViewHeight = 0.00001;
+		}
+	}
+	if (EntityEx(MO).PlayerIsMorphed())
+	{
+		ViewOrg.z = MO.Origin.z + ViewHeight - 20.0;
+	}
+	else
+	{
+		ViewOrg.z = MO.Origin.z + ViewHeight + bob;
+	}
+
+	if (PlayerState != PST_DEAD && MO.Origin.z <= MO.FloorZ)
+	{
+		ViewOrg.z -= MO.FloorClip;
+	}
+	if (ViewOrg.z < MO.FloorZ + 4.0)
+		ViewOrg.z = MO.FloorZ + 4.0;
+
+	if (ViewOrg.z > MO.CeilingZ - 4.0)
+		ViewOrg.z = MO.CeilingZ - 4.0;
+}
+
+//==========================================================================
+//
+//  MovePlayer
+//
+//==========================================================================
+
+final void MovePlayer(float deltaTime)
+{
+	float forward;
+	float side;
+	float fly;
+
+	// Do not let the player control movement
+	//  if not onground.
+	onground = MO.Origin.z <= MO.FloorZ || EntityEx(MO).bOnMobj;
+
+	forward = ForwardMove * 5.0;
+	side = SideMove * 5.0;
+
+	AdjustSpeed(forward, side);
+
+	if (EntityEx(MO).Inventory && !EntityEx(MO).PlayerIsMorphed())
+	{
+		// Adjust for a player with a speed artifact
+		float SpeedFactor = EntityEx(MO).Inventory.GetSpeedFactor();
+		forward *= SpeedFactor;
+		side *= SpeedFactor;
+	}
+
+	// When the player has less than 25 health points, he's unable to run
+	if (MO.Health < NoRunHealth)
+	{
+		if (forward > 1000.0)
+		{
+			forward = 1000.0;
+		}
+		else if (forward < -1000.0)
+		{
+			forward = -1000.0;
+		}
+		if (side > 1000.0)
+		{
+			side = 1000.0;
+		}
+		else if (side < -1000.0)
+		{
+			side = 1000.0;
+		}
+	}
+
+	if (!(onground || MO.bFly))
+	{
+		//  not on ground, so little effect on velocity
+		forward *= LineSpecialGameInfo(Level.Game).air_control;
+		side *= LineSpecialGameInfo(Level.Game).air_control;
+	}
+
+	if (forward)
+	{
+		ThrustPlayer(MO.Angles.yaw, forward, deltaTime);
+	}
+	if (side)
+	{
+		ThrustPlayer(AngleMod360(MO.Angles.yaw - 90.0), side, deltaTime);
+	}
+
+	if (forward || side)
+	{
+		SetPlayerRunState();
+	}
+
+	fly = FlyMove / 16.0;
+	if (fly && EntityEx(MO).FindInventory(PowerFlight))
+	{
+		if (FlyMove != TOCENTRE)
+		{
+			FlyHeight = fly * 2.0;
+			if (!MO.bFly)
+			{
+				MO.bFly = true;
+				MO.bNoGravity = true;
+				if (MO.Velocity.z <= -39.0 * 35.0)
+				{
+					// stop falling scream
+					MO.StopSound(CHAN_VOICE);
+				}
+			}
+		}
+		else
+		{
+			MO.bFly = false;
+			MO.bNoGravity = false;
+		}
+	}
+	else if (fly > 0.0)
+	{
+		UseFlyPower();
+	}
+	if (MO.bFly)
+	{
+		MO.Velocity.z = FlyHeight * 35.0;
+		if (FlyHeight)
+		{
+			FlyHeight /= 2.0;
+		}
+	}
+
+	if ((Buttons & BT_JUMP) && onground && !JumpTime)
+	{
+		if (EntityEx(MO).PlayerIsMorphed())
+		{
+			MO.Velocity.z = 6.5 * 35.0;
+		}
+		else
+		{
+			MO.Velocity.z = 9.5 * 35.0;
+		}
+		EntityEx(MO).bOnMobj = false;
+		JumpTime = 0.5;
+	}
+}
+
+//==========================================================================
+//
+//  CheckWaterJump
+//
+//==========================================================================
+
+final void CheckWaterJump()
+{
+	TVec start;
+	TVec end;
+	TVec vforward;
+	TVec HitPoint;
+	TVec HitNormal;
+
+	// check for a jump-out-of-water
+	AngleVector(&MO.Angles, &vforward);
+	start = MO.Origin;
+	start.z += MO.Height * 0.5 + 8.0;
+	vforward.z = 0.0;
+	vforward = Normalise(vforward);
+	end = start + vforward * 24.0;
+	if (!Level.XLevel.TraceLine(start, end, HitPoint, HitNormal))
+	{
+		// solid at waist
+		start.z = MO.Origin.z + MO.Height;
+		end = start + vforward * 24.0;
+		MoveDir = HitNormal * -50.0;
+		if (Level.XLevel.TraceLine(start, end, HitPoint, HitNormal))
+		{
+			// open at eye level
+			EntityEx(MO).bWaterJump = true;
+			MO.Velocity.z = 350.0;
+			EntityEx(MO).ReactionTime = 2.0;	// safety net
+		}
+	}
+}
+
+//==========================================================================
+//
+//  WaterMove
+//
+//==========================================================================
+
+final void WaterMove(float deltaTime)
+{
+	float forward;
+	float side;
+	TVec vforward;
+	TVec vright;
+	TVec vup;
+	TVec wishvel;
+
+	// Do not let the player control movement
+	//  if not onground.
+	onground = (MO.Origin.z <= MO.FloorZ) || EntityEx(MO).bOnMobj;
+
+	AngleVectors(&MO.Angles, &vforward, &vright, &vup);
+
+	forward = ForwardMove;
+	side = SideMove;
+
+	AdjustSpeed(forward, side);
+
+	if (EntityEx(MO).Inventory && !EntityEx(MO).PlayerIsMorphed())
+	{
+		// Adjust for a player with a speed artifact
+		float SpeedFactor = EntityEx(MO).Inventory.GetSpeedFactor();
+		forward *= SpeedFactor;
+		side *= SpeedFactor;
+	}
+
+	wishvel = vforward * forward + vright * side;
+	if (!forward && !side /* && !cmd.upmove */ )
+		wishvel.z -= 60.0;	// drift towards bottom
+//  else
+//      wishvel.z += cmd.upmove;
+
+	MO.Velocity += 3.5 * deltaTime * wishvel;
+
+	if (forward || side)
+	{
+		SetPlayerRunState();
+	}
+
+	if (Buttons & BT_JUMP)
+	{
+		if (MO.WaterType == CONTENTS_WATER)
+			MO.Velocity.z = 100.0;
+		else if (MO.WaterType == CONTENTS_NUKAGE ||
+			MO.WaterType == CONTENTS_SLIME || MO.WaterType == CONTENTS_SLUDGE)
+			MO.Velocity.z = 80.0;
+		else
+			MO.Velocity.z = 50.0;
+	}
+	CheckWaterJump();
+}
+
+//==========================================================================
+//
+//  WaterJump
+//
+//==========================================================================
+
+final void WaterJump()
+{
+	if (!EntityEx(MO).ReactionTime || !MO.WaterLevel)
+	{
+		EntityEx(MO).bWaterJump = false;
+		EntityEx(MO).ReactionTime = 0.0;
+	}
+	MO.Velocity.x = MoveDir.x;
+	MO.Velocity.y = MoveDir.y;
+}
+
+//==========================================================================
+//
+//  PlayerInSpecialSector
+//
+//  Called every tic frame that the player origin is in a special sector.
+//
+//==========================================================================
+
+final void PlayerInSpecialSector(float deltaTime)
+{
+	float speed;
+	float finean;
+
+	if (MO.Origin.z != GetPlanePointZ(&MO.Sector->floor, MO.Origin))
+	{
+		// Player is not touching the floor
+		return;
+	}
+
+	if (MO.Sector->special & SECSPEC_SECRET_MASK)
+	{
+		//	Secret area.
+		SecretCount++;
+		Level.CurrentSecret++;
+		MO.Sector->special &= ~SECSPEC_SECRET_MASK;
+		centreprint("You found a secret area");
+		MO.PlaySound('misc/secret', CHAN_VOICE);
+	}
+
+	//	Search for iron feet power. Any subclass will do.
+	Inventory IronFeet = EntityEx(MO).Inventory;
+	while (IronFeet)
+	{
+		if (PowerIronFeet(IronFeet))
+		{
+			break;
+		}
+		IronFeet = IronFeet.Inventory;
+	}
+
+	if (MO.Sector->special >= SECSPEC_LightFlicker &&
+		MO.Sector->special <= 255)
+	{
+		switch (MO.Sector->special)
+		{
+		case SECSPEC_DamageHellslime:
+			if (!IronFeet &&
+				Level.XLevel.Time - LastSectorDamageTime >= 32.0 / 35.0)
+			{
+				LastSectorDamageTime = Level.XLevel.Time;
+				EntityEx(MO).Damage(none, none, 10);
+			}
+			break;
+		case SECSPEC_DamageSludge:
+			if (!IronFeet &&
+				Level.XLevel.Time - LastSectorDamageTime >= 32.0 / 35.0)
+			{
+				LastSectorDamageTime = Level.XLevel.Time;
+				EntityEx(MO).Damage(none, none, 4);
+			}
+			break;
+		case SECSPEC_DamageNukage:
+			if (!IronFeet &&
+				Level.XLevel.Time - LastSectorDamageTime >= 32.0 / 35.0)
+			{
+				LastSectorDamageTime = Level.XLevel.Time;
+				EntityEx(MO).Damage(none, none, 5);
+			}
+			break;
+		case SECSPEC_LightStrobeFastDamage:
+		case SECSPEC_DamageSuperHellslime:
+			if ((!IronFeet || (P_Random() < 5)) &&
+				Level.XLevel.Time - LastSectorDamageTime >= 32.0 / 35.0)
+			{
+				LastSectorDamageTime = Level.XLevel.Time;
+				EntityEx(MO).Damage(none, none, 20);
+			}
+			break;
+		case SECSPEC_DamageSuperHellslimeExit:
+			// EXIT SUPER DAMAGE! (for E1M8 finale)
+			Cheats &= ~CF_GODMODE;
+	
+			if (Level.XLevel.Time - LastSectorDamageTime >= 32.0 / 35.0)
+			{
+				LastSectorDamageTime = Level.XLevel.Time;
+				EntityEx(MO).Damage(none, none, 20);
+			}
+	
+			if (Health <= 10)
+			{
+				Level.ExitLevel(0);
+			}
+			break;
+		case SECSPEC_DamageLavaWimpy:
+			if (Level.XLevel.Time - LastSectorDamageTime >= 16.0 / 35.0)
+			{
+				LastSectorDamageTime = Level.XLevel.Time;
+				EntityEx(MO).Damage(none, none, 5, 'Fire');
+				EntityEx(MO).HitFloorType();
+			}
+			break;
+		case SECSPEC_DamageLavaHefty:
+			if (Level.XLevel.Time - LastSectorDamageTime >= 16.0 / 35.0)
+			{
+				LastSectorDamageTime = Level.XLevel.Time;
+				EntityEx(MO).Damage(none, none, 8, 'Fire');
+				EntityEx(MO).HitFloorType();
+			}
+			break;
+		case SECSPEC_ScrollEastLavaDamage:
+			ThrustPlayer(0.0, 1024.0, deltaTime);
+			if (Level.XLevel.Time - LastSectorDamageTime >= 16.0 / 35.0)
+			{
+				LastSectorDamageTime = Level.XLevel.Time;
+				EntityEx(MO).Damage(none, none, 5, 'Fire');
+				EntityEx(MO).HitFloorType();
+			}
+			break;
+		case SECSPEC_DamageHazard:
+			if (!IronFeet)
+				HazardTime += 2.0 * deltaTime;
+			break;
+		case SECSPEC_DamageInstantDeath:
+			EntityEx(MO).Damage(none, none, 999);
+			break;
+		case SECSPEC_DamageSuperHazard:
+			if (!IronFeet)
+				HazardTime += 4.0 * deltaTime;
+			break;
+		}
+	}
+	else
+	{
+		//	Extended sector damage type.
+		switch (MO.Sector->special & SECSPEC_DAMAGE_MASK)
+		{
+		case 0x0100:
+			if (!IronFeet &&
+				Level.XLevel.Time - LastSectorDamageTime >= 32.0 / 35.0)
+			{
+				LastSectorDamageTime = Level.XLevel.Time;
+				EntityEx(MO).Damage(none, none, 5);
+			}
+			break;
+		case 0x0200:
+			if (!IronFeet &&
+				Level.XLevel.Time - LastSectorDamageTime >= 32.0 / 35.0)
+			{
+				LastSectorDamageTime = Level.XLevel.Time;
+				EntityEx(MO).Damage(none, none, 10);
+			}
+			break;
+		case 0x0300:
+			if ((!IronFeet || (P_Random() < 5)) &&
+				Level.XLevel.Time - LastSectorDamageTime >= 32.0 / 35.0)
+			{
+				LastSectorDamageTime = Level.XLevel.Time;
+				EntityEx(MO).Damage(none, none, 20);
+			}
+			break;
+		}
+	}
+
+	//	Apply any customizable damage
+	if (MO.Sector->Damage)
+	{
+		if (MO.Sector->Damage < 20)
+		{
+			if (!IronFeet &&
+				Level.XLevel.Time - LastSectorDamageTime >= 32.0 / 35.0)
+			{
+				LastSectorDamageTime = Level.XLevel.Time;
+				EntityEx(MO).Damage(none, none, MO.Sector->Damage);
+			}
+		}
+		else if (MO.Sector->Damage < 50)
+		{
+			if ((!IronFeet || (P_Random() < 5)) &&
+				Level.XLevel.Time - LastSectorDamageTime >= 32.0 / 35.0)
+			{
+				LastSectorDamageTime = Level.XLevel.Time;
+				EntityEx(MO).Damage(none, none, MO.Sector->Damage);
+			}
+		}
+		else if (Level.XLevel.Time - LastSectorDamageTime >= 1.0 / 35.0)
+		{
+			LastSectorDamageTime = Level.XLevel.Time;
+			EntityEx(MO).Damage(none, none, MO.Sector->Damage);
+		}
+	}
+
+	switch (MO.Sector->special & SECSPEC_BASE_MASK)
+	{
+	case SECSPEC_ScrollCurrent:
+		speed = itof((MO.Sector->tag - 100) % 10) / 16.0 * 35.0;
+		finean = itof((MO.Sector->tag - 100) / 10) * 45.0;
+		MO.Velocity.x += speed * cos(finean);
+		MO.Velocity.y += speed * sin(finean);
+		break;
+	case SECSPEC_ScrollNorthSlow:
+	case SECSPEC_ScrollNorthMedium:
+	case SECSPEC_ScrollNorthFast:
+		ThrustPlayer(90.0, LineSpecialGameInfo(Level.Game).pushTab[(MO.Sector->special &
+			SECSPEC_BASE_MASK) - SECSPEC_ScrollNorthSlow], deltaTime);
+		break;
+	case SECSPEC_ScrollEastSlow:
+	case SECSPEC_ScrollEastMedium:
+	case SECSPEC_ScrollEastFast:
+		ThrustPlayer(0.0, LineSpecialGameInfo(Level.Game).pushTab[(MO.Sector->special &
+			SECSPEC_BASE_MASK) - SECSPEC_ScrollEastSlow], deltaTime);
+		break;
+	case SECSPEC_ScrollSouthSlow:
+	case SECSPEC_ScrollSouthMedium:
+	case SECSPEC_ScrollSouthFast:
+		ThrustPlayer(270.0, LineSpecialGameInfo(Level.Game).pushTab[(MO.Sector->special &
+			SECSPEC_BASE_MASK) - SECSPEC_ScrollSouthSlow], deltaTime);
+		break;
+	case SECSPEC_ScrollWestSlow:
+	case SECSPEC_ScrollWestMedium:
+	case SECSPEC_ScrollWestFast:
+		ThrustPlayer(180.0, LineSpecialGameInfo(Level.Game).pushTab[(MO.Sector->special &
+			SECSPEC_BASE_MASK) - SECSPEC_ScrollWestSlow], deltaTime);
+		break;
+	case SECSPEC_ScrollNorthWestSlow:
+	case SECSPEC_ScrollNorthWestMedium:
+	case SECSPEC_ScrollNorthWestFast:
+		ThrustPlayer(135.0, LineSpecialGameInfo(Level.Game).pushTab[(MO.Sector->special &
+			SECSPEC_BASE_MASK) - SECSPEC_ScrollNorthWestSlow], deltaTime);
+		break;
+	case SECSPEC_ScrollNorthEastSlow:
+	case SECSPEC_ScrollNorthEastMedium:
+	case SECSPEC_ScrollNorthEastFast:
+		ThrustPlayer(45.0, LineSpecialGameInfo(Level.Game).pushTab[(MO.Sector->special &
+			SECSPEC_BASE_MASK) - SECSPEC_ScrollNorthEastSlow], deltaTime);
+		break;
+	case SECSPEC_ScrollSouthEastSlow:
+	case SECSPEC_ScrollSouthEastMedium:
+	case SECSPEC_ScrollSouthEastFast:
+		ThrustPlayer(315.0, LineSpecialGameInfo(Level.Game).pushTab[(MO.Sector->special &
+			SECSPEC_BASE_MASK) - SECSPEC_ScrollSouthEastSlow], deltaTime);
+		break;
+	case SECSPEC_ScrollSouthWestSlow:
+	case SECSPEC_ScrollSouthWestMedium:
+	case SECSPEC_ScrollSouthWestFast:
+		ThrustPlayer(225.0, LineSpecialGameInfo(Level.Game).pushTab[(MO.Sector->special &
+			SECSPEC_BASE_MASK) - SECSPEC_ScrollSouthWestSlow], deltaTime);
+		break;
+	case SECSPEC_ScrollEast5:
+	case SECSPEC_ScrollEast10:
+	case SECSPEC_ScrollEast25:
+	case SECSPEC_ScrollEast30:
+	case SECSPEC_ScrollEast35:
+		ThrustPlayer(0.0, LineSpecialGameInfo(Level.Game).pushTab[(MO.Sector->special &
+			SECSPEC_BASE_MASK) - SECSPEC_ScrollEast5], deltaTime);
+		break;
+	case SECSPEC_ScrollNorth5:
+	case SECSPEC_ScrollNorth10:
+	case SECSPEC_ScrollNorth25:
+	case SECSPEC_ScrollNorth30:
+	case SECSPEC_ScrollNorth35:
+		ThrustPlayer(90.0, LineSpecialGameInfo(Level.Game).pushTab[(MO.Sector->special &
+			SECSPEC_BASE_MASK) - SECSPEC_ScrollNorth5], deltaTime);
+		break;
+	case SECSPEC_ScrollSouth5:
+	case SECSPEC_ScrollSouth10:
+	case SECSPEC_ScrollSouth25:
+	case SECSPEC_ScrollSouth30:
+	case SECSPEC_ScrollSouth35:
+		ThrustPlayer(270.0, LineSpecialGameInfo(Level.Game).pushTab[(MO.Sector->special &
+			SECSPEC_BASE_MASK) - SECSPEC_ScrollSouth5], deltaTime);
+		break;
+	case SECSPEC_ScrollWest5:
+	case SECSPEC_ScrollWest10:
+	case SECSPEC_ScrollWest25:
+	case SECSPEC_ScrollWest30:
+	case SECSPEC_ScrollWest35:
+		ThrustPlayer(180.0, LineSpecialGameInfo(Level.Game).pushTab[(MO.Sector->special &
+			SECSPEC_BASE_MASK) - SECSPEC_ScrollWest5], deltaTime);
+		break;
+	};
+}
+
+//============================================================================
+//
+//  PlayerOnSpecialFlat
+//
+//============================================================================
+
+final void PlayerOnSpecialFlat(VTerrainInfo* floorType)
+{
+	if (MO.Origin.z != MO.FloorZ)
+	{
+		// Player is not touching the floor
+		return;
+	}
+	if (floorType->DamageAmount && Level.XLevel.Time - LastSectorDamageTime >=
+		itof(floorType->DamageTimeMask + 1) / 35.0)
+	{
+		LastSectorDamageTime = Level.XLevel.Time;
+		EntityEx(MO).Damage(none, none, 10, 'Fire');
+		MO.PlaySound('world/lavasizzle', CHAN_BODY);
+	}
+}
+
+//==========================================================================
+//
+//  PlayerInContents
+//
+//==========================================================================
+
+final void PlayerInContents(float deltaTime)
+{
+	if (!MO.WaterLevel)
+	{
+		return;
+	}
+
+	//	Search for iron feet power. Any subclass will do.
+	Inventory IronFeet = EntityEx(MO).Inventory;
+	while (IronFeet)
+	{
+		if (PowerIronFeet(IronFeet))
+		{
+			break;
+		}
+		IronFeet = IronFeet.Inventory;
+	}
+
+	switch (MO.WaterType)
+	{
+	case CONTENTS_LAVA:
+		if (!IronFeet &&
+			Level.XLevel.Time - LastSectorDamageTime >= 32.0 / 35.0)
+		{
+			LastSectorDamageTime = Level.XLevel.Time;
+			EntityEx(MO).Damage(none, none, 10, 'Fire');
+		}
+		break;
+
+	case CONTENTS_NUKAGE:
+		if (!IronFeet &&
+			Level.XLevel.Time - LastSectorDamageTime >= 32.0 / 35.0)
+		{
+			LastSectorDamageTime = Level.XLevel.Time;
+			EntityEx(MO).Damage(none, none, 5);
+		}
+		break;
+
+	case CONTENTS_SLIME:
+		if (!IronFeet &&
+			Level.XLevel.Time - LastSectorDamageTime >= 32.0 / 35.0)
+		{
+			LastSectorDamageTime = Level.XLevel.Time;
+			EntityEx(MO).Damage(none, none, 10);
+		}
+		break;
+
+	case CONTENTS_HELLSLIME:
+		if ((!IronFeet || (P_Random() < 5)) &&
+			Level.XLevel.Time - LastSectorDamageTime >= 32.0 / 35.0)
+		{
+			LastSectorDamageTime = Level.XLevel.Time;
+			EntityEx(MO).Damage(none, none, 20);
+		}
+		break;
+
+	case CONTENTS_SLUDGE:
+		if (!IronFeet &&
+			Level.XLevel.Time - LastSectorDamageTime >= 32.0 / 35.0)
+		{
+			LastSectorDamageTime = Level.XLevel.Time;
+			EntityEx(MO).Damage(none, none, 4);
+		}
+		break;
+
+	case CONTENTS_HAZARD:
+		if (!IronFeet)
+		{
+			HazardTime += 2.0 * deltaTime;
+		}
+		break;
+	}
+}
+
+//==========================================================================
+//
+//  SetPlayerRunState
+//
+//==========================================================================
+
+final void SetPlayerRunState()
+{
+	if (MO.State == EntityEx(MO).IdleState)
+	{
+		MO.SetState(EntityEx(MO).SeeState);
+	}
+}
+
+//***************************************************************************
+//
+//  WEAPON UTILITES
+//
+//***************************************************************************
+
+//==========================================================================
+//
+//	SetWeapon
+//
+//==========================================================================
+
+final void SetWeapon(Weapon NewWeapon)
+{
+	ReadyWeapon = NewWeapon;
+	PendingWeapon = none;
+	ViewEnt = ReadyWeapon;
+	PSpriteSY = Weapon(ViewEnt).PSpriteSY;
+	MO.ModelVersion = ReadyWeapon.PlayerModelVersion;
+}
+
+//===========================================================================
+//
+//  BringUpWeapon
+//
+//  Starts bringing the pending weapon up from the bottom of the screen.
+//
+//===========================================================================
+
+final void BringUpWeapon()
+{
+	if (ReadyWeapon.UpSound)
+	{
+		MO.PlaySound(ReadyWeapon.UpSound, CHAN_WEAPON);
+	}
+
+	PendingWeapon = none;
+	ViewStates[ps_weapon].SY = Weapon::WEAPONBOTTOM;
+	SetViewState(ps_weapon, ReadyWeapon.GetUpState());
+	MO.ModelVersion = ReadyWeapon.PlayerModelVersion;
+}
+
+//===========================================================================
+//
+//  DropWeapon
+//
+//  Player died, so put the weapon away.
+//
+//===========================================================================
+
+final void DropWeapon()
+{
+	SetViewState(ps_weapon, Weapon(ViewEnt).GetDownState());
+}
+
+//===========================================================================
+//
+//  SetupPsprites
+//
+//  Called at start of level for each player.
+//
+//===========================================================================
+
+final void SetupPsprites()
+{
+	int i;
+
+	// remove all psprites
+	for (i = 0; i < NUMPSPRITES; i++)
+	{
+		SetViewState(i, none);
+	}
+
+	// spawn the gun
+	BringUpWeapon();
+}
+
+//==========================================================================
+//
+//  MovePsprites
+//
+//  Called every tic by player thinking routine.
+//
+//==========================================================================
+
+void MovePsprites(float deltaTime)
+{
+	AdvanceViewStates(deltaTime);
+	ViewStates[ps_flash].SX = ViewStates[ps_weapon].SX;
+	ViewStates[ps_flash].SY = ViewStates[ps_weapon].SY;
+}
+
+//===========================================================================
+//
+//  FireWeapon
+//
+//===========================================================================
+
+final void FireWeapon()
+{
+	if (!ReadyWeapon.CheckAmmo(true))
+	{
+		return;
+	}
+
+	MO.SetState(EntityEx(MO).MissileState);
+	SetViewState(ps_weapon, ReadyWeapon.GetAttackState(Refire));
+	if (!ReadyWeapon.bNoAlert)
+		LineSpecialLevelInfo(Level).NoiseAlert(EntityEx(MO), EntityEx(MO));
+}
+
+//==========================================================================
+//
+//  ChangeWeapon
+//
+//  The actual changing of the weapon is done when the weapon psprite can
+// do it (read: not in the middle of an attack).
+//
+//==========================================================================
+
+final void ChangeWeapon(int newweapon)
+{
+	if (EntityEx(MO).PlayerIsMorphed())
+	{
+		return;
+	}
+	Weapon NewWpn = GetSlotChangeWeapon(newweapon, ReadyWeapon, false);
+	if (NewWpn && NewWpn != ReadyWeapon)
+	{
+		PendingWeapon = NewWpn;
+	}
+}
+
+//==========================================================================
+//
+//  PrevWeapon
+//
+//==========================================================================
+
+final void PrevWeapon()
+{
+	if (EntityEx(MO).PlayerIsMorphed())
+	{
+		return;
+	}
+	Weapon Best = GetPrevWeapon(ReadyWeapon, true);
+	if (Best && Best != ReadyWeapon)
+	{
+		PendingWeapon = Best;
+	}
+}
+
+//==========================================================================
+//
+//  NextWeapon
+//
+//==========================================================================
+
+final void NextWeapon()
+{
+	if (EntityEx(MO).PlayerIsMorphed())
+	{
+		return;
+	}
+	Weapon Best = GetNextWeapon(ReadyWeapon, true);
+	if (Best && Best != ReadyWeapon)
+	{
+		PendingWeapon = Best;
+	}
 }
 
 //==========================================================================
@@ -88,7 +1003,7 @@ replication
 //
 //==========================================================================
 
-Weapon BestWeapon(optional class<Ammo> AmmoType)
+final Weapon BestWeapon(optional class<Ammo> AmmoType)
 {
 	bool Powered = !!EntityEx(MO).FindInventory(PowerWeaponLevel2);
 	Weapon Best = none;
@@ -137,7 +1052,7 @@ Weapon BestWeapon(optional class<Ammo> AmmoType)
 //
 //==========================================================================
 
-Weapon GetSlotChangeWeapon(int Slot, Weapon Current, bool bCheckAmmo)
+final Weapon GetSlotChangeWeapon(int Slot, Weapon Current, bool bCheckAmmo)
 {
 	if (Current && Current.Slot != Slot)
 	{
@@ -207,7 +1122,7 @@ Weapon GetSlotChangeWeapon(int Slot, Weapon Current, bool bCheckAmmo)
 //
 //==========================================================================
 
-Weapon GetPrevWeapon(Weapon Current, bool bCheckAmmo)
+final Weapon GetPrevWeapon(Weapon Current, bool bCheckAmmo)
 {
 	bool Powered = !!EntityEx(MO).FindInventory(PowerWeaponLevel2);
 	Weapon Best = none;
@@ -271,7 +1186,7 @@ Weapon GetPrevWeapon(Weapon Current, bool bCheckAmmo)
 //
 //==========================================================================
 
-Weapon GetNextWeapon(Weapon Current, bool bCheckAmmo)
+final Weapon GetNextWeapon(Weapon Current, bool bCheckAmmo)
 {
 	bool Powered = !!EntityEx(MO).FindInventory(PowerWeaponLevel2);
 	Weapon Best = none;
@@ -415,7 +1330,7 @@ final bool UsePuzzleItem(int PuzzleItemType)
 //
 //==========================================================================
 
-bool AddRevealedMap()
+final bool AddRevealedMap()
 {
 	int			i;
 
@@ -439,7 +1354,7 @@ bool AddRevealedMap()
 //
 //==========================================================================
 
-void RemoveRevealedMap()
+final void RemoveRevealedMap()
 {
 	int			i;
 
@@ -460,7 +1375,7 @@ void RemoveRevealedMap()
 //
 //==========================================================================
 
-void UpdateRevealedMap()
+final void UpdateRevealedMap()
 {
 	int			i;
 
@@ -490,23 +1405,7 @@ void StartDeathSlideShow()
 {
 }
 
-void DropWeapon()
-{
-}
-
 void GotAmmo(Ammo NewAmmo)
-{
-}
-
-void FireWeapon()
-{
-}
-
-void SetWeapon(Weapon Wpn)
-{
-}
-
-void BringUpWeapon()
 {
 }
 
@@ -518,6 +1417,14 @@ name GetInvulnerabilityMode()
 int GetMaxHealth()
 {
 	return 0;
+}
+
+void AdjustSpeed(out float forward, out float side)
+{
+}
+
+void UseFlyPower()
+{
 }
 
 defaultproperties

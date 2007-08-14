@@ -256,7 +256,7 @@ void SB_DrawMainBar()
 	Item = cl.InvFirst;
 	for (i = 0; Item && i < 6; i++)
 	{
-		if (cl.InvCursor == Item)
+		if (cl.InvPtr == Item)
 		{
 			R_DrawPic(BAR_X + 42 + 35 * i, BAR_Y + 180, pic_invcurs);
 		}
@@ -420,7 +420,7 @@ void SB_DrawFullscreenStats()
 	Item = cl.InvFirst;
 	for (i = 0; i < 6 && Item; i++)
 	{
-		if (cl.InvCursor == Item)
+		if (cl.InvPtr == Item)
 		{
 			R_DrawPic2(225 + 35 * i, 450, pic_invcurs, 0.6);
 		}

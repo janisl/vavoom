@@ -527,6 +527,7 @@ defaultproperties
 	BloodClass = Blood;
 	InvDefaultMaxAmount = 16;
 	DefaultInvulnBlendColour = Inventory::INVERSECOLOUR;
+	IceMoveFactor = 0.25;
 
 	botskill = 2;
 }

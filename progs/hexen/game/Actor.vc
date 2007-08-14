@@ -253,6 +253,7 @@ bool MorphPlayer()
 	{
 		HArmor.Slots[i] = 0.0;
 	}
+	beastMo.ObtainInventory(self);
 	Player.PClass = HexenDefs::PCLASS_PIG;
 	beastMo.bFly = bFly;
 	Player(Player).MorphTime = MORPHTIME;

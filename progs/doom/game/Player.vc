@@ -27,9 +27,6 @@ class Player : PlayerEx;
 
 const float VIEWHEIGHT		= 41.0;
 
-// 16 pixels of bob
-const float MAXBOB			= 16.0;
-
 const float ST_STRAIGHTFACETIME		= 0.5;
 const float ST_TURNTIME				= 1.0;
 const float ST_EVILGRINTIME			= 2.0;
@@ -64,7 +61,6 @@ float sb_face_lastattackdown;
 int sb_faceindex;
 
 BotPlayer Bot;
-Inventory SavedInventory;
 
 replication
 {
@@ -613,592 +609,6 @@ int GetMaxHealth()
 
 //==========================================================================
 //
-//  ThrustPlayer
-//
-//  Moves the given origin along a given angle.
-//
-//==========================================================================
-
-void ThrustPlayer(float angle, float move, float deltaTime)
-{
-	if ((MO.Sector->special & SECSPEC_BASE_MASK) == SECSPEC_FrictionLow)
-	{
-		move *= 0.5;
-	}
-	MO.Velocity.x += move * cos(angle) * deltaTime;
-	MO.Velocity.y += move * sin(angle) * deltaTime;
-}
-
-//==========================================================================
-//
-//  CalcHeight
-//
-//  Calculate the walking / running height adjustment
-//
-//==========================================================================
-
-void CalcHeight(float deltaTime)
-{
-	float angle;
-	float bob;
-
-	// Regular movement bobbing
-	// (needs to be calculated for gun swing even if not on ground)
-	Bob = MO.Velocity.x * MO.Velocity.x + MO.Velocity.y * MO.Velocity.y;
-	Bob /= 4.0 * 35.0 * 35.0;
-	if (Bob > MAXBOB)
-		Bob = MAXBOB;
-
-	angle = (180.0 * 35.0 / 10.0) * Level.XLevel.Time;
-	bob = Bob / 2.0 * sin(angle);
-
-	// move viewheight
-	if (PlayerState == PST_LIVE)
-	{
-		ViewHeight += DeltaViewHeight * deltaTime;
-
-		if (ViewHeight > VIEWHEIGHT)
-		{
-			ViewHeight = VIEWHEIGHT;
-			DeltaViewHeight = 0.0;
-		}
-
-		if (ViewHeight < VIEWHEIGHT / 2.0)
-		{
-			ViewHeight = VIEWHEIGHT / 2.0;
-			if (DeltaViewHeight <= 0.0)
-				DeltaViewHeight = 0.00001;
-		}
-
-		if (DeltaViewHeight)
-		{
-			DeltaViewHeight += 256.0 * deltaTime;
-			if (!DeltaViewHeight)
-				DeltaViewHeight = 0.00001;
-		}
-	}
-	ViewOrg.z = MO.Origin.z + ViewHeight + bob;
-
-	if (PlayerState != PST_DEAD && MO.Origin.z <= MO.FloorZ)
-	{
-		ViewOrg.z -= MO.FloorClip;
-	}
-	if (ViewOrg.z < MO.FloorZ + 4.0)
-		ViewOrg.z = MO.FloorZ + 4.0;
-
-	if (ViewOrg.z > MO.CeilingZ - 4.0)
-		ViewOrg.z = MO.CeilingZ - 4.0;
-}
-
-//==========================================================================
-//
-//  MovePlayer
-//
-//==========================================================================
-
-void MovePlayer(float deltaTime)
-{
-	float forward;
-	float side;
-	bool onground;
-
-	// Do not let the player control movement
-	//  if not onground.
-	onground = MO.Origin.z <= MO.FloorZ || Actor(MO).bOnMobj;
-
-	forward = ForwardMove * 5.0;
-	side = SideMove * 5.0;
-
-	if (!onground)
-	{
-		forward *= MainGameInfo(Level.Game).air_control;
-		side *= MainGameInfo(Level.Game).air_control;
-	}
-
-	if (forward)
-	{
-		ThrustPlayer(MO.Angles.yaw, forward, deltaTime);
-	}
-	if (side)
-	{
-		ThrustPlayer(MO.Angles.yaw - 90.0, side, deltaTime);
-	}
-
-	if (forward || side)
-	{
-		SetPlayerRunState();
-	}
-
-	if ((Buttons & BT_JUMP) && onground && !JumpTime)
-	{
-		//  Jump
-		MO.Velocity.z = 9.0 * 35.0;
-		Actor(MO).bOnMobj = false;
-		JumpTime = 0.5;
-	}
-}
-
-//==========================================================================
-//
-//  CheckWaterJump
-//
-//==========================================================================
-
-void CheckWaterJump()
-{
-	TVec start;
-	TVec end;
-	TVec vforward;
-	TVec HitPoint;
-	TVec HitNormal;
-
-	// check for a jump-out-of-water
-	AngleVector(&MO.Angles, &vforward);
-	start = MO.Origin;
-	start.z += MO.Height * 0.5 + 8.0;
-	vforward.z = 0.0;
-	vforward = Normalise(vforward);
-	end = start + vforward * 24.0;
-	if (!Level.XLevel.TraceLine(start, end, HitPoint, HitNormal))
-	{
-		// solid at waist
-		start.z = MO.Origin.z + MO.Height;
-		end = start + vforward * 24.0;
-		MoveDir = HitNormal * -50.0;
-		if (Level.XLevel.TraceLine(start, end, HitPoint, HitNormal))
-		{
-			// open at eye level
-			Actor(MO).bWaterJump = true;
-			MO.Velocity.z = 320.0;
-			Actor(MO).ReactionTime = 2.0;	// safety net
-		}
-	}
-}
-
-//==========================================================================
-//
-//  WaterMove
-//
-//==========================================================================
-
-void WaterMove(float deltaTime)
-{
-	float forward;
-	float side;
-	TVec vforward;
-	TVec vright;
-	TVec vup;
-	TVec wishvel;
-
-	AngleVectors(&MO.Angles, &vforward, &vright, &vup);
-
-	forward = ForwardMove;
-	side = SideMove;
-
-	wishvel = forward * vforward + side * vright;
-	if (!forward && !side /* && !cmd.upmove */ )
-		wishvel.z -= 60.0;	// drift towards bottom
-//  else
-//      wishvel.z += cmd.upmove;
-
-	MO.Velocity += 3.5 * deltaTime * wishvel;
-
-	if (forward || side)
-	{
-		SetPlayerRunState();
-	}
-
-	if (Buttons & BT_JUMP)
-	{
-		if (MO.WaterType == CONTENTS_WATER)
-			MO.Velocity.z = 100.0;
-		else if (MO.WaterType == CONTENTS_NUKAGE || MO.WaterType == CONTENTS_SLIME)
-			MO.Velocity.z = 80.0;
-		else
-			MO.Velocity.z = 50.0;
-	}
-	CheckWaterJump();
-}
-
-//==========================================================================
-//
-//  WaterJump
-//
-//==========================================================================
-
-void WaterJump()
-{
-	if (!Actor(MO).ReactionTime || !MO.WaterLevel)
-	{
-		Actor(MO).bWaterJump = false;
-		Actor(MO).ReactionTime = 0.0;
-	}
-	MO.Velocity.x = MoveDir.x;
-	MO.Velocity.y = MoveDir.y;
-}
-
-//==========================================================================
-//
-//  PlayerInSpecialSector
-//
-//  Called every tic frame that the player origin is in a special sector
-//
-//==========================================================================
-
-void PlayerInSpecialSector(float deltaTime)
-{
-	float speed;
-	float finean;
-
-	//	Falling, not all the way down yet?
-	if (MO.Origin.z != GetPlanePointZ(&MO.Sector->floor, MO.Origin))
-		return;
-
-	if (MO.Sector->special & SECSPEC_SECRET_MASK)
-	{
-		//	Secret area.
-		SecretCount++;
-		Level.CurrentSecret++;
-		MO.Sector->special &= ~SECSPEC_SECRET_MASK;
-		centreprint("You found a secret area");
-	}
-
-	//	Search for iron feet power. Any subclass will do.
-	Inventory IronFeet = EntityEx(MO).Inventory;
-	while (IronFeet)
-	{
-		if (PowerIronFeet(IronFeet))
-		{
-			break;
-		}
-		IronFeet = IronFeet.Inventory;
-	}
-
-	// Has hitten ground.
-	if (MO.Sector->special >= SECSPEC_LightFlicker &&
-		MO.Sector->special <= 255)
-	{
-		switch (MO.Sector->special)
-		{
-		case SECSPEC_DamageHellslime:
-			if (!IronFeet &&
-				Level.XLevel.Time - LastSectorDamageTime >= 32.0 / 35.0)
-			{
-				LastSectorDamageTime = Level.XLevel.Time;
-				Actor(MO).Damage(none, none, 10);
-			}
-			break;
-		case SECSPEC_DamageSludge:
-			if (!IronFeet &&
-				Level.XLevel.Time - LastSectorDamageTime >= 32.0 / 35.0)
-			{
-				LastSectorDamageTime = Level.XLevel.Time;
-				Actor(MO).Damage(none, none, 4);
-			}
-			break;
-		case SECSPEC_DamageNukage:
-			if (!IronFeet &&
-				Level.XLevel.Time - LastSectorDamageTime >= 32.0 / 35.0)
-			{
-				LastSectorDamageTime = Level.XLevel.Time;
-				Actor(MO).Damage(none, none, 5);
-			}
-			break;
-		case SECSPEC_LightStrobeFastDamage:
-		case SECSPEC_DamageSuperHellslime:
-			if ((!IronFeet || (P_Random() < 5)) &&
-				Level.XLevel.Time - LastSectorDamageTime >= 32.0 / 35.0)
-			{
-				LastSectorDamageTime = Level.XLevel.Time;
-				Actor(MO).Damage(none, none, 20);
-			}
-			break;
-		case SECSPEC_DamageSuperHellslimeExit:
-			// EXIT SUPER DAMAGE! (for E1M8 finale)
-			Cheats &= ~CF_GODMODE;
-	
-			if (Level.XLevel.Time - LastSectorDamageTime >= 32.0 / 35.0)
-			{
-				LastSectorDamageTime = Level.XLevel.Time;
-				Actor(MO).Damage(none, none, 20);
-			}
-	
-			if (Health <= 10)
-			{
-				Level.ExitLevel(0);
-			}
-			break;
-		case SECSPEC_DamageLavaWimpy:
-			if (Level.XLevel.Time - LastSectorDamageTime >= 16.0 / 35.0)
-			{
-				LastSectorDamageTime = Level.XLevel.Time;
-				Actor(MO).Damage(none, none, 5, 'Fire');
-				Actor(MO).HitFloorType();
-			}
-			break;
-		case SECSPEC_DamageLavaHefty:
-			if (Level.XLevel.Time - LastSectorDamageTime >= 16.0 / 35.0)
-			{
-				LastSectorDamageTime = Level.XLevel.Time;
-				Actor(MO).Damage(none, none, 8, 'Fire');
-				Actor(MO).HitFloorType();
-			}
-			break;
-		case SECSPEC_ScrollEastLavaDamage:
-			ThrustPlayer(0.0, 1024.0, deltaTime);
-			if (Level.XLevel.Time - LastSectorDamageTime >= 16.0 / 35.0)
-			{
-				LastSectorDamageTime = Level.XLevel.Time;
-				Actor(MO).Damage(none, none, 5, 'Fire');
-				Actor(MO).HitFloorType();
-			}
-			break;
-		case SECSPEC_DamageHazard:
-			if (!IronFeet)
-				HazardTime += 2.0 * deltaTime;
-			break;
-		case SECSPEC_DamageInstantDeath:
-			Actor(MO).Damage(none, none, 999);
-			break;
-		case SECSPEC_DamageSuperHazard:
-			if (!IronFeet)
-				HazardTime += 4.0 * deltaTime;
-			break;
-		}
-	}
-	else
-	{
-		//	Extended sector damage type.
-		switch (MO.Sector->special & SECSPEC_DAMAGE_MASK)
-		{
-		case 0x0100:
-			if (!IronFeet &&
-				Level.XLevel.Time - LastSectorDamageTime >= 32.0 / 35.0)
-			{
-				LastSectorDamageTime = Level.XLevel.Time;
-				Actor(MO).Damage(none, none, 5);
-			}
-			break;
-		case 0x0200:
-			if (!IronFeet &&
-				Level.XLevel.Time - LastSectorDamageTime >= 32.0 / 35.0)
-			{
-				LastSectorDamageTime = Level.XLevel.Time;
-				Actor(MO).Damage(none, none, 10);
-			}
-			break;
-		case 0x0300:
-			if ((!IronFeet || (P_Random() < 5)) &&
-				Level.XLevel.Time - LastSectorDamageTime >= 32.0 / 35.0)
-			{
-				LastSectorDamageTime = Level.XLevel.Time;
-				Actor(MO).Damage(none, none, 20);
-			}
-			break;
-		}
-	}
-
-	//	Apply any customizable damage
-	if (MO.Sector->Damage)
-	{
-		if (MO.Sector->Damage < 20)
-		{
-			if (!IronFeet &&
-				Level.XLevel.Time - LastSectorDamageTime >= 32.0 / 35.0)
-			{
-				LastSectorDamageTime = Level.XLevel.Time;
-				Actor(MO).Damage(none, none, MO.Sector->Damage);
-			}
-		}
-		else if (MO.Sector->Damage < 50)
-		{
-			if ((!IronFeet || (P_Random() < 5)) &&
-				Level.XLevel.Time - LastSectorDamageTime >= 32.0 / 35.0)
-			{
-				LastSectorDamageTime = Level.XLevel.Time;
-				Actor(MO).Damage(none, none, MO.Sector->Damage);
-			}
-		}
-		else if (Level.XLevel.Time - LastSectorDamageTime >= 1.0 / 35.0)
-		{
-			LastSectorDamageTime = Level.XLevel.Time;
-			Actor(MO).Damage(none, none, MO.Sector->Damage);
-		}
-	}
-
-	switch (MO.Sector->special & 255)
-	{
-	case SECSPEC_ScrollCurrent:
-		speed = itof((MO.Sector->tag - 100) % 10) / 16.0 * 35.0;
-		finean = itof((MO.Sector->tag - 100) / 10) * 45.0;
-		MO.Velocity.x += speed * cos(finean);
-		MO.Velocity.y += speed * sin(finean);
-		break;
-	case SECSPEC_ScrollNorthSlow:
-	case SECSPEC_ScrollNorthMedium:
-	case SECSPEC_ScrollNorthFast:
-		ThrustPlayer(90.0, MainGameInfo(Level.Game).pushTab[(MO.Sector->special &
-			SECSPEC_BASE_MASK) - SECSPEC_ScrollNorthSlow], deltaTime);
-		break;
-	case SECSPEC_ScrollEastSlow:
-	case SECSPEC_ScrollEastMedium:
-	case SECSPEC_ScrollEastFast:
-		ThrustPlayer(0.0, MainGameInfo(Level.Game).pushTab[(MO.Sector->special &
-			SECSPEC_BASE_MASK) - SECSPEC_ScrollEastSlow], deltaTime);
-		break;
-	case SECSPEC_ScrollSouthSlow:
-	case SECSPEC_ScrollSouthMedium:
-	case SECSPEC_ScrollSouthFast:
-		ThrustPlayer(270.0, MainGameInfo(Level.Game).pushTab[(MO.Sector->special &
-			SECSPEC_BASE_MASK) - SECSPEC_ScrollSouthSlow], deltaTime);
-		break;
-	case SECSPEC_ScrollWestSlow:
-	case SECSPEC_ScrollWestMedium:
-	case SECSPEC_ScrollWestFast:
-		ThrustPlayer(180.0, MainGameInfo(Level.Game).pushTab[(MO.Sector->special &
-			SECSPEC_BASE_MASK) - SECSPEC_ScrollWestSlow], deltaTime);
-		break;
-	case SECSPEC_ScrollNorthWestSlow:
-	case SECSPEC_ScrollNorthWestMedium:
-	case SECSPEC_ScrollNorthWestFast:
-		ThrustPlayer(135.0, MainGameInfo(Level.Game).pushTab[(MO.Sector->special &
-			SECSPEC_BASE_MASK) - SECSPEC_ScrollNorthWestSlow], deltaTime);
-		break;
-	case SECSPEC_ScrollNorthEastSlow:
-	case SECSPEC_ScrollNorthEastMedium:
-	case SECSPEC_ScrollNorthEastFast:
-		ThrustPlayer(45.0, MainGameInfo(Level.Game).pushTab[(MO.Sector->special &
-			SECSPEC_BASE_MASK) - SECSPEC_ScrollNorthEastSlow], deltaTime);
-		break;
-	case SECSPEC_ScrollSouthEastSlow:
-	case SECSPEC_ScrollSouthEastMedium:
-	case SECSPEC_ScrollSouthEastFast:
-		ThrustPlayer(315.0, MainGameInfo(Level.Game).pushTab[(MO.Sector->special &
-			SECSPEC_BASE_MASK) - SECSPEC_ScrollSouthEastSlow], deltaTime);
-		break;
-	case SECSPEC_ScrollSouthWestSlow:
-	case SECSPEC_ScrollSouthWestMedium:
-	case SECSPEC_ScrollSouthWestFast:
-		ThrustPlayer(225.0, MainGameInfo(Level.Game).pushTab[(MO.Sector->special &
-			SECSPEC_BASE_MASK) - SECSPEC_ScrollSouthWestSlow], deltaTime);
-		break;
-	case SECSPEC_ScrollEast5:
-	case SECSPEC_ScrollEast10:
-	case SECSPEC_ScrollEast25:
-	case SECSPEC_ScrollEast30:
-	case SECSPEC_ScrollEast35:
-		ThrustPlayer(0.0, MainGameInfo(Level.Game).pushTab[(MO.Sector->special &
-			SECSPEC_BASE_MASK) - SECSPEC_ScrollEast5], deltaTime);
-		break;
-	case SECSPEC_ScrollNorth5:
-	case SECSPEC_ScrollNorth10:
-	case SECSPEC_ScrollNorth25:
-	case SECSPEC_ScrollNorth30:
-	case SECSPEC_ScrollNorth35:
-		ThrustPlayer(90.0, MainGameInfo(Level.Game).pushTab[(MO.Sector->special &
-			SECSPEC_BASE_MASK) - SECSPEC_ScrollNorth5], deltaTime);
-		break;
-	case SECSPEC_ScrollSouth5:
-	case SECSPEC_ScrollSouth10:
-	case SECSPEC_ScrollSouth25:
-	case SECSPEC_ScrollSouth30:
-	case SECSPEC_ScrollSouth35:
-		ThrustPlayer(270.0, MainGameInfo(Level.Game).pushTab[(MO.Sector->special &
-			SECSPEC_BASE_MASK) - SECSPEC_ScrollSouth5], deltaTime);
-		break;
-	case SECSPEC_ScrollWest5:
-	case SECSPEC_ScrollWest10:
-	case SECSPEC_ScrollWest25:
-	case SECSPEC_ScrollWest30:
-	case SECSPEC_ScrollWest35:
-		ThrustPlayer(180.0, MainGameInfo(Level.Game).pushTab[(MO.Sector->special &
-			SECSPEC_BASE_MASK) - SECSPEC_ScrollWest5], deltaTime);
-		break;
-	};
-}
-
-//==========================================================================
-//
-//  PlayerInContents
-//
-//==========================================================================
-
-void PlayerInContents(float deltaTime)
-{
-	if (!MO.WaterLevel)
-	{
-		return;
-	}
-
-	//	Search for iron feet power. Any subclass will do.
-	Inventory IronFeet = EntityEx(MO).Inventory;
-	while (IronFeet)
-	{
-		if (PowerIronFeet(IronFeet))
-		{
-			break;
-		}
-		IronFeet = IronFeet.Inventory;
-	}
-
-	switch (MO.WaterType)
-	{
-	case CONTENTS_LAVA:
-		if (!IronFeet &&
-			Level.XLevel.Time - LastSectorDamageTime >= 32.0 / 35.0)
-		{
-			LastSectorDamageTime = Level.XLevel.Time;
-			Actor(MO).Damage(none, none, 10, 'Fire');
-		}
-		break;
-
-	case CONTENTS_NUKAGE:
-		if (!IronFeet &&
-			Level.XLevel.Time - LastSectorDamageTime >= 32.0 / 35.0)
-		{
-			LastSectorDamageTime = Level.XLevel.Time;
-			Actor(MO).Damage(none, none, 5);
-		}
-		break;
-
-	case CONTENTS_SLIME:
-		if (!IronFeet &&
-			Level.XLevel.Time - LastSectorDamageTime >= 32.0 / 35.0)
-		{
-			LastSectorDamageTime = Level.XLevel.Time;
-			Actor(MO).Damage(none, none, 10);
-		}
-		break;
-
-	case CONTENTS_HELLSLIME:
-		if ((!IronFeet || (P_Random() < 5)) &&
-			Level.XLevel.Time - LastSectorDamageTime >= 32.0 / 35.0)
-		{
-			LastSectorDamageTime = Level.XLevel.Time;
-			Actor(MO).Damage(none, none, 20);
-		}
-		break;
-
-	case CONTENTS_SLUDGE:
-		if (!IronFeet &&
-			Level.XLevel.Time - LastSectorDamageTime >= 32.0 / 35.0)
-		{
-			LastSectorDamageTime = Level.XLevel.Time;
-			Actor(MO).Damage(none, none, 4);
-		}
-		break;
-
-	case CONTENTS_HAZARD:
-		if (!IronFeet)
-		{
-			HazardTime += 2.0 * deltaTime;
-		}
-		break;
-	}
-}
-
-//==========================================================================
-//
 //  DeathPlayerTick
 //
 //  Fall on your face when dying. Decrease POV height to floor height.
@@ -1265,36 +675,6 @@ void DeathPlayerTick(float deltaTime)
 
 //==========================================================================
 //
-//  PrevWeapon
-//
-//==========================================================================
-
-void PrevWeapon()
-{
-	Weapon Best = GetPrevWeapon(ReadyWeapon, true);
-	if (Best && Best != ReadyWeapon)
-	{
-		PendingWeapon = Best;
-	}
-}
-
-//==========================================================================
-//
-//  NextWeapon
-//
-//==========================================================================
-
-void NextWeapon()
-{
-	Weapon Best = GetNextWeapon(ReadyWeapon, true);
-	if (Best && Best != ReadyWeapon)
-	{
-		PendingWeapon = Best;
-	}
-}
-
-//==========================================================================
-//
 //  PlayerImpulse
 //
 //==========================================================================
@@ -1308,7 +688,7 @@ void PlayerImpulse()
 
 	if (impulse <= 7)
 	{
-		ChangeWeapon(impulse - 1);
+		ChangeWeapon(impulse);
 	}
 	else if (impulse == 16)
 	{
@@ -1765,149 +1145,6 @@ void SetViewPos()
 
 //==========================================================================
 //
-//  SetPlayerRunState
-//
-//==========================================================================
-
-void SetPlayerRunState()
-{
-	if (MO.State == Actor(MO).IdleState)
-	{
-		MO.SetState(Actor(MO).SeeState);
-	}
-}
-
-//***************************************************************************
-//
-//  WEAPON UTILITES
-//
-//***************************************************************************
-
-//==========================================================================
-//
-//	SetWeapon
-//
-//==========================================================================
-
-void SetWeapon(Weapon NewWeapon)
-{
-	ReadyWeapon = NewWeapon;
-	PendingWeapon = none;
-	ViewEnt = ReadyWeapon;
-	MO.ModelVersion = ReadyWeapon.PlayerModelVersion;
-}
-
-//===========================================================================
-//
-//  BringUpWeapon
-//
-//  Starts bringing the pending weapon up from the bottom of the screen.
-// Uses player
-//
-//===========================================================================
-
-void BringUpWeapon()
-{
-	if (ReadyWeapon.UpSound)
-	{
-		MO.PlaySound(ReadyWeapon.UpSound, CHAN_WEAPON);
-	}
-
-	PendingWeapon = none;
-	ViewStates[ps_weapon].SY = Weapon::WEAPONBOTTOM;
-
-	SetViewState(ps_weapon, ReadyWeapon.UpState);
-	MO.ModelVersion = ReadyWeapon.PlayerModelVersion;
-}
-
-//==========================================================================
-//
-//  ChangeWeapon
-//
-//  The actual changing of the weapon is done when the weapon psprite can
-// do it (read: not in the middle of an attack).
-//
-//==========================================================================
-
-void ChangeWeapon(int newweapon)
-{
-	Weapon NewWpn = GetSlotChangeWeapon(newweapon + 1, ReadyWeapon, false);
-	if (NewWpn && NewWpn != ReadyWeapon)
-	{
-		PendingWeapon = NewWpn;
-	}
-}
-
-//===========================================================================
-//
-//  DropWeapon
-//
-//  Player died, so put the weapon away.
-//
-//===========================================================================
-
-void DropWeapon()
-{
-	SetViewState(ps_weapon, Weapon(ViewEnt).DownState);
-}
-
-//===========================================================================
-//
-//  SetupPsprites
-//
-//  Called at start of level for each player.
-//
-//===========================================================================
-
-void SetupPsprites()
-{
-	int i;
-
-	// remove all psprites
-	for (i = 0; i < NUMPSPRITES; i++)
-	{
-		SetViewState(i, none);
-	}
-
-	// spawn the gun
-	BringUpWeapon();
-}
-
-//==========================================================================
-//
-//  MovePsprites
-//
-//  Called every tic by player thinking routine.
-//
-//==========================================================================
-
-void MovePsprites(float deltaTime)
-{
-	AdvanceViewStates(deltaTime);
-	ViewStates[ps_flash].SX = ViewStates[ps_weapon].SX;
-	ViewStates[ps_flash].SY = ViewStates[ps_weapon].SY;
-}
-
-//===========================================================================
-//
-//  FireWeapon
-//
-//===========================================================================
-
-void FireWeapon()
-{
-	if (!ReadyWeapon.CheckAmmo(true))
-	{
-		return;
-	}
-
-	MO.SetState(Actor(MO).MissileState);
-	SetViewState(ps_weapon, Weapon(ViewEnt).AttackState);
-	DoomLevelInfo(Level).NoiseAlert(Actor(MO), Actor(MO));
-}
-
-//==========================================================================
-//
 //  P_UseLines
 //
 //  Looks for special lines in front of the player to activate.
@@ -1922,23 +1159,61 @@ void P_UseLines()
 	float y2;
 	TVec useDir;
 	intercept_t* in;
+	TVec hit_point;
+	opening_t *open;
 
 	AngleVector(&MO.Angles, &useDir);
 	x1 = MO.Origin.x;
 	y1 = MO.Origin.y;
+
+	x2 = x1 + USETHINGRANGE * useDir.x;
+	y2 = y1 + USETHINGRANGE * useDir.y;
+	foreach MO.PathTraverse(in, x1, y1, x2, y2, PT_ADDLINES | PT_ADDTHINGS)
+	{
+		if (!in->bIsALine)
+		{
+			//	Check height.
+			if (MO.Origin.z >= in->Thing.Origin.z + in->Thing.Height ||
+				MO.Origin.z + MO.Height <= in->Thing.Origin.z)
+			{
+				continue;
+			}
+			if (LineSpecialLevelInfo(Level).StartConversation(Actor(MO), Actor(in->Thing)))
+			{
+				break;
+			}
+			continue;
+		}
+
+		if (!(in->line->flags & ML_TWOSIDED))
+			break;	// stop
+
+		hit_point = MO.Origin + (USETHINGRANGE * in->frac) * useDir;
+		open = LineOpenings(in->line, hit_point);
+		open = FindOpening(open, hit_point.z, hit_point.z + MO.Height);
+		if (!open || open->range < 1.0)
+		{
+			// can't use through a wall
+			break;
+		}
+		continue;
+	}
+
 	x2 = x1 + USERANGE * useDir.x;
 	y2 = y1 + USERANGE * useDir.y;
 	foreach MO.PathTraverse(in, x1, y1, x2, y2, PT_ADDLINES)
 	{
-		if (!in->line->special || (Level.GET_SPAC(in->line->flags) != SPAC_USE &&
-			Level.GET_SPAC(in->line->flags) != SPAC_USETHROUGH))
-		{
-			TVec hit_point;
-			opening_t *open;
+		line_t* line;
+		float pheight;
 
+		line = in->line;
+		if (!line->special || (Level.GET_SPAC(line->flags) != SPAC_USE &&
+			Level.GET_SPAC(line->flags) != SPAC_USETHROUGH))
+		{
 			hit_point = MO.Origin + (USERANGE * in->frac) * useDir;
-			open = LineOpenings(in->line, hit_point);
-			open = FindOpening(open, hit_point.z, hit_point.z + MO.Height);
+			open = LineOpenings(line, hit_point);
+			open = FindOpening(open, hit_point.z,
+				hit_point.z + MO.Height);
 			if (!open)
 			{
 				MO.PlaySound('*usefail', CHAN_VOICE);

@@ -4452,6 +4452,17 @@ class<Inventory> GetDehackedItemType(EntityEx Ent)
 	return none;
 }
 
+//==========================================================================
+//
+//  StartConversation
+//
+//==========================================================================
+
+bool StartConversation(EntityEx Speaker, EntityEx SpeakingTo)
+{
+	return false;
+}
+
 defaultproperties
 {
 	ExtPlayersBase = 4001;

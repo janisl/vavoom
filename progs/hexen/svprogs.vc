@@ -26,32 +26,4 @@
 import shared;
 import linespec;
 
-// CONSTANTS ---------------------------------------------------------------
-
-enum
-{
-	CONTENTS_EMPTY,
-	CONTENTS_WATER,
-	CONTENTS_LAVA,
-	CONTENTS_NUKAGE,
-	CONTENTS_SLIME,
-	CONTENTS_HELLSLIME,
-	CONTENTS_BLOOD,
-	CONTENTS_SLUDGE,
-	CONTENTS_HAZARD,
-
-	CONTENTS_SOLID = -1
-};
-
-enum
-{
-	CSHIFT_Contents,
-	CSHIFT_Damage,
-	CSHIFT_Bonus,
-	CSHIFT_Poison,
-	CSHIFT_Weapon
-};
-
-// TYPES -------------------------------------------------------------------
-
 #include "game/classes.vc"
