@@ -1672,13 +1672,17 @@ void VParser::ParseClass()
 		{
 			Lex.Expect(TK_LParen, ERR_MISSING_LPAREN);
 			VExpression* e = ParseExpression();
-			if (e)
+			if (!e)
 			{
-				Class->MobjInfoExpressions.Append(e);
+				ParseError(Lex.Location, "Constant expression expected");
+			}
+			else if (Class->MobjInfoExpr)
+			{
+				ParseError(Lex.Location, "Only one Editor ID allowed");
 			}
 			else
 			{
-				ParseError(Lex.Location, "Constant expression expected");
+				Class->MobjInfoExpr = e;
 			}
 			Lex.Expect(TK_RParen, ERR_MISSING_RPAREN);
 		}
@@ -1686,13 +1690,35 @@ void VParser::ParseClass()
 		{
 			Lex.Expect(TK_LParen, ERR_MISSING_LPAREN);
 			VExpression* e = ParseExpression();
-			if (e)
+			if (!e)
 			{
-				Class->ScriptIdExpressions.Append(e);
+				ParseError(Lex.Location, "Constant expression expected");
+			}
+			else if (Class->ScriptIdExpr)
+			{
+				ParseError(Lex.Location, "Only one script ID allowed");
 			}
 			else
 			{
+				Class->ScriptIdExpr = e;
+			}
+			Lex.Expect(TK_RParen, ERR_MISSING_RPAREN);
+		}
+		else if (Lex.Check(TK_Game))
+		{
+			Lex.Expect(TK_LParen, ERR_MISSING_LPAREN);
+			VExpression* e = ParseExpression();
+			if (!e)
+			{
 				ParseError(Lex.Location, "Constant expression expected");
+			}
+			else if (Class->GameExpr)
+			{
+				ParseError(Lex.Location, "Only one game expression allowed");
+			}
+			else
+			{
+				Class->GameExpr = e;
 			}
 			Lex.Expect(TK_RParen, ERR_MISSING_RPAREN);
 		}

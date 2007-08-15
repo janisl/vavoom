@@ -451,6 +451,7 @@ public:
 struct mobjinfo_t
 {
 	int			DoomEdNum;
+	int			GameFilter;
 	VClass*		Class;
 };
 
@@ -481,8 +482,9 @@ public:
 	VName					ParentClassName;
 	TLocation				ParentClassLoc;
 	int						Modifiers;
-	TArray<VExpression*>	MobjInfoExpressions;
-	TArray<VExpression*>	ScriptIdExpressions;
+	VExpression*			GameExpr;
+	VExpression*			MobjInfoExpr;
+	VExpression*			ScriptIdExpr;
 	TArray<VStruct*>		Structs;
 	TArray<VConstant*>		Constants;
 	TArray<VProperty*>		Properties;

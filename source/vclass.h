@@ -350,6 +350,7 @@ public:
 struct mobjinfo_t
 {
 	vint32		doomednum;
+	vint32		GameFilter;
 	VClass*		class_id;
 
 	friend VStream& operator<<(VStream&, mobjinfo_t&);

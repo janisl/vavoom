@@ -73,6 +73,7 @@ const char*			VLexer::TokenNames[] =
 	"float",
 	"for",
 	"foreach",
+	"game",
 	"get",
 	"if",
 	"import",
@@ -1234,7 +1235,11 @@ void VLexer::ProcessLetterToken(bool CheckKeywords)
 		break;
 
 	case 'g':
-		if (s[1] == 'e' && s[2] == 't' && s[3] == 0)
+		if (s[1] == 'a' && s[2] == 'm' && s[3] == 'e' && s[4] == 0)
+		{
+			Token = TK_Game;
+		}
+		else if (s[1] == 'e' && s[2] == 't' && s[3] == 0)
 		{
 			Token = TK_Get;
 		}

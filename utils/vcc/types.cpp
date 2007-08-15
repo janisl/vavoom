@@ -2236,6 +2236,9 @@ VClass::VClass(VName InName, VMemberBase* InOuter, TLocation InLoc)
 , DefaultProperties(NULL)
 , ParentClassName(NAME_None)
 , Modifiers(0)
+, GameExpr(NULL)
+, MobjInfoExpr(NULL)
+, ScriptIdExpr(NULL)
 , Defined(true)
 {
 }
@@ -2248,12 +2251,10 @@ VClass::VClass(VName InName, VMemberBase* InOuter, TLocation InLoc)
 
 VClass::~VClass()
 {
-	for (int i = 0; i < MobjInfoExpressions.Num(); i++)
-		if (MobjInfoExpressions[i])
-			delete MobjInfoExpressions[i];
-	for (int i = 0; i < ScriptIdExpressions.Num(); i++)
-		if (ScriptIdExpressions[i])
-			delete ScriptIdExpressions[i];
+	if (MobjInfoExpr)
+		delete MobjInfoExpr;
+	if (ScriptIdExpr)
+		delete ScriptIdExpr;
 }
 
 //==========================================================================
@@ -2531,39 +2532,58 @@ bool VClass::Define()
 		}
 	}
 
-	for (int i = 0; i < MobjInfoExpressions.Num(); i++)
+	int GameFilter = 0;
+	if (GameExpr)
 	{
 		VEmitContext ec(this);
-		MobjInfoExpressions[i] = MobjInfoExpressions[i]->Resolve(ec);
-		if (!MobjInfoExpressions[i])
+		GameExpr = GameExpr->Resolve(ec);
+		if (!GameExpr)
 		{
 			return false;
 		}
-		if (!MobjInfoExpressions[i]->IsIntConst())
+		if (!GameExpr->IsIntConst())
 		{
-			ParseError(MobjInfoExpressions[i]->Loc, "Integer constant expected");
+			ParseError(GameExpr->Loc, "Integer constant expected");
+			return false;
+		}
+		GameFilter = GameExpr->GetIntConst();
+	}
+
+	if (MobjInfoExpr)
+	{
+		VEmitContext ec(this);
+		MobjInfoExpr = MobjInfoExpr->Resolve(ec);
+		if (!MobjInfoExpr)
+		{
+			return false;
+		}
+		if (!MobjInfoExpr->IsIntConst())
+		{
+			ParseError(MobjInfoExpr->Loc, "Integer constant expected");
 			return false;
 		}
 		mobjinfo_t& mi = ec.Package->MobjInfo.Alloc();
-		mi.DoomEdNum = MobjInfoExpressions[i]->GetIntConst();
+		mi.DoomEdNum = MobjInfoExpr->GetIntConst();
+		mi.GameFilter = GameFilter;
 		mi.Class = this;
 	}
 
-	for (int i = 0; i < ScriptIdExpressions.Num(); i++)
+	if (ScriptIdExpr)
 	{
 		VEmitContext ec(this);
-		ScriptIdExpressions[i] = ScriptIdExpressions[i]->Resolve(ec);
-		if (!ScriptIdExpressions[i])
+		ScriptIdExpr = ScriptIdExpr->Resolve(ec);
+		if (!ScriptIdExpr)
 		{
 			return false;
 		}
-		if (!ScriptIdExpressions[i]->IsIntConst())
+		if (!ScriptIdExpr->IsIntConst())
 		{
-			ParseError(ScriptIdExpressions[i]->Loc, "Integer constant expected");
+			ParseError(ScriptIdExpr->Loc, "Integer constant expected");
 			return false;
 		}
 		mobjinfo_t& mi = ec.Package->ScriptIds.Alloc();
-		mi.DoomEdNum = ScriptIdExpressions[i]->GetIntConst();
+		mi.DoomEdNum = ScriptIdExpr->GetIntConst();
+		mi.GameFilter = GameFilter;
 		mi.Class = this;
 	}
 
@@ -2988,6 +3008,7 @@ void VPackage::WriteObject(const char *name)
 	for (i = 0; i < MobjInfo.Num(); i++)
 	{
 		Writer << STRM_INDEX(MobjInfo[i].DoomEdNum)
+			<< STRM_INDEX(MobjInfo[i].GameFilter)
 			<< MobjInfo[i].Class;
 	}
 
@@ -2996,6 +3017,7 @@ void VPackage::WriteObject(const char *name)
 	for (i = 0; i < ScriptIds.Num(); i++)
 	{
 		Writer << STRM_INDEX(ScriptIds[i].DoomEdNum)
+			<< STRM_INDEX(ScriptIds[i].GameFilter)
 			<< ScriptIds[i].Class;
 	}
 

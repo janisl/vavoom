@@ -62,6 +62,7 @@ enum EToken
 	TK_Float,
 	TK_For,
 	TK_Foreach,
+	TK_Game,
 	TK_Get,
 	TK_If,
 	TK_Import,

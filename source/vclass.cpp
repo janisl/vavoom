@@ -2489,6 +2489,7 @@ bool VStruct::NetSerialiseObject(VStream& Strm, VNetObjectsMap* Map,
 VStream& operator<<(VStream& Strm, mobjinfo_t& MI)
 {
 	return Strm << STRM_INDEX(MI.doomednum)
+		<< STRM_INDEX(MI.GameFilter)
 		<< MI.class_id;
 }
 
