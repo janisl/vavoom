@@ -25,6 +25,19 @@
 
 class ActivatedTimeBomb : Actor;
 
+//==========================================================================
+//
+//	PreExplode
+//
+//==========================================================================
+
+void PreExplode()
+{
+	// Time Bombs
+	Origin.z += 32.0;
+	Alpha = 1.0;
+}
+
 __states__
 {
 	S_FIREBOMB1('FBMB', 0, 10.0 / 35.0, S_FIREBOMB2) = none

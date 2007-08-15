@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class SpectralLightningSpot : Effect;
+class SpectralLightningSpot : SpectralLightningBase;
 
 //==========================================================================
 //
@@ -83,6 +83,9 @@ defaultproperties
 	Speed = 630.0;
 	ReactionCount = 70;
 	Alpha = 0.333;
+	bNoBlockmap = true;
+	bNoGravity = true;
+	bNoPassMobj = true;
 	bNoGravity = false;
 	bNoBlockMonst = true;
 	IdleState = S_SIGIL_FLOOR_1;

@@ -30,6 +30,17 @@ state ExtraState;
 
 //==========================================================================
 //
+//	PreExplode
+//
+//==========================================================================
+
+void PreExplode()
+{
+	Alpha = 0.5;
+}
+
+//==========================================================================
+//
 //  A_BrainExplode
 //
 //  Brain explosions.
@@ -79,6 +90,7 @@ defaultproperties
 	bActivateImpact = true;
 	bNoTeleport = true;
 	bRandomise = true;
+	bExplodeParticles = true;
 	IdleState = S_ROCKET;
 	DeathState = S_EXPLODE1;
 	ExtraState = S_BRAINEXPLODE1;

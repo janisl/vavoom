@@ -184,6 +184,7 @@ bool bFullVolActive;	//	Play active sound at full volume
 bool bDehackedSpecial;	// Old style special handling
 bool bUnknown2;			//8000000
 bool bPuffParticles;	// Puff spawns particles
+bool bExplodeParticles;	// Use particle explosion
 
 //  Params
 float			Speed;
@@ -5661,6 +5662,26 @@ void SetDormant()
 {
 	bDormant = true;
 	StateTime = -1.0;
+}
+
+//==========================================================================
+//
+//	PreExplode
+//
+//==========================================================================
+
+void PreExplode()
+{
+}
+
+//==========================================================================
+//
+//	GetExplodeParms
+//
+//==========================================================================
+
+void GetExplodeParms(out int damage, out float distance, out byte damageSelf)
+{
 }
 
 float GetBaseViewHeight()

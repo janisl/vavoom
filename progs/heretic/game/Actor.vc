@@ -417,46 +417,6 @@ final void A_PlayerScream()
 	}
 }
 
-//==========================================================================
-//
-//  A_Explode
-//
-//  Handles a bunch of exploding things.
-//
-//==========================================================================
-
-final void A_Explode()
-{
-	int damage;
-
-	damage = 128;
-	if (Class == ActivatedTimeBomb)
-	{
-		// Time Bombs
-		Origin.z += 32.0;
-		Alpha = 1.0;
-	}
-	else if (Class == MinotaurFX2)
-	{
-		// Minotaur floor fire
-		damage = 24;
-	}
-	else if (Class == Sorcerer2FX1)
-	{
-		// D'Sparil missile
-		damage = 80 + (P_Random() & 31);
-	}
-	RadiusAttack(Target, damage, itof(damage), true);
-	if (Origin.z <= FloorZ + itof(damage))
-	{
-		HitFloorType();
-	}
-	if (ExplodeEffect)
-	{
-		SendExplosion(ExplodeEffect, Origin);
-	}
-}
-
 __states__
 {
 	S_FREETARGMOBJ('ACLO', 4, 30.0, none) = A_FreeTargMobj

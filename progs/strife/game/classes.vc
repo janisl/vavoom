@@ -66,6 +66,7 @@
 #include "SoundSequenceSlot.vc"
 
 #include "PunchDagger.vc"
+#include "StrifeZap1.vc"
 #include "ElectricBolt.vc"
 #include "PoisonBolt.vc"
 #include "MiniMissile.vc"
@@ -76,6 +77,7 @@
 #include "MaulerPuff.vc"
 #include "MaulerTorpedoWave.vc"
 #include "MaulerTorpedo.vc"
+#include "SpectralLightningBase.vc"
 #include "SpectralLightningH1.vc"
 #include "SpectralLightningBall1.vc"
 #include "SpectralLightningBigBall1.vc"
@@ -83,6 +85,7 @@
 #include "SpectralLightningBigV1.vc"
 #include "SpectralLightningHTail.vc"
 #include "SpectralLightningSpot.vc"
+#include "Bang4Cloud.vc"
 
 #include "StrifeKey.vc"
 #include "MedPatch.vc"

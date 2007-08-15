@@ -26,6 +26,18 @@
 class Reaver : Pawn
 	__mobjinfo__(3001);
 
+//==========================================================================
+//
+//	GetExplodeParms
+//
+//==========================================================================
+
+void GetExplodeParms(out int damage, out float distance, out byte damageSelf)
+{
+	damage = 32;
+	distance = 32.0;
+}
+
 __states__
 {
 	S_REAVER_LOOK1('ROB1', 0, 10.0 / 35.0, S_REAVER_LOOK2) = A_Look
@@ -52,14 +64,14 @@ __states__
 	S_REAVER_DIE5('ROB1', 13 | FF_FULLBRIGHT, 5.0 / 35.0, S_REAVER_DIE6) = none
 	S_REAVER_DIE6('ROB1', 14 | FF_FULLBRIGHT, 5.0 / 35.0, S_REAVER_DIE7) = none
 	S_REAVER_DIE7('ROB1', 15 | FF_FULLBRIGHT, 5.0 / 35.0, S_REAVER_DIE8) = none
-	S_REAVER_DIE8('ROB1', 16 | FF_FULLBRIGHT, 6.0 / 35.0, S_REAVER_DIE9) = A_Explode32
+	S_REAVER_DIE8('ROB1', 16 | FF_FULLBRIGHT, 6.0 / 35.0, S_REAVER_DIE9) = A_ExplodeAndAlert
 	S_REAVER_DIE9('ROB1', 17, -1.0, none) = none
 	S_REAVER_XDIE1('ROB1', 11 | FF_FULLBRIGHT, 5.0 / 35.0, S_REAVER_XDIE2) = A_XDying
 	S_REAVER_XDIE2('ROB1', 12 | FF_FULLBRIGHT, 5.0 / 35.0, S_REAVER_XDIE3) = A_XXScream
 	S_REAVER_XDIE3('ROB1', 13 | FF_FULLBRIGHT, 5.0 / 35.0, S_REAVER_XDIE4) = A_XDying
 	S_REAVER_XDIE4('ROB1', 14 | FF_FULLBRIGHT, 5.0 / 35.0, S_REAVER_XDIE5) = A_Fall
 	S_REAVER_XDIE5('ROB1', 15 | FF_FULLBRIGHT, 5.0 / 35.0, S_REAVER_XDIE6) = A_XDying
-	S_REAVER_XDIE6('ROB1', 16 | FF_FULLBRIGHT, 5.0 / 35.0, S_REAVER_XDIE7) = A_Explode32
+	S_REAVER_XDIE6('ROB1', 16 | FF_FULLBRIGHT, 5.0 / 35.0, S_REAVER_XDIE7) = A_ExplodeAndAlert
 	S_REAVER_XDIE7('ROB1', 17, -1.0, none) = none
 }
 

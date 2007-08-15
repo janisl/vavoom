@@ -25,9 +25,21 @@
 
 class ProgrammerBase : Effect;
 
+//==========================================================================
+//
+//	GetExplodeParms
+//
+//==========================================================================
+
+void GetExplodeParms(out int damage, out float distance, out byte damageSelf)
+{
+	damage = 32;
+	distance = 32.0;
+}
+
 __states__
 {
-	S_PROGRAMMER_BASE_1('BASE', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_PROGRAMMER_BASE_2) = A_Explode32
+	S_PROGRAMMER_BASE_1('BASE', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_PROGRAMMER_BASE_2) = A_ExplodeAndAlert
 	S_PROGRAMMER_BASE_2('BASE', 1 | FF_FULLBRIGHT, 5.0 / 35.0, S_PROGRAMMER_BASE_3) = none
 	S_PROGRAMMER_BASE_3('BASE', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_PROGRAMMER_BASE_4) = none
 	S_PROGRAMMER_BASE_4('BASE', 3 | FF_FULLBRIGHT, 5.0 / 35.0, S_PROGRAMMER_BASE_5) = none

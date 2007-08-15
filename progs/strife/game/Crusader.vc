@@ -54,6 +54,18 @@ void NoBlockingSet()
 
 //==========================================================================
 //
+//	GetExplodeParms
+//
+//==========================================================================
+
+void GetExplodeParms(out int damage, out float distance, out byte damageSelf)
+{
+	damage = 64;
+	distance = 64.0;
+}
+
+//==========================================================================
+//
 //	A_CrusaderChoose
 //
 //==========================================================================
@@ -161,12 +173,12 @@ __states__
 	S_CRUSADER_DIE1('ROB2', 6, 3.0 / 35.0, S_CRUSADER_DIE2) = A_Scream
 	S_CRUSADER_DIE2('ROB2', 7, 5.0 / 35.0, S_CRUSADER_DIE3) = A_XDying
 	S_CRUSADER_DIE3('ROB2', 8 | FF_FULLBRIGHT, 4.0 / 35.0, S_CRUSADER_DIE4) = A_XDying
-	S_CRUSADER_DIE4('ROB2', 9 | FF_FULLBRIGHT, 4.0 / 35.0, S_CRUSADER_DIE5) = A_Explode
+	S_CRUSADER_DIE4('ROB2', 9 | FF_FULLBRIGHT, 4.0 / 35.0, S_CRUSADER_DIE5) = A_ExplodeAndAlert
 	S_CRUSADER_DIE5('ROB2', 10 | FF_FULLBRIGHT, 4.0 / 35.0, S_CRUSADER_DIE6) = A_Fall
-	S_CRUSADER_DIE6('ROB2', 11, 4.0 / 35.0, S_CRUSADER_DIE7) = A_Explode
+	S_CRUSADER_DIE6('ROB2', 11, 4.0 / 35.0, S_CRUSADER_DIE7) = A_ExplodeAndAlert
 	S_CRUSADER_DIE7('ROB2', 12, 4.0 / 35.0, S_CRUSADER_DIE8) = A_XDying
 	S_CRUSADER_DIE8('ROB2', 13, 4.0 / 35.0, S_CRUSADER_DIE9) = A_XDying
-	S_CRUSADER_DIE9('ROB2', 14, 4.0 / 35.0, S_CRUSADER_DIE10) = A_Explode
+	S_CRUSADER_DIE9('ROB2', 14, 4.0 / 35.0, S_CRUSADER_DIE10) = A_ExplodeAndAlert
 	S_CRUSADER_DIE10('ROB2', 15, -1.0, none) = A_BossDeath
 }
 

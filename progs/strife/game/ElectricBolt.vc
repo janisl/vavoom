@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ElectricBolt : Projectile;
+class ElectricBolt : StrifeZap1;
 
 __states__
 {
@@ -37,6 +37,13 @@ defaultproperties
 	Speed = 1050.0;
 	MaxStepHeight = 4.0;
 	MissileDamage = 10;
+	bMissile = true;
+	bNoBlockmap = true;
+	bNoGravity = true;
+	bDropOff = true;
+	bActivatePCross = true;
+	bNoTeleport = true;
+	bDynamicLight = true;
 	bActivateImpact = true;
 	DLightColour = RGB(123, 127, 171);
 	DLightRadius = 200.0;

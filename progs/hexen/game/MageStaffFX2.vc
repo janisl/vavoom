@@ -25,6 +25,19 @@
 
 class MageStaffFX2 : Projectile;
 
+//==========================================================================
+//
+//	GetExplodeParms
+//
+//==========================================================================
+
+void GetExplodeParms(out int damage, out float distance, out byte damageSelf)
+{
+	damage = 80;
+	distance = 192.0;
+	damageSelf = false;
+}
+
 //===========================================================================
 //
 //  RoughCheckThing

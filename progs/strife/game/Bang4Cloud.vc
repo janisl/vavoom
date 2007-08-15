@@ -23,36 +23,28 @@
 //**
 //**************************************************************************
 
-class SpectralLightningBall1 : SpectralLightningBase;
+class Bang4Cloud : Effect;
 
 __states__
 {
-	S_SIGIL_FX2_1('ZOT3', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_SIGIL_FX2_2) = none
-	S_SIGIL_FX2_2('ZOT3', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_SIGIL_FX2_3) = none
-	S_SIGIL_FX2_3('ZOT3', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_SIGIL_FX2_4) = none
-	S_SIGIL_FX2_4('ZOT3', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_SIGIL_FX2_5) = none
-	S_SIGIL_FX2_5('ZOT3', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_SIGIL_FX2_1) = none
+	S_GRENADE_HE_X2('BNG4', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_GRENADE_HE_X3) = none
+	S_GRENADE_HE_X3('BNG4', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_GRENADE_HE_X4) = none
+	S_GRENADE_HE_X4('BNG4', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_GRENADE_HE_X5) = none
+	S_GRENADE_HE_X5('BNG4', 4 | FF_FULLBRIGHT, 3.0 / 35.0, S_GRENADE_HE_X6) = none
+	S_GRENADE_HE_X6('BNG4', 5 | FF_FULLBRIGHT, 3.0 / 35.0, S_GRENADE_HE_X7) = none
+	S_GRENADE_HE_X7('BNG4', 6 | FF_FULLBRIGHT, 3.0 / 35.0, S_GRENADE_HE_X8) = none
+	S_GRENADE_HE_X8('BNG4', 7 | FF_FULLBRIGHT, 3.0 / 35.0, S_GRENADE_HE_X9) = none
+	S_GRENADE_HE_X9('BNG4', 8 | FF_FULLBRIGHT, 3.0 / 35.0, S_GRENADE_HE_X10) = none
+	S_GRENADE_HE_X10('BNG4', 9 | FF_FULLBRIGHT, 3.0 / 35.0, S_GRENADE_HE_X11) = none
+	S_GRENADE_HE_X11('BNG4', 10 | FF_FULLBRIGHT, 3.0 / 35.0, S_GRENADE_HE_X12) = none
+	S_GRENADE_HE_X12('BNG4', 11 | FF_FULLBRIGHT, 3.0 / 35.0, S_GRENADE_HE_X13) = none
+	S_GRENADE_HE_X13('BNG4', 12 | FF_FULLBRIGHT, 3.0 / 35.0, S_GRENADE_HE_X14) = none
+	S_GRENADE_HE_X14('BNG4', 13 | FF_FULLBRIGHT, 3.0 / 35.0, none) = none
 }
 
 defaultproperties
 {
-	Radius = 8.0;
-	Height = 16.0;
-	Speed = 1050.0;
-	MaxStepHeight = 4.0;
-	MissileDamage = 70;
-	bMissile = true;
-	bNoBlockmap = true;
-	bNoGravity = true;
-	bDropOff = true;
-	bActivatePCross = true;
-	bNoTeleport = true;
-	bDynamicLight = true;
-	bSpectral = true;
-	IdleState = S_SIGIL_FX2_1;
-	DeathState = S_ZAP1_1;
-	SightSound = 'weapons/sigil';
-	DeathSound = 'weapons/sigilhit';
-	DLightColour = RGB(151, 155, 203);
-	DLightRadius = 200.0;
+	Alpha = 0.333;
+	PuffVelZ = 1.0 * 35.0;
+	IdleState = S_GRENADE_HE_X2;
 }

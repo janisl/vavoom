@@ -178,6 +178,7 @@ EXTRA_DIST = compile.bat \
 	game/Armorer.vc \
 	game/AssaultGun.vc \
 	game/AssaultGunStanding.vc \
+	game/Bang4Cloud.vc \
 	game/BarKeep.vc \
 	game/BarricadeColumn.vc \
 	game/BaseKey.vc \
@@ -455,6 +456,7 @@ EXTRA_DIST = compile.bat \
 	game/SoundSequenceSlot.vc \
 	game/SpectralLightningBall1.vc \
 	game/SpectralLightningBall2.vc \
+	game/SpectralLightningBase.vc \
 	game/SpectralLightningBigBall1.vc \
 	game/SpectralLightningBigBall2.vc \
 	game/SpectralLightningBigV1.vc \
@@ -497,6 +499,7 @@ EXTRA_DIST = compile.bat \
 	game/StrifeSpark.vc \
 	game/StrifeWeapon.vc \
 	game/StrifeWorldInfo.vc \
+	game/StrifeZap1.vc \
 	game/SurgeryCrab.vc \
 	game/SurgeryKit.vc \
 	game/TallBush.vc \

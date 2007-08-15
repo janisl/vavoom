@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class SpectralLightningH1 : Projectile;
+class SpectralLightningH1 : SpectralLightningBase;
 
 //==========================================================================
 //
@@ -53,6 +53,13 @@ defaultproperties
 	Speed = 1050.0;
 	MaxStepHeight = 4.0;
 	MissileDamage = 70;
+	bMissile = true;
+	bNoBlockmap = true;
+	bNoGravity = true;
+	bDropOff = true;
+	bActivatePCross = true;
+	bNoTeleport = true;
+	bDynamicLight = true;
 	bSpectral = true;
 	IdleState = S_SIGIL_FX1_1;
 	DeathState = S_ZAP1_1;

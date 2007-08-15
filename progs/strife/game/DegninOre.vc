@@ -28,27 +28,23 @@ class DegninOre : Inventory
 
 //==========================================================================
 //
-//	A_Explode192
+//	GetExplodeParms
 //
 //==========================================================================
 
-final void A_Explode192()
+void GetExplodeParms(out int damage, out float distance, out byte damageSelf)
 {
-	RadiusAttack(Target, 192, 192.0, false);
-	if (DeathSound)
-		PlaySound(DeathSound, CHAN_VOICE);
+	damage = 192;
+	distance = 192.0;
 
-	if (ExplodeEffect)
-	{
-		SendExplosion(ExplodeEffect, Origin);
-	}
+	PlaySound(DeathSound, CHAN_VOICE);
 }
 
 __states__
 {
 	S_ORE('XPRK', 0, -1.0, none) = none
 	S_ORE_X('XPRK', 0, 1.0 / 35.0, S_ORE_X1) = A_RemoveForceField
-	S_ORE_X1('BNG3', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_ORE_X2) = A_Explode192
+	S_ORE_X1('BNG3', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_ORE_X2) = A_ExplodeAndAlert
 	S_ORE_X2('BNG3', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_ORE_X3) = none
 	S_ORE_X3('BNG3', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_ORE_X4) = none
 	S_ORE_X4('BNG3', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_ORE_X5) = none

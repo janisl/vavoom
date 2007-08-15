@@ -23,44 +23,30 @@
 //**
 //**************************************************************************
 
-class FireBomb : Actor;
-
-//==========================================================================
-//
-//	PreExplode
-//
-//==========================================================================
-
-void PreExplode()
-{
-	// Time Bombs
-	Origin.z += 32.0;
-	Alpha = 1.0;
-}
+class StrifeZap1 : Actor;
 
 __states__
 {
-	S_FIREBOMB1('PSBG', 0, 20.0 / 35.0, S_FIREBOMB2) = none
-	S_FIREBOMB2('PSBG', 0, 10.0 / 35.0, S_FIREBOMB3) = none
-	S_FIREBOMB3('PSBG', 0, 10.0 / 35.0, S_FIREBOMB4) = none
-	S_FIREBOMB4('PSBG', 1, 4.0 / 35.0, S_FIREBOMB5) = none
-	S_FIREBOMB5('PSBG', 2, 4.0 / 35.0, S_FIREBOMB6) = A_Scream
-	S_FIREBOMB6('XPL1', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_FIREBOMB7) = A_Explode
-	S_FIREBOMB7('XPL1', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_FIREBOMB8) = none
-	S_FIREBOMB8('XPL1', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_FIREBOMB9) = none
-	S_FIREBOMB9('XPL1', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_FIREBOMB10) = none
-	S_FIREBOMB10('XPL1', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_FIREBOMB11) = none
-	S_FIREBOMB11('XPL1', 5 | FF_FULLBRIGHT, 4.0 / 35.0, none) = none
+	S_ZAP1_0('ZAP1', 0, 3.0 / 35.0, S_ZAP1_2) = A_AlertMonsters
+	S_ZAP1_2('ZAP1', 1, 3.0 / 35.0, S_ZAP1_3) = none
+	S_ZAP1_3('ZAP1', 2, 3.0 / 35.0, S_ZAP1_4) = none
+	S_ZAP1_4('ZAP1', 3, 3.0 / 35.0, S_ZAP1_5) = none
+	S_ZAP1_5('ZAP1', 4, 3.0 / 35.0, S_ZAP1_6) = none
+	S_ZAP1_6('ZAP1', 5, 3.0 / 35.0, S_ZAP1_7) = none
+	S_ZAP1_7('ZAP1', 4, 3.0 / 35.0, S_ZAP1_8) = none
+	S_ZAP1_8('ZAP1', 3, 2.0 / 35.0, S_ZAP1_9) = none
+	S_ZAP1_9('ZAP1', 2, 2.0 / 35.0, S_ZAP1_10) = none
+	S_ZAP1_10('ZAP1', 1, 2.0 / 35.0, S_ZAP1_11) = none
+	S_ZAP1_11('ZAP1', 0, 1.0 / 35.0, none) = none
 }
 
 defaultproperties
 {
-	Alpha = 0.666;
+	DeathState = S_ZAP1_0;
+
+	//	Just to be able to spawn it on its own.
+	IdleState = S_ZAP1_0;
+	bNoBlockmap = true;
 	bNoGravity = true;
-	bNoPassMobj = true;
-	DamageType = 'Fire';
-	bDamageInvulnerable = true;
-	ExplodeEffect = RGB(255, 128, 0);
-	IdleState = S_FIREBOMB1;
-	DeathSound = 'FlechetteExplode';
+	bDropOff = true;
 }

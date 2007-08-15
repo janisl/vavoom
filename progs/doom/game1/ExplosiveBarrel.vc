@@ -27,6 +27,17 @@ class ExplosiveBarrel : Actor
 	__mobjinfo__(2035)
 	__scriptid__(125);
 
+//==========================================================================
+//
+//	PreExplode
+//
+//==========================================================================
+
+void PreExplode()
+{
+	Alpha = 0.5;
+}
+
 __states__
 {
 	S_BAR1('BAR1', 0, 6.0 / 35.0, S_BAR2) = none
@@ -47,6 +58,7 @@ defaultproperties
 	bShootable = true;
 	bNoBlood = true;
 	bFloorClip = true;
+	bExplodeParticles = true;
 	IdleState = S_BAR1;
 	DeathState = S_BEXP;
 	DeathSound = 'world/barrelx';

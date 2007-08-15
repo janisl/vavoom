@@ -572,6 +572,72 @@ final void A_BeShadowyFoe()
 	bFriendly = false;
 }
 
+//==========================================================================
+//
+//  A_Explode
+//
+//  Handles a bunch of exploding things.
+//
+//==========================================================================
+
+final void A_Explode()
+{
+	int			damage;
+	float		distance;
+	byte		damageSelf;
+	int			i;
+
+	damage = 128;
+	distance = 128.0;
+	damageSelf = true;
+
+	PreExplode();
+	GetExplodeParms(damage, distance, damageSelf);
+
+	RadiusAttack(Target, damage, distance, damageSelf);
+	if (Origin.z <= FloorZ + distance)
+	{
+		HitFloorType();
+	}
+
+	if (bExplodeParticles)
+	{
+		//  Spawn explosion effects - dynamic light and particles
+		for (i = 0; i < MAXPLAYERS; i++)
+		{
+			if (!Level.Game.Players[i])
+				continue;
+			if (!Level.Game.Players[i].bSpawned)
+				continue;
+			PlayerEx(Level.Game.Players[i]).ClientParticleExplosion(
+				DLightColour, Origin + vector(0.0, 0.0, Height * 0.5));
+		}
+	}
+	else if (ExplodeEffect)
+	{
+		SendExplosion(ExplodeEffect, Origin);
+	}
+
+	//  Clear old dynamic light effect
+	bDynamicLight = false;
+	bLeaveTrail = false;
+}
+
+//==========================================================================
+//
+//  A_ExplodeAndAlert
+//
+//==========================================================================
+
+final void A_ExplodeAndAlert()
+{
+	A_Explode();
+	if (Target && Target.bIsPlayer)
+	{
+		LineSpecialLevelInfo(Level).NoiseAlert(Target, self);
+	}
+}
+
 defaultproperties
 {
 }

@@ -30,6 +30,18 @@ int BobIndex;
 
 //==========================================================================
 //
+//	GetExplodeParms
+//
+//==========================================================================
+
+void GetExplodeParms(out int damage, out float distance, out byte damageSelf)
+{
+	damage = 4;
+	distance = 40.0;
+}
+
+//==========================================================================
+//
 //  DoSpecialDamage
 //
 //==========================================================================
@@ -140,6 +152,7 @@ defaultproperties
 	bNoDamageThrust = true;
 	bDamageInvulnerable = true;
 	bHowlVictims = true;
+	bNoSplash = true;
 	IdleState = S_POISONCLOUD1;
 	DeathState = S_POISONCLOUD_X1;
 	DeathSound = 'PoisonShroomDeath';

@@ -109,40 +109,6 @@ bool FindOther()
 
 //==========================================================================
 //
-//  A_Explode
-//
-//  Rocket and barrel explosion.
-//
-//==========================================================================
-
-final void A_Explode()
-{
-	int i;
-
-	Alpha = 0.5;
-	RadiusAttack(Target, 128, 128.0, true);
-	if (Origin.z <= FloorZ + 128.0)
-	{
-		HitFloorType();
-	}
-
-	//  Spawn explosion effects - dynamic light and particles
-	for (i = 0; i < MAXPLAYERS; i++)
-	{
-		if (!Level.Game.Players[i])
-			continue;
-		if (!Level.Game.Players[i].bSpawned)
-			continue;
-		Player(Level.Game.Players[i]).ClientParticleExplosion(DLightColour,
-			Origin + vector(0.0, 0.0, Height * 0.5));
-	}
-
-	//  Clear old dynamic light effect
-	bDynamicLight = false;
-}
-
-//==========================================================================
-//
 //  A_SPosAttack
 //
 //  Shotgun guy, Spider mastermind attack.
