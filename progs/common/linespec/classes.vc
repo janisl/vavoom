@@ -96,6 +96,14 @@ enum
 #include "MapRevealer.vc"
 #include "PlayerEx.vc"
 
+#include "TeleportDest.vc"
+#include "TeleportDest2.vc"
+#include "TeleportDest3.vc"
+#include "MapSpot.vc"
+#include "MapSpotGravity.vc"
+#include "PointPusher.vc"
+#include "PointPuller.vc"
+
 #include "LineSpecialLevelInfo.vc"
 #include "LineSpecialGameInfo.vc"
 #include "SectorThinker.vc"

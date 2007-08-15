@@ -44,8 +44,6 @@
 
 #include "StaticLightSource.vc"
 #include "StaticRGBLightSource.vc"
-#include "PointPusher.vc"
-#include "PointPuller.vc"
 
 #include "SoundSequence.vc"
 #include "SoundSequenceSlot.vc"
@@ -123,8 +121,6 @@
 #include "KeySwamp.vc"
 #include "KeyCastle.vc"
 
-#include "MapSpot.vc"
-#include "MapSpotGravity.vc"
 #include "FireBomb.vc"
 #include "WaterSplash.vc"
 #include "WaterSplashBase.vc"
@@ -138,9 +134,6 @@
 #include "SlimeSplash.vc"
 #include "TeleportFog.vc"
 #include "TeleSmoke.vc"
-#include "TeleportDest.vc"
-#include "TeleportDest2.vc"
-#include "TeleportDest3.vc"
 #include "Blood.vc"
 #include "BloodSplatter.vc"
 #include "Gibs.vc"

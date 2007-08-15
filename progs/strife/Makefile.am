@@ -285,8 +285,6 @@ EXTRA_DIST = compile.bat \
 	game/Macil1.vc \
 	game/Macil2.vc \
 	game/MainGameInfo.vc \
-	game/MapSpot.vc \
-	game/MapSpotGravity.vc \
 	game/Mauler.vc \
 	game/Mauler2.vc \
 	game/MaulerKey.vc \
@@ -357,8 +355,6 @@ EXTRA_DIST = compile.bat \
 	game/Pitcher.vc \
 	game/Player.vc \
 	game/PlayerPawn.vc \
-	game/PointPuller.vc \
-	game/PointPusher.vc \
 	game/PoisonBolt.vc \
 	game/PoisonBolts.vc \
 	game/PoleLatern.vc \
@@ -514,9 +510,6 @@ EXTRA_DIST = compile.bat \
 	game/TargetPractice.vc \
 	game/TechLampBrass.vc \
 	game/TechLampSilver.vc \
-	game/TeleportDest.vc \
-	game/TeleportDest2.vc \
-	game/TeleportDest3.vc \
 	game/TeleporterBeacon.vc \
 	game/TeleportFog.vc \
 	game/TeleportSwirl.vc \

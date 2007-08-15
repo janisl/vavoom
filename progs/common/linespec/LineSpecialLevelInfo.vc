@@ -3307,7 +3307,7 @@ final bool EV_Teleport(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 			Sec = &XLevel.Sectors[SecNum];
 			foreach AllThinkers(EntityEx, A)
 			{
-				if (!A.IsTeleportSpot())
+				if (!TeleportDest(A))
 				{
 					//	Not a teleportman
 					continue;
@@ -3343,7 +3343,7 @@ final bool EV_Teleport(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 		// Momentum of thing crossing teleporter linedef
 		OldVel = thing.Velocity;
 	}
-	if (!A.IsTeleportSpot2())
+	if (!TeleportDest2(A))
 	{
 		DstOrg.z = EntityEx::ONFLOORZ;
 	}
@@ -3448,14 +3448,14 @@ final bool EV_TeleportGroup(int group_tid, int source_tid, int dest_tid,
 	{
 		destOrigin = EntityEx(FindMobjFromTID(dest_tid, &Searcher));
 	}
-	while (destOrigin && !destOrigin.IsTeleportSpot());
+	while (destOrigin && !TeleportDest(destOrigin));
 	if (!destOrigin)
 	{
 		return false;
 	}
 
 	didSomething = false;
-	floorz = !destOrigin.IsTeleportSpot2();
+	floorz = !TeleportDest2(destOrigin);
 
 	// Use the passed victim if group_tid is 0
 	if (group_tid == 0 && victim)
@@ -3522,14 +3522,14 @@ final bool EV_TeleportSector(int tag, int source_tid, int dest_tid, bool fog,
 	{
 		destOrigin = EntityEx(FindMobjFromTID(dest_tid, &Searcher));
 	}
-	while (destOrigin && !destOrigin.IsTeleportSpot());
+	while (destOrigin && !TeleportDest(destOrigin));
 	if (!destOrigin)
 	{
 		return false;
 	}
 
 	didSomething = false;
-	floorz = !destOrigin.IsTeleportSpot2();
+	floorz = !TeleportDest2(destOrigin);
 
 	for (secnum = XLevel.FindSectorFromTag(tag, -1); secnum >= 0;
 		secnum = XLevel.FindSectorFromTag(tag, secnum))
@@ -3824,7 +3824,7 @@ final EntityEx GetPushThing(int s)
 	sec = &XLevel.Sectors[s];
 	foreach AllThinkers(EntityEx, thing)
 	{
-		if (thing.IsPointPusher() || thing.IsPointPuller())
+		if (PointPusher(thing) || PointPuller(thing))
 		{
 			return thing;
 		}
@@ -3903,7 +3903,7 @@ final void SpawnPushers()
 					thing;
 					thing = EntityEx(FindMobjFromTID(l->arg2, &searcher)))
 				{
-					if (thing.IsPointPuller() || thing.IsPointPusher())
+					if (PointPuller(thing) || PointPusher(thing))
 					{
 						for (s = 0; s < XLevel.NumSectors; s++)
 							if (&XLevel.Sectors[s] == thing.Sector)

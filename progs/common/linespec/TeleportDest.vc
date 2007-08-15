@@ -23,11 +23,12 @@
 //**
 //**************************************************************************
 
-class PointPusher : Actor
-	__mobjinfo__(5001);
+class TeleportDest : ScriptedEntity
+	__mobjinfo__(14);
 
 defaultproperties
 {
 	bHidden = true;
 	bNoBlockmap = true;
+	bNoPassMobj = true;
 }

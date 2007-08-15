@@ -275,9 +275,6 @@ EXTRA_DIST = compile.bat \
 	game/TeleGlitter2.vc \
 	game/TeleGlitterGenerator1.vc \
 	game/TeleGlitterGenerator2.vc \
-	game/TeleportDest.vc \
-	game/TeleportDest2.vc \
-	game/TeleportDest3.vc \
 	game/TeleportFog.vc \
 	game/Whirlwind.vc \
 	game/WizardFX1.vc \
@@ -334,12 +331,10 @@ EXTRA_DIST = compile.bat \
 	game/Chandelier.vc \
 	game/CrossbowFX1.vc \
 	game/KeyGizmoBlue.vc \
-	game/MapSpotGravity.vc \
 	game/CrossbowFX4.vc \
 	game/SmallPillar.vc \
 	game/Feather.vc \
 	game/GauntletPuff2.vc \
-	game/PointPusher.vc \
 	game/Knight.vc \
 	game/SkullHang45.vc \
 	game/Moss2.vc \
@@ -353,9 +348,7 @@ EXTRA_DIST = compile.bat \
 	game/StalactiteLarge.vc \
 	game/MaceFX4.vc \
 	game/BossSpot.vc \
-	game/PointPuller.vc \
 	game/StalagmiteSmall.vc \
-	game/MapSpot.vc \
 	game/WaterSplashBase.vc \
 	game/KeyGizmoYellow.vc \
 	game/Ripper.vc \

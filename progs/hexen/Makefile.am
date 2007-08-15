@@ -348,9 +348,6 @@ EXTRA_DIST = compile.bat \
 	game/SorcSpark1.vc \
 	game/SoundWindHexen.vc \
 	game/SummoningDoll.vc \
-	game/TeleportDest.vc \
-	game/TeleportDest2.vc \
-	game/TeleportDest3.vc \
 	game/TeleportFog.vc \
 	game/TelOtherFX1.vc \
 	game/TelOtherFX2.vc \
@@ -531,7 +528,6 @@ EXTRA_DIST = compile.bat \
 	game/TableShit3.vc \
 	game/Fragment.vc \
 	game/FogPatchLarge.vc \
-	game/PointPuller.vc \
 	game/MageStaffFX2.vc \
 	game/IceChunk.vc \
 	game/Dirt6.vc \
@@ -540,7 +536,6 @@ EXTRA_DIST = compile.bat \
 	game/ThrowingBomb.vc \
 	game/FlamePuff.vc \
 	game/FireDemonRock4.vc \
-	game/MapSpot.vc \
 	game/Dirt1.vc \
 	game/Ettin.vc \
 	game/Bat.vc \
@@ -583,8 +578,6 @@ EXTRA_DIST = compile.bat \
 	game/CorpseBloodDrip.vc \
 	game/TableShit5.vc \
 	game/FlameLargeTemp.vc \
-	game/PointPusher.vc \
-	game/MapSpotGravity.vc \
 	game/HolyPuff.vc \
 	game/Rock1.vc \
 	game/FireDemonRock1.vc \

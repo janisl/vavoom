@@ -227,7 +227,7 @@ void Tick(float DeltaTime)
 				if ((speed > 0.0) && thing.CanSee(Source))
 				{
 					pushangle = atan2(sy - thing.Origin.y, sx - thing.Origin.x);
-					if (Source.IsPointPusher())
+					if (PointPusher(Source))
 						pushangle += 180.0;    // away
 					thing.Velocity.x += speed * cos(pushangle) * 35.0 * Level.Game.frametime;
 					thing.Velocity.y += speed * sin(pushangle) * 35.0 * Level.Game.frametime;

@@ -47,13 +47,9 @@
 #include "BloodSplashBase.vc"
 #include "SlimeChunk.vc"
 #include "SlimeSplash.vc"
-#include "MapSpot.vc"
-#include "MapSpotGravity.vc"
 #include "QuakeFocus.vc"
 #include "StaticLightSource.vc"
 #include "StaticRGBLightSource.vc"
-#include "PointPusher.vc"
-#include "PointPuller.vc"
 
 #include "RocketTrail.vc"
 #include "StrifePuff.vc"
@@ -65,9 +61,6 @@
 #include "FireDroplet.vc"
 #include "ForceFieldGuard.vc"
 #include "ZombieSpawner.vc"
-#include "TeleportDest.vc"
-#include "TeleportDest2.vc"
-#include "TeleportDest3.vc"
 
 #include "SoundSequence.vc"
 #include "SoundSequenceSlot.vc"

@@ -23,8 +23,8 @@
 //**
 //**************************************************************************
 
-class PointPusher : Actor
-	__mobjinfo__(5001);
+class PointPuller : ScriptedEntity
+	__mobjinfo__(5002);
 
 defaultproperties
 {

@@ -27,7 +27,8 @@
 //**
 //**************************************************************************
 
-class TeleportDest3 : TeleportDest2;
+class TeleportDest3 : TeleportDest2
+	__mobjinfo__(9043);
 
 defaultproperties
 {

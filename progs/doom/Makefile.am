@@ -164,11 +164,7 @@ EXTRA_DIST = compile.bat \
 	game/LavaSmoke.vc \
 	game/LavaSplash.vc \
 	game/MainGameInfo.vc \
-	game/MapSpot.vc \
-	game/MapSpotGravity.vc \
 	game/Player.vc \
-	game/PointPuller.vc \
-	game/PointPusher.vc \
 	game/QuakeFocus.vc \
 	game/SecurityCamera.vc \
 	game/SlimeChunk.vc \
@@ -299,9 +295,6 @@ EXTRA_DIST = compile.bat \
 	game1/TechLamp.vc \
 	game1/TechLamp2.vc \
 	game1/TechPillar.vc \
-	game1/TeleportDest.vc \
-	game1/TeleportDest2.vc \
-	game1/TeleportDest3.vc \
 	game1/TeleportFog.vc \
 	game1/TorchTree.vc \
 	game1/YellowCard.vc \

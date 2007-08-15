@@ -54,12 +54,16 @@ EXTRA_DIST = \
 	linespec/LineSpecialGameInfo.vc \
 	linespec/LineSpecialLevelInfo.vc \
 	linespec/MapRevealer.vc \
+	linespec/MapSpot.vc \
+	linespec/MapSpotGravity.vc \
 	linespec/PhasedLight.vc \
 	linespec/PickupFlash.vc \
 	linespec/Pillar.vc \
 	linespec/PlaneWatcher.vc \
 	linespec/Platform.vc \
 	linespec/PlayerEx.vc \
+	linespec/PointPuller.vc \
+	linespec/PointPusher.vc \
 	linespec/PolyobjDoor.vc \
 	linespec/PolyobjMover.vc \
 	linespec/PolyobjRotator.vc \
@@ -88,6 +92,9 @@ EXTRA_DIST = \
 	linespec/SectorThinker.vc \
 	linespec/StairStepMover.vc \
 	linespec/Strobe.vc \
+	linespec/TeleportDest.vc \
+	linespec/TeleportDest2.vc \
+	linespec/TeleportDest3.vc \
 	linespec/TextureChangeDoor.vc \
 	linespec/VerticalDoor.vc \
 	linespec/Weapon.vc
