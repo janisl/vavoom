@@ -35,8 +35,6 @@ int classFlags[3];
 
 bool randomclass;
 
-Actor PuffSpawned;
-
 //==========================================================================
 //
 //	Init
@@ -355,6 +353,8 @@ defaultproperties
 	TeleportFogClass = TeleportFog;
 	DefaultKickBack = 150.0;
 	BloodClass = Blood;
+	BloodSplatterClass = BloodSplatter;
+	AxeBloodClass = AxeBlood;
 	NonMonsterAngleIncrements = 1;
 
 	classFlags[0] = HexenLevelInfo::MTF_FIGHTER;

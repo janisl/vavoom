@@ -38,6 +38,7 @@ defaultproperties
 {
 	SpriteType = SPR_VP_PARALLEL;
 	Alpha = 0.333;
+	PuffVelZ = 1.0 * 35.0;
 	bPuffOnActors = true;
 	IdleState = S_PUNCHPUFF1;
 	SightSound = 'FighterPunchHitThing';

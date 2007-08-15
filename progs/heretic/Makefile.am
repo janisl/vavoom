@@ -173,8 +173,7 @@ EXTRA_DIST = compile.bat \
 	game/BlasterFX1.vc \
 	game/BlasterHefty.vc \
 	game/BlasterPowered.vc \
-	game/BlasterPuff1.vc \
-	game/BlasterPuff2.vc \
+	game/BlasterPuff.vc \
 	game/BlasterSmoke.vc \
 	game/Blood.vc \
 	game/BloodSplash.vc \

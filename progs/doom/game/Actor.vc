@@ -72,42 +72,6 @@ bool IsPointPuller()
 
 //==========================================================================
 //
-//  DoMissileExplosionEffects
-//
-//==========================================================================
-
-void DoMissileExplosionEffects()
-{
-	if (!EntityEx(self).bLeaveTrail && bDynamicLight)
-	{
-		SendExplosion2(DLightColour, Origin);
-		bDynamicLight = false;
-	}
-	EntityEx(self).bLeaveTrail = false;
-}
-
-//==========================================================================
-//
-//  SendExplosion2
-//
-//==========================================================================
-
-final void SendExplosion2(int colour, TVec org)
-{
-	int i;
-
-	for (i = 0; i < MAXPLAYERS; i++)
-	{
-		if (!Level.Game.Players[i])
-			continue;
-		if (!Level.Game.Players[i].bSpawned)
-			continue;
-		Player(Level.Game.Players[i]).ClientExplosion2(colour, org);
-	}
-}
-
-//==========================================================================
-//
 //	KilledByPlayer
 //
 //==========================================================================
@@ -213,80 +177,12 @@ final void A_Explode()
 			continue;
 		if (!Level.Game.Players[i].bSpawned)
 			continue;
-		Player(Level.Game.Players[i]).ClientExplosion(DLightColour,
+		Player(Level.Game.Players[i]).ClientParticleExplosion(DLightColour,
 			Origin + vector(0.0, 0.0, Height * 0.5));
 	}
 
 	//  Clear old dynamic light effect
 	bDynamicLight = false;
-}
-
-//==========================================================================
-//
-//  SpawnPuff
-//
-//==========================================================================
-
-void SpawnPuff(TVec Org, float Range, class<EntityEx> PuffType, bool HitThing)
-{
-	EntityEx A;
-	int i;
-
-	for (i = 0; i < MAXPLAYERS; i++)
-	{
-		if (!Level.Game.Players[i])
-			continue;
-		if (!Level.Game.Players[i].bSpawned)
-			continue;
-		Player(Level.Game.Players[i]).ClientGunShot(Org);
-	}
-
-	Org.z += (Random() - Random()) * 4.0;
-
-	A = Spawn(PuffType, Org);
-	A.Velocity.z = 1.0 * 35.0;
-	A.StateTime -= Random() * 0.1;
-
-	if (A.StateTime < 0.1)
-		A.StateTime = 0.1;
-
-	// don't make punches spark on the wall
-	if (Range == MELEERANGE)
-		A.SetState(BulletPuff::S_PUFF3);
-}
-
-//==========================================================================
-//
-//  SpawnBlood
-// 
-//==========================================================================
-
-void SpawnBlood(TVec Org, int damage)
-{
-	Actor A;
-	int i;
-
-	for (i = 0; i < MAXPLAYERS; i++)
-	{
-		if (!Level.Game.Players[i])
-			continue;
-		if (!Level.Game.Players[i].bSpawned)
-			continue;
-		Player(Level.Game.Players[i]).ClientBlood(Org, damage > 255 ? 255 : damage);
-	}
-
-	Org.z += (Random() - Random()) * 4.0;
-	A = Spawn(Blood, Org);
-	A.Velocity.z = 2.0 * 35.0;
-	A.StateTime -= Random() * 0.1;
-
-	if (A.StateTime < 0.1)
-		A.StateTime = 0.1;
-
-	if (damage <= 12 && damage >= 9)
-		A.SetState(Blood::S_BLOOD2);
-	else if (damage < 9)
-		A.SetState(Blood::S_BLOOD3);
 }
 
 //==========================================================================

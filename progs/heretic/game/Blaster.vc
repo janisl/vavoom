@@ -46,7 +46,7 @@ final void A_FireBlasterPL1()
 	{
 		VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0 / 8.0);
 	}
-	Actor(Owner).LineAttack(dir, MISSILERANGE, damage, BlasterPuff1);
+	Actor(Owner).LineAttack(dir, MISSILERANGE, damage, BlasterPuff);
 	Owner.PlaySound('weapons/blastershoot', CHAN_WEAPON);
 }
 

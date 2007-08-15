@@ -600,4 +600,5 @@ defaultproperties
 	bBabyNightmareDoubleAmmo = true;
 	bNightmareExtraAmmo = false;
 	bAlwaysSwitchNewWeapon = true;
+	bBloodSpray = true;
 }

@@ -23,11 +23,15 @@
 //**
 //**************************************************************************
 
-class Blood : Effect
+class Blood : Actor
 	__scriptid__(130);
 
 __states__
 {
+	S_BLOOD1('BLOD', 2, 8.0 / 35.0, S_BLOOD2) = none
+	S_BLOOD2('BLOD', 1, 8.0 / 35.0, S_BLOOD3) = none
+	S_BLOOD3('BLOD', 0, 8.0 / 35.0, none) = none
+
 	S_BLOOD_SPRAY_1('SPRY', 0, 3.0 / 35.0, S_BLOOD_SPRAY_2) = none
 	S_BLOOD_SPRAY_2('SPRY', 1, 3.0 / 35.0, S_BLOOD_SPRAY_3) = none
 	S_BLOOD_SPRAY_3('SPRY', 2, 3.0 / 35.0, S_BLOOD_SPRAY_4) = none
@@ -39,7 +43,11 @@ __states__
 
 defaultproperties
 {
-	bNoGravity = false;
+	bNoBlockmap = true;
+	bNoPassMobj = true;
 	bSmallSplash = true;
-	IdleState = S_BLOOD_SPRAY_1;
+	IdleState = S_BLOOD1;
+	IdleRightState = S_BLOOD2;
+	IdleLeftState = S_BLOOD3;
+	SprayState = S_BLOOD_SPRAY_1;
 }

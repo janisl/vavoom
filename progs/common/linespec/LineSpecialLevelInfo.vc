@@ -65,6 +65,8 @@ name			DefaultPlatformSound;
 bool			bTeleportNewMapBothSides;
 bool			bCheckStrifeStartSpots;
 
+bool			bPuffSpawned;
+
 int				ExtPlayersBase;
 string			Lock103Message;
 

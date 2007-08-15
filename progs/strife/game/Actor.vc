@@ -89,41 +89,6 @@ void TouchSpecial(EntityEx Toucher)
 
 //==========================================================================
 //
-//  DoMissileExplosionEffects
-//
-//==========================================================================
-
-void DoMissileExplosionEffects()
-{
-	if (bDynamicLight)
-	{
-		SendExplosion(DLightColour, Origin);
-		bDynamicLight = false;
-	}
-}
-
-//==========================================================================
-//
-//  SendExplosion
-//
-//==========================================================================
-
-final void SendExplosion(int colour, TVec org)
-{
-	int i;
-
-	for (i = 0; i < MAXPLAYERS; i++)
-	{
-		if (!Level.Game.Players[i])
-			continue;
-		if (!Level.Game.Players[i].bSpawned)
-			continue;
-		Player(Level.Game.Players[i]).ClientExplosion(colour, org);
-	}
-}
-
-//==========================================================================
-//
 //	KilledByPlayer
 //
 //==========================================================================
@@ -639,61 +604,6 @@ Actor TossUpObject(class<Actor> type)
 
 //==========================================================================
 //
-//  SpawnPuff
-//
-//==========================================================================
-
-void SpawnPuff(TVec Org, float Range, class<EntityEx> PuffType, bool HitThing)
-{
-	EntityEx A;
-
-	Org.z += (Random() - Random()) * 4.0;
-	A = Spawn(PuffType, Org);
-	if(PuffType != StrifeSpark)
-		A.Velocity.z = 1.0 * 35.0;
-
-	A.StateTime -= Random() * 0.1;
-	if (A.StateTime < 0.1)
-		A.StateTime = 0.1;
-}
-
-//==========================================================================
-//
-//  SpawnBlood
-// 
-//==========================================================================
-
-void SpawnBlood(TVec org, int damage)
-{
-	Actor A;
-	int i;
-
-	for (i = 0; i < MAXPLAYERS; i++)
-	{
-		if (!Level.Game.Players[i])
-			continue;
-		if (!Level.Game.Players[i].bSpawned)
-			continue;
-		Player(Level.Game.Players[i]).ClientBlood(
-			org, damage > 255 ? 255 : damage);
-	}
-
-	org.z += (Random() - Random()) * 4.0;
-	A = Spawn(Blood, org);
-	A.Velocity.z = 2.0 * 35.0;
-	A.StateTime -= Random() * 0.1;
-
-	if (A.StateTime < 0.1)
-		A.StateTime = 0.1;
-
-	if (damage <= 12 && damage >= 9)
-		A.SetState(Blood::S_BLOOD2);
-	else if (damage < 9)
-		A.SetState(Blood::S_BLOOD3);
-}
-
-//==========================================================================
-//
 //	A_ActiveSound
 //
 //==========================================================================
@@ -1064,10 +974,6 @@ __states__
 	S_ZAP1_9('ZAP1', 2, 2.0 / 35.0, S_ZAP1_10) = none
 	S_ZAP1_10('ZAP1', 1, 2.0 / 35.0, S_ZAP1_11) = none
 	S_ZAP1_11('ZAP1', 0, 1.0 / 35.0, none) = none
-
-	S_BLOOD1('BLOD', 2, 8.0 / 35.0, S_BLOOD2) = none
-	S_BLOOD2('BLOD', 1, 8.0 / 35.0, S_BLOOD3) = none
-	S_BLOOD3('BLOD', 0, 8.0 / 35.0, none) = none
 
 	S_SHARD_1('SHRD', 0, 128.0 / 35.0, none) = none
 	S_SHARD_2('SHRD', 1, 128.0 / 35.0, none) = none

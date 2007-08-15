@@ -525,9 +525,11 @@ defaultproperties
 	TeleportFogClass = TeleportFog;
 	DefaultKickBack = 150.0;
 	BloodClass = Blood;
+	BloodSplatterClass = BloodSplatter;
 	InvDefaultMaxAmount = 16;
 	DefaultInvulnBlendColour = Inventory::INVERSECOLOUR;
 	IceMoveFactor = 0.25;
+	bRipperBloodNoGravity = true;
 
 	botskill = 2;
 }

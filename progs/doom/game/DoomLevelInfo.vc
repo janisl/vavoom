@@ -243,7 +243,7 @@ void UpdateParticle(particle_t * p, float DeltaTime)
 		if (p->ramp >= 16.0)
 			p->die = -1.0;
 		else
-			p->colour = DoomDefs.default.ramp1[ftoi(p->ramp)];
+			p->colour = LineSpecialGameInfo.default.ramp1[ftoi(p->ramp)];
 		p->vel.x += p->vel.x * dvel;
 		p->vel.y += p->vel.y * dvel;
 		p->vel.z += p->vel.z * dvel;
@@ -255,7 +255,7 @@ void UpdateParticle(particle_t * p, float DeltaTime)
 		if (p->ramp >= 16.0)
 			p->die = -1.0;
 		else
-			p->colour = DoomDefs.default.ramp2[ftoi(p->ramp)];
+			p->colour = LineSpecialGameInfo.default.ramp2[ftoi(p->ramp)];
 		p->vel.x -= p->vel.x * DeltaTime;
 		p->vel.y -= p->vel.y * DeltaTime;
 		p->vel.z -= p->vel.z * DeltaTime;

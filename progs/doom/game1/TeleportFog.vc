@@ -35,7 +35,7 @@ class TeleportFog : Actor;
 
 final void A_Lights()
 {
-	SendExplosion2(DLightColour, Origin + vector(0.0, 0.0, Height * 0.5));
+	SendExplosion(DLightColour, Origin + vector(0.0, 0.0, Height * 0.5));
 
 	//  Clear old dynamic light effect
 	bDynamicLight = false;

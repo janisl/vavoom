@@ -36,6 +36,7 @@ __states__
 defaultproperties
 {
 	Alpha = 0.666;
+	PuffVelZ = 0.8 * 35.0;
 	bPuffOnActors = true;
 	bDynamicLight = true;
 	DLightColour = RGB(239, 0, 0);

@@ -44,26 +44,6 @@ final void A_Explode192()
 	}
 }
 
-//==========================================================================
-//
-//  SendExplosion
-//
-//==========================================================================
-
-final void SendExplosion(int colour, TVec org)
-{
-	int i;
-
-	for (i = 0; i < MAXPLAYERS; i++)
-	{
-		if (!Level.Game.Players[i])
-			continue;
-		if (!Level.Game.Players[i].bSpawned)
-			continue;
-		Player(Level.Game.Players[i]).ClientExplosion(colour, org);
-	}
-}
-
 __states__
 {
 	S_ORE('XPRK', 0, -1.0, none) = none

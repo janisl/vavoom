@@ -64,12 +64,12 @@ final void A_FHammerAttack()
 	else
 	{
 		// didn't find any targets in meleerange, so set to throw out a hammer
-		MainGameInfo(Level.Game).PuffSpawned = none;
+		LineSpecialLevelInfo(Level).bPuffSpawned = false;
 		if (Actor(Owner).LineAttack(vforward, HammerRange, damage, HammerPuff))
 		{
 			Owner.PlaySound('FighterHammerMiss', CHAN_WEAPON);
 		}
-		if (MainGameInfo(Level.Game).PuffSpawned)
+		if (LineSpecialLevelInfo(Level).bPuffSpawned)
 		{
 			bThrowHammer = false;
 		}

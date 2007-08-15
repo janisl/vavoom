@@ -1251,6 +1251,7 @@ defaultproperties
 	DefaultKickBack = 150.0;
 	BloodClass = Blood;
 	DefaultInvulnBlendColour = Inventory::INVERSECOLOUR;
+	bBloodRandomiseTime = true;
 
 	botskill = 2;
 

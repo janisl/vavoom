@@ -52,5 +52,6 @@ __states__
 defaultproperties
 {
 	Alpha = 0.333;
+	PuffVelZ = 1.0 * 35.0;
 	IdleState = S_PUFF1;
 }

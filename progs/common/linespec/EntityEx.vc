@@ -76,6 +76,7 @@ state			IdleRightState;
 state			IdleLeftState;
 state			WalkState;
 state			CrunchState;
+state			SprayState;
 
 //	Sounds
 name			SightSound;
@@ -182,6 +183,7 @@ bool bInCombat;			// Actors in combat won't talk
 bool bFullVolActive;	//	Play active sound at full volume
 bool bDehackedSpecial;	// Old style special handling
 bool bUnknown2;			//8000000
+bool bPuffParticles;	// Puff spawns particles
 
 //  Params
 float			Speed;
@@ -259,6 +261,8 @@ int				CurrentSpeech;	// Current speech index.
 Inventory		Inventory;
 
 float			FloatBobPhase;
+
+float			PuffVelZ;
 
 replication
 {
@@ -3335,7 +3339,12 @@ final bool ExplodeMissile()
 			ATTN_NORMAL);
 	}
 
-	DoMissileExplosionEffects();
+	if (!bLeaveTrail && bDynamicLight)
+	{
+		SendExplosion(DLightColour, Origin);
+		bDynamicLight = false;
+	}
+	bLeaveTrail = false;
 	return true;
 }
 
@@ -5440,6 +5449,196 @@ final bool GiveBody(int num)
 	return false;
 }
 
+//==========================================================================
+//
+//  SpawnPuff
+//
+//==========================================================================
+
+final void SpawnPuff(TVec Org, float Range, class<EntityEx> PuffType,
+	bool HitThing)
+{
+	int i;
+	EntityEx puff;
+
+	if (PuffType.default.bPuffParticles)
+	{
+		for (i = 0; i < MAXPLAYERS; i++)
+		{
+			if (!Level.Game.Players[i])
+				continue;
+			if (!Level.Game.Players[i].bSpawned)
+				continue;
+			PlayerEx(Level.Game.Players[i]).ClientGunShot(Org);
+		}
+	}
+
+	Org.z += (Random() - Random()) * 4.0;
+
+	puff = Spawn(PuffType, Org);
+	if (!HitThing && puff.CrashState)
+	{
+		puff.SetState(puff.CrashState);
+	}
+	else if (Range == MELEERANGE && puff.MeleeState)
+	{
+		puff.SetState(puff.MeleeState);
+	}
+
+	if (HitThing && puff.SightSound)
+	{
+		// Hit thing sound
+		puff.PlaySound(puff.SightSound, CHAN_VOICE);
+	}
+	else if (puff.AttackSound)
+	{
+		puff.PlaySound(puff.AttackSound, CHAN_VOICE);
+	}
+
+	puff.Velocity.z = puff.PuffVelZ;
+	if (puff.ExplodeEffect)
+	{
+		SendExplosion(ExplodeEffect, Org);
+	}
+	LineSpecialLevelInfo(Level).bPuffSpawned = true;
+}
+
+//==========================================================================
+//
+//  SpawnBlood
+// 
+//==========================================================================
+
+final void SpawnBlood(TVec Org, int damage)
+{
+	EntityEx	A;
+	int			i;
+
+	for (i = 0; i < MAXPLAYERS; i++)
+	{
+		if (!Level.Game.Players[i])
+			continue;
+		if (!Level.Game.Players[i].bSpawned)
+			continue;
+		PlayerEx(Level.Game.Players[i]).ClientBlood(
+			Org, damage > 255 ? 255 : damage);
+	}
+
+	Org.z += (Random() - Random()) * 4.0;
+	A = Spawn(LineSpecialGameInfo(Level.Game).BloodClass, Org);
+	A.Velocity.z = 2.0 * 35.0;
+	if (LineSpecialGameInfo(Level.Game).bBloodRandomiseTime)
+	{
+		A.StateTime -= Random() * 0.1;
+		if (A.StateTime < 0.1)
+			A.StateTime = 0.1;
+	}
+
+	if (LineSpecialGameInfo(Level.Game).bBloodSpray)
+	{
+		if (damage > 13)
+		{
+			A.SetState(A.SprayState);
+		}
+		else
+		{
+			damage += 2;
+		}
+	}
+	if (damage <= 12 && damage >= 9)
+		A.SetState(A.IdleRightState);
+	else if (damage < 9)
+		A.SetState(A.IdleLeftState);
+}
+
+//==========================================================================
+//
+//  SpawnBloodSplatter
+//
+//==========================================================================
+
+final void SpawnBloodSplatter(TVec org, int damage)
+{
+	EntityEx	mo;
+	int			i;
+
+	for (i = 0; i < MAXPLAYERS; i++)
+	{
+		if (!Level.Game.Players[i])
+			continue;
+		if (!Level.Game.Players[i].bSpawned)
+			continue;
+		PlayerEx(Level.Game.Players[i]).ClientBlood(org,
+			damage > 255 ? 255 : damage);
+	}
+
+	mo = Spawn(LineSpecialGameInfo(Level.Game).BloodSplatterClass, org);
+	mo.Target = self;
+	mo.Velocity.x = (Random() - Random()) * 4.0 * 35.0;
+	mo.Velocity.y = (Random() - Random()) * 4.0 * 35.0;
+	mo.Velocity.z = 3.0 * 35.0;
+}
+
+//===========================================================================
+//
+//  SpawnBloodSplatter2
+//
+//===========================================================================
+
+final void SpawnBloodSplatter2(TVec org)
+{
+	EntityEx	mo;
+
+	org.x += (Random() - 0.5) * 8.0;
+	org.y += (Random() - 0.5) * 8.0;
+	mo = Spawn(LineSpecialGameInfo(Level.Game).AxeBloodClass, org);
+	mo.Target = self;
+}
+
+//==========================================================================
+//
+//  SpawnRipperBlood
+//
+//==========================================================================
+
+final void SpawnRipperBlood()
+{
+	EntityEx	th;
+	TVec		org;
+
+	org.x = Origin.x + (Random() - Random()) * 16.0;
+	org.y = Origin.y + (Random() - Random()) * 16.0;
+	org.z = Origin.z + (Random() - Random()) * 16.0;
+	th = Spawn(LineSpecialGameInfo(Level.Game).BloodClass, org);
+	if (LineSpecialGameInfo(Level.Game).bRipperBloodNoGravity)
+	{
+		th.bNoGravity = true;
+	}
+	th.Velocity.x = Velocity.x / 2.0;
+	th.Velocity.y = Velocity.y / 2.0;
+	th.StateTime += Random() * 0.1;
+}
+
+//==========================================================================
+//
+//  SendExplosion
+//
+//==========================================================================
+
+final void SendExplosion(int colour, TVec org)
+{
+	int i;
+
+	for (i = 0; i < MAXPLAYERS; i++)
+	{
+		if (!Level.Game.Players[i])
+			continue;
+		if (!Level.Game.Players[i].bSpawned)
+			continue;
+		PlayerEx(Level.Game.Players[i]).ClientExplosion(colour, org);
+	}
+}
+
 float GetBaseViewHeight()
 {
 	return 0.0;
@@ -5456,26 +5655,6 @@ bool IsTeammate(EntityEx Other)
 		!Level.Game.deathmatch;
 }
 
-void SpawnPuff(TVec Org, float Range, class<EntityEx> PuffType, bool HitThing)
-{
-}
-
-void SpawnBlood(TVec hit_point, int damage)
-{
-}
-
-void SpawnBloodSplatter(TVec hit_point, int damage)
-{
-}
-
-void SpawnBloodSplatter2(TVec hit_point)
-{
-}
-
-void SpawnRipperBlood()
-{
-}
-
 bool IsNotAttackingMaster(EntityEx Other)
 {
 	return false;
@@ -5484,10 +5663,6 @@ bool IsNotAttackingMaster(EntityEx Other)
 bool IsMaster(EntityEx Other)
 {
 	return false;
-}
-
-void DoMissileExplosionEffects()
-{
 }
 
 bool IsServant()

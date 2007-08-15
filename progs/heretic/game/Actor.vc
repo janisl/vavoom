@@ -89,41 +89,6 @@ int HITDICE(int a)
 
 //==========================================================================
 //
-//  DoMissileExplosionEffects
-//
-//==========================================================================
-
-void DoMissileExplosionEffects()
-{
-	if (bDynamicLight)
-	{
-		SendExplosion(DLightColour, Origin);
-		bDynamicLight = false;
-	}
-}
-
-//==========================================================================
-//
-//  SendExplosion
-//
-//==========================================================================
-
-final void SendExplosion(int colour, TVec org)
-{
-	int i;
-
-	for (i = 0; i < MAXPLAYERS; i++)
-	{
-		if (!Level.Game.Players[i])
-			continue;
-		if (!Level.Game.Players[i].bSpawned)
-			continue;
-		Player(Level.Game.Players[i]).ClientExplosion(colour, org);
-	}
-}
-
-//==========================================================================
-//
 //	KilledByPlayer
 //
 //==========================================================================
@@ -433,77 +398,6 @@ void AutoUseHealth(int saveHealth)
 
 //==========================================================================
 //
-//  SpawnBloodSplatter
-//
-//==========================================================================
-
-void SpawnBloodSplatter(TVec org, int damage)
-{
-	Actor mo;
-	int i;
-
-	for (i = 0; i < MAXPLAYERS; i++)
-	{
-		if (!Level.Game.Players[i])
-			continue;
-		if (!Level.Game.Players[i].bSpawned)
-			continue;
-		Player(Level.Game.Players[i]).ClientBlood(org,
-			damage > 255 ? 255 : damage);
-	}
-
-	mo = Spawn(BloodSplatter, org);
-	mo.Target = self;
-	mo.Velocity.x = (Random() - Random()) * 2.0 * 35.0;
-	mo.Velocity.y = (Random() - Random()) * 2.0 * 35.0;
-	mo.Velocity.z = 2.0 * 35.0;
-}
-
-//==========================================================================
-//
-//  SpawnRipperBlood
-//
-//==========================================================================
-
-void SpawnRipperBlood()
-{
-	Actor th;
-	TVec org;
-
-	org.x = Origin.x + (Random() - Random()) * 16.0;
-	org.y = Origin.y + (Random() - Random()) * 16.0;
-	org.z = Origin.z + (Random() - Random()) * 16.0;
-	th = Spawn(Blood, org);
-	th.bNoGravity = true;
-	th.Velocity.x = Velocity.x / 2.0;
-	th.Velocity.y = Velocity.y / 2.0;
-	th.StateTime += Random() * 0.1;
-}
-
-//===========================================================================
-//
-//	SpawnBlasterEffects
-//
-//===========================================================================
-
-void SpawnBlasterEffects()
-{
-	TVec org;
-
-	if (P_Random() < 64)
-	{
-		org = Origin;
-		org.z = Origin.z - 8.0;
-		if (org.z < FloorZ)
-		{
-			org.z = FloorZ;
-		}
-		Spawn(BlasterSmoke, org);
-	}
-}
-
-//==========================================================================
-//
 //	GetBaseViewHeight
 //
 //==========================================================================
@@ -604,53 +498,6 @@ final void A_Explode()
 	if (ExplodeEffect)
 	{
 		SendExplosion(ExplodeEffect, Origin);
-	}
-}
-
-//==========================================================================
-//
-//  SpawnPuff
-//
-//==========================================================================
-
-void SpawnPuff(TVec org, float Range, class<EntityEx> PuffType, bool HitThing)
-{
-	EntityEx puff;
-
-	if (PuffType == BlasterPuff1 && HitThing)
-	{
-		// Make blaster big puff
-		Actor A;
-
-		A = Spawn(BlasterPuff2, org);
-		A.PlaySound('weapons/blastershoot', CHAN_VOICE);
-
-		SendExplosion(RGB(80, 164, 252), org);
-	}
-	else
-	{
-		org.z += (Random() - Random()) * 4.0;
-		puff = Spawn(PuffType, org);
-		if (puff.AttackSound)
-		{
-			puff.PlaySound(puff.AttackSound, CHAN_VOICE);
-		}
-		if (PuffType == BeakPuff || PuffType == StaffPuff)
-		{
-			puff.Velocity.z = 1.0 * 35.0;
-		}
-		else if (PuffType == GauntletPuff1 || PuffType == GauntletPuff2)
-		{
-			puff.Velocity.z = 0.8 * 35.0;
-		}
-		if (PuffType == GoldWandPuff1)
-		{
-			SendExplosion(RGB(252, 187, 57), org);
-		}
-		if (PuffType == BlasterPuff1)
-		{
-			SendExplosion(RGB(80, 164, 252), org);
-		}
 	}
 }
 

@@ -25,6 +25,28 @@
 
 class BlasterFX1 : Projectile;
 
+//===========================================================================
+//
+//	SpawnBlasterEffects
+//
+//===========================================================================
+
+void SpawnBlasterEffects()
+{
+	TVec org;
+
+	if (P_Random() < 64)
+	{
+		org = Origin;
+		org.z = Origin.z - 8.0;
+		if (org.z < FloorZ)
+		{
+			org.z = FloorZ;
+		}
+		Spawn(BlasterSmoke, org);
+	}
+}
+
 //==========================================================================
 //
 //  DoSpecialDamage

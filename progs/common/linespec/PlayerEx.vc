@@ -93,6 +93,9 @@ replication
 {
 	reliable if (!bIsClient)
 		Cheats, ReadyWeapon, InvFirst, InvPtr, InventoryTime, ArtifactFlash;
+
+	unreliable if (!bIsClient)
+		ClientGunShot, ClientBlood, ClientExplosion, ClientParticleExplosion;
 }
 
 //==========================================================================
@@ -1388,6 +1391,126 @@ final void UpdateRevealedMap()
 			return;
 		}
 	}
+}
+
+//==========================================================================
+//
+//  ClientGunShot
+//
+//==========================================================================
+
+void ClientGunShot(TVec org)
+{
+	int i;
+	particle_t *p;
+	int c;
+
+	for (i = 0; i < 20; i++)
+	{
+		p = Level.NewParticle();
+		if (!p)
+			return;
+
+		p->org = org;
+		c = P_Random() >> 1;
+		p->colour = RGB(c, c, c);
+		p->die = Level.XLevel.Time + 0.5 * Random();
+		p->vel.x = 32.0 * (Random() - 0.5);
+		p->vel.y = 32.0 * (Random() - 0.5);
+		p->vel.z = 32.0 * (Random() - 0.5);
+		p->type = LineSpecialLevelInfo::pt_static;
+	}
+}
+
+//==========================================================================
+//
+//  ClientBlood
+//
+//==========================================================================
+
+void ClientBlood(TVec org, int damage)
+{
+	int i;
+	particle_t *p;
+	int c;
+
+	for (i = 0; i < damage; i++)
+	{
+		p = Level.NewParticle();
+		if (!p)
+			return;
+
+		p->org = org;
+		c = P_Random() >> 1;
+		p->colour = RGB(32 + c, c >> 4, c >> 4);
+		p->die = Level.XLevel.Time + 0.5 * Random();
+		p->vel.x = 32.0 * (Random() - 0.5);
+		p->vel.y = 32.0 * (Random() - 0.5);
+		p->vel.z = 32.0 * (Random() - 0.5);
+		p->type = LineSpecialLevelInfo::pt_static;
+	}
+}
+
+//==========================================================================
+//
+//  ClientExplosion
+//
+//==========================================================================
+
+void ClientExplosion(int colour, TVec org)
+{
+	dlight_t*	dl;
+
+	dl = Level.AllocDlight(none);
+	dl->origin = org;
+	dl->radius = 350.0;
+	dl->colour = colour;
+	dl->die = Level.XLevel.Time + 0.5;
+	dl->decay = 300.0;
+}
+
+//==========================================================================
+//
+//  ClientParticleExplosion
+//
+//==========================================================================
+
+void ClientParticleExplosion(int colour, TVec org)
+{
+	int i;
+	particle_t *p;
+	dlight_t *dl;
+
+	for (i = 0; i < 1024; i++)
+	{
+		p = Level.NewParticle();
+		if (!p)
+			return;
+		p->die = Level.XLevel.Time + 5.0;
+		p->colour = LineSpecialGameInfo.default.ramp1[0];
+		p->ramp = Random() * 4.0;
+		if (i & 1)
+		{
+			p->type = LineSpecialLevelInfo::pt_explode;
+		}
+		else
+		{
+			p->type = LineSpecialLevelInfo::pt_explode2;
+		}
+		p->org.x = org.x + ((Random() * 32.0) - 16.0);
+		p->org.y = org.y + ((Random() * 32.0) - 16.0);
+		p->org.z = org.z + ((Random() * 32.0) - 16.0);
+		p->vel.x = (Random() * 512.0) - 256.0;
+		p->vel.y = (Random() * 512.0) - 256.0;
+		p->vel.z = (Random() * 512.0) - 256.0;
+	}
+
+	dl = Level.AllocDlight(none);
+	dl->origin = org;
+	dl->radius = 350.0;
+	dl->colour = colour;
+	dl->die = Level.XLevel.Time + 0.5;
+	dl->decay = 300.0;
 }
 
 int ArmorAbsorbDamage(EntityEx inflictor, EntityEx source, int damage,

@@ -35,9 +35,10 @@ __states__
 
 defaultproperties
 {
-	Alpha = 0.666;
 	bNoBlockmap = true;
 	bNoPassMobj = true;
 	bSmallSplash = true;
 	IdleState = S_BLOOD1;
+	IdleRightState = S_BLOOD2;
+	IdleLeftState = S_BLOOD3;
 }

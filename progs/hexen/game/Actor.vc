@@ -474,70 +474,6 @@ void PoisonDamage(Actor source, int damage, bool playPainSound)
 	}
 }
 
-//==========================================================================
-//
-//  SpawnBloodSplatter
-//
-//==========================================================================
-
-void SpawnBloodSplatter(TVec org, int damage)
-{
-	Actor mo;
-	int i;
-
-	for (i = 0; i < MAXPLAYERS; i++)
-	{
-		if (!Level.Game.Players[i])
-			continue;
-		if (!Level.Game.Players[i].bSpawned)
-			continue;
-		Player(Level.Game.Players[i]).ClientBlood(org,
-			damage > 255 ? 255 : damage);
-	}
-
-	mo = Spawn(BloodSplatter, org);
-	mo.Target = self;
-	mo.Velocity.x = (Random() - Random()) * 4.0 * 35.0;
-	mo.Velocity.y = (Random() - Random()) * 4.0 * 35.0;
-	mo.Velocity.z = 3.0 * 35.0 / 20.0;
-}
-
-//===========================================================================
-//
-//  SpawnBloodSplatter2
-//
-//===========================================================================
-
-void SpawnBloodSplatter2(TVec org)
-{
-	Actor mo;
-
-	org.x += (Random() - 0.5) * 8.0;
-	org.y += (Random() - 0.5) * 8.0;
-	mo = Spawn(AxeBlood, org);
-	mo.Target = self;
-}
-
-//==========================================================================
-//
-//  SpawnRipperBlood
-//
-//==========================================================================
-
-void SpawnRipperBlood()
-{
-	Actor th;
-	TVec org;
-
-	org.x = Origin.x + (Random() - Random()) * 16.0;
-	org.y = Origin.y + (Random() - Random()) * 16.0;
-	org.z = Origin.z + (Random() - Random()) * 16.0;
-	th = Spawn(Blood, org);
-	th.Velocity.x = Velocity.x / 2.0;
-	th.Velocity.y = Velocity.y / 2.0;
-	th.StateTime += Random() * 0.1;
-}
-
 //============================================================================
 //
 //  SpawnDirt
@@ -756,41 +692,6 @@ float GetBaseViewHeight()
 
 //==========================================================================
 //
-//  DoMissileExplosionEffects
-//
-//==========================================================================
-
-void DoMissileExplosionEffects()
-{
-	if (bDynamicLight)
-	{
-		SendExplosion(DLightColour, Origin);
-		bDynamicLight = false;
-	}
-}
-
-//==========================================================================
-//
-//  SendExplosion
-//
-//==========================================================================
-
-final void SendExplosion(int colour, TVec org)
-{
-	int i;
-
-	for (i = 0; i < MAXPLAYERS; i++)
-	{
-		if (!Level.Game.Players[i])
-			continue;
-		if (!Level.Game.Players[i].bSpawned)
-			continue;
-		Player(Level.Game.Players[i]).ClientExplosion(colour, org);
-	}
-}
-
-//==========================================================================
-//
 //  Blast
 //
 //==========================================================================
@@ -877,38 +778,6 @@ final void Blast(Actor source, float strength)
 			bBlasted = true;
 		}
 	}
-}
-
-//==========================================================================
-//
-//  SpawnPuff
-//
-//==========================================================================
-
-void SpawnPuff(TVec org, float Range, class<EntityEx> PuffType, bool HitThing)
-{
-	EntityEx puff;
-
-	org.z += (Random() - Random()) * 4.0;
-	puff = Spawn(PuffType, org);
-	if (HitThing && puff.SightSound)
-	{
-		// Hit thing sound
-		puff.PlaySound(puff.SightSound, CHAN_VOICE);
-	}
-	else if (puff.AttackSound)
-	{
-		puff.PlaySound(puff.AttackSound, CHAN_VOICE);
-	}
-	if (PuffType == PunchPuff)
-	{
-		puff.Velocity.z = 1.0 * 35.0;
-	}
-	else if (PuffType == HammerPuff)
-	{
-		puff.Velocity.z = 8.0 / 10.0 * 35.0;
-	}
-	MainGameInfo(Level.Game).PuffSpawned = Actor(puff);
 }
 
 //===========================================================================

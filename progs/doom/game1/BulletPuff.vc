@@ -37,8 +37,11 @@ __states__
 defaultproperties
 {
 	Alpha = 0.666;
+	PuffVelZ = 1.0 * 35.0;
 	bNoBlockmap = true;
 	bNoGravity = true;
 	bNoPassMobj = true;
+	bPuffParticles = true;
 	IdleState = S_PUFF1;
+	MeleeState = S_PUFF3;
 }

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MaulerPuff:Effect;
+class MaulerPuff : Effect;
 
 __states__
 {
@@ -38,5 +38,6 @@ __states__
 
 defaultproperties
 {
+	PuffVelZ = 1.0 * 35.0;
 	IdleState = S_MAULER_FX_1;
 }

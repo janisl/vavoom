@@ -38,12 +38,6 @@ float MorphTime;	// player is a pig if > 0
 
 BotPlayer Bot;
 
-replication
-{
-	unreliable if (!bIsClient)
-		ClientBlood, ClientExplosion;
-}
-
 //==========================================================================
 //
 //	PutClientIntoServer
@@ -2066,52 +2060,6 @@ void Cheat_Class()
 	//PostMorphWeapon(HexenDefs::WP_FIRST);
 	SetCvar('class', pclass);
 	SB_Start();
-}
-
-//==========================================================================
-//
-//  ClientBlood
-//
-//==========================================================================
-
-void ClientBlood(TVec org, int damage)
-{
-	int i, j;
-	particle_t *p;
-	int c;
-
-	for (i = 0; i < damage; i++)
-	{
-		p = Level.NewParticle();
-		if (!p)
-			return;
-
-		p->org = org;
-		c = P_Random() >> 1;
-		p->colour = RGB(32 + c, c >> 4, c >> 4);
-		p->die = Level.XLevel.Time + 0.5 * Random();
-		p->vel.x = 32.0 * (Random() - 0.5);
-		p->vel.y = 32.0 * (Random() - 0.5);
-		p->vel.z = 32.0 * (Random() - 0.5);
-	}
-}
-
-//==========================================================================
-//
-//  ClientExplosion
-//
-//==========================================================================
-
-void ClientExplosion(int colour, TVec org)
-{
-	dlight_t *dl;
-
-	dl = Level.AllocDlight(none);
-	dl->origin = org;
-	dl->radius = 350.0;
-	dl->colour = colour;
-	dl->die = Level.XLevel.Time + 0.5;
-	dl->decay = 300.0;
 }
 
 //==========================================================================

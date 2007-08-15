@@ -43,14 +43,14 @@ final void A_SnoutAttack()
 	damage = 3 + (P_Random() & 3);
 	angles = Owner.Angles;
 	AimTarget = Actor(Owner).AimLineAttack(vforward, angles, Actor::MELEERANGE);
-	MainGameInfo(Level.Game).PuffSpawned = none;
+	LineSpecialLevelInfo(Level).bPuffSpawned = false;
 	Actor(Owner).LineAttack(vforward, Actor::MELEERANGE, damage, SnoutPuff);
 	Owner.PlaySound((P_Random() & 1) ? 'PigActive2' : 'PigActive1',
 		CHAN_VOICE);
 	if (AimTarget)
 	{
 		Player(Owner.Player).AdjustPlayerAngle(AimTarget);
-		if (MainGameInfo(Level.Game).PuffSpawned)
+		if (LineSpecialLevelInfo(Level).bPuffSpawned)
 		{
 			// Bit something
 			Owner.PlaySound('PigAttack', CHAN_VOICE);
