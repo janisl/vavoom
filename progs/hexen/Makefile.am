@@ -225,12 +225,38 @@ EXTRA_DIST = compile.bat \
 	game/DragonExplosion.vc \
 	game/DragonFireball.vc \
 	game/FalconShield.vc \
+	game/FighterBoss.vc \
 	game/FighterPlayer.vc \
 	game/FighterWeapon.vc \
 	game/FighterWeaponPiece.vc \
 	game/FireBall.vc \
+	game/FireBomb.vc \
+	game/FireDemon.vc \
+	game/FireDemonMissile.vc \
+	game/FireDemonRock1.vc \
+	game/FireDemonRock2.vc \
+	game/FireDemonRock3.vc \
+	game/FireDemonRock4.vc \
+	game/FireDemonRock5.vc \
+	game/FireDemonSplotch1.vc \
+	game/FireDemonSplotch2.vc \
+	game/FireThing.vc \
+	game/FlameLarge.vc \
+	game/FlameLarge2.vc \
+	game/FlameLargeTemp.vc \
+	game/FlamePuff.vc \
+	game/FlamePuff2.vc \
+	game/FlameSmall.vc \
+	game/FlameSmall2.vc \
+	game/FlameSmallTemp.vc \
+	game/FogPatch.vc \
+	game/FogPatchLarge.vc \
+	game/FogPatchMedium.vc \
+	game/FogPatchSmall.vc \
+	game/FogSpawner.vc \
 	game/FourthWeaponHolder.vc \
 	game/FourthWeaponPiece.vc \
+	game/Fragment.vc \
 	game/FrostMissile.vc \
 	game/FSwordFlame.vc \
 	game/FSwordMissile.vc \
@@ -478,31 +504,24 @@ EXTRA_DIST = compile.bat \
 	game/CircleFlame.vc \
 	game/Pottery1.vc \
 	game/EttinMace.vc \
-	game/FireDemonRock2.vc \
 	game/SludgeChunk.vc \
 	game/Rock2.vc \
-	game/FireDemonSplotch2.vc \
-	game/FireDemon.vc \
 	game/TeleSmoke.vc \
-	game/FogPatchMedium.vc \
 	game/ClassBoss.vc \
 	game/classes.vc \
 	game/PoisonCloud.vc \
 	game/Pawn.vc \
 	game/Projectile.vc \
-	game/FlameSmallTemp.vc \
 	game/PotteryBit.vc \
 	game/QuakeFocus.vc \
 	game/TableShit7.vc \
 	game/CentaurLeader.vc \
-	game/FireThing.vc \
 	game/TableShit10.vc \
 	game/SnoutPuff.vc \
 	game/MainGameInfo.vc \
 	game/SoundWaterfall.vc \
 	game/MageStaffFX.vc \
 	game/LavaSplash.vc \
-	game/FireDemonMissile.vc \
 	game/Blood.vc \
 	game/TableShit2.vc \
 	game/BloodySkull.vc \
@@ -512,12 +531,8 @@ EXTRA_DIST = compile.bat \
 	game/BurnableTree.vc \
 	game/IceChunkHead.vc \
 	game/HexenLevelInfo.vc \
-	game/FogPatchSmall.vc \
-	game/FireBomb.vc \
 	game/Effect.vc \
-	game/FireDemonRock3.vc \
 	game/Rock3.vc \
-	game/FlamePuff2.vc \
 	game/BridgeBall.vc \
 	game/StaticRGBLightSource.vc \
 	game/HammerPuff.vc \
@@ -526,23 +541,18 @@ EXTRA_DIST = compile.bat \
 	game/CentaurSword.vc \
 	game/PoisonBag.vc \
 	game/TableShit3.vc \
-	game/Fragment.vc \
-	game/FogPatchLarge.vc \
 	game/MageStaffFX2.vc \
 	game/IceChunk.vc \
 	game/Dirt6.vc \
 	game/CentaurShield.vc \
 	game/ThrustFloorUp.vc \
 	game/ThrowingBomb.vc \
-	game/FlamePuff.vc \
-	game/FireDemonRock4.vc \
 	game/Dirt1.vc \
 	game/Ettin.vc \
 	game/Bat.vc \
 	game/HolyMissile.vc \
 	game/TableShit9.vc \
 	game/CentaurMash.vc \
-	game/FlameSmall.vc \
 	game/BloodSplatter.vc \
 	game/MageWandSmoke.vc \
 	game/Decoration.vc \
@@ -552,14 +562,11 @@ EXTRA_DIST = compile.bat \
 	game/TableShit4.vc \
 	game/BrassTorch.vc \
 	game/Dirt3.vc \
-	game/FogSpawner.vc \
 	game/BloodPool.vc \
 	game/Leaf1.vc \
 	game/PunchPuff.vc \
 	game/HammerMissile.vc \
-	game/FireDemonRock5.vc \
 	game/Leaf2.vc \
-	game/FighterBoss.vc \
 	game/BlastEffect.vc \
 	game/Bridge.vc \
 	game/ThrustFloorDown.vc \
@@ -569,19 +576,14 @@ EXTRA_DIST = compile.bat \
 	game/CorpseBit.vc \
 	game/EttinMash.vc \
 	game/SludgeSplash.vc \
-	game/FlameLarge.vc \
 	game/MageWandPuff.vc \
 	game/LavaSmoke.vc \
 	game/Pottery3.vc \
-	game/FogPatch.vc \
 	game/ClericBoss.vc \
 	game/CorpseBloodDrip.vc \
 	game/TableShit5.vc \
-	game/FlameLargeTemp.vc \
 	game/HolyPuff.vc \
 	game/Rock1.vc \
-	game/FireDemonRock1.vc \
-	game/FireDemonSplotch1.vc \
 	game/HolyTail.vc \
 	game/IceShard.vc \
 	game/HolyMissilePuff.vc \

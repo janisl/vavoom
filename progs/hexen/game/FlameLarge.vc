@@ -25,8 +25,7 @@
 
 class FlameLarge : Decoration
 	__mobjinfo__(10503)
-	__scriptid__(99)
-	__scriptid__(67);
+	__scriptid__(99);
 
 __states__
 {

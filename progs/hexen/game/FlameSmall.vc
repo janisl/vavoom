@@ -25,8 +25,7 @@
 
 class FlameSmall : Decoration
 	__mobjinfo__(10501)
-	__scriptid__(97)
-	__scriptid__(66);
+	__scriptid__(97);
 
 __states__
 {
