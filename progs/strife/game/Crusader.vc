@@ -148,6 +148,22 @@ final void A_CrusaderRefire()
 	}
 }
 
+//==========================================================================
+//
+//	A_CrusaderDeath
+//
+//==========================================================================
+
+final void A_CrusaderDeath()
+{
+	if (!CheckBossDeath())
+	{
+		return;
+	}
+	StrifeLevelInfo(Level).EV_DoFloor(667, 8, 0, 0, 0,
+		FloorMover::FLOOREV_LowerToLowest, NULL);
+}
+
 __states__
 {
 	S_CRUSADER_LOOK('ROB2', 16, 10.0 / 35.0, S_CRUSADER_LOOK) = A_Look
@@ -179,7 +195,7 @@ __states__
 	S_CRUSADER_DIE7('ROB2', 12, 4.0 / 35.0, S_CRUSADER_DIE8) = A_XDying
 	S_CRUSADER_DIE8('ROB2', 13, 4.0 / 35.0, S_CRUSADER_DIE9) = A_XDying
 	S_CRUSADER_DIE9('ROB2', 14, 4.0 / 35.0, S_CRUSADER_DIE10) = A_ExplodeAndAlert
-	S_CRUSADER_DIE10('ROB2', 15, -1.0, none) = A_BossDeath
+	S_CRUSADER_DIE10('ROB2', 15, -1.0, none) = A_CrusaderDeath
 }
 
 defaultproperties

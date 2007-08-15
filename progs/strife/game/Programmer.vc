@@ -59,17 +59,30 @@ final void A_ProgrammerMelee()
 
 //==========================================================================
 //
+//	A_SpawnProgrammerBase
+//
+//==========================================================================
+
+final void A_SpawnProgrammerBase()
+{
+	//	Spawn separate base object.
+	TossUpObject(ProgrammerBase);
+}
+
+//==========================================================================
+//
 //	A_ProgrammerDeath
 //
 //==========================================================================
 
 final void A_ProgrammerDeath()
 {
-	//	Spawn separate base object.
-	TossUpObject(ProgrammerBase);
-
-	//	Give Silil piece to the player.
-	Target.Player.cprint("You\'ve Killed the Programmer!");
+	if (!CheckBossDeath())
+	{
+		return;
+	}
+	//	Call death script.
+	XLevel.StartACS(250, 0, 0, 0, 0, self, NULL, 0, false, false);
 }
 
 __states__
@@ -99,7 +112,7 @@ __states__
 	S_PROGRAMMER_DIE3('PRGR', 13 | FF_FULLBRIGHT, 7.0 / 35.0, S_PROGRAMMER_DIE4) = A_XDying
 	S_PROGRAMMER_DIE4('PRGR', 14 | FF_FULLBRIGHT, 7.0 / 35.0, S_PROGRAMMER_DIE5) = A_Fall
 	S_PROGRAMMER_DIE5('PRGR', 15 | FF_FULLBRIGHT, 7.0 / 35.0, S_PROGRAMMER_DIE6) = A_XDying
-	S_PROGRAMMER_DIE6('PRGR', 16 | FF_FULLBRIGHT, 7.0 / 35.0, S_PROGRAMMER_DIE7) = A_ProgrammerDeath
+	S_PROGRAMMER_DIE6('PRGR', 16 | FF_FULLBRIGHT, 7.0 / 35.0, S_PROGRAMMER_DIE7) = A_SpawnProgrammerBase
 	S_PROGRAMMER_DIE7('PRGR', 17 | FF_FULLBRIGHT, 7.0 / 35.0, S_PROGRAMMER_DIE8) = none
 	S_PROGRAMMER_DIE8('PRGR', 18 | FF_FULLBRIGHT, 6.0 / 35.0, S_PROGRAMMER_DIE9) = none
 	S_PROGRAMMER_DIE9('PRGR', 19 | FF_FULLBRIGHT, 5.0 / 35.0, S_PROGRAMMER_DIE10) = none
@@ -107,7 +120,7 @@ __states__
 	S_PROGRAMMER_DIE11('PRGR', 21 | FF_FULLBRIGHT, 5.0 / 35.0, S_PROGRAMMER_DIE12) = none
 	S_PROGRAMMER_DIE12('PRGR', 22 | FF_FULLBRIGHT, 5.0 / 35.0, S_PROGRAMMER_DIE13) = none
 	S_PROGRAMMER_DIE13('PRGR', 23 | FF_FULLBRIGHT, 32.0 / 35.0, S_PROGRAMMER_DIE14) = none
-	S_PROGRAMMER_DIE14('PRGR', 23 | FF_FULLBRIGHT, -1.0, none) = A_BossDeath
+	S_PROGRAMMER_DIE14('PRGR', 23 | FF_FULLBRIGHT, -1.0, none) = A_ProgrammerDeath
 }
 
 defaultproperties

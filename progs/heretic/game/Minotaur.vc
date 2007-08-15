@@ -239,24 +239,6 @@ final void A_MinotaurCharge()
 	}
 }
 
-//==========================================================================
-//
-//  A_BossDeath
-//
-//  Trigger special effects if all bosses are dead.
-//
-//==========================================================================
-
-final void A_BossDeath()
-{
-	if (!Level.bMinotaurSpecial)
-	{
-		//  Not a boss level
-		return;
-	}
-	BossDeathSpecialAction();
-}
-
 __states__
 {
 	S_MNTR_LOOK1('MNTR', 0, 10.0 / 35.0, S_MNTR_LOOK2) = A_Look

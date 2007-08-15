@@ -365,29 +365,6 @@ float GetBaseViewHeight()
 
 //==========================================================================
 //
-//  A_FreeTargMobj
-//
-//==========================================================================
-
-final void A_FreeTargMobj()
-{
-	Velocity = vector(0.0, 0.0, 0.0);
-	Origin.z = CeilingZ + 4.0;
-	Gravity = 1.0;
-	bSolid = false;
-	bShootable = false;
-	bFloat = false;
-	bSkullFly = false;
-	bNoGravity = true;
-	bDropOff = true;
-	bCorpse = true;
-	bNoPassMobj = true;
-	Player = none;
-	bIsPlayer = false;
-}
-
-//==========================================================================
-//
 //  A_PlayerScream
 //
 //==========================================================================
@@ -414,6 +391,49 @@ final void A_PlayerScream()
 	{
 		// Extreme death sound
 		PlaySound('*gibbed', CHAN_VOICE);
+	}
+}
+
+//==========================================================================
+//
+//  A_Feathers
+//
+//==========================================================================
+
+final void A_Feathers()
+{
+	int i;
+	int count;
+	Actor mo;
+
+	if (Health > 0)
+	{
+		// Pain
+		count = P_Random() < 32 ? 2 : 1;
+	}
+	else
+	{
+		// Death
+		count = 5 + (P_Random() & 3);
+	}
+	for (i = 0; i < count; i++)
+	{
+		mo = Spawn(Feather, Origin + vector(0.0, 0.0, 20.0));
+		mo.Target = self;
+		mo.Velocity.x = (Random() - Random()) * 35.0;
+		mo.Velocity.y = (Random() - Random()) * 35.0;
+		mo.Velocity.z = (1.0 + Random() * 2.0) * 35.0;
+		switch (P_Random() & 7)
+		{
+		case 0: mo.SetState(Feather::S_FEATHER1); break;
+		case 1: mo.SetState(Feather::S_FEATHER2); break;
+		case 2: mo.SetState(Feather::S_FEATHER3); break;
+		case 3: mo.SetState(Feather::S_FEATHER4); break;
+		case 4: mo.SetState(Feather::S_FEATHER5); break;
+		case 5: mo.SetState(Feather::S_FEATHER6); break;
+		case 6: mo.SetState(Feather::S_FEATHER7); break;
+		case 7: mo.SetState(Feather::S_FEATHER8); break;
+		}
 	}
 }
 

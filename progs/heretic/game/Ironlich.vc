@@ -115,23 +115,6 @@ final void A_HeadAttack()
 	}
 }
 
-//==========================================================================
-//
-//  A_BossDeath
-//
-//  Trigger special effects if all bosses are dead.
-//
-//==========================================================================
-
-final void A_BossDeath()
-{
-	if (!Level.bIronLichSpecial)
-	{
-		return;
-	}
-	BossDeathSpecialAction();
-}
-
 __states__
 {
 	S_HEAD_LOOK('HEAD', 0, 10.0 / 35.0, S_HEAD_LOOK) = A_Look

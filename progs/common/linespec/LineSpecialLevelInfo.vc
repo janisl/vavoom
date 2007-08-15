@@ -4465,6 +4465,17 @@ bool StartConversation(EntityEx Speaker, EntityEx SpeakingTo)
 	return false;
 }
 
+//==========================================================================
+//
+//	P_Massacre
+//
+//==========================================================================
+
+int P_Massacre()
+{
+	return 0;
+}
+
 defaultproperties
 {
 	ExtPlayersBase = 4001;

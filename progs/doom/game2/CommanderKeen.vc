@@ -36,14 +36,21 @@ class CommanderKeen : Actor
 
 final void A_KeenDie()
 {
+	Actor		Other;
+
 	A_Fall();
 
 	// scan the remaining thinkers to see if all Keens are dead
-	if (FindOther())
+	foreach AllThinkers(CommanderKeen, Other)
 	{
-		return;
+		if (Other != self && Other.Health > 0)
+		{
+			// other mobj of the same Class not dead
+			return;
+		}
 	}
-	Level.ExecuteActionSpecial(LNSPEC_DoorOpen, 666, 16, 150, 0, 0, NULL, 0, none);
+	Level.ExecuteActionSpecial(LNSPEC_DoorOpen, 666, 16, 150, 0, 0, NULL, 0,
+		none);
 }
 
 __states__

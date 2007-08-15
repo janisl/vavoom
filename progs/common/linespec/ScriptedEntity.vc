@@ -638,6 +638,134 @@ final void A_ExplodeAndAlert()
 	}
 }
 
+//==========================================================================
+//
+//  A_BossDeath
+//
+//  Possibly trigger special effects if on first boss level
+//
+//==========================================================================
+
+final void A_BossDeath()
+{
+	name Cls = GetClassName(Class);
+	if (!((Cls == 'BaronOfHell' && Level.bBaronSpecial) ||
+		(Cls == 'Cyberdemon' && Level.bCyberDemonSpecial) ||
+		(Cls == 'SpiderMastermind' && Level.bSpiderMastermindSpecial) ||
+		(Cls == 'Arachnotron' && Level.bMap07Special) ||
+		(Cls == 'Fatso' && Level.bMap07Special) ||
+		(Cls == 'Ironlich' && Level.bIronLichSpecial) ||
+		(Cls == 'Minotaur' && Level.bMinotaurSpecial) ||
+		(Cls == 'Sorcerer2' && Level.bDSparilSpecial)))
+	{
+		return;
+	}
+
+	if (!CheckBossDeath())
+	{
+		return;
+	}
+
+	// victory!
+	if (Level.bSpecialActionKillMonsters)
+	{
+		// Kill any remaining monsters
+		LineSpecialLevelInfo(Level).P_Massacre();
+	}
+
+	if (Level.bMap07Special)
+	{
+		if (GetClassName(Class) == 'Fatso')
+		{
+			Level.ExecuteActionSpecial(LNSPEC_FloorLowerToLowest, 666, 8,
+				0, 0, 0, NULL, 0, none);
+			return;
+		}
+		if (GetClassName(Class) == 'Arachnotron')
+		{
+			Level.ExecuteActionSpecial(LNSPEC_FloorRaiseByTexture, 667, 8,
+				0, 0, 0, NULL, 0, none);
+			return;
+		}
+	}
+	else if (Level.bSpecialActionOpenDoor)
+	{
+		Level.ExecuteActionSpecial(LNSPEC_DoorOpen, 666, 64, 150, 0, 0,
+			NULL, 0, none);
+		return;
+	}
+	else if (Level.bSpecialActionLowerFloor)
+	{
+		Level.ExecuteActionSpecial(LNSPEC_FloorLowerToLowest, 666, 8, 0, 0,
+			0, NULL, 0, none);
+		return;
+	}
+	Level.ExitLevel(0);
+}
+
+//==========================================================================
+//
+//  A_FreeTargMobj
+//
+//==========================================================================
+
+final void A_FreeTargMobj()
+{
+	Velocity = vector(0.0, 0.0, 0.0);
+	Origin.z = CeilingZ + 4.0;
+	Gravity = 1.0;
+	bSolid = false;
+	bShootable = false;
+	bFloat = false;
+	bCountKill = false;
+	bMonster = false;
+	bSkullFly = false;
+	bNoGravity = true;
+	bDropOff = true;
+	bCorpse = true;
+	bNoPassMobj = true;
+	Alpha = 0.0;
+	Player = none;
+	bIsPlayer = false;
+	Health = -1000;	// Don't resurrect
+}
+
+//==========================================================================
+//
+//  A_Metal
+//
+//  Cyberdemon move with metal sound.
+//
+//==========================================================================
+
+final void A_Metal()
+{
+	PlaySound('spider/walk', CHAN_BODY);
+	A_Chase();
+}
+
+//==========================================================================
+//
+//  A_SpidRefire
+//
+//  Spider mastermind refire.
+//
+//==========================================================================
+
+final void A_SpidRefire()
+{
+	// keep firing unless target got out of sight
+	A_FaceTarget();
+
+	if (P_Random() < 10)
+		return;
+
+	if (!Target || Target.Health <= 0 || !CanSee(Target))
+	{
+		SetState(SeeState);
+	}
+}
+
 defaultproperties
 {
 }

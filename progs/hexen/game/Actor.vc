@@ -793,33 +793,6 @@ final void A_UnHideThing()
 
 //============================================================================
 //
-//  A_FreeTargMobj
-//
-//============================================================================
-
-final void A_FreeTargMobj()
-{
-	Velocity = vector(0.0, 0.0, 0.0);
-	Origin.z = CeilingZ + 4.0;
-	Gravity = 1.0;
-	bSolid = false;
-	bShootable = false;
-	bFloat = false;
-	bCountKill = false;
-	bMonster = false;
-	bSkullFly = false;
-	bDropOff = true;
-	bNoGravity = true;
-	bCorpse = true;
-	bNoPassMobj = true;
-	Alpha = 0.0;
-	Player = none;
-	bIsPlayer = false;
-	Health = -1000;	// Don't resurrect
-}
-
-//============================================================================
-//
 //  A_PlayerScream
 //
 //============================================================================

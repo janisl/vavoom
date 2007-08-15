@@ -26,6 +26,108 @@
 class AlienSpectre1 : Pawn
 	__mobjinfo__(129);
 
+//==========================================================================
+//
+//	A_AlienSpectreDeath
+//
+//==========================================================================
+
+final void A_AlienSpectreDeath()
+{
+	if (!CheckBossDeath())
+	{
+		return;
+	}
+
+	// victory!
+	if (Class == AlienSpectre1)
+	{
+		//	Specter in ruined temple.
+		StrifeLevelInfo(Level).EV_DoFloor(999, 8, 0, 0, 0,
+			FloorMover::FLOOREV_LowerToLowest, NULL);
+		Player(Target.Player).SetObjectives(95);
+		Player(Target.Player).ClientVoice(95);
+	}
+	else if (Class == AlienSpectre2)
+	{
+		//	Bishop's specter
+		if (!Target)
+			return;
+
+		Target.Player.cprint("$txt_killed_bishop");
+		Target.GiveInventoryType(QuestItem21);
+		Player(Target.Player).SetObjectives(74);
+		Player(Target.Player).ClientVoice(74);
+	}
+	else if (Class == AlienSpectre3)
+	{
+		//	Oracle's specter
+		if (!Target)
+			return;
+
+		Target.Player.cprint("$txt_killed_oracle");
+		Target.GiveInventoryType(QuestItem23);
+		if (Target.FindInventory(QuestItem21))
+		{
+			//	If the Bishop is dead, set quest item 22
+			Target.GiveInventoryType(QuestItem22);
+		}
+		if (Target.FindInventory(QuestItem24))
+		{
+			Player(Target.Player).SetObjectives(85);
+			Player(Target.Player).ClientVoice(85);
+		}
+		else
+		{
+			Player(Target.Player).SetObjectives(87);
+			Player(Target.Player).ClientVoice(87);
+		}
+		Level.ExecuteActionSpecial(LNSPEC_DoorOpen, 222, 256, 0, 0, 0, NULL, 0, none);
+	}
+	else if (Class == AlienSpectre4)
+	{
+		//	Macil's specter
+		if (!Target)
+			return;
+
+		Target.Player.cprint("$txt_killed_macil");
+		Target.GiveInventoryType(QuestItem24);
+		if (Target.FindInventory(QuestItem25))
+		{
+			Player(Target.Player).SetObjectives(106);
+			Player(Target.Player).ClientVoice(106);
+		}
+		else
+		{
+			Player(Target.Player).SetObjectives(79);
+			Player(Target.Player).ClientVoice(79);
+		}
+	}
+	else if (Class == AlienSpectre5)
+	{
+		//	Loremaster's specter
+		if (!Target)
+			return;
+
+		Target.Player.cprint("$txt_killed_loremaster");
+		Target.GiveInventoryType(QuestItem26);
+		Target.GiveInventoryType(UpgradeAccuracy);
+		Target.GiveInventoryType(UpgradeStamina);
+		if (GetSigilPieces() == 5)
+		{
+			Player(Target.Player).SetObjectives(85);
+			Player(Target.Player).ClientVoice(85);
+		}
+		else
+		{
+			Player(Target.Player).SetObjectives(83);
+			Player(Target.Player).ClientVoice(83);
+		}
+		StrifeLevelInfo(Level).EV_DoFloor(666, 8, 0, 0, 0,
+			FloorMover::FLOOREV_LowerToLowest, NULL);
+	}
+}
+
 __states__
 {
 	S_SPECTER_LOOK1('ALN1', 0, 10.0 / 35.0, S_SPECTER_LOOK2) = A_Look
@@ -65,7 +167,7 @@ __states__
 	S_SPECTER_DIE15('AL1P', 14 | FF_FULLBRIGHT, 5.0 / 35.0, S_SPECTER_DIE16) = none
 	S_SPECTER_DIE16('AL1P', 15 | FF_FULLBRIGHT, 5.0 / 35.0, S_SPECTER_DIE17) = none
 	S_SPECTER_DIE17('AL1P', 16 | FF_FULLBRIGHT, 5.0 / 35.0, S_SPECTER_DIE18) = none
-	S_SPECTER_DIE18('AL1P', 17 | FF_FULLBRIGHT, 5.0 / 35.0, none) = A_BossDeath
+	S_SPECTER_DIE18('AL1P', 17 | FF_FULLBRIGHT, 5.0 / 35.0, none) = A_AlienSpectreDeath
 }
 
 defaultproperties

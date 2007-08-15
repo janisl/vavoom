@@ -239,17 +239,20 @@ bool CheckShareware(class<EntityEx> moClass)
 //
 //==========================================================================
 
-void P_Massacre()
+int P_Massacre()
 {
 	EntityEx mo;
+	int Count = 0;
 
 	foreach AllThinkers(EntityEx, mo)
 	{
 		if (mo.bMonster && mo.Health > 0)
 		{
 			mo.Damage(none, none, 10000);
+			Count++;
 		}
 	}
+	return Count;
 }
 
 defaultproperties
