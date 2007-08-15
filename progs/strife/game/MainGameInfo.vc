@@ -592,6 +592,7 @@ name GetConScriptName(name LevelName)
 defaultproperties
 {
 	LevelInfoClass = StrifeLevelInfo;
+	GameFilterFlag = EntityEx::GAME_Strife;
 	AcsHelper = 'strfhelp';
 	GenericConScript = 'script00';
 	TeleportFogClass = TeleportFog;

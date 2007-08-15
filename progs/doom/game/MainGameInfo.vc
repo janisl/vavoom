@@ -1244,6 +1244,7 @@ void TranslateLevel(Level InLevel)
 defaultproperties
 {
 	LevelInfoClass = DoomLevelInfo;
+	GameFilterFlag = EntityEx::GAME_Doom;
 	bNoClipIgnoreFloor = true;
 	bBabyNightmareDoubleAmmo = true;
 	bAlwaysSwitchNewWeapon = true;

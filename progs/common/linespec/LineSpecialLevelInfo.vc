@@ -2957,7 +2957,8 @@ final bool EV_ThingProjectile(int Arg1, int Arg2, int Arg3, int Arg4,
 	success = false;
 	searcher = -1;
 	tid = Arg1;
-	moType = class<EntityEx>(FindClassFromScriptId(Arg2));
+	moType = class<EntityEx>(FindClassFromScriptId(Arg2,
+		LineSpecialGameInfo(Game).GameFilterFlag));
 	if (!moType)
 	{
 		return false;
@@ -3019,7 +3020,8 @@ final bool EV_ThingSpawn(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 	success = false;
 	searcher = -1;
 	tid = Arg1;
-	moType = class<EntityEx>(FindClassFromScriptId(Arg2));
+	moType = class<EntityEx>(FindClassFromScriptId(Arg2,
+		LineSpecialGameInfo(Game).GameFilterFlag));
 	if (!moType)
 	{
 		return false;
@@ -4127,7 +4129,8 @@ final int ThingCount(int type, int tid)
 		// Nothing to count
 		return 0;
 	}
-	moType = class<EntityEx>(FindClassFromScriptId(type));
+	moType = class<EntityEx>(FindClassFromScriptId(type,
+		LineSpecialGameInfo(Game).GameFilterFlag));
 	count = 0;
 	searcher = -1;
 	if (tid)
@@ -4281,7 +4284,8 @@ final void SpawnMapThing(mthing_t* mthing)
 	}
 
 	// find which type to spawn
-	moClass = class<EntityEx>(FindClassFromEditorId(mthing->type));
+	moClass = class<EntityEx>(FindClassFromEditorId(mthing->type,
+		LineSpecialGameInfo(Game).GameFilterFlag));
 	if (!moClass)
 	{
 		// Can't find thing type

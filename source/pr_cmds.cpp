@@ -40,8 +40,8 @@
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
-VClass* SV_FindClassFromEditorId(int Id);
-VClass* SV_FindClassFromScriptId(int Id);
+VClass* SV_FindClassFromEditorId(int Id, int GameFilter);
+VClass* SV_FindClassFromScriptId(int Id, int GameFilter);
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
@@ -361,8 +361,9 @@ IMPLEMENT_FUNCTION(VObject, SB_Start)
 
 IMPLEMENT_FUNCTION(VObject, FindClassFromEditorId)
 {
+	P_GET_INT(GameFilter);
 	P_GET_INT(Id);
-	RET_PTR(SV_FindClassFromEditorId(Id));
+	RET_PTR(SV_FindClassFromEditorId(Id, GameFilter));
 }
 
 //==========================================================================
@@ -373,8 +374,9 @@ IMPLEMENT_FUNCTION(VObject, FindClassFromEditorId)
 
 IMPLEMENT_FUNCTION(VObject, FindClassFromScriptId)
 {
+	P_GET_INT(GameFilter);
 	P_GET_INT(Id);
-	RET_PTR(SV_FindClassFromScriptId(Id));
+	RET_PTR(SV_FindClassFromScriptId(Id, GameFilter));
 }
 
 //==========================================================================

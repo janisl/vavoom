@@ -26,6 +26,13 @@
 class EntityEx : Entity
 	abstract;
 
+const int
+	GAME_Doom				= 0x01,
+	GAME_Heretic			= 0x02,
+	GAME_Hexen				= 0x04,
+	GAME_Strife				= 0x08,
+	GAME_Raven				= GAME_Heretic | GAME_Hexen;
+
 const float ONFLOORZ		= -99999.0;
 const float ONCEILINGZ		= 99999.0;
 const float FLOATRANDZ		= 99998.0;

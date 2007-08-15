@@ -517,6 +517,7 @@ void TranslateLevel(Level InLevel)
 defaultproperties
 {
 	LevelInfoClass = HereticLevelInfo;
+	GameFilterFlag = EntityEx::GAME_Heretic;
 	bUseHexenPolyobjTypes = true;
 	bBloodSplatter = true;
 	bNightmareFastChase = true;

@@ -1628,8 +1628,8 @@ native static final VTerrainInfo* TerrainType(int pic);
 native static final VSplashInfo* GetSplashInfo(name Name);
 native static final VTerrainInfo* GetTerrainInfo(name Name);
 native static final void SB_Start();
-native static final class FindClassFromEditorId(int Id);
-native static final class FindClassFromScriptId(int Id);
+native static final class FindClassFromEditorId(int Id, int GameFilter);
+native static final class FindClassFromScriptId(int Id, int GameFilter);
 native static final void ChangeMusic(string SongName);
 
 defaultproperties

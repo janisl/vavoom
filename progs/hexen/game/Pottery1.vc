@@ -71,7 +71,8 @@ final void A_PotteryExplode()
 	if (Args[0])
 	{
 		// Spawn an item. Don't spawn monsters it they are disabled.
-		class<EntityEx> Cls = class<EntityEx>(FindClassFromScriptId(Args[0]));
+		class<EntityEx> Cls = class<EntityEx>(FindClassFromScriptId(Args[0],
+			LineSpecialGameInfo(Level.Game).GameFilterFlag));
 		if (Cls && (!Level.Game.nomonsters || !Cls.default.bMonster))
 		{
 			Spawn(Cls, Origin, vector(0.0, 0.0, 0.0));

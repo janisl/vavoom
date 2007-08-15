@@ -1560,12 +1560,14 @@ void ServerFrame(int realtics)
 //
 //==========================================================================
 
-VClass* SV_FindClassFromEditorId(int Id)
+VClass* SV_FindClassFromEditorId(int Id, int GameFilter)
 {
 	guard(SV_FindClassFromEditorId);
 	for (int i = 0; i < VClass::GMobjInfos.Num(); i++)
 	{
-		if (Id == VClass::GMobjInfos[i].doomednum)
+		if ((!VClass::GMobjInfos[i].GameFilter ||
+			(VClass::GMobjInfos[i].GameFilter & GameFilter)) &&
+			Id == VClass::GMobjInfos[i].doomednum)
 		{
 			return VClass::GMobjInfos[i].class_id;
 		}
@@ -1580,12 +1582,14 @@ VClass* SV_FindClassFromEditorId(int Id)
 //
 //==========================================================================
 
-VClass* SV_FindClassFromScriptId(int Id)
+VClass* SV_FindClassFromScriptId(int Id, int GameFilter)
 {
 	guard(SV_FindClassFromScriptId);
 	for (int i = 0; i < VClass::GScriptIds.Num(); i++)
 	{
-		if (Id == VClass::GScriptIds[i].doomednum)
+		if ((!VClass::GScriptIds[i].GameFilter ||
+			(VClass::GScriptIds[i].GameFilter & GameFilter)) &&
+			Id == VClass::GScriptIds[i].doomednum)
 		{
 			return VClass::GScriptIds[i].class_id;
 		}
