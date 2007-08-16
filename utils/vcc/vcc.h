@@ -417,6 +417,8 @@ public:
 class VState : public VMemberBase
 {
 public:
+	enum { FF_FULLBRIGHT	= 0x80 };	// flag in Frame
+
 	//	State info
 	VName			SpriteName;
 	vint32			Frame;
@@ -430,11 +432,14 @@ public:
 	VState*			Next;
 
 	//	Compile time variables
+	bool			DecorateStyle;
 	VExpression*	FrameExpr;
 	VExpression*	TimeExpr;
 	VExpression*	Misc1Expr;
 	VExpression*	Misc2Expr;
 	VName			NextStateName;
+	VName			GotoLabel;
+	vint32			GotoOffset;
 	VName			FunctionName;
 
 	VState(VName, VMemberBase*, TLocation);
@@ -471,8 +476,18 @@ struct VRepInfo
 
 struct VStateLabel
 {
+	TLocation	Loc;
 	VName		Name;
 	VState*		State;
+	VName		GotoLabel;
+	vint32		GotoOffset;
+
+	VStateLabel()
+	: Name(NAME_None)
+	, State(NULL)
+	, GotoLabel(NAME_None)
+	, GotoOffset(0)
+	{}
 
 	friend VStream& operator<<(VStream& Strm, VStateLabel& Lbl)
 	{
@@ -521,6 +536,8 @@ public:
 	VField* CheckForField(TLocation, VName, VClass*, bool = true);
 	VProperty* CheckForProperty(VName);
 	VState* CheckForState(VName);
+	VStateLabel* CheckForStateLabel(VName, bool = true);
+	VState* ResolveStateLabel(TLocation, VName, int);
 
 	bool Define();
 	bool DefineMembers();
@@ -611,6 +628,8 @@ private:
 	void ParseDefaultProperties(VClass*);
 	void ParseStruct(VClass*, bool);
 	void ParseStates(VClass*);
+	VName ParseStateString();
+	void ParseDecorateStates(VClass*);
 	void ParseReplication(VClass*);
 	void ParseClass();
 

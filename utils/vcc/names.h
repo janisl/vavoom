@@ -45,6 +45,14 @@ REGISTER_NAME(Object)
 REGISTER_NAME(Num)
 REGISTER_NAME(Insert)
 REGISTER_NAME(Remove)
+REGISTER_NAME(Goto)
+REGISTER_NAME(Stop)
+REGISTER_NAME(Wait)
+REGISTER_NAME(Fail)
+REGISTER_NAME(Loop)
+REGISTER_NAME(Super)
+REGISTER_NAME(BRIGHT)
+REGISTER_NAME(OFFSET)
 
 // Closing -----------------------------------------------------------------
 

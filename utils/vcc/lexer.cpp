@@ -94,6 +94,7 @@ const char*			VLexer::TokenNames[] =
 	"set",
 	"spawner",
 	"state",
+	"states",
 	"static",
 	"string",
 	"struct",
@@ -352,12 +353,14 @@ void VLexer::PopSource()
 
 void VLexer::NextToken()
 {
+	NewLine = Src->NewLine;
 	do
 	{
 		TokenStringBuffer[0] = 0;
 		SkipWhitespaceAndComments();
 		if (Src->NewLine)
 		{
+			NewLine = true;
 			//	A new line has been started, check preprocessor directive.
 			Src->NewLine = false;
 			if (Chr == '#')
@@ -1098,7 +1101,7 @@ void VLexer::ProcessLetterToken(bool CheckKeywords)
 				if (s[3] == 't' && s[4] == 'a' && s[5] == 't' && s[6] == 'e' &&
 					s[7] == 's' && s[8] == '_' && s[9] == '_' && s[10] == 0)
 				{
-					Token = TK_States;
+					Token = TK_States__;
 				}
 				else if (s[3] == 'c' && s[4] == 'r' && s[5] == 'i' &&
 					s[6] == 'p' && s[7] == 't' && s[8] == 'i' && s[9] == 'd' &&
@@ -1361,9 +1364,16 @@ void VLexer::ProcessLetterToken(bool CheckKeywords)
 		{
 			if (s[2] == 'a' && s[3] == 't')
 			{
-				if (s[4] == 'e' && s[5] == 0)
+				if (s[4] == 'e')
 				{
-					Token = TK_State;
+					if (s[5] == 0)
+					{
+						Token = TK_State;
+					}
+					else if (s[5] == 's' && s[6] == 0)
+					{
+						Token = TK_States;
+					}
 				}
 				else if (s[4] == 'i' && s[5] == 'c' && s[6] == 0)
 				{

@@ -2059,11 +2059,14 @@ VState::VState(VName InName, VMemberBase* InOuter, TLocation InLoc)
 , NextState(0)
 , Function(0)
 , Next(0)
+, DecorateStyle(false)
 , FrameExpr(NULL)
 , TimeExpr(NULL)
 , Misc1Expr(NULL)
 , Misc2Expr(NULL)
 , NextStateName(NAME_None)
+, GotoLabel(NAME_None)
+, GotoOffset(0)
 , FunctionName(NAME_None)
 {
 }
@@ -2141,15 +2144,15 @@ void VState::Emit()
 	if (Misc2Expr)
 		Misc2Expr = Misc2Expr->Resolve(ec);
 
-	if (!FrameExpr || !TimeExpr)
+	if (!DecorateStyle && (!FrameExpr || !TimeExpr))
 		return;
 
-	if (!FrameExpr->IsIntConst())
+	if (FrameExpr && !FrameExpr->IsIntConst())
 	{
 		ParseError(FrameExpr->Loc, "Integer constant expected");
 		return;
 	}
-	if (!TimeExpr->IsFloatConst())
+	if (TimeExpr && !TimeExpr->IsFloatConst())
 	{
 		ParseError(TimeExpr->Loc, "Float constant expected");
 		return;
@@ -2165,12 +2168,22 @@ void VState::Emit()
 		return;
 	}
 
-	Frame = FrameExpr->GetIntConst();
-	Time = TimeExpr->GetFloatConst();
+	if (FrameExpr)
+	{
+		Frame = FrameExpr->GetIntConst();
+	}
+	if (TimeExpr)
+	{
+		Time = TimeExpr->GetFloatConst();
+	}
 	if (Misc1Expr)
+	{
 		Misc1 = Misc1Expr->GetIntConst();
+	}
 	if (Misc2Expr)
+	{
 		Misc2 = Misc2Expr->GetIntConst();
+	}
 
 	if (NextStateName != NAME_None)
 	{
@@ -2179,6 +2192,10 @@ void VState::Emit()
 		{
 			ParseError(Loc, "No such state %s", *NextStateName);
 		}
+	}
+	else if (GotoLabel != NAME_None)
+	{
+		NextState = ((VClass*)Outer)->ResolveStateLabel(Loc, GotoLabel, GotoOffset);
 	}
 
 	if (Function)
@@ -2668,6 +2685,15 @@ bool VClass::DefineMembers()
 		}
 	}
 
+	for (int i = 0; i < StateLabels.Num(); i++)
+	{
+		VStateLabel& Lbl = StateLabels[i];
+		if (Lbl.GotoLabel != NAME_None)
+		{
+			Lbl.State = ResolveStateLabel(Lbl.Loc, Lbl.GotoLabel, Lbl.GotoOffset);
+		}
+	}
+
 	for (int ri = 0; ri < RepInfos.Num(); ri++)
 	{
 		if (!RepInfos[ri].Cond->Define())
@@ -2765,6 +2791,83 @@ void VClass::Emit()
 	}
 
 	DefaultProperties->Emit();
+}
+
+//==========================================================================
+//
+//	VClass::CheckForStateLabel
+//
+//==========================================================================
+
+VStateLabel* VClass::CheckForStateLabel(VName LblName, bool CheckParent)
+{
+	for (int i = 0; i < StateLabels.Num(); i++)
+	{
+		if (StateLabels[i].Name == LblName)
+		{
+			return &StateLabels[i];
+		}
+	}
+	if (CheckParent && ParentClass)
+	{
+		return ParentClass->CheckForStateLabel(LblName);
+	}
+	return NULL;
+}
+
+//==========================================================================
+//
+//	VClass::ResolveStateLabel
+//
+//==========================================================================
+
+VState* VClass::ResolveStateLabel(TLocation Loc, VName LabelName, int Offset)
+{
+	VClass* CheckClass = this;
+	VName CheckName = LabelName;
+
+	const char* DCol = strstr(*LabelName, "::");
+	if (DCol)
+	{
+		char ClassNameBuf[NAME_SIZE];
+		strcpy(ClassNameBuf, *LabelName);
+		ClassNameBuf[DCol - *LabelName] = 0;
+		VName ClassName(ClassNameBuf);
+		if (ClassName == NAME_Super)
+		{
+			CheckClass = ParentClass;
+		}
+		else
+		{
+			CheckClass = CheckForClass(ClassName);
+			if (!CheckClass)
+			{
+				ParseError(Loc, "No such class %s", *ClassName);
+				return NULL;
+			}
+		}
+		CheckName = DCol + 2;
+	}
+
+	VStateLabel* Lbl = CheckClass->CheckForStateLabel(CheckName, false);
+	if (!Lbl)
+	{
+		ParseError(Loc, "No such state %s", *LabelName);
+		return NULL;
+	}
+
+	VState* State = Lbl->State;
+	int Count = Offset;
+	while (Count--)
+	{
+		if (!State || !State->Next || State->Next != State->NextState)
+		{
+			ParseError(Loc, "Bad jump offset");
+			return NULL;
+		}
+		State = State->Next;
+	}
+	return State;
 }
 
 //END

@@ -1588,6 +1588,320 @@ void VParser::ParseStates(VClass* InClass)
 
 //==========================================================================
 //
+//	VParser::ParseStateString
+//
+//==========================================================================
+
+VName VParser::ParseStateString()
+{
+	char		StateStr[256];
+
+	if (Lex.Token != TK_Identifier)
+	{
+		ParseError(Lex.Location, "Identifier expected");
+		return NAME_None;
+	}
+	strcpy(StateStr, *Lex.Name);
+	Lex.NextToken();
+
+	if (Lex.Check(TK_DColon))
+	{
+		if (Lex.Token != TK_Identifier)
+		{
+			ParseError(Lex.Location, "Identifier expected");
+			return NAME_None;
+		}
+		strcat(StateStr, "::");
+		strcat(StateStr, *Lex.Name);
+		Lex.NextToken();
+	}
+
+	if (Lex.Check(TK_Dot))
+	{
+		if (Lex.Token != TK_Identifier)
+		{
+			ParseError(Lex.Location, "Identifier expected");
+			return NAME_None;
+		}
+		strcat(StateStr, ".");
+		strcat(StateStr, *Lex.Name);
+		Lex.NextToken();
+	}
+
+	return StateStr;
+}
+
+//==========================================================================
+//
+//	VParser::ParseDecorateStates
+//
+//==========================================================================
+
+void VParser::ParseDecorateStates(VClass* InClass)
+{
+	Lex.Expect(TK_LBrace, ERR_MISSING_LBRACE);
+	int StateIdx = 0;
+	VState* PrevState = NULL;
+	VState* LoopStart = NULL;
+	int NewLabelsStart = InClass->StateLabels.Num();
+	while (!Lex.Check(TK_RBrace))
+	{
+		TLocation TmpLoc = Lex.Location;
+		VName TmpName = ParseStateString();
+
+		//	Goto command.
+		if (TmpName == NAME_Goto)
+		{
+			VName GotoLabel = ParseStateString();
+			int GotoOffset = 0;
+			if (Lex.Check(TK_Plus))
+			{
+				if (Lex.Token != TK_IntLiteral)
+				{
+					ParseError(Lex.Location, "Number expected");
+					continue;
+				}
+				GotoOffset = Lex.Number;
+				Lex.NextToken();
+			}
+
+			if (!PrevState && NewLabelsStart == InClass->StateLabels.Num())
+			{
+				ParseError(Lex.Location, "Goto before first state");
+				continue;
+			}
+			if (PrevState)
+			{
+				PrevState->GotoLabel = GotoLabel;
+				PrevState->GotoOffset = GotoOffset;
+			}
+			for (int i = NewLabelsStart; i < InClass->StateLabels.Num(); i++)
+			{
+				InClass->StateLabels[i].GotoLabel = GotoLabel;
+				InClass->StateLabels[i].GotoOffset = GotoOffset;
+			}
+			NewLabelsStart = InClass->StateLabels.Num();
+			PrevState = NULL;
+			continue;
+		}
+
+		//	Stop command.
+		if (TmpName == NAME_Stop)
+		{
+			if (!PrevState && NewLabelsStart != InClass->StateLabels.Num())
+			{
+				ParseError(Lex.Location, "Stop before first state");
+				continue;
+			}
+			if (PrevState)
+			{
+				PrevState->NextState = NULL;
+			}
+			for (int i = NewLabelsStart; i < InClass->StateLabels.Num(); i++)
+			{
+				InClass->StateLabels[i].State = NULL;
+			}
+			NewLabelsStart = InClass->StateLabels.Num();
+			PrevState = NULL;
+			continue;
+		}
+
+		//	Wait command.
+		if (TmpName == NAME_Wait || TmpName == NAME_Fail)
+		{
+			if (!PrevState)
+			{
+				ParseError(Lex.Location, "%s before first state", *TmpName);
+				continue;
+			}
+			PrevState->NextState = PrevState;
+			PrevState = NULL;
+			continue;
+		}
+
+		//	Loop command.
+		if (TmpName == NAME_Loop)
+		{
+			if (!PrevState)
+			{
+				ParseError(Lex.Location, "Loop before first state");
+				continue;
+			}
+			PrevState->NextState = LoopStart;
+			PrevState = NULL;
+			continue;
+		}
+
+		//	Check for label.
+		if (Lex.Check(TK_Colon))
+		{
+			VStateLabel& Lbl = InClass->StateLabels.Alloc();
+			Lbl.Loc = TmpLoc;
+			Lbl.Name = TmpName;
+			continue;
+		}
+
+		if (!PrevState && NewLabelsStart == InClass->StateLabels.Num())
+		{
+			ParseError(Lex.Location, "State block must start with a label");
+		}
+
+		char StateName[16];
+		sprintf(StateName, "S_%d", StateIdx);
+		VState* s = new VState(StateName, InClass, TmpLoc);
+		InClass->AddState(s);
+		s->DecorateStyle = true;
+
+		//	Sprite name
+		char SprName[8];
+		SprName[0] = 0;
+		if (strlen(*TmpName) != 4)
+		{
+			ParseError(Lex.Location, "Invalid sprite name");
+		}
+		else
+		{
+			SprName[0] = tolower((*TmpName)[0]);
+			SprName[1] = tolower((*TmpName)[1]);
+			SprName[2] = tolower((*TmpName)[2]);
+			SprName[3] = tolower((*TmpName)[3]);
+			SprName[4] = 0;
+		}
+		s->SpriteName = SprName;
+
+		//  Frame
+		VName FramesString(NAME_None);
+		TLocation FramesLoc;
+		if (Lex.Token != TK_Identifier)
+		{
+			ParseError(Lex.Location, "Identifier expected");
+		}
+		char FChar = toupper(Lex.String[0]);
+		if (FChar < 'A' || FChar > ']')
+		{
+			ParseError(Lex.Location, "Frames must be A-Z, [, \\ or ]");
+		}
+		s->Frame = FChar - 'A';
+		FramesString = Lex.Name;
+		FramesLoc = Lex.Location;
+		Lex.NextToken();
+
+		//  Tics
+		bool Neg = Lex.Check(TK_Minus);
+		if (Lex.Token != TK_IntLiteral)
+		{
+			ParseError(Lex.Location, "Integer expected");
+		}
+		else
+		{
+			if (Neg)
+			{
+				s->Time = -Lex.Number;
+			}
+			else
+			{
+				s->Time = float(Lex.Number) / 35.0;
+			}
+			Lex.NextToken();
+		}
+
+		while (Lex.Token == TK_Identifier && !Lex.NewLine)
+		{
+			if (Lex.Name == NAME_BRIGHT)
+			{
+				s->Frame |= VState::FF_FULLBRIGHT;
+				Lex.NextToken();
+				continue;
+			}
+			if (Lex.Name == NAME_OFFSET)
+			{
+				Lex.NextToken();
+				Lex.Expect(TK_LParen);
+				if (Lex.Token != TK_IntLiteral)
+				{
+					ParseError(Lex.Location, "Integer expected");
+				}
+				s->Misc1 = Lex.Number;
+				Lex.NextToken();
+				Lex.Expect(TK_Comma);
+				if (Lex.Token != TK_IntLiteral)
+				{
+					ParseError(Lex.Location, "Integer expected");
+				}
+				s->Misc2 = Lex.Number;
+				Lex.NextToken();
+				Lex.Expect(TK_RParen);
+				continue;
+			}
+			break;
+		}
+
+		//	Code
+		if (!Lex.NewLine)
+		{
+			if (Lex.Token != TK_Identifier)
+			{
+				ParseError(Lex.Location, "State method name expected");
+			}
+			else
+			{
+				s->FunctionName = Lex.Name;
+				Lex.NextToken();
+			}
+		}
+
+		//	Link previous state.
+		if (PrevState)
+		{
+			PrevState->NextState = s;
+		}
+
+		//	Assign state to the labels.
+		for (int i = NewLabelsStart; i < InClass->StateLabels.Num(); i++)
+		{
+			InClass->StateLabels[i].State = s;
+			LoopStart = s;
+		}
+		NewLabelsStart = InClass->StateLabels.Num();
+		PrevState = s;
+		StateIdx++;
+
+		for (size_t i = 1; i < strlen(*FramesString); i++)
+		{
+			char FChar = toupper((*FramesString)[i]);
+			if (FChar < 'A' || FChar > ']')
+			{
+				ParseError(Lex.Location, "Frames must be A-Z, [, \\ or ]");
+			}
+
+			//	Create a new state.
+			sprintf(StateName, "S_%d", StateIdx);
+			VState* s2 = new VState(StateName, InClass, TmpLoc);
+			InClass->AddState(s2);
+			s2->DecorateStyle = true;
+			s2->SpriteName = s->SpriteName;
+			s2->Frame = (s->Frame & VState::FF_FULLBRIGHT) | (FChar - 'A');
+			s2->Time = s->Time;
+			s2->Misc1Expr = s->Misc1Expr;
+			s2->Misc2Expr = s->Misc2Expr;
+			s2->FunctionName = s->FunctionName;
+
+			//	Link previous state.
+			PrevState->NextState = s2;
+			PrevState = s2;
+			StateIdx++;
+		}
+	}
+
+	//	Make sure all state labels have corresponding states.
+	if (NewLabelsStart != InClass->StateLabels.Num())
+	{
+		ParseError(Lex.Location, "State label at the end of state block");
+	}
+}
+
+//==========================================================================
+//
 //	VParser::ParseReplication
 //
 //==========================================================================
@@ -1751,9 +2065,14 @@ void VParser::ParseClass()
 	Lex.Expect(TK_Semicolon, ERR_MISSING_SEMICOLON);
 	while (!Lex.Check(TK_DefaultProperties))
 	{
-		if (Lex.Check(TK_States))
+		if (Lex.Check(TK_States__))
 		{
 			ParseStates(Class);
+			continue;
+		}
+		if (Lex.Check(TK_States))
+		{
+			ParseDecorateStates(Class);
 			continue;
 		}
 

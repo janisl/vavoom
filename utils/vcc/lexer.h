@@ -83,6 +83,7 @@ enum EToken
 	TK_Set,
 	TK_Spawner,
 	TK_State,
+	TK_States,
 	TK_Static,
 	TK_String,
 	TK_Struct,
@@ -93,7 +94,7 @@ enum EToken
 	TK_Vector,
 	TK_Void,
 	TK_While,
-	TK_States,
+	TK_States__,
 	TK_MobjInfo,
 	TK_ScriptId,
 
@@ -265,6 +266,7 @@ public:
 	float				Float;
 	char*				String;
 	VName				Name;
+	bool				NewLine;
 
 	static const char*	TokenNames[];
 
