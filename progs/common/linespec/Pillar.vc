@@ -51,19 +51,22 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 	float		CeilHeight;
 
 	Sector = InSector;
-	Sector->FloorData = self;
-	Sector->CeilingData = self;
-
-	//	Not so easy.
-/*	if (sec->floorheight == sec->ceilingheight)
-	{
-		// pillar is already closed
-		continue;
-	}*/
 
 	Spot = *Sector->lines[0]->v1;
 	FloorHeight = GetPlanePointZ(&Sector->floor, Spot);
 	CeilHeight = GetPlanePointZ(&Sector->ceiling, Spot);
+
+	//	Not so easy.
+	if (FloorHeight == CeilHeight)
+	{
+		// pillar is already closed
+		Destroy();
+		return;
+	}
+
+	Sector->FloorData = self;
+	Sector->CeilingData = self;
+
 	if (!Arg3)
 	{
 		NewHeight = FloorHeight + ((CeilHeight - FloorHeight) / 2.0);
@@ -115,14 +118,6 @@ void InitOpen(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 	float		CeilHeight;
 
 	Sector = InSector;
-	Sector->FloorData = self;
-	Sector->CeilingData = self;
-
-	//	Not so easy
-/*	if (sec->floorheight != sec->ceilingheight)
-	{	// pillar isn't closed
-		continue;
-	}*/
 
 	if (!Arg3)
 	{
@@ -149,6 +144,16 @@ void InitOpen(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 	CeilHeight = GetPlanePointZ(&Sector->ceiling, Spot2);
 	Spot2.z = CeilDestHeight;
 	CeilingDest = DotProduct(Sector->ceiling.normal, Spot2);
+
+	if (FloorHeight != CeilHeight)
+	{
+		// pillar isn't closed
+		Destroy();
+		return;
+	}
+
+	Sector->FloorData = self;
+	Sector->CeilingData = self;
 
 	if (FloorHeight - FloorDestHeight >= CeilDestHeight - CeilHeight)
 	{
