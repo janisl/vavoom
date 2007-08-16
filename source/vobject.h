@@ -323,6 +323,7 @@ public:
 	DECLARE_FUNCTION(GetClassName)
 	DECLARE_FUNCTION(GetClassParent)
 	DECLARE_FUNCTION(GetLockDef)
+	DECLARE_FUNCTION(GetStatePlus)
 
 #ifdef CLIENT
 	DECLARE_FUNCTION(P_GetMapName)

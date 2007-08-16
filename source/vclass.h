@@ -275,6 +275,7 @@ public:
 
 	bool IsInRange(VState*, VState*, int);
 	bool IsInSequence(VState*);
+	VState* GetPlus(int);
 
 	friend inline VStream& operator<<(VStream& Strm, VState*& Obj)
 	{ return Strm << *(VMemberBase**)&Obj; }

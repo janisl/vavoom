@@ -1092,3 +1092,10 @@ IMPLEMENT_FUNCTION(VObject, GetLockDef)
 	P_GET_INT(Lock);
 	RET_PTR(GetLockDef(Lock));
 }
+
+IMPLEMENT_FUNCTION(VObject, GetStatePlus)
+{
+	P_GET_INT(Offset);
+	P_GET_PTR(VState, State);
+	RET_PTR(State->GetPlus(Offset));
+}

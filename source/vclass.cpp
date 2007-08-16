@@ -2072,6 +2072,30 @@ bool VState::IsInSequence(VState* Start)
 
 //==========================================================================
 //
+//	VState::GetPlus
+//
+//==========================================================================
+
+VState* VState::GetPlus(int Offset)
+{
+	guard(VState::GetPlus);
+	check(Offset >= 0);
+	VState* S = this;
+	int Count = Offset;
+	while (Count--)
+	{
+		if (S->Next != S->NextState)
+		{
+			return NULL;
+		}
+		S = S->Next;
+	}
+	return S;
+	unguard;
+}
+
+//==========================================================================
+//
 //	VConstant::VConstant
 //
 //==========================================================================
