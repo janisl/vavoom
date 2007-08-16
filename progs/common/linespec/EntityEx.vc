@@ -4714,6 +4714,39 @@ void OnMapSpawn(mthing_t* mthing)
 		}
 	}
 
+	if (!IdleState)
+	{
+		IdleState = FindState('Spawn');
+	}
+	if (!SeeState)
+	{
+		SeeState = FindState('See');
+	}
+	if (!MeleeState)
+	{
+		MeleeState = FindState('Melee');
+	}
+	if (!MissileState)
+	{
+		MissileState = FindState('Missile');
+	}
+	if (!PainState)
+	{
+		PainState = FindState('Pain');
+	}
+	if (!DeathState)
+	{
+		DeathState = FindState('Death');
+	}
+	if (!GibsDeathState)
+	{
+		GibsDeathState = FindState('XDeath');
+	}
+	if (!RaiseState)
+	{
+		RaiseState = FindState('Raise');
+	}
+
 	//	Set the state, but do not use SetState, because action routines can't
 	// be called yet.  If the spawnstate has an action routine, it will not
 	// be called.
