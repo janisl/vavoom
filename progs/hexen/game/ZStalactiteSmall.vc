@@ -26,9 +26,11 @@
 class ZStalactiteSmall : Decoration
 	__mobjinfo__(57);
 
-__states__
+states
 {
-	S_ZSTALACTITESMALL1('SLC3', 0, -1.0, none) = none
+Spawn:
+	SLC3 A -1
+	Stop
 }
 
 defaultproperties
@@ -38,5 +40,4 @@ defaultproperties
 	bSolid = true;
 	bSpawnCeiling = true;
 	bNoGravity = true;
-	IdleState = S_ZSTALACTITESMALL1;
 }

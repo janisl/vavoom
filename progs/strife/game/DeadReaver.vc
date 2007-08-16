@@ -26,12 +26,13 @@
 class DeadReaver : Decoration
 	__mobjinfo__(20);
 
-__states__
+states
 {
-	S_DEAD_REAVER('ROB1', 17, -1.0, none) = none
+Spawn:
+	ROB1 R -1
+	Stop
 }
 
 defaultproperties
 {
-	IdleState = S_DEAD_REAVER;
 }

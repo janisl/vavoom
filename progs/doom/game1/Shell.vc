@@ -27,14 +27,15 @@ class Shell : Ammo
 	__mobjinfo__(2008)
 	__scriptid__(12);
 
-__states__
+states
 {
-	S_SHEL('SHEL', 0, -1.0, none) = none
+Spawn:
+	SHEL A -1
+	Stop
 }
 
 defaultproperties
 {
-	IdleState = S_SHEL;
 	Amount = 4;
 	MaxAmount = 50;
 	BackpackAmount = 4;

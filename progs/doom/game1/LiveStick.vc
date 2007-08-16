@@ -26,10 +26,12 @@
 class LiveStick : Actor
 	__mobjinfo__(26);
 
-__states__
+states
 {
-	S_LIVESTICK('POL6', 0, 6.0 / 35.0, S_LIVESTICK2) = none
-	S_LIVESTICK2('POL6', 1, 8.0 / 35.0, S_LIVESTICK) = none
+Spawn:
+	POL6 A 6
+	POL6 B 8
+	Loop
 }
 
 defaultproperties
@@ -38,5 +40,4 @@ defaultproperties
 	Height = 64.0;
 	bSolid = true;
 	bFloorClip = true;
-	IdleState = S_LIVESTICK;
 }

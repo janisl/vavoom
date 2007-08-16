@@ -25,9 +25,11 @@
 
 class Ear : Inventory;
 
-__states__
+states
 {
-	S_EAR('EARS', 0, -1.0, none) = none
+Spawn:
+	EARS A -1
+	Stop
 }
 
 defaultproperties
@@ -37,7 +39,6 @@ defaultproperties
 	MaxAmount = 1;
 	IconName = 'i_ears';
 	GiveQuestType = QuestItem9;
-	IdleState = S_EAR;
 	bFloorClip = true;
 	bInvBar = true;
 }

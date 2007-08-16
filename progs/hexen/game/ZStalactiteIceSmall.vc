@@ -23,12 +23,14 @@
 //**
 //**************************************************************************
 
-class ZStalactiteIceSmall:Decoration
+class ZStalactiteIceSmall : Decoration
 	__mobjinfo__(91);
 
-__states__
+states
 {
-	S_ZSTALACTITEICESMALL('ICT3', 0, -1.0, none) = none
+Spawn:
+	ICT3 A -1
+	Stop
 }
 
 defaultproperties
@@ -38,5 +40,4 @@ defaultproperties
 	bSolid = true;
 	bSpawnCeiling = true;
 	bNoGravity = true;
-	IdleState = S_ZSTALACTITEICESMALL;
 }

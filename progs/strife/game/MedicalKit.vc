@@ -26,9 +26,11 @@
 class MedicalKit : HealthPickup
 	__mobjinfo__(2012);
 
-__states__
+states
 {
-	S_MEDICAL_KIT('MDKT', 0, -1.0, none) = none
+Spawn:
+	MDKT A -1
+	Stop
 }
 
 defaultproperties
@@ -40,5 +42,4 @@ defaultproperties
 	MaxAmount = 15;
 	IconName = 'i_mdkt';
 	bFloorClip = true;
-	IdleState = S_MEDICAL_KIT;
 }

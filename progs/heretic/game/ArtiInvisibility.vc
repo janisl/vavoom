@@ -27,9 +27,11 @@ class ArtiInvisibility : PowerupGiver
 	__mobjinfo__(75)
 	__scriptid__(135);
 
-__states__
+states
 {
-	S_ARTI_INVS1('INVS', 0 | FF_FULLBRIGHT, 350.0 / 35.0, S_ARTI_INVS1) = none
+Spawn:
+	INVS A 350 Bright
+	Loop
 }
 
 defaultproperties
@@ -42,5 +44,4 @@ defaultproperties
 	bFloatBob = true;
 	bPickupFlash = true;
 	bBigPowerup = true;
-	IdleState = S_ARTI_INVS1;
 }

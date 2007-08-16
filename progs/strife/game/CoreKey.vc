@@ -26,9 +26,11 @@
 class CoreKey : StrifeKey
 	__mobjinfo__(236);
 
-__states__
+states
 {
-	S_CORE_KEY('GOID', 0, -1.0, none) = none
+Spawn:
+	GOID A -1
+	Stop
 }
 
 defaultproperties
@@ -37,5 +39,4 @@ defaultproperties
 	PickupMessage = "$txt_corekey";
 	StrifeName = "Core Key";
 	IconName = 'i_goid';
-	IdleState = S_CORE_KEY;
 }

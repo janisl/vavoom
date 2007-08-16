@@ -26,12 +26,13 @@
 class DeadRebel : Decoration
 	__mobjinfo__(19);
 
-__states__
+states
 {
-	S_DEAD_REBEL('HMN1', 13, -1.0, none) = none
+Spawn:
+	HMN1 N -1
+	Stop
 }
 
 defaultproperties
 {
-	IdleState = S_DEAD_REBEL;
 }

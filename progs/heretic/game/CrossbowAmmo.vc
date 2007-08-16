@@ -27,9 +27,11 @@ class CrossbowAmmo : Ammo
 	__mobjinfo__(18)
 	__scriptid__(33);
 
-__states__
+states
 {
-	S_AMC1('AMC1', 0, -1.0, none) = none
+Spawn:
+	AMC1 A -1
+	Stop
 }
 
 defaultproperties
@@ -38,7 +40,6 @@ defaultproperties
 	MaxAmount = 50;
 	BackpackAmount = 5;
 	BackpackMaxAmount = 100;
-	IdleState = S_AMC1;
 	PickupMessage = "$txt_ammocrossbow1";
 	IconName = 'inambow';
 }

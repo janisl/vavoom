@@ -23,12 +23,14 @@
 //**
 //**************************************************************************
 
-class ZStumpBurned:Decoration
+class ZStumpBurned : Decoration
 	__mobjinfo__(28);
 
-__states__
+states
 {
-	S_ZSTUMPBURNED1('STM1', 0, -1.0, none) = none
+Spawn:
+	STM1 A -1
+	Stop
 }
 
 defaultproperties
@@ -36,5 +38,4 @@ defaultproperties
 	Radius = 12.0;
 	Height = 20.0;
 	bSolid = true;
-	IdleState = S_ZSTUMPBURNED1;
 }

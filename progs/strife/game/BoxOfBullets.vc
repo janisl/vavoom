@@ -27,15 +27,16 @@ class BoxOfBullets : ClipOfBullets
 	__mobjinfo__(2048)
 	__scriptid__(139);
 
-__states__
+states
 {
-	S_AMMO('BBOX', 0, -1.0, none) = none
+Spawn:
+	BBOX A -1
+	Stop
 }
 
 defaultproperties
 {
 	ConversationID = 180;
 	PickupMessage = "$txt_boxofbullets";
-	IdleState = S_AMMO;
 	Amount = 50;
 }

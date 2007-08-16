@@ -26,9 +26,11 @@
 class OfferingChalice : Inventory
 	__mobjinfo__(205);
 
-__states__
+states
 {
-	S_CHALICE('RELC', 0 | FF_FULLBRIGHT, -1.0, none) = none
+Spawn:
+	RELC A -1 Bright
+	Stop
 }
 
 defaultproperties
@@ -43,5 +45,4 @@ defaultproperties
 	bDropped = true;
 	bFloorClip = true;
 	bInvBar = true;
-	IdleState = S_CHALICE;
 }

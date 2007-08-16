@@ -23,12 +23,14 @@
 //**
 //**************************************************************************
 
-class ZRockBrown1:Decoration
+class ZRockBrown1 : Decoration
 	__mobjinfo__(97);
 
-__states__
+states
 {
-	S_ZROCKBROWN1('RKBL', 0, -1.0, none) = none
+Spawn:
+	RKBL A -1
+	Stop
 }
 
 defaultproperties
@@ -36,5 +38,4 @@ defaultproperties
 	Radius = 17.0;
 	Height = 72.0;
 	bSolid = true;
-	IdleState = S_ZROCKBROWN1;
 }

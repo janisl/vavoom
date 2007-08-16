@@ -36,6 +36,12 @@ void NoBlockingSet()
 {
 }
 
+states
+{
+Spawn:
+	Goto Super::Death+4
+}
+
 defaultproperties
 {
 	Health = 1000;
@@ -63,6 +69,5 @@ defaultproperties
 	PainSound = '';
 	DeathSound = '';
 
-	IdleState = S_POSS_DIE5;
 	bFloorClip = true;
 }

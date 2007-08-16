@@ -23,12 +23,14 @@
 //**
 //**************************************************************************
 
-class ZStumpBare:Decoration
+class ZStumpBare : Decoration
 	__mobjinfo__(29);
 
-__states__
+states
 {
-	S_ZSTUMPBARE1('STM2', 0, -1.0, none) = none
+Spawn:
+	STM2 A -1
+	Stop
 }
 
 defaultproperties
@@ -36,5 +38,4 @@ defaultproperties
 	Radius = 12.0;
 	Height = 20.0;
 	bSolid = true;
-	IdleState = S_ZSTUMPBARE1;
 }

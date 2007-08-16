@@ -27,9 +27,11 @@ class ClipOfBullets : Ammo
 	__mobjinfo__(2007)
 	__scriptid__(11);
 
-__states__
+states
 {
-	S_BULLETS('BLIT', 0, -1.0, none) = none
+Spawn:
+	BLIT A -1
+	Stop
 }
 
 defaultproperties
@@ -41,6 +43,5 @@ defaultproperties
 	BackpackMaxAmount = 500;
 	IconName = 'i_blit';
 	bFloorClip = true;
-	IdleState = S_BULLETS;
 	PickupMessage = "$txt_clipofbullets";
 }

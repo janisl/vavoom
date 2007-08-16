@@ -26,14 +26,15 @@
 class Candlestick : Actor
 	__mobjinfo__(34);
 
-__states__
+states
 {
-	S_CANDLESTIK('CAND', 0 | FF_FULLBRIGHT, -1.0, none) = none
+Spawn:
+	CAND A -1 Bright
+	Stop
 }
 
 defaultproperties
 {
-	IdleState = S_CANDLESTIK;
 	bStaticLight = true;
 	bStaticLight = true;
 	LightColour = RGB(255, 255, 128);

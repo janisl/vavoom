@@ -25,9 +25,11 @@
 
 class MilitaryID : StrifeKey;
 
-__states__
+states
 {
-	S_MILITARY_ID('GYID', 0, -1.0, none) = none
+Spawn:
+	GYID A -1
+	Stop
 }
 
 defaultproperties
@@ -36,5 +38,4 @@ defaultproperties
 	PickupMessage = "$txt_militaryid";
 	StrifeName = "Military ID";
 	IconName = 'i_gyid';
-	IdleState = S_MILITARY_ID;
 }

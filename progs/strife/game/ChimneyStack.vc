@@ -26,9 +26,11 @@
 class ChimneyStack : Decoration
 	__mobjinfo__(63);
 
-__states__
+states
 {
-	S_STAKE('STAK', 0, -1.0, none) = none
+Spawn:
+	STAK A -1
+	Stop
 }
 
 defaultproperties
@@ -36,5 +38,4 @@ defaultproperties
 	Radius = 20.0;
 	Height = 64.0;
 	bSolid = true;
-	IdleState = S_STAKE;
 }

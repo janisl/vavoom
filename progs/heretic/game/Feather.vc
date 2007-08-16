@@ -26,17 +26,14 @@
 class Feather : Actor
 	__scriptid__(121);
 
-__states__
+states
 {
-	S_FEATHER1('CHKN', 12, 3.0 / 35.0, S_FEATHER2) = none
-	S_FEATHER2('CHKN', 13, 3.0 / 35.0, S_FEATHER3) = none
-	S_FEATHER3('CHKN', 14, 3.0 / 35.0, S_FEATHER4) = none
-	S_FEATHER4('CHKN', 15, 3.0 / 35.0, S_FEATHER5) = none
-	S_FEATHER5('CHKN', 16, 3.0 / 35.0, S_FEATHER6) = none
-	S_FEATHER6('CHKN', 15, 3.0 / 35.0, S_FEATHER7) = none
-	S_FEATHER7('CHKN', 14, 3.0 / 35.0, S_FEATHER8) = none
-	S_FEATHER8('CHKN', 13, 3.0 / 35.0, S_FEATHER1) = none
-	S_FEATHERX('CHKN', 13, 6.0 / 35.0, none) = none
+Spawn:
+	CHKN MNOPQPON 3
+	Loop
+Death:
+	CHKN N 6
+	Stop
 }
 
 defaultproperties
@@ -51,6 +48,4 @@ defaultproperties
 	bActivatePCross = true;
 	bWindThrust = true;
 	bCannotPush = true;
-	IdleState = S_FEATHER1;
-	DeathState = S_FEATHERX;
 }

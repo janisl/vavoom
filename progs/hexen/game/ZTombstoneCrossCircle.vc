@@ -26,9 +26,11 @@
 class ZTombstoneCrossCircle : Decoration
 	__mobjinfo__(67);
 
-__states__
+states
 {
-	S_ZTOMBSTONECROSSCIRCLE1('TMS5', 0, -1.0, none) = none
+Spawn:
+	TMS5 A -1
+	Stop
 }
 
 defaultproperties
@@ -36,5 +38,4 @@ defaultproperties
 	Radius = 10.0;
 	Height = 52.0;
 	bSolid = true;
-	IdleState = S_ZTOMBSTONECROSSCIRCLE1;
 }

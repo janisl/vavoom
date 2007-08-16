@@ -23,12 +23,14 @@
 //**
 //**************************************************************************
 
-class ZTreeGnarled1:Decoration
+class ZTreeGnarled1 : Decoration
 	__mobjinfo__(80);
 
-__states__
+states
 {
-	S_ZTREEGNARLED1('TRE6', 0, -1.0, none) = none
+Spawn:
+	TRE6 A -1
+	Stop
 }
 
 defaultproperties
@@ -36,5 +38,4 @@ defaultproperties
 	Radius = 22.0;
 	Height = 100.0;
 	bSolid = true;
-	IdleState = S_ZTREEGNARLED1;
 }

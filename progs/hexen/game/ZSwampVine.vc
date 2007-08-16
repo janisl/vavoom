@@ -23,12 +23,14 @@
 //**
 //**************************************************************************
 
-class ZSwampVine:Decoration
+class ZSwampVine : Decoration
 	__mobjinfo__(60);
 
-__states__
+states
 {
-	S_ZSWAMPVINE1('SWMV', 0, -1.0, none) = none
+Spawn:
+	SWMV A -1
+	Stop
 }
 
 defaultproperties
@@ -36,5 +38,4 @@ defaultproperties
 	Radius = 8.0;
 	Height = 52.0;
 	bSolid = true;
-	IdleState = S_ZSWAMPVINE1;
 }

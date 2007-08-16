@@ -27,14 +27,15 @@ class Clip : Ammo
 	__mobjinfo__(2007)
 	__scriptid__(11);
 
-__states__
+states
 {
-	S_CLIP('CLIP', 0, -1.0, none) = none
+Spawn:
+	CLIP A -1
+	Stop
 }
 
 defaultproperties
 {
-	IdleState = S_CLIP;
 	Amount = 10;
 	MaxAmount = 200;
 	BackpackAmount = 10;

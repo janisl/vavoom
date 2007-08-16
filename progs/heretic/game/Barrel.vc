@@ -26,9 +26,11 @@
 class Barrel : Decoration
 	__mobjinfo__(44);
 
-__states__
+states
 {
-	S_BARREL('BARL', 0, -1.0, none) = none
+Spawn:
+	BARL A -1
+	Stop
 }
 
 defaultproperties
@@ -36,5 +38,4 @@ defaultproperties
 	Radius = 12.0;
 	Height = 32.0;
 	bSolid = true;
-	IdleState = S_BARREL;
 }

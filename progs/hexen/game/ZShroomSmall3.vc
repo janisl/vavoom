@@ -23,15 +23,16 @@
 //**
 //**************************************************************************
 
-class ZShroomSmall3:Decoration
+class ZShroomSmall3 : Decoration
 	__mobjinfo__(45);
 
-__states__
+states
 {
-	S_ZSHROOMSMALL3_1('MSH6', 0, -1.0, none) = none
+Spawn:
+	MSH6 A -1
+	Stop
 }
 
 defaultproperties
 {
-	IdleState = S_ZSHROOMSMALL3_1;
 }

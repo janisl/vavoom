@@ -27,9 +27,11 @@ class RadSuit : PowerupGiver
 	__mobjinfo__(2025)
 	__scriptid__(136);
 
-__states__
+states
 {
-	S_SUIT('SUIT', 0 | FF_FULLBRIGHT, -1.0, none) = none
+Spawn:
+	SUIT A -1 Bright
+	Stop
 }
 
 defaultproperties
@@ -39,5 +41,4 @@ defaultproperties
 	MaxAmount = 0;
 	bAutoActivate = true;
 	bAlwaysPickup = true;
-	IdleState = S_SUIT;
 }

@@ -25,16 +25,17 @@
 
 class BeldinsRing : Inventory;
 
-__states__
+states
 {
-	S_RING('RING', 0, -1.0, none) = none
+Spawn:
+	RING A -1
+	Stop
 }
 
 defaultproperties
 {
 	ConversationID = 173;
 	PickupMessage = "$txt_beldinsring";
-	IdleState = S_RING;
 	MaxAmount = 1;
 	IconName = 'i_ring';
 	GiveQuestType = QuestItem1;

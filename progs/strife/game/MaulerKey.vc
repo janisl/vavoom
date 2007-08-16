@@ -26,9 +26,11 @@
 class MaulerKey : StrifeKey
 	__mobjinfo__(233);
 
-__states__
+states
 {
-	S_MAULER_KEY('BLTK', 0, -1.0, none) = none
+Spawn:
+	BLTK A -1
+	Stop
 }
 
 defaultproperties
@@ -37,5 +39,4 @@ defaultproperties
 	PickupMessage = "$txt_maulerkey";
 	StrifeName = "Mauler Key";
 	IconName = 'i_bltk';
-	IdleState = S_MAULER_KEY;
 }

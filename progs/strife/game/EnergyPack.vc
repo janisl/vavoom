@@ -27,16 +27,16 @@ class EnergyPack : EnergyPod
 	__mobjinfo__(17)
 	__scriptid__(142);
 
-__states__
+states
 {
-	S_ENERGY_PACK_1('CPAC', 0, 6.0 / 35.0, S_ENERGY_PACK_2) = none
-	S_ENERGY_PACK_2('CPAC', 1, 6.0 / 35.0, S_ENERGY_PACK_1) = none
+Spawn:
+	CPAC AB 6
+	Loop
 }
 
 defaultproperties
 {
 	ConversationID = 184;
 	PickupMessage = "$txt_energypack";
-	IdleState = S_ENERGY_PACK_1;
 	Amount = 100;
 }

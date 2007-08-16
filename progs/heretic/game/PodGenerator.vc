@@ -62,9 +62,11 @@ final void A_MakePod()
 	Pod(A).Generator = self;	// Link the generator to the pod
 }
 
-__states__
+states
 {
-	S_PODGENERATOR('AMG1', 0, 35.0 / 35.0, S_PODGENERATOR) = A_MakePod
+Spawn:
+	AMG1 A 35 A_MakePod
+	Loop
 }
 
 defaultproperties
@@ -72,5 +74,4 @@ defaultproperties
 	bHidden = true;
 	bNoBlockmap = true;
 	bNoPassMobj = true;
-	IdleState = S_PODGENERATOR;
 }

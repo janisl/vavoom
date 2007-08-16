@@ -23,12 +23,14 @@
 //**
 //**************************************************************************
 
-class ZChainEndSkull:Decoration
+class ZChainEndSkull : Decoration
 	__mobjinfo__(8077);
 
-__states__
+states
 {
-	S_ZCHAINEND_SKULL('CHNS', 6, -1.0, none) = none
+Spawn:
+	CHNS G -1
+	Stop
 }
 
 defaultproperties
@@ -38,5 +40,4 @@ defaultproperties
 	bNoBlockmap = true;
 	bSpawnCeiling = true;
 	bNoGravity = true;
-	IdleState = S_ZCHAINEND_SKULL;
 }

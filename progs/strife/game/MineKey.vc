@@ -26,9 +26,11 @@
 class MineKey : StrifeKey
 	__mobjinfo__(235);
 
-__states__
+states
 {
-	S_MINE_KEY('MINE', 0, -1.0, none) = none
+Spawn:
+	MINE A -1
+	Stop
 }
 
 defaultproperties
@@ -37,5 +39,4 @@ defaultproperties
 	PickupMessage = "$txt_minekey";
 	StrifeName = "Mine Key";
 	IconName = 'i_mine';
-	IdleState = S_MINE_KEY;
 }

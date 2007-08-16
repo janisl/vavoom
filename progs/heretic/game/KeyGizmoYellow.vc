@@ -37,11 +37,13 @@ final void A_InitKeyGizmo()
 	Spawn(KeyGizmoFloatYellow, Origin + vector(0.0, 0.0, 60.0));
 }
 
-__states__
+states
 {
-	S_KEYGIZMO1('KGZ1', 0, 1.0 / 35.0, S_KEYGIZMO2) = none
-	S_KEYGIZMO2('KGZ1', 0, 1.0 / 35.0, S_KEYGIZMO3) = A_InitKeyGizmo
-	S_KEYGIZMO3('KGZ1', 0, -1.0, none) = none
+Spawn:
+	KGZ1 A 1
+	KGZ1 A 1 A_InitKeyGizmo
+	KGZ1 A -1
+	Stop
 }
 
 defaultproperties
@@ -52,5 +54,4 @@ defaultproperties
 	bStaticLight = true;
 	LightColour = RGB(255, 255, 0);
 	LightOffset = vector(0.0, 0.0, 68.0);
-	IdleState = S_KEYGIZMO1;
 }

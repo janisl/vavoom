@@ -27,16 +27,15 @@ class CrossbowHefty : CrossbowAmmo
 	__mobjinfo__(19)
 	__scriptid__(34);
 
-__states__
+states
 {
-	S_AMC2_1('AMC2', 0, 5.0 / 35.0, S_AMC2_2) = none
-	S_AMC2_2('AMC2', 1, 5.0 / 35.0, S_AMC2_3) = none
-	S_AMC2_3('AMC2', 2, 5.0 / 35.0, S_AMC2_1) = none
+Spawn:
+	AMC2 ABC 5
+	Loop
 }
 
 defaultproperties
 {
 	Amount = 20;
-	IdleState = S_AMC2_1;
 	PickupMessage = "$txt_ammocrossbow2";
 }

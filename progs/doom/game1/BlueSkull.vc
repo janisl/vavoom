@@ -27,14 +27,15 @@ class BlueSkull : DoomKey
 	__mobjinfo__(40)
 	__scriptid__(90);
 
-__states__
+states
 {
-	S_BSKULL('BSKU', 0, 10.0 / 35.0, S_BSKULL2) = none
-	S_BSKULL2('BSKU', 1 | FF_FULLBRIGHT, 10.0 / 35.0, S_BSKULL) = none
+Spawn:
+	BSKU A 10
+	BSKU B 10 Bright
+	Loop
 }
 
 defaultproperties
 {
-	IdleState = S_BSKULL;
 	PickupMessage = "$gotblueskul";
 }

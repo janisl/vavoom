@@ -26,13 +26,14 @@
 class MetalPot : Decoration
 	__mobjinfo__(190);
 
-__states__
+states
 {
-	S_POT1('POT1', 0, -1.0, none) = none
+Spawn:
+	POT1 A -1
+	Stop
 }
 
 defaultproperties
 {
 	bNoBlockmap = true;
-	IdleState = S_POT1;
 }

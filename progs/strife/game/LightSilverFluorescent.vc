@@ -26,9 +26,11 @@
 class LightSilverFluorescent : Decoration
 	__mobjinfo__(95);
 
-__states__
+states
 {
-	S_LITE_1('LITS', 0 | FF_FULLBRIGHT, -1.0, none) = none
+Spawn:
+	LITS A -1 Bright
+	Stop
 }
 
 defaultproperties
@@ -36,7 +38,6 @@ defaultproperties
 	Radius = 4.0;
 	Height = 16.0;
 	bNoBlockmap = true;
-	IdleState = S_LITE_1;
 	bStaticLight = true;
 	LightOffset = vector(0.0, 0.0, 32.0);
 	LightRadius = 200.0;

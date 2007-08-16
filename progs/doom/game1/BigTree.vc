@@ -26,9 +26,11 @@
 class BigTree : Actor
 	__mobjinfo__(54);
 
-__states__
+states
 {
-	S_BIGTREE('TRE2', 0, -1.0, none) = none
+Spawn:
+	TRE2 A -1
+	Stop
 }
 
 defaultproperties
@@ -37,5 +39,4 @@ defaultproperties
 	Height = 96.0;
 	bSolid = true;
 	bFloorClip = true;
-	IdleState = S_BIGTREE;
 }

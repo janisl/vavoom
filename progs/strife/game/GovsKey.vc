@@ -25,9 +25,11 @@
 
 class GovsKey : StrifeKey;
 
-__states__
+states
 {
-	S_GOVS_KEY('REBL', 0, -1.0, none) = none
+Spawn:
+	REBL A -1
+	Stop
 }
 
 defaultproperties
@@ -36,5 +38,4 @@ defaultproperties
 	PickupMessage = "$txt_govskey";
 	StrifeName = "Govs Key";
 	IconName = 'i_rebl';
-	IdleState = S_GOVS_KEY;
 }

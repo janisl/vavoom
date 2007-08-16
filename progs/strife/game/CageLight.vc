@@ -26,9 +26,11 @@
 class CageLight : Decoration
 	__mobjinfo__(28);
 
-__states__
+states
 {
-	S_CAGE('CAGE', 0, -1.0, none) = none
+Spawn:
+	CAGE A -1
+	Stop
 }
 
 defaultproperties
@@ -38,7 +40,6 @@ defaultproperties
 	bNoBlockmap = true;
 	bSpawnCeiling = true;
 	bNoGravity = true;
-	IdleState = S_CAGE;
 	bStaticLight = true;
 	LightOffset = vector(0.0, 0.0, 0.0);
 	LightRadius = 180.0;

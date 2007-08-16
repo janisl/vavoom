@@ -23,15 +23,16 @@
 //**
 //**************************************************************************
 
-class ZStumpSwamp2:Decoration
+class ZStumpSwamp2 : Decoration
 	__mobjinfo__(38);
 
-__states__
+states
 {
-	S_ZSTUMPSWAMP2_1('STM4', 0, -1.0, none) = none
+Spawn:
+	STM4 A -1
+	Stop
 }
 
 defaultproperties
 {
-	IdleState = S_ZSTUMPSWAMP2_1;
 }

@@ -27,12 +27,11 @@ class BlurSphere : PowerupGiver
 	__mobjinfo__(2024)
 	__scriptid__(135);
 
-__states__
+states
 {
-	S_PINS('PINS', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_PINS2) = none
-	S_PINS2('PINS', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_PINS3) = none
-	S_PINS3('PINS', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_PINS4) = none
-	S_PINS4('PINS', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_PINS) = none
+Spawn:
+	PINS ABCD 6 Bright
+	Loop
 }
 
 defaultproperties
@@ -45,5 +44,4 @@ defaultproperties
 	bBigPowerup = true;
 	bAutoActivate = true;
 	bAlwaysPickup = true;
-	IdleState = S_PINS;
 }

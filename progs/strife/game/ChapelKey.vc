@@ -26,9 +26,11 @@
 class ChapelKey : StrifeKey
 	__mobjinfo__(195);
 
-__states__
+states
 {
-	S_CHAPEL_KEY('CHAP', 0, -1.0, none) = none
+Spawn:
+	CHAP A -1
+	Stop
 }
 
 defaultproperties
@@ -37,5 +39,4 @@ defaultproperties
 	PickupMessage = "$txt_chapelkey";
 	StrifeName = "Chapel Key";
 	IconName = 'i_chap';
-	IdleState = S_CHAPEL_KEY;
 }

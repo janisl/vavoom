@@ -27,14 +27,15 @@ class RocketBox : RocketAmmo
 	__mobjinfo__(2046)
 	__scriptid__(141);
 
-__states__
+states
 {
-	S_BROK('BROK', 0, -1.0, none) = none
+Spawn:
+	BROK A -1
+	Stop
 }
 
 defaultproperties
 {
-	IdleState = S_BROK;
 	Amount = 5;
 	PickupMessage = "$gotrockbox";
 }

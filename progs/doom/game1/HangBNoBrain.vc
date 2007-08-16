@@ -26,9 +26,11 @@
 class HangBNoBrain : Actor
 	__mobjinfo__(74);
 
-__states__
+states
 {
-	S_HANGBNOBRAIN('HDB2', 0, -1.0, none) = none
+Spawn:
+	HDB2 A -1
+	Stop
 }
 
 defaultproperties
@@ -38,5 +40,4 @@ defaultproperties
 	bSolid = true;
 	bSpawnCeiling = true;
 	bNoGravity = true;
-	IdleState = S_HANGBNOBRAIN;
 }

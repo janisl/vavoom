@@ -27,13 +27,14 @@ class Backpack : BackpackItem
 	__mobjinfo__(8)
 	__scriptid__(144);
 
-__states__
+states
 {
-	S_BPAK('BPAK', 0, -1.0, none) = none
+Spawn:
+	BPAK A -1
+	Stop
 }
 
 defaultproperties
 {
-	IdleState = S_BPAK;
 	PickupMessage = "$gotbackpack";
 }

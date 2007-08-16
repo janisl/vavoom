@@ -26,11 +26,11 @@
 class ZCorpseLynchedNoHeart : Decoration
 	__mobjinfo__(109);
 
-//============================================================================
+//==========================================================================
 //
 //  BeginPlay
 //
-//============================================================================
+//==========================================================================
 
 void BeginPlay()
 {
@@ -39,11 +39,11 @@ void BeginPlay()
 	Spawn(BloodPool, vector(Origin.x, Origin.y, ONFLOORZ));
 }
 
-//============================================================================
+//==========================================================================
 //
 //  A_CorpseBloodDrip
 //
-//============================================================================
+//==========================================================================
 
 final void A_CorpseBloodDrip()
 {
@@ -54,9 +54,11 @@ final void A_CorpseBloodDrip()
 	Spawn(CorpseBloodDrip, Origin + vector(0.0, 0.0, Height / 2.0));
 }
 
-__states__
+states
 {
-	S_ZCORPSELYNCHED2('CPS5', 0, 140.0 / 35.0, S_ZCORPSELYNCHED2) = A_CorpseBloodDrip
+Spawn:
+	CPS5 A 140 A_CorpseBloodDrip
+	Wait
 }
 
 defaultproperties
@@ -66,5 +68,4 @@ defaultproperties
 	bSolid = true;
 	bSpawnCeiling = true;
 	bNoGravity = true;
-	IdleState = S_ZCORPSELYNCHED2;
 }

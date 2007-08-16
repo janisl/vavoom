@@ -26,9 +26,11 @@
 class BaseKey : StrifeKey
 	__mobjinfo__(230);
 
-__states__
+states
 {
-	S_BASE_KEY('FUSL', 0, -1.0, none) = none
+Spawn:
+	FUSL A -1
+	Stop
 }
 
 defaultproperties
@@ -37,5 +39,4 @@ defaultproperties
 	PickupMessage = "$txt_basekey";
 	StrifeName = "Base Key";
 	IconName = 'i_fusl';
-	IdleState = S_BASE_KEY;
 }

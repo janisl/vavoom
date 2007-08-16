@@ -33,13 +33,14 @@ void OnMapSpawn(mthing_t* mthing)
 		Speed = 700.0;
 }
 
-__states__
+states
 {
-	S_BRBALL1('BAL7', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_BRBALL2) = none
-	S_BRBALL2('BAL7', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_BRBALL1) = none
-	S_BRBALLX1('BAL7', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_BRBALLX2) = none
-	S_BRBALLX2('BAL7', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_BRBALLX3) = none
-	S_BRBALLX3('BAL7', 4 | FF_FULLBRIGHT, 6.0 / 35.0, none) = none
+Spawn:
+	BAL7 AB 4 Bright
+	Loop
+Death:
+	BAL7 CDE 6 Bright
+	Stop
 }
 
 defaultproperties
@@ -57,8 +58,6 @@ defaultproperties
 	bNoTeleport = true;
 	bRandomise = true;
 	bDynamicLight = true;
-	IdleState = S_BRBALL1;
-	DeathState = S_BRBALLX1;
 	SightSound = 'baron/attack';
 	DeathSound = 'baron/shotx';
 	bDynamicLight = true;

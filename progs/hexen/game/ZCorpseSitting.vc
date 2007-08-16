@@ -66,10 +66,14 @@ final void A_CorpseExplode()
 	Destroy();
 }
 
-__states__
+states
 {
-	S_ZCORPSESITTING('CPS6', 0, -1.0, none) = none
-	S_ZCORPSESITTING_X('CPS6', 0, 1.0 / 35.0, none) = A_CorpseExplode
+Spawn:
+	CPS6 A -1
+	Stop
+Death:
+	CPS6 A 1 A_CorpseExplode
+	Stop
 }
 
 defaultproperties
@@ -80,6 +84,4 @@ defaultproperties
 	bSolid = true;
 	bShootable = true;
 	bNoBlood = true;
-	IdleState = S_ZCORPSESITTING;
-	DeathState = S_ZCORPSESITTING_X;
 }

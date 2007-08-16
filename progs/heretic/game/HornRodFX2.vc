@@ -184,20 +184,22 @@ final void A_SkullRodStorm()
 	Special1++;
 }
 
-__states__
+states
 {
-	S_HRODFX2_1('FX00', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_HRODFX2_2) = none
-	S_HRODFX2_2('FX00', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_HRODFX2_3) = A_SkullRodPL2Seek
-	S_HRODFX2_3('FX00', 4 | FF_FULLBRIGHT, 3.0 / 35.0, S_HRODFX2_4) = none
-	S_HRODFX2_4('FX00', 5 | FF_FULLBRIGHT, 3.0 / 35.0, S_HRODFX2_1) = A_SkullRodPL2Seek
-	S_HRODFXI2_1('FX00', 7 | FF_FULLBRIGHT, 5.0 / 35.0, S_HRODFXI2_2) = A_AddPlayerRain
-	S_HRODFXI2_2('FX00', 8 | FF_FULLBRIGHT, 5.0 / 35.0, S_HRODFXI2_3) = none
-	S_HRODFXI2_3('FX00', 9 | FF_FULLBRIGHT, 4.0 / 35.0, S_HRODFXI2_4) = none
-	S_HRODFXI2_4('FX00', 10 | FF_FULLBRIGHT, 3.0 / 35.0, S_HRODFXI2_5) = none
-	S_HRODFXI2_5('FX00', 11 | FF_FULLBRIGHT, 3.0 / 35.0, S_HRODFXI2_6) = none
-	S_HRODFXI2_6('FX00', 12 | FF_FULLBRIGHT, 3.0 / 35.0, S_HRODFXI2_7) = none
-	S_HRODFXI2_7('FX00', 6, 1.0 / 35.0, S_HRODFXI2_8) = A_HideInCeiling
-	S_HRODFXI2_8('FX00', 6, 1.0 / 35.0, S_HRODFXI2_8) = A_SkullRodStorm
+Spawn:
+	FX00 C 3 Bright
+	FX00 D 3 Bright A_SkullRodPL2Seek
+	FX00 E 3 Bright
+	FX00 F 3 Bright A_SkullRodPL2Seek
+	Loop
+Death:
+	FX00 H 5 Bright A_AddPlayerRain
+	FX00 I 5 Bright
+	FX00 J 4 Bright
+	FX00 KLM 3 Bright
+	FX00 G 1 A_HideInCeiling
+	FX00 G 1 A_SkullRodStorm
+	Wait
 }
 
 defaultproperties
@@ -208,8 +210,6 @@ defaultproperties
 	Speed = 770.0;
 	MissileDamage = 10;
 	bActivateImpact = true;
-	IdleState = S_HRODFX2_1;
-	DeathState = S_HRODFXI2_1;
 	SightSound = 'weapons/hornrodshoot';
 	DeathSound = 'weapons/hornrodpowhit';
 	DLightColour = RGB(255, 74, 74);

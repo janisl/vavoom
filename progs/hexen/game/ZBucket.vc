@@ -26,9 +26,11 @@
 class ZBucket:Decoration
 	__mobjinfo__(8103);
 
-__states__
+states
 {
-	S_ZBUCKET1('BCKT', 0, -1.0, none) = none
+Spawn:
+	BCKT A -1
+	Stop
 }
 
 defaultproperties
@@ -38,5 +40,4 @@ defaultproperties
 	bSolid = true;
 	bSpawnCeiling = true;
 	bNoGravity = true;
-	IdleState = S_ZBUCKET1;
 }

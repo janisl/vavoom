@@ -23,12 +23,14 @@
 //**
 //**************************************************************************
 
-class ZStatueGargoyleBlueShort:Decoration
+class ZStatueGargoyleBlueShort : Decoration
 	__mobjinfo__(76);
 
-__states__
+states
 {
-	S_ZSTATUEGARGOYLEBLUESHORT_1('STT5', 0, -1.0, none) = none
+Spawn:
+	STT5 A -1
+	Stop
 }
 
 defaultproperties
@@ -36,5 +38,4 @@ defaultproperties
 	Radius = 14.0;
 	Height = 62.0;
 	bSolid = true;
-	IdleState = S_ZSTATUEGARGOYLEBLUESHORT_1;
 }

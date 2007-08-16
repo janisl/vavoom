@@ -26,11 +26,11 @@
 class Chandelier : Decoration
 	__mobjinfo__(28);
 
-__states__
+states
 {
-	S_CHANDELIER1('CHDL', 0, 4.0 / 35.0, S_CHANDELIER2) = none
-	S_CHANDELIER2('CHDL', 1, 4.0 / 35.0, S_CHANDELIER3) = none
-	S_CHANDELIER3('CHDL', 2, 4.0 / 35.0, S_CHANDELIER1) = none
+Spawn:
+	CHDL ABC 4
+	Loop
 }
 
 defaultproperties
@@ -38,7 +38,6 @@ defaultproperties
 	Height = 60.0;
 	bSpawnCeiling = true;
 	bNoGravity = true;
-	IdleState = S_CHANDELIER1;
 	bStaticLight = true;
 	LightColour = RGB(255, 255, 128);
 	LightOffset = vector(0.0, 0.0, 52.0);

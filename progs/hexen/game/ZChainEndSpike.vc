@@ -23,12 +23,14 @@
 //**
 //**************************************************************************
 
-class ZChainEndSpike:Decoration
+class ZChainEndSpike : Decoration
 	__mobjinfo__(8076);
 
-__states__
+states
 {
-	S_ZCHAINEND_SPIKE('CHNS', 5, -1.0, none) = none
+Spawn:
+	CHNS F -1
+	Stop
 }
 
 defaultproperties
@@ -38,5 +40,4 @@ defaultproperties
 	bNoBlockmap = true;
 	bSpawnCeiling = true;
 	bNoGravity = true;
-	IdleState = S_ZCHAINEND_SPIKE;
 }

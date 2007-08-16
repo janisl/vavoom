@@ -26,12 +26,11 @@
 class MediumTorch : Decoration
 	__mobjinfo__(111);
 
-__states__
+states
 {
-	S_LATERN_1('LTRH', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_LATERN_2) = none
-	S_LATERN_2('LTRH', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_LATERN_3) = none
-	S_LATERN_3('LTRH', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_LATERN_4) = none
-	S_LATERN_4('LTRH', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_LATERN_1) = none
+Spawn:
+	LTRH ABCD 4 Bright
+	Loop
 }
 
 defaultproperties
@@ -39,7 +38,6 @@ defaultproperties
 	Radius = 4.0;
 	Height = 72.0;
 	bSolid = true;
-	IdleState = S_LATERN_1;
 	bStaticLight = true;
 	LightColour = 0xffffaf7f;
 	LightOffset = vector(0.0, 0.0, 64.0);

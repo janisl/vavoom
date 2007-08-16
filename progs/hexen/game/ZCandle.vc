@@ -26,11 +26,11 @@
 class ZCandle : Decoration
 	__mobjinfo__(119);
 
-__states__
+states
 {
-	S_ZCANDLE1('CNDL', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_ZCANDLE2) = none
-	S_ZCANDLE2('CNDL', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_ZCANDLE3) = none
-	S_ZCANDLE3('CNDL', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_ZCANDLE1) = none
+Spawn:
+	CNDL ABC 4 Bright
+	Loop
 }
 
 defaultproperties
@@ -38,6 +38,5 @@ defaultproperties
 	bNoBlockmap = true;
 	bNoGravity = true;
 	bStaticLight = true;
-	IdleState = S_ZCANDLE1;
 	LightColour = RGB(255, 255, 128);
 }

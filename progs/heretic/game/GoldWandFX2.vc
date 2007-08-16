@@ -26,14 +26,14 @@
 class GoldWandFX2 : Projectile
 	__scriptid__(152);
 
-__states__
+states
 {
-	S_GWANDFX2_1('FX01', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_GWANDFX2_2) = none
-	S_GWANDFX2_2('FX01', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_GWANDFX2_1) = none
-	S_GWANDFXI1_1('FX01', 4 | FF_FULLBRIGHT, 3.0 / 35.0, S_GWANDFXI1_2) = none
-	S_GWANDFXI1_2('FX01', 5 | FF_FULLBRIGHT, 3.0 / 35.0, S_GWANDFXI1_3) = none
-	S_GWANDFXI1_3('FX01', 6 | FF_FULLBRIGHT, 3.0 / 35.0, S_GWANDFXI1_4) = none
-	S_GWANDFXI1_4('FX01', 7 | FF_FULLBRIGHT, 3.0 / 35.0, none) = none
+Spawn:
+	FX01 CD 6 Bright
+	Loop
+Death:
+	FX01 EFGH 3 Bright
+	Stop
 }
 
 defaultproperties
@@ -43,8 +43,6 @@ defaultproperties
 	Speed = 630.0;
 	MissileDamage = 1;
 	bActivateImpact = true;
-	IdleState = S_GWANDFX2_1;
-	DeathState = S_GWANDFXI1_1;
 	DLightColour = RGB(252, 187, 57);
 	DLightRadius = 200.0;
 }

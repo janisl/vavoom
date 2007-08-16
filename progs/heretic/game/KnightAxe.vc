@@ -50,14 +50,15 @@ final void A_ContMobjSound()
 	PlaySound('hknight/axewhoosh', CHAN_VOICE);
 }
 
-__states__
+states
 {
-	S_SPINAXE1('SPAX', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_SPINAXE2) = A_ContMobjSound
-	S_SPINAXE2('SPAX', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_SPINAXE3) = none
-	S_SPINAXE3('SPAX', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_SPINAXE1) = none
-	S_SPINAXEX1('SPAX', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_SPINAXEX2) = none
-	S_SPINAXEX2('SPAX', 4 | FF_FULLBRIGHT, 6.0 / 35.0, S_SPINAXEX3) = none
-	S_SPINAXEX3('SPAX', 5 | FF_FULLBRIGHT, 6.0 / 35.0, none) = none
+Spawn:
+	SPAX A 3 Bright A_ContMobjSound
+	SPAX BC 3 Bright
+	Loop
+Death:
+	SPAX DEF 6 Bright
+	Stop
 }
 
 defaultproperties
@@ -68,8 +69,6 @@ defaultproperties
 	MissileDamage = 2;
 	bWindThrust = true;
 	bThruGhost = true;
-	IdleState = S_SPINAXE1;
-	DeathState = S_SPINAXEX1;
 	DeathSound = 'hknight/hit';
 	DLightColour = RGB(67, 147, 55);
 	DLightRadius = 200.0;

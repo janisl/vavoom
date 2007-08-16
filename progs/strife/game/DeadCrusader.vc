@@ -26,12 +26,13 @@
 class DeadCrusader : Decoration
 	__mobjinfo__(22);
 
-__states__
+states
 {
-	S_DEAD_CRUSADER('ROB2', 15, -1.0, none) = none
+Spawn:
+	ROB2 P -1
+	Stop
 }
 
 defaultproperties
 {
-	IdleState = S_DEAD_CRUSADER;
 }

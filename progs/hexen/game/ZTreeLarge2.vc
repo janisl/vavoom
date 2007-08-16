@@ -23,12 +23,14 @@
 //**
 //**************************************************************************
 
-class ZTreeLarge2:Decoration
+class ZTreeLarge2 : Decoration
 	__mobjinfo__(79);
 
-__states__
+states
 {
-	S_ZTREELARGE2('TRE5', 0, -1.0, none) = none
+Spawn:
+	TRE5 A -1
+	Stop
 }
 
 defaultproperties
@@ -36,6 +38,4 @@ defaultproperties
 	Radius = 15.0;
 	Height = 180.0;
 	bSolid = true;
-	IdleState = S_ZTREELARGE2;
-	DeathState = S_ZTREELARGE2;
 }

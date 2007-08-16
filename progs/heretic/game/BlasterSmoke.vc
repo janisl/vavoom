@@ -23,15 +23,13 @@
 //**
 //**************************************************************************
 
-class BlasterSmoke:Effect;
+class BlasterSmoke : Effect;
 
-__states__
+states
 {
-	S_BLASTERSMOKE1('FX18', 7, 4.0 / 35.0, S_BLASTERSMOKE2) = none
-	S_BLASTERSMOKE2('FX18', 8, 4.0 / 35.0, S_BLASTERSMOKE3) = none
-	S_BLASTERSMOKE3('FX18', 9, 4.0 / 35.0, S_BLASTERSMOKE4) = none
-	S_BLASTERSMOKE4('FX18', 10, 4.0 / 35.0, S_BLASTERSMOKE5) = none
-	S_BLASTERSMOKE5('FX18', 11, 4.0 / 35.0, none) = none
+Spawn:
+	FX18 HIJKL 4
+	Stop
 }
 
 defaultproperties
@@ -39,5 +37,4 @@ defaultproperties
 	Alpha = 0.666;
 	bNoTeleport = true;
 	bCannotPush = true;
-	IdleState = S_BLASTERSMOKE1;
 }

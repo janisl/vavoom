@@ -23,15 +23,16 @@
 //**
 //**************************************************************************
 
-class ZRock2:Decoration
+class ZRock2 : Decoration
 	__mobjinfo__(7);
 
-__states__
+states
 {
-	S_ZROCK2_1('RCK2', 0, -1.0, none) = none
+Spawn:
+	RCK2 A -1
+	Stop
 }
 
 defaultproperties
 {
-	IdleState = S_ZROCK2_1;
 }

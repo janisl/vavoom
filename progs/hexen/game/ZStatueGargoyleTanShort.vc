@@ -23,12 +23,14 @@
 //**
 //**************************************************************************
 
-class ZStatueGargoyleTanShort:Decoration
+class ZStatueGargoyleTanShort : Decoration
 	__mobjinfo__(8051);
 
-__states__
+states
 {
-	S_ZSTATUEGARGOYLETANSHORT_1('GAR8', 0, -1.0, none) = none
+Spawn:
+	GAR8 A -1
+	Stop
 }
 
 defaultproperties
@@ -36,5 +38,4 @@ defaultproperties
 	Radius = 14.0;
 	Height = 62.0;
 	bSolid = true;
-	IdleState = S_ZSTATUEGARGOYLETANSHORT_1;
 }

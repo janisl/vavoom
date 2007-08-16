@@ -44,14 +44,15 @@ final void A_BoltSpark()
 	}
 }
 
-__states__
+states
 {
-	S_CRBOWFX2('FX03', 1 | FF_FULLBRIGHT, 1.0 / 35.0, S_CRBOWFX2) = A_BoltSpark
+Spawn:
+	FX03 B 1 Bright A_BoltSpark
+	Loop
 }
 
 defaultproperties
 {
 	Speed = 1120.0;
 	MissileDamage = 6;
-	IdleState = S_CRBOWFX2;
 }

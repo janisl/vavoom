@@ -26,9 +26,11 @@
 class BlueCrystalKey : StrifeKey
 	__mobjinfo__(193);
 
-__states__
+states
 {
-	S_BLUE_CRYSTAL_KEY('BCRY', 0 | FF_FULLBRIGHT, -1.0, none) = none
+Spawn:
+	BCRY A -1 Bright
+	Stop
 }
 
 defaultproperties
@@ -37,5 +39,4 @@ defaultproperties
 	PickupMessage = "$txt_bluecrystal";
 	StrifeName = "Blue Crystal Key";
 	IconName = 'i_bcry';
-	IdleState = S_BLUE_CRYSTAL_KEY;
 }

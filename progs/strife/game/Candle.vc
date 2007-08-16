@@ -26,14 +26,15 @@
 class Candle : Decoration
 	__mobjinfo__(34);
 
-__states__
+states
 {
-	S_CANDLE('CNDL', 0 | FF_FULLBRIGHT, -1.0, none) = none
+Spawn:
+	CNDL A -1 Bright
+	Stop
 }
 
 defaultproperties
 {
-	IdleState = S_CANDLE;
 	bStaticLight = true;
 	LightOffset = vector(0.0, 0.0, 16.0);
 	LightRadius = 64.0;

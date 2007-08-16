@@ -26,9 +26,11 @@
 class ZStalactiteIceMedium : Decoration
 	__mobjinfo__(90);
 
-__states__
+states
 {
-	S_ZSTALACTITEICEMEDIUM('ICT2', 0, -1.0, none) = none
+Spawn:
+	ICT2 A -1
+	Stop
 }
 
 defaultproperties
@@ -38,5 +40,4 @@ defaultproperties
 	bSolid = true;
 	bSpawnCeiling = true;
 	bNoGravity = true;
-	IdleState = S_ZSTALACTITEICEMEDIUM;
 }

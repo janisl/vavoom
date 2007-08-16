@@ -23,12 +23,14 @@
 //**
 //**************************************************************************
 
-class ZCorpseKabob:Decoration
+class ZCorpseKabob : Decoration
 	__mobjinfo__(61);
 
-__states__
+states
 {
-	S_ZCORPSEKABOB1('CPS1', 0, -1.0, none) = none
+Spawn:
+	CPS1 A -1
+	Stop
 }
 
 defaultproperties
@@ -36,5 +38,4 @@ defaultproperties
 	Radius = 10.0;
 	Height = 92.0;
 	bSolid = true;
-	IdleState = S_ZCORPSEKABOB1;
 }

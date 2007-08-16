@@ -27,21 +27,14 @@ class KeyYellow : HereticKey
 	__mobjinfo__(80)
 	__scriptid__(87);
 
-__states__
+states
 {
-	S_CKYY1('CKYY', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_CKYY2) = none
-	S_CKYY2('CKYY', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_CKYY3) = none
-	S_CKYY3('CKYY', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_CKYY4) = none
-	S_CKYY4('CKYY', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_CKYY5) = none
-	S_CKYY5('CKYY', 4 | FF_FULLBRIGHT, 3.0 / 35.0, S_CKYY6) = none
-	S_CKYY6('CKYY', 5 | FF_FULLBRIGHT, 3.0 / 35.0, S_CKYY7) = none
-	S_CKYY7('CKYY', 6 | FF_FULLBRIGHT, 3.0 / 35.0, S_CKYY8) = none
-	S_CKYY8('CKYY', 7 | FF_FULLBRIGHT, 3.0 / 35.0, S_CKYY9) = none
-	S_CKYY9('CKYY', 8 | FF_FULLBRIGHT, 3.0 / 35.0, S_CKYY1) = none
+Spawn:
+	CKYY ABCDEFGHI 3 Bright
+	Loop
 }
 
 defaultproperties
 {
-	IdleState = S_CKYY1;
 	PickupMessage = "$txt_gotyellowkey";
 }

@@ -25,12 +25,11 @@
 
 class FireDroplet : Effect;
 
-__states__
+states
 {
-	S_FFOT_1('FFOT', 0, 9.0 / 35.0, S_FFOT_2) = none
-	S_FFOT_2('FFOT', 1, 9.0 / 35.0, S_FFOT_3) = none
-	S_FFOT_3('FFOT', 2, 9.0 / 35.0, S_FFOT_4) = none
-	S_FFOT_4('FFOT', 3, 9.0 / 35.0, none) = none
+Spawn:
+	FFOT ABCD 9
+	Stop
 }
 
 defaultproperties
@@ -38,5 +37,4 @@ defaultproperties
 	bNoGravity = false;
 	bColideWithThings = false;
 	bColideWithWorld = false;
-	IdleState = S_FFOT_1;
 }

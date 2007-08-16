@@ -26,9 +26,11 @@
 class AlienAspClimber : Decoration
 	__mobjinfo__(224);
 
-__states__
+states
 {
-	S_ASPR('ASPR', 0, 4.0 / 35.0, S_ASPR) = A_ActiveSound
+Spawn:
+	ASPR A 4 A_ActiveSound
+	Loop
 }
 
 defaultproperties
@@ -36,6 +38,5 @@ defaultproperties
 	Radius = 16.0;
 	Height = 128.0;
 	bSolid = true;
-	IdleState = S_ASPR;
 	ActiveSound = 'ambient/alien3';
 }

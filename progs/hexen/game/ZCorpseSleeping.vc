@@ -23,17 +23,18 @@
 //**
 //**************************************************************************
 
-class ZCorpseSleeping:Decoration
+class ZCorpseSleeping : Decoration
 	__mobjinfo__(62);
 
-__states__
+states
 {
-	S_ZCORPSESLEEPING1('CPS2', 0, -1.0, none) = none
+Spawn:
+	CPS2 A -1
+	Stop
 }
 
 defaultproperties
 {
 	Radius = 20.0;
 	Height = 16.0;
-	IdleState = S_ZCORPSESLEEPING1;
 }

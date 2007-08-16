@@ -23,12 +23,14 @@
 //**
 //**************************************************************************
 
-class ZStatueGargoyleGreenTall:Decoration
+class ZStatueGargoyleGreenTall : Decoration
 	__mobjinfo__(72);
 
-__states__
+states
 {
-	S_ZSTATUEGARGOYLEGREENTALL_1('STT2', 0, -1.0, none) = none
+Spawn:
+	STT2 A -1
+	Stop
 }
 
 defaultproperties
@@ -36,5 +38,4 @@ defaultproperties
 	Radius = 14.0;
 	Height = 108.0;
 	bSolid = true;
-	IdleState = S_ZSTATUEGARGOYLEGREENTALL_1;
 }

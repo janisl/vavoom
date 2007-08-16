@@ -26,9 +26,11 @@
 class IDBadge : StrifeKey
 	__mobjinfo__(184);
 
-__states__
+states
 {
-	S_ID_BADGE('CRD1', 0, -1.0, none) = none
+Spawn:
+	CRD1 A -1
+	Stop
 }
 
 defaultproperties
@@ -37,5 +39,4 @@ defaultproperties
 	PickupMessage = "$txt_idbadge";
 	StrifeName = "ID Badge";
 	IconName = 'i_crd1';
-	IdleState = S_ID_BADGE;
 }

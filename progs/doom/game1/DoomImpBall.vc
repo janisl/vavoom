@@ -33,13 +33,14 @@ void OnMapSpawn(mthing_t* mthing)
 		Speed = 700.0;
 }
 
-__states__
+states
 {
-	S_TBALL1('BAL1', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_TBALL2) = none
-	S_TBALL2('BAL1', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_TBALL1) = none
-	S_TBALLX1('BAL1', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_TBALLX2) = none
-	S_TBALLX2('BAL1', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_TBALLX3) = none
-	S_TBALLX3('BAL1', 4 | FF_FULLBRIGHT, 6.0 / 35.0, none) = none
+Spawn:
+	BAL1 AB 4 Bright
+	Loop
+Death:
+	BAL1 CDE 6 Bright
+	Stop
 }
 
 defaultproperties
@@ -56,8 +57,6 @@ defaultproperties
 	bActivatePCross = true;
 	bNoTeleport = true;
 	bRandomise = true;
-	IdleState = S_TBALL1;
-	DeathState = S_TBALLX1;
 	SightSound = 'imp/attack';
 	DeathSound = 'imp/shotx';
 	bDynamicLight = true;

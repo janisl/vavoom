@@ -26,9 +26,11 @@
 class ZTombstoneRIP : Decoration
 	__mobjinfo__(63);
 
-__states__
+states
 {
-	S_ZTOMBSTONERIP1('TMS1', 0, -1.0, none) = none
+Spawn:
+	TMS1 A -1
+	Stop
 }
 
 defaultproperties
@@ -36,5 +38,4 @@ defaultproperties
 	Radius = 10.0;
 	Height = 46.0;
 	bSolid = true;
-	IdleState = S_ZTOMBSTONERIP1;
 }

@@ -46,9 +46,11 @@ bool TryPickup(EntityEx Toucher)
 	return true;
 }
 
-__states__
+states
 {
-	S_PSTR('PSTR', 0 | FF_FULLBRIGHT, -1.0, none) = none
+Spawn:
+	PSTR A -1 Bright
+	Stop
 }
 
 defaultproperties
@@ -56,5 +58,4 @@ defaultproperties
 	PickupSound = 'misc/p_pkup';
 	PickupMessage = "$gotberserk";
 	bCountItem = true;
-	IdleState = S_PSTR;
 }

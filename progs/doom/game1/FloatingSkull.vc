@@ -26,11 +26,11 @@
 class FloatingSkull : Actor
 	__mobjinfo__(42);
 
-__states__
+states
 {
-	S_FLOATSKULL('FSKU', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_FLOATSKULL2) = none
-	S_FLOATSKULL2('FSKU', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_FLOATSKULL3) = none
-	S_FLOATSKULL3('FSKU', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_FLOATSKULL) = none
+Spawn:
+	FSKU ABC 6 Bright
+	Loop
 }
 
 defaultproperties
@@ -39,7 +39,6 @@ defaultproperties
 	Height = 48.0;
 	bSolid = true;
 	bFloorClip = true;
-	IdleState = S_FLOATSKULL;
 	bStaticLight = true;
 	LightColour = RGB(255, 127, 27);
 	LightOffset = vector(0.0, 0.0, 32.0);

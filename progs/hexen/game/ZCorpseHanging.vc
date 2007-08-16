@@ -23,12 +23,14 @@
 //**
 //**************************************************************************
 
-class ZCorpseHanging:Decoration
+class ZCorpseHanging : Decoration
 	__mobjinfo__(71);
 
-__states__
+states
 {
-	S_CORPSEHANGING_1('CPS3', 0, -1.0, none) = none
+Spawn:
+	CPS3 A -1
+	Stop
 }
 
 defaultproperties
@@ -38,5 +40,4 @@ defaultproperties
 	bSolid = true;
 	bSpawnCeiling = true;
 	bNoGravity = true;
-	IdleState = S_CORPSEHANGING_1;
 }

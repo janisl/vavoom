@@ -23,12 +23,14 @@
 //**
 //**************************************************************************
 
-class ZLog:Decoration
+class ZLog : Decoration
 	__mobjinfo__(88);
 
-__states__
+states
 {
-	S_ZLOG('LOGG', 0, -1.0, none) = none
+Spawn:
+	LOGG A -1
+	Stop
 }
 
 defaultproperties
@@ -36,5 +38,4 @@ defaultproperties
 	Radius = 20.0;
 	Height = 25.0;
 	bSolid = true;
-	IdleState = S_ZLOG;
 }

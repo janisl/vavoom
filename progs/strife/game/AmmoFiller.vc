@@ -26,9 +26,11 @@
 class AmmoFiller : Decoration
 	__mobjinfo__(228);
 
-__states__
+states
 {
-	S_AFED('AFED', 0, -1.0, none) = none
+Spawn:
+	AFED A -1
+	Stop
 }
 
 defaultproperties
@@ -36,5 +38,4 @@ defaultproperties
 	Radius = 12.0;
 	Height = 24.0;
 	bSolid = true;
-	IdleState = S_AFED;
 }

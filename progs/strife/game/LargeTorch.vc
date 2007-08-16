@@ -26,12 +26,11 @@
 class LargeTorch : Decoration
 	__mobjinfo__(47);
 
-__states__
+states
 {
-	S_LAMPCAND_1('LMPC', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_LAMPCAND_2) = none
-	S_LAMPCAND_2('LMPC', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_LAMPCAND_3) = none
-	S_LAMPCAND_3('LMPC', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_LAMPCAND_4) = none
-	S_LAMPCAND_4('LMPC', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_LAMPCAND_1) = none
+Spawn:
+	LMPC ABDC 4 Bright
+	Loop
 	// NOTE Wad has 5 frames of animation
 }
 
@@ -40,7 +39,6 @@ defaultproperties
 	Radius = 10.0;
 	Height = 72.0;
 	bSolid = true;
-	IdleState = S_LAMPCAND_1;
 	ActiveSound = 'world/smallfire';
 	bStaticLight = true;
 	LightColour = 0xffffbf7f;

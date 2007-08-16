@@ -23,12 +23,14 @@
 //**
 //**************************************************************************
 
-class ZVasePillar:Decoration
+class ZVasePillar : Decoration
 	__mobjinfo__(103);
 
-__states__
+states
 {
-	S_ZVASEPILLAR('VASE', 0, -1.0, none) = none
+Spawn:
+	VASE A -1
+	Stop
 }
 
 defaultproperties
@@ -36,5 +38,4 @@ defaultproperties
 	Radius = 12.0;
 	Height = 54.0;
 	bSolid = true;
-	IdleState = S_ZVASEPILLAR;
 }

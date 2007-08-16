@@ -23,12 +23,14 @@
 //**
 //**************************************************************************
 
-class ZMossCeiling2:Decoration
+class ZMossCeiling2 : Decoration
 	__mobjinfo__(59);
 
-__states__
+states
 {
-	S_ZMOSSCEILING2_1('MSS2', 0, -1.0, none) = none
+Spawn:
+	MSS2 A -1
+	Stop
 }
 
 defaultproperties
@@ -37,5 +39,4 @@ defaultproperties
 	Height = 24.0;
 	bSpawnCeiling = true;
 	bNoGravity = true;
-	IdleState = S_ZMOSSCEILING2_1;
 }

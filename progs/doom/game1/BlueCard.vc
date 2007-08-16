@@ -27,14 +27,15 @@ class BlueCard : DoomKey
 	__mobjinfo__(5)
 	__scriptid__(85);
 
-__states__
+states
 {
-	S_BKEY('BKEY', 0, 10.0 / 35.0, S_BKEY2) = none
-	S_BKEY2('BKEY', 1 | FF_FULLBRIGHT, 10.0 / 35.0, S_BKEY) = none
+Spawn:
+	BKEY A 10
+	BKEY B 10 Bright
+	Loop
 }
 
 defaultproperties
 {
-	IdleState = S_BKEY;
 	PickupMessage = "$gotbluecard";
 }

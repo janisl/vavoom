@@ -23,13 +23,14 @@
 //**
 //**************************************************************************
 
-class InquisitorArm:Effect;
+class InquisitorArm : Effect;
 
-__states__
+states
 {
-	S_INQUISITOR_ARM_1('RBB3', 5 | FF_FULLBRIGHT, 5.0 / 35.0, S_INQUISITOR_ARM_2) = none
-	S_INQUISITOR_ARM_2('RBB3', 6 | FF_FULLBRIGHT, 5.0 / 35.0, S_INQUISITOR_ARM_3) = none
-	S_INQUISITOR_ARM_3('RBB3', 7, -1.0, none) = none
+Spawn:
+	RBB3 FG 5 Bright
+	RBB3 H -1
+	Stop
 }
 
 defaultproperties
@@ -39,5 +40,4 @@ defaultproperties
 	bColideWithThings = false;
 	bColideWithWorld = false;
 	bNoBlood = true;
-	IdleState = S_INQUISITOR_ARM_1;
 }

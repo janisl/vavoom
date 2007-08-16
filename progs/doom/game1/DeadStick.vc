@@ -26,9 +26,11 @@
 class DeadStick : Actor
 	__mobjinfo__(25);
 
-__states__
+states
 {
-	S_DEADSTICK('POL1', 0, -1.0, none) = none
+Spawn:
+	POL1 A -1
+	Stop
 }
 
 defaultproperties
@@ -37,5 +39,4 @@ defaultproperties
 	Height = 64.0;
 	bSolid = true;
 	bFloorClip = true;
-	IdleState = S_DEADSTICK;
 }

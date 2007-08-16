@@ -26,9 +26,11 @@
 class Moss2 : Decoration
 	__mobjinfo__(49);
 
-__states__
+states
 {
-	S_MOSS2('MOS2', 0, -1.0, none) = none
+Spawn:
+	MOS2 A -1
+	Stop
 }
 
 defaultproperties
@@ -36,5 +38,4 @@ defaultproperties
 	Height = 27.0;
 	bSpawnCeiling = true;
 	bNoGravity = true;
-	IdleState = S_MOSS2;
 }

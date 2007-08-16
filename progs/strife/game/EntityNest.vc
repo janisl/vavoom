@@ -23,12 +23,14 @@
 //**
 //**************************************************************************
 
-class EntityNest:Decoration
+class EntityNest : Decoration
 	__mobjinfo__(26);
 
-__states__
+states
 {
-	S_ENTITY_NEST('NEST', 0, -1.0, none) = none
+Spawn:
+	NEST A -1
+	Stop
 }
 
 defaultproperties
@@ -37,5 +39,4 @@ defaultproperties
 	Height = 47.0;
 	bSolid = true;
 	bNoDeathmatch = true;
-	IdleState = S_ENTITY_NEST;
 }

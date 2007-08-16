@@ -26,10 +26,11 @@
 class HeartColumn : Actor
 	__mobjinfo__(36);
 
-__states__
+states
 {
-	S_HEARTCOL('COL5', 0, 14.0 / 35.0, S_HEARTCOL2) = none
-	S_HEARTCOL2('COL5', 1, 14.0 / 35.0, S_HEARTCOL) = none
+Spawn:
+	COL5 AB 14
+	Loop
 }
 
 defaultproperties
@@ -38,5 +39,4 @@ defaultproperties
 	Height = 40.0;
 	bSolid = true;
 	bFloorClip = true;
-	IdleState = S_HEARTCOL;
 }

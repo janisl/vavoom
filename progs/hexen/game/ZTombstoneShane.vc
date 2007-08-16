@@ -26,9 +26,11 @@
 class ZTombstoneShane : Decoration
 	__mobjinfo__(64);
 
-__states__
+states
 {
-	S_ZTOMBSTONESHANE1('TMS2', 0, -1.0, none) = none
+Spawn:
+	TMS2 A -1
+	Stop
 }
 
 defaultproperties
@@ -36,5 +38,4 @@ defaultproperties
 	Radius = 10.0;
 	Height = 46.0;
 	bSolid = true;
-	IdleState = S_ZTOMBSTONESHANE1;
 }

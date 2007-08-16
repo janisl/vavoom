@@ -26,9 +26,11 @@
 class IDCard : StrifeKey
 	__mobjinfo__(13);
 
-__states__
+states
 {
-	S_ID_CARD('CRD2', 0, -1.0, none) = none
+Spawn:
+	CRD2 A -1
+	Stop
 }
 
 defaultproperties
@@ -37,5 +39,4 @@ defaultproperties
 	PickupMessage = "$txt_idcard";
 	StrifeName = "ID Card";
 	IconName = 'i_crd2';
-	IdleState = S_ID_CARD;
 }

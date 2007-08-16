@@ -23,12 +23,14 @@
 //**
 //**************************************************************************
 
-class ZChandelierUnlit:Decoration
+class ZChandelierUnlit : Decoration
 	__mobjinfo__(8063);
 
-__states__
+states
 {
-	S_ZCHANDELIER_U('CDLR', 3, -1.0, none) = none
+Spawn:
+	CDLR D -1
+	Stop
 }
 
 defaultproperties
@@ -37,5 +39,4 @@ defaultproperties
 	Height = 60.0;
 	bSpawnCeiling = true;
 	bNoGravity = true;
-	IdleState = S_ZCHANDELIER_U;
 }

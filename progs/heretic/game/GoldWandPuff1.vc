@@ -25,18 +25,15 @@
 
 class GoldWandPuff1 : Effect;
 
-__states__
+states
 {
-	S_GWANDPUFF1_1('PUF2', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_GWANDPUFF1_2) = none
-	S_GWANDPUFF1_2('PUF2', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_GWANDPUFF1_3) = none
-	S_GWANDPUFF1_3('PUF2', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_GWANDPUFF1_4) = none
-	S_GWANDPUFF1_4('PUF2', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_GWANDPUFF1_5) = none
-	S_GWANDPUFF1_5('PUF2', 4 | FF_FULLBRIGHT, 3.0 / 35.0, none) = none
+Spawn:
+	PUF2 ABCDE 3 Bright
+	Stop
 }
 
 defaultproperties
 {
 	ExplodeEffect = RGBA(252, 187, 57, 255);
 	bPuffOnActors = true;
-	IdleState = S_GWANDPUFF1_1;
 }

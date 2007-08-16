@@ -45,7 +45,7 @@ final void A_FireSkullRodPL1()
 	// Randomize the first frame
 	if (A && P_Random() > 128)
 	{
-		A.SetState(HornRodFX1::S_HRODFX1_2);
+		A.SetState(GetStatePlus(A.IdleState, 1));
 	}
 }
 

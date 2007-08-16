@@ -26,9 +26,11 @@
 class ZTombstoneBrianP : Decoration
 	__mobjinfo__(69);
 
-__states__
+states
 {
-	S_ZTOMBSTONEBRIANP1('TMS7', 0, -1.0, none) = none
+Spawn:
+	TMS7 A -1
+	Stop
 }
 
 defaultproperties
@@ -36,5 +38,4 @@ defaultproperties
 	Radius = 8.0;
 	Height = 46.0;
 	bSolid = true;
-	IdleState = S_ZTOMBSTONEBRIANP1;
 }

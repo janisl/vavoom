@@ -26,9 +26,11 @@
 class HEGrenadeRounds : Ammo
 	__mobjinfo__(152);
 
-__states__
+states
 {
-	S_GRENADE_HE('GRN1', 0, -1.0, none) = none
+Spawn:
+	GRN1 A -1
+	Stop
 }
 
 defaultproperties
@@ -40,6 +42,5 @@ defaultproperties
 	BackpackMaxAmount = 60;
 	IconName = 'i_grn1';
 	bFloorClip = true;
-	IdleState = S_GRENADE_HE;
 	PickupMessage = "$txt_hegrenades";
 }

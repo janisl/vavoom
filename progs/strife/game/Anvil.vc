@@ -23,12 +23,14 @@
 //**
 //**************************************************************************
 
-class Anvil:Decoration
+class Anvil : Decoration
 	__mobjinfo__(194);
 
-__states__
+states
 {
-	S_ANVIL('ANVL', 0, -1.0, none) = none
+Spawn:
+	ANVL A -1
+	Stop
 }
 
 defaultproperties
@@ -36,5 +38,4 @@ defaultproperties
 	Radius = 16.0;
 	Height = 32.0;
 	bSolid = true;
-	IdleState = S_ANVIL;
 }

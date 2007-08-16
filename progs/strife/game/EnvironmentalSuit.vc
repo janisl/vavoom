@@ -27,9 +27,11 @@ class EnvironmentalSuit : PowerupGiver
 	__mobjinfo__(2025)
 	__scriptid__(136);
 
-__states__
+states
 {
-	S_ENV_SUIT('MASK', 0, -1.0, none) = none
+Spawn:
+	MASK A -1
+	Stop
 }
 
 defaultproperties
@@ -41,5 +43,4 @@ defaultproperties
 	MaxAmount = 5;
 	IconName = 'i_mask';
 	bFloorClip = true;
-	IdleState = S_ENV_SUIT;
 }

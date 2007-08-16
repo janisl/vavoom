@@ -26,9 +26,11 @@
 class HangNoGuts : Actor
 	__mobjinfo__(73);
 
-__states__
+states
 {
-	S_HANGNOGUTS('HDB1', 0, -1.0, none) = none
+Spawn:
+	HDB1 A -1
+	Stop
 }
 
 defaultproperties
@@ -38,5 +40,4 @@ defaultproperties
 	bSolid = true;
 	bSpawnCeiling = true;
 	bNoGravity = true;
-	IdleState = S_HANGNOGUTS;
 }

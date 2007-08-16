@@ -27,14 +27,15 @@ class Medikit : Health
 	__mobjinfo__(2012)
 	__scriptid__(24);
 
-__states__
+states
 {
-	S_MEDI('MEDI', 0, -1.0, none) = none
+Spawn:
+	MEDI A -1
+	Stop
 }
 
 defaultproperties
 {
-	IdleState = S_MEDI;
 	Amount = 25;
 	LowHealth = 10;
 	PickupMessage = "$gotmedikit";

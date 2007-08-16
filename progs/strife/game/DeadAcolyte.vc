@@ -26,14 +26,15 @@
 class DeadAcolyte : Decoration
 	__mobjinfo__(21);
 
-__states__
+states
 {
-	S_DEAD_ACOLYTE('AGRD', 13, 1400.0 / 35.0, S_DEAD_ACOLYTE_2) = none
-	S_DEAD_ACOLYTE_2('GIBS', 10, 5.0 / 35.0, S_DEAD_ACOLYTE_3) = none
-	S_DEAD_ACOLYTE_3('GIBS', 11, 1400.0 / 35.0, none) = none
+Spawn:
+	AGRD N 1400
+	GIBS K 5
+	GIBS L 1400
+	Stop
 }
 
 defaultproperties
 {
-	IdleState = S_DEAD_ACOLYTE;
 }

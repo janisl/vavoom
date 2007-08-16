@@ -27,14 +27,15 @@ class ClipBox : Clip
 	__mobjinfo__(2048)
 	__scriptid__(139);
 
-__states__
+states
 {
-	S_AMMO('AMMO', 0, -1.0, none) = none
+Spawn:
+	AMMO A -1
+	Stop
 }
 
 defaultproperties
 {
-	IdleState = S_AMMO;
 	Amount = 50;
 	PickupMessage = "$gotclipbox";
 }

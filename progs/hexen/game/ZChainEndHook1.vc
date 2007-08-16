@@ -23,12 +23,14 @@
 //**
 //**************************************************************************
 
-class ZChainEndHook1:Decoration
+class ZChainEndHook1 : Decoration
 	__mobjinfo__(8074);
 
-__states__
+states
 {
-	S_ZCHAINEND_HOOK1('CHNS', 3, -1.0, none) = none
+Spawn:
+	CHNS D -1
+	Stop
 }
 
 defaultproperties
@@ -38,5 +40,4 @@ defaultproperties
 	bNoBlockmap = true;
 	bSpawnCeiling = true;
 	bNoGravity = true;
-	IdleState = S_ZCHAINEND_HOOK1;
 }

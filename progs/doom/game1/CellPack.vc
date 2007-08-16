@@ -27,14 +27,15 @@ class CellPack : Cell
 	__mobjinfo__(17)
 	__scriptid__(142);
 
-__states__
+states
 {
-	S_CELP('CELP', 0, -1.0, none) = none
+Spawn:
+	CELP A -1
+	Stop
 }
 
 defaultproperties
 {
-	IdleState = S_CELP;
 	Amount = 100;
 	PickupMessage = "$gotcellbox";
 }

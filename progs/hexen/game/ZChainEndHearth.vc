@@ -23,12 +23,14 @@
 //**
 //**************************************************************************
 
-class ZChainEndHearth:Decoration
+class ZChainEndHearth : Decoration
 	__mobjinfo__(8073);
 
-__states__
+states
 {
-	S_ZCHAINEND_HEART('CHNS', 2, -1.0, none) = none
+Spawn:
+	CHNS C -1
+	Stop
 }
 
 defaultproperties
@@ -38,5 +40,4 @@ defaultproperties
 	bNoBlockmap = true;
 	bSpawnCeiling = true;
 	bNoGravity = true;
-	IdleState = S_ZCHAINEND_HEART;
 }

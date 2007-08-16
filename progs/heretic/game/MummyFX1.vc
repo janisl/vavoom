@@ -61,16 +61,17 @@ final void A_MummyFX1Seek()
 	SeekerMissile(10.0, 20.0);
 }
 
-__states__
+states
 {
-	S_MUMMYFX1_1('FX15', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_MUMMYFX1_2) = A_ContMobjSound
-	S_MUMMYFX1_2('FX15', 1 | FF_FULLBRIGHT, 5.0 / 35.0, S_MUMMYFX1_3) = A_MummyFX1Seek
-	S_MUMMYFX1_3('FX15', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_MUMMYFX1_4) = none
-	S_MUMMYFX1_4('FX15', 1 | FF_FULLBRIGHT, 5.0 / 35.0, S_MUMMYFX1_1) = A_MummyFX1Seek
-	S_MUMMYFXI1_1('FX15', 3 | FF_FULLBRIGHT, 5.0 / 35.0, S_MUMMYFXI1_2) = none
-	S_MUMMYFXI1_2('FX15', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_MUMMYFXI1_3) = none
-	S_MUMMYFXI1_3('FX15', 5 | FF_FULLBRIGHT, 5.0 / 35.0, S_MUMMYFXI1_4) = none
-	S_MUMMYFXI1_4('FX15', 6 | FF_FULLBRIGHT, 5.0 / 35.0, none) = none
+Spawn:
+	FX15 A 5 Bright A_ContMobjSound
+	FX15 B 5 Bright A_MummyFX1Seek
+	FX15 C 5 Bright
+	FX15 B 5 Bright A_MummyFX1Seek
+	Loop
+Death:
+	FX15 DEFG 5 Bright
+	Stop
 }
 
 defaultproperties
@@ -79,8 +80,6 @@ defaultproperties
 	Height = 14.0;
 	Speed = 315.0;
 	MissileDamage = 4;
-	IdleState = S_MUMMYFX1_1;
-	DeathState = S_MUMMYFXI1_1;
 	DLightColour = RGB(251, 221, 123);
 	DLightRadius = 200.0;
 }

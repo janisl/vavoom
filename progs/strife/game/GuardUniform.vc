@@ -26,9 +26,11 @@
 class GuardUniform : Inventory
 	__mobjinfo__(90);
 
-__states__
+states
 {
-	S_GUARD_UNIFORM('UNIF', 0, -1.0, none) = none
+Spawn:
+	UNIF A -1
+	Stop
 }
 
 defaultproperties
@@ -40,5 +42,4 @@ defaultproperties
 	IconName = 'i_unif';
 	bFloorClip = true;
 	bInvBar = true;
-	IdleState = S_GUARD_UNIFORM;
 }

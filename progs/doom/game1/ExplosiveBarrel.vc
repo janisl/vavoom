@@ -38,15 +38,18 @@ void PreExplode()
 	Alpha = 0.5;
 }
 
-__states__
+states
 {
-	S_BAR1('BAR1', 0, 6.0 / 35.0, S_BAR2) = none
-	S_BAR2('BAR1', 1, 6.0 / 35.0, S_BAR1) = none
-	S_BEXP('BEXP', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_BEXP2) = none
-	S_BEXP2('BEXP', 1 | FF_FULLBRIGHT, 5.0 / 35.0, S_BEXP3) = A_Scream
-	S_BEXP3('BEXP', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_BEXP4) = none
-	S_BEXP4('BEXP', 3 | FF_FULLBRIGHT, 10.0 / 35.0, S_BEXP5) = A_Explode
-	S_BEXP5('BEXP', 4 | FF_FULLBRIGHT, 10.0 / 35.0, none) = none
+Spawn:
+	BAR1 AB 6
+	Loop
+Death:
+	BEXP A 5 Bright
+	BEXP B 5 Bright A_Scream
+	BEXP C 5 Bright
+	BEXP D 10 Bright A_Explode
+	BEXP E 10 Bright
+	Stop
 }
 
 defaultproperties
@@ -59,8 +62,6 @@ defaultproperties
 	bNoBlood = true;
 	bFloorClip = true;
 	bExplodeParticles = true;
-	IdleState = S_BAR1;
-	DeathState = S_BEXP;
 	DeathSound = 'world/barrelx';
 	DLightColour = RGB(203, 87, 7);
 }

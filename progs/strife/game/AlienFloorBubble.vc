@@ -26,9 +26,11 @@
 class AlienFloorBubble : Decoration
 	__mobjinfo__(222);
 
-__states__
+states
 {
-	S_BUBF('BUBF', 0, 4.0 / 35.0, S_BUBF) = A_ActiveSound
+Spawn:
+	BUBF A 4 A_ActiveSound
+	Loop
 }
 
 defaultproperties
@@ -36,6 +38,5 @@ defaultproperties
 	Radius = 16.0;
 	Height = 72.0;
 	bSolid = true;
-	IdleState = S_BUBF;
 	ActiveSound = 'ambient/alien6';
 }

@@ -26,9 +26,11 @@
 class CeilingChain : Decoration
 	__mobjinfo__(109);
 
-__states__
+states
 {
-	S_CHAIN('CHAN', 0, -1.0, none) = none
+Spawn:
+	CHAN A -1
+	Stop
 }
 
 defaultproperties
@@ -38,5 +40,4 @@ defaultproperties
 	bNoBlockmap = true;
 	bSpawnCeiling = true;
 	bNoGravity = true;
-	IdleState = S_CHAIN;
 }

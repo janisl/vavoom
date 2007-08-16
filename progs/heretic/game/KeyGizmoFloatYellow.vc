@@ -25,9 +25,11 @@
 
 class KeyGizmoFloatYellow : Decoration;
 
-__states__
+states
 {
-	S_KGZ_YELLOWFLOAT1('KGZY', 0 | FF_FULLBRIGHT, -1.0, none) = none
+Spawn:
+	KGZY A -1 Bright
+	Stop
 }
 
 defaultproperties
@@ -35,5 +37,4 @@ defaultproperties
 	Radius = 16.0;
 	bSolid = true;
 	bNoGravity = true;
-	IdleState = S_KGZ_YELLOWFLOAT1;
 }

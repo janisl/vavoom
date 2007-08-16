@@ -26,14 +26,15 @@
 class DeadPeasant : Decoration
 	__mobjinfo__(18);
 
-__states__
+states
 {
-	S_DEAD_PEASANT('PEAS', 13, 1400.0 / 35.0, S_DEAD_PEASANT_2) = none
-	S_DEAD_PEASANT_2('GIBS', 20, 5.0 / 35.0, S_DEAD_PEASANT_3) = none
-	S_DEAD_PEASANT_3('GIBS', 21, 1400.0 / 35.0, none) = none
+Spawn:
+	PEAS N 1400
+	GIBS U 5
+	GIBS V 1400
+	Stop
 }
 
 defaultproperties
 {
-	IdleState = S_DEAD_PEASANT;
 }

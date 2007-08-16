@@ -26,9 +26,11 @@
 class ZStalagmiteMedium : Decoration
 	__mobjinfo__(50);
 
-__states__
+states
 {
-	S_ZSTALAGMITEMEDIUM1('SGM2', 0, -1.0, none) = none
+Spawn:
+	SGM2 A -1
+	Stop
 }
 
 defaultproperties
@@ -36,5 +38,4 @@ defaultproperties
 	Radius = 6.0;
 	Height = 40.0;
 	bSolid = true;
-	IdleState = S_ZSTALAGMITEMEDIUM1;
 }

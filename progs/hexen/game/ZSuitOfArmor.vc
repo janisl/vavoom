@@ -65,10 +65,14 @@ final void A_SoAExplode()
 	Destroy();
 }
 
-__states__
+states
 {
-	S_ZSUITOFARMOR('SUIT', 0, -1.0, none) = none
-	S_ZSUITOFARMOR_X1('SUIT', 0, 1.0 / 35.0, none) = A_SoAExplode
+Spawn:
+	SUIT A -1
+	Stop
+Death:
+	SUIT A 1 A_SoAExplode
+	Stop
 }
 
 defaultproperties
@@ -80,7 +84,5 @@ defaultproperties
 	bSolid = true;
 	bShootable = true;
 	bNoBlood = true;
-	IdleState = S_ZSUITOFARMOR;
-	DeathState = S_ZSUITOFARMOR_X1;
 	DeathSound = 'SuitofArmorBreak';
 }

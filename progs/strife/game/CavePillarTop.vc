@@ -26,9 +26,11 @@
 class CavePillarTop : Decoration
 	__mobjinfo__(159);
 
-__states__
+states
 {
-	S_STALAG_4('STLG', 3, -1.0, none) = none
+Spawn:
+	STLG D -1
+	Stop
 }
 
 defaultproperties
@@ -38,5 +40,4 @@ defaultproperties
 	bSolid = true;
 	bSpawnCeiling = true;
 	bNoGravity = true;
-	IdleState = S_STALAG_4;
 }

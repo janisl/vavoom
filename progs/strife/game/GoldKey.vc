@@ -26,9 +26,11 @@
 class GoldKey : StrifeKey
 	__mobjinfo__(40);
 
-__states__
+states
 {
-	S_GOLD_KEY('KY1G', 0, -1.0, none) = none
+Spawn:
+	KY1G A -1
+	Stop
 }
 
 defaultproperties
@@ -37,5 +39,4 @@ defaultproperties
 	PickupMessage = "$txt_goldkey";
 	StrifeName = "Gold Key";
 	IconName = 'i_ky1g';
-	IdleState = S_GOLD_KEY;
 }

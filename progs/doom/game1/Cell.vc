@@ -27,14 +27,15 @@ class Cell : Ammo
 	__mobjinfo__(2047)
 	__scriptid__(75);
 
-__states__
+states
 {
-	S_CELL('CELL', 0, -1.0, none) = none
+Spawn:
+	CELL A -1
+	Stop
 }
 
 defaultproperties
 {
-	IdleState = S_CELL;
 	Amount = 20;
 	MaxAmount = 300;
 	BackpackAmount = 20;

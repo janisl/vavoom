@@ -23,12 +23,14 @@
 //**
 //**************************************************************************
 
-class ZStalagmiteIceMedium:Decoration
+class ZStalagmiteIceMedium : Decoration
 	__mobjinfo__(94);
 
-__states__
+states
 {
-	S_ZSTALAGMITEICEMEDIUM('ICM2', 0, -1.0, none) = none
+Spawn:
+	ICM2 A -1
+	Stop
 }
 
 defaultproperties
@@ -36,5 +38,4 @@ defaultproperties
 	Radius = 5.0;
 	Height = 50.0;
 	bSolid = true;
-	IdleState = S_ZSTALAGMITEICEMEDIUM;
 }

@@ -25,12 +25,12 @@
 
 class GauntletPuff1 : Effect;
 
-__states__
+states
 {
-	S_GAUNTLETPUFF1_1('PUF1', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_GAUNTLETPUFF1_2) = A_Lights
-	S_GAUNTLETPUFF1_2('PUF1', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_GAUNTLETPUFF1_3) = none
-	S_GAUNTLETPUFF1_3('PUF1', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_GAUNTLETPUFF1_4) = none
-	S_GAUNTLETPUFF1_4('PUF1', 3 | FF_FULLBRIGHT, 4.0 / 35.0, none) = none
+Spawn:
+	PUF1 A 4 Bright A_Lights
+	PUF1 BCD 4 Bright
+	Stop
 }
 
 defaultproperties
@@ -40,5 +40,4 @@ defaultproperties
 	bPuffOnActors = true;
 	bDynamicLight = true;
 	DLightColour = RGB(91, 191, 79);
-	IdleState = S_GAUNTLETPUFF1_1;
 }

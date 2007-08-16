@@ -23,12 +23,14 @@
 //**
 //**************************************************************************
 
-class ZStatueGargoyleTanTall:Decoration
+class ZStatueGargoyleTanTall : Decoration
 	__mobjinfo__(8047);
 
-__states__
+states
 {
-	S_ZSTATUEGARGOYLETANTALL_1('GAR4', 0, -1.0, none) = none
+Spawn:
+	GAR4 A -1
+	Stop
 }
 
 defaultproperties
@@ -36,5 +38,4 @@ defaultproperties
 	Radius = 14.0;
 	Height = 108.0;
 	bSolid = true;
-	IdleState = S_ZSTATUEGARGOYLETANTALL_1;
 }

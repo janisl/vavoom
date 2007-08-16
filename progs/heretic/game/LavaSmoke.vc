@@ -25,13 +25,11 @@
 
 class LavaSmoke : Actor;
 
-__states__
+states
 {
-	S_LAVASMOKE1('LVAS', 6 | FF_FULLBRIGHT, 5.0 / 35.0, S_LAVASMOKE2) = none
-	S_LAVASMOKE2('LVAS', 7 | FF_FULLBRIGHT, 5.0 / 35.0, S_LAVASMOKE3) = none
-	S_LAVASMOKE3('LVAS', 8 | FF_FULLBRIGHT, 5.0 / 35.0, S_LAVASMOKE4) = none
-	S_LAVASMOKE4('LVAS', 9 | FF_FULLBRIGHT, 5.0 / 35.0, S_LAVASMOKE5) = none
-	S_LAVASMOKE5('LVAS', 10 | FF_FULLBRIGHT, 5.0 / 35.0, none) = none
+Spawn:
+	LVAS GHIJK 5 Bright
+	Stop
 }
 
 defaultproperties
@@ -40,5 +38,4 @@ defaultproperties
 	bNoBlockmap = true;
 	bNoGravity = true;
 	bNoPassMobj = true;
-	IdleState = S_LAVASMOKE1;
 }

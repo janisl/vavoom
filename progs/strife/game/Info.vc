@@ -25,9 +25,11 @@
 
 class Info : Inventory;
 
-__states__
+states
 {
-	S_TOKENS('TOKN', 0, -1.0, none) = none
+Spawn:
+	TOKN A -1
+	Stop
 }
 
 defaultproperties
@@ -35,5 +37,4 @@ defaultproperties
 	ConversationID = 300;
 	PickupMessage = "$txt_info";
 	bFloorClip = true;
-	IdleState = S_TOKENS;
 }

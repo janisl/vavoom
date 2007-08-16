@@ -25,12 +25,14 @@
 
 class BloodSplatter : Actor;
 
-__states__
+states
 {
-	S_BLOODSPLATTER1('BLOD', 2, 8.0 / 35.0, S_BLOODSPLATTER2) = none
-	S_BLOODSPLATTER2('BLOD', 1, 8.0 / 35.0, S_BLOODSPLATTER3) = none
-	S_BLOODSPLATTER3('BLOD', 0, 8.0 / 35.0, none) = none
-	S_BLOODSPLATTERX('BLOD', 0, 6.0 / 35.0, none) = none
+Spawn:
+	BLOD CBS 8
+	Stop
+Death:
+	BLOD A 6
+	Stop
 }
 
 defaultproperties
@@ -43,6 +45,4 @@ defaultproperties
 	bNoTeleport = true;
 	bActivatePCross = true;
 	bCannotPush = true;
-	IdleState = S_BLOODSPLATTER1;
-	DeathState = S_BLOODSPLATTERX;
 }

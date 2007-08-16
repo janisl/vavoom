@@ -26,9 +26,11 @@
 class MedPatch : HealthPickup
 	__mobjinfo__(2011);
 
-__states__
+states
 {
-	S_MED_PATCH('STMP', 0, -1.0, none) = none
+Spawn:
+	STMP A -1
+	Stop
 }
 
 defaultproperties
@@ -40,5 +42,4 @@ defaultproperties
 	MaxAmount = 20;
 	IconName = 'i_stmp';
 	bFloorClip = true;
-	IdleState = S_MED_PATCH;
 }

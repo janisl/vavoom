@@ -27,10 +27,12 @@ class Infrared : PowerupGiver
 	__mobjinfo__(2045)
 	__scriptid__(138);
 
-__states__
+states
 {
-	S_PVIS('PVIS', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_PVIS2) = none
-	S_PVIS2('PVIS', 1, 6.0 / 35.0, S_PVIS) = none
+Spawn:
+	PVIS A 6 Bright
+	PVIS B 6
+	Loop
 }
 
 defaultproperties
@@ -40,6 +42,5 @@ defaultproperties
 	bAutoActivate = true;
 	bAlwaysPickup = true;
 	bCountItem = true;
-	IdleState = S_PVIS;
 	PickupMessage = "$gotvisor";
 }

@@ -27,14 +27,15 @@ class MaceHefty : MaceAmmo
 	__mobjinfo__(16)
 	__scriptid__(36);
 
-__states__
+states
 {
-	S_AMM2('AMM2', 0, -1.0, none) = none
+Spawn:
+	AMM2 A -1
+	Stop
 }
 
 defaultproperties
 {
 	Amount = 100;
-	IdleState = S_AMM2;
 	PickupMessage = "$txt_ammomace2";
 }

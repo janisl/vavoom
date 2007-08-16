@@ -23,12 +23,14 @@
 //**
 //**************************************************************************
 
-class ZStalactiteIceTiny:Decoration
+class ZStalactiteIceTiny : Decoration
 	__mobjinfo__(92);
 
-__states__
+states
 {
-	S_ZSTALACTITEICETINY('ICT4', 0, -1.0, none) = none
+Spawn:
+	ICT4 A -1
+	Stop
 }
 
 defaultproperties
@@ -38,5 +40,4 @@ defaultproperties
 	bSolid = true;
 	bSpawnCeiling = true;
 	bNoGravity = true;
-	IdleState = S_ZSTALACTITEICETINY;
 }

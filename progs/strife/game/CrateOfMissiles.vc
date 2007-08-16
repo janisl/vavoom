@@ -27,15 +27,16 @@ class CrateOfMissiles : MiniMissiles
 	__mobjinfo__(2046)
 	__scriptid__(141);
 
-__states__
+states
 {
-	S_CRATE_OF_MISSILES('ROKT', 0, -1.0, none) = none
+Spawn:
+	ROKT A -1
+	Stop
 }
 
 defaultproperties
 {
 	ConversationID = 182;
 	PickupMessage = "$txt_crateofmissiles";
-	IdleState = S_CRATE_OF_MISSILES;
 	Amount = 20;
 }

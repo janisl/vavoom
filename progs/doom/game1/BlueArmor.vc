@@ -27,10 +27,12 @@ class BlueArmor : BasicArmorPickup
 	__mobjinfo__(2019)
 	__scriptid__(69);
 
-__states__
+states
 {
-	S_ARM2('ARM2', 0, 6.0 / 35.0, S_ARM2A) = none
-	S_ARM2A('ARM2', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_ARM2) = none
+Spawn:
+	ARM2 A 6
+	ARM2 B 6 Bright
+	Loop
 }
 
 defaultproperties
@@ -38,5 +40,4 @@ defaultproperties
 	SaveAmount = 200;
 	SavePercent = 1.0 / 2.0;
 	PickupMessage = "$gotmega";
-	IdleState = S_ARM2;
 }

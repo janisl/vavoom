@@ -26,9 +26,11 @@
 class ZTreeSwamp120 : Decoration
 	__mobjinfo__(27);
 
-__states__
+states
 {
-	S_ZTREESWAMP172_1('TRE3', 0, -1.0, none) = none
+Spawn:
+	TRE3 A -1
+	Stop
 }
 
 defaultproperties
@@ -36,5 +38,4 @@ defaultproperties
 	Radius = 10.0;
 	Height = 120.0;
 	bSolid = true;
-	IdleState = S_ZTREESWAMP172_1;
 }

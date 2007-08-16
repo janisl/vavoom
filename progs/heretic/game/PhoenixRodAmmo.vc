@@ -27,11 +27,11 @@ class PhoenixRodAmmo : Ammo
 	__mobjinfo__(22)
 	__scriptid__(161);
 
-__states__
+states
 {
-	S_AMP1_1('AMP1', 0, 4.0 / 35.0, S_AMP1_2) = none
-	S_AMP1_2('AMP1', 1, 4.0 / 35.0, S_AMP1_3) = none
-	S_AMP1_3('AMP1', 2, 4.0 / 35.0, S_AMP1_1) = none
+Spawn:
+	AMP1 ABC 4
+	Loop
 }
 
 defaultproperties
@@ -40,7 +40,6 @@ defaultproperties
 	MaxAmount = 20;
 	BackpackAmount = 1;
 	BackpackMaxAmount = 40;
-	IdleState = S_AMP1_1;
 	PickupMessage = "$txt_ammophoenixrod1";
 	IconName = 'inampnx';
 }

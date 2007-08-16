@@ -27,9 +27,11 @@ class EnchantedShield : BasicArmorPickup
 	__mobjinfo__(31)
 	__scriptid__(69);
 
-__states__
+states
 {
-	S_ITEM_SHD2_1('SHD2', 0, -1.0, none) = none
+Spawn:
+	SHD2 A -1
+	Stop
 }
 
 defaultproperties
@@ -39,5 +41,4 @@ defaultproperties
 	SavePercent = 0.75;
 	PickupMessage = "$txt_itemshield2";
 	bFloatBob = true;
-	IdleState = S_ITEM_SHD2_1;
 }

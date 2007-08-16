@@ -25,9 +25,11 @@
 
 class NewKey5 : StrifeKey;
 
-__states__
+states
 {
-	S_MAULER_KEY('BLTK', 0, -1.0, none) = none
+Spawn:
+	BLTK A -1
+	Stop
 }
 
 defaultproperties
@@ -36,5 +38,4 @@ defaultproperties
 	PickupMessage = "$txt_newkey5";
 	StrifeName = "New Key 5";
 	IconName = 'i_bltk';
-	IdleState = S_MAULER_KEY;
 }

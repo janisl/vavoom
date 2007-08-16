@@ -23,12 +23,14 @@
 //**
 //**************************************************************************
 
-class ZChainBit64:Decoration
+class ZChainBit64 : Decoration
 	__mobjinfo__(8072);
 
-__states__
+states
 {
-	S_ZCHAINBIT64('CHNS', 1, -1.0, none) = none
+Spawn:
+	CHNS B -1
+	Stop
 }
 
 defaultproperties
@@ -38,5 +40,4 @@ defaultproperties
 	bNoBlockmap = true;
 	bSpawnCeiling = true;
 	bNoGravity = true;
-	IdleState = S_ZCHAINBIT64;
 }

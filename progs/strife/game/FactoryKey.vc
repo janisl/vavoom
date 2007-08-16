@@ -26,9 +26,11 @@
 class FactoryKey : StrifeKey
 	__mobjinfo__(234);
 
-__states__
+states
 {
-	S_FACTORY_KEY('PROC', 0, -1.0, none) = none
+Spawn:
+	PROC A -1
+	Stop
 }
 
 defaultproperties
@@ -37,5 +39,4 @@ defaultproperties
 	PickupMessage = "$txt_factorykey";
 	StrifeName = "Factory Key";
 	IconName = 'i_proc';
-	IdleState = S_FACTORY_KEY;
 }

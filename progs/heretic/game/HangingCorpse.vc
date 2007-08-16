@@ -23,12 +23,14 @@
 //**
 //**************************************************************************
 
-class HangingCorpse:Decoration
+class HangingCorpse : Decoration
 	__mobjinfo__(51);
 
-__states__
+states
 {
-	S_HANGINGCORPSE('HCOR', 0, -1.0, none) = none
+Spawn:
+	HCOR A -1
+	Stop
 }
 
 defaultproperties
@@ -38,5 +40,4 @@ defaultproperties
 	bSolid = true;
 	bSpawnCeiling = true;
 	bNoGravity = true;
-	IdleState = S_HANGINGCORPSE;
 }

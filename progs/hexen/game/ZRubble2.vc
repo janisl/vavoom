@@ -23,15 +23,16 @@
 //**
 //**************************************************************************
 
-class ZRubble2:Decoration
+class ZRubble2 : Decoration
 	__mobjinfo__(101);
 
-__states__
+states
 {
-	S_ZRUBBLE2('RBL2', 0, -1.0, none) = none
+Spawn:
+	RBL2 A -1
+	Stop
 }
 
 defaultproperties
 {
-	IdleState = S_ZRUBBLE2;
 }

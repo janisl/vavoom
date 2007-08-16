@@ -26,11 +26,11 @@
 class ZChandelier : Decoration
 	__mobjinfo__(17);
 
-__states__
+states
 {
-	S_ZCHANDELIER1('CDLR', 0, 4.0 / 35.0, S_ZCHANDELIER2) = none
-	S_ZCHANDELIER2('CDLR', 1, 4.0 / 35.0, S_ZCHANDELIER3) = none
-	S_ZCHANDELIER3('CDLR', 2, 4.0 / 35.0, S_ZCHANDELIER1) = none
+Spawn:
+	CDLR ABC 4
+	Loop
 }
 
 defaultproperties
@@ -40,7 +40,6 @@ defaultproperties
 	bSpawnCeiling = true;
 	bNoGravity = true;
 	bStaticLight = true;
-	IdleState = S_ZCHANDELIER1;
 	LightColour = RGB(255, 255, 128);
 	LightOffset = vector(0.0, 0.0, 52.0);
 }

@@ -26,12 +26,11 @@
 class RedTorch : Actor
 	__mobjinfo__(46);
 
-__states__
+states
 {
-	S_REDTORCH('TRED', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_REDTORCH2) = none
-	S_REDTORCH2('TRED', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_REDTORCH3) = none
-	S_REDTORCH3('TRED', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_REDTORCH4) = none
-	S_REDTORCH4('TRED', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_REDTORCH) = none
+Spawn:
+	TRED ABCD 4 Bright
+	Loop
 }
 
 defaultproperties
@@ -40,7 +39,6 @@ defaultproperties
 	Height = 64.0;
 	bSolid = true;
 	bFloorClip = true;
-	IdleState = S_REDTORCH;
 	bStaticLight = true;
 	LightColour = RGB(255, 0, 0);
 	LightOffset = vector(0.0, 0.0, 32.0);

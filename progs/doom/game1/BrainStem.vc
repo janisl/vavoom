@@ -27,13 +27,14 @@ class BrainStem : Actor
 	__mobjinfo__(81)
 	__scriptid__(150);
 
-__states__
+states
 {
-	S_BRAINSTEM('BRS1', 0, -1.0, none) = none
+Spawn:
+	BRS1 A -1
+	Stop
 }
 
 defaultproperties
 {
 	bNoBlockmap = true;
-	IdleState = S_BRAINSTEM;
 }

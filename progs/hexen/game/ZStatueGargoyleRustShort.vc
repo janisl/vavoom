@@ -23,12 +23,14 @@
 //**
 //**************************************************************************
 
-class ZStatueGargoyleRustShort:Decoration
+class ZStatueGargoyleRustShort : Decoration
 	__mobjinfo__(8052);
 
-__states__
+states
 {
-	S_ZSTATUEGARGOYLERUSTSHORT_1('GAR9', 0, -1.0, none) = none
+Spawn:
+	GAR9 A -1
+	Stop
 }
 
 defaultproperties
@@ -36,5 +38,4 @@ defaultproperties
 	Radius = 14.0;
 	Height = 62.0;
 	bSolid = true;
-	IdleState = S_ZSTATUEGARGOYLERUSTSHORT_1;
 }

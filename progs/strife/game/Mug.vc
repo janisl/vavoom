@@ -23,15 +23,16 @@
 //**
 //**************************************************************************
 
-class Mug:Decoration
+class Mug : Decoration
 	__mobjinfo__(164);
 
-__states__
+states
 {
-	S_MUGG('MUGG', 0, -1.0, none) = none
+Spawn:
+	MUGG A -1
+	Stop
 }
 
 defaultproperties
 {
-	IdleState = S_MUGG;
 }

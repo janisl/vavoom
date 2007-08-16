@@ -67,17 +67,16 @@ final void A_PhoenixPuff()
 	puff.Velocity.z = 0.0;
 }
 
-__states__
+states
 {
-	S_PHOENIXFX1_1('FX04', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_PHOENIXFX1_1) = A_PhoenixPuff
-	S_PHOENIXFXI1_1('FX08', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_PHOENIXFXI1_2) = A_Explode
-	S_PHOENIXFXI1_2('FX08', 1 | FF_FULLBRIGHT, 5.0 / 35.0, S_PHOENIXFXI1_3) = none
-	S_PHOENIXFXI1_3('FX08', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_PHOENIXFXI1_4) = none
-	S_PHOENIXFXI1_4('FX08', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_PHOENIXFXI1_5) = none
-	S_PHOENIXFXI1_5('FX08', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_PHOENIXFXI1_6) = none
-	S_PHOENIXFXI1_6('FX08', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_PHOENIXFXI1_7) = none
-	S_PHOENIXFXI1_7('FX08', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_PHOENIXFXI1_8) = none
-	S_PHOENIXFXI1_8('FX08', 7 | FF_FULLBRIGHT, 4.0 / 35.0, none) = none
+Spawn:
+	FX04 A 4 Bright A_PhoenixPuff
+	Loop
+Death:
+	FX08 A 6 Bright A_Explode
+	FX08 BC 5 Bright
+	FX08 DEFGH 4 Bright
+	Stop
 }
 
 defaultproperties
@@ -90,8 +89,6 @@ defaultproperties
 	bActivateImpact = true;
 	DamageType = 'Fire';
 	bConditionalFireDamage = true;
-	IdleState = S_PHOENIXFX1_1;
-	DeathState = S_PHOENIXFXI1_1;
 	SightSound = 'weapons/phoenixshoot';
 	DeathSound = 'weapons/phoenixhit';
 	DLightColour = RGB(255, 95, 0);

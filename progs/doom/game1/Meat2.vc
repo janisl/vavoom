@@ -26,9 +26,11 @@
 class Meat2 : Actor
 	__mobjinfo__(50);
 
-__states__
+states
 {
-	S_MEAT2('GOR2', 0, -1.0, none) = none
+Spawn:
+	GOR2 A -1
+	Stop
 }
 
 defaultproperties
@@ -38,5 +40,4 @@ defaultproperties
 	bSolid = true;
 	bSpawnCeiling = true;
 	bNoGravity = true;
-	IdleState = S_MEAT2;
 }

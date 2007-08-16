@@ -26,9 +26,11 @@
 class BrownPillar : Decoration
 	__mobjinfo__(47);
 
-__states__
+states
 {
-	S_BRPILLAR('BRPL', 0, -1.0, none) = none
+Spawn:
+	BRPL A -1
+	Stop
 }
 
 defaultproperties
@@ -36,5 +38,4 @@ defaultproperties
 	Radius = 14.0;
 	Height = 128.0;
 	bSolid = true;
-	IdleState = S_BRPILLAR;
 }

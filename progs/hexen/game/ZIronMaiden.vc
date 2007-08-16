@@ -23,12 +23,14 @@
 //**
 //**************************************************************************
 
-class ZIronMaiden:Decoration
+class ZIronMaiden : Decoration
 	__mobjinfo__(8067);
 
-__states__
+states
 {
-	S_ZIRON_MAIDEN('IRON', 0, -1.0, none) = none
+Spawn:
+	IRON A -1
+	Stop
 }
 
 defaultproperties
@@ -36,5 +38,4 @@ defaultproperties
 	Radius = 12.0;
 	Height = 60.0;
 	bSolid = true;
-	IdleState = S_ZIRON_MAIDEN;
 }

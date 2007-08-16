@@ -27,10 +27,12 @@ class GreenArmor : BasicArmorPickup
 	__mobjinfo__(2018)
 	__scriptid__(68);
 
-__states__
+states
 {
-	S_ARM1('ARM1', 0, 6.0 / 35.0, S_ARM1A) = none
-	S_ARM1A('ARM1', 1 | FF_FULLBRIGHT, 7.0 / 35.0, S_ARM1) = none
+Spawn:
+	ARM1 A 6
+	ARM1 B 7 Bright
+	Loop
 }
 
 defaultproperties
@@ -38,5 +40,4 @@ defaultproperties
 	SaveAmount = 100;
 	SavePercent = 1.0 / 3.0;
 	PickupMessage = "$gotarmor";
-	IdleState = S_ARM1;
 }

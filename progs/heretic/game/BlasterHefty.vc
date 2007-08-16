@@ -27,16 +27,15 @@ class BlasterHefty : BlasterAmmo
 	__mobjinfo__(55)
 	__scriptid__(38);
 
-__states__
+states
 {
-	S_AMB2_1('AMB2', 0, 4.0 / 35.0, S_AMB2_2) = none
-	S_AMB2_2('AMB2', 1, 4.0 / 35.0, S_AMB2_3) = none
-	S_AMB2_3('AMB2', 2, 4.0 / 35.0, S_AMB2_1) = none
+Spawn:
+	AMB2 ABC 4
+	Loop
 }
 
 defaultproperties
 {
 	Amount = 25;
-	IdleState = S_AMB2_1;
 	PickupMessage = "$txt_ammoblaster2";
 }

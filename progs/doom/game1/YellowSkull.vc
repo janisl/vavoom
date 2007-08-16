@@ -27,14 +27,15 @@ class YellowSkull : DoomKey
 	__mobjinfo__(39)
 	__scriptid__(88);
 
-__states__
+states
 {
-	S_YSKULL('YSKU', 0, 10.0 / 35.0, S_YSKULL2) = none
-	S_YSKULL2('YSKU', 1 | FF_FULLBRIGHT, 10.0 / 35.0, S_YSKULL) = none
+Spawn:
+	YSKU A 10
+	YSKU B 10 Bright
+	Loop
 }
 
 defaultproperties
 {
-	IdleState = S_YSKULL;
 	PickupMessage = "$gotyelwskul";
 }

@@ -26,9 +26,11 @@
 class Candelabra : Actor
 	__mobjinfo__(35);
 
-__states__
+states
 {
-	S_CANDELABRA('CBRA', 0 | FF_FULLBRIGHT, -1.0, none) = none
+Spawn:
+	CBRA A -1 Bright
+	Stop
 }
 
 defaultproperties
@@ -37,7 +39,6 @@ defaultproperties
 	Height = 56.0;
 	bSolid = true;
 	bFloorClip = true;
-	IdleState = S_CANDELABRA;
 	bStaticLight = true;
 	LightColour = RGB(255, 255, 128);
 	LightOffset = vector(0.0, 0.0, 32.0);

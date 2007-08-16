@@ -25,19 +25,11 @@
 
 class AlienChunkLarge : Effect;
 
-__states__
+states
 {
-	S_SPECTER_HEAD_1('MTHD', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_SPECTER_HEAD_2) = none
-	S_SPECTER_HEAD_2('MTHD', 1 | FF_FULLBRIGHT, 5.0 / 35.0, S_SPECTER_HEAD_3) = none
-	S_SPECTER_HEAD_3('MTHD', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_SPECTER_HEAD_4) = none
-	S_SPECTER_HEAD_4('MTHD', 3 | FF_FULLBRIGHT, 5.0 / 35.0, S_SPECTER_HEAD_5) = none
-	S_SPECTER_HEAD_5('MTHD', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_SPECTER_HEAD_6) = none
-	S_SPECTER_HEAD_6('MTHD', 5 | FF_FULLBRIGHT, 5.0 / 35.0, S_SPECTER_HEAD_7) = none
-	S_SPECTER_HEAD_7('MTHD', 6 | FF_FULLBRIGHT, 5.0 / 35.0, S_SPECTER_HEAD_8) = none
-	S_SPECTER_HEAD_8('MTHD', 7 | FF_FULLBRIGHT, 5.0 / 35.0, S_SPECTER_HEAD_9) = none
-	S_SPECTER_HEAD_9('MTHD', 8 | FF_FULLBRIGHT, 5.0 / 35.0, S_SPECTER_HEAD_10) = none
-	S_SPECTER_HEAD_10('MTHD', 9 | FF_FULLBRIGHT, 5.0 / 35.0, S_SPECTER_HEAD_11) = none
-	S_SPECTER_HEAD_11('MTHD', 10 | FF_FULLBRIGHT, 5.0 / 35.0, none) = none
+Spawn:
+	MTHD ABCDEFGHIJK 5 Bright
+	Stop
 }
 
 defaultproperties
@@ -45,5 +37,4 @@ defaultproperties
 	bNoGravity = false;
 	bColideWithThings = false;
 	bColideWithWorld = false;
-	IdleState = S_SPECTER_HEAD_1;
 }

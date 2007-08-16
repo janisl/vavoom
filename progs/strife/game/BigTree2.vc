@@ -26,9 +26,11 @@
 class BigTree2 : Decoration
 	__mobjinfo__(202);
 
-__states__
+states
 {
-	S_TREE_2('TREE', 1, -1.0, none) = none
+Spawn:
+	TREE B -1
+	Stop
 }
 
 defaultproperties
@@ -36,5 +38,4 @@ defaultproperties
 	Radius = 15.0;
 	Height = 109.0;
 	bSolid = true;
-	IdleState = S_TREE_2;
 }

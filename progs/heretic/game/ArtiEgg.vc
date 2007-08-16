@@ -47,12 +47,11 @@ bool Use(bool Pickup)
 	return true;
 }
 
-__states__
+states
 {
-	S_ARTI_EGGC1('EGGC', 0, 6.0 / 35.0, S_ARTI_EGGC2) = none
-	S_ARTI_EGGC2('EGGC', 1, 6.0 / 35.0, S_ARTI_EGGC3) = none
-	S_ARTI_EGGC3('EGGC', 2, 6.0 / 35.0, S_ARTI_EGGC4) = none
-	S_ARTI_EGGC4('EGGC', 1, 6.0 / 35.0, S_ARTI_EGGC1) = none
+Spawn:
+	EGGC ABCB 6
+	Loop
 }
 
 defaultproperties
@@ -65,5 +64,4 @@ defaultproperties
 	bFloatBob = true;
 	bPickupFlash = true;
 	bInvBar = true;
-	IdleState = S_ARTI_EGGC1;
 }

@@ -26,9 +26,11 @@
 class BarricadeColumn : Decoration
 	__mobjinfo__(69);
 
-__states__
+states
 {
-	S_BARRIER('BAR1', 0, -1.0, none) = none
+Spawn:
+	BAR1 A -1
+	Stop
 }
 
 defaultproperties
@@ -36,5 +38,4 @@ defaultproperties
 	Radius = 16.0;
 	Height = 128.0;
 	bSolid = true;
-	IdleState = S_BARRIER;
 }

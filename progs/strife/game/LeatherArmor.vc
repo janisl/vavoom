@@ -27,9 +27,11 @@ class LeatherArmor : BasicArmorPickup
 	__mobjinfo__(2018)
 	__scriptid__(68);
 
-__states__
+states
 {
-	S_LEATHER_ARMOR('ARM2', 0, -1.0, none) = none
+Spawn:
+	ARM2 A -1
+	Stop
 }
 
 defaultproperties
@@ -43,5 +45,4 @@ defaultproperties
 	IconName = 'i_arm2';
 	bFloorClip = true;
 	bInvBar = true;
-	IdleState = S_LEATHER_ARMOR;
 }

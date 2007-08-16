@@ -23,12 +23,14 @@
 //**
 //**************************************************************************
 
-class ZTree:Decoration
+class ZTree : Decoration
 	__mobjinfo__(25);
 
-__states__
+states
 {
-	S_ZTREE('TRE1', 0, -1.0, none) = none
+Spawn:
+	TRE1 A -1
+	Stop
 }
 
 defaultproperties
@@ -36,5 +38,4 @@ defaultproperties
 	Radius = 15.0;
 	Height = 128.0;
 	bSolid = true;
-	IdleState = S_ZTREE;
 }

@@ -27,9 +27,11 @@ class MetalArmor : BasicArmorPickup
 	__mobjinfo__(2019)
 	__scriptid__(69);
 
-__states__
+states
 {
-	S_METAL_ARMOR('ARM1', 0, -1.0, none) = none
+Spawn:
+	ARM1 A -1
+	Stop
 }
 
 defaultproperties
@@ -43,5 +45,4 @@ defaultproperties
 	IconName = 'i_arm1';
 	bFloorClip = true;
 	bInvBar = true;
-	IdleState = S_METAL_ARMOR;
 }

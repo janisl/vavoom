@@ -53,20 +53,20 @@ void GetExplodeParms(out int damage, out float distance, out byte damageSelf)
 	distance = 64.0;
 }
 
-__states__
+states
 {
-	S_TECH_BARREL('BART', 0, -1.0, none) = none
-	S_TECH_BARREL_X1('BART', 1 | FF_FULLBRIGHT, 2.0 / 35.0, S_TECH_BARREL_X2) = A_Scream
-	S_TECH_BARREL_X2('BART', 2 | FF_FULLBRIGHT, 2.0 / 35.0, S_TECH_BARREL_X3) = none
-	S_TECH_BARREL_X3('BART', 3 | FF_FULLBRIGHT, 2.0 / 35.0, S_TECH_BARREL_X4) = none
-	S_TECH_BARREL_X4('BART', 4 | FF_FULLBRIGHT, 2.0 / 35.0, S_TECH_BARREL_X5) = A_Fall
-	S_TECH_BARREL_X5('BART', 5 | FF_FULLBRIGHT, 2.0 / 35.0, S_TECH_BARREL_X6) = A_ExplodeAndAlert
-	S_TECH_BARREL_X6('BART', 6 | FF_FULLBRIGHT, 2.0 / 35.0, S_TECH_BARREL_X7) = none
-	S_TECH_BARREL_X7('BART', 7 | FF_FULLBRIGHT, 2.0 / 35.0, S_TECH_BARREL_X8) = none
-	S_TECH_BARREL_X8('BART', 8 | FF_FULLBRIGHT, 2.0 / 35.0, S_TECH_BARREL_X9) = none
-	S_TECH_BARREL_X9('BART', 9 | FF_FULLBRIGHT, 3.0 / 35.0, S_TECH_BARREL_X10) = none
-	S_TECH_BARREL_X10('BART', 10 | FF_FULLBRIGHT, 3.0 / 35.0, S_TECH_BARREL_X11) = none
-	S_TECH_BARREL_X11('BART', 11, -1.0, none) = none
+Spawn:
+	BART A -1
+	Stop
+Death:
+	BART B 2 Bright A_Scream
+	BART CD 2 Bright
+	BART E 2 Bright A_Fall
+	BART F 2 Bright A_ExplodeAndAlert
+	BART GHI 2 Bright
+	BART JK 3 Bright
+	BART L -1
+	Stop
 }
 
 defaultproperties
@@ -78,8 +78,6 @@ defaultproperties
 	bShootable = true;
 	bInCombat = true;
 	bNoBlood = true;
-	IdleState = S_TECH_BARREL;
-	DeathState = S_TECH_BARREL_X1;
 	DeathSound = 'world/barrelx';
 	ExplodeEffect = RGB(239, 239, 0);
 }

@@ -57,9 +57,11 @@ bool Use(bool Pickup)
 	}
 }
 
-__states__
+states
 {
-	S_ARTI_PWBK1('PWBK', 0, 350.0 / 35.0, S_ARTI_PWBK1) = none
+Spawn:
+	PWBK A 350
+	Loop
 }
 
 defaultproperties
@@ -70,5 +72,4 @@ defaultproperties
 	bCountItem = true;
 	bFloatBob = true;
 	bPickupFlash = true;
-	IdleState = S_ARTI_PWBK1;
 }

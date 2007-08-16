@@ -26,9 +26,11 @@
 class ZStalagmiteSmall : Decoration
 	__mobjinfo__(51);
 
-__states__
+states
 {
-	S_ZSTALAGMITESMALL1('SGM3', 0, -1.0, none) = none
+Spawn:
+	SGM3 A -1
+	Stop
 }
 
 defaultproperties
@@ -36,5 +38,4 @@ defaultproperties
 	Radius = 8.0;
 	Height = 36.0;
 	bSolid = true;
-	IdleState = S_ZSTALAGMITESMALL1;
 }

@@ -27,15 +27,16 @@ class BagOfHolding : BackpackItem
 	__mobjinfo__(8)
 	__scriptid__(136);
 
-__states__
+states
 {
-	S_ITEM_BAGH1('BAGH', 0, -1.0, none) = none
+Spawn:
+	BAGH A -1
+	Stop
 }
 
 defaultproperties
 {
 	bCountItem = true;
 	bFloatBob = true;
-	IdleState = S_ITEM_BAGH1;
 	PickupMessage = "$txt_itembagofholding";
 }

@@ -27,14 +27,15 @@ class Stimpack : Health
 	__mobjinfo__(2011)
 	__scriptid__(23);
 
-__states__
+states
 {
-	S_STIM('STIM', 0, -1.0, none) = none
+Spawn:
+	STIM A -1
+	Stop
 }
 
 defaultproperties
 {
-	IdleState = S_STIM;
 	Amount = 10;
 	PickupMessage = "$gotstim";
 }

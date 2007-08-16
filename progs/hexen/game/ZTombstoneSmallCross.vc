@@ -26,9 +26,11 @@
 class ZTombstoneSmallCross : Decoration
 	__mobjinfo__(68);
 
-__states__
+states
 {
-	S_ZTOMBSTONESMALLCROSS1('TMS6', 0, -1.0, none) = none
+Spawn:
+	TMS6 A -1
+	Stop
 }
 
 defaultproperties
@@ -36,5 +38,4 @@ defaultproperties
 	Radius = 8.0;
 	Height = 46.0;
 	bSolid = true;
-	IdleState = S_ZTOMBSTONESMALLCROSS1;
 }

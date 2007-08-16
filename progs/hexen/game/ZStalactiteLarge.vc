@@ -26,9 +26,11 @@
 class ZStalactiteLarge : Decoration
 	__mobjinfo__(52);
 
-__states__
+states
 {
-	S_ZSTALACTITELARGE1('SLC1', 0, -1.0, none) = none
+Spawn:
+	SLC1 A -1
+	Stop
 }
 
 defaultproperties
@@ -38,5 +40,4 @@ defaultproperties
 	bSolid = true;
 	bSpawnCeiling = true;
 	bNoGravity = true;
-	IdleState = S_ZSTALACTITELARGE1;
 }

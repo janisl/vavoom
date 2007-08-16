@@ -64,23 +64,19 @@ final void A_FloatPuff()
 	Velocity.z += 1.8 * 35.0;
 }
 
-__states__
+states
 {
-	S_PHOENIXFX2_1('FX09', 0 | FF_FULLBRIGHT, 2.0 / 35.0, S_PHOENIXFX2_2) = none
-	S_PHOENIXFX2_2('FX09', 1 | FF_FULLBRIGHT, 2.0 / 35.0, S_PHOENIXFX2_3) = none
-	S_PHOENIXFX2_3('FX09', 0 | FF_FULLBRIGHT, 2.0 / 35.0, S_PHOENIXFX2_4) = none
-	S_PHOENIXFX2_4('FX09', 1 | FF_FULLBRIGHT, 2.0 / 35.0, S_PHOENIXFX2_5) = none
-	S_PHOENIXFX2_5('FX09', 0 | FF_FULLBRIGHT, 2.0 / 35.0, S_PHOENIXFX2_6) = none
-	S_PHOENIXFX2_6('FX09', 1 | FF_FULLBRIGHT, 2.0 / 35.0, S_PHOENIXFX2_7) = A_FlameEnd
-	S_PHOENIXFX2_7('FX09', 2 | FF_FULLBRIGHT, 2.0 / 35.0, S_PHOENIXFX2_8) = none
-	S_PHOENIXFX2_8('FX09', 3 | FF_FULLBRIGHT, 2.0 / 35.0, S_PHOENIXFX2_9) = none
-	S_PHOENIXFX2_9('FX09', 4 | FF_FULLBRIGHT, 2.0 / 35.0, S_PHOENIXFX2_10) = none
-	S_PHOENIXFX2_10('FX09', 5 | FF_FULLBRIGHT, 2.0 / 35.0, none) = none
-	S_PHOENIXFXI2_1('FX09', 6 | FF_FULLBRIGHT, 3.0 / 35.0, S_PHOENIXFXI2_2) = none
-	S_PHOENIXFXI2_2('FX09', 7 | FF_FULLBRIGHT, 3.0 / 35.0, S_PHOENIXFXI2_3) = A_FloatPuff
-	S_PHOENIXFXI2_3('FX09', 8 | FF_FULLBRIGHT, 4.0 / 35.0, S_PHOENIXFXI2_4) = none
-	S_PHOENIXFXI2_4('FX09', 9 | FF_FULLBRIGHT, 5.0 / 35.0, S_PHOENIXFXI2_5) = none
-	S_PHOENIXFXI2_5('FX09', 10 | FF_FULLBRIGHT, 5.0 / 35.0, none) = none
+Spawn:
+	FX09 ABABA 2 Bright
+	FX09 B 2 Bright A_FlameEnd
+	FX09 CDEF 2 Bright
+	Stop
+Death:
+	FX09 G 3 Bright
+	FX09 H 3 Bright A_FloatPuff
+	FX09 I 4 Bright
+	FX09 JK 5 Bright
+	Stop
 }
 
 defaultproperties
@@ -91,8 +87,6 @@ defaultproperties
 	MissileDamage = 2;
 	DamageType = 'Fire';
 	bActivateImpact = true;
-	IdleState = S_PHOENIXFX2_1;
-	DeathState = S_PHOENIXFXI2_1;
 	DLightColour = RGB(255, 159, 0);
 	DLightRadius = 200.0;
 }
