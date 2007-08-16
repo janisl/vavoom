@@ -2685,15 +2685,6 @@ bool VClass::DefineMembers()
 		}
 	}
 
-	for (int i = 0; i < StateLabels.Num(); i++)
-	{
-		VStateLabel& Lbl = StateLabels[i];
-		if (Lbl.GotoLabel != NAME_None)
-		{
-			Lbl.State = ResolveStateLabel(Lbl.Loc, Lbl.GotoLabel, Lbl.GotoOffset);
-		}
-	}
-
 	for (int ri = 0; ri < RepInfos.Num(); ri++)
 	{
 		if (!RepInfos[ri].Cond->Define())
@@ -2782,6 +2773,15 @@ void VClass::Emit()
 	for (VState* s = States; s; s = s->Next)
 	{
 		s->Emit();
+	}
+
+	for (int i = 0; i < StateLabels.Num(); i++)
+	{
+		VStateLabel& Lbl = StateLabels[i];
+		if (Lbl.GotoLabel != NAME_None)
+		{
+			Lbl.State = ResolveStateLabel(Lbl.Loc, Lbl.GotoLabel, Lbl.GotoOffset);
+		}
 	}
 
 	//	Emit code of the network replication conditions.
