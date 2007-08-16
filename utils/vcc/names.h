@@ -51,8 +51,8 @@ REGISTER_NAME(Wait)
 REGISTER_NAME(Fail)
 REGISTER_NAME(Loop)
 REGISTER_NAME(Super)
-REGISTER_NAME(BRIGHT)
-REGISTER_NAME(OFFSET)
+REGISTER_NAME(Bright)
+REGISTER_NAME(Offset)
 
 // Closing -----------------------------------------------------------------
 

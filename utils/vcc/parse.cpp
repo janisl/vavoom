@@ -1807,13 +1807,13 @@ void VParser::ParseDecorateStates(VClass* InClass)
 
 		while (Lex.Token == TK_Identifier && !Lex.NewLine)
 		{
-			if (Lex.Name == NAME_BRIGHT)
+			if (Lex.Name == NAME_Bright)
 			{
 				s->Frame |= VState::FF_FULLBRIGHT;
 				Lex.NextToken();
 				continue;
 			}
-			if (Lex.Name == NAME_OFFSET)
+			if (Lex.Name == NAME_Offset)
 			{
 				Lex.NextToken();
 				Lex.Expect(TK_LParen);
