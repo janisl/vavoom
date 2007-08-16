@@ -275,12 +275,7 @@ bool VEntity::AdvanceState(float deltaTime)
 VState* VEntity::FindState(VName StateName)
 {
 	guard(VEntity::FindState);
-	VState* s = GetClass()->FindState(StateName);
-	if (!s)
-	{
-		Host_Error("Can't find state %s", *StateName);
-	}
-	return s;
+	return GetClass()->FindStateLabel(StateName);
 	unguard;
 }
 

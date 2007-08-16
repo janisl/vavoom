@@ -282,6 +282,23 @@ public:
 
 //==========================================================================
 //
+//	VStateLabel
+//
+//==========================================================================
+
+struct VStateLabel
+{
+	VName		Name;
+	VState*		State;
+
+	friend VStream& operator<<(VStream& Strm, VStateLabel& Lbl)
+	{
+		return Strm << Lbl.Name << Lbl.State;
+	}
+};
+
+//==========================================================================
+//
 //	VConstant
 //
 //==========================================================================
@@ -402,6 +419,7 @@ public:
 	TArray<VState*>		StatesLookup;
 	vint32				NumNetFields;
 	TArray<VRepInfo>	RepInfos;
+	TArray<VStateLabel>	StateLabels;
 
 	static TArray<mobjinfo_t>	GMobjInfos;
 	static TArray<mobjinfo_t>	GScriptIds;
@@ -452,13 +470,15 @@ public:
 		return ParentClass;
 	}
 
-	VField* FindField(VName InName);
-	VField* FindFieldChecked(VName InName);
-	VMethod* FindFunction(VName InName);
-	VMethod* FindFunctionChecked(VName InName);
-	int GetFunctionIndex(VName InName);
-	VState* FindState(VName InName);
-	VState* FindStateChecked(VName InName);
+	VField* FindField(VName);
+	VField* FindFieldChecked(VName);
+	VMethod* FindFunction(VName);
+	VMethod* FindFunctionChecked(VName);
+	int GetFunctionIndex(VName);
+	VState* FindState(VName);
+	VState* FindStateChecked(VName);
+	VState* FindStateLabel(VName);
+	VState* FindStateLabelChecked(VName);
 	void CopyObject(const vuint8*, vuint8*);
 	void SerialiseObject(VStream&, VObject*);
 	void CleanObject(VObject*);

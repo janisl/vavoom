@@ -2291,6 +2291,17 @@ void VClass::Serialise(VStream& Strm)
 			Strm << RepInfos[i].RepFields[j].Member;
 		}
 	}
+
+	int NumStateLabels = StateLabels.Num();
+	Strm << STRM_INDEX(NumStateLabels);
+	if (Strm.IsLoading())
+	{
+		StateLabels.SetNum(NumStateLabels);
+	}
+	for (int i = 0; i < StateLabels.Num(); i++)
+	{
+		Strm << StateLabels[i];
+	}
 }
 
 //==========================================================================

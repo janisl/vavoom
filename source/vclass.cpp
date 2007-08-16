@@ -2682,6 +2682,17 @@ void VClass::Serialise(VStream& Strm)
 			Strm << RepInfos[i].RepMembers[j];
 		}
 	}
+
+	int NumStateLabels = StateLabels.Num();
+	Strm << STRM_INDEX(NumStateLabels);
+	if (Strm.IsLoading())
+	{
+		StateLabels.SetNum(NumStateLabels);
+	}
+	for (int i = 0; i < StateLabels.Num(); i++)
+	{
+		Strm << StateLabels[i];
+	}
 	unguard;
 }
 
@@ -2933,6 +2944,48 @@ VState* VClass::FindStateChecked(VName AName)
 {
 	guard(VClass::FindStateChecked);
 	VState* s = FindState(AName);
+	if (!s)
+	{
+		Sys_Error("State %s not found", *AName);
+	}
+	return s;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VClass::FindStateLabel
+//
+//==========================================================================
+
+VState* VClass::FindStateLabel(VName AName)
+{
+	guard(VClass::FindStateLabel);
+	for (int i = 0; i < StateLabels.Num(); i++)
+	{
+		if (StateLabels[i].Name == AName)
+		{
+			return StateLabels[i].State;
+		}
+	}
+	if (ParentClass)
+	{
+		return ParentClass->FindStateLabel(AName);
+	}
+	return NULL;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VClass::FindStateLabelChecked
+//
+//==========================================================================
+
+VState* VClass::FindStateLabelChecked(VName AName)
+{
+	guard(VClass::FindStateLabelChecked);
+	VState* s = FindStateLabel(AName);
 	if (!s)
 	{
 		Sys_Error("State %s not found", *AName);

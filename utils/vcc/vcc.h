@@ -469,6 +469,17 @@ struct VRepInfo
 	TArray<VRepField>	RepFields;
 };
 
+struct VStateLabel
+{
+	VName		Name;
+	VState*		State;
+
+	friend VStream& operator<<(VStream& Strm, VStateLabel& Lbl)
+	{
+		return Strm << Lbl.Name << Lbl.State;
+	}
+};
+
 class VClass : public VMemberBase
 {
 public:
@@ -491,6 +502,7 @@ public:
 	TArray<VMethod*>		Methods;
 	bool					Defined;
 	TArray<VRepInfo>		RepInfos;
+	TArray<VStateLabel>		StateLabels;
 
 	VClass(VName, VMemberBase*, TLocation);
 	~VClass();

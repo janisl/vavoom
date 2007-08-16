@@ -1476,6 +1476,7 @@ void VParser::ParseStruct(VClass* InClass, bool IsVector)
 void VParser::ParseStates(VClass* InClass)
 {
 	Lex.Expect(TK_LBrace, ERR_MISSING_LBRACE);
+	int NewLabelsStart = InClass->StateLabels.Num();
 	while (!Lex.Check(TK_RBrace))
 	{
 		//	State identifier
@@ -1485,9 +1486,15 @@ void VParser::ParseStates(VClass* InClass)
 			Lex.NextToken();
 			continue;
 		}
-		VState* s = new VState(Lex.Name, InClass, Lex.Location);
-		InClass->AddState(s);
+		VName TmpName = Lex.Name;
 		Lex.NextToken();
+		if (Lex.Check(TK_Colon))
+		{
+			InClass->StateLabels.Alloc().Name = TmpName;
+			continue;
+		}
+		VState* s = new VState(TmpName, InClass, Lex.Location);
+		InClass->AddState(s);
 		Lex.Expect(TK_LParen, ERR_MISSING_LPAREN);
 		//	Sprite name
 		if (Lex.Token != TK_NameLiteral)
@@ -1563,6 +1570,19 @@ void VParser::ParseStates(VClass* InClass)
 		{
 			ParseError(Lex.Location, "State method declaration expected");
 		}
+
+		//	Assign state to the labels.
+		for (int i = NewLabelsStart; i < InClass->StateLabels.Num(); i++)
+		{
+			InClass->StateLabels[i].State = s;
+		}
+		NewLabelsStart = InClass->StateLabels.Num();
+	}
+
+	//	Make sure all state labels have corresponding states.
+	if (NewLabelsStart != InClass->StateLabels.Num())
+	{
+		ParseError(Lex.Location, "State label at the end of state block");
 	}
 }
 
