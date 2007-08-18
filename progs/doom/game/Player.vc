@@ -1341,7 +1341,7 @@ void Cheat_Gimme()
 	{
 		foreach AllClasses(Weapon, Cls)
 		{
-			if (!class<Weapon>(Cls).default.ReadyState)
+			if (!FindClassState(Cls, 'Ready'))
 			{
 				//	An abstract base class.
 				continue;

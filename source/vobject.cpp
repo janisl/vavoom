@@ -1099,3 +1099,10 @@ IMPLEMENT_FUNCTION(VObject, GetStatePlus)
 	P_GET_PTR(VState, State);
 	RET_PTR(State->GetPlus(Offset));
 }
+
+IMPLEMENT_FUNCTION(VObject, FindClassState)
+{
+	P_GET_NAME(StateName);
+	P_GET_PTR(VClass, Cls);
+	RET_PTR(Cls->FindStateLabel(StateName));
+}

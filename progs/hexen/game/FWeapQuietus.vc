@@ -47,34 +47,29 @@ final void A_FSwordAttack()
 	Owner.PlaySound('FighterSwordFire', CHAN_WEAPON);
 }
 
-__states__
+states
 {
-	S_FSWORDREADY('FSRD', 0 | FF_FULLBRIGHT, 1.0 / 35.0, S_FSWORDREADY1) = A_WeaponReady
-	S_FSWORDREADY1('FSRD', 0 | FF_FULLBRIGHT, 1.0 / 35.0, S_FSWORDREADY2) = A_WeaponReady
-	S_FSWORDREADY2('FSRD', 0 | FF_FULLBRIGHT, 1.0 / 35.0, S_FSWORDREADY3) = A_WeaponReady
-	S_FSWORDREADY3('FSRD', 0 | FF_FULLBRIGHT, 1.0 / 35.0, S_FSWORDREADY4) = A_WeaponReady
-	S_FSWORDREADY4('FSRD', 1 | FF_FULLBRIGHT, 1.0 / 35.0, S_FSWORDREADY5) = A_WeaponReady
-	S_FSWORDREADY5('FSRD', 1 | FF_FULLBRIGHT, 1.0 / 35.0, S_FSWORDREADY6) = A_WeaponReady
-	S_FSWORDREADY6('FSRD', 1 | FF_FULLBRIGHT, 1.0 / 35.0, S_FSWORDREADY7) = A_WeaponReady
-	S_FSWORDREADY7('FSRD', 1 | FF_FULLBRIGHT, 1.0 / 35.0, S_FSWORDREADY8) = A_WeaponReady
-	S_FSWORDREADY8('FSRD', 2 | FF_FULLBRIGHT, 1.0 / 35.0, S_FSWORDREADY9) = A_WeaponReady
-	S_FSWORDREADY9('FSRD', 2 | FF_FULLBRIGHT, 1.0 / 35.0, S_FSWORDREADY10) = A_WeaponReady
-	S_FSWORDREADY10('FSRD', 2 | FF_FULLBRIGHT, 1.0 / 35.0, S_FSWORDREADY11) = A_WeaponReady
-	S_FSWORDREADY11('FSRD', 2 | FF_FULLBRIGHT, 1.0 / 35.0, S_FSWORDREADY) = A_WeaponReady
-	S_FSWORDDOWN('FSRD', 0 | FF_FULLBRIGHT, 1.0 / 35.0, S_FSWORDDOWN) = A_Lower
-	S_FSWORDUP('FSRD', 0 | FF_FULLBRIGHT, 1.0 / 35.0, S_FSWORDUP) = A_Raise
-	S_FSWORDATK_1('FSRD', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_FSWORDATK_2, 5, 36) = none
-	S_FSWORDATK_2('FSRD', 4 | FF_FULLBRIGHT, 3.0 / 35.0, S_FSWORDATK_3, 5, 36) = none
-	S_FSWORDATK_3('FSRD', 5 | FF_FULLBRIGHT, 2.0 / 35.0, S_FSWORDATK_4, 5, 36) = none
-	S_FSWORDATK_4('FSRD', 6 | FF_FULLBRIGHT, 3.0 / 35.0, S_FSWORDATK_5, 5, 36) = A_FSwordAttack
-	S_FSWORDATK_5('FSRD', 7 | FF_FULLBRIGHT, 2.0 / 35.0, S_FSWORDATK_6, 5, 36) = none
-	S_FSWORDATK_6('FSRD', 8 | FF_FULLBRIGHT, 2.0 / 35.0, S_FSWORDATK_7, 5, 36) = none
-	S_FSWORDATK_7('FSRD', 8 | FF_FULLBRIGHT, 10.0 / 35.0, S_FSWORDATK_8, 5, 150) = none
-	S_FSWORDATK_8('FSRD', 0 | FF_FULLBRIGHT, 1.0 / 35.0, S_FSWORDATK_9, 5, 60) = none
-	S_FSWORDATK_9('FSRD', 1 | FF_FULLBRIGHT, 1.0 / 35.0, S_FSWORDATK_10, 5, 55) = none
-	S_FSWORDATK_10('FSRD', 2 | FF_FULLBRIGHT, 1.0 / 35.0, S_FSWORDATK_11, 5, 50) = none
-	S_FSWORDATK_11('FSRD', 0 | FF_FULLBRIGHT, 1.0 / 35.0, S_FSWORDATK_12, 5, 45) = none
-	S_FSWORDATK_12('FSRD', 1 | FF_FULLBRIGHT, 1.0 / 35.0, S_FSWORDREADY, 5, 40) = none
+Ready:
+	FSRD AAAABBBBCCCC 1 Bright A_WeaponReady
+	Loop
+Deselect:
+	FSRD A 1 Bright A_Lower
+Select:
+	FSRD A 1 Bright A_Raise
+Fire:
+	FSRD D 3 Bright Offset(5, 36)
+	FSRD E 3 Bright Offset(5, 36)
+	FSRD F 2 Bright Offset(5, 36)
+	FSRD G 3 Bright Offset(5, 36) A_FSwordAttack
+	FSRD H 2 Bright Offset(5, 36)
+	FSRD I 2 Bright Offset(5, 36)
+	FSRD I 10 Bright Offset(5, 150)
+	FSRD A 1 Bright Offset(5, 60)
+	FSRD B 1 Bright Offset(5, 55)
+	FSRD C 1 Bright Offset(5, 50)
+	FSRD A 1 Bright Offset(5, 45)
+	FSRD B 1 Bright Offset(5, 40)
+	Goto Ready
 }
 
 defaultproperties
@@ -91,9 +86,4 @@ defaultproperties
 	BotCombatDist = 256.0;
 	bBotProjectile = true;
 	bExtremeDeath = true;
-	UpState = S_FSWORDUP;
-	DownState = S_FSWORDDOWN;
-	ReadyState = S_FSWORDREADY;
-	AttackState = S_FSWORDATK_1;
-	HoldAttackState = S_FSWORDATK_1;
 }

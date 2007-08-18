@@ -37,22 +37,36 @@ final void A_FirePlasma()
 {
 	DepleteAmmo(, 1);
 	if (!(P_Random() & 1))
-		Owner.Player.SetViewState(ps_flash, FlashState);
+		Owner.Player.SetViewState(ps_flash, FindState('Flash'));
 	else
-		Owner.Player.SetViewState(ps_flash, S_PLASMAFLASH2);
+		Owner.Player.SetViewState(ps_flash, FindState('Flash2'));
 	Actor(Owner).SpawnPlayerMissile(PlasmaBall);
 }
 
-__states__
+states
 {
-	S_PLASMA('PLSG', 0, 1.0 / 35.0, S_PLASMA) = A_WeaponReady
-	S_PLASMADOWN('PLSG', 0, 1.0 / 35.0, S_PLASMADOWN) = A_Lower
-	S_PLASMAUP('PLSG', 0, 1.0 / 35.0, S_PLASMAUP) = A_Raise
-	S_PLASMA1('PLSG', 0, 3.0 / 35.0, S_PLASMA2) = A_FirePlasma
-	S_PLASMA2('PLSG', 1, 20.0 / 35.0, S_PLASMA) = A_ReFire
-	S_PLASMAFLASH1('PLSF', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_LIGHTDONE) = A_Light1
-	S_PLASMAFLASH2('PLSF', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_LIGHTDONE) = A_Light1
-	S_PLAS('PLAS', 0, -1.0, none) = none
+Ready:
+	PLSG A 1 A_WeaponReady
+	Loop
+Deselect:
+	PLSG A 1 A_Lower
+	Loop
+Select:
+	PLSG A 1 A_Raise
+	Loop
+Fire:
+	PLSG A 3 A_FirePlasma
+	PLSG B 20 A_ReFire
+	Goto Ready
+Flash:
+	PLSF A 4 Bright A_Light1
+	Goto Super::LightDone
+Flash2:
+	PLSF B 4 Bright A_Light1
+	Goto Super::LightDone
+Spawn:
+	PLAS A -1
+	Stop
 }
 
 defaultproperties
@@ -66,10 +80,4 @@ defaultproperties
 	PickupMessage = "$gotplasma";
 	BotCombatDist = 384.0;
 	bBotProjectile = true;
-	IdleState = S_PLAS;
-	UpState = S_PLASMAUP;
-	DownState = S_PLASMADOWN;
-	ReadyState = S_PLASMA;
-	AttackState = S_PLASMA1;
-	FlashState = S_PLASMAFLASH1;
 }

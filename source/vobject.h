@@ -324,6 +324,7 @@ public:
 	DECLARE_FUNCTION(GetClassParent)
 	DECLARE_FUNCTION(GetLockDef)
 	DECLARE_FUNCTION(GetStatePlus)
+	DECLARE_FUNCTION(FindClassState)
 
 #ifdef CLIENT
 	DECLARE_FUNCTION(P_GetMapName)

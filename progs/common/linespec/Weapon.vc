@@ -44,13 +44,6 @@ int				AmmoUse2;
 //	Weapon given together with current one.
 class<Weapon>	SisterWeaponType;
 
-state			UpState;
-state			DownState;
-state			ReadyState;
-state			AttackState;
-state			HoldAttackState;
-state			FlashState;
-
 name			UpSound;
 name			ReadySound;
 
@@ -403,7 +396,7 @@ bool Use(bool Pickup)
 
 state GetUpState()
 {
-	return UpState;
+	return FindState('Select');
 }
 
 //==========================================================================
@@ -414,7 +407,7 @@ state GetUpState()
 
 state GetDownState()
 {
-	return DownState;
+	return FindState('Deselect');
 }
 
 //==========================================================================
@@ -425,7 +418,7 @@ state GetDownState()
 
 state GetReadyState()
 {
-	return ReadyState;
+	return FindState('Ready');
 }
 
 //==========================================================================
@@ -436,7 +429,16 @@ state GetReadyState()
 
 state GetAttackState(bool Hold)
 {
-	return Hold && HoldAttackState ? HoldAttackState : AttackState;
+	state S = none;
+	if (Hold)
+	{
+		S = FindState('Hold');
+	}
+	if (!S)
+	{
+		S = FindState('Fire');
+	}
+	return S;
 }
 
 //==========================================================================
@@ -560,7 +562,7 @@ final void A_WeaponReady()
 		Owner.SetState(EntityEx(Owner).IdleState);
 	}
 
-	if (Owner.Player.ViewStates[ps_weapon].State == ReadyState &&
+	if (Owner.Player.ViewStates[ps_weapon].State == GetReadyState() &&
 		ReadySound && (!bReadySndHalf || Random() < 0.5))
 	{
 		Owner.PlaySound(ReadySound, CHAN_WEAPON);
@@ -724,7 +726,7 @@ final void A_CheckReload()
 final void A_GunFlash()
 {
 	Owner.SetState(EntityEx(Owner).MeleeState);
-	Owner.Player.SetViewState(ps_flash, FlashState);
+	Owner.Player.SetViewState(ps_flash, FindState('Flash'));
 }
 
 //===========================================================================

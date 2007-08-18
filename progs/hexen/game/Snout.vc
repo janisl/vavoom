@@ -25,13 +25,11 @@
 
 class Snout : HexenWeapon;
 
-state SniffState;
-
-//============================================================================
+//==========================================================================
 //
 //  A_SnoutAttack
 //
-//============================================================================
+//==========================================================================
 
 final void A_SnoutAttack()
 {
@@ -66,17 +64,27 @@ final void A_SnoutAttack()
 
 void SnoutSniff()
 {
-	Owner.Player.SetViewState(ps_weapon, SniffState);
+	Owner.Player.SetViewState(ps_weapon, FindState('Sniff'));
 }
 
-__states__
+states
 {
-	S_SNOUTREADY('WPIG', 0, 1.0 / 35.0, S_SNOUTREADY) = A_WeaponReady
-	S_SNOUTDOWN('WPIG', 0, 1.0 / 35.0, S_SNOUTDOWN) = A_Lower
-	S_SNOUTUP('WPIG', 0, 1.0 / 35.0, S_SNOUTUP) = A_Raise
-	S_SNOUTATK1('WPIG', 0, 4.0 / 35.0, S_SNOUTATK2) = A_SnoutAttack
-	S_SNOUTATK2('WPIG', 1, 8.0 / 35.0, S_SNOUTREADY) = A_SnoutAttack
-	S_SNOUTSNIFF('WPIG', 1, 8.0 / 35.0, S_SNOUTREADY) = none
+Ready:
+	WPIG A 1 A_WeaponReady
+	Loop
+Deselect:
+	WPIG A 1 A_Lower
+	Loop
+Select:
+	WPIG A 1 A_Raise
+	Loop
+Fire:
+	WPIG A 4 A_SnoutAttack
+	WPIG B 8 A_SnoutAttack
+	Goto Ready
+Sniff:
+	WPIG B 8
+	Goto Ready
 }
 
 defaultproperties
@@ -86,10 +94,4 @@ defaultproperties
 	SelectionOrder = 10000;
 	PSpriteSY = 10.0;
 	bDontBob = true;
-	UpState = S_SNOUTUP;
-	DownState = S_SNOUTDOWN;
-	ReadyState = S_SNOUTREADY;
-	AttackState = S_SNOUTATK1;
-	HoldAttackState = S_SNOUTATK1;
-	SniffState = S_SNOUTSNIFF;
 }

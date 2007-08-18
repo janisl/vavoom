@@ -99,52 +99,26 @@ final void A_MStaffPalette3()
 	Player(Owner.Player).WeaponCShift = 0;
 }
 
-__states__
+states
 {
-	S_MSTAFFREADY('MSTF', 0, 1.0 / 35.0, S_MSTAFFREADY2) = A_WeaponReady
-	S_MSTAFFREADY2('MSTF', 0, 1.0 / 35.0, S_MSTAFFREADY3) = A_WeaponReady
-	S_MSTAFFREADY3('MSTF', 0, 1.0 / 35.0, S_MSTAFFREADY4) = A_WeaponReady
-	S_MSTAFFREADY4('MSTF', 0, 1.0 / 35.0, S_MSTAFFREADY5) = A_WeaponReady
-	S_MSTAFFREADY5('MSTF', 0, 1.0 / 35.0, S_MSTAFFREADY6) = A_WeaponReady
-	S_MSTAFFREADY6('MSTF', 0, 1.0 / 35.0, S_MSTAFFREADY7) = A_WeaponReady
-	S_MSTAFFREADY7('MSTF', 1, 1.0 / 35.0, S_MSTAFFREADY8) = A_WeaponReady
-	S_MSTAFFREADY8('MSTF', 1, 1.0 / 35.0, S_MSTAFFREADY9) = A_WeaponReady
-	S_MSTAFFREADY9('MSTF', 1, 1.0 / 35.0, S_MSTAFFREADY10) = A_WeaponReady
-	S_MSTAFFREADY10('MSTF', 1, 1.0 / 35.0, S_MSTAFFREADY11) = A_WeaponReady
-	S_MSTAFFREADY11('MSTF', 1, 1.0 / 35.0, S_MSTAFFREADY12) = A_WeaponReady
-	S_MSTAFFREADY12('MSTF', 1, 1.0 / 35.0, S_MSTAFFREADY13) = A_WeaponReady
-	S_MSTAFFREADY13('MSTF', 2, 1.0 / 35.0, S_MSTAFFREADY14) = A_WeaponReady
-	S_MSTAFFREADY14('MSTF', 2, 1.0 / 35.0, S_MSTAFFREADY15) = A_WeaponReady
-	S_MSTAFFREADY15('MSTF', 2, 1.0 / 35.0, S_MSTAFFREADY16) = A_WeaponReady
-	S_MSTAFFREADY16('MSTF', 2, 1.0 / 35.0, S_MSTAFFREADY17) = A_WeaponReady
-	S_MSTAFFREADY17('MSTF', 2, 1.0 / 35.0, S_MSTAFFREADY18) = A_WeaponReady
-	S_MSTAFFREADY18('MSTF', 2, 1.0 / 35.0, S_MSTAFFREADY19) = A_WeaponReady
-	S_MSTAFFREADY19('MSTF', 3, 1.0 / 35.0, S_MSTAFFREADY20) = A_WeaponReady
-	S_MSTAFFREADY20('MSTF', 3, 1.0 / 35.0, S_MSTAFFREADY21) = A_WeaponReady
-	S_MSTAFFREADY21('MSTF', 3, 1.0 / 35.0, S_MSTAFFREADY22) = A_WeaponReady
-	S_MSTAFFREADY22('MSTF', 3, 1.0 / 35.0, S_MSTAFFREADY23) = A_WeaponReady
-	S_MSTAFFREADY23('MSTF', 3, 1.0 / 35.0, S_MSTAFFREADY24) = A_WeaponReady
-	S_MSTAFFREADY24('MSTF', 3, 1.0 / 35.0, S_MSTAFFREADY25) = A_WeaponReady
-	S_MSTAFFREADY25('MSTF', 4, 1.0 / 35.0, S_MSTAFFREADY26) = A_WeaponReady
-	S_MSTAFFREADY26('MSTF', 4, 1.0 / 35.0, S_MSTAFFREADY27) = A_WeaponReady
-	S_MSTAFFREADY27('MSTF', 4, 1.0 / 35.0, S_MSTAFFREADY28) = A_WeaponReady
-	S_MSTAFFREADY28('MSTF', 4, 1.0 / 35.0, S_MSTAFFREADY29) = A_WeaponReady
-	S_MSTAFFREADY29('MSTF', 4, 1.0 / 35.0, S_MSTAFFREADY30) = A_WeaponReady
-	S_MSTAFFREADY30('MSTF', 4, 1.0 / 35.0, S_MSTAFFREADY31) = A_WeaponReady
-	S_MSTAFFREADY31('MSTF', 5, 1.0 / 35.0, S_MSTAFFREADY32) = A_WeaponReady
-	S_MSTAFFREADY32('MSTF', 5, 1.0 / 35.0, S_MSTAFFREADY33) = A_WeaponReady
-	S_MSTAFFREADY33('MSTF', 5, 1.0 / 35.0, S_MSTAFFREADY34) = A_WeaponReady
-	S_MSTAFFREADY34('MSTF', 5, 1.0 / 35.0, S_MSTAFFREADY35) = A_WeaponReady
-	S_MSTAFFREADY35('MSTF', 5, 1.0 / 35.0, S_MSTAFFREADY) = A_WeaponReady
-	S_MSTAFFDOWN('MSTF', 0, 1.0 / 35.0, S_MSTAFFDOWN) = A_Lower
-	S_MSTAFFUP('MSTF', 0, 1.0 / 35.0, S_MSTAFFUP) = A_Raise
-	S_MSTAFFATK_1('MSTF', 6, 4.0 / 35.0, S_MSTAFFATK_2, 0, 40) = none
-	S_MSTAFFATK_2('MSTF', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_MSTAFFATK_3, 0, 48) = A_MStaffAttack
-	S_MSTAFFATK_3('MSTF', 7 | FF_FULLBRIGHT, 2.0 / 35.0, S_MSTAFFATK_4, 0, 48) = A_MStaffPalette1
-	S_MSTAFFATK_4('MSTF', 8, 2.0 / 35.0, S_MSTAFFATK_5, 0, 48) = A_MStaffPalette2
-	S_MSTAFFATK_5('MSTF', 8, 2.0 / 35.0, S_MSTAFFATK_6, 0, 48) = A_MStaffPalette3
-	S_MSTAFFATK_6('MSTF', 8, 1.0 / 35.0, S_MSTAFFATK_7, 0, 40) = none
-	S_MSTAFFATK_7('MSTF', 9, 5.0 / 35.0, S_MSTAFFREADY, 0, 36) = none
+Ready:
+	MSTF AAAAAABBBBBBCCCCCCDDDDDDEEEEEEFFFFF 1 A_WeaponReady
+	Loop
+Deselect:
+	MSTF A 1 A_Lower
+	Loop
+Select:
+	MSTF A 1 A_Raise
+	Loop
+Fire:
+	MSTF G 4 Offset(0, 40)
+	MSTF H 4 Bright Offset(0, 48) A_MStaffAttack
+	MSTF H 2 Bright Offset(0, 48) A_MStaffPalette1
+	MSTF I 2 Offset(0, 48) A_MStaffPalette2
+	MSTF I 2 Offset(0, 48) A_MStaffPalette3
+	MSTF I 1 Offset(0, 40)
+	MSTF J 5 Offset(0, 36)
+	Goto Ready
 }
 
 defaultproperties
@@ -161,9 +135,4 @@ defaultproperties
 	BotCombatDist= 384.0;
 	bBotProjectile = true;
 	bExtremeDeath = true;
-	UpState = S_MSTAFFUP;
-	DownState = S_MSTAFFDOWN;
-	ReadyState = S_MSTAFFREADY;
-	AttackState = S_MSTAFFATK_1;
-	HoldAttackState = S_MSTAFFATK_1;
 }

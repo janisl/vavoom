@@ -25,15 +25,11 @@
 
 class ItemFog : ScriptedEntity;
 
-__states__
+states
 {
-	S_IFOG1('IFOG', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_IFOG2) = none
-	S_IFOG2('IFOG', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_IFOG3) = none
-	S_IFOG3('IFOG', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_IFOG4) = none
-	S_IFOG4('IFOG', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_IFOG5) = none
-	S_IFOG5('IFOG', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_IFOG6) = none
-	S_IFOG6('IFOG', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_IFOG7) = none
-	S_IFOG7('IFOG', 4 | FF_FULLBRIGHT, 6.0 / 35.0, none) = none
+Spawn:
+	IFOG ABABCDE 6 Bright
+	Stop
 }
 
 defaultproperties
@@ -42,5 +38,4 @@ defaultproperties
 	bNoBlockmap = true;
 	bNoGravity = true;
 	bNoPassMobj = true;
-	IdleState = S_IFOG1;
 }

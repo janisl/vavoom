@@ -26,8 +26,6 @@
 class StrifeGrenadeLauncher : StrifeWeapon
 	__mobjinfo__(154);
 
-state FlashState2;
-
 //==========================================================================
 //
 //	A_FireGrenade
@@ -53,10 +51,10 @@ final void A_FireGrenade()
 		return;
 
 	// Make it flash
-	if (Owner.Player.ViewStates[ps_weapon].State == AttackState)
-		Owner.Player.SetViewState(ps_flash, FlashState);
+	if (Owner.Player.ViewStates[ps_weapon].State == GetAttackState(false))
+		Owner.Player.SetViewState(ps_flash, FindState('Flash'));
 	else
-		Owner.Player.SetViewState(ps_flash, FlashState2);
+		Owner.Player.SetViewState(ps_flash, FindState('Flash2'));
 
 	Owner.Origin.z += 32.0;
 	grenade = Actor(Owner).SpawnSubMissile(grenadetype, Actor(Owner));
@@ -76,7 +74,7 @@ final void A_FireGrenade()
 	grenade.Origin.x += cos(an) * tworadii;
 	grenade.Origin.y += sin(an) * tworadii;
 
-	if (AttackState == Owner.Player.ViewStates[ps_weapon].State)
+	if (GetAttackState(false) == Owner.Player.ViewStates[ps_weapon].State)
 	{
 		an = Owner.Angles.yaw - 90.0;
 	}
@@ -88,31 +86,36 @@ final void A_FireGrenade()
 	grenade.Origin.y += sin(an) * 15.0;
 }
 
-__states__
+states
 {
-	S_GRENADE('GREN', 0, 1.0 / 35.0, S_GRENADE) = A_WeaponReady
-	S_GRENADEDOWN('GREN', 0, 1.0 / 35.0, S_GRENADEDOWN) = A_Lower
-	S_GRENADEUP('GREN', 0, 1.0 / 35.0, S_GRENADEUP) = A_Raise
-	S_GRENADE1('GREN', 0, 5.0 / 35.0, S_GRENADE2) = A_FireGrenade
-	S_GRENADE2('GREN', 1, 10.0 / 35.0, S_GRENADE3) = none
-	S_GRENADE3('GREN', 0, 5.0 / 35.0, S_GRENADE4) = A_FireGrenade
-	S_GRENADE4('GREN', 2, 10.0 / 35.0, S_GRENADE5) = none
-	S_GRENADE5('GREN', 0, 0.0 / 35.0, S_GRENADE) = A_ReFire
-	S_GRENADEFLASH1('GREF', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_LIGHTDONE) = A_Light1
-	S_GRENADEFLASH2('GREF', 0, 10.0 / 35.0, S_LIGHTDONE) = A_Light0
-	S_GRENADEFLASH3('GREF', 1 | FF_FULLBRIGHT, 5.0 / 35.0, S_LIGHTDONE) = A_Light2
-	S_GRENADEHIGH('GREN', 3, 1.0 / 35.0, S_GRENADEHIGH) = A_WeaponReady
-	S_GRENADEHIGHDOWN('GREN', 3, 1.0 / 35.0, S_GRENADEHIGHDOWN) = A_Lower
-	S_GRENADEHIGHUP('GREN', 3, 1.0 / 35.0, S_GRENADEHIGHUP) = A_Raise
-	S_GRENADEHIGH1('GREN', 3, 5.0 / 35.0, S_GRENADEHIGH2) = A_FireGrenade
-	S_GRENADEHIGH2('GREN', 4, 10.0 / 35.0, S_GRENADEHIGH3) = none
-	S_GRENADEHIGH3('GREN', 3, 5.0 / 35.0, S_GRENADEHIGH4) = A_FireGrenade
-	S_GRENADEHIGH4('GREN', 5, 10.0 / 35.0, S_GRENADEHIGH5) = none
-	S_GRENADEHIGH5('GREN', 0, 0.0 / 35.0, S_GRENADEHIGH) = A_ReFire
-	S_GRENADEHIGHFLASH1('GREF', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_LIGHTDONE) = A_Light1
-	S_GRENADEHIGHFLASH2('GREF', 2, 10.0 / 35.0, S_LIGHTDONE) = A_Light0
-	S_GRENADEHIGHFLASH3('GREF', 3 | FF_FULLBRIGHT, 5.0 / 35.0, S_LIGHTDONE) = A_Light2
-	S_GRENADE_LAUNCHER('GRND', 0, -1.0, none) = none
+Ready:
+	GREN A 1 A_WeaponReady
+	Loop
+Deselect:
+	GREN A 1 A_Lower
+	Loop
+Select:
+	GREN A 1 A_Raise
+	Loop
+Fire:
+	GREN A 5 A_FireGrenade
+	GREN B 10
+	GREN A 5 A_FireGrenade
+	GREN C 10
+	GREN A 0 A_ReFire
+	Goto Ready
+Flash:
+	GREF A 5 Bright A_Light1
+	Goto Super::LightDone
+FlashUnused:
+	GREF A 10 A_Light0
+	Goto Super::LightDone
+Flash2:
+	GREF B 5 Bright A_Light2
+	Goto Super::LightDone
+Spawn:
+	GRND A -1
+	Stop
 }
 
 defaultproperties
@@ -125,11 +128,4 @@ defaultproperties
 	AmmoGive1 = 12;
 	ConversationID = 195;
 	PickupMessage = "$txt_glauncher";
-	IdleState = S_GRENADE_LAUNCHER;
-	UpState = S_GRENADEUP;
-	DownState = S_GRENADEDOWN;
-	ReadyState = S_GRENADE;
-	AttackState = S_GRENADE1;
-	FlashState = S_GRENADEFLASH1;
-	FlashState2 = S_GRENADEFLASH3;
 }

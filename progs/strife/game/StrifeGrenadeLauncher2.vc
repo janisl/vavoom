@@ -25,6 +25,35 @@
 
 class StrifeGrenadeLauncher2 : StrifeGrenadeLauncher;
 
+states
+{
+Ready:
+	GREN D 1 A_WeaponReady
+	Loop
+Deselect:
+	GREN D 1 A_Lower
+	Loop
+Select:
+	GREN D 1 A_Raise
+	Loop
+Fire:
+	GREN D 5 A_FireGrenade
+	GREN E 10
+	GREN D 5 A_FireGrenade
+	GREN F 10
+	GREN A 0 A_ReFire
+	Goto Ready
+Flash:
+	GREF C 5 Bright A_Light1
+	Goto StrifeWeapon::LightDone
+FlashUnused:
+	GREF C 10 A_Light0
+	Goto StrifeWeapon::LightDone
+Flash2:
+	GREF D 5 Bright A_Light2
+	Goto StrifeWeapon::LightDone
+}
+
 defaultproperties
 {
 	SisterWeaponType = StrifeGrenadeLauncher;
@@ -33,10 +62,4 @@ defaultproperties
 	AmmoType1 = PhosphorusGrenadeRounds;
 	AmmoUse1 = 1;
 	AmmoGive1 = 0;
-	UpState = S_GRENADEHIGHUP;
-	DownState = S_GRENADEHIGHDOWN;
-	ReadyState = S_GRENADEHIGH;
-	AttackState = S_GRENADEHIGH1;
-	FlashState = S_GRENADEHIGHFLASH1;
-	FlashState2 = S_GRENADEHIGHFLASH3;
 }

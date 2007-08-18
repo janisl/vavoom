@@ -155,19 +155,19 @@ final void A_SelectSigilReady()
 	switch (NumPieces)
 	{
 	case 1:
-		Owner.Player.SetViewState(ps_weapon, S_READY_1);
+		Owner.Player.SetViewState(ps_weapon, FindState('Ready1'));
 		break;
 	case 2:
-		Owner.Player.SetViewState(ps_weapon, S_READY_2);
+		Owner.Player.SetViewState(ps_weapon, FindState('Ready2'));
 		break;
 	case 3:
-		Owner.Player.SetViewState(ps_weapon, S_READY_3);
+		Owner.Player.SetViewState(ps_weapon, FindState('Ready3'));
 		break;
 	case 4:
-		Owner.Player.SetViewState(ps_weapon, S_READY_4);
+		Owner.Player.SetViewState(ps_weapon, FindState('Ready4'));
 		break;
 	case 5:
-		Owner.Player.SetViewState(ps_weapon, S_READY_5);
+		Owner.Player.SetViewState(ps_weapon, FindState('Ready5'));
 		break;
 	}
 }
@@ -189,19 +189,19 @@ final void A_SelectSigilDown()
 	switch (Pieces)
 	{
 	case 1:
-		Owner.Player.SetViewState(ps_weapon, S_DOWN_1);
+		Owner.Player.SetViewState(ps_weapon, FindState('Deselect1'));
 		break;
 	case 2:
-		Owner.Player.SetViewState(ps_weapon, S_DOWN_2);
+		Owner.Player.SetViewState(ps_weapon, FindState('Deselect2'));
 		break;
 	case 3:
-		Owner.Player.SetViewState(ps_weapon, S_DOWN_3);
+		Owner.Player.SetViewState(ps_weapon, FindState('Deselect3'));
 		break;
 	case 4:
-		Owner.Player.SetViewState(ps_weapon, S_DOWN_4);
+		Owner.Player.SetViewState(ps_weapon, FindState('Deselect4'));
 		break;
 	case 5:
-		Owner.Player.SetViewState(ps_weapon, S_DOWN_5);
+		Owner.Player.SetViewState(ps_weapon, FindState('Deselect5'));
 		break;
 	}
 }
@@ -217,19 +217,19 @@ final void A_SelectSigilUp()
 	switch (NumPieces)
 	{
 	case 1:
-		Owner.Player.SetViewState(ps_weapon, S_UP_1);
+		Owner.Player.SetViewState(ps_weapon, FindState('Select1'));
 		break;
 	case 2:
-		Owner.Player.SetViewState(ps_weapon, S_UP_2);
+		Owner.Player.SetViewState(ps_weapon, FindState('Select2'));
 		break;
 	case 3:
-		Owner.Player.SetViewState(ps_weapon, S_UP_3);
+		Owner.Player.SetViewState(ps_weapon, FindState('Select3'));
 		break;
 	case 4:
-		Owner.Player.SetViewState(ps_weapon, S_UP_4);
+		Owner.Player.SetViewState(ps_weapon, FindState('Select4'));
 		break;
 	case 5:
-		Owner.Player.SetViewState(ps_weapon, S_UP_5);
+		Owner.Player.SetViewState(ps_weapon, FindState('Select5'));
 		break;
 	}
 }
@@ -245,19 +245,19 @@ final void A_SelectSigilAttack()
 	switch (NumPieces)
 	{
 	case 1:
-		Owner.Player.SetViewState(ps_weapon, S_ATK1_1);
+		Owner.Player.SetViewState(ps_weapon, FindState('Fire1'));
 		break;
 	case 2:
-		Owner.Player.SetViewState(ps_weapon, S_ATK1_2);
+		Owner.Player.SetViewState(ps_weapon, FindState('Fire2'));
 		break;
 	case 3:
-		Owner.Player.SetViewState(ps_weapon, S_ATK1_3);
+		Owner.Player.SetViewState(ps_weapon, FindState('Fire3'));
 		break;
 	case 4:
-		Owner.Player.SetViewState(ps_weapon, S_ATK1_4);
+		Owner.Player.SetViewState(ps_weapon, FindState('Fire4'));
 		break;
 	case 5:
-		Owner.Player.SetViewState(ps_weapon, S_ATK1_5);
+		Owner.Player.SetViewState(ps_weapon, FindState('Fire5'));
 		break;
 	}
 }
@@ -389,63 +389,121 @@ final void A_SigilFlash()
 	Owner.Player.FixedColourmap = INVERSECOLOURMAP;
 }
 
-__states__
+//==========================================================================
+//
+//	A_ClearSigilFlash
+//
+//==========================================================================
+
+final void A_ClearSigilFlash()
 {
-	S_READY('SIGH', 0 | FF_FULLBRIGHT, 0.0, S_READY) = A_SelectSigilReady
-	S_READY_1('SIGH', 0 | FF_FULLBRIGHT, 1.0 / 35.0, S_READY_1) = A_WeaponReady
-	S_READY_2('SIGH', 1 | FF_FULLBRIGHT, 1.0 / 35.0, S_READY_2) = A_WeaponReady
-	S_READY_3('SIGH', 2 | FF_FULLBRIGHT, 1.0 / 35.0, S_READY_3) = A_WeaponReady
-	S_READY_4('SIGH', 3 | FF_FULLBRIGHT, 1.0 / 35.0, S_READY_4) = A_WeaponReady
-	S_READY_5('SIGH', 4 | FF_FULLBRIGHT, 1.0 / 35.0, S_READY_5) = A_WeaponReady
+	Owner.Player.FixedColourmap = 0;
+}
 
-	S_DOWN('SIGH', 0 | FF_FULLBRIGHT, 1.0 / 35.0, S_DOWN) = A_SelectSigilDown
-	S_DOWN_1('SIGH', 0 | FF_FULLBRIGHT, 1.0 / 35.0, S_DOWN_1) = A_Lower
-	S_DOWN_2('SIGH', 1 | FF_FULLBRIGHT, 1.0 / 35.0, S_DOWN_2) = A_Lower
-	S_DOWN_3('SIGH', 2 | FF_FULLBRIGHT, 1.0 / 35.0, S_DOWN_3) = A_Lower
-	S_DOWN_4('SIGH', 3 | FF_FULLBRIGHT, 1.0 / 35.0, S_DOWN_4) = A_Lower
-	S_DOWN_5('SIGH', 4 | FF_FULLBRIGHT, 1.0 / 35.0, S_DOWN_5) = A_Lower
+states
+{
+Ready:
+	SIGH A 0 Bright A_SelectSigilReady
+	Loop
+Ready1:
+	SIGH A 1 Bright A_WeaponReady
+	Loop
+Ready2:
+	SIGH B 1 Bright A_WeaponReady
+	Loop
+Ready3:
+	SIGH C 1 Bright A_WeaponReady
+	Loop
+Ready4:
+	SIGH D 1 Bright A_WeaponReady
+	Loop
+Ready5:
+	SIGH E 1 Bright A_WeaponReady
+	Loop
 
-	S_UP('SIGH', 0 | FF_FULLBRIGHT, 1.0 / 35.0, S_UP) = A_SelectSigilUp
-	S_UP_1('SIGH', 0 | FF_FULLBRIGHT, 1.0 / 35.0, S_UP_1) = A_Raise
-	S_UP_2('SIGH', 1 | FF_FULLBRIGHT, 1.0 / 35.0, S_UP_2) = A_Raise
-	S_UP_3('SIGH', 2 | FF_FULLBRIGHT, 1.0 / 35.0, S_UP_3) = A_Raise
-	S_UP_4('SIGH', 3 | FF_FULLBRIGHT, 1.0 / 35.0, S_UP_4) = A_Raise
-	S_UP_5('SIGH', 4 | FF_FULLBRIGHT, 1.0 / 35.0, S_UP_5) = A_Raise
+Deselect:
+	SIGH A 1 Bright A_SelectSigilDown
+	Loop
+Deselect1:
+	SIGH A 1 Bright A_Lower
+	Loop
+Deselect2:
+	SIGH B 1 Bright A_Lower
+	Loop
+Deselect3:
+	SIGH C 1 Bright A_Lower
+	Loop
+Deselect4:
+	SIGH D 1 Bright A_Lower
+	Loop
+Deselect5:
+	SIGH E 1 Bright A_Lower
+	Loop
 
-	S_ATK('SIGH', 0 | FF_FULLBRIGHT, 0.0, S_ATK) = A_SelectSigilAttack
+Select:
+	SIGH A 1 Bright A_SelectSigilUp
+	Loop
+Select1:
+	SIGH A 1 Bright A_Raise
+	Loop
+Select2:
+	SIGH B 1 Bright A_Raise
+	Loop
+Select3:
+	SIGH C 1 Bright A_Raise
+	Loop
+Select4:
+	SIGH D 1 Bright A_Raise
+	Loop
+Select5:
+	SIGH E 1 Bright A_Raise
+	Loop
 
-	S_ATK1_1('SIGH', 0 | FF_FULLBRIGHT, 18.0 / 35.0, S_ATK2_1) = A_SigilCharge
-	S_ATK2_1('SIGH', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_ATK3_1) = A_GunFlash
-	S_ATK3_1('SIGH', 0, 10.0 / 35.0, S_ATK4_1) = A_FireSigil1
-	S_ATK4_1('SIGH', 0, 5.0 / 35.0, S_READY) = none
+Fire:
+	SIGH A 0 Bright A_SelectSigilAttack
+	Loop
 
-	S_ATK1_2('SIGH', 1 | FF_FULLBRIGHT, 18.0 / 35.0, S_ATK2_2) = A_SigilCharge
-	S_ATK2_2('SIGH', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_ATK3_2) = A_GunFlash
-	S_ATK3_2('SIGH', 1, 10.0 / 35.0, S_ATK4_2) = A_FireSigil2
-	S_ATK4_2('SIGH', 1, 5.0 / 35.0, S_READY) = none
+Fire1:
+	SIGH A 18 Bright A_SigilCharge
+	SIGH A 3 Bright A_GunFlash
+	SIGH A 10 A_FireSigil1
+	SIGH A 5
+	Goto Ready
 
-	S_ATK1_3('SIGH', 2 | FF_FULLBRIGHT, 18.0 / 35.0, S_ATK2_3) = A_SigilCharge
-	S_ATK2_3('SIGH', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_ATK3_3) = A_GunFlash
-	S_ATK3_3('SIGH', 2, 10.0 / 35.0, S_ATK4_3) = A_FireSigil3
-	S_ATK4_3('SIGH', 2, 5.0 / 35.0, S_READY) = none
+Fire2:
+	SIGH B 18 Bright A_SigilCharge
+	SIGH B 3 Bright A_GunFlash
+	SIGH B 10 A_FireSigil2
+	SIGH B 5
+	Goto Ready
 
-	S_ATK1_4('SIGH', 3 | FF_FULLBRIGHT, 18.0 / 35.0, S_ATK2_4) = A_SigilCharge
-	S_ATK2_4('SIGH', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_ATK3_4) = A_GunFlash
-	S_ATK3_4('SIGH', 3, 10.0 / 35.0, S_ATK4_4) = A_FireSigil4
-	S_ATK4_4('SIGH', 3, 5.0 / 35.0, S_READY) = none
+Fire3:
+	SIGH C 18 Bright A_SigilCharge
+	SIGH C 3 Bright A_GunFlash
+	SIGH C 10 A_FireSigil3
+	SIGH C 5
+	Goto Ready
 
-	S_ATK1_5('SIGH', 4 | FF_FULLBRIGHT, 18.0 / 35.0, S_ATK2_5) = A_SigilCharge
-	S_ATK2_5('SIGH', 4 | FF_FULLBRIGHT, 3.0 / 35.0, S_ATK3_5) = A_GunFlash
-	S_ATK3_5('SIGH', 4, 10.0 / 35.0, S_ATK4_5) = A_FireSigil5
-	S_ATK4_5('SIGH', 4, 5.0 / 35.0, S_READY) = none
+Fire4:
+	SIGH D 18 Bright A_SigilCharge
+	SIGH D 3 Bright A_GunFlash
+	SIGH D 10 A_FireSigil4
+	SIGH D 5
+	Goto Ready
 
-	S_FLASH1('SIGF', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_FLASH2) = A_Light2
-	S_FLASH2('SIGF', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_FLASH3) = A_SigilFlash
-	S_FLASH3('SIGF', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_LIGHTDONE)
-	{
-		A_Light1();
-		Owner.Player.FixedColourmap = 0;
-	}
+Fire5:
+	SIGH E 18 Bright A_SigilCharge
+	SIGH E 3 Bright A_GunFlash
+	SIGH E 10 A_FireSigil5
+	SIGH E 5
+	Goto Ready
+
+Flash:
+	SIGF A 4 Bright A_Light2
+	SIGF B 6 Bright A_SigilFlash
+	SIGF C 0 Bright A_ClearSigilFlash
+	SIGF C 4 Bright A_Light1
+	Goto Super::LightDone
 }
 
 defaultproperties
@@ -455,9 +513,4 @@ defaultproperties
 	NumPieces = 1;
 	IconName = 'i_sgl1';
 	bCheatNotWeapon = true;
-	UpState = S_UP;
-	DownState = S_DOWN;
-	ReadyState = S_READY;
-	AttackState = S_ATK;
-	FlashState = S_FLASH1;
 }

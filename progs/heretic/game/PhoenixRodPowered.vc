@@ -25,12 +25,82 @@
 
 class PhoenixRodPowered : PhoenixRod;
 
+//===========================================================================
+//
+//  A_InitPhoenixPL2
+//
+//===========================================================================
+
+final void A_InitPhoenixPL2()
+{
+	FlameCount = 10 * 35;
+}
+
+//===========================================================================
+//
+//  A_FirePhoenixPL2
+//
+//  Flame thrower effect.
+//
+//===========================================================================
+
+final void A_FirePhoenixPL2()
+{
+	Actor A;
+	TVec dir;
+	TVec org;
+
+	if (--FlameCount == 0)
+	{
+		// Out of flame
+		Owner.Player.SetViewState(ps_weapon, FindState('Shutdown'));
+		Player(Owner.Player).Refire = 0;
+		return;
+	}
+	org.x = Owner.Origin.x + (Random() - Random()) * 2.0;
+	org.y = Owner.Origin.y + (Random() - Random()) * 2.0;
+	org.z = Owner.Origin.z + 26.0 - sin(Owner.Angles.pitch);
+	org.z -= Owner.FloorClip;
+	A = HereticLevelInfo(Level).Spawn(PhoenixFX2, org);
+	A.Target = Actor(Owner);
+	A.Angles.yaw = Owner.Angles.yaw;
+	A.Angles.pitch = Owner.Angles.pitch;
+	AngleVector(&A.Angles, &dir);
+	A.Velocity = Owner.Velocity + A.Speed * dir;
+	if (!Player(Owner.Player).Refire || !(XLevel.TicTime % 38))
+	{
+		Owner.PlaySound('weapons/phoenixpowshoot', CHAN_WEAPON);
+	}
+	A.CheckMissileSpawn();
+}
+
+//===========================================================================
+//
+//  A_ShutdownPhoenixPL2
+//
+//===========================================================================
+
+final void A_ShutdownPhoenixPL2()
+{
+	DepleteAmmo();
+}
+
+states
+{
+Fire:
+	PHNX B 3 A_InitPhoenixPL2
+Hold:
+	PHNX C 1 Bright A_FirePhoenixPL2
+	PHNX B 4 A_ReFire
+Shutdown:
+	PHNX B 4 A_ShutdownPhoenixPL2
+	Goto Super::Ready
+}
+
 defaultproperties
 {
 	AmmoUse1 = 1;
 	AmmoGive1 = 0;
 	SisterWeaponType = PhoenixRod;
 	bPoweredUp = true;
-	AttackState = S_PHOENIXATK2_1;
-	HoldAttackState = S_PHOENIXATK2_2;
 }

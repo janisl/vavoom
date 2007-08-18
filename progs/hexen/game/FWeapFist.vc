@@ -25,7 +25,6 @@
 
 class FWeapFist : FighterWeapon;
 
-state Attack2State;
 int PunchCount;
 
 //==========================================================================
@@ -89,30 +88,40 @@ final void A_FPunchAttack()
 	if (PunchCount == 3)
 	{
 		PunchCount = 0;
-		Owner.Player.SetViewState(ps_weapon, Attack2State);
+		Owner.Player.SetViewState(ps_weapon, FindState('Fire2'));
 		Owner.PlaySound('*fistgrunt', CHAN_VOICE);
 	}
 }
 
-__states__
+states
 {
-	S_PUNCHREADY('FPCH', 0, 1.0 / 35.0, S_PUNCHREADY) = A_WeaponReady
-	S_PUNCHDOWN('FPCH', 0, 1.0 / 35.0, S_PUNCHDOWN) = A_Lower
-	S_PUNCHUP('FPCH', 0, 1.0 / 35.0, S_PUNCHUP) = A_Raise
-	S_PUNCHATK1_1('FPCH', 1, 5.0 / 35.0, S_PUNCHATK1_2, 5, 40) = none
-	S_PUNCHATK1_2('FPCH', 2, 4.0 / 35.0, S_PUNCHATK1_3, 5, 40) = none
-	S_PUNCHATK1_3('FPCH', 3, 4.0 / 35.0, S_PUNCHATK1_4, 5, 40) = A_FPunchAttack
-	S_PUNCHATK1_4('FPCH', 2, 4.0 / 35.0, S_PUNCHATK1_5, 5, 40) = none
-	S_PUNCHATK1_5('FPCH', 1, 5.0 / 35.0, S_PUNCHREADY, 5, 40) = A_ReFire
-	S_PUNCHATK2_1('FPCH', 3, 4.0 / 35.0, S_PUNCHATK2_2, 5, 40) = none
-	S_PUNCHATK2_2('FPCH', 4, 4.0 / 35.0, S_PUNCHATK2_3, 5, 40) = none
-	S_PUNCHATK2_3('FPCH', 4, 1.0 / 35.0, S_PUNCHATK2_4, 15, 50) = none
-	S_PUNCHATK2_4('FPCH', 4, 1.0 / 35.0, S_PUNCHATK2_5, 25, 60) = none
-	S_PUNCHATK2_5('FPCH', 4, 1.0 / 35.0, S_PUNCHATK2_6, 35, 70) = none
-	S_PUNCHATK2_6('FPCH', 4, 1.0 / 35.0, S_PUNCHATK2_7, 45, 80) = none
-	S_PUNCHATK2_7('FPCH', 4, 1.0 / 35.0, S_PUNCHATK2_8, 55, 90) = none
-	S_PUNCHATK2_8('FPCH', 4, 1.0 / 35.0, S_PUNCHATK2_9, 65, 100) = none
-	S_PUNCHATK2_9('FPCH', 4, 10.0 / 35.0, S_PUNCHREADY, 0, 150) = none
+Ready:
+	FPCH A 1 A_WeaponReady
+	Loop
+Deselect:
+	FPCH A 1 A_Lower
+	Loop
+Select:
+	FPCH A 1 A_Raise
+	Loop
+Fire:
+	FPCH B 5 Offset(5, 40)
+	FPCH C 4 Offset(5, 40)
+	FPCH D 4 Offset(5, 40) A_FPunchAttack
+	FPCH C 4 Offset(5, 40)
+	FPCH B 5 Offset(5, 40) A_ReFire
+	Goto Ready
+Fire2:
+	FPCH D 4 Offset(5, 40)
+	FPCH E 4 Offset(5, 40)
+	FPCH E 1 Offset(15, 50)
+	FPCH E 1 Offset(25, 60)
+	FPCH E 1 Offset(35, 70)
+	FPCH E 1 Offset(45, 80)
+	FPCH E 1 Offset(55, 90)
+	FPCH E 1 Offset(65, 100)
+	FPCH E 10 Offset(0, 150)
+	Goto Ready
 }
 
 defaultproperties
@@ -121,10 +130,4 @@ defaultproperties
 	SelectionOrder = 3400;
 	PSpriteSY = 0.0;
 	BotCombatDist = 48.0;
-	UpState = S_PUNCHUP;
-	DownState = S_PUNCHDOWN;
-	ReadyState = S_PUNCHREADY;
-	AttackState = S_PUNCHATK1_1;
-	Attack2State = S_PUNCHATK2_1;
-	HoldAttackState = S_PUNCHATK1_1;
 }

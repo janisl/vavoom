@@ -83,22 +83,22 @@ final void A_StaffAttackPL2()
 	}
 }
 
-__states__
+states
 {
-	S_STAFFREADY('STFF', 0, 1.0 / 35.0, S_STAFFREADY) = A_WeaponReady
-	S_STAFFDOWN('STFF', 0, 1.0 / 35.0, S_STAFFDOWN) = A_Lower
-	S_STAFFUP('STFF', 0, 1.0 / 35.0, S_STAFFUP) = A_Raise
-	S_STAFFREADY2_1('STFF', 3, 4.0 / 35.0, S_STAFFREADY2_2) = A_WeaponReady
-	S_STAFFREADY2_2('STFF', 4, 4.0 / 35.0, S_STAFFREADY2_3) = A_WeaponReady
-	S_STAFFREADY2_3('STFF', 5, 4.0 / 35.0, S_STAFFREADY2_1) = A_WeaponReady
-	S_STAFFDOWN2('STFF', 3, 1.0 / 35.0, S_STAFFDOWN2) = A_Lower
-	S_STAFFUP2('STFF', 3, 1.0 / 35.0, S_STAFFUP2) = A_Raise
-	S_STAFFATK1_1('STFF', 1, 6.0 / 35.0, S_STAFFATK1_2) = none
-	S_STAFFATK1_2('STFF', 2, 8.0 / 35.0, S_STAFFATK1_3) = A_StaffAttackPL1
-	S_STAFFATK1_3('STFF', 1, 8.0 / 35.0, S_STAFFREADY) = A_ReFire
-	S_STAFFATK2_1('STFF', 6, 6.0 / 35.0, S_STAFFATK2_2) = none
-	S_STAFFATK2_2('STFF', 7, 8.0 / 35.0, S_STAFFATK2_3) = A_StaffAttackPL2
-	S_STAFFATK2_3('STFF', 6, 8.0 / 35.0, S_STAFFREADY2_1) = A_ReFire
+Ready:
+	STFF A 1 A_WeaponReady
+	Loop
+Deselect:
+	STFF A 1 A_Lower
+	Loop
+Select:
+	STFF A 1 A_Raise
+	Loop
+Fire:
+	STFF B 6
+	STFF C 8 A_StaffAttackPL1
+	STFF B 8 A_ReFire
+	Goto Ready
 }
 
 defaultproperties
@@ -110,9 +110,4 @@ defaultproperties
 	BotCombatDist = 1.0;
 	bWimpyWeapon = true;
 	bBotMelee = true;
-	UpState = S_STAFFUP;
-	DownState = S_STAFFDOWN;
-	ReadyState = S_STAFFREADY;
-	AttackState = S_STAFFATK1_1;
-	HoldAttackState = S_STAFFATK1_1;
 }

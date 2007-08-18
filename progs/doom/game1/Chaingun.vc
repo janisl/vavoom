@@ -46,13 +46,13 @@ final void A_FireCGun()
 
 	Owner.SetState(DoomPlayer::S_PLAY_ATK2);
 
-	if (Owner.Player.ViewStates[ps_weapon].State == AttackState)
+	if (Owner.Player.ViewStates[ps_weapon].State == GetAttackState(false))
 	{
-		Owner.Player.SetViewState(ps_flash, FlashState);
+		Owner.Player.SetViewState(ps_flash, FindState('Flash'));
 	}
 	else
 	{
-		Owner.Player.SetViewState(ps_flash, S_CHAINFLASH2);
+		Owner.Player.SetViewState(ps_flash, FindState('Flash2'));
 	}
 
 	Actor(Owner).Aim(dir, 16.0 * 64.0);
@@ -61,17 +61,31 @@ final void A_FireCGun()
 	EntityEx(Owner).DLightColour = RGB(195, 79, 0);
 }
 
-__states__
+states
 {
-	S_CHAIN('CHGG', 0, 1.0 / 35.0, S_CHAIN) = A_WeaponReady
-	S_CHAINDOWN('CHGG', 0, 1.0 / 35.0, S_CHAINDOWN) = A_Lower
-	S_CHAINUP('CHGG', 0, 1.0 / 35.0, S_CHAINUP) = A_Raise
-	S_CHAIN1('CHGG', 0, 4.0 / 35.0, S_CHAIN2) = A_FireCGun
-	S_CHAIN2('CHGG', 1, 4.0 / 35.0, S_CHAIN3) = A_FireCGun
-	S_CHAIN3('CHGG', 1, 0.0 / 35.0, S_CHAIN) = A_ReFire
-	S_CHAINFLASH1('CHGF', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_LIGHTDONE) = A_Light1
-	S_CHAINFLASH2('CHGF', 1 | FF_FULLBRIGHT, 5.0 / 35.0, S_LIGHTDONE) = A_Light2
-	S_MGUN('MGUN', 0, -1.0, none) = none
+Ready:
+	CHGG A 1 A_WeaponReady
+	Loop
+Deselect:
+	CHGG A 1 A_Lower
+	Loop
+Select:
+	CHGG A 1 A_Raise
+	Loop
+Fire:
+	CHGG A 4 A_FireCGun
+	CHGG B 4 A_FireCGun
+	CHGG B 0 A_ReFire
+	Goto Ready
+Flash:
+	CHGF A 5 Bright A_Light1
+	Goto Super::LightDone
+Flash2:
+	CHGF B 5 Bright A_Light2
+	Goto Super::LightDone
+Spawn:
+	MGUN A -1
+	Stop
 }
 
 defaultproperties
@@ -84,10 +98,4 @@ defaultproperties
 	PlayerModelVersion = 4;
 	PickupMessage = "$gotchaingun";
 	BotCombatDist = 256.0;
-	IdleState = S_MGUN;
-	UpState = S_CHAINUP;
-	DownState = S_CHAINDOWN;
-	ReadyState = S_CHAIN;
-	AttackState = S_CHAIN1;
-	FlashState = S_CHAINFLASH1;
 }

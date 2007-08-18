@@ -60,16 +60,24 @@ final void A_Punch()
 	}
 }
 
-__states__
+states
 {
-	S_PUNCH('PUNG', 0, 1.0 / 35.0, S_PUNCH) = A_WeaponReady
-	S_PUNCHDOWN('PUNG', 0, 1.0 / 35.0, S_PUNCHDOWN) = A_Lower
-	S_PUNCHUP('PUNG', 0, 1.0 / 35.0, S_PUNCHUP) = A_Raise
-	S_PUNCH1('PUNG', 1, 4.0 / 35.0, S_PUNCH2) = none
-	S_PUNCH2('PUNG', 2, 4.0 / 35.0, S_PUNCH3) = A_Punch
-	S_PUNCH3('PUNG', 3, 5.0 / 35.0, S_PUNCH4) = none
-	S_PUNCH4('PUNG', 2, 4.0 / 35.0, S_PUNCH5) = none
-	S_PUNCH5('PUNG', 1, 5.0 / 35.0, S_PUNCH) = A_ReFire
+Ready:
+	PUNG A 1 A_WeaponReady
+	Loop
+Deselect:
+	PUNG A 1 A_Lower
+	Loop
+Select:
+	PUNG A 1 A_Raise
+	Loop
+Fire:
+	PUNG B 4
+	PUNG C 4 A_Punch
+	PUNG D 5
+	PUNG C 4
+	PUNG B 5 A_ReFire
+	Goto Ready
 }
 
 defaultproperties
@@ -79,9 +87,5 @@ defaultproperties
 	BotCombatDist = 1.0;
 	bWimpyWeapon = true;
 	bBotMelee = true;
-	UpState = S_PUNCHUP;
-	DownState = S_PUNCHDOWN;
-	ReadyState = S_PUNCH;
-	AttackState = S_PUNCH1;
 	PlayerModelVersion = 1;
 }

@@ -25,12 +25,21 @@
 
 class MacePowered : Mace;
 
+states
+{
+Fire:
+Hold:
+	MACE B 4
+	MACE D 4 A_FireMacePL2
+	MACE B 4
+	MACE A 8 A_ReFire
+	Goto Super::Ready
+}
+
 defaultproperties
 {
 	AmmoUse1 = 5;
 	AmmoGive1 = 0;
 	SisterWeaponType = Mace;
 	bPoweredUp = true;
-	AttackState = S_MACEATK2_1;
-	HoldAttackState = S_MACEATK2_1;
 }

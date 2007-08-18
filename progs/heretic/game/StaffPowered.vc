@@ -25,16 +25,29 @@
 
 class StaffPowered : Staff;
 
+states
+{
+Ready:
+	STFF DEF 4 A_WeaponReady
+	Loop
+Deselect:
+	STFF D 1 A_Lower
+	Loop
+Select:
+	STFF D 1 A_Raise
+	Loop
+Fire:
+	STFF G 6
+	STFF H 8 A_StaffAttackPL2
+	STFF G 8 A_ReFire
+	Goto Ready
+}
+
 defaultproperties
 {
 	SisterWeaponType = Staff;
 	bPoweredUp = true;
 	bStaff2Kickback = true;
 	bReadySndHalf = true;
-	UpState = S_STAFFUP2;
-	DownState = S_STAFFDOWN2;
-	ReadyState = S_STAFFREADY2_1;
-	AttackState = S_STAFFATK2_1;
-	HoldAttackState = S_STAFFATK2_1;
 	ReadySound = 'weapons/staffcrackle';
 }

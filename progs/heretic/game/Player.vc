@@ -1281,7 +1281,7 @@ void ActivateBeak()
 	}
 	SetWeapon(Weapon(EntityEx(MO).FindInventory(Beak)));
 	ViewStates[ps_weapon].SY = Weapon::WEAPONTOP;
-	SetViewState(ps_weapon, Weapon(ViewEnt).ReadyState);
+	SetViewState(ps_weapon, ReadyWeapon.GetReadyState());
 }
 
 //===========================================================================
@@ -1295,7 +1295,7 @@ void PostChickenWeapon(Weapon weapon)
 	ReadyWeapon.Destroy();
 	SetWeapon(weapon);
 	ViewStates[ps_weapon].SY = Weapon::WEAPONBOTTOM;
-	SetViewState(ps_weapon, Weapon(ViewEnt).UpState);
+	SetViewState(ps_weapon, ReadyWeapon.GetUpState());
 }
 
 //===========================================================================
@@ -1485,7 +1485,7 @@ void Cheat_Gimme()
 		}
 		foreach AllClasses(Weapon, WpnCls)
 		{
-			if (!WpnCls.default.ReadyState)
+			if (!FindClassState(WpnCls, 'Ready'))
 			{
 				//	Abstract base class.
 			}

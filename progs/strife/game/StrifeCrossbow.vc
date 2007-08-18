@@ -28,6 +28,17 @@ class StrifeCrossbow : StrifeWeapon
 
 //==========================================================================
 //
+//	A_ShowElectricFlash
+//
+//==========================================================================
+
+final void A_ShowElectricFlash()
+{
+	Owner.Player.SetViewState(ps_flash, FindState('ElectricFlash'));
+}
+
+//==========================================================================
+//
 //	A_FireElectricArrow
 //
 //==========================================================================
@@ -66,38 +77,33 @@ final void A_FirePoisonArrow()
 	Owner.PlaySound('weapons/xbowshoot', CHAN_WEAPON);
 }
 
-__states__
+states
 {
-	S_XBOW('XBOW', 0, 1.0 / 35.0, S_XBOW_2)
-	{
-		Owner.Player.SetViewState(ps_flash, S_XBOWFLASH1);
-		A_WeaponReady();
-	}
-	S_XBOW_2('XBOW', 0, 1.0 / 35.0, S_XBOW_2) = A_WeaponReady
-	S_XBOWDOWN('XBOW', 0, 1.0 / 35.0, S_XBOWDOWN_2) = A_Lower
-	S_XBOWDOWN_2('XBOW', 0, 1.0 / 35.0, S_XBOWDOWN_2) = A_Lower
-	S_XBOWUP('XBOW', 0, 1.0 / 35.0, S_XBOWUP) = A_Raise
-	S_XBOW1('XBOW', 0, 3.0 / 35.0, S_XBOW2) = A_ClearFlash
-	S_XBOW2('XBOW', 1, 6.0 / 35.0, S_XBOW3) = A_FireElectricArrow
-	S_XBOW3('XBOW', 2, 4.0 / 35.0, S_XBOW4) = none
-	S_XBOW4('XBOW', 3, 6.0 / 35.0, S_XBOW5) = none
-	S_XBOW5('XBOW', 4, 3.0 / 35.0, S_XBOW6) = none
-	S_XBOW6('XBOW', 5, 5.0 / 35.0, S_XBOW7) = none
-	S_XBOW7('XBOW', 6, 5.0 / 35.0, S_XBOW) = A_CheckReload
-	S_XBOWFLASH1('XBOW', 10, 5.0 / 35.0, S_XBOWFLASH2) = none
-	S_XBOWFLASH2('XBOW', 11, 5.0 / 35.0, S_XBOWFLASH3) = none
-	S_XBOWFLASH3('XBOW', 12, 5.0 / 35.0, S_XBOWFLASH1) = none
-	S_XBOWPOISON('XBOW', 7, 1.0 / 35.0, S_XBOWPOISON) = A_WeaponReady
-	S_XBOWPOISONDOWN('XBOW', 7, 1.0 / 35.0, S_XBOWPOISONDOWN) = A_Lower
-	S_XBOWPOISONUP('XBOW', 7, 1.0 / 35.0, S_XBOWPOISONUP) = A_Raise
-	S_XBOWPOISON1('XBOW', 7, 3.0 / 35.0, S_XBOWPOISON2) = none
-	S_XBOWPOISON2('XBOW', 1, 6.0 / 35.0, S_XBOWPOISON3) = A_FirePoisonArrow
-	S_XBOWPOISON3('XBOW', 2, 4.0 / 35.0, S_XBOWPOISON4) = none
-	S_XBOWPOISON4('XBOW', 3, 6.0 / 35.0, S_XBOWPOISON5) = none
-	S_XBOWPOISON5('XBOW', 4, 3.0 / 35.0, S_XBOWPOISON6) = none
-	S_XBOWPOISON6('XBOW', 8, 5.0 / 35.0, S_XBOWPOISON7) = none
-	S_XBOWPOISON7('XBOW', 9, 5.0 / 35.0, S_XBOWPOISON) = A_CheckReload
-	S_CROSSBOW('CBOW', 0, -1.0, none) = none
+Ready:
+	XBOW A 0 A_ShowElectricFlash
+	XBOW A 1 A_WeaponReady
+	Wait
+Deselect:
+	XBOW A 1 A_Lower
+	Loop
+Select:
+	XBOW A 1 A_Raise
+	Loop
+Fire:
+	XBOW A 3 A_ClearFlash
+	XBOW B 6 A_FireElectricArrow
+	XBOW C 4
+	XBOW D 6
+	XBOW E 3
+	XBOW F 5
+	XBOW G 5 A_CheckReload
+	Goto Ready
+ElectricFlash:
+	XBOW KLM 5
+	Loop
+Spawn:
+	CBOW A -1
+	Stop
 }
 
 defaultproperties
@@ -111,10 +117,4 @@ defaultproperties
 	bNoAlert = true;
 	ConversationID = 194;
 	PickupMessage = "$txt_strifecrossbow";
-	IdleState = S_CROSSBOW;
-	UpState = S_XBOWUP;
-	DownState = S_XBOWDOWN;
-	ReadyState = S_XBOW;
-	AttackState = S_XBOW1;
-	FlashState = S_LIGHTDONE;
 }

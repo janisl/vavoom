@@ -1601,7 +1601,7 @@ void ActivateMorphWeapon()
 		Wpn.Destroy();
 	}
 	SetWeapon(Weapon(EntityEx(MO).FindInventory(Snout)));	// Snout is the first weapon
-	SetViewState(ps_weapon, Weapon(ViewEnt).ReadyState);
+	SetViewState(ps_weapon, ReadyWeapon.GetReadyState());
 }
 
 //==========================================================================
@@ -1615,7 +1615,7 @@ void PostMorphWeapon(Weapon weapon)
 	ReadyWeapon.Destroy();
 	SetWeapon(weapon);
 	ViewStates[ps_weapon].SY = Weapon::WEAPONBOTTOM;
-	SetViewState(ps_weapon, Weapon(ViewEnt).UpState);
+	SetViewState(ps_weapon, ReadyWeapon.GetUpState());
 }
 
 //==========================================================================
@@ -1798,7 +1798,7 @@ void Cheat_Gimme()
 		}
 		foreach AllClasses(Weapon, WpnCls)
 		{
-			if (!WpnCls.default.ReadyState)
+			if (!FindClassState(WpnCls, 'Ready'))
 			{
 				//	Abstract class.
 				continue;

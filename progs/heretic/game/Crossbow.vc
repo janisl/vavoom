@@ -63,45 +63,26 @@ final void A_FireCrossbowPL2()
 		AngleMod360(Owner.Angles.yaw + (45.0 / 5.0)));
 }
 
-__states__
+states
 {
-	S_CRBOW1('CRBW', 0, 1.0 / 35.0, S_CRBOW2) = A_WeaponReady
-	S_CRBOW2('CRBW', 0, 1.0 / 35.0, S_CRBOW3) = A_WeaponReady
-	S_CRBOW3('CRBW', 0, 1.0 / 35.0, S_CRBOW4) = A_WeaponReady
-	S_CRBOW4('CRBW', 0, 1.0 / 35.0, S_CRBOW5) = A_WeaponReady
-	S_CRBOW5('CRBW', 0, 1.0 / 35.0, S_CRBOW6) = A_WeaponReady
-	S_CRBOW6('CRBW', 0, 1.0 / 35.0, S_CRBOW7) = A_WeaponReady
-	S_CRBOW7('CRBW', 1, 1.0 / 35.0, S_CRBOW8) = A_WeaponReady
-	S_CRBOW8('CRBW', 1, 1.0 / 35.0, S_CRBOW9) = A_WeaponReady
-	S_CRBOW9('CRBW', 1, 1.0 / 35.0, S_CRBOW10) = A_WeaponReady
-	S_CRBOW10('CRBW', 1, 1.0 / 35.0, S_CRBOW11) = A_WeaponReady
-	S_CRBOW11('CRBW', 1, 1.0 / 35.0, S_CRBOW12) = A_WeaponReady
-	S_CRBOW12('CRBW', 1, 1.0 / 35.0, S_CRBOW13) = A_WeaponReady
-	S_CRBOW13('CRBW', 2, 1.0 / 35.0, S_CRBOW14) = A_WeaponReady
-	S_CRBOW14('CRBW', 2, 1.0 / 35.0, S_CRBOW15) = A_WeaponReady
-	S_CRBOW15('CRBW', 2, 1.0 / 35.0, S_CRBOW16) = A_WeaponReady
-	S_CRBOW16('CRBW', 2, 1.0 / 35.0, S_CRBOW17) = A_WeaponReady
-	S_CRBOW17('CRBW', 2, 1.0 / 35.0, S_CRBOW18) = A_WeaponReady
-	S_CRBOW18('CRBW', 2, 1.0 / 35.0, S_CRBOW1) = A_WeaponReady
-	S_CRBOWDOWN('CRBW', 0, 1.0 / 35.0, S_CRBOWDOWN) = A_Lower
-	S_CRBOWUP('CRBW', 0, 1.0 / 35.0, S_CRBOWUP) = A_Raise
-	S_CRBOWATK1_1('CRBW', 3, 6.0 / 35.0, S_CRBOWATK1_2) = A_FireCrossbowPL1
-	S_CRBOWATK1_2('CRBW', 4, 3.0 / 35.0, S_CRBOWATK1_3) = none
-	S_CRBOWATK1_3('CRBW', 5, 3.0 / 35.0, S_CRBOWATK1_4) = none
-	S_CRBOWATK1_4('CRBW', 6, 3.0 / 35.0, S_CRBOWATK1_5) = none
-	S_CRBOWATK1_5('CRBW', 7, 3.0 / 35.0, S_CRBOWATK1_6) = none
-	S_CRBOWATK1_6('CRBW', 0, 4.0 / 35.0, S_CRBOWATK1_7) = none
-	S_CRBOWATK1_7('CRBW', 1, 4.0 / 35.0, S_CRBOWATK1_8) = none
-	S_CRBOWATK1_8('CRBW', 2, 5.0 / 35.0, S_CRBOW1) = A_ReFire
-	S_CRBOWATK2_1('CRBW', 3, 5.0 / 35.0, S_CRBOWATK2_2) = A_FireCrossbowPL2
-	S_CRBOWATK2_2('CRBW', 4, 3.0 / 35.0, S_CRBOWATK2_3) = none
-	S_CRBOWATK2_3('CRBW', 5, 2.0 / 35.0, S_CRBOWATK2_4) = none
-	S_CRBOWATK2_4('CRBW', 6, 3.0 / 35.0, S_CRBOWATK2_5) = none
-	S_CRBOWATK2_5('CRBW', 7, 2.0 / 35.0, S_CRBOWATK2_6) = none
-	S_CRBOWATK2_6('CRBW', 0, 3.0 / 35.0, S_CRBOWATK2_7) = none
-	S_CRBOWATK2_7('CRBW', 1, 3.0 / 35.0, S_CRBOWATK2_8) = none
-	S_CRBOWATK2_8('CRBW', 2, 4.0 / 35.0, S_CRBOW1) = A_ReFire
-	S_WBOW('WBOW', 0, -1.0, none) = none
+Ready:
+	CRBW AAAAAABBBBBBCCCCCC 1 A_WeaponReady
+	Loop
+Deselect:
+	CRBW A 1 A_Lower
+	Loop
+Select:
+	CRBW A 1 A_Raise
+	Loop
+Fire:
+	CRBW D 6 A_FireCrossbowPL1
+	CRBW EFGH 3
+	CRBW AB 4
+	CRBW C 5 A_ReFire
+	Goto Ready
+Spawn:
+	WBOW A -1
+	Stop
 }
 
 defaultproperties
@@ -115,10 +96,4 @@ defaultproperties
 	PickupMessage = "$txt_wpncrossbow";
 	SisterWeaponType = CrossbowPowered;
 	BotCombatDist = 192.0;
-	IdleState = S_WBOW;
-	UpState = S_CRBOWUP;
-	DownState = S_CRBOWDOWN;
-	ReadyState = S_CRBOW1;
-	AttackState = S_CRBOWATK1_1;
-	HoldAttackState = S_CRBOWATK1_1;
 }

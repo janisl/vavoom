@@ -34,7 +34,7 @@ class Beak : HereticWeapon;
 final void A_BeakRaise()
 {
 	Owner.Player.ViewStates[ps_weapon].SY = WEAPONTOP;
-	Owner.Player.SetViewState(ps_weapon, ReadyState);
+	Owner.Player.SetViewState(ps_weapon, GetReadyState());
 }
 
 //===========================================================================
@@ -50,7 +50,7 @@ final void A_BeakReady()
 		// Chicken beak attack
 		Owner.Player.bAttackDown = true;
 		Owner.SetState(Actor(Owner).MissileState);
-		Owner.Player.SetViewState(ps_weapon, AttackState);
+		Owner.Player.SetViewState(ps_weapon, GetAttackState(false));
 		HereticLevelInfo(Level).NoiseAlert(Actor(Owner), Actor(Owner));
 	}
 	else
@@ -116,13 +116,20 @@ final void A_BeakAttackPL2()
 	Owner.Player.ViewStates[ps_weapon].StateTime -= Random() * 0.125;
 }
 
-__states__
+states
 {
-	S_BEAKREADY('BEAK', 0, 1.0 / 35.0, S_BEAKREADY) = A_BeakReady
-	S_BEAKDOWN('BEAK', 0, 1.0 / 35.0, S_BEAKDOWN) = A_Lower
-	S_BEAKUP('BEAK', 0, 1.0 / 35.0, S_BEAKUP) = A_BeakRaise
-	S_BEAKATK1_1('BEAK', 0, 18.0 / 35.0, S_BEAKREADY) = A_BeakAttackPL1
-	S_BEAKATK2_1('BEAK', 0, 12.0 / 35.0, S_BEAKREADY) = A_BeakAttackPL2
+Ready:
+	BEAK A 1 A_BeakReady
+	Loop
+Deselect:
+	BEAK A 1 A_Lower
+	Loop
+Select:
+	BEAK A 1 A_BeakRaise
+	Loop
+Fire:
+	BEAK A 18 A_BeakAttackPL1
+	Goto Ready
 }
 
 defaultproperties
@@ -133,9 +140,4 @@ defaultproperties
 	SisterWeaponType = BeakPowered;
 	BotCombatDist = 1.0;
 	bBotMelee = true;
-	UpState = S_BEAKUP;
-	DownState = S_BEAKDOWN;
-	ReadyState = S_BEAKREADY;
-	AttackState = S_BEAKATK1_1;
-	HoldAttackState = S_BEAKATK1_1;
 }

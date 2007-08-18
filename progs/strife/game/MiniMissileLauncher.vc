@@ -45,19 +45,29 @@ final void A_FireMissile()
 	Owner.Angles.yaw = savedangle;
 }
 
-__states__
+states
 {
-	S_MISSILE('MMIS', 0, 1.0 / 35.0, S_MISSILE) = A_WeaponReady
-	S_MISSILEDOWN('MMIS', 0, 1.0 / 35.0, S_MISSILEDOWN) = A_Lower
-	S_MISSILEUP('MMIS', 0, 1.0 / 35.0, S_MISSILEUP) = A_Raise
-	S_MISSILE1('MMIS', 0, 4.0 / 35.0, S_MISSILE2) = A_FireMissile
-	S_MISSILE2('MMIS', 1, 4.0 / 35.0, S_MISSILE3) = A_Light1
-	S_MISSILE3('MMIS', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_MISSILE4) = none
-	S_MISSILE4('MMIS', 3 | FF_FULLBRIGHT, 2.0 / 35.0, S_MISSILE5) = A_Light2
-	S_MISSILE5('MMIS', 4 | FF_FULLBRIGHT, 2.0 / 35.0, S_MISSILE6) = none
-	S_MISSILE6('MMIS', 5 | FF_FULLBRIGHT, 2.0 / 35.0, S_MISSILE7) = A_Light0
-	S_MISSILE7('MMIS', 5, 0.0 / 35.0, S_MISSILE) = A_ReFire
-	S_MISSILE_LAUNCHER('MMSL', 0, -1.0, none) = none
+Ready:
+	MMIS A 1 A_WeaponReady
+	Loop
+Deselect:
+	MMIS A 1 A_Lower
+	Loop
+Select:
+	MMIS A 1 A_Raise
+	Loop
+Fire:
+	MMIS A 4 A_FireMissile
+	MMIS B 4 A_Light1
+	MMIS C 5 Bright
+	MMIS D 2 Bright A_Light2
+	MMIS E 2 Bright
+	MMIS F 2 Bright A_Light0
+	MMIS F 0 A_ReFire
+	Goto Ready
+Spawn:
+	MMSL A -1
+	Stop
 }
 
 defaultproperties
@@ -70,9 +80,4 @@ defaultproperties
 	ConversationID = 192;
 	PickupMessage = "$txt_mmlauncher";
 	bNoAutoFire = true;
-	IdleState = S_MISSILE_LAUNCHER;
-	UpState = S_MISSILEUP;
-	DownState = S_MISSILEDOWN;
-	ReadyState = S_MISSILE;
-	AttackState = S_MISSILE1;
 }

@@ -25,12 +25,20 @@
 
 class GoldWandPowered : GoldWand;
 
+states
+{
+Fire:
+	GWND B 3
+	GWND C 4 A_FireGoldWandPL2
+	GWND D 3
+	GWND D 0 A_ReFire
+	Goto Super::Ready
+}
+
 defaultproperties
 {
 	AmmoUse1 = 1;
 	AmmoGive1 = 0;
 	SisterWeaponType = GoldWand;
 	bPoweredUp = true;
-	AttackState = S_GOLDWANDATK2_1;
-	HoldAttackState = S_GOLDWANDATK2_1;
 }

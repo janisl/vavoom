@@ -25,10 +25,15 @@
 
 class BeakPowered : Beak;
 
+states
+{
+Fire:
+	BEAK A 12 A_BeakAttackPL2
+	Goto Super::Ready
+}
+
 defaultproperties
 {
 	SisterWeaponType = Beak;
 	bPoweredUp = true;
-	AttackState = S_BEAKATK2_1;
-	HoldAttackState = S_BEAKATK2_1;
 }

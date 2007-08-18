@@ -25,12 +25,23 @@
 
 class CrossbowPowered : Crossbow;
 
+states
+{
+Fire:
+	CRBW D 5 A_FireCrossbowPL2
+	CRBW E 3
+	CRBW F 2
+	CRBW G 3
+	CRBW H 2
+	CRBW AB 3
+	CRBW C 4 A_ReFire
+	Goto Super::Ready
+}
+
 defaultproperties
 {
 	AmmoUse1 = 1;
 	AmmoGive1 = 0;
 	SisterWeaponType = Crossbow;
 	bPoweredUp = true;
-	AttackState = S_CRBOWATK2_1;
-	HoldAttackState = S_CRBOWATK2_1;
 }

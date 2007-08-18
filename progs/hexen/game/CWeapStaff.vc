@@ -28,8 +28,6 @@ class CWeapStaff : ClericWeapon
 	__scriptid__(32);
 
 int BlinkCount;
-state BlinkState;
-state Attack2State;
 
 //==========================================================================
 //
@@ -52,7 +50,7 @@ final void A_CStaffCheckBlink()
 {
 	if (!--BlinkCount)
 	{
-		Owner.Player.SetViewState(ps_weapon, BlinkState);
+		Owner.Player.SetViewState(ps_weapon, FindState('Blink'));
 		BlinkCount = (P_Random() + 50) >> 2;
 	}
 }
@@ -89,7 +87,7 @@ final void A_CStaffCheck()
 			newLife = newLife > 100 ? 100 : newLife;
 			pmo.Health = newLife;
 			Owner.Player.Health = newLife;
-			Owner.Player.SetViewState(ps_weapon, Attack2State);
+			Owner.Player.SetViewState(ps_weapon, FindState('Fire2'));
 		}
 		DepleteAmmo(false);
 	}
@@ -123,41 +121,38 @@ final void A_CStaffAttack()
 	playPawn.PlaySound('ClericCStaffFire', CHAN_WEAPON);
 }
 
-__states__
+states
 {
-	S_CSTAFFREADY('CSSF', 2, 4.0 / 35.0, S_CSTAFFREADY1) = none
-	S_CSTAFFREADY1('CSSF', 1, 3.0 / 35.0, S_CSTAFFREADY2) = A_CStaffInitBlink
-	S_CSTAFFREADY2('CSSF', 0, 1.0 / 35.0, S_CSTAFFREADY3) = A_WeaponReady
-	S_CSTAFFREADY3('CSSF', 0, 1.0 / 35.0, S_CSTAFFREADY4) = A_WeaponReady
-	S_CSTAFFREADY4('CSSF', 0, 1.0 / 35.0, S_CSTAFFREADY5) = A_WeaponReady
-	S_CSTAFFREADY5('CSSF', 0, 1.0 / 35.0, S_CSTAFFREADY6) = A_WeaponReady
-	S_CSTAFFREADY6('CSSF', 0, 1.0 / 35.0, S_CSTAFFREADY7) = A_WeaponReady
-	S_CSTAFFREADY7('CSSF', 0, 1.0 / 35.0, S_CSTAFFREADY8) = A_WeaponReady
-	S_CSTAFFREADY8('CSSF', 0, 1.0 / 35.0, S_CSTAFFREADY9) = A_WeaponReady
-	S_CSTAFFREADY9('CSSF', 0, 1.0 / 35.0, S_CSTAFFREADY2) = A_CStaffCheckBlink
-	S_CSTAFFBLINK1('CSSF', 1, 1.0 / 35.0, S_CSTAFFBLINK2) = A_WeaponReady
-	S_CSTAFFBLINK2('CSSF', 1, 1.0 / 35.0, S_CSTAFFBLINK3) = A_WeaponReady
-	S_CSTAFFBLINK3('CSSF', 1, 1.0 / 35.0, S_CSTAFFBLINK4) = A_WeaponReady
-	S_CSTAFFBLINK4('CSSF', 2, 1.0 / 35.0, S_CSTAFFBLINK5) = A_WeaponReady
-	S_CSTAFFBLINK5('CSSF', 2, 1.0 / 35.0, S_CSTAFFBLINK6) = A_WeaponReady
-	S_CSTAFFBLINK6('CSSF', 2, 1.0 / 35.0, S_CSTAFFBLINK7) = A_WeaponReady
-	S_CSTAFFBLINK7('CSSF', 2, 1.0 / 35.0, S_CSTAFFBLINK8) = A_WeaponReady
-	S_CSTAFFBLINK8('CSSF', 2, 1.0 / 35.0, S_CSTAFFBLINK9) = A_WeaponReady
-	S_CSTAFFBLINK9('CSSF', 1, 1.0 / 35.0, S_CSTAFFBLINK10) = A_WeaponReady
-	S_CSTAFFBLINK10('CSSF', 1, 1.0 / 35.0, S_CSTAFFBLINK11) = A_WeaponReady
-	S_CSTAFFBLINK11('CSSF', 1, 1.0 / 35.0, S_CSTAFFREADY2) = A_WeaponReady
-	S_CSTAFFDOWN('CSSF', 1, 3.0 / 35.0, S_CSTAFFDOWN2) = none
-	S_CSTAFFDOWN2('CSSF', 2, 4.0 / 35.0, S_CSTAFFDOWN3) = none
-	S_CSTAFFDOWN3('CSSF', 2, 1.0 / 35.0, S_CSTAFFDOWN3) = A_Lower
-	S_CSTAFFUP('CSSF', 2, 1.0 / 35.0, S_CSTAFFUP) = A_Raise
-	S_CSTAFFATK_1('CSSF', 0, 1.0 / 35.0, S_CSTAFFATK_2, 0, 45) = A_CStaffCheck
-	S_CSTAFFATK_2('CSSF', 9, 1.0 / 35.0, S_CSTAFFATK_3, 0, 50) = A_CStaffAttack
-	S_CSTAFFATK_3('CSSF', 9, 2.0 / 35.0, S_CSTAFFATK_4, 0, 50) = none
-	S_CSTAFFATK_4('CSSF', 9, 2.0 / 35.0, S_CSTAFFATK_5, 0, 45) = none
-	S_CSTAFFATK_5('CSSF', 0, 2.0 / 35.0, S_CSTAFFATK_6, 0, 40) = none
-	S_CSTAFFATK_6('CSSF', 0, 2.0 / 35.0, S_CSTAFFREADY2, 0, 36) = none
-	S_CSTAFFATK2_1('CSSF', 10, 10.0 / 35.0, S_CSTAFFREADY2, 0, 36) = none
-	S_CSTAFF('WCSS', 0, -1.0, none) = none
+Ready:
+	CSSF C 4
+	CSSF B 3 A_CStaffInitBlink
+	CSSF AAAAAAA 1 A_WeaponReady
+	CSSF A 1 A_CStaffCheckBlink
+	Goto Ready+2
+Blink:
+	CSSF BBBCCCCCBBB 1 A_WeaponReady
+	Goto Ready+2
+Deselect:
+	CSSF B 3
+	CSSF C 4
+	CSSF C 1 A_Lower
+	Wait
+Select:
+	CSSF C 1 A_Raise
+Fire:
+	CSSF A 1 Offset(0, 45) A_CStaffCheck
+	CSSF J 1 Offset(0, 50) A_CStaffAttack
+	CSSF J 2 Offset(0, 50)
+	CSSF J 2 Offset(0, 45)
+	CSSF A 2 Offset(0, 40)
+	CSSF A 2 Offset(0, 36)
+	Goto Ready+2
+Fire2:
+	CSSF K 10 Offset(0, 36)
+	Goto Ready+2
+Spawn:
+	WCSS A -1
+	Stop
 }
 
 defaultproperties
@@ -172,12 +167,4 @@ defaultproperties
 	PickupMessage = "$txt_weapon_c2";
 	BotCombatDist = 192.0;
 	bBotProjectile = true;
-	UpState = S_CSTAFFUP;
-	DownState = S_CSTAFFDOWN;
-	ReadyState = S_CSTAFFREADY;
-	BlinkState = S_CSTAFFBLINK1;
-	AttackState = S_CSTAFFATK_1;
-	HoldAttackState = S_CSTAFFATK_1;
-	Attack2State = S_CSTAFFATK2_1;
-	IdleState = S_CSTAFF;
 }

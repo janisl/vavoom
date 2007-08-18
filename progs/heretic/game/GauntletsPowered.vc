@@ -25,13 +25,29 @@
 
 class GauntletsPowered : Gauntlets;
 
+states
+{
+Ready:
+	GAUN GHI 4 A_WeaponReady
+	Loop
+Deselect:
+	GAUN G 1 A_Lower
+	Loop
+Select:
+	GAUN G 1 A_Raise
+	Loop
+Fire:
+	GAUN J 4 A_GauntletSound
+	GAUN K 4
+Hold:
+	GAUN LMN 4 Bright A_GauntletAttack
+	GAUN K 4 A_ReFire
+	GAUN J 4 A_Light0
+	Goto Ready
+}
+
 defaultproperties
 {
 	SisterWeaponType = Gauntlets;
 	bPoweredUp = true;
-	UpState = S_GAUNTLETUP2;
-	DownState = S_GAUNTLETDOWN2;
-	ReadyState = S_GAUNTLETREADY2_1;
-	AttackState = S_GAUNTLETATK2_1;
-	HoldAttackState = S_GAUNTLETATK2_3;
 }

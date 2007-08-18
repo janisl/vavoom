@@ -60,28 +60,36 @@ final void A_CMaceAttack()
 	}
 }
 
-__states__
+states
 {
-	S_CMACEREADY('CMCE', 0, 1.0 / 35.0, S_CMACEREADY) = A_WeaponReady
-	S_CMACEDOWN('CMCE', 0, 1.0 / 35.0, S_CMACEDOWN) = A_Lower
-	S_CMACEUP('CMCE', 0, 1.0 / 35.0, S_CMACEUP) = A_Raise
-	S_CMACEATK_1('CMCE', 1, 2.0 / 35.0, S_CMACEATK_2, 60, 20) = none
-	S_CMACEATK_2('CMCE', 1, 1.0 / 35.0, S_CMACEATK_3, 30, 33) = none
-	S_CMACEATK_3('CMCE', 1, 2.0 / 35.0, S_CMACEATK_4, 8, 45) = none
-	S_CMACEATK_4('CMCE', 2, 1.0 / 35.0, S_CMACEATK_5, 8, 45) = none
-	S_CMACEATK_5('CMCE', 3, 1.0 / 35.0, S_CMACEATK_6, 8, 45) = none
-	S_CMACEATK_6('CMCE', 4, 1.0 / 35.0, S_CMACEATK_7, 8, 45) = none
-	S_CMACEATK_7('CMCE', 4, 1.0 / 35.0, S_CMACEATK_8, -11, 58) = A_CMaceAttack
-	S_CMACEATK_8('CMCE', 5, 1.0 / 35.0, S_CMACEATK_9, 8, 45) = none
-	S_CMACEATK_9('CMCE', 5, 2.0 / 35.0, S_CMACEATK_10, -8, 74) = none
-	S_CMACEATK_10('CMCE', 5, 1.0 / 35.0, S_CMACEATK_11, -20, 96) = none
-	S_CMACEATK_11('CMCE', 5, 8.0 / 35.0, S_CMACEATK_12, -33, 160) = none
-	S_CMACEATK_12('CMCE', 0, 2.0 / 35.0, S_CMACEATK_13, 8, 75) = A_ReFire
-	S_CMACEATK_13('CMCE', 0, 1.0 / 35.0, S_CMACEATK_14, 8, 65) = none
-	S_CMACEATK_14('CMCE', 0, 2.0 / 35.0, S_CMACEATK_15, 8, 60) = none
-	S_CMACEATK_15('CMCE', 0, 1.0 / 35.0, S_CMACEATK_16, 8, 55) = none
-	S_CMACEATK_16('CMCE', 0, 2.0 / 35.0, S_CMACEATK_17, 8, 50) = none
-	S_CMACEATK_17('CMCE', 0, 1.0 / 35.0, S_CMACEREADY, 8, 45) = none
+Ready:
+	CMCE A 1 A_WeaponReady
+	Loop
+Deselect:
+	CMCE A 1 A_Lower
+	Loop
+Select:
+	CMCE A 1 A_Raise
+	Loop
+Fire:
+	CMCE B 2 Offset(60, 20)
+	CMCE B 1 Offset(30, 33)
+	CMCE B 2 Offset(8, 45)
+	CMCE C 1 Offset(8, 45)
+	CMCE D 1 Offset(8, 45)
+	CMCE E 1 Offset(8, 45)
+	CMCE E 1 Offset(-11, 58) A_CMaceAttack
+	CMCE F 1 Offset(8, 45)
+	CMCE F 2 Offset(-8, 74)
+	CMCE F 1 Offset(-20, 96)
+	CMCE F 8 Offset(-33, 160)
+	CMCE A 2 Offset(8, 75) A_ReFire
+	CMCE A 1 Offset(8, 65)
+	CMCE A 2 Offset(8, 60)
+	CMCE A 1 Offset(8, 55)
+	CMCE A 2 Offset(8, 50)
+	CMCE A 1 Offset(8, 45)
+	Goto Ready
 }
 
 defaultproperties
@@ -91,9 +99,4 @@ defaultproperties
 	SelectionOrder = 3500;
 	PSpriteSY = -8.0;
 	BotCombatDist = 48.0;
-	UpState = S_CMACEUP;
-	DownState = S_CMACEDOWN;
-	ReadyState = S_CMACEREADY;
-	AttackState = S_CMACEATK_1;
-	HoldAttackState = S_CMACEATK_1;
 }

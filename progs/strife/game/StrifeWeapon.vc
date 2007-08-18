@@ -39,9 +39,15 @@ final void A_ClearFlash()
 	Owner.Player.SetViewState(ps_flash, none);
 }
 
+states
+{
+LightDone:
+	TNT1 A 0 A_Light0
+	Stop
+}
+
 __states__
 {
-	S_LIGHTDONE('', 0, 0.0 / 35.0, none) = A_Light0
 	S_WAVE1('WAVE', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_WAVE2) = none
 	S_WAVE2('WAVE', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_WAVE3) = none
 	S_WAVE3('WAVE', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_WAVE4) = none
