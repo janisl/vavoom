@@ -1817,18 +1817,20 @@ void VParser::ParseDecorateStates(VClass* InClass)
 			{
 				Lex.NextToken();
 				Lex.Expect(TK_LParen);
+				Neg = Lex.Check(TK_Minus);
 				if (Lex.Token != TK_IntLiteral)
 				{
 					ParseError(Lex.Location, "Integer expected");
 				}
-				s->Misc1 = Lex.Number;
+				s->Misc1 = Lex.Number * (Neg ? -1 : 1);
 				Lex.NextToken();
 				Lex.Expect(TK_Comma);
+				Neg = Lex.Check(TK_Minus);
 				if (Lex.Token != TK_IntLiteral)
 				{
 					ParseError(Lex.Location, "Integer expected");
 				}
-				s->Misc2 = Lex.Number;
+				s->Misc2 = Lex.Number * (Neg ? -1 : 1);
 				Lex.NextToken();
 				Lex.Expect(TK_RParen);
 				continue;
@@ -1897,6 +1899,10 @@ void VParser::ParseDecorateStates(VClass* InClass)
 	if (NewLabelsStart != InClass->StateLabels.Num())
 	{
 		ParseError(Lex.Location, "State label at the end of state block");
+	}
+	if (PrevState)
+	{
+		ParseError(Lex.Location, "State block not ended");
 	}
 }
 
