@@ -25,18 +25,15 @@
 
 class SorcFX3Explosion : Effect;
 
-__states__
+states
 {
-	S_SORCFX3_EXP1('SBS3', 3, 3.0 / 35.0, S_SORCFX3_EXP2) = none
-	S_SORCFX3_EXP2('SBS3', 4, 3.0 / 35.0, S_SORCFX3_EXP3) = none
-	S_SORCFX3_EXP3('SBS3', 5, 3.0 / 35.0, S_SORCFX3_EXP4) = none
-	S_SORCFX3_EXP4('SBS3', 6, 3.0 / 35.0, S_SORCFX3_EXP5) = none
-	S_SORCFX3_EXP5('SBS3', 7, 3.0 / 35.0, none) = none
+Spawn:
+	SBS3 DEFGH 3
+	Stop
 }
 
 defaultproperties
 {
 	Alpha = 0.666;
 	bNoTeleport = true;
-	IdleState = S_SORCFX3_EXP1;
 }

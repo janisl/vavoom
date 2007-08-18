@@ -27,14 +27,15 @@ class KeyDungeon : HexenKey
 	__mobjinfo__(8035)
 	__scriptid__(90);
 
-__states__
+states
 {
-	S_KEY6('KEY6', 0, -1.0, none) = none
+Spawn:
+	KEY6 A -1
+	Stop
 }
 
 defaultproperties
 {
 	PickupMessage = "$txt_key_dungeon";
 	IconName = 'keyslot6';
-	IdleState = S_KEY6;
 }

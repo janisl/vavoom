@@ -26,12 +26,12 @@
 class PillarHugeTech : Decoration
 	__mobjinfo__(57);
 
-__states__
+states
 {
-	S_HUGE_COLUMN_1('HUGE', 0, 4.0 / 35.0, S_HUGE_COLUMN_2) = none
-	S_HUGE_COLUMN_2('HUGE', 1, 5.0 / 35.0, S_HUGE_COLUMN_3) = none
-	S_HUGE_COLUMN_3('HUGE', 2, 5.0 / 35.0, S_HUGE_COLUMN_4) = none
-	S_HUGE_COLUMN_4('HUGE', 3, 5.0 / 35.0, S_HUGE_COLUMN_1) = none
+Spawn:
+	HUGE A 4
+	HUGE BCD 5
+	Loop
 }
 
 defaultproperties
@@ -39,7 +39,6 @@ defaultproperties
 	Radius = 24.0;
 	Height = 192.0;
 	bSolid = true;
-	IdleState = S_HUGE_COLUMN_1;
 	bStaticLight = true;
 	LightColour = 0xff7fff7f;
 	LightOffset = vector(0.0, 0.0, 96.0);

@@ -25,22 +25,17 @@
 
 class MinotaurFX3 : MinotaurFloorFire;
 
-__states__
+states
 {
-	S_MNTRFX3_1('FX13', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_MNTRFX3_2) = none
-	S_MNTRFX3_2('FX13', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_MNTRFX3_3) = none
-	S_MNTRFX3_3('FX13', 1 | FF_FULLBRIGHT, 5.0 / 35.0, S_MNTRFX3_4) = none
-	S_MNTRFX3_4('FX13', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_MNTRFX3_5) = none
-	S_MNTRFX3_5('FX13', 3 | FF_FULLBRIGHT, 5.0 / 35.0, S_MNTRFX3_6) = none
-	S_MNTRFX3_6('FX13', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_MNTRFX3_7) = none
-	S_MNTRFX3_7('FX13', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_MNTRFX3_8) = none
-	S_MNTRFX3_8('FX13', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_MNTRFX3_9) = none
-	S_MNTRFX3_9('FX13', 7 | FF_FULLBRIGHT, 4.0 / 35.0, none) = none
+Spawn:
+	FX13 DC 4 Bright
+	FX13 BCDE 5 Bright
+	FX13 FGH 4 Bright
+	Stop
 }
 
 defaultproperties
 {
 	Radius = 8.0;
 	Height = 16.0;
-	IdleState = S_MNTRFX3_1;
 }

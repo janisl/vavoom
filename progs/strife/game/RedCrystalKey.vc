@@ -26,9 +26,11 @@
 class RedCrystalKey : StrifeKey
 	__mobjinfo__(192);
 
-__states__
+states
 {
-	S_RED_CRYSTAL_KEY('RCRY', 0 | FF_FULLBRIGHT, -1.0, none) = none
+Spawn:
+	RCRY A -1 Bright
+	Stop
 }
 
 defaultproperties
@@ -37,5 +39,4 @@ defaultproperties
 	PickupMessage = "$txt_redcrystal";
 	StrifeName = "Red Crystal Key";
 	IconName = 'i_rcry';
-	IdleState = S_RED_CRYSTAL_KEY;
 }

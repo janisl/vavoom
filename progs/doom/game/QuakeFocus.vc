@@ -96,54 +96,13 @@ final void A_ContMobjSound()
 	PlaySound('Earthquake', CHAN_VOICE);
 }
 
-__states__
+states
 {
-	S_QUAKE_ACTIVE1('', 0, 2.0 / 35.0, S_QUAKE_ACTIVE2) = A_Quake
-	S_QUAKE_ACTIVE2('', 0, 1.0 / 35.0, S_QUAKE_ACTIVE3) = A_ContMobjSound
-	S_QUAKE_ACTIVE3('', 0, 2.0 / 35.0, S_QUAKE_ACTIVE4) = A_Quake
-	S_QUAKE_ACTIVE4('', 0, 2.0 / 35.0, S_QUAKE_ACTIVE5) = A_Quake
-	S_QUAKE_ACTIVE5('', 0, 2.0 / 35.0, S_QUAKE_ACTIVE6) = A_Quake
-	S_QUAKE_ACTIVE6('', 0, 2.0 / 35.0, S_QUAKE_ACTIVE7) = A_Quake
-	S_QUAKE_ACTIVE7('', 0, 2.0 / 35.0, S_QUAKE_ACTIVE8) = A_Quake
-	S_QUAKE_ACTIVE8('', 0, 2.0 / 35.0, S_QUAKE_ACTIVE9) = A_Quake
-	S_QUAKE_ACTIVE9('', 0, 2.0 / 35.0, S_QUAKE_ACTIVE0) = A_Quake
-	S_QUAKE_ACTIVE0('', 0, 2.0 / 35.0, S_QUAKE_ACTIVEA) = A_Quake
-	S_QUAKE_ACTIVEA('', 0, 2.0 / 35.0, S_QUAKE_ACTIVEB) = A_Quake
-	S_QUAKE_ACTIVEB('', 0, 2.0 / 35.0, S_QUAKE_ACTIVEC) = A_Quake
-	S_QUAKE_ACTIVEC('', 0, 2.0 / 35.0, S_QUAKE_ACTIVED) = A_Quake
-	S_QUAKE_ACTIVED('', 0, 2.0 / 35.0, S_QUAKE_ACTIVEE) = A_Quake
-	S_QUAKE_ACTIVEE('', 0, 2.0 / 35.0, S_QUAKE_ACTIVEF) = A_Quake
-	S_QUAKE_ACTIVEF('', 0, 2.0 / 35.0, S_QUAKE_ACTIVEG) = A_Quake
-	S_QUAKE_ACTIVEG('', 0, 2.0 / 35.0, S_QUAKE_ACTIVEH) = A_Quake
-	S_QUAKE_ACTIVEH('', 0, 2.0 / 35.0, S_QUAKE_ACTIVEI) = A_Quake
-	S_QUAKE_ACTIVEI('', 0, 2.0 / 35.0, S_QUAKE_ACTIVEJ) = A_Quake
-	S_QUAKE_ACTIVEJ('', 0, 2.0 / 35.0, S_QUAKE_ACTIVEK) = A_Quake
-	S_QUAKE_ACTIVEK('', 0, 2.0 / 35.0, S_QUAKE_ACTIVEL) = A_Quake
-	S_QUAKE_ACTIVEL('', 0, 2.0 / 35.0, S_QUAKE_ACTIVEM) = A_Quake
-	S_QUAKE_ACTIVEM('', 0, 2.0 / 35.0, S_QUAKE_ACTIVEN) = A_Quake
-	S_QUAKE_ACTIVEN('', 0, 2.0 / 35.0, S_QUAKE_ACTIVEO) = A_Quake
-	S_QUAKE_ACTIVEO('', 0, 2.0 / 35.0, S_QUAKE_ACTIVEP) = A_Quake
-	S_QUAKE_ACTIVEP('', 0, 2.0 / 35.0, S_QUAKE_ACTIVEQ) = A_Quake
-	S_QUAKE_ACTIVEQ('', 0, 2.0 / 35.0, S_QUAKE_ACTIVER) = A_Quake
-	S_QUAKE_ACTIVER('', 0, 2.0 / 35.0, S_QUAKE_ACTIVES) = A_Quake
-	S_QUAKE_ACTIVES('', 0, 2.0 / 35.0, S_QUAKE_ACTIVET) = A_Quake
-	S_QUAKE_ACTIVET('', 0, 2.0 / 35.0, S_QUAKE_ACTIVEU) = A_Quake
-	S_QUAKE_ACTIVEU('', 0, 2.0 / 35.0, S_QUAKE_ACTIVEV) = A_Quake
-	S_QUAKE_ACTIVEV('', 0, 2.0 / 35.0, S_QUAKE_ACTIVEW) = A_Quake
-	S_QUAKE_ACTIVEW('', 0, 2.0 / 35.0, S_QUAKE_ACTIVEX) = A_Quake
-	S_QUAKE_ACTIVEX('', 0, 2.0 / 35.0, S_QUAKE_ACTIVEY) = A_Quake
-	S_QUAKE_ACTIVEY('', 0, 2.0 / 35.0, S_QUAKE_ACTIVEZ) = A_Quake
-	S_QUAKE_ACTIVEZ('', 0, 2.0 / 35.0, S_QUAKE_ACT1) = A_Quake
-	S_QUAKE_ACT1('', 0, 2.0 / 35.0, S_QUAKE_ACT2) = A_Quake
-	S_QUAKE_ACT2('', 0, 2.0 / 35.0, S_QUAKE_ACT3) = A_Quake
-	S_QUAKE_ACT3('', 0, 2.0 / 35.0, S_QUAKE_ACT4) = A_Quake
-	S_QUAKE_ACT4('', 0, 2.0 / 35.0, S_QUAKE_ACT5) = A_Quake
-	S_QUAKE_ACT5('', 0, 2.0 / 35.0, S_QUAKE_ACT6) = A_Quake
-	S_QUAKE_ACT6('', 0, 2.0 / 35.0, S_QUAKE_ACT7) = A_Quake
-	S_QUAKE_ACT7('', 0, 2.0 / 35.0, S_QUAKE_ACT8) = A_Quake
-	S_QUAKE_ACT8('', 0, 2.0 / 35.0, S_QUAKE_ACT9) = A_Quake
-	S_QUAKE_ACT9('', 0, 2.0 / 35.0, S_QUAKE_ACT0) = A_Quake
-	S_QUAKE_ACT0('', 0, 2.0 / 35.0, S_QUAKE_ACTIVE1) = A_Quake
+Spawn:
+	TNT1 A 2 A_Quake
+	TNT1 A 1 A_ContMobjSound
+	TNT1 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA 2 A_Quake
+	Loop
 }
 
 defaultproperties
@@ -151,5 +110,4 @@ defaultproperties
 	Alpha = 0.0;
 	bHidden = true;
 	bNoBlockmap = true;
-	IdleState = S_QUAKE_ACTIVE1;
 }

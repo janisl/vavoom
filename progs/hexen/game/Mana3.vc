@@ -44,24 +44,11 @@ bool TryPickup(EntityEx Toucher)
 	return false;
 }
 
-__states__
+states
 {
-	S_MANA3_1('MAN3', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_MANA3_2) = none
-	S_MANA3_2('MAN3', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_MANA3_3) = none
-	S_MANA3_3('MAN3', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_MANA3_4) = none
-	S_MANA3_4('MAN3', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_MANA3_5) = none
-	S_MANA3_5('MAN3', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_MANA3_6) = none
-	S_MANA3_6('MAN3', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_MANA3_7) = none
-	S_MANA3_7('MAN3', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_MANA3_8) = none
-	S_MANA3_8('MAN3', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_MANA3_9) = none
-	S_MANA3_9('MAN3', 8 | FF_FULLBRIGHT, 4.0 / 35.0, S_MANA3_10) = none
-	S_MANA3_10('MAN3', 9 | FF_FULLBRIGHT, 4.0 / 35.0, S_MANA3_11) = none
-	S_MANA3_11('MAN3', 10 | FF_FULLBRIGHT, 4.0 / 35.0, S_MANA3_12) = none
-	S_MANA3_12('MAN3', 11 | FF_FULLBRIGHT, 4.0 / 35.0, S_MANA3_13) = none
-	S_MANA3_13('MAN3', 12 | FF_FULLBRIGHT, 4.0 / 35.0, S_MANA3_14) = none
-	S_MANA3_14('MAN3', 13 | FF_FULLBRIGHT, 4.0 / 35.0, S_MANA3_15) = none
-	S_MANA3_15('MAN3', 14 | FF_FULLBRIGHT, 4.0 / 35.0, S_MANA3_16) = none
-	S_MANA3_16('MAN3', 15 | FF_FULLBRIGHT, 4.0 / 35.0, S_MANA3_1) = none
+Spawn:
+	MAN3 ABCDEFGHIJKLMNOP 4 Bright
+	Loop
 }
 
 defaultproperties
@@ -75,6 +62,5 @@ defaultproperties
 	bDynamicLight = true;
 	DLightColour = RGB(255, 0, 0);
 	DLightRadius = 100.0;
-	IdleState = S_MANA3_1;
 	PickupMessage = "$txt_mana_both";
 }

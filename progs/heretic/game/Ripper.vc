@@ -46,15 +46,15 @@ int DoSpecialDamage(EntityEx victim, EntityEx source, int damage)
 	return ::DoSpecialDamage(victim, source, damage);
 }
 
-__states__
+states
 {
-	S_RIPPER1('FX18', 12, 4.0 / 35.0, S_RIPPER2) = none
-	S_RIPPER2('FX18', 13, 5.0 / 35.0, S_RIPPER1) = none
-	S_RIPPERX1('FX18', 14 | FF_FULLBRIGHT, 4.0 / 35.0, S_RIPPERX2) = none
-	S_RIPPERX2('FX18', 15 | FF_FULLBRIGHT, 4.0 / 35.0, S_RIPPERX3) = none
-	S_RIPPERX3('FX18', 16 | FF_FULLBRIGHT, 4.0 / 35.0, S_RIPPERX4) = none
-	S_RIPPERX4('FX18', 17 | FF_FULLBRIGHT, 4.0 / 35.0, S_RIPPERX5) = none
-	S_RIPPERX5('FX18', 18 | FF_FULLBRIGHT, 4.0 / 35.0, none) = none
+Spawn:
+	FX18 M 4
+	FX18 N 5
+	Loop
+Death:
+	FX18 OPQRS 4 Bright
+	Stop
 }
 
 defaultproperties
@@ -65,7 +65,5 @@ defaultproperties
 	MissileDamage = 1;
 	bRip = true;
 	bActivateImpact = true;
-	IdleState = S_RIPPER1;
-	DeathState = S_RIPPERX1;
 	DeathSound = 'weapons/blasterpowhit';
 }

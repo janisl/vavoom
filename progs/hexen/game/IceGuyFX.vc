@@ -57,16 +57,17 @@ final void A_IceGuyMissileExplode()
 	}
 }
 
-__states__
+states
 {
-	S_ICEGUY_FX1('ICPR', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_ICEGUY_FX2) = A_IceGuyMissilePuff
-	S_ICEGUY_FX2('ICPR', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_ICEGUY_FX3) = A_IceGuyMissilePuff
-	S_ICEGUY_FX3('ICPR', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_ICEGUY_FX1) = A_IceGuyMissilePuff
-	S_ICEGUY_FX_X1('ICPR', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_ICEGUY_FX_X2) = none
-	S_ICEGUY_FX_X2('ICPR', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_ICEGUY_FX_X3) = A_IceGuyMissileExplode
-	S_ICEGUY_FX_X3('ICPR', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_ICEGUY_FX_X4) = none
-	S_ICEGUY_FX_X4('ICPR', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_ICEGUY_FX_X5) = none
-	S_ICEGUY_FX_X5('ICPR', 7 | FF_FULLBRIGHT, 3.0 / 35.0, none) = none
+Spawn:
+	ICPR ABC 3 Bright A_IceGuyMissilePuff
+	Loop
+Death:
+	ICPR D 4 Bright
+	ICPR E 4 Bright A_IceGuyMissileExplode
+	ICPR FG 4 Bright
+	ICPR H 3 Bright
+	Stop
 }
 
 defaultproperties
@@ -78,8 +79,6 @@ defaultproperties
 	DamageType = 'Ice';
 	bActivateImpact = false;
 	bActivatePCross = false;
-	IdleState = S_ICEGUY_FX1;
-	DeathState = S_ICEGUY_FX_X1;
 	DeathSound = 'IceGuyMissileExplode';
 	DLightColour = RGB(74, 77, 196);
 	DLightRadius = 200.0;

@@ -26,11 +26,11 @@
 class SerpentTorch : Decoration
 	__mobjinfo__(27);
 
-__states__
+states
 {
-	S_SERPTORCH1('SRTC', 0, 4.0 / 35.0, S_SERPTORCH2) = none
-	S_SERPTORCH2('SRTC', 1, 4.0 / 35.0, S_SERPTORCH3) = none
-	S_SERPTORCH3('SRTC', 2, 4.0 / 35.0, S_SERPTORCH1) = none
+Spawn:
+	SRTC ABC 4
+	Loop
 }
 
 defaultproperties
@@ -38,7 +38,6 @@ defaultproperties
 	Radius = 12.0;
 	Height = 54.0;
 	bSolid = true;
-	IdleState = S_SERPTORCH1;
 	bStaticLight = true;
 	LightColour = RGB(255, 255, 0);
 	LightOffset = vector(0.0, 0.0, 46.0);

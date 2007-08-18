@@ -25,9 +25,11 @@
 
 class Power1Key : StrifeKey;
 
-__states__
+states
 {
-	S_POWER1_KEY('PWR1', 0, -1.0, none) = none
+Spawn:
+	PWR1 A -1
+	Stop
 }
 
 defaultproperties
@@ -36,5 +38,4 @@ defaultproperties
 	PickupMessage = "$txt_power1key";
 	StrifeName = "Power1 Key";
 	IconName = 'i_pwr1';
-	IdleState = S_POWER1_KEY;
 }

@@ -53,9 +53,11 @@ bool SpecialDropAction(EntityEx Source)
 	return true;
 }
 
-__states__
+states
 {
-	S_TOKENS('TOKN', 0, -1.0, none) = none
+Spawn:
+	TOKN A -1
+	Stop
 }
 
 defaultproperties
@@ -65,7 +67,6 @@ defaultproperties
 	MaxAmount = 1;
 	IconName = 'i_tokn';
 	GiveQuestType = QuestItem10;
-	IdleState = S_TOKENS;
 	bFloorClip = true;
 	bInvBar = true;
 }

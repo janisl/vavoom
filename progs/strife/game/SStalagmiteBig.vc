@@ -26,9 +26,11 @@
 class SStalagmiteBig : Decoration
 	__mobjinfo__(160);
 
-__states__
+states
 {
-	S_STALAG_2('STLG', 1, -1.0, none) = none
+Spawn:
+	STLG B -1
+	Stop
 }
 
 defaultproperties
@@ -36,5 +38,4 @@ defaultproperties
 	Radius = 16.0;
 	Height = 40.0;
 	bSolid = true;
-	IdleState = S_STALAG_2;
 }

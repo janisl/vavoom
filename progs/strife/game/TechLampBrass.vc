@@ -26,9 +26,11 @@
 class TechLampBrass : Decoration
 	__mobjinfo__(197);
 
-__states__
+states
 {
-	S_TLAMP_2('TLMP', 1, -1.0, none) = none
+Spawn:
+	TLMP B -1
+	Stop
 }
 
 defaultproperties
@@ -36,7 +38,6 @@ defaultproperties
 	Radius = 8.0;
 	Height = 64.0;
 	bSolid = true;
-	IdleState = S_TLAMP_2;
 	bStaticLight = true;
 	LightColour = 0xffafaf7f;
 	LightOffset = vector(0.0, 0.0, 32.0);

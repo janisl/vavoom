@@ -25,13 +25,14 @@
 
 class SlimeChunk : Actor;
 
-__states__
+states
 {
-	S_SLUDGECHUNK1('SLIM', 0, 8.0 / 35.0, S_SLUDGECHUNK2) = none
-	S_SLUDGECHUNK2('SLIM', 1, 8.0 / 35.0, S_SLUDGECHUNK3) = none
-	S_SLUDGECHUNK3('SLIM', 2, 8.0 / 35.0, S_SLUDGECHUNK4) = none
-	S_SLUDGECHUNK4('SLIM', 3, 8.0 / 35.0, none) = none
-	S_SLUDGECHUNKX('SLIM', 3, 6.0 / 35.0, none) = none
+Spawn:
+	SLIM ABCD 8
+	Stop
+Death:
+	SLIM D 6
+	Stop
 }
 
 defaultproperties
@@ -46,6 +47,4 @@ defaultproperties
 	bActivatePCross = true;
 	bCannotPush = true;
 	bNoSplash = true;
-	IdleState = S_SLUDGECHUNK1;
-	DeathState = S_SLUDGECHUNKX;
 }

@@ -26,19 +26,17 @@
 class TeleportSwirl : Decoration
 	__mobjinfo__(23);
 
-__states__
+states
 {
-	S_TELEPORT_MARKER_1('TELP', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_TELEPORT_MARKER_2) = none
-	S_TELEPORT_MARKER_2('TELP', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_TELEPORT_MARKER_3) = none
-	S_TELEPORT_MARKER_3('TELP', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_TELEPORT_MARKER_4) = none
-	S_TELEPORT_MARKER_4('TELP', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_TELEPORT_MARKER_1) = none
+Spawn:
+	TELP ABCD 3 Bright
+	Loop
 }
 
 defaultproperties
 {
 	Alpha = 0.333;
 	bNoBlockmap = true;
-	IdleState = S_TELEPORT_MARKER_1;
 	bStaticLight = true;
 	LightColour = 0xffffff7f;
 	LightOffset = vector(0.0, 0.0, 32.0);

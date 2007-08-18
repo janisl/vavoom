@@ -27,14 +27,15 @@ class KeyAxe : HexenKey
 	__mobjinfo__(8032)
 	__scriptid__(87);
 
-__states__
+states
 {
-	S_KEY3('KEY3', 0, -1.0, none) = none
+Spawn:
+	KEY3 A -1
+	Stop
 }
 
 defaultproperties
 {
 	PickupMessage = "$txt_key_axe";
 	IconName = 'keyslot3';
-	IdleState = S_KEY3;
 }

@@ -23,14 +23,16 @@
 //**
 //**************************************************************************
 
-class WraithFX3:Fragment;
+class WraithFX3 : Fragment;
 
-__states__
+states
 {
-	S_WRTHFX_DROP1('WRBL', 16 | FF_FULLBRIGHT, 4.0 / 35.0, S_WRTHFX_DROP2) = none
-	S_WRTHFX_DROP2('WRBL', 17 | FF_FULLBRIGHT, 4.0 / 35.0, S_WRTHFX_DROP3) = none
-	S_WRTHFX_DROP3('WRBL', 18 | FF_FULLBRIGHT, 4.0 / 35.0, S_WRTHFX_DROP1) = none
-	S_WRTHFX_DEAD1('WRBL', 18 | FF_FULLBRIGHT, 4.0 / 35.0, none) = none
+Spawn:
+	WRBL QRS 4 Bright
+	Loop
+Death:
+	WRBL S 4 Bright
+	Stop
 }
 
 defaultproperties
@@ -40,7 +42,5 @@ defaultproperties
 	Mass = 5.0;
 	bFloorClip = true;
 	bNoGravity = false;
-	IdleState = S_WRTHFX_DROP1;
-	DeathState = S_WRTHFX_DEAD1;
 	DeathSound = 'Drip';
 }

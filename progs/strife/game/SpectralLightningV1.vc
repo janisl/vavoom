@@ -25,13 +25,12 @@
 
 class SpectralLightningV1 : SpectralLightningBase;
 
-__states__
+states
 {
-	S_SIGIL_FX4_1('ZOT1', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_SIGIL_FX4_2) = none
-	S_SIGIL_FX4_2('ZOT1', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_SIGIL_FX4_3) = none
-	S_SIGIL_FX4_3('ZOT1', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_SIGIL_FX4_4) = none
-	S_SIGIL_FX4_4('ZOT1', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_SIGIL_FX4_5) = none
-	S_SIGIL_FX4_5('ZOT1', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_SIGIL_FX4_1) = none
+Spawn:
+	ZOT1 AB 4 Bright
+	ZOT1 CDD 6 Bright
+	Loop
 }
 
 defaultproperties
@@ -49,7 +48,6 @@ defaultproperties
 	bNoTeleport = true;
 	bDynamicLight = true;
 	bSpectral = true;
-	IdleState = S_SIGIL_FX4_1;
 	DeathState = S_ZAP1_6;
 	SightSound = 'weapons/sigil';
 	DeathSound = 'weapons/sigilhit';

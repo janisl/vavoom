@@ -27,17 +27,11 @@ class Mana1 : Ammo
 	__mobjinfo__(122)
 	__scriptid__(11);
 
-__states__
+states
 {
-	S_MANA1_1('MAN1', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_MANA1_2) = none
-	S_MANA1_2('MAN1', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_MANA1_3) = none
-	S_MANA1_3('MAN1', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_MANA1_4) = none
-	S_MANA1_4('MAN1', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_MANA1_5) = none
-	S_MANA1_5('MAN1', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_MANA1_6) = none
-	S_MANA1_6('MAN1', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_MANA1_7) = none
-	S_MANA1_7('MAN1', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_MANA1_8) = none
-	S_MANA1_8('MAN1', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_MANA1_9) = none
-	S_MANA1_9('MAN1', 8 | FF_FULLBRIGHT, 4.0 / 35.0, S_MANA1_1) = none
+Spawn:
+	MAN1 ABCDEFGHI 4 Bright
+	Loop
 }
 
 defaultproperties
@@ -53,6 +47,5 @@ defaultproperties
 	bDynamicLight = true;
 	DLightColour = RGB(74, 77, 196);
 	DLightRadius = 100.0;
-	IdleState = S_MANA1_1;
 	PickupMessage = "$txt_mana_1";
 }

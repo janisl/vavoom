@@ -25,13 +25,14 @@
 
 class SludgeChunk : Actor;
 
-__states__
+states
 {
-	S_SLUDGECHUNK1('SLDG', 0, 8.0 / 35.0, S_SLUDGECHUNK2) = none
-	S_SLUDGECHUNK2('SLDG', 1, 8.0 / 35.0, S_SLUDGECHUNK3) = none
-	S_SLUDGECHUNK3('SLDG', 2, 8.0 / 35.0, S_SLUDGECHUNK4) = none
-	S_SLUDGECHUNK4('SLDG', 3, 8.0 / 35.0, none) = none
-	S_SLUDGECHUNKX('SLDG', 3, 6.0 / 35.0, none) = none
+Spawn:
+	SLDG ABCD 8
+	Stop
+Death:
+	SLDG D 6
+	Stop
 }
 
 defaultproperties
@@ -46,6 +47,4 @@ defaultproperties
 	bActivatePCross = true;
 	bCannotPush = true;
 	bNoSplash = true;
-	IdleState = S_SLUDGECHUNK1;
-	DeathState = S_SLUDGECHUNKX;
 }

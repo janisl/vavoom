@@ -27,16 +27,11 @@ class ArtiSpeedBoots : PowerupGiver
 	__mobjinfo__(8002)
 	__scriptid__(13);
 
-__states__
+states
 {
-	S_ARTI_BOOTS1('SPED', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_ARTI_BOOTS2) = none
-	S_ARTI_BOOTS2('SPED', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_ARTI_BOOTS3) = none
-	S_ARTI_BOOTS3('SPED', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_ARTI_BOOTS4) = none
-	S_ARTI_BOOTS4('SPED', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_ARTI_BOOTS5) = none
-	S_ARTI_BOOTS5('SPED', 4 | FF_FULLBRIGHT, 3.0 / 35.0, S_ARTI_BOOTS6) = none
-	S_ARTI_BOOTS6('SPED', 5 | FF_FULLBRIGHT, 3.0 / 35.0, S_ARTI_BOOTS7) = none
-	S_ARTI_BOOTS7('SPED', 6 | FF_FULLBRIGHT, 3.0 / 35.0, S_ARTI_BOOTS8) = none
-	S_ARTI_BOOTS8('SPED', 7 | FF_FULLBRIGHT, 3.0 / 35.0, S_ARTI_BOOTS1) = none
+Spawn:
+	SPED ABCDEFGH 3 Bright
+	Loop
 }
 
 defaultproperties
@@ -46,5 +41,4 @@ defaultproperties
 	IconName = 'artisped';
 	bFloatBob = true;
 	bPickupFlash = true;
-	IdleState = S_ARTI_BOOTS1;
 }

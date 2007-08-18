@@ -26,9 +26,11 @@
 class PillarTechno : Decoration
 	__mobjinfo__(48);
 
-__states__
+states
 {
-	S_MONITOR_COLUMN('MONI', 0, -1.0, none) = none
+Spawn:
+	MONI A -1
+	Stop
 }
 
 defaultproperties
@@ -36,5 +38,4 @@ defaultproperties
 	Radius = 20.0;
 	Height = 128.0;
 	bSolid = true;
-	IdleState = S_MONITOR_COLUMN;
 }

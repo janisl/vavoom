@@ -27,9 +27,11 @@ class PuzzGemGreen1 : PuzzleItem
 	__mobjinfo__(9005)
 	__scriptid__(79);
 
-__states__
+states
 {
-	S_ARTIPUZZGEMGREEN1('AGMG', 0, -1.0, none) = none
+Spawn:
+	AGMG A -1
+	Stop
 }
 
 defaultproperties
@@ -37,5 +39,4 @@ defaultproperties
 	PuzzleItemNumber = 3;
 	PickupMessage = "$txt_artipuzzgemgreen1";
 	IconName = 'artigemg';
-	IdleState = S_ARTIPUZZGEMGREEN1;
 }

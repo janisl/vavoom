@@ -25,16 +25,15 @@
 
 class Sorcerer2FXSpark : Effect;
 
-__states__
+states
 {
-	S_SOR2FXSPARK1('FX16', 3 | FF_FULLBRIGHT, 12.0 / 35.0, S_SOR2FXSPARK2) = none
-	S_SOR2FXSPARK2('FX16', 4 | FF_FULLBRIGHT, 12.0 / 35.0, S_SOR2FXSPARK3) = none
-	S_SOR2FXSPARK3('FX16', 5 | FF_FULLBRIGHT, 12.0 / 35.0, none) = none
+Spawn:
+	FX16 DEF 12 Bright
+	Stop
 }
 
 defaultproperties
 {
 	bNoTeleport = true;
 	bCannotPush = true;
-	IdleState = S_SOR2FXSPARK1;
 }

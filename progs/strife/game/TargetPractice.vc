@@ -26,11 +26,15 @@
 class TargetPractice : Decoration
 	__mobjinfo__(208);
 
-__states__
+states
 {
-	S_TRAIN_TARGET('HOGN', 0, 2.0 / 35.0, S_TRAIN_TARGET) = A_ScrollOrDie
-	S_TRAIN_TARGET_P1('HOGN', 1, 1.0 / 35.0, S_TRAIN_TARGET_P2) = A_ScrollOrDie
-	S_TRAIN_TARGET_P2('HOGN', 2, 1.0 / 35.0, S_TRAIN_TARGET) = A_Pain
+Spawn:
+	HOGN A 2 A_ScrollOrDie
+	Loop
+Pain:
+	HOGN B 1 A_ScrollOrDie
+	HOGN C 1 A_Pain
+	Goto Spawn
 }
 
 defaultproperties
@@ -45,7 +49,5 @@ defaultproperties
 	bInCombat = true;
 	bNoBlood = true;
 	bActivateMCross = true;
-	IdleState = S_TRAIN_TARGET;
-	PainState = S_TRAIN_TARGET_P1;
 	PainSound = 'misc/metalhit';
 }

@@ -25,12 +25,11 @@
 
 class MageWandSmoke : Effect;
 
-__states__
+states
 {
-	S_MWANDSMOKE1('MWND', 2, 4.0 / 35.0, S_MWANDSMOKE2) = none
-	S_MWANDSMOKE2('MWND', 3, 4.0 / 35.0, S_MWANDSMOKE3) = none
-	S_MWANDSMOKE3('MWND', 2, 4.0 / 35.0, S_MWANDSMOKE4) = none
-	S_MWANDSMOKE4('MWND', 3, 4.0 / 35.0, none) = none
+Spawn:
+	MWND CDCD 4
+	Stop
 }
 
 defaultproperties
@@ -39,5 +38,4 @@ defaultproperties
 	bNoTeleport = true;
 	bCannotPush = true;
 	bNoDamageThrust = true;
-	IdleState = S_MWANDSMOKE1;
 }

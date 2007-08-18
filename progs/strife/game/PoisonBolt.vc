@@ -25,10 +25,14 @@
 
 class PoisonBolt : Projectile;
 
-__states__
+states
 {
-	S_ARROW2('ARWP', 0, 10.0 / 35.0, S_ARROW2) = A_ActiveSound
-	S_ARROW2_X('AROW', 0, 1.0 / 35.0, none) = none
+Spawn:
+	ARWP A 10 A_ActiveSound
+	Loop
+Death:
+	AROW A 1
+	Stop
 }
 
 defaultproperties
@@ -41,8 +45,6 @@ defaultproperties
 	bActivateImpact = true;
 	bNoExtremeDeath = true;
 	bDynamicLight = false;
-	IdleState = S_ARROW2;
-	DeathState = S_ARROW2_X;
 	SightSound = 'misc/swish';
 	ActiveSound = 'misc/swish';
 }

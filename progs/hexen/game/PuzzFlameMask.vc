@@ -26,9 +26,11 @@
 class PuzzFlameMask : PuzzleItem
 	__mobjinfo__(9014);
 
-__states__
+states
 {
-	S_ARTIPUZZSKULL2('ASK2', 0, -1.0, none) = none
+Spawn:
+	ASK2 A -1
+	Stop
 }
 
 defaultproperties
@@ -36,5 +38,4 @@ defaultproperties
 	PuzzleItemNumber = 9;
 	PickupMessage = "$txt_artipuzzskull2";
 	IconName = 'artiskl2';
-	IdleState = S_ARTIPUZZSKULL2;
 }

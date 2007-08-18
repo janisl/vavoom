@@ -27,19 +27,22 @@
 class Piston : Decoration
 	__mobjinfo__(45);
 
-__states__
+states
 {
-	S_GATES_1('PSTN', 0, 8.0 / 35.0, S_GATES_2) = none
-	S_GATES_2('PSTN', 1, 8.0 / 35.0, S_GATES_1) = none
-	S_GATES_X1('PSTN', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_GATES_X2) = A_Scream
-	S_GATES_X2('PSTN', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_GATES_X3) = A_Fall
-	S_GATES_X3('PSTN', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_GATES_X4) = A_QuestObjectDeath
-	S_GATES_X4('PSTN', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_GATES_X5) = A_SpawnPuff
-	S_GATES_X5('PSTN', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_GATES_X6) = A_XDying
-	S_GATES_X6('PSTN', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_GATES_X7) = none
-	S_GATES_X7('PSTN', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_GATES_X8) = A_SpawnPuff
-	S_GATES_X8('PSTN', 7, 4.0 / 35.0, S_GATES_X9) = none
-	S_GATES_X9('PSTN', 8, -1.0, none) = none
+Spawn:
+	PSTN AB 8
+	Loop
+Death:
+	PSTN A 4 Bright A_Scream
+	PSTN B 4 Bright A_Fall
+	PSTN C 4 Bright A_QuestObjectDeath
+	PSTN D 4 Bright A_SpawnPuff
+	PSTN E 4 Bright A_XDying
+	PSTN F 4 Bright
+	PSTN G 4 Bright A_SpawnPuff
+	PSTN H 4
+	PSTN I -1
+	Stop
 }
 
 defaultproperties
@@ -54,7 +57,5 @@ defaultproperties
 	bInCombat = true;
 	bNoBlood = true;
 	bFloorClip = true;
-	IdleState = S_GATES_1;
-	DeathState = S_GATES_X1;
 	DeathSound = 'misc/explosion';
 }

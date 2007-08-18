@@ -27,14 +27,15 @@ class KeyHorn : HexenKey
 	__mobjinfo__(8038)
 	__scriptid__(93);
 
-__states__
+states
 {
-	S_KEY9('KEY9', 0, -1.0, none) = none
+Spawn:
+	KEY9 A -1
+	Stop
 }
 
 defaultproperties
 {
 	PickupMessage = "$txt_key_horn";
 	IconName = 'keyslot9';
-	IdleState = S_KEY9;
 }

@@ -26,10 +26,14 @@
 class Dart : Projectile
 	__scriptid__(51);
 
-__states__
+states
 {
-	S_DART_1('DART', 0, -1.0, none) = none
-	S_DART_X1('DART', 0, 1.0 / 35.0, none) = none
+Spawn:
+	DART A -1
+	Stop
+Death:
+	DART A 1
+	Stop
 }
 
 defaultproperties
@@ -40,6 +44,4 @@ defaultproperties
 	MissileDamage = 2;
 	bActivateImpact = false;
 	bActivatePCross = false;
-	IdleState = S_DART_1;
-	DeathState = S_DART_X1;
 }

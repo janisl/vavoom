@@ -77,16 +77,15 @@ final void A_VolcBallImpact()
 	}
 }
 
-__states__
+states
 {
-	S_VOLCANOBALL1('VFBL', 0, 4.0 / 35.0, S_VOLCANOBALL2) = A_BeastPuff
-	S_VOLCANOBALL2('VFBL', 1, 4.0 / 35.0, S_VOLCANOBALL1) = A_BeastPuff
-	S_VOLCANOBALLX1('XPL1', 0, 4.0 / 35.0, S_VOLCANOBALLX2) = A_VolcBallImpact
-	S_VOLCANOBALLX2('XPL1', 1, 4.0 / 35.0, S_VOLCANOBALLX3) = none
-	S_VOLCANOBALLX3('XPL1', 2, 4.0 / 35.0, S_VOLCANOBALLX4) = none
-	S_VOLCANOBALLX4('XPL1', 3, 4.0 / 35.0, S_VOLCANOBALLX5) = none
-	S_VOLCANOBALLX5('XPL1', 4, 4.0 / 35.0, S_VOLCANOBALLX6) = none
-	S_VOLCANOBALLX6('XPL1', 5, 4.0 / 35.0, none) = none
+Spawn:
+	VFBL AB 4 A_BeastPuff
+	Loop
+Death:
+	XPL1 A 4 A_VolcBallImpact
+	XPL1 BCDEF 4
+	Stop
 }
 
 defaultproperties
@@ -98,8 +97,6 @@ defaultproperties
 	MissileDamage = 2;
 	DamageType = 'Fire';
 	bNoGravity = false;
-	IdleState = S_VOLCANOBALL1;
-	DeathState = S_VOLCANOBALLX1;
 	DeathSound = 'world/volcano/blast';
 	DLightColour = RGB(255, 128, 0);
 	DLightRadius = 200.0;

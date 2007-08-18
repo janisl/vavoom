@@ -69,12 +69,14 @@ final void A_BatMove()
 	FloatBobIndex = (FloatBobIndex + 3) & 63;
 }
 
-__states__
+states
 {
-	S_BAT1('ABAT', 0, 2.0 / 35.0, S_BAT2) = A_BatMove
-	S_BAT2('ABAT', 1, 2.0 / 35.0, S_BAT3) = A_BatMove
-	S_BAT3('ABAT', 2, 2.0 / 35.0, S_BAT1) = A_BatMove
-	S_BAT_DEATH('ABAT', 0, 2.0 / 35.0, none) = none
+Spawn:
+	ABAT ABC 2 A_BatMove
+	Loop
+Death:
+	ABAT A 2
+	Stop
 }
 
 defaultproperties
@@ -83,6 +85,4 @@ defaultproperties
 	Height = 3.0;
 	Speed = 175.0;
 	bDropOff = false;
-	IdleState = S_BAT1;
-	DeathState = S_BAT_DEATH;
 }

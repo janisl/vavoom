@@ -101,12 +101,12 @@ final void A_SpawnSound()
 	A_SpawnFly();
 }
 
-__states__
+states
 {
-	S_SPAWN1('BOSF', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_SPAWN2) = A_SpawnSound
-	S_SPAWN2('BOSF', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_SPAWN3) = A_SpawnFly
-	S_SPAWN3('BOSF', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_SPAWN4) = A_SpawnFly
-	S_SPAWN4('BOSF', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_SPAWN1) = A_SpawnFly
+Spawn:
+	BOSF A 3 Bright A_SpawnSound
+	BOSF BCD 3 Bright A_SpawnFly
+	Loop
 }
 
 defaultproperties
@@ -124,7 +124,6 @@ defaultproperties
 	bColideWithThings = false;
 	bColideWithWorld = false;
 	bRandomise = true;
-	IdleState = S_SPAWN1;
 	SightSound = 'brain/spit';
 	DeathSound = 'brain/cubeboom';
 }

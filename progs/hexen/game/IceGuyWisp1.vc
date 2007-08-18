@@ -25,21 +25,14 @@
 
 class IceGuyWisp1 : Fragment;
 
-__states__
+states
 {
-	S_ICEGUY_WISP1_1('ICWS', 0, 2.0 / 35.0, S_ICEGUY_WISP1_2) = none
-	S_ICEGUY_WISP1_2('ICWS', 1, 2.0 / 35.0, S_ICEGUY_WISP1_3) = none
-	S_ICEGUY_WISP1_3('ICWS', 2, 2.0 / 35.0, S_ICEGUY_WISP1_4) = none
-	S_ICEGUY_WISP1_4('ICWS', 3, 2.0 / 35.0, S_ICEGUY_WISP1_5) = none
-	S_ICEGUY_WISP1_5('ICWS', 4, 2.0 / 35.0, S_ICEGUY_WISP1_6) = none
-	S_ICEGUY_WISP1_6('ICWS', 5, 2.0 / 35.0, S_ICEGUY_WISP1_7) = none
-	S_ICEGUY_WISP1_7('ICWS', 6, 2.0 / 35.0, S_ICEGUY_WISP1_8) = none
-	S_ICEGUY_WISP1_8('ICWS', 7, 2.0 / 35.0, S_ICEGUY_WISP1_9) = none
-	S_ICEGUY_WISP1_9('ICWS', 8, 2.0 / 35.0, none) = none
+Spawn:
+	ICWS ABCDEFGHI 2
+	Stop
 }
 
 defaultproperties
 {
 	Alpha = 0.666;
-	IdleState = S_ICEGUY_WISP1_1;
 }

@@ -40,13 +40,15 @@ final void A_AccTeleGlitter()
 	}
 }
 
-__states__
+states
 {
-	S_TELEGLITTER1_1('TGLT', 0 | FF_FULLBRIGHT, 2.0 / 35.0, S_TELEGLITTER1_2) = none
-	S_TELEGLITTER1_2('TGLT', 1 | FF_FULLBRIGHT, 2.0 / 35.0, S_TELEGLITTER1_3) = A_AccTeleGlitter
-	S_TELEGLITTER1_3('TGLT', 2 | FF_FULLBRIGHT, 2.0 / 35.0, S_TELEGLITTER1_4) = none
-	S_TELEGLITTER1_4('TGLT', 3 | FF_FULLBRIGHT, 2.0 / 35.0, S_TELEGLITTER1_5) = A_AccTeleGlitter
-	S_TELEGLITTER1_5('TGLT', 4 | FF_FULLBRIGHT, 2.0 / 35.0, S_TELEGLITTER1_1) = none
+Spawn:
+	TGLT A 2 Bright
+	TGLT B 2 Bright A_AccTeleGlitter
+	TGLT C 2 Bright
+	TGLT D 2 Bright A_AccTeleGlitter
+	TGLT E 2 Bright
+	Loop
 }
 
 defaultproperties
@@ -57,7 +59,6 @@ defaultproperties
 	bNoBlockmap = true;
 	bNoGravity = true;
 	bDynamicLight = true;
-	IdleState = S_TELEGLITTER1_1;
 	DLightColour = RGB(255, 179, 179);
 	DLightRadius = 100.0;
 }

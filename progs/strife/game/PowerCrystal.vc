@@ -83,39 +83,29 @@ final void A_Unknown114()
 	}
 }
 
-__states__
+states
 {
-	S_CRYSTAL_1('CRYS', 0, 16.0 / 35.0, S_CRYSTAL_2) = A_ActiveSound
-	S_CRYSTAL_2('CRYS', 1, 5.0 / 35.0, S_CRYSTAL_3) = A_ActiveSound
-	S_CRYSTAL_3('CRYS', 2, 4.0 / 35.0, S_CRYSTAL_4) = A_ActiveSound
-	S_CRYSTAL_4('CRYS', 3, 4.0 / 35.0, S_CRYSTAL_5) = A_ActiveSound
-	S_CRYSTAL_5('CRYS', 4, 4.0 / 35.0, S_CRYSTAL_6) = A_ActiveSound
-	S_CRYSTAL_6('CRYS', 5, 4.0 / 35.0, S_CRYSTAL_1) = A_ActiveSound
-	S_CRYSTAL_X1('BOOM', 0 | FF_FULLBRIGHT, 1.0 / 35.0, S_CRYSTAL_X2) = A_Unknown112
-	S_CRYSTAL_X2('BOOM', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_CRYSTAL_X3) = A_QuestObjectDeath
-	S_CRYSTAL_X3('BOOM', 2 | FF_FULLBRIGHT, 2.0 / 35.0, S_CRYSTAL_X4) = A_LightGoesOut
-	S_CRYSTAL_X4('BOOM', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_CRYSTAL_X5) = A_SpawnPuff
-	S_CRYSTAL_X5('BOOM', 4 | FF_FULLBRIGHT, 3.0 / 35.0, S_CRYSTAL_X6) = none
-	S_CRYSTAL_X6('BOOM', 5 | FF_FULLBRIGHT, 3.0 / 35.0, S_CRYSTAL_X7) = none
-	S_CRYSTAL_X7('BOOM', 6 | FF_FULLBRIGHT, 3.0 / 35.0, S_CRYSTAL_X8) = A_SpawnPuff
-	S_CRYSTAL_X8('BOOM', 7 | FF_FULLBRIGHT, 1.0 / 35.0, S_CRYSTAL_X9) = A_Unknown112
-	S_CRYSTAL_X9('BOOM', 8 | FF_FULLBRIGHT, 3.0 / 35.0, S_CRYSTAL_X10) = none
-	S_CRYSTAL_X10('BOOM', 9 | FF_FULLBRIGHT, 3.0 / 35.0, S_CRYSTAL_X11) = A_SpawnPuff
-	S_CRYSTAL_X11('BOOM', 10 | FF_FULLBRIGHT, 3.0 / 35.0, S_CRYSTAL_X12) = A_SpawnPuff
-	S_CRYSTAL_X12('BOOM', 11 | FF_FULLBRIGHT, 3.0 / 35.0, S_CRYSTAL_X13) = A_SpawnPuff
-	S_CRYSTAL_X13('BOOM', 12 | FF_FULLBRIGHT, 3.0 / 35.0, S_CRYSTAL_X14) = none
-	S_CRYSTAL_X14('BOOM', 13 | FF_FULLBRIGHT, 3.0 / 35.0, S_CRYSTAL_X15) = none
-	S_CRYSTAL_X15('BOOM', 14 | FF_FULLBRIGHT, 3.0 / 35.0, S_CRYSTAL_X16) = A_SpawnPuff
-	S_CRYSTAL_X16('BOOM', 15 | FF_FULLBRIGHT, 3.0 / 35.0, S_CRYSTAL_X17) = none
-	S_CRYSTAL_X17('BOOM', 16 | FF_FULLBRIGHT, 3.0 / 35.0, S_CRYSTAL_X18) = none
-	S_CRYSTAL_X18('BOOM', 17 | FF_FULLBRIGHT, 3.0 / 35.0, S_CRYSTAL_X19) = none
-	S_CRYSTAL_X19('BOOM', 18 | FF_FULLBRIGHT, 3.0 / 35.0, S_CRYSTAL_X20) = none
-	S_CRYSTAL_X20('BOOM', 19 | FF_FULLBRIGHT, 3.0 / 35.0, S_CRYSTAL_X21) = none
-	S_CRYSTAL_X21('BOOM', 20 | FF_FULLBRIGHT, 3.0 / 35.0, S_CRYSTAL_X22) = A_Unknown114
-	S_CRYSTAL_X22('BOOM', 21 | FF_FULLBRIGHT, 3.0 / 35.0, S_CRYSTAL_X23) = none
-	S_CRYSTAL_X23('BOOM', 22 | FF_FULLBRIGHT, 3.0 / 35.0, S_CRYSTAL_X24) = none
-	S_CRYSTAL_X24('BOOM', 23 | FF_FULLBRIGHT, 3.0 / 35.0, S_CRYSTAL_X25) = none
-	S_CRYSTAL_X25('BOOM', 24 | FF_FULLBRIGHT, 3.0 / 35.0, none) = none
+Spawn:
+	CRYS A 16 A_ActiveSound
+	CRYS B 5 A_ActiveSound
+	CRYS CDEF 4 A_ActiveSound
+	Loop
+Death:
+	BOOM A 1 Bright A_Unknown112
+	BOOM B 3 Bright A_QuestObjectDeath
+	BOOM C 2 Bright A_LightGoesOut
+	BOOM D 3 Bright A_SpawnPuff
+	BOOM EF 3 Bright
+	BOOM G 3 Bright A_SpawnPuff
+	BOOM H 1 Bright A_Unknown112
+	BOOM I 3 Bright
+	BOOM JKL 3 Bright A_SpawnPuff
+	BOOM MN 3 Bright
+	BOOM O 3 Bright A_SpawnPuff
+	BOOM PQRST 3 Bright
+	BOOM U 3 Bright A_Unknown114
+	BOOM VWXY 3 Bright
+	Stop
 }
 
 defaultproperties
@@ -128,8 +118,6 @@ defaultproperties
 	bNoGravity = true;
 	bNoBlood = true;
 	bFloorClip = true;
-	IdleState = S_CRYSTAL_1;
-	DeathState = S_CRYSTAL_X1;
 	ActiveSound = 'misc/reactor';
 	DeathSound = 'misc/explosion';
 }

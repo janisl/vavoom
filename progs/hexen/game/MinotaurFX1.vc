@@ -25,16 +25,14 @@
 
 class MinotaurFX1 : Projectile;
 
-__states__
+states
 {
-	S_MNTRFX1_1('FX12', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_MNTRFX1_2) = none
-	S_MNTRFX1_2('FX12', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_MNTRFX1_1) = none
-	S_MNTRFXI1_1('FX12', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_MNTRFXI1_2) = none
-	S_MNTRFXI1_2('FX12', 3 | FF_FULLBRIGHT, 5.0 / 35.0, S_MNTRFXI1_3) = none
-	S_MNTRFXI1_3('FX12', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_MNTRFXI1_4) = none
-	S_MNTRFXI1_4('FX12', 5 | FF_FULLBRIGHT, 5.0 / 35.0, S_MNTRFXI1_5) = none
-	S_MNTRFXI1_5('FX12', 6 | FF_FULLBRIGHT, 5.0 / 35.0, S_MNTRFXI1_6) = none
-	S_MNTRFXI1_6('FX12', 7 | FF_FULLBRIGHT, 5.0 / 35.0, none) = none
+Spawn:
+	FX12 AB 6 Bright
+	Loop
+Death:
+	FX12 CDEFGH 5 Bright
+	Stop
 }
 
 defaultproperties
@@ -46,8 +44,6 @@ defaultproperties
 	DamageType = 'Fire';
 	bActivateImpact = false;
 	bActivatePCross = false;
-	IdleState = S_MNTRFX1_1;
-	DeathState = S_MNTRFXI1_1;
 	DLightColour = RGB(255, 128, 0);
 	DLightRadius = 200.0;
 }

@@ -26,9 +26,11 @@
 class ShortBush : Decoration
 	__mobjinfo__(60);
 
-__states__
+states
 {
-	S_BUSH('BUSH', 0, -1.0, none) = none
+Spawn:
+	BUSH A -1
+	Stop
 }
 
 defaultproperties
@@ -36,5 +38,4 @@ defaultproperties
 	Radius = 15.0;
 	Height = 40.0;
 	bSolid = true;
-	IdleState = S_BUSH;
 }

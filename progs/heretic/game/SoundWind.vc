@@ -38,9 +38,11 @@ final void A_ESound()
 	PlaySound('world/wind', CHAN_VOICE);
 }
 
-__states__
+states
 {
-	S_SND_WIND('AMG1', 0, 100.0 / 35.0, S_SND_WIND) = A_ESound
+Spawn:
+	AMG1 A 100 A_ESound
+	Loop
 }
 
 defaultproperties
@@ -48,5 +50,4 @@ defaultproperties
 	bHidden = true;
 	bNoBlockmap = true;
 	bNoPassMobj = true;
-	IdleState = S_SND_WIND;
 }

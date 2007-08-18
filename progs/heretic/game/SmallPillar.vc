@@ -26,9 +26,11 @@
 class SmallPillar : Decoration
 	__mobjinfo__(29);
 
-__states__
+states
 {
-	S_SMALLPILLAR('SMPL', 0, -1.0, none) = none
+Spawn:
+	SMPL A -1
+	Stop
 }
 
 defaultproperties
@@ -36,5 +38,4 @@ defaultproperties
 	Radius = 16.0;
 	Height = 34.0;
 	bSolid = true;
-	IdleState = S_SMALLPILLAR;
 }

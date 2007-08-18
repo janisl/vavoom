@@ -26,17 +26,14 @@
 class VolcanoTBlast : Projectile
 	__scriptid__(124);
 
-__states__
+states
 {
-	S_VOLCANOTBALL1('VTFB', 0, 4.0 / 35.0, S_VOLCANOTBALL2) = none
-	S_VOLCANOTBALL2('VTFB', 1, 4.0 / 35.0, S_VOLCANOTBALL1) = none
-	S_VOLCANOTBALLX1('SFFI', 2, 4.0 / 35.0, S_VOLCANOTBALLX2) = none
-	S_VOLCANOTBALLX2('SFFI', 1, 4.0 / 35.0, S_VOLCANOTBALLX3) = none
-	S_VOLCANOTBALLX3('SFFI', 0, 4.0 / 35.0, S_VOLCANOTBALLX4) = none
-	S_VOLCANOTBALLX4('SFFI', 1, 4.0 / 35.0, S_VOLCANOTBALLX5) = none
-	S_VOLCANOTBALLX5('SFFI', 2, 4.0 / 35.0, S_VOLCANOTBALLX6) = none
-	S_VOLCANOTBALLX6('SFFI', 3, 4.0 / 35.0, S_VOLCANOTBALLX7) = none
-	S_VOLCANOTBALLX7('SFFI', 4, 4.0 / 35.0, none) = none
+Spawn:
+	VTFB AB 4
+	Loop
+Death:
+	SFFI CBABCDE 4
+	Stop
 }
 
 defaultproperties
@@ -48,8 +45,6 @@ defaultproperties
 	MissileDamage = 1;
 	DamageType = 'Fire';
 	bNoGravity = false;
-	IdleState = S_VOLCANOTBALL1;
-	DeathState = S_VOLCANOTBALLX1;
 	DLightColour = RGB(255, 128, 0);
 	DLightRadius = 200.0;
 }

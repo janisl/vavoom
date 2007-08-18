@@ -27,9 +27,11 @@ class PuzzGemBlue2 : PuzzleItem
 	__mobjinfo__(9010)
 	__scriptid__(82);
 
-__states__
+states
 {
-	S_ARTIPUZZGEMBLUE2('AGB2', 0, -1.0, none) = none
+Spawn:
+	AGB2 A -1
+	Stop
 }
 
 defaultproperties
@@ -37,5 +39,4 @@ defaultproperties
 	PuzzleItemNumber = 6;
 	PickupMessage = "$txt_artipuzzgemblue2";
 	IconName = 'artigmb2';
-	IdleState = S_ARTIPUZZGEMBLUE2;
 }

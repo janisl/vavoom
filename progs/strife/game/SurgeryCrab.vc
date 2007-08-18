@@ -23,12 +23,14 @@
 //**
 //**************************************************************************
 
-class SurgeryCrab:Decoration
+class SurgeryCrab : Decoration
 	__mobjinfo__(117);
 
-__states__
+states
 {
-	S_CRAB('CRAB', 0, -1.0, none) = none
+Spawn:
+	CRAB A -1
+	Stop
 }
 
 defaultproperties
@@ -36,5 +38,4 @@ defaultproperties
 	bSolid = true;
 	bSpawnCeiling = true;
 	bNoGravity = true;
-	IdleState = S_CRAB;
 }

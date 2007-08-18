@@ -80,15 +80,16 @@ final void A_SorcFX1Seek()
 	SeekerMissile(2.0, 6.0);
 }
 
-__states__
+states
 {
-	S_SORCFX1_1('SBS1', 0 | FF_FULLBRIGHT, 2.0 / 35.0, S_SORCFX1_2) = none
-	S_SORCFX1_2('SBS1', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_SORCFX1_3) = A_SorcFX1Seek
-	S_SORCFX1_3('SBS1', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_SORCFX1_4) = A_SorcFX1Seek
-	S_SORCFX1_4('SBS1', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_SORCFX1_1) = A_SorcFX1Seek
-	S_SORCFX1_D1('FHFX', 18 | FF_FULLBRIGHT, 2.0 / 35.0, S_SORCFX1_D2) = A_Explode
-	S_SORCFX1_D2('FHFX', 18 | FF_FULLBRIGHT, 6.0 / 35.0, S_SORCFX1_D3) = none
-	S_SORCFX1_D3('FHFX', 18 | FF_FULLBRIGHT, 6.0 / 35.0, none) = none
+Spawn:
+	SBS1 A 2 Bright
+	SBS1 BCD 3 Bright A_SorcFX1Seek
+	Loop
+Death:
+	FHFX S 2 Bright A_Explode
+	FHFX SS 6 Bright
+	Stop
 }
 
 defaultproperties
@@ -104,9 +105,6 @@ defaultproperties
 	bActivatePCross = false;
 	bNoWallBounceSnd = true;
 	bFullVolDeath = true;
-	IdleState = S_SORCFX1_1;
-	DeathState = S_SORCFX1_D1;
-	GibsDeathState = S_SORCFX1_D1;
 	SightSound = 'SorcererBallBounce';
 	DeathSound = 'SorcererHeadScream';
 	DLightColour = RGB(255, 128, 0);

@@ -26,12 +26,14 @@
 class CrossbowFX3 : Projectile
 	__scriptid__(149);
 
-__states__
+states
 {
-	S_CRBOWFX3('FX03', 0 | FF_FULLBRIGHT, 1.0 / 35.0, S_CRBOWFX3) = none
-	S_CRBOWFXI3_1('FX03', 2 | FF_FULLBRIGHT, 8.0 / 35.0, S_CRBOWFXI3_2) = none
-	S_CRBOWFXI3_2('FX03', 3 | FF_FULLBRIGHT, 8.0 / 35.0, S_CRBOWFXI3_3) = none
-	S_CRBOWFXI3_3('FX03', 4 | FF_FULLBRIGHT, 8.0 / 35.0, none) = none
+Spawn:
+	FX03 A 1 Bright
+	Loop
+Death:
+	FX03 CDE 8 Bright
+	Stop
 }
 
 defaultproperties
@@ -43,8 +45,6 @@ defaultproperties
 	bActivateImpact = true;
 	bWindThrust = true;
 	bThruGhost = true;
-	IdleState = S_CRBOWFX3;
-	DeathState = S_CRBOWFXI3_1;
 	DeathSound = 'weapons/bowhit';
 	DLightColour = RGB(91, 191, 79);
 	DLightRadius = 200.0;

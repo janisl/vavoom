@@ -26,13 +26,14 @@
 class SRock4 : Decoration
 	__mobjinfo__(102);
 
-__states__
+states
 {
-	S_ROCK4('ROK4', 0, -1.0, none) = none
+Spawn:
+	ROK4 A -1
+	Stop
 }
 
 defaultproperties
 {
 	bNoBlockmap = true;
-	IdleState = S_ROCK4;
 }

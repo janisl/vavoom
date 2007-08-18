@@ -26,9 +26,11 @@
 class Statue : Decoration
 	__mobjinfo__(110);
 
-__states__
+states
 {
-	S_STATUE('STAT', 0, -1.0, none) = none
+Spawn:
+	STAT A -1
+	Stop
 }
 
 defaultproperties
@@ -36,5 +38,4 @@ defaultproperties
 	Radius = 20.0;
 	Height = 64.0;
 	bSolid = true;
-	IdleState = S_STATUE;
 }

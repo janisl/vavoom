@@ -25,13 +25,11 @@
 
 class HolyMissilePuff : Effect;
 
-__states__
+states
 {
-	S_HOLY_MISSILE_P1('SPIR', 16, 3.0 / 35.0, S_HOLY_MISSILE_P2) = none
-	S_HOLY_MISSILE_P2('SPIR', 17, 3.0 / 35.0, S_HOLY_MISSILE_P3) = none
-	S_HOLY_MISSILE_P3('SPIR', 18, 3.0 / 35.0, S_HOLY_MISSILE_P4) = none
-	S_HOLY_MISSILE_P4('SPIR', 19, 3.0 / 35.0, S_HOLY_MISSILE_P5) = none
-	S_HOLY_MISSILE_P5('SPIR', 20, 3.0 / 35.0, none) = none
+Spawn:
+	SPIR QRSTU 3
+	Stop
 }
 
 defaultproperties
@@ -41,5 +39,4 @@ defaultproperties
 	Alpha = 0.666;
 	bDropOff = true;
 	bNoTeleport = true;
-	IdleState = S_HOLY_MISSILE_P1;
 }

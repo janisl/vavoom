@@ -305,18 +305,17 @@ final void A_CHolyCheckScream()
 	}
 }
 
-__states__
+states
 {
-	S_HOLY_FX1('SPIR', 0, 2.0 / 35.0, S_HOLY_FX2) = A_CHolySeek
-	S_HOLY_FX2('SPIR', 0, 2.0 / 35.0, S_HOLY_FX3) = A_CHolySeek
-	S_HOLY_FX3('SPIR', 1, 2.0 / 35.0, S_HOLY_FX4) = A_CHolySeek
-	S_HOLY_FX4('SPIR', 1, 2.0 / 35.0, S_HOLY_FX1) = A_CHolyCheckScream
-	S_HOLY_FX_X1('SPIR', 3, 4.0 / 35.0, S_HOLY_FX_X2) = none
-	S_HOLY_FX_X2('SPIR', 4, 4.0 / 35.0, S_HOLY_FX_X3) = A_Scream
-	S_HOLY_FX_X3('SPIR', 5, 4.0 / 35.0, S_HOLY_FX_X4) = none
-	S_HOLY_FX_X4('SPIR', 6, 4.0 / 35.0, S_HOLY_FX_X5) = none
-	S_HOLY_FX_X5('SPIR', 7, 4.0 / 35.0, S_HOLY_FX_X6) = none
-	S_HOLY_FX_X6('SPIR', 8, 4.0 / 35.0, none) = none
+Spawn:
+	SPIR AAB 2 A_CHolySeek
+	SPIR B 2 A_CHolyCheckScream
+	Loop
+Death:
+	SPIR D 4
+	SPIR E 4 A_Scream
+	SPIR FGHI 4
+	Stop
 }
 
 defaultproperties
@@ -333,7 +332,5 @@ defaultproperties
 	bExplodeOnSky = true;
 	bNoExplodeFloor = true;
 	bExtremeDeath = true;
-	IdleState = S_HOLY_FX1;
-	DeathState = S_HOLY_FX_X1;
 	DeathSound = 'SpiritDie';
 }

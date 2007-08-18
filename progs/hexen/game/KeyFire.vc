@@ -27,14 +27,15 @@ class KeyFire : HexenKey
 	__mobjinfo__(8033)
 	__scriptid__(88);
 
-__states__
+states
 {
-	S_KEY4('KEY4', 0, -1.0, none) = none
+Spawn:
+	KEY4 A -1
+	Stop
 }
 
 defaultproperties
 {
 	PickupMessage = "$txt_key_fire";
 	IconName = 'keyslot4';
-	IdleState = S_KEY4;
 }

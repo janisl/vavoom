@@ -26,13 +26,14 @@
 class RebelHelmet : Decoration
 	__mobjinfo__(218);
 
-__states__
+states
 {
-	S_REBELS_HAT('HATR', 0, -1.0, none) = none
+Spawn:
+	HATR A -1
+	Stop
 }
 
 defaultproperties
 {
 	bNoBlockmap = true;
-	IdleState = S_REBELS_HAT;
 }

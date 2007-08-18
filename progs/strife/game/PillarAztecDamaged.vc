@@ -26,9 +26,11 @@
 class PillarAztecDamaged : Decoration
 	__mobjinfo__(55);
 
-__states__
+states
 {
-	S_STEAL_COLUMN_BRK1('STLA', 0, -1.0, none) = none
+Spawn:
+	STLA A -1
+	Stop
 }
 
 defaultproperties
@@ -36,5 +38,4 @@ defaultproperties
 	Radius = 16.0;
 	Height = 80.0;
 	bSolid = true;
-	IdleState = S_STEAL_COLUMN_BRK1;
 }

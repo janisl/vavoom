@@ -27,9 +27,11 @@ class AmuletOfWarding : HexenArmor
 	__mobjinfo__(8008)
 	__scriptid__(71);
 
-__states__
+states
 {
-	S_ARMOR_4('ARM4', 0, -1.0, none) = none
+Spawn:
+	ARM4 A -1
+	Stop
 }
 
 defaultproperties
@@ -39,5 +41,4 @@ defaultproperties
 	Amount = 0;
 	PickupMessage = "$txt_armor4";
 	bNoGravity = true;
-	IdleState = S_ARMOR_4;
 }

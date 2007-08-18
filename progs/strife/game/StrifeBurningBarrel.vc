@@ -26,12 +26,11 @@
 class StrifeBurningBarrel : Decoration
 	__mobjinfo__(70);
 
-__states__
+states
 {
-	S_BURN_BARREL_1('BARL', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_BURN_BARREL_2) = none
-	S_BURN_BARREL_2('BARL', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_BURN_BARREL_3) = none
-	S_BURN_BARREL_3('BARL', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_BURN_BARREL_4) = none
-	S_BURN_BARREL_4('BARL', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_BURN_BARREL_1) = none
+Spawn:
+	BARL ABCD 4 Bright
+	Loop
 }
 
 defaultproperties
@@ -39,7 +38,6 @@ defaultproperties
 	Radius = 16.0;
 	Height = 48.0;
 	bSolid = true;
-	IdleState = S_BURN_BARREL_1;
 	bStaticLight = true;
 	LightOffset = vector(0.0, 0.0, 64.0);
 	LightRadius = 160.0;

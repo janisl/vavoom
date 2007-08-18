@@ -26,9 +26,11 @@
 class WarehouseKey : StrifeKey
 	__mobjinfo__(166);
 
-__states__
+states
 {
-	S_WAREHOUSE_KEY('WARE', 0, -1.0, none) = none
+Spawn:
+	WARE A -1
+	Stop
 }
 
 defaultproperties
@@ -37,5 +39,4 @@ defaultproperties
 	PickupMessage = "$txt_warehousekey";
 	StrifeName = "Warehouse Key";
 	IconName = 'i_ware';
-	IdleState = S_WAREHOUSE_KEY;
 }

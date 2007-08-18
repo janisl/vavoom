@@ -27,14 +27,15 @@ class KeySilver : HexenKey
 	__mobjinfo__(8036)
 	__scriptid__(91);
 
-__states__
+states
 {
-	S_KEY7('KEY7', 0, -1.0, none) = none
+Spawn:
+	KEY7 A -1
+	Stop
 }
 
 defaultproperties
 {
 	PickupMessage = "$txt_key_silver";
 	IconName = 'keyslot7';
-	IdleState = S_KEY7;
 }

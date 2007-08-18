@@ -25,15 +25,15 @@
 
 class CrossbowFX4 : Effect;
 
-__states__
+states
 {
-	S_CRBOWFX4_1('FX03', 5 | FF_FULLBRIGHT, 8.0 / 35.0, S_CRBOWFX4_2) = none
-	S_CRBOWFX4_2('FX03', 6 | FF_FULLBRIGHT, 8.0 / 35.0, none) = none
+Spawn:
+	FX03 FG 8 Bright
+	Stop
 }
 
 defaultproperties
 {
 	Gravity = 0.125;
 	bNoGravity = false;
-	IdleState = S_CRBOWFX4_1;
 }

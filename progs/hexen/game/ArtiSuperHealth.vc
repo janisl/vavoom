@@ -27,9 +27,11 @@ class ArtiSuperHealth : HealthPickup
 	__mobjinfo__(32)
 	__scriptid__(25);
 
-__states__
+states
 {
-	S_ARTI_SPHL1('SPHL', 0, 350.0 / 35.0, S_ARTI_SPHL1) = none
+Spawn:
+	SPHL A 350
+	Loop
 }
 
 defaultproperties
@@ -40,5 +42,4 @@ defaultproperties
 	IconName = 'artisphl';
 	bFloatBob = true;
 	bPickupFlash = true;
-	IdleState = S_ARTI_SPHL1;
 }

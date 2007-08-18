@@ -80,9 +80,11 @@ bool Use(bool Pickup)
 	return true;
 }
 
-__states__
+states
 {
-	S_ARTI_PSBG1('PSBG', 0, -1.0, none) = none
+Spawn:
+	PSBG A -1
+	Stop
 }
 
 defaultproperties
@@ -94,5 +96,4 @@ defaultproperties
 	bFloatBob = true;
 	bPickupFlash = true;
 	bInvBar = true;
-	IdleState = S_ARTI_PSBG1;
 }

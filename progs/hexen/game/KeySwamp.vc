@@ -27,14 +27,15 @@ class KeySwamp : HexenKey
 	__mobjinfo__(8039)
 	__scriptid__(94);
 
-__states__
+states
 {
-	S_KEYA('KEYA', 0, -1.0, none) = none
+Spawn:
+	KEYA A -1
+	Stop
 }
 
 defaultproperties
 {
 	PickupMessage = "$txt_key_swamp";
 	IconName = 'keyslota';
-	IdleState = S_KEYA;
 }

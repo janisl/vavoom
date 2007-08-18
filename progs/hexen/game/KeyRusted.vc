@@ -27,14 +27,15 @@ class KeyRusted : HexenKey
 	__mobjinfo__(8037)
 	__scriptid__(92);
 
-__states__
+states
 {
-	S_KEY8('KEY8', 0, -1.0, none) = none
+Spawn:
+	KEY8 A -1
+	Stop
 }
 
 defaultproperties
 {
 	PickupMessage = "$txt_key_rusted";
 	IconName = 'keyslot8';
-	IdleState = S_KEY8;
 }

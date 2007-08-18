@@ -25,9 +25,11 @@
 
 class SecurityKey : StrifeKey;
 
-__states__
+states
 {
-	S_SECURITY_KEY('SECK', 0, -1.0, none) = none
+Spawn:
+	SECK A -1
+	Stop
 }
 
 defaultproperties
@@ -36,5 +38,4 @@ defaultproperties
 	PickupMessage = "$txt_securitykey";
 	StrifeName = "Security Key";
 	IconName = 'i_seck';
-	IdleState = S_SECURITY_KEY;
 }

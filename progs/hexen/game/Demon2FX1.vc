@@ -25,20 +25,15 @@
 
 class Demon2FX1 : Projectile;
 
-__states__
+states
 {
-	S_DEMON2FX_MOVE1('D2FX', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_DEMON2FX_MOVE2) = none
-	S_DEMON2FX_MOVE2('D2FX', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_DEMON2FX_MOVE3) = none
-	S_DEMON2FX_MOVE3('D2FX', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_DEMON2FX_MOVE4) = none
-	S_DEMON2FX_MOVE4('D2FX', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_DEMON2FX_MOVE5) = none
-	S_DEMON2FX_MOVE5('D2FX', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_DEMON2FX_MOVE6) = none
-	S_DEMON2FX_MOVE6('D2FX', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_DEMON2FX_MOVE1) = none
-	S_DEMON2FX_BOOM1('D2FX', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_DEMON2FX_BOOM2) = none
-	S_DEMON2FX_BOOM2('D2FX', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_DEMON2FX_BOOM3) = none
-	S_DEMON2FX_BOOM3('D2FX', 8 | FF_FULLBRIGHT, 4.0 / 35.0, S_DEMON2FX_BOOM4) = none
-	S_DEMON2FX_BOOM4('D2FX', 9 | FF_FULLBRIGHT, 4.0 / 35.0, S_DEMON2FX_BOOM5) = none
-	S_DEMON2FX_BOOM5('D2FX', 10 | FF_FULLBRIGHT, 3.0 / 35.0, S_DEMON2FX_BOOM6) = none
-	S_DEMON2FX_BOOM6('D2FX', 11 | FF_FULLBRIGHT, 3.0 / 35.0, none) = none
+Spawn:
+	D2FX ABCDEF 4 Bright
+	Loop
+Death:
+	D2FX GHIJ 4 Bright
+	D2FX KL 3 Bright
+	Stop
 }
 
 defaultproperties
@@ -48,8 +43,6 @@ defaultproperties
 	Speed = 525.0;
 	MissileDamage = 5;
 	DamageType = 'Fire';
-	IdleState = S_DEMON2FX_MOVE1;
-	DeathState = S_DEMON2FX_BOOM1;
 	DeathSound = 'DemonMissileExplode';
 	DLightColour = RGB(3, 234, 3);
 	DLightRadius = 200.0;

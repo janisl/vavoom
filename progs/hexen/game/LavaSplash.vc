@@ -25,19 +25,15 @@
 
 class LavaSplash : Actor;
 
-__states__
+states
 {
-	S_LAVASPLASH1('LVAS', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_LAVASPLASH2) = none
-	S_LAVASPLASH2('LVAS', 1 | FF_FULLBRIGHT, 5.0 / 35.0, S_LAVASPLASH3) = none
-	S_LAVASPLASH3('LVAS', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_LAVASPLASH4) = none
-	S_LAVASPLASH4('LVAS', 3 | FF_FULLBRIGHT, 5.0 / 35.0, S_LAVASPLASH5) = none
-	S_LAVASPLASH5('LVAS', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_LAVASPLASH6) = none
-	S_LAVASPLASH6('LVAS', 5 | FF_FULLBRIGHT, 5.0 / 35.0, none) = none
+Spawn:
+	LVAS ABCDEF 5 Bright
+	Stop
 }
 
 defaultproperties
 {
 	bNoBlockmap = true;
 	bNoPassMobj = true;
-	IdleState = S_LAVASPLASH1;
 }

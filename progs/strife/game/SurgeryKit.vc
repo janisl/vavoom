@@ -26,10 +26,11 @@
 class SurgeryKit : HealthPickup
 	__mobjinfo__(83);
 
-__states__
+states
 {
-	S_FULL_HEALTH('FULL', 0, 35.0 / 35.0, S_FULL_HEALTH2) = none
-	S_FULL_HEALTH2('FULL', 1, 35.0 / 35.0, S_FULL_HEALTH) = none
+Spawn:
+	FULL AB 35
+	Loop
 }
 
 defaultproperties
@@ -41,5 +42,4 @@ defaultproperties
 	MaxAmount = 5;
 	IconName = 'i_full';
 	bFloorClip = true;
-	IdleState = S_FULL_HEALTH;
 }

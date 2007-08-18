@@ -26,10 +26,14 @@
 class Arrow : Projectile
 	__scriptid__(50);
 
-__states__
+states
 {
-	S_ARROW_1('ARRW', 0, -1.0, none) = none
-	S_ARROW_X1('ARRW', 0, 1.0 / 35.0, none) = none
+Spawn:
+	ARRW A -1
+	Stop
+Death:
+	ARRW A 1
+	Stop
 }
 
 defaultproperties
@@ -40,6 +44,4 @@ defaultproperties
 	MissileDamage = 4;
 	bActivateImpact = false;
 	bActivatePCross = false;
-	IdleState = S_ARROW_1;
-	DeathState = S_ARROW_X1;
 }

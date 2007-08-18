@@ -26,9 +26,11 @@
 class StalagmiteSmall : Decoration
 	__mobjinfo__(37);
 
-__states__
+states
 {
-	S_STALAGMITESMALL('STGS', 0, -1.0, none) = none
+Spawn:
+	STGS A -1
+	Stop
 }
 
 defaultproperties
@@ -36,5 +38,4 @@ defaultproperties
 	Radius = 8.0;
 	Height = 32.0;
 	bSolid = true;
-	IdleState = S_STALAGMITESMALL;
 }

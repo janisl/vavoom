@@ -26,9 +26,11 @@
 class PuzzFWeapon : PuzzleItem
 	__mobjinfo__(9015);
 
-__states__
+states
 {
-	S_ARTIPUZZFWEAPON('AFWP', 0, -1.0, none) = none
+Spawn:
+	AFWP A -1
+	Stop
 }
 
 defaultproperties
@@ -36,5 +38,4 @@ defaultproperties
 	PuzzleItemNumber = 10;
 	PickupMessage = "$txt_artipuzzfweapon";
 	IconName = 'artifwep';
-	IdleState = S_ARTIPUZZFWEAPON;
 }

@@ -25,15 +25,16 @@
 
 class SentinelFX1 : Projectile;
 
-__states__
+states
 {
-	S_SENTINEL_SHOT_1('SHT1', 0, 4.0 / 35.0, S_SENTINEL_SHOT_2) = none
-	S_SENTINEL_SHOT_2('SHT1', 1, 4.0 / 35.0, S_SENTINEL_SHOT_1) = none
-	S_SENTINEL_SHOT_X1('POW1', 5, 4.0 / 35.0, S_SENTINEL_SHOT_X2) = none
-	S_SENTINEL_SHOT_X2('POW1', 6, 4.0 / 35.0, S_SENTINEL_SHOT_X3) = none
-	S_SENTINEL_SHOT_X3('POW1', 7, 4.0 / 35.0, S_SENTINEL_SHOT_X4) = none
-	S_SENTINEL_SHOT_X4('POW1', 8, 4.0 / 35.0, S_SENTINEL_SHOT_X5) = none
-	S_SENTINEL_SHOT_X5('POW1', 9, 4.0 / 35.0, none) = none
+Spawn:
+	SHT1 AB 4
+	Loop
+SharedDeath:
+	POW1 FGHIJ 4
+	Stop
+Death:
+	Goto SharedDeath+4
 }
 
 defaultproperties
@@ -44,6 +45,4 @@ defaultproperties
 	MaxStepHeight = 4.0;
 	DLightColour = RGB(163, 23, 23);
 	DLightRadius = 200.0;
-	IdleState = S_SENTINEL_SHOT_1;
-	DeathState = S_SENTINEL_SHOT_X5;
 }

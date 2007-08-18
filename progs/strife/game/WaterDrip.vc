@@ -26,12 +26,12 @@
 class WaterDrip : Decoration
 	__mobjinfo__(53);
 
-__states__
+states
 {
-	S_CDRIP_1('CDRP', 0, 10.0 / 35.0, S_CDRIP_2) = none
-	S_CDRIP_2('CDRP', 1, 8.0 / 35.0, S_CDRIP_3) = none
-	S_CDRIP_3('CDRP', 2, 8.0 / 35.0, S_CDRIP_4) = none
-	S_CDRIP_4('CDRP', 3, 8.0 / 35.0, S_CDRIP_1) = none
+Spawn:
+	CDRP A 10
+	CDRP BCD 8
+	Loop
 }
 
 defaultproperties
@@ -41,5 +41,4 @@ defaultproperties
 	bNoBlockmap = true;
 	bSpawnCeiling = true;
 	bNoGravity = true;
-	IdleState = S_CDRIP_1;
 }

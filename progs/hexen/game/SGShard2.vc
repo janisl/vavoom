@@ -26,18 +26,16 @@
 class SGShard2 : GlassShard
 	__scriptid__(55);
 
-__states__
+states
 {
-	S_SGSHARD2_1('SGSA', 5, 4.0 / 35.0, S_SGSHARD2_2) = none
-	S_SGSHARD2_2('SGSA', 6, 4.0 / 35.0, S_SGSHARD2_3) = none
-	S_SGSHARD2_3('SGSA', 7, 4.0 / 35.0, S_SGSHARD2_4) = none
-	S_SGSHARD2_4('SGSA', 8, 4.0 / 35.0, S_SGSHARD2_5) = none
-	S_SGSHARD2_5('SGSA', 9, 4.0 / 35.0, S_SGSHARD2_1) = none
-	S_SGSHARD2_D('SGSA', 9, 30.0 / 35.0, none) = none
+Spawn:
+	SGSA FGHIJ 4
+	Loop
+Death:
+	SGSA J 30
+	Stop
 }
 
 defaultproperties
 {
-	IdleState = S_SGSHARD2_1;
-	DeathState = S_SGSHARD2_D;
 }

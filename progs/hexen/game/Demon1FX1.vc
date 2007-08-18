@@ -25,16 +25,15 @@
 
 class Demon1FX1 : Projectile;
 
-__states__
+states
 {
-	S_DEMONFX_MOVE1('DMFX', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_DEMONFX_MOVE2) = none
-	S_DEMONFX_MOVE2('DMFX', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_DEMONFX_MOVE3) = none
-	S_DEMONFX_MOVE3('DMFX', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_DEMONFX_MOVE1) = none
-	S_DEMONFX_BOOM1('DMFX', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_DEMONFX_BOOM2) = none
-	S_DEMONFX_BOOM2('DMFX', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_DEMONFX_BOOM3) = none
-	S_DEMONFX_BOOM3('DMFX', 5 | FF_FULLBRIGHT, 3.0 / 35.0, S_DEMONFX_BOOM4) = none
-	S_DEMONFX_BOOM4('DMFX', 6 | FF_FULLBRIGHT, 3.0 / 35.0, S_DEMONFX_BOOM5) = none
-	S_DEMONFX_BOOM5('DMFX', 7 | FF_FULLBRIGHT, 3.0 / 35.0, none) = none
+Spawn:
+	DMFX ABC 4 Bright
+	Loop
+Death:
+	DMFX DE 4 Bright
+	DMFX FGH 3 Bright
+	Stop
 }
 
 defaultproperties
@@ -44,8 +43,6 @@ defaultproperties
 	Speed = 525.0;
 	MissileDamage = 5;
 	DamageType = 'Fire';
-	IdleState = S_DEMONFX_MOVE1;
-	DeathState = S_DEMONFX_BOOM1;
 	DeathSound = 'DemonMissileExplode';
 	DLightColour = RGB(234, 147, 5);
 	DLightRadius = 200.0;

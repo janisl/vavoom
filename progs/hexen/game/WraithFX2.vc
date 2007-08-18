@@ -26,15 +26,11 @@
 class WraithFX2 : Effect
 	__scriptid__(108);
 
-__states__
+states
 {
-	S_WRTHFX_SIZZLE1('WRBL', 9 | FF_FULLBRIGHT, 4.0 / 35.0, S_WRTHFX_SIZZLE2) = none
-	S_WRTHFX_SIZZLE2('WRBL', 10 | FF_FULLBRIGHT, 4.0 / 35.0, S_WRTHFX_SIZZLE3) = none
-	S_WRTHFX_SIZZLE3('WRBL', 11 | FF_FULLBRIGHT, 4.0 / 35.0, S_WRTHFX_SIZZLE4) = none
-	S_WRTHFX_SIZZLE4('WRBL', 12 | FF_FULLBRIGHT, 4.0 / 35.0, S_WRTHFX_SIZZLE5) = none
-	S_WRTHFX_SIZZLE5('WRBL', 13 | FF_FULLBRIGHT, 4.0 / 35.0, S_WRTHFX_SIZZLE6) = none
-	S_WRTHFX_SIZZLE6('WRBL', 14 | FF_FULLBRIGHT, 4.0 / 35.0, S_WRTHFX_SIZZLE7) = none
-	S_WRTHFX_SIZZLE7('WRBL', 15 | FF_FULLBRIGHT, 4.0 / 35.0, none) = none
+Spawn:
+	WRBL JKLMNOP 4 Bright
+	Stop
 }
 
 defaultproperties
@@ -46,5 +42,4 @@ defaultproperties
 	bFloorClip = true;
 	bNoTeleport = true;
 	bNoGravity = false;
-	IdleState = S_WRTHFX_SIZZLE1;
 }

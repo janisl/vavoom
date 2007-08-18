@@ -27,9 +27,11 @@ class SuperMap : MapRevealer
 	__mobjinfo__(35)
 	__scriptid__(137);
 
-__states__
+states
 {
-	S_ITEM_SPMP1('SPMP', 0, -1.0, none) = none
+Spawn:
+	SPMP A -1
+	Stop
 }
 
 defaultproperties
@@ -38,5 +40,4 @@ defaultproperties
 	PickupMessage = "$txt_itemsupermap";
 	bCountItem = true;
 	bFloatBob = true;
-	IdleState = S_ITEM_SPMP1;
 }

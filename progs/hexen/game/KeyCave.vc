@@ -27,14 +27,15 @@ class KeyCave : HexenKey
 	__mobjinfo__(8031)
 	__scriptid__(86);
 
-__states__
+states
 {
-	S_KEY2('KEY2', 0, -1.0, none) = none
+Spawn:
+	KEY2 A -1
+	Stop
 }
 
 defaultproperties
 {
 	PickupMessage = "$txt_key_cave";
 	IconName = 'keyslot2';
-	IdleState = S_KEY2;
 }

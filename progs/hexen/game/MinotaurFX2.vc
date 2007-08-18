@@ -56,9 +56,11 @@ final void A_MntrFloorFire()
 	A.CheckMissileSpawn();
 }
 
-__states__
+states
 {
-	S_MNTRFX2_1('FX13', 0, 2.0 / 35.0, S_MNTRFX2_1) = A_MntrFloorFire
+Spawn:
+	FX13 A 2 A_MntrFloorFire
+	Loop
 }
 
 defaultproperties
@@ -66,7 +68,6 @@ defaultproperties
 	Radius = 5.0;
 	Height = 12.0;
 	Speed = 490.0;
-	IdleState = S_MNTRFX2_1;
 	// The Minotaur floor fire can step up any amount
 	MaxStepHeight = 99999.0;
 	bIgnoreFloorStep = true;

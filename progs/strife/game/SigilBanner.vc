@@ -23,12 +23,14 @@
 //**
 //**************************************************************************
 
-class SigilBanner:Decoration
+class SigilBanner : Decoration
 	__mobjinfo__(216);
 
-__states__
+states
 {
-	S_SIGIL_BANNER('SBAN', 0, -1.0, none) = none
+Spawn:
+	SBAN A -1
+	Stop
 }
 
 defaultproperties
@@ -36,5 +38,4 @@ defaultproperties
 	Radius = 24.0;
 	Height = 96.0;
 	bNoBlockmap = true;
-	IdleState = S_SIGIL_BANNER;
 }

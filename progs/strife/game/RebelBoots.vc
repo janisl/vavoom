@@ -26,13 +26,14 @@
 class RebelBoots : Decoration
 	__mobjinfo__(217);
 
-__states__
+states
 {
-	S_REBELS_BOOTS('BOTR', 0, -1.0, none) = none
+Spawn:
+	BOTR A -1
+	Stop
 }
 
 defaultproperties
 {
 	bNoBlockmap = true;
-	IdleState = S_REBELS_BOOTS;
 }

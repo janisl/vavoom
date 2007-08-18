@@ -26,9 +26,11 @@
 class StalactiteSmall : Decoration
 	__mobjinfo__(39);
 
-__states__
+states
 {
-	S_STALACTITESMALL('STCS', 0, -1.0, none) = none
+Spawn:
+	STCS A -1
+	Stop
 }
 
 defaultproperties
@@ -38,5 +40,4 @@ defaultproperties
 	bSolid = true;
 	bSpawnCeiling = true;
 	bNoGravity = true;
-	IdleState = S_STALACTITESMALL;
 }

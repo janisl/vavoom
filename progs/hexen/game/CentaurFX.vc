@@ -25,22 +25,24 @@
 
 class CentaurFX : Projectile;
 
-__states__
+states
 {
-	S_CENTAUR_FX1('CTFX', 0 | FF_FULLBRIGHT, -1.0, none) = none
-	S_CENTAUR_FX_X1('CTFX', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_CENTAUR_FX_X2) = none
-	S_CENTAUR_FX_X2('CTFX', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_CENTAUR_FX_X3) = none
-	S_CENTAUR_FX_X3('CTFX', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_CENTAUR_FX_X4) = none
-	S_CENTAUR_FX_X4('CTFX', 4 | FF_FULLBRIGHT, 3.0 / 35.0, S_CENTAUR_FX_X5) = none
-	S_CENTAUR_FX_X5('CTFX', 5 | FF_FULLBRIGHT, 2.0 / 35.0, none) = none
+Spawn:
+	CTFX A -1 Bright
+	Stop
+Death:
+	CTFX B 4 Bright
+	CTFX C 3 Bright
+	CTFX D 4 Bright
+	CTFX E 3 Bright
+	CTFX F 2 Bright
+	Stop
 }
 
 defaultproperties
 {
 	Speed = 700.0;
 	MissileDamage = 4;
-	IdleState = S_CENTAUR_FX1;
-	DeathState = S_CENTAUR_FX_X1;
 	DeathSound = 'CentaurMissileExplode';
 	DLightColour = RGB(41, 119, 233);
 	DLightRadius = 200.0;

@@ -25,9 +25,11 @@
 
 class Power3Key : StrifeKey;
 
-__states__
+states
 {
-	S_POWER3_KEY('PWR3', 0, -1.0, none) = none
+Spawn:
+	PWR3 A -1
+	Stop
 }
 
 defaultproperties
@@ -36,5 +38,4 @@ defaultproperties
 	PickupMessage = "$txt_power3key";
 	StrifeName = "Power3 Key";
 	IconName = 'i_pwr3';
-	IdleState = S_POWER3_KEY;
 }

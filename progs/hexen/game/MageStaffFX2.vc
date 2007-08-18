@@ -109,17 +109,17 @@ final void A_MStaffTrack()
 	SeekerMissile(2.0, 10.0);
 }
 
-__states__
+states
 {
-	S_MSTAFF_FX2_1('MSP2', 0 | FF_FULLBRIGHT, 2.0 / 35.0, S_MSTAFF_FX2_2) = A_MStaffTrack
-	S_MSTAFF_FX2_2('MSP2', 1 | FF_FULLBRIGHT, 2.0 / 35.0, S_MSTAFF_FX2_3) = A_MStaffTrack
-	S_MSTAFF_FX2_3('MSP2', 2 | FF_FULLBRIGHT, 2.0 / 35.0, S_MSTAFF_FX2_4) = A_MStaffTrack
-	S_MSTAFF_FX2_4('MSP2', 3 | FF_FULLBRIGHT, 2.0 / 35.0, S_MSTAFF_FX2_1) = A_MStaffTrack
-	S_MSTAFF_FX2_X1('MSP2', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_MSTAFF_FX2_X2) = none
-	S_MSTAFF_FX2_X2('MSP2', 5 | FF_FULLBRIGHT, 5.0 / 35.0, S_MSTAFF_FX2_X3) = A_Explode
-	S_MSTAFF_FX2_X3('MSP2', 6 | FF_FULLBRIGHT, 5.0 / 35.0, S_MSTAFF_FX2_X4) = none
-	S_MSTAFF_FX2_X4('MSP2', 7 | FF_FULLBRIGHT, 5.0 / 35.0, S_MSTAFF_FX2_X5) = none
-	S_MSTAFF_FX2_X5('MSP2', 8 | FF_FULLBRIGHT, 4.0 / 35.0, none) = none
+Spawn:
+	MSP2 ABCD 2 Bright A_MStaffTrack
+	Loop
+Death:
+	MSP2 E 4 Bright
+	MSP2 F 5 Bright A_Explode
+	MSP2 GH 5 Bright
+	MSP2 I 4 Bright
+	Stop
 }
 
 defaultproperties
@@ -130,8 +130,6 @@ defaultproperties
 	DamageType = 'Fire';
 	bSeekerMissile = true;
 	bExtremeDeath = true;
-	IdleState = S_MSTAFF_FX2_1;
-	DeathState = S_MSTAFF_FX2_X1;
 	DeathSound = 'MageStaffExplode';
 	DLightColour = RGB(255, 63, 0);
 	DLightRadius = 200.0;

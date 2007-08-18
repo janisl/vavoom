@@ -25,9 +25,11 @@
 
 class Power2Key : StrifeKey;
 
-__states__
+states
 {
-	S_POWER2_KEY('PWR2', 0, -1.0, none) = none
+Spawn:
+	PWR2 A -1
+	Stop
 }
 
 defaultproperties
@@ -36,5 +38,4 @@ defaultproperties
 	PickupMessage = "$txt_power2key";
 	StrifeName = "Power2 Key";
 	IconName = 'i_pwr2';
-	IdleState = S_POWER2_KEY;
 }

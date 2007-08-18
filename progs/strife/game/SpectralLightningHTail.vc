@@ -25,15 +25,14 @@
 
 class SpectralLightningHTail : Effect;
 
-__states__
+states
 {
-	S_ZAP6_1('ZAP6', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_ZAP6_2) = none
-	S_ZAP6_2('ZAP6', 1 | FF_FULLBRIGHT, 5.0 / 35.0, S_ZAP6_3) = none
-	S_ZAP6_3('ZAP6', 2 | FF_FULLBRIGHT, 5.0 / 35.0, none) = none
+Spawn:
+	ZAP6 ABC 5 Bright
+	Stop
 }
 
 defaultproperties
 {
 	bDropOff = true;
-	IdleState = S_ZAP6_1;
 }

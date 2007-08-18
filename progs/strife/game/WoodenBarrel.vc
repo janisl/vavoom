@@ -26,16 +26,18 @@
 class WoodenBarrel : Decoration
 	__mobjinfo__(82);
 
-__states__
+states
 {
-	S_WOOD_BARREL('BARW', 0, -1.0, none) = none
-	S_WOOD_BARREL_X1('BARW', 1, 2.0 / 35.0, S_WOOD_BARREL_X2) = A_Scream
-	S_WOOD_BARREL_X2('BARW', 2, 2.0 / 35.0, S_WOOD_BARREL_X3) = none
-	S_WOOD_BARREL_X3('BARW', 3, 2.0 / 35.0, S_WOOD_BARREL_X4) = A_Fall
-	S_WOOD_BARREL_X4('BARW', 4, 2.0 / 35.0, S_WOOD_BARREL_X5) = none
-	S_WOOD_BARREL_X5('BARW', 5, 2.0 / 35.0, S_WOOD_BARREL_X6) = none
-	S_WOOD_BARREL_X6('BARW', 6, 2.0 / 35.0, S_WOOD_BARREL_X7) = none
-	S_WOOD_BARREL_X7('BARW', 7, -1.0, none) = none
+Spawn:
+	BARW A -1
+	Stop
+Death:
+	BARW B 2 A_Scream
+	BARW C 2
+	BARW D 2 A_Fall
+	BARW EFG 2
+	BARW H -1
+	Stop
 }
 
 defaultproperties
@@ -47,7 +49,5 @@ defaultproperties
 	bShootable = true;
 	bInCombat = true;
 	bNoBlood = true;
-	IdleState = S_WOOD_BARREL;
-	DeathState = S_WOOD_BARREL_X1;
 	DeathSound = 'woodenbarrel/death';
 }

@@ -64,16 +64,15 @@ final void A_CStaffMissileSlither()
 	TryMove(vector(newX, newY, Origin.z));
 }
 
-__states__
+states
 {
-	S_CSTAFF_MISSILE1('CSSF', 3 | FF_FULLBRIGHT, 1.0 / 35.0, S_CSTAFF_MISSILE2) = A_CStaffMissileSlither
-	S_CSTAFF_MISSILE2('CSSF', 3 | FF_FULLBRIGHT, 1.0 / 35.0, S_CSTAFF_MISSILE3) = A_CStaffMissileSlither
-	S_CSTAFF_MISSILE3('CSSF', 4 | FF_FULLBRIGHT, 1.0 / 35.0, S_CSTAFF_MISSILE4) = A_CStaffMissileSlither
-	S_CSTAFF_MISSILE4('CSSF', 4 | FF_FULLBRIGHT, 1.0 / 35.0, S_CSTAFF_MISSILE1) = A_CStaffMissileSlither
-	S_CSTAFF_MISSILE_X1('CSSF', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_CSTAFF_MISSILE_X2) = none
-	S_CSTAFF_MISSILE_X2('CSSF', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_CSTAFF_MISSILE_X3) = none
-	S_CSTAFF_MISSILE_X3('CSSF', 7 | FF_FULLBRIGHT, 3.0 / 35.0, S_CSTAFF_MISSILE_X4) = none
-	S_CSTAFF_MISSILE_X4('CSSF', 8 | FF_FULLBRIGHT, 3.0 / 35.0, none) = none
+Spawn:
+	CSSF DDEE 1 Bright A_CStaffMissileSlither
+	Loop
+Death:
+	CSSF FG 4
+	CSSF HI 3
+	Stop
 }
 
 defaultproperties
@@ -82,8 +81,6 @@ defaultproperties
 	Height = 10.0;
 	Speed = 770.0;
 	MissileDamage = 5;
-	IdleState = S_CSTAFF_MISSILE1;
-	DeathState = S_CSTAFF_MISSILE_X1;
 	DeathSound = 'ClericCStaffExplode';
 	DLightColour = RGB(3, 234, 3);
 	DLightRadius = 200.0;

@@ -26,9 +26,11 @@
 class Passcard : StrifeKey
 	__mobjinfo__(185);
 
-__states__
+states
 {
-	S_PASSCARD('TPAS', 0, -1.0, none) = none
+Spawn:
+	TPAS A -1
+	Stop
 }
 
 defaultproperties
@@ -37,5 +39,4 @@ defaultproperties
 	PickupMessage = "$txt_passcard";
 	StrifeName = "Passcard";
 	IconName = 'i_tpas';
-	IdleState = S_PASSCARD;
 }

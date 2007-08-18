@@ -47,12 +47,14 @@ final void A_IceSetTics()
 	}
 }
 
-__states__
+states
 {
-	S_ICECHUNK1('ICEC', 0, 10.0 / 35.0, S_ICECHUNK2) = none
-	S_ICECHUNK2('ICEC', 1, 10.0 / 35.0, S_ICECHUNK3) = A_IceSetTics
-	S_ICECHUNK3('ICEC', 2, 10.0 / 35.0, S_ICECHUNK4) = A_IceSetTics
-	S_ICECHUNK4('ICEC', 3, 10.0 / 35.0, none) = A_IceSetTics
+Spawn:
+	ICEC A 10
+	ICEC B 10 A_IceSetTics
+	ICEC C 10 A_IceSetTics
+	ICEC D 10 A_IceSetTics
+	Stop
 }
 
 defaultproperties
@@ -64,5 +66,4 @@ defaultproperties
 	bFloorClip = true;
 	bCannotPush = true;
 	bNoGravity = false;
-	IdleState = S_ICECHUNK1;
 }

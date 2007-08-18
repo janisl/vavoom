@@ -26,10 +26,14 @@
 class ProjectileBlade : Projectile
 	__scriptid__(64);
 
-__states__
+states
 {
-	S_PRJ_BLADE1('BLAD', 0, -1.0, none) = none
-	S_PRJ_BLADE_X1('BLAD', 0, 1.0 / 35.0, none) = none
+Spawn:
+	BLAD A -1
+	Stop
+Death:
+	BLAD A 1
+	Stop
 }
 
 defaultproperties
@@ -40,6 +44,4 @@ defaultproperties
 	MissileDamage = 3;
 	bActivateImpact = false;
 	bActivatePCross = false;
-	IdleState = S_PRJ_BLADE1;
-	DeathState = S_PRJ_BLADE_X1;
 }

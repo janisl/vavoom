@@ -25,9 +25,11 @@
 
 class PrisonKey : StrifeKey;
 
-__states__
+states
 {
-	S_PRISON_KEY('PRIS', 0, -1.0, none) = none
+Spawn:
+	PRIS A -1
+	Stop
 }
 
 defaultproperties
@@ -37,5 +39,4 @@ defaultproperties
 	StrifeName = "Prison Key";
 	IconName = 'i_pris';
 	GiveQuestType = QuestItem11;
-	IdleState = S_PRISON_KEY;
 }

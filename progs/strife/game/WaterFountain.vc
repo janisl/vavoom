@@ -26,17 +26,16 @@
 class WaterFountain : Decoration
 	__mobjinfo__(112);
 
-__states__
+states
 {
-	S_FOUNTAIN_1('WTFT', 0, 4.0 / 35.0, S_FOUNTAIN_2) = none
-	S_FOUNTAIN_2('WTFT', 1, 4.0 / 35.0, S_FOUNTAIN_3) = none
-	S_FOUNTAIN_3('WTFT', 2, 4.0 / 35.0, S_FOUNTAIN_4) = none
-	S_FOUNTAIN_4('WTFT', 3, 4.0 / 35.0, S_FOUNTAIN_1) = A_ActiveSound
+Spawn:
+	WTFT ABC 4
+	WTFT D 4 A_ActiveSound
+	Loop
 }
 
 defaultproperties
 {
 	bNoBlockmap = true;
-	IdleState = S_FOUNTAIN_1;
 	ActiveSound = 'world/watersplash';
 }

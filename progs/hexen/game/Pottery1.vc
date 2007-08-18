@@ -80,10 +80,14 @@ final void A_PotteryExplode()
 	}
 }
 
-__states__
+states
 {
-	S_ZPOTTERY1('POT1', 0, -1.0, none) = none
-	S_ZPOTTERY_EXPLODE('POT1', 0, 0.0 / 35.0, none) = A_PotteryExplode
+Spawn:
+	POT1 A -1
+	Stop
+Death:
+	POT1 A 0 A_PotteryExplode
+	Stop
 }
 
 defaultproperties
@@ -99,6 +103,4 @@ defaultproperties
 	bSlide = true;
 	bTelestomp = true;
 	bNoPassMobj = false;
-	IdleState = S_ZPOTTERY1;
-	DeathState = S_ZPOTTERY_EXPLODE;
 }

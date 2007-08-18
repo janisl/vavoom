@@ -52,16 +52,16 @@ final void A_GenWizard()
 	fog.PlaySound('misc/teleport', CHAN_VOICE);
 }
 
-__states__
+states
 {
-	S_SOR2FX2_1('FX11', 0 | FF_FULLBRIGHT, 35.0 / 35.0, S_SOR2FX2_2) = none
-	S_SOR2FX2_2('FX11', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_SOR2FX2_3) = A_GenWizard
-	S_SOR2FX2_3('FX11', 1 | FF_FULLBRIGHT, 5.0 / 35.0, S_SOR2FX2_2) = none
-	S_SOR2FXI2_1('FX11', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_SOR2FXI2_2) = none
-	S_SOR2FXI2_2('FX11', 3 | FF_FULLBRIGHT, 5.0 / 35.0, S_SOR2FXI2_3) = none
-	S_SOR2FXI2_3('FX11', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_SOR2FXI2_4) = none
-	S_SOR2FXI2_4('FX11', 5 | FF_FULLBRIGHT, 5.0 / 35.0, S_SOR2FXI2_5) = none
-	S_SOR2FXI2_5('FX11', 6 | FF_FULLBRIGHT, 5.0 / 35.0, none) = none
+Spawn:
+	FX11 A 35 Bright
+	FX11 A 5 Bright A_GenWizard
+	FX11 B 5 Bright
+	Goto Spawn+1
+Death:
+	FX11 CDEFG 5 Bright
+	Stop
 }
 
 defaultproperties
@@ -70,8 +70,6 @@ defaultproperties
 	Height = 6.0;
 	Speed = 210.0;
 	MissileDamage = 10;
-	IdleState = S_SOR2FX2_1;
-	DeathState = S_SOR2FXI2_1;
 	DLightColour = RGB(80, 80, 253);
 	DLightRadius = 200.0;
 }

@@ -25,9 +25,11 @@
 
 class OraclePass : Inventory;
 
-__states__
+states
 {
-	S_ORACLE_PASS('OTOK', 0, -1.0, none) = none
+Spawn:
+	OTOK A -1
+	Stop
 }
 
 defaultproperties
@@ -36,7 +38,6 @@ defaultproperties
 	PickupMessage = "$txt_oraclepass";
 	MaxAmount = 1;
 	IconName = 'i_otok';
-	IdleState = S_ORACLE_PASS;
 	bFloorClip = true;
 	bInvBar = true;
 	GiveQuestType = QuestItem18;

@@ -25,13 +25,11 @@
 
 class RevenantTracerSmoke : Actor;
 
-__states__
+states
 {
-	S_SMOKE1('PUFF', 1, 4.0 / 35.0, S_SMOKE2) = none
-	S_SMOKE2('PUFF', 2, 4.0 / 35.0, S_SMOKE3) = none
-	S_SMOKE3('PUFF', 1, 4.0 / 35.0, S_SMOKE4) = none
-	S_SMOKE4('PUFF', 2, 4.0 / 35.0, S_SMOKE5) = none
-	S_SMOKE5('PUFF', 3, 4.0 / 35.0, none) = none
+Spawn:
+	PUFF BCBCD 4
+	Stop
 }
 
 defaultproperties
@@ -40,5 +38,4 @@ defaultproperties
 	bNoBlockmap = true;
 	bNoGravity = true;
 	bNoPassMobj = true;
-	IdleState = S_SMOKE1;
 }

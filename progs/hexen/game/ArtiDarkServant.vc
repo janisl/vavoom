@@ -46,9 +46,11 @@ bool Use(bool Pickup)
 	return true;
 }
 
-__states__
+states
 {
-	S_ARTI_SUMMON('SUMN', 0, 350.0 / 35.0, S_ARTI_SUMMON) = none
+Spawn:
+	SUMN A 350
+	Loop
 }
 
 defaultproperties
@@ -61,5 +63,4 @@ defaultproperties
 	bFloatBob = true;
 	bPickupFlash = true;
 	bInvBar = true;
-	IdleState = S_ARTI_SUMMON;
 }

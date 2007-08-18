@@ -25,10 +25,15 @@
 
 class SentinelFX2 : SentinelFX1;
 
+states
+{
+Death:
+	Goto Super::SharedDeath
+}
+
 defaultproperties
 {
 	MissileDamage = 1;
 	DLightRadius = 100.0;
-	DeathState = S_SENTINEL_SHOT_X1;
 	SightSound = 'sentinel/plasma';
 }

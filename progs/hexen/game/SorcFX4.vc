@@ -53,16 +53,16 @@ final void A_SorcFX4Check()
 	}
 }
 
-__states__
+states
 {
-	S_SORCFX4_1('SBS4', 0 | FF_FULLBRIGHT, 2.0 / 35.0, S_SORCFX4_2) = A_SorcFX4Check
-	S_SORCFX4_2('SBS4', 1 | FF_FULLBRIGHT, 2.0 / 35.0, S_SORCFX4_3) = A_SorcFX4Check
-	S_SORCFX4_3('SBS4', 2 | FF_FULLBRIGHT, 2.0 / 35.0, S_SORCFX4_1) = A_SorcFX4Check
-	S_SORCFX4_D1('SBS4', 3 | FF_FULLBRIGHT, 2.0 / 35.0, S_SORCFX4_D2) = none
-	S_SORCFX4_D2('SBS4', 4 | FF_FULLBRIGHT, 2.0 / 35.0, S_SORCFX4_D3) = A_Explode
-	S_SORCFX4_D3('SBS4', 5 | FF_FULLBRIGHT, 2.0 / 35.0, S_SORCFX4_D4) = none
-	S_SORCFX4_D4('SBS4', 6 | FF_FULLBRIGHT, 2.0 / 35.0, S_SORCFX4_D5) = none
-	S_SORCFX4_D5('SBS4', 7 | FF_FULLBRIGHT, 2.0 / 35.0, none) = none
+Spawn:
+	SBS4 ABC 2 Bright A_SorcFX4Check
+	Loop
+Death:
+	SBS4 D 2 Bright
+	SBS4 E 2 Bright A_Explode
+	SBS4 FGH 2 Bright
+	Stop
 }
 
 defaultproperties
@@ -73,8 +73,6 @@ defaultproperties
 	bDropOff = false;
 	bActivateImpact = false;
 	bActivatePCross = false;
-	IdleState = S_SORCFX4_1;
-	DeathState = S_SORCFX4_D1;
 	DeathSound = 'SorcererBallExplode';
 	DLightColour = RGB(149, 16, 189);
 	DLightRadius = 100.0;

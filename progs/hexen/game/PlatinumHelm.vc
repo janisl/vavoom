@@ -27,9 +27,11 @@ class PlatinumHelm : HexenArmor
 	__mobjinfo__(8007)
 	__scriptid__(70);
 
-__states__
+states
 {
-	S_ARMOR_3('ARM3', 0, -1.0, none) = none
+Spawn:
+	ARM3 A -1
+	Stop
 }
 
 defaultproperties
@@ -39,5 +41,4 @@ defaultproperties
 	Amount = 0;
 	PickupMessage = "$txt_armor3";
 	bNoGravity = true;
-	IdleState = S_ARMOR_3;
 }

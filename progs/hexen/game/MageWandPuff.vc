@@ -23,15 +23,17 @@
 //**
 //**************************************************************************
 
-class MageWandPuff:Effect;
+class MageWandPuff : Effect;
 
-__states__
+states
 {
-	S_MWANDPUFF1('MWND', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_MWANDPUFF2) = none
-	S_MWANDPUFF2('MWND', 5 | FF_FULLBRIGHT, 3.0 / 35.0, S_MWANDPUFF3) = none
-	S_MWANDPUFF3('MWND', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_MWANDPUFF4) = none
-	S_MWANDPUFF4('MWND', 7 | FF_FULLBRIGHT, 3.0 / 35.0, S_MWANDPUFF5) = none
-	S_MWANDPUFF5('MWND', 8 | FF_FULLBRIGHT, 4.0 / 35.0, none) = none
+Spawn:
+	MWND E 4 Bright
+	MWND F 3 Bright
+	MWND G 4 Bright
+	MWND H 3 Bright
+	MWND I 4 Bright
+	Stop
 }
 
 defaultproperties
@@ -39,5 +41,4 @@ defaultproperties
 	bNoTeleport = true;
 	bCannotPush = true;
 	bNoDamageThrust = true;
-	IdleState = S_MWANDPUFF1;
 }

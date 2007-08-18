@@ -26,17 +26,16 @@
 class WallTorch : Decoration
 	__mobjinfo__(50);
 
-__states__
+states
 {
-	S_WALLTORCH1('WTRH', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_WALLTORCH2) = none
-	S_WALLTORCH2('WTRH', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_WALLTORCH3) = none
-	S_WALLTORCH3('WTRH', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_WALLTORCH1) = none
+Spawn:
+	WTRH ABC 6 Bright
+	Loop
 }
 
 defaultproperties
 {
 	bNoGravity = true;
-	IdleState = S_WALLTORCH1;
 	bStaticLight = true;
 	LightColour = RGB(255, 255, 0);
 	LightOffset = vector(0.0, 0.0, 8.0);

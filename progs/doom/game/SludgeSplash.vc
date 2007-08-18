@@ -25,17 +25,15 @@
 
 class SludgeSplash : Actor;
 
-__states__
+states
 {
-	S_SLUDGESPLASH1('SLDG', 4, 5.0 / 35.0, S_SLUDGESPLASH2) = none
-	S_SLUDGESPLASH2('SLDG', 5, 5.0 / 35.0, S_SLUDGESPLASH3) = none
-	S_SLUDGESPLASH3('SLDG', 6, 5.0 / 35.0, S_SLUDGESPLASH4) = none
-	S_SLUDGESPLASH4('SLDG', 7, 5.0 / 35.0, none) = none
+Spawn:
+	SLDG EFGH 5
+	Stop
 }
 
 defaultproperties
 {
 	bNoBlockmap = true;
 	bNoPassMobj = true;
-	IdleState = S_SLUDGESPLASH1;
 }

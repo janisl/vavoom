@@ -58,25 +58,21 @@ final void A_DelayGib()
 	StateTime -= Random() * 2.0;
 }
 
-__states__
+states
 {
-	S_SERPENT_GIB1_1('SSXD', 16, 6.0 / 35.0, S_SERPENT_GIB1_2) = none
-	S_SERPENT_GIB1_2('SSXD', 16, 6.0 / 35.0, S_SERPENT_GIB1_3) = A_FloatGib
-	S_SERPENT_GIB1_3('SSXD', 16, 8.0 / 35.0, S_SERPENT_GIB1_4) = A_FloatGib
-	S_SERPENT_GIB1_4('SSXD', 16, 8.0 / 35.0, S_SERPENT_GIB1_5) = A_FloatGib
-	S_SERPENT_GIB1_5('SSXD', 16, 12.0 / 35.0, S_SERPENT_GIB1_6) = A_FloatGib
-	S_SERPENT_GIB1_6('SSXD', 16, 12.0 / 35.0, S_SERPENT_GIB1_7) = A_FloatGib
-	S_SERPENT_GIB1_7('SSXD', 16, 232.0 / 35.0, S_SERPENT_GIB1_8) = A_DelayGib
-	S_SERPENT_GIB1_8('SSXD', 16, 12.0 / 35.0, S_SERPENT_GIB1_9) = A_SinkGib
-	S_SERPENT_GIB1_9('SSXD', 16, 12.0 / 35.0, S_SERPENT_GIB1_10) = A_SinkGib
-	S_SERPENT_GIB1_10('SSXD', 16, 8.0 / 35.0, S_SERPENT_GIB1_11) = A_SinkGib
-	S_SERPENT_GIB1_11('SSXD', 16, 8.0 / 35.0, S_SERPENT_GIB1_12) = A_SinkGib
-	S_SERPENT_GIB1_12('SSXD', 16, 8.0 / 35.0, none) = A_SinkGib
+Spawn:
+	SSXD Q 6
+	SSXD Q 6 A_FloatGib
+	SSXD QQ 8 A_FloatGib
+	SSXD QQ 12 A_FloatGib
+	SSXD Q 232 A_DelayGib
+	SSXD QQ 12 A_SinkGib
+	SSXD QQQ 8 A_SinkGib
+	Stop
 }
 
 defaultproperties
 {
 	Radius = 3.0;
 	Height = 3.0;
-	IdleState = S_SERPENT_GIB1_1;
 }

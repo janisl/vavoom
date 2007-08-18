@@ -25,13 +25,15 @@
 
 class BloodSplash : Actor;
 
-__states__
+states
 {
-	S_SPLASH1('BSPH', 0, 8.0 / 35.0, S_SPLASH2) = none
-	S_SPLASH2('BSPH', 1, 8.0 / 35.0, S_SPLASH3) = none
-	S_SPLASH3('BSPH', 2, 8.0 / 35.0, S_SPLASH4) = none
-	S_SPLASH4('BSPH', 3, 16.0 / 35.0, none) = none
-	S_SPLASHX('BSPH', 3, 10.0 / 35.0, none) = none
+Spawn:
+	BSPH ABC 8
+	BSPH D 16
+	Stop
+Death:
+	BSPH D 10
+	Stop
 }
 
 defaultproperties
@@ -46,6 +48,4 @@ defaultproperties
 	bActivatePCross = true;
 	bCannotPush = true;
 	bNoSplash = true;
-	IdleState = S_SPLASH1;
-	DeathState = S_SPLASHX;
 }

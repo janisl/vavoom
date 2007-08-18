@@ -25,17 +25,14 @@
 
 class HolyPuff : Effect;
 
-__states__
+states
 {
-	S_HOLY_PUFF1('SPIR', 10, 3.0 / 35.0, S_HOLY_PUFF2) = none
-	S_HOLY_PUFF2('SPIR', 11, 3.0 / 35.0, S_HOLY_PUFF3) = none
-	S_HOLY_PUFF3('SPIR', 12, 3.0 / 35.0, S_HOLY_PUFF4) = none
-	S_HOLY_PUFF4('SPIR', 13, 3.0 / 35.0, S_HOLY_PUFF5) = none
-	S_HOLY_PUFF5('SPIR', 14, 3.0 / 35.0, none) = none
+Spawn:
+	SPIR KLMNO 3
+	Stop
 }
 
 defaultproperties
 {
 	Alpha = 0.333;
-	IdleState = S_HOLY_PUFF1;
 }

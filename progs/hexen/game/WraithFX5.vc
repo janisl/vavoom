@@ -26,12 +26,14 @@
 class WraithFX5 : Fragment
 	__scriptid__(107);
 
-__states__
+states
 {
-	S_WRTHFX_BDROP1('WRBL', 23, 7.0 / 35.0, S_WRTHFX_BDROP2) = none
-	S_WRTHFX_BDROP2('WRBL', 24, 7.0 / 35.0, S_WRTHFX_BDROP3) = none
-	S_WRTHFX_BDROP3('WRBL', 25, 7.0 / 35.0, S_WRTHFX_BDROP1) = none
-	S_WRTHFX_BDEAD1('WRBL', 25, 35.0 / 35.0, none) = none
+Spawn:
+	WRBL XYZ 7
+	Loop
+Death:
+	WRBL Z 35
+	Stop
 }
 
 defaultproperties
@@ -40,7 +42,5 @@ defaultproperties
 	Height = 5.0;
 	Mass = 5.0;
 	bNoGravity = false;
-	IdleState = S_WRTHFX_BDROP1;
-	DeathState = S_WRTHFX_BDEAD1;
 	DeathSound = 'Drip';
 }

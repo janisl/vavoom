@@ -39,17 +39,16 @@ void OnMapSpawn(mthing_t* mthing)
 		Speed = 700.0;
 }
 
-__states__
+states
 {
-	S_SNAKEPRO_A1('SNFX', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_SNAKEPRO_A2) = none
-	S_SNAKEPRO_A2('SNFX', 1 | FF_FULLBRIGHT, 5.0 / 35.0, S_SNAKEPRO_A3) = none
-	S_SNAKEPRO_A3('SNFX', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_SNAKEPRO_A4) = none
-	S_SNAKEPRO_A4('SNFX', 3 | FF_FULLBRIGHT, 5.0 / 35.0, S_SNAKEPRO_A1) = none
-	S_SNAKEPRO_AX1('SNFX', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_SNAKEPRO_AX2) = none
-	S_SNAKEPRO_AX2('SNFX', 5 | FF_FULLBRIGHT, 5.0 / 35.0, S_SNAKEPRO_AX3) = none
-	S_SNAKEPRO_AX3('SNFX', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_SNAKEPRO_AX4) = none
-	S_SNAKEPRO_AX4('SNFX', 7 | FF_FULLBRIGHT, 3.0 / 35.0, S_SNAKEPRO_AX5) = none
-	S_SNAKEPRO_AX5('SNFX', 8 | FF_FULLBRIGHT, 3.0 / 35.0, none) = none
+Spawn:
+	SNFX ABCD 5 Bright
+	Loop
+Death:
+	SNFX EF 5 Bright
+	SNFX G 4 Bright
+	SNFX HI 3 Bright
+	Stop
 }
 
 defaultproperties
@@ -59,8 +58,6 @@ defaultproperties
 	Speed = 490.0;
 	MissileDamage = 1;
 	bWindThrust = true;
-	IdleState = S_SNAKEPRO_A1;
-	DeathState = S_SNAKEPRO_AX1;
 	DLightColour = RGB(151, 143, 219);
 	DLightRadius = 200.0;
 }

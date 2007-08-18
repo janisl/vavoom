@@ -25,20 +25,15 @@
 
 class WaterSplashBase : Actor;
 
-__states__
+states
 {
-	S_SPLASHBASE1('SPSH', 4, 5.0 / 35.0, S_SPLASHBASE2) = none
-	S_SPLASHBASE2('SPSH', 5, 5.0 / 35.0, S_SPLASHBASE3) = none
-	S_SPLASHBASE3('SPSH', 6, 5.0 / 35.0, S_SPLASHBASE4) = none
-	S_SPLASHBASE4('SPSH', 7, 5.0 / 35.0, S_SPLASHBASE5) = none
-	S_SPLASHBASE5('SPSH', 8, 5.0 / 35.0, S_SPLASHBASE6) = none
-	S_SPLASHBASE6('SPSH', 9, 5.0 / 35.0, S_SPLASHBASE7) = none
-	S_SPLASHBASE7('SPSH', 10, 5.0 / 35.0, none) = none
+Spawn:
+	SPSH EFGHIJK 5
+	Stop
 }
 
 defaultproperties
 {
 	bNoBlockmap = true;
 	bNoPassMobj = true;
-	IdleState = S_SPLASHBASE1;
 }

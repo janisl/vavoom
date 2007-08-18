@@ -26,21 +26,20 @@
 class WaterDropOnFloor : Decoration
 	__mobjinfo__(103);
 
-__states__
+states
 {
-	S_WATER_DRIP_1('DRIP', 0, 6.0 / 35.0, S_WATER_DRIP_2) = A_ActiveSound
-	S_WATER_DRIP_2('DRIP', 1, 4.0 / 35.0, S_WATER_DRIP_3) = none
-	S_WATER_DRIP_3('DRIP', 2, 4.0 / 35.0, S_WATER_DRIP_4) = none
-	S_WATER_DRIP_4('DRIP', 3, 4.0 / 35.0, S_WATER_DRIP_5) = A_ActiveSound
-	S_WATER_DRIP_5('DRIP', 4, 4.0 / 35.0, S_WATER_DRIP_6) = none
-	S_WATER_DRIP_6('DRIP', 5, 4.0 / 35.0, S_WATER_DRIP_7) = none
-	S_WATER_DRIP_7('DRIP', 6, 4.0 / 35.0, S_WATER_DRIP_8) = A_ActiveSound
-	S_WATER_DRIP_8('DRIP', 7, 4.0 / 35.0, S_WATER_DRIP_1) = none
+Spawn:
+	DRIP A 6 A_ActiveSound
+	DRIP BC 4
+	DRIP D 4 A_ActiveSound
+	DRIP EF 4
+	DRIP G 4 A_ActiveSound
+	DRIP H 4
+	Loop
 }
 
 defaultproperties
 {
 	bNoBlockmap = true;
-	IdleState = S_WATER_DRIP_1;
 	ActiveSound = 'world/waterdrip';
 }

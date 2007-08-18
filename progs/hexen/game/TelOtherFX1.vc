@@ -116,17 +116,21 @@ final void A_TeloSpawnD()
 	}
 }
 
-__states__
+states
 {
-	S_TELO_FX1('TRNG', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_TELO_FX2) = none
-	S_TELO_FX2('TRNG', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_TELO_FX3) = none
-	S_TELO_FX3('TRNG', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_TELO_FX4) = A_TeloSpawnC
-	S_TELO_FX4('TRNG', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_TELO_FX5) = A_TeloSpawnB
-	S_TELO_FX5('TRNG', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_TELO_FX6) = A_TeloSpawnA
-	S_TELO_FX6('TRNG', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_TELO_FX7) = A_TeloSpawnB
-	S_TELO_FX7('TRNG', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_TELO_FX8) = A_TeloSpawnC
-	S_TELO_FX8('TRNG', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_TELO_FX3) = A_TeloSpawnD
-	S_TELO_FX9('TRNG', 4 | FF_FULLBRIGHT, 3.0 / 35.0, none) = none
+Spawn:
+	TRNG E 5 Bright
+	TRNG D 4 Bright
+	TRNG C 3 Bright A_TeloSpawnC
+	TRNG B 3 Bright A_TeloSpawnB
+	TRNG A 3 Bright A_TeloSpawnA
+	TRNG B 3 Bright A_TeloSpawnB
+	TRNG C 3 Bright A_TeloSpawnC
+	TRNG D 3 Bright A_TeloSpawnD
+	Goto Spawn+2
+Death:
+	TRNG E 3 Bright
+	Stop
 }
 
 defaultproperties
@@ -139,6 +143,4 @@ defaultproperties
 	bBloodlessImpact = true;
 	DLightColour = RGB(243, 0, 0);
 	DLightRadius = 100.0;
-	IdleState = S_TELO_FX1;
-	DeathState = S_TELO_FX9;
 }

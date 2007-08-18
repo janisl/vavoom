@@ -27,9 +27,11 @@ class PuzzSkull : PuzzleItem
 	__mobjinfo__(9002)
 	__scriptid__(76);
 
-__states__
+states
 {
-	S_ARTIPUZZSKULL('ASKU', 0, -1.0, none) = none
+Spawn:
+	ASKU A -1
+	Stop
 }
 
 defaultproperties
@@ -37,5 +39,4 @@ defaultproperties
 	PuzzleItemNumber = 0;
 	PickupMessage = "$txt_artipuzzskull";
 	IconName = 'artiskll';
-	IdleState = S_ARTIPUZZSKULL;
 }

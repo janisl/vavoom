@@ -38,19 +38,14 @@ void PreExplode()
 	Alpha = 1.0;
 }
 
-__states__
+states
 {
-	S_FIREBOMB1('FBMB', 0, 10.0 / 35.0, S_FIREBOMB2) = none
-	S_FIREBOMB2('FBMB', 1, 10.0 / 35.0, S_FIREBOMB3) = none
-	S_FIREBOMB3('FBMB', 2, 10.0 / 35.0, S_FIREBOMB4) = none
-	S_FIREBOMB4('FBMB', 3, 10.0 / 35.0, S_FIREBOMB5) = none
-	S_FIREBOMB5('FBMB', 4, 6.0 / 35.0, S_FIREBOMB6) = A_Scream
-	S_FIREBOMB6('XPL1', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_FIREBOMB7) = A_Explode
-	S_FIREBOMB7('XPL1', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_FIREBOMB8) = none
-	S_FIREBOMB8('XPL1', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_FIREBOMB9) = none
-	S_FIREBOMB9('XPL1', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_FIREBOMB10) = none
-	S_FIREBOMB10('XPL1', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_FIREBOMB11) = none
-	S_FIREBOMB11('XPL1', 5 | FF_FULLBRIGHT, 4.0 / 35.0, none) = none
+Spawn:
+	FBMB ABCD 10
+	FBMB E 6 A_Scream
+	XPL1 A 4 Bright A_Explode
+	XPL1 BCDEF 4 Bright
+	Stop
 }
 
 defaultproperties
@@ -58,7 +53,6 @@ defaultproperties
 	Alpha = 0.666;
 	bNoGravity = true;
 	bNoPassMobj = true;
-	IdleState = S_FIREBOMB1;
 	DeathSound = 'misc/timebomb';
 	ExplodeEffect = RGB(255, 128, 0);
 }

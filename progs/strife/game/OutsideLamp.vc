@@ -26,9 +26,11 @@
 class OutsideLamp : Decoration
 	__mobjinfo__(43);
 
-__states__
+states
 {
-	S_LAMP('LAMP', 0, -1.0, none) = none
+Spawn:
+	LAMP A -1
+	Stop
 }
 
 defaultproperties
@@ -36,7 +38,6 @@ defaultproperties
 	Radius = 3.0;
 	Height = 80.0;
 	bSolid = true;
-	IdleState = S_LAMP;
 	bStaticLight = true;
 	LightOffset = vector(0.0, 0.0, 70.0);
 	LightRadius = 200.0;

@@ -23,17 +23,18 @@
 //**
 //**************************************************************************
 
-class Pottery3:Pottery1
+class Pottery3 : Pottery1
 	__mobjinfo__(106);
 
-__states__
+states
 {
-	S_ZPOTTERY3('POT3', 0, -1.0, none) = none
+Spawn:
+	POT3 A -1
+	Stop
 }
 
 defaultproperties
 {
 	Radius = 15.0;
 	Height = 25.0;
-	IdleState = S_ZPOTTERY3;
 }

@@ -70,21 +70,21 @@ final void A_FSwordFlames()
 	}
 }
 
-__states__
+states
 {
-	S_FSWORD_MISSILE1('FSFX', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_FSWORD_MISSILE2) = none
-	S_FSWORD_MISSILE2('FSFX', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_FSWORD_MISSILE3) = none
-	S_FSWORD_MISSILE3('FSFX', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_FSWORD_MISSILE1) = none
-	S_FSWORD_MISSILE_X1('FSFX', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_FSWORD_MISSILE_X2) = none
-	S_FSWORD_MISSILE_X2('FSFX', 4 | FF_FULLBRIGHT, 3.0 / 35.0, S_FSWORD_MISSILE_X3) = A_FSwordFlames
-	S_FSWORD_MISSILE_X3('FSFX', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_FSWORD_MISSILE_X4) = A_Explode
-	S_FSWORD_MISSILE_X4('FSFX', 6 | FF_FULLBRIGHT, 3.0 / 35.0, S_FSWORD_MISSILE_X5) = none
-	S_FSWORD_MISSILE_X5('FSFX', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_FSWORD_MISSILE_X6) = none
-	S_FSWORD_MISSILE_X6('FSFX', 8 | FF_FULLBRIGHT, 3.0 / 35.0, S_FSWORD_MISSILE_X7) = none
-	S_FSWORD_MISSILE_X7('FSFX', 9 | FF_FULLBRIGHT, 4.0 / 35.0, S_FSWORD_MISSILE_X8) = none
-	S_FSWORD_MISSILE_X8('FSFX', 10 | FF_FULLBRIGHT, 3.0 / 35.0, S_FSWORD_MISSILE_X9) = none
-	S_FSWORD_MISSILE_X9('FSFX', 11 | FF_FULLBRIGHT, 3.0 / 35.0, S_FSWORD_MISSILE_X10) = none
-	S_FSWORD_MISSILE_X10('FSFX', 12 | FF_FULLBRIGHT, 3.0 / 35.0, none) = none
+Spawn:
+	FSFX ABC 3 Bright
+	Loop
+Death:
+	FSFX D 4 Bright
+	FSFX E 3 Bright A_FSwordFlames
+	FSFX F 4 Bright A_Explode
+	FSFX G 3 Bright
+	FSFX H 4 Bright
+	FSFX I 3 Bright
+	FSFX J 4 Bright
+	FSFX KLM 3 Bright
+	Stop
 }
 
 defaultproperties
@@ -94,8 +94,6 @@ defaultproperties
 	Speed = 1050.0;
 	MissileDamage = 8;
 	bExtremeDeath = true;
-	IdleState = S_FSWORD_MISSILE1;
-	DeathState = S_FSWORD_MISSILE_X1;
 	DeathSound = 'FighterSwordExplode';
 	DLightColour = RGB(68, 159, 58);
 	DLightRadius = 90.0;

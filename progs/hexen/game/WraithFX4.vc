@@ -26,13 +26,14 @@
 class WraithFX4 : Fragment
 	__scriptid__(106);
 
-__states__
+states
 {
-	S_WRTHFX_ADROP1('WRBL', 19, 4.0 / 35.0, S_WRTHFX_ADROP2) = none
-	S_WRTHFX_ADROP2('WRBL', 20, 4.0 / 35.0, S_WRTHFX_ADROP3) = none
-	S_WRTHFX_ADROP3('WRBL', 21, 4.0 / 35.0, S_WRTHFX_ADROP4) = none
-	S_WRTHFX_ADROP4('WRBL', 22, 4.0 / 35.0, S_WRTHFX_ADROP1) = none
-	S_WRTHFX_ADEAD1('WRBL', 22, 10.0 / 35.0, none) = none
+Spawn:
+	WRBL TUVW 4
+	Loop
+Death:
+	WRBL W 10
+	Stop
 }
 
 defaultproperties
@@ -41,7 +42,5 @@ defaultproperties
 	Height = 5.0;
 	Mass = 5.0;
 	bNoGravity = false;
-	IdleState = S_WRTHFX_ADROP1;
-	DeathState = S_WRTHFX_ADEAD1;
 	DeathSound = 'Drip';
 }

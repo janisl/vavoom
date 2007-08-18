@@ -27,13 +27,14 @@ class MWeaponPiece1 : MageWeaponPiece
 	__mobjinfo__(21)
 	__scriptid__(37);
 
-__states__
+states
 {
-	S_MSTAFF1('WMS1', 0 | FF_FULLBRIGHT, -1.0, none) = none
+Spawn:
+	WMS1 A -1 Bright
+	Stop
 }
 
 defaultproperties
 {
 	PieceValue = WPIECE1;
-	IdleState = S_MSTAFF1;
 }

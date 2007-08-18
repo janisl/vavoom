@@ -26,9 +26,11 @@
 class TreeStub : Decoration
 	__mobjinfo__(33);
 
-__states__
+states
 {
-	S_TREE_4('TRE1', 0, -1.0, none) = none
+Spawn:
+	TRE1 A -1
+	Stop
 }
 
 defaultproperties
@@ -36,5 +38,4 @@ defaultproperties
 	Radius = 15.0;
 	Height = 80.0;
 	bSolid = true;
-	IdleState = S_TREE_4;
 }

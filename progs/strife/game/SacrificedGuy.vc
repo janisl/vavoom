@@ -27,12 +27,13 @@
 class SacrificedGuy : Decoration
 	__mobjinfo__(212);
 
-__states__
+states
 {
-	S_DEAD_BODY('SACR', 0, -1.0, none) = none
+Spawn:
+	SACR A -1
+	Stop
 }
 
 defaultproperties
 {
-	IdleState = S_DEAD_BODY;
 }

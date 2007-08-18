@@ -39,11 +39,12 @@ final void A_SigilTrail()
 	A.Angles.yaw = Angles.yaw;
 }
 
-__states__
+states
 {
-	S_SIGIL_FX1_1('ZAP6', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_SIGIL_FX1_2) = none
-	S_SIGIL_FX1_2('ZAP6', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_SIGIL_FX1_3) = A_SigilTrail
-	S_SIGIL_FX1_3('ZAP6', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_SIGIL_FX1_1) = A_SigilTrail
+Spawn:
+	ZAP6 A 4 Bright
+	ZAP6 BC 4 Bright A_SigilTrail
+	Loop
 }
 
 defaultproperties
@@ -61,7 +62,6 @@ defaultproperties
 	bNoTeleport = true;
 	bDynamicLight = true;
 	bSpectral = true;
-	IdleState = S_SIGIL_FX1_1;
 	DeathState = S_ZAP1_1;
 	SightSound = 'weapons/sigil';
 	DeathSound = 'weapons/sigilhit';

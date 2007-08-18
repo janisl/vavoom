@@ -26,9 +26,11 @@
 class TechLampSilver : Decoration
 	__mobjinfo__(196);
 
-__states__
+states
 {
-	S_TLAMP_1('TLMP', 0, -1.0, none) = none
+Spawn:
+	TLMP A -1
+	Stop
 }
 
 defaultproperties
@@ -36,7 +38,6 @@ defaultproperties
 	Radius = 11.0;
 	Height = 64.0;
 	bSolid = true;
-	IdleState = S_TLAMP_1;
 	bStaticLight = true;
 	LightOffset = vector(0.0, 0.0, 48.0);
 	LightRadius = 200.0;

@@ -25,14 +25,13 @@
 
 class Sorcerer2Telefade : Effect;
 
-__states__
+states
 {
-	S_SOR2TELEFADE1('SOR2', 6, 8.0 / 35.0, S_SOR2TELEFADE2) = none
-	S_SOR2TELEFADE2('SOR2', 7, 6.0 / 35.0, S_SOR2TELEFADE3) = none
-	S_SOR2TELEFADE3('SOR2', 8, 6.0 / 35.0, S_SOR2TELEFADE4) = none
-	S_SOR2TELEFADE4('SOR2', 9, 6.0 / 35.0, S_SOR2TELEFADE5) = none
-	S_SOR2TELEFADE5('SOR2', 10, 6.0 / 35.0, S_SOR2TELEFADE6) = none
-	S_SOR2TELEFADE6('SOR2', 11, 6.0 / 35.0, none) = A_Lights
+Spawn:
+	SOR2 G 8
+	SOR2 HIJK 6
+	SOR2 L 6 A_Lights
+	Stop
 }
 
 defaultproperties
@@ -40,5 +39,4 @@ defaultproperties
 	bNoGravity = false;
 	bDynamicLight = true;
 	DLightColour = RGB(192, 95, 21);
-	IdleState = S_SOR2TELEFADE1;
 }

@@ -133,11 +133,15 @@ final void A_SummonRebel()
 	}
 }
 
-__states__
+states
 {
-	S_BEACON('BEAC', 0, -1.0, none) = none
-	S_BEACON_1('BEAC', 0, 30.0 / 35.0, S_BEACON_2) = none
-	S_BEACON_2('BEAC', 0, 160.0 / 35.0, S_BEACON_1) = A_SummonRebel
+Spawn:
+	BEAC A -1
+	Stop
+See:
+	BEAC A 30
+	BEAC A 160 A_SummonRebel
+	Loop
 }
 
 defaultproperties
@@ -153,6 +157,4 @@ defaultproperties
 	bDropped = true;
 	bFloorClip = true;
 	bInvBar = true;
-	IdleState = S_BEACON;
-	SeeState = S_BEACON_1;
 }

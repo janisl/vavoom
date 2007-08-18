@@ -26,9 +26,11 @@
 class StalactiteLarge : Decoration
 	__mobjinfo__(40);
 
-__states__
+states
 {
-	S_STALACTITELARGE('STCL', 0, -1.0, none) = none
+Spawn:
+	STCL A -1
+	Stop
 }
 
 defaultproperties
@@ -38,5 +40,4 @@ defaultproperties
 	bSolid = true;
 	bSpawnCeiling = true;
 	bNoGravity = true;
-	IdleState = S_STALACTITELARGE;
 }

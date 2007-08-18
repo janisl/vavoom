@@ -27,9 +27,11 @@ class SilverShield : BasicArmorPickup
 	__mobjinfo__(85)
 	__scriptid__(68);
 
-__states__
+states
 {
-	S_ITEM_SHLD1('SHLD', 0, -1.0, none) = none
+Spawn:
+	SHLD A -1
+	Stop
 }
 
 defaultproperties
@@ -39,5 +41,4 @@ defaultproperties
 	SavePercent = 0.5;
 	PickupMessage = "$txt_itemshield1";
 	bFloatBob = true;
-	IdleState = S_ITEM_SHLD1;
 }

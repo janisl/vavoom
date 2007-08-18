@@ -27,14 +27,15 @@ class KeySteel : HexenKey
 	__mobjinfo__(8030)
 	__scriptid__(85);
 
-__states__
+states
 {
-	S_KEY1('KEY1', 0, -1.0, none) = none
+Spawn:
+	KEY1 A -1
+	Stop
 }
 
 defaultproperties
 {
 	PickupMessage = "$txt_key_steel";
 	IconName = 'keyslot1';
-	IdleState = S_KEY1;
 }

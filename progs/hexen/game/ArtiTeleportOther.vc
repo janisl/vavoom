@@ -45,12 +45,11 @@ bool Use(bool Pickup)
 	return true;
 }
 
-__states__
+states
 {
-	S_ARTI_TELOTHER1('TELO', 0, 5.0 / 35.0, S_ARTI_TELOTHER2) = none
-	S_ARTI_TELOTHER2('TELO', 1, 5.0 / 35.0, S_ARTI_TELOTHER3) = none
-	S_ARTI_TELOTHER3('TELO', 2, 5.0 / 35.0, S_ARTI_TELOTHER4) = none
-	S_ARTI_TELOTHER4('TELO', 3, 5.0 / 35.0, S_ARTI_TELOTHER1) = none
+Spawn:
+	TELO ABCD 5
+	Loop
 }
 
 defaultproperties
@@ -62,5 +61,4 @@ defaultproperties
 	bFloatBob = true;
 	bPickupFlash = true;
 	bInvBar = true;
-	IdleState = S_ARTI_TELOTHER1;
 }

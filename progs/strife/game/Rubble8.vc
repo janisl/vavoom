@@ -26,9 +26,11 @@
 class Rubble8 : Decoration
 	__mobjinfo__(42);
 
-__states__
+states
 {
-	S_RUB8('RUB8', 0, -1.0, none) = none
+Spawn:
+	RUB8 A -1
+	Stop
 }
 
 defaultproperties
@@ -36,5 +38,4 @@ defaultproperties
 	bNoBlockmap = true;
 	bColideWithThings = false;
 	bColideWithWorld = false;
-	IdleState = S_RUB8;
 }

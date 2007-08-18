@@ -70,12 +70,15 @@ final void A_Summon()
 	}
 }
 
-__states__
+states
 {
-	S_SUMMON_FX1_1('SUMN', 0, 4.0 / 35.0, S_SUMMON_FX1_1) = none
-	S_SUMMON_FX2_1('SUMN', 0, 4.0 / 35.0, S_SUMMON_FX2_2) = none
-	S_SUMMON_FX2_2('SUMN', 0, 4.0 / 35.0, S_SUMMON_FX2_3) = none
-	S_SUMMON_FX2_3('SUMN', 0, 4.0 / 35.0, none) = A_Summon
+Spawn:
+	SUMN A 4
+	Loop
+Death:
+	SUMN AA 4
+	SUMN A 4 A_Summon
+	Stop
 }
 
 defaultproperties
@@ -85,6 +88,4 @@ defaultproperties
 	bActivateImpact = false;
 	bActivatePCross = false;
 	bDynamicLight = false;
-	IdleState = S_SUMMON_FX1_1;
-	DeathState = S_SUMMON_FX2_1;
 }

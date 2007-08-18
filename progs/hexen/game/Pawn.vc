@@ -111,12 +111,7 @@ final void A_FreezeDeathChunks()
 			(Random() - 0.5) * 2.0 * Radius,
 			(Random() - 0.5) * 2.0 * Radius,
 			Random() * Height));
-		switch (P_Random() % 3)
-		{
-		case 0: A.SetState(IceChunk::S_ICECHUNK1); break;
-		case 1: A.SetState(IceChunk::S_ICECHUNK2); break;
-		case 2: A.SetState(IceChunk::S_ICECHUNK3); break;
-		}
+		A.SetState(GetStatePlus(A.IdleState, P_Random() % 3));
 		if (A)
 		{
 			A.Velocity.z = (A.Origin.z - Origin.z) / Height * 4.0 * 35.0;
@@ -131,12 +126,7 @@ final void A_FreezeDeathChunks()
 			(Random() - 0.5) * 2.0 * Radius,
 			(Random() - 0.5) * 2.0 * Radius,
 			Random() * Height));
-		switch (P_Random() % 3)
-		{
-		case 0: A.SetState(IceChunk::S_ICECHUNK1); break;
-		case 1: A.SetState(IceChunk::S_ICECHUNK2); break;
-		case 2: A.SetState(IceChunk::S_ICECHUNK3); break;
-		}
+		A.SetState(GetStatePlus(A.IdleState, P_Random() % 3));
 		if (A)
 		{
 			A.Velocity.z = (A.Origin.z - Origin.z) / Height * 4.0 * 35.0;

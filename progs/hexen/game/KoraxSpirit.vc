@@ -56,11 +56,11 @@ void KSpiritInit(Actor korax)
 	}
 }
 
-//============================================================================
+//==========================================================================
 //
 //  A_KSpiritSeeker
 //
-//============================================================================
+//==========================================================================
 
 final void A_KSpiritSeeker(float thresh, float turnMax)
 {
@@ -126,11 +126,11 @@ final void A_KSpiritSeeker(float thresh, float turnMax)
 	return;
 }
 
-//============================================================================
+//==========================================================================
 //
 //  A_KSpiritWeave
 //
-//============================================================================
+//==========================================================================
 
 final void A_KSpiritWeave()
 {
@@ -149,11 +149,11 @@ final void A_KSpiritWeave()
 	Origin.z += Level.Game.FloatBobOffsets[WeaveZ] * 2.0;
 }
 
-//============================================================================
+//==========================================================================
 //
 //  A_KSpiritRoam
 //
-//============================================================================
+//==========================================================================
 
 final void A_KSpiritRoam()
 {
@@ -176,16 +176,14 @@ final void A_KSpiritRoam()
 	}
 }
 
-__states__
+states
 {
-	S_KSPIRIT_ROAM1('SPIR', 0, 5.0 / 35.0, S_KSPIRIT_ROAM2) = A_KSpiritRoam
-	S_KSPIRIT_ROAM2('SPIR', 1, 5.0 / 35.0, S_KSPIRIT_ROAM1) = A_KSpiritRoam
-	S_KSPIRIT_DEATH1('SPIR', 3, 5.0 / 35.0, S_KSPIRIT_DEATH2) = none
-	S_KSPIRIT_DEATH2('SPIR', 4, 5.0 / 35.0, S_KSPIRIT_DEATH3) = none
-	S_KSPIRIT_DEATH3('SPIR', 5, 5.0 / 35.0, S_KSPIRIT_DEATH4) = none
-	S_KSPIRIT_DEATH4('SPIR', 6, 5.0 / 35.0, S_KSPIRIT_DEATH5) = none
-	S_KSPIRIT_DEATH5('SPIR', 7, 5.0 / 35.0, S_KSPIRIT_DEATH6) = none
-	S_KSPIRIT_DEATH6('SPIR', 8, 5.0 / 35.0, none) = none
+Spawn:
+	SPIR AB 5 A_KSpiritRoam
+	Loop
+Death:
+	SPIR DEFGHI 5
+	Stop
 }
 
 defaultproperties
@@ -199,6 +197,4 @@ defaultproperties
 	bActivatePCross = false;
 	DLightColour = RGB(221, 221, 221);
 	DLightRadius = 200.0;
-	IdleState = S_KSPIRIT_ROAM1;
-	DeathState = S_KSPIRIT_DEATH1;
 }

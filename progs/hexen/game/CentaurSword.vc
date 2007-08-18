@@ -23,24 +23,20 @@
 //**
 //**************************************************************************
 
-class CentaurSword:CentaurShield;
+class CentaurSword : CentaurShield;
 
-__states__
+states
 {
-	S_CENTAUR_SWORD1('CTDP', 10, 3.0 / 35.0, S_CENTAUR_SWORD2) = A_CheckFloor
-	S_CENTAUR_SWORD2('CTDP', 11, 3.0 / 35.0, S_CENTAUR_SWORD3) = A_CheckFloor
-	S_CENTAUR_SWORD3('CTDP', 12, 3.0 / 35.0, S_CENTAUR_SWORD4) = A_CheckFloor
-	S_CENTAUR_SWORD4('CTDP', 13, 3.0 / 35.0, S_CENTAUR_SWORD5) = A_CheckFloor
-	S_CENTAUR_SWORD5('CTDP', 14, 3.0 / 35.0, S_CENTAUR_SWORD6) = A_CheckFloor
-	S_CENTAUR_SWORD6('CTDP', 15, 3.0 / 35.0, S_CENTAUR_SWORD7) = A_CheckFloor
-	S_CENTAUR_SWORD7('CTDP', 16, 3.0 / 35.0, S_CENTAUR_SWORD3) = A_CheckFloor
-	S_CENTAUR_SWORD_X1('CTDP', 17, 4.0 / 35.0, S_CENTAUR_SWORD_X2) = none
-	S_CENTAUR_SWORD_X2('CTDP', 18, 4.0 / 35.0, S_CENTAUR_SWORD_X3) = A_QueueCorpse
-	S_CENTAUR_SWORD_X3('CTDP', 19, -1.0, none) = none
+Spawn:
+	CTDP KLMNOPQ 3 A_CheckFloor
+	Goto Spawn+2
+Death:
+	CTDP R 4
+	CTDP S 4 A_QueueCorpse
+	CTDP T -1
+	Stop
 }
 
 defaultproperties
 {
-	IdleState = S_CENTAUR_SWORD1;
-	DeathState = S_CENTAUR_SWORD_X1;
 }

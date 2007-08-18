@@ -27,18 +27,13 @@
 //
 //**************************************************************************
 
-class BurnBallFB:BeastBall;
+class BurnBallFB : BeastBall;
 
-__states__
+states
 {
-	S_BURNBALLFB1('FRB1', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_BURNBALLFB2) = none
-	S_BURNBALLFB2('FRB1', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_BURNBALLFB3) = none
-	S_BURNBALLFB3('FRB1', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_BURNBALLFB4) = none
-	S_BURNBALLFB4('FRB1', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_BURNBALLFB5) = none
-	S_BURNBALLFB5('FRB1', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_BURNBALLFB6) = none
-	S_BURNBALLFB6('FRB1', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_BURNBALLFB7) = none
-	S_BURNBALLFB7('FRB1', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_BURNBALLFB8) = none
-	S_BURNBALLFB8('FRB1', 7 | FF_FULLBRIGHT, 4.0 / 35.0, none) = none
+Spawn:
+	FRB1 ABCDEFGH 4 Bright
+	Stop
 }
 
 defaultproperties
@@ -48,5 +43,4 @@ defaultproperties
 	MissileDamage = 2;
 	bWindThrust = false;
 	bDropOff = false;
-	IdleState = S_BURNBALLFB1;
 }

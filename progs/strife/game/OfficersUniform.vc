@@ -26,9 +26,11 @@
 class OfficersUniform : Inventory
 	__mobjinfo__(52);
 
-__states__
+states
 {
-	S_OFFICERS_UNIFORM('OFIC', 0, -1.0, none) = none
+Spawn:
+	OFIC A -1
+	Stop
 }
 
 defaultproperties
@@ -40,5 +42,4 @@ defaultproperties
 	bNoDeathmatch = true;
 	bFloorClip = true;
 	bInvBar = true;
-	IdleState = S_OFFICERS_UNIFORM;
 }

@@ -27,12 +27,11 @@ class ArtiFly : PowerupGiver
 	__mobjinfo__(83)
 	__scriptid__(15);
 
-__states__
+states
 {
-	S_ARTI_SOAR1('SOAR', 0, 5.0 / 35.0, S_ARTI_SOAR2) = none
-	S_ARTI_SOAR2('SOAR', 1, 5.0 / 35.0, S_ARTI_SOAR3) = none
-	S_ARTI_SOAR3('SOAR', 2, 5.0 / 35.0, S_ARTI_SOAR4) = none
-	S_ARTI_SOAR4('SOAR', 1, 5.0 / 35.0, S_ARTI_SOAR1) = none
+Spawn:
+	SOAR ABCB 5
+	Loop
 }
 
 defaultproperties
@@ -43,5 +42,4 @@ defaultproperties
 	IconName = 'artisoar';
 	bFloatBob = true;
 	bPickupFlash = true;
-	IdleState = S_ARTI_SOAR1;
 }

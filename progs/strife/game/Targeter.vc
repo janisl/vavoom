@@ -38,9 +38,11 @@ bool Use(bool Pickup)
 	return false;
 }
 
-__states__
+states
 {
-	S_TARGETER('TARG', 0, -1.0, none) = none
+Spawn:
+	TARG A -1
+	Stop
 }
 
 defaultproperties
@@ -52,5 +54,4 @@ defaultproperties
 	IconName = 'i_targ';
 	bFloorClip = true;
 	bInvBar = true;
-	IdleState = S_TARGETER;
 }

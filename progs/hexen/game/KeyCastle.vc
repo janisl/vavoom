@@ -26,14 +26,15 @@
 class KeyCastle : HexenKey
 	__mobjinfo__(8200);
 
-__states__
+states
 {
-	S_KEYB('KEYB', 0, -1.0, none) = none
+Spawn:
+	KEYB A -1
+	Stop
 }
 
 defaultproperties
 {
 	PickupMessage = "$txt_key_castle";
 	IconName = 'keyslotb';
-	IdleState = S_KEYB;
 }

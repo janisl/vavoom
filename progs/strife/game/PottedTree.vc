@@ -26,9 +26,11 @@
 class PottedTree : Decoration
 	__mobjinfo__(203);
 
-__states__
+states
 {
-	S_TREE_3('TREE', 2, -1.0, none) = none
+Spawn:
+	TREE C -1
+	Stop
 }
 
 defaultproperties
@@ -36,5 +38,4 @@ defaultproperties
 	Radius = 15.0;
 	Height = 64.0;
 	bSolid = true;
-	IdleState = S_TREE_3;
 }

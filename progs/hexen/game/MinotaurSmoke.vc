@@ -25,30 +25,15 @@
 
 class MinotaurSmoke : Effect;
 
-__states__
+states
 {
-	S_MINOSMOKE1('MNSM', 0, 3.0 / 35.0, S_MINOSMOKE2) = none
-	S_MINOSMOKE2('MNSM', 1, 3.0 / 35.0, S_MINOSMOKE3) = none
-	S_MINOSMOKE3('MNSM', 2, 3.0 / 35.0, S_MINOSMOKE4) = none
-	S_MINOSMOKE4('MNSM', 3, 3.0 / 35.0, S_MINOSMOKE5) = none
-	S_MINOSMOKE5('MNSM', 4, 3.0 / 35.0, S_MINOSMOKE6) = none
-	S_MINOSMOKE6('MNSM', 5, 3.0 / 35.0, S_MINOSMOKE7) = none
-	S_MINOSMOKE7('MNSM', 6, 3.0 / 35.0, S_MINOSMOKE8) = none
-	S_MINOSMOKE8('MNSM', 7, 3.0 / 35.0, S_MINOSMOKE9) = none
-	S_MINOSMOKE9('MNSM', 8, 3.0 / 35.0, S_MINOSMOKE0) = none
-	S_MINOSMOKE0('MNSM', 9, 3.0 / 35.0, S_MINOSMOKEA) = none
-	S_MINOSMOKEA('MNSM', 10, 3.0 / 35.0, S_MINOSMOKEB) = none
-	S_MINOSMOKEB('MNSM', 11, 3.0 / 35.0, S_MINOSMOKEC) = none
-	S_MINOSMOKEC('MNSM', 12, 3.0 / 35.0, S_MINOSMOKED) = none
-	S_MINOSMOKED('MNSM', 13, 3.0 / 35.0, S_MINOSMOKEE) = none
-	S_MINOSMOKEE('MNSM', 14, 3.0 / 35.0, S_MINOSMOKEF) = none
-	S_MINOSMOKEF('MNSM', 15, 3.0 / 35.0, S_MINOSMOKEG) = none
-	S_MINOSMOKEG('MNSM', 16, 3.0 / 35.0, none) = none
+Spawn:
+	MNSM ABCDEFGHIJKLMNOPQ 3
+	Stop
 }
 
 defaultproperties
 {
 	Alpha = 0.333;
 	bNoTeleport = true;
-	IdleState = S_MINOSMOKE1;
 }

@@ -26,11 +26,13 @@
 class Tank3 : Decoration
 	__mobjinfo__(211);
 
-__states__
+states
 {
-	S_TANKER3_1('TNK3', 0, 15.0 / 35.0, S_TANKER3_2) = none
-	S_TANKER3_2('TNK3', 1, 11.0 / 35.0, S_TANKER3_3) = none
-	S_TANKER3_3('TNK3', 2, 40.0 / 35.0, S_TANKER3_1) = none
+Spawn:
+	TNK3 A 15
+	TNK3 B 11
+	TNK3 C 40
+	Loop
 }
 
 defaultproperties
@@ -39,5 +41,4 @@ defaultproperties
 	Height = 192.0;
 	Mass = 50000.0;
 	bSolid = true;
-	IdleState = S_TANKER3_1;
 }

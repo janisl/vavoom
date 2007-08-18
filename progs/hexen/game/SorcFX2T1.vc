@@ -25,14 +25,15 @@
 
 class SorcFX2T1 : Effect;
 
-__states__
+states
 {
-	S_SORCFX2T1('SBS2', 0, 10.0 / 35.0, none) = none
+Spawn:
+	SBS2 A 10
+	Stop
 }
 
 defaultproperties
 {
 	Alpha = 0.666;
 	bNoTeleport = true;
-	IdleState = S_SORCFX2T1;
 }

@@ -25,19 +25,16 @@
 
 class CStaffPuff : Effect;
 
-__states__
+states
 {
-	S_CSTAFFPUFF1('FHFX', 18, 4.0 / 35.0, S_CSTAFFPUFF2) = none
-	S_CSTAFFPUFF2('FHFX', 19, 4.0 / 35.0, S_CSTAFFPUFF3) = none
-	S_CSTAFFPUFF3('FHFX', 20, 4.0 / 35.0, S_CSTAFFPUFF4) = none
-	S_CSTAFFPUFF4('FHFX', 21, 4.0 / 35.0, S_CSTAFFPUFF5) = none
-	S_CSTAFFPUFF5('FHFX', 22, 4.0 / 35.0, none) = none
+Spawn:
+	FHFX STUVW 4
+	Stop
 }
 
 defaultproperties
 {
 	Alpha = 0.333;
 	bPuffOnActors = true;
-	IdleState = S_CSTAFFPUFF1;
 	SightSound = 'ClericCStaffHitThing';
 }

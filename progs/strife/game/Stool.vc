@@ -23,12 +23,14 @@
 //**
 //**************************************************************************
 
-class Stool:Decoration
+class Stool : Decoration
 	__mobjinfo__(189);
 
-__states__
+states
 {
-	S_STOOL('STOL', 0, -1.0, none) = none
+Spawn:
+	STOL A -1
+	Stop
 }
 
 defaultproperties
@@ -36,5 +38,4 @@ defaultproperties
 	Radius = 6.0;
 	Height = 24.0;
 	bSolid = true;
-	IdleState = S_STOOL;
 }

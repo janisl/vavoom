@@ -27,9 +27,11 @@ class PuzzBook2 : PuzzleItem
 	__mobjinfo__(9008)
 	__scriptid__(84);
 
-__states__
+states
 {
-	S_ARTIPUZZBOOK2('ABK2', 0, -1.0, none) = none
+Spawn:
+	ABK2 A -1
+	Stop
 }
 
 defaultproperties
@@ -37,5 +39,4 @@ defaultproperties
 	PuzzleItemNumber = 8;
 	PickupMessage = "$txt_artipuzzbook2";
 	IconName = 'artibok2';
-	IdleState = S_ARTIPUZZBOOK2;
 }

@@ -42,10 +42,14 @@ int DoSpecialDamage(EntityEx victim, EntityEx source, int damage)
 	return damage;
 }
 
-__states__
+states
 {
-	S_POISONDART_1('DART', 0, -1.0, none) = none
-	S_POISONDART_X1('DART', 0, 1.0 / 35.0, none) = none
+Spawn:
+	DART A -1
+	Stop
+Death:
+	DART A 1
+	Stop
 }
 
 defaultproperties
@@ -56,6 +60,4 @@ defaultproperties
 	MissileDamage = 2;
 	bActivateImpact = false;
 	bActivatePCross = false;
-	IdleState = S_POISONDART_1;
-	DeathState = S_POISONDART_X1;
 }

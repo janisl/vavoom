@@ -26,13 +26,14 @@
 class Tub : Decoration
 	__mobjinfo__(191);
 
-__states__
+states
 {
-	S_TUB1('TUB1', 0, -1.0, none) = none
+Spawn:
+	TUB1 A -1
+	Stop
 }
 
 defaultproperties
 {
 	bNoBlockmap = true;
-	IdleState = S_TUB1;
 }

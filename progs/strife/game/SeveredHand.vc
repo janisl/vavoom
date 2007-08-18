@@ -26,9 +26,11 @@
 class SeveredHand : StrifeKey
 	__mobjinfo__(91);
 
-__states__
+states
 {
-	S_SEVERED_HAND('HAND', 0, -1.0, none) = none
+Spawn:
+	HAND A -1
+	Stop
 }
 
 defaultproperties
@@ -38,5 +40,4 @@ defaultproperties
 	StrifeName = "Severed Hand";
 	IconName = 'i_hand';
 	GiveQuestType = QuestItem12;
-	IdleState = S_SEVERED_HAND;
 }

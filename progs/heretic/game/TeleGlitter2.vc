@@ -26,17 +26,18 @@
 class TeleGlitter2 : TeleGlitter1
 	__scriptid__(167);
 
-__states__
+states
 {
-	S_TELEGLITTER2_1('TGLT', 5 | FF_FULLBRIGHT, 2.0 / 35.0, S_TELEGLITTER2_2) = none
-	S_TELEGLITTER2_2('TGLT', 6 | FF_FULLBRIGHT, 2.0 / 35.0, S_TELEGLITTER2_3) = A_AccTeleGlitter
-	S_TELEGLITTER2_3('TGLT', 7 | FF_FULLBRIGHT, 2.0 / 35.0, S_TELEGLITTER2_4) = none
-	S_TELEGLITTER2_4('TGLT', 8 | FF_FULLBRIGHT, 2.0 / 35.0, S_TELEGLITTER2_5) = A_AccTeleGlitter
-	S_TELEGLITTER2_5('TGLT', 9 | FF_FULLBRIGHT, 2.0 / 35.0, S_TELEGLITTER2_1) = none
+Spawn:
+	TGLT F 2 Bright
+	TGLT G 2 Bright A_AccTeleGlitter
+	TGLT H 2 Bright
+	TGLT I 2 Bright A_AccTeleGlitter
+	TGLT J 2 Bright
+	Loop
 }
 
 defaultproperties
 {
-	IdleState = S_TELEGLITTER2_1;
 	DLightColour = RGB(192, 196, 208);
 }

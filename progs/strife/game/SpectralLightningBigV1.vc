@@ -25,13 +25,13 @@
 
 class SpectralLightningBigV1 : SpectralLightningBase;
 
-__states__
+states
 {
-	S_SIGIL_FX5_1('ZOT2', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_SIGIL_FX5_2) = A_Tracer
-	S_SIGIL_FX5_2('ZOT2', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_SIGIL_FX5_3) = A_Tracer
-	S_SIGIL_FX5_3('ZOT2', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_SIGIL_FX5_4) = A_Tracer
-	S_SIGIL_FX5_4('ZOT2', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_SIGIL_FX5_5) = A_Tracer
-	S_SIGIL_FX5_5('ZOT2', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_SIGIL_FX5_1) = A_Tracer
+Spawn:
+	ZOT2 AB 4 Bright A_Tracer
+	ZOT2 CD 6 Bright A_Tracer
+	ZOT2 E 5 Bright A_Tracer
+	Loop
 }
 
 defaultproperties
@@ -49,7 +49,6 @@ defaultproperties
 	bNoTeleport = true;
 	bDynamicLight = true;
 	bSpectral = true;
-	IdleState = S_SIGIL_FX5_1;
 	DeathState = S_ZAP1_0;
 	SightSound = 'weapons/sigil';
 	DeathSound = 'weapons/sigilhit';

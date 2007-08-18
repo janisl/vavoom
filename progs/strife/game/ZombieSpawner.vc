@@ -37,9 +37,11 @@ final void A_SpawnZombie()
 	Spawn(Zombie, Origin);
 }
 
-__states__
+states
 {
-	S_PEASANT_SPAWNER('', 0, 175.0 / 35.0, S_PEASANT_SPAWNER) = A_SpawnZombie
+Spawn:
+	TNT1 A 175 A_SpawnZombie
+	Loop
 }
 
 defaultproperties
@@ -47,6 +49,5 @@ defaultproperties
 	Health = 20;
 	bShootable = true;
 	bHidden = true;
-	IdleState = S_PEASANT_SPAWNER;
 	ActiveSound = 'zombie/spawner';
 }

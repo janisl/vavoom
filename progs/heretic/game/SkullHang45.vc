@@ -26,9 +26,11 @@
 class SkullHang45 : Decoration
 	__mobjinfo__(25);
 
-__states__
+states
 {
-	S_SKULLHANG45_1('SKH3', 0, -1.0, none) = none
+Spawn:
+	SKH3 A -1
+	Stop
 }
 
 defaultproperties
@@ -36,5 +38,4 @@ defaultproperties
 	Height = 45.0;
 	bSpawnCeiling = true;
 	bNoGravity = true;
-	IdleState = S_SKULLHANG45_1;
 }

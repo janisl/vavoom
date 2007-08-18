@@ -26,18 +26,14 @@
 class IceShard : Projectile
 	__scriptid__(65);
 
-__states__
+states
 {
-	S_ICESHARD1('SHRD', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_ICESHARD2) = none
-	S_ICESHARD2('SHRD', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_ICESHARD3) = none
-	S_ICESHARD3('SHRD', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_ICESHARD1) = none
-
-	//FIXME avoid copying.
-	S_SHARDFXE1_1('SHEX', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_SHARDFXE1_2) = none
-	S_SHARDFXE1_2('SHEX', 1 | FF_FULLBRIGHT, 5.0 / 35.0, S_SHARDFXE1_3) = none
-	S_SHARDFXE1_3('SHEX', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_SHARDFXE1_4) = none
-	S_SHARDFXE1_4('SHEX', 3 | FF_FULLBRIGHT, 5.0 / 35.0, S_SHARDFXE1_5) = none
-	S_SHARDFXE1_5('SHEX', 4 | FF_FULLBRIGHT, 5.0 / 35.0, none) = none
+Spawn:
+	SHRD ABC 3 Bright
+	Loop
+Death:
+	SHEX ABCDE 5 Bright
+	Stop
 }
 
 defaultproperties
@@ -49,8 +45,6 @@ defaultproperties
 	DamageType = 'Ice';
 	bActivateImpact = false;
 	bActivatePCross = false;
-	IdleState = S_ICESHARD1;
-	DeathState = S_SHARDFXE1_1;
 	DeathSound = 'MageShardsExplode';
 	DLightColour = RGB(74, 77, 196);
 	DLightRadius = 200.0;

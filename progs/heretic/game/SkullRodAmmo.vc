@@ -27,10 +27,11 @@ class SkullRodAmmo : Ammo
 	__mobjinfo__(20)
 	__scriptid__(158);
 
-__states__
+states
 {
-	S_AMS1_1('AMS1', 0, 5.0 / 35.0, S_AMS1_2) = none
-	S_AMS1_2('AMS1', 1, 5.0 / 35.0, S_AMS1_1) = none
+Spawn:
+	AMS1 AB 5
+	Loop
 }
 
 defaultproperties
@@ -39,7 +40,6 @@ defaultproperties
 	MaxAmount = 200;
 	BackpackAmount = 20;
 	BackpackMaxAmount = 400;
-	IdleState = S_AMS1_1;
 	PickupMessage = "$txt_ammoskullrod1";
 	IconName = 'inamram';
 }

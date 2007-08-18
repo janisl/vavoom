@@ -72,17 +72,15 @@ final void A_BlueSpark()
 	}
 }
 
-__states__
+states
 {
-	S_SOR2FX1_1('FX16', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_SOR2FX1_2) = A_BlueSpark
-	S_SOR2FX1_2('FX16', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_SOR2FX1_3) = A_BlueSpark
-	S_SOR2FX1_3('FX16', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_SOR2FX1_1) = A_BlueSpark
-	S_SOR2FXI1_1('FX16', 6 | FF_FULLBRIGHT, 5.0 / 35.0, S_SOR2FXI1_2) = A_Explode
-	S_SOR2FXI1_2('FX16', 7 | FF_FULLBRIGHT, 5.0 / 35.0, S_SOR2FXI1_3) = none
-	S_SOR2FXI1_3('FX16', 8 | FF_FULLBRIGHT, 5.0 / 35.0, S_SOR2FXI1_4) = none
-	S_SOR2FXI1_4('FX16', 9 | FF_FULLBRIGHT, 5.0 / 35.0, S_SOR2FXI1_5) = none
-	S_SOR2FXI1_5('FX16', 10 | FF_FULLBRIGHT, 5.0 / 35.0, S_SOR2FXI1_6) = none
-	S_SOR2FXI1_6('FX16', 11 | FF_FULLBRIGHT, 5.0 / 35.0, none) = none
+Spawn:
+	FX16 ABC 3 Bright A_BlueSpark
+	Loop
+Death:
+	FX16 G 5 Bright A_Explode
+	FX16 HIJKL 5 Bright
+	Stop
 }
 
 defaultproperties
@@ -91,8 +89,6 @@ defaultproperties
 	Height = 6.0;
 	Speed = 700.0;
 	MissileDamage = 1;
-	IdleState = S_SOR2FX1_1;
-	DeathState = S_SOR2FXI1_1;
 	DLightColour = RGB(80, 80, 253);
 	DLightRadius = 200.0;
 }

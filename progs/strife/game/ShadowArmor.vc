@@ -27,12 +27,14 @@ class ShadowArmor : PowerupGiver
 	__mobjinfo__(2024)
 	__scriptid__(135);
 
-__states__
+states
 {
-	S_SHADOW_ARMOR1('SHD1', 0, 17.0 / 35.0, S_SHADOW_ARMOR2) = A_ClearShadow
-	S_SHADOW_ARMOR2('SHD1', 0, 17.0 / 35.0, S_SHADOW_ARMOR3) = A_BeShadowyFoe
-	S_SHADOW_ARMOR3('SHD1', 0, 17.0 / 35.0, S_SHADOW_ARMOR4) = A_SetShadow
-	S_SHADOW_ARMOR4('SHD1', 0, 17.0 / 35.0, S_SHADOW_ARMOR1) = A_BeShadowyFoe
+Spawn:
+	SHD1 A 17 A_ClearShadow
+	SHD1 A 17 A_BeShadowyFoe
+	SHD1 A 17 A_SetShadow
+	SHD1 A 17 A_BeShadowyFoe
+	Loop
 }
 
 defaultproperties
@@ -44,5 +46,4 @@ defaultproperties
 	PickupSound = 'misc/i_pkup';
 	IconName = 'i_shd1';
 	bFloorClip = true;
-	IdleState = S_SHADOW_ARMOR1;
 }

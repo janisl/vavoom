@@ -41,9 +41,11 @@ final void A_SpawnTeleGlitter2()
 	mo.Velocity.z = 0.25 * 35.0;
 }
 
-__states__
+states
 {
-	S_TELEGLITGEN2('TGLT', 5, 8.0 / 35.0, S_TELEGLITGEN2) = A_SpawnTeleGlitter2
+Spawn:
+	TGLT F 8 A_SpawnTeleGlitter2
+	Loop
 }
 
 defaultproperties
@@ -52,5 +54,4 @@ defaultproperties
 	bNoBlockmap = true;
 	bNoGravity = true;
 	bNoPassMobj = true;
-	IdleState = S_TELEGLITGEN2;
 }

@@ -25,15 +25,12 @@
 
 class AxePuffGlow : Effect;
 
-__states__
+states
 {
-	S_AXEPUFF_GLOW1('FAXE', 17 | FF_FULLBRIGHT, 4.0 / 35.0, S_AXEPUFF_GLOW2) = A_Lights
-	S_AXEPUFF_GLOW2('FAXE', 18 | FF_FULLBRIGHT, 4.0 / 35.0, S_AXEPUFF_GLOW3) = none
-	S_AXEPUFF_GLOW3('FAXE', 19 | FF_FULLBRIGHT, 4.0 / 35.0, S_AXEPUFF_GLOW4) = none
-	S_AXEPUFF_GLOW4('FAXE', 20 | FF_FULLBRIGHT, 4.0 / 35.0, S_AXEPUFF_GLOW5) = none
-	S_AXEPUFF_GLOW5('FAXE', 21 | FF_FULLBRIGHT, 4.0 / 35.0, S_AXEPUFF_GLOW6) = none
-	S_AXEPUFF_GLOW6('FAXE', 22 | FF_FULLBRIGHT, 4.0 / 35.0, S_AXEPUFF_GLOW7) = none
-	S_AXEPUFF_GLOW7('FAXE', 23 | FF_FULLBRIGHT, 4.0 / 35.0, none) = none
+Spawn:
+	FAXE R 4 Bright A_Lights
+	FAXE STUVWX 4 Bright
+	Stop
 }
 
 defaultproperties
@@ -42,7 +39,6 @@ defaultproperties
 	bAxeBlood = true;
 	bDynamicLight = true;
 	DLightColour = RGB(67, 197, 246);
-	IdleState = S_AXEPUFF_GLOW1;
 	SightSound = 'FighterAxeHitThing';
 	AttackSound = 'FighterHammerHitWall';
 }

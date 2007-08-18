@@ -23,12 +23,14 @@
 //**
 //**************************************************************************
 
-class PoleLatern:Decoration
+class PoleLatern : Decoration
 	__mobjinfo__(46);
 
-__states__
+states
 {
-	S_LANT('LANT', 0, -1.0, none) = none
+Spawn:
+	LANT A -1
+	Stop
 }
 
 defaultproperties
@@ -36,5 +38,4 @@ defaultproperties
 	Radius = 3.0;
 	Height = 80.0;
 	bSolid = true;
-	IdleState = S_LANT;
 }

@@ -47,17 +47,14 @@ final void A_SerpentHeadCheck()
 	}
 }
 
-__states__
+states
 {
-	S_SERPENT_HEAD1('SSXD', 8, 4.0 / 35.0, S_SERPENT_HEAD2) = A_SerpentHeadCheck
-	S_SERPENT_HEAD2('SSXD', 9, 4.0 / 35.0, S_SERPENT_HEAD3) = A_SerpentHeadCheck
-	S_SERPENT_HEAD3('SSXD', 10, 4.0 / 35.0, S_SERPENT_HEAD4) = A_SerpentHeadCheck
-	S_SERPENT_HEAD4('SSXD', 11, 4.0 / 35.0, S_SERPENT_HEAD5) = A_SerpentHeadCheck
-	S_SERPENT_HEAD5('SSXD', 12, 4.0 / 35.0, S_SERPENT_HEAD6) = A_SerpentHeadCheck
-	S_SERPENT_HEAD6('SSXD', 13, 4.0 / 35.0, S_SERPENT_HEAD7) = A_SerpentHeadCheck
-	S_SERPENT_HEAD7('SSXD', 14, 4.0 / 35.0, S_SERPENT_HEAD8) = A_SerpentHeadCheck
-	S_SERPENT_HEAD8('SSXD', 15, 4.0 / 35.0, S_SERPENT_HEAD1) = A_SerpentHeadCheck
-	S_SERPENT_HEAD_X1('SSXD', 18, -1.0, S_SERPENT_HEAD_X1) = none
+Spawn:
+	SSXD IJKLMNOP 4 A_SerpentHeadCheck
+	Loop
+Death:
+	SSXD S -1
+	Wait
 }
 
 defaultproperties
@@ -66,6 +63,4 @@ defaultproperties
 	Height = 10.0;
 	Gravity = 0.125;
 	bNoGravity = false;
-	IdleState = S_SERPENT_HEAD1;
-	DeathState = S_SERPENT_HEAD_X1;
 }

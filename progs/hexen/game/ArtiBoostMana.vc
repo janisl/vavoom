@@ -39,9 +39,11 @@ bool Use(bool Pickup)
 		Player(Owner.Player).GiveMana(Mana2, Mana2.default.MaxAmount);
 }
 
-__states__
+states
 {
-	S_ARTI_MANA('BMAN', 0 | FF_FULLBRIGHT, -1.0, none) = none
+Spawn:
+	BMAN A -1 Bright
+	Stop
 }
 
 defaultproperties
@@ -53,5 +55,4 @@ defaultproperties
 	bFloatBob = true;
 	bPickupFlash = true;
 	bInvBar = true;
-	IdleState = S_ARTI_MANA;
 }

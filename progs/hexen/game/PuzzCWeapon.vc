@@ -26,9 +26,11 @@
 class PuzzCWeapon : PuzzleItem
 	__mobjinfo__(9016);
 
-__states__
+states
 {
-	S_ARTIPUZZCWEAPON('ACWP', 0, -1.0, none) = none
+Spawn:
+	ACWP A -1
+	Stop
 }
 
 defaultproperties
@@ -36,5 +38,4 @@ defaultproperties
 	PuzzleItemNumber = 11;
 	PickupMessage = "$txt_artipuzzcweapon";
 	IconName = 'articwep';
-	IdleState = S_ARTIPUZZCWEAPON;
 }

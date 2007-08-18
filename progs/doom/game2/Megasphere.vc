@@ -41,19 +41,17 @@ bool TryPickup(EntityEx Toucher)
 	return true;
 }
 
-__states__
+states
 {
-	S_MEGA('MEGA', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_MEGA2) = none
-	S_MEGA2('MEGA', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_MEGA3) = none
-	S_MEGA3('MEGA', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_MEGA4) = none
-	S_MEGA4('MEGA', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_MEGA) = none
+Spawn:
+	MEGA ABCD 6 Bright
+	Loop
 }
 
 defaultproperties
 {
 	Alpha = 0.666;
 	bCountItem = true;
-	IdleState = S_MEGA;
 	PickupMessage = "$gotmsphere";
 	PickupSound = 'misc/p_pkup';
 }

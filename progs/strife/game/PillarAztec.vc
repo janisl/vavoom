@@ -26,9 +26,11 @@
 class PillarAztec : Decoration
 	__mobjinfo__(54);
 
-__states__
+states
 {
-	S_STEAL_COLUMN('STEL', 0, -1.0, none) = none
+Spawn:
+	STEL A -1
+	Stop
 }
 
 defaultproperties
@@ -36,5 +38,4 @@ defaultproperties
 	Radius = 16.0;
 	Height = 128.0;
 	bSolid = true;
-	IdleState = S_STEAL_COLUMN;
 }

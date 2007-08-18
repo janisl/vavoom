@@ -27,14 +27,15 @@ class KeyEmerald : HexenKey
 	__mobjinfo__(8034)
 	__scriptid__(89);
 
-__states__
+states
 {
-	S_KEY5('KEY5', 0, -1.0, none) = none
+Spawn:
+	KEY5 A -1
+	Stop
 }
 
 defaultproperties
 {
 	PickupMessage = "$txt_key_emerald";
 	IconName = 'keyslot5';
-	IdleState = S_KEY5;
 }

@@ -26,9 +26,11 @@
 class OracleKey : StrifeKey
 	__mobjinfo__(61);
 
-__states__
+states
 {
-	S_ORACLE_KEY('ORAC', 0, -1.0, none) = none
+Spawn:
+	ORAC A -1
+	Stop
 }
 
 defaultproperties
@@ -37,5 +39,4 @@ defaultproperties
 	PickupMessage = "$txt_oraclekey";
 	StrifeName = "Oracle Key";
 	IconName = 'i_orac';
-	IdleState = S_ORACLE_KEY;
 }

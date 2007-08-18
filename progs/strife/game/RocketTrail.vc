@@ -25,18 +25,15 @@
 
 class RocketTrail : Effect;
 
-__states__
+states
 {
-	S_R_PUFF_1('PUFY', 1, 4.0 / 35.0, S_R_PUFF_2) = none
-	S_R_PUFF_2('PUFY', 2, 4.0 / 35.0, S_R_PUFF_3) = none
-	S_R_PUFF_3('PUFY', 1, 4.0 / 35.0, S_R_PUFF_4) = none
-	S_R_PUFF_4('PUFY', 2, 4.0 / 35.0, S_R_PUFF_5) = none
-	S_R_PUFF_5('PUFY', 3, 4.0 / 35.0, none) = none
+Spawn:
+	PUFY BCBCD 4
+	Stop
 }
 
 defaultproperties
 {
 	Alpha = 0.333;
-	IdleState = S_R_PUFF_1;
 	SightSound = 'misc/missileinflight';
 }

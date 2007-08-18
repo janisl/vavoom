@@ -26,9 +26,11 @@
 class StrifeCandelabra : Decoration
 	__mobjinfo__(35);
 
-__states__
+states
 {
-	S_CANDLEABRA('CLBR', 0 | FF_FULLBRIGHT, -1.0, none) = none
+Spawn:
+	CLBR A -1 Bright
+	Stop
 }
 
 defaultproperties
@@ -36,7 +38,6 @@ defaultproperties
 	Radius = 16.0;
 	Height = 40.0;
 	bSolid = true;
-	IdleState = S_CANDLEABRA;
 	bStaticLight = true;
 	LightOffset = vector(0.0, 0.0, 64.0);
 	LightRadius = 160.0;

@@ -26,9 +26,11 @@
 class Rubble3 : Decoration
 	__mobjinfo__(31);
 
-__states__
+states
 {
-	S_RUB3('RUB3', 0, -1.0, none) = none
+Spawn:
+	RUB3 A -1
+	Stop
 }
 
 defaultproperties
@@ -36,5 +38,4 @@ defaultproperties
 	bNoBlockmap = true;
 	bColideWithThings = false;
 	bColideWithWorld = false;
-	IdleState = S_RUB3;
 }

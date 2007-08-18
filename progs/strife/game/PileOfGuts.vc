@@ -28,12 +28,13 @@
 
 class PileOfGuts : Decoration;
 
-__states__
+states
 {
-	S_DEAD_BODY_2('DEAD', 0, -1.0, none) = none
+Spawn:
+	DEAD A -1
+	Stop
 }
 
 defaultproperties
 {
-	IdleState = S_DEAD_BODY_2;
 }

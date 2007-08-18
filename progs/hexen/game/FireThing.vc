@@ -26,17 +26,19 @@
 class FireThing : Decoration
 	__mobjinfo__(8060);
 
-__states__
+states
 {
-	S_ZFIRETHING1('FSKL', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_ZFIRETHING2) = none
-	S_ZFIRETHING2('FSKL', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_ZFIRETHING3) = none
-	S_ZFIRETHING3('FSKL', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_ZFIRETHING4) = none
-	S_ZFIRETHING4('FSKL', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_ZFIRETHING5) = none
-	S_ZFIRETHING5('FSKL', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_ZFIRETHING6) = none
-	S_ZFIRETHING6('FSKL', 5 | FF_FULLBRIGHT, 3.0 / 35.0, S_ZFIRETHING7) = none
-	S_ZFIRETHING7('FSKL', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_ZFIRETHING8) = none
-	S_ZFIRETHING8('FSKL', 7 | FF_FULLBRIGHT, 3.0 / 35.0, S_ZFIRETHING9) = none
-	S_ZFIRETHING9('FSKL', 8 | FF_FULLBRIGHT, 4.0 / 35.0, S_ZFIRETHING1) = none
+Spawn:
+	FSKL A 4 Bright
+	FSKL B 3 Bright
+	FSKL C 4 Bright
+	FSKL D 3 Bright
+	FSKL E 4 Bright
+	FSKL F 3 Bright
+	FSKL G 4 Bright
+	FSKL H 3 Bright
+	FSKL I 4 Bright
+	Loop
 }
 
 defaultproperties
@@ -44,7 +46,6 @@ defaultproperties
 	Radius = 5.0;
 	Height = 10.0;
 	bSolid = true;
-	IdleState = S_ZFIRETHING1;
 	bStaticLight = true;
 	LightColour = RGB(255, 255, 0);
 	LightOffset = vector(0.0, 0.0, 16.0);

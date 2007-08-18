@@ -26,9 +26,11 @@
 class PoisonBolts : Ammo
 	__mobjinfo__(115);
 
-__states__
+states
 {
-	S_ARROWS_POISON('PQRL', 0, -1.0, none) = none
+Spawn:
+	PQRL A -1
+	Stop
 }
 
 defaultproperties
@@ -40,6 +42,5 @@ defaultproperties
 	BackpackMaxAmount = 50;
 	IconName = 'i_pqrl';
 	bFloorClip = true;
-	IdleState = S_ARROWS_POISON;
 	PickupMessage = "$txt_poisonbolts";
 }

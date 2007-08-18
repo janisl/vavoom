@@ -26,9 +26,11 @@
 class Pitcher : Decoration
 	__mobjinfo__(188);
 
-__states__
+states
 {
-	S_VASE_2('VASE', 1, -1.0, none) = none
+Spawn:
+	VASE B -1
+	Stop
 }
 
 defaultproperties
@@ -36,5 +38,4 @@ defaultproperties
 	Radius = 12.0;
 	Height = 32.0;
 	bSolid = true;
-	IdleState = S_VASE_2;
 }

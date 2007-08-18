@@ -23,19 +23,20 @@
 //**
 //**************************************************************************
 
-class MageWandMissile:Projectile;
+class MageWandMissile : Projectile;
 
-__states__
+states
 {
-	S_MWAND_MISSILE1('MWND', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_MWAND_MISSILE2) = none
-	S_MWAND_MISSILE2('MWND', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_MWAND_MISSILE1) = none
-
-	//FIXME avoid copying.
-	S_MWANDPUFF1('MWND', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_MWANDPUFF2) = none
-	S_MWANDPUFF2('MWND', 5 | FF_FULLBRIGHT, 3.0 / 35.0, S_MWANDPUFF3) = none
-	S_MWANDPUFF3('MWND', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_MWANDPUFF4) = none
-	S_MWANDPUFF4('MWND', 7 | FF_FULLBRIGHT, 3.0 / 35.0, S_MWANDPUFF5) = none
-	S_MWANDPUFF5('MWND', 8 | FF_FULLBRIGHT, 4.0 / 35.0, none) = none
+Spawn:
+	MWND CD 4 Bright
+	Loop
+Death:
+	MWND E 4 Bright
+	MWND F 3 Bright
+	MWND G 4 Bright
+	MWND H 3 Bright
+	MWND I 4 Bright
+	Stop
 }
 
 defaultproperties
@@ -48,8 +49,6 @@ defaultproperties
 	bCannotPush = true;
 	bNoDamageThrust = true;
 	bBlaster = true;
-	IdleState = S_MWAND_MISSILE1;
-	DeathState = S_MWANDPUFF1;
 	DLightColour = RGB(91, 94, 211);
 	DLightRadius = 200.0;
 }

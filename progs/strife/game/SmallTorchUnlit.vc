@@ -26,9 +26,11 @@
 class SmallTorchUnlit : Decoration
 	__mobjinfo__(108);
 
-__states__
+states
 {
-	S_TORCH_UNLIT('TRHO', 0, -1.0, none) = none
+Spawn:
+	TRHO A -1
+	Stop
 }
 
 defaultproperties
@@ -36,5 +38,4 @@ defaultproperties
 	Radius = 0.0;
 	Height = 16.0;
 	bNoBlockmap = true;
-	IdleState = S_TORCH_UNLIT;
 }

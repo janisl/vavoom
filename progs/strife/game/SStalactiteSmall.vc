@@ -26,9 +26,11 @@
 class SStalactiteSmall : Decoration
 	__mobjinfo__(161);
 
-__states__
+states
 {
-	S_STALAG_1('STLG', 0, -1.0, none) = none
+Spawn:
+	STLG A -1
+	Stop
 }
 
 defaultproperties
@@ -38,5 +40,4 @@ defaultproperties
 	bSolid = true;
 	bSpawnCeiling = true;
 	bNoGravity = true;
-	IdleState = S_STALAG_1;
 }

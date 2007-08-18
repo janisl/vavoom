@@ -25,17 +25,15 @@
 
 class SlimeSplash : Actor;
 
-__states__
+states
 {
-	S_SLUDGESPLASH1('SLIM', 4, 5.0 / 35.0, S_SLUDGESPLASH2) = none
-	S_SLUDGESPLASH2('SLIM', 5, 5.0 / 35.0, S_SLUDGESPLASH3) = none
-	S_SLUDGESPLASH3('SLIM', 6, 5.0 / 35.0, S_SLUDGESPLASH4) = none
-	S_SLUDGESPLASH4('SLIM', 7, 5.0 / 35.0, none) = none
+Spawn:
+	SLIM EFGH 5
+	Stop
 }
 
 defaultproperties
 {
 	bNoBlockmap = true;
 	bNoPassMobj = true;
-	IdleState = S_SLUDGESPLASH1;
 }

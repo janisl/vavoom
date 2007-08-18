@@ -61,17 +61,20 @@ final void A_WraithFX2()
 	}
 }
 
-__states__
+states
 {
-	S_WRTHFX_MOVE1('WRBL', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_WRTHFX_MOVE2) = none
-	S_WRTHFX_MOVE2('WRBL', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_WRTHFX_MOVE3) = A_WraithFX2
-	S_WRTHFX_MOVE3('WRBL', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_WRTHFX_MOVE1) = none
-	S_WRTHFX_BOOM1('WRBL', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_WRTHFX_BOOM2) = none
-	S_WRTHFX_BOOM2('WRBL', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_WRTHFX_BOOM3) = A_WraithFX2
-	S_WRTHFX_BOOM3('WRBL', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_WRTHFX_BOOM4) = none
-	S_WRTHFX_BOOM4('WRBL', 6 | FF_FULLBRIGHT, 3.0 / 35.0, S_WRTHFX_BOOM5) = A_WraithFX2
-	S_WRTHFX_BOOM5('WRBL', 7 | FF_FULLBRIGHT, 3.0 / 35.0, S_WRTHFX_BOOM6) = A_WraithFX2
-	S_WRTHFX_BOOM6('WRBL', 8 | FF_FULLBRIGHT, 3.0 / 35.0, none) = none
+Spawn:
+	WRBL A 3 Bright
+	WRBL B 3 Bright A_WraithFX2
+	WRBL C 3 Bright
+	Loop
+Death:
+	WRBL D 4 Bright
+	WRBL E 4 Bright A_WraithFX2
+	WRBL F 4 Bright
+	WRBL GH 3 Bright A_WraithFX2
+	WRBL I 3 Bright
+	Stop
 }
 
 defaultproperties
@@ -83,8 +86,6 @@ defaultproperties
 	MissileDamage = 5;
 	bFloorClip = true;
 	DamageType = 'Fire';
-	IdleState = S_WRTHFX_MOVE1;
-	DeathState = S_WRTHFX_BOOM1;
 	DeathSound = 'WraithMissileExplode';
 	DLightColour = RGB(244, 14, 3);
 	DLightRadius = 200.0;

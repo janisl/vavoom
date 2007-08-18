@@ -26,13 +26,14 @@
 class RebelShirt : Decoration
 	__mobjinfo__(219);
 
-__states__
+states
 {
-	S_REBELS_TOP('TOPR', 0, -1.0, none) = none
+Spawn:
+	TOPR A -1
+	Stop
 }
 
 defaultproperties
 {
 	bNoBlockmap = true;
-	IdleState = S_REBELS_TOP;
 }

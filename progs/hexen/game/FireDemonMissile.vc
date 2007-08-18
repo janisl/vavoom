@@ -23,15 +23,16 @@
 //**
 //**************************************************************************
 
-class FireDemonMissile:Projectile;
+class FireDemonMissile : Projectile;
 
-__states__
+states
 {
-	S_FIRED_FX6_1('FDMB', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_FIRED_FX6_1) = none
-	S_FIRED_FX6_2('FDMB', 1 | FF_FULLBRIGHT, 5.0 / 35.0, S_FIRED_FX6_3) = none
-	S_FIRED_FX6_3('FDMB', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_FIRED_FX6_4) = none
-	S_FIRED_FX6_4('FDMB', 3 | FF_FULLBRIGHT, 5.0 / 35.0, S_FIRED_FX6_5) = none
-	S_FIRED_FX6_5('FDMB', 4 | FF_FULLBRIGHT, 5.0 / 35.0, none) = none
+Spawn:
+	FDMB A 5 Bright
+	Loop
+Death:
+	FDMB BCDE 5 Bright
+	Stop
 }
 
 defaultproperties
@@ -43,8 +44,6 @@ defaultproperties
 	MissileDamage = 1;
 	bFloorClip = true;
 	DamageType = 'Fire';
-	IdleState = S_FIRED_FX6_1;
-	DeathState = S_FIRED_FX6_2;
 	DeathSound = 'FireDemonMissileHit';
 	DLightColour = RGB(255, 195, 26);
 	DLightRadius = 200.0;

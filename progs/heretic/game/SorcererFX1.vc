@@ -39,16 +39,14 @@ void OnMapSpawn(mthing_t* mthing)
 		Speed = 980.0;
 }
 
-__states__
+states
 {
-	S_SRCRFX1_1('FX14', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_SRCRFX1_2) = none
-	S_SRCRFX1_2('FX14', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_SRCRFX1_3) = none
-	S_SRCRFX1_3('FX14', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_SRCRFX1_1) = none
-	S_SRCRFXI1_1('FX14', 3 | FF_FULLBRIGHT, 5.0 / 35.0, S_SRCRFXI1_2) = none
-	S_SRCRFXI1_2('FX14', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_SRCRFXI1_3) = none
-	S_SRCRFXI1_3('FX14', 5 | FF_FULLBRIGHT, 5.0 / 35.0, S_SRCRFXI1_4) = none
-	S_SRCRFXI1_4('FX14', 6 | FF_FULLBRIGHT, 5.0 / 35.0, S_SRCRFXI1_5) = none
-	S_SRCRFXI1_5('FX14', 7 | FF_FULLBRIGHT, 5.0 / 35.0, none) = none
+Spawn:
+	FX14 ABC 6 Bright
+	Loop
+Death:
+	FX14 DEFGH 5 Bright
+	Stop
 }
 
 defaultproperties
@@ -58,8 +56,6 @@ defaultproperties
 	Speed = 700.0;
 	MissileDamage = 10;
 	DamageType = 'Fire';
-	IdleState = S_SRCRFX1_1;
-	DeathState = S_SRCRFXI1_1;
 	DLightColour = RGB(192, 95, 21);
 	DLightRadius = 200.0;
 }

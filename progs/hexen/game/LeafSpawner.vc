@@ -51,9 +51,11 @@ final void A_LeafSpawn()
 	}
 }
 
-__states__
+states
 {
-	S_ZLEAFSPAWNER('MAN1', 0, 20.0 / 35.0, S_ZLEAFSPAWNER) = A_LeafSpawn
+Spawn:
+	MAN1 A 20 A_LeafSpawn
+	Loop
 }
 
 defaultproperties
@@ -62,5 +64,4 @@ defaultproperties
 	bNoBlockmap = true;
 	bNoPassMobj = true;
 	bDynamicLight = false;
-	IdleState = S_ZLEAFSPAWNER;
 }

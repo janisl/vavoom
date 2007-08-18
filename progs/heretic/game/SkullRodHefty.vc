@@ -27,15 +27,15 @@ class SkullRodHefty : SkullRodAmmo
 	__mobjinfo__(21)
 	__scriptid__(159);
 
-__states__
+states
 {
-	S_AMS2_1('AMS2', 0, 5.0 / 35.0, S_AMS2_2) = none
-	S_AMS2_2('AMS2', 1, 5.0 / 35.0, S_AMS2_1) = none
+Spawn:
+	AMS2 AB 5
+	Loop
 }
 
 defaultproperties
 {
 	Amount = 100;
-	IdleState = S_AMS2_1;
 	PickupMessage = "$txt_ammoskullrod2";
 }

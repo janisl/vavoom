@@ -23,12 +23,14 @@
 //**
 //**************************************************************************
 
-class Tray:Decoration
+class Tray : Decoration
 	__mobjinfo__(68);
 
-__states__
+states
 {
-	S_TRAY('TRAY', 0, -1.0, none) = none
+Spawn:
+	TRAY A -1
+	Stop
 }
 
 defaultproperties
@@ -36,5 +38,4 @@ defaultproperties
 	Radius = 24.0;
 	Height = 40.0;
 	bSolid = true;
-	IdleState = S_TRAY;
 }
