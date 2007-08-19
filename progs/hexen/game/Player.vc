@@ -1894,7 +1894,7 @@ void Cheat_Gimme()
 				//	Not an inventory item.
 				continue;
 			}
-			if (!Cls.default.IdleState)
+			if (!FindClassState(Cls, 'Spawn'))
 			{
 				//	Abstract class
 				continue;
@@ -1904,9 +1904,11 @@ void Cheat_Gimme()
 				//	Not puzzle items.
 				continue;
 			}
-			for (j = 0; j < 25; j++)
+			Inv = Level.Spawn(Cls);
+			Inv.Amount = Inv.MaxAmount;
+			if (!Inv.TryPickup(EntityEx(MO)))
 			{
-				EntityEx(MO).GiveInventoryType(Cls);
+				Inv.Destroy();
 			}
 		}
 		cprint("ALL ARTIFACTS");

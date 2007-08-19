@@ -1557,7 +1557,7 @@ void Cheat_Gimme()
 				//	Not an artifact
 				continue;
 			}
-			if (!Cls.default.IdleState)
+			if (!FindClassState(Cls, 'Spawn'))
 			{
 				//	Abstract class.
 				continue;
@@ -1567,9 +1567,11 @@ void Cheat_Gimme()
 			{
 				continue;
 			}
-			for (j = 0; j < 16; j++)
+			Inventory Item = Level.Spawn(Cls);
+			Item.Amount = Item.MaxAmount;
+			if (!Item.TryPickup(EntityEx(MO)))
 			{
-				EntityEx(MO).GiveInventoryType(Cls);
+				Item.Destroy();
 			}
 		}
 		cprint("YOU GOT IT");
