@@ -37,9 +37,11 @@ final void A_ESound()
 	// Waterfall seams to be silent, in other words UNUSED
 }
 
-__states__
+states
 {
-	S_SND_WATERFALL('', 0, 85.0 / 35.0, S_SND_WATERFALL) = A_ESound
+Spawn:
+	TNT1 A 85 A_ESound
+	Loop
 }
 
 defaultproperties
@@ -47,5 +49,4 @@ defaultproperties
 	bHidden = true;
 	bNoBlockmap = true;
 	bNoPassMobj = true;
-	IdleState = S_SND_WATERFALL;
 }

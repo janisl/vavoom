@@ -45,14 +45,18 @@ final void A_EntityBossRaise()
 	}
 }
 
-__states__
+states
 {
-	S_ENT_POD('PODD', 0, 60.0 / 35.0, S_ENT_POD) = A_Look
-	S_ENT_POD_OPEN1('PODD', 0, 360.0 / 35.0, S_ENT_POD_OPEN2) = none
-	S_ENT_POD_OPEN2('PODD', 1, 9.0 / 35.0, S_ENT_POD_OPEN3) = A_Fall
-	S_ENT_POD_OPEN3('PODD', 2, 9.0 / 35.0, S_ENT_POD_OPEN4) = none
-	S_ENT_POD_OPEN4('PODD', 3, 9.0 / 35.0, S_ENT_POD_OPEN5) = A_EntityBossRaise
-	S_ENT_POD_OPEN5('PODD', 4, -1.0, none) = none
+Spawn:
+	PODD A 60 A_Look
+	Loop
+See:
+	PODD A 360
+	PODD B 9 A_Fall
+	PODD C 9
+	PODD D 9 A_EntityBossRaise
+	PODD E -1
+	Stop
 }
 
 defaultproperties
@@ -61,7 +65,5 @@ defaultproperties
 	Height = 91.0;
 	bSolid = true;
 	bNoDeathmatch = true;
-	IdleState = S_ENT_POD;
-	SeeState = S_ENT_POD_OPEN1;
 	SightSound = 'misc/gibbed';
 }

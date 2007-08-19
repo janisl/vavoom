@@ -23,50 +23,32 @@
 //**
 //**************************************************************************
 
-class ZFireBull : Decoration
+class ZFireBull : SwitchableDecoration
 	__mobjinfo__(8042);
 
-__states__
-{
-	S_ZFIREBULL1('FBUL', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_ZFIREBULL2) = none
-	S_ZFIREBULL2('FBUL', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_ZFIREBULL3) = none
-	S_ZFIREBULL3('FBUL', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_ZFIREBULL4) = none
-	S_ZFIREBULL4('FBUL', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_ZFIREBULL5) = none
-	S_ZFIREBULL5('FBUL', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_ZFIREBULL6) = none
-	S_ZFIREBULL6('FBUL', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_ZFIREBULL7) = none
-	S_ZFIREBULL7('FBUL', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_ZFIREBULL1) = none
-	S_ZFIREBULL_DEATH('FBUL', 9 | FF_FULLBRIGHT, 4.0 / 35.0, S_ZFIREBULL_DEATH2) = none
-	S_ZFIREBULL_DEATH2('FBUL', 8 | FF_FULLBRIGHT, 4.0 / 35.0, S_ZFIREBULL_U) = none
-	S_ZFIREBULL_U('FBUL', 7, -1.0, none) = none
-	S_ZFIREBULL_BIRTH('FBUL', 8 | FF_FULLBRIGHT, 4.0 / 35.0, S_ZFIREBULL_BIRTH2) = none
-	S_ZFIREBULL_BIRTH2('FBUL', 9 | FF_FULLBRIGHT, 4.0 / 35.0, S_ZFIREBULL1) = none
-}
-
 //==========================================================================
 //
-//	Activate
+//	A_IgniteSound
 //
 //==========================================================================
 
-bool Activate()
+final void A_IgniteSound()
 {
-	SetState(S_ZFIREBULL_BIRTH);
 	PlaySound('Ignite', CHAN_VOICE);
-	bStaticLight = true;
-	return true;
 }
 
-//==========================================================================
-//
-//	Deactivate
-//
-//==========================================================================
-
-bool Deactivate()
+states
 {
-	SetState(S_ZFIREBULL_DEATH);
-	bStaticLight = false;
-	return true;
+Active:
+	FBUL I 4 Bright A_IgniteSound
+	FBUL J 4 Bright
+Spawn:
+	FBUL ABCDEFG 4 Bright
+	Loop
+Inactive:
+	FBUL JI 4 Bright
+	FBUL H -1
+	Stop
 }
 
 defaultproperties
@@ -74,8 +56,8 @@ defaultproperties
 	Radius = 20.0;
 	Height = 80.0;
 	bSolid = true;
+	bNoPassMobj = true;
 	bStaticLight = true;
-	IdleState = S_ZFIREBULL1;
 	LightColour = RGB(255, 255, 0);
 	LightOffset = vector(0.0, 0.0, 72.0);
 	LightRadius = 200.0;

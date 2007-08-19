@@ -92,6 +92,8 @@ EXTRA_DIST = \
 	linespec/SectorThinker.vc \
 	linespec/StairStepMover.vc \
 	linespec/Strobe.vc \
+	linespec/SwitchableDecoration.vc \
+	linespec/SwitchingDecoration.vc \
 	linespec/TeleportDest.vc \
 	linespec/TeleportDest2.vc \
 	linespec/TeleportDest3.vc \

@@ -25,9 +25,11 @@
 
 class GunTraining : Inventory;
 
-__states__
+states
 {
-	S_ACCURACY('GUNT', 0, -1.0, none) = none
+Spawn:
+	GUNT A -1
+	Stop
 }
 
 defaultproperties
@@ -39,5 +41,4 @@ defaultproperties
 	bFloorClip = true;
 	bInvBar = true;
 	bUndroppable = true;
-	IdleState = S_ACCURACY;
 }

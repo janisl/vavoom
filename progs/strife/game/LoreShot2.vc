@@ -25,13 +25,14 @@
 
 class LoreShot2 : Effect;
 
-__states__
+states
 {
-	S_LOREMASTER_FX_TRAIL('TEND', 0, 20.0 / 35.0, none) = none
+Spawn:
+	TEND A 20
+	Stop
 }
 
 defaultproperties
 {
-	IdleState = S_LOREMASTER_FX_TRAIL;
 	SightSound = 'loremaster/active';
 }

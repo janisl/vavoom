@@ -26,9 +26,11 @@
 class Gold25 : Coin
 	__mobjinfo__(139);
 
-__states__
+states
 {
-	S_GOLD25('SACK', 0, -1.0, none) = none
+Spawn:
+	SACK A -1
+	Stop
 }
 
 defaultproperties
@@ -36,5 +38,4 @@ defaultproperties
 	ConversationID = 170;
 	PickupMessage = "$txt_25gold";
 	Amount = 25;
-	IdleState = S_GOLD25;
 }

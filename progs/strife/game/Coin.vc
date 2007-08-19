@@ -126,9 +126,11 @@ Inventory CreateTossable()
 	return Copy;
 }
 
-__states__
+states
 {
-	S_COIN('COIN', 0, -1.0, none) = none
+Spawn:
+	COIN A -1
+	Stop
 }
 
 defaultproperties
@@ -141,5 +143,4 @@ defaultproperties
 	bNoDeathmatch = true;
 	bFloorClip = true;
 	bInvBar = true;
-	IdleState = S_COIN;
 }

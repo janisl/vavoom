@@ -61,5 +61,4 @@ defaultproperties
 {
 	ConversationID = 299;
 	ClassName = 'Health';
-	IdleState = S_TOKENS;
 }

@@ -26,13 +26,14 @@
 class TableShit10:Decoration
 	__mobjinfo__(8509);
 
-__states__
+states
 {
-	S_TABLE_SHIT10('TST0', 0, -1.0, none) = none
+Spawn:
+	TST0 A -1
+	Stop
 }
 
 defaultproperties
 {
 	bNoBlockmap = true;
-	IdleState = S_TABLE_SHIT10;
 }

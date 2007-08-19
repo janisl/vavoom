@@ -23,47 +23,29 @@
 //**
 //**************************************************************************
 
-class ZTwinedTorch : Decoration
+class ZTwinedTorch : SwitchableDecoration
 	__mobjinfo__(116);
 
-__states__
-{
-	S_ZTWINEDTORCH_1('TWTR', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_ZTWINEDTORCH_2) = none
-	S_ZTWINEDTORCH_2('TWTR', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_ZTWINEDTORCH_3) = none
-	S_ZTWINEDTORCH_3('TWTR', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_ZTWINEDTORCH_4) = none
-	S_ZTWINEDTORCH_4('TWTR', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_ZTWINEDTORCH_5) = none
-	S_ZTWINEDTORCH_5('TWTR', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_ZTWINEDTORCH_6) = none
-	S_ZTWINEDTORCH_6('TWTR', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_ZTWINEDTORCH_7) = none
-	S_ZTWINEDTORCH_7('TWTR', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_ZTWINEDTORCH_8) = none
-	S_ZTWINEDTORCH_8('TWTR', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_ZTWINEDTORCH_1) = none
-	S_ZTWINEDTORCH_UNLIT('TWTR', 8, -1.0, none) = none
-}
-
 //==========================================================================
 //
-//	Activate
+//	A_IgniteSound
 //
 //==========================================================================
 
-bool Activate()
+final void A_IgniteSound()
 {
-	SetState(S_ZTWINEDTORCH_1);
 	PlaySound('Ignite', CHAN_VOICE);
-	bStaticLight = true;
-	return true;
 }
 
-//==========================================================================
-//
-//	Deactivate
-//
-//==========================================================================
-
-bool Deactivate()
+states
 {
-	SetState(S_ZTWINEDTORCH_UNLIT);
-	bStaticLight = false;
-	return true;
+Active:
+	TWTR A 0 Bright A_IgniteSound
+Spawn:
+	TWTR ABCDEFGH 4 Bright
+Inactive:
+	TWTR I -1
+	Stop
 }
 
 defaultproperties
@@ -71,8 +53,8 @@ defaultproperties
 	Radius = 10.0;
 	Height = 64.0;
 	bSolid = true;
+	bNoPassMobj = true;
 	bStaticLight = true;
-	IdleState = S_ZTWINEDTORCH_1;
 	LightColour = RGB(255, 255, 0);
 	LightOffset = vector(0.0, 0.0, 64.0);
 	LightRadius = 200.0;

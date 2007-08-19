@@ -23,11 +23,16 @@
 //**
 //**************************************************************************
 
-class ZWallTorchUnlit:ZWallTorch
+class ZWallTorchUnlit : ZWallTorch
 	__mobjinfo__(55);
+
+states
+{
+Spawn:
+	Goto Super::Inactive
+}
 
 defaultproperties
 {
-	IdleState = S_ZWALLTORCH_U;
 	bStaticLight = false;
 }

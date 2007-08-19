@@ -26,9 +26,11 @@
 class Communicator : Inventory
 	__mobjinfo__(206);
 
-__states__
+states
 {
-	S_COMMUNICATOR('COMM', 0, -1.0, none) = none
+Spawn:
+	COMM A -1
+	Stop
 }
 
 defaultproperties
@@ -36,5 +38,4 @@ defaultproperties
 	ConversationID = 176;
 	PickupMessage = "$txt_communicator";
 	bNoDeathmatch = true;
-	IdleState = S_COMMUNICATOR;
 }

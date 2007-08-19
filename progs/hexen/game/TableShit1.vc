@@ -23,16 +23,17 @@
 //**
 //**************************************************************************
 
-class TableShit1:Decoration
+class TableShit1 : Decoration
 	__mobjinfo__(8500);
 
-__states__
+states
 {
-	S_TABLE_SHIT1('TST1', 0, -1.0, none) = none
+Spawn:
+	TST1 A -1
+	Stop
 }
 
 defaultproperties
 {
 	bNoBlockmap = true;
-	IdleState = S_TABLE_SHIT1;
 }

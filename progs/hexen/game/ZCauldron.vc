@@ -23,46 +23,30 @@
 //**
 //**************************************************************************
 
-class ZCauldron : Decoration
+class ZCauldron : SwitchableDecoration
 	__mobjinfo__(8069);
 
-__states__
-{
-	S_ZCAULDRON1('CDRN', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_ZCAULDRON2) = none
-	S_ZCAULDRON2('CDRN', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_ZCAULDRON3) = none
-	S_ZCAULDRON3('CDRN', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_ZCAULDRON4) = none
-	S_ZCAULDRON4('CDRN', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_ZCAULDRON5) = none
-	S_ZCAULDRON5('CDRN', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_ZCAULDRON6) = none
-	S_ZCAULDRON6('CDRN', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_ZCAULDRON7) = none
-	S_ZCAULDRON7('CDRN', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_ZCAULDRON1) = none
-	S_ZCAULDRON_U('CDRN', 0, -1.0, none) = none
-}
-
 //==========================================================================
 //
-//	Activate
+//	A_IgniteSound
 //
 //==========================================================================
 
-bool Activate()
+final void A_IgniteSound()
 {
-	SetState(S_ZCAULDRON1);
 	PlaySound('Ignite', CHAN_VOICE);
-	bStaticLight = true;
-	return true;
 }
 
-//==========================================================================
-//
-//	Deactivate
-//
-//==========================================================================
-
-bool Deactivate()
+states
 {
-	SetState(S_ZCAULDRON_U);
-	bStaticLight = false;
-	return true;
+Active:
+	CDRN B 0 Bright A_IgniteSound
+Spawn:
+	CDRN BCDEFGH 4 Bright
+	Loop
+Inactive:
+	CDRN A -1
+	Stop
 }
 
 defaultproperties
@@ -70,8 +54,8 @@ defaultproperties
 	Radius = 12.0;
 	Height = 26.0;
 	bSolid = true;
+	bNoPassMobj = true;
 	bStaticLight = true;
-	IdleState = S_ZCAULDRON1;
 	LightColour = RGB(255, 255, 0);
 	LightOffset = vector(0.0, 0.0, 18.0);
 }

@@ -26,10 +26,11 @@
 class BrokenPowerCoupling : Inventory
 	__mobjinfo__(226);
 
-__states__
+states
 {
-	// FIXME
-	S_BROKEN_POWER_COUPLING('COUP', 2, -1.0, none) = none
+Spawn:
+	COUP C -1
+	Stop
 }
 
 defaultproperties
@@ -48,5 +49,4 @@ defaultproperties
 	bDropped = true;
 	bFloorClip = true;
 	bInvBar = true;
-	IdleState = S_BROKEN_POWER_COUPLING;
 }

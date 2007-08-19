@@ -104,6 +104,9 @@ enum
 #include "PointPusher.vc"
 #include "PointPuller.vc"
 
+#include "SwitchableDecoration.vc"
+#include "SwitchingDecoration.vc"
+
 #include "LineSpecialLevelInfo.vc"
 #include "LineSpecialGameInfo.vc"
 #include "SectorThinker.vc"

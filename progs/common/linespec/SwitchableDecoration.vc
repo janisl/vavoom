@@ -22,24 +22,38 @@
 //**  GNU General Public License for more details.
 //**
 //**************************************************************************
+//**
+//**	A decoration that can be activated and deactivated.
+//**
+//**************************************************************************
 
-class ZWingedStatueNoSkull : SwitchingDecoration
-	__mobjinfo__(9011);
+class SwitchableDecoration : ScriptedEntity
+	abstract;
 
-states
+//==========================================================================
+//
+//	Activate
+//
+//==========================================================================
+
+bool Activate()
 {
-Spawn:
-	STWN A -1
-	Stop
-Active:
-	STWN B -1
-	Stop
+	SetState(FindState('Active'));
+	return true;
+}
+
+//==========================================================================
+//
+//	Deactivate
+//
+//==========================================================================
+
+bool Deactivate()
+{
+	SetState(FindState('Inactive'));
+	return true;
 }
 
 defaultproperties
 {
-	Radius = 10.0;
-	Height = 62.0;
-	bSolid = true;
-	bNoPassMobj = true;
 }

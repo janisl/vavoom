@@ -25,11 +25,14 @@
 
 class MaulerTorpedoWave : Projectile;
 
-__states__
+states
 {
-	S_TORPEDO_WAV1('TWAV', 0 | FF_FULLBRIGHT, 9.0 / 35.0, S_TORPEDO_WAV2) = none
-	S_TORPEDO_WAV2('TWAV', 1 | FF_FULLBRIGHT, 9.0 / 35.0, S_TORPEDO_WAV3) = none
-	S_TORPEDO_WAV3('TWAV', 2 | FF_FULLBRIGHT, 9.0 / 35.0, none) = none
+Spawn:
+	TWAV AB 9 Bright
+	//Fall throuh
+Death:
+	TWAV C 9 Bright
+	Stop
 }
 
 defaultproperties
@@ -41,8 +44,6 @@ defaultproperties
 	MissileDamage = 10;
 	bActivateImpact = true;
 	DamageType = 'Disintegrate';
-	IdleState = S_TORPEDO_WAV1;
-	DeathState = S_TORPEDO_WAV3;
 	DLightColour = RGB(63, 123, 35);
 	DLightRadius = 200.0;
 }

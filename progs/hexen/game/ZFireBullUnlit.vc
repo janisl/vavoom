@@ -23,11 +23,16 @@
 //**
 //**************************************************************************
 
-class ZFireBullUnlit:ZFireBull
+class ZFireBullUnlit : ZFireBull
 	__mobjinfo__(8043);
+
+states
+{
+Spawn:
+	Goto Super::Inactive+2
+}
 
 defaultproperties
 {
-	IdleState = S_ZFIREBULL_U;
 	bStaticLight = false;
 }

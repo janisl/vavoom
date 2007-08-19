@@ -26,13 +26,14 @@
 class AssaultGunStanding : AssaultGun
 	__mobjinfo__(2006);
 
-__states__
+states
 {
-	S_ASSAULT_GUN2('RIFL', 1, -1.0, none) = none
+Spawn:
+	RIFL B -1
+	Stop
 }
 
 defaultproperties
 {
 	ConversationID = 189;
-	IdleState = S_ASSAULT_GUN2;
 }

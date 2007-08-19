@@ -40,17 +40,18 @@ final void A_RocketTrail()
 		mpuff.PlaySound(mpuff.SightSound, CHAN_BODY);
 }
 
-__states__
+states
 {
-	S_ROBOT_MISSILE2_1('MISS', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_ROBOT_MISSILE2_2) = A_RocketTrail
-	S_ROBOT_MISSILE2_2('MISS', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_ROBOT_MISSILE2_1) = A_Tracer
+Spawn:
+	MISS A 4 Bright A_RocketTrail
+	MISS B 3 Bright A_Tracer
+	Loop
 }
 
 defaultproperties
 {
 	MaxStepHeight = 4.0;
 	bActivateImpact = false;
-	IdleState = S_ROBOT_MISSILE2_1;
 	SightSound = 'bishop/misl';
 	DeathSound = 'bishop/mislx';
 }

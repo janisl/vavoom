@@ -58,10 +58,14 @@ final void A_ChainTend()
 	PlaySound(ActiveSound, CHAN_BODY);
 }
 
-__states__
+states
 {
-	S_LOREMASTER_CHAIN('OCLW', 0, 2.0 / 35.0, S_LOREMASTER_CHAIN) = A_ChainTend
-	S_LOREMASTER_CHAIN_X('CCLW', 0, 6.0 / 35.0, none) = none
+Spawn:
+	OCLW A 2 A_ChainTend
+	Loop
+Death:
+	CCLW A 6
+	Stop
 }
 
 defaultproperties
@@ -71,8 +75,6 @@ defaultproperties
 	Speed = 700.0;
 	MaxStepHeight = 4.0;
 	MissileDamage = 2;
-	IdleState = S_LOREMASTER_CHAIN;
-	DeathState = S_LOREMASTER_CHAIN_X;
 	SightSound = 'loremaster/chain';
 	ActiveSound = 'loremaster/swish';
 }

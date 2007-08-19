@@ -23,25 +23,17 @@
 //**
 //**************************************************************************
 
-class ZGemPedestal : Decoration
+class ZGemPedestal : SwitchingDecoration
 	__mobjinfo__(9012);
 
-__states__
+states
 {
-	S_ZGEMPEDESTAL1('GMPD', 0, -1.0, none) = none
-	S_ZGEMPEDESTAL2('GMPD', 1, -1.0, none) = none
-}
-
-//==========================================================================
-//
-//	Activate
-//
-//==========================================================================
-
-bool Activate()
-{
-	SetState(S_ZGEMPEDESTAL2);
-	return true;
+Spawn:
+	GMPD A -1
+	Stop
+Active:
+	GMPD B -1
+	Stop
 }
 
 defaultproperties
@@ -49,5 +41,5 @@ defaultproperties
 	Radius = 10.0;
 	Height = 40.0;
 	bSolid = true;
-	IdleState = S_ZGEMPEDESTAL1;
+	bNoPassMobj = true;
 }

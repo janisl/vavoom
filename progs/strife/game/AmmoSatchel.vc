@@ -27,9 +27,11 @@ class AmmoSatchel : BackpackItem
 	__mobjinfo__(183)
 	__scriptid__(144);
 
-__states__
+states
 {
-	S_BACKPACK('BKPK', 0, -1.0, none) = none
+Spawn:
+	BKPK A -1
+	Stop
 }
 
 defaultproperties
@@ -37,5 +39,4 @@ defaultproperties
 	bFloorClip = true;
 	ConversationID = 187;
 	PickupMessage = "$txt_ammosatchel";
-	IdleState = S_BACKPACK;
 }

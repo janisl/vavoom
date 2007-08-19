@@ -23,11 +23,16 @@
 //**
 //**************************************************************************
 
-class ZCauldronUnlit:ZCauldron
+class ZCauldronUnlit : ZCauldron
 	__mobjinfo__(8070);
+
+states
+{
+Spawn:
+	Goto Super::Inactive
+}
 
 defaultproperties
 {
-	IdleState = S_ZCAULDRON_U;
 	bStaticLight = false;
 }

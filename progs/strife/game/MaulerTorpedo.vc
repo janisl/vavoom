@@ -53,17 +53,16 @@ final void A_MaulerTorpedoExplode()
 	Origin.z = savedz;
 }
 
-__states__
+states
 {
-	S_TORPEDO_1('TORP', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_TORPEDO_2) = none
-	S_TORPEDO_2('TORP', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_TORPEDO_3) = none
-	S_TORPEDO_3('TORP', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_TORPEDO_4) = none
-	S_TORPEDO_4('TORP', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_TORPEDO_1) = none
-	S_TORPEDO_X1('THIT', 0 | FF_FULLBRIGHT, 8.0 / 35.0, S_TORPEDO_X2) = none
-	S_TORPEDO_X2('THIT', 1 | FF_FULLBRIGHT, 8.0 / 35.0, S_TORPEDO_X3) = none
-	S_TORPEDO_X3('THIT', 2 | FF_FULLBRIGHT, 8.0 / 35.0, S_TORPEDO_X4) = A_MaulerTorpedoExplode
-	S_TORPEDO_X4('THIT', 3 | FF_FULLBRIGHT, 8.0 / 35.0, S_TORPEDO_X5) = none
-	S_TORPEDO_X5('THIT', 4 | FF_FULLBRIGHT, 8.0 / 35.0, none) = none
+Spawn:
+	TORP ABCD 4 Bright
+	Loop
+Death:
+	THIT AB 8 Bright
+	THIT C 8 Bright A_MaulerTorpedoExplode
+	THIT DE 8 Bright
+	Stop
 }
 
 defaultproperties
@@ -75,8 +74,6 @@ defaultproperties
 	MissileDamage = 1;
 	bActivateImpact = true;
 	DamageType = 'Disintegrate';
-	IdleState = S_TORPEDO_1;
-	DeathState = S_TORPEDO_X1;
 	SightSound = 'weapons/mauler2fire';
 	DeathSound = 'weapons/mauler2hit';
 	DLightColour = RGB(79, 143, 55);

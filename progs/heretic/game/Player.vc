@@ -677,12 +677,12 @@ void AdjustInvFirst()
 	{
 		FirstOffs++;
 	}
-	while (FirstOffs > 5)
+	while (FirstOffs > 6)
 	{
 		InvFirst = InvFirst.NextInv();
 		FirstOffs--;
 	}
-	while (NumFollowing + FirstOffs < 5 && InvFirst.PrevInv())
+	while (NumFollowing + FirstOffs < 6 && InvFirst.PrevInv())
 	{
 		InvFirst = InvFirst.PrevInv();
 		FirstOffs++;

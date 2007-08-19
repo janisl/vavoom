@@ -26,15 +26,17 @@
 class Rock1 : Fragment
 	__scriptid__(41);
 
-__states__
+states
 {
-	S_ROCK1_1('ROCK', 0, 20.0 / 35.0, S_ROCK1_1) = none
-	S_ROCK1_D('ROCK', 0, 10.0 / 35.0, none) = none
+Spawn:
+	ROCK A 20
+	Loop
+Death:
+	ROCK A 10
+	Stop
 }
 
 defaultproperties
 {
 	bNoGravity = false;
-	IdleState = S_ROCK1_1;
-	DeathState = S_ROCK1_D;
 }

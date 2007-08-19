@@ -31,12 +31,13 @@
 class DummyStrifeItem : Inventory
 	abstract;
 
-__states__
+states
 {
-	S_TOKENS('TOKN', 0, -1.0, none) = none
+Spawn:
+	TOKN A -1
+	Stop
 }
 
 defaultproperties
 {
-	IdleState = S_TOKENS;
 }

@@ -37,10 +37,12 @@ final void A_ESound()
 	PlaySound('Wind', CHAN_VOICE);
 }
 
-__states__
+states
 {
-	S_SND_WIND1('', 0, 1.0 / 35.0, S_SND_WIND2) = none
-	S_SND_WIND2('', 0, 200.0 / 35.0, S_SND_WIND2) = A_ESound
+Spawn:
+	TNT1 A 1
+	TNT1 A 200 A_ESound
+	Wait
 }
 
 defaultproperties
@@ -48,5 +50,4 @@ defaultproperties
 	bHidden = true;
 	bNoBlockmap = true;
 	bNoPassMobj = true;
-	IdleState = S_SND_WIND1;
 }

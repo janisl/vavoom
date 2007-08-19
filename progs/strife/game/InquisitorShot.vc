@@ -37,19 +37,22 @@ void GetExplodeParms(out int damage, out float distance, out byte damageSelf)
 	distance = 192.0;
 }
 
-__states__
+states
 {
-	S_INQUISITOR_GRENADE_1('UBAM', 0, 3.0 / 35.0, S_INQUISITOR_GRENADE_2) = A_DecReactionCount
-	S_INQUISITOR_GRENADE_2('UBAM', 1, 3.0 / 35.0, S_INQUISITOR_GRENADE_1) = A_DecReactionCount
-	S_INQUISITOR_GRENADE_X1('BNG2', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_INQUISITOR_GRENADE_X2) = A_ExplodeAndAlert
-	S_INQUISITOR_GRENADE_X2('BNG2', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_INQUISITOR_GRENADE_X3) = none
-	S_INQUISITOR_GRENADE_X3('BNG2', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_INQUISITOR_GRENADE_X4) = none
-	S_INQUISITOR_GRENADE_X4('BNG2', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_INQUISITOR_GRENADE_X5) = none
-	S_INQUISITOR_GRENADE_X5('BNG2', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_INQUISITOR_GRENADE_X6) = none
-	S_INQUISITOR_GRENADE_X6('BNG2', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_INQUISITOR_GRENADE_X7) = none
-	S_INQUISITOR_GRENADE_X7('BNG2', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_INQUISITOR_GRENADE_X8) = none
-	S_INQUISITOR_GRENADE_X8('BNG2', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_INQUISITOR_GRENADE_X9) = none
-	S_INQUISITOR_GRENADE_X9('BNG2', 8 | FF_FULLBRIGHT, 4.0 / 35.0, none) = none
+Spawn:
+	UBAM AB 3 A_DecReactionCount
+	Loop
+Death:
+	BNG2 A 4 Bright A_ExplodeAndAlert
+	BNG2 B 4 Bright
+	BNG2 C 4 Bright
+	BNG2 D 4 Bright
+	BNG2 E 4 Bright
+	BNG2 F 4 Bright
+	BNG2 G 4 Bright
+	BNG2 H 4 Bright
+	BNG2 I 4 Bright
+	Stop
 }
 
 defaultproperties
@@ -61,8 +64,6 @@ defaultproperties
 	MaxStepHeight = 4.0;
 	ReactionCount = 15;
 	bNoGravity = false;
-	IdleState = S_INQUISITOR_GRENADE_1;
-	DeathState = S_INQUISITOR_GRENADE_X1;
 	SightSound = 'inquisitor/attack';
 	DeathSound = 'inquisitor/atkexplode';
 	ExplodeEffect = RGB(239, 239, 0);

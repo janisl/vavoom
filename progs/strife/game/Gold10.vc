@@ -26,9 +26,11 @@
 class Gold10 : Coin
 	__mobjinfo__(138);
 
-__states__
+states
 {
-	S_GOLD10('CRED', 0, -1.0, none) = none
+Spawn:
+	CRED A -1
+	Stop
 }
 
 defaultproperties
@@ -36,5 +38,4 @@ defaultproperties
 	ConversationID = 169;
 	PickupMessage = "$txt_10gold";
 	Amount = 10;
-	IdleState = S_GOLD10;
 }

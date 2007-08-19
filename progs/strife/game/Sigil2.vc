@@ -26,9 +26,11 @@
 class Sigil2 : Sigil
 	__mobjinfo__(78);
 
-__states__
+states
 {
-	S_SIGIL_2('SIGL', 1, -1.0, none) = none
+Spawn:
+	SIGL B -1
+	Stop
 }
 
 defaultproperties
@@ -37,5 +39,4 @@ defaultproperties
 	NumPieces = 2;
 	IconName = 'i_sgl2';
 	PickupMessage = "$txt_sigil";
-	IdleState = S_SIGIL_2;
 }

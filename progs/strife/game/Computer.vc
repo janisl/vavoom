@@ -27,24 +27,25 @@
 class Computer : Decoration
 	__mobjinfo__(182);
 
-__states__
+states
 {
-	S_COMP_CORE_1('SECR', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_COMP_CORE_2) = none
-	S_COMP_CORE_2('SECR', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_COMP_CORE_3) = none
-	S_COMP_CORE_3('SECR', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_COMP_CORE_4) = none
-	S_COMP_CORE_4('SECR', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_COMP_CORE_1) = none
-	S_COMP_CORE_X1('SECR', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_COMP_CORE_X2) = A_SpawnPuff
-	S_COMP_CORE_X2('SECR', 5 | FF_FULLBRIGHT, 5.0 / 35.0, S_COMP_CORE_X3) = A_Fall
-	S_COMP_CORE_X3('SECR', 6 | FF_FULLBRIGHT, 5.0 / 35.0, S_COMP_CORE_X4) = A_QuestObjectDeath
-	S_COMP_CORE_X4('SECR', 7 | FF_FULLBRIGHT, 5.0 / 35.0, S_COMP_CORE_X5) = A_XDying
-	S_COMP_CORE_X5('SECR', 8 | FF_FULLBRIGHT, 5.0 / 35.0, S_COMP_CORE_X6) = A_SpawnPuff
-	S_COMP_CORE_X6('SECR', 9, 5.0 / 35.0, S_COMP_CORE_X7) = none
-	S_COMP_CORE_X7('SECR', 10, 5.0 / 35.0, S_COMP_CORE_X8) = A_SpawnPuff
-	S_COMP_CORE_X8('SECR', 11, 5.0 / 35.0, S_COMP_CORE_X9) = none
-	S_COMP_CORE_X9('SECR', 12, 5.0 / 35.0, S_COMP_CORE_X10) = A_SpawnPuff
-	S_COMP_CORE_X10('SECR', 13, 5.0 / 35.0, S_COMP_CORE_X11) = none
-	S_COMP_CORE_X11('SECR', 14, 5.0 / 35.0, S_COMP_CORE_X12) = A_SpawnPuff
-	S_COMP_CORE_X12('SECR', 15, -1.0, none) = none
+Spawn:
+	SECR ABCD 4 Bright
+	Loop
+Death:
+	SECR E 5 Bright A_SpawnPuff
+	SECR F 5 Bright A_Fall
+	SECR G 5 Bright A_QuestObjectDeath
+	SECR H 5 Bright A_XDying
+	SECR I 5 Bright A_SpawnPuff
+	SECR J 5
+	SECR K 5 A_SpawnPuff
+	SECR L 5
+	SECR M 5 A_SpawnPuff
+	SECR N 5
+	SECR O 5 A_SpawnPuff
+	SECR P -1
+	Stop
 }
 
 defaultproperties
@@ -59,8 +60,6 @@ defaultproperties
 	bInCombat = true;
 	bNoBlood = true;
 	bFloorClip = true;
-	IdleState = S_COMP_CORE_1;
-	DeathState = S_COMP_CORE_X1;
 	DeathSound = 'misc/explosion';
 	bDynamicLight = true;
 	DLightColour = RGB(91, 155, 55);

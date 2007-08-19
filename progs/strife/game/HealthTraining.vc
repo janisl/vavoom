@@ -47,9 +47,11 @@ bool TryPickup(EntityEx Toucher)
 	return false;
 }
 
-__states__
+states
 {
-	S_TOUGHNESS('HELT', 0, -1.0, none) = none
+Spawn:
+	HELT A -1
+	Stop
 }
 
 defaultproperties
@@ -61,5 +63,4 @@ defaultproperties
 	bFloorClip = true;
 	bInvBar = true;
 	bUndroppable = true;
-	IdleState = S_TOUGHNESS;
 }

@@ -22,24 +22,25 @@
 //**  GNU General Public License for more details.
 //**
 //**************************************************************************
+//**
+//**	Only Activate changes state.
+//**
+//**************************************************************************
 
-class ZWingedStatueNoSkull : SwitchingDecoration
-	__mobjinfo__(9011);
+class SwitchingDecoration : SwitchableDecoration
+	abstract;
 
-states
+//==========================================================================
+//
+//	Deactivate
+//
+//==========================================================================
+
+bool Deactivate()
 {
-Spawn:
-	STWN A -1
-	Stop
-Active:
-	STWN B -1
-	Stop
+	return false;
 }
 
 defaultproperties
 {
-	Radius = 10.0;
-	Height = 62.0;
-	bSolid = true;
-	bNoPassMobj = true;
 }
