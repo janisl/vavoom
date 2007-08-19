@@ -822,12 +822,12 @@ void AdjustInvFirst()
 	{
 		FirstOffs++;
 	}
-	while (FirstOffs > 5)
+	while (FirstOffs > 6)
 	{
 		InvFirst = InvFirst.NextInv();
 		FirstOffs--;
 	}
-	while (NumFollowing + FirstOffs < 5 && InvFirst.PrevInv())
+	while (NumFollowing + FirstOffs < 6 && InvFirst.PrevInv())
 	{
 		InvFirst = InvFirst.PrevInv();
 		FirstOffs++;
@@ -1136,7 +1136,7 @@ void DeathPlayerTick(float deltaTime)
 	if (Attacker && Attacker != MO)
 	{
 		// Watch killer
-		dir = Actor(MO).FaceActor(Actor(Attacker), delta);
+		dir = EntityEx(MO).FaceActor(EntityEx(Attacker), delta);
 		if (delta < 10.0)
 		{
 			// Looking at killer, so fade damage and poison counters
