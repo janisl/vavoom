@@ -2012,6 +2012,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\ui_actor.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\source\ui_gc.cpp"
 				>
 			</File>
