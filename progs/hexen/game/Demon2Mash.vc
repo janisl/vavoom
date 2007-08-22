@@ -26,6 +26,14 @@
 class Demon2Mash : Demon2
 	__scriptid__(101);
 
+states
+{
+Death:
+XDeath:
+Ice:
+	Stop
+}
+
 defaultproperties
 {
 	GibsHealth = 0;
@@ -34,7 +42,4 @@ defaultproperties
 	bBlasted = true;
 	bTelestomp = false;
 	bActivatePushWall = true;
-	DeathState = none;
-	GibsDeathState = none;
-	IceDeathState = none;
 }

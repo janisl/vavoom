@@ -57,57 +57,65 @@ final void A_SkullPop()
 	Player(A.Player).DamageFlash = 1.0;
 }
 
-__states__
+states
 {
-	S_FPLAY('PLAY', 0, -1.0, none) = none
-	S_FPLAY_RUN1('PLAY', 0, 4.0 / 35.0, S_FPLAY_RUN2) = none
-	S_FPLAY_RUN2('PLAY', 1, 4.0 / 35.0, S_FPLAY_RUN3) = none
-	S_FPLAY_RUN3('PLAY', 2, 4.0 / 35.0, S_FPLAY_RUN4) = none
-	S_FPLAY_RUN4('PLAY', 3, 4.0 / 35.0, S_FPLAY_RUN1) = none
-	S_FPLAY_ATK1('PLAY', 4, 8.0 / 35.0, S_FPLAY_ATK2) = none
-	S_FPLAY_ATK2('PLAY', 5, 8.0 / 35.0, S_FPLAY) = none
-	S_FPLAY_PAIN('PLAY', 6, 4.0 / 35.0, S_FPLAY_PAIN2) = none
-	S_FPLAY_PAIN2('PLAY', 6, 4.0 / 35.0, S_FPLAY) = A_Pain
-	S_FPLAY_DIE1('PLAY', 7, 6.0 / 35.0, S_FPLAY_DIE2) = none
-	S_FPLAY_DIE2('PLAY', 8, 6.0 / 35.0, S_FPLAY_DIE3) = A_PlayerScream
-	S_FPLAY_DIE3('PLAY', 9, 6.0 / 35.0, S_FPLAY_DIE4) = none
-	S_FPLAY_DIE4('PLAY', 10, 6.0 / 35.0, S_FPLAY_DIE5) = none
-	S_FPLAY_DIE5('PLAY', 11, 6.0 / 35.0, S_FPLAY_DIE6) = A_NoBlocking
-	S_FPLAY_DIE6('PLAY', 12, 6.0 / 35.0, S_FPLAY_DIE7) = none
-	S_FPLAY_DIE7('PLAY', 13, -1.0, none) = A_AddPlayerCorpse
-	S_FPLAY_XDIE1('PLAY', 14, 5.0 / 35.0, S_FPLAY_XDIE2) = A_PlayerScream
-	S_FPLAY_XDIE2('PLAY', 15, 5.0 / 35.0, S_FPLAY_XDIE3) = A_SkullPop
-	S_FPLAY_XDIE3('PLAY', 17, 5.0 / 35.0, S_FPLAY_XDIE4) = A_NoBlocking
-	S_FPLAY_XDIE4('PLAY', 18, 5.0 / 35.0, S_FPLAY_XDIE5) = none
-	S_FPLAY_XDIE5('PLAY', 19, 5.0 / 35.0, S_FPLAY_XDIE6) = none
-	S_FPLAY_XDIE6('PLAY', 20, 5.0 / 35.0, S_FPLAY_XDIE7) = none
-	S_FPLAY_XDIE7('PLAY', 21, 5.0 / 35.0, S_FPLAY_XDIE8) = none
-	S_FPLAY_XDIE8('PLAY', 22, -1.0, none) = A_AddPlayerCorpse
-	S_FPLAY_ICE('PLAY', 23, 5.0 / 35.0, S_FPLAY_ICE2) = A_FreezeDeath
-	S_FPLAY_ICE2('PLAY', 23, 1.0 / 35.0, S_FPLAY_ICE2) = A_FreezeDeathChunks
-	S_PLAY_F_FDTH1('FDTH', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_F_FDTH2)
-	{
-		PlaySound('*burndeath', CHAN_VOICE);
-	}
-	S_PLAY_F_FDTH2('FDTH', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH3) = none
-	S_PLAY_FDTH3('FDTH', 6 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH4) = none
-	S_PLAY_FDTH4('FDTH', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH5) = A_PlayerScream
-	S_PLAY_FDTH5('FDTH', 8 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH6) = none
-	S_PLAY_FDTH6('FDTH', 9 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH7) = none
-	S_PLAY_FDTH7('FDTH', 10 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH8) = none
-	S_PLAY_FDTH8('FDTH', 11 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH9) = none
-	S_PLAY_FDTH9('FDTH', 12 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH10) = none
-	S_PLAY_FDTH10('FDTH', 13 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH11) = none
-	S_PLAY_FDTH11('FDTH', 14 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH12) = none
-	S_PLAY_FDTH12('FDTH', 15 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH13) = none
-	S_PLAY_FDTH13('FDTH', 16 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH14) = none
-	S_PLAY_FDTH14('FDTH', 17 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH15) = none
-	S_PLAY_FDTH15('FDTH', 18 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH16) = A_NoBlocking
-	S_PLAY_FDTH16('FDTH', 19 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH17) = none
-	S_PLAY_FDTH17('FDTH', 20 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH18) = none
-	S_PLAY_FDTH18('FDTH', 21 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH19) = none
-	S_PLAY_FDTH19('ACLO', 4, 35.0 / 35.0, S_PLAY_FDTH19) = A_CheckBurnGone
-	S_PLAY_FDTH20('ACLO', 4, 8.0 / 35.0, none) = none
+Spawn:
+	PLAY A -1
+	Stop
+See:
+	PLAY ABCD 4
+	Loop
+Melee:
+Missile:
+	PLAY EF 8
+	Goto Spawn
+Pain:
+	PLAY G 4
+	PLAY G 4 A_Pain
+	Goto Spawn
+Death:
+	PLAY H 6
+	PLAY I 6 A_PlayerScream
+	PLAY JK 6
+	PLAY L 6 A_NoBlocking
+	PLAY M 6
+	PLAY N -1 A_AddPlayerCorpse
+	Stop
+XDeath:
+	PLAY O 5 A_PlayerScream
+	PLAY P 5 A_SkullPop
+	PLAY R 5 A_NoBlocking
+	PLAY STUV 5
+	PLAY W -1 A_AddPlayerCorpse
+	Stop
+Ice:
+	PLAY X 5 A_FreezeDeath
+	PLAY X 1 A_FreezeDeathChunks
+	Wait
+Burn:
+	FDTH A 5 Bright A_PlayerBurnScream
+	FDTH B 4 Bright
+	FDTH G 5 Bright
+	FDTH H 4 Bright A_PlayerScream
+	FDTH I 5 Bright
+	FDTH J 4 Bright
+	FDTH K 5 Bright
+	FDTH L 4 Bright
+	FDTH M 5 Bright
+	FDTH N 4 Bright
+	FDTH O 5 Bright
+	FDTH P 4 Bright
+	FDTH Q 5 Bright
+	FDTH R 4 Bright
+	FDTH S 5 Bright A_NoBlocking
+	FDTH T 4 Bright
+	FDTH U 5 Bright
+	FDTH V 4 Bright
+	ACLO E 35 A_CheckBurnGone
+	Wait
+BurnGone:
+	ACLO E 8
+	Stop
 }
 
 defaultproperties
@@ -123,15 +131,6 @@ defaultproperties
 	HexenArmor[3] = 15.0;
 	HexenArmor[4] = 5.0;
 	bPickUp = true;
-	IdleState = S_FPLAY;
-	SeeState = S_FPLAY_RUN1;
-	MeleeState = S_FPLAY_ATK1;
-	MissileState = S_FPLAY_ATK1;
-	PainState = S_FPLAY_PAIN;
-	DeathState = S_FPLAY_DIE1;
-	GibsDeathState = S_FPLAY_XDIE1;
-	FireDeathState = S_PLAY_F_FDTH1;
-	IceDeathState = S_FPLAY_ICE;
 	PainSound = 'PlayerFighterPain';
 	SoundClass = 'fighter';
 

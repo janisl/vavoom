@@ -27,10 +27,6 @@ class Serpent : Pawn
 	__mobjinfo__(121)
 	__scriptid__(6);
 
-state HumpState;
-state WalkState;
-state AttackState;
-
 //==========================================================================
 //
 //	A_SerpentChase
@@ -155,21 +151,50 @@ final void A_SerpentChase()
 //
 //  A_SerpentHumpDecide
 //
-//  Decided whether to hump up
+//  Decided whether to hump up or to missile attack
 //
 //==========================================================================
 
-void A_SerpentHumpDecide()
+final void A_SerpentHumpDecide()
 {
-	if (P_Random() > 3)
+	if (SerpentLeader(self))
 	{
-		return;
+		if (P_Random() > 30)
+		{
+			return;
+		}
+		if (P_Random() < 40)
+		{
+			// Missile attack
+			SetState(MeleeState);
+			return;
+		}
+		if (!CheckMeleeRange())
+		{
+			// The hump shouldn't occur when within melee range
+			if (P_Random() < 128)
+			{
+				SetState(MeleeState);
+			}
+			else
+			{
+				SetState(FindState('Hump'));
+				PlaySound('SerpentActive', CHAN_VOICE);
+			}
+		}
 	}
-	if (!CheckMeleeRange())
+	else
 	{
-		// The hump shouldn't occur when within melee range
-		SetState(HumpState);
-		PlaySound('SerpentActive', CHAN_VOICE);
+		if (P_Random() > 3)
+		{
+			return;
+		}
+		if (!CheckMeleeRange())
+		{
+			// The hump shouldn't occur when within melee range
+			SetState(FindState('Hump'));
+			PlaySound('SerpentActive', CHAN_VOICE);
+		}
 	}
 }
 
@@ -250,25 +275,30 @@ final void A_SetShootable()
 //
 //==========================================================================
 
-void A_SerpentCheckForAttack()
+final void A_SerpentCheckForAttack()
 {
 	if (!Target)
 	{
 		return;
 	}
+	if (SerpentLeader(self) && !CheckMeleeRange())
+	{
+		SetState(FindState('Attack'));
+		return;
+	}
 	if (CheckMeleeRange2())
 	{
-		SetState(WalkState);
+		SetState(FindState('Walk'));
 	}
 	else if (CheckMeleeRange())
 	{
 		if (P_Random() < 32)
 		{
-			SetState(WalkState);
+			SetState(FindState('Walk'));
 		}
 		else
 		{
-			SetState(AttackState);
+			SetState(FindState('Attack'));
 		}
 	}
 }
@@ -378,7 +408,7 @@ final void A_SerpentWalk()
 		{
 			PlaySound(AttackSound, CHAN_WEAPON);
 		}
-		SetState(AttackState);
+		SetState(FindState('Attack'));
 		return;
 	}
 	//
@@ -405,8 +435,16 @@ final void A_SerpentWalk()
 //
 //==========================================================================
 
-void A_SerpentChooseAttack()
+final void A_SerpentChooseAttack()
 {
+	if (SerpentLeader(self))
+	{
+		if (!Target || CheckMeleeRange())
+		{
+			return;
+		}
+		SetState(MissileState);
+	}
 }
 
 //==========================================================================
@@ -479,73 +517,67 @@ final void A_SerpentSpawnGibs()
 	}
 }
 
-__states__
+states
 {
-	S_SERPENT_LOOK1('SSPT', 7, 10.0 / 35.0, S_SERPENT_LOOK1) = A_Look
-	S_SERPENT_SWIM1('SSPT', 7, 1.0 / 35.0, S_SERPENT_SWIM2) = A_SerpentChase
-	S_SERPENT_SWIM2('SSPT', 7, 1.0 / 35.0, S_SERPENT_SWIM3) = A_SerpentChase
-	S_SERPENT_SWIM3('SSPT', 7, 2.0 / 35.0, S_SERPENT_SWIM1) { A_SerpentHumpDecide(); }
-	S_SERPENT_HUMP1('SSPT', 7, 3.0 / 35.0, S_SERPENT_HUMP2) = A_SerpentUnHide
-	S_SERPENT_HUMP2('SSPT', 4, 3.0 / 35.0, S_SERPENT_HUMP3) = A_SerpentRaiseHump
-	S_SERPENT_HUMP3('SSPT', 5, 3.0 / 35.0, S_SERPENT_HUMP4) = A_SerpentRaiseHump
-	S_SERPENT_HUMP4('SSPT', 6, 3.0 / 35.0, S_SERPENT_HUMP5) = A_SerpentRaiseHump
-	S_SERPENT_HUMP5('SSPT', 4, 3.0 / 35.0, S_SERPENT_HUMP6) = A_SerpentRaiseHump
-	S_SERPENT_HUMP6('SSPT', 5, 3.0 / 35.0, S_SERPENT_HUMP7) = A_SerpentRaiseHump
-	S_SERPENT_HUMP7('SSPT', 6, 3.0 / 35.0, S_SERPENT_HUMP8) = none
-	S_SERPENT_HUMP8('SSPT', 4, 3.0 / 35.0, S_SERPENT_HUMP9) = none
-	S_SERPENT_HUMP9('SSPT', 5, 3.0 / 35.0, S_SERPENT_HUMP10) = none
-	S_SERPENT_HUMP10('SSPT', 6, 3.0 / 35.0, S_SERPENT_HUMP11) = A_SerpentLowerHump
-	S_SERPENT_HUMP11('SSPT', 4, 3.0 / 35.0, S_SERPENT_HUMP12) = A_SerpentLowerHump
-	S_SERPENT_HUMP12('SSPT', 5, 3.0 / 35.0, S_SERPENT_HUMP13) = A_SerpentLowerHump
-	S_SERPENT_HUMP13('SSPT', 6, 3.0 / 35.0, S_SERPENT_HUMP14) = A_SerpentLowerHump
-	S_SERPENT_HUMP14('SSPT', 4, 3.0 / 35.0, S_SERPENT_HUMP15) = A_SerpentLowerHump
-	S_SERPENT_HUMP15('SSPT', 5, 3.0 / 35.0, S_SERPENT_SWIM1) = A_SerpentHide
-	S_SERPENT_SURFACE1('SSPT', 0, 1.0 / 35.0, S_SERPENT_SURFACE2) = A_UnHideThing
-	S_SERPENT_SURFACE2('SSPT', 0, 1.0 / 35.0, S_SERPENT_SURFACE3) = A_SerpentBirthScream
-	S_SERPENT_SURFACE3('SSPT', 1, 3.0 / 35.0, S_SERPENT_SURFACE4) = A_SetShootable
-	S_SERPENT_SURFACE4('SSPT', 2, 3.0 / 35.0, S_SERPENT_SURFACE5) = none
-	S_SERPENT_SURFACE5('SSPT', 3, 4.0 / 35.0, S_SERPENT_DIVE1) { A_SerpentCheckForAttack(); }
-	S_SERPENT_DIVE1('SSDV', 0, 4.0 / 35.0, S_SERPENT_DIVE2) = none
-	S_SERPENT_DIVE2('SSDV', 1, 4.0 / 35.0, S_SERPENT_DIVE3) = none
-	S_SERPENT_DIVE3('SSDV', 2, 4.0 / 35.0, S_SERPENT_DIVE4) = none
-	S_SERPENT_DIVE4('SSDV', 3, 4.0 / 35.0, S_SERPENT_DIVE5) = A_UnSetShootable
-	S_SERPENT_DIVE5('SSDV', 4, 3.0 / 35.0, S_SERPENT_DIVE6) = A_SerpentDiveSound
-	S_SERPENT_DIVE6('SSDV', 5, 3.0 / 35.0, S_SERPENT_DIVE7) = none
-	S_SERPENT_DIVE7('SSDV', 6, 4.0 / 35.0, S_SERPENT_DIVE8) = none
-	S_SERPENT_DIVE8('SSDV', 7, 4.0 / 35.0, S_SERPENT_DIVE9) = none
-	S_SERPENT_DIVE9('SSDV', 8, 3.0 / 35.0, S_SERPENT_DIVE10) = none
-	S_SERPENT_DIVE10('SSDV', 9, 3.0 / 35.0, S_SERPENT_SWIM1) = A_SerpentHide
-	S_SERPENT_WALK1('SSPT', 8, 5.0 / 35.0, S_SERPENT_WALK2) = A_SerpentWalk
-	S_SERPENT_WALK2('SSPT', 9, 5.0 / 35.0, S_SERPENT_WALK3) = A_SerpentWalk
-	S_SERPENT_WALK3('SSPT', 8, 5.0 / 35.0, S_SERPENT_WALK4) = A_SerpentWalk
-	S_SERPENT_WALK4('SSPT', 9, 5.0 / 35.0, S_SERPENT_DIVE1) { A_SerpentCheckForAttack(); }
-	S_SERPENT_PAIN1('SSPT', 11, 5.0 / 35.0, S_SERPENT_PAIN2) = none
-	S_SERPENT_PAIN2('SSPT', 11, 5.0 / 35.0, S_SERPENT_DIVE1) = A_Pain
-	S_SERPENT_ATK1('SSPT', 10, 6.0 / 35.0, S_SERPENT_ATK2) = A_FaceTarget
-	S_SERPENT_ATK2('SSPT', 11, 5.0 / 35.0, S_SERPENT_MELEE1) { A_SerpentChooseAttack(); }
-	S_SERPENT_MELEE1('SSPT', 13, 5.0 / 35.0, S_SERPENT_DIVE1) = A_SerpentMeleeAttack
-	S_SERPENT_DIE1('SSPT', 14, 4.0 / 35.0, S_SERPENT_DIE2) = none
-	S_SERPENT_DIE2('SSPT', 15, 4.0 / 35.0, S_SERPENT_DIE3) = A_Scream
-	S_SERPENT_DIE3('SSPT', 16, 4.0 / 35.0, S_SERPENT_DIE4) = A_NoBlocking
-	S_SERPENT_DIE4('SSPT', 17, 4.0 / 35.0, S_SERPENT_DIE5) = none
-	S_SERPENT_DIE5('SSPT', 18, 4.0 / 35.0, S_SERPENT_DIE6) = none
-	S_SERPENT_DIE6('SSPT', 19, 4.0 / 35.0, S_SERPENT_DIE7) = none
-	S_SERPENT_DIE7('SSPT', 20, 4.0 / 35.0, S_SERPENT_DIE8) = none
-	S_SERPENT_DIE8('SSPT', 21, 4.0 / 35.0, S_SERPENT_DIE9) = none
-	S_SERPENT_DIE9('SSPT', 22, 4.0 / 35.0, S_SERPENT_DIE10) = none
-	S_SERPENT_DIE10('SSPT', 23, 4.0 / 35.0, S_SERPENT_DIE11) = none
-	S_SERPENT_DIE11('SSPT', 24, 4.0 / 35.0, S_SERPENT_DIE12) = none
-	S_SERPENT_DIE12('SSPT', 25, 4.0 / 35.0, none) = none
-	S_SERPENT_XDIE1('SSXD', 0, 4.0 / 35.0, S_SERPENT_XDIE2) = none
-	S_SERPENT_XDIE2('SSXD', 1, 4.0 / 35.0, S_SERPENT_XDIE3) = A_SerpentHeadPop
-	S_SERPENT_XDIE3('SSXD', 2, 4.0 / 35.0, S_SERPENT_XDIE4) = A_NoBlocking
-	S_SERPENT_XDIE4('SSXD', 3, 4.0 / 35.0, S_SERPENT_XDIE5) = none
-	S_SERPENT_XDIE5('SSXD', 4, 4.0 / 35.0, S_SERPENT_XDIE6) = none
-	S_SERPENT_XDIE6('SSXD', 5, 3.0 / 35.0, S_SERPENT_XDIE7) = none
-	S_SERPENT_XDIE7('SSXD', 6, 3.0 / 35.0, S_SERPENT_XDIE8) = none
-	S_SERPENT_XDIE8('SSXD', 7, 3.0 / 35.0, none) = A_SerpentSpawnGibs
-	S_SERPENT_ICE('SSPT', 26, 5.0 / 35.0, S_SERPENT_ICE2) = A_FreezeDeath
-	S_SERPENT_ICE2('SSPT', 26, 1.0 / 35.0, S_SERPENT_ICE2) = A_FreezeDeathChunks
+Spawn:
+	SSPT H 10 A_Look
+	Loop
+See:
+	SSPT HH 1 A_SerpentChase
+	SSPT H 2 A_SerpentHumpDecide
+	Loop
+Hump:
+	SSPT H 3 A_SerpentUnHide
+	SSPT EFGEF 3 A_SerpentRaiseHump
+	SSPT GEF 3
+	SSPT GEFGE 3 A_SerpentLowerHump
+	SSPT F 3 A_SerpentHide
+	Goto See
+Melee:
+	SSPT A 1 A_UnHideThing
+	SSPT A 1 A_SerpentBirthScream
+	SSPT B 3 A_SetShootable
+	SSPT C 3
+	SSPT D 4 A_SerpentCheckForAttack
+	SSDV ABC 4
+	SSDV D 4 A_UnSetShootable
+	SSDV E 3 A_SerpentDiveSound
+	SSDV F 3
+	SSDV GH 4
+	SSDV I 3
+	SSDV J 3 A_SerpentHide
+	Goto See
+Walk:
+	SSPT IJI 5 A_SerpentWalk
+	SSPT J 5 A_SerpentCheckForAttack
+	Goto Melee+5
+Pain:
+	SSPT L 5
+	SSPT L 5 A_Pain
+	Goto Melee+5
+Attack:
+	SSPT K 6 A_FaceTarget
+	SSPT L 5 A_SerpentChooseAttack
+	SSPT N 5 A_SerpentMeleeAttack
+	Goto Melee+5
+Death:
+	SSPT O 4
+	SSPT P 4 A_Scream
+	SSPT Q 4 A_NoBlocking
+	SSPT RSTUVWXYZ 4
+	Stop
+XDeath:
+	SSXD A 4
+	SSXD B 4 A_SerpentHeadPop
+	SSXD C 4 A_NoBlocking
+	SSXD DE 4
+	SSXD FG 3
+	SSXD H 3 A_SerpentSpawnGibs
+	Stop
+Ice:
+	SSPT "[" 5 A_FreezeDeath
+	SSPT "[" 1 A_FreezeDeathChunks
+	Wait
 }
 
 defaultproperties
@@ -565,16 +597,6 @@ defaultproperties
 	bActivatePushWall = false;
 	bCantLeaveFloorpic = true;
 	bNonShootable = true;
-	IdleState = S_SERPENT_LOOK1;
-	SeeState = S_SERPENT_SWIM1;
-	HumpState = S_SERPENT_HUMP1;
-	MeleeState = S_SERPENT_SURFACE1;
-	WalkState = S_SERPENT_WALK1;
-	AttackState = S_SERPENT_ATK1;
-	PainState = S_SERPENT_PAIN1;
-	DeathState = S_SERPENT_DIE1;
-	GibsDeathState = S_SERPENT_XDIE1;
-	IceDeathState = S_SERPENT_ICE;
 	SightSound = 'SerpentSight';
 	AttackSound = 'SerpentAttack';
 	PainSound = 'SerpentPain';

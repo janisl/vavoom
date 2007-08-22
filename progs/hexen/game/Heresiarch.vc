@@ -241,44 +241,43 @@ final void A_StopBalls()
 	}
 }
 
-__states__
+states
 {
-	S_SORC_SPAWN1('SORC', 0, 3.0 / 35.0, S_SORC_SPAWN2) = none
-	S_SORC_SPAWN2('SORC', 0, 2.0 / 35.0, S_SORC_LOOK1) = A_SorcSpinBalls
-	S_SORC_LOOK1('SORC', 0, 10.0 / 35.0, S_SORC_LOOK1) = A_Look
-	S_SORC_WALK1('SORC', 0, 5.0 / 35.0, S_SORC_WALK2) = A_Chase
-	S_SORC_WALK2('SORC', 1, 5.0 / 35.0, S_SORC_WALK3) = A_Chase
-	S_SORC_WALK3('SORC', 2, 5.0 / 35.0, S_SORC_WALK4) = A_Chase
-	S_SORC_WALK4('SORC', 3, 5.0 / 35.0, S_SORC_WALK1) = A_Chase
-	S_SORC_PAIN1('SORC', 6, 8.0 / 35.0, S_SORC_PAIN2) = none
-	S_SORC_PAIN2('SORC', 6, 8.0 / 35.0, S_SORC_WALK1) = A_Pain
-	S_SORC_ATK2_1('SORC', 5 | FF_FULLBRIGHT, 6.0 / 35.0, S_SORC_ATK2_2) = A_FaceTarget
-	S_SORC_ATK2_2('SORC', 5 | FF_FULLBRIGHT, 6.0 / 35.0, S_SORC_ATK2_3) = A_SpeedBalls
-	S_SORC_ATK2_3('SORC', 5 | FF_FULLBRIGHT, 6.0 / 35.0, S_SORC_ATK2_3) = A_FaceTarget
-	S_SORC_ATTACK1('SORC', 4 | FF_FULLBRIGHT, 6.0 / 35.0, S_SORC_ATTACK2) = none
-	S_SORC_ATTACK2('SORC', 4 | FF_FULLBRIGHT, 6.0 / 35.0, S_SORC_ATTACK3) = A_SpawnFizzle
-	S_SORC_ATTACK3('SORC', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_SORC_ATTACK2) = A_FaceTarget
-	S_SORC_ATTACK4('SORC', 4 | FF_FULLBRIGHT, 2.0 / 35.0, S_SORC_ATTACK5) = none
-	S_SORC_ATTACK5('SORC', 4 | FF_FULLBRIGHT, 2.0 / 35.0, S_SORC_WALK1) = A_SorcBossAttack
-	S_SORC_DIE1('SORC', 7 | FF_FULLBRIGHT, 5.0 / 35.0, S_SORC_DIE2) = none
-	S_SORC_DIE2('SORC', 8 | FF_FULLBRIGHT, 5.0 / 35.0, S_SORC_DIE3) = A_FaceTarget
-	S_SORC_DIE3('SORC', 9 | FF_FULLBRIGHT, 5.0 / 35.0, S_SORC_DIE4) = A_Scream
-	S_SORC_DIE4('SORC', 10 | FF_FULLBRIGHT, 5.0 / 35.0, S_SORC_DIE5) = none
-	S_SORC_DIE5('SORC', 11 | FF_FULLBRIGHT, 5.0 / 35.0, S_SORC_DIE6) = none
-	S_SORC_DIE6('SORC', 12 | FF_FULLBRIGHT, 5.0 / 35.0, S_SORC_DIE7) = none
-	S_SORC_DIE7('SORC', 13 | FF_FULLBRIGHT, 5.0 / 35.0, S_SORC_DIE8) = none
-	S_SORC_DIE8('SORC', 14 | FF_FULLBRIGHT, 5.0 / 35.0, S_SORC_DIE9) = none
-	S_SORC_DIE9('SORC', 15 | FF_FULLBRIGHT, 5.0 / 35.0, S_SORC_DIE0) = none
-	S_SORC_DIE0('SORC', 16 | FF_FULLBRIGHT, 5.0 / 35.0, S_SORC_DIEA) = none
-	S_SORC_DIEA('SORC', 17 | FF_FULLBRIGHT, 5.0 / 35.0, S_SORC_DIEB) = none
-	S_SORC_DIEB('SORC', 18 | FF_FULLBRIGHT, 5.0 / 35.0, S_SORC_DIEC) = none
-	S_SORC_DIEC('SORC', 19 | FF_FULLBRIGHT, 5.0 / 35.0, S_SORC_DIED) = none
-	S_SORC_DIED('SORC', 20 | FF_FULLBRIGHT, 5.0 / 35.0, S_SORC_DIEE) = A_NoBlocking
-	S_SORC_DIEE('SORC', 21 | FF_FULLBRIGHT, 5.0 / 35.0, S_SORC_DIEF) = none
-	S_SORC_DIEF('SORC', 22 | FF_FULLBRIGHT, 5.0 / 35.0, S_SORC_DIEG) = none
-	S_SORC_DIEG('SORC', 23 | FF_FULLBRIGHT, 5.0 / 35.0, S_SORC_DIEH) = none
-	S_SORC_DIEH('SORC', 24 | FF_FULLBRIGHT, 5.0 / 35.0, S_SORC_DIEI) = none
-	S_SORC_DIEI('SORC', 25 | FF_FULLBRIGHT, -1.0, none) = none
+Spawn:
+	SORC A 3
+	SORC A 2 A_SorcSpinBalls
+	SORC A 10 A_Look
+	Wait
+See:
+	SORC ABCD 5 A_Chase
+	Loop
+Pain:
+	SORC G 8
+	SORC G 8 A_Pain
+	Goto See
+Missile:
+	SORC F 6 Bright A_FaceTarget
+	SORC F 6 Bright A_SpeedBalls
+	SORC F 6 Bright A_FaceTarget
+	Wait
+Attack1:
+	SORC E 6 Bright
+	SORC E 6 Bright A_SpawnFizzle
+	SORC E 5 Bright A_FaceTarget
+	Goto Attack1+1
+Attack2:
+	SORC E 2 Bright
+	SORC E 2 Bright A_SorcBossAttack
+	Goto See
+Death:
+	SORC H 5 Bright
+	SORC I 5 Bright A_FaceTarget
+	SORC J 5 Bright A_Scream
+	SORC KLMNOPQRST 5 Bright
+	SORC U 5 Bright A_NoBlocking
+	SORC VWXY 5 Bright
+	SORC Z -1 Bright
+	Stop
 }
 
 defaultproperties
@@ -295,11 +294,6 @@ defaultproperties
 	bNeverTarget = true;
 	bTelestomp = false;
 	bFullVolActive = true;
-	IdleState = S_SORC_SPAWN1;
-	SeeState = S_SORC_WALK1;
-	MissileState = S_SORC_ATK2_1;
-	PainState = S_SORC_PAIN1;
-	DeathState = S_SORC_DIE1;
 	SightSound = 'SorcererSight';
 	ActiveSound = 'SorcererActive';
 	PainSound = 'SorcererPain';

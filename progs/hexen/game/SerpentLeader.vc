@@ -29,76 +29,6 @@ class SerpentLeader : Serpent
 
 //==========================================================================
 //
-//  A_SerpentHumpDecide
-//
-//  Decided whether to hump up or to missile attack
-//
-//==========================================================================
-
-void A_SerpentHumpDecide()
-{
-	if (P_Random() > 30)
-	{
-		return;
-	}
-	if (P_Random() < 40)
-	{
-		// Missile attack
-		SetState(MeleeState);
-		return;
-	}
-	if (!CheckMeleeRange())
-	{
-		// The hump shouldn't occur when within melee range
-		if (P_Random() < 128)
-		{
-			SetState(MeleeState);
-		}
-		else
-		{
-			SetState(HumpState);
-			PlaySound('SerpentActive', CHAN_VOICE);
-		}
-	}
-}
-
-//==========================================================================
-//
-//  A_SerpentCheckForAttack
-//
-//==========================================================================
-
-void A_SerpentCheckForAttack()
-{
-	if (!Target)
-	{
-		return;
-	}
-	if (!CheckMeleeRange())
-	{
-		SetState(AttackState);
-		return;
-	}
-	::A_SerpentCheckForAttack();
-}
-
-//==========================================================================
-//
-//  A_SerpentChooseAttack
-//
-//==========================================================================
-
-void A_SerpentChooseAttack()
-{
-	if (!Target || CheckMeleeRange())
-	{
-		return;
-	}
-	SetState(MissileState);
-}
-
-//==========================================================================
-//
 //	A_SerpentMissileAttack
 //
 //==========================================================================
@@ -112,13 +42,14 @@ final void A_SerpentMissileAttack()
 	SpawnMissile(Target, SerpentFX);
 }
 
-__states__
+states
 {
-	S_SERPENT_MISSILE1('SSPT', 13, 5.0 / 35.0, S_SERPENT_DIVE1) = A_SerpentMissileAttack
+Missile:
+	SSPT N 5 A_SerpentMissileAttack
+	Goto Super::Melee+5
 }
 
 defaultproperties
 {
 	Mass = 200.0;
-	MissileState = S_SERPENT_MISSILE1;
 }

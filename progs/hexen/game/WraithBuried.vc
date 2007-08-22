@@ -83,19 +83,22 @@ final void A_WraithRaise()
 	if (RaiseFromFloor())
 	{
 		// Reached it's target height
-		SetState(S_WRAITH_CHASE1);
+		SetState(FindClassState(Wraith, 'See'));
 	}
 
 	SpawnDirt(Radius);
 }
 
-__states__
+states
 {
-	S_WRAITH_RAISE1('WRTH', 0, 2.0 / 35.0, S_WRAITH_RAISE2) = A_WraithRaiseInit
-	S_WRAITH_RAISE2('WRTH', 0, 2.0 / 35.0, S_WRAITH_RAISE3) = A_WraithRaise
-	S_WRAITH_RAISE3('WRTH', 0, 2.0 / 35.0, S_WRAITH_RAISE4) = A_FaceTarget
-	S_WRAITH_RAISE4('WRTH', 1, 2.0 / 35.0, S_WRAITH_RAISE5) = A_WraithRaise
-	S_WRAITH_RAISE5('WRTH', 1, 2.0 / 35.0, S_WRAITH_RAISE2) = A_WraithRaise
+Spawn:
+	Goto Super::Spawn+2
+See:
+	WRTH A 2 A_WraithRaiseInit
+	WRTH A 2 A_WraithRaise
+	WRTH A 2 A_FaceTarget
+	WRTH BB 2 A_WraithRaise
+	Goto See+1
 }
 
 defaultproperties
@@ -104,6 +107,4 @@ defaultproperties
 	bSolid = false;
 	Alpha = 0.0;
 	bShootable = false;
-	IdleState = S_WRAITH_LOOK1;
-	SeeState = S_WRAITH_RAISE1;
 }

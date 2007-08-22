@@ -61,41 +61,42 @@ final void A_DropMace()
 	}
 }
 
-__states__
+states
 {
-	S_ETTIN_LOOK1('ETTN', 0, 10.0 / 35.0, S_ETTIN_LOOK2) = A_Look
-	S_ETTIN_LOOK2('ETTN', 0, 10.0 / 35.0, S_ETTIN_LOOK1) = A_Look
-	S_ETTIN_CHASE1('ETTN', 0, 5.0 / 35.0, S_ETTIN_CHASE2) = A_Chase
-	S_ETTIN_CHASE2('ETTN', 1, 5.0 / 35.0, S_ETTIN_CHASE3) = A_Chase
-	S_ETTIN_CHASE3('ETTN', 2, 5.0 / 35.0, S_ETTIN_CHASE4) = A_Chase
-	S_ETTIN_CHASE4('ETTN', 3, 5.0 / 35.0, S_ETTIN_CHASE1) = A_Chase
-	S_ETTIN_PAIN1('ETTN', 7, 7.0 / 35.0, S_ETTIN_CHASE1) = A_Pain
-	S_ETTIN_ATK1_1('ETTN', 4, 6.0 / 35.0, S_ETTIN_ATK1_2) = A_FaceTarget
-	S_ETTIN_ATK1_2('ETTN', 5, 6.0 / 35.0, S_ETTIN_ATK1_3) = A_FaceTarget
-	S_ETTIN_ATK1_3('ETTN', 6, 8.0 / 35.0, S_ETTIN_CHASE1) = A_EttinAttack
-	S_ETTIN_DEATH1_1('ETTN', 8, 4.0 / 35.0, S_ETTIN_DEATH1_2) = none
-	S_ETTIN_DEATH1_2('ETTN', 9, 4.0 / 35.0, S_ETTIN_DEATH1_3) = none
-	S_ETTIN_DEATH1_3('ETTN', 10, 4.0 / 35.0, S_ETTIN_DEATH1_4) = A_Scream
-	S_ETTIN_DEATH1_4('ETTN', 11, 4.0 / 35.0, S_ETTIN_DEATH1_5) = A_NoBlocking
-	S_ETTIN_DEATH1_5('ETTN', 12, 4.0 / 35.0, S_ETTIN_DEATH1_6) = A_QueueCorpse
-	S_ETTIN_DEATH1_6('ETTN', 13, 4.0 / 35.0, S_ETTIN_DEATH1_7) = none
-	S_ETTIN_DEATH1_7('ETTN', 14, 4.0 / 35.0, S_ETTIN_DEATH1_8) = none
-	S_ETTIN_DEATH1_8('ETTN', 15, 4.0 / 35.0, S_ETTIN_DEATH1_9) = none
-	S_ETTIN_DEATH1_9('ETTN', 16, -1.0, none) = none
-	S_ETTIN_DEATH2_1('ETTB', 0, 4.0 / 35.0, S_ETTIN_DEATH2_2) = none
-	S_ETTIN_DEATH2_2('ETTB', 1, 4.0 / 35.0, S_ETTIN_DEATH2_3) = A_NoBlocking
-	S_ETTIN_DEATH2_3('ETTB', 2, 4.0 / 35.0, S_ETTIN_DEATH2_4) = A_DropMace
-	S_ETTIN_DEATH2_4('ETTB', 3, 4.0 / 35.0, S_ETTIN_DEATH2_5) = A_Scream
-	S_ETTIN_DEATH2_5('ETTB', 4, 4.0 / 35.0, S_ETTIN_DEATH2_6) = A_QueueCorpse
-	S_ETTIN_DEATH2_6('ETTB', 5, 4.0 / 35.0, S_ETTIN_DEATH2_7) = none
-	S_ETTIN_DEATH2_7('ETTB', 6, 4.0 / 35.0, S_ETTIN_DEATH2_8) = none
-	S_ETTIN_DEATH2_8('ETTB', 7, 4.0 / 35.0, S_ETTIN_DEATH2_9) = none
-	S_ETTIN_DEATH2_9('ETTB', 8, 4.0 / 35.0, S_ETTIN_DEATH2_0) = none
-	S_ETTIN_DEATH2_0('ETTB', 9, 4.0 / 35.0, S_ETTIN_DEATH2_A) = none
-	S_ETTIN_DEATH2_A('ETTB', 10, 4.0 / 35.0, S_ETTIN_DEATH2_B) = none
-	S_ETTIN_DEATH2_B('ETTB', 11, -1.0, none) = none
-	S_ETTIN_ICE1('ETTN', 17, 5.0 / 35.0, S_ETTIN_ICE2) = A_FreezeDeath
-	S_ETTIN_ICE2('ETTN', 17, 1.0 / 35.0, S_ETTIN_ICE2) = A_FreezeDeathChunks
+Spawn:
+	ETTN AA 10 A_Look
+	Loop
+See:
+	ETTN ABCD 5 A_Chase
+	Loop
+Pain:
+	ETTN H 7 A_Pain
+	Goto See
+Melee:
+	ETTN EF 6 A_FaceTarget
+	ETTN G 8 A_EttinAttack
+	Goto See
+Death:
+	ETTN IJ 4
+	ETTN K 4 A_Scream
+	ETTN L 4 A_NoBlocking
+	ETTN M 4 A_QueueCorpse
+	ETTN NOP 4
+	ETTN Q -1
+	Stop
+XDeath:
+	ETTB A 4
+	ETTB B 4 A_NoBlocking
+	ETTB C 4 A_DropMace
+	ETTB D 4 A_Scream
+	ETTB E 4 A_QueueCorpse
+	ETTB FGHIJK 4
+	ETTB L -1
+	Stop
+Ice:
+	ETTN R 5 A_FreezeDeath
+	ETTN R 1 A_FreezeDeathChunks
+	Wait
 }
 
 defaultproperties
@@ -108,13 +109,6 @@ defaultproperties
 	StepSpeed = 13.0;
 	PainChance = 0.234375;
 	bNoPassMobj = true;
-	IdleState = S_ETTIN_LOOK1;
-	SeeState = S_ETTIN_CHASE1;
-	MeleeState = S_ETTIN_ATK1_1;
-	PainState = S_ETTIN_PAIN1;
-	DeathState = S_ETTIN_DEATH1_1;
-	GibsDeathState = S_ETTIN_DEATH2_1;
-	IceDeathState = S_ETTIN_ICE1;
 	SightSound = 'EttinSight';
 	ActiveSound = 'EttinActive';
 	AttackSound = 'EttinAttack';

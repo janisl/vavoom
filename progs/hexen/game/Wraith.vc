@@ -198,44 +198,53 @@ final void A_WraithMissile()
 	}
 }
 
-__states__
+states
 {
-	S_WRAITH_INIT1('WRTH', 0, 10.0 / 35.0, S_WRAITH_INIT2) = none
-	S_WRAITH_INIT2('WRTH', 1, 5.0 / 35.0, S_WRAITH_LOOK1) = A_WraithInit
-	S_WRAITH_LOOK1('WRTH', 0, 15.0 / 35.0, S_WRAITH_LOOK2) = A_WraithLook
-	S_WRAITH_LOOK2('WRTH', 1, 15.0 / 35.0, S_WRAITH_LOOK1) = A_WraithLook
-	S_WRAITH_CHASE1('WRTH', 0, 4.0 / 35.0, S_WRAITH_CHASE2) = A_WraithChase
-	S_WRAITH_CHASE2('WRTH', 1, 4.0 / 35.0, S_WRAITH_CHASE3) = A_WraithChase
-	S_WRAITH_CHASE3('WRTH', 2, 4.0 / 35.0, S_WRAITH_CHASE4) = A_WraithChase
-	S_WRAITH_CHASE4('WRTH', 3, 4.0 / 35.0, S_WRAITH_CHASE1) = A_WraithChase
-	S_WRAITH_ATK1_1('WRTH', 4, 6.0 / 35.0, S_WRAITH_ATK1_2) = A_FaceTarget
-	S_WRAITH_ATK1_2('WRTH', 5, 6.0 / 35.0, S_WRAITH_ATK1_3) = A_WraithFX3
-	S_WRAITH_ATK1_3('WRTH', 6, 6.0 / 35.0, S_WRAITH_CHASE1) = A_WraithMelee
-	S_WRAITH_ATK2_1('WRTH', 4, 6.0 / 35.0, S_WRAITH_ATK2_2) = A_FaceTarget
-	S_WRAITH_ATK2_2('WRTH', 5, 6.0 / 35.0, S_WRAITH_ATK2_3) = none
-	S_WRAITH_ATK2_3('WRTH', 6, 6.0 / 35.0, S_WRAITH_CHASE1) = A_WraithMissile
-	S_WRAITH_PAIN1('WRTH', 0, 2.0 / 35.0, S_WRAITH_PAIN2) = none
-	S_WRAITH_PAIN2('WRTH', 7, 6.0 / 35.0, S_WRAITH_CHASE1) = A_Pain
-	S_WRAITH_DEATH1_1('WRTH', 8, 4.0 / 35.0, S_WRAITH_DEATH1_2) = none
-	S_WRAITH_DEATH1_2('WRTH', 9, 4.0 / 35.0, S_WRAITH_DEATH1_3) = A_Scream
-	S_WRAITH_DEATH1_3('WRTH', 10, 4.0 / 35.0, S_WRAITH_DEATH1_4) = none
-	S_WRAITH_DEATH1_4('WRTH', 11, 4.0 / 35.0, S_WRAITH_DEATH1_5) = none
-	S_WRAITH_DEATH1_5('WRTH', 12, 4.0 / 35.0, S_WRAITH_DEATH1_6) = A_NoBlocking
-	S_WRAITH_DEATH1_6('WRTH', 13, 4.0 / 35.0, S_WRAITH_DEATH1_7) = A_QueueCorpse
-	S_WRAITH_DEATH1_7('WRTH', 14, 4.0 / 35.0, S_WRAITH_DEATH1_8) = none
-	S_WRAITH_DEATH1_8('WRTH', 15, 5.0 / 35.0, S_WRAITH_DEATH1_9) = none
-	S_WRAITH_DEATH1_9('WRTH', 16, 5.0 / 35.0, S_WRAITH_DEATH1_0) = none
-	S_WRAITH_DEATH1_0('WRTH', 17, -1.0, none) = none
-	S_WRAITH_DEATH2_1('WRT2', 0, 5.0 / 35.0, S_WRAITH_DEATH2_2) = none
-	S_WRAITH_DEATH2_2('WRT2', 1, 5.0 / 35.0, S_WRAITH_DEATH2_3) = A_Scream
-	S_WRAITH_DEATH2_3('WRT2', 2, 5.0 / 35.0, S_WRAITH_DEATH2_4) = none
-	S_WRAITH_DEATH2_4('WRT2', 3, 5.0 / 35.0, S_WRAITH_DEATH2_5) = none
-	S_WRAITH_DEATH2_5('WRT2', 4, 5.0 / 35.0, S_WRAITH_DEATH2_6) = A_NoBlocking
-	S_WRAITH_DEATH2_6('WRT2', 5, 5.0 / 35.0, S_WRAITH_DEATH2_7) = A_QueueCorpse
-	S_WRAITH_DEATH2_7('WRT2', 6, 5.0 / 35.0, S_WRAITH_DEATH2_8) = none
-	S_WRAITH_DEATH2_8('WRT2', 7, -1.0, none) = none
-	S_WRAITH_ICE('WRT2', 8, 5.0 / 35.0, S_WRAITH_ICE2) = A_FreezeDeath
-	S_WRAITH_ICE2('WRT2', 8, 1.0 / 35.0, S_WRAITH_ICE2) = A_FreezeDeathChunks
+Spawn:
+	WRTH A 10
+	WRTH B 5 A_WraithInit
+	WRTH AB 15 A_WraithLook
+	Goto Spawn+2
+See:
+	WRTH ABCD 4 A_WraithChase
+	Loop
+Melee:
+	WRTH E 6 A_FaceTarget
+	WRTH F 6 A_WraithFX3
+	WRTH G 6 A_WraithMelee
+	Goto See
+Missile:
+	WRTH E 6 A_FaceTarget
+	WRTH F 6
+	WRTH G 6 A_WraithMissile
+	Goto See
+Pain:
+	WRTH A 2
+	WRTH H 6 A_Pain
+	Goto See
+Death:
+	WRTH I 4
+	WRTH J 4 A_Scream
+	WRTH KL 4
+	WRTH M 4 A_NoBlocking
+	WRTH N 4 A_QueueCorpse
+	WRTH O 4
+	WRTH PQ 5
+	WRTH R -1
+	Stop
+XDeath:
+	WRT2 A 5
+	WRT2 B 5 A_Scream
+	WRT2 CD 5
+	WRT2 E 5 A_NoBlocking
+	WRT2 F 5 A_QueueCorpse
+	WRT2 G 5
+	WRT2 H -1
+	Stop
+Ice:
+	WRT2 I 5 A_FreezeDeath
+	WRT2 I 1 A_FreezeDeathChunks
+	Wait
 }
 
 defaultproperties
@@ -252,14 +261,6 @@ defaultproperties
 	bDropOff = true;
 	bFloat = true;
 	bActivateMCross = false;
-	IdleState = S_WRAITH_INIT1;
-	SeeState = S_WRAITH_CHASE1;
-	MeleeState = S_WRAITH_ATK1_1;
-	MissileState = S_WRAITH_ATK2_1;
-	PainState = S_WRAITH_PAIN1;
-	DeathState = S_WRAITH_DEATH1_1;
-	GibsDeathState = S_WRAITH_DEATH2_1;
-	IceDeathState = S_WRAITH_ICE;
 	SightSound = 'WraithSight';
 	ActiveSound = 'WraithActive';
 	AttackSound = 'WraithAttack';

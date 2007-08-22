@@ -26,6 +26,14 @@
 class EttinMash : Ettin
 	__scriptid__(102);
 
+states
+{
+Death:
+XDeath:
+Ice:
+	Stop
+}
+
 defaultproperties
 {
 	GibsHealth = 0;
@@ -34,7 +42,4 @@ defaultproperties
 	bBlasted = true;
 	bTelestomp = false;
 	bNoPassMobj = false;
-	DeathState = none;
-	GibsDeathState = none;
-	IceDeathState = none;
 }

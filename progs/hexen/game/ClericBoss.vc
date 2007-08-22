@@ -26,13 +26,13 @@
 class ClericBoss : ClassBoss
 	__mobjinfo__(10101);
 
-//============================================================================
+//==========================================================================
 //
 //  A_ClericAttack
 //
 //  Spawns the spirits
 //
-//============================================================================
+//==========================================================================
 
 final void A_ClericAttack()
 {
@@ -48,64 +48,80 @@ final void A_ClericAttack()
 	PlaySound('HolySymbolFire', CHAN_WEAPON);
 }
 
-__states__
+//==========================================================================
+//
+//	A_ClericBurnScream
+//
+//==========================================================================
+
+final void A_ClericBurnScream()
 {
-	S_CLERIC('CLER', 0, 2.0 / 35.0, S_CLERIC2) = none
-	S_CLERIC2('CLER', 0, 3.0 / 35.0, S_CLERICLOOK) = A_ClassBossHealth
-	S_CLERICLOOK('CLER', 0, 5.0 / 35.0, S_CLERICLOOK) = A_Look
-	S_CLERIC_RUN1('CLER', 0, 4.0 / 35.0, S_CLERIC_RUN2) = A_FastChase
-	S_CLERIC_RUN2('CLER', 1, 4.0 / 35.0, S_CLERIC_RUN3) = A_FastChase
-	S_CLERIC_RUN3('CLER', 2, 4.0 / 35.0, S_CLERIC_RUN4) = A_FastChase
-	S_CLERIC_RUN4('CLER', 3, 4.0 / 35.0, S_CLERIC_RUN1) = A_FastChase
-	S_CLERIC_ATK1('CLER', 4, 8.0 / 35.0, S_CLERIC_ATK2) = A_FaceTarget
-	S_CLERIC_ATK2('CLER', 5, 8.0 / 35.0, S_CLERIC_ATK3) = A_FaceTarget
-	S_CLERIC_ATK3('CLER', 6, 10.0 / 35.0, S_CLERIC_RUN1) = A_ClericAttack
-	S_CLERIC_PAIN('CLER', 7, 4.0 / 35.0, S_CLERIC_PAIN2) = none
-	S_CLERIC_PAIN2('CLER', 7, 4.0 / 35.0, S_CLERIC_RUN1) = A_Pain
-	S_CLERIC_DIE1('CLER', 8, 6.0 / 35.0, S_CLERIC_DIE2) = none
-	S_CLERIC_DIE2('CLER', 10, 6.0 / 35.0, S_CLERIC_DIE3) = A_Scream
-	S_CLERIC_DIE3('CLER', 11, 6.0 / 35.0, S_CLERIC_DIE4) = none
-	S_CLERIC_DIE4('CLER', 11, 6.0 / 35.0, S_CLERIC_DIE5) = none
-	S_CLERIC_DIE5('CLER', 12, 6.0 / 35.0, S_CLERIC_DIE6) = A_NoBlocking
-	S_CLERIC_DIE6('CLER', 13, 6.0 / 35.0, S_CLERIC_DIE7) = none
-	S_CLERIC_DIE7('CLER', 14, 6.0 / 35.0, S_CLERIC_DIE8) = none
-	S_CLERIC_DIE8('CLER', 15, 6.0 / 35.0, S_CLERIC_DIE9) = none
-	S_CLERIC_DIE9('CLER', 16, -1.0, none) = none
-	S_CLERIC_XDIE1('CLER', 17, 5.0 / 35.0, S_CLERIC_XDIE2) = A_Scream
-	S_CLERIC_XDIE2('CLER', 18, 5.0 / 35.0, S_CLERIC_XDIE3) = none
-	S_CLERIC_XDIE3('CLER', 19, 5.0 / 35.0, S_CLERIC_XDIE4) = A_NoBlocking
-	S_CLERIC_XDIE4('CLER', 20, 5.0 / 35.0, S_CLERIC_XDIE5) = none
-	S_CLERIC_XDIE5('CLER', 21, 5.0 / 35.0, S_CLERIC_XDIE6) = none
-	S_CLERIC_XDIE6('CLER', 22, 5.0 / 35.0, S_CLERIC_XDIE7) = none
-	S_CLERIC_XDIE7('CLER', 23, 5.0 / 35.0, S_CLERIC_XDIE8) = none
-	S_CLERIC_XDIE8('CLER', 24, 5.0 / 35.0, S_CLERIC_XDIE9) = none
-	S_CLERIC_XDIE9('CLER', 25, 5.0 / 35.0, S_CLERIC_XDIE10) = none
-	S_CLERIC_XDIE10('CLER', 26, -1.0, none) = none
-	S_CLERIC_ICE('CLER', 27, 5.0 / 35.0, S_CLERIC_ICE2) = A_FreezeDeath
-	S_CLERIC_ICE2('CLER', 27, 1.0 / 35.0, S_CLERIC_ICE2) = A_FreezeDeathChunks
-	S_PLAY_C_FDTH1('FDTH', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_C_FDTH2)
-	{
-		PlaySound('PlayerClericBurnDeath', CHAN_VOICE);
-	}
-	S_PLAY_C_FDTH2('FDTH', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH3) = none
-	S_PLAY_FDTH3('FDTH', 6 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH4) = none
-	S_PLAY_FDTH4('FDTH', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH5) = A_Scream
-	S_PLAY_FDTH5('FDTH', 8 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH6) = none
-	S_PLAY_FDTH6('FDTH', 9 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH7) = none
-	S_PLAY_FDTH7('FDTH', 10 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH8) = none
-	S_PLAY_FDTH8('FDTH', 11 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH9) = none
-	S_PLAY_FDTH9('FDTH', 12 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH10) = none
-	S_PLAY_FDTH10('FDTH', 13 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH11) = none
-	S_PLAY_FDTH11('FDTH', 14 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH12) = none
-	S_PLAY_FDTH12('FDTH', 15 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH13) = none
-	S_PLAY_FDTH13('FDTH', 16 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH14) = none
-	S_PLAY_FDTH14('FDTH', 17 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH15) = none
-	S_PLAY_FDTH15('FDTH', 18 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH16) = A_NoBlocking
-	S_PLAY_FDTH16('FDTH', 19 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH17) = none
-	S_PLAY_FDTH17('FDTH', 20 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH18) = none
-	S_PLAY_FDTH18('FDTH', 21 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH19) = none
-	S_PLAY_FDTH19('ACLO', 4, 35.0 / 35.0, S_PLAY_FDTH19) = A_CheckBurnGone
-	S_PLAY_FDTH20('ACLO', 4, 8.0 / 35.0, none) = none
+	PlaySound('PlayerClericBurnDeath', CHAN_VOICE);
+}
+
+states
+{
+Spawn:
+	CLER A 2
+	CLER A 3 A_ClassBossHealth
+	CLER A 5 A_Look
+	Wait
+See:
+	CLER ABCD 4 A_FastChase
+	Loop
+Melee:
+Missile:
+	CLER E 8 A_FaceTarget
+	CLER F 8 A_FaceTarget
+	CLER G 10 A_ClericAttack
+	Goto See
+Pain:
+	CLER H 4
+	CLER H 4 A_Pain
+	Goto See
+Death:
+	CLER I 6
+	CLER K 6 A_Scream
+	CLER LL 6
+	CLER M 6 A_NoBlocking
+	CLER NOP 6
+	CLER Q -1
+	Stop
+XDeath:
+	CLER R 5 A_Scream
+	CLER S 5
+	CLER T 5 A_NoBlocking
+	CLER UVWXYZ 5
+	CLER "[" -1
+	Stop
+Ice:
+	CLER "\\" 5 A_FreezeDeath
+	CLER "\\" 1 A_FreezeDeathChunks
+	Wait
+Burn:
+	FDTH C 5 Bright A_ClericBurnScream
+	FDTH D 4 Bright
+	FDTH G 5 Bright
+	FDTH H 4 Bright A_Scream
+	FDTH I 5 Bright
+	FDTH J 4 Bright
+	FDTH K 5 Bright
+	FDTH L 4 Bright
+	FDTH M 5 Bright
+	FDTH N 4 Bright
+	FDTH O 5 Bright
+	FDTH P 4 Bright
+	FDTH Q 5 Bright
+	FDTH R 4 Bright
+	FDTH S 5 Bright A_NoBlocking
+	FDTH T 4 Bright
+	FDTH U 5 Bright
+	FDTH V 4 Bright
+	ACLO E 35 A_CheckBurnGone
+	Wait
+BurnGone:
+	ACLO E 8
+	Stop
 }
 
 defaultproperties
@@ -117,15 +133,6 @@ defaultproperties
 	Mass = 100.0;
 	StepSpeed = 25.0;
 	PainChance = 0.1953125;
-	IdleState = S_CLERIC;
-	SeeState = S_CLERIC_RUN1;
-	MeleeState = S_CLERIC_ATK1;
-	MissileState = S_CLERIC_ATK1;
-	PainState = S_CLERIC_PAIN;
-	DeathState = S_CLERIC_DIE1;
-	GibsDeathState = S_CLERIC_XDIE1;
-	FireDeathState = S_PLAY_C_FDTH1;
-	IceDeathState = S_CLERIC_ICE;
 	PainSound = 'PlayerClericPain';
 	DeathSound = 'PlayerClericCrazyDeath';
 }

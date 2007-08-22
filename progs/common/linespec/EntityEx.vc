@@ -4746,6 +4746,18 @@ void OnMapSpawn(mthing_t* mthing)
 	{
 		RaiseState = FindState('Raise');
 	}
+	if (!IceDeathState)
+	{
+		IceDeathState = FindState('Ice');
+	}
+	if (!FireDeathState)
+	{
+		FireDeathState = FindState('Burn');
+	}
+	if (!CrashState)
+	{
+		CrashState = FindState('Crash');
+	}
 
 	//	Set the state, but do not use SetState, because action routines can't
 	// be called yet.  If the spawnstate has an action routine, it will not

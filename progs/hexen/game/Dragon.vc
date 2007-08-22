@@ -26,14 +26,13 @@
 class Dragon : Pawn
 	__mobjinfo__(254);
 
-state CrashedState;		//	Maybe it's safe to use CrashState?
 Actor FlightTarget;
 
-//============================================================================
+//==========================================================================
 //
 //	A_DragonInitFlight
 //
-//============================================================================
+//==========================================================================
 
 final void A_DragonInitFlight()
 {
@@ -54,11 +53,11 @@ final void A_DragonInitFlight()
 	RemoveFromTIDList();
 }
 
-//============================================================================
+//==========================================================================
 //
 //	DragonSeek
 //
-//============================================================================
+//==========================================================================
 
 final void DragonSeek(float thresh, float turnMax)
 {
@@ -184,11 +183,11 @@ final void DragonSeek(float thresh, float turnMax)
 	}
 }
 
-//============================================================================
+//==========================================================================
 //
 //	A_DragonFlight
 //
-//============================================================================
+//==========================================================================
 
 final void A_DragonFlight()
 {
@@ -222,11 +221,11 @@ final void A_DragonFlight()
 	}
 }
 
-//============================================================================
+//==========================================================================
 //
 //	A_DragonFlap
 //
-//============================================================================
+//==========================================================================
 
 final void A_DragonFlap()
 {
@@ -241,22 +240,22 @@ final void A_DragonFlap()
 	}
 }
 
-//============================================================================
+//==========================================================================
 //
 //	A_DragonAttack
 //
-//============================================================================
+//==========================================================================
 
 final void A_DragonAttack()
 {
 	SpawnMissile(Target, DragonFireball);
 }
 
-//============================================================================
+//==========================================================================
 //
 //  A_DragonPain
 //
-//============================================================================
+//==========================================================================
 
 final void A_DragonPain()
 {
@@ -268,47 +267,47 @@ final void A_DragonPain()
 	}
 }
 
-//============================================================================
+//==========================================================================
 //
 //	A_DragonCheckCrash
 //
-//============================================================================
+//==========================================================================
 
 final void A_DragonCheckCrash()
 {
 	if (Origin.z <= FloorZ)
 	{
-		SetState(CrashedState);
+		SetState(FindState('Crashed'));
 	}
 }
 
-__states__
+states
 {
-	S_DRAGON_LOOK1('DRAG', 3, 10.0 / 35.0, S_DRAGON_LOOK1) = A_Look
-	S_DRAGON_INIT('DRAG', 2, 5.0 / 35.0, S_DRAGON_INIT2) = none
-	S_DRAGON_INIT2('DRAG', 1, 5.0 / 35.0, S_DRAGON_INIT3) = none
-	S_DRAGON_INIT3('DRAG', 0, 5.0 / 35.0, S_DRAGON_WALK1) = A_DragonInitFlight
-	S_DRAGON_WALK1('DRAG', 1, 3.0 / 35.0, S_DRAGON_WALK2) = A_DragonFlap
-	S_DRAGON_WALK2('DRAG', 1, 3.0 / 35.0, S_DRAGON_WALK3) = A_DragonFlight
-	S_DRAGON_WALK3('DRAG', 2, 3.0 / 35.0, S_DRAGON_WALK4) = A_DragonFlight
-	S_DRAGON_WALK4('DRAG', 2, 3.0 / 35.0, S_DRAGON_WALK5) = A_DragonFlight
-	S_DRAGON_WALK5('DRAG', 3, 3.0 / 35.0, S_DRAGON_WALK6) = A_DragonFlight
-	S_DRAGON_WALK6('DRAG', 3, 3.0 / 35.0, S_DRAGON_WALK7) = A_DragonFlight
-	S_DRAGON_WALK7('DRAG', 2, 3.0 / 35.0, S_DRAGON_WALK8) = A_DragonFlight
-	S_DRAGON_WALK8('DRAG', 2, 3.0 / 35.0, S_DRAGON_WALK9) = A_DragonFlight
-	S_DRAGON_WALK9('DRAG', 1, 3.0 / 35.0, S_DRAGON_WALK10) = A_DragonFlight
-	S_DRAGON_WALK10('DRAG', 1, 3.0 / 35.0, S_DRAGON_WALK11) = A_DragonFlight
-	S_DRAGON_WALK11('DRAG', 0, 3.0 / 35.0, S_DRAGON_WALK12) = A_DragonFlight
-	S_DRAGON_WALK12('DRAG', 0, 3.0 / 35.0, S_DRAGON_WALK1) = A_DragonFlight
-	S_DRAGON_ATK1('DRAG', 4, 8.0 / 35.0, S_DRAGON_WALK1) = A_DragonAttack
-	S_DRAGON_PAIN1('DRAG', 5, 10.0 / 35.0, S_DRAGON_WALK1) = A_DragonPain
-	S_DRAGON_DEATH1('DRAG', 6, 5.0 / 35.0, S_DRAGON_DEATH2) = A_Scream
-	S_DRAGON_DEATH2('DRAG', 7, 4.0 / 35.0, S_DRAGON_DEATH3) = A_NoBlocking
-	S_DRAGON_DEATH3('DRAG', 8, 4.0 / 35.0, S_DRAGON_DEATH4) = none
-	S_DRAGON_DEATH4('DRAG', 9, 4.0 / 35.0, S_DRAGON_DEATH4) = A_DragonCheckCrash
-	S_DRAGON_CRASH1('DRAG', 10, 5.0 / 35.0, S_DRAGON_CRASH2) = none
-	S_DRAGON_CRASH2('DRAG', 11, 5.0 / 35.0, S_DRAGON_CRASH3) = none
-	S_DRAGON_CRASH3('DRAG', 12, -1.0, none) = none
+Spawn:
+	DRAG D 10 A_Look
+	Loop
+See:
+	DRAG CB 5
+	DRAG A 5 A_DragonInitFlight
+	DRAG B 3 A_DragonFlap
+	DRAG BCCDDCCBBAA 3 A_DragonFlight
+	Goto See+3
+Missile:
+	DRAG E 8 A_DragonAttack
+	Goto See+3
+Pain:
+	DRAG F 10 A_DragonPain
+	Goto See+3
+Death:
+	DRAG G 5 A_Scream
+	DRAG H 4 A_NoBlocking
+	DRAG I 4
+	DRAG J 4 A_DragonCheckCrash
+	Wait
+Crashed:
+	DRAG KL 5
+	DRAG M -1
+	Stop
 }
 
 defaultproperties
@@ -329,12 +328,6 @@ defaultproperties
 	bActivatePushWall = false;
 	bActivateMCross = false;
 	bFullVolActive = true;
-	IdleState = S_DRAGON_LOOK1;
-	SeeState = S_DRAGON_INIT;
-	MissileState = S_DRAGON_ATK1;
-	PainState = S_DRAGON_PAIN1;
-	DeathState = S_DRAGON_DEATH1;
-	CrashedState = S_DRAGON_CRASH1;
 	SightSound = 'DragonSight';
 	ActiveSound = 'DragonActive';
 	AttackSound = 'DragonAttack';

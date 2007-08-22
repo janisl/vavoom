@@ -74,25 +74,22 @@ float CommandOffset;
 //  Special1    last teleport destination
 bool bDidBelowHalfHealth;	//  set if "below half" script not yet run
 
-state KoraxMissileState;
-state KoraxCommandState;
-
-//============================================================================
+//==========================================================================
 //
 //  A_KoraxStep
 //
-//============================================================================
+//==========================================================================
 
 final void A_KoraxStep()
 {
 	A_Chase();
 }
 
-//============================================================================
+//==========================================================================
 //
 //  A_KoraxStep2
 //
-//============================================================================
+//==========================================================================
 
 final void A_KoraxStep2()
 {
@@ -100,11 +97,11 @@ final void A_KoraxStep2()
 	A_Chase();
 }
 
-//============================================================================
+//==========================================================================
 //
 //  A_KoraxChase
 //
-//============================================================================
+//==========================================================================
 
 final void A_KoraxChase()
 {
@@ -151,29 +148,29 @@ final void A_KoraxChase()
 	}
 }
 
-//============================================================================
+//==========================================================================
 //
 //  A_KoraxDecide
 //
-//============================================================================
+//==========================================================================
 
 final void A_KoraxDecide()
 {
 	if (Random() < 0.859375)
 	{
-		SetState(KoraxMissileState);
+		SetState(FindState('MissileAttack'));
 	}
 	else
 	{
-		SetState(KoraxCommandState);
+		SetState(FindState('Command'));
 	}
 }
 
-//============================================================================
+//==========================================================================
 //
 //  SpawnKoraxMissile
 //
-//============================================================================
+//==========================================================================
 
 final Actor SpawnKoraxMissile(TVec org, EntityEx dest, class<Actor> type)
 {
@@ -199,9 +196,9 @@ final Actor SpawnKoraxMissile(TVec org, EntityEx dest, class<Actor> type)
 	return th.CheckMissileSpawn() ? th : none;
 }
 
-//============================================================================
+//==========================================================================
 // Arm 1 projectile
-//============================================================================
+//==========================================================================
 
 final void KoraxFire1(class<Actor> type)
 {
@@ -427,51 +424,52 @@ final void A_KoraxBonePop()
 	XLevel.StartACS(255, 0, 0, 0, 0, self, NULL, 0, false, false);	// Death script
 }
 
-__states__
+states
 {
-	S_KORAX_LOOK1('KORX', 0, 5.0 / 35.0, S_KORAX_LOOK1) = A_Look
-	S_KORAX_CHASE1('KORX', 0, 3.0 / 35.0, S_KORAX_CHASE2) = A_KoraxStep2
-	S_KORAX_CHASE2('KORX', 0, 3.0 / 35.0, S_KORAX_CHASE3) = A_KoraxChase
-	S_KORAX_CHASE3('KORX', 0, 3.0 / 35.0, S_KORAX_CHASE4) = A_KoraxChase
-	S_KORAX_CHASE4('KORX', 0, 3.0 / 35.0, S_KORAX_CHASE5) = A_KoraxChase
-	S_KORAX_CHASE5('KORX', 1, 3.0 / 35.0, S_KORAX_CHASE6) = A_KoraxStep
-	S_KORAX_CHASE6('KORX', 1, 3.0 / 35.0, S_KORAX_CHASE7) = A_KoraxChase
-	S_KORAX_CHASE7('KORX', 1, 3.0 / 35.0, S_KORAX_CHASE8) = A_KoraxChase
-	S_KORAX_CHASE8('KORX', 1, 3.0 / 35.0, S_KORAX_CHASE9) = A_KoraxChase
-	S_KORAX_CHASE9('KORX', 2, 3.0 / 35.0, S_KORAX_CHASE0) = A_KoraxStep2
-	S_KORAX_CHASE0('KORX', 2, 3.0 / 35.0, S_KORAX_CHASEA) = A_KoraxChase
-	S_KORAX_CHASEA('KORX', 2, 3.0 / 35.0, S_KORAX_CHASEB) = A_KoraxChase
-	S_KORAX_CHASEB('KORX', 2, 3.0 / 35.0, S_KORAX_CHASEC) = A_KoraxChase
-	S_KORAX_CHASEC('KORX', 3, 3.0 / 35.0, S_KORAX_CHASED) = A_KoraxStep
-	S_KORAX_CHASED('KORX', 3, 3.0 / 35.0, S_KORAX_CHASEE) = A_KoraxChase
-	S_KORAX_CHASEE('KORX', 3, 3.0 / 35.0, S_KORAX_CHASEF) = A_KoraxChase
-	S_KORAX_CHASEF('KORX', 3, 3.0 / 35.0, S_KORAX_CHASE1) = A_KoraxChase
-	S_KORAX_PAIN1('KORX', 7, 5.0 / 35.0, S_KORAX_PAIN2) = A_Pain
-	S_KORAX_PAIN2('KORX', 7, 5.0 / 35.0, S_KORAX_CHASE2) = none
-	S_KORAX_ATTACK1('KORX', 4 | FF_FULLBRIGHT, 2.0 / 35.0, S_KORAX_ATTACK2) = A_FaceTarget
-	S_KORAX_ATTACK2('KORX', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_KORAX_ATTACK2) = A_KoraxDecide
-	S_KORAX_MISSILE1('KORX', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_KORAX_MISSILE2) = A_FaceTarget
-	S_KORAX_MISSILE2('KORX', 5 | FF_FULLBRIGHT, 8.0 / 35.0, S_KORAX_MISSILE3) = A_KoraxMissile
-	S_KORAX_MISSILE3('KORX', 4 | FF_FULLBRIGHT, 8.0 / 35.0, S_KORAX_CHASE2) = none
-	S_KORAX_COMMAND1('KORX', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_KORAX_COMMAND2) = A_FaceTarget
-	S_KORAX_COMMAND2('KORX', 22 | FF_FULLBRIGHT, 10.0 / 35.0, S_KORAX_COMMAND3) = A_FaceTarget
-	S_KORAX_COMMAND3('KORX', 6 | FF_FULLBRIGHT, 15.0 / 35.0, S_KORAX_COMMAND4) = A_KoraxCommand
-	S_KORAX_COMMAND4('KORX', 22 | FF_FULLBRIGHT, 10.0 / 35.0, S_KORAX_COMMAND5) = none
-	S_KORAX_COMMAND5('KORX', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_KORAX_CHASE2) = none
-	S_KORAX_DEATH1('KORX', 8, 5.0 / 35.0, S_KORAX_DEATH2) = none
-	S_KORAX_DEATH2('KORX', 9, 5.0 / 35.0, S_KORAX_DEATH3) = A_FaceTarget
-	S_KORAX_DEATH3('KORX', 10, 5.0 / 35.0, S_KORAX_DEATH4) = A_Scream
-	S_KORAX_DEATH4('KORX', 11, 5.0 / 35.0, S_KORAX_DEATH5) = none
-	S_KORAX_DEATH5('KORX', 12, 5.0 / 35.0, S_KORAX_DEATH6) = none
-	S_KORAX_DEATH6('KORX', 13, 5.0 / 35.0, S_KORAX_DEATH7) = none
-	S_KORAX_DEATH7('KORX', 14, 5.0 / 35.0, S_KORAX_DEATH8) = none
-	S_KORAX_DEATH8('KORX', 15, 5.0 / 35.0, S_KORAX_DEATH9) = none
-	S_KORAX_DEATH9('KORX', 16, 10.0 / 35.0, S_KORAX_DEATH0) = none
-	S_KORAX_DEATH0('KORX', 17, 5.0 / 35.0, S_KORAX_DEATHA) = A_KoraxBonePop
-	S_KORAX_DEATHA('KORX', 18, 5.0 / 35.0, S_KORAX_DEATHB) = A_NoBlocking
-	S_KORAX_DEATHB('KORX', 19, 5.0 / 35.0, S_KORAX_DEATHC) = none
-	S_KORAX_DEATHC('KORX', 20, 5.0 / 35.0, S_KORAX_DEATHD) = none
-	S_KORAX_DEATHD('KORX', 21, -1.0, none) = none
+Spawn:
+	KORX A 5 A_Look
+	Loop
+See:
+	KORX A 3 A_KoraxStep2
+	KORX AAA 3 A_KoraxChase
+	KORX B 3 A_KoraxStep
+	KORX BBB 3 A_KoraxChase
+	KORX C 3 A_KoraxStep2
+	KORX CCC 3 A_KoraxChase
+	KORX D 3 A_KoraxStep
+	KORX DDD 3 A_KoraxChase
+	Loop
+Pain:
+	KORX H 5 A_Pain
+	KORX H 5
+	Goto See+1
+Missile:
+	KORX E 2 Bright A_FaceTarget
+	KORX E 5 Bright A_KoraxDecide
+	Wait
+MissileAttack:
+	KORX E 4 Bright A_FaceTarget
+	KORX F 8 Bright A_KoraxMissile
+	KORX E 8 Bright
+	Goto See+1
+Command:
+	KORX E 5 Bright A_FaceTarget
+	KORX W 10 Bright A_FaceTarget
+	KORX G 15 Bright A_KoraxCommand
+	KORX W 10 Bright
+	KORX E 5 Bright
+	Goto See+1
+Death:
+	KORX I 5
+	KORX J 5 A_FaceTarget
+	KORX K 5 A_Scream
+	KORX LMNOP 5
+	KORX Q 10
+	KORX R 5 A_KoraxBonePop
+	KORX S 5 A_NoBlocking
+	KORX TU 5
+	KORX V -1
+	Stop
 }
 
 defaultproperties
@@ -500,13 +498,6 @@ defaultproperties
 	bBoss = true;
 	bNeverTarget = true;
 	bFullVolActive = true;
-	IdleState = S_KORAX_LOOK1;
-	SeeState = S_KORAX_CHASE2;
-	MissileState = S_KORAX_ATTACK1;
-	KoraxMissileState = S_KORAX_MISSILE1;
-	KoraxCommandState = S_KORAX_COMMAND1;
-	PainState = S_KORAX_PAIN1;
-	DeathState = S_KORAX_DEATH1;
 	SightSound = 'KoraxSight';
 	ActiveSound = 'KoraxActive';
 	AttackSound = 'KoraxAttack';

@@ -27,7 +27,6 @@ class Bishop : Pawn
 	__mobjinfo__(114)
 	__scriptid__(19);
 
-state BlurState;
 int NumToSpawn;		//	Number of blurs/missiles to spawn
 int WeaveIndex;		//	Index into floatbob
 
@@ -57,7 +56,7 @@ final void A_BishopDecide()
 	}
 	else
 	{
-		SetState(BlurState);
+		SetState(FindState('Blur'));
 	}
 }
 
@@ -188,7 +187,7 @@ final void A_BishopPainBlur()
 
 	if (P_Random() < 64)
 	{
-		SetState(BlurState);
+		SetState(FindState('Blur'));
 		return;
 	}
 	blur = Spawn(BishopPainBlur,
@@ -217,40 +216,50 @@ final void A_BishopPuff()
 	}
 }
 
-__states__
+states
 {
-	S_BISHOP_LOOK1('BISH', 0, 10.0 / 35.0, S_BISHOP_LOOK1) = A_Look
-	S_BISHOP_DECIDE('BISH', 0, 1.0 / 35.0, S_BISHOP_WALK1) = A_BishopDecide
-	S_BISHOP_BLUR1('BISH', 0, 2.0 / 35.0, S_BISHOP_BLUR2) = A_BishopDoBlur
-	S_BISHOP_BLUR2('BISH', 0, 4.0 / 35.0, S_BISHOP_BLUR2) = A_BishopSpawnBlur
-	S_BISHOP_WALK1('BISH', 0, 2.0 / 35.0, S_BISHOP_WALK2) = A_Chase
-	S_BISHOP_WALK2('BISH', 0, 2.0 / 35.0, S_BISHOP_WALK3) = A_BishopChase
-	S_BISHOP_WALK3('BISH', 0, 2.0 / 35.0, S_BISHOP_WALK4) = none
-	S_BISHOP_WALK4('BISH', 1, 2.0 / 35.0, S_BISHOP_WALK5) = A_BishopChase
-	S_BISHOP_WALK5('BISH', 1, 2.0 / 35.0, S_BISHOP_WALK6) = A_Chase
-	S_BISHOP_WALK6('BISH', 1, 2.0 / 35.0, S_BISHOP_DECIDE) = A_BishopChase
-	S_BISHOP_ATK1('BISH', 0, 3.0 / 35.0, S_BISHOP_ATK2) = A_FaceTarget
-	S_BISHOP_ATK2('BISH', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_BISHOP_ATK3) = A_FaceTarget
-	S_BISHOP_ATK3('BISH', 4 | FF_FULLBRIGHT, 3.0 / 35.0, S_BISHOP_ATK4) = A_FaceTarget
-	S_BISHOP_ATK4('BISH', 5 | FF_FULLBRIGHT, 3.0 / 35.0, S_BISHOP_ATK5) = A_BishopAttack
-	S_BISHOP_ATK5('BISH', 5 | FF_FULLBRIGHT, 5.0 / 35.0, S_BISHOP_ATK5) = A_BishopAttack2
-	S_BISHOP_PAIN1('BISH', 2, 6.0 / 35.0, S_BISHOP_PAIN2) = A_Pain
-	S_BISHOP_PAIN2('BISH', 2, 6.0 / 35.0, S_BISHOP_PAIN3) = A_BishopPainBlur
-	S_BISHOP_PAIN3('BISH', 2, 6.0 / 35.0, S_BISHOP_PAIN4) = A_BishopPainBlur
-	S_BISHOP_PAIN4('BISH', 2, 6.0 / 35.0, S_BISHOP_PAIN5) = A_BishopPainBlur
-	S_BISHOP_PAIN5('BISH', 2, 0.0 / 35.0, S_BISHOP_WALK1) = none
-	S_BISHOP_DEATH1('BISH', 6, 6.0 / 35.0, S_BISHOP_DEATH2) = none
-	S_BISHOP_DEATH2('BISH', 7 | FF_FULLBRIGHT, 6.0 / 35.0, S_BISHOP_DEATH3) = A_Scream
-	S_BISHOP_DEATH3('BISH', 8 | FF_FULLBRIGHT, 5.0 / 35.0, S_BISHOP_DEATH4) = A_NoBlocking
-	S_BISHOP_DEATH4('BISH', 9 | FF_FULLBRIGHT, 5.0 / 35.0, S_BISHOP_DEATH5) = A_Explode
-	S_BISHOP_DEATH5('BISH', 10 | FF_FULLBRIGHT, 5.0 / 35.0, S_BISHOP_DEATH6) = none
-	S_BISHOP_DEATH6('BISH', 11 | FF_FULLBRIGHT, 4.0 / 35.0, S_BISHOP_DEATH7) = none
-	S_BISHOP_DEATH7('BISH', 12 | FF_FULLBRIGHT, 4.0 / 35.0, S_BISHOP_DEATH8) = none
-	S_BISHOP_DEATH8('BISH', 13, 4.0 / 35.0, S_BISHOP_DEATH9) = A_BishopPuff
-	S_BISHOP_DEATH9('BISH', 14, 4.0 / 35.0, S_BISHOP_DEATH10) = A_QueueCorpse
-	S_BISHOP_DEATH10('BISH', 15, -1.0, none) = none
-	S_BISHOP_ICE('BISH', 23, 5.0 / 35.0, S_BISHOP_ICE2) = A_FreezeDeath
-	S_BISHOP_ICE2('BISH', 23, 1.0 / 35.0, S_BISHOP_ICE2) = A_FreezeDeathChunks
+Spawn:
+	BISH A 10 A_Look
+	Loop
+See:
+	BISH A 2 A_Chase
+	BISH A 2 A_BishopChase
+	BISH A 2
+	BISH B 2 A_BishopChase
+	BISH B 2 A_Chase
+	BISH B 2 A_BishopChase
+	BISH A 1 A_BishopDecide
+	Loop
+Blur:
+	BISH A 2 A_BishopDoBlur
+	BISH A 4 A_BishopSpawnBlur
+	Wait
+Missile:
+	BISH A 3 A_FaceTarget
+	BISH DE 3 Bright A_FaceTarget
+	BISH F 3 Bright A_BishopAttack
+	BISH F 5 Bright A_BishopAttack2
+	Wait
+Pain:
+	BISH C 6 A_Pain
+	BISH CCC 6 A_BishopPainBlur
+	BISH C 0
+	Goto See
+Death:
+	BISH G 6
+	BISH H 6 Bright A_Scream
+	BISH I 5 Bright A_NoBlocking
+	BISH J 5 Bright A_Explode
+	BISH K 5 Bright
+	BISH LM 4 Bright
+	BISH N 4 A_BishopPuff
+	BISH O 4 A_QueueCorpse
+	BISH P -1
+	Stop
+Ice:
+	BISH X 5 A_FreezeDeath
+	BISH X 1 A_FreezeDeathChunks
+	Wait
 }
 
 defaultproperties
@@ -268,13 +277,6 @@ defaultproperties
 	bActivateMCross = false;
 	bNoTargetSwitch = true;
 	ExplodeEffect = RGB(8, 175, 8);
-	IdleState = S_BISHOP_LOOK1;
-	BlurState = S_BISHOP_BLUR1;
-	SeeState = S_BISHOP_WALK1;
-	MissileState = S_BISHOP_ATK1;
-	PainState = S_BISHOP_PAIN1;
-	DeathState = S_BISHOP_DEATH1;
-	IceDeathState = S_BISHOP_ICE;
 	SightSound = 'BishopSight';
 	ActiveSound = 'BishopActiveSounds';
 	AttackSound = 'BishopAttack';

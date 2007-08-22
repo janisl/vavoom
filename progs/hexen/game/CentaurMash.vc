@@ -26,6 +26,14 @@
 class CentaurMash : Centaur
 	__scriptid__(103);
 
+states
+{
+Death:
+XDeath:
+Ice:
+	Stop
+}
+
 defaultproperties
 {
 	GibsHealth = 0;
@@ -33,7 +41,4 @@ defaultproperties
 	bNoBlood = true;
 	bBlasted = true;
 	bTelestomp = false;
-	DeathState = none;
-	GibsDeathState = none;
-	IceDeathState = none;
 }

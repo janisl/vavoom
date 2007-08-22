@@ -54,8 +54,10 @@ Ready:
 	Loop
 Deselect:
 	FSRD A 1 Bright A_Lower
+	Loop
 Select:
 	FSRD A 1 Bright A_Raise
+	Loop
 Fire:
 	FSRD D 3 Bright Offset(5, 36)
 	FSRD E 3 Bright Offset(5, 36)

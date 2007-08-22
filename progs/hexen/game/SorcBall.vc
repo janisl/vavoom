@@ -234,7 +234,7 @@ final void A_SorcBallOrbit()
 		{
 			// Put sorcerer into special throw spell anim
 			if (Target.Health > 0)
-				Target.SetState(Heresiarch::S_SORC_ATTACK1);
+				Target.SetState(Target.FindState('Attack1'));
 
 			PlaySound('SorcererSpellCast', CHAN_VOICE, 1.0, ATTN_NONE);
 
@@ -250,7 +250,7 @@ final void A_SorcBallOrbit()
 				Target.Args[3] = Heresiarch::SORC_STOPPED;
 				// Back to orbit balls
 				if (Target.Health > 0)
-					Target.SetState(Heresiarch::S_SORC_ATTACK4);
+					Target.SetState(Target.FindState('Attack2'));
 			}
 			else
 			{

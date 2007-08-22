@@ -123,20 +123,28 @@ final void A_IceGuyDie()
 	A_FreezeDeathChunks();
 }
 
-__states__
+states
 {
-	S_ICEGUY_LOOK('ICEY', 0, 10.0 / 35.0, S_ICEGUY_LOOK) = A_IceGuyLook
-	S_ICEGUY_DORMANT('ICEY', 0, -1.0, S_ICEGUY_LOOK) = none
-	S_ICEGUY_WALK1('ICEY', 0, 4.0 / 35.0, S_ICEGUY_WALK2) = A_Chase
-	S_ICEGUY_WALK2('ICEY', 1, 4.0 / 35.0, S_ICEGUY_WALK3) = A_IceGuyChase
-	S_ICEGUY_WALK3('ICEY', 2, 4.0 / 35.0, S_ICEGUY_WALK4) = A_Chase
-	S_ICEGUY_WALK4('ICEY', 3, 4.0 / 35.0, S_ICEGUY_WALK1) = A_Chase
-	S_ICEGUY_ATK1('ICEY', 4, 3.0 / 35.0, S_ICEGUY_ATK2) = A_FaceTarget
-	S_ICEGUY_ATK2('ICEY', 5, 3.0 / 35.0, S_ICEGUY_ATK3) = A_FaceTarget
-	S_ICEGUY_ATK3('ICEY', 6 | FF_FULLBRIGHT, 8.0 / 35.0, S_ICEGUY_ATK4) = A_IceGuyAttack
-	S_ICEGUY_ATK4('ICEY', 5, 4.0 / 35.0, S_ICEGUY_WALK1) = A_FaceTarget
-	S_ICEGUY_PAIN1('ICEY', 0, 1.0 / 35.0, S_ICEGUY_WALK1) = A_Pain
-	S_ICEGUY_DEATH('ICEY', 0, 1.0 / 35.0, none) = A_IceGuyDie
+Spawn:
+	ICEY A 10 A_IceGuyLook
+	Loop
+Dormant:
+	ICEY A -1
+	Goto Spawn
+See:
+	ICEY ABCD 4 A_Chase
+	Loop
+Missile:
+	ICEY EF 3 A_FaceTarget
+	ICEY G 8 Bright A_IceGuyAttack
+	ICEY F 4 A_FaceTarget
+	Goto See
+Pain:
+	ICEY A 1 A_Pain
+	Goto See
+Death:
+	ICEY A 1 A_IceGuyDie
+	Stop
 }
 
 //==========================================================================
@@ -148,7 +156,7 @@ __states__
 void SetDormant()
 {
 	bDormant = true;
-	SetState(S_ICEGUY_DORMANT);
+	SetState(FindState('Dormant'));
 	StateTime = -1.0;
 }
 
@@ -163,11 +171,6 @@ defaultproperties
 	bNoBlood = true;
 	DamageType = 'Ice';
 	bFloorClip = false;
-	IdleState = S_ICEGUY_LOOK;
-	SeeState = S_ICEGUY_WALK1;
-	MissileState = S_ICEGUY_ATK1;
-	PainState = S_ICEGUY_PAIN1;
-	DeathState = S_ICEGUY_DEATH;
 	SightSound = 'IceGuySight';
 	ActiveSound = 'IceGuyActive';
 	AttackSound = 'IceGuyAttack';

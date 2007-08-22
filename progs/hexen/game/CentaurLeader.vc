@@ -43,12 +43,14 @@ final void A_CentaurAttack2()
 	PlaySound('CentaurLeaderAttack', CHAN_WEAPON);
 }
 
-__states__
+states
 {
-	S_CENTAUR_MISSILE1('CENT', 4, 10.0 / 35.0, S_CENTAUR_MISSILE2) = A_FaceTarget
-	S_CENTAUR_MISSILE2('CENT', 5 | FF_FULLBRIGHT, 8.0 / 35.0, S_CENTAUR_MISSILE3) = A_CentaurAttack2
-	S_CENTAUR_MISSILE3('CENT', 4, 10.0 / 35.0, S_CENTAUR_MISSILE4) = A_FaceTarget
-	S_CENTAUR_MISSILE4('CENT', 5 | FF_FULLBRIGHT, 8.0 / 35.0, S_CENTAUR_WALK1) = A_CentaurAttack2
+Missile:
+	CENT E 10 A_FaceTarget
+	CENT F 8 Bright A_CentaurAttack2
+	CENT E 10 A_FaceTarget
+	CENT F 8 Bright A_CentaurAttack2
+	Goto Super::See
 }
 
 defaultproperties
@@ -57,5 +59,4 @@ defaultproperties
 	GibsHealth = -125;
 	StepSpeed = 10.0;
 	PainChance = 0.375;
-	MissileState = S_CENTAUR_MISSILE1;
 }

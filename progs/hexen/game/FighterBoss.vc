@@ -26,11 +26,11 @@
 class FighterBoss : ClassBoss
 	__mobjinfo__(10100);
 
-//============================================================================
+//==========================================================================
 //
 //  A_FighterAttack
 //
-//============================================================================
+//==========================================================================
 
 final void A_FighterAttack()
 {
@@ -45,59 +45,79 @@ final void A_FighterAttack()
 	PlaySound('FighterSwordFire', CHAN_WEAPON);
 }
 
-__states__
+//==========================================================================
+//
+//  A_FighterBurnScream
+//
+//==========================================================================
+
+final void A_FighterBurnScream()
 {
-	S_FIGHTER('PLAY', 0, 2.0 / 35.0, S_FIGHTER2) = none
-	S_FIGHTER2('PLAY', 0, 3.0 / 35.0, S_FIGHTERLOOK) = A_ClassBossHealth
-	S_FIGHTERLOOK('PLAY', 0, 5.0 / 35.0, S_FIGHTERLOOK) = A_Look
-	S_FIGHTER_RUN1('PLAY', 0, 4.0 / 35.0, S_FIGHTER_RUN2) = A_FastChase
-	S_FIGHTER_RUN2('PLAY', 1, 4.0 / 35.0, S_FIGHTER_RUN3) = A_FastChase
-	S_FIGHTER_RUN3('PLAY', 2, 4.0 / 35.0, S_FIGHTER_RUN4) = A_FastChase
-	S_FIGHTER_RUN4('PLAY', 3, 4.0 / 35.0, S_FIGHTER_RUN1) = A_FastChase
-	S_FIGHTER_ATK1('PLAY', 4, 8.0 / 35.0, S_FIGHTER_ATK2) = A_FaceTarget
-	S_FIGHTER_ATK2('PLAY', 5, 8.0 / 35.0, S_FIGHTER_RUN1) = A_FighterAttack
-	S_FIGHTER_PAIN('PLAY', 6, 4.0 / 35.0, S_FIGHTER_PAIN2) = none
-	S_FIGHTER_PAIN2('PLAY', 6, 4.0 / 35.0, S_FIGHTER_RUN1) = A_Pain
-	S_FIGHTER_DIE1('PLAY', 7, 6.0 / 35.0, S_FIGHTER_DIE2) = none
-	S_FIGHTER_DIE2('PLAY', 8, 6.0 / 35.0, S_FIGHTER_DIE3) = A_Scream
-	S_FIGHTER_DIE3('PLAY', 9, 6.0 / 35.0, S_FIGHTER_DIE4) = none
-	S_FIGHTER_DIE4('PLAY', 10, 6.0 / 35.0, S_FIGHTER_DIE5) = none
-	S_FIGHTER_DIE5('PLAY', 11, 6.0 / 35.0, S_FIGHTER_DIE6) = A_NoBlocking
-	S_FIGHTER_DIE6('PLAY', 12, 6.0 / 35.0, S_FIGHTER_DIE7) = none
-	S_FIGHTER_DIE7('PLAY', 13, -1.0, none) = none
-	S_FIGHTER_XDIE1('PLAY', 14, 5.0 / 35.0, S_FIGHTER_XDIE2) = A_Scream
-	S_FIGHTER_XDIE2('PLAY', 15, 5.0 / 35.0, S_FIGHTER_XDIE3) = none
-	S_FIGHTER_XDIE3('PLAY', 17, 5.0 / 35.0, S_FIGHTER_XDIE4) = A_NoBlocking
-	S_FIGHTER_XDIE4('PLAY', 18, 5.0 / 35.0, S_FIGHTER_XDIE5) = none
-	S_FIGHTER_XDIE5('PLAY', 19, 5.0 / 35.0, S_FIGHTER_XDIE6) = none
-	S_FIGHTER_XDIE6('PLAY', 20, 5.0 / 35.0, S_FIGHTER_XDIE7) = none
-	S_FIGHTER_XDIE7('PLAY', 21, 5.0 / 35.0, S_FIGHTER_XDIE8) = none
-	S_FIGHTER_XDIE8('PLAY', 22, -1.0, none) = none
-	S_FIGHTER_ICE('PLAY', 23, 5.0 / 35.0, S_FIGHTER_ICE2) = A_FreezeDeath
-	S_FIGHTER_ICE2('PLAY', 23, 1.0 / 35.0, S_FIGHTER_ICE2) = A_FreezeDeathChunks
-	S_PLAY_F_FDTH1('FDTH', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_F_FDTH2)
-	{
-		PlaySound('PlayerFighterBurnDeath', CHAN_VOICE);
-	}
-	S_PLAY_F_FDTH2('FDTH', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH3) = none
-	S_PLAY_FDTH3('FDTH', 6 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH4) = none
-	S_PLAY_FDTH4('FDTH', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH5) = A_Scream
-	S_PLAY_FDTH5('FDTH', 8 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH6) = none
-	S_PLAY_FDTH6('FDTH', 9 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH7) = none
-	S_PLAY_FDTH7('FDTH', 10 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH8) = none
-	S_PLAY_FDTH8('FDTH', 11 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH9) = none
-	S_PLAY_FDTH9('FDTH', 12 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH10) = none
-	S_PLAY_FDTH10('FDTH', 13 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH11) = none
-	S_PLAY_FDTH11('FDTH', 14 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH12) = none
-	S_PLAY_FDTH12('FDTH', 15 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH13) = none
-	S_PLAY_FDTH13('FDTH', 16 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH14) = none
-	S_PLAY_FDTH14('FDTH', 17 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH15) = none
-	S_PLAY_FDTH15('FDTH', 18 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH16) = A_NoBlocking
-	S_PLAY_FDTH16('FDTH', 19 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH17) = none
-	S_PLAY_FDTH17('FDTH', 20 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH18) = none
-	S_PLAY_FDTH18('FDTH', 21 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH19) = none
-	S_PLAY_FDTH19('ACLO', 4, 35.0 / 35.0, S_PLAY_FDTH19) = A_CheckBurnGone
-	S_PLAY_FDTH20('ACLO', 4, 8.0 / 35.0, none) = none
+	PlaySound('PlayerFighterBurnDeath', CHAN_VOICE);
+}
+
+states
+{
+Spawn:
+	PLAY A 2
+	PLAY A 3 A_ClassBossHealth
+	PLAY A 5 A_Look
+	Wait
+See:
+	PLAY ABCD 4 A_FastChase
+	Loop
+Melee:
+Missile:
+	PLAY E 8 A_FaceTarget
+	PLAY F 8 A_FighterAttack
+	Goto See
+Pain:
+	PLAY G 4
+	PLAY G 4 A_Pain
+	Goto See
+Death:
+	PLAY H 6
+	PLAY I 6 A_Scream
+	PLAY JK 6
+	PLAY L 6 A_NoBlocking
+	PLAY M 6
+	PLAY N -1
+	Stop
+XDeath:
+	PLAY O 5 A_Scream
+	PLAY P 5
+	PLAY R 5 A_NoBlocking
+	PLAY STUV 5
+	PLAY W -1
+	Stop
+Ice:
+	PLAY X 5 A_FreezeDeath
+	PLAY X 1 A_FreezeDeathChunks
+	Wait
+Burn:
+	FDTH A 5 Bright A_FighterBurnScream
+	FDTH B 4 Bright
+	FDTH G 5 Bright
+	FDTH H 4 Bright A_Scream
+	FDTH I 5 Bright
+	FDTH J 4 Bright
+	FDTH K 5 Bright
+	FDTH L 4 Bright
+	FDTH M 5 Bright
+	FDTH N 4 Bright
+	FDTH O 5 Bright
+	FDTH P 4 Bright
+	FDTH Q 5 Bright
+	FDTH R 4 Bright
+	FDTH S 5 Bright A_NoBlocking
+	FDTH T 4 Bright
+	FDTH U 5 Bright
+	FDTH V 4 Bright
+	ACLO E 35 A_CheckBurnGone
+	Wait
+BurnGone:
+	ACLO E 8
+	Stop
 }
 
 defaultproperties
@@ -109,15 +129,6 @@ defaultproperties
 	Mass = 100.0;
 	StepSpeed = 25.0;
 	PainChance = 0.1953125;
-	IdleState = S_FIGHTER;
-	SeeState = S_FIGHTER_RUN1;
-	MeleeState = S_FIGHTER_ATK1;
-	MissileState = S_FIGHTER_ATK1;
-	PainState = S_FIGHTER_PAIN;
-	DeathState = S_FIGHTER_DIE1;
-	GibsDeathState = S_FIGHTER_XDIE1;
-	FireDeathState = S_PLAY_F_FDTH1;
-	IceDeathState = S_FIGHTER_ICE;
 	PainSound = 'PlayerFighterPain';
 	DeathSound = 'PlayerFighterCrazyDeath';
 }

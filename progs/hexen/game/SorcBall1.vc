@@ -78,7 +78,7 @@ void A_CastSorcererSpell()
 
 	// Put sorcerer into throw spell animation
 	if (Target.Health > 0)
-		Target.SetState(Heresiarch::S_SORC_ATTACK4);
+		Target.SetState(Target.FindState('Attack2'));
 
 	// Offensive
 	A_SorcOffense1();

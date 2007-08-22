@@ -84,50 +84,48 @@ final void A_Demon2Death()
 	}
 }
 
-__states__
+states
 {
-	S_DEMN2_LOOK1('DEM2', 0, 10.0 / 35.0, S_DEMN2_LOOK2) = A_Look
-	S_DEMN2_LOOK2('DEM2', 0, 10.0 / 35.0, S_DEMN2_LOOK1) = A_Look
-	S_DEMN2_CHASE1('DEM2', 0, 4.0 / 35.0, S_DEMN2_CHASE2) = A_Chase
-	S_DEMN2_CHASE2('DEM2', 1, 4.0 / 35.0, S_DEMN2_CHASE3) = A_Chase
-	S_DEMN2_CHASE3('DEM2', 2, 4.0 / 35.0, S_DEMN2_CHASE4) = A_Chase
-	S_DEMN2_CHASE4('DEM2', 3, 4.0 / 35.0, S_DEMN2_CHASE1) = A_Chase
-	S_DEMN2_ATK1_1('DEM2', 4, 6.0 / 35.0, S_DEMN2_ATK1_2) = A_FaceTarget
-	S_DEMN2_ATK1_2('DEM2', 5, 8.0 / 35.0, S_DEMN2_ATK1_3) = A_FaceTarget
-	S_DEMN2_ATK1_3('DEM2', 6, 6.0 / 35.0, S_DEMN2_CHASE1) = A_DemonAttack1
-	S_DEMN2_ATK2_1('DEM2', 4, 5.0 / 35.0, S_DEMN2_ATK2_2) = A_FaceTarget
-	S_DEMN2_ATK2_2('DEM2', 5, 6.0 / 35.0, S_DEMN2_ATK2_3) = A_FaceTarget
-	S_DEMN2_ATK2_3('DEM2', 6, 5.0 / 35.0, S_DEMN2_CHASE1) = A_DemonAttack2
-	S_DEMN2_PAIN1('DEM2', 4, 4.0 / 35.0, S_DEMN2_PAIN2) = none
-	S_DEMN2_PAIN2('DEM2', 4, 4.0 / 35.0, S_DEMN2_CHASE1) = A_Pain
-	S_DEMN2_DEATH1('DEM2', 7, 6.0 / 35.0, S_DEMN2_DEATH2) = none
-	S_DEMN2_DEATH2('DEM2', 8, 6.0 / 35.0, S_DEMN2_DEATH3) = none
-	S_DEMN2_DEATH3('DEM2', 9, 6.0 / 35.0, S_DEMN2_DEATH4) = A_Scream
-	S_DEMN2_DEATH4('DEM2', 10, 6.0 / 35.0, S_DEMN2_DEATH5) = A_NoBlocking
-	S_DEMN2_DEATH5('DEM2', 11, 6.0 / 35.0, S_DEMN2_DEATH6) = A_QueueCorpse
-	S_DEMN2_DEATH6('DEM2', 12, 6.0 / 35.0, S_DEMN2_DEATH7) = none
-	S_DEMN2_DEATH7('DEM2', 13, 6.0 / 35.0, S_DEMN2_DEATH8) = none
-	S_DEMN2_DEATH8('DEM2', 14, 6.0 / 35.0, S_DEMN2_DEATH9) = none
-	S_DEMN2_DEATH9('DEM2', 15, -1.0, none) = none
-	S_DEMN2_XDEATH1('DEM2', 7, 6.0 / 35.0, S_DEMN2_XDEATH2) = none
-	S_DEMN2_XDEATH2('DEM2', 8, 6.0 / 35.0, S_DEMN2_XDEATH3) = A_Demon2Death
-	S_DEMN2_XDEATH3('DEM2', 9, 6.0 / 35.0, S_DEMN2_XDEATH4) = A_Scream
-	S_DEMN2_XDEATH4('DEM2', 10, 6.0 / 35.0, S_DEMN2_XDEATH5) = A_NoBlocking
-	S_DEMN2_XDEATH5('DEM2', 11, 6.0 / 35.0, S_DEMN2_XDEATH6) = A_QueueCorpse
-	S_DEMN2_XDEATH6('DEM2', 12, 6.0 / 35.0, S_DEMN2_XDEATH7) = none
-	S_DEMN2_XDEATH7('DEM2', 13, 6.0 / 35.0, S_DEMN2_XDEATH8) = none
-	S_DEMN2_XDEATH8('DEM2', 14, 6.0 / 35.0, S_DEMN2_XDEATH9) = none
-	S_DEMN2_XDEATH9('DEM2', 15, -1.0, none) = none
+Spawn:
+	DEM2 AA 10 A_Look
+	Loop
+See:
+	DEM2 ABCD 4 A_Chase
+	Loop
+Melee:
+	DEM2 E 6 A_FaceTarget
+	DEM2 F 8 A_FaceTarget
+	DEM2 G 6 A_DemonAttack1
+	Goto See
+Missile:
+	DEM2 E 5 A_FaceTarget
+	DEM2 F 6 A_FaceTarget
+	DEM2 G 5 A_DemonAttack2
+	Goto See
+Pain:
+	DEM2 E 4
+	DEM2 E 4 A_Pain
+	Goto See
+Death:
+	DEM2 HI 6
+	DEM2 J 6 A_Scream
+	DEM2 K 6 A_NoBlocking
+	DEM2 L 6 A_QueueCorpse
+	DEM2 MNO 6
+	DEM2 P -1
+	Stop
+XDeath:
+	DEM2 H 6
+	DEM2 I 6 A_Demon2Death
+	DEM2 J 6 A_Scream
+	DEM2 K 6 A_NoBlocking
+	DEM2 L 6 A_QueueCorpse
+	DEM2 MNO 6
+	DEM2 P -1
+	Stop
 }
 
 defaultproperties
 {
-	IdleState = S_DEMN2_LOOK1;
-	SeeState = S_DEMN2_CHASE1;
-	MeleeState = S_DEMN2_ATK1_1;
-	MissileState = S_DEMN2_ATK2_1;
-	PainState = S_DEMN2_PAIN1;
-	DeathState = S_DEMN2_DEATH1;
-	GibsDeathState = S_DEMN2_XDEATH1;
 	FireBallType = Demon2FX1;
 }
