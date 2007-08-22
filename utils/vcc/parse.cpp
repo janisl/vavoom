@@ -1688,7 +1688,7 @@ void VParser::ParseDecorateStates(VClass* InClass)
 		//	Stop command.
 		if (TmpName == NAME_Stop)
 		{
-			if (!PrevState && NewLabelsStart != InClass->StateLabels.Num())
+			if (!PrevState && NewLabelsStart == InClass->StateLabels.Num())
 			{
 				ParseError(Lex.Location, "Stop before first state");
 				continue;
@@ -1772,7 +1772,7 @@ void VParser::ParseDecorateStates(VClass* InClass)
 		//  Frame
 		VName FramesString(NAME_None);
 		TLocation FramesLoc;
-		if (Lex.Token != TK_Identifier)
+		if (Lex.Token != TK_Identifier && Lex.Token != TK_StringLiteral)
 		{
 			ParseError(Lex.Location, "Identifier expected");
 		}
@@ -1782,7 +1782,7 @@ void VParser::ParseDecorateStates(VClass* InClass)
 			ParseError(Lex.Location, "Frames must be A-Z, [, \\ or ]");
 		}
 		s->Frame = FChar - 'A';
-		FramesString = Lex.Name;
+		FramesString = Lex.String;
 		FramesLoc = Lex.Location;
 		Lex.NextToken();
 
