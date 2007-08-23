@@ -25,35 +25,61 @@
 
 class StrifePlayer : PlayerPawn;
 
-__states__
+states
 {
-	S_PLAY('PLAY', 0, -1.0, none) = none
-	S_PLAY_RUN1('PLAY', 0, 4.0 / 35.0, S_PLAY_RUN2) = none
-	S_PLAY_RUN2('PLAY', 1, 4.0 / 35.0, S_PLAY_RUN3) = none
-	S_PLAY_RUN3('PLAY', 2, 4.0 / 35.0, S_PLAY_RUN4) = none
-	S_PLAY_RUN4('PLAY', 3, 4.0 / 35.0, S_PLAY_RUN1) = none
-	S_PLAY_ATK1('PLAY', 4, 12.0 / 35.0, S_PLAY) = none
-	S_PLAY_ATK2('PLAY', 5, 6.0 / 35.0, S_PLAY_ATK1) = none
-	S_PLAY_PAIN('PLAY', 16, 4.0 / 35.0, S_PLAY_PAIN2) = A_Pain
-	S_PLAY_PAIN2('PLAY', 16, 4.0 / 35.0, S_PLAY) = none
-	S_PLAY_DIE1('PLAY', 6, 4.0 / 35.0, S_PLAY_DIE2) = none
-	S_PLAY_DIE2('PLAY', 7, 3.0 / 35.0, S_PLAY_DIE3) = A_PlayerScream
-	S_PLAY_DIE3('PLAY', 8, 3.0 / 35.0, S_PLAY_DIE4) = A_Fall
-	S_PLAY_DIE4('PLAY', 9, 4.0 / 35.0, S_PLAY_DIE5) = none
-	S_PLAY_DIE5('PLAY', 10, 4.0 / 35.0, S_PLAY_DIE6) = none
-	S_PLAY_DIE6('PLAY', 11, 4.0 / 35.0, S_PLAY_DIE7) = none
-	S_PLAY_DIE7('PLAY', 12, 4.0 / 35.0, S_PLAY_DIE8) = none
-	S_PLAY_DIE8('PLAY', 13, 4.0 / 35.0, S_PLAY_DIE9) = none
-	S_PLAY_DIE9('PLAY', 14, 4.0 / 35.0, S_PLAY_DIE10) = none
-	S_PLAY_DIE10('PLAY', 15, 700.0 / 35.0, S_PLAY_XDIE8) = none
-	S_PLAY_XDIE1('RGIB', 0, 5.0 / 35.0, S_PLAY_XDIE2) = A_XDying
-	S_PLAY_XDIE2('RGIB', 1, 5.0 / 35.0, S_PLAY_XDIE3) = A_XScream
-	S_PLAY_XDIE3('RGIB', 2, 5.0 / 35.0, S_PLAY_XDIE4) = A_Fall
-	S_PLAY_XDIE4('RGIB', 3, 5.0 / 35.0, S_PLAY_XDIE5) = A_XDying
-	S_PLAY_XDIE5('RGIB', 4, 5.0 / 35.0, S_PLAY_XDIE6) = A_XDying
-	S_PLAY_XDIE6('RGIB', 5, 5.0 / 35.0, S_PLAY_XDIE7) = A_XDying
-	S_PLAY_XDIE7('RGIB', 6, 5.0 / 35.0, S_PLAY_XDIE8) = A_XDying
-	S_PLAY_XDIE8('RGIB', 7, 1400.0 / 35.0, none) = none
+Spawn:
+	PLAY A -1
+	Stop
+See:
+	PLAY ABCD 4
+	Loop
+Missile:
+	PLAY E 12
+	Goto Spawn
+Melee:
+	PLAY F 6
+	Goto Missile
+Pain:
+	PLAY Q 4 A_Pain
+	PLAY Q 4
+	Goto Spawn
+Death:
+	PLAY G 4
+	PLAY H 3 A_PlayerScream
+	PLAY I 3 A_Fall
+	PLAY JKLMNO 4
+	PLAY P 700
+	Goto XDeath+7
+XDeath:
+	RGIB A 5 A_XDying
+	RGIB B 5 A_XScream
+	RGIB C 5 A_Fall
+	RGIB DEFG 5 A_XDying
+	RGIB H 1400
+	Stop
+Burn:
+	BURN A 3 A_BurnScream
+	BURN B 3 A_Burn
+	BURN C 3 A_Walk
+	BURN D 3 A_Fall
+	BURN E 5 A_Burn
+	BURN FGH 5 A_Walk
+	BURN I 5 A_Burn
+	BURN JKL 5 A_Walk
+	BURN M 3 A_Burn
+	BURN N 3
+	BURN OPQPQ 5
+	BURN RSTU 7
+	BURN V 700 //FIXME A_Dying
+	Stop
+Disintegrate:
+	DISR A 5 A_Yeargh
+	DISR BC 5
+	DISR D 5 A_Fall
+	DISR EF 5
+	DISR GHIJ 4
+	MEAT D 700
+	Stop
 }
 
 defaultproperties
@@ -67,15 +93,6 @@ defaultproperties
 	MaxStepHeight = 16.0;
 	bDropOff = true;
 	bFriendly = true;
-	IdleState = S_PLAY;
-	SeeState = S_PLAY_RUN1;
-	MeleeState = S_PLAY_ATK2;
-	MissileState = S_PLAY_ATK1;
-	PainState = S_PLAY_PAIN;
-	DeathState = S_PLAY_DIE1;
-	GibsDeathState = S_PLAY_XDIE1;
-	FireDeathState = S_BURN1;
-	DisruptDeathState = S_DISRUPT1;
 	PainSound = '*pain100';
 	DeathSound = '*death';
 

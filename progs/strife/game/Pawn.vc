@@ -400,47 +400,15 @@ final void A_SpecterTossHead()
 	TossUpObject(AlienChunkLarge);
 }
 
-__states__
-{
-	S_BURN1('BURN', 0, 3.0 / 35.0, S_BURN2) = A_BurnScream
-	S_BURN2('BURN', 1, 3.0 / 35.0, S_BURN3) = A_Burn
-	S_BURN3('BURN', 2, 3.0 / 35.0, S_BURN4) = A_Walk
-	S_BURN4('BURN', 3, 3.0 / 35.0, S_BURN5) = A_Fall
-	S_BURN5('BURN', 4, 5.0 / 35.0, S_BURN6) = A_Burn
-	S_BURN6('BURN', 5, 5.0 / 35.0, S_BURN7) = A_Walk
-	S_BURN7('BURN', 6, 5.0 / 35.0, S_BURN8) = A_Walk
-	S_BURN8('BURN', 7, 5.0 / 35.0, S_BURN9) = A_Walk
-	S_BURN9('BURN', 8, 5.0 / 35.0, S_BURN10) = A_Burn
-	S_BURN10('BURN', 9, 5.0 / 35.0, S_BURN11) = A_Walk
-	S_BURN11('BURN', 10, 5.0 / 35.0, S_BURN12) = A_Walk
-	S_BURN12('BURN', 11, 5.0 / 35.0, S_BURN13) = A_Walk
-	S_BURN13('BURN', 12, 3.0 / 35.0, S_BURN14) = A_Burn
-	S_BURN14('BURN', 13, 3.0 / 35.0, S_BURN15) = none
-	S_BURN15('BURN', 14, 5.0 / 35.0, S_BURN16) = none
-	S_BURN16('BURN', 15, 5.0 / 35.0, S_BURN17) = none
-	S_BURN17('BURN', 16, 5.0 / 35.0, S_BURN18) = none
-	S_BURN18('BURN', 15, 5.0 / 35.0, S_BURN19) = none
-	S_BURN19('BURN', 16, 5.0 / 35.0, S_BURN20) = none
-	S_BURN20('BURN', 17, 7.0 / 35.0, S_BURN21) = none
-	S_BURN21('BURN', 18, 7.0 / 35.0, S_BURN22) = none
-	S_BURN22('BURN', 19, 7.0 / 35.0, S_BURN23) = none
-	S_BURN23('BURN', 20, 7.0 / 35.0, S_BURN24) = none
-	S_BURN24('BURN', 21, 700.0 / 35.0, none) { /*FIXME A_Dying();*/ }
+//==========================================================================
+//
+//	A_Yeargh
+//
+//==========================================================================
 
-	S_DISRUPT1('DISR', 0, 5.0 / 35.0, S_DISRUPT2)
-	{
-		PlaySound('human/disrupt', CHAN_BODY);
-	}
-	S_DISRUPT2('DISR', 1, 5.0 / 35.0, S_DISRUPT3) = none
-	S_DISRUPT3('DISR', 2, 5.0 / 35.0, S_DISRUPT4) = none
-	S_DISRUPT4('DISR', 3, 5.0 / 35.0, S_DISRUPT5) = A_Fall
-	S_DISRUPT5('DISR', 4, 5.0 / 35.0, S_DISRUPT6) = none
-	S_DISRUPT6('DISR', 5, 5.0 / 35.0, S_DISRUPT7) = none
-	S_DISRUPT7('DISR', 6, 4.0 / 35.0, S_DISRUPT8) = none
-	S_DISRUPT8('DISR', 7, 4.0 / 35.0, S_DISRUPT9) = none
-	S_DISRUPT9('DISR', 8, 4.0 / 35.0, S_DISRUPT10) = none
-	S_DISRUPT10('DISR', 9, 4.0 / 35.0, S_DISRUPT11) = none
-	S_DISRUPT11('MEAT', 3, 700.0 / 35.0, none) = none
+final void A_Yeargh()
+{
+	PlaySound('human/disrupt', CHAN_VOICE);
 }
 
 defaultproperties

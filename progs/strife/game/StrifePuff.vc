@@ -25,17 +25,16 @@
 
 class StrifePuff : Effect;
 
-__states__
+states
 {
-	S_PUFF1('PUFY', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_PUFF2) = none
-	S_PUFF2('PUFY', 1, 4.0 / 35.0, S_PUFF3) = none
-	S_PUFF3('PUFY', 2, 4.0 / 35.0, S_PUFF4) = none
-	S_PUFF4('PUFY', 3, 4.0 / 35.0, none) = none
+Spawn:
+	PUFY A 4 Bright
+	PUFY BCD 4
+	Stop
 }
 
 defaultproperties
 {
 	Alpha = 0.333;
 	PuffVelZ = 1.0 * 35.0;
-	IdleState = S_PUFF1;
 }

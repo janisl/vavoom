@@ -85,42 +85,47 @@ final void A_ProgrammerDeath()
 	XLevel.StartACS(250, 0, 0, 0, 0, self, NULL, 0, false, false);
 }
 
-__states__
+states
 {
-	S_PROGRAMMER_LOOK1('PRGR', 0, 5.0 / 35.0, S_PROGRAMMER_LOOK2) = A_Look
-	S_PROGRAMMER_LOOK2('PRGR', 0, 1.0 / 35.0, S_PROGRAMMER_LOOK1) = A_FlightChase
-	S_PROGRAMMER_RUN1('PRGR', 0, 160.0 / 35.0, S_PROGRAMMER_RUN2) = A_FlightChase
-	S_PROGRAMMER_RUN2('PRGR', 1, 5.0 / 35.0, S_PROGRAMMER_RUN3) = A_FlightChase
-	S_PROGRAMMER_RUN3('PRGR', 2, 5.0 / 35.0, S_PROGRAMMER_RUN4) = A_FlightChase
-	S_PROGRAMMER_RUN4('PRGR', 3, 5.0 / 35.0, S_PROGRAMMER_RUN5) = A_FlightChase
-	S_PROGRAMMER_RUN5('PRGR', 4, 2.0 / 35.0, S_PROGRAMMER_RUN6) = A_FlightChase
-	S_PROGRAMMER_RUN6('PRGR', 5, 2.0 / 35.0, S_PROGRAMMER_RUN7) = A_FlightChase
-	S_PROGRAMMER_RUN7('PRGR', 4, 3.0 / 35.0, S_PROGRAMMER_RUN8) = A_Chase
-	S_PROGRAMMER_RUN8('PRGR', 5, 3.0 / 35.0, S_PROGRAMMER_RUN5) = A_Chase
-	S_PROGRAMMER_ATK1_1('PRGR', 4, 2.0 / 35.0, S_PROGRAMMER_ATK1_2) = A_FlightChase
-	S_PROGRAMMER_ATK1_2('PRGR', 5, 3.0 / 35.0, S_PROGRAMMER_ATK1_3) = A_FlightChase
-	S_PROGRAMMER_ATK1_3('PRGR', 4, 3.0 / 35.0, S_PROGRAMMER_ATK1_4) = A_FaceTarget
-	S_PROGRAMMER_ATK1_4('PRGR', 5, 4.0 / 35.0, S_PROGRAMMER_RUN5) = A_ProgrammerMelee
-	S_PROGRAMMER_ATK2_1('PRGR', 6, 5.0 / 35.0, S_PROGRAMMER_ATK2_2) = A_FaceTarget
-	S_PROGRAMMER_ATK2_2('PRGR', 7, 5.0 / 35.0, S_PROGRAMMER_ATK2_3) = A_FlightChase
-	S_PROGRAMMER_ATK2_3('PRGR', 8 | FF_FULLBRIGHT, 5.0 / 35.0, S_PROGRAMMER_ATK2_4) = A_FaceTarget
-	S_PROGRAMMER_ATK2_4('PRGR', 9 | FF_FULLBRIGHT, 5.0 / 35.0, S_PROGRAMMER_RUN5) = A_SpecterAttack
-	S_PROGRAMMER_PAIN1('PRGR', 10, 5.0 / 35.0, S_PROGRAMMER_PAIN2) = A_Pain
-	S_PROGRAMMER_PAIN2('PRGR', 11, 5.0 / 35.0, S_PROGRAMMER_RUN5) = A_FlightChase
-	S_PROGRAMMER_DIE1('PRGR', 11 | FF_FULLBRIGHT, 7.0 / 35.0, S_PROGRAMMER_DIE2) = A_XDying
-	S_PROGRAMMER_DIE2('PRGR', 12 | FF_FULLBRIGHT, 7.0 / 35.0, S_PROGRAMMER_DIE3) = A_Scream
-	S_PROGRAMMER_DIE3('PRGR', 13 | FF_FULLBRIGHT, 7.0 / 35.0, S_PROGRAMMER_DIE4) = A_XDying
-	S_PROGRAMMER_DIE4('PRGR', 14 | FF_FULLBRIGHT, 7.0 / 35.0, S_PROGRAMMER_DIE5) = A_Fall
-	S_PROGRAMMER_DIE5('PRGR', 15 | FF_FULLBRIGHT, 7.0 / 35.0, S_PROGRAMMER_DIE6) = A_XDying
-	S_PROGRAMMER_DIE6('PRGR', 16 | FF_FULLBRIGHT, 7.0 / 35.0, S_PROGRAMMER_DIE7) = A_SpawnProgrammerBase
-	S_PROGRAMMER_DIE7('PRGR', 17 | FF_FULLBRIGHT, 7.0 / 35.0, S_PROGRAMMER_DIE8) = none
-	S_PROGRAMMER_DIE8('PRGR', 18 | FF_FULLBRIGHT, 6.0 / 35.0, S_PROGRAMMER_DIE9) = none
-	S_PROGRAMMER_DIE9('PRGR', 19 | FF_FULLBRIGHT, 5.0 / 35.0, S_PROGRAMMER_DIE10) = none
-	S_PROGRAMMER_DIE10('PRGR', 20 | FF_FULLBRIGHT, 5.0 / 35.0, S_PROGRAMMER_DIE11) = none
-	S_PROGRAMMER_DIE11('PRGR', 21 | FF_FULLBRIGHT, 5.0 / 35.0, S_PROGRAMMER_DIE12) = none
-	S_PROGRAMMER_DIE12('PRGR', 22 | FF_FULLBRIGHT, 5.0 / 35.0, S_PROGRAMMER_DIE13) = none
-	S_PROGRAMMER_DIE13('PRGR', 23 | FF_FULLBRIGHT, 32.0 / 35.0, S_PROGRAMMER_DIE14) = none
-	S_PROGRAMMER_DIE14('PRGR', 23 | FF_FULLBRIGHT, -1.0, none) = A_ProgrammerDeath
+Spawn:
+	PRGR A 5 A_Look
+	PRGR A 1 A_FlightChase
+	Loop
+See:
+	PRGR A 160 A_FlightChase
+	PRGR BCD 5 A_FlightChase
+	PRGR EF 2 A_FlightChase
+	PRGR EF 3 A_Chase
+	Goto See+4
+Melee:
+	PRGR E 2 A_FlightChase
+	PRGR F 3 A_FlightChase
+	PRGR E 3 A_FaceTarget
+	PRGR F 4 A_ProgrammerMelee
+	Goto See+4
+Missile:
+	PRGR G 5 A_FaceTarget
+	PRGR H 5 A_FlightChase
+	PRGR I 5 Bright A_FaceTarget
+	PRGR J 5 Bright A_SpecterAttack
+	Goto See+4
+Pain:
+	PRGR K 5 A_Pain
+	PRGR L 5 A_FlightChase
+	Goto See+4
+Death:
+	PRGR L 7 Bright A_XDying
+	PRGR M 7 Bright A_Scream
+	PRGR N 7 Bright A_XDying
+	PRGR O 7 Bright A_Fall
+	PRGR P 7 Bright A_XDying
+	PRGR Q 7 Bright A_SpawnProgrammerBase
+	PRGR R 7 Bright
+	PRGR S 6 Bright
+	PRGR TUVW 5 Bright
+	PRGR X 32 Bright
+	PRGR Y -1 Bright A_ProgrammerDeath
+	Stop
 }
 
 defaultproperties
@@ -138,12 +143,6 @@ defaultproperties
 	bNoBlood = true;
 	bNoDeathmatch = true;
 	bNoBlockMonst = true;
-	IdleState = S_PROGRAMMER_LOOK1;
-	SeeState = S_PROGRAMMER_RUN1;
-	MeleeState = S_PROGRAMMER_ATK1_1;
-	MissileState = S_PROGRAMMER_ATK2_1;
-	PainState = S_PROGRAMMER_PAIN1;
-	DeathState = S_PROGRAMMER_DIE1;
 	ActiveSound = 'programmer/active';
 	AttackSound = 'programmer/attack';
 	PainSound = 'programmer/pain';

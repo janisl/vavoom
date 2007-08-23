@@ -128,46 +128,47 @@ final void A_AlienSpectreDeath()
 	}
 }
 
-__states__
+states
 {
-	S_SPECTER_LOOK1('ALN1', 0, 10.0 / 35.0, S_SPECTER_LOOK2) = A_Look
-	S_SPECTER_LOOK2('ALN1', 1, 10.0 / 35.0, S_SPECTER_LOOK1) = A_FlightChase
-	S_SPECTER_RUN1('ALN1', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_SPECTER_RUN2) = A_Chase
-	S_SPECTER_RUN2('ALN1', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_SPECTER_RUN3) = A_Chase
-	S_SPECTER_RUN3('ALN1', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_SPECTER_RUN4) = A_FlightChase
-	S_SPECTER_RUN4('ALN1', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_SPECTER_RUN5) = A_Chase
-	S_SPECTER_RUN5('ALN1', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_SPECTER_RUN6) = A_Chase
-	S_SPECTER_RUN6('ALN1', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_SPECTER_RUN7) = A_Chase
-	S_SPECTER_RUN7('ALN1', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_SPECTER_RUN8) = A_FlightChase
-	S_SPECTER_RUN8('ALN1', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_SPECTER_RUN9) = A_Chase
-	S_SPECTER_RUN9('ALN1', 8 | FF_FULLBRIGHT, 4.0 / 35.0, S_SPECTER_RUN10) = A_Chase
-	S_SPECTER_RUN10('ALN1', 9 | FF_FULLBRIGHT, 4.0 / 35.0, S_SPECTER_RUN11) = A_Chase
-	S_SPECTER_RUN11('ALN1', 10 | FF_FULLBRIGHT, 4.0 / 35.0, S_SPECTER_RUN1) = A_FlightChase
-	S_SPECTER_MELEE1('ALN1', 9 | FF_FULLBRIGHT, 4.0 / 35.0, S_SPECTER_MELEE2) = A_FaceTarget
-	S_SPECTER_MELEE2('ALN1', 8 | FF_FULLBRIGHT, 4.0 / 35.0, S_SPECTER_MELEE3) = A_SpecterMelee
-	S_SPECTER_MELEE3('ALN1', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_SPECTER_RUN3) = none
-	S_SPECTER_ATK1('ALN1', 9 | FF_FULLBRIGHT, 4.0 / 35.0, S_SPECTER_ATK2) = A_FaceTarget
-	S_SPECTER_ATK2('ALN1', 8 | FF_FULLBRIGHT, 4.0 / 35.0, S_SPECTER_ATK3) = A_SpecterAttack
-	S_SPECTER_ATK3('ALN1', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_SPECTER_RUN11) = none
-	S_SPECTER_PAIN1('ALN1', 9, 2.0 / 35.0, S_SPECTER_RUN7) = A_Pain
-	S_SPECTER_DIE1('AL1P', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_SPECTER_DIE2) = A_SpecterTossChunk
-	S_SPECTER_DIE2('AL1P', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_SPECTER_DIE3) = A_Scream
-	S_SPECTER_DIE3('AL1P', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_SPECTER_DIE4) = A_SpecterTossChunk
-	S_SPECTER_DIE4('AL1P', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_SPECTER_DIE5) = none
-	S_SPECTER_DIE5('AL1P', 4 | FF_FULLBRIGHT, 6.0 / 35.0, S_SPECTER_DIE6) = none
-	S_SPECTER_DIE6('AL1P', 5 | FF_FULLBRIGHT, 6.0 / 35.0, S_SPECTER_DIE7) = A_SpecterTossChunk
-	S_SPECTER_DIE7('AL1P', 6 | FF_FULLBRIGHT, 6.0 / 35.0, S_SPECTER_DIE8) = none
-	S_SPECTER_DIE8('AL1P', 7 | FF_FULLBRIGHT, 6.0 / 35.0, S_SPECTER_DIE9) = A_SpecterTossChunk
-	S_SPECTER_DIE9('AL1P', 8 | FF_FULLBRIGHT, 6.0 / 35.0, S_SPECTER_DIE10) = none
-	S_SPECTER_DIE10('AL1P', 9 | FF_FULLBRIGHT, 6.0 / 35.0, S_SPECTER_DIE11) = none
-	S_SPECTER_DIE11('AL1P', 10 | FF_FULLBRIGHT, 6.0 / 35.0, S_SPECTER_DIE12) = none
-	S_SPECTER_DIE12('AL1P', 11 | FF_FULLBRIGHT, 5.0 / 35.0, S_SPECTER_DIE13) = none
-	S_SPECTER_DIE13('AL1P', 12 | FF_FULLBRIGHT, 5.0 / 35.0, S_SPECTER_DIE14) = none
-	S_SPECTER_DIE14('AL1P', 13 | FF_FULLBRIGHT, 5.0 / 35.0, S_SPECTER_DIE15) = A_SpecterTossHead
-	S_SPECTER_DIE15('AL1P', 14 | FF_FULLBRIGHT, 5.0 / 35.0, S_SPECTER_DIE16) = none
-	S_SPECTER_DIE16('AL1P', 15 | FF_FULLBRIGHT, 5.0 / 35.0, S_SPECTER_DIE17) = none
-	S_SPECTER_DIE17('AL1P', 16 | FF_FULLBRIGHT, 5.0 / 35.0, S_SPECTER_DIE18) = none
-	S_SPECTER_DIE18('AL1P', 17 | FF_FULLBRIGHT, 5.0 / 35.0, none) = A_AlienSpectreDeath
+Spawn:
+	ALN1 A 10 A_Look
+	ALN1 B 10 A_FlightChase
+	Loop
+See:
+	ALN1 AB 4 Bright A_Chase
+	ALN1 C 4 Bright A_FlightChase
+	ALN1 DEF 4 Bright A_Chase
+	ALN1 G 4 Bright A_FlightChase
+	ALN1 HIJ 4 Bright A_Chase
+	ALN1 K 4 Bright A_FlightChase
+	Loop
+Melee:
+	ALN1 J 4 Bright A_FaceTarget
+	ALN1 I 4 Bright A_SpecterMelee
+	ALN1 H 4 Bright
+	Goto See
+Missile:
+	ALN1 J 4 Bright A_FaceTarget
+	ALN1 I 4 Bright A_SpecterAttack
+	ALN1 H 4 Bright
+	Goto See+10
+Pain:
+	ALN1 J 2 A_Pain
+	Goto See+6
+Death:
+	AL1P A 6 Bright A_SpecterTossChunk
+	AL1P B 6 Bright A_Scream
+	AL1P C 6 Bright A_SpecterTossChunk
+	AL1P DE 6 Bright
+	AL1P F 6 Bright A_SpecterTossChunk
+	AL1P G 6 Bright
+	AL1P H 6 Bright A_SpecterTossChunk
+	AL1P IJK 6 Bright
+	AL1P LM 5 Bright
+	AL1P N 5 Bright A_SpecterTossHead
+	AL1P OPQ 5 Bright
+	AL1P R 5 Bright A_AlienSpectreDeath
+	Stop
 }
 
 defaultproperties
@@ -188,12 +189,6 @@ defaultproperties
 	bSpectral = true;
 	bNoDeathmatch = true;
 	bNoBlockMonst = true;
-	IdleState = S_SPECTER_LOOK1;
-	SeeState = S_SPECTER_RUN1;
-	MeleeState = S_SPECTER_MELEE1;
-	MissileState = S_SPECTER_ATK1;
-	PainState = S_SPECTER_PAIN1;
-	DeathState = S_SPECTER_DIE1;
 	SightSound = 'alienspectre/sight';
 	ActiveSound = 'alienspectre/active';
 	AttackSound = 'alienspectre/blade';

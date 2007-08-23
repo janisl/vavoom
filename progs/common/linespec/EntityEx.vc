@@ -4758,6 +4758,26 @@ void OnMapSpawn(mthing_t* mthing)
 	{
 		CrashState = FindState('Crash');
 	}
+	if (!IdleRightState)
+	{
+		IdleRightState = FindState('LookRight');
+	}
+	if (!IdleLeftState)
+	{
+		IdleLeftState = FindState('LookLeft');
+	}
+	if (!WalkState)
+	{
+		WalkState = FindState('Walk');
+	}
+	if (!WoundState)
+	{
+		WoundState = FindState('Wound');
+	}
+	if (!DisruptDeathState)
+	{
+		DisruptDeathState = FindState('Disintegrate');
+	}
 
 	//	Set the state, but do not use SetState, because action routines can't
 	// be called yet.  If the spawnstate has an action routine, it will not

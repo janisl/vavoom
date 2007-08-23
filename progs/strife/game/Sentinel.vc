@@ -58,22 +58,31 @@ final void A_SentinelAttack()
 	}
 }
 
-__states__
+states
 {
-	S_SENTINEL_LOOK('SEWR', 0, 10.0 / 35.0, S_SENTINEL_LOOK) = A_Look
-	S_SENTINEL_RUN1('SEWR', 0, 6.0 / 35.0, S_SENTINEL_RUN2) = A_FlightChase
-	S_SENTINEL_RUN2('SEWR', 0, 6.0 / 35.0, S_SENTINEL_RUN1) = A_Chase
-	S_SENTINEL_ATK1('SEWR', 1, 4.0 / 35.0, S_SENTINEL_ATK2) = A_FaceTarget
-	S_SENTINEL_ATK2('SEWR', 2 | FF_FULLBRIGHT, 8.0 / 35.0, S_SENTINEL_ATK3) = A_SentinelAttack
-	S_SENTINEL_ATK3('SEWR', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_SENTINEL_ATK2) = A_CheckRefire
-	S_SENTINEL_PAIN('SEWR', 3, 5.0 / 35.0, S_SENTINEL_ATK3) = A_Pain
-	S_SENTINEL_DIE1('SEWR', 3, 7.0 / 35.0, S_SENTINEL_DIE2) = A_Fall
-	S_SENTINEL_DIE2('SEWR', 4 | FF_FULLBRIGHT, 8.0 / 35.0, S_SENTINEL_DIE3) = A_XDying
-	S_SENTINEL_DIE3('SEWR', 5 | FF_FULLBRIGHT, 5.0 / 35.0, S_SENTINEL_DIE4) = A_Scream
-	S_SENTINEL_DIE4('SEWR', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_SENTINEL_DIE5) = A_XDying
-	S_SENTINEL_DIE5('SEWR', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_SENTINEL_DIE6) = A_XDying
-	S_SENTINEL_DIE6('SEWR', 8, 4.0 / 35.0, S_SENTINEL_DIE7) = none
-	S_SENTINEL_DIE7('SEWR', 9, 5.0 / 35.0, none) = none
+Spawn:
+	SEWR A 10 A_Look
+	Loop
+See:
+	SEWR A 6 A_FlightChase
+	SEWR A 6 A_Chase
+	Loop
+Missile:
+	SEWR B 4 A_FaceTarget
+	SEWR C 8 Bright A_SentinelAttack
+	SEWR C 4 Bright A_CheckRefire
+	Goto Missile+1
+Pain:
+	SEWR D 5 A_Pain
+	Goto Missile+2
+Death:
+	SEWR D 7 A_Fall
+	SEWR E 8 Bright A_XDying
+	SEWR F 5 Bright A_Scream
+	SEWR GH 4 Bright A_XDying
+	SEWR I 4
+	SEWR J 5
+	Stop
 }
 
 defaultproperties
@@ -91,11 +100,6 @@ defaultproperties
 	bInCombat = true;
 	bNoBlood = true;
 	bNoBlockMonst = true;
-	IdleState = S_SENTINEL_LOOK;
-	SeeState = S_SENTINEL_RUN1;
-	MissileState = S_SENTINEL_ATK1;
-	PainState = S_SENTINEL_PAIN;
-	DeathState = S_SENTINEL_DIE1;
 	SightSound = 'sentinel/sight';
 	ActiveSound = 'sentinel/active';
 	DeathSound = 'sentinel/death';

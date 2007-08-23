@@ -26,16 +26,21 @@
 class RatBuddy : Pawn
 	__mobjinfo__(85);
 
-__states__
+states
 {
-	S_RAT_LOOK('RATT', 0, 10.0 / 35.0, S_RAT_LOOK) = A_Look
-	S_RAT_RUN1('RATT', 0, 4.0 / 35.0, S_RAT_RUN2) = A_Chase
-	S_RAT_RUN2('RATT', 0, 4.0 / 35.0, S_RAT_RUN3) = A_Chase
-	S_RAT_RUN3('RATT', 1, 4.0 / 35.0, S_RAT_RUN4) = A_Chase
-	S_RAT_RUN4('RATT', 1, 4.0 / 35.0, S_RAT_RUN1) = A_Chase
-	S_RAT_WALK1('RATT', 0, 8.0 / 35.0, S_RAT_WALK2) = A_Walk
-	S_RAT_WALK2('RATT', 1, 4.0 / 35.0, S_RAT_RUN1) = A_Walk
-	S_RAT_DIE('MEAT', 16, 700.0 / 35.0, none) = none
+Spawn:
+	RATT A 10 A_Look
+	Loop
+See:
+	RATT AABB 4 A_Chase
+	Loop
+Melee:
+	RATT A 8 A_Walk
+	RATT B 4 A_Walk
+	Goto See
+Death:
+	MEAT Q 700
+	Stop
 }
 
 defaultproperties
@@ -51,10 +56,6 @@ defaultproperties
 	bShootable = false;
 	bInCombat = true;
 	bNoBlood = true;
-	IdleState = S_RAT_LOOK;
-	SeeState = S_RAT_RUN1;
-	MeleeState = S_RAT_WALK1;
-	DeathState = S_RAT_DIE;
 	SightSound = 'rat/sight';
 	ActiveSound = 'rat/active';
 	DeathSound = 'rat/death';

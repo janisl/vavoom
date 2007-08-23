@@ -23,19 +23,29 @@
 //**
 //**************************************************************************
 
-class CrusaderMissile : MiniMissile;
+class CrusaderMissile : Projectile;
 
-__states__
+states
 {
-	S_MISSILE_NO_EXPLODE('MISL', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_MISSILE_X2) = none
+Spawn:
+	MICR A 6 Bright A_SpawnPuff
+	Loop
+Death:
+	MISL AB 5 Bright
+	MISL C 4 Bright
+	MISL DEFG 2 Bright
+	Stop
 }
 
 defaultproperties
 {
+	Radius = 10.0;
+	Height = 14.0;
+	Speed = 700.0;
 	MaxStepHeight = 4.0;
-	bActivateImpact = false;
 	MissileDamage = 7;
-	DeathState = S_MISSILE_NO_EXPLODE;
 	SightSound = 'crusader/misl';
 	DeathSound = 'crusader/mislx';
+	DLightColour = RGB(215, 179, 0);
+	DLightRadius = 200.0;
 }

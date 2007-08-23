@@ -26,31 +26,41 @@
 class Beggar : StrifeHumanoid
 	abstract;
 
-__states__
+states
 {
-	S_BEGGAR_STAND('BEGR', 0, 10.0 / 35.0, S_BEGGAR_STAND) = A_Look
-	S_BEGGAR_WALK1('BEGR', 0, 4.0 / 35.0, S_BEGGAR_WALK2) = A_Walk
-	S_BEGGAR_WALK2('BEGR', 0, 4.0 / 35.0, S_BEGGAR_WALK3) = A_Walk
-	S_BEGGAR_WALK3('BEGR', 1, 4.0 / 35.0, S_BEGGAR_WALK4) = A_Walk
-	S_BEGGAR_WALK4('BEGR', 1, 4.0 / 35.0, S_BEGGAR_WALK5) = A_Walk
-	S_BEGGAR_WALK5('BEGR', 2, 4.0 / 35.0, S_BEGGAR_WALK6) = A_Walk
-	S_BEGGAR_WALK6('BEGR', 2, 4.0 / 35.0, S_BEGGAR_WALK1) = A_Walk
-	S_BEGGAR_ATK1('BEGR', 3, 8.0 / 35.0, S_BEGGAR_ATK2) = none
-	S_BEGGAR_ATK2('BEGR', 4, 8.0 / 35.0, S_BEGGAR_ATK3) = A_PeasantAttack
-	S_BEGGAR_ATK3('BEGR', 4, 1.0 / 35.0, S_BEGGAR_ATK4) = A_Chase
-	S_BEGGAR_ATK4('BEGR', 3, 8.0 / 35.0, S_BEGGAR_ATK1) = A_CheckRefire
-	S_BEGGAR_PAIN1('BEGR', 0, 3.0 / 35.0, S_BEGGAR_PAIN2) = A_Pain
-	S_BEGGAR_PAIN2('BEGR', 0, 3.0 / 35.0, S_BEGGAR_ATK1) = A_Chase
-	S_BEGGAR_DIE1('BEGR', 5, 4.0 / 35.0, S_BEGGAR_DIE2) = none
-	S_BEGGAR_DIE2('BEGR', 6, 4.0 / 35.0, S_BEGGAR_DIE3) = A_Scream
-	S_BEGGAR_DIE3('BEGR', 7, 4.0 / 35.0, S_BEGGAR_DIE4) = none
-	S_BEGGAR_DIE4('BEGR', 8, 4.0 / 35.0, S_BEGGAR_DIE5) = A_Fall
-	S_BEGGAR_DIE5('BEGR', 9, 4.0 / 35.0, S_BEGGAR_DIE6) = none
-	S_BEGGAR_DIE6('BEGR', 10, 4.0 / 35.0, S_BEGGAR_DIE7) = none
-	S_BEGGAR_DIE7('BEGR', 11, 4.0 / 35.0, S_BEGGAR_DIE8) = none
-	S_BEGGAR_DIE8('BEGR', 12, 4.0 / 35.0, S_BEGGAR_DIE9) = none
-	S_BEGGAR_DIE9('BEGR', 13, -1.0, none) = none
-	S_BEGGAR_XDIE1('BEGR', 5, 5.0 / 35.0, S_PEASANT_XDIE2) = A_XDying
+Spawn:
+	BEGR A 10 A_Look
+	Loop
+See:
+	BEGR AABBCC 4 A_Walk
+	Loop
+Melee:
+	BEGR D 8
+	BEGR E 8 A_PeasantAttack
+	BEGR E 1 A_Chase
+	BEGR D 8 A_CheckRefire
+	Loop
+Pain:
+	BEGR A 3 A_Pain
+	BEGR A 3 A_Chase
+	Goto Melee
+Death:
+	BEGR F 4
+	BEGR G 4 A_Scream
+	BEGR H 4
+	BEGR I 4 A_Fall
+	BEGR JKLM 4
+	BEGR N -1
+	Stop
+XDeath:
+	BEGR F 5 A_XDying
+	GIBS N 5 A_XScream
+	GIBS O 5 A_Fall
+	GIBS PQRS 4 A_XDying
+	GIBS T 4
+	GIBS U 5
+	GIBS V 1400
+	Stop
 }
 
 defaultproperties
@@ -65,14 +75,6 @@ defaultproperties
 	MaxStepHeight = 16.0;
 	PainChance = 0.9765625;
 	bNeutral = true;
-	IdleState = S_BEGGAR_STAND;
-	SeeState = S_BEGGAR_WALK1;
-	MeleeState = S_BEGGAR_ATK1;
-	PainState = S_BEGGAR_PAIN1;
-	DeathState = S_BEGGAR_DIE1;
-	GibsDeathState = S_BEGGAR_XDIE1;
-	FireDeathState = S_BURN1;
-	DisruptDeathState = S_DISRUPT1;
 	AttackSound = 'beggar/attack';
 	PainSound = 'beggar/pain';
 	DeathSound = 'beggar/death';

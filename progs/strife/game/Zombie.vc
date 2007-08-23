@@ -26,10 +26,23 @@
 class Zombie : StrifeHumanoid
 	__mobjinfo__(169);
 
-__states__
+states
 {
-	S_PEASANT2_STAND('PEAS', 0, 5.0 / 35.0, S_PEASANT2_STAND) = A_ScrollOrDie
-	S_PEASANT2_PAIN('AGRD', 0, 5.0 / 35.0, S_PEASANT2_PAIN) = A_ScrollOrDie
+Spawn:
+	PEAS A 5 A_ScrollOrDie
+	Loop
+Pain:
+	AGRD A 5 A_ScrollOrDie
+	Loop
+Death:
+	GIBS M 5 A_XDying
+	GIBS N 5 A_XScream
+	GIBS O 5 A_Fall
+	GIBS PQRS 4 A_XDying
+	GIBS T 4
+	GIBS U 5
+	GIBS V 1400
+	Stop
 }
 
 defaultproperties
@@ -40,8 +53,5 @@ defaultproperties
 	Mass = 100.0;
 	MaxStepHeight = 16.0;
 	Translation = 1;
-	IdleState = S_PEASANT2_STAND;
-	PainState = S_PEASANT2_PAIN;
-	DeathState = S_PEASANT_XDIE1;
 	DeathSound = 'zombie/death';
 }

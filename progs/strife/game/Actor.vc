@@ -828,14 +828,7 @@ __states__
 	S_SHARD_5('SHRD', 4, 128.0 / 35.0, none) = none
 	S_SHARD_6('SHRD', 5, 128.0 / 35.0, none) = none
 
-	S_MINI_MISSILE2_1('MICR', 0 | FF_FULLBRIGHT, 2.0 / 35.0, S_MINI_MISSILE2_2) = A_Tracer
-	S_MINI_MISSILE2_2('MICR', 0 | FF_FULLBRIGHT, 2.0 / 35.0, S_MINI_MISSILE2_1) = A_Tracer
-
-	S_TOKENS('TOKN', 0, -1.0, none) = none
-
 	S_GIBS('DIE1', 0, -1.0, none) = none
-
-	S_ANKH('ANKH', 0, -1.0, none) = none
 }
 
 defaultproperties

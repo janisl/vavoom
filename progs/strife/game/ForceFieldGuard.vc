@@ -26,9 +26,14 @@
 class ForceFieldGuard : Actor
 	__mobjinfo__(25);
 
-__states__
+states
 {
-	S_REMOVE_FORCE_FIELD('', 0, 1.0 / 35.0, none) = A_RemoveForceField
+Spawn:
+	TOKN A -1
+	Stop
+Death:
+	TNT1 A 1 A_RemoveForceField
+	Stop
 }
 
 defaultproperties
@@ -40,6 +45,4 @@ defaultproperties
 	bShootable = true;
 	bHidden = true;
 	bInCombat = true;
-	IdleState = S_TOKENS;
-	DeathState = S_REMOVE_FORCE_FIELD;
 }

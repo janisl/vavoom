@@ -37,11 +37,13 @@ void NoBlockingSet()
 	DropItem(Sigil4, 0, 1.0);
 }
 
-__states__
+states
 {
-	S_SPECTER4_ATK1('ALN1', 5, 4.0 / 35.0, S_SPECTER4_ATK2) = A_FaceTarget
-	S_SPECTER4_ATK2('ALN1', 8, 4.0 / 35.0, S_SPECTER4_ATK3) = A_Specter4Attack
-	S_SPECTER4_ATK3('ALN1', 4, 4.0 / 35.0, S_SPECTER_RUN11) = none
+Missile:
+	ALN1 F 4 A_FaceTarget
+	ALN1 I 4 A_Specter4Attack
+	ALN1 E 4
+	Goto Super::See+10
 }
 
 defaultproperties
@@ -49,5 +51,4 @@ defaultproperties
 	Health = 1700;
 	Radius = 24.0;
 	PainChance = 0.1953125;
-	MissileState = S_SPECTER4_ATK1;
 }

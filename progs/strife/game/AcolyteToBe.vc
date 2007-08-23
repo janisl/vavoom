@@ -26,7 +26,7 @@
 class AcolyteToBe : Acolyte
 	__mobjinfo__(201);
 
-//============================================================================
+//==========================================================================
 //
 // A_HideDecepticon
 //
@@ -38,7 +38,7 @@ class AcolyteToBe : Acolyte
 //
 // Hide the Decepticon!
 //
-//============================================================================
+//==========================================================================
 
 final void A_HideDecepticon()
 {
@@ -50,10 +50,16 @@ final void A_HideDecepticon()
 	}
 }
 
-__states__
+states
 {
-	S_ACOLYTEARM_STAND('ARMR', 0, -1.0, none) = none
-	S_ACOLYTEARM_PAIN('ARMR', 0, -1.0, none) = A_HideDecepticon
+Spawn:
+	ARMR A -1
+	Stop
+Pain:
+	ARMR A -1 A_HideDecepticon
+	Stop
+Death:
+	Goto Super::XDeath
 }
 
 defaultproperties
@@ -79,8 +85,5 @@ defaultproperties
 	Height = 56.0;
 	Mass = 100.0;
 	PainChance = 1.0;
-	IdleState = S_ACOLYTEARM_STAND;
-	PainState = S_ACOLYTEARM_PAIN;
-	DeathState = S_ACOLYTE_XDIE1;
 	DeathSound = 'becoming/death';
 }

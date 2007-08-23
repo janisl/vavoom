@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Acolyte : Pawn
+class Acolyte : StrifeHumanoid
 	abstract;
 
 //==========================================================================
@@ -88,48 +88,54 @@ final void A_AcolyteDeath()
 	Player(Level.Game.Players[0]).ClientVoice(14);
 }
 
-__states__
+states
 {
-	S_ACOLYTE_STAND('AGRD', 0, 5.0 / 35.0, S_ACOLYTE_STAND) = A_Stand
-	S_ACOLYTE_STAND_R('AGRD', 1, 8.0 / 35.0, S_ACOLYTE_STAND) = A_ClearShadow
-	S_ACOLYTE_STAND_L('AGRD', 3, 8.0 / 35.0, S_ACOLYTE_STAND) = none
-	S_ACOLYTE_WALK1('AGRD', 0, 5.0 / 35.0, S_ACOLYTE_WALK2) = A_Walk
-	S_ACOLYTE_WALK2('AGRD', 1, 5.0 / 35.0, S_ACOLYTE_WALK3) = A_Walk
-	S_ACOLYTE_WALK3('AGRD', 2, 5.0 / 35.0, S_ACOLYTE_WALK4) = A_Walk
-	S_ACOLYTE_WALK4('AGRD', 3, 5.0 / 35.0, S_ACOLYTE_WALK5) = A_Walk
-	S_ACOLYTE_WALK5('AGRD', 0, 5.0 / 35.0, S_ACOLYTE_WALK6) = A_Walk
-	S_ACOLYTE_WALK6('AGRD', 1, 5.0 / 35.0, S_ACOLYTE_WALK7) = A_Walk
-	S_ACOLYTE_WALK7('AGRD', 2, 5.0 / 35.0, S_ACOLYTE_WALK8) = A_Walk
-	S_ACOLYTE_WALK8('AGRD', 3, 5.0 / 35.0, S_ACOLYTE_STAND) = A_Walk
-	S_ACOLYTE_RUN1('AGRD', 0, 6.0 / 35.0, S_ACOLYTE_RUN2) = A_AcolyteBits
-	S_ACOLYTE_RUN2('AGRD', 1, 6.0 / 35.0, S_ACOLYTE_RUN3) = A_Chase
-	S_ACOLYTE_RUN3('AGRD', 2, 6.0 / 35.0, S_ACOLYTE_RUN4) = A_Chase
-	S_ACOLYTE_RUN4('AGRD', 3, 6.0 / 35.0, S_ACOLYTE_RUN1) = A_Chase
-	S_ACOLYTE_ATK1('AGRD', 4, 8.0 / 35.0, S_ACOLYTE_ATK2) = A_FaceTarget
-	S_ACOLYTE_ATK2('AGRD', 5, 4.0 / 35.0, S_ACOLYTE_ATK3) = A_RiffleAttack
-	S_ACOLYTE_ATK3('AGRD', 4, 4.0 / 35.0, S_ACOLYTE_ATK4) = A_RiffleAttack
-	S_ACOLYTE_ATK4('AGRD', 5, 6.0 / 35.0, S_ACOLYTE_RUN1) = A_RiffleAttack
-	S_ACOLYTE_PAIN('AGRD', 14, 8.0 / 35.0, S_ACOLYTE_RUN1) = A_Pain
-	S_ACOLYTE_DIE1('AGRD', 6, 4.0 / 35.0, S_ACOLYTE_DIE2) = none
-	S_ACOLYTE_DIE2('AGRD', 7, 4.0 / 35.0, S_ACOLYTE_DIE3) = A_Scream
-	S_ACOLYTE_DIE3('AGRD', 8, 4.0 / 35.0, S_ACOLYTE_DIE4) = none
-	S_ACOLYTE_DIE4('AGRD', 9, 3.0 / 35.0, S_ACOLYTE_DIE5) = none
-	S_ACOLYTE_DIE5('AGRD', 10, 3.0 / 35.0, S_ACOLYTE_DIE6) = A_Fall
-	S_ACOLYTE_DIE6('AGRD', 11, 3.0 / 35.0, S_ACOLYTE_DIE7) = none
-	S_ACOLYTE_DIE7('AGRD', 12, 3.0 / 35.0, S_ACOLYTE_DIE8) = A_AcolyteDeath
-	S_ACOLYTE_DIE8('AGRD', 13, 1400.0 / 35.0, S_ACOLYTE_XDIE11) = none
-	S_ACOLYTE_XDIE1('GIBS', 0, 5.0 / 35.0, S_ACOLYTE_XDIE2) = A_Fall
-	S_ACOLYTE_XDIE2('GIBS', 1, 5.0 / 35.0, S_ACOLYTE_XDIE3) = A_XDying
-	S_ACOLYTE_XDIE3('GIBS', 2, 5.0 / 35.0, S_ACOLYTE_XDIE4) = A_XDying
-	S_ACOLYTE_XDIE4('GIBS', 3, 4.0 / 35.0, S_ACOLYTE_XDIE5) = A_XDying
-	S_ACOLYTE_XDIE5('GIBS', 4, 4.0 / 35.0, S_ACOLYTE_XDIE6) = A_XScream
-	S_ACOLYTE_XDIE6('GIBS', 5, 4.0 / 35.0, S_ACOLYTE_XDIE7) = A_XDying
-	S_ACOLYTE_XDIE7('GIBS', 6, 4.0 / 35.0, S_ACOLYTE_XDIE8) = none
-	S_ACOLYTE_XDIE8('GIBS', 7, 4.0 / 35.0, S_ACOLYTE_XDIE9) = none
-	S_ACOLYTE_XDIE9('GIBS', 8, 5.0 / 35.0, S_ACOLYTE_XDIE10) = none
-	S_ACOLYTE_XDIE10('GIBS', 9, 5.0 / 35.0, S_ACOLYTE_XDIE11) = A_AcolyteDeath
-	S_ACOLYTE_XDIE11('GIBS', 10, 5.0 / 35.0, S_ACOLYTE_XDIE12) = none
-	S_ACOLYTE_XDIE12('GIBS', 11, 1400.0 / 35.0, none) = none
+Spawn:
+	AGRD A 5 A_Stand
+	Loop
+LookRight:
+	AGRD B 8 A_ClearShadow
+	Goto Spawn
+LookLeft:
+	AGRD D 8
+	Goto Spawn
+Walk:
+	AGRD ABCDABCD 5 A_Walk
+	Loop
+See:
+	AGRD A 6 A_AcolyteBits
+	AGRD BCD 6 A_Chase
+	Loop
+Missile:
+	AGRD E 8 A_FaceTarget
+	AGRD FE 4 A_RiffleAttack
+	AGRD F 6 A_RiffleAttack
+	Goto See
+Pain:
+	AGRD O 8 A_Pain
+	Goto See
+Death:
+	AGRD G 4
+	AGRD H 4 A_Scream
+	AGRD I 4
+	AGRD J 3
+	AGRD K 3 A_Fall
+	AGRD L 3
+	AGRD M 3 A_AcolyteDeath
+	AGRD N 1400
+	Goto XDeath+10
+XDeath:
+	GIBS A 5 A_Fall
+	GIBS BC 5 A_XDying
+	GIBS D 4 A_XDying
+	GIBS E 4 A_XScream
+	GIBS F 4 A_XDying
+	GIBS GH 4
+	GIBS I 5
+	GIBS J 5 A_AcolyteDeath
+	GIBS K 5
+	GIBS L 1400
+	Stop
 }
 
 defaultproperties
@@ -142,17 +148,6 @@ defaultproperties
 	Mass = 400.0;
 	StepSpeed = 7.0;
 	PainChance = 0.5859375;
-	IdleState = S_ACOLYTE_STAND;
-	IdleRightState = S_ACOLYTE_STAND_R;
-	IdleLeftState = S_ACOLYTE_STAND_L;
-	WalkState = S_ACOLYTE_WALK1;
-	SeeState = S_ACOLYTE_RUN1;
-	MissileState = S_ACOLYTE_ATK1;
-	PainState = S_ACOLYTE_PAIN;
-	DeathState = S_ACOLYTE_DIE1;
-	GibsDeathState = S_ACOLYTE_XDIE1;
-	FireDeathState = S_BURN1;
-	DisruptDeathState = S_DISRUPT1;
 	SightSound = 'acolyte/sight';
 	ActiveSound = 'acolyte/active';
 	AttackSound = 'acolyte/rifle';

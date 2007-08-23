@@ -26,16 +26,18 @@
 class AcolyteShadow : Acolyte
 	__mobjinfo__(58);
 
-__states__
+states
 {
-	S_ACOLYTE_RUN_B('AGRD', 0, 6.0 / 35.0, S_ACOLYTE_RUN2) = A_BeShadowyFoe
-	S_ACOLYTE_PAIN_B1('AGRD', 14, 0.0 / 35.0, S_ACOLYTE_PAIN_B2) = A_SetShadow
-	S_ACOLYTE_PAIN_B2('AGRD', 14, 8.0 / 35.0, S_ACOLYTE_RUN_B) = A_Pain
+See:
+	AGRD A 6 A_BeShadowyFoe
+	Goto Super::See+1
+Pain:
+	AGRD O 0 A_SetShadow
+	AGRD O 8 A_Pain
+	Goto See
 }
 
 defaultproperties
 {
 	ConversationID = 61;
-	SeeState = S_ACOLYTE_RUN_B;
-	PainState = S_ACOLYTE_PAIN_B1;
 }

@@ -26,19 +26,25 @@
 class CeilingTurret : Pawn
 	__mobjinfo__(27);
 
-__states__
+states
 {
-	S_TURRET('TURT', 0, 5.0 / 35.0, S_TURRET) = A_CheckAlarm
-	S_TURRET_ACTIVE('TURT', 0, 2.0 / 35.0, S_TURRET_ACTIVE) = A_Chase
-	S_TURRET_ATK1('TURT', 1, 4.0 / 35.0, S_TURRET_ATK2) = A_RiffleAttack
-	S_TURRET_ATK2('TURT', 3, 3.0 / 35.0, S_TURRET_ATK3) = A_CheckRefire
-	S_TURRET_ATK3('TURT', 0, 4.0 / 35.0, S_TURRET_ATK1) = A_CheckRefire
-	S_TURRET_DIE1('BALL', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_TURRET_DIE2) = A_Scream
-	S_TURRET_DIE2('BALL', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_TURRET_DIE3) = none
-	S_TURRET_DIE3('BALL', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_TURRET_DIE4) = none
-	S_TURRET_DIE4('BALL', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_TURRET_DIE5) = none
-	S_TURRET_DIE5('BALL', 4 | FF_FULLBRIGHT, 6.0 / 35.0, S_TURRET_DIE6) = none
-	S_TURRET_DIE6('TURT', 2, -1.0, none) = none
+Spawn:
+	TURT A 5 A_CheckAlarm
+	Loop
+See:
+	TURT A 2 A_Chase
+	Loop
+Missile:
+Pain:
+	TURT B 4 A_RiffleAttack
+	TURT D 3 A_CheckRefire
+	TURT A 4 A_CheckRefire
+	Loop
+Death:
+	BALL A 6 Bright A_Scream
+	BALL BCDE 6 Bright
+	TURT C -1
+	Stop
 }
 
 defaultproperties
@@ -53,10 +59,5 @@ defaultproperties
 	bNoGravity = true;
 	bNoBlood = true;
 	bNoGravKill = true;
-	IdleState = S_TURRET;
-	SeeState = S_TURRET_ACTIVE;
-	MissileState = S_TURRET_ATK1;
-	PainState = S_TURRET_ATK1;
-	DeathState = S_TURRET_DIE1;
 	DeathSound = 'turret/death';
 }

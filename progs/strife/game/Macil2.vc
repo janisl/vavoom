@@ -56,29 +56,23 @@ final void A_MacilDeath()
 	A.Angles.yaw = Angles.yaw;
 }
 
-__states__
+states
 {
-	S_MACIL_ATK2_1('LEAD', 4, 4.0 / 35.0, S_MACIL_ATK2_2) = A_FaceTarget
-	S_MACIL_ATK2_2('LEAD', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_MACIL_ATK2_3) = A_RiffleAttack
-	S_MACIL_ATK2_3('LEAD', 4, 2.0 / 35.0, S_MACIL_ATK2_1) = A_CheckRefire
-	S_MACIL_DIE1('LEAD', 6, 5.0 / 35.0, S_MACIL_DIE2) = none
-	S_MACIL_DIE2('LEAD', 7, 5.0 / 35.0, S_MACIL_DIE3) = A_Scream
-	S_MACIL_DIE3('LEAD', 8, 4.0 / 35.0, S_MACIL_DIE4) = none
-	S_MACIL_DIE4('LEAD', 9, 4.0 / 35.0, S_MACIL_DIE5) = none
-	S_MACIL_DIE5('LEAD', 10, 3.0 / 35.0, S_MACIL_DIE6) = none
-	S_MACIL_DIE6('LEAD', 11, 3.0 / 35.0, S_MACIL_DIE7) = A_Fall
-	S_MACIL_DIE7('LEAD', 12, 3.0 / 35.0, S_MACIL_DIE8) = none
-	S_MACIL_DIE8('LEAD', 13, 3.0 / 35.0, S_MACIL_DIE9) = none
-	S_MACIL_DIE9('LEAD', 14, 3.0 / 35.0, S_MACIL_DIE10) = none
-	S_MACIL_DIE10('LEAD', 15, 3.0 / 35.0, S_MACIL_DIE11) = none
-	S_MACIL_DIE11('LEAD', 16, 3.0 / 35.0, S_MACIL_DIE12) = none
-	S_MACIL_DIE12('LEAD', 17, 3.0 / 35.0, S_MACIL_DIE13) = none
-	S_MACIL_DIE13('LEAD', 18, 3.0 / 35.0, S_MACIL_DIE14) = none
-	S_MACIL_DIE14('LEAD', 19, 3.0 / 35.0, S_MACIL_DIE15) = none
-	S_MACIL_DIE15('LEAD', 20, 3.0 / 35.0, S_MACIL_DIE16) = none
-	S_MACIL_DIE16('LEAD', 21, 3.0 / 35.0, S_MACIL_DIE17) = none
-	S_MACIL_DIE17('LEAD', 22, 3.0 / 35.0, S_MACIL_DIE18) = A_MacilDeath
-	S_MACIL_DIE18('LEAD', 23, -1.0, none) = none
+Missile:
+	LEAD E 4 A_FaceTarget
+	LEAD F 4 Bright A_RiffleAttack
+	LEAD E 2 A_CheckRefire
+	Loop
+Death:
+XDeath:
+	LEAD G 5
+	LEAD H 5 A_Scream
+	LEAD IJ 4
+	LEAD K 3
+	LEAD L 3 A_Fall
+	LEAD MNOPQRSTUVW 3
+	LEAD X -1
+	Stop
 }
 
 defaultproperties
@@ -87,8 +81,5 @@ defaultproperties
 	GibsHealth = -47;
 	PainChance = 0.78125;
 	bSpectral = true;
-	MissileState = S_MACIL_ATK2_1;
-	DeathState = S_MACIL_DIE1;
-	GibsDeathState = S_MACIL_DIE1;
 	DeathSound = 'macil/slop';
 }
