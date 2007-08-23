@@ -29,10 +29,6 @@ class Minotaur : Pawn
 float ChargeSpeed;
 bool bFloorFireRefired;
 
-state ChargeAttackState;
-state FloorFireAttackState;
-state FloorFireAttackState2;
-
 //==========================================================================
 //
 //  DoSpecialDamage
@@ -112,7 +108,7 @@ final void A_MinotaurDecide()
 	{
 		// Charge attack
 		// Don't call the state function right away
-		SetState(ChargeAttackState);
+		SetState(FindState('ChargeAttack'));
 		bSkullFly = true;
 		A_FaceTarget();
 		Velocity = Normalise(Target.Origin - Origin) * ChargeSpeed;
@@ -122,7 +118,7 @@ final void A_MinotaurDecide()
 		dist < 9.0 * 64.0 && P_Random() < 220)
 	{
 		// Floor fire attack
-		SetState(FloorFireAttackState);
+		SetState(FindState('FloorFireAttack'));
 		bFloorFireRefired = false;
 	}
 	else
@@ -211,7 +207,7 @@ final void A_MinotaurAtk3()
 	}
 	if (Random() < 0.75 && !bFloorFireRefired)
 	{
-		SetState(FloorFireAttackState2);
+		SetState(FindState('FloorFireAttack2'));
 		bFloorFireRefired = true;
 	}
 }
@@ -239,43 +235,57 @@ final void A_MinotaurCharge()
 	}
 }
 
-__states__
+states
 {
-	S_MNTR_LOOK1('MNTR', 0, 10.0 / 35.0, S_MNTR_LOOK2) = A_Look
-	S_MNTR_LOOK2('MNTR', 1, 10.0 / 35.0, S_MNTR_LOOK1) = A_Look
-	S_MNTR_WALK1('MNTR', 0, 5.0 / 35.0, S_MNTR_WALK2) = A_Chase
-	S_MNTR_WALK2('MNTR', 1, 5.0 / 35.0, S_MNTR_WALK3) = A_Chase
-	S_MNTR_WALK3('MNTR', 2, 5.0 / 35.0, S_MNTR_WALK4) = A_Chase
-	S_MNTR_WALK4('MNTR', 3, 5.0 / 35.0, S_MNTR_WALK1) = A_Chase
-	S_MNTR_ATK1_1('MNTR', 21, 10.0 / 35.0, S_MNTR_ATK1_2) = A_FaceTarget
-	S_MNTR_ATK1_2('MNTR', 22, 7.0 / 35.0, S_MNTR_ATK1_3) = A_FaceTarget
-	S_MNTR_ATK1_3('MNTR', 23, 4.0 / 35.0, S_MNTR_WALK1) = A_MinotaurAtk1
-	S_MNTR_ATK2_1('MNTR', 21, 10.0 / 35.0, S_MNTR_ATK2_2) = A_MinotaurDecide
-	S_MNTR_ATK2_2('MNTR', 24, 4.0 / 35.0, S_MNTR_ATK2_3) = A_FaceTarget
-	S_MNTR_ATK2_3('MNTR', 25, 9.0 / 35.0, S_MNTR_WALK1) = A_MinotaurAtk2
-	S_MNTR_ATK3_1('MNTR', 21, 10.0 / 35.0, S_MNTR_ATK3_2) = A_FaceTarget
-	S_MNTR_ATK3_2('MNTR', 22, 7.0 / 35.0, S_MNTR_ATK3_3) = A_FaceTarget
-	S_MNTR_ATK3_3('MNTR', 23, 12.0 / 35.0, S_MNTR_WALK1) = A_MinotaurAtk3
-	S_MNTR_ATK3_4('MNTR', 23, 12.0 / 35.0, S_MNTR_ATK3_1) = none
-	S_MNTR_ATK4_1('MNTR', 20, 2.0 / 35.0, S_MNTR_ATK4_2) = none
-	S_MNTR_ATK4_2('MNTR', 20, 2.0 / 35.0, S_MNTR_ATK4_2) = A_MinotaurCharge
-	S_MNTR_PAIN1('MNTR', 4, 3.0 / 35.0, S_MNTR_PAIN2) = none
-	S_MNTR_PAIN2('MNTR', 4, 6.0 / 35.0, S_MNTR_WALK1) = A_Pain
-	S_MNTR_DIE1('MNTR', 5, 6.0 / 35.0, S_MNTR_DIE2) = none
-	S_MNTR_DIE2('MNTR', 6, 5.0 / 35.0, S_MNTR_DIE3) = none
-	S_MNTR_DIE3('MNTR', 7, 6.0 / 35.0, S_MNTR_DIE4) = A_Scream
-	S_MNTR_DIE4('MNTR', 8, 5.0 / 35.0, S_MNTR_DIE5) = none
-	S_MNTR_DIE5('MNTR', 9, 6.0 / 35.0, S_MNTR_DIE6) = none
-	S_MNTR_DIE6('MNTR', 10, 5.0 / 35.0, S_MNTR_DIE7) = none
-	S_MNTR_DIE7('MNTR', 11, 6.0 / 35.0, S_MNTR_DIE8) = none
-	S_MNTR_DIE8('MNTR', 12, 5.0 / 35.0, S_MNTR_DIE9) = A_NoBlocking
-	S_MNTR_DIE9('MNTR', 13, 6.0 / 35.0, S_MNTR_DIE10) = none
-	S_MNTR_DIE10('MNTR', 14, 5.0 / 35.0, S_MNTR_DIE11) = none
-	S_MNTR_DIE11('MNTR', 15, 6.0 / 35.0, S_MNTR_DIE12) = none
-	S_MNTR_DIE12('MNTR', 16, 5.0 / 35.0, S_MNTR_DIE13) = none
-	S_MNTR_DIE13('MNTR', 17, 6.0 / 35.0, S_MNTR_DIE14) = none
-	S_MNTR_DIE14('MNTR', 18, 5.0 / 35.0, S_MNTR_DIE15) = none
-	S_MNTR_DIE15('MNTR', 19, -1.0, none) = A_BossDeath
+Spawn:
+	MNTR AB 10 A_Look
+	Loop
+See:
+	MNTR ABCD 5 A_Chase
+	Loop
+Melee:
+	MNTR V 10 A_FaceTarget
+	MNTR W 7 A_FaceTarget
+	MNTR X 4 A_MinotaurAtk1
+	Goto See
+Missile:
+	MNTR V 10 A_MinotaurDecide
+	MNTR Y 4 A_FaceTarget
+	MNTR Z 9 A_MinotaurAtk2
+	Goto See
+FloorFireAttack:
+	MNTR V 10 A_FaceTarget
+	MNTR W 7 A_FaceTarget
+	MNTR X 12 A_MinotaurAtk3
+	Goto See
+FloorFireAttack2:
+	MNTR X 12
+	Goto FloorFireAttack
+ChargeAttack:
+	MNTR U 2
+	MNTR U 2 A_MinotaurCharge
+	Wait
+Pain:
+	MNTR E 3
+	MNTR E 6 A_Pain
+	Goto See
+Death:
+	MNTR F 6
+	MNTR G 5
+	MNTR H 6 A_Scream
+	MNTR I 5
+	MNTR J 6
+	MNTR K 5
+	MNTR L 6
+	MNTR M 5 A_NoBlocking
+	MNTR N 6
+	MNTR O 5
+	MNTR P 6
+	MNTR Q 5
+	MNTR R 6
+	MNTR S 5
+	MNTR T -1 A_BossDeath
+	Stop
 }
 
 defaultproperties
@@ -294,15 +304,6 @@ defaultproperties
 	bNoRadiusDamage = true;
 	bNeverTarget = true;
 	bSkullFlyInvulnerable = true;
-	IdleState = S_MNTR_LOOK1;
-	SeeState = S_MNTR_WALK1;
-	MeleeState = S_MNTR_ATK1_1;
-	MissileState = S_MNTR_ATK2_1;
-	ChargeAttackState = S_MNTR_ATK4_1;
-	FloorFireAttackState = S_MNTR_ATK3_1;
-	FloorFireAttackState2 = S_MNTR_ATK3_4;
-	PainState = S_MNTR_PAIN1;
-	DeathState = S_MNTR_DIE1;
 	SightSound = 'minotaur/sight';
 	ActiveSound = 'minotaur/active';
 	AttackSound = 'minotaur/attack1';

@@ -115,21 +115,30 @@ final void A_HeadAttack()
 	}
 }
 
-__states__
+states
 {
-	S_HEAD_LOOK('HEAD', 0, 10.0 / 35.0, S_HEAD_LOOK) = A_Look
-	S_HEAD_FLOAT('HEAD', 0, 4.0 / 35.0, S_HEAD_FLOAT) = A_Chase
-	S_HEAD_ATK1('HEAD', 0, 5.0 / 35.0, S_HEAD_ATK2) = A_FaceTarget
-	S_HEAD_ATK2('HEAD', 1, 20.0 / 35.0, S_HEAD_FLOAT) = A_HeadAttack
-	S_HEAD_PAIN1('HEAD', 0, 4.0 / 35.0, S_HEAD_PAIN2) = none
-	S_HEAD_PAIN2('HEAD', 0, 4.0 / 35.0, S_HEAD_FLOAT) = A_Pain
-	S_HEAD_DIE1('HEAD', 2, 7.0 / 35.0, S_HEAD_DIE2) = none
-	S_HEAD_DIE2('HEAD', 3, 7.0 / 35.0, S_HEAD_DIE3) = A_Scream
-	S_HEAD_DIE3('HEAD', 4, 7.0 / 35.0, S_HEAD_DIE4) = none
-	S_HEAD_DIE4('HEAD', 5, 7.0 / 35.0, S_HEAD_DIE5) = none
-	S_HEAD_DIE5('HEAD', 6, 7.0 / 35.0, S_HEAD_DIE6) = A_NoBlocking
-	S_HEAD_DIE6('HEAD', 7, 7.0 / 35.0, S_HEAD_DIE7) = none
-	S_HEAD_DIE7('HEAD', 8, -1.0, none) = A_BossDeath
+Spawn:
+	HEAD A 10 A_Look
+	Loop
+See:
+	HEAD A 4 A_Chase
+	Loop
+Missile:
+	HEAD A 5 A_FaceTarget
+	HEAD B 20 A_HeadAttack
+	Goto See
+Pain:
+	HEAD A 4
+	HEAD A 4 A_Pain
+	Goto See
+Death:
+	HEAD C 7
+	HEAD D 7 A_Scream
+	HEAD EF 7
+	HEAD G 7 A_NoBlocking
+	HEAD H 7
+	HEAD I -1 A_BossDeath
+	Stop
 }
 
 defaultproperties
@@ -143,11 +152,6 @@ defaultproperties
 	bNoBlood = true;
 	bFloorClip = false;
 	bNoMorph = true;
-	IdleState = S_HEAD_LOOK;
-	SeeState = S_HEAD_FLOAT;
-	MissileState = S_HEAD_ATK1;
-	PainState = S_HEAD_PAIN1;
-	DeathState = S_HEAD_DIE1;
 	SightSound = 'ironlich/sight';
 	ActiveSound = 'ironlich/active';
 	AttackSound = 'ironlich/attack1';

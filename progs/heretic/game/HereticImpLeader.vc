@@ -50,12 +50,12 @@ final void A_ImpMsAttack2()
 	SpawnMissile(Target, HereticImpBall);
 }
 
-__states__
+states
 {
-	//	Missile attack
-	S_IMP_MSATK2_1('IMPX', 3, 6.0 /35.0, S_IMP_MSATK2_2) = A_FaceTarget
-	S_IMP_MSATK2_2('IMPX', 4, 6.0 /35.0, S_IMP_MSATK2_3) = A_FaceTarget
-	S_IMP_MSATK2_3('IMPX', 5, 6.0 /35.0, S_IMP_FLY1) = A_ImpMsAttack2
+Missile:
+	IMPX DE 6 A_FaceTarget
+	IMPX F 6 A_ImpMsAttack2
+	Goto Super::See
 }
 
 defaultproperties
@@ -64,6 +64,5 @@ defaultproperties
 	GibsHealth = -40;
 	MeleeState = none;
 	bTriggerHappy = false;
-	MissileState = S_IMP_MSATK2_1;
 	AttackSound = 'himp/leaderattack';
 }

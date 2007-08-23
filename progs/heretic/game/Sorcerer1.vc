@@ -27,8 +27,6 @@ class Sorcerer1 : Pawn
 	__mobjinfo__(7)
 	__scriptid__(142);
 
-state ReAttackState;
-
 //==========================================================================
 //
 //  A_Sor1Chase
@@ -99,7 +97,7 @@ final void A_Srcr1Attack()
 			{
 				// Set state to attack again
 				Special1 = 1;
-				SetState(ReAttackState);
+				SetState(FindState('ReAttack'));
 			}
 		}
 	}
@@ -140,44 +138,47 @@ final void A_SorcererRise()
 
 	bSolid = false;
 	S2 = Sorcerer2(Spawn(Sorcerer2, Origin));
-	S2.SetState(S2.RiseState);
+	S2.SetState(S2.FindState('Rise'));
 	S2.Angles.yaw = Angles.yaw;
 	S2.Target = Target;
 }
 
-__states__
+states
 {
-	S_SRCR1_LOOK1('SRCR', 0, 10.0 / 35.0, S_SRCR1_LOOK2) = A_Look
-	S_SRCR1_LOOK2('SRCR', 1, 10.0 / 35.0, S_SRCR1_LOOK1) = A_Look
-	S_SRCR1_WALK1('SRCR', 0, 5.0 / 35.0, S_SRCR1_WALK2) = A_Sor1Chase
-	S_SRCR1_WALK2('SRCR', 1, 5.0 / 35.0, S_SRCR1_WALK3) = A_Sor1Chase
-	S_SRCR1_WALK3('SRCR', 2, 5.0 / 35.0, S_SRCR1_WALK4) = A_Sor1Chase
-	S_SRCR1_WALK4('SRCR', 3, 5.0 / 35.0, S_SRCR1_WALK1) = A_Sor1Chase
-	S_SRCR1_ATK1('SRCR', 16, 7.0 / 35.0, S_SRCR1_ATK2) = A_FaceTarget
-	S_SRCR1_ATK2('SRCR', 17, 6.0 / 35.0, S_SRCR1_ATK3) = A_FaceTarget
-	S_SRCR1_ATK3('SRCR', 18, 10.0 / 35.0, S_SRCR1_WALK1) = A_Srcr1Attack
-	S_SRCR1_ATK4('SRCR', 18, 10.0 / 35.0, S_SRCR1_ATK5) = A_FaceTarget
-	S_SRCR1_ATK5('SRCR', 16, 7.0 / 35.0, S_SRCR1_ATK6) = A_FaceTarget
-	S_SRCR1_ATK6('SRCR', 17, 6.0 / 35.0, S_SRCR1_ATK7) = A_FaceTarget
-	S_SRCR1_ATK7('SRCR', 18, 10.0 / 35.0, S_SRCR1_WALK1) = A_Srcr1Attack
-	S_SRCR1_PAIN1('SRCR', 16, 6.0 / 35.0, S_SRCR1_WALK1) = A_Sor1Pain
-	S_SRCR1_DIE1('SRCR', 4, 7.0 / 35.0, S_SRCR1_DIE2) = none
-	S_SRCR1_DIE2('SRCR', 5, 7.0 / 35.0, S_SRCR1_DIE3) = A_Scream
-	S_SRCR1_DIE3('SRCR', 6, 7.0 / 35.0, S_SRCR1_DIE4) = none
-	S_SRCR1_DIE4('SRCR', 7, 6.0 / 35.0, S_SRCR1_DIE5) = none
-	S_SRCR1_DIE5('SRCR', 8, 6.0 / 35.0, S_SRCR1_DIE6) = none
-	S_SRCR1_DIE6('SRCR', 9, 6.0 / 35.0, S_SRCR1_DIE7) = none
-	S_SRCR1_DIE7('SRCR', 10, 6.0 / 35.0, S_SRCR1_DIE8) = none
-	S_SRCR1_DIE8('SRCR', 11, 25.0 / 35.0, S_SRCR1_DIE9) = A_SorZap
-	S_SRCR1_DIE9('SRCR', 12, 5.0 / 35.0, S_SRCR1_DIE10) = none
-	S_SRCR1_DIE10('SRCR', 13, 5.0 / 35.0, S_SRCR1_DIE11) = none
-	S_SRCR1_DIE11('SRCR', 14, 4.0 / 35.0, S_SRCR1_DIE12) = none
-	S_SRCR1_DIE12('SRCR', 11, 20.0 / 35.0, S_SRCR1_DIE13) = A_SorZap
-	S_SRCR1_DIE13('SRCR', 12, 5.0 / 35.0, S_SRCR1_DIE14) = none
-	S_SRCR1_DIE14('SRCR', 13, 5.0 / 35.0, S_SRCR1_DIE15) = none
-	S_SRCR1_DIE15('SRCR', 14, 4.0 / 35.0, S_SRCR1_DIE16) = none
-	S_SRCR1_DIE16('SRCR', 11, 12.0 / 35.0, S_SRCR1_DIE17) = none
-	S_SRCR1_DIE17('SRCR', 15, -1.0, none) = A_SorcererRise
+Spawn:
+	SRCR AB 10 A_Look
+	Loop
+See:
+	SRCR ABCD 5 A_Sor1Chase
+	Loop
+Missile:
+	SRCR Q 7 A_FaceTarget
+	SRCR R 6 A_FaceTarget
+	SRCR S 10 A_Srcr1Attack
+	Goto See
+ReAttack:
+	SRCR S 10 A_FaceTarget
+	SRCR Q 7 A_FaceTarget
+	SRCR R 6 A_FaceTarget
+	SRCR S 10 A_Srcr1Attack
+	Goto See
+Pain:
+	SRCR Q 6 A_Sor1Pain
+	Goto See
+Death:
+	SRCR E 7
+	SRCR F 7 A_Scream
+	SRCR G 7
+	SRCR HIJK 6
+	SRCR L 25 A_SorZap
+	SRCR MN 5
+	SRCR O 4
+	SRCR L 20 A_SorZap
+	SRCR MN 5
+	SRCR O 4
+	SRCR L 12
+	SRCR P -1 A_SorcererRise
+	Stop
 }
 
 defaultproperties
@@ -192,12 +193,6 @@ defaultproperties
 	bNoMorph = true;
 	bNoRadiusDamage = true;
 	bNeverTarget = true;
-	IdleState = S_SRCR1_LOOK1;
-	SeeState = S_SRCR1_WALK1;
-	MissileState = S_SRCR1_ATK1;
-	ReAttackState = S_SRCR1_ATK4;
-	PainState = S_SRCR1_PAIN1;
-	DeathState = S_SRCR1_DIE1;
 	SightSound = 'dsparilserpent/sight';
 	ActiveSound = 'dsparilserpent/active';
 	AttackSound = 'dsparilserpent/attack';

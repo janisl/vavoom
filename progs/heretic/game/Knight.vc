@@ -68,29 +68,35 @@ final void A_KnightAttack()
 	SpawnMissile(Target, KnightAxe, 36.0);
 }
 
-__states__
+states
 {
-	S_KNIGHT_STND1('KNIG', 0, 10.0 / 35.0, S_KNIGHT_STND2) = A_Look
-	S_KNIGHT_STND2('KNIG', 1, 10.0 / 35.0, S_KNIGHT_STND1) = A_Look
-	S_KNIGHT_WALK1('KNIG', 0, 4.0 / 35.0, S_KNIGHT_WALK2) = A_Chase
-	S_KNIGHT_WALK2('KNIG', 1, 4.0 / 35.0, S_KNIGHT_WALK3) = A_Chase
-	S_KNIGHT_WALK3('KNIG', 2, 4.0 / 35.0, S_KNIGHT_WALK4) = A_Chase
-	S_KNIGHT_WALK4('KNIG', 3, 4.0 / 35.0, S_KNIGHT_WALK1) = A_Chase
-	S_KNIGHT_ATK1('KNIG', 4, 10.0 / 35.0, S_KNIGHT_ATK2) = A_FaceTarget
-	S_KNIGHT_ATK2('KNIG', 5, 8.0 / 35.0, S_KNIGHT_ATK3) = A_FaceTarget
-	S_KNIGHT_ATK3('KNIG', 6, 8.0 / 35.0, S_KNIGHT_ATK4) = A_KnightAttack
-	S_KNIGHT_ATK4('KNIG', 4, 10.0 / 35.0, S_KNIGHT_ATK5) = A_FaceTarget
-	S_KNIGHT_ATK5('KNIG', 5, 8.0 / 35.0, S_KNIGHT_ATK6) = A_FaceTarget
-	S_KNIGHT_ATK6('KNIG', 6, 8.0 / 35.0, S_KNIGHT_WALK1) = A_KnightAttack
-	S_KNIGHT_PAIN1('KNIG', 7, 3.0 / 35.0, S_KNIGHT_PAIN2) = none
-	S_KNIGHT_PAIN2('KNIG', 7, 3.0 / 35.0, S_KNIGHT_WALK1) = A_Pain
-	S_KNIGHT_DIE1('KNIG', 8, 6.0 / 35.0, S_KNIGHT_DIE2) = none
-	S_KNIGHT_DIE2('KNIG', 9, 6.0 / 35.0, S_KNIGHT_DIE3) = A_Scream
-	S_KNIGHT_DIE3('KNIG', 10, 6.0 / 35.0, S_KNIGHT_DIE4) = none
-	S_KNIGHT_DIE4('KNIG', 11, 6.0 / 35.0, S_KNIGHT_DIE5) = A_NoBlocking
-	S_KNIGHT_DIE5('KNIG', 12, 6.0 / 35.0, S_KNIGHT_DIE6) = none
-	S_KNIGHT_DIE6('KNIG', 13, 6.0 / 35.0, S_KNIGHT_DIE7) = none
-	S_KNIGHT_DIE7('KNIG', 14, -1.0, none) = none
+Spawn:
+	KNIG AB 10 A_Look
+	Loop
+See:
+	KNIG ABCD 4 A_Chase
+	Loop
+Melee:
+Missile:
+	KNIG E 10 A_FaceTarget
+	KNIG F 8 A_FaceTarget
+	KNIG G 8 A_KnightAttack
+	KNIG E 10 A_FaceTarget
+	KNIG F 8 A_FaceTarget
+	KNIG G 8 A_KnightAttack
+	Goto See
+Pain:
+	KNIG H 3
+	KNIG H 3 A_Pain
+	Goto See
+Death:
+	KNIG I 6
+	KNIG J 6 A_Scream
+	KNIG K 6
+	KNIG L 6 A_NoBlocking
+	KNIG MN 6
+	KNIG O -1
+	Stop
 }
 
 defaultproperties
@@ -101,12 +107,6 @@ defaultproperties
 	Mass = 150.0;
 	StepSpeed = 12.0;
 	PainChance = 0.390625;
-	IdleState = S_KNIGHT_STND1;
-	SeeState = S_KNIGHT_WALK1;
-	MeleeState = S_KNIGHT_ATK1;
-	MissileState = S_KNIGHT_ATK1;
-	PainState = S_KNIGHT_PAIN1;
-	DeathState = S_KNIGHT_DIE1;
 	SightSound = 'hknight/sight';
 	ActiveSound = 'hknight/active';
 	AttackSound = 'hknight/attack';

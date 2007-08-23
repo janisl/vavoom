@@ -155,27 +155,31 @@ final void A_ChicPain()
 	PlaySound(PainSound, CHAN_VOICE);
 }
 
-__states__
+states
 {
-	S_CHICKEN_LOOK1('CHKN', 0, 10.0 / 35.0, S_CHICKEN_LOOK2) = A_ChicLook
-	S_CHICKEN_LOOK2('CHKN', 1, 10.0 / 35.0, S_CHICKEN_LOOK1) = A_ChicLook
-	S_CHICKEN_WALK1('CHKN', 0, 3.0 / 35.0, S_CHICKEN_WALK2) = A_ChicChase
-	S_CHICKEN_WALK2('CHKN', 1, 3.0 / 35.0, S_CHICKEN_WALK3) = A_ChicChase
-	S_CHICKEN_WALK3('CHKN', 0, 3.0 / 35.0, S_CHICKEN_WALK4) = A_ChicChase
-	S_CHICKEN_WALK4('CHKN', 1, 3.0 / 35.0, S_CHICKEN_WALK1) = A_ChicChase
-	S_CHICKEN_ATK1('CHKN', 0, 8.0 / 35.0, S_CHICKEN_ATK2) = A_FaceTarget
-	S_CHICKEN_ATK2('CHKN', 2, 5.0 / 35.0, S_CHICKEN_ATK3) = A_ChicAttack
-	S_CHICKEN_ATK3('CHKN', 2, 5.0 / 35.0, S_CHICKEN_WALK1) = none
-	S_CHICKEN_PAIN1('CHKN', 3, 5.0 / 35.0, S_CHICKEN_PAIN2) = A_Feathers
-	S_CHICKEN_PAIN2('CHKN', 2, 5.0 / 35.0, S_CHICKEN_WALK1) = A_ChicPain
-	S_CHICKEN_DIE1('CHKN', 4, 6.0 / 35.0, S_CHICKEN_DIE2) = A_Scream
-	S_CHICKEN_DIE2('CHKN', 5, 6.0 / 35.0, S_CHICKEN_DIE3) = A_Feathers
-	S_CHICKEN_DIE3('CHKN', 6, 6.0 / 35.0, S_CHICKEN_DIE4) = none
-	S_CHICKEN_DIE4('CHKN', 7, 6.0 / 35.0, S_CHICKEN_DIE5) = A_NoBlocking
-	S_CHICKEN_DIE5('CHKN', 8, 6.0 / 35.0, S_CHICKEN_DIE6) = none
-	S_CHICKEN_DIE6('CHKN', 9, 6.0 / 35.0, S_CHICKEN_DIE7) = none
-	S_CHICKEN_DIE7('CHKN', 10, 6.0 / 35.0, S_CHICKEN_DIE8) = none
-	S_CHICKEN_DIE8('CHKN', 11, -1.0, none) = none
+Spawn:
+	CHKN AB 10 A_ChicLook
+	Loop
+See:
+	CHKN ABAB 3 A_ChicChase
+	Loop
+Melee:
+	CHKN A 8 A_FaceTarget
+	CHKN C 5 A_ChicAttack
+	CHKN C 5
+	Goto See
+Pain:
+	CHKN D 5 A_Feathers
+	CHKN C 5 A_ChicPain
+	Goto See
+Death:
+	CHKN E 6 A_Scream
+	CHKN F 6 A_Feathers
+	CHKN G 6
+	CHKN H 6 A_NoBlocking
+	CHKN IJK 6
+	CHKN L -1
+	Stop
 }
 
 defaultproperties
@@ -189,11 +193,6 @@ defaultproperties
 	bDropOff = true;
 	bWindThrust = true;
 	bNoMorph = true;
-	IdleState = S_CHICKEN_LOOK1;
-	SeeState = S_CHICKEN_WALK1;
-	MeleeState = S_CHICKEN_ATK1;
-	PainState = S_CHICKEN_PAIN1;
-	DeathState = S_CHICKEN_DIE1;
 	SightSound = 'chicken/sight';
 	ActiveSound = 'chicken/active';
 	AttackSound = 'chicken/attack';

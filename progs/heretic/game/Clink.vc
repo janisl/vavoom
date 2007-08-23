@@ -60,26 +60,30 @@ final void A_ClinkAttack()
 	}
 }
 
-__states__
+states
 {
-	S_CLINK_LOOK1('CLNK', 0, 10.0 / 35.0, S_CLINK_LOOK2) = A_Look
-	S_CLINK_LOOK2('CLNK', 1, 10.0 / 35.0, S_CLINK_LOOK1) = A_Look
-	S_CLINK_WALK1('CLNK', 0, 3.0 / 35.0, S_CLINK_WALK2) = A_Chase
-	S_CLINK_WALK2('CLNK', 1, 3.0 / 35.0, S_CLINK_WALK3) = A_Chase
-	S_CLINK_WALK3('CLNK', 2, 3.0 / 35.0, S_CLINK_WALK4) = A_Chase
-	S_CLINK_WALK4('CLNK', 3, 3.0 / 35.0, S_CLINK_WALK1) = A_Chase
-	S_CLINK_ATK1('CLNK', 4, 5.0 / 35.0, S_CLINK_ATK2) = A_FaceTarget
-	S_CLINK_ATK2('CLNK', 5, 4.0 / 35.0, S_CLINK_ATK3) = A_FaceTarget
-	S_CLINK_ATK3('CLNK', 6, 7.0 / 35.0, S_CLINK_WALK1) = A_ClinkAttack
-	S_CLINK_PAIN1('CLNK', 7, 3.0 / 35.0, S_CLINK_PAIN2) = none
-	S_CLINK_PAIN2('CLNK', 7, 3.0 / 35.0, S_CLINK_WALK1) = A_Pain
-	S_CLINK_DIE1('CLNK', 8, 6.0 / 35.0, S_CLINK_DIE2) = none
-	S_CLINK_DIE2('CLNK', 9, 6.0 / 35.0, S_CLINK_DIE3) = none
-	S_CLINK_DIE3('CLNK', 10, 5.0 / 35.0, S_CLINK_DIE4) = A_Scream
-	S_CLINK_DIE4('CLNK', 11, 5.0 / 35.0, S_CLINK_DIE5) = A_NoBlocking
-	S_CLINK_DIE5('CLNK', 12, 5.0 / 35.0, S_CLINK_DIE6) = none
-	S_CLINK_DIE6('CLNK', 13, 5.0 / 35.0, S_CLINK_DIE7) = none
-	S_CLINK_DIE7('CLNK', 14, -1.0, none) = none
+Spawn:
+	CLNK AB 10 A_Look
+	Loop
+See:
+	CLNK ABCD 3 A_Chase
+	Loop
+Melee:
+	CLNK E 5 A_FaceTarget
+	CLNK F 4 A_FaceTarget
+	CLNK G 7 A_ClinkAttack
+	Goto See
+Pain:
+	CLNK H 3
+	CLNK H 3 A_Pain
+	Goto See
+Death:
+	CLNK IJ 6
+	CLNK K 5 A_Scream
+	CLNK L 5 A_NoBlocking
+	CLNK MN 5
+	CLNK O -1
+	Stop
 }
 
 defaultproperties
@@ -91,11 +95,6 @@ defaultproperties
 	StepSpeed = 14.0;
 	PainChance = 0.125;
 	bNoBlood = true;
-	IdleState = S_CLINK_LOOK1;
-	SeeState = S_CLINK_WALK1;
-	MeleeState = S_CLINK_ATK1;
-	PainState = S_CLINK_PAIN1;
-	DeathState = S_CLINK_DIE1;
 	SightSound = 'clink/sight';
 	ActiveSound = 'clink/active';
 	AttackSound = 'clink/attack';

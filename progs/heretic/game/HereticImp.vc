@@ -27,8 +27,6 @@ class HereticImp : Pawn
 	__mobjinfo__(66)
 	__scriptid__(5);
 
-state XCrashState;
-
 //==========================================================================
 //
 //  A_ImpMeAttack
@@ -133,49 +131,52 @@ final void A_ImpExplode()
 	if (Special1 == 666)
 	{
 		// Extreme death crash
-		SetState(XCrashState);
+		SetState(FindState('XCrash'));
 	}
 }
 
-__states__
+states
 {
-	S_IMP_LOOK1('IMPX', 0, 10.0 / 35.0, S_IMP_LOOK2) = A_Look
-	S_IMP_LOOK2('IMPX', 1, 10.0 / 35.0, S_IMP_LOOK3) = A_Look
-	S_IMP_LOOK3('IMPX', 2, 10.0 / 35.0, S_IMP_LOOK4) = A_Look
-	S_IMP_LOOK4('IMPX', 1, 10.0 / 35.0, S_IMP_LOOK1) = A_Look
-	S_IMP_FLY1('IMPX', 0, 3.0 /35.0, S_IMP_FLY2) = A_Chase
-	S_IMP_FLY2('IMPX', 0, 3.0 /35.0, S_IMP_FLY3) = A_Chase
-	S_IMP_FLY3('IMPX', 1, 3.0 /35.0, S_IMP_FLY4) = A_Chase
-	S_IMP_FLY4('IMPX', 1, 3.0 /35.0, S_IMP_FLY5) = A_Chase
-	S_IMP_FLY5('IMPX', 2, 3.0 /35.0, S_IMP_FLY6) = A_Chase
-	S_IMP_FLY6('IMPX', 2, 3.0 /35.0, S_IMP_FLY7) = A_Chase
-	S_IMP_FLY7('IMPX', 1, 3.0 /35.0, S_IMP_FLY8) = A_Chase
-	S_IMP_FLY8('IMPX', 1, 3.0 /35.0, S_IMP_FLY1) = A_Chase
-	S_IMP_MEATK1('IMPX', 3, 6.0 /35.0, S_IMP_MEATK2) = A_FaceTarget
-	S_IMP_MEATK2('IMPX', 4, 6.0 /35.0, S_IMP_MEATK3) = A_FaceTarget
-	S_IMP_MEATK3('IMPX', 5, 3.0 /35.0, S_IMP_FLY1) = A_ImpMeAttack
-	S_IMP_MSATK1_1('IMPX', 0, 10.0 /35.0, S_IMP_MSATK1_2) = A_FaceTarget
-	S_IMP_MSATK1_2('IMPX', 1, 6.0 /35.0, S_IMP_MSATK1_3) = A_ImpMsAttack
-	S_IMP_MSATK1_3('IMPX', 2, 6.0 /35.0, S_IMP_MSATK1_4) = none
-	S_IMP_MSATK1_4('IMPX', 1, 6.0 /35.0, S_IMP_MSATK1_5) = none
-	S_IMP_MSATK1_5('IMPX', 0, 6.0 /35.0, S_IMP_MSATK1_6) = none
-	S_IMP_MSATK1_6('IMPX', 1, 6.0 /35.0, S_IMP_MSATK1_3) = none
-	S_IMP_PAIN1('IMPX', 6, 3.0 /35.0, S_IMP_PAIN2) = none
-	S_IMP_PAIN2('IMPX', 6, 3.0 /35.0, S_IMP_FLY1) = A_Pain
-	S_IMP_DIE1('IMPX', 6, 4.0 / 35.0, S_IMP_DIE2) = A_ImpDeath
-	S_IMP_DIE2('IMPX', 7, 5.0 / 35.0, S_IMP_DIE2) = none
-	S_IMP_XDIE1('IMPX', 18, 5.0 / 35.0, S_IMP_XDIE2) = A_ImpXDeath1
-	S_IMP_XDIE2('IMPX', 19, 5.0 / 35.0, S_IMP_XDIE3) = none
-	S_IMP_XDIE3('IMPX', 20, 5.0 / 35.0, S_IMP_XDIE4) = none
-	S_IMP_XDIE4('IMPX', 21, 5.0 / 35.0, S_IMP_XDIE5) = A_ImpXDeath2
-	S_IMP_XDIE5('IMPX', 22, 5.0 / 35.0, S_IMP_XDIE5) = none
-	S_IMP_CRASH1('IMPX', 8, 7.0 / 35.0, S_IMP_CRASH2) = A_ImpExplode
-	S_IMP_CRASH2('IMPX', 9, 7.0 / 35.0, S_IMP_CRASH3) = A_Scream
-	S_IMP_CRASH3('IMPX', 10, 7.0 / 35.0, S_IMP_CRASH4) = none
-	S_IMP_CRASH4('IMPX', 11, -1.0, none) = none
-	S_IMP_XCRASH1('IMPX', 23, 7.0 / 35.0, S_IMP_XCRASH2) = none
-	S_IMP_XCRASH2('IMPX', 24, 7.0 / 35.0, S_IMP_XCRASH3) = none
-	S_IMP_XCRASH3('IMPX', 25, -1.0, none) = none
+Spawn:
+	IMPX ABCB 10 A_Look
+	Loop
+See:
+	IMPX AABBCCBB 3 A_Chase
+	Loop
+Melee:
+	IMPX DE 6 A_FaceTarget
+	IMPX F 3 A_ImpMeAttack
+	Goto See
+Missile:
+	IMPX A 10 A_FaceTarget
+	IMPX B 6 A_ImpMsAttack
+	IMPX CBAB 6
+	Goto Missile+2
+Pain:
+	IMPX G 3
+	IMPX G 3 A_Pain
+	Goto See
+Death:
+	IMPX G 4 A_ImpDeath
+	IMPX H 5
+	Wait
+XDeath:
+	IMPX S 5 A_ImpXDeath1
+	IMPX TU 5
+	IMPX V 5 A_ImpXDeath2
+	IMPX W 5
+	Wait
+Crash:
+	IMPX I 7 A_ImpExplode
+	IMPX J 7 A_Scream
+	IMPX K 7
+	IMPX L -1
+	Stop
+XCrash:
+	IMPX X 7
+	IMPX Y 7
+	IMPX Z -1
+	Stop
 }
 
 defaultproperties
@@ -192,15 +193,6 @@ defaultproperties
 	bSpawnFloat = true;
 	bFloorClip = false;
 	bTriggerHappy = true;
-	IdleState = S_IMP_LOOK1;
-	SeeState = S_IMP_FLY1;
-	MeleeState = S_IMP_MEATK1;
-	MissileState = S_IMP_MSATK1_1;
-	PainState = S_IMP_PAIN1;
-	DeathState = S_IMP_DIE1;
-	GibsDeathState = S_IMP_XDIE1;
-	CrashState = S_IMP_CRASH1;
-	XCrashState = S_IMP_XCRASH1;
 	SightSound = 'himp/sight';
 	ActiveSound = 'himp/active';
 	AttackSound = 'himp/attack';
