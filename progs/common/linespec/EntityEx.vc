@@ -5619,9 +5619,9 @@ final void SpawnBlood(TVec Org, int damage)
 		}
 	}
 	if (damage <= 12 && damage >= 9)
-		A.SetState(A.IdleRightState);
+		A.SetState(GetStatePlus(A.IdleState, 1));
 	else if (damage < 9)
-		A.SetState(A.IdleLeftState);
+		A.SetState(GetStatePlus(A.IdleState, 2));
 }
 
 //==========================================================================

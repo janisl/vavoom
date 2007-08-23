@@ -26,6 +26,19 @@
 class DeadMarine : DoomPlayer
 	__mobjinfo__(15);
 
+states
+{
+Spawn:
+	Goto Super::Death+6
+See:
+Melee:
+Missile:
+Pain:
+Death:
+XDeath:
+	Stop
+}
+
 defaultproperties
 {
 	Health = 1000;
@@ -42,15 +55,8 @@ defaultproperties
 	bWindThrust = false;
 	bDropOff = false;
 	bPickUp = false;
-	SeeState = none;
-	MeleeState = none;
-	MissileState = none;
-	PainState = none;
-	DeathState = none;
-	GibsDeathState = none;
 	PainSound = '';
 	DeathSound = '';
 
-	IdleState = S_PLAY_DIE7;
 	bFloorClip = true;
 }

@@ -44,7 +44,7 @@ final void A_FireCGun()
 		return;
 	}
 
-	Owner.SetState(DoomPlayer::S_PLAY_ATK2);
+	Owner.SetState(EntityEx(Owner).MeleeState);
 
 	if (Owner.Player.ViewStates[ps_weapon].State == GetAttackState(false))
 	{

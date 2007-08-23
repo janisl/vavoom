@@ -42,7 +42,7 @@ final void A_FireShotgun2()
 	TVec dir;
 
 	Owner.PlaySound('weapons/sshotf', CHAN_WEAPON);
-	Owner.SetState(DoomPlayer::S_PLAY_ATK2);
+	Owner.SetState(EntityEx(Owner).MeleeState);
 
 	DepleteAmmo(, 2);
 

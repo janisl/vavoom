@@ -54,28 +54,33 @@ final void A_HeadAttack()
 	SpawnMissile(Target, CacodemonBall);
 }
 
-__states__
+states
 {
-	S_HEAD_STND('HEAD', 0, 10.0 / 35.0, S_HEAD_STND) = A_Look
-	S_HEAD_RUN1('HEAD', 0, 3.0 / 35.0, S_HEAD_RUN1) = A_Chase
-	S_HEAD_ATK1('HEAD', 1, 5.0 / 35.0, S_HEAD_ATK2) = A_FaceTarget
-	S_HEAD_ATK2('HEAD', 2, 5.0 / 35.0, S_HEAD_ATK3) = A_FaceTarget
-	S_HEAD_ATK3('HEAD', 3 | FF_FULLBRIGHT, 5.0 / 35.0, S_HEAD_RUN1) = A_HeadAttack
-	S_HEAD_PAIN('HEAD', 4, 3.0 / 35.0, S_HEAD_PAIN2) = none
-	S_HEAD_PAIN2('HEAD', 4, 3.0 / 35.0, S_HEAD_PAIN3) = A_Pain
-	S_HEAD_PAIN3('HEAD', 5, 6.0 / 35.0, S_HEAD_RUN1) = none
-	S_HEAD_DIE1('HEAD', 6, 8.0 / 35.0, S_HEAD_DIE2) = none
-	S_HEAD_DIE2('HEAD', 7, 8.0 / 35.0, S_HEAD_DIE3) = A_Scream
-	S_HEAD_DIE3('HEAD', 8, 8.0 / 35.0, S_HEAD_DIE4) = none
-	S_HEAD_DIE4('HEAD', 9, 8.0 / 35.0, S_HEAD_DIE5) = none
-	S_HEAD_DIE5('HEAD', 10, 8.0 / 35.0, S_HEAD_DIE6) = A_Fall
-	S_HEAD_DIE6('HEAD', 11, -1.0, none) = none
-	S_HEAD_RAISE1('HEAD', 11, 8.0 / 35.0, S_HEAD_RAISE2) = none
-	S_HEAD_RAISE2('HEAD', 10, 8.0 / 35.0, S_HEAD_RAISE3) = none
-	S_HEAD_RAISE3('HEAD', 9, 8.0 / 35.0, S_HEAD_RAISE4) = none
-	S_HEAD_RAISE4('HEAD', 8, 8.0 / 35.0, S_HEAD_RAISE5) = none
-	S_HEAD_RAISE5('HEAD', 7, 8.0 / 35.0, S_HEAD_RAISE6) = none
-	S_HEAD_RAISE6('HEAD', 6, 8.0 / 35.0, S_HEAD_RUN1) = none
+Spawn:
+	HEAD A 10 A_Look
+	Loop
+See:
+	HEAD A 3 A_Chase
+	Loop
+Missile:
+	HEAD BC 5 A_FaceTarget
+	HEAD D 5 Bright A_HeadAttack
+	Goto See
+Pain:
+	HEAD E 3
+	HEAD E 3 A_Pain
+	HEAD F 6
+	Goto See
+Death:
+	HEAD G 8
+	HEAD H 8 A_Scream
+	HEAD IJ 8
+	HEAD K 8 A_Fall
+	HEAD L -1
+	Stop
+Raise:
+	HEAD LKJIHG 8
+	Goto See
 }
 
 defaultproperties
@@ -95,12 +100,6 @@ defaultproperties
 	bNoGravity = true;
 	bFloat = true;
 	bFloorClip = true;
-	IdleState = S_HEAD_STND;
-	SeeState = S_HEAD_RUN1;
-	MissileState = S_HEAD_ATK1;
-	PainState = S_HEAD_PAIN;
-	DeathState = S_HEAD_DIE1;
-	RaiseState = S_HEAD_RAISE1;
 	SightSound = 'caco/sight';
 	ActiveSound = 'caco/active';
 	PainSound = 'caco/pain';

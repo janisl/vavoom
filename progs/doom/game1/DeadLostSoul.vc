@@ -26,6 +26,17 @@
 class DeadLostSoul : LostSoul
 	__mobjinfo__(23);
 
+states
+{
+Spawn:
+	Goto Super::Death+5
+See:
+Missile:
+Pain:
+Death:
+	Stop
+}
+
 defaultproperties
 {
 	Health = 1000;
@@ -45,15 +56,10 @@ defaultproperties
 	bTriggerHappy = false;
 	bNoGravKill = false;
 	bDynamicLight = false;
-	SeeState = none;
-	MissileState = none;
-	PainState = none;
-	DeathState = none;
 	ActiveSound = '';
 	AttackSound = '';
 	PainSound = '';
 	DeathSound = '';
 
-	IdleState = S_SKULL_DIE6;
 	bFloorClip = true;
 }

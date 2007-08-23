@@ -320,60 +320,55 @@ void F_StartCast()
 //
 //==========================================================================
 
+void DoCastSound(state CurState, class Cls, name State, int Offset,
+	name Sound)
+{
+	state S = FindClassState(Cls, State);
+	if (S)
+	{
+		S = GetStatePlus(S, Offset);
+		if (S == CurState)
+		{
+			LocalSound(Sound);
+		}
+	}
+}
+
+//==========================================================================
+//
+//  CastSound
+//
+//==========================================================================
+
 void CastSound(state State)
 {
-	name	sfx;
-
 	// sound hacks....
-	if (State == DoomPlayer::S_PLAY_ATK1)
-		sfx = 'weapons/sshotf';
-	else if (State == ZombieMan::S_POSS_ATK2)
-		sfx = 'grunt/attack';
-	else if (State == ShotgunGuy::S_SPOS_ATK2)
-		sfx = 'shotguy/attack';
-	else if (State == Archvile::S_VILE_ATK2)
-		sfx = 'vile/start';
-	else if (State == Revenant::S_SKEL_FIST2)
-		sfx = 'skeleton/swing';
-	else if (State == Revenant::S_SKEL_FIST4)
-		sfx = 'skeleton/melee';
-	else if (State == Revenant::S_SKEL_MISS2)
-		sfx = 'skeleton/attack';
-	else if (State == Fatso::S_FATT_ATK8 ||
-		State == Fatso::S_FATT_ATK5 ||
-		State == Fatso::S_FATT_ATK2)
-		sfx = 'fatso/attack';
-	else if (State == ChaingunGuy::S_CPOS_ATK2 ||
-		State == ChaingunGuy::S_CPOS_ATK3 ||
-		State == ChaingunGuy::S_CPOS_ATK4)
-		sfx = 'chainguy/attack';
-	else if (State == DoomImp::S_TROO_ATK3)
-		sfx = 'imp/melee';
-	else if (State == Demon::S_SARG_ATK2)
-		sfx = 'demon/melee';
-	else if (State == BaronOfHell::S_BOSS_ATK2 ||
-		State == HellKnight::S_BOS2_ATK2)
-		sfx = 'baron/attack';
-	else if (State == Cacodemon::S_HEAD_ATK2)
-		sfx = 'caco/attack';
-	else if (State == LostSoul::S_SKULL_ATK2)
-		sfx = 'skull/melee';
-	else if (State == SpiderMastermind::S_SPID_ATK2 ||
-		State == SpiderMastermind::S_SPID_ATK3)
-		sfx = 'spider/attack';
-	else if (State == Arachnotron::S_BSPI_ATK2)
-		sfx = 'baby/attack';
-	else if (State == Cyberdemon::S_CYBER_ATK2 ||
-		State == Cyberdemon::S_CYBER_ATK4 ||
-		State == Cyberdemon::S_CYBER_ATK6)
-		sfx = 'weapons/rocklf';
-	else if (State == PainElemental::S_PAIN_ATK3)
-		sfx = 'skull/melee';
-
-	if (sfx)
-	{
-		LocalSound(sfx);
-	}
+	DoCastSound(State, DoomPlayer, 'Missile', 0, 'weapons/sshotf');
+	DoCastSound(State, ZombieMan, 'Missile', 1, 'grunt/attack');
+	DoCastSound(State, ShotgunGuy, 'Missile', 1, 'shotguy/attack');
+	DoCastSound(State, ChaingunGuy, 'Missile', 1, 'chainguy/attack');
+	DoCastSound(State, ChaingunGuy, 'Missile', 2, 'chainguy/attack');
+	DoCastSound(State, ChaingunGuy, 'Missile', 3, 'chainguy/attack');
+	DoCastSound(State, DoomImp, 'Melee', 2, 'imp/melee');
+	DoCastSound(State, LostSoul, 'Missile', 1, 'skull/melee');
+	DoCastSound(State, Demon, 'Melee', 1, 'demon/melee');
+	DoCastSound(State, Cacodemon, 'Missile', 1, 'caco/attack');
+	DoCastSound(State, BaronOfHell, 'Missile', 1, 'baron/attack');
+	DoCastSound(State, HellKnight, 'Missile', 1, 'baron/attack');
+	DoCastSound(State, Cyberdemon, 'Missile', 1, 'weapons/rocklf');
+	DoCastSound(State, Cyberdemon, 'Missile', 3, 'weapons/rocklf');
+	DoCastSound(State, Cyberdemon, 'Missile', 5, 'weapons/rocklf');
+	DoCastSound(State, SpiderMastermind, 'Missile', 1, 'spider/attack');
+	DoCastSound(State, SpiderMastermind, 'Missile', 2, 'spider/attack');
+	DoCastSound(State, Arachnotron, 'Missile', 1, 'baby/attack');
+	DoCastSound(State, PainElemental, 'Missile', 2, 'skull/melee');
+	DoCastSound(State, Revenant, 'Melee', 1, 'skeleton/swing');
+	DoCastSound(State, Revenant, 'Melee', 3, 'skeleton/melee');
+	DoCastSound(State, Revenant, 'Missile', 1, 'skeleton/attack');
+	DoCastSound(State, Fatso, 'Missile', 1, 'fatso/attack');
+	DoCastSound(State, Fatso, 'Missile', 4, 'fatso/attack');
+	DoCastSound(State, Fatso, 'Missile', 7, 'fatso/attack');
+	DoCastSound(State, Archvile, 'Missile', 1, 'vile/start');
 }
 
 //==========================================================================

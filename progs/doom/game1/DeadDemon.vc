@@ -26,6 +26,18 @@
 class DeadDemon : Demon
 	__mobjinfo__(21);
 
+states
+{
+Spawn:
+	Goto Super::Death+5
+See:
+Melee:
+Pain:
+Death:
+Raise:
+	Stop
+}
+
 defaultproperties
 {
 	Health = 1000;
@@ -40,11 +52,6 @@ defaultproperties
 	bMonster = false;
 	bActivateMCross = false;
 	bActivatePushWall = false;
-	SeeState = none;
-	MeleeState = none;
-	PainState = none;
-	DeathState = none;
-	RaiseState = none;
 	SightSound = '';
 	ActiveSound = '';
 	AttackSound = '';
@@ -53,6 +60,5 @@ defaultproperties
 	bFaster = false;
 	bFastMelee = false;
 
-	IdleState = S_SARG_DIE6;
 	bFloorClip = true;
 }

@@ -26,6 +26,20 @@
 class DeadDoomImp : DoomImp
 	__mobjinfo__(20);
 
+states
+{
+Spawn:
+	Goto Super::Death+4
+See:
+Melee:
+Missile:
+Pain:
+Death:
+XDeath:
+Raise:
+	Stop
+}
+
 defaultproperties
 {
 	Health = 1000;
@@ -41,18 +55,10 @@ defaultproperties
 	bMonster = false;
 	bActivateMCross = false;
 	bActivatePushWall = false;
-	SeeState = none;
-	MeleeState = none;
-	MissileState = none;
-	PainState = none;
-	DeathState = none;
-	GibsDeathState = none;
-	RaiseState = none;
 	SightSound = '';
 	ActiveSound = '';
 	PainSound = '';
 	DeathSound = '';
 
-	IdleState = S_TROO_DIE5;
 	bFloorClip = true;
 }

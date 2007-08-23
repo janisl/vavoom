@@ -36,6 +36,19 @@ void NoBlockingSet()
 {
 }
 
+states
+{
+Spawn:
+	Goto Super::Death+4
+See:
+Missile:
+Pain:
+Death:
+XDeath:
+Raise:
+	Stop
+}
+
 defaultproperties
 {
 	Health = 1000;
@@ -51,17 +64,10 @@ defaultproperties
 	bMonster = false;
 	bActivateMCross = false;
 	bActivatePushWall = false;
-	SeeState = none;
-	MissileState = none;
-	PainState = none;
-	DeathState = none;
-	GibsDeathState = none;
-	RaiseState = none;
 	SightSound = '';
 	ActiveSound = '';
 	PainSound = '';
 	DeathSound = '';
 
-	IdleState = S_SPOS_DIE5;
 	bFloorClip = true;
 }

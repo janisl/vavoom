@@ -26,8 +26,6 @@
 class Rocket : Actor
 	__scriptid__(127);
 
-state ExtraState;
-
 //==========================================================================
 //
 //	PreExplode
@@ -39,41 +37,16 @@ void PreExplode()
 	Alpha = 0.5;
 }
 
-//==========================================================================
-//
-//  A_BrainExplode
-//
-//  Brain explosions.
-//
-//==========================================================================
-
-final void A_BrainExplode()
+states
 {
-	TVec org;
-	Actor A;
-
-	org.x = Origin.x + (Random() - Random()) * 8.0;
-	org.y = Origin.y;
-	org.z = 1.0 / 512.0 + Random() * 512.0;
-	A = Spawn(Rocket, org);
-	A.Velocity.z = Random() * 2.0 * 35.0;
-
-	A.SetState(S_BRAINEXPLODE1);
-
-	A.StateTime -= Random() * 0.2;
-	if (A.StateTime < 0.1)
-		A.StateTime = 0.1;
-}
-
-__states__
-{
-	S_ROCKET('MISL', 0 | FF_FULLBRIGHT, 1.0 / 35.0, S_ROCKET) = none
-	S_EXPLODE1('MISL', 1 | FF_FULLBRIGHT, 8.0 / 35.0, S_EXPLODE2) = A_Explode
-	S_EXPLODE2('MISL', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_EXPLODE3) = none
-	S_EXPLODE3('MISL', 3 | FF_FULLBRIGHT, 4.0 / 35.0, none) = none
-	S_BRAINEXPLODE1('MISL', 1 | FF_FULLBRIGHT, 10.0 / 35.0, S_BRAINEXPLODE2) = none
-	S_BRAINEXPLODE2('MISL', 2 | FF_FULLBRIGHT, 10.0 / 35.0, S_BRAINEXPLODE3) = none
-	S_BRAINEXPLODE3('MISL', 3 | FF_FULLBRIGHT, 10.0 / 35.0, none) = A_BrainExplode
+Spawn:
+	MISL A 1 Bright
+	Loop
+Death:
+	MISL B 8 Bright A_Explode
+	MISL C 6 Bright
+	MISL D 4 Bright
+	Stop
 }
 
 defaultproperties
@@ -91,9 +64,6 @@ defaultproperties
 	bNoTeleport = true;
 	bRandomise = true;
 	bExplodeParticles = true;
-	IdleState = S_ROCKET;
-	DeathState = S_EXPLODE1;
-	ExtraState = S_BRAINEXPLODE1;
 	SightSound = 'weapons/rocklf';
 	DeathSound = 'weapons/rocklx';
 	bDynamicLight = true;

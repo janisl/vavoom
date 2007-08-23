@@ -26,11 +26,11 @@
 class Blood : Actor
 	__scriptid__(130);
 
-__states__
+states
 {
-	S_BLOOD1('BLUD', 2, 8.0 / 35.0, S_BLOOD2) = none
-	S_BLOOD2('BLUD', 1, 8.0 / 35.0, S_BLOOD3) = none
-	S_BLOOD3('BLUD', 0, 8.0 / 35.0, none) = none
+Spawn:
+	BLUD CBA 8
+	Stop
 }
 
 defaultproperties
@@ -38,7 +38,4 @@ defaultproperties
 	bNoBlockmap = true;
 	bNoPassMobj = true;
 	bSmallSplash = true;
-	IdleState = S_BLOOD1;
-	IdleRightState = S_BLOOD2;
-	IdleLeftState = S_BLOOD3;
 }

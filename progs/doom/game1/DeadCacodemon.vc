@@ -26,6 +26,18 @@
 class DeadCacodemon : Cacodemon
 	__mobjinfo__(22);
 
+states
+{
+Spawn:
+	Goto Super::Death+5
+See:
+Missile:
+Pain:
+Death:
+Raise:
+	Stop
+}
+
 defaultproperties
 {
 	Health = 1000;
@@ -42,16 +54,10 @@ defaultproperties
 	bActivatePushWall = false;
 	bNoGravity = false;
 	bFloat = false;
-	SeeState = none;
-	MissileState = none;
-	PainState = none;
-	DeathState = none;
-	RaiseState = none;
 	SightSound = '';
 	ActiveSound = '';
 	PainSound = '';
 	DeathSound = '';
 
-	IdleState = S_HEAD_DIE6;
 	bFloorClip = true;
 }

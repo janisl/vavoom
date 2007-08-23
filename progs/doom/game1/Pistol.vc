@@ -37,7 +37,7 @@ final void A_FirePistol()
 
 	Owner.PlaySound('weapons/pistol', CHAN_WEAPON);
 
-	Owner.SetState(DoomPlayer::S_PLAY_ATK2);
+	Owner.SetState(EntityEx(Owner).MeleeState);
 	DepleteAmmo(, 1);
 
 	Owner.Player.SetViewState(ps_flash, FindState('Flash'));

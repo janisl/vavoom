@@ -25,15 +25,19 @@
 
 class DoomUnusedStates : Actor;
 
-__states__
+states
 {
-	S_STALAG('SMT2', 0, -1.0, none) = none
-	S_DEADTORSO('PLAY', 13, -1.0, none) = none
-	S_DEADBOTTOM('PLAY', 18, -1.0, none) = none
+Spawn:
+	SMT2 A -1
+	Stop
+Death:
+	PLAY N -1
+	Stop
+XDeath:
+	PLAY S -1
+	Stop
 }
 
 defaultproperties
 {
-	IdleState = S_STALAG;
-	DeathState = S_DEADTORSO;
 }

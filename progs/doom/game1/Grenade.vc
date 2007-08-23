@@ -25,14 +25,18 @@
 
 class Grenade : Rocket;
 
-__states__
+final void A_GrenadeExplode()
+{
+	ExplodeMissile();
+}
+
+states
 {
 	//  Flying grenade
-	S_GRENADE('GREN', 0 | FF_FULLBRIGHT, 3.0, S_GRENADE_EXPLODE) = none
-	S_GRENADE_EXPLODE('GREN', 0 | FF_FULLBRIGHT, 0.0, S_EXPLODE1)
-	{
-		ExplodeMissile();
-	}
+Spawn:
+	GREN A 3 Bright
+	GREN A 0 A_GrenadeExplode
+	Goto Super::Death
 }
 
 defaultproperties
@@ -43,8 +47,6 @@ defaultproperties
 	MissileDamage = 20;
 	bNoGravity = false;
 	BounceType = BOUNCE_Doom;
-	IdleState = S_GRENADE;
-	DeathState = S_EXPLODE1;
 	SightSound = 'weapons/rocklf';
 	PainSound = 'GrenadeBounce';
 	DeathSound = 'weapons/rocklx';

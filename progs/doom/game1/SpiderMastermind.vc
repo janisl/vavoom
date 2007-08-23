@@ -27,39 +27,35 @@ class SpiderMastermind : Actor
 	__mobjinfo__(7)
 	__scriptid__(7);
 
-__states__
+states
 {
-	S_SPID_STND('SPID', 0, 10.0 / 35.0, S_SPID_STND2) = A_Look
-	S_SPID_STND2('SPID', 1, 10.0 / 35.0, S_SPID_STND) = A_Look
-	S_SPID_RUN1('SPID', 0, 3.0 / 35.0, S_SPID_RUN2) = A_Metal
-	S_SPID_RUN2('SPID', 0, 3.0 / 35.0, S_SPID_RUN3) = A_Chase
-	S_SPID_RUN3('SPID', 1, 3.0 / 35.0, S_SPID_RUN4) = A_Chase
-	S_SPID_RUN4('SPID', 1, 3.0 / 35.0, S_SPID_RUN5) = A_Chase
-	S_SPID_RUN5('SPID', 2, 3.0 / 35.0, S_SPID_RUN6) = A_Metal
-	S_SPID_RUN6('SPID', 2, 3.0 / 35.0, S_SPID_RUN7) = A_Chase
-	S_SPID_RUN7('SPID', 3, 3.0 / 35.0, S_SPID_RUN8) = A_Chase
-	S_SPID_RUN8('SPID', 3, 3.0 / 35.0, S_SPID_RUN9) = A_Chase
-	S_SPID_RUN9('SPID', 4, 3.0 / 35.0, S_SPID_RUN10) = A_Metal
-	S_SPID_RUN10('SPID', 4, 3.0 / 35.0, S_SPID_RUN11) = A_Chase
-	S_SPID_RUN11('SPID', 5, 3.0 / 35.0, S_SPID_RUN12) = A_Chase
-	S_SPID_RUN12('SPID', 5, 3.0 / 35.0, S_SPID_RUN1) = A_Chase
-	S_SPID_ATK1('SPID', 0 | FF_FULLBRIGHT, 20.0 / 35.0, S_SPID_ATK2) = A_FaceTarget
-	S_SPID_ATK2('SPID', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_SPID_ATK3) = A_SPosAttack
-	S_SPID_ATK3('SPID', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_SPID_ATK4) = A_SPosAttack
-	S_SPID_ATK4('SPID', 7 | FF_FULLBRIGHT, 1.0 / 35.0, S_SPID_ATK2) = A_SpidRefire
-	S_SPID_PAIN('SPID', 8, 3.0 / 35.0, S_SPID_PAIN2) = none
-	S_SPID_PAIN2('SPID', 8, 3.0 / 35.0, S_SPID_RUN1) = A_Pain
-	S_SPID_DIE1('SPID', 9, 20.0 / 35.0, S_SPID_DIE2) = A_Scream
-	S_SPID_DIE2('SPID', 10, 10.0 / 35.0, S_SPID_DIE3) = A_Fall
-	S_SPID_DIE3('SPID', 11, 10.0 / 35.0, S_SPID_DIE4) = none
-	S_SPID_DIE4('SPID', 12, 10.0 / 35.0, S_SPID_DIE5) = none
-	S_SPID_DIE5('SPID', 13, 10.0 / 35.0, S_SPID_DIE6) = none
-	S_SPID_DIE6('SPID', 14, 10.0 / 35.0, S_SPID_DIE7) = none
-	S_SPID_DIE7('SPID', 15, 10.0 / 35.0, S_SPID_DIE8) = none
-	S_SPID_DIE8('SPID', 16, 10.0 / 35.0, S_SPID_DIE9) = none
-	S_SPID_DIE9('SPID', 17, 10.0 / 35.0, S_SPID_DIE10) = none
-	S_SPID_DIE10('SPID', 18, 30.0 / 35.0, S_SPID_DIE11) = none
-	S_SPID_DIE11('SPID', 18, -1.0, none) = A_BossDeath
+Spawn:
+	SPID AB 10 A_Look
+	Loop
+See:
+	SPID A 3 A_Metal
+	SPID ABB 3 A_Chase
+	SPID C 3 A_Metal
+	SPID CDD 3 A_Chase
+	SPID E 3 A_Metal
+	SPID EFF 3 A_Chase
+	Loop
+Missile:
+	SPID A 20 Bright A_FaceTarget
+	SPID GH 4 Bright A_SPosAttack
+	SPID H 1 Bright A_SpidRefire
+	Goto Missile+1
+Pain:
+	SPID I 3
+	SPID I 3 A_Pain
+	Goto See
+Death:
+	SPID J 20 A_Scream
+	SPID K 10 A_Fall
+	SPID LMNOPQR 10
+	SPID S 30
+	SPID S -1 A_BossDeath
+	Stop
 }
 
 defaultproperties
@@ -80,11 +76,6 @@ defaultproperties
 	bTriggerHappy = true;
 	bFloorClip = true;
 	bNoRadiusDamage = true;
-	IdleState = S_SPID_STND;
-	SeeState = S_SPID_RUN1;
-	MissileState = S_SPID_ATK1;
-	PainState = S_SPID_PAIN;
-	DeathState = S_SPID_DIE1;
 	SightSound = 'spider/sight';
 	ActiveSound = 'spider/active';
 	AttackSound = 'spider/attack';

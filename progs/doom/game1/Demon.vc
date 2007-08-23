@@ -50,35 +50,33 @@ final void A_SargAttack()
 	}
 }
 
-__states__
+states
 {
-	S_SARG_STND('SARG', 0, 10.0 / 35.0, S_SARG_STND2) = A_Look
-	S_SARG_STND2('SARG', 1, 10.0 / 35.0, S_SARG_STND) = A_Look
-	S_SARG_RUN1('SARG', 0, 2.0 / 35.0, S_SARG_RUN2) = A_Chase
-	S_SARG_RUN2('SARG', 0, 2.0 / 35.0, S_SARG_RUN3) = A_Chase
-	S_SARG_RUN3('SARG', 1, 2.0 / 35.0, S_SARG_RUN4) = A_Chase
-	S_SARG_RUN4('SARG', 1, 2.0 / 35.0, S_SARG_RUN5) = A_Chase
-	S_SARG_RUN5('SARG', 2, 2.0 / 35.0, S_SARG_RUN6) = A_Chase
-	S_SARG_RUN6('SARG', 2, 2.0 / 35.0, S_SARG_RUN7) = A_Chase
-	S_SARG_RUN7('SARG', 3, 2.0 / 35.0, S_SARG_RUN8) = A_Chase
-	S_SARG_RUN8('SARG', 3, 2.0 / 35.0, S_SARG_RUN1) = A_Chase
-	S_SARG_ATK1('SARG', 4, 8.0 / 35.0, S_SARG_ATK2) = A_FaceTarget
-	S_SARG_ATK2('SARG', 5, 8.0 / 35.0, S_SARG_ATK3) = A_FaceTarget
-	S_SARG_ATK3('SARG', 6, 8.0 / 35.0, S_SARG_RUN1) = A_SargAttack
-	S_SARG_PAIN('SARG', 7, 2.0 / 35.0, S_SARG_PAIN2) = none
-	S_SARG_PAIN2('SARG', 7, 2.0 / 35.0, S_SARG_RUN1) = A_Pain
-	S_SARG_DIE1('SARG', 8, 8.0 / 35.0, S_SARG_DIE2) = none
-	S_SARG_DIE2('SARG', 9, 8.0 / 35.0, S_SARG_DIE3) = A_Scream
-	S_SARG_DIE3('SARG', 10, 4.0 / 35.0, S_SARG_DIE4) = none
-	S_SARG_DIE4('SARG', 11, 4.0 / 35.0, S_SARG_DIE5) = A_Fall
-	S_SARG_DIE5('SARG', 12, 4.0 / 35.0, S_SARG_DIE6) = none
-	S_SARG_DIE6('SARG', 13, -1.0, none) = none
-	S_SARG_RAISE1('SARG', 13, 5.0 / 35.0, S_SARG_RAISE2) = none
-	S_SARG_RAISE2('SARG', 12, 5.0 / 35.0, S_SARG_RAISE3) = none
-	S_SARG_RAISE3('SARG', 11, 5.0 / 35.0, S_SARG_RAISE4) = none
-	S_SARG_RAISE4('SARG', 10, 5.0 / 35.0, S_SARG_RAISE5) = none
-	S_SARG_RAISE5('SARG', 9, 5.0 / 35.0, S_SARG_RAISE6) = none
-	S_SARG_RAISE6('SARG', 8, 5.0 / 35.0, S_SARG_RUN1) = none
+Spawn:
+	SARG AB 10 A_Look
+	Loop
+See:
+	SARG AABBCCDD 2 A_Chase
+	Loop
+Melee:
+	SARG EF 8 A_FaceTarget
+	SARG G 8 A_SargAttack
+	Goto See
+Pain:
+	SARG H 2
+	SARG H 2 A_Pain
+	Goto See
+Death:
+	SARG I 8
+	SARG J 8 A_Scream
+	SARG K 4
+	SARG L 4 A_Fall
+	SARG M 4
+	SARG N -1
+	Stop
+Raise:
+	SARG NMLKJI 5
+	Goto See
 }
 
 defaultproperties
@@ -96,12 +94,6 @@ defaultproperties
 	bActivateMCross = true;
 	bActivatePushWall = true;
 	bFloorClip = true;
-	IdleState = S_SARG_STND;
-	SeeState = S_SARG_RUN1;
-	MeleeState = S_SARG_ATK1;
-	PainState = S_SARG_PAIN;
-	DeathState = S_SARG_DIE1;
-	RaiseState = S_SARG_RAISE1;
 	SightSound = 'demon/sight';
 	ActiveSound = 'demon/active';
 	AttackSound = 'demon/melee';

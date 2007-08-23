@@ -53,23 +53,22 @@ final void A_KeenDie()
 		none);
 }
 
-__states__
+states
 {
-	S_KEENSTND('KEEN', 0, -1.0, S_KEENSTND) = none
-	S_COMMKEEN('KEEN', 0, 6.0 / 35.0, S_COMMKEEN2) = none
-	S_COMMKEEN2('KEEN', 1, 6.0 / 35.0, S_COMMKEEN3) = none
-	S_COMMKEEN3('KEEN', 2, 6.0 / 35.0, S_COMMKEEN4) = A_Scream
-	S_COMMKEEN4('KEEN', 3, 6.0 / 35.0, S_COMMKEEN5) = none
-	S_COMMKEEN5('KEEN', 4, 6.0 / 35.0, S_COMMKEEN6) = none
-	S_COMMKEEN6('KEEN', 5, 6.0 / 35.0, S_COMMKEEN7) = none
-	S_COMMKEEN7('KEEN', 6, 6.0 / 35.0, S_COMMKEEN8) = none
-	S_COMMKEEN8('KEEN', 7, 6.0 / 35.0, S_COMMKEEN9) = none
-	S_COMMKEEN9('KEEN', 8, 6.0 / 35.0, S_COMMKEEN10) = none
-	S_COMMKEEN10('KEEN', 9, 6.0 / 35.0, S_COMMKEEN11) = none
-	S_COMMKEEN11('KEEN', 10, 6.0 / 35.0, S_COMMKEEN12) = A_KeenDie
-	S_COMMKEEN12('KEEN', 11, -1.0, none) = none
-	S_KEENPAIN('KEEN', 12, 4.0 / 35.0, S_KEENPAIN2) = none
-	S_KEENPAIN2('KEEN', 12, 8.0 / 35.0, S_KEENSTND) = A_Pain
+Spawn:
+	KEEN A -1
+	Loop
+Death:
+	KEEN AB 6
+	KEEN C 6 A_Scream
+	KEEN DEFGHIJ 6
+	KEEN K 6 A_KeenDie
+	KEEN L -1
+	Stop
+Pain:
+	KEEN M 4
+	KEEN M 8 A_Pain
+	Goto Spawn
 }
 
 defaultproperties
@@ -87,9 +86,6 @@ defaultproperties
 	bActivatePushWall = true;
 	bSpawnCeiling = true;
 	bNoGravity = true;
-	IdleState = S_KEENSTND;
-	PainState = S_KEENPAIN;
-	DeathState = S_COMMKEEN;
 	PainSound = 'keen/pain';
 	DeathSound = 'keen/death';
 }
