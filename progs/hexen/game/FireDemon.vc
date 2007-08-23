@@ -263,11 +263,11 @@ See:
 	Goto See+9
 Pain:
 	FDMN D 6 Bright A_Pain
-	Goto See
+	Goto See+9
 Missile:
 	FDMN K 3 Bright A_FaceTarget
 	FDMN KKK 5 Bright A_FiredAttack
-	Goto See
+	Goto See+9
 Death:
 	FDMN D 4 Bright A_FaceTarget
 	FDMN L 4 Bright A_Scream

@@ -262,6 +262,7 @@ GlowFire:
 	FAXE A 1 Offset(0, 44)
 	FAXE A 1 Offset(0, 36)
 	FAXE A 1
+	Goto Ready
 Spawn:
 	WFAX A -1
 	Stop

@@ -139,6 +139,7 @@ Deselect:
 	Wait
 Select:
 	CSSF C 1 A_Raise
+	Wait
 Fire:
 	CSSF A 1 Offset(0, 45) A_CStaffCheck
 	CSSF J 1 Offset(0, 50) A_CStaffAttack

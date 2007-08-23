@@ -43,6 +43,7 @@ Active:
 	TWTR A 0 Bright A_IgniteSound
 Spawn:
 	TWTR ABCDEFGH 4 Bright
+	Loop
 Inactive:
 	TWTR I -1
 	Stop

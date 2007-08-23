@@ -81,8 +81,10 @@ Ready:
 	Loop
 Deselect:
 	MLNG A 1 Bright A_Lower
+	Wait
 Select:
 	MLNG A 1 Bright A_Raise
+	Wait
 Fire:
 	MLNG DE 3 Bright
 	MLNG F 4 Bright A_MLightningAttack
