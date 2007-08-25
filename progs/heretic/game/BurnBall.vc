@@ -27,18 +27,13 @@
 //
 //**************************************************************************
 
-class BurnBall:BeastBall;
+class BurnBall : BeastBall;
 
-__states__
+states
 {
-	S_BURNBALL1('FRB1', 0, 4.0 / 35.0, S_BURNBALL2) = none
-	S_BURNBALL2('FRB1', 1, 4.0 / 35.0, S_BURNBALL3) = none
-	S_BURNBALL3('FRB1', 2, 4.0 / 35.0, S_BURNBALL4) = none
-	S_BURNBALL4('FRB1', 3, 4.0 / 35.0, S_BURNBALL5) = none
-	S_BURNBALL5('FRB1', 4, 4.0 / 35.0, S_BURNBALL6) = none
-	S_BURNBALL6('FRB1', 5, 4.0 / 35.0, S_BURNBALL7) = none
-	S_BURNBALL7('FRB1', 6, 4.0 / 35.0, S_BURNBALL8) = none
-	S_BURNBALL8('FRB1', 7, 4.0 / 35.0, none) = none
+Spawn:
+	FRB1 ABCDEFGH 4
+	Stop
 }
 
 defaultproperties
@@ -48,5 +43,4 @@ defaultproperties
 	MissileDamage = 2;
 	bWindThrust = false;
 	bDropOff = false;
-	IdleState = S_BURNBALL1;
 }

@@ -25,23 +25,21 @@
 
 class RainPlayer4 : RainPillar;
 
-__states__
+states
 {
-	S_RAINPLR4_1('FX23', 0 | FF_FULLBRIGHT, -1.0, none) = none
-	S_RAINPLR4X_1('FX23', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_RAINPLR4X_2) = A_RainImpact
-	S_RAINPLR4X_2('FX23', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_RAINPLR4X_3) = none
-	S_RAINPLR4X_3('FX23', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_RAINPLR4X_4) = none
-	S_RAINPLR4X_4('FX23', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_RAINPLR4X_5) = none
-	S_RAINPLR4X_5('FX23', 5 | FF_FULLBRIGHT, 4.0 / 35.0, none) = none
-	S_RAINAIRXPLR4_1('FX23', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_RAINAIRXPLR4_2) = none
-	S_RAINAIRXPLR4_2('FX23', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_RAINAIRXPLR4_3) = none
-	S_RAINAIRXPLR4_3('FX23', 8 | FF_FULLBRIGHT, 4.0 / 35.0, none) = none
+Spawn:
+	FX23 A -1 Bright
+	Stop
+Death:
+	FX23 B 4 Bright A_RainImpact
+	FX23 CDEF 4 Bright
+	Stop
+AirDeath:
+	FX23 GHI 4 Bright
+	Stop
 }
 
 defaultproperties
 {
-	IdleState = S_RAINPLR4_1;
-	DeathState = S_RAINPLR4X_1;
-	AirDeathState = S_RAINAIRXPLR4_1;
 	DLightColour = RGB(80, 80, 253);
 }

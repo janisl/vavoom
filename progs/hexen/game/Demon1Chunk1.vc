@@ -25,12 +25,16 @@
 
 class Demon1Chunk1 : Fragment;
 
-__states__
+states
 {
-	S_DEMONCHUNK1_1('DEMA', 0, 4.0 / 35.0, S_DEMONCHUNK1_2) = none
-	S_DEMONCHUNK1_2('DEMA', 0, 10.0 / 35.0, S_DEMONCHUNK1_3) = A_QueueCorpse
-	S_DEMONCHUNK1_3('DEMA', 0, 20.0 / 35.0, S_DEMONCHUNK1_3) = none
-	S_DEMONCHUNK1_4('DEMA', 0, -1.0, none) = none
+Spawn:
+	DEMA A 4
+	DEMA A 10 A_QueueCorpse
+	DEMA A 20
+	Wait
+Death:
+	DEMA A -1
+	Stop
 }
 
 defaultproperties
@@ -40,6 +44,4 @@ defaultproperties
 	bCorpse = true;
 	bFloorClip = true;
 	bNoGravity = false;
-	IdleState = S_DEMONCHUNK1_1;
-	DeathState = S_DEMONCHUNK1_4;
 }

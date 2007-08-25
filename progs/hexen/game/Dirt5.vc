@@ -26,16 +26,18 @@
 class Dirt5 : Fragment
 	__scriptid__(48);
 
-__states__
+states
 {
-	S_DIRT5_1('ROCK', 7, 20.0 / 35.0, S_DIRT5_1) = none
-	S_DIRT5_D('ROCK', 7, 10.0 / 35.0, none) = none
+Spawn:
+	ROCK H 20
+	Loop
+Death:
+	ROCK H 10
+	Stop
 }
 
 defaultproperties
 {
 	Gravity = 0.125;
 	bNoGravity = false;
-	IdleState = S_DIRT5_1;
-	DeathState = S_DIRT5_D;
 }

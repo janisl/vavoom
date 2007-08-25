@@ -72,9 +72,11 @@ final void A_MntrFloorFire()
 	mo.CheckMissileSpawn();
 }
 
-__states__
+states
 {
-	S_MNTRFX2_1('FX13', 0, 2.0 / 35.0, S_MNTRFX2_1) = A_MntrFloorFire
+Spawn:
+	FX13 A 2 A_MntrFloorFire
+	Loop
 }
 
 defaultproperties
@@ -84,8 +86,6 @@ defaultproperties
 	Speed = 490.0;
 	MissileDamage = 4;
 	DamageType = 'Fire';
-	IdleState = S_MNTRFX2_1;
-	DeathState = S_MNTRFXI2_1;
 	DeathSound = 'minotaur/fx2hit';
 	DLightRadius = 200.0;
 	// The Minotaur floor fire can step up any amount

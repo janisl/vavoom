@@ -25,11 +25,14 @@
 
 class PodGoo : Actor;
 
-__states__
+states
 {
-	S_PODGOO1('PPOD', 6, 8.0 / 35.0, S_PODGOO2) = none
-	S_PODGOO2('PPOD', 7, 8.0 / 35.0, S_PODGOO1) = none
-	S_PODGOOX('PPOD', 6, 10.0 / 35.0, none) = none
+Spawn:
+	PPOD GH 8
+	Loop
+Death:
+	PPOD G 10
+	Stop
 }
 
 defaultproperties
@@ -43,6 +46,4 @@ defaultproperties
 	bNoTeleport = true;
 	bActivatePCross = true;
 	bCannotPush = true;
-	IdleState = S_PODGOO1;
-	DeathState = S_PODGOOX;
 }

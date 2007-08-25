@@ -23,18 +23,19 @@
 //**
 //**************************************************************************
 
-class FireDemonSplotch1:Carcas;
+class FireDemonSplotch1 : Carcas;
 
-__states__
+states
 {
-	S_FIRED_CORPSE1('FDMN', 15, 3.0 / 35.0, S_FIRED_CORPSE2) = none
-	S_FIRED_CORPSE2('FDMN', 15, 6.0 / 35.0, S_FIRED_CORPSE3) = A_QueueCorpse
-	S_FIRED_CORPSE3('FDMN', 24, -1.0, none) = none
+Spawn:
+	FDMN P 3
+	FDMN P 6 A_QueueCorpse
+	FDMN Y -1
+	Stop
 }
 
 defaultproperties
 {
 	Radius = 3.0;
 	Height = 16.0;
-	IdleState = S_FIRED_CORPSE1;
 }

@@ -25,8 +25,6 @@
 
 class HeadFX3 : Projectile;
 
-state GrownState;
-
 //==========================================================================
 //
 //  OnMapSpawn
@@ -52,22 +50,21 @@ final void A_HeadFireGrow()
 	Origin.z += 9.0;
 	if (Health == 0)
 	{
-		SetState(GrownState);
+		SetState(FindState('Grown'));
 	}
 }
 
-__states__
+states
 {
-	S_HEADFX3_1('FX06', 0, 4.0 / 35.0, S_HEADFX3_2) = A_HeadFireGrow
-	S_HEADFX3_2('FX06', 1, 4.0 / 35.0, S_HEADFX3_3) = A_HeadFireGrow
-	S_HEADFX3_3('FX06', 2, 4.0 / 35.0, S_HEADFX3_1) = A_HeadFireGrow
-	S_HEADFX3_4('FX06', 0, 5.0 / 35.0, S_HEADFX3_5) = none
-	S_HEADFX3_5('FX06', 1, 5.0 / 35.0, S_HEADFX3_6) = none
-	S_HEADFX3_6('FX06', 2, 5.0 / 35.0, S_HEADFX3_4) = none
-	S_HEADFXI3_1('FX06', 3, 5.0 / 35.0, S_HEADFXI3_2) = none
-	S_HEADFXI3_2('FX06', 4, 5.0 / 35.0, S_HEADFXI3_3) = none
-	S_HEADFXI3_3('FX06', 5, 5.0 / 35.0, S_HEADFXI3_4) = none
-	S_HEADFXI3_4('FX06', 6, 5.0 / 35.0, none) = none
+Spawn:
+	FX06 ABC 4 A_HeadFireGrow
+	Loop
+Grown:
+	FX06 ABC 5
+	Loop
+Death:
+	FX06 DEFG 5
+	Stop
 }
 
 defaultproperties
@@ -77,9 +74,6 @@ defaultproperties
 	Speed = 350.0;
 	MissileDamage = 5;
 	bWindThrust = true;
-	IdleState = S_HEADFX3_1;
-	GrownState = S_HEADFX3_4;
-	DeathState = S_HEADFXI3_1;
 	DLightColour = RGB(255, 95, 0);
 	DLightRadius = 200.0;
 }

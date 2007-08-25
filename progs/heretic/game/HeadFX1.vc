@@ -64,15 +64,15 @@ final void A_HeadIceImpact()
 	}
 }
 
-__states__
+states
 {
-	S_HEADFX1_1('FX05', 0, 6.0 / 35.0, S_HEADFX1_2) = none
-	S_HEADFX1_2('FX05', 1, 6.0 / 35.0, S_HEADFX1_3) = none
-	S_HEADFX1_3('FX05', 2, 6.0 / 35.0, S_HEADFX1_1) = none
-	S_HEADFXI1_1('FX05', 3, 5.0 / 35.0, S_HEADFXI1_2) = A_HeadIceImpact
-	S_HEADFXI1_2('FX05', 4, 5.0 / 35.0, S_HEADFXI1_3) = none
-	S_HEADFXI1_3('FX05', 5, 5.0 / 35.0, S_HEADFXI1_4) = none
-	S_HEADFXI1_4('FX05', 6, 5.0 / 35.0, none) = none
+Spawn:
+	FX05 ABC 6
+	Loop
+Death:
+	FX05 D 5 A_HeadIceImpact
+	FX05 EFG 5
+	Stop
 }
 
 defaultproperties
@@ -82,8 +82,6 @@ defaultproperties
 	Speed = 455.0;
 	MissileDamage = 1;
 	bThruGhost = true;
-	IdleState = S_HEADFX1_1;
-	DeathState = S_HEADFXI1_1;
 	DLightColour = RGB(6, 9, 159);
 	DLightRadius = 200.0;
 }

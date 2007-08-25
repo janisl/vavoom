@@ -84,15 +84,16 @@ final void A_SpawnMace()
 	M.DoRespawn();
 }
 
-__states__
+states
 {
-	S0('TNT1', 0, 0.03, S1) = none
-	S1('TNT1', 0, -1.0, none) = A_SpawnMace
+Spawn:
+	TNT1 A 1
+	TNT1 A -1 A_SpawnMace
+	Stop
 }
 
 defaultproperties
 {
 	bHidden = true;
 	bNoBlockmap = true;
-	IdleState = S0;
 }

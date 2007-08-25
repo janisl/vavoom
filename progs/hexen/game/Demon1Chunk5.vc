@@ -25,16 +25,18 @@
 
 class Demon1Chunk5 : Demon1Chunk1;
 
-__states__
+states
 {
-	S_DEMONCHUNK5_1('DEME', 0, 4.0 / 35.0, S_DEMONCHUNK5_2) = none
-	S_DEMONCHUNK5_2('DEME', 0, 10.0 / 35.0, S_DEMONCHUNK5_3) = A_QueueCorpse
-	S_DEMONCHUNK5_3('DEME', 0, 20.0 / 35.0, S_DEMONCHUNK5_3) = none
-	S_DEMONCHUNK5_4('DEME', 0, -1.0, none) = none
+Spawn:
+	DEME A 4
+	DEME A 10 A_QueueCorpse
+	DEME A 20
+	Wait
+Death:
+	DEME A -1
+	Stop
 }
 
 defaultproperties
 {
-	IdleState = S_DEMONCHUNK5_1;
-	DeathState = S_DEMONCHUNK5_4;
 }

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Pod : Decoration
+class Pod : Actor
 	__mobjinfo__(2035)
 	__scriptid__(125);
 
@@ -88,22 +88,23 @@ final void A_RemovePod()
 	}
 }
 
-__states__
+states
 {
-	S_POD_WAIT1('PPOD', 0, 10.0 / 35.0, S_POD_WAIT1) = none
-	S_POD_PAIN1('PPOD', 1, 14.0 / 35.0, S_POD_WAIT1) = A_PodPain
-	S_POD_DIE1('PPOD', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_POD_DIE2) = A_RemovePod
-	S_POD_DIE2('PPOD', 3 | FF_FULLBRIGHT, 5.0 / 35.0, S_POD_DIE3) = A_Scream
-	S_POD_DIE3('PPOD', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_POD_DIE4) = A_Explode
-	S_POD_DIE4('PPOD', 5 | FF_FULLBRIGHT, 10.0 / 35.0, S_FREETARGMOBJ) = none
-	S_POD_GROW1('PPOD', 8, 3.0 / 35.0, S_POD_GROW2) = none
-	S_POD_GROW2('PPOD', 9, 3.0 / 35.0, S_POD_GROW3) = none
-	S_POD_GROW3('PPOD', 10, 3.0 / 35.0, S_POD_GROW4) = none
-	S_POD_GROW4('PPOD', 11, 3.0 / 35.0, S_POD_GROW5) = none
-	S_POD_GROW5('PPOD', 12, 3.0 / 35.0, S_POD_GROW6) = none
-	S_POD_GROW6('PPOD', 13, 3.0 / 35.0, S_POD_GROW7) = none
-	S_POD_GROW7('PPOD', 14, 3.0 / 35.0, S_POD_GROW8) = none
-	S_POD_GROW8('PPOD', 15, 3.0 / 35.0, S_POD_WAIT1) = none
+Spawn:
+	PPOD A 10
+	Loop
+Pain:
+	PPOD B 14 A_PodPain
+	Goto Spawn
+Death:
+	PPOD C 5 Bright A_RemovePod
+	PPOD D 5 Bright A_Scream
+	PPOD E 5 Bright A_Explode
+	PPOD F 10 Bright
+	Goto Super::FreeTargMobj
+Grow:
+	PPOD IJKLMNOP 3
+	Goto Spawn
 }
 
 defaultproperties
@@ -120,14 +121,10 @@ defaultproperties
 	bPushable = true;
 	bSlide = true;
 	bTelestomp = true;
-	bNoPassMobj = false;
 	bNoMorph = true;
 	bOnmobjCopyVel = true;
 	bCantAutoAim = true;
 	bNoBlockMonst = true;
-	IdleState = S_POD_WAIT1;
-	PainState = S_POD_PAIN1;
-	DeathState = S_POD_DIE1;
 	DeathSound = 'world/podexplode';
 	ExplodeEffect = RGB(103, 223, 95);
 }

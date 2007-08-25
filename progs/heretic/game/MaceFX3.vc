@@ -59,15 +59,15 @@ final void A_MaceBallImpact()
 	}
 }
 
-__states__
+states
 {
-	S_MACEFX3_1('FX02', 0, 4.0 / 35.0, S_MACEFX3_2) = none
-	S_MACEFX3_2('FX02', 1, 4.0 / 35.0, S_MACEFX3_1) = none
-	S_MACEFXI1_1('FX02', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_MACEFXI1_2) = A_MaceBallImpact
-	S_MACEFXI1_2('FX02', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_MACEFXI1_3) = none
-	S_MACEFXI1_3('FX02', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_MACEFXI1_4) = none
-	S_MACEFXI1_4('FX02', 8 | FF_FULLBRIGHT, 4.0 / 35.0, S_MACEFXI1_5) = none
-	S_MACEFXI1_5('FX02', 9 | FF_FULLBRIGHT, 4.0 / 35.0, none) = none
+Spawn:
+	FX02 AB 4
+	Loop
+Death:
+	FX02 F 4 Bright A_MaceBallImpact
+	FX02 GHIJ 4 Bright
+	Stop
 }
 
 defaultproperties
@@ -82,6 +82,4 @@ defaultproperties
 	bNoGravity = false;
 	bActivateImpact = true;
 	bDynamicLight = false;
-	IdleState = S_MACEFX3_1;
-	DeathState = S_MACEFXI1_1;
 }

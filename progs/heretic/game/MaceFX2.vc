@@ -82,11 +82,14 @@ final void A_MaceBallImpact2()
 	}
 }
 
-__states__
+states
 {
-	S_MACEFX2_1('FX02', 2, 4.0 / 35.0, S_MACEFX2_2) = none
-	S_MACEFX2_2('FX02', 3, 4.0 / 35.0, S_MACEFX2_1) = none
-	S_MACEFXI2_1('FX02', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_MACEFXI1_2) = A_MaceBallImpact2
+Spawn:
+	FX02 CD 4
+	Loop
+Death:
+	FX02 E 4 Bright A_MaceBallImpact2
+	Goto Super::Death+1
 }
 
 defaultproperties
@@ -94,6 +97,4 @@ defaultproperties
 	Speed = 350.0;
 	MissileDamage = 6;
 	bDynamicLight = false;
-	IdleState = S_MACEFX2_1;
-	DeathState = S_MACEFXI2_1;
 }

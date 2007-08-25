@@ -23,18 +23,21 @@
 //**
 //**************************************************************************
 
-class FireDemonRock5:FireDemonRock1;
+class FireDemonRock5 : FireDemonRock1;
 
-__states__
+states
 {
-	S_FIRED_RDROP5('FDMN', 22, 4.0 / 35.0, S_FIRED_RDROP5) = none
-	S_FIRED_RDEAD5_1('FDMN', 22, 5.0 / 35.0, S_FIRED_RDEAD5_2) = A_SmBounce
-	S_FIRED_RDEAD5_2('FDMN', 22, 200.0 / 35.0, none) = none
+Spawn:
+	FDMN W 4
+	Loop
+Death:
+	FDMN W 5 A_SmBounce
+	//Fall through
+XDeath:
+	FDMN W 200
+	Stop
 }
 
 defaultproperties
 {
-	IdleState = S_FIRED_RDROP5;
-	DeathState = S_FIRED_RDEAD5_1;
-	GibsDeathState = S_FIRED_RDEAD5_2;
 }

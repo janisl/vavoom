@@ -25,28 +25,21 @@
 
 class BlasterPuff : Effect;
 
-__states__
+states
 {
-	S_BLASTERPUFF1_1('FX17', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_BLASTERPUFF1_2) = none
-	S_BLASTERPUFF1_2('FX17', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_BLASTERPUFF1_3) = none
-	S_BLASTERPUFF1_3('FX17', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_BLASTERPUFF1_4) = none
-	S_BLASTERPUFF1_4('FX17', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_BLASTERPUFF1_5) = none
-	S_BLASTERPUFF1_5('FX17', 4 | FF_FULLBRIGHT, 4.0 / 35.0, none) = none
+Crash:
+	FX17 ABCDE 4 Bright
+	Stop
 
-	S_BLASTERPUFF2_1('FX17', 5 | FF_FULLBRIGHT, 3.0 / 35.0, S_BLASTERPUFF2_2) = none
-	S_BLASTERPUFF2_2('FX17', 6 | FF_FULLBRIGHT, 3.0 / 35.0, S_BLASTERPUFF2_3) = none
-	S_BLASTERPUFF2_3('FX17', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_BLASTERPUFF2_4) = none
-	S_BLASTERPUFF2_4('FX17', 8 | FF_FULLBRIGHT, 4.0 / 35.0, S_BLASTERPUFF2_5) = none
-	S_BLASTERPUFF2_5('FX17', 9 | FF_FULLBRIGHT, 4.0 / 35.0, S_BLASTERPUFF2_6) = none
-	S_BLASTERPUFF2_6('FX17', 10 | FF_FULLBRIGHT, 4.0 / 35.0, S_BLASTERPUFF2_7) = none
-	S_BLASTERPUFF2_7('FX17', 11 | FF_FULLBRIGHT, 4.0 / 35.0, none) = none
+Spawn:
+	FX17 FG 3 Bright
+	FX17 HIJKL 4 Bright
+	Stop
 }
 
 defaultproperties
 {
 	ExplodeEffect = RGBA(80, 164, 252, 255);
 	bPuffOnActors = true;
-	IdleState = S_BLASTERPUFF2_1;
-	CrashState = S_BLASTERPUFF1_1;
 	SightSound = 'weapons/blastershoot';
 }

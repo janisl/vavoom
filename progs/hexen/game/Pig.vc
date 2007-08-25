@@ -83,7 +83,7 @@ int UpdateMorphedMonster(int tics)
 	}
 	LinkToWorld();
 	RemoveFromTIDList();
-	SetState(S_FREETARGMOBJ);
+	SetState(FindState('FreeTargMobj'));
 	mo.Angles.yaw = oldAngle;
 	mo.Target = oldTarget;
 	mo.TID = oldTID;

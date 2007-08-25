@@ -25,23 +25,21 @@
 
 class RainPlayer2 : RainPillar;
 
-__states__
+states
 {
-	S_RAINPLR2_1('FX21', 0 | FF_FULLBRIGHT, -1.0, none) = none
-	S_RAINPLR2X_1('FX21', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_RAINPLR2X_2) = A_RainImpact
-	S_RAINPLR2X_2('FX21', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_RAINPLR2X_3) = none
-	S_RAINPLR2X_3('FX21', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_RAINPLR2X_4) = none
-	S_RAINPLR2X_4('FX21', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_RAINPLR2X_5) = none
-	S_RAINPLR2X_5('FX21', 5 | FF_FULLBRIGHT, 4.0 / 35.0, none) = none
-	S_RAINAIRXPLR2_1('FX21', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_RAINAIRXPLR2_2) = none
-	S_RAINAIRXPLR2_2('FX21', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_RAINAIRXPLR2_3) = none
-	S_RAINAIRXPLR2_3('FX21', 8 | FF_FULLBRIGHT, 4.0 / 35.0, none) = none
+Spawn:
+	FX21 A -1 Bright
+	Stop
+Death:
+	FX21 B 4 Bright A_RainImpact
+	FX21 CDEF 4 Bright
+	Stop
+AirDeath:
+	FX21 GHI 4 Bright
+	Stop
 }
 
 defaultproperties
 {
-	IdleState = S_RAINPLR2_1;
-	DeathState = S_RAINPLR2X_1;
-	AirDeathState = S_RAINAIRXPLR2_1;
 	DLightColour = RGB(236, 164, 3);
 }

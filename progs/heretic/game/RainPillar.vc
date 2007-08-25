@@ -25,8 +25,6 @@
 
 class RainPillar : Projectile;
 
-state AirDeathState;
-
 //==========================================================================
 //
 //  DoSpecialDamage
@@ -53,7 +51,7 @@ final void A_RainImpact()
 {
 	if (Origin.z > FloorZ)
 	{
-		SetState(AirDeathState);
+		SetState(FindState('AirDeath'));
 	}
 	else if (P_Random() < 40)
 	{
@@ -61,17 +59,18 @@ final void A_RainImpact()
 	}
 }
 
-__states__
+states
 {
-	S_RAINPLR1_1('FX20', 0 | FF_FULLBRIGHT, -1.0, none) = none
-	S_RAINPLR1X_1('FX20', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_RAINPLR1X_2) = A_RainImpact
-	S_RAINPLR1X_2('FX20', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_RAINPLR1X_3) = none
-	S_RAINPLR1X_3('FX20', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_RAINPLR1X_4) = none
-	S_RAINPLR1X_4('FX20', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_RAINPLR1X_5) = none
-	S_RAINPLR1X_5('FX20', 5 | FF_FULLBRIGHT, 4.0 / 35.0, none) = none
-	S_RAINAIRXPLR1_1('FX20', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_RAINAIRXPLR1_2) = none
-	S_RAINAIRXPLR1_2('FX20', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_RAINAIRXPLR1_3) = none
-	S_RAINAIRXPLR1_3('FX20', 8 | FF_FULLBRIGHT, 4.0 / 35.0, none) = none
+Spawn:
+	FX20 A -1 Bright
+	Stop
+Death:
+	FX20 B 4 Bright A_RainImpact
+	FX20 CDEF 4 Bright
+	Stop
+AirDeath:
+	FX20 GHI 4 Bright
+	Stop
 }
 
 defaultproperties
@@ -80,9 +79,6 @@ defaultproperties
 	Height = 12.0;
 	Speed = 420.0;
 	MissileDamage = 5;
-	IdleState = S_RAINPLR1_1;
-	DeathState = S_RAINPLR1X_1;
-	AirDeathState = S_RAINAIRXPLR1_1;
 	DLightColour = RGB(95, 207, 87);
 	DLightRadius = 100.0;
 }

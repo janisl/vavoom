@@ -54,10 +54,11 @@ final void A_MacePL1Check()
 	Velocity.z -= Velocity.z / 2.0;
 }
 
-__states__
+states
 {
-	S_MACEFX1_1('FX02', 0, 4.0 / 35.0, S_MACEFX1_2) = A_MacePL1Check
-	S_MACEFX1_2('FX02', 1, 4.0 / 35.0, S_MACEFX1_1) = A_MacePL1Check
+Spawn:
+	FX02 AB 4 A_MacePL1Check
+	Loop
 }
 
 defaultproperties
@@ -65,7 +66,5 @@ defaultproperties
 	Speed = 700.0;
 	MissileDamage = 2;
 	bNoGravity = true;
-	IdleState = S_MACEFX1_1;
-	DeathState = S_MACEFXI1_1;
 	SightSound = 'weapons/maceshoot';
 }

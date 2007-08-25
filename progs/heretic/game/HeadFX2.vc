@@ -25,15 +25,14 @@
 
 class HeadFX2 : Projectile;
 
-__states__
+states
 {
-	S_HEADFX2_1('FX05', 7, 6.0 / 35.0, S_HEADFX2_2) = none
-	S_HEADFX2_2('FX05', 8, 6.0 / 35.0, S_HEADFX2_3) = none
-	S_HEADFX2_3('FX05', 9, 6.0 / 35.0, S_HEADFX2_1) = none
-	S_HEADFXI2_1('FX05', 3, 5.0 / 35.0, S_HEADFXI2_2) = none
-	S_HEADFXI2_2('FX05', 4, 5.0 / 35.0, S_HEADFXI2_3) = none
-	S_HEADFXI2_3('FX05', 5, 5.0 / 35.0, S_HEADFXI2_4) = none
-	S_HEADFXI2_4('FX05', 6, 5.0 / 35.0, none) = none
+Spawn:
+	FX05 HIJ 6
+	Loop
+Death:
+	FX05 DEFG 5
+	Stop
 }
 
 defaultproperties
@@ -42,8 +41,6 @@ defaultproperties
 	Height = 6.0;
 	Speed = 280.0;
 	MissileDamage = 3;
-	IdleState = S_HEADFX2_1;
-	DeathState = S_HEADFXI2_1;
 	DLightColour = RGB(6, 9, 159);
 	DLightRadius = 100.0;
 }

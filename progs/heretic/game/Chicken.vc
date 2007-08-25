@@ -72,7 +72,7 @@ bool UpdateChicken(int tics)
 	}
 	LinkToWorld();
 	RemoveFromTIDList();
-	SetState(S_FREETARGMOBJ);
+	SetState(FindState('FreeTargMobj'));
 	A.Angles.yaw = oldAngle;
 	A.Target = oldTarget;
 	A.TID = oldTID;

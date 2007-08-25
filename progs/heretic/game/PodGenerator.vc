@@ -55,7 +55,7 @@ final void A_MakePod()
 		A.Destroy();
 		return;
 	}
-	A.SetState(Pod::S_POD_GROW1);
+	A.SetState(A.FindState('Grow'));
 	A.Thrust(Random() * 360.0, 4.5);
 	A.PlaySound('world/podgrow', CHAN_VOICE);
 	Special1++;	// Increment generated pod count

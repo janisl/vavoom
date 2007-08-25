@@ -83,7 +83,7 @@ final void A_HeadAttack()
 		baseFire = SpawnMissile(Target, HeadFX3);
 		if (baseFire != none)
 		{
-			baseFire.SetState(HeadFX3::S_HEADFX3_4);	// Don't grow
+			baseFire.SetState(baseFire.FindState('Grown'));	// Don't grow
 			for (i = 0; i < 5; i++)
 			{
 				fire = Spawn(HeadFX3, baseFire.Origin);

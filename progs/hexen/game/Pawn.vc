@@ -152,7 +152,7 @@ final void A_FreezeDeathChunks()
 		A.Angles.pitch = 0.0;
 	}
 	RemoveFromTIDList();
-	SetState(S_FREETARGMOBJ);
+	SetState(FindState('FreeTargMobj'));
 	bHidden = true;
 }
 

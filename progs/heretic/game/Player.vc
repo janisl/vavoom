@@ -860,7 +860,7 @@ bool UndoPlayerChicken()
 		20.0 * cos(MO.Angles.yaw), 20.0 * sin(MO.Angles.yaw), Actor::TELEFOGHEIGHT));
 	fog.PlaySound('misc/teleport', CHAN_VOICE);
 
-	MO.SetState(Actor::S_FREETARGMOBJ);
+	MO.SetState(MO.FindState('FreeTargMobj'));
 	MO = A;
 
 	return true;

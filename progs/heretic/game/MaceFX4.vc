@@ -137,10 +137,14 @@ final void A_DeathBallImpact()
 	}
 }
 
-__states__
+states
 {
-	S_MACEFX4_1('FX02', 4, 99.0 / 35.0, S_MACEFX4_1) = none
-	S_MACEFXI4_1('FX02', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_MACEFXI1_2) = A_DeathBallImpact
+Spawn:
+	FX02 E 99
+	Loop
+Death:
+	FX02 C 4 Bright A_DeathBallImpact
+	Goto Super::Death+1
 }
 
 defaultproperties
@@ -148,6 +152,4 @@ defaultproperties
 	MissileDamage = 18;
 	bTelestomp = true;
 	bNoTeleport = false;
-	IdleState = S_MACEFX4_1;
-	DeathState = S_MACEFXI4_1;
 }

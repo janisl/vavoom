@@ -25,13 +25,12 @@
 
 class Puffy : Projectile;
 
-__states__
+states
 {
-	S_PUFFY1('FRB1', 3, 4.0 / 35.0, S_PUFFY2) = none
-	S_PUFFY2('FRB1', 4, 4.0 / 35.0, S_PUFFY3) = none
-	S_PUFFY3('FRB1', 5, 4.0 / 35.0, S_PUFFY4) = none
-	S_PUFFY4('FRB1', 6, 4.0 / 35.0, S_PUFFY5) = none
-	S_PUFFY5('FRB1', 7, 4.0 / 35.0, none) = none
+Spawn:
+Death:
+	FRB1 DEFGH 4
+	Stop
 }
 
 defaultproperties
@@ -41,6 +40,4 @@ defaultproperties
 	Speed = 350.0;
 	MissileDamage = 2;
 	bDropOff = false;
-	IdleState = S_PUFFY1;
-	DeathState = S_PUFFY1;
 }

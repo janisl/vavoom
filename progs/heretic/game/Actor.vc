@@ -214,7 +214,7 @@ bool ChickenMorphPlayer()
 	Player(Player).ChickenTime = Player::CHICKENTIME;
 	Player(Player).ActivateBeak();
 
-	SetState(S_FREETARGMOBJ);
+	SetState(FindState('FreeTargMobj'));
 
 	return true;
 }
@@ -259,7 +259,7 @@ bool ChickenMorph()
 
 	RemoveFromTIDList();
 
-	SetState(S_FREETARGMOBJ);
+	SetState(FindState('FreeTargMobj'));
 
 	return true;
 }
@@ -427,9 +427,11 @@ final void A_Feathers()
 	}
 }
 
-__states__
+states
 {
-	S_FREETARGMOBJ('ACLO', 4, 30.0, none) = A_FreeTargMobj
+FreeTargMobj:
+	ACLO E 1050 A_FreeTargMobj
+	Stop
 }
 
 defaultproperties

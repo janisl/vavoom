@@ -1052,7 +1052,7 @@ bool UndoPlayerMorph()
 		20.0 * sin(MO.Angles.yaw), Actor::TELEFOGHEIGHT));
 	fog.PlaySound('Teleport', CHAN_VOICE);
 
-	MO.SetState(Actor::S_FREETARGMOBJ);
+	MO.SetState(MO.FindState('FreeTargMobj'));
 	MO = A;
 	return true;
 }
