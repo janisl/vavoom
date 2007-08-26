@@ -2076,15 +2076,15 @@ bool VState::IsInSequence(VState* Start)
 //
 //==========================================================================
 
-VState* VState::GetPlus(int Offset)
+VState* VState::GetPlus(int Offset, bool IgnoreJump)
 {
 	guard(VState::GetPlus);
 	check(Offset >= 0);
 	VState* S = this;
 	int Count = Offset;
-	while (Count--)
+	while (S && Count--)
 	{
-		if (S->Next != S->NextState)
+		if (!IgnoreJump && S->Next != S->NextState)
 		{
 			return NULL;
 		}

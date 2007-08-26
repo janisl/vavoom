@@ -1095,9 +1095,10 @@ IMPLEMENT_FUNCTION(VObject, GetLockDef)
 
 IMPLEMENT_FUNCTION(VObject, GetStatePlus)
 {
+	P_GET_BOOL_OPT(IgnoreJump, false);
 	P_GET_INT(Offset);
 	P_GET_PTR(VState, State);
-	RET_PTR(State->GetPlus(Offset));
+	RET_PTR(State->GetPlus(Offset, IgnoreJump));
 }
 
 IMPLEMENT_FUNCTION(VObject, FindClassState)
