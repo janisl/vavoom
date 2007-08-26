@@ -52,14 +52,7 @@ final void A_PotteryExplode()
 	for (i = (P_Random() & 3) + 3; i; i--)
 	{
 		A = Spawn(PotteryBit, Origin);
-		switch (P_Random() % 5)
-		{
-		case 0: A.SetState(PotteryBit::S_POTTERYBIT_1); break;
-		case 1: A.SetState(PotteryBit::S_POTTERYBIT_2); break;
-		case 2: A.SetState(PotteryBit::S_POTTERYBIT_3); break;
-		case 3: A.SetState(PotteryBit::S_POTTERYBIT_4); break;
-		case 4: A.SetState(PotteryBit::S_POTTERYBIT_5); break;
-		}
+		A.SetState(GetStatePlus(A.IdleState, P_Random() % 5, true));
 		if (A)
 		{
 			A.Velocity.x = (Random() - Random()) * 4.0 * 35.0;

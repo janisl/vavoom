@@ -38,14 +38,20 @@ void GetExplodeParms(out int damage, out float distance, out byte damageSelf)
 	distance = 64.0;
 }
 
-__states__
+states
 {
-	S_ZSHRUB2('SHB2', 0, -1.0, none) = none
-	S_ZSHRUB2_DIE('SHB2', 0, 1.0 / 35.0, S_ZSHRUB2) = A_TreeDeath
-	S_ZSHRUB2_X1('SHB2', 1 | FF_FULLBRIGHT, 7.0 / 35.0, S_ZSHRUB2_X2) = none
-	S_ZSHRUB2_X2('SHB2', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_ZSHRUB2_X3) = A_Scream
-	S_ZSHRUB2_X3('SHB2', 3 | FF_FULLBRIGHT, 5.0 / 35.0, S_ZSHRUB2_X4) = A_Explode
-	S_ZSHRUB2_X4('SHB2', 4 | FF_FULLBRIGHT, 5.0 / 35.0, none) = none
+Spawn:
+	SHB2 A -1
+	Stop
+Death:
+	SHB2 A 1 A_TreeDeath
+	Goto Spawn
+Melee:
+	SHB2 B 7 Bright
+	SHB2 C 6 Bright A_Scream
+	SHB2 D 5 Bright A_Explode
+	SHB2 E 5 Bright
+	Stop
 }
 
 defaultproperties
@@ -53,8 +59,5 @@ defaultproperties
 	Health = 10;
 	Radius = 16.0;
 	Height = 40.0;
-	IdleState = S_ZSHRUB2;
-	MeleeState = S_ZSHRUB2_X1;
-	DeathState = S_ZSHRUB2_DIE;
 	DeathSound = 'TreeExplode';
 }

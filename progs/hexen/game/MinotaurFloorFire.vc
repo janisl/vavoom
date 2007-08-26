@@ -23,16 +23,15 @@
 //**
 //**************************************************************************
 
-class MinotaurFloorFire:Projectile
+class MinotaurFloorFire : Projectile
 	abstract;
 
-__states__
+states
 {
-	S_MNTRFXI2_1('FX13', 8 | FF_FULLBRIGHT, 4.0 / 35.0, S_MNTRFXI2_2) = A_Explode
-	S_MNTRFXI2_2('FX13', 9 | FF_FULLBRIGHT, 4.0 / 35.0, S_MNTRFXI2_3) = none
-	S_MNTRFXI2_3('FX13', 10 | FF_FULLBRIGHT, 4.0 / 35.0, S_MNTRFXI2_4) = none
-	S_MNTRFXI2_4('FX13', 11 | FF_FULLBRIGHT, 4.0 / 35.0, S_MNTRFXI2_5) = none
-	S_MNTRFXI2_5('FX13', 12 | FF_FULLBRIGHT, 4.0 / 35.0, none) = none
+Death:
+	FX13 I 4 Bright A_Explode
+	FX13 JKLM 4 Bright
+	Stop
 }
 
 defaultproperties
@@ -41,7 +40,6 @@ defaultproperties
 	DamageType = 'Fire';
 	bActivateImpact = false;
 	bActivatePCross = false;
-	DeathState = S_MNTRFXI2_1;
 	DLightColour = RGB(255, 128, 0);
 	DLightRadius = 200.0;
 }

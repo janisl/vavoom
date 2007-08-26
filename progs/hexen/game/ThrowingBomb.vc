@@ -25,9 +25,6 @@
 
 class ThrowingBomb : Projectile;
 
-state LastThrowState;
-state LandedState;
-
 //===========================================================================
 //
 //  A_CheckThrowBomb
@@ -38,9 +35,9 @@ final void A_CheckThrowBomb()
 {
 	if (fabs(Velocity.x) < 1.5 * 35.0 &&
 		fabs(Velocity.y) < 1.5 * 35.0 &&
-		Velocity.z < 2.0 * 35.0 && State == LastThrowState)
+		Velocity.z < 2.0 * 35.0 && State == GetStatePlus(IdleState, 5))
 	{
-		SetState(LandedState);
+		SetState(FindState('Landed'));
 		Origin.z = FloorZ;
 		Velocity.z = 0.0;
 		BounceType = BOUNCE_None;
@@ -48,32 +45,34 @@ final void A_CheckThrowBomb()
 	}
 	if (!--Health)
 	{
-		SetState(DeathState);
+		SetState(FindState('Death'));
 	}
 }
 
-__states__
+states
 {
-	S_THROWINGBOMB1('THRW', 0, 4.0 / 35.0, S_THROWINGBOMB2) = A_CheckThrowBomb
-	S_THROWINGBOMB2('THRW', 1, 3.0 / 35.0, S_THROWINGBOMB3) = A_CheckThrowBomb
-	S_THROWINGBOMB3('THRW', 2, 3.0 / 35.0, S_THROWINGBOMB4) = A_CheckThrowBomb
-	S_THROWINGBOMB4('THRW', 3, 3.0 / 35.0, S_THROWINGBOMB5) = A_CheckThrowBomb
-	S_THROWINGBOMB5('THRW', 4, 3.0 / 35.0, S_THROWINGBOMB6) = A_CheckThrowBomb
-	S_THROWINGBOMB6('THRW', 5, 3.0 / 35.0, S_THROWINGBOMB1) = A_CheckThrowBomb
-	S_THROWINGBOMB7('THRW', 6, 6.0 / 35.0, S_THROWINGBOMB8) = A_CheckThrowBomb
-	S_THROWINGBOMB8('THRW', 5, 4.0 / 35.0, S_THROWINGBOMB9) = A_CheckThrowBomb
-	S_THROWINGBOMB9('THRW', 7, 6.0 / 35.0, S_THROWINGBOMB10) = A_CheckThrowBomb
-	S_THROWINGBOMB10('THRW', 5, 4.0 / 35.0, S_THROWINGBOMB11) = A_CheckThrowBomb
-	S_THROWINGBOMB11('THRW', 6, 6.0 / 35.0, S_THROWINGBOMB12) = A_CheckThrowBomb
-	S_THROWINGBOMB12('THRW', 5, 3.0 / 35.0, S_THROWINGBOMB12) = A_CheckThrowBomb
-	S_THROWINGBOMB_X1('CFCF', 16 | FF_FULLBRIGHT, 4.0 / 35.0, S_THROWINGBOMB_X2) = A_NoGravity
-	S_THROWINGBOMB_X2('CFCF', 17 | FF_FULLBRIGHT, 3.0 / 35.0, S_THROWINGBOMB_X3) = A_Scream
-	S_THROWINGBOMB_X3('CFCF', 18 | FF_FULLBRIGHT, 4.0 / 35.0, S_THROWINGBOMB_X4) = A_Explode
-	S_THROWINGBOMB_X4('CFCF', 19 | FF_FULLBRIGHT, 3.0 / 35.0, S_THROWINGBOMB_X5) = none
-	S_THROWINGBOMB_X5('CFCF', 20 | FF_FULLBRIGHT, 4.0 / 35.0, S_THROWINGBOMB_X6) = none
-	S_THROWINGBOMB_X6('CFCF', 22 | FF_FULLBRIGHT, 3.0 / 35.0, S_THROWINGBOMB_X7) = none
-	S_THROWINGBOMB_X7('CFCF', 23 | FF_FULLBRIGHT, 4.0 / 35.0, S_THROWINGBOMB_X8) = none
-	S_THROWINGBOMB_X8('CFCF', 25 | FF_FULLBRIGHT, 3.0 / 35.0, none) = none
+Spawn:
+	THRW A 4 A_CheckThrowBomb
+	THRW BCDEF 3 A_CheckThrowBomb
+	Loop
+Landed:
+	THRW G 6 A_CheckThrowBomb
+	THRW F 4 A_CheckThrowBomb
+	THRW H 6 A_CheckThrowBomb
+	THRW F 4 A_CheckThrowBomb
+	THRW G 6 A_CheckThrowBomb
+	THRW F 3 A_CheckThrowBomb
+	Wait
+Death:
+	CFCF Q 4 Bright A_NoGravity
+	CFCF R 3 Bright A_Scream
+	CFCF S 4 Bright A_Explode
+	CFCF T 3 Bright
+	CFCF U 4 Bright
+	CFCF W 3 Bright
+	CFCF X 4 Bright
+	CFCF Z 3 Bright
+	Stop
 }
 
 defaultproperties
@@ -90,10 +89,6 @@ defaultproperties
 	bActivatePCross = false;
 	bDynamicLight = false;
 	ExplodeEffect = RGB(255, 128, 0);
-	IdleState = S_THROWINGBOMB1;
-	LastThrowState = S_THROWINGBOMB6;
-	LandedState = S_THROWINGBOMB7;
-	DeathState = S_THROWINGBOMB_X1;
 	SightSound = 'FlechetteBounce';
 	DeathSound = 'FlechetteExplode';
 }

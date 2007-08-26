@@ -66,56 +66,44 @@ final void A_BellReset2()
 	Health = 5;
 }
 
-__states__
+states
 {
-	S_ZBELL('BBLL', 5, -1.0, none) = none
-	S_ZBELL_X1('BBLL', 0, 4.0 / 35.0, S_ZBELL_X2) = A_BellReset1
-	S_ZBELL_X2('BBLL', 1, 4.0 / 35.0, S_ZBELL_X3) = none
-	S_ZBELL_X3('BBLL', 2, 4.0 / 35.0, S_ZBELL_X4) = none
-	S_ZBELL_X4('BBLL', 3, 5.0 / 35.0, S_ZBELL_X5) = A_Scream
-	S_ZBELL_X5('BBLL', 2, 4.0 / 35.0, S_ZBELL_X6) = none
-	S_ZBELL_X6('BBLL', 1, 4.0 / 35.0, S_ZBELL_X7) = none
-	S_ZBELL_X7('BBLL', 0, 3.0 / 35.0, S_ZBELL_X8) = none
-	S_ZBELL_X8('BBLL', 4, 4.0 / 35.0, S_ZBELL_X9) = none
-	S_ZBELL_X9('BBLL', 5, 5.0 / 35.0, S_ZBELL_X10) = none
-	S_ZBELL_X10('BBLL', 6, 6.0 / 35.0, S_ZBELL_X11) = A_Scream
-	S_ZBELL_X11('BBLL', 5, 5.0 / 35.0, S_ZBELL_X12) = none
-	S_ZBELL_X12('BBLL', 4, 4.0 / 35.0, S_ZBELL_X13) = none
-	S_ZBELL_X13('BBLL', 0, 4.0 / 35.0, S_ZBELL_X14) = none
-	S_ZBELL_X14('BBLL', 1, 5.0 / 35.0, S_ZBELL_X15) = none
-	S_ZBELL_X15('BBLL', 2, 5.0 / 35.0, S_ZBELL_X16) = none
-	S_ZBELL_X16('BBLL', 3, 6.0 / 35.0, S_ZBELL_X17) = A_Scream
-	S_ZBELL_X17('BBLL', 2, 5.0 / 35.0, S_ZBELL_X18) = none
-	S_ZBELL_X18('BBLL', 1, 5.0 / 35.0, S_ZBELL_X19) = none
-	S_ZBELL_X19('BBLL', 0, 4.0 / 35.0, S_ZBELL_X20) = none
-	S_ZBELL_X20('BBLL', 4, 5.0 / 35.0, S_ZBELL_X21) = none
-	S_ZBELL_X21('BBLL', 5, 5.0 / 35.0, S_ZBELL_X22) = none
-	S_ZBELL_X22('BBLL', 6, 7.0 / 35.0, S_ZBELL_X23) = A_Scream
-	S_ZBELL_X23('BBLL', 5, 5.0 / 35.0, S_ZBELL_X24) = none
-	S_ZBELL_X24('BBLL', 4, 5.0 / 35.0, S_ZBELL_X25) = none
-	S_ZBELL_X25('BBLL', 0, 5.0 / 35.0, S_ZBELL_X26) = none
-	S_ZBELL_X26('BBLL', 1, 6.0 / 35.0, S_ZBELL_X27) = none
-	S_ZBELL_X27('BBLL', 2, 6.0 / 35.0, S_ZBELL_X28) = none
-	S_ZBELL_X28('BBLL', 3, 7.0 / 35.0, S_ZBELL_X29) = A_Scream
-	S_ZBELL_X29('BBLL', 2, 6.0 / 35.0, S_ZBELL_X30) = none
-	S_ZBELL_X30('BBLL', 1, 6.0 / 35.0, S_ZBELL_X31) = none
-	S_ZBELL_X31('BBLL', 0, 5.0 / 35.0, S_ZBELL_X32) = none
-	S_ZBELL_X32('BBLL', 4, 6.0 / 35.0, S_ZBELL_X33) = none
-	S_ZBELL_X33('BBLL', 5, 6.0 / 35.0, S_ZBELL_X34) = none
-	S_ZBELL_X34('BBLL', 6, 7.0 / 35.0, S_ZBELL_X35) = A_Scream
-	S_ZBELL_X35('BBLL', 5, 6.0 / 35.0, S_ZBELL_X36) = none
-	S_ZBELL_X36('BBLL', 4, 6.0 / 35.0, S_ZBELL_X37) = none
-	S_ZBELL_X37('BBLL', 0, 6.0 / 35.0, S_ZBELL_X38) = none
-	S_ZBELL_X38('BBLL', 1, 6.0 / 35.0, S_ZBELL_X39) = none
-	S_ZBELL_X39('BBLL', 2, 6.0 / 35.0, S_ZBELL_X40) = none
-	S_ZBELL_X40('BBLL', 1, 7.0 / 35.0, S_ZBELL_X41) = none
-	S_ZBELL_X41('BBLL', 0, 8.0 / 35.0, S_ZBELL_X42) = none
-	S_ZBELL_X42('BBLL', 4, 12.0 / 35.0, S_ZBELL_X43) = none
-	S_ZBELL_X43('BBLL', 0, 10.0 / 35.0, S_ZBELL_X44) = none
-	S_ZBELL_X44('BBLL', 1, 12.0 / 35.0, S_ZBELL_X45) = none
-	S_ZBELL_X45('BBLL', 0, 12.0 / 35.0, S_ZBELL_X46) = none
-	S_ZBELL_X46('BBLL', 4, 14.0 / 35.0, S_ZBELL_X47) = none
-	S_ZBELL_X47('BBLL', 0, 1.0 / 35.0, S_ZBELL) = A_BellReset2
+Spawn:
+	BBLL F -1
+	Stop
+Death:
+	BBLL A 4 A_BellReset1
+	BBLL BC 4
+	BBLL D 5 A_Scream
+	BBLL CB 4
+	BBLL A 3
+	BBLL E 4
+	BBLL F 5
+	BBLL G 6 A_Scream
+	BBLL F 5
+	BBLL EA 4
+	BBLL BC 5
+	BBLL D 6 A_Scream
+	BBLL CB 5
+	BBLL A 4
+	BBLL EF 5
+	BBLL G 7 A_Scream
+	BBLL FEA 5
+	BBLL BC 6
+	BBLL D 7 A_Scream
+	BBLL CB 6
+	BBLL A 5
+	BBLL EF 6
+	BBLL G 7 A_Scream
+	BBLL FEABC 6
+	BBLL B 7
+	BBLL A 8
+	BBLL E 12
+	BBLL A 10
+	BBLL BA 12
+	BBLL E 14
+	BBLL A 1 A_BellReset2
+	Goto Spawn
 }
 
 defaultproperties
@@ -129,7 +117,5 @@ defaultproperties
 	bSpawnCeiling = true;
 	bNoGravity = true;
 	bNoBlood = true;
-	IdleState = S_ZBELL;
-	DeathState = S_ZBELL_X1;
 	DeathSound = 'BellRing';
 }

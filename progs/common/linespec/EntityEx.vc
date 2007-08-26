@@ -70,20 +70,7 @@ state			IdleState;
 state			SeeState;
 state			MeleeState;
 state			MissileState;
-state			PainState;
-state			WoundState;
-state			DeathState;
-state			GibsDeathState;
-state			IceDeathState;
-state			FireDeathState;
-state			DisruptDeathState;
-state			CrashState;
-state			RaiseState;
-state			IdleRightState;
-state			IdleLeftState;
-state			WalkState;
 state			CrunchState;
-state			SprayState;
 
 //	Sounds
 name			SightSound;
@@ -1017,7 +1004,7 @@ void FloorBounceMissile()
 	{
 		Velocity -= 2.0 * vdot * Floor->normal;
 		Angles.yaw = atan2(Velocity.y, Velocity.x);
-		SetState(DeathState);
+		SetState(FindState('Death'));
 		return;
 	}
 
@@ -1061,7 +1048,7 @@ final void CeilingBounceMissile()
 	{
 		Velocity -= 2.0 * vdot * Ceiling->normal;
 		Angles.yaw = atan2(Velocity.y, Velocity.x);
-		SetState(DeathState);
+		SetState(FindState('Death'));
 		return;
 	}
 
@@ -1099,6 +1086,7 @@ float GetReflectedAngle(EntityEx Other)
 
 final void Crash()
 {
+	state CrashState = FindState('Crash');
 	if (CrashState && bCorpse && DamageType != 'Ice')
 	{
 		SetState(CrashState);
@@ -3327,7 +3315,7 @@ final bool ExplodeMissile()
 
 	Velocity = vector(0.0, 0.0, 0.0);
 
-	if (!SetState(DeathState))
+	if (!SetState(FindState('Death')))
 	{
 		return false;
 	}
@@ -3968,7 +3956,7 @@ final void Damage(EntityEx inflictor, EntityEx source, int damage,
 			if (P_Random() < 96)
 			{
 				bJustHit = true;	// fight back!
-				SetState(PainState);
+				SetState(FindState('Pain'));
 			}
 			else
 			{
@@ -3984,7 +3972,7 @@ final void Damage(EntityEx inflictor, EntityEx source, int damage,
 		else
 		{
 			bJustHit = true;	// fight back!
-			SetState(PainState);
+			SetState(FindState('Pain'));
 			if (inflictor && inflictor.bHowlVictims)
 			{
 				if (HowlSound && bCountKill && P_Random() < 128 &&
@@ -4176,29 +4164,25 @@ void Died(EntityEx source, EntityEx inflictor)
 #endif
 	}
 
-	if (DamageType == 'Fire' && FireDeathState)
+	if (DamageType == 'Fire' && FindState('Burn'))
 	{
 		// Flame death
-		SetState(FireDeathState);
+		SetState(FindState('Burn'));
 	}
-	else if (DamageType == 'Ice' && IceDeathState)
+	else if (DamageType && FindState(DamageType))
 	{
-		// Ice death
-		SetState(IceDeathState);
+		// Specialised death state for this damage type (ice, etc).
+		SetState(FindState(DamageType));
 	}
-	else if (DamageType == 'Disintegrate' && DisruptDeathState)
-	{
-		SetState(DisruptDeathState);
-	}
-	else if (Health < GibsHealth && GibsDeathState)
+	else if (Health < GibsHealth && FindState('XDeath'))
 	{
 		// Extreme death
-		SetState(GibsDeathState);
+		SetState(FindState('XDeath'));
 	}
 	else
 	{
 		// Normal death
-		SetState(DeathState);
+		SetState(FindState('Death'));
 	}
 	StateTime -= Random() * 0.1;
 	if (StateTime < 1.0 / 35.0)
@@ -4729,54 +4713,6 @@ void OnMapSpawn(mthing_t* mthing)
 	if (!MissileState)
 	{
 		MissileState = FindState('Missile');
-	}
-	if (!PainState)
-	{
-		PainState = FindState('Pain');
-	}
-	if (!DeathState)
-	{
-		DeathState = FindState('Death');
-	}
-	if (!GibsDeathState)
-	{
-		GibsDeathState = FindState('XDeath');
-	}
-	if (!RaiseState)
-	{
-		RaiseState = FindState('Raise');
-	}
-	if (!IceDeathState)
-	{
-		IceDeathState = FindState('Ice');
-	}
-	if (!FireDeathState)
-	{
-		FireDeathState = FindState('Burn');
-	}
-	if (!CrashState)
-	{
-		CrashState = FindState('Crash');
-	}
-	if (!IdleRightState)
-	{
-		IdleRightState = FindState('LookRight');
-	}
-	if (!IdleLeftState)
-	{
-		IdleLeftState = FindState('LookLeft');
-	}
-	if (!WalkState)
-	{
-		WalkState = FindState('Walk');
-	}
-	if (!WoundState)
-	{
-		WoundState = FindState('Wound');
-	}
-	if (!DisruptDeathState)
-	{
-		DisruptDeathState = FindState('Disintegrate');
 	}
 
 	//	Set the state, but do not use SetState, because action routines can't
@@ -5549,9 +5485,9 @@ final void SpawnPuff(TVec Org, float Range, class<EntityEx> PuffType,
 	Org.z += (Random() - Random()) * 4.0;
 
 	puff = Spawn(PuffType, Org);
-	if (!HitThing && puff.CrashState)
+	if (!HitThing && puff.FindState('Crash'))
 	{
-		puff.SetState(puff.CrashState);
+		puff.SetState(puff.FindState('Crash'));
 	}
 	else if (Range == MELEERANGE && puff.MeleeState)
 	{
@@ -5611,7 +5547,7 @@ final void SpawnBlood(TVec Org, int damage)
 	{
 		if (damage > 13)
 		{
-			A.SetState(A.SprayState);
+			A.SetState(A.FindState('Spray'));
 		}
 		else
 		{

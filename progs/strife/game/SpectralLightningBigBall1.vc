@@ -81,6 +81,8 @@ Spawn:
 	ZAP7 AB 4 Bright A_Unknown91
 	ZAP7 CDE 6 Bright A_Unknown91
 	Loop
+Death:
+	Goto Super::Death+2
 }
 
 defaultproperties
@@ -98,7 +100,6 @@ defaultproperties
 	bNoTeleport = true;
 	bDynamicLight = true;
 	bSpectral = true;
-	DeathState = S_ZAP1_2;
 	SightSound = 'weapons/sigil';
 	DeathSound = 'weapons/sigilhit';
 	DLightColour = RGB(151, 155, 203);

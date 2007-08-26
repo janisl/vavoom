@@ -61,7 +61,8 @@ final void A_VileChase()
 			if (Other.StateTime != -1.0)
 				continue;	// not lying still yet
 
-			if (!EntityEx(Other).RaiseState)
+			state RaiseState = Other.FindState('Raise');
+			if (!RaiseState)
 				continue;	// monster doesn't have a raise state
 
 			maxdist = Other.Radius + Radius;
@@ -96,7 +97,7 @@ final void A_VileChase()
 			SetState(FindClassState(Archvile, 'Heal'));
 			CorpseHit.PlaySound('vile/raise', CHAN_BODY);
 
-			CorpseHit.SetState(CorpseHit.RaiseState);
+			CorpseHit.SetState(RaiseState);
 			CorpseHit.Height = CorpseHit.default.Height;
 			CorpseHit.bShootable = true;
 			CorpseHit.bFloat = CorpseHit.default.bFloat;

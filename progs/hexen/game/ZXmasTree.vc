@@ -38,20 +38,26 @@ void GetExplodeParms(out int damage, out float distance, out byte damageSelf)
 	distance = 64.0;
 }
 
-__states__
+states
 {
-	S_ZXMAS_TREE('XMAS', 0, -1.0, none) = none
-	S_ZXMAS_TREE_DIE('XMAS', 0, 4.0 / 35.0, S_ZXMAS_TREE) = A_TreeDeath
-	S_ZXMAS_TREE_X1('XMAS', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_ZXMAS_TREE_X2) = none
-	S_ZXMAS_TREE_X2('XMAS', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_ZXMAS_TREE_X3) = A_Scream
-	S_ZXMAS_TREE_X3('XMAS', 3 | FF_FULLBRIGHT, 5.0 / 35.0, S_ZXMAS_TREE_X4) = none
-	S_ZXMAS_TREE_X4('XMAS', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_ZXMAS_TREE_X5) = A_Explode
-	S_ZXMAS_TREE_X5('XMAS', 5 | FF_FULLBRIGHT, 5.0 / 35.0, S_ZXMAS_TREE_X6) = none
-	S_ZXMAS_TREE_X6('XMAS', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_ZXMAS_TREE_X7) = none
-	S_ZXMAS_TREE_X7('XMAS', 7, 5.0 / 35.0, S_ZXMAS_TREE_X8) = none
-	S_ZXMAS_TREE_X8('XMAS', 8, 4.0 / 35.0, S_ZXMAS_TREE_X9) = A_NoBlocking
-	S_ZXMAS_TREE_X9('XMAS', 9, 4.0 / 35.0, S_ZXMAS_TREE_X10) = none
-	S_ZXMAS_TREE_X10('XMAS', 10, -1.0, none) = none
+Spawn:
+	XMAS A -1
+	Stop
+Death:
+	XMAS A 4 A_TreeDeath
+	Goto Spawn
+Melee:
+	XMAS B 6 Bright
+	XMAS C 6 Bright A_Scream
+	XMAS D 5 Bright
+	XMAS E 5 Bright A_Explode
+	XMAS F 5 Bright
+	XMAS G 4 Bright
+	XMAS H 5
+	XMAS I 4 A_NoBlocking
+	XMAS J 4
+	XMAS K -1
+	Stop
 }
 
 defaultproperties
@@ -59,8 +65,5 @@ defaultproperties
 	Health = 20;
 	Radius = 11.0;
 	Height = 130.0;
-	IdleState = S_ZXMAS_TREE;
-	MeleeState = S_ZXMAS_TREE_X1;
-	DeathState = S_ZXMAS_TREE_DIE;
 	DeathSound = 'TreeExplode';
 }

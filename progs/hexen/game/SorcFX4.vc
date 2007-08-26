@@ -49,7 +49,7 @@ final void A_SorcFX4Check()
 {
 	if (_Special2-- <= 0)
 	{
-		SetState(DeathState);
+		SetState(FindState('Death'));
 	}
 }
 

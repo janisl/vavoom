@@ -42,7 +42,7 @@ final void A_SerpentHeadCheck()
 		}
 		else
 		{
-			SetState(DeathState);
+			SetState(FindState('Death'));
 		}
 	}
 }

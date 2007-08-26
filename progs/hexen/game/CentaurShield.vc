@@ -39,7 +39,7 @@ final void A_CheckFloor()
 	{
 		Origin.z = FloorZ;
 		//bLowGravity = false;
-		SetState(DeathState);
+		SetState(FindState('Death'));
 	}
 }
 

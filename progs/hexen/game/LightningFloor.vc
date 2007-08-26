@@ -38,7 +38,7 @@ final void A_LastZap()
 	A = Spawn(LightningZap, Origin);
 	if (A)
 	{
-		A.SetState(LightningZap::S_LIGHTNING_ZAP_X1);
+		A.SetState(A.FindState('LastZap'));
 		A.Velocity.z = 40.0 * 35.0;
 	}
 }

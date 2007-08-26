@@ -120,13 +120,13 @@ final void A_Stand()
 	if (P_Random() < 30)
 	{
 		if (!(P_Random() & 1))
-			SetState(IdleRightState);
+			SetState(FindState('LookRight'));
 		else
-			SetState(IdleLeftState);
+			SetState(FindState('LookLeft'));
 	}
 	if (!bStanding && P_Random() < 40)
 	{
-		SetState(WalkState);
+		SetState(FindState('Walk'));
 	}
 }
 

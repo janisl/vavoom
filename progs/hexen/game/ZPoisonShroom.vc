@@ -54,15 +54,20 @@ final void A_PoisonBagInit()
 	}
 }
 
-__states__
+states
 {
-	S_ZPOISONSHROOM1('SHRM', 0, 5.0 / 35.0, S_ZPOISONSHROOM_P2) = A_PoisonShroom
-	S_ZPOISONSHROOM_P1('SHRM', 0, 6.0 / 35.0, S_ZPOISONSHROOM_P2) = none
-	S_ZPOISONSHROOM_P2('SHRM', 1, 8.0 / 35.0, S_ZPOISONSHROOM1) = A_Pain
-	S_ZPOISONSHROOM_X1('SHRM', 2, 5.0 / 35.0, S_ZPOISONSHROOM_X2) = none
-	S_ZPOISONSHROOM_X2('SHRM', 3, 5.0 / 35.0, S_ZPOISONSHROOM_X3) = none
-	S_ZPOISONSHROOM_X3('SHRM', 4, 5.0 / 35.0, S_ZPOISONSHROOM_X4) = A_PoisonBagInit
-	S_ZPOISONSHROOM_X4('SHRM', 5, -1.0, none) = none
+Spawn:
+	SHRM A 5 A_PoisonShroom
+	Goto Pain+1
+Pain:
+	SHRM A 6
+	SHRM B 8 A_Pain
+	Goto Spawn
+Death:
+	SHRM CD 5
+	SHRM E 5 A_PoisonBagInit
+	SHRM F -1
+	Stop
 }
 
 defaultproperties
@@ -75,9 +80,6 @@ defaultproperties
 	bSolid = true;
 	bShootable = true;
 	bNoBlood = true;
-	IdleState = S_ZPOISONSHROOM1;
-	PainState = S_ZPOISONSHROOM_P1;
-	DeathState = S_ZPOISONSHROOM_X1;
 	PainSound = 'PoisonShroomPain';
 	DeathSound = 'PoisonShroomDeath';
 }

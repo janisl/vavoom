@@ -130,21 +130,17 @@ final void A_ZapMimic()
 	}
 }
 
-__states__
+states
 {
-	S_LIGHTNING_ZAP1('MLFX', 8 | FF_FULLBRIGHT, 2.0 / 35.0, S_LIGHTNING_ZAP2) = A_ZapMimic
-	S_LIGHTNING_ZAP2('MLFX', 9 | FF_FULLBRIGHT, 2.0 / 35.0, S_LIGHTNING_ZAP3) = A_ZapMimic
-	S_LIGHTNING_ZAP3('MLFX', 10 | FF_FULLBRIGHT, 2.0 / 35.0, S_LIGHTNING_ZAP4) = A_ZapMimic
-	S_LIGHTNING_ZAP4('MLFX', 11 | FF_FULLBRIGHT, 2.0 / 35.0, S_LIGHTNING_ZAP5) = A_ZapMimic
-	S_LIGHTNING_ZAP5('MLFX', 12 | FF_FULLBRIGHT, 2.0 / 35.0, S_LIGHTNING_ZAP1) = A_ZapMimic
-	S_LIGHTNING_ZAP_X1('MLFX', 13 | FF_FULLBRIGHT, 2.0 / 35.0, S_LIGHTNING_ZAP_X2) = none
-	S_LIGHTNING_ZAP_X2('MLFX', 14 | FF_FULLBRIGHT, 2.0 / 35.0, S_LIGHTNING_ZAP_X3) = none
-	S_LIGHTNING_ZAP_X3('MLFX', 15 | FF_FULLBRIGHT, 2.0 / 35.0, S_LIGHTNING_ZAP_X4) = none
-	S_LIGHTNING_ZAP_X4('MLFX', 16 | FF_FULLBRIGHT, 2.0 / 35.0, S_LIGHTNING_ZAP_X5) = none
-	S_LIGHTNING_ZAP_X5('MLFX', 17 | FF_FULLBRIGHT, 2.0 / 35.0, S_LIGHTNING_ZAP_X6) = none
-	S_LIGHTNING_ZAP_X6('MLFX', 18 | FF_FULLBRIGHT, 2.0 / 35.0, S_LIGHTNING_ZAP_X7) = none
-	S_LIGHTNING_ZAP_X7('MLFX', 19 | FF_FULLBRIGHT, 2.0 / 35.0, S_LIGHTNING_ZAP_X8) = none
-	S_LIGHTNING_ZAP_X8('MLFX', 20 | FF_FULLBRIGHT, 2.0 / 35.0, none) = none
+Spawn:
+	MLFX IJKLM 2 Bright A_ZapMimic
+	Loop
+LastZap:
+	MLFX NOPQRST 2 Bright
+	//Fall through
+Death:
+	MLFX U 2 Bright
+	Stop
 }
 
 defaultproperties
@@ -156,8 +152,6 @@ defaultproperties
 	bActivateImpact = false;
 	bActivatePCross = false;
 	bLightning = true;
-	IdleState = S_LIGHTNING_ZAP1;
-	DeathState = S_LIGHTNING_ZAP_X8;
 	DLightColour = RGB(58, 158, 239);
 	DLightRadius = 200.0;
 }

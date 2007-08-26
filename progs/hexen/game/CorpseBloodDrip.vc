@@ -25,13 +25,15 @@
 
 class CorpseBloodDrip : Fragment;
 
-__states__
+states
 {
-	S_CORPSEBLOODDRIP('BDRP', 0, -1.0, none) = none
-	S_CORPSEBLOODDRIP_X1('BDSH', 0, 3.0 / 35.0, S_CORPSEBLOODDRIP_X2) = none
-	S_CORPSEBLOODDRIP_X2('BDSH', 1, 3.0 / 35.0, S_CORPSEBLOODDRIP_X3) = none
-	S_CORPSEBLOODDRIP_X3('BDSH', 2, 2.0 / 35.0, S_CORPSEBLOODDRIP_X4) = none
-	S_CORPSEBLOODDRIP_X4('BDSH', 3, 2.0 / 35.0, none) = none
+Spawn:
+	BDRP A -1
+	Stop
+Death:
+	BDSH AB 3
+	BDSH CD 2
+	Stop
 }
 
 defaultproperties
@@ -43,7 +45,5 @@ defaultproperties
 	bDropOff = false;
 	bNoGravity = false;
 	bNoTeleport = false;
-	IdleState = S_CORPSEBLOODDRIP;
-	DeathState = S_CORPSEBLOODDRIP_X1;
 	DeathSound = 'Drip';
 }

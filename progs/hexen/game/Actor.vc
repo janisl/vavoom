@@ -426,17 +426,17 @@ void PoisonDamage(Actor source, int damage, bool playPainSound)
 	}
 	if (!(XLevel.TicTime & 63) && playPainSound)
 	{
-		SetState(PainState);
+		SetState(FindState('Pain'));
 	}
 }
 
-//============================================================================
+//==========================================================================
 //
 //  SpawnDirt
 //
 //  Dirt stuff
 //
-//============================================================================
+//==========================================================================
 
 void SpawnDirt(float radius)
 {

@@ -473,7 +473,7 @@ bool F_CastResponder(event_t * ev)
 
 	// go into death frame
 	castdeath = true;
-	CastWin.SetState(castorder[castnum].default.DeathState);
+	CastWin.SetState(FindClassState(castorder[castnum], 'Death'));
 	CastWin.CastTime = CastWin.StateTime;
 	castframes = 0;
 	castattacking = false;

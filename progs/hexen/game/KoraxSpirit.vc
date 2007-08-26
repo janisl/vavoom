@@ -160,7 +160,7 @@ final void A_KSpiritRoam()
 	if (LifeTime-- <= 0)
 	{
 		PlaySound('SpiritDie', CHAN_VOICE);
-		SetState(DeathState);
+		SetState(FindState('Death'));
 	}
 	else
 	{

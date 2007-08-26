@@ -34,8 +34,6 @@ class SorcFX2 : Effect;
 //      Args[0]     0 = CW,  1 = CCW
 //==========================================================================
 
-state OrbitState;
-
 //==========================================================================
 //
 //  A_SorcFX2Split
@@ -54,7 +52,7 @@ final void A_SorcFX2Split()
 		A.Target = Target;
 		A.Args[0] = 0;	// CW
 		A.Special1f = Angles.yaw;	// Set angle
-		A.SetState(SorcFX2(A).OrbitState);
+		A.SetState(A.FindState('Orbit'));
 	}
 	A = Spawn(SorcFX2, Origin);
 	if (A)
@@ -62,7 +60,7 @@ final void A_SorcFX2Split()
 		A.Target = Target;
 		A.Args[0] = 1;	// CCW
 		A.Special1f = Angles.yaw;	// Set angle
-		A.SetState(SorcFX2(A).OrbitState);
+		A.SetState(A.FindState('Orbit'));
 	}
 	SetState(none);
 }
@@ -84,7 +82,7 @@ final void A_SorcFX2Orbit()
 	if ((Target.Health <= 0) ||	// Sorcerer is dead
 		(!Target.Args[0]))	// Time expired
 	{
-		SetState(DeathState);
+		SetState(FindState('Death'));
 		Target.Args[0] = 0;
 		Actor(Target).bReflective = false;
 		Actor(Target).bInvulnerable = false;
@@ -92,7 +90,7 @@ final void A_SorcFX2Orbit()
 
 	if (Args[0] && (Target.Args[0]-- <= 0))	// Time expired
 	{
-		SetState(DeathState);
+		SetState(FindState('Death'));
 		Target.Args[0] = 0;
 		Actor(Target).bReflective = false;
 	}
@@ -126,27 +124,20 @@ final void A_SorcFX2Orbit()
 	Origin.z = z;
 }
 
-__states__
+states
 {
-	S_SORCFX2_SPLIT1('SBS2', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_SORCFX2_SPLIT1) = A_SorcFX2Split
-	S_SORCFX2_ORBIT1_NF('SBS2', 0 | FF_FULLBRIGHT, 2.0 / 35.0, S_SORCFX2_ORBIT2) = none
-	S_SORCFX2_ORBIT1('SBS2', 0 | FF_FULLBRIGHT, 2.0 / 35.0, S_SORCFX2_ORBIT2) = A_SorcFX2Orbit
-	S_SORCFX2_ORBIT2('SBS2', 1 | FF_FULLBRIGHT, 2.0 / 35.0, S_SORCFX2_ORBIT3) = A_SorcFX2Orbit
-	S_SORCFX2_ORBIT3('SBS2', 2 | FF_FULLBRIGHT, 2.0 / 35.0, S_SORCFX2_ORBIT4) = A_SorcFX2Orbit
-	S_SORCFX2_ORBIT4('SBS2', 3 | FF_FULLBRIGHT, 2.0 / 35.0, S_SORCFX2_ORBIT5) = A_SorcFX2Orbit
-	S_SORCFX2_ORBIT5('SBS2', 4 | FF_FULLBRIGHT, 2.0 / 35.0, S_SORCFX2_ORBIT6) = A_SorcFX2Orbit
-	S_SORCFX2_ORBIT6('SBS2', 5 | FF_FULLBRIGHT, 2.0 / 35.0, S_SORCFX2_ORBIT7) = A_SorcFX2Orbit
-	S_SORCFX2_ORBIT7('SBS2', 6 | FF_FULLBRIGHT, 2.0 / 35.0, S_SORCFX2_ORBIT8) = A_SorcFX2Orbit
-	S_SORCFX2_ORBIT8('SBS2', 7 | FF_FULLBRIGHT, 2.0 / 35.0, S_SORCFX2_ORBIT9) = A_SorcFX2Orbit
-	S_SORCFX2_ORBIT9('SBS2', 8 | FF_FULLBRIGHT, 2.0 / 35.0, S_SORCFX2_ORBIT0) = A_SorcFX2Orbit
-	S_SORCFX2_ORBIT0('SBS2', 9 | FF_FULLBRIGHT, 2.0 / 35.0, S_SORCFX2_ORBITA) = A_SorcFX2Orbit
-	S_SORCFX2_ORBITA('SBS2', 10 | FF_FULLBRIGHT, 2.0 / 35.0, S_SORCFX2_ORBITB) = A_SorcFX2Orbit
-	S_SORCFX2_ORBITB('SBS2', 11 | FF_FULLBRIGHT, 2.0 / 35.0, S_SORCFX2_ORBITC) = A_SorcFX2Orbit
-	S_SORCFX2_ORBITC('SBS2', 12 | FF_FULLBRIGHT, 2.0 / 35.0, S_SORCFX2_ORBITD) = A_SorcFX2Orbit
-	S_SORCFX2_ORBITD('SBS2', 13 | FF_FULLBRIGHT, 2.0 / 35.0, S_SORCFX2_ORBITE) = A_SorcFX2Orbit
-	S_SORCFX2_ORBITE('SBS2', 14 | FF_FULLBRIGHT, 2.0 / 35.0, S_SORCFX2_ORBITF) = A_SorcFX2Orbit
-	S_SORCFX2_ORBITF('SBS2', 15 | FF_FULLBRIGHT, 2.0 / 35.0, S_SORCFX2_ORBIT1) = A_SorcFX2Orbit
-	S_SORCFX2_DEATH('SBS2', 0, 10.0 / 35.0, none) = none
+Spawn:
+	SBS2 A 3 Bright A_SorcFX2Split
+	Loop
+Orbit:
+	SBS2 A 2 Bright
+	Goto Orbiting+1
+Orbiting:
+	SBS2 ABCDEFGHIJKLMNOP 2 Bright A_SorcFX2Orbit
+	Loop
+Death:
+	SBS2 A 10
+	Stop
 }
 
 defaultproperties
@@ -155,7 +146,4 @@ defaultproperties
 	Height = 5.0;
 	Speed = 525.0;
 	bNoTeleport = true;
-	IdleState = S_SORCFX2_SPLIT1;
-	OrbitState = S_SORCFX2_ORBIT1_NF;
-	DeathState = S_SORCFX2_DEATH;
 }

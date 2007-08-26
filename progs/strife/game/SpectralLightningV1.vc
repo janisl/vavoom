@@ -31,6 +31,8 @@ Spawn:
 	ZOT1 AB 4 Bright
 	ZOT1 CDD 6 Bright
 	Loop
+Death:
+	Goto Super::Death+6
 }
 
 defaultproperties
@@ -48,7 +50,6 @@ defaultproperties
 	bNoTeleport = true;
 	bDynamicLight = true;
 	bSpectral = true;
-	DeathState = S_ZAP1_6;
 	SightSound = 'weapons/sigil';
 	DeathSound = 'weapons/sigilhit';
 	DLightColour = RGB(151, 155, 203);

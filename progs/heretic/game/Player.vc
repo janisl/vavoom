@@ -802,7 +802,7 @@ void ChickenPlayerThink()
 	{
 		// Jump and noise
 		MO.Velocity.z += 1.0 * 35.0;
-		MO.SetState(Actor(MO).PainState);
+		MO.SetState(Actor(MO).FindState('Pain'));
 		return;
 	}
 	if (P_Random() < 48)

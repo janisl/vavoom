@@ -35,14 +35,8 @@ state BitState;
 
 final void A_PotteryChooseBit()
 {
-	switch (P_Random() % 5)
-	{
-	case 0: BitState = S_POTTERYBIT_EX1; break;
-	case 1: BitState = S_POTTERYBIT_EX2; break;
-	case 2: BitState = S_POTTERYBIT_EX3; break;
-	case 3: BitState = S_POTTERYBIT_EX4; break;
-	case 4: BitState = S_POTTERYBIT_EX5; break;
-	}
+	BitState = GetStatePlus(FindState('Death'), 1 + 2 * (P_Random() % 5),
+		true);
 	SetState(BitState);
 	StateTime = 8.0 + Random() * 16.0;
 }
@@ -75,24 +69,37 @@ final void A_PotteryCheck()
 	}
 }
 
-__states__
+states
 {
-	S_POTTERYBIT_1('PBIT', 0, -1.0, none) = none
-	S_POTTERYBIT_2('PBIT', 1, -1.0, none) = none
-	S_POTTERYBIT_3('PBIT', 2, -1.0, none) = none
-	S_POTTERYBIT_4('PBIT', 3, -1.0, none) = none
-	S_POTTERYBIT_5('PBIT', 4, -1.0, none) = none
-	S_POTTERYBIT_EX0('PBIT', 5, 0.0 / 35.0, none) = A_PotteryChooseBit
-	S_POTTERYBIT_EX1('PBIT', 5, 140.0 / 35.0, S_POTTERYBIT_EX1_2) = none
-	S_POTTERYBIT_EX1_2('PBIT', 5, 1.0 / 35.0, none) = A_PotteryCheck
-	S_POTTERYBIT_EX2('PBIT', 6, 140.0 / 35.0, S_POTTERYBIT_EX2_2) = none
-	S_POTTERYBIT_EX2_2('PBIT', 6, 1.0 / 35.0, none) = A_PotteryCheck
-	S_POTTERYBIT_EX3('PBIT', 7, 140.0 / 35.0, S_POTTERYBIT_EX3_2) = none
-	S_POTTERYBIT_EX3_2('PBIT', 7, 1.0 / 35.0, none) = A_PotteryCheck
-	S_POTTERYBIT_EX4('PBIT', 8, 140.0 / 35.0, S_POTTERYBIT_EX4_2) = none
-	S_POTTERYBIT_EX4_2('PBIT', 8, 1.0 / 35.0, none) = A_PotteryCheck
-	S_POTTERYBIT_EX5('PBIT', 9, 140.0 / 35.0, S_POTTERYBIT_EX5_2) = none
-	S_POTTERYBIT_EX5_2('PBIT', 9, 1.0 / 35.0, none) = A_PotteryCheck
+Spawn:
+	PBIT A -1
+	Stop
+	PBIT B -1
+	Stop
+	PBIT C -1
+	Stop
+	PBIT D -1
+	Stop
+	PBIT E -1
+	Stop
+Death:
+	PBIT F 0 A_PotteryChooseBit
+	Stop
+	PBIT F 140
+	PBIT F 1 A_PotteryCheck
+	Stop
+	PBIT G 140
+	PBIT G 1 A_PotteryCheck
+	Stop
+	PBIT H 140
+	PBIT H 1 A_PotteryCheck
+	Stop
+	PBIT I 140
+	PBIT I 1 A_PotteryCheck
+	Stop
+	PBIT J 140
+	PBIT J 1 A_PotteryCheck
+	Stop
 }
 
 defaultproperties
@@ -103,6 +110,4 @@ defaultproperties
 	bDropOff = false;
 	bNoGravity = false;
 	bDynamicLight = false;
-	IdleState = S_POTTERYBIT_1;
-	DeathState = S_POTTERYBIT_EX0;
 }

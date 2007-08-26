@@ -39,7 +39,7 @@ int TakeSpecialDamage(EntityEx inflictor, EntityEx source, int damage)
 {
 	if ((Random() < PainChance))
 	{
-		SetState(PainState);
+		SetState(FindState('Pain'));
 	}
 
 	return -1;

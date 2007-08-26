@@ -37,28 +37,36 @@ void GetExplodeParms(out int damage, out float distance, out byte damageSelf)
 	damage = 10;
 }
 
-__states__
+//==========================================================================
+//
+//	A_TreeExplodeSound
+//
+//==========================================================================
+
+final void A_TreeExplodeSound()
 {
-	S_ZTREEDESTRUCTIBLE1('TRDT', 0, -1.0, none) = none
-	S_ZTREEDES_D1('TRDT', 1, 5.0 / 35.0, S_ZTREEDES_D2) = none
-	S_ZTREEDES_D2('TRDT', 2, 5.0 / 35.0, S_ZTREEDES_D3) = A_Scream
-	S_ZTREEDES_D3('TRDT', 3, 5.0 / 35.0, S_ZTREEDES_D4) = none
-	S_ZTREEDES_D4('TRDT', 4, 5.0 / 35.0, S_ZTREEDES_D5) = none
-	S_ZTREEDES_D5('TRDT', 5, 5.0 / 35.0, S_ZTREEDES_D6) = none
-	S_ZTREEDES_D6('TRDT', 6, -1.0, none) = none
-	S_ZTREEDES_X1('TRDT', 7 | FF_FULLBRIGHT, 5.0 / 35.0, S_ZTREEDES_X2)
-	{
-		PlaySound('TreeExplode', CHAN_VOICE);
-	}
-	S_ZTREEDES_X2('TRDT', 8 | FF_FULLBRIGHT, 5.0 / 35.0, S_ZTREEDES_X3) = none
-	S_ZTREEDES_X3('TRDT', 9 | FF_FULLBRIGHT, 5.0 / 35.0, S_ZTREEDES_X4) = none
-	S_ZTREEDES_X4('TRDT', 10 | FF_FULLBRIGHT, 5.0 / 35.0, S_ZTREEDES_X5) = none
-	S_ZTREEDES_X5('TRDT', 11 | FF_FULLBRIGHT, 5.0 / 35.0, S_ZTREEDES_X6) = none
-	S_ZTREEDES_X6('TRDT', 12 | FF_FULLBRIGHT, 5.0 / 35.0, S_ZTREEDES_X7) = A_Explode
-	S_ZTREEDES_X7('TRDT', 13 | FF_FULLBRIGHT, 5.0 / 35.0, S_ZTREEDES_X8) = none
-	S_ZTREEDES_X8('TRDT', 14, 5.0 / 35.0, S_ZTREEDES_X9) = none
-	S_ZTREEDES_X9('TRDT', 15, 5.0 / 35.0, S_ZTREEDES_X10) = none
-	S_ZTREEDES_X10('TRDT', 16, -1.0, none) = none
+	PlaySound('TreeExplode', CHAN_VOICE);
+}
+
+states
+{
+Spawn:
+	TRDT A -1
+	Stop
+Death:
+	TRDT B 5
+	TRDT C 5 A_Scream
+	TRDT DEF 5
+	TRDT G -1
+	Stop
+Burn:
+	TRDT H 5 Bright A_TreeExplodeSound
+	TRDT IJKL 5 Bright
+	TRDT M 5 Bright A_Explode
+	TRDT N 5 Bright
+	TRDT OP 5
+	TRDT Q -1
+	Stop
 }
 
 defaultproperties
@@ -72,8 +80,5 @@ defaultproperties
 	bSolid = true;
 	bShootable = true;
 	bNoBlood = true;
-	IdleState = S_ZTREEDESTRUCTIBLE1;
-	DeathState = S_ZTREEDES_D1;
-	FireDeathState = S_ZTREEDES_X1;
 	DeathSound = 'TreeBreak';
 }

@@ -26,22 +26,16 @@
 class FogPatchMedium : FogPatchSmall
 	__mobjinfo__(10002);
 
-__states__
+states
 {
-	S_FOGPATCHM1('FOGM', 0, 7.0 / 35.0, S_FOGPATCHM2) = A_FogMove
-	S_FOGPATCHM2('FOGM', 1, 7.0 / 35.0, S_FOGPATCHM3) = A_FogMove
-	S_FOGPATCHM3('FOGM', 2, 7.0 / 35.0, S_FOGPATCHM4) = A_FogMove
-	S_FOGPATCHM4('FOGM', 3, 7.0 / 35.0, S_FOGPATCHM5) = A_FogMove
-	S_FOGPATCHM5('FOGM', 4, 7.0 / 35.0, S_FOGPATCHM1) = A_FogMove
-	S_FOGPATCHM0('FOGS', 0, 5.0 / 35.0, S_FOGPATCHMA) = none
-	S_FOGPATCHMA('FOGS', 1, 5.0 / 35.0, S_FOGPATCHMB) = none
-	S_FOGPATCHMB('FOGS', 2, 5.0 / 35.0, S_FOGPATCHMC) = none
-	S_FOGPATCHMC('FOGS', 3, 5.0 / 35.0, S_FOGPATCHMD) = none
-	S_FOGPATCHMD('FOGS', 4, 5.0 / 35.0, S_FOGPATCHS0) = none
+Spawn:
+	FOGM ABCDE 7 A_FogMove
+	Loop
+Death:
+	FOGS ABCDE 5
+	Goto Super::Death
 }
 
 defaultproperties
 {
-	IdleState = S_FOGPATCHM1;
-	DeathState = S_FOGPATCHM0;
 }

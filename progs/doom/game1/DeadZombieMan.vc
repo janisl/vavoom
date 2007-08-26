@@ -40,6 +40,13 @@ states
 {
 Spawn:
 	Goto Super::Death+4
+See:
+Missile:
+Pain:
+Death:
+XDeath:
+Raise:
+	Stop
 }
 
 defaultproperties
@@ -57,12 +64,6 @@ defaultproperties
 	bMonster = false;
 	bActivateMCross = false;
 	bActivatePushWall = false;
-	SeeState = none;
-	MissileState = none;
-	PainState = none;
-	DeathState = none;
-	GibsDeathState = none;
-	RaiseState = none;
 	SightSound = '';
 	ActiveSound = '';
 	AttackSound = '';

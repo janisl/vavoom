@@ -25,14 +25,13 @@
 
 class Leaf1 : Fragment;
 
-state RestartState;
 int RestartCount;
 
-//============================================================================
+//==========================================================================
 //
 //  A_LeafThrust
 //
-//============================================================================
+//==========================================================================
 
 final void A_LeafThrust()
 {
@@ -43,11 +42,11 @@ final void A_LeafThrust()
 	Velocity.z += (Random() * 2.0 + 1.0) * 35.0;
 }
 
-//============================================================================
+//==========================================================================
 //
 //  A_LeafCheck
 //
-//============================================================================
+//==========================================================================
 
 final void A_LeafCheck()
 {
@@ -65,33 +64,28 @@ final void A_LeafCheck()
 		}
 		return;
 	}
-	SetState(RestartState);
+	SetState(GetStatePlus(IdleState, 7));
 	Velocity.z = (Random() * 2.0 + 1.0) * 35.0;
 	Thrust(Target.Angles.yaw, Random() * 2.0 + 2.0);
 	bMissile = true;
 }
 
-__states__
+states
 {
-	S_LEAF1_1('LEF1', 0, 4.0 / 35.0, S_LEAF1_2) = none
-	S_LEAF1_2('LEF1', 1, 4.0 / 35.0, S_LEAF1_3) = none
-	S_LEAF1_3('LEF1', 2, 4.0 / 35.0, S_LEAF1_4) = none
-	S_LEAF1_4('LEF1', 3, 4.0 / 35.0, S_LEAF1_5) = A_LeafThrust
-	S_LEAF1_5('LEF1', 4, 4.0 / 35.0, S_LEAF1_6) = none
-	S_LEAF1_6('LEF1', 5, 4.0 / 35.0, S_LEAF1_7) = none
-	S_LEAF1_7('LEF1', 6, 4.0 / 35.0, S_LEAF1_8) = none
-	S_LEAF1_8('LEF1', 7, 4.0 / 35.0, S_LEAF1_9) = A_LeafThrust
-	S_LEAF1_9('LEF1', 8, 4.0 / 35.0, S_LEAF1_10) = none
-	S_LEAF1_10('LEF1', 0, 4.0 / 35.0, S_LEAF1_11) = none
-	S_LEAF1_11('LEF1', 1, 4.0 / 35.0, S_LEAF1_12) = none
-	S_LEAF1_12('LEF1', 2, 4.0 / 35.0, S_LEAF1_13) = A_LeafThrust
-	S_LEAF1_13('LEF1', 3, 4.0 / 35.0, S_LEAF1_14) = none
-	S_LEAF1_14('LEF1', 4, 4.0 / 35.0, S_LEAF1_15) = none
-	S_LEAF1_15('LEF1', 5, 4.0 / 35.0, S_LEAF1_16) = none
-	S_LEAF1_16('LEF1', 6, 4.0 / 35.0, S_LEAF1_17) = A_LeafThrust
-	S_LEAF1_17('LEF1', 7, 4.0 / 35.0, S_LEAF1_18) = none
-	S_LEAF1_18('LEF1', 8, 4.0 / 35.0, none) = none
-	S_LEAF_X1('LEF3', 3, 10.0 / 35.0, S_LEAF_X1) = A_LeafCheck
+Spawn:
+	LEF1 ABC 4
+	LEF1 D 4 A_LeafThrust
+	LEF1 EFG 4
+	LEF1 H 4 A_LeafThrust
+	LEF1 IAB 4
+	LEF1 C 4 A_LeafThrust
+	LEF1 DEF 4
+	LEF1 G 4 A_LeafThrust
+	LEF1 HI 4
+	Stop
+Death:
+	LEF3 D 10 A_LeafCheck
+	Loop
 }
 
 defaultproperties
@@ -102,7 +96,4 @@ defaultproperties
 	bDropOff = false;
 	bNoGravity = false;
 	bNoSplash = true;
-	IdleState = S_LEAF1_1;
-	RestartState = S_LEAF1_8;
-	DeathState = S_LEAF_X1;
 }

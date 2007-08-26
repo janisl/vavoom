@@ -50,7 +50,7 @@ final void A_WhirlwindSeek()
 	if (Health < 0)
 	{
 		Velocity = vector(0.0, 0.0, 0.0);
-		SetState(DeathState);
+		SetState(FindState('Death'));
 		bMissile = false;
 		return;
 	}

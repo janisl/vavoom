@@ -32,6 +32,8 @@ Spawn:
 	ZOT2 CD 6 Bright A_Tracer
 	ZOT2 E 5 Bright A_Tracer
 	Loop
+Death:
+	Goto Super::Death+1
 }
 
 defaultproperties
@@ -49,7 +51,6 @@ defaultproperties
 	bNoTeleport = true;
 	bDynamicLight = true;
 	bSpectral = true;
-	DeathState = S_ZAP1_0;
 	SightSound = 'weapons/sigil';
 	DeathSound = 'weapons/sigilhit';
 	DLightColour = RGB(151, 155, 203);

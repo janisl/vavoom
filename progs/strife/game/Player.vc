@@ -1179,9 +1179,10 @@ void Cheat_Gimme()
 	{
 		foreach AllClasses(Weapon, WpnCls)
 		{
-			if (!WpnCls.default.RaiseState)
+			if (!FindClassState(WpnCls, 'Ready'))
 			{
 				//	Abstract base class.
+				continue;
 			}
 			if (WpnCls.default.bCheatNotWeapon)
 			{

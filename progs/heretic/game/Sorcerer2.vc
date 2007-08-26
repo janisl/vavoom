@@ -271,7 +271,7 @@ final void A_Sor2DthLoop()
 	if (--Special1)
 	{
 		// Need to loop
-		SetState(GetStatePlus(DeathState, 3));
+		SetState(GetStatePlus(FindState('Death'), 3));
 	}
 }
 

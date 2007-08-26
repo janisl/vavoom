@@ -441,7 +441,7 @@ bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 			//	Only teleport when crossing the front side of a line
 			buttonSuccess = EV_Teleport(Arg1, Arg2, Arg3, Arg4, Arg5, A, Line,
 				true);
-			A.SetState(A.PainState);
+			A.SetState(A.FindState('Pain'));
 		}
 		break;
 	case LNSPEC_CeilingLowerByValue:

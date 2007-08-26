@@ -77,6 +77,8 @@ Spawn:
 	ZAP5 B 4 Bright A_SigilFloorAttack
 	ZAP5 CD 4 Bright A_DecReactionCount
 	Loop
+Death:
+	Goto Super::Death+1
 }
 
 defaultproperties
@@ -89,5 +91,4 @@ defaultproperties
 	bNoPassMobj = true;
 	bNoGravity = false;
 	bNoBlockMonst = true;
-	DeathState = S_ZAP1_0;
 }

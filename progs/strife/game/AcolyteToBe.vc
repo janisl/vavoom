@@ -60,20 +60,21 @@ Pain:
 	Stop
 Death:
 	Goto Super::XDeath
+IdleRight:
+IdleLeft:
+Walk:
+See:
+Missile:
+XDeath:
+Burn:
+Disintegrate:
+	Stop
 }
 
 defaultproperties
 {
 	ClassName = '';
 	StepSpeed = 0.0;
-	IdleRightState = none;
-	IdleLeftState = none;
-	WalkState = none;
-	SeeState = none;
-	MissileState = none;
-	GibsDeathState = none;
-	FireDeathState = none;
-	DisruptDeathState = none;
 	SightSound = '';
 	ActiveSound = '';
 	AttackSound = '';

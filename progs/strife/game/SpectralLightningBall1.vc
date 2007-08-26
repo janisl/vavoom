@@ -47,7 +47,6 @@ defaultproperties
 	bNoTeleport = true;
 	bDynamicLight = true;
 	bSpectral = true;
-	DeathState = S_ZAP1_1;
 	SightSound = 'weapons/sigil';
 	DeathSound = 'weapons/sigilhit';
 	DLightColour = RGB(151, 155, 203);

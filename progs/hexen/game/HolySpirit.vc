@@ -271,7 +271,7 @@ final void A_CHolySeek()
 		Velocity.x /= 4.0;
 		Velocity.y /= 4.0;
 		Velocity.z = 0.0;
-		SetState(DeathState);
+		SetState(FindState('Death'));
 		StateTime -= Random() * 0.1;
 		return;
 	}

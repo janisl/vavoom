@@ -23,21 +23,19 @@
 //**
 //**************************************************************************
 
-class FogPatchSmall:FogPatch
+class FogPatchSmall : FogPatch
 	__mobjinfo__(10001);
 
-__states__
+states
 {
-	S_FOGPATCHS1('FOGS', 0, 7.0 / 35.0, S_FOGPATCHS2) = A_FogMove
-	S_FOGPATCHS2('FOGS', 1, 7.0 / 35.0, S_FOGPATCHS3) = A_FogMove
-	S_FOGPATCHS3('FOGS', 2, 7.0 / 35.0, S_FOGPATCHS4) = A_FogMove
-	S_FOGPATCHS4('FOGS', 3, 7.0 / 35.0, S_FOGPATCHS5) = A_FogMove
-	S_FOGPATCHS5('FOGS', 4, 7.0 / 35.0, S_FOGPATCHS1) = A_FogMove
-	S_FOGPATCHS0('FOGS', 4, 5.0 / 35.0, none) = none
+Spawn:
+	FOGS ABCDE 7 A_FogMove
+	Loop
+Death:
+	FOGS E 5
+	Stop
 }
 
 defaultproperties
 {
-	IdleState = S_FOGPATCHS1;
-	DeathState = S_FOGPATCHS0;
 }
