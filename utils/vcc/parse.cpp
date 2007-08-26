@@ -1738,12 +1738,14 @@ void VParser::ParseDecorateStates(VClass* InClass)
 			VStateLabel& Lbl = InClass->StateLabels.Alloc();
 			Lbl.Loc = TmpLoc;
 			Lbl.Name = TmpName;
+			if (PrevState)
+				ParseWarning(Lex.Location, "Fall through");
 			continue;
 		}
 
 		if (!PrevState && NewLabelsStart == InClass->StateLabels.Num())
 		{
-			ParseError(Lex.Location, "State block must start with a label");
+			ParseWarning(Lex.Location, "State block must start with a label");
 		}
 
 		char StateName[16];
