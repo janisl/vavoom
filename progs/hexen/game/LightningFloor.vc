@@ -59,7 +59,7 @@ Death:
 	MLF2 Q 4 Bright A_LastZap
 	MLF2 POP 3 Bright
 	MLF2 P 1 Bright A_HideThing
-	Goto Actor::FreeTargMobj
+	Goto ScriptedEntity::FreeTargMobj
 }
 
 defaultproperties

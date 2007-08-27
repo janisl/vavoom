@@ -48,7 +48,7 @@ final void A_CheckSkullFloor()
 
 final void A_CheckSkullDone()
 {
-	if (_Special2 == 666)
+	if (Special2 == 666)
 	{
 		SetState(GetStatePlus(IdleState, 8, true));
 	}

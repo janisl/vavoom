@@ -28,8 +28,6 @@ class Actor : ScriptedEntity
 
 const float TELEFOGHEIGHT 	= 32.0;
 
-class<Actor> SpecialCID;
-
 //==========================================================================
 //
 //  HITDICE
@@ -38,7 +36,7 @@ class<Actor> SpecialCID;
 //
 //==========================================================================
 
-int HITDICE(int a)
+final int HITDICE(int a)
 {
 	return (1 + (P_Random() & 7)) * a;
 }
@@ -103,174 +101,11 @@ void PlayerKilled(EntityEx source, EntityEx inflictor)
 
 //==========================================================================
 //
-//  MinotaurSlam
-//
-//==========================================================================
-
-void MinotaurSlam(Actor Other)
-{
-	float angle;
-	float thrust;
-
-	angle = atan2(Other.Origin.y - Origin.y, Other.Origin.x - Origin.x);
-	thrust = 16.0 + Random() * 4.0;
-	Other.Velocity.x += thrust * cos(angle) * 35.0;
-	Other.Velocity.y += thrust * sin(angle) * 35.0;
-	Other.Damage(none, none, HITDICE(6));
-	if (Other.Player)
-	{
-		Other.ReactionTime = 0.4 + Random() * 0.2;
-	}
-}
-
-//==========================================================================
-//
-//  TouchWhirlwind
-//
-//==========================================================================
-
-void TouchWhirlwind(Actor Other)
-{
-	float randVal;
-
-	Other.Angles.yaw = AngleMod360(Other.Angles.yaw +
-		(Random() - Random()) * 45.0 / 2.0);
-	Other.Velocity.x += (Random() - Random()) * 4.0 * 35.0;
-	Other.Velocity.y += (Random() - Random()) * 4.0 * 35.0;
-	if (XLevel.TicTime & 16 && !Other.bBoss)
-	{
-		randVal = Random() * 4.0;
-		if (randVal > 2.5)
-		{
-			randVal = 2.5;
-		}
-		Other.Velocity.z += randVal * 35.0;
-		if (Other.Velocity.z > 12.0 * 35.0)
-		{
-			Other.Velocity.z = 12.0 * 35.0;
-		}
-	}
-	if (!(XLevel.TicTime & 7))
-	{
-		Other.Damage(none, none, 3);
-	}
-}
-
-//==========================================================================
-//
-//  ChickenMorphPlayer
-//
-//  Returns true if the player gets turned into a chicken.
-//
-//==========================================================================
-
-bool ChickenMorphPlayer()
-{
-	Actor fog;
-	Actor chicken;
-
-	if (Player(Player).ChickenTime)
-	{
-		if ((Player(Player).ChickenTime < Player::CHICKENTIME - 1.0) &&
-			!FindInventory(PowerWeaponLevel2))
-		{
-			// Make a super chicken
-			GiveInventoryType(PowerWeaponLevel2);
-		}
-		return false;
-	}
-	if (bInvulnerable)
-	{
-		// Immune when invulnerable
-		return false;
-	}
-
-	fog = Spawn(TeleportFog, Origin + vector(0.0, 0.0, TELEFOGHEIGHT));
-	fog.PlaySound('misc/teleport', CHAN_VOICE);
-
-	chicken = Spawn(ChickenPlayer, Origin);
-	chicken.Tracer = Player(Player).ReadyWeapon;
-	chicken.Angles.yaw = Angles.yaw;
-	chicken.Player = Player;
-	chicken.bIsPlayer = true;
-	chicken.Health = Player::MAXCHICKENHEALTH;
-	Player.Health = chicken.Health;
-	Player.MO = chicken;
-	BasicArmor Armor = BasicArmor(FindInventory(BasicArmor));
-	Armor.Amount = 0;
-	Armor.SavePercent = 0.0;
-	Inventory Pw = FindInventory(PowerGhost);
-	if (Pw)
-	{
-		Pw.Destroy();
-	}
-	Pw = FindInventory(PowerWeaponLevel2);
-	if (Pw)
-	{
-		Pw.Destroy();
-	}
-	chicken.ObtainInventory(self);
-	chicken.bFly = bFly;
-	Player(Player).ChickenTime = Player::CHICKENTIME;
-	Player(Player).ActivateBeak();
-
-	SetState(FindState('FreeTargMobj'));
-
-	return true;
-}
-
-//==========================================================================
-//
-//  ChickenMorph
-//
-//==========================================================================
-
-bool ChickenMorph()
-{
-	Actor fog;
-	Actor chicken;
-	int i;
-
-	if (bIsPlayer)
-	{
-		return false;
-	}
-	if (bNoMorph)
-	{
-		return false;
-	}
-
-	fog = Spawn(TeleportFog, Origin + vector(0.0, 0.0, TELEFOGHEIGHT));
-	fog.PlaySound('misc/teleport', CHAN_VOICE);
-
-	chicken = Spawn(Chicken, Origin);
-	chicken.SpecialCID = class<Actor>(Class);
-	chicken.Special1 = ftoi(Player::CHICKENTIME * 35.0) + P_Random();
-	chicken.Alpha = Alpha;
-	chicken.Target = Target;
-	chicken.Angles.yaw = Angles.yaw;
-	chicken.TID = TID;
-	chicken.Special = Special;
-	chicken.InsertIntoTIDList(TID);
-	for (i = 0; i < 5; i++)
-	{
-		chicken.Args[i] = Args[i];
-	}
-
-	RemoveFromTIDList();
-
-	SetState(FindState('FreeTargMobj'));
-
-	return true;
-}
-
-//==========================================================================
-//
 //  AutoUseChaosDevice
 //
 //==========================================================================
 
-bool AutoUseChaosDevice()
+final bool AutoUseChaosDevice()
 {
 	Inventory Item = FindInventory(ArtiTeleport);
 	if (Item)
@@ -289,7 +124,7 @@ bool AutoUseChaosDevice()
 //
 //==========================================================================
 
-void AutoUseHealth(int saveHealth)
+final void AutoUseHealth(int saveHealth)
 {
 	int i;
 	int count;
@@ -425,13 +260,6 @@ final void A_Feathers()
 		mo.Velocity.z = (1.0 + Random() * 2.0) * 35.0;
 		mo.SetState(GetStatePlus(mo.IdleState, P_Random() & 7));
 	}
-}
-
-states
-{
-FreeTargMobj:
-	ACLO E 1050 A_FreeTargMobj
-	Stop
 }
 
 defaultproperties

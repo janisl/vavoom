@@ -41,7 +41,7 @@ final void A_BridgeInit()
 	BridgeBall ball3;
 
 	StartAngle = Random() * 360.0;
-	_Special1 = 0;
+	Special1 = 0;
 
 	// Spawn triad into world
 	ball1 = BridgeBall(Spawn(BridgeBall, Origin));
@@ -81,7 +81,7 @@ Spawn:
 
 void RemoveThing()
 {
-	_Special1 = true;	// Removing the bridge
+	Special1 = true;	// Removing the bridge
 	bSolid = false;
 	SetState(GetStatePlus(IdleState, 3, true));
 }

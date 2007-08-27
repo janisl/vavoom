@@ -101,7 +101,7 @@ Death:
 	PPOD D 5 Bright A_Scream
 	PPOD E 5 Bright A_Explode
 	PPOD F 10 Bright
-	Goto Super::FreeTargMobj
+	Goto ScriptedEntity::FreeTargMobj
 Grow:
 	PPOD IJKLMNOP 3
 	Goto Spawn

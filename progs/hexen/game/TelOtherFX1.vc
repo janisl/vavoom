@@ -35,9 +35,97 @@ int DoSpecialDamage(EntityEx victim, EntityEx source, int damage)
 {
 	if (victim.bMonster && !Actor(victim).bBoss && !Serpent(victim))
 	{
-		Actor(victim).TeleportOther();
+		TeleportOther(Actor(victim));
 	}
 	return -1;
+}
+
+//==========================================================================
+//
+//  TeleportOther
+//
+//==========================================================================
+
+final void TeleportOther(Actor victim)
+{
+	if (victim.bIsPlayer)
+	{
+		if (Level.Game.deathmatch)
+			TeleportToDeathmatchStarts(victim);
+		else
+			TeleportToPlayerStarts(victim);
+	}
+	else
+	{
+		// If death action, run it upon teleport
+		if (victim.bMonster && victim.Special)
+		{
+			victim.RemoveFromTIDList();
+			Level.ExecuteActionSpecial(victim.Special, victim.Args[0],
+				victim.Args[1], victim.Args[2], victim.Args[3],
+				victim.Args[4], NULL, 0, victim);
+			victim.Special = 0;
+		}
+
+		// Send all monsters to deathmatch spots
+		TeleportToDeathmatchStarts(victim);
+	}
+}
+
+//==========================================================================
+//
+//  TeleportToDeathmatchStarts
+//
+//==========================================================================
+
+final void TeleportToDeathmatchStarts(Actor victim)
+{
+	int i;
+	float destX;
+	float destY;
+	float destAngle;
+
+	if (Level.NumDeathmatchStarts)
+	{
+		i = P_Random() % Level.NumDeathmatchStarts;
+		destX = Level.DeathmatchStarts[i].x;
+		destY = Level.DeathmatchStarts[i].y;
+		destAngle = itof(45 * (Level.DeathmatchStarts[i].angle / 45));
+		victim.Teleport(vector(destX, destY, ONFLOORZ), destAngle, true,
+			true, false);
+	}
+	else
+	{
+		TeleportToPlayerStarts(victim);
+	}
+}
+
+//==========================================================================
+//
+//  TeleportToPlayerStarts
+//
+//==========================================================================
+
+final void TeleportToPlayerStarts(Actor victim)
+{
+	int i;
+	int selections = 0;
+	float destX;
+	float destY;
+	float destAngle;
+
+	for (i = 0; i < MAXPLAYERS; i++)
+	{
+		if (!Level.Game.Players[i])
+			continue;
+		selections++;
+	}
+	i = P_Random() % selections;
+	destX = Level.PlayerStarts[i].x;
+	destY = Level.PlayerStarts[i].y;
+	destAngle = itof(45 * (Level.PlayerStarts[i].angle / 45));
+	victim.Teleport(vector(destX, destY, ONFLOORZ), destAngle, true, true,
+		false);
 }
 
 //==========================================================================

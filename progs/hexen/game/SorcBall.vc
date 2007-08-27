@@ -150,7 +150,7 @@ final void A_SorcOffense2()
 	mo = Actor(Target).SpawnMissileAngle(SorcFX4, ang1, 0.0);
 	if (mo)
 	{
-		Actor(mo)._Special2 = 35 * 5 / 2;	// 5 seconds
+		Actor(mo).Special2 = 35 * 5 / 2;	// 5 seconds
 		dist = Target.Target.DistTo2(mo);
 		dist = dist / mo.Speed;
 		if (dist < 1.0)
@@ -244,7 +244,7 @@ final void A_SorcBallOrbit()
 	case Heresiarch::SORC_FIRING_SPELL:
 		if (Actor(Target).SpecialCID == Class)
 		{
-			if (_Special2-- <= 0)
+			if (Special2-- <= 0)
 			{
 				// Done rapid firing 
 				Target.Args[3] = Heresiarch::SORC_STOPPED;

@@ -37,16 +37,16 @@ int UpdateMorphedMonster(int tics)
 {
 	Actor fog;
 	TVec oldOrigin;
-	class<Actor> originalClass;
+	class<EntityEx> originalClass;
 	float oldAngle;
 	EntityEx oldTarget;
 	int oldSpecial;
 	int oldTID;
 	int oldArgs[5];
-	Actor mo;
+	EntityEx mo;
 
-	_Special1 -= tics;
-	if (_Special1 > 0)
+	Special1 -= tics;
+	if (Special1 > 0)
 	{
 		return false;
 	}
@@ -78,7 +78,7 @@ int UpdateMorphedMonster(int tics)
 		// Didn't fit
 		mo.Destroy();
 		LinkToWorld();
-		mo._Special1 = 5 * 35;	// Next try in 5 seconds
+		mo.Special1 = 5 * 35;	// Next try in 5 seconds
 		return false;
 	}
 	LinkToWorld();

@@ -139,7 +139,7 @@ final void A_KoraxChase()
 	{
 		if (Random() < 0.0390625)
 		{
-			spot = Actor(Level.FindMobjFromTID(TeleportTID, &_Special1));
+			spot = Actor(Level.FindMobjFromTID(TeleportTID, &Special1));
 			if (spot)
 			{
 				Teleport(spot.Origin, spot.Angles.yaw, true, true, false);

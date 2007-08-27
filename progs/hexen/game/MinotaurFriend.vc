@@ -59,10 +59,33 @@ int DoSpecialDamage(EntityEx victim, EntityEx source, int damage)
 	if (bSkullFly)
 	{
 		// Slam only when in charge mode
-		Actor(victim).MinotaurSlam(self);
+		MinotaurSlam(Actor(victim));
 		return -1;
 	}
 	return damage;
+}
+
+//==========================================================================
+//
+//  MinotaurSlam
+//
+//==========================================================================
+
+final void MinotaurSlam(Actor victim)
+{
+	float angle;
+	float thrust;
+
+	angle = atan2(victim.Origin.y - Origin.y, victim.Origin.x - Origin.x);
+	thrust = 16.0 + Random() * 4.0;
+	victim.Velocity.x += thrust * cos(angle) * 35.0;
+	victim.Velocity.y += thrust * sin(angle) * 35.0;
+	victim.Damage(none, self, HITDICE(4));
+	if (victim.bIsPlayer)
+	{
+		victim.ReactionTime = 0.4 + Random() * 0.2;
+	}
+	Args[4] = 0;	// Stop charging
 }
 
 //==========================================================================
@@ -83,6 +106,34 @@ bool Slam(EntityEx Other)
 
 //==========================================================================
 //
+//  ActiveMinotaur
+//
+//  Search thinker list for minotaur
+//
+//==========================================================================
+
+Actor ActiveMinotaur()
+{
+	MinotaurFriend mo;
+
+	foreach AllThinkers(MinotaurFriend, mo)
+	{
+		if (mo.Health <= 0)
+			continue;
+		if (!mo.bMonster)
+			continue;	// for morphed minotaurs
+		if (mo.bCorpse)
+			continue;
+		if ((XLevel.Time - mo.StartTime) >= MAULATORTIME)
+			continue;
+		if (mo.Tracer == Tracer)
+			return mo;
+	}
+	return none;
+}
+
+//==========================================================================
+//
 //  Died
 //
 //==========================================================================
@@ -93,7 +144,7 @@ void Died(EntityEx source, EntityEx inflictor)
 	if (Tracer && Tracer.Health > 0)
 	{
 		Inventory Power = Tracer.FindInventory(PowerMinotaur);
-		if (!Actor(Tracer).ActiveMinotaur() && Power)
+		if (!ActiveMinotaur() && Power)
 		{
 			Power.Destroy();
 		}
@@ -102,26 +153,21 @@ void Died(EntityEx source, EntityEx inflictor)
 
 //==========================================================================
 //
-//  MorphMonster
+//	MonsterMorphed
 //
 //==========================================================================
 
-bool MorphMonster()
+void MonsterMorphed()
 {
-	if (::MorphMonster())
+	// check for turning off minotaur power for active icon
+	if (Tracer && Tracer.Health > 0)
 	{
-		// check for turning off minotaur power for active icon
-		if (Tracer && Tracer.Health > 0)
+		Inventory Power = Tracer.FindInventory(PowerMinotaur);
+		if (!ActiveMinotaur() && Power)
 		{
-			Inventory Power = Tracer.FindInventory(PowerMinotaur);
-			if (!Actor(Tracer).ActiveMinotaur() && Power)
-			{
-				Power.Destroy();
-			}
+			Power.Destroy();
 		}
-		return true;
 	}
-	return false;
 }
 
 //==========================================================================

@@ -70,7 +70,7 @@ void A_CastSorcererSpell()
 {
 	if (P_Random() < 200)
 	{
-		_Special2 = Heresiarch::SORCFX4_RAPIDFIRE_TIME;
+		Special2 = Heresiarch::SORCFX4_RAPIDFIRE_TIME;
 		Args[4] = 128;
 		Target.Args[3] = Heresiarch::SORC_FIRING_SPELL;
 		return;

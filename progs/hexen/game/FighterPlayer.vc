@@ -50,7 +50,7 @@ final void A_SkullPop()
 	A.bIsPlayer = true;
 	Player = none;
 	bIsPlayer = false;
-	_Special1 = A.Player.PClass;
+	Special1 = A.Player.PClass;
 	A.Health = Health;
 	A.Angles.yaw = Angles.yaw;
 	A.Player.MO = A;

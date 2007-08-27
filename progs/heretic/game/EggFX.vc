@@ -36,13 +36,124 @@ int DoSpecialDamage(EntityEx victim, EntityEx source, int damage)
 {
 	if (victim.bIsPlayer)
 	{
-		Actor(victim).ChickenMorphPlayer();
+		MorphPlayer(Actor(victim));
 	}
 	else
 	{
-		Actor(victim).ChickenMorph();
+		MorphMonster(Actor(victim));
 	}
 	return -1;	// Always return
+}
+
+//==========================================================================
+//
+//	MorphMonster
+//
+//==========================================================================
+
+final bool MorphMonster(Actor victim)
+{
+	Actor fog;
+	Actor chicken;
+	int i;
+
+	if (victim.bIsPlayer)
+	{
+		return false;
+	}
+	if (victim.bNoMorph)
+	{
+		return false;
+	}
+
+	fog = Spawn(TeleportFog, victim.Origin + vector(0.0, 0.0,
+		TELEFOGHEIGHT));
+	fog.PlaySound('misc/teleport', CHAN_VOICE);
+
+	chicken = Spawn(Chicken, victim.Origin);
+	chicken.SpecialCID = class<Actor>(victim.Class);
+	chicken.Special1 = ftoi(Player::CHICKENTIME * 35.0) + P_Random();
+	chicken.Alpha = victim.Alpha;
+	chicken.Target = victim.Target;
+	chicken.Angles.yaw = victim.Angles.yaw;
+	chicken.TID = victim.TID;
+	chicken.Special = victim.Special;
+	chicken.InsertIntoTIDList(victim.TID);
+	for (i = 0; i < 5; i++)
+	{
+		chicken.Args[i] = victim.Args[i];
+	}
+
+	victim.RemoveFromTIDList();
+
+	victim.SetState(victim.FindState('FreeTargMobj'));
+
+	return true;
+}
+
+//==========================================================================
+//
+//  MorphPlayer
+//
+//  Returns true if the player gets turned into a chicken.
+//
+//==========================================================================
+
+final bool MorphPlayer(Actor victim)
+{
+	Actor fog;
+	Actor chicken;
+
+	if (Player(victim.Player).ChickenTime)
+	{
+		if ((Player(victim.Player).ChickenTime <
+			Player::CHICKENTIME - 1.0) &&
+			!victim.FindInventory(PowerWeaponLevel2))
+		{
+			// Make a super chicken
+			victim.GiveInventoryType(PowerWeaponLevel2);
+		}
+		return false;
+	}
+	if (victim.bInvulnerable)
+	{
+		// Immune when invulnerable
+		return false;
+	}
+
+	fog = Spawn(TeleportFog, victim.Origin + vector(0.0, 0.0,
+		TELEFOGHEIGHT));
+	fog.PlaySound('misc/teleport', CHAN_VOICE);
+
+	chicken = Spawn(ChickenPlayer, victim.Origin);
+	chicken.Tracer = Player(victim.Player).ReadyWeapon;
+	chicken.Angles.yaw = victim.Angles.yaw;
+	chicken.Player = victim.Player;
+	chicken.bIsPlayer = true;
+	chicken.Health = Player::MAXCHICKENHEALTH;
+	victim.Player.Health = chicken.Health;
+	victim.Player.MO = chicken;
+	BasicArmor Armor = BasicArmor(victim.FindInventory(BasicArmor));
+	Armor.Amount = 0;
+	Armor.SavePercent = 0.0;
+	Inventory Pw = victim.FindInventory(PowerGhost);
+	if (Pw)
+	{
+		Pw.Destroy();
+	}
+	Pw = victim.FindInventory(PowerWeaponLevel2);
+	if (Pw)
+	{
+		Pw.Destroy();
+	}
+	chicken.ObtainInventory(victim);
+	chicken.bFly = victim.bFly;
+	Player(victim.Player).ChickenTime = Player::CHICKENTIME;
+	Player(victim.Player).ActivateBeak();
+
+	victim.SetState(victim.FindState('FreeTargMobj'));
+
+	return true;
 }
 
 states

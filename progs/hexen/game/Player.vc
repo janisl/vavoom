@@ -1186,14 +1186,14 @@ void DeathPlayerTick(float deltaTime)
 		InvPtr = none;
 		InvFirst = none;
 		PlayerState = PST_REBORN;
-		Actor(MO)._Special1 = PClass;
-		if (Actor(MO)._Special1 > 2)
+		Actor(MO).Special1 = PClass;
+		if (Actor(MO).Special1 > 2)
 		{
-			Actor(MO)._Special1 = 0;
+			Actor(MO).Special1 = 0;
 		}
 		// Let the mobj know the player has entered the reborn state.  Some
 		// mobjs need to know when it's ok to remove themselves.
-		Actor(MO)._Special2 = 666;
+		Actor(MO).Special2 = 666;
 	}
 }
 
@@ -1280,10 +1280,10 @@ void PlayerTick(float deltaTime)
 				speedA.Angles.yaw = MO.Angles.yaw;
 				speedA.Translation = MO.Translation;
 				speedA.Target = Actor(MO);
-				speedA._Special1 = PClass;
-				if (speedA._Special1 > 2)
+				speedA.Special1 = PClass;
+				if (speedA.Special1 > 2)
 				{
-					speedA._Special1 = 0;
+					speedA.Special1 = 0;
 				}
 				int Idx;
 				switch (PClass)
@@ -1983,7 +1983,9 @@ void Cheat_Morph()
 	}
 	else
 	{
-		Actor(MO).MorphPlayer();
+		PorkFX Tmp = Level.Spawn(PorkFX);
+		Tmp.MorphPlayer(Actor(MO));
+		Tmp.Destroy();
 	}
 	cprint("SQUEAL!!");
 }

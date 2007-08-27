@@ -1645,9 +1645,14 @@ void Cheat_Morph()
 			cprint("CHICKEN OFF");
 		}
 	}
-	else if (Actor(MO).ChickenMorphPlayer())
+	else
 	{
-		cprint("CHICKEN ON");
+		EggFX Tmp = Level.Spawn(EggFX);
+		if (Tmp.MorphPlayer(Actor(MO)))
+		{
+			cprint("CHICKEN ON");
+		}
+		Tmp.Destroy();
 	}
 }
 

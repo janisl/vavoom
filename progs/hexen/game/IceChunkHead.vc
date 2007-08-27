@@ -33,7 +33,7 @@ class IceChunkHead : PlayerPawn;
 
 final void A_IceCheckHeadDone()
 {
-	if (_Special2 == 666)
+	if (Special2 == 666)
 	{
 		SetState(GetStatePlus(IdleState, 1, true));
 	}

@@ -1513,6 +1513,17 @@ void ClientParticleExplosion(int colour, TVec org)
 	dl->decay = 300.0;
 }
 
+//==========================================================================
+//
+//	CheckFriendlyFire
+//
+//==========================================================================
+
+bool CheckFriendlyFire(EntityEx source, int damage)
+{
+	return false;
+}
+
 int ArmorAbsorbDamage(EntityEx inflictor, EntityEx source, int damage,
 	name DmgType)
 {

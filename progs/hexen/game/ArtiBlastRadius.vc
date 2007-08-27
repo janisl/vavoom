@@ -91,9 +91,101 @@ bool Use(bool Pickup)
 			// Out of range
 			continue;
 		}
-		mo.Blast(Actor(Owner), BLAST_FULLSTRENGTH);
+		Blast(mo, Actor(Owner), BLAST_FULLSTRENGTH);
 	}
 	return true;
+}
+
+//==========================================================================
+//
+//  Blast
+//
+//==========================================================================
+
+final void Blast(Actor victim, Actor source, float strength)
+{
+	float angle;
+	float ang;
+	Actor A;
+	float x;
+	float y;
+	float z;
+
+	angle = atan2(victim.Origin.y - source.Origin.y,
+		victim.Origin.x - source.Origin.x);
+	if (strength < ArtiBlastRadius::BLAST_FULLSTRENGTH)
+	{
+		victim.Velocity.x = strength * cos(angle) * 35.0;
+		victim.Velocity.y = strength * sin(angle) * 35.0;
+		if (victim.bIsPlayer)
+		{
+			// Players handled automatically
+		}
+		else
+		{
+			victim.bSlide = true;
+			victim.bBlasted = true;
+		}
+	}
+	else	// full strength blast from artifact
+	{
+		if (victim.bMissile)
+		{
+			if (SorcBall(victim))
+			{
+				// don't blast sorcerer balls
+				return;
+			}
+			else if (MageStaffFX2(victim))
+			{
+				// Reflect to originator
+				victim.Tracer = victim.Target;
+				victim.Target = source;
+			}
+		}
+		if (victim.Class == HolySpirit)
+		{
+			if (victim.Tracer == source)
+			{
+				victim.Tracer = victim.Target;
+				victim.Target = source;
+			}
+		}
+		victim.Velocity.x = ArtiBlastRadius::BLAST_SPEED * cos(angle) * 35.0;
+		victim.Velocity.y = ArtiBlastRadius::BLAST_SPEED * sin(angle) * 35.0;
+
+		// Spawn blast puff
+		ang = atan2(source.Origin.y - victim.Origin.y,
+			source.Origin.x - victim.Origin.x);
+		x = victim.Origin.x + (victim.Radius + 1.0) * cos(ang);
+		y = victim.Origin.y + (victim.Radius + 1.0) * sin(ang);
+		z = victim.Origin.z - victim.FloorClip + victim.Height / 2.0;
+		A = Spawn(BlastEffect, vector(x, y, z));
+		if (A)
+		{
+			A.Velocity.x = victim.Velocity.x;
+			A.Velocity.y = victim.Velocity.y;
+		}
+
+		if (victim.bMissile)
+		{
+			victim.Velocity.z = 8.0 * 35.0;
+			A.Velocity.z = victim.Velocity.z;
+		}
+		else
+		{
+			victim.Velocity.z = 1000.0 / victim.Mass * 35.0;
+		}
+		if (victim.bIsPlayer)
+		{
+			// Players handled automatically
+		}
+		else
+		{
+			victim.bSlide = true;
+			victim.bBlasted = true;
+		}
+	}
 }
 
 states

@@ -232,13 +232,13 @@ int				DLightColour;
 float			DLightRadius;
 int				ExplodeEffect;
 
-float			Special1f;
-
 float			MeleeRange;
 
-int				ExploCountSpec1;
-int				ExploCountSpec2;		// Timer for active sound
 int				Special1;	// Special info
+int				Special2;	// Special info
+float			Special1f;
+float			Special2f;
+class<EntityEx>	SpecialCID;
 
 name			DamageType;
 
@@ -3305,8 +3305,8 @@ final bool ExplodeMissile()
 {
 	if (bExploCount)
 	{
-		ExploCountSpec2++;
-		if (ExploCountSpec2 < ExploCountSpec1)
+		Special2++;
+		if (Special2 < Special1)
 		{
 			return true;
 		}
@@ -3863,6 +3863,11 @@ final void Damage(EntityEx inflictor, EntityEx source, int damage,
 	// player specific
 	if (bIsPlayer)
 	{
+		if (PlayerEx(Player).CheckFriendlyFire(source, damage))
+		{
+			return;
+		}
+
 		//	End of game hell hack.
 		if ((Sector->special & SECSPEC_BASE_MASK) ==
 			SECSPEC_DamageSuperHellslimeExit && damage >= Health)
@@ -5311,6 +5316,55 @@ void ObtainInventory(EntityEx Other)
 	}
 }
 
+//===========================================================================
+//
+//  GiveInventory
+//
+//===========================================================================
+
+void GiveInventory(name ItemName, int Amount)
+{
+	if (!bIsPlayer)
+	{
+		return;
+	}
+
+	//	Stamina upgrade.
+	class<Inventory> ItemClass = class<Inventory>(FindClass(ItemName));
+	if (ItemClass)
+	{
+		Inventory Item = Spawn(ItemClass);
+		Item.Amount = Amount;
+		if (Item.TryPickup(self))
+		{
+			Item.Destroy();
+		}
+	}
+}
+
+//===========================================================================
+//
+//  CheckInventory
+//
+//===========================================================================
+
+int CheckInventory(name ItemName)
+{
+	//	Check if it's a player.
+	if (!bIsPlayer)
+	{
+		return 0;
+	}
+
+	class<Inventory> ItemClass = class<Inventory>(FindClass(ItemName));
+	if (ItemClass)
+	{
+		Inventory Item = FindInventory(ItemClass);
+		return Item ? Item.Amount : 0;
+	}
+	return 0;
+}
+
 //==========================================================================
 //
 //	TouchDehackedSpecial
@@ -5729,6 +5783,66 @@ final bool CheckBossDeath()
 	return true;
 }
 
+//==========================================================================
+//
+//	MonsterMorphed
+//
+//==========================================================================
+
+void MonsterMorphed()
+{
+}
+
+//==========================================================================
+//
+//	GetSpeechIndex
+//
+//==========================================================================
+
+final int GetSpeechIndex(RogueConSpeech *List, int Count, int ID, int Num)
+{
+	int Found;
+	int i;
+
+	Found = 0;
+	for (i = 0; i < Count; i++)
+	{
+		if (List[i].SpeakerID == ID)
+		{
+			Found++;
+			if (Found == Num)
+			{
+				return i + 1;
+			}
+		}
+	}
+	return 0;
+}
+
+//==========================================================================
+//
+//	GetSpeech
+//
+//==========================================================================
+
+final int GetSpeech()
+{
+	int Index;
+
+	if (!CurrentSpeech)
+	{
+		CurrentSpeech = 1;
+	}
+	Index = GetSpeechIndex(XLevel.LevelSpeeches, XLevel.NumLevelSpeeches,
+		ConversationID, CurrentSpeech);
+	if (Index)
+	{
+		return Index;
+	}
+	return -GetSpeechIndex(XLevel.GenericSpeeches, XLevel.NumGenericSpeeches,
+		ConversationID, CurrentSpeech);
+}
+
 float GetBaseViewHeight()
 {
 	return 0.0;
@@ -5770,11 +5884,6 @@ void PlayerKilled(EntityEx source, EntityEx inflictor)
 
 void TouchSpecial(EntityEx Toucher)
 {
-}
-
-int GetSpeech()
-{
-	return 0;
 }
 
 void AutoUseArmor()

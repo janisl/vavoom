@@ -47,7 +47,7 @@ void GetExplodeParms(out int damage, out float distance, out byte damageSelf)
 
 final void A_SorcFX4Check()
 {
-	if (_Special2-- <= 0)
+	if (Special2-- <= 0)
 	{
 		SetState(FindState('Death'));
 	}

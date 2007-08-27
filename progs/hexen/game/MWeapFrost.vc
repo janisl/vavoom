@@ -72,7 +72,7 @@ final void A_FireConePL1()
 			mo.bShardSpawnRight = true;
 			mo.bShardSpawnUp = true;
 			mo.bShardSpawnDown = true;
-			mo._Special2 = 3;	// Set sperm count (levels of reproductivity)
+			mo.Special2 = 3;	// Set sperm count (levels of reproductivity)
 			mo.Target = pmo;
 			mo.Args[0] = 3;	// Mark Initial shard as super damage
 		}

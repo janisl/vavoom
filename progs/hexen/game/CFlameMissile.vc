@@ -40,6 +40,33 @@ bool BlasterHitMobj(Entity Other)
 	return ::BlasterHitMobj(Other);
 }
 
+//===========================================================================
+//
+//	SpawnBlasterEffects
+//
+//===========================================================================
+
+void SpawnBlasterEffects()
+{
+	float z;
+	Actor A;
+
+	if (!--Special1)
+	{
+		Special1 = 4;
+		z = Origin.z - 12.0;
+		if (z < FloorZ)
+		{
+			z = FloorZ;
+		}
+		A = Spawn(CFlameFloor, vector(Origin.x, Origin.y, z));
+		if (A)
+		{
+			A.Angles.yaw = Angles.yaw;
+		}
+	}
+}
+
 //==========================================================================
 //
 //	A_CFlamePuff

@@ -31,11 +31,6 @@ const float MAULATORTIME 	= 25.0;
 
 const float TELEFOGHEIGHT	= 32.0;
 
-int _Special1;	// Special info
-int _Special2;	// Special info
-float Special2f;
-class<Actor> SpecialCID;
-
 //==========================================================================
 //
 //  HITDICE
@@ -44,7 +39,7 @@ class<Actor> SpecialCID;
 //
 //==========================================================================
 
-int HITDICE(int a)
+final int HITDICE(int a)
 {
 	return (1 + (P_Random() & 7)) * a;
 }
@@ -64,34 +59,6 @@ void Destroyed()
 	}
 
 	::Destroyed();
-}
-
-//==========================================================================
-//
-//  ActiveMinotaur
-//
-//  Search thinker list for minotaur
-//
-//==========================================================================
-
-Actor ActiveMinotaur()
-{
-	MinotaurFriend mo;
-
-	foreach AllThinkers(MinotaurFriend, mo)
-	{
-		if (mo.Health <= 0)
-			continue;
-		if (!mo.bMonster)
-			continue;	// for morphed minotaurs
-		if (mo.bCorpse)
-			continue;
-		if ((XLevel.TicTime - mo.Args[0]) >= ftoi(MAULATORTIME * 35.0))
-			continue;
-		if (mo.Tracer == self)
-			return mo;
-	}
-	return none;
 }
 
 //==========================================================================
@@ -147,131 +114,11 @@ void PlayerKilled(EntityEx source, EntityEx inflictor)
 
 //==========================================================================
 //
-//  MinotaurSlam
-//
-//==========================================================================
-
-void MinotaurSlam(Actor source)
-{
-	float angle;
-	float thrust;
-
-	angle = atan2(Origin.y - source.Origin.y, Origin.x - source.Origin.x);
-	thrust = 16.0 + Random() * 4.0;
-	Velocity.x += thrust * cos(angle) * 35.0;
-	Velocity.y += thrust * sin(angle) * 35.0;
-	Damage(none, source, HITDICE(4));
-	if (bIsPlayer)
-	{
-		ReactionTime = 0.4 + Random() * 0.2;
-	}
-	source.Args[4] = 0;	// Stop charging
-}
-
-//==========================================================================
-//
-//  MorphPlayer
-//
-//  Returns true if the player gets turned into a pig
-//
-//==========================================================================
-
-bool MorphPlayer()
-{
-	Actor fog;
-	Actor beastMo;
-	int i;
-
-	if (bInvulnerable)
-	{
-		// Immune when invulnerable
-		return false;
-	}
-	if (Player(Player).MorphTime)
-	{
-		// Player is already a beast
-		return false;
-	}
-
-	fog = Spawn(TeleportFog, Origin + vector(0.0, 0.0, TELEFOGHEIGHT));
-	fog.PlaySound('Teleport', CHAN_VOICE);
-
-	beastMo = Spawn(PigPlayer, Origin);
-	beastMo.Tracer = Player(Player).ReadyWeapon;
-	beastMo.Angles = Angles;
-	beastMo.Player = Player;
-	beastMo.bIsPlayer = true;
-	beastMo.Health = Player::MAXMORPHHEALTH;
-	Player.Health = beastMo.Health;
-	Player.MO = beastMo;
-	HexenArmor HArmor = HexenArmor(FindInventory(HexenArmor));
-	for (i = 0; i < 4; i++)
-	{
-		HArmor.Slots[i] = 0.0;
-	}
-	beastMo.ObtainInventory(self);
-	Player.PClass = HexenDefs::PCLASS_PIG;
-	beastMo.bFly = bFly;
-	Player(Player).MorphTime = MORPHTIME;
-	Player(Player).ActivateMorphWeapon();
-
-	SetState(FindState('FreeTargMobj'));
-
-	return true;
-}
-
-//==========================================================================
-//
-//  MorphMonster
-//
-//==========================================================================
-
-bool MorphMonster()
-{
-	Actor monster;
-	Actor fog;
-	int i;
-
-	if (bIsPlayer)
-		return false;
-	if (!bMonster)
-		return false;
-	if (bBoss)
-		return false;
-	if (bNoMorph)
-		return false;
-
-	fog = Spawn(TeleportFog, Origin + vector(0.0, 0.0, TELEFOGHEIGHT));
-	fog.PlaySound('Teleport', CHAN_VOICE);
-
-	monster = Spawn(Pig, Origin);
-	monster.SpecialCID = class<Actor>(Class);
-	monster._Special1 = ftoi(MORPHTIME * 35.0) + P_Random();
-	monster.Alpha = Alpha;
-	monster.Target = Target;
-	monster.Angles.yaw = Angles.yaw;
-	monster.TID = TID;
-	monster.Special = Special;
-	monster.InsertIntoTIDList(TID);
-	for (i = 0; i < 5; i++)
-	{
-		monster.Args[i] = Args[i];
-	}
-
-	RemoveFromTIDList();
-
-	SetState(FindState('FreeTargMobj'));
-
-	return true;
-}
-
-//==========================================================================
-//
 //  AutoUseHealth
 //
 //==========================================================================
 
-void AutoUseHealth(int saveHealth)
+final void AutoUseHealth(int saveHealth)
 {
 	int i;
 	int count;
@@ -342,7 +189,7 @@ void AutoUseHealth(int saveHealth)
 //
 //==========================================================================
 
-void PoisonPlayer(Actor poisoner, int poison)
+final void PoisonPlayer(Actor poisoner, int poison)
 {
 	if ((Player(Player).Cheats & Player::CF_GODMODE) || bInvulnerable)
 	{
@@ -365,7 +212,7 @@ void PoisonPlayer(Actor poisoner, int poison)
 //
 //==========================================================================
 
-void PoisonDamage(Actor source, int damage, bool playPainSound)
+final void PoisonDamage(Actor source, int damage, bool playPainSound)
 {
 	Actor inflictor;
 
@@ -408,7 +255,7 @@ void PoisonDamage(Actor source, int damage, bool playPainSound)
 	if (Health <= 0)
 	{
 		// Death
-		_Special1 = damage;
+		Special1 = damage;
 		if (bIsPlayer && inflictor && !Player(Player).MorphTime)
 		{
 			// Check for flame death
@@ -438,7 +285,7 @@ void PoisonDamage(Actor source, int damage, bool playPainSound)
 //
 //==========================================================================
 
-void SpawnDirt(float radius)
+final void SpawnDirt(float radius)
 {
 	float angle;
 	TVec org;
@@ -477,92 +324,6 @@ void SpawnDirt(float radius)
 	}
 }
 
-//==========================================================================
-//
-//  TeleportToPlayerStarts
-//
-//==========================================================================
-
-void TeleportToPlayerStarts()
-{
-	int i;
-	int selections = 0;
-	float destX;
-	float destY;
-	float destAngle;
-
-	for (i = 0; i < MAXPLAYERS; i++)
-	{
-		if (!Level.Game.Players[i])
-			continue;
-		selections++;
-	}
-	i = P_Random() % selections;
-	destX = Level.PlayerStarts[i].x;
-	destY = Level.PlayerStarts[i].y;
-	destAngle = itof(45 * (Level.PlayerStarts[i].angle / 45));
-	Teleport(vector(destX, destY, ONFLOORZ), destAngle, true, true, false);
-}
-
-//==========================================================================
-//
-//  TeleportToDeathmatchStarts
-//
-//==========================================================================
-
-void TeleportToDeathmatchStarts()
-{
-	int i;
-	float destX;
-	float destY;
-	float destAngle;
-
-	if (Level.NumDeathmatchStarts)
-	{
-		i = P_Random() % Level.NumDeathmatchStarts;
-		destX = Level.DeathmatchStarts[i].x;
-		destY = Level.DeathmatchStarts[i].y;
-		destAngle = itof(45 * (Level.DeathmatchStarts[i].angle / 45));
-		Teleport(vector(destX, destY, ONFLOORZ), destAngle, true, true,
-			false);
-	}
-	else
-	{
-		TeleportToPlayerStarts();
-	}
-}
-
-//==========================================================================
-//
-//  TeleportOther
-//
-//==========================================================================
-
-void TeleportOther()
-{
-	if (bIsPlayer)
-	{
-		if (Level.Game.deathmatch)
-			TeleportToDeathmatchStarts();
-		else
-			TeleportToPlayerStarts();
-	}
-	else
-	{
-		// If death action, run it upon teleport
-		if (bMonster && Special)
-		{
-			RemoveFromTIDList();
-			Level.ExecuteActionSpecial(Special, Args[0], Args[1], Args[2],
-				Args[3], Args[4], NULL, 0, self);
-			Special = 0;
-		}
-
-		// Send all monsters to deathmatch spots
-		TeleportToDeathmatchStarts();
-	}
-}
-
 //**************************************************************************
 //
 //  OBJECT MOVEMENT
@@ -577,7 +338,7 @@ void TeleportOther()
 //
 //==========================================================================
 
-TVec ClipVelocity(TVec in, TVec normal, float overbounce)
+final TVec ClipVelocity(TVec in, TVec normal, float overbounce)
 {
 	return in - normal * (DotProduct(in, normal) * overbounce);
 }
@@ -593,48 +354,6 @@ bool PlayerIsMorphed()
 	return !!Player(Player).MorphTime;
 }
 
-//===========================================================================
-//
-//	SpawnBlasterEffects
-//
-//===========================================================================
-
-void SpawnBlasterEffects()
-{
-	float z;
-	Actor A;
-
-	if (Class == MageWandMissile)
-	{
-		if (P_Random() < 128)
-		{
-			z = Origin.z - 8.0;
-			if (z < FloorZ)
-			{
-				z = FloorZ;
-			}
-			Spawn(MageWandSmoke, vector(Origin.x, Origin.y, z));
-		}
-	}
-	else
-	{
-		if (!--_Special1)
-		{
-			_Special1 = 4;
-			z = Origin.z - 12.0;
-			if (z < FloorZ)
-			{
-				z = FloorZ;
-			}
-			A = Spawn(CFlameFloor, vector(Origin.x, Origin.y, z));
-			if (A)
-			{
-				A.Angles.yaw = Angles.yaw;
-			}
-		}
-	}
-}
-
 //==========================================================================
 //
 //	GetBaseViewHeight
@@ -644,151 +363,6 @@ void SpawnBlasterEffects()
 float GetBaseViewHeight()
 {
 	return Player::VIEWHEIGHT;
-}
-
-//==========================================================================
-//
-//  Blast
-//
-//==========================================================================
-
-final void Blast(Actor source, float strength)
-{
-	float angle;
-	float ang;
-	Actor A;
-	float x;
-	float y;
-	float z;
-
-	angle = atan2(Origin.y - source.Origin.y, Origin.x - source.Origin.x);
-	if (strength < ArtiBlastRadius::BLAST_FULLSTRENGTH)
-	{
-		Velocity.x = strength * cos(angle) * 35.0;
-		Velocity.y = strength * sin(angle) * 35.0;
-		if (bIsPlayer)
-		{
-			// Players handled automatically
-		}
-		else
-		{
-			bSlide = true;
-			bBlasted = true;
-		}
-	}
-	else	// full strength blast from artifact
-	{
-		if (bMissile)
-		{
-			if (SorcBall(self))
-			{
-				// don't blast sorcerer balls
-				return;
-			}
-			else if (MageStaffFX2(self))
-			{
-				// Reflect to originator
-				Tracer = Target;
-				Target = source;
-			}
-		}
-		if (Class == HolySpirit)
-		{
-			if (Tracer == source)
-			{
-				Tracer = Target;
-				Target = source;
-			}
-		}
-		Velocity.x = ArtiBlastRadius::BLAST_SPEED * cos(angle) * 35.0;
-		Velocity.y = ArtiBlastRadius::BLAST_SPEED * sin(angle) * 35.0;
-
-		// Spawn blast puff
-		ang = atan2(source.Origin.y - Origin.y, source.Origin.x - Origin.x);
-		x = Origin.x + (Radius + 1.0) * cos(ang);
-		y = Origin.y + (Radius + 1.0) * sin(ang);
-		z = Origin.z - FloorClip + Height / 2.0;
-		A = Spawn(BlastEffect, vector(x, y, z));
-		if (A)
-		{
-			A.Velocity.x = Velocity.x;
-			A.Velocity.y = Velocity.y;
-		}
-
-		if (bMissile)
-		{
-			Velocity.z = 8.0 * 35.0;
-			A.Velocity.z = Velocity.z;
-		}
-		else
-		{
-			Velocity.z = 1000.0 / Mass * 35.0;
-		}
-		if (bIsPlayer)
-		{
-			// Players handled automatically
-		}
-		else
-		{
-			bSlide = true;
-			bBlasted = true;
-		}
-	}
-}
-
-//===========================================================================
-//
-//  A_NoGravity
-//
-//===========================================================================
-
-final void A_NoGravity()
-{
-	bNoGravity = true;
-}
-
-//============================================================================
-//
-//  A_SetInvulnerable
-//
-//============================================================================
-
-final void A_SetInvulnerable()
-{
-	bInvulnerable = true;
-}
-
-//============================================================================
-//
-//  A_UnSetInvulnerable
-//
-//============================================================================
-
-final void A_UnSetInvulnerable()
-{
-	bInvulnerable = false;
-}
-
-//==========================================================================
-//
-//  A_HideThing
-//
-//==========================================================================
-
-final void A_HideThing()
-{
-	bHidden = true;
-}
-
-//==========================================================================
-//
-//  A_UnHideThing
-//
-//==========================================================================
-
-final void A_UnHideThing()
-{
-	bHidden = false;
 }
 
 //============================================================================
@@ -847,32 +421,37 @@ final void A_AddPlayerCorpse()
 
 final void A_CheckBurnGone()
 {
-	if (_Special2 == 666)
+	if (Special2 == 666)
 	{
 		SetState(FindState('BurnGone'));
 	}
 }
 
-//============================================================================
+//==========================================================================
 //
 //  A_QueueCorpse
 //
 //  Throw another corpse on the queue.
 //
-//============================================================================
+//==========================================================================
 
 final void A_QueueCorpse()
 {
 	EntityEx corpse;
 
-	if (HexenLevelInfo(Level).corpseQueueSlot >= HexenLevelInfo::CORPSEQUEUESIZE)
+	if (HexenLevelInfo(Level).corpseQueueSlot >=
+		HexenLevelInfo::CORPSEQUEUESIZE)
 	{
 		// Too many corpses - remove an old one
-		corpse = HexenLevelInfo(Level).corpseQueue[HexenLevelInfo(Level).corpseQueueSlot % HexenLevelInfo::CORPSEQUEUESIZE];
+		corpse = HexenLevelInfo(Level).corpseQueue[
+			HexenLevelInfo(Level).corpseQueueSlot %
+			HexenLevelInfo::CORPSEQUEUESIZE];
 		if (corpse)
 			corpse.Destroy();
 	}
-	HexenLevelInfo(Level).corpseQueue[HexenLevelInfo(Level).corpseQueueSlot % HexenLevelInfo::CORPSEQUEUESIZE] = self;
+	HexenLevelInfo(Level).corpseQueue[
+		HexenLevelInfo(Level).corpseQueueSlot %
+		HexenLevelInfo::CORPSEQUEUESIZE] = self;
 	HexenLevelInfo(Level).corpseQueueSlot++;
 }
 
@@ -926,9 +505,6 @@ final void A_PlayerBurnScream()
 
 states
 {
-FreeTargMobj:
-	ACLO E 1050 A_FreeTargMobj
-	Stop
 Crunch:
 	GIBS A -1
 	Stop

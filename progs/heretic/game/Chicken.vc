@@ -37,13 +37,13 @@ class Chicken : Pawn
 bool UpdateChicken(int tics)
 {
 	Actor fog;
-	class<Actor> moType;
+	class<EntityEx> moType;
 	float oldAngle;
 	EntityEx oldTarget;
 	int oldSpecial;
 	int oldTID;
 	int oldArgs[5];
-	Actor A;
+	EntityEx A;
 
 	Special1 -= tics;
 	if (Special1 > 0)
