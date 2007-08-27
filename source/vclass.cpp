@@ -3020,6 +3020,29 @@ VState* VClass::FindStateLabelChecked(VName AName)
 
 //==========================================================================
 //
+//	VClass::SetStateLabel
+//
+//==========================================================================
+
+void VClass::SetStateLabel(VName AName, VState* State)
+{
+	guard(VClass::SetStateLabel);
+	for (int i = 0; i < StateLabels.Num(); i++)
+	{
+		if (StateLabels[i].Name == AName)
+		{
+			StateLabels[i].State = State;
+			return;
+		}
+	}
+	VStateLabel& L = StateLabels.Alloc();
+	L.Name = AName;
+	L.State = State;
+	unguard;
+}
+
+//==========================================================================
+//
 //	VClass::PostLoad
 //
 //==========================================================================

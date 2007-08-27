@@ -183,21 +183,6 @@ static int GetClassFieldInt(VClass* Class, const char* FieldName)
 
 //==========================================================================
 //
-//	GetClassFieldState
-//
-//==========================================================================
-
-static VState* GetClassFieldState(VClass* Class, const char* FieldName)
-{
-	guard(GetClassFieldInt);
-	VField* F = Class->FindFieldChecked(FieldName);
-	VState** Ptr = (VState**)(Class->Defaults + F->Ofs);
-	return *Ptr;
-	unguard;
-}
-
-//==========================================================================
-//
 //	GetClassFieldClass
 //
 //==========================================================================
@@ -255,22 +240,6 @@ static void SetClassFieldName(VClass* Class, const char* FieldName,
 	guard(SetClassFieldInt);
 	VField* F = Class->FindFieldChecked(FieldName);
 	VName* Ptr = (VName*)(Class->Defaults + F->Ofs);
-	*Ptr = Value;
-	unguard;
-}
-
-//==========================================================================
-//
-//	SetClassFieldState
-//
-//==========================================================================
-
-static void SetClassFieldState(VClass* Class, const char* FieldName,
-	VState* Value)
-{
-	guard(SetClassFieldState);
-	VField* F = Class->FindFieldChecked(FieldName);
-	VState** Ptr = (VState**)(Class->Defaults + F->Ofs);
 	*Ptr = Value;
 	unguard;
 }
@@ -539,7 +508,7 @@ static void ReadThing(int num)
 			}
 			else
 			{
-				SetClassFieldState(Ent, "IdleState", States[value]);
+				Ent->SetStateLabel("Spawn", States[value]);
 			}
 		}
 		else if (!VStr::ICmp(String, "First moving frame"))
@@ -550,7 +519,7 @@ static void ReadThing(int num)
 			}
 			else
 			{
-				SetClassFieldState(Ent, "SeeState", States[value]);
+				Ent->SetStateLabel("See", States[value]);
 			}
 		}
 		else if (!VStr::ICmp(String, "Close attack frame"))
@@ -561,7 +530,7 @@ static void ReadThing(int num)
 			}
 			else
 			{
-				SetClassFieldState(Ent, "MeleeState", States[value]);
+				Ent->SetStateLabel("Melee", States[value]);
 			}
 		}
 		else if (!VStr::ICmp(String, "Far attack frame"))
@@ -572,7 +541,7 @@ static void ReadThing(int num)
 			}
 			else
 			{
-				SetClassFieldState(Ent, "MissileState", States[value]);
+				Ent->SetStateLabel("Missile", States[value]);
 			}
 		}
 		else if (!VStr::ICmp(String, "Injury frame"))
@@ -583,7 +552,7 @@ static void ReadThing(int num)
 			}
 			else
 			{
-				SetClassFieldState(Ent, "PainState", States[value]);
+				Ent->SetStateLabel("Pain", States[value]);
 			}
 		}
 		else if (!VStr::ICmp(String, "Death frame"))
@@ -594,7 +563,7 @@ static void ReadThing(int num)
 			}
 			else
 			{
-				SetClassFieldState(Ent, "DeathState", States[value]);
+				Ent->SetStateLabel("Death", States[value]);
 			}
 		}
 		else if (!VStr::ICmp(String, "Exploding frame"))
@@ -605,7 +574,7 @@ static void ReadThing(int num)
 			}
 			else
 			{
-				SetClassFieldState(Ent, "GibsDeathState", States[value]);
+				Ent->SetStateLabel("XDeath", States[value]);
 			}
 		}
 		else if (!VStr::ICmp(String, "Respawn frame"))
@@ -616,7 +585,7 @@ static void ReadThing(int num)
 			}
 			else
 			{
-				SetClassFieldState(Ent, "RaiseState", States[value]);
+				Ent->SetStateLabel("Raise", States[value]);
 			}
 		}
 		//
@@ -923,7 +892,7 @@ static void ReadWeapon(int num)
 			}
 			else
 			{
-				SetClassFieldState(Weapon, "UpState", States[value]);
+				Weapon->SetStateLabel("Select", States[value]);
 			}
 		}
 		else if (!VStr::ICmp(String, "Select frame"))
@@ -934,7 +903,7 @@ static void ReadWeapon(int num)
 			}
 			else
 			{
-				SetClassFieldState(Weapon, "DownState", States[value]);
+				Weapon->SetStateLabel("Deselect", States[value]);
 			}
 		}
 		else if (!VStr::ICmp(String, "Bobbing frame"))
@@ -945,7 +914,7 @@ static void ReadWeapon(int num)
 			}
 			else
 			{
-				SetClassFieldState(Weapon, "ReadyState", States[value]);
+				Weapon->SetStateLabel("Ready", States[value]);
 			}
 		}
 		else if (!VStr::ICmp(String, "Shooting frame"))
@@ -956,7 +925,7 @@ static void ReadWeapon(int num)
 			}
 			else
 			{
-				SetClassFieldState(Weapon, "AttackState", States[value]);
+				Weapon->SetStateLabel("Fire", States[value]);
 			}
 		}
 		else if (!VStr::ICmp(String, "Firing frame"))
@@ -967,7 +936,7 @@ static void ReadWeapon(int num)
 			}
 			else
 			{
-				SetClassFieldState(Weapon, "FlashState", States[value]);
+				Weapon->SetStateLabel("Flash", States[value]);
 			}
 		}
 		else
@@ -1598,48 +1567,24 @@ void ProcessDehackedFiles()
 			S = StatesClass->NetStates;
 			pState = &StatesClass->NetStates;
 		}
-		else if (sc->Check("Spawn"))
-		{
-			S = GetClassFieldState(StatesClass, "IdleState");
-			pState = &StatesClass->NetStates;
-			while (*pState && *pState != S)
-			{
-				pState = &(*pState)->NetNext;
-			}
-			if (!pState)
-			{
-				sc->Error("Bad state");
-			}
-		}
-		else if (sc->Check("Death"))
-		{
-			S = GetClassFieldState(StatesClass, "DeathState");
-			pState = &StatesClass->NetStates;
-			while (*pState && *pState != S)
-			{
-				pState = &(*pState)->NetNext;
-			}
-			if (!pState)
-			{
-				sc->Error("Bad state");
-			}
-		}
-		else if (sc->Check("Extra"))
-		{
-			S = GetClassFieldState(StatesClass, "ExtraState");
-			pState = &StatesClass->NetStates;
-			while (*pState && *pState != S)
-			{
-				pState = &(*pState)->NetNext;
-			}
-			if (!pState)
-			{
-				sc->Error("Bad state");
-			}
-		}
 		else
 		{
-			sc->Error("Expected First or Death");
+			sc->ExpectString();
+			S = StatesClass->FindStateLabel(*sc->String);
+			if (!S)
+			{
+				sc->Error(va("No such state %s in class %s",
+					*sc->String, StatesClass->GetName()));
+			}
+			pState = &StatesClass->NetStates;
+			while (*pState && *pState != S)
+			{
+				pState = &(*pState)->NetNext;
+			}
+			if (!pState)
+			{
+				sc->Error("Bad state");
+			}
 		}
 		//	Number of states
 		sc->ExpectNumber();
@@ -1725,6 +1670,15 @@ void ProcessDehackedFiles()
 			sc->Error(va("No such class %s", *sc->String));
 		}
 		EntClasses.Append(C);
+		//	Make sure class has it's own copy of all used state labels.
+		C->SetStateLabel("Spawn", C->FindStateLabel("Spawn"));
+		C->SetStateLabel("See", C->FindStateLabel("See"));
+		C->SetStateLabel("Melee", C->FindStateLabel("Melee"));
+		C->SetStateLabel("Missile", C->FindStateLabel("Missile"));
+		C->SetStateLabel("Pain", C->FindStateLabel("Pain"));
+		C->SetStateLabel("Death", C->FindStateLabel("Death"));
+		C->SetStateLabel("XDeath", C->FindStateLabel("XDeath"));
+		C->SetStateLabel("Raise", C->FindStateLabel("Raise"));
 	}
 
 	//	Create list of weapon classes.
@@ -1739,6 +1693,11 @@ void ProcessDehackedFiles()
 			sc->Error(va("No such class %s", *sc->String));
 		}
 		WeaponClasses.Append(C);
+		C->SetStateLabel("Select", C->FindStateLabel("Select"));
+		C->SetStateLabel("Deselect", C->FindStateLabel("Deselect"));
+		C->SetStateLabel("Ready", C->FindStateLabel("Ready"));
+		C->SetStateLabel("Fire", C->FindStateLabel("Fire"));
+		C->SetStateLabel("Flash", C->FindStateLabel("Flash"));
 	}
 
 	//	Create list of ammo classes.

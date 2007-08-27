@@ -69,11 +69,11 @@ states
 	PainElemental			First	25
 	WolfensteinSS			First	37
 	CommanderKeen			First	15
-	BossBrain				First	6
+	BossBrain				Spawn	6
 	BossEye					First	3
 	SpawnShot				First	4
 	SpawnFire				First	8
-	Rocket					Extra	3
+	BossBrain				First	3
 	GreenArmor				First	2
 	BlueArmor				First	2
 	ExplosiveBarrel			First	7
@@ -285,7 +285,7 @@ code_pointers
 	BrainSpit		BossEye				A_BrainSpit
 	SpawnSound		SpawnShot			A_SpawnSound
 	SpawnFly		SpawnShot			A_SpawnFly
-	BrainExplode	Rocket				A_BrainExplode
+	BrainExplode	BossBrain			A_BrainExplode
 }
 
 //	Names of the sounds to be used when changing sounds

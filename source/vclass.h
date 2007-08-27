@@ -480,6 +480,7 @@ public:
 	VState* FindStateChecked(VName);
 	VState* FindStateLabel(VName);
 	VState* FindStateLabelChecked(VName);
+	void SetStateLabel(VName, VState*);
 	void CopyObject(const vuint8*, vuint8*);
 	void SerialiseObject(VStream&, VObject*);
 	void CleanObject(VObject*);
