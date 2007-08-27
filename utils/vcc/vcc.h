@@ -432,12 +432,6 @@ public:
 	VState*			Next;
 
 	//	Compile time variables
-	bool			DecorateStyle;
-	VExpression*	FrameExpr;
-	VExpression*	TimeExpr;
-	VExpression*	Misc1Expr;
-	VExpression*	Misc2Expr;
-	VName			NextStateName;
 	VName			GotoLabel;
 	vint32			GotoOffset;
 	VName			FunctionName;
@@ -627,9 +621,8 @@ private:
 	void ParseDelegate(VExpression*, VField*);
 	void ParseDefaultProperties(VClass*);
 	void ParseStruct(VClass*, bool);
-	void ParseStates(VClass*);
 	VName ParseStateString();
-	void ParseDecorateStates(VClass*);
+	void ParseStates(VClass*);
 	void ParseReplication(VClass*);
 	void ParseClass();
 

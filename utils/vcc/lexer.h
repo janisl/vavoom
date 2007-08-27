@@ -94,7 +94,6 @@ enum EToken
 	TK_Vector,
 	TK_Void,
 	TK_While,
-	TK_States__,
 	TK_MobjInfo,
 	TK_ScriptId,
 

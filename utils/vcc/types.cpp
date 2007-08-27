@@ -2059,12 +2059,6 @@ VState::VState(VName InName, VMemberBase* InOuter, TLocation InLoc)
 , NextState(0)
 , Function(0)
 , Next(0)
-, DecorateStyle(false)
-, FrameExpr(NULL)
-, TimeExpr(NULL)
-, Misc1Expr(NULL)
-, Misc2Expr(NULL)
-, NextStateName(NAME_None)
 , GotoLabel(NAME_None)
 , GotoOffset(0)
 , FunctionName(NAME_None)
@@ -2079,14 +2073,6 @@ VState::VState(VName InName, VMemberBase* InOuter, TLocation InLoc)
 
 VState::~VState()
 {
-	if (FrameExpr)
-		delete FrameExpr;
-	if (TimeExpr)
-		delete TimeExpr;
-	if (Misc1Expr)
-		delete Misc1Expr;
-	if (Misc2Expr)
-		delete Misc2Expr;
 }
 
 //==========================================================================
@@ -2135,67 +2121,10 @@ bool VState::Define()
 void VState::Emit()
 {
 	VEmitContext ec(this);
-	if (FrameExpr)
-		FrameExpr = FrameExpr->Resolve(ec);
-	if (TimeExpr)
-		TimeExpr = TimeExpr->Resolve(ec);
-	if (Misc1Expr)
-		Misc1Expr = Misc1Expr->Resolve(ec);
-	if (Misc2Expr)
-		Misc2Expr = Misc2Expr->Resolve(ec);
-
-	if (!DecorateStyle && (!FrameExpr || !TimeExpr))
-		return;
-
-	if (FrameExpr && !FrameExpr->IsIntConst())
+	if (GotoLabel != NAME_None)
 	{
-		ParseError(FrameExpr->Loc, "Integer constant expected");
-		return;
-	}
-	if (TimeExpr && !TimeExpr->IsFloatConst())
-	{
-		ParseError(TimeExpr->Loc, "Float constant expected");
-		return;
-	}
-	if (Misc1Expr && !Misc1Expr->IsIntConst())
-	{
-		ParseError(Misc1Expr->Loc, "Integer constant expected");
-		return;
-	}
-	if (Misc2Expr && !Misc2Expr->IsIntConst())
-	{
-		ParseError(Misc2Expr->Loc, "Integer constant expected");
-		return;
-	}
-
-	if (FrameExpr)
-	{
-		Frame = FrameExpr->GetIntConst();
-	}
-	if (TimeExpr)
-	{
-		Time = TimeExpr->GetFloatConst();
-	}
-	if (Misc1Expr)
-	{
-		Misc1 = Misc1Expr->GetIntConst();
-	}
-	if (Misc2Expr)
-	{
-		Misc2 = Misc2Expr->GetIntConst();
-	}
-
-	if (NextStateName != NAME_None)
-	{
-		NextState = ((VClass*)Outer)->CheckForState(NextStateName);
-		if (!NextState)
-		{
-			ParseError(Loc, "No such state %s", *NextStateName);
-		}
-	}
-	else if (GotoLabel != NAME_None)
-	{
-		NextState = ((VClass*)Outer)->ResolveStateLabel(Loc, GotoLabel, GotoOffset);
+		NextState = ((VClass*)Outer)->ResolveStateLabel(Loc, GotoLabel,
+			GotoOffset);
 	}
 
 	if (Function)
@@ -2860,7 +2789,7 @@ VState* VClass::ResolveStateLabel(TLocation Loc, VName LabelName, int Offset)
 	int Count = Offset;
 	while (Count--)
 	{
-		if (!State || !State->Next || State->Next != State->NextState)
+		if (!State || !State->Next)
 		{
 			ParseError(Loc, "Bad jump offset");
 			return NULL;

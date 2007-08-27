@@ -105,7 +105,6 @@ const char*			VLexer::TokenNames[] =
 	"vector",
 	"void",
 	"while",
-	"__states__",
 	"__mobjinfo__",
 	"__scriptid__",
 	//	Punctuation
@@ -1096,19 +1095,11 @@ void VLexer::ProcessLetterToken(bool CheckKeywords)
 			{
 				Token = TK_MobjInfo;
 			}
-			else if (s[2] == 's')
+			else if (s[2] == 's' && s[3] == 'c' && s[4] == 'r' &&
+				s[5] == 'i' && s[6] == 'p' && s[7] == 't' && s[8] == 'i' &&
+				s[9] == 'd' && s[10] == '_' && s[11] == '_' && s[12] == 0)
 			{
-				if (s[3] == 't' && s[4] == 'a' && s[5] == 't' && s[6] == 'e' &&
-					s[7] == 's' && s[8] == '_' && s[9] == '_' && s[10] == 0)
-				{
-					Token = TK_States__;
-				}
-				else if (s[3] == 'c' && s[4] == 'r' && s[5] == 'i' &&
-					s[6] == 'p' && s[7] == 't' && s[8] == 'i' && s[9] == 'd' &&
-					s[10] == '_' && s[11] == '_' && s[12] == 0)
-				{
-					Token = TK_ScriptId;
-				}
+				Token = TK_ScriptId;
 			}
 		}
 		break;

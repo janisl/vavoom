@@ -3,7 +3,6 @@
 <language name="VavoomC" version="0.91" kateversion="2.3" section="Games" extensions="*.vc" mimetype="text/x-vavoomc">
 	<highlighting>
 		<list name="keywords">
-			<item> __states__ </item>
 			<item> __mobjinfo__ </item>
 			<item> __scriptid__ </item>
 			<item> abstract </item>

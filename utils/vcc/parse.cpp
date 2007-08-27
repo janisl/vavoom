@@ -1469,125 +1469,6 @@ void VParser::ParseStruct(VClass* InClass, bool IsVector)
 
 //==========================================================================
 //
-//	VParser::ParseStates
-//
-//==========================================================================
-
-void VParser::ParseStates(VClass* InClass)
-{
-	Lex.Expect(TK_LBrace, ERR_MISSING_LBRACE);
-	int NewLabelsStart = InClass->StateLabels.Num();
-	while (!Lex.Check(TK_RBrace))
-	{
-		//	State identifier
-		if (Lex.Token != TK_Identifier)
-		{
-			ParseError(Lex.Location, "State name expected");
-			Lex.NextToken();
-			continue;
-		}
-		VName TmpName = Lex.Name;
-		Lex.NextToken();
-		if (Lex.Check(TK_Colon))
-		{
-			InClass->StateLabels.Alloc().Name = TmpName;
-			continue;
-		}
-		VState* s = new VState(TmpName, InClass, Lex.Location);
-		InClass->AddState(s);
-		Lex.Expect(TK_LParen, ERR_MISSING_LPAREN);
-		//	Sprite name
-		if (Lex.Token != TK_NameLiteral)
-		{
-			ParseError(Lex.Location, "Sprite name expected");
-		}
-		char SprName[8];
-		SprName[0] = 0;
-		if (Lex.Name != NAME_None && strlen(Lex.String) != 4)
-		{
-			ParseError(Lex.Location, "Invalid sprite name");
-		}
-		else if (Lex.Name != NAME_None)
-		{
-			SprName[0] = tolower(Lex.String[0]);
-			SprName[1] = tolower(Lex.String[1]);
-			SprName[2] = tolower(Lex.String[2]);
-			SprName[3] = tolower(Lex.String[3]);
-			SprName[4] = 0;
-		}
-		s->SpriteName = SprName;
-		Lex.NextToken();
-		Lex.Expect(TK_Comma);
-		//  Frame
-		s->FrameExpr = ParseExpression();
-		Lex.Expect(TK_Comma);
-		//  Tics
-		s->TimeExpr = ParseExpression();
-		Lex.Expect(TK_Comma);
-		//  Next state
-		if (Lex.Token != TK_Identifier && Lex.Token != TK_None)
-		{
-			ParseError(Lex.Location, "Next state name expectred");
-		}
-		if (Lex.Token == TK_Identifier)
-		{
-			s->NextStateName = Lex.Name;
-		}
-		Lex.NextToken();
-		if (Lex.Check(TK_Comma))
-		{
-			//	Misc 1
-			s->Misc1Expr = ParseExpression();
-			Lex.Expect(TK_Comma);
-			//	Misc 2
-			s->Misc2Expr = ParseExpression();
-		}
-		Lex.Expect(TK_RParen, ERR_NONE);
-		//	Code
-		if (Lex.Check(TK_LBrace))
-		{
-			s->Function = new VMethod(NAME_None, s, s->Loc);
-			s->Function->ReturnTypeExpr = new VTypeExpr(TYPE_Void, Lex.Location);
-			s->Function->ReturnType = TType(TYPE_Void);
-			s->Function->Statement = ParseCompoundStatement();
-		}
-		else if (Lex.Check(TK_Assign))
-		{
-			if (!Lex.Check(TK_None))
-			{
-				if (Lex.Token != TK_Identifier)
-				{
-					ParseError(Lex.Location, "State method name expected");
-				}
-				else
-				{
-					s->FunctionName = Lex.Name;
-					Lex.NextToken();
-				}
-			}
-		}
-		else
-		{
-			ParseError(Lex.Location, "State method declaration expected");
-		}
-
-		//	Assign state to the labels.
-		for (int i = NewLabelsStart; i < InClass->StateLabels.Num(); i++)
-		{
-			InClass->StateLabels[i].State = s;
-		}
-		NewLabelsStart = InClass->StateLabels.Num();
-	}
-
-	//	Make sure all state labels have corresponding states.
-	if (NewLabelsStart != InClass->StateLabels.Num())
-	{
-		ParseError(Lex.Location, "State label at the end of state block");
-	}
-}
-
-//==========================================================================
-//
 //	VParser::ParseStateString
 //
 //==========================================================================
@@ -1633,11 +1514,11 @@ VName VParser::ParseStateString()
 
 //==========================================================================
 //
-//	VParser::ParseDecorateStates
+//	VParser::ParseStates
 //
 //==========================================================================
 
-void VParser::ParseDecorateStates(VClass* InClass)
+void VParser::ParseStates(VClass* InClass)
 {
 	Lex.Expect(TK_LBrace, ERR_MISSING_LBRACE);
 	int StateIdx = 0;
@@ -1745,7 +1626,6 @@ void VParser::ParseDecorateStates(VClass* InClass)
 		sprintf(StateName, "S_%d", StateIdx);
 		VState* s = new VState(StateName, InClass, TmpLoc);
 		InClass->AddState(s);
-		s->DecorateStyle = true;
 
 		//	Sprite name
 		char SprName[8];
@@ -1898,7 +1778,6 @@ void VParser::ParseDecorateStates(VClass* InClass)
 			sprintf(StateName, "S_%d", StateIdx);
 			VState* s2 = new VState(StateName, InClass, TmpLoc);
 			InClass->AddState(s2);
-			s2->DecorateStyle = true;
 			s2->SpriteName = s->SpriteName;
 			s2->Frame = (s->Frame & VState::FF_FULLBRIGHT) | (FChar - 'A');
 			s2->Time = s->Time;
@@ -2089,14 +1968,9 @@ void VParser::ParseClass()
 	Lex.Expect(TK_Semicolon, ERR_MISSING_SEMICOLON);
 	while (!Lex.Check(TK_DefaultProperties))
 	{
-		if (Lex.Check(TK_States__))
-		{
-			ParseStates(Class);
-			continue;
-		}
 		if (Lex.Check(TK_States))
 		{
-			ParseDecorateStates(Class);
+			ParseStates(Class);
 			continue;
 		}
 
