@@ -27,30 +27,29 @@
 //
 //**************************************************************************
 
-class FlamePuff:Effect;
+class FlamePuff : Effect;
 
-__states__
+states
 {
-	S_FLAMEPUFF1('CFFX', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_FLAMEPUFF2) = none
-	S_FLAMEPUFF2('CFFX', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_FLAMEPUFF3) = none
-	S_FLAMEPUFF3('CFFX', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_FLAMEPUFF4) = none
-	S_FLAMEPUFF4('CFFX', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_FLAMEPUFF5) = none
-	S_FLAMEPUFF5('CFFX', 4 | FF_FULLBRIGHT, 3.0 / 35.0, S_FLAMEPUFF6) = none
-	S_FLAMEPUFF6('CFFX', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_FLAMEPUFF7) = none
-	S_FLAMEPUFF7('CFFX', 6 | FF_FULLBRIGHT, 3.0 / 35.0, S_FLAMEPUFF8) = none
-	S_FLAMEPUFF8('CFFX', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_FLAMEPUFF9) = none
-	S_FLAMEPUFF9('CFFX', 8 | FF_FULLBRIGHT, 3.0 / 35.0, S_FLAMEPUFF10) = none
-	S_FLAMEPUFF10('CFFX', 9 | FF_FULLBRIGHT, 4.0 / 35.0, S_FLAMEPUFF11) = none
-	S_FLAMEPUFF11('CFFX', 10 | FF_FULLBRIGHT, 3.0 / 35.0, S_FLAMEPUFF12) = none
-	S_FLAMEPUFF12('CFFX', 11 | FF_FULLBRIGHT, 4.0 / 35.0, S_FLAMEPUFF13) = none
-	S_FLAMEPUFF13('CFFX', 12 | FF_FULLBRIGHT, 3.0 / 35.0, none) = none
+Spawn:
+	CFFX ABC 3 Bright
+	CFFX D 4 Bright
+	CFFX E 3 Bright
+	CFFX F 4 Bright
+	CFFX G 3 Bright
+	CFFX H 4 Bright
+	CFFX I 3 Bright
+	CFFX J 4 Bright
+	CFFX K 3 Bright
+	CFFX L 4 Bright
+	CFFX M 3 Bright
+	Stop
 }
 
 defaultproperties
 {
 	Radius = 1.0;
 	Height = 1.0;
-	IdleState = S_FLAMEPUFF1;
 	SightSound = 'ClericFlameExplode';
 	AttackSound = 'ClericFlameExplode';
 }

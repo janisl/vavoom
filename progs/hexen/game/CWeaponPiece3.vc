@@ -27,13 +27,14 @@ class CWeaponPiece3 : ClericWeaponPiece
 	__mobjinfo__(20)
 	__scriptid__(35);
 
-__states__
+states
 {
-	S_CHOLY3('WCH3', 0 | FF_FULLBRIGHT, -1.0, none) = none
+Spawn:
+	WCH3 A -1 Bright
+	Stop
 }
 
 defaultproperties
 {
 	PieceValue = WPIECE3;
-	IdleState = S_CHOLY3;
 }

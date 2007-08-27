@@ -211,7 +211,7 @@ final void A_BurnScream()
 	if (bIsPlayer)
 	{
 		Player.SetViewState(ps_weapon,
-			StrifeWeapon(Player.ViewEnt).FireDeathWaveState);
+			Player.ViewEnt.FindState('BurnWave'));
 		Player.SetViewState(ps_flash, none);
 	}
 }

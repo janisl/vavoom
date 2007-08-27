@@ -23,31 +23,22 @@
 //**
 //**************************************************************************
 
-class Leaf2:Leaf1;
+class Leaf2 : Leaf1;
 
-__states__
+states
 {
-	S_LEAF2_1('LEF2', 0, 4.0 / 35.0, S_LEAF2_2) = none
-	S_LEAF2_2('LEF2', 1, 4.0 / 35.0, S_LEAF2_3) = none
-	S_LEAF2_3('LEF2', 2, 4.0 / 35.0, S_LEAF2_4) = none
-	S_LEAF2_4('LEF2', 3, 4.0 / 35.0, S_LEAF2_5) = A_LeafThrust
-	S_LEAF2_5('LEF2', 4, 4.0 / 35.0, S_LEAF2_6) = none
-	S_LEAF2_6('LEF2', 5, 4.0 / 35.0, S_LEAF2_7) = none
-	S_LEAF2_7('LEF2', 6, 4.0 / 35.0, S_LEAF2_8) = none
-	S_LEAF2_8('LEF2', 7, 4.0 / 35.0, S_LEAF2_9) = A_LeafThrust
-	S_LEAF2_9('LEF2', 8, 4.0 / 35.0, S_LEAF2_10) = none
-	S_LEAF2_10('LEF2', 0, 4.0 / 35.0, S_LEAF2_11) = none
-	S_LEAF2_11('LEF2', 1, 4.0 / 35.0, S_LEAF2_12) = none
-	S_LEAF2_12('LEF2', 2, 4.0 / 35.0, S_LEAF2_13) = A_LeafThrust
-	S_LEAF2_13('LEF2', 3, 4.0 / 35.0, S_LEAF2_14) = none
-	S_LEAF2_14('LEF2', 4, 4.0 / 35.0, S_LEAF2_15) = none
-	S_LEAF2_15('LEF2', 5, 4.0 / 35.0, S_LEAF2_16) = none
-	S_LEAF2_16('LEF2', 6, 4.0 / 35.0, S_LEAF2_17) = A_LeafThrust
-	S_LEAF2_17('LEF2', 7, 4.0 / 35.0, S_LEAF2_18) = none
-	S_LEAF2_18('LEF2', 8, 4.0 / 35.0, none) = none
+Spawn:
+	LEF2 ABC 4
+	LEF2 D 4 A_LeafThrust
+	LEF2 EFG 4
+	LEF2 H 4 A_LeafThrust
+	LEF2 IAB 4
+	LEF2 C 4 A_LeafThrust
+	LEF2 DEF 4
+	LEF2 GHI 4 A_LeafThrust
+	Stop
 }
 
 defaultproperties
 {
-	IdleState = S_LEAF2_1;
 }

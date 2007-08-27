@@ -100,7 +100,7 @@ final void A_CHolyAttack2()
 		for (i = 1; i < 3; i++)
 		{
 			next = Spawn(HolyTail, A.Origin);
-			next.SetState(HolyTail::S_HOLY_TAIL2);
+			next.SetState(GetStatePlus(next.IdleState, 1));
 			HolyTail(tail).NextTail = HolyTail(next);
 			tail = next;
 		}

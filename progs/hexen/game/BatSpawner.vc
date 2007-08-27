@@ -82,12 +82,17 @@ final void A_BatSpawn()
 	}
 }
 
-__states__
+states
 {
-	S_SPAWNBATS1('', 0, 2.0 / 35.0, S_SPAWNBATS2) = none
-	S_SPAWNBATS2('', 0, 2.0 / 35.0, S_SPAWNBATS3) = A_BatSpawnInit
-	S_SPAWNBATS3('', 0, 2.0 / 35.0, S_SPAWNBATS3) = A_BatSpawn
-	S_SPAWNBATS_OFF('', 0, -1.0, none) = none
+Spawn:
+Active:
+	TNT1 A 2
+	TNT1 A 2 A_BatSpawnInit
+	TNT1 A 2 A_BatSpawn
+	Wait
+Inactive:
+	TNT1 A -1
+	Stop
 }
 
 //==========================================================================
@@ -98,7 +103,7 @@ __states__
 
 bool Activate()
 {
-	SetState(S_SPAWNBATS1);
+	SetState(FindState('Active'));
 	return true;
 }
 
@@ -110,7 +115,7 @@ bool Activate()
 
 bool Deactivate()
 {
-	SetState(S_SPAWNBATS_OFF);
+	SetState(FindState('Inactive'));
 	return true;
 }
 
@@ -120,5 +125,4 @@ defaultproperties
 	bNoBlockmap = true;
 	bNoGravity = true;
 	bNoPassMobj = true;
-	IdleState = S_SPAWNBATS1;
 }

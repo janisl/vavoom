@@ -27,9 +27,11 @@ class MeshArmor : HexenArmor
 	__mobjinfo__(8005)
 	__scriptid__(68);
 
-__states__
+states
 {
-	S_ARMOR_1('ARM1', 0, -1.0, none) = none
+Spawn:
+	ARM1 A -1
+	Stop
 }
 
 defaultproperties
@@ -39,5 +41,4 @@ defaultproperties
 	Amount = 0;
 	PickupMessage = "$txt_armor1";
 	bNoGravity = true;
-	IdleState = S_ARMOR_1;
 }

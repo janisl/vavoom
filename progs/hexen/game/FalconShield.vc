@@ -27,9 +27,11 @@ class FalconShield : HexenArmor
 	__mobjinfo__(8006)
 	__scriptid__(69);
 
-__states__
+states
 {
-	S_ARMOR_2('ARM2', 0, -1.0, none) = none
+Spawn:
+	ARM2 A -1
+	Stop
 }
 
 defaultproperties
@@ -39,5 +41,4 @@ defaultproperties
 	Amount = 0;
 	PickupMessage = "$txt_armor2";
 	bNoGravity = true;
-	IdleState = S_ARMOR_2;
 }

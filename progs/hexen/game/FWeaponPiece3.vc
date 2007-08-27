@@ -27,13 +27,14 @@ class FWeaponPiece3 : FighterWeaponPiece
 	__mobjinfo__(16)
 	__scriptid__(31);
 
-__states__
+states
 {
-	S_FSWORD3('WFR3', 0 | FF_FULLBRIGHT, -1.0, none) = none
+Spawn:
+	WFR3 A -1 Bright
+	Stop
 }
 
 defaultproperties
 {
 	PieceValue = WPIECE3;
-	IdleState = S_FSWORD3;
 }

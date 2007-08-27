@@ -33,54 +33,53 @@ class Meat : Effect;
 
 void OnMapSpawn(mthing_t* mthing)
 {
-	switch (P_Random() % 20)
-	{
-	case 0: IdleState = S_MEAT_1; break;
-	case 1: IdleState = S_MEAT_2; break;
-	case 2: IdleState = S_MEAT_3; break;
-	case 3: IdleState = S_MEAT_4; break;
-	case 4: IdleState = S_MEAT_5; break;
-	case 5: IdleState = S_MEAT_6; break;
-	case 6: IdleState = S_MEAT_7; break;
-	case 7: IdleState = S_MEAT_8; break;
-	case 8: IdleState = S_MEAT_9; break;
-	case 9: IdleState = S_MEAT_10; break;
-	case 10: IdleState = S_MEAT_11; break;
-	case 11: IdleState = S_MEAT_12; break;
-	case 12: IdleState = S_MEAT_13; break;
-	case 13: IdleState = S_MEAT_14; break;
-	case 14: IdleState = S_MEAT_15; break;
-	case 15: IdleState = S_MEAT_16; break;
-	case 16: IdleState = S_MEAT_17; break;
-	case 17: IdleState = S_MEAT_18; break;
-	case 18: IdleState = S_MEAT_19; break;
-	case 19: IdleState = S_MEAT_20; break;
-	}
 	::OnMapSpawn(mthing);
+	SetState(GetStatePlus(IdleState, P_Random() % 20, true));
 }
 
-__states__
+states
 {
-	S_MEAT_1('MEAT', 0, 700.0 / 35.0, none) = none
-	S_MEAT_2('MEAT', 1, 700.0 / 35.0, none) = none
-	S_MEAT_3('MEAT', 2, 700.0 / 35.0, none) = none
-	S_MEAT_4('MEAT', 3, 700.0 / 35.0, none) = none
-	S_MEAT_5('MEAT', 4, 700.0 / 35.0, none) = none
-	S_MEAT_6('MEAT', 5, 700.0 / 35.0, none) = none
-	S_MEAT_7('MEAT', 6, 700.0 / 35.0, none) = none
-	S_MEAT_8('MEAT', 7, 700.0 / 35.0, none) = none
-	S_MEAT_9('MEAT', 8, 700.0 / 35.0, none) = none
-	S_MEAT_10('MEAT', 9, 700.0 / 35.0, none) = none
-	S_MEAT_11('MEAT', 10, 700.0 / 35.0, none) = none
-	S_MEAT_12('MEAT', 11, 700.0 / 35.0, none) = none
-	S_MEAT_13('MEAT', 12, 700.0 / 35.0, none) = none
-	S_MEAT_14('MEAT', 13, 700.0 / 35.0, none) = none
-	S_MEAT_15('MEAT', 14, 700.0 / 35.0, none) = none
-	S_MEAT_16('MEAT', 15, 700.0 / 35.0, none) = none
-	S_MEAT_17('MEAT', 16, 700.0 / 35.0, none) = none
-	S_MEAT_18('MEAT', 17, 700.0 / 35.0, none) = none
-	S_MEAT_19('MEAT', 18, 700.0 / 35.0, none) = none
-	S_MEAT_20('MEAT', 19, 700.0 / 35.0, none) = none
+Spawn:
+	MEAT A 700
+	Stop
+	MEAT B 700
+	Stop
+	MEAT C 700
+	Stop
+	MEAT D 700
+	Stop
+	MEAT E 700
+	Stop
+	MEAT F 700
+	Stop
+	MEAT G 700
+	Stop
+	MEAT H 700
+	Stop
+	MEAT I 700
+	Stop
+	MEAT J 700
+	Stop
+	MEAT K 700
+	Stop
+	MEAT L 700
+	Stop
+	MEAT M 700
+	Stop
+	MEAT N 700
+	Stop
+	MEAT O 700
+	Stop
+	MEAT P 700
+	Stop
+	MEAT Q 700
+	Stop
+	MEAT R 700
+	Stop
+	MEAT S 700
+	Stop
+	MEAT T 700
+	Stop
 }
 
 defaultproperties
@@ -88,5 +87,4 @@ defaultproperties
 	bNoGravity = false;
 	bColideWithThings = false;
 	bColideWithWorld = false;
-	IdleState = S_MEAT_1;
 }

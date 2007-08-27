@@ -849,7 +849,7 @@ final void A_CheckBurnGone()
 {
 	if (_Special2 == 666)
 	{
-		SetState(S_PLAY_FDTH20);
+		SetState(FindState('BurnGone'));
 	}
 }
 
@@ -929,17 +929,13 @@ states
 FreeTargMobj:
 	ACLO E 1050 A_FreeTargMobj
 	Stop
-}
-
-__states__
-{
-	S_GIBS1('GIBS', 0, -1.0, none) = none
-	S_PLAY_FDTH20('ACLO', 4, 8.0 / 35.0, none) = none
+Crunch:
+	GIBS A -1
+	Stop
 }
 
 defaultproperties
 {
 	SoundClass = 'fighter';
-	CrunchState = S_GIBS1;
 	CrunchSound = '*splat';
 }

@@ -26,8 +26,6 @@
 class StrifeWeapon : Weapon
 	abstract;
 
-state FireDeathWaveState;
-
 //==========================================================================
 //
 //	A_ClearFlash
@@ -44,26 +42,22 @@ states
 LightDone:
 	TNT1 A 0 A_Light0
 	Stop
-}
-
-__states__
-{
-	S_WAVE1('WAVE', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_WAVE2) = none
-	S_WAVE2('WAVE', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_WAVE3) = none
-	S_WAVE3('WAVE', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_WAVE4) = none
-	S_WAVE4('WAVE', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_WAVE1) = none
-	S_RBPY_1('RBPY', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_RBPY_2) = none
-	S_RBPY_2('RBPY', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_RBPY_3) = none
-	S_RBPY_3('RBPY', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_RBPY_4) = none
-	S_RBPY_4('RBPY', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_RBPY_1) = none
-	S_TARGETER1('TRGT', 0, -1.0, none) = none
-	S_TARGETER2('TRGT', 1, -1.0, none) = none
-	S_TARGETER3('TRGT', 2, -1.0, none) = none
+BurnWave:
+	WAVE ABCD 3 Bright
+	Loop
+UnknownTargeter:
+	RBPY ABCD 3 Bright
+	Loop
+	TRGT A -1
+	Stop
+	TRGT B -1
+	Stop
+	TRGT C -1
+	Stop
 }
 
 defaultproperties
 {
 	bFloorClip = true;
-	FireDeathWaveState = S_WAVE1;
 	Kickback = 100.0;
 }

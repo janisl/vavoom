@@ -116,10 +116,13 @@ final void A_CHolyTail()
 	}
 }
 
-__states__
+states
 {
-	S_HOLY_TAIL1('SPIR', 2, 1.0 / 35.0, S_HOLY_TAIL1) = A_CHolyTail
-	S_HOLY_TAIL2('SPIR', 3, -1.0, none) = none
+Spawn:
+	SPIR C 1 A_CHolyTail
+	Wait
+	SPIR D -1
+	Stop
 }
 
 defaultproperties
@@ -131,5 +134,4 @@ defaultproperties
 	bColideWithWorld = false;
 	bColideWithThings = false;
 	bNoTeleport = true;
-	IdleState = S_HOLY_TAIL1;
 }

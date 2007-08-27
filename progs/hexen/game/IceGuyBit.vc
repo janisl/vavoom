@@ -29,10 +29,13 @@
 
 class IceGuyBit : Effect;
 
-__states__
+states
 {
-	S_ICEGUY_BIT1('ICPR', 16 | FF_FULLBRIGHT, 50.0 / 35.0, none) = none
-	S_ICEGUY_BIT2('ICPR', 17 | FF_FULLBRIGHT, 50.0 / 35.0, none) = none
+Spawn:
+	ICPR Q 50
+	Stop
+	ICPR R 50
+	Stop
 }
 
 defaultproperties
@@ -43,5 +46,4 @@ defaultproperties
 	bDropOff = true;
 	bNoTeleport = true;
 	bNoGravity = false;
-	IdleState = S_ICEGUY_BIT1;
 }

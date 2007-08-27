@@ -27,9 +27,14 @@ class ThrustFloorUp : ThrustFloorDown
 	__mobjinfo__(10091)
 	__scriptid__(104);
 
+states
+{
+Spawn:
+	Goto Super::Up
+}
+
 defaultproperties
 {
 	bSolid = true;
 	bHidden = false;
-	IdleState = S_THRUSTINIT2_1;
 }

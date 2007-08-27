@@ -86,9 +86,11 @@ final void A_FogSpawn()
 	}
 }
 
-__states__
+states
 {
-	S_SPAWNFOG1('', 0, 20.0 / 35.0, S_SPAWNFOG1) = A_FogSpawn
+Spawn:
+	TNT1 A 20 A_FogSpawn
+	Loop
 }
 
 defaultproperties
@@ -97,5 +99,4 @@ defaultproperties
 	bNoBlockmap = true;
 	bNoPassMobj = true;
 	bFloatBob = true;
-	IdleState = S_SPAWNFOG1;
 }

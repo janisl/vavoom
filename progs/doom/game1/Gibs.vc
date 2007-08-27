@@ -27,8 +27,13 @@ class Gibs : Actor
 	__mobjinfo__(24)
 	__scriptid__(146);
 
+states
+{
+Spawn:
+	Goto Actor::Crunch
+}
+
 defaultproperties
 {
-	IdleState = S_GIBS;
 	bFloorClip = true;
 }

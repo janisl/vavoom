@@ -31,11 +31,6 @@ class ThrustFloorDown : Decoration
 // Thrust Spike Variables
 //
 
-state UpState;
-state BloodyUpState;
-state DownState;
-state BloodyDownState;
-
 Actor SpawnedDirt;	//	pointer to dirt clump mobj
 float RaiseSpeed;	//	speed of raise
 bool bRaised;		//	Lowered or raised state
@@ -90,9 +85,9 @@ final void A_ThrustRaise()
 		FloorClip = 0.0;
 		bRaised = true;
 		if (bBloody)
-			SetState(BloodyUpState);
+			SetState(FindState('BloodyUp'));
 		else
-			SetState(UpState);
+			SetState(FindState('Up'));
 	}
 
 	// Lose the dirt clump
@@ -126,9 +121,9 @@ final void A_ThrustLower()
 	{
 		bRaised = false;
 		if (bBloody)
-			SetState(BloodyDownState);
+			SetState(FindState('BloodyDown'));
 		else
-			SetState(DownState);
+			SetState(FindState('Down'));
 	}
 }
 
@@ -178,34 +173,51 @@ final void A_ThrustImpale()
 	}
 }
 
-__states__
+states
 {
-	S_THRUSTINIT2_1('TSPK', 0, 3.0 / 35.0, S_THRUSTINIT2_2) = none
-	S_THRUSTINIT2_2('TSPK', 0, 4.0 / 35.0, S_THRUSTBLOCK) = A_ThrustInitUp
-	S_BTHRUSTINIT2_1('TSPK', 1, 3.0 / 35.0, S_BTHRUSTINIT2_2) = none
-	S_BTHRUSTINIT2_2('TSPK', 1, 4.0 / 35.0, S_BTHRUSTBLOCK) = A_ThrustInitUp
-	S_THRUSTINIT1_1('TSPK', 0, 3.0 / 35.0, S_THRUSTINIT1_2) = none
-	S_THRUSTINIT1_2('TSPK', 0, 4.0 / 35.0, S_THRUSTSTAY) = A_ThrustInitDn
-	S_BTHRUSTINIT1_1('TSPK', 1, 3.0 / 35.0, S_BTHRUSTINIT1_2) = none
-	S_BTHRUSTINIT1_2('TSPK', 1, 4.0 / 35.0, S_BTHRUSTSTAY) = A_ThrustInitDn
-	S_THRUSTRAISE1('TSPK', 0, 8.0 / 35.0, S_THRUSTRAISE2) = A_ThrustRaise
-	S_THRUSTRAISE2('TSPK', 0, 6.0 / 35.0, S_THRUSTRAISE3) = A_ThrustRaise
-	S_THRUSTRAISE3('TSPK', 0, 4.0 / 35.0, S_THRUSTRAISE4) = A_ThrustRaise
-	S_THRUSTRAISE4('TSPK', 0, 3.0 / 35.0, S_THRUSTIMPALE) = A_ThrustBlock
-	S_BTHRUSTRAISE1('TSPK', 1, 8.0 / 35.0, S_BTHRUSTRAISE2) = A_ThrustRaise
-	S_BTHRUSTRAISE2('TSPK', 1, 6.0 / 35.0, S_BTHRUSTRAISE3) = A_ThrustRaise
-	S_BTHRUSTRAISE3('TSPK', 1, 4.0 / 35.0, S_BTHRUSTRAISE4) = A_ThrustRaise
-	S_BTHRUSTRAISE4('TSPK', 1, 3.0 / 35.0, S_BTHRUSTIMPALE) = A_ThrustBlock
-	S_THRUSTIMPALE('TSPK', 0, 2.0 / 35.0, S_THRUSTRAISE) = A_ThrustImpale
-	S_BTHRUSTIMPALE('TSPK', 1, 2.0 / 35.0, S_BTHRUSTRAISE) = A_ThrustImpale
-	S_THRUSTRAISE('TSPK', 0, 2.0 / 35.0, S_THRUSTRAISE) = A_ThrustRaise
-	S_BTHRUSTRAISE('TSPK', 1, 2.0 / 35.0, S_BTHRUSTRAISE) = A_ThrustRaise
-	S_THRUSTBLOCK('TSPK', 0, 10.0 / 35.0, S_THRUSTBLOCK) = none
-	S_BTHRUSTBLOCK('TSPK', 1, 10.0 / 35.0, S_BTHRUSTBLOCK) = none
-	S_THRUSTLOWER('TSPK', 0, 2.0 / 35.0, S_THRUSTLOWER) = A_ThrustLower
-	S_BTHRUSTLOWER('TSPK', 1, 2.0 / 35.0, S_BTHRUSTLOWER) = A_ThrustLower
-	S_THRUSTSTAY('TSPK', 0, -1.0, S_THRUSTSTAY) = none
-	S_BTHRUSTSTAY('TSPK', 1, -1.0, S_BTHRUSTSTAY) = none
+Up:
+	TSPK A 3
+	TSPK A 4 A_ThrustInitUp
+	TSPK A 10
+	Wait
+BloodyUp:
+	TSPK B 3
+	TSPK B 4 A_ThrustInitUp
+	TSPK B 10
+	Wait
+Spawn:
+Down:
+	TSPK A 3
+	TSPK A 4 A_ThrustInitDn
+	TSPK A -1
+	Wait
+BloodyDown:
+	TSPK B 3
+	TSPK B 4 A_ThrustInitDn
+	TSPK B -1
+	Wait
+Raise:
+	TSPK A 8 A_ThrustRaise
+	TSPK A 6 A_ThrustRaise
+	TSPK A 4 A_ThrustRaise
+	TSPK A 3 A_ThrustBlock
+	TSPK A 2 A_ThrustImpale
+	TSPK A 2 A_ThrustRaise
+	Wait
+BloodyRaise:
+	TSPK B 8 A_ThrustRaise
+	TSPK B 6 A_ThrustRaise
+	TSPK B 4 A_ThrustRaise
+	TSPK B 3 A_ThrustBlock
+	TSPK B 2 A_ThrustImpale
+	TSPK B 2 A_ThrustRaise
+	Wait
+Lower:
+	TSPK A 2 A_ThrustLower
+	Loop
+BloodyLower:
+	TSPK B 2 A_ThrustLower
+	Loop
 }
 
 //==========================================================================
@@ -221,9 +233,9 @@ bool Activate()
 		PlaySound('ThrustSpikeLower', CHAN_VOICE);
 		bHidden = false;
 		if (bBloody)
-			SetState(S_BTHRUSTRAISE1);
+			SetState(FindState('BloodyRaise'));
 		else
-			SetState(S_THRUSTRAISE1);
+			SetState(FindState('Raise'));
 	}
 	return true;
 }
@@ -240,9 +252,9 @@ bool Deactivate()
 	{
 		PlaySound('ThrustSpikeRaise', CHAN_VOICE);
 		if (bBloody)
-			SetState(S_BTHRUSTLOWER);
+			SetState(FindState('BloodyLower'));
 		else
-			SetState(S_THRUSTLOWER);
+			SetState(FindState('Lower'));
 	}
 	return true;
 }
@@ -254,9 +266,4 @@ defaultproperties
 	bFloorClip = true;
 	bNoTeleport = true;
 	bHidden = true;
-	IdleState = S_THRUSTINIT1_1;
-	UpState = S_THRUSTINIT2_1;
-	BloodyUpState = S_BTHRUSTINIT2_1;
-	DownState = S_THRUSTINIT1_1;
-	BloodyDownState = S_BTHRUSTINIT1_1;
 }

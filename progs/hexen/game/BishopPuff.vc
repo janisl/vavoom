@@ -25,19 +25,16 @@
 
 class BishopPuff : Effect;
 
-__states__
+states
 {
-	S_BISHOP_PUFF1('BISH', 16, 5.0 / 35.0, S_BISHOP_PUFF2) = none
-	S_BISHOP_PUFF2('BISH', 17, 5.0 / 35.0, S_BISHOP_PUFF3) = none
-	S_BISHOP_PUFF3('BISH', 18, 5.0 / 35.0, S_BISHOP_PUFF4) = none
-	S_BISHOP_PUFF4('BISH', 19, 5.0 / 35.0, S_BISHOP_PUFF5) = none
-	S_BISHOP_PUFF5('BISH', 20, 6.0 / 35.0, S_BISHOP_PUFF6) = none
-	S_BISHOP_PUFF6('BISH', 21, 6.0 / 35.0, S_BISHOP_PUFF7) = none
-	S_BISHOP_PUFF7('BISH', 22, 5.0 / 35.0, none) = none
+Spawn:
+	BISH QRST 5
+	BISH UV 6
+	BISH W 5
+	Stop
 }
 
 defaultproperties
 {
 	Alpha = 0.333;
-	IdleState = S_BISHOP_PUFF1;
 }

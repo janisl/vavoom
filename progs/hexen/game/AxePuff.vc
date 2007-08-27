@@ -25,13 +25,11 @@
 
 class AxePuff : Effect;
 
-__states__
+states
 {
-	S_HAMMERPUFF1('FHFX', 18, 4.0 / 35.0, S_HAMMERPUFF2) = none
-	S_HAMMERPUFF2('FHFX', 19, 4.0 / 35.0, S_HAMMERPUFF3) = none
-	S_HAMMERPUFF3('FHFX', 20, 4.0 / 35.0, S_HAMMERPUFF4) = none
-	S_HAMMERPUFF4('FHFX', 21, 4.0 / 35.0, S_HAMMERPUFF5) = none
-	S_HAMMERPUFF5('FHFX', 22, 4.0 / 35.0, none) = none
+Spawn:
+	FHFX STUVW 4
+	Stop
 }
 
 defaultproperties
@@ -39,7 +37,6 @@ defaultproperties
 	Alpha = 0.333;
 	bPuffOnActors = true;
 	bAxeBlood = true;
-	IdleState = S_HAMMERPUFF1;
 	SightSound = 'FighterAxeHitThing';
 	AttackSound = 'FighterHammerHitWall';
 }

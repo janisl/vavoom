@@ -26,9 +26,11 @@
 class ZWingedStatue:Decoration
 	__mobjinfo__(5);
 
-__states__
+states
 {
-	S_ZWINGEDSTATUE1('STTW', 0, -1.0, none) = none
+Spawn:
+	STTW A -1
+	Stop
 }
 
 defaultproperties
@@ -36,5 +38,4 @@ defaultproperties
 	Radius = 10.0;
 	Height = 62.0;
 	bSolid = true;
-	IdleState = S_ZWINGEDSTATUE1;
 }

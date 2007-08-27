@@ -25,26 +25,27 @@
 
 class IceChunkHead : PlayerPawn;
 
-state RemoveState;
-
-//============================================================================
+//==========================================================================
 //
 //	A_IceCheckHeadDone
 //
-//============================================================================
+//==========================================================================
 
 final void A_IceCheckHeadDone()
 {
 	if (_Special2 == 666)
 	{
-		SetState(RemoveState);
+		SetState(GetStatePlus(IdleState, 1, true));
 	}
 }
 
-__states__
+states
 {
-	S_ICECHUNK_HEAD('ICEC', 0, 10.0 / 35.0, S_ICECHUNK_HEAD) = A_IceCheckHeadDone
-	S_ICECHUNK_HEAD2('ICEC', 0, 1050.0 / 35.0, none) = none
+Spawn:
+	ICEC A 10 A_IceCheckHeadDone
+	Wait
+	ICEC A 1050
+	Stop
 }
 
 defaultproperties
@@ -64,6 +65,4 @@ defaultproperties
 	bNoBlockmap = true;
 	bNoPassMobj = true;
 	bCannotPush = true;
-	IdleState = S_ICECHUNK_HEAD;
-	RemoveState = S_ICECHUNK_HEAD2;
 }

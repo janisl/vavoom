@@ -819,21 +819,28 @@ int GetSpeech()
 		ConversationID, CurrentSpeech);
 }
 
-__states__
+states
 {
-	S_SHARD_1('SHRD', 0, 128.0 / 35.0, none) = none
-	S_SHARD_2('SHRD', 1, 128.0 / 35.0, none) = none
-	S_SHARD_3('SHRD', 2, 128.0 / 35.0, none) = none
-	S_SHARD_4('SHRD', 3, 128.0 / 35.0, none) = none
-	S_SHARD_5('SHRD', 4, 128.0 / 35.0, none) = none
-	S_SHARD_6('SHRD', 5, 128.0 / 35.0, none) = none
-
-	S_GIBS('DIE1', 0, -1.0, none) = none
+Crunch:
+	DIE1 A -1
+	Stop
+Shard:
+	SHRD A 128
+	Stop
+	SHRD B 128
+	Stop
+	SHRD C 128
+	Stop
+	SHRD D 128
+	Stop
+	SHRD E 128
+	Stop
+	SHRD F 128
+	Stop
 }
 
 defaultproperties
 {
 	MaxDropoffHeight = 32.0;
 	FloatSpeed = 175.0;
-	CrunchState = S_GIBS;
 }

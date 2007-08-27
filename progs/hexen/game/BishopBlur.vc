@@ -36,14 +36,15 @@ final void A_SetAltShadow()
 	Alpha = 0.666;
 }
 
-__states__
+states
 {
-	S_BISHOPBLUR1('BISH', 0, 16.0 / 35.0, S_BISHOPBLUR2) = none
-	S_BISHOPBLUR2('BISH', 0, 8.0 / 35.0, none) = A_SetAltShadow
+Spawn:
+	BISH A 16
+	BISH A 8 A_SetAltShadow
+	Stop
 }
 
 defaultproperties
 {
 	Alpha = 0.333;
-	IdleState = S_BISHOPBLUR1;
 }

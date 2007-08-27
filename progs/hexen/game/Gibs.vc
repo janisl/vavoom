@@ -27,11 +27,16 @@
 //
 //**************************************************************************
 
-class Gibs:Carcas;
+class Gibs : Carcas;
+
+states
+{
+Spawn:
+	Goto Actor::Crunch
+}
 
 defaultproperties
 {
 	bNoBlockmap = true;
 	bFloorClip = false;
-	IdleState = S_GIBS1;
 }

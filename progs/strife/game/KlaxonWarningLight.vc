@@ -55,11 +55,15 @@ final void A_AlarmActive()
 	}
 }
 
-__states__
+states
 {
-	S_KLAX('KLAX', 0, 5.0 / 35.0, S_KLAX) { bDynamicLight = false; A_CheckAlarm(); }
-	S_KLAX_ACT1('KLAX', 1, 6.0 / 35.0, S_KLAX_ACT2) { bDynamicLight = false; A_AlarmActive(); }
-	S_KLAX_ACT2('KLAX', 2, 60.0 / 35.0, S_KLAX_ACT1) { bDynamicLight = true; }
+Spawn:
+	KLAX A 5 { bDynamicLight = false; A_CheckAlarm(); }
+	Loop
+See:
+	KLAX B 6 { bDynamicLight = false; A_AlarmActive(); }
+	KLAX C 60 { bDynamicLight = true; }
+	Loop
 }
 
 defaultproperties
@@ -69,8 +73,6 @@ defaultproperties
 	bStanding = true;
 	bSpawnCeiling = true;
 	bNoGravity = true;
-	IdleState = S_KLAX;
-	SeeState = S_KLAX_ACT1;
 	DLightColour = RGB(191, 0, 0);
 	DLightRadius = 200.0;
 }

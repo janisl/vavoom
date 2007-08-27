@@ -154,7 +154,7 @@ final void BecomeItem()
 	bHidden = true;
 	bNoBlockmap = true;
 	LinkToWorld();
-	SetState(S_HELD);
+	SetState(FindState('Held'));
 }
 
 //==========================================================================
@@ -289,7 +289,7 @@ bool TryPickup(EntityEx Toucher)
 			if (Copy.Amount <= 0)
 			{
 				Copy.bSpecial = false;
-				Copy.SetState(S_HOLDANDDESTROY);
+				Copy.SetState(Copy.FindState('HoldAndDestroy'));
 			}
 		}
 	}
@@ -471,7 +471,7 @@ final void GoAwayAndDie()
 	if (!GoAway())
 	{
 		bSpecial = false;
-		SetState(S_HOLDANDDESTROY);
+		SetState(FindState('HoldAndDestroy'));
 	}
 }
 
@@ -487,7 +487,7 @@ final void Hide()
 	bHidden = true;
 	if (LineSpecialGameInfo(Level.Game).bRavenStylePickupRespawn)
 	{
-		SetState(S_HIDESPECIAL1);
+		SetState(FindState('HideSpecial'));
 		StateTime = 40.0;
 		if (bPickupFlash)
 		{
@@ -496,7 +496,7 @@ final void Hide()
 	}
 	else
 	{
-		SetState(S_DORMANT_PICKUP1);
+		SetState(FindState('DormantPickup'));
 		StateTime = 30.0;
 	}
 	if (RespawnTime)
@@ -727,11 +727,12 @@ final void A_RestoreSpecialThing2()
 	SetState(IdleState);
 }
 
-__states__
+states
 {
 	//	Hide pickup like in Doom and Strife.
-	S_DORMANT_PICKUP1('', 0, 30.0, S_DORMANT_PICKUP2) = none
-	S_DORMANT_PICKUP2('', 0, -1.0, none)
+DormantPickup:
+	TNT1 A 1050
+	TNT1 A -1
 	{
 		EntityEx	A;
 
@@ -743,25 +744,25 @@ __states__
 		A = Spawn(ItemFog, Origin);
 		A.PlaySound('misc/spawn', CHAN_ITEM);
 	}
+	Stop
 
 	//	Hide for 40 secs
-	S_HIDESPECIAL1('ACLO', 4, 1400.0 / 35.0, S_HIDESPECIAL2) = none
-	S_HIDESPECIAL2('ACLO', 0, 4.0 / 35.0, S_HIDESPECIAL3) = A_RestoreSpecialThing1
-	S_HIDESPECIAL3('ACLO', 1, 4.0 / 35.0, S_HIDESPECIAL4) = none
-	S_HIDESPECIAL4('ACLO', 0, 4.0 / 35.0, S_HIDESPECIAL5) = none
-	S_HIDESPECIAL5('ACLO', 1, 4.0 / 35.0, S_HIDESPECIAL6) = none
-	S_HIDESPECIAL6('ACLO', 2, 4.0 / 35.0, S_HIDESPECIAL7) = none
-	S_HIDESPECIAL7('ACLO', 1, 4.0 / 35.0, S_HIDESPECIAL8) = none
-	S_HIDESPECIAL8('ACLO', 2, 4.0 / 35.0, S_HIDESPECIAL9) = none
-	S_HIDESPECIAL9('ACLO', 3, 4.0 / 35.0, S_HIDESPECIAL10) = none
-	S_HIDESPECIAL10('ACLO', 2, 4.0 / 35.0, S_HIDESPECIAL11) = none
-	S_HIDESPECIAL11('ACLO', 3, 4.0 / 35.0, none) = A_RestoreSpecialThing2
+HideSpecial:
+	ACLO E 1400
+	ACLO A 4 A_RestoreSpecialThing1
+	ACLO BABCBCDC 4
+	ACLO D 4 A_RestoreSpecialThing2
+	Stop
 
 	//	Invisible state for held items
-	S_HELD('TNT1', 0, -1.0, none) = none
+Held:
+	TNT1 A -1
+	Stop
 
 	//	Will destroy item as soon as possible
-	S_HOLDANDDESTROY('TNT1', 0, 0.01, none) = none
+HoldAndDestroy:
+	TNT1 A 1
+	Stop
 }
 
 defaultproperties

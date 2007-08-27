@@ -25,49 +25,44 @@
 
 class BloodySkull : PlayerPawn;
 
-state FloorState;
-state RemoveState;
-
-//============================================================================
+//==========================================================================
 //
 //  A_CheckSkullFloor
 //
-//============================================================================
+//==========================================================================
 
 final void A_CheckSkullFloor()
 {
 	if (Origin.z <= FloorZ)
 	{
-		SetState(FloorState);
+		SetState(GetStatePlus(IdleState, 7, true));
 		PlaySound('Drip', CHAN_VOICE);
 	}
 }
 
-//============================================================================
+//==========================================================================
 //
 //  A_CheckSkullDone
 //
-//============================================================================
+//==========================================================================
 
 final void A_CheckSkullDone()
 {
 	if (_Special2 == 666)
 	{
-		SetState(RemoveState);
+		SetState(GetStatePlus(IdleState, 8, true));
 	}
 }
 
-__states__
+states
 {
-	S_BLOODYSKULL1('BSKL', 0, 5.0 / 35.0, S_BLOODYSKULL2) = A_CheckSkullFloor
-	S_BLOODYSKULL2('BSKL', 1, 5.0 / 35.0, S_BLOODYSKULL3) = A_CheckSkullFloor
-	S_BLOODYSKULL3('BSKL', 2, 5.0 / 35.0, S_BLOODYSKULL4) = A_CheckSkullFloor
-	S_BLOODYSKULL4('BSKL', 3, 5.0 / 35.0, S_BLOODYSKULL5) = A_CheckSkullFloor
-	S_BLOODYSKULL5('BSKL', 5, 5.0 / 35.0, S_BLOODYSKULL6) = A_CheckSkullFloor
-	S_BLOODYSKULL6('BSKL', 6, 5.0 / 35.0, S_BLOODYSKULL7) = A_CheckSkullFloor
-	S_BLOODYSKULL7('BSKL', 7, 5.0 / 35.0, S_BLOODYSKULL1) = A_CheckSkullFloor
-	S_BLOODYSKULLX1('BSKL', 8, 16.0 / 35.0, S_BLOODYSKULLX1) = A_CheckSkullDone
-	S_BLOODYSKULLX2('BSKL', 8, 1050.0 / 35.0, none) = none
+Spawn:
+	BSKL ABCDFGH 5 A_CheckSkullFloor
+	Loop
+	BSKL I 16 A_CheckSkullDone
+	Wait
+	BSKL I 1050
+	Stop
 }
 
 defaultproperties
@@ -87,7 +82,4 @@ defaultproperties
 	bNoPassMobj = true;
 	bCannotPush = true;
 	bBounceSky = true;
-	IdleState = S_BLOODYSKULL1;
-	FloorState = S_BLOODYSKULLX1;
-	RemoveState = S_BLOODYSKULLX2;
 }

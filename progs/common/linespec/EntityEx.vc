@@ -70,7 +70,6 @@ state			IdleState;
 state			SeeState;
 state			MeleeState;
 state			MissileState;
-state			CrunchState;
 
 //	Sounds
 name			SightSound;
@@ -5053,9 +5052,9 @@ final bool SectorChanged(int CrushChange)
 		}
 		else
 		{
-			if (CrunchState)
+			if (FindState('Crunch'))
 			{
-				SetState(CrunchState);
+				SetState(FindState('Crunch'));
 			}
 			bCorpse = false;
 			bSolid = false;
@@ -5380,7 +5379,7 @@ final void TouchDehackedSpecial(EntityEx Toucher)
 		{
 			bHidden = true;
 			bSpecial = false;
-			SetState(S_DEHACKED_DORMANT_PICKUP1);
+			SetState(FindState('DehackedDormantPickup'));
 		}
 		else
 		{
@@ -5782,10 +5781,11 @@ void AutoUseArmor()
 {
 }
 
-__states__
+states
 {
-	S_DEHACKED_DORMANT_PICKUP1('', 0, 30.0, S_DEHACKED_DORMANT_PICKUP2) = none
-	S_DEHACKED_DORMANT_PICKUP2('', 0, -1.0, none)
+DehackedDormantPickup:
+	TNT1 A 1050
+	TNT1 A -1
 	{
 		EntityEx	A;
 
@@ -5797,6 +5797,7 @@ __states__
 		A = Spawn(ItemFog, Origin);
 		A.PlaySound('misc/spawn', CHAN_ITEM);
 	}
+	Stop
 }
 
 defaultproperties

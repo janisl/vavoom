@@ -40,12 +40,7 @@ final void A_CorpseExplode()
 	for (i = (P_Random() & 3) + 3; i; i--)
 	{
 		A = Spawn(CorpseBit, Origin);
-		switch (P_Random() % 3)
-		{
-		case 0: A.SetState(CorpseBit::S_CORPSEBIT_1); break;
-		case 1: A.SetState(CorpseBit::S_CORPSEBIT_2); break;
-		case 2: A.SetState(CorpseBit::S_CORPSEBIT_3); break;
-		}
+		A.SetState(GetStatePlus(A.IdleState, P_Random() % 3, true));
 		if (A)
 		{
 			A.Velocity.x = (Random() - Random()) * 4.0 * 35.0;
@@ -55,7 +50,7 @@ final void A_CorpseExplode()
 	}
 	// Spawn a skull
 	A = Spawn(CorpseBit, Origin);
-	A.SetState(CorpseBit::S_CORPSEBIT_4);
+	A.SetState(GetStatePlus(A.IdleState, 3, true));
 	if (A)
 	{
 		A.Velocity.x = (Random() - Random()) * 4.0 * 35.0;

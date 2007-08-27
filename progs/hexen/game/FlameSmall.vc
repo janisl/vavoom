@@ -27,18 +27,19 @@ class FlameSmall : Decoration
 	__mobjinfo__(10501)
 	__scriptid__(97);
 
-__states__
+states
 {
-	S_FLAME_SDORM1('FFSM', 0, 2.0 / 35.0, S_FLAME_SDORM2) = none
-	S_FLAME_SDORM2('FFSM', 1, 2.0 / 35.0, S_FLAME_SDORM3) = A_HideThing
-	S_FLAME_SDORM3('FFSM', 2, 200.0 / 35.0, S_FLAME_SDORM3) = none
-	S_FLAME_SMALL1('FFSM', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_FLAME_SMALL2) = none
-	S_FLAME_SMALL2('FFSM', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_FLAME_SMALL3) = A_UnHideThing
-	S_FLAME_SMALL3('FFSM', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_FLAME_SMALL4) = none
-	S_FLAME_SMALL4('FFSM', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_FLAME_SMALL5) = none
-	S_FLAME_SMALL5('FFSM', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_FLAME_SMALL6) = none
-	S_FLAME_SMALL6('FFSM', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_FLAME_SMALL7) = none
-	S_FLAME_SMALL7('FFSM', 4 | FF_FULLBRIGHT, 3.0 / 35.0, S_FLAME_SMALL3) = none
+Inactive:
+	FFSM A 2
+	FFSM B 2 A_HideThing
+	FFSM C 200
+	Wait
+Spawn:
+Active:
+	FFSM A 3 Bright
+	FFSM A 3 Bright A_UnHideThing
+	FFSM ABCDE 3 Bright
+	Goto Spawn+2
 }
 
 //==========================================================================
@@ -50,7 +51,7 @@ __states__
 bool Activate()
 {
 	PlaySound('Ignite', CHAN_VOICE);
-	SetState(S_FLAME_SMALL1);
+	SetState(FindState('Active'));
 	bStaticLight = true;
 	return true;
 }
@@ -63,7 +64,7 @@ bool Activate()
 
 bool Deactivate()
 {
-	SetState(S_FLAME_SDORM1);
+	SetState(FindState('Inactive'));
 	bStaticLight = false;
 	return true;
 }
@@ -72,7 +73,6 @@ defaultproperties
 {
 	bHidden = true;
 	bNoTeleport = true;
-	IdleState = S_FLAME_SMALL1;
 	bStaticLight = true;
 	LightColour = RGB(255, 255, 0);
 	LightRadius = 64.0;

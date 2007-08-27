@@ -26,9 +26,11 @@
 class HWaterDrip : Fragment
 	__scriptid__(95);
 
-__states__
+states
 {
-	S_WATERDRIP1('WATR', 0, 5.0 / 35.0, S_WATERDRIP1) = none
+Spawn:
+	WATR A 5
+	Loop
 }
 
 defaultproperties
@@ -38,6 +40,5 @@ defaultproperties
 	bNoBlockmap = false;
 	bDropOff = false;
 	bNoGravity = false;
-	IdleState = S_WATERDRIP1;
 	DeathSound = 'Drip';
 }

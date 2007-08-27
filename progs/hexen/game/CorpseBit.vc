@@ -23,14 +23,19 @@
 //**
 //**************************************************************************
 
-class CorpseBit:Effect;
+class CorpseBit : Effect;
 
-__states__
+states
 {
-	S_CORPSEBIT_1('CPB1', 0, -1.0, none) = none
-	S_CORPSEBIT_2('CPB2', 0, -1.0, none) = none
-	S_CORPSEBIT_3('CPB3', 0, -1.0, none) = none
-	S_CORPSEBIT_4('CPB4', 0, -1.0, none) = none
+Spawn:
+	CPB1 A -1
+	Stop
+	CPB2 A -1
+	Stop
+	CPB3 A -1
+	Stop
+	CPB4 A -1
+	Stop
 }
 
 defaultproperties
@@ -39,5 +44,4 @@ defaultproperties
 	Height = 5.0;
 	bNoGravity = false;
 	bTelestomp = true;
-	IdleState = S_CORPSEBIT_1;
 }

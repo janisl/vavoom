@@ -26,13 +26,14 @@
 class BloodPool:Decoration
 	__mobjinfo__(111);
 
-__states__
+states
 {
-	S_BLOODPOOL('BDPL', 0, -1.0, none) = none
+Spawn:
+	BDPL A -1
+	Stop
 }
 
 defaultproperties
 {
 	bNoBlockmap = true;
-	IdleState = S_BLOODPOOL;
 }

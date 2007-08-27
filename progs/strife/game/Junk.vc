@@ -33,54 +33,53 @@ class Junk : Effect;
 
 void OnMapSpawn(mthing_t* mthing)
 {
-	switch (P_Random() % 20)
-	{
-	case 0: IdleState = S_JUNK_1; break;
-	case 1: IdleState = S_JUNK_2; break;
-	case 2: IdleState = S_JUNK_3; break;
-	case 3: IdleState = S_JUNK_4; break;
-	case 4: IdleState = S_JUNK_5; break;
-	case 5: IdleState = S_JUNK_6; break;
-	case 6: IdleState = S_JUNK_7; break;
-	case 7: IdleState = S_JUNK_8; break;
-	case 8: IdleState = S_JUNK_9; break;
-	case 9: IdleState = S_JUNK_10; break;
-	case 10: IdleState = S_JUNK_11; break;
-	case 11: IdleState = S_JUNK_12; break;
-	case 12: IdleState = S_JUNK_13; break;
-	case 13: IdleState = S_JUNK_14; break;
-	case 14: IdleState = S_JUNK_15; break;
-	case 15: IdleState = S_JUNK_16; break;
-	case 16: IdleState = S_JUNK_17; break;
-	case 17: IdleState = S_JUNK_18; break;
-	case 18: IdleState = S_JUNK_19; break;
-	case 19: IdleState = S_JUNK_20; break;
-	}
 	::OnMapSpawn(mthing);
+	SetState(GetStatePlus(IdleState, P_Random() % 20, true));
 }
 
-__states__
+states
 {
-	S_JUNK_1('JUNK', 0, 700.0 / 35.0, none) = none
-	S_JUNK_2('JUNK', 1, 700.0 / 35.0, none) = none
-	S_JUNK_3('JUNK', 2, 700.0 / 35.0, none) = none
-	S_JUNK_4('JUNK', 3, 700.0 / 35.0, none) = none
-	S_JUNK_5('JUNK', 4, 700.0 / 35.0, none) = none
-	S_JUNK_6('JUNK', 5, 700.0 / 35.0, none) = none
-	S_JUNK_7('JUNK', 6, 700.0 / 35.0, none) = none
-	S_JUNK_8('JUNK', 7, 700.0 / 35.0, none) = none
-	S_JUNK_9('JUNK', 8, 700.0 / 35.0, none) = none
-	S_JUNK_10('JUNK', 9, 700.0 / 35.0, none) = none
-	S_JUNK_11('JUNK', 10, 700.0 / 35.0, none) = none
-	S_JUNK_12('JUNK', 11, 700.0 / 35.0, none) = none
-	S_JUNK_13('JUNK', 12, 700.0 / 35.0, none) = none
-	S_JUNK_14('JUNK', 13, 700.0 / 35.0, none) = none
-	S_JUNK_15('JUNK', 14, 700.0 / 35.0, none) = none
-	S_JUNK_16('JUNK', 15, 700.0 / 35.0, none) = none
-	S_JUNK_17('JUNK', 16, 700.0 / 35.0, none) = none
-	S_JUNK_18('JUNK', 17, 700.0 / 35.0, none) = none
-	S_JUNK_19('JUNK', 18, 700.0 / 35.0, none) = none
-	S_JUNK_20('JUNK', 19, 700.0 / 35.0, none) = none
+Spawn:
+	JUNK A 700
+	Stop
+	JUNK B 700
+	Stop
+	JUNK C 700
+	Stop
+	JUNK D 700
+	Stop
+	JUNK E 700
+	Stop
+	JUNK F 700
+	Stop
+	JUNK G 700
+	Stop
+	JUNK H 700
+	Stop
+	JUNK I 700
+	Stop
+	JUNK J 700
+	Stop
+	JUNK K 700
+	Stop
+	JUNK L 700
+	Stop
+	JUNK M 700
+	Stop
+	JUNK N 700
+	Stop
+	JUNK O 700
+	Stop
+	JUNK P 700
+	Stop
+	JUNK Q 700
+	Stop
+	JUNK R 700
+	Stop
+	JUNK S 700
+	Stop
+	JUNK T 700
+	Stop
 }
 
 defaultproperties
@@ -88,5 +87,4 @@ defaultproperties
 	bNoGravity = false;
 	bColideWithThings = false;
 	bColideWithWorld = false;
-	IdleState = S_JUNK_1;
 }

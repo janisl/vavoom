@@ -119,12 +119,13 @@ final void A_SPosAttack()
 	bMuzzleFlash = true;
 }
 
-__states__
+states
 {
-	S_GIBS('POL5', 0, -1.0, none) = none
+Crunch:
+	POL5 A -1
+	Stop
 }
 
 defaultproperties
 {
-	CrunchState = S_GIBS;
 }

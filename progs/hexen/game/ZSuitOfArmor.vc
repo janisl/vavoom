@@ -43,7 +43,7 @@ final void A_SoAExplode()
 	{
 		A = Spawn(ZArmorChunk, Origin + vector((Random() - 0.5) * 16.0,
 			(Random() - 0.5) * 16.0, Random() * Height));
-		A.SetState(ZArmorChunk(A).ChunkStates[i]);
+		A.SetState(GetStatePlus(A.IdleState, i, true));
 		if (A)
 		{
 			A.Velocity.x = (Random() - Random()) * 4.0 * 35.0;

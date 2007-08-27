@@ -241,12 +241,8 @@ bool EV_BreakGlass(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 			glass.bColideWithThings = false;
 			glass.bColideWithWorld = false;
 			glass.Origin.z += 24.0;
-			switch (P_Random() % 3)
-			{
-			case 0: glass.SetState(Actor::S_SHARD_4); break;
-			case 1: glass.SetState(Actor::S_SHARD_5); break;
-			case 2: glass.SetState(Actor::S_SHARD_6); break;
-			}
+			glass.SetState(GetStatePlus(glass.FindState('Shard'),
+				P_Random() % 6, true));
 			an = Random() * 360.0;
 			glass.Angles.yaw = an;
 			speed = Random() * 4.0 * 35.0;

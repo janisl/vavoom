@@ -58,10 +58,12 @@ final void A_BridgeOrbit()
 	Origin.z = Target.Origin.z;
 }
 
-__states__
+states
 {
-	S_BBALL1('TLGL', 0, 2.0 / 35.0, S_BBALL2) = none
-	S_BBALL2('TLGL', 0, 5.0 / 35.0, S_BBALL2) = A_BridgeOrbit
+Spawn:
+	TLGL A 2
+	TLGL A 5 A_BridgeOrbit
+	Wait
 }
 
 defaultproperties
@@ -70,5 +72,4 @@ defaultproperties
 	bDynamicLight = true;
 	DLightColour = RGB(91, 94, 211);
 	DLightRadius = 100.0;
-	IdleState = S_BBALL1;
 }

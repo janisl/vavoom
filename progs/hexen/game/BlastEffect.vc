@@ -25,17 +25,12 @@
 
 class BlastEffect : Effect;
 
-__states__
+states
 {
-	S_BLASTEFFECT1('RADE', 0, 4.0 / 35.0, S_BLASTEFFECT2) = A_Lights
-	S_BLASTEFFECT2('RADE', 1, 4.0 / 35.0, S_BLASTEFFECT3) = none
-	S_BLASTEFFECT3('RADE', 2, 4.0 / 35.0, S_BLASTEFFECT4) = none
-	S_BLASTEFFECT4('RADE', 3, 4.0 / 35.0, S_BLASTEFFECT5) = none
-	S_BLASTEFFECT5('RADE', 4, 4.0 / 35.0, S_BLASTEFFECT6) = none
-	S_BLASTEFFECT6('RADE', 5, 4.0 / 35.0, S_BLASTEFFECT7) = none
-	S_BLASTEFFECT7('RADE', 6, 4.0 / 35.0, S_BLASTEFFECT8) = none
-	S_BLASTEFFECT8('RADE', 7, 4.0 / 35.0, S_BLASTEFFECT9) = none
-	S_BLASTEFFECT9('RADE', 8, 4.0 / 35.0, none) = none
+Spawn:
+	RADE A 4 A_Lights
+	RADE BCDEFGHI 4
+	Stop
 }
 
 defaultproperties
@@ -47,5 +42,4 @@ defaultproperties
 	bFallingFriction = true;
 	bDynamicLight = true;
 	DLightColour = RGB(109, 107, 130);
-	IdleState = S_BLASTEFFECT1;
 }

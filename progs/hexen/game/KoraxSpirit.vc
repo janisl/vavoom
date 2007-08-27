@@ -50,7 +50,7 @@ void KSpiritInit(Actor korax)
 	for (i = 1; i < 3; i++)
 	{
 		next = Spawn(HolyTail, Origin);
-		next.SetState(HolyTail::S_HOLY_TAIL2);
+		next.SetState(GetStatePlus(next.IdleState, 1, true));
 		HolyTail(tail).NextTail = HolyTail(next);
 		tail = next;
 	}
