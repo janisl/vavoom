@@ -33,22 +33,6 @@
 
 //==========================================================================
 //
-//	VStateConstant
-//
-//==========================================================================
-
-class VStateConstant : public VExpression
-{
-public:
-	VState*		State;
-
-	VStateConstant(VState* AState, const TLocation& ALoc);
-	VExpression* DoResolve(VEmitContext&);
-	void Emit(VEmitContext&);
-};
-
-//==========================================================================
-//
 //	VClassConstant
 //
 //==========================================================================
@@ -1190,14 +1174,6 @@ VExpression* VSingleName::IntResolve(VEmitContext& ec, bool AssignTarget)
 				return e->Resolve(ec);
 			}
 		}
-
-		VState* State = ec.SelfClass->CheckForState(Name);
-		if (State)
-		{
-			VExpression* e = new VStateConstant(State, Loc);
-			delete this;
-			return e->Resolve(ec);
-		}
 	}
 
 	VConstant* Const = ec.Package->CheckForConstant(Name);
@@ -1343,14 +1319,6 @@ VExpression* VDoubleName::DoResolve(VEmitContext& ec)
 	if (Const)
 	{
 		VExpression* e = new VConstantValue(Const, Loc);
-		delete this;
-		return e->Resolve(ec);
-	}
-
-	VState* State = Class->CheckForState(Name2);
-	if (State)
-	{
-		VExpression* e = new VStateConstant(State, Loc);
 		delete this;
 		return e->Resolve(ec);
 	}
@@ -3947,45 +3915,6 @@ void VAssignment::Emit(VEmitContext& ec)
 		}
 		break;
 	}
-}
-
-//END
-
-//BEGIN VStateConstant
-
-//==========================================================================
-//
-//	VStateConstant::VStateConstant
-//
-//==========================================================================
-
-VStateConstant::VStateConstant(VState* AState, const TLocation& ALoc)
-: VExpression(ALoc)
-, State(AState)
-{
-	Type = TYPE_State;
-}
-
-//==========================================================================
-//
-//	VStateConstant::DoResolve
-//
-//==========================================================================
-
-VExpression* VStateConstant::DoResolve(VEmitContext&)
-{
-	return this;
-}
-
-//==========================================================================
-//
-//	VStateConstant::Emit
-//
-//==========================================================================
-
-void VStateConstant::Emit(VEmitContext& ec)
-{
-	ec.AddStatement(OPC_PushState, State);
 }
 
 //END

@@ -529,7 +529,6 @@ public:
 	VConstant* CheckForConstant(VName);
 	VField* CheckForField(TLocation, VName, VClass*, bool = true);
 	VProperty* CheckForProperty(VName);
-	VState* CheckForState(VName);
 	VStateLabel* CheckForStateLabel(VName, bool = true);
 	VState* ResolveStateLabel(TLocation, VName, int);
 

@@ -2439,26 +2439,6 @@ VProperty* VClass::CheckForProperty(VName Name)
 
 //==========================================================================
 //
-//	VClass::CheckForState
-//
-//==========================================================================
-
-VState* VClass::CheckForState(VName StateName)
-{
-	VMemberBase* m = StaticFindMember(StateName, this, MEMBER_State);
-	if (m)
-	{
-		return (VState*)m;
-	}
-	if (ParentClass)
-	{
-		return ParentClass->CheckForState(StateName);
-	}
-	return NULL;
-}
-
-//==========================================================================
-//
 //	VClass::Define
 //
 //==========================================================================
