@@ -1790,11 +1790,7 @@ void VParser::ParseDecorateStates(VClass* InClass)
 
 		//  Tics
 		bool Neg = Lex.Check(TK_Minus);
-		if (Lex.Token != TK_IntLiteral)
-		{
-			ParseError(Lex.Location, "Integer expected");
-		}
-		else
+		if (Lex.Token == TK_IntLiteral)
 		{
 			if (Neg)
 			{
@@ -1805,6 +1801,22 @@ void VParser::ParseDecorateStates(VClass* InClass)
 				s->Time = float(Lex.Number) / 35.0;
 			}
 			Lex.NextToken();
+		}
+		else if (Lex.Token == TK_FloatLiteral)
+		{
+			if (Neg)
+			{
+				s->Time = -Lex.Float;
+			}
+			else
+			{
+				s->Time = float(Lex.Float) / 35.0;
+			}
+			Lex.NextToken();
+		}
+		else
+		{
+			ParseError(Lex.Location, "State duration expected");
 		}
 
 		while (Lex.Token == TK_Identifier && !Lex.NewLine)
@@ -1841,7 +1853,18 @@ void VParser::ParseDecorateStates(VClass* InClass)
 		}
 
 		//	Code
-		if (!Lex.NewLine)
+		if (Lex.Check(TK_LBrace))
+		{
+			if (strlen(*FramesString) > 1)
+			{
+				ParseError(Lex.Location, "Only states with single frame can have code block");
+			}
+			s->Function = new VMethod(NAME_None, s, s->Loc);
+			s->Function->ReturnTypeExpr = new VTypeExpr(TYPE_Void, Lex.Location);
+			s->Function->ReturnType = TType(TYPE_Void);
+			s->Function->Statement = ParseCompoundStatement();
+		}
+		else if (!Lex.NewLine)
 		{
 			if (Lex.Token != TK_Identifier)
 			{
@@ -1886,8 +1909,8 @@ void VParser::ParseDecorateStates(VClass* InClass)
 			s2->SpriteName = s->SpriteName;
 			s2->Frame = (s->Frame & VState::FF_FULLBRIGHT) | (FChar - 'A');
 			s2->Time = s->Time;
-			s2->Misc1Expr = s->Misc1Expr;
-			s2->Misc2Expr = s->Misc2Expr;
+			s2->Misc1 = s->Misc1;
+			s2->Misc2 = s->Misc2;
 			s2->FunctionName = s->FunctionName;
 
 			//	Link previous state.
