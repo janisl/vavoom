@@ -424,7 +424,7 @@ bool Physics(float DeltaTime)
 			return false;
 		}
 	}
-	else if (bSkullFly)
+	else if (bSkullFly && Health > 0)
 	{
 		//	A flying mobj slammed into something
 		bSkullFly = false;
