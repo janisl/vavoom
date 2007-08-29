@@ -239,7 +239,7 @@ final void MovePlayer(float deltaTime)
 		}
 		else if (side < -1000.0)
 		{
-			side = 1000.0;
+			side = -1000.0;
 		}
 	}
 
