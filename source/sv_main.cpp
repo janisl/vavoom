@@ -1431,14 +1431,14 @@ COMMAND(AddBot)
 COMMAND(Map)
 {
 	guard(COMMAND Map);
-	char	mapname[12];
+	VStr	mapname;
 
 	if (Args.Num() != 2)
 	{
 		GCon->Log("map <mapname> : change level");
 		return;
 	}
-	VStr::Cpy(mapname, *Args[1]);
+	mapname = Args[1];
 
 	SV_ShutdownServer(false);
 #ifdef CLIENT
@@ -1461,7 +1461,7 @@ COMMAND(Map)
 	GGameInfo->netgame = svs.max_clients > 1;
 	GGameInfo->eventInitNewGame(gameskill);
 
-	SV_SpawnServer(mapname, true);
+	SV_SpawnServer(*mapname, true);
 #ifdef CLIENT
 	if (cls.state != ca_dedicated)
 		GCmdBuf << "Connect local\n";

@@ -203,6 +203,12 @@ COMMAND(ScreenShot)
 	void	*data;
 	char	filename[128];
 
+	if (strlen(screenshot_type) > 8)
+	{
+		GCon->Log("Screenshot extension too long");
+		return;
+	}
+
 	//	Find a file name to save it to
 	VStr BaseDir = (fl_savedir ? fl_savedir : fl_basedir) + "/" + fl_gamedir;
 	for (i = 0; i <= 9999; i++)
