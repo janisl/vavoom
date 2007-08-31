@@ -345,6 +345,8 @@ public:
 		{
 			vint32 Len;
 			Strm << STRM_INDEX(Len);
+			if (Len < 0)
+				Len = 0;
 			S.Resize(Len);
 			if (Len)
 				Strm.Serialise(S.Str, Len + 1);
