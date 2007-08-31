@@ -1624,7 +1624,7 @@ COMMAND(Say)
 		Text += " ";
 		Text += Args[i];
 	}
-	GLevelInfo->BroadcastPrintf(*Text);
+	GLevelInfo->BroadcastPrint(*Text);
 	GLevelInfo->StartSound(TVec(0, 0, 0), 0,
 		GSoundManager->GetSoundID("misc/chat"), 0, 1.0, 0);
 	unguard;

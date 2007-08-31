@@ -2486,7 +2486,7 @@ int VAcs::RunScript(float DeltaTime)
 			}
 			else
 			{
-				BroadcastCentrePrintf(*PrintStr);
+				BroadcastCentrePrint(*PrintStr);
 			}
 			ACSVM_BREAK;
 
@@ -2649,7 +2649,7 @@ int VAcs::RunScript(float DeltaTime)
 		ACSVM_CASE(PCD_EndPrintBold)
 			//FIXME yellow message
 			PrintStr = PrintStr.EvalEscapeSequences();
-			BroadcastCentrePrintf(*PrintStr);
+			BroadcastCentrePrint(*PrintStr);
 			ACSVM_BREAK;
 
 		//	Extended P-Code commands.
@@ -2974,7 +2974,7 @@ int VAcs::RunScript(float DeltaTime)
 			}
 			else
 			{
-				BroadcastCentrePrintf(*PrintStr);
+				BroadcastCentrePrint(*PrintStr);
 			}
 			sp = optstart - 6;
 			ACSVM_BREAK;

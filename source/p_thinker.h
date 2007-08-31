@@ -76,7 +76,9 @@ class VThinker : public VObject
 	void AddSoundSequenceChoice(vint32, VName);
 	void StopSoundSequence(vint32);
 
+	void BroadcastPrint(const char*);
 	void BroadcastPrintf(const char*, ...);
+	void BroadcastCentrePrint(const char*);
 	void BroadcastCentrePrintf(const char*, ...);
 
 	DECLARE_FUNCTION(Spawn)

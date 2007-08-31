@@ -294,6 +294,21 @@ void VThinker::StopSoundSequence(int origin_id)
 
 //==========================================================================
 //
+//	VThinker::BroadcastPrint
+//
+//==========================================================================
+
+void VThinker::BroadcastPrint(const char *s)
+{
+	guard(VThinker::BroadcastPrint);
+	for (int i = 0; i < svs.max_clients; i++)
+		if (Level->Game->Players[i])
+			Level->Game->Players[i]->eventClientPrint(s);
+	unguard;
+}
+
+//==========================================================================
+//
 //	VThinker::BroadcastPrintf
 //
 //==========================================================================
@@ -308,9 +323,22 @@ void VThinker::BroadcastPrintf(const char *s, ...)
 	vsprintf(buf, s, v);
 	va_end(v);
 
+	BroadcastPrint(buf);
+	unguard;
+}
+
+//==========================================================================
+//
+//	VThinker::BroadcastCentrePrint
+//
+//==========================================================================
+
+void VThinker::BroadcastCentrePrint(const char *s)
+{
+	guard(VThinker::BroadcastCentrePrint);
 	for (int i = 0; i < svs.max_clients; i++)
 		if (Level->Game->Players[i])
-			Level->Game->Players[i]->eventClientPrint(buf);
+			Level->Game->Players[i]->eventClientCentrePrint(s);
 	unguard;
 }
 
@@ -330,9 +358,7 @@ void VThinker::BroadcastCentrePrintf(const char *s, ...)
 	vsprintf(buf, s, v);
 	va_end(v);
 
-	for (int i = 0; i < svs.max_clients; i++)
-		if (Level->Game->Players[i])
-			Level->Game->Players[i]->eventClientCentrePrint(buf);
+	BroadcastCentrePrint(buf);
 	unguard;
 }
 
@@ -444,7 +470,7 @@ IMPLEMENT_FUNCTION(VThinker, bprint)
 {
 	VStr Msg = PF_FormatString();
 	P_GET_SELF;
-	Self->BroadcastPrintf(*Msg);
+	Self->BroadcastPrint(*Msg);
 }
 
 IMPLEMENT_FUNCTION(VThinker, AllocDlight)
