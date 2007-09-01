@@ -38,7 +38,7 @@ bool SetNewValue(int newValue)
 
 defaultproperties
 {
-	Text = "Croshair";
+	Text = "Crosshair";
 	EnumNames[0] = "None";
 	EnumNames[1] = "Cross";
 	EnumNames[2] = "Angle";

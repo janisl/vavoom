@@ -38,6 +38,6 @@ bool SetNewValue(float newValue)
 
 defaultproperties
 {
-	Text = "Croshair Transparency";
+	Text = "Crosshair Transparency";
 	ValueDelta = 0.1;
 }
