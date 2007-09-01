@@ -116,9 +116,6 @@ sndinfo.txt				@srcdir@/sndinfo.txt
 sndseq.txt				@srcdir@/sndseq.txt
 skyboxes.txt			@srcdir@/skyboxes.txt
 
-//	Language strings
-language.en				@srcdir@/language.en
-
 //	Generated data
 $load @srcdir@/palette.pcx
 translat.dat			raw 0 0 256 8

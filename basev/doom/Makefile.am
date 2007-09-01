@@ -104,7 +104,6 @@ EXTRA_DIST = \
 	graphics/croshai3.lmp \
 	palette.pcx \
 	basepak.ls.in \
-	language.en \
 	animated.lmp \
 	animdefs.txt \
 	dehinfo.txt \

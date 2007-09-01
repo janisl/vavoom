@@ -67,7 +67,6 @@ EXTRA_DIST = \
 	graphics/fontb57.lmp \
 	graphics/fontb58.lmp \
 	basepak.ls.in \
-	language.en \
 	animdefs.txt \
 	lockdefs.txt \
 	mapinfo.txt \

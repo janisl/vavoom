@@ -10,7 +10,6 @@ EXTRA_DIST = \
 	graphics/fonta63.lmp \
 	palette.pcx \
 	basepak.ls.in \
-	language.en \
 	animdefs.txt \
 	lockdefs.txt \
 	mapinfo.txt \

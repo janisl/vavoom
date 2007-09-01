@@ -22,8 +22,5 @@ sndinfo.txt				@srcdir@/sndinfo.txt
 sndseq.txt				@srcdir@/sndseq.txt
 terrain.txt				@srcdir@/terrain.txt
 
-//	Language strings
-language.en				@srcdir@/language.en
-
 $load @srcdir@/palette.pcx
 translat.dat			raw 0 0 256 8

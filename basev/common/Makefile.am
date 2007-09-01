@@ -5,6 +5,7 @@ nobase_common_DATA = basepak.pk3
 EXTRA_DIST = \
 	basepak.ls.in \
 	default.cfg \
+	language.en \
 	lockdefs.txt \
 	startup.vs \
 	terrain.txt \
