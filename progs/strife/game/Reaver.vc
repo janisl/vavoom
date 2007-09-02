@@ -94,5 +94,6 @@ defaultproperties
 	ActiveSound = 'reaver/active';
 	PainSound = 'reaver/pain';
 	DeathSound = 'reaver/death';
+	DLightColour = RGB(203, 111, 0);
 	ExplodeEffect = RGB(187, 59, 0);
 }
