@@ -75,6 +75,7 @@ defaultproperties
 	Speed = 700.0;
 	MaxStepHeight = 4.0;
 	MissileDamage = 2;
+	bDynamicLight = false;	
 	SightSound = 'loremaster/chain';
 	ActiveSound = 'loremaster/swish';
 }
