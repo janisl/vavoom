@@ -365,7 +365,7 @@ void SB_DrawMainBar()
 
 //==========================================================================
 //
-//	SB_DrawFullscreenStats
+//	DrawAmmo
 //
 //==========================================================================
 
@@ -463,13 +463,13 @@ void SB_DrawFullscreenStats()
 		{
 			R_DrawPic(BAR_X + 75, BAR_Y + 182, pic_blaster);
 		}
-		DrawAmmo(ClipOfBullets, 75);
-		DrawAmmo(ElectricBolts, 99);
-		DrawAmmo(PoisonBolts, 91);
-		DrawAmmo(EnergyPod, 139);
-		DrawAmmo(MiniMissiles, 131);
-		DrawAmmo(HEGrenadeRounds, 115);
-		DrawAmmo(PhosphorusGrenadeRounds, 123);
+		DrawAmmo(ClipOfBullets, 115);
+		DrawAmmo(ElectricBolts, 139);
+		DrawAmmo(PoisonBolts, 131);
+		DrawAmmo(EnergyPod, 179);
+		DrawAmmo(MiniMissiles, 171);
+		DrawAmmo(HEGrenadeRounds, 155);
+		DrawAmmo(PhosphorusGrenadeRounds, 163);
 		SB_DrawSmallNum(BAR_X + 267, BAR_Y + 124, cl.Accuracy);
 		SB_DrawSmallNum(BAR_X + 267, BAR_Y + 148, cl.Stamina);
 		NumKeys = 0;
