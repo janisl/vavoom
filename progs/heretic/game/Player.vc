@@ -1489,6 +1489,11 @@ void Cheat_Gimme()
 			{
 				//	Abstract base class.
 			}
+			if (!FindClassState(WpnCls, 'Spawn'))
+			{
+				//	Can't be picked up
+				continue;
+			}
 			if (MainGameInfo(Level.Game).shareware &&
 				!class<HereticWeapon>(WpnCls).default.bInShareware)
 			{
