@@ -2336,3 +2336,209 @@
   I merged death methods.
 04.07.2007
   I merged nightmare respawn, touch and line hit event methods.
+05.07.2007
+  I split makefile in basev directory into sub Makefiles.
+  I moved some common methods to LineSpecialLevelInfo.
+  I implemented net replication of references to thinker objects that have an
+ open channel.
+07.07.2007
+  I moved 2 missile spawn methods from Hexen to EntityEx. Somehow I managed to
+ miss them.
+  I moved OnMapSpawn, SeekerMissile, DropItems and some other small methods to
+ EntityEx. I created a ScriptedEntity class for state action methods and moved
+ basic AI state actions to it.
+  In Doom as a test I merged Weapon and WeaponPickup classes.
+  I moved net serialisation of classes, states and names to objects map.
+08.07.2007
+  I moved spawning of things on a map to LineSpecialLevelinfo.
+  In Doom I created a separate class that holds the Boss brain global state.
+ In Heretic I moved mace handling code to mace spot class, removed global array
+ of D'Sparil teleport spots.
+09.07.2007
+  I fixed Dehacked support.
+  I moved Tick, SectorChanged and ClientTick to EntityEx.
+  I started work on inventory system by creating and Inventory class. I changed
+ game specific pickup base classes to inherit from it. In Heretic every pickup
+ type had complete handling code in it, so I started to generalise it.
+10.07.2007
+  Hexen had the same pickup handling as Heretic, so I changed that one too.
+  I started to implement basic inventory system by starting to convert Doom
+ player ammo array to references to ammo objects. I added basic add, remove and
+ find methods. I also made items in actor's inventory to be replicated to the
+ corresponding player.
+11.07.2007
+  I changed handling of pickups when using a Dehacked patch to use pickup
+ handling methods of items to avoid duplicate code. This will come very handy
+ when new inventory system will be in place.
+  In Doom I manged to get rid of ammo array in Player class. I also rearanged
+ other Doom pickups by moving some common code to Pickup class.
+  In Heretic and Hexen I merged hiding of pickups.
+12.07.2007
+  I moved all of the general pickup handling code to Inventory class and did
+ some rearangements.
+13.07.2007
+  I fixed a crash that was caused by zero length damage hit vector and crash
+ in Strife when destroying the power coupling.
+  In Heretic I got rid of Pickup class.
+14.07.2007
+  I moved Dehacked pickup handling and some Strife state action methods to
+ EntityEx and ScriptedEntity to be able to get rid of Pickup classes in all
+ games. Then I started to work on replacing ammo count array with classes in
+ all other games. A common ammo base class has been created.
+15.07.2007
+  I finished all of the work needed to get rid of the ammo count arrays in
+ all games. I moved all of the ammo pickip code to Ammo class that allowed me
+ to get rid of the game specific ammo pickup classes. I also got rid of the
+ ammo type enums.
+16.07.2007
+  I sorted out ammo pickup handling code to the general layout how it should
+ be in the end.
+  I created a common base class for backpack type items and moved all code to
+ it. In Ammo class I added additonal fields that control backpack behavior.
+  I merged weapon pickup classes with the actual weapon classes.
+17.07.2007
+  I changed WeaponOwned array, ReadyWeapon and PendingWeapon to be references
+ to the weapon objects. I created a common base class for weapons.
+  I also updated glbsp to the latest SVN code.
+18.07.2007
+  I moved CheckAmmo methods to corresponding weapon classes and made them to be
+ useable without automatic weapon change. I added common methods that are used
+ in weapon change methods. I moved common weapon fields to Weapon class.
+  Firebrand fixed crashes caused by the fact that pickups are not subclasses of
+ the Actor class.
+19.07.2007
+  I added some more common fields to the Weapon class and implemented them in
+ games that didn't have them. I did a lots of other work to removed use of the
+ WeaponOwned arrays. I also changed how Hexen's fighter's axe handles case when
+ more mana is picked up.
+20.07.2007
+  I got rid of WeaponOwned arrays in all games.
+21.07.2007
+  I implemented initial inventory of a player pawn class in all games. I also
+ got rid of weapon classes arrays.
+  I got rid of the weapon type enum in Doom.
+22.07.2007
+  I made Heretic's powered up weapons to be separate weapon classes.
+  I got rid of weapon type enum in all games, added some fields needed for
+ the bot AI and other flags.
+23.07.2007
+  I made give ammo/mana methods in all games to be the same.
+24.07.2007
+  I moved ReadyWeapon and pendingWeapon fields to PlayerEx class, moved
+ common weapon methods to the Weapon class.
+25.07.2007
+  I implemented a better way of detecting wether player is playing a
+ firing animaton or not.
+28.07.2007
+  Firebrand implemented a more dynamic way of defining dynamic light of an
+ actor.
+  I moved some remaining common fields to Weapon class, renamed game specific
+ weapon classes.
+29.07.2007
+  In Weapon class I added common DepleeAmmo method, added no alert flag, did
+ some cleanup.
+  I added a special class that holds Hexen's fourth weapon piece info.
+  In Heretic I changed player's inventory to be an array of Artifact objects.
+30.07.2007
+  In Hexen and Strife I changed Inventory arrays on Player class to be arrays
+ of Artifact / InventoryItem classes.
+31.07.2007
+  I added utility methods for inventory traversal, changed current inventory
+ pointers to be references to Invemtory objects, cleaned up some unnecesary
+ fields.
+01.08.2007
+  I created initial version of the launcher using wxWidgets.
+  I moved status bar icon names to the corresponding classes, got rid of
+ Inventory arrays in Player classes.
+02.08.2007
+  In Inventory class I added bIgnoreSkill flag to prevent giving too much
+ initial ammo, added generic methods for dropping inventory items.
+  I moved use methods of inventory items to the corresponding classes and
+ got rid of inventory type enums and Artifact and InventoryItem classes.
+03.08.2007
+  I moved PuzzleItem to linespec package and moved UsePuzzleItem line special
+ to LineSpecialLevelInfo making it available in all games.
+04.08.2007
+  I created a base class for key inventory items, removed Keys field from 
+ Player classes.
+05.08.2007
+  I implemented support for LOCKDEFS script.
+  In Strife I removed Communicator flag from Plyaer class, now give the item
+ instead.
+06.08.2007
+  I created a base class for powerups, changed array of powers to be array of
+ Powerup objects, started to implement invulnerability power class.
+07.08.2007
+  I split the main interface of the launcher into multiple tabs, adjusted to
+ make it loog correct on Linux.
+  I mostly finished implementing invulnerability power, added methods that
+ will be used by other powerup classes.
+08.08.2007
+  I finished invulnerability powerup, implemented strength and started to 
+ implement invisibility powerup classes.
+09.08.2007
+  I updated glBSP to the latest version.
+  In launcher I added icon, Direct3D option is now shown only on Windows.
+  I finished invisibility and implemented iron feet, light amp, torch, flight
+ and weapon level 2 powerups.
+10.08.2007
+  I implemented speed and minotaur powerups. All powerups are now implemented.
+11.08.2007
+  I updated DeHackEd info file.
+  I added sound definitions for ammo, health and armor pickups.
+  I made floating items not to use Health for it's current state.
+  I implemented base classes for health pickups and basic armor class that
+ handles armor in all games except Hexen.
+12.08.2007
+  I implemented an armor class that handles Hexen style armor.
+  I implemented proper handling of revealed maps, added a base class for map
+ revealer items and implemented Strife's scanner item.
+13.08.2007
+  I implemented Strife's quest items as inventory items and moved sigil
+ pieces count to Sigil class.
+14.08.2007
+  I moved many methods from Player classes to PlayerEx.
+15.08.2007
+  I implemented support for actor class game filter flags.
+  I moved spawn puff and blood methods, methods for spawning particles and
+ dynamic light effects, moved map spot and teleport destination classes to
+ linespec. I implemented more dynamic handling of explosions, moved A_Explode
+ and A_BossDeath and some other state action methods to ScriptedEntity. In
+ Strife I moved boss death methods to the corresponding classes.
+17.08.2007
+  I implemented support for state labels and DECORATE style state definitions
+ and started to convert many classes to use it.
+18.08.2007
+  I changed weapons to fully use state labels, converted many more classes to
+ the new style.
+19.08.2007
+  I converted many more classes to use new style state definitions.
+21.08.2007
+  I converted many Hexen monsters to use new style state defs.
+22.08.2007
+  Many more monsters converted.
+23.08.2007
+  I finished converting monster classes.
+24.08.2007
+  More of the remaining classes converted.
+25.08.2007
+  I removed most of the state fields from EntityEx class, converted more
+ classes.
+26.08.2007
+  I converted most of the remaining state definitions.
+27.08.2007
+  I added support for code blocks in new style state definitiions, converted
+ the remaining state definitions and removed support for old style state
+ definitions.
+  I moved ACS inventory and Strife conversation related methods to EntityEx,
+ moved some simple state ection methods to ScriptedEntity, moved some methods
+ from Actor class to some other classes.
+29.08.2007
+  I fixed possibility of having unkillable lost souls.
+  In Strife I fixed strafing while on low health.
+  I fixed some security vulnerabilities that were reported.
+31.08.2007
+  I fixed other security vulnerabilities that were reported.
+01.09.2007
+  I fixed a spelling mistake in the menus.
+  I merged language definition scripts.
