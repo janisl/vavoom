@@ -113,13 +113,6 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		}
 		break;
 
-	case FLOOREV_RaiseToHighest:
-		Direction = 1;
-		DestHeight = Level.FindHighestFloorSurrounding(Sector, &Spot);
-		Spot.z = DestHeight;
-		FloorDestDist = DotProduct(Sector->floor.normal, Spot);
-		break;
-
 	case FLOOREV_LowerToLowest:
 		Direction = -1;
 		DestHeight = Level.FindLowestFloorSurrounding(Sector, &Spot);
@@ -132,28 +125,6 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		DestHeight = Level.FindNextLowestFloor(Sector, &Spot);
 		Spot.z = DestHeight;
 		FloorDestDist = DotProduct(Sector->floor.normal, Spot);
-		break;
-
-	case FLOOREV_RaiseToNearest:
-		Direction = 1;
-		DestHeight = Level.FindNextHighestFloor(Sector, &Spot);
-		Spot.z = DestHeight;
-		FloorDestDist = DotProduct(Sector->floor.normal, Spot);
-		break;
-
-	case FLOOREV_RaiseToLowestCeiling:
-		Direction = 1;
-		DestHeight = Level.FindLowestCeilingSurrounding(Sector, &Spot);
-		Spot.z = DestHeight;
-		FloorDestDist = DotProduct(Sector->floor.normal, Spot);
-		CeilHeight = Level.FindLowestCeilingPoint(Sector, &Spot2);
-		if ((FloorDestDist - Sector->floor.normal.x * Spot2.x -
-			Sector->floor.normal.y * Spot2.y) / Sector->floor.normal.z >
-			CeilHeight)
-		{
-			Spot2.z = CeilHeight;
-			FloorDestDist = DotProduct(Sector->floor.normal, Spot2);
-		}
 		break;
 
 	case FLOOREV_LowerByValue:
@@ -178,14 +149,6 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		FloorDestDist = DotProduct(Sector->floor.normal, Spot);
 		break;
 
-	case FLOOREV_RaiseByValueTimes8:
-	case FLOOREV_RaiseTimes8Instant:
-		Direction = 1;
-		DestHeight = GetPlanePointZ(&Sector->floor, Spot) + itof(Arg3) * 8.0;
-		Spot.z = DestHeight;
-		FloorDestDist = DotProduct(Sector->floor.normal, Spot);
-		break;
-
 	case FLOOREV_MoveToValueTimes8:
 		Level.FindHighestFloorPoint(Sector, &Spot);
 		DestHeight = itof(Arg3) * 8.0;
@@ -203,6 +166,59 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		{
 			Direction = -1;
 		}
+		break;
+
+	case FLOOREV_RaiseAndCrush:
+		Crush = Arg3;	// arg[2] = crushing value
+		Direction = 1;
+		DestHeight = Level.FindLowestCeilingSurrounding(Sector, &Spot);
+		Spot.z = DestHeight;
+		FloorDestDist = DotProduct(Sector->floor.normal, Spot);
+		CeilHeight = Level.FindLowestCeilingPoint(Sector, &Spot2);
+		if ((FloorDestDist - Sector->floor.normal.x * Spot2.x -
+			Sector->floor.normal.y * Spot2.y) / Sector->floor.normal.z >
+			CeilHeight)
+		{
+			Spot2.z = CeilHeight - 8.0;
+			FloorDestDist = DotProduct(Sector->floor.normal, Spot2);
+		}
+		break;
+
+	case FLOOREV_RaiseToLowestCeiling:
+		Direction = 1;
+		DestHeight = Level.FindLowestCeilingSurrounding(Sector, &Spot);
+		Spot.z = DestHeight;
+		FloorDestDist = DotProduct(Sector->floor.normal, Spot);
+		CeilHeight = Level.FindLowestCeilingPoint(Sector, &Spot2);
+		if ((FloorDestDist - Sector->floor.normal.x * Spot2.x -
+			Sector->floor.normal.y * Spot2.y) / Sector->floor.normal.z >
+			CeilHeight)
+		{
+			Spot2.z = CeilHeight;
+			FloorDestDist = DotProduct(Sector->floor.normal, Spot2);
+		}
+		break;
+
+	case FLOOREV_RaiseToHighest:
+		Direction = 1;
+		DestHeight = Level.FindHighestFloorSurrounding(Sector, &Spot);
+		Spot.z = DestHeight;
+		FloorDestDist = DotProduct(Sector->floor.normal, Spot);
+		break;
+
+	case FLOOREV_RaiseToNearest:
+		Direction = 1;
+		DestHeight = Level.FindNextHighestFloor(Sector, &Spot);
+		Spot.z = DestHeight;
+		FloorDestDist = DotProduct(Sector->floor.normal, Spot);
+		break;
+
+	case FLOOREV_RaiseByValueTimes8:
+	case FLOOREV_RaiseTimes8Instant:
+		Direction = 1;
+		DestHeight = GetPlanePointZ(&Sector->floor, Spot) + itof(Arg3) * 8.0;
+		Spot.z = DestHeight;
+		FloorDestDist = DotProduct(Sector->floor.normal, Spot);
 		break;
 
 	case FLOOREV_RaiseByTexture:
@@ -259,22 +275,6 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		FloorDestDist = DotProduct(Sector->floor.normal, Spot);
 		Sector->floor.pic = Line->frontsector->floor.pic;
 		SeqName = LineSpecialLevelInfo(Level).DefaultFloorAltSound;
-		break;
-
-	case FLOOREV_RaiseAndCrush:
-		Crush = Arg3;	// arg[2] = crushing value
-		Direction = 1;
-		DestHeight = Level.FindLowestCeilingSurrounding(Sector, &Spot);
-		Spot.z = DestHeight - 8.0;
-		FloorDestDist = DotProduct(Sector->floor.normal, Spot);
-		CeilHeight = Level.FindLowestCeilingPoint(Sector, &Spot2);
-		if ((FloorDestDist - Sector->floor.normal.x * Spot2.x -
-			Sector->floor.normal.y * Spot2.y) / Sector->floor.normal.z >
-			CeilHeight)
-		{
-			Spot2.z = CeilHeight - 8.0;
-			FloorDestDist = DotProduct(Sector->floor.normal, Spot2);
-		}
 		break;
 
 	case FLOOREV_Generic:
