@@ -67,7 +67,6 @@ final void A_InquisitorChase()
 			Origin.z = FloorZ + 80.0;
 		else
 		{
-			Origin.z = FloorZ;
 			return;
 		}
 
@@ -80,13 +79,9 @@ final void A_InquisitorChase()
 				SetState(FindState('Jump'));
 				bDynamicLight = true;
 			}
-			else
-				//	Don't let him jump while under a low ceiling
-				Origin.z = FloorZ;
 		}
 		else
 		{
-			Origin.z = FloorZ;
 			return;
 		}
 	}
