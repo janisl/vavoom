@@ -1346,6 +1346,12 @@ void Cheat_Gimme()
 				//	An abstract base class.
 				continue;
 			}
+#ifndef DOOM2
+			if (Cls == SuperShotgun)
+			{
+				continue;
+			}
+#endif
 			Weapon Wpn = Weapon(Level.Spawn(Cls));
 			Wpn.AmmoGive1 = 0;
 			Wpn.AmmoGive2 = 0;
