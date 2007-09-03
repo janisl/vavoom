@@ -72,6 +72,11 @@ void InitEffect()
 
 void EndEffect()
 {
+	if (!Owner)
+	{
+		return;
+	}
+
 	if (Owner.Origin.z != Owner.FloorZ)
 	{
 //FIXME		player->centreing = true;
