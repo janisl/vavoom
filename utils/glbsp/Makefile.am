@@ -34,6 +34,5 @@ EXTRA_DIST = \
 	COPYING.txt \
 	INSTALL.txt \
 	README.txt \
-	TODO.txt \
 	TRICKS.txt \
 	USAGE.txt

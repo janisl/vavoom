@@ -13,4 +13,5 @@ EXTRA_DIST = \
 	vlaunch.ico \
 	vlaunch.rc \
 	vlaunch.sln \
-	vlaunch.vcproj
+	vlaunch.vcproj \
+	vlaunch.xpm
