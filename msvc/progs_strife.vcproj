@@ -25,8 +25,8 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
-				CommandLine="$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/strife/strfdefs.vc ../basev/strife/progs/shared.dat -P../basev/common/progs -P../basev/strife/progs -I../progs/common&#x0D;&#x0A;$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/strife/svprogs.vc ../basev/strife/progs/svprogs.dat -P../basev/common/progs -P../basev/strife/progs -I../progs/common&#x0D;&#x0A;$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/strife/clprogs.vc ../basev/strife/progs/clprogs.dat -P../basev/common/progs -P../basev/strife/progs -I../progs/common&#x0D;&#x0A;"
-				Outputs="../basev/strife/progs/shared.dat;../basev/strife/progs/svprogs.dat;../basev/strife/progs/clprogs.dat"
+				CommandLine="$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/strife/svprogs.vc ../basev/strife/progs/svprogs.dat -P../basev/common/progs -P../basev/strife/progs -I../progs/common&#x0D;&#x0A;$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/strife/clprogs.vc ../basev/strife/progs/clprogs.dat -P../basev/common/progs -P../basev/strife/progs -I../progs/common&#x0D;&#x0A;"
+				Outputs="../basev/strife/progs/svprogs.dat;../basev/strife/progs/clprogs.dat"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -88,8 +88,8 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
-				CommandLine="$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/strife/strfdefs.vc ../basev/strife/progs/shared.dat -P../basev/common/progs -P../basev/strife/progs -I../progs/common&#x0D;&#x0A;$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/strife/svprogs.vc ../basev/strife/progs/svprogs.dat -P../basev/common/progs -P../basev/strife/progs -I../progs/common&#x0D;&#x0A;$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/strife/clprogs.vc ../basev/strife/progs/clprogs.dat -P../basev/common/progs -P../basev/strife/progs -I../progs/common&#x0D;&#x0A;"
-				Outputs="../basev/strife/progs/shared.dat;../basev/strife/progs/svprogs.dat;../basev/strife/progs/clprogs.dat"
+				CommandLine="$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/strife/svprogs.vc ../basev/strife/progs/svprogs.dat -P../basev/common/progs -P../basev/strife/progs -I../progs/common&#x0D;&#x0A;$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/strife/clprogs.vc ../basev/strife/progs/clprogs.dat -P../basev/common/progs -P../basev/strife/progs -I../progs/common&#x0D;&#x0A;"
+				Outputs="../basev/strife/progs/svprogs.dat;../basev/strife/progs/clprogs.dat"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
