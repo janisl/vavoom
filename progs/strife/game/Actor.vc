@@ -206,34 +206,6 @@ float GetBaseViewHeight()
 
 //==========================================================================
 //
-//  TossUpObject
-//
-//==========================================================================
-
-Actor TossUpObject(class<Actor> type)
-{
-	Actor		A;
-	float		an;
-	float		randomspeed;
-
-	randomspeed = Random() * 8.0 - 6.0;
-
-	A = Spawn(type, GetCentre());
-	if (A)
-	{
-		an = AngleMod360(Angles.yaw + Random() * 360.0);
-		A.Angles.yaw = an;
-		A.Tracer = Target;
-		A.Target = self;
-		A.Velocity.x = randomspeed * cos(an) * 35.0;
-		A.Velocity.y = randomspeed * sin(an) * 35.0;
-		A.Velocity.z = (12.0 + Random() / 8.0) * 35.0;
-	}
-	return A;
-}
-
-//==========================================================================
-//
 //	A_ActiveSound
 //
 //==========================================================================
