@@ -19,140 +19,140 @@ EXTRA_DIST = compile.bat \
 	clprogs.vc \
 	doomdefs.vc \
 	svprogs.vc \
-	cgame/MenuChoice_SpanDrawing.vc \
-	cgame/MenuChoice_LoadGame.vc \
-	cgame/MenuChoiceEpisode.vc \
-	cgame/MenuChoice_MouseLook.vc \
-	cgame/MenuScreenScreenResolution.vc \
-	cgame/MenuChoice_InvertMouse.vc \
-	cgame/MenuSelector_Skull.vc \
-	cgame/MenuStaticAnim.vc \
-	cgame/MenuChoice_JoinAt.vc \
-	cgame/MenuScreenSList.vc \
-	cgame/MenuChoice_MPEpisode.vc \
-	cgame/MenuChoice_Models.vc \
-	cgame/MenuChoice_CDMusic.vc \
-	cgame/MenuChoice_Help.vc \
-	cgame/MenuChoice_GoToConsole.vc \
-	cgame/MenuChoice_NewNetGame.vc \
-	cgame/MenuChoice_Options.vc \
-	cgame/MenuScreen.vc \
 	cgame/classes.vc \
-	cgame/MenuChoice_MouseYSensitivity.vc \
-	cgame/MenuObject.vc \
-	cgame/MenuSelector_SmallRight.vc \
-	cgame/MenuChoice_TimeLimit.vc \
-	cgame/MenuScreenMultiplayer.vc \
-	cgame/FinaleScreen.vc \
-	cgame/MenuChoice_SkillEasy.vc \
-	cgame/MenuChoice_SaveSlot.vc \
-	cgame/MenuChoice_Windowed.vc \
-	cgame/MenuChoice_SoundSettings.vc \
-	cgame/MenuSelector_SmallLeft.vc \
-	cgame/MenuChoice_Croshair.vc \
-	cgame/MenuChoice_ClipLights.vc \
-	cgame/MenuChoice_QuitGame.vc \
-	cgame/MenuTitleText.vc \
-	cgame/MenuChoice_PlayerSetup.vc \
-	cgame/MenuChoice_DarkenLights.vc \
-	cgame/MenuMainTitleImage.vc \
-	cgame/MenuScreenJoinGame.vc \
-	cgame/MenuChoice_LoadSlot.vc \
-	cgame/MenuScreenOptions.vc \
-	cgame/MenuChoice_VideoOptions.vc \
-	cgame/MenuChoice_Controls2.vc \
-	cgame/MenuScreenControls.vc \
-	cgame/MenuScreenSoundOptions.vc \
-	cgame/MenuChoice_SwapStereo.vc \
-	cgame/MenuChoice_PlayerName.vc \
-	cgame/MenuInputLine.vc \
-	cgame/MenuChoice_ScreenResolution.vc \
-	cgame/MenuChoice_DynamicLights.vc \
-	cgame/MenuSpriteAnim.vc \
-	cgame/MenuChoice_DeathMatch.vc \
-	cgame/MenuChoice_SkillNightmare.vc \
-	cgame/MenuScreenPlayerSetup.vc \
-	cgame/MenuChoice_MPLevel.vc \
 	cgame/ClientGame.vc \
-	cgame/MenuChoice_Monsters.vc \
-	cgame/MenuChoice_GLSpecular.vc \
-	cgame/MenuStaticBitmap.vc \
-	cgame/MenuChoice_MPSkill.vc \
-	cgame/MenuHelpPage.vc \
-	cgame/MenuScreenControls2.vc \
-	cgame/MenuChoice_SkillBaby.vc \
-	cgame/MenuChoice_GLBlendSprites.vc \
-	cgame/MenuScreenSaveGame.vc \
-	cgame/MenuChoice_Players.vc \
-	cgame/MenuChoiceSlider.vc \
-	cgame/TitleScreen.vc \
-	cgame/MenuScreenSinglePlayer.vc \
-	cgame/MenuChoice_NewGame.vc \
-	cgame/MenuSaveSlot.vc \
-	cgame/MenuModel.vc \
-	cgame/MenuScreenMouseOptions.vc \
-	cgame/MenuChoice_Lookspring.vc \
-	cgame/MenuChoice_StartGame.vc \
-	cgame/MenuBigTextButton.vc \
-	cgame/MenuChoice_JoinGame.vc \
-	cgame/MenuSList.vc \
-	cgame/MenuChoice_D3DBlendSprites.vc \
-	cgame/MenuChoice_MouseXSensitivity.vc \
-	cgame/MenuChoice_ApplyVidMode.vc \
-	cgame/MenuScreenLoadGame.vc \
-	cgame/MenuSmallTextButton.vc \
-	cgame/MenuChoice_Controls.vc \
-	cgame/MenuChoice_BitDepth.vc \
-	cgame/MenuChoice_Skin.vc \
-	cgame/MenuScreenSkill.vc \
-	cgame/MenuChoice_Search.vc \
-	cgame/MenuChoiceEnum.vc \
-	cgame/MenuChoice_OnOff.vc \
-	cgame/MenuChoice_Brightness.vc \
-	cgame/MenuChoice_ExtraSamples.vc \
-	cgame/MenuChoice_LookStrafe.vc \
-	cgame/MenuChoice_AddLights.vc \
-	cgame/StatusBarScreen.vc \
-	cgame/MenuChoice_ScreenSize.vc \
-	cgame/MenuScreenMain.vc \
-	cgame/MenuChoice_VideoMode.vc \
-	cgame/MenuChoice_SkillHard.vc \
-	cgame/MenuScreenEpisode.vc \
-	cgame/MenuScreenHelp.vc \
-	cgame/MenuControlKey.vc \
-	cgame/MenuChoice.vc \
-	cgame/MenuChoice_SoundVolume.vc \
-	cgame/MenuScreenNewNetGame.vc \
+	cgame/FinaleScreen.vc \
 	cgame/IntermissionScreen.vc \
+	cgame/MenuBigTextButton.vc \
+	cgame/MenuChoice.vc \
+	cgame/MenuChoice_AddLights.vc \
+	cgame/MenuChoice_AdvancedVideoOptions.vc \
+	cgame/MenuChoice_ApplyVidMode.vc \
+	cgame/MenuChoice_AspectRatio.vc \
+	cgame/MenuChoice_BitDepth.vc \
+	cgame/MenuChoice_Brightness.vc \
+	cgame/MenuChoice_CDMusic.vc \
+	cgame/MenuChoice_ClipLights.vc \
 	cgame/MenuChoice_Colour.vc \
-	cgame/MenuChoice_SkillNormal.vc \
-	cgame/MenuChoice_SaveGame.vc \
-	cgame/MenuChoice_SinglePlayer.vc \
-	cgame/MenuChoice_EndGame.vc \
+	cgame/MenuChoice_ColouredLights.vc \
+	cgame/MenuChoice_Controls.vc \
+	cgame/MenuChoice_Controls2.vc \
+	cgame/MenuChoice_Croshair.vc \
+	cgame/MenuChoice_CroshairTrans.vc \
+	cgame/MenuChoice_D3DBlendSprites.vc \
+	cgame/MenuChoice_D3DDither.vc \
+	cgame/MenuChoice_D3DModelLights.vc \
+	cgame/MenuChoice_D3DSpecular.vc \
+	cgame/MenuChoice_D3DTextureFilter.vc \
 	cgame/MenuChoice_Darkening.vc \
+	cgame/MenuChoice_DarkenLights.vc \
+	cgame/MenuChoice_DeathMatch.vc \
+	cgame/MenuChoice_DrawFPS.vc \
+	cgame/MenuChoice_DynamicLights.vc \
+	cgame/MenuChoice_EndGame.vc \
+	cgame/MenuChoice_ExternalMusic.vc \
+	cgame/MenuChoice_ExtraSamples.vc \
+	cgame/MenuChoice_Help.vc \
+	cgame/MenuChoice_GLBlendSprites.vc \
+	cgame/MenuChoice_GLModelLights.vc \
+	cgame/MenuChoice_GLSpecular.vc \
+	cgame/MenuChoice_GLTextureFilter.vc \
+	cgame/MenuChoice_GoToConsole.vc \
+	cgame/MenuChoice_HiResTextures.vc \
+	cgame/MenuChoice_InvertMouse.vc \
+	cgame/MenuChoice_JoinAt.vc \
+	cgame/MenuChoice_JoinGame.vc \
+	cgame/MenuChoice_LoadGame.vc \
+	cgame/MenuChoice_LoadSlot.vc \
+	cgame/MenuChoice_Lookspring.vc \
+	cgame/MenuChoice_LookStrafe.vc \
+	cgame/MenuChoice_Models.vc \
+	cgame/MenuChoice_Monsters.vc \
+	cgame/MenuChoice_MouseLook.vc \
 	cgame/MenuChoice_MouseOptions.vc \
-	cgame/MenuTextButton.vc \
+	cgame/MenuChoice_MouseXSensitivity.vc \
+	cgame/MenuChoice_MouseYSensitivity.vc \
+	cgame/MenuChoice_MPEpisode.vc \
+	cgame/MenuChoice_MPLevel.vc \
+	cgame/MenuChoice_MPSkill.vc \
 	cgame/MenuChoice_Multiplayer.vc \
 	cgame/MenuChoice_MusicVolume.vc \
-	cgame/MenuScreenVideoOptions.vc \
-	cgame/MenuChoice_ColouredLights.vc \
-	cgame/MenuChoice_D3DTextureFilter.vc \
-	cgame/MenuChoice_SpriteOffset.vc \
-	cgame/MenuChoice_GLTextureFilter.vc \
-	cgame/MenuChoice_SpriteDelta.vc \
-	cgame/MenuChoice_GLModelLights.vc \
-	cgame/MenuChoice_ViewModels.vc \
-	cgame/MenuChoice_CroshairTrans.vc \
-	cgame/MenuScreenAdvancedVideoOptions.vc \
+	cgame/MenuChoice_NewGame.vc \
+	cgame/MenuChoice_NewNetGame.vc \
+	cgame/MenuChoice_OnOff.vc \
+	cgame/MenuChoice_Options.vc \
+	cgame/MenuChoice_PlayerName.vc \
+	cgame/MenuChoice_Players.vc \
+	cgame/MenuChoice_PlayerSetup.vc \
+	cgame/MenuChoice_QuitGame.vc \
+	cgame/MenuChoice_SaveGame.vc \
+	cgame/MenuChoice_SaveSlot.vc \
+	cgame/MenuChoice_ScreenResolution.vc \
+	cgame/MenuChoice_ScreenSize.vc \
+	cgame/MenuChoice_Search.vc \
+	cgame/MenuChoice_SinglePlayer.vc \
+	cgame/MenuChoice_SkillBaby.vc \
+	cgame/MenuChoice_SkillEasy.vc \
+	cgame/MenuChoice_SkillHard.vc \
+	cgame/MenuChoice_SkillNightmare.vc \
+	cgame/MenuChoice_SkillNormal.vc \
+	cgame/MenuChoice_Skin.vc \
+	cgame/MenuChoice_SoundSettings.vc \
+	cgame/MenuChoice_SoundVolume.vc \
+	cgame/MenuChoice_SpanDrawing.vc \
 	cgame/MenuChoice_SpecularLevel.vc \
-	cgame/MenuChoice_D3DDither.vc \
-	cgame/MenuChoice_AdvancedVideoOptions.vc \
-	cgame/MenuChoice_AspectRatio.vc \
-	cgame/MenuChoice_D3DSpecular.vc \
-	cgame/MenuChoice_HiResTextures.vc \
-	cgame/MenuChoice_ExternalMusic.vc \
-	cgame/MenuChoice_DrawFPS.vc \
-	cgame/MenuChoice_D3DModelLights.vc \
+	cgame/MenuChoice_SpriteDelta.vc \
+	cgame/MenuChoice_SpriteOffset.vc \
+	cgame/MenuChoice_StartGame.vc \
+	cgame/MenuChoice_SwapStereo.vc \
+	cgame/MenuChoice_TimeLimit.vc \
+	cgame/MenuChoice_VideoMode.vc \
+	cgame/MenuChoice_VideoOptions.vc \
+	cgame/MenuChoice_ViewModels.vc \
+	cgame/MenuChoice_Windowed.vc \
+	cgame/MenuChoiceEpisode.vc \
+	cgame/MenuChoiceSlider.vc \
+	cgame/MenuControlKey.vc \
+	cgame/MenuHelpPage.vc \
+	cgame/MenuInputLine.vc \
+	cgame/MenuMainTitleImage.vc \
+	cgame/MenuModel.vc \
+	cgame/MenuObject.vc \
+	cgame/MenuSaveSlot.vc \
+	cgame/MenuChoiceEnum.vc \
+	cgame/MenuScreen.vc \
+	cgame/MenuScreenAdvancedVideoOptions.vc \
+	cgame/MenuScreenControls.vc \
+	cgame/MenuScreenControls2.vc \
+	cgame/MenuScreenEpisode.vc \
+	cgame/MenuScreenHelp.vc \
+	cgame/MenuScreenJoinGame.vc \
+	cgame/MenuScreenLoadGame.vc \
+	cgame/MenuScreenMain.vc \
+	cgame/MenuScreenMouseOptions.vc \
+	cgame/MenuScreenMultiplayer.vc \
+	cgame/MenuScreenNewNetGame.vc \
+	cgame/MenuScreenOptions.vc \
+	cgame/MenuScreenPlayerSetup.vc \
+	cgame/MenuScreenSaveGame.vc \
+	cgame/MenuScreenScreenResolution.vc \
+	cgame/MenuScreenSinglePlayer.vc \
+	cgame/MenuScreenSkill.vc \
+	cgame/MenuScreenSList.vc \
+	cgame/MenuScreenSoundOptions.vc \
+	cgame/MenuScreenVideoOptions.vc \
+	cgame/MenuSelector_Skull.vc \
+	cgame/MenuSelector_SmallLeft.vc \
+	cgame/MenuSelector_SmallRight.vc \
+	cgame/MenuSList.vc \
+	cgame/MenuSmallTextButton.vc \
+	cgame/MenuSpriteAnim.vc \
+	cgame/MenuStaticAnim.vc \
+	cgame/MenuStaticBitmap.vc \
+	cgame/MenuTextButton.vc \
+	cgame/MenuTitleText.vc \
+	cgame/StatusBarScreen.vc \
+	cgame/TitleScreen.vc \
 	game/classes.vc \
 	game/Actor.vc \
 	game/BloodSplash.vc \
@@ -180,7 +180,6 @@ EXTRA_DIST = compile.bat \
 	game1/classes.vc \
 	game1/Allmap.vc \
 	game1/ArmorBonus.vc \
-	game1/ArmorPickup.vc \
 	game1/Backpack.vc \
 	game1/BaronBall.vc \
 	game1/BaronOfHell.vc \
@@ -247,7 +246,6 @@ EXTRA_DIST = compile.bat \
 	game1/HeadOnAStick.vc \
 	game1/HeadsOnAStick.vc \
 	game1/HealthBonus.vc \
-	game1/HealthPickup.vc \
 	game1/HeartColumn.vc \
 	game1/Infrared.vc \
 	game1/InvulnerabilitySphere.vc \

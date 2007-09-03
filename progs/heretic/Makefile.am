@@ -15,142 +15,142 @@ $(OUTDIR)/clprogs.dat: $(VCC) $(OUTDIR)/svprogs.dat $(srcdir)/*.vc $(srcdir)/cga
 EXTRA_DIST = compile.bat \
 	clprogs.vc \
 	svprogs.vc \
-	cgame/MenuChoice_SpanDrawing.vc \
-	cgame/MenuChoice_LoadGame.vc \
-	cgame/MenuChoice_Episode4.vc \
-	cgame/MenuChoice_MouseLook.vc \
-	cgame/MenuScreenScreenResolution.vc \
-	cgame/MenuChoice_InvertMouse.vc \
-	cgame/MenuStaticAnim.vc \
-	cgame/MenuChoice_JoinAt.vc \
-	cgame/MenuScreenSList.vc \
-	cgame/MenuChoice_MPEpisode.vc \
-	cgame/MenuChoice_Models.vc \
-	cgame/MenuSpinningSkull.vc \
-	cgame/MenuChoice_CDMusic.vc \
-	cgame/MenuChoice_Help.vc \
-	cgame/MenuChoice_GoToConsole.vc \
-	cgame/MenuChoice_NewNetGame.vc \
-	cgame/MenuChoice_Options.vc \
-	cgame/MenuScreen.vc \
 	cgame/classes.vc \
-	cgame/MenuChoice_MouseYSensitivity.vc \
-	cgame/MenuObject.vc \
-	cgame/MenuSelector_SmallRight.vc \
-	cgame/MenuChoice_TimeLimit.vc \
-	cgame/MenuScreenMultiplayer.vc \
-	cgame/FinaleScreen.vc \
-	cgame/MenuChoice_SaveSlot.vc \
-	cgame/MenuChoice_Windowed.vc \
-	cgame/MenuChoice_SoundSettings.vc \
-	cgame/MenuSelector_SmallLeft.vc \
-	cgame/MenuChoice_Croshair.vc \
-	cgame/MenuChoice_Episode3.vc \
-	cgame/MenuChoice_QuitGame.vc \
-	cgame/MenuTitleText.vc \
-	cgame/MenuChoice_PlayerSetup.vc \
-	cgame/MenuChoice_DarkenLights.vc \
-	cgame/MenuMainTitleImage.vc \
-	cgame/MenuScreenJoinGame.vc \
-	cgame/MenuChoice_LoadSlot.vc \
-	cgame/MenuScreenOptions.vc \
-	cgame/MenuChoice_VideoOptions.vc \
-	cgame/MenuChoice_Controls2.vc \
-	cgame/MenuScreenControls.vc \
-	cgame/MenuScreenSoundOptions.vc \
-	cgame/MenuChoice_SwapStereo.vc \
-	cgame/MenuChoice_PlayerName.vc \
-	cgame/MenuInputLine.vc \
-	cgame/MenuChoice_ScreenResolution.vc \
-	cgame/MenuChoice_DynamicLights.vc \
-	cgame/MenuSpriteAnim.vc \
-	cgame/MenuChoice_DeathMatch.vc \
-	cgame/MenuChoice_GLBlendSprites.vc \
-	cgame/MenuScreenPlayerSetup.vc \
-	cgame/MenuChoice_Level.vc \
-	cgame/MenuSpinningSkull2.vc \
 	cgame/ClientGame.vc \
-	cgame/MenuChoice_Monsters.vc \
-	cgame/MenuChoice_Episode2.vc \
-	cgame/MenuStaticBitmap.vc \
-	cgame/MenuChoice_MPSkill.vc \
-	cgame/MenuHelpPage.vc \
-	cgame/MenuScreenControls2.vc \
-	cgame/MenuChoice_Skill.vc \
-	cgame/MenuScreenSaveGame.vc \
-	cgame/MenuChoice_Players.vc \
-	cgame/MenuChoiceSlider.vc \
-	cgame/TitleScreen.vc \
-	cgame/MenuScreenSinglePlayer.vc \
-	cgame/MenuChoice_NewGame.vc \
-	cgame/MenuBigTextButton.vc \
-	cgame/MenuSaveSlot.vc \
-	cgame/MenuScreenMouseOptions.vc \
-	cgame/MenuChoice_Lookspring.vc \
-	cgame/MenuChoice_StartGame.vc \
-	cgame/MenuChoice_JoinGame.vc \
-	cgame/MenuSList.vc \
-	cgame/MenuChoice_D3DBlendSprites.vc \
-	cgame/MenuChoice_MouseXSensitivity.vc \
-	cgame/MenuChoice_ApplyVidMode.vc \
-	cgame/MenuScreenLoadGame.vc \
-	cgame/MenuSmallTextButton.vc \
-	cgame/MenuSelector_BigArrow.vc \
-	cgame/MenuChoice_Controls.vc \
-	cgame/MenuChoice_BitDepth.vc \
-	cgame/MenuScreenSkill.vc \
-	cgame/MenuChoice_Search.vc \
-	cgame/MenuChoiceEnum.vc \
-	cgame/MenuChoice_OnOff.vc \
-	cgame/MenuChoice_Brightness.vc \
-	cgame/MenuChoice_ExtraSamples.vc \
-	cgame/MenuChoice_LookStrafe.vc \
-	cgame/MenuChoice_Episode1.vc \
-	cgame/StatusBarScreen.vc \
-	cgame/MenuChoice_ScreenSize.vc \
-	cgame/MenuScreenMain.vc \
-	cgame/MenuChoice_VideoMode.vc \
-	cgame/MenuChoice_Episode5.vc \
-	cgame/MenuScreenEpisode.vc \
-	cgame/MenuScreenHelp.vc \
-	cgame/MenuControlKey.vc \
-	cgame/MenuChoice.vc \
-	cgame/MenuChoice_SoundVolume.vc \
-	cgame/MenuScreenNewNetGame.vc \
+	cgame/FinaleScreen.vc \
 	cgame/IntermissionScreen.vc \
-	cgame/MenuChoice_SinglePlayer.vc \
-	cgame/MenuChoice_SaveGame.vc \
-	cgame/MenuChoice_MouseOptions.vc \
-	cgame/MenuChoice_EndGame.vc \
-	cgame/MenuChoice_Darkening.vc \
+	cgame/MenuBigTextButton.vc \
+	cgame/MenuChoice.vc \
+	cgame/MenuChoice_AddLights.vc \
+	cgame/MenuChoice_AdvancedVideoOptions.vc \
+	cgame/MenuChoice_ApplyVidMode.vc \
+	cgame/MenuChoice_AspectRatio.vc \
+	cgame/MenuChoice_BitDepth.vc \
+	cgame/MenuChoice_Brightness.vc \
+	cgame/MenuChoice_CDMusic.vc \
+	cgame/MenuChoice_ClipLights.vc \
 	cgame/MenuChoice_Colour.vc \
-	cgame/MenuTextButton.vc \
+	cgame/MenuChoice_ColouredLights.vc \
+	cgame/MenuChoice_Controls.vc \
+	cgame/MenuChoice_Controls2.vc \
+	cgame/MenuChoice_Croshair.vc \
+	cgame/MenuChoice_CroshairTrans.vc \
+	cgame/MenuChoice_D3DBlendSprites.vc \
+	cgame/MenuChoice_D3DDither.vc \
+	cgame/MenuChoice_D3DModelLights.vc \
+	cgame/MenuChoice_D3DSpecular.vc \
 	cgame/MenuChoice_D3DTextureFilter.vc \
+	cgame/MenuChoice_Darkening.vc \
+	cgame/MenuChoice_DarkenLights.vc \
+	cgame/MenuChoice_DeathMatch.vc \
+	cgame/MenuChoice_DrawFPS.vc \
+	cgame/MenuChoice_DynamicLights.vc \
+	cgame/MenuChoice_EndGame.vc \
+	cgame/MenuChoice_Episode1.vc \
+	cgame/MenuChoice_Episode2.vc \
+	cgame/MenuChoice_Episode3.vc \
+	cgame/MenuChoice_Episode5.vc \
+	cgame/MenuChoice_Episode4.vc \
+	cgame/MenuChoice_ExternalMusic.vc \
+	cgame/MenuChoice_ExtraSamples.vc \
+	cgame/MenuChoice_GLBlendSprites.vc \
+	cgame/MenuChoice_GLModelLights.vc \
+	cgame/MenuChoice_GLSpecular.vc \
+	cgame/MenuChoice_GLTextureFilter.vc \
+	cgame/MenuChoice_GoToConsole.vc \
+	cgame/MenuChoice_Help.vc \
+	cgame/MenuChoice_HiResTextures.vc \
+	cgame/MenuChoice_InvertMouse.vc \
+	cgame/MenuChoice_JoinAt.vc \
+	cgame/MenuChoice_JoinGame.vc \
+	cgame/MenuChoice_Level.vc \
+	cgame/MenuChoice_LoadGame.vc \
+	cgame/MenuChoice_LoadSlot.vc \
+	cgame/MenuChoice_Lookspring.vc \
+	cgame/MenuChoice_LookStrafe.vc \
+	cgame/MenuChoice_Models.vc \
+	cgame/MenuChoice_Monsters.vc \
+	cgame/MenuChoice_MouseLook.vc \
+	cgame/MenuChoice_MouseOptions.vc \
+	cgame/MenuChoice_MouseYSensitivity.vc \
+	cgame/MenuChoice_MouseXSensitivity.vc \
+	cgame/MenuChoice_MPEpisode.vc \
+	cgame/MenuChoice_MPSkill.vc \
 	cgame/MenuChoice_Multiplayer.vc \
 	cgame/MenuChoice_MusicVolume.vc \
-	cgame/MenuScreenVideoOptions.vc \
-	cgame/MenuChoice_ColouredLights.vc \
-	cgame/MenuChoice_ClipLights.vc \
-	cgame/MenuChoice_SpriteOffset.vc \
-	cgame/MenuChoice_SpriteDelta.vc \
-	cgame/MenuChoice_GLSpecular.vc \
-	cgame/MenuChoice_AddLights.vc \
-	cgame/MenuChoice_GLTextureFilter.vc \
-	cgame/MenuChoice_GLModelLights.vc \
-	cgame/MenuChoice_ViewModels.vc \
-	cgame/MenuChoice_CroshairTrans.vc \
-	cgame/MenuScreenAdvancedVideoOptions.vc \
+	cgame/MenuChoice_NewGame.vc \
+	cgame/MenuChoice_NewNetGame.vc \
+	cgame/MenuChoice_OnOff.vc \
+	cgame/MenuChoice_Options.vc \
+	cgame/MenuChoice_PlayerName.vc \
+	cgame/MenuChoice_Players.vc \
+	cgame/MenuChoice_PlayerSetup.vc \
+	cgame/MenuChoice_QuitGame.vc \
+	cgame/MenuChoice_SaveGame.vc \
+	cgame/MenuChoice_SaveSlot.vc \
+	cgame/MenuChoice_ScreenResolution.vc \
+	cgame/MenuChoice_ScreenSize.vc \
+	cgame/MenuChoice_Search.vc \
+	cgame/MenuChoice_SinglePlayer.vc \
+	cgame/MenuChoice_Skill.vc \
+	cgame/MenuChoice_SoundSettings.vc \
+	cgame/MenuChoice_SoundVolume.vc \
+	cgame/MenuChoice_SpanDrawing.vc \
 	cgame/MenuChoice_SpecularLevel.vc \
-	cgame/MenuChoice_D3DDither.vc \
-	cgame/MenuChoice_AdvancedVideoOptions.vc \
-	cgame/MenuChoice_AspectRatio.vc \
-	cgame/MenuChoice_D3DSpecular.vc \
-	cgame/MenuChoice_HiResTextures.vc \
-	cgame/MenuChoice_ExternalMusic.vc \
-	cgame/MenuChoice_DrawFPS.vc \
-	cgame/MenuChoice_D3DModelLights.vc \
-	\
+	cgame/MenuChoice_SpriteDelta.vc \
+	cgame/MenuChoice_SpriteOffset.vc \
+	cgame/MenuChoice_StartGame.vc \
+	cgame/MenuChoice_SwapStereo.vc \
+	cgame/MenuChoice_TimeLimit.vc \
+	cgame/MenuChoice_VideoMode.vc \
+	cgame/MenuChoice_VideoOptions.vc \
+	cgame/MenuChoice_ViewModels.vc \
+	cgame/MenuChoice_Windowed.vc \
+	cgame/MenuChoiceEnum.vc \
+	cgame/MenuChoiceSlider.vc \
+	cgame/MenuControlKey.vc \
+	cgame/MenuHelpPage.vc \
+	cgame/MenuInputLine.vc \
+	cgame/MenuMainTitleImage.vc \
+	cgame/MenuObject.vc \
+	cgame/MenuSaveSlot.vc \
+	cgame/MenuScreen.vc \
+	cgame/MenuScreenAdvancedVideoOptions.vc \
+	cgame/MenuScreenControls.vc \
+	cgame/MenuScreenControls2.vc \
+	cgame/MenuScreenEpisode.vc \
+	cgame/MenuScreenHelp.vc \
+	cgame/MenuScreenJoinGame.vc \
+	cgame/MenuScreenLoadGame.vc \
+	cgame/MenuScreenMain.vc \
+	cgame/MenuScreenMouseOptions.vc \
+	cgame/MenuScreenMultiplayer.vc \
+	cgame/MenuScreenNewNetGame.vc \
+	cgame/MenuScreenOptions.vc \
+	cgame/MenuScreenPlayerSetup.vc \
+	cgame/MenuScreenSaveGame.vc \
+	cgame/MenuScreenScreenResolution.vc \
+	cgame/MenuScreenSinglePlayer.vc \
+	cgame/MenuScreenSkill.vc \
+	cgame/MenuScreenSList.vc \
+	cgame/MenuScreenSoundOptions.vc \
+	cgame/MenuScreenVideoOptions.vc \
+	cgame/MenuSelector_BigArrow.vc \
+	cgame/MenuSelector_SmallLeft.vc \
+	cgame/MenuSelector_SmallRight.vc \
+	cgame/MenuSList.vc \
+	cgame/MenuSmallTextButton.vc \
+	cgame/MenuSpinningSkull.vc \
+	cgame/MenuSpinningSkull2.vc \
+	cgame/MenuSpriteAnim.vc \
+	cgame/MenuStaticAnim.vc \
+	cgame/MenuStaticBitmap.vc \
+	cgame/MenuTextButton.vc \
+	cgame/MenuTitleText.vc \
+	cgame/StatusBarScreen.vc \
+	cgame/TitleScreen.vc \
 	game/ActivatedTimeBomb.vc \
+	game/Actor.vc \
 	game/AmbientSoundSequence.vc \
 	game/ArtiEgg.vc \
 	game/ArtiFly.vc \
@@ -167,6 +167,7 @@ EXTRA_DIST = compile.bat \
 	game/Beak.vc \
 	game/BeakPowered.vc \
 	game/BeakPuff.vc \
+	game/Beast.vc \
 	game/BeastBall.vc \
 	game/Blaster.vc \
 	game/BlasterAmmo.vc \
@@ -180,16 +181,33 @@ EXTRA_DIST = compile.bat \
 	game/BloodSplashBase.vc \
 	game/BloodSplatter.vc \
 	game/BloodySkull.vc \
+	game/BossSpot.vc \
 	game/BotPlayer.vc \
 	game/BrownPillar.vc \
 	game/BurnBall.vc \
+	game/BurnBallFB.vc \
+	game/Chandelier.vc \
+	game/Chicken.vc \
+	game/ChickenPlayer.vc \
+	game/classes.vc \
+	game/Clink.vc \
 	game/Crossbow.vc \
 	game/CrossbowAmmo.vc \
+	game/CrossbowFX1.vc \
+	game/CrossbowFX2.vc \
+	game/CrossbowFX3.vc \
+	game/CrossbowFX4.vc \
 	game/CrossbowHefty.vc \
 	game/CrossbowPowered.vc \
 	game/CrystalVial.vc \
+	game/Decoration.vc \
+	game/Effect.vc \
 	game/EggFX.vc \
 	game/EnchantedShield.vc \
+	game/Feather.vc \
+	game/FireBrazier.vc \
+	game/GauntletPuff1.vc \
+	game/GauntletPuff2.vc \
 	game/Gauntlets.vc \
 	game/GauntletsPowered.vc \
 	game/GoldWand.vc \
@@ -228,35 +246,79 @@ EXTRA_DIST = compile.bat \
 	game/HornRodFX2.vc \
 	game/Ironlich.vc \
 	game/KeyBlue.vc \
+	game/KeyGizmoBlue.vc \
 	game/KeyGizmoFloatBlue.vc \
 	game/KeyGizmoFloatGreen.vc \
 	game/KeyGizmoFloatYellow.vc \
+	game/KeyGizmoGreen.vc \
+	game/KeyGizmoYellow.vc \
 	game/KeyGreen.vc \
 	game/KeyYellow.vc \
+	game/Knight.vc \
+	game/KnightAxe.vc \
+	game/KnightGhost.vc \
+	game/LavaSmoke.vc \
+	game/LavaSplash.vc \
 	game/Mace.vc \
 	game/MaceAmmo.vc \
+	game/MaceFX1.vc \
+	game/MaceFX2.vc \
+	game/MaceFX3.vc \
+	game/MaceFX4.vc \
 	game/MaceHefty.vc \
 	game/MacePowered.vc \
 	game/MaceSpawner.vc \
+	game/MainGameInfo.vc \
 	game/Minotaur.vc \
 	game/MinotaurFX1.vc \
 	game/MinotaurFX2.vc \
 	game/MinotaurFX3.vc \
+	game/Moss1.vc \
+	game/Moss2.vc \
+	game/Mummy.vc \
 	game/MummyFX1.vc \
+	game/MummyGhost.vc \
+	game/MummyLeader.vc \
+	game/MummyLeaderGhost.vc \
+	game/MummySoul.vc \
+	game/Pawn.vc \
+	game/PhoenixFX1.vc \
+	game/PhoenixFX2.vc \
+	game/PhoenixPuff.vc \
 	game/PhoenixRod.vc \
 	game/PhoenixRodAmmo.vc \
 	game/PhoenixRodHefty.vc \
 	game/PhoenixRodPowered.vc \
+	game/Player.vc \
+	game/PlayerPawn.vc \
+	game/Pod.vc \
+	game/PodGenerator.vc \
+	game/PodGoo.vc \
+	game/Projectile.vc \
+	game/Puffy.vc \
+	game/QuakeFocus.vc \
 	game/RainPillar.vc \
 	game/RainPlayer2.vc \
 	game/RainPlayer3.vc \
 	game/RainPlayer4.vc \
 	game/RedAxe.vc \
+	game/Ripper.vc \
+	game/SerpentTorch.vc \
 	game/SilverShield.vc \
+	game/SkullHang35.vc \
+	game/SkullHang45.vc \
+	game/SkullHang60.vc \
+	game/SkullHang70.vc \
 	game/SkullRod.vc \
 	game/SkullRodAmmo.vc \
 	game/SkullRodHefty.vc \
 	game/SkullRodPowered.vc \
+	game/SlimeChunk.vc \
+	game/SlimeSplash.vc \
+	game/SludgeChunk.vc \
+	game/SludgeSplash.vc \
+	game/SmallPillar.vc \
+	game/Snake.vc \
 	game/SnakeProjA.vc \
 	game/SnakeProjB.vc \
 	game/Sorcerer1.vc \
@@ -268,97 +330,33 @@ EXTRA_DIST = compile.bat \
 	game/SorcererFX1.vc \
 	game/SoundSequence.vc \
 	game/SoundSequenceSlot.vc \
+	game/SoundWaterfall.vc \
+	game/SoundWind.vc \
 	game/Staff.vc \
 	game/StaffPowered.vc \
+	game/StaffPuff.vc \
+	game/StaffPuff2.vc \
+	game/StalactiteLarge.vc \
+	game/StalactiteSmall.vc \
+	game/StalagmiteLarge.vc \
+	game/StalagmiteSmall.vc \
+	game/StaticLightSource.vc \
+	game/StaticRGBLightSource.vc \
 	game/SuperMap.vc \
 	game/TeleGlitter1.vc \
 	game/TeleGlitter2.vc \
 	game/TeleGlitterGenerator1.vc \
 	game/TeleGlitterGenerator2.vc \
 	game/TeleportFog.vc \
-	game/Whirlwind.vc \
-	game/WizardFX1.vc \
-	\
-	game/VolcanoTBlast.vc \
-	game/SerpentTorch.vc \
-	game/Actor.vc \
-	game/KnightAxe.vc \
-	game/Chicken.vc \
-	game/Decoration.vc \
-	game/MaceFX2.vc \
-	game/PodGoo.vc \
-	game/Pawn.vc \
-	game/MainGameInfo.vc \
-	game/SkullHang35.vc \
-	game/StaticLightSource.vc \
-	game/StalagmiteLarge.vc \
-	game/MummyGhost.vc \
-	game/BurnBallFB.vc \
-	game/SludgeChunk.vc \
-	game/MummyLeaderGhost.vc \
-	game/KnightGhost.vc \
-	game/Puffy.vc \
-	game/classes.vc \
-	game/SkullHang70.vc \
-	game/Projectile.vc \
-	game/Wizard.vc \
-	game/QuakeFocus.vc \
-	game/StaffPuff2.vc \
-	game/Beast.vc \
-	game/MummySoul.vc \
-	game/SoundWind.vc \
-	game/CrossbowFX3.vc \
-	game/PlayerPawn.vc \
-	game/GauntletPuff1.vc \
-	game/SoundWaterfall.vc \
-	game/PhoenixFX1.vc \
-	game/PodGenerator.vc \
-	game/LavaSplash.vc \
-	game/Clink.vc \
-	game/SludgeSplash.vc \
-	game/Snake.vc \
-	game/FireBrazier.vc \
-	game/StalactiteSmall.vc \
-	game/MummyLeader.vc \
-	game/ChickenPlayer.vc \
-	game/LavaSmoke.vc \
-	game/Pod.vc \
-	game/Moss1.vc \
-	game/MaceFX3.vc \
-	game/VolcanoBlast.vc \
-	game/Effect.vc \
-	game/Mummy.vc \
-	game/Chandelier.vc \
-	game/CrossbowFX1.vc \
-	game/KeyGizmoBlue.vc \
-	game/CrossbowFX4.vc \
-	game/SmallPillar.vc \
-	game/Feather.vc \
-	game/GauntletPuff2.vc \
-	game/Knight.vc \
-	game/SkullHang45.vc \
-	game/Moss2.vc \
-	game/StaticRGBLightSource.vc \
-	game/MaceFX1.vc \
-	game/StaffPuff.vc \
-	game/PhoenixFX2.vc \
-	game/PhoenixPuff.vc \
-	game/SkullHang60.vc \
-	game/WallTorch.vc \
-	game/StalactiteLarge.vc \
-	game/MaceFX4.vc \
-	game/BossSpot.vc \
-	game/StalagmiteSmall.vc \
-	game/WaterSplashBase.vc \
-	game/KeyGizmoYellow.vc \
-	game/Ripper.vc \
-	game/Player.vc \
 	game/Volcano.vc \
+	game/VolcanoBlast.vc \
+	game/VolcanoTBlast.vc \
+	game/WallTorch.vc \
 	game/WaterSplash.vc \
-	game/SlimeChunk.vc \
-	game/KeyGizmoGreen.vc \
-	game/SlimeSplash.vc \
-	game/CrossbowFX2.vc
+	game/WaterSplashBase.vc \
+	game/Whirlwind.vc \
+	game/Wizard.vc \
+	game/WizardFX1.vc
 
 MOSTLYCLEANFILES = \
 	$(OUTDIR)/shared.dat $(OUTDIR)/svprogs.dat $(OUTDIR)/clprogs.dat \

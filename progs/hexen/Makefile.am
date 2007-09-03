@@ -19,151 +19,149 @@ EXTRA_DIST = compile.bat \
 	clprogs.vc \
 	hexndefs.vc \
 	svprogs.vc \
-	cgame/MenuChoice_SpanDrawing.vc \
-	cgame/MenuChoice_LoadGame.vc \
-	cgame/MenuChoice_MouseLook.vc \
-	cgame/MenuScreenScreenResolution.vc \
-	cgame/MenuChoice_InvertMouse.vc \
-	cgame/MenuStaticAnim.vc \
-	cgame/MenuChoice_JoinAt.vc \
-	cgame/MenuScreenSList.vc \
-	cgame/MenuScreenEpisode.vc \
-	cgame/MenuChoice_CDMusic.vc \
-	cgame/MenuFighterBox.vc \
-	cgame/MenuChoice_Help.vc \
-	cgame/MenuChoice_GoToConsole.vc \
-	cgame/MenuChoice_NewNetGame.vc \
-	cgame/MenuChoice_Options.vc \
-	cgame/MenuScreen.vc \
 	cgame/classes.vc \
-	cgame/MenuChoice_MouseYSensitivity.vc \
-	cgame/MenuObject.vc \
-	cgame/MenuSelector_SmallRight.vc \
-	cgame/MenuChoice_TimeLimit.vc \
-	cgame/MenuScreenMultiplayer.vc \
-	cgame/FinaleScreen.vc \
-	cgame/MenuChoice_SaveSlot.vc \
-	cgame/MenuChoice_Cleric.vc \
-	cgame/MenuChoice_Windowed.vc \
-	cgame/MenuChoice_SoundSettings.vc \
-	cgame/MenuChoice_Mage.vc \
-	cgame/MenuSelector_SmallLeft.vc \
-	cgame/MenuChoice_Croshair.vc \
-	cgame/MenuChoice_QuitGame.vc \
-	cgame/MenuTitleText.vc \
-	cgame/MenuChoice_PlayerSetup.vc \
-	cgame/MenuChoice_DarkenLights.vc \
-	cgame/MenuMainAnim.vc \
-	cgame/MenuMainTitleImage.vc \
-	cgame/MenuScreenJoinGame.vc \
-	cgame/MenuChoice_LoadSlot.vc \
-	cgame/MenuScreenOptions.vc \
-	cgame/MenuChoice_VideoOptions.vc \
-	cgame/MenuChoice_Controls2.vc \
-	cgame/MenuScreenControls.vc \
-	cgame/MenuScreenSoundOptions.vc \
-	cgame/MenuScreenClass.vc \
-	cgame/MenuChoice_SwapStereo.vc \
-	cgame/MenuChoice_PlayerName.vc \
-	cgame/MenuInputLine.vc \
-	cgame/MenuChoice_ScreenResolution.vc \
-	cgame/MenuChoice_DynamicLights.vc \
-	cgame/MenuSpriteAnim.vc \
-	cgame/MenuChoice_DeathMatch.vc \
-	cgame/MenuScreenFighterSkill.vc \
-	cgame/MenuScreenPlayerSetup.vc \
-	cgame/MenuChoice_Level.vc \
 	cgame/ClientGame.vc \
-	cgame/MenuChoice_Monsters.vc \
-	cgame/MenuStaticBitmap.vc \
-	cgame/MenuChoice_MPSkill.vc \
-	cgame/MenuHelpPage.vc \
-	cgame/MenuScreenControls2.vc \
-	cgame/MenuScreenSaveGame.vc \
-	cgame/MenuChoice_Skill.vc \
-	cgame/MenuChoice_GLBlendSprites.vc \
-	cgame/MenuChoice_Players.vc \
-	cgame/MenuChoiceSlider.vc \
-	cgame/TitleScreen.vc \
-	cgame/MenuScreenSinglePlayer.vc \
-	cgame/MenuChoice_NewGame.vc \
-	cgame/MenuScreenClericSkill.vc \
-	cgame/MenuChoice_PClass.vc \
-	cgame/MenuSaveSlot.vc \
-	cgame/MenuScreenMouseOptions.vc \
-	cgame/MenuChoice_Lookspring.vc \
-	cgame/MenuChoice_StartGame.vc \
-	cgame/MenuBigTextButton.vc \
-	cgame/MenuChoice_JoinGame.vc \
-	cgame/MenuChoice_D3DBlendSprites.vc \
-	cgame/MenuSList.vc \
-	cgame/MenuChoice_MouseXSensitivity.vc \
-	cgame/MenuChoice_ApplyVidMode.vc \
-	cgame/MenuScreenMageSkill.vc \
-	cgame/MenuScreenLoadGame.vc \
-	cgame/MenuSmallTextButton.vc \
-	cgame/MenuClericBox.vc \
-	cgame/MenuSelector_BigArrow.vc \
-	cgame/MenuChoice_Controls.vc \
-	cgame/MenuChoice_BitDepth.vc \
-	cgame/MenuChoice_Search.vc \
-	cgame/MenuChoiceEnum.vc \
-	cgame/MenuClericWalk.vc \
-	cgame/MenuChoice_OnOff.vc \
-	cgame/MenuChoice_Brightness.vc \
-	cgame/MenuChoice_ExtraSamples.vc \
-	cgame/MenuMageBox.vc \
-	cgame/MenuChoice_LookStrafe.vc \
-	cgame/StatusBarScreen.vc \
-	cgame/MenuChoice_ScreenSize.vc \
-	cgame/MenuScreenMain.vc \
-	cgame/MenuChoice_VideoMode.vc \
-	cgame/MenuChoiceEpisode.vc \
-	cgame/MenuMageWalk.vc \
-	cgame/MenuScreenHelp.vc \
-	cgame/MenuControlKey.vc \
-	cgame/MenuChoice_SoundVolume.vc \
-	cgame/MenuChoice.vc \
-	cgame/MenuScreenNewNetGame.vc \
+	cgame/FinaleScreen.vc \
 	cgame/IntermissionScreen.vc \
-	cgame/MenuChoice_SinglePlayer.vc \
-	cgame/MenuChoice_SaveGame.vc \
-	cgame/MenuChoice_Fighter.vc \
-	cgame/MenuFighterWalk.vc \
-	cgame/MenuChoice_MouseOptions.vc \
-	cgame/MenuChoice_EndGame.vc \
-	cgame/MenuChoice_Darkening.vc \
+	cgame/MenuBigTextButton.vc \
+	cgame/MenuChoice.vc \
+	cgame/MenuChoice_AddLights.vc \
+	cgame/MenuChoice_AdvancedVideoOptions.vc \
+	cgame/MenuChoice_ApplyVidMode.vc \
+	cgame/MenuChoice_AspectRatio.vc \
+	cgame/MenuChoice_BitDepth.vc \
+	cgame/MenuChoice_Brightness.vc \
+	cgame/MenuChoice_CDMusic.vc \
+	cgame/MenuChoice_Cleric.vc \
+	cgame/MenuChoice_ClipLights.vc \
 	cgame/MenuChoice_Colour.vc \
-	cgame/MenuTextButton.vc \
+	cgame/MenuChoice_ColouredLights.vc \
+	cgame/MenuChoice_Controls.vc \
+	cgame/MenuChoice_Controls2.vc \
+	cgame/MenuChoice_Croshair.vc \
+	cgame/MenuChoice_CroshairTrans.vc \
+	cgame/MenuChoice_D3DBlendSprites.vc \
+	cgame/MenuChoice_D3DDither.vc \
+	cgame/MenuChoice_D3DModelLights.vc \
+	cgame/MenuChoice_D3DSpecular.vc \
 	cgame/MenuChoice_D3DTextureFilter.vc \
+	cgame/MenuChoice_Darkening.vc \
+	cgame/MenuChoice_DarkenLights.vc \
+	cgame/MenuChoice_DeathMatch.vc \
+	cgame/MenuChoice_DrawFPS.vc \
+	cgame/MenuChoice_DynamicLights.vc \
+	cgame/MenuChoice_EndGame.vc \
+	cgame/MenuChoice_ExternalMusic.vc \
+	cgame/MenuChoice_ExtraSamples.vc \
+	cgame/MenuChoice_Fighter.vc \
+	cgame/MenuChoice_GLBlendSprites.vc \
+	cgame/MenuChoice_GLModelLights.vc \
+	cgame/MenuChoice_GLSpecular.vc \
+	cgame/MenuChoice_GLTextureFilter.vc \
+	cgame/MenuChoice_GoToConsole.vc \
+	cgame/MenuChoice_Help.vc \
+	cgame/MenuChoice_HiResTextures.vc \
+	cgame/MenuChoice_InvertMouse.vc \
+	cgame/MenuChoice_JoinAt.vc \
+	cgame/MenuChoice_JoinGame.vc \
+	cgame/MenuChoice_Level.vc \
+	cgame/MenuChoice_LoadGame.vc \
+	cgame/MenuChoice_LoadSlot.vc \
+	cgame/MenuChoice_Lookspring.vc \
+	cgame/MenuChoice_LookStrafe.vc \
+	cgame/MenuChoice_Mage.vc \
+	cgame/MenuChoice_Models.vc \
+	cgame/MenuChoice_Monsters.vc \
+	cgame/MenuChoice_MouseLook.vc \
+	cgame/MenuChoice_MouseOptions.vc \
+	cgame/MenuChoice_MouseXSensitivity.vc \
+	cgame/MenuChoice_MouseYSensitivity.vc \
+	cgame/MenuChoice_MPSkill.vc \
 	cgame/MenuChoice_Multiplayer.vc \
 	cgame/MenuChoice_MusicVolume.vc \
-	cgame/MenuScreenVideoOptions.vc \
-	cgame/MenuChoice_ColouredLights.vc \
-	cgame/MenuChoice_ClipLights.vc \
-	cgame/MenuChoice_SpriteOffset.vc \
-	cgame/MenuChoice_SpriteDelta.vc \
-	cgame/MenuChoice_GLSpecular.vc \
-	cgame/MenuChoice_AddLights.vc \
-	cgame/MenuChoice_GLTextureFilter.vc \
-	cgame/MenuChoice_GLModelLights.vc \
-	cgame/MenuChoice_ViewModels.vc \
-	cgame/MenuChoice_CroshairTrans.vc \
-	cgame/MenuScreenAdvancedVideoOptions.vc \
+	cgame/MenuChoice_NewGame.vc \
+	cgame/MenuChoice_NewNetGame.vc \
+	cgame/MenuChoice_OnOff.vc \
+	cgame/MenuChoice_Options.vc \
+	cgame/MenuChoice_PClass.vc \
+	cgame/MenuChoice_PlayerName.vc \
+	cgame/MenuChoice_Players.vc \
+	cgame/MenuChoice_PlayerSetup.vc \
+	cgame/MenuChoice_QuitGame.vc \
+	cgame/MenuChoice_SaveGame.vc \
+	cgame/MenuChoice_SaveSlot.vc \
+	cgame/MenuChoice_ScreenResolution.vc \
+	cgame/MenuChoice_ScreenSize.vc \
+	cgame/MenuChoice_Search.vc \
+	cgame/MenuChoice_SinglePlayer.vc \
+	cgame/MenuChoice_Skill.vc \
+	cgame/MenuChoice_SoundSettings.vc \
+	cgame/MenuChoice_SoundVolume.vc \
+	cgame/MenuChoice_SpanDrawing.vc \
 	cgame/MenuChoice_SpecularLevel.vc \
-	cgame/MenuChoice_D3DDither.vc \
-	cgame/MenuChoice_AdvancedVideoOptions.vc \
-	cgame/MenuChoice_AspectRatio.vc \
-	cgame/MenuChoice_D3DSpecular.vc \
-	cgame/MenuChoice_HiResTextures.vc \
-	cgame/MenuChoice_ExternalMusic.vc \
-	cgame/MenuChoice_Models.vc \
-	cgame/MenuChoice_DrawFPS.vc \
-	cgame/MenuChoice_D3DModelLights.vc \
-	\
+	cgame/MenuChoice_SpriteDelta.vc \
+	cgame/MenuChoice_SpriteOffset.vc \
+	cgame/MenuChoice_StartGame.vc \
+	cgame/MenuChoice_SwapStereo.vc \
+	cgame/MenuChoice_TimeLimit.vc \
+	cgame/MenuChoice_VideoMode.vc \
+	cgame/MenuChoice_VideoOptions.vc \
+	cgame/MenuChoice_ViewModels.vc \
+	cgame/MenuChoice_Windowed.vc \
+	cgame/MenuChoiceEnum.vc \
+	cgame/MenuChoiceEpisode.vc \
+	cgame/MenuChoiceSlider.vc \
+	cgame/MenuClericBox.vc \
+	cgame/MenuClericWalk.vc \
+	cgame/MenuControlKey.vc \
+	cgame/MenuFighterBox.vc \
+	cgame/MenuFighterWalk.vc \
+	cgame/MenuHelpPage.vc \
+	cgame/MenuInputLine.vc \
+	cgame/MenuMageBox.vc \
+	cgame/MenuMageWalk.vc \
+	cgame/MenuMainAnim.vc \
+	cgame/MenuMainTitleImage.vc \
+	cgame/MenuObject.vc \
+	cgame/MenuSaveSlot.vc \
+	cgame/MenuScreen.vc \
+	cgame/MenuScreenAdvancedVideoOptions.vc \
+	cgame/MenuScreenClass.vc \
+	cgame/MenuScreenClericSkill.vc \
+	cgame/MenuScreenControls.vc \
+	cgame/MenuScreenControls2.vc \
+	cgame/MenuScreenEpisode.vc \
+	cgame/MenuScreenFighterSkill.vc \
+	cgame/MenuScreenJoinGame.vc \
+	cgame/MenuScreenHelp.vc \
+	cgame/MenuScreenLoadGame.vc \
+	cgame/MenuScreenMageSkill.vc \
+	cgame/MenuScreenMain.vc \
+	cgame/MenuScreenMouseOptions.vc \
+	cgame/MenuScreenMultiplayer.vc \
+	cgame/MenuScreenNewNetGame.vc \
+	cgame/MenuScreenOptions.vc \
+	cgame/MenuScreenPlayerSetup.vc \
+	cgame/MenuScreenSaveGame.vc \
+	cgame/MenuScreenScreenResolution.vc \
+	cgame/MenuScreenSinglePlayer.vc \
+	cgame/MenuScreenSList.vc \
+	cgame/MenuScreenSoundOptions.vc \
+	cgame/MenuScreenVideoOptions.vc \
+	cgame/MenuSelector_BigArrow.vc \
+	cgame/MenuSelector_SmallLeft.vc \
+	cgame/MenuSelector_SmallRight.vc \
+	cgame/MenuSList.vc \
+	cgame/MenuSmallTextButton.vc \
+	cgame/MenuSpriteAnim.vc \
+	cgame/MenuStaticAnim.vc \
+	cgame/MenuStaticBitmap.vc \
+	cgame/MenuTextButton.vc \
+	cgame/MenuTitleText.vc \
+	cgame/StatusBarScreen.vc \
+	cgame/TitleScreen.vc \
 	game/Actor.vc \
 	game/AmuletOfWarding.vc \
-	game/ArmorPickup.vc \
 	game/Arrow.vc \
 	game/ArtiBlastRadius.vc \
 	game/ArtiBoostArmor.vc \
@@ -183,18 +181,43 @@ EXTRA_DIST = compile.bat \
 	game/AxeBlood.vc \
 	game/AxePuff.vc \
 	game/AxePuffGlow.vc \
+	game/Bat.vc \
+	game/BatSpawner.vc \
 	game/Bishop.vc \
 	game/BishopBlur.vc \
 	game/BishopFX.vc \
 	game/BishopPainBlur.vc \
 	game/BishopPuff.vc \
+	game/BlastEffect.vc \
+	game/Blood.vc \
+	game/BloodPool.vc \
+	game/BloodSplash.vc \
+	game/BloodSplashBase.vc \
+	game/BloodSplatter.vc \
+	game/BloodySkull.vc \
 	game/BotPlayer.vc \
+	game/BrassTorch.vc \
+	game/Bridge.vc \
+	game/BridgeBall.vc \
+	game/BurnableTree.vc \
+	game/Carcas.vc \
+	game/Centaur.vc \
 	game/CentaurFX.vc \
+	game/CentaurLeader.vc \
+	game/CentaurMash.vc \
+	game/CentaurShield.vc \
+	game/CentaurSword.vc \
 	game/CFlameFloor.vc \
 	game/CFlameMissile.vc \
+	game/CircleFlame.vc \
+	game/ClassBoss.vc \
+	game/classes.vc \
+	game/ClericBoss.vc \
 	game/ClericPlayer.vc \
 	game/ClericWeapon.vc \
 	game/ClericWeaponPiece.vc \
+	game/CorpseBit.vc \
+	game/CorpseBloodDrip.vc \
 	game/CrystalVial.vc \
 	game/CStaffMissile.vc \
 	game/CStaffPuff.vc \
@@ -205,6 +228,8 @@ EXTRA_DIST = compile.bat \
 	game/CWeaponPiece3.vc \
 	game/CWeapStaff.vc \
 	game/CWeapWraithverge.vc \
+	game/Dart.vc \
+	game/Decoration.vc \
 	game/Demon1.vc \
 	game/Demon1Chunk1.vc \
 	game/Demon1Chunk2.vc \
@@ -221,9 +246,20 @@ EXTRA_DIST = compile.bat \
 	game/Demon2Chunk5.vc \
 	game/Demon2FX1.vc \
 	game/Demon2Mash.vc \
+	game/Dirt1.vc \
+	game/Dirt2.vc \
+	game/Dirt3.vc \
+	game/Dirt4.vc \
+	game/Dirt5.vc \
+	game/Dirt6.vc \
+	game/DirtClump.vc \
 	game/Dragon.vc \
 	game/DragonExplosion.vc \
 	game/DragonFireball.vc \
+	game/Effect.vc \
+	game/Ettin.vc \
+	game/EttinMace.vc \
+	game/EttinMash.vc \
 	game/FalconShield.vc \
 	game/FighterBoss.vc \
 	game/FighterPlayer.vc \
@@ -267,12 +303,23 @@ EXTRA_DIST = compile.bat \
 	game/FWeaponPiece2.vc \
 	game/FWeaponPiece3.vc \
 	game/FWeapQuietus.vc \
+	game/Gibs.vc \
 	game/GlassShard.vc \
+	game/HammerMissile.vc \
+	game/HammerPuff.vc \
 	game/Heresiarch.vc \
 	game/HexenKey.vc \
+	game/HexenLevelInfo.vc \
 	game/HexenWeapon.vc \
+	game/HexenWorldInfo.vc \
+	game/HolyMissile.vc \
+	game/HolyMissilePuff.vc \
+	game/HolyPuff.vc \
 	game/HolySpirit.vc \
+	game/HolyTail.vc \
 	game/HWaterDrip.vc \
+	game/IceChunk.vc \
+	game/IceChunkHead.vc \
 	game/IceFXPuff.vc \
 	game/IceGuy.vc \
 	game/IceGuyBit.vc \
@@ -280,6 +327,7 @@ EXTRA_DIST = compile.bat \
 	game/IceGuyFX2.vc \
 	game/IceGuyWisp1.vc \
 	game/IceGuyWisp2.vc \
+	game/IceShard.vc \
 	game/KeyAxe.vc \
 	game/KeyCastle.vc \
 	game/KeyCave.vc \
@@ -294,14 +342,25 @@ EXTRA_DIST = compile.bat \
 	game/Korax.vc \
 	game/KoraxBolt.vc \
 	game/KoraxSpirit.vc \
+	game/LavaSmoke.vc \
+	game/LavaSplash.vc \
+	game/Leaf1.vc \
+	game/Leaf2.vc \
 	game/LeafSpawner.vc \
 	game/Lightning.vc \
 	game/LightningCeiling.vc \
 	game/LightningFloor.vc \
 	game/LightningZap.vc \
+	game/MageBoss.vc \
 	game/MagePlayer.vc \
+	game/MageStaffFX.vc \
+	game/MageStaffFX2.vc \
+	game/MageWandPuff.vc \
+	game/MageWandSmoke.vc \
+	game/MageWandMissile.vc \
 	game/MageWeapon.vc \
 	game/MageWeaponPiece.vc \
+	game/MainGameInfo.vc \
 	game/Mana1.vc \
 	game/Mana2.vc \
 	game/Mana3.vc \
@@ -320,12 +379,24 @@ EXTRA_DIST = compile.bat \
 	game/MWeaponPiece2.vc \
 	game/MWeaponPiece3.vc \
 	game/MWeapWand.vc \
+	game/Pawn.vc \
+	game/Pig.vc \
 	game/PigPlayer.vc \
 	game/PlatinumHelm.vc \
 	game/Player.vc \
 	game/PlayerPawn.vc \
 	game/PlayerSpeed.vc \
+	game/PoisonBag.vc \
+	game/PoisonCloud.vc \
+	game/PoisonDart.vc \
 	game/PorkFX.vc \
+	game/Pottery1.vc \
+	game/Pottery2.vc \
+	game/Pottery3.vc \
+	game/PotteryBit.vc \
+	game/Projectile.vc \
+	game/ProjectileBlade.vc \
+	game/PunchPuff.vc \
 	game/PuzzBook1.vc \
 	game/PuzzBook2.vc \
 	game/PuzzCWeapon.vc \
@@ -343,6 +414,11 @@ EXTRA_DIST = compile.bat \
 	game/PuzzMWeapon.vc \
 	game/PuzzSkull.vc \
 	game/PuzzGear4.vc \
+	game/QuakeFocus.vc \
+	game/RipperBall.vc \
+	game/Rock1.vc \
+	game/Rock2.vc \
+	game/Rock3.vc \
 	game/Serpent.vc \
 	game/SerpentFX.vc \
 	game/SerpentGib1.vc \
@@ -360,7 +436,12 @@ EXTRA_DIST = compile.bat \
 	game/SGShard7.vc \
 	game/SGShard8.vc \
 	game/SGShard9.vc \
+	game/SlimeChunk.vc \
+	game/SlimeSplash.vc \
+	game/SludgeChunk.vc \
+	game/SludgeSplash.vc \
 	game/Snout.vc \
+	game/SnoutPuff.vc \
 	game/SorcBall.vc \
 	game/SorcBall1.vc \
 	game/SorcBall2.vc \
@@ -372,14 +453,36 @@ EXTRA_DIST = compile.bat \
 	game/SorcFX3Explosion.vc \
 	game/SorcFX4.vc \
 	game/SorcSpark1.vc \
+	game/SoundSequence.vc \
+	game/SoundSequenceSlot.vc \
+	game/SoundWaterfall.vc \
 	game/SoundWindHexen.vc \
+	game/StaticLightSource.vc \
+	game/StaticRGBLightSource.vc \
 	game/SummoningDoll.vc \
+	game/TableShit1.vc \
+	game/TableShit2.vc \
+	game/TableShit3.vc \
+	game/TableShit4.vc \
+	game/TableShit5.vc \
+	game/TableShit6.vc \
+	game/TableShit7.vc \
+	game/TableShit8.vc \
+	game/TableShit9.vc \
+	game/TableShit10.vc \
 	game/TeleportFog.vc \
+	game/TeleSmoke.vc \
 	game/TelOtherFX1.vc \
 	game/TelOtherFX2.vc \
 	game/TelOtherFX3.vc \
 	game/TelOtherFX4.vc \
 	game/TelOtherFX5.vc \
+	game/ThrowingBomb.vc \
+	game/ThrustFloorDown.vc \
+	game/ThrustFloorUp.vc \
+	game/TreeDestructible.vc \
+	game/WaterSplash.vc \
+	game/WaterSplashBase.vc \
 	game/Wraith.vc \
 	game/WraithBuried.vc \
 	game/WraithFX1.vc \
@@ -495,113 +598,7 @@ EXTRA_DIST = compile.bat \
 	game/ZWallTorchUnlit.vc \
 	game/ZWingedStatue.vc \
 	game/ZWingedStatueNoSkull.vc \
-	game/ZXmasTree.vc \
-	\
-	game/TreeDestructible.vc \
-	game/Dirt4.vc \
-	game/StaticLightSource.vc \
-	game/BatSpawner.vc \
-	game/CircleFlame.vc \
-	game/Pottery1.vc \
-	game/EttinMace.vc \
-	game/SludgeChunk.vc \
-	game/Rock2.vc \
-	game/TeleSmoke.vc \
-	game/ClassBoss.vc \
-	game/classes.vc \
-	game/PoisonCloud.vc \
-	game/Pawn.vc \
-	game/Projectile.vc \
-	game/PotteryBit.vc \
-	game/QuakeFocus.vc \
-	game/TableShit7.vc \
-	game/CentaurLeader.vc \
-	game/TableShit10.vc \
-	game/SnoutPuff.vc \
-	game/MainGameInfo.vc \
-	game/SoundWaterfall.vc \
-	game/MageStaffFX.vc \
-	game/LavaSplash.vc \
-	game/Blood.vc \
-	game/TableShit2.vc \
-	game/BloodySkull.vc \
-	game/Pig.vc \
-	game/Carcas.vc \
-	game/Dirt5.vc \
-	game/BurnableTree.vc \
-	game/IceChunkHead.vc \
-	game/HexenLevelInfo.vc \
-	game/Effect.vc \
-	game/Rock3.vc \
-	game/BridgeBall.vc \
-	game/StaticRGBLightSource.vc \
-	game/HammerPuff.vc \
-	game/MageBoss.vc \
-	game/TableShit8.vc \
-	game/CentaurSword.vc \
-	game/PoisonBag.vc \
-	game/TableShit3.vc \
-	game/MageStaffFX2.vc \
-	game/IceChunk.vc \
-	game/Dirt6.vc \
-	game/CentaurShield.vc \
-	game/ThrustFloorUp.vc \
-	game/ThrowingBomb.vc \
-	game/Dirt1.vc \
-	game/Ettin.vc \
-	game/Bat.vc \
-	game/HolyMissile.vc \
-	game/TableShit9.vc \
-	game/CentaurMash.vc \
-	game/BloodSplatter.vc \
-	game/MageWandSmoke.vc \
-	game/Decoration.vc \
-	game/Pottery2.vc \
-	game/Dirt2.vc \
-	game/DirtClump.vc \
-	game/TableShit4.vc \
-	game/BrassTorch.vc \
-	game/Dirt3.vc \
-	game/BloodPool.vc \
-	game/Leaf1.vc \
-	game/PunchPuff.vc \
-	game/HammerMissile.vc \
-	game/Leaf2.vc \
-	game/BlastEffect.vc \
-	game/Bridge.vc \
-	game/ThrustFloorDown.vc \
-	game/BloodSplash.vc \
-	game/Centaur.vc \
-	game/Dart.vc \
-	game/CorpseBit.vc \
-	game/EttinMash.vc \
-	game/SludgeSplash.vc \
-	game/MageWandPuff.vc \
-	game/LavaSmoke.vc \
-	game/Pottery3.vc \
-	game/ClericBoss.vc \
-	game/CorpseBloodDrip.vc \
-	game/TableShit5.vc \
-	game/HolyPuff.vc \
-	game/Rock1.vc \
-	game/HolyTail.vc \
-	game/IceShard.vc \
-	game/HolyMissilePuff.vc \
-	game/MageWandMissile.vc \
-	game/PoisonDart.vc \
-	game/Gibs.vc \
-	game/ProjectileBlade.vc \
-	game/RipperBall.vc \
-	game/TableShit1.vc \
-	game/TableShit6.vc \
-	game/WaterSplash.vc \
-	game/BloodSplashBase.vc \
-	game/WaterSplashBase.vc \
-	game/SlimeChunk.vc \
-	game/SlimeSplash.vc \
-	game/HexenWorldInfo.vc \
-	game/SoundSequence.vc \
-	game/SoundSequenceSlot.vc
+	game/ZXmasTree.vc
 
 MOSTLYCLEANFILES = \
 	$(OUTDIR)/shared.dat $(OUTDIR)/svprogs.dat $(OUTDIR)/clprogs.dat \
