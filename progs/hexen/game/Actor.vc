@@ -85,12 +85,10 @@ void KilledByPlayer(EntityEx source)
 		if (self == source)
 		{
 			// Self-frag
-			Player.FragsStats[Player.GetPlayerNum()]--;
 			Player.Frags--;
 		}
 		else
 		{
-			source.Player.FragsStats[Player.GetPlayerNum()]++;
 			source.Player.Frags++;
 		}
 	}
@@ -107,7 +105,6 @@ void PlayerKilled(EntityEx source, EntityEx inflictor)
 	// Count environment kills against you
 	if (!source)
 	{
-		Player.FragsStats[Player.GetPlayerNum()]--;
 		Player.Frags--;
 	}
 }
@@ -125,7 +122,8 @@ final void AutoUseHealth(int saveHealth)
 
 	Inventory normal = FindInventory(ArtiHealth);
 	Inventory super = FindInventory(ArtiSuperHealth);
-	if ((Level.Game.gameskill == sk_baby) && (normal.Amount * 25 >= saveHealth))
+	if ((Level.Game.gameskill == sk_baby) && normal &&
+		(normal.Amount * 25 >= saveHealth))
 	{
 		// Use quartz flasks
 		count = (saveHealth + 24) / 25;
@@ -139,7 +137,7 @@ final void AutoUseHealth(int saveHealth)
 			}
 		}
 	}
-	else if (super.Amount * 100 >= saveHealth)
+	else if (super && super.Amount * 100 >= saveHealth)
 	{
 		// Use mystic urns
 		count = (saveHealth + 99) / 100;
@@ -154,22 +152,24 @@ final void AutoUseHealth(int saveHealth)
 		}
 	}
 	else if ((Level.Game.gameskill == sk_baby)
-		&& (super.Amount * 100 + normal.Amount * 25 >= saveHealth))
+		&& ((super ? super.Amount * 100 : 0) +
+		(normal ? normal.Amount * 25 : 0) >= saveHealth))
 	{
 		// Use mystic urns and quartz flasks
 		count = (saveHealth + 24) / 25;
 		saveHealth -= count * 25;
-		for (i = 0; i < count; i++)
+		for (i = 0; normal && i < count; i++)
 		{
 			Health += 25;
 			if (!(--normal.Amount))
 			{
 				// Used last of a type - compact the artifact list
 				normal.Destroy();
+				normal = none;
 			}
 		}
 		count = (saveHealth + 99) / 100;
-		for (i = 0; i < count; i++)
+		for (i = 0; super && i < count; i++)
 		{
 			Health += 100;
 			// The same as in HERETIC
@@ -177,6 +177,7 @@ final void AutoUseHealth(int saveHealth)
 			{
 				// Used last of a type - compact the artifact list
 				super.Destroy();
+				super = none;
 			}
 		}
 	}

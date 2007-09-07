@@ -44,7 +44,6 @@ void KilledByPlayer(EntityEx source)
 	// Check for frag changes
 	if (bIsPlayer)
 	{
-		source.Player.FragsStats[Player.GetPlayerNum()]++;
 		if (source == self)
 		{
 			Player.Frags--;
@@ -67,7 +66,6 @@ void PlayerKilled(EntityEx source, EntityEx inflictor)
 	// Count environment kills against you
 	if (!source)
 	{
-		Player.FragsStats[Player.GetPlayerNum()]++;
 		Player.Frags--;
 	}
 }

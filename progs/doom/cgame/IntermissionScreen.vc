@@ -62,12 +62,8 @@ const int NG_SPACINGX    	= 64;
 const int DM_MATRIXX		= 202;
 const int DM_MATRIXY		= 208;
 
-const int DM_TOTALSX		= 429;
-
-const int DM_KILLERSX		= 170;
-const int DM_KILLERSY		= 240;
-const int DM_VICTIMSX    	= 165;
-const int DM_VICTIMSY		= 190;
+const int DM_TOTALSX		= 329;
+const int DM_DEATHSX		= 429;
 
 const int DM_SPACINGX		= 40;
 
@@ -162,12 +158,8 @@ int cnt_time;
 float cnt_pause;
 int cnt_frags[MAXPLAYERS];
 
-int dm_frags[MAXPLAYERS * MAXPLAYERS];
-int dm_totals[MAXPLAYERS];
-
-// "killers", "victims"
-int killers;
-int victims;
+int dm_Frags[MAXPLAYERS];
+int dm_Deaths[MAXPLAYERS];
 
 // Face background, your face, your dead face
 int p[MAXPLAYERS];
@@ -742,12 +734,6 @@ void IM_LoadData()
 
 	if (ClGame.maxclients > 1 || ClGame.deathmatch)
 	{
-		// "killers" (vertical)
-		killers = R_RegisterPic('wikilrs');
-
-		// "victims" (horiz)
-		victims = R_RegisterPic('wivctms');
-
 		// face backgrounds
 //      for (i = 0; i < MAXPLAYERS; i++)
 		for (i = 0; i < 4; i++)
@@ -1295,10 +1281,8 @@ void IM_InitDeathmatchStats()
 	foreach ClGame.GLevel.LevelInfo.AllThinkers(PlayerReplicationInfo, RepInfo)
 	{
 		i = RepInfo.PlayerNum;
-		for (j = 0; j < MAXPLAYERS; j++)
-			dm_frags[i * MAXPLAYERS + j] = 0;
-
-		dm_totals[i] = 0;
+		dm_Frags[i] = 0;
+		dm_Deaths[i] = 0;
 	}
 }
 
@@ -1310,66 +1294,35 @@ void IM_InitDeathmatchStats()
 
 void IM_DrawDeathmatchStats()
 {
-	int i;
-	int j;
-	int x;
 	int y;
-	int w;
-	int lh;	// line height
 	picinfo_t info;
 	PlayerReplicationInfo RepInfo;
-	PlayerReplicationInfo Other;
-
-	lh = WI_SPACINGY;
 
 	IM_DrawLF();
 
 	T_SetAlign(hcentre, vtop);
 	// draw stat titles (top line)
-	T_DrawText(DM_TOTALSX, DM_MATRIXY - WI_SPACINGY + 10, "total");
+	T_DrawText(DM_TOTALSX, DM_MATRIXY - WI_SPACINGY, "FRAGS");
+	T_DrawText(DM_DEATHSX, DM_MATRIXY - WI_SPACINGY, "DEATHS");
 
-	R_DrawPic(DM_KILLERSX, DM_KILLERSY, killers);
-	R_DrawPic(DM_VICTIMSX, DM_VICTIMSY, victims);
-
-	// draw P?
-	x = DM_MATRIXX + DM_SPACINGX;
+	// draw stats
 	y = DM_MATRIXY;
 
 	foreach ClGame.GLevel.LevelInfo.AllThinkers(PlayerReplicationInfo, RepInfo)
 	{
-		i = RepInfo.PlayerNum;
-		R_GetPicInfo(p[i], &info);
-		R_DrawPic(x - info.width / 2, DM_MATRIXY - WI_SPACINGY, p[i]);
-		R_DrawPic(DM_MATRIXX - info.width / 2, y, p[i]);
-
-		if (i == ClGame.cl.ClientNum)
+		if (RepInfo.PlayerNum == ClGame.cl.ClientNum)
 		{
-			R_DrawPic(x - info.width / 2, DM_MATRIXY - WI_SPACINGY,
-				bstar);
-			R_DrawPic(DM_MATRIXX - info.width / 2, y, star);
+			R_GetPicInfo(star, &info);
+			R_DrawPic(DM_MATRIXX - info.width - 5, y - 8, star);
 		}
-		x += DM_SPACINGX;
-		y += WI_SPACINGY;
-	}
-
-	// draw stats
-	y = DM_MATRIXY + 10;
-	w = T_TextWidth("0");
-
-	T_SetAlign(hright, vtop);
-	foreach ClGame.GLevel.LevelInfo.AllThinkers(PlayerReplicationInfo, RepInfo)
-	{
-		i = RepInfo.PlayerNum;
-		x = DM_MATRIXX + DM_SPACINGX;
-
-		foreach ClGame.GLevel.LevelInfo.AllThinkers(PlayerReplicationInfo, Other)
-		{
-			j = Other.PlayerNum;
-			T_DrawText(x + w, y, va("%d", dm_frags[i * MAXPLAYERS + j]));
-			x += DM_SPACINGX;
-		}
-		T_DrawText(DM_TOTALSX + w, y, va("%d", dm_totals[i]));
-		y += WI_SPACINGY;
+		T_SetAlign(hleft, vtop);
+		T_SetFont(font_small);
+		T_DrawText(DM_MATRIXX, y + 5, RepInfo.PlayerName);
+		T_SetAlign(hright, vtop);
+		T_SetFont(font_big);
+		T_DrawText(DM_TOTALSX, y, va("%d", dm_Frags[RepInfo.PlayerNum]));
+		T_DrawText(DM_DEATHSX, y, va("%d", dm_Deaths[RepInfo.PlayerNum]));
+		y += 24;
 	}
 }
 
@@ -1382,11 +1335,9 @@ void IM_DrawDeathmatchStats()
 void IM_UpdateDeathmatchStats(float DeltaTime)
 {
 	int i;
-	int j;
 
 	bool stillticking;
 	PlayerReplicationInfo	RepInfo;
-	PlayerReplicationInfo	Other;
 
 	if (ClGame.skipintermission && dm_state != 4)
 	{
@@ -1394,13 +1345,8 @@ void IM_UpdateDeathmatchStats(float DeltaTime)
 
 		foreach ClGame.GLevel.LevelInfo.AllThinkers(PlayerReplicationInfo, RepInfo)
 		{
-			foreach ClGame.GLevel.LevelInfo.AllThinkers(PlayerReplicationInfo, Other)
-			{
-				dm_frags[RepInfo.PlayerNum * MAXPLAYERS + Other.PlayerNum] =
-					RepInfo.FragsStats[Other.PlayerNum];
-			}
-
-			dm_totals[RepInfo.PlayerNum] = RepInfo.Frags;
+			dm_Frags[RepInfo.PlayerNum] = RepInfo.Frags;
+			dm_Deaths[RepInfo.PlayerNum] = RepInfo.Deaths;
 		}
 
 		LocalSound('weapons/rocklx');
@@ -1417,32 +1363,24 @@ void IM_UpdateDeathmatchStats(float DeltaTime)
 		foreach ClGame.GLevel.LevelInfo.AllThinkers(PlayerReplicationInfo, RepInfo)
 		{
 			i = RepInfo.PlayerNum;
-			foreach ClGame.GLevel.LevelInfo.AllThinkers(PlayerReplicationInfo, Other)
+			if (dm_Frags[i] != RepInfo.Frags)
 			{
-				j = Other.PlayerNum;
-				if (dm_frags[i * MAXPLAYERS + j] != RepInfo.FragsStats[j])
-				{
-					if (RepInfo.FragsStats[j] < 0)
-						dm_frags[i * MAXPLAYERS + j]--;
-					else
-						dm_frags[i * MAXPLAYERS + j]++;
+				if (RepInfo.Frags < 0)
+					dm_Frags[i]--;
+				else
+					dm_Frags[i]++;
 
-					if (dm_frags[i * MAXPLAYERS + j] > 99)
-						dm_frags[i * MAXPLAYERS + j] = 99;
-
-					if (dm_frags[i * MAXPLAYERS + j] < -99)
-						dm_frags[i * MAXPLAYERS + j] = -99;
-
-					stillticking = true;
-				}
+				stillticking = true;
 			}
-			dm_totals[i] = RepInfo.Frags;
+			if (dm_Deaths[i] != RepInfo.Deaths)
+			{
+				if (RepInfo.Deaths < 0)
+					dm_Deaths[i]--;
+				else
+					dm_Deaths[i]++;
 
-			if (dm_totals[i] > 99)
-				dm_totals[i] = 99;
-
-			if (dm_totals[i] < -99)
-				dm_totals[i] = -99;
+				stillticking = true;
+			}
 		}
 		if (!stillticking)
 		{

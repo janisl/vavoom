@@ -625,9 +625,7 @@ void IM_DrawDMStats()
 	int j;
 	int ypos;
 	int xpos;
-	int kpos;
 	PlayerReplicationInfo RepInfo;
-	PlayerReplicationInfo Other;
 
 	xpos = 250;
 	ypos = 195;
@@ -635,12 +633,10 @@ void IM_DrawDMStats()
 	T_SetShadow(true);
 	T_SetFont(font_big);
 	T_SetAlign(hleft, vtop);
-	T_DrawText(425, 170, "TOTAL");
+	T_DrawText(425, 170, "FRAGS");
+	T_DrawText(525, 170, "DEATHS");
 	T_SetShadow(false);
 
-	T_SetFont(font_small);
-	T_DrawText(300, 148, "VICTIMS");
-	T_DrawText(170, 220, "K\nI\nL\nL\nE\nR\nS");
 	if (intertime < 0.625)
 	{
 		foreach ClGame.GLevel.LevelInfo.AllThinkers(PlayerReplicationInfo, RepInfo)
@@ -648,8 +644,10 @@ void IM_DrawDMStats()
 			i = RepInfo.PlayerNum;
 			R_DrawShadowedPic(200, ypos + ftoi(dSlideY[i] * 35.0 * intertime),
 				patchFaceOkay[i]);
-			R_DrawShadowedPic(xpos + ftoi(dSlideX[i] * 35.0 * intertime),
-				158, patchFaceDead[i]);
+			T_SetFont(font_small);
+			T_SetAlign(hleft, vtop);
+			T_DrawText(240, ypos + 10 + ftoi(dSlideY[i] * 35.0 * intertime),
+				RepInfo.PlayerName);
 		}
 		return;
 	}
@@ -673,30 +671,26 @@ void IM_DrawDMStats()
 		if (intertime < 3.0 || i == ClGame.cl.ClientNum)
 		{
 			R_DrawShadowedPic(200, ypos, patchFaceOkay[i]);
-			R_DrawShadowedPic(xpos, 158, patchFaceDead[i]);
 		}
 		else
 		{
 			R_DrawPic2(200, ypos, patchFaceOkay[i], 0.4);
-			R_DrawPic2(xpos, 158, patchFaceDead[i], 0.4);
 		}
-		kpos = 246;
-		foreach ClGame.GLevel.LevelInfo.AllThinkers(PlayerReplicationInfo, Other)
-		{
-			j = Other.PlayerNum;
-			T_DrawText(kpos, ypos + 10, va("%d", RepInfo.FragsStats[j]));
-			kpos += 43;
-		}
+		T_SetFont(font_small);
+		T_SetAlign(hleft, vtop);
+		T_DrawText(240, ypos + 10, RepInfo.PlayerName);
 		if (slaughterboy & (1 << i))
 		{
 			if (!(ftoi(32.0 * intertime) & 16))
 			{
 				T_DrawText(423, ypos + 10, va("%d", RepInfo.Frags));
+				T_DrawText(523, ypos + 10, va("%d", RepInfo.Deaths));
 			}
 		}
 		else
 		{
 			T_DrawText(423, ypos + 10, va("%d", RepInfo.Frags));
+			T_DrawText(523, ypos + 10, va("%d", RepInfo.Deaths));
 		}
 		ypos += 36;
 		xpos += 43;

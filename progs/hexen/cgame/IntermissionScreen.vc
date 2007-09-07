@@ -378,8 +378,6 @@ void IM_DrawDeathTally(GC gc)
 	PlayerReplicationInfo Other;
 
 	gc.DrawFullScreenPic(patchINTERPIC);
-	R_DrawPic(TALLY_TOP_X, TALLY_TOP_Y, tallytop);
-	R_DrawPic(TALLY_LEFT_X, TALLY_LEFT_Y, tallylft);
 	if (intertime < TALLY_EFFECT_TIME)
 	{
 		showTotals = false;
@@ -408,24 +406,20 @@ void IM_DrawDeathTally(GC gc)
 	{
 		i = RepInfo.PlayerNum;
 		xPos = xStart;
-		foreach ClGame.GLevel.LevelInfo.AllThinkers(PlayerReplicationInfo, Other)
-		{
-			j = Other.PlayerNum;
-			x = ftoi(xPos);
-			bold = (i == ClGame.cl.ClientNum || j == ClGame.cl.ClientNum);
-			if (bold)
-			{
-				IM_DrawNumberBold(RepInfo.FragsStats[j], x, y, 100);
-			}
-			else
-			{
-				IM_DrawNumber(RepInfo.FragsStats[j], x, y, 100);
-			}
-		}
+		T_SetFont(i == ClGame.cl.ClientNum ? font_yellow : font_small);
+		T_SetAlign(hleft, vtop);
+		T_DrawText(ftoi(xPos), y, RepInfo.PlayerName);
 		if (showTotals && !((slaughterboy & (1 << i)) &&
 			!(ftoi(32.0 * intertime) & 16)))
 		{
-			IM_DrawNumber(RepInfo.Frags, TALLY_TOTALS_X, y, 1000);
+			if (i == ClGame.cl.ClientNum)
+			{
+				IM_DrawNumberBold(RepInfo.Frags, TALLY_TOTALS_X, y, 1000);
+			}
+			else
+			{
+				IM_DrawNumber(RepInfo.Frags, TALLY_TOTALS_X, y, 1000);
+			}
 		}
 		yPos += yDelta;
 		y = ftoi(yPos);

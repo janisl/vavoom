@@ -347,11 +347,8 @@ void SV_SendClientMessages()
 		VPlayerReplicationInfo* RepInfo = Player->PlayerReplicationInfo;
 		RepInfo->PlayerName = Player->PlayerName;
 		RepInfo->UserInfo = Player->UserInfo;
-		for (int j = 0; j < MAXPLAYERS; j++)
-		{
-			RepInfo->FragsStats[j] = Player->FragsStats[j];
-		}
 		RepInfo->Frags = Player->Frags;
+		RepInfo->Deaths = Player->Deaths;
 		RepInfo->KillCount = Player->KillCount;
 		RepInfo->ItemCount = Player->ItemCount;
 		RepInfo->SecretCount = Player->SecretCount;
@@ -937,7 +934,7 @@ void SV_SpawnServer(const char *mapname, bool spawn_thinkers)
 			GGameInfo->Players[i]->PlayerFlags &= ~VBasePlayer::PF_Spawned;
 			GGameInfo->Players[i]->MO = NULL;
 			GGameInfo->Players[i]->Frags = 0;
-			memset(GGameInfo->Players[i]->FragsStats, 0, sizeof(GGameInfo->Players[i]->FragsStats));
+			GGameInfo->Players[i]->Deaths = 0;
 			if (GGameInfo->Players[i]->PlayerState == PST_DEAD)
 				GGameInfo->Players[i]->PlayerState = PST_REBORN;
 		}
@@ -1319,7 +1316,7 @@ void SV_ConnectClient(VBasePlayer *player)
 		player->eventPutClientIntoServer();
 	}
 	player->Frags = 0;
-	memset(player->FragsStats, 0, sizeof(player->FragsStats));
+	player->Deaths = 0;
 
 	player->PlayerReplicationInfo =
 		(VPlayerReplicationInfo*)GLevel->SpawnThinker(GGameInfo->PlayerReplicationInfoClass);

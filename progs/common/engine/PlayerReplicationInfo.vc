@@ -32,8 +32,8 @@ int				PlayerNum;
 string			PlayerName;
 string			UserInfo;
 
-int				FragsStats[MAXPLAYERS];
 int				Frags;
+int				Deaths;
 int				KillCount;
 int				ItemCount;
 int				SecretCount;
@@ -41,7 +41,7 @@ int				SecretCount;
 replication
 {
 	reliable if (Role == ROLE_Authority)
-		PlayerNum, PlayerName, UserInfo, FragsStats, Frags, KillCount,
+		PlayerNum, PlayerName, UserInfo, Frags, Deaths, KillCount,
 		ItemCount, SecretCount;
 }
 

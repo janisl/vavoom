@@ -85,7 +85,7 @@ int						Health;
 
 // Frags, kills of other players.
 int						Frags;
-int						FragsStats[MAXPLAYERS];
+int						Deaths;
 
 // For intermission stats.
 int						KillCount;
@@ -119,9 +119,10 @@ PlayerReplicationInfo	PlayerReplicationInfo;
 replication
 {
 	reliable if (!bIsClient)
-		Health, Frags, ExtraLight, FixedColourmap, CShifts, PSpriteSY,
-		KillCount, ItemCount, SecretCount, ViewStates, ViewEnt, ViewEntAlpha,
-		ClientNum, WorldTimer, MO, bAutomapRevealed, bAutomapShowThings;
+		Health, Frags, Deaths, ExtraLight, FixedColourmap, CShifts,
+		PSpriteSY, KillCount, ItemCount, SecretCount, ViewStates, ViewEnt,
+		ViewEntAlpha, ClientNum, WorldTimer, MO, bAutomapRevealed,
+		bAutomapShowThings;
 
 	unreliable if (!bIsClient)
 		ClientStartSound, ClientStopSound, ClientForceLightning,

@@ -66,12 +66,10 @@ void KilledByPlayer(EntityEx source)
 		if (self == source)
 		{
 			// Self-frag
-			Player.FragsStats[Player.GetPlayerNum()]--;
 			Player.Frags--;
 		}
 		else
 		{
-			source.Player.FragsStats[Player.GetPlayerNum()]++;
 			source.Player.Frags++;
 			source.PlaySound('misc/frag', CHAN_ITEM);
 			if (Player(source.Player).ChickenTime)
@@ -94,7 +92,6 @@ void PlayerKilled(EntityEx source, EntityEx inflictor)
 	// Count environment kills against you
 	if (!source)
 	{
-		Player.FragsStats[Player.GetPlayerNum()]--;
 		Player.Frags--;
 	}
 }

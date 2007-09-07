@@ -410,13 +410,18 @@ void DrawAmmo(int CountX, int CountY, int MaxX, int MaxY,
 
 void SB_DrawFullscreenStats()
 {
+	if (!cl.MO)
+	{
+		return;
+	}
+
 	// health
 	SB_DrawTallNum(ST_TDHEALTHX, ST_TDHEALTHY, cl.Health, 0.6, false);
 	R_DrawPic(ST_TDHEALTHX - 60, ST_TDHEALTHY + 15, pic_health);
 
 	// armor
 	BasicArmor Armor = BasicArmor(EntityEx(cl.MO).FindInventory(BasicArmor));
-	if (Armor.Amount)
+	if (Armor && Armor.Amount)
 	{
 		SB_DrawTallNum(ST_TDARMORX, ST_TDARMORY, Armor.Amount, 0.6, false);
 

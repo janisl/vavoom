@@ -253,6 +253,11 @@ void SB_DrawMainBar()
 	int i;
 	int health;
 
+	if (!cl.MO)
+	{
+		return;
+	}
+
 	// draw something in the blank spaces
 	R_FillRectWithFlat(0, 438, 640, 42,
 		!WadLumpPresent('e2m1') ? 'floor04' : 'flat513');
@@ -310,7 +315,7 @@ void SB_DrawMainBar()
 			SB_DrawNumber9(BAR_X + 61, BAR_Y + 12, health);
 		}
 
-		if (cl.ReadyWeapon.Ammo1)
+		if (cl.ReadyWeapon && cl.ReadyWeapon.Ammo1)
 		{
 			//  Ammo
 			SB_DrawNumber9(BAR_X + 109, BAR_Y + 4, cl.ReadyWeapon.Ammo1.Amount);
@@ -347,7 +352,7 @@ void SB_DrawMainBar()
 		//  Armor
 		BasicArmor Armor = BasicArmor(EntityEx(cl.MO).FindInventory(
 			BasicArmor));
-		SB_DrawNumber9(BAR_X + 228, BAR_Y + 12, Armor.Amount);
+		SB_DrawNumber9(BAR_X + 228, BAR_Y + 12, Armor ? Armor.Amount : 0);
 	}
 	else
 	{
@@ -386,13 +391,18 @@ void SB_DrawFullscreenStats()
 {
 	int i;
 
+	if (!cl.MO)
+	{
+		return;
+	}
+
 	//  Health
 	SB_DrawNumber12(50, 450, cl.Health);
 	R_DrawPic(30, 494, pic_health);
 
 	//  Armorpoints
 	BasicArmor Armor = BasicArmor(EntityEx(cl.MO).FindInventory(BasicArmor));
-	SB_DrawNumber12(140, 450, Armor.Amount);
+	SB_DrawNumber12(140, 450, Armor ? Armor.Amount : 0);
 	R_DrawPic(120, 490, pic_armor2);
 
 	//  Frags
@@ -402,7 +412,7 @@ void SB_DrawFullscreenStats()
 	}
 
 	//  Ammo
-	if (cl.ReadyWeapon.Ammo1)
+	if (cl.ReadyWeapon && cl.ReadyWeapon.Ammo1)
 	{
 		SB_DrawNumber9(610, 456, cl.ReadyWeapon.Ammo1.Amount);
 		R_DrawPic(590, 454, R_RegisterPic(cl.ReadyWeapon.Ammo1.IconName));

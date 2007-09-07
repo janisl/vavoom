@@ -126,7 +126,7 @@ class VBasePlayer : public VObject
 
 	// Frags, kills of other players.
 	vint32			Frags;
-	vint32			FragsStats[MAXPLAYERS];
+	vint32			Deaths;
 
 	// For intermission stats.
 	vint32			KillCount;

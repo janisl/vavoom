@@ -504,7 +504,7 @@ void SpawnPlayer(mthing_t * mthing)
 		// Give all keys in death match mode
 		foreach AllClasses(Key, Cls)
 		{
-			if (!Cls.default.IdleState)
+			if (!FindClassState(Cls, 'Spawn'))
 			{
 				//	Abstract class.
 				continue;
