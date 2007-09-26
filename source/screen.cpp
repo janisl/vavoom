@@ -467,7 +467,7 @@ void SCR_Update()
 	Drawer->StartUpdate();
 
 	// do buffered drawing
-	if (cls.state == ca_connected && cls.signon)
+	if (cls.state == ca_connected && cls.signon && cl && cl->MO)
 	{
 		switch (GClGame->intermission)
 		{
