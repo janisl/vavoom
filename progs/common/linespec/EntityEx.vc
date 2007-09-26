@@ -5117,6 +5117,11 @@ final void ClientTick(float DeltaTime)
 	int			c;
 	int			count;
 
+	if (bHidden)
+	{
+		return;
+	}
+
 	if (bDynamicLight)
 	{
 		// Update dynamic lights
