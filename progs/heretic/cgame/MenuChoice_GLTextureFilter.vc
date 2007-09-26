@@ -50,6 +50,6 @@ defaultproperties
 	Text = "Texture Filter";
 	EnumNames[0] = "Nearest";
 	EnumNames[1] = "Linear";
-	EnumNames[2] = "Linear_Nearest";
-	EnumNames[3] = "Linear_Linear";
+	EnumNames[2] = "Linear Nearest";
+	EnumNames[3] = "Linear Linear";
 }
