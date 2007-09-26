@@ -778,6 +778,11 @@ void VRenderLevel::RenderThing(VEntity* mobj)
 		return;
 	}
 
+	if (mobj->SubSector->VisFrame != r_visframecount)
+	{
+		return;
+	}
+
 	//	Setup lighting
 	vuint32 light;
 	if ((mobj->State->Frame & FF_FULLBRIGHT) ||
