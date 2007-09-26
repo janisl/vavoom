@@ -1405,7 +1405,7 @@ void Cheat_Gimme()
 	{
 		foreach AllClasses(Key, Cls)
 		{
-			if (!Cls.default.IdleState)
+			if (!FindClassState(Cls, 'Spawn'))
 			{
 				//	Abstract class
 				continue;
