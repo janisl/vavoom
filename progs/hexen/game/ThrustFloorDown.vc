@@ -154,7 +154,7 @@ final void A_ThrustImpale()
 	{
 		float blockdist;
 	
-		if (!Actor(Other).bShootable)
+		if (!EntityEx(Other).bShootable)
 			continue;
 	
 		blockdist = Other.Radius + Radius;
@@ -168,7 +168,7 @@ final void A_ThrustImpale()
 		if (Other == self)
 			continue;	// don't clip against self
 	
-		Actor(Other).Damage(self, self, 10001);
+		EntityEx(Other).Damage(self, self, 10001);
 		bBloody = true;	// Mark thrust thing as bloody
 	}
 }
