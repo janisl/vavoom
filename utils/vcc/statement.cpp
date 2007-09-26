@@ -980,7 +980,7 @@ bool VReturn::Resolve(VEmitContext& ec)
 		Expr = Expr->Resolve(ec);
 		if (ec.FuncRetType.Type == TYPE_Void)
 		{
-			ParseError(Loc, "viod function cannot return a value.");
+			ParseError(Loc, "void function cannot return a value.");
 			Ret = false;
 		}
 		else if (Expr)
