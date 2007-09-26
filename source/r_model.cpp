@@ -370,7 +370,7 @@ static void Mod_SwapAliasModel(VModel* mod)
 	mskin_t* pskindesc = (mskin_t *)((byte *)pmodel + pmodel->ofsskins);
 	for (i = 0; i < pmodel->numskins; i++)
 	{
-		mod->Skins.Append(*VStr(pskindesc[0].name).ToLower());
+		mod->Skins.Append(*VStr(pskindesc[i].name).ToLower());
 	}
 	unguard;
 }
