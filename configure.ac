@@ -1,4 +1,4 @@
-AC_INIT([vavoom], [1.24])
+AC_INIT([vavoom], [1.25])
 AC_CONFIG_SRCDIR([source/gamedefs.h])
 AC_CONFIG_AUX_DIR([utils])
 

@@ -10,7 +10,7 @@
             ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
              #    ##    ##    #      ####     ####   ##       ##
 
-                                                    Version 1.24
+                                                    Version 1.25
 
 Contents:
     0. Disclaimer
@@ -1045,6 +1045,18 @@ Version 1.24
 * Implemented support for ZDoom's compressed GL nodes.
 * Added support for texture offsets in PNG textures.
 * Added support for ZDoom's sloping thing types.
+
+==============================================================================
+Version 1.25
+==============================================================================
+
+* Merged a lots of common progs code.
+* New style state definitions.
+* Implemented a new inventory system.
+* Rewrote graphical launcher using wxWidgets, now available on Linux.
+* Added support for LOCKDEFS script.
+* Updated glBSP to the latest version.
+* Fixed many bugs, other improvements.
 
 *****************************************************************************
 8. Licensing

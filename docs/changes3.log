@@ -2542,3 +2542,23 @@
 01.09.2007
   I fixed a spelling mistake in the menus.
   I merged language definition scripts.
+03.09.2007
+  I started to change displaying of deathmatch statistics to show player names
+ with total number of frags and deaths.
+04.09.2007
+  I changed deathmatch intermission screen in Heretic, some other fixes.
+07.09.2007
+  I finished changing deathmatch intermission screens, removed FragStats field
+ from player class.
+  Firebrand fixed several bugs.
+09.09.2007
+  I added PVS check when rendering things inorder not to draw things that are
+ not visible.
+26.09.2007
+  I fixed bug with hidden objects emiting dynamic lights, gimme cheat, Hexen's
+ thrust spike and model skin animations. I also removed underscores from GL
+ filter menu options.
+
+******************************************************************************
+                            VERSION 1.25
+******************************************************************************
