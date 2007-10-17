@@ -655,7 +655,8 @@ void VRenderLevel::UpdateParticles(float frametime)
 			kill = p->next;
 		}
 
-		p->org += p->vel * frametime;
+		p->vel.z -= p->gravity * frametime;
+		p->org += (p->vel - p->gravity) * frametime;
 
 		Level->LevelInfo->eventUpdateParticle(p, frametime);
 	}
