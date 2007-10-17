@@ -46,6 +46,7 @@ defaultproperties
 	MissileDamage = 7;
 	SightSound = 'crusader/misl';
 	DeathSound = 'crusader/mislx';
+	bDynamicLight = true;
 	DLightColour = RGB(215, 179, 0);
 	DLightRadius = 200.0;
 }

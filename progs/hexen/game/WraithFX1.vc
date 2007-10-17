@@ -87,6 +87,7 @@ defaultproperties
 	bFloorClip = true;
 	DamageType = 'Fire';
 	DeathSound = 'WraithMissileExplode';
+	bDynamicLight = true;
 	DLightColour = RGB(244, 14, 3);
-	DLightRadius = 200.0;
+	DLightRadius = 126.0;
 }

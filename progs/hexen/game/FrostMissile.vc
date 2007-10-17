@@ -156,6 +156,7 @@ defaultproperties
 	MissileDamage = 1;
 	DamageType = 'Ice';
 	DeathSound = 'MageShardsExplode';
+	bDynamicLight = true;
 	DLightColour = RGB(74, 77, 196);
 	DLightRadius = 90.0;
 }

@@ -120,6 +120,7 @@ final void A_ImpExplode()
 {
 	Actor mo;
 
+	bNoGravity = false;
 	mo = Spawn(HereticImpChunk1, Origin);
 	mo.Velocity.x = (Random() - Random()) * 4.0 * 35.0;
 	mo.Velocity.y = (Random() - Random()) * 4.0 * 35.0;

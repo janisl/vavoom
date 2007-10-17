@@ -115,6 +115,20 @@ final void A_HeadAttack()
 	}
 }
 
+//==========================================================================
+//
+//  A_Lights
+//
+//  Just spawn some dynamic light
+//
+//==========================================================================
+
+final void A_Lights()
+{
+	SendExplosion(DLightColour, DLightRadius, Origin);
+	bDynamicLight = false;
+}
+
 states
 {
 Spawn:
@@ -134,7 +148,8 @@ Pain:
 Death:
 	HEAD C 7
 	HEAD D 7 A_Scream
-	HEAD EF 7
+	HEAD E 7 A_Lights
+	HEAD F 7
 	HEAD G 7 A_NoBlocking
 	HEAD H 7
 	HEAD I -1 A_BossDeath
@@ -157,4 +172,6 @@ defaultproperties
 	AttackSound = 'ironlich/attack1';
 	PainSound = 'ironlich/pain';
 	DeathSound = 'ironlich/death';
+	DLightColour = RGB(255, 95, 0);
+	DLightRadius = 124.0;
 }

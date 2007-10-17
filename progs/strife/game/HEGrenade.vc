@@ -69,4 +69,5 @@ defaultproperties
 	SightSound = 'weapons/hegrenadeshoot';
 	DeathSound = 'weapons/hegrenadebang';
 	ExplodeEffect = RGB(239, 239, 0);
+	DLightRadius = 118.0;
 }

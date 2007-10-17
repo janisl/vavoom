@@ -54,7 +54,7 @@ final void A_MaceBallImpact()
 		// Explode
 		bNoGravity = true;
 		Gravity = 1.0;
-		SendExplosion(RGB(255, 128, 0), Origin);		
+		SendExplosion(RGB(255, 128, 0), 86.0, Origin);
 		PlaySound('weapons/macehit', CHAN_VOICE);
 	}
 }
@@ -81,5 +81,4 @@ defaultproperties
 	bThruGhost = true;
 	bNoGravity = false;
 	bActivateImpact = true;
-	bDynamicLight = false;
 }

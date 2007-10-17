@@ -47,8 +47,9 @@ final void A_TreeDeath()
 	{
 		bDynamicLight = true;
 		DLightColour = RGB(255, 127, 0);
+		DLightRadius = 86.0;
 		SetState(MeleeState);
-		SendExplosion(DLightColour, Origin);
+		SendExplosion(DLightColour, DLightRadius, Origin);
 	}
 }
 

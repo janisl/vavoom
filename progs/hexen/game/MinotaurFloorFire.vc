@@ -40,6 +40,7 @@ defaultproperties
 	DamageType = 'Fire';
 	bActivateImpact = false;
 	bActivatePCross = false;
+	bDynamicLight = true;
 	DLightColour = RGB(255, 128, 0);
-	DLightRadius = 200.0;
+	DLightRadius = 126.0;
 }

@@ -44,6 +44,7 @@ defaultproperties
 	Speed = 700.0;
 	MissileDamage = 4;
 	DeathSound = 'CentaurMissileExplode';
+	bDynamicLight = true;
 	DLightColour = RGB(41, 119, 233);
-	DLightRadius = 200.0;
+	DLightRadius = 134.0;
 }

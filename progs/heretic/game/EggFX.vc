@@ -172,4 +172,5 @@ defaultproperties
 	Height = 8.0;
 	Speed = 630.0;
 	MissileDamage = 1;
+	bDynamicLight = true;
 }

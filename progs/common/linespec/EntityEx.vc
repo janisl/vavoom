@@ -3336,7 +3336,7 @@ final bool ExplodeMissile()
 
 	if (!bLeaveTrail && bDynamicLight)
 	{
-		SendExplosion(DLightColour, Origin);
+		SendExplosion(DLightColour, DLightRadius, Origin);
 		bDynamicLight = false;
 	}
 	bLeaveTrail = false;
@@ -4807,17 +4807,26 @@ void OnMapSpawn(mthing_t* mthing)
 		SetOrigin2(Origin);
 	}
 
-	if (bStaticLight && mthing && !TID)
+	if (bStaticLight && mthing)
 	{
-		if (LightColour == 0xffffffff)
+		if (!TID)
 		{
-			Level.AddStaticLight(Origin + LightOffset, mthing->arg1 ?
-				itof(mthing->arg1) * 8.0 : LightRadius);
+			if (LightColour == 0xffffffff)
+			{
+				Level.AddStaticLight(Origin + LightOffset, mthing->arg1 ?
+					itof(mthing->arg1) * 8.0 : LightRadius);
+			}
+			else
+			{
+				Level.AddStaticLightRGB(Origin + LightOffset, mthing->arg1 ?
+					itof(mthing->arg1) * 8.0 : LightRadius, LightColour);
+			}
 		}
 		else
 		{
-			Level.AddStaticLightRGB(Origin + LightOffset, mthing->arg1 ?
-				itof(mthing->arg1) * 8.0 : LightRadius, LightColour);
+			bDynamicLight = true;
+			DLightRadius = Args[0] ? itof(Args[0]) * 8.0 : LightRadius;
+			DLightColour = LightColour;
 		}
 	}
 }
@@ -5112,10 +5121,7 @@ final void ClientTick(float DeltaTime)
 {
 	dlight_t*	dl;
 	TVec		fv;
-	int			i;
-	particle_t*	p;
 	int			c;
-	int			count;
 
 	if (bHidden)
 	{
@@ -5148,22 +5154,79 @@ final void ClientTick(float DeltaTime)
 	
 	if (bLeaveTrail)
 	{
-		count = ftoi(DeltaTime * 256.0);
-		for (i = 0; i < count; i++)
-		{
-			p = NewParticle();
-			if (!p)
-				return;
+		c = P_Random() >> 1;
+		// ParticleEffect(int count, int type1, int type2, float org, float ornd,
+		// float vel, float vrnd, float grav, int colour, float duration, bool ramp)
+		ParticleEffect(ftoi(DeltaTime * 256.0), LineSpecialLevelInfo::pt_static, 0, Origin,
+					0.0, vector(16.0, 16.0, 16.0), 0.5, 0.0, RGB(c, c, c), 0.5,  0.0);
+	}
+}
 
-			p->org = Origin;
-			c = P_Random() >> 1;
-			p->colour = RGB(c, c, c);
-			p->die = XLevel.Time + 0.5 * Random();
-			p->type = LineSpecialLevelInfo::pt_static;
-			p->vel.x = 16.0 * (Random() - 0.5);
-			p->vel.y = 16.0 * (Random() - 0.5);
-			p->vel.z = 16.0 * (Random() - 0.5);
+//==========================================================================
+//
+//  ParticleEffect
+//
+//==========================================================================
+
+void ParticleEffect(int count, int type1, int type2, TVec origin, float ornd,
+	TVec velocity, float vrnd, float grav, int colour, float duration, float ramp)
+{
+	int i;
+	particle_t *p;
+
+	for (i = 0; i < count; i++)
+	{
+		p = Level.NewParticle();
+
+		if (!p)
+			return;
+		p->die = XLevel.Time + duration * Random();
+		p->colour = colour;
+
+		if(ramp)
+			p->ramp = Random() * ramp;
+
+		if(!type2)
+		{
+			p->type = type1;
 		}
+		else
+		{
+			// Choose between the two types
+			if (i & 1)
+			{
+				p->type = type1;
+			}
+			else
+			{
+				p->type = type2;
+			}
+		}
+
+		// No random origin
+		if(!ornd)
+		{
+			p->org = origin;
+		}
+		else
+		{
+			p->org.x = origin.x + ((Random() * ornd) - 16.0);
+			p->org.y = origin.y + ((Random() * ornd) - 16.0);
+			p->org.z = origin.z + ((Random() * ornd) - 16.0);
+		}
+
+		// No random velocity
+		if(!vrnd)
+		{
+			p->vel = velocity;
+		}
+		else
+		{
+			p->vel.x = velocity.x * (Random() - vrnd);
+			p->vel.y = velocity.y * (Random() - vrnd);
+			p->vel.z = velocity.z * (Random() - vrnd);
+		}
+		p->gravity = grav;
 	}
 }
 
@@ -5565,7 +5628,7 @@ final void SpawnPuff(TVec Org, float Range, class<EntityEx> PuffType,
 	puff.Velocity.z = puff.PuffVelZ;
 	if (puff.ExplodeEffect)
 	{
-		SendExplosion(ExplodeEffect, Org);
+		SendExplosion(ExplodeEffect, DLightRadius, Org);
 	}
 	LineSpecialLevelInfo(Level).bPuffSpawned = true;
 }
@@ -5579,19 +5642,14 @@ final void SpawnPuff(TVec Org, float Range, class<EntityEx> PuffType,
 final void SpawnBlood(TVec Org, int damage)
 {
 	EntityEx	A;
-	int			i;
-
-	for (i = 0; i < MAXPLAYERS; i++)
-	{
-		if (!Level.Game.Players[i])
-			continue;
-		if (!Level.Game.Players[i].bSpawned)
-			continue;
-		PlayerEx(Level.Game.Players[i]).ClientBlood(
-			Org, damage > 255 ? 255 : damage);
-	}
+	int			c;
 
 	Org.z += (Random() - Random()) * 4.0;
+	damage = damage > 255 ? 255 : damage;
+	c = P_Random() >> 1;
+	ParticleEffect(damage, LineSpecialLevelInfo::pt_static, 0, Org,
+				0.0, vector(32.0, 32.0, 32.0), 0.5, 40.0, RGB(32 + c, c >> 4, c >> 4),
+				0.5, 0.0);
 	A = Spawn(LineSpecialGameInfo(Level.Game).BloodClass, Org);
 	A.Velocity.z = 2.0 * 35.0;
 	if (LineSpecialGameInfo(Level.Game).bBloodRandomiseTime)
@@ -5627,17 +5685,13 @@ final void SpawnBlood(TVec Org, int damage)
 final void SpawnBloodSplatter(TVec org, int damage)
 {
 	EntityEx	mo;
-	int			i;
+	int			c;
 
-	for (i = 0; i < MAXPLAYERS; i++)
-	{
-		if (!Level.Game.Players[i])
-			continue;
-		if (!Level.Game.Players[i].bSpawned)
-			continue;
-		PlayerEx(Level.Game.Players[i]).ClientBlood(org,
-			damage > 255 ? 255 : damage);
-	}
+	damage = damage > 255 ? 255 : damage;
+	c = P_Random() >> 1;
+	ParticleEffect(damage, LineSpecialLevelInfo::pt_static, 0, org,
+				0.0, vector(32.0, 32.0, 32.0), 0.5, 40.0, RGB(32 + c, c >> 4, c >> 4),
+				0.5, 0.0);
 
 	mo = Spawn(LineSpecialGameInfo(Level.Game).BloodSplatterClass, org);
 	mo.Target = self;
@@ -5692,7 +5746,7 @@ final void SpawnRipperBlood()
 //
 //==========================================================================
 
-final void SendExplosion(int colour, TVec org)
+final void SendExplosion(int colour, float rad, TVec org)
 {
 	int i;
 
@@ -5702,7 +5756,7 @@ final void SendExplosion(int colour, TVec org)
 			continue;
 		if (!Level.Game.Players[i].bSpawned)
 			continue;
-		PlayerEx(Level.Game.Players[i]).ClientExplosion(colour, org);
+		PlayerEx(Level.Game.Players[i]).ClientExplosion(colour, rad, org);
 	}
 }
 

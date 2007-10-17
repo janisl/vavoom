@@ -66,7 +66,6 @@ defaultproperties
 	bBounceOnActors = true;
 	bNoBounceSound = true;
 	bExplodeOnWater = true;
-	bDynamicLight = false;
 	SightSound = 'weapons/phgrenadeshoot';
 	DeathSound = 'weapons/phgrenadebang';
 }

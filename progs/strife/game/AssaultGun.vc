@@ -56,6 +56,7 @@ final void A_FireRiffle()
 	damage = 4 * (P_Random() % 3 + 1);
 	Actor(Owner).LineAttack(dir, MISSILERANGE, damage, StrifePuff);
 	EntityEx(Owner).bMuzzleFlash = true;
+	EntityEx(Owner).DLightRadius = 118.0;
 	EntityEx(Owner).DLightColour = RGB(203, 111, 0);
 }
 

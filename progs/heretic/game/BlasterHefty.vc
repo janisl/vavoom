@@ -38,4 +38,5 @@ defaultproperties
 {
 	Amount = 25;
 	PickupMessage = "$txt_ammoblaster2";
+	DLightRadius = 86.0;
 }

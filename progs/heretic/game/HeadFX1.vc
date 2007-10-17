@@ -82,6 +82,7 @@ defaultproperties
 	Speed = 455.0;
 	MissileDamage = 1;
 	bThruGhost = true;
+	bDynamicLight = true;
 	DLightColour = RGB(6, 9, 159);
-	DLightRadius = 200.0;
+	DLightRadius = 126.0;
 }

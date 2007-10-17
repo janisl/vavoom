@@ -63,5 +63,5 @@ defaultproperties
 	DeathSound = 'misc/explosion';
 	bDynamicLight = true;
 	DLightColour = RGB(91, 155, 55);
-	DLightRadius = 200.0;
+	DLightRadius = 118.0;
 }

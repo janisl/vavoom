@@ -71,4 +71,5 @@ defaultproperties
 	// The Minotaur floor fire can step up any amount
 	MaxStepHeight = 99999.0;
 	bIgnoreFloorStep = true;
+	DLightRadius = 118.0;
 }

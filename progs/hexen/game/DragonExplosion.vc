@@ -64,4 +64,5 @@ defaultproperties
 	bNoGravity = false;
 	DeathSound = 'DragonFireballExplode';
 	ExplodeEffect  = RGB(255, 95, 0);
+	DLightRadius = 118.0;
 }

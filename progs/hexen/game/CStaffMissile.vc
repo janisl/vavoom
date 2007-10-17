@@ -70,8 +70,8 @@ Spawn:
 	CSSF DDEE 1 Bright A_CStaffMissileSlither
 	Loop
 Death:
-	CSSF FG 4
-	CSSF HI 3
+	CSSF FG 4 Bright
+	CSSF HI 3 Bright
 	Stop
 }
 
@@ -82,6 +82,7 @@ defaultproperties
 	Speed = 770.0;
 	MissileDamage = 5;
 	DeathSound = 'ClericCStaffExplode';
+	bDynamicLight = true;
 	DLightColour = RGB(3, 234, 3);
-	DLightRadius = 200.0;
+	DLightRadius = 118.0;
 }

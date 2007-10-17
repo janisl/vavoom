@@ -70,6 +70,7 @@ defaultproperties
 	bCannotPush = true;
 	bNoDamageThrust = true;
 	bBlaster = true;
+	bDynamicLight = true;
 	DLightColour = RGB(91, 94, 211);
-	DLightRadius = 200.0;
+	DLightRadius = 118.0;
 }

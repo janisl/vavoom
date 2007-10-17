@@ -61,7 +61,7 @@ final void A_BFGSpray()
 		emo = Spawn(BFGExtra, AimTarget.Origin +
 			vector(0.0, 0.0, AimTarget.Height / 4.0));
 
-		SendExplosion(DLightColour, emo.Origin);
+		SendExplosion(DLightColour, DLightRadius, emo.Origin);
 
 		damage = 0;
 		for (j = 0; j < 15; j++)
@@ -71,13 +71,26 @@ final void A_BFGSpray()
 	}
 }
 
+//===========================================================================
+//
+//  A_Particles
+//
+//===========================================================================
+
+final void A_Particles()
+{
+	ParticleEffect(1024, LineSpecialLevelInfo::pt_static, 0, Origin, 16.0,
+			vector(512.0, 512.0, 512.0), 0.8, 40.0, RGB(95, 207, 87), 1.0, 2.0);
+}
+
 states
 {
 Spawn:
 	BFS1 AB 4 Bright
 	Loop
 Death:
-	BFE1 AB 8 Bright
+	BFE1 A 8 Bright A_Particles
+	BFE1 B 8 Bright
 	BFE1 C 8 Bright A_BFGSpray
 	BFE1 DEF 8 Bright
 	Stop
@@ -101,5 +114,5 @@ defaultproperties
 	DeathSound = 'weapons/bfgx';
 	bDynamicLight = true;
 	DLightColour = RGB(95, 207, 87);
-	DLightRadius = 200.0;
+	DLightRadius = 150.0;
 }

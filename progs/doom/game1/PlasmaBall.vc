@@ -55,5 +55,5 @@ defaultproperties
 	DeathSound = 'weapons/plasmax';
 	bDynamicLight = true;
 	DLightColour = RGB(115, 115, 255);
-	DLightRadius = 200.0;
+	DLightRadius = 126.0;
 }

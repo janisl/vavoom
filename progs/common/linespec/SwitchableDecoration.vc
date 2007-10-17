@@ -39,6 +39,10 @@ class SwitchableDecoration : ScriptedEntity
 bool Activate()
 {
 	SetState(FindState('Active'));
+	bDynamicLight = true;
+	DLightRadius = Args[0] ? itof(Args[0]) * 8.0 : LightRadius;
+	DLightColour = LightColour;
+
 	return true;
 }
 
@@ -51,6 +55,8 @@ bool Activate()
 bool Deactivate()
 {
 	SetState(FindState('Inactive'));
+	bDynamicLight = false;
+
 	return true;
 }
 

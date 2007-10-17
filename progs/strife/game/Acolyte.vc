@@ -74,7 +74,7 @@ final void A_AcolyteDeath()
 		return;
 
 	//	Make sure all the other blue acolytes are dead.
-	foreach AllThinkers(Actor, Other)
+	foreach AllThinkers(EntityEx, Other)
 	{
 		if (Other != self && Other.Class == Class && Other.Health > 0)
 		{
@@ -154,4 +154,5 @@ defaultproperties
 	PainSound = 'acolyte/pain';
 	DeathSound = 'acolyte/death';
 	DLightColour = RGB(203, 111, 0);
+	DLightRadius = 118.0;
 }

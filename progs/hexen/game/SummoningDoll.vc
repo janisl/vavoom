@@ -87,5 +87,4 @@ defaultproperties
 	bNoGravity = false;
 	bActivateImpact = false;
 	bActivatePCross = false;
-	bDynamicLight = false;
 }

@@ -54,5 +54,5 @@ defaultproperties
 	DeathSound = 'baby/shotx';
 	bDynamicLight = true;
 	DLightColour = RGB(215, 187, 67);
-	DLightRadius = 200.0;
+	DLightRadius = 126.0;
 }

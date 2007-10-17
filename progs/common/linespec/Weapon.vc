@@ -569,7 +569,7 @@ final void A_WeaponReady()
 	}
 
 	// Put the weapon away if the player has a pending weapon or has died.
-	if (PlayerEx(Owner.Player).PendingWeapon || !Owner.Player.Health)
+	if (PlayerEx(Owner.Player).PendingWeapon || Owner.Player.MO.Health <= 0)
 	{
 		Owner.Player.SetViewState(ps_weapon, GetDownState());
 		return;
@@ -616,7 +616,7 @@ final void A_WeaponReady()
 
 final void A_Lower()
 {
-	if (EntityEx(Owner).PlayerIsMorphed())
+	if (EntityEx(Owner.Player.MO).PlayerIsMorphed())
 	{
 		Owner.Player.ViewStates[ps_weapon].SY = WEAPONBOTTOM;
 	}
@@ -647,7 +647,7 @@ final void A_Lower()
 		return;
 	}
 
-	if (!Owner.Player.Health)
+	if (Owner.Player.MO.Health <= 0)
 	{
 		// Player is dead, so keep the weapon off screen.
 		Owner.Player.SetViewState(ps_weapon, none);
@@ -694,7 +694,7 @@ final void A_Raise()
 final void A_ReFire()
 {
 	if ((Owner.Player.Buttons & BT_ATTACK) &&
-		!PlayerEx(Owner.Player).PendingWeapon && Owner.Player.Health)
+		!PlayerEx(Owner.Player).PendingWeapon && Owner.Player.MO.Health > 0)
 	{
 		PlayerEx(Owner.Player).Refire++;
 		PlayerEx(Owner.Player).FireWeapon();

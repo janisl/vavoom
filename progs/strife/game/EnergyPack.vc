@@ -39,4 +39,5 @@ defaultproperties
 	ConversationID = 184;
 	PickupMessage = "$txt_energypack";
 	Amount = 100;
+	DLightRadius = 86.0;
 }

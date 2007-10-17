@@ -60,5 +60,6 @@ defaultproperties
 	bNoBlood = true;
 	bNoGravKill = true;
 	DeathSound = 'turret/death';
+	DLightRadius = 118.0;
 	DLightColour = RGB(203, 111, 0);
 }

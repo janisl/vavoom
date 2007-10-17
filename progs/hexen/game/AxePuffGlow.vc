@@ -39,6 +39,7 @@ defaultproperties
 	bAxeBlood = true;
 	bDynamicLight = true;
 	DLightColour = RGB(67, 197, 246);
+	DLightRadius = 86.0;
 	SightSound = 'FighterAxeHitThing';
 	AttackSound = 'FighterHammerHitWall';
 }

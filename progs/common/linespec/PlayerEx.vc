@@ -95,7 +95,7 @@ replication
 		Cheats, ReadyWeapon, InvFirst, InvPtr, InventoryTime, ArtifactFlash;
 
 	unreliable if (!bIsClient)
-		ClientGunShot, ClientBlood, ClientExplosion, ClientParticleExplosion;
+		ClientGunShot, ClientExplosion, ClientParticleExplosion;
 }
 
 //==========================================================================
@@ -1412,42 +1412,24 @@ void ClientGunShot(TVec org)
 			return;
 
 		p->org = org;
-		c = P_Random() >> 1;
-		p->colour = RGB(c, c, c);
+		if (i & 1)
+		{
+			c = P_Random() >> 1;
+			p->colour = RGB(c, c, c);
+			p->type = LineSpecialLevelInfo::pt_static;
+		}
+		else
+		{
+			c = P_Random() >> 1;
+			p->colour = RGB(32 + c, 32 + c, c >> 4);
+			p->ramp = Random() * 4.0;
+			p->type = LineSpecialLevelInfo::pt_explode2;
+		}
 		p->die = Level.XLevel.Time + 0.5 * Random();
 		p->vel.x = 32.0 * (Random() - 0.5);
 		p->vel.y = 32.0 * (Random() - 0.5);
 		p->vel.z = 32.0 * (Random() - 0.5);
-		p->type = LineSpecialLevelInfo::pt_static;
-	}
-}
-
-//==========================================================================
-//
-//  ClientBlood
-//
-//==========================================================================
-
-void ClientBlood(TVec org, int damage)
-{
-	int i;
-	particle_t *p;
-	int c;
-
-	for (i = 0; i < damage; i++)
-	{
-		p = Level.NewParticle();
-		if (!p)
-			return;
-
-		p->org = org;
-		c = P_Random() >> 1;
-		p->colour = RGB(32 + c, c >> 4, c >> 4);
-		p->die = Level.XLevel.Time + 0.5 * Random();
-		p->vel.x = 32.0 * (Random() - 0.5);
-		p->vel.y = 32.0 * (Random() - 0.5);
-		p->vel.z = 32.0 * (Random() - 0.5);
-		p->type = LineSpecialLevelInfo::pt_static;
+		p->gravity = 40.0;
 	}
 }
 
@@ -1457,13 +1439,13 @@ void ClientBlood(TVec org, int damage)
 //
 //==========================================================================
 
-void ClientExplosion(int colour, TVec org)
+void ClientExplosion(int colour, float rad, TVec org)
 {
 	dlight_t*	dl;
 
 	dl = Level.AllocDlight(none);
 	dl->origin = org;
-	dl->radius = 350.0;
+	dl->radius = rad + 150.0;
 	dl->colour = colour;
 	dl->die = Level.XLevel.Time + 0.5;
 	dl->decay = 300.0;
@@ -1475,7 +1457,7 @@ void ClientExplosion(int colour, TVec org)
 //
 //==========================================================================
 
-void ClientParticleExplosion(int colour, TVec org)
+void ClientParticleExplosion(int colour, float rad, TVec org)
 {
 	int i;
 	particle_t *p;
@@ -1503,11 +1485,12 @@ void ClientParticleExplosion(int colour, TVec org)
 		p->vel.x = (Random() * 512.0) - 256.0;
 		p->vel.y = (Random() * 512.0) - 256.0;
 		p->vel.z = (Random() * 512.0) - 256.0;
+		p->gravity = 40.0 + (Random() * 512.0) - 256.0;
 	}
 
 	dl = Level.AllocDlight(none);
 	dl->origin = org;
-	dl->radius = 350.0;
+	dl->radius = rad + 150.0;
 	dl->colour = colour;
 	dl->die = Level.XLevel.Time + 0.5;
 	dl->decay = 300.0;

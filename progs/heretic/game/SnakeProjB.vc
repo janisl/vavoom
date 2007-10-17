@@ -57,6 +57,7 @@ defaultproperties
 	Height = 8.0;
 	Speed = 490.0;
 	MissileDamage = 3;
+	bDynamicLight = true;
 	DLightColour = RGB(255, 128, 0);
-	DLightRadius = 200.0;
+	DLightRadius = 126.0;
 }

@@ -43,6 +43,7 @@ defaultproperties
 	Height = 8.0;
 	Speed = 1400.0;
 	MaxStepHeight = 4.0;
+	bDynamicLight = true;
 	DLightColour = RGB(163, 23, 23);
-	DLightRadius = 200.0;
+	DLightRadius = 96.0;
 }

@@ -60,6 +60,7 @@ final void A_FireShotgun2()
 	}
 	EntityEx(Owner).bMuzzleFlash = true;
 	EntityEx(Owner).DLightColour = RGB(195, 79, 0);
+	EntityEx(Owner).DLightRadius = 118.0;
 }
 
 //===========================================================================

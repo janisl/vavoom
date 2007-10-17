@@ -71,5 +71,5 @@ defaultproperties
 	bNoTeleport = true;
 	bDynamicLight = true;
 	DLightColour = RGB(91, 94, 211);
-	DLightRadius = 100.0;
+	DLightRadius = 86.0;
 }

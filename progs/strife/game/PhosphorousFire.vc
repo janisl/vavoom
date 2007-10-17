@@ -105,4 +105,5 @@ defaultproperties
 	bNoGravity = false;
 	DamageType = 'Fire';
 	ExplodeEffect = RGB(199, 91, 0);
+	DLightRadius = 118.0;
 }

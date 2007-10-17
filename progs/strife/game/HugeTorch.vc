@@ -43,5 +43,5 @@ defaultproperties
 	bStaticLight = true;
 	LightColour = 0xffffaf7f;
 	LightOffset = vector(0.0, 0.0, 80.0);
-	LightRadius = 200.0;
+	LightRadius = 180.0;
 }

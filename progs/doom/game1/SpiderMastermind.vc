@@ -76,6 +76,7 @@ defaultproperties
 	bTriggerHappy = true;
 	bFloorClip = true;
 	bNoRadiusDamage = true;
+	DLightRadius = 100.0;
 	SightSound = 'spider/sight';
 	ActiveSound = 'spider/active';
 	AttackSound = 'spider/attack';

@@ -42,4 +42,7 @@ defaultproperties
 	BackpackMaxAmount = 100;
 	PickupMessage = "$txt_ammocrossbow1";
 	IconName = 'inambow';
+ 	bDynamicLight = true;
+	DLightColour = RGB(91, 191, 79);
+	DLightRadius = 66.0;
 }

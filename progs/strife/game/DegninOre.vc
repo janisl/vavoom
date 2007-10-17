@@ -70,4 +70,5 @@ defaultproperties
 	bInvBar = true;
 	DeathSound = 'ore/explode';
 	ExplodeEffect = RGB(235, 231, 0);
+	DLightRadius = 86.0;
 }

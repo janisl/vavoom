@@ -38,4 +38,5 @@ defaultproperties
 {
 	Amount = 50;
 	PickupMessage = "$txt_ammogoldwand2";
+	DLightRadius = 86.0;
 }

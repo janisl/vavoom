@@ -36,7 +36,7 @@ Spawn:
 defaultproperties
 {
 	bPuffOnActors = true;
-	bDynamicLight = true;
-	DLightColour = RGB(192, 95, 21);
+	ExplodeEffect = RGB(80, 164, 252);
+	DLightRadius = 86.0;
 	AttackSound = 'weapons/staffpowerhit';
 }

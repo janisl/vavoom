@@ -110,6 +110,7 @@ defaultproperties
 	PainChance = 0.390625;
 	bNoBlood = true;
 	DLightColour = RGB(203, 111, 0);
+	DLightRadius = 126.0;
 	SightSound = 'templar/sight';
 	ActiveSound = 'templar/active';
 	PainSound = 'templar/pain';

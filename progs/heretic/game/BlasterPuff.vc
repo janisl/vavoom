@@ -39,7 +39,8 @@ Spawn:
 
 defaultproperties
 {
-	ExplodeEffect = RGBA(80, 164, 252, 255);
+	ExplodeEffect = RGB(80, 164, 252);
+	DLightRadius = 118.0;
 	bPuffOnActors = true;
 	SightSound = 'weapons/blastershoot';
 }

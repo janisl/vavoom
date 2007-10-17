@@ -35,7 +35,7 @@ class TeleportFog : Actor;
 
 final void A_Lights()
 {
-	SendExplosion(DLightColour, Origin + vector(0.0, 0.0, Height * 0.5));
+	SendExplosion(DLightColour, DLightRadius, Origin + vector(0.0, 0.0, Height * 0.5));
 
 	//  Clear old dynamic light effect
 	bDynamicLight = false;
@@ -44,7 +44,9 @@ final void A_Lights()
 states
 {
 Spawn:
-	TFOG ABABCDEFGHIJ 6 Bright
+	TFOG ABABCDE 6 Bright
+	TFOG F 6 Bright A_Lights
+	TFOG GHIJ 6 Bright
 	Stop
 }
 
@@ -56,5 +58,5 @@ defaultproperties
 	bNoPassMobj = true;
 	bDynamicLight = true;
 	DLightColour = RGB(75, 159, 63);
-	DLightRadius = 200.0;
+	DLightRadius = 126.0;
 }

@@ -163,7 +163,7 @@ final void A_FlightChase()
 {
 	float minz, maxz;
 
-	if (bInFloat)
+	if (bInFloat || !TestMobjZ())
 	{
 		Velocity.z = 0.0;
 		return;
@@ -181,13 +181,11 @@ final void A_FlightChase()
 
 	if (minz < Origin.z)
 	{
-		if(TestMobjZ())
-			Velocity.z -= 1.0 * 35.0;
+		Velocity.z -= 1.0 * 35.0;
 	}
 	else
 	{
-		if(TestMobjZ())
-			Velocity.z += 1.0 * 35.0;
+		Velocity.z += 1.0 * 35.0;
 	}
 	ReactionCount = (minz >= Origin.z) ? 4 : 0;
 }

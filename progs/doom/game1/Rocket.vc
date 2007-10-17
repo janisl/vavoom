@@ -69,5 +69,5 @@ defaultproperties
 	bDynamicLight = true;
 	bLeaveTrail = true;
 	DLightColour = RGB(195, 79, 0);
-	DLightRadius = 200.0;
+	DLightRadius = 126.0;
 }

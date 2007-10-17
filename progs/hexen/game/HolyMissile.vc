@@ -125,6 +125,7 @@ defaultproperties
 	bActivateImpact = false;
 	bActivatePCross = false;
 	bExtremeDeath = true;
+	bDynamicLight = true;
 	DLightColour = RGB(221, 221, 221);
-	DLightRadius = 200.0;
+	DLightRadius = 126.0;
 }

@@ -97,7 +97,8 @@ defaultproperties
 	MissileDamage = 2;
 	DamageType = 'Fire';
 	bNoGravity = false;
+	bDynamicLight = true;
 	DeathSound = 'world/volcano/blast';
 	DLightColour = RGB(255, 128, 0);
-	DLightRadius = 200.0;
+	DLightRadius = 126.0;
 }

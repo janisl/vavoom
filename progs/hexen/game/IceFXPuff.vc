@@ -41,5 +41,5 @@ defaultproperties
 	bDropOff = true;
 	bNoTeleport = true;
 	DLightColour = RGB(74, 77, 196);
-	DLightRadius = 100.0;
+	DLightRadius = 118.0;
 }

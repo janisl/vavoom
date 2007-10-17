@@ -89,4 +89,5 @@ defaultproperties
 	ActiveSound = 'macil/active';
 	PainSound = 'macil/pain';
 	DLightColour = RGB(203, 111, 0);
+	DLightRadius = 118.0;
 }

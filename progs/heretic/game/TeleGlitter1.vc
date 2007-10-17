@@ -60,5 +60,5 @@ defaultproperties
 	bNoGravity = true;
 	bDynamicLight = true;
 	DLightColour = RGB(255, 179, 179);
-	DLightRadius = 100.0;
+	DLightRadius = 66.0;
 }

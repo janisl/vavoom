@@ -33,5 +33,5 @@ defaultproperties
 	WeaponType = CWeapWraithverge;
 	bDynamicLight = true;
 	DLightColour = RGB(74, 77, 196);
-	DLightRadius = 100.0;	
+	DLightRadius = 86.0;	
 }

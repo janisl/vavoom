@@ -53,5 +53,4 @@ defaultproperties
 	bRip = true;
 	bActivateImpact = false;
 	bActivatePCross = false;
-	bDynamicLight = false;
 }

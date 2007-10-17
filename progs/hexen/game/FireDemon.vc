@@ -307,5 +307,5 @@ defaultproperties
 	PainSound = 'FireDemonPain';
 	DeathSound = 'FireDemonDeath';
 	DLightColour = RGB(255, 178, 6);
-	DLightRadius = 200.0;
+	DLightRadius = 126.0;
 }

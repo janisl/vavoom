@@ -44,4 +44,7 @@ defaultproperties
 	bBigPowerup = true;
 	bAutoActivate = true;
 	bAlwaysPickup = true;
+ 	bDynamicLight = true;
+	DLightColour = RGB(167, 0, 0);
+	DLightRadius = 86.0;
 }

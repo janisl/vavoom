@@ -140,6 +140,7 @@ defaultproperties
 	bActivatePushWall = true;
 	bFloorClip = true;
 	DLightColour = RGB(195, 79, 0);
+	DLightRadius = 118.0;
 	SightSound = 'chainguy/sight';
 	ActiveSound = 'chainguy/active';
 	PainSound = 'chainguy/pain';

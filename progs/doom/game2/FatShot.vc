@@ -56,5 +56,5 @@ defaultproperties
 	DeathSound = 'fatso/shotx';
 	bDynamicLight = true;
 	DLightColour = RGB(255, 31, 31);
-	DLightRadius = 200.0;
+	DLightRadius = 134.0;
 }

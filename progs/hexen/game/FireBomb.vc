@@ -58,5 +58,6 @@ defaultproperties
 	DamageType = 'Fire';
 	bDamageInvulnerable = true;
 	ExplodeEffect = RGB(255, 128, 0);
+	DLightRadius = 86.0;
 	DeathSound = 'FlechetteExplode';
 }

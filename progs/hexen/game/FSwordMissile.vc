@@ -94,6 +94,7 @@ defaultproperties
 	Speed = 1050.0;
 	MissileDamage = 8;
 	bExtremeDeath = true;
+	bDynamicLight = true;
 	DeathSound = 'FighterSwordExplode';
 	DLightColour = RGB(68, 159, 58);
 	DLightRadius = 90.0;

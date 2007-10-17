@@ -43,4 +43,7 @@ defaultproperties
 	bAlwaysPickup = true;
 	PickupMessage = "$gotsuper";
 	PickupSound = 'misc/p_pkup';
+	bDynamicLight = true;
+	DLightColour = RGB(0, 0, 255);
+	DLightRadius = 86.0;
 }

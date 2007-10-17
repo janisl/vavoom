@@ -87,7 +87,7 @@ defaultproperties
 	MissileDamage = 4;
 	DamageType = 'Fire';
 	DeathSound = 'minotaur/fx2hit';
-	DLightRadius = 200.0;
+	DLightRadius = 118.0;
 	// The Minotaur floor fire can step up any amount
 	MaxStepHeight = 99999.0;
 }

@@ -118,6 +118,7 @@ final void A_PainAttack()
 
 final void A_PainDie()
 {
+	SendExplosion(DLightColour, DLightRadius, Origin + vector(0.0, 0.0, Height * 0.5));
 	A_Fall();
 	A_PainShootSkull(Angles.yaw + 90.0);
 	A_PainShootSkull(Angles.yaw + 180.0);
@@ -169,6 +170,8 @@ defaultproperties
 	bActivatePushWall = true;
 	bNoGravity = true;
 	bFloat = true;
+	DLightColour = RGB(195, 79, 0);
+	DLightRadius = 126.0;
 	SightSound = 'pain/sight';
 	ActiveSound = 'pain/active';
 	PainSound = 'pain/pain';

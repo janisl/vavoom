@@ -182,7 +182,8 @@ defaultproperties
 	bHidden = true;
 	DamageType = 'Fire';
 	bBlaster = true;
+	bDynamicLight = true;
 	DLightColour = RGB(255, 159, 0);
-	DLightRadius = 200.0;
+	DLightRadius = 134.0;
 	FlameSpeed = 9.0 / 20.0 * 35.0;
 }

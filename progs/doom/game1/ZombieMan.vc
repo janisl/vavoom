@@ -54,7 +54,7 @@ final void A_PosAttack()
 
 	LineAttack(dir, MISSILERANGE, damage, BulletPuff);
 
-	bMuzzleFlash = false;
+	bMuzzleFlash = true;
 }
 
 //==========================================================================
@@ -121,6 +121,7 @@ defaultproperties
 	bActivatePushWall = true;
 	bFloorClip = true;
 	DLightColour = RGB(195, 79, 0);
+	DLightRadius = 118.0;
 	SightSound = 'grunt/sight';
 	ActiveSound = 'grunt/active';
 	AttackSound = 'grunt/attack';

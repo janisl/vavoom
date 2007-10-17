@@ -42,4 +42,7 @@ defaultproperties
 	PickupMessage = "$goththbonus";
 	bCountItem = true;
 	bAlwaysPickup = true;
+	bDynamicLight = true;
+	DLightColour = RGB(0, 0, 179);
+	DLightRadius = 86.0;
 }

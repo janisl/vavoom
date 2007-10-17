@@ -89,8 +89,9 @@ defaultproperties
 	bActivateImpact = true;
 	DamageType = 'Fire';
 	bConditionalFireDamage = true;
+	bDynamicLight = true;
 	SightSound = 'weapons/phoenixshoot';
 	DeathSound = 'weapons/phoenixhit';
 	DLightColour = RGB(255, 95, 0);
-	DLightRadius = 200.0;
+	DLightRadius = 126.0;
 }

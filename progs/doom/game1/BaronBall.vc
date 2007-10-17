@@ -62,5 +62,5 @@ defaultproperties
 	DeathSound = 'baron/shotx';
 	bDynamicLight = true;
 	DLightColour = RGB(91, 191, 79);
-	DLightRadius = 200.0;
+	DLightRadius = 134.0;
 }

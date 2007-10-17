@@ -38,4 +38,5 @@ defaultproperties
 {
 	Amount = 10;
 	PickupMessage = "$txt_ammophoenixrod2";
+	DLightRadius = 86.0;
 }

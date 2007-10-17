@@ -55,4 +55,5 @@ defaultproperties
 	bNoPassMobj = true;
 	DeathSound = 'misc/timebomb';
 	ExplodeEffect = RGB(255, 128, 0);
+	DLightRadius = 126.0;
 }

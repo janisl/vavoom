@@ -48,7 +48,7 @@ defaultproperties
 	bDynamicLight = true;
 	bActivateImpact = true;
 	DLightColour = RGB(123, 127, 171);
-	DLightRadius = 200.0;
+	DLightRadius = 86.0;
 	SightSound = 'misc/swish';
 	ActiveSound = 'misc/swish';
 	DeathSound = 'weapons/xbowhit';

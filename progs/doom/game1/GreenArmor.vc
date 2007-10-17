@@ -40,4 +40,7 @@ defaultproperties
 	SaveAmount = 100;
 	SavePercent = 1.0 / 3.0;
 	PickupMessage = "$gotarmor";
+ 	bDynamicLight = true;
+	DLightColour = RGB(0, 255, 0);
+	DLightRadius = 86.0;
 }

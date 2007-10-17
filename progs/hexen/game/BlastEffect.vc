@@ -42,4 +42,5 @@ defaultproperties
 	bFallingFriction = true;
 	bDynamicLight = true;
 	DLightColour = RGB(109, 107, 130);
+	DLightRadius = 118.0;
 }

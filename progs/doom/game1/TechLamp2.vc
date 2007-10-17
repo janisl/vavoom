@@ -41,5 +41,5 @@ defaultproperties
 	bFloorClip = true;
 	bStaticLight = true;
 	LightOffset = vector(0.0, 0.0, 48.0);
-	LightRadius = 200.0;
+	LightRadius = 160.0;
 }

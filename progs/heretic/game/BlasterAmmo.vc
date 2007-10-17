@@ -42,4 +42,7 @@ defaultproperties
 	BackpackMaxAmount = 400;
 	PickupMessage = "$txt_ammoblaster1";
 	IconName = 'inambst';
+ 	bDynamicLight = true;
+	DLightColour = RGB(80, 164, 252);
+	DLightRadius = 66.0;
 }

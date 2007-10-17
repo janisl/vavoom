@@ -90,6 +90,7 @@ defaultproperties
 	DamageType = 'Fire';
 	bActivateImpact = false;
 	bActivatePCross = false;
+	bDynamicLight = true;
 	DeathSound = 'ClericFlameCircle';
 	DLightColour = RGB(255, 159, 0);
 	DLightRadius = 100.0;

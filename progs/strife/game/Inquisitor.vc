@@ -283,6 +283,6 @@ defaultproperties
 	JumpSound = 'inquisitor/jump';
 	DeathSound = 'inquisitor/death';
 	DLightColour = RGB(151, 155, 203);
-	DLightRadius = 200.0;
+	DLightRadius = 164.0;
 	ExplodeEffect = RGB(203, 111, 0);
 }

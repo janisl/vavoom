@@ -73,9 +73,10 @@ defaultproperties
 	MaxStepHeight = 4.0;
 	MissileDamage = 1;
 	bActivateImpact = true;
+	bDynamicLight = true;
 	DamageType = 'Disintegrate';
 	SightSound = 'weapons/mauler2fire';
 	DeathSound = 'weapons/mauler2hit';
 	DLightColour = RGB(79, 143, 55);
-	DLightRadius = 200.0;
+	DLightRadius = 118.0;
 }

@@ -610,15 +610,15 @@ final void A_Explode()
 			if (!Level.Game.Players[i].bSpawned)
 				continue;
 			PlayerEx(Level.Game.Players[i]).ClientParticleExplosion(
-				DLightColour, Origin + vector(0.0, 0.0, Height * 0.5));
+				DLightColour, DLightRadius, Origin + vector(0.0, 0.0, Height * 0.5));
 		}
 	}
 	else if (ExplodeEffect)
 	{
-		SendExplosion(ExplodeEffect, Origin);
+		SendExplosion(ExplodeEffect, DLightRadius, Origin);
 	}
 
-	//  Clear old dynamic light effect
+	//  Clear old dynamic light and trail effects
 	bDynamicLight = false;
 	bLeaveTrail = false;
 }

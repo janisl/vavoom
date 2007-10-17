@@ -36,7 +36,7 @@ class Effect : Actor
 
 final void A_Lights()
 {
-	SendExplosion(DLightColour, Origin);
+	SendExplosion(DLightColour, DLightRadius, Origin);
 	bDynamicLight = false;
 }
 

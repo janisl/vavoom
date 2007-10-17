@@ -95,9 +95,10 @@ defaultproperties
 	bSeekerMissile = true;
 	bActivateImpact = false;
 	bActivatePCross = false;
+	bDynamicLight = true;
 	DeathSound = 'BishopMissileExplode';
 	DLightColour = RGB(8, 175, 8);
-	DLightRadius = 200.0;
+	DLightRadius = 126.0;
 	WeaveXY = 0;
 	WeaveZ = 16;
 }

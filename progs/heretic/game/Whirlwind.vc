@@ -119,7 +119,6 @@ defaultproperties
 	MissileDamage = 1;
 	Alpha = 0.666;
 	bExploCount = true;
-	bDynamicLight = false;
 	Special2 = 50;
 	Special1 = 60;
 }

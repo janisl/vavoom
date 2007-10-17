@@ -40,4 +40,5 @@ defaultproperties
 	bPuffOnActors = true;
 	bDynamicLight = true;
 	DLightColour = RGB(91, 191, 79);
+	DLightRadius = 86.0;
 }

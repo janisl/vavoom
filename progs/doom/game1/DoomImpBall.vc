@@ -61,5 +61,5 @@ defaultproperties
 	DeathSound = 'imp/shotx';
 	bDynamicLight = true;
 	DLightColour = RGB(215, 95, 11);
-	DLightRadius = 200.0;
+	DLightRadius = 134.0;
 }

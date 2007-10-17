@@ -50,7 +50,7 @@ final void A_MaceBallImpact2()
 		bNoGravity = true;
 		BounceType = BOUNCE_None;
 		Gravity = 1.0;
-		SendExplosion(RGB(255, 128, 0), Origin);
+		SendExplosion(RGB(255, 128, 0), 86.0, Origin);
 	}
 	else
 	{

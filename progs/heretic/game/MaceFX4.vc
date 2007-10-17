@@ -132,7 +132,7 @@ final void A_DeathBallImpact()
 		// Explode
 		bNoGravity = true;
 		Gravity = 1.0;
-		SendExplosion(RGB(255, 128, 0), Origin);
+		SendExplosion(RGB(255, 128, 0), 86.0, Origin);
 		PlaySound('weapons/maceexplode', CHAN_VOICE);
 	}
 }

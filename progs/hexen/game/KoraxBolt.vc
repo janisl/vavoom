@@ -83,5 +83,5 @@ defaultproperties
 	LifeTime = 3;
 	BoltHeight = 48.0;
 	DLightColour = RGB(58, 158, 239);
-	DLightRadius = 200.0;
+	DLightRadius = 126.0;
 }

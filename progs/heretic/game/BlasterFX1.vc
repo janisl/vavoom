@@ -113,5 +113,5 @@ defaultproperties
 	DeathSound = 'weapons/blasterhit';
 	bDynamicLight = true;
 	DLightColour = RGB(80, 164, 252);
-	DLightRadius = 200.0;
+	DLightRadius = 118.0;
 }

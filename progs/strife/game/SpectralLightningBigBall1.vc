@@ -103,5 +103,5 @@ defaultproperties
 	SightSound = 'weapons/sigil';
 	DeathSound = 'weapons/sigilhit';
 	DLightColour = RGB(151, 155, 203);
-	DLightRadius = 200.0;
+	DLightRadius = 134.0;
 }

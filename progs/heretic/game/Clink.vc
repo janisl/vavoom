@@ -35,6 +35,7 @@ class Clink : Pawn
 
 void NoBlockingSet()
 {
+	A_Lights();
 	DropItem(SkullRodAmmo, 20, 0.328125);
 }
 
@@ -58,6 +59,20 @@ final void A_ClinkAttack()
 		damage = ((P_Random() % 7) + 3);
 		Target.Damage(self, self, damage);
 	}
+}
+
+//==========================================================================
+//
+//  A_Lights
+//
+//  Just spawn some dynamic light
+//
+//==========================================================================
+
+final void A_Lights()
+{
+	SendExplosion(DLightColour, DLightRadius, Origin);
+	bDynamicLight = false;
 }
 
 states
@@ -100,4 +115,6 @@ defaultproperties
 	AttackSound = 'clink/attack';
 	PainSound = 'clink/pain';
 	DeathSound = 'clink/death';
+	DLightColour = RGB(255, 95, 0);
+	DLightRadius = 86.0;
 }

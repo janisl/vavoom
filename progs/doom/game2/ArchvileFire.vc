@@ -98,5 +98,5 @@ defaultproperties
 	bNoPassMobj = true;
 	bDynamicLight = true;
 	DLightColour = RGB(195, 155, 47);
-	DLightRadius = 200.0;
+	DLightRadius = 134.0;
 }

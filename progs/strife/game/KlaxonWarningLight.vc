@@ -74,5 +74,5 @@ defaultproperties
 	bSpawnCeiling = true;
 	bNoGravity = true;
 	DLightColour = RGB(191, 0, 0);
-	DLightRadius = 200.0;
+	DLightRadius = 86.0;
 }

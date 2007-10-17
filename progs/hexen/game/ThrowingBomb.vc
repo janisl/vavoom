@@ -87,8 +87,8 @@ defaultproperties
 	bNoTeleport = false;
 	bActivateImpact = false;
 	bActivatePCross = false;
-	bDynamicLight = false;
 	ExplodeEffect = RGB(255, 128, 0);
+	DLightRadius = 86.0;
 	SightSound = 'FlechetteBounce';
 	DeathSound = 'FlechetteExplode';
 }
