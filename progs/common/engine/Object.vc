@@ -1101,6 +1101,7 @@ struct particle_t
 	float die;
 	int type;
 	float ramp;
+	float gravity;
 };
 
 struct ClipRect
