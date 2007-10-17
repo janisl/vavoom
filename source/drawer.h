@@ -52,6 +52,7 @@ struct particle_t
 	float		die;	//	cl.time when particle will be removed
 	int			type;
 	float		ramp;
+	float		gravity;
 };
 
 struct refdef_t
