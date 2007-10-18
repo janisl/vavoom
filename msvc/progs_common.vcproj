@@ -200,6 +200,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\common\engine\Widget.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\common\engine\Window.vc"
 				>
 			</File>

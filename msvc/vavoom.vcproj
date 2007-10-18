@@ -2040,6 +2040,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\ui_widget.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\source\ui_widget.h"
+				>
+			</File>
+			<File
 				RelativePath="..\source\ui_win.cpp"
 				>
 			</File>

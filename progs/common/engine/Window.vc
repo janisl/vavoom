@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Window : Object
+class Window : Widget
 	native;
 
 // Quick class reference
@@ -47,13 +47,6 @@ int Height;
 readonly ClipRect ClipRect;
 
 readonly GC WinGC;
-
-// Relatives
-readonly Window Parent;			// Parent window; NULL if this is root
-readonly Window FirstChild;		// "Lowest" child (first one drawn)
-readonly Window LastChild;		// "Highest" child (last one drawn)
-readonly Window PrevSibling;		// Next "lowest" sibling (previous one drawn)
-readonly Window NextSibling;		// Next "highest" sibling (next one drawn)
 
 native void Destroy();
 native Window NewChild(class<Window> ChildClass);

@@ -69,11 +69,11 @@ VWindow::VWindow()
 void VWindow::Init(VWindow *InParent)
 {
 	guard(VWindow::Init);
-	Parent = InParent;
+	ParentWidget = InParent;
 	WinGC = Spawn<VGC>();
-	if (Parent)
+	if (ParentWidget)
 	{
-		Parent->AddChild(this);
+		static_cast<VWindow*>(ParentWidget)->AddChild(this);
 	}
 	ClipTree();
 	InitWindow();
@@ -104,8 +104,8 @@ void VWindow::Destroy()
 	WindowFlags |= WF_BeingDestroyed;
 	DestroyWindow();
 	KillAllChildren();
-	if (Parent)
-		Parent->RemoveChild(this);
+	if (ParentWidget)
+		static_cast<VWindow*>(ParentWidget)->RemoveChild(this);
 	if (WinGC)
 		WinGC->ConditionalDestroy();
 	Super::Destroy();
@@ -124,7 +124,7 @@ VRootWindow *VWindow::GetRootWindow()
 	VWindow *win = this;
 	while (win->WindowType < WIN_Root)
 	{
-		win = win->Parent;
+		win = static_cast<VWindow*>(win->ParentWidget);
 	}
 	return (VRootWindow *)win;
 	unguard;
@@ -142,7 +142,7 @@ VModalWindow *VWindow::GetModalWindow()
 	VWindow *win = this;
 	while (win->WindowType < WIN_Modal)
 	{
-		win = win->Parent;
+		win = static_cast<VWindow*>(win->ParentWidget);
 	}
 	return (VModalWindow *)win;
 	unguard;
@@ -156,7 +156,7 @@ VModalWindow *VWindow::GetModalWindow()
 
 VWindow *VWindow::GetParent()
 {
-	return Parent;
+	return static_cast<VWindow*>(ParentWidget);
 }
 
 //==========================================================================
@@ -168,12 +168,12 @@ VWindow *VWindow::GetParent()
 VWindow *VWindow::GetBottomChild(bool bVisibleOnly)
 {
 	guard(VWindow::GetBottomChild);
-	VWindow *win = FirstChild;
+	VWindow *win = static_cast<VWindow*>(FirstChildWidget);
 	if (bVisibleOnly)
 	{
 		while (win && !(win->WindowFlags & WF_IsVisible))
 		{
-			win = win->NextSibling;
+			win = static_cast<VWindow*>(win->NextWidget);
 		}
 	}
 	return win;
@@ -189,12 +189,12 @@ VWindow *VWindow::GetBottomChild(bool bVisibleOnly)
 VWindow *VWindow::GetTopChild(bool bVisibleOnly)
 {
 	guard(VWindow::GetTopChild);
-	VWindow *win = LastChild;
+	VWindow *win = static_cast<VWindow*>(LastChildWidget);
 	if (bVisibleOnly)
 	{
 		while (win && !(win->WindowFlags & WF_IsVisible))
 		{
-			win = win->PrevSibling;
+			win = static_cast<VWindow*>(win->PrevWidget);
 		}
 	}
 	return win;
@@ -210,12 +210,12 @@ VWindow *VWindow::GetTopChild(bool bVisibleOnly)
 VWindow *VWindow::GetLowerSibling(bool bVisibleOnly)
 {
 	guard(VWindow::GetLowerSibling);
-	VWindow *win = PrevSibling;
+	VWindow *win = static_cast<VWindow*>(PrevWidget);
 	if (bVisibleOnly)
 	{
 		while (win && !(win->WindowFlags & WF_IsVisible))
 		{
-			win = win->PrevSibling;
+			win = static_cast<VWindow*>(win->PrevWidget);
 		}
 	}
 	return win;
@@ -231,12 +231,12 @@ VWindow *VWindow::GetLowerSibling(bool bVisibleOnly)
 VWindow *VWindow::GetHigherSibling(bool bVisibleOnly)
 {
 	guard(VWindow::GetHigherSibling);
-	VWindow *win = NextSibling;
+	VWindow *win = static_cast<VWindow*>(NextWidget);
 	if (bVisibleOnly)
 	{
 		while (win && !(win->WindowFlags & WF_IsVisible))
 		{
-			win = win->NextSibling;
+			win = static_cast<VWindow*>(win->NextWidget);
 		}
 	}
 	return win;
@@ -252,30 +252,30 @@ VWindow *VWindow::GetHigherSibling(bool bVisibleOnly)
 void VWindow::Raise()
 {
 	guard(VWindow::Raise);
-	if (!Parent)
+	if (!ParentWidget)
 	{
 		Sys_Error("Can't raise root window");
 	}
-	if (Parent->LastChild == this)
+	if (ParentWidget->LastChildWidget == this)
 	{
 		//	Already there
 		return;
 	}
 	//	Unlink from current location
-	if (PrevSibling)
+	if (PrevWidget)
 	{
-		PrevSibling->NextSibling = NextSibling;
+		PrevWidget->NextWidget = NextWidget;
 	}
 	else
 	{
-		Parent->FirstChild = NextSibling;
+		ParentWidget->FirstChildWidget = NextWidget;
 	}
-	NextSibling->PrevSibling = PrevSibling;
+	NextWidget->PrevWidget = PrevWidget;
 	//	Link on top
-	PrevSibling = Parent->LastChild;
+	PrevWidget = ParentWidget->LastChildWidget;
 	NextSibling = NULL;
-	Parent->LastChild->NextSibling = this;
-	Parent->LastChild = this;
+	ParentWidget->LastChildWidget->NextWidget = this;
+	ParentWidget->LastChildWidget = this;
 	unguard;
 }
 
@@ -288,30 +288,30 @@ void VWindow::Raise()
 void VWindow::Lower()
 {
 	guard(VWindow::Lower);
-	if (!Parent)
+	if (!ParentWidget)
 	{
 		Sys_Error("Can't lower root window");
 	}
-	if (Parent->FirstChild == this)
+	if (ParentWidget->FirstChildWidget == this)
 	{
 		//	Already there
 		return;
 	}
 	//	Unlink from current location
-	PrevSibling->NextSibling = NextSibling;
-	if (NextSibling)
+	PrevWidget->NextWidget = NextWidget;
+	if (NextWidget)
 	{
-		NextSibling->PrevSibling = PrevSibling;
+		NextWidget->PrevWidget = PrevWidget;
 	}
 	else
 	{
-		Parent->LastChild = PrevSibling;
+		ParentWidget->LastChildWidget = PrevWidget;
 	}
 	//	Link on bottom
-	PrevSibling = NULL;
-	NextSibling = Parent->FirstChild;
-	Parent->FirstChild->PrevSibling = this;
-	Parent->FirstChild = this;
+	PrevWidget = NULL;
+	NextWidget = ParentWidget->FirstChildWidget;
+	ParentWidget->FirstChildWidget->PrevWidget = this;
+	ParentWidget->FirstChildWidget = this;
 	unguard;
 }
 
@@ -470,9 +470,9 @@ void VWindow::SetHeight(int NewHeight)
 void VWindow::KillAllChildren()
 {
 	guard(VWindow::KillAllChildren);
-	while (FirstChild)
+	while (FirstChildWidget)
 	{
-		FirstChild->ConditionalDestroy();
+		FirstChildWidget->ConditionalDestroy();
 	}
 	unguard;
 }
@@ -486,19 +486,19 @@ void VWindow::KillAllChildren()
 void VWindow::AddChild(VWindow *NewChild)
 {
 	guard(VWindow::AddChild);
-	NewChild->PrevSibling = LastChild;
+	NewChild->PrevWidget = LastChildWidget;
 	NewChild->NextSibling = NULL;
-	if (LastChild)
+	if (LastChildWidget)
 	{
-		LastChild->NextSibling = NewChild;
+		static_cast<VWindow*>(LastChildWidget)->NextSibling = NewChild;
 	}
 	else
 	{
-		FirstChild = NewChild;
+		FirstChildWidget = NewChild;
 	}
-	LastChild = NewChild;
+	LastChildWidget = NewChild;
 	ChildAdded(NewChild);
-	for (VWindow *w = this; w; w = w->Parent)
+	for (VWindow *w = this; w; w = static_cast<VWindow*>(w->ParentWidget))
 	{
 		w->DescendantAdded(NewChild);
 	}
@@ -514,27 +514,27 @@ void VWindow::AddChild(VWindow *NewChild)
 void VWindow::RemoveChild(VWindow *InChild)
 {
 	guard(VWindow::RemoveChild);
-	if (InChild->PrevSibling)
+	if (InChild->PrevWidget)
 	{
-		InChild->PrevSibling->NextSibling = InChild->NextSibling;
+		static_cast<VWindow*>(InChild->PrevWidget)->NextSibling = InChild->NextSibling;
 	}
 	else
 	{
-		FirstChild = InChild->NextSibling;
+		FirstChildWidget = InChild->NextSibling;
 	}
 	if (InChild->NextSibling)
 	{
-		InChild->NextSibling->PrevSibling = InChild->PrevSibling;
+		InChild->NextSibling->PrevWidget = InChild->PrevWidget;
 	}
 	else
 	{
-		LastChild = InChild->PrevSibling;
+		LastChildWidget = InChild->PrevWidget;
 	}
-	InChild->PrevSibling = NULL;
+	InChild->PrevWidget = NULL;
 	InChild->NextSibling = NULL;
-	InChild->Parent = NULL;
+	InChild->ParentWidget = NULL;
 	ChildRemoved(InChild);
-	for (VWindow *w = this; w; w = w->Parent)
+	for (VWindow *w = this; w; w = static_cast<VWindow*>(w->ParentWidget))
 	{
 		w->DescendantRemoved(InChild);
 	}
@@ -557,7 +557,7 @@ void VWindow::DrawTree()
 	}
 	WinGC->SetClipRect(ClipRect);
 	DrawWindow(WinGC);
-	for (VWindow *c = FirstChild; c; c = c->NextSibling)
+	for (VWindow *c = static_cast<VWindow*>(FirstChildWidget); c; c = c->NextSibling)
 	{
 		c->DrawTree();
 	}
@@ -574,17 +574,17 @@ void VWindow::DrawTree()
 void VWindow::ClipTree()
 {
 	guard(VWindow::ClipTree);
-	if (Parent)
+	if (ParentWidget)
 	{
-		ClipRect = VClipRect(Parent->ClipRect.OriginX + X, 
-			Parent->ClipRect.OriginY + Y, Width, Height);
-		ClipRect.Intersect(Parent->ClipRect);
+		ClipRect = VClipRect(static_cast<VWindow*>(ParentWidget)->ClipRect.OriginX + X, 
+			static_cast<VWindow*>(ParentWidget)->ClipRect.OriginY + Y, Width, Height);
+		ClipRect.Intersect(static_cast<VWindow*>(ParentWidget)->ClipRect);
 	}
 	else
 	{
 		ClipRect = VClipRect(X, Y, Width, Height);
 	}
-	for (VWindow *c = FirstChild; c; c = c->NextSibling)
+	for (VWindow *c = static_cast<VWindow*>(FirstChildWidget); c; c = c->NextSibling)
 	{
 		c->ClipTree();
 	}
@@ -605,7 +605,7 @@ void VWindow::TickTree(float DeltaTime)
 	{
 		eventTick(DeltaTime);
 	}
-	for (VWindow *c = FirstChild; c; c = c->NextSibling)
+	for (VWindow *c = static_cast<VWindow*>(FirstChildWidget); c; c = c->NextSibling)
 	{
 		c->TickTree(DeltaTime);
 	}

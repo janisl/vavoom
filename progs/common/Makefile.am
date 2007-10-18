@@ -25,6 +25,7 @@ EXTRA_DIST = \
 	engine/PlayerReplicationInfo.vc \
 	engine/RootWindow.vc \
 	engine/Thinker.vc \
+	engine/Widget.vc \
 	engine/Window.vc \
 	engine/WorldInfo.vc \
 	linespec/Ammo.vc \

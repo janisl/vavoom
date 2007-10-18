@@ -30,9 +30,9 @@ enum EWinType
 	WIN_Root
 };
 
-class VWindow : public VObject
+class VWindow : public VWidget
 {
-	DECLARE_CLASS(VWindow, VObject, 0)
+	DECLARE_CLASS(VWindow, VWidget, 0)
 
 	friend class VRootWindow;
 
@@ -63,13 +63,6 @@ class VWindow : public VObject
 
 private:
 	VGC *WinGC;
-
-	// Relatives
-	VWindow *Parent;			// Parent window; NULL if this is root
-	VWindow *FirstChild;		// "Lowest" child (first one drawn)
-	VWindow *LastChild;			// "Highest" child (last one drawn)
-	VWindow *PrevSibling;		// Next "lowest" sibling (previous one drawn)
-	VWindow *NextSibling;		// Next "highest" sibling (next one drawn)
 
 public:
 	VWindow();
@@ -107,7 +100,7 @@ public:
 			{
 				if (!(pParent->WindowFlags & WF_IsVisible))
 					break;
-				pParent = pParent->Parent;
+				pParent = static_cast<VWindow*>(pParent->ParentWidget);
 			}
 			return (pParent ? false : true);
 		}
@@ -128,7 +121,7 @@ public:
 			{
 				if (!(pParent->WindowFlags & WF_IsSensitive))
 					break;
-				pParent = pParent->Parent;
+				pParent = static_cast<VWindow*>(pParent->ParentWidget);
 			}
 			return (pParent ? false : true);
 		}

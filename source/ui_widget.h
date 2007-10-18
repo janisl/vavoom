@@ -23,20 +23,21 @@
 //**
 //**************************************************************************
 
-#ifndef _UI_H
-#define _UI_H
+class VWidget : public VObject
+{
+	DECLARE_CLASS(VWidget, VObject, 0)
 
-// Forward declarations
-class	VGC;
-class	VWidget;
-class	VWindow;
-class	VModalWindow;
-class	VRootWindow;
+private:
+	//	Parent container widget.
+	VWidget*			ParentWidget;
+	//	Linked list of child widgets.
+	VWidget*			FirstChildWidget;
+	VWidget*			LastChildWidget;
+	//	Links in the linked list of widgets.
+	VWidget*			PrevWidget;
+	VWidget*			NextWidget;
 
-#include "ui_gc.h"
-#include "ui_widget.h"
-#include "ui_win.h"
-#include "ui_modal.h"
-#include "ui_root.h"
+	friend class VWindow;
 
-#endif
+public:
+};

@@ -23,20 +23,28 @@
 //**
 //**************************************************************************
 
-#ifndef _UI_H
-#define _UI_H
+// HEADER FILES ------------------------------------------------------------
 
-// Forward declarations
-class	VGC;
-class	VWidget;
-class	VWindow;
-class	VModalWindow;
-class	VRootWindow;
+#include "gamedefs.h"
+#include "ui.h"
 
-#include "ui_gc.h"
-#include "ui_widget.h"
-#include "ui_win.h"
-#include "ui_modal.h"
-#include "ui_root.h"
+// MACROS ------------------------------------------------------------------
 
-#endif
+// TYPES -------------------------------------------------------------------
+
+// EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
+
+// PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
+
+// PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
+
+// EXTERNAL DATA DECLARATIONS ----------------------------------------------
+
+// PUBLIC DATA DEFINITIONS -------------------------------------------------
+
+IMPLEMENT_CLASS(V, Widget);
+
+// PRIVATE DATA DEFINITIONS ------------------------------------------------
+
+// CODE --------------------------------------------------------------------
+
