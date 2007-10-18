@@ -117,54 +117,6 @@ void WindowReady()
 
 //==========================================================================
 //
-//	ChildAdded
-//
-//	Called when a child window is added.
-//
-//==========================================================================
-
-void ChildAdded(Window Child)
-{
-}
-
-//==========================================================================
-//
-//	ChildRemoved
-//
-//	Called when a child window is removed.
-//
-//==========================================================================
-
-void ChildRemoved(Window Child)
-{
-}
-
-//==========================================================================
-//
-//	DescendantAdded
-//
-//	Called when a descendant window is added.
-//
-//==========================================================================
-
-void DescendantAdded(Window Descendant)
-{
-}
-
-//==========================================================================
-//
-//	DescendantRemoved
-//
-//	Called when a descendant window is removed.
-//
-//==========================================================================
-
-void DescendantRemoved(Window Descendant)
-{
-}
-
-//==========================================================================
-//
 //	ConfigurationChanged
 //
 //	Called when the parent changes this window's size.

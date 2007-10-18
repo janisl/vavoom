@@ -45,7 +45,7 @@ string Title;
 int TitleX;
 int TitleY;
 
-void ChildAdded(Window Child)
+void OnChildAdded(Widget Child)
 {
 	if (MenuObject(Child))
 	{
@@ -55,7 +55,7 @@ void ChildAdded(Window Child)
 		}
 		Items[NumItems++] = MenuObject(Child);
 	}
-	::ChildAdded(Child);
+	::OnChildAdded(Child);
 }
 
 void CreateTitle()

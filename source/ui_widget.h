@@ -37,7 +37,22 @@ private:
 	VWidget*			PrevWidget;
 	VWidget*			NextWidget;
 
+	void AddChild(VWidget*);
+	void RemoveChild(VWidget*);
+
 	friend class VWindow;
 
 public:
+	virtual void OnChildAdded(VWidget* Child)
+	{
+		P_PASS_SELF;
+		P_PASS_REF(Child);
+		EV_RET_VOID(NAME_OnChildAdded);
+	}
+	virtual void OnChildRemoved(VWidget* Child)
+	{
+		P_PASS_SELF;
+		P_PASS_REF(Child);
+		EV_RET_VOID(NAME_OnChildRemoved);
+	}
 };

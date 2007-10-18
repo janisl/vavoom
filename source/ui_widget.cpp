@@ -48,3 +48,58 @@ IMPLEMENT_CLASS(V, Widget);
 
 // CODE --------------------------------------------------------------------
 
+//==========================================================================
+//
+//	VWidget::AddChild
+//
+//==========================================================================
+
+void VWidget::AddChild(VWidget* NewChild)
+{
+	guard(VWidget::AddChild);
+	NewChild->PrevWidget = LastChildWidget;
+	NewChild->NextWidget = NULL;
+	if (LastChildWidget)
+	{
+		LastChildWidget->NextWidget = NewChild;
+	}
+	else
+	{
+		FirstChildWidget = NewChild;
+	}
+	LastChildWidget = NewChild;
+	OnChildAdded(NewChild);
+	unguard;
+}
+
+//==========================================================================
+//
+//	VWidget::RemoveChild
+//
+//==========================================================================
+
+void VWidget::RemoveChild(VWidget* InChild)
+{
+	guard(VWidget::RemoveChild);
+	if (InChild->PrevWidget)
+	{
+		InChild->PrevWidget->NextWidget = InChild->NextWidget;
+	}
+	else
+	{
+		FirstChildWidget = InChild->NextWidget;
+	}
+	if (InChild->NextWidget)
+	{
+		InChild->NextWidget->PrevWidget = InChild->PrevWidget;
+	}
+	else
+	{
+		LastChildWidget = InChild->PrevWidget;
+	}
+	InChild->PrevWidget = NULL;
+	InChild->NextWidget = NULL;
+	InChild->ParentWidget = NULL;
+	OnChildRemoved(InChild);
+	unguard;
+}

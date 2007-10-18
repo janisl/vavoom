@@ -44,6 +44,30 @@ Widget Parent
 	}
 }
 
+//==========================================================================
+//
+//	OnChildAdded
+//
+//	Called when a child widget is added.
+//
+//==========================================================================
+
+void OnChildAdded(Widget Child)
+{
+}
+
+//==========================================================================
+//
+//	OnChildRemoved
+//
+//	Called when a child widget is removed.
+//
+//==========================================================================
+
+void OnChildRemoved(Widget Child)
+{
+}
+
 defaultproperties
 {
 }

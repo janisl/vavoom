@@ -273,7 +273,7 @@ void VWindow::Raise()
 	NextWidget->PrevWidget = PrevWidget;
 	//	Link on top
 	PrevWidget = ParentWidget->LastChildWidget;
-	NextSibling = NULL;
+	NextWidget = NULL;
 	ParentWidget->LastChildWidget->NextWidget = this;
 	ParentWidget->LastChildWidget = this;
 	unguard;
@@ -479,70 +479,6 @@ void VWindow::KillAllChildren()
 
 //==========================================================================
 //
-//	VWindow::AddChild
-//
-//==========================================================================
-
-void VWindow::AddChild(VWindow *NewChild)
-{
-	guard(VWindow::AddChild);
-	NewChild->PrevWidget = LastChildWidget;
-	NewChild->NextSibling = NULL;
-	if (LastChildWidget)
-	{
-		static_cast<VWindow*>(LastChildWidget)->NextSibling = NewChild;
-	}
-	else
-	{
-		FirstChildWidget = NewChild;
-	}
-	LastChildWidget = NewChild;
-	ChildAdded(NewChild);
-	for (VWindow *w = this; w; w = static_cast<VWindow*>(w->ParentWidget))
-	{
-		w->DescendantAdded(NewChild);
-	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	VWindow::RemoveChild
-//
-//==========================================================================
-
-void VWindow::RemoveChild(VWindow *InChild)
-{
-	guard(VWindow::RemoveChild);
-	if (InChild->PrevWidget)
-	{
-		static_cast<VWindow*>(InChild->PrevWidget)->NextSibling = InChild->NextSibling;
-	}
-	else
-	{
-		FirstChildWidget = InChild->NextSibling;
-	}
-	if (InChild->NextSibling)
-	{
-		InChild->NextSibling->PrevWidget = InChild->PrevWidget;
-	}
-	else
-	{
-		LastChildWidget = InChild->PrevWidget;
-	}
-	InChild->PrevWidget = NULL;
-	InChild->NextSibling = NULL;
-	InChild->ParentWidget = NULL;
-	ChildRemoved(InChild);
-	for (VWindow *w = this; w; w = static_cast<VWindow*>(w->ParentWidget))
-	{
-		w->DescendantRemoved(InChild);
-	}
-	unguard;
-}
-
-//==========================================================================
-//
 //	VWindow::DrawTree
 //
 //==========================================================================
@@ -557,7 +493,7 @@ void VWindow::DrawTree()
 	}
 	WinGC->SetClipRect(ClipRect);
 	DrawWindow(WinGC);
-	for (VWindow *c = static_cast<VWindow*>(FirstChildWidget); c; c = c->NextSibling)
+	for (VWindow *c = static_cast<VWindow*>(FirstChildWidget); c; c = static_cast<VWindow*>(c->NextWidget))
 	{
 		c->DrawTree();
 	}
@@ -584,7 +520,7 @@ void VWindow::ClipTree()
 	{
 		ClipRect = VClipRect(X, Y, Width, Height);
 	}
-	for (VWindow *c = static_cast<VWindow*>(FirstChildWidget); c; c = c->NextSibling)
+	for (VWindow *c = static_cast<VWindow*>(FirstChildWidget); c; c = static_cast<VWindow*>(c->NextWidget))
 	{
 		c->ClipTree();
 	}
@@ -605,7 +541,7 @@ void VWindow::TickTree(float DeltaTime)
 	{
 		eventTick(DeltaTime);
 	}
-	for (VWindow *c = static_cast<VWindow*>(FirstChildWidget); c; c = c->NextSibling)
+	for (VWindow *c = static_cast<VWindow*>(FirstChildWidget); c; c = static_cast<VWindow*>(c->NextWidget))
 	{
 		c->TickTree(DeltaTime);
 	}

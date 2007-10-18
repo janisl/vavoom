@@ -161,31 +161,6 @@ public:
 		EV_RET_VOID(NAME_WindowReady);
 	}
 
-	virtual void ChildAdded(VWindow *Child)
-	{
-		P_PASS_SELF;
-		P_PASS_REF(Child);
-		EV_RET_VOID(NAME_ChildAdded);
-	}
-	virtual void ChildRemoved(VWindow *Child)
-	{
-		P_PASS_SELF;
-		P_PASS_REF(Child);
-		EV_RET_VOID(NAME_ChildRemoved);
-	}
-	virtual void DescendantAdded(VWindow *Descendant)
-	{
-		P_PASS_SELF;
-		P_PASS_REF(Descendant);
-		EV_RET_VOID(NAME_DescendantAdded);
-	}
-	virtual void DescendantRemoved(VWindow *Descendant)
-	{
-		P_PASS_SELF;
-		P_PASS_REF(Descendant);
-		EV_RET_VOID(NAME_DescendantRemoved);
-	}
-
 	virtual void ConfigurationChanged()
 	{
 		P_PASS_SELF;
@@ -231,9 +206,6 @@ protected:
 	void KillAllChildren();
 
 private:
-	void AddChild(VWindow *);
-	void RemoveChild(VWindow *);
-
 	void DrawTree();
 
 	void ClipTree();
