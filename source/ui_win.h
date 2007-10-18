@@ -83,10 +83,6 @@ public:
 	VWindow *GetLowerSibling(bool bVisibleOnly = true);
 	VWindow *GetHigherSibling(bool bVisibleOnly = true);
 
-	// Routines which change order of siblings
-	void Raise();
-	void Lower();
-
 	// Visibility routines
 	void SetVisibility(bool NewVisibility);
 	void Show() { SetVisibility(true); }
@@ -215,8 +211,6 @@ private:
 public:
 	DECLARE_FUNCTION(Destroy)
 	DECLARE_FUNCTION(NewChild)
-	DECLARE_FUNCTION(Raise)
-	DECLARE_FUNCTION(Lower)
 	DECLARE_FUNCTION(SetVisibility)
 	DECLARE_FUNCTION(Show)
 	DECLARE_FUNCTION(Hide)

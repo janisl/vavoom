@@ -43,6 +43,10 @@ private:
 	friend class VWindow;
 
 public:
+	//	Methods to move widget on top or bottom.
+	void Lower();
+	void Raise();
+
 	virtual void OnChildAdded(VWidget* Child)
 	{
 		P_PASS_SELF;
@@ -55,4 +59,7 @@ public:
 		P_PASS_REF(Child);
 		EV_RET_VOID(NAME_OnChildRemoved);
 	}
+
+	DECLARE_FUNCTION(Raise)
+	DECLARE_FUNCTION(Lower)
 };

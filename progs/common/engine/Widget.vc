@@ -44,6 +44,10 @@ Widget Parent
 	}
 }
 
+//	Methods to move widget on top or bottom.
+native void Lower();
+native void Raise();
+
 //==========================================================================
 //
 //	OnChildAdded

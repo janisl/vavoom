@@ -245,78 +245,6 @@ VWindow *VWindow::GetHigherSibling(bool bVisibleOnly)
 
 //==========================================================================
 //
-//	VWindow::Raise
-//
-//==========================================================================
-
-void VWindow::Raise()
-{
-	guard(VWindow::Raise);
-	if (!ParentWidget)
-	{
-		Sys_Error("Can't raise root window");
-	}
-	if (ParentWidget->LastChildWidget == this)
-	{
-		//	Already there
-		return;
-	}
-	//	Unlink from current location
-	if (PrevWidget)
-	{
-		PrevWidget->NextWidget = NextWidget;
-	}
-	else
-	{
-		ParentWidget->FirstChildWidget = NextWidget;
-	}
-	NextWidget->PrevWidget = PrevWidget;
-	//	Link on top
-	PrevWidget = ParentWidget->LastChildWidget;
-	NextWidget = NULL;
-	ParentWidget->LastChildWidget->NextWidget = this;
-	ParentWidget->LastChildWidget = this;
-	unguard;
-}
-
-//==========================================================================
-//
-//	VWindow::Lower
-//
-//==========================================================================
-
-void VWindow::Lower()
-{
-	guard(VWindow::Lower);
-	if (!ParentWidget)
-	{
-		Sys_Error("Can't lower root window");
-	}
-	if (ParentWidget->FirstChildWidget == this)
-	{
-		//	Already there
-		return;
-	}
-	//	Unlink from current location
-	PrevWidget->NextWidget = NextWidget;
-	if (NextWidget)
-	{
-		NextWidget->PrevWidget = PrevWidget;
-	}
-	else
-	{
-		ParentWidget->LastChildWidget = PrevWidget;
-	}
-	//	Link on bottom
-	PrevWidget = NULL;
-	NextWidget = ParentWidget->FirstChildWidget;
-	ParentWidget->FirstChildWidget->PrevWidget = this;
-	ParentWidget->FirstChildWidget = this;
-	unguard;
-}
-
-//==========================================================================
-//
 //	VWindow::SetVisibility
 //
 //==========================================================================
@@ -581,16 +509,6 @@ IMPLEMENT_FUNCTION(VWindow, NewChild)
 	P_GET_PTR(VClass, ChildClass);
 	P_GET_SELF;
 	RET_REF(CreateNewWindow(ChildClass, Self));
-}
-IMPLEMENT_FUNCTION(VWindow, Raise)
-{
-	P_GET_SELF;
-	Self->Raise();
-}
-IMPLEMENT_FUNCTION(VWindow, Lower)
-{
-	P_GET_SELF;
-	Self->Lower();
 }
 IMPLEMENT_FUNCTION(VWindow, SetVisibility)
 {

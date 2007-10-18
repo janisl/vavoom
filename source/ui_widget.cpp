@@ -103,3 +103,99 @@ void VWidget::RemoveChild(VWidget* InChild)
 	OnChildRemoved(InChild);
 	unguard;
 }
+
+//==========================================================================
+//
+//	VWidget::Lower
+//
+//==========================================================================
+
+void VWidget::Lower()
+{
+	guard(VWidget::Lower);
+	if (!ParentWidget)
+	{
+		Sys_Error("Can't lower root window");
+	}
+
+	if (ParentWidget->FirstChildWidget == this)
+	{
+		//	Already there
+		return;
+	}
+
+	//	Unlink from current location
+	PrevWidget->NextWidget = NextWidget;
+	if (NextWidget)
+	{
+		NextWidget->PrevWidget = PrevWidget;
+	}
+	else
+	{
+		ParentWidget->LastChildWidget = PrevWidget;
+	}
+
+	//	Link on bottom
+	PrevWidget = NULL;
+	NextWidget = ParentWidget->FirstChildWidget;
+	ParentWidget->FirstChildWidget->PrevWidget = this;
+	ParentWidget->FirstChildWidget = this;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VWidget::Raise
+//
+//==========================================================================
+
+void VWidget::Raise()
+{
+	guard(VWidget::Raise);
+	if (!ParentWidget)
+	{
+		Sys_Error("Can't raise root window");
+	}
+
+	if (ParentWidget->LastChildWidget == this)
+	{
+		//	Already there
+		return;
+	}
+
+	//	Unlink from current location
+	NextWidget->PrevWidget = PrevWidget;
+	if (PrevWidget)
+	{
+		PrevWidget->NextWidget = NextWidget;
+	}
+	else
+	{
+		ParentWidget->FirstChildWidget = NextWidget;
+	}
+
+	//	Link on top
+	PrevWidget = ParentWidget->LastChildWidget;
+	NextWidget = NULL;
+	ParentWidget->LastChildWidget->NextWidget = this;
+	ParentWidget->LastChildWidget = this;
+	unguard;
+}
+
+//==========================================================================
+//
+//	Natives
+//
+//==========================================================================
+
+IMPLEMENT_FUNCTION(VWidget, Lower)
+{
+	P_GET_SELF;
+	Self->Lower();
+}
+
+IMPLEMENT_FUNCTION(VWidget, Raise)
+{
+	P_GET_SELF;
+	Self->Raise();
+}
