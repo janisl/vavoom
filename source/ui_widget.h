@@ -37,6 +37,13 @@ private:
 	VWidget*			PrevWidget;
 	VWidget*			NextWidget;
 
+	//	Position of the widget in the parent widget.
+	int					PosX;
+	int					PosY;
+	//	Size of the child area of the widget.
+	int					SizeWidth;
+	int					SizeHeight;
+
 	void AddChild(VWidget*);
 	void RemoveChild(VWidget*);
 

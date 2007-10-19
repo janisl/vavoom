@@ -318,8 +318,8 @@ void VWindow::SetSelectability(bool NewSelectability)
 void VWindow::SetPos(int NewX, int NewY)
 {
 	guard(VWindow::SetPos);
-	X = NewX;
-	Y = NewY;
+	PosX = NewX;
+	PosY = NewY;
 	ClipTree();
 	ConfigurationChanged();
 	unguard;
@@ -334,8 +334,8 @@ void VWindow::SetPos(int NewX, int NewY)
 void VWindow::SetSize(int NewWidth, int NewHeight)
 {
 	guard(VWindow::SetSize);
-	Width = NewWidth;
-	Height = NewHeight;
+	SizeWidth = NewWidth;
+	SizeHeight = NewHeight;
 	ClipTree();
 	ConfigurationChanged();
 	unguard;
@@ -350,10 +350,10 @@ void VWindow::SetSize(int NewWidth, int NewHeight)
 void VWindow::SetConfiguration(int NewX, int NewY, int NewWidth, int HewHeight)
 {
 	guard(VWindow::SetConfiguration);
-	X = NewX;
-	Y = NewY;
-	Width = NewWidth;
-	Height = HewHeight;
+	PosX = NewX;
+	PosY = NewY;
+	SizeWidth = NewWidth;
+	SizeHeight = HewHeight;
 	ClipTree();
 	ConfigurationChanged();
 	unguard;
@@ -368,7 +368,7 @@ void VWindow::SetConfiguration(int NewX, int NewY, int NewWidth, int HewHeight)
 void VWindow::SetWidth(int NewWidth)
 {
 	guard(VWindow::SetWidth);
-	Width = NewWidth;
+	SizeWidth = NewWidth;
 	ClipTree();
 	ConfigurationChanged();
 	unguard;
@@ -383,7 +383,7 @@ void VWindow::SetWidth(int NewWidth)
 void VWindow::SetHeight(int NewHeight)
 {
 	guard(VWindow::SetHeight);
-	Height = NewHeight;
+	SizeHeight = NewHeight;
 	ClipTree();
 	ConfigurationChanged();
 	unguard;
@@ -440,13 +440,13 @@ void VWindow::ClipTree()
 	guard(VWindow::ClipTree);
 	if (ParentWidget)
 	{
-		ClipRect = VClipRect(static_cast<VWindow*>(ParentWidget)->ClipRect.OriginX + X, 
-			static_cast<VWindow*>(ParentWidget)->ClipRect.OriginY + Y, Width, Height);
+		ClipRect = VClipRect(static_cast<VWindow*>(ParentWidget)->ClipRect.OriginX + PosX,
+			static_cast<VWindow*>(ParentWidget)->ClipRect.OriginY + PosY, SizeWidth, SizeHeight);
 		ClipRect.Intersect(static_cast<VWindow*>(ParentWidget)->ClipRect);
 	}
 	else
 	{
-		ClipRect = VClipRect(X, Y, Width, Height);
+		ClipRect = VClipRect(PosX, PosY, SizeWidth, SizeHeight);
 	}
 	for (VWindow *c = static_cast<VWindow*>(FirstChildWidget); c; c = static_cast<VWindow*>(c->NextWidget))
 	{

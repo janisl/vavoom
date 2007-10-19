@@ -53,11 +53,6 @@ class VWindow : public VWidget
 	};
 	vuint32 WindowFlags;
 
-	int X;
-	int Y;
-	int Width;
-	int Height;
-
 	// Clipping rectangle
 	VClipRect ClipRect;			// Clipping rectangle; maintained at all times
 

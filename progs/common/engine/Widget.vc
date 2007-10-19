@@ -35,13 +35,41 @@ private readonly Widget			LastChildWidget;
 private readonly Widget			PrevWidget;
 private readonly Widget			NextWidget;
 
+//	Position of the widget in the parent widget.
+private int						PosX;
+private int						PosY;
+//	Size of the child area of the widget.
+private int						SizeWidth;
+private int						SizeHeight;
+
 //==========================================================================
 Widget Parent
 {
-	get
-	{
-		return ParentWidget;
-	}
+	get { return ParentWidget; }
+}
+
+int X
+{
+	get { return PosX; }
+	default PosX;
+}
+
+int Y
+{
+	get { return PosY; }
+	default PosY;
+}
+
+int Width
+{
+	get { return SizeWidth; }
+	default SizeWidth;
+}
+
+int Height
+{
+	get { return SizeHeight; }
+	default SizeHeight;
 }
 
 //	Methods to move widget on top or bottom.

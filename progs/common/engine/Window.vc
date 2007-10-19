@@ -39,11 +39,6 @@ readonly bool bIsInitialised;	// True if the window has been initialised
 // Destructor information
 readonly bool bBeingDestroyed;	// TRUE if this window is going bye-bye
 
-int X;
-int Y;
-int Width;
-int Height;
-
 readonly ClipRect ClipRect;
 
 readonly GC WinGC;
