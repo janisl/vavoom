@@ -37,7 +37,7 @@ void InitWindow()
 	Disable();
 }
 
-void DrawWindow(GC gc)
+void DrawWindow()
 {
 	R_DrawModelFrame(Origin, Angle, Model, Frame, Skin);
 }

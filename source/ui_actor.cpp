@@ -45,7 +45,7 @@ class VActorDisplayWindow : public VWindow
 	VActorDisplayWindow();
 
 	void SetState(VState*);
-	void DrawWindow(VGC*);
+	void DrawWindow();
 
 	DECLARE_FUNCTION(SetState)
 };
@@ -100,7 +100,7 @@ void VActorDisplayWindow::SetState(VState* AState)
 //
 //==========================================================================
 
-void VActorDisplayWindow::DrawWindow(VGC*)
+void VActorDisplayWindow::DrawWindow()
 {
 	guard(VActorDisplayWindow::DrawWindow);
 	// draw the current frame in the middle of the screen

@@ -30,9 +30,9 @@ void SetPage(name pageName)
 	Handle = R_RegisterPic(pageName);
 }
 
-void DrawWindow(GC gc)
+void DrawWindow()
 {
-	gc.DrawFullScreenPic(Handle);
+	DrawFullScreenPic(Handle);
 }
 
 defaultproperties

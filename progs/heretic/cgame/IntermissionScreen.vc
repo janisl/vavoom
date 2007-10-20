@@ -217,7 +217,7 @@ void Tick(float DeltaTime)
 //
 //==========================================================================
 
-void DrawWindow(GC gc)
+void DrawWindow()
 {
 	if (interstate == IMS_Done)
 	{
@@ -258,7 +258,7 @@ void DrawWindow(GC gc)
 		}
 		break;
 	case IMS_Text:	// displaying text
-		IM_DrawText(gc);
+		IM_DrawText();
 		break;
 	case IMS_Done:	// waiting before going to the next level
 		break;
@@ -879,14 +879,14 @@ void IM_InitText()
 //
 //==========================================================================
 
-void IM_DrawText(GC gc)
+void IM_DrawText()
 {
 	int count;
 
 	// erase the entire screen to a tiled background
 	if (TextPic)
 	{
-		gc.DrawFullScreenPic(TextPic);
+		DrawFullScreenPic(TextPic);
 	}
 	else if (TextFlat)
 	{

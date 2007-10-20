@@ -55,16 +55,16 @@ void InitSlot()
 //
 //==========================================================================
 
-int DrawSlot(GC gc, int y, string text, bool entering)
+int DrawSlot(int y, string text, bool entering)
 {
 	int xx;
 	int j;
 
-	gc.DrawIcon(0, y, pic_M_FSLOT);
+	DrawIcon(0, y, pic_M_FSLOT);
 
 	T_SetFont(font_small);
 	T_SetAlign(hleft, vtop);
-	gc.DrawText(5, y + 5, text);
+	DrawText(5, y + 5, text);
 	if (entering)
 	{
 		T_DrawCursor();

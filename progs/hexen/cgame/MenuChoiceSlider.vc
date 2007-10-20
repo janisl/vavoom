@@ -65,7 +65,7 @@ void InitWindow()
 	pic_M_SLDKB = R_RegisterPic('m_sldkb');
 }
 
-void DrawWindow(GC gc)
+void DrawWindow()
 {
 	int i;
 	int xx;
@@ -76,19 +76,19 @@ void DrawWindow(GC gc)
 		T_SetFont(font_yellow);
 	}
 	T_SetAlign(hright, vtop);
-	gc.DrawText(0, 0, Text);
+	DrawText(0, 0, Text);
 
 	xx = 0;
-	gc.DrawIcon(xx, 0, pic_M_SLDLT);
+	DrawIcon(xx, 0, pic_M_SLDLT);
 	xx += 32;
 	for (i = 0; i < 12; i++)
 	{
-		gc.DrawIcon(xx, 0, i & 1 ? pic_M_SLDMD1 : pic_M_SLDMD2);
+		DrawIcon(xx, 0, i & 1 ? pic_M_SLDMD1 : pic_M_SLDMD2);
 		xx += 8;
 	}
-	gc.DrawIcon(xx, 0, pic_M_SLDRT);
+	DrawIcon(xx, 0, pic_M_SLDRT);
 	xx = 30 + ftoi((Value - MinValue) * 100.0 / (MaxValue - MinValue));
-	gc.DrawIcon(xx, 7, pic_M_SLDKB);
+	DrawIcon(xx, 7, pic_M_SLDKB);
 }
 
 bool Key(int key)

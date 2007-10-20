@@ -42,10 +42,10 @@ void Tick(float DeltaTime)
 	Time += DeltaTime;
 }
 
-void DrawWindow(GC gc)
+void DrawWindow()
 {
 	// DRAW SKULL
-	gc.DrawIcon(-32, -5, selector_pics[ftoi(Time * 4.0) & 1]);
+	DrawIcon(-32, -5, selector_pics[ftoi(Time * 4.0) & 1]);
 }
 
 defaultproperties

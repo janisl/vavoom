@@ -35,9 +35,9 @@ void InitWindow()
 	Handle = R_RegisterPic(PicName);
 }
 
-void DrawWindow(GC gc)
+void DrawWindow()
 {
-	gc.DrawIcon(0, 0, Handle);
+	DrawIcon(0, 0, Handle);
 }
 
 defaultproperties

@@ -168,10 +168,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\common\engine\GC.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\common\engine\Level.vc"
 				>
 			</File>

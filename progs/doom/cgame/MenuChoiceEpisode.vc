@@ -35,17 +35,17 @@ bool bNoSkillMenu;
 //
 //==========================================================================
 
-void DrawWindow(GC gc)
+void DrawWindow()
 {
 	if (PicHandle > 0)
 	{
-		gc.DrawIcon(0, 0, PicHandle);
+		DrawIcon(0, 0, PicHandle);
 	}
 	else
 	{
 		T_SetFont(font_big);
 		T_SetAlign(hleft, vtop);
-		gc.DrawText(0, 0, Text);
+		DrawText(0, 0, Text);
 	}
 }
 

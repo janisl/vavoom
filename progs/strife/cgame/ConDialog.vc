@@ -169,11 +169,11 @@ void SetSpeech(int SpeechNum)
 	SetDefaultChoice();
 }
 
-void DrawWindow(GC gc)
+void DrawWindow()
 {
 	if (BackPic != -1)
 	{
-		gc.DrawFullScreenPic(BackPic);
+		DrawFullScreenPic(BackPic);
 	}
 	else
 	{
@@ -182,7 +182,7 @@ void DrawWindow(GC gc)
 	R_ShadeRect(60, 438 - NumChoices * 22, 501, NumChoices * 22, 0.3);
 	T_SetFont(font_small);
 	T_SetAlign(hleft, vtop);
-	gc.DrawText(48, 48, SpeakerName);
+	DrawText(48, 48, SpeakerName);
 	T_DrawTextW(64, 72, SpeechText, 640 - 128);
 }
 

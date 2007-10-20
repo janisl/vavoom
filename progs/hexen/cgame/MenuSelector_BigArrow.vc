@@ -42,9 +42,9 @@ void Tick(float DeltaTime)
 	Time += DeltaTime;
 }
 
-void DrawWindow(GC gc)
+void DrawWindow()
 {
-	gc.DrawIcon(-28, -1, selector_pics[ftoi(Time * 2.0) & 1]);
+	DrawIcon(-28, -1, selector_pics[ftoi(Time * 2.0) & 1]);
 }
 
 defaultproperties

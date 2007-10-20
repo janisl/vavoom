@@ -63,26 +63,26 @@ void InitWindow()
 	pic_M_THERMO = R_RegisterPic('m_thermo');
 }
 
-void DrawWindow(GC gc)
+void DrawWindow()
 {
 	int i;
 	int xx;
 
 	T_SetFont(font_small);
 	T_SetAlign(hright, vtop);
-	gc.DrawText(0, 0, Text);
+	DrawText(0, 0, Text);
 
 	xx =  8;
-	gc.DrawIcon(xx, 0, pic_M_THERML);
+	DrawIcon(xx, 0, pic_M_THERML);
 	xx += 8;
 	for (i = 0; i < 13; i++)
 	{
-		gc.DrawIcon(xx, 0, pic_M_THERMM);
+		DrawIcon(xx, 0, pic_M_THERMM);
 		xx += 8;
 	}
-	gc.DrawIcon(xx, 0, pic_M_THERMR);
+	DrawIcon(xx, 0, pic_M_THERMR);
 	xx = 8 + 6 + ftoi((Value - MinValue) * 100.0 / (MaxValue - MinValue));
-	gc.DrawIcon(xx, 0, pic_M_THERMO);
+	DrawIcon(xx, 0, pic_M_THERMO);
 }
 
 bool Key(int key)

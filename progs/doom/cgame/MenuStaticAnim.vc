@@ -57,14 +57,14 @@ void Tick(float DeltaTime)
 	Time += DeltaTime;
 }
 
-void DrawWindow(GC gc)
+void DrawWindow()
 {
 	int frame = (ftoi(Time * itof(Speed)) + StartFrame) % NumFrames;
 	if (bBackwards)
 	{
 		frame = NumFrames - frame - 1;
 	}
-	gc.DrawIcon(0, 0, Frames[frame]);
+	DrawIcon(0, 0, Frames[frame]);
 }
 
 defaultproperties

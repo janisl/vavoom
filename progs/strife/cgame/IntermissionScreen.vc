@@ -91,7 +91,7 @@ void Tick(float DeltaTime)
 //
 //==========================================================================
 
-void DrawWindow(GC gc)
+void DrawWindow()
 {
 	if (interstate == IMS_Done)
 	{
@@ -101,7 +101,7 @@ void DrawWindow(GC gc)
 	switch (interstate)
 	{
 	case IMS_Text:
-		IM_DrawHubText(gc);
+		IM_DrawHubText();
 	}
 }
 
@@ -160,11 +160,11 @@ void IM_InitHubText()
 //
 //===========================================================================
 
-void IM_DrawHubText(GC gc)
+void IM_DrawHubText()
 {
 	if (TextPic)
 	{
-		gc.DrawFullScreenPic(TextPic);
+		DrawFullScreenPic(TextPic);
 	}
 	else if (TextFlat)
 	{

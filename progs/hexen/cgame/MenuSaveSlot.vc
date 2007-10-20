@@ -39,15 +39,15 @@ void InitWindow()
 	InitSlot();
 }
 
-void DrawWindow(GC gc)
+void DrawWindow()
 {
 	if (bEnteringText && bSelected)
 	{
-		DrawSlot(gc, 0, EnterText, true);
+		DrawSlot(0, EnterText, true);
 	}
 	else
 	{
-		DrawSlot(gc, 0, Text, false);
+		DrawSlot(0, Text, false);
 	}
 }
 

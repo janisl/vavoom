@@ -42,15 +42,15 @@ void ActivateEvent()
 	}
 }
 
-void DrawWindow(GC gc)
+void DrawWindow()
 {
 	if (PicHandle > 0)
 	{
-		gc.DrawIcon(0, 0, PicHandle);
+		DrawIcon(0, 0, PicHandle);
 	}
 	else
 	{
-		::DrawWindow(gc);
+		::DrawWindow();
 	}
 }
 

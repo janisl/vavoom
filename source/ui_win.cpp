@@ -70,7 +70,6 @@ void VWindow::Init(VWindow *InParent)
 {
 	guard(VWindow::Init);
 	ParentWidget = InParent;
-	WinGC = Spawn<VGC>();
 	if (ParentWidget)
 	{
 		static_cast<VWindow*>(ParentWidget)->AddChild(this);
@@ -106,8 +105,6 @@ void VWindow::Destroy()
 	KillAllChildren();
 	if (ParentWidget)
 		static_cast<VWindow*>(ParentWidget)->RemoveChild(this);
-	if (WinGC)
-		WinGC->ConditionalDestroy();
 	Super::Destroy();
 	unguard;
 }
@@ -419,13 +416,12 @@ void VWindow::DrawTree()
 		//	Nowhere to draw.
 		return;
 	}
-	WinGC->SetClipRect(ClipRect);
-	DrawWindow(WinGC);
+	DrawWindow();
 	for (VWindow *c = static_cast<VWindow*>(FirstChildWidget); c; c = static_cast<VWindow*>(c->NextWidget))
 	{
 		c->DrawTree();
 	}
-	PostDrawWindow(WinGC);
+	PostDrawWindow();
 	unguard;
 }
 

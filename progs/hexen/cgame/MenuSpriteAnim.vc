@@ -43,11 +43,11 @@ void Tick(float DeltaTime)
 	Time += DeltaTime;
 }
 
-void DrawWindow(GC gc)
+void DrawWindow()
 {
 	int frame = ftoi(Time * itof(Speed)) % NumFrames;
 
-	R_DrawSpritePatch(ftoi(gc.ClipRect.OriginX), ftoi(gc.ClipRect.OriginY),
+	R_DrawSpritePatch(ftoi(ClipRect.OriginX), ftoi(ClipRect.OriginY),
 		SprDef, frame, 0, Translation);
 }
 

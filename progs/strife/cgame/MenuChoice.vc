@@ -59,21 +59,21 @@ void InitSlot()
 //
 //==========================================================================
 
-int DrawSlot(GC gc, int y, string text, bool entering)
+int DrawSlot(int y, string text, bool entering)
 {
 	int xx;
 	int j;
 
-	gc.DrawIcon(2, y + 12, pic_M_LSLEFT);
+	DrawIcon(2, y + 12, pic_M_LSLEFT);
 	for (j = 0, xx = 10; j < 24; j++, xx += 8)
 	{
-		gc.DrawIcon(xx, y + 12, pic_M_LSCNTR);
+		DrawIcon(xx, y + 12, pic_M_LSCNTR);
 	}
-	gc.DrawIcon(xx, y + 12, pic_M_LSRGHT);
+	DrawIcon(xx, y + 12, pic_M_LSRGHT);
 
 	T_SetFont(font_small);
 	T_SetAlign(hleft, vtop);
-	gc.DrawText(8, y + 5, text);
+	DrawText(8, y + 5, text);
 	if (entering)
 	{
 		T_DrawCursor();

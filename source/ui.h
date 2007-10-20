@@ -27,13 +27,11 @@
 #define _UI_H
 
 // Forward declarations
-class	VGC;
 class	VWidget;
 class	VWindow;
 class	VModalWindow;
 class	VRootWindow;
 
-#include "ui_gc.h"
 #include "ui_widget.h"
 #include "ui_win.h"
 #include "ui_modal.h"

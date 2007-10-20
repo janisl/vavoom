@@ -29,33 +29,33 @@ string Text;
 string CommandOn;
 string CommandOff;
 
-void DrawWindow(GC gc)
+void DrawWindow()
 {
 	int key1;
 	int key2;
 
 	T_SetFont(font_small);
 	T_SetAlign(hright, vtop);
-	gc.DrawText(0, 0, Text);
+	DrawText(0, 0, Text);
 
 	IN_GetBindingKeys(CommandOn, &key1, &key2);
 
 	T_SetAlign(hleft, vtop);
 	if (key1 >= 0)
 	{
-		gc.DrawText(10, 0, KeyNameForNum(key1));
+		DrawText(10, 0, KeyNameForNum(key1));
 	}
 	else
 	{
-		gc.DrawText(10, 0, "---");
+		DrawText(10, 0, "---");
 	}
 	if (key2 >= 0)
 	{
-		gc.DrawText(100, 0, KeyNameForNum(key2));
+		DrawText(100, 0, KeyNameForNum(key2));
 	}
 	else
 	{
-		gc.DrawText(100, 0, "---");
+		DrawText(100, 0, "---");
 	}
 }
 

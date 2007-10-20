@@ -125,9 +125,9 @@ void Tick(float DeltaTime)
 //
 //==========================================================================
 
-void DrawWindow(GC gc)
+void DrawWindow()
 {
-	gc.DrawFullScreenPic(page_pic);
+	DrawFullScreenPic(page_pic);
 	if (demosequence == 1)
 	{
 		R_DrawPic(4, 440, advisor_pic);

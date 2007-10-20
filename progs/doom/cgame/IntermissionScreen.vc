@@ -459,7 +459,7 @@ void Tick(float DeltaTime)
 //
 //==========================================================================
 
-void DrawWindow(GC gc)
+void DrawWindow()
 {
 	T_SetFont(font_big);
 
@@ -497,7 +497,7 @@ void DrawWindow(GC gc)
 		break;
 
 	case IMS_Text:
-		IM_DrawText(gc);
+		IM_DrawText();
 		break;
 
 	case IMS_Done:
@@ -1659,14 +1659,14 @@ void IM_InitText()
 //
 //==========================================================================
 
-void IM_DrawText(GC gc)
+void IM_DrawText()
 {
 	int count;
 
 	// erase the entire screen to a tiled background
 	if (TextPic)
 	{
-		gc.DrawFullScreenPic(TextPic);
+		DrawFullScreenPic(TextPic);
 	}
 	else if (TextFlat)
 	{

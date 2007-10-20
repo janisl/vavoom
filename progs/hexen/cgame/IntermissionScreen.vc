@@ -126,7 +126,7 @@ void Tick(float DeltaTime)
 //
 //==========================================================================
 
-void DrawWindow(GC gc)
+void DrawWindow()
 {
 	if (interstate == IMS_Done)
 	{
@@ -136,11 +136,11 @@ void DrawWindow(GC gc)
 	switch (interstate)
 	{
 	case IMS_Stats:
-		IM_DrawDeathTally(gc);
+		IM_DrawDeathTally();
 		break;
 
 	case IMS_Text:
-		IM_DrawHubText(gc);
+		IM_DrawHubText();
 	}
 }
 
@@ -290,11 +290,11 @@ void IM_InitHubText()
 //
 //===========================================================================
 
-void IM_DrawHubText(GC gc)
+void IM_DrawHubText()
 {
 	if (TextPic)
 	{
-		gc.DrawFullScreenPic(TextPic);
+		DrawFullScreenPic(TextPic);
 	}
 	else if (TextFlat)
 	{
@@ -366,7 +366,7 @@ void IM_DrawNumberBold(int val, int x, int y, int wrapThresh)
 //
 //========================================================================
 
-void IM_DrawDeathTally(GC gc)
+void IM_DrawDeathTally()
 {
 	int i, j;
 	float xPos, yPos;
@@ -377,7 +377,7 @@ void IM_DrawDeathTally(GC gc)
 	PlayerReplicationInfo RepInfo;
 	PlayerReplicationInfo Other;
 
-	gc.DrawFullScreenPic(patchINTERPIC);
+	DrawFullScreenPic(patchINTERPIC);
 	if (intertime < TALLY_EFFECT_TIME)
 	{
 		showTotals = false;

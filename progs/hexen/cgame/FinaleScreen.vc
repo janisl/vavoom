@@ -125,7 +125,7 @@ void Tick(float DeltaTime)
 //
 //==========================================================================
 
-void DrawWindow(GC gc)
+void DrawWindow()
 {
 	F_DrawPic();
 	switch (FinaleStage)

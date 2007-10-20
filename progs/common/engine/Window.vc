@@ -41,8 +41,6 @@ readonly bool bBeingDestroyed;	// TRUE if this window is going bye-bye
 
 readonly ClipRect ClipRect;
 
-readonly GC WinGC;
-
 native void Destroy();
 native Window NewChild(class<Window> ChildClass);
 native void SetVisibility(bool bNewVisibility);
@@ -152,7 +150,7 @@ void SensitivityChanged(bool bNewSensitivity)
 //
 //==========================================================================
 
-void DrawWindow(GC gc)
+void DrawWindow()
 {
 }
 
@@ -164,7 +162,7 @@ void DrawWindow(GC gc)
 //
 //==========================================================================
 
-void PostDrawWindow(GC gc)
+void PostDrawWindow()
 {
 }
 
@@ -178,6 +176,23 @@ void PostDrawWindow(GC gc)
 
 void Tick(float DeltaTime)
 {
+}
+
+void DrawIcon(int X, int Y, int Handle)
+{
+	R_DrawPic(X + ftoi(ClipRect.OriginX), Y + ftoi(ClipRect.OriginY), Handle);
+}
+
+void DrawText(int X, int Y, string Text)
+{
+	T_DrawText(X + ftoi(ClipRect.OriginX), Y + ftoi(ClipRect.OriginY), Text);
+}
+
+void DrawFullScreenPic(int Handle)
+{
+	SetVirtualScreen(320, 200);
+	R_DrawPic(0, 0, Handle);
+	SetVirtualScreen(640, 480);
 }
 
 defaultproperties

@@ -62,7 +62,7 @@ void InitWindow()
 		Value = MaxValue - 1;
 }
 
-void DrawWindow(GC gc)
+void DrawWindow()
 {
 	int xx;
 
@@ -79,7 +79,7 @@ void DrawWindow(GC gc)
 	{
 		T_SetAlign(hright, vtop);
 	}
-	gc.DrawText(0, 0, Text);
+	DrawText(0, 0, Text);
 
 	if (bLeftAlign)
 	{
@@ -90,7 +90,7 @@ void DrawWindow(GC gc)
 		xx = 10;
 	}
 	T_SetAlign(hleft, vtop);
-	gc.DrawText(xx, 0, EnumNames[Value]);
+	DrawText(xx, 0, EnumNames[Value]);
 }
 
 bool Key(int key)

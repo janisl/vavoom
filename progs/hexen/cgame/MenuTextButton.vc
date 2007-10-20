@@ -48,11 +48,11 @@ bool Key(int key)
 	return false;
 }
 
-void DrawWindow(GC gc)
+void DrawWindow()
 {
 	T_SetFont(bSelected ? TextSelectedFont : TextFont);
 	T_SetAlign(TextHAlign, TextVAlign);
-	gc.DrawText(0, 0, Text);
+	DrawText(0, 0, Text);
 }
 
 defaultproperties

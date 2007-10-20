@@ -17,7 +17,6 @@ EXTRA_DIST = \
 	engine/ClientGameBase.vc \
 	engine/Entity.vc \
 	engine/GameInfo.vc \
-	engine/GC.vc \
 	engine/Level.vc \
 	engine/LevelInfo.vc \
 	engine/ModalWindow.vc \

@@ -63,9 +63,9 @@ void Tick(float DeltaTime)
 //
 //==========================================================================
 
-void DrawWindow(GC gc)
+void DrawWindow()
 {
-	gc.DrawFullScreenPic(FinalePic);
+	DrawFullScreenPic(FinalePic);
 }
 
 //===========================================================================

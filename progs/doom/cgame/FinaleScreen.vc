@@ -141,7 +141,7 @@ void Tick(float DeltaTime)
 //
 //==========================================================================
 
-void DrawWindow(GC gc)
+void DrawWindow()
 {
 	if (FinaleType == 'EndGameBunny')
 	{
@@ -157,7 +157,7 @@ void DrawWindow(GC gc)
 	}
 	else
 	{
-		gc.DrawFullScreenPic(fpage1);
+		DrawFullScreenPic(fpage1);
 	}
 }
 
@@ -167,7 +167,7 @@ void DrawWindow(GC gc)
 //
 //==========================================================================
 
-void PostDrawWindow(GC gc)
+void PostDrawWindow()
 {
 	if (FinaleType == 'EndGameCast')
 	{

@@ -214,7 +214,7 @@ bool Key(int key)
 //
 //==========================================================================
 
-void DrawWindow(GC gc)
+void DrawWindow()
 {
 	R_ShadeRect(0, 0, 640, 480, GetCvarF('menu_darkening'));
 }

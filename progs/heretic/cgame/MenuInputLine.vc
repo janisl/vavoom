@@ -40,15 +40,15 @@ void ValueChanged()
 {
 }
 
-void DrawWindow(GC gc)
+void DrawWindow()
 {
 	T_SetFont(font_small);
 	T_SetAlign(hleft, vtop);
-	gc.DrawText(0, 0, Text);
+	DrawText(0, 0, Text);
 	if (bEnteringText)
-		DrawSlot(gc, 12, EnterText, true);
+		DrawSlot(12, EnterText, true);
 	else
-		DrawSlot(gc, 12, Value, false);
+		DrawSlot(12, Value, false);
 }
 
 bool Key(int key)

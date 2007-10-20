@@ -31,11 +31,11 @@ void InitWindow()
 	Disable();
 }
 
-void DrawWindow(GC gc)
+void DrawWindow()
 {
 	T_SetFont(font_small);
 	T_SetAlign(hleft, vtop);
-	gc.DrawText(2, 0, ">");
+	DrawText(2, 0, ">");
 }
 
 defaultproperties
