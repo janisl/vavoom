@@ -23,6 +23,20 @@
 //**
 //**************************************************************************
 
+struct VClipRectNew
+{
+	float		OriginX;	//	Origin of the widget, in absolute coordinates.
+	float		OriginY;
+
+	float		ScaleX;		//	Accomulative scale.
+	float		ScaleY;
+
+	float		ClipX1;		//	Clipping rectangle, in absolute coordinates.
+	float		ClipY1;
+	float		ClipX2;
+	float		ClipY2;
+};
+
 class VWidget : public VObject
 {
 	DECLARE_CLASS(VWidget, VObject, 0)
@@ -43,11 +57,17 @@ private:
 	//	Size of the child area of the widget.
 	int					SizeWidth;
 	int					SizeHeight;
+	//	Scaling of the widget.
+	float				SizeScaleX;
+	float				SizeScaleY;
+
+	VClipRectNew		ClipRectNew;
 
 	void AddChild(VWidget*);
 	void RemoveChild(VWidget*);
 
 	friend class VWindow;
+	friend class VRootWindow;
 
 public:
 	//	Methods to move widget on top or bottom.
@@ -67,6 +87,10 @@ public:
 		EV_RET_VOID(NAME_OnChildRemoved);
 	}
 
+	void TestDrawImage(int X, int Y, int Handle);
+
 	DECLARE_FUNCTION(Raise)
 	DECLARE_FUNCTION(Lower)
+
+	DECLARE_FUNCTION(TestDrawImage)
 };

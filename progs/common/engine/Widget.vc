@@ -26,6 +26,20 @@
 class Widget : Object
 	native;
 
+struct VClipRectNew
+{
+	float		OriginX;	//	Origin of the widget, in absolote coords.
+	float		OriginY;
+
+	float		ScaleX;		//	Accomulative scale.
+	float		ScaleY;
+
+	float		ClipX1;		//	Clipping rectangle, in absolute coordinates.
+	float		ClipY1;
+	float		ClipX2;
+	float		ClipY2;
+};
+
 //	Parent container widget.
 private readonly Widget			ParentWidget;
 //	Linked list of child widgets.
@@ -41,6 +55,11 @@ private int						PosY;
 //	Size of the child area of the widget.
 private int						SizeWidth;
 private int						SizeHeight;
+//	Scaling of the widget.
+private float					SizeScaleX;
+private float					SizeScaleY;
+
+private readonly VClipRectNew	ClipRectNew;
 
 //==========================================================================
 Widget Parent
@@ -72,9 +91,23 @@ int Height
 	default SizeHeight;
 }
 
+float ScaleX
+{
+	get { return SizeScaleX; }
+	default SizeScaleX;
+}
+
+float ScaleY
+{
+	get { return SizeScaleY; }
+	default SizeScaleY;
+}
+
 //	Methods to move widget on top or bottom.
 native void Lower();
 native void Raise();
+
+native void TestDrawImage(int X, int Y, int Handle);
 
 //==========================================================================
 //
@@ -102,4 +135,6 @@ void OnChildRemoved(Widget Child)
 
 defaultproperties
 {
+	ScaleX = 1.0;
+	ScaleY = 1.0;
 }

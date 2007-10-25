@@ -93,6 +93,12 @@ void VRootWindow::PaintWindows()
 
 void VRootWindow::TickWindows(float DeltaTime)
 {
+	if (SizeScaleX != fScaleX)
+	{
+		SizeScaleX = fScaleX;
+		SizeScaleY = fScaleY;
+		ClipTree();
+	}
 	TickTree(DeltaTime);
 }
 

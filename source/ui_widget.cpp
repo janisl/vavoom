@@ -26,6 +26,7 @@
 // HEADER FILES ------------------------------------------------------------
 
 #include "gamedefs.h"
+#include "cl_local.h"
 #include "ui.h"
 
 // MACROS ------------------------------------------------------------------
@@ -184,6 +185,56 @@ void VWidget::Raise()
 
 //==========================================================================
 //
+//	VWidget::TestDrawImage
+//
+//==========================================================================
+
+void VWidget::TestDrawImage(int X, int Y, int Handle)
+{
+	guard(VWidget::TestDrawImage);
+	if (Handle < 0)
+	{
+		return;
+	}
+
+	picinfo_t Info;
+	GTextureManager.GetTextureInfo(Handle, &Info);
+	X -= Info.xoffset;
+	Y -= Info.yoffset;
+	float X1 = ClipRectNew.ScaleX * X + ClipRectNew.OriginX;
+	float Y1 = ClipRectNew.ScaleY * Y + ClipRectNew.OriginY;
+	float X2 = ClipRectNew.ScaleX * (X + Info.width) + ClipRectNew.OriginX;
+	float Y2 = ClipRectNew.ScaleY * (Y + Info.height) + ClipRectNew.OriginY;
+	float S1 = 0;
+	float T1 = 0;
+	float S2 = Info.width;
+	float T2 = Info.height;
+	if (X1 < ClipRectNew.ClipX1)
+	{
+		S1 = S1 + (X1 - ClipRectNew.ClipX1) / (X1 - X2) * (S2 - S1);
+		X1 = ClipRectNew.ClipX1;
+	}
+	if (X2 > ClipRectNew.ClipX2)
+	{
+		S2 = S2 + (X2 - ClipRectNew.ClipX2) / (X1 - X2) * (S2 - S1);
+		X2 = ClipRectNew.ClipX2;
+	}
+	if (Y1 < ClipRectNew.ClipY1)
+	{
+		T1 = T1 + (Y1 - ClipRectNew.ClipY1) / (Y1 - Y2) * (T2 - T1);
+		Y1 = ClipRectNew.ClipY1;
+	}
+	if (Y2 > ClipRectNew.ClipY2)
+	{
+		T2 = T2 + (Y2 - ClipRectNew.ClipY2) / (Y1 - Y2) * (T2 - T1);
+		Y2 = ClipRectNew.ClipY2;
+	}
+	Drawer->DrawPic(X1, Y1, X2, Y2, S1, T1, S2, T2, Handle, 1.0);
+	unguard;
+}
+
+//==========================================================================
+//
 //	Natives
 //
 //==========================================================================
@@ -198,4 +249,13 @@ IMPLEMENT_FUNCTION(VWidget, Raise)
 {
 	P_GET_SELF;
 	Self->Raise();
+}
+
+IMPLEMENT_FUNCTION(VWidget, TestDrawImage)
+{
+	P_GET_INT(Handle);
+	P_GET_INT(Y);
+	P_GET_INT(X);
+	P_GET_SELF;
+	Self->TestDrawImage(X, Y, Handle);
 }
