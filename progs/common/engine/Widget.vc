@@ -26,7 +26,7 @@
 class Widget : Object
 	native;
 
-struct VClipRectNew
+struct ClipRect
 {
 	float		OriginX;	//	Origin of the widget, in absolote coords.
 	float		OriginY;
@@ -59,7 +59,7 @@ private int						SizeHeight;
 private float					SizeScaleX;
 private float					SizeScaleY;
 
-private readonly VClipRectNew	ClipRectNew;
+private readonly ClipRect		ClipRect;
 
 //==========================================================================
 Widget Parent

@@ -436,45 +436,44 @@ void VWindow::ClipTree()
 	guard(VWindow::ClipTree);
 	if (ParentWidget)
 	{
-		ClipRect = VClipRect(static_cast<VWindow*>(ParentWidget)->ClipRect.OriginX + PosX,
-			static_cast<VWindow*>(ParentWidget)->ClipRect.OriginY + PosY, SizeWidth, SizeHeight);
-		ClipRect.Intersect(static_cast<VWindow*>(ParentWidget)->ClipRect);
-		ClipRectNew.OriginX = ParentWidget->ClipRectNew.OriginX + ParentWidget->ClipRectNew.ScaleX * PosX;
-		ClipRectNew.OriginY = ParentWidget->ClipRectNew.OriginY + ParentWidget->ClipRectNew.ScaleY * PosY;
-		ClipRectNew.ScaleX = ParentWidget->ClipRectNew.ScaleX * SizeScaleX;
-		ClipRectNew.ScaleY = ParentWidget->ClipRectNew.ScaleY * SizeScaleY;
-		ClipRectNew.ClipX1 = ClipRectNew.OriginX;
-		ClipRectNew.ClipY1 = ClipRectNew.OriginY;
-		ClipRectNew.ClipX2 = ClipRectNew.OriginX + ClipRectNew.ScaleX * SizeWidth;
-		ClipRectNew.ClipY2 = ClipRectNew.OriginY + ClipRectNew.ScaleY * SizeHeight;
-		if (ClipRectNew.ClipX1 < ParentWidget->ClipRectNew.ClipX1)
+		ClipRectOld = VClipRectOld(static_cast<VWindow*>(ParentWidget)->ClipRectOld.OriginX + PosX,
+			static_cast<VWindow*>(ParentWidget)->ClipRectOld.OriginY + PosY);
+		ClipRect.OriginX = ParentWidget->ClipRect.OriginX + ParentWidget->ClipRect.ScaleX * PosX;
+		ClipRect.OriginY = ParentWidget->ClipRect.OriginY + ParentWidget->ClipRect.ScaleY * PosY;
+		ClipRect.ScaleX = ParentWidget->ClipRect.ScaleX * SizeScaleX;
+		ClipRect.ScaleY = ParentWidget->ClipRect.ScaleY * SizeScaleY;
+		ClipRect.ClipX1 = ClipRect.OriginX;
+		ClipRect.ClipY1 = ClipRect.OriginY;
+		ClipRect.ClipX2 = ClipRect.OriginX + ClipRect.ScaleX * SizeWidth;
+		ClipRect.ClipY2 = ClipRect.OriginY + ClipRect.ScaleY * SizeHeight;
+		if (ClipRect.ClipX1 < ParentWidget->ClipRect.ClipX1)
 		{
-			ClipRectNew.ClipX1 = ParentWidget->ClipRectNew.ClipX1;
+			ClipRect.ClipX1 = ParentWidget->ClipRect.ClipX1;
 		}
-		if (ClipRectNew.ClipY1 < ParentWidget->ClipRectNew.ClipY1)
+		if (ClipRect.ClipY1 < ParentWidget->ClipRect.ClipY1)
 		{
-			ClipRectNew.ClipY1 = ParentWidget->ClipRectNew.ClipY1;
+			ClipRect.ClipY1 = ParentWidget->ClipRect.ClipY1;
 		}
-		if (ClipRectNew.ClipX2 > ParentWidget->ClipRectNew.ClipX2)
+		if (ClipRect.ClipX2 > ParentWidget->ClipRect.ClipX2)
 		{
-			ClipRectNew.ClipX2 = ParentWidget->ClipRectNew.ClipX2;
+			ClipRect.ClipX2 = ParentWidget->ClipRect.ClipX2;
 		}
-		if (ClipRectNew.ClipY2 > ParentWidget->ClipRectNew.ClipY2)
+		if (ClipRect.ClipY2 > ParentWidget->ClipRect.ClipY2)
 		{
-			ClipRectNew.ClipY2 = ParentWidget->ClipRectNew.ClipY2;
+			ClipRect.ClipY2 = ParentWidget->ClipRect.ClipY2;
 		}
 	}
 	else
 	{
-		ClipRect = VClipRect(PosX, PosY, SizeWidth, SizeHeight);
-		ClipRectNew.OriginX = PosX;
-		ClipRectNew.OriginY = PosY;
-		ClipRectNew.ScaleX = SizeScaleX;
-		ClipRectNew.ScaleY = SizeScaleY;
-		ClipRectNew.ClipX1 = ClipRectNew.OriginX;
-		ClipRectNew.ClipY1 = ClipRectNew.OriginY;
-		ClipRectNew.ClipX2 = ClipRectNew.OriginX + ClipRectNew.ScaleX * SizeWidth;
-		ClipRectNew.ClipY2 = ClipRectNew.OriginY + ClipRectNew.ScaleY * SizeHeight;
+		ClipRectOld = VClipRectOld(PosX, PosY);
+		ClipRect.OriginX = PosX;
+		ClipRect.OriginY = PosY;
+		ClipRect.ScaleX = SizeScaleX;
+		ClipRect.ScaleY = SizeScaleY;
+		ClipRect.ClipX1 = ClipRect.OriginX;
+		ClipRect.ClipY1 = ClipRect.OriginY;
+		ClipRect.ClipX2 = ClipRect.OriginX + ClipRect.ScaleX * SizeWidth;
+		ClipRect.ClipY2 = ClipRect.OriginY + ClipRect.ScaleY * SizeHeight;
 	}
 	for (VWindow *c = static_cast<VWindow*>(FirstChildWidget); c; c = static_cast<VWindow*>(c->NextWidget))
 	{

@@ -201,33 +201,33 @@ void VWidget::TestDrawImage(int X, int Y, int Handle)
 	GTextureManager.GetTextureInfo(Handle, &Info);
 	X -= Info.xoffset;
 	Y -= Info.yoffset;
-	float X1 = ClipRectNew.ScaleX * X + ClipRectNew.OriginX;
-	float Y1 = ClipRectNew.ScaleY * Y + ClipRectNew.OriginY;
-	float X2 = ClipRectNew.ScaleX * (X + Info.width) + ClipRectNew.OriginX;
-	float Y2 = ClipRectNew.ScaleY * (Y + Info.height) + ClipRectNew.OriginY;
+	float X1 = ClipRect.ScaleX * X + ClipRect.OriginX;
+	float Y1 = ClipRect.ScaleY * Y + ClipRect.OriginY;
+	float X2 = ClipRect.ScaleX * (X + Info.width) + ClipRect.OriginX;
+	float Y2 = ClipRect.ScaleY * (Y + Info.height) + ClipRect.OriginY;
 	float S1 = 0;
 	float T1 = 0;
 	float S2 = Info.width;
 	float T2 = Info.height;
-	if (X1 < ClipRectNew.ClipX1)
+	if (X1 < ClipRect.ClipX1)
 	{
-		S1 = S1 + (X1 - ClipRectNew.ClipX1) / (X1 - X2) * (S2 - S1);
-		X1 = ClipRectNew.ClipX1;
+		S1 = S1 + (X1 - ClipRect.ClipX1) / (X1 - X2) * (S2 - S1);
+		X1 = ClipRect.ClipX1;
 	}
-	if (X2 > ClipRectNew.ClipX2)
+	if (X2 > ClipRect.ClipX2)
 	{
-		S2 = S2 + (X2 - ClipRectNew.ClipX2) / (X1 - X2) * (S2 - S1);
-		X2 = ClipRectNew.ClipX2;
+		S2 = S2 + (X2 - ClipRect.ClipX2) / (X1 - X2) * (S2 - S1);
+		X2 = ClipRect.ClipX2;
 	}
-	if (Y1 < ClipRectNew.ClipY1)
+	if (Y1 < ClipRect.ClipY1)
 	{
-		T1 = T1 + (Y1 - ClipRectNew.ClipY1) / (Y1 - Y2) * (T2 - T1);
-		Y1 = ClipRectNew.ClipY1;
+		T1 = T1 + (Y1 - ClipRect.ClipY1) / (Y1 - Y2) * (T2 - T1);
+		Y1 = ClipRect.ClipY1;
 	}
-	if (Y2 > ClipRectNew.ClipY2)
+	if (Y2 > ClipRect.ClipY2)
 	{
-		T2 = T2 + (Y2 - ClipRectNew.ClipY2) / (Y1 - Y2) * (T2 - T1);
-		Y2 = ClipRectNew.ClipY2;
+		T2 = T2 + (Y2 - ClipRect.ClipY2) / (Y1 - Y2) * (T2 - T1);
+		Y2 = ClipRect.ClipY2;
 	}
 	Drawer->DrawPic(X1, Y1, X2, Y2, S1, T1, S2, T2, Handle, 1.0);
 	unguard;

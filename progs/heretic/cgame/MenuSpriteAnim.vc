@@ -47,7 +47,7 @@ void DrawWindow()
 {
 	int frame = ftoi(Time * itof(Speed)) % NumFrames;
 
-	R_DrawSpritePatch(ftoi(ClipRect.OriginX), ftoi(ClipRect.OriginY),
+	R_DrawSpritePatch(ftoi(ClipRectOld.OriginX), ftoi(ClipRectOld.OriginY),
 		SprDef, frame, 0, Translation);
 }
 

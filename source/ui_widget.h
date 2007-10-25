@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-struct VClipRectNew
+struct VClipRect
 {
 	float		OriginX;	//	Origin of the widget, in absolute coordinates.
 	float		OriginY;
@@ -35,6 +35,11 @@ struct VClipRectNew
 	float		ClipY1;
 	float		ClipX2;
 	float		ClipY2;
+
+	bool HasArea() const
+	{
+		return ClipX1 < ClipX2 && ClipY1 < ClipY2;
+	}
 };
 
 class VWidget : public VObject
@@ -61,7 +66,7 @@ private:
 	float				SizeScaleX;
 	float				SizeScaleY;
 
-	VClipRectNew		ClipRectNew;
+	VClipRect			ClipRect;
 
 	void AddChild(VWidget*);
 	void RemoveChild(VWidget*);

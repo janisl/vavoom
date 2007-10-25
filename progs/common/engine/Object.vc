@@ -1104,17 +1104,6 @@ struct particle_t
 	float gravity;
 };
 
-struct ClipRect
-{
-	float OriginX;		// X origin of rectangle, in absolute coordinates
-	float OriginY;		// Y origin of rectangle, in absolute coordinates
-
-	float ClipX;		// Leftmost edge of rectangle relative to origin
-	float ClipY;		// Topmost edge of rectangle relative to origin
-	float ClipWidth;	// Width of rectangle
-	float ClipHeight;	// Height of rectangle
-};
-
 struct EpisodeDef
 {
 	name		Name;
