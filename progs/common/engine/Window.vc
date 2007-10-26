@@ -26,12 +26,6 @@
 class Window : Widget
 	native;
 
-struct ClipRectOld
-{
-	float OriginX;		// X origin of rectangle, in absolute coordinates
-	float OriginY;		// Y origin of rectangle, in absolute coordinates
-};
-
 // Quick class reference
 readonly byte WindowType;			// Contains window type
 
@@ -44,8 +38,6 @@ readonly bool bIsInitialised;	// True if the window has been initialised
 
 // Destructor information
 readonly bool bBeingDestroyed;	// TRUE if this window is going bye-bye
-
-readonly ClipRectOld ClipRectOld;
 
 native void Destroy();
 native Window NewChild(class<Window> ChildClass);
@@ -182,16 +174,6 @@ void PostDrawWindow()
 
 void Tick(float DeltaTime)
 {
-}
-
-void DrawIcon(int X, int Y, int Handle)
-{
-	R_DrawPic(X + ftoi(ClipRectOld.OriginX), Y + ftoi(ClipRectOld.OriginY), Handle);
-}
-
-void DrawText(int X, int Y, string Text)
-{
-	T_DrawText(X + ftoi(ClipRectOld.OriginX), Y + ftoi(ClipRectOld.OriginY), Text);
 }
 
 void DrawFullScreenPic(int Handle)

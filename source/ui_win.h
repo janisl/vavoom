@@ -23,22 +23,6 @@
 //**
 //**************************************************************************
 
-struct VClipRectOld
-{
-	VClipRectOld()
-	{
-		OriginX = 0;
-		OriginY = 0;
-	}
-	VClipRectOld(float NewClipX, float NewClipY)
-	{
-		OriginX = NewClipX;
-		OriginY = NewClipY;
-	}
-	float OriginX;
-	float OriginY;
-};
-
 enum EWinType
 {
 	WIN_Normal,
@@ -68,9 +52,6 @@ class VWindow : public VWidget
 		WF_BeingDestroyed	= 0x0020,	// True if this window is going bye-bye
 	};
 	vuint32 WindowFlags;
-
-	// Clipping rectangle
-	VClipRectOld ClipRectOld;			// Clipping rectangle; maintained at all times
 
 public:
 	VWindow();

@@ -185,30 +185,18 @@ void VWidget::Raise()
 
 //==========================================================================
 //
-//	VWidget::TestDrawImage
+//	VWidget::TransferAndClipRect
 //
 //==========================================================================
 
-void VWidget::TestDrawImage(int X, int Y, int Handle)
+void VWidget::TransferAndClipRect(float& X1, float& Y1, float& X2, float& Y2,
+	float& S1, float& T1, float& S2, float& T2) const
 {
-	guard(VWidget::TestDrawImage);
-	if (Handle < 0)
-	{
-		return;
-	}
-
-	picinfo_t Info;
-	GTextureManager.GetTextureInfo(Handle, &Info);
-	X -= Info.xoffset;
-	Y -= Info.yoffset;
-	float X1 = ClipRect.ScaleX * X + ClipRect.OriginX;
-	float Y1 = ClipRect.ScaleY * Y + ClipRect.OriginY;
-	float X2 = ClipRect.ScaleX * (X + Info.width) + ClipRect.OriginX;
-	float Y2 = ClipRect.ScaleY * (Y + Info.height) + ClipRect.OriginY;
-	float S1 = 0;
-	float T1 = 0;
-	float S2 = Info.width;
-	float T2 = Info.height;
+	guard(VWidget::TransferAndClipRect);
+	X1 = ClipRect.ScaleX * X1 + ClipRect.OriginX;
+	Y1 = ClipRect.ScaleY * Y1 + ClipRect.OriginY;
+	X2 = ClipRect.ScaleX * X2 + ClipRect.OriginX;
+	Y2 = ClipRect.ScaleY * Y2 + ClipRect.OriginY;
 	if (X1 < ClipRect.ClipX1)
 	{
 		S1 = S1 + (X1 - ClipRect.ClipX1) / (X1 - X2) * (S2 - S1);
@@ -229,7 +217,37 @@ void VWidget::TestDrawImage(int X, int Y, int Handle)
 		T2 = T2 + (Y2 - ClipRect.ClipY2) / (Y1 - Y2) * (T2 - T1);
 		Y2 = ClipRect.ClipY2;
 	}
-	Drawer->DrawPic(X1, Y1, X2, Y2, S1, T1, S2, T2, Handle, 1.0);
+	unguard;
+}
+
+//==========================================================================
+//
+//	VWidget::DrawPic
+//
+//==========================================================================
+
+void VWidget::DrawPic(int X, int Y, int Handle, float Alpha)
+{
+	guard(VWidget::DrawPic);
+	if (Handle < 0)
+	{
+		return;
+	}
+
+	picinfo_t Info;
+	GTextureManager.GetTextureInfo(Handle, &Info);
+	X -= Info.xoffset;
+	Y -= Info.yoffset;
+	float X1 = X;
+	float Y1 = Y;
+	float X2 = X + Info.width;
+	float Y2 = Y + Info.height;
+	float S1 = 0;
+	float T1 = 0;
+	float S2 = Info.width;
+	float T2 = Info.height;
+	TransferAndClipRect(X1, Y1, X2, Y2, S1, T1, S2, T2);
+	Drawer->DrawPic(X1, Y1, X2, Y2, S1, T1, S2, T2, Handle, Alpha);
 	unguard;
 }
 
@@ -251,11 +269,12 @@ IMPLEMENT_FUNCTION(VWidget, Raise)
 	Self->Raise();
 }
 
-IMPLEMENT_FUNCTION(VWidget, TestDrawImage)
+IMPLEMENT_FUNCTION(VWidget, DrawPic)
 {
+	P_GET_FLOAT_OPT(Alpha, 1.0);
 	P_GET_INT(Handle);
 	P_GET_INT(Y);
 	P_GET_INT(X);
 	P_GET_SELF;
-	Self->TestDrawImage(X, Y, Handle);
+	Self->DrawPic(X, Y, Handle, Alpha);
 }

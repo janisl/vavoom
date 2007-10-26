@@ -71,6 +71,9 @@ private:
 	void AddChild(VWidget*);
 	void RemoveChild(VWidget*);
 
+	void TransferAndClipRect(float&, float&, float&, float&, float&, float&,
+		float&, float&) const;
+
 	friend class VWindow;
 	friend class VRootWindow;
 
@@ -92,10 +95,10 @@ public:
 		EV_RET_VOID(NAME_OnChildRemoved);
 	}
 
-	void TestDrawImage(int X, int Y, int Handle);
+	void DrawPic(int, int, int, float = 1.0);
 
 	DECLARE_FUNCTION(Raise)
 	DECLARE_FUNCTION(Lower)
 
-	DECLARE_FUNCTION(TestDrawImage)
+	DECLARE_FUNCTION(DrawPic)
 };

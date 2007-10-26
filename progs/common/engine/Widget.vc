@@ -103,11 +103,21 @@ float ScaleY
 	default SizeScaleY;
 }
 
+int OldOriginX
+{
+	get { return ftoi(ClipRect.OriginX / ClipRect.ScaleX); }
+}
+
+int OldOriginY
+{
+	get { return ftoi(ClipRect.OriginY / ClipRect.ScaleY); }
+}
+
 //	Methods to move widget on top or bottom.
 native void Lower();
 native void Raise();
 
-native void TestDrawImage(int X, int Y, int Handle);
+native void DrawPic(int X, int Y, int Handle, optional float Alpha);
 
 //==========================================================================
 //
@@ -131,6 +141,16 @@ void OnChildAdded(Widget Child)
 
 void OnChildRemoved(Widget Child)
 {
+}
+
+void DrawIcon(int X, int Y, int Handle)
+{
+	R_DrawPic(X + OldOriginX, Y + OldOriginY, Handle);
+}
+
+void DrawText(int X, int Y, string Text)
+{
+	T_DrawText(X + OldOriginX, Y + OldOriginY, Text);
 }
 
 defaultproperties

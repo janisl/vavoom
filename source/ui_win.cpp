@@ -436,8 +436,6 @@ void VWindow::ClipTree()
 	guard(VWindow::ClipTree);
 	if (ParentWidget)
 	{
-		ClipRectOld = VClipRectOld(static_cast<VWindow*>(ParentWidget)->ClipRectOld.OriginX + PosX,
-			static_cast<VWindow*>(ParentWidget)->ClipRectOld.OriginY + PosY);
 		ClipRect.OriginX = ParentWidget->ClipRect.OriginX + ParentWidget->ClipRect.ScaleX * PosX;
 		ClipRect.OriginY = ParentWidget->ClipRect.OriginY + ParentWidget->ClipRect.ScaleY * PosY;
 		ClipRect.ScaleX = ParentWidget->ClipRect.ScaleX * SizeScaleX;
@@ -465,7 +463,6 @@ void VWindow::ClipTree()
 	}
 	else
 	{
-		ClipRectOld = VClipRectOld(PosX, PosY);
 		ClipRect.OriginX = PosX;
 		ClipRect.OriginY = PosY;
 		ClipRect.ScaleX = SizeScaleX;
