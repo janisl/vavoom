@@ -126,7 +126,7 @@ public:
 	virtual void DrawPicShadow(float, float, float, float, float, float,
 		float, float, int, float) = 0;
 	virtual void FillRectWithFlat(float, float, float, float, float, float,
-		float, float, const char*) = 0;
+		float, float, VName) = 0;
 	virtual void FillRect(float, float, float, float, vuint32) = 0;
 	virtual void ShadeRect(int, int, int, int, float) = 0;
 	virtual void DrawConsoleBackground(int) = 0;

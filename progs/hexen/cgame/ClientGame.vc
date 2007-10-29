@@ -526,7 +526,7 @@ void MessageBoxDrawer()
 	// Horiz. & Vertically centre string and print it.
 	if (messageToPrint)
 	{
-		R_FillRectWithFlat(msgBoxX, msgBoxY, msgBoxW, msgBoxH, 'f_019');
+		GRoot.FillRectWithFlat(msgBoxX, msgBoxY, msgBoxW, msgBoxH, 'f_019');
 		DrawBorder(msgBoxX, msgBoxY, msgBoxW, msgBoxH);
 		T_SetFont(font_small);
 		T_SetAlign(hcentre, vcentre);
@@ -722,7 +722,7 @@ void DrawBorder(int x, int y, int w, int h)
 
 void DrawViewBorder(int x, int y, int w, int h)
 {
-	R_FillRectWithFlat(0, 0, 640, 480/* - 39*/, 'f_022');
+	GRoot.FillRectWithFlat(0, 0, 640, 480/* - 39*/, 'f_022');
 	DrawBorder(x, y, w, h);
 }
 

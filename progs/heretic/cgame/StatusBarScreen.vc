@@ -205,14 +205,14 @@ void SB_DrawNumber12(int x, int y, int num)
 	// in the special case of 0, you draw 0
 	if (!num)
 	{
-		R_DrawShadowedPic(x - bignumwidth[0], y, pic_bignum[0]);
+		DrawShadowedPic(x - bignumwidth[0], y, pic_bignum[0]);
 	}
 
 	// draw the new number
 	while (num)
 	{
 		x -= bignumwidth[num % 10];
-		R_DrawShadowedPic(x, y, pic_bignum[num % 10]);
+		DrawShadowedPic(x, y, pic_bignum[num % 10]);
 		num /= 10;
 		x -= 3;
 	}
@@ -259,7 +259,7 @@ void SB_DrawMainBar()
 	}
 
 	// draw something in the blank spaces
-	R_FillRectWithFlat(0, 438, 640, 42,
+	FillRectWithFlat(0, 438, 640, 42,
 		!WadLumpPresent('e2m1') ? 'floor04' : 'flat513');
 
 	//  Background
@@ -296,8 +296,8 @@ void SB_DrawMainBar()
 	DrawPic(BAR_X + 276, BAR_Y + 32, pic_rtface);
 	for (i = 0; i < 16; i++)
 	{
-		R_ShadeRect(BAR_X + 277 + i, BAR_Y + 32, 1, 10, itof(9 + i) / 32.0);
-		R_ShadeRect(BAR_X + 19 + i, BAR_Y + 32, 1, 10, itof(9 + 15 - i) / 32.0);
+		ShadeRect(BAR_X + 277 + i, BAR_Y + 32, 1, 10, itof(9 + i) / 32.0);
+		ShadeRect(BAR_X + 19 + i, BAR_Y + 32, 1, 10, itof(9 + 15 - i) / 32.0);
 	}
 
 	if (!cl.InventoryTime)

@@ -1511,10 +1511,6 @@ native static final int R_RegisterPicPal(name Name, name palname);
 native static final void R_GetPicInfo(int handle, picinfo_t * info);
 //  Draws a pic
 native static final void R_DrawPic(int x, int y, int handle);
-//  Draws a translucent pic
-native static final void R_DrawPic2(int x, int y, int handle, float alpha);
-//  Draws a shadowed pic
-native static final void R_DrawShadowedPic(int x, int y, int handle);
 //  Installs a sprite model
 native static final void R_InstallSprite(string Name, int index);
 //  Draws a sprite
@@ -1528,11 +1524,6 @@ native static final bool GetModelSkinInfo(void* Model, int Index,
 //  Draws a model
 native static final void R_DrawModelFrame(TVec origin, float angle, void* model,
 	int frame, string skin);
-//  Draws a rectangle filled with a flat
-native static final void R_FillRectWithFlat(int x, int y, int width, int height,
-	name Name);
-//  Darkens a screen region
-native static final void R_ShadeRect(int x, int y, int w, int h, float shade);
 //  Draws a coloured rectangle
 native static final void R_FillRect(int x, int y, int w, int h, int colour);
 

@@ -168,7 +168,7 @@ void IM_DrawHubText()
 	}
 	else if (TextFlat)
 	{
-		R_FillRectWithFlat(0, 0, 640, 480, TextFlat);
+		FillRectWithFlat(0, 0, 640, 480, TextFlat);
 	}
 	else
 	{

@@ -132,14 +132,13 @@ void VDirect3DDrawer::DrawPicShadow(float x1, float y1, float x2, float y2,
 //==========================================================================
 
 void VDirect3DDrawer::FillRectWithFlat(float x1, float y1, float x2, float y2,
-	float s1, float t1, float s2, float t2, const char* fname)
+	float s1, float t1, float s2, float t2, VName fname)
 {
 	guard(VDirect3DDrawer::FillRectWithFlat);
 	MyD3DVertex	dv[4];
 	int l = 0xffffffff;
 
-	SetTexture(GTextureManager.NumForName(VName(fname, VName::AddLower8),
-		TEXTYPE_Flat, true, true));
+	SetTexture(GTextureManager.NumForName(fname, TEXTYPE_Flat, true, true));
 
 	dv[0] = MyD3DVertex(x1, y1, l, s1 * tex_iw, t1 * tex_ih);
 	dv[1] = MyD3DVertex(x2, y1, l, s2 * tex_iw, t1 * tex_ih);

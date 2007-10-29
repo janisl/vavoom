@@ -96,9 +96,15 @@ public:
 	}
 
 	void DrawPic(int, int, int, float = 1.0);
+	void DrawShadowedPic(int, int, int);
+	void FillRectWithFlat(int, int, int, int, VName);
+	void ShadeRect(int, int, int, int, float);
 
 	DECLARE_FUNCTION(Raise)
 	DECLARE_FUNCTION(Lower)
 
 	DECLARE_FUNCTION(DrawPic)
+	DECLARE_FUNCTION(DrawShadowedPic)
+	DECLARE_FUNCTION(FillRectWithFlat)
+	DECLARE_FUNCTION(ShadeRect)
 };

@@ -189,7 +189,7 @@ public:
 	//	Drawing
 	void DrawPic(float, float, float, float, float, float, float, float, int, float);
 	void DrawPicShadow(float, float, float, float, float, float, float, float, int, float);
-	void FillRectWithFlat(float, float, float, float, float, float, float, float, const char*);
+	void FillRectWithFlat(float, float, float, float, float, float, float, float, VName);
 	void FillRect(float, float, float, float, vuint32);
 	void ShadeRect(int, int, int, int, float);
 	void DrawConsoleBackground(int);

@@ -54,7 +54,7 @@ void DrawTextBox(string text)
 	x = (640 - w) / 2;
 	y = (480 - h) / 2;
 
-	R_FillRectWithFlat(x, y, w, h, 'flat20');
+	FillRectWithFlat(x, y, w, h, 'flat20');
 	GetClGame().DrawBorder(x, y, w, h);
 
 	DrawText(160, 100, text);

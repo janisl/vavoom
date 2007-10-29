@@ -467,35 +467,6 @@ IMPLEMENT_FUNCTION(VObject, R_DrawPic)
 
 //==========================================================================
 //
-//	PF_R_DrawPic2
-//
-//==========================================================================
-
-IMPLEMENT_FUNCTION(VObject, R_DrawPic2)
-{
-	P_GET_FLOAT(alpha);
-	P_GET_INT(handle);
-	P_GET_INT(y);
-	P_GET_INT(x);
-	R_DrawPic(x, y, handle, alpha);
-}
-
-//==========================================================================
-//
-//	PF_R_DrawShadowedPic
-//
-//==========================================================================
-
-IMPLEMENT_FUNCTION(VObject, R_DrawShadowedPic)
-{
-	P_GET_INT(handle);
-	P_GET_INT(y);
-	P_GET_INT(x);
-	R_DrawShadowedPic(x, y, handle);
-}
-
-//==========================================================================
-//
 //	PF_R_InstallSprite
 //
 //==========================================================================
@@ -572,40 +543,6 @@ IMPLEMENT_FUNCTION(VObject, R_DrawModelFrame)
 	P_GET_FLOAT(angle);
 	P_GET_VEC(origin);
 	R_DrawModelFrame(origin, angle, model, frame, *skin, 0);
-}
-
-//==========================================================================
-//
-//	PF_R_FillRectWithFlat
-//
-//==========================================================================
-
-IMPLEMENT_FUNCTION(VObject, R_FillRectWithFlat)
-{
-	P_GET_NAME(name);
-	P_GET_INT(height);
-	P_GET_INT(width);
-	P_GET_INT(y);
-	P_GET_INT(x);
-	R_FillRectWithFlat(x, y, width, height, *name);
-}
-
-//==========================================================================
-//
-//	PF_R_ShadeRect
-//
-//==========================================================================
-
-void R_ShadeRect(int x, int y, int width, int height, float shade);
-
-IMPLEMENT_FUNCTION(VObject, R_ShadeRect)
-{
-	P_GET_FLOAT(shade);
-	P_GET_INT(height);
-	P_GET_INT(width);
-	P_GET_INT(y);
-	P_GET_INT(x);
-	R_ShadeRect(x, y, width, height, shade);
 }
 
 //==========================================================================

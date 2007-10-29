@@ -271,7 +271,7 @@ void SB_DrawBackground()
 	}
 
 	// draw something in the blank spaces
-	R_FillRectWithFlat(0, 441, 640, 39, 'f_022');
+	FillRectWithFlat(0, 441, 640, 39, 'f_022');
 
 	DrawPic(BAR_X + 0, BAR_Y - 27, pic_bar);
 	DrawPic(BAR_X + 28 + (((sb_health * 196) / 100) % 9), BAR_Y + 32, pic_chain);
@@ -328,18 +328,18 @@ void SB_DrawNumber9(int x, int y, int num, int colour)
 void SB_DrawNumber12(int x, int y, int num)
 {
 	x = x + 36;
-    
+
 	// in the special case of 0, you draw 0
 	if (!num)
 	{
-		R_DrawShadowedPic(x - bignumwidth[0], y, pic_bignum[0]);
+		DrawShadowedPic(x - bignumwidth[0], y, pic_bignum[0]);
 	}
 
 	// draw the new number
 	while (num)
 	{
 		x -= bignumwidth[num % 10];
-		R_DrawShadowedPic(x, y, pic_bignum[num % 10]);
+		DrawShadowedPic(x, y, pic_bignum[num % 10]);
 		num /= 10;
 		x -= 3;
 	}
@@ -473,9 +473,9 @@ void SB_DrawMainBar()
 	DrawPic(BAR_X + 110, BAR_Y + 3, pic_manadim2[sb_mana2]);
 	DrawPic(BAR_X + 94, BAR_Y + 3, pic_manavial1[sb_manaVial1]);
 	DrawPic(BAR_X + 102, BAR_Y + 3, pic_manavial2[sb_manaVial2]);
-	R_ShadeRect(BAR_X + 95, BAR_Y + 4, 3, 22 -
+	ShadeRect(BAR_X + 95, BAR_Y + 4, 3, 22 -
 		(ManaItem1 ? 22 * ManaItem1.Amount / ManaItem1.MaxAmount : 0), 0.99);
-	R_ShadeRect(BAR_X + 103, BAR_Y + 4, 3, 22 -
+	ShadeRect(BAR_X + 103, BAR_Y + 4, 3, 22 -
 		(ManaItem2 ? 22 * ManaItem2.Amount / ManaItem2.MaxAmount : 0), 0.99);
 
 	// Ready artifact

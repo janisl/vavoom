@@ -899,11 +899,10 @@ void VSoftwareDrawer::DrawPicShadow(float x1, float y1, float x2, float y2,
 //==========================================================================
 
 void VSoftwareDrawer::FillRectWithFlat(float x1, float y1, float x2, float y2,
-	float s1, float t1, float s2, float t2, const char* fname)
+	float s1, float t1, float s2, float t2, VName fname)
 {
 	guard(VSoftwareDrawer::FillRectWithFlat);
-	SetTexture(GTextureManager.NumForName(VName(fname, VName::AddLower8),
-		TEXTYPE_Flat, true, true));
+	SetTexture(GTextureManager.NumForName(fname, TEXTYPE_Flat, true, true));
 	picsource = (byte*)cacheblock;
 	if (ScreenBPP == 8)
 	{

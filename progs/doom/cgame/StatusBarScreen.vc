@@ -281,9 +281,9 @@ void SB_DrawMainBar()
 	// draw something in the blank spaces
 	// check which version of Doom we are playing
 #ifdef DOOM2
-	R_FillRectWithFlat(0, 448, 640, 32, 'grnrock');
+	FillRectWithFlat(0, 448, 640, 32, 'grnrock');
 #else
-	R_FillRectWithFlat(0, 448, 640, 32, 'floor7_2');
+	FillRectWithFlat(0, 448, 640, 32, 'floor7_2');
 #endif
 
 	if (!cl.MO)

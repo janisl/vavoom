@@ -177,9 +177,9 @@ void DrawWindow()
 	}
 	else
 	{
-		R_ShadeRect(46, 46, 515, 70, 0.3);
+		ShadeRect(46, 46, 515, 70, 0.3);
 	}
-	R_ShadeRect(60, 438 - NumChoices * 22, 501, NumChoices * 22, 0.3);
+	ShadeRect(60, 438 - NumChoices * 22, 501, NumChoices * 22, 0.3);
 	T_SetFont(font_small);
 	T_SetAlign(hleft, vtop);
 	DrawText(48, 48, SpeakerName);

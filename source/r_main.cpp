@@ -837,38 +837,6 @@ void R_DrawShadowedPic(int x, int y, int handle)
 
 //==========================================================================
 //
-//  R_FillRectWithFlat
-//
-// 	Fills rectangle with flat.
-//
-//==========================================================================
-
-void R_FillRectWithFlat(int DestX, int DestY, int width, int height, const char* fname)
-{
-	guard(R_FillRectWithFlat);
-	Drawer->FillRectWithFlat(fScaleX * DestX, fScaleY * DestY,
-		fScaleX * (DestX + width), fScaleY * (DestY + height),
-		0, 0, width, height, fname);
-	unguard;
-}
-
-//==========================================================================
-//
-//	R_ShadeRect
-//
-//==========================================================================
-
-void R_ShadeRect(int x, int y, int width, int height, float shade)
-{
-	guard(R_ShadeRect);
-	Drawer->ShadeRect((int)(x * fScaleX), (int)(y * fScaleY),
-		(int)((x + width) * fScaleX) - (int)(x * fScaleX),
-		(int)((y + height) * fScaleY) - (int)(y * fScaleY), shade);
-	unguard;
-}
-
-//==========================================================================
-//
 // 	VRenderLevel::PrecacheLevel
 //
 // 	Preloads all relevant graphics for the level.

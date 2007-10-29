@@ -193,7 +193,7 @@ void SB_DrawMainBar()
 	Inventory Item;
 
 	// draw something in the blank spaces
-	R_FillRectWithFlat(0, 448, 640, 32, 'f_pave01');
+	FillRectWithFlat(0, 448, 640, 32, 'f_pave01');
 
 	if (!cl.MO)
 	{

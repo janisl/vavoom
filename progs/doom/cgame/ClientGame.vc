@@ -536,7 +536,7 @@ void MessageBoxDrawer()
 	// Horiz. & Vertically centre string and print it.
 	if (messageToPrint)
 	{
-		R_FillRectWithFlat(msgBoxX, msgBoxY, msgBoxW, msgBoxH, 'flat20');
+		GRoot.FillRectWithFlat(msgBoxX, msgBoxY, msgBoxW, msgBoxH, 'flat20');
 		DrawBorder(msgBoxX, msgBoxY, msgBoxW, msgBoxH);
 		T_SetFont(font_small);
 		T_SetAlign(hcentre, vcentre);
@@ -781,9 +781,9 @@ void DrawBorder(int x, int y, int w, int h)
 void DrawViewBorder(int x, int y, int w, int h)
 {
 #ifdef DOOM2
-	R_FillRectWithFlat(0, 0, 640, 480/* - 32*/, 'grnrock');
+	GRoot.FillRectWithFlat(0, 0, 640, 480/* - 32*/, 'grnrock');
 #else
-	R_FillRectWithFlat(0, 0, 640, 480/* - 32*/, 'floor7_2');
+	GRoot.FillRectWithFlat(0, 0, 640, 480/* - 32*/, 'floor7_2');
 #endif
 	DrawBorder(x, y, w, h);
 }

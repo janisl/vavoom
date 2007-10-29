@@ -253,6 +253,82 @@ void VWidget::DrawPic(int X, int Y, int Handle, float Alpha)
 
 //==========================================================================
 //
+//	VWidget::DrawShadowedPic
+//
+//==========================================================================
+
+void VWidget::DrawShadowedPic(int X, int Y, int Handle)
+{
+	guard(VWidget::DrawShadowedPic);
+	if (Handle < 0)
+	{
+		return;
+	}
+
+	picinfo_t Info;
+	GTextureManager.GetTextureInfo(Handle, &Info);
+	float X1 = X - Info.xoffset + 2;
+	float Y1 = Y - Info.yoffset + 2;
+	float X2 = X - Info.xoffset + 2 + Info.width;
+	float Y2 = Y - Info.yoffset + 2 + Info.height;
+	float S1 = 0;
+	float T1 = 0;
+	float S2 = Info.width;
+	float T2 = Info.height;
+	TransferAndClipRect(X1, Y1, X2, Y2, S1, T1, S2, T2);
+	Drawer->DrawPicShadow(X1, Y1, X2, Y2, S1, T1, S2, T2, Handle, 0.625);
+
+	DrawPic(X, Y, Handle);
+	unguard;
+}
+
+//==========================================================================
+//
+//	VWidget::FillRectWithFlat
+//
+//==========================================================================
+
+void VWidget::FillRectWithFlat(int X, int Y, int Width, int Height,
+	VName Name)
+{
+	guard(VWidget::FillRectWithFlat);
+	float X1 = X;
+	float Y1 = Y;
+	float X2 = X + Width;
+	float Y2 = Y + Height;
+	float S1 = 0;
+	float T1 = 0;
+	float S2 = Width;
+	float T2 = Height;
+	TransferAndClipRect(X1, Y1, X2, Y2, S1, T1, S2, T2);
+	Drawer->FillRectWithFlat(X1, Y1, X2, Y2, S1, T1, S2, T2, Name);
+	unguard;
+}
+
+//==========================================================================
+//
+//	VWidget::ShadeRect
+//
+//==========================================================================
+
+void VWidget::ShadeRect(int X, int Y, int Width, int Height, float Shade)
+{
+	guard(VWidget::ShadeRect);
+	float X1 = X;
+	float Y1 = Y;
+	float X2 = X + Width;
+	float Y2 = Y + Height;
+	float S1 = 0;
+	float T1 = 0;
+	float S2 = 0;
+	float T2 = 0;
+	TransferAndClipRect(X1, Y1, X2, Y2, S1, T1, S2, T2);
+	Drawer->ShadeRect((int)X1, (int)Y1, (int)X2 - (int)X1, (int)Y2 - (int)Y1, Shade);
+	unguard;
+}
+
+//==========================================================================
+//
 //	Natives
 //
 //==========================================================================
@@ -277,4 +353,35 @@ IMPLEMENT_FUNCTION(VWidget, DrawPic)
 	P_GET_INT(X);
 	P_GET_SELF;
 	Self->DrawPic(X, Y, Handle, Alpha);
+}
+
+IMPLEMENT_FUNCTION(VWidget, DrawShadowedPic)
+{
+	P_GET_INT(Handle);
+	P_GET_INT(Y);
+	P_GET_INT(X);
+	P_GET_SELF;
+	Self->DrawShadowedPic(X, Y, Handle);
+}
+
+IMPLEMENT_FUNCTION(VWidget, FillRectWithFlat)
+{
+	P_GET_NAME(Name);
+	P_GET_INT(Height);
+	P_GET_INT(Width);
+	P_GET_INT(Y);
+	P_GET_INT(X);
+	P_GET_SELF;
+	Self->FillRectWithFlat(X, Y, Width, Height, Name);
+}
+
+IMPLEMENT_FUNCTION(VWidget, ShadeRect)
+{
+	P_GET_FLOAT(Shade);
+	P_GET_INT(Height);
+	P_GET_INT(Width);
+	P_GET_INT(Y);
+	P_GET_INT(X);
+	P_GET_SELF;
+	Self->ShadeRect(X, Y, Width, Height, Shade);
 }

@@ -321,7 +321,7 @@ void IM_DrawBackground()
 {
 	if (interstate == IMS_Stats)
 	{
-		R_FillRectWithFlat(0, 0, 640, 480, 'floor16');
+		FillRectWithFlat(0, 0, 640, 480, 'floor16');
 	}
 	else if (im_episode < 4)
 	{
@@ -590,7 +590,7 @@ void IM_DrawCoopStats()
 	foreach ClGame.GLevel.LevelInfo.AllThinkers(PlayerReplicationInfo, RepInfo)
 	{
 		i = RepInfo.PlayerNum;
-		R_DrawShadowedPic(185, ypos, patchFaceOkay[i]);
+		DrawShadowedPic(185, ypos, patchFaceOkay[i]);
 		if (intertime < 1.25)
 		{
 			ypos += 37;
@@ -642,7 +642,7 @@ void IM_DrawDMStats()
 		foreach ClGame.GLevel.LevelInfo.AllThinkers(PlayerReplicationInfo, RepInfo)
 		{
 			i = RepInfo.PlayerNum;
-			R_DrawShadowedPic(200, ypos + ftoi(dSlideY[i] * 35.0 * intertime),
+			DrawShadowedPic(200, ypos + ftoi(dSlideY[i] * 35.0 * intertime),
 				patchFaceOkay[i]);
 			T_SetFont(font_small);
 			T_SetAlign(hleft, vtop);
@@ -670,7 +670,7 @@ void IM_DrawDMStats()
 		i = RepInfo.PlayerNum;
 		if (intertime < 3.0 || i == ClGame.cl.ClientNum)
 		{
-			R_DrawShadowedPic(200, ypos, patchFaceOkay[i]);
+			DrawShadowedPic(200, ypos, patchFaceOkay[i]);
 		}
 		else
 		{
@@ -890,7 +890,7 @@ void IM_DrawText()
 	}
 	else if (TextFlat)
 	{
-		R_FillRectWithFlat(0, 0, 640, 480, TextFlat);
+		FillRectWithFlat(0, 0, 640, 480, TextFlat);
 	}
 	else
 	{
