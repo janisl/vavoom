@@ -114,10 +114,10 @@ int OldOriginY
 }
 
 //	Methods to move widget on top or bottom.
-native void Lower();
-native void Raise();
+native final void Lower();
+native final void Raise();
 
-native void DrawPic(int X, int Y, int Handle, optional float Alpha);
+native final void DrawPic(int X, int Y, int Handle, optional float Alpha);
 
 //==========================================================================
 //
@@ -143,12 +143,7 @@ void OnChildRemoved(Widget Child)
 {
 }
 
-void DrawIcon(int X, int Y, int Handle)
-{
-	R_DrawPic(X + OldOriginX, Y + OldOriginY, Handle);
-}
-
-void DrawText(int X, int Y, string Text)
+final void DrawText(int X, int Y, string Text)
 {
 	T_DrawText(X + OldOriginX, Y + OldOriginY, Text);
 }

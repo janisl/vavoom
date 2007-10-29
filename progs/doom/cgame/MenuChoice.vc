@@ -64,12 +64,12 @@ int DrawSlot(int y, string text, bool entering)
 	int xx;
 	int j;
 
-	DrawIcon(2, y + 12, pic_M_LSLEFT);
-	for (j = 0, xx = 10; j < 24; j++, xx += 8)
+	DrawPic(3, y + 12, pic_M_LSLEFT);
+	for (j = 0, xx = 11; j < 24; j++, xx += 8)
 	{
-		DrawIcon(xx, y + 12, pic_M_LSCNTR);
+		DrawPic(xx, y + 12, pic_M_LSCNTR);
 	}
-	DrawIcon(xx, y + 12, pic_M_LSRGHT);
+	DrawPic(xx, y + 12, pic_M_LSRGHT);
 
 	T_SetFont(font_small);
 	T_SetAlign(hleft, vtop);

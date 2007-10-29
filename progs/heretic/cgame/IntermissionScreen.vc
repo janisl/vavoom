@@ -674,7 +674,7 @@ void IM_DrawDMStats()
 		}
 		else
 		{
-			R_DrawPic2(200, ypos, patchFaceOkay[i], 0.4);
+			DrawPic(200, ypos, patchFaceOkay[i], 0.4);
 		}
 		T_SetFont(font_small);
 		T_SetAlign(hleft, vtop);
@@ -723,13 +723,13 @@ void IM_DrawOldLevel()
 	{
 		for (i = 0; i < im_nextmap - 1; i++)
 		{
-			R_DrawPic(YAHspot[(im_episode - 1) * 9 + i].x * 2,
+			DrawPic(YAHspot[(im_episode - 1) * 9 + i].x * 2,
 				YAHspot[(im_episode - 1) * 9 + i].y * 480 / 200,
 				patchBEENTHERE);
 		}
 		if (!(ftoi(32.0 * intertime) & 16))
 		{
-			R_DrawPic(YAHspot[(im_episode - 1) * 9 + 8].x * 2,
+			DrawPic(YAHspot[(im_episode - 1) * 9 + 8].x * 2,
 				YAHspot[(im_episode - 1) * 9 + 8].y * 480 / 200,
 				patchBEENTHERE);
 		}
@@ -738,19 +738,19 @@ void IM_DrawOldLevel()
 	{
 		for (i = 0; i < im_map - 1; i++)
 		{
-			R_DrawPic(YAHspot[(im_episode - 1) * 9 + i].x * 2,
+			DrawPic(YAHspot[(im_episode - 1) * 9 + i].x * 2,
 				YAHspot[(im_episode - 1) * 9 + i].y * 480 / 200,
 				patchBEENTHERE);
 		}
 		if (ClGame.cl.bDidSecret)
 		{
-			R_DrawPic(YAHspot[(im_episode - 1) * 9 + 8].x * 2,
+			DrawPic(YAHspot[(im_episode - 1) * 9 + 8].x * 2,
 				YAHspot[(im_episode - 1) * 9 + 8].y * 480 / 200,
 				patchBEENTHERE);
 		}
 		if (!(ftoi(32.0 * intertime) & 16))
 		{
-			R_DrawPic(YAHspot[(im_episode - 1) * 9 + im_map - 1].x * 2,
+			DrawPic(YAHspot[(im_episode - 1) * 9 + im_map - 1].x * 2,
 				YAHspot[(im_episode - 1) * 9 + im_map - 1].y * 480 / 200,
 				patchBEENTHERE);
 		}
@@ -783,20 +783,20 @@ void IM_DrawYAH()
 	}
 	for (i = 0; i < im_map; i++)
 	{
-		R_DrawPic(YAHspot[(im_episode - 1) * 9 + i].x * 2,
+		DrawPic(YAHspot[(im_episode - 1) * 9 + i].x * 2,
 			YAHspot[(im_episode - 1) * 9 + i].y * 480 / 200,
 			patchBEENTHERE);
 	}
 	if (ClGame.cl.bDidSecret)
 	{
-		R_DrawPic(YAHspot[(im_episode - 1) * 9 + 8].x * 2,
+		DrawPic(YAHspot[(im_episode - 1) * 9 + 8].x * 2,
 			YAHspot[(im_episode - 1) * 9 + 8].y * 480 / 200,
 			patchBEENTHERE);
 	}
 	if (!(ftoi(32.0 * intertime) & 16) || interstate == IMS_Done)
 	{
 		// draw the destination 'X'
-		R_DrawPic(YAHspot[(im_nextepisode - 1) * 9 + im_nextmap - 1].x * 2,
+		DrawPic(YAHspot[(im_nextepisode - 1) * 9 + im_nextmap - 1].x * 2,
 			YAHspot[(im_nextepisode - 1) * 9 + im_nextmap - 1].y * 480 / 200,
 			patchGOINGTHERE);
 	}

@@ -64,7 +64,12 @@ void DrawWindow()
 	{
 		frame = NumFrames - frame - 1;
 	}
-	DrawIcon(0, 0, Frames[frame]);
+	DrawPic(30, 80, Frames[frame]);
+}
+
+void SetPos(int X, int Y)
+{
+	::SetPos(X - 30, Y - 80);
 }
 
 defaultproperties

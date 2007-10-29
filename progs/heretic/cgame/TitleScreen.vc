@@ -137,7 +137,7 @@ void DrawWindow()
 	DrawFullScreenPic(page_pic);
 	if (demosequence == 1)
 	{
-		R_DrawPic(4, 440, advisor_pic);
+		DrawPic(4, 440, advisor_pic);
 	}
 }
 

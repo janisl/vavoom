@@ -778,7 +778,7 @@ void IM_DrawLF()
 	if (ClGame.im->LeaveTitlePatch)
 	{
 		R_GetPicInfo(LeaveTitlePic, &info);
-		R_DrawPic(320 - info.width / 2, y, LeaveTitlePic);
+		DrawPic(320 - info.width / 2, y, LeaveTitlePic);
 		y += info.height + T_TextHeight("DUMMY") / 4;
 	}
 	else
@@ -815,7 +815,7 @@ void IM_DrawEL()
 	if (ClGame.im->EnterTitlePatch)
 	{
 		R_GetPicInfo(EnterTitlePic, &info);
-		R_DrawPic(320 - info.width / 2, y, EnterTitlePic);
+		DrawPic(320 - info.width / 2, y, EnterTitlePic);
 	}
 	else
 	{
@@ -1099,10 +1099,10 @@ void IM_DrawCooperativeStats()
 		i = RepInfo.PlayerNum;
 		x = NG_STATSX;
 		R_GetPicInfo(p[i], &info);
-		R_DrawPic(x - info.width, y, p[i]);
+		DrawPic(x - info.width, y, p[i]);
 
 		if (i == ClGame.cl.ClientNum)
-			R_DrawPic(x - info.width, y, star);
+			DrawPic(x - info.width, y, star);
 
 		x += NG_SPACINGX;
 		IM_DrawPercent(x - pwidth, y + 10, cnt_kills[i]);
@@ -1313,7 +1313,7 @@ void IM_DrawDeathmatchStats()
 		if (RepInfo.PlayerNum == ClGame.cl.ClientNum)
 		{
 			R_GetPicInfo(star, &info);
-			R_DrawPic(DM_MATRIXX - info.width - 5, y - 8, star);
+			DrawPic(DM_MATRIXX - info.width - 5, y - 8, star);
 		}
 		T_SetAlign(hleft, vtop);
 		T_SetFont(font_small);
@@ -1469,7 +1469,7 @@ void IM_DrawOnLnode(int n, int *c)
 
 	if (fits && i < 2)
 	{
-		R_DrawPic(lnodes[(im_episode - 1) * NUMMAPS + n].x, lnodes[(im_episode - 1) * NUMMAPS + n].y,
+		DrawPic(lnodes[(im_episode - 1) * NUMMAPS + n].x, lnodes[(im_episode - 1) * NUMMAPS + n].y,
 			c[i]);
 	}
 	else

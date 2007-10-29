@@ -73,16 +73,16 @@ void DrawWindow()
 	DrawText(0, 0, Text);
 
 	xx =  8;
-	DrawIcon(xx, 0, pic_M_THERML);
+	DrawPic(xx, 0, pic_M_THERML);
 	xx += 8;
 	for (i = 0; i < 13; i++)
 	{
-		DrawIcon(xx, 0, pic_M_THERMM);
+		DrawPic(xx, 0, pic_M_THERMM);
 		xx += 8;
 	}
-	DrawIcon(xx, 0, pic_M_THERMR);
+	DrawPic(xx, 0, pic_M_THERMR);
 	xx = 8 + 6 + ftoi((Value - MinValue) * 100.0 / (MaxValue - MinValue));
-	DrawIcon(xx, 0, pic_M_THERMO);
+	DrawPic(xx, 0, pic_M_THERMO);
 }
 
 bool Key(int key)

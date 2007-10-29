@@ -201,7 +201,7 @@ void SB_DrawTallNum(int x, int y, int num, float alpha, bool perc)
 
 	if (perc)
 	{
-		R_DrawPic2(x, y, pic_percent, alpha);
+		DrawPic(x, y, pic_percent, alpha);
 	}
 
 	R_GetPicInfo(pic_tallnum[0], &info);
@@ -216,21 +216,21 @@ void SB_DrawTallNum(int x, int y, int num, float alpha, bool perc)
 	// in the special case of 0, you draw 0
 	if (!num)
 	{
-		R_DrawPic2(x - w, y, pic_tallnum[0], alpha);
+		DrawPic(x - w, y, pic_tallnum[0], alpha);
 	}
 
 	// draw the new number
 	while (num)
 	{
 		x -= w;
-		R_DrawPic2(x, y, pic_tallnum[num % 10], alpha);
+		DrawPic(x, y, pic_tallnum[num % 10], alpha);
 		num /= 10;
 	}
 
 	// draw a minus sign if necessary
 	if (neg)
 	{
-		R_DrawPic2(x - 8, y, pic_minus, alpha);
+		DrawPic(x - 8, y, pic_minus, alpha);
 	}
 }
 
@@ -256,14 +256,14 @@ void SB_DrawSmallNum(int x, int y, int num)
 	// in the special case of 0, you draw 0
 	if (!num)
 	{
-		R_DrawPic(x - w, y, pic_yellownum[0]);
+		DrawPic(x - w, y, pic_yellownum[0]);
 	}
 
 	// draw the new number
 	while (num)
 	{
 		x -= w;
-		R_DrawPic(x, y, pic_yellownum[num % 10]);
+		DrawPic(x, y, pic_yellownum[num % 10]);
 		num /= 10;
 	}
 }
@@ -292,7 +292,7 @@ void SB_DrawMainBar()
 	}
 
 	//  background
-	R_DrawPic(ST_BGX, ST_BGY, pic_bar);
+	DrawPic(ST_BGX, ST_BGY, pic_bar);
 
 	// ready weapon ammo
 	if (cl.ReadyWeapon && cl.ReadyWeapon.Ammo1)
@@ -311,7 +311,7 @@ void SB_DrawMainBar()
 	else
 	{
 		// weapons owned
-		R_DrawPic(ST_ARMSBGX, ST_ARMSBGY, pic_arms);
+		DrawPic(ST_ARMSBGX, ST_ARMSBGY, pic_arms);
 		for (i = 0; i < 6; i++)
 		{
 			bool HaveWeapon = false;
@@ -326,12 +326,12 @@ void SB_DrawMainBar()
 			}
 			if (HaveWeapon)
 			{
-				R_DrawPic(ST_ARMSX + (i % 3) * ST_ARMSXSPACE,
+				DrawPic(ST_ARMSX + (i % 3) * ST_ARMSXSPACE,
 					ST_ARMSY + (i / 3) * ST_ARMSYSPACE, pic_yellownum[i + 2]);
 			}
 			else
 			{
-				R_DrawPic(ST_ARMSX + (i % 3) * ST_ARMSXSPACE,
+				DrawPic(ST_ARMSX + (i % 3) * ST_ARMSXSPACE,
 					ST_ARMSY + (i / 3) * ST_ARMSYSPACE, pic_graynum[i + 2]);
 			}
 		}
@@ -340,40 +340,40 @@ void SB_DrawMainBar()
 	// faces
 	if (ClGame.maxclients > 1)
 	{
-		R_DrawPic(ST_FACESX, ST_FACESY, pic_faceback);
+		DrawPic(ST_FACESX, ST_FACESY, pic_faceback);
 	}
-	R_DrawPic(ST_FACESX, ST_FACESY, pic_faces[cl.sb_faceindex]);
+	DrawPic(ST_FACESX, ST_FACESY, pic_faces[cl.sb_faceindex]);
 
 	// armor percentage
 	BasicArmor Armor = BasicArmor(EntityEx(cl.MO).FindInventory(BasicArmor));
-	SB_DrawTallNum(ST_ARMORX, ST_ARMORY, Armor.Amount, 1.0, true);
+	SB_DrawTallNum(ST_ARMORX, ST_ARMORY, Armor ? Armor.Amount : 0, 1.0, true);
 
 	// keyboxes 0-2
 	if (EntityEx(cl.MO).FindInventory(BlueSkull))
 	{
-		R_DrawPic(ST_KEY0X, ST_KEY0Y, pic_keys[3]);
+		DrawPic(ST_KEY0X, ST_KEY0Y, pic_keys[3]);
 	}
 	else if (EntityEx(cl.MO).FindInventory(BlueCard))
 	{
-		R_DrawPic(ST_KEY0X, ST_KEY0Y, pic_keys[0]);
+		DrawPic(ST_KEY0X, ST_KEY0Y, pic_keys[0]);
 	}
 
 	if (EntityEx(cl.MO).FindInventory(YellowSkull))
 	{
-		R_DrawPic(ST_KEY1X, ST_KEY1Y, pic_keys[4]);
+		DrawPic(ST_KEY1X, ST_KEY1Y, pic_keys[4]);
 	}
 	else if (EntityEx(cl.MO).FindInventory(YellowCard))
 	{
-		R_DrawPic(ST_KEY1X, ST_KEY1Y, pic_keys[1]);
+		DrawPic(ST_KEY1X, ST_KEY1Y, pic_keys[1]);
 	}
 
 	if (EntityEx(cl.MO).FindInventory(RedSkull))
 	{
-		R_DrawPic(ST_KEY2X, ST_KEY2Y, pic_keys[5]);
+		DrawPic(ST_KEY2X, ST_KEY2Y, pic_keys[5]);
 	}
 	else if (EntityEx(cl.MO).FindInventory(RedCard))
 	{
-		R_DrawPic(ST_KEY2X, ST_KEY2Y, pic_keys[2]);
+		DrawPic(ST_KEY2X, ST_KEY2Y, pic_keys[2]);
 	}
 
 	// ammo count (all four kinds)
@@ -417,7 +417,7 @@ void SB_DrawFullscreenStats()
 
 	// health
 	SB_DrawTallNum(ST_TDHEALTHX, ST_TDHEALTHY, cl.Health, 0.6, false);
-	R_DrawPic(ST_TDHEALTHX - 60, ST_TDHEALTHY + 15, pic_health);
+	DrawPic(ST_TDHEALTHX - 60, ST_TDHEALTHY + 15, pic_health);
 
 	// armor
 	BasicArmor Armor = BasicArmor(EntityEx(cl.MO).FindInventory(BasicArmor));
@@ -427,11 +427,11 @@ void SB_DrawFullscreenStats()
 
 		if (Armor.Amount > 100)
 		{
-			R_DrawPic(ST_TDARMORX - 60, ST_TDARMORY + 15, pic_armor2);
+			DrawPic(ST_TDARMORX - 60, ST_TDARMORY + 15, pic_armor2);
 		}
 		else
 		{
-			R_DrawPic(ST_TDARMORX - 60, ST_TDARMORY + 15, pic_armor);
+			DrawPic(ST_TDARMORX - 60, ST_TDARMORY + 15, pic_armor);
 		}
 	}
 
@@ -442,47 +442,47 @@ void SB_DrawFullscreenStats()
 	}
 	if (cl.ReadyWeapon.AmmoType1 == Clip)
 	{
-		R_DrawPic(ST_TDAMMOX - 60, ST_TDAMMOY + 15, pic_ammoicon[0]);
+		DrawPic(ST_TDAMMOX - 60, ST_TDAMMOY + 15, pic_ammoicon[0]);
 	}
 	else if (cl.ReadyWeapon.AmmoType1 == Shell)
 	{
-		R_DrawPic(ST_TDAMMOX - 60, ST_TDAMMOY + 15, pic_ammoicon[1]);
+		DrawPic(ST_TDAMMOX - 60, ST_TDAMMOY + 15, pic_ammoicon[1]);
 	}
 	else if (cl.ReadyWeapon.AmmoType1 == Cell)
 	{
-		R_DrawPic(ST_TDAMMOX - 60, ST_TDAMMOY + 15, pic_ammoicon[2]);
+		DrawPic(ST_TDAMMOX - 60, ST_TDAMMOY + 15, pic_ammoicon[2]);
 	}
 	else if (cl.ReadyWeapon.AmmoType1 == RocketAmmo)
 	{
-		R_DrawPic(ST_TDAMMOX - 60, ST_TDAMMOY + 15, pic_ammoicon[3]);
+		DrawPic(ST_TDAMMOX - 60, ST_TDAMMOY + 15, pic_ammoicon[3]);
 	}
 
 	// keys
 	if (EntityEx(cl.MO).FindInventory(BlueSkull))
 	{
-		R_DrawPic(460, 470, pic_keys[3]);
+		DrawPic(460, 470, pic_keys[3]);
 	}
 	else if (EntityEx(cl.MO).FindInventory(BlueCard))
 	{
-		R_DrawPic(460, 470, pic_keys[0]);
+		DrawPic(460, 470, pic_keys[0]);
 	}
 
 	if (EntityEx(cl.MO).FindInventory(YellowSkull))
 	{
-		R_DrawPic(440, 470, pic_keys[4]);
+		DrawPic(440, 470, pic_keys[4]);
 	}
 	else if (EntityEx(cl.MO).FindInventory(YellowCard))
 	{
-		R_DrawPic(440, 470, pic_keys[1]);
+		DrawPic(440, 470, pic_keys[1]);
 	}
 
 	if (EntityEx(cl.MO).FindInventory(RedSkull))
 	{
-		R_DrawPic(420, 470, pic_keys[5]);
+		DrawPic(420, 470, pic_keys[5]);
 	}
 	else if (EntityEx(cl.MO).FindInventory(RedCard))
 	{
-		R_DrawPic(420, 470, pic_keys[2]);
+		DrawPic(420, 470, pic_keys[2]);
 	}
 
 	if (ClGame.deathmatch)
@@ -502,7 +502,7 @@ void SB_DrawPause()
 {
 	if (ClGame.bPaused && GetCvar('draw_pause'))
 	{
-		R_DrawPic(286, 4, pic_pause);
+		DrawPic(286, 4, pic_pause);
 	}
 }
 

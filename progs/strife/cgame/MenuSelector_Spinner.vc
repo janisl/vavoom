@@ -50,7 +50,12 @@ void Tick(float DeltaTime)
 
 void DrawWindow()
 {
-	DrawIcon(-32, -5, selector_pics[ftoi(Time * 4.0) & 7]);
+	DrawPic(0, 0, selector_pics[ftoi(Time * 4.0) & 7]);
+}
+
+void SetPos(int X, int Y)
+{
+	::SetPos(X - 32, Y - 5);
 }
 
 defaultproperties

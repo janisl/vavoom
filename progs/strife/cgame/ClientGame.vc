@@ -695,22 +695,22 @@ void DrawBorder(int x, int y, int w, int h)
 	}
 
 	for (i = 0; i < w; i += 8)
-		R_DrawPic(x + i, y - 8, pic_brdr_t);
+		GRoot.DrawPic(x + i, y - 8, pic_brdr_t);
 
 	for (i = 0; i < w; i += 8)
-		R_DrawPic(x + i, y + h, pic_brdr_b);
+		GRoot.DrawPic(x + i, y + h, pic_brdr_b);
 
 	for (i = 0; i < h; i += 8)
-		R_DrawPic(x - 8, y + i, pic_brdr_l);
+		GRoot.DrawPic(x - 8, y + i, pic_brdr_l);
 
 	for (i = 0; i < h; i += 8)
-		R_DrawPic(x + w, y + i, pic_brdr_r);
+		GRoot.DrawPic(x + w, y + i, pic_brdr_r);
 
 	// Draw beveled edge.
-	R_DrawPic(x - 8, y - 8, pic_brdr_tl);
-	R_DrawPic(x + w, y - 8, pic_brdr_tr);
-	R_DrawPic(x - 8, y + h, pic_brdr_bl);
-	R_DrawPic(x + w, y + h, pic_brdr_br);
+	GRoot.DrawPic(x - 8, y - 8, pic_brdr_tl);
+	GRoot.DrawPic(x + w, y - 8, pic_brdr_tr);
+	GRoot.DrawPic(x - 8, y + h, pic_brdr_bl);
+	GRoot.DrawPic(x + w, y + h, pic_brdr_br);
 }
 
 //==========================================================================

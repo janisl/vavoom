@@ -161,7 +161,7 @@ void SB_DrawNumber9(int x, int y, int num)
 	if (num < -9)
 	{
 		//	Lame message
-		R_DrawPic(x + 1, y + 1, pic_lame);
+		DrawPic(x + 1, y + 1, pic_lame);
 		return;
 	}
 	if (neg)
@@ -174,21 +174,21 @@ void SB_DrawNumber9(int x, int y, int num)
 	// in the special case of 0, you draw 0
 	if (!num)
 	{
-		R_DrawPic(x - w, y, pic_innum[0]);
+		DrawPic(x - w, y, pic_innum[0]);
 	}
 
 	// draw the new number
 	while (num)
 	{
 		x -= w;
-		R_DrawPic(x, y, pic_innum[num % 10]);
+		DrawPic(x, y, pic_innum[num % 10]);
 		num /= 10;
 	}
 
 	// draw a minus sign if necessary
 	if (neg)
 	{
-		R_DrawPic(x - 8, y, pic_minus);
+		DrawPic(x - 8, y, pic_minus);
 	}
 }
 
@@ -234,7 +234,7 @@ void SB_DrawINumber(int x, int y, int num)
 		while (num)
 		{
 			x -= 4;
-			R_DrawPic(x, y, pic_smallinnum[num % 10]);
+			DrawPic(x, y, pic_smallinnum[num % 10]);
 			num /= 10;
 		}
 	}
@@ -263,18 +263,18 @@ void SB_DrawMainBar()
 		!WadLumpPresent('e2m1') ? 'floor04' : 'flat513');
 
 	//  Background
-	R_DrawPic(BAR_X, BAR_Y, pic_barback);
+	DrawPic(BAR_X, BAR_Y, pic_barback);
 
 	if (cl.Cheats & Player::CF_GODMODE)
 	{
 		//  God mode
-		R_DrawPic(BAR_X + 16, BAR_Y + 9, pic_god1);
-		R_DrawPic(BAR_X + 287, BAR_Y + 9, pic_god2);
+		DrawPic(BAR_X + 16, BAR_Y + 9, pic_god1);
+		DrawPic(BAR_X + 287, BAR_Y + 9, pic_god2);
 	}
 
 	//  Top
-	R_DrawPic(BAR_X + 0, BAR_Y - 10, pic_barltop);
-	R_DrawPic(BAR_X + 290, BAR_Y - 10, pic_barrtop);
+	DrawPic(BAR_X + 0, BAR_Y - 10, pic_barltop);
+	DrawPic(BAR_X + 290, BAR_Y - 10, pic_barrtop);
 
 	//  Healtn and chain
 	health = HealthMarker;
@@ -290,10 +290,10 @@ void SB_DrawMainBar()
 	chainY = (HealthMarker == cl.Health) ? 33 : 33 + ChainWiggle;
 
 	//  Chain
-	R_DrawPic(BAR_X + 2 + (healthPos % 17), BAR_Y + chainY, pic_chain);
-	R_DrawPic(BAR_X + 17 + healthPos, BAR_Y + chainY, pic_lifegem);
-	R_DrawPic(BAR_X + 0, BAR_Y + 32, pic_ltface);
-	R_DrawPic(BAR_X + 276, BAR_Y + 32, pic_rtface);
+	DrawPic(BAR_X + 2 + (healthPos % 17), BAR_Y + chainY, pic_chain);
+	DrawPic(BAR_X + 17 + healthPos, BAR_Y + chainY, pic_lifegem);
+	DrawPic(BAR_X + 0, BAR_Y + 32, pic_ltface);
+	DrawPic(BAR_X + 276, BAR_Y + 32, pic_rtface);
 	for (i = 0; i < 16; i++)
 	{
 		R_ShadeRect(BAR_X + 277 + i, BAR_Y + 32, 1, 10, itof(9 + i) / 32.0);
@@ -303,7 +303,7 @@ void SB_DrawMainBar()
 	if (!cl.InventoryTime)
 	{
 		//  Main interface
-		R_DrawPic(BAR_X + 34, BAR_Y + 2, pic_mainbar);
+		DrawPic(BAR_X + 34, BAR_Y + 2, pic_mainbar);
 
 		//  Frags / Health
 		if (ClGame.deathmatch)
@@ -319,18 +319,18 @@ void SB_DrawMainBar()
 		{
 			//  Ammo
 			SB_DrawNumber9(BAR_X + 109, BAR_Y + 4, cl.ReadyWeapon.Ammo1.Amount);
-			R_DrawPic(BAR_X + 111, BAR_Y + 14, R_RegisterPic(cl.ReadyWeapon.Ammo1.IconName));
+			DrawPic(BAR_X + 111, BAR_Y + 14, R_RegisterPic(cl.ReadyWeapon.Ammo1.IconName));
 		}
 
 		//  Ready artifact
 		if (cl.ArtifactFlash)
 		{
-			R_DrawPic(BAR_X + 182, BAR_Y + 3,
+			DrawPic(BAR_X + 182, BAR_Y + 3,
 				pic_artiflash[cl.ArtifactFlash - 1]);
 		}
 		else if (cl.InvPtr)
 		{
-			R_DrawPic(BAR_X + 179, BAR_Y + 2,
+			DrawPic(BAR_X + 179, BAR_Y + 2,
 				R_RegisterPic(cl.InvPtr.IconName));
 			SB_DrawINumber(BAR_X + 201, BAR_Y + 24, cl.InvPtr.Amount);
 		}
@@ -338,15 +338,15 @@ void SB_DrawMainBar()
 		//  Keys
 		if (EntityEx(cl.MO).FindInventory(KeyYellow))
 		{
-			R_DrawPic(BAR_X + 153, BAR_Y + 6, pic_ykey);
+			DrawPic(BAR_X + 153, BAR_Y + 6, pic_ykey);
 		}
 		if (EntityEx(cl.MO).FindInventory(KeyGreen))
 		{
-			R_DrawPic(BAR_X + 153, BAR_Y + 14, pic_gkey);
+			DrawPic(BAR_X + 153, BAR_Y + 14, pic_gkey);
 		}
 		if (EntityEx(cl.MO).FindInventory(KeyBlue))
 		{
-			R_DrawPic(BAR_X + 153, BAR_Y + 22, pic_bkey);
+			DrawPic(BAR_X + 153, BAR_Y + 22, pic_bkey);
 		}
 
 		//  Armor
@@ -357,26 +357,26 @@ void SB_DrawMainBar()
 	else
 	{
 		//  Inventory
-		R_DrawPic(BAR_X + 34, BAR_Y + 2, pic_invbar);
+		DrawPic(BAR_X + 34, BAR_Y + 2, pic_invbar);
 		Inventory Item = cl.InvFirst;
 		for (i = 0; Item && i < 7; i++)
 		{
-			R_DrawPic(BAR_X + 50 + i * 31, BAR_Y + 2,
+			DrawPic(BAR_X + 50 + i * 31, BAR_Y + 2,
 				R_RegisterPic(Item.IconName));
 			SB_DrawINumber(BAR_X + 69 + i * 31, BAR_Y + 24, Item.Amount);
 			if (Item == cl.InvPtr)
 			{
-				R_DrawPic(BAR_X + 50 + i * 31, BAR_Y + 31, pic_selectbox);
+				DrawPic(BAR_X + 50 + i * 31, BAR_Y + 31, pic_selectbox);
 			}
 			Item = Item.NextInv();
 		}
 		if (cl.InvFirst && cl.InvFirst.PrevInv())
 		{
-			R_DrawPic(BAR_X + 38, BAR_Y + 1, pic_invgeml[!(ClGame.GLevel.TicTime & 4) ? 0 : 1]);
+			DrawPic(BAR_X + 38, BAR_Y + 1, pic_invgeml[!(ClGame.GLevel.TicTime & 4) ? 0 : 1]);
 		}
 		if (Item)
 		{
-			R_DrawPic(BAR_X + 269, BAR_Y + 1, pic_invgemr[!(ClGame.GLevel.TicTime & 4) ? 0 : 1]);
+			DrawPic(BAR_X + 269, BAR_Y + 1, pic_invgemr[!(ClGame.GLevel.TicTime & 4) ? 0 : 1]);
 		}
 	}
 }
@@ -398,12 +398,12 @@ void SB_DrawFullscreenStats()
 
 	//  Health
 	SB_DrawNumber12(50, 450, cl.Health);
-	R_DrawPic(30, 494, pic_health);
+	DrawPic(30, 494, pic_health);
 
 	//  Armorpoints
 	BasicArmor Armor = BasicArmor(EntityEx(cl.MO).FindInventory(BasicArmor));
 	SB_DrawNumber12(140, 450, Armor ? Armor.Amount : 0);
-	R_DrawPic(120, 490, pic_armor2);
+	DrawPic(120, 490, pic_armor2);
 
 	//  Frags
 	if (ClGame.deathmatch)
@@ -415,21 +415,21 @@ void SB_DrawFullscreenStats()
 	if (cl.ReadyWeapon && cl.ReadyWeapon.Ammo1)
 	{
 		SB_DrawNumber9(610, 456, cl.ReadyWeapon.Ammo1.Amount);
-		R_DrawPic(590, 454, R_RegisterPic(cl.ReadyWeapon.Ammo1.IconName));
+		DrawPic(590, 454, R_RegisterPic(cl.ReadyWeapon.Ammo1.IconName));
 	}
 
 	//  Keys
 	if (EntityEx(cl.MO).FindInventory(KeyYellow))
 	{
-		R_DrawPic(580, 444, pic_ykey);
+		DrawPic(580, 444, pic_ykey);
 	}
 	if (EntityEx(cl.MO).FindInventory(KeyGreen))
 	{
-		R_DrawPic(580, 452, pic_gkey);
+		DrawPic(580, 452, pic_gkey);
 	}
 	if (EntityEx(cl.MO).FindInventory(KeyBlue))
 	{
-		R_DrawPic(580, 460, pic_bkey);
+		DrawPic(580, 460, pic_bkey);
 	}
 
 	if (cl.InventoryTime)
@@ -438,33 +438,33 @@ void SB_DrawFullscreenStats()
 		Inventory Item = cl.InvFirst;
 		for (i = 0; i < 7; i++)
 		{
-			R_DrawPic2(210 + i * 31, 448, pic_artibox, 0.6);
+			DrawPic(210 + i * 31, 448, pic_artibox, 0.6);
 			if (Item)
 			{
-				R_DrawPic(210 + i * 31, 448,
+				DrawPic(210 + i * 31, 448,
 					R_RegisterPic(Item.IconName));
 				SB_DrawINumber(229 + i * 31, 470, Item.Amount);
 				if (Item == cl.InvPtr)
 				{
-					R_DrawPic(210 + i * 31, 477, pic_selectbox);
+					DrawPic(210 + i * 31, 477, pic_selectbox);
 				}
 				Item = Item.NextInv();
 			}
 		}
 		if (cl.InvFirst && cl.InvFirst.PrevInv())
 		{
-			R_DrawPic(198, 447, pic_invgeml[!(ClGame.GLevel.TicTime & 4) ? 0 : 1]);
+			DrawPic(198, 447, pic_invgeml[!(ClGame.GLevel.TicTime & 4) ? 0 : 1]);
 		}
 		if (Item)
 		{
-			R_DrawPic(429, 447, pic_invgemr[!(ClGame.GLevel.TicTime & 4) ? 0 : 1]);
+			DrawPic(429, 447, pic_invgemr[!(ClGame.GLevel.TicTime & 4) ? 0 : 1]);
 		}
 	}
 	else if (cl.InvPtr)
 	{
 		//  Ready artifact
-		R_DrawPic2(546, 440, pic_artibox, 0.6);
-		R_DrawPic(546, 440, R_RegisterPic(cl.InvPtr.IconName));
+		DrawPic(546, 440, pic_artibox, 0.6);
+		DrawPic(546, 440, R_RegisterPic(cl.InvPtr.IconName));
 		SB_DrawINumber(567, 462, cl.InvPtr.Amount);
 	}
 }
@@ -509,14 +509,14 @@ void SB_DrawIcons()
 				hitCentreFrame = true;
 			}
 		}
-		R_DrawPic(20, 17, pic_flight[frame]);
+		DrawPic(20, 17, pic_flight[frame]);
 	}
 
 	Pw = Powerup(EntityEx(cl.MO).FindInventory(PowerWeaponLevel2));
 	if (Pw && !cl.ChickenTime && (Pw.EffectTime > Player::BLINKTHRESHOLD ||
 		!(ftoi(2.0 * Pw.EffectTime) & 1)))
 	{
-		R_DrawPic(620, 17, pic_book[(ClGame.GLevel.TicTime / 3) & 15]);
+		DrawPic(620, 17, pic_book[(ClGame.GLevel.TicTime / 3) & 15]);
 	}
 }
 
@@ -530,7 +530,7 @@ void SB_DrawPause()
 {
 	if (ClGame.bPaused && GetCvar('draw_pause'))
 	{
-		R_DrawPic(320, ClGame.maxclients > 1 ? 140 : 40, pic_paused);
+		DrawPic(320, ClGame.maxclients > 1 ? 140 : 40, pic_paused);
 	}
 }
 

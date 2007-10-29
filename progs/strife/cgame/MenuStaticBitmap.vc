@@ -37,7 +37,7 @@ void InitWindow()
 
 void DrawWindow()
 {
-	DrawIcon(0, 0, Handle);
+	DrawPic(0, 0, Handle);
 }
 
 defaultproperties

@@ -52,7 +52,7 @@ void DrawWindow()
 {
 	if (PicHandle > 0)
 	{
-		DrawIcon(0, 0, PicHandle);
+		DrawPic(0, 0, PicHandle);
 	}
 	else
 	{

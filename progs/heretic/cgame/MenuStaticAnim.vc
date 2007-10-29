@@ -64,7 +64,7 @@ void DrawWindow()
 	{
 		frame = NumFrames - frame - 1;
 	}
-	DrawIcon(0, 0, Frames[frame]);
+	DrawPic(0, 0, Frames[frame]);
 }
 
 defaultproperties

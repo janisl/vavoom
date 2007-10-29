@@ -79,16 +79,16 @@ void DrawWindow()
 	DrawText(0, 0, Text);
 
 	xx = 0;
-	DrawIcon(xx, 0, pic_M_SLDLT);
+	DrawPic(xx, 0, pic_M_SLDLT);
 	xx += 32;
 	for (i = 0; i < 12; i++)
 	{
-		DrawIcon(xx, 0, i & 1 ? pic_M_SLDMD1 : pic_M_SLDMD2);
+		DrawPic(xx, 0, i & 1 ? pic_M_SLDMD1 : pic_M_SLDMD2);
 		xx += 8;
 	}
-	DrawIcon(xx, 0, pic_M_SLDRT);
+	DrawPic(xx, 0, pic_M_SLDRT);
 	xx = 30 + ftoi((Value - MinValue) * 100.0 / (MaxValue - MinValue));
-	DrawIcon(xx, 7, pic_M_SLDKB);
+	DrawPic(xx, 7, pic_M_SLDKB);
 }
 
 bool Key(int key)

@@ -265,7 +265,7 @@ void F_BunnyScroll()
 	}
 	if (FinaleTime < 35.0)
 	{
-		R_DrawPic((640 - 13 * 8) / 2, (480 - 8 * 8) / 2, fend[0]);
+		DrawPic((640 - 13 * 8) / 2, (480 - 8 * 8) / 2, fend[0]);
 		laststage = 0;
 		return;
 	}
@@ -280,7 +280,7 @@ void F_BunnyScroll()
 		LocalSound('weapons/pistol');
 		laststage = stage;
 	}
-	R_DrawPic((640 - 13 * 8) / 2, (480 - 8 * 8) / 2, fend[stage]);
+	DrawPic((640 - 13 * 8) / 2, (480 - 8 * 8) / 2, fend[stage]);
 }
 
 //==========================================================================
