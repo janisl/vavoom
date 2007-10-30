@@ -55,12 +55,6 @@ native RootWindow GetRootWindow();
 native ModalWindow GetModalWindow();
 native Window GetParent();
 
-native void SetPos(int NewX, int NewY);
-native void SetSize(int NewWidth, int NewHeight);
-native void SetConfiguration(int NewX, int NewY, int NewWidth, int NewHeight);
-native void SetWidth(int NewWidth);
-native void SetHeight(int NewHeight);
-
 native Window GetBottomChild(bool bVisibleOnly);
 native Window GetTopChild(bool bVisibleOnly);
 native Window GetLowerSibling(bool bVisibleOnly);
@@ -101,18 +95,6 @@ void DestroyWindow()
 //==========================================================================
 
 void WindowReady()
-{
-}
-
-//==========================================================================
-//
-//	ConfigurationChanged
-//
-//	Called when the parent changes this window's size.
-//
-//==========================================================================
-
-void ConfigurationChanged()
 {
 }
 

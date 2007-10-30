@@ -308,86 +308,6 @@ void VWindow::SetSelectability(bool NewSelectability)
 
 //==========================================================================
 //
-//	VWindow::SetPos
-//
-//==========================================================================
-
-void VWindow::SetPos(int NewX, int NewY)
-{
-	guard(VWindow::SetPos);
-	PosX = NewX;
-	PosY = NewY;
-	ClipTree();
-	ConfigurationChanged();
-	unguard;
-}
-
-//==========================================================================
-//
-//	VWindow::SetSize
-//
-//==========================================================================
-
-void VWindow::SetSize(int NewWidth, int NewHeight)
-{
-	guard(VWindow::SetSize);
-	SizeWidth = NewWidth;
-	SizeHeight = NewHeight;
-	ClipTree();
-	ConfigurationChanged();
-	unguard;
-}
-
-//==========================================================================
-//
-//	VWindow::SetConfiguration
-//
-//==========================================================================
-
-void VWindow::SetConfiguration(int NewX, int NewY, int NewWidth, int HewHeight)
-{
-	guard(VWindow::SetConfiguration);
-	PosX = NewX;
-	PosY = NewY;
-	SizeWidth = NewWidth;
-	SizeHeight = HewHeight;
-	ClipTree();
-	ConfigurationChanged();
-	unguard;
-}
-
-//==========================================================================
-//
-//	VWindow::SetWidth
-//
-//==========================================================================
-
-void VWindow::SetWidth(int NewWidth)
-{
-	guard(VWindow::SetWidth);
-	SizeWidth = NewWidth;
-	ClipTree();
-	ConfigurationChanged();
-	unguard;
-}
-
-//==========================================================================
-//
-//	VWindow::SetHeight
-//
-//==========================================================================
-
-void VWindow::SetHeight(int NewHeight)
-{
-	guard(VWindow::SetHeight);
-	SizeHeight = NewHeight;
-	ClipTree();
-	ConfigurationChanged();
-	unguard;
-}
-
-//==========================================================================
-//
 //	VWindow::KillAllChildren
 //
 //==========================================================================
@@ -422,60 +342,6 @@ void VWindow::DrawTree()
 		c->DrawTree();
 	}
 	PostDrawWindow();
-	unguard;
-}
-
-//==========================================================================
-//
-//	VWindow::ClipTree
-//
-//==========================================================================
-
-void VWindow::ClipTree()
-{
-	guard(VWindow::ClipTree);
-	if (ParentWidget)
-	{
-		ClipRect.OriginX = ParentWidget->ClipRect.OriginX + ParentWidget->ClipRect.ScaleX * PosX;
-		ClipRect.OriginY = ParentWidget->ClipRect.OriginY + ParentWidget->ClipRect.ScaleY * PosY;
-		ClipRect.ScaleX = ParentWidget->ClipRect.ScaleX * SizeScaleX;
-		ClipRect.ScaleY = ParentWidget->ClipRect.ScaleY * SizeScaleY;
-		ClipRect.ClipX1 = ClipRect.OriginX;
-		ClipRect.ClipY1 = ClipRect.OriginY;
-		ClipRect.ClipX2 = ClipRect.OriginX + ClipRect.ScaleX * SizeWidth;
-		ClipRect.ClipY2 = ClipRect.OriginY + ClipRect.ScaleY * SizeHeight;
-		if (ClipRect.ClipX1 < ParentWidget->ClipRect.ClipX1)
-		{
-			ClipRect.ClipX1 = ParentWidget->ClipRect.ClipX1;
-		}
-		if (ClipRect.ClipY1 < ParentWidget->ClipRect.ClipY1)
-		{
-			ClipRect.ClipY1 = ParentWidget->ClipRect.ClipY1;
-		}
-		if (ClipRect.ClipX2 > ParentWidget->ClipRect.ClipX2)
-		{
-			ClipRect.ClipX2 = ParentWidget->ClipRect.ClipX2;
-		}
-		if (ClipRect.ClipY2 > ParentWidget->ClipRect.ClipY2)
-		{
-			ClipRect.ClipY2 = ParentWidget->ClipRect.ClipY2;
-		}
-	}
-	else
-	{
-		ClipRect.OriginX = PosX;
-		ClipRect.OriginY = PosY;
-		ClipRect.ScaleX = SizeScaleX;
-		ClipRect.ScaleY = SizeScaleY;
-		ClipRect.ClipX1 = ClipRect.OriginX;
-		ClipRect.ClipY1 = ClipRect.OriginY;
-		ClipRect.ClipX2 = ClipRect.OriginX + ClipRect.ScaleX * SizeWidth;
-		ClipRect.ClipY2 = ClipRect.OriginY + ClipRect.ScaleY * SizeHeight;
-	}
-	for (VWindow *c = static_cast<VWindow*>(FirstChildWidget); c; c = static_cast<VWindow*>(c->NextWidget))
-	{
-		c->ClipTree();
-	}
 	unguard;
 }
 
@@ -597,42 +463,6 @@ IMPLEMENT_FUNCTION(VWindow, GetParent)
 {
 	P_GET_SELF;
 	RET_REF(Self->GetParent());
-}
-
-IMPLEMENT_FUNCTION(VWindow, SetPos)
-{
-	P_GET_INT(NewY);
-	P_GET_INT(NewX);
-	P_GET_SELF;
-	Self->SetPos(NewX, NewY);
-}
-IMPLEMENT_FUNCTION(VWindow, SetSize)
-{
-	P_GET_INT(NewHeight);
-	P_GET_INT(NewWidth);
-	P_GET_SELF;
-	Self->SetSize(NewWidth, NewHeight);
-}
-IMPLEMENT_FUNCTION(VWindow, SetConfiguration)
-{
-	P_GET_INT(NewHeight);
-	P_GET_INT(NewWidth);
-	P_GET_INT(NewY);
-	P_GET_INT(NewX);
-	P_GET_SELF;
-	Self->SetConfiguration(NewX, NewY, NewWidth, NewHeight);
-}
-IMPLEMENT_FUNCTION(VWindow, SetWidth)
-{
-	P_GET_INT(NewWidth);
-	P_GET_SELF;
-	Self->SetWidth(NewWidth);
-}
-IMPLEMENT_FUNCTION(VWindow, SetHeight)
-{
-	P_GET_INT(NewHeight);
-	P_GET_SELF;
-	Self->SetHeight(NewHeight);
 }
 
 IMPLEMENT_FUNCTION(VWindow, GetBottomChild)

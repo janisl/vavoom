@@ -185,6 +185,90 @@ void VWidget::Raise()
 
 //==========================================================================
 //
+//	VWidget::ClipTree
+//
+//==========================================================================
+
+void VWidget::ClipTree()
+{
+	guard(VWidget::ClipTree);
+	//	Set up clipping rectangle.
+	if (ParentWidget)
+	{
+		//	Clipping rectangle is relative to the parent widget.
+		ClipRect.OriginX = ParentWidget->ClipRect.OriginX +
+			ParentWidget->ClipRect.ScaleX * PosX;
+		ClipRect.OriginY = ParentWidget->ClipRect.OriginY +
+			ParentWidget->ClipRect.ScaleY * PosY;
+		ClipRect.ScaleX = ParentWidget->ClipRect.ScaleX * SizeScaleX;
+		ClipRect.ScaleY = ParentWidget->ClipRect.ScaleY * SizeScaleY;
+		ClipRect.ClipX1 = ClipRect.OriginX;
+		ClipRect.ClipY1 = ClipRect.OriginY;
+		ClipRect.ClipX2 = ClipRect.OriginX + ClipRect.ScaleX * SizeWidth;
+		ClipRect.ClipY2 = ClipRect.OriginY + ClipRect.ScaleY * SizeHeight;
+
+		//	Clip against the parent widget's clipping rectangle.
+		if (ClipRect.ClipX1 < ParentWidget->ClipRect.ClipX1)
+		{
+			ClipRect.ClipX1 = ParentWidget->ClipRect.ClipX1;
+		}
+		if (ClipRect.ClipY1 < ParentWidget->ClipRect.ClipY1)
+		{
+			ClipRect.ClipY1 = ParentWidget->ClipRect.ClipY1;
+		}
+		if (ClipRect.ClipX2 > ParentWidget->ClipRect.ClipX2)
+		{
+			ClipRect.ClipX2 = ParentWidget->ClipRect.ClipX2;
+		}
+		if (ClipRect.ClipY2 > ParentWidget->ClipRect.ClipY2)
+		{
+			ClipRect.ClipY2 = ParentWidget->ClipRect.ClipY2;
+		}
+	}
+	else
+	{
+		//	This is the root widget.
+		ClipRect.OriginX = PosX;
+		ClipRect.OriginY = PosY;
+		ClipRect.ScaleX = SizeScaleX;
+		ClipRect.ScaleY = SizeScaleY;
+		ClipRect.ClipX1 = ClipRect.OriginX;
+		ClipRect.ClipY1 = ClipRect.OriginY;
+		ClipRect.ClipX2 = ClipRect.OriginX + ClipRect.ScaleX * SizeWidth;
+		ClipRect.ClipY2 = ClipRect.OriginY + ClipRect.ScaleY * SizeHeight;
+	}
+
+	//	Set up clipping rectangles in child widgets.
+	for (VWidget* W = FirstChildWidget; W; W = W->NextWidget)
+	{
+		W->ClipTree();
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VWidget::SetConfiguration
+//
+//==========================================================================
+
+void VWidget::SetConfiguration(int NewX, int NewY, int NewWidth,
+	int HewHeight, float NewScaleX, float NewScaleY)
+{
+	guard(VWidget::SetConfiguration);
+	PosX = NewX;
+	PosY = NewY;
+	SizeWidth = NewWidth;
+	SizeHeight = HewHeight;
+	SizeScaleX = NewScaleX;
+	SizeScaleY = NewScaleY;
+	ClipTree();
+	OnConfigurationChanged();
+	unguard;
+}
+
+//==========================================================================
+//
 //	VWidget::TransferAndClipRect
 //
 //==========================================================================
@@ -343,6 +427,71 @@ IMPLEMENT_FUNCTION(VWidget, Raise)
 {
 	P_GET_SELF;
 	Self->Raise();
+}
+
+IMPLEMENT_FUNCTION(VWidget, SetPos)
+{
+	P_GET_INT(NewY);
+	P_GET_INT(NewX);
+	P_GET_SELF;
+	Self->SetPos(NewX, NewY);
+}
+
+IMPLEMENT_FUNCTION(VWidget, SetX)
+{
+	P_GET_INT(NewX);
+	P_GET_SELF;
+	Self->SetX(NewX);
+}
+
+IMPLEMENT_FUNCTION(VWidget, SetY)
+{
+	P_GET_INT(NewY);
+	P_GET_SELF;
+	Self->SetY(NewY);
+}
+
+IMPLEMENT_FUNCTION(VWidget, SetSize)
+{
+	P_GET_INT(NewHeight);
+	P_GET_INT(NewWidth);
+	P_GET_SELF;
+	Self->SetSize(NewWidth, NewHeight);
+}
+
+IMPLEMENT_FUNCTION(VWidget, SetWidth)
+{
+	P_GET_INT(NewWidth);
+	P_GET_SELF;
+	Self->SetWidth(NewWidth);
+}
+
+IMPLEMENT_FUNCTION(VWidget, SetHeight)
+{
+	P_GET_INT(NewHeight);
+	P_GET_SELF;
+	Self->SetHeight(NewHeight);
+}
+
+IMPLEMENT_FUNCTION(VWidget, SetScale)
+{
+	P_GET_FLOAT(NewScaleY);
+	P_GET_FLOAT(NewScaleX);
+	P_GET_SELF;
+	Self->SetScale(NewScaleX, NewScaleY);
+}
+
+IMPLEMENT_FUNCTION(VWidget, SetConfiguration)
+{
+	P_GET_FLOAT_OPT(NewScaleY, 1.0);
+	P_GET_FLOAT_OPT(NewScaleX, 1.0);
+	P_GET_INT(NewHeight);
+	P_GET_INT(NewWidth);
+	P_GET_INT(NewY);
+	P_GET_INT(NewX);
+	P_GET_SELF;
+	Self->SetConfiguration(NewX, NewY, NewWidth, NewHeight, NewScaleX,
+		NewScaleY);
 }
 
 IMPLEMENT_FUNCTION(VWidget, DrawPic)

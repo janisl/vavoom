@@ -71,6 +71,8 @@ private:
 	void AddChild(VWidget*);
 	void RemoveChild(VWidget*);
 
+	void ClipTree();
+
 	void TransferAndClipRect(float&, float&, float&, float&, float&, float&,
 		float&, float&) const;
 
@@ -81,6 +83,40 @@ public:
 	//	Methods to move widget on top or bottom.
 	void Lower();
 	void Raise();
+
+	//	Methods to set position, size and scale.
+	void SetPos(int NewX, int NewY)
+	{
+		SetConfiguration(NewX, NewY, SizeWidth, SizeHeight, SizeScaleX,
+			SizeScaleY);
+	}
+	void SetX(int NewX)
+	{
+		SetPos(NewX, PosY);
+	}
+	void SetY(int NewY)
+	{
+		SetPos(PosX, NewY);
+	}
+	void SetSize(int NewWidth, int NewHeight)
+	{
+		SetConfiguration(PosX, PosY, NewWidth, NewHeight, SizeScaleX,
+			SizeScaleY);
+	}
+	void SetWidth(int NewWidth)
+	{
+		SetSize(NewWidth, SizeHeight);
+	}
+	void SetHeight(int NewHeight)
+	{
+		SetSize(SizeWidth, NewHeight);
+	}
+	void SetScale(float NewScaleX, float NewScaleY)
+	{
+		SetConfiguration(PosX, PosY, SizeWidth, SizeHeight, NewScaleX,
+			NewScaleY);
+	}
+	void SetConfiguration(int, int, int, int, float = 1.0, float = 1.0);
 
 	virtual void OnChildAdded(VWidget* Child)
 	{
@@ -94,6 +130,11 @@ public:
 		P_PASS_REF(Child);
 		EV_RET_VOID(NAME_OnChildRemoved);
 	}
+	virtual void OnConfigurationChanged()
+	{
+		P_PASS_SELF;
+		EV_RET_VOID(NAME_OnConfigurationChanged);
+	}
 
 	void DrawPic(int, int, int, float = 1.0);
 	void DrawShadowedPic(int, int, int);
@@ -102,6 +143,15 @@ public:
 
 	DECLARE_FUNCTION(Raise)
 	DECLARE_FUNCTION(Lower)
+
+	DECLARE_FUNCTION(SetPos)
+	DECLARE_FUNCTION(SetX)
+	DECLARE_FUNCTION(SetY)
+	DECLARE_FUNCTION(SetSize)
+	DECLARE_FUNCTION(SetWidth)
+	DECLARE_FUNCTION(SetHeight)
+	DECLARE_FUNCTION(SetScale)
+	DECLARE_FUNCTION(SetConfiguration)
 
 	DECLARE_FUNCTION(DrawPic)
 	DECLARE_FUNCTION(DrawShadowedPic)

@@ -70,36 +70,42 @@ Widget Parent
 int X
 {
 	get { return PosX; }
+	set { SetX(value); }
 	default PosX;
 }
 
 int Y
 {
 	get { return PosY; }
+	set { SetY(value); }
 	default PosY;
 }
 
 int Width
 {
 	get { return SizeWidth; }
+	set { SetWidth(value); }
 	default SizeWidth;
 }
 
 int Height
 {
 	get { return SizeHeight; }
+	set { SetHeight(value); }
 	default SizeHeight;
 }
 
 float ScaleX
 {
 	get { return SizeScaleX; }
+	set { SetScale(value, SizeScaleY); }
 	default SizeScaleX;
 }
 
 float ScaleY
 {
 	get { return SizeScaleY; }
+	set { SetScale(SizeScaleX, value); }
 	default SizeScaleY;
 }
 
@@ -116,6 +122,17 @@ int OldOriginY
 //	Methods to move widget on top or bottom.
 native final void Lower();
 native final void Raise();
+
+//	Methods to set position, size and scale.
+native void SetPos(int NewX, int NewY);//FIXME should be final
+native final void SetX(int NewX);
+native final void SetY(int NewY);
+native final void SetSize(int NewWidth, int NewHeight);
+native final void SetWidth(int NewWidth);
+native final void SetHeight(int NewHeight);
+native final void SetScale(float NewScaleX, float NewScaleY);
+native final void SetConfiguration(int NewX, int NewY, int NewWidth,
+	int NewHeight, optional float NewScaleX, optional float NewScaleY);
 
 native final void DrawPic(int X, int Y, int Handle, optional float Alpha);
 native final void DrawShadowedPic(int X, int Y, int Handle);
@@ -145,6 +162,18 @@ void OnChildAdded(Widget Child)
 //==========================================================================
 
 void OnChildRemoved(Widget Child)
+{
+}
+
+//==========================================================================
+//
+//	OnConfigurationChanged
+//
+//	Called when position or size has been changed.
+//
+//==========================================================================
+
+void OnConfigurationChanged()
 {
 }
 

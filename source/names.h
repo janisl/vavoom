@@ -168,13 +168,15 @@ REGISTER_NAME(MessageBoxResponder)
 REGISTER_NAME(MessageBoxActive)
 REGISTER_NAME(DrawViewBorder)
 
+//	Widget events
+REGISTER_NAME(OnChildAdded)
+REGISTER_NAME(OnChildRemoved)
+REGISTER_NAME(OnConfigurationChanged)
+
 //	Window events
 REGISTER_NAME(InitWindow)
 REGISTER_NAME(DestroyWindow)
 REGISTER_NAME(WindowReady)
-REGISTER_NAME(OnChildAdded)
-REGISTER_NAME(OnChildRemoved)
-REGISTER_NAME(ConfigurationChanged)
 REGISTER_NAME(VisibilityChanged)
 REGISTER_NAME(SensitivityChanged)
 REGISTER_NAME(DrawWindow)

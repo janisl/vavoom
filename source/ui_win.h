@@ -120,13 +120,6 @@ public:
 	//bool IsTraversable(bool bCheckModal = true);
 	//bool IsFocusWindow();
 
-	//	Reconfiguration routines.
-	void SetPos(int NewX, int NewY);
-	void SetSize(int NewWidth, int NewHeight);
-	void SetConfiguration(int NewX, int NewY, int NewWidth, int HewHeight);
-	void SetWidth(int NewWidth);
-	void SetHeight(int NewHeight);
-
 	// Slayer of innocent children
 	void DestroyAllChildren() { KillAllChildren(); }
 
@@ -146,11 +139,6 @@ public:
 		EV_RET_VOID(NAME_WindowReady);
 	}
 
-	virtual void ConfigurationChanged()
-	{
-		P_PASS_SELF;
-		EV_RET_VOID(NAME_ConfigurationChanged);
-	}
 	virtual void VisibilityChanged(bool NewVisibility)
 	{
 		P_PASS_SELF;
@@ -191,8 +179,6 @@ protected:
 private:
 	void DrawTree();
 
-	void ClipTree();
-
 	void TickTree(float DeltaTime);
 
 public:
@@ -211,12 +197,6 @@ public:
 	DECLARE_FUNCTION(GetRootWindow)
 	DECLARE_FUNCTION(GetModalWindow)
 	DECLARE_FUNCTION(GetParent)
-
-	DECLARE_FUNCTION(SetPos)
-	DECLARE_FUNCTION(SetSize)
-	DECLARE_FUNCTION(SetConfiguration)
-	DECLARE_FUNCTION(SetWidth)
-	DECLARE_FUNCTION(SetHeight)
 
 	DECLARE_FUNCTION(GetBottomChild)
 	DECLARE_FUNCTION(GetTopChild)
