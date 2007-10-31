@@ -395,6 +395,57 @@ void VLevel::Destroy()
 
 //==========================================================================
 //
+//	VLevel::ClampOffsets
+//
+//==========================================================================
+
+void VLevel::ClampOffsets()
+{
+	guard(VLevel::ClampOffsets);
+	//	Clamp side offsets.
+	for (int i = 0; i < NumSides; i++)
+	{
+		if (Sides[i].textureoffset > 0x7fff ||
+			Sides[i].textureoffset < -0x8000)
+		{
+			Sides[i].textureoffset = 0;
+		}
+		if (Sides[i].rowoffset > 0x7fff || Sides[i].rowoffset < -0x8000)
+		{
+			Sides[i].rowoffset = 0;
+		}
+	}
+
+	//	Clamp sector offsets.
+	for (int i = 0; i < NumSectors; i++)
+	{
+		if (Sectors[i].floor.xoffs > 0x7fff ||
+			Sectors[i].floor.xoffs < -0x8000)
+		{
+			Sectors[i].floor.xoffs = 0;
+		}
+		if (Sectors[i].floor.yoffs > 0x7fff ||
+			Sectors[i].floor.yoffs < -0x8000)
+		{
+			Sectors[i].floor.yoffs = 0;
+		}
+
+		if (Sectors[i].ceiling.xoffs > 0x7fff ||
+			Sectors[i].ceiling.xoffs < -0x8000)
+		{
+			Sectors[i].ceiling.xoffs = 0;
+		}
+		if (Sectors[i].ceiling.yoffs > 0x7fff ||
+			Sectors[i].ceiling.yoffs < -0x8000)
+		{
+			Sectors[i].ceiling.yoffs = 0;
+		}
+	}
+	unguard;
+}
+
+//==========================================================================
+//
 //  CalcLine
 //
 //==========================================================================

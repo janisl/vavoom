@@ -104,6 +104,8 @@ void P_Ticker()
 		}
 	}
 
+	GLevel->ClampOffsets();
+
 	GLevel->Time += host_frametime;
 	GLevel->TicTime++;
 	unguard;

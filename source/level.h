@@ -682,6 +682,8 @@ class VLevel : public VObject
 
 	bool TraceLine(linetrace_t&, const TVec&, const TVec&, int) const;
 
+	void ClampOffsets();
+
 	bool IsForServer() const
 	{
 		return !!(LevelFlags & LF_ForServer);
