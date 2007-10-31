@@ -37,25 +37,36 @@ int pic_M_THERMM;
 int pic_M_THERMR;
 int pic_M_THERMO;
 
+delegate bool ValueChanging(Object Sender, float NewValue);
+
 float GetInitialValue()
 {
 	return 0.0;
 }
 
-bool SetNewValue(float newValue)
+bool SetNewValue(float NewValue)
 {
+	if (ValueChanging)
+	{
+		return ValueChanging(self, NewValue);
+	}
 	return true;
+}
+
+void SetInitialValue(float AValue)
+{
+	Value = AValue;
+	if (Value < MinValue)
+		Value = MinValue;
+	if (Value > MaxValue)
+		Value = MaxValue;
 }
 
 void InitWindow()
 {
 	::InitWindow();
 
-	Value = GetInitialValue();
-	if (Value < MinValue)
-		Value = MinValue;
-	if (Value > MaxValue)
-		Value = MaxValue;
+	SetInitialValue(GetInitialValue());
 
 	pic_M_THERML = R_RegisterPic('m_therml');
 	pic_M_THERMM = R_RegisterPic('m_thermm');

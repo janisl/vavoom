@@ -38,25 +38,36 @@ int pic_M_SLDMD2;
 int pic_M_SLDRT;
 int pic_M_SLDKB;
 
+delegate bool ValueChanging(Object Sender, float NewValue);
+
 float GetInitialValue()
 {
 	return 0.0;
 }
 
-bool SetNewValue(float newValue)
+bool SetNewValue(float NewValue)
 {
+	if (ValueChanging)
+	{
+		return ValueChanging(self, NewValue);
+	}
 	return true;
+}
+
+void SetInitialValue(float AValue)
+{
+	Value = AValue;
+	if (Value < MinValue)
+		Value = MinValue;
+	if (Value > MaxValue)
+		Value = MaxValue;
 }
 
 void InitWindow()
 {
 	::InitWindow();
 
-	Value = GetInitialValue();
-	if (Value < MinValue)
-		Value = MinValue;
-	if (Value > MaxValue)
-		Value = MaxValue;
+	SetInitialValue(GetInitialValue());
 
 	pic_M_SLDLT = R_RegisterPic('m_sldlt');
 	pic_M_SLDMD1 = R_RegisterPic('m_sldmd1');
