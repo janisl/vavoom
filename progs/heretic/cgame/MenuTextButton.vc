@@ -31,8 +31,12 @@ int TextFont;
 int TextHAlign;
 int TextVAlign;
 
+delegate void Activated(Object Sender);
+
 void ActivateEvent()
 {
+	if (Activated)
+		Activated(self);
 }
 
 bool Key(int key)

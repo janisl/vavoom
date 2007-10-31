@@ -39,13 +39,106 @@ void CreateTitle()
 	newAnim.SetPos(278, 80);
 }
 
+//==========================================================================
+//
+//	CreateChoices
+//
+//==========================================================================
+
+void CreateChoices()
+{
+	MenuBigTextButton	btn;
+	int					currentY;
+
+	currentY = ChoicesStartY;
+
+	btn = MenuBigTextButton(NewChild(MenuBigTextButton));
+	btn.SetPos(ChoicesStartX, currentY);
+	btn.Text = "Single Player";
+	btn.Activated = ActivateSP;
+	currentY += btn.Height;
+
+	btn = MenuBigTextButton(NewChild(MenuBigTextButton));
+	btn.SetPos(ChoicesStartX, currentY);
+	btn.Text = "Multiplayer";
+	btn.Activated = ActivateMP;
+	currentY += btn.Height;
+
+	btn = MenuBigTextButton(NewChild(MenuBigTextButton));
+	btn.SetPos(ChoicesStartX, currentY);
+	btn.Text = "Options";
+	btn.Activated = ActivateOpt;
+	currentY += btn.Height;
+
+	btn = MenuBigTextButton(NewChild(MenuBigTextButton));
+	btn.SetPos(ChoicesStartX, currentY);
+	btn.Text = "Help";
+	btn.Activated = ActivateHelp;
+	currentY += btn.Height;
+
+	btn = MenuBigTextButton(NewChild(MenuBigTextButton));
+	btn.SetPos(ChoicesStartX, currentY);
+	btn.Text = "Quit game";
+	btn.Activated = ActivateQuit;
+}
+
+//==========================================================================
+//
+//	ActivateSP
+//
+//==========================================================================
+
+void ActivateSP(Object Sender)
+{
+	ClGame.PushMenuScreen(ClGame.SpawnMenu(MenuScreenSinglePlayer));
+}
+
+//==========================================================================
+//
+//	ActivateMP
+//
+//==========================================================================
+
+void ActivateMP(Object Sender)
+{
+	ClGame.PushMenuScreen(ClGame.SpawnMenu(MenuScreenMultiplayer));
+}
+
+//==========================================================================
+//
+//	ActivateOpt
+//
+//==========================================================================
+
+void ActivateOpt(Object Sender)
+{
+	ClGame.PushMenuScreen(ClGame.SpawnMenu(MenuScreenOptions));
+}
+
+//==========================================================================
+//
+//	ActivateHelp
+//
+//==========================================================================
+
+void ActivateHelp(Object Sender)
+{
+	ClGame.PushMenuScreen(ClGame.SpawnMenu(MenuScreenHelp));
+}
+
+//==========================================================================
+//
+//	ActivateQuit
+//
+//==========================================================================
+
+void ActivateQuit(Object Sender)
+{
+	ClGame.menu_quit();
+}
+
 defaultproperties
 {
-	Choices[0] = MenuChoice_SinglePlayer;
-	Choices[1] = MenuChoice_Multiplayer;
-	Choices[2] = MenuChoice_Options;
-	Choices[3] = MenuChoice_Help;
-	Choices[4] = MenuChoice_QuitGame;
 	ChoicesStartX = 110;
 	ChoicesStartY = 56;
 	SelectorType = MenuSelector_BigArrow;

@@ -44,11 +44,6 @@
 #include "MenuSList.vc"
 
 #include "MenuMainTitleImage.vc"
-#include "MenuChoice_SinglePlayer.vc"
-#include "MenuChoice_Multiplayer.vc"
-#include "MenuChoice_Options.vc"
-#include "MenuChoice_Help.vc"
-#include "MenuChoice_QuitGame.vc"
 #include "MenuScreenMain.vc"
 #include "MenuChoice_NewGame.vc"
 #include "MenuChoice_LoadGame.vc"
