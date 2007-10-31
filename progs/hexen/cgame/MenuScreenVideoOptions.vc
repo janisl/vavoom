@@ -25,26 +25,261 @@
 
 class MenuScreenVideoOptions : MenuScreen;
 
-void InitWindow()
+//==========================================================================
+//
+//	CreateChoices
+//
+//==========================================================================
+
+void CreateChoices()
 {
-	::InitWindow();
+	MenuChoiceSlider	Slider;
+	MenuChoiceEnum		Enum;
+	MenuTextButton		Btn;
+	int					currentY;
+	int					i;
+
+	currentY = ChoicesStartY;
+
+	Slider = MenuChoiceSlider(NewChild(MenuChoiceSlider));
+	Slider.SetPos(ChoicesStartX, currentY);
+	Slider.Text = "Screen size";
+	Slider.MinValue = 3.0;
+	Slider.MaxValue = 11.0;
+	Slider.SetInitialValue(itof(GetCvar('screen_size')));
+	Slider.ValueChanging = ChangeScreenSize;
+	currentY += Slider.Height;
+
+	Slider = MenuChoiceSlider(NewChild(MenuChoiceSlider));
+	Slider.SetPos(ChoicesStartX, currentY);
+	Slider.Text = "Brightness";
+	Slider.MaxValue = 4.0;
+	Slider.SetInitialValue(itof(GetCvar('brightness')));
+	Slider.ValueChanging = ChangeBrightness;
+	currentY += Slider.Height;
+
+	Slider = MenuChoiceSlider(NewChild(MenuChoiceSlider));
+	Slider.SetPos(ChoicesStartX, currentY);
+	Slider.Text = "Menu darkness";
+	Slider.ValueDelta = 0.1;
+	Slider.SetInitialValue(GetCvarF('menu_darkening'));
+	Slider.ValueChanging = ChangeDarkening;
+	currentY += Slider.Height;
+
+	Enum = MenuChoiceEnum(NewChild(MenuChoiceEnum));
+	Enum.SetPos(ChoicesStartX, currentY);
+	Enum.Text = "Crosshair";
+	Enum.AddItem("None");
+	Enum.AddItem("Cross");
+	Enum.AddItem("Angle");
+	Enum.AddItem("Dot");
+	Enum.SetInitialValue(GetCvar('croshair'));
+	Enum.ValueChanging = ChangeCrosshair;
+	currentY += Enum.Height;
+
+	Slider = MenuChoiceSlider(NewChild(MenuChoiceSlider));
+	Slider.SetPos(ChoicesStartX, currentY);
+	Slider.Text = "Crosshair Transparency";
+	Slider.ValueDelta = 0.1;
+	Slider.SetInitialValue(GetCvarF('croshair_alpha'));
+	Slider.ValueChanging = ChangeCrosshairAlpha;
+	currentY += Slider.Height;
+
+	Enum = MenuChoiceEnum(NewChild(MenuChoice_OnOff));
+	Enum.SetPos(ChoicesStartX, currentY);
+	Enum.Text = "High Resolution Textures";
+	Enum.SetInitialValue(GetCvar('r_hirestex'));
+	Enum.ValueChanging = ChangeHiRestex;
+	currentY += Enum.Height;
+
+	Enum = MenuChoiceEnum(NewChild(MenuChoice_OnOff));
+	Enum.SetPos(ChoicesStartX, currentY);
+	Enum.Text = "Render Enemy Models";
+	Enum.SetInitialValue(GetCvar('r_models'));
+	Enum.ValueChanging = ChangeModels;
+	currentY += Enum.Height;
+
+	Enum = MenuChoiceEnum(NewChild(MenuChoice_OnOff));
+	Enum.SetPos(ChoicesStartX, currentY);
+	Enum.Text = "Render Weapon Models";
+	Enum.SetInitialValue(GetCvar('r_view_models'));
+	Enum.ValueChanging = ChangeViewModels;
+	currentY += Enum.Height;
+
+	Enum = MenuChoiceEnum(NewChild(MenuChoice_OnOff));
+	Enum.SetPos(ChoicesStartX, currentY);
+	Enum.Text = "Sprites Offset";
+	Enum.SetInitialValue(GetCvar('r_fix_sprite_offsets'));
+	Enum.ValueChanging = ChangeFixSpriteOffsets;
+	currentY += Enum.Height;
+
+	Slider = MenuChoiceSlider(NewChild(MenuChoiceSlider));
+	Slider.SetPos(ChoicesStartX, currentY);
+	Slider.Text = "Sprites Delta";
+	Slider.MinValue = -255.0;
+	Slider.MaxValue = 255.0;
+	Slider.SetInitialValue(itof(GetCvar('r_sprite_fix_delta')));
+	Slider.ValueChanging = ChangeSpriteFixDelta;
+	currentY += Slider.Height;
+
+	Enum = MenuChoiceEnum(NewChild(MenuChoice_OnOff));
+	Enum.SetPos(ChoicesStartX, currentY);
+	Enum.Text = "FPS Counter";
+	Enum.SetInitialValue(GetCvar('draw_fps'));
+	Enum.ValueChanging = ChangeDrawFps;
+	currentY += Enum.Height;
+
+	Btn = MenuTextButton(NewChild(MenuSmallTextButton));
+	Btn.SetPos(ChoicesStartX, currentY);
+	Btn.Text = "Advanced Video options";
+	Btn.Activated = ActivateAdvanced;
+}
+
+//==========================================================================
+//
+//	ChangeScreenSize
+//
+//==========================================================================
+
+bool ChangeScreenSize(Object Sender, float newValue)
+{
+	SetCvar('screen_size', ftoi(newValue));
+	return true;
+}
+
+//==========================================================================
+//
+//	ChangeBrightness
+//
+//==========================================================================
+
+bool ChangeBrightness(Object Sender, float newValue)
+{
+	SetCvar('brightness', ftoi(newValue));
+	return true;
+}
+
+//==========================================================================
+//
+//	ChangeDarkening
+//
+//==========================================================================
+
+bool ChangeDarkening(Object Sender, float newValue)
+{
+	SetCvarF('menu_darkening', newValue);
+	return true;
+}
+
+//==========================================================================
+//
+//	ChangeCrosshair
+//
+//==========================================================================
+
+bool ChangeCrosshair(Object Sender, int newValue)
+{
+	SetCvar('croshair', newValue);
+	return true;
+}
+
+//==========================================================================
+//
+//	ChangeCrosshairAlpha
+//
+//==========================================================================
+
+bool ChangeCrosshairAlpha(Object Sender, float newValue)
+{
+	SetCvarF('croshair_alpha', newValue);
+	return true;
+}
+
+//==========================================================================
+//
+//	ChangeHiRestex
+//
+//==========================================================================
+
+bool ChangeHiRestex(Object Sender, int newValue)
+{
+	SetCvar('r_hirestex', newValue);
+	return true;
+}
+
+//==========================================================================
+//
+//	ChangeModels
+//
+//==========================================================================
+
+bool ChangeModels(Object Sender, int newValue)
+{
+	SetCvar('r_models', newValue);
+	return true;
+}
+
+//==========================================================================
+//
+//	ChangeViewModels
+//
+//==========================================================================
+
+bool ChangeViewModels(Object Sender, int newValue)
+{
+	SetCvar('r_view_models', newValue);
+	return true;
+}
+
+//==========================================================================
+//
+//	ChangeFixSpriteOffsets
+//
+//==========================================================================
+
+bool ChangeFixSpriteOffsets(Object Sender, int newValue)
+{
+	SetCvar('r_fix_sprite_offsets', newValue);
+	return true;
+}
+
+//==========================================================================
+//
+//	ChangeSpriteFixDelta
+//
+//==========================================================================
+
+bool ChangeSpriteFixDelta(Object Sender, float newValue)
+{
+	SetCvar('r_sprite_fix_delta', ftoi(newValue));
+	return true;
+}
+
+//==========================================================================
+//
+//	ChangeDrawFps
+//
+//==========================================================================
+
+bool ChangeDrawFps(Object Sender, int newValue)
+{
+	SetCvar('draw_fps', newValue);
+	return true;
+}
+
+//==========================================================================
+//
+//	ActivateAdvanced
+//
+//==========================================================================
+
+void ActivateAdvanced(Object Sender)
+{
+	ClGame.PushMenuScreen(ClGame.SpawnMenu(MenuScreenAdvancedVideoOptions));
 }
 
 defaultproperties
 {
-	Choices[0] = MenuChoice_ScreenSize;
-	Choices[1] = MenuChoice_Brightness;
-	Choices[2] = MenuChoice_Darkening;
-	Choices[3] = MenuChoice_Croshair;
-	Choices[4] = MenuChoice_CroshairTrans;
-	Choices[5] = MenuChoice_HiResTextures;
-	Choices[6] = MenuChoice_Models;
-	Choices[7] = MenuChoice_ViewModels;
-	Choices[8] = MenuChoice_SpriteOffset;
-	Choices[9] = MenuChoice_SpriteDelta;
-	Choices[10] = MenuChoice_DrawFPS;
-	Choices[11] = MenuChoice_AdvancedVideoOptions;
-
 	ChoicesStartX = 160;
 	ChoicesStartY = 26;
 	SelectorType = MenuSelector_SmallRight;
