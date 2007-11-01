@@ -71,8 +71,6 @@
 #include "MenuChoice_MPEpisode.vc"
 #endif
 #include "MenuScreenNewNetGame.vc"
-#include "MenuChoice_Search.vc"
-#include "MenuChoice_JoinAt.vc"
 #include "MenuScreenJoinGame.vc"
 #include "MenuScreenSList.vc"
 #include "MenuChoice_PlayerName.vc"

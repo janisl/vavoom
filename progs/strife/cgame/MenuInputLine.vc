@@ -25,10 +25,12 @@
 
 class MenuInputLine : MenuChoice;
 
-string	Text;
 bool	bEnteringText;
+string	Text;
 string	Value;
 string	EnterText;
+
+delegate void ValueChanged(Object Sender);
 
 void InitWindow()
 {
@@ -36,8 +38,12 @@ void InitWindow()
 	InitSlot();
 }
 
-void ValueChanged()
+void OnValueChanged()
 {
+	if (ValueChanged)
+	{
+		ValueChanged(self);
+	}
 }
 
 void DrawWindow()
@@ -69,7 +75,7 @@ bool Key(int key)
 		case K_MOUSE1:
 			bEnteringText = false;
 			Value = EnterText;
-			ValueChanged();
+			OnValueChanged();
 			break;
 
     	case K_BACKSPACE:

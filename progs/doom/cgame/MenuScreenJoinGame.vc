@@ -25,10 +25,62 @@
 
 class MenuScreenJoinGame:MenuScreen;
 
+MenuInputLine		JoinAt;
+
+//==========================================================================
+//
+//	CreateChoices
+//
+//==========================================================================
+
+void CreateChoices()
+{
+	MenuTextButton		Btn;
+	int					currentY;
+
+	currentY = ChoicesStartY;
+
+	Btn = MenuTextButton(NewChild(MenuSmallTextButton));
+	Btn.SetPos(ChoicesStartX, currentY);
+	Btn.Text = "Search for games...";
+	Btn.TextHAlign = hleft;
+	Btn.Activated = ActivateSearch;
+	currentY += Btn.Height;
+
+	JoinAt = MenuInputLine(NewChild(MenuInputLine));
+	JoinAt.SetPos(ChoicesStartX, currentY);
+	JoinAt.Text = "Join Game At";
+	JoinAt.ValueChanged = ChangedJoinAt;
+	currentY += JoinAt.Height;
+}
+
+//==========================================================================
+//
+//	ActivateSearch
+//
+//==========================================================================
+
+void ActivateSearch(Object Sender)
+{
+	ClGame.PushMenuScreen(ClGame.SpawnMenu(MenuScreenSList));
+}
+
+//==========================================================================
+//
+//	ChangedJoinAt
+//
+//==========================================================================
+
+void ChangedJoinAt(Object Sender)
+{
+	if (JoinAt.Value)
+	{
+		CmdBuf_AddText("Connect %s\n", JoinAt.Value);
+	}
+}
+
 defaultproperties
 {
-	Choices[0] = MenuChoice_Search;
-	Choices[1] = MenuChoice_JoinAt;
 	ChoicesStartX = 64;
 	ChoicesStartY = 40;
 	SelectorType = MenuSelector_SmallLeft;

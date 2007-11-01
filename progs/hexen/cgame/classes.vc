@@ -76,8 +76,6 @@
 #include "MenuChoice_Level.vc"
 #include "MenuChoice_StartGame.vc"
 #include "MenuScreenNewNetGame.vc"
-#include "MenuChoice_Search.vc"
-#include "MenuChoice_JoinAt.vc"
 #include "MenuScreenJoinGame.vc"
 #include "MenuScreenSList.vc"
 #include "MenuChoice_PlayerName.vc"

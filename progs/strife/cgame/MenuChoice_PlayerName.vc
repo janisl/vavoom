@@ -31,9 +31,9 @@ void InitWindow()
 	Value = GetCvarS('Name');
 }
 
-void ValueChanged()
+void OnValueChanged()
 {
-	::ValueChanged();
+	::OnValueChanged();
 	SetCvarS('Name', Value);
 }
 
