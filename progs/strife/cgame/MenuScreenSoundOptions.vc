@@ -23,15 +23,122 @@
 //**
 //**************************************************************************
 
-class MenuScreenSoundOptions:MenuScreen;
+class MenuScreenSoundOptions : MenuScreen;
+
+//==========================================================================
+//
+//	CreateChoices
+//
+//==========================================================================
+
+void CreateChoices()
+{
+	MenuChoiceSlider	Slider;
+	MenuChoiceEnum		Enum;
+	int					currentY;
+
+	currentY = ChoicesStartY;
+
+	Slider = MenuChoiceSlider(NewChild(MenuChoiceSlider));
+	Slider.SetPos(ChoicesStartX, currentY);
+	Slider.Text = "Sound volume";
+	Slider.ValueDelta = 0.1;
+	Slider.SetInitialValue(GetCvarF('sfx_volume'));
+	Slider.ValueChanging = ChangeSoundVolume;
+	currentY += Slider.Height;
+
+	Enum = MenuChoiceEnum(NewChild(MenuChoice_OnOff));
+	Enum.SetPos(ChoicesStartX, currentY);
+	Enum.Text = "Swap stereo";
+	Enum.SetInitialValue(GetCvar('swap_stereo'));
+	Enum.ValueChanging = ChangeSwapStereo;
+	currentY += Enum.Height;
+
+	Slider = MenuChoiceSlider(NewChild(MenuChoiceSlider));
+	Slider.SetPos(ChoicesStartX, currentY);
+	Slider.Text = "Music volume";
+	Slider.ValueDelta = 0.1;
+	Slider.SetInitialValue(GetCvarF('music_volume'));
+	Slider.ValueChanging = ChangeMusicVolume;
+	currentY += Slider.Height;
+
+	Enum = MenuChoiceEnum(NewChild(MenuChoice_OnOff));
+	Enum.SetPos(ChoicesStartX, currentY);
+	Enum.Text = "CD Music";
+	Enum.SetInitialValue(GetCvar('use_cd_music'));
+	Enum.ValueChanging = ChangeCDMusic;
+	currentY += Enum.Height;
+
+	Enum = MenuChoiceEnum(NewChild(MenuChoice_OnOff));
+	Enum.SetPos(ChoicesStartX, currentY);
+	Enum.Text = "External Music";
+	Enum.SetInitialValue(GetCvar('s_external_music'));
+	Enum.ValueChanging = ChangeExternamMusic;
+	currentY += Enum.Height;
+}
+
+//==========================================================================
+//
+//	ChangeSoundVolume
+//
+//==========================================================================
+
+bool ChangeSoundVolume(Object Sender, float newValue)
+{
+	SetCvarF('sfx_volume', newValue);
+	return true;
+}
+
+//==========================================================================
+//
+//	ChangeSwapStereo
+//
+//==========================================================================
+
+bool ChangeSwapStereo(Object Sender, int newValue)
+{
+	SetCvar('swap_stereo', newValue);
+	return true;
+}
+
+//==========================================================================
+//
+//	ChangeMusicVolume
+//
+//==========================================================================
+
+bool ChangeMusicVolume(Object Sender, float newValue)
+{
+	SetCvarF('music_volume', newValue);
+	return true;
+}
+
+//==========================================================================
+//
+//	ChangeCDMusic
+//
+//==========================================================================
+
+bool ChangeCDMusic(Object Sender, int newValue)
+{
+	SetCvar('use_cd_music', newValue);
+	return true;
+}
+
+//==========================================================================
+//
+//	ChangeExternamMusic
+//
+//==========================================================================
+
+bool ChangeExternamMusic(Object Sender, int newValue)
+{
+	SetCvar('s_external_music', newValue);
+	return true;
+}
 
 defaultproperties
 {
-	Choices[0] = MenuChoice_SoundVolume;
-	Choices[1] = MenuChoice_SwapStereo;
-	Choices[2] = MenuChoice_MusicVolume;
-	Choices[3] = MenuChoice_CDMusic;
-	Choices[4] = MenuChoice_ExternalMusic;
 	ChoicesStartX = 160;
 	ChoicesStartY = 37;
 	SelectorType = MenuSelector_SmallRight;
