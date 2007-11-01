@@ -25,39 +25,146 @@
 
 class MenuScreenScreenResolution : MenuScreen;
 
-MenuChoice_VideoMode Mode;
-MenuChoice_BitDepth Depth;
-MenuChoice_Windowed Windowed;
+struct mode_t
+{
+	int		width;
+	int		height;
+};
+
+mode_t				modes[6];
+int					depths[4];
+
+MenuChoiceEnum		Mode;
+MenuChoiceEnum		Depth;
+MenuChoiceEnum		Windowed;
+
+//==========================================================================
+//
+//	CreateChoices
+//
+//==========================================================================
 
 void CreateChoices()
 {
-	Mode = MenuChoice_VideoMode(NewChild(MenuChoice_VideoMode));
+	MenuTextButton		Btn;
+
+	Mode = MenuChoiceEnum(NewChild(MenuChoiceEnum));
 	Mode.SetPos(ChoicesStartX, ChoicesStartY);
+	Mode.Text = "Resolution";
+	Mode.AddItem("640x480");
+	Mode.AddItem("800x600");
+	Mode.AddItem("1024x768");
+	Mode.AddItem("1152x864");
+	Mode.AddItem("1280x1024");
+	Mode.AddItem("1600x1200");
+	Mode.SetInitialValue(GetModeValue());
 	ChoicesStartY += Mode.Height;
 
-	Depth = MenuChoice_BitDepth(NewChild(MenuChoice_BitDepth));
+	Depth = MenuChoiceEnum(NewChild(MenuChoiceEnum));
 	Depth.SetPos(ChoicesStartX, ChoicesStartY);
+	Depth.Text = "Bit depth";
+	Depth.AddItem("8");
+	Depth.AddItem("16");
+	Depth.AddItem("24");
+	Depth.AddItem("32");
+	Depth.SetInitialValue(GetDepthValue());
 	ChoicesStartY += Depth.Height;
 
-	Windowed = MenuChoice_Windowed(NewChild(MenuChoice_Windowed));
+	Windowed = MenuChoiceEnum(NewChild(MenuChoice_OnOff));
 	Windowed.SetPos(ChoicesStartX, ChoicesStartY);
+	Windowed.Text = "Windowed";
+	Windowed.SetInitialValue(GetCvar('screen_windowed'));
 	ChoicesStartY += Windowed.Height;
 
-	::CreateChoices();
+	Btn = MenuTextButton(NewChild(MenuSmallTextButton));
+	Btn.SetPos(ChoicesStartX, ChoicesStartY);
+	Btn.Text = "Set Resolution";
+	Btn.Activated = ActivateSetMode;
 }
 
-void SetMode()
+//==========================================================================
+//
+//	GetModeValue
+//
+//==========================================================================
+
+final int GetModeValue()
+{
+	int w;
+	int h;
+	int mi;
+
+	w = GetCvar('screen_width');
+	h = GetCvar('screen_height');
+
+	for (mi = 0; mi < 9; mi++)
+	{
+		if (modes[mi].width == w && modes[mi].height == h)
+		{
+			break;
+		}
+	}
+	if (mi == 9)
+	{
+		mi = 0;
+	}
+	return mi;
+}
+
+//==========================================================================
+//
+//	GetDepthValue
+//
+//==========================================================================
+
+final int GetDepthValue()
+{
+	int b;
+	int bi;
+
+	b = GetCvar('screen_bpp');
+
+	for (bi = 0; bi < 4; bi++)
+	{
+		if (depths[bi] == b)
+		{
+			break;
+		}
+	}
+	if (bi == 4)
+	{
+		bi = 0;
+	}
+	return bi;
+}
+
+//==========================================================================
+//
+//	ActivateSetMode
+//
+//==========================================================================
+
+void ActivateSetMode(Object Sender)
 {
 	SetCvar('screen_windowed', Windowed.Value);
-	CmdBuf_AddText("SetResolution %d %d %d\n", Mode.GetModeWidth(),
-		Mode.GetModeHeight(), Depth.GetDepth());
+	CmdBuf_AddText("SetResolution %d %d %d\n", modes[Mode.Value].width,
+		modes[Mode.Value].height, depths[Depth.Value]);
 }
 
 defaultproperties
 {
-	Choices[0] = MenuChoice_ApplyVidMode;
 	ChoicesStartX = 120;
 	ChoicesStartY = 26;
 	SelectorType = MenuSelector_SmallRight;
 	Title = "SCREEN RESOLUTION";
+	modes[0].width = 640; modes[0].height = 480;
+	modes[1].width = 800; modes[1].height = 600;
+	modes[2].width = 1024; modes[2].height = 768;
+	modes[3].width = 1152; modes[3].height = 864;
+	modes[4].width = 1280; modes[4].height = 1024;
+	modes[5].width = 1600; modes[5].height = 1200;
+	depths[0] = 8;
+	depths[1] = 16;
+	depths[2] = 24;
+	depths[3] = 32;
 }
