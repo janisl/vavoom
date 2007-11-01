@@ -23,17 +23,143 @@
 //**
 //**************************************************************************
 
-class MenuScreenOptions:MenuScreen;
+class MenuScreenOptions : MenuScreen;
+
+//==========================================================================
+//
+//	CreateChoices
+//
+//==========================================================================
+
+void CreateChoices()
+{
+	MenuTextButton		Btn;
+	int					currentY;
+
+	currentY = ChoicesStartY;
+
+	Btn = MenuTextButton(NewChild(MenuSmallTextButton));
+	Btn.SetPos(ChoicesStartX, currentY);
+	Btn.Text = "Controls";
+	Btn.Activated = ActivateControls;
+	currentY += Btn.Height;
+
+	Btn = MenuTextButton(NewChild(MenuSmallTextButton));
+	Btn.SetPos(ChoicesStartX, currentY);
+	Btn.Text = "Controls 2";
+	Btn.Activated = ActivateControls2;
+	currentY += Btn.Height;
+
+	Btn = MenuTextButton(NewChild(MenuSmallTextButton));
+	Btn.SetPos(ChoicesStartX, currentY);
+	Btn.Text = "Mouse Options";
+	Btn.Activated = ActivateMouseOpt;
+	currentY += Btn.Height;
+
+	Btn = MenuTextButton(NewChild(MenuSmallTextButton));
+	Btn.SetPos(ChoicesStartX, currentY);
+	Btn.Text = "Screen Resolution";
+	Btn.Activated = ActivateScreenResolution;
+	currentY += Btn.Height;
+
+	Btn = MenuTextButton(NewChild(MenuSmallTextButton));
+	Btn.SetPos(ChoicesStartX, currentY);
+	Btn.Text = "Video options";
+	Btn.Activated = ActivateVideoOpt;
+	currentY += Btn.Height;
+
+	Btn = MenuTextButton(NewChild(MenuSmallTextButton));
+	Btn.SetPos(ChoicesStartX, currentY);
+	Btn.Text = "Sound Settings";
+	Btn.Activated = ActivateSoundOpt;
+	currentY += Btn.Height;
+
+	Btn = MenuTextButton(NewChild(MenuSmallTextButton));
+	Btn.SetPos(ChoicesStartX, currentY);
+	Btn.Text = "Go to console";
+	Btn.Activated = ActivateConsole;
+	currentY += Btn.Height;
+}
+
+//==========================================================================
+//
+//	ActivateControls
+//
+//==========================================================================
+
+void ActivateControls(Object Sender)
+{
+	ClGame.PushMenuScreen(ClGame.SpawnMenu(MenuScreenControls));
+}
+
+//==========================================================================
+//
+//	ActivateControls2
+//
+//==========================================================================
+
+void ActivateControls2(Object Sender)
+{
+	ClGame.PushMenuScreen(ClGame.SpawnMenu(MenuScreenControls2));
+}
+
+//==========================================================================
+//
+//	ActivateMouseOpt
+//
+//==========================================================================
+
+void ActivateMouseOpt(Object Sender)
+{
+	ClGame.PushMenuScreen(ClGame.SpawnMenu(MenuScreenMouseOptions));
+}
+
+//==========================================================================
+//
+//	ActivateScreenResolution
+//
+//==========================================================================
+
+void ActivateScreenResolution(Object Sender)
+{
+	ClGame.PushMenuScreen(ClGame.SpawnMenu(MenuScreenScreenResolution));
+}
+
+//==========================================================================
+//
+//	ActivateVideoOpt
+//
+//==========================================================================
+
+void ActivateVideoOpt(Object Sender)
+{
+	ClGame.PushMenuScreen(ClGame.SpawnMenu(MenuScreenVideoOptions));
+}
+
+//==========================================================================
+//
+//	ActivateSoundOpt
+//
+//==========================================================================
+
+void ActivateSoundOpt(Object Sender)
+{
+	ClGame.PushMenuScreen(ClGame.SpawnMenu(MenuScreenSoundOptions));
+}
+
+//==========================================================================
+//
+//	ActivateConsole
+//
+//==========================================================================
+
+void ActivateConsole(Object Sender)
+{
+	CmdBuf_AddText("ToggleConsole\n");
+}
 
 defaultproperties
 {
-	Choices[0] = MenuChoice_Controls;
-	Choices[1] = MenuChoice_Controls2;
-	Choices[2] = MenuChoice_MouseOptions;
-	Choices[3] = MenuChoice_ScreenResolution;
-	Choices[4] = MenuChoice_VideoOptions;
-	Choices[5] = MenuChoice_SoundSettings;
-	Choices[6] = MenuChoice_GoToConsole;
 	ChoicesStartX = 160;
 	ChoicesStartY = 32;
 	SelectorType = MenuSelector_SmallRight;
