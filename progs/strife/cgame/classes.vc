@@ -45,10 +45,6 @@
 
 #include "MenuMainTitleImage.vc"
 #include "MenuScreenMain.vc"
-#include "MenuChoice_NewGame.vc"
-#include "MenuChoice_LoadGame.vc"
-#include "MenuChoice_SaveGame.vc"
-#include "MenuChoice_EndGame.vc"
 #include "MenuScreenSinglePlayer.vc"
 #include "MenuChoiceEpisode.vc"
 #include "MenuScreenEpisode.vc"

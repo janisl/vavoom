@@ -23,14 +23,120 @@
 //**
 //**************************************************************************
 
-class MenuScreenSinglePlayer:MenuScreen;
+class MenuScreenSinglePlayer : MenuScreen;
+
+//==========================================================================
+//
+//	CreateChoices
+//
+//==========================================================================
+
+void CreateChoices()
+{
+	MenuTextButton		Btn;
+	int					currentY;
+
+	currentY = ChoicesStartY;
+
+	Btn = MenuTextButton(NewChild(MenuBigTextButton));
+	Btn.SetPos(ChoicesStartX, currentY);
+	Btn.Text = "New Game";
+	Btn.Activated = ActivateNewGame;
+	currentY += Btn.Height;
+
+	Btn = MenuTextButton(NewChild(MenuBigTextButton));
+	Btn.SetPos(ChoicesStartX, currentY);
+	Btn.Text = "Load Game";
+	Btn.Activated = ActivateLoad;
+	currentY += Btn.Height;
+
+	Btn = MenuTextButton(NewChild(MenuBigTextButton));
+	Btn.SetPos(ChoicesStartX, currentY);
+	Btn.Text = "Save Game";
+	Btn.Activated = ActivateSave;
+	currentY += Btn.Height;
+
+	Btn = MenuTextButton(NewChild(MenuBigTextButton));
+	Btn.SetPos(ChoicesStartX, currentY);
+	Btn.Text = "End Game";
+	Btn.Activated = ActivateEndGame;
+	currentY += Btn.Height;
+}
+
+//==========================================================================
+//
+//	ActivateNewGame
+//
+//==========================================================================
+
+void ActivateNewGame(Object Sender)
+{
+	if (!ClGame.local_server)
+	{
+		return;
+	}
+	if (P_GetNumEpisodes() > 1)
+	{
+		ClGame.PushMenuScreen(ClGame.SpawnMenu(MenuScreenEpisode));
+	}
+	else if (P_GetNumEpisodes() == 1)
+	{
+		ClGame.MenuStartMap = P_GetEpisodeDef(0)->Name;
+		if (P_GetEpisodeDef(0)->bNoSkillMenu)
+		{
+			ClGame.NewGame(sk_medium);
+		}
+		else
+		{
+			ClGame.PushMenuScreen(ClGame.SpawnMenu(MenuScreenSkill));
+		}
+	}
+	else
+	{
+#ifdef DOOM2
+		ClGame.MenuStartMap = 'map01';
+		ClGame.PushMenuScreen(ClGame.SpawnMenu(MenuScreenSkill));
+#else
+		ClGame.PushMenuScreen(ClGame.SpawnMenu(MenuScreenEpisode));
+#endif
+	}
+}
+
+//==========================================================================
+//
+//	ActivateLoad
+//
+//==========================================================================
+
+void ActivateLoad(Object Sender)
+{
+	ClGame.PushMenuScreen(ClGame.SpawnMenu(MenuScreenLoadGame));
+}
+
+//==========================================================================
+//
+//	ActivateSave
+//
+//==========================================================================
+
+void ActivateSave(Object Sender)
+{
+	ClGame.PushMenuScreen(ClGame.SpawnMenu(MenuScreenSaveGame));
+}
+
+//==========================================================================
+//
+//	ActivateEndGame
+//
+//==========================================================================
+
+void ActivateEndGame(Object Sender)
+{
+	CmdBuf_AddText("Disconnect\n");
+}
 
 defaultproperties
 {
-	Choices[0] = MenuChoice_NewGame;
-	Choices[1] = MenuChoice_LoadGame;
-	Choices[2] = MenuChoice_SaveGame;
-	Choices[3] = MenuChoice_EndGame;
 	ChoicesStartX = 97;
 	ChoicesStartY = 40;
 	SelectorType = MenuSelector_Skull;
