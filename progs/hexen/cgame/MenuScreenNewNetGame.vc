@@ -25,47 +25,132 @@
 
 class MenuScreenNewNetGame : MenuScreen;
 
-MenuChoice_Players Players;
-MenuChoice_Monsters Monsters;
-MenuChoice_DeathMatch DeathMatch;
-MenuChoice_MPSkill Skill;
-MenuChoice_TimeLimit TimeLimit;
-MenuChoice_Level Level;
+MenuChoiceEnum		Players;
+MenuChoiceEnum		Monsters;
+MenuChoiceEnum		DeathMatch;
+MenuChoiceEnum		Skill;
+MenuChoiceEnum		TimeLimit;
+MenuChoiceEnum		Level;
+
+//==========================================================================
+//
+//	CreateChoices
+//
+//==========================================================================
 
 void CreateChoices()
 {
-	MenuChoice newChoice;
+	MenuTextButton		Btn;
 
-	newChoice = MenuChoice(NewChild(MenuChoice_StartGame));
-	newChoice.SetPos(ChoicesStartX, ChoicesStartY);
-	ChoicesStartY += newChoice.Height;
+	Btn = MenuTextButton(NewChild(MenuSmallTextButton));
+	Btn.SetPos(ChoicesStartX, ChoicesStartY);
+	Btn.Text = "Start Game";
+	Btn.Activated = ActivateStartNewGame;
+	ChoicesStartY += Btn.Height;
 
-	Players = MenuChoice_Players(NewChild(MenuChoice_Players));
+	Players = MenuChoiceEnum(NewChild(MenuChoiceEnum));
 	Players.SetPos(ChoicesStartX, ChoicesStartY);
+	Players.Text = "Max players";
+	Players.AddItem("2");
+	Players.AddItem("3");
+	Players.AddItem("4");
+	Players.AddItem("5");
+	Players.AddItem("6");
+	Players.AddItem("7");
+	Players.AddItem("8");
+	Players.SetInitialValue(2);
 	ChoicesStartY += Players.Height;
 
-	Monsters = MenuChoice_Monsters(NewChild(MenuChoice_Monsters));
+	Monsters = MenuChoiceEnum(NewChild(MenuChoice_OnOff));
 	Monsters.SetPos(ChoicesStartX, ChoicesStartY);
+	Monsters.Text = "Monsters";
 	ChoicesStartY += Monsters.Height;
 
-	DeathMatch = MenuChoice_DeathMatch(NewChild(MenuChoice_DeathMatch));
+	DeathMatch = MenuChoiceEnum(NewChild(MenuChoiceEnum));
 	DeathMatch.SetPos(ChoicesStartX, ChoicesStartY);
+	DeathMatch.Text = "Game type";
+	DeathMatch.AddItem("Cooperative");
+	DeathMatch.AddItem("Deathmatch");
+	DeathMatch.SetInitialValue(1);
 	ChoicesStartY += DeathMatch.Height;
 
-	Skill = MenuChoice_MPSkill(NewChild(MenuChoice_MPSkill));
+	Skill = MenuChoiceEnum(NewChild(MenuChoiceEnum));
 	Skill.SetPos(ChoicesStartX, ChoicesStartY);
+	Skill.SetInitialValue(2);
+	Skill.Text = "Skill";
+	Skill.AddItem("Baby");
+	Skill.AddItem("Easy");
+	Skill.AddItem("Normal");
+	Skill.AddItem("Hard");
+	Skill.AddItem("Nightmare");
 	ChoicesStartY += Skill.Height;
 
-	TimeLimit = MenuChoice_TimeLimit(NewChild(MenuChoice_TimeLimit));
+	TimeLimit = MenuChoiceEnum(NewChild(MenuChoiceEnum));
 	TimeLimit.SetPos(ChoicesStartX, ChoicesStartY);
+	TimeLimit.Text = "Time limit";
+	TimeLimit.AddItem("0");
+	TimeLimit.AddItem("5");
+	TimeLimit.AddItem("10");
+	TimeLimit.AddItem("15");
+	TimeLimit.AddItem("20");
+	TimeLimit.AddItem("25");
+	TimeLimit.AddItem("30");
+	TimeLimit.AddItem("35");
+	TimeLimit.AddItem("40");
+	TimeLimit.AddItem("45");
+	TimeLimit.AddItem("50");
+	TimeLimit.AddItem("55");
+	TimeLimit.AddItem("60");
 	ChoicesStartY += TimeLimit.Height;
 
-	Level = MenuChoice_Level(NewChild(MenuChoice_Level));
+	Level = MenuChoiceEnum(NewChild(MenuChoiceEnum));
 	Level.SetPos(ChoicesStartX, ChoicesStartY);
+	Level.Text = "Level";
 	ChoicesStartY += Level.Height;
+
+	InitMapList();
 }
 
-void StartNewGame()
+//==========================================================================
+//
+//	InitMapList
+//
+//==========================================================================
+
+void InitMapList()
+{
+	int i;
+#ifdef FIXME
+	int count = 0;
+
+	for (i = 1; i <= 99; i++)
+	{
+		int map = P_TranslateMap(i);
+
+		if (map != -1)
+		{
+			Level.EnumNames[count] = P_GetMapName(map);
+			count++;
+		}
+	}
+	Level.MaxValue = count;
+#else
+	for (i = 0; i < 32; i++)
+	{
+		Level.EnumNames[i] = P_GetMapName(i);
+	}
+	Level.MaxValue = 32;
+#endif
+	Level.Value = 0;
+}
+
+//==========================================================================
+//
+//	ActivateStartNewGame
+//
+//==========================================================================
+
+void ActivateStartNewGame(Object Sender)
 {
 	CmdBuf_AddText("Disconnect\n");
 	CmdBuf_AddText("MaxPlayers %d\n", Players.Value + 2);

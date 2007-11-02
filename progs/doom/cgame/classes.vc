@@ -60,16 +60,6 @@
 #include "MenuChoice_SaveSlot.vc"
 #include "MenuScreenSaveGame.vc"
 #include "MenuScreenMultiplayer.vc"
-#include "MenuChoice_StartGame.vc"
-#include "MenuChoice_Players.vc"
-#include "MenuChoice_Monsters.vc"
-#include "MenuChoice_DeathMatch.vc"
-#include "MenuChoice_MPSkill.vc"
-#include "MenuChoice_TimeLimit.vc"
-#include "MenuChoice_MPLevel.vc"
-#ifndef DOOM2
-#include "MenuChoice_MPEpisode.vc"
-#endif
 #include "MenuScreenNewNetGame.vc"
 #include "MenuScreenJoinGame.vc"
 #include "MenuScreenSList.vc"
