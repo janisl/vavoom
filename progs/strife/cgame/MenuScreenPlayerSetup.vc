@@ -25,18 +25,39 @@
 
 class MenuScreenPlayerSetup : MenuScreen;
 
-MenuChoice_PlayerName PlayerName;
-MenuChoice_Colour Colour;
-MenuSpriteAnim Anim;
+MenuInputLine		PlayerName;
+MenuChoiceEnum		Colour;
+MenuSpriteAnim		Anim;
+
+//==========================================================================
+//
+//	CreateChoices
+//
+//==========================================================================
 
 void CreateChoices()
 {
-	PlayerName = MenuChoice_PlayerName(NewChild(MenuChoice_PlayerName));
+	PlayerName = MenuInputLine(NewChild(MenuInputLine));
 	PlayerName.SetPos(ChoicesStartX, ChoicesStartY);
+	PlayerName.Text = "Name";
+	PlayerName.Value = GetCvarS('Name');
+	PlayerName.ValueChanged = ChangePlayerName;
 	ChoicesStartY += PlayerName.Height;
 
-	Colour = MenuChoice_Colour(NewChild(MenuChoice_Colour));
+	Colour = MenuChoiceEnum(NewChild(MenuChoiceEnum));
 	Colour.SetPos(ChoicesStartX, ChoicesStartY);
+	Colour.Text = "Colour";
+	Colour.bLeftAlign = true;
+	Colour.AddItem("brown");
+	Colour.AddItem("red");
+	Colour.AddItem("dark brown");
+	Colour.AddItem("gray");
+	Colour.AddItem("green");
+	Colour.AddItem("yellow");
+	Colour.AddItem("light green");
+	Colour.AddItem("cyan");
+	Colour.SetInitialValue(GetCvar('colour'));
+	Colour.ValueChanging = ChangeColour;
 	ChoicesStartY += Colour.Height;
 
 	R_InstallSprite("PLAY", 500);
@@ -47,12 +68,34 @@ void CreateChoices()
 	Anim.Speed = 8;
 	Anim.NumFrames = 4;
 	Anim.Translation = Colour.Value;
-	Colour.Anim = Anim;
+}
+
+//==========================================================================
+//
+//	ChangePlayerName
+//
+//==========================================================================
+
+void ChangePlayerName(Object Sender)
+{
+	SetCvarS('Name', PlayerName.Value);
+}
+
+//==========================================================================
+//
+//	ChangeColour
+//
+//==========================================================================
+
+bool ChangeColour(Object Sender, int newValue)
+{
+	SetCvar('colour', newValue);
+	Anim.Translation = newValue;
+	return true;
 }
 
 defaultproperties
 {
-	Choices[0] = MenuChoice_PlayerName;
 	ChoicesStartX = 16;
 	ChoicesStartY = 40;
 	SelectorType = MenuSelector_SmallLeft;

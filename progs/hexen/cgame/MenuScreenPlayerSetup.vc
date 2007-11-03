@@ -25,9 +25,118 @@
 
 class MenuScreenPlayerSetup : MenuScreen;
 
-MenuSpriteAnim Anim;
-int Colour;
-int PClass;
+MenuSpriteAnim		Anim;
+MenuInputLine		PName;
+MenuChoiceEnum		EColour;
+MenuChoiceEnum		EPClass;
+int					Colour;
+int					PClass;
+
+//==========================================================================
+//
+//	CreateChoices
+//
+//==========================================================================
+
+void CreateChoices()
+{
+	int			currentY;
+
+	R_InstallSprite("PLAY", 500);
+	R_InstallSprite("CLER", 501);
+	R_InstallSprite("MAGE", 502);
+
+	Anim = MenuSpriteAnim(NewChild(MenuSpriteAnim));
+	Anim.SetPos(260, 120);
+	Anim.SprDef = 500;
+	Anim.Speed = 8;
+	Anim.NumFrames = 4;
+
+	currentY = ChoicesStartY;
+
+	PName = MenuInputLine(NewChild(MenuInputLine));
+	PName.SetPos(ChoicesStartX, currentY);
+	PName.Text = "Name";
+	PName.Value = GetCvarS('Name');
+	PName.ValueChanged = ChangeName;
+	currentY += PName.Height;
+
+	EColour = MenuChoiceEnum(NewChild(MenuChoiceEnum));
+	EColour.SetPos(ChoicesStartX, currentY);
+	EColour.Text = "Colour";
+	EColour.bLeftAlign = true;
+	EColour.AddItem("blue");
+	EColour.AddItem("red");
+	EColour.AddItem("gold");
+	EColour.AddItem("light green");
+	EColour.AddItem("green");
+	EColour.AddItem("gray");
+	EColour.AddItem("brown");
+	EColour.AddItem("magenta");
+	EColour.SetInitialValue(GetCvar('colour'));
+	EColour.ValueChanging = ChangeColour;
+	currentY += EColour.Height;
+
+	EPClass = MenuChoiceEnum(NewChild(MenuChoiceEnum));
+	EPClass.SetPos(ChoicesStartX, currentY);
+	EPClass.Text = "Class";
+	EPClass.bLeftAlign = true;
+	EPClass.AddItem("fighter");
+	EPClass.AddItem("cleric");
+	EPClass.AddItem("mage");
+	EPClass.SetInitialValue(GetCvar('class'));
+	EPClass.ValueChanging = ChangeClass;
+	currentY += EPClass.Height;
+
+	Colour = EColour.Value;
+	PClass = EPClass.Value;
+	SetColour();
+}
+
+//==========================================================================
+//
+//	ChangeName
+//
+//==========================================================================
+
+void ChangeName(Object Sender)
+{
+	SetCvarS('Name', PName.Value);
+}
+
+//==========================================================================
+//
+//	ChangeColour
+//
+//==========================================================================
+
+bool ChangeColour(Object Sender, int newValue)
+{
+	SetCvar('colour', newValue);
+	Colour = newValue;
+	SetColour();
+	return true;
+}
+
+//==========================================================================
+//
+//	ChangeClass
+//
+//==========================================================================
+
+bool ChangeClass(Object Sender, int newValue)
+{
+	SetCvar('class', newValue);
+	PClass = newValue;
+	SetColour();
+	return true;
+}
+
+//==========================================================================
+//
+//	SetColour
+//
+//==========================================================================
 
 void SetColour()
 {
@@ -47,38 +156,8 @@ void SetColour()
 	}
 }
 
-void SetSpriteColour(int newColour)
-{
-	Colour = newColour;
-	SetColour();
-}
-
-void SetPClass(int newPClass)
-{
-	PClass = newPClass;
-	SetColour();
-}
-
-void CreateChoices()
-{
-	R_InstallSprite("PLAY", 500);
-	R_InstallSprite("CLER", 501);
-	R_InstallSprite("MAGE", 502);
-
-	Anim = MenuSpriteAnim(NewChild(MenuSpriteAnim));
-	Anim.SetPos(260, 120);
-	Anim.SprDef = 500;
-	Anim.Speed = 8;
-	Anim.NumFrames = 4;
-
-	::CreateChoices();
-}
-
 defaultproperties
 {
-	Choices[0] = MenuChoice_PlayerName;
-	Choices[1] = MenuChoice_Colour;
-	Choices[2] = MenuChoice_PClass;
 	ChoicesStartX = 16;
 	ChoicesStartY = 40;
 	SelectorType = MenuSelector_SmallLeft;

@@ -36,11 +36,6 @@ string EnumNames[MAX_ENUM_CHOICES];
 
 delegate bool ValueChanging(Object Sender, int NewValue);
 
-int GetInitialValue()
-{
-	return 0;
-}
-
 bool SetNewValue(int newValue)
 {
 	if (ValueChanging)
@@ -63,22 +58,6 @@ void SetInitialValue(int AValue)
 		Value = 0;
 	if (Value >= MaxValue)
 		Value = MaxValue - 1;
-}
-
-void InitWindow()
-{
-	int i;
-
-	MaxValue = 0;
-	for (i = 0; i < MAX_ENUM_CHOICES; i++)
-	{
-		if (EnumNames[i])
-		{
-			MaxValue++;
-		}
-	}
-
-	SetInitialValue(GetInitialValue());
 }
 
 void DrawWindow()

@@ -39,11 +39,6 @@ int pic_M_THERMO;
 
 delegate bool ValueChanging(Object Sender, float NewValue);
 
-float GetInitialValue()
-{
-	return 0.0;
-}
-
 bool SetNewValue(float NewValue)
 {
 	if (ValueChanging)
@@ -65,8 +60,6 @@ void SetInitialValue(float AValue)
 void InitWindow()
 {
 	::InitWindow();
-
-	SetInitialValue(GetInitialValue());
 
 	pic_M_THERML = R_RegisterPic('m_therml');
 	pic_M_THERMM = R_RegisterPic('m_thermm');

@@ -23,10 +23,20 @@
 //**
 //**************************************************************************
 
-class MenuScreenSList:MenuScreen;
+class MenuScreenSList : MenuScreen;
+
+//==========================================================================
+//
+//	CreateChoices
+//
+//==========================================================================
+
+void CreateChoices()
+{
+	NewChild(MenuSList);
+}
 
 defaultproperties
 {
-	Choices[0] = MenuSList;
 	Title = "JOIN GAME";
 }
