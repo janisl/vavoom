@@ -48,7 +48,6 @@
 #include "MenuScreenSinglePlayer.vc"
 #include "MenuChoiceEpisode.vc"
 #include "MenuScreenEpisode.vc"
-#include "MenuChoice_Skill.vc"
 #include "MenuScreenSkill.vc"
 #include "MenuChoice_LoadSlot.vc"
 #include "MenuScreenLoadGame.vc"

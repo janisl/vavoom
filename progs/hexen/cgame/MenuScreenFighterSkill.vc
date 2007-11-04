@@ -26,28 +26,109 @@
 class MenuScreenFighterSkill : MenuScreen;
 
 string SkillNames[5];
-int PClass;
+
+//==========================================================================
+//
+//	CreateChoices
+//
+//==========================================================================
 
 void CreateChoices()
 {
-	int i;
-	MenuChoice_Skill newChoice;
+	MenuTextButton		Btn;
 
-	for (i = 0; i < 5; i++)
-	{
-		newChoice = MenuChoice_Skill(NewChild(MenuChoice_Skill));
-		newChoice.SetPos(ChoicesStartX, ChoicesStartY + i * 18);
-		newChoice.Text = SkillNames[i];
-		newChoice.PClass = PClass;
-		newChoice.SkillLevel = i;
-	}
+	Btn = MenuTextButton(NewChild(MenuBigTextButton));
+	Btn.SetPos(ChoicesStartX, ChoicesStartY);
+	Btn.Text = SkillNames[0];
+	Btn.Activated = ActivateBaby;
+
+	Btn = MenuTextButton(NewChild(MenuBigTextButton));
+	Btn.SetPos(ChoicesStartX, ChoicesStartY + 18);
+	Btn.Text = SkillNames[1];
+	Btn.Activated = ActivateEasy;
+
+	Btn = MenuTextButton(NewChild(MenuBigTextButton));
+	Btn.SetPos(ChoicesStartX, ChoicesStartY + 2 * 18);
+	Btn.Text = SkillNames[2];
+	Btn.Activated = ActivateNormal;
+
+	Btn = MenuTextButton(NewChild(MenuBigTextButton));
+	Btn.SetPos(ChoicesStartX, ChoicesStartY + 3 * 18);
+	Btn.Text = SkillNames[3];
+	Btn.Activated = ActivateHard;
+
+	Btn = MenuTextButton(NewChild(MenuBigTextButton));
+	Btn.SetPos(ChoicesStartX, ChoicesStartY + 4 * 18);
+	Btn.Text = SkillNames[4];
+	Btn.Activated = ActivateNightmare;
 }
+
+//==========================================================================
+//
+//	SetDefaultChoice
+//
+//==========================================================================
 
 void SetDefaultChoice()
 {
 	::SetDefaultChoice();
 	CycleNextChoice();
 	CycleNextChoice();
+}
+
+//==========================================================================
+//
+//	ActivateBaby
+//
+//==========================================================================
+
+void ActivateBaby(Object Sender)
+{
+	ClGame.NewGame(sk_baby);
+}
+
+//==========================================================================
+//
+//	ActivateEasy
+//
+//==========================================================================
+
+void ActivateEasy(Object Sender)
+{
+	ClGame.NewGame(sk_easy);
+}
+
+//==========================================================================
+//
+//	ActivateNormal
+//
+//==========================================================================
+
+void ActivateNormal(Object Sender)
+{
+	ClGame.NewGame(sk_medium);
+}
+
+//==========================================================================
+//
+//	ActivateHard
+//
+//==========================================================================
+
+void ActivateHard(Object Sender)
+{
+	ClGame.NewGame(sk_hard);
+}
+
+//==========================================================================
+//
+//	ActivateNightmare
+//
+//==========================================================================
+
+void ActivateNightmare(Object Sender)
+{
+	ClGame.NewGame(sk_nightmare);
 }
 
 defaultproperties
@@ -59,7 +140,6 @@ defaultproperties
 	SkillNames[4] = "TITAN";
 	ChoicesStartX = 120;
 	ChoicesStartY = 44;
-	PClass = HexenDefs::PCLASS_FIGHTER;
 	SelectorType = MenuSelector_BigArrow;
 	Title = "CHOOSE SKILL LEVEL:";
 }

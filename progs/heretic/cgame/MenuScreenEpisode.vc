@@ -59,20 +59,43 @@ void CreateChoices()
 	}
 	else
 	{
+		currentY = ChoicesStartY;
+
+		newChoice = MenuChoice_Episode1(NewChild(MenuChoice_Episode1));
+		newChoice.SetPos(ChoicesStartX, currentY);
+		currentY += newChoice.Height;
+
+		newChoice = MenuChoice_Episode1(NewChild(MenuChoice_Episode1));
+		newChoice.SetPos(ChoicesStartX, currentY);
+		newChoice.Text = "HELL\'S MAW";
+		newChoice.EpisodeMap = 'e2m1';
+		currentY += newChoice.Height;
+
+		newChoice = MenuChoice_Episode1(NewChild(MenuChoice_Episode1));
+		newChoice.SetPos(ChoicesStartX, currentY);
+		newChoice.Text = "THE DOME OF D\'SPARIL";
+		newChoice.EpisodeMap = 'e3m1';
+		currentY += newChoice.Height;
+
 		if (WadLumpPresent('extended'))
 		{
-			Choices[3] = MenuChoice_Episode4;
-			Choices[4] = MenuChoice_Episode5;
+			newChoice = MenuChoice_Episode1(NewChild(MenuChoice_Episode1));
+			newChoice.SetPos(ChoicesStartX, currentY);
+			newChoice.Text = "THE OSSUARY";
+			newChoice.EpisodeMap = 'e4m1';
+			currentY += newChoice.Height;
+
+			newChoice = MenuChoice_Episode1(NewChild(MenuChoice_Episode1));
+			newChoice.SetPos(ChoicesStartX, currentY);
+			newChoice.Text = "THE STAGNANT DEMESNE";
+			newChoice.EpisodeMap = 'e5m1';
+			currentY += newChoice.Height;
 		}
-		::CreateChoices();
 	}
 }
 
 defaultproperties
 {
-	Choices[0] = MenuChoice_Episode1;
-	Choices[1] = MenuChoice_Episode2;
-	Choices[2] = MenuChoice_Episode3;
 	ChoicesStartX = 48;
 	ChoicesStartY = 40;
 	SelectorType = MenuSelector_BigArrow;

@@ -25,6 +25,55 @@
 
 class MenuScreenSkill : MenuScreen;
 
+//==========================================================================
+//
+//	CreateChoices
+//
+//==========================================================================
+
+void CreateChoices()
+{
+	MenuTextButton		Btn;
+	int					currentY;
+
+	currentY = ChoicesStartY;
+
+	Btn = MenuTextButton(NewChild(MenuBigTextButton));
+	Btn.SetPos(ChoicesStartX, currentY);
+	Btn.Text = "I\'m too young to die.";
+	Btn.Activated = ActivateBaby;
+	currentY += Btn.Height;
+
+	Btn = MenuTextButton(NewChild(MenuBigTextButton));
+	Btn.SetPos(ChoicesStartX, currentY);
+	Btn.Text = "Hey, not too rough.";
+	Btn.Activated = ActivateEasy;
+	currentY += Btn.Height;
+
+	Btn = MenuTextButton(NewChild(MenuBigTextButton));
+	Btn.SetPos(ChoicesStartX, currentY);
+	Btn.Text = "Hurt me plenty.";
+	Btn.Activated = ActivateNormal;
+	currentY += Btn.Height;
+
+	Btn = MenuTextButton(NewChild(MenuBigTextButton));
+	Btn.SetPos(ChoicesStartX, currentY);
+	Btn.Text = "Ultra - Violence.";
+	Btn.Activated = ActivateHard;
+	currentY += Btn.Height;
+
+	Btn = MenuTextButton(NewChild(MenuBigTextButton));
+	Btn.SetPos(ChoicesStartX, currentY);
+	Btn.Text = "Nightmare";
+	Btn.Activated = ActivateNightmare;
+}
+
+//==========================================================================
+//
+//	SetDefaultChoice
+//
+//==========================================================================
+
 void SetDefaultChoice()
 {
 	::SetDefaultChoice();
@@ -32,13 +81,64 @@ void SetDefaultChoice()
 	CycleNextChoice();
 }
 
+//==========================================================================
+//
+//	ActivateBaby
+//
+//==========================================================================
+
+void ActivateBaby(Object Sender)
+{
+	ClGame.NewGame(sk_baby);
+}
+
+//==========================================================================
+//
+//	ActivateEasy
+//
+//==========================================================================
+
+void ActivateEasy(Object Sender)
+{
+	ClGame.NewGame(sk_easy);
+}
+
+//==========================================================================
+//
+//	ActivateNormal
+//
+//==========================================================================
+
+void ActivateNormal(Object Sender)
+{
+	ClGame.NewGame(sk_medium);
+}
+
+//==========================================================================
+//
+//	ActivateHard
+//
+//==========================================================================
+
+void ActivateHard(Object Sender)
+{
+	ClGame.NewGame(sk_hard);
+}
+
+//==========================================================================
+//
+//	ActivateNightmare
+//
+//==========================================================================
+
+void ActivateNightmare(Object Sender)
+{
+	ClGame.MessageBoxStartMessage("are you sure? this skill level\nisn\'t even remotely fair.\n\npress y or n.",
+		ClientGame::MB_Nightmare, true);
+}
+
 defaultproperties
 {
-	Choices[0] = MenuChoice_SkillBaby;
-	Choices[1] = MenuChoice_SkillEasy;
-	Choices[2] = MenuChoice_SkillNormal;
-	Choices[3] = MenuChoice_SkillHard;
-	Choices[4] = MenuChoice_SkillNightmare;
 	ChoicesStartX = 48;
 	ChoicesStartY = 40;
 	SelectorType = MenuSelector_Skull;

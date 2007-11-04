@@ -23,13 +23,217 @@
 //**
 //**************************************************************************
 
-class MenuScreenClass:MenuScreen;
+class MenuScreenClass : MenuScreen;
+
+MenuObject		FighterBox;
+MenuObject		FighterWalk;
+MenuObject		ClericBox;
+MenuObject		ClericWalk;
+MenuObject		MageBox;
+MenuObject		MageWalk;
+
+//==========================================================================
+//
+//	CreateChoices
+//
+//==========================================================================
+
+void CreateChoices()
+{
+	MenuTextButton		Btn;
+	int					currentY;
+
+	currentY = ChoicesStartY;
+
+	FighterBox = MenuObject(NewChild(MenuFighterBox));
+	FighterBox.SetPos(174, 28);
+	FighterBox.Hide();
+
+	FighterWalk = MenuObject(NewChild(MenuFighterWalk));
+	FighterWalk.SetPos(174 + 24, 28 + 12);
+	FighterWalk.Hide();
+
+	Btn = MenuTextButton(NewChild(MenuBigTextButton));
+	Btn.SetPos(ChoicesStartX, currentY);
+	Btn.Text = "FIGHTER";
+	Btn.FocusLost = FighterFocusLost;
+	Btn.FocusReceived = FighterFocusReceived;
+	Btn.Activated = FighterActivate;
+	currentY += Btn.Height;
+
+	ClericBox = MenuObject(NewChild(MenuClericBox));
+	ClericBox.SetPos(174, 28);
+	ClericBox.Hide();
+
+	ClericWalk = MenuObject(NewChild(MenuClericWalk));
+	ClericWalk.SetPos(174 + 24, 28 + 12);
+	ClericWalk.Hide();
+
+	Btn = MenuTextButton(NewChild(MenuBigTextButton));
+	Btn.SetPos(ChoicesStartX, currentY);
+	Btn.Text = "CLERIC";
+	Btn.FocusLost = ClericFocusLost;
+	Btn.FocusReceived = ClericFocusReceived;
+	Btn.Activated = ClericActivate;
+	currentY += Btn.Height;
+
+	MageBox = MenuObject(NewChild(MenuMageBox));
+	MageBox.SetPos(174, 28);
+	MageBox.Hide();
+
+	MageWalk = MenuObject(NewChild(MenuMageWalk));
+	MageWalk.SetPos(174 + 24, 28 + 12);
+	MageWalk.Hide();
+
+	Btn = MenuTextButton(NewChild(MenuBigTextButton));
+	Btn.SetPos(ChoicesStartX, currentY);
+	Btn.Text = "MAGE";
+	Btn.FocusLost = MageFocusLost;
+	Btn.FocusReceived = MageFocusReceived;
+	Btn.Activated = MageActivate;
+	currentY += Btn.Height;
+}
+
+//==========================================================================
+//
+//	FighterFocusLost
+//
+//==========================================================================
+
+void FighterFocusLost(Object Sender)
+{
+	FighterBox.Hide();
+	FighterWalk.Hide();
+}
+
+//==========================================================================
+//
+//	FighterFocusReceived
+//
+//==========================================================================
+
+void FighterFocusReceived(Object Sender)
+{
+	FighterBox.Show();
+	FighterWalk.Show();
+}
+
+//==========================================================================
+//
+//	FighterActivate
+//
+//==========================================================================
+
+void FighterActivate(Object Sender)
+{
+	ActivateClass(HexenDefs::PCLASS_FIGHTER, MenuScreenFighterSkill);
+}
+
+//==========================================================================
+//
+//	ClericFocusLost
+//
+//==========================================================================
+
+void ClericFocusLost(Object Sender)
+{
+	ClericBox.Hide();
+	ClericWalk.Hide();
+}
+
+//==========================================================================
+//
+//	ClericFocusReceived
+//
+//==========================================================================
+
+void ClericFocusReceived(Object Sender)
+{
+	ClericBox.Show();
+	ClericWalk.Show();
+}
+
+//==========================================================================
+//
+//	ClericActivate
+//
+//==========================================================================
+
+void ClericActivate(Object Sender)
+{
+	ActivateClass(HexenDefs::PCLASS_CLERIC, MenuScreenClericSkill);
+}
+
+//==========================================================================
+//
+//	MageFocusLost
+//
+//==========================================================================
+
+void MageFocusLost(Object Sender)
+{
+	MageBox.Hide();
+	MageWalk.Hide();
+}
+
+//==========================================================================
+//
+//	MageFocusReceived
+//
+//==========================================================================
+
+void MageFocusReceived(Object Sender)
+{
+	MageBox.Show();
+	MageWalk.Show();
+}
+
+//==========================================================================
+//
+//	MageActivate
+//
+//==========================================================================
+
+void MageActivate(Object Sender)
+{
+	ActivateClass(HexenDefs::PCLASS_MAGE, MenuScreenMageSkill);
+}
+
+//==========================================================================
+//
+//	ActivateClass
+//
+//==========================================================================
+
+void ActivateClass(int PClass, class<MenuScreen> SkillMenuType)
+{
+	ClGame.MenuPClass = PClass;
+	ClGame.SkillMenuType = SkillMenuType;
+	if (P_GetNumEpisodes() > 1)
+	{
+		ClGame.PushMenuScreen(ClGame.SpawnMenu(MenuScreenEpisode));
+	}
+	else if (P_GetNumEpisodes() == 1)
+	{
+		ClGame.MenuStartMap = P_GetEpisodeDef(0)->Name;
+		if (P_GetEpisodeDef(0)->bNoSkillMenu)
+		{
+			ClGame.NewGame(sk_medium);
+		}
+		else
+		{
+			ClGame.PushMenuScreen(ClGame.SpawnMenu(SkillMenuType));
+		}
+	}
+	else
+	{
+		ClGame.MenuStartMap = P_TranslateMap(1);
+		ClGame.PushMenuScreen(ClGame.SpawnMenu(SkillMenuType));
+	}
+}
 
 defaultproperties
 {
-	Choices[0] = MenuChoice_Fighter;
-	Choices[1] = MenuChoice_Cleric;
-	Choices[2] = MenuChoice_Mage;
 	ChoicesStartX = 66;
 	ChoicesStartY = 66;
 	SelectorType = MenuSelector_BigArrow;

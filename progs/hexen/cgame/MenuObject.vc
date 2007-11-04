@@ -27,17 +27,28 @@ class MenuObject : Window;
 
 bool bSelected;
 
+delegate void FocusLost(Object Sender);
+delegate void FocusReceived(Object Sender);
+
 bool Key(int key)
 {
 	return false;
 }
 
-void FocusLost()
+void OnFocusLost()
 {
+	if (FocusLost)
+	{
+		FocusLost(self);
+	}
 }
 
-void FocusReceived()
+void OnFocusReceived()
 {
+	if (FocusReceived)
+	{
+		FocusReceived(self);
+	}
 }
 
 defaultproperties

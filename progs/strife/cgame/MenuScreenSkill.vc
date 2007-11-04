@@ -25,21 +25,47 @@
 
 class MenuScreenSkill : MenuScreen;
 
-string SkillNames[5];
+//==========================================================================
+//
+//	CreateChoices
+//
+//==========================================================================
 
 void CreateChoices()
 {
-	MenuChoice_Skill newChoice;
-	int i;
+	MenuTextButton		Btn;
 
-	for (i = 0; i < 5; i++)
-	{
-		newChoice = MenuChoice_Skill(NewChild(MenuChoice_Skill));
-		newChoice.SetPos(ChoicesStartX, ChoicesStartY + i * 18);
-		newChoice.Text = SkillNames[i];
-		newChoice.SkillLevel = i;
-	}
+	Btn = MenuTextButton(NewChild(MenuBigTextButton));
+	Btn.SetPos(ChoicesStartX, ChoicesStartY);
+	Btn.Text = "training";
+	Btn.Activated = ActivateBaby;
+
+	Btn = MenuTextButton(NewChild(MenuBigTextButton));
+	Btn.SetPos(ChoicesStartX, ChoicesStartY + 18);
+	Btn.Text = "rookie";
+	Btn.Activated = ActivateEasy;
+
+	Btn = MenuTextButton(NewChild(MenuBigTextButton));
+	Btn.SetPos(ChoicesStartX, ChoicesStartY + 2 * 18);
+	Btn.Text = "veteran";
+	Btn.Activated = ActivateNormal;
+
+	Btn = MenuTextButton(NewChild(MenuBigTextButton));
+	Btn.SetPos(ChoicesStartX, ChoicesStartY + 3 * 18);
+	Btn.Text = "elite";
+	Btn.Activated = ActivateHard;
+
+	Btn = MenuTextButton(NewChild(MenuBigTextButton));
+	Btn.SetPos(ChoicesStartX, ChoicesStartY + 4 * 18);
+	Btn.Text = "bloodbath";
+	Btn.Activated = ActivateNightmare;
 }
+
+//==========================================================================
+//
+//	SetDefaultChoice
+//
+//==========================================================================
 
 void SetDefaultChoice()
 {
@@ -48,15 +74,65 @@ void SetDefaultChoice()
 	CycleNextChoice();
 }
 
+//==========================================================================
+//
+//	ActivateBaby
+//
+//==========================================================================
+
+void ActivateBaby(Object Sender)
+{
+	ClGame.NewGame(sk_baby);
+}
+
+//==========================================================================
+//
+//	ActivateEasy
+//
+//==========================================================================
+
+void ActivateEasy(Object Sender)
+{
+	ClGame.NewGame(sk_easy);
+}
+
+//==========================================================================
+//
+//	ActivateNormal
+//
+//==========================================================================
+
+void ActivateNormal(Object Sender)
+{
+	ClGame.NewGame(sk_medium);
+}
+
+//==========================================================================
+//
+//	ActivateHard
+//
+//==========================================================================
+
+void ActivateHard(Object Sender)
+{
+	ClGame.NewGame(sk_hard);
+}
+
+//==========================================================================
+//
+//	ActivateNightmare
+//
+//==========================================================================
+
+void ActivateNightmare(Object Sender)
+{
+	ClGame.NewGame(sk_nightmare);
+}
+
 defaultproperties
 {
 	ChoicesStartX = 48;
 	ChoicesStartY = 40;
 	SelectorType = MenuSelector_Spinner;
 	Title = "CHOOSE SKILL LEVEL:";
-	SkillNames[0] = "training";
-	SkillNames[1] = "rookie";
-	SkillNames[2] = "veteran";
-	SkillNames[3] = "elite";
-	SkillNames[4] = "bloodbath";
 }

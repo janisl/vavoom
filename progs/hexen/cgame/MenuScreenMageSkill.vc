@@ -33,5 +33,4 @@ defaultproperties
 	SkillNames[3] = "WARLOCK";
 	SkillNames[4] = "ARCHIMAGE";
 	ChoicesStartX = 112;
-	PClass = HexenDefs::PCLASS_MAGE;
 }

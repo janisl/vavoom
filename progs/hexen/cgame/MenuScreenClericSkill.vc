@@ -33,5 +33,4 @@ defaultproperties
 	SkillNames[3] = "CARDINAL";
 	SkillNames[4] = "POPE";
 	ChoicesStartX = 116;
-	PClass = HexenDefs::PCLASS_CLERIC;
 }

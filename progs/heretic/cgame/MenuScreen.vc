@@ -34,7 +34,6 @@ MenuObject Items[MAX_MENU_ITEMS];
 int CursorPos;
 int CursorPrev;
 
-class<MenuChoice> Choices[MAX_MENU_ITEMS];
 int ChoicesStartX;
 int ChoicesStartY;
 
@@ -72,20 +71,6 @@ void CreateTitle()
 
 void CreateChoices()
 {
-	MenuChoice newChoice;
-	int currentY;
-	int i;
-
-	currentY = ChoicesStartY;
-	for (i = 0; i < MAX_MENU_ITEMS; i++)
-	{
-		if (Choices[i])
-		{
-			newChoice = MenuChoice(NewChild(Choices[i]));
-			newChoice.SetPos(ChoicesStartX, currentY);
-			currentY += newChoice.Height;
-		}
-	}
 }
 
 void CreateSelector()
