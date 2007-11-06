@@ -28,6 +28,7 @@
 
 // HEADER FILES ------------------------------------------------------------
 
+#include "text.h"
 #include "iline.h"		//	Input line widget
 #include "drawer.h"
 

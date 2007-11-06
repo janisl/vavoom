@@ -1543,10 +1543,6 @@ native static final void T_SetShadow(bool on);
 native static final int T_TextWidth(string text);
 //  Calculates text height
 native static final int T_TextHeight(string text);
-//  Draws text
-native static final void T_DrawText(int x, int y, string text);
-//  Draws text wrapping at the width w
-native static final void T_DrawTextW(int x, int y, string text, int w);
 //  Draws a cursor at the end of last drawn string
 native static final void T_DrawCursor();
 

@@ -173,7 +173,7 @@ void PostDrawWindow()
 	{
 		T_SetFont(font_small);
 		T_SetAlign(hcentre, vtop);
-		T_DrawText(320, 440, caststrings[castnum]);
+		DrawText(320, 440, caststrings[castnum]);
 	}
 }
 

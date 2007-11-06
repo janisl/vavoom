@@ -540,7 +540,7 @@ void MessageBoxDrawer()
 		DrawBorder(msgBoxX, msgBoxY, msgBoxW, msgBoxH);
 		T_SetFont(font_small);
 		T_SetAlign(hcentre, vcentre);
-		T_DrawText(320, 240, messageString);
+		GRoot.DrawText(320, 240, messageString);
 	}
 
 	if (WaitForQuit && !IsLocalSoundPlaying(QuitSound))

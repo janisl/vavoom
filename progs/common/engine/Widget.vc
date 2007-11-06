@@ -141,6 +141,11 @@ native final void FillRectWithFlat(int x, int y, int width, int height,
 //  Darkens a screen region
 native final void ShadeRect(int x, int y, int w, int h, float shade);
 
+//  Draws text
+native final void DrawText(int X, int Y, string Text);
+//  Draws text wrapping at the width w
+native final int DrawTextW(int x, int y, string Text, int w);
+
 //==========================================================================
 //
 //	OnChildAdded
@@ -175,11 +180,6 @@ void OnChildRemoved(Widget Child)
 
 void OnConfigurationChanged()
 {
-}
-
-final void DrawText(int X, int Y, string Text)
-{
-	T_DrawText(X + OldOriginX, Y + OldOriginY, Text);
 }
 
 defaultproperties

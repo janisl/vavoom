@@ -784,13 +784,13 @@ void IM_DrawLF()
 	else
 	{
 		T_SetAlign(hcentre, vtop);
-		T_DrawText(320, y, ClGame.im->LeaveName);
+		DrawText(320, y, ClGame.im->LeaveName);
 		y += (5 * T_TextHeight("DUMMY")) / 4;
 	}
 
 	// draw "Finished!"
 	T_SetAlign(hcentre, vtop);
-	T_DrawText(320, y, "finished");
+	DrawText(320, y, "finished");
 }
 
 //==========================================================================
@@ -808,7 +808,7 @@ void IM_DrawEL()
 
 	// draw "Entering"
 	T_SetAlign(hcentre, vtop);
-	T_DrawText(320, y, "entering");
+	DrawText(320, y, "entering");
 
 	// draw level
 	y += (5 * T_TextHeight("DUMMY")) / 4;
@@ -819,7 +819,7 @@ void IM_DrawEL()
 	}
 	else
 	{
-		T_DrawText(320, y, ClGame.im->EnterName);
+		DrawText(320, y, ClGame.im->EnterName);
 	}
 }
 
@@ -835,7 +835,7 @@ void IM_DrawPercent(int x, int y, int p)
 		return;
 
 	T_SetAlign(hright, vtop);
-	T_DrawText(x, y, va("%d%%", p));
+	DrawText(x, y, va("%d%%", p));
 }
 
 //==========================================================================
@@ -877,7 +877,7 @@ void IM_DrawTime(int x, int y, int t, string BaseText, bool sucks)
 		// "sucks"
 		Text = strcat(BaseText, "sucks");
 	}
-	T_DrawText(x, y, Text);
+	DrawText(x, y, Text);
 }
 
 //==========================================================================
@@ -919,9 +919,9 @@ void IM_DrawSingleStats()
 
 	T_SetAlign(hleft, vtop);
 
-	T_DrawText(SP_STATSX, SP_STATSY, "kills");
-	T_DrawText(SP_STATSX, SP_STATSY + lh, "items");
-	T_DrawText(SP_STATSX, SP_STATSY + 2 * lh, "scrt");
+	DrawText(SP_STATSX, SP_STATSY, "kills");
+	DrawText(SP_STATSX, SP_STATSY + lh, "items");
+	DrawText(SP_STATSX, SP_STATSY + 2 * lh, "scrt");
 
 	IM_DrawPercent(640 - SP_STATSX, SP_STATSY, cnt_kills[0]);
 	IM_DrawPercent(640 - SP_STATSX, SP_STATSY + lh, cnt_items[0]);
@@ -1083,13 +1083,13 @@ void IM_DrawCooperativeStats()
 
 	T_SetAlign(hright, vtop);
 	// draw stat titles (top line)
-	T_DrawText(NG_STATSX + NG_SPACINGX, NG_STATSY, "kills");
+	DrawText(NG_STATSX + NG_SPACINGX, NG_STATSY, "kills");
 
-	T_DrawText(NG_STATSX + 2 * NG_SPACINGX, NG_STATSY, "items");
+	DrawText(NG_STATSX + 2 * NG_SPACINGX, NG_STATSY, "items");
 
-	T_DrawText(NG_STATSX + 3 * NG_SPACINGX, NG_STATSY, "scrt");
+	DrawText(NG_STATSX + 3 * NG_SPACINGX, NG_STATSY, "scrt");
 
-	T_DrawText(NG_STATSX + 4 * NG_SPACINGX, NG_STATSY, "frgs");
+	DrawText(NG_STATSX + 4 * NG_SPACINGX, NG_STATSY, "frgs");
 
 	// draw stats
 	y = NG_STATSY + T_TextHeight("kills");
@@ -1113,7 +1113,7 @@ void IM_DrawCooperativeStats()
 		x += NG_SPACINGX;
 
 		T_SetAlign(hright, vtop);
-		T_DrawText(x, y + 10, va("%d", cnt_frags[i]));
+		DrawText(x, y + 10, va("%d", cnt_frags[i]));
 
 		y += WI_SPACINGY;
 	}
@@ -1302,8 +1302,8 @@ void IM_DrawDeathmatchStats()
 
 	T_SetAlign(hcentre, vtop);
 	// draw stat titles (top line)
-	T_DrawText(DM_TOTALSX, DM_MATRIXY - WI_SPACINGY, "FRAGS");
-	T_DrawText(DM_DEATHSX, DM_MATRIXY - WI_SPACINGY, "DEATHS");
+	DrawText(DM_TOTALSX, DM_MATRIXY - WI_SPACINGY, "FRAGS");
+	DrawText(DM_DEATHSX, DM_MATRIXY - WI_SPACINGY, "DEATHS");
 
 	// draw stats
 	y = DM_MATRIXY;
@@ -1317,11 +1317,11 @@ void IM_DrawDeathmatchStats()
 		}
 		T_SetAlign(hleft, vtop);
 		T_SetFont(font_small);
-		T_DrawText(DM_MATRIXX, y + 5, RepInfo.PlayerName);
+		DrawText(DM_MATRIXX, y + 5, RepInfo.PlayerName);
 		T_SetAlign(hright, vtop);
 		T_SetFont(font_big);
-		T_DrawText(DM_TOTALSX, y, va("%d", dm_Frags[RepInfo.PlayerNum]));
-		T_DrawText(DM_DEATHSX, y, va("%d", dm_Deaths[RepInfo.PlayerNum]));
+		DrawText(DM_TOTALSX, y, va("%d", dm_Frags[RepInfo.PlayerNum]));
+		DrawText(DM_DEATHSX, y, va("%d", dm_Deaths[RepInfo.PlayerNum]));
 		y += 24;
 	}
 }
@@ -1686,7 +1686,7 @@ void IM_DrawText()
 
 	T_SetFont(font_small);
 	T_SetAlign(hleft, vtop);
-	T_DrawText(170, 150, substr(HubText, 0, count));
+	DrawText(170, 150, substr(HubText, 0, count));
 }
 
 //==========================================================================

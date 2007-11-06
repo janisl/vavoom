@@ -207,7 +207,7 @@ void F_TextWrite()
 
 	T_SetFont(font_small);
 	T_SetAlign(hleft, vtop);
-	T_DrawText(180, (FinaleStage == 5) ? 275 : 145, substr(FinaleText, 0, count));
+	DrawText(180, (FinaleStage == 5) ? 275 : 145, substr(FinaleText, 0, count));
 }
 
 //==========================================================================

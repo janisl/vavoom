@@ -141,6 +141,10 @@ public:
 	void FillRectWithFlat(int, int, int, int, VName);
 	void ShadeRect(int, int, int, int, float);
 
+	void DrawString(int, int, const VStr&);
+	void DrawText(int, int, const VStr&);
+	int DrawTextW(int, int, const VStr&, int);
+
 	DECLARE_FUNCTION(Raise)
 	DECLARE_FUNCTION(Lower)
 
@@ -157,4 +161,7 @@ public:
 	DECLARE_FUNCTION(DrawShadowedPic)
 	DECLARE_FUNCTION(FillRectWithFlat)
 	DECLARE_FUNCTION(ShadeRect)
+
+	DECLARE_FUNCTION(DrawText)
+	DECLARE_FUNCTION(DrawTextW)
 };

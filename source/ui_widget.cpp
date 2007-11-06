@@ -413,6 +413,160 @@ void VWidget::ShadeRect(int X, int Y, int Width, int Height, float Shade)
 
 //==========================================================================
 //
+//	VWidget::DrawString
+//
+//==========================================================================
+
+void VWidget::DrawString(int x, int y, const VStr& String)
+{
+	guard(VWidget::DrawNString);
+	if (!String)
+		return;
+
+	int cx = x;
+	int cy = y;
+
+	if (HAlign == hcentre)
+		cx -= T_StringWidth(String) / 2;
+	if (HAlign == hright)
+		cx -= T_StringWidth(String);
+
+	for (size_t i = 0; i < String.Length(); i++)
+	{
+		int c = String[i] - 32;
+
+		if (c < 0)
+		{
+			continue;
+		}
+		if (c >= 96 || Font->Pics[c] < 0)
+		{
+			cx += Font->SpaceWidth + HDistance;
+			continue;
+		}
+
+		int w = Font->PicInfo[c].width;
+		if (t_shadowed)
+			DrawShadowedPic(cx, cy, Font->Pics[c]);
+		else
+			DrawPic(cx, cy, Font->Pics[c]);
+		cx += w + HDistance;
+	}
+	LastX = cx;
+	LastY = cy;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VWidget::DrawText
+//
+//==========================================================================
+
+void VWidget::DrawText(int x, int y, const VStr& String)
+{
+	guard(VWidget::DrawText);
+	int start = 0;
+	int cx = x;
+	int cy = y;
+
+	if (VAlign == vcentre)
+		cy -= T_TextHeight(String) / 2;
+	if (VAlign == vbottom)
+		cy -= T_TextHeight(String);
+
+	//	Need this for correct cursor position with empty strings.
+	LastX = cx;
+	LastY = cy;
+
+	for (size_t i = 0; i < String.Length(); i++)
+	{
+		if (String[i] == '\n')
+		{
+			VStr cs(String, start, i - start);
+			DrawString(cx, cy, cs);
+			cy += T_StringHeight(cs) + VDistance;
+			start = i + 1;
+		}
+		if (i == String.Length() - 1)
+		{
+			DrawString(cx, cy, VStr(String, start, String.Length() - start));
+		}
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VWidget::DrawTextW
+//
+//==========================================================================
+
+int VWidget::DrawTextW(int x, int y, const VStr& String, int w)
+{
+	guard(VWidget::DrawTextW);
+	int			start = 0;
+	int			cx;
+	int			cy;
+	int			i;
+	bool		wordStart = true;
+	int			LinesPrinted = 0;
+
+	cx = x;
+	cy = y;
+
+	//	These won't work correctly so don't use them for now.
+	if (VAlign == vcentre)
+		cy -= T_TextHeight(String) / 2;
+	if (VAlign == vbottom)
+		cy -= T_TextHeight(String);
+
+	//	Need this for correct cursor position with empty strings.
+	LastX = cx;
+	LastY = cy;
+
+	for (i = 0; String[i]; i++)
+	{
+		if (String[i] == '\n')
+		{
+			VStr cs(String, start, i - start);
+			DrawString(cx, cy, cs);
+			cy += T_StringHeight(cs) + VDistance;
+			start = i + 1;
+			wordStart = true;
+			LinesPrinted++;
+		}
+		else if (wordStart && String[i] > ' ')
+		{
+			int j = i;
+			while (String[j] > ' ')
+				j++;
+			if (T_StringWidth(VStr(String, start, j - start)) > w)
+			{
+				VStr cs(String, start, i - start);
+				DrawString(cx, cy, cs);
+				cy += T_StringHeight(cs) + VDistance;
+				start = i;
+				LinesPrinted++;
+			}
+			wordStart = false;
+		}
+		else if (String[i] <= ' ')
+		{
+			wordStart = true;
+		}
+		if (!String[i + 1])
+		{
+			DrawString(cx, cy, VStr(String, start, i - start + 1));
+			LinesPrinted++;
+		}
+	}
+	return LinesPrinted;
+	unguard;
+}
+
+//==========================================================================
+//
 //	Natives
 //
 //==========================================================================
@@ -533,4 +687,23 @@ IMPLEMENT_FUNCTION(VWidget, ShadeRect)
 	P_GET_INT(X);
 	P_GET_SELF;
 	Self->ShadeRect(X, Y, Width, Height, Shade);
+}
+
+IMPLEMENT_FUNCTION(VWidget, DrawText)
+{
+	P_GET_STR(String);
+	P_GET_INT(Y);
+	P_GET_INT(X);
+	P_GET_SELF;
+	Self->DrawText(X, Y, String);
+}
+
+IMPLEMENT_FUNCTION(VWidget, DrawTextW)
+{
+	P_GET_INT(w);
+	P_GET_STR(txt);
+	P_GET_INT(y);
+	P_GET_INT(x);
+	P_GET_SELF;
+	RET_INT(Self->DrawTextW(x, y, txt, w));
 }

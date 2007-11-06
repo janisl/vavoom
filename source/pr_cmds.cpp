@@ -642,35 +642,6 @@ IMPLEMENT_FUNCTION(VObject, T_TextHeight)
 	RET_INT(T_TextHeight(*text));
 }
 
-//==========================================================================
-//
-//	PF_T_DrawText
-//
-//==========================================================================
-
-IMPLEMENT_FUNCTION(VObject, T_DrawText)
-{
-	P_GET_STR(txt);
-	P_GET_INT(y);
-	P_GET_INT(x);
-	T_DrawText(x, y, *txt);
-}
-
-//==========================================================================
-//
-//	PF_T_DrawTextW
-//
-//==========================================================================
-
-IMPLEMENT_FUNCTION(VObject, T_DrawTextW)
-{
-	P_GET_INT(w);
-	P_GET_STR(txt);
-	P_GET_INT(y);
-	P_GET_INT(x);
-	T_DrawTextW(x, y, *txt, w);
-}
-
 //**************************************************************************
 //
 //	Client side sound

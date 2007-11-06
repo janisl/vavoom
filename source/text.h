@@ -61,6 +61,20 @@ enum valign_e
 	vbottom		//Bottom
 };
 
+//
+// Fonts
+//
+struct font_t
+{
+	// Font patches
+	int			Pics[96];
+	picinfo_t	PicInfo[96];
+
+	//Empty character width and empty strinh height
+	int			SpaceWidth;
+	int			SpaceHeight;
+};
+
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 void T_Init();
@@ -82,10 +96,20 @@ void T_DrawString8(int, int, const VStr&);
 void T_DrawText(int, int, const VStr&);
 int T_DrawTextW(int, int, const VStr&, int);
 
-void T_DrawNString(int, int, const VStr&, int);
-void T_DrawNText(int, int, const VStr&, int);
-
 void T_DrawCursor();
 void T_DrawCursorAt(int, int);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
+
+extern font_t*			Font;
+
+extern int				HDistance;
+extern int				VDistance;
+
+extern halign_e			HAlign;
+extern valign_e			VAlign;
+
+extern bool				t_shadowed;
+
+extern int				LastX;
+extern int				LastY;

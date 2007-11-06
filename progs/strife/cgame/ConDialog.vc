@@ -183,7 +183,7 @@ void DrawWindow()
 	T_SetFont(font_small);
 	T_SetAlign(hleft, vtop);
 	DrawText(48, 48, SpeakerName);
-	T_DrawTextW(64, 72, SpeechText, 640 - 128);
+	DrawTextW(64, 72, SpeechText, 640 - 128);
 }
 
 bool Key(int key)

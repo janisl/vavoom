@@ -458,15 +458,15 @@ void IM_DrawSingleStats()
 	T_SetShadow(true);
 	T_SetFont(font_big);
 	T_SetAlign(hleft, vtop);
-	T_DrawText(210, 205, "KILLS");
-	T_DrawText(210, 230, "ITEMS");
-	T_DrawText(210, 255, "SECRETS");
+	DrawText(210, 205, "KILLS");
+	DrawText(210, 230, "ITEMS");
+	DrawText(210, 255, "SECRETS");
 	T_SetAlign(hcentre, vtop);
-	T_DrawText(320, 143, ClGame.im->LeaveName);
+	DrawText(320, 143, ClGame.im->LeaveName);
 	T_SetShadow(false);
 
 	T_SetFont(font_small);
-	T_DrawText(320, 165, "FINISHED");
+	DrawText(320, 165, "FINISHED");
 
 	if (intertime < 1.0)
 	{
@@ -481,9 +481,9 @@ void IM_DrawSingleStats()
 	T_SetFont(font_big);
 	T_SetAlign(hleft, vtop);
 	T_SetDist(1, 1);
-	T_DrawText(362, 205, va("%d", ClGame.cl.KillCount));
-	T_DrawText(397, 205, "/");
-	T_DrawText(410, 205, va("%d", ClGame.cl.Level.TotalKills));
+	DrawText(362, 205, va("%d", ClGame.cl.KillCount));
+	DrawText(397, 205, "/");
+	DrawText(410, 205, va("%d", ClGame.cl.Level.TotalKills));
 	T_SetDist(-1, 1);
 	T_SetShadow(false);
 	if (intertime < 2.0)
@@ -499,9 +499,9 @@ void IM_DrawSingleStats()
 	T_SetFont(font_big);
 	T_SetAlign(hleft, vtop);
 	T_SetDist(1, 1);
-	T_DrawText(362, 230, va("%d", ClGame.cl.ItemCount));
-	T_DrawText(397, 230, "/");
-	T_DrawText(410, 230, va("%d", ClGame.cl.Level.TotalItems));
+	DrawText(362, 230, va("%d", ClGame.cl.ItemCount));
+	DrawText(397, 230, "/");
+	DrawText(410, 230, va("%d", ClGame.cl.Level.TotalItems));
 	T_SetDist(-1, 1);
 	T_SetShadow(false);
 	if (intertime < 3.0)
@@ -517,9 +517,9 @@ void IM_DrawSingleStats()
 	T_SetFont(font_big);
 	T_SetAlign(hleft, vtop);
 	T_SetDist(1, 1);
-	T_DrawText(362, 255, va("%d", ClGame.cl.SecretCount));
-	T_DrawText(397, 255, "/");
-	T_DrawText(410, 255, va("%d", ClGame.cl.Level.TotalSecret));
+	DrawText(362, 255, va("%d", ClGame.cl.SecretCount));
+	DrawText(397, 255, "/");
+	DrawText(410, 255, va("%d", ClGame.cl.Level.TotalSecret));
 	T_SetDist(-1, 1);
 	T_SetShadow(false);
 	if (intertime < 5.0)
@@ -537,9 +537,9 @@ void IM_DrawSingleStats()
 		T_SetShadow(true);
 		T_SetFont(font_big);
 		T_SetAlign(hleft, vtop);
-		T_DrawText(245, 300, "TIME");
+		DrawText(245, 300, "TIME");
 		T_SetDist(1, 1);
-		T_DrawText(315, 300, va("%d%d:%d%d:%d%d", hours / 10, hours % 10,
+		DrawText(315, 300, va("%d%d:%d%d:%d%d", hours / 10, hours % 10,
 				minutes / 10, minutes % 10, seconds / 10, seconds % 10));
 		T_SetDist(-1, 1);
 		T_SetShadow(false);
@@ -548,10 +548,10 @@ void IM_DrawSingleStats()
 	{
 		T_SetFont(font_small);
 		T_SetAlign(hcentre, vtop);
-		T_DrawText(320, 300, "NOW ENTERING:");
+		DrawText(320, 300, "NOW ENTERING:");
 		T_SetShadow(true);
 		T_SetFont(font_big);
-		T_DrawText(320, 310, ClGame.im->EnterName);
+		DrawText(320, 310, ClGame.im->EnterName);
 		T_SetShadow(false);
 		ClGame.skipintermission = false;
 	}
@@ -572,15 +572,15 @@ void IM_DrawCoopStats()
 	T_SetShadow(true);
 	T_SetFont(font_big);
 	T_SetAlign(hleft, vtop);
-	T_DrawText(255, 175, "KILLS");
-	T_DrawText(315, 175, "BONUS");
-	T_DrawText(392, 175, "SECRET");
+	DrawText(255, 175, "KILLS");
+	DrawText(315, 175, "BONUS");
+	DrawText(392, 175, "SECRET");
 
 	T_SetAlign(hcentre, vtop);
-	T_DrawText(320, 143, ClGame.im->LeaveName);
+	DrawText(320, 143, ClGame.im->LeaveName);
 	T_SetShadow(false);
 	T_SetFont(font_small);
-	T_DrawText(320, 165, "FINISHED");
+	DrawText(320, 165, "FINISHED");
 
 	T_SetShadow(true);
 	T_SetFont(font_big);
@@ -601,12 +601,12 @@ void IM_DrawCoopStats()
 			LocalSound('doors/dr1_clos');
 			im_sounds++;
 		}
-		T_DrawText(247, ypos + 10, va("%d", killPercent[i]));
-		T_DrawText(281, ypos + 10, "%");
-		T_DrawText(322, ypos + 10, va("%d", bonusPercent[i]));
-		T_DrawText(356, ypos + 10, "%");
-		T_DrawText(399, ypos + 10, va("%d", secretPercent[i]));
-		T_DrawText(433, ypos + 10, "%");
+		DrawText(247, ypos + 10, va("%d", killPercent[i]));
+		DrawText(281, ypos + 10, "%");
+		DrawText(322, ypos + 10, va("%d", bonusPercent[i]));
+		DrawText(356, ypos + 10, "%");
+		DrawText(399, ypos + 10, va("%d", secretPercent[i]));
+		DrawText(433, ypos + 10, "%");
 		ypos += 37;
 	}
 	T_SetDist(-1, 1);
@@ -633,8 +633,8 @@ void IM_DrawDMStats()
 	T_SetShadow(true);
 	T_SetFont(font_big);
 	T_SetAlign(hleft, vtop);
-	T_DrawText(425, 170, "FRAGS");
-	T_DrawText(525, 170, "DEATHS");
+	DrawText(425, 170, "FRAGS");
+	DrawText(525, 170, "DEATHS");
 	T_SetShadow(false);
 
 	if (intertime < 0.625)
@@ -646,7 +646,7 @@ void IM_DrawDMStats()
 				patchFaceOkay[i]);
 			T_SetFont(font_small);
 			T_SetAlign(hleft, vtop);
-			T_DrawText(240, ypos + 10 + ftoi(dSlideY[i] * 35.0 * intertime),
+			DrawText(240, ypos + 10 + ftoi(dSlideY[i] * 35.0 * intertime),
 				RepInfo.PlayerName);
 		}
 		return;
@@ -678,19 +678,19 @@ void IM_DrawDMStats()
 		}
 		T_SetFont(font_small);
 		T_SetAlign(hleft, vtop);
-		T_DrawText(240, ypos + 10, RepInfo.PlayerName);
+		DrawText(240, ypos + 10, RepInfo.PlayerName);
 		if (slaughterboy & (1 << i))
 		{
 			if (!(ftoi(32.0 * intertime) & 16))
 			{
-				T_DrawText(423, ypos + 10, va("%d", RepInfo.Frags));
-				T_DrawText(523, ypos + 10, va("%d", RepInfo.Deaths));
+				DrawText(423, ypos + 10, va("%d", RepInfo.Frags));
+				DrawText(523, ypos + 10, va("%d", RepInfo.Deaths));
 			}
 		}
 		else
 		{
-			T_DrawText(423, ypos + 10, va("%d", RepInfo.Frags));
-			T_DrawText(523, ypos + 10, va("%d", RepInfo.Deaths));
+			DrawText(423, ypos + 10, va("%d", RepInfo.Frags));
+			DrawText(523, ypos + 10, va("%d", RepInfo.Deaths));
 		}
 		ypos += 36;
 		xpos += 43;
@@ -713,11 +713,11 @@ void IM_DrawOldLevel()
 
 	T_SetShadow(true);
 	T_SetFont(font_big);
-	T_DrawText(320, 3, ClGame.im->LeaveName);
+	DrawText(320, 3, ClGame.im->LeaveName);
 	T_SetShadow(false);
 
 	T_SetFont(font_small);
-	T_DrawText(320, 25, "FINISHED");
+	DrawText(320, 25, "FINISHED");
 
 	if (im_map == 9)
 	{
@@ -770,11 +770,11 @@ void IM_DrawYAH()
 	T_SetAlign(hcentre, vtop);
 
 	T_SetFont(font_small);
-	T_DrawText(320, 10, "NOW ENTERING:");
+	DrawText(320, 10, "NOW ENTERING:");
 
 	T_SetShadow(true);
 	T_SetFont(font_big);
-	T_DrawText(320, 20, ClGame.im->EnterName);
+	DrawText(320, 20, ClGame.im->EnterName);
 	T_SetShadow(false);
 
 	if (im_map == 9)
@@ -907,7 +907,7 @@ void IM_DrawText()
 	T_SetFont(font_small);
 	T_SetAlign(hleft, vtop);
 	T_SetDist(-1, -1);
-	T_DrawText(180, 145, substr(HubText, 0, count));
+	DrawText(180, 145, substr(HubText, 0, count));
 	T_SetDist(-1, 1);
 }
 
