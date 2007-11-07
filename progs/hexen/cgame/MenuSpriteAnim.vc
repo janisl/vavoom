@@ -31,9 +31,9 @@ int NumFrames;
 int Translation;
 float Time;
 
-void InitWindow()
+void OnCreate()
 {
-	::InitWindow();
+	::OnCreate();
 	bTickEnabled = true;
 	Disable();
 }

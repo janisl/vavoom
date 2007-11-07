@@ -45,18 +45,11 @@ class VWindow : public VWidget
 		WF_IsSensitive		= 0x0001,	// True if the window can take input
 		WF_IsSelectable		= 0x0002,	// True if the window can have keyboard focus
 		WF_TickEnabled		= 0x0004,	// True if () event should be called
-		WF_IsInitialised	= 0x0008,	// True if the window has been initialised
-
-		// Destructor information
-		WF_BeingDestroyed	= 0x0010,	// True if this window is going bye-bye
 	};
 	vuint32 WindowFlags;
 
 public:
 	VWindow();
-	virtual void Init(VWindow *InParent);
-	virtual void CleanUp();
-	void Destroy();
 
 	// Ancestral routines
 	VRootWindow *GetRootWindow();
@@ -88,22 +81,6 @@ public:
 	void SetSelectability(bool NewSelectability);
 	bool IsSelectable() { return !!(WindowFlags & WF_IsSelectable); }
 
-	void InitWindow()
-	{
-		P_PASS_SELF;
-		EV_RET_VOID(NAME_InitWindow);
-	}
-	void DestroyWindow()
-	{
-		P_PASS_SELF;
-		EV_RET_VOID(NAME_DestroyWindow);
-	}
-	void WindowReady()
-	{
-		P_PASS_SELF;
-		EV_RET_VOID(NAME_WindowReady);
-	}
-
 	virtual void SensitivityChanged(bool bNewSensitivity)
 	{
 		P_PASS_SELF;
@@ -119,14 +96,10 @@ public:
 		EV_RET_VOID(NAME_Tick);
 	}
 
-	static VWindow *CreateNewWindow(VClass *NewClass, VWindow *ParentWindow);
-
 private:
 	void TickTree(float DeltaTime);
 
 public:
-	DECLARE_FUNCTION(Destroy)
-	DECLARE_FUNCTION(NewChild)
 	DECLARE_FUNCTION(SetSensitivity)
 	DECLARE_FUNCTION(Enable)
 	DECLARE_FUNCTION(Disable)

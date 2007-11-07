@@ -25,9 +25,9 @@
 
 class MenuSelector_SmallRight : MenuObject;
 
-void InitWindow()
+void OnCreate()
 {
-	::InitWindow();
+	::OnCreate();
 	Disable();
 }
 

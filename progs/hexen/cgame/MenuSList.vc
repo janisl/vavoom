@@ -28,9 +28,9 @@ class MenuSList : MenuChoice;
 int			Cursor;
 slist_t*	slist;
 
-void InitWindow()
+void OnCreate()
 {
-	::InitWindow();
+	::OnCreate();
 	StartSearch();
 }
 

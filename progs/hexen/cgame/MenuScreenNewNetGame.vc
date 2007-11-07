@@ -76,13 +76,13 @@ void CreateChoices()
 
 	Skill = MenuChoiceEnum(NewChild(MenuChoiceEnum));
 	Skill.SetPos(ChoicesStartX, ChoicesStartY);
-	Skill.SetInitialValue(2);
 	Skill.Text = "Skill";
 	Skill.AddItem("Baby");
 	Skill.AddItem("Easy");
 	Skill.AddItem("Normal");
 	Skill.AddItem("Hard");
 	Skill.AddItem("Nightmare");
+	Skill.SetInitialValue(2);
 	ChoicesStartY += Skill.Height;
 
 	TimeLimit = MenuChoiceEnum(NewChild(MenuChoiceEnum));

@@ -28,9 +28,9 @@ class MenuSelector_Spinner : MenuObject;
 int selector_pics[8];
 float Time;
 
-void InitWindow()
+void OnCreate()
 {
-	::InitWindow();
+	::OnCreate();
 	bTickEnabled = true;
 	Disable();
 	selector_pics[0] = R_RegisterPic('m_curs1');

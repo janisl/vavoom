@@ -32,9 +32,9 @@ string	EnterText;
 
 delegate void ValueChanged(Object Sender);
 
-void InitWindow()
+void OnCreate()
 {
-	::InitWindow();
+	::OnCreate();
 	InitSlot();
 }
 

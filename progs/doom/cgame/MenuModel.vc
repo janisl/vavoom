@@ -31,9 +31,9 @@ void* Model;
 int Frame;
 string Skin;
 
-void InitWindow()
+void OnCreate()
 {
-	::InitWindow();
+	::OnCreate();
 	Disable();
 }
 

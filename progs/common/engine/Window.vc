@@ -33,13 +33,7 @@ readonly byte WindowType;			// Contains window type
 readonly bool bIsSensitive;		// True if the window can take input
 readonly bool bIsSelectable;		// True if the window can have keyboard focus
 bool bTickEnabled;		// True if Tick() event should be called
-readonly bool bIsInitialised;	// True if the window has been initialised
 
-// Destructor information
-readonly bool bBeingDestroyed;	// TRUE if this window is going bye-bye
-
-native void Destroy();
-native Window NewChild(class<Window> ChildClass);
 native void SetSensitivity(bool bNewSensitivity);
 native void Enable();
 native void Disable();
@@ -49,42 +43,6 @@ native void SetSelectability(bool bNewSelectability);
 native RootWindow GetRootWindow();
 native ModalWindow GetModalWindow();
 native Window GetParent();
-
-//==========================================================================
-//
-//	InitWindow
-//
-//	Window constructor.
-//
-//==========================================================================
-
-void InitWindow()
-{
-}
-
-//==========================================================================
-//
-//	DestroyWindow
-//
-//	Window destructor.
-//
-//==========================================================================
-
-void DestroyWindow()
-{
-}
-
-//==========================================================================
-//
-//	WindowReady
-//
-//	Called just before window is first drawn.
-//
-//==========================================================================
-
-void WindowReady()
-{
-}
 
 //==========================================================================
 //

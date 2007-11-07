@@ -27,14 +27,14 @@ class VRootWindow : public VModalWindow
 {
 	DECLARE_CLASS(VRootWindow, VModalWindow, 0)
 
-	VRootWindow(void);
-	void Init(void);
-	void Init(VWindow *) { Sys_Error("Root canot have a parent"); }
+	VRootWindow();
+	void Init();
+	void Init(VWidget*) { Sys_Error("Root canot have a parent"); }
 
-	void PaintWindows(void);
+	void PaintWindows();
 	void TickWindows(float DeltaTime);
 
-	static void StaticInit(void);
+	static void StaticInit();
 };
 
 extern VRootWindow *GRoot;

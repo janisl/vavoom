@@ -51,6 +51,59 @@ IMPLEMENT_CLASS(V, Widget);
 
 //==========================================================================
 //
+//	VWidget::CreateNewWidget
+//
+//==========================================================================
+
+VWidget* VWidget::CreateNewWidget(VClass* AClass, VWidget* AParent)
+{
+	guard(VWidget::CreateNewWidget);
+	VWidget* W = (VWidget*)StaticSpawnObject(AClass);
+	W->Init(AParent);
+	return W;
+	unguardf(("(%s)", AClass->GetName()));
+}
+
+//==========================================================================
+//
+//	VWidget::Init
+//
+//==========================================================================
+
+void VWidget::Init(VWidget* AParent)
+{
+	guard(VWidget::Init);
+	ParentWidget = AParent;
+	if (ParentWidget)
+	{
+		ParentWidget->AddChild(this);
+	}
+	ClipTree();
+	OnCreate();
+	unguard;
+}
+
+//==========================================================================
+//
+//	VWidget::Destroy
+//
+//==========================================================================
+
+void VWidget::Destroy()
+{
+	guard(VWidget::Destroy);
+	OnDestroy();
+	DestroyAllChildren();
+	if (ParentWidget)
+	{
+		ParentWidget->RemoveChild(this);
+	}
+	Super::Destroy();
+	unguard;
+}
+
+//==========================================================================
+//
 //	VWidget::AddChild
 //
 //==========================================================================
@@ -644,6 +697,19 @@ int VWidget::DrawTextW(int x, int y, const VStr& String, int w)
 //	Natives
 //
 //==========================================================================
+
+IMPLEMENT_FUNCTION(VWidget, NewChild)
+{
+	P_GET_PTR(VClass, ChildClass);
+	P_GET_SELF;
+	RET_REF(CreateNewWidget(ChildClass, Self));
+}
+
+IMPLEMENT_FUNCTION(VWidget, Destroy)
+{
+	P_GET_SELF;
+	delete Self;
+}
 
 IMPLEMENT_FUNCTION(VWidget, DestroyAllChildren)
 {

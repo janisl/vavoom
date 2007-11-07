@@ -33,11 +33,11 @@ int Frames[32];
 name FrameNames[32];
 float Time;
 
-void InitWindow()
+void OnCreate()
 {
 	int i;
 
-	::InitWindow();
+	::OnCreate();
 
 	bTickEnabled = true;
 	Disable();

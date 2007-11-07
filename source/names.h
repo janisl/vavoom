@@ -169,6 +169,8 @@ REGISTER_NAME(MessageBoxActive)
 REGISTER_NAME(DrawViewBorder)
 
 //	Widget events
+REGISTER_NAME(OnCreate)
+REGISTER_NAME(OnDestroy)
 REGISTER_NAME(OnChildAdded)
 REGISTER_NAME(OnChildRemoved)
 REGISTER_NAME(OnConfigurationChanged)
@@ -177,9 +179,6 @@ REGISTER_NAME(OnDraw)
 REGISTER_NAME(OnPostDraw)
 
 //	Window events
-REGISTER_NAME(InitWindow)
-REGISTER_NAME(DestroyWindow)
-REGISTER_NAME(WindowReady)
 REGISTER_NAME(SensitivityChanged)
 
 //	Lump names

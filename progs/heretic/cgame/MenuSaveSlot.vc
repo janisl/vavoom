@@ -33,9 +33,9 @@ int		SlotNum;
 string	Text;
 string	EnterText;
 
-void InitWindow()
+void OnCreate()
 {
-	::InitWindow();
+	::OnCreate();
 	InitSlot();
 }
 

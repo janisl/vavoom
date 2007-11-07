@@ -57,9 +57,9 @@ void SetInitialValue(float AValue)
 		Value = MaxValue;
 }
 
-void InitWindow()
+void OnCreate()
 {
-	::InitWindow();
+	::OnCreate();
 
 	pic_M_THERML = R_RegisterPic('m_therml');
 	pic_M_THERMM = R_RegisterPic('m_thermm');

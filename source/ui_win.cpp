@@ -62,57 +62,6 @@ VWindow::VWindow()
 
 //==========================================================================
 //
-//	VWindow::Init
-//
-//==========================================================================
-
-void VWindow::Init(VWindow *InParent)
-{
-	guard(VWindow::Init);
-	ParentWidget = InParent;
-	if (ParentWidget)
-	{
-		static_cast<VWindow*>(ParentWidget)->AddChild(this);
-	}
-	ClipTree();
-	InitWindow();
-	WindowReady();
-	WindowFlags |= WF_IsInitialised;
-	unguard;
-}
-
-//==========================================================================
-//
-//	VWindow::CleanUp
-//
-//==========================================================================
-
-void VWindow::CleanUp()
-{
-}
-
-//==========================================================================
-//
-//	VWindow::Destroy
-//
-//==========================================================================
-
-void VWindow::Destroy()
-{
-	guard(VWindow::Destroy);
-	WindowFlags |= WF_BeingDestroyed;
-	DestroyWindow();
-	DestroyAllChildren();
-	if (ParentWidget)
-	{
-		ParentWidget->RemoveChild(this);
-	}
-	Super::Destroy();
-	unguard;
-}
-
-//==========================================================================
-//
 //	VWindow::GetRootWindow
 //
 //==========================================================================
@@ -220,38 +169,10 @@ void VWindow::TickTree(float DeltaTime)
 
 //==========================================================================
 //
-//	VWindow::CreateNewWindow
-//
-//==========================================================================
-
-VWindow *VWindow::CreateNewWindow(VClass *NewClass, VWindow *ParentWindow)
-{
-	guard(VWindow::CreateNewWindow);
-	VWindow *win;
-
-	win = (VWindow *)StaticSpawnObject(NewClass);
-	win->Init(ParentWindow);
-	return win;
-	unguardf(("(%s)", NewClass->GetName()));
-}
-
-//==========================================================================
-//
 //	Natives
 //
 //==========================================================================
 
-IMPLEMENT_FUNCTION(VWindow, Destroy)
-{
-	P_GET_SELF;
-	delete Self;
-}
-IMPLEMENT_FUNCTION(VWindow, NewChild)
-{
-	P_GET_PTR(VClass, ChildClass);
-	P_GET_SELF;
-	RET_REF(CreateNewWindow(ChildClass, Self));
-}
 IMPLEMENT_FUNCTION(VWindow, SetSensitivity)
 {
 	P_GET_BOOL(bNewSensitivity);

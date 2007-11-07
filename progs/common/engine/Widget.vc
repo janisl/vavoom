@@ -129,7 +129,9 @@ int OldOriginY
 	get { return ftoi(ClipRect.OriginY / ClipRect.ScaleY); }
 }
 
-//	Destroys all child widgets.
+//	Creation and destruction of widgets.
+native final spawner Widget NewChild(class<Widget> ChildClass);
+native final void Destroy();
 native final void DestroyAllChildren();
 
 //	Methods to move widget on top or bottom.
@@ -164,6 +166,30 @@ native final void ShadeRect(int x, int y, int w, int h, float shade);
 native final void DrawText(int X, int Y, string Text);
 //  Draws text wrapping at the width w
 native final int DrawTextW(int x, int y, string Text, int w);
+
+//==========================================================================
+//
+//	OnCreate
+//
+//	Called when widget has been just created.
+//
+//==========================================================================
+
+void OnCreate()
+{
+}
+
+//==========================================================================
+//
+//	OnDestroy
+//
+//	Called when widget is about to be destroyed.
+//
+//==========================================================================
+
+void OnDestroy()
+{
+}
 
 //==========================================================================
 //

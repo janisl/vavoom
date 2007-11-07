@@ -90,6 +90,8 @@ private:
 
 public:
 	//	Destroys all child widgets.
+	virtual void Init(VWidget*);
+	void Destroy();
 	void DestroyAllChildren();
 
 	//	Methods to move widget on top or bottom.
@@ -131,7 +133,7 @@ public:
 	void SetConfiguration(int, int, int, int, float = 1.0, float = 1.0);
 
 	//	Visibility methods.
-	void SetVisibility(bool NewVisibility);
+	void SetVisibility(bool);
 	void Show()
 	{
 		SetVisibility(true);
@@ -161,6 +163,16 @@ public:
 		}
 	}
 
+	void OnCreate()
+	{
+		P_PASS_SELF;
+		EV_RET_VOID(NAME_OnCreate);
+	}
+	void OnDestroy()
+	{
+		P_PASS_SELF;
+		EV_RET_VOID(NAME_OnDestroy);
+	}
 	virtual void OnChildAdded(VWidget* Child)
 	{
 		P_PASS_SELF;
@@ -204,6 +216,10 @@ public:
 	void DrawText(int, int, const VStr&);
 	int DrawTextW(int, int, const VStr&, int);
 
+	static VWidget *CreateNewWidget(VClass*, VWidget*);
+
+	DECLARE_FUNCTION(NewChild)
+	DECLARE_FUNCTION(Destroy)
 	DECLARE_FUNCTION(DestroyAllChildren)
 
 	DECLARE_FUNCTION(Raise)

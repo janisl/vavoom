@@ -63,9 +63,9 @@ void SetInitialValue(float AValue)
 		Value = MaxValue;
 }
 
-void InitWindow()
+void OnCreate()
 {
-	::InitWindow();
+	::OnCreate();
 
 	SetInitialValue(GetInitialValue());
 
