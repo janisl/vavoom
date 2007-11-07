@@ -148,11 +148,11 @@ void Tick(float DeltaTime)
 
 //==========================================================================
 //
-//  DrawWindow
+//  OnDraw
 //
 //==========================================================================
 
-void DrawWindow()
+void OnDraw()
 {
 	DrawFullScreenPic(page_pic);
 }

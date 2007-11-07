@@ -42,7 +42,7 @@ void ActivateEvent()
 	}
 }
 
-void DrawWindow()
+void OnDraw()
 {
 	if (PicHandle > 0)
 	{
@@ -50,7 +50,7 @@ void DrawWindow()
 	}
 	else
 	{
-		::DrawWindow();
+		::OnDraw();
 	}
 }
 

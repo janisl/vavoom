@@ -173,14 +173,14 @@ REGISTER_NAME(OnChildAdded)
 REGISTER_NAME(OnChildRemoved)
 REGISTER_NAME(OnConfigurationChanged)
 REGISTER_NAME(OnVisibilityChanged)
+REGISTER_NAME(OnDraw)
+REGISTER_NAME(OnPostDraw)
 
 //	Window events
 REGISTER_NAME(InitWindow)
 REGISTER_NAME(DestroyWindow)
 REGISTER_NAME(WindowReady)
 REGISTER_NAME(SensitivityChanged)
-REGISTER_NAME(DrawWindow)
-REGISTER_NAME(PostDrawWindow)
 
 //	Lump names
 REGISTER_NAME(s_start)

@@ -29,7 +29,7 @@ string Text;
 string CommandOn;
 string CommandOff;
 
-void DrawWindow()
+void OnDraw()
 {
 	int key1;
 	int key2;

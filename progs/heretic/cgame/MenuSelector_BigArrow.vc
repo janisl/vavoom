@@ -37,7 +37,7 @@ void InitWindow()
 	selector_pics[1] = R_RegisterPic('m_slctr2');
 }
 
-void DrawWindow()
+void OnDraw()
 {
 	DrawPic(0, 0, selector_pics[ftoi(Time * 2.0) & 1]);
 }

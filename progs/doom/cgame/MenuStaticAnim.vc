@@ -57,7 +57,7 @@ void Tick(float DeltaTime)
 	Time += DeltaTime;
 }
 
-void DrawWindow()
+void OnDraw()
 {
 	int frame = (ftoi(Time * itof(Speed)) + StartFrame) % NumFrames;
 	if (bBackwards)

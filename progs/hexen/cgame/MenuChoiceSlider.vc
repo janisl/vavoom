@@ -76,7 +76,7 @@ void InitWindow()
 	pic_M_SLDKB = R_RegisterPic('m_sldkb');
 }
 
-void DrawWindow()
+void OnDraw()
 {
 	int i;
 	int xx;

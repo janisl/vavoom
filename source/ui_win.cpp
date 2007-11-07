@@ -102,9 +102,11 @@ void VWindow::Destroy()
 	guard(VWindow::Destroy);
 	WindowFlags |= WF_BeingDestroyed;
 	DestroyWindow();
-	KillAllChildren();
+	DestroyAllChildren();
 	if (ParentWidget)
-		static_cast<VWindow*>(ParentWidget)->RemoveChild(this);
+	{
+		ParentWidget->RemoveChild(this);
+	}
 	Super::Destroy();
 	unguard;
 }
@@ -192,45 +194,6 @@ void VWindow::SetSelectability(bool NewSelectability)
 		else
 			WindowFlags &= ~WF_IsSelectable;
 	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	VWindow::KillAllChildren
-//
-//==========================================================================
-
-void VWindow::KillAllChildren()
-{
-	guard(VWindow::KillAllChildren);
-	while (FirstChildWidget)
-	{
-		FirstChildWidget->ConditionalDestroy();
-	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	VWindow::DrawTree
-//
-//==========================================================================
-
-void VWindow::DrawTree()
-{
-	guard(VWindow::DrawTree);
-	if (!(WidgetFlags & WF_IsVisible) || !ClipRect.HasArea())
-	{
-		//	Nowhere to draw.
-		return;
-	}
-	DrawWindow();
-	for (VWindow *c = static_cast<VWindow*>(FirstChildWidget); c; c = static_cast<VWindow*>(c->NextWidget))
-	{
-		c->DrawTree();
-	}
-	PostDrawWindow();
 	unguard;
 }
 
@@ -331,10 +294,4 @@ IMPLEMENT_FUNCTION(VWindow, GetParent)
 {
 	P_GET_SELF;
 	RET_REF(Self->GetParent());
-}
-
-IMPLEMENT_FUNCTION(VWindow, DestroyAllChildren)
-{
-	P_GET_SELF;
-	Self->DestroyAllChildren();
 }

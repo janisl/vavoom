@@ -192,14 +192,14 @@ bool Key(int key)
 
 //==========================================================================
 //
-//	DrawWindow
+//	OnDraw
 //
 //  Fade all the screen buffer, so that the menu is more readable,
 // especially now that we use the small hufont in the menus...
 //
 //==========================================================================
 
-void DrawWindow()
+void OnDraw()
 {
 	ShadeRect(0, 0, 640, 480, GetCvarF('menu_darkening'));
 }

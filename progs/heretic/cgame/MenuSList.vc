@@ -60,7 +60,7 @@ void DrawTextBox(string text)
 	DrawText(160, 100, text);
 }
 
-void DrawWindow()
+void OnDraw()
 {
 	int i;
 	int x;

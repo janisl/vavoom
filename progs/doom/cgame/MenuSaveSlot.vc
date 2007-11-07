@@ -39,7 +39,7 @@ void InitWindow()
 	InitSlot();
 }
 
-void DrawWindow()
+void OnDraw()
 {
 	if (bEnteringText && bSelected)
 	{

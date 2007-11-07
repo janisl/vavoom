@@ -48,7 +48,7 @@ void Tick(float DeltaTime)
 	Time += DeltaTime;
 }
 
-void DrawWindow()
+void OnDraw()
 {
 	DrawPic(0, 0, selector_pics[ftoi(Time * 4.0) & 7]);
 }

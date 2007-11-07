@@ -50,8 +50,6 @@ native RootWindow GetRootWindow();
 native ModalWindow GetModalWindow();
 native Window GetParent();
 
-native void DestroyAllChildren();
-
 //==========================================================================
 //
 //	InitWindow
@@ -97,30 +95,6 @@ void WindowReady()
 //==========================================================================
 
 void SensitivityChanged(bool bNewSensitivity)
-{
-}
-
-//==========================================================================
-//
-//	DrawWindow
-//
-//	Draws the window.
-//
-//==========================================================================
-
-void DrawWindow()
-{
-}
-
-//==========================================================================
-//
-//	PostDrawWindow
-//
-//	Draws the window (AFTER all children are drawn).
-//
-//==========================================================================
-
-void PostDrawWindow()
 {
 }
 

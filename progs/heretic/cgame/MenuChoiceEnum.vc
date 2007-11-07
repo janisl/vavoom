@@ -58,7 +58,7 @@ void SetInitialValue(int AValue)
 		Value = MaxValue - 1;
 }
 
-void DrawWindow()
+void OnDraw()
 {
 	int xx;
 

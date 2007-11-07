@@ -88,9 +88,6 @@ public:
 	void SetSelectability(bool NewSelectability);
 	bool IsSelectable() { return !!(WindowFlags & WF_IsSelectable); }
 
-	// Slayer of innocent children
-	void DestroyAllChildren() { KillAllChildren(); }
-
 	void InitWindow()
 	{
 		P_PASS_SELF;
@@ -114,17 +111,6 @@ public:
 		EV_RET_VOID(NAME_SensitivityChanged);
 	}
 
-	virtual void DrawWindow()
-	{
-		P_PASS_SELF;
-		EV_RET_VOID(NAME_DrawWindow);
-	}
-	virtual void PostDrawWindow()
-	{
-		P_PASS_SELF;
-		EV_RET_VOID(NAME_PostDrawWindow);
-	}
-
 	virtual void Tick(float) { }
 	void eventTick(float DeltaTime)
 	{
@@ -135,12 +121,7 @@ public:
 
 	static VWindow *CreateNewWindow(VClass *NewClass, VWindow *ParentWindow);
 
-protected:
-	void KillAllChildren();
-
 private:
-	void DrawTree();
-
 	void TickTree(float DeltaTime);
 
 public:
@@ -155,6 +136,4 @@ public:
 	DECLARE_FUNCTION(GetRootWindow)
 	DECLARE_FUNCTION(GetModalWindow)
 	DECLARE_FUNCTION(GetParent)
-
-	DECLARE_FUNCTION(DestroyAllChildren)
 };

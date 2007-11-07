@@ -80,6 +80,7 @@ private:
 	void RemoveChild(VWidget*);
 
 	void ClipTree();
+	void DrawTree();
 
 	bool TransferAndClipRect(float&, float&, float&, float&, float&, float&,
 		float&, float&) const;
@@ -88,6 +89,9 @@ private:
 	friend class VRootWindow;
 
 public:
+	//	Destroys all child widgets.
+	void DestroyAllChildren();
+
 	//	Methods to move widget on top or bottom.
 	void Lower();
 	void Raise();
@@ -180,6 +184,16 @@ public:
 		P_PASS_BOOL(NewVisibility);
 		EV_RET_VOID(NAME_OnVisibilityChanged);
 	}
+	virtual void OnDraw()
+	{
+		P_PASS_SELF;
+		EV_RET_VOID(NAME_OnDraw);
+	}
+	virtual void OnPostDraw()
+	{
+		P_PASS_SELF;
+		EV_RET_VOID(NAME_OnPostDraw);
+	}
 
 	void DrawPic(int, int, int, float = 1.0);
 	void DrawShadowedPic(int, int, int);
@@ -189,6 +203,8 @@ public:
 	void DrawString(int, int, const VStr&);
 	void DrawText(int, int, const VStr&);
 	int DrawTextW(int, int, const VStr&, int);
+
+	DECLARE_FUNCTION(DestroyAllChildren)
 
 	DECLARE_FUNCTION(Raise)
 	DECLARE_FUNCTION(Lower)

@@ -51,7 +51,7 @@ bool Key(int key)
 	return false;
 }
 
-void DrawWindow()
+void OnDraw()
 {
 	T_SetFont(TextFont);
 	T_SetAlign(TextHAlign, TextVAlign);

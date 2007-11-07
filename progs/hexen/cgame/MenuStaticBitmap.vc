@@ -38,7 +38,7 @@ void InitWindow()
 	}
 }
 
-void DrawWindow()
+void OnDraw()
 {
 	DrawPic(0, 0, Handle);
 }

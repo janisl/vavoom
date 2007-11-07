@@ -35,7 +35,7 @@ void InitWindow()
 	Handle = R_RegisterPic(PicName);
 }
 
-void DrawWindow()
+void OnDraw()
 {
 	DrawPic(0, 0, Handle);
 }

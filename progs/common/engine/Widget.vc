@@ -129,6 +129,9 @@ int OldOriginY
 	get { return ftoi(ClipRect.OriginY / ClipRect.ScaleY); }
 }
 
+//	Destroys all child widgets.
+native final void DestroyAllChildren();
+
 //	Methods to move widget on top or bottom.
 native final void Lower();
 native final void Raise();
@@ -207,6 +210,30 @@ void OnConfigurationChanged()
 //==========================================================================
 
 void OnVisibilityChanged(bool bNewVisibility)
+{
+}
+
+//==========================================================================
+//
+//	OnDraw
+//
+//	Draws the window.
+//
+//==========================================================================
+
+void OnDraw()
+{
+}
+
+//==========================================================================
+//
+//	OnPostDraw
+//
+//	Draws the window (AFTER all children are drawn).
+//
+//==========================================================================
+
+void OnPostDraw()
 {
 }
 

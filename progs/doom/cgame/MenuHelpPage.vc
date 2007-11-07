@@ -36,7 +36,7 @@ void SetPage(name pageName)
 	Handle = R_RegisterPic(pageName);
 }
 
-void DrawWindow()
+void OnDraw()
 {
 	DrawFullScreenPic(Handle);
 }

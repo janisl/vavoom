@@ -137,11 +137,11 @@ void Tick(float DeltaTime)
 
 //==========================================================================
 //
-//  DrawWindow
+//  OnDraw
 //
 //==========================================================================
 
-void DrawWindow()
+void OnDraw()
 {
 	if (FinaleType == 'EndGameBunny')
 	{
@@ -163,11 +163,11 @@ void DrawWindow()
 
 //==========================================================================
 //
-//  PostDrawWindow
+//  OnPostDraw
 //
 //==========================================================================
 
-void PostDrawWindow()
+void OnPostDraw()
 {
 	if (FinaleType == 'EndGameCast')
 	{

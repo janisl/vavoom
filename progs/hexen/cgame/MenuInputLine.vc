@@ -46,7 +46,7 @@ void OnValueChanged()
 	}
 }
 
-void DrawWindow()
+void OnDraw()
 {
 	T_SetFont(font_small);
 	T_SetAlign(hleft, vtop);

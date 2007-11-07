@@ -107,6 +107,22 @@ void VWidget::RemoveChild(VWidget* InChild)
 
 //==========================================================================
 //
+//	VWidget::DestroyAllChildren
+//
+//==========================================================================
+
+void VWidget::DestroyAllChildren()
+{
+	guard(VWidget::DestroyAllChildren);
+	while (FirstChildWidget)
+	{
+		FirstChildWidget->ConditionalDestroy();
+	}
+	unguard;
+}
+
+//==========================================================================
+//
 //	VWidget::Lower
 //
 //==========================================================================
@@ -284,6 +300,35 @@ void VWidget::SetVisibility(bool NewVisibility)
 			WidgetFlags &= ~WF_IsVisible;
 		OnVisibilityChanged(NewVisibility);
 	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VWidget::DrawTree
+//
+//==========================================================================
+
+void VWidget::DrawTree()
+{
+	guard(VWidget::DrawTree);
+	if (!(WidgetFlags & WF_IsVisible) || !ClipRect.HasArea())
+	{
+		//	Not visible or clipped away.
+		return;
+	}
+
+	//	Main draw event for this widget.
+	OnDraw();
+
+	//	Draw chid widgets.
+	for (VWidget* c = FirstChildWidget; c; c = c->NextWidget)
+	{
+		c->DrawTree();
+	}
+
+	//	Do any drawing after child wigets have been drawn.
+	OnPostDraw();
 	unguard;
 }
 
@@ -599,6 +644,12 @@ int VWidget::DrawTextW(int x, int y, const VStr& String, int w)
 //	Natives
 //
 //==========================================================================
+
+IMPLEMENT_FUNCTION(VWidget, DestroyAllChildren)
+{
+	P_GET_SELF;
+	Self->DestroyAllChildren();
+}
 
 IMPLEMENT_FUNCTION(VWidget, Lower)
 {

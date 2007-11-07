@@ -79,7 +79,7 @@ void InitWindow()
 	SetInitialValue(GetInitialValue());
 }
 
-void DrawWindow()
+void OnDraw()
 {
 	int xx;
 

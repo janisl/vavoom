@@ -33,7 +33,7 @@ void InitWindow()
 	Disable();
 }
 
-void DrawWindow()
+void OnDraw()
 {
 	T_SetFont(font_big);
 	T_SetAlign(hcentre, vbottom);

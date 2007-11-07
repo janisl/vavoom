@@ -169,7 +169,7 @@ void SetSpeech(int SpeechNum)
 	SetDefaultChoice();
 }
 
-void DrawWindow()
+void OnDraw()
 {
 	if (BackPic != -1)
 	{
