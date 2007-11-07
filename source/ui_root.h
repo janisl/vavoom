@@ -31,7 +31,7 @@ class VRootWindow : public VModalWindow
 	void Init();
 	void Init(VWidget*) { Sys_Error("Root canot have a parent"); }
 
-	void PaintWindows();
+	void DrawWidgets();
 	void TickWindows(float DeltaTime);
 
 	static void StaticInit();

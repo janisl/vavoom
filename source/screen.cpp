@@ -27,6 +27,7 @@
 
 #include "gamedefs.h"
 #include "cl_local.h"
+#include "ui.h"
 
 // MACROS ------------------------------------------------------------------
 
@@ -487,6 +488,12 @@ void SCR_Update()
 			break;
 		}
 	}
+
+	//FIXME it's a wrong place for this.
+	GRoot->TickWindows(host_frametime);
+
+	//	Draw user interface.
+	GRoot->DrawWidgets();
 
 	// Menu drawing
 	MN_Drawer();

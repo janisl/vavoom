@@ -142,8 +142,6 @@ bool MN_Responder(event_t* event)
 
 void MN_Drawer()
 {
-	GRoot->TickWindows(host_frametime);
-	GRoot->PaintWindows();
 	GClGame->eventMessageBoxDrawer();
 }
 

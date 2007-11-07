@@ -76,11 +76,11 @@ void VRootWindow::Init()
 
 //==========================================================================
 //
-//	VRootWindow::PaintWindows
+//	VRootWindow::DrawWidgets
 //
 //==========================================================================
 
-void VRootWindow::PaintWindows()
+void VRootWindow::DrawWidgets()
 {
 	DrawTree();
 }
