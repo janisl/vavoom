@@ -73,7 +73,7 @@ private:
 
 	void ClipTree();
 
-	void TransferAndClipRect(float&, float&, float&, float&, float&, float&,
+	bool TransferAndClipRect(float&, float&, float&, float&, float&, float&,
 		float&, float&) const;
 
 	friend class VWindow;

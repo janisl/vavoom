@@ -273,7 +273,7 @@ void VWidget::SetConfiguration(int NewX, int NewY, int NewWidth,
 //
 //==========================================================================
 
-void VWidget::TransferAndClipRect(float& X1, float& Y1, float& X2, float& Y2,
+bool VWidget::TransferAndClipRect(float& X1, float& Y1, float& X2, float& Y2,
 	float& S1, float& T1, float& S2, float& T2) const
 {
 	guard(VWidget::TransferAndClipRect);
@@ -301,6 +301,7 @@ void VWidget::TransferAndClipRect(float& X1, float& Y1, float& X2, float& Y2,
 		T2 = T2 + (Y2 - ClipRect.ClipY2) / (Y1 - Y2) * (T2 - T1);
 		Y2 = ClipRect.ClipY2;
 	}
+	return X1 < X2 && Y1 < Y2;
 	unguard;
 }
 
@@ -330,8 +331,10 @@ void VWidget::DrawPic(int X, int Y, int Handle, float Alpha)
 	float T1 = 0;
 	float S2 = Info.width;
 	float T2 = Info.height;
-	TransferAndClipRect(X1, Y1, X2, Y2, S1, T1, S2, T2);
-	Drawer->DrawPic(X1, Y1, X2, Y2, S1, T1, S2, T2, Handle, Alpha);
+	if (TransferAndClipRect(X1, Y1, X2, Y2, S1, T1, S2, T2))
+	{
+		Drawer->DrawPic(X1, Y1, X2, Y2, S1, T1, S2, T2, Handle, Alpha);
+	}
 	unguard;
 }
 
@@ -359,8 +362,10 @@ void VWidget::DrawShadowedPic(int X, int Y, int Handle)
 	float T1 = 0;
 	float S2 = Info.width;
 	float T2 = Info.height;
-	TransferAndClipRect(X1, Y1, X2, Y2, S1, T1, S2, T2);
-	Drawer->DrawPicShadow(X1, Y1, X2, Y2, S1, T1, S2, T2, Handle, 0.625);
+	if (TransferAndClipRect(X1, Y1, X2, Y2, S1, T1, S2, T2))
+	{
+		Drawer->DrawPicShadow(X1, Y1, X2, Y2, S1, T1, S2, T2, Handle, 0.625);
+	}
 
 	DrawPic(X, Y, Handle);
 	unguard;
@@ -384,8 +389,10 @@ void VWidget::FillRectWithFlat(int X, int Y, int Width, int Height,
 	float T1 = 0;
 	float S2 = Width;
 	float T2 = Height;
-	TransferAndClipRect(X1, Y1, X2, Y2, S1, T1, S2, T2);
-	Drawer->FillRectWithFlat(X1, Y1, X2, Y2, S1, T1, S2, T2, Name);
+	if (TransferAndClipRect(X1, Y1, X2, Y2, S1, T1, S2, T2))
+	{
+		Drawer->FillRectWithFlat(X1, Y1, X2, Y2, S1, T1, S2, T2, Name);
+	}
 	unguard;
 }
 
@@ -406,8 +413,10 @@ void VWidget::ShadeRect(int X, int Y, int Width, int Height, float Shade)
 	float T1 = 0;
 	float S2 = 0;
 	float T2 = 0;
-	TransferAndClipRect(X1, Y1, X2, Y2, S1, T1, S2, T2);
-	Drawer->ShadeRect((int)X1, (int)Y1, (int)X2 - (int)X1, (int)Y2 - (int)Y1, Shade);
+	if (TransferAndClipRect(X1, Y1, X2, Y2, S1, T1, S2, T2))
+	{
+		Drawer->ShadeRect((int)X1, (int)Y1, (int)X2 - (int)X1, (int)Y2 - (int)Y1, Shade);
+	}
 	unguard;
 }
 
