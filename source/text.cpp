@@ -97,7 +97,6 @@ void T_Init()
 
 	// Set default values
 	T_SetFont(font_small);
-	T_SetDist(-1, 1);
 	T_SetAlign(hleft, vtop);
 	unguard;
 }
@@ -218,18 +217,6 @@ static void T_LoadFont2(font_e FontNr, const char* Name, int SpaceW, int SpaceH)
 void T_SetFont(font_e FontNr)
 {
 	Font = Fonts[FontNr];
-}
-
-//==========================================================================
-//
-//	T_SetDist
-//
-//==========================================================================
-
-void T_SetDist(int HDist, int VDist)
-{
-	HDistance = HDist;
-	VDistance = VDist;
 }
 
 //==========================================================================

@@ -357,12 +357,9 @@ public:
 	//	Text
 	DECLARE_FUNCTION(T_SetFont)
 	DECLARE_FUNCTION(T_SetAlign)
-	DECLARE_FUNCTION(T_SetDist)
 	DECLARE_FUNCTION(T_SetShadow)
 	DECLARE_FUNCTION(T_TextWidth)
 	DECLARE_FUNCTION(T_TextHeight)
-	DECLARE_FUNCTION(T_DrawText)
-	DECLARE_FUNCTION(T_DrawTextW)
 	DECLARE_FUNCTION(T_DrawCursor)
 
 	//	Client side sound

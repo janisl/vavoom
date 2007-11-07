@@ -480,11 +480,9 @@ void IM_DrawSingleStats()
 	T_SetShadow(true);
 	T_SetFont(font_big);
 	T_SetAlign(hleft, vtop);
-	T_SetDist(1, 1);
 	DrawText(362, 205, va("%d", ClGame.cl.KillCount));
 	DrawText(397, 205, "/");
 	DrawText(410, 205, va("%d", ClGame.cl.Level.TotalKills));
-	T_SetDist(-1, 1);
 	T_SetShadow(false);
 	if (intertime < 2.0)
 	{
@@ -498,11 +496,9 @@ void IM_DrawSingleStats()
 	T_SetShadow(true);
 	T_SetFont(font_big);
 	T_SetAlign(hleft, vtop);
-	T_SetDist(1, 1);
 	DrawText(362, 230, va("%d", ClGame.cl.ItemCount));
 	DrawText(397, 230, "/");
 	DrawText(410, 230, va("%d", ClGame.cl.Level.TotalItems));
-	T_SetDist(-1, 1);
 	T_SetShadow(false);
 	if (intertime < 3.0)
 	{
@@ -516,11 +512,9 @@ void IM_DrawSingleStats()
 	T_SetShadow(true);
 	T_SetFont(font_big);
 	T_SetAlign(hleft, vtop);
-	T_SetDist(1, 1);
 	DrawText(362, 255, va("%d", ClGame.cl.SecretCount));
 	DrawText(397, 255, "/");
 	DrawText(410, 255, va("%d", ClGame.cl.Level.TotalSecret));
-	T_SetDist(-1, 1);
 	T_SetShadow(false);
 	if (intertime < 5.0)
 	{
@@ -538,10 +532,8 @@ void IM_DrawSingleStats()
 		T_SetFont(font_big);
 		T_SetAlign(hleft, vtop);
 		DrawText(245, 300, "TIME");
-		T_SetDist(1, 1);
 		DrawText(315, 300, va("%d%d:%d%d:%d%d", hours / 10, hours % 10,
 				minutes / 10, minutes % 10, seconds / 10, seconds % 10));
-		T_SetDist(-1, 1);
 		T_SetShadow(false);
 	}
 	else
@@ -585,7 +577,6 @@ void IM_DrawCoopStats()
 	T_SetShadow(true);
 	T_SetFont(font_big);
 	T_SetAlign(hleft, vtop);
-	T_SetDist(1, 1);
 	ypos = 190;
 	foreach ClGame.GLevel.LevelInfo.AllThinkers(PlayerReplicationInfo, RepInfo)
 	{
@@ -609,7 +600,6 @@ void IM_DrawCoopStats()
 		DrawText(433, ypos + 10, "%");
 		ypos += 37;
 	}
-	T_SetDist(-1, 1);
 	T_SetShadow(false);
 }
 
@@ -664,7 +654,6 @@ void IM_DrawDMStats()
 	T_SetShadow(true);
 	T_SetFont(font_big);
 	T_SetAlign(hleft, vtop);
-	T_SetDist(1, 1);
 	foreach ClGame.GLevel.LevelInfo.AllThinkers(PlayerReplicationInfo, RepInfo)
 	{
 		i = RepInfo.PlayerNum;
@@ -695,7 +684,6 @@ void IM_DrawDMStats()
 		ypos += 36;
 		xpos += 43;
 	}
-	T_SetDist(-1, 1);
 	T_SetShadow(false);
 }
 
@@ -906,9 +894,7 @@ void IM_DrawText()
 
 	T_SetFont(font_small);
 	T_SetAlign(hleft, vtop);
-	T_SetDist(-1, -1);
 	DrawText(180, 145, substr(HubText, 0, count));
-	T_SetDist(-1, 1);
 }
 
 //==========================================================================

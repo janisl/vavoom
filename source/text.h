@@ -81,7 +81,6 @@ void T_Init();
 void T_Shutdown();
 
 void T_SetFont(font_e);
-void T_SetDist(int, int);
 void T_SetAlign(halign_e, valign_e);
 void T_SetShadow(bool);
 

@@ -1535,8 +1535,6 @@ native static final void R_FillRect(int x, int y, int w, int h, int colour);
 native static final void T_SetFont(int font);
 //  Changes text alignement
 native static final void T_SetAlign(int halign, int valign);
-//  Changes text spacing
-native static final void T_SetDist(int hdist, int vdist);
 //  Enable/disable text shadow
 native static final void T_SetShadow(bool on);
 //  Calculates text width
