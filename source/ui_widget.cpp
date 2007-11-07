@@ -269,6 +269,26 @@ void VWidget::SetConfiguration(int NewX, int NewY, int NewWidth,
 
 //==========================================================================
 //
+//	VWidget::SetVisibility
+//
+//==========================================================================
+
+void VWidget::SetVisibility(bool NewVisibility)
+{
+	guard(VWidget::SetVisibility);
+	if (!!(WidgetFlags & WF_IsVisible) != NewVisibility)
+	{
+		if (NewVisibility)
+			WidgetFlags |= WF_IsVisible;
+		else
+			WidgetFlags &= ~WF_IsVisible;
+		OnVisibilityChanged(NewVisibility);
+	}
+	unguard;
+}
+
+//==========================================================================
+//
 //	VWidget::TransferAndClipRect
 //
 //==========================================================================
@@ -655,6 +675,32 @@ IMPLEMENT_FUNCTION(VWidget, SetConfiguration)
 	P_GET_SELF;
 	Self->SetConfiguration(NewX, NewY, NewWidth, NewHeight, NewScaleX,
 		NewScaleY);
+}
+
+IMPLEMENT_FUNCTION(VWidget, SetVisibility)
+{
+	P_GET_BOOL(bNewVisibility);
+	P_GET_SELF;
+	Self->SetVisibility(bNewVisibility);
+}
+
+IMPLEMENT_FUNCTION(VWidget, Show)
+{
+	P_GET_SELF;
+	Self->Show();
+}
+
+IMPLEMENT_FUNCTION(VWidget, Hide)
+{
+	P_GET_SELF;
+	Self->Hide();
+}
+
+IMPLEMENT_FUNCTION(VWidget, IsVisible)
+{
+	P_GET_BOOL_OPT(Recurse, true);
+	P_GET_SELF;
+	RET_BOOL(Self->IsVisible(Recurse));
 }
 
 IMPLEMENT_FUNCTION(VWidget, DrawPic)

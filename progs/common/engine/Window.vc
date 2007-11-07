@@ -30,7 +30,6 @@ class Window : Widget
 readonly byte WindowType;			// Contains window type
 
 // Booleans
-readonly bool bIsVisible;		// True if the window is visible
 readonly bool bIsSensitive;		// True if the window can take input
 readonly bool bIsSelectable;		// True if the window can have keyboard focus
 bool bTickEnabled;		// True if Tick() event should be called
@@ -41,10 +40,6 @@ readonly bool bBeingDestroyed;	// TRUE if this window is going bye-bye
 
 native void Destroy();
 native Window NewChild(class<Window> ChildClass);
-native void SetVisibility(bool bNewVisibility);
-native void Show();
-native void Hide();
-native bool IsVisible();
 native void SetSensitivity(bool bNewSensitivity);
 native void Enable();
 native void Disable();
@@ -54,11 +49,6 @@ native void SetSelectability(bool bNewSelectability);
 native RootWindow GetRootWindow();
 native ModalWindow GetModalWindow();
 native Window GetParent();
-
-native Window GetBottomChild(bool bVisibleOnly);
-native Window GetTopChild(bool bVisibleOnly);
-native Window GetLowerSibling(bool bVisibleOnly);
-native Window GetHigherSibling(bool bVisibleOnly);
 
 native void DestroyAllChildren();
 
@@ -95,18 +85,6 @@ void DestroyWindow()
 //==========================================================================
 
 void WindowReady()
-{
-}
-
-//==========================================================================
-//
-//	VisibilityChanged
-//
-//	Called when the parent shows or hides this window.
-//
-//==========================================================================
-
-void VisibilityChanged(bool bNewVisibility)
 {
 }
 

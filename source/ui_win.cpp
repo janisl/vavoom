@@ -57,7 +57,7 @@ IMPLEMENT_CLASS(V, Window);
 VWindow::VWindow()
 : WindowType(WIN_Normal)
 {
-	WindowFlags |= WF_IsVisible | WF_IsSensitive;
+	WindowFlags |= WF_IsSensitive;
 }
 
 //==========================================================================
@@ -158,110 +158,6 @@ VWindow *VWindow::GetParent()
 
 //==========================================================================
 //
-//	VWindow::GetBottomChild
-//
-//==========================================================================
-
-VWindow *VWindow::GetBottomChild(bool bVisibleOnly)
-{
-	guard(VWindow::GetBottomChild);
-	VWindow *win = static_cast<VWindow*>(FirstChildWidget);
-	if (bVisibleOnly)
-	{
-		while (win && !(win->WindowFlags & WF_IsVisible))
-		{
-			win = static_cast<VWindow*>(win->NextWidget);
-		}
-	}
-	return win;
-	unguard;
-}
-
-//==========================================================================
-//
-//	VWindow::GetTopChild
-//
-//==========================================================================
-
-VWindow *VWindow::GetTopChild(bool bVisibleOnly)
-{
-	guard(VWindow::GetTopChild);
-	VWindow *win = static_cast<VWindow*>(LastChildWidget);
-	if (bVisibleOnly)
-	{
-		while (win && !(win->WindowFlags & WF_IsVisible))
-		{
-			win = static_cast<VWindow*>(win->PrevWidget);
-		}
-	}
-	return win;
-	unguard;
-}
-
-//==========================================================================
-//
-//	VWindow::GetLowerSibling
-//
-//==========================================================================
-
-VWindow *VWindow::GetLowerSibling(bool bVisibleOnly)
-{
-	guard(VWindow::GetLowerSibling);
-	VWindow *win = static_cast<VWindow*>(PrevWidget);
-	if (bVisibleOnly)
-	{
-		while (win && !(win->WindowFlags & WF_IsVisible))
-		{
-			win = static_cast<VWindow*>(win->PrevWidget);
-		}
-	}
-	return win;
-	unguard;
-}
-
-//==========================================================================
-//
-//	VWindow::GetHigherSibling
-//
-//==========================================================================
-
-VWindow *VWindow::GetHigherSibling(bool bVisibleOnly)
-{
-	guard(VWindow::GetHigherSibling);
-	VWindow *win = static_cast<VWindow*>(NextWidget);
-	if (bVisibleOnly)
-	{
-		while (win && !(win->WindowFlags & WF_IsVisible))
-		{
-			win = static_cast<VWindow*>(win->NextWidget);
-		}
-	}
-	return win;
-	unguard;
-}
-
-//==========================================================================
-//
-//	VWindow::SetVisibility
-//
-//==========================================================================
-
-void VWindow::SetVisibility(bool NewVisibility)
-{
-	guard(VWindow::SetVisibility);
-	if (!!(WindowFlags & WF_IsVisible) != NewVisibility)
-	{
-		if (NewVisibility)
-			WindowFlags |= WF_IsVisible;
-		else
-			WindowFlags &= ~WF_IsVisible;
-		VisibilityChanged(NewVisibility);
-	}
-	unguard;
-}
-
-//==========================================================================
-//
 //	VWindow::SetSensitivity
 //
 //==========================================================================
@@ -295,13 +191,6 @@ void VWindow::SetSelectability(bool NewSelectability)
 			WindowFlags |= WF_IsSelectable;
 		else
 			WindowFlags &= ~WF_IsSelectable;
-/*		if (WindowFlags & WF_IsVisible && WindowFlags & WF_IsSensitive)
-		{
-			if (WindowFlags & WF_IsSelectable)
-				GetModalWindow()->AddWindowToTables(this);
-			else
-				GetModalWindow()->RemoveWindowFromTables(this);
-		}*/
 	}
 	unguard;
 }
@@ -331,7 +220,7 @@ void VWindow::KillAllChildren()
 void VWindow::DrawTree()
 {
 	guard(VWindow::DrawTree);
-	if (!(WindowFlags & WF_IsVisible) || !ClipRect.HasArea())
+	if (!(WidgetFlags & WF_IsVisible) || !ClipRect.HasArea())
 	{
 		//	Nowhere to draw.
 		return;
@@ -400,27 +289,6 @@ IMPLEMENT_FUNCTION(VWindow, NewChild)
 	P_GET_SELF;
 	RET_REF(CreateNewWindow(ChildClass, Self));
 }
-IMPLEMENT_FUNCTION(VWindow, SetVisibility)
-{
-	P_GET_BOOL(bNewVisibility);
-	P_GET_SELF;
-	Self->SetVisibility(bNewVisibility);
-}
-IMPLEMENT_FUNCTION(VWindow, Show)
-{
-	P_GET_SELF;
-	Self->Show();
-}
-IMPLEMENT_FUNCTION(VWindow, Hide)
-{
-	P_GET_SELF;
-	Self->Hide();
-}
-IMPLEMENT_FUNCTION(VWindow, IsVisible)
-{
-	P_GET_SELF;
-	RET_BOOL(Self->IsVisible());
-}
 IMPLEMENT_FUNCTION(VWindow, SetSensitivity)
 {
 	P_GET_BOOL(bNewSensitivity);
@@ -463,31 +331,6 @@ IMPLEMENT_FUNCTION(VWindow, GetParent)
 {
 	P_GET_SELF;
 	RET_REF(Self->GetParent());
-}
-
-IMPLEMENT_FUNCTION(VWindow, GetBottomChild)
-{
-	P_GET_BOOL(bVisibleOnly);
-	P_GET_SELF;
-	Self->GetBottomChild(bVisibleOnly);
-}
-IMPLEMENT_FUNCTION(VWindow, GetTopChild)
-{
-	P_GET_BOOL(bVisibleOnly);
-	P_GET_SELF;
-	Self->GetTopChild(bVisibleOnly);
-}
-IMPLEMENT_FUNCTION(VWindow, GetLowerSibling)
-{
-	P_GET_BOOL(bVisibleOnly);
-	P_GET_SELF;
-	Self->GetLowerSibling(bVisibleOnly);
-}
-IMPLEMENT_FUNCTION(VWindow, GetHigherSibling)
-{
-	P_GET_BOOL(bVisibleOnly);
-	P_GET_SELF;
-	Self->GetHigherSibling(bVisibleOnly);
 }
 
 IMPLEMENT_FUNCTION(VWindow, DestroyAllChildren)

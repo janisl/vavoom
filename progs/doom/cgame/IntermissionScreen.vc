@@ -1708,11 +1708,11 @@ void IM_UpdateText(float DeltaTime)
 
 //==========================================================================
 //
-//	VisibilityChanged
+//	OnVisibilityChanged
 //
 //==========================================================================
 
-void VisibilityChanged(bool bNewVisibility)
+void OnVisibilityChanged(bool bNewVisibility)
 {
 	bTickEnabled = bNewVisibility;
 }

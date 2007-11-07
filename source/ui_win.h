@@ -42,14 +42,13 @@ class VWindow : public VWidget
 	// Booleans
 	enum
 	{
-		WF_IsVisible		= 0x0001,	// True if the window is visible
-		WF_IsSensitive		= 0x0002,	// True if the window can take input
-		WF_IsSelectable		= 0x0004,	// True if the window can have keyboard focus
-		WF_TickEnabled		= 0x0008,	// True if () event should be called
-		WF_IsInitialised	= 0x0010,	// True if the window has been initialised
+		WF_IsSensitive		= 0x0001,	// True if the window can take input
+		WF_IsSelectable		= 0x0002,	// True if the window can have keyboard focus
+		WF_TickEnabled		= 0x0004,	// True if () event should be called
+		WF_IsInitialised	= 0x0008,	// True if the window has been initialised
 
 		// Destructor information
-		WF_BeingDestroyed	= 0x0020,	// True if this window is going bye-bye
+		WF_BeingDestroyed	= 0x0010,	// True if this window is going bye-bye
 	};
 	vuint32 WindowFlags;
 
@@ -63,35 +62,6 @@ public:
 	VRootWindow *GetRootWindow();
 	VModalWindow *GetModalWindow();
 	VWindow *GetParent();
-
-	// Child routines
-	VWindow *GetBottomChild(bool bVisibleOnly = true);
-	VWindow *GetTopChild(bool bVisibleOnly = true);
-
-	// Sibling routines
-	VWindow *GetLowerSibling(bool bVisibleOnly = true);
-	VWindow *GetHigherSibling(bool bVisibleOnly = true);
-
-	// Visibility routines
-	void SetVisibility(bool NewVisibility);
-	void Show() { SetVisibility(true); }
-	void Hide() { SetVisibility(false); }
-	bool IsVisible(bool bRecurse = true)
-	{
-		if (bRecurse)
-		{
-			VWindow *pParent = this;
-			while (pParent)
-			{
-				if (!(pParent->WindowFlags & WF_IsVisible))
-					break;
-				pParent = static_cast<VWindow*>(pParent->ParentWidget);
-			}
-			return (pParent ? false : true);
-		}
-		else
-			return !!(WindowFlags & WF_IsVisible);
-	}
 
 	// Sensitivity routines
 	void SetSensitivity(bool NewSensitivity);
@@ -117,8 +87,6 @@ public:
 	// Selectability routines
 	void SetSelectability(bool NewSelectability);
 	bool IsSelectable() { return !!(WindowFlags & WF_IsSelectable); }
-	//bool IsTraversable(bool bCheckModal = true);
-	//bool IsFocusWindow();
 
 	// Slayer of innocent children
 	void DestroyAllChildren() { KillAllChildren(); }
@@ -139,12 +107,6 @@ public:
 		EV_RET_VOID(NAME_WindowReady);
 	}
 
-	virtual void VisibilityChanged(bool NewVisibility)
-	{
-		P_PASS_SELF;
-		P_PASS_BOOL(NewVisibility);
-		EV_RET_VOID(NAME_VisibilityChanged);
-	}
 	virtual void SensitivityChanged(bool bNewSensitivity)
 	{
 		P_PASS_SELF;
@@ -184,10 +146,6 @@ private:
 public:
 	DECLARE_FUNCTION(Destroy)
 	DECLARE_FUNCTION(NewChild)
-	DECLARE_FUNCTION(SetVisibility)
-	DECLARE_FUNCTION(Show)
-	DECLARE_FUNCTION(Hide)
-	DECLARE_FUNCTION(IsVisible)
 	DECLARE_FUNCTION(SetSensitivity)
 	DECLARE_FUNCTION(Enable)
 	DECLARE_FUNCTION(Disable)
@@ -197,11 +155,6 @@ public:
 	DECLARE_FUNCTION(GetRootWindow)
 	DECLARE_FUNCTION(GetModalWindow)
 	DECLARE_FUNCTION(GetParent)
-
-	DECLARE_FUNCTION(GetBottomChild)
-	DECLARE_FUNCTION(GetTopChild)
-	DECLARE_FUNCTION(GetLowerSibling)
-	DECLARE_FUNCTION(GetHigherSibling)
 
 	DECLARE_FUNCTION(DestroyAllChildren)
 };

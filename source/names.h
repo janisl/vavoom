@@ -172,12 +172,12 @@ REGISTER_NAME(DrawViewBorder)
 REGISTER_NAME(OnChildAdded)
 REGISTER_NAME(OnChildRemoved)
 REGISTER_NAME(OnConfigurationChanged)
+REGISTER_NAME(OnVisibilityChanged)
 
 //	Window events
 REGISTER_NAME(InitWindow)
 REGISTER_NAME(DestroyWindow)
 REGISTER_NAME(WindowReady)
-REGISTER_NAME(VisibilityChanged)
 REGISTER_NAME(SensitivityChanged)
 REGISTER_NAME(DrawWindow)
 REGISTER_NAME(PostDrawWindow)

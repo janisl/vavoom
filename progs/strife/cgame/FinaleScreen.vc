@@ -157,11 +157,11 @@ void F_PlayPage()
 
 //==========================================================================
 //
-//	VisibilityChanged
+//	OnVisibilityChanged
 //
 //==========================================================================
 
-void VisibilityChanged(bool bNewVisibility)
+void OnVisibilityChanged(bool bNewVisibility)
 {
 	bTickEnabled = bNewVisibility;
 }

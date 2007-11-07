@@ -427,11 +427,11 @@ void IM_DrawDeathTally()
 
 //==========================================================================
 //
-//	VisibilityChanged
+//	OnVisibilityChanged
 //
 //==========================================================================
 
-void VisibilityChanged(bool bNewVisibility)
+void OnVisibilityChanged(bool bNewVisibility)
 {
 	bTickEnabled = bNewVisibility;
 }

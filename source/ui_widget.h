@@ -68,6 +68,14 @@ private:
 
 	VClipRect			ClipRect;
 
+	// Booleans
+	enum
+	{
+		//	Is this widget visible?
+		WF_IsVisible		= 0x0001,
+	};
+	vuint32				WidgetFlags;
+
 	void AddChild(VWidget*);
 	void RemoveChild(VWidget*);
 
@@ -118,6 +126,37 @@ public:
 	}
 	void SetConfiguration(int, int, int, int, float = 1.0, float = 1.0);
 
+	//	Visibility methods.
+	void SetVisibility(bool NewVisibility);
+	void Show()
+	{
+		SetVisibility(true);
+	}
+	void Hide()
+	{
+		SetVisibility(false);
+	}
+	bool IsVisible(bool bRecurse = true) const
+	{
+		if (bRecurse)
+		{
+			const VWidget* pParent = this;
+			while (pParent)
+			{
+				if (!(pParent->WidgetFlags & WF_IsVisible))
+				{
+					break;
+				}
+				pParent = pParent->ParentWidget;
+			}
+			return (pParent ? false : true);
+		}
+		else
+		{
+			return !!(WidgetFlags & WF_IsVisible);
+		}
+	}
+
 	virtual void OnChildAdded(VWidget* Child)
 	{
 		P_PASS_SELF;
@@ -134,6 +173,12 @@ public:
 	{
 		P_PASS_SELF;
 		EV_RET_VOID(NAME_OnConfigurationChanged);
+	}
+	virtual void OnVisibilityChanged(bool NewVisibility)
+	{
+		P_PASS_SELF;
+		P_PASS_BOOL(NewVisibility);
+		EV_RET_VOID(NAME_OnVisibilityChanged);
 	}
 
 	void DrawPic(int, int, int, float = 1.0);
@@ -156,6 +201,11 @@ public:
 	DECLARE_FUNCTION(SetHeight)
 	DECLARE_FUNCTION(SetScale)
 	DECLARE_FUNCTION(SetConfiguration)
+
+	DECLARE_FUNCTION(SetVisibility)
+	DECLARE_FUNCTION(Show)
+	DECLARE_FUNCTION(Hide)
+	DECLARE_FUNCTION(IsVisible)
 
 	DECLARE_FUNCTION(DrawPic)
 	DECLARE_FUNCTION(DrawShadowedPic)

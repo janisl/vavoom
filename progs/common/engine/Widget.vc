@@ -61,6 +61,9 @@ private float					SizeScaleY;
 
 private readonly ClipRect		ClipRect;
 
+//	Is this widget visible?
+private bool					bIsVisible;
+
 //==========================================================================
 Widget Parent
 {
@@ -109,6 +112,13 @@ float ScaleY
 	default SizeScaleY;
 }
 
+bool Visible
+{
+	get { return IsVisible(); }
+	set { SetVisibility(value); }
+	default bIsVisible;
+}
+
 int OldOriginX
 {
 	get { return ftoi(ClipRect.OriginX / ClipRect.ScaleX); }
@@ -133,6 +143,12 @@ native final void SetHeight(int NewHeight);
 native final void SetScale(float NewScaleX, float NewScaleY);
 native final void SetConfiguration(int NewX, int NewY, int NewWidth,
 	int NewHeight, optional float NewScaleX, optional float NewScaleY);
+
+//	Visibility methods.
+native final void SetVisibility(bool bNewVisibility);
+native final void Show();
+native final void Hide();
+native final bool IsVisible(optional bool Recurse);
 
 native final void DrawPic(int X, int Y, int Handle, optional float Alpha);
 native final void DrawShadowedPic(int X, int Y, int Handle);
@@ -182,8 +198,21 @@ void OnConfigurationChanged()
 {
 }
 
+//==========================================================================
+//
+//	OnVisibilityChanged
+//
+//	Called when this widget is shown or hidden.
+//
+//==========================================================================
+
+void OnVisibilityChanged(bool bNewVisibility)
+{
+}
+
 defaultproperties
 {
 	ScaleX = 1.0;
 	ScaleY = 1.0;
+	Visible = true;
 }

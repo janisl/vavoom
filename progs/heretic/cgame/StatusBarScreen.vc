@@ -606,11 +606,11 @@ void SB_UpdateWidgets()
 
 //==========================================================================
 //
-//	VisibilityChanged
+//	OnVisibilityChanged
 //
 //==========================================================================
 
-void VisibilityChanged(bool bNewVisibility)
+void OnVisibilityChanged(bool bNewVisibility)
 {
 	bTickEnabled = bNewVisibility;
 }
