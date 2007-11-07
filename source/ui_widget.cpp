@@ -387,6 +387,26 @@ void VWidget::DrawTree()
 
 //==========================================================================
 //
+//	VWidget::TickTree
+//
+//==========================================================================
+
+void VWidget::TickTree(float DeltaTime)
+{
+	guard(VWidget::TickTree);
+	if (WidgetFlags & WF_TickEnabled)
+	{
+		Tick(DeltaTime);
+	}
+	for (VWidget* c = FirstChildWidget; c; c = c->NextWidget)
+	{
+		c->TickTree(DeltaTime);
+	}
+	unguard;
+}
+
+//==========================================================================
+//
 //	VWidget::TransferAndClipRect
 //
 //==========================================================================

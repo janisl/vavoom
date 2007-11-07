@@ -70,8 +70,10 @@ VRootWindow::VRootWindow()
 
 void VRootWindow::Init()
 {
+	guard(VRootWindow::Init);
 	Super::Init(NULL);
 	SetSize(640, 480);
+	unguard;
 }
 
 //==========================================================================
@@ -82,17 +84,20 @@ void VRootWindow::Init()
 
 void VRootWindow::DrawWidgets()
 {
+	guard(VRootWindow::DrawWidgets)
 	DrawTree();
+	unguard;
 }
 
 //==========================================================================
 //
-//	VRootWindow::TickWindows
+//	VRootWindow::TickWidgets
 //
 //==========================================================================
 
-void VRootWindow::TickWindows(float DeltaTime)
+void VRootWindow::TickWidgets(float DeltaTime)
 {
+	guard(VRootWindow::TickWidgets);
 	if (SizeScaleX != fScaleX)
 	{
 		SizeScaleX = fScaleX;
@@ -100,6 +105,7 @@ void VRootWindow::TickWindows(float DeltaTime)
 		ClipTree();
 	}
 	TickTree(DeltaTime);
+	unguard;
 }
 
 //==========================================================================

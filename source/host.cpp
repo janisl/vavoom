@@ -28,6 +28,7 @@
 #include "gamedefs.h"
 #include "network.h"
 #include "cl_local.h"
+#include "ui.h"
 
 void CL_Init();
 void CL_Shutdown();
@@ -392,6 +393,9 @@ void Host_Frame()
 #ifdef CLIENT
 		//	Fetch results from server
 		CL_ReadFromServer();
+
+		//	Update user interface.
+		GRoot->TickWidgets(host_frametime);
 
 		//	Collect all garbage
 		VObject::CollectGarbage();

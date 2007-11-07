@@ -489,9 +489,6 @@ void SCR_Update()
 		}
 	}
 
-	//FIXME it's a wrong place for this.
-	GRoot->TickWindows(host_frametime);
-
 	//	Draw user interface.
 	GRoot->DrawWidgets();
 

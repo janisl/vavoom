@@ -80,35 +80,6 @@ VRootWindow *VWindow::GetRootWindow()
 
 //==========================================================================
 //
-//	VWindow::GetModalWindow
-//
-//==========================================================================
-
-VModalWindow *VWindow::GetModalWindow()
-{
-	guard(VWindow::GetModalWindow);
-	VWindow *win = this;
-	while (win->WindowType < WIN_Modal)
-	{
-		win = static_cast<VWindow*>(win->ParentWidget);
-	}
-	return (VModalWindow *)win;
-	unguard;
-}
-
-//==========================================================================
-//
-//	VWindow::GetParent
-//
-//==========================================================================
-
-VWindow *VWindow::GetParent()
-{
-	return static_cast<VWindow*>(ParentWidget);
-}
-
-//==========================================================================
-//
 //	VWindow::SetSensitivity
 //
 //==========================================================================
@@ -123,46 +94,6 @@ void VWindow::SetSensitivity(bool NewSensitivity)
 		else
 			WindowFlags &= ~WF_IsSensitive;
 		SensitivityChanged(NewSensitivity);
-	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	VWindow::SetSelectability
-//
-//==========================================================================
-
-void VWindow::SetSelectability(bool NewSelectability)
-{
-	guard(VWindow::SetSelectability);
-	if (!!(WindowFlags & WF_IsSelectable) != NewSelectability)
-	{
-		if (NewSelectability)
-			WindowFlags |= WF_IsSelectable;
-		else
-			WindowFlags &= ~WF_IsSelectable;
-	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	VWindow::TickTree
-//
-//==========================================================================
-
-void VWindow::TickTree(float DeltaTime)
-{
-	guard(VWindow::TickTree);
-	Tick(DeltaTime);
-	if (WindowFlags & WF_TickEnabled)
-	{
-		eventTick(DeltaTime);
-	}
-	for (VWindow *c = static_cast<VWindow*>(FirstChildWidget); c; c = static_cast<VWindow*>(c->NextWidget))
-	{
-		c->TickTree(DeltaTime);
 	}
 	unguard;
 }
@@ -194,25 +125,9 @@ IMPLEMENT_FUNCTION(VWindow, IsSensitive)
 	P_GET_SELF;
 	RET_BOOL(Self->IsSensitive());
 }
-IMPLEMENT_FUNCTION(VWindow, SetSelectability)
-{
-	P_GET_BOOL(bNewSelectability);
-	P_GET_SELF;
-	Self->SetSelectability(bNewSelectability);
-}
 
 IMPLEMENT_FUNCTION(VWindow, GetRootWindow)
 {
 	P_GET_SELF;
 	RET_REF(Self->GetRootWindow());
-}
-IMPLEMENT_FUNCTION(VWindow, GetModalWindow)
-{
-	P_GET_SELF;
-	RET_REF(Self->GetModalWindow());
-}
-IMPLEMENT_FUNCTION(VWindow, GetParent)
-{
-	P_GET_SELF;
-	RET_REF(Self->GetParent());
 }

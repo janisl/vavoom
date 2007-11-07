@@ -73,6 +73,8 @@ private:
 	{
 		//	Is this widget visible?
 		WF_IsVisible		= 0x0001,
+		//	A flag that enables or disables Tick event.
+		WF_TickEnabled		= 0x0002,
 	};
 	vuint32				WidgetFlags;
 
@@ -81,6 +83,7 @@ private:
 
 	void ClipTree();
 	void DrawTree();
+	void TickTree(float DeltaTime);
 
 	bool TransferAndClipRect(float&, float&, float&, float&, float&, float&,
 		float&, float&) const;
@@ -205,6 +208,12 @@ public:
 	{
 		P_PASS_SELF;
 		EV_RET_VOID(NAME_OnPostDraw);
+	}
+	virtual void Tick(float DeltaTime)
+	{
+		P_PASS_SELF;
+		P_PASS_FLOAT(DeltaTime);
+		EV_RET_VOID(NAME_Tick);
 	}
 
 	void DrawPic(int, int, int, float = 1.0);

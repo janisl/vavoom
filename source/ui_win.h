@@ -43,8 +43,6 @@ class VWindow : public VWidget
 	enum
 	{
 		WF_IsSensitive		= 0x0001,	// True if the window can take input
-		WF_IsSelectable		= 0x0002,	// True if the window can have keyboard focus
-		WF_TickEnabled		= 0x0004,	// True if () event should be called
 	};
 	vuint32 WindowFlags;
 
@@ -53,8 +51,6 @@ public:
 
 	// Ancestral routines
 	VRootWindow *GetRootWindow();
-	VModalWindow *GetModalWindow();
-	VWindow *GetParent();
 
 	// Sensitivity routines
 	void SetSensitivity(bool NewSensitivity);
@@ -77,10 +73,6 @@ public:
 			return !!(WindowFlags & WF_IsSensitive);
 	}
 
-	// Selectability routines
-	void SetSelectability(bool NewSelectability);
-	bool IsSelectable() { return !!(WindowFlags & WF_IsSelectable); }
-
 	virtual void SensitivityChanged(bool bNewSensitivity)
 	{
 		P_PASS_SELF;
@@ -88,25 +80,11 @@ public:
 		EV_RET_VOID(NAME_SensitivityChanged);
 	}
 
-	virtual void Tick(float) { }
-	void eventTick(float DeltaTime)
-	{
-		P_PASS_SELF;
-		P_PASS_FLOAT(DeltaTime);
-		EV_RET_VOID(NAME_Tick);
-	}
-
-private:
-	void TickTree(float DeltaTime);
-
 public:
 	DECLARE_FUNCTION(SetSensitivity)
 	DECLARE_FUNCTION(Enable)
 	DECLARE_FUNCTION(Disable)
 	DECLARE_FUNCTION(IsSensitive)
-	DECLARE_FUNCTION(SetSelectability)
 	
 	DECLARE_FUNCTION(GetRootWindow)
-	DECLARE_FUNCTION(GetModalWindow)
-	DECLARE_FUNCTION(GetParent)
 };

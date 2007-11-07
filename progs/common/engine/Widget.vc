@@ -63,6 +63,8 @@ private readonly ClipRect		ClipRect;
 
 //	Is this widget visible?
 private bool					bIsVisible;
+//	A flag that enables or disables Tick event.
+bool							bTickEnabled;
 
 //==========================================================================
 Widget Parent
@@ -260,6 +262,18 @@ void OnDraw()
 //==========================================================================
 
 void OnPostDraw()
+{
+}
+
+//==========================================================================
+//
+//	Tick
+//
+//	Called periodicly, but only when bTickEnabled is true.
+//
+//==========================================================================
+
+void Tick(float DeltaTime)
 {
 }
 

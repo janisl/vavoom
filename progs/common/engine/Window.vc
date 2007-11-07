@@ -31,18 +31,13 @@ readonly byte WindowType;			// Contains window type
 
 // Booleans
 readonly bool bIsSensitive;		// True if the window can take input
-readonly bool bIsSelectable;		// True if the window can have keyboard focus
-bool bTickEnabled;		// True if Tick() event should be called
 
 native void SetSensitivity(bool bNewSensitivity);
 native void Enable();
 native void Disable();
 native bool IsSensitive();
-native void SetSelectability(bool bNewSelectability);
 
 native RootWindow GetRootWindow();
-native ModalWindow GetModalWindow();
-native Window GetParent();
 
 //==========================================================================
 //
@@ -53,18 +48,6 @@ native Window GetParent();
 //==========================================================================
 
 void SensitivityChanged(bool bNewSensitivity)
-{
-}
-
-//==========================================================================
-//
-//	Tick
-//
-//	Called periodicly, but only when bTickEnabled is true.
-//
-//==========================================================================
-
-void Tick(float DeltaTime)
 {
 }
 
