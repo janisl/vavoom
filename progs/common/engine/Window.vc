@@ -29,27 +29,7 @@ class Window : Widget
 // Quick class reference
 readonly byte WindowType;			// Contains window type
 
-// Booleans
-readonly bool bIsSensitive;		// True if the window can take input
-
-native void SetSensitivity(bool bNewSensitivity);
-native void Enable();
-native void Disable();
-native bool IsSensitive();
-
 native RootWindow GetRootWindow();
-
-//==========================================================================
-//
-//	SensitivityChanged
-//
-//	Called when this window becomes sensitive or insensitive.
-//
-//==========================================================================
-
-void SensitivityChanged(bool bNewSensitivity)
-{
-}
 
 void DrawFullScreenPic(int Handle)
 {

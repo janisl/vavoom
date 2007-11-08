@@ -75,6 +75,8 @@ private:
 		WF_IsVisible		= 0x0001,
 		//	A flag that enables or disables Tick event.
 		WF_TickEnabled		= 0x0002,
+		//	Is this widget enabled and can receive input.
+		WF_IsEnabled		= 0x0004,
 	};
 	vuint32				WidgetFlags;
 
@@ -166,6 +168,37 @@ public:
 		}
 	}
 
+	//	Enable state methods
+	void SetEnabled(bool);
+	void Enable()
+	{
+		SetEnabled(true);
+	}
+	void Disable()
+	{
+		SetEnabled(false);
+	}
+	bool IsEnabled(bool bRecurse = true) const
+	{
+		if (bRecurse)
+		{
+			const VWidget* pParent = this;
+			while (pParent)
+			{
+				if (!(pParent->WidgetFlags & WF_IsEnabled))
+				{
+					break;
+				}
+				pParent = pParent->ParentWidget;
+			}
+			return (pParent ? false : true);
+		}
+		else
+		{
+			return !!(WidgetFlags & WF_IsEnabled);
+		}
+	}
+
 	void OnCreate()
 	{
 		P_PASS_SELF;
@@ -198,6 +231,12 @@ public:
 		P_PASS_SELF;
 		P_PASS_BOOL(NewVisibility);
 		EV_RET_VOID(NAME_OnVisibilityChanged);
+	}
+	virtual void OnEnableChanged(bool bNewEnable)
+	{
+		P_PASS_SELF;
+		P_PASS_BOOL(bNewEnable);
+		EV_RET_VOID(NAME_OnEnableChanged);
 	}
 	virtual void OnDraw()
 	{
@@ -247,6 +286,11 @@ public:
 	DECLARE_FUNCTION(Show)
 	DECLARE_FUNCTION(Hide)
 	DECLARE_FUNCTION(IsVisible)
+
+	DECLARE_FUNCTION(SetEnabled)
+	DECLARE_FUNCTION(Enable)
+	DECLARE_FUNCTION(Disable)
+	DECLARE_FUNCTION(IsEnabled)
 
 	DECLARE_FUNCTION(DrawPic)
 	DECLARE_FUNCTION(DrawShadowedPic)

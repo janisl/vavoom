@@ -175,11 +175,9 @@ REGISTER_NAME(OnChildAdded)
 REGISTER_NAME(OnChildRemoved)
 REGISTER_NAME(OnConfigurationChanged)
 REGISTER_NAME(OnVisibilityChanged)
+REGISTER_NAME(OnEnableChanged)
 REGISTER_NAME(OnDraw)
 REGISTER_NAME(OnPostDraw)
-
-//	Window events
-REGISTER_NAME(SensitivityChanged)
 
 //	Lump names
 REGISTER_NAME(s_start)

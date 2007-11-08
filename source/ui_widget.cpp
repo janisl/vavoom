@@ -358,6 +358,26 @@ void VWidget::SetVisibility(bool NewVisibility)
 
 //==========================================================================
 //
+//	VWidget::SetEnabled
+//
+//==========================================================================
+
+void VWidget::SetEnabled(bool NewEnabled)
+{
+	guard(VWidget::SetEnabled);
+	if (!!(WidgetFlags & WF_IsEnabled) != NewEnabled)
+	{
+		if (NewEnabled)
+			WidgetFlags |= WF_IsEnabled;
+		else
+			WidgetFlags &= ~WF_IsEnabled;
+		OnEnableChanged(NewEnabled);
+	}
+	unguard;
+}
+
+//==========================================================================
+//
 //	VWidget::DrawTree
 //
 //==========================================================================
@@ -838,6 +858,32 @@ IMPLEMENT_FUNCTION(VWidget, IsVisible)
 	P_GET_BOOL_OPT(Recurse, true);
 	P_GET_SELF;
 	RET_BOOL(Self->IsVisible(Recurse));
+}
+
+IMPLEMENT_FUNCTION(VWidget, SetEnabled)
+{
+	P_GET_BOOL(bNewEnabled);
+	P_GET_SELF;
+	Self->SetEnabled(bNewEnabled);
+}
+
+IMPLEMENT_FUNCTION(VWidget, Enable)
+{
+	P_GET_SELF;
+	Self->Enable();
+}
+
+IMPLEMENT_FUNCTION(VWidget, Disable)
+{
+	P_GET_SELF;
+	Self->Disable();
+}
+
+IMPLEMENT_FUNCTION(VWidget, IsEnabled)
+{
+	P_GET_BOOL_OPT(Recurse, true);
+	P_GET_SELF;
+	RET_BOOL(Self->IsEnabled(Recurse));
 }
 
 IMPLEMENT_FUNCTION(VWidget, DrawPic)

@@ -65,6 +65,8 @@ private readonly ClipRect		ClipRect;
 private bool					bIsVisible;
 //	A flag that enables or disables Tick event.
 bool							bTickEnabled;
+//	Is this widget enabled and can receive input.
+private bool					bIsEnabled;
 
 //==========================================================================
 Widget Parent
@@ -121,6 +123,13 @@ bool Visible
 	default bIsVisible;
 }
 
+bool Enabled
+{
+	get { return IsEnabled(); }
+	set { SetEnabled(value); }
+	default bIsEnabled;
+}
+
 int OldOriginX
 {
 	get { return ftoi(ClipRect.OriginX / ClipRect.ScaleX); }
@@ -156,6 +165,11 @@ native final void SetVisibility(bool bNewVisibility);
 native final void Show();
 native final void Hide();
 native final bool IsVisible(optional bool Recurse);
+
+native final void SetEnabled(bool bNewEnable);
+native final void Enable();
+native final void Disable();
+native final bool IsEnabled(optional bool Recurse);
 
 native final void DrawPic(int X, int Y, int Handle, optional float Alpha);
 native final void DrawShadowedPic(int X, int Y, int Handle);
@@ -243,6 +257,18 @@ void OnVisibilityChanged(bool bNewVisibility)
 
 //==========================================================================
 //
+//	OnEnableChanged
+//
+//	Called when this widget is enabled or disabled.
+//
+//==========================================================================
+
+void OnEnableChanged(bool bNewEnable)
+{
+}
+
+//==========================================================================
+//
 //	OnDraw
 //
 //	Draws the window.
@@ -282,4 +308,5 @@ defaultproperties
 	ScaleX = 1.0;
 	ScaleY = 1.0;
 	Visible = true;
+	Enabled = true;
 }

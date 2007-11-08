@@ -57,7 +57,6 @@ IMPLEMENT_CLASS(V, Window);
 VWindow::VWindow()
 : WindowType(WIN_Normal)
 {
-	WindowFlags |= WF_IsSensitive;
 }
 
 //==========================================================================
@@ -80,51 +79,9 @@ VRootWindow *VWindow::GetRootWindow()
 
 //==========================================================================
 //
-//	VWindow::SetSensitivity
-//
-//==========================================================================
-
-void VWindow::SetSensitivity(bool NewSensitivity)
-{
-	guard(VWindow::SetSensitivity);
-	if (!!(WindowFlags & WF_IsSensitive) != NewSensitivity)
-	{
-		if (NewSensitivity)
-			WindowFlags |= WF_IsSensitive;
-		else
-			WindowFlags &= ~WF_IsSensitive;
-		SensitivityChanged(NewSensitivity);
-	}
-	unguard;
-}
-
-//==========================================================================
-//
 //	Natives
 //
 //==========================================================================
-
-IMPLEMENT_FUNCTION(VWindow, SetSensitivity)
-{
-	P_GET_BOOL(bNewSensitivity);
-	P_GET_SELF;
-	Self->SetSensitivity(bNewSensitivity);
-}
-IMPLEMENT_FUNCTION(VWindow, Enable)
-{
-	P_GET_SELF;
-	Self->Enable();
-}
-IMPLEMENT_FUNCTION(VWindow, Disable)
-{
-	P_GET_SELF;
-	Self->Disable();
-}
-IMPLEMENT_FUNCTION(VWindow, IsSensitive)
-{
-	P_GET_SELF;
-	RET_BOOL(Self->IsSensitive());
-}
 
 IMPLEMENT_FUNCTION(VWindow, GetRootWindow)
 {

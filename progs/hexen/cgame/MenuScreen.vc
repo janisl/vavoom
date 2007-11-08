@@ -115,7 +115,7 @@ void SetDefaultChoice()
 	// force first available item to have focus
 	for (i = 0; i < NumItems; i++)
 	{
-		if (Items[i].IsSensitive())
+		if (Items[i].Enabled)
 		{
 			CursorPrev = -1;
 			CursorPos = i;
@@ -144,7 +144,7 @@ void CyclePrevChoice()
 		else
 			CursorPos--;
 	}
-	while (!Items[CursorPos].IsSensitive() && CursorPrev != CursorPos);
+	while (!Items[CursorPos].Enabled && CursorPrev != CursorPos);
 	CursorMoved();
 }
 
@@ -158,7 +158,7 @@ void CycleNextChoice()
 		else
 			CursorPos++;
 	}
-	while (!Items[CursorPos].IsSensitive() && CursorPrev != CursorPos);
+	while (!Items[CursorPos].Enabled && CursorPrev != CursorPos);
 	CursorMoved();
 }
 
