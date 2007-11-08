@@ -99,6 +99,8 @@ public:
 	void Destroy();
 	void DestroyAllChildren();
 
+	VRootWindow *GetRootWindow();
+
 	//	Methods to move widget on top or bottom.
 	void Lower();
 	void Raise();
@@ -269,6 +271,8 @@ public:
 	DECLARE_FUNCTION(NewChild)
 	DECLARE_FUNCTION(Destroy)
 	DECLARE_FUNCTION(DestroyAllChildren)
+
+	DECLARE_FUNCTION(GetRootWindow)
 
 	DECLARE_FUNCTION(Raise)
 	DECLARE_FUNCTION(Lower)

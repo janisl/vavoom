@@ -145,6 +145,8 @@ native final spawner Widget NewChild(class<Widget> ChildClass);
 native final void Destroy();
 native final void DestroyAllChildren();
 
+native final RootWindow GetRootWindow();
+
 //	Methods to move widget on top or bottom.
 native final void Lower();
 native final void Raise();
@@ -301,6 +303,13 @@ void OnPostDraw()
 
 void Tick(float DeltaTime)
 {
+}
+
+void DrawFullScreenPic(int Handle)
+{
+	SetVirtualScreen(320, 200);
+	R_DrawPic(0, 0, Handle);
+	SetVirtualScreen(640, 480);
 }
 
 defaultproperties

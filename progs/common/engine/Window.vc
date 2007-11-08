@@ -26,18 +26,6 @@
 class Window : Widget
 	native;
 
-// Quick class reference
-readonly byte WindowType;			// Contains window type
-
-native RootWindow GetRootWindow();
-
-void DrawFullScreenPic(int Handle)
-{
-	SetVirtualScreen(320, 200);
-	R_DrawPic(0, 0, Handle);
-	SetVirtualScreen(640, 480);
-}
-
 defaultproperties
 {
 }

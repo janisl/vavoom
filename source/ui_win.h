@@ -23,28 +23,9 @@
 //**
 //**************************************************************************
 
-enum EWinType
-{
-	WIN_Normal,
-	WIN_Modal,
-	WIN_Root
-};
-
 class VWindow : public VWidget
 {
 	DECLARE_CLASS(VWindow, VWidget, 0)
 
-	friend class VRootWindow;
-
-	// Quick class reference
-	vuint8 WindowType;				// Contains window type
-
-public:
 	VWindow();
-
-	// Ancestral routines
-	VRootWindow *GetRootWindow();
-
-public:
-	DECLARE_FUNCTION(GetRootWindow)
 };

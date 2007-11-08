@@ -55,36 +55,5 @@ IMPLEMENT_CLASS(V, Window);
 //==========================================================================
 
 VWindow::VWindow()
-: WindowType(WIN_Normal)
 {
-}
-
-//==========================================================================
-//
-//	VWindow::GetRootWindow
-//
-//==========================================================================
-
-VRootWindow *VWindow::GetRootWindow()
-{
-	guard(VWindow::GetRootWindow);
-	VWindow *win = this;
-	while (win->WindowType < WIN_Root)
-	{
-		win = static_cast<VWindow*>(win->ParentWidget);
-	}
-	return (VRootWindow *)win;
-	unguard;
-}
-
-//==========================================================================
-//
-//	Natives
-//
-//==========================================================================
-
-IMPLEMENT_FUNCTION(VWindow, GetRootWindow)
-{
-	P_GET_SELF;
-	RET_REF(Self->GetRootWindow());
 }

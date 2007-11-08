@@ -59,7 +59,6 @@ VRootWindow *GRoot;
 
 VRootWindow::VRootWindow()
 {
-	WindowType = WIN_Root;
 }
 
 //==========================================================================
