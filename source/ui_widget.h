@@ -90,8 +90,7 @@ private:
 	bool TransferAndClipRect(float&, float&, float&, float&, float&, float&,
 		float&, float&) const;
 
-	friend class VWindow;
-	friend class VRootWindow;
+	friend class VRootWidget;
 
 public:
 	//	Destroys all child widgets.
@@ -99,7 +98,7 @@ public:
 	void Destroy();
 	void DestroyAllChildren();
 
-	VRootWindow *GetRootWindow();
+	VRootWidget* GetRootWidget();
 
 	//	Methods to move widget on top or bottom.
 	void Lower();
@@ -272,7 +271,7 @@ public:
 	DECLARE_FUNCTION(Destroy)
 	DECLARE_FUNCTION(DestroyAllChildren)
 
-	DECLARE_FUNCTION(GetRootWindow)
+	DECLARE_FUNCTION(GetRootWidget)
 
 	DECLARE_FUNCTION(Raise)
 	DECLARE_FUNCTION(Lower)

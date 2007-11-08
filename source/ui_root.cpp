@@ -43,9 +43,9 @@
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-IMPLEMENT_CLASS(V, RootWindow);
+IMPLEMENT_CLASS(V, RootWidget);
 
-VRootWindow *GRoot;
+VRootWidget*		GRoot;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -53,23 +53,23 @@ VRootWindow *GRoot;
 
 //==========================================================================
 //
-//	VRootWindow::VRootWindow
+//	VRootWidget::VRootWidget
 //
 //==========================================================================
 
-VRootWindow::VRootWindow()
+VRootWidget::VRootWidget()
 {
 }
 
 //==========================================================================
 //
-//	VRootWindow::Init
+//	VRootWidget::Init
 //
 //==========================================================================
 
-void VRootWindow::Init()
+void VRootWidget::Init()
 {
-	guard(VRootWindow::Init);
+	guard(VRootWidget::Init);
 	Super::Init(NULL);
 	SetSize(640, 480);
 	unguard;
@@ -77,26 +77,26 @@ void VRootWindow::Init()
 
 //==========================================================================
 //
-//	VRootWindow::DrawWidgets
+//	VRootWidget::DrawWidgets
 //
 //==========================================================================
 
-void VRootWindow::DrawWidgets()
+void VRootWidget::DrawWidgets()
 {
-	guard(VRootWindow::DrawWidgets)
+	guard(VRootWidget::DrawWidgets)
 	DrawTree();
 	unguard;
 }
 
 //==========================================================================
 //
-//	VRootWindow::TickWidgets
+//	VRootWidget::TickWidgets
 //
 //==========================================================================
 
-void VRootWindow::TickWidgets(float DeltaTime)
+void VRootWidget::TickWidgets(float DeltaTime)
 {
-	guard(VRootWindow::TickWidgets);
+	guard(VRootWidget::TickWidgets);
 	if (SizeScaleX != fScaleX)
 	{
 		SizeScaleX = fScaleX;
@@ -109,14 +109,14 @@ void VRootWindow::TickWidgets(float DeltaTime)
 
 //==========================================================================
 //
-//	VRootWindow::StaticInit
+//	VRootWidget::StaticInit
 //
 //==========================================================================
 
-void VRootWindow::StaticInit()
+void VRootWidget::StaticInit()
 {
-	guard(VRootWindow::StaticInit);
-	GRoot = Spawn<VRootWindow>();
+	guard(VRootWidget::StaticInit);
+	GRoot = Spawn<VRootWidget>();
 	GRoot->Init();
 	GClGame->GRoot = GRoot;
 	unguard;

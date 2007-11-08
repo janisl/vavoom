@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class StatusBarScreen : Window;
+class StatusBarScreen : Widget;
 
 //
 //  Location of statistics, justified according to widget type.

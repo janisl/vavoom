@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MenuObject : Window;
+class MenuObject : Widget;
 
 bool bSelected;
 

@@ -176,19 +176,19 @@ void VWidget::DestroyAllChildren()
 
 //==========================================================================
 //
-//	VWidget::GetRootWindow
+//	VWidget::GetRootWidget
 //
 //==========================================================================
 
-VRootWindow* VWidget::GetRootWindow()
+VRootWidget* VWidget::GetRootWidget()
 {
-	guard(VWidget::GetRootWindow);
+	guard(VWidget::GetRootWidget);
 	VWidget* W = this;
 	while (W->ParentWidget)
 	{
 		W = W->ParentWidget;
 	}
-	return (VRootWindow*)W;
+	return (VRootWidget*)W;
 	unguard;
 }
 
@@ -775,10 +775,10 @@ IMPLEMENT_FUNCTION(VWidget, DestroyAllChildren)
 	Self->DestroyAllChildren();
 }
 
-IMPLEMENT_FUNCTION(VWidget, GetRootWindow)
+IMPLEMENT_FUNCTION(VWidget, GetRootWidget)
 {
 	P_GET_SELF;
-	RET_REF(Self->GetRootWindow());
+	RET_REF(Self->GetRootWidget());
 }
 
 IMPLEMENT_FUNCTION(VWidget, Lower)

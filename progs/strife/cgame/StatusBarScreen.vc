@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class StatusBarScreen : Window;
+class StatusBarScreen : Widget;
 
 const int BAR_X = 160;
 const int BAR_Y = 280;

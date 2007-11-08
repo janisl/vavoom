@@ -145,7 +145,7 @@ native final spawner Widget NewChild(class<Widget> ChildClass);
 native final void Destroy();
 native final void DestroyAllChildren();
 
-native final RootWindow GetRootWindow();
+native final RootWidget GetRootWidget();
 
 //	Methods to move widget on top or bottom.
 native final void Lower();

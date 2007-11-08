@@ -33,9 +33,9 @@
 
 // TYPES -------------------------------------------------------------------
 
-class VActorDisplayWindow : public VWindow
+class VActorDisplayWindow : public VWidget
 {
-	DECLARE_CLASS(VActorDisplayWindow, VWindow, 0)
+	DECLARE_CLASS(VActorDisplayWindow, VWidget, 0)
 
 	VState*		CastState;
 	float		CastTime;

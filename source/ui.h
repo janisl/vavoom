@@ -28,13 +28,9 @@
 
 // Forward declarations
 class	VWidget;
-class	VWindow;
-class	VModalWindow;
-class	VRootWindow;
+class	VRootWidget;
 
 #include "ui_widget.h"
-#include "ui_win.h"
-#include "ui_modal.h"
 #include "ui_root.h"
 
 #endif

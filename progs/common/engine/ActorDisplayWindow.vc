@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ActorDisplayWindow : Window
+class ActorDisplayWindow : Widget
 	native;
 
 state		CastState;

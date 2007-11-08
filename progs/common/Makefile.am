@@ -19,13 +19,11 @@ EXTRA_DIST = \
 	engine/GameInfo.vc \
 	engine/Level.vc \
 	engine/LevelInfo.vc \
-	engine/ModalWindow.vc \
 	engine/Object.vc \
 	engine/PlayerReplicationInfo.vc \
-	engine/RootWindow.vc \
+	engine/RootWidget.vc \
 	engine/Thinker.vc \
 	engine/Widget.vc \
-	engine/Window.vc \
 	engine/WorldInfo.vc \
 	linespec/Ammo.vc \
 	linespec/Armor.vc \

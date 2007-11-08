@@ -176,10 +176,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\common\engine\ModalWindow.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\common\engine\Object.vc"
 				>
 			</File>
@@ -188,7 +184,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\common\engine\RootWindow.vc"
+				RelativePath="..\progs\common\engine\RootWidget.vc"
 				>
 			</File>
 			<File
@@ -197,10 +193,6 @@
 			</File>
 			<File
 				RelativePath="..\progs\common\engine\Widget.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\common\engine\Window.vc"
 				>
 			</File>
 			<File

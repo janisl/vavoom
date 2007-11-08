@@ -223,14 +223,10 @@ _____MAIN_EXE__SOURCES = \
 	text.h \
 	ui.h \
 	ui_actor.cpp \
-	ui_modal.cpp \
-	ui_modal.h \
 	ui_root.cpp \
 	ui_root.h \
 	ui_widget.cpp \
 	ui_widget.h \
-	ui_win.cpp \
-	ui_win.h \
 	vclass.cpp \
 	vclass.h \
 	vector.h \

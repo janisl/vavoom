@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class FinaleScreen : Window;
+class FinaleScreen : Widget;
 
 const float TEXTSPEED	= 0.1;
 const float TEXTWAIT	= 7.0;

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class RootWindow:ModalWindow
+class RootWidget : Widget
 	native;
 
 defaultproperties

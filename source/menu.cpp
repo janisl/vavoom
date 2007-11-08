@@ -79,7 +79,7 @@ void MN_Init()
 #else
 	GClGame->ClientFlags &= ~VClientGameBase::CF_LocalServer;
 #endif
-	VRootWindow::StaticInit();
+	VRootWidget::StaticInit();
 	GClGame->eventRootWindowCreated();
 }
 

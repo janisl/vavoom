@@ -23,11 +23,11 @@
 //**
 //**************************************************************************
 
-class VRootWindow : public VModalWindow
+class VRootWidget : public VWidget
 {
-	DECLARE_CLASS(VRootWindow, VModalWindow, 0)
+	DECLARE_CLASS(VRootWidget, VWidget, 0)
 
-	VRootWindow();
+	VRootWidget();
 	void Init();
 	void Init(VWidget*) { Sys_Error("Root canot have a parent"); }
 
@@ -37,4 +37,4 @@ class VRootWindow : public VModalWindow
 	static void StaticInit();
 };
 
-extern VRootWindow *GRoot;
+extern VRootWidget*		GRoot;

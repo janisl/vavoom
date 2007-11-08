@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class FinaleScreen : Window;
+class FinaleScreen : Widget;
 
 ClientGameBase	ClGame;
 

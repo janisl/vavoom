@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class IntermissionScreen : Window;
+class IntermissionScreen : Widget;
 
 enum
 {

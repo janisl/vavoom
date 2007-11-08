@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class TitleScreen : Window;
+class TitleScreen : Widget;
 
 ClientGameBase ClGame;
 

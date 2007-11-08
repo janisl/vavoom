@@ -32,6 +32,8 @@
 #include "iline.h"		//	Input line widget
 #include "drawer.h"
 
+class VRootWidget;
+
 // MACROS ------------------------------------------------------------------
 
 // TYPES -------------------------------------------------------------------
@@ -46,8 +48,6 @@ struct dlight_t
 	VThinker*	Owner;		// used to identify owner to reuse the same light
 	vuint32		colour;		// for coloured lights
 };
-
-class VRootWindow;
 
 class VClientGameBase : public VObject
 {
@@ -67,7 +67,7 @@ class VClientGameBase : public VObject
 
 	im_t*				im;
 
-	VRootWindow*		GRoot;
+	VRootWidget*		GRoot;
 
 	int					sb_height;
 

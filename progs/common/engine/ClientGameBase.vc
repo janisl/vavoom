@@ -39,7 +39,7 @@ readonly Level GLevel;
 
 readonly im_t *im;
 
-readonly RootWindow GRoot;
+readonly RootWidget GRoot;
 
 int sb_height;
 

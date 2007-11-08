@@ -2016,22 +2016,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\source\ui_gc.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\source\ui_gc.h"
-				>
-			</File>
-			<File
-				RelativePath="..\source\ui_modal.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\source\ui_modal.h"
-				>
-			</File>
-			<File
 				RelativePath="..\source\ui_root.cpp"
 				>
 			</File>
@@ -2045,14 +2029,6 @@
 			</File>
 			<File
 				RelativePath="..\source\ui_widget.h"
-				>
-			</File>
-			<File
-				RelativePath="..\source\ui_win.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\source\ui_win.h"
 				>
 			</File>
 			<File
