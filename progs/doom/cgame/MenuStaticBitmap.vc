@@ -31,7 +31,6 @@ int Handle;
 void OnCreate()
 {
 	::OnCreate();
-	Disable();
 	if (PicName)
 	{
 		Handle = R_RegisterPic(PicName);

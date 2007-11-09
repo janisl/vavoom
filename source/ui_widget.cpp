@@ -396,6 +396,26 @@ void VWidget::SetEnabled(bool NewEnabled)
 
 //==========================================================================
 //
+//	VWidget::SetFocusable
+//
+//==========================================================================
+
+void VWidget::SetFocusable(bool NewFocusable)
+{
+	guard(VWidget::SetFocusable);
+	if (!!(WidgetFlags & WF_IsFocusable) != NewFocusable)
+	{
+		if (NewFocusable)
+			WidgetFlags |= WF_IsFocusable;
+		else
+			WidgetFlags &= ~WF_IsFocusable;
+		OnFocusableChanged(NewFocusable);
+	}
+	unguard;
+}
+
+//==========================================================================
+//
 //	VWidget::DrawTree
 //
 //==========================================================================
@@ -908,6 +928,19 @@ IMPLEMENT_FUNCTION(VWidget, IsEnabled)
 	P_GET_BOOL_OPT(Recurse, true);
 	P_GET_SELF;
 	RET_BOOL(Self->IsEnabled(Recurse));
+}
+
+IMPLEMENT_FUNCTION(VWidget, SetFocusable)
+{
+	P_GET_BOOL(bNewFocusable);
+	P_GET_SELF;
+	Self->SetFocusable(bNewFocusable);
+}
+
+IMPLEMENT_FUNCTION(VWidget, IsFocusable)
+{
+	P_GET_SELF;
+	RET_BOOL(Self->IsFocusable());
 }
 
 IMPLEMENT_FUNCTION(VWidget, DrawPic)

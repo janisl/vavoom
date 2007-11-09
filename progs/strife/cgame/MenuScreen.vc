@@ -206,6 +206,7 @@ void OnDraw()
 
 defaultproperties
 {
+	Focusable = true;
 	X = 160;
 	Y = 140;
 	TitleX = 160;

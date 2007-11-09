@@ -159,6 +159,7 @@ void OnVisibilityChanged(bool bNewVisibility)
 defaultproperties
 {
 	bTickEnabled = true;
+	Focusable = true;
 	Width = 640;
 	Height = 480;
 }

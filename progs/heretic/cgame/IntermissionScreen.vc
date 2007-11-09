@@ -911,6 +911,7 @@ void OnVisibilityChanged(bool bNewVisibility)
 defaultproperties
 {
 	bTickEnabled = true;
+	Focusable = true;
 	Width = 640;
 	Height = 480;
 	YAHspot[0 * 9 + 0].x = 172;	YAHspot[0 * 9 + 0].y = 78;

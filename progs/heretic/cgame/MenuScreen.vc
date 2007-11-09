@@ -210,4 +210,5 @@ defaultproperties
 	Y = 140;
 	TitleX = 160;
 	TitleY = 24;
+	Focusable = true;
 }

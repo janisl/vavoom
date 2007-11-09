@@ -67,6 +67,8 @@ private bool					bIsVisible;
 bool							bTickEnabled;
 //	Is this widget enabled and can receive input.
 private bool					bIsEnabled;
+//	Can this widget be focused?
+private bool					bIsFocusable;
 
 //==========================================================================
 Widget Parent
@@ -130,6 +132,13 @@ bool Enabled
 	default bIsEnabled;
 }
 
+bool Focusable
+{
+	get { return IsFocusable(); }
+	set { SetFocusable(value); }
+	default bIsFocusable;
+}
+
 int OldOriginX
 {
 	get { return ftoi(ClipRect.OriginX / ClipRect.ScaleX); }
@@ -168,10 +177,15 @@ native final void Show();
 native final void Hide();
 native final bool IsVisible(optional bool Recurse);
 
+//	Enable state methods
 native final void SetEnabled(bool bNewEnable);
 native final void Enable();
 native final void Disable();
 native final bool IsEnabled(optional bool Recurse);
+
+//	Focusable state methods.
+native final void SetFocusable(bool bNewFocusable);
+native final bool IsFocusable();
 
 native final void DrawPic(int X, int Y, int Handle, optional float Alpha);
 native final void DrawShadowedPic(int X, int Y, int Handle);
@@ -266,6 +280,18 @@ void OnVisibilityChanged(bool bNewVisibility)
 //==========================================================================
 
 void OnEnableChanged(bool bNewEnable)
+{
+}
+
+//==========================================================================
+//
+//	OnFocusableChanged
+//
+//	Called when focusable flag of this widget is changed.
+//
+//==========================================================================
+
+void OnFocusableChanged(bool bNewFocusable)
 {
 }
 

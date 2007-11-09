@@ -77,6 +77,8 @@ private:
 		WF_TickEnabled		= 0x0002,
 		//	Is this widget enabled and can receive input.
 		WF_IsEnabled		= 0x0004,
+		//	Can this widget be focused?
+		WF_IsFocusable		= 0x0008,
 	};
 	vuint32				WidgetFlags;
 
@@ -200,6 +202,13 @@ public:
 		}
 	}
 
+	//	Focusable state methods.
+	void SetFocusable(bool);
+	bool IsFocusable() const
+	{
+		return !!(WidgetFlags & WF_IsFocusable);
+	}
+
 	void OnCreate()
 	{
 		P_PASS_SELF;
@@ -238,6 +247,12 @@ public:
 		P_PASS_SELF;
 		P_PASS_BOOL(bNewEnable);
 		EV_RET_VOID(NAME_OnEnableChanged);
+	}
+	virtual void OnFocusableChanged(bool bNewFocusable)
+	{
+		P_PASS_SELF;
+		P_PASS_BOOL(bNewFocusable);
+		EV_RET_VOID(NAME_OnFocusableChanged);
 	}
 	virtual void OnDraw()
 	{
@@ -294,6 +309,9 @@ public:
 	DECLARE_FUNCTION(Enable)
 	DECLARE_FUNCTION(Disable)
 	DECLARE_FUNCTION(IsEnabled)
+
+	DECLARE_FUNCTION(SetFocusable)
+	DECLARE_FUNCTION(IsFocusable)
 
 	DECLARE_FUNCTION(DrawPic)
 	DECLARE_FUNCTION(DrawShadowedPic)

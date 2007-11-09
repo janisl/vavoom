@@ -174,6 +174,7 @@ REGISTER_NAME(OnChildRemoved)
 REGISTER_NAME(OnConfigurationChanged)
 REGISTER_NAME(OnVisibilityChanged)
 REGISTER_NAME(OnEnableChanged)
+REGISTER_NAME(OnFocusableChanged)
 REGISTER_NAME(OnDraw)
 REGISTER_NAME(OnPostDraw)
 

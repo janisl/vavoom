@@ -83,4 +83,5 @@ int DrawSlot(int y, string text, bool entering)
 
 defaultproperties
 {
+	Focusable = true;
 }

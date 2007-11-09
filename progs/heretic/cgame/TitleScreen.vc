@@ -180,6 +180,7 @@ void StopDemoLoop()
 defaultproperties
 {
 	bTickEnabled = true;
+	Focusable = true;
 	Width = 320;
 	Height = 200;
 	demosequence = -1;	// -1 = don't play demos
