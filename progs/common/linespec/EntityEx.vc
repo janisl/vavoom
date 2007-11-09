@@ -217,8 +217,9 @@ float			ReactionTime;
 int				Threshold;
 
 // Movement direction, movement generation (zig-zagging).
-int				MoveDir;	// 0-7
-int				MoveCount;	// when 0, select a new dir
+int				MoveDir;		// 0-7
+int				MoveCount;		// when 0, select a new dir
+int				strafecount;    // killough 9/8/98: monster strafing
 
 float			RDFactor;
 
@@ -3148,11 +3149,12 @@ final void NewChaseDir()
 	deltax = Target.Origin.x - Origin.x;
 	deltay = Target.Origin.y - Origin.y;
 
-	tmtrace_t tmtrace;
-	CheckRelPosition(&tmtrace, Origin);
+	// killough 8/8/98: sometimes move away from target, keeping distance
+	// Take advantage over an enemy without missiles, by keeping distance
+	strafecount = 0;
 
 	// Try to move away from a dropoff
-	if (FloorZ - tmtrace.DropOffZ > MaxDropoffHeight &&
+	if (FloorZ - DropOffZ > MaxDropoffHeight &&
 		Origin.z <= FloorZ && !bDropOff && !bOnMobj && !bFloat)
 	{
 		avoiddropoff_t a;
@@ -3172,14 +3174,39 @@ final void NewChaseDir()
 			bAvoidingDropoff = true;
 			DO_NewChaseDir(a.deltax, a.deltay);
 			bAvoidingDropoff = false;
-		
+
 			// If moving away from dropoff, set movecount to 1 so that
 			// small steps are taken to get monster away from dropoff.
 			MoveCount = 1;
 			return;
 		}
 	}
+	else
+	{
+		float dist;
+		
+		dist = DistTo(Target);
+
+		if (Target.Health > 0)
+	    {   // Live enemy target
+			if (/*monster_backing &&*/ MissileState &&
+				/*actor->type != MT_SKULL &&*/
+				((!Target.MissileState && dist < MELEERANGE * 2.0) ||
+				(Target.Player && PlayerEx(Target.Player).ReadyWeapon.bBotMelee &&
+				dist < MELEERANGE * 3.0)))
+			{       // Back away from melee attacker
+					strafecount = P_Random() & 15;
+					deltax = -deltax;
+					deltay = -deltay;
+			}
+		}
+	}
 	DO_NewChaseDir(deltax, deltay);
+
+	// If strafing, set movecount to strafecount so that old Doom
+	// logic still works the same, except in the strafing part
+	if (strafecount)
+		MoveCount = strafecount;
 }
 
 //==========================================================================
@@ -3368,6 +3395,10 @@ final EntityEx SpawnMissile(EntityEx dest, class<EntityEx> type,
 	{
 		org.z = ONFLOORZ + FloorClip;
 	}
+	else if (type.default.bIgnoreCeilingStep)
+	{
+		org.z = ONCEILINGZ;
+	}
 	else
 	{
 		org.z = Origin.z + 32.0;
@@ -3497,6 +3528,10 @@ final EntityEx SpawnMissileAngles(class<EntityEx> type, float yaw, float pitch,
 	{
 		org.z = ONFLOORZ + FloorClip;
 	}
+	else if (type.default.bIgnoreCeilingStep)
+	{
+		org.z = ONCEILINGZ;
+	}
 	else
 	{
 		org.z = Origin.z + 32.0;
@@ -3539,6 +3574,10 @@ final EntityEx SpawnMissileAngle(class<EntityEx> type, float angle,
 	{
 		// Minotaur floor fire missile
 		org.z = ONFLOORZ + FloorClip;
+	}
+	else if (type.default.bIgnoreCeilingStep)
+	{
+		org.z = ONCEILINGZ;
 	}
 	else
 	{
@@ -3910,6 +3949,9 @@ final void Damage(EntityEx inflictor, EntityEx source, int damage,
 		{
 			PlayerEx(Player).DamageFlash = 3.0;	// teleport stomp does 10k points...
 		}
+
+		// For Korax Arena
+		PlayerEx(Player).Damaged(inflictor);
 	}
 
 	// do the damage    
@@ -4295,7 +4337,7 @@ bool Touch(Entity InOther)
 		return true;
 
 	// check for skulls slamming into things
-	if (bSkullFly)
+	if (bSkullFly && Health > 0)
 	{
 		return Slam(Other);
 	}
@@ -5121,7 +5163,7 @@ final void ClientTick(float DeltaTime)
 {
 	dlight_t*	dl;
 	TVec		fv;
-	int			c;
+	int			i, c;
 
 	if (bHidden)
 	{
@@ -5155,80 +5197,18 @@ final void ClientTick(float DeltaTime)
 	if (bLeaveTrail)
 	{
 		c = P_Random() >> 1;
-		// ParticleEffect(int count, int type1, int type2, float org, float ornd,
-		// float vel, float vrnd, float grav, int colour, float duration, bool ramp)
-		ParticleEffect(ftoi(DeltaTime * 256.0), LineSpecialLevelInfo::pt_static, 0, Origin,
-					0.0, vector(16.0, 16.0, 16.0), 0.5, 0.0, RGB(c, c, c), 0.5,  0.0);
+		for (i = 0; i < MAXPLAYERS; i++)
+		{
+			if (!Level.Game.Players[i])
+				continue;
+			if (!Level.Game.Players[i].bSpawned)
+				continue;
+			PlayerEx(Level.Game.Players[i]).ParticleEffect(ftoi(DeltaTime * 256.0), LineSpecialLevelInfo::pt_static, 0, Origin,
+					0.0, vector(16.0, 16.0, 64.0), 0.5, 2.5, 0.0, RGB(c, c, c), 0.5,  0.0);
+		}
 	}
 }
 
-//==========================================================================
-//
-//  ParticleEffect
-//
-//==========================================================================
-
-void ParticleEffect(int count, int type1, int type2, TVec origin, float ornd,
-	TVec velocity, float vrnd, float grav, int colour, float duration, float ramp)
-{
-	int i;
-	particle_t *p;
-
-	for (i = 0; i < count; i++)
-	{
-		p = Level.NewParticle();
-
-		if (!p)
-			return;
-		p->die = XLevel.Time + duration * Random();
-		p->colour = colour;
-
-		if(ramp)
-			p->ramp = Random() * ramp;
-
-		if(!type2)
-		{
-			p->type = type1;
-		}
-		else
-		{
-			// Choose between the two types
-			if (i & 1)
-			{
-				p->type = type1;
-			}
-			else
-			{
-				p->type = type2;
-			}
-		}
-
-		// No random origin
-		if(!ornd)
-		{
-			p->org = origin;
-		}
-		else
-		{
-			p->org.x = origin.x + ((Random() * ornd) - 16.0);
-			p->org.y = origin.y + ((Random() * ornd) - 16.0);
-			p->org.z = origin.z + ((Random() * ornd) - 16.0);
-		}
-
-		// No random velocity
-		if(!vrnd)
-		{
-			p->vel = velocity;
-		}
-		else
-		{
-			p->vel.x = velocity.x * (Random() - vrnd);
-			p->vel.y = velocity.y * (Random() - vrnd);
-			p->vel.z = velocity.z * (Random() - vrnd);
-		}
-		p->gravity = grav;
-	}
-}
 
 //==========================================================================
 //
@@ -5588,18 +5568,21 @@ final bool GiveBody(int num)
 final void SpawnPuff(TVec Org, float Range, class<EntityEx> PuffType,
 	bool HitThing)
 {
-	int i;
+	int i, c;
 	EntityEx puff;
 
 	if (PuffType.default.bPuffParticles)
 	{
+		c = P_Random() >> 1;
 		for (i = 0; i < MAXPLAYERS; i++)
 		{
 			if (!Level.Game.Players[i])
 				continue;
 			if (!Level.Game.Players[i].bSpawned)
 				continue;
-			PlayerEx(Level.Game.Players[i]).ClientGunShot(Org);
+			PlayerEx(Level.Game.Players[i]).ParticleEffect(20, LineSpecialLevelInfo::pt_static,
+						LineSpecialLevelInfo::pt_explode2, Org, 0.0, vector(32.0, 32.0, 32.0),
+						0.5, 10.0, 40.0, RGB(c, c, c), 0.8, 0.0);
 		}
 	}
 
@@ -5642,14 +5625,21 @@ final void SpawnPuff(TVec Org, float Range, class<EntityEx> PuffType,
 final void SpawnBlood(TVec Org, int damage)
 {
 	EntityEx	A;
-	int			c;
+	int			i, c;
 
 	Org.z += (Random() - Random()) * 4.0;
 	damage = damage > 255 ? 255 : damage;
 	c = P_Random() >> 1;
-	ParticleEffect(damage, LineSpecialLevelInfo::pt_static, 0, Org,
-				0.0, vector(32.0, 32.0, 32.0), 0.5, 40.0, RGB(32 + c, c >> 4, c >> 4),
-				0.5, 0.0);
+	for (i = 0; i < MAXPLAYERS; i++)
+	{
+		if (!Level.Game.Players[i])
+			continue;
+		if (!Level.Game.Players[i].bSpawned)
+			continue;
+		PlayerEx(Level.Game.Players[i]).ParticleEffect(damage, LineSpecialLevelInfo::pt_static,
+				0, Org,	0.0, vector(32.0, 32.0, 32.0), 0.5, 10.0, 40.0, RGB(32 + c, c >> 4, c >> 4),
+				0.6, 0.0);
+	}
 	A = Spawn(LineSpecialGameInfo(Level.Game).BloodClass, Org);
 	A.Velocity.z = 2.0 * 35.0;
 	if (LineSpecialGameInfo(Level.Game).bBloodRandomiseTime)
@@ -5685,13 +5675,20 @@ final void SpawnBlood(TVec Org, int damage)
 final void SpawnBloodSplatter(TVec org, int damage)
 {
 	EntityEx	mo;
-	int			c;
+	int			i, c;
 
 	damage = damage > 255 ? 255 : damage;
 	c = P_Random() >> 1;
-	ParticleEffect(damage, LineSpecialLevelInfo::pt_static, 0, org,
-				0.0, vector(32.0, 32.0, 32.0), 0.5, 40.0, RGB(32 + c, c >> 4, c >> 4),
-				0.5, 0.0);
+	for (i = 0; i < MAXPLAYERS; i++)
+	{
+		if (!Level.Game.Players[i])
+			continue;
+		if (!Level.Game.Players[i].bSpawned)
+			continue;
+		PlayerEx(Level.Game.Players[i]).ParticleEffect(damage, LineSpecialLevelInfo::pt_static,
+				0, org,	0.0, vector(32.0, 32.0, 32.0), 0.5, 10.0, 40.0, RGB(32 + c, c >> 4, c >> 4),
+				0.6, 0.0);
+	}
 
 	mo = Spawn(LineSpecialGameInfo(Level.Game).BloodSplatterClass, org);
 	mo.Target = self;
