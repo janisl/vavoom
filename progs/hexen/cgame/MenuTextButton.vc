@@ -54,7 +54,7 @@ bool Key(int key)
 
 void OnDraw()
 {
-	T_SetFont(bSelected ? TextSelectedFont : TextFont);
+	T_SetFont(IsFocus() ? TextSelectedFont : TextFont);
 	T_SetAlign(TextHAlign, TextVAlign);
 	DrawText(0, 0, Text);
 }

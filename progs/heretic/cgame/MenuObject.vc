@@ -25,24 +25,13 @@
 
 class MenuObject : Widget;
 
-bool bSelected;
-
 bool Key(int key)
 {
 	return false;
 }
 
-void FocusLost()
-{
-}
-
-void FocusReceived()
-{
-}
-
 defaultproperties
 {
-	bSelected = false;
 	Width = 320;
 	Height = 200;
 }

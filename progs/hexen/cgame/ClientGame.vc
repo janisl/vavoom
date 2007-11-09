@@ -441,6 +441,7 @@ void PushMenuScreen(MenuScreen menu)
 	}
 
 	CurrentMenuScreen = menu;
+	GRoot.SetCurrentFocusChild(CurrentMenuScreen);
 }
 
 //==========================================================================
@@ -462,6 +463,7 @@ void PopMenu()
 		CurrentMenuScreen = menu_stack[menu_sp - 1];
 		CurrentMenuScreen.Show();
 		CurrentMenuScreen.Raise();
+		GRoot.SetCurrentFocusChild(CurrentMenuScreen);
 		LocalSound('menu/backup');
 	}
 	else

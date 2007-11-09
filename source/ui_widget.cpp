@@ -416,6 +416,71 @@ void VWidget::SetFocusable(bool NewFocusable)
 
 //==========================================================================
 //
+//	VWidget::SetCurrentFocusChild
+//
+//==========================================================================
+
+void VWidget::SetCurrentFocusChild(VWidget* NewFocus)
+{
+	guard(VWidget::SetCurrentFocusChild);
+	//	Check f it's already focused.
+	if (CurrentFocusChild == NewFocus)
+	{
+		return;
+	}
+
+	//	Make sure it's visible, enabled and focusable.
+	if (!(NewFocus->WidgetFlags & WF_IsVisible) ||
+		!(NewFocus->WidgetFlags & WF_IsEnabled) ||
+		!(NewFocus->WidgetFlags & WF_IsFocusable))
+	{
+		return;
+	}
+
+	//	If we have a focused child, send focus lost event.
+	if (CurrentFocusChild)
+	{
+		CurrentFocusChild->OnFocusLost();
+	}
+
+	//	Make it the current focus.
+	CurrentFocusChild = NewFocus;
+	CurrentFocusChild->OnFocusReceived();
+	unguard;
+}
+
+//==========================================================================
+//
+//	VWidget::IsFocus
+//
+//==========================================================================
+
+bool VWidget::IsFocus(bool Recurse) const
+{
+	guard(VWidget::IsFocus);
+	//	Root is always focused.
+	if (!ParentWidget)
+	{
+		return true;
+	}
+	if (Recurse)
+	{
+		const VWidget* W = this;
+		while (W->ParentWidget && W->ParentWidget->CurrentFocusChild == W)
+		{
+			W = W->ParentWidget;
+		}
+		return !W->ParentWidget;
+	}
+	else
+	{
+		return ParentWidget->CurrentFocusChild == this;
+	}
+	unguard;
+}
+
+//==========================================================================
+//
 //	VWidget::DrawTree
 //
 //==========================================================================
@@ -941,6 +1006,26 @@ IMPLEMENT_FUNCTION(VWidget, IsFocusable)
 {
 	P_GET_SELF;
 	RET_BOOL(Self->IsFocusable());
+}
+
+IMPLEMENT_FUNCTION(VWidget, SetCurrentFocusChild)
+{
+	P_GET_REF(VWidget, NewFocus);
+	P_GET_SELF;
+	Self->SetCurrentFocusChild(NewFocus);
+}
+
+IMPLEMENT_FUNCTION(VWidget, GetCurrentFocus)
+{
+	P_GET_SELF;
+	RET_REF(Self->GetCurrentFocus());
+}
+
+IMPLEMENT_FUNCTION(VWidget, IsFocus)
+{
+	P_GET_BOOL_OPT(Recurse, true);
+	P_GET_SELF;
+	RET_BOOL(Self->IsFocus(Recurse));
 }
 
 IMPLEMENT_FUNCTION(VWidget, DrawPic)

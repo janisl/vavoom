@@ -175,6 +175,8 @@ REGISTER_NAME(OnConfigurationChanged)
 REGISTER_NAME(OnVisibilityChanged)
 REGISTER_NAME(OnEnableChanged)
 REGISTER_NAME(OnFocusableChanged)
+REGISTER_NAME(OnFocusReceived)
+REGISTER_NAME(OnFocusLost)
 REGISTER_NAME(OnDraw)
 REGISTER_NAME(OnPostDraw)
 

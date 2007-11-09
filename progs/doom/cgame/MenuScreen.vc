@@ -86,16 +86,9 @@ void CursorMoved()
 	if (CursorPrev == CursorPos)
 		return;
 
-	if (CursorPrev >= 0 && CursorPrev < NumItems)
-	{
-		Items[CursorPrev].FocusLost();
-		Items[CursorPrev].bSelected = false;
-	}
-
 	if (CursorPos >= 0 && CursorPos < NumItems)
 	{
-		Items[CursorPos].FocusReceived();
-		Items[CursorPos].bSelected = true;
+		SetCurrentFocusChild(Items[CursorPos]);
 	}
 
 	if (Selector)

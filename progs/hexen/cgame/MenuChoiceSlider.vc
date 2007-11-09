@@ -82,7 +82,7 @@ void OnDraw()
 	int xx;
 
 	T_SetFont(font_small);
-	if (bSelected)
+	if (IsFocus())
 	{
 		T_SetFont(font_yellow);
 	}

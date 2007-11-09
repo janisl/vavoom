@@ -25,35 +25,13 @@
 
 class MenuObject : Widget;
 
-bool bSelected;
-
-delegate void FocusLost(Object Sender);
-delegate void FocusReceived(Object Sender);
-
 bool Key(int key)
 {
 	return false;
 }
 
-void OnFocusLost()
-{
-	if (FocusLost)
-	{
-		FocusLost(self);
-	}
-}
-
-void OnFocusReceived()
-{
-	if (FocusReceived)
-	{
-		FocusReceived(self);
-	}
-}
-
 defaultproperties
 {
-	bSelected = false;
 	Width = 320;
 	Height = 200;
 }

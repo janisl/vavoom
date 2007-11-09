@@ -61,6 +61,9 @@ private float					SizeScaleY;
 
 private readonly ClipRect		ClipRect;
 
+//	Currently focused child widget.
+private readonly Widget			CurrentFocusChild;
+
 //	Is this widget visible?
 private bool					bIsVisible;
 //	A flag that enables or disables Tick event.
@@ -71,6 +74,7 @@ private bool					bIsEnabled;
 private bool					bIsFocusable;
 
 //==========================================================================
+
 Widget Parent
 {
 	get { return ParentWidget; }
@@ -149,6 +153,13 @@ int OldOriginY
 	get { return ftoi(ClipRect.OriginY / ClipRect.ScaleY); }
 }
 
+//==========================================================================
+
+delegate void FocusLost(Object Sender);
+delegate void FocusReceived(Object Sender);
+
+//==========================================================================
+
 //	Creation and destruction of widgets.
 native final spawner Widget NewChild(class<Widget> ChildClass);
 native final void Destroy();
@@ -186,6 +197,11 @@ native final bool IsEnabled(optional bool Recurse);
 //	Focusable state methods.
 native final void SetFocusable(bool bNewFocusable);
 native final bool IsFocusable();
+
+//	Focus methods.
+native final void SetCurrentFocusChild(Widget NewFocus);
+native final Widget GetCurrentFocus();
+native final bool IsFocus(optional bool Recurse);
 
 native final void DrawPic(int X, int Y, int Handle, optional float Alpha);
 native final void DrawShadowedPic(int X, int Y, int Handle);
@@ -293,6 +309,38 @@ void OnEnableChanged(bool bNewEnable)
 
 void OnFocusableChanged(bool bNewFocusable)
 {
+}
+
+//==========================================================================
+//
+//	OnFocusReceived
+//
+//	Called when focus enters this widget.
+//
+//==========================================================================
+
+void OnFocusReceived()
+{
+	if (FocusReceived)
+	{
+		FocusReceived(self);
+	}
+}
+
+//==========================================================================
+//
+//	OnFocusLost
+//
+//	Called when focus leaves this widget.
+//
+//==========================================================================
+
+void OnFocusLost()
+{
+	if (FocusLost)
+	{
+		FocusLost(self);
+	}
 }
 
 //==========================================================================

@@ -68,6 +68,9 @@ private:
 
 	VClipRect			ClipRect;
 
+	//	Currently focused child widget.
+	VWidget*			CurrentFocusChild;
+
 	// Booleans
 	enum
 	{
@@ -81,6 +84,9 @@ private:
 		WF_IsFocusable		= 0x0008,
 	};
 	vuint32				WidgetFlags;
+
+	VObjectDelegate 	FocusLost;
+	VObjectDelegate 	FocusReceived;
 
 	void AddChild(VWidget*);
 	void RemoveChild(VWidget*);
@@ -209,6 +215,14 @@ public:
 		return !!(WidgetFlags & WF_IsFocusable);
 	}
 
+	//	Focus methods.
+	void SetCurrentFocusChild(VWidget*);
+	VWidget* GetCurrentFocus() const
+	{
+		return CurrentFocusChild;
+	}
+	bool IsFocus(bool Recurse = true) const;
+
 	void OnCreate()
 	{
 		P_PASS_SELF;
@@ -253,6 +267,16 @@ public:
 		P_PASS_SELF;
 		P_PASS_BOOL(bNewFocusable);
 		EV_RET_VOID(NAME_OnFocusableChanged);
+	}
+	virtual void OnFocusReceived()
+	{
+		P_PASS_SELF;
+		EV_RET_VOID(NAME_OnFocusReceived);
+	}
+	virtual void OnFocusLost()
+	{
+		P_PASS_SELF;
+		EV_RET_VOID(NAME_OnFocusLost);
 	}
 	virtual void OnDraw()
 	{
@@ -312,6 +336,10 @@ public:
 
 	DECLARE_FUNCTION(SetFocusable)
 	DECLARE_FUNCTION(IsFocusable)
+
+	DECLARE_FUNCTION(SetCurrentFocusChild)
+	DECLARE_FUNCTION(GetCurrentFocus)
+	DECLARE_FUNCTION(IsFocus)
 
 	DECLARE_FUNCTION(DrawPic)
 	DECLARE_FUNCTION(DrawShadowedPic)

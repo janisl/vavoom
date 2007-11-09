@@ -41,7 +41,7 @@ void OnCreate()
 
 void OnDraw()
 {
-	if (bEnteringText && bSelected)
+	if (bEnteringText && IsFocus())
 	{
 		DrawSlot(0, EnterText, true);
 	}
