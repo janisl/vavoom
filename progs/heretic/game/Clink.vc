@@ -94,7 +94,7 @@ Pain:
 	Goto See
 Death:
 	CLNK IJ 6
-	CLNK K 5 A_Scream
+	CLNK K 5 { A_Scream(); A_Lights(); }
 	CLNK L 5 A_NoBlocking
 	CLNK MN 5
 	CLNK O -1

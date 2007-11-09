@@ -147,8 +147,8 @@ Pain:
 	Goto See
 Death:
 	HEAD C 7
-	HEAD D 7 A_Scream
-	HEAD E 7 A_Lights
+	HEAD D 7 { A_Scream(); A_Lights(); }
+	HEAD E 7
 	HEAD F 7
 	HEAD G 7 A_NoBlocking
 	HEAD H 7

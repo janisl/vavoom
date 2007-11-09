@@ -109,6 +109,20 @@ final void A_GhostOff()
 	Alpha = 1.0;
 }
 
+//==========================================================================
+//
+//  A_Lights
+//
+//  Just spawn some dynamic light
+//
+//==========================================================================
+
+final void A_Lights()
+{
+	SendExplosion(DLightColour, DLightRadius, Origin);
+	bDynamicLight = false;
+}
+
 states
 {
 Spawn:
@@ -140,7 +154,7 @@ Pain:
 	WZRD E 3 A_Pain
 	Goto See
 Death:
-	WZRD F 6 A_GhostOff
+	WZRD F 6 { A_GhostOff(); A_Lights(); }
 	WZRD G 6 A_Scream
 	WZRD HI 6
 	WZRD J 6 A_NoBlocking
@@ -164,4 +178,6 @@ defaultproperties
 	AttackSound = 'wizard/attack';
 	PainSound = 'wizard/pain';
 	DeathSound = 'wizard/death';
+	DLightColour = RGB(149, 16, 189);
+	DLightRadius = 118.0;
 }

@@ -90,6 +90,7 @@ defaultproperties
 	DamageType = 'Fire';
 	bConditionalFireDamage = true;
 	bDynamicLight = true;
+	bExplodeParticles = true;
 	SightSound = 'weapons/phoenixshoot';
 	DeathSound = 'weapons/phoenixhit';
 	DLightColour = RGB(255, 95, 0);

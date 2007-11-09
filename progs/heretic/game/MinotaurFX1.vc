@@ -55,6 +55,7 @@ defaultproperties
 	Speed = 700.0;
 	MissileDamage = 3;
 	DamageType = 'Fire';
+	bLeaveTrail = true;
 	bDynamicLight = true;
 	DLightColour = RGB(255, 128, 0);
 	DLightRadius = 126.0;

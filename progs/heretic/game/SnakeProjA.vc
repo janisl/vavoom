@@ -39,13 +39,35 @@ void OnMapSpawn(mthing_t* mthing)
 		Speed = 700.0;
 }
 
+//===========================================================================
+//
+//  A_Particles
+//
+//===========================================================================
+
+final void A_Particles()
+{
+	int i;
+	
+	for (i = 0; i < MAXPLAYERS; i++)
+	{
+		if (!Level.Game.Players[i])
+			continue;
+		if (!Level.Game.Players[i].bSpawned)
+			continue;
+		PlayerEx(Level.Game.Players[i]).ParticleEffect(5, LineSpecialLevelInfo::pt_static, 0, Origin, 10.0,
+				vector(128.0, 128.0, 128.0), 0.3, 25.0, 40.0, RGB(151, 143, 219), 1.0, 2.0);
+	}
+}
+
 states
 {
 Spawn:
 	SNFX ABCD 5 Bright
 	Loop
 Death:
-	SNFX EF 5 Bright
+	SNFX E 5 Bright A_Particles
+	SNFX F 5 Bright
 	SNFX G 4 Bright
 	SNFX HI 3 Bright
 	Stop
