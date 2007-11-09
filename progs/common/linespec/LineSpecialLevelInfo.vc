@@ -4480,6 +4480,130 @@ int P_Massacre()
 	return 0;
 }
 
+//==========================================================================
+//
+//  ParticleEffect
+//
+//==========================================================================
+
+void ParticleEffect(int count, int type1, int type2, TVec origin, float ornd,
+	TVec velocity, float vrnd, float acceleration, float grav, int colour, float duration, float ramp)
+{
+	int i;
+	particle_t *p;
+
+	for (i = 0; i < count; i++)
+	{
+		p = Level.NewParticle();
+		if (!p)
+			return;
+
+		p->die = Level.XLevel.Time + duration * Random();
+		p->colour = colour;
+		if(ramp)
+			p->ramp = Random() * ramp;
+
+		if(type2)
+		{
+			// Choose between the two types
+			if (i & 1)
+			{
+				p->type = type1;
+			}
+			else
+			{
+				p->type = type2;
+			}
+		}
+		else
+		{
+			p->type = type1;
+		}
+
+		// No random origin
+		if(!ornd)
+		{
+			p->org = origin;
+		}
+		else
+		{
+			p->org.x = origin.x + ((Random() * ornd) - 16.0);
+			p->org.y = origin.y + ((Random() * ornd) - 16.0);
+			p->org.z = origin.z + ((Random() * ornd) - 16.0);
+		}
+
+		// No random velocity
+		if(!vrnd)
+		{
+			p->vel = velocity;
+		}
+		else
+		{
+			p->vel.x = velocity.x * (Random() - vrnd);
+			p->vel.y = velocity.y * (Random() - vrnd);
+			p->vel.z = velocity.z * (Random() - vrnd);
+		}
+		p->accel.x = acceleration;
+		p->accel.y = acceleration;
+		p->accel.z = acceleration;
+		p->gravity = grav;
+	}
+}
+
+//==========================================================================
+//
+//  UpdateParticle
+//
+//==========================================================================
+
+void UpdateParticle(particle_t * p, float DeltaTime)
+{
+	float time2, time3;
+	float dvel;
+	float grav;
+
+	time2 = DeltaTime * 10.0;	// 15;
+	time3 = DeltaTime * 15.0;
+	dvel = 4.0 * DeltaTime;
+	grav = DeltaTime * p->gravity /*sv_gravity.value * 0.05*/;
+	p->accel.x -= grav;
+	p->accel.y -= grav;
+	p->accel.z -= grav;
+
+	switch (p->type)
+	{
+	case pt_static:
+		p->vel += p->accel * DeltaTime;
+		break;
+
+	case pt_explode:
+		p->ramp += time2;
+		if (p->ramp >= 16.0)
+			p->die = -1.0;
+		else
+			p->colour = LineSpecialGameInfo.default.ramp1[ftoi(p->ramp)];
+		p->vel.x += p->vel.x * dvel;
+		p->vel.y += p->vel.y * dvel;
+		p->vel.z += p->vel.z * dvel;
+		p->vel += p->accel * DeltaTime;
+		p->vel.z -= grav;
+		break;
+
+	case pt_explode2:
+		p->ramp += time3;
+		if (p->ramp >= 16.0)
+			p->die = -1.0;
+		else
+			p->colour = LineSpecialGameInfo.default.ramp2[ftoi(p->ramp)];
+		p->vel.x -= p->vel.x * DeltaTime;
+		p->vel.y -= p->vel.y * DeltaTime;
+		p->vel.z -= p->vel.z * DeltaTime;
+		p->vel += p->accel * DeltaTime;
+		p->vel.z -= grav;
+		break;
+	}
+}
+
 defaultproperties
 {
 	ExtPlayersBase = 4001;
