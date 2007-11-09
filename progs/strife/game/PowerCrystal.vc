@@ -37,6 +37,7 @@ final void A_Unknown112()
 {
 	int i;
 
+	A_Lights();
 	RadiusAttack(Target, 512, 512.0, true);
 	if (Target && Target.bIsPlayer)
 	{
@@ -83,6 +84,20 @@ final void A_Unknown114()
 	}
 }
 
+//==========================================================================
+//
+//  A_Lights
+//
+//  Just spawn some dynamic light
+//
+//==========================================================================
+
+final void A_Lights()
+{
+	SendExplosion(DLightColour, DLightRadius, Origin);
+	bDynamicLight = false;
+}
+
 states
 {
 Spawn:
@@ -120,4 +135,5 @@ defaultproperties
 	bFloorClip = true;
 	ActiveSound = 'misc/reactor';
 	DeathSound = 'misc/explosion';
+	DLightRadius = 300.0;
 }

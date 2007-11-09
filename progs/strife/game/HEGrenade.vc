@@ -62,7 +62,7 @@ defaultproperties
 	bBounceOnActors = true;
 	bNoBounceSound = true;
 	bExplodeOnWater = true;
-	bDynamicLight = false;
+	bExplodeParticles = true;
 	BounceType = BOUNCE_Doom;
 	BounceCount = 2;
 	BounceFactor = 0.5;

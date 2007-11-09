@@ -52,6 +52,7 @@ defaultproperties
 {
 	MaxStepHeight = 4.0;
 	bActivateImpact = false;
+	bExplodeParticles = true;
 	SightSound = 'bishop/misl';
 	DeathSound = 'bishop/mislx';
 }

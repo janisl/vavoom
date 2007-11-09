@@ -58,6 +58,20 @@ final void A_SentinelAttack()
 	}
 }
 
+//==========================================================================
+//
+//  A_Lights
+//
+//  Just spawn some dynamic light
+//
+//==========================================================================
+
+final void A_Lights()
+{
+	SendExplosion(DLightColour, DLightRadius, Origin);
+	bDynamicLight = false;
+}
+
 states
 {
 Spawn:
@@ -79,7 +93,8 @@ Death:
 	SEWR D 7 A_Fall
 	SEWR E 8 Bright A_XDying
 	SEWR F 5 Bright A_Scream
-	SEWR GH 4 Bright A_XDying
+	SEWR G 4 Bright A_XDying
+	SEWR H 4 Bright { A_XDying(); A_Lights(); }
 	SEWR I 4
 	SEWR J 5
 	Stop
@@ -103,4 +118,6 @@ defaultproperties
 	SightSound = 'sentinel/sight';
 	ActiveSound = 'sentinel/active';
 	DeathSound = 'sentinel/death';
+	DLightColour = RGB(255, 128, 0);
+	DLightRadius = 118.0;
 }

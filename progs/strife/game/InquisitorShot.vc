@@ -64,6 +64,7 @@ defaultproperties
 	MaxStepHeight = 4.0;
 	ReactionCount = 15;
 	bNoGravity = false;
+	bExplodeParticles = true;
 	SightSound = 'inquisitor/attack';
 	DeathSound = 'inquisitor/atkexplode';
 	ExplodeEffect = RGB(239, 239, 0);

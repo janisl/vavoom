@@ -37,7 +37,7 @@ class Macil1 : Pawn
 
 int TakeSpecialDamage(EntityEx inflictor, EntityEx source, int damage)
 {
-	if ((Random() < PainChance))
+	if (Random() < PainChance)
 	{
 		SetState(FindState('Pain'));
 	}

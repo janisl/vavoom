@@ -62,6 +62,7 @@ final void A_BishopAttack()
 	if (!Target)
 		return;
 
+	bMuzzleFlash = true;
 	missile = SpawnMissile(Target, BishopMissile, 64.0);
 	if (missile)
 	{
@@ -130,8 +131,10 @@ defaultproperties
 	bInCombat = true;
 	bNoBlood = true;
 	bNoDeathmatch = true;
+	bExplodeParticles = true;
 	SightSound = 'bishop/sight';
 	ActiveSound = 'bishop/active';
 	PainSound = 'bishop/pain';
 	DeathSound = 'bishop/death';
+	DLightRadius = 128.0;
 }

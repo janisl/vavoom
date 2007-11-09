@@ -278,6 +278,7 @@ defaultproperties
 	JumpSpeed = 6.0 * 35.0;
 	bDropOff = true;
 	bNoBlood = true;
+	bExplodeParticles = true;
 	SightSound = 'inquisitor/sight';
 	ActiveSound = 'inquisitor/active';
 	JumpSound = 'inquisitor/jump';

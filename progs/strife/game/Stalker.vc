@@ -153,6 +153,20 @@ bool CheckMeleeRange()
 	return true;
 }
 
+//==========================================================================
+//
+//  A_Lights
+//
+//  Just spawn some dynamic light
+//
+//==========================================================================
+
+final void A_Lights()
+{
+	SendExplosion(DLightColour, DLightRadius, Origin);
+	bDynamicLight = false;
+}
+
 states
 {
 Spawn:
@@ -193,7 +207,9 @@ Death:
 	SPID QRST 4
 	SPID U 4 A_Fall
 	SPID VW 4
-	SPID XYZ 4 Bright
+	SPID X 4 Bright
+	SPID Y 4 Bright A_Lights
+	SPID Z 4 Bright
 	SPID "[" 4 Bright
 	Stop
 }
@@ -217,4 +233,6 @@ defaultproperties
 	AttackSound = 'stalker/attack';
 	PainSound = 'stalker/pain';
 	DeathSound = 'stalker/death';
+	DLightColour = RGB(255, 128, 0);
+	DLightRadius = 118.0;
 }

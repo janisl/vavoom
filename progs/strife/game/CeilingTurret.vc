@@ -26,6 +26,21 @@
 class CeilingTurret : Pawn
 	__mobjinfo__(27);
 
+//==========================================================================
+//
+//  A_Lights
+//
+//  Just spawn some dynamic light
+//
+//==========================================================================
+
+final void A_Lights()
+{
+	DLightColour = RGB(255, 255, 255);
+	SendExplosion(DLightColour, DLightRadius, Origin);
+	bDynamicLight = false;
+}
+
 states
 {
 Spawn:
@@ -42,7 +57,8 @@ Pain:
 	Loop
 Death:
 	BALL A 6 Bright A_Scream
-	BALL BCDE 6 Bright
+	BALL B 6 Bright A_Lights
+	BALL CDE 6 Bright
 	TURT C -1
 	Stop
 }

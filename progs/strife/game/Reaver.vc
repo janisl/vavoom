@@ -90,6 +90,7 @@ defaultproperties
 	PainChance = 0.5;
 	bInCombat = true;
 	bNoBlood = true;
+	bExplodeParticles = true;
 	SightSound = 'reaver/sight';
 	ActiveSound = 'reaver/active';
 	PainSound = 'reaver/pain';

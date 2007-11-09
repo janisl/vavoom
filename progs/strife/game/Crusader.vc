@@ -210,6 +210,7 @@ defaultproperties
 	PainChance = 0.5;
 	bInCombat = true;
 	bNoBlood = true;
+	bExplodeParticles = true;
 	SightSound = 'crusader/sight';
 	ActiveSound = 'crusader/active';
 	PainSound = 'crusader/pain';

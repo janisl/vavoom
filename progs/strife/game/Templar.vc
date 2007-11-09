@@ -109,7 +109,7 @@ defaultproperties
 	StepSpeed = 8.0;
 	PainChance = 0.390625;
 	bNoBlood = true;
-	DLightColour = RGB(203, 111, 0);
+	DLightColour = RGB(0, 255, 0);
 	DLightRadius = 126.0;
 	SightSound = 'templar/sight';
 	ActiveSound = 'templar/active';

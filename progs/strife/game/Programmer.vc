@@ -85,6 +85,20 @@ final void A_ProgrammerDeath()
 	XLevel.StartACS(250, 0, 0, 0, 0, self, NULL, 0, false, false);
 }
 
+//==========================================================================
+//
+//  A_Lights
+//
+//  Just spawn some dynamic light
+//
+//==========================================================================
+
+final void A_Lights()
+{
+	SendExplosion(DLightColour, DLightRadius, Origin);
+	bDynamicLight = false;
+}
+
 states
 {
 Spawn:
@@ -116,7 +130,7 @@ Pain:
 Death:
 	PRGR L 7 Bright A_XDying
 	PRGR M 7 Bright A_Scream
-	PRGR N 7 Bright A_XDying
+	PRGR N 7 Bright { A_XDying(); A_Lights(); }
 	PRGR O 7 Bright A_Fall
 	PRGR P 7 Bright A_XDying
 	PRGR Q 7 Bright A_SpawnProgrammerBase
@@ -147,4 +161,6 @@ defaultproperties
 	AttackSound = 'programmer/attack';
 	PainSound = 'programmer/pain';
 	DeathSound = 'programmer/death';
+	DLightColour = RGB(255, 128, 0);
+	DLightRadius = 200.0;
 }

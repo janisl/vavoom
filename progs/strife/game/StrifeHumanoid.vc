@@ -48,19 +48,23 @@ final void A_PeasantAttack()
 states
 {
 Burn:
-	BURN A 3 A_BurnScream
+	BURN A 3 { DLightColour = RGB(255, 128, 0); bMuzzleFlash = true; A_BurnScream(); }
 	BURN B 3 A_Burn
-	BURN C 3 A_Walk
-	BURN D 3 A_Fall
+	BURN C 3 { A_Walk(); bMuzzleFlash = true; }
+	BURN D 3 { A_Fall(); bMuzzleFlash = true; }
 	BURN E 5 A_Burn
-	BURN FGH 5 A_Walk
+	BURN F 5 { A_Walk(); bMuzzleFlash = true; }
+	BURN G 5 { A_Walk(); bMuzzleFlash = true; }
+	BURN H 5 { A_Walk(); bMuzzleFlash = true; }
 	BURN I 5 A_Burn
-	BURN JKL 5 A_Walk
+	BURN J 5 { A_Walk(); bMuzzleFlash = true; }
+	BURN K 5 { A_Walk(); bMuzzleFlash = true; }
+	BURN L 5 { A_Walk(); bMuzzleFlash = true; }
 	BURN M 3 A_Burn
 	BURN N 3
 	BURN OPQPQ 5
 	BURN RSTU 7
-	BURN V 700 //FIXME A_Dying
+	BURN V 700 { bMuzzleFlash = false; } //FIXME A_Dying();
 	Stop
 Disintegrate:
 	DISR A 5 A_Yeargh
@@ -75,4 +79,5 @@ Disintegrate:
 defaultproperties
 {
 	MaxStepHeight = 16.0;
+	DLightRadius = 118.0;
 }

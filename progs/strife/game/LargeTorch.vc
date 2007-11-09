@@ -29,7 +29,7 @@ class LargeTorch : Decoration
 states
 {
 Spawn:
-	LMPC ABDC 4 Bright
+	LMPC ABDCE 4 Bright
 	Loop
 	// NOTE Wad has 5 frames of animation
 }
