@@ -37,7 +37,7 @@ void CreateChoices()
 	Page.SetPage(PageNames[CurPage]);
 }
 
-bool Key(int key)
+bool OnKeyDown(int key)
 {
 	LocalSound('menu/clear');
 	CurPage++;

@@ -158,6 +158,9 @@ int OldOriginY
 delegate void FocusLost(Object Sender);
 delegate void FocusReceived(Object Sender);
 
+delegate bool KeyDown(Object Sender, int Key);
+delegate bool KeyUp(Object Sender, int Key);
+
 //==========================================================================
 
 //	Creation and destruction of widgets.
@@ -378,6 +381,40 @@ void OnPostDraw()
 
 void Tick(float DeltaTime)
 {
+}
+
+//==========================================================================
+//
+//	OnKeyDown
+//
+//	Called for focused widget and it's parents when a key is pressed.
+//
+//==========================================================================
+
+bool OnKeyDown(int Key)
+{
+	if (KeyDown)
+	{
+		return KeyDown(self, Key);
+	}
+	return false;
+}
+
+//==========================================================================
+//
+//	OnKeyUp
+//
+//	Called for focused widget and it's parents when a key is released.
+//
+//==========================================================================
+
+bool OnKeyUp(int Key)
+{
+	if (KeyUp)
+	{
+		return KeyUp(self, Key);
+	}
+	return false;
 }
 
 void DrawFullScreenPic(int Handle)

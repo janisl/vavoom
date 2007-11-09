@@ -39,7 +39,7 @@ void ActivateEvent()
 		Activated(self);
 }
 
-bool Key(int key)
+bool OnKeyDown(int key)
 {
 	if (key == K_ENTER || key == K_PADENTER ||
 		key == K_MOUSE1 || key == K_JOY1)

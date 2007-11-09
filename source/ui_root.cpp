@@ -109,6 +109,49 @@ void VRootWidget::TickWidgets(float DeltaTime)
 
 //==========================================================================
 //
+//	VRootWidget::Responder
+//
+//==========================================================================
+
+bool VRootWidget::Responder(event_t* Event)
+{
+	guard(VRootWidget::Responder);
+	//	Handle keyboard events.
+	if (Event->type == ev_keydown || Event->type == ev_keyup)
+	{
+		//	Find the top-most focused widget.
+		VWidget* W = CurrentFocusChild;
+		while (W && W->CurrentFocusChild)
+		{
+			W = W->CurrentFocusChild;
+		}
+
+		//	Call event handlers
+		while (W)
+		{
+			if (Event->type == ev_keydown)
+			{
+				if (W->OnKeyDown(Event->data1))
+				{
+					return true;
+				}
+			}
+			else
+			{
+				if (W->OnKeyUp(Event->data1))
+				{
+					return true;
+				}
+			}
+			W = W->ParentWidget;
+		}
+	}
+	return false;
+	unguard;
+}
+
+//==========================================================================
+//
 //	VRootWidget::StaticInit
 //
 //==========================================================================

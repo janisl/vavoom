@@ -45,7 +45,7 @@ void CreateChoices()
 	CmdBuf_AddText("music play d_fast\n");
 }
 
-bool Key(int key)
+bool OnKeyDown(int key)
 {
 	return true;
 }

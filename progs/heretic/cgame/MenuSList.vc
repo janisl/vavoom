@@ -115,7 +115,7 @@ void OnDraw()
 	}
 }
 
-bool Key(int key)
+bool OnKeyDown(int key)
 {
 	slist = GetSlist();
 

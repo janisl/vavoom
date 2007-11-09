@@ -103,7 +103,7 @@ void OnDraw()
 	DrawText(xx, 0, EnumNames[Value]);
 }
 
-bool Key(int key)
+bool OnKeyDown(int key)
 {
 	int newValue;
 

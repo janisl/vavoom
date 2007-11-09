@@ -91,7 +91,7 @@ void OnDraw()
 	DrawPic(xx, 7, pic_M_SLDKB);
 }
 
-bool Key(int key)
+bool OnKeyDown(int key)
 {
 	float newValue;
 
@@ -123,7 +123,7 @@ bool Key(int key)
 		}
 		return true;
 	}
-	return ::Key(key);
+	return ::OnKeyDown(key);
 }
 
 defaultproperties

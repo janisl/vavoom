@@ -88,6 +88,9 @@ private:
 	VObjectDelegate 	FocusLost;
 	VObjectDelegate 	FocusReceived;
 
+	VObjectDelegate 	KeyDown;
+	VObjectDelegate 	KeyUp;
+
 	void AddChild(VWidget*);
 	void RemoveChild(VWidget*);
 
@@ -296,6 +299,18 @@ public:
 		P_PASS_SELF;
 		P_PASS_FLOAT(DeltaTime);
 		EV_RET_VOID(NAME_Tick);
+	}
+	virtual bool OnKeyDown(int Key)
+	{
+		P_PASS_SELF;
+		P_PASS_INT(Key);
+		EV_RET_BOOL(NAME_OnKeyDown);
+	}
+	virtual bool OnKeyUp(int Key)
+	{
+		P_PASS_SELF;
+		P_PASS_INT(Key);
+		EV_RET_BOOL(NAME_OnKeyUp);
 	}
 
 	void DrawPic(int, int, int, float = 1.0);

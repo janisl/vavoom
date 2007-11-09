@@ -55,7 +55,7 @@ void ActivateSlot()
 {
 }
 
-bool Key(int key)
+bool OnKeyDown(int key)
 {
 	int Len;
 	

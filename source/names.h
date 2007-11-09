@@ -179,6 +179,8 @@ REGISTER_NAME(OnFocusReceived)
 REGISTER_NAME(OnFocusLost)
 REGISTER_NAME(OnDraw)
 REGISTER_NAME(OnPostDraw)
+REGISTER_NAME(OnKeyDown)
+REGISTER_NAME(OnKeyUp)
 
 //	Lump names
 REGISTER_NAME(s_start)

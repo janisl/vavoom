@@ -63,7 +63,7 @@ void OnDraw()
 	}
 }
 
-bool Key(int key)
+bool OnKeyDown(int key)
 {
 	int key1;
 	int key2;

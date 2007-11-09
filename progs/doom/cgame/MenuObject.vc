@@ -25,11 +25,6 @@
 
 class MenuObject : Widget;
 
-bool Key(int key)
-{
-	return false;
-}
-
 defaultproperties
 {
 	Width = 320;

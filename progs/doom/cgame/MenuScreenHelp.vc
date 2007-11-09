@@ -60,7 +60,7 @@ void CreateChoices()
 //
 //==========================================================================
 
-bool Key(int key)
+bool OnKeyDown(int key)
 {
 	LocalSound('menu/clear');
 #ifdef DOOM2

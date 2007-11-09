@@ -155,13 +155,8 @@ void CycleNextChoice()
 	CursorMoved();
 }
 
-bool Key(int key)
+bool OnKeyDown(int key)
 {
-	if (Items[CursorPos].Key(key))
-	{
-		return true;
-	}
-
 	switch (key)
 	{
 	case K_DOWNARROW:

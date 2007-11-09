@@ -285,14 +285,8 @@ bool MenuResponder(event_t * event)
 			PushMenuScreen(SpawnMenu(MenuScreenMain));
 			return true;
 		}
-		return false;
 	}
-
-	if (event->type != ev_keydown)
-	{
-		return false;
-	}
-	return CurrentMenuScreen.Key(event->data1);
+	return false;
 }
 
 //==========================================================================

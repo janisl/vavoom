@@ -33,6 +33,7 @@ class VRootWidget : public VWidget
 
 	void DrawWidgets();
 	void TickWidgets(float DeltaTime);
+	bool Responder(event_t* Event);
 
 	static void StaticInit();
 };

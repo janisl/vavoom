@@ -186,7 +186,7 @@ void OnDraw()
 	DrawTextW(64, 72, SpeechText, 640 - 128);
 }
 
-bool Key(int key)
+bool OnKeyDown(int key)
 {
 	switch (key)
 	{
@@ -197,7 +197,7 @@ bool Key(int key)
 		ClGame.PopMenu();
 		return true;
 	}
-	return ::Key(key);
+	return ::OnKeyDown(key);
 }
 
 defaultproperties

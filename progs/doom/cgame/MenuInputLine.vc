@@ -57,7 +57,7 @@ void OnDraw()
 		DrawSlot(10, Value, false);
 }
 
-bool Key(int key)
+bool OnKeyDown(int key)
 {
 	int Len;
 	
