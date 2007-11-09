@@ -228,18 +228,24 @@ final void A_Chase()
 	}
 
 	// turn towards movement direction if not there yet
-	if (MoveDir < 8)
+	// killough 9/7/98: keep facing towards target if strafing or backing out
+	if (strafecount)
+		A_FaceTarget();
+	else
 	{
-		Angles.yaw = itof(ftoi(Angles.yaw / 45.0)) * 45.0;
-		delta = AngleMod180(Angles.yaw - itof(MoveDir) * 45.0);
+		if (MoveDir < 8)
+		{
+			Angles.yaw = itof(ftoi(Angles.yaw / 45.0)) * 45.0;
+			delta = AngleMod180(Angles.yaw - itof(MoveDir) * 45.0);
 
-		if (delta > 0.0)
-		{
-			Angles.yaw = AngleMod360(Angles.yaw - 45.0);
-		}
-		else if (delta < 0.0)
-		{
-			Angles.yaw = AngleMod360(Angles.yaw + 45.0);
+			if (delta > 0.0)
+			{
+				Angles.yaw = AngleMod360(Angles.yaw - 45.0);
+			}
+			else if (delta < 0.0)
+			{
+				Angles.yaw = AngleMod360(Angles.yaw + 45.0);
+			}
 		}
 	}
 
@@ -300,6 +306,9 @@ final void A_Chase()
 				return;	// got a new target
 		}
 	}
+
+	if (strafecount)
+		strafecount--;
 
 	// chase towards player
 	if (--MoveCount < 0 || !StepMove())
