@@ -44,9 +44,9 @@ final void A_Lights()
 states
 {
 Spawn:
-	TFOG ABABCDE 6 Bright
-	TFOG F 6 Bright A_Lights
-	TFOG GHIJ 6 Bright
+	TFOG ABABCD 6 Bright
+	TFOG E 6 Bright A_Lights
+	TFOG FGHIJ 6 Bright 
 	Stop
 }
 

@@ -26,13 +26,35 @@
 class PlasmaBall : Actor
 	__scriptid__(51);
 
+//===========================================================================
+//
+//  A_Particles
+//
+//===========================================================================
+
+final void A_Particles()
+{
+	int i;
+	
+	for (i = 0; i < MAXPLAYERS; i++)
+	{
+		if (!Level.Game.Players[i])
+			continue;
+		if (!Level.Game.Players[i].bSpawned)
+			continue;
+		PlayerEx(Level.Game.Players[i]).ParticleEffect(10, LineSpecialLevelInfo::pt_static, 0, Origin, 10.0,
+				vector(256.0, 256.0, 256.0), 0.3, 20.0, 85.0, RGB(115, 115, 255), 1.0, 2.0);
+	}
+}
+
 states
 {
 Spawn:
 	PLSS AB 6 Bright
 	Loop
 Death:
-	PLSE ABCDE 4 Bright
+	PLSE A 4 Bright A_Particles
+	PLSE BCDE 4 Bright
 	Stop
 }
 

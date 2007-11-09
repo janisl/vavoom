@@ -79,8 +79,17 @@ final void A_BFGSpray()
 
 final void A_Particles()
 {
-	ParticleEffect(1024, LineSpecialLevelInfo::pt_static, 0, Origin, 16.0,
-			vector(512.0, 512.0, 512.0), 0.8, 40.0, RGB(95, 207, 87), 1.0, 2.0);
+	int i;
+	
+	for (i = 0; i < MAXPLAYERS; i++)
+	{
+		if (!Level.Game.Players[i])
+			continue;
+		if (!Level.Game.Players[i].bSpawned)
+			continue;
+		PlayerEx(Level.Game.Players[i]).ParticleEffect(256, LineSpecialLevelInfo::pt_static, 0, Origin, 10.0,
+				vector(384.0, 384.0, 256.0), 0.3, 14.0, 80.0, RGB(95, 207, 87), 1.5, 2.0);
+	}
 }
 
 states

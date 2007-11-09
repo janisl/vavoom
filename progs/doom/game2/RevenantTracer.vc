@@ -98,9 +98,10 @@ defaultproperties
 	bActivatePCross = true;
 	bNoTeleport = true;
 	bRandomise = true;
+	bDynamicLight = true;
+	bLeaveTrail = true;
 	SightSound = 'skeleton/attack';
 	DeathSound = 'skeleton/tracex';
-	bDynamicLight = true;
 	DLightColour = RGB(155, 51, 51);
 	DLightRadius = 118.0;
 }

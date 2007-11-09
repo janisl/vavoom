@@ -218,54 +218,6 @@ int P_Massacre()
 
 //==========================================================================
 //
-//  UpdateParticle
-//
-//==========================================================================
-
-void UpdateParticle(particle_t * p, float DeltaTime)
-{
-	float time2, time3;
-	float dvel;
-	float grav;
-
-	time3 = DeltaTime * 15.0;
-	time2 = DeltaTime * 10.0;	// 15;
-	dvel = 4.0 * DeltaTime;
-	grav = 0.0;	//frametime * sv_gravity.value * 0.05;
-
-	switch (p->type)
-	{
-	case pt_static:
-		break;
-
-	case pt_explode:
-		p->ramp += time2;
-		if (p->ramp >= 16.0)
-			p->die = -1.0;
-		else
-			p->colour = LineSpecialGameInfo.default.ramp1[ftoi(p->ramp)];
-		p->vel.x += p->vel.x * dvel;
-		p->vel.y += p->vel.y * dvel;
-		p->vel.z += p->vel.z * dvel;
-		p->vel.z -= grav;
-		break;
-
-	case pt_explode2:
-		p->ramp += time3;
-		if (p->ramp >= 16.0)
-			p->die = -1.0;
-		else
-			p->colour = LineSpecialGameInfo.default.ramp2[ftoi(p->ramp)];
-		p->vel.x -= p->vel.x * DeltaTime;
-		p->vel.y -= p->vel.y * DeltaTime;
-		p->vel.z -= p->vel.z * DeltaTime;
-		p->vel.z -= grav;
-		break;
-	}
-}
-
-//==========================================================================
-//
 //	GetDehackedItemType
 //
 //==========================================================================

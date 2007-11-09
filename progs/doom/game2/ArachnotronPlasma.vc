@@ -26,13 +26,35 @@
 class ArachnotronPlasma : Actor
 	__scriptid__(129);
 
+//===========================================================================
+//
+//  A_Particles
+//
+//===========================================================================
+
+final void A_Particles()
+{
+	int i;
+	
+	for (i = 0; i < MAXPLAYERS; i++)
+	{
+		if (!Level.Game.Players[i])
+			continue;
+		if (!Level.Game.Players[i].bSpawned)
+			continue;
+		PlayerEx(Level.Game.Players[i]).ParticleEffect(10, LineSpecialLevelInfo::pt_static, 0, Origin, 10.0,
+				vector(384.0, 384.0, 256.0), 0.3, 20.0, 85.0, RGB(215, 187, 67), 1.0, 2.0);
+	}
+}
+
 states
 {
 Spawn:
 	APLS AB 5 Bright
 	Loop
 Death:
-	APBX ABCDE 5 Bright
+	APBX A 5 Bright A_Particles
+	APBX BCDE 5 Bright
 	Stop
 }
 
