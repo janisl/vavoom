@@ -49,6 +49,7 @@ struct particle_t
 	//	Handled by refresh
 	particle_t*	next;	//	next in the list
 	TVec		vel;	//	velocity
+	TVec		accel;	//	acceleration
 	float		die;	//	cl.time when particle will be removed
 	int			type;
 	float		ramp;
