@@ -23,22 +23,22 @@
 //**
 //**************************************************************************
 
-class MenuScreen : MenuObject;
+class MenuScreen : Widget;
 
 const int MAX_MENU_ITEMS	= 32;
 
 ClientGame ClGame;
 
 int NumItems;
-MenuObject Items[MAX_MENU_ITEMS];
+MenuChoice Items[MAX_MENU_ITEMS];
 int CursorPos;
 int CursorPrev;
 
 int ChoicesStartX;
 int ChoicesStartY;
 
-class<MenuObject> SelectorType;
-MenuObject Selector;
+class<Widget> SelectorType;
+Widget Selector;
 
 string Title;
 int TitleX;
@@ -46,13 +46,13 @@ int TitleY;
 
 void OnChildAdded(Widget Child)
 {
-	if (MenuObject(Child))
+	if (MenuChoice(Child))
 	{
 		if (NumItems >= MAX_MENU_ITEMS)
 		{
 			FatalError("Too many menu items");
 		}
-		Items[NumItems++] = MenuObject(Child);
+		Items[NumItems++] = MenuChoice(Child);
 	}
 	::OnChildAdded(Child);
 }
@@ -77,7 +77,7 @@ void CreateSelector()
 {
 	if (SelectorType)
 	{
-		Selector = MenuObject(NewChild(SelectorType));
+		Selector = NewChild(SelectorType);
 	}
 }
 
@@ -196,6 +196,8 @@ defaultproperties
 {
 	X = 160;
 	Y = 140;
+	Width = 320;
+	Height = 200;
 	TitleX = 160;
 	TitleY = 24;
 	Focusable = true;

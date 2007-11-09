@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MenuStaticAnim : MenuObject;
+class MenuStaticAnim : Widget;
 
 int Speed;
 int NumFrames;
@@ -69,4 +69,6 @@ void OnDraw()
 
 defaultproperties
 {
+	Width = 320;
+	Height = 200;
 }

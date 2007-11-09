@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MenuSelector_Spinner : MenuObject;
+class MenuSelector_Spinner : Widget;
 
 int selector_pics[8];
 float Time;
@@ -60,4 +60,6 @@ void SetPos(int X, int Y)
 
 defaultproperties
 {
+	Width = 320;
+	Height = 200;
 }

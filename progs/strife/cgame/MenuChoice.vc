@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MenuChoice : MenuObject;
+class MenuChoice : Widget;
 
 int pic_M_LSLEFT;
 int pic_M_LSCNTR;
@@ -84,4 +84,6 @@ int DrawSlot(int y, string text, bool entering)
 defaultproperties
 {
 	Focusable = true;
+	Width = 320;
+	Height = 200;
 }

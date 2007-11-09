@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MenuSelector_Skull : MenuObject;
+class MenuSelector_Skull : Widget;
 
 int selector_pics[2];
 float Time;
@@ -55,4 +55,6 @@ void SetPos(int X, int Y)
 
 defaultproperties
 {
+	Width = 320;
+	Height = 200;
 }

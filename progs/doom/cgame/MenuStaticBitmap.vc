@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MenuStaticBitmap : MenuObject;
+class MenuStaticBitmap : Widget;
 
 name PicName;
 int Handle;
@@ -44,4 +44,6 @@ void OnDraw()
 
 defaultproperties
 {
+	Width = 320;
+	Height = 200;
 }

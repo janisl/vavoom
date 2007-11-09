@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MenuSelector_SmallLeft : MenuObject;
+class MenuSelector_SmallLeft : Widget;
 
 void OnCreate()
 {
@@ -40,4 +40,6 @@ void OnDraw()
 
 defaultproperties
 {
+	Width = 320;
+	Height = 200;
 }

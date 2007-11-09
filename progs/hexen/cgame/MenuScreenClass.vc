@@ -25,12 +25,12 @@
 
 class MenuScreenClass : MenuScreen;
 
-MenuObject		FighterBox;
-MenuObject		FighterWalk;
-MenuObject		ClericBox;
-MenuObject		ClericWalk;
-MenuObject		MageBox;
-MenuObject		MageWalk;
+Widget		FighterBox;
+Widget		FighterWalk;
+Widget		ClericBox;
+Widget		ClericWalk;
+Widget		MageBox;
+Widget		MageWalk;
 
 //==========================================================================
 //
@@ -45,10 +45,10 @@ void CreateChoices()
 
 	currentY = ChoicesStartY;
 
-	FighterBox = MenuObject(NewChild(MenuFighterBox));
+	FighterBox = NewChild(MenuFighterBox);
 	FighterBox.SetPos(174, 28);
 
-	FighterWalk = MenuObject(NewChild(MenuFighterWalk));
+	FighterWalk = NewChild(MenuFighterWalk);
 	FighterWalk.SetPos(174 + 24, 28 + 12);
 
 	Btn = MenuTextButton(NewChild(MenuBigTextButton));
@@ -59,11 +59,11 @@ void CreateChoices()
 	Btn.Activated = FighterActivate;
 	currentY += Btn.Height;
 
-	ClericBox = MenuObject(NewChild(MenuClericBox));
+	ClericBox = NewChild(MenuClericBox);
 	ClericBox.SetPos(174, 28);
 	ClericBox.Hide();
 
-	ClericWalk = MenuObject(NewChild(MenuClericWalk));
+	ClericWalk = NewChild(MenuClericWalk);
 	ClericWalk.SetPos(174 + 24, 28 + 12);
 	ClericWalk.Hide();
 
@@ -75,11 +75,11 @@ void CreateChoices()
 	Btn.Activated = ClericActivate;
 	currentY += Btn.Height;
 
-	MageBox = MenuObject(NewChild(MenuMageBox));
+	MageBox = NewChild(MenuMageBox);
 	MageBox.SetPos(174, 28);
 	MageBox.Hide();
 
-	MageWalk = MenuObject(NewChild(MenuMageWalk));
+	MageWalk = NewChild(MenuMageWalk);
 	MageWalk.SetPos(174 + 24, 28 + 12);
 	MageWalk.Hide();
 

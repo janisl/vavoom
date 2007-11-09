@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MenuTitleText : MenuObject;
+class MenuTitleText : Widget;
 
 string Text;
 
@@ -42,4 +42,6 @@ void OnDraw()
 
 defaultproperties
 {
+	Width = 320;
+	Height = 200;
 }

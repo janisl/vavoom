@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MenuModel : MenuObject;
+class MenuModel : Widget;
 
 TVec Origin;
 float Angle;
@@ -45,4 +45,6 @@ void OnDraw()
 defaultproperties
 {
 	Skin = "";
+	Width = 320;
+	Height = 200;
 }

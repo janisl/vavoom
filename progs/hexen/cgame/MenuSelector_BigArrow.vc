@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MenuSelector_BigArrow : MenuObject;
+class MenuSelector_BigArrow : Widget;
 
 int selector_pics[2];
 float Time;
@@ -54,4 +54,6 @@ void SetPos(int X, int Y)
 
 defaultproperties
 {
+	Width = 320;
+	Height = 200;
 }
