@@ -95,7 +95,7 @@ replication
 		Cheats, ReadyWeapon, InvFirst, InvPtr, InventoryTime, ArtifactFlash;
 
 	unreliable if (!bIsClient)
-		ClientGunShot, ClientExplosion, ClientParticleExplosion;
+		ParticleEffect, ClientExplosion, ClientParticleExplosion;
 }
 
 //==========================================================================
@@ -1395,42 +1395,15 @@ final void UpdateRevealedMap()
 
 //==========================================================================
 //
-//  ClientGunShot
+//  ParticleEffect
 //
 //==========================================================================
 
-void ClientGunShot(TVec org)
+void ParticleEffect(int count, int type1, int type2, TVec origin, float ornd,
+	TVec velocity, float vrnd, float acceleration, float grav, int colour, float duration, float ramp)
 {
-	int i;
-	particle_t *p;
-	int c;
-
-	for (i = 0; i < 20; i++)
-	{
-		p = Level.NewParticle();
-		if (!p)
-			return;
-
-		p->org = org;
-		if (i & 1)
-		{
-			c = P_Random() >> 1;
-			p->colour = RGB(c, c, c);
-			p->type = LineSpecialLevelInfo::pt_static;
-		}
-		else
-		{
-			c = P_Random() >> 1;
-			p->colour = RGB(32 + c, 32 + c, c >> 4);
-			p->ramp = Random() * 4.0;
-			p->type = LineSpecialLevelInfo::pt_explode2;
-		}
-		p->die = Level.XLevel.Time + 0.5 * Random();
-		p->vel.x = 32.0 * (Random() - 0.5);
-		p->vel.y = 32.0 * (Random() - 0.5);
-		p->vel.z = 32.0 * (Random() - 0.5);
-		p->gravity = 40.0;
-	}
+	Level.ParticleEffect(count, type1, type2, origin, ornd, velocity, vrnd, acceleration,
+				grav, colour, duration, ramp);
 }
 
 //==========================================================================
@@ -1485,6 +1458,7 @@ void ClientParticleExplosion(int colour, float rad, TVec org)
 		p->vel.x = (Random() * 512.0) - 256.0;
 		p->vel.y = (Random() * 512.0) - 256.0;
 		p->vel.z = (Random() * 512.0) - 256.0;
+//		p->accel = (Random() * 512.0) - 256.0;
 		p->gravity = 40.0 + (Random() * 512.0) - 256.0;
 	}
 
@@ -1507,40 +1481,98 @@ bool CheckFriendlyFire(EntityEx source, int damage)
 	return false;
 }
 
+//==========================================================================
+//
+//	ArmorAbsorbDamage
+//
+//==========================================================================
+
 int ArmorAbsorbDamage(EntityEx inflictor, EntityEx source, int damage,
 	name DmgType)
 {
 	return damage;
 }
 
+//==========================================================================
+//
+//	IsWeaponAlwaysExtremeDeath
+//
+//==========================================================================
+
 bool IsWeaponAlwaysExtremeDeath()
 {
 	return false;
 }
 
+//==========================================================================
+//
+//	StartDeathSlideShow
+//
+//==========================================================================
+
 void StartDeathSlideShow()
 {
 }
 
+//==========================================================================
+//
+//	GotAmmo
+//
+//==========================================================================
+
 void GotAmmo(Ammo NewAmmo)
 {
 }
+
+//==========================================================================
+//
+//	GetInvulnerabilityMode
+//
+//==========================================================================
 
 name GetInvulnerabilityMode()
 {
 	return '';
 }
 
+//==========================================================================
+//
+//	GetMaxHealth
+//
+//==========================================================================
+
 int GetMaxHealth()
 {
 	return 0;
 }
 
+//==========================================================================
+//
+//	AdjustSpeed
+//
+//==========================================================================
+
 void AdjustSpeed(out float forward, out float side)
 {
 }
 
+//==========================================================================
+//
+//	UseFlyPower
+//
+//==========================================================================
+
 void UseFlyPower()
+{
+}
+
+//==========================================================================
+//
+//	Damaged
+//
+//==========================================================================
+
+void Damaged(EntityEx inflictor)
 {
 }
 
