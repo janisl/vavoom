@@ -1070,6 +1070,17 @@ void CopyMThing(mthing_t * from, mthing_t * to)
 
 //==========================================================================
 //
+//  ParticleEffect
+//
+//==========================================================================
+
+void ParticleEffect(int count, int type1, int type2, TVec origin, float ornd,
+	TVec velocity, float vrnd, float acceleration, float grav, int colour, float duration, float ramp)
+{
+}
+
+//==========================================================================
+//
 //  UpdateParticle
 //
 //==========================================================================

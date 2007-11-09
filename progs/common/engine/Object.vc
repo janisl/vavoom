@@ -1098,6 +1098,7 @@ struct particle_t
 	int colour;
 	particle_t *next;
 	TVec vel;
+	TVec accel;
 	float die;
 	int type;
 	float ramp;
