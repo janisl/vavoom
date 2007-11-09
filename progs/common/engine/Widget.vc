@@ -202,6 +202,7 @@ native final bool IsFocusable();
 native final void SetCurrentFocusChild(Widget NewFocus);
 native final Widget GetCurrentFocus();
 native final bool IsFocus(optional bool Recurse);
+native final void SetFocus();
 
 native final void DrawPic(int X, int Y, int Handle, optional float Alpha);
 native final void DrawShadowedPic(int X, int Y, int Handle);

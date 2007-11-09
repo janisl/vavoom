@@ -123,6 +123,10 @@ void VWidget::AddChild(VWidget* NewChild)
 	}
 	LastChildWidget = NewChild;
 	OnChildAdded(NewChild);
+	if (!CurrentFocusChild)
+	{
+		SetCurrentFocusChild(NewChild);
+	}
 	unguard;
 }
 
@@ -155,6 +159,10 @@ void VWidget::RemoveChild(VWidget* InChild)
 	InChild->NextWidget = NULL;
 	InChild->ParentWidget = NULL;
 	OnChildRemoved(InChild);
+	if (CurrentFocusChild == InChild)
+	{
+		FindNewFocus();
+	}
 	unguard;
 }
 
@@ -366,9 +374,21 @@ void VWidget::SetVisibility(bool NewVisibility)
 	if (!!(WidgetFlags & WF_IsVisible) != NewVisibility)
 	{
 		if (NewVisibility)
+		{
 			WidgetFlags |= WF_IsVisible;
+			if (ParentWidget && !ParentWidget->CurrentFocusChild)
+			{
+				ParentWidget->SetCurrentFocusChild(this);
+			}
+		}
 		else
+		{
 			WidgetFlags &= ~WF_IsVisible;
+			if (ParentWidget && ParentWidget->CurrentFocusChild == this)
+			{
+				ParentWidget->FindNewFocus();
+			}
+		}
 		OnVisibilityChanged(NewVisibility);
 	}
 	unguard;
@@ -386,9 +406,21 @@ void VWidget::SetEnabled(bool NewEnabled)
 	if (!!(WidgetFlags & WF_IsEnabled) != NewEnabled)
 	{
 		if (NewEnabled)
+		{
 			WidgetFlags |= WF_IsEnabled;
+			if (ParentWidget && !ParentWidget->CurrentFocusChild)
+			{
+				ParentWidget->SetCurrentFocusChild(this);
+			}
+		}
 		else
+		{
 			WidgetFlags &= ~WF_IsEnabled;
+			if (ParentWidget && ParentWidget->CurrentFocusChild == this)
+			{
+				ParentWidget->FindNewFocus();
+			}
+		}
 		OnEnableChanged(NewEnabled);
 	}
 	unguard;
@@ -406,9 +438,21 @@ void VWidget::SetFocusable(bool NewFocusable)
 	if (!!(WidgetFlags & WF_IsFocusable) != NewFocusable)
 	{
 		if (NewFocusable)
+		{
 			WidgetFlags |= WF_IsFocusable;
+			if (ParentWidget && !ParentWidget->CurrentFocusChild)
+			{
+				ParentWidget->SetCurrentFocusChild(this);
+			}
+		}
 		else
+		{
 			WidgetFlags &= ~WF_IsFocusable;
+			if (ParentWidget && ParentWidget->CurrentFocusChild == this)
+			{
+				ParentWidget->FindNewFocus();
+			}
+		}
 		OnFocusableChanged(NewFocusable);
 	}
 	unguard;
@@ -430,9 +474,9 @@ void VWidget::SetCurrentFocusChild(VWidget* NewFocus)
 	}
 
 	//	Make sure it's visible, enabled and focusable.
-	if (!(NewFocus->WidgetFlags & WF_IsVisible) ||
+	if (NewFocus && (!(NewFocus->WidgetFlags & WF_IsVisible) ||
 		!(NewFocus->WidgetFlags & WF_IsEnabled) ||
-		!(NewFocus->WidgetFlags & WF_IsFocusable))
+		!(NewFocus->WidgetFlags & WF_IsFocusable)))
 	{
 		return;
 	}
@@ -445,7 +489,10 @@ void VWidget::SetCurrentFocusChild(VWidget* NewFocus)
 
 	//	Make it the current focus.
 	CurrentFocusChild = NewFocus;
-	CurrentFocusChild->OnFocusReceived();
+	if (CurrentFocusChild)
+	{
+		CurrentFocusChild->OnFocusReceived();
+	}
 	unguard;
 }
 
@@ -476,6 +523,57 @@ bool VWidget::IsFocus(bool Recurse) const
 	{
 		return ParentWidget->CurrentFocusChild == this;
 	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VWidget::SetFocus
+//
+//==========================================================================
+
+void VWidget::SetFocus()
+{
+	guard(VWidget::SetFocus);
+	if (ParentWidget)
+	{
+		ParentWidget->SetCurrentFocusChild(this);
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VWidget::FindNewFocus
+//
+//==========================================================================
+
+void VWidget::FindNewFocus()
+{
+	guard(VWidget::FindNewFocus);
+	for (VWidget* W = CurrentFocusChild->NextWidget; W; W = W->NextWidget)
+	{
+		if ((W->WidgetFlags & WF_IsFocusable) &&
+			(W->WidgetFlags & WF_IsVisible) &&
+			(W->WidgetFlags & WF_IsEnabled))
+		{
+			SetCurrentFocusChild(W);
+			return;
+		}
+	}
+
+	for (VWidget* W = CurrentFocusChild->PrevWidget; W; W = W->PrevWidget)
+	{
+		if ((W->WidgetFlags & WF_IsFocusable) &&
+			(W->WidgetFlags & WF_IsVisible) &&
+			(W->WidgetFlags & WF_IsEnabled))
+		{
+			SetCurrentFocusChild(W);
+			return;
+		}
+	}
+
+	SetCurrentFocusChild(NULL);
 	unguard;
 }
 
@@ -1026,6 +1124,12 @@ IMPLEMENT_FUNCTION(VWidget, IsFocus)
 	P_GET_BOOL_OPT(Recurse, true);
 	P_GET_SELF;
 	RET_BOOL(Self->IsFocus(Recurse));
+}
+
+IMPLEMENT_FUNCTION(VWidget, SetFocus)
+{
+	P_GET_SELF;
+	Self->SetFocus();
 }
 
 IMPLEMENT_FUNCTION(VWidget, DrawPic)

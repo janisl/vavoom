@@ -47,11 +47,9 @@ void CreateChoices()
 
 	FighterBox = MenuObject(NewChild(MenuFighterBox));
 	FighterBox.SetPos(174, 28);
-	FighterBox.Hide();
 
 	FighterWalk = MenuObject(NewChild(MenuFighterWalk));
 	FighterWalk.SetPos(174 + 24, 28 + 12);
-	FighterWalk.Hide();
 
 	Btn = MenuTextButton(NewChild(MenuBigTextButton));
 	Btn.SetPos(ChoicesStartX, currentY);

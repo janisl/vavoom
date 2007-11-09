@@ -442,6 +442,7 @@ void PushMenuScreen(MenuScreen menu)
 	}
 
 	CurrentMenuScreen = menu;
+	CurrentMenuScreen.SetFocus();
 }
 
 //==========================================================================
@@ -463,6 +464,7 @@ void PopMenu()
 		CurrentMenuScreen = menu_stack[menu_sp - 1];
 		CurrentMenuScreen.Show();
 		CurrentMenuScreen.Raise();
+		CurrentMenuScreen.SetFocus();
 		LocalSound('menu/backup');
 	}
 	else

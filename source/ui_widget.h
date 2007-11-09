@@ -95,6 +95,8 @@ private:
 	void DrawTree();
 	void TickTree(float DeltaTime);
 
+	void FindNewFocus();
+
 	bool TransferAndClipRect(float&, float&, float&, float&, float&, float&,
 		float&, float&) const;
 
@@ -222,6 +224,7 @@ public:
 		return CurrentFocusChild;
 	}
 	bool IsFocus(bool Recurse = true) const;
+	void SetFocus();
 
 	void OnCreate()
 	{
@@ -340,6 +343,7 @@ public:
 	DECLARE_FUNCTION(SetCurrentFocusChild)
 	DECLARE_FUNCTION(GetCurrentFocus)
 	DECLARE_FUNCTION(IsFocus)
+	DECLARE_FUNCTION(SetFocus)
 
 	DECLARE_FUNCTION(DrawPic)
 	DECLARE_FUNCTION(DrawShadowedPic)
