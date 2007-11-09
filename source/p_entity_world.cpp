@@ -692,7 +692,7 @@ bool VEntity::CheckPosition(TVec Pos)
 // hang over dropoffs.
 //=============================================================================
 
-bool VEntity::PIT_AvoidDropoff(void* arg, line_t* line)
+float VEntity::PIT_AvoidDropoff(void* arg, line_t* line)
 {
 	guard(VEntity::PIT_AvoidDropoff);
 	float				front;
@@ -720,22 +720,18 @@ bool VEntity::PIT_AvoidDropoff(void* arg, line_t* line)
 		if ((back == a.floorz) && (front < a.floorz - a.thing->MaxDropoffHeight))
 		{
 			// front side dropoff
-			a.angle = matan(line->normal.y, line->normal.x);
+			return a.angle = matan(line->normal.y, line->normal.x);
 		}
 		else if ((front == a.floorz) && (back < a.floorz - a.thing->MaxDropoffHeight))
 		{
 			// back side dropoff
-			a.angle = matan(-line->normal.y, -line->normal.x);
+			return a.angle = matan(-line->normal.y, -line->normal.x);
 		}
 		else
-			return true;
-		// Move away from dropoff at a standard speed.
-		// Multiple contacted linedefs are cumulative (e.g. hanging over corner)
-		a.deltax -= sin(a.angle) * 32.0;
-		a.deltay += cos(a.angle) * 32.0;
+			return 0.0;
 	}
 
-	return true;
+	return 0.0;
 	unguard;
 }
 
@@ -747,7 +743,7 @@ bool VEntity::PIT_AvoidDropoff(void* arg, line_t* line)
 //
 //=============================================================================
 
-bool VEntity::CheckDropOff(avoiddropoff_t& a)
+void VEntity::CheckDropOff(avoiddropoff_t& a)
 {
 	guard(VEntity::CheckDropOff);
 	int xl;
@@ -784,15 +780,15 @@ bool VEntity::CheckDropOff(avoiddropoff_t& a)
 			line_t*		ld;
 			for (VBlockLinesIterator It(this, bx, by, &ld); It.GetNext(); )
 			{
-				if (!PIT_AvoidDropoff(&a, ld))
-				{
-					return true;
-				}
+				// Move away from dropoff at a standard speed.
+				// Multiple contacted linedefs are cumulative (e.g. hanging over corner)
+				a.deltax -= sin(PIT_AvoidDropoff(&a, ld)) * 32.0;
+				a.deltay += cos(PIT_AvoidDropoff(&a, ld)) * 32.0;
 			}
 		}
 	}
 
-	return false;
+	return;
 	unguard;
 }
 
@@ -1185,21 +1181,24 @@ bool VEntity::TryMove(tmtrace_t& tmtrace, TVec newPos)
 				return false;
 			}
 		}
-		if (tmtrace.FloorZ - Origin.z > MaxStepHeight && !(EntityFlags & EF_IgnoreFloorStep))
+		if (!(EntityFlags & EF_IgnoreFloorStep))
 		{
-			// Too big a step up
-			eventPushLine(&tmtrace);
-			return false;
-		}
-		if (Origin.z < tmtrace.FloorZ)
-		{
-			// Check to make sure there's nothing in the way for the step up
-			tztrace_t tztrace;
-			good = TestMobjZ(tztrace);
-			if(!good)
+			if (tmtrace.FloorZ - Origin.z > MaxStepHeight)
 			{
+				// Too big a step up
 				eventPushLine(&tmtrace);
 				return false;
+			}
+			if (Origin.z < tmtrace.FloorZ)
+			{
+				// Check to make sure there's nothing in the way for the step up
+				tztrace_t tztrace;
+				good = TestMobjZ(tztrace);
+				if(!good)
+				{
+					eventPushLine(&tmtrace);
+					return false;
+				}
 			}
 		}
 // Only Heretic
@@ -1211,17 +1210,17 @@ bool VEntity::TryMove(tmtrace_t& tmtrace, TVec newPos)
 		if ((!(EntityFlags & EF_DropOff) && !(EntityFlags & EF_Float)) ||
 			(EntityFlags & EF_AvoidingDropoff))
 		{
-			float floorz = tmtrace.FloorZ;
-
-			// [RH] If the thing is standing on something, use its current z as the floorz.
-			// This is so that it does not walk off of things onto a drop off.
-			if (EntityFlags & EF_OnMobj)
-			{
-				floorz = MAX(Origin.z, tmtrace.FloorZ);
-			}
-
 			if (!(EntityFlags & EF_AvoidingDropoff))
 			{
+				float floorz = tmtrace.FloorZ;
+
+				// [RH] If the thing is standing on something, use its current z as the floorz.
+				// This is so that it does not walk off of things onto a drop off.
+				if (EntityFlags & EF_OnMobj)
+				{
+					floorz = MAX(Origin.z, tmtrace.FloorZ);
+				}
+
 				if ((floorz - tmtrace.DropOffZ > MaxDropoffHeight) &&
 					!(EntityFlags & EF_Blasted))
 				{
@@ -1232,7 +1231,8 @@ bool VEntity::TryMove(tmtrace_t& tmtrace, TVec newPos)
 			else
 			{
 				// special logic to move a monster off a dropoff
-				if (FloorZ - floorz > MaxDropoffHeight ||
+				// this intentionally does not check for standing on things.
+				if (FloorZ - tmtrace.FloorZ > MaxDropoffHeight ||
 					DropOffZ - tmtrace.DropOffZ > MaxDropoffHeight)
 					return false;
 			}
@@ -2103,7 +2103,8 @@ IMPLEMENT_FUNCTION(VEntity, CheckDropOff)
 {
 	P_GET_PTR(avoiddropoff_t, a);
 	P_GET_SELF;
-	RET_BOOL(Self->CheckDropOff(*a));
+//	RET_BOOL(Self->CheckDropOff(*a));
+	Self->CheckDropOff(*a);
 }
 
 IMPLEMENT_FUNCTION(VEntity, CheckPosition)
