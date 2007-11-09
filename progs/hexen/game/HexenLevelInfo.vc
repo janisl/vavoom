@@ -35,6 +35,11 @@ int bodyqueslot;
 EntityEx corpseQueue[CORPSEQUEUESIZE];
 int corpseQueueSlot;
 
+enum
+{
+	pt_ice_chunk
+};
+
 //==========================================================================
 //
 //  ExecuteActionSpecial
@@ -183,6 +188,29 @@ int GetPClassSpawnFlags()
 	}
 #endif
 	return 0;
+}
+
+//==========================================================================
+//
+//  UpdateParticle
+//
+//==========================================================================
+
+void UpdateParticle(particle_t * p, float DeltaTime)
+{
+	float grav;
+
+	grav = DeltaTime * p->gravity /*sv_gravity.value * 0.05*/;
+	p->accel.z -= grav;
+	
+	switch (p->type)
+	{
+	case pt_ice_chunk:
+		p->vel.x -= p->vel.x * DeltaTime;
+		p->vel.y -= p->vel.y * DeltaTime;
+		p->vel.z += p->accel.z * DeltaTime;
+		break;
+	}
 }
 
 defaultproperties

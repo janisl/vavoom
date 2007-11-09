@@ -281,4 +281,5 @@ defaultproperties
 	AxeRange = 9.0 * Actor::MELEERANGE / 4.0;
 	PickupMessage = "$txt_weapon_f2";
 	BotCombatDist = 48.0;
+	bBotMelee = true;
 }
