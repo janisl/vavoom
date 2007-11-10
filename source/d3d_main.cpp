@@ -937,7 +937,7 @@ void VDirect3DDrawer::EndView()
 
 	for (int i = 0; i < NUM_CSHIFTS; i++)
 	{
-		if (!cl->CShifts[i])
+		if (!cl || !cl->CShifts[i])
 		{
 			continue;
 		}
