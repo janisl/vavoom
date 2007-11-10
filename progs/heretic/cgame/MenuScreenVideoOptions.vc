@@ -42,7 +42,7 @@ void CreateChoices()
 	currentY = ChoicesStartY;
 
 	Slider = MenuChoiceSlider(NewChild(MenuChoiceSlider));
-	Slider.SetPos(ChoicesStartX, currentY);
+	Slider.SetOrigin(ChoicesStartX, currentY);
 	Slider.Text = "Screen size";
 	Slider.MinValue = 3.0;
 	Slider.MaxValue = 11.0;
@@ -51,7 +51,7 @@ void CreateChoices()
 	currentY += Slider.Height;
 
 	Slider = MenuChoiceSlider(NewChild(MenuChoiceSlider));
-	Slider.SetPos(ChoicesStartX, currentY);
+	Slider.SetOrigin(ChoicesStartX, currentY);
 	Slider.Text = "Brightness";
 	Slider.MaxValue = 4.0;
 	Slider.SetInitialValue(itof(GetCvar('brightness')));
@@ -59,7 +59,7 @@ void CreateChoices()
 	currentY += Slider.Height;
 
 	Slider = MenuChoiceSlider(NewChild(MenuChoiceSlider));
-	Slider.SetPos(ChoicesStartX, currentY);
+	Slider.SetOrigin(ChoicesStartX, currentY);
 	Slider.Text = "Menu darkness";
 	Slider.ValueDelta = 0.1;
 	Slider.SetInitialValue(GetCvarF('menu_darkening'));
@@ -67,7 +67,7 @@ void CreateChoices()
 	currentY += Slider.Height;
 
 	Enum = MenuChoiceEnum(NewChild(MenuChoiceEnum));
-	Enum.SetPos(ChoicesStartX, currentY);
+	Enum.SetOrigin(ChoicesStartX, currentY);
 	Enum.Text = "Crosshair";
 	Enum.AddItem("None");
 	Enum.AddItem("Cross");
@@ -78,7 +78,7 @@ void CreateChoices()
 	currentY += Enum.Height;
 
 	Slider = MenuChoiceSlider(NewChild(MenuChoiceSlider));
-	Slider.SetPos(ChoicesStartX, currentY);
+	Slider.SetOrigin(ChoicesStartX, currentY);
 	Slider.Text = "Crosshair Transparency";
 	Slider.ValueDelta = 0.1;
 	Slider.SetInitialValue(GetCvarF('croshair_alpha'));
@@ -86,35 +86,35 @@ void CreateChoices()
 	currentY += Slider.Height;
 
 	Enum = MenuChoiceEnum(NewChild(MenuChoice_OnOff));
-	Enum.SetPos(ChoicesStartX, currentY);
+	Enum.SetOrigin(ChoicesStartX, currentY);
 	Enum.Text = "High Resolution Textures";
 	Enum.SetInitialValue(GetCvar('r_hirestex'));
 	Enum.ValueChanging = ChangeHiRestex;
 	currentY += Enum.Height;
 
 	Enum = MenuChoiceEnum(NewChild(MenuChoice_OnOff));
-	Enum.SetPos(ChoicesStartX, currentY);
+	Enum.SetOrigin(ChoicesStartX, currentY);
 	Enum.Text = "Render Enemy Models";
 	Enum.SetInitialValue(GetCvar('r_models'));
 	Enum.ValueChanging = ChangeModels;
 	currentY += Enum.Height;
 
 	Enum = MenuChoiceEnum(NewChild(MenuChoice_OnOff));
-	Enum.SetPos(ChoicesStartX, currentY);
+	Enum.SetOrigin(ChoicesStartX, currentY);
 	Enum.Text = "Render Weapon Models";
 	Enum.SetInitialValue(GetCvar('r_view_models'));
 	Enum.ValueChanging = ChangeViewModels;
 	currentY += Enum.Height;
 
 	Enum = MenuChoiceEnum(NewChild(MenuChoice_OnOff));
-	Enum.SetPos(ChoicesStartX, currentY);
+	Enum.SetOrigin(ChoicesStartX, currentY);
 	Enum.Text = "Sprites Offset";
 	Enum.SetInitialValue(GetCvar('r_fix_sprite_offsets'));
 	Enum.ValueChanging = ChangeFixSpriteOffsets;
 	currentY += Enum.Height;
 
 	Slider = MenuChoiceSlider(NewChild(MenuChoiceSlider));
-	Slider.SetPos(ChoicesStartX, currentY);
+	Slider.SetOrigin(ChoicesStartX, currentY);
 	Slider.Text = "Sprites Delta";
 	Slider.MinValue = -255.0;
 	Slider.MaxValue = 255.0;
@@ -123,14 +123,14 @@ void CreateChoices()
 	currentY += Slider.Height;
 
 	Enum = MenuChoiceEnum(NewChild(MenuChoice_OnOff));
-	Enum.SetPos(ChoicesStartX, currentY);
+	Enum.SetOrigin(ChoicesStartX, currentY);
 	Enum.Text = "FPS Counter";
 	Enum.SetInitialValue(GetCvar('draw_fps'));
 	Enum.ValueChanging = ChangeDrawFps;
 	currentY += Enum.Height;
 
 	Btn = MenuTextButton(NewChild(MenuSmallTextButton));
-	Btn.SetPos(ChoicesStartX, currentY);
+	Btn.SetOrigin(ChoicesStartX, currentY);
 	Btn.Text = "Advanced Video options";
 	Btn.Activated = ActivateAdvanced;
 }

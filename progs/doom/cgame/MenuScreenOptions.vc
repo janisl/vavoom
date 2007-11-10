@@ -39,43 +39,43 @@ void CreateChoices()
 	currentY = ChoicesStartY;
 
 	Btn = MenuTextButton(NewChild(MenuSmallTextButton));
-	Btn.SetPos(ChoicesStartX, currentY);
+	Btn.SetOrigin(ChoicesStartX, currentY);
 	Btn.Text = "Controls";
 	Btn.Activated = ActivateControls;
 	currentY += Btn.Height;
 
 	Btn = MenuTextButton(NewChild(MenuSmallTextButton));
-	Btn.SetPos(ChoicesStartX, currentY);
+	Btn.SetOrigin(ChoicesStartX, currentY);
 	Btn.Text = "Controls 2";
 	Btn.Activated = ActivateControls2;
 	currentY += Btn.Height;
 
 	Btn = MenuTextButton(NewChild(MenuSmallTextButton));
-	Btn.SetPos(ChoicesStartX, currentY);
+	Btn.SetOrigin(ChoicesStartX, currentY);
 	Btn.Text = "Mouse Options";
 	Btn.Activated = ActivateMouseOpt;
 	currentY += Btn.Height;
 
 	Btn = MenuTextButton(NewChild(MenuSmallTextButton));
-	Btn.SetPos(ChoicesStartX, currentY);
+	Btn.SetOrigin(ChoicesStartX, currentY);
 	Btn.Text = "Screen Resolution";
 	Btn.Activated = ActivateScreenResolution;
 	currentY += Btn.Height;
 
 	Btn = MenuTextButton(NewChild(MenuSmallTextButton));
-	Btn.SetPos(ChoicesStartX, currentY);
+	Btn.SetOrigin(ChoicesStartX, currentY);
 	Btn.Text = "Video options";
 	Btn.Activated = ActivateVideoOpt;
 	currentY += Btn.Height;
 
 	Btn = MenuTextButton(NewChild(MenuSmallTextButton));
-	Btn.SetPos(ChoicesStartX, currentY);
+	Btn.SetOrigin(ChoicesStartX, currentY);
 	Btn.Text = "Sound Settings";
 	Btn.Activated = ActivateSoundOpt;
 	currentY += Btn.Height;
 
 	Btn = MenuTextButton(NewChild(MenuSmallTextButton));
-	Btn.SetPos(ChoicesStartX, currentY);
+	Btn.SetOrigin(ChoicesStartX, currentY);
 	Btn.Text = "Go to console";
 	Btn.Activated = ActivateConsole;
 	currentY += Btn.Height;

@@ -26,6 +26,18 @@
 class RootWidget : Widget
 	native;
 
+//	True if mouse cursor is currently enabled.
+readonly bool				bMouseEnabled;
+
+//	Current mouse cursor position.
+readonly int				MouseX;
+readonly int				MouseY;
+
+//	Current mouse cursor graphic.
+readonly int				MouseCursorPic;
+
+native final void SetMouse(bool MouseOn);
+
 defaultproperties
 {
 }

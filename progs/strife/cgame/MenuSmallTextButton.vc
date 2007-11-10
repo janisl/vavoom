@@ -25,6 +25,25 @@
 
 class MenuSmallTextButton:MenuTextButton;
 
+//==========================================================================
+//
+//  SetOrigin
+//
+//==========================================================================
+
+void SetOrigin(int x, int y)
+{
+	if (TextHAlign == hright)
+	{
+		SetPos(x - 160, y);
+		CursorXOffs = 160;
+	}
+	else
+	{
+		SetPos(x, y);
+	}
+}
+
 defaultproperties
 {
 	TextFont = font_small;

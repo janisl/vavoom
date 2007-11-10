@@ -55,7 +55,7 @@ void OnDraw()
 {
 	T_SetFont(TextFont);
 	T_SetAlign(TextHAlign, TextVAlign);
-	DrawText(0, 0, Text);
+	DrawText(CursorXOffs, 0, Text);
 }
 
 defaultproperties

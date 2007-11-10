@@ -40,6 +40,17 @@ int pic_M_SLDKB;
 
 delegate bool ValueChanging(Object Sender, float NewValue);
 
+//==========================================================================
+//
+//  SetOrigin
+//
+//==========================================================================
+
+void SetOrigin(int x, int y)
+{
+	SetPos(x - 160, y);
+}
+
 float GetInitialValue()
 {
 	return 0.0;
@@ -87,9 +98,9 @@ void OnDraw()
 		T_SetFont(font_yellow);
 	}
 	T_SetAlign(hright, vtop);
-	DrawText(0, 0, Text);
+	DrawText(160, 0, Text);
 
-	xx = 0;
+	xx = 160;
 	DrawPic(xx, 0, pic_M_SLDLT);
 	xx += 32;
 	for (i = 0; i < 12; i++)
@@ -98,7 +109,7 @@ void OnDraw()
 		xx += 8;
 	}
 	DrawPic(xx, 0, pic_M_SLDRT);
-	xx = 30 + ftoi((Value - MinValue) * 100.0 / (MaxValue - MinValue));
+	xx = 160 + 30 + ftoi((Value - MinValue) * 100.0 / (MaxValue - MinValue));
 	DrawPic(xx, 7, pic_M_SLDKB);
 }
 
@@ -140,6 +151,7 @@ bool OnKeyDown(int key)
 defaultproperties
 {
 	Height = 20;
+	CursorXOffs = 160;
 	Value = 0.0;
 	ValueDelta = 1.0;
 	MinValue = 0.0;

@@ -34,6 +34,25 @@ string EnumNames[32];
 
 delegate bool ValueChanging(Object Sender, int NewValue);
 
+//==========================================================================
+//
+//  SetOrigin
+//
+//==========================================================================
+
+void SetOrigin(int x, int y)
+{
+	if (bLeftAlign)
+	{
+		SetPos(x, y);
+	}
+	else
+	{
+		SetPos(x - 160, y);
+		CursorXOffs = 160;
+	}
+}
+
 bool SetNewValue(int newValue)
 {
 	if (ValueChanging)
@@ -82,12 +101,13 @@ void OnDraw()
 	if (bLeftAlign)
 	{
 		T_SetAlign(hleft, vtop);
+		DrawText(0, 0, Text);
 	}
 	else
 	{
 		T_SetAlign(hright, vtop);
+		DrawText(160, 0, Text);
 	}
-	DrawText(0, 0, Text);
 
 	if (bLeftAlign)
 	{
@@ -95,7 +115,7 @@ void OnDraw()
 	}
 	else
 	{
-		xx = 10;
+		xx = 160 + 10;
 	}
 	T_SetAlign(hleft, vtop);
 	DrawText(xx, 0, EnumNames[Value]);

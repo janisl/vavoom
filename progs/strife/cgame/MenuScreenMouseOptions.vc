@@ -40,7 +40,7 @@ void CreateChoices()
 	currentY = ChoicesStartY;
 
 	Slider = MenuChoiceSlider(NewChild(MenuChoiceSlider));
-	Slider.SetPos(ChoicesStartX, currentY);
+	Slider.SetOrigin(ChoicesStartX, currentY);
 	Slider.Text = "Mouse X sensitivity";
 	Slider.ValueDelta = 0.25;
 	Slider.MaxValue = 10.0;
@@ -49,7 +49,7 @@ void CreateChoices()
 	currentY += Slider.Height;
 
 	Slider = MenuChoiceSlider(NewChild(MenuChoiceSlider));
-	Slider.SetPos(ChoicesStartX, currentY);
+	Slider.SetOrigin(ChoicesStartX, currentY);
 	Slider.Text = "Mouse Y sensitivity";
 	Slider.ValueDelta = 0.25;
 	Slider.MaxValue = 10.0;
@@ -58,28 +58,28 @@ void CreateChoices()
 	currentY += Slider.Height;
 
 	Enum = MenuChoiceEnum(NewChild(MenuChoice_OnOff));
-	Enum.SetPos(ChoicesStartX, currentY);
+	Enum.SetOrigin(ChoicesStartX, currentY);
 	Enum.Text = "Mouse look";
 	Enum.SetInitialValue(GetCvar('mouse_look'));
 	Enum.ValueChanging = ChangeMouseLook;
 	currentY += Enum.Height;
 
 	Enum = MenuChoiceEnum(NewChild(MenuChoice_OnOff));
-	Enum.SetPos(ChoicesStartX, currentY);
+	Enum.SetOrigin(ChoicesStartX, currentY);
 	Enum.Text = "Invert mouse";
 	Enum.SetInitialValue(GetCvar('invert_mouse'));
 	Enum.ValueChanging = ChangeInvertMouse;
 	currentY += Enum.Height;
 
 	Enum = MenuChoiceEnum(NewChild(MenuChoice_OnOff));
-	Enum.SetPos(ChoicesStartX, currentY);
+	Enum.SetOrigin(ChoicesStartX, currentY);
 	Enum.Text = "Look spring";
 	Enum.SetInitialValue(GetCvar('lookspring'));
 	Enum.ValueChanging = ChangeLookSpring;
 	currentY += Enum.Height;
 
 	Enum = MenuChoiceEnum(NewChild(MenuChoice_OnOff));
-	Enum.SetPos(ChoicesStartX, currentY);
+	Enum.SetOrigin(ChoicesStartX, currentY);
 	Enum.Text = "Look strafe";
 	Enum.SetInitialValue(GetCvar('lookstrafe'));
 	Enum.ValueChanging = ChangeLookStrafe;

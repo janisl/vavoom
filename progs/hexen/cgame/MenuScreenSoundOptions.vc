@@ -40,7 +40,7 @@ void CreateChoices()
 	currentY = ChoicesStartY;
 
 	Slider = MenuChoiceSlider(NewChild(MenuChoiceSlider));
-	Slider.SetPos(ChoicesStartX, currentY);
+	Slider.SetOrigin(ChoicesStartX, currentY);
 	Slider.Text = "Sound volume";
 	Slider.ValueDelta = 0.1;
 	Slider.SetInitialValue(GetCvarF('sfx_volume'));
@@ -48,14 +48,14 @@ void CreateChoices()
 	currentY += Slider.Height;
 
 	Enum = MenuChoiceEnum(NewChild(MenuChoice_OnOff));
-	Enum.SetPos(ChoicesStartX, currentY);
+	Enum.SetOrigin(ChoicesStartX, currentY);
 	Enum.Text = "Swap stereo";
 	Enum.SetInitialValue(GetCvar('swap_stereo'));
 	Enum.ValueChanging = ChangeSwapStereo;
 	currentY += Enum.Height;
 
 	Slider = MenuChoiceSlider(NewChild(MenuChoiceSlider));
-	Slider.SetPos(ChoicesStartX, currentY);
+	Slider.SetOrigin(ChoicesStartX, currentY);
 	Slider.Text = "Music volume";
 	Slider.ValueDelta = 0.1;
 	Slider.SetInitialValue(GetCvarF('music_volume'));
@@ -63,14 +63,14 @@ void CreateChoices()
 	currentY += Slider.Height;
 
 	Enum = MenuChoiceEnum(NewChild(MenuChoice_OnOff));
-	Enum.SetPos(ChoicesStartX, currentY);
+	Enum.SetOrigin(ChoicesStartX, currentY);
 	Enum.Text = "CD Music";
 	Enum.SetInitialValue(GetCvar('use_cd_music'));
 	Enum.ValueChanging = ChangeCDMusic;
 	currentY += Enum.Height;
 
 	Enum = MenuChoiceEnum(NewChild(MenuChoice_OnOff));
-	Enum.SetPos(ChoicesStartX, currentY);
+	Enum.SetOrigin(ChoicesStartX, currentY);
 	Enum.Text = "External Music";
 	Enum.SetInitialValue(GetCvar('s_external_music'));
 	Enum.ValueChanging = ChangeExternamMusic;

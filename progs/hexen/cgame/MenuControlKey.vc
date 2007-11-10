@@ -29,6 +29,17 @@ string Text;
 string CommandOn;
 string CommandOff;
 
+//==========================================================================
+//
+//  SetOrigin
+//
+//==========================================================================
+
+void SetOrigin(int x, int y)
+{
+	SetPos(x - 160, y);
+}
+
 void OnDraw()
 {
 	int key1;
@@ -40,26 +51,26 @@ void OnDraw()
 		T_SetFont(font_yellow);
 	}
 	T_SetAlign(hright, vtop);
-	DrawText(0, 0, Text);
+	DrawText(160, 0, Text);
 
 	IN_GetBindingKeys(CommandOn, &key1, &key2);
 
 	T_SetAlign(hleft, vtop);
 	if (key1 >= 0)
 	{
-		DrawText(10, 0, KeyNameForNum(key1));
+		DrawText(160 + 10, 0, KeyNameForNum(key1));
 	}
 	else
 	{
-		DrawText(10, 0, "---");
+		DrawText(160 + 10, 0, "---");
 	}
 	if (key2 >= 0)
 	{
-		DrawText(100, 0, KeyNameForNum(key2));
+		DrawText(160 + 100, 0, KeyNameForNum(key2));
 	}
 	else
 	{
-		DrawText(100, 0, "---");
+		DrawText(160 + 100, 0, "---");
 	}
 }
 
@@ -101,4 +112,5 @@ bool OnKeyDown(int key)
 
 defaultproperties
 {
+	CursorXOffs = 160;
 }

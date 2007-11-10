@@ -29,6 +29,20 @@ int pic_M_LSLEFT;
 int pic_M_LSCNTR;
 int pic_M_LSRGHT;
 
+int CursorXOffs;
+int CursorYOffs;
+
+//==========================================================================
+//
+//  SetOrigin
+//
+//==========================================================================
+
+void SetOrigin(int x, int y)
+{
+	SetPos(x, y);
+}
+
 ClientGame GetClGame()
 {
 	return MenuScreen(Parent).ClGame;

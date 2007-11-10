@@ -44,13 +44,13 @@ void CreateChoices()
 	MenuTextButton		Btn;
 
 	Btn = MenuTextButton(NewChild(MenuSmallTextButton));
-	Btn.SetPos(ChoicesStartX, ChoicesStartY);
+	Btn.SetOrigin(ChoicesStartX, ChoicesStartY);
 	Btn.Text = "Start Game";
 	Btn.Activated = ActivateStartNewGame;
 	ChoicesStartY += Btn.Height;
 
 	Players = MenuChoiceEnum(NewChild(MenuChoiceEnum));
-	Players.SetPos(ChoicesStartX, ChoicesStartY);
+	Players.SetOrigin(ChoicesStartX, ChoicesStartY);
 	Players.Text = "Max players";
 	Players.AddItem("2");
 	Players.AddItem("3");
@@ -63,12 +63,12 @@ void CreateChoices()
 	ChoicesStartY += Players.Height;
 
 	Monsters = MenuChoiceEnum(NewChild(MenuChoice_OnOff));
-	Monsters.SetPos(ChoicesStartX, ChoicesStartY);
+	Monsters.SetOrigin(ChoicesStartX, ChoicesStartY);
 	Monsters.Text = "Monsters";
 	ChoicesStartY += Monsters.Height;
 
 	DeathMatch = MenuChoiceEnum(NewChild(MenuChoiceEnum));
-	DeathMatch.SetPos(ChoicesStartX, ChoicesStartY);
+	DeathMatch.SetOrigin(ChoicesStartX, ChoicesStartY);
 	DeathMatch.Text = "Game type";
 	DeathMatch.AddItem("Cooperative");
 	DeathMatch.AddItem("Deathmatch");
@@ -76,7 +76,7 @@ void CreateChoices()
 	ChoicesStartY += DeathMatch.Height;
 
 	Skill = MenuChoiceEnum(NewChild(MenuChoiceEnum));
-	Skill.SetPos(ChoicesStartX, ChoicesStartY);
+	Skill.SetOrigin(ChoicesStartX, ChoicesStartY);
 	Skill.Text = "Skill";
 	Skill.AddItem("Baby");
 	Skill.AddItem("Easy");
@@ -87,7 +87,7 @@ void CreateChoices()
 	ChoicesStartY += Skill.Height;
 
 	TimeLimit = MenuChoiceEnum(NewChild(MenuChoiceEnum));
-	TimeLimit.SetPos(ChoicesStartX, ChoicesStartY);
+	TimeLimit.SetOrigin(ChoicesStartX, ChoicesStartY);
 	TimeLimit.Text = "Time limit";
 	TimeLimit.AddItem("0");
 	TimeLimit.AddItem("5");
@@ -105,7 +105,7 @@ void CreateChoices()
 	ChoicesStartY += TimeLimit.Height;
 
 	Episode = MenuChoiceEnum(NewChild(MenuChoiceEnum));
-	Episode.SetPos(ChoicesStartX, ChoicesStartY);
+	Episode.SetOrigin(ChoicesStartX, ChoicesStartY);
 	Episode.Text = "Episode";
 	Episode.AddItem("CITY OF THE DAMNED");
 	if (WadLumpPresent('e2m1'))
@@ -122,7 +122,7 @@ void CreateChoices()
 	ChoicesStartY += Episode.Height;
 
 	Level = MenuChoiceEnum(NewChild(MenuChoiceEnum));
-	Level.SetPos(ChoicesStartX, ChoicesStartY);
+	Level.SetOrigin(ChoicesStartX, ChoicesStartY);
 	Level.Text = "Level";
 	ChoicesStartY += Level.Height;
 

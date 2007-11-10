@@ -49,7 +49,7 @@ void CreateChoices()
 	MenuTextButton		Btn;
 
 	Mode = MenuChoiceEnum(NewChild(MenuChoiceEnum));
-	Mode.SetPos(ChoicesStartX, ChoicesStartY);
+	Mode.SetOrigin(ChoicesStartX, ChoicesStartY);
 	Mode.Text = "Resolution";
 	Mode.AddItem("640x480");
 	Mode.AddItem("800x600");
@@ -61,7 +61,7 @@ void CreateChoices()
 	ChoicesStartY += Mode.Height;
 
 	Depth = MenuChoiceEnum(NewChild(MenuChoiceEnum));
-	Depth.SetPos(ChoicesStartX, ChoicesStartY);
+	Depth.SetOrigin(ChoicesStartX, ChoicesStartY);
 	Depth.Text = "Bit depth";
 	Depth.AddItem("8");
 	Depth.AddItem("16");
@@ -71,13 +71,13 @@ void CreateChoices()
 	ChoicesStartY += Depth.Height;
 
 	Windowed = MenuChoiceEnum(NewChild(MenuChoice_OnOff));
-	Windowed.SetPos(ChoicesStartX, ChoicesStartY);
+	Windowed.SetOrigin(ChoicesStartX, ChoicesStartY);
 	Windowed.Text = "Windowed";
 	Windowed.SetInitialValue(GetCvar('screen_windowed'));
 	ChoicesStartY += Windowed.Height;
 
 	Btn = MenuTextButton(NewChild(MenuSmallTextButton));
-	Btn.SetPos(ChoicesStartX, ChoicesStartY);
+	Btn.SetOrigin(ChoicesStartX, ChoicesStartY);
 	Btn.Text = "Set Resolution";
 	Btn.Activated = ActivateSetMode;
 }
