@@ -72,6 +72,10 @@ bool							bTickEnabled;
 private bool					bIsEnabled;
 //	Can this widget be focused?
 private bool					bIsFocusable;
+//	Mouse button state for click events.
+private readonly bool			bLMouseDown;
+private readonly bool			bMMouseDown;
+private readonly bool			bRMouseDown;
 
 //==========================================================================
 
@@ -451,6 +455,68 @@ void OnMouseEnter()
 //==========================================================================
 
 void OnMouseLeave()
+{
+}
+
+//==========================================================================
+//
+//	OnMouseDown
+//
+//	Called when mouse button is pressed.
+//
+//==========================================================================
+
+bool OnMouseDown(int X, int Y, int Button)
+{
+	return false;
+}
+
+//==========================================================================
+//
+//	OnMouseUp
+//
+//	Called when mouse button is released.
+//
+//==========================================================================
+
+bool OnMouseUp(int X, int Y, int Button)
+{
+	return false;
+}
+
+//==========================================================================
+//
+//	OnMouseClick
+//
+//	Callec when left mouse button is clicked on this widget.
+//
+//==========================================================================
+
+void OnMouseClick(int X, int Y)
+{
+}
+
+//==========================================================================
+//
+//	OnMMouseClick
+//
+//	Callec when middle mouse button is clicked on this widget.
+//
+//==========================================================================
+
+void OnMMouseClick(int X, int Y)
+{
+}
+
+//==========================================================================
+//
+//	OnRMouseClick
+//
+//	Callec when right mouse button is clicked on this widget.
+//
+//==========================================================================
+
+void OnRMouseClick(int X, int Y)
 {
 }
 

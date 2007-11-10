@@ -43,6 +43,7 @@ private:
 	int					MouseCursorPic;
 
 	void MouseMoveEvent(int, int);
+	bool MouseButtonEvent(int, bool);
 
 public:
 	VRootWidget();

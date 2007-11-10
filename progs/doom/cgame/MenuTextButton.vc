@@ -51,6 +51,12 @@ bool OnKeyDown(int key)
 	return false;
 }
 
+void OnMouseClick(int X, int Y)
+{
+	ActivateEvent();
+	LocalSound(ActivateSound);
+}
+
 void OnDraw()
 {
 	T_SetFont(TextFont);

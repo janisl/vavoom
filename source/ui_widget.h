@@ -82,6 +82,10 @@ private:
 		WF_IsEnabled		= 0x0004,
 		//	Can this widget be focused?
 		WF_IsFocusable		= 0x0008,
+		//	Mouse button state for click events.
+		WF_LMouseDown		= 0x0010,
+		WF_MMouseDown		= 0x0020,
+		WF_RMouseDown		= 0x0040,
 	};
 	vuint32				WidgetFlags;
 
@@ -332,6 +336,43 @@ public:
 	{
 		P_PASS_SELF;
 		EV_RET_VOID(NAME_OnMouseEnter);
+	}
+	virtual bool OnMouseDown(int X, int Y, int Button)
+	{
+		P_PASS_SELF;
+		P_PASS_INT(X);
+		P_PASS_INT(Y);
+		P_PASS_INT(Button);
+		EV_RET_BOOL(NAME_OnMouseDown);
+	}
+	virtual bool OnMouseUp(int X, int Y, int Button)
+	{
+		P_PASS_SELF;
+		P_PASS_INT(X);
+		P_PASS_INT(Y);
+		P_PASS_INT(Button);
+		EV_RET_BOOL(NAME_OnMouseUp);
+	}
+	virtual void OnMouseClick(int X, int Y)
+	{
+		P_PASS_SELF;
+		P_PASS_INT(X);
+		P_PASS_INT(Y);
+		EV_RET_VOID(NAME_OnMouseClick);
+	}
+	virtual void OnMMouseClick(int X, int Y)
+	{
+		P_PASS_SELF;
+		P_PASS_INT(X);
+		P_PASS_INT(Y);
+		EV_RET_VOID(NAME_OnMMouseClick);
+	}
+	virtual void OnRMouseClick(int X, int Y)
+	{
+		P_PASS_SELF;
+		P_PASS_INT(X);
+		P_PASS_INT(Y);
+		EV_RET_VOID(NAME_OnRMouseClick);
 	}
 
 	void DrawPic(int, int, int, float = 1.0);
