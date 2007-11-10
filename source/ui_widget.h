@@ -100,6 +100,8 @@ private:
 
 	void FindNewFocus();
 
+	VWidget* GetWidgetAt(float, float);
+
 	bool TransferAndClipRect(float&, float&, float&, float&, float&, float&,
 		float&, float&) const;
 
@@ -311,6 +313,25 @@ public:
 		P_PASS_SELF;
 		P_PASS_INT(Key);
 		EV_RET_BOOL(NAME_OnKeyUp);
+	}
+	virtual bool OnMouseMove(int OldX, int OldY, int NewX, int NewY)
+	{
+		P_PASS_SELF;
+		P_PASS_INT(OldX);
+		P_PASS_INT(OldY);
+		P_PASS_INT(NewX);
+		P_PASS_INT(NewY);
+		EV_RET_BOOL(NAME_OnMouseMove);
+	}
+	virtual void OnMouseEnter()
+	{
+		P_PASS_SELF;
+		EV_RET_VOID(NAME_OnMouseEnter);
+	}
+	virtual void OnMouseLeave()
+	{
+		P_PASS_SELF;
+		EV_RET_VOID(NAME_OnMouseEnter);
 	}
 
 	void DrawPic(int, int, int, float = 1.0);

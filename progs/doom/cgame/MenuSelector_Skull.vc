@@ -55,6 +55,6 @@ void SetPos(int X, int Y)
 
 defaultproperties
 {
-	Width = 320;
-	Height = 200;
+	Width = 40;
+	Height = 40;
 }

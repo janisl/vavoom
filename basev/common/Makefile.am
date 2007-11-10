@@ -10,6 +10,7 @@ EXTRA_DIST = \
 	startup.vs \
 	terrain.txt \
 	x11r6rgb.txt \
+	graphics/mc_arrow.png \
 	sprites/tnt1a0.lmp \
 	textures/-noflat-.png
 

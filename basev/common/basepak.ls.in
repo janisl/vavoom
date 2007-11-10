@@ -8,6 +8,9 @@ startup.vs				@srcdir@/startup.vs
 progs/engine.dat		progs/engine.dat
 progs/linespec.dat		progs/linespec.dat
 
+//	Graphics
+graphics/mc_arrow.png	@srcdir@/graphics/mc_arrow.png
+
 //	Default texture
 textures/-noflat-.png	@srcdir@/textures/-noflat-.png
 

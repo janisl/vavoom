@@ -43,6 +43,33 @@ void SetOrigin(int x, int y)
 	SetPos(x, y);
 }
 
+//==========================================================================
+//
+//	OnFocusReceived
+//
+//==========================================================================
+
+void OnFocusReceived()
+{
+	if (MenuScreen(Parent) && MenuScreen(Parent).Selector)
+	{
+		MenuScreen(Parent).Selector.SetPos(X + CursorXOffs,
+			Y + CursorYOffs);
+	}
+	::OnFocusReceived();
+}
+
+//==========================================================================
+//
+//	OnMouseEnter
+//
+//==========================================================================
+
+void OnMouseEnter()
+{
+	SetFocus();
+}
+
 ClientGame GetClGame()
 {
 	return MenuScreen(Parent).ClGame;

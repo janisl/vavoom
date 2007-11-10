@@ -417,6 +417,43 @@ bool OnKeyUp(int Key)
 	return false;
 }
 
+//==========================================================================
+//
+//	OnMouseMove
+//
+//	Called when mouse moves over this widget.
+//
+//==========================================================================
+
+bool OnMouseMove(int OldX, int OldY, int NewX, int NewY)
+{
+	return false;
+}
+
+//==========================================================================
+//
+//	OnMouseEnter
+//
+//	Called when mouse enters this widget.
+//
+//==========================================================================
+
+void OnMouseEnter()
+{
+}
+
+//==========================================================================
+//
+//	OnMouseLeave
+//
+//	Called when mouse leaves this widget.
+//
+//==========================================================================
+
+void OnMouseLeave()
+{
+}
+
 void DrawFullScreenPic(int Handle)
 {
 	SetVirtualScreen(320, 200);

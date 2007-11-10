@@ -579,6 +579,31 @@ void VWidget::FindNewFocus()
 
 //==========================================================================
 //
+//	VWidget::GetWidgetAt
+//
+//==========================================================================
+
+VWidget* VWidget::GetWidgetAt(float X, float Y)
+{
+	guard(VWidget::GetWidgetAt);
+	for (VWidget* W = LastChildWidget; W; W = W->PrevWidget)
+	{
+		if (!(W->WidgetFlags & WF_IsVisible))
+		{
+			continue;
+		}
+		if (X >= W->ClipRect.ClipX1 && X < W->ClipRect.ClipX2 &&
+			Y >= W->ClipRect.ClipY1 && Y < W->ClipRect.ClipY2)
+		{
+			return W->GetWidgetAt(X, Y);
+		}
+	}
+	return this;
+	unguard;
+}
+
+//==========================================================================
+//
 //	VWidget::DrawTree
 //
 //==========================================================================

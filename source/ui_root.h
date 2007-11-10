@@ -27,6 +27,24 @@ class VRootWidget : public VWidget
 {
 	DECLARE_CLASS(VRootWidget, VWidget, 0)
 
+private:
+	enum
+	{
+		//	True if mouse cursor is currently enabled.
+		RWF_MouseEnabled		= 0x0001,
+	};
+	vuint32				RootFlags;
+
+	//	Current mouse cursor position.
+	int					MouseX;
+	int					MouseY;
+
+	//	Current mouse cursor graphic.
+	int					MouseCursorPic;
+
+	void MouseMoveEvent(int, int);
+
+public:
 	VRootWidget();
 	void Init();
 	void Init(VWidget*) { Sys_Error("Root canot have a parent"); }
@@ -35,7 +53,11 @@ class VRootWidget : public VWidget
 	void TickWidgets(float DeltaTime);
 	bool Responder(event_t* Event);
 
+	void SetMouse(bool MouseOn);
+
 	static void StaticInit();
+
+	DECLARE_FUNCTION(SetMouse)
 };
 
 extern VRootWidget*		GRoot;
