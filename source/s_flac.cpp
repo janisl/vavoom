@@ -54,7 +54,7 @@ public:
 	protected:
 		//	FLAC decoder callbacks.
 		::FLAC__StreamDecoderReadStatus read_callback(FLAC__byte buffer[],
-			unsigned *bytes);
+			size_t *bytes);
 		::FLAC__StreamDecoderWriteStatus write_callback(
 			const ::FLAC__Frame *frame, const FLAC__int32 * const buffer[]);
 		void metadata_callback(const ::FLAC__StreamMetadata *metadata);
@@ -199,7 +199,7 @@ VFlacSampleLoader::FStream::FStream(VStream& InStream)
 //==========================================================================
 
 ::FLAC__StreamDecoderReadStatus VFlacSampleLoader::FStream::read_callback(
-	FLAC__byte buffer[], unsigned* bytes)
+	FLAC__byte buffer[], size_t* bytes)
 {
 	guard(VFlacSampleLoader::FStream::read_callback);
 	if (*bytes > 0)
