@@ -498,16 +498,22 @@ void VRenderLevel::UpdateSecSurface(sec_surface_t *ssurf,
 				surf->verts[i].z = plane->GetPointZ(surf->verts[i]);
 			}
 		}
-		FlushSurfCaches(ssurf->surfs);
-		InitSurfs(ssurf->surfs, &ssurf->texinfo, NULL, sub);
+		if (plane->pic != skyflatnum)
+		{
+			FlushSurfCaches(ssurf->surfs);
+			InitSurfs(ssurf->surfs, &ssurf->texinfo, NULL, sub);
+		}
 	}
 	if (FASI(ssurf->texinfo.soffs) != FASI(plane->xoffs) ||
 		FASI(ssurf->texinfo.toffs) != FASI(plane->yoffs))
 	{
 		ssurf->texinfo.soffs = plane->xoffs;
 		ssurf->texinfo.toffs = plane->yoffs;
-		FlushSurfCaches(ssurf->surfs);
-		InitSurfs(ssurf->surfs, &ssurf->texinfo, NULL, sub);
+		if (plane->pic != skyflatnum)
+		{
+			FlushSurfCaches(ssurf->surfs);
+			InitSurfs(ssurf->surfs, &ssurf->texinfo, NULL, sub);
+		}
 	}
 	if (ssurf->texinfo.pic != plane->pic)
 	{
