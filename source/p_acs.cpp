@@ -3323,8 +3323,8 @@ int VAcs::RunScript(float DeltaTime)
 				((VAcsCallReturn*)sp)->ReturnObject = ActiveObject;
 				((VAcsCallReturn*)sp)->bDiscardResult = (cmd == PCD_CallDiscard);
 				sp += sizeof(VAcsCallReturn) / sizeof(vint32);
-				ip = ActiveObject->OffsetToPtr(func->Address);
 				ActiveObject = object;
+				ip = ActiveObject->OffsetToPtr(func->Address);
 				activeFunction = func;
 			}
 			ACSVM_BREAK;
@@ -3346,10 +3346,10 @@ int VAcs::RunScript(float DeltaTime)
 				}
 				sp -= sizeof(VAcsCallReturn) / sizeof(vint32);
 				retState = (VAcsCallReturn*)sp;
-				ip = ActiveObject->OffsetToPtr(retState->ReturnAddress);
 				sp -= activeFunction->ArgCount + activeFunction->LocalCount;
-				activeFunction = retState->ReturnFunction;
 				ActiveObject = retState->ReturnObject;
+				activeFunction = retState->ReturnFunction;
+				ip = ActiveObject->OffsetToPtr(retState->ReturnAddress);
 				fmt = ActiveObject->GetFormat();
 				if (!activeFunction)
 				{
