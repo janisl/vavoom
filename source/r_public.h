@@ -125,6 +125,26 @@ public:
 	int AddRawWithPal(VName Name, VName PalName);
 	int AddFileTexture(VName Name, int Type);
 
+	//	Get unanimated texture
+	VTexture* operator[](int TexNum)
+	{
+		if ((vuint32)TexNum >= (vuint32)Textures.Num())
+		{
+			return NULL;
+		}
+		return Textures[TexNum];
+	}
+
+	//	Get animated texture
+	VTexture* operator()(int TexNum)
+	{
+		if ((vuint32)TexNum >= (vuint32)Textures.Num())
+		{
+			return NULL;
+		}
+		return Textures[TextureAnimation(TexNum)];
+	}
+
 private:
 	void AddTextures();
 	void AddTexturesLump(int, int, int, bool);
