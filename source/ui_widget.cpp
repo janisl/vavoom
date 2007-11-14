@@ -708,18 +708,16 @@ void VWidget::DrawPic(int X, int Y, int Handle, float Alpha)
 		return;
 	}
 
-	picinfo_t Info;
-	GTextureManager.GetTextureInfo(Handle, &Info);
-	X -= Info.xoffset;
-	Y -= Info.yoffset;
+	X -= Tex->GetScaledSOffset();
+	Y -= Tex->GetScaledTOffset();
 	float X1 = X;
 	float Y1 = Y;
-	float X2 = X + Info.width;
-	float Y2 = Y + Info.height;
+	float X2 = X + Tex->GetScaledWidth();
+	float Y2 = Y + Tex->GetScaledHeight();
 	float S1 = 0;
 	float T1 = 0;
-	float S2 = Info.width;
-	float T2 = Info.height;
+	float S2 = Tex->GetWidth();
+	float T2 = Tex->GetHeight();
 	if (TransferAndClipRect(X1, Y1, X2, Y2, S1, T1, S2, T2))
 	{
 		Drawer->DrawPic(X1, Y1, X2, Y2, S1, T1, S2, T2, Tex, Alpha);
@@ -742,16 +740,14 @@ void VWidget::DrawShadowedPic(int X, int Y, int Handle)
 		return;
 	}
 
-	picinfo_t Info;
-	GTextureManager.GetTextureInfo(Handle, &Info);
-	float X1 = X - Info.xoffset + 2;
-	float Y1 = Y - Info.yoffset + 2;
-	float X2 = X - Info.xoffset + 2 + Info.width;
-	float Y2 = Y - Info.yoffset + 2 + Info.height;
+	float X1 = X - Tex->GetScaledSOffset() + 2;
+	float Y1 = Y - Tex->GetScaledTOffset() + 2;
+	float X2 = X - Tex->GetScaledSOffset() + 2 + Tex->GetScaledWidth();
+	float Y2 = Y - Tex->GetScaledTOffset() + 2 + Tex->GetScaledHeight();
 	float S1 = 0;
 	float T1 = 0;
-	float S2 = Info.width;
-	float T2 = Info.height;
+	float S2 = Tex->GetWidth();
+	float T2 = Tex->GetHeight();
 	if (TransferAndClipRect(X1, Y1, X2, Y2, S1, T1, S2, T2))
 	{
 		Drawer->DrawPicShadow(X1, Y1, X2, Y2, S1, T1, S2, T2, Tex, 0.625);

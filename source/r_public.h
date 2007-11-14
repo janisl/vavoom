@@ -25,8 +25,8 @@
 
 struct particle_t;
 struct dlight_t;
-class VTexture;
 
+//	Texture use types.
 enum
 {
 	TEXTYPE_Any,
@@ -40,6 +40,29 @@ enum
 	TEXTYPE_Pic,
 	TEXTYPE_Autopage,
 	TEXTYPE_Null,
+};
+
+//	Texture data formats.
+enum
+{
+	TEXFMT_8,		//	Paletised texture in main palette.
+	TEXFMT_8Pal,	//	Paletised texture with custom palette.
+	TEXFMT_RGBA,	//	Truecolour texture.
+};
+
+struct rgb_t
+{
+	byte	r;
+	byte	g;
+	byte	b;
+};
+
+struct rgba_t
+{
+	byte	r;
+	byte	g;
+	byte	b;
+	byte	a;
 };
 
 struct picinfo_t
@@ -99,6 +122,59 @@ public:
 	virtual void DecayLights(float) = 0;
 
 	virtual particle_t* NewParticle() = 0;
+};
+
+class VTexture
+{
+public:
+	int			Type;
+	int			Format;
+	VName		Name;
+	int			Width;
+	int			Height;
+	int			SOffset;
+	int			TOffset;
+	bool		bNoRemap0;
+	bool		bWorldPanning;
+	vuint8		WarpType;
+	float		SScale;				//	Scaling
+	float		TScale;
+	int			TextureTranslation;	// Animation
+	union
+	{
+		vuint32	DriverHandle;
+		void*	DriverData;
+	};
+protected:
+	vuint8*		Pixels8Bit;
+	VTexture*	HiResTexture;
+	bool		Pixels8BitValid;
+
+public:
+	VTexture();
+	virtual ~VTexture();
+
+	static VTexture* CreateTexture(int, int);
+
+	int GetWidth() const { return Width; }
+	int GetHeight() const { return Height; }
+
+	int GetScaledWidth() const { return (int)(Width / SScale); }
+	int GetScaledHeight() const { return (int)(Height / TScale); }
+
+	int GetScaledSOffset() const { return (int)(SOffset / SScale); }
+	int GetScaledTOffset() const { return (int)(TOffset / TScale); }
+
+	virtual void SetFrontSkyLayer();
+	virtual bool CheckModified();
+	virtual vuint8* GetPixels() = 0;
+	vuint8* GetPixels8();
+	virtual rgba_t* GetPalette();
+	virtual void Unload() = 0;
+	virtual VTexture* GetHighResolutionTexture();
+
+protected:
+	void FixupPalette(vuint8* Pixels, rgba_t* Palette);
 };
 
 class VTextureManager
@@ -170,7 +246,6 @@ void R_InitSprites();
 
 //	2D graphics
 void R_DrawPic(int x, int y, int handle, float Aplha = 1.0);
-void R_DrawShadowedPic(int x, int y, int handle);
 
 extern VTextureManager	GTextureManager;
 

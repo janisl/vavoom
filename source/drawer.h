@@ -26,21 +26,6 @@
 struct surface_t;
 struct surfcache_t;
 
-struct rgb_t
-{
-	byte	r;
-	byte	g;
-	byte	b;
-};
-
-struct rgba_t
-{
-	byte	r;
-	byte	g;
-	byte	b;
-	byte	a;
-};
-
 struct particle_t
 {
 	//	Drawing info

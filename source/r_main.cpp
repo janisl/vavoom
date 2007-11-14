@@ -788,47 +788,17 @@ vuint32 VRenderLevel::GetFade(subsector_t* Sub)
 void R_DrawPic(int x, int y, int handle, float Alpha)
 {
 	guard(R_DrawPic);
-	picinfo_t	info;
-
 	if (handle < 0)
 	{
 		return;
 	}
 
-	GTextureManager.GetTextureInfo(handle, &info);
-	x -= info.xoffset;
-	y -= info.yoffset;
+	VTexture* Tex = GTextureManager(handle);
+	x -= Tex->GetScaledSOffset();
+	y -= Tex->GetScaledTOffset();
 	Drawer->DrawPic(fScaleX * x, fScaleY * y,
-		fScaleX * (x + info.width), fScaleY * (y + info.height),
-		0, 0, info.width, info.height, GTextureManager(handle), Alpha);
-	unguard;
-}
-
-//==========================================================================
-//
-//	R_DrawShadowedPic
-//
-//==========================================================================
-
-void R_DrawShadowedPic(int x, int y, int handle)
-{
-	guard(R_DrawShadowedPic);
-	picinfo_t	info;
-
-	if (handle < 0)
-	{
-		return;
-	}
-
-	GTextureManager.GetTextureInfo(handle, &info);
-	x -= info.xoffset;
-	y -= info.yoffset;
-	Drawer->DrawPicShadow(fScaleX * (x + 2), fScaleY * (y + 2),
-		fScaleX * (x + 2 + info.width), fScaleY * (y + 2 + info.height),
-		0, 0, info.width, info.height, GTextureManager(handle), 0.625);
-	Drawer->DrawPic(fScaleX * x, fScaleY * y,
-		fScaleX * (x + info.width), fScaleY * (y + info.height),
-		0, 0, info.width, info.height, GTextureManager(handle), 1.0);
+		fScaleX * (x + Tex->GetScaledWidth()), fScaleY * (y + Tex->GetScaledHeight()),
+		0, 0, Tex->GetWidth(), Tex->GetHeight(), Tex, Alpha);
 	unguard;
 }
 

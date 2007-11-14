@@ -81,59 +81,6 @@ struct surface_t
 	TVec			verts[1];
 };
 
-enum
-{
-	TEXFMT_8,		//	Paletised texture in main palette.
-	TEXFMT_8Pal,	//	Paletised texture with custom palette.
-	TEXFMT_RGBA,	//	Truecolour texture.
-};
-
-class VTexture
-{
-public:
-	int			Type;
-	int			Format;
-	VName		Name;
-	int			Width;
-	int			Height;
-	int			SOffset;
-	int			TOffset;
-	bool		bNoRemap0;
-	bool		bWorldPanning;
-	vuint8		WarpType;
-	float		SScale;				//	Scaling
-	float		TScale;
-	int			TextureTranslation;	// Animation
-	union
-	{
-		vuint32	DriverHandle;
-		void*	DriverData;
-	};
-protected:
-	vuint8*		Pixels8Bit;
-	VTexture*	HiResTexture;
-	bool		Pixels8BitValid;
-
-public:
-	VTexture();
-	virtual ~VTexture();
-
-	static VTexture* CreateTexture(int, int);
-
-	int GetWidth() { return Width; }
-	int GetHeight() { return Height; }
-	virtual void SetFrontSkyLayer();
-	virtual bool CheckModified();
-	virtual vuint8* GetPixels() = 0;
-	vuint8* GetPixels8();
-	virtual rgba_t* GetPalette();
-	virtual void Unload() = 0;
-	virtual VTexture* GetHighResolutionTexture();
-
-protected:
-	void FixupPalette(vuint8* Pixels, rgba_t* Palette);
-};
-
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 void R_DrawViewBorder();

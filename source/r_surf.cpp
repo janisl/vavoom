@@ -844,8 +844,7 @@ void VRenderLevel::CreateSegParts(drawseg_t* dseg, seg_t *seg)
 		if (linedef->flags & ML_DONTPEGBOTTOM)
 		{
 			//	bottom of texture at bottom
-			sp->texinfo.toffs = MIN(botz1, botz2) +
-				GTextureManager.TextureHeight(sidedef->midtexture);
+			sp->texinfo.toffs = MIN(botz1, botz2) + MTex->GetScaledHeight();
 		}
 		else if (linedef->flags & ML_DONTPEGTOP)
 		{
@@ -944,8 +943,7 @@ void VRenderLevel::CreateSegParts(drawseg_t* dseg, seg_t *seg)
 		else
 		{
 			// bottom of texture
-			sp->texinfo.toffs = back_topz1 +
-				GTextureManager.TextureHeight(sidedef->toptexture);
+			sp->texinfo.toffs = back_topz1 + TTex->GetScaledHeight();
 		}
 		sp->texinfo.toffs -= offshdelta;
 		sp->texinfo.toffs *= TextureTScale(TTex);
@@ -1056,7 +1054,7 @@ void VRenderLevel::CreateSegParts(drawseg_t* dseg, seg_t *seg)
 		if (MTex->Type != TEXTYPE_Null)
 		{
 			// masked midtexture
-			float texh = GTextureManager.TextureHeight(sidedef->midtexture);
+			float texh = MTex->GetScaledHeight();
 			hdelta = midtopz2 - midtopz1;
 			offshdelta = hdelta * seg->offset / seg->length;
 
@@ -1241,7 +1239,7 @@ void VRenderLevel::UpdateDrawSeg(drawseg_t* dseg)
 			{
 				//	bottom of texture at bottom
 				sp->texinfo.toffs = MIN(botz1, botz2) +
-					GTextureManager.TextureHeight(sidedef->midtexture);
+					MTex->GetScaledHeight();
 			}
 			else if (linedef->flags & ML_DONTPEGTOP)
 			{
@@ -1356,8 +1354,7 @@ void VRenderLevel::UpdateDrawSeg(drawseg_t* dseg)
 			else
 			{
 				// bottom of texture
-				sp->texinfo.toffs = back_topz1 +
-					GTextureManager.TextureHeight(sidedef->toptexture);
+				sp->texinfo.toffs = back_topz1 + TTex->GetScaledHeight();
 			}
 			sp->texinfo.toffs -= offshdelta;
 			sp->texinfo.toffs *= TextureTScale(TTex);
@@ -1534,7 +1531,7 @@ void VRenderLevel::UpdateDrawSeg(drawseg_t* dseg)
 				float midbotz1 = MAX(botz1, back_botz1);
 				float midbotz2 = MAX(botz2, back_botz2);
 
-				float texh = GTextureManager.TextureHeight(sidedef->midtexture);
+				float texh = MTex->GetScaledHeight();
 				float hdelta = midtopz2 - midtopz1;
 				float offshdelta = hdelta * seg->offset / seg->length;
 
