@@ -869,9 +869,9 @@ void VWidget::DrawString(int x, int y, const VStr& String)
 	if (HAlign == hright)
 		cx -= T_StringWidth(Font, String);
 
-	for (size_t i = 0; i < String.Length(); i++)
+	for (const char* SPtr = *String; *SPtr;)
 	{
-		int c = String[i] - 32;
+		int c = VStr::GetChar(SPtr) - 32;
 
 		if (c < 0)
 		{
@@ -1040,11 +1040,8 @@ void VWidget::DrawString8(int x, int y, const VStr& String)
 {
 	guard(VWidget::DrawString8);
 	int		w;
-	int		c;
 	int		cx;
 	int		cy;
-	int		i;
-	int		length;
 
 	if (!String)
 		return;
@@ -1057,11 +1054,9 @@ void VWidget::DrawString8(int x, int y, const VStr& String)
 	if (HAlign == hright)
 		cx -= T_StringWidth(Font, String);
 
-	length = (int)String.Length();
-	
-	for (i = 0; i < length && cx < VirtualWidth; i++)
+	for (const char* SPtr = *String; *SPtr;)
 	{
-		c = String[i] - 32;
+		int c = VStr::GetChar(SPtr) - 32;
 
 		if (c < 0)
 		{

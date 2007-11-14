@@ -226,13 +226,17 @@ int T_StringWidth(font_t* Font, const VStr& String)
 {
 	guard(T_StringWidth);
 	int w = 0;
-	for (size_t i = 0; i < String.Length(); i++)
+	for (const char* SPtr = *String; *SPtr;)
 	{
-		int c = String[i] - 32;
+		int c = VStr::GetChar(SPtr) - 32;
 		if (c < 0 || c >= 96 || Font->Pics[c] < 0)
+		{
 			w += Font->SpaceWidth;
+		}
 		else
+		{
 			w += Font->PicInfo[c].width;
+		}
 	}
 	return w;
 	unguard;
@@ -247,19 +251,16 @@ int T_StringWidth(font_t* Font, const VStr& String)
 int T_StringHeight(font_t* Font, const VStr& String)
 {
 	guard(T_StringHeight);
-	size_t	i;
-	int		c;
-	int		h = Font->SpaceHeight;
-
-	for (i = 0;i < String.Length();i++)
+	int h = Font->SpaceHeight;
+	for (const char* SPtr = *String; *SPtr;)
 	{
-		c = String[i] - 32;
-
-		if (c >= 0 && c < 96 && Font->Pics[c] >= 0
-			&& (h < Font->PicInfo[c].height))
-				h = Font->PicInfo[c].height;
+		int c = VStr::GetChar(SPtr) - 32;
+		if (c >= 0 && c < 96 && Font->Pics[c] >= 0 &&
+			(h < Font->PicInfo[c].height))
+		{
+			h = Font->PicInfo[c].height;
+		}
 	}
-		
 	return h;
 	unguard;
 }
