@@ -131,19 +131,19 @@ public:
 
 	//	Texture stuff
 	void InitTextures();
-	void SetTexture(int);
+	void SetTexture(VTexture*);
 
 	//	Polygon drawing
 	void DrawPolygon(surface_t*, int);
 	void DrawSkyPortal(surface_t*, int);
 	void BeginSky();
-	void DrawSkyPolygon(surface_t*, bool, int, float, int, float);
+	void DrawSkyPolygon(surface_t*, bool, VTexture*, float, VTexture*, float);
 	void EndSky();
 	void DrawMaskedPolygon(surface_t*, float);
-	void DrawSpritePolygon(TVec*, int, float, int, vuint32, vuint32,
+	void DrawSpritePolygon(TVec*, VTexture*, float, int, vuint32, vuint32,
 		const TVec&, float, const TVec&, const TVec&, const TVec&);
 	void DrawAliasModel(const TVec&, const TAVec&, const TVec&, const TVec&,
-		mmdl_t*, int, int, vuint32, vuint32, float, bool);
+		mmdl_t*, int, VTexture*, vuint32, vuint32, float, bool);
 
 	//	Particles
 	void StartParticles();
@@ -151,13 +151,16 @@ public:
 	void EndParticles();
 
 	//	Drawing
-	void DrawPic(float, float, float, float, float, float, float, float, int, float);
-	void DrawPicShadow(float, float, float, float, float, float, float, float, int, float);
-	void FillRectWithFlat(float, float, float, float, float, float, float, float, VName);
+	void DrawPic(float, float, float, float, float, float, float, float,
+		VTexture*, float);
+	void DrawPicShadow(float, float, float, float, float, float, float,
+		float, VTexture*, float);
+	void FillRectWithFlat(float, float, float, float, float, float, float,
+		float, VTexture*);
 	void FillRect(float, float, float, float, vuint32);
 	void ShadeRect(int, int, int, int, float);
 	void DrawConsoleBackground(int);
-	void DrawSpriteLump(float, float, float, float, int, int, bool);
+	void DrawSpriteLump(float, float, float, float, VTexture*, int, bool);
 
 	//	Automap
 	void StartAutomap();
@@ -170,7 +173,7 @@ protected:
 
 	GLuint		trspr_id[MAX_TRANSLATED_SPRITES];
 	bool		trspr_sent[MAX_TRANSLATED_SPRITES];
-	int			trspr_lump[MAX_TRANSLATED_SPRITES];
+	VTexture*	trspr_tex[MAX_TRANSLATED_SPRITES];
 	int			trspr_tnum[MAX_TRANSLATED_SPRITES];
 
 	GLuint		particle_texture;
@@ -238,10 +241,10 @@ protected:
 	void GenerateTextures();
 	void FlushTextures();
 	void DeleteTextures();
-	void SetSpriteLump(int, int);
-	void SetPic(int);
-	void GenerateTexture(int);
-	void GenerateTranslatedSprite(int, int, int);
+	void SetSpriteLump(VTexture*, int);
+	void SetPic(VTexture*);
+	void GenerateTexture(VTexture*);
+	void GenerateTranslatedSprite(VTexture*, int, int);
 	void AdjustGamma(rgba_t *, int);
 	void ResampleTexture(int, int, const byte*, int, int, byte*);
 	void MipMap(int, int, byte*);

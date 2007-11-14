@@ -171,18 +171,14 @@ surfcache_t *VSoftwareDrawer::CacheSurface(surface_t *surface, int miplevel)
 	guard(VSoftwareDrawer::CacheSurface);
 	surfcache_t     *cache;
 	float           surfscale;
-	int				texture;
 
-	//
-	// if the surface is animating or flashing, flush the cache
-	//
-	texture = GTextureManager.TextureAnimation(surface->texinfo->pic);
+	VTexture* Tex = surface->texinfo->Tex;
 
 	//	If texture has been modified mark all cache spots using this texture
 	// as invalid.
-	if (GTextureManager.Textures[texture]->CheckModified())
+	if (Tex->CheckModified())
 	{
-		SCInvalidateTexture(texture);
+		SCInvalidateTexture(Tex);
 	}
 	
 	//
@@ -193,7 +189,7 @@ surfcache_t *VSoftwareDrawer::CacheSurface(surface_t *surface, int miplevel)
 	if (cache &&
 		((!cache->dlight && surface->dlightframe != r_dlightframecount) ||
 		cache->dlight == r_dlightframecount) &&
-		cache->texture == texture &&
+		cache->Texture == Tex &&
 		cache->Light == surface->Light &&
 		cache->Fade == surface->Fade)
 		return cache;
@@ -221,7 +217,7 @@ surfcache_t *VSoftwareDrawer::CacheSurface(surface_t *surface, int miplevel)
 	else
 		cache->dlight = 0;
 
-	cache->texture = texture;
+	cache->Texture = Tex;
 	cache->Light = surface->Light;
 	cache->Fade = surface->Fade;
 
@@ -250,7 +246,7 @@ surfcache_t *VSoftwareDrawer::CacheSurface(surface_t *surface, int miplevel)
 	
 	surfrowbytes = surfwidth * PixelBytes;
 
-	SetTexture(texture);
+	SetTexture(Tex);
 	mt = miptexture;
 	
 	r_source = (byte *)mt + mt->offsets[miplevel];
@@ -349,26 +345,17 @@ surfcache_t *VSoftwareDrawer::CacheSurface(surface_t *surface, int miplevel)
 //
 //==========================================================================
 
-surfcache_t *VSoftwareDrawer::CacheSkySurface(surface_t *surface, int texture1,
-	int texture2, float offs1, float offs2)
+surfcache_t *VSoftwareDrawer::CacheSkySurface(surface_t *surface,
+	VTexture* Texture1, VTexture* Texture2, float offs1, float offs2)
 {
 	guard(VSoftwareDrawer::CacheSkySurface);
-	surfcache_t     *cache;
-
-	//
-	// if the surface is animating flush the cache
-	//
-	texture1 = GTextureManager.TextureAnimation(texture1);
-	texture2 = GTextureManager.TextureAnimation(texture2);
-	
 	//
 	// see if the cache holds apropriate data
 	//
-	cache = surface->cachespots[0];
+	surfcache_t* cache = surface->cachespots[0];
 
-	if (cache && cache->texture == texture1 &&
-		*(float *)&cache->dlight == offs1 &&
-		(int)cache->Light == texture2 && cache->mipscale == offs2)
+	if (cache && cache->Texture == Texture1 && cache->SkyOffs1 == offs1 &&
+		cache->SkyTexture2 == Texture2 && cache->mipscale == offs2)
 	{
 		return cache;
 	}
@@ -389,9 +376,9 @@ surfcache_t *VSoftwareDrawer::CacheSkySurface(surface_t *surface, int texture1,
 		cache->owner = &surface->cachespots[0];
 	}
 	
-	cache->texture = texture1;
-	*(float *)&cache->dlight = offs1;
-	cache->Light = texture2;
+	cache->Texture = Texture1;
+	cache->SkyOffs1 = offs1;
+	cache->SkyTexture2 = Texture2;
 	cache->mipscale = offs2;
 
 	//
@@ -405,13 +392,13 @@ surfcache_t *VSoftwareDrawer::CacheSkySurface(surface_t *surface, int texture1,
 	dsky_cachedest = (byte*)cache->data;
 	dsky_toffs = surface->texturemins[1];
 
-	SetTexture(texture1);
+	SetTexture(Texture1);
 	dsky_mt1 = miptexture;
 	dsky_offs1 = (-(int)offs1) & (dsky_mt1->width - 1);
 
-	if (texture2)
+	if (Texture2->Type != TEXTYPE_Null)
 	{
-		SetTexture(texture2);
+		SetTexture(Texture2);
 		dsky_mt2 = miptexture;
 		dsky_offs2 = (-(int)offs2) & (dsky_mt2->width - 1);
 

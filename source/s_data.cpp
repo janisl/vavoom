@@ -455,6 +455,12 @@ void VSoundManager::ParseSndinfo(VScriptParser* sc)
 				V.Volume = sc->Float;
 			}
 		}
+		else if (sc->Check("$ifdoom") || sc->Check("$ifheretic") ||
+			sc->Check("$ifhexen") || sc->Check("$ifstrife") ||
+			sc->Check("$endif"))
+		{
+			GCon->Log("Conditional SNDINFO commands are not supported");
+		}
 		else
 		{
 			sc->ExpectString();

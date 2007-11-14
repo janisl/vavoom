@@ -702,7 +702,8 @@ bool VWidget::TransferAndClipRect(float& X1, float& Y1, float& X2, float& Y2,
 void VWidget::DrawPic(int X, int Y, int Handle, float Alpha)
 {
 	guard(VWidget::DrawPic);
-	if (Handle < 0)
+	VTexture* Tex = GTextureManager(Handle);
+	if (!Tex)
 	{
 		return;
 	}
@@ -721,7 +722,7 @@ void VWidget::DrawPic(int X, int Y, int Handle, float Alpha)
 	float T2 = Info.height;
 	if (TransferAndClipRect(X1, Y1, X2, Y2, S1, T1, S2, T2))
 	{
-		Drawer->DrawPic(X1, Y1, X2, Y2, S1, T1, S2, T2, Handle, Alpha);
+		Drawer->DrawPic(X1, Y1, X2, Y2, S1, T1, S2, T2, Tex, Alpha);
 	}
 	unguard;
 }
@@ -735,7 +736,8 @@ void VWidget::DrawPic(int X, int Y, int Handle, float Alpha)
 void VWidget::DrawShadowedPic(int X, int Y, int Handle)
 {
 	guard(VWidget::DrawShadowedPic);
-	if (Handle < 0)
+	VTexture* Tex = GTextureManager(Handle);
+	if (!Tex)
 	{
 		return;
 	}
@@ -752,7 +754,7 @@ void VWidget::DrawShadowedPic(int X, int Y, int Handle)
 	float T2 = Info.height;
 	if (TransferAndClipRect(X1, Y1, X2, Y2, S1, T1, S2, T2))
 	{
-		Drawer->DrawPicShadow(X1, Y1, X2, Y2, S1, T1, S2, T2, Handle, 0.625);
+		Drawer->DrawPicShadow(X1, Y1, X2, Y2, S1, T1, S2, T2, Tex, 0.625);
 	}
 
 	DrawPic(X, Y, Handle);
@@ -779,7 +781,9 @@ void VWidget::FillRectWithFlat(int X, int Y, int Width, int Height,
 	float T2 = Height;
 	if (TransferAndClipRect(X1, Y1, X2, Y2, S1, T1, S2, T2))
 	{
-		Drawer->FillRectWithFlat(X1, Y1, X2, Y2, S1, T1, S2, T2, Name);
+		Drawer->FillRectWithFlat(X1, Y1, X2, Y2, S1, T1, S2, T2,
+			GTextureManager(GTextureManager.NumForName(Name, TEXTYPE_Flat,
+			true, true)));
 	}
 	unguard;
 }

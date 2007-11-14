@@ -56,7 +56,7 @@ struct texinfo_t
 	float			soffs;
 	TVec			taxis;
 	float			toffs;
-	int				pic;
+	VTexture*		Tex;
 	//	1.1 for solid surfaces
 	// Alpha for masked surfaces
 	float			Alpha;

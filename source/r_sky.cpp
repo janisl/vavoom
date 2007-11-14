@@ -311,8 +311,8 @@ float tk = skyh / RADIUS;
 	}
 
 	//	Precache textures
-	Drawer->SetTexture(Level->LevelInfo->Sky1Texture);
-	Drawer->SetTexture(Level->LevelInfo->Sky2Texture);
+	Drawer->SetTexture(GTextureManager[Level->LevelInfo->Sky1Texture]);
+	Drawer->SetTexture(GTextureManager[Level->LevelInfo->Sky2Texture]);
 	unguard;
 }
 
@@ -445,7 +445,7 @@ void VRenderLevel::InitSkyBox(VName Name1, VName Name2)
 		sky[j].surf.Light = 0xffffffff;
 
 		//	Precache texture
-		Drawer->SetTexture(sky[j].texture1);
+		Drawer->SetTexture(GTextureManager[sky[j].texture1]);
 
 		VTexture* STex = GTextureManager.Textures[sky[j].texture1];
 
@@ -710,8 +710,9 @@ void VRenderLevel::DrawSky()
 
 	for (int i = 0; i < NumSkySurfs; i++)
 	{
-		Drawer->DrawSkyPolygon(&sky[i].surf, bIsSkyBox, sky[i].texture1,
-			sky[i].columnOffset1, sky[i].texture2, sky[i].columnOffset2);
+		Drawer->DrawSkyPolygon(&sky[i].surf, bIsSkyBox,
+			GTextureManager(sky[i].texture1), sky[i].columnOffset1,
+			GTextureManager(sky[i].texture2), sky[i].columnOffset2);
 	}
 
 	Drawer->EndSky();

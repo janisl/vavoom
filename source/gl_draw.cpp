@@ -56,10 +56,10 @@
 //==========================================================================
 
 void VOpenGLDrawer::DrawPic(float x1, float y1, float x2, float y2,
-	float s1, float t1, float s2, float t2, int handle, float Alpha)
+	float s1, float t1, float s2, float t2, VTexture* Tex, float Alpha)
 {
 	guard(VOpenGLDrawer::DrawPic);
-	SetPic(handle);
+	SetPic(Tex);
 	if (Alpha < 1.0)
 	{
 		glDisable(GL_ALPHA_TEST);
@@ -95,10 +95,10 @@ void VOpenGLDrawer::DrawPic(float x1, float y1, float x2, float y2,
 //==========================================================================
 
 void VOpenGLDrawer::DrawPicShadow(float x1, float y1, float x2, float y2,
-	float s1, float t1, float s2, float t2, int handle, float shade)
+	float s1, float t1, float s2, float t2, VTexture* Tex, float shade)
 {
 	guard(VOpenGLDrawer::DrawPicShadow);
-	SetPic(handle);
+	SetPic(Tex);
 	glDisable(GL_ALPHA_TEST);
 	glEnable(GL_BLEND);
 	glColor4f(0, 0, 0, shade);
@@ -126,10 +126,10 @@ void VOpenGLDrawer::DrawPicShadow(float x1, float y1, float x2, float y2,
 //==========================================================================
 
 void VOpenGLDrawer::FillRectWithFlat(float x1, float y1, float x2, float y2,
-	float s1, float t1, float s2, float t2, VName fname)
+	float s1, float t1, float s2, float t2, VTexture* Tex)
 {
 	guard(VOpenGLDrawer::FillRectWithFlat);
-	SetTexture(GTextureManager.NumForName(fname, TEXTYPE_Flat, true, false));
+	SetTexture(Tex);
 
 	glColor4f(1, 1, 1, 1);
 	glBegin(GL_QUADS);
@@ -233,12 +233,11 @@ void VOpenGLDrawer::DrawConsoleBackground(int h)
 //==========================================================================
 
 void VOpenGLDrawer::DrawSpriteLump(float x1, float y1, float x2, float y2,
-	int lump, int translation, bool flip)
+	VTexture* Tex, int translation, bool flip)
 {
 	guard(VOpenGLDrawer::DrawSpriteLump);
-	SetSpriteLump(lump, translation);
+	SetSpriteLump(Tex, translation);
 
-	VTexture* Tex = GTextureManager.Textures[lump];
 	float s1, s2;
 	if (flip)
 	{

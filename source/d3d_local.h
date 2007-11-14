@@ -189,20 +189,19 @@ public:
 
 	//	Texture stuff
 	void InitTextures();
-	void SetTexture(int);
-	void SetSpriteLump(int, int);
+	void SetTexture(VTexture*);
 
 	//	Polygon drawing
 	void DrawPolygon(surface_t*, int);
 	void DrawSkyPortal(surface_t*, int);
 	void BeginSky();
-	void DrawSkyPolygon(surface_t*, bool, int, float, int, float);
+	void DrawSkyPolygon(surface_t*, bool, VTexture*, float, VTexture*, float);
 	void EndSky();
 	void DrawMaskedPolygon(surface_t*, float);
-	void DrawSpritePolygon(TVec*, int, float, int, vuint32, vuint32,
+	void DrawSpritePolygon(TVec*, VTexture*, float, int, vuint32, vuint32,
 		const TVec&, float, const TVec&, const TVec&, const TVec&);
 	void DrawAliasModel(const TVec&, const TAVec&, const TVec&, const TVec&,
-		mmdl_t*, int, int, vuint32, vuint32, float, bool);
+		mmdl_t*, int, VTexture*, vuint32, vuint32, float, bool);
 
 	//	Particles
 	void StartParticles();
@@ -210,13 +209,16 @@ public:
 	void EndParticles();
 
 	//	Drawing
-	void DrawPic(float, float, float, float, float, float, float, float, int, float);
-	void DrawPicShadow(float, float, float, float, float, float, float, float, int, float);
-	void FillRectWithFlat(float, float, float, float, float, float, float, float, VName);
+	void DrawPic(float, float, float, float, float, float, float, float,
+		VTexture*, float);
+	void DrawPicShadow(float, float, float, float, float, float, float,
+		float, VTexture*, float);
+	void FillRectWithFlat(float, float, float, float, float, float, float,
+		float, VTexture*);
 	void FillRect(float, float, float, float, vuint32);
 	void ShadeRect(int, int, int, int, float);
 	void DrawConsoleBackground(int);
-	void DrawSpriteLump(float, float, float, float, int, int, bool);
+	void DrawSpriteLump(float, float, float, float, VTexture*, int, bool);
 
 	//	Automap
 	void StartAutomap();
@@ -235,9 +237,10 @@ private:
 #else
 	LPDIRECTDRAWSURFACE7 CreateSurface(int, int, int, bool);
 #endif
-	void SetPic(int);
-	void GenerateTexture(int);
-	void GenerateTranslatedSprite(int, int, int);
+	void SetSpriteLump(VTexture*, int);
+	void SetPic(VTexture*);
+	void GenerateTexture(VTexture*);
+	void GenerateTranslatedSprite(VTexture*, int, int);
 #if DIRECT3D_VERSION >= 0x0900
 	void UploadTextureImage(LPDIRECT3DTEXTURE9, int, int, int, rgba_t*);
 #elif DIRECT3D_VERSION >= 0x0800
@@ -379,7 +382,7 @@ private:
 	LPDIRECTDRAWSURFACE7		*trsprdata;
 	LPDIRECTDRAWSURFACE7		particle_texture;
 #endif
-	int							trsprlump[MAX_TRANSLATED_SPRITES];
+	int							trspr_tex[MAX_TRANSLATED_SPRITES];
 	int							trsprtnum[MAX_TRANSLATED_SPRITES];
 	int							tscount;
 

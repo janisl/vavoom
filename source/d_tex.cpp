@@ -37,7 +37,7 @@ struct sprite_cache_t
 {
 	void*		data;
 	vuint32		light;
-	int			lump;
+	VTexture*	Tex;
 	int			tnum;
 };
 
@@ -108,31 +108,26 @@ void VSoftwareDrawer::FlushTextureCaches()
 //
 //==========================================================================
 
-void VSoftwareDrawer::SetTexture(int tex)
+void VSoftwareDrawer::SetTexture(VTexture* Tex)
 {
 	guard(VSoftwareDrawer::SetTexture);
-	if ((vuint32)tex >= (vuint32)GTextureManager.Textures.Num())
-		Sys_Error("Invalid texture num %d\n", tex);
-
-	if (GTextureManager.Textures[tex]->Type == TEXTYPE_SkyMap)
+	if (Tex->Type == TEXTYPE_SkyMap)
 	{
-		if (!GTextureManager.Textures[tex]->DriverData ||
-			GTextureManager.Textures[tex]->CheckModified())
+		if (!Tex->DriverData || Tex->CheckModified())
 		{
-			LoadSkyMap(tex);
+			LoadSkyMap(Tex);
 		}
-		cacheblock = (byte*)GTextureManager.Textures[tex]->DriverData;
-		cachewidth = GTextureManager.Textures[tex]->GetWidth();
+		cacheblock = (byte*)Tex->DriverData;
+		cachewidth = Tex->GetWidth();
 		return;
 	}
 
-	if (!GTextureManager.Textures[tex]->DriverData ||
-		GTextureManager.Textures[tex]->CheckModified())
+	if (!Tex->DriverData || Tex->CheckModified())
 	{
-		GenerateTexture(tex);
+		GenerateTexture(Tex);
 	}
 
-	miptexture = (miptexture_t*)GTextureManager.Textures[tex]->DriverData;
+	miptexture = (miptexture_t*)Tex->DriverData;
 	cacheblock = (byte*)miptexture + miptexture->offsets[0];
 	unguard;
 }
@@ -143,7 +138,7 @@ void VSoftwareDrawer::SetTexture(int tex)
 //
 //==========================================================================
 
-void VSoftwareDrawer::SetSpriteLump(int lump, vuint32 light, int translation)
+void VSoftwareDrawer::SetSpriteLump(VTexture* Tex, vuint32 light, int translation)
 {
 	guard(VSoftwareDrawer::SetSpriteLump);
 	light &= 0xf8f8f8f8;
@@ -151,11 +146,11 @@ void VSoftwareDrawer::SetSpriteLump(int lump, vuint32 light, int translation)
 	int i;
 	int avail = -1;
 	//	If texture has been modified, free all instances of this texture.
-	if (GTextureManager.Textures[lump]->CheckModified())
+	if (Tex->CheckModified())
 	{
 		for (i = 0; i <	SPRITE_CACHE_SIZE; i++)
 		{
-			if (sprite_cache[i].data && sprite_cache[i].lump == lump)
+			if (sprite_cache[i].data && sprite_cache[i].Tex == Tex)
 			{
 				Z_Free(sprite_cache[i].data);
 				sprite_cache[i].data = NULL;
@@ -166,12 +161,12 @@ void VSoftwareDrawer::SetSpriteLump(int lump, vuint32 light, int translation)
 	{
 		if (sprite_cache[i].data)
 		{
-			if (sprite_cache[i].lump == lump &&
+			if (sprite_cache[i].Tex == Tex &&
 				sprite_cache[i].light == light &&
 				sprite_cache[i].tnum == translation)
 			{
 				cacheblock = (byte*)sprite_cache[i].data;
-				cachewidth = GTextureManager.Textures[lump]->GetWidth();
+				cachewidth = Tex->GetWidth();
 				return;
 			}
 		}
@@ -189,9 +184,9 @@ void VSoftwareDrawer::SetSpriteLump(int lump, vuint32 light, int translation)
 		sprite_cache_count = (sprite_cache_count + 1) % SPRITE_CACHE_SIZE;
 	}
 
-	GenerateSprite(lump, avail, light, translation);
+	GenerateSprite(Tex, avail, light, translation);
 	cacheblock = (byte*)sprite_cache[avail].data;
-	cachewidth = GTextureManager.Textures[lump]->GetWidth();
+	cachewidth = Tex->GetWidth();
 	unguard;
 }
 
@@ -201,18 +196,15 @@ void VSoftwareDrawer::SetSpriteLump(int lump, vuint32 light, int translation)
 //
 //==========================================================================
 
-byte* VSoftwareDrawer::SetPic(int handle)
+byte* VSoftwareDrawer::SetPic(VTexture* Tex)
 {
 	guard(VSoftwareDrawer::SetPic);
-	handle = GTextureManager.TextureAnimation(handle);
-
-	if (!GTextureManager.Textures[handle]->DriverData ||
-		GTextureManager.Textures[handle]->CheckModified())
+	if (!Tex->DriverData || Tex->CheckModified())
 	{
-		GeneratePic(handle);
+		GeneratePic(Tex);
 	}
-	cachewidth = GTextureManager.Textures[handle]->GetWidth();
-	return (byte*)GTextureManager.Textures[handle]->DriverData;
+	cachewidth = Tex->GetWidth();
+	return (byte*)Tex->DriverData;
 	unguard;
 }
 
@@ -222,11 +214,9 @@ byte* VSoftwareDrawer::SetPic(int handle)
 //
 //==========================================================================
 
-void VSoftwareDrawer::GenerateTexture(int texnum)
+void VSoftwareDrawer::GenerateTexture(VTexture* Tex)
 {
 	guard(VSoftwareDrawer::GenerateTexture);
-	VTexture* Tex = GTextureManager.Textures[texnum];
-
 	byte* block = Tex->GetPixels8();
 
 	int mipw = (Tex->GetWidth() + 15) & ~15;
@@ -361,10 +351,9 @@ void VSoftwareDrawer::MakeMips(miptexture_t *mip)
 //
 //==========================================================================
 
-void VSoftwareDrawer::LoadSkyMap(int texnum)
+void VSoftwareDrawer::LoadSkyMap(VTexture* Tex)
 {
 	guard(VSoftwareDrawer::LoadSkyMap);
-	VTexture* Tex = GTextureManager.Textures[texnum];
 	int j;
 
 	byte* Pixels = Tex->GetPixels();
@@ -465,12 +454,10 @@ void VSoftwareDrawer::LoadSkyMap(int texnum)
 //
 //==========================================================================
 
-void VSoftwareDrawer::GenerateSprite(int lump, int slot, vuint32 light,
+void VSoftwareDrawer::GenerateSprite(VTexture* Tex, int slot, vuint32 light,
 	int translation)
 {
 	guard(VSoftwareDrawer::GenerateSprite);
-	VTexture* Tex = GTextureManager.Textures[lump];
-
 	int w = Tex->GetWidth();
 	int h = Tex->GetHeight();
 
@@ -479,7 +466,7 @@ void VSoftwareDrawer::GenerateSprite(int lump, int slot, vuint32 light,
 	void *block = (byte*)Z_Calloc(w * h * PixelBytes);
 	sprite_cache[slot].data = block;
 	sprite_cache[slot].light = light;
-	sprite_cache[slot].lump = lump;
+	sprite_cache[slot].Tex = Tex;
 	sprite_cache[slot].tnum = translation;
 
 	int lightr = (light >> 19) & 0x1f;
@@ -609,10 +596,9 @@ void VSoftwareDrawer::GenerateSprite(int lump, int slot, vuint32 light,
 //
 //==========================================================================
 
-void VSoftwareDrawer::GeneratePic(int texnum)
+void VSoftwareDrawer::GeneratePic(VTexture* Tex)
 {
 	guard(GeneratePic);
-	VTexture* Tex = GTextureManager.Textures[texnum];
 	byte* Pixels = Tex->GetPixels8();
 	int NumPixels = Tex->GetWidth() * Tex->GetHeight();
 	if (!Tex->DriverData)

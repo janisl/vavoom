@@ -1623,7 +1623,7 @@ void VSoftwareDrawer::SpriteScanRightEdge(TVec *vb, int count)
 //
 //==========================================================================
 
-void VSoftwareDrawer::SpriteCaclulateGradients(int lump, const TVec& normal,
+void VSoftwareDrawer::SpriteCaclulateGradients(VTexture* Tex, const TVec& normal,
 	float dist, const TVec& saxis, const TVec& taxis, const TVec& texorg)
 {
 	TVec		p_normal, p_saxis, p_taxis;
@@ -1657,8 +1657,8 @@ void VSoftwareDrawer::SpriteCaclulateGradients(int lump, const TVec& normal,
 		0.5) - spr_texturemins[1];
 
 	// -1 (-epsilon) so we never wander off the edge of the texture
-	bbextents = (GTextureManager.Textures[lump]->GetWidth() << 16) - 1;
-	bbextentt = (GTextureManager.Textures[lump]->GetHeight() << 16) - 1;
+	bbextents = (Tex->GetWidth() << 16) - 1;
+	bbextentt = (Tex->GetHeight() << 16) - 1;
 }
 
 //==========================================================================
@@ -1727,7 +1727,7 @@ void VSoftwareDrawer::MaskedSurfCaclulateGradients(surface_t *surf)
 //==========================================================================
 
 void VSoftwareDrawer::SpriteDrawPolygon(TVec *cv, int count, surface_t *surf,
-	int lump, int translation, float Alpha, vuint32 light, vuint32 Fade,
+	VTexture* Tex, int translation, float Alpha, vuint32 light, vuint32 Fade,
 	const TVec& normal, float dist, const TVec& saxis, const TVec& taxis,
 	const TVec& texorg)
 {
@@ -1826,9 +1826,9 @@ void VSoftwareDrawer::SpriteDrawPolygon(TVec *cv, int count, surface_t *surf,
 	}
 	else
 	{
-		SpriteCaclulateGradients(lump, normal, dist, saxis, taxis, texorg);
+		SpriteCaclulateGradients(Tex, normal, dist, saxis, taxis, texorg);
 		SetFade(Fade);
-		SetSpriteLump(lump, light, translation);
+		SetSpriteLump(Tex, light, translation);
 	}
 	SpriteScanLeftEdge(verts, r_emited);
 	SpriteScanRightEdge(verts, r_emited);
@@ -1844,7 +1844,7 @@ void VSoftwareDrawer::SpriteDrawPolygon(TVec *cv, int count, surface_t *surf,
 void VSoftwareDrawer::DrawMaskedPolygon(surface_t* surf, float Alpha)
 {
 	guard(VSoftwareDrawer::DrawMaskedPolygon);
-	SpriteDrawPolygon(surf->verts, surf->count, surf, 0, 0, Alpha, 0, 0,
+	SpriteDrawPolygon(surf->verts, surf->count, surf, NULL, 0, Alpha, 0, 0,
 		TVec(), 0, TVec(), TVec(), TVec());
 	unguard;
 }
@@ -1855,12 +1855,12 @@ void VSoftwareDrawer::DrawMaskedPolygon(surface_t* surf, float Alpha)
 //
 //==========================================================================
 
-void VSoftwareDrawer::DrawSpritePolygon(TVec* cv, int lump, float Alpha,
+void VSoftwareDrawer::DrawSpritePolygon(TVec* cv, VTexture* Tex, float Alpha,
 	int translation, vuint32 light, vuint32 Fade, const TVec& normal,
 	float dist, const TVec& saxis, const TVec& taxis, const TVec& texorg)
 {
 	guard(VSoftwareDrawer::DrawSpritePolygon);
-	SpriteDrawPolygon(cv, 4, NULL, lump, translation, Alpha, light,
+	SpriteDrawPolygon(cv, 4, NULL, Tex, translation, Alpha, light,
 		Fade, normal, dist, saxis, taxis, texorg);
 	unguard;
 }

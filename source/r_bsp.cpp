@@ -98,12 +98,12 @@ void VRenderLevel::DrawSurfaces(surface_t* InSurfs, texinfo_t *texinfo,
 		return;
 	}
 
-	if (GTextureManager.Textures[texinfo->pic]->Type == TEXTYPE_Null)
+	if (texinfo->Tex->Type == TEXTYPE_Null)
 	{
 		return;
 	}
 
-	if (texinfo->pic == skyflatnum)
+	if (texinfo->Tex == GTextureManager[skyflatnum])
 	{
 		SkyIsVisible = true;
 		Drawer->DrawSkyPortal(surfs, clipflags);
@@ -133,7 +133,7 @@ void VRenderLevel::DrawSurfaces(surface_t* InSurfs, texinfo_t *texinfo,
 		else
 		{
 			DrawTranslucentPoly(surfs, surfs->verts, surfs->count,
-				texinfo->pic, texinfo->Alpha, 0, false, 0, 0,
+				0, texinfo->Alpha, 0, false, 0, 0,
 				TVec(), 0, TVec(), TVec(), TVec());
 		}
 		surfs = surfs->next;

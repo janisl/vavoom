@@ -274,7 +274,7 @@ void VDirect3DDrawer::ReleaseTextures()
 //
 //==========================================================================
 
-void VDirect3DDrawer::SetTexture(int tex)
+void VDirect3DDrawer::SetTexture(VTexture* Tex)
 {
 	guard(VDirect3DDrawer::SetTexture);
 	if (!RenderDevice)
@@ -282,17 +282,14 @@ void VDirect3DDrawer::SetTexture(int tex)
 		return;
 	}
 
-	tex = GTextureManager.TextureAnimation(tex);
-
-	if (!GTextureManager.Textures[tex]->DriverData ||
-		GTextureManager.Textures[tex]->CheckModified())
+	if (!Tex->DriverData || Tex->CheckModified())
 	{
-		GenerateTexture(tex);
+		GenerateTexture(Tex);
 	}
 
 #if DIRECT3D_VERSION >= 0x0900
-	RenderDevice->SetTexture(TexStage, (LPDIRECT3DTEXTURE9)GTextureManager.Textures[tex]->DriverData);
-	if (GTextureManager.Textures[tex]->Type == TEXTYPE_SkyMap)
+	RenderDevice->SetTexture(TexStage, (LPDIRECT3DTEXTURE9)Tex->DriverData);
+	if (Tex->Type == TEXTYPE_SkyMap)
 	{
 		RenderDevice->SetSamplerState(TexStage, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
 		RenderDevice->SetSamplerState(TexStage, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
@@ -304,11 +301,11 @@ void VDirect3DDrawer::SetTexture(int tex)
 	}
 #else
 #if DIRECT3D_VERSION >= 0x0800
-	RenderDevice->SetTexture(TexStage, (LPDIRECT3DTEXTURE8)GTextureManager.Textures[tex]->DriverData);
+	RenderDevice->SetTexture(TexStage, (LPDIRECT3DTEXTURE8)Tex->DriverData);
 #else
-	RenderDevice->SetTexture(TexStage, (LPDIRECTDRAWSURFACE7)GTextureManager.Textures[tex]->DriverData);
+	RenderDevice->SetTexture(TexStage, (LPDIRECTDRAWSURFACE7)Tex->DriverData);
 #endif
-	if (GTextureManager.Textures[tex]->Type == TEXTYPE_SkyMap)
+	if (Tex->Type == TEXTYPE_SkyMap)
 	{
 		RenderDevice->SetTextureStageState(TexStage, D3DTSS_ADDRESSU, D3DTADDRESS_CLAMP);
 		RenderDevice->SetTextureStageState(TexStage, D3DTSS_ADDRESSV, D3DTADDRESS_CLAMP);
@@ -319,8 +316,8 @@ void VDirect3DDrawer::SetTexture(int tex)
 		RenderDevice->SetTextureStageState(TexStage, D3DTSS_ADDRESSV, D3DTADDRESS_WRAP);
 	}
 #endif
-	tex_iw = 1.0 / GTextureManager.Textures[tex]->GetWidth();
-	tex_ih = 1.0 / GTextureManager.Textures[tex]->GetHeight();
+	tex_iw = 1.0 / Tex->GetWidth();
+	tex_ih = 1.0 / Tex->GetHeight();
 	unguard;
 }
 
@@ -330,7 +327,7 @@ void VDirect3DDrawer::SetTexture(int tex)
 //
 //==========================================================================
 
-void VDirect3DDrawer::SetSpriteLump(int lump, int translation)
+void VDirect3DDrawer::SetSpriteLump(VTexture* Tex, int translation)
 {
 	guard(VDirect3DDrawer::SetSpriteLump);
 	if (!RenderDevice)
@@ -344,9 +341,9 @@ void VDirect3DDrawer::SetSpriteLump(int lump, int translation)
 		{
 			if (trsprdata[i])
 			{
-				if (trsprlump[i] == lump && trsprtnum[i] == translation)
+				if (trspr_tex[i] == Tex && trsprtnum[i] == translation)
 				{
-					if (GTextureManager.Textures[lump]->CheckModified())
+					if (Tex->CheckModified())
 					{
 						SAFE_RELEASE(trsprdata[i]);
 						avail = i;
@@ -360,8 +357,8 @@ void VDirect3DDrawer::SetSpriteLump(int lump, int translation)
 					RenderDevice->SetTextureStageState(0, D3DTSS_ADDRESSU, D3DTADDRESS_CLAMP);
 					RenderDevice->SetTextureStageState(0, D3DTSS_ADDRESSV, D3DTADDRESS_CLAMP);
 #endif
-					tex_iw = 1.0 / GTextureManager.Textures[lump]->GetWidth();
-					tex_ih = 1.0 / GTextureManager.Textures[lump]->GetHeight();
+					tex_iw = 1.0 / Tex->GetWidth();
+					tex_ih = 1.0 / Tex->GetHeight();
 					return;
 				}
 			}
@@ -376,7 +373,7 @@ void VDirect3DDrawer::SetSpriteLump(int lump, int translation)
 			SAFE_RELEASE(trsprdata[0]);
 			avail = 0;
 		}
-		GenerateTranslatedSprite(lump, avail, translation);
+		GenerateTranslatedSprite(Tex, avail, translation);
 		RenderDevice->SetTexture(0, trsprdata[avail]);
 #if DIRECT3D_VERSION >= 0x0900
 		RenderDevice->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
@@ -385,31 +382,30 @@ void VDirect3DDrawer::SetSpriteLump(int lump, int translation)
 		RenderDevice->SetTextureStageState(0, D3DTSS_ADDRESSU, D3DTADDRESS_CLAMP);
 		RenderDevice->SetTextureStageState(0, D3DTSS_ADDRESSV, D3DTADDRESS_CLAMP);
 #endif
-		tex_iw = 1.0 / GTextureManager.Textures[lump]->GetWidth();
-		tex_ih = 1.0 / GTextureManager.Textures[lump]->GetHeight();
+		tex_iw = 1.0 / Tex->GetWidth();
+		tex_ih = 1.0 / Tex->GetHeight();
 	}
 	else
 	{
-		if (!GTextureManager.Textures[lump]->DriverData ||
-			GTextureManager.Textures[lump]->CheckModified())
+		if (!Tex->DriverData || Tex->CheckModified())
 		{
-			GenerateTexture(lump);
+			GenerateTexture(Tex);
 		}
 #if DIRECT3D_VERSION >= 0x0900
-		RenderDevice->SetTexture(0, (LPDIRECT3DTEXTURE9)GTextureManager.Textures[lump]->DriverData);
+		RenderDevice->SetTexture(0, (LPDIRECT3DTEXTURE9)Tex->DriverData);
 		RenderDevice->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
 		RenderDevice->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
 #elif DIRECT3D_VERSION >= 0x0800
-		RenderDevice->SetTexture(0, (LPDIRECT3DTEXTURE8)GTextureManager.Textures[lump]->DriverData);
+		RenderDevice->SetTexture(0, (LPDIRECT3DTEXTURE8)Tex->DriverData);
 		RenderDevice->SetTextureStageState(0, D3DTSS_ADDRESSU, D3DTADDRESS_CLAMP);
 		RenderDevice->SetTextureStageState(0, D3DTSS_ADDRESSV, D3DTADDRESS_CLAMP);
 #else
-		RenderDevice->SetTexture(0, (LPDIRECTDRAWSURFACE7)GTextureManager.Textures[lump]->DriverData);
+		RenderDevice->SetTexture(0, (LPDIRECTDRAWSURFACE7)Tex->DriverData);
 		RenderDevice->SetTextureStageState(0, D3DTSS_ADDRESSU, D3DTADDRESS_CLAMP);
 		RenderDevice->SetTextureStageState(0, D3DTSS_ADDRESSV, D3DTADDRESS_CLAMP);
 #endif
-		tex_iw = 1.0 / GTextureManager.Textures[lump]->GetWidth();
-		tex_ih = 1.0 / GTextureManager.Textures[lump]->GetHeight();
+		tex_iw = 1.0 / Tex->GetWidth();
+		tex_ih = 1.0 / Tex->GetHeight();
 	}
 	unguard;
 }
@@ -420,7 +416,7 @@ void VDirect3DDrawer::SetSpriteLump(int lump, int translation)
 //
 //==========================================================================
 
-void VDirect3DDrawer::SetPic(int handle)
+void VDirect3DDrawer::SetPic(VTexture* Tex)
 {
 	guard(VDirect3DDrawer::SetPic);
 	if (!RenderDevice)
@@ -428,29 +424,26 @@ void VDirect3DDrawer::SetPic(int handle)
 		return;
 	}
 
-	handle = GTextureManager.TextureAnimation(handle);
-
-	if (!GTextureManager.Textures[handle]->DriverData ||
-		GTextureManager.Textures[handle]->CheckModified())
+	if (!Tex->DriverData || Tex->CheckModified())
 	{
-		GenerateTexture(handle);
+		GenerateTexture(Tex);
 	}
 
 #if DIRECT3D_VERSION >= 0x0900
-	RenderDevice->SetTexture(TexStage, (LPDIRECT3DTEXTURE9)GTextureManager.Textures[handle]->DriverData);
+	RenderDevice->SetTexture(TexStage, (LPDIRECT3DTEXTURE9)Tex->DriverData);
 	RenderDevice->SetSamplerState(TexStage, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
 	RenderDevice->SetSamplerState(TexStage, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
 #elif DIRECT3D_VERSION >= 0x0800
-	RenderDevice->SetTexture(TexStage, (LPDIRECT3DTEXTURE8)GTextureManager.Textures[handle]->DriverData);
+	RenderDevice->SetTexture(TexStage, (LPDIRECT3DTEXTURE8)Tex->DriverData);
 	RenderDevice->SetTextureStageState(TexStage, D3DTSS_ADDRESSU, D3DTADDRESS_CLAMP);
 	RenderDevice->SetTextureStageState(TexStage, D3DTSS_ADDRESSV, D3DTADDRESS_CLAMP);
 #else
-	RenderDevice->SetTexture(TexStage, (LPDIRECTDRAWSURFACE7)GTextureManager.Textures[handle]->DriverData);
+	RenderDevice->SetTexture(TexStage, (LPDIRECTDRAWSURFACE7)Tex->DriverData);
 	RenderDevice->SetTextureStageState(TexStage, D3DTSS_ADDRESSU, D3DTADDRESS_CLAMP);
 	RenderDevice->SetTextureStageState(TexStage, D3DTSS_ADDRESSV, D3DTADDRESS_CLAMP);
 #endif
-	tex_iw = 1.0 / GTextureManager.Textures[handle]->GetWidth();
-	tex_ih = 1.0 / GTextureManager.Textures[handle]->GetHeight();
+	tex_iw = 1.0 / Tex->GetWidth();
+	tex_ih = 1.0 / Tex->GetHeight();
 	unguard;
 }
 
@@ -460,11 +453,9 @@ void VDirect3DDrawer::SetPic(int handle)
 //
 //==========================================================================
 
-void VDirect3DDrawer::GenerateTexture(int texnum)
+void VDirect3DDrawer::GenerateTexture(VTexture* Tex)
 {
 	guard(VDirect3DDrawer::GenerateTexture);
-	VTexture* Tex = GTextureManager.Textures[texnum];
-
 	VTexture* SrcTex = Tex->GetHighResolutionTexture();
 	if (!SrcTex)
 	{
@@ -492,13 +483,11 @@ void VDirect3DDrawer::GenerateTexture(int texnum)
 //
 //==========================================================================
 
-void VDirect3DDrawer::GenerateTranslatedSprite(int lump, int slot,
+void VDirect3DDrawer::GenerateTranslatedSprite(VTexture* Tex, int slot,
 	int translation)
 {
 	guard(VDirect3DDrawer::GenerateTranslatedSprite);
-	VTexture* Tex = GTextureManager.Textures[lump];
-
-	trsprlump[slot] = lump;
+	trspr_tex[slot] = Tex;
 	trsprtnum[slot] = translation;
 
 	byte* Pixels = Tex->GetPixels8();

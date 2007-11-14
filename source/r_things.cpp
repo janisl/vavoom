@@ -396,7 +396,7 @@ void VRenderLevel::DrawTranslucentPoly(surface_t* surf, TVec* sv, int count,
 		}
 		else if (spr.type)
 		{
-			Drawer->DrawSpritePolygon(spr.Verts, spr.lump, spr.Alpha,
+			Drawer->DrawSpritePolygon(spr.Verts, GTextureManager[spr.lump], spr.Alpha,
 				spr.translation, spr.light, spr.Fade, spr.normal, spr.pdist,
 				spr.saxis, spr.taxis, spr.texorg);
 		}
@@ -424,7 +424,7 @@ void VRenderLevel::DrawTranslucentPoly(surface_t* surf, TVec* sv, int count,
 	//	All slots are full and are nearer to current sprite so draw it
 	if (type)
 	{
-		Drawer->DrawSpritePolygon(sv, lump, Alpha, translation, light,
+		Drawer->DrawSpritePolygon(sv, GTextureManager[lump], Alpha, translation, light,
 			Fade, normal, pdist, saxis, taxis, texorg);
 	}
 	else
@@ -640,7 +640,7 @@ void VRenderLevel::RenderSprite(VEntity* thing, vuint32 light, vuint32 Fade)
 	}
 	else
 	{
-		Drawer->DrawSpritePolygon(sv, lump, thing->Alpha, thing->Translation,
+		Drawer->DrawSpritePolygon(sv, GTextureManager[lump], thing->Alpha, thing->Translation,
 			light, Fade, -sprforward, DotProduct(sprorigin, -sprforward),
 			flip ? -sprright : sprright, -sprup, flip ? sv[2] : sv[1]);
 	}
@@ -692,7 +692,7 @@ void VRenderLevel::RenderTranslucentAliasModel(VEntity* mobj, vuint32 light,
 		}
 		else if (spr.type)
 		{
-			Drawer->DrawSpritePolygon(spr.Verts, spr.lump, spr.Alpha,
+			Drawer->DrawSpritePolygon(spr.Verts, GTextureManager[spr.lump], spr.Alpha,
 				spr.translation, spr.light, spr.Fade, spr.normal, spr.pdist,
 				spr.saxis, spr.taxis, spr.texorg);
 		}
@@ -863,7 +863,7 @@ void VRenderLevel::DrawTranslucentPolys()
 			}
 			else if (spr.type)
 			{
-				Drawer->DrawSpritePolygon(spr.Verts, spr.lump, spr.Alpha,
+				Drawer->DrawSpritePolygon(spr.Verts, GTextureManager[spr.lump], spr.Alpha,
 					spr.translation, spr.light, spr.Fade, spr.normal,
 					spr.pdist, spr.saxis, spr.taxis, spr.texorg);
 			}
@@ -967,7 +967,7 @@ void VRenderLevel::RenderPSprite(VViewState* VSt, float PSP_DIST,
 	else
 		taxis = -(viewup * 100 * 4 / 3 * PSP_DISTI);
 
-	Drawer->DrawSpritePolygon(dv, lump, cl->ViewEntAlpha, 0, light, Fade,
+	Drawer->DrawSpritePolygon(dv, GTextureManager[lump], cl->ViewEntAlpha, 0, light, Fade,
 		-viewforward, DotProduct(dv[0], -viewforward), saxis, taxis, texorg);
 	unguard;
 }
@@ -1098,6 +1098,6 @@ void R_DrawSpritePatch(int x, int y, int sprite, int frame, int rot, int transla
 	x2 *= fScaleX;
 	y2 *= fScaleY;
 
-	Drawer->DrawSpriteLump(x1, y1, x2, y2, lump, translation, flip);
+	Drawer->DrawSpriteLump(x1, y1, x2, y2, Tex, translation, flip);
 	unguard;
 }

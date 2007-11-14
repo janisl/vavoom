@@ -56,13 +56,13 @@
 //==========================================================================
 
 void VDirect3DDrawer::DrawPic(float x1, float y1, float x2, float y2,
-	float s1, float t1, float s2, float t2, int handle, float Alpha)
+	float s1, float t1, float s2, float t2, VTexture* Tex, float Alpha)
 {
 	guard(VDirect3DDrawer::DrawPic);
 	MyD3DVertex	dv[4];
 	int l = ((int)(Alpha * 255) << 24) | 0xffffff;
 
-	SetPic(handle);
+	SetPic(Tex);
 
 	dv[0] = MyD3DVertex(x1, y1, l, s1 * tex_iw, t1 * tex_ih);
 	dv[1] = MyD3DVertex(x2, y1, l, s2 * tex_iw, t1 * tex_ih);
@@ -96,13 +96,13 @@ void VDirect3DDrawer::DrawPic(float x1, float y1, float x2, float y2,
 //==========================================================================
 
 void VDirect3DDrawer::DrawPicShadow(float x1, float y1, float x2, float y2,
-	float s1, float t1, float s2, float t2, int handle, float shade)
+	float s1, float t1, float s2, float t2, VTexture* Tex, float shade)
 {
 	guard(VDirect3DDrawer::DrawPicShadow);
 	MyD3DVertex	dv[4];
 	int l = (int)(shade * 255) << 24;
 
-	SetPic(handle);
+	SetPic(Tex);
 
 	dv[0] = MyD3DVertex(x1, y1, l, s1 * tex_iw, t1 * tex_ih);
 	dv[1] = MyD3DVertex(x2, y1, l, s2 * tex_iw, t1 * tex_ih);
@@ -132,13 +132,13 @@ void VDirect3DDrawer::DrawPicShadow(float x1, float y1, float x2, float y2,
 //==========================================================================
 
 void VDirect3DDrawer::FillRectWithFlat(float x1, float y1, float x2, float y2,
-	float s1, float t1, float s2, float t2, VName fname)
+	float s1, float t1, float s2, float t2, VTexture* Tex)
 {
 	guard(VDirect3DDrawer::FillRectWithFlat);
 	MyD3DVertex	dv[4];
 	int l = 0xffffffff;
 
-	SetTexture(GTextureManager.NumForName(fname, TEXTYPE_Flat, true, true));
+	SetTexture(Tex);
 
 	dv[0] = MyD3DVertex(x1, y1, l, s1 * tex_iw, t1 * tex_ih);
 	dv[1] = MyD3DVertex(x2, y1, l, s2 * tex_iw, t1 * tex_ih);
@@ -258,12 +258,11 @@ void VDirect3DDrawer::DrawConsoleBackground(int h)
 //==========================================================================
 
 void VDirect3DDrawer::DrawSpriteLump(float x1, float y1, float x2, float y2,
-	int lump, int translation, bool flip)
+	VTexture* Tex, int translation, bool flip)
 {
 	guard(VDirect3DDrawer::DrawSpriteLump);
-	SetSpriteLump(lump, translation);
+	SetSpriteLump(Tex, translation);
 
-	VTexture* Tex = GTextureManager.Textures[lump];
 	float s1, s2;
 	if (flip)
 	{

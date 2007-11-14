@@ -182,24 +182,21 @@ int VOpenGLDrawer::ToPowerOf2(int val)
 //
 //==========================================================================
 
-void VOpenGLDrawer::SetTexture(int tex)
+void VOpenGLDrawer::SetTexture(VTexture* Tex)
 {
 	guard(VOpenGLDrawer::SetTexture);
-	tex = GTextureManager.TextureAnimation(tex);
-
-	if (!GTextureManager.Textures[tex]->DriverHandle ||
-		GTextureManager.Textures[tex]->CheckModified())
+	if (!Tex->DriverHandle || Tex->CheckModified())
 	{
-		GenerateTexture(tex);
+		GenerateTexture(Tex);
 	}
 	else
 	{
-		glBindTexture(GL_TEXTURE_2D, GTextureManager.Textures[tex]->DriverHandle);
+		glBindTexture(GL_TEXTURE_2D, Tex->DriverHandle);
 	}
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, maxfilter);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mipfilter);
-	tex_iw = 1.0 / GTextureManager.Textures[tex]->GetWidth();
-	tex_ih = 1.0 / GTextureManager.Textures[tex]->GetHeight();
+	tex_iw = 1.0 / Tex->GetWidth();
+	tex_ih = 1.0 / Tex->GetHeight();
 	unguard;
 }
 
@@ -209,7 +206,7 @@ void VOpenGLDrawer::SetTexture(int tex)
 //
 //==========================================================================
 
-void VOpenGLDrawer::SetSpriteLump(int lump, int translation)
+void VOpenGLDrawer::SetSpriteLump(VTexture* Tex, int translation)
 {
 	guard(VOpenGLDrawer::SetSpriteLump);
 	if (translation)
@@ -220,9 +217,9 @@ void VOpenGLDrawer::SetSpriteLump(int lump, int translation)
 		{
 			if (trspr_sent[i])
 			{
-				if (trspr_lump[i] == lump && trspr_tnum[i] == translation)
+				if (trspr_tex[i] == Tex && trspr_tnum[i] == translation)
 				{
-					if (GTextureManager.Textures[lump]->CheckModified())
+					if (Tex->CheckModified())
 					{
 						avail = i;
 						break;
@@ -230,8 +227,8 @@ void VOpenGLDrawer::SetSpriteLump(int lump, int translation)
 					glBindTexture(GL_TEXTURE_2D, trspr_id[i]);
 					glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, maxfilter);
 					glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mipfilter);
-					tex_iw = 1.0 / GTextureManager.Textures[lump]->GetWidth();
-					tex_ih = 1.0 / GTextureManager.Textures[lump]->GetHeight();
+					tex_iw = 1.0 / Tex->GetWidth();
+					tex_ih = 1.0 / Tex->GetHeight();
 					return;
 				}
 			}
@@ -246,27 +243,26 @@ void VOpenGLDrawer::SetSpriteLump(int lump, int translation)
 			avail = 0;
 		}
 		glBindTexture(GL_TEXTURE_2D, trspr_id[avail]);
-		GenerateTranslatedSprite(lump, avail, translation);
+		GenerateTranslatedSprite(Tex, avail, translation);
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, maxfilter);
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mipfilter);
-		tex_iw = 1.0 / GTextureManager.Textures[lump]->GetWidth();
-		tex_ih = 1.0 / GTextureManager.Textures[lump]->GetHeight();
+		tex_iw = 1.0 / Tex->GetWidth();
+		tex_ih = 1.0 / Tex->GetHeight();
 	}
 	else
 	{
-		if (!GTextureManager.Textures[lump]->DriverHandle ||
-			GTextureManager.Textures[lump]->CheckModified())
+		if (!Tex->DriverHandle || Tex->CheckModified())
 		{
-			GenerateTexture(lump);
+			GenerateTexture(Tex);
 		}
 		else
 		{
-			glBindTexture(GL_TEXTURE_2D, GTextureManager.Textures[lump]->DriverHandle);
+			glBindTexture(GL_TEXTURE_2D, Tex->DriverHandle);
 		}
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, maxfilter);
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mipfilter);
-		tex_iw = 1.0 / GTextureManager.Textures[lump]->GetWidth();
-		tex_ih = 1.0 / GTextureManager.Textures[lump]->GetHeight();
+		tex_iw = 1.0 / Tex->GetWidth();
+		tex_ih = 1.0 / Tex->GetHeight();
 	}
 	unguard;
 }
@@ -277,24 +273,20 @@ void VOpenGLDrawer::SetSpriteLump(int lump, int translation)
 //
 //==========================================================================
 
-void VOpenGLDrawer::SetPic(int handle)
+void VOpenGLDrawer::SetPic(VTexture* Tex)
 {
 	guard(VOpenGLDrawer::SetPic);
-
-	handle = GTextureManager.TextureAnimation(handle);
-
-	if (!GTextureManager.Textures[handle]->DriverHandle ||
-		GTextureManager.Textures[handle]->CheckModified())
+	if (!Tex->DriverHandle || Tex->CheckModified())
 	{
-		GenerateTexture(handle);
+		GenerateTexture(Tex);
 	}
 	else
 	{
-		glBindTexture(GL_TEXTURE_2D, GTextureManager.Textures[handle]->DriverHandle);
+		glBindTexture(GL_TEXTURE_2D, Tex->DriverHandle);
 	}
 
-	tex_iw = 1.0 / GTextureManager.Textures[handle]->GetWidth();
-	tex_ih = 1.0 / GTextureManager.Textures[handle]->GetHeight();
+	tex_iw = 1.0 / Tex->GetWidth();
+	tex_ih = 1.0 / Tex->GetHeight();
 
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, maxfilter);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mipfilter);
@@ -307,11 +299,9 @@ void VOpenGLDrawer::SetPic(int handle)
 //
 //==========================================================================
 
-void VOpenGLDrawer::GenerateTexture(int texnum)
+void VOpenGLDrawer::GenerateTexture(VTexture* Tex)
 {
 	guard(VOpenGLDrawer::GenerateTexture);
-	VTexture* Tex = GTextureManager.Textures[texnum];
-
 	if (!Tex->DriverHandle)
 	{
 		glGenTextures(1, (GLuint*)&Tex->DriverHandle);
@@ -363,12 +353,10 @@ void VOpenGLDrawer::GenerateTexture(int texnum)
 //
 //==========================================================================
 
-void VOpenGLDrawer::GenerateTranslatedSprite(int lump, int slot, int translation)
+void VOpenGLDrawer::GenerateTranslatedSprite(VTexture* Tex, int slot, int translation)
 {
 	guard(VOpenGLDrawer::GenerateTranslatedSprite);
-	VTexture* Tex = GTextureManager.Textures[lump];
-
-	trspr_lump[slot] = lump;
+	trspr_tex[slot] = Tex;
 	trspr_tnum[slot] = translation;
 	trspr_sent[slot] = true;
 

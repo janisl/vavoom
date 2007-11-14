@@ -102,19 +102,20 @@ public:
 
 	//	Texture stuff
 	virtual void InitTextures() = 0;
-	virtual void SetTexture(int) = 0;
+	virtual void SetTexture(VTexture*) = 0;
 
 	//	Polygon drawing
 	virtual void DrawPolygon(surface_t*, int) = 0;
 	virtual void DrawSkyPortal(surface_t*, int) = 0;
 	virtual void BeginSky() = 0;
-	virtual void DrawSkyPolygon(surface_t*, bool, int, float, int, float) = 0;
+	virtual void DrawSkyPolygon(surface_t*, bool, VTexture*, float, VTexture*,
+		float) = 0;
 	virtual void EndSky() = 0;
 	virtual void DrawMaskedPolygon(surface_t*, float) = 0;
-	virtual void DrawSpritePolygon(TVec*, int, float, int, vuint32, vuint32,
-		const TVec&, float, const TVec&, const TVec&, const TVec&) = 0;
+	virtual void DrawSpritePolygon(TVec*, VTexture*, float, int, vuint32,
+		vuint32, const TVec&, float, const TVec&, const TVec&, const TVec&) = 0;
 	virtual void DrawAliasModel(const TVec&, const TAVec&, const TVec&,
-		const TVec&, mmdl_t*, int, int, vuint32, vuint32, float, bool) = 0;
+		const TVec&, mmdl_t*, int, VTexture*, vuint32, vuint32, float, bool) = 0;
 
 	//	Particles
 	virtual void StartParticles() = 0;
@@ -123,15 +124,16 @@ public:
 
 	//	Drawing
 	virtual void DrawPic(float, float, float, float, float, float, float,
-		float, int, float) = 0;
+		float, VTexture*, float) = 0;
 	virtual void DrawPicShadow(float, float, float, float, float, float,
-		float, float, int, float) = 0;
+		float, float, VTexture*, float) = 0;
 	virtual void FillRectWithFlat(float, float, float, float, float, float,
-		float, float, VName) = 0;
+		float, float, VTexture*) = 0;
 	virtual void FillRect(float, float, float, float, vuint32) = 0;
 	virtual void ShadeRect(int, int, int, int, float) = 0;
 	virtual void DrawConsoleBackground(int) = 0;
-	virtual void DrawSpriteLump(float, float, float, float, int, int, bool) = 0;
+	virtual void DrawSpriteLump(float, float, float, float, VTexture*, int,
+		bool) = 0;
 
 	//	Automap
 	virtual void StartAutomap() = 0;

@@ -94,17 +94,25 @@ struct sspan_t
 
 struct surfcache_t
 {
-	surfcache_t	*next;
-	surfcache_t	**owner;	// NULL is an empty chunk of memory
-	vuint32		Light;		// checked for strobe flash
-	vuint32		Fade;
-	int			dlight;
-	int			size;		// including header
-	unsigned	width;
-	unsigned	height;		// DEBUG only needed for debug
-	float		mipscale;
-	int			texture;	// checked for animating textures
-	vuint8		data[4];	// width*height elements
+	surfcache_t*	next;
+	surfcache_t**	owner;	// NULL is an empty chunk of memory
+	union
+	{
+		vuint32		Light;		// checked for strobe flash
+		VTexture*	SkyTexture2;
+	};
+	vuint32			Fade;
+	union
+	{
+		int			dlight;
+		float		SkyOffs1;
+	};
+	int				size;		// including header
+	unsigned		width;
+	unsigned		height;		// DEBUG only needed for debug
+	float			mipscale;
+	VTexture*		Texture;	// checked for animating textures
+	vuint8			data[4];	// width*height elements
 };
 
 struct finalvert_t
@@ -167,19 +175,19 @@ public:
 
 	//	Texture stuff
 	void InitTextures();
-	void SetTexture(int);
+	void SetTexture(VTexture*);
 
 	//	Polygon drawing
 	void DrawPolygon(surface_t*, int);
 	void DrawSkyPortal(surface_t*, int);
 	void BeginSky();
-	void DrawSkyPolygon(surface_t*, bool, int, float, int, float);
+	void DrawSkyPolygon(surface_t*, bool, VTexture*, float, VTexture*, float);
 	void EndSky();
 	void DrawMaskedPolygon(surface_t*, float);
-	void DrawSpritePolygon(TVec*, int, float, int, vuint32, vuint32,
+	void DrawSpritePolygon(TVec*, VTexture*, float, int, vuint32, vuint32,
 		const TVec&, float, const TVec&, const TVec&, const TVec&);
 	void DrawAliasModel(const TVec&, const TAVec&, const TVec&, const TVec&,
-		mmdl_t*, int, int, vuint32, vuint32, float, bool);
+		mmdl_t*, int, VTexture*, vuint32, vuint32, float, bool);
 
 	//	Particles
 	void StartParticles();
@@ -187,13 +195,16 @@ public:
 	void EndParticles();
 
 	//	Drawing
-	void DrawPic(float, float, float, float, float, float, float, float, int, float);
-	void DrawPicShadow(float, float, float, float, float, float, float, float, int, float);
-	void FillRectWithFlat(float, float, float, float, float, float, float, float, VName);
+	void DrawPic(float, float, float, float, float, float, float, float,
+		VTexture*, float);
+	void DrawPicShadow(float, float, float, float, float, float, float,
+		float, VTexture*, float);
+	void FillRectWithFlat(float, float, float, float, float, float, float,
+		float, VTexture*);
 	void FillRect(float, float, float, float, vuint32);
 	void ShadeRect(int, int, int, int, float);
 	void DrawConsoleBackground(int);
-	void DrawSpriteLump(float, float, float, float, int, int, bool);
+	void DrawSpriteLump(float, float, float, float, VTexture*, int, bool);
 
 	//	Automap
 	void StartAutomap();
@@ -218,13 +229,13 @@ protected:
 
 	//	Textures.
 	void FlushTextureCaches();
-	void SetSpriteLump(int, vuint32, int);
-	vuint8* SetPic(int);
-	void GenerateTexture(int);
-	static void	MakeMips(miptexture_t*);
-	void LoadSkyMap(int);
-	void GenerateSprite(int, int, vuint32, int);
-	void GeneratePic(int);
+	void SetSpriteLump(VTexture*, vuint32, int);
+	vuint8* SetPic(VTexture*);
+	void GenerateTexture(VTexture*);
+	static void MakeMips(miptexture_t*);
+	void LoadSkyMap(VTexture*);
+	void GenerateSprite(VTexture*, int, vuint32, int);
+	void GeneratePic(VTexture*);
 
 	//	Edge drawing.
 	void BeginEdgeFrame();
@@ -238,26 +249,28 @@ protected:
 	void FlushCaches(bool);
 	surfcache_t *SCAlloc(int, int);
 	void SCDump(FOutputDevice&);
-	void SCInvalidateTexture(int);
+	void SCInvalidateTexture(VTexture*);
 
 	//	Surface caching.
 	surfcache_t* CacheSurface(surface_t*, int);
-	surfcache_t* CacheSkySurface(surface_t*, int, int, float, float);
+	surfcache_t* CacheSkySurface(surface_t*, VTexture*, VTexture*, float,
+		float);
 
 	//	Sprite drawing.
 	static void SpriteClipEdge(const TVec&, const TVec&, TClipPlane*, int);
 	static void SpriteScanLeftEdge(TVec*, int);
 	static void SpriteScanRightEdge(TVec*, int);
-	void SpriteCaclulateGradients(int, const TVec&, float, const TVec&,
+	void SpriteCaclulateGradients(VTexture*, const TVec&, float, const TVec&,
 		const TVec&, const TVec&);
 	void MaskedSurfCaclulateGradients(surface_t*);
-	void SpriteDrawPolygon(TVec*, int, surface_t*, int, int, float, vuint32,
-		vuint32, const TVec&, float, const TVec&, const TVec&, const TVec&);
+	void SpriteDrawPolygon(TVec*, int, surface_t*, VTexture*, int, float,
+		vuint32, vuint32, const TVec&, float, const TVec&, const TVec&,
+		const TVec&);
 
 	//	Drawing of the aliased models, i.e. md2
 	bool AliasCheckBBox(mmdl_t*, const TAVec&, const TVec&, const TVec&, int);
 	void AliasSetUpTransform(const TAVec&, const TVec&, const TVec&, int, int);
-	void AliasSetupSkin(int);
+	void AliasSetupSkin(VTexture*);
 	void AliasSetupLighting(vuint32);
 	void AliasSetupFrame(int);
 	void AliasPrepareUnclippedPoints();

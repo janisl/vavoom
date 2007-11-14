@@ -527,7 +527,7 @@ void VOpenGLDrawer::WorldDrawing()
 	for (surf = SimpleSurfsHead; surf; surf = surf->DrawNext)
 	{
 		texinfo_t* tex = surf->texinfo;
-		SetTexture(tex->pic);
+		SetTexture(tex->Tex);
 
 		if (surf->lightmap != NULL ||
 			surf->dlightframe == r_dlightframecount)
@@ -587,7 +587,7 @@ void VOpenGLDrawer::WorldDrawing()
 				surf = cache->surf;
 				tex = surf->texinfo;
 
-				SetTexture(tex->pic);
+				SetTexture(tex->Tex);
 				SetFade(surf->Fade);
 				glBegin(GL_POLYGON);
 				for (i = 0; i < surf->count; i++)
@@ -742,7 +742,7 @@ void VOpenGLDrawer::BeginSky()
 //==========================================================================
 
 void VOpenGLDrawer::DrawSkyPolygon(surface_t* surf, bool bIsSkyBox,
-	int texture1, float offs1, int texture2, float offs2)
+	VTexture* Texture1, float offs1, VTexture* Texture2, float offs2)
 {
 	guard(VOpenGLDrawer::DrawSkyPolygon);
 	int		i;
@@ -766,13 +766,13 @@ void VOpenGLDrawer::DrawSkyPolygon(surface_t* surf, bool bIsSkyBox,
 		}
 	}
 	texinfo_t *tex = surf->texinfo;
-	if (mtexable && texture2)
+	if (mtexable && Texture2->Type != TEXTYPE_Null)
 	{
-		SetTexture(texture1);
+		SetTexture(Texture1);
 		SelectTexture(1);
 		glEnable(GL_TEXTURE_2D);
 		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
-		SetTexture(texture2);
+		SetTexture(Texture2);
 		SelectTexture(0);
 
 		glColor4f(1, 1, 1, 1);
@@ -795,7 +795,7 @@ void VOpenGLDrawer::DrawSkyPolygon(surface_t* surf, bool bIsSkyBox,
 	}
 	else
 	{
-		SetTexture(texture1);
+		SetTexture(Texture1);
 		glBegin(GL_POLYGON);
 		glColor4f(1, 1, 1, 1);
 		for (i = 0; i < surf->count; i++)
@@ -807,9 +807,9 @@ void VOpenGLDrawer::DrawSkyPolygon(surface_t* surf, bool bIsSkyBox,
 		}
 		glEnd();
 
-		if (texture2)
+		if (Texture2->Type != TEXTYPE_Null)
 		{
-			SetTexture(texture2);
+			SetTexture(Texture2);
 			glEnable(GL_BLEND);
 			glBegin(GL_POLYGON);
 			glColor4f(1, 1, 1, 1);
@@ -851,7 +851,7 @@ void VOpenGLDrawer::DrawMaskedPolygon(surface_t* surf, float Alpha)
 {
 	guard(VOpenGLDrawer::DrawMaskedPolygon);
 	texinfo_t* tex = surf->texinfo;
-	SetTexture(tex->pic);
+	SetTexture(tex->Tex);
 	glEnable(GL_ALPHA_TEST);
 	if (blend_sprites || Alpha < 1.0)
 	{
@@ -911,14 +911,14 @@ void VOpenGLDrawer::DrawMaskedPolygon(surface_t* surf, float Alpha)
 //
 //==========================================================================
 
-void VOpenGLDrawer::DrawSpritePolygon(TVec *cv, int lump, float Alpha,
+void VOpenGLDrawer::DrawSpritePolygon(TVec *cv, VTexture* Tex, float Alpha,
 	int translation, vuint32 light, vuint32 Fade, const TVec&, float,
 	const TVec& saxis, const TVec& taxis, const TVec& texorg)
 {
 	guard(VOpenGLDrawer::DrawSpritePolygon);
 	TVec	texpt;
 
-	SetSpriteLump(lump, translation);
+	SetSpriteLump(Tex, translation);
 
 	if (blend_sprites || Alpha < 1.0)
 	{
@@ -972,7 +972,7 @@ void VOpenGLDrawer::DrawSpritePolygon(TVec *cv, int lump, float Alpha,
 
 void VOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	const TVec& Offset, const TVec& Scale, mmdl_t* pmdl, int frame,
-	int SkinID, vuint32 light, vuint32 Fade, float Alpha, bool is_view_model)
+	VTexture* Skin, vuint32 light, vuint32 Fade, float Alpha, bool is_view_model)
 {
 	guard(VOpenGLDrawer::DrawAliasModel);
 	mframe_t	*framedesc;
@@ -1024,7 +1024,7 @@ void VOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	glTranslatef(framedesc->scale_origin[0], framedesc->scale_origin[1], framedesc->scale_origin[2]);
 	glScalef(framedesc->scale[0], framedesc->scale[1], framedesc->scale[2]);
 
-	SetPic(SkinID);
+	SetPic(Skin);
 
 	glShadeModel(GL_SMOOTH);
 	glEnable(GL_BLEND);

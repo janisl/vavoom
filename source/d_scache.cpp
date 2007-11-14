@@ -307,13 +307,15 @@ void VSoftwareDrawer::SCDump(FOutputDevice& Ar)
 //
 //==========================================================================
 
-void VSoftwareDrawer::SCInvalidateTexture(int TexNum)
+void VSoftwareDrawer::SCInvalidateTexture(VTexture* Tex)
 {
 	guard(VSoftwareDrawer::SCInvalidateTexture);
 	for (surfcache_t* c = sc_base; c; c = c->next)
 	{
-		if (c->texture == TexNum)
-			c->texture = -1;
+		if (c->Texture == Tex)
+		{
+			c->Texture = NULL;
+		}
 	}
 	unguard;
 }

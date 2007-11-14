@@ -569,7 +569,7 @@ void VDirect3DDrawer::WorldDrawing()
 			light = 0xff000000 | (lR << 16) | (lG << 8) | lB;
 		}
 
-		SetTexture(tex->pic);
+		SetTexture(tex->Tex);
 		SetFade(surf->Fade);
 
 		for (i = 0; i < surf->count; i++)
@@ -632,7 +632,7 @@ void VDirect3DDrawer::WorldDrawing()
 			{
 				surf = cache->surf;
 				tex = surf->texinfo;
-				SetTexture(tex->pic);
+				SetTexture(tex->Tex);
 				SetFade(surf->Fade);
 				for (i = 0; i < surf->count; i++)
 				{
@@ -843,7 +843,7 @@ void VDirect3DDrawer::BeginSky()
 //==========================================================================
 
 void VDirect3DDrawer::DrawSkyPolygon(surface_t* surf, bool bIsSkyBox,
-	int texture1, float offs1, int texture2, float offs2)
+	VTexture* Texture1, float offs1, VTexture* Texture2, float offs2)
 {
 	guard(VDirect3DDrawer::DrawSkyPolygon);
 	MyD3DVertex		out[256];
@@ -868,7 +868,7 @@ void VDirect3DDrawer::DrawSkyPolygon(surface_t* surf, bool bIsSkyBox,
 		}
 	}
 	texinfo_t *tex = surf->texinfo;
-	if (maxMultiTex >= 2 && texture2)
+	if (maxMultiTex >= 2 && Texture2->Type != TEXTYPE_Null)
 	{
 		RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_SELECTARG1);
 		RenderDevice->SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_BLENDTEXTUREALPHA);
@@ -876,9 +876,9 @@ void VDirect3DDrawer::DrawSkyPolygon(surface_t* surf, bool bIsSkyBox,
 		RenderDevice->SetTextureStageState(1, D3DTSS_COLORARG2, D3DTA_CURRENT);
 		RenderDevice->SetTextureStageState(1, D3DTSS_TEXCOORDINDEX, 1);
 
-		SetTexture(texture1);
+		SetTexture(Texture1);
 		TexStage = 1;
-		SetTexture(texture2);
+		SetTexture(Texture2);
 		TexStage = 0;
 		for (i = 0; i < surf->count; i++)
 		{
@@ -899,7 +899,7 @@ void VDirect3DDrawer::DrawSkyPolygon(surface_t* surf, bool bIsSkyBox,
 	}
 	else
 	{
-		SetTexture(texture1);
+		SetTexture(Texture1);
 		for (i = 0; i < surf->count; i++)
 		{
 			out[i] = MyD3DVertex(surf->verts[i] + vieworg, 0xffffffff,
@@ -912,9 +912,9 @@ void VDirect3DDrawer::DrawSkyPolygon(surface_t* surf, bool bIsSkyBox,
 		RenderDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, MYD3D_VERTEX_FORMAT, out, surf->count, 0);
 #endif
 
-		if (texture2)
+		if (Texture2->Type != TEXTYPE_Null)
 		{
-			SetTexture(texture2);
+			SetTexture(Texture2);
 			for (i = 0; i < surf->count; i++)
 			{
 				out[i] = MyD3DVertex(surf->verts[i] + vieworg, 0xffffffff,
@@ -959,7 +959,7 @@ void VDirect3DDrawer::DrawMaskedPolygon(surface_t* surf, float Alpha)
 	int			l;
 
 	texinfo_t* tex = surf->texinfo;
-	SetTexture(tex->pic);
+	SetTexture(tex->Tex);
 
 	if (surf->lightmap != NULL ||
 		surf->dlightframe == r_dlightframecount)
@@ -1029,14 +1029,14 @@ void VDirect3DDrawer::DrawMaskedPolygon(surface_t* surf, float Alpha)
 //
 //==========================================================================
 
-void VDirect3DDrawer::DrawSpritePolygon(TVec *cv, int lump, float Alpha,
+void VDirect3DDrawer::DrawSpritePolygon(TVec *cv, VTexture* Tex, float Alpha,
 	int translation, vuint32 light, vuint32 Fade, const TVec&, float,
 	const TVec& saxis, const TVec& taxis, const TVec& texorg)
 {
 	guard(VDirect3DDrawer::DrawSpritePolygon);
 	MyD3DVertex		out[4];
 
-	SetSpriteLump(lump, translation);
+	SetSpriteLump(Tex, translation);
 
 	int l = ((int)(Alpha * 255) << 24) | (light & 0x00ffffff);
 	for (int i = 0; i < 4; i++)
@@ -1078,7 +1078,7 @@ void VDirect3DDrawer::DrawSpritePolygon(TVec *cv, int lump, float Alpha,
 
 void VDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	const TVec& Offset, const TVec& Scale, mmdl_t* pmdl, int frame,
-	int SkinID, vuint32 light, vuint32 Fade, float Alpha, bool is_view_model)
+	VTexture* Skin, vuint32 light, vuint32 Fade, float Alpha, bool is_view_model)
 {
 	guard(VDirect3DDrawer::DrawAliasModel);
 	mframe_t			*pframedesc;
@@ -1161,7 +1161,7 @@ void VDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 
 	RenderDevice->SetTransform(D3DTRANSFORMSTATE_WORLD, &matWorld);
 
-	SetPic(SkinID);
+	SetPic(Skin);
 
 	RenderDevice->SetRenderState(D3DRENDERSTATE_SHADEMODE, D3DSHADE_GOURAUD);
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, TRUE);

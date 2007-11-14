@@ -796,10 +796,10 @@ void VSoftwareDrawer::DrawPic(float x1, float y1, float x2, float y2,
 //==========================================================================
 
 void VSoftwareDrawer::DrawPic(float x1, float y1, float x2, float y2,
-	float s1, float t1, float s2, float t2, int handle, float Alpha)
+	float s1, float t1, float s2, float t2, VTexture* Tex, float Alpha)
 {
 	guard(VSoftwareDrawer::DrawPic);
-	picsource = SetPic(handle);
+	picsource = SetPic(Tex);
 	int trans = (int)((1.0 - Alpha) * 100.0);
 	if (ScreenBPP == 8)
 	{
@@ -869,10 +869,10 @@ void VSoftwareDrawer::DrawPic(float x1, float y1, float x2, float y2,
 //==========================================================================
 
 void VSoftwareDrawer::DrawPicShadow(float x1, float y1, float x2, float y2,
-	float s1, float t1, float s2, float t2, int handle, float shade)
+	float s1, float t1, float s2, float t2, VTexture* Tex, float shade)
 {
 	guard(VSoftwareDrawer::DrawPicShadow);
-	picsource = SetPic(handle);
+	picsource = SetPic(Tex);
 	ds_shade = (int)(shade * 255);
 	if (ScreenBPP == 8)
 	{
@@ -899,10 +899,10 @@ void VSoftwareDrawer::DrawPicShadow(float x1, float y1, float x2, float y2,
 //==========================================================================
 
 void VSoftwareDrawer::FillRectWithFlat(float x1, float y1, float x2, float y2,
-	float s1, float t1, float s2, float t2, VName fname)
+	float s1, float t1, float s2, float t2, VTexture* Tex)
 {
 	guard(VSoftwareDrawer::FillRectWithFlat);
-	SetTexture(GTextureManager.NumForName(fname, TEXTYPE_Flat, true, true));
+	SetTexture(Tex);
 	picsource = (byte*)cacheblock;
 	if (ScreenBPP == 8)
 	{
@@ -993,13 +993,13 @@ void VSoftwareDrawer::DrawConsoleBackground(int h)
 //==========================================================================
 
 void VSoftwareDrawer::DrawSpriteLump(float x1, float y1, float x2, float y2,
-	int lump, int translation, bool flip)
+	VTexture* Tex, int translation, bool flip)
 {
 	guard(VSoftwareDrawer::DrawSpriteLump);
-	float w = GTextureManager.Textures[lump]->GetWidth();
-	float h = GTextureManager.Textures[lump]->GetHeight();
+	float w = Tex->GetWidth();
+	float h = Tex->GetHeight();
 
-	SetSpriteLump(lump, 0xffffffff, translation);
+	SetSpriteLump(Tex, 0xffffffff, translation);
 	picsource = (byte*)cacheblock;
 	picspanfunc = ScreenBPP == 8 ? DrawPicSpan_8 :
 		PixelBytes == 2 ? DrawSpritePicSpan_16 : DrawSpritePicSpan_32;

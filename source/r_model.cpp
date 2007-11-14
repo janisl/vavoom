@@ -850,7 +850,8 @@ static void DrawModel(VLevel* Level, const TVec& Org, const TAVec& Angles,
 		}
 
 		Drawer->DrawAliasModel(Md2Org, Md2Angle, F.Offset, F.Scale, pmdl,
-			Md2Frame, SkinID, Light, Fade, Md2Alpha, IsViewModel);
+			Md2Frame, GTextureManager(SkinID), Light, Fade, Md2Alpha,
+			IsViewModel);
 	}
 	unguard;
 }

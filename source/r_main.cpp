@@ -798,10 +798,9 @@ void R_DrawPic(int x, int y, int handle, float Alpha)
 	GTextureManager.GetTextureInfo(handle, &info);
 	x -= info.xoffset;
 	y -= info.yoffset;
-	GTextureManager.Textures[handle]->GetPixels();
 	Drawer->DrawPic(fScaleX * x, fScaleY * y,
 		fScaleX * (x + info.width), fScaleY * (y + info.height),
-		0, 0, info.width, info.height, handle, Alpha);
+		0, 0, info.width, info.height, GTextureManager(handle), Alpha);
 	unguard;
 }
 
@@ -826,10 +825,10 @@ void R_DrawShadowedPic(int x, int y, int handle)
 	y -= info.yoffset;
 	Drawer->DrawPicShadow(fScaleX * (x + 2), fScaleY * (y + 2),
 		fScaleX * (x + 2 + info.width), fScaleY * (y + 2 + info.height),
-		0, 0, info.width, info.height, handle, 0.625);
+		0, 0, info.width, info.height, GTextureManager(handle), 0.625);
 	Drawer->DrawPic(fScaleX * x, fScaleY * y,
 		fScaleX * (x + info.width), fScaleY * (y + info.height),
-		0, 0, info.width, info.height, handle, 1.0);
+		0, 0, info.width, info.height, GTextureManager(handle), 1.0);
 	unguard;
 }
 
@@ -874,7 +873,7 @@ void VRenderLevel::PrecacheLevel()
 	{
 		if (texturepresent[i])
 		{
-			Drawer->SetTexture(i);
+			Drawer->SetTexture(GTextureManager[i]);
 		}
 	}
 

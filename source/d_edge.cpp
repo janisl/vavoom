@@ -70,8 +70,8 @@ struct surf_t
 
 	surface_t	*surf;
 
-	int			texture1;
-	int			texture2;
+	VTexture*	Texture1;
+	VTexture*	Texture2;
 	float		offs1;
 	float		offs2;
 
@@ -512,7 +512,7 @@ void VSoftwareDrawer::BeginSky()
 //==========================================================================
 
 void VSoftwareDrawer::DrawSkyPolygon(surface_t* surf, bool bIsSkyBox,
-	int texture1, float offs1, int texture2, float offs2)
+	VTexture* Texture1, float offs1, VTexture* Texture2, float offs2)
 {
 	guard(VSoftwareDrawer::DrawSkyPolygon);
 	int		i;
@@ -564,8 +564,8 @@ void VSoftwareDrawer::DrawSkyPolygon(surface_t* surf, bool bIsSkyBox,
 	surface_p->flags = bIsSkyBox ? SURF_SKY_BOX : SURF_SKY;
 	surface_p->nearzi = r_nearzi;
 
-	surface_p->texture1 = texture1;
-	surface_p->texture2 = texture2;
+	surface_p->Texture1 = Texture1;
+	surface_p->Texture2 = Texture2;
 	surface_p->offs1 = offs1;
 	surface_p->offs2 = offs2;
 
@@ -975,8 +975,8 @@ void VSoftwareDrawer::DrawSurfaces()
 		else if (surf->flags & SURF_SKY)
 		{
 			D_CalcGradients(surf->surf, 0, TVec(0, 0, 0));
-			cache =	CacheSkySurface(surf->surf, surf->texture1,
-				surf->texture2, surf->offs1, surf->offs2);
+			cache = CacheSkySurface(surf->surf, surf->Texture1,
+				surf->Texture2, surf->offs1, surf->offs2);
 			cachewidth = cache->width;
 			cacheblock = cache->data;
 			D_DrawSpans(surf->spans);
@@ -988,7 +988,7 @@ void VSoftwareDrawer::DrawSurfaces()
 		else if (surf->flags & SURF_SKY_BOX)
 		{
 			D_CalcGradients(surf->surf, 0, TVec(0, 0, 0));
-			SetTexture(surf->texture1);
+			SetTexture(surf->Texture1);
 			D_DrawSpans(surf->spans);
 			d_ziorigin = 0;
 			d_zistepv = 0;
