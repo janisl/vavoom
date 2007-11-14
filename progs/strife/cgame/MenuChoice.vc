@@ -85,12 +85,12 @@ int DrawSlot(int y, string text, bool entering)
 	}
 	DrawPic(xx, y + 12, pic_M_LSRGHT);
 
-	T_SetFont(font_small);
-	T_SetAlign(hleft, vtop);
+	SetFont(font_small);
+	SetTextAlign(hleft, vtop);
 	DrawText(8, y + 5, text);
 	if (entering)
 	{
-		T_DrawCursor();
+		DrawCursor();
 	}
 	return 16;
 }

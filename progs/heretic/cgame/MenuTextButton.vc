@@ -53,8 +53,8 @@ bool OnKeyDown(int key)
 
 void OnDraw()
 {
-	T_SetFont(TextFont);
-	T_SetAlign(TextHAlign, TextVAlign);
+	SetFont(TextFont);
+	SetTextAlign(TextHAlign, TextVAlign);
 	DrawText(CursorXOffs, 0, Text);
 }
 

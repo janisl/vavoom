@@ -171,8 +171,8 @@ void OnPostDraw()
 {
 	if (FinaleType == 'EndGameCast')
 	{
-		T_SetFont(font_small);
-		T_SetAlign(hcentre, vtop);
+		SetFont(font_small);
+		SetTextAlign(hcentre, vtop);
 		DrawText(320, 440, caststrings[castnum]);
 	}
 }

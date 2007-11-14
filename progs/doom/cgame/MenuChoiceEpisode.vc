@@ -43,8 +43,8 @@ void OnDraw()
 	}
 	else
 	{
-		T_SetFont(font_big);
-		T_SetAlign(hleft, vtop);
+		SetFont(font_big);
+		SetTextAlign(hleft, vtop);
 		DrawText(0, 0, Text);
 	}
 }

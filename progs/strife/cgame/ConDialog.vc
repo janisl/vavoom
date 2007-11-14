@@ -180,8 +180,8 @@ void OnDraw()
 		ShadeRect(46, 46, 515, 70, 0.3);
 	}
 	ShadeRect(60, 438 - NumChoices * 22, 501, NumChoices * 22, 0.3);
-	T_SetFont(font_small);
-	T_SetAlign(hleft, vtop);
+	SetFont(font_small);
+	SetTextAlign(hleft, vtop);
 	DrawText(48, 48, SpeakerName);
 	DrawTextW(64, 72, SpeechText, 640 - 128);
 }

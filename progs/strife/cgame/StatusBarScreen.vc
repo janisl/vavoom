@@ -341,8 +341,8 @@ void SB_DrawMainBar()
 			{
 				DrawPic(BAR_X + 20 + (i / 5) * 140,
 					BAR_Y + 60 + (i % 5) * 18, R_RegisterPic(Item.IconName));
-				T_SetFont(font_yellow);
-				T_SetAlign(hleft, vtop);
+				SetFont(font_yellow);
+				SetTextAlign(hleft, vtop);
 				DrawText(BAR_X + 40 + (i / 5) * 140,
 					BAR_Y + 64 + (i % 5) * 18, StrifeKey(Item).StrifeName);
 			}
@@ -357,8 +357,8 @@ void SB_DrawMainBar()
 			LogText = LoadTextLump(StrToName(va("log%d", cl.Objectives)));
 			LoadedLog = cl.Objectives;
 		}
-		T_SetFont(font_yellow);
-		T_SetAlign(hleft, vtop);
+		SetFont(font_yellow);
+		SetTextAlign(hleft, vtop);
 		DrawTextW(BAR_X + 20, BAR_Y + 60, LogText, 280);
 	}
 }
@@ -497,8 +497,8 @@ void SB_DrawFullscreenStats()
 			{
 				DrawPic(BAR_X + 20 + (i / 5) * 140,
 					BAR_Y + 100 + (i % 5) * 18, R_RegisterPic(Item.IconName));
-				T_SetFont(font_yellow);
-				T_SetAlign(hleft, vtop);
+				SetFont(font_yellow);
+				SetTextAlign(hleft, vtop);
 				DrawText(BAR_X + 40 + (i / 5) * 140,
 					BAR_Y + 104 + (i % 5) * 18, StrifeKey(Item).StrifeName);
 			}
@@ -513,8 +513,8 @@ void SB_DrawFullscreenStats()
 			LogText = LoadTextLump(StrToName(va("log%d", cl.Objectives)));
 			LoadedLog = cl.Objectives;
 		}
-		T_SetFont(font_yellow);
-		T_SetAlign(hleft, vtop);
+		SetFont(font_yellow);
+		SetTextAlign(hleft, vtop);
 		DrawTextW(BAR_X + 20, BAR_Y + 100, LogText, 280);
 	}
 }

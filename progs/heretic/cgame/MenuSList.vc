@@ -42,11 +42,11 @@ void DrawTextBox(string text)
 	int h;
 
 	// Horiz. & Vertically centre string and print it.
-	T_SetFont(font_small);
-	T_SetAlign(hcentre, vcentre);
+	SetFont(font_small);
+	SetTextAlign(hcentre, vcentre);
 
-	w = (T_TextWidth(text) + 16) & ~15;
-	h = (T_TextHeight(text) + 16) & ~15;
+	w = (TextWidth(text) + 16) & ~15;
+	h = (TextHeight(text) + 16) & ~15;
 	if (w > 304)
 		w = 304;
 	if (h > 184)
@@ -69,8 +69,8 @@ void OnDraw()
 
 	slist = GetSlist();
 
-	T_SetFont(font_small);
-	T_SetAlign(hleft, vtop);
+	SetFont(font_small);
+	SetTextAlign(hleft, vtop);
 	for (i = 0; i < slist->Count; i++)
 	{
 		DrawText(16, 32 + 10 * i, slist->Cache[i].Name);
@@ -92,7 +92,7 @@ void OnDraw()
 		y = 124;
 		for (i = 0; i < 20 && slist->Cache[Cursor].WadFiles[i]; i++)
 		{
-			w = T_TextWidth(slist->Cache[Cursor].WadFiles[i]);
+			w = TextWidth(slist->Cache[Cursor].WadFiles[i]);
 			if (x + w > 312)
 			{
 				x = 8;

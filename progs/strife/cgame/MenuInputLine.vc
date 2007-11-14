@@ -48,8 +48,8 @@ void OnValueChanged()
 
 void OnDraw()
 {
-	T_SetFont(font_small);
-	T_SetAlign(hleft, vtop);
+	SetFont(font_small);
+	SetTextAlign(hleft, vtop);
 	DrawText(0, 0, Text);
 	if (bEnteringText)
 		DrawSlot(12, EnterText, true);

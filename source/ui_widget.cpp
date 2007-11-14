@@ -73,6 +73,10 @@ VWidget* VWidget::CreateNewWidget(VClass* AClass, VWidget* AParent)
 void VWidget::Init(VWidget* AParent)
 {
 	guard(VWidget::Init);
+	// Set default values
+	SetFont(font_small);
+	SetTextAlign(hleft, vtop);
+
 	ParentWidget = AParent;
 	if (ParentWidget)
 	{
@@ -806,6 +810,47 @@ void VWidget::ShadeRect(int X, int Y, int Width, int Height, float Shade)
 
 //==========================================================================
 //
+//	VWidget::SetFont
+//
+//==========================================================================
+
+void VWidget::SetFont(font_e FontNr)
+{
+	guard(VWidget::SetFont);
+	Font = Fonts[FontNr];
+	unguard;
+}
+
+//==========================================================================
+//
+//	VWidget::SetTextAlign
+//
+//==========================================================================
+
+void VWidget::SetTextAlign(halign_e NewHAlign, valign_e NewVAlign)
+{
+	guard(VWidget::SetTextAlign);
+	HAlign = NewHAlign;
+	VAlign = NewVAlign;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VWidget::SetTextShadow
+//
+//==========================================================================
+
+void VWidget::SetTextShadow(bool State)
+{
+	if (State)
+		WidgetFlags |= WF_TextShadowed;
+	else
+		WidgetFlags &= ~WF_TextShadowed;
+}
+
+//==========================================================================
+//
 //	VWidget::DrawString
 //
 //==========================================================================
@@ -820,9 +865,9 @@ void VWidget::DrawString(int x, int y, const VStr& String)
 	int cy = y;
 
 	if (HAlign == hcentre)
-		cx -= T_StringWidth(String) / 2;
+		cx -= T_StringWidth(Font, String) / 2;
 	if (HAlign == hright)
-		cx -= T_StringWidth(String);
+		cx -= T_StringWidth(Font, String);
 
 	for (size_t i = 0; i < String.Length(); i++)
 	{
@@ -834,16 +879,16 @@ void VWidget::DrawString(int x, int y, const VStr& String)
 		}
 		if (c >= 96 || Font->Pics[c] < 0)
 		{
-			cx += Font->SpaceWidth + HDistance;
+			cx += Font->SpaceWidth;
 			continue;
 		}
 
 		int w = Font->PicInfo[c].width;
-		if (t_shadowed)
+		if (WidgetFlags & WF_TextShadowed)
 			DrawShadowedPic(cx, cy, Font->Pics[c]);
 		else
 			DrawPic(cx, cy, Font->Pics[c]);
-		cx += w + HDistance;
+		cx += w;
 	}
 	LastX = cx;
 	LastY = cy;
@@ -864,9 +909,9 @@ void VWidget::DrawText(int x, int y, const VStr& String)
 	int cy = y;
 
 	if (VAlign == vcentre)
-		cy -= T_TextHeight(String) / 2;
+		cy -= T_TextHeight(Font, String) / 2;
 	if (VAlign == vbottom)
-		cy -= T_TextHeight(String);
+		cy -= T_TextHeight(Font, String);
 
 	//	Need this for correct cursor position with empty strings.
 	LastX = cx;
@@ -878,7 +923,7 @@ void VWidget::DrawText(int x, int y, const VStr& String)
 		{
 			VStr cs(String, start, i - start);
 			DrawString(cx, cy, cs);
-			cy += T_StringHeight(cs) + VDistance;
+			cy += T_StringHeight(Font, cs);
 			start = i + 1;
 		}
 		if (i == String.Length() - 1)
@@ -910,9 +955,9 @@ int VWidget::DrawTextW(int x, int y, const VStr& String, int w)
 
 	//	These won't work correctly so don't use them for now.
 	if (VAlign == vcentre)
-		cy -= T_TextHeight(String) / 2;
+		cy -= T_TextHeight(Font, String) / 2;
 	if (VAlign == vbottom)
-		cy -= T_TextHeight(String);
+		cy -= T_TextHeight(Font, String);
 
 	//	Need this for correct cursor position with empty strings.
 	LastX = cx;
@@ -924,7 +969,7 @@ int VWidget::DrawTextW(int x, int y, const VStr& String, int w)
 		{
 			VStr cs(String, start, i - start);
 			DrawString(cx, cy, cs);
-			cy += T_StringHeight(cs) + VDistance;
+			cy += T_StringHeight(Font, cs);
 			start = i + 1;
 			wordStart = true;
 			LinesPrinted++;
@@ -934,11 +979,11 @@ int VWidget::DrawTextW(int x, int y, const VStr& String, int w)
 			int j = i;
 			while (String[j] > ' ')
 				j++;
-			if (T_StringWidth(VStr(String, start, j - start)) > w)
+			if (T_StringWidth(Font, VStr(String, start, j - start)) > w)
 			{
 				VStr cs(String, start, i - start);
 				DrawString(cx, cy, cs);
-				cy += T_StringHeight(cs) + VDistance;
+				cy += T_StringHeight(Font, cs);
 				start = i;
 				LinesPrinted++;
 			}
@@ -955,6 +1000,85 @@ int VWidget::DrawTextW(int x, int y, const VStr& String, int w)
 		}
 	}
 	return LinesPrinted;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VWidget::DrawCursor
+//
+//==========================================================================
+
+void VWidget::DrawCursor()
+{
+	DrawCursorAt(LastX, LastY);
+}
+
+//==========================================================================
+//
+//	VWidget::DrawCursorAt
+//
+//==========================================================================
+
+void VWidget::DrawCursorAt(int x, int y)
+{
+	guard(VWidget::DrawCursorAt);
+	if ((int)(host_time * 4) & 1)
+		DrawPic(x, y, Font->Pics['_' - 32]);
+	unguard;
+}
+
+//==========================================================================
+//
+//	VWidget::DrawString8
+//
+//	Write a string using the font with fixed width 8.
+//
+//==========================================================================
+
+void VWidget::DrawString8(int x, int y, const VStr& String)
+{
+	guard(VWidget::DrawString8);
+	int		w;
+	int		c;
+	int		cx;
+	int		cy;
+	int		i;
+	int		length;
+
+	if (!String)
+		return;
+		
+	cx = x;
+	cy = y;
+
+	if (HAlign == hcentre)
+		cx -= T_StringWidth(Font, String) / 2;
+	if (HAlign == hright)
+		cx -= T_StringWidth(Font, String);
+
+	length = (int)String.Length();
+	
+	for (i = 0; i < length && cx < VirtualWidth; i++)
+	{
+		c = String[i] - 32;
+
+		if (c < 0)
+		{
+			continue;
+		}
+		if (c >= 96 || Font->Pics[c] < 0)
+		{
+			cx += 8;
+			continue;
+		}
+		
+		w = Font->PicInfo[c].width;
+		DrawPic(cx + (8 - w) / 2, cy, Font->Pics[c]);
+		cx += 8;
+	}
+	LastX = cx;
+	LastY = cy;
 	unguard;
 }
 
@@ -1198,6 +1322,42 @@ IMPLEMENT_FUNCTION(VWidget, ShadeRect)
 	Self->ShadeRect(X, Y, Width, Height, Shade);
 }
 
+IMPLEMENT_FUNCTION(VWidget, SetFont)
+{
+	P_GET_INT(font);
+	P_GET_SELF;
+	Self->SetFont((font_e)font);
+}
+
+IMPLEMENT_FUNCTION(VWidget, SetTextAlign)
+{
+	P_GET_INT(valign);
+	P_GET_INT(halign);
+	P_GET_SELF;
+	Self->SetTextAlign((halign_e)halign, (valign_e)valign);
+}
+
+IMPLEMENT_FUNCTION(VWidget, SetTextShadow)
+{
+	P_GET_BOOL(State);
+	P_GET_SELF;
+	Self->SetTextShadow(State);
+}
+
+IMPLEMENT_FUNCTION(VWidget, TextWidth)
+{
+	P_GET_STR(text);
+	P_GET_SELF;
+	RET_INT(T_TextWidth(Self->Font, text));
+}
+
+IMPLEMENT_FUNCTION(VWidget, TextHeight)
+{
+	P_GET_STR(text);
+	P_GET_SELF;
+	RET_INT(T_TextHeight(Self->Font, text));
+}
+
 IMPLEMENT_FUNCTION(VWidget, DrawText)
 {
 	P_GET_STR(String);
@@ -1215,4 +1375,10 @@ IMPLEMENT_FUNCTION(VWidget, DrawTextW)
 	P_GET_INT(x);
 	P_GET_SELF;
 	RET_INT(Self->DrawTextW(x, y, txt, w));
+}
+
+IMPLEMENT_FUNCTION(VWidget, DrawCursor)
+{
+	P_GET_SELF;
+	Self->DrawCursor();
 }

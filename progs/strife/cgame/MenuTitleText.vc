@@ -35,8 +35,8 @@ void OnCreate()
 
 void OnDraw()
 {
-	T_SetFont(font_big);
-	T_SetAlign(hcentre, vbottom);
+	SetFont(font_big);
+	SetTextAlign(hcentre, vbottom);
 	DrawText(0, 0, Text);
 }
 

@@ -313,8 +313,8 @@ void IM_DrawHubText()
 	{
 		count = strlen(HubText);
 	}
-	T_SetFont(font_small);
-	T_SetAlign(hleft, vtop);
+	SetFont(font_small);
+	SetTextAlign(hleft, vtop);
 	DrawText(170, 145, substr(HubText, 0, count));
 }
 
@@ -326,8 +326,8 @@ void IM_DrawHubText()
 
 void IM_DrawNumber(int val, int x, int y, int wrapThresh)
 {
-	T_SetFont(font_small);
-	T_SetAlign(hcentre, vtop);
+	SetFont(font_small);
+	SetTextAlign(hcentre, vtop);
 	if (!(val < -9 && wrapThresh < 1000))
 	{
 		DrawText(x, y, va("%d",
@@ -347,8 +347,8 @@ void IM_DrawNumber(int val, int x, int y, int wrapThresh)
 
 void IM_DrawNumberBold(int val, int x, int y, int wrapThresh)
 {
-	T_SetFont(font_yellow);
-	T_SetAlign(hcentre, vtop);
+	SetFont(font_yellow);
+	SetTextAlign(hcentre, vtop);
 	if (!(val < -9 && wrapThresh < 1000))
 	{
 		DrawText(x, y, va("%d", val >= wrapThresh ? val % wrapThresh : val));
@@ -405,8 +405,8 @@ void IM_DrawDeathTally()
 	{
 		i = RepInfo.PlayerNum;
 		xPos = xStart;
-		T_SetFont(i == ClGame.cl.ClientNum ? font_yellow : font_small);
-		T_SetAlign(hleft, vtop);
+		SetFont(i == ClGame.cl.ClientNum ? font_yellow : font_small);
+		SetTextAlign(hleft, vtop);
 		DrawText(ftoi(xPos), y, RepInfo.PlayerName);
 		if (showTotals && !((slaughterboy & (1 << i)) &&
 			!(ftoi(32.0 * intertime) & 16)))

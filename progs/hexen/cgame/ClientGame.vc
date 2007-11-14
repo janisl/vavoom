@@ -498,9 +498,9 @@ void MessageBoxStartMessage(string text, int type, bool input)
 	messageType = type;
 	messageNeedsInput = input;
 
-	T_SetFont(font_small);
-	msgBoxW = (T_TextWidth(messageString) + 16) & ~15;
-	msgBoxH = (T_TextHeight(messageString) + 16) & ~15;
+	GRoot.SetFont(font_small);
+	msgBoxW = (GRoot.TextWidth(messageString) + 16) & ~15;
+	msgBoxH = (GRoot.TextHeight(messageString) + 16) & ~15;
 	if (msgBoxW > 304)
 		msgBoxW = 304;
 	if (msgBoxH > 184)
@@ -524,8 +524,8 @@ void MessageBoxDrawer()
 	{
 		GRoot.FillRectWithFlat(msgBoxX, msgBoxY, msgBoxW, msgBoxH, 'f_019');
 		DrawBorder(msgBoxX, msgBoxY, msgBoxW, msgBoxH);
-		T_SetFont(font_small);
-		T_SetAlign(hcentre, vcentre);
+		GRoot.SetFont(font_small);
+		GRoot.SetTextAlign(hcentre, vcentre);
 		GRoot.DrawText(320, 240, messageString);
 	}
 }

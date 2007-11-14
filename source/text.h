@@ -84,11 +84,11 @@ void T_SetFont(font_e);
 void T_SetAlign(halign_e, valign_e);
 void T_SetShadow(bool);
 
-int T_StringWidth(const VStr&);
-int T_StringHeight(const VStr&);
+int T_StringWidth(font_t* Font, const VStr&);
+int T_StringHeight(font_t* Font, const VStr&);
 
-int T_TextWidth(const VStr&);
-int T_TextHeight(const VStr&);
+int T_TextWidth(font_t* Font, const VStr&);
+int T_TextHeight(font_t* Font, const VStr&);
 
 void T_DrawString(int, int, const VStr&);
 void T_DrawString8(int, int, const VStr&);
@@ -100,15 +100,4 @@ void T_DrawCursorAt(int, int);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
-extern font_t*			Font;
-
-extern int				HDistance;
-extern int				VDistance;
-
-extern halign_e			HAlign;
-extern valign_e			VAlign;
-
-extern bool				t_shadowed;
-
-extern int				LastX;
-extern int				LastY;
+extern font_t*			Fonts[NUMFONTTYPES];

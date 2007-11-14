@@ -354,14 +354,6 @@ public:
 	DECLARE_FUNCTION(R_DrawModelFrame)
 	DECLARE_FUNCTION(R_FillRect)
 
-	//	Text
-	DECLARE_FUNCTION(T_SetFont)
-	DECLARE_FUNCTION(T_SetAlign)
-	DECLARE_FUNCTION(T_SetShadow)
-	DECLARE_FUNCTION(T_TextWidth)
-	DECLARE_FUNCTION(T_TextHeight)
-	DECLARE_FUNCTION(T_DrawCursor)
-
 	//	Client side sound
 	DECLARE_FUNCTION(LocalSound)
 	DECLARE_FUNCTION(IsLocalSoundPlaying)

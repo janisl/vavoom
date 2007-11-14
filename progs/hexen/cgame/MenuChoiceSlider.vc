@@ -92,12 +92,12 @@ void OnDraw()
 	int i;
 	int xx;
 
-	T_SetFont(font_small);
+	SetFont(font_small);
 	if (IsFocus())
 	{
-		T_SetFont(font_yellow);
+		SetFont(font_yellow);
 	}
-	T_SetAlign(hright, vtop);
+	SetTextAlign(hright, vtop);
 	DrawText(160, 0, Text);
 
 	xx = 160;

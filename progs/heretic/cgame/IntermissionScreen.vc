@@ -455,17 +455,17 @@ void IM_InitStats()
 
 void IM_DrawSingleStats()
 {
-	T_SetShadow(true);
-	T_SetFont(font_big);
-	T_SetAlign(hleft, vtop);
+	SetTextShadow(true);
+	SetFont(font_big);
+	SetTextAlign(hleft, vtop);
 	DrawText(210, 205, "KILLS");
 	DrawText(210, 230, "ITEMS");
 	DrawText(210, 255, "SECRETS");
-	T_SetAlign(hcentre, vtop);
+	SetTextAlign(hcentre, vtop);
 	DrawText(320, 143, ClGame.im->LeaveName);
-	T_SetShadow(false);
+	SetTextShadow(false);
 
-	T_SetFont(font_small);
+	SetFont(font_small);
 	DrawText(320, 165, "FINISHED");
 
 	if (intertime < 1.0)
@@ -477,13 +477,13 @@ void IM_DrawSingleStats()
 		LocalSound('doors/dr1_clos');
 		im_sounds++;
 	}
-	T_SetShadow(true);
-	T_SetFont(font_big);
-	T_SetAlign(hleft, vtop);
+	SetTextShadow(true);
+	SetFont(font_big);
+	SetTextAlign(hleft, vtop);
 	DrawText(362, 205, va("%d", ClGame.cl.KillCount));
 	DrawText(397, 205, "/");
 	DrawText(410, 205, va("%d", ClGame.cl.Level.TotalKills));
-	T_SetShadow(false);
+	SetTextShadow(false);
 	if (intertime < 2.0)
 	{
 		return;
@@ -493,13 +493,13 @@ void IM_DrawSingleStats()
 		LocalSound('doors/dr1_clos');
 		im_sounds++;
 	}
-	T_SetShadow(true);
-	T_SetFont(font_big);
-	T_SetAlign(hleft, vtop);
+	SetTextShadow(true);
+	SetFont(font_big);
+	SetTextAlign(hleft, vtop);
 	DrawText(362, 230, va("%d", ClGame.cl.ItemCount));
 	DrawText(397, 230, "/");
 	DrawText(410, 230, va("%d", ClGame.cl.Level.TotalItems));
-	T_SetShadow(false);
+	SetTextShadow(false);
 	if (intertime < 3.0)
 	{
 		return;
@@ -509,13 +509,13 @@ void IM_DrawSingleStats()
 		LocalSound('doors/dr1_clos');
 		im_sounds++;
 	}
-	T_SetShadow(true);
-	T_SetFont(font_big);
-	T_SetAlign(hleft, vtop);
+	SetTextShadow(true);
+	SetFont(font_big);
+	SetTextAlign(hleft, vtop);
 	DrawText(362, 255, va("%d", ClGame.cl.SecretCount));
 	DrawText(397, 255, "/");
 	DrawText(410, 255, va("%d", ClGame.cl.Level.TotalSecret));
-	T_SetShadow(false);
+	SetTextShadow(false);
 	if (intertime < 5.0)
 	{
 		return;
@@ -528,23 +528,23 @@ void IM_DrawSingleStats()
 
 	if (!WadLumpPresent('extended') || im_episode < 4)
 	{
-		T_SetShadow(true);
-		T_SetFont(font_big);
-		T_SetAlign(hleft, vtop);
+		SetTextShadow(true);
+		SetFont(font_big);
+		SetTextAlign(hleft, vtop);
 		DrawText(245, 300, "TIME");
 		DrawText(315, 300, va("%d%d:%d%d:%d%d", hours / 10, hours % 10,
 				minutes / 10, minutes % 10, seconds / 10, seconds % 10));
-		T_SetShadow(false);
+		SetTextShadow(false);
 	}
 	else
 	{
-		T_SetFont(font_small);
-		T_SetAlign(hcentre, vtop);
+		SetFont(font_small);
+		SetTextAlign(hcentre, vtop);
 		DrawText(320, 300, "NOW ENTERING:");
-		T_SetShadow(true);
-		T_SetFont(font_big);
+		SetTextShadow(true);
+		SetFont(font_big);
 		DrawText(320, 310, ClGame.im->EnterName);
-		T_SetShadow(false);
+		SetTextShadow(false);
 		ClGame.skipintermission = false;
 	}
 }
@@ -561,22 +561,22 @@ void IM_DrawCoopStats()
 	int ypos;
 	PlayerReplicationInfo RepInfo;
 
-	T_SetShadow(true);
-	T_SetFont(font_big);
-	T_SetAlign(hleft, vtop);
+	SetTextShadow(true);
+	SetFont(font_big);
+	SetTextAlign(hleft, vtop);
 	DrawText(255, 175, "KILLS");
 	DrawText(315, 175, "BONUS");
 	DrawText(392, 175, "SECRET");
 
-	T_SetAlign(hcentre, vtop);
+	SetTextAlign(hcentre, vtop);
 	DrawText(320, 143, ClGame.im->LeaveName);
-	T_SetShadow(false);
-	T_SetFont(font_small);
+	SetTextShadow(false);
+	SetFont(font_small);
 	DrawText(320, 165, "FINISHED");
 
-	T_SetShadow(true);
-	T_SetFont(font_big);
-	T_SetAlign(hleft, vtop);
+	SetTextShadow(true);
+	SetFont(font_big);
+	SetTextAlign(hleft, vtop);
 	ypos = 190;
 	foreach ClGame.GLevel.LevelInfo.AllThinkers(PlayerReplicationInfo, RepInfo)
 	{
@@ -600,7 +600,7 @@ void IM_DrawCoopStats()
 		DrawText(433, ypos + 10, "%");
 		ypos += 37;
 	}
-	T_SetShadow(false);
+	SetTextShadow(false);
 }
 
 //========================================================================
@@ -620,12 +620,12 @@ void IM_DrawDMStats()
 	xpos = 250;
 	ypos = 195;
 
-	T_SetShadow(true);
-	T_SetFont(font_big);
-	T_SetAlign(hleft, vtop);
+	SetTextShadow(true);
+	SetFont(font_big);
+	SetTextAlign(hleft, vtop);
 	DrawText(425, 170, "FRAGS");
 	DrawText(525, 170, "DEATHS");
-	T_SetShadow(false);
+	SetTextShadow(false);
 
 	if (intertime < 0.625)
 	{
@@ -634,8 +634,8 @@ void IM_DrawDMStats()
 			i = RepInfo.PlayerNum;
 			DrawShadowedPic(200, ypos + ftoi(dSlideY[i] * 35.0 * intertime),
 				patchFaceOkay[i]);
-			T_SetFont(font_small);
-			T_SetAlign(hleft, vtop);
+			SetFont(font_small);
+			SetTextAlign(hleft, vtop);
 			DrawText(240, ypos + 10 + ftoi(dSlideY[i] * 35.0 * intertime),
 				RepInfo.PlayerName);
 		}
@@ -651,9 +651,9 @@ void IM_DrawDMStats()
 		LocalSound('*evillaugh');
 		im_sounds++;
 	}
-	T_SetShadow(true);
-	T_SetFont(font_big);
-	T_SetAlign(hleft, vtop);
+	SetTextShadow(true);
+	SetFont(font_big);
+	SetTextAlign(hleft, vtop);
 	foreach ClGame.GLevel.LevelInfo.AllThinkers(PlayerReplicationInfo, RepInfo)
 	{
 		i = RepInfo.PlayerNum;
@@ -665,8 +665,8 @@ void IM_DrawDMStats()
 		{
 			DrawPic(200, ypos, patchFaceOkay[i], 0.4);
 		}
-		T_SetFont(font_small);
-		T_SetAlign(hleft, vtop);
+		SetFont(font_small);
+		SetTextAlign(hleft, vtop);
 		DrawText(240, ypos + 10, RepInfo.PlayerName);
 		if (slaughterboy & (1 << i))
 		{
@@ -684,7 +684,7 @@ void IM_DrawDMStats()
 		ypos += 36;
 		xpos += 43;
 	}
-	T_SetShadow(false);
+	SetTextShadow(false);
 }
 
 //========================================================================
@@ -697,14 +697,14 @@ void IM_DrawOldLevel()
 {
 	int i;
 
-	T_SetAlign(hcentre, vtop);
+	SetTextAlign(hcentre, vtop);
 
-	T_SetShadow(true);
-	T_SetFont(font_big);
+	SetTextShadow(true);
+	SetFont(font_big);
 	DrawText(320, 3, ClGame.im->LeaveName);
-	T_SetShadow(false);
+	SetTextShadow(false);
 
-	T_SetFont(font_small);
+	SetFont(font_small);
 	DrawText(320, 25, "FINISHED");
 
 	if (im_map == 9)
@@ -755,15 +755,15 @@ void IM_DrawYAH()
 {
 	int i;
 
-	T_SetAlign(hcentre, vtop);
+	SetTextAlign(hcentre, vtop);
 
-	T_SetFont(font_small);
+	SetFont(font_small);
 	DrawText(320, 10, "NOW ENTERING:");
 
-	T_SetShadow(true);
-	T_SetFont(font_big);
+	SetTextShadow(true);
+	SetFont(font_big);
 	DrawText(320, 20, ClGame.im->EnterName);
-	T_SetShadow(false);
+	SetTextShadow(false);
 
 	if (im_map == 9)
 	{
@@ -892,8 +892,8 @@ void IM_DrawText()
 	if (count > strlen(HubText))
 		count = strlen(HubText);
 
-	T_SetFont(font_small);
-	T_SetAlign(hleft, vtop);
+	SetFont(font_small);
+	SetTextAlign(hleft, vtop);
 	DrawText(180, 145, substr(HubText, 0, count));
 }
 

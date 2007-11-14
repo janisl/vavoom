@@ -71,6 +71,16 @@ private:
 	//	Currently focused child widget.
 	VWidget*			CurrentFocusChild;
 
+	font_t*				Font;
+
+	//	Text alignements
+	vuint8				HAlign;
+	vuint8				VAlign;
+
+	//	Text cursor
+	int					LastX;
+	int					LastY;
+
 	// Booleans
 	enum
 	{
@@ -86,6 +96,8 @@ private:
 		WF_LMouseDown		= 0x0010,
 		WF_MMouseDown		= 0x0020,
 		WF_RMouseDown		= 0x0040,
+		//	Shadowed text
+		WF_TextShadowed		= 0x0080,
 	};
 	vuint32				WidgetFlags;
 
@@ -380,9 +392,15 @@ public:
 	void FillRectWithFlat(int, int, int, int, VName);
 	void ShadeRect(int, int, int, int, float);
 
+	void SetFont(font_e FontNr);
+	void SetTextAlign(halign_e, valign_e);
+	void SetTextShadow(bool);
 	void DrawString(int, int, const VStr&);
 	void DrawText(int, int, const VStr&);
 	int DrawTextW(int, int, const VStr&, int);
+	void DrawCursor();
+	void DrawCursorAt(int, int);
+	void DrawString8(int, int, const VStr&);
 
 	static VWidget *CreateNewWidget(VClass*, VWidget*);
 
@@ -427,6 +445,12 @@ public:
 	DECLARE_FUNCTION(FillRectWithFlat)
 	DECLARE_FUNCTION(ShadeRect)
 
+	DECLARE_FUNCTION(SetFont)
+	DECLARE_FUNCTION(SetTextAlign)
+	DECLARE_FUNCTION(SetTextShadow)
+	DECLARE_FUNCTION(TextWidth)
+	DECLARE_FUNCTION(TextHeight)
 	DECLARE_FUNCTION(DrawText)
 	DECLARE_FUNCTION(DrawTextW)
+	DECLARE_FUNCTION(DrawCursor)
 };

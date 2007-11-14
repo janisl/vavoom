@@ -1529,23 +1529,6 @@ native static final void R_DrawModelFrame(TVec origin, float angle, void* model,
 native static final void R_FillRect(int x, int y, int w, int h, int colour);
 
 //
-//  Text
-//
-
-//  Selects active font
-native static final void T_SetFont(int font);
-//  Changes text alignement
-native static final void T_SetAlign(int halign, int valign);
-//  Enable/disable text shadow
-native static final void T_SetShadow(bool on);
-//  Calculates text width
-native static final int T_TextWidth(string text);
-//  Calculates text height
-native static final int T_TextHeight(string text);
-//  Draws a cursor at the end of last drawn string
-native static final void T_DrawCursor();
-
-//
 //  Client sound stuff
 //
 

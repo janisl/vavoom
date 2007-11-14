@@ -64,6 +64,16 @@ private readonly ClipRect		ClipRect;
 //	Currently focused child widget.
 private readonly Widget			CurrentFocusChild;
 
+private readonly void*			Font;
+
+//	Text alignements
+private readonly byte			HAlign;
+private readonly byte			VAlign;
+
+//	Text cursor
+private readonly int			LastX;
+private readonly int			LastY;
+
 //	Is this widget visible?
 private bool					bIsVisible;
 //	A flag that enables or disables Tick event.
@@ -76,6 +86,8 @@ private bool					bIsFocusable;
 private readonly bool			bLMouseDown;
 private readonly bool			bMMouseDown;
 private readonly bool			bRMouseDown;
+//	Shadowed text
+private readonly bool			bTextShadowed;
 
 //==========================================================================
 
@@ -218,10 +230,22 @@ native final void FillRectWithFlat(int x, int y, int width, int height,
 //  Darkens a screen region
 native final void ShadeRect(int x, int y, int w, int h, float shade);
 
+//  Selects active font
+native final void SetFont(int font);
+//  Changes text alignement
+native final void SetTextAlign(int halign, int valign);
+//  Enable/disable text shadow
+native final void SetTextShadow(bool on);
+//  Calculates text width
+native final int TextWidth(string text);
+//  Calculates text height
+native final int TextHeight(string text);
 //  Draws text
 native final void DrawText(int X, int Y, string Text);
 //  Draws text wrapping at the width w
 native final int DrawTextW(int x, int y, string Text, int w);
+//  Draws a cursor at the end of last drawn string
+native final void DrawCursor();
 
 //==========================================================================
 //

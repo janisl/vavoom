@@ -97,27 +97,27 @@ void OnDraw()
 {
 	int xx;
 
-	T_SetFont(font_small);
+	SetFont(font_small);
 	if (bLeftAlign)
 	{
-		T_SetAlign(hleft, vtop);
+		SetTextAlign(hleft, vtop);
 		DrawText(0, 0, Text);
 	}
 	else
 	{
-		T_SetAlign(hright, vtop);
+		SetTextAlign(hright, vtop);
 		DrawText(160, 0, Text);
 	}
 
 	if (bLeftAlign)
 	{
-		xx = T_TextWidth(Text) + 8;
+		xx = TextWidth(Text) + 8;
 	}
 	else
 	{
 		xx = 160 + 10;
 	}
-	T_SetAlign(hleft, vtop);
+	SetTextAlign(hleft, vtop);
 	DrawText(xx, 0, EnumNames[Value]);
 }
 

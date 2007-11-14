@@ -564,73 +564,6 @@ IMPLEMENT_FUNCTION(VObject, R_FillRect)
 
 //**************************************************************************
 //
-//	Text
-//
-//**************************************************************************
-
-//==========================================================================
-//
-//	PF_T_SetFont
-//
-//==========================================================================
-
-IMPLEMENT_FUNCTION(VObject, T_SetFont)
-{
-	P_GET_INT(font);
-	T_SetFont((font_e)font);
-}
-
-//==========================================================================
-//
-//	PF_T_SetAlign
-//
-//==========================================================================
-
-IMPLEMENT_FUNCTION(VObject, T_SetAlign)
-{
-	P_GET_INT(valign);
-	P_GET_INT(halign);
-	T_SetAlign((halign_e)halign, (valign_e)valign);
-}
-
-//==========================================================================
-//
-//	PF_T_SetShadow
-//
-//==========================================================================
-
-IMPLEMENT_FUNCTION(VObject, T_SetShadow)
-{
-	P_GET_BOOL(state);
-	T_SetShadow(state);
-}
-
-//==========================================================================
-//
-//	PF_T_TextWidth
-//
-//==========================================================================
-
-IMPLEMENT_FUNCTION(VObject, T_TextWidth)
-{
-	P_GET_STR(text);
-	RET_INT(T_TextWidth(*text));
-}
-
-//==========================================================================
-//
-//	PF_T_TextHeight
-//
-//==========================================================================
-
-IMPLEMENT_FUNCTION(VObject, T_TextHeight)
-{
-	P_GET_STR(text);
-	RET_INT(T_TextHeight(*text));
-}
-
-//**************************************************************************
-//
 //	Client side sound
 //
 //**************************************************************************
@@ -767,11 +700,6 @@ IMPLEMENT_FUNCTION(VObject, LoadTextLump)
 IMPLEMENT_FUNCTION(VObject, StartSearch)
 {
 	GNet->StartSearch();
-}
-
-IMPLEMENT_FUNCTION(VObject, T_DrawCursor)
-{
-	T_DrawCursor();
 }
 
 #endif

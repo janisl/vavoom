@@ -85,8 +85,8 @@ void OnDraw()
 	int i;
 	int xx;
 
-	T_SetFont(font_small);
-	T_SetAlign(hright, vtop);
+	SetFont(font_small);
+	SetTextAlign(hright, vtop);
 	DrawText(160, 0, Text);
 
 	xx = 160;

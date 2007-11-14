@@ -45,17 +45,17 @@ void OnDraw()
 	int key1;
 	int key2;
 
-	T_SetFont(font_small);
+	SetFont(font_small);
 	if (IsFocus())
 	{
-		T_SetFont(font_yellow);
+		SetFont(font_yellow);
 	}
-	T_SetAlign(hright, vtop);
+	SetTextAlign(hright, vtop);
 	DrawText(160, 0, Text);
 
 	IN_GetBindingKeys(CommandOn, &key1, &key2);
 
-	T_SetAlign(hleft, vtop);
+	SetTextAlign(hleft, vtop);
 	if (key1 >= 0)
 	{
 		DrawText(160 + 10, 0, KeyNameForNum(key1));

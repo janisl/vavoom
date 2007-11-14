@@ -183,8 +183,8 @@ void IM_DrawHubText()
 	{
 		count = strlen(HubText);
 	}
-	T_SetFont(font_small);
-	T_SetAlign(hleft, vtop);
+	SetFont(font_small);
+	SetTextAlign(hleft, vtop);
 	DrawText(170, 145, substr(HubText, 0, count));
 }
 
