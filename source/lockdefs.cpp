@@ -166,6 +166,7 @@ static void ParseLockDefs(VScriptParser* sc)
 			sc->Error("Bad syntax");
 		}
 	}
+	delete sc;
 	unguard;
 }
 
