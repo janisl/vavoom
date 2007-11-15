@@ -39,9 +39,6 @@
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
-static void T_LoadFont(font_e FontNr, const char* Name, int SpaceW, int SpaceH);
-static void T_LoadFont2(font_e FontNr, const char* Name, int SpaceW, int SpaceH);
-
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
@@ -51,6 +48,49 @@ static void T_LoadFont2(font_e FontNr, const char* Name, int SpaceW, int SpaceH)
 VFont*					Fonts[NUMFONTTYPES];
 
 // CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//	T_LoadFont
+//
+//==========================================================================
+
+static void T_LoadFont(font_e FontNr, const char* Name, int SpaceW, int SpaceH, int StartIndex)
+{
+	int		i;
+
+	Fonts[FontNr] = new VFont;
+	memset(Fonts[FontNr], 0, sizeof(VFont));
+	Fonts[FontNr]->SpaceWidth = SpaceW;
+	Fonts[FontNr]->SpaceHeight = SpaceH;
+	for (i = 0; i < 96; i++)
+	{
+		Fonts[FontNr]->Pics[i] = -1;
+	}
+	for (i = 0; i < 96; i++)
+	{
+		char Buffer[10];
+		sprintf(Buffer, Name, i + StartIndex);
+		VName LumpName(Buffer, VName::AddLower8);
+		int Lump = W_CheckNumForName(LumpName, WADNS_Graphics);
+
+		//	In Doom stcfn121 is actually an upper-case 'I' and not 'y' and
+		// may wad authors provide it as such, so load it only if wad also
+		// provides stcfn120 ('x') and stcfn122 ('z').
+		if (LumpName == "stcfn121" &&
+			(W_CheckNumForName("stcfn120", WADNS_Graphics) == -1 ||
+			W_CheckNumForName("stcfn122", WADNS_Graphics) == -1))
+		{
+			Lump = -2;
+		}
+
+		if (Lump >= 0)
+		{
+			Fonts[FontNr]->Pics[i] = GTextureManager.AddPatch(LumpName, TEXTYPE_Pic);
+			GTextureManager.GetTextureInfo(Fonts[FontNr]->Pics[i], &Fonts[FontNr]->PicInfo[i]);
+		}
+	}
+}
 
 //==========================================================================
 //
@@ -64,15 +104,15 @@ void T_Init()
 	// Load fonts
 	if (W_CheckNumForName(NAME_stcfn033) >= 0)
 	{
-		T_LoadFont2(font_small, "STCFN", 4, 7);
-		T_LoadFont2(font_yellow, "STBFN", 4, 7);
+		T_LoadFont(font_small, "stcfn%03d", 4, 7, 32);
+		T_LoadFont(font_yellow, "stbfn%03d", 4, 7, 32);
 	}
 	else
 	{
-		T_LoadFont(font_small, "FONTA", 4, 7);
-		T_LoadFont(font_yellow, "FONTAY", 4, 7);
+		T_LoadFont(font_small, "fonta%02d", 4, 7, 0);
+		T_LoadFont(font_yellow, "fontay%02d", 4, 7, 0);
 	}
-	T_LoadFont(font_big, "FONTB", 8, 10);
+	T_LoadFont(font_big, "fontb%02d", 8, 10, 0);
 	unguard;
 }
 
@@ -93,70 +133,6 @@ void T_Shutdown()
 		}
 	}
 	unguard;
-}
-
-//==========================================================================
-//
-//	T_LoadFont
-//
-//==========================================================================
-
-static void T_LoadFont(font_e FontNr, const char* Name, int SpaceW, int SpaceH)
-{
-	int		i;
-	char   	buffer[10];
-
-	Fonts[FontNr] = new VFont;
-	memset(Fonts[FontNr], 0, sizeof(VFont));
-	Fonts[FontNr]->SpaceWidth = SpaceW;
-	Fonts[FontNr]->SpaceHeight = SpaceH;
-	for (i = 0; i < 96; i++)
-	{
-		Fonts[FontNr]->Pics[i] = -1;
-	}
-	for (i = 0; i < 96; i++)
-	{
-		sprintf(buffer, "%s%02d", Name, i);
-		if (W_CheckNumForName(VName(buffer, VName::AddLower8), WADNS_Graphics) >= 0)
-		{
-			Fonts[FontNr]->Pics[i] = GTextureManager.AddPatch(VName(buffer,
-				VName::AddLower8), TEXTYPE_Pic);
-			GTextureManager.GetTextureInfo(Fonts[FontNr]->Pics[i],
-				&Fonts[FontNr]->PicInfo[i]);
-		}
-	}
-}
-
-//==========================================================================
-//
-//	T_LoadFont2
-//
-//==========================================================================
-
-static void T_LoadFont2(font_e FontNr, const char* Name, int SpaceW, int SpaceH)
-{
-	int		i;
-	char   	buffer[10];
-
-	Fonts[FontNr] = new VFont;
-	memset(Fonts[FontNr], 0, sizeof(VFont));
-	Fonts[FontNr]->SpaceWidth = SpaceW;
-	Fonts[FontNr]->SpaceHeight = SpaceH;
-	for (i = 0; i < 96; i++)
-	{
-		Fonts[FontNr]->Pics[i] = -1;
-	}
-	for (i = 0; i < 64; i++)
-	{
-		sprintf(buffer, "%s%03d", Name, i + 32);
-		if (W_CheckNumForName(VName(buffer, VName::AddLower8), WADNS_Graphics) >= 0)
-		{
-			Fonts[FontNr]->Pics[i] = GTextureManager.AddPatch(VName(buffer,
-				VName::AddLower8), TEXTYPE_Pic);
-			GTextureManager.GetTextureInfo(Fonts[FontNr]->Pics[i],
-				&Fonts[FontNr]->PicInfo[i]);
-		}
-	}
 }
 
 //==========================================================================
