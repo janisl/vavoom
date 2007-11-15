@@ -53,17 +53,20 @@
 //
 //==========================================================================
 
-VFont::VFont(const VStr& Name, int StartIndex)
+VFont::VFont(const VStr& Name, int First, int Count, int StartIndex)
 {
 	guard(VFont::VFont);
-	for (int i = 0; i < 96; i++)
+	for (int i = 0; i < 128; i++)
 	{
-		Pics[i] = NULL;
+		AsciiChars[i] = -1;
 	}
 	FontHeight = 0;
+	FirstChar = -1;
+	LastChar = -1;
 
-	for (int i = 0; i < 96; i++)
+	for (int i = 0; i < Count; i++)
 	{
+		int Char = i + First;
 		char Buffer[10];
 		sprintf(Buffer, *Name, i + StartIndex);
 		VName LumpName(Buffer, VName::AddLower8);
@@ -81,26 +84,41 @@ VFont::VFont(const VStr& Name, int StartIndex)
 
 		if (Lump >= 0)
 		{
-			Pics[i] = GTextureManager[GTextureManager.AddPatch(LumpName,
+			VTexture* Tex = GTextureManager[GTextureManager.AddPatch(LumpName,
 				TEXTYPE_Pic)];
+			FFontChar& FChar = Chars.Alloc();
+			FChar.Char = Char;
+			FChar.Tex = Tex;
+			if (Char < 128)
+			{
+				AsciiChars[Char] = Chars.Num() - 1;
+			}
 
 			//	Calculate height of font character and adjust font height
 			// as needed.
-			int Height = Pics[i]->GetScaledHeight();
-			int TOffs = Pics[i]->GetScaledTOffset();
+			int Height = Tex->GetScaledHeight();
+			int TOffs = Tex->GetScaledTOffset();
 			Height += abs(TOffs);
 			if (FontHeight < Height)
 			{
 				FontHeight = Height;
 			}
+
+			//	Update first and last characters.
+			if (FirstChar == -1)
+			{
+				FirstChar = Char;
+			}
+			LastChar = Char;
 		}
 	}
 
 	//	Set up width of a space character as half width of N character
 	// or 4 if character N has no graphic for it.
-	if (Pics['N' - 32])
+	int NIdx = FindChar('N');
+	if (NIdx >= 0)
 	{
-		SpaceWidth = (Pics['N' - 32]->GetScaledWidth() + 1) / 2;
+		SpaceWidth = (Chars[NIdx].Tex->GetScaledWidth() + 1) / 2;
 	}
 	else
 	{
@@ -115,22 +133,55 @@ VFont::VFont(const VStr& Name, int StartIndex)
 //
 //==========================================================================
 
+int VFont::FindChar(int Chr) const
+{
+	//	Check if character is outside of available character range.
+	if (Chr < FirstChar || Chr > LastChar)
+	{
+		return -1;
+	}
+
+	//	Fast look-up for ASCII characters
+	if (Chr < 128)
+	{
+		return AsciiChars[Chr];
+	}
+
+	//	A slower one for unicode.
+	for (int i = 0; i < Chars.Num(); i++)
+	{
+		if (Chars[i].Char == Chr)
+		{
+			return i;
+		}
+	}
+	return -1;
+}
+
+//==========================================================================
+//
+//	VFont::GetChar
+//
+//==========================================================================
+
 VTexture* VFont::GetChar(int Chr, int* pWidth) const
 {
 	guard(VFont::GetChar);
-	if (Chr < 32 || Chr >= 128 || !Pics[Chr - 32])
+	int Idx = FindChar(Chr);
+	if (Idx < 0)
 	{
 		//	Try upper-case letter.
 		Chr = VStr::ToUpper(Chr);
-		if (Chr < 32 || Chr >= 128 || !Pics[Chr - 32])
+		Idx = FindChar(Chr);
+		if (Idx < 0)
 		{
 			*pWidth = SpaceWidth;
 			return NULL;
 		}
 	}
 
-	*pWidth = Pics[Chr - 32]->GetScaledWidth();
-	return Pics[Chr - 32];
+	*pWidth = Chars[Idx].Tex->GetScaledWidth();
+	return Chars[Idx].Tex;
 	unguard;
 }
 
@@ -143,16 +194,18 @@ VTexture* VFont::GetChar(int Chr, int* pWidth) const
 int VFont::GetCharWidth(int Chr) const
 {
 	guard(VFont::GetCharWidth);
-	if (Chr < 32 || Chr >= 128 || !Pics[Chr - 32])
+	int Idx = FindChar(Chr);
+	if (Idx < 0)
 	{
 		//	Try upper-case letter.
 		Chr = VStr::ToUpper(Chr);
-		if (Chr < 32 || Chr >= 128 || !Pics[Chr - 32])
+		Idx = FindChar(Chr);
+		if (Idx < 0)
 		{
 			return SpaceWidth;
 		}
 	}
 
-	return Pics[Chr - 32]->GetScaledWidth();
+	return Chars[Idx].Tex->GetScaledWidth();
 	unguard;
 }

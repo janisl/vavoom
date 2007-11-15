@@ -29,15 +29,28 @@
 class VFont
 {
 protected:
-	//	Font characters
-	VTexture*	Pics[96];
+	struct FFontChar
+	{
+		int				Char;
+		VTexture*		Tex;
+	};
 
-	int			SpaceWidth;
-	int			FontHeight;
+	//	Font characters
+	TArray<FFontChar>	Chars;
+	//	Fast look-up for ASCII characters.
+	int					AsciiChars[128];
+	//	Range of available characters.
+	int					FirstChar;
+	int					LastChar;
+
+	int					SpaceWidth;
+	int					FontHeight;
+
+	int FindChar(int) const;
 
 public:
 
-	VFont(const VStr&, int);
+	VFont(const VStr&, int, int, int);
 
 	VTexture* GetChar(int, int*) const;
 	int GetCharWidth(int) const;
