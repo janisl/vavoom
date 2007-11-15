@@ -1017,7 +1017,10 @@ void VWidget::DrawCursorAt(int x, int y)
 {
 	guard(VWidget::DrawCursorAt);
 	if ((int)(host_time * 4) & 1)
-		DrawPic(x, y, Font->Pics['_' - 32]);
+	{
+		int w;
+		DrawPic(x, y, Font->GetChar('_', &w));
+	}
 	unguard;
 }
 

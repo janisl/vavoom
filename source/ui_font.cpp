@@ -49,6 +49,49 @@
 
 //==========================================================================
 //
+//	VFont::VFont
+//
+//==========================================================================
+
+VFont::VFont(const VStr& Name, int SpaceW, int SpaceH, int StartIndex)
+: SpaceWidth(SpaceW)
+, SpaceHeight(SpaceH)
+{
+	guard(VFont::VFont);
+	for (int i = 0; i < 96; i++)
+	{
+		Pics[i] = -1;
+	}
+	memset(PicInfo, 0, sizeof(PicInfo));
+
+	for (int i = 0; i < 96; i++)
+	{
+		char Buffer[10];
+		sprintf(Buffer, *Name, i + StartIndex);
+		VName LumpName(Buffer, VName::AddLower8);
+		int Lump = W_CheckNumForName(LumpName, WADNS_Graphics);
+
+		//	In Doom stcfn121 is actually an upper-case 'I' and not 'y' and
+		// may wad authors provide it as such, so load it only if wad also
+		// provides stcfn120 ('x') and stcfn122 ('z').
+		if (LumpName == "stcfn121" &&
+			(W_CheckNumForName("stcfn120", WADNS_Graphics) == -1 ||
+			W_CheckNumForName("stcfn122", WADNS_Graphics) == -1))
+		{
+			Lump = -1;
+		}
+
+		if (Lump >= 0)
+		{
+			Pics[i] = GTextureManager.AddPatch(LumpName, TEXTYPE_Pic);
+			GTextureManager.GetTextureInfo(Pics[i], &PicInfo[i]);
+		}
+	}
+	unguard;
+}
+
+//==========================================================================
+//
 //	VFont::GetChar
 //
 //==========================================================================

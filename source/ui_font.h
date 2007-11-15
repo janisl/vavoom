@@ -28,14 +28,17 @@
 //
 class VFont
 {
-public:
+protected:
 	// Font patches
 	int			Pics[96];
 	picinfo_t	PicInfo[96];
 
+public:
 	//Empty character width and empty strinh height
 	int			SpaceWidth;
 	int			SpaceHeight;
+
+	VFont(const VStr&, int, int, int);
 
 	int GetChar(int, int*);
 	int GetCharWidth(int);
