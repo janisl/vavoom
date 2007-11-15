@@ -120,6 +120,7 @@ private:
 
 	bool TransferAndClipRect(float&, float&, float&, float&, float&, float&,
 		float&, float&) const;
+	void DrawString(int, int, const VStr&);
 
 	friend class VRootWidget;
 
@@ -258,7 +259,6 @@ public:
 	void SetFont(VName);
 	void SetTextAlign(halign_e, valign_e);
 	void SetTextShadow(bool);
-	void DrawString(int, int, const VStr&);
 	void DrawText(int, int, const VStr&);
 	int DrawTextW(int, int, const VStr&, int);
 	void DrawCursor();
