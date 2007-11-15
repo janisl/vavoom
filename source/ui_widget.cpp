@@ -908,6 +908,7 @@ void VWidget::DrawString(int x, int y, const VStr& String)
 
 	int cx = x;
 	int cy = y;
+	int Kerning = Font->GetKerning();
 
 	if (HAlign == hcentre)
 		cx -= T_StringWidth(Font, String) / 2;
@@ -926,7 +927,7 @@ void VWidget::DrawString(int x, int y, const VStr& String)
 			else
 				DrawPic(cx, cy, Tex);
 		}
-		cx += w;
+		cx += w + Kerning;
 	}
 	LastX = cx;
 	LastY = cy;

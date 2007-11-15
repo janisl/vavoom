@@ -130,7 +130,7 @@ int T_StringWidth(VFont* Font, const VStr& String)
 	for (const char* SPtr = *String; *SPtr;)
 	{
 		int c = VStr::GetChar(SPtr);
-		w += Font->GetCharWidth(c);
+		w += Font->GetCharWidth(c) + Font->GetKerning();
 	}
 	return w;
 	unguard;

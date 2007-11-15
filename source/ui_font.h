@@ -36,6 +36,7 @@ protected:
 	};
 
 	VName				Name;
+	VFont*				Next;
 
 	//	Font characters
 	TArray<FFontChar>	Chars;
@@ -45,10 +46,12 @@ protected:
 	int					FirstChar;
 	int					LastChar;
 
+	//	Width of the space character.
 	int					SpaceWidth;
+	//	Height of the font.
 	int					FontHeight;
-
-	VFont*				Next;
+	//	Additional distance betweeen characters.
+	int					Kerning;
 
 	int FindChar(int) const;
 
@@ -67,6 +70,10 @@ public:
 	int GetHeight() const
 	{
 		return FontHeight;
+	}
+	int GetKerning() const
+	{
+		return Kerning;
 	}
 
 	static void StaticShutdown();

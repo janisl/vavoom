@@ -107,9 +107,10 @@ VFont::VFont(VName AName, const VStr& FormatStr, int First, int Count,
 	{
 		AsciiChars[i] = -1;
 	}
-	FontHeight = 0;
 	FirstChar = -1;
 	LastChar = -1;
+	FontHeight = 0;
+	Kerning = 0;
 
 	for (int i = 0; i < Count; i++)
 	{
