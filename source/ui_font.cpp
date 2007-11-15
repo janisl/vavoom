@@ -60,9 +60,8 @@ VFont::VFont(const VStr& Name, int SpaceW, int SpaceH, int StartIndex)
 	guard(VFont::VFont);
 	for (int i = 0; i < 96; i++)
 	{
-		Pics[i] = -1;
+		Pics[i] = NULL;
 	}
-	memset(PicInfo, 0, sizeof(PicInfo));
 
 	for (int i = 0; i < 96; i++)
 	{
@@ -83,8 +82,8 @@ VFont::VFont(const VStr& Name, int SpaceW, int SpaceH, int StartIndex)
 
 		if (Lump >= 0)
 		{
-			Pics[i] = GTextureManager.AddPatch(LumpName, TEXTYPE_Pic);
-			GTextureManager.GetTextureInfo(Pics[i], &PicInfo[i]);
+			Pics[i] = GTextureManager[GTextureManager.AddPatch(LumpName,
+				TEXTYPE_Pic)];
 		}
 	}
 	unguard;
@@ -99,18 +98,19 @@ VFont::VFont(const VStr& Name, int SpaceW, int SpaceH, int StartIndex)
 VTexture* VFont::GetChar(int Chr, int* pWidth)
 {
 	guard(VFont::GetChar);
-	if (Chr < 32 || Chr >= 128 || Pics[Chr - 32] < 0)
+	if (Chr < 32 || Chr >= 128 || !Pics[Chr - 32])
 	{
 		//	Try upper-case letter.
 		Chr = VStr::ToUpper(Chr);
-		if (Chr < 32 || Chr >= 128 || Pics[Chr - 32] < 0)
+		if (Chr < 32 || Chr >= 128 || !Pics[Chr - 32])
 		{
 			*pWidth = SpaceWidth;
 			return NULL;
 		}
 	}
-	*pWidth = PicInfo[Chr - 32].width;
-	return GTextureManager[Pics[Chr - 32]];
+
+	*pWidth = Pics[Chr - 32]->GetScaledWidth();
+	return Pics[Chr - 32];
 	unguard;
 }
 
@@ -123,16 +123,17 @@ VTexture* VFont::GetChar(int Chr, int* pWidth)
 int VFont::GetCharWidth(int Chr)
 {
 	guard(VFont::GetCharWidth);
-	if (Chr < 32 || Chr >= 128 || Pics[Chr - 32] < 0)
+	if (Chr < 32 || Chr >= 128 || !Pics[Chr - 32])
 	{
 		//	Try upper-case letter.
 		Chr = VStr::ToUpper(Chr);
-		if (Chr < 32 || Chr >= 128 || Pics[Chr - 32] < 0)
+		if (Chr < 32 || Chr >= 128 || !Pics[Chr - 32])
 		{
 			return SpaceWidth;
 		}
 	}
-	return PicInfo[Chr - 32].width;
+
+	return Pics[Chr - 32]->GetScaledWidth();
 	unguard;
 }
 
@@ -145,15 +146,16 @@ int VFont::GetCharWidth(int Chr)
 int VFont::GetCharHeight(int Chr)
 {
 	guard(VFont::GetCharHeight);
-	if (Chr < 32 || Chr >= 128 || Pics[Chr - 32] < 0)
+	if (Chr < 32 || Chr >= 128 || !Pics[Chr - 32])
 	{
 		//	Try upper-case letter.
 		Chr = VStr::ToUpper(Chr);
-		if (Chr < 32 || Chr >= 128 || Pics[Chr - 32] < 0)
+		if (Chr < 32 || Chr >= 128 || !Pics[Chr - 32])
 		{
 			return SpaceHeight;
 		}
 	}
-	return PicInfo[Chr - 32].height;
+
+	return Pics[Chr - 32]->GetScaledHeight();
 	unguard;
 }

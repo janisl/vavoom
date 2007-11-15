@@ -30,8 +30,7 @@ class VFont
 {
 protected:
 	// Font patches
-	int			Pics[96];
-	picinfo_t	PicInfo[96];
+	VTexture*	Pics[96];
 
 public:
 	//Empty character width and empty strinh height
