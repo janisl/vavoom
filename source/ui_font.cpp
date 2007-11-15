@@ -58,8 +58,13 @@ int VFont::GetChar(int Chr, int* pWidth)
 	guard(VFont::GetChar);
 	if (Chr < 32 || Chr >= 128 || Pics[Chr - 32] < 0)
 	{
-		*pWidth = SpaceWidth;
-		return -1;
+		//	Try upper-case letter.
+		Chr = VStr::ToUpper(Chr);
+		if (Chr < 32 || Chr >= 128 || Pics[Chr - 32] < 0)
+		{
+			*pWidth = SpaceWidth;
+			return -1;
+		}
 	}
 	*pWidth = PicInfo[Chr - 32].width;
 	return Pics[Chr - 32];
@@ -77,7 +82,12 @@ int VFont::GetCharWidth(int Chr)
 	guard(VFont::GetCharWidth);
 	if (Chr < 32 || Chr >= 128 || Pics[Chr - 32] < 0)
 	{
-		return SpaceWidth;
+		//	Try upper-case letter.
+		Chr = VStr::ToUpper(Chr);
+		if (Chr < 32 || Chr >= 128 || Pics[Chr - 32] < 0)
+		{
+			return SpaceWidth;
+		}
 	}
 	return PicInfo[Chr - 32].width;
 	unguard;
@@ -94,7 +104,12 @@ int VFont::GetCharHeight(int Chr)
 	guard(VFont::GetCharHeight);
 	if (Chr < 32 || Chr >= 128 || Pics[Chr - 32] < 0)
 	{
-		return SpaceHeight;
+		//	Try upper-case letter.
+		Chr = VStr::ToUpper(Chr);
+		if (Chr < 32 || Chr >= 128 || Pics[Chr - 32] < 0)
+		{
+			return SpaceHeight;
+		}
 	}
 	return PicInfo[Chr - 32].height;
 	unguard;

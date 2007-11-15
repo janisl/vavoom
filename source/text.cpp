@@ -123,18 +123,6 @@ static void T_LoadFont(font_e FontNr, const char* Name, int SpaceW, int SpaceH)
 				VName::AddLower8), TEXTYPE_Pic);
 			GTextureManager.GetTextureInfo(Fonts[FontNr]->Pics[i],
 				&Fonts[FontNr]->PicInfo[i]);
-			if ((i + 32 >= 'a') && (i + 32 <= 'z') &&
-				Fonts[FontNr]->Pics[i + 'A' - 'a'] < 0)
-			{
-				Fonts[FontNr]->Pics[i + 'A' - 'a'] = Fonts[FontNr]->Pics[i];
-				Fonts[FontNr]->PicInfo[i + 'A' - 'a'] = Fonts[FontNr]->PicInfo[i];
-			}
-			if ((i + 32 >= 'A') && (i + 32 <= 'Z') &&
-				Fonts[FontNr]->Pics[i + 'a' - 'A'] < 0)
-			{
-				Fonts[FontNr]->Pics[i + 'a' - 'A'] = Fonts[FontNr]->Pics[i];
-				Fonts[FontNr]->PicInfo[i + 'a' - 'A'] = Fonts[FontNr]->PicInfo[i];
-			}
 		}
 	}
 }
@@ -167,18 +155,6 @@ static void T_LoadFont2(font_e FontNr, const char* Name, int SpaceW, int SpaceH)
 				VName::AddLower8), TEXTYPE_Pic);
 			GTextureManager.GetTextureInfo(Fonts[FontNr]->Pics[i],
 				&Fonts[FontNr]->PicInfo[i]);
-			if ((i + 32 >= 'a') && (i + 32 <= 'z') &&
-				Fonts[FontNr]->Pics[i + 'A' - 'a'] < 0)
-			{
-				Fonts[FontNr]->Pics[i + 'A' - 'a'] = Fonts[FontNr]->Pics[i];
-				Fonts[FontNr]->PicInfo[i + 'A' - 'a'] = Fonts[FontNr]->PicInfo[i];
-			}
-			if ((i + 32 >= 'A') && (i + 32 <= 'Z') &&
-				Fonts[FontNr]->Pics[i + 'a' - 'A'] < 0)
-			{
-				Fonts[FontNr]->Pics[i + 'a' - 'A'] = Fonts[FontNr]->Pics[i];
-				Fonts[FontNr]->PicInfo[i + 'a' - 'A'] = Fonts[FontNr]->PicInfo[i];
-			}
 		}
 	}
 }
