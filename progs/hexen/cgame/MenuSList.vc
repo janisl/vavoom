@@ -42,7 +42,6 @@ void DrawTextBox(string text)
 	int h;
 
 	// Horiz. & Vertically centre string and print it.
-	SetFont(font_small);
 	SetTextAlign(hcentre, vcentre);
 
 	w = (TextWidth(text) + 16) & ~15;
@@ -69,7 +68,6 @@ void OnDraw()
 
 	slist = GetSlist();
 
-	SetFont(font_small);
 	SetTextAlign(hleft, vtop);
 	for (i = 0; i < slist->Count; i++)
 	{

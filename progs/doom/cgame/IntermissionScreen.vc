@@ -461,7 +461,7 @@ void Tick(float DeltaTime)
 
 void OnDraw()
 {
-	SetFont(font_big);
+	SetFont('bigfont');
 
 	switch (interstate)
 	{
@@ -1316,10 +1316,10 @@ void IM_DrawDeathmatchStats()
 			DrawPic(DM_MATRIXX - info.width - 5, y - 8, star);
 		}
 		SetTextAlign(hleft, vtop);
-		SetFont(font_small);
+		SetFont('smallfont');
 		DrawText(DM_MATRIXX, y + 5, RepInfo.PlayerName);
 		SetTextAlign(hright, vtop);
-		SetFont(font_big);
+		SetFont('bigfont');
 		DrawText(DM_TOTALSX, y, va("%d", dm_Frags[RepInfo.PlayerNum]));
 		DrawText(DM_DEATHSX, y, va("%d", dm_Deaths[RepInfo.PlayerNum]));
 		y += 24;
@@ -1684,7 +1684,7 @@ void IM_DrawText()
 	if (count > strlen(HubText))
 		count = strlen(HubText);
 
-	SetFont(font_small);
+	SetFont('smallfont');
 	SetTextAlign(hleft, vtop);
 	DrawText(170, 150, substr(HubText, 0, count));
 }

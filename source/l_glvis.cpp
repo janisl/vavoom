@@ -112,7 +112,7 @@ void TGLVisGUI::DisplayStartMap(const char *name)
 
 	Drawer->FillRect(0, 0, ScreenWidth, ScreenHeight, 0xff000000);
 
-	T_SetFont(font_small);
+	T_SetFont(SmallFont);
 	T_SetAlign(hcentre, vcentre);
 	T_DrawText(320, 16, MESSAGE1);
 	T_DrawText(320, 48, MESSAGE2);

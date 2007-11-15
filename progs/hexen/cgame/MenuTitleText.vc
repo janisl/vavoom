@@ -35,7 +35,7 @@ void OnCreate()
 
 void OnDraw()
 {
-	SetFont(font_big);
+	SetFont('bigfont');
 	SetTextAlign(hcentre, vbottom);
 	DrawText(0, 0, Text);
 }

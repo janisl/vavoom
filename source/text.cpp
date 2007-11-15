@@ -45,7 +45,7 @@
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-VFont*					Fonts[NUMFONTTYPES];
+VFont*					SmallFont;
 
 // CODE --------------------------------------------------------------------
 
@@ -61,15 +61,15 @@ void T_Init()
 	// Load fonts
 	if (W_CheckNumForName(NAME_stcfn033) >= 0)
 	{
-		Fonts[font_small] = new VFont(NAME_smallfont, "stcfn%03d", 33, 95, 33);
-		Fonts[font_yellow] = new VFont(NAME_smallfont2, "stbfn%03d", 33, 95, 33);
+		SmallFont = new VFont(NAME_smallfont, "stcfn%03d", 33, 95, 33);
+		new VFont(NAME_smallfont2, "stbfn%03d", 33, 95, 33);
 	}
 	else
 	{
-		Fonts[font_small] = new VFont(NAME_smallfont, "fonta%02d", 33, 95, 1);
-		Fonts[font_yellow] = new VFont(NAME_smallfont2, "fontay%02d", 33, 95, 1);
+		SmallFont = new VFont(NAME_smallfont, "fonta%02d", 33, 95, 1);
+		new VFont(NAME_smallfont2, "fontay%02d", 33, 95, 1);
 	}
-	Fonts[font_big] = new VFont(NAME_bigfont, "fontb%02d", 33, 95, 1);
+	new VFont(NAME_bigfont, "fontb%02d", 33, 95, 1);
 	unguard;
 }
 
@@ -90,9 +90,9 @@ void T_Shutdown()
 //
 //==========================================================================
 
-void T_SetFont(font_e FontNr)
+void T_SetFont(VFont* AFont)
 {
-	GRoot->SetFont(FontNr);
+	GRoot->SetFont(AFont);
 }
 
 //==========================================================================

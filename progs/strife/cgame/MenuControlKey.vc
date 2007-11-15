@@ -45,7 +45,6 @@ void OnDraw()
 	int key1;
 	int key2;
 
-	SetFont(font_small);
 	SetTextAlign(hright, vtop);
 	DrawText(160, 0, Text);
 

@@ -313,7 +313,7 @@ void IM_DrawHubText()
 	{
 		count = strlen(HubText);
 	}
-	SetFont(font_small);
+	SetFont('smallfont');
 	SetTextAlign(hleft, vtop);
 	DrawText(170, 145, substr(HubText, 0, count));
 }
@@ -326,7 +326,7 @@ void IM_DrawHubText()
 
 void IM_DrawNumber(int val, int x, int y, int wrapThresh)
 {
-	SetFont(font_small);
+	SetFont('smallfont');
 	SetTextAlign(hcentre, vtop);
 	if (!(val < -9 && wrapThresh < 1000))
 	{
@@ -347,7 +347,7 @@ void IM_DrawNumber(int val, int x, int y, int wrapThresh)
 
 void IM_DrawNumberBold(int val, int x, int y, int wrapThresh)
 {
-	SetFont(font_yellow);
+	SetFont('smallfont2');
 	SetTextAlign(hcentre, vtop);
 	if (!(val < -9 && wrapThresh < 1000))
 	{
@@ -405,7 +405,7 @@ void IM_DrawDeathTally()
 	{
 		i = RepInfo.PlayerNum;
 		xPos = xStart;
-		SetFont(i == ClGame.cl.ClientNum ? font_yellow : font_small);
+		SetFont(i == ClGame.cl.ClientNum ? 'smallfont2' : 'smallfont');
 		SetTextAlign(hleft, vtop);
 		DrawText(ftoi(xPos), y, RepInfo.PlayerName);
 		if (showTotals && !((slaughterboy & (1 << i)) &&

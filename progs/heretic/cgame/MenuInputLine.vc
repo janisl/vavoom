@@ -48,7 +48,6 @@ void OnValueChanged()
 
 void OnDraw()
 {
-	SetFont(font_small);
 	SetTextAlign(hleft, vtop);
 	DrawText(0, 0, Text);
 	if (bEnteringText)

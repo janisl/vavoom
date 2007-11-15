@@ -249,7 +249,7 @@ void C_Drawer()
 	// Backbround
 	Drawer->DrawConsoleBackground((int)(fScaleY * cons_h));
 
-	T_SetFont(font_small);
+	T_SetFont(SmallFont);
 	T_SetAlign(hleft, vtop);
 
 	// Input line
@@ -629,7 +629,7 @@ void C_NotifyMessage(const char* AStr)
 
 void C_DrawNotify()
 {
-	T_SetFont(font_small);
+	T_SetFont(SmallFont);
 	T_SetAlign(hleft, vtop);
 
 	//  Notify lines
@@ -687,7 +687,7 @@ void C_DrawCentreMessage()
 {
 	if (centre_time)
 	{
-		T_SetFont(font_small);
+		T_SetFont(SmallFont);
 		T_SetAlign(hcentre, vcentre);
 		T_DrawTextW(320, 360, centre_message, 600);
 		centre_time -= host_frametime;

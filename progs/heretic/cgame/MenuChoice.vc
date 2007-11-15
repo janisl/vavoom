@@ -76,7 +76,7 @@ int DrawSlot(int y, string text, bool entering)
 
 	DrawPic(0, y, pic_M_FSLOT);
 
-	SetFont(font_small);
+	SetFont('smallfont');
 	SetTextAlign(hleft, vtop);
 	DrawText(5, y + 5, text);
 	if (entering)

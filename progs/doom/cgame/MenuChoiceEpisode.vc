@@ -43,7 +43,7 @@ void OnDraw()
 	}
 	else
 	{
-		SetFont(font_big);
+		SetFont('bigfont');
 		SetTextAlign(hleft, vtop);
 		DrawText(0, 0, Text);
 	}

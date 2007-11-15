@@ -112,7 +112,7 @@ int DrawSlot(int y, string text, bool entering)
 	}
 	DrawPic(xx, y + 12, pic_M_LSRGHT);
 
-	SetFont(font_small);
+	SetFont('smallfont');
 	SetTextAlign(hleft, vtop);
 	DrawText(8, y + 5, text);
 	if (entering)

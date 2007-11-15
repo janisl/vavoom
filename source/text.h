@@ -24,18 +24,6 @@
 //**************************************************************************
 
 //
-// Fonts
-//
-enum font_e
-{
-	font_small,
-	font_yellow,
-	font_big,
-
-	NUMFONTTYPES
-};
-
-//
 // Horisontal alignement
 //
 enum halign_e
@@ -60,7 +48,7 @@ class VFont;
 void T_Init();
 void T_Shutdown();
 
-void T_SetFont(font_e);
+void T_SetFont(VFont*);
 void T_SetAlign(halign_e, valign_e);
 void T_SetShadow(bool);
 
@@ -76,3 +64,5 @@ int T_DrawTextW(int, int, const VStr&, int);
 
 void T_DrawCursor();
 void T_DrawCursorAt(int, int);
+
+extern VFont*			SmallFont;

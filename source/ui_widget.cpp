@@ -74,7 +74,7 @@ void VWidget::Init(VWidget* AParent)
 {
 	guard(VWidget::Init);
 	// Set default values
-	SetFont(font_small);
+	SetFont(SmallFont);
 	SetTextAlign(hleft, vtop);
 
 	ParentWidget = AParent;
@@ -838,10 +838,10 @@ void VWidget::ShadeRect(int X, int Y, int Width, int Height, float Shade)
 //
 //==========================================================================
 
-void VWidget::SetFont(font_e FontNr)
+void VWidget::SetFont(VFont* AFont)
 {
 	guard(VWidget::SetFont);
-	Font = Fonts[FontNr];
+	Font = AFont;
 	unguard;
 }
 
@@ -1349,9 +1349,9 @@ IMPLEMENT_FUNCTION(VWidget, ShadeRect)
 
 IMPLEMENT_FUNCTION(VWidget, SetFont)
 {
-	P_GET_INT(font);
+	P_GET_NAME(FontName);
 	P_GET_SELF;
-	Self->SetFont((font_e)font);
+	Self->SetFont(FontName);
 }
 
 IMPLEMENT_FUNCTION(VWidget, SetTextAlign)

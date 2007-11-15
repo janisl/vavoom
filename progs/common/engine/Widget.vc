@@ -231,7 +231,7 @@ native final void FillRectWithFlat(int x, int y, int width, int height,
 native final void ShadeRect(int x, int y, int w, int h, float shade);
 
 //  Selects active font
-native final void SetFont(int font);
+native final void SetFont(name font);
 //  Changes text alignement
 native final void SetTextAlign(int halign, int valign);
 //  Enable/disable text shadow

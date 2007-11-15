@@ -278,7 +278,7 @@ static void DrawFPS()
 			fps_frames = 0;
 		}
 
-		T_SetFont(font_small);
+		T_SetFont(SmallFont);
 		T_SetAlign(hright, vtop);
 		T_DrawString(VirtualWidth - 2, 0, va("%d fps", show_fps));
 	}

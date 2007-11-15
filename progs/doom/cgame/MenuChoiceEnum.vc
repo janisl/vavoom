@@ -99,7 +99,6 @@ void OnDraw()
 {
 	int xx;
 
-	SetFont(font_small);
 	if (bLeftAlign)
 	{
 		SetTextAlign(hleft, vtop);

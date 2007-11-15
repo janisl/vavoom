@@ -226,18 +226,6 @@ const float ATTN_SURROUND	= -1.0;
 //**************************************************************************
 
 //
-// Fonts
-//
-enum
-{
-	font_small,
-	font_yellow,
-	font_big,
-
-	NUMFONTTYPES
-};
-
-//
 // Horisontal text alignement
 //
 enum

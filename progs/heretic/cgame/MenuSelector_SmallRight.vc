@@ -33,7 +33,6 @@ void OnCreate()
 
 void OnDraw()
 {
-	SetFont(font_small);
 	SetTextAlign(hleft, vtop);
 	DrawText(2, 0, ">");
 }

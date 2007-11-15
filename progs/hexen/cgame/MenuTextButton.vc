@@ -27,8 +27,8 @@ class MenuTextButton : MenuChoice;
 
 name ActivateSound;
 string Text;
-int TextFont;
-int TextSelectedFont;
+name TextFont;
+name TextSelectedFont;
 int TextHAlign;
 int TextVAlign;
 

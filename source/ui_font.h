@@ -72,5 +72,3 @@ public:
 	static void StaticShutdown();
 	static VFont* FindFont(VName);
 };
-
-extern VFont*			Fonts[NUMFONTTYPES];

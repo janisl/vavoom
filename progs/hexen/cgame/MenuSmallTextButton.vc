@@ -46,8 +46,8 @@ void SetOrigin(int x, int y)
 
 defaultproperties
 {
-	TextFont = font_small;
-	TextSelectedFont = font_yellow;
+	TextFont = 'smallfont';
+	TextSelectedFont = 'smallfont2';
 	TextHAlign = hright;
 	TextVAlign = vtop;
 	Height = 10;

@@ -205,7 +205,7 @@ void F_TextWrite()
 	if (count > strlen(FinaleText))
 		count = strlen(FinaleText);
 
-	SetFont(font_small);
+	SetFont('smallfont');
 	SetTextAlign(hleft, vtop);
 	DrawText(180, (FinaleStage == 5) ? 275 : 145, substr(FinaleText, 0, count));
 }

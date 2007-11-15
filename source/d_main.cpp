@@ -514,7 +514,7 @@ void VSoftwareDrawer::EndView()
 
 	if (r_cache_thrash)
 	{
-		T_SetFont(font_small);
+		T_SetFont(SmallFont);
 		T_SetAlign(hright, vtop);
 		T_DrawText(318, 10, "RAM");
 	}

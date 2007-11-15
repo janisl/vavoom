@@ -1432,7 +1432,7 @@ static void DrawWorldTimer()
 	worldTimer -= minutes * 60;
 	seconds = worldTimer;
 
-	T_SetFont(font_small);
+	T_SetFont(SmallFont);
 	T_SetAlign(hleft, vtop);
 	sprintf(timeBuffer, "%.2d : %.2d : %.2d", hours, minutes, seconds);
 	T_DrawString(560, 8, timeBuffer);
@@ -1537,7 +1537,7 @@ static void AM_DrawLevelStats()
 	totalitems = GClLevel->LevelInfo->TotalItems;
 	totalsecrets = GClLevel->LevelInfo->TotalSecret;
 
-	T_SetFont(font_small);
+	T_SetFont(SmallFont);
 	T_SetAlign(hleft, vtop);
 	sprintf(kill, "Kills: %.2d / %.2d", kills, totalkills);
 	T_DrawString(8, 390, kill);
@@ -1641,7 +1641,7 @@ void AM_Drawer()
 	}
 	Drawer->EndAutomap();
 	DrawWorldTimer();
-	T_SetFont(font_small);
+	T_SetFont(SmallFont);
 	T_SetAlign(hleft, vbottom);
 	T_DrawText(20, 480 - sb_height - 7, *GClLevel->LevelInfo->GetLevelName());
 	if (ShowStats)

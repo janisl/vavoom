@@ -499,7 +499,7 @@ void MessageBoxStartMessage(string text, int type, bool input)
 	messageType = type;
 	messageNeedsInput = input;
 
-	GRoot.SetFont(font_small);
+	GRoot.SetFont('smallfont');
 	msgBoxW = (GRoot.TextWidth(messageString) + 16) & ~15;
 	msgBoxH = (GRoot.TextHeight(messageString) + 16) & ~15;
 	if (msgBoxW > 304)
@@ -525,7 +525,7 @@ void MessageBoxDrawer()
 	{
 		GRoot.FillRectWithFlat(msgBoxX, msgBoxY, msgBoxW, msgBoxH, 'f_pave01');
 		DrawBorder(msgBoxX, msgBoxY, msgBoxW, msgBoxH);
-		GRoot.SetFont(font_small);
+		GRoot.SetFont('smallfont');
 		GRoot.SetTextAlign(hcentre, vcentre);
 		GRoot.DrawText(320, 240, messageString);
 	}

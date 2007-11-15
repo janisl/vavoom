@@ -97,10 +97,10 @@ void OnDraw()
 {
 	int xx;
 
-	SetFont(font_small);
+	SetFont('smallfont');
 	if (IsFocus())
 	{
-		SetFont(font_yellow);
+		SetFont('smallfont2');
 	}
 	if (bLeftAlign)
 	{

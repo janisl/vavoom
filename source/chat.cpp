@@ -159,7 +159,7 @@ void CT_Drawer()
 {
 	if (chatmodeon)
 	{
-		T_SetFont(font_small);
+		T_SetFont(SmallFont);
 		T_SetAlign(hleft, vtop);
 		T_DrawString(25, 10, w_chat.Data);
 		T_DrawCursor();
