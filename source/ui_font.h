@@ -35,6 +35,8 @@ protected:
 		VTexture*		Tex;
 	};
 
+	VName				Name;
+
 	//	Font characters
 	TArray<FFontChar>	Chars;
 	//	Fast look-up for ASCII characters.
@@ -46,11 +48,14 @@ protected:
 	int					SpaceWidth;
 	int					FontHeight;
 
+	VFont*				Next;
+
 	int FindChar(int) const;
 
-public:
+	static VFont*		Fonts;
 
-	VFont(const VStr&, int, int, int);
+public:
+	VFont(VName, const VStr&, int, int, int);
 
 	VTexture* GetChar(int, int*) const;
 	int GetCharWidth(int) const;
@@ -63,6 +68,9 @@ public:
 	{
 		return FontHeight;
 	}
+
+	static void StaticShutdown();
+	static VFont* FindFont(VName);
 };
 
 extern VFont*			Fonts[NUMFONTTYPES];

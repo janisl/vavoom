@@ -61,15 +61,15 @@ void T_Init()
 	// Load fonts
 	if (W_CheckNumForName(NAME_stcfn033) >= 0)
 	{
-		Fonts[font_small] = new VFont("stcfn%03d", 33, 95, 33);
-		Fonts[font_yellow] = new VFont("stbfn%03d", 33, 95, 33);
+		Fonts[font_small] = new VFont(NAME_smallfont, "stcfn%03d", 33, 95, 33);
+		Fonts[font_yellow] = new VFont(NAME_smallfont2, "stbfn%03d", 33, 95, 33);
 	}
 	else
 	{
-		Fonts[font_small] = new VFont("fonta%02d", 33, 95, 1);
-		Fonts[font_yellow] = new VFont("fontay%02d", 33, 95, 1);
+		Fonts[font_small] = new VFont(NAME_smallfont, "fonta%02d", 33, 95, 1);
+		Fonts[font_yellow] = new VFont(NAME_smallfont2, "fontay%02d", 33, 95, 1);
 	}
-	Fonts[font_big] = new VFont("fontb%02d", 33, 95, 1);
+	Fonts[font_big] = new VFont(NAME_bigfont, "fontb%02d", 33, 95, 1);
 	unguard;
 }
 
@@ -81,15 +81,7 @@ void T_Init()
 
 void T_Shutdown()
 {
-	guard(T_Shutdown);
-	for (int i = 0; i < NUMFONTTYPES; i++)
-	{
-		if (Fonts[i])
-		{
-			delete Fonts[i];
-		}
-	}
-	unguard;
+	VFont::StaticShutdown();
 }
 
 //==========================================================================

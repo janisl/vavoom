@@ -847,6 +847,27 @@ void VWidget::SetFont(font_e FontNr)
 
 //==========================================================================
 //
+//	VWidget::SetFont
+//
+//==========================================================================
+
+void VWidget::SetFont(VName FontName)
+{
+	guard(VWidget::SetFont);
+	VFont* F = VFont::FindFont(FontName);
+	if (F)
+	{
+		Font = F;
+	}
+	else
+	{
+		GCon->Logf("No such font %s", *FontName);
+	}
+	unguard;
+}
+
+//==========================================================================
+//
 //	VWidget::SetTextAlign
 //
 //==========================================================================

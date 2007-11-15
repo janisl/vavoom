@@ -256,6 +256,12 @@ REGISTER_NAME(clprogs)
 REGISTER_NAME(svprogs)
 REGISTER_NAME(language)
 
+//	Standard font names
+REGISTER_NAME(smallfont)
+REGISTER_NAME(smallfont2)
+REGISTER_NAME(bigfont)
+REGISTER_NAME(consolefont)
+
 // Closing -----------------------------------------------------------------
 
 #ifdef REGISTERING_ENUM

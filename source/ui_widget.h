@@ -254,7 +254,8 @@ public:
 	void FillRectWithFlat(int, int, int, int, VName);
 	void ShadeRect(int, int, int, int, float);
 
-	void SetFont(font_e FontNr);
+	void SetFont(font_e);
+	void SetFont(VName);
 	void SetTextAlign(halign_e, valign_e);
 	void SetTextShadow(bool);
 	void DrawString(int, int, const VStr&);

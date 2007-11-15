@@ -45,7 +45,49 @@
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
+VFont*				VFont::Fonts;
+
 // CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//	VFont::StaticShutdown
+//
+//==========================================================================
+
+void VFont::StaticShutdown()
+{
+	guard(VFont::StaticShutdown);
+	VFont* F = Fonts;
+	while (F)
+	{
+		VFont* Next = F->Next;
+		delete F;
+		F = Next;
+	}
+	Fonts = NULL;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VFont::FindFont
+//
+//==========================================================================
+
+VFont* VFont::FindFont(VName AName)
+{
+	guard(VFont::FindFont);
+	for (VFont* F = Fonts; F; F = F->Next)
+	{
+		if (F->Name == AName)
+		{
+			return F;
+		}
+	}
+	return NULL;
+	unguard;
+}
 
 //==========================================================================
 //
@@ -53,9 +95,14 @@
 //
 //==========================================================================
 
-VFont::VFont(const VStr& Name, int First, int Count, int StartIndex)
+VFont::VFont(VName AName, const VStr& FormatStr, int First, int Count,
+	int StartIndex)
 {
 	guard(VFont::VFont);
+	Name = AName;
+	Next = Fonts;
+	Fonts = this;
+
 	for (int i = 0; i < 128; i++)
 	{
 		AsciiChars[i] = -1;
@@ -68,7 +115,7 @@ VFont::VFont(const VStr& Name, int First, int Count, int StartIndex)
 	{
 		int Char = i + First;
 		char Buffer[10];
-		sprintf(Buffer, *Name, i + StartIndex);
+		sprintf(Buffer, *FormatStr, i + StartIndex);
 		VName LumpName(Buffer, VName::AddLower8);
 		int Lump = W_CheckNumForName(LumpName, WADNS_Graphics);
 
