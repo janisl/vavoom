@@ -23,12 +23,6 @@
 //**
 //**************************************************************************
 
-// HEADER FILES ------------------------------------------------------------
-
-// MACROS ------------------------------------------------------------------
-
-// TYPES -------------------------------------------------------------------
-
 //
 // Fonts
 //
@@ -61,21 +55,7 @@ enum valign_e
 	vbottom		//Bottom
 };
 
-//
-// Fonts
-//
-struct font_t
-{
-	// Font patches
-	int			Pics[96];
-	picinfo_t	PicInfo[96];
-
-	//Empty character width and empty strinh height
-	int			SpaceWidth;
-	int			SpaceHeight;
-};
-
-// PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
+class VFont;
 
 void T_Init();
 void T_Shutdown();
@@ -84,11 +64,11 @@ void T_SetFont(font_e);
 void T_SetAlign(halign_e, valign_e);
 void T_SetShadow(bool);
 
-int T_StringWidth(font_t* Font, const VStr&);
-int T_StringHeight(font_t* Font, const VStr&);
+int T_StringWidth(VFont* Font, const VStr&);
+int T_StringHeight(VFont* Font, const VStr&);
 
-int T_TextWidth(font_t* Font, const VStr&);
-int T_TextHeight(font_t* Font, const VStr&);
+int T_TextWidth(VFont* Font, const VStr&);
+int T_TextHeight(VFont* Font, const VStr&);
 
 void T_DrawString(int, int, const VStr&);
 void T_DrawString8(int, int, const VStr&);
@@ -97,7 +77,3 @@ int T_DrawTextW(int, int, const VStr&, int);
 
 void T_DrawCursor();
 void T_DrawCursorAt(int, int);
-
-// PUBLIC DATA DECLARATIONS ------------------------------------------------
-
-extern font_t*			Fonts[NUMFONTTYPES];

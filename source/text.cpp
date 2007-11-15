@@ -48,7 +48,7 @@ static void T_LoadFont2(font_e FontNr, const char* Name, int SpaceW, int SpaceH)
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-font_t*					Fonts[NUMFONTTYPES];
+VFont*					Fonts[NUMFONTTYPES];
 
 // CODE --------------------------------------------------------------------
 
@@ -106,8 +106,8 @@ static void T_LoadFont(font_e FontNr, const char* Name, int SpaceW, int SpaceH)
 	int		i;
 	char   	buffer[10];
 
-	Fonts[FontNr] = new font_t;
-	memset(Fonts[FontNr], 0, sizeof(font_t));
+	Fonts[FontNr] = new VFont;
+	memset(Fonts[FontNr], 0, sizeof(VFont));
 	Fonts[FontNr]->SpaceWidth = SpaceW;
 	Fonts[FontNr]->SpaceHeight = SpaceH;
 	for (i = 0; i < 96; i++)
@@ -150,8 +150,8 @@ static void T_LoadFont2(font_e FontNr, const char* Name, int SpaceW, int SpaceH)
 	int		i;
 	char   	buffer[10];
 
-	Fonts[FontNr] = new font_t;
-	memset(Fonts[FontNr], 0, sizeof(font_t));
+	Fonts[FontNr] = new VFont;
+	memset(Fonts[FontNr], 0, sizeof(VFont));
 	Fonts[FontNr]->SpaceWidth = SpaceW;
 	Fonts[FontNr]->SpaceHeight = SpaceH;
 	for (i = 0; i < 96; i++)
@@ -222,7 +222,7 @@ void T_SetShadow(bool state)
 //
 //==========================================================================
 
-int T_StringWidth(font_t* Font, const VStr& String)
+int T_StringWidth(VFont* Font, const VStr& String)
 {
 	guard(T_StringWidth);
 	int w = 0;
@@ -248,7 +248,7 @@ int T_StringWidth(font_t* Font, const VStr& String)
 //
 //==========================================================================
 
-int T_StringHeight(font_t* Font, const VStr& String)
+int T_StringHeight(VFont* Font, const VStr& String)
 {
 	guard(T_StringHeight);
 	int h = Font->SpaceHeight;
@@ -271,7 +271,7 @@ int T_StringHeight(font_t* Font, const VStr& String)
 //
 //==========================================================================
 
-int T_TextWidth(font_t* Font, const VStr& String)
+int T_TextWidth(VFont* Font, const VStr& String)
 {
 	guard(T_TextWidth);
 	size_t		i;
@@ -297,7 +297,7 @@ int T_TextWidth(font_t* Font, const VStr& String)
 //
 //==========================================================================
 
-int T_TextHeight(font_t* Font, const VStr& String)
+int T_TextHeight(VFont* Font, const VStr& String)
 {
 	guard(T_TextHeight);
 	size_t		i;

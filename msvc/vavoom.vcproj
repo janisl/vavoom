@@ -2016,6 +2016,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\ui_font.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\source\ui_font.h"
+				>
+			</File>
+			<File
 				RelativePath="..\source\ui_root.cpp"
 				>
 			</File>

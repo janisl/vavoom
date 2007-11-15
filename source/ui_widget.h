@@ -71,7 +71,7 @@ private:
 	//	Currently focused child widget.
 	VWidget*			CurrentFocusChild;
 
-	font_t*				Font;
+	VFont*				Font;
 
 	//	Text alignements
 	vuint8				HAlign;

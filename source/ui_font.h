@@ -23,15 +23,21 @@
 //**
 //**************************************************************************
 
-#ifndef _UI_H
-#define _UI_H
+//
+// Fonts
+//
+class VFont
+{
+public:
+	// Font patches
+	int			Pics[96];
+	picinfo_t	PicInfo[96];
 
-// Forward declarations
-class	VWidget;
-class	VRootWidget;
+	//Empty character width and empty strinh height
+	int			SpaceWidth;
+	int			SpaceHeight;
 
-#include "ui_font.h"
-#include "ui_widget.h"
-#include "ui_root.h"
+	int GetChar(int, picinfo_t*);
+};
 
-#endif
+extern VFont*			Fonts[NUMFONTTYPES];

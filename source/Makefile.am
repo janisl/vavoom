@@ -223,6 +223,8 @@ _____MAIN_EXE__SOURCES = \
 	text.h \
 	ui.h \
 	ui_actor.cpp \
+	ui_font.cpp \
+	ui_font.h \
 	ui_root.cpp \
 	ui_root.h \
 	ui_widget.cpp \

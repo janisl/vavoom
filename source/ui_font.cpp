@@ -23,15 +23,39 @@
 //**
 //**************************************************************************
 
-#ifndef _UI_H
-#define _UI_H
+// HEADER FILES ------------------------------------------------------------
 
-// Forward declarations
-class	VWidget;
-class	VRootWidget;
+#include "gamedefs.h"
+#include "cl_local.h"
+#include "ui.h"
 
-#include "ui_font.h"
-#include "ui_widget.h"
-#include "ui_root.h"
+// MACROS ------------------------------------------------------------------
 
-#endif
+// TYPES -------------------------------------------------------------------
+
+// EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
+
+// PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
+
+// PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
+
+// EXTERNAL DATA DECLARATIONS ----------------------------------------------
+
+// PUBLIC DATA DEFINITIONS -------------------------------------------------
+
+// PRIVATE DATA DEFINITIONS ------------------------------------------------
+
+// CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//	VFont::GetChar
+//
+//==========================================================================
+
+int VFont::GetChar(int Chr, picinfo_t* pInfo)
+{
+	guard(VFont::GetChar);
+	return 0;
+	unguard;
+}
