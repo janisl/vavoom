@@ -40,7 +40,7 @@ public:
 
 	VFont(const VStr&, int, int, int);
 
-	int GetChar(int, int*);
+	VTexture* GetChar(int, int*);
 	int GetCharWidth(int);
 	int GetCharHeight(int);
 };

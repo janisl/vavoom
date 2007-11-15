@@ -96,7 +96,7 @@ VFont::VFont(const VStr& Name, int SpaceW, int SpaceH, int StartIndex)
 //
 //==========================================================================
 
-int VFont::GetChar(int Chr, int* pWidth)
+VTexture* VFont::GetChar(int Chr, int* pWidth)
 {
 	guard(VFont::GetChar);
 	if (Chr < 32 || Chr >= 128 || Pics[Chr - 32] < 0)
@@ -106,11 +106,11 @@ int VFont::GetChar(int Chr, int* pWidth)
 		if (Chr < 32 || Chr >= 128 || Pics[Chr - 32] < 0)
 		{
 			*pWidth = SpaceWidth;
-			return -1;
+			return NULL;
 		}
 	}
 	*pWidth = PicInfo[Chr - 32].width;
-	return Pics[Chr - 32];
+	return GTextureManager[Pics[Chr - 32]];
 	unguard;
 }
 

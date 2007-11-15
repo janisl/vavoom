@@ -247,6 +247,26 @@ public:
 	bool IsFocus(bool Recurse = true) const;
 	void SetFocus();
 
+	void DrawPic(int, int, int, float = 1.0);
+	void DrawPic(int, int, VTexture*, float = 1.0);
+	void DrawShadowedPic(int, int, int);
+	void DrawShadowedPic(int, int, VTexture*);
+	void FillRectWithFlat(int, int, int, int, VName);
+	void ShadeRect(int, int, int, int, float);
+
+	void SetFont(font_e FontNr);
+	void SetTextAlign(halign_e, valign_e);
+	void SetTextShadow(bool);
+	void DrawString(int, int, const VStr&);
+	void DrawText(int, int, const VStr&);
+	int DrawTextW(int, int, const VStr&, int);
+	void DrawCursor();
+	void DrawCursorAt(int, int);
+	void DrawString8(int, int, const VStr&);
+
+	static VWidget *CreateNewWidget(VClass*, VWidget*);
+
+	//	Events.
 	void OnCreate()
 	{
 		P_PASS_SELF;
@@ -387,23 +407,7 @@ public:
 		EV_RET_VOID(NAME_OnRMouseClick);
 	}
 
-	void DrawPic(int, int, int, float = 1.0);
-	void DrawShadowedPic(int, int, int);
-	void FillRectWithFlat(int, int, int, int, VName);
-	void ShadeRect(int, int, int, int, float);
-
-	void SetFont(font_e FontNr);
-	void SetTextAlign(halign_e, valign_e);
-	void SetTextShadow(bool);
-	void DrawString(int, int, const VStr&);
-	void DrawText(int, int, const VStr&);
-	int DrawTextW(int, int, const VStr&, int);
-	void DrawCursor();
-	void DrawCursorAt(int, int);
-	void DrawString8(int, int, const VStr&);
-
-	static VWidget *CreateNewWidget(VClass*, VWidget*);
-
+	//	Script natives
 	DECLARE_FUNCTION(NewChild)
 	DECLARE_FUNCTION(Destroy)
 	DECLARE_FUNCTION(DestroyAllChildren)

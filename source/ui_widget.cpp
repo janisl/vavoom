@@ -702,7 +702,19 @@ bool VWidget::TransferAndClipRect(float& X1, float& Y1, float& X2, float& Y2,
 void VWidget::DrawPic(int X, int Y, int Handle, float Alpha)
 {
 	guard(VWidget::DrawPic);
-	VTexture* Tex = GTextureManager(Handle);
+	DrawPic(X, Y, GTextureManager(Handle), Alpha);
+	unguard;
+}
+
+//==========================================================================
+//
+//	VWidget::DrawPic
+//
+//==========================================================================
+
+void VWidget::DrawPic(int X, int Y, VTexture* Tex, float Alpha)
+{
+	guard(VWidget::DrawPic);
 	if (!Tex)
 	{
 		return;
@@ -734,7 +746,19 @@ void VWidget::DrawPic(int X, int Y, int Handle, float Alpha)
 void VWidget::DrawShadowedPic(int X, int Y, int Handle)
 {
 	guard(VWidget::DrawShadowedPic);
-	VTexture* Tex = GTextureManager(Handle);
+	DrawShadowedPic(X, Y, GTextureManager(Handle));
+	unguard;
+}
+
+//==========================================================================
+//
+//	VWidget::DrawShadowedPic
+//
+//==========================================================================
+
+void VWidget::DrawShadowedPic(int X, int Y, VTexture* Tex)
+{
+	guard(VWidget::DrawShadowedPic);
 	if (!Tex)
 	{
 		return;
@@ -753,7 +777,7 @@ void VWidget::DrawShadowedPic(int X, int Y, int Handle)
 		Drawer->DrawPicShadow(X1, Y1, X2, Y2, S1, T1, S2, T2, Tex, 0.625);
 	}
 
-	DrawPic(X, Y, Handle);
+	DrawPic(X, Y, Tex);
 	unguard;
 }
 
@@ -873,13 +897,13 @@ void VWidget::DrawString(int x, int y, const VStr& String)
 	{
 		int c = VStr::GetChar(SPtr);
 		int w;
-		int TexNum = Font->GetChar(c, &w);
-		if (TexNum >= 0)
+		VTexture* Tex = Font->GetChar(c, &w);
+		if (Tex)
 		{
 			if (WidgetFlags & WF_TextShadowed)
-				DrawShadowedPic(cx, cy, TexNum);
+				DrawShadowedPic(cx, cy, Tex);
 			else
-				DrawPic(cx, cy, TexNum);
+				DrawPic(cx, cy, Tex);
 		}
 		cx += w;
 	}
@@ -1050,10 +1074,10 @@ void VWidget::DrawString8(int x, int y, const VStr& String)
 	{
 		int c = VStr::GetChar(SPtr);
 		int w;
-		int TexNum = Font->GetChar(c, &w);
-		if (TexNum >= 0)
+		VTexture* Tex = Font->GetChar(c, &w);
+		if (Tex)
 		{
-			DrawPic(cx + (8 - w) / 2, cy, TexNum);
+			DrawPic(cx + (8 - w) / 2, cy, Tex);
 		}
 		cx += 8;
 	}

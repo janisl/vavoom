@@ -290,9 +290,9 @@ bool VRootWidget::MouseButtonEvent(int Button, bool Down)
 	}
 	else
 	{
-		int LocalX((ScaledX - Focus->ClipRect.OriginX) /
+		int LocalX = (int)((ScaledX - Focus->ClipRect.OriginX) /
 			Focus->ClipRect.ScaleX);
-		int LocalY((ScaledY - Focus->ClipRect.OriginY) /
+		int LocalY = (int)((ScaledY - Focus->ClipRect.OriginY) /
 			Focus->ClipRect.ScaleY);
 		if (Button == K_MOUSE1 && (Focus->WidgetFlags & WF_LMouseDown))
 		{
@@ -313,8 +313,8 @@ bool VRootWidget::MouseButtonEvent(int Button, bool Down)
 
 	for (VWidget* W = Focus; W; W = W->ParentWidget)
 	{
-		int LocalX((ScaledX - W->ClipRect.OriginX) / W->ClipRect.ScaleX);
-		int LocalY((ScaledY - W->ClipRect.OriginY) / W->ClipRect.ScaleY);
+		int LocalX = (int)((ScaledX - W->ClipRect.OriginX) / W->ClipRect.ScaleX);
+		int LocalY = (int)((ScaledY - W->ClipRect.OriginY) / W->ClipRect.ScaleY);
 		if (Down)
 		{
 			if (W->OnMouseDown(LocalX, LocalY, Button))
