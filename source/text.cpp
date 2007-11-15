@@ -61,15 +61,15 @@ void T_Init()
 	// Load fonts
 	if (W_CheckNumForName(NAME_stcfn033) >= 0)
 	{
-		Fonts[font_small] = new VFont("stcfn%03d", 4, 7, 32);
-		Fonts[font_yellow] = new VFont("stbfn%03d", 4, 7, 32);
+		Fonts[font_small] = new VFont("stcfn%03d", 32);
+		Fonts[font_yellow] = new VFont("stbfn%03d", 32);
 	}
 	else
 	{
-		Fonts[font_small] = new VFont("fonta%02d", 4, 7, 0);
-		Fonts[font_yellow] = new VFont("fontay%02d", 4, 7, 0);
+		Fonts[font_small] = new VFont("fonta%02d", 0);
+		Fonts[font_yellow] = new VFont("fontay%02d", 0);
 	}
-	Fonts[font_big] = new VFont("fontb%02d", 8, 10, 0);
+	Fonts[font_big] = new VFont("fontb%02d", 0);
 	unguard;
 }
 
@@ -146,28 +146,6 @@ int T_StringWidth(VFont* Font, const VStr& String)
 
 //==========================================================================
 //
-//	T_StringHeight
-//
-//==========================================================================
-
-int T_StringHeight(VFont* Font, const VStr& String)
-{
-	guard(T_StringHeight);
-	int h = Font->SpaceHeight;
-	for (const char* SPtr = *String; *SPtr;)
-	{
-		int c = VStr::GetChar(SPtr);
-		if (h < Font->GetCharHeight(c))
-		{
-			h = Font->GetCharHeight(c);
-		}
-	}
-	return h;
-	unguard;
-}
-
-//==========================================================================
-//
 //	T_TextWidth
 //
 //==========================================================================
@@ -201,16 +179,14 @@ int T_TextWidth(VFont* Font, const VStr& String)
 int T_TextHeight(VFont* Font, const VStr& String)
 {
 	guard(T_TextHeight);
-	size_t		i;
-	int			h = 0;
-	int			start = 0;
-
-	for (i=0; i <= String.Length(); i++)
-		if ((String[i] == '\n') || !String[i])
+	int h = Font->GetHeight();
+	for (size_t i = 0; i < String.Length(); i++)
+	{
+		if (String[i] == '\n')
 		{
-			h += T_StringHeight(Font, VStr(String, start, i - start));
-			start = i;
+			h += Font->GetHeight();
 		}
+	}
 	return h;
 	unguard;
 }

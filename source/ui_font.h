@@ -29,19 +29,27 @@
 class VFont
 {
 protected:
-	// Font patches
+	//	Font characters
 	VTexture*	Pics[96];
 
-public:
-	//Empty character width and empty strinh height
 	int			SpaceWidth;
-	int			SpaceHeight;
+	int			FontHeight;
 
-	VFont(const VStr&, int, int, int);
+public:
 
-	VTexture* GetChar(int, int*);
-	int GetCharWidth(int);
-	int GetCharHeight(int);
+	VFont(const VStr&, int);
+
+	VTexture* GetChar(int, int*) const;
+	int GetCharWidth(int) const;
+
+	int GetSpaceWidth() const
+	{
+		return SpaceWidth;
+	}
+	int GetHeight() const
+	{
+		return FontHeight;
+	}
 };
 
 extern VFont*			Fonts[NUMFONTTYPES];

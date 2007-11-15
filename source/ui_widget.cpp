@@ -940,7 +940,7 @@ void VWidget::DrawText(int x, int y, const VStr& String)
 		{
 			VStr cs(String, start, i - start);
 			DrawString(cx, cy, cs);
-			cy += T_StringHeight(Font, cs);
+			cy += Font->GetHeight();
 			start = i + 1;
 		}
 		if (i == String.Length() - 1)
@@ -986,7 +986,7 @@ int VWidget::DrawTextW(int x, int y, const VStr& String, int w)
 		{
 			VStr cs(String, start, i - start);
 			DrawString(cx, cy, cs);
-			cy += T_StringHeight(Font, cs);
+			cy += Font->GetHeight();
 			start = i + 1;
 			wordStart = true;
 			LinesPrinted++;
@@ -1000,7 +1000,7 @@ int VWidget::DrawTextW(int x, int y, const VStr& String, int w)
 			{
 				VStr cs(String, start, i - start);
 				DrawString(cx, cy, cs);
-				cy += T_StringHeight(Font, cs);
+				cy += Font->GetHeight();
 				start = i;
 				LinesPrinted++;
 			}

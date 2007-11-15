@@ -65,7 +65,6 @@ void T_SetAlign(halign_e, valign_e);
 void T_SetShadow(bool);
 
 int T_StringWidth(VFont* Font, const VStr&);
-int T_StringHeight(VFont* Font, const VStr&);
 
 int T_TextWidth(VFont* Font, const VStr&);
 int T_TextHeight(VFont* Font, const VStr&);

@@ -53,15 +53,14 @@
 //
 //==========================================================================
 
-VFont::VFont(const VStr& Name, int SpaceW, int SpaceH, int StartIndex)
-: SpaceWidth(SpaceW)
-, SpaceHeight(SpaceH)
+VFont::VFont(const VStr& Name, int StartIndex)
 {
 	guard(VFont::VFont);
 	for (int i = 0; i < 96; i++)
 	{
 		Pics[i] = NULL;
 	}
+	FontHeight = 0;
 
 	for (int i = 0; i < 96; i++)
 	{
@@ -84,7 +83,28 @@ VFont::VFont(const VStr& Name, int SpaceW, int SpaceH, int StartIndex)
 		{
 			Pics[i] = GTextureManager[GTextureManager.AddPatch(LumpName,
 				TEXTYPE_Pic)];
+
+			//	Calculate height of font character and adjust font height
+			// as needed.
+			int Height = Pics[i]->GetScaledHeight();
+			int TOffs = Pics[i]->GetScaledTOffset();
+			Height += abs(TOffs);
+			if (FontHeight < Height)
+			{
+				FontHeight = Height;
+			}
 		}
+	}
+
+	//	Set up width of a space character as half width of N character
+	// or 4 if character N has no graphic for it.
+	if (Pics['N' - 32])
+	{
+		SpaceWidth = (Pics['N' - 32]->GetScaledWidth() + 1) / 2;
+	}
+	else
+	{
+		SpaceWidth = 4;
 	}
 	unguard;
 }
@@ -95,7 +115,7 @@ VFont::VFont(const VStr& Name, int SpaceW, int SpaceH, int StartIndex)
 //
 //==========================================================================
 
-VTexture* VFont::GetChar(int Chr, int* pWidth)
+VTexture* VFont::GetChar(int Chr, int* pWidth) const
 {
 	guard(VFont::GetChar);
 	if (Chr < 32 || Chr >= 128 || !Pics[Chr - 32])
@@ -120,7 +140,7 @@ VTexture* VFont::GetChar(int Chr, int* pWidth)
 //
 //==========================================================================
 
-int VFont::GetCharWidth(int Chr)
+int VFont::GetCharWidth(int Chr) const
 {
 	guard(VFont::GetCharWidth);
 	if (Chr < 32 || Chr >= 128 || !Pics[Chr - 32])
@@ -134,28 +154,5 @@ int VFont::GetCharWidth(int Chr)
 	}
 
 	return Pics[Chr - 32]->GetScaledWidth();
-	unguard;
-}
-
-//==========================================================================
-//
-//	VFont::GetCharHeight
-//
-//==========================================================================
-
-int VFont::GetCharHeight(int Chr)
-{
-	guard(VFont::GetCharHeight);
-	if (Chr < 32 || Chr >= 128 || !Pics[Chr - 32])
-	{
-		//	Try upper-case letter.
-		Chr = VStr::ToUpper(Chr);
-		if (Chr < 32 || Chr >= 128 || !Pics[Chr - 32])
-		{
-			return SpaceHeight;
-		}
-	}
-
-	return Pics[Chr - 32]->GetScaledHeight();
 	unguard;
 }
