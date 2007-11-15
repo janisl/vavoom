@@ -37,7 +37,9 @@ public:
 	int			SpaceWidth;
 	int			SpaceHeight;
 
-	int GetChar(int, picinfo_t*);
+	int GetChar(int, int*);
+	int GetCharWidth(int);
+	int GetCharHeight(int);
 };
 
 extern VFont*			Fonts[NUMFONTTYPES];

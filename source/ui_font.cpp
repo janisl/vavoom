@@ -53,9 +53,49 @@
 //
 //==========================================================================
 
-int VFont::GetChar(int Chr, picinfo_t* pInfo)
+int VFont::GetChar(int Chr, int* pWidth)
 {
 	guard(VFont::GetChar);
-	return 0;
+	if (Chr < 32 || Chr >= 128 || Pics[Chr - 32] < 0)
+	{
+		*pWidth = SpaceWidth;
+		return -1;
+	}
+	*pWidth = PicInfo[Chr - 32].width;
+	return Pics[Chr - 32];
+	unguard;
+}
+
+//==========================================================================
+//
+//	VFont::GetCharWidth
+//
+//==========================================================================
+
+int VFont::GetCharWidth(int Chr)
+{
+	guard(VFont::GetCharWidth);
+	if (Chr < 32 || Chr >= 128 || Pics[Chr - 32] < 0)
+	{
+		return SpaceWidth;
+	}
+	return PicInfo[Chr - 32].width;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VFont::GetCharHeight
+//
+//==========================================================================
+
+int VFont::GetCharHeight(int Chr)
+{
+	guard(VFont::GetCharHeight);
+	if (Chr < 32 || Chr >= 128 || Pics[Chr - 32] < 0)
+	{
+		return SpaceHeight;
+	}
+	return PicInfo[Chr - 32].height;
 	unguard;
 }

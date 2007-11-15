@@ -871,23 +871,16 @@ void VWidget::DrawString(int x, int y, const VStr& String)
 
 	for (const char* SPtr = *String; *SPtr;)
 	{
-		int c = VStr::GetChar(SPtr) - 32;
-
-		if (c < 0)
+		int c = VStr::GetChar(SPtr);
+		int w;
+		int TexNum = Font->GetChar(c, &w);
+		if (TexNum >= 0)
 		{
-			continue;
+			if (WidgetFlags & WF_TextShadowed)
+				DrawShadowedPic(cx, cy, TexNum);
+			else
+				DrawPic(cx, cy, TexNum);
 		}
-		if (c >= 96 || Font->Pics[c] < 0)
-		{
-			cx += Font->SpaceWidth;
-			continue;
-		}
-
-		int w = Font->PicInfo[c].width;
-		if (WidgetFlags & WF_TextShadowed)
-			DrawShadowedPic(cx, cy, Font->Pics[c]);
-		else
-			DrawPic(cx, cy, Font->Pics[c]);
 		cx += w;
 	}
 	LastX = cx;
@@ -1039,15 +1032,11 @@ void VWidget::DrawCursorAt(int x, int y)
 void VWidget::DrawString8(int x, int y, const VStr& String)
 {
 	guard(VWidget::DrawString8);
-	int		w;
-	int		cx;
-	int		cy;
-
 	if (!String)
 		return;
-		
-	cx = x;
-	cy = y;
+
+	int cx = x;
+	int cy = y;
 
 	if (HAlign == hcentre)
 		cx -= T_StringWidth(Font, String) / 2;
@@ -1056,20 +1045,13 @@ void VWidget::DrawString8(int x, int y, const VStr& String)
 
 	for (const char* SPtr = *String; *SPtr;)
 	{
-		int c = VStr::GetChar(SPtr) - 32;
-
-		if (c < 0)
+		int c = VStr::GetChar(SPtr);
+		int w;
+		int TexNum = Font->GetChar(c, &w);
+		if (TexNum >= 0)
 		{
-			continue;
+			DrawPic(cx + (8 - w) / 2, cy, TexNum);
 		}
-		if (c >= 96 || Font->Pics[c] < 0)
-		{
-			cx += 8;
-			continue;
-		}
-		
-		w = Font->PicInfo[c].width;
-		DrawPic(cx + (8 - w) / 2, cy, Font->Pics[c]);
 		cx += 8;
 	}
 	LastX = cx;

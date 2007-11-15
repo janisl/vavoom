@@ -228,15 +228,8 @@ int T_StringWidth(VFont* Font, const VStr& String)
 	int w = 0;
 	for (const char* SPtr = *String; *SPtr;)
 	{
-		int c = VStr::GetChar(SPtr) - 32;
-		if (c < 0 || c >= 96 || Font->Pics[c] < 0)
-		{
-			w += Font->SpaceWidth;
-		}
-		else
-		{
-			w += Font->PicInfo[c].width;
-		}
+		int c = VStr::GetChar(SPtr);
+		w += Font->GetCharWidth(c);
 	}
 	return w;
 	unguard;
@@ -254,11 +247,10 @@ int T_StringHeight(VFont* Font, const VStr& String)
 	int h = Font->SpaceHeight;
 	for (const char* SPtr = *String; *SPtr;)
 	{
-		int c = VStr::GetChar(SPtr) - 32;
-		if (c >= 0 && c < 96 && Font->Pics[c] >= 0 &&
-			(h < Font->PicInfo[c].height))
+		int c = VStr::GetChar(SPtr);
+		if (h < Font->GetCharHeight(c))
 		{
-			h = Font->PicInfo[c].height;
+			h = Font->GetCharHeight(c);
 		}
 	}
 	return h;
