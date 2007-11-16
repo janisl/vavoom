@@ -27,11 +27,26 @@
 
 #include "gamedefs.h"
 #include "cl_local.h"
+#include "r_shared.h"
 #include "ui.h"
 
 // MACROS ------------------------------------------------------------------
 
 // TYPES -------------------------------------------------------------------
+
+class VFontChar : public VTexture
+{
+private:
+	VTexture*		BaseTex;
+	rgba_t*			Palette;
+
+public:
+	VFontChar(VTexture*, rgba_t*);
+	~VFontChar();
+	vuint8* GetPixels();
+	rgba_t* GetPalette();
+	void Unload();
+};
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
@@ -111,6 +126,7 @@ VFont::VFont(VName AName, const VStr& FormatStr, int First, int Count,
 	LastChar = -1;
 	FontHeight = 0;
 	Kerning = 0;
+	bool ColoursUsed[256];
 
 	for (int i = 0; i < Count; i++)
 	{
@@ -136,7 +152,10 @@ VFont::VFont(VName AName, const VStr& FormatStr, int First, int Count,
 				TEXTYPE_Pic)];
 			FFontChar& FChar = Chars.Alloc();
 			FChar.Char = Char;
-			FChar.Tex = Tex;
+			FChar.Tex = new VFontChar(Tex, Translation);
+			//	Currently render drivers expects all textures to be registered
+			// in texture manager.
+			GTextureManager.AddTexture(FChar.Tex);
 			if (Char < 128)
 			{
 				AsciiChars[Char] = Chars.Num() - 1;
@@ -158,6 +177,9 @@ VFont::VFont(VName AName, const VStr& FormatStr, int First, int Count,
 				FirstChar = Char;
 			}
 			LastChar = Char;
+
+			//	Mark colours that are used by this texture.
+			MarkUsedColours(Tex, ColoursUsed);
 		}
 	}
 
@@ -171,6 +193,30 @@ VFont::VFont(VName AName, const VStr& FormatStr, int First, int Count,
 	else
 	{
 		SpaceWidth = 4;
+	}
+
+	//	0 is transparent.
+	Translation[0] = r_palette[0];
+	for (int i = 1; i < 256; i++)
+	{
+#if 0
+		if (!ColoursUsed[i])
+		{
+			continue;
+		}
+		int r = r_palette[i].r;
+		int g = r_palette[i].g;
+		int b = r_palette[i].b;
+		r = (int)(r * 0.3 + g * 0.5 + b * 0.2);
+		g = r;
+		b = r;
+		Translation[i].r = MID(0, r, 255);
+		Translation[i].g = MID(0, g, 255);
+		Translation[i].b = MID(0, b, 255);
+		Translation[i].a = 255;
+#else
+		Translation[i] = r_palette[i];
+#endif
 	}
 	unguard;
 }
@@ -255,5 +301,93 @@ int VFont::GetCharWidth(int Chr) const
 	}
 
 	return Chars[Idx].Tex->GetScaledWidth();
+	unguard;
+}
+
+//==========================================================================
+//
+//	VFont::MarkUsedColours
+//
+//==========================================================================
+
+void VFont::MarkUsedColours(VTexture* Tex, bool* Used)
+{
+	guard(VFont::MarkUsedColours);
+	const vuint8* Pixels = Tex->GetPixels8();
+	int Count = Tex->GetWidth() * Tex->GetHeight();
+	for (int i = 0; i < Count; i++)
+	{
+		Used[Pixels[i]] = true;
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VFontChar::VFontChar
+//
+//==========================================================================
+
+VFontChar::VFontChar(VTexture* ATex, rgba_t* APalette)
+: BaseTex(ATex)
+, Palette(APalette)
+{
+	Type = TEXTYPE_FontChar;
+	Format = TEXFMT_8Pal;
+	Name = NAME_None;
+	Width = BaseTex->GetWidth();
+	Height = BaseTex->GetHeight();
+	SOffset = BaseTex->SOffset;
+	TOffset = BaseTex->TOffset;
+	SScale = BaseTex->SScale;
+	TScale = BaseTex->TScale;
+}
+
+//==========================================================================
+//
+//	VFontChar::~VFontChar
+//
+//==========================================================================
+
+VFontChar::~VFontChar()
+{
+}
+
+//==========================================================================
+//
+//	VFontChar::GetPixels
+//
+//==========================================================================
+
+vuint8* VFontChar::GetPixels()
+{
+	guard(VFontChar::GetPixels);
+	return BaseTex->GetPixels8();
+	unguard;
+}
+
+//==========================================================================
+//
+//	VFontChar::GetPalette
+//
+//==========================================================================
+
+rgba_t* VFontChar::GetPalette()
+{
+	guard(VFontChar::GetPalette);
+	return Palette;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VFontChar::Unload
+//
+//==========================================================================
+
+void VFontChar::Unload()
+{
+	guard(VFontChar::Unload);
+	BaseTex->Unload();
 	unguard;
 }

@@ -40,6 +40,7 @@ enum
 	TEXTYPE_Pic,
 	TEXTYPE_Autopage,
 	TEXTYPE_Null,
+	TEXTYPE_FontChar,
 };
 
 //	Texture data formats.

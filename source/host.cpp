@@ -172,7 +172,6 @@ void Host_Init()
 	GAudio = VAudioPublic::Create();
 	GAudio->Init();
 	SCR_Init();
-	T_Init();
 	CT_Init();
 	C_Init();
 	V_Init();
@@ -182,10 +181,10 @@ void Host_Init()
 	MN_Init();
 	AM_Init();
 	SB_Init();
-#endif
 
-#ifdef CLIENT
 	R_Init();
+
+	T_Init();
 #endif
 
 #ifdef SERVER

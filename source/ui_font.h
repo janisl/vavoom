@@ -53,9 +53,13 @@ protected:
 	//	Additional distance betweeen characters.
 	int					Kerning;
 
-	int FindChar(int) const;
+	rgba_t				Translation[256];
 
 	static VFont*		Fonts;
+
+	int FindChar(int) const;
+
+	static void MarkUsedColours(VTexture*, bool*);
 
 public:
 	VFont(VName, const VStr&, int, int, int);
