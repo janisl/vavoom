@@ -673,6 +673,13 @@ void C_CentreMessage(const char* AMsg)
 		Msg = GLanguage[*VStr(Msg.ToLower(), 1, Msg.Length() - 1)];
 	}
 
+	if (msg_echo)
+	{
+		GCon->Log("<-------------------------------->");
+		GCon->Log(Msg);
+		GCon->Log("<-------------------------------->");
+	}
+
 	VStr::Cpy(centre_message, *Msg);
 	centre_time = centre_msg_time;
 }
