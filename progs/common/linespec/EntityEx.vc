@@ -1720,20 +1720,16 @@ final EntityEx AimLineAttack(out TVec OutDir, TAVec angles, float distance)
 			dist = aim_range2d * in->frac;
 			if (li->frontsector->floorheight != li->backsector->floorheight)
 			{
-				if(dist > 0.0)
-					slope = (open->bottom - aim_z) / dist;
-				else
-					slope = (open->bottom - aim_z);
+				slope = (open->bottom - aim_z) / dist;
+
 				if (slope > aim_bottomslope)
 					aim_bottomslope = slope;
 			}
 
 			if (li->frontsector->ceilingheight != li->backsector->ceilingheight)
 			{
-				if(dist > 0.0)
-					slope = (open->top - aim_z) / dist;
-				else
-					slope = (open->top - aim_z);
+				slope = (open->top - aim_z) / dist;
+
 				if (slope < aim_topslope)
 					aim_topslope = slope;
 			}
@@ -1766,18 +1762,12 @@ final EntityEx AimLineAttack(out TVec OutDir, TAVec angles, float distance)
 
 		// check angles to see if the thing can be aimed at
 		dist = aim_range2d * in->frac;
-		if(dist > 0.0)
-			thingtopslope = (th.Origin.z + th.Height - aim_z) / dist;
-		else
-			thingtopslope = (th.Origin.z + th.Height - aim_z);
+		thingtopslope = (th.Origin.z + th.Height - aim_z) / dist;
 
 		if (thingtopslope < aim_bottomslope)
 			continue;	// shot over the thing
 
-		if(dist > 0.0)
-			thingbottomslope = (th.Origin.z - aim_z) / dist;
-		else
-			thingbottomslope = (th.Origin.z - aim_z);
+		thingbottomslope = (th.Origin.z - aim_z) / dist;
 
 		if (thingbottomslope > aim_topslope)
 			continue;	// shot under the thing
