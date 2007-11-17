@@ -619,6 +619,9 @@ VStr VStr::EvalEscapeSequences() const
 			case 'r':
 				Ret += '\r';
 				break;
+			case 'c':
+				Ret += TEXT_COLOUR_ESCAPE;
+				break;
 			case 'x':
 				Val = 0;
 				c++;

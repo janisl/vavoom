@@ -643,6 +643,7 @@ COMMAND(Echo)
 		Text += " ";
 		Text += Args[i];
 	}
+	Text = Text.EvalEscapeSequences();
 #ifdef CLIENT
 	C_NotifyMessage(*Text);
 #else

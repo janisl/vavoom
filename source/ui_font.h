@@ -86,4 +86,5 @@ public:
 	static void StaticInit();
 	static void StaticShutdown();
 	static VFont* FindFont(VName);
+	static int ParseColourEscape(const char*&);
 };

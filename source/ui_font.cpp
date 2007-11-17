@@ -27,7 +27,6 @@
 
 #include "gamedefs.h"
 #include "r_tex.h"
-#include "text.h"
 #include "ui.h"
 
 // MACROS ------------------------------------------------------------------
@@ -674,6 +673,46 @@ void VFont::MarkUsedColours(VTexture* Tex, bool* Used)
 	{
 		Used[Pixels[i]] = true;
 	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VFont::ParseColourEscape
+//
+//	Assumes that pColour points to the character right after the colour
+// escape character.
+//
+//==========================================================================
+
+int VFont::ParseColourEscape(const char*& pColour)
+{
+	guard(VFont::ParseColourEscape);
+	const char* Chr = pColour;
+	int Col = *Chr++;
+
+	//	Standard colors, upper case
+	if (Col >= 'A' && Col < 'A' + NUM_TEXT_COLOURS)
+	{
+		Col -= 'A';
+	}
+	//	Standard colors, lower case
+	else if (Col >= 'a' && Col < 'a' + NUM_TEXT_COLOURS)
+	{
+		Col -= 'a';
+	}
+	else
+	{
+		if (!Col)
+		{
+			Chr--;
+		}
+		Col = CR_UNDEFINED;
+	}
+
+	//	Set pointer after the colour definition.
+	pColour = Chr;
+	return Col;
 	unguard;
 }
 

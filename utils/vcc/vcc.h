@@ -61,6 +61,8 @@ class VMemberBase;
 #define ANY_PACKAGE				((VPackage*)-1)
 #define ANY_MEMBER				255
 
+#define TEXT_COLOUR_ESCAPE		'\034'
+
 // TYPES -------------------------------------------------------------------
 
 enum

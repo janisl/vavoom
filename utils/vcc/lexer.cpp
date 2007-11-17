@@ -985,6 +985,8 @@ void VLexer::ProcessChar()
 			Chr = '\t';
 		else if (Chr == '\\')
 			Chr = '\\';
+		else if (Chr == 'c')
+			Chr = TEXT_COLOUR_ESCAPE;
 		else
 			ParseError(Location, ERR_UNKNOWN_ESC_CHAR);
 	}

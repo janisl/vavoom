@@ -75,6 +75,7 @@
 #include "lockdefs.h"
 #include "host.h"
 #include "r_public.h"
+#include "text.h"
 #include "sound.h"
 #include "menu.h"
 #include "console.h"

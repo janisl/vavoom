@@ -900,7 +900,7 @@ void VWidget::SetTextShadow(bool State)
 //
 //==========================================================================
 
-void VWidget::DrawString(int x, int y, const VStr& String, int Colour)
+void VWidget::DrawString(int x, int y, const VStr& String, int NormalColour)
 {
 	guard(VWidget::DrawNString);
 	if (!String)
@@ -909,6 +909,7 @@ void VWidget::DrawString(int x, int y, const VStr& String, int Colour)
 	int cx = x;
 	int cy = y;
 	int Kerning = Font->GetKerning();
+	int Colour = NormalColour;
 
 	if (HAlign == hcentre)
 		cx -= T_StringWidth(Font, String) / 2;
@@ -918,6 +919,14 @@ void VWidget::DrawString(int x, int y, const VStr& String, int Colour)
 	for (const char* SPtr = *String; *SPtr;)
 	{
 		int c = VStr::GetChar(SPtr);
+
+		//	Check for colour escape.
+		if (c == TEXT_COLOUR_ESCAPE)
+		{
+			Colour = VFont::ParseColourEscape(SPtr);
+			continue;
+		}
+
 		int w;
 		VTexture* Tex = Font->GetChar(c, &w, Colour);
 		if (Tex)
@@ -1087,6 +1096,7 @@ void VWidget::DrawString8(int x, int y, const VStr& String)
 
 	int cx = x;
 	int cy = y;
+	int Colour = CR_UNTRANSLATED;
 
 	if (HAlign == hcentre)
 		cx -= T_StringWidth(Font, String) / 2;
@@ -1096,8 +1106,16 @@ void VWidget::DrawString8(int x, int y, const VStr& String)
 	for (const char* SPtr = *String; *SPtr;)
 	{
 		int c = VStr::GetChar(SPtr);
+
+		//	Check for colour escape.
+		if (c == TEXT_COLOUR_ESCAPE)
+		{
+			Colour = VFont::ParseColourEscape(SPtr);
+			continue;
+		}
+
 		int w;
-		VTexture* Tex = Font->GetChar(c, &w, CR_UNTRANSLATED);
+		VTexture* Tex = Font->GetChar(c, &w, Colour);
 		if (Tex)
 		{
 			DrawPic(cx + (8 - w) / 2, cy, Tex);

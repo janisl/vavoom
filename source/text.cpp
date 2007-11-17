@@ -115,6 +115,12 @@ int T_StringWidth(VFont* Font, const VStr& String)
 	for (const char* SPtr = *String; *SPtr;)
 	{
 		int c = VStr::GetChar(SPtr);
+		//	Check for colour escape.
+		if (c == TEXT_COLOUR_ESCAPE)
+		{
+			VFont::ParseColourEscape(SPtr);
+			continue;
+		}
 		w += Font->GetCharWidth(c) + Font->GetKerning();
 	}
 	return w;
