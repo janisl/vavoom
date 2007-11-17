@@ -58,6 +58,7 @@ VFont*					SmallFont;
 void T_Init()
 {
 	guard(T_Init);
+	VFont::StaticInit();
 	// Load fonts
 	if (W_CheckNumForName(NAME_stcfn033) >= 0)
 	{

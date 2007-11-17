@@ -34,6 +34,28 @@
 
 // TYPES -------------------------------------------------------------------
 
+struct VColTranslationDef
+{
+	rgba_t			From;
+	rgba_t			To;
+	int				LumFrom;
+	int				LumTo;
+};
+
+struct VTextColourDef
+{
+	TArray<VColTranslationDef>	Translations;
+	TArray<VColTranslationDef>	ConsoleTranslations;
+	rgba_t						FlatColour;
+	int							Index;
+};
+
+struct VColTransMap
+{
+	VName		Name;
+	int			Index;
+};
+
 class VFontChar : public VTexture
 {
 private:
@@ -61,9 +83,25 @@ public:
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-VFont*				VFont::Fonts;
+VFont*						VFont::Fonts;
+
+static TArray<VTextColourDef>		TextColours;
+static TArray<VColTransMap>			TextColourLookup;
 
 // CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//	VFont::StaticInit
+//
+//==========================================================================
+
+void VFont::StaticInit()
+{
+	guard(VFont::StaticInit);
+	ParseTextColours();
+	unguard;
+}
 
 //==========================================================================
 //
@@ -82,6 +120,216 @@ void VFont::StaticShutdown()
 		F = Next;
 	}
 	Fonts = NULL;
+	TextColours.Clear();
+	TextColourLookup.Clear();
+	unguard;
+}
+
+//==========================================================================
+//
+//	VFont::ParseTextColours
+//
+//==========================================================================
+
+void VFont::ParseTextColours()
+{
+	guard(VFont::ParseTextColours);
+	TArray<VTextColourDef>		TempDefs;
+	TArray<VColTransMap>		TempColours;
+	for (int Lump = W_IterateNS(-1, WADNS_Global); Lump >= 0;
+		Lump = W_IterateNS(Lump, WADNS_Global))
+	{
+		if (W_LumpName(Lump) != NAME_textcolo)
+		{
+			continue;
+		}
+		VScriptParser sc(*W_LumpName(Lump), W_CreateLumpReaderNum(Lump));
+		while (!sc.AtEnd())
+		{
+			VTextColourDef& Col = TempDefs.Alloc();
+			Col.FlatColour.r = 0;
+			Col.FlatColour.g = 0;
+			Col.FlatColour.b = 0;
+			Col.FlatColour.a = 255;
+			Col.Index = -1;
+
+			TArray<VName> Names;
+			VColTranslationDef TDef;
+			TDef.LumFrom = -1;
+			TDef.LumTo = -1;
+
+			//	Name for this colour.
+			sc.ExpectString();
+			Names.Append(*sc.String.ToLower());
+			//	Additional names.
+			while (!sc.Check("{"))
+			{
+				if (Names[0] == "untranslated")
+				{
+					sc.Error("Colour \"untranslated\" cannot have any other names");
+				}
+				sc.ExpectString();
+				Names.Append(*sc.String.ToLower());
+			}
+
+			int TranslationMode = 0;
+			while (!sc.Check("}"))
+			{
+				if (sc.Check("Console:"))
+				{
+					if (TranslationMode == 1)
+					{
+						sc.Error("Only one console text colour definition allowed");
+					}
+					TranslationMode = 1;
+					TDef.LumFrom = -1;
+					TDef.LumTo = -1;
+				}
+				else if (sc.Check("Flat:"))
+				{
+					sc.ExpectString();
+					vuint32 C = M_ParseColour(sc.String);
+					Col.FlatColour.r = (C >> 16) & 0xff;
+					Col.FlatColour.g = (C >> 8) & 0xff;
+					Col.FlatColour.b = C & 0xff;
+					Col.FlatColour.a = 255;
+				}
+				else
+				{
+					//	From colour.
+					sc.ExpectString();
+					vuint32 C = M_ParseColour(sc.String);
+					TDef.From.r = (C >> 16) & 0xff;
+					TDef.From.g = (C >> 8) & 0xff;
+					TDef.From.b = C & 0xff;
+					TDef.From.a = 255;
+
+					//	To colour.
+					sc.ExpectString();
+					C = M_ParseColour(sc.String);
+					TDef.To.r = (C >> 16) & 0xff;
+					TDef.To.g = (C >> 8) & 0xff;
+					TDef.To.b = C & 0xff;
+					TDef.To.a = 255;
+
+					if (sc.CheckNumber())
+					{
+						//	Optional luminosity ranges.
+						if (TDef.LumFrom == -1 && sc.Number != 0)
+						{
+							sc.Error("First colour range must start at position 0");
+						}
+						if (sc.Number < 0 || sc.Number > 256)
+						{
+							sc.Error("Colour index must be in range from 0 to 256");
+						}
+						if (sc.Number <= TDef.LumTo)
+						{
+							sc.Error("Colour range must start after end of previous range");
+						}
+						TDef.LumFrom = sc.Number;
+
+						sc.ExpectNumber();
+						if (sc.Number < 0 || sc.Number > 256)
+						{
+							sc.Error("Colour index must be in range from 0 to 256");
+						}
+						if (sc.Number <= TDef.LumFrom)
+						{
+							sc.Error("Ending colour index must be greater than start index");
+						}
+						TDef.LumTo = sc.Number;
+					}
+					else
+					{
+						//	Set default luminosity range.
+						TDef.LumFrom = 0;
+						TDef.LumTo = 256;
+					}
+	
+					if (TranslationMode == 0)
+					{
+						Col.Translations.Append(TDef);
+					}
+					else if (TranslationMode == 1)
+					{
+						Col.ConsoleTranslations.Append(TDef);
+					}
+				}
+			}
+
+			if (Names[0] == "untranslated")
+			{
+				if (Col.Translations.Num() != 0 ||
+					Col.ConsoleTranslations.Num() != 0)
+				{
+					sc.Error("The \"untranslated\" colour must be left undefined");
+				}
+			}
+			else
+			{
+				if (Col.Translations.Num() == 0)
+				{
+					sc.Error("There must be at least one normal range for a colour");
+				}
+				if (Col.ConsoleTranslations.Num() == 0)
+				{
+					//	If console colour translation is not defined, make
+					// it white.
+					TDef.From.r = 0;
+					TDef.From.g = 0;
+					TDef.From.b = 0;
+					TDef.From.a = 255;
+					TDef.To.r = 255;
+					TDef.To.g = 255;
+					TDef.To.b = 255;
+					TDef.To.a = 255;
+					TDef.LumFrom = 0;
+					TDef.LumTo = 256;
+					Col.ConsoleTranslations.Append(TDef);
+				}
+			}
+
+			//	Add all names to the list of colours.
+			for (int i = 0; i < Names.Num(); i++)
+			{
+				//	Check for redefined colours.
+				int CIdx;
+				for (CIdx = 0; CIdx < TempColours.Num(); CIdx++)
+				{
+					if (TempColours[CIdx].Name == Names[i])
+					{
+						TempColours[CIdx].Index = TempDefs.Num() - 1;
+						break;
+					}
+				}
+				if (CIdx == TempColours.Num())
+				{
+					VColTransMap& CMap = TempColours.Alloc();
+					CMap.Name = Names[i];
+					CMap.Index = TempDefs.Num() - 1;
+				}
+			}
+		}
+	}
+
+	//	Put colour definitions in it's final location.
+	for (int i = 0; i < TempColours.Num(); i++)
+	{
+		VColTransMap& TmpCol = TempColours[i];
+		VTextColourDef& TmpDef = TempDefs[TmpCol.Index];
+		if (TmpDef.Index == -1)
+		{
+			TmpDef.Index = TextColours.Num();
+			TextColours.Append(TmpDef);
+		}
+		VColTransMap& Col = TextColourLookup.Alloc();
+		Col.Name = TmpCol.Name;
+		Col.Index = TmpDef.Index;
+	}
+
+	//	Make sure all biilt-in colours are defined.
+	check(TextColours.Num() >= NUM_TEXT_COLOURS);
 	unguard;
 }
 
@@ -110,31 +358,6 @@ VFont* VFont::FindFont(VName AName)
 //	VFont::VFont
 //
 //==========================================================================
-
-rgba_t Cols[NUM_TEXT_COLOURS] =
-{
-	{ 255, 32, 32, 255 },
-	{ 255, 127, 63, 255 },
-	{ 128, 129, 128, 255 },
-	{ 0, 255, 0, 255 },
-	{ 192, 192, 64, 255 },
-	{ 255, 255, 128, 255 },
-	{ 255, 0, 0, 255 },
-	{ 0, 0, 255, 255 },
-	{ 255, 255, 128, 255 },
-	{ 255, 255, 255, 255 },
-	{ 255, 255, 0, 255 },
-	{ 0, 0, 0, 255 },
-	{ 0, 0, 0, 255 },
-	{ 128, 128, 255, 255 },
-	{ 255, 192, 192, 255 },
-	{ 32, 192, 32, 255 },
-	{ 0, 128, 0, 255 },
-	{ 128, 0, 0, 255 },
-	{ 128, 32, 32, 255 },
-	{ 256, 128, 128, 255 },
-	{ 64, 64, 64, 255 },
-};
 
 VFont::VFont(VName AName, const VStr& FormatStr, int First, int Count,
 	int StartIndex)
@@ -248,11 +471,13 @@ VFont::VFont(VName AName, const VStr& FormatStr, int First, int Count,
 		Luminosity[i] = MID(0.0, Luminosity[i], 1.0);
 	}
 
-	Translation = new rgba_t[256 * NUM_TEXT_COLOURS];
-	for (int ColIdx = 0; ColIdx < NUM_TEXT_COLOURS; ColIdx++)
+	Translation = new rgba_t[256 * TextColours.Num()];
+	for (int ColIdx = 0; ColIdx < TextColours.Num(); ColIdx++)
 	{
 		rgba_t* pOut = Translation + ColIdx * 256;
-		if (ColIdx == CR_UNTRANSLATED)
+		const TArray<VColTranslationDef>& TList =
+			TextColours[ColIdx].Translations;
+		if (ColIdx == CR_UNTRANSLATED || !TList.Num())
 		{
 			memcpy(pOut, r_palette, 4 * 256);
 			continue;
@@ -261,9 +486,20 @@ VFont::VFont(VName AName, const VStr& FormatStr, int First, int Count,
 		pOut[0] = r_palette[0];
 		for (int i = 1; i < 256; i++)
 		{
-			int r = (int)(Luminosity[i] * Cols[ColIdx].r);
-			int g = (int)(Luminosity[i] * Cols[ColIdx].g);
-			int b = (int)(Luminosity[i] * Cols[ColIdx].b);
+			int ILum = (int)(Luminosity[i] * 256);
+			int TDefIdx = 0;
+			while (TDefIdx < TList.Num() - 1 && ILum > TList[TDefIdx].LumTo)
+			{
+				TDefIdx++;
+			}
+			const VColTranslationDef& TDef = TList[TDefIdx];
+
+			//	Linearly interpolate between colours.
+			float v = ((float)(ILum - TDef.LumFrom) /
+				(float)(TDef.LumTo - TDef.LumFrom));
+			int r = (int)((1.0 - v) * TDef.From.r + v * TDef.To.r);
+			int g = (int)((1.0 - v) * TDef.From.g + v * TDef.To.g);
+			int b = (int)((1.0 - v) * TDef.From.b + v * TDef.To.b);
 			pOut[i].r = MID(0, r, 255);
 			pOut[i].g = MID(0, g, 255);
 			pOut[i].b = MID(0, b, 255);
@@ -274,8 +510,8 @@ VFont::VFont(VName AName, const VStr& FormatStr, int First, int Count,
 	//	Create texture objects for all different colours.
 	for (int i = 0; i < Chars.Num(); i++)
 	{
-		Chars[i].Textures = new VTexture*[NUM_TEXT_COLOURS];
-		for (int j = 0; j < NUM_TEXT_COLOURS; j++)
+		Chars[i].Textures = new VTexture*[TextColours.Num()];
+		for (int j = 0; j < TextColours.Num(); j++)
 		{
 			Chars[i].Textures[j] = new VFontChar(Chars[i].BaseTex,
 				Translation + j * 256);
@@ -364,7 +600,7 @@ VTexture* VFont::GetChar(int Chr, int* pWidth, int Colour) const
 		}
 	}
 
-	if (Colour < 0 || Colour >= NUM_TEXT_COLOURS)
+	if (Colour < 0 || Colour >= TextColours.Num())
 	{
 		Colour = CR_UNTRANSLATED;
 	}

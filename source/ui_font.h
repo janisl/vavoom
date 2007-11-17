@@ -60,6 +60,7 @@ protected:
 
 	int FindChar(int) const;
 
+	static void ParseTextColours();
 	static void MarkUsedColours(VTexture*, bool*);
 
 public:
@@ -82,6 +83,7 @@ public:
 		return Kerning;
 	}
 
+	static void StaticInit();
 	static void StaticShutdown();
 	static VFont* FindFont(VName);
 };

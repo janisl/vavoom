@@ -9,6 +9,7 @@ EXTRA_DIST = \
 	lockdefs.txt \
 	startup.vs \
 	terrain.txt \
+	textcolo.txt \
 	x11r6rgb.txt \
 	graphics/mc_arrow.png \
 	sprites/tnt1a0.lmp \

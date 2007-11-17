@@ -26,3 +26,4 @@ language.en				@srcdir@/language.en
 //	Base scripts
 terrain.txt				@srcdir@/terrain.txt
 lockdefs.txt			@srcdir@/lockdefs.txt
+textcolo.txt			@srcdir@/textcolo.txt

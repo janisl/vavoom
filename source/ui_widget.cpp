@@ -1066,7 +1066,7 @@ void VWidget::DrawCursorAt(int x, int y)
 	if ((int)(host_time * 4) & 1)
 	{
 		int w;
-		DrawPic(x, y, Font->GetChar('_', &w, CR_YELLOW));
+		DrawPic(x, y, Font->GetChar('_', &w, CR_UNTRANSLATED));
 	}
 	unguard;
 }
