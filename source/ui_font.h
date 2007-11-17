@@ -32,7 +32,8 @@ protected:
 	struct FFontChar
 	{
 		int				Char;
-		VTexture*		Tex;
+		VTexture*		BaseTex;
+		VTexture**		Textures;
 	};
 
 	VName				Name;
@@ -53,7 +54,7 @@ protected:
 	//	Additional distance betweeen characters.
 	int					Kerning;
 
-	rgba_t				Translation[256];
+	rgba_t*				Translation;
 
 	static VFont*		Fonts;
 
@@ -63,8 +64,9 @@ protected:
 
 public:
 	VFont(VName, const VStr&, int, int, int);
+	~VFont();
 
-	VTexture* GetChar(int, int*) const;
+	VTexture* GetChar(int, int*, int) const;
 	int GetCharWidth(int) const;
 
 	int GetSpaceWidth() const

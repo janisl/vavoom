@@ -43,6 +43,34 @@ enum valign_e
 	vbottom		//Bottom
 };
 
+//	Text colours, these must match the constants used in ACS.
+enum
+{
+	CR_UNDEFINED = -1,
+	CR_BRICK,
+	CR_TAN,
+	CR_GRAY,
+	CR_GREEN,
+	CR_BROWN,
+	CR_GOLD,
+	CR_RED,
+	CR_BLUE,
+	CR_ORANGE,
+	CR_WHITE,
+	CR_YELLOW,
+	CR_UNTRANSLATED,
+	CR_BLACK,
+	CR_LIGHTBLUE,
+	CR_CREAM,
+	CR_OLIVE,
+	CR_DARKGREEN,
+	CR_DARKRED,
+	CR_DARKBROWN,
+	CR_PURPLE,
+	CR_DARKGRAY,
+	NUM_TEXT_COLOURS
+};
+
 class VFont;
 
 void T_Init();

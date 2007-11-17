@@ -46,6 +46,7 @@ public:
 	vuint8* GetPixels();
 	rgba_t* GetPalette();
 	void Unload();
+	VTexture* GetHighResolutionTexture();
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -110,6 +111,31 @@ VFont* VFont::FindFont(VName AName)
 //
 //==========================================================================
 
+rgba_t Cols[NUM_TEXT_COLOURS] =
+{
+	{ 255, 32, 32, 255 },
+	{ 255, 127, 63, 255 },
+	{ 128, 129, 128, 255 },
+	{ 0, 255, 0, 255 },
+	{ 192, 192, 64, 255 },
+	{ 255, 255, 128, 255 },
+	{ 255, 0, 0, 255 },
+	{ 0, 0, 255, 255 },
+	{ 255, 255, 128, 255 },
+	{ 255, 255, 255, 255 },
+	{ 255, 255, 0, 255 },
+	{ 0, 0, 0, 255 },
+	{ 0, 0, 0, 255 },
+	{ 128, 128, 255, 255 },
+	{ 255, 192, 192, 255 },
+	{ 32, 192, 32, 255 },
+	{ 0, 128, 0, 255 },
+	{ 128, 0, 0, 255 },
+	{ 128, 32, 32, 255 },
+	{ 256, 128, 128, 255 },
+	{ 64, 64, 64, 255 },
+};
+
 VFont::VFont(VName AName, const VStr& FormatStr, int First, int Count,
 	int StartIndex)
 {
@@ -126,7 +152,9 @@ VFont::VFont(VName AName, const VStr& FormatStr, int First, int Count,
 	LastChar = -1;
 	FontHeight = 0;
 	Kerning = 0;
+	Translation = NULL;
 	bool ColoursUsed[256];
+	memset(ColoursUsed, 0, sizeof(ColoursUsed));
 
 	for (int i = 0; i < Count; i++)
 	{
@@ -152,10 +180,7 @@ VFont::VFont(VName AName, const VStr& FormatStr, int First, int Count,
 				TEXTYPE_Pic)];
 			FFontChar& FChar = Chars.Alloc();
 			FChar.Char = Char;
-			FChar.Tex = new VFontChar(Tex, Translation);
-			//	Currently render drivers expects all textures to be registered
-			// in texture manager.
-			GTextureManager.AddTexture(FChar.Tex);
+			FChar.BaseTex = Tex;
 			if (Char < 128)
 			{
 				AsciiChars[Char] = Chars.Num() - 1;
@@ -188,35 +213,100 @@ VFont::VFont(VName AName, const VStr& FormatStr, int First, int Count,
 	int NIdx = FindChar('N');
 	if (NIdx >= 0)
 	{
-		SpaceWidth = (Chars[NIdx].Tex->GetScaledWidth() + 1) / 2;
+		SpaceWidth = (Chars[NIdx].BaseTex->GetScaledWidth() + 1) / 2;
 	}
 	else
 	{
 		SpaceWidth = 4;
 	}
 
-	//	0 is transparent.
-	Translation[0] = r_palette[0];
+	//	Calculate luminosity for all colours and find minimal and maximal
+	// values for used colours.
+	float Luminosity[256];
+	float MinLum = 1000000.0;
+	float MaxLum = 0.0;
 	for (int i = 1; i < 256; i++)
 	{
-#if 0
-		if (!ColoursUsed[i])
+		Luminosity[i] = r_palette[i].r * 0.299 + r_palette[i].g * 0.587 +
+			r_palette[i].b * 0.114;
+		if (ColoursUsed[i])
 		{
+			if (MinLum > Luminosity[i])
+			{
+				MinLum = Luminosity[i];
+			}
+			if (MaxLum < Luminosity[i])
+			{
+				MaxLum = Luminosity[i];
+			}
+		}
+	}
+	//	Create gradual luminosity values.
+	for (int i = 1; i < 256; i++)
+	{
+		Luminosity[i] = (Luminosity[i] - MinLum) / (MaxLum - MinLum);
+		Luminosity[i] = MID(0.0, Luminosity[i], 1.0);
+	}
+
+	Translation = new rgba_t[256 * NUM_TEXT_COLOURS];
+	for (int ColIdx = 0; ColIdx < NUM_TEXT_COLOURS; ColIdx++)
+	{
+		rgba_t* pOut = Translation + ColIdx * 256;
+		if (ColIdx == CR_UNTRANSLATED)
+		{
+			memcpy(pOut, r_palette, 4 * 256);
 			continue;
 		}
-		int r = r_palette[i].r;
-		int g = r_palette[i].g;
-		int b = r_palette[i].b;
-		r = (int)(r * 0.3 + g * 0.5 + b * 0.2);
-		g = r;
-		b = r;
-		Translation[i].r = MID(0, r, 255);
-		Translation[i].g = MID(0, g, 255);
-		Translation[i].b = MID(0, b, 255);
-		Translation[i].a = 255;
-#else
-		Translation[i] = r_palette[i];
-#endif
+
+		pOut[0] = r_palette[0];
+		for (int i = 1; i < 256; i++)
+		{
+			int r = (int)(Luminosity[i] * Cols[ColIdx].r);
+			int g = (int)(Luminosity[i] * Cols[ColIdx].g);
+			int b = (int)(Luminosity[i] * Cols[ColIdx].b);
+			pOut[i].r = MID(0, r, 255);
+			pOut[i].g = MID(0, g, 255);
+			pOut[i].b = MID(0, b, 255);
+			pOut[i].a = 255;
+		}
+	}
+
+	//	Create texture objects for all different colours.
+	for (int i = 0; i < Chars.Num(); i++)
+	{
+		Chars[i].Textures = new VTexture*[NUM_TEXT_COLOURS];
+		for (int j = 0; j < NUM_TEXT_COLOURS; j++)
+		{
+			Chars[i].Textures[j] = new VFontChar(Chars[i].BaseTex,
+				Translation + j * 256);
+			//	Currently render drivers expects all textures to be
+			// registered in texture manager.
+			GTextureManager.AddTexture(Chars[i].Textures[j]);
+		}
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VFont::~VFont
+//
+//==========================================================================
+
+VFont::~VFont()
+{
+	guard(VFont::~VFont);
+	for (int i = 0; i < Chars.Num(); i++)
+	{
+		if (Chars[i].Textures)
+		{
+			delete[] Chars[i].Textures;
+		}
+	}
+	Chars.Clear();
+	if (Translation)
+	{
+		delete[] Translation;
 	}
 	unguard;
 }
@@ -258,7 +348,7 @@ int VFont::FindChar(int Chr) const
 //
 //==========================================================================
 
-VTexture* VFont::GetChar(int Chr, int* pWidth) const
+VTexture* VFont::GetChar(int Chr, int* pWidth, int Colour) const
 {
 	guard(VFont::GetChar);
 	int Idx = FindChar(Chr);
@@ -274,8 +364,14 @@ VTexture* VFont::GetChar(int Chr, int* pWidth) const
 		}
 	}
 
-	*pWidth = Chars[Idx].Tex->GetScaledWidth();
-	return Chars[Idx].Tex;
+	if (Colour < 0 || Colour >= NUM_TEXT_COLOURS)
+	{
+		Colour = CR_UNTRANSLATED;
+	}
+	VTexture* Tex = Chars[Idx].Textures ? Chars[Idx].Textures[Colour] :
+		Chars[Idx].BaseTex;
+	*pWidth = Tex->GetScaledWidth();
+	return Tex;
 	unguard;
 }
 
@@ -300,7 +396,7 @@ int VFont::GetCharWidth(int Chr) const
 		}
 	}
 
-	return Chars[Idx].Tex->GetScaledWidth();
+	return Chars[Idx].BaseTex->GetScaledWidth();
 	unguard;
 }
 
@@ -389,5 +485,26 @@ void VFontChar::Unload()
 {
 	guard(VFontChar::Unload);
 	BaseTex->Unload();
+	unguard;
+}
+
+//==========================================================================
+//
+//	VFontChar::GetHighResolutionTexture
+//
+//==========================================================================
+
+VTexture* VFontChar::GetHighResolutionTexture()
+{
+	guard(VFontChar::GetHighResolutionTexture);
+	if (!HiResTexture)
+	{
+		VTexture* Tex = BaseTex->GetHighResolutionTexture();
+		if (Tex)
+		{
+			HiResTexture = new VFontChar(Tex, Palette);
+		}
+	}
+	return HiResTexture;
 	unguard;
 }

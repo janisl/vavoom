@@ -241,9 +241,10 @@ native final int TextWidth(string text);
 //  Calculates text height
 native final int TextHeight(string text);
 //  Draws text
-native final void DrawText(int X, int Y, string Text);
+native final void DrawText(int X, int Y, string Text, optional int Colour);
 //  Draws text wrapping at the width w
-native final int DrawTextW(int x, int y, string Text, int w);
+native final int DrawTextW(int x, int y, string Text, int w,
+	optional int Colour);
 //  Draws a cursor at the end of last drawn string
 native final void DrawCursor();
 

@@ -191,7 +191,7 @@ int T_TextHeight(VFont* Font, const VStr& String)
 
 void T_DrawText(int x, int y, const VStr& String)
 {
-	GRoot->DrawText(x, y, String);
+	GRoot->DrawText(x, y, String, CR_UNTRANSLATED);
 }
 
 //==========================================================================
@@ -202,7 +202,7 @@ void T_DrawText(int x, int y, const VStr& String)
 
 int T_DrawTextW(int x, int y, const VStr& String, int w)
 {
-	return GRoot->DrawTextW(x, y, String, w);
+	return GRoot->DrawTextW(x, y, String, w, CR_UNTRANSLATED);
 }
 
 //==========================================================================
