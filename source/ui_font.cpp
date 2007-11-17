@@ -712,6 +712,20 @@ int VFont::ParseColourEscape(const char*& pColour, int NormalColour,
 	{
 		Col = BoldColour;
 	}
+	//	Named colours.
+	else if (Col == '[')
+	{
+		VStr CName;
+		while (*Chr && *Chr != ']')
+		{
+			CName += *Chr++;
+		}
+		if (*Chr == ']')
+		{
+			Chr++;
+		}
+		Col = FindTextColour(*CName.ToLower());
+	}
 	else
 	{
 		if (!Col)
@@ -724,6 +738,26 @@ int VFont::ParseColourEscape(const char*& pColour, int NormalColour,
 	//	Set pointer after the colour definition.
 	pColour = Chr;
 	return Col;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VFont::FindTextColour
+//
+//==========================================================================
+
+int VFont::FindTextColour(VName Name)
+{
+	guard(VFont::FindTextColour);
+	for (int i = 0; i < TextColourLookup.Num(); i++)
+	{
+		if (TextColourLookup[i].Name == Name)
+		{
+			return TextColourLookup[i].Index;
+		}
+	}
+	return CR_UNTRANSLATED;
 	unguard;
 }
 
