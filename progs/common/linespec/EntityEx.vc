@@ -1720,14 +1720,20 @@ final EntityEx AimLineAttack(out TVec OutDir, TAVec angles, float distance)
 			dist = aim_range2d * in->frac;
 			if (li->frontsector->floorheight != li->backsector->floorheight)
 			{
-				slope = (open->bottom - aim_z) / dist;
+				if(dist > 0.0)
+					slope = (open->bottom - aim_z) / dist;
+				else
+					slope = (open->bottom - aim_z);
 				if (slope > aim_bottomslope)
 					aim_bottomslope = slope;
 			}
 
 			if (li->frontsector->ceilingheight != li->backsector->ceilingheight)
 			{
-				slope = (open->top - aim_z) / dist;
+				if(dist > 0.0)
+					slope = (open->top - aim_z) / dist;
+				else
+					slope = (open->top - aim_z);
 				if (slope < aim_topslope)
 					aim_topslope = slope;
 			}
@@ -1760,12 +1766,18 @@ final EntityEx AimLineAttack(out TVec OutDir, TAVec angles, float distance)
 
 		// check angles to see if the thing can be aimed at
 		dist = aim_range2d * in->frac;
-		thingtopslope = (th.Origin.z + th.Height - aim_z) / dist;
+		if(dist > 0.0)
+			thingtopslope = (th.Origin.z + th.Height - aim_z) / dist;
+		else
+			thingtopslope = (th.Origin.z + th.Height - aim_z);
 
 		if (thingtopslope < aim_bottomslope)
 			continue;	// shot over the thing
 
-		thingbottomslope = (th.Origin.z - aim_z) / dist;
+		if(dist > 0.0)
+			thingbottomslope = (th.Origin.z - aim_z) / dist;
+		else
+			thingbottomslope = (th.Origin.z - aim_z);
 
 		if (thingbottomslope > aim_topslope)
 			continue;	// shot under the thing
@@ -5197,15 +5209,8 @@ final void ClientTick(float DeltaTime)
 	if (bLeaveTrail)
 	{
 		c = P_Random() >> 1;
-		for (i = 0; i < MAXPLAYERS; i++)
-		{
-			if (!Level.Game.Players[i])
-				continue;
-			if (!Level.Game.Players[i].bSpawned)
-				continue;
-			PlayerEx(Level.Game.Players[i]).ParticleEffect(ftoi(DeltaTime * 256.0), LineSpecialLevelInfo::pt_static, 0, Origin,
-					0.0, vector(16.0, 16.0, 64.0), 0.5, 2.5, 0.0, RGB(c, c, c), 0.5,  0.0);
-		}
+		LineSpecialLevelInfo(Level).ParticleEffect(ftoi(DeltaTime * 256.0), LineSpecialLevelInfo::pt_static, 0, Origin,
+				0.0, vector(16.0, 16.0, 64.0), 0.5, 2.5, 0.0, RGB(c, c, c), 0.5,  0.0);
 	}
 }
 

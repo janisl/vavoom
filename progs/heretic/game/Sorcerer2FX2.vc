@@ -37,7 +37,7 @@ final void A_GenWizard()
 	Actor A;
 	Actor fog;
 
-	A = Spawn(Wizard, Origin);
+	A = Spawn(Wizard, Origin, vector(0.0, 0.0, 0.0));
 	A.Origin.z = Origin.z - A.Height / 2.0;
 	if (!A.TestLocation())
 	{

@@ -33,7 +33,7 @@ class HereticPlayer : PlayerPawn;
 
 final void A_SkullPop()
 {
-	Actor A;
+	EntityEx A;
 
 	if (!bIsPlayer)
 	{
@@ -48,6 +48,7 @@ final void A_SkullPop()
 	// Attach player mobj to bloody skull
 	A.Player = Player;
 	A.bIsPlayer = true;
+	A.ObtainInventory(EntityEx(Player.MO));
 	Player = none;
 	bIsPlayer = false;
 	A.Health = Health;

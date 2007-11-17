@@ -320,7 +320,7 @@ Pain:
 	Goto See
 Missile:
 	SOR2 R 9 A_Srcr2Decide
-	SOR2 S 9 A_FaceTarget
+	SOR2 S 9 { A_FaceTarget(); bMuzzleFlash = true; }
 	SOR2 T 20 A_Srcr2Attack
 	Goto See
 Teleport:
@@ -328,13 +328,13 @@ Teleport:
 	Goto See
 Death:
 	SDTH A 8 A_Sor2DthInit
-	SDTH B 8
+	SDTH B 8 { bMuzzleFlash = true; }
 	SDTH C 8 A_SorDSph
 	SDTH D 7
 	SDTH E 7
 	SDTH F 7 A_Sor2DthLoop
 	SDTH G 6 A_SorDExp
-	SDTH H 6
+	SDTH H 6 { bMuzzleFlash = false; }
 	SDTH I 18
 	SDTH J 6 A_NoBlocking
 	SDTH K 6 A_SorDBon
@@ -363,4 +363,6 @@ defaultproperties
 	ActiveSound = 'dsparil/active';
 	AttackSound = 'dsparil/attack';
 	PainSound = 'dsparil/pain';
+	DLightColour = RGB(80, 164, 252);
+	DLightRadius = 118.0;
 }
