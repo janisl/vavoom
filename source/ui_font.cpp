@@ -685,7 +685,8 @@ void VFont::MarkUsedColours(VTexture* Tex, bool* Used)
 //
 //==========================================================================
 
-int VFont::ParseColourEscape(const char*& pColour)
+int VFont::ParseColourEscape(const char*& pColour, int NormalColour,
+	int BoldColour)
 {
 	guard(VFont::ParseColourEscape);
 	const char* Chr = pColour;
@@ -700,6 +701,16 @@ int VFont::ParseColourEscape(const char*& pColour)
 	else if (Col >= 'a' && Col < 'a' + NUM_TEXT_COLOURS)
 	{
 		Col -= 'a';
+	}
+	//	Normal colour
+	else if (Col == '-')
+	{
+		Col = NormalColour;
+	}
+	//	Bold colour
+	else if (Col == '+')
+	{
+		Col = BoldColour;
 	}
 	else
 	{

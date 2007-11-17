@@ -900,7 +900,8 @@ void VWidget::SetTextShadow(bool State)
 //
 //==========================================================================
 
-void VWidget::DrawString(int x, int y, const VStr& String, int NormalColour)
+void VWidget::DrawString(int x, int y, const VStr& String, int NormalColour,
+	int BoldColour)
 {
 	guard(VWidget::DrawNString);
 	if (!String)
@@ -923,7 +924,7 @@ void VWidget::DrawString(int x, int y, const VStr& String, int NormalColour)
 		//	Check for colour escape.
 		if (c == TEXT_COLOUR_ESCAPE)
 		{
-			Colour = VFont::ParseColourEscape(SPtr);
+			Colour = VFont::ParseColourEscape(SPtr, NormalColour, BoldColour);
 			continue;
 		}
 
@@ -949,7 +950,8 @@ void VWidget::DrawString(int x, int y, const VStr& String, int NormalColour)
 //
 //==========================================================================
 
-void VWidget::DrawText(int x, int y, const VStr& String, int Colour)
+void VWidget::DrawText(int x, int y, const VStr& String, int NormalColour,
+	int BoldColour)
 {
 	guard(VWidget::DrawText);
 	int start = 0;
@@ -970,14 +972,14 @@ void VWidget::DrawText(int x, int y, const VStr& String, int Colour)
 		if (String[i] == '\n')
 		{
 			VStr cs(String, start, i - start);
-			DrawString(cx, cy, cs, Colour);
+			DrawString(cx, cy, cs, NormalColour, BoldColour);
 			cy += Font->GetHeight();
 			start = i + 1;
 		}
 		if (i == String.Length() - 1)
 		{
 			DrawString(cx, cy, VStr(String, start, String.Length() - start),
-				Colour);
+				NormalColour, BoldColour);
 		}
 	}
 	unguard;
@@ -989,7 +991,8 @@ void VWidget::DrawText(int x, int y, const VStr& String, int Colour)
 //
 //==========================================================================
 
-int VWidget::DrawTextW(int x, int y, const VStr& String, int w, int Colour)
+int VWidget::DrawTextW(int x, int y, const VStr& String, int w,
+	int NormalColour, int BoldColour)
 {
 	guard(VWidget::DrawTextW);
 	int			start = 0;
@@ -1017,7 +1020,7 @@ int VWidget::DrawTextW(int x, int y, const VStr& String, int w, int Colour)
 		if (String[i] == '\n')
 		{
 			VStr cs(String, start, i - start);
-			DrawString(cx, cy, cs, Colour);
+			DrawString(cx, cy, cs, NormalColour, BoldColour);
 			cy += Font->GetHeight();
 			start = i + 1;
 			wordStart = true;
@@ -1031,7 +1034,7 @@ int VWidget::DrawTextW(int x, int y, const VStr& String, int w, int Colour)
 			if (T_StringWidth(Font, VStr(String, start, j - start)) > w)
 			{
 				VStr cs(String, start, i - start);
-				DrawString(cx, cy, cs, Colour);
+				DrawString(cx, cy, cs, NormalColour, BoldColour);
 				cy += Font->GetHeight();
 				start = i;
 				LinesPrinted++;
@@ -1044,7 +1047,8 @@ int VWidget::DrawTextW(int x, int y, const VStr& String, int w, int Colour)
 		}
 		if (!String[i + 1])
 		{
-			DrawString(cx, cy, VStr(String, start, i - start + 1), Colour);
+			DrawString(cx, cy, VStr(String, start, i - start + 1),
+				NormalColour, BoldColour);
 			LinesPrinted++;
 		}
 	}
@@ -1110,7 +1114,8 @@ void VWidget::DrawString8(int x, int y, const VStr& String)
 		//	Check for colour escape.
 		if (c == TEXT_COLOUR_ESCAPE)
 		{
-			Colour = VFont::ParseColourEscape(SPtr);
+			Colour = VFont::ParseColourEscape(SPtr, CR_UNTRANSLATED,
+				CR_YELLOW);
 			continue;
 		}
 
@@ -1405,23 +1410,25 @@ IMPLEMENT_FUNCTION(VWidget, TextHeight)
 
 IMPLEMENT_FUNCTION(VWidget, DrawText)
 {
+	P_GET_INT_OPT(BoldColour, CR_UNTRANSLATED);
 	P_GET_INT_OPT(Colour, CR_UNTRANSLATED);
 	P_GET_STR(String);
 	P_GET_INT(Y);
 	P_GET_INT(X);
 	P_GET_SELF;
-	Self->DrawText(X, Y, String, Colour);
+	Self->DrawText(X, Y, String, Colour, BoldColour);
 }
 
 IMPLEMENT_FUNCTION(VWidget, DrawTextW)
 {
+	P_GET_INT_OPT(BoldColour, CR_UNTRANSLATED);
 	P_GET_INT_OPT(Colour, CR_UNTRANSLATED);
 	P_GET_INT(w);
 	P_GET_STR(txt);
 	P_GET_INT(y);
 	P_GET_INT(x);
 	P_GET_SELF;
-	RET_INT(Self->DrawTextW(x, y, txt, w, Colour));
+	RET_INT(Self->DrawTextW(x, y, txt, w, Colour, BoldColour));
 }
 
 IMPLEMENT_FUNCTION(VWidget, DrawCursor)

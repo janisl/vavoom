@@ -118,7 +118,7 @@ int T_StringWidth(VFont* Font, const VStr& String)
 		//	Check for colour escape.
 		if (c == TEXT_COLOUR_ESCAPE)
 		{
-			VFont::ParseColourEscape(SPtr);
+			VFont::ParseColourEscape(SPtr, CR_UNDEFINED, CR_UNDEFINED);
 			continue;
 		}
 		w += Font->GetCharWidth(c) + Font->GetKerning();
@@ -182,7 +182,7 @@ int T_TextHeight(VFont* Font, const VStr& String)
 
 void T_DrawText(int x, int y, const VStr& String)
 {
-	GRoot->DrawText(x, y, String, CR_UNTRANSLATED);
+	GRoot->DrawText(x, y, String, CR_UNTRANSLATED, CR_YELLOW);
 }
 
 //==========================================================================
@@ -193,7 +193,7 @@ void T_DrawText(int x, int y, const VStr& String)
 
 int T_DrawTextW(int x, int y, const VStr& String, int w)
 {
-	return GRoot->DrawTextW(x, y, String, w, CR_UNTRANSLATED);
+	return GRoot->DrawTextW(x, y, String, w, CR_UNTRANSLATED, CR_YELLOW);
 }
 
 //==========================================================================
