@@ -681,6 +681,39 @@ VStr VStr::EvalEscapeSequences() const
 
 //==========================================================================
 //
+//	VStr::RemoveColours
+//
+//==========================================================================
+
+VStr VStr::RemoveColours() const
+{
+	guard(VStr::RemoveColours);
+	VStr Ret;
+	for (const char* c = **this; *c; c++)
+	{
+		if (*c == TEXT_COLOUR_ESCAPE)
+		{
+			if (c[1])
+			{
+				c++;
+			}
+			if (*c == '[')
+			{
+				while (c[1] && *c != ']')
+				{
+					c++;
+				}
+			}
+			continue;
+		}
+		Ret += *c;
+	}
+	return Ret;
+	unguard;
+}
+
+//==========================================================================
+//
 //	VStr::ExtractFilePath
 //
 //==========================================================================

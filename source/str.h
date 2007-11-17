@@ -363,6 +363,8 @@ public:
 
 	VStr EvalEscapeSequences() const;
 
+	VStr RemoveColours() const;
+
 	VStr ExtractFilePath() const;
 	VStr ExtractFileName() const;
 	VStr ExtractFileBase() const;

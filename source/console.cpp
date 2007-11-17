@@ -553,7 +553,7 @@ static void DoPrint(const char *buf)
 
 void FConsoleDevice::Serialise(const char* V, EName Event)
 {
-	dprintf("%s: %s\n", VName::SafeString(Event), V);
+	dprintf("%s: %s\n", VName::SafeString(Event), *VStr(V).RemoveColours());
 	if (Event == NAME_Dev && !developer)
 	{
 		return;
