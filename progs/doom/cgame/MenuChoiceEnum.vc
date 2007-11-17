@@ -99,15 +99,16 @@ void OnDraw()
 {
 	int xx;
 
+	int Col = IsFocus() ? CR_YELLOW : CR_WHITE;
 	if (bLeftAlign)
 	{
 		SetTextAlign(hleft, vtop);
-		DrawText(0, 0, Text);
+		DrawText(0, 0, Text, Col);
 	}
 	else
 	{
 		SetTextAlign(hright, vtop);
-		DrawText(160, 0, Text);
+		DrawText(160, 0, Text, Col);
 	}
 
 	if (bLeftAlign)
@@ -119,7 +120,7 @@ void OnDraw()
 		xx = 160 + 10;
 	}
 	SetTextAlign(hleft, vtop);
-	DrawText(xx, 0, EnumNames[Value]);
+	DrawText(xx, 0, EnumNames[Value], Col);
 }
 
 bool OnKeyDown(int key)

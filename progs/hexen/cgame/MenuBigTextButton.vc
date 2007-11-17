@@ -28,7 +28,6 @@ class MenuBigTextButton:MenuTextButton;
 defaultproperties
 {
 	TextFont = 'bigfont';
-	TextSelectedFont = 'bigfont';
 	TextHAlign = hleft;
 	TextVAlign = vtop;
 	Height = 18;

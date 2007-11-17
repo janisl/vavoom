@@ -45,32 +45,28 @@ void OnDraw()
 	int key1;
 	int key2;
 
-	SetFont('smallfont');
-	if (IsFocus())
-	{
-		SetFont('smallfont2');
-	}
+	int Col = IsFocus() ? CR_YELLOW : CR_WHITE;
 	SetTextAlign(hright, vtop);
-	DrawText(160, 0, Text);
+	DrawText(160, 0, Text, Col);
 
 	IN_GetBindingKeys(CommandOn, &key1, &key2);
 
 	SetTextAlign(hleft, vtop);
 	if (key1 >= 0)
 	{
-		DrawText(160 + 10, 0, KeyNameForNum(key1));
+		DrawText(160 + 10, 0, KeyNameForNum(key1), Col);
 	}
 	else
 	{
-		DrawText(160 + 10, 0, "---");
+		DrawText(160 + 10, 0, "---", Col);
 	}
 	if (key2 >= 0)
 	{
-		DrawText(160 + 100, 0, KeyNameForNum(key2));
+		DrawText(160 + 100, 0, KeyNameForNum(key2), Col);
 	}
 	else
 	{
-		DrawText(160 + 100, 0, "---");
+		DrawText(160 + 100, 0, "---", Col);
 	}
 }
 

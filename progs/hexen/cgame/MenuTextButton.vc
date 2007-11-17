@@ -28,7 +28,8 @@ class MenuTextButton : MenuChoice;
 name ActivateSound;
 string Text;
 name TextFont;
-name TextSelectedFont;
+int TextColour;
+int TextColourFocus;
 int TextHAlign;
 int TextVAlign;
 
@@ -54,12 +55,14 @@ bool OnKeyDown(int key)
 
 void OnDraw()
 {
-	SetFont(IsFocus() ? TextSelectedFont : TextFont);
+	SetFont(TextFont);
 	SetTextAlign(TextHAlign, TextVAlign);
-	DrawText(CursorXOffs, 0, Text);
+	DrawText(CursorXOffs, 0, Text, IsFocus() ? TextColourFocus : TextColour);
 }
 
 defaultproperties
 {
 	ActivateSound = 'menu/choose';
+	TextColour = CR_UNTRANSLATED;
+	TextColourFocus = CR_UNTRANSLATED;
 }

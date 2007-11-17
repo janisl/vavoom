@@ -84,7 +84,7 @@ void OnDraw()
 	int xx;
 
 	SetTextAlign(hright, vtop);
-	DrawText(160, 0, Text);
+	DrawText(160, 0, Text, IsFocus() ? CR_YELLOW : CR_WHITE);
 
 	xx =  168;
 	DrawPic(xx, 0, pic_M_THERML);

@@ -49,7 +49,7 @@ void OnValueChanged()
 void OnDraw()
 {
 	SetTextAlign(hleft, vtop);
-	DrawText(0, 0, Text);
+	DrawText(0, 0, Text, IsFocus() ? CR_YELLOW : CR_WHITE);
 	if (bEnteringText)
 		DrawSlot(10, EnterText, true);
 	else

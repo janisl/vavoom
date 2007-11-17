@@ -28,6 +28,8 @@ class MenuTextButton : MenuChoice;
 name ActivateSound;
 string Text;
 name TextFont;
+int TextColour;
+int TextColourFocus;
 int TextHAlign;
 int TextVAlign;
 
@@ -55,10 +57,12 @@ void OnDraw()
 {
 	SetFont(TextFont);
 	SetTextAlign(TextHAlign, TextVAlign);
-	DrawText(CursorXOffs, 0, Text);
+	DrawText(CursorXOffs, 0, Text, IsFocus() ? TextColourFocus : TextColour);
 }
 
 defaultproperties
 {
 	ActivateSound = 'menu/choose';
+	TextColour = CR_UNTRANSLATED;
+	TextColourFocus = CR_UNTRANSLATED;
 }

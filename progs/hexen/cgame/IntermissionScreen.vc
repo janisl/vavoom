@@ -347,15 +347,15 @@ void IM_DrawNumber(int val, int x, int y, int wrapThresh)
 
 void IM_DrawNumberBold(int val, int x, int y, int wrapThresh)
 {
-	SetFont('smallfont2');
+	SetFont('smallfont');
 	SetTextAlign(hcentre, vtop);
 	if (!(val < -9 && wrapThresh < 1000))
 	{
-		DrawText(x, y, va("%d", val >= wrapThresh ? val % wrapThresh : val));
+		DrawText(x, y, va("%d", val >= wrapThresh ? val % wrapThresh : val), CR_YELLOW);
 	}
 	else
 	{
-		DrawText(x, y, "XX");
+		DrawText(x, y, "XX", CR_YELLOW);
 	}
 }
 
@@ -405,9 +405,10 @@ void IM_DrawDeathTally()
 	{
 		i = RepInfo.PlayerNum;
 		xPos = xStart;
-		SetFont(i == ClGame.cl.ClientNum ? 'smallfont2' : 'smallfont');
+		SetFont('smallfont');
 		SetTextAlign(hleft, vtop);
-		DrawText(ftoi(xPos), y, RepInfo.PlayerName);
+		DrawText(ftoi(xPos), y, RepInfo.PlayerName,
+			i == ClGame.cl.ClientNum ? CR_YELLOW : CR_WHITE);
 		if (showTotals && !((slaughterboy & (1 << i)) &&
 			!(ftoi(32.0 * intertime) & 16)))
 		{
