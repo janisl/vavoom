@@ -26,8 +26,8 @@
 // HEADER FILES ------------------------------------------------------------
 
 #include "gamedefs.h"
-#include "cl_local.h"
-#include "r_shared.h"
+#include "r_tex.h"
+#include "text.h"
 #include "ui.h"
 
 // MACROS ------------------------------------------------------------------
@@ -81,9 +81,11 @@ public:
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
+VFont*								SmallFont;
+
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-VFont*						VFont::Fonts;
+VFont*								VFont::Fonts;
 
 static TArray<VTextColourDef>		TextColours;
 static TArray<VColTransMap>			TextColourLookup;
@@ -100,6 +102,27 @@ void VFont::StaticInit()
 {
 	guard(VFont::StaticInit);
 	ParseTextColours();
+
+	//
+	//	Initialise standard fonts.
+	//
+
+	//	Small font.
+	if (W_CheckNumForName(NAME_fonta_s) >= 0)
+	{
+		SmallFont = new VFont(NAME_smallfont, "fonta%02d", 33, 95, 1);
+	}
+	else
+	{
+		SmallFont = new VFont(NAME_smallfont, "stcfn%03d", 33, 95, 33);
+	}
+	//	Strife's second small font.
+	if (W_CheckNumForName(NAME_stbfn033) >= 0)
+	{
+		new VFont(NAME_smallfont2, "stbfn%03d", 33, 95, 33);
+	}
+	//	Big font.
+	new VFont(NAME_bigfont, "fontb%02d", 33, 95, 1);
 	unguard;
 }
 
@@ -733,6 +756,10 @@ void VFontChar::Unload()
 VTexture* VFontChar::GetHighResolutionTexture()
 {
 	guard(VFontChar::GetHighResolutionTexture);
+	if (!r_hirestex)
+	{
+		return NULL;
+	}
 	if (!HiResTexture)
 	{
 		VTexture* Tex = BaseTex->GetHighResolutionTexture();

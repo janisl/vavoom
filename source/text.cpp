@@ -45,8 +45,6 @@
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-VFont*					SmallFont;
-
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
@@ -57,21 +55,7 @@ VFont*					SmallFont;
 
 void T_Init()
 {
-	guard(T_Init);
 	VFont::StaticInit();
-	// Load fonts
-	if (W_CheckNumForName(NAME_stcfn033) >= 0)
-	{
-		SmallFont = new VFont(NAME_smallfont, "stcfn%03d", 33, 95, 33);
-		new VFont(NAME_smallfont2, "stbfn%03d", 33, 95, 33);
-	}
-	else
-	{
-		SmallFont = new VFont(NAME_smallfont, "fonta%02d", 33, 95, 1);
-		new VFont(NAME_smallfont2, "fontay%02d", 33, 95, 1);
-	}
-	new VFont(NAME_bigfont, "fontb%02d", 33, 95, 1);
-	unguard;
 }
 
 //==========================================================================
