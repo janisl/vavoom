@@ -70,6 +70,18 @@ public:
 	VTexture* GetHighResolutionTexture();
 };
 
+//
+//	VSpecialFont
+//
+//	Like regular font, but initialised using explicit list of patches.
+//
+class VSpecialFont : public VFont
+{
+public:
+	VSpecialFont(VName, const TArray<int>&, const TArray<VName>&,
+		const bool*);
+};
+
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -122,6 +134,9 @@ void VFont::StaticInit()
 	}
 	//	Big font.
 	new VFont(NAME_bigfont, "fontb%02d", 33, 95, 1);
+
+	//	Load custom fonts.
+	ParseFontDefs();
 	unguard;
 }
 
@@ -357,6 +372,121 @@ void VFont::ParseTextColours()
 
 //==========================================================================
 //
+//	VFont::ParseFontDefs
+//
+//==========================================================================
+
+void VFont::ParseFontDefs()
+{
+	guard(VFont::ParseFontDefs);
+	for (int Lump = W_IterateNS(-1, WADNS_Global); Lump >= 0;
+		Lump = W_IterateNS(Lump, WADNS_Global))
+	{
+		if (W_LumpName(Lump) != NAME_fontdefs)
+		{
+			continue;
+		}
+		VScriptParser sc(*W_LumpName(Lump), W_CreateLumpReaderNum(Lump));
+		while (!sc.AtEnd())
+		{
+			//	Name of the font.
+			sc.ExpectString();
+			VName FontName = *sc.String.ToLower();
+			sc.Expect("{");
+
+#define CHECK_TYPE(Id) if (FontType == Id) \
+	sc.Error(va("Invalid combination of properties in font '%s'", *FontName))
+			int FontType = 0;
+			VStr Template;
+			int First = 33;
+			int Count = 223;
+			int Start = 33;
+			TArray<int> CharIndexes;
+			TArray<VName> CharLumps;
+			bool NoTranslate[256];
+			memset(NoTranslate, 0, sizeof(NoTranslate));
+
+			while (!sc.Check("}"))
+			{
+				if (sc.Check("template"))
+				{
+					CHECK_TYPE(2);
+					sc.ExpectString();
+					Template = sc.String;
+					FontType = 1;
+				}
+				else if (sc.Check("first"))
+				{
+					CHECK_TYPE(2);
+					sc.ExpectNumber();
+					First = sc.Number;
+					FontType = 1;
+				}
+				else if (sc.Check("count"))
+				{
+					CHECK_TYPE(2);
+					sc.ExpectNumber();
+					Count = sc.Number;
+					FontType = 1;
+				}
+				else if (sc.Check("base"))
+				{
+					CHECK_TYPE(2);
+					sc.ExpectNumber();
+					Start = sc.Number;
+					FontType = 1;
+				}
+				else if (sc.Check("notranslate"))
+				{
+					CHECK_TYPE(1);
+					while (sc.CheckNumber() && !sc.Crossed)
+					{
+						if (sc.Number >= 0 && sc.Number < 256)
+						{
+							NoTranslate[sc.Number] = true;
+						}
+					}
+					FontType = 2;
+				}
+				else
+				{
+					CHECK_TYPE(1);
+					sc.ExpectString();
+					const char* CPtr = *sc.String;
+					int CharIdx = VStr::GetChar(CPtr);
+					sc.ExpectString();
+					VName LumpName(*sc.String, VName::AddLower8);
+					if (W_CheckNumForName(LumpName, WADNS_Graphics) >= 0)
+					{
+						CharIndexes.Append(CharIdx);
+						CharLumps.Append(LumpName);
+					}
+					FontType = 2;
+				}
+			}
+			if (FontType == 1)
+			{
+				new VFont(FontName, Template, First, Count, Start);
+			}
+			else if (FontType == 2)
+			{
+				if (CharIndexes.Num())
+				{
+					new VSpecialFont(FontName, CharIndexes, CharLumps,
+						NoTranslate);
+				}
+			}
+			else
+			{
+				sc.Error("Font has no attributes");
+			}
+		}
+	}
+	unguard;
+}
+
+//==========================================================================
+//
 //	VFont::FindFont
 //
 //==========================================================================
@@ -373,6 +503,16 @@ VFont* VFont::FindFont(VName AName)
 	}
 	return NULL;
 	unguard;
+}
+
+//==========================================================================
+//
+//	VFont::VFont
+//
+//==========================================================================
+
+VFont::VFont()
+{
 }
 
 //==========================================================================
@@ -465,6 +605,57 @@ VFont::VFont(VName AName, const VStr& FormatStr, int First, int Count,
 		SpaceWidth = 4;
 	}
 
+	BuildTranslations(ColoursUsed);
+
+	//	Create texture objects for all different colours.
+	for (int i = 0; i < Chars.Num(); i++)
+	{
+		Chars[i].Textures = new VTexture*[TextColours.Num()];
+		for (int j = 0; j < TextColours.Num(); j++)
+		{
+			Chars[i].Textures[j] = new VFontChar(Chars[i].BaseTex,
+				Translation + j * 256);
+			//	Currently all render drivers expect all textures to be
+			// registered in texture manager.
+			GTextureManager.AddTexture(Chars[i].Textures[j]);
+		}
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VFont::~VFont
+//
+//==========================================================================
+
+VFont::~VFont()
+{
+	guard(VFont::~VFont);
+	for (int i = 0; i < Chars.Num(); i++)
+	{
+		if (Chars[i].Textures)
+		{
+			delete[] Chars[i].Textures;
+		}
+	}
+	Chars.Clear();
+	if (Translation)
+	{
+		delete[] Translation;
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VFont::BuildTranslations
+//
+//==========================================================================
+
+void VFont::BuildTranslations(const bool* ColoursUsed)
+{
+	guard(VFont::BuildTranslations);
 	//	Calculate luminosity for all colours and find minimal and maximal
 	// values for used colours.
 	float Luminosity[256];
@@ -527,44 +718,6 @@ VFont::VFont(VName AName, const VStr& FormatStr, int First, int Count,
 			pOut[i].b = MID(0, b, 255);
 			pOut[i].a = 255;
 		}
-	}
-
-	//	Create texture objects for all different colours.
-	for (int i = 0; i < Chars.Num(); i++)
-	{
-		Chars[i].Textures = new VTexture*[TextColours.Num()];
-		for (int j = 0; j < TextColours.Num(); j++)
-		{
-			Chars[i].Textures[j] = new VFontChar(Chars[i].BaseTex,
-				Translation + j * 256);
-			//	Currently render drivers expects all textures to be
-			// registered in texture manager.
-			GTextureManager.AddTexture(Chars[i].Textures[j]);
-		}
-	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	VFont::~VFont
-//
-//==========================================================================
-
-VFont::~VFont()
-{
-	guard(VFont::~VFont);
-	for (int i = 0; i < Chars.Num(); i++)
-	{
-		if (Chars[i].Textures)
-		{
-			delete[] Chars[i].Textures;
-		}
-	}
-	Chars.Clear();
-	if (Translation)
-	{
-		delete[] Translation;
 	}
 	unguard;
 }
@@ -758,6 +911,120 @@ int VFont::FindTextColour(VName Name)
 		}
 	}
 	return CR_UNTRANSLATED;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VSpecialFont::VSpecialFont
+//
+//==========================================================================
+
+VSpecialFont::VSpecialFont(VName AName, const TArray<int>& CharIndexes,
+	const TArray<VName>& CharLumps, const bool* NoTranslate)
+{
+	guard(VSpecialFont::VSpecialFont);
+	Name = AName;
+	Next = Fonts;
+	Fonts = this;
+
+	for (int i = 0; i < 128; i++)
+	{
+		AsciiChars[i] = -1;
+	}
+	FirstChar = -1;
+	LastChar = -1;
+	FontHeight = 0;
+	Kerning = 0;
+	Translation = NULL;
+	bool ColoursUsed[256];
+	memset(ColoursUsed, 0, sizeof(ColoursUsed));
+
+	check(CharIndexes.Num() == CharLumps.Num());
+	for (int i = 0; i < CharIndexes.Num(); i++)
+	{
+		int Char = CharIndexes[i];
+		VName LumpName = CharLumps[i];
+
+		VTexture* Tex = GTextureManager[GTextureManager.AddPatch(LumpName,
+			TEXTYPE_Pic)];
+		FFontChar& FChar = Chars.Alloc();
+		FChar.Char = Char;
+		FChar.BaseTex = Tex;
+		if (Char < 128)
+		{
+			AsciiChars[Char] = Chars.Num() - 1;
+		}
+
+		//	Calculate height of font character and adjust font height
+		// as needed.
+		int Height = Tex->GetScaledHeight();
+		int TOffs = Tex->GetScaledTOffset();
+		Height += abs(TOffs);
+		if (FontHeight < Height)
+		{
+			FontHeight = Height;
+		}
+
+		//	Update first and last characters.
+		if (FirstChar == -1)
+		{
+			FirstChar = Char;
+		}
+		LastChar = Char;
+
+		//	Mark colours that are used by this texture.
+		MarkUsedColours(Tex, ColoursUsed);
+	}
+
+	//	Exclude non-translated colours from calculations.
+	for (int i = 0; i < 256; i++)
+	{
+		if (NoTranslate[i])
+		{
+			ColoursUsed[i] = false;
+		}
+	}
+
+	//	Set up width of a space character as half width of N character
+	// or 4 if character N has no graphic for it.
+	int NIdx = FindChar('N');
+	if (NIdx >= 0)
+	{
+		SpaceWidth = (Chars[NIdx].BaseTex->GetScaledWidth() + 1) / 2;
+	}
+	else
+	{
+		SpaceWidth = 4;
+	}
+
+	BuildTranslations(ColoursUsed);
+
+	//	Map non-translated colours to their original values
+	for (int i = 0; i < TextColours.Num(); i++)
+	{
+		for (int j = 0; j < 256; j++)
+		{
+			if (NoTranslate[j])
+			{
+				Translation[i * 256 + j] = r_palette[j];
+			}
+		}
+	}
+
+	//	Create texture objects for all different colours.
+	for (int i = 0; i < Chars.Num(); i++)
+	{
+		Chars[i].Textures = new VTexture*[TextColours.Num()];
+		for (int j = 0; j < TextColours.Num(); j++)
+		{
+			Chars[i].Textures[j] = new VFontChar(Chars[i].BaseTex,
+				Translation + j * 256);
+			//	Currently all render drivers expect all textures to be
+			// registered in texture manager.
+			GTextureManager.AddTexture(Chars[i].Textures[j]);
+		}
+	}
 	unguard;
 }
 

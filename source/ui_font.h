@@ -58,12 +58,15 @@ protected:
 
 	static VFont*		Fonts;
 
+	void BuildTranslations(const bool*);
 	int FindChar(int) const;
 
 	static void ParseTextColours();
+	static void ParseFontDefs();
 	static void MarkUsedColours(VTexture*, bool*);
 
 public:
+	VFont();
 	VFont(VName, const VStr&, int, int, int);
 	~VFont();
 
