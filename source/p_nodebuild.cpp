@@ -31,7 +31,23 @@
 
 #include "gamedefs.h"
 #include "fwaddefs.h"
-#include "../utils/glbsp/glbsp.h"
+extern "C" {
+#define vertex_t		glbsp_vertex_t
+#define sector_t		glbsp_sector_t
+#define seg_t			glbsp_seg_t
+#define node_t			glbsp_node_t
+#include "../utils/glbsp/system.h"
+#include "../utils/glbsp/wad.h"
+#include "../utils/glbsp/util.h"
+#include "../utils/glbsp/level.h"
+#include "../utils/glbsp/blockmap.h"
+#include "../utils/glbsp/node.h"
+#include "../utils/glbsp/seg.h"
+#undef vertex_t
+#undef sector_t
+#undef seg_t
+#undef node_t
+};
 
 // MACROS ------------------------------------------------------------------
 
@@ -161,35 +177,168 @@ static const nodebuildfuncs_t build_funcs =
 	GLBSP_DisplayClose
 };
 
+static glbsp_node_t *root_node;
+
 //==========================================================================
 //
-//	GLBSP_BuildNodes
+//	CopyNode
 //
 //==========================================================================
 
-static bool _GLBSP_BuildNodes(const char *name, const char* gwafile)
+static void CopyNode(int& NodeIndex, glbsp_node_t* SrcNode, node_t* Nodes)
 {
-	nodebuildinfo_t nb_info;
-	nodebuildcomms_t nb_comms;
-	glbsp_ret_e ret;
+	if (SrcNode->r.node)
+	{
+		CopyNode(NodeIndex, SrcNode->r.node, Nodes);
+	}
 
-	nb_info = default_buildinfo;
-	nb_comms = default_buildcomms;
+	if (SrcNode->l.node)
+	{
+		CopyNode(NodeIndex, SrcNode->l.node, Nodes);
+	}
 
-	nb_info.input_file = name;
-	nb_info.output_file = gwafile;
+	SrcNode->index = NodeIndex;
 
-	// FIXME: check parm "-node-factor"
+	node_t* Node = &Nodes[NodeIndex];
+	Node->SetPointDir(TVec(SrcNode->x, SrcNode->y, 0),
+		TVec(SrcNode->dx, SrcNode->dy, 0));
 
-	if (GLBSP_E_OK != GlbspCheckInfo(&nb_info, &nb_comms))
-		return false;
+	Node->bbox[0][0] = SrcNode->r.bounds.minx;
+	Node->bbox[0][1] = SrcNode->r.bounds.miny;
+	Node->bbox[0][2] = -32768.0;
+	Node->bbox[0][3] = SrcNode->r.bounds.maxx;
+	Node->bbox[0][4] = SrcNode->r.bounds.maxy;
+	Node->bbox[0][5] = 32768.0;
 
-	ret = GlbspBuildNodes(&nb_info, &build_funcs, &nb_comms);
+	Node->bbox[1][0] = SrcNode->l.bounds.minx;
+	Node->bbox[1][1] = SrcNode->l.bounds.miny;
+	Node->bbox[1][2] = -32768.0;
+	Node->bbox[1][3] = SrcNode->l.bounds.maxx;
+	Node->bbox[1][4] = SrcNode->l.bounds.maxy;
+	Node->bbox[1][5] = 32768.0;
 
-	if (ret != GLBSP_E_OK)
-		return false;
+	if (SrcNode->r.node)
+	{
+		Node->children[0] = SrcNode->r.node->index;
+	}
+	else if (SrcNode->r.subsec)
+	{
+		Node->children[0] = SrcNode->r.subsec->index | NF_SUBSECTOR;
+	}
 
-	return true;
+	if (SrcNode->l.node)
+	{
+		Node->children[1] = SrcNode->l.node->index;
+	}
+	else if (SrcNode->l.subsec)
+	{
+		Node->children[1] = SrcNode->l.subsec->index | NF_SUBSECTOR;
+	}
+
+	NodeIndex++;
+}
+
+//==========================================================================
+//
+//	HandleLevel
+//
+//==========================================================================
+
+static glbsp_ret_e HandleLevel()
+{
+  superblock_t *seg_list;
+  glbsp_node_t *root_stale_node;
+  subsec_t *root_sub;
+
+  glbsp_ret_e ret;
+
+  cur_comms->build_pos = 0;
+
+  LoadLevel();
+
+  InitBlockmap();
+
+  // create initial segs
+  seg_list = CreateSegs();
+
+  root_stale_node = (num_stale_nodes == 0) ? NULL : 
+      LookupStaleNode(num_stale_nodes - 1);
+
+  // recursively create nodes
+  ret = BuildNodes(seg_list, &root_node, &root_sub, 0, root_stale_node);
+  FreeSuper(seg_list);
+
+  if (ret == GLBSP_E_OK)
+  {
+    ClockwiseBspTree(root_node);
+
+    SaveLevel(root_node);
+  }
+
+  return ret;
+}
+
+//==========================================================================
+//
+//	MyGlbspBuildNodes
+//
+//==========================================================================
+
+static glbsp_ret_e MyGlbspBuildNodes(const nodebuildinfo_t *info,
+    const nodebuildfuncs_t *funcs, volatile nodebuildcomms_t *comms)
+{
+  glbsp_ret_e ret = GLBSP_E_OK;
+
+  cur_info  = info;
+  cur_funcs = funcs;
+  cur_comms = comms;
+
+  cur_comms->total_big_warn = 0;
+  cur_comms->total_small_warn = 0;
+
+  InitDebug();
+  InitEndian();
+ 
+  // opens and reads directory from the input wad
+  ret = ReadWadFile(cur_info->input_file);
+
+  if (ret != GLBSP_E_OK)
+  {
+    TermDebug();
+    return ret;
+  }
+
+  cur_comms->file_pos = 0;
+  
+  // loop over each level in the wad
+  while (FindNextLevel())
+  {
+    ret = HandleLevel();
+
+    if (ret != GLBSP_E_OK)
+      break;
+
+    cur_comms->file_pos += 10;
+  }
+
+  // writes all the lumps to the output wad
+  if (ret == GLBSP_E_OK)
+  {
+    ret = WriteWadFile(cur_info->output_file);
+
+    ReportFailedLevels();
+  }
+
+  // close wads and free memory
+  CloseWads();
+
+  TermDebug();
+
+  cur_info  = NULL;
+  cur_comms = NULL;
+  cur_funcs = NULL;
+
+  return ret;
 }
 
 //==========================================================================
@@ -201,6 +350,7 @@ static bool _GLBSP_BuildNodes(const char *name, const char* gwafile)
 void VLevel::BuildNodes(int Lump)
 {
 	guard(VLevel::BuildNodes);
+	//	Write WAD file.
 	VStr FName = fl_savedir + "/temp.wad";
 	VStr GwaName = fl_savedir + "/temp.gwa";
 	FILE* f = fopen(*FName, "wb");
@@ -240,13 +390,29 @@ void VLevel::BuildNodes(int Lump)
 	fwrite(&Hdr, 1, 12, f);
 	fclose(f);
 
-	_GLBSP_BuildNodes(*FName, *GwaName);
+	//	Call glBSP to build nodes.
+	nodebuildinfo_t nb_info = default_buildinfo;
+	nodebuildcomms_t nb_comms = default_buildcomms;
+	nb_info.input_file = *FName;
+	nb_info.output_file = *GwaName;
+	nb_info.quiet = true;
+	if (GLBSP_E_OK != GlbspCheckInfo(&nb_info, &nb_comms))
+	{
+		Sys_Error("???");
+	}
+	glbsp_ret_e ret = MyGlbspBuildNodes(&nb_info, &build_funcs, &nb_comms);
+	if (ret != GLBSP_E_OK)
+	{
+		Host_Error("Node build failed");
+	}
 
+	//	Load the nodes built.
 	int gl_lumpnum = W_OpenAuxiliary(*GwaName);
 	int NumBaseVerts;
 	TVec* OldVertexes = Vertexes;
 	LoadVertexes(Lump + ML_VERTEXES, gl_lumpnum + ML_GL_VERT, NumBaseVerts);
 
+	//	Update pointer to vertexes in lines.
 	for (int i = 0; i < NumLines; i++)
 	{
 		line_t* ld = &Lines[i];
@@ -256,9 +422,58 @@ void VLevel::BuildNodes(int Lump)
 	delete[] OldVertexes;
 
 	LoadGLSegs(gl_lumpnum + ML_GL_SEGS, NumBaseVerts);
-	LoadSubsectors(gl_lumpnum + ML_GL_SSECT);
-	LoadNodes(gl_lumpnum + ML_GL_NODES);
-	LoadPVS(gl_lumpnum + ML_GL_PVS);
 	W_CloseAuxiliary();
+
+	//	Copy subsectors
+	guard(Subsectors);
+	NumSubsectors = num_subsecs;
+	Subsectors = new subsector_t[NumSubsectors];
+	memset(Subsectors, 0, sizeof(subsector_t) * NumSubsectors);
+	subsector_t* ss = Subsectors;
+	for (int i = 0; i < NumSubsectors; i++, ss++)
+	{
+		subsec_t* SrcSub = LookupSubsec(i);
+		ss->numlines = SrcSub->seg_count;
+		ss->firstline = SrcSub->seg_list->index;
+
+		//	Look up sector number for each subsector
+		seg_t* seg = &Segs[ss->firstline];
+		for (int j = 0; j < ss->numlines; j++)
+		{
+			if (seg[j].linedef)
+			{
+				ss->sector = seg[j].sidedef->sector;
+				ss->seclink = ss->sector->subsectors;
+				ss->sector->subsectors = ss;
+				break;
+			}
+		}
+		if (!ss->sector)
+		{
+			Host_Error("Subsector %d without sector", i);
+		}
+	}
+	unguard;
+
+	//	Copy nodes.
+	guard(Nodes);
+	NumNodes = num_nodes;
+	Nodes = new node_t[NumNodes];
+	memset(Nodes, 0, sizeof(node_t) * NumNodes);
+	if (root_node)
+	{
+		int NodeIndex = 0;
+		CopyNode(NodeIndex, root_node, Nodes);
+	}
+	unguard;
+
+	FreeLevel();
+	FreeQuickAllocCuts();
+	FreeQuickAllocSupers();
+
+	//	Create dummy VIS data.
+	VisData = NULL;
+	NoVis = new vuint8[(NumSubsectors + 7) / 8];
+	memset(NoVis, 0xff, (NumSubsectors + 7) / 8);
 	unguard;
 }
