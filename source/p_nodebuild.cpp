@@ -411,6 +411,8 @@ void VLevel::BuildNodes(int Lump)
 	int NumBaseVerts;
 	TVec* OldVertexes = Vertexes;
 	LoadVertexes(Lump + ML_VERTEXES, gl_lumpnum + ML_GL_VERT, NumBaseVerts);
+	vertex_t* GLVertexes = Vertexes + NumBaseVerts;
+	W_CloseAuxiliary();
 
 	//	Update pointer to vertexes in lines.
 	for (int i = 0; i < NumLines; i++)
@@ -421,8 +423,66 @@ void VLevel::BuildNodes(int Lump)
 	}
 	delete[] OldVertexes;
 
-	LoadGLSegs(gl_lumpnum + ML_GL_SEGS, NumBaseVerts);
-	W_CloseAuxiliary();
+	guard(Segs);
+	//	Build ordered list of source segs.
+	glbsp_seg_t** SrcSegs = new glbsp_seg_t*[num_complete_seg];
+	for (int i = 0; i < num_segs; i++)
+	{
+		glbsp_seg_t* Seg = LookupSeg(i);
+		// ignore degenerate segs
+		if (Seg->degenerate)
+			continue;
+		SrcSegs[Seg->index] = Seg;
+	}
+
+	//	Copy segs.
+	NumSegs = num_complete_seg;
+	Segs = new seg_t[NumSegs];
+	memset(Segs, 0, sizeof(seg_t) * NumSegs);
+	seg_t* li = Segs;
+	for (int i = 0; i < NumSegs; i++, li++)
+	{
+		glbsp_seg_t* SrcSeg = SrcSegs[i];
+
+		if (SrcSeg->start->index & IS_GL_VERTEX)
+		{
+			li->v1 = &GLVertexes[SrcSeg->start->index & ~IS_GL_VERTEX];
+		}
+		else
+		{
+			li->v1 = &Vertexes[SrcSeg->start->index];
+		}
+		if (SrcSeg->end->index & IS_GL_VERTEX)
+		{
+			li->v2 = &GLVertexes[SrcSeg->end->index & ~IS_GL_VERTEX];
+		}
+		else
+		{
+			li->v2 = &Vertexes[SrcSeg->end->index];
+		}
+
+		if (SrcSeg->linedef)
+		{
+			line_t* ldef = &Lines[SrcSeg->linedef->index];
+			li->linedef = ldef;
+			li->sidedef = &Sides[ldef->sidenum[SrcSeg->side]];
+			li->frontsector = Sides[ldef->sidenum[SrcSeg->side]].sector;
+
+			if (ldef->flags & ML_TWOSIDED)
+				li->backsector = Sides[ldef->sidenum[SrcSeg->side ^ 1]].sector;
+
+			if (SrcSeg->side)
+				li->offset = Length(*li->v1 - *ldef->v2);
+			else
+				li->offset = Length(*li->v1 - *ldef->v1);
+			li->length = Length(*li->v2 - *li->v1);
+			li->side = SrcSeg->side;
+		}
+
+		//	Calc seg's plane params
+		CalcSeg(li);
+	}
+	unguard;
 
 	//	Copy subsectors
 	guard(Subsectors);
