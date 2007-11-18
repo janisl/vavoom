@@ -271,8 +271,6 @@ static glbsp_ret_e HandleLevel()
   if (ret == GLBSP_E_OK)
   {
     ClockwiseBspTree(root_node);
-
-    SaveLevel(root_node);
   }
 
   return ret;
@@ -287,58 +285,44 @@ static glbsp_ret_e HandleLevel()
 static glbsp_ret_e MyGlbspBuildNodes(const nodebuildinfo_t *info,
     const nodebuildfuncs_t *funcs, volatile nodebuildcomms_t *comms)
 {
-  glbsp_ret_e ret = GLBSP_E_OK;
+	glbsp_ret_e ret = GLBSP_E_OK;
 
-  cur_info  = info;
-  cur_funcs = funcs;
-  cur_comms = comms;
+	cur_info  = info;
+	cur_funcs = funcs;
+	cur_comms = comms;
 
-  cur_comms->total_big_warn = 0;
-  cur_comms->total_small_warn = 0;
+	cur_comms->total_big_warn = 0;
+	cur_comms->total_small_warn = 0;
 
-  InitDebug();
-  InitEndian();
- 
-  // opens and reads directory from the input wad
-  ret = ReadWadFile(cur_info->input_file);
+	InitDebug();
+	InitEndian();
 
-  if (ret != GLBSP_E_OK)
-  {
-    TermDebug();
-    return ret;
-  }
+	// opens and reads directory from the input wad
+	ret = ReadWadFile(cur_info->input_file);
 
-  cur_comms->file_pos = 0;
-  
-  // loop over each level in the wad
-  while (FindNextLevel())
-  {
-    ret = HandleLevel();
+	if (ret != GLBSP_E_OK)
+	{
+		TermDebug();
+		return ret;
+	}
 
-    if (ret != GLBSP_E_OK)
-      break;
+	cur_comms->file_pos = 0;
 
-    cur_comms->file_pos += 10;
-  }
+	// loop over each level in the wad
+	FindNextLevel();
 
-  // writes all the lumps to the output wad
-  if (ret == GLBSP_E_OK)
-  {
-    ret = WriteWadFile(cur_info->output_file);
+	ret = HandleLevel();
 
-    ReportFailedLevels();
-  }
+	// close wads and free memory
+	CloseWads();
 
-  // close wads and free memory
-  CloseWads();
+	TermDebug();
 
-  TermDebug();
+	cur_info  = NULL;
+	cur_comms = NULL;
+	cur_funcs = NULL;
 
-  cur_info  = NULL;
-  cur_comms = NULL;
-  cur_funcs = NULL;
-
-  return ret;
+	return ret;
 }
 
 //==========================================================================
@@ -406,15 +390,24 @@ void VLevel::BuildNodes(int Lump)
 		Host_Error("Node build failed");
 	}
 
-	//	Load the nodes built.
-	int gl_lumpnum = W_OpenAuxiliary(*GwaName);
-	int NumBaseVerts;
-	TVec* OldVertexes = Vertexes;
-	LoadVertexes(Lump + ML_VERTEXES, gl_lumpnum + ML_GL_VERT, NumBaseVerts);
+	//	Copy new vertexes.
+	int NumBaseVerts = NumVertexes;
+	vertex_t* OldVertexes = Vertexes;
+	NumVertexes = NumBaseVerts + num_gl_vert;
+	Vertexes = new vertex_t[NumVertexes];
 	vertex_t* GLVertexes = Vertexes + NumBaseVerts;
-	W_CloseAuxiliary();
+	memcpy(Vertexes, OldVertexes, NumBaseVerts * sizeof(vertex_t));
+	vertex_t* pDst = GLVertexes;
+	for (int i = 0; i < num_vertices; i++)
+	{
+		glbsp_vertex_t* vert = LookupVertex(i);
+		if (!(vert->index & IS_GL_VERTEX))
+			continue;
+		*pDst = TVec(vert->x, vert->y, 0);
+		pDst++;
+	}
 
-	//	Update pointer to vertexes in lines.
+	//	Update pointers to vertexes in lines.
 	for (int i = 0; i < NumLines; i++)
 	{
 		line_t* ld = &Lines[i];
@@ -423,7 +416,6 @@ void VLevel::BuildNodes(int Lump)
 	}
 	delete[] OldVertexes;
 
-	guard(Segs);
 	//	Build ordered list of source segs.
 	glbsp_seg_t** SrcSegs = new glbsp_seg_t*[num_complete_seg];
 	for (int i = 0; i < num_segs; i++)
@@ -482,10 +474,8 @@ void VLevel::BuildNodes(int Lump)
 		//	Calc seg's plane params
 		CalcSeg(li);
 	}
-	unguard;
 
 	//	Copy subsectors
-	guard(Subsectors);
 	NumSubsectors = num_subsecs;
 	Subsectors = new subsector_t[NumSubsectors];
 	memset(Subsectors, 0, sizeof(subsector_t) * NumSubsectors);
@@ -513,10 +503,8 @@ void VLevel::BuildNodes(int Lump)
 			Host_Error("Subsector %d without sector", i);
 		}
 	}
-	unguard;
 
 	//	Copy nodes.
-	guard(Nodes);
 	NumNodes = num_nodes;
 	Nodes = new node_t[NumNodes];
 	memset(Nodes, 0, sizeof(node_t) * NumNodes);
@@ -525,7 +513,6 @@ void VLevel::BuildNodes(int Lump)
 		int NodeIndex = 0;
 		CopyNode(NodeIndex, root_node, Nodes);
 	}
-	unguard;
 
 	FreeLevel();
 	FreeQuickAllocCuts();
