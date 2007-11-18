@@ -2164,6 +2164,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\p_nodebuild.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\source\p_player.cpp"
 				>
 			</File>

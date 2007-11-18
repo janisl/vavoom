@@ -149,6 +149,7 @@ _____MAIN_EXE__SOURCES = \
 	p_gameinfo.h \
 	p_levelinfo.cpp \
 	p_levelinfo.h \
+	p_nodebuild.cpp \
 	p_player.cpp \
 	p_playerreplicationinfo.cpp \
 	p_playerreplicationinfo.h \
@@ -470,6 +471,7 @@ _____SERVER_EXE__SOURCES = \
 	p_entity.cpp \
 	p_entity_world.cpp \
 	p_levelinfo.cpp \
+	p_nodebuild.cpp \
 	p_player.cpp \
 	p_playerreplicationinfo.cpp \
 	p_polyobj.cpp \

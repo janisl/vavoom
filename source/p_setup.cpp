@@ -107,6 +107,7 @@ enum
 
 static VCvarI strict_level_errors("strict_level_errors", "1");
 static VCvarI build_blockmap("build_blockmap", "0", CVAR_Archive);
+static VCvarI build_gwa("build_gwa", "1");
 
 // CODE --------------------------------------------------------------------
 
@@ -172,27 +173,38 @@ void VLevel::LoadMap(VName AMapName)
 	}
 	delete TmpStrm;
 
+	bool NeedNodesBuild = false;
 	if (!UseComprGLNodes)
 	{
 		gl_lumpnum = FindGLNodes(MapLumpName);
 #ifdef CLIENT
-		//	If missing GL nodes or VIS data, then build them.
-		if (gl_lumpnum < lumpnum)
+		if (build_gwa)
 		{
-			W_BuildGLNodes(lumpnum);
-			gl_lumpnum = FindGLNodes(MapLumpName);
-		}
-		else if (W_LumpName(gl_lumpnum + ML_GL_PVS) != NAME_gl_pvs ||
-			W_LumpLength(gl_lumpnum + ML_GL_PVS) == 0)
-		{
-			W_BuildPVS(lumpnum, gl_lumpnum);
-			lumpnum = W_GetNumForName(MapLumpName);
-			gl_lumpnum = FindGLNodes(MapLumpName);
+			//	If missing GL nodes or VIS data, then build them.
+			if (gl_lumpnum < lumpnum)
+			{
+				W_BuildGLNodes(lumpnum);
+				gl_lumpnum = FindGLNodes(MapLumpName);
+			}
+			else if (W_LumpName(gl_lumpnum + ML_GL_PVS) != NAME_gl_pvs ||
+				W_LumpLength(gl_lumpnum + ML_GL_PVS) == 0)
+			{
+				W_BuildPVS(lumpnum, gl_lumpnum);
+				lumpnum = W_GetNumForName(MapLumpName);
+				gl_lumpnum = FindGLNodes(MapLumpName);
+			}
 		}
 #endif
 		if (gl_lumpnum < lumpnum)
 		{
-			Host_Error("Map %s is missing GL-Nodes\n", *MapName);
+			if (build_gwa)
+			{
+				Host_Error("Map %s is missing GL-Nodes\n", *MapName);
+			}
+			else
+			{
+				NeedNodesBuild = true;
+			}
 		}
 	}
 
@@ -217,7 +229,12 @@ void VLevel::LoadMap(VName AMapName)
 	{
 		LoadLineDefs2(lumpnum + ML_LINEDEFS, NumBaseVerts);
 	}
-	if (UseComprGLNodes)
+
+	if (NeedNodesBuild)
+	{
+		BuildNodes(lumpnum);
+	}
+	else if (UseComprGLNodes)
 	{
 		LoadCompressedGLNodes(lumpnum + ML_SSECTORS);
 	}
@@ -230,6 +247,7 @@ void VLevel::LoadMap(VName AMapName)
 	}
 	LoadBlockMap(lumpnum + ML_BLOCKMAP);
 	LoadReject(lumpnum + ML_REJECT);
+
 	if (!(LevelFlags & LF_Extended))
 	{
 		LoadThings1(lumpnum + ML_THINGS);
