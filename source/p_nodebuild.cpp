@@ -71,17 +71,6 @@ enum
 	ML_BEHAVIOR		// ACS scripts
 };
 
-//	Lump order from "GL-Friendly Nodes" specs.
-enum
-{
-	ML_GL_LABEL,	// A separator name, GL_ExMx or GL_MAPxx
-	ML_GL_VERT,		// Extra Vertices
-	ML_GL_SEGS,		// Segs, from linedefs & minisegs
-	ML_GL_SSECT,	// SubSectors, list of segs
-	ML_GL_NODES,	// GL BSP nodes
-	ML_GL_PVS		// Potentially visible set
-};
-
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -177,7 +166,151 @@ static const nodebuildfuncs_t build_funcs =
 	GLBSP_DisplayClose
 };
 
-static glbsp_node_t *root_node;
+//==========================================================================
+//
+//	CopyGLVerts
+//
+//==========================================================================
+
+static void CopyGLVerts(VLevel* Level, vertex_t*& GLVertexes)
+{
+	guard(CopyGLVerts);
+	int NumBaseVerts = Level->NumVertexes;
+	vertex_t* OldVertexes = Level->Vertexes;
+	Level->NumVertexes = NumBaseVerts + num_gl_vert;
+	Level->Vertexes = new vertex_t[Level->NumVertexes];
+	GLVertexes = Level->Vertexes + NumBaseVerts;
+	memcpy(Level->Vertexes, OldVertexes, NumBaseVerts * sizeof(vertex_t));
+	vertex_t* pDst = GLVertexes;
+	for (int i = 0; i < num_vertices; i++)
+	{
+		glbsp_vertex_t* vert = LookupVertex(i);
+		if (!(vert->index & IS_GL_VERTEX))
+			continue;
+		*pDst = TVec(vert->x, vert->y, 0);
+		pDst++;
+	}
+
+	//	Update pointers to vertexes in lines.
+	for (int i = 0; i < Level->NumLines; i++)
+	{
+		line_t* ld = &Level->Lines[i];
+		ld->v1 = &Level->Vertexes[ld->v1 - OldVertexes];
+		ld->v2 = &Level->Vertexes[ld->v2 - OldVertexes];
+	}
+	delete[] OldVertexes;
+	unguard;
+}
+
+//==========================================================================
+//
+//	CopySegs
+//
+//==========================================================================
+
+static void CopySegs(VLevel* Level, vertex_t* GLVertexes)
+{
+	guard(CopySegs);
+	//	Build ordered list of source segs.
+	glbsp_seg_t** SrcSegs = new glbsp_seg_t*[num_complete_seg];
+	for (int i = 0; i < num_segs; i++)
+	{
+		glbsp_seg_t* Seg = LookupSeg(i);
+		// ignore degenerate segs
+		if (Seg->degenerate)
+			continue;
+		SrcSegs[Seg->index] = Seg;
+	}
+
+	Level->NumSegs = num_complete_seg;
+	Level->Segs = new seg_t[Level->NumSegs];
+	memset(Level->Segs, 0, sizeof(seg_t) * Level->NumSegs);
+	seg_t* li = Level->Segs;
+	for (int i = 0; i < Level->NumSegs; i++, li++)
+	{
+		glbsp_seg_t* SrcSeg = SrcSegs[i];
+
+		if (SrcSeg->start->index & IS_GL_VERTEX)
+		{
+			li->v1 = &GLVertexes[SrcSeg->start->index & ~IS_GL_VERTEX];
+		}
+		else
+		{
+			li->v1 = &Level->Vertexes[SrcSeg->start->index];
+		}
+		if (SrcSeg->end->index & IS_GL_VERTEX)
+		{
+			li->v2 = &GLVertexes[SrcSeg->end->index & ~IS_GL_VERTEX];
+		}
+		else
+		{
+			li->v2 = &Level->Vertexes[SrcSeg->end->index];
+		}
+
+		if (SrcSeg->linedef)
+		{
+			line_t* ldef = &Level->Lines[SrcSeg->linedef->index];
+			li->linedef = ldef;
+			li->sidedef = &Level->Sides[ldef->sidenum[SrcSeg->side]];
+			li->frontsector = Level->Sides[ldef->sidenum[SrcSeg->side]].sector;
+
+			if (ldef->flags & ML_TWOSIDED)
+				li->backsector = Level->Sides[ldef->sidenum[SrcSeg->side ^ 1]].sector;
+
+			if (SrcSeg->side)
+				li->offset = Length(*li->v1 - *ldef->v2);
+			else
+				li->offset = Length(*li->v1 - *ldef->v1);
+			li->length = Length(*li->v2 - *li->v1);
+			li->side = SrcSeg->side;
+		}
+
+		//	Calc seg's plane params
+		CalcSeg(li);
+	}
+
+	delete[] SrcSegs;
+	unguard;
+}
+
+//==========================================================================
+//
+//	CopySubsectors
+//
+//==========================================================================
+
+static void CopySubsectors(VLevel* Level)
+{
+	guard(CopySubsectors);
+	Level->NumSubsectors = num_subsecs;
+	Level->Subsectors = new subsector_t[Level->NumSubsectors];
+	memset(Level->Subsectors, 0, sizeof(subsector_t) * Level->NumSubsectors);
+	subsector_t* ss = Level->Subsectors;
+	for (int i = 0; i < Level->NumSubsectors; i++, ss++)
+	{
+		subsec_t* SrcSub = LookupSubsec(i);
+		ss->numlines = SrcSub->seg_count;
+		ss->firstline = SrcSub->seg_list->index;
+
+		//	Look up sector number for each subsector
+		seg_t* seg = &Level->Segs[ss->firstline];
+		for (int j = 0; j < ss->numlines; j++)
+		{
+			if (seg[j].linedef)
+			{
+				ss->sector = seg[j].sidedef->sector;
+				ss->seclink = ss->sector->subsectors;
+				ss->sector->subsectors = ss;
+				break;
+			}
+		}
+		if (!ss->sector)
+		{
+			Host_Error("Subsector %d without sector", i);
+		}
+	}
+	unguard;
+}
 
 //==========================================================================
 //
@@ -240,40 +373,68 @@ static void CopyNode(int& NodeIndex, glbsp_node_t* SrcNode, node_t* Nodes)
 
 //==========================================================================
 //
+//	CopyNodes
+//
+//==========================================================================
+
+static void CopyNodes(VLevel* Level, glbsp_node_t* root_node)
+{
+	guard(CopyNodes);
+	//	Copy nodes.
+	Level->NumNodes = num_nodes;
+	Level->Nodes = new node_t[Level->NumNodes];
+	memset(Level->Nodes, 0, sizeof(node_t) * Level->NumNodes);
+	if (root_node)
+	{
+		int NodeIndex = 0;
+		CopyNode(NodeIndex, root_node, Level->Nodes);
+	}
+	unguard;
+}
+
+//==========================================================================
+//
 //	HandleLevel
 //
 //==========================================================================
 
-static glbsp_ret_e HandleLevel()
+static glbsp_ret_e HandleLevel(VLevel* Level)
 {
-  superblock_t *seg_list;
-  glbsp_node_t *root_stale_node;
-  subsec_t *root_sub;
+	cur_comms->build_pos = 0;
 
-  glbsp_ret_e ret;
+	LoadLevel();
 
-  cur_comms->build_pos = 0;
+	InitBlockmap();
 
-  LoadLevel();
+	// create initial segs
+	superblock_t* seg_list = CreateSegs();
 
-  InitBlockmap();
+	glbsp_node_t* root_stale_node = (num_stale_nodes == 0) ? NULL : 
+		LookupStaleNode(num_stale_nodes - 1);
 
-  // create initial segs
-  seg_list = CreateSegs();
+	// recursively create nodes
+	glbsp_node_t* root_node;
+	subsec_t* root_sub;
+	glbsp_ret_e ret = BuildNodes(seg_list, &root_node, &root_sub, 0, root_stale_node);
+	FreeSuper(seg_list);
 
-  root_stale_node = (num_stale_nodes == 0) ? NULL : 
-      LookupStaleNode(num_stale_nodes - 1);
+	if (ret == GLBSP_E_OK)
+	{
+		ClockwiseBspTree(root_node);
 
-  // recursively create nodes
-  ret = BuildNodes(seg_list, &root_node, &root_sub, 0, root_stale_node);
-  FreeSuper(seg_list);
+		vertex_t* GLVertexes;
 
-  if (ret == GLBSP_E_OK)
-  {
-    ClockwiseBspTree(root_node);
-  }
+		CopyGLVerts(Level, GLVertexes);
+		CopySegs(Level, GLVertexes);
+		CopySubsectors(Level);
+		CopyNodes(Level, root_node);
+	}
 
-  return ret;
+	FreeLevel();
+	FreeQuickAllocCuts();
+	FreeQuickAllocSupers();
+
+	return ret;
 }
 
 //==========================================================================
@@ -282,7 +443,7 @@ static glbsp_ret_e HandleLevel()
 //
 //==========================================================================
 
-static glbsp_ret_e MyGlbspBuildNodes(const nodebuildinfo_t *info,
+static glbsp_ret_e MyGlbspBuildNodes(VLevel* Level, const nodebuildinfo_t *info,
     const nodebuildfuncs_t *funcs, volatile nodebuildcomms_t *comms)
 {
 	glbsp_ret_e ret = GLBSP_E_OK;
@@ -311,7 +472,7 @@ static glbsp_ret_e MyGlbspBuildNodes(const nodebuildinfo_t *info,
 	// loop over each level in the wad
 	FindNextLevel();
 
-	ret = HandleLevel();
+	ret = HandleLevel(Level);
 
 	// close wads and free memory
 	CloseWads();
@@ -384,139 +545,11 @@ void VLevel::BuildNodes(int Lump)
 	{
 		Sys_Error("???");
 	}
-	glbsp_ret_e ret = MyGlbspBuildNodes(&nb_info, &build_funcs, &nb_comms);
+	glbsp_ret_e ret = MyGlbspBuildNodes(this, &nb_info, &build_funcs, &nb_comms);
 	if (ret != GLBSP_E_OK)
 	{
 		Host_Error("Node build failed");
 	}
-
-	//	Copy new vertexes.
-	int NumBaseVerts = NumVertexes;
-	vertex_t* OldVertexes = Vertexes;
-	NumVertexes = NumBaseVerts + num_gl_vert;
-	Vertexes = new vertex_t[NumVertexes];
-	vertex_t* GLVertexes = Vertexes + NumBaseVerts;
-	memcpy(Vertexes, OldVertexes, NumBaseVerts * sizeof(vertex_t));
-	vertex_t* pDst = GLVertexes;
-	for (int i = 0; i < num_vertices; i++)
-	{
-		glbsp_vertex_t* vert = LookupVertex(i);
-		if (!(vert->index & IS_GL_VERTEX))
-			continue;
-		*pDst = TVec(vert->x, vert->y, 0);
-		pDst++;
-	}
-
-	//	Update pointers to vertexes in lines.
-	for (int i = 0; i < NumLines; i++)
-	{
-		line_t* ld = &Lines[i];
-		ld->v1 = &Vertexes[ld->v1 - OldVertexes];
-		ld->v2 = &Vertexes[ld->v2 - OldVertexes];
-	}
-	delete[] OldVertexes;
-
-	//	Build ordered list of source segs.
-	glbsp_seg_t** SrcSegs = new glbsp_seg_t*[num_complete_seg];
-	for (int i = 0; i < num_segs; i++)
-	{
-		glbsp_seg_t* Seg = LookupSeg(i);
-		// ignore degenerate segs
-		if (Seg->degenerate)
-			continue;
-		SrcSegs[Seg->index] = Seg;
-	}
-
-	//	Copy segs.
-	NumSegs = num_complete_seg;
-	Segs = new seg_t[NumSegs];
-	memset(Segs, 0, sizeof(seg_t) * NumSegs);
-	seg_t* li = Segs;
-	for (int i = 0; i < NumSegs; i++, li++)
-	{
-		glbsp_seg_t* SrcSeg = SrcSegs[i];
-
-		if (SrcSeg->start->index & IS_GL_VERTEX)
-		{
-			li->v1 = &GLVertexes[SrcSeg->start->index & ~IS_GL_VERTEX];
-		}
-		else
-		{
-			li->v1 = &Vertexes[SrcSeg->start->index];
-		}
-		if (SrcSeg->end->index & IS_GL_VERTEX)
-		{
-			li->v2 = &GLVertexes[SrcSeg->end->index & ~IS_GL_VERTEX];
-		}
-		else
-		{
-			li->v2 = &Vertexes[SrcSeg->end->index];
-		}
-
-		if (SrcSeg->linedef)
-		{
-			line_t* ldef = &Lines[SrcSeg->linedef->index];
-			li->linedef = ldef;
-			li->sidedef = &Sides[ldef->sidenum[SrcSeg->side]];
-			li->frontsector = Sides[ldef->sidenum[SrcSeg->side]].sector;
-
-			if (ldef->flags & ML_TWOSIDED)
-				li->backsector = Sides[ldef->sidenum[SrcSeg->side ^ 1]].sector;
-
-			if (SrcSeg->side)
-				li->offset = Length(*li->v1 - *ldef->v2);
-			else
-				li->offset = Length(*li->v1 - *ldef->v1);
-			li->length = Length(*li->v2 - *li->v1);
-			li->side = SrcSeg->side;
-		}
-
-		//	Calc seg's plane params
-		CalcSeg(li);
-	}
-
-	//	Copy subsectors
-	NumSubsectors = num_subsecs;
-	Subsectors = new subsector_t[NumSubsectors];
-	memset(Subsectors, 0, sizeof(subsector_t) * NumSubsectors);
-	subsector_t* ss = Subsectors;
-	for (int i = 0; i < NumSubsectors; i++, ss++)
-	{
-		subsec_t* SrcSub = LookupSubsec(i);
-		ss->numlines = SrcSub->seg_count;
-		ss->firstline = SrcSub->seg_list->index;
-
-		//	Look up sector number for each subsector
-		seg_t* seg = &Segs[ss->firstline];
-		for (int j = 0; j < ss->numlines; j++)
-		{
-			if (seg[j].linedef)
-			{
-				ss->sector = seg[j].sidedef->sector;
-				ss->seclink = ss->sector->subsectors;
-				ss->sector->subsectors = ss;
-				break;
-			}
-		}
-		if (!ss->sector)
-		{
-			Host_Error("Subsector %d without sector", i);
-		}
-	}
-
-	//	Copy nodes.
-	NumNodes = num_nodes;
-	Nodes = new node_t[NumNodes];
-	memset(Nodes, 0, sizeof(node_t) * NumNodes);
-	if (root_node)
-	{
-		int NodeIndex = 0;
-		CopyNode(NodeIndex, root_node, Nodes);
-	}
-
-	FreeLevel();
-	FreeQuickAllocCuts();
-	FreeQuickAllocSupers();
 
 	//	Create dummy VIS data.
 	VisData = NULL;
