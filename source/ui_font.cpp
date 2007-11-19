@@ -55,6 +55,23 @@ struct VColTransMap
 	int			Index;
 };
 
+//
+//	VSpecialFont
+//
+//	Like regular font, but initialised using explicit list of patches.
+//
+class VSpecialFont : public VFont
+{
+public:
+	VSpecialFont(VName, const TArray<int>&, const TArray<VName>&,
+		const bool*);
+};
+
+//
+//	VFontChar
+//
+//	Texture class for regular font characters.
+//
 class VFontChar : public VTexture
 {
 private:
@@ -68,18 +85,6 @@ public:
 	rgba_t* GetPalette();
 	void Unload();
 	VTexture* GetHighResolutionTexture();
-};
-
-//
-//	VSpecialFont
-//
-//	Like regular font, but initialised using explicit list of patches.
-//
-class VSpecialFont : public VFont
-{
-public:
-	VSpecialFont(VName, const TArray<int>&, const TArray<VName>&,
-		const bool*);
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -502,6 +507,19 @@ VFont* VFont::FindFont(VName AName)
 		}
 	}
 	return NULL;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VFont::GetFont
+//
+//==========================================================================
+
+VFont* VFont::GetFont(VName AName)
+{
+	guard(VFont::GetFont);
+	return FindFont(AName);
 	unguard;
 }
 
