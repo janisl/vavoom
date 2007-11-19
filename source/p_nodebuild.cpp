@@ -178,43 +178,130 @@ static const nodebuildfuncs_t build_funcs =
 
 //==========================================================================
 //
-//	MyLoadLevel
+//	SetUpVertices
 //
 //==========================================================================
 
-void MyLoadLevel(VLevel* Level)
+static void SetUpVertices(VLevel* Level)
 {
-	guard(MyLoadLevel);
-	lev_doing_normal = false;
-	lev_doing_hexen = !!(Level->LevelFlags & VLevel::LF_Extended);
-
-	GetVertices();
-	GetSectors();
-	GetSidedefs();
-
-	if (lev_doing_hexen)
+	guard(SetUpVertices);
+	vertex_t* pSrc = Level->Vertexes;
+	for (int i = 0; i < Level->NumVertexes; i++, pSrc++)
 	{
-		GetLinedefsHexen();
-		GetThingsHexen();
-	}
-	else
-	{
-		GetLinedefs();
-		GetThings();
+		glbsp_vertex_t* Vert = NewVertex();
+		Vert->x = pSrc->x;
+		Vert->y = pSrc->y;
+		Vert->index = i;
 	}
 
-	CalculateWallTips();
+	num_normal_vert = num_vertices;
+	num_gl_vert = 0;
+	num_complete_seg = 0;
+	unguard;
+}
 
-	if (lev_doing_hexen)
+//==========================================================================
+//
+//	SetUpSectors
+//
+//==========================================================================
+
+static void SetUpSectors(VLevel* Level)
+{
+	guard(SetUpSectors);
+	sector_t* pSrc = Level->Sectors;
+	for (int i = 0; i < Level->NumSectors; i++, pSrc++)
 	{
-		DetectPolyobjSectors();
+		glbsp_sector_t* Sector = NewSector();
+		Sector->coalesce = (pSrc->tag >= 900 && pSrc->tag < 1000) ?
+			TRUE : FALSE;
+		Sector->index = i;
+		Sector->warned_facing = -1;
 	}
+	unguard;
+}
 
-	DetectOverlappingLines();
+//==========================================================================
+//
+//	SetUpSidedefs
+//
+//==========================================================================
 
-	if (cur_info->window_fx)
+static void SetUpSidedefs(VLevel* Level)
+{
+	guard(SetUpSidedefs);
+	side_t* pSrc = Level->Sides;
+	for (int i = 0; i < Level->NumSides; i++, pSrc++)
 	{
-		DetectWindowEffects();
+		sidedef_t* Side = NewSidedef();
+		Side->sector = !pSrc->sector ? NULL :
+			LookupSector(pSrc->sector - Level->Sectors);
+		if (Side->sector)
+			Side->sector->ref_count++;
+		Side->index = i;
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	SetUpLinedefs
+//
+//==========================================================================
+
+static void SetUpLinedefs(VLevel* Level)
+{
+	guard(SetUpLinedefs);
+	line_t* pSrc = Level->Lines;
+	for (int i = 0; i < Level->NumLines; i++, pSrc++)
+	{
+		linedef_t* Line = NewLinedef();
+		Line->start = LookupVertex(pSrc->v1 - Level->Vertexes);
+		Line->end = LookupVertex(pSrc->v2 - Level->Vertexes);
+		Line->start->ref_count++;
+		Line->end->ref_count++;
+		Line->zero_len = (fabs(Line->start->x - Line->end->x) < DIST_EPSILON) &&
+			(fabs(Line->start->y - Line->end->y) < DIST_EPSILON);
+		Line->flags = pSrc->flags;
+		Line->type = pSrc->special;
+		Line->two_sided = (Line->flags & LINEFLAG_TWO_SIDED) ? TRUE : FALSE;
+		Line->right = pSrc->sidenum[0] < 0 ? NULL : LookupSidedef(pSrc->sidenum[0]);
+		Line->left = pSrc->sidenum[1] < 0 ? NULL : LookupSidedef(pSrc->sidenum[1]);
+		if (Line->right)
+		{
+			Line->right->ref_count++;
+			Line->right->on_special |= (Line->type > 0) ? 1 : 0;
+		}
+		if (Line->left)
+		{
+			Line->left->ref_count++;
+			Line->left->on_special |= (Line->type > 0) ? 1 : 0;
+		}
+		Line->self_ref = (Line->left && Line->right &&
+			(Line->left->sector == Line->right->sector));
+		Line->index = i;
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	SetUpThings
+//
+//==========================================================================
+
+static void SetUpThings(VLevel* Level)
+{
+	guard(SetUpThings);
+	mthing_t* pSrc = Level->Things;
+	for (int i = 0; i < Level->NumThings; i++, pSrc++)
+	{
+		thing_t* Thing = NewThing();
+		Thing->x = pSrc->x;
+		Thing->y = pSrc->y;
+		Thing->type = pSrc->type;
+		Thing->options = pSrc->options;
+		Thing->index = i;
 	}
 	unguard;
 }
@@ -441,6 +528,40 @@ static void CopyNodes(VLevel* Level, glbsp_node_t* root_node)
 	{
 		int NodeIndex = 0;
 		CopyNode(NodeIndex, root_node, Level->Nodes);
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	MyLoadLevel
+//
+//==========================================================================
+
+static void MyLoadLevel(VLevel* Level)
+{
+	guard(MyLoadLevel);
+	lev_doing_normal = false;
+	lev_doing_hexen = !!(Level->LevelFlags & VLevel::LF_Extended);
+
+	SetUpVertices(Level);
+	SetUpSectors(Level);
+	SetUpSidedefs(Level);
+	SetUpLinedefs(Level);
+	SetUpThings(Level);
+
+	CalculateWallTips();
+
+	if (lev_doing_hexen)
+	{
+		DetectPolyobjSectors();
+	}
+
+	DetectOverlappingLines();
+
+	if (cur_info->window_fx)
+	{
+		DetectWindowEffects();
 	}
 	unguard;
 }

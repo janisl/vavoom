@@ -224,10 +224,12 @@ void VLevel::LoadMap(VName AMapName)
 	if (!(LevelFlags & LF_Extended))
 	{
 		LoadLineDefs1(lumpnum + ML_LINEDEFS, NumBaseVerts);
+		LoadThings1(lumpnum + ML_THINGS);
 	}
 	else
 	{
 		LoadLineDefs2(lumpnum + ML_LINEDEFS, NumBaseVerts);
+		LoadThings2(lumpnum + ML_THINGS);
 	}
 
 	if (NeedNodesBuild)
@@ -248,14 +250,6 @@ void VLevel::LoadMap(VName AMapName)
 	LoadBlockMap(lumpnum + ML_BLOCKMAP);
 	LoadReject(lumpnum + ML_REJECT);
 
-	if (!(LevelFlags & LF_Extended))
-	{
-		LoadThings1(lumpnum + ML_THINGS);
-	}
-	else
-	{
-		LoadThings2(lumpnum + ML_THINGS);
-	}
 	//	ACS object code
 	if (LevelFlags & LF_Extended)
 	{
