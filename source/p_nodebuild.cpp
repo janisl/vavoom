@@ -620,36 +620,14 @@ static glbsp_ret_e HandleLevel(VLevel* Level)
 static glbsp_ret_e MyGlbspBuildNodes(VLevel* Level, const nodebuildinfo_t *info,
     const nodebuildfuncs_t *funcs, volatile nodebuildcomms_t *comms)
 {
-	glbsp_ret_e ret = GLBSP_E_OK;
-
 	cur_info  = info;
 	cur_funcs = funcs;
 	cur_comms = comms;
 
-	cur_comms->total_big_warn = 0;
-	cur_comms->total_small_warn = 0;
-
 	InitDebug();
 	InitEndian();
 
-	// opens and reads directory from the input wad
-	ret = ReadWadFile(cur_info->input_file);
-
-	if (ret != GLBSP_E_OK)
-	{
-		TermDebug();
-		return ret;
-	}
-
-	cur_comms->file_pos = 0;
-
-	// loop over each level in the wad
-	FindNextLevel();
-
-	ret = HandleLevel(Level);
-
-	// close wads and free memory
-	CloseWads();
+	glbsp_ret_e ret = HandleLevel(Level);
 
 	TermDebug();
 
@@ -669,49 +647,9 @@ static glbsp_ret_e MyGlbspBuildNodes(VLevel* Level, const nodebuildinfo_t *info,
 void VLevel::BuildNodes(int Lump)
 {
 	guard(VLevel::BuildNodes);
-	//	Write WAD file.
-	VStr FName = fl_savedir + "/temp.wad";
-	FILE* f = fopen(*FName, "wb");
-
-	wadinfo_t Hdr;
-	Hdr.identification[0] = 'P';
-	Hdr.identification[1] = 'W';
-	Hdr.identification[2] = 'A';
-	Hdr.identification[3] = 'D';
-	Hdr.numlumps = (LevelFlags & LF_Extended) ? ML_BEHAVIOR + 1 : ML_BEHAVIOR;
-	fwrite(&Hdr, 1, 12, f);
-
-	filelump_t Lumps[ML_BEHAVIOR + 1];
-	memset(Lumps, 0, sizeof(Lumps));
-	for (int i = 0; i < Hdr.numlumps; i++)
-	{
-		VName LName = W_LumpName(Lump + i);
-		for (int j = 0; j < 8 && (*LName)[j]; j++)
-		{
-			Lumps[i].name[j] = VStr::ToUpper((*LName)[j]);
-		}
-		Lumps[i].filepos = LittleLong(ftell(f));
-		VStream* Src = W_CreateLumpReaderNum(Lump + i);
-		Lumps[i].size = LittleLong(Src->TotalSize());
-		if (Src->TotalSize())
-		{
-			TArray<vuint8> Buf;
-			Buf.SetNum(Src->TotalSize());
-			Src->Serialise(&Buf[0], Src->TotalSize());
-			fwrite(&Buf[0], 1, Src->TotalSize(), f);
-		}
-	}
-	Hdr.infotableofs = LittleLong(ftell(f));
-	fwrite(Lumps, 1, 16 * Hdr.numlumps, f);
-	Hdr.numlumps = LittleLong(Hdr.numlumps);
-	fseek(f, 0, SEEK_SET);
-	fwrite(&Hdr, 1, 12, f);
-	fclose(f);
-
 	//	Call glBSP to build nodes.
 	nodebuildinfo_t nb_info = default_buildinfo;
 	nodebuildcomms_t nb_comms = default_buildcomms;
-	nb_info.input_file = *FName;
 	nb_info.quiet = FALSE;
 	nb_info.gwa_mode = TRUE;
 	glbsp_ret_e ret = MyGlbspBuildNodes(this, &nb_info, &build_funcs, &nb_comms);
