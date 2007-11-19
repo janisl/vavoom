@@ -60,6 +60,13 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 	{
 	case LIGHTEV_Fade:
 		Value1 = Arg2;	// destination lightlevel
+		if (!Arg3)
+		{
+			Sector->params.lightlevel = Arg2;
+			Sector->LightingData = none;
+			Destroy();
+			return;
+		}
 		Delta = itof((Arg2 - Sector->params.lightlevel) / Arg3) * 32.0;	// delta lightlevel
 		if (Sector->params.lightlevel <= Arg2)
 		{
