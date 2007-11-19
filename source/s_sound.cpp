@@ -1223,6 +1223,12 @@ void VAudio::PlaySong(const char* Song, bool Loop)
 	}
 	VStream* Strm = W_CreateLumpReaderNum(Lump);
 
+	if (Strm->TotalSize() < 4)
+	{
+		delete Strm;
+		return;
+	}
+
 	byte Hdr[4];
 	Strm->Serialise(Hdr, 4);
 	if (!memcmp(Hdr, MUSMAGIC, 4))
