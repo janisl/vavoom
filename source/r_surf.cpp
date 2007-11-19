@@ -1678,10 +1678,6 @@ void VRenderLevel::SegMoved(seg_t* seg)
 	{
 		Sys_Error("R_SegMoved: miniseg");
 	}
-	if (seg->backsector)
-	{
-		Sys_Error("R_SegMoved: two-sided");
-	}
 
 	VTexture* Tex = seg->drawsegs->mid->texinfo.Tex;
 	seg->drawsegs->mid->texinfo.saxis = (*seg->v2 - *seg->v1) / seg->length *
