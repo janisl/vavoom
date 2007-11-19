@@ -297,8 +297,8 @@ static void SetUpThings(VLevel* Level)
 	for (int i = 0; i < Level->NumThings; i++, pSrc++)
 	{
 		thing_t* Thing = NewThing();
-		Thing->x = pSrc->x;
-		Thing->y = pSrc->y;
+		Thing->x = (int)pSrc->x;
+		Thing->y = (int)pSrc->y;
 		Thing->type = pSrc->type;
 		Thing->options = pSrc->options;
 		Thing->index = i;
@@ -671,7 +671,6 @@ void VLevel::BuildNodes(int Lump)
 	guard(VLevel::BuildNodes);
 	//	Write WAD file.
 	VStr FName = fl_savedir + "/temp.wad";
-	VStr GwaName = fl_savedir + "/temp.gwa";
 	FILE* f = fopen(*FName, "wb");
 
 	wadinfo_t Hdr;
@@ -713,12 +712,8 @@ void VLevel::BuildNodes(int Lump)
 	nodebuildinfo_t nb_info = default_buildinfo;
 	nodebuildcomms_t nb_comms = default_buildcomms;
 	nb_info.input_file = *FName;
-	nb_info.output_file = *GwaName;
-	nb_info.quiet = false;
-	if (GLBSP_E_OK != GlbspCheckInfo(&nb_info, &nb_comms))
-	{
-		Sys_Error("???");
-	}
+	nb_info.quiet = FALSE;
+	nb_info.gwa_mode = TRUE;
 	glbsp_ret_e ret = MyGlbspBuildNodes(this, &nb_info, &build_funcs, &nb_comms);
 	if (ret != GLBSP_E_OK)
 	{
