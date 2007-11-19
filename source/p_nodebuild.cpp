@@ -43,10 +43,20 @@ extern "C" {
 #include "../utils/glbsp/blockmap.h"
 #include "../utils/glbsp/node.h"
 #include "../utils/glbsp/seg.h"
+#include "../utils/glbsp/analyze.h"
 #undef vertex_t
 #undef sector_t
 #undef seg_t
 #undef node_t
+extern boolean_g lev_doing_normal;
+extern boolean_g lev_doing_hexen;
+void GetVertices();
+void GetSectors();
+void GetThings();
+void GetThingsHexen();
+void GetSidedefs();
+void GetLinedefs();
+void GetLinedefsHexen();
 };
 
 // MACROS ------------------------------------------------------------------
@@ -165,6 +175,49 @@ static const nodebuildfuncs_t build_funcs =
 	GLBSP_DisplaySetBarText,
 	GLBSP_DisplayClose
 };
+
+//==========================================================================
+//
+//	MyLoadLevel
+//
+//==========================================================================
+
+void MyLoadLevel(VLevel* Level)
+{
+	guard(MyLoadLevel);
+	lev_doing_normal = false;
+	lev_doing_hexen = !!(Level->LevelFlags & VLevel::LF_Extended);
+
+	GetVertices();
+	GetSectors();
+	GetSidedefs();
+
+	if (lev_doing_hexen)
+	{
+		GetLinedefsHexen();
+		GetThingsHexen();
+	}
+	else
+	{
+		GetLinedefs();
+		GetThings();
+	}
+
+	CalculateWallTips();
+
+	if (lev_doing_hexen)
+	{
+		DetectPolyobjSectors();
+	}
+
+	DetectOverlappingLines();
+
+	if (cur_info->window_fx)
+	{
+		DetectWindowEffects();
+	}
+	unguard;
+}
 
 //==========================================================================
 //
@@ -402,7 +455,7 @@ static glbsp_ret_e HandleLevel(VLevel* Level)
 {
 	cur_comms->build_pos = 0;
 
-	LoadLevel();
+	MyLoadLevel(Level);
 
 	InitBlockmap();
 
@@ -540,7 +593,7 @@ void VLevel::BuildNodes(int Lump)
 	nodebuildcomms_t nb_comms = default_buildcomms;
 	nb_info.input_file = *FName;
 	nb_info.output_file = *GwaName;
-	nb_info.quiet = true;
+	nb_info.quiet = false;
 	if (GLBSP_E_OK != GlbspCheckInfo(&nb_info, &nb_comms))
 	{
 		Sys_Error("???");
