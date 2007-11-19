@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ClientGame : ClientGameBase;
+class ClientGame : ClientGameShared;
 
 enum
 {

@@ -28,5 +28,6 @@
 //**************************************************************************
 
 import svprogs;
+import uibase;
 
 #include "cgame/classes.vc"

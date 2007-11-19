@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class StatusBarScreen : Widget;
+class StatusBarScreen : StatusBarShared;
 
 //
 //  Location of statistics, justified according to widget type.
@@ -100,7 +100,6 @@ const int
 	ST_TDAMMOX		= 620,
 	ST_TDAMMOY		= 460;
 
-ClientGame ClGame;
 Player cl;
 
 //
@@ -133,6 +132,8 @@ int pic_armor2;
 void StartMap()
 {
 	int i;
+
+	::StartMap();
 
 	pic_bar = R_RegisterPic('stbar');
 	pic_arms = R_RegisterPic('starms');

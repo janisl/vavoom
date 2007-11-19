@@ -23,12 +23,10 @@
 //**
 //**************************************************************************
 
-class StatusBarScreen : Widget;
+class StatusBarScreen : StatusBarShared;
 
 const int BAR_X = 160;
 const int BAR_Y = 438;
-
-ClientGameBase ClGame;
 
 Player cl;
 
@@ -81,6 +79,8 @@ void StartMap()
 {
 	int i;
 	picinfo_t info;
+
+	::StartMap();
 
 	pic_barback = R_RegisterPic('barback');
 	pic_god1 = R_RegisterPic('god1');

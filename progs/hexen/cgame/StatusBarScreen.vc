@@ -23,12 +23,10 @@
 //**
 //**************************************************************************
 
-class StatusBarScreen : Widget;
+class StatusBarScreen : StatusBarShared;
 
 const int BAR_X = 160;
 const int BAR_Y = 441;
-
-ClientGameBase ClGame;
 
 Player cl;
 
@@ -94,6 +92,8 @@ void StartMap()
 {
 	int i;
 	picinfo_t info;
+
+	::StartMap();
 
 	sb_pclass = GetCvar('class');
 	sb_colour = GetCvar('colour');

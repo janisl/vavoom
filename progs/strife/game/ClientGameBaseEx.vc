@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ClientGameBaseEx : ClientGameBase
+class ClientGameBaseEx : ClientGameShared
 	abstract;
 
 //==========================================================================

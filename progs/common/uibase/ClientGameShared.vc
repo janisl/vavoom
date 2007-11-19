@@ -22,12 +22,9 @@
 //**  GNU General Public License for more details.
 //**
 //**************************************************************************
-//**
-//**    Strife progs
-//**
-//**************************************************************************
 
-import linespec;
-import uibase;
+class ClientGameShared : ClientGameBase;
 
-#include "game/classes.vc"
+defaultproperties
+{
+}

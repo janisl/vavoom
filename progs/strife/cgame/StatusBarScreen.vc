@@ -23,12 +23,11 @@
 //**
 //**************************************************************************
 
-class StatusBarScreen : Widget;
+class StatusBarScreen : StatusBarShared;
 
 const int BAR_X = 160;
 const int BAR_Y = 280;
 
-ClientGameBase ClGame;
 Player cl;
 
 bool bShowWeapons;
@@ -74,6 +73,8 @@ class<StrifeKey> KeyCID[30];
 void StartMap()
 {
 	int i;
+
+	::StartMap();
 
 	pic_invback = R_RegisterPic('invback');
 	pic_invtop = R_RegisterPic('invtop');

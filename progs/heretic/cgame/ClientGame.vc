@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ClientGame : ClientGameBase;
+class ClientGame : ClientGameShared;
 
 const int MAX_MENU_STACK	= 32;
 
