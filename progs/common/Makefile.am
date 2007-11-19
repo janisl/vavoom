@@ -1,7 +1,7 @@
 VCC=../../utils/bin/vcc$(EXEEXT)
 OUTDIR=../../basev/common/progs
 
-noinst_DATA = $(OUTDIR)/engine.dat $(OUTDIR)/linespec.dat
+noinst_DATA = $(OUTDIR)/engine.dat $(OUTDIR)/linespec.dat $(OUTDIR)/uibase.dat
 
 $(OUTDIR)/engine.dat: $(VCC) $(srcdir)/engine/*.vc
 	@mkdir -p $(OUTDIR)
@@ -9,6 +9,9 @@ $(OUTDIR)/engine.dat: $(VCC) $(srcdir)/engine/*.vc
 
 $(OUTDIR)/linespec.dat: $(VCC) $(OUTDIR)/engine.dat $(srcdir)/linespec/*.vc
 	$(VCC) -P$(OUTDIR) $(srcdir)/linespec/classes.vc $@
+
+$(OUTDIR)/uibase.dat: $(VCC) $(OUTDIR)/engine.dat $(srcdir)/uibase/*.vc
+	$(VCC) -P$(OUTDIR) $(srcdir)/uibase/classes.vc $@
 
 EXTRA_DIST = \
 	engine/classes.vc \
@@ -97,8 +100,10 @@ EXTRA_DIST = \
 	linespec/TeleportDest3.vc \
 	linespec/TextureChangeDoor.vc \
 	linespec/VerticalDoor.vc \
-	linespec/Weapon.vc
+	linespec/Weapon.vc \
+	uibase/classes.vc
 
 MOSTLYCLEANFILES = \
 	$(OUTDIR)/engine.dat $(OUTDIR)/engine.txt \
-	$(OUTDIR)/linespec.dat $(OUTDIR)/linespec.txt
+	$(OUTDIR)/linespec.dat $(OUTDIR)/linespec.txt \
+	$(OUTDIR)/uibase.dat $(OUTDIR)/uibase.txt

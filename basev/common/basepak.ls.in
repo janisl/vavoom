@@ -7,6 +7,7 @@ startup.vs				@srcdir@/startup.vs
 //	Common progs
 progs/engine.dat		progs/engine.dat
 progs/linespec.dat		progs/linespec.dat
+progs/uibase.dat		progs/uibase.dat
 
 //	Graphics
 graphics/mc_arrow.png	@srcdir@/graphics/mc_arrow.png

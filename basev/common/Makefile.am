@@ -18,7 +18,7 @@ EXTRA_DIST = \
 VLUMPY = ../../utils/bin/vlumpy$(EXEEXT)
 
 basepak.pk3: basepak.ls $(EXTRA_DIST) $(VLUMPY) \
-		progs/engine.dat progs/linespec.dat
+		progs/engine.dat progs/linespec.dat progs/uibase.dat
 	$(VLUMPY) $<
 
 MOSTLYCLEANFILES = basepak.pk3
