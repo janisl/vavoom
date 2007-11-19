@@ -36,9 +36,6 @@ extern "C" {
 #define sector_t		glbsp_sector_t
 #define seg_t			glbsp_seg_t
 #define node_t			glbsp_node_t
-#include "../utils/glbsp/system.h"
-#include "../utils/glbsp/wad.h"
-#include "../utils/glbsp/util.h"
 #include "../utils/glbsp/level.h"
 #include "../utils/glbsp/blockmap.h"
 #include "../utils/glbsp/node.h"
@@ -50,13 +47,6 @@ extern "C" {
 #undef node_t
 extern boolean_g lev_doing_normal;
 extern boolean_g lev_doing_hexen;
-void GetVertices();
-void GetSectors();
-void GetThings();
-void GetThingsHexen();
-void GetSidedefs();
-void GetLinedefs();
-void GetLinedefsHexen();
 };
 
 // MACROS ------------------------------------------------------------------
@@ -534,125 +524,75 @@ static void CopyNodes(VLevel* Level, glbsp_node_t* root_node)
 
 //==========================================================================
 //
-//	MyLoadLevel
+//	VLevel::BuildNodes
 //
 //==========================================================================
 
-static void MyLoadLevel(VLevel* Level)
+void VLevel::BuildNodes()
 {
-	guard(MyLoadLevel);
+	guard(VLevel::BuildNodes);
+	//	Set up glBSP build globals.
+	nodebuildinfo_t nb_info = default_buildinfo;
+	nodebuildcomms_t nb_comms = default_buildcomms;
+	nb_info.quiet = false;
+	nb_info.gwa_mode = true;
+
+	cur_info  = &nb_info;
+	cur_funcs = &build_funcs;
+	cur_comms = &nb_comms;
+
 	lev_doing_normal = false;
-	lev_doing_hexen = !!(Level->LevelFlags & VLevel::LF_Extended);
+	lev_doing_hexen = !!(LevelFlags & LF_Extended);
 
-	SetUpVertices(Level);
-	SetUpSectors(Level);
-	SetUpSidedefs(Level);
-	SetUpLinedefs(Level);
-	SetUpThings(Level);
+	//	Set up map data from loaded data.
+	SetUpVertices(this);
+	SetUpSectors(this);
+	SetUpSidedefs(this);
+	SetUpLinedefs(this);
+	SetUpThings(this);
 
+	//	Other data initialisation.
 	CalculateWallTips();
-
 	if (lev_doing_hexen)
 	{
 		DetectPolyobjSectors();
 	}
-
 	DetectOverlappingLines();
-
 	if (cur_info->window_fx)
 	{
 		DetectWindowEffects();
 	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	HandleLevel
-//
-//==========================================================================
-
-static glbsp_ret_e HandleLevel(VLevel* Level)
-{
-	cur_comms->build_pos = 0;
-
-	MyLoadLevel(Level);
-
 	InitBlockmap();
 
-	// create initial segs
-	superblock_t* seg_list = CreateSegs();
-
-	glbsp_node_t* root_stale_node = (num_stale_nodes == 0) ? NULL : 
-		LookupStaleNode(num_stale_nodes - 1);
-
-	// recursively create nodes
+	//	Build nodes.
+	superblock_t* SegList = CreateSegs();
 	glbsp_node_t* root_node;
 	subsec_t* root_sub;
-	glbsp_ret_e ret = BuildNodes(seg_list, &root_node, &root_sub, 0, root_stale_node);
-	FreeSuper(seg_list);
+	glbsp_ret_e ret = ::BuildNodes(SegList, &root_node, &root_sub, 0, NULL);
+	FreeSuper(SegList);
 
 	if (ret == GLBSP_E_OK)
 	{
 		ClockwiseBspTree(root_node);
 
+		//	Copy nodes into internal structures.
 		vertex_t* GLVertexes;
 
-		CopyGLVerts(Level, GLVertexes);
-		CopySegs(Level, GLVertexes);
-		CopySubsectors(Level);
-		CopyNodes(Level, root_node);
+		CopyGLVerts(this, GLVertexes);
+		CopySegs(this, GLVertexes);
+		CopySubsectors(this);
+		CopyNodes(this, root_node);
 	}
 
+	//	Free any memory used by glBSP.
 	FreeLevel();
 	FreeQuickAllocCuts();
 	FreeQuickAllocSupers();
-
-	return ret;
-}
-
-//==========================================================================
-//
-//	MyGlbspBuildNodes
-//
-//==========================================================================
-
-static glbsp_ret_e MyGlbspBuildNodes(VLevel* Level, const nodebuildinfo_t *info,
-    const nodebuildfuncs_t *funcs, volatile nodebuildcomms_t *comms)
-{
-	cur_info  = info;
-	cur_funcs = funcs;
-	cur_comms = comms;
-
-	InitDebug();
-	InitEndian();
-
-	glbsp_ret_e ret = HandleLevel(Level);
-
-	TermDebug();
 
 	cur_info  = NULL;
 	cur_comms = NULL;
 	cur_funcs = NULL;
 
-	return ret;
-}
-
-//==========================================================================
-//
-//	VLevel::BuildNodes
-//
-//==========================================================================
-
-void VLevel::BuildNodes(int Lump)
-{
-	guard(VLevel::BuildNodes);
-	//	Call glBSP to build nodes.
-	nodebuildinfo_t nb_info = default_buildinfo;
-	nodebuildcomms_t nb_comms = default_buildcomms;
-	nb_info.quiet = FALSE;
-	nb_info.gwa_mode = TRUE;
-	glbsp_ret_e ret = MyGlbspBuildNodes(this, &nb_info, &build_funcs, &nb_comms);
 	if (ret != GLBSP_E_OK)
 	{
 		Host_Error("Node build failed");

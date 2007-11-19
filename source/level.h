@@ -718,7 +718,7 @@ private:
 	void SetupLineSides(line_t*) const;
 	void CreateRepBase();
 	void CreateBlockMap();
-	void BuildNodes(int);
+	void BuildNodes();
 
 	//	Post-loading routines.
 	void GroupLines() const;

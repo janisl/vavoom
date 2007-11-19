@@ -107,7 +107,7 @@ enum
 
 static VCvarI strict_level_errors("strict_level_errors", "1");
 static VCvarI build_blockmap("build_blockmap", "0", CVAR_Archive);
-static VCvarI build_gwa("build_gwa", "1");
+static VCvarI build_gwa("build_gwa", "0", CVAR_Archive);
 
 // CODE --------------------------------------------------------------------
 
@@ -234,7 +234,7 @@ void VLevel::LoadMap(VName AMapName)
 
 	if (NeedNodesBuild)
 	{
-		BuildNodes(lumpnum);
+		BuildNodes();
 	}
 	else if (UseComprGLNodes)
 	{
