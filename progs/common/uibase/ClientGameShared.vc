@@ -48,6 +48,7 @@ final MenuScreen SpawnMenu(class<MenuScreen> CID)
 
 	m = MenuScreen(GRoot.NewChild(CID));
 	m.ClGame = self;
+	m.CreateMenu();
 	return m;
 }
 
