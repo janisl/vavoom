@@ -25,32 +25,12 @@
 
 class ClientGame : ClientGameShared;
 
-enum
-{
-	MB_None,
-	MB_Shareware,
-	MB_Control,
-	MB_Quit
-};
-
 TitleScreen			GTitle;
 StatusBarScreen		GSBar;
 IntermissionScreen	GImission;
 FinaleScreen		GFinale;
 
 MenuControlKey CurrentCtl;
-
-//
-//  MESSAGE BOX
-//
-bool messageToPrint;
-int msgBoxX;
-int msgBoxY;
-int msgBoxW;
-int msgBoxH;
-string messageString;	// ...and here is the message string!
-bool messageNeedsInput;	// timed message = no input from user
-int messageType;
 
 int pic_bordt;
 int pic_bordb;
@@ -357,105 +337,6 @@ void SetMenu(string Name)
 
 //==========================================================================
 //
-//  MessageBoxStartMessage
-//
-//==========================================================================
-
-void MessageBoxStartMessage(string text, int type, bool input)
-{
-	messageToPrint = true;
-	messageString = text;
-	messageType = type;
-	messageNeedsInput = input;
-
-	GRoot.SetFont('smallfont');
-	msgBoxW = (GRoot.TextWidth(messageString) + 16) & ~15;
-	msgBoxH = (GRoot.TextHeight(messageString) + 16) & ~15;
-	if (msgBoxW > 304)
-		msgBoxW = 304;
-	if (msgBoxH > 184)
-		msgBoxH = 184;
-	msgBoxX = (640 - msgBoxW) / 2;
-	msgBoxY = (480 - msgBoxH) / 2;
-
-	CmdBuf_AddText("HideConsole\n");
-}
-
-//==========================================================================
-//
-//  MessageBoxDrawer
-//
-//==========================================================================
-
-void MessageBoxDrawer()
-{
-	// Horiz. & Vertically centre string and print it.
-	if (messageToPrint)
-	{
-		GRoot.FillRectWithFlat(msgBoxX, msgBoxY, msgBoxW, msgBoxH, 'floor04');
-		DrawBorder(msgBoxX, msgBoxY, msgBoxW, msgBoxH);
-		GRoot.SetFont('smallfont');
-		GRoot.SetTextAlign(hcentre, vcentre);
-		GRoot.DrawText(320, 240, messageString);
-	}
-}
-
-//==========================================================================
-//
-//  MessageBoxResponder
-//
-//==========================================================================
-
-bool MessageBoxResponder(event_t * event)
-{
-	// Take care of any messages that need input
-	if (messageToPrint && event->type == ev_keydown)
-	{
-		if (messageNeedsInput &&
-			event->data1 != K_SPACE &&
-			event->data1 != K_n &&
-			event->data1 != K_y &&
-			event->data1 != K_ESCAPE &&
-			event->data1 != K_MOUSE1 && event->data1 != K_MOUSE2)
-		{
-			return true;
-		}
-
-		messageToPrint = false;
-		switch (messageType)
-		{
-		case MB_None:
-			break;
-		case MB_Shareware:
-			SharewareResponse(event->data1);
-			break;
-		case MB_Control:
-			ControlResponse(event->data1);
-			break;
-		case MB_Quit:
-			QuitResponse(event->data1);
-			break;
-		}
-
-//      S_StartSound(sfx1_swtchx);
-		return true;
-	}
-	return false;
-}
-
-//==========================================================================
-//
-//  MessageBoxActive
-//
-//==========================================================================
-
-bool MessageBoxActive()
-{
-	return messageToPrint;
-}
-
-//==========================================================================
-//
 //  menu_quit
 //
 //==========================================================================
@@ -609,4 +490,5 @@ void DrawViewBorder(int x, int y, int w, int h)
 defaultproperties
 {
 	sb_height = 42;
+	MsgBoxFlat = 'floor04';
 }

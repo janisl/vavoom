@@ -25,6 +25,16 @@
 
 class ClientGameShared : ClientGameBase;
 
+enum
+{
+	MB_None,
+	MB_Quit,
+	MB_Control,
+	MB_Shareware,
+	MB_Nightmare,
+	MB_EndGame
+};
+
 const int MAX_MENU_STACK	= 32;
 
 MenuScreen				menu_stack[MAX_MENU_STACK];
@@ -35,6 +45,22 @@ MenuScreen				CurrentMenuScreen;
 int						ControlColumn;	// menu column for controls
 
 name					MenuStartMap;
+
+//
+//  MESSAGE BOX
+//
+bool					messageToPrint;
+int						msgBoxX;
+int						msgBoxY;
+int						msgBoxW;
+int						msgBoxH;
+string					messageString;		// ...and here is the message string!
+bool					messageNeedsInput;	// timed message = no input from user
+int						messageType;
+name					MsgBoxFlat;
+
+name					QuitSound;
+bool					WaitForQuit;
 
 //==========================================================================
 //
@@ -159,6 +185,151 @@ final void ForceMenuOff()
 	GRoot.SetMouse(false);
 }
 
+//==========================================================================
+//
+//  MessageBoxStartMessage
+//
+//==========================================================================
+
+final void MessageBoxStartMessage(string text, int type, bool input)
+{
+	messageToPrint = true;
+	messageString = text;
+	messageType = type;
+	messageNeedsInput = input;
+
+	GRoot.SetFont('smallfont');
+	msgBoxW = (GRoot.TextWidth(messageString) + 16) & ~15;
+	msgBoxH = (GRoot.TextHeight(messageString) + 16) & ~15;
+	if (msgBoxW > 304)
+		msgBoxW = 304;
+	if (msgBoxH > 184)
+		msgBoxH = 184;
+	msgBoxX = (640 - msgBoxW) / 2;
+	msgBoxY = (480 - msgBoxH) / 2;
+
+	CmdBuf_AddText("HideConsole\n");
+}
+
+//==========================================================================
+//
+//  MessageBoxDrawer
+//
+//==========================================================================
+
+final void MessageBoxDrawer()
+{
+	// Horiz. & Vertically centre string and print it.
+	if (messageToPrint)
+	{
+		GRoot.FillRectWithFlat(msgBoxX, msgBoxY, msgBoxW, msgBoxH, MsgBoxFlat);
+		DrawBorder(msgBoxX, msgBoxY, msgBoxW, msgBoxH);
+		GRoot.SetFont('smallfont');
+		GRoot.SetTextAlign(hcentre, vcentre);
+		GRoot.DrawText(320, 240, messageString);
+	}
+
+	if (WaitForQuit && !IsLocalSoundPlaying(QuitSound))
+	{
+		CmdBuf_AddText("Quit\n");
+	}
+}
+
+//==========================================================================
+//
+//  MessageBoxResponder
+//
+//==========================================================================
+
+final bool MessageBoxResponder(event_t * event)
+{
+	if (WaitForQuit)
+	{
+		return true;
+	}
+
+	// Take care of any messages that need input
+	if (messageToPrint && event->type == ev_keydown)
+	{
+		if (messageNeedsInput &&
+			event->data1 != K_SPACE &&
+			event->data1 != K_n &&
+			event->data1 != K_y &&
+			event->data1 != K_ESCAPE &&
+			event->data1 != K_MOUSE1 && event->data1 != K_MOUSE2)
+		{
+			return true;
+		}
+
+		messageToPrint = false;
+		switch (messageType)
+		{
+		case MB_None:
+			break;
+		case MB_Quit:
+			QuitResponse(event->data1);
+			break;
+		case MB_Control:
+			ControlResponse(event->data1);
+			break;
+		case MB_Shareware:
+			SharewareResponse(event->data1);
+			break;
+		case MB_Nightmare:
+			VerifyNightmare(event->data1);
+			break;
+		case MB_EndGame:
+			EndGameResponse(event->data1);
+			break;
+		}
+
+//      S_StartSound(sfx1_swtchx);
+		return true;
+	}
+	return false;
+}
+
+//==========================================================================
+//
+//  MessageBoxActive
+//
+//==========================================================================
+
+final bool MessageBoxActive()
+{
+	return messageToPrint;
+}
+
+//==========================================================================
+//
+//  VerifyNightmare
+//
+//  Realy mightmare skill?
+//
+//==========================================================================
+
+final void VerifyNightmare(int ch)
+{
+	if (ch != K_y)
+		return;
+
+	NewGame(sk_nightmare);
+}
+
+//==========================================================================
+//
+//  EndGameResponse
+//
+//==========================================================================
+
+final void EndGameResponse(int ch)
+{
+	if (ch != K_y)
+		return;
+
+	CmdBuf_AddText("Disconnect\n");
+}
+
 void menu_quit()
 {
 }
@@ -167,11 +338,19 @@ void NewGame(int skill)
 {
 }
 
-void MessageBoxStartMessage(string text, int type, bool input)
+void DrawBorder(int x, int y, int w, int h)
 {
 }
 
-void DrawBorder(int x, int y, int w, int h)
+void QuitResponse(int key)
+{
+}
+
+void ControlResponse(int key)
+{
+}
+
+void SharewareResponse(int key)
 {
 }
 
