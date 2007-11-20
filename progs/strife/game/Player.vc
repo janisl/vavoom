@@ -1270,12 +1270,42 @@ void Cheat_Gimme()
 
 	// Quest items.
 	for (i = 0; i < 31; i++)
+	{
 		if (Cmd_CheckParm(va("Quest%d", i + 1)))
 		{
 			EntityEx(MO).GiveInventoryType(class<Inventory>(FindClass(
 				StrToName(va("QuestItem%d", i)))));
 			cprint("YOU GOT IT");
 		}
+	}
+
+	// Gold
+	if (Cmd_CheckParm("Gold"))
+	{
+		foreach AllClasses(Coin, Cls)
+		{
+			//	Only direct descendants.
+			if (GetClassParent(Cls) != Coin)
+			{
+				continue;
+			}
+			Inventory GoldItem = EntityEx(MO).FindInventory(Cls);
+			if (!GoldItem)
+			{
+				GoldItem = Level.Spawn(Cls);
+				if (!GoldItem.TryPickup(EntityEx(MO)))
+				{
+					GoldItem.Destroy();
+					GoldItem = none;
+				}
+			}
+			if (GoldItem)
+			{
+				GoldItem.Amount = GoldItem.MaxAmount;
+			}
+		}
+		cprint("GOT GOLD");
+	}
 }
 
 //==========================================================================
