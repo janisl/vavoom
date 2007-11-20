@@ -627,7 +627,7 @@ void C_NotifyMessage(const char* AStr)
 //
 //==========================================================================
 
-void C_DrawNotify()
+void C_DrawNotify(int col)
 {
 	T_SetFont(SmallFont);
 	T_SetAlign(hleft, vtop);
@@ -644,7 +644,7 @@ void C_DrawNotify()
 		}
 		else
 		{
-			int lp = T_DrawTextW(4, y, notify_lines[(i + first_notify) % NUM_NOTIFY_LINES], 640);
+			int lp = T_DrawTextW(4, y, notify_lines[(i + first_notify) % NUM_NOTIFY_LINES], 640, col);
 			y += 9 * lp;
 			i++;
 		}
@@ -690,13 +690,13 @@ void C_CentreMessage(const char* AMsg)
 //
 //==========================================================================
 
-void C_DrawCentreMessage()
+void C_DrawCentreMessage(int col)
 {
 	if (centre_time)
 	{
 		T_SetFont(SmallFont);
 		T_SetAlign(hcentre, vcentre);
-		T_DrawTextW(320, 360, centre_message, 600);
+		T_DrawTextW(320, 360, centre_message, 600, col);
 		centre_time -= host_frametime;
 		if (centre_time < 0.0)
 		{

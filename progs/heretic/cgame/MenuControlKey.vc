@@ -54,7 +54,7 @@ void OnDraw()
 	SetTextAlign(hleft, vtop);
 	if (key1 >= 0)
 	{
-		DrawText(160 + 10, 0, KeyNameForNum(key1), Col);
+		DrawText(160 + 10, 0, KeyNameForNum(key1), IsFocus() ? CR_YELLOW : CR_OLIVE);
 	}
 	else
 	{
@@ -62,7 +62,7 @@ void OnDraw()
 	}
 	if (key2 >= 0)
 	{
-		DrawText(160 + 100, 0, KeyNameForNum(key2), Col);
+		DrawText(160 + 100, 0, KeyNameForNum(key2), IsFocus() ? CR_YELLOW : CR_OLIVE);
 	}
 	else
 	{

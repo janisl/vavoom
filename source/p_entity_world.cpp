@@ -1169,14 +1169,26 @@ bool VEntity::TryMove(tmtrace_t& tmtrace, TVec newPos)
 			// is not blocked.
 			if (Origin.z + Height > tmtrace.CeilingZ)
 			{
-				Velocity.z = -8.0 * 35.0;
+				// Check to make sure there's nothing in the way for the step up
+				tztrace_t tztrace;
+				good = TestMobjZ(tztrace);
+				if(good)
+				{
+					Velocity.z = -8.0 * 35.0;
+				}
 				eventPushLine(&tmtrace);
 				return false;
 			}
 			else if (Origin.z < tmtrace.FloorZ
 				&& tmtrace.FloorZ - tmtrace.DropOffZ > MaxStepHeight)
 			{
-				Velocity.z = 8.0 * 35.0;
+				// Check to make sure there's nothing in the way for the step down
+				tztrace_t tztrace;
+				good = TestMobjZ(tztrace);
+				if(good)
+				{
+					Velocity.z = 8.0 * 35.0;
+				}
 				eventPushLine(&tmtrace);
 				return false;
 			}
@@ -1210,10 +1222,10 @@ bool VEntity::TryMove(tmtrace_t& tmtrace, TVec newPos)
 		if ((!(EntityFlags & EF_DropOff) && !(EntityFlags & EF_Float)) ||
 			(EntityFlags & EF_AvoidingDropoff))
 		{
+			float floorz = tmtrace.FloorZ;
+
 			if (!(EntityFlags & EF_AvoidingDropoff))
 			{
-				float floorz = tmtrace.FloorZ;
-
 				// [RH] If the thing is standing on something, use its current z as the floorz.
 				// This is so that it does not walk off of things onto a drop off.
 				if (EntityFlags & EF_OnMobj)
@@ -1232,7 +1244,7 @@ bool VEntity::TryMove(tmtrace_t& tmtrace, TVec newPos)
 			{
 				// special logic to move a monster off a dropoff
 				// this intentionally does not check for standing on things.
-				if (FloorZ - tmtrace.FloorZ > MaxDropoffHeight ||
+				if (floorz - tmtrace.FloorZ > MaxDropoffHeight ||
 					DropOffZ - tmtrace.DropOffZ > MaxDropoffHeight)
 					return false;
 			}

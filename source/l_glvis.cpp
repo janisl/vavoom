@@ -114,10 +114,10 @@ void TGLVisGUI::DisplayStartMap(const char *name)
 
 	T_SetFont(SmallFont);
 	T_SetAlign(hcentre, vcentre);
-	T_DrawText(320, 16, MESSAGE1);
-	T_DrawText(320, 48, MESSAGE2);
+	T_DrawText(320, 16, MESSAGE1, CR_GREEN);
+	T_DrawText(320, 48, MESSAGE2, CR_RED);
 	T_SetAlign(hleft, vtop);
-	T_DrawText(BARTEXTX, BARTEXTY, va("Creating vis data for %s", name));
+	T_DrawText(BARTEXTX, BARTEXTY, va("Creating vis data for %s", name), CR_UNTRANSLATED);
 
 	Drawer->FillRect(barx - barborderw, bary1 - barborderh,
 		barx + barw + barborderw, bary2 + barborderh, 0xffff0000);
@@ -126,7 +126,7 @@ void TGLVisGUI::DisplayStartMap(const char *name)
 	if (glvis_fast)
 	{
 		T_SetAlign(hcentre, vcentre);
-		T_DrawText(320, 320, "Using fast mode\nIt's highly recomended that you rebuild\nfull vis data using standalone utility.");
+		T_DrawText(320, 320, "Using fast mode\nIt's highly recomended that you rebuild\nfull vis data using the standalone utility.", CR_WHITE);
 	}
 
 	Drawer->Update();

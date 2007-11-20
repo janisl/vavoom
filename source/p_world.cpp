@@ -308,7 +308,8 @@ void VPathTraverse::Init(VThinker* Self, float InX1, float InY1, float x2,
 	float		xstep;
 	float		ystep;
 
-	float		partial;
+	float		partialx;
+	float		partialy;
 
 	float		xintercept;
 	float		yintercept;
@@ -350,48 +351,68 @@ void VPathTraverse::Init(VThinker* Self, float InX1, float InY1, float x2,
 	if (xt2 > xt1)
 	{
 		mapxstep = 1;
-		partial = 1.0 - FL((FX(x1) >> MAPBTOFRAC) & (FRACUNIT - 1));
-//		partial = 1.0 - (x1 / 120.0 - xt1);
+		partialx = 1.0 - FL((FX(x1) >> MAPBTOFRAC) & (FRACUNIT - 1));
+//		partialx = 1.0 - (x1 / 120.0 - xt1);
 		ystep = (y2 - y1) / fabs(x2 - x1);
 	}
 	else if (xt2 < xt1)
 	{
 		mapxstep = -1;
-		partial = FL((FX(x1) >> MAPBTOFRAC) & (FRACUNIT - 1));
-//		partial = x1 / MAPBLOCKSIZE - xt1;
+		partialx = FL((FX(x1) >> MAPBTOFRAC) & (FRACUNIT - 1));
+//		partialx = x1 / MAPBLOCKSIZE - xt1;
 		ystep = (y2 - y1) / fabs(x2 - x1);
 	}
 	else
 	{
 		mapxstep = 0;
-		partial = 1.0;
+		partialx = 1.0;
 		ystep = 256.0;
 	}
-	yintercept = FL(FX(y1) >> MAPBTOFRAC) + partial * ystep;
+	yintercept = FL(FX(y1) >> MAPBTOFRAC) + partialx * ystep;
 //	yintercept = y1 / MAPBLOCKSIZE + partial * ystep;
 
 	if (yt2 > yt1)
 	{
 		mapystep = 1;
-		partial = 1.0 - FL((FX(y1) >> MAPBTOFRAC) & (FRACUNIT - 1));
-//		partial = 1.0 - (y1 / MAPBLOCKSIZE - yt1);
+		partialy = 1.0 - FL((FX(y1) >> MAPBTOFRAC) & (FRACUNIT - 1));
+//		partialy = 1.0 - (y1 / MAPBLOCKSIZE - yt1);
 		xstep = (x2 - x1) / fabs(y2 - y1);
 	}
 	else if (yt2 < yt1)
 	{
 		mapystep = -1;
-		partial = FL((FX(y1) >> MAPBTOFRAC) & (FRACUNIT - 1));
-//		partial = y1 / MAPBLOCKSIZE - yt1;
+		partialy = FL((FX(y1) >> MAPBTOFRAC) & (FRACUNIT - 1));
+//		partialy = y1 / MAPBLOCKSIZE - yt1;
 		xstep = (x2 - x1) / fabs(y2 - y1);
 	}
 	else
 	{
 		mapystep = 0;
-		partial = 1.0;
+		partialy = 1.0;
 		xstep = 256.0;
 	}
-	xintercept = FL(FX(x1) >> MAPBTOFRAC) + partial * xstep;
-//	xintercept = x1 / MAPBLOCKSIZE + partial * xstep;
+	xintercept = FL(FX(x1) >> MAPBTOFRAC) + partialy * xstep;
+//	xintercept = x1 / MAPBLOCKSIZE + partialy * xstep;
+
+	// [RH] Fix for traces that pass only through blockmap corners. In that case,
+	// xintercept and yintercept can both be set ahead of mapx and mapy, so the
+	// for loop would never advance anywhere.
+	if (fabs(xstep) == 1.0 && fabs(ystep) == 1.0)
+	{
+		if (ystep < 0.0)
+		{
+			partialx = 1.0 - partialx;
+		}
+		if (xstep < 0.0)
+		{
+			partialy = 1.0 - partialy;
+		}
+		if (partialx == partialy)
+		{
+			xintercept = xt1;
+			yintercept = yt1;
+		}
+	}
 
 	// Step through map blocks.
 	// Count is present to prevent a round off error
@@ -399,7 +420,7 @@ void VPathTraverse::Init(VThinker* Self, float InX1, float InY1, float x2,
 	mapx = xt1;
 	mapy = yt1;
 
-	for (int count = 0 ; count < 64 ; count++)
+	for (int count = 0 ; count < 100 ; count++)
 	{
 		if (flags & PT_ADDLINES)
 		{
@@ -419,6 +440,7 @@ void VPathTraverse::Init(VThinker* Self, float InX1, float InY1, float x2,
 			break;
 		}
 
+		// [RH] Handle corner cases properly instead of pretending they don't exist.
 		if ((int)yintercept == mapy)
 		{
 			yintercept += ystep;
@@ -429,7 +451,34 @@ void VPathTraverse::Init(VThinker* Self, float InX1, float InY1, float x2,
 			xintercept += xstep;
 			mapy += mapystep;
 		}
-		
+		else if (((int)yintercept == mapy) && ((int)xintercept == mapx))
+		{
+			// The trace is exiting a block through its corner. Not only does the block
+			// being entered need to be checked (which will happen when this loop
+			// continues), but the other two blocks adjacent to the corner also need to
+			// be checked.
+			if (flags & PT_ADDLINES)
+			{
+				if (!AddLineIntercepts(Self, mapx + mapxstep, mapy, !!(flags & PT_EARLYOUT)) ||
+					!AddLineIntercepts(Self, mapx, mapy + mapystep, !!(flags & PT_EARLYOUT)))
+					return;	// early out
+			}
+			
+			if (flags & PT_ADDTHINGS)
+			{
+				AddThingIntercepts(Self, mapx + mapxstep, mapy);
+				AddThingIntercepts(Self, mapx, mapy + mapystep);
+			}
+
+			xintercept += xstep;
+			yintercept += ystep;
+			mapx += mapxstep;
+			mapy += mapystep;
+		}
+		else
+		{
+			count = 100;	// Stop traversing, because somebody screwed up.
+		}
 	}
 
 	Count = Intercepts.Num();

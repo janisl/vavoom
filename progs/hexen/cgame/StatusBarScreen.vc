@@ -637,7 +637,7 @@ void SB_DrawFullscreenStats()
 		ftoi((HArmor.Slots[0] + HArmor.Slots[1] + HArmor.Slots[2] +
 		HArmor.Slots[3] + HArmor.Slots[4]) / 5.0);
 	SB_DrawNumber12(140, 450, TotalArmorPoints);
-	DrawPic(120, 490, pic_armor2);
+	DrawShadowedPic(120, 490, pic_armor2);
 
 	//  Frags
 	if (ClGame.deathmatch)
@@ -654,30 +654,30 @@ void SB_DrawFullscreenStats()
 			DrawPic(210 + i * 31, 448, pic_artibox, 0.6);
 			if (Item)
 			{
-				DrawPic(209 + i * 31, 447,
+				DrawShadowedPic(209 + i * 31, 447,
 					R_RegisterPic(Item.IconName));
 				SB_DrawINumber(229 + i * 31, 468, Item.Amount);
 				if (Item == cl.InvPtr)
 				{
-					DrawPic(210 + i * 31, 447, pic_selectbox);
+					DrawPic(210 + i * 31, 447, pic_selectbox, 0.6);
 				}
 				Item = Item.NextInv();
 			}
 		}
 		if (cl.InvFirst && cl.InvFirst.PrevInv())
 		{
-			DrawPic(200, 447, pic_invgeml[!(ClGame.GLevel.TicTime & 4) ? 0 : 1]);
+			DrawPic(200, 447, pic_invgeml[!(ClGame.GLevel.TicTime & 4) ? 0 : 1], 0.6);
 		}
 		if (Item)
 		{
-			DrawPic(428, 447, pic_invgemr[!(ClGame.GLevel.TicTime & 4) ? 0 : 1]);
+			DrawPic(428, 447, pic_invgemr[!(ClGame.GLevel.TicTime & 4) ? 0 : 1], 0.6);
 		}
 	}
 	else if (cl.InvPtr)
 	{
 		//  Ready artifact
 		DrawPic(546, 440, pic_artibox, 0.6);
-		DrawPic(544, 440, R_RegisterPic(cl.InvPtr.IconName));
+		DrawShadowedPic(544, 440, R_RegisterPic(cl.InvPtr.IconName));
 		SB_DrawINumber(567, 462, cl.InvPtr.Amount);
 	}
 
@@ -715,8 +715,8 @@ void SB_DrawFullscreenStats()
 
 	SB_DrawMNumber(600, 446, ManaItem1 ? ManaItem1.Amount : 0);
 	SB_DrawMNumber(600, 462, ManaItem2 ? ManaItem2.Amount : 0);
-	DrawPic(584, 440, pic_manadim1[sb_mana1]);
-	DrawPic(584, 456, pic_manadim2[sb_mana2]);
+	DrawShadowedPic(584, 440, pic_manadim1[sb_mana1]);
+	DrawShadowedPic(584, 456, pic_manadim2[sb_mana2]);
 }
 
 //==========================================================================

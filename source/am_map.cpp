@@ -1435,7 +1435,7 @@ static void DrawWorldTimer()
 	T_SetFont(SmallFont);
 	T_SetAlign(hleft, vtop);
 	sprintf(timeBuffer, "%.2d : %.2d : %.2d", hours, minutes, seconds);
-	T_DrawText(560, 8, timeBuffer);
+	T_DrawText(560, 8, timeBuffer, CR_UNTRANSLATED);
 
 	if (days)
 	{
@@ -1447,10 +1447,10 @@ static void DrawWorldTimer()
 		{
 			sprintf(dayBuffer, "%.2d DAYS", days);
 		}
-		T_DrawText(560, 18, dayBuffer);
+		T_DrawText(560, 18, dayBuffer, CR_UNTRANSLATED);
 		if (days >= 5)
 		{
-			T_DrawText(550, 28, "YOU FREAK!!!");
+			T_DrawText(550, 28, "YOU FREAK!!!", CR_UNTRANSLATED);
 		}
 	}
 }
@@ -1540,11 +1540,11 @@ static void AM_DrawLevelStats()
 	T_SetFont(SmallFont);
 	T_SetAlign(hleft, vtop);
 	sprintf(kill, "Kills: %.2d / %.2d", kills, totalkills);
-	T_DrawText(8, 390, kill);
+	T_DrawText(8, 390, kill, CR_RED);
 	sprintf(item, "Items: %.2d / %.2d", items, totalitems);
-	T_DrawText(8, 400, item);
+	T_DrawText(8, 400, item, CR_BLUE);
 	sprintf(secret, "Secrets: %.2d / %.2d", secrets, totalsecrets);
-	T_DrawText(8, 410, secret);
+	T_DrawText(8, 410, secret, CR_WHITE);
 }
 
 //==========================================================================
@@ -1643,7 +1643,7 @@ void AM_Drawer()
 	DrawWorldTimer();
 	T_SetFont(SmallFont);
 	T_SetAlign(hleft, vbottom);
-	T_DrawText(20, 480 - sb_height - 7, *GClLevel->LevelInfo->GetLevelName());
+	T_DrawText(20, 480 - sb_height - 7, *GClLevel->LevelInfo->GetLevelName(), CR_UNTRANSLATED);
 	if (ShowStats)
 	{
 		AM_DrawLevelStats();

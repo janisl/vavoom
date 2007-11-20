@@ -88,8 +88,8 @@ int T_TextWidth(VFont* Font, const VStr&);
 int T_TextHeight(VFont* Font, const VStr&);
 
 void T_DrawString8(int, int, const VStr&);
-void T_DrawText(int, int, const VStr&);
-int T_DrawTextW(int, int, const VStr&, int);
+void T_DrawText(int, int, const VStr&, int);
+int T_DrawTextW(int, int, const VStr&, int, int);
 
 void T_DrawCursor();
 void T_DrawCursorAt(int, int);

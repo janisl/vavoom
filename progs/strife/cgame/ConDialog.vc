@@ -42,6 +42,9 @@ string				SpeechText;
 ConDlgChoice		WinChoices[6];
 int					NumChoices;
 
+// True if gold icon should be drawn
+bool bNeedGold;
+
 RandomConversation	RandomConversations[5];
 string				CancelTexts[3];
 
@@ -142,6 +145,7 @@ void SetSpeech(int SpeechNum)
 		{
 			WinChoices[NumChoices].Text = va("%s for %d gold",
 				Speech->Choices[i].Text, Speech->Choices[i].NeedAmount1);
+			bNeedGold = true;
 		}
 		else
 		{
@@ -171,18 +175,28 @@ void SetSpeech(int SpeechNum)
 
 void OnDraw()
 {
+	SetFont('smallfont');
+	SetTextAlign(hleft, vtop);
 	if (BackPic != -1)
 	{
 		DrawFullScreenPic(BackPic);
 	}
 	else
 	{
-		ShadeRect(46, 46, 515, 70, 0.3);
+		ShadeRect(60, 46, 515, 70, 0.3);
 	}
+	if (bNeedGold)
+	{
+		int i;
+		Inventory Item;
+		Item = EntityEx(ClGame.GSBar.cl.MO).FindInventory(Coin);
+
+		DrawPic(480, 510 - NumChoices * 22,  R_RegisterPic('i_coin'));
+		DrawText(510, 510 - NumChoices * 22, va("%d", Item ? Item.Amount : 0), CR_WHITE);
+	}
+
 	ShadeRect(60, 438 - NumChoices * 22, 501, NumChoices * 22, 0.3);
-	SetFont('smallfont');
-	SetTextAlign(hleft, vtop);
-	DrawText(48, 48, SpeakerName);
+	DrawText(64, 48, SpeakerName, CR_GREEN);
 	DrawTextW(64, 72, SpeechText, 640 - 128);
 }
 

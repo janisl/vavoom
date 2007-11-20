@@ -398,12 +398,12 @@ void SB_DrawFullscreenStats()
 
 	//  Health
 	SB_DrawNumber12(50, 450, cl.Health);
-	DrawPic(30, 494, pic_health);
+	DrawShadowedPic(30, 494, pic_health);
 
 	//  Armorpoints
 	BasicArmor Armor = BasicArmor(EntityEx(cl.MO).FindInventory(BasicArmor));
 	SB_DrawNumber12(140, 450, Armor ? Armor.Amount : 0);
-	DrawPic(120, 490, pic_armor2);
+	DrawShadowedPic(120, 490, pic_armor2);
 
 	//  Frags
 	if (ClGame.deathmatch)
@@ -415,21 +415,21 @@ void SB_DrawFullscreenStats()
 	if (cl.ReadyWeapon && cl.ReadyWeapon.Ammo1)
 	{
 		SB_DrawNumber9(610, 456, cl.ReadyWeapon.Ammo1.Amount);
-		DrawPic(590, 454, R_RegisterPic(cl.ReadyWeapon.Ammo1.IconName));
+		DrawShadowedPic(590, 454, R_RegisterPic(cl.ReadyWeapon.Ammo1.IconName));
 	}
 
 	//  Keys
 	if (EntityEx(cl.MO).FindInventory(KeyYellow))
 	{
-		DrawPic(580, 444, pic_ykey);
+		DrawShadowedPic(580, 444, pic_ykey);
 	}
 	if (EntityEx(cl.MO).FindInventory(KeyGreen))
 	{
-		DrawPic(580, 452, pic_gkey);
+		DrawShadowedPic(580, 452, pic_gkey);
 	}
 	if (EntityEx(cl.MO).FindInventory(KeyBlue))
 	{
-		DrawPic(580, 460, pic_bkey);
+		DrawShadowedPic(580, 460, pic_bkey);
 	}
 
 	if (cl.InventoryTime)
@@ -441,30 +441,30 @@ void SB_DrawFullscreenStats()
 			DrawPic(210 + i * 31, 448, pic_artibox, 0.6);
 			if (Item)
 			{
-				DrawPic(210 + i * 31, 448,
+				DrawShadowedPic(210 + i * 31, 448,
 					R_RegisterPic(Item.IconName));
 				SB_DrawINumber(229 + i * 31, 470, Item.Amount);
 				if (Item == cl.InvPtr)
 				{
-					DrawPic(210 + i * 31, 477, pic_selectbox);
+					DrawPic(210 + i * 31, 477, pic_selectbox, 0.6);
 				}
 				Item = Item.NextInv();
 			}
 		}
 		if (cl.InvFirst && cl.InvFirst.PrevInv())
 		{
-			DrawPic(198, 447, pic_invgeml[!(ClGame.GLevel.TicTime & 4) ? 0 : 1]);
+			DrawPic(198, 447, pic_invgeml[!(ClGame.GLevel.TicTime & 4) ? 0 : 1], 0.6);
 		}
 		if (Item)
 		{
-			DrawPic(429, 447, pic_invgemr[!(ClGame.GLevel.TicTime & 4) ? 0 : 1]);
+			DrawPic(429, 447, pic_invgemr[!(ClGame.GLevel.TicTime & 4) ? 0 : 1], 0.6);
 		}
 	}
 	else if (cl.InvPtr)
 	{
 		//  Ready artifact
 		DrawPic(546, 440, pic_artibox, 0.6);
-		DrawPic(546, 440, R_RegisterPic(cl.InvPtr.IconName));
+		DrawShadowedPic(546, 440, R_RegisterPic(cl.InvPtr.IconName));
 		SB_DrawINumber(567, 462, cl.InvPtr.Amount);
 	}
 }

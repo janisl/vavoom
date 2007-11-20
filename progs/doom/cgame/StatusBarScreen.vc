@@ -418,7 +418,7 @@ void SB_DrawFullscreenStats()
 
 	// health
 	SB_DrawTallNum(ST_TDHEALTHX, ST_TDHEALTHY, cl.Health, 0.6, false);
-	DrawPic(ST_TDHEALTHX - 60, ST_TDHEALTHY + 15, pic_health);
+	DrawPic(ST_TDHEALTHX - 60, ST_TDHEALTHY + 15, pic_health, 0.6);
 
 	// armor
 	BasicArmor Armor = BasicArmor(EntityEx(cl.MO).FindInventory(BasicArmor));
@@ -428,11 +428,11 @@ void SB_DrawFullscreenStats()
 
 		if (Armor.Amount > 100)
 		{
-			DrawPic(ST_TDARMORX - 60, ST_TDARMORY + 15, pic_armor2);
+			DrawPic(ST_TDARMORX - 60, ST_TDARMORY + 15, pic_armor2, 0.6);
 		}
 		else
 		{
-			DrawPic(ST_TDARMORX - 60, ST_TDARMORY + 15, pic_armor);
+			DrawPic(ST_TDARMORX - 60, ST_TDARMORY + 15, pic_armor, 0.6);
 		}
 	}
 
@@ -443,47 +443,47 @@ void SB_DrawFullscreenStats()
 	}
 	if (cl.ReadyWeapon.AmmoType1 == Clip)
 	{
-		DrawPic(ST_TDAMMOX - 60, ST_TDAMMOY + 15, pic_ammoicon[0]);
+		DrawPic(ST_TDAMMOX - 60, ST_TDAMMOY + 15, pic_ammoicon[0], 0.6);
 	}
 	else if (cl.ReadyWeapon.AmmoType1 == Shell)
 	{
-		DrawPic(ST_TDAMMOX - 60, ST_TDAMMOY + 15, pic_ammoicon[1]);
+		DrawPic(ST_TDAMMOX - 60, ST_TDAMMOY + 15, pic_ammoicon[1], 0.6);
 	}
 	else if (cl.ReadyWeapon.AmmoType1 == Cell)
 	{
-		DrawPic(ST_TDAMMOX - 60, ST_TDAMMOY + 15, pic_ammoicon[2]);
+		DrawPic(ST_TDAMMOX - 60, ST_TDAMMOY + 15, pic_ammoicon[2], 0.6);
 	}
 	else if (cl.ReadyWeapon.AmmoType1 == RocketAmmo)
 	{
-		DrawPic(ST_TDAMMOX - 60, ST_TDAMMOY + 15, pic_ammoicon[3]);
+		DrawPic(ST_TDAMMOX - 60, ST_TDAMMOY + 15, pic_ammoicon[3], 0.6);
 	}
 
 	// keys
 	if (EntityEx(cl.MO).FindInventory(BlueSkull))
 	{
-		DrawPic(460, 470, pic_keys[3]);
+		DrawPic(460, 470, pic_keys[3], 0.6);
 	}
 	else if (EntityEx(cl.MO).FindInventory(BlueCard))
 	{
-		DrawPic(460, 470, pic_keys[0]);
+		DrawPic(460, 470, pic_keys[0], 0.6);
 	}
 
 	if (EntityEx(cl.MO).FindInventory(YellowSkull))
 	{
-		DrawPic(440, 470, pic_keys[4]);
+		DrawPic(440, 470, pic_keys[4], 0.6);
 	}
 	else if (EntityEx(cl.MO).FindInventory(YellowCard))
 	{
-		DrawPic(440, 470, pic_keys[1]);
+		DrawPic(440, 470, pic_keys[1], 0.6);
 	}
 
 	if (EntityEx(cl.MO).FindInventory(RedSkull))
 	{
-		DrawPic(420, 470, pic_keys[5]);
+		DrawPic(420, 470, pic_keys[5], 0.6);
 	}
 	else if (EntityEx(cl.MO).FindInventory(RedCard))
 	{
-		DrawPic(420, 470, pic_keys[2]);
+		DrawPic(420, 470, pic_keys[2], 0.6);
 	}
 
 	if (ClGame.deathmatch)
