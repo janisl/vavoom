@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MenuControlKey : MenuChoiceBase;
+class MenuControlKey : MenuChoice;
 
 string Text;
 string CommandOn;

@@ -12,7 +12,7 @@ $(OUTDIR)/svprogs.dat: $(VCC) $(srcdir)/*.vc $(srcdir)/game/*.vc $(srcdir)/game1
 		$(OUTDIR)/shared.dat $(COMMON_PROGS_DIR)/linespec.dat
 	$(VCC) -P$(COMMON_PROGS_DIR) -P$(OUTDIR) $(srcdir)/svprogs.vc $@
 
-$(OUTDIR)/clprogs.dat: $(VCC) $(srcdir)/*.vc $(srcdir)/cgame/*.vc $(OUTDIR)/svprogs.dat
+$(OUTDIR)/clprogs.dat: $(VCC) $(srcdir)/*.vc $(srcdir)/cgame/*.vc $(OUTDIR)/svprogs.dat $(COMMON_PROGS_DIR)/uibase.dat
 	$(VCC) -P$(COMMON_PROGS_DIR) -P$(OUTDIR) $(srcdir)/clprogs.vc $@
 
 EXTRA_DIST = compile.bat \

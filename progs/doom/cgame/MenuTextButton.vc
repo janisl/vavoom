@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MenuTextButton : MenuChoiceBase;
+class MenuTextButton : MenuChoice;
 
 name ActivateSound;
 string Text;

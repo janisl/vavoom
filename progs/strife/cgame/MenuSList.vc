@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MenuSList : MenuChoiceBase;
+class MenuSList : MenuChoice;
 
 int			Cursor;
 slist_t*	slist;

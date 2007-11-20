@@ -29,7 +29,7 @@ const int MAX_MENU_ITEMS		= 32;
 
 ClientGameShared		ClGame;
 
-MenuChoiceBase			Items[MAX_MENU_ITEMS];
+MenuChoice				Items[MAX_MENU_ITEMS];
 int						NumItems;
 int						CursorPos;
 int						CursorPrev;

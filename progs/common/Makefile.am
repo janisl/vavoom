@@ -103,7 +103,8 @@ EXTRA_DIST = \
 	linespec/Weapon.vc \
 	uibase/classes.vc \
 	uibase/ClientGameShared.vc \
-	uibase/MenuChoiceBase.vc \
+	uibase/MenuChoice.vc \
+	uibase/MenuScreenBase.vc \
 	uibase/StatusBarShared.vc
 
 MOSTLYCLEANFILES = \

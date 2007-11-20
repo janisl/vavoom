@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MenuChoiceBase : Widget;
+class MenuChoice : Widget;
 
 int				CursorXOffs;
 int				CursorYOffs;

@@ -27,13 +27,13 @@ class MenuScreen : MenuScreenBase;
 
 void OnChildAdded(Widget Child)
 {
-	if (MenuChoiceBase(Child))
+	if (MenuChoice(Child))
 	{
 		if (NumItems >= MAX_MENU_ITEMS)
 		{
 			FatalError("Too many menu items");
 		}
-		Items[NumItems++] = MenuChoiceBase(Child);
+		Items[NumItems++] = MenuChoice(Child);
 	}
 	::OnChildAdded(Child);
 }
