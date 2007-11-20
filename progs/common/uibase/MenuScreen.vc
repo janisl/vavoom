@@ -90,8 +90,8 @@ void CreateTitle()
 	if (Title)
 	{
 		newTitle = MenuTitleText(NewChild(MenuTitleText));
-		newTitle.SetPos(TitleX, TitleY);
 		newTitle.Text = Title;
+		newTitle.SetOrigin(TitleX, TitleY);
 	}
 }
 

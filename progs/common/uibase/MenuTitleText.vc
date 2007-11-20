@@ -25,23 +25,33 @@
 
 class MenuTitleText : Widget;
 
-string Text;
+string			Text;
 
-void OnCreate()
+//==========================================================================
+//
+//	SetOrigin
+//
+//==========================================================================
+
+void SetOrigin(int OrgX, int OrgY)
 {
-	::OnCreate();
-	Disable();
+	SetFont('bigfont');
+	SetPos(OrgX - TextWidth(Text) / 2, OrgY - TextHeight(Text));
+	SetSize(TextWidth(Text), TextHeight(Text));
 }
+
+//==========================================================================
+//
+//	OnDraw
+//
+//==========================================================================
 
 void OnDraw()
 {
 	SetFont('bigfont');
-	SetTextAlign(hcentre, vbottom);
 	DrawText(0, 0, Text);
 }
 
 defaultproperties
 {
-	Width = 320;
-	Height = 200;
 }
