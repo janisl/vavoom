@@ -32,23 +32,14 @@ enum
 	MB_Quit
 };
 
-const int MAX_MENU_STACK		= 32;
-
 TitleScreen			GTitle;
 StatusBarScreen		GSBar;
 IntermissionScreen	GImission;
 FinaleScreen		GFinale;
 
-MenuScreen menu_stack[MAX_MENU_STACK];
-int menu_sp;
-
-MenuScreen CurrentMenuScreen;
-
 MenuControlKey CurrentCtl;
-int ControlColumn;	// menu column for controls
 
 int MenuPClass;
-name MenuStartMap;
 class<MenuScreen> SkillMenuType;
 
 //
@@ -372,7 +363,7 @@ void SetMenu(string Name)
 //
 //==========================================================================
 
-MenuScreen SpawnMenu(class<MenuScreen> CID)
+MenuScreenBase SpawnMenu(class<MenuScreenBase> CID)
 {
 	MenuScreen m;
 
@@ -393,7 +384,7 @@ MenuScreen SpawnMenu(class<MenuScreen> CID)
 //
 //==========================================================================
 
-void PushMenuScreen(MenuScreen menu)
+void PushMenuScreen(MenuScreenBase menu)
 {
 	int i;
 

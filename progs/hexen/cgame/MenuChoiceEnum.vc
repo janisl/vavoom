@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MenuChoiceEnum:MenuChoice;
+class MenuChoiceEnum:MenuChoiceBase;
 
 string Text;
 bool bLeftAlign;

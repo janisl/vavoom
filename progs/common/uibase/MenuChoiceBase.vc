@@ -23,46 +23,64 @@
 //**
 //**************************************************************************
 
-class MenuTextButton : MenuChoiceBase;
+class MenuChoiceBase : Widget;
 
-name ActivateSound;
-string Text;
-name TextFont;
-int TextColour;
-int TextColourFocus;
-int TextHAlign;
-int TextVAlign;
+int				CursorXOffs;
+int				CursorYOffs;
 
-delegate void Activated(Object Sender);
+//==========================================================================
+//
+//  SetOrigin
+//
+//==========================================================================
 
-void ActivateEvent()
+void SetOrigin(int x, int y)
 {
-	if (Activated)
-		Activated(self);
+	SetPos(x, y);
 }
 
-bool OnKeyDown(int key)
+//==========================================================================
+//
+//	GetClGame
+//
+//==========================================================================
+
+ClientGameShared GetClGame()
 {
-	if (key == K_ENTER || key == K_PADENTER ||
-		key == K_MOUSE1 || key == K_JOY1)
+	return MenuScreenBase(Parent).ClGame;
+}
+
+//==========================================================================
+//
+//	OnFocusReceived
+//
+//==========================================================================
+
+void OnFocusReceived()
+{
+	if (MenuScreenBase(Parent) && MenuScreenBase(Parent).Selector)
 	{
-		ActivateEvent();
-		LocalSound(ActivateSound);
-		return true;
+		MenuScreenBase(Parent).Selector.SetPos(X + CursorXOffs,
+			Y + CursorYOffs);
 	}
-	return false;
+	::OnFocusReceived();
 }
 
-void OnDraw()
+//==========================================================================
+//
+//	OnMouseEnter
+//
+//==========================================================================
+
+void OnMouseEnter()
 {
-	SetFont(TextFont);
-	SetTextAlign(TextHAlign, TextVAlign);
-	DrawText(CursorXOffs, 0, Text, IsFocus() ? TextColourFocus : TextColour);
+	SetFocus();
+	LocalSound('menu/cursor');
 }
 
 defaultproperties
 {
-	ActivateSound = 'menu/choose';
-	TextColour = CR_UNTRANSLATED;
-	TextColourFocus = CR_UNTRANSLATED;
+	Focusable = true;
+	Width = 320;
+	Height = 200;
 }

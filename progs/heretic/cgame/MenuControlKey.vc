@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MenuControlKey : MenuChoice;
+class MenuControlKey : MenuChoiceEnum;
 
 string Text;
 string CommandOn;
@@ -90,7 +90,7 @@ bool OnKeyDown(int key)
 	case K_ENTER:
 	case K_PADENTER:
 	case K_MOUSE1:
-		GetClGame().CurrentCtl = self;
+		ClientGame(GetClGame()).CurrentCtl = self;
 		GetClGame().MessageBoxStartMessage("Press new key\n\nESC to cancel",
 			ClientGame::MB_Control, false);
 		return true;

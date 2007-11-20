@@ -23,57 +23,11 @@
 //**
 //**************************************************************************
 
-class MenuChoice : Widget;
+class MenuChoice : MenuChoiceBase;
 
 int pic_M_LSLEFT;
 int pic_M_LSCNTR;
 int pic_M_LSRGHT;
-
-int CursorXOffs;
-int CursorYOffs;
-
-//==========================================================================
-//
-//  SetOrigin
-//
-//==========================================================================
-
-void SetOrigin(int x, int y)
-{
-	SetPos(x, y);
-}
-
-//==========================================================================
-//
-//	OnFocusReceived
-//
-//==========================================================================
-
-void OnFocusReceived()
-{
-	if (MenuScreen(Parent) && MenuScreen(Parent).Selector)
-	{
-		MenuScreen(Parent).Selector.SetPos(X + CursorXOffs,
-			Y + CursorYOffs);
-	}
-	::OnFocusReceived();
-}
-
-//==========================================================================
-//
-//	OnMouseEnter
-//
-//==========================================================================
-
-void OnMouseEnter()
-{
-	SetFocus();
-}
-
-ClientGame GetClGame()
-{
-	return MenuScreen(Parent).ClGame;
-}
 
 //**************************************************************************
 //**
@@ -124,7 +78,4 @@ int DrawSlot(int y, string text, bool entering)
 
 defaultproperties
 {
-	Focusable = true;
-	Width = 320;
-	Height = 200;
 }

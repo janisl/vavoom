@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MenuChoiceSlider : MenuChoice;
+class MenuChoiceSlider : MenuChoiceBase;
 
 string Text;
 

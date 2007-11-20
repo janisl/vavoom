@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MenuChoiceEnum : MenuChoice;
+class MenuChoiceEnum : MenuChoiceBase;
 
 const int MAX_ENUM_CHOICES = 32;
 

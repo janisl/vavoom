@@ -23,36 +23,17 @@
 //**
 //**************************************************************************
 
-class MenuScreen : Widget;
-
-const int MAX_MENU_ITEMS		= 32;
-
-ClientGame ClGame;
-
-MenuChoice Items[MAX_MENU_ITEMS];
-int NumItems;
-int CursorPos;
-int CursorPrev;
-
-int ChoicesStartX;
-int ChoicesStartY;
-
-class<Widget> SelectorType;
-Widget Selector;
-
-string Title;
-int TitleX;
-int TitleY;
+class MenuScreen : MenuScreenBase;
 
 void OnChildAdded(Widget Child)
 {
-	if (MenuChoice(Child))
+	if (MenuChoiceBase(Child))
 	{
 		if (NumItems >= MAX_MENU_ITEMS)
 		{
 			FatalError("Too many menu items");
 		}
-		Items[NumItems++] = MenuChoice(Child);
+		Items[NumItems++] = MenuChoiceBase(Child);
 	}
 	::OnChildAdded(Child);
 }

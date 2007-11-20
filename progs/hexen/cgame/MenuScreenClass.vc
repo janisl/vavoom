@@ -205,8 +205,8 @@ void MageActivate(Object Sender)
 
 void ActivateClass(int PClass, class<MenuScreen> SkillMenuType)
 {
-	ClGame.MenuPClass = PClass;
-	ClGame.SkillMenuType = SkillMenuType;
+	ClientGame(ClGame).MenuPClass = PClass;
+	ClientGame(ClGame).SkillMenuType = SkillMenuType;
 	if (P_GetNumEpisodes() > 1)
 	{
 		ClGame.PushMenuScreen(ClGame.SpawnMenu(MenuScreenEpisode));

@@ -25,6 +25,49 @@
 
 class ClientGameShared : ClientGameBase;
 
+const int MAX_MENU_STACK	= 32;
+
+MenuScreenBase			menu_stack[MAX_MENU_STACK];
+int						menu_sp;
+
+MenuScreenBase			CurrentMenuScreen;
+
+int						ControlColumn;	// menu column for controls
+
+name					MenuStartMap;
+
+void PushMenuScreen(MenuScreenBase menu)
+{
+}
+
+MenuScreenBase SpawnMenu(class<MenuScreenBase> CID)
+{
+}
+
+void PopMenu()
+{
+}
+
+void ForceMenuOff()
+{
+}
+
+void menu_quit()
+{
+}
+
+void NewGame(int skill)
+{
+}
+
+void MessageBoxStartMessage(string text, int type, bool input)
+{
+}
+
+void DrawBorder(int x, int y, int w, int h)
+{
+}
+
 defaultproperties
 {
 }

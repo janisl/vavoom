@@ -28,13 +28,13 @@ EXTRA_DIST = \
 	engine/Thinker.vc \
 	engine/Widget.vc \
 	engine/WorldInfo.vc \
+	linespec/classes.vc \
 	linespec/Ammo.vc \
 	linespec/Armor.vc \
 	linespec/BackpackItem.vc \
 	linespec/BasicArmor.vc \
 	linespec/BasicArmorBonus.vc \
 	linespec/BasicArmorPickup.vc \
-	linespec/classes.vc \
 	linespec/CeilingMover.vc \
 	linespec/CeilingWaggle.vc \
 	linespec/Elevator.vc \
@@ -101,7 +101,10 @@ EXTRA_DIST = \
 	linespec/TextureChangeDoor.vc \
 	linespec/VerticalDoor.vc \
 	linespec/Weapon.vc \
-	uibase/classes.vc
+	uibase/classes.vc \
+	uibase/ClientGameShared.vc \
+	uibase/MenuChoiceBase.vc \
+	uibase/StatusBarShared.vc
 
 MOSTLYCLEANFILES = \
 	$(OUTDIR)/engine.dat $(OUTDIR)/engine.txt \

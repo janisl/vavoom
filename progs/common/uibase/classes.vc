@@ -27,3 +27,5 @@ import engine;
 
 #include "ClientGameShared.vc"
 #include "StatusBarShared.vc"
+#include "MenuChoiceBase.vc"
+#include "MenuScreenBase.vc"

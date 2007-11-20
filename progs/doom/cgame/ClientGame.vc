@@ -34,8 +34,6 @@ enum
 	MB_Nightmare
 };
 
-const int MAX_MENU_STACK	= 32;
-
 const int NUM_END_MESSAGES	= 15;
 
 TitleScreen			GTitle;
@@ -43,15 +41,7 @@ StatusBarScreen		GSBar;
 IntermissionScreen	GImission;
 FinaleScreen		GFinale;
 
-MenuScreen menu_stack[MAX_MENU_STACK];
-int menu_sp;
-
-MenuScreen CurrentMenuScreen;
-
-name MenuStartMap;
-
 MenuControlKey CurrentCtl;
-int ControlColumn;	// menu column for controls
 
 name quitsounds[8];
 
@@ -382,7 +372,7 @@ void SetMenu(string Name)
 //
 //==========================================================================
 
-MenuScreen SpawnMenu(class<MenuScreen> CID)
+MenuScreenBase SpawnMenu(class<MenuScreenBase> CID)
 {
 	MenuScreen m;
 
@@ -403,7 +393,7 @@ MenuScreen SpawnMenu(class<MenuScreen> CID)
 //
 //==========================================================================
 
-void PushMenuScreen(MenuScreen menu)
+void PushMenuScreen(MenuScreenBase menu)
 {
 	int i;
 
