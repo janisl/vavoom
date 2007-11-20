@@ -34,3 +34,8 @@ import engine;
 #include "MenuStaticAnim.vc"
 #include "MenuSpriteAnim.vc"
 #include "MenuModel.vc"
+#include "MenuTextButton.vc"
+#include "MenuBigTextButton.vc"
+#include "MenuSmallTextButton.vc"
+#include "MenuChoiceEnum.vc"
+#include "MenuChoice_OnOff.vc"

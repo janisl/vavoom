@@ -120,7 +120,7 @@ void OnDraw()
 		xx = 160 + 10;
 	}
 	SetTextAlign(hleft, vtop);
-	DrawText(xx, 0, EnumNames[Value], Col);
+	DrawText(xx, 0, EnumNames[Value], IsFocus() ? CR_YELLOW : CR_TAN);
 }
 
 bool OnKeyDown(int key)

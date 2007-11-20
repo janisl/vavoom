@@ -23,11 +23,8 @@ EXTRA_DIST = compile.bat \
 	cgame/ConSlideshow2.vc \
 	cgame/FinaleScreen.vc \
 	cgame/IntermissionScreen.vc \
-	cgame/MenuBigTextButton.vc \
 	cgame/MenuChoice_LoadSlot.vc \
-	cgame/MenuChoice_OnOff.vc \
 	cgame/MenuChoice_SaveSlot.vc \
-	cgame/MenuChoiceEnum.vc \
 	cgame/MenuChoiceEpisode.vc \
 	cgame/MenuChoiceSlider.vc \
 	cgame/MenuChoiceSlot.vc \
@@ -59,8 +56,6 @@ EXTRA_DIST = compile.bat \
 	cgame/MenuSelector_SmallRight.vc \
 	cgame/MenuSelector_Spinner.vc \
 	cgame/MenuSList.vc \
-	cgame/MenuSmallTextButton.vc \
-	cgame/MenuTextButton.vc \
 	cgame/StatusBarScreen.vc \
 	cgame/TitleScreen.vc \
 	game/Acolyte.vc \

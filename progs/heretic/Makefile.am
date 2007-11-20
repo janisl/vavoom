@@ -19,12 +19,9 @@ EXTRA_DIST = compile.bat \
 	cgame/ClientGame.vc \
 	cgame/FinaleScreen.vc \
 	cgame/IntermissionScreen.vc \
-	cgame/MenuBigTextButton.vc \
 	cgame/MenuChoice_Episode1.vc \
 	cgame/MenuChoice_LoadSlot.vc \
-	cgame/MenuChoice_OnOff.vc \
 	cgame/MenuChoice_SaveSlot.vc \
-	cgame/MenuChoiceEnum.vc \
 	cgame/MenuChoiceSlider.vc \
 	cgame/MenuChoiceSlot.vc \
 	cgame/MenuControlKey.vc \
@@ -54,8 +51,6 @@ EXTRA_DIST = compile.bat \
 	cgame/MenuSelector_SmallLeft.vc \
 	cgame/MenuSelector_SmallRight.vc \
 	cgame/MenuSList.vc \
-	cgame/MenuSmallTextButton.vc \
-	cgame/MenuTextButton.vc \
 	cgame/StatusBarScreen.vc \
 	cgame/TitleScreen.vc \
 	game/ActivatedTimeBomb.vc \

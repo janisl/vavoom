@@ -103,12 +103,17 @@ EXTRA_DIST = \
 	linespec/Weapon.vc \
 	uibase/classes.vc \
 	uibase/ClientGameShared.vc \
+	uibase/MenuBigTextButton.vc \
 	uibase/MenuChoice.vc \
+	uibase/MenuChoice_OnOff.vc \
+	uibase/MenuChoiceEnum.vc \
 	uibase/MenuModel.vc \
 	uibase/MenuScreen.vc \
+	uibase/MenuSmallTextButton.vc \
 	uibase/MenuSpriteAnim.vc \
 	uibase/MenuStaticAnim.vc \
 	uibase/MenuStaticBitmap.vc \
+	uibase/MenuTextButton.vc \
 	uibase/MenuTitleText.vc \
 	uibase/StatusBarShared.vc
 
