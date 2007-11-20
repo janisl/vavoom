@@ -104,7 +104,8 @@ EXTRA_DIST = \
 	uibase/classes.vc \
 	uibase/ClientGameShared.vc \
 	uibase/MenuChoice.vc \
-	uibase/MenuScreenBase.vc \
+	uibase/MenuScreen.vc \
+	uibase/MenuTitleText.vc \
 	uibase/StatusBarShared.vc
 
 MOSTLYCLEANFILES = \

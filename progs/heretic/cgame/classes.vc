@@ -24,8 +24,6 @@
 //**************************************************************************
 
 #include "MenuChoiceSlot.vc"
-#include "MenuTitleText.vc"
-#include "MenuScreen.vc"
 #include "MenuStaticBitmap.vc"
 #include "MenuStaticAnim.vc"
 #include "MenuSpriteAnim.vc"

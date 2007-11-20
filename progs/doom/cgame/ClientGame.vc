@@ -372,7 +372,7 @@ void SetMenu(string Name)
 //
 //==========================================================================
 
-MenuScreenBase SpawnMenu(class<MenuScreenBase> CID)
+MenuScreen SpawnMenu(class<MenuScreen> CID)
 {
 	MenuScreen m;
 
@@ -393,7 +393,7 @@ MenuScreenBase SpawnMenu(class<MenuScreenBase> CID)
 //
 //==========================================================================
 
-void PushMenuScreen(MenuScreenBase menu)
+void PushMenuScreen(MenuScreen menu)
 {
 	int i;
 

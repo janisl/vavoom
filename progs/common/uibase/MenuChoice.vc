@@ -47,7 +47,7 @@ void SetOrigin(int x, int y)
 
 ClientGameShared GetClGame()
 {
-	return MenuScreenBase(Parent).ClGame;
+	return MenuScreen(Parent).ClGame;
 }
 
 //==========================================================================
@@ -58,9 +58,9 @@ ClientGameShared GetClGame()
 
 void OnFocusReceived()
 {
-	if (MenuScreenBase(Parent) && MenuScreenBase(Parent).Selector)
+	if (MenuScreen(Parent) && MenuScreen(Parent).Selector)
 	{
-		MenuScreenBase(Parent).Selector.SetPos(X + CursorXOffs,
+		MenuScreen(Parent).Selector.SetPos(X + CursorXOffs,
 			Y + CursorYOffs);
 	}
 	::OnFocusReceived();

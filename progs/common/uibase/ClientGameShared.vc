@@ -27,20 +27,20 @@ class ClientGameShared : ClientGameBase;
 
 const int MAX_MENU_STACK	= 32;
 
-MenuScreenBase			menu_stack[MAX_MENU_STACK];
+MenuScreen				menu_stack[MAX_MENU_STACK];
 int						menu_sp;
 
-MenuScreenBase			CurrentMenuScreen;
+MenuScreen				CurrentMenuScreen;
 
 int						ControlColumn;	// menu column for controls
 
 name					MenuStartMap;
 
-void PushMenuScreen(MenuScreenBase menu)
+void PushMenuScreen(MenuScreen menu)
 {
 }
 
-MenuScreenBase SpawnMenu(class<MenuScreenBase> CID)
+MenuScreen SpawnMenu(class<MenuScreen> CID)
 {
 }
 
