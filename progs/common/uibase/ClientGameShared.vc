@@ -36,20 +36,126 @@ int						ControlColumn;	// menu column for controls
 
 name					MenuStartMap;
 
-void PushMenuScreen(MenuScreen menu)
+//==========================================================================
+//
+//  SpawnMenu
+//
+//==========================================================================
+
+final MenuScreen SpawnMenu(class<MenuScreen> CID)
 {
+	MenuScreen m;
+
+	m = MenuScreen(GRoot.NewChild(CID));
+	m.ClGame = self;
+	return m;
 }
 
-MenuScreen SpawnMenu(class<MenuScreen> CID)
+//**************************************************************************
+//**
+//**    Menu stack handling
+//**
+//**************************************************************************
+
+//==========================================================================
+//
+//  PushMenuScreen
+//
+//==========================================================================
+
+final void PushMenuScreen(MenuScreen menu)
 {
+	int i;
+
+	// avoid stacking menus invoked by hotkeys
+	for (i = 0; i < menu_sp; i++)
+	{
+		if (menu_stack[i].Class == menu.Class)
+		{
+			int j;
+
+			for (j = i; j < menu_sp; j++)
+			{
+				menu_stack[j].Destroy();
+			}
+			menu_sp = i;
+			CurrentMenuScreen = none;
+			break;
+		}
+	}
+
+	if (menu_sp >= MAX_MENU_STACK)
+		FatalError("PushMenu: menu stack overflow");
+
+	menu_stack[menu_sp++] = menu;
+
+	if (!CurrentMenuScreen)
+	{
+/*		if (cl.paused)
+		{
+			S_ResumeSound();
+		}
+		C_ClearNotify();*/
+		CmdBuf_AddText("HideConsole\n");
+		LocalSound('menu/activate');
+		GRoot.SetMouse(true);
+	}
+	else
+	{
+		CurrentMenuScreen.Hide();
+	}
+
+	CurrentMenuScreen = menu;
+	CurrentMenuScreen.SetFocus();
 }
 
-void PopMenu()
+//==========================================================================
+//
+//  PopMenu
+//
+//==========================================================================
+
+final void PopMenu()
 {
+	menu_sp--;
+
+	if (menu_sp < 0)
+		FatalError("PopMenu: menu stack underflow");
+
+	menu_stack[menu_sp].Destroy();
+	if (menu_sp)
+	{
+		CurrentMenuScreen = menu_stack[menu_sp - 1];
+		CurrentMenuScreen.Show();
+		CurrentMenuScreen.Raise();
+		CurrentMenuScreen.SetFocus();
+		LocalSound('menu/backup');
+	}
+	else
+	{
+		CurrentMenuScreen = none;
+		LocalSound('menu/clear');
+		GRoot.SetMouse(false);
+	}
 }
 
-void ForceMenuOff()
+//==========================================================================
+//
+//  ForceMenuOff
+//
+//==========================================================================
+
+final void ForceMenuOff()
 {
+	int i;
+
+	for (i = 0; i < menu_sp; i++)
+	{
+		menu_stack[i].Destroy();
+	}
+	menu_sp = 0;
+	CurrentMenuScreen = none;
+	GRoot.SetMouse(false);
 }
 
 void menu_quit()
