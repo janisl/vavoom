@@ -37,12 +37,8 @@
 #include "MenuInputLine.vc"
 #include "MenuSList.vc"
 
-#include "MenuMainAnim.vc"
 #include "MenuScreenMain.vc"
 #include "MenuScreenSinglePlayer.vc"
-#include "MenuFighterWalk.vc"
-#include "MenuClericWalk.vc"
-#include "MenuMageWalk.vc"
 #include "MenuScreenClass.vc"
 #include "MenuChoiceEpisode.vc"
 #include "MenuScreenEpisode.vc"

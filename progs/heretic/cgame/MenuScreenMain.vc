@@ -28,13 +28,56 @@ class MenuScreenMain : MenuScreen;
 void CreateTitle()
 {
 	MenuStaticBitmap	Img;
+	MenuStaticAnim		Anim;
 
 	Img = NewChild(MenuStaticBitmap);
 	Img.SetOrigin(88, 0);
 	Img.SetPic('m_htic');
 
-	NewChild(MenuSpinningSkull);
-	NewChild(MenuSpinningSkull2);
+	Anim = NewChild(MenuStaticAnim);
+	Anim.SetOrigin(40, 10);
+	Anim.Speed = 12;
+	Anim.bBackwards = true;
+	Anim.AddFrame('m_skl00');
+	Anim.AddFrame('m_skl01');
+	Anim.AddFrame('m_skl02');
+	Anim.AddFrame('m_skl03');
+	Anim.AddFrame('m_skl04');
+	Anim.AddFrame('m_skl05');
+	Anim.AddFrame('m_skl06');
+	Anim.AddFrame('m_skl07');
+	Anim.AddFrame('m_skl08');
+	Anim.AddFrame('m_skl09');
+	Anim.AddFrame('m_skl10');
+	Anim.AddFrame('m_skl11');
+	Anim.AddFrame('m_skl12');
+	Anim.AddFrame('m_skl13');
+	Anim.AddFrame('m_skl14');
+	Anim.AddFrame('m_skl15');
+	Anim.AddFrame('m_skl16');
+	Anim.AddFrame('m_skl17');
+
+	Anim = NewChild(MenuStaticAnim);
+	Anim.SetOrigin(232, 10);
+	Anim.Speed = 12;
+	Anim.AddFrame('m_skl00');
+	Anim.AddFrame('m_skl01');
+	Anim.AddFrame('m_skl02');
+	Anim.AddFrame('m_skl03');
+	Anim.AddFrame('m_skl04');
+	Anim.AddFrame('m_skl05');
+	Anim.AddFrame('m_skl06');
+	Anim.AddFrame('m_skl07');
+	Anim.AddFrame('m_skl08');
+	Anim.AddFrame('m_skl09');
+	Anim.AddFrame('m_skl10');
+	Anim.AddFrame('m_skl11');
+	Anim.AddFrame('m_skl12');
+	Anim.AddFrame('m_skl13');
+	Anim.AddFrame('m_skl14');
+	Anim.AddFrame('m_skl15');
+	Anim.AddFrame('m_skl16');
+	Anim.AddFrame('m_skl17');
 }
 
 //==========================================================================

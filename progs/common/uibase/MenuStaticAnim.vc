@@ -25,55 +25,109 @@
 
 class MenuStaticAnim : Widget;
 
-int Speed;
-int NumFrames;
-int StartFrame;
-bool bBackwards;
-int Frames[32];
-name FrameNames[32];
-float Time;
+int			Speed;
+array<int>	Frames;
+float		Time;
 
-void OnCreate()
+int			OffsetX;
+int			OffsetY;
+
+int			OriginX;
+int			OriginY;
+
+bool		bAutoSize;
+bool		bBackwards;
+
+//==========================================================================
+//
+//	SetOrigin
+//
+//==========================================================================
+
+void SetOrigin(int OrgX, int OrgY)
 {
-	int i;
+	OriginX = OrgX;
+	OriginY = OrgY;
+	SetPos(OriginX - OffsetX, OriginY - OffsetY);
+}
 
-	::OnCreate();
+//==========================================================================
+//
+//	AddFrame
+//
+//==========================================================================
 
-	bTickEnabled = true;
-	Disable();
-	NumFrames = 0;
-	for (i = 0; i < 32; i++)
+void AddFrame(name Name)
+{
+	int			Handle;
+	picinfo_t	Info;
+
+	Handle = R_RegisterPic(Name);
+	Frames.Num = Frames.Num + 1;
+	Frames[Frames.Num - 1] = Handle;
+	if (bAutoSize)
 	{
-		if (FrameNames[i])
+		R_GetPicInfo(Handle, &Info);
+		if (Frames.Num == 1)
 		{
-			Frames[NumFrames] = R_RegisterPic(FrameNames[i]);
-			NumFrames++;
+			//	Set up offsets and size for initial frame.
+			OffsetX = Info.xoffset;
+			OffsetY = Info.yoffset;
+			SetSize(Info.width, Info.height);
 		}
+		else
+		{
+			//	Adjust offsets and size.
+			if (OffsetX < Info.xoffset)
+			{
+				OffsetX = Info.xoffset;
+			}
+			if (OffsetY < Info.yoffset)
+			{
+				OffsetY = Info.yoffset;
+			}
+			if (Width - OffsetX < Info.width - Info.xoffset)
+			{
+				Width = Info.width - Info.xoffset + OffsetX;
+			}
+			if (Height - OffsetY < Info.height - Info.yoffset)
+			{
+				Height = Info.height - Info.yoffset + OffsetY;
+			}
+		}
+		SetPos(OriginX - OffsetX, OriginY - OffsetY);
 	}
 }
+
+//==========================================================================
+//
+//	Tick
+//
+//==========================================================================
 
 void Tick(float DeltaTime)
 {
 	Time += DeltaTime;
 }
 
+//==========================================================================
+//
+//	OnDraw
+//
+//==========================================================================
+
 void OnDraw()
 {
-	int frame = (ftoi(Time * itof(Speed)) + StartFrame) % NumFrames;
+	int frame = ftoi(Time * itof(Speed)) % Frames.Num;
 	if (bBackwards)
 	{
-		frame = NumFrames - frame - 1;
+		frame = Frames.Num - frame - 1;
 	}
-	DrawPic(30, 80, Frames[frame]);
-}
-
-void SetPos(int X, int Y)
-{
-	::SetPos(X - 30, Y - 80);
+	DrawPic(OffsetX, OffsetY, Frames[frame]);
 }
 
 defaultproperties
 {
-	Width = 320;
-	Height = 200;
+	bTickEnabled = true;
+	bAutoSize = true;
 }

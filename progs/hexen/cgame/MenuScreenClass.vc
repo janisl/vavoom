@@ -26,11 +26,11 @@
 class MenuScreenClass : MenuScreen;
 
 MenuStaticBitmap	FighterBox;
-Widget				FighterWalk;
+MenuStaticAnim		FighterWalk;
 MenuStaticBitmap	ClericBox;
-Widget				ClericWalk;
+MenuStaticAnim		ClericWalk;
 MenuStaticBitmap	MageBox;
-Widget				MageWalk;
+MenuStaticAnim		MageWalk;
 
 //==========================================================================
 //
@@ -49,8 +49,13 @@ void CreateChoices()
 	FighterBox.SetOrigin(174, 28);
 	FighterBox.SetPic('m_fbox');
 
-	FighterWalk = NewChild(MenuFighterWalk);
-	FighterWalk.SetPos(174 + 24, 28 + 12);
+	FighterWalk = NewChild(MenuStaticAnim);
+	FighterWalk.SetOrigin(174 + 24, 28 + 12);
+	FighterWalk.Speed = 8;
+	FighterWalk.AddFrame('m_fwalk1');
+	FighterWalk.AddFrame('m_fwalk2');
+	FighterWalk.AddFrame('m_fwalk3');
+	FighterWalk.AddFrame('m_fwalk4');
 
 	Btn = MenuTextButton(NewChild(MenuBigTextButton));
 	Btn.SetPos(ChoicesStartX, currentY);
@@ -65,8 +70,13 @@ void CreateChoices()
 	ClericBox.SetPic('m_cbox');
 	ClericBox.Hide();
 
-	ClericWalk = NewChild(MenuClericWalk);
-	ClericWalk.SetPos(174 + 24, 28 + 12);
+	ClericWalk = NewChild(MenuStaticAnim);
+	ClericWalk.SetOrigin(174 + 24, 28 + 12);
+	ClericWalk.Speed = 8;
+	ClericWalk.AddFrame('m_cwalk1');
+	ClericWalk.AddFrame('m_cwalk2');
+	ClericWalk.AddFrame('m_cwalk3');
+	ClericWalk.AddFrame('m_cwalk4');
 	ClericWalk.Hide();
 
 	Btn = MenuTextButton(NewChild(MenuBigTextButton));
@@ -82,8 +92,13 @@ void CreateChoices()
 	MageBox.SetPic('m_mbox');
 	MageBox.Hide();
 
-	MageWalk = NewChild(MenuMageWalk);
-	MageWalk.SetPos(174 + 24, 28 + 12);
+	MageWalk = NewChild(MenuStaticAnim);
+	MageWalk.SetOrigin(174 + 24, 28 + 12);
+	MageWalk.Speed = 8;
+	MageWalk.AddFrame('m_mwalk1');
+	MageWalk.AddFrame('m_mwalk2');
+	MageWalk.AddFrame('m_mwalk3');
+	MageWalk.AddFrame('m_mwalk4');
 	MageWalk.Hide();
 
 	Btn = MenuTextButton(NewChild(MenuBigTextButton));
