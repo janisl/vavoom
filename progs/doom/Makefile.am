@@ -24,7 +24,7 @@ EXTRA_DIST = compile.bat \
 	cgame/FinaleScreen.vc \
 	cgame/IntermissionScreen.vc \
 	cgame/MenuBigTextButton.vc \
-	cgame/MenuChoice.vc \
+	cgame/MenuChoiceSlot.vc \
 	cgame/MenuChoice_AddLights.vc \
 	cgame/MenuChoice_AdvancedVideoOptions.vc \
 	cgame/MenuChoice_ApplyVidMode.vc \

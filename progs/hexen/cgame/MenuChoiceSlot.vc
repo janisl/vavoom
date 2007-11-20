@@ -23,15 +23,13 @@
 //**
 //**************************************************************************
 
-class MenuChoice : MenuChoiceBase;
+class MenuChoiceSlot : MenuChoiceBase;
 
-int pic_M_LSLEFT;
-int pic_M_LSCNTR;
-int pic_M_LSRGHT;
+int pic_M_FSLOT;
 
 //**************************************************************************
 //**
-//**    Slot for saves and input lines
+//**	Slot for saves and input lines
 //**
 //**************************************************************************
 
@@ -43,9 +41,7 @@ int pic_M_LSRGHT;
 
 void InitSlot()
 {
-	pic_M_LSLEFT = R_RegisterPic('m_lsleft');
-	pic_M_LSCNTR = R_RegisterPic('m_lscntr');
-	pic_M_LSRGHT = R_RegisterPic('m_lsrght');
+	pic_M_FSLOT = R_RegisterPic('m_fslot');
 }
 
 //==========================================================================
@@ -59,21 +55,16 @@ int DrawSlot(int y, string text, bool entering)
 	int xx;
 	int j;
 
-	DrawPic(2, y + 12, pic_M_LSLEFT);
-	for (j = 0, xx = 10; j < 24; j++, xx += 8)
-	{
-		DrawPic(xx, y + 12, pic_M_LSCNTR);
-	}
-	DrawPic(xx, y + 12, pic_M_LSRGHT);
+	DrawPic(0, y, pic_M_FSLOT);
 
 	SetFont('smallfont');
 	SetTextAlign(hleft, vtop);
-	DrawText(8, y + 5, text);
+	DrawText(5, y + 5, text);
 	if (entering)
 	{
 		DrawCursor();
 	}
-	return 16;
+	return 20;
 }
 
 defaultproperties

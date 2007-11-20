@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MenuSaveSlot : MenuChoice;
+class MenuSaveSlot : MenuChoiceSlot;
 
 const int SLOTTEXTLEN = 24;
 

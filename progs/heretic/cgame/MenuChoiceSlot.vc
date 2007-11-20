@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MenuChoice : MenuChoiceBase;
+class MenuChoiceSlot : MenuChoiceBase;
 
 int pic_M_FSLOT;
 

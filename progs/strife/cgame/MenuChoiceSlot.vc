@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MenuChoice : MenuChoiceBase;
+class MenuChoiceSlot : MenuChoiceBase;
 
 int pic_M_LSLEFT;
 int pic_M_LSCNTR;
@@ -31,7 +31,7 @@ int pic_M_LSRGHT;
 
 //**************************************************************************
 //**
-//**	Slot for saves and input lines
+//**    Slot for saves and input lines
 //**
 //**************************************************************************
 
@@ -59,8 +59,8 @@ int DrawSlot(int y, string text, bool entering)
 	int xx;
 	int j;
 
-	DrawPic(3, y + 12, pic_M_LSLEFT);
-	for (j = 0, xx = 11; j < 24; j++, xx += 8)
+	DrawPic(2, y + 12, pic_M_LSLEFT);
+	for (j = 0, xx = 10; j < 24; j++, xx += 8)
 	{
 		DrawPic(xx, y + 12, pic_M_LSCNTR);
 	}

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MenuInputLine : MenuChoice;
+class MenuInputLine : MenuChoiceSlot;
 
 bool	bEnteringText;
 string	Text;
