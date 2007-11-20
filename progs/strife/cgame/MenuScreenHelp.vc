@@ -25,16 +25,15 @@
 
 class MenuScreenHelp:MenuScreen;
 
-MenuHelpPage Page;
-int NumPages;
-int CurPage;
-name PageNames[3];
+MenuStaticBitmap	Page;
+int					NumPages;
+int					CurPage;
+name				PageNames[3];
 
 void CreateChoices()
 {
-	::CreateChoices();
-	Page = MenuHelpPage(NewChild(MenuHelpPage));
-	Page.SetPage(PageNames[CurPage]);
+	Page = NewChild(MenuStaticBitmap);
+	Page.SetPic(PageNames[CurPage]);
 }
 
 bool OnKeyDown(int key)
@@ -47,13 +46,17 @@ bool OnKeyDown(int key)
 	}
 	else
 	{
-		Page.SetPage(PageNames[CurPage]);
+		Page.SetPic(PageNames[CurPage]);
 	}
 	return true;
 }
 
 defaultproperties
 {
+	X = 0;
+	Y = 0;
+	ScaleX = 2.0;
+	ScaleY = 2.4;
 	PageNames[0] = 'help1';
 	PageNames[1] = 'help2';
 	PageNames[2] = 'help3';

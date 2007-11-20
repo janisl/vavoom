@@ -33,7 +33,11 @@ class MenuScreenMain : MenuScreen;
 
 void CreateTitle()
 {
-	NewChild(MenuMainTitleImage);
+	MenuStaticBitmap	Img;
+ 
+ 	Img = NewChild(MenuStaticBitmap);
+	Img.SetOrigin(94, 2);
+	Img.SetPic('m_doom');
 }
 
 //==========================================================================

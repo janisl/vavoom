@@ -33,9 +33,12 @@ class MenuScreenMain : MenuScreen;
 
 void CreateTitle()
 {
-	MenuStaticAnim newAnim;
+	MenuStaticBitmap	Img;
+	MenuStaticAnim		newAnim;
 
-	NewChild(MenuMainTitleImage);
+	Img = NewChild(MenuStaticBitmap);
+	Img.SetOrigin(88, 0);
+	Img.SetPic('m_htic');
 
 	newAnim = MenuStaticAnim(NewChild(MenuMainAnim));
 	newAnim.SetPos(37, 80);

@@ -33,7 +33,7 @@ float				PicTimer;
 void CreateChoices()
 {
 	::CreateChoices();
-	BackPic = MenuStaticBitmap(NewChild(MenuHelpPage));
+	BackPic = NewChild(MenuStaticBitmap);
 	PlayPage();
 }
 
@@ -52,7 +52,7 @@ void PlayPage()
 	switch (PageNum)
 	{
 	case 0:
-		BackPic.Handle = R_RegisterPic('ss3f1');
+		BackPic.SetPic('ss3f1');
 		ChangeMusic(va("%n", 'd_dark'));
 		LocalSound('svox/mac16');
 		PicTimer = 10.0;
@@ -60,21 +60,21 @@ void PlayPage()
 		break;
 
 	case 1:
-		BackPic.Handle = R_RegisterPic('ss3f2');
+		BackPic.SetPic('ss3f2');
 		LocalSound('svox/mac17');
 		PicTimer = 12.0;
 		PageNum = 2;
 		break;
 
 	case 2:
-		BackPic.Handle = R_RegisterPic('ss3f3');
+		BackPic.SetPic('ss3f3');
 		LocalSound('svox/mac18');
 		PicTimer = 12.0;
 		PageNum = 3;
 		break;
 
 	case 3:
-		BackPic.Handle = R_RegisterPic('ss3f4');
+		BackPic.SetPic('ss3f4');
 		LocalSound('svox/mac19');
 		PicTimer = 11.0;
 		PageNum = -1;
@@ -102,5 +102,9 @@ bool OnKeyDown(int key)
 
 defaultproperties
 {
+	X = 0;
+	Y = 0;
+	ScaleX = 2.0;
+	ScaleY = 2.4;
 	bTickEnabled = true;
 }

@@ -25,10 +25,10 @@
 
 class MenuScreenHelp : MenuScreen;
 
-MenuHelpPage Pic;
+MenuStaticBitmap	Pic;
 #ifndef DOOM2
-int NumPages;
-int CurPage;
+int					NumPages;
+int					CurPage;
 #endif
 
 //==========================================================================
@@ -51,7 +51,12 @@ void CreateChoices()
 	CurPage = 0;
 #endif
 
-	Pic = MenuHelpPage(NewChild(MenuHelpPage));
+	Pic = NewChild(MenuStaticBitmap);
+#ifdef DOOM2
+	Pic.SetPic('help');
+#else
+	Pic.SetPic('help1');
+#endif
 }
 
 //==========================================================================
@@ -73,7 +78,7 @@ bool OnKeyDown(int key)
 	}
 	else
 	{
-		Pic.SetPage('help2');
+		Pic.SetPic('help2');
 	}
 #endif
 	return true;
@@ -81,4 +86,8 @@ bool OnKeyDown(int key)
 
 defaultproperties
 {
+	X = 0;
+	Y = 0;
+	ScaleX = 2.0;
+	ScaleY = 2.4;
 }

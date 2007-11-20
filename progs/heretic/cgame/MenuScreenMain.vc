@@ -27,7 +27,12 @@ class MenuScreenMain : MenuScreen;
 
 void CreateTitle()
 {
-	NewChild(MenuMainTitleImage);
+	MenuStaticBitmap	Img;
+
+	Img = NewChild(MenuStaticBitmap);
+	Img.SetOrigin(88, 0);
+	Img.SetPic('m_htic');
+
 	NewChild(MenuSpinningSkull);
 	NewChild(MenuSpinningSkull2);
 }

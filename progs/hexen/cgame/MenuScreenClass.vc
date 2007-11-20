@@ -25,12 +25,12 @@
 
 class MenuScreenClass : MenuScreen;
 
-Widget		FighterBox;
-Widget		FighterWalk;
-Widget		ClericBox;
-Widget		ClericWalk;
-Widget		MageBox;
-Widget		MageWalk;
+MenuStaticBitmap	FighterBox;
+Widget				FighterWalk;
+MenuStaticBitmap	ClericBox;
+Widget				ClericWalk;
+MenuStaticBitmap	MageBox;
+Widget				MageWalk;
 
 //==========================================================================
 //
@@ -45,8 +45,9 @@ void CreateChoices()
 
 	currentY = ChoicesStartY;
 
-	FighterBox = NewChild(MenuFighterBox);
-	FighterBox.SetPos(174, 28);
+	FighterBox = NewChild(MenuStaticBitmap);
+	FighterBox.SetOrigin(174, 28);
+	FighterBox.SetPic('m_fbox');
 
 	FighterWalk = NewChild(MenuFighterWalk);
 	FighterWalk.SetPos(174 + 24, 28 + 12);
@@ -59,8 +60,9 @@ void CreateChoices()
 	Btn.Activated = FighterActivate;
 	currentY += Btn.Height;
 
-	ClericBox = NewChild(MenuClericBox);
-	ClericBox.SetPos(174, 28);
+	ClericBox = NewChild(MenuStaticBitmap);
+	ClericBox.SetOrigin(174, 28);
+	ClericBox.SetPic('m_cbox');
 	ClericBox.Hide();
 
 	ClericWalk = NewChild(MenuClericWalk);
@@ -75,8 +77,9 @@ void CreateChoices()
 	Btn.Activated = ClericActivate;
 	currentY += Btn.Height;
 
-	MageBox = NewChild(MenuMageBox);
-	MageBox.SetPos(174, 28);
+	MageBox = NewChild(MenuStaticBitmap);
+	MageBox.SetOrigin(174, 28);
+	MageBox.SetPic('m_mbox');
 	MageBox.Hide();
 
 	MageWalk = NewChild(MenuMageWalk);

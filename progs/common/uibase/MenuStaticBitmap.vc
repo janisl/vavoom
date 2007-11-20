@@ -25,25 +25,62 @@
 
 class MenuStaticBitmap : Widget;
 
-name PicName;
-int Handle;
+int			Handle;
 
-void OnCreate()
+int			OffsetX;
+int			OffsetY;
+
+int			OriginX;
+int			OriginY;
+
+bool		bAutoSize;
+
+//==========================================================================
+//
+//	SetOrigin
+//
+//==========================================================================
+
+void SetOrigin(int OrgX, int OrgY)
 {
-	::OnCreate();
-	if (PicName)
+	OriginX = OrgX;
+	OriginY = OrgY;
+	SetPos(OriginX - OffsetX, OriginY - OffsetY);
+}
+
+//==========================================================================
+//
+//	SetPic
+//
+//==========================================================================
+
+void SetPic(name Name)
+{
+	picinfo_t	Info;
+
+	Handle = R_RegisterPic(Name);
+	if (bAutoSize)
 	{
-		Handle = R_RegisterPic(PicName);
+		R_GetPicInfo(Handle, &Info);
+		OffsetX = Info.xoffset;
+		OffsetY = Info.yoffset;
+		SetPos(OriginX - OffsetX, OriginY - OffsetY);
+		SetSize(Info.width, Info.height);
 	}
 }
 
+//==========================================================================
+//
+//	OnDraw
+//
+//==========================================================================
+
 void OnDraw()
 {
-	DrawPic(0, 0, Handle);
+	DrawPic(OffsetX, OffsetY, Handle);
 }
 
 defaultproperties
 {
-	Width = 320;
-	Height = 200;
+	bAutoSize = true;
 }

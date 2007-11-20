@@ -25,8 +25,8 @@
 
 class MenuScreenQuit : MenuScreen;
 
-MenuHelpPage	Page;
-name			QuitSound;
+MenuStaticBitmap	Page;
+name				QuitSound;
 
 name TeaserQuitSounds[5];
 name QuitSounds[8];
@@ -34,8 +34,8 @@ name QuitSounds[8];
 void CreateChoices()
 {
 	::CreateChoices();
-	Page = MenuHelpPage(NewChild(MenuHelpPage));
-	Page.SetPage('panel7');
+	Page = NewChild(MenuStaticBitmap);
+	Page.SetPic('panel7');
 
 	if (!WadLumpPresent('map01'))
 		QuitSound = TeaserQuitSounds[P_Random() % 5];
@@ -60,6 +60,10 @@ void Tick(float DeltaTime)
 
 defaultproperties
 {
+	X = 0;
+	Y = 0;
+	ScaleX = 2.0;
+	ScaleY = 2.4;
 	bTickEnabled = true;
 	TeaserQuitSounds[0] = 'svox/voc100';
 	TeaserQuitSounds[1] = 'svox/voc101';

@@ -37,7 +37,6 @@
 #include "MenuInputLine.vc"
 #include "MenuSList.vc"
 
-#include "MenuMainTitleImage.vc"
 #include "MenuSpinningSkull.vc"
 #include "MenuSpinningSkull2.vc"
 #include "MenuScreenMain.vc"
@@ -63,7 +62,6 @@
 #include "MenuScreenAdvancedVideoOptions.vc"
 #include "MenuScreenVideoOptions.vc"
 #include "MenuScreenSoundOptions.vc"
-#include "MenuHelpPage.vc"
 #include "MenuScreenHelp.vc"
 #include "TitleScreen.vc"
 #include "StatusBarScreen.vc"

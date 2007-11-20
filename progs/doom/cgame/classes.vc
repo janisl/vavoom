@@ -37,7 +37,6 @@
 #include "MenuInputLine.vc"
 #include "MenuSList.vc"
 
-#include "MenuMainTitleImage.vc"
 #include "MenuScreenMain.vc"
 #include "MenuScreenSinglePlayer.vc"
 #include "MenuChoiceEpisode.vc"
@@ -61,7 +60,6 @@
 #include "MenuScreenAdvancedVideoOptions.vc"
 #include "MenuScreenVideoOptions.vc"
 #include "MenuScreenSoundOptions.vc"
-#include "MenuHelpPage.vc"
 #include "MenuScreenHelp.vc"
 #include "TitleScreen.vc"
 #include "StatusBarScreen.vc"
