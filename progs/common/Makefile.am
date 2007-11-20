@@ -104,7 +104,11 @@ EXTRA_DIST = \
 	uibase/classes.vc \
 	uibase/ClientGameShared.vc \
 	uibase/MenuChoice.vc \
+	uibase/MenuModel.vc \
 	uibase/MenuScreen.vc \
+	uibase/MenuSpriteAnim.vc \
+	uibase/MenuStaticAnim.vc \
+	uibase/MenuStaticBitmap.vc \
 	uibase/MenuTitleText.vc \
 	uibase/StatusBarShared.vc
 

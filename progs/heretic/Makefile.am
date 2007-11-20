@@ -59,9 +59,6 @@ EXTRA_DIST = compile.bat \
 	cgame/MenuSmallTextButton.vc \
 	cgame/MenuSpinningSkull.vc \
 	cgame/MenuSpinningSkull2.vc \
-	cgame/MenuSpriteAnim.vc \
-	cgame/MenuStaticAnim.vc \
-	cgame/MenuStaticBitmap.vc \
 	cgame/MenuTextButton.vc \
 	cgame/StatusBarScreen.vc \
 	cgame/TitleScreen.vc \

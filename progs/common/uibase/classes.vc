@@ -30,3 +30,7 @@ import engine;
 #include "MenuChoice.vc"
 #include "MenuScreen.vc"
 #include "MenuTitleText.vc"
+#include "MenuStaticBitmap.vc"
+#include "MenuStaticAnim.vc"
+#include "MenuSpriteAnim.vc"
+#include "MenuModel.vc"

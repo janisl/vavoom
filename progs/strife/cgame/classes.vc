@@ -24,9 +24,6 @@
 //**************************************************************************
 
 #include "MenuChoiceSlot.vc"
-#include "MenuStaticBitmap.vc"
-#include "MenuStaticAnim.vc"
-#include "MenuSpriteAnim.vc"
 #include "MenuSelector_Spinner.vc"
 #include "MenuSelector_SmallLeft.vc"
 #include "MenuSelector_SmallRight.vc"

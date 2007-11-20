@@ -34,7 +34,6 @@ EXTRA_DIST = compile.bat \
 	cgame/MenuHelpPage.vc \
 	cgame/MenuInputLine.vc \
 	cgame/MenuMainTitleImage.vc \
-	cgame/MenuModel.vc \
 	cgame/MenuSaveSlot.vc \
 	cgame/MenuChoiceEnum.vc \
 	cgame/MenuScreenAdvancedVideoOptions.vc \
@@ -62,9 +61,6 @@ EXTRA_DIST = compile.bat \
 	cgame/MenuSelector_SmallRight.vc \
 	cgame/MenuSList.vc \
 	cgame/MenuSmallTextButton.vc \
-	cgame/MenuSpriteAnim.vc \
-	cgame/MenuStaticAnim.vc \
-	cgame/MenuStaticBitmap.vc \
 	cgame/MenuTextButton.vc \
 	cgame/StatusBarScreen.vc \
 	cgame/TitleScreen.vc \
