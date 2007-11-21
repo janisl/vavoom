@@ -191,7 +191,7 @@ native final void Lower();
 native final void Raise();
 
 //	Methods to set position, size and scale.
-native void SetPos(int NewX, int NewY);//FIXME should be final
+native final void SetPos(int NewX, int NewY);
 native final void SetX(int NewX);
 native final void SetY(int NewY);
 native final void SetSize(int NewWidth, int NewHeight);

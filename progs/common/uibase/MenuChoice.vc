@@ -49,7 +49,7 @@ void OnFocusReceived()
 {
 	if (MenuScreen(Parent) && MenuScreen(Parent).Selector)
 	{
-		MenuScreen(Parent).Selector.SetPos(X + CursorXOffs,
+		MenuScreen(Parent).Selector.SetOrigin(X + CursorXOffs,
 			Y + CursorYOffs);
 	}
 	::OnFocusReceived();

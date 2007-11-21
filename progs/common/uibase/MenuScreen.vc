@@ -137,7 +137,7 @@ void CursorMoved()
 
 	if (Selector)
 	{
-		Selector.SetPos(Items[CursorPos].X + Items[CursorPos].CursorXOffs,
+		Selector.SetOrigin(Items[CursorPos].X + Items[CursorPos].CursorXOffs,
 			Items[CursorPos].Y + Items[CursorPos].CursorYOffs);
 	}
 }

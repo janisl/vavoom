@@ -25,16 +25,15 @@
 
 class MenuSelector_SmallLeft : Widget;
 
-void OnCreate()
+void SetOrigin(int OrgX, int OrgY)
 {
-	::OnCreate();
-	Disable();
+	SetPos(OrgX - 10, OrgY);
 }
 
 void OnDraw()
 {
 	SetTextAlign(hright, vtop);
-	DrawText(-2, 0, ">");
+	DrawText(8, 0, ">");
 }
 
 defaultproperties
