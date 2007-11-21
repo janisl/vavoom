@@ -143,6 +143,6 @@ defaultproperties
 {
 	ChoicesStartX = 97;
 	ChoicesStartY = 40;
-	SelectorType = MenuSelector_Spinner;
+	SelectorType = MenuSelector_Big;
 	Title = "SINGLE PLAYER";
 }

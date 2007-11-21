@@ -98,6 +98,6 @@ defaultproperties
 {
 	ChoicesStartX = 48;
 	ChoicesStartY = 40;
-	SelectorType = MenuSelector_BigArrow;
+	SelectorType = MenuSelector_Big;
 	Title = "WHICH EPISODE?";
 }

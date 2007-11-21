@@ -252,7 +252,7 @@ defaultproperties
 {
 	ChoicesStartX = 66;
 	ChoicesStartY = 66;
-	SelectorType = MenuSelector_BigArrow;
+	SelectorType = MenuSelector_Big;
 	Title = "CHOOSE CLASS:";
 	// 34, TEXT_BIG
 }

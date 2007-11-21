@@ -32,7 +32,7 @@ EXTRA_DIST = compile.bat \
 	cgame/MenuScreenSaveGame.vc \
 	cgame/MenuScreenSinglePlayer.vc \
 	cgame/MenuScreenSkill.vc \
-	cgame/MenuSelector_BigArrow.vc \
+	cgame/MenuSelector_Big.vc \
 	cgame/StatusBarScreen.vc \
 	cgame/TitleScreen.vc \
 	game/ActivatedTimeBomb.vc \

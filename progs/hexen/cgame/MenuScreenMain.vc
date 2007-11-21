@@ -166,5 +166,5 @@ defaultproperties
 {
 	ChoicesStartX = 110;
 	ChoicesStartY = 56;
-	SelectorType = MenuSelector_BigArrow;
+	SelectorType = MenuSelector_Big;
 }

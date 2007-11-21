@@ -220,7 +220,7 @@ defaultproperties
 	Y = 0;
 	Width = 640;
 	Height = 480;
-	SelectorType = MenuSelector_Spinner;
+	SelectorType = MenuSelector_Big;
 	BackPic = -1;
 	RandomConversations[0].Name = "PEASANT";
 	RandomConversations[0].Texts[0] = "PLEASE DON\'T HURT ME.";

@@ -37,7 +37,7 @@ EXTRA_DIST = compile.bat \
 	cgame/MenuScreenSaveGame.vc \
 	cgame/MenuScreenSinglePlayer.vc \
 	cgame/MenuScreenSkill.vc \
-	cgame/MenuSelector_Spinner.vc \
+	cgame/MenuSelector_Big.vc \
 	cgame/StatusBarScreen.vc \
 	cgame/TitleScreen.vc \
 	game/Acolyte.vc \

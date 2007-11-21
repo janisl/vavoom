@@ -133,6 +133,6 @@ defaultproperties
 {
 	ChoicesStartX = 38;
 	ChoicesStartY = 30;
-	SelectorType = MenuSelector_BigArrow;
+	SelectorType = MenuSelector_Big;
 	Title = "CHOOSE SKILL LEVEL:";
 }

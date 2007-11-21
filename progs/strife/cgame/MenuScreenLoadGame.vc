@@ -43,6 +43,6 @@ defaultproperties
 {
 	ChoicesStartX = 80;
 	ChoicesStartY = 40;
-	SelectorType = MenuSelector_Spinner;
+	SelectorType = MenuSelector_Big;
 	Title = "LOAD GAME";
 }

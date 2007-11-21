@@ -43,7 +43,7 @@ defaultproperties
 {
 	ChoicesStartX = 80;
 	ChoicesStartY = 40;
-	SelectorType = MenuSelector_Skull;
+	SelectorType = MenuSelector_Big;
 	Title = "SAVE GAME";
 }
 

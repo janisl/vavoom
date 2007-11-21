@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MenuSelector_Spinner : Widget;
+class MenuSelector_Big : Widget;
 
 int selector_pics[8];
 float Time;

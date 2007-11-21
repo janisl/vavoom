@@ -140,6 +140,6 @@ defaultproperties
 	SkillNames[4] = "TITAN";
 	ChoicesStartX = 120;
 	ChoicesStartY = 44;
-	SelectorType = MenuSelector_BigArrow;
+	SelectorType = MenuSelector_Big;
 	Title = "CHOOSE SKILL LEVEL:";
 }

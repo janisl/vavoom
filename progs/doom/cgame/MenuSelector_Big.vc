@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MenuSelector_Skull : Widget;
+class MenuSelector_Big : Widget;
 
 int selector_pics[2];
 float Time;

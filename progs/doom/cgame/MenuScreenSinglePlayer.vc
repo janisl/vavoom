@@ -139,6 +139,6 @@ defaultproperties
 {
 	ChoicesStartX = 97;
 	ChoicesStartY = 40;
-	SelectorType = MenuSelector_Skull;
+	SelectorType = MenuSelector_Big;
 	Title = "SINGLE PLAYER";
 }

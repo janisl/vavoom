@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-#include "MenuSelector_BigArrow.vc"
+#include "MenuSelector_Big.vc"
 
 #include "MenuScreenMain.vc"
 #include "MenuScreenSinglePlayer.vc"
