@@ -53,7 +53,7 @@ void DrawTextBox(string text)
 	x = (640 - w) / 2;
 	y = (480 - h) / 2;
 
-	FillRectWithFlat(x, y, w, h, 'floor04');
+	FillRectWithFlat(x, y, w, h, GetClGame().MsgBoxFlat);
 	GetClGame().DrawBorder(x, y, w, h);
 
 	DrawText(160, 100, text);

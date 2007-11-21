@@ -30,7 +30,6 @@
 #include "MenuChoiceSlider.vc"
 #include "MenuSaveSlot.vc"
 #include "MenuInputLine.vc"
-#include "MenuSList.vc"
 
 #include "MenuScreenMain.vc"
 #include "MenuScreenSinglePlayer.vc"
@@ -47,7 +46,6 @@
 #include "MenuScreenSList.vc"
 #include "MenuScreenPlayerSetup.vc"
 #include "MenuScreenOptions.vc"
-#include "MenuControlKey.vc"
 #include "MenuScreenControls.vc"
 #include "MenuScreenControls2.vc"
 #include "MenuScreenMouseOptions.vc"

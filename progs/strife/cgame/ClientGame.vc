@@ -30,8 +30,6 @@ StatusBarScreen		GSBar;
 IntermissionScreen	GImission;
 FinaleScreen		GFinale;
 
-MenuControlKey CurrentCtl;
-
 int pic_brdr_t;
 int pic_brdr_b;
 int pic_brdr_l;
@@ -361,37 +359,6 @@ void QuitResponse(int ch)
 	if (ch != K_y)
 		return;
 	PushMenuScreen(SpawnMenu(MenuScreenQuit));
-}
-
-//==========================================================================
-//
-//  ControlResponse
-//
-//==========================================================================
-
-void ControlResponse(int key)
-{
-	string kb_down;
-	string kb_up;
-	int key1;
-	int key2;
-
-	if (key != K_ESCAPE)
-	{
-		kb_down = CurrentCtl.CommandOn;
-		kb_up = CurrentCtl.CommandOff;
-		IN_GetBindingKeys(kb_down, &key1, &key2);
-		if (ControlColumn == 0)
-		{
-			IN_SetBinding(key1, "", "");
-			IN_SetBinding(key, kb_down, kb_up);
-		}
-		if (ControlColumn == 1)
-		{
-			IN_SetBinding(key2, "", "");
-			IN_SetBinding(key, kb_down, kb_up);
-		}
-	}
 }
 
 //==========================================================================

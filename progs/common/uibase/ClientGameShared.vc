@@ -42,6 +42,7 @@ int						menu_sp;
 
 MenuScreen				CurrentMenuScreen;
 
+MenuControlKey			CurrentCtl;
 int						ControlColumn;	// menu column for controls
 
 name					MenuStartMap;
@@ -302,6 +303,37 @@ final bool MessageBoxActive()
 
 //==========================================================================
 //
+//  ControlResponse
+//
+//==========================================================================
+
+void ControlResponse(int key)
+{
+	string kb_down;
+	string kb_up;
+	int key1;
+	int key2;
+
+	if (key != K_ESCAPE)
+	{
+		kb_down = CurrentCtl.CommandOn;
+		kb_up = CurrentCtl.CommandOff;
+		IN_GetBindingKeys(kb_down, &key1, &key2);
+		if (ControlColumn == 0)
+		{
+			IN_SetBinding(key1, "", "");
+			IN_SetBinding(key, kb_down, kb_up);
+		}
+		if (ControlColumn == 1)
+		{
+			IN_SetBinding(key2, "", "");
+			IN_SetBinding(key, kb_down, kb_up);
+		}
+	}
+}
+
+//==========================================================================
+//
 //  VerifyNightmare
 //
 //  Realy mightmare skill?
@@ -343,10 +375,6 @@ void DrawBorder(int x, int y, int w, int h)
 }
 
 void QuitResponse(int key)
-{
-}
-
-void ControlResponse(int key)
 {
 }
 

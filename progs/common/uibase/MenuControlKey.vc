@@ -52,9 +52,10 @@ void OnDraw()
 	IN_GetBindingKeys(CommandOn, &key1, &key2);
 
 	SetTextAlign(hleft, vtop);
+	Col = IsFocus() ? CR_YELLOW : CR_OLIVE;
 	if (key1 >= 0)
 	{
-		DrawText(160 + 10, 0, KeyNameForNum(key1), IsFocus() ? CR_YELLOW : CR_OLIVE);
+		DrawText(160 + 10, 0, KeyNameForNum(key1), Col);
 	}
 	else
 	{
@@ -62,7 +63,7 @@ void OnDraw()
 	}
 	if (key2 >= 0)
 	{
-		DrawText(160 + 100, 0, KeyNameForNum(key2), IsFocus() ? CR_YELLOW : CR_OLIVE);
+		DrawText(160 + 100, 0, KeyNameForNum(key2), Col);
 	}
 	else
 	{
@@ -90,9 +91,9 @@ bool OnKeyDown(int key)
 	case K_ENTER:
 	case K_PADENTER:
 	case K_MOUSE1:
-		ClientGame(GetClGame()).CurrentCtl = self;
+		GetClGame().CurrentCtl = self;
 		GetClGame().MessageBoxStartMessage("Press new key\n\nESC to cancel",
-			ClientGame::MB_Control, false);
+			ClientGameShared::MB_Control, false);
 		return true;
 
 	case K_BACKSPACE:

@@ -107,8 +107,10 @@ EXTRA_DIST = \
 	uibase/MenuChoice.vc \
 	uibase/MenuChoice_OnOff.vc \
 	uibase/MenuChoiceEnum.vc \
+	uibase/MenuControlKey.vc \
 	uibase/MenuModel.vc \
 	uibase/MenuScreen.vc \
+	uibase/MenuSList.vc \
 	uibase/MenuSmallTextButton.vc \
 	uibase/MenuSpriteAnim.vc \
 	uibase/MenuStaticAnim.vc \
