@@ -24,8 +24,6 @@
 //**************************************************************************
 
 #include "MenuSelector_Spinner.vc"
-#include "MenuSelector_SmallLeft.vc"
-#include "MenuSelector_SmallRight.vc"
 
 #include "MenuScreenMain.vc"
 #include "MenuScreenSinglePlayer.vc"

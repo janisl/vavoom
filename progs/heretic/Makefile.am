@@ -41,8 +41,6 @@ EXTRA_DIST = compile.bat \
 	cgame/MenuScreenSoundOptions.vc \
 	cgame/MenuScreenVideoOptions.vc \
 	cgame/MenuSelector_BigArrow.vc \
-	cgame/MenuSelector_SmallLeft.vc \
-	cgame/MenuSelector_SmallRight.vc \
 	cgame/StatusBarScreen.vc \
 	cgame/TitleScreen.vc \
 	game/ActivatedTimeBomb.vc \

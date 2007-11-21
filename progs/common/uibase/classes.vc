@@ -47,3 +47,5 @@ import engine;
 #include "MenuSaveSlot.vc"
 #include "MenuChoice_LoadSlot.vc"
 #include "MenuChoice_SaveSlot.vc"
+#include "MenuSelector_SmallLeft.vc"
+#include "MenuSelector_SmallRight.vc"
