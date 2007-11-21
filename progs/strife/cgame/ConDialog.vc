@@ -189,7 +189,7 @@ void OnDraw()
 	{
 		int i;
 		Inventory Item;
-		Item = EntityEx(ClientGame(ClGame).GSBar.cl.MO).FindInventory(Coin);
+		Item = EntityEx(StatusBarScreen(ClGame.GSBar).cl.MO).FindInventory(Coin);
 
 		DrawPic(480, 510 - NumChoices * 22,  R_RegisterPic('i_coin'));
 		DrawText(510, 510 - NumChoices * 22, va("%d", Item ? Item.Amount : 0), CR_WHITE);

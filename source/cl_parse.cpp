@@ -326,7 +326,6 @@ void CL_ParseServerInfo(VMessageIn& msg)
 	GCon->Log("---------------------------------------");
 	GCon->Log(LInfo.GetName());
 	GCon->Log("");
-	C_ClearNotify();
 
 	CL_LoadLevel(MapName);
 	GClLevel->NetContext = ClientNetContext;

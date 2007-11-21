@@ -28,7 +28,6 @@ class ClientGame : ClientGameShared;
 const int NUM_END_MESSAGES	= 15;
 
 TitleScreen			GTitle;
-StatusBarScreen		GSBar;
 IntermissionScreen	GImission;
 FinaleScreen		GFinale;
 
@@ -153,7 +152,7 @@ void OnHostError()
 
 void StatusBarStartMap()
 {
-	GSBar.cl = Player(cl);
+	StatusBarScreen(GSBar).cl = Player(cl);
 	GSBar.Show();
 	GSBar.StartMap();
 	GImission.Hide();

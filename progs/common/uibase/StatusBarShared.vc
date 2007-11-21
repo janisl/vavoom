@@ -27,6 +27,13 @@ class StatusBarShared : Widget;
 
 ClientGameBase		ClGame;
 
+const int NUM_NOTIFY_LINES = 5;
+
+string			notify_lines[NUM_NOTIFY_LINES];
+float			notify_times[NUM_NOTIFY_LINES];
+int				num_notify;
+int				first_notify;
+
 //==========================================================================
 //
 //  StartMap
@@ -34,6 +41,121 @@ ClientGameBase		ClGame;
 //==========================================================================
 
 void StartMap()
+{
+	ClearNotify();
+}
+
+//==========================================================================
+//
+//	OnDraw
+//
+//==========================================================================
+
+void OnDraw()
+{
+	DrawNotify();
+}
+
+//==========================================================================
+//
+//  Tick
+//
+//==========================================================================
+
+void Tick(float DeltaTime)
+{
+	UpdateNotify(DeltaTime);
+}
+
+//**************************************************************************
+//	Notify messages
+//**************************************************************************
+
+//==========================================================================
+//
+//	ClearNotify
+//
+//==========================================================================
+
+void ClearNotify()
+{
+	num_notify = 0;
+	first_notify = 0;
+}
+
+//==========================================================================
+//
+//	AddNotifyMessage
+//
+//==========================================================================
+
+void AddNotifyMessage(string Str)
+{
+	if (num_notify >= NUM_NOTIFY_LINES)
+	{
+		num_notify--;
+		first_notify++;
+	}
+	notify_lines[(num_notify + first_notify) % NUM_NOTIFY_LINES] = Str;
+	notify_times[(num_notify + first_notify) % NUM_NOTIFY_LINES] =
+		GetCvarF('notify_time');
+	num_notify++;
+}
+
+//==========================================================================
+//
+//	DrawNotify
+//
+//==========================================================================
+
+void DrawNotify()
+{
+	SetFont('smallfont');
+	SetTextAlign(hleft, vtop);
+
+	int col = GetCvar('font_colour');
+
+	//  Notify lines
+	int y = 0;
+	int i = 0;
+	while (i < num_notify)
+	{
+		if (notify_times[(i + first_notify) % NUM_NOTIFY_LINES] <= 0.0)
+		{
+			first_notify++;
+			num_notify--;
+		}
+		else
+		{
+			int lp = DrawTextW(4, y, notify_lines[(i + first_notify) %
+				NUM_NOTIFY_LINES], 640, col);
+			y += 9 * lp;
+			i++;
+		}
+	}
+}
+
+//==========================================================================
+//
+//	UpdateNotify
+//
+//==========================================================================
+
+void UpdateNotify(float DeltaTime)
+{
+	int		i;
+
+	for (i = 0; i < num_notify; i++)
+	{
+		notify_times[(i + first_notify) % NUM_NOTIFY_LINES] -= DeltaTime;
+	}
+}
+
+void SB_Drawer(int sb_view)
+{
+}
+
+void SB_UpdateWidgets()
 {
 }
 

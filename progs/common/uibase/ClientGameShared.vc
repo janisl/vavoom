@@ -37,6 +37,8 @@ enum
 
 const int MAX_MENU_STACK	= 32;
 
+StatusBarShared			GSBar;
+
 MenuScreen				menu_stack[MAX_MENU_STACK];
 int						menu_sp;
 
@@ -365,6 +367,17 @@ final void EndGameResponse(int ch)
 		return;
 
 	CmdBuf_AddText("Disconnect\n");
+}
+
+//==========================================================================
+//
+//	AddNotifyMessage
+//
+//==========================================================================
+
+void AddNotifyMessage(string Str)
+{
+	GSBar.AddNotifyMessage(Str);
 }
 
 void menu_quit()

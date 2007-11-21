@@ -267,6 +267,16 @@ void DrawViewBorder(int x, int y, int w, int h)
 {
 }
 
+//==========================================================================
+//
+//	AddNotifyMessage
+//
+//==========================================================================
+
+void AddNotifyMessage(string Str)
+{
+}
+
 defaultproperties
 {
 	local_server = true;

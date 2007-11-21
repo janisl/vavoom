@@ -26,7 +26,6 @@
 class ClientGame : ClientGameShared;
 
 TitleScreen			GTitle;
-StatusBarScreen		GSBar;
 IntermissionScreen	GImission;
 FinaleScreen		GFinale;
 
@@ -150,7 +149,7 @@ void OnHostError()
 
 void StatusBarStartMap()
 {
-	GSBar.cl = Player(cl);
+	StatusBarScreen(GSBar).cl = Player(cl);
 	GSBar.Show();
 	GSBar.StartMap();
 	GImission.Hide();

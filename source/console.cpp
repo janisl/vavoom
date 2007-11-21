@@ -91,6 +91,10 @@ static VCvarF			con_speed("con_speed", "480", CVAR_Archive);
 static int				c_autocompleteIndex = -1;
 static VStr				c_autocompleteString;
 
+static VCvarF			notify_time("notify_time", "5", CVAR_Archive);
+static VCvarI			msg_echo("msg_echo", "1", CVAR_Archive);
+static VCvarI			font_colour("font_colour", "11", CVAR_Archive);
+
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
@@ -562,31 +566,6 @@ void FConsoleDevice::Serialise(const char* V, EName Event)
 	DoPrint("\n");
 }
 
-//**************************************************************************
-//**************************************************************************
-
-#define NUM_NOTIFY_LINES		5
-#define MAX_NOTIFY_LINE_LENGTH	80
-
-static char				notify_lines[NUM_NOTIFY_LINES][MAX_NOTIFY_LINE_LENGTH];
-static double			notify_times[NUM_NOTIFY_LINES];
-static int				num_notify = 0;
-static int				first_notify = 0;
-static VCvarF			notify_time("notify_time", "5", CVAR_Archive);
-static VCvarI			msg_echo("msg_echo", "1", CVAR_Archive);
-
-//==========================================================================
-//
-//	C_ClearNotify
-//
-//==========================================================================
-
-void C_ClearNotify()
-{
-	num_notify = 0;
-	first_notify = 0;
-}
-
 //==========================================================================
 //
 //	C_NotifyMessage
@@ -607,48 +586,7 @@ void C_NotifyMessage(const char* AStr)
 		GCon->Log(Str);
 	}
 
-	if (num_notify >= NUM_NOTIFY_LINES)
-	{
-		num_notify--;
-		first_notify++;
-	}
-	VStr::NCpy(notify_lines[(num_notify + first_notify) % NUM_NOTIFY_LINES],
-		*Str, MAX_NOTIFY_LINE_LENGTH - 1);
-	notify_lines[(num_notify + first_notify) % NUM_NOTIFY_LINES][
-		MAX_NOTIFY_LINE_LENGTH - 1] = 0;
-	notify_times[(num_notify + first_notify) % NUM_NOTIFY_LINES] =
-		host_time + notify_time;
-	num_notify++;
-}
-
-//==========================================================================
-//
-//	C_DrawNotify
-//
-//==========================================================================
-
-void C_DrawNotify(int col)
-{
-	T_SetFont(SmallFont);
-	T_SetAlign(hleft, vtop);
-
-	//  Notify lines
-	int y = 0;
-	int i = 0;
-	while (i < num_notify)
-	{
-		if (notify_times[(i + first_notify) % NUM_NOTIFY_LINES] < host_time)
-		{
-			first_notify++;
-			num_notify--;
-		}
-		else
-		{
-			int lp = T_DrawTextW(4, y, notify_lines[(i + first_notify) % NUM_NOTIFY_LINES], 640, col);
-			y += 9 * lp;
-			i++;
-		}
-	}
+	GClGame->eventAddNotifyMessage(Str);
 }
 
 //**************************************************************************

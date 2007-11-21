@@ -199,6 +199,12 @@ class VClientGameBase : public VObject
 		P_PASS_INT(h);
 		EV_RET_VOID(NAME_DrawViewBorder);
 	}
+	void eventAddNotifyMessage(const VStr& Str)
+	{
+		P_PASS_SELF;
+		P_PASS_STR(Str);
+		EV_RET_VOID(NAME_AddNotifyMessage);
+	}
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------

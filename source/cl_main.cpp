@@ -424,7 +424,6 @@ void CL_SetUpStandaloneClient()
 	GCon->Log("---------------------------------------");
 	GCon->Log(LInfo.GetName());
 	GCon->Log("");
-	C_ClearNotify();
 
 	GClLevel = GLevel;
 	GClGame->GLevel = GClLevel;
