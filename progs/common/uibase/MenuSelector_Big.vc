@@ -23,12 +23,7 @@
 //**
 //**************************************************************************
 
-class MenuSelector_Big : Widget;
-
-int NumFrames;
-int selector_pics[8];
-int Speed;
-float Time;
+class MenuSelector_Big : MenuStaticAnim;
 
 //==========================================================================
 //
@@ -41,39 +36,37 @@ ClientGameShared GetClGame()
 	return MenuScreen(Parent).ClGame;
 }
 
+//==========================================================================
+//
+//	OnCreate
+//
+//==========================================================================
+
 void OnCreate()
 {
 	int i;
 
 	::OnCreate();
-	bTickEnabled = true;
-	Disable();
+
 	for (i = 0; i < GetClGame().BigSelectorAnimFrames.Num; i++)
 	{
-		selector_pics[i] = R_RegisterPic(GetClGame().BigSelectorAnimFrames[i]);
+		AddFrame(GetClGame().BigSelectorAnimFrames[i]);
 	}
-	NumFrames = GetClGame().BigSelectorAnimFrames.Num;
 	Speed = GetClGame().BigSelectorAnimSpeed;
 }
 
-void Tick(float DeltaTime)
-{
-	Time += DeltaTime;
-}
-
-void OnDraw()
-{
-	DrawPic(0, 0, selector_pics[ftoi(Time * itof(Speed)) % NumFrames]);
-}
+//==========================================================================
+//
+//	SetOrigin
+//
+//==========================================================================
 
 void SetOrigin(int X, int Y)
 {
-	SetPos(X + GetClGame().BigSelectorXOffset,
+	::SetOrigin(X + GetClGame().BigSelectorXOffset,
 		Y + GetClGame().BigSelectorYOffset);
 }
 
 defaultproperties
 {
-	Width = 320;
-	Height = 200;
 }
