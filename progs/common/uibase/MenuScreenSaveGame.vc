@@ -23,17 +23,23 @@
 //**
 //**************************************************************************
 
-class MenuScreenLoadGame : MenuScreen;
+class MenuScreenSaveGame:MenuScreen;
+
+//==========================================================================
+//
+//	CreateChoices
+//
+//==========================================================================
 
 void CreateChoices()
 {
-	MenuChoice_LoadSlot newChoice;
-	int i;
+	MenuChoice_SaveSlot		newChoice;
+	int						i;
 
 	for (i = 0; i < 8; i++)
 	{
-		newChoice = MenuChoice_LoadSlot(NewChild(MenuChoice_LoadSlot));
-		newChoice.SetPos(ChoicesStartX, ChoicesStartY + i * 18);
+		newChoice = NewChild(MenuChoice_SaveSlot);
+		newChoice.SetOrigin(ChoicesStartX, ChoicesStartY + i * 18);
 		newChoice.SlotNum = i;
 		newChoice.Status = SV_GetSaveString(i, &newChoice.Text);
 	}
@@ -44,5 +50,17 @@ defaultproperties
 	ChoicesStartX = 80;
 	ChoicesStartY = 40;
 	SelectorType = MenuSelector_Big;
-	Title = "LOAD GAME";
+	Title = "SAVE GAME";
 }
+
+/*	if (sv.active && svs.max_clients > 1)
+	{
+		MB_StartMessage("can't save net game", NULL, false);
+		return;
+	}
+
+	if (!sv.active || sv.intermission)
+	{
+		MB_StartMessage("you can't save if you aren't playing!", NULL, false);
+		return;
+	}*/

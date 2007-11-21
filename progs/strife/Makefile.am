@@ -27,14 +27,12 @@ EXTRA_DIST = compile.bat \
 	cgame/MenuScreenControls2.vc \
 	cgame/MenuScreenEpisode.vc \
 	cgame/MenuScreenHelp.vc \
-	cgame/MenuScreenLoadGame.vc \
 	cgame/MenuScreenMain.vc \
 	cgame/MenuScreenMultiplayer.vc \
 	cgame/MenuScreenNewNetGame.vc \
 	cgame/MenuScreenOptions.vc \
 	cgame/MenuScreenPlayerSetup.vc \
 	cgame/MenuScreenQuit.vc \
-	cgame/MenuScreenSaveGame.vc \
 	cgame/MenuScreenSinglePlayer.vc \
 	cgame/MenuScreenSkill.vc \
 	cgame/StatusBarScreen.vc \

@@ -31,8 +31,6 @@
 #include "MenuScreenFighterSkill.vc"
 #include "MenuScreenClericSkill.vc"
 #include "MenuScreenMageSkill.vc"
-#include "MenuScreenLoadGame.vc"
-#include "MenuScreenSaveGame.vc"
 #include "MenuScreenMultiplayer.vc"
 #include "MenuScreenNewNetGame.vc"
 #include "MenuScreenPlayerSetup.vc"

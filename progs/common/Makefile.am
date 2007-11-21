@@ -119,7 +119,9 @@ EXTRA_DIST = \
 	uibase/MenuScreenAdvancedVideoOptions.vc \
 	uibase/MenuScreenControls.vc \
 	uibase/MenuScreenJoinGame.vc \
+	uibase/MenuScreenLoadGame.vc \
 	uibase/MenuScreenMouseOptions.vc \
+	uibase/MenuScreenSaveGame.vc \
 	uibase/MenuScreenScreenResolution.vc \
 	uibase/MenuScreenSList.vc \
 	uibase/MenuScreenSoundOptions.vc \

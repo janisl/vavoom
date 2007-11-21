@@ -25,15 +25,21 @@
 
 class MenuScreenLoadGame : MenuScreen;
 
+//==========================================================================
+//
+//	CreateChoices
+//
+//==========================================================================
+
 void CreateChoices()
 {
-	MenuChoice_LoadSlot newChoice;
-	int i;
+	MenuChoice_LoadSlot		newChoice;
+	int						i;
 
 	for (i = 0; i < 8; i++)
 	{
-		newChoice = MenuChoice_LoadSlot(NewChild(MenuChoice_LoadSlot));
-		newChoice.SetPos(ChoicesStartX, ChoicesStartY + i * 18);
+		newChoice = NewChild(MenuChoice_LoadSlot);
+		newChoice.SetOrigin(ChoicesStartX, ChoicesStartY + i * 18);
 		newChoice.SlotNum = i;
 		newChoice.Status = SV_GetSaveString(i, &newChoice.Text);
 	}

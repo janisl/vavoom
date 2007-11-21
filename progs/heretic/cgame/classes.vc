@@ -28,8 +28,6 @@
 #include "MenuChoice_Episode1.vc"
 #include "MenuScreenEpisode.vc"
 #include "MenuScreenSkill.vc"
-#include "MenuScreenLoadGame.vc"
-#include "MenuScreenSaveGame.vc"
 #include "MenuScreenMultiplayer.vc"
 #include "MenuScreenNewNetGame.vc"
 #include "MenuScreenPlayerSetup.vc"

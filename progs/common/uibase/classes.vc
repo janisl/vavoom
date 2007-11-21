@@ -51,6 +51,8 @@ import engine;
 #include "MenuSelector_SmallRight.vc"
 #include "MenuSelector_Big.vc"
 
+#include "MenuScreenLoadGame.vc"
+#include "MenuScreenSaveGame.vc"
 #include "MenuScreenJoinGame.vc"
 #include "MenuScreenSList.vc"
 #include "MenuScreenControls.vc"
