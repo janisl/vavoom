@@ -36,13 +36,11 @@ EXTRA_DIST = compile.bat \
 	cgame/MenuScreenLoadGame.vc \
 	cgame/MenuScreenMageSkill.vc \
 	cgame/MenuScreenMain.vc \
-	cgame/MenuScreenMouseOptions.vc \
 	cgame/MenuScreenMultiplayer.vc \
 	cgame/MenuScreenNewNetGame.vc \
 	cgame/MenuScreenOptions.vc \
 	cgame/MenuScreenPlayerSetup.vc \
 	cgame/MenuScreenSaveGame.vc \
-	cgame/MenuScreenScreenResolution.vc \
 	cgame/MenuScreenSinglePlayer.vc \
 	cgame/MenuScreenSList.vc \
 	cgame/MenuScreenSoundOptions.vc \

@@ -43,8 +43,6 @@
 #include "MenuScreenOptions.vc"
 #include "MenuScreenControls.vc"
 #include "MenuScreenControls2.vc"
-#include "MenuScreenMouseOptions.vc"
-#include "MenuScreenScreenResolution.vc"
 #include "MenuScreenAdvancedVideoOptions.vc"
 #include "MenuScreenVideoOptions.vc"
 #include "MenuScreenSoundOptions.vc"
