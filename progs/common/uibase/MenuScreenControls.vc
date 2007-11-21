@@ -77,7 +77,7 @@ void CursorMoved()
 
 defaultproperties
 {
-	ChoicesStartX = 120;
+	ChoicesStartX = 150;
 	ChoicesStartY = 26;
 	SelectorType = MenuSelector_SmallRight;
 	Title = "SETUP CONTROLS";

@@ -45,5 +45,4 @@ void CreateControlKeyChoices()
 
 defaultproperties
 {
-	ChoicesStartX = 131;
 }

@@ -50,10 +50,16 @@ void SetOrigin(int x, int y)
 	}
 	else
 	{
-		SetPos(x - 160, y);
-		CursorXOffs = 160;
+		CursorXOffs = 200;
+		SetPos(x - CursorXOffs, y);
 	}
 }
+
+//==========================================================================
+//
+//  SetNewValue
+//
+//==========================================================================
 
 bool SetNewValue(int newValue)
 {
@@ -64,11 +70,23 @@ bool SetNewValue(int newValue)
 	return true;
 }
 
+//==========================================================================
+//
+//  AddItem
+//
+//==========================================================================
+
 void AddItem(string AValue)
 {
 	EnumNames[MaxValue] = AValue;
 	MaxValue++;
 }
+
+//==========================================================================
+//
+//  SetInitialValue
+//
+//==========================================================================
 
 void SetInitialValue(int AValue)
 {
@@ -78,6 +96,12 @@ void SetInitialValue(int AValue)
 	if (Value >= MaxValue)
 		Value = MaxValue - 1;
 }
+
+//==========================================================================
+//
+//  OnCreate
+//
+//==========================================================================
 
 void OnCreate()
 {
@@ -95,6 +119,12 @@ void OnCreate()
 	}
 }
 
+//==========================================================================
+//
+//  OnDraw
+//
+//==========================================================================
+
 void OnDraw()
 {
 	int xx;
@@ -108,7 +138,7 @@ void OnDraw()
 	else
 	{
 		SetTextAlign(hright, vtop);
-		DrawText(160, 0, Text, Col);
+		DrawText(CursorXOffs, 0, Text, Col);
 	}
 
 	if (bLeftAlign)
@@ -117,11 +147,17 @@ void OnDraw()
 	}
 	else
 	{
-		xx = 160 + 10;
+		xx = CursorXOffs + 10;
 	}
 	SetTextAlign(hleft, vtop);
 	DrawText(xx, 0, EnumNames[Value], IsFocus() ? CR_YELLOW : CR_TAN);
 }
+
+//==========================================================================
+//
+//  OnKeyDown
+//
+//==========================================================================
 
 bool OnKeyDown(int key)
 {
@@ -160,5 +196,6 @@ bool OnKeyDown(int key)
 
 defaultproperties
 {
+	Width = 360;
 	Height = 10;
 }

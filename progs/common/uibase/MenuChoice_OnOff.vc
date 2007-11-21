@@ -23,7 +23,13 @@
 //**
 //**************************************************************************
 
-class MenuChoice_OnOff:MenuChoiceEnum;
+class MenuChoice_OnOff : MenuChoiceEnum;
+
+//==========================================================================
+//
+//  OnDraw
+//
+//==========================================================================
 
 void OnDraw()
 {
@@ -38,7 +44,7 @@ void OnDraw()
 	else
 	{
 		SetTextAlign(hright, vtop);
-		DrawText(160, 0, Text, Col);
+		DrawText(CursorXOffs, 0, Text, Col);
 	}
 
 	if (bLeftAlign)
@@ -47,7 +53,7 @@ void OnDraw()
 	}
 	else
 	{
-		xx = 160 + 10;
+		xx = CursorXOffs + 10;
 	}
 	int Col2 = IsFocus() ? CR_YELLOW : Value ? CR_GREEN : CR_RED;
 	SetTextAlign(hleft, vtop);

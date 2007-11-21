@@ -280,7 +280,8 @@ void ActivateAdvanced(Object Sender)
 
 defaultproperties
 {
-	ChoicesStartX = 160;
+	Width = 360;
+	ChoicesStartX = 200;
 	ChoicesStartY = 26;
 	SelectorType = MenuSelector_SmallRight;
 	Title = "VIDEO OPTIONS";

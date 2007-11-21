@@ -25,23 +25,23 @@
 
 class MenuChoiceSlider : MenuChoice;
 
-string Text;
+string		Text;
 
-float Value;
-float ValueDelta;
-float MinValue;
-float MaxValue;
+float		Value;
+float		ValueDelta;
+float		MinValue;
+float		MaxValue;
 
-int pic_M_THERML;
-int pic_M_THERMM;
-int pic_M_THERMR;
-int pic_M_THERMO;
+int			pic_M_THERML;
+int			pic_M_THERMM;
+int			pic_M_THERMR;
+int			pic_M_THERMO;
 
-int pic_M_SLDLT;
-int pic_M_SLDMD1;
-int pic_M_SLDMD2;
-int pic_M_SLDRT;
-int pic_M_SLDKB;
+int			pic_M_SLDLT;
+int			pic_M_SLDMD1;
+int			pic_M_SLDMD2;
+int			pic_M_SLDRT;
+int			pic_M_SLDKB;
 
 delegate bool ValueChanging(Object Sender, float NewValue);
 
@@ -53,7 +53,7 @@ delegate bool ValueChanging(Object Sender, float NewValue);
 
 void SetOrigin(int x, int y)
 {
-	SetPos(x - 160, y);
+	SetPos(x - CursorXOffs, y);
 }
 
 bool SetNewValue(float NewValue)
@@ -101,11 +101,11 @@ void OnDraw()
 	int xx;
 
 	SetTextAlign(hright, vtop);
-	DrawText(160, 0, Text, IsFocus() ? CR_YELLOW : CR_WHITE);
+	DrawText(CursorXOffs, 0, Text, IsFocus() ? CR_YELLOW : CR_WHITE);
 
 	if (pic_M_SLDLT != -1)
 	{
-		xx = 160;
+		xx = CursorXOffs;
 		DrawPic(xx, 0, pic_M_SLDLT);
 		xx += 32;
 		for (i = 0; i < 12; i++)
@@ -114,12 +114,12 @@ void OnDraw()
 			xx += 8;
 		}
 		DrawPic(xx, 0, pic_M_SLDRT);
-		xx = 160 + 30 + ftoi((Value - MinValue) * 100.0 / (MaxValue - MinValue));
+		xx = CursorXOffs + 30 + ftoi((Value - MinValue) * 100.0 / (MaxValue - MinValue));
 		DrawPic(xx, 7, pic_M_SLDKB);
 	}
 	else
 	{
-		xx = 168;
+		xx = CursorXOffs + 8;
 		DrawPic(xx, 0, pic_M_THERML);
 		xx += 8;
 		for (i = 0; i < 13; i++)
@@ -128,7 +128,7 @@ void OnDraw()
 			xx += 8;
 		}
 		DrawPic(xx, 0, pic_M_THERMR);
-		xx = 168 + 6 + ftoi((Value - MinValue) * 100.0 / (MaxValue - MinValue));
+		xx = CursorXOffs + 8 + 6 + ftoi((Value - MinValue) * 100.0 / (MaxValue - MinValue));
 		DrawPic(xx, 0, pic_M_THERMO);
 	}
 }
@@ -170,8 +170,9 @@ bool OnKeyDown(int key)
 
 defaultproperties
 {
+	Width = 360;
 	Height = 20;
-	CursorXOffs = 160;
+	CursorXOffs = 200;
 	pic_M_SLDLT = -1;
 	Value = 0.0;
 	ValueDelta = 1.0;

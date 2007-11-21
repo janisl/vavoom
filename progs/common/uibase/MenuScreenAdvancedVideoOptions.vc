@@ -48,7 +48,7 @@ void CreateChoices()
 
 	Enum = MenuChoiceEnum(NewChild(MenuChoiceEnum));
 	Enum.SetOrigin(ChoicesStartX, currentY);
-	Enum.Text = "Message Text Colour";
+	Enum.Text = "Message Colour";
 	Enum.AddItem("Brick");
 	Enum.AddItem("Tan");
 	Enum.AddItem("Gray");
@@ -76,7 +76,7 @@ void CreateChoices()
 
 	Enum = MenuChoiceEnum(NewChild(MenuChoiceEnum));
 	Enum.SetOrigin(ChoicesStartX, currentY);
-	Enum.Text = "Centred Message Text Colour";
+	Enum.Text = "Centre Message Colour";
 	Enum.AddItem("Brick");
 	Enum.AddItem("Tan");
 	Enum.AddItem("Gray");
@@ -496,8 +496,10 @@ bool ChangeD3dSpecularHighlights(Object Sender, int newValue)
 
 defaultproperties
 {
-	ChoicesStartX = 160;
+	Width = 360;
+	ChoicesStartX = 200;
 	ChoicesStartY = 26;
+	TitleX = 180;
 	SelectorType = MenuSelector_SmallRight;
 	Title = "ADVANCED VIDEO OPTIONS";
 }
