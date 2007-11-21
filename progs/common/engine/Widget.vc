@@ -546,6 +546,19 @@ void OnRMouseClick(int X, int Y)
 {
 }
 
+//==========================================================================
+//
+//	SetOrigin
+//
+//	Sets origin of the widget. Some widget classes will adjust the position.
+//
+//==========================================================================
+
+void SetOrigin(int x, int y)
+{
+	SetPos(x, y);
+}
+
 void DrawFullScreenPic(int Handle)
 {
 	SetVirtualScreen(320, 200);
