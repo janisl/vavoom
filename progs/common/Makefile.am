@@ -105,12 +105,16 @@ EXTRA_DIST = \
 	uibase/ClientGameShared.vc \
 	uibase/MenuBigTextButton.vc \
 	uibase/MenuChoice.vc \
+	uibase/MenuChoice_LoadSlot.vc \
 	uibase/MenuChoice_OnOff.vc \
+	uibase/MenuChoice_SaveSlot.vc \
 	uibase/MenuChoiceEnum.vc \
 	uibase/MenuChoiceSlider.vc \
 	uibase/MenuChoiceSlot.vc \
 	uibase/MenuControlKey.vc \
+	uibase/MenuInputLine.vc \
 	uibase/MenuModel.vc \
+	uibase/MenuSaveSlot.vc \
 	uibase/MenuScreen.vc \
 	uibase/MenuSList.vc \
 	uibase/MenuSmallTextButton.vc \

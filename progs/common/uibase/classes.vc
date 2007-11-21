@@ -43,3 +43,7 @@ import engine;
 #include "MenuSList.vc"
 #include "MenuChoiceSlider.vc"
 #include "MenuChoiceSlot.vc"
+#include "MenuInputLine.vc"
+#include "MenuSaveSlot.vc"
+#include "MenuChoice_LoadSlot.vc"
+#include "MenuChoice_SaveSlot.vc"

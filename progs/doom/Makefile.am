@@ -23,11 +23,7 @@ EXTRA_DIST = compile.bat \
 	cgame/ClientGame.vc \
 	cgame/FinaleScreen.vc \
 	cgame/IntermissionScreen.vc \
-	cgame/MenuChoice_LoadSlot.vc \
-	cgame/MenuChoice_SaveSlot.vc \
 	cgame/MenuChoiceEpisode.vc \
-	cgame/MenuInputLine.vc \
-	cgame/MenuSaveSlot.vc \
 	cgame/MenuScreenAdvancedVideoOptions.vc \
 	cgame/MenuScreenControls.vc \
 	cgame/MenuScreenControls2.vc \

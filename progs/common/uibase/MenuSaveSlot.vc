@@ -23,14 +23,15 @@
 //**
 //**************************************************************************
 
-class MenuInputLine : MenuChoiceSlot;
+class MenuSaveSlot : MenuChoiceSlot;
 
+const int SLOTTEXTLEN		= 24;
+
+int		Status;
 bool	bEnteringText;
+int		SlotNum;
 string	Text;
-string	Value;
 string	EnterText;
-
-delegate void ValueChanged(Object Sender);
 
 void OnCreate()
 {
@@ -38,22 +39,20 @@ void OnCreate()
 	InitSlot();
 }
 
-void OnValueChanged()
+void OnDraw()
 {
-	if (ValueChanged)
+	if (bEnteringText && IsFocus())
 	{
-		ValueChanged(self);
+		DrawSlot(0, EnterText, true);
+	}
+	else
+	{
+		DrawSlot(0, Text, false);
 	}
 }
 
-void OnDraw()
+void ActivateSlot()
 {
-	SetTextAlign(hleft, vtop);
-	DrawText(0, 0, Text, IsFocus() ? CR_YELLOW : CR_WHITE);
-	if (bEnteringText)
-		DrawSlot(12, EnterText, true);
-	else
-		DrawSlot(12, Value, false);
 }
 
 bool OnKeyDown(int key)
@@ -62,6 +61,7 @@ bool OnKeyDown(int key)
 	
 	if (bEnteringText)
 	{
+		// Save Game string input
 		switch (key)
 		{
 		case K_ESCAPE:
@@ -73,8 +73,12 @@ bool OnKeyDown(int key)
 		case K_PADENTER:
 		case K_MOUSE1:
 			bEnteringText = false;
-			Value = EnterText;
-			OnValueChanged();
+			if (strlen(EnterText))
+			{
+				Text = EnterText;
+				CmdBuf_AddText("Save %d \"%s\"\n", SlotNum, Text);
+				GetClGame().ForceMenuOff();
+			}
 			break;
 
     	case K_BACKSPACE:
@@ -88,7 +92,7 @@ bool OnKeyDown(int key)
 		    if (key >= 32 && key < 128)
 			{
 				Len = strlen(EnterText);
-			    if (Len < 30)
+			    if (Len < SLOTTEXTLEN - 1)
     			{
 					EnterText = strcat(EnterText, TranslateKey(key));
 		    	}
@@ -101,10 +105,7 @@ bool OnKeyDown(int key)
 	if (key == K_ENTER || key == K_PADENTER ||
 		key == K_MOUSE1 || key == K_JOY1)
 	{
-		// we are going to be intercepting all chars
-		bEnteringText = true;
-		EnterText = Value;
-		LocalSound('menu/choose');
+		ActivateSlot();
 		return true;
 	}
 	return false;
@@ -112,5 +113,4 @@ bool OnKeyDown(int key)
 
 defaultproperties
 {
-	Height = 30;
 }

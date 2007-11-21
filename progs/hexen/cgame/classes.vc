@@ -26,8 +26,6 @@
 #include "MenuSelector_BigArrow.vc"
 #include "MenuSelector_SmallLeft.vc"
 #include "MenuSelector_SmallRight.vc"
-#include "MenuSaveSlot.vc"
-#include "MenuInputLine.vc"
 
 #include "MenuScreenMain.vc"
 #include "MenuScreenSinglePlayer.vc"
@@ -37,9 +35,7 @@
 #include "MenuScreenFighterSkill.vc"
 #include "MenuScreenClericSkill.vc"
 #include "MenuScreenMageSkill.vc"
-#include "MenuChoice_LoadSlot.vc"
 #include "MenuScreenLoadGame.vc"
-#include "MenuChoice_SaveSlot.vc"
 #include "MenuScreenSaveGame.vc"
 #include "MenuScreenMultiplayer.vc"
 #include "MenuScreenNewNetGame.vc"
