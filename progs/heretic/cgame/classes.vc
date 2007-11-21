@@ -34,8 +34,6 @@
 #include "MenuScreenSaveGame.vc"
 #include "MenuScreenMultiplayer.vc"
 #include "MenuScreenNewNetGame.vc"
-#include "MenuScreenJoinGame.vc"
-#include "MenuScreenSList.vc"
 #include "MenuScreenPlayerSetup.vc"
 #include "MenuScreenOptions.vc"
 #include "MenuScreenControls2.vc"

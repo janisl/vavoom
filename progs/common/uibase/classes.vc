@@ -50,6 +50,8 @@ import engine;
 #include "MenuSelector_SmallLeft.vc"
 #include "MenuSelector_SmallRight.vc"
 
+#include "MenuScreenJoinGame.vc"
+#include "MenuScreenSList.vc"
 #include "MenuScreenControls.vc"
 #include "MenuScreenMouseOptions.vc"
 #include "MenuScreenScreenResolution.vc"

@@ -26,7 +26,6 @@ EXTRA_DIST = compile.bat \
 	cgame/MenuChoiceEpisode.vc \
 	cgame/MenuScreenControls2.vc \
 	cgame/MenuScreenEpisode.vc \
-	cgame/MenuScreenJoinGame.vc \
 	cgame/MenuScreenHelp.vc \
 	cgame/MenuScreenLoadGame.vc \
 	cgame/MenuScreenMain.vc \
@@ -38,7 +37,6 @@ EXTRA_DIST = compile.bat \
 	cgame/MenuScreenSaveGame.vc \
 	cgame/MenuScreenSinglePlayer.vc \
 	cgame/MenuScreenSkill.vc \
-	cgame/MenuScreenSList.vc \
 	cgame/MenuSelector_Spinner.vc \
 	cgame/StatusBarScreen.vc \
 	cgame/TitleScreen.vc \
