@@ -901,7 +901,7 @@ void VWidget::SetTextShadow(bool State)
 //==========================================================================
 
 void VWidget::DrawString(int x, int y, const VStr& String, int NormalColour,
-	int BoldColour)
+	int BoldColour, float Alpha)
 {
 	guard(VWidget::DrawNString);
 	if (!String)
@@ -935,7 +935,7 @@ void VWidget::DrawString(int x, int y, const VStr& String, int NormalColour,
 			if (WidgetFlags & WF_TextShadowed)
 				DrawShadowedPic(cx, cy, Tex);
 			else
-				DrawPic(cx, cy, Tex);
+				DrawPic(cx, cy, Tex, Alpha);
 		}
 		cx += w + Kerning;
 	}
@@ -951,7 +951,7 @@ void VWidget::DrawString(int x, int y, const VStr& String, int NormalColour,
 //==========================================================================
 
 void VWidget::DrawText(int x, int y, const VStr& String, int NormalColour,
-	int BoldColour)
+	int BoldColour, float Alpha)
 {
 	guard(VWidget::DrawText);
 	int start = 0;
@@ -972,14 +972,14 @@ void VWidget::DrawText(int x, int y, const VStr& String, int NormalColour,
 		if (String[i] == '\n')
 		{
 			VStr cs(String, start, i - start);
-			DrawString(cx, cy, cs, NormalColour, BoldColour);
+			DrawString(cx, cy, cs, NormalColour, BoldColour, Alpha);
 			cy += Font->GetHeight();
 			start = i + 1;
 		}
 		if (i == String.Length() - 1)
 		{
 			DrawString(cx, cy, VStr(String, start, String.Length() - start),
-				NormalColour, BoldColour);
+				NormalColour, BoldColour, Alpha);
 		}
 	}
 	unguard;
@@ -1001,6 +1001,7 @@ int VWidget::DrawTextW(int x, int y, const VStr& String, int w,
 	int			i;
 	bool		wordStart = true;
 	int			LinesPrinted = 0;
+	float		Alpha = 1.0;
 
 	cx = x;
 	cy = y;
@@ -1020,7 +1021,7 @@ int VWidget::DrawTextW(int x, int y, const VStr& String, int w,
 		if (String[i] == '\n')
 		{
 			VStr cs(String, start, i - start);
-			DrawString(cx, cy, cs, NormalColour, BoldColour);
+			DrawString(cx, cy, cs, NormalColour, BoldColour, Alpha);
 			cy += Font->GetHeight();
 			start = i + 1;
 			wordStart = true;
@@ -1034,7 +1035,7 @@ int VWidget::DrawTextW(int x, int y, const VStr& String, int w,
 			if (T_StringWidth(Font, VStr(String, start, j - start)) > w)
 			{
 				VStr cs(String, start, i - start);
-				DrawString(cx, cy, cs, NormalColour, BoldColour);
+				DrawString(cx, cy, cs, NormalColour, BoldColour, Alpha);
 				cy += Font->GetHeight();
 				start = i;
 				LinesPrinted++;
@@ -1048,7 +1049,7 @@ int VWidget::DrawTextW(int x, int y, const VStr& String, int w,
 		if (!String[i + 1])
 		{
 			DrawString(cx, cy, VStr(String, start, i - start + 1),
-				NormalColour, BoldColour);
+				NormalColour, BoldColour, Alpha);
 			LinesPrinted++;
 		}
 	}
@@ -1410,13 +1411,14 @@ IMPLEMENT_FUNCTION(VWidget, TextHeight)
 
 IMPLEMENT_FUNCTION(VWidget, DrawText)
 {
+	P_GET_FLOAT_OPT(Alpha, 1.0);
 	P_GET_INT_OPT(BoldColour, CR_UNTRANSLATED);
 	P_GET_INT_OPT(Colour, CR_UNTRANSLATED);
 	P_GET_STR(String);
 	P_GET_INT(Y);
 	P_GET_INT(X);
 	P_GET_SELF;
-	Self->DrawText(X, Y, String, Colour, BoldColour);
+	Self->DrawText(X, Y, String, Colour, BoldColour, Alpha);
 }
 
 IMPLEMENT_FUNCTION(VWidget, DrawTextW)

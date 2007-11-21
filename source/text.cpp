@@ -182,7 +182,7 @@ int T_TextHeight(VFont* Font, const VStr& String)
 
 void T_DrawText(int x, int y, const VStr& String, int col)
 {
-	GRoot->DrawText(x, y, String, col, CR_YELLOW);
+	GRoot->DrawText(x, y, String, col, CR_YELLOW, 1.0);
 }
 
 //==========================================================================
