@@ -76,7 +76,7 @@ void CreateChoices()
 
 	Enum = MenuChoiceEnum(NewChild(MenuChoiceEnum));
 	Enum.SetOrigin(ChoicesStartX, currentY);
-	Enum.Text = "Centered Message Text Colour";
+	Enum.Text = "Centred Message Text Colour";
 	Enum.AddItem("Brick");
 	Enum.AddItem("Tan");
 	Enum.AddItem("Gray");
