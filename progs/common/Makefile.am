@@ -116,8 +116,12 @@ EXTRA_DIST = \
 	uibase/MenuModel.vc \
 	uibase/MenuSaveSlot.vc \
 	uibase/MenuScreen.vc \
+	uibase/MenuScreenAdvancedVideoOptions.vc \
+	uibase/MenuScreenControls.vc \
 	uibase/MenuScreenMouseOptions.vc \
 	uibase/MenuScreenScreenResolution.vc \
+	uibase/MenuScreenSoundOptions.vc \
+	uibase/MenuScreenVideoOptions.vc \
 	uibase/MenuSelector_SmallLeft.vc \
 	uibase/MenuSelector_SmallRight.vc \
 	uibase/MenuSList.vc \
