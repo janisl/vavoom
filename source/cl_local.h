@@ -205,6 +205,12 @@ class VClientGameBase : public VObject
 		P_PASS_STR(Str);
 		EV_RET_VOID(NAME_AddNotifyMessage);
 	}
+	void eventAddCentreMessage(const VStr& Msg)
+	{
+		P_PASS_SELF;
+		P_PASS_STR(Msg);
+		EV_RET_VOID(NAME_AddCentreMessage);
+	}
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------

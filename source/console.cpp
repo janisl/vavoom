@@ -92,8 +92,10 @@ static int				c_autocompleteIndex = -1;
 static VStr				c_autocompleteString;
 
 static VCvarF			notify_time("notify_time", "5", CVAR_Archive);
+static VCvarF			centre_msg_time("centre_message_time", "7", CVAR_Archive);
 static VCvarI			msg_echo("msg_echo", "1", CVAR_Archive);
 static VCvarI			font_colour("font_colour", "11", CVAR_Archive);
+static VCvarI			font_colour2("font_colour2", "11", CVAR_Archive);
 
 // CODE --------------------------------------------------------------------
 
@@ -589,13 +591,6 @@ void C_NotifyMessage(const char* AStr)
 	GClGame->eventAddNotifyMessage(Str);
 }
 
-//**************************************************************************
-//**************************************************************************
-
-static char				centre_message[256];
-static float			centre_time;
-static VCvarF			centre_msg_time("centre_message_time", "7", CVAR_Archive);
-
 //==========================================================================
 //
 //	C_CentreMessage
@@ -618,27 +613,5 @@ void C_CentreMessage(const char* AMsg)
 		GCon->Log("<-------------------------------->");
 	}
 
-	VStr::Cpy(centre_message, *Msg);
-	centre_time = centre_msg_time;
-}
-
-//==========================================================================
-//
-//	C_DrawCentreMessage
-//
-//==========================================================================
-
-void C_DrawCentreMessage(int col)
-{
-	if (centre_time)
-	{
-		T_SetFont(SmallFont);
-		T_SetAlign(hcentre, vcentre);
-		T_DrawTextW(320, 360, centre_message, 600, col);
-		centre_time -= host_frametime;
-		if (centre_time < 0.0)
-		{
-			centre_time = 0.0;
-		}
-	}
+	GClGame->eventAddCentreMessage(Msg);
 }

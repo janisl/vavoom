@@ -380,6 +380,17 @@ void AddNotifyMessage(string Str)
 	GSBar.AddNotifyMessage(Str);
 }
 
+//==========================================================================
+//
+//	AddCentreMessage
+//
+//==========================================================================
+
+void AddCentreMessage(string Msg)
+{
+	GSBar.AddCentreMessage(Msg);
+}
+
 void menu_quit()
 {
 }

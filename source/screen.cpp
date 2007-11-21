@@ -37,8 +37,6 @@
 
 void CalcFadetable16(byte *pal);
 
-void C_DrawCentreMessage(int col);
-
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
@@ -169,7 +167,6 @@ static VCvarI	screen_windowed("screen_windowed", "0", CVAR_Archive);
 static VCvarI	brightness("brightness", "0", CVAR_Archive);
 
 static VCvarI	draw_fps("draw_fps", "0", CVAR_Archive);
-static VCvarI	font_colour2("font_colour2", "11", CVAR_Archive);
 static double	fps_start = 0.0;
 static int		fps_frames = 0;
 static int		show_fps = 0;
@@ -483,7 +480,6 @@ void SCR_Update()
 			}
 			CT_Drawer();
 			SB_Drawer();
-			C_DrawCentreMessage(font_colour2);
 			break;
 		}
 	}

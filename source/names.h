@@ -166,6 +166,7 @@ REGISTER_NAME(MessageBoxResponder)
 REGISTER_NAME(MessageBoxActive)
 REGISTER_NAME(DrawViewBorder)
 REGISTER_NAME(AddNotifyMessage)
+REGISTER_NAME(AddCentreMessage)
 
 //	Widget events
 REGISTER_NAME(OnCreate)

@@ -277,6 +277,16 @@ void AddNotifyMessage(string Str)
 {
 }
 
+//==========================================================================
+//
+//	AddCentreMessage
+//
+//==========================================================================
+
+void AddCentreMessage(string Msg)
+{
+}
+
 defaultproperties
 {
 	local_server = true;

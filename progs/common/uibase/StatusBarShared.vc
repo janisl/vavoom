@@ -34,6 +34,9 @@ float			notify_times[NUM_NOTIFY_LINES];
 int				num_notify;
 int				first_notify;
 
+string			centre_message;
+float			centre_time;
+
 //==========================================================================
 //
 //  StartMap
@@ -43,6 +46,7 @@ int				first_notify;
 void StartMap()
 {
 	ClearNotify();
+	ClearCentreMessage();
 }
 
 //==========================================================================
@@ -54,6 +58,7 @@ void StartMap()
 void OnDraw()
 {
 	DrawNotify();
+	DrawCentreMessage();
 }
 
 //==========================================================================
@@ -65,6 +70,7 @@ void OnDraw()
 void Tick(float DeltaTime)
 {
 	UpdateNotify(DeltaTime);
+	UpdateCentreMessage(DeltaTime);
 }
 
 //**************************************************************************
@@ -148,6 +154,64 @@ void UpdateNotify(float DeltaTime)
 	for (i = 0; i < num_notify; i++)
 	{
 		notify_times[(i + first_notify) % NUM_NOTIFY_LINES] -= DeltaTime;
+	}
+}
+
+//**************************************************************************
+//	Centre message
+//**************************************************************************
+
+//==========================================================================
+//
+//	ClearCentreMessage
+//
+//==========================================================================
+
+void ClearCentreMessage()
+{
+	centre_time = 0.0;
+}
+
+//==========================================================================
+//
+//	AddCentreMessage
+//
+//==========================================================================
+
+void AddCentreMessage(string Msg)
+{
+	centre_message = Msg;
+	centre_time = GetCvarF('centre_message_time');
+}
+
+//==========================================================================
+//
+//	DrawCentreMessage
+//
+//==========================================================================
+
+void DrawCentreMessage()
+{
+	if (centre_time)
+	{
+		SetFont('smallfont');
+		SetTextAlign(hcentre, vcentre);
+		DrawTextW(320, 360, centre_message, 600, GetCvar('font_colour2'));
+	}
+}
+
+//==========================================================================
+//
+//	UpdateCentreMessage
+//
+//==========================================================================
+
+void UpdateCentreMessage(float DeltaTime)
+{
+	centre_time -= DeltaTime;
+	if (centre_time < 0.0)
+	{
+		centre_time = 0.0;
 	}
 }
 
