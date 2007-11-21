@@ -22,7 +22,6 @@ EXTRA_DIST = compile.bat \
 	cgame/MenuChoice_Episode1.vc \
 	cgame/MenuChoice_LoadSlot.vc \
 	cgame/MenuChoice_SaveSlot.vc \
-	cgame/MenuChoiceSlider.vc \
 	cgame/MenuChoiceSlot.vc \
 	cgame/MenuInputLine.vc \
 	cgame/MenuSaveSlot.vc \
