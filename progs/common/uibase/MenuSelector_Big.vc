@@ -25,16 +25,35 @@
 
 class MenuSelector_Big : Widget;
 
-int selector_pics[2];
+int NumFrames;
+int selector_pics[8];
+int Speed;
 float Time;
+
+//==========================================================================
+//
+//	GetClGame
+//
+//==========================================================================
+
+ClientGameShared GetClGame()
+{
+	return MenuScreen(Parent).ClGame;
+}
 
 void OnCreate()
 {
+	int i;
+
 	::OnCreate();
 	bTickEnabled = true;
 	Disable();
-	selector_pics[0] = R_RegisterPic('m_skull1');
-	selector_pics[1] = R_RegisterPic('m_skull2');
+	for (i = 0; i < GetClGame().BigSelectorAnimFrames.Num; i++)
+	{
+		selector_pics[i] = R_RegisterPic(GetClGame().BigSelectorAnimFrames[i]);
+	}
+	NumFrames = GetClGame().BigSelectorAnimFrames.Num;
+	Speed = GetClGame().BigSelectorAnimSpeed;
 }
 
 void Tick(float DeltaTime)
@@ -44,17 +63,17 @@ void Tick(float DeltaTime)
 
 void OnDraw()
 {
-	// DRAW SKULL
-	DrawPic(0, 0, selector_pics[ftoi(Time * 4.0) & 1]);
+	DrawPic(0, 0, selector_pics[ftoi(Time * itof(Speed)) % NumFrames]);
 }
 
 void SetOrigin(int X, int Y)
 {
-	SetPos(X - 32, Y - 5);
+	SetPos(X + GetClGame().BigSelectorXOffset,
+		Y + GetClGame().BigSelectorYOffset);
 }
 
 defaultproperties
 {
-	Width = 40;
-	Height = 40;
+	Width = 320;
+	Height = 200;
 }

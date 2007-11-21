@@ -450,4 +450,9 @@ defaultproperties
 {
 	sb_height = 39;
 	MsgBoxFlat = 'f_019';
+	BigSelectorXOffset = -28;
+	BigSelectorYOffset = -1;
+	BigSelectorAnimSpeed = 2;
+	BigSelectorAnimFrames[0] = 'm_slctr1';
+	BigSelectorAnimFrames[1] = 'm_slctr2';
 }

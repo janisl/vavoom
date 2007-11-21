@@ -474,6 +474,11 @@ defaultproperties
 {
 	sb_height = 32;
 	MsgBoxFlat = 'flat20';
+	BigSelectorXOffset = -32;
+	BigSelectorYOffset = -5;
+	BigSelectorAnimSpeed = 4;
+	BigSelectorAnimFrames[0] = 'm_skull1';
+	BigSelectorAnimFrames[1] = 'm_skull2';
 #ifndef DOOM2
 	quitsounds[0] = '*death';
 	quitsounds[1] = 'demon/pain';

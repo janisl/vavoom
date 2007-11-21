@@ -496,4 +496,15 @@ defaultproperties
 {
 	sb_height = 32;
 	MsgBoxFlat = 'f_pave01';
+	BigSelectorXOffset = -32;
+	BigSelectorYOffset = -5;
+	BigSelectorAnimSpeed = 4;
+	BigSelectorAnimFrames[0] = 'm_curs1';
+	BigSelectorAnimFrames[1] = 'm_curs2';
+	BigSelectorAnimFrames[2] = 'm_curs3';
+	BigSelectorAnimFrames[3] = 'm_curs4';
+	BigSelectorAnimFrames[4] = 'm_curs5';
+	BigSelectorAnimFrames[5] = 'm_curs6';
+	BigSelectorAnimFrames[6] = 'm_curs7';
+	BigSelectorAnimFrames[7] = 'm_curs8';
 }

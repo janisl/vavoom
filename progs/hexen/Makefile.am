@@ -39,7 +39,6 @@ EXTRA_DIST = compile.bat \
 	cgame/MenuScreenPlayerSetup.vc \
 	cgame/MenuScreenSaveGame.vc \
 	cgame/MenuScreenSinglePlayer.vc \
-	cgame/MenuSelector_Big.vc \
 	cgame/StatusBarScreen.vc \
 	cgame/TitleScreen.vc \
 	game/Actor.vc \

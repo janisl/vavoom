@@ -23,8 +23,6 @@
 //**
 //**************************************************************************
 
-#include "MenuSelector_Big.vc"
-
 #include "MenuScreenMain.vc"
 #include "MenuScreenSinglePlayer.vc"
 #include "MenuChoice_Episode1.vc"

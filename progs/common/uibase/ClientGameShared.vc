@@ -63,6 +63,11 @@ name					MsgBoxFlat;
 name					QuitSound;
 bool					WaitForQuit;
 
+int						BigSelectorXOffset;
+int						BigSelectorYOffset;
+int						BigSelectorAnimSpeed;
+array<name>				BigSelectorAnimFrames;
+
 //==========================================================================
 //
 //  SpawnMenu
