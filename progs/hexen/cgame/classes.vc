@@ -23,7 +23,6 @@
 //**
 //**************************************************************************
 
-#include "MenuChoiceSlot.vc"
 #include "MenuSelector_BigArrow.vc"
 #include "MenuSelector_SmallLeft.vc"
 #include "MenuSelector_SmallRight.vc"

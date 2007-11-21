@@ -42,3 +42,4 @@ import engine;
 #include "MenuControlKey.vc"
 #include "MenuSList.vc"
 #include "MenuChoiceSlider.vc"
+#include "MenuChoiceSlot.vc"

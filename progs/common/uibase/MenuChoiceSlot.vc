@@ -29,6 +29,8 @@ int pic_M_LSLEFT;
 int pic_M_LSCNTR;
 int pic_M_LSRGHT;
 
+int pic_M_FSLOT;
+
 //**************************************************************************
 //**
 //**	Slot for saves and input lines
@@ -43,9 +45,16 @@ int pic_M_LSRGHT;
 
 void InitSlot()
 {
-	pic_M_LSLEFT = R_RegisterPic('m_lsleft');
-	pic_M_LSCNTR = R_RegisterPic('m_lscntr');
-	pic_M_LSRGHT = R_RegisterPic('m_lsrght');
+	if (WadLumpPresent('m_fslot'))
+	{
+		pic_M_FSLOT = R_RegisterPic('m_fslot');
+	}
+	else
+	{
+		pic_M_LSLEFT = R_RegisterPic('m_lsleft');
+		pic_M_LSCNTR = R_RegisterPic('m_lscntr');
+		pic_M_LSRGHT = R_RegisterPic('m_lsrght');
+	}
 }
 
 //==========================================================================
@@ -59,23 +68,31 @@ int DrawSlot(int y, string text, bool entering)
 	int xx;
 	int j;
 
-	DrawPic(3, y + 12, pic_M_LSLEFT);
-	for (j = 0, xx = 11; j < 24; j++, xx += 8)
+	if (pic_M_FSLOT != -1)
 	{
-		DrawPic(xx, y + 12, pic_M_LSCNTR);
+		DrawPic(0, y, pic_M_FSLOT);
 	}
-	DrawPic(xx, y + 12, pic_M_LSRGHT);
+	else
+	{
+		DrawPic(3, y + 12, pic_M_LSLEFT);
+		for (j = 0, xx = 11; j < 24; j++, xx += 8)
+		{
+			DrawPic(xx, y + 12, pic_M_LSCNTR);
+		}
+		DrawPic(xx, y + 12, pic_M_LSRGHT);
+	}
 
 	SetFont('smallfont');
 	SetTextAlign(hleft, vtop);
-	DrawText(8, y + 5, text);
+	DrawText(5, y + 5, text);
 	if (entering)
 	{
 		DrawCursor();
 	}
-	return 16;
+	return 20;
 }
 
 defaultproperties
 {
+	pic_M_FSLOT = -1;
 }
