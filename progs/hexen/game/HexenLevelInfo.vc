@@ -211,6 +211,8 @@ void UpdateParticle(particle_t * p, float DeltaTime)
 		p->vel.z += p->accel.z * DeltaTime;
 		break;
 	}
+	
+	::UpdateParticle(p, DeltaTime);
 }
 
 defaultproperties
