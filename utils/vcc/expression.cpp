@@ -4743,10 +4743,19 @@ void VInvocation::CheckParams()
 			}
 			else
 			{
-				Args[i]->Type.CheckMatch(Args[i]->Loc, Func->ParamTypes[i]);
 				if (Func->ParamFlags[i] & FPARM_Out)
 				{
+					if (!Args[i]->Type.Equals(Func->ParamTypes[i]))
+					{
+						//FIXME This should be error.
+						Args[i]->Type.CheckMatch(Args[i]->Loc, Func->ParamTypes[i]);
+						//ParseError(Args[i]->Loc, "Out parameter types must be equal");
+					}
 					Args[i]->RequestAddressOf();
+				}
+				else
+				{
+					Args[i]->Type.CheckMatch(Args[i]->Loc, Func->ParamTypes[i]);
 				}
 				argsize += Args[i]->Type.GetSize();
 			}

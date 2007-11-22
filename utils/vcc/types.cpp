@@ -1456,7 +1456,6 @@ bool VMethod::Define()
 			Ret = false;
 			continue;
 		}
-		type.CheckPassable(P.TypeExpr->Loc);
 
 		TModifiers::Check(P.Modifiers, AllowedParmModifiers, P.Loc);
 
@@ -1472,6 +1471,7 @@ bool VMethod::Define()
 		}
 		else
 		{
+			type.CheckPassable(P.TypeExpr->Loc);
 			ParamsSize += type.GetSize() / 4;
 		}
 		if (ParamFlags[i] & FPARM_Optional)
