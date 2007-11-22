@@ -93,89 +93,6 @@ void T_SetAlign(halign_e NewHAlign, valign_e NewVAlign)
 
 //==========================================================================
 //
-//	T_SetShadow
-//
-//==========================================================================
-
-void T_SetShadow(bool state)
-{
-	GRoot->SetTextShadow(state);
-}
-
-//==========================================================================
-//
-//	T_StringWidth
-//
-//==========================================================================
-
-int T_StringWidth(VFont* Font, const VStr& String)
-{
-	guard(T_StringWidth);
-	int w = 0;
-	for (const char* SPtr = *String; *SPtr;)
-	{
-		int c = VStr::GetChar(SPtr);
-		//	Check for colour escape.
-		if (c == TEXT_COLOUR_ESCAPE)
-		{
-			VFont::ParseColourEscape(SPtr, CR_UNDEFINED, CR_UNDEFINED);
-			continue;
-		}
-		w += Font->GetCharWidth(c) + Font->GetKerning();
-	}
-	return w;
-	unguard;
-}
-
-//==========================================================================
-//
-//	T_TextWidth
-//
-//==========================================================================
-
-int T_TextWidth(VFont* Font, const VStr& String)
-{
-	guard(T_TextWidth);
-	size_t		i;
-	int			w1;
-	int			w = 0;
-	int			start = 0;
-
-	for (i = 0; i <= String.Length(); i++)
-		if ((String[i] == '\n') || !String[i])
-		{
-			w1 = T_StringWidth(Font, VStr(String, start, i - start));
-			if (w1 > w)
-				w = w1;
-			start = i;
-		}
-	return w;
-	unguard;
-}
-
-//==========================================================================
-//
-//	T_TextHeight
-//
-//==========================================================================
-
-int T_TextHeight(VFont* Font, const VStr& String)
-{
-	guard(T_TextHeight);
-	int h = Font->GetHeight();
-	for (size_t i = 0; i < String.Length(); i++)
-	{
-		if (String[i] == '\n')
-		{
-			h += Font->GetHeight();
-		}
-	}
-	return h;
-	unguard;
-}
-
-//==========================================================================
-//
 //	T_DrawText
 //
 //==========================================================================
@@ -183,17 +100,6 @@ int T_TextHeight(VFont* Font, const VStr& String)
 void T_DrawText(int x, int y, const VStr& String, int col)
 {
 	GRoot->DrawText(x, y, String, col, CR_YELLOW, 1.0);
-}
-
-//==========================================================================
-//
-//	T_DrawTextW
-//
-//==========================================================================
-
-int T_DrawTextW(int x, int y, const VStr& String, int w, int col)
-{
-	return GRoot->DrawTextW(x, y, String, w, col, CR_YELLOW);
 }
 
 //==========================================================================

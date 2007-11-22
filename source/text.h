@@ -80,16 +80,9 @@ void T_Shutdown();
 
 void T_SetFont(VFont*);
 void T_SetAlign(halign_e, valign_e);
-void T_SetShadow(bool);
-
-int T_StringWidth(VFont* Font, const VStr&);
-
-int T_TextWidth(VFont* Font, const VStr&);
-int T_TextHeight(VFont* Font, const VStr&);
 
 void T_DrawString8(int, int, const VStr&);
 void T_DrawText(int, int, const VStr&, int);
-int T_DrawTextW(int, int, const VStr&, int, int);
 
 void T_DrawCursor();
 void T_DrawCursorAt(int, int);

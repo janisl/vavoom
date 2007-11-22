@@ -913,9 +913,9 @@ void VWidget::DrawString(int x, int y, const VStr& String, int NormalColour,
 	int Colour = NormalColour;
 
 	if (HAlign == hcentre)
-		cx -= T_StringWidth(Font, String) / 2;
+		cx -= Font->StringWidth(String) / 2;
 	if (HAlign == hright)
-		cx -= T_StringWidth(Font, String);
+		cx -= Font->StringWidth(String);
 
 	for (const char* SPtr = *String; *SPtr;)
 	{
@@ -959,9 +959,9 @@ void VWidget::DrawText(int x, int y, const VStr& String, int NormalColour,
 	int cy = y;
 
 	if (VAlign == vcentre)
-		cy -= T_TextHeight(Font, String) / 2;
+		cy -= Font->TextHeight(String) / 2;
 	if (VAlign == vbottom)
-		cy -= T_TextHeight(Font, String);
+		cy -= Font->TextHeight(String);
 
 	//	Need this for correct cursor position with empty strings.
 	LastX = cx;
@@ -1008,9 +1008,9 @@ int VWidget::DrawTextW(int x, int y, const VStr& String, int w,
 
 	//	These won't work correctly so don't use them for now.
 	if (VAlign == vcentre)
-		cy -= T_TextHeight(Font, String) / 2;
+		cy -= Font->TextHeight(String) / 2;
 	if (VAlign == vbottom)
-		cy -= T_TextHeight(Font, String);
+		cy -= Font->TextHeight(String);
 
 	//	Need this for correct cursor position with empty strings.
 	LastX = cx;
@@ -1032,7 +1032,7 @@ int VWidget::DrawTextW(int x, int y, const VStr& String, int w,
 			int j = i;
 			while (String[j] > ' ')
 				j++;
-			if (T_StringWidth(Font, VStr(String, start, j - start)) > w)
+			if (Font->StringWidth(VStr(String, start, j - start)) > w)
 			{
 				VStr cs(String, start, i - start);
 				DrawString(cx, cy, cs, NormalColour, BoldColour, Alpha);
@@ -1104,9 +1104,9 @@ void VWidget::DrawString8(int x, int y, const VStr& String)
 	int Colour = CR_UNTRANSLATED;
 
 	if (HAlign == hcentre)
-		cx -= T_StringWidth(Font, String) / 2;
+		cx -= Font->StringWidth(String) / 2;
 	if (HAlign == hright)
-		cx -= T_StringWidth(Font, String);
+		cx -= Font->StringWidth(String);
 
 	for (const char* SPtr = *String; *SPtr;)
 	{
@@ -1399,14 +1399,14 @@ IMPLEMENT_FUNCTION(VWidget, TextWidth)
 {
 	P_GET_STR(text);
 	P_GET_SELF;
-	RET_INT(T_TextWidth(Self->Font, text));
+	RET_INT(Self->Font->TextWidth(text));
 }
 
 IMPLEMENT_FUNCTION(VWidget, TextHeight)
 {
 	P_GET_STR(text);
 	P_GET_SELF;
-	RET_INT(T_TextHeight(Self->Font, text));
+	RET_INT(Self->Font->TextHeight(text));
 }
 
 IMPLEMENT_FUNCTION(VWidget, DrawText)

@@ -934,6 +934,78 @@ int VFont::FindTextColour(VName Name)
 
 //==========================================================================
 //
+//	VFont::StringWidth
+//
+//==========================================================================
+
+int VFont::StringWidth(const VStr& String) const
+{
+	guard(VFont::StringWidth);
+	int w = 0;
+	for (const char* SPtr = *String; *SPtr;)
+	{
+		int c = VStr::GetChar(SPtr);
+		//	Check for colour escape.
+		if (c == TEXT_COLOUR_ESCAPE)
+		{
+			ParseColourEscape(SPtr, CR_UNDEFINED, CR_UNDEFINED);
+			continue;
+		}
+		w += GetCharWidth(c) + GetKerning();
+	}
+	return w;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VFont::TextWidth
+//
+//==========================================================================
+
+int VFont::TextWidth(const VStr& String) const
+{
+	guard(VFont::TextWidth);
+	size_t		i;
+	int			w1;
+	int			w = 0;
+	int			start = 0;
+
+	for (i = 0; i <= String.Length(); i++)
+		if ((String[i] == '\n') || !String[i])
+		{
+			w1 = StringWidth(VStr(String, start, i - start));
+			if (w1 > w)
+				w = w1;
+			start = i;
+		}
+	return w;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VFont::TextHeight
+//
+//==========================================================================
+
+int VFont::TextHeight(const VStr& String) const
+{
+	guard(VFont::TextHeight);
+	int h = FontHeight;
+	for (size_t i = 0; i < String.Length(); i++)
+	{
+		if (String[i] == '\n')
+		{
+			h += FontHeight;
+		}
+	}
+	return h;
+	unguard;
+}
+
+//==========================================================================
+//
 //	VSpecialFont::VSpecialFont
 //
 //==========================================================================

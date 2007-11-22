@@ -72,6 +72,9 @@ public:
 
 	VTexture* GetChar(int, int*, int) const;
 	int GetCharWidth(int) const;
+	int StringWidth(const VStr&) const;
+	int TextWidth(const VStr&) const;
+	int TextHeight(const VStr&) const;
 
 	int GetSpaceWidth() const
 	{
