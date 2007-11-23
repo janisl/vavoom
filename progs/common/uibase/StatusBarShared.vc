@@ -38,6 +38,16 @@ array<SplitLine>	CentreMessageLines;
 int					CentreMessageHeight;
 float				CentreTime;
 
+enum
+{
+	HUDMSG_PLAIN,
+	HUDMSG_FADEOUT,
+	HUDMSG_TYPEON,
+	HUDMSG_FADEINOUT
+};
+const int HUDMSG_LOG			= 0x80000000;
+const int HUDMSG_COLORSTRING	= 0x40000000;
+
 //==========================================================================
 //
 //  StartMap
@@ -232,6 +242,29 @@ void UpdateCentreMessage(float DeltaTime)
 	{
 		CentreTime = 0.0;
 	}
+}
+
+//==========================================================================
+//
+//	AddHudMessage
+//
+//==========================================================================
+
+void AddHudMessage(string Message, int Type, int Id, int Colour,
+	string ColourName, float x, float y, float HoldTime, float Time1,
+	float Time2)
+{
+	if (Type & HUDMSG_LOG)
+	{
+		print("\ci<------------------------------->");
+		print("%s%s", TextColourString(Colour), Message);
+		print("\ci<------------------------------->");
+		Type &= ~HUDMSG_LOG;
+	}
+
+	HudMessage Msg = NewChild(HudMessage);
+	Msg.Init(Message, Type, Id, Colour, ColourName, x, y, HoldTime, Time1,
+		Time2);
 }
 
 void SB_Drawer(int sb_view)

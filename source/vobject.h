@@ -325,6 +325,8 @@ public:
 	DECLARE_FUNCTION(GetLockDef)
 	DECLARE_FUNCTION(GetStatePlus)
 	DECLARE_FUNCTION(FindClassState)
+	DECLARE_FUNCTION(TextColourString)
+
 
 #ifdef CLIENT
 	DECLARE_FUNCTION(P_GetMapName)

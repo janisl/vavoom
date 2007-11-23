@@ -140,6 +140,7 @@ REGISTER_NAME(ClientSkipIntermission)
 REGISTER_NAME(ClientFinale)
 REGISTER_NAME(ClientChangeMusic)
 REGISTER_NAME(ClientSetServerInfo)
+REGISTER_NAME(ClientHudMessage)
 REGISTER_NAME(ServerImpulse)
 REGISTER_NAME(ServerSetUserInfo)
 
@@ -167,6 +168,7 @@ REGISTER_NAME(MessageBoxActive)
 REGISTER_NAME(DrawViewBorder)
 REGISTER_NAME(AddNotifyMessage)
 REGISTER_NAME(AddCentreMessage)
+REGISTER_NAME(AddHudMessage)
 
 //	Widget events
 REGISTER_NAME(OnCreate)

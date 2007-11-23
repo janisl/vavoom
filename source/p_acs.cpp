@@ -303,6 +303,17 @@ private:
 		NOT_CEILING			= 16,
 	};
 
+	enum
+	{
+		HUDMSG_PLAIN,
+		HUDMSG_FADEOUT,
+		HUDMSG_TYPEON,
+		HUDMSG_FADEINOUT,
+
+		HUDMSG_LOG			= 0x80000000,
+		HUDMSG_COLORSTRING	= 0x40000000,
+	};
+
 	const char* GetStr(int Index)
 	{
 		return ActiveObject->Level->GetString(Index);
@@ -2955,28 +2966,66 @@ int VAcs::RunScript(float DeltaTime)
 
 		ACSVM_CASE(PCD_EndHudMessage)
 		ACSVM_CASE(PCD_EndHudMessageBold)
-			STUB(PCD_EndHudMessage or PCD_EndHudMessageBold)
-			//FIXME implement this
 			if (!optstart)
 			{
 				optstart = sp;
 			}
-			//optstart[-6] - type
-			//optstart[-5] - ID
-			//optstart[-4] - colour
-			//optstart[-3] - x, fixed point
-			//optstart[-2] - y, fixed point
-			//optstart[-1] - hold time, fixed point
-			if (cmd != PCD_EndHudMessageBold &&
-				Activator && Activator->EntityFlags & VEntity::EF_IsPlayer)
 			{
-				Activator->Player->Printf(*PrintStr);
+				int Type = optstart[-6];
+				int Id = optstart[-5];
+				int Colour = optstart[-4];
+				VStr ColourName;
+				if (Type & HUDMSG_COLORSTRING)
+				{
+					ColourName = GetStr(optstart[-4]);
+					Colour = -1;
+				}
+				float x = (float)optstart[-3] / float(0x10000);
+				float y = (float)optstart[-2] / float(0x10000);
+				float HoldTime = (float)optstart[-1] / float(0x10000);
+				float Time1 = 0;
+				float Time2 = 0;
+				switch (Type & 0xffff)
+				{
+				case HUDMSG_FADEOUT:
+					Time1 = optstart < sp ?
+						(float)optstart[0] / float(0x10000) : 0.5;
+					break;
+				case HUDMSG_TYPEON:
+					Time1 = optstart < sp ?
+						(float)optstart[0] / float(0x10000) : 0.05;
+					Time2 = optstart < sp - 1 ?
+						(float)optstart[1] / float(0x10000) : 0.5;
+					break;
+				case HUDMSG_FADEINOUT:
+					Time1 = optstart < sp ?
+						(float)optstart[0] / float(0x10000) : 0.5;
+					Time2 = optstart < sp - 1 ?
+						(float)optstart[1] / float(0x10000) : 0.5;
+					break;
+				}
+				if (cmd != PCD_EndHudMessageBold && Activator &&
+					(Activator->EntityFlags & VEntity::EF_IsPlayer))
+				{
+					Activator->Player->eventClientHudMessage(PrintStr, Type,
+						Id, Colour, ColourName, x, y, HoldTime, Time1, Time2);
+				}
+				else
+				{
+					for (int i = 0; i < MAXPLAYERS; i++)
+					{
+						if (Level->Game->Players[i] &&
+							(Level->Game->Players[i]->PlayerFlags &
+							VBasePlayer::PF_Spawned))
+						{
+							Level->Game->Players[i]->eventClientHudMessage(
+								PrintStr, Type, Id, Colour, ColourName, x, y,
+								HoldTime, Time1, Time2);
+						}
+					}
+				}
+				sp = optstart - 6;
 			}
-			else
-			{
-				BroadcastCentrePrint(*PrintStr);
-			}
-			sp = optstart - 6;
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_SetFont)

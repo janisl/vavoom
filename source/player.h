@@ -194,6 +194,7 @@ class VBasePlayer : public VObject
 	DECLARE_FUNCTION(ClientFinale)
 	DECLARE_FUNCTION(ClientChangeMusic)
 	DECLARE_FUNCTION(ClientSetServerInfo)
+	DECLARE_FUNCTION(ClientHudMessage)
 
 	DECLARE_FUNCTION(ServerSetUserInfo)
 
@@ -377,6 +378,23 @@ class VBasePlayer : public VObject
 		P_PASS_STR(Key);
 		P_PASS_STR(Value);
 		EV_RET_VOID(NAME_ClientSetServerInfo);
+	}
+	void eventClientHudMessage(const VStr& Message, int Type, int Id,
+		int Colour, const VStr& ColourName, float x, float y, float HoldTime,
+		float Time1, float Time2)
+	{
+		P_PASS_SELF;
+		P_PASS_STR(Message);
+		P_PASS_INT(Type);
+		P_PASS_INT(Id);
+		P_PASS_INT(Colour);
+		P_PASS_STR(ColourName);
+		P_PASS_FLOAT(x);
+		P_PASS_FLOAT(y);
+		P_PASS_FLOAT(HoldTime);
+		P_PASS_FLOAT(Time1);
+		P_PASS_FLOAT(Time2);
+		EV_RET_VOID(NAME_ClientHudMessage);
 	}
 
 	void eventServerImpulse(int AImpulse)

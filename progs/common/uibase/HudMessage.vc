@@ -23,43 +23,56 @@
 //**
 //**************************************************************************
 
-import engine;
+class HudMessage : Widget;
 
-#include "ClientGameShared.vc"
-#include "MenuChoice.vc"
-#include "MenuScreen.vc"
-#include "MenuTitleText.vc"
-#include "MenuStaticBitmap.vc"
-#include "MenuStaticAnim.vc"
-#include "MenuSpriteAnim.vc"
-#include "MenuModel.vc"
-#include "MenuTextButton.vc"
-#include "MenuBigTextButton.vc"
-#include "MenuSmallTextButton.vc"
-#include "MenuChoiceEnum.vc"
-#include "MenuChoice_OnOff.vc"
-#include "MenuControlKey.vc"
-#include "MenuSList.vc"
-#include "MenuChoiceSlider.vc"
-#include "MenuChoiceSlot.vc"
-#include "MenuInputLine.vc"
-#include "MenuSaveSlot.vc"
-#include "MenuChoice_LoadSlot.vc"
-#include "MenuChoice_SaveSlot.vc"
-#include "MenuSelector_SmallLeft.vc"
-#include "MenuSelector_SmallRight.vc"
-#include "MenuSelector_Big.vc"
+string		Message;
+float		HoldTime;
 
-#include "MenuScreenLoadGame.vc"
-#include "MenuScreenSaveGame.vc"
-#include "MenuScreenJoinGame.vc"
-#include "MenuScreenSList.vc"
-#include "MenuScreenControls.vc"
-#include "MenuScreenMouseOptions.vc"
-#include "MenuScreenScreenResolution.vc"
-#include "MenuScreenAdvancedVideoOptions.vc"
-#include "MenuScreenVideoOptions.vc"
-#include "MenuScreenSoundOptions.vc"
+//==========================================================================
+//
+//	AddHudMessage
+//
+//==========================================================================
 
-#include "StatusBarShared.vc"
-#include "HudMessage.vc"
+void Init(string AMessage, int Type, int Id, int Colour, string ColourName,
+	float MsgX, float MsgY, float AHoldTime, float Time1, float Time2)
+{
+	Message = AMessage;
+	HoldTime = AHoldTime;
+
+	print("HUD Message %s", Message);
+	print("Args %d %d %d %s %f %f %f %f %f", Type, Id, Colour, ColourName, MsgX, MsgY, HoldTime, Time1, Time2);
+}
+
+//==========================================================================
+//
+//	OnDraw
+//
+//==========================================================================
+
+void OnDraw()
+{
+	DrawText(100, 100, Message);
+}
+
+//==========================================================================
+//
+//	Tick
+//
+//==========================================================================
+
+void Tick(float DeltaTime)
+{
+	HoldTime -= DeltaTime;
+	if (HoldTime <= 0.0)
+	{
+		Destroy();
+	}
+}
+
+defaultproperties
+{
+	Width = 640;
+	Height = 480;
+	bTickEnabled = true;
+}

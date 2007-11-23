@@ -1508,6 +1508,7 @@ native static final LockDef* GetLockDef(int Lock);
 native static final state GetStatePlus(state S, int Offset,
 	optional bool IgnoreJump);
 native static final state FindClassState(class C, name StateName);
+native static final string TextColourString(int Colour);
 
 //==========================================================================
 //

@@ -391,6 +391,20 @@ void AddCentreMessage(string Msg)
 	GSBar.AddCentreMessage(Msg);
 }
 
+//==========================================================================
+//
+//	AddHudMessage
+//
+//==========================================================================
+
+void AddHudMessage(string Message, int Type, int Id, int Colour,
+	string ColourName, float x, float y, float HoldTime, float Time1,
+	float Time2)
+{
+	GSBar.AddHudMessage(Message, Type, Id, Colour, ColourName, x, y, HoldTime,
+		Time1, Time2);
+}
+
 void menu_quit()
 {
 }

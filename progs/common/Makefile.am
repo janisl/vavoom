@@ -103,6 +103,7 @@ EXTRA_DIST = \
 	linespec/Weapon.vc \
 	uibase/classes.vc \
 	uibase/ClientGameShared.vc \
+	uibase/HudMessage.vc \
 	uibase/MenuBigTextButton.vc \
 	uibase/MenuChoice.vc \
 	uibase/MenuChoice_LoadSlot.vc \
