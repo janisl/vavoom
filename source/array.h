@@ -27,6 +27,17 @@
 //**
 //**************************************************************************
 
+#ifdef ZONE_DEBUG_NEW
+#undef new
+#endif
+
+enum EArrayNew { E_ArrayNew };
+
+inline void* operator new(size_t, void* Ptr, EArrayNew)
+{
+	return Ptr;
+}
+
 template<class T> class TArray
 {
 public:
@@ -51,7 +62,11 @@ public:
 	{
 		if (ArrData)
 		{
-			delete[] ArrData;
+			for (int i = 0; i < ArrSize; i++)
+			{
+				ArrData[i].~T();
+			}
+			Z_Free(ArrData);
 		}
 		ArrData = NULL;
 		ArrNum = 0;
@@ -89,13 +104,18 @@ public:
 			return;
 		}
 		T* OldData = ArrData;
+		int OldSize = ArrSize;
 		ArrSize = NewSize;
 		if (ArrNum > NewSize)
 		{
 			ArrNum = NewSize;
 		}
 
-		ArrData = new T[ArrSize];
+		ArrData = (T*)Z_Malloc(ArrSize * sizeof(T));
+		for (int i = 0; i < ArrSize; i++)
+		{
+			new(&ArrData[i], E_ArrayNew) T;
+		}
 		for (int i = 0; i < ArrNum; i++)
 		{
 			ArrData[i] = OldData[i];
@@ -103,7 +123,11 @@ public:
 
 		if (OldData)
 		{
-			delete[] OldData;
+			for (int i = 0; i < OldSize; i++)
+			{
+				OldData[i].~T();
+			}
+			Z_Free(OldData);
 		}
 	}
 	void SetNum(int NewNum, bool bResize = true)
@@ -128,7 +152,11 @@ public:
 		ArrSize = Other.ArrSize;
 		if (ArrSize)
 		{
-			ArrData = new T[ArrSize];
+			ArrData = (T*)Z_Malloc(ArrSize * sizeof(T));
+			for (int i = 0; i < ArrSize; i++)
+			{
+				new(&ArrData[i], E_ArrayNew) T;
+			}
 			for (int i = 0; i < ArrNum; i++)
 			{
 				ArrData[i] = Other.ArrData[i];
@@ -203,3 +231,7 @@ private:
 	int ArrSize;
 	T* ArrData;
 };
+
+#ifdef ZONE_DEBUG_NEW
+#define new ZONE_DEBUG_NEW
+#endif
