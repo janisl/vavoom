@@ -995,65 +995,23 @@ int VWidget::DrawTextW(int x, int y, const VStr& String, int w,
 	int NormalColour, int BoldColour)
 {
 	guard(VWidget::DrawTextW);
-	int			start = 0;
-	int			cx;
-	int			cy;
-	int			i;
-	bool		wordStart = true;
-	int			LinesPrinted = 0;
-	float		Alpha = 1.0;
+	TArray<VSplitLine> Lines;
+	int TextH = Font->SplitText(String, Lines, w);
 
-	cx = x;
-	cy = y;
+	int cx = x;
+	int cy = y;
 
-	//	These won't work correctly so don't use them for now.
 	if (VAlign == vcentre)
-		cy -= Font->TextHeight(String) / 2;
+		cy -= TextH / 2;
 	if (VAlign == vbottom)
-		cy -= Font->TextHeight(String);
+		cy -= TextH;
 
-	//	Need this for correct cursor position with empty strings.
-	LastX = cx;
-	LastY = cy;
-
-	for (i = 0; String[i]; i++)
+	for (int i = 0; i < Lines.Num(); i++)
 	{
-		if (String[i] == '\n')
-		{
-			VStr cs(String, start, i - start);
-			DrawString(cx, cy, cs, NormalColour, BoldColour, Alpha);
-			cy += Font->GetHeight();
-			start = i + 1;
-			wordStart = true;
-			LinesPrinted++;
-		}
-		else if (wordStart && String[i] > ' ')
-		{
-			int j = i;
-			while (String[j] > ' ')
-				j++;
-			if (Font->StringWidth(VStr(String, start, j - start)) > w)
-			{
-				VStr cs(String, start, i - start);
-				DrawString(cx, cy, cs, NormalColour, BoldColour, Alpha);
-				cy += Font->GetHeight();
-				start = i;
-				LinesPrinted++;
-			}
-			wordStart = false;
-		}
-		else if (String[i] <= ' ')
-		{
-			wordStart = true;
-		}
-		if (!String[i + 1])
-		{
-			DrawString(cx, cy, VStr(String, start, i - start + 1),
-				NormalColour, BoldColour, Alpha);
-			LinesPrinted++;
-		}
+		DrawString(cx, cy, Lines[i].Text, NormalColour, BoldColour, 1.0);
+		cy += Font->GetHeight();
 	}
-	return LinesPrinted;
+	return Lines.Num();
 	unguard;
 }
 
@@ -1407,6 +1365,15 @@ IMPLEMENT_FUNCTION(VWidget, TextHeight)
 	P_GET_STR(text);
 	P_GET_SELF;
 	RET_INT(Self->Font->TextHeight(text));
+}
+
+IMPLEMENT_FUNCTION(VWidget, SplitText)
+{
+	P_GET_INT(MaxWidth);
+	P_GET_PTR(TArray<VSplitLine>, Lines);
+	P_GET_STR(Text);
+	P_GET_SELF;
+	RET_INT(Self->Font->SplitText(Text, *Lines, MaxWidth));
 }
 
 IMPLEMENT_FUNCTION(VWidget, DrawText)

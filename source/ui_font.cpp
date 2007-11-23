@@ -1006,6 +1006,92 @@ int VFont::TextHeight(const VStr& String) const
 
 //==========================================================================
 //
+//	VFont::SplitText
+//
+//==========================================================================
+
+int VFont::SplitText(const VStr& Text, TArray<VSplitLine>& Lines,
+	int MaxWidth) const
+{
+	guard(VFont::SplitText);
+	Lines.Clear();
+	const char* Start = *Text;
+	bool WordStart = true;
+	int CurW = 0;
+	for (const char* SPtr = *Text; *SPtr;)
+	{
+		const char* PChar = SPtr;
+		int c = VStr::GetChar(SPtr);
+
+		//	Check for colour escape.
+		if (c == TEXT_COLOUR_ESCAPE)
+		{
+			ParseColourEscape(SPtr, CR_UNDEFINED, CR_UNDEFINED);
+			continue;
+		}
+
+		if (c == '\n')
+		{
+			VSplitLine& L = Lines.Alloc();
+			L.Text = VStr(Text, Start - *Text, PChar - Start);
+			L.Width = CurW;
+			Start = SPtr;
+			WordStart = true;
+			CurW = 0;
+		}
+		else if (WordStart && c > ' ')
+		{
+			const char* SPtr2 = SPtr;
+			const char* PChar2 = PChar;
+			int c2 = c;
+			int NewW = CurW;
+			while (c2 > ' ' || c2 == TEXT_COLOUR_ESCAPE)
+			{
+				if (c2 != TEXT_COLOUR_ESCAPE)
+				{
+					NewW += GetCharWidth(c2);
+				}
+				PChar2 = SPtr2;
+				c2 = VStr::GetChar(SPtr2);
+				//	Check for colour escape.
+				if (c2 == TEXT_COLOUR_ESCAPE)
+				{
+					ParseColourEscape(SPtr2, CR_UNDEFINED, CR_UNDEFINED);
+				}
+			}
+			if (NewW > MaxWidth)
+			{
+				VSplitLine& L = Lines.Alloc();
+				L.Text = VStr(Text, Start - *Text, PChar - Start);
+				L.Width = CurW;
+				Start = PChar;
+				CurW = 0;
+			}
+			WordStart = false;
+			CurW += GetCharWidth(c);
+		}
+		else if (c <= ' ')
+		{
+			WordStart = true;
+			CurW += GetCharWidth(c);
+		}
+		else
+		{
+			CurW += GetCharWidth(c);
+		}
+		if (!*SPtr && Start != SPtr)
+		{
+			VSplitLine& L = Lines.Alloc();
+			L.Text = Start;
+			L.Width = CurW;
+		}
+	}
+	return Lines.Num() * FontHeight;
+	unguard;
+}
+
+//==========================================================================
+//
 //	VSpecialFont::VSpecialFont
 //
 //==========================================================================

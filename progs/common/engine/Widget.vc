@@ -40,6 +40,15 @@ struct ClipRect
 	float		ClipY2;
 };
 
+//
+//	VSplitLine
+//
+struct SplitLine
+{
+	string		Text;
+	int			Width;
+};
+
 //	Parent container widget.
 private readonly Widget			ParentWidget;
 //	Linked list of child widgets.
@@ -241,6 +250,9 @@ native final int TextWidth(string text);
 //  Calculates text height
 native final int TextHeight(string text);
 //  Draws text
+//	Splits text into lines that fit in specified width
+native final int SplitText(string Text, out array<SplitLine> Lines,
+	int Maxwidth);
 native final void DrawText(int X, int Y, string Text, optional int Colour,
 	optional int BoldColour, optional float Alpha);
 //  Draws text wrapping at the width w

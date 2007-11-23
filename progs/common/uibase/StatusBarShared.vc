@@ -97,15 +97,25 @@ void ClearNotify()
 
 void AddNotifyMessage(string Str)
 {
-	if (num_notify >= NUM_NOTIFY_LINES)
+	array<SplitLine>	Lines;
+	int					i;
+
+	SetFont('smallfont');
+	SplitText(Str, Lines, 640);
+
+	for (i = 0; i < Lines.Num; i++)
 	{
-		num_notify--;
-		first_notify++;
+		if (num_notify >= NUM_NOTIFY_LINES)
+		{
+			num_notify--;
+			first_notify++;
+		}
+		notify_lines[(num_notify + first_notify) % NUM_NOTIFY_LINES] =
+			Lines[i].Text;
+		notify_times[(num_notify + first_notify) % NUM_NOTIFY_LINES] =
+			GetCvarF('notify_time');
+		num_notify++;
 	}
-	notify_lines[(num_notify + first_notify) % NUM_NOTIFY_LINES] = Str;
-	notify_times[(num_notify + first_notify) % NUM_NOTIFY_LINES] =
-		GetCvarF('notify_time');
-	num_notify++;
 }
 
 //==========================================================================
@@ -133,9 +143,9 @@ void DrawNotify()
 		}
 		else
 		{
-			int lp = DrawTextW(4, y, notify_lines[(i + first_notify) %
-				NUM_NOTIFY_LINES], 640, col);
-			y += 9 * lp;
+			DrawText(4, y, notify_lines[(i + first_notify) %
+				NUM_NOTIFY_LINES], col);
+			y += 9;
 			i++;
 		}
 	}

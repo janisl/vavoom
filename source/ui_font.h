@@ -24,7 +24,18 @@
 //**************************************************************************
 
 //
-// Fonts
+//	VSplitLine
+//
+struct VSplitLine
+{
+	VStr		Text;
+	vint32		Width;
+};
+
+//
+//	VFont
+//
+//	Base class for fonts.
 //
 class VFont
 {
@@ -75,6 +86,7 @@ public:
 	int StringWidth(const VStr&) const;
 	int TextWidth(const VStr&) const;
 	int TextHeight(const VStr&) const;
+	int SplitText(const VStr&, TArray<VSplitLine>&, int) const;
 
 	int GetSpaceWidth() const
 	{
