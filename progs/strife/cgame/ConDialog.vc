@@ -43,10 +43,16 @@ ConDlgChoice		WinChoices[6];
 int					NumChoices;
 
 // True if gold icon should be drawn
-bool bNeedGold;
+bool				bNeedGold;
 
 RandomConversation	RandomConversations[5];
 string				CancelTexts[3];
+
+//==========================================================================
+//
+//	SetSpeech
+//
+//==========================================================================
 
 void SetSpeech(int SpeechNum)
 {
@@ -115,7 +121,8 @@ void SetSpeech(int SpeechNum)
 		if (!SpeakerName)
 			SpeakerName = "Person";
 	}
-	SpeechText = Speech->Text;
+	SetFont('smallfont');
+	SpeechText = SplitTextWithNewlines(Speech->Text, 640 - 128);
 
 	//	Check for random conversation text.
 	if (!strcmp(substr(SpeechText, 0, 6), "RANDOM"))
@@ -127,7 +134,8 @@ void SetSpeech(int SpeechNum)
 		{
 			if (!strcmp(TempStr, RandomConversations[i].Name))
 			{
-				SpeechText = RandomConversations[i].Texts[P_Random() % 10];
+				SpeechText = SplitTextWithNewlines(
+					RandomConversations[i].Texts[P_Random() % 10], 640 - 128);
 				break;
 			}
 		}
@@ -173,6 +181,12 @@ void SetSpeech(int SpeechNum)
 	SetDefaultChoice();
 }
 
+//==========================================================================
+//
+//	OnDraw
+//
+//==========================================================================
+
 void OnDraw()
 {
 	SetFont('smallfont');
@@ -187,7 +201,6 @@ void OnDraw()
 	}
 	if (bNeedGold)
 	{
-		int i;
 		Inventory Item;
 		Item = EntityEx(StatusBarScreen(ClGame.GSBar).cl.MO).FindInventory(Coin);
 
@@ -197,8 +210,14 @@ void OnDraw()
 
 	ShadeRect(60, 438 - NumChoices * 22, 501, NumChoices * 22, 0.3);
 	DrawText(64, 48, SpeakerName, CR_GREEN);
-	DrawTextW(64, 72, SpeechText, 640 - 128);
+	DrawText(64, 72, SpeechText);
 }
+
+//==========================================================================
+//
+//	OnKeyDown
+//
+//==========================================================================
 
 bool OnKeyDown(int key)
 {

@@ -353,14 +353,15 @@ void SB_DrawMainBar()
 	{
 		DrawPic(BAR_X + 0, BAR_Y + 56, pic_invpbak2, 0.666);
 		DrawPic(BAR_X + 0, BAR_Y + 56, pic_invpop2);
+		SetFont('smallfont2');
 		if (LoadedLog != cl.Objectives)
 		{
-			LogText = LoadTextLump(StrToName(va("log%d", cl.Objectives)));
+			LogText = SplitTextWithNewlines(LoadTextLump(
+				StrToName(va("log%d", cl.Objectives))), 280);
 			LoadedLog = cl.Objectives;
 		}
-		SetFont('smallfont2');
 		SetTextAlign(hleft, vtop);
-		DrawTextW(BAR_X + 20, BAR_Y + 60, LogText, 280);
+		DrawText(BAR_X + 20, BAR_Y + 60, LogText);
 	}
 }
 
@@ -509,14 +510,15 @@ void SB_DrawFullscreenStats()
 	{
 		DrawPic(BAR_X + 0, BAR_Y + 96, pic_invpbak2, 0.666);
 		DrawPic(BAR_X + 0, BAR_Y + 96, pic_invpop2);
+		SetFont('smallfont2');
 		if (LoadedLog != cl.Objectives)
 		{
-			LogText = LoadTextLump(StrToName(va("log%d", cl.Objectives)));
+			LogText = SplitTextWithNewlines(LoadTextLump(
+				StrToName(va("log%d", cl.Objectives))), 280);
 			LoadedLog = cl.Objectives;
 		}
-		SetFont('smallfont2');
 		SetTextAlign(hleft, vtop);
-		DrawTextW(BAR_X + 20, BAR_Y + 100, LogText, 280);
+		DrawText(BAR_X + 20, BAR_Y + 100, LogText);
 	}
 }
 

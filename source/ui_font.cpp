@@ -1092,6 +1092,26 @@ int VFont::SplitText(const VStr& Text, TArray<VSplitLine>& Lines,
 
 //==========================================================================
 //
+//	VFont::SplitTextWithNewlines
+//
+//==========================================================================
+
+VStr VFont::SplitTextWithNewlines(const VStr& Text, int MaxWidth) const
+{
+	guard(VFont::SplitTextWithNewlines);
+	TArray<VSplitLine> Lines;
+	SplitText(Text, Lines, MaxWidth);
+	VStr Ret;
+	for (int i = 0; i < Lines.Num(); i++)
+	{
+		Ret += Lines[i].Text + "\n";
+	}
+	return Ret;
+	unguard;
+}
+
+//==========================================================================
+//
 //	VSpecialFont::VSpecialFont
 //
 //==========================================================================

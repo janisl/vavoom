@@ -987,36 +987,6 @@ void VWidget::DrawText(int x, int y, const VStr& String, int NormalColour,
 
 //==========================================================================
 //
-//	VWidget::DrawTextW
-//
-//==========================================================================
-
-int VWidget::DrawTextW(int x, int y, const VStr& String, int w,
-	int NormalColour, int BoldColour)
-{
-	guard(VWidget::DrawTextW);
-	TArray<VSplitLine> Lines;
-	int TextH = Font->SplitText(String, Lines, w);
-
-	int cx = x;
-	int cy = y;
-
-	if (VAlign == vcentre)
-		cy -= TextH / 2;
-	if (VAlign == vbottom)
-		cy -= TextH;
-
-	for (int i = 0; i < Lines.Num(); i++)
-	{
-		DrawString(cx, cy, Lines[i].Text, NormalColour, BoldColour, 1.0);
-		cy += Font->GetHeight();
-	}
-	return Lines.Num();
-	unguard;
-}
-
-//==========================================================================
-//
 //	VWidget::DrawCursor
 //
 //==========================================================================
@@ -1376,6 +1346,14 @@ IMPLEMENT_FUNCTION(VWidget, SplitText)
 	RET_INT(Self->Font->SplitText(Text, *Lines, MaxWidth));
 }
 
+IMPLEMENT_FUNCTION(VWidget, SplitTextWithNewlines)
+{
+	P_GET_INT(MaxWidth);
+	P_GET_STR(Text);
+	P_GET_SELF;
+	RET_STR(Self->Font->SplitTextWithNewlines(Text, MaxWidth));
+}
+
 IMPLEMENT_FUNCTION(VWidget, DrawText)
 {
 	P_GET_FLOAT_OPT(Alpha, 1.0);
@@ -1386,18 +1364,6 @@ IMPLEMENT_FUNCTION(VWidget, DrawText)
 	P_GET_INT(X);
 	P_GET_SELF;
 	Self->DrawText(X, Y, String, Colour, BoldColour, Alpha);
-}
-
-IMPLEMENT_FUNCTION(VWidget, DrawTextW)
-{
-	P_GET_INT_OPT(BoldColour, CR_UNTRANSLATED);
-	P_GET_INT_OPT(Colour, CR_UNTRANSLATED);
-	P_GET_INT(w);
-	P_GET_STR(txt);
-	P_GET_INT(y);
-	P_GET_INT(x);
-	P_GET_SELF;
-	RET_INT(Self->DrawTextW(x, y, txt, w, Colour, BoldColour));
 }
 
 IMPLEMENT_FUNCTION(VWidget, DrawCursor)

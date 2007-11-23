@@ -260,7 +260,6 @@ public:
 	void SetTextAlign(halign_e, valign_e);
 	void SetTextShadow(bool);
 	void DrawText(int, int, const VStr&, int, int, float);
-	int DrawTextW(int, int, const VStr&, int, int, int);
 	void DrawCursor();
 	void DrawCursorAt(int, int);
 	void DrawString8(int, int, const VStr&);
@@ -456,7 +455,7 @@ public:
 	DECLARE_FUNCTION(TextWidth)
 	DECLARE_FUNCTION(TextHeight)
 	DECLARE_FUNCTION(SplitText)
+	DECLARE_FUNCTION(SplitTextWithNewlines)
 	DECLARE_FUNCTION(DrawText)
-	DECLARE_FUNCTION(DrawTextW)
 	DECLARE_FUNCTION(DrawCursor)
 };

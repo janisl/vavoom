@@ -176,15 +176,15 @@ void Host_Init()
 	C_Init();
 	V_Init();
 
+	R_Init();
+
+	T_Init();
+
 	CL_Init();
 
 	MN_Init();
 	AM_Init();
 	SB_Init();
-
-	R_Init();
-
-	T_Init();
 #endif
 
 #ifdef SERVER

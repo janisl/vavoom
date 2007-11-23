@@ -29,13 +29,14 @@ ClientGameBase		ClGame;
 
 const int NUM_NOTIFY_LINES = 5;
 
-string			notify_lines[NUM_NOTIFY_LINES];
-float			notify_times[NUM_NOTIFY_LINES];
-int				num_notify;
-int				first_notify;
+string				notify_lines[NUM_NOTIFY_LINES];
+float				notify_times[NUM_NOTIFY_LINES];
+int					num_notify;
+int					first_notify;
 
-string			centre_message;
-float			centre_time;
+array<SplitLine>	CentreMessageLines;
+int					CentreMessageHeight;
+float				CentreTime;
 
 //==========================================================================
 //
@@ -179,7 +180,7 @@ void UpdateNotify(float DeltaTime)
 
 void ClearCentreMessage()
 {
-	centre_time = 0.0;
+	CentreTime = 0.0;
 }
 
 //==========================================================================
@@ -190,8 +191,9 @@ void ClearCentreMessage()
 
 void AddCentreMessage(string Msg)
 {
-	centre_message = Msg;
-	centre_time = GetCvarF('centre_message_time');
+	SetFont('smallfont');
+	SplitText(Msg, CentreMessageLines, 600);
+	CentreTime = GetCvarF('centre_message_time');
 }
 
 //==========================================================================
@@ -202,11 +204,18 @@ void AddCentreMessage(string Msg)
 
 void DrawCentreMessage()
 {
-	if (centre_time)
+	int		i;
+
+	if (CentreTime && CentreMessageLines.Num)
 	{
+		int LineH = CentreMessageHeight / CentreMessageLines.Num; 
 		SetFont('smallfont');
-		SetTextAlign(hcentre, vcentre);
-		DrawTextW(320, 360, centre_message, 600, GetCvar('font_colour2'));
+		SetTextAlign(hleft, vtop);
+		for (i = 0; i < CentreMessageLines.Num; i++)
+		{
+			DrawText(320 - CentreMessageLines[i].Width / 2, 360 + i * LineH,
+				CentreMessageLines[i].Text, GetCvar('font_colour2'));
+		}
 	}
 }
 
@@ -218,10 +227,10 @@ void DrawCentreMessage()
 
 void UpdateCentreMessage(float DeltaTime)
 {
-	centre_time -= DeltaTime;
-	if (centre_time < 0.0)
+	CentreTime -= DeltaTime;
+	if (CentreTime < 0.0)
 	{
-		centre_time = 0.0;
+		CentreTime = 0.0;
 	}
 }
 
