@@ -1076,6 +1076,7 @@ VStatement* VParser::ParseStatement()
 	case TK_State:
 	case TK_String:
 	case TK_Void:
+	case TK_Array:
 	{
 		VExpression* TypeExpr = ParseType();
 		VLocalDecl* Decl = ParseLocalVar(TypeExpr);
