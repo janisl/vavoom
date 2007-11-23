@@ -1371,3 +1371,9 @@ IMPLEMENT_FUNCTION(VWidget, DrawCursor)
 	P_GET_SELF;
 	Self->DrawCursor();
 }
+
+IMPLEMENT_FUNCTION(VWidget, FindTextColour)
+{
+	P_GET_STR(Name);
+	RET_INT(VFont::FindTextColour(*Name.ToLower()));
+}

@@ -458,4 +458,5 @@ public:
 	DECLARE_FUNCTION(SplitTextWithNewlines)
 	DECLARE_FUNCTION(DrawText)
 	DECLARE_FUNCTION(DrawCursor)
+	DECLARE_FUNCTION(FindTextColour)
 };

@@ -48,8 +48,8 @@ float				Time;
 //
 //==========================================================================
 
-void Init(string Message, int Type, int Id, int Colour, string ColourName,
-	float AMsgX, float AMsgY, float AHoldTime, float Time1, float Time2)
+void Init(string Message, int Type, int Id, int Colour, float AMsgX,
+	float AMsgY, float AHoldTime, float Time1, float Time2)
 {
 	int		i;
 
@@ -57,7 +57,7 @@ void Init(string Message, int Type, int Id, int Colour, string ColourName,
 	HoldTime = AHoldTime;
 
 	print("HUD Message %s", Message);
-	print("Args %d %d %s %f %f %f", Type, Id, ColourName, HoldTime, Time1, Time2);
+	print("Args %d %d %f %f", Type, Id, Time1, Time2);
 
 	//	Calculate width and height of the text.
 	MsgHeight = SplitText(Message, MsgLines, Width);
