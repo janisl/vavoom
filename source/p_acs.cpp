@@ -238,6 +238,7 @@ class VAcs : public VThinker
 	VAcsObject*		ActiveObject;
 	int				HudWidth;
 	int				HudHeight;
+	VName			Font;
 
 	void Destroy();
 	void Serialise(VStream&);
@@ -1741,7 +1742,8 @@ void VAcs::Serialise(VStream& Strm)
 		Strm << LocalVars[i];
 	}
 	Strm << HudWidth
-		<< HudHeight;
+		<< HudHeight
+		<< Font;
 	unguard;
 }
 
@@ -3011,9 +3013,9 @@ int VAcs::RunScript(float DeltaTime)
 				if (cmd != PCD_EndHudMessageBold && Activator &&
 					(Activator->EntityFlags & VEntity::EF_IsPlayer))
 				{
-					Activator->Player->eventClientHudMessage(PrintStr, Type,
-						Id, Colour, ColourName, x, y, HudWidth, HudHeight,
-						HoldTime, Time1, Time2);
+					Activator->Player->eventClientHudMessage(PrintStr, Font,
+						Type, Id, Colour, ColourName, x, y, HudWidth,
+						HudHeight, HoldTime, Time1, Time2);
 				}
 				else
 				{
@@ -3024,8 +3026,9 @@ int VAcs::RunScript(float DeltaTime)
 							VBasePlayer::PF_Spawned))
 						{
 							Level->Game->Players[i]->eventClientHudMessage(
-								PrintStr, Type, Id, Colour, ColourName, x, y,
-								HudWidth, HudHeight, HoldTime, Time1, Time2);
+								PrintStr, Font, Type, Id, Colour, ColourName,
+								x, y, HudWidth, HudHeight, HoldTime, Time1,
+								Time2);
 						}
 					}
 				}
@@ -3034,16 +3037,12 @@ int VAcs::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_SetFont)
-			STUB(PCD_SetFont)
-			//FIXME implement this
-			//sp[-1] - font name, string
+			Font = *VStr(GetStr(sp[-1])).ToLower();
 			sp--;
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_SetFontDirect)
-			STUB(PCD_SetFontDirect)
-			//FIXME implement this
-			//READ_INT32(ip) - font name, string
+			Font = *VStr(READ_INT32(ip)).ToLower();
 			ip += 4;
 			ACSVM_BREAK;
 

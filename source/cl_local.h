@@ -211,12 +211,13 @@ class VClientGameBase : public VObject
 		P_PASS_STR(Msg);
 		EV_RET_VOID(NAME_AddCentreMessage);
 	}
-	void eventAddHudMessage(const VStr& Message, int Type, int Id,
+	void eventAddHudMessage(const VStr& Message, VName Font, int Type, int Id,
 		int Colour, const VStr& ColourName, float x, float y, int HudWidth,
 		int HudHeight, float HoldTime, float Time1, float Time2)
 	{
 		P_PASS_SELF;
 		P_PASS_STR(Message);
+		P_PASS_NAME(Font);
 		P_PASS_INT(Type);
 		P_PASS_INT(Id);
 		P_PASS_INT(Colour);

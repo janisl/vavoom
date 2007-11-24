@@ -172,9 +172,9 @@ native void ClientSkipIntermission();
 native void ClientFinale(string Type);
 native void ClientChangeMusic(name Song, int CDTrack);
 native void ClientSetServerInfo(string Key, string Value);
-native void ClientHudMessage(string Message, int Type, int Id, int Colour,
-	string ColourName, float x, float y, int HudWidth, int HudHeight,
-	float HoldTime, float Time1, float Time2);
+native void ClientHudMessage(string Message, name Font, int Type, int Id,
+	int Colour, string ColourName, float x, float y, int HudWidth,
+	int HudHeight, float HoldTime, float Time1, float Time2);
 
 native void ServerSetUserInfo(string Info);
 

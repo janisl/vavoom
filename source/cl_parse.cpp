@@ -314,10 +314,11 @@ IMPLEMENT_FUNCTION(VBasePlayer, ClientHudMessage)
 	P_GET_INT(Colour);
 	P_GET_INT(Id);
 	P_GET_INT(Type);
+	P_GET_NAME(Font);
 	P_GET_STR(Message);
 	P_GET_SELF;
-	GClGame->eventAddHudMessage(Message, Type, Id, Colour, ColourName, x, y,
-		HudWidth, HudHeight, HoldTime, Time1, Time2);
+	GClGame->eventAddHudMessage(Message, Font, Type, Id, Colour, ColourName,
+		x, y, HudWidth, HudHeight, HoldTime, Time1, Time2);
 }
 
 //==========================================================================
