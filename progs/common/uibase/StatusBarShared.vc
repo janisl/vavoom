@@ -254,6 +254,8 @@ void AddHudMessage(string Message, int Type, int Id, int Colour,
 	string ColourName, float x, float y, float HoldTime, float Time1,
 	float Time2)
 {
+	Widget		Probe;
+
 	//	Log to console if needed.
 	if (Type & HUDMSG_LOG)
 	{
@@ -269,8 +271,36 @@ void AddHudMessage(string Message, int Type, int Id, int Colour,
 		Colour = FindTextColour(ColourName);
 	}
 
+	//	Remove previous message with the same ID.
+	if (Id && Id != 0xffffffff)
+	{
+		for (Probe = FirstChild; Probe; Probe = Probe.Next)
+		{
+			if (HudMessage(Probe) && HudMessage(Probe).Id == Id)
+			{
+				Probe.Destroy();
+				break;
+			}
+		}
+	}
+
+	print("HUD Message %s", Message);
+	print("Args %d %f %f", Type, Time1, Time2);
+
 	HudMessage Msg = NewChild(HudMessage);
 	Msg.Init(Message, Type, Id, Colour, x, y, HoldTime, Time1, Time2);
+
+	//	Insert in the list in the proper location.
+	Probe = FirstChild;
+	while (Probe && (!HudMessage(Probe) || Probe == Msg ||
+		HudMessage(Probe).Id > Id))
+	{
+		Probe = Probe.Next;
+	}
+	if (Probe)
+	{
+		Msg.MoveBefore(Probe);
+	}
 }
 
 void SB_Drawer(int sb_view)

@@ -25,6 +25,9 @@
 
 class HudMessage : Widget;
 
+//	ID, used as a priority or to replace a previous message.
+int					Id;
+
 array<SplitLine>	MsgLines;
 int					MsgColour;
 
@@ -48,16 +51,14 @@ float				Time;
 //
 //==========================================================================
 
-void Init(string Message, int Type, int Id, int Colour, float AMsgX,
+void Init(string Message, int Type, int AId, int Colour, float AMsgX,
 	float AMsgY, float AHoldTime, float Time1, float Time2)
 {
 	int		i;
 
+	Id = AId;
 	MsgColour = Colour;
 	HoldTime = AHoldTime;
-
-	print("HUD Message %s", Message);
-	print("Args %d %d %f %f", Type, Id, Time1, Time2);
 
 	//	Calculate width and height of the text.
 	MsgHeight = SplitText(Message, MsgLines, Width);

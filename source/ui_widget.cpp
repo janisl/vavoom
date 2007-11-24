@@ -284,6 +284,120 @@ void VWidget::Raise()
 
 //==========================================================================
 //
+//	VWidget::MoveBefore
+//
+//==========================================================================
+
+void VWidget::MoveBefore(VWidget* Other)
+{
+	guard(VWidget::MoveBefore);
+	if (ParentWidget != Other->ParentWidget)
+	{
+		Sys_Error("Must have the same parent widget");
+	}
+	if (Other == this)
+	{
+		Sys_Error("Can't move before self");
+	}
+
+	if (Other->PrevWidget == this)
+	{
+		//	Already there
+		return;
+	}
+
+	//	Unlink from current location
+	if (PrevWidget)
+	{
+		PrevWidget->NextWidget = NextWidget;
+	}
+	else
+	{
+		ParentWidget->FirstChildWidget = NextWidget;
+	}
+	if (NextWidget)
+	{
+		NextWidget->PrevWidget = PrevWidget;
+	}
+	else
+	{
+		ParentWidget->LastChildWidget = PrevWidget;
+	}
+
+	//	Link in new position
+	PrevWidget = Other->PrevWidget;
+	NextWidget = Other;
+	Other->PrevWidget = this;
+	if (PrevWidget)
+	{
+		PrevWidget->NextWidget = this;
+	}
+	else
+	{
+		ParentWidget->FirstChildWidget = this;
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VWidget::MoveAfter
+//
+//==========================================================================
+
+void VWidget::MoveAfter(VWidget* Other)
+{
+	guard(VWidget::MoveAfter);
+	if (ParentWidget != Other->ParentWidget)
+	{
+		Sys_Error("Must have the same parent widget");
+	}
+	if (Other == this)
+	{
+		Sys_Error("Can't move after self");
+	}
+
+	if (Other->NextWidget == this)
+	{
+		//	Already there
+		return;
+	}
+
+	//	Unlink from current location
+	if (PrevWidget)
+	{
+		PrevWidget->NextWidget = NextWidget;
+	}
+	else
+	{
+		ParentWidget->FirstChildWidget = NextWidget;
+	}
+	if (NextWidget)
+	{
+		NextWidget->PrevWidget = PrevWidget;
+	}
+	else
+	{
+		ParentWidget->LastChildWidget = PrevWidget;
+	}
+
+	//	Link in new position
+	NextWidget = Other->NextWidget;
+	PrevWidget = Other;
+	Other->NextWidget = this;
+	if (NextWidget)
+	{
+		NextWidget->PrevWidget = this;
+	}
+	else
+	{
+		ParentWidget->LastChildWidget = this;
+	}
+	unguard;
+}
+
+//==========================================================================
+//
 //	VWidget::ClipTree
 //
 //==========================================================================
@@ -1102,6 +1216,20 @@ IMPLEMENT_FUNCTION(VWidget, Raise)
 {
 	P_GET_SELF;
 	Self->Raise();
+}
+
+IMPLEMENT_FUNCTION(VWidget, MoveBefore)
+{
+	P_GET_REF(VWidget, Other);
+	P_GET_SELF;
+	Self->MoveBefore(Other);
+}
+
+IMPLEMENT_FUNCTION(VWidget, MoveAfter)
+{
+	P_GET_REF(VWidget, Other);
+	P_GET_SELF;
+	Self->MoveAfter(Other);
 }
 
 IMPLEMENT_FUNCTION(VWidget, SetPos)

@@ -135,6 +135,8 @@ public:
 	//	Methods to move widget on top or bottom.
 	void Lower();
 	void Raise();
+	void MoveBefore(VWidget*);
+	void MoveAfter(VWidget*);
 
 	//	Methods to set position, size and scale.
 	void SetPos(int NewX, int NewY)
@@ -416,6 +418,8 @@ public:
 
 	DECLARE_FUNCTION(Raise)
 	DECLARE_FUNCTION(Lower)
+	DECLARE_FUNCTION(MoveBefore)
+	DECLARE_FUNCTION(MoveAfter)
 
 	DECLARE_FUNCTION(SetPos)
 	DECLARE_FUNCTION(SetX)

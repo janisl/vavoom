@@ -105,6 +105,26 @@ Widget Parent
 	get { return ParentWidget; }
 }
 
+Widget FirstChild
+{
+	get { return FirstChildWidget; }
+}
+
+Widget LastChild
+{
+	get { return LastChildWidget; }
+}
+
+Widget Prev
+{
+	get { return PrevWidget; }
+}
+
+Widget Next
+{
+	get { return NextWidget; }
+}
+
 int X
 {
 	get { return PosX; }
@@ -198,6 +218,8 @@ native final RootWidget GetRootWidget();
 //	Methods to move widget on top or bottom.
 native final void Lower();
 native final void Raise();
+native final void MoveBefore(Widget Other);
+native final void MoveAfter(Widget Other);
 
 //	Methods to set position, size and scale.
 native final void SetPos(int NewX, int NewY);
