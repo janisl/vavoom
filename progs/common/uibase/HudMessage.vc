@@ -39,6 +39,9 @@ int					MsgHeight;
 float				MsgX;
 float				MsgY;
 
+int					HudWidth;
+int					HudHeight;
+
 //	True if text lines should be centred.
 bool				bCentreX;
 
@@ -52,7 +55,8 @@ float				Time;
 //==========================================================================
 
 void Init(string Message, int Type, int AId, int Colour, float AMsgX,
-	float AMsgY, float AHoldTime, float Time1, float Time2)
+	float AMsgY, int AHudWidth, int AHudHeight, float AHoldTime, float Time1,
+	float Time2)
 {
 	int		i;
 
@@ -74,18 +78,45 @@ void Init(string Message, int Type, int AId, int Colour, float AMsgX,
 	//	Position of the message.
 	MsgX = AMsgX;
 	MsgY = AMsgY;
-	if (fabs(MsgX) > 2.0)
+	if (AHudWidth == 0 || AHudHeight == 0)
 	{
-		bCentreX = true;
-		MsgX = 0.5;
+		if (fabs(MsgX) > 2.0)
+		{
+			bCentreX = true;
+			MsgX = 0.5;
+		}
+		else
+		{
+			if (fabs(MsgX) > 1.0)
+			{
+				bCentreX = true;
+			}
+			MsgX = MsgX > 1.0 ? MsgX - 1.0 : MsgX < -1.0 ? MsgX + 1.0 : MsgX;
+		}
 	}
 	else
 	{
-		if (fabs(MsgX) > 1.0)
+		HudWidth = AHudWidth;
+		HudHeight = AHudHeight;
+		Width = abs(HudWidth);
+		Height = abs(HudHeight);
+		ScaleX = itof(Parent.Width) / itof(Width);
+		ScaleY = itof(Parent.Height) / itof(Height);
+
+		int IntPart = ftoi(MsgX);
+		int FracPart = ftoi(fabs(MsgX - itof(IntPart)) * 10.0 + 0.5);
+		if (FracPart & 4)
 		{
 			bCentreX = true;
 		}
-		MsgX = MsgX > 1.0 ? MsgX - 1.0 : MsgX < -1.0 ? MsgX + 1.0 : MsgX;
+		if (MsgX > 0.0)
+		{
+			MsgX = itof(IntPart) + itof(FracPart & 3) / 10.0;
+		}
+		else
+		{
+			MsgX = itof(IntPart) - itof(FracPart & 3) / 10.0;
+		}
 	}
 }
 
@@ -101,21 +132,56 @@ void OnDraw()
 	int		x;
 	int		y;
 
-	if (MsgX > 0.0)
+	if (HudWidth == 0)
 	{
-		x = ftoi(itof(Width - MsgWidth) * MsgX);
+		if (MsgX > 0.0)
+		{
+			x = ftoi(itof(Width - MsgWidth) * MsgX);
+		}
+		else
+		{
+			x = ftoi(itof(Width) * -MsgX);
+		}
+		if (MsgY > 0.0)
+		{
+			y = ftoi(itof(Height - MsgHeight) * MsgY);
+		}
+		else
+		{
+			y = ftoi(itof(Height) * -MsgY);
+		}
 	}
 	else
 	{
-		x = ftoi(itof(Width) * -MsgX);
-	}
-	if (MsgY > 0.0)
-	{
-		y = ftoi(itof(Height - MsgHeight) * MsgY);
-	}
-	else
-	{
-		y = ftoi(itof(Height) * -MsgY);
+		int IntPart = ftoi(MsgX);
+		int FracPart = ftoi(fabs(MsgX - itof(IntPart)) * 10.0 + 0.5);
+		x = IntPart;
+		//	Fractional part specifies alignment, 0 - centre, 1 - left,
+		// 2 - right.
+		switch (FracPart & 3)
+		{
+		case 0:
+			x -= MsgWidth / 2;
+			break;
+		case 2:
+			x -= MsgWidth;
+			break;
+		}
+
+		IntPart = ftoi(MsgY);
+		FracPart = ftoi(fabs(MsgY - itof(IntPart)) * 10.0 + 0.5);
+		y = IntPart;
+		//	Fractional part specifies alignment, 0 - centre, 1 - top,
+		// 2 - bottom.
+		switch (FracPart & 3)
+		{
+		case 0:
+			y -= MsgHeight / 2;
+			break;
+		case 2:
+			y -= MsgHeight;
+			break;
+		}
 	}
 
 	for (i = 0; i < MsgLines.Num; i++)

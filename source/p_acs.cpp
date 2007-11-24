@@ -236,6 +236,8 @@ class VAcs : public VThinker
 	vint32*			LocalVars;
 	vuint8*			InstructionPointer;
 	VAcsObject*		ActiveObject;
+	int				HudWidth;
+	int				HudHeight;
 
 	void Destroy();
 	void Serialise(VStream&);
@@ -1738,6 +1740,8 @@ void VAcs::Serialise(VStream& Strm)
 	{
 		Strm << LocalVars[i];
 	}
+	Strm << HudWidth
+		<< HudHeight;
 	unguard;
 }
 
@@ -3008,7 +3012,8 @@ int VAcs::RunScript(float DeltaTime)
 					(Activator->EntityFlags & VEntity::EF_IsPlayer))
 				{
 					Activator->Player->eventClientHudMessage(PrintStr, Type,
-						Id, Colour, ColourName, x, y, HoldTime, Time1, Time2);
+						Id, Colour, ColourName, x, y, HudWidth, HudHeight,
+						HoldTime, Time1, Time2);
 				}
 				else
 				{
@@ -3020,7 +3025,7 @@ int VAcs::RunScript(float DeltaTime)
 						{
 							Level->Game->Players[i]->eventClientHudMessage(
 								PrintStr, Type, Id, Colour, ColourName, x, y,
-								HoldTime, Time1, Time2);
+								HudWidth, HudHeight, HoldTime, Time1, Time2);
 						}
 					}
 				}
@@ -3777,11 +3782,12 @@ int VAcs::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_SetHudSize)
-			STUB(PCD_SetHudSize)
-			//FIXME implement this
-			//sp[-3] - hud width, abs-ed
-			//sp[-2] - hud height, abs-ed
-			//sp[-1] - cover status bar
+			HudWidth = abs(sp[-3]);
+			HudHeight = abs(sp[-2]);
+			if (sp[-1])
+			{
+				HudHeight = -HudHeight;
+			}
 			sp -= 3;
 			ACSVM_BREAK;
 

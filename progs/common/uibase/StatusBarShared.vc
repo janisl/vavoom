@@ -251,8 +251,8 @@ void UpdateCentreMessage(float DeltaTime)
 //==========================================================================
 
 void AddHudMessage(string Message, int Type, int Id, int Colour,
-	string ColourName, float x, float y, float HoldTime, float Time1,
-	float Time2)
+	string ColourName, float x, float y, int HudWidth, int HudHeight,
+	float HoldTime, float Time1, float Time2)
 {
 	Widget		Probe;
 
@@ -288,7 +288,8 @@ void AddHudMessage(string Message, int Type, int Id, int Colour,
 	print("Args %d %f %f", Type, Time1, Time2);
 
 	HudMessage Msg = NewChild(HudMessage);
-	Msg.Init(Message, Type, Id, Colour, x, y, HoldTime, Time1, Time2);
+	Msg.Init(Message, Type, Id, Colour, x, y, HudWidth, HudHeight, HoldTime,
+		Time1, Time2);
 
 	//	Insert in the list in the proper location.
 	Probe = FirstChild;

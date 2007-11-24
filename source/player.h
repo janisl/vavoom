@@ -380,8 +380,8 @@ class VBasePlayer : public VObject
 		EV_RET_VOID(NAME_ClientSetServerInfo);
 	}
 	void eventClientHudMessage(const VStr& Message, int Type, int Id,
-		int Colour, const VStr& ColourName, float x, float y, float HoldTime,
-		float Time1, float Time2)
+		int Colour, const VStr& ColourName, float x, float y, int HudWidth,
+		int HudHeight, float HoldTime, float Time1, float Time2)
 	{
 		P_PASS_SELF;
 		P_PASS_STR(Message);
@@ -391,6 +391,8 @@ class VBasePlayer : public VObject
 		P_PASS_STR(ColourName);
 		P_PASS_FLOAT(x);
 		P_PASS_FLOAT(y);
+		P_PASS_INT(HudWidth);
+		P_PASS_INT(HudHeight);
 		P_PASS_FLOAT(HoldTime);
 		P_PASS_FLOAT(Time1);
 		P_PASS_FLOAT(Time2);
