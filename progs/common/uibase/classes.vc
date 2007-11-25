@@ -63,3 +63,4 @@ import engine;
 
 #include "StatusBarShared.vc"
 #include "HUDMessage.vc"
+#include "HUDMessageFadeOut.vc"

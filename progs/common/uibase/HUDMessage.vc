@@ -31,6 +31,7 @@ int					Id;
 array<SplitLine>	MsgLines;
 name				MsgFont;
 int					MsgColour;
+float				MsgAlpha;
 
 //	Calculated size of the message box.
 int					MsgWidth;
@@ -51,7 +52,7 @@ float				Time;
 
 //==========================================================================
 //
-//	AddHudMessage
+//	Init
 //
 //==========================================================================
 
@@ -196,11 +197,11 @@ void OnDraw()
 		if (bCentreX)
 		{
 			DrawText(x + (MsgWidth - MsgLines[i].Width) / 2, y,
-				MsgLines[i].Text, MsgColour);
+				MsgLines[i].Text, MsgColour, CR_YELLOW, MsgAlpha);
 		}
 		else
 		{
-			DrawText(x, y, MsgLines[i].Text, MsgColour);
+			DrawText(x, y, MsgLines[i].Text, MsgColour, CR_YELLOW, MsgAlpha);
 		}
 		y += MsgHeight / MsgLines.Num;
 	}
@@ -226,4 +227,5 @@ defaultproperties
 	Width = 640;
 	Height = 480;
 	bTickEnabled = true;
+	MsgAlpha = 1.0;
 }

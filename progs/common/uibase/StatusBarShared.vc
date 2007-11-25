@@ -294,6 +294,10 @@ void AddHudMessage(string Message, name Font, int Type, int Id, int Colour,
 	case HUDMSG_PLAIN:
 		Msg = NewChild(HUDMessage);
 		break;
+
+	case HUDMSG_FADEOUT:
+		Msg = NewChild(HUDMessageFadeOut);
+		break;
 	}
 	Msg.Init(Message, Font, Type, Id, Colour, x, y, HudWidth, HudHeight,
 		HoldTime, Time1, Time2);
