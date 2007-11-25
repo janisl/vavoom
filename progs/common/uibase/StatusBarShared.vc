@@ -38,6 +38,8 @@ array<SplitLine>	CentreMessageLines;
 int					CentreMessageHeight;
 float				CentreTime;
 
+Widget				HudMsgWin;
+
 enum
 {
 	HUDMSG_PLAIN,
@@ -47,6 +49,20 @@ enum
 };
 const int HUDMSG_LOG			= 0x80000000;
 const int HUDMSG_COLOURSTRING	= 0x40000000;
+
+//==========================================================================
+//
+//  OnCreate
+//
+//==========================================================================
+
+void OnCreate()
+{
+	::OnCreate();
+	HudMsgWin = NewChild(Widget);
+	HudMsgWin.Width = Width;
+	HudMsgWin.Height = Height;
+}
 
 //==========================================================================
 //
@@ -244,6 +260,10 @@ void UpdateCentreMessage(float DeltaTime)
 	}
 }
 
+//**************************************************************************
+//	HUD messages
+//**************************************************************************
+
 //==========================================================================
 //
 //	AddHudMessage
@@ -275,9 +295,9 @@ void AddHudMessage(string Message, name Font, int Type, int Id, int Colour,
 	//	Remove previous message with the same ID.
 	if (Id && Id != 0xffffffff)
 	{
-		for (Probe = FirstChild; Probe; Probe = Probe.Next)
+		for (Probe = HudMsgWin.FirstChild; Probe; Probe = Probe.Next)
 		{
-			if (HUDMessage(Probe) && HUDMessage(Probe).Id == Id)
+			if (HUDMessage(Probe).Id == Id)
 			{
 				Probe.Destroy();
 				break;
@@ -308,9 +328,8 @@ void AddHudMessage(string Message, name Font, int Type, int Id, int Colour,
 		HoldTime, Time1, Time2);
 
 	//	Insert in the list in the proper location.
-	Probe = FirstChild;
-	while (Probe && (!HUDMessage(Probe) || Probe == Msg ||
-		HUDMessage(Probe).Id > Id))
+	Probe = HudMsgWin.FirstChild;
+	while (Probe && (Probe == Msg || HUDMessage(Probe).Id > Id))
 	{
 		Probe = Probe.Next;
 	}
