@@ -69,7 +69,7 @@ protected:
 
 	static VFont*		Fonts;
 
-	void BuildTranslations(const bool*, rgba_t*, bool);
+	void BuildTranslations(const bool*, rgba_t*, bool, bool);
 	int FindChar(int) const;
 
 	static void ParseTextColours();

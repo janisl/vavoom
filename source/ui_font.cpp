@@ -79,6 +79,17 @@ public:
 };
 
 //
+//	VFon2Font
+//
+//	Font in FON2 format.
+//
+class VFon2Font : public VFont
+{
+public:
+	VFon2Font(VName, int);
+};
+
+//
 //	VFontChar
 //
 //	Texture class for regular font characters.
@@ -110,9 +121,10 @@ private:
 	int				FilePos;
 	vuint8*			Pixels;
 	rgba_t*			Palette;
+	int				MaxCol;
 
 public:
-	VFontChar2(int, int, int, int, rgba_t*);
+	VFontChar2(int, int, int, int, rgba_t*, int);
 	~VFontChar2();
 	vuint8* GetPixels();
 	rgba_t* GetPalette();
@@ -567,9 +579,16 @@ VFont* VFont::GetFont(VName AName)
 		Strm->Serialise(Hdr, 4);
 		delete Strm;
 
-		if (Hdr[0] == 'F' && Hdr[1] == 'O' && Hdr[2] == 'N' && Hdr[3] == '1')
+		if (Hdr[0] == 'F' && Hdr[1] == 'O' && Hdr[2] == 'N')
 		{
-			return new VFon1Font(AName, Lump);
+			if (Hdr[3] == '1')
+			{
+				return new VFon1Font(AName, Lump);
+			}
+			if (Hdr[3] == '2')
+			{
+				return new VFon2Font(AName, Lump);
+			}
 		}
 	}
 
@@ -677,7 +696,7 @@ VFont::VFont(VName AName, const VStr& FormatStr, int First, int Count,
 		SpaceWidth = 4;
 	}
 
-	BuildTranslations(ColoursUsed, r_palette, false);
+	BuildTranslations(ColoursUsed, r_palette, false, true);
 
 	//	Create texture objects for all different colours.
 	for (int i = 0; i < Chars.Num(); i++)
@@ -726,7 +745,7 @@ VFont::~VFont()
 //==========================================================================
 
 void VFont::BuildTranslations(const bool* ColoursUsed, rgba_t* Pal,
-	bool ConsoleTrans)
+	bool ConsoleTrans, bool Rescale)
 {
 	guard(VFont::BuildTranslations);
 	//	Calculate luminosity for all colours and find minimal and maximal
@@ -751,9 +770,10 @@ void VFont::BuildTranslations(const bool* ColoursUsed, rgba_t* Pal,
 		}
 	}
 	//	Create gradual luminosity values.
+	float Scale = 1.0 / (Rescale ? (MaxLum - MinLum) : 255.0);
 	for (int i = 1; i < 256; i++)
 	{
-		Luminosity[i] = (Luminosity[i] - MinLum) / (MaxLum - MinLum);
+		Luminosity[i] = (Luminosity[i] - MinLum) *Scale;
 		Luminosity[i] = MID(0.0, Luminosity[i], 1.0);
 	}
 
@@ -1250,7 +1270,7 @@ VSpecialFont::VSpecialFont(VName AName, const TArray<int>& CharIndexes,
 		SpaceWidth = 4;
 	}
 
-	BuildTranslations(ColoursUsed, r_palette, false);
+	BuildTranslations(ColoursUsed, r_palette, false, true);
 
 	//	Map non-translated colours to their original values
 	for (int i = 0; i < TextColours.Num(); i++)
@@ -1328,7 +1348,7 @@ VFon1Font::VFon1Font(VName AName, int LumpNum)
 		Pal[i].a = 255;
 	}
 
-	BuildTranslations(ColoursUsed, Pal, true);
+	BuildTranslations(ColoursUsed, Pal, true, false);
 
 	for (int i = 0; i < 256; i++)
 	{
@@ -1340,7 +1360,7 @@ VFon1Font::VFon1Font(VName AName, int LumpNum)
 		for (int j = 0; j < TextColours.Num(); j++)
 		{
 			FChar.Textures[j] = new VFontChar2(LumpNum, Strm->Tell(),
-				SpaceWidth, FontHeight, Translation + j * 256);
+				SpaceWidth, FontHeight, Translation + j * 256, 255);
 			//	Currently all render drivers expect all textures to be
 			// registered in texture manager.
 			GTextureManager.AddTexture(FChar.Textures[j]);
@@ -1374,6 +1394,160 @@ VFon1Font::VFon1Font(VName AName, int LumpNum)
 	}
 
 	delete Strm;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VFon2Font::VFon2Font
+//
+//	4       - header
+//	2       - height
+//	1       - first char
+//	1       - last char
+//	1       - fixed width flag
+//	1
+//	1       - active colours
+//	1       - kerning flag
+//	2 (if have flag) - kerning
+//
+//==========================================================================
+
+VFon2Font::VFon2Font(VName AName, int LumpNum)
+{
+	guard(VFon2Font::VFon2Font);
+	Name = AName;
+	Next = Fonts;
+	Fonts = this;
+
+	VStream* Strm = W_CreateLumpReaderNum(LumpNum);
+	//	Skip ID.
+	Strm->Seek(4);
+
+	//	Read header.
+	FontHeight = Streamer<vuint16>(*Strm);
+	FirstChar = Streamer<vuint8>(*Strm);
+	LastChar = Streamer<vuint8>(*Strm);
+	vuint8 FixedWidthFlag;
+	vuint8 RescalePal;
+	vuint8 ActiveColours;
+	vuint8 KerningFlag;
+	*Strm << FixedWidthFlag << RescalePal << ActiveColours << KerningFlag;
+	Kerning = 0;
+	if (KerningFlag & 1)
+	{
+		Kerning = Streamer<vint16>(*Strm);
+	}
+
+	Translation = NULL;
+	for (int i = 0; i < 128; i++)
+	{
+		AsciiChars[i] = -1;
+	}
+
+	//	Read character widths.
+	int Count = LastChar - FirstChar + 1;
+	vuint16* Widths = new vuint16[Count];
+	int TotalWidth = 0;
+	if (FixedWidthFlag)
+	{
+		*Strm << Widths[0];
+		for (int i = 1; i < Count; i++)
+		{
+			Widths[i] = Widths[0];
+		}
+		TotalWidth = Widths[0] * Count;
+	}
+	else
+	{
+		for (int i = 0; i < Count; i++)
+		{
+			*Strm << Widths[i];
+			TotalWidth += Widths[i];
+		}
+	}
+
+	if (FirstChar <= ' ' && LastChar >= ' ')
+	{
+		SpaceWidth = Widths[' ' - FirstChar];
+	}
+	else if (FirstChar <= 'N' && LastChar >= 'N')
+	{
+		SpaceWidth = (Widths['N' - FirstChar] + 1) / 2;
+	}
+	else
+	{
+		SpaceWidth = TotalWidth * 2 / (3 * Count);
+	}
+
+	//	Read palette
+	bool ColoursUsed[256];
+	rgba_t Pal[256];
+	memset(ColoursUsed, 0, sizeof(ColoursUsed));
+	memset(Pal, 0, sizeof(Pal));
+	for (int i = 0; i <= ActiveColours; i++)
+	{
+		ColoursUsed[i] = true;
+		*Strm << Pal[i].r << Pal[i].g << Pal[i].b;
+		Pal[i].a = i ? 255 : 0;
+	}
+
+	BuildTranslations(ColoursUsed, Pal, false, !!RescalePal);
+
+	for (int i = 0; i < Count; i++)
+	{
+		int Chr = FirstChar + i;
+		int DataSize = Widths[i] * FontHeight;
+		if (DataSize > 0)
+		{
+			FFontChar& FChar = Chars.Alloc();
+			FChar.Char = Chr;
+			if (Chr < 128)
+			{
+				AsciiChars[Chr] = Chars.Num() - 1;
+			}
+
+			//	Create texture objects for all different colours.
+			FChar.Textures = new VTexture*[TextColours.Num()];
+			for (int j = 0; j < TextColours.Num(); j++)
+			{
+				FChar.Textures[j] = new VFontChar2(LumpNum, Strm->Tell(),
+					Widths[i], FontHeight, Translation + j * 256,
+					ActiveColours);
+				//	Currently all render drivers expect all textures to be
+				// registered in texture manager.
+				GTextureManager.AddTexture(FChar.Textures[j]);
+			}
+			FChar.BaseTex = FChar.Textures[CR_UNTRANSLATED];
+
+			//	Skip character data.
+			do
+			{
+				vint8 Code = Streamer<vint8>(*Strm);
+				if (Code >= 0)
+				{
+					DataSize -= Code + 1;
+					while (Code-- >= 0)
+					{
+						Streamer<vint8>(*Strm);
+					}
+				}
+				else if (Code != -128)
+				{
+					DataSize -= 1 - Code;
+					Streamer<vint8>(*Strm);
+				}
+			}
+			while (DataSize > 0);
+			if (DataSize < 0)
+			{
+				Sys_Error("Overflow decompressing a character %d", i);
+			}
+		}
+	}
+
+	delete Strm;
+	delete[] Widths;
 	unguard;
 }
 
@@ -1479,11 +1653,12 @@ VTexture* VFontChar::GetHighResolutionTexture()
 //==========================================================================
 
 VFontChar2::VFontChar2(int ALumpNum, int AFilePos, int CharW, int CharH,
-	rgba_t* APalette)
+	rgba_t* APalette, int AMaxCol)
 : LumpNum(ALumpNum)
 , FilePos(AFilePos)
 , Pixels(NULL)
 , Palette(APalette)
+, MaxCol(AMaxCol)
 {
 	Type = TEXTYPE_FontChar;
 	Format = TEXFMT_8Pal;
@@ -1534,7 +1709,9 @@ vuint8* VFontChar2::GetPixels()
 			Count -= Code + 1;
 			while (Code-- >= 0)
 			{
-				*pDst++ = Streamer<vuint8>(*Strm);
+				*pDst = Streamer<vuint8>(*Strm);
+				*pDst = MIN(*pDst, MaxCol);
+				pDst++;
 			}
 		}
 		else if (Code != -128)
@@ -1542,6 +1719,7 @@ vuint8* VFontChar2::GetPixels()
 			Code = 1 - Code;
 			Count -= Code;
 			vuint8 Val = Streamer<vuint8>(*Strm);
+			Val = MIN(Val, MaxCol);
 			while (Code-- > 0)
 			{
 				*pDst++ = Val;
