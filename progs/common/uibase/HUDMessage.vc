@@ -196,15 +196,26 @@ void OnDraw()
 	{
 		if (bCentreX)
 		{
-			DrawText(x + (MsgWidth - MsgLines[i].Width) / 2, y,
-				MsgLines[i].Text, MsgColour, CR_YELLOW, MsgAlpha);
+			DrawLine(i, x + (MsgWidth - MsgLines[i].Width) / 2, y,
+				MsgLines[i].Text);
 		}
 		else
 		{
-			DrawText(x, y, MsgLines[i].Text, MsgColour, CR_YELLOW, MsgAlpha);
+			DrawLine(i, x, y, MsgLines[i].Text);
 		}
 		y += MsgHeight / MsgLines.Num;
 	}
+}
+
+//==========================================================================
+//
+//	DrawLine
+//
+//==========================================================================
+
+void DrawLine(int LineIdx, int x, int y, string Text)
+{
+	DrawText(x, y, Text, MsgColour, CR_YELLOW, MsgAlpha);
 }
 
 //==========================================================================

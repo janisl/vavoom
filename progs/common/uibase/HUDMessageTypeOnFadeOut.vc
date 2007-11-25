@@ -1,0 +1,130 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class HUDMessageTypeOnFadeOut : HUDMessage;
+
+int			State;
+float		TypeOnTime;
+int			CurrentLine;
+int			LineChars;
+int			LineLen;
+float		FadeOutTime;
+
+//==========================================================================
+//
+//	Init
+//
+//==========================================================================
+
+void Init(string Message, name AFont, int Type, int AId, int Colour,
+	float AMsgX, float AMsgY, int AHudWidth, int AHudHeight, float AHoldTime,
+	float Time1, float Time2)
+{
+	::Init(Message, AFont, Type, AId, Colour, AMsgX, AMsgY, AHudWidth,
+		AHudHeight, AHoldTime, Time1, Time2);
+
+	TypeOnTime = Time1;
+	if (TypeOnTime == 0.0)
+		TypeOnTime = 0.1;
+	FadeOutTime = Time2;
+	CurrentLine = 0;
+	LineChars = 0;
+	LineLen = strlen(MsgLines[0].Text);
+}
+
+//==========================================================================
+//
+//	Tick
+//
+//==========================================================================
+
+void Tick(float DeltaTime)
+{
+	Time += DeltaTime;
+	if (State == 0)
+	{
+		LineChars = ftoi(Time / TypeOnTime);
+		while (LineChars > LineLen && State == 0)
+		{
+			Time -= itof(LineLen) * TypeOnTime;
+			CurrentLine++;
+			if (CurrentLine >= MsgLines.Num)
+			{
+				State = 1;
+			}
+			else
+			{
+				LineChars = ftoi(Time / TypeOnTime);
+				LineLen = strlen(MsgLines[CurrentLine].Text);
+			}
+		}
+	}
+	if (State == 1 && HoldTime < Time)
+	{
+		State = 2;
+		Time -= HoldTime;
+	}
+	if (State == 2)
+	{
+		if (FadeOutTime < Time)
+		{
+			Destroy();
+		}
+		else
+		{
+			MsgAlpha = (1.0 - Time / FadeOutTime);
+		}
+	}
+}
+
+//==========================================================================
+//
+//	DrawLine
+//
+//==========================================================================
+
+void DrawLine(int LineIdx, int x, int y, string Text)
+{
+	if (State == 0)
+	{
+		if (LineIdx < CurrentLine)
+		{
+			DrawText(x, y, Text, MsgColour, CR_YELLOW, MsgAlpha);
+		}
+		else if (LineIdx == CurrentLine)
+		{
+			DrawText(x, y, substr(Text, 0, LineChars), MsgColour, CR_YELLOW,
+				MsgAlpha);
+		}
+	}
+	else
+	{
+		::DrawLine(LineIdx, x, y, Text);
+	}
+}
+
+defaultproperties
+{
+}
