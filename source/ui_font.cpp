@@ -90,6 +90,17 @@ public:
 };
 
 //
+//	VSingleTextureFont
+//
+//	Font consisting of a single texture for character 'A'.
+//
+class VSingleTextureFont : public VFont
+{
+public:
+	VSingleTextureFont(VName, int);
+};
+
+//
 //	VFontChar
 //
 //	Texture class for regular font characters.
@@ -590,6 +601,16 @@ VFont* VFont::GetFont(VName AName)
 				return new VFon2Font(AName, Lump);
 			}
 		}
+	}
+
+	int TexNum = GTextureManager.CheckNumForName(AName, TEXTYPE_Any);
+	if (TexNum <= 0)
+	{
+		TexNum = GTextureManager.AddPatch(AName, TEXTYPE_Pic);
+	}
+	if (TexNum > 0)
+	{
+		return new VSingleTextureFont(AName, TexNum);
 	}
 
 	return NULL;
@@ -1548,6 +1569,39 @@ VFon2Font::VFon2Font(VName AName, int LumpNum)
 
 	delete Strm;
 	delete[] Widths;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VSingleTextureFont::VSingleTextureFont
+//
+//==========================================================================
+
+VSingleTextureFont::VSingleTextureFont(VName AName, int TexNum)
+{
+	guard(VSingleTextureFont::VSingleTextureFont);
+	Name = AName;
+	Next = Fonts;
+	Fonts = this;
+
+	VTexture* Tex = GTextureManager[TexNum];
+	for (int i = 0; i < 128; i++)
+	{
+		AsciiChars[i] = -1;
+	}
+	AsciiChars[(int)'A'] = 0;
+	FirstChar = 'A';
+	LastChar = 'A';
+	SpaceWidth = Tex->GetScaledWidth();
+	FontHeight = Tex->GetScaledHeight();
+	Kerning = 0;
+	Translation = NULL;
+
+	FFontChar& FChar = Chars.Alloc();
+	FChar.Char = 'A';
+	FChar.BaseTex = Tex;
+	FChar.Textures = NULL;
 	unguard;
 }
 
