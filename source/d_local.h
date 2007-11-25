@@ -184,10 +184,10 @@ public:
 	void DrawSkyPolygon(surface_t*, bool, VTexture*, float, VTexture*, float);
 	void EndSky();
 	void DrawMaskedPolygon(surface_t*, float, bool);
-	void DrawSpritePolygon(TVec*, VTexture*, float, int, vuint32, vuint32,
-		const TVec&, float, const TVec&, const TVec&, const TVec&);
+	void DrawSpritePolygon(TVec*, VTexture*, float, bool, int, vuint32,
+		vuint32, const TVec&, float, const TVec&, const TVec&, const TVec&);
 	void DrawAliasModel(const TVec&, const TAVec&, const TVec&, const TVec&,
-		mmdl_t*, int, VTexture*, vuint32, vuint32, float, bool);
+		mmdl_t*, int, VTexture*, vuint32, vuint32, float, bool, bool);
 
 	//	Particles
 	void StartParticles();
@@ -276,7 +276,7 @@ protected:
 	void AliasPrepareUnclippedPoints();
 	void AliasPreparePoints();
 	void AliasClipTriangle(mtriangle_t*);
-	void PolysetSetupDrawer(float);
+	void PolysetSetupDrawer(float, bool);
 	void PolysetDraw();
 
 	//	Drawing of onscreen graphics.

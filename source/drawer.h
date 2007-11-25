@@ -97,10 +97,12 @@ public:
 		float) = 0;
 	virtual void EndSky() = 0;
 	virtual void DrawMaskedPolygon(surface_t*, float, bool) = 0;
-	virtual void DrawSpritePolygon(TVec*, VTexture*, float, int, vuint32,
-		vuint32, const TVec&, float, const TVec&, const TVec&, const TVec&) = 0;
+	virtual void DrawSpritePolygon(TVec*, VTexture*, float, bool, int,
+		vuint32, vuint32, const TVec&, float, const TVec&, const TVec&,
+		const TVec&) = 0;
 	virtual void DrawAliasModel(const TVec&, const TAVec&, const TVec&,
-		const TVec&, mmdl_t*, int, VTexture*, vuint32, vuint32, float, bool) = 0;
+		const TVec&, mmdl_t*, int, VTexture*, vuint32, vuint32, float, bool,
+		bool) = 0;
 
 	//	Particles
 	virtual void StartParticles() = 0;

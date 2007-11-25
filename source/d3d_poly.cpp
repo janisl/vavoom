@@ -1039,8 +1039,8 @@ void VDirect3DDrawer::DrawMaskedPolygon(surface_t* surf, float Alpha,
 //==========================================================================
 
 void VDirect3DDrawer::DrawSpritePolygon(TVec *cv, VTexture* Tex, float Alpha,
-	int translation, vuint32 light, vuint32 Fade, const TVec&, float,
-	const TVec& saxis, const TVec& taxis, const TVec& texorg)
+	bool Additive, int translation, vuint32 light, vuint32 Fade, const TVec&,
+	float, const TVec& saxis, const TVec& taxis, const TVec& texorg)
 {
 	guard(VDirect3DDrawer::DrawSpritePolygon);
 	MyD3DVertex		out[4];
@@ -1057,10 +1057,14 @@ void VDirect3DDrawer::DrawSpritePolygon(TVec *cv, VTexture* Tex, float Alpha,
 	}
 	SetFade(Fade);
 
-	if (blend_sprites || Alpha < 1.0)
+	if (blend_sprites || Additive || Alpha < 1.0)
 	{
 		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, TRUE);
 		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHAREF, 0);
+	}
+	if (Additive)
+	{
+		RenderDevice->SetRenderState(D3DRENDERSTATE_DESTBLEND, D3DBLEND_ONE);
 	}
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, TRUE);
 
@@ -1070,10 +1074,14 @@ void VDirect3DDrawer::DrawSpritePolygon(TVec *cv, VTexture* Tex, float Alpha,
 	RenderDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, MYD3D_VERTEX_FORMAT, out, 4, 0);
 #endif
 
-	if (blend_sprites || Alpha < 1.0)
+	if (blend_sprites || Additive || Alpha < 1.0)
 	{
 		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, FALSE);
 		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHAREF, 170);
+	}
+	if (Additive)
+	{
+		RenderDevice->SetRenderState(D3DRENDERSTATE_DESTBLEND, D3DBLEND_INVSRCALPHA);
 	}
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, FALSE);
 	unguard;
@@ -1087,7 +1095,8 @@ void VDirect3DDrawer::DrawSpritePolygon(TVec *cv, VTexture* Tex, float Alpha,
 
 void VDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	const TVec& Offset, const TVec& Scale, mmdl_t* pmdl, int frame,
-	VTexture* Skin, vuint32 light, vuint32 Fade, float Alpha, bool is_view_model)
+	VTexture* Skin, vuint32 light, vuint32 Fade, float Alpha, bool Additive,
+	bool is_view_model)
 {
 	guard(VDirect3DDrawer::DrawAliasModel);
 	mframe_t			*pframedesc;
@@ -1174,6 +1183,10 @@ void VDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 
 	RenderDevice->SetRenderState(D3DRENDERSTATE_SHADEMODE, D3DSHADE_GOURAUD);
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, TRUE);
+	if (Additive)
+	{
+		RenderDevice->SetRenderState(D3DRENDERSTATE_DESTBLEND, D3DBLEND_ONE);
+	}
 
 	SetFade(Fade);
 
@@ -1235,6 +1248,10 @@ void VDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 
 	RenderDevice->SetRenderState(D3DRENDERSTATE_SHADEMODE, D3DSHADE_FLAT);
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, FALSE);
+	if (Additive)
+	{
+		RenderDevice->SetRenderState(D3DRENDERSTATE_DESTBLEND, D3DBLEND_INVSRCALPHA);
+	}
 
 	RenderDevice->SetTransform(D3DTRANSFORMSTATE_WORLD, &IdentityMatrix);
 	if (is_view_model)

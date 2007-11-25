@@ -393,13 +393,13 @@ void VRenderLevel::DrawTranslucentPoly(surface_t* surf, TVec* sv, int count,
 		if (spr.type == 2)
 		{
 			DrawEntityModel(spr.Ent, spr.light, spr.Fade, spr.Alpha,
-				spr.TimeFrac);
+				spr.Additive, spr.TimeFrac);
 		}
 		else if (spr.type)
 		{
-			Drawer->DrawSpritePolygon(spr.Verts, GTextureManager[spr.lump], spr.Alpha,
-				spr.translation, spr.light, spr.Fade, spr.normal, spr.pdist,
-				spr.saxis, spr.taxis, spr.texorg);
+			Drawer->DrawSpritePolygon(spr.Verts, GTextureManager[spr.lump],
+				spr.Alpha, spr.Additive, spr.translation, spr.light, spr.Fade,
+				spr.normal, spr.pdist, spr.saxis, spr.taxis, spr.texorg);
 		}
 		else
 		{
@@ -426,8 +426,9 @@ void VRenderLevel::DrawTranslucentPoly(surface_t* surf, TVec* sv, int count,
 	//	All slots are full and are nearer to current sprite so draw it
 	if (type)
 	{
-		Drawer->DrawSpritePolygon(sv, GTextureManager[lump], Alpha, translation, light,
-			Fade, normal, pdist, saxis, taxis, texorg);
+		Drawer->DrawSpritePolygon(sv, GTextureManager[lump], Alpha,
+			Additive, translation, light, Fade, normal, pdist, saxis,
+			taxis, texorg);
 	}
 	else
 	{
@@ -442,7 +443,8 @@ void VRenderLevel::DrawTranslucentPoly(surface_t* surf, TVec* sv, int count,
 //
 //==========================================================================
 
-void VRenderLevel::RenderSprite(VEntity* thing, vuint32 light, vuint32 Fade)
+void VRenderLevel::RenderSprite(VEntity* thing, vuint32 light, vuint32 Fade,
+	float Alpha, bool Additive)
 {
 	guard(VRenderLevel::RenderSprite);
 	int spr_type = thing->SpriteType;
@@ -633,18 +635,19 @@ void VRenderLevel::RenderSprite(VEntity* thing, vuint32 light, vuint32 Fade)
 	sv[2] = sprorigin + end + topdelta;
 	sv[3] = sprorigin + end + botdelta;
 
-	if (thing->Alpha < 1.0 || r_sort_sprites)
+	if (Alpha < 1.0 || Additive || r_sort_sprites)
 	{
-		DrawTranslucentPoly(NULL, sv, 4, lump, thing->Alpha, false,
+		DrawTranslucentPoly(NULL, sv, 4, lump, Alpha, Additive,
 			thing->Translation, true, light, Fade, -sprforward, DotProduct(
 			sprorigin, -sprforward), flip ? -sprright : sprright, -sprup,
 			flip ? sv[2] : sv[1]);
 	}
 	else
 	{
-		Drawer->DrawSpritePolygon(sv, GTextureManager[lump], thing->Alpha, thing->Translation,
-			light, Fade, -sprforward, DotProduct(sprorigin, -sprforward),
-			flip ? -sprright : sprright, -sprup, flip ? sv[2] : sv[1]);
+		Drawer->DrawSpritePolygon(sv, GTextureManager[lump], Alpha,
+			Additive, thing->Translation, light, Fade, -sprforward,
+			DotProduct(sprorigin, -sprforward), flip ? -sprright : sprright,
+			-sprup, flip ? sv[2] : sv[1]);
 	}
 	unguard;
 }
@@ -656,7 +659,7 @@ void VRenderLevel::RenderSprite(VEntity* thing, vuint32 light, vuint32 Fade)
 //==========================================================================
 
 void VRenderLevel::RenderTranslucentAliasModel(VEntity* mobj, vuint32 light,
-	vuint32 Fade, float TimeFrac)
+	vuint32 Fade, float Alpha, bool Additive, float TimeFrac)
 {
 	guard(VRenderLevel::RenderTranslucentAliasModel);
 	int i;
@@ -672,7 +675,8 @@ void VRenderLevel::RenderTranslucentAliasModel(VEntity* mobj, vuint32 light,
 			spr.Ent = mobj;
 			spr.light = light;
 			spr.Fade = Fade;
-			spr.Alpha = mobj->Alpha;
+			spr.Alpha = Alpha;
+			spr.Additive = Additive;
 			spr.dist = dist;
 			spr.type = 2;
 			spr.TimeFrac = TimeFrac;
@@ -690,13 +694,14 @@ void VRenderLevel::RenderTranslucentAliasModel(VEntity* mobj, vuint32 light,
 		trans_sprite_t &spr = trans_sprites[found];
 		if (spr.type == 2)
 		{
-			DrawEntityModel(spr.Ent, spr.light, spr.Fade, spr.Alpha, spr.TimeFrac);
+			DrawEntityModel(spr.Ent, spr.light, spr.Fade, spr.Alpha,
+				spr.Additive, spr.TimeFrac);
 		}
 		else if (spr.type)
 		{
-			Drawer->DrawSpritePolygon(spr.Verts, GTextureManager[spr.lump], spr.Alpha,
-				spr.translation, spr.light, spr.Fade, spr.normal, spr.pdist,
-				spr.saxis, spr.taxis, spr.texorg);
+			Drawer->DrawSpritePolygon(spr.Verts, GTextureManager[spr.lump],
+				spr.Alpha, spr.Additive, spr.translation, spr.light, spr.Fade,
+				spr.normal, spr.pdist, spr.saxis, spr.taxis, spr.texorg);
 		}
 		else
 		{
@@ -705,13 +710,14 @@ void VRenderLevel::RenderTranslucentAliasModel(VEntity* mobj, vuint32 light,
 		spr.Ent = mobj;
 		spr.light = light;
 		spr.Fade = Fade;
-		spr.Alpha = mobj->Alpha;
+		spr.Alpha = Alpha;
+		spr.Additive = Additive;
 		spr.dist = dist;
 		spr.type = 2;
 		spr.TimeFrac = TimeFrac;
 		return;
 	}
-	DrawEntityModel(mobj, light, Fade, mobj->Alpha, TimeFrac);
+	DrawEntityModel(mobj, light, Fade, Alpha, Additive, TimeFrac);
 	unguard;
 }
 
@@ -722,7 +728,7 @@ void VRenderLevel::RenderTranslucentAliasModel(VEntity* mobj, vuint32 light,
 //==========================================================================
 
 bool VRenderLevel::RenderAliasModel(VEntity* mobj, vuint32 light,
-	vuint32 Fade)
+	vuint32 Fade, float Alpha, bool Additive)
 {
 	guard(VRenderLevel::RenderAliasModel);
 	if (!r_models)
@@ -738,18 +744,19 @@ bool VRenderLevel::RenderAliasModel(VEntity* mobj, vuint32 light,
 	}
 
 	//	Draw it
-	if (mobj->Alpha < 1.0)
+	if (Alpha < 1.0 || Additive)
 	{
 		if (!CheckAliasModelFrame(mobj, TimeFrac))
 		{
 			return false;
 		}
-		RenderTranslucentAliasModel(mobj, light, Fade, TimeFrac);
+		RenderTranslucentAliasModel(mobj, light, Fade, Alpha, Additive,
+			TimeFrac);
 		return true;
 	}
 	else
 	{
-		return DrawEntityModel(mobj, light, Fade, 1.0, TimeFrac);
+		return DrawEntityModel(mobj, light, Fade, 1.0, false, TimeFrac);
 	}
 	unguard;
 }
@@ -797,12 +804,14 @@ void VRenderLevel::RenderThing(VEntity* mobj)
 		light = LightPoint(mobj->Origin);
 	}
 	vuint32 Fade = GetFade(mobj->SubSector);
+	float Alpha = mobj->Alpha;
+	bool Additive = false;
 
 	//	Try to draw a model. If it's a script and it doesn't
 	// specify model for this frame, draw sprite instead.
-	if (!RenderAliasModel(mobj, light, Fade))
+	if (!RenderAliasModel(mobj, light, Fade, Alpha, Additive))
 	{
-		RenderSprite(mobj, light, Fade);
+		RenderSprite(mobj, light, Fade, Alpha, Additive);
 	}
 	unguard;
 }
@@ -861,13 +870,14 @@ void VRenderLevel::DrawTranslucentPolys()
 			if (spr.type == 2)
 			{
 				DrawEntityModel(spr.Ent, spr.light, spr.Fade, spr.Alpha,
-					spr.TimeFrac);
+					spr.Additive, spr.TimeFrac);
 			}
 			else if (spr.type)
 			{
-				Drawer->DrawSpritePolygon(spr.Verts, GTextureManager[spr.lump], spr.Alpha,
-					spr.translation, spr.light, spr.Fade, spr.normal,
-					spr.pdist, spr.saxis, spr.taxis, spr.texorg);
+				Drawer->DrawSpritePolygon(spr.Verts, GTextureManager[spr.lump],
+					spr.Alpha, spr.Additive, spr.translation, spr.light,
+					spr.Fade, spr.normal, spr.pdist, spr.saxis, spr.taxis,
+					spr.texorg);
 			}
 			else
 			{
@@ -886,7 +896,7 @@ void VRenderLevel::DrawTranslucentPolys()
 //==========================================================================
 
 void VRenderLevel::RenderPSprite(VViewState* VSt, float PSP_DIST,
-	vuint32 light, vuint32 Fade)
+	vuint32 light, vuint32 Fade, float Alpha, bool Additive)
 {
 	guard(VRenderLevel::RenderPSprite);
 	spritedef_t*		sprdef;
@@ -969,8 +979,9 @@ void VRenderLevel::RenderPSprite(VViewState* VSt, float PSP_DIST,
 	else
 		taxis = -(viewup * 100 * 4 / 3 * PSP_DISTI);
 
-	Drawer->DrawSpritePolygon(dv, GTextureManager[lump], cl->ViewEntAlpha, 0, light, Fade,
-		-viewforward, DotProduct(dv[0], -viewforward), saxis, taxis, texorg);
+	Drawer->DrawSpritePolygon(dv, GTextureManager[lump], Alpha, Additive,
+		0, light, Fade, -viewforward, DotProduct(dv[0], -viewforward),
+		saxis, taxis, texorg);
 	unguard;
 }
 
@@ -981,7 +992,7 @@ void VRenderLevel::RenderPSprite(VViewState* VSt, float PSP_DIST,
 //==========================================================================
 
 bool VRenderLevel::RenderViewModel(VViewState* VSt, vuint32 light,
-	vuint32 Fade)
+	vuint32 Fade, float Alpha, bool Additive)
 {
 	guard(VRenderLevel::RenderViewModel);
 	if (!r_view_models)
@@ -1000,7 +1011,7 @@ bool VRenderLevel::RenderViewModel(VViewState* VSt, vuint32 light,
 	}
 
 	return DrawAliasModel(origin, cl->ViewAngles, VSt->State,
-		NULL, 0, light, Fade, cl->ViewEntAlpha, true, TimeFrac);
+		NULL, 0, light, Fade, Alpha, Additive, true, TimeFrac);
 	unguard;
 }
 
@@ -1036,10 +1047,14 @@ void VRenderLevel::DrawPlayerSprites()
 			light = LightPoint(vieworg);
 		}
 		vuint32 Fade = GetFade(Level->PointInSubsector(cl->ViewOrg));
+		float Alpha = cl->ViewEntAlpha;
+		bool Additive = false;
 
-		if (!RenderViewModel(&cl->ViewStates[i], light, Fade))
+		if (!RenderViewModel(&cl->ViewStates[i], light, Fade, Alpha,
+			Additive))
 		{
-			RenderPSprite(&cl->ViewStates[i], 3 - i, light, Fade);
+			RenderPSprite(&cl->ViewStates[i], 3 - i, light, Fade, Alpha,
+				Additive);
 		}
 	}
 	unguard;

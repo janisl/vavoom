@@ -2412,11 +2412,12 @@ void VSoftwareDrawer::DrawMaskedPolygon(surface_t* surf, float Alpha,
 //==========================================================================
 
 void VSoftwareDrawer::DrawSpritePolygon(TVec* cv, VTexture* Tex, float Alpha,
-	int translation, vuint32 light, vuint32 Fade, const TVec& normal,
-	float dist, const TVec& saxis, const TVec& taxis, const TVec& texorg)
+	bool Additive, int translation, vuint32 light, vuint32 Fade,
+	const TVec& normal, float dist, const TVec& saxis, const TVec& taxis,
+	const TVec& texorg)
 {
 	guard(VSoftwareDrawer::DrawSpritePolygon);
-	SpriteDrawPolygon(cv, 4, NULL, Tex, translation, Alpha, false, light,
+	SpriteDrawPolygon(cv, 4, NULL, Tex, translation, Alpha, Additive, light,
 		Fade, normal, dist, saxis, taxis, texorg);
 	unguard;
 }

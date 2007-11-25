@@ -105,6 +105,9 @@ void D_PolysetDrawSpansRGBAltFuzz_8(spanpackage_t*);
 void D_PolysetDrawSpansRGBFuzz_15(spanpackage_t*);
 void D_PolysetDrawSpansRGBFuzz_16(spanpackage_t*);
 void D_PolysetDrawSpansRGBFuzz_32(spanpackage_t*);
+void D_PolysetDrawSpansRGBAdditive_15(spanpackage_t*);
+void D_PolysetDrawSpansRGBAdditive_16(spanpackage_t*);
+void D_PolysetDrawSpansRGBAdditive_32(spanpackage_t*);
 }
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
@@ -172,54 +175,62 @@ static edgetable	edgetables[12] =
 
 static aliasspanfunc_t		D_PolysetDrawSpans;
 
-static const aliasspanfunc_t alias_span_drawers[4][2][3] =
+static const aliasspanfunc_t alias_span_drawers[4][2][4] =
 {
 	{
 		{
 			D_PolysetDrawSpans_8,
 			D_PolysetDrawSpansFuzz_8,
-			D_PolysetDrawSpansAltFuzz_8
+			D_PolysetDrawSpansAltFuzz_8,
+			D_PolysetDrawSpansFuzz_8
 		},
 		{
 			D_PolysetDrawSpansRGB_8,
 			D_PolysetDrawSpansRGBFuzz_8,
-			D_PolysetDrawSpansRGBAltFuzz_8
+			D_PolysetDrawSpansRGBAltFuzz_8,
+			D_PolysetDrawSpansRGBFuzz_8
 		}
 	},
 	{
 		{
 			D_PolysetDrawSpans_16,
 			D_PolysetDrawSpansFuzz_15,
-			D_PolysetDrawSpansFuzz_15
+			D_PolysetDrawSpansFuzz_15,
+			D_PolysetDrawSpansRGBAdditive_15
 		},
 		{
 			D_PolysetDrawSpansRGB_16,
 			D_PolysetDrawSpansRGBFuzz_15,
-			D_PolysetDrawSpansRGBFuzz_15
+			D_PolysetDrawSpansRGBFuzz_15,
+			D_PolysetDrawSpansRGBAdditive_15
 		}
 	},
 	{
 		{
 			D_PolysetDrawSpans_16,
 			D_PolysetDrawSpansFuzz_16,
-			D_PolysetDrawSpansFuzz_16
+			D_PolysetDrawSpansFuzz_16,
+			D_PolysetDrawSpansRGBAdditive_16
 		},
 		{
 			D_PolysetDrawSpansRGB_16,
 			D_PolysetDrawSpansRGBFuzz_16,
-			D_PolysetDrawSpansRGBFuzz_16
+			D_PolysetDrawSpansRGBFuzz_16,
+			D_PolysetDrawSpansRGBAdditive_16
 		}
 	},
 	{
 		{
 			D_PolysetDrawSpans_32,
 			D_PolysetDrawSpansFuzz_32,
-			D_PolysetDrawSpansFuzz_32
+			D_PolysetDrawSpansFuzz_32,
+			D_PolysetDrawSpansRGBAdditive_32
 		},
 		{
 			D_PolysetDrawSpansRGB_32,
 			D_PolysetDrawSpansRGBFuzz_32,
-			D_PolysetDrawSpansRGBFuzz_32
+			D_PolysetDrawSpansRGBFuzz_32,
+			D_PolysetDrawSpansRGBAdditive_32
 		}
 	}
 };
@@ -232,12 +243,30 @@ static const aliasspanfunc_t alias_span_drawers[4][2][3] =
 //
 //==========================================================================
 
-void VSoftwareDrawer::PolysetSetupDrawer(float Alpha)
+void VSoftwareDrawer::PolysetSetupDrawer(float Alpha, bool Additive)
 {
 	guardSlow(VSoftwareDrawer::PolysetSetupDrawer);
 	int fuzzfunc = 0;
 
-	if (Alpha < 0.95)
+	if (Additive)
+	{
+		int trindex = int(Alpha * 10.0 - 0.5);
+		if (trindex < 0)
+		{
+			trindex = 0;
+		}
+		else if (trindex > 9)
+		{
+			trindex = 9;
+		}
+		d_transluc = AdditiveTransTables[trindex];
+		fuzzfunc = 3;
+
+		trindex = int(Alpha * 31);
+		d_dsttranstab = scaletable[31 - trindex];
+		d_srctranstab = scaletable[trindex];
+	}
+	else if (Alpha < 0.95)
 	{
 		int trindex = int(9.5 - Alpha * 10.0);
 		if (trindex < 0)
@@ -2215,3 +2244,326 @@ extern "C" void D_PolysetDrawSpansRGBFuzz_32(spanpackage_t *pspanpackage)
 }
 
 #endif
+
+//==========================================================================
+//
+//	D_PolysetDrawSpansRGBAdditive_15
+//
+//==========================================================================
+
+extern "C" void D_PolysetDrawSpansRGBAdditive_15(spanpackage_t *pspanpackage)
+{
+	int		lcount;
+	word	*lpdest;
+	byte	*lptex;
+	int		lsfrac, ltfrac;
+	int		lr;
+	int		lg;
+	int		lb;
+	int		lzi;
+	short	*lpz;
+
+	do
+	{
+		lcount = d_aspancount - pspanpackage->count;
+
+		errorterm += erroradjustup;
+		if (errorterm >= 0)
+		{
+			d_aspancount += d_countextrastep;
+			errorterm -= erroradjustdown;
+		}
+		else
+		{
+			d_aspancount += ubasestep;
+		}
+
+		if (lcount)
+		{
+			lpdest = (word*)pspanpackage->pdest;
+			lptex = pspanpackage->ptex;
+			lpz = pspanpackage->pz;
+#if USE_ASM_I386
+			lsfrac = (vuint32)pspanpackage->sfrac >> 16;
+			ltfrac = (vuint32)pspanpackage->tfrac >> 16;
+#else
+			lsfrac = pspanpackage->sfrac;
+			ltfrac = pspanpackage->tfrac;
+#endif
+			lr = pspanpackage->r;
+			lg = pspanpackage->g;
+			lb = pspanpackage->b;
+			lzi = pspanpackage->zi;
+
+			do
+			{
+				if ((lzi >> 16) >= *lpz)
+				{
+					int pix = *lptex;
+					int btemp = d_fadetable16r[pix + (lr & 0xFF00)] |
+						d_fadetable16g[pix + (lg & 0xFF00)] |
+						d_fadetable16b[pix + (lb & 0xFF00)];
+					byte r1 = GetCol15R(*lpdest);
+					byte g1 = GetCol15G(*lpdest);
+					byte b1 = GetCol15B(*lpdest);
+					byte r2 = GetCol15R(btemp);
+					byte g2 = GetCol15G(btemp);
+					byte b2 = GetCol15B(btemp);
+					int r = r1 + (d_srctranstab[r2] >> 8);
+					if (r > 255)
+					{
+						r = 255;
+					}
+					int g = g1 + (d_srctranstab[g2] >> 8);
+					if (g > 255)
+					{
+						g = 255;
+					}
+					int b = b1 + (d_srctranstab[b2] >> 8);
+					if (b > 255)
+					{
+						b = 255;
+					}
+					*lpdest = MakeCol15(r, g, b);
+					*lpz = lzi >> 16;
+				}
+				lpdest++;
+				lzi += r_zistepx;
+				lpz++;
+				lr += r_rstepx;
+				lg += r_gstepx;
+				lb += r_bstepx;
+				lptex += a_ststepxwhole;
+#if USE_ASM_I386
+				lsfrac += (vuint32)a_sstepxfrac >> 16;
+#else
+				lsfrac += a_sstepxfrac;
+#endif
+				lptex += lsfrac >> 16;
+				lsfrac &= 0xFFFF;
+#if USE_ASM_I386
+				ltfrac += (vuint32)a_tstepxfrac >> 16;
+#else
+				ltfrac += a_tstepxfrac;
+#endif
+				if (ltfrac & 0x10000)
+				{
+					lptex += d_affinetridesc.skinwidth;
+					ltfrac &= 0xFFFF;
+				}
+			} while (--lcount);
+		}
+
+		pspanpackage++;
+	} while (pspanpackage->count != DPS_SPAN_LIST_END);
+}
+
+//==========================================================================
+//
+//	D_PolysetDrawSpansRGBAdditive_16
+//
+//==========================================================================
+
+extern "C" void D_PolysetDrawSpansRGBAdditive_16(spanpackage_t *pspanpackage)
+{
+	int		lcount;
+	word	*lpdest;
+	byte	*lptex;
+	int		lsfrac, ltfrac;
+	int		lr;
+	int		lg;
+	int		lb;
+	int		lzi;
+	short	*lpz;
+
+	do
+	{
+		lcount = d_aspancount - pspanpackage->count;
+
+		errorterm += erroradjustup;
+		if (errorterm >= 0)
+		{
+			d_aspancount += d_countextrastep;
+			errorterm -= erroradjustdown;
+		}
+		else
+		{
+			d_aspancount += ubasestep;
+		}
+
+		if (lcount)
+		{
+			lpdest = (word*)pspanpackage->pdest;
+			lptex = pspanpackage->ptex;
+			lpz = pspanpackage->pz;
+#if USE_ASM_I386
+			lsfrac = (vuint32)pspanpackage->sfrac >> 16;
+			ltfrac = (vuint32)pspanpackage->tfrac >> 16;
+#else
+			lsfrac = pspanpackage->sfrac;
+			ltfrac = pspanpackage->tfrac;
+#endif
+			lr = pspanpackage->r;
+			lg = pspanpackage->g;
+			lb = pspanpackage->b;
+			lzi = pspanpackage->zi;
+
+			do
+			{
+				if ((lzi >> 16) >= *lpz)
+				{
+					int pix = *lptex;
+					vuint32 btemp = d_fadetable16r[pix + (lr & 0xFF00)] |
+						d_fadetable16g[pix + (lg & 0xFF00)] |
+						d_fadetable16b[pix + (lb & 0xFF00)];
+					byte r1 = GetCol16R(*lpdest);
+					byte g1 = GetCol16G(*lpdest);
+					byte b1 = GetCol16B(*lpdest);
+					byte r2 = GetCol16R(btemp);
+					byte g2 = GetCol16G(btemp);
+					byte b2 = GetCol16B(btemp);
+					int r = r1 + (d_srctranstab[r2] >> 8);
+					if (r > 255)
+					{
+						r = 255;
+					}
+					int g = g1 + (d_srctranstab[g2] >> 8);
+					if (g > 255)
+					{
+						g = 255;
+					}
+					int b = b1 + (d_srctranstab[b2] >> 8);
+					if (b > 255)
+					{
+						b = 255;
+					}
+					*lpdest = MakeCol16(r, g, b);
+					*lpz = lzi >> 16;
+				}
+				lpdest++;
+				lzi += r_zistepx;
+				lpz++;
+				lr += r_rstepx;
+				lg += r_gstepx;
+				lb += r_bstepx;
+				lptex += a_ststepxwhole;
+#if USE_ASM_I386
+				lsfrac += (vuint32)a_sstepxfrac >> 16;
+#else
+				lsfrac += a_sstepxfrac;
+#endif
+				lptex += lsfrac >> 16;
+				lsfrac &= 0xFFFF;
+#if USE_ASM_I386
+				ltfrac += (vuint32)a_tstepxfrac >> 16;
+#else
+				ltfrac += a_tstepxfrac;
+#endif
+				if (ltfrac & 0x10000)
+				{
+					lptex += d_affinetridesc.skinwidth;
+					ltfrac &= 0xFFFF;
+				}
+			} while (--lcount);
+		}
+
+		pspanpackage++;
+	} while (pspanpackage->count != DPS_SPAN_LIST_END);
+}
+
+//==========================================================================
+//
+//	D_PolysetDrawSpansRGBAdditive_32
+//
+//==========================================================================
+
+extern "C" void D_PolysetDrawSpansRGBAdditive_32(spanpackage_t *pspanpackage)
+{
+	int		lcount;
+	vuint32	*lpdest;
+	byte	*lptex;
+	int		lsfrac, ltfrac;
+	int		lr;
+	int		lg;
+	int		lb;
+	int		lzi;
+	short	*lpz;
+
+	do
+	{
+		lcount = d_aspancount - pspanpackage->count;
+
+		errorterm += erroradjustup;
+		if (errorterm >= 0)
+		{
+			d_aspancount += d_countextrastep;
+			errorterm -= erroradjustdown;
+		}
+		else
+		{
+			d_aspancount += ubasestep;
+		}
+
+		if (lcount)
+		{
+			lpdest = (vuint32*)pspanpackage->pdest;
+			lptex = pspanpackage->ptex;
+			lpz = pspanpackage->pz;
+			lsfrac = pspanpackage->sfrac;
+			ltfrac = pspanpackage->tfrac;
+			lr = pspanpackage->r;
+			lg = pspanpackage->g;
+			lb = pspanpackage->b;
+			lzi = pspanpackage->zi;
+
+			do
+			{
+				if ((lzi >> 16) >= *lpz)
+				{
+					int pix = *lptex;
+					byte r1 = GetCol32R(*lpdest);
+					byte g1 = GetCol32G(*lpdest);
+					byte b1 = GetCol32B(*lpdest);
+					byte r2 = d_fadetable32r[pix + (lr & 0xFF00)];
+					byte g2 = d_fadetable32g[pix + (lg & 0xFF00)];
+					byte b2 = d_fadetable32b[pix + (lb & 0xFF00)];
+					int r = r1 + (d_srctranstab[r2] >> 8);
+					if (r > 255)
+					{
+						r = 255;
+					}
+					int g = g1 + (d_srctranstab[g2] >> 8);
+					if (g > 255)
+					{
+						g = 255;
+					}
+					int b = b1 + (d_srctranstab[b2] >> 8);
+					if (b > 255)
+					{
+						b = 255;
+					}
+					*lpdest = MakeCol32(r, g, b);
+					*lpz = lzi >> 16;
+				}
+				lpdest++;
+				lzi += r_zistepx;
+				lpz++;
+				lr += r_rstepx;
+				lg += r_gstepx;
+				lb += r_bstepx;
+				lptex += a_ststepxwhole;
+				lsfrac += a_sstepxfrac;
+				lptex += lsfrac >> 16;
+				lsfrac &= 0xFFFF;
+				ltfrac += a_tstepxfrac;
+				if (ltfrac & 0x10000)
+				{
+					lptex += d_affinetridesc.skinwidth;
+					ltfrac &= 0xFFFF;
+				}
+			} while (--lcount);
+		}
+
+		pspanpackage++;
+	} while (pspanpackage->count != DPS_SPAN_LIST_END);
+}

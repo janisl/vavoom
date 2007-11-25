@@ -750,7 +750,8 @@ static int FindFrame(const VClassModelScript& Cls, int Frame, float Inter)
 
 static void DrawModel(VLevel* Level, const TVec& Org, const TAVec& Angles,
 	VClassModelScript& Cls, int FIdx, const char* Skin, int Version,
-	vuint32 Light, vuint32 Fade, float Alpha, bool IsViewModel, float Inter)
+	vuint32 Light, vuint32 Fade, float Alpha, bool Additive, bool IsViewModel,
+	float Inter)
 {
 	guard(DrawModel);
 	VScriptedModelFrame& FDef = Cls.Frames[FIdx];
@@ -851,7 +852,7 @@ static void DrawModel(VLevel* Level, const TVec& Org, const TAVec& Angles,
 
 		Drawer->DrawAliasModel(Md2Org, Md2Angle, F.Offset, F.Scale, pmdl,
 			Md2Frame, GTextureManager(SkinID), Light, Fade, Md2Alpha,
-			IsViewModel);
+			Additive, IsViewModel);
 	}
 	unguard;
 }
@@ -864,7 +865,7 @@ static void DrawModel(VLevel* Level, const TVec& Org, const TAVec& Angles,
 
 bool VRenderLevel::DrawAliasModel(const TVec& Org, const TAVec& Angles,
 	VModel* Mdl, int Frame, const char* Skin, int Version, vuint32 Light,
-	vuint32 Fade, float Alpha, bool IsViewModel, float Inter)
+	vuint32 Fade, float Alpha, bool Additive, bool IsViewModel, float Inter)
 {
 	guard(VRenderLevel::DrawAliasModel);
 	void* MData = Mod_Extradata(Mdl);
@@ -882,7 +883,7 @@ bool VRenderLevel::DrawAliasModel(const TVec& Org, const TAVec& Angles,
 	}
 
 	DrawModel(Level, Org, Angles, *SMdl->DefaultClass, FIdx, Skin, Version,
-		Light, Fade, Alpha, IsViewModel, Inter);
+		Light, Fade, Alpha, Additive, IsViewModel, Inter);
 	return true;
 	unguard;
 }
@@ -895,7 +896,7 @@ bool VRenderLevel::DrawAliasModel(const TVec& Org, const TAVec& Angles,
 
 bool VRenderLevel::DrawAliasModel(const TVec& Org, const TAVec& Angles,
 	VState* State, const char* Skin, int Version, vuint32 Light, vuint32 Fade,
-	float Alpha, bool IsViewModel, float Inter)
+	float Alpha, bool Additive, bool IsViewModel, float Inter)
 {
 	guard(VRenderLevel::DrawAliasModel);
 	VClassModelScript* Cls = NULL;
@@ -918,7 +919,7 @@ bool VRenderLevel::DrawAliasModel(const TVec& Org, const TAVec& Angles,
 	}
 
 	DrawModel(Level, Org, Angles, *Cls, FIdx, Skin, Version, Light, Fade,
-		Alpha, IsViewModel, Inter);
+		Alpha, Additive, IsViewModel, Inter);
 	return true;
 	unguard;
 }
@@ -930,7 +931,7 @@ bool VRenderLevel::DrawAliasModel(const TVec& Org, const TAVec& Angles,
 //==========================================================================
 
 bool VRenderLevel::DrawEntityModel(VEntity* Ent, vuint32 Light, vuint32 Fade,
-	float Alpha, float Inter)
+	float Alpha, bool Additive, float Inter)
 {
 	guard(VRenderLevel::DrawEntityModel);
 	if (Ent->EntityFlags & VEntity::EF_FixedModel)
@@ -947,13 +948,13 @@ bool VRenderLevel::DrawEntityModel(VEntity* Ent, vuint32 Light, vuint32 Fade,
 		}
 		return DrawAliasModel(Ent->Origin - TVec(0, 0, Ent->FloorClip),
 			Ent->Angles, Mdl, Ent->State->InClassIndex, *Ent->ModelSkin,
-			Ent->ModelVersion, Light, Fade, Alpha, false, Inter);
+			Ent->ModelVersion, Light, Fade, Alpha, Additive, false, Inter);
 	}
 	else
 	{
 		return DrawAliasModel(Ent->Origin - TVec(0, 0, Ent->FloorClip),
 			Ent->Angles, Ent->State, *Ent->ModelSkin, Ent->ModelVersion,
-			Light, Fade, Alpha, false, Inter);
+			Light, Fade, Alpha, Additive, false, Inter);
 	}
 	unguard;
 }
@@ -1053,7 +1054,7 @@ void R_DrawModelFrame(const TVec& Origin, float Angle, VModel* Model,
 	Angles.roll = 0;
 
 	DrawModel(NULL, Origin, Angles, *SMdl->DefaultClass, FIdx, Skin, 0,
-		0xffffffff, 0, 1.0, false, 0);
+		0xffffffff, 0, 1.0, false, false, 0);
 
 	Drawer->EndView();
 	unguard;
@@ -1111,7 +1112,7 @@ bool R_DrawStateModelFrame(VState* State, float Inter, const TVec& Origin,
 	Angles.roll = 0;
 
 	DrawModel(NULL, Origin, Angles, *Cls, FIdx, "", 0, 0xffffffff, 0, 1.0,
-		false, 0);
+		false, false, 0);
 
 	Drawer->EndView();
 	return true;

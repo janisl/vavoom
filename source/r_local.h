@@ -278,23 +278,24 @@ private:
 	void DrawTranslucentPoly(surface_t*, TVec*, int, int, float, bool, int,
 		bool, vuint32, vuint32, const TVec&, float, const TVec&, const TVec&,
 		const TVec&);
-	void RenderSprite(VEntity*, vuint32, vuint32);
-	void RenderTranslucentAliasModel(VEntity*, vuint32, vuint32, float);
-	bool RenderAliasModel(VEntity*, vuint32, vuint32);
+	void RenderSprite(VEntity*, vuint32, vuint32, float, bool);
+	void RenderTranslucentAliasModel(VEntity*, vuint32, vuint32, float, bool,
+		float);
+	bool RenderAliasModel(VEntity*, vuint32, vuint32, float, bool);
 	void RenderThing(VEntity*);
 	void RenderMobjs();
 	void DrawTranslucentPolys();
-	void RenderPSprite(VViewState*, float, vuint32, vuint32);
-	bool RenderViewModel(VViewState*, vuint32, vuint32);
+	void RenderPSprite(VViewState*, float, vuint32, vuint32, float, bool);
+	bool RenderViewModel(VViewState*, vuint32, vuint32, float, bool);
 	void DrawPlayerSprites();
 	void DrawCroshair();
 
 	//	Models
 	bool DrawAliasModel(const TVec&, const TAVec&, VModel*, int, const char*,
-		int, vuint32, vuint32, float, bool, float);
+		int, vuint32, vuint32, float, bool, bool, float);
 	bool DrawAliasModel(const TVec&, const TAVec&, VState*, const char*,
-		int, vuint32, vuint32, float, bool, float);
-	bool DrawEntityModel(VEntity*, vuint32, vuint32, float, float);
+		int, vuint32, vuint32, float, bool, bool, float);
+	bool DrawEntityModel(VEntity*, vuint32, vuint32, float, bool, float);
 	bool CheckAliasModelFrame(VEntity*, float);
 
 public:

@@ -124,7 +124,8 @@ static aedge_t aedges[12] =
 
 void VSoftwareDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	const TVec& Offset, const TVec& Scale, mmdl_t* Apmdl, int frame,
-	VTexture* Skin, vuint32 light, vuint32 Fade, float Alpha, bool is_view_model)
+	VTexture* Skin, vuint32 light, vuint32 Fade, float Alpha, bool Additive,
+	bool is_view_model)
 {
 	guard(VSoftwareDrawer::DrawAliasModel);
 	modelorg = vieworg - origin;
@@ -158,7 +159,7 @@ void VSoftwareDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	AliasSetupLighting(light);
 	AliasSetupFrame(frame);
 
-	PolysetSetupDrawer(Alpha);
+	PolysetSetupDrawer(Alpha, Additive);
 
 	SetFade(Fade);
 

@@ -921,18 +921,22 @@ void VOpenGLDrawer::DrawMaskedPolygon(surface_t* surf, float Alpha,
 //==========================================================================
 
 void VOpenGLDrawer::DrawSpritePolygon(TVec *cv, VTexture* Tex, float Alpha,
-	int translation, vuint32 light, vuint32 Fade, const TVec&, float,
-	const TVec& saxis, const TVec& taxis, const TVec& texorg)
+	bool Additive, int translation, vuint32 light, vuint32 Fade, const TVec&,
+	float, const TVec& saxis, const TVec& taxis, const TVec& texorg)
 {
 	guard(VOpenGLDrawer::DrawSpritePolygon);
 	TVec	texpt;
 
 	SetSpriteLump(Tex, translation);
 
-	if (blend_sprites || Alpha < 1.0)
+	if (blend_sprites || Additive || Alpha < 1.0)
 	{
 		glAlphaFunc(GL_GREATER, 0.0);
 		glEnable(GL_BLEND);
+	}
+	if (Additive)
+	{
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 	}
 	glEnable(GL_ALPHA_TEST);
 
@@ -964,10 +968,14 @@ void VOpenGLDrawer::DrawSpritePolygon(TVec *cv, VTexture* Tex, float Alpha,
 
 	glEnd();
 
-	if (blend_sprites || Alpha < 1.0)
+	if (blend_sprites || Additive || Alpha < 1.0)
 	{
 		glAlphaFunc(GL_GREATER, 0.666);
 		glDisable(GL_BLEND);
+	}
+	if (Additive)
+	{
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 	glDisable(GL_ALPHA_TEST);
 	unguard;
@@ -981,7 +989,8 @@ void VOpenGLDrawer::DrawSpritePolygon(TVec *cv, VTexture* Tex, float Alpha,
 
 void VOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	const TVec& Offset, const TVec& Scale, mmdl_t* pmdl, int frame,
-	VTexture* Skin, vuint32 light, vuint32 Fade, float Alpha, bool is_view_model)
+	VTexture* Skin, vuint32 light, vuint32 Fade, float Alpha, bool Additive,
+	bool is_view_model)
 {
 	guard(VOpenGLDrawer::DrawAliasModel);
 	mframe_t	*framedesc;
@@ -1037,6 +1046,10 @@ void VOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 
 	glShadeModel(GL_SMOOTH);
 	glEnable(GL_BLEND);
+	if (Additive)
+	{
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+	}
 
 	verts = (trivertx_t *)(framedesc + 1);
 	order = (int *)((byte *)pmdl + pmdl->ofscmds);
@@ -1076,6 +1089,10 @@ void VOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 
 	glShadeModel(GL_FLAT);
 	glDisable(GL_BLEND);
+	if (Additive)
+	{
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	}
 
 	glPopMatrix();
 	if (is_view_model)
