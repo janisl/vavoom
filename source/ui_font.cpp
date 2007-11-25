@@ -677,7 +677,7 @@ VFont::VFont(VName AName, const VStr& FormatStr, int First, int Count,
 		SpaceWidth = 4;
 	}
 
-	BuildTranslations(ColoursUsed);
+	BuildTranslations(ColoursUsed, r_palette, false);
 
 	//	Create texture objects for all different colours.
 	for (int i = 0; i < Chars.Num(); i++)
@@ -725,7 +725,8 @@ VFont::~VFont()
 //
 //==========================================================================
 
-void VFont::BuildTranslations(const bool* ColoursUsed)
+void VFont::BuildTranslations(const bool* ColoursUsed, rgba_t* Pal,
+	bool ConsoleTrans)
 {
 	guard(VFont::BuildTranslations);
 	//	Calculate luminosity for all colours and find minimal and maximal
@@ -735,8 +736,8 @@ void VFont::BuildTranslations(const bool* ColoursUsed)
 	float MaxLum = 0.0;
 	for (int i = 1; i < 256; i++)
 	{
-		Luminosity[i] = r_palette[i].r * 0.299 + r_palette[i].g * 0.587 +
-			r_palette[i].b * 0.114;
+		Luminosity[i] = Pal[i].r * 0.299 + Pal[i].g * 0.587 +
+			Pal[i].b * 0.114;
 		if (ColoursUsed[i])
 		{
 			if (MinLum > Luminosity[i])
@@ -760,15 +761,16 @@ void VFont::BuildTranslations(const bool* ColoursUsed)
 	for (int ColIdx = 0; ColIdx < TextColours.Num(); ColIdx++)
 	{
 		rgba_t* pOut = Translation + ColIdx * 256;
-		const TArray<VColTranslationDef>& TList =
+		const TArray<VColTranslationDef>& TList = ConsoleTrans ?
+			TextColours[ColIdx].ConsoleTranslations :
 			TextColours[ColIdx].Translations;
 		if (ColIdx == CR_UNTRANSLATED || !TList.Num())
 		{
-			memcpy(pOut, r_palette, 4 * 256);
+			memcpy(pOut, Pal, 4 * 256);
 			continue;
 		}
 
-		pOut[0] = r_palette[0];
+		pOut[0] = Pal[0];
 		for (int i = 1; i < 256; i++)
 		{
 			int ILum = (int)(Luminosity[i] * 256);
@@ -1248,7 +1250,7 @@ VSpecialFont::VSpecialFont(VName AName, const TArray<int>& CharIndexes,
 		SpaceWidth = 4;
 	}
 
-	BuildTranslations(ColoursUsed);
+	BuildTranslations(ColoursUsed, r_palette, false);
 
 	//	Map non-translated colours to their original values
 	for (int i = 0; i < TextColours.Num(); i++)
@@ -1309,26 +1311,24 @@ VFon1Font::VFon1Font(VName AName, int LumpNum)
 		AsciiChars[i] = i;
 	}
 
-//	bool ColoursUsed[256];
-//	memset(ColoursUsed, 0, sizeof(ColoursUsed));
-
-//	BuildTranslations(ColoursUsed);
-
-	Translation = new rgba_t[256 * TextColours.Num()];
-	for (int i = 0; i < TextColours.Num(); i++)
+	//	Mark all colours as used and construct a grayscale palette.
+	bool ColoursUsed[256];
+	rgba_t Pal[256];
+	ColoursUsed[0] = false;
+	Pal[0].r = 0;
+	Pal[0].g = 0;
+	Pal[0].b = 0;
+	Pal[0].a = 0;
+	for (int i = 1; i < 256; i++)
 	{
-		Translation[i * 256].r = 0;
-		Translation[i * 256].g = 0;
-		Translation[i * 256].b = 0;
-		Translation[i * 256].a = 0;
-		for (int j = 1; j < 256; j++)
-		{
-			Translation[i * 256 + j].r = (j - 1) * 255 / 254;
-			Translation[i * 256 + j].g = Translation[i * 256 + j].r;
-			Translation[i * 256 + j].b = Translation[i * 256 + j].r;
-			Translation[i * 256 + j].a = 255;
-		}
+		ColoursUsed[i] = true;
+		Pal[i].r = (i - 1) * 255 / 254;
+		Pal[i].g = Pal[i].r;
+		Pal[i].b = Pal[i].r;
+		Pal[i].a = 255;
 	}
+
+	BuildTranslations(ColoursUsed, Pal, true);
 
 	for (int i = 0; i < 256; i++)
 	{
