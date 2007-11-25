@@ -847,16 +847,21 @@ void VOpenGLDrawer::EndSky()
 //
 //==========================================================================
 
-void VOpenGLDrawer::DrawMaskedPolygon(surface_t* surf, float Alpha)
+void VOpenGLDrawer::DrawMaskedPolygon(surface_t* surf, float Alpha,
+	bool Additive)
 {
 	guard(VOpenGLDrawer::DrawMaskedPolygon);
 	texinfo_t* tex = surf->texinfo;
 	SetTexture(tex->Tex);
 	glEnable(GL_ALPHA_TEST);
-	if (blend_sprites || Alpha < 1.0)
+	if (blend_sprites || Additive || Alpha < 1.0)
 	{
 		glAlphaFunc(GL_GREATER, 0.0);
 		glEnable(GL_BLEND);
+	}
+	if (Additive)
+	{
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 	}
 
 	if (surf->lightmap != NULL ||
@@ -896,10 +901,14 @@ void VOpenGLDrawer::DrawMaskedPolygon(surface_t* surf, float Alpha)
 	}
 	glEnd();
 
-	if (blend_sprites || Alpha < 1.0)
+	if (blend_sprites || Additive || Alpha < 1.0)
 	{
 		glAlphaFunc(GL_GREATER, 0.666);
 		glDisable(GL_BLEND);
+	}
+	if (Additive)
+	{
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 	glDisable(GL_ALPHA_TEST);
 	unguard;

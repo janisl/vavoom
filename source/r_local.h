@@ -153,6 +153,7 @@ private:
 		TVec			taxis;
 		TVec			texorg;
 		float			Alpha;
+		bool			Additive;
 		int				translation;
 		int				type;
 		float			dist;
@@ -274,8 +275,8 @@ private:
 	void RenderWorld();
 
 	//	Things
-	void DrawTranslucentPoly(surface_t*, TVec*, int, int, float, int, bool,
-		vuint32, vuint32, const TVec&, float, const TVec&, const TVec&,
+	void DrawTranslucentPoly(surface_t*, TVec*, int, int, float, bool, int,
+		bool, vuint32, vuint32, const TVec&, float, const TVec&, const TVec&,
 		const TVec&);
 	void RenderSprite(VEntity*, vuint32, vuint32);
 	void RenderTranslucentAliasModel(VEntity*, vuint32, vuint32, float);

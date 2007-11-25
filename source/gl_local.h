@@ -139,7 +139,7 @@ public:
 	void BeginSky();
 	void DrawSkyPolygon(surface_t*, bool, VTexture*, float, VTexture*, float);
 	void EndSky();
-	void DrawMaskedPolygon(surface_t*, float);
+	void DrawMaskedPolygon(surface_t*, float, bool);
 	void DrawSpritePolygon(TVec*, VTexture*, float, int, vuint32, vuint32,
 		const TVec&, float, const TVec&, const TVec&, const TVec&);
 	void DrawAliasModel(const TVec&, const TAVec&, const TVec&, const TVec&,

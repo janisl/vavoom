@@ -96,7 +96,7 @@ public:
 	virtual void DrawSkyPolygon(surface_t*, bool, VTexture*, float, VTexture*,
 		float) = 0;
 	virtual void EndSky() = 0;
-	virtual void DrawMaskedPolygon(surface_t*, float) = 0;
+	virtual void DrawMaskedPolygon(surface_t*, float, bool) = 0;
 	virtual void DrawSpritePolygon(TVec*, VTexture*, float, int, vuint32,
 		vuint32, const TVec&, float, const TVec&, const TVec&, const TVec&) = 0;
 	virtual void DrawAliasModel(const TVec&, const TAVec&, const TVec&,

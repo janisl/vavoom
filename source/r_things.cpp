@@ -340,9 +340,9 @@ void R_FreeSpriteData()
 //==========================================================================
 
 void VRenderLevel::DrawTranslucentPoly(surface_t* surf, TVec* sv, int count,
-	int lump, float Alpha, int translation, bool type, vuint32 light,
-	vuint32 Fade, const TVec& normal, float pdist, const TVec& saxis,
-	const TVec& taxis, const TVec& texorg)
+	int lump, float Alpha, bool Additive, int translation, bool type,
+	vuint32 light, vuint32 Fade, const TVec& normal, float pdist,
+	const TVec& saxis, const TVec& taxis, const TVec& texorg)
 {
 	guard(VRenderLevel::DrawTranslucentPoly);
 	int i;
@@ -373,6 +373,7 @@ void VRenderLevel::DrawTranslucentPoly(surface_t* surf, TVec* sv, int count,
 			spr.texorg = texorg;
 			spr.surf = surf;
 			spr.Alpha = Alpha;
+			spr.Additive = Additive;
 			spr.translation = translation;
 			spr.type = type;
 			spr.light = light;
@@ -402,7 +403,7 @@ void VRenderLevel::DrawTranslucentPoly(surface_t* surf, TVec* sv, int count,
 		}
 		else
 		{
-			Drawer->DrawMaskedPolygon(spr.surf, spr.Alpha);
+			Drawer->DrawMaskedPolygon(spr.surf, spr.Alpha, spr.Additive);
 		}
 		if (type)
 			memcpy(spr.Verts, sv, sizeof(TVec) * 4);
@@ -415,6 +416,7 @@ void VRenderLevel::DrawTranslucentPoly(surface_t* surf, TVec* sv, int count,
 		spr.texorg = texorg;
 		spr.surf = surf;
 		spr.Alpha = Alpha;
+		spr.Additive = Additive;
 		spr.translation = translation;
 		spr.light = light;
 		spr.Fade = Fade;
@@ -429,7 +431,7 @@ void VRenderLevel::DrawTranslucentPoly(surface_t* surf, TVec* sv, int count,
 	}
 	else
 	{
-		Drawer->DrawMaskedPolygon(surf, Alpha);
+		Drawer->DrawMaskedPolygon(surf, Alpha, Additive);
 	}
 	unguard;
 }
@@ -633,7 +635,7 @@ void VRenderLevel::RenderSprite(VEntity* thing, vuint32 light, vuint32 Fade)
 
 	if (thing->Alpha < 1.0 || r_sort_sprites)
 	{
-		DrawTranslucentPoly(NULL, sv, 4, lump, thing->Alpha,
+		DrawTranslucentPoly(NULL, sv, 4, lump, thing->Alpha, false,
 			thing->Translation, true, light, Fade, -sprforward, DotProduct(
 			sprorigin, -sprforward), flip ? -sprright : sprright, -sprup,
 			flip ? sv[2] : sv[1]);
@@ -698,7 +700,7 @@ void VRenderLevel::RenderTranslucentAliasModel(VEntity* mobj, vuint32 light,
 		}
 		else
 		{
-			Drawer->DrawMaskedPolygon(spr.surf, spr.Alpha);
+			Drawer->DrawMaskedPolygon(spr.surf, spr.Alpha, spr.Additive);
 		}
 		spr.Ent = mobj;
 		spr.light = light;
@@ -869,7 +871,7 @@ void VRenderLevel::DrawTranslucentPolys()
 			}
 			else
 			{
-				Drawer->DrawMaskedPolygon(spr.surf, spr.Alpha);
+				Drawer->DrawMaskedPolygon(spr.surf, spr.Alpha, spr.Additive);
 			}
 			spr.Alpha = 0;
 		}

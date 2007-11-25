@@ -183,7 +183,7 @@ public:
 	void BeginSky();
 	void DrawSkyPolygon(surface_t*, bool, VTexture*, float, VTexture*, float);
 	void EndSky();
-	void DrawMaskedPolygon(surface_t*, float);
+	void DrawMaskedPolygon(surface_t*, float, bool);
 	void DrawSpritePolygon(TVec*, VTexture*, float, int, vuint32, vuint32,
 		const TVec&, float, const TVec&, const TVec&, const TVec&);
 	void DrawAliasModel(const TVec&, const TAVec&, const TVec&, const TVec&,
@@ -264,7 +264,7 @@ protected:
 		const TVec&, const TVec&);
 	void MaskedSurfCaclulateGradients(surface_t*);
 	void SpriteDrawPolygon(TVec*, int, surface_t*, VTexture*, int, float,
-		vuint32, vuint32, const TVec&, float, const TVec&, const TVec&,
+		bool, vuint32, vuint32, const TVec&, float, const TVec&, const TVec&,
 		const TVec&);
 
 	//	Drawing of the aliased models, i.e. md2
@@ -330,9 +330,12 @@ void D_DrawFuzzSpriteSpans_8(sspan_t*);
 void D_DrawAltFuzzSpriteSpans_8(sspan_t*);
 void D_DrawSpriteSpans_16(sspan_t*);
 void D_DrawFuzzSpriteSpans_15(sspan_t*);
+void D_DrawAdditiveSpriteSpans_15(sspan_t*);
 void D_DrawFuzzSpriteSpans_16(sspan_t*);
+void D_DrawAdditiveSpriteSpans_16(sspan_t*);
 void D_DrawSpriteSpans_32(sspan_t*);
 void D_DrawFuzzSpriteSpans_32(sspan_t*);
+void D_DrawAdditiveSpriteSpans_32(sspan_t *pspan);
 
 //	Particle drawers.
 void D_DrawParticle_8(particle_t*);
@@ -424,6 +427,7 @@ extern spanfunc_t		D_DrawSpans;
 extern spritespanfunc_t	D_DrawSpriteSpans;
 extern spritespanfunc_t	D_DrawFuzzSpriteSpans;
 extern spritespanfunc_t	D_DrawAltFuzzSpriteSpans;
+extern spritespanfunc_t	D_DrawAdditiveSpriteSpans;
 extern particle_func_t	D_DrawParticle;
 
 extern float			xscaleshrink;
@@ -432,6 +436,7 @@ extern float			yscaleshrink;
 extern vuint8*			colourmaps;
 
 extern vuint8*			tinttables[5];
+extern vuint8*			AdditiveTransTables[10];
 extern vuint16			scaletable[32][256];
 
 extern vuint16			pal8_to16[256];

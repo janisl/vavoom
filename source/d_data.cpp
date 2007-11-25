@@ -61,6 +61,7 @@ vuint8			d_fadetable32b[32 * 256];
 //	Translucency tables
 //
 vuint8*			tinttables[5];
+vuint8*			AdditiveTransTables[10];
 vuint16			scaletable[32][256];
 
 vuint8*			consbgmap = NULL;
@@ -319,6 +320,32 @@ static vuint8* CreateTranslucencyTable(int transluc)
 
 //==========================================================================
 //
+//	CreateAdditiveTranslucencyTable
+//
+//==========================================================================
+
+static vuint8* CreateAdditiveTranslucencyTable(float Alpha)
+{
+	guard(CreateAdditiveTranslucencyTable);
+	vuint8* table = new vuint8[0x10000];
+	vuint8* p = table;
+	for (int i = 0; i < 256; i++)
+	{
+		int r = (int)(r_palette[i].r * Alpha);
+		int g = (int)(r_palette[i].g * Alpha);
+		int b = (int)(r_palette[i].b * Alpha);
+		for (int j = 0; j < 256; j++)
+		{
+			*(p++) = MakeCol8(MIN(r + r_palette[j].r, 255),
+				MIN(g + r_palette[j].g, 255), MIN(b + r_palette[j].b, 255));
+		}
+	}
+	return table;
+	unguard;
+}
+
+//==========================================================================
+//
 //	InitTranslucencyTables
 //
 //==========================================================================
@@ -326,11 +353,15 @@ static vuint8* CreateTranslucencyTable(int transluc)
 static void InitTranslucencyTables()
 {
 	guard(InitTranslucencyTables);
-	tinttables[0] = CreateTranslucencyTable(10);
-	tinttables[1] = CreateTranslucencyTable(20);
-	tinttables[2] = CreateTranslucencyTable(30);
-	tinttables[3] = CreateTranslucencyTable(40);
-	tinttables[4] = CreateTranslucencyTable(50);
+	for (int i = 0; i < 5; i++)
+	{
+		tinttables[i] = CreateTranslucencyTable((i + 1) * 10);
+	}
+	for (int i = 0; i < 10; i++)
+	{
+		AdditiveTransTables[i] = CreateAdditiveTranslucencyTable(
+			float(i + 1) / 10.0);
+	}
 
 	for (int t = 0; t < 32; t++)
 	{

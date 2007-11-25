@@ -1384,6 +1384,543 @@ NextSpan:
 
 //==========================================================================
 //
+//	D_DrawAdditiveSpriteSpans_15
+//
+//==========================================================================
+
+extern "C" void D_DrawAdditiveSpriteSpans_15(sspan_t *pspan)
+{
+	int			count, spancount, izi, izistep;
+	word		*pbase, *pdest;
+	fixed_t		s, t, snext, tnext, sstep, tstep;
+	float		sdivz, tdivz, zi, z, du, dv, spancountminus1;
+	float		sdivz8stepu, tdivz8stepu, zi8stepu;
+	word		btemp;
+	short		*pz;
+
+	sstep = 0;	// keep compiler happy
+	tstep = 0;	// ditto
+
+	pbase = (word*)cacheblock;
+
+	sdivz8stepu = d_sdivzstepu * 8;
+	tdivz8stepu = d_tdivzstepu * 8;
+	zi8stepu = d_zistepu * 8;
+
+	// we count on FP exceptions being turned off to avoid range problems
+	izistep = (int)(d_zistepu * 0x8000 * 0x10000);
+
+	do
+	{
+		pdest = (word*)scrn + ylookup[pspan->v] + pspan->u;
+		pz = zbuffer + ylookup[pspan->v] + pspan->u;
+
+		count = pspan->count;
+
+		if (count <= 0)
+			goto NextSpan;
+
+		// calculate the initial s/z, t/z, 1/z, s, and t and clamp
+		du = (float)pspan->u;
+		dv = (float)pspan->v;
+
+		sdivz = d_sdivzorigin + dv*d_sdivzstepv + du*d_sdivzstepu;
+		tdivz = d_tdivzorigin + dv*d_tdivzstepv + du*d_tdivzstepu;
+		zi = d_ziorigin + dv*d_zistepv + du*d_zistepu;
+		z = (float)0x10000 / zi;	// prescale to 16.16 fixed-point
+		// we count on FP exceptions being turned off to avoid range problems
+		izi = (int)(zi * 0x8000 * 0x10000);
+
+		s = (int)(sdivz * z) + sadjust;
+		if (s > bbextents)
+			s = bbextents;
+		else if (s < 0)
+			s = 0;
+
+		t = (int)(tdivz * z) + tadjust;
+		if (t > bbextentt)
+			t = bbextentt;
+		else if (t < 0)
+			t = 0;
+
+		do
+		{
+			// calculate s and t at the far end of the span
+			if (count >= 8)
+				spancount = 8;
+			else
+				spancount = count;
+
+			count -= spancount;
+
+			if (count)
+			{
+				// calculate s/z, t/z, zi->fixed s and t at far end of span,
+				// calculate s and t steps across span by shifting
+				sdivz += sdivz8stepu;
+				tdivz += tdivz8stepu;
+				zi += zi8stepu;
+				z = (float)0x10000 / zi;	// prescale to 16.16 fixed-point
+
+				snext = (int)(sdivz * z) + sadjust;
+				if (snext > bbextents)
+					snext = bbextents;
+				else if (snext < 8)
+					snext = 8;	// prevent round-off error on <0 steps from
+								// from causing overstepping & running off
+								// the edge of the texture
+
+				tnext = (int)(tdivz * z) + tadjust;
+				if (tnext > bbextentt)
+					tnext = bbextentt;
+				else if (tnext < 8)
+					tnext = 8;	// guard against round-off error on <0 steps
+
+				sstep = (snext - s) >> 3;
+				tstep = (tnext - t) >> 3;
+			}
+			else
+			{
+				// calculate s/z, t/z, zi->fixed s and t at last pixel in
+				// span (so can't step off polygon), clamp, calculate s and
+				// t steps across span by division, biasing steps low so we
+				// don't run off the texture
+				spancountminus1 = (float)(spancount - 1);
+				sdivz += d_sdivzstepu * spancountminus1;
+				tdivz += d_tdivzstepu * spancountminus1;
+				zi += d_zistepu * spancountminus1;
+				z = (float)0x10000 / zi;	// prescale to 16.16 fixed-point
+				snext = (int)(sdivz * z) + sadjust;
+				if (snext > bbextents)
+					snext = bbextents;
+				else if (snext < 8)
+					snext = 8;	// prevent round-off error on <0 steps from
+								// from causing overstepping & running off
+								// the edge of the texture
+
+				tnext = (int)(tdivz * z) + tadjust;
+				if (tnext > bbextentt)
+					tnext = bbextentt;
+				else if (tnext < 8)
+					tnext = 8;	// guard against round-off error on <0 steps
+
+				if (spancount > 1)
+				{
+					sstep = (snext - s) / (spancount - 1);
+					tstep = (tnext - t) / (spancount - 1);
+				}
+			}
+
+			do
+			{
+				btemp = pbase[(s >> 16) + (t >> 16) * cachewidth];
+				if (btemp)
+				{
+					if (*pz <= (izi >> 16))
+					{
+						byte r1 = _GetCol15R(*pdest);
+						byte g1 = _GetCol15G(*pdest);
+						byte b1 = _GetCol15B(*pdest);
+						byte r2 = _GetCol15R(btemp);
+						byte g2 = _GetCol15G(btemp);
+						byte b2 = _GetCol15B(btemp);
+						int r = r1 + (d_srctranstab[r2] >> 8);
+						if (r > 255)
+						{
+							r = 255;
+						}
+						int g = g1 + (d_srctranstab[g2] >> 8);
+						if (g > 255)
+						{
+							g = 255;
+						}
+						int b = b1 + (d_srctranstab[b2] >> 8);
+						if (b > 255)
+						{
+							b = 255;
+						}
+						*pdest = _MakeCol15(r, g, b);
+					}
+				}
+
+				izi += izistep;
+				pdest++;
+				pz++;
+				s += sstep;
+				t += tstep;
+			} while (--spancount > 0);
+
+			s = snext;
+			t = tnext;
+
+		} while (count > 0);
+
+NextSpan:
+		pspan++;
+
+	} while (pspan->count != DS_SPAN_LIST_END);
+}
+
+//==========================================================================
+//
+//	D_DrawAdditiveSpriteSpans_16
+//
+//==========================================================================
+
+extern "C" void D_DrawAdditiveSpriteSpans_16(sspan_t *pspan)
+{
+	int			count, spancount, izi, izistep;
+	word		*pbase, *pdest;
+	fixed_t		s, t, snext, tnext, sstep, tstep;
+	float		sdivz, tdivz, zi, z, du, dv, spancountminus1;
+	float		sdivz8stepu, tdivz8stepu, zi8stepu;
+	word		btemp;
+	short		*pz;
+
+	sstep = 0;	// keep compiler happy
+	tstep = 0;	// ditto
+
+	pbase = (word*)cacheblock;
+
+	sdivz8stepu = d_sdivzstepu * 8;
+	tdivz8stepu = d_tdivzstepu * 8;
+	zi8stepu = d_zistepu * 8;
+
+	// we count on FP exceptions being turned off to avoid range problems
+	izistep = (int)(d_zistepu * 0x8000 * 0x10000);
+
+	do
+	{
+		pdest = (word*)scrn + ylookup[pspan->v] + pspan->u;
+		pz = zbuffer + ylookup[pspan->v] + pspan->u;
+
+		count = pspan->count;
+
+		if (count <= 0)
+			goto NextSpan;
+
+		// calculate the initial s/z, t/z, 1/z, s, and t and clamp
+		du = (float)pspan->u;
+		dv = (float)pspan->v;
+
+		sdivz = d_sdivzorigin + dv*d_sdivzstepv + du*d_sdivzstepu;
+		tdivz = d_tdivzorigin + dv*d_tdivzstepv + du*d_tdivzstepu;
+		zi = d_ziorigin + dv*d_zistepv + du*d_zistepu;
+		z = (float)0x10000 / zi;	// prescale to 16.16 fixed-point
+		// we count on FP exceptions being turned off to avoid range problems
+		izi = (int)(zi * 0x8000 * 0x10000);
+
+		s = (int)(sdivz * z) + sadjust;
+		if (s > bbextents)
+			s = bbextents;
+		else if (s < 0)
+			s = 0;
+
+		t = (int)(tdivz * z) + tadjust;
+		if (t > bbextentt)
+			t = bbextentt;
+		else if (t < 0)
+			t = 0;
+
+		do
+		{
+			// calculate s and t at the far end of the span
+			if (count >= 8)
+				spancount = 8;
+			else
+				spancount = count;
+
+			count -= spancount;
+
+			if (count)
+			{
+				// calculate s/z, t/z, zi->fixed s and t at far end of span,
+				// calculate s and t steps across span by shifting
+				sdivz += sdivz8stepu;
+				tdivz += tdivz8stepu;
+				zi += zi8stepu;
+				z = (float)0x10000 / zi;	// prescale to 16.16 fixed-point
+
+				snext = (int)(sdivz * z) + sadjust;
+				if (snext > bbextents)
+					snext = bbextents;
+				else if (snext < 8)
+					snext = 8;	// prevent round-off error on <0 steps from
+								// from causing overstepping & running off
+								// the edge of the texture
+
+				tnext = (int)(tdivz * z) + tadjust;
+				if (tnext > bbextentt)
+					tnext = bbextentt;
+				else if (tnext < 8)
+					tnext = 8;	// guard against round-off error on <0 steps
+
+				sstep = (snext - s) >> 3;
+				tstep = (tnext - t) >> 3;
+			}
+			else
+			{
+				// calculate s/z, t/z, zi->fixed s and t at last pixel in
+				// span (so can't step off polygon), clamp, calculate s and
+				// t steps across span by division, biasing steps low so we
+				// don't run off the texture
+				spancountminus1 = (float)(spancount - 1);
+				sdivz += d_sdivzstepu * spancountminus1;
+				tdivz += d_tdivzstepu * spancountminus1;
+				zi += d_zistepu * spancountminus1;
+				z = (float)0x10000 / zi;	// prescale to 16.16 fixed-point
+				snext = (int)(sdivz * z) + sadjust;
+				if (snext > bbextents)
+					snext = bbextents;
+				else if (snext < 8)
+					snext = 8;	// prevent round-off error on <0 steps from
+								// from causing overstepping & running off
+								// the edge of the texture
+
+				tnext = (int)(tdivz * z) + tadjust;
+				if (tnext > bbextentt)
+					tnext = bbextentt;
+				else if (tnext < 8)
+					tnext = 8;	// guard against round-off error on <0 steps
+
+				if (spancount > 1)
+				{
+					sstep = (snext - s) / (spancount - 1);
+					tstep = (tnext - t) / (spancount - 1);
+				}
+			}
+
+			do
+			{
+				btemp = pbase[(s >> 16) + (t >> 16) * cachewidth];
+				if (btemp)
+				{
+					if (*pz <= (izi >> 16))
+					{
+						byte r1 = _GetCol16R(*pdest);
+						byte g1 = _GetCol16G(*pdest);
+						byte b1 = _GetCol16B(*pdest);
+						byte r2 = _GetCol16R(btemp);
+						byte g2 = _GetCol16G(btemp);
+						byte b2 = _GetCol16B(btemp);
+						int r = r1 + (d_srctranstab[r2] >> 8);
+						if (r > 255)
+						{
+							r = 255;
+						}
+						int g = g1 + (d_srctranstab[g2] >> 8);
+						if (g > 255)
+						{
+							g = 255;
+						}
+						int b = b1 + (d_srctranstab[b2] >> 8);
+						if (b > 255)
+						{
+							b = 255;
+						}
+						*pdest = _MakeCol16(r, g, b);
+					}
+				}
+
+				izi += izistep;
+				pdest++;
+				pz++;
+				s += sstep;
+				t += tstep;
+			} while (--spancount > 0);
+
+			s = snext;
+			t = tnext;
+
+		} while (count > 0);
+
+NextSpan:
+		pspan++;
+
+	} while (pspan->count != DS_SPAN_LIST_END);
+}
+
+//==========================================================================
+//
+//	D_DrawAdditiveSpriteSpans_32
+//
+//==========================================================================
+
+extern "C" void D_DrawAdditiveSpriteSpans_32(sspan_t *pspan)
+{
+	int			count, spancount, izi, izistep;
+	vuint32		*pbase, *pdest;
+	fixed_t		s, t, snext, tnext, sstep, tstep;
+	float		sdivz, tdivz, zi, z, du, dv, spancountminus1;
+	float		sdivz8stepu, tdivz8stepu, zi8stepu;
+	vuint32		btemp;
+	short		*pz;
+
+	sstep = 0;	// keep compiler happy
+	tstep = 0;	// ditto
+
+	pbase = (vuint32*)cacheblock;
+
+	sdivz8stepu = d_sdivzstepu * 8;
+	tdivz8stepu = d_tdivzstepu * 8;
+	zi8stepu = d_zistepu * 8;
+
+	// we count on FP exceptions being turned off to avoid range problems
+	izistep = (int)(d_zistepu * 0x8000 * 0x10000);
+
+	do
+	{
+		pdest = (vuint32*)scrn + ylookup[pspan->v] + pspan->u;
+		pz = zbuffer + ylookup[pspan->v] + pspan->u;
+
+		count = pspan->count;
+
+		if (count <= 0)
+			goto NextSpan;
+
+		// calculate the initial s/z, t/z, 1/z, s, and t and clamp
+		du = (float)pspan->u;
+		dv = (float)pspan->v;
+
+		sdivz = d_sdivzorigin + dv*d_sdivzstepv + du*d_sdivzstepu;
+		tdivz = d_tdivzorigin + dv*d_tdivzstepv + du*d_tdivzstepu;
+		zi = d_ziorigin + dv*d_zistepv + du*d_zistepu;
+		z = (float)0x10000 / zi;	// prescale to 16.16 fixed-point
+		// we count on FP exceptions being turned off to avoid range problems
+		izi = (int)(zi * 0x8000 * 0x10000);
+
+		s = (int)(sdivz * z) + sadjust;
+		if (s > bbextents)
+			s = bbextents;
+		else if (s < 0)
+			s = 0;
+
+		t = (int)(tdivz * z) + tadjust;
+		if (t > bbextentt)
+			t = bbextentt;
+		else if (t < 0)
+			t = 0;
+
+		do
+		{
+			// calculate s and t at the far end of the span
+			if (count >= 8)
+				spancount = 8;
+			else
+				spancount = count;
+
+			count -= spancount;
+
+			if (count)
+			{
+				// calculate s/z, t/z, zi->fixed s and t at far end of span,
+				// calculate s and t steps across span by shifting
+				sdivz += sdivz8stepu;
+				tdivz += tdivz8stepu;
+				zi += zi8stepu;
+				z = (float)0x10000 / zi;	// prescale to 16.16 fixed-point
+
+				snext = (int)(sdivz * z) + sadjust;
+				if (snext > bbextents)
+					snext = bbextents;
+				else if (snext < 8)
+					snext = 8;	// prevent round-off error on <0 steps from
+								// from causing overstepping & running off
+								// the edge of the texture
+
+				tnext = (int)(tdivz * z) + tadjust;
+				if (tnext > bbextentt)
+					tnext = bbextentt;
+				else if (tnext < 8)
+					tnext = 8;	// guard against round-off error on <0 steps
+
+				sstep = (snext - s) >> 3;
+				tstep = (tnext - t) >> 3;
+			}
+			else
+			{
+				// calculate s/z, t/z, zi->fixed s and t at last pixel in
+				// span (so can't step off polygon), clamp, calculate s and
+				// t steps across span by division, biasing steps low so we
+				// don't run off the texture
+				spancountminus1 = (float)(spancount - 1);
+				sdivz += d_sdivzstepu * spancountminus1;
+				tdivz += d_tdivzstepu * spancountminus1;
+				zi += d_zistepu * spancountminus1;
+				z = (float)0x10000 / zi;	// prescale to 16.16 fixed-point
+				snext = (int)(sdivz * z) + sadjust;
+				if (snext > bbextents)
+					snext = bbextents;
+				else if (snext < 8)
+					snext = 8;	// prevent round-off error on <0 steps from
+								// from causing overstepping & running off
+								// the edge of the texture
+
+				tnext = (int)(tdivz * z) + tadjust;
+				if (tnext > bbextentt)
+					tnext = bbextentt;
+				else if (tnext < 8)
+					tnext = 8;	// guard against round-off error on <0 steps
+
+				if (spancount > 1)
+				{
+					sstep = (snext - s) / (spancount - 1);
+					tstep = (tnext - t) / (spancount - 1);
+				}
+			}
+
+			do
+			{
+				btemp = pbase[(s >> 16) + (t >> 16) * cachewidth];
+				if (btemp)
+				{
+					if (*pz <= (izi >> 16))
+					{
+						byte r1 = _GetCol32R(*pdest);
+						byte g1 = _GetCol32G(*pdest);
+						byte b1 = _GetCol32B(*pdest);
+						byte r2 = _GetCol32R(btemp);
+						byte g2 = _GetCol32G(btemp);
+						byte b2 = _GetCol32B(btemp);
+						int r = r1 + (d_srctranstab[r2] >> 8);
+						if (r > 255)
+						{
+							r = 255;
+						}
+						int g = g1 + (d_srctranstab[g2] >> 8);
+						if (g > 255)
+						{
+							g = 255;
+						}
+						int b = b1 + (d_srctranstab[b2] >> 8);
+						if (b > 255)
+						{
+							b = 255;
+						}
+						*pdest = _MakeCol32(r, g, b);
+					}
+				}
+
+				izi += izistep;
+				pdest++;
+				pz++;
+				s += sstep;
+				t += tstep;
+			} while (--spancount > 0);
+
+			s = snext;
+			t = tnext;
+
+		} while (count > 0);
+
+NextSpan:
+		pspan++;
+
+	} while (pspan->count != DS_SPAN_LIST_END);
+}
+
+//==========================================================================
+//
 //	VSoftwareDrawer::SpriteClipEdge
 //
 //==========================================================================
@@ -1727,9 +2264,9 @@ void VSoftwareDrawer::MaskedSurfCaclulateGradients(surface_t *surf)
 //==========================================================================
 
 void VSoftwareDrawer::SpriteDrawPolygon(TVec *cv, int count, surface_t *surf,
-	VTexture* Tex, int translation, float Alpha, vuint32 light, vuint32 Fade,
-	const TVec& normal, float dist, const TVec& saxis, const TVec& taxis,
-	const TVec& texorg)
+	VTexture* Tex, int translation, float Alpha, bool Additive, vuint32 light,
+	vuint32 Fade, const TVec& normal, float dist, const TVec& saxis,
+	const TVec& taxis, const TVec& texorg)
 {
 	int			i;
 	float		ymin, ymax;
@@ -1793,7 +2330,25 @@ void VSoftwareDrawer::SpriteDrawPolygon(TVec *cv, int count, surface_t *surf,
 		return;
 	}
 
-	if (Alpha >= 1.0)
+	if (Additive)
+	{
+		int trindex = (int)(Alpha * 10 - 0.5);
+		if (trindex < 0)
+		{
+			trindex = 0;
+		}
+		else if (trindex > 9)
+		{
+			trindex = 9;
+		}
+		d_transluc = AdditiveTransTables[trindex];
+		spritespanfunc = D_DrawAdditiveSpriteSpans;
+
+		trindex = (int)(Alpha * 31);
+		d_dsttranstab = scaletable[31 - trindex];
+		d_srctranstab = scaletable[trindex];
+	}
+	else if (Alpha >= 1.0)
 	{
 		spritespanfunc = D_DrawSpriteSpans;
 	}
@@ -1841,11 +2396,12 @@ void VSoftwareDrawer::SpriteDrawPolygon(TVec *cv, int count, surface_t *surf,
 //
 //==========================================================================
 
-void VSoftwareDrawer::DrawMaskedPolygon(surface_t* surf, float Alpha)
+void VSoftwareDrawer::DrawMaskedPolygon(surface_t* surf, float Alpha,
+	bool Additive)
 {
 	guard(VSoftwareDrawer::DrawMaskedPolygon);
-	SpriteDrawPolygon(surf->verts, surf->count, surf, NULL, 0, Alpha, 0, 0,
-		TVec(), 0, TVec(), TVec(), TVec());
+	SpriteDrawPolygon(surf->verts, surf->count, surf, NULL, 0, Alpha,
+		Additive, 0, 0, TVec(), 0, TVec(), TVec(), TVec());
 	unguard;
 }
 
@@ -1860,7 +2416,7 @@ void VSoftwareDrawer::DrawSpritePolygon(TVec* cv, VTexture* Tex, float Alpha,
 	float dist, const TVec& saxis, const TVec& taxis, const TVec& texorg)
 {
 	guard(VSoftwareDrawer::DrawSpritePolygon);
-	SpriteDrawPolygon(cv, 4, NULL, Tex, translation, Alpha, light,
+	SpriteDrawPolygon(cv, 4, NULL, Tex, translation, Alpha, false, light,
 		Fade, normal, dist, saxis, taxis, texorg);
 	unguard;
 }

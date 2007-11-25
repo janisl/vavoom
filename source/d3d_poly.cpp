@@ -952,7 +952,8 @@ void VDirect3DDrawer::EndSky()
 //
 //==========================================================================
 
-void VDirect3DDrawer::DrawMaskedPolygon(surface_t* surf, float Alpha)
+void VDirect3DDrawer::DrawMaskedPolygon(surface_t* surf, float Alpha,
+	bool Additive)
 {
 	guard(VDirect3DDrawer::DrawMaskedPolygon);
 	MyD3DVertex	out[256];
@@ -1002,10 +1003,14 @@ void VDirect3DDrawer::DrawMaskedPolygon(surface_t* surf, float Alpha)
 	}
 
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, TRUE);
-	if (blend_sprites || Alpha < 1.0)
+	if (blend_sprites || Additive || Alpha < 1.0)
 	{
 		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, TRUE);
 		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHAREF, 0);
+	}
+	if (Additive)
+	{
+		RenderDevice->SetRenderState(D3DRENDERSTATE_DESTBLEND, D3DBLEND_ONE);
 	}
 
 #if DIRECT3D_VERSION >= 0x0800
@@ -1015,10 +1020,14 @@ void VDirect3DDrawer::DrawMaskedPolygon(surface_t* surf, float Alpha)
 #endif
 
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, FALSE);
-	if (blend_sprites || Alpha < 1.0)
+	if (blend_sprites || Additive || Alpha < 1.0)
 	{
 		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, FALSE);
 		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHAREF, 170);
+	}
+	if (Additive)
+	{
+		RenderDevice->SetRenderState(D3DRENDERSTATE_DESTBLEND, D3DBLEND_INVSRCALPHA);
 	}
 	unguard;
 }

@@ -97,6 +97,7 @@ spanfunc_t				D_DrawSpans;
 spritespanfunc_t		D_DrawSpriteSpans;
 spritespanfunc_t		D_DrawFuzzSpriteSpans;
 spritespanfunc_t		D_DrawAltFuzzSpriteSpans;
+spritespanfunc_t		D_DrawAdditiveSpriteSpans;
 
 spanfunc_t				spanfunc;
 spritespanfunc_t		spritespanfunc;
@@ -193,6 +194,7 @@ void VSoftwareDrawer::InitResolution()
 		D_DrawSpriteSpans = D_DrawSpriteSpans_8;
 		D_DrawFuzzSpriteSpans = D_DrawFuzzSpriteSpans_8;
 		D_DrawAltFuzzSpriteSpans = D_DrawAltFuzzSpriteSpans_8;
+		D_DrawAdditiveSpriteSpans = D_DrawFuzzSpriteSpans_8;
 		D_DrawParticle = D_DrawParticle_8;
 	}
 	else if (ScreenBPP == 15)
@@ -203,6 +205,7 @@ void VSoftwareDrawer::InitResolution()
 		D_DrawSpriteSpans = D_DrawSpriteSpans_16;
 		D_DrawFuzzSpriteSpans = D_DrawFuzzSpriteSpans_15;
 		D_DrawAltFuzzSpriteSpans = D_DrawFuzzSpriteSpans_15;
+		D_DrawAdditiveSpriteSpans = D_DrawAdditiveSpriteSpans_15;
 		D_DrawParticle = D_DrawParticle_15;
 	}
 	else if (ScreenBPP == 16)
@@ -213,6 +216,7 @@ void VSoftwareDrawer::InitResolution()
 		D_DrawSpriteSpans = D_DrawSpriteSpans_16;
 		D_DrawFuzzSpriteSpans = D_DrawFuzzSpriteSpans_16;
 		D_DrawAltFuzzSpriteSpans = D_DrawFuzzSpriteSpans_16;
+		D_DrawAdditiveSpriteSpans = D_DrawAdditiveSpriteSpans_16;
 		D_DrawParticle = D_DrawParticle_16;
 	}
 	else if (ScreenBPP == 32)
@@ -226,6 +230,7 @@ void VSoftwareDrawer::InitResolution()
 		D_DrawSpriteSpans = D_DrawSpriteSpans_32;
 		D_DrawFuzzSpriteSpans = D_DrawFuzzSpriteSpans_32;
 		D_DrawAltFuzzSpriteSpans = D_DrawFuzzSpriteSpans_32;
+		D_DrawAdditiveSpriteSpans = D_DrawAdditiveSpriteSpans_32;
 		D_DrawParticle = D_DrawParticle_32;
 	}
 	else
@@ -593,11 +598,14 @@ void VSoftwareDrawer::FreeAllMemory()
 
 	Z_Free(colourmaps);
 
-	delete[] tinttables[0];
-	delete[] tinttables[1];
-	delete[] tinttables[2];
-	delete[] tinttables[3];
-	delete[] tinttables[4];
+	for (int i = 0; i < 5; i++)
+	{
+		delete[] tinttables[i];
+	}
+	for (int i = 0; i < 10; i++)
+	{
+		delete[] AdditiveTransTables[i];
+	}
 
 	if (consbgmap)
 	{
