@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class HudMessage : Widget;
+class HUDMessage : Widget;
 
 //	ID, used as a priority or to replace a previous message.
 int					Id;

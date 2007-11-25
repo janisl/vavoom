@@ -255,6 +255,7 @@ void AddHudMessage(string Message, name Font, int Type, int Id, int Colour,
 	float HoldTime, float Time1, float Time2)
 {
 	Widget		Probe;
+	HUDMessage	Msg;
 
 	//	Log to console if needed.
 	if (Type & HUDMSG_LOG)
@@ -276,7 +277,7 @@ void AddHudMessage(string Message, name Font, int Type, int Id, int Colour,
 	{
 		for (Probe = FirstChild; Probe; Probe = Probe.Next)
 		{
-			if (HudMessage(Probe) && HudMessage(Probe).Id == Id)
+			if (HUDMessage(Probe) && HUDMessage(Probe).Id == Id)
 			{
 				Probe.Destroy();
 				break;
@@ -284,17 +285,23 @@ void AddHudMessage(string Message, name Font, int Type, int Id, int Colour,
 		}
 	}
 
-	print("HUD Message %s", Message);
-	print("Args %d %n %f %f", Type, Font, Time1, Time2);
+	switch (Type & 0xffff)
+	{
+	default:
+		print("HUD Message %s", Message);
+		print("Args %d %f %f", Type, Time1, Time2);
 
-	HudMessage Msg = NewChild(HudMessage);
+	case HUDMSG_PLAIN:
+		Msg = NewChild(HUDMessage);
+		break;
+	}
 	Msg.Init(Message, Font, Type, Id, Colour, x, y, HudWidth, HudHeight,
 		HoldTime, Time1, Time2);
 
 	//	Insert in the list in the proper location.
 	Probe = FirstChild;
-	while (Probe && (!HudMessage(Probe) || Probe == Msg ||
-		HudMessage(Probe).Id > Id))
+	while (Probe && (!HUDMessage(Probe) || Probe == Msg ||
+		HUDMessage(Probe).Id > Id))
 	{
 		Probe = Probe.Next;
 	}

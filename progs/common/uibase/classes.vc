@@ -62,4 +62,4 @@ import engine;
 #include "MenuScreenSoundOptions.vc"
 
 #include "StatusBarShared.vc"
-#include "HudMessage.vc"
+#include "HUDMessage.vc"
