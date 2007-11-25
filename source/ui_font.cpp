@@ -68,6 +68,17 @@ public:
 };
 
 //
+//	VFon1Font
+//
+//	Font in FON1 format.
+//
+class VFon1Font : public VFont
+{
+public:
+	VFon1Font(VName, int);
+};
+
+//
 //	VFontChar
 //
 //	Texture class for regular font characters.
@@ -85,6 +96,27 @@ public:
 	rgba_t* GetPalette();
 	void Unload();
 	VTexture* GetHighResolutionTexture();
+};
+
+//
+//	VFontChar2
+//
+//	Texture class for FON1 font characters.
+//
+class VFontChar2 : public VTexture
+{
+private:
+	int				LumpNum;
+	int				FilePos;
+	vuint8*			Pixels;
+	rgba_t*			Palette;
+
+public:
+	VFontChar2(int, int, int, int, rgba_t*);
+	~VFontChar2();
+	vuint8* GetPixels();
+	rgba_t* GetPalette();
+	void Unload();
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -519,7 +551,29 @@ VFont* VFont::FindFont(VName AName)
 VFont* VFont::GetFont(VName AName)
 {
 	guard(VFont::GetFont);
-	return FindFont(AName);
+	VFont* F = FindFont(AName);
+	if (F)
+	{
+		return F;
+	}
+
+	//	Check for wad lump.
+	int Lump = W_CheckNumForName(AName);
+	if (Lump >= 0)
+	{
+		//	Read header.
+		VStream* Strm = W_CreateLumpReaderNum(Lump);
+		char Hdr[4];
+		Strm->Serialise(Hdr, 4);
+		delete Strm;
+
+		if (Hdr[0] == 'F' && Hdr[1] == 'O' && Hdr[2] == 'N' && Hdr[3] == '1')
+		{
+			return new VFon1Font(AName, Lump);
+		}
+	}
+
+	return NULL;
 	unguard;
 }
 
@@ -1226,6 +1280,105 @@ VSpecialFont::VSpecialFont(VName AName, const TArray<int>& CharIndexes,
 
 //==========================================================================
 //
+//	VFon1Font::VFon1Font
+//
+//==========================================================================
+
+VFon1Font::VFon1Font(VName AName, int LumpNum)
+{
+	guard(VFon1Font::VFon1Font);
+	Name = AName;
+	Next = Fonts;
+	Fonts = this;
+
+	VStream* Strm = W_CreateLumpReaderNum(LumpNum);
+	//	Skip ID.
+	Strm->Seek(4);
+	vuint16 w;
+	vuint16 h;
+	*Strm << w << h;
+	SpaceWidth = w;
+	FontHeight = h;
+
+	FirstChar = 0;
+	LastChar = 255;
+	Kerning = 0;
+	Translation = NULL;
+	for (int i = 0; i < 128; i++)
+	{
+		AsciiChars[i] = i;
+	}
+
+//	bool ColoursUsed[256];
+//	memset(ColoursUsed, 0, sizeof(ColoursUsed));
+
+//	BuildTranslations(ColoursUsed);
+
+	Translation = new rgba_t[256 * TextColours.Num()];
+	for (int i = 0; i < TextColours.Num(); i++)
+	{
+		Translation[i * 256].r = 0;
+		Translation[i * 256].g = 0;
+		Translation[i * 256].b = 0;
+		Translation[i * 256].a = 0;
+		for (int j = 1; j < 256; j++)
+		{
+			Translation[i * 256 + j].r = (j - 1) * 255 / 254;
+			Translation[i * 256 + j].g = Translation[i * 256 + j].r;
+			Translation[i * 256 + j].b = Translation[i * 256 + j].r;
+			Translation[i * 256 + j].a = 255;
+		}
+	}
+
+	for (int i = 0; i < 256; i++)
+	{
+		FFontChar& FChar = Chars.Alloc();
+		FChar.Char = i;
+
+		//	Create texture objects for all different colours.
+		FChar.Textures = new VTexture*[TextColours.Num()];
+		for (int j = 0; j < TextColours.Num(); j++)
+		{
+			FChar.Textures[j] = new VFontChar2(LumpNum, Strm->Tell(),
+				SpaceWidth, FontHeight, Translation + j * 256);
+			//	Currently all render drivers expect all textures to be
+			// registered in texture manager.
+			GTextureManager.AddTexture(FChar.Textures[j]);
+		}
+		FChar.BaseTex = FChar.Textures[CR_UNTRANSLATED];
+
+		//	Skip character data.
+		int Count = SpaceWidth * FontHeight;
+		do
+		{
+			vint8 Code = Streamer<vint8>(*Strm);
+			if (Code >= 0)
+			{
+				Count -= Code + 1;
+				while (Code-- >= 0)
+				{
+					Streamer<vint8>(*Strm);
+				}
+			}
+			else if (Code != -128)
+			{
+				Count -= 1 - Code;
+				Streamer<vint8>(*Strm);
+			}
+		}
+		while (Count > 0);
+		if (Count < 0)
+		{
+			Sys_Error("Overflow decompressing a character %d", i);
+		}
+	}
+
+	delete Strm;
+	unguard;
+}
+
+//==========================================================================
+//
 //	VFontChar::VFontChar
 //
 //==========================================================================
@@ -1316,5 +1469,117 @@ VTexture* VFontChar::GetHighResolutionTexture()
 		}
 	}
 	return HiResTexture;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VFontChar2::VFontChar2
+//
+//==========================================================================
+
+VFontChar2::VFontChar2(int ALumpNum, int AFilePos, int CharW, int CharH,
+	rgba_t* APalette)
+: LumpNum(ALumpNum)
+, FilePos(AFilePos)
+, Pixels(NULL)
+, Palette(APalette)
+{
+	Type = TEXTYPE_FontChar;
+	Format = TEXFMT_8Pal;
+	Name = NAME_None;
+	Width = CharW;
+	Height = CharH;
+}
+
+//==========================================================================
+//
+//	VFontChar2::~VFontChar2
+//
+//==========================================================================
+
+VFontChar2::~VFontChar2()
+{
+	if (Pixels)
+	{
+		delete[] Pixels;
+	}
+}
+
+//==========================================================================
+//
+//	VFontChar2::GetPixels
+//
+//==========================================================================
+
+vuint8* VFontChar2::GetPixels()
+{
+	guard(VFontChar2::GetPixels);
+	if (Pixels)
+	{
+		return Pixels;
+	}
+
+	VStream* Strm = W_CreateLumpReaderNum(LumpNum);
+	Strm->Seek(FilePos);
+
+	int Count = Width * Height;
+	Pixels = new vuint8[Count];
+	vuint8* pDst = Pixels;
+	do
+	{
+		vint8 Code = Streamer<vint8>(*Strm);
+		if (Code >= 0)
+		{
+			Count -= Code + 1;
+			while (Code-- >= 0)
+			{
+				*pDst++ = Streamer<vuint8>(*Strm);
+			}
+		}
+		else if (Code != -128)
+		{
+			Code = 1 - Code;
+			Count -= Code;
+			vuint8 Val = Streamer<vuint8>(*Strm);
+			while (Code-- > 0)
+			{
+				*pDst++ = Val;
+			}
+		}
+	}
+	while (Count > 0);
+
+	delete Strm;
+	return Pixels;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VFontChar2::GetPalette
+//
+//==========================================================================
+
+rgba_t* VFontChar2::GetPalette()
+{
+	guard(VFontChar2::GetPalette);
+	return Palette;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VFontChar2::Unload
+//
+//==========================================================================
+
+void VFontChar2::Unload()
+{
+	guard(VFontChar2::Unload);
+	if (Pixels)
+	{
+		delete[] Pixels;
+	}
 	unguard;
 }
