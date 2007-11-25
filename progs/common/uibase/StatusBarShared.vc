@@ -74,6 +74,7 @@ void StartMap()
 {
 	ClearNotify();
 	ClearCentreMessage();
+	ClearHudMessages();
 }
 
 //==========================================================================
@@ -266,6 +267,17 @@ void UpdateCentreMessage(float DeltaTime)
 
 //==========================================================================
 //
+//	ClearHudMessages
+//
+//==========================================================================
+
+void ClearHudMessages()
+{
+	HudMsgWin.DestroyAllChildren();
+}
+
+//==========================================================================
+//
 //	AddHudMessage
 //
 //==========================================================================
@@ -309,19 +321,19 @@ void AddHudMessage(string Message, name Font, int Type, int Id, int Colour,
 	{
 	default:
 	case HUDMSG_PLAIN:
-		Msg = NewChild(HUDMessage);
+		Msg = HudMsgWin.NewChild(HUDMessage);
 		break;
 
 	case HUDMSG_FADEOUT:
-		Msg = NewChild(HUDMessageFadeOut);
+		Msg = HudMsgWin.NewChild(HUDMessageFadeOut);
 		break;
 
 	case HUDMSG_TYPEON:
-		Msg = NewChild(HUDMessageTypeOnFadeOut);
+		Msg = HudMsgWin.NewChild(HUDMessageTypeOnFadeOut);
 		break;
 
 	case HUDMSG_FADEINOUT:
-		Msg = NewChild(HUDMessageFadeInOut);
+		Msg = HudMsgWin.NewChild(HUDMessageFadeInOut);
 		break;
 	}
 	Msg.Init(Message, Font, Type, Id, Colour, x, y, HudWidth, HudHeight,
