@@ -39,6 +39,7 @@ class VVorbisAudioCodec : public VAudioCodec
 public:
 	int					InitLevel;
 	VStream*			Strm;
+	bool				FreeStream;
 	int					BytesLeft;
 
 	ogg_sync_state		oy;
@@ -50,15 +51,21 @@ public:
 
 	bool				eos;
 
-	VVorbisAudioCodec(VStream* InStrm);
+	VVorbisAudioCodec(VStream*, bool);
 	~VVorbisAudioCodec();
 	bool Init();
 	void Cleanup();
-	int Decode(short* Data, int NumSamples);
+	int Decode(short*, int);
 	int ReadData();
 	bool Finished();
 	void Restart();
-	static VAudioCodec* Create(VStream* InStrm);
+	static VAudioCodec* Create(VStream*);
+};
+
+class VVorbisSampleLoader : public VSampleLoader
+{
+public:
+	void Load(sfxinfo_t&, VStream&);
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -75,6 +82,8 @@ public:
 
 IMPLEMENT_AUDIO_CODEC(VVorbisAudioCodec, "Vorbis");
 
+VVorbisSampleLoader		VorbisSampleLoader;
+
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
@@ -83,8 +92,9 @@ IMPLEMENT_AUDIO_CODEC(VVorbisAudioCodec, "Vorbis");
 //
 //==========================================================================
 
-VVorbisAudioCodec::VVorbisAudioCodec(VStream* InStrm)
-: Strm(InStrm)
+VVorbisAudioCodec::VVorbisAudioCodec(VStream* AStrm, bool AFreeStream)
+: Strm(AStrm)
+, FreeStream(AFreeStream)
 {
 	guard(VVorbisAudioCodec::VVorbisAudioCodec);
 	BytesLeft = Strm->TotalSize();
@@ -107,8 +117,11 @@ VVorbisAudioCodec::~VVorbisAudioCodec()
 	{
 		Cleanup();
 
-		Strm->Close();
-		delete Strm;
+		if (FreeStream)
+		{
+			Strm->Close();
+			delete Strm;
+		}
 		Strm = NULL;
 	}
 	ogg_sync_clear(&oy);
@@ -356,7 +369,7 @@ void VVorbisAudioCodec::Restart()
 VAudioCodec* VVorbisAudioCodec::Create(VStream* InStrm)
 {
 	guard(VVorbisAudioCodec::Create);
-	VVorbisAudioCodec* Codec = new VVorbisAudioCodec(InStrm);
+	VVorbisAudioCodec* Codec = new VVorbisAudioCodec(InStrm, true);
 	if (!Codec->Init())
 	{
 		Codec->Cleanup();
@@ -364,5 +377,57 @@ VAudioCodec* VVorbisAudioCodec::Create(VStream* InStrm)
 		return NULL;
 	}
 	return Codec;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VVorbisAudioCodec::Create
+//
+//==========================================================================
+
+void VVorbisSampleLoader::Load(sfxinfo_t& Sfx, VStream& Stream)
+{
+	guard(VVorbisSampleLoader::Load);
+	VVorbisAudioCodec* Codec = new VVorbisAudioCodec(&Stream, false);
+	if (!Codec->Init())
+	{
+		Codec->Cleanup();
+		delete Codec;
+		return;
+	}
+
+	TArray<short> Data;
+	do
+	{
+		short Buf[16 * 2048];
+		int SamplesDecoded = Codec->Decode(Buf, 16 * 1024);
+		if (SamplesDecoded > 0)
+		{
+			int OldPos = Data.Num();
+			Data.SetNum(Data.Num() + SamplesDecoded);
+			for (int i = 0; i < SamplesDecoded; i++)
+			{
+				Data[OldPos + i] = Buf[i * 2];
+			}
+		}
+	}
+	while (!Codec->Finished());
+	if (!Data.Num())
+	{
+		delete Codec;
+		return;
+	}
+
+	//	Copy parameters.
+	Sfx.SampleRate = Codec->SampleRate;
+	Sfx.SampleBits = Codec->SampleBits;
+
+	//	Copy data.
+	Sfx.DataSize = Data.Num() * 2;
+	Sfx.Data = Z_Malloc(Data.Num() * 2);
+	memcpy(Sfx.Data, &Data[0], Data.Num() * 2);
+
+	delete Codec;
 	unguard;
 }

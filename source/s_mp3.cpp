@@ -40,6 +40,7 @@ public:
 	enum { INPUT_BUFFER_SIZE = 5 * 8192 };
 
 	VStream*			Strm;
+	bool				FreeStream;
 	int					BytesLeft;
 	bool				Initialised;
 
@@ -50,14 +51,20 @@ public:
 	int					FramePos;
 	bool				HaveFrame;
 
-	VMp3AudioCodec(VStream* InStrm);
+	VMp3AudioCodec(VStream*, bool);
 	~VMp3AudioCodec();
 	bool Init();
-	int Decode(short* Data, int NumSamples);
+	int Decode(short*, int);
 	int ReadData();
 	bool Finished();
 	void Restart();
-	static VAudioCodec* Create(VStream* InStrm);
+	static VAudioCodec* Create(VStream*);
+};
+
+class VMp3SampleLoader : public VSampleLoader
+{
+public:
+	void Load(sfxinfo_t&, VStream&);
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -74,6 +81,8 @@ public:
 
 IMPLEMENT_AUDIO_CODEC(VMp3AudioCodec, "MP3");
 
+VMp3SampleLoader		Mp3SampleLoader;
+
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
@@ -82,8 +91,9 @@ IMPLEMENT_AUDIO_CODEC(VMp3AudioCodec, "MP3");
 //
 //==========================================================================
 
-VMp3AudioCodec::VMp3AudioCodec(VStream* InStrm)
-: Strm(InStrm)
+VMp3AudioCodec::VMp3AudioCodec(VStream* AStrm, bool AFreeStream)
+: Strm(AStrm)
+, FreeStream(AFreeStream)
 , Initialised(false)
 {
 	guard(VMp3AudioCodec::VMp3AudioCodec);
@@ -110,8 +120,11 @@ VMp3AudioCodec::~VMp3AudioCodec()
 	if (Initialised)
 	{
 		//	Close file only if decoder has been initialised succesfully.
-		Strm->Close();
-		delete Strm;
+		if (FreeStream)
+		{
+			Strm->Close();
+			delete Strm;
+		}
 		Strm = NULL;
 	}
 	//	Clear structs used by libmad.
@@ -342,12 +355,63 @@ void VMp3AudioCodec::Restart()
 VAudioCodec* VMp3AudioCodec::Create(VStream* InStrm)
 {
 	guard(VMp3AudioCodec::Create);
-	VMp3AudioCodec* Codec = new VMp3AudioCodec(InStrm);
+	VMp3AudioCodec* Codec = new VMp3AudioCodec(InStrm, true);
 	if (!Codec->Init())
 	{
 		delete Codec;
 		return NULL;
 	}
 	return Codec;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VMp3SampleLoader::Create
+//
+//==========================================================================
+
+void VMp3SampleLoader::Load(sfxinfo_t& Sfx, VStream& Stream)
+{
+	guard(VMp3SampleLoader::Load);
+	VMp3AudioCodec* Codec = new VMp3AudioCodec(&Stream, false);
+	if (!Codec->Init())
+	{
+		delete Codec;
+		return;
+	}
+
+	TArray<short> Data;
+	do
+	{
+		short Buf[16 * 2048];
+		int SamplesDecoded = Codec->Decode(Buf, 16 * 1024);
+		if (SamplesDecoded > 0)
+		{
+			int OldPos = Data.Num();
+			Data.SetNum(Data.Num() + SamplesDecoded);
+			for (int i = 0; i < SamplesDecoded; i++)
+			{
+				Data[OldPos + i] = Buf[i * 2];
+			}
+		}
+	}
+	while (!Codec->Finished());
+	if (!Data.Num())
+	{
+		delete Codec;
+		return;
+	}
+
+	//	Copy parameters.
+	Sfx.SampleRate = Codec->SampleRate;
+	Sfx.SampleBits = Codec->SampleBits;
+
+	//	Copy data.
+	Sfx.DataSize = Data.Num() * 2;
+	Sfx.Data = Z_Malloc(Data.Num() * 2);
+	memcpy(Sfx.Data, &Data[0], Data.Num() * 2);
+
+	delete Codec;
 	unguard;
 }
