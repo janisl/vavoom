@@ -65,3 +65,4 @@ import engine;
 #include "HUDMessage.vc"
 #include "HUDMessageFadeOut.vc"
 #include "HUDMessageTypeOnFadeOut.vc"
+#include "HUDMessageFadeInOut.vc"

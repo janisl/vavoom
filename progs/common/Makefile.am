@@ -104,6 +104,7 @@ EXTRA_DIST = \
 	uibase/classes.vc \
 	uibase/ClientGameShared.vc \
 	uibase/HUDMessage.vc \
+	uibase/HUDMessageFadeInOut.vc \
 	uibase/HUDMessageFadeOut.vc \
 	uibase/HUDMessageTypeOnFadeOut.vc \
 	uibase/MenuBigTextButton.vc \
