@@ -1880,6 +1880,11 @@ void VParser::ParseClass()
 	{
 		ParseError(Lex.Location, "Class name expected");
 	}
+	else if (VMemberBase::CheckForClass(Lex.Name))
+	{
+		ParseError(Lex.Location, "Class %s already has been declared",
+			*Lex.Name);
+	}
 	//	New class.
 	VClass* Class = new VClass(Lex.Name, Package, Lex.Location);
 	Class->Defined = false;
