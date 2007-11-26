@@ -1545,7 +1545,7 @@ void ProcessDehackedFiles()
 	sc->Expect("{");
 	States.Append(NULL);
 	StateActions.Append(NULL);
-	VState** StatesTail = &VClass::FindClass("Actor")->NetStates;
+	VState** StatesTail = &VClass::FindClass("Entity")->NetStates;
 	while (*StatesTail)
 	{
 		StatesTail = &(*StatesTail)->NetNext;
@@ -1783,6 +1783,7 @@ void ProcessDehackedFiles()
 	Sprites.Clear();
 	EntClasses.Clear();
 	WeaponClasses.Clear();
+	AmmoClasses.Clear();
 	States.Clear();
 	CodePtrStates.Clear();
 	StateActions.Clear();
