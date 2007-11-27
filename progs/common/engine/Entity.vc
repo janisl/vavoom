@@ -79,6 +79,13 @@ class Entity : Thinker
 	native
 	abstract;
 
+enum
+{
+	STYLE_None,					// Do not draw
+	STYLE_Normal,				// Normal; just copy the image to the screen
+	STYLE_Translucent = 64		// Draw translucent
+};
+
 // Info for drawing: position.
 TVec			Origin;
 
@@ -96,6 +103,7 @@ string			FixedModelName;
 string			ModelSkin;
 byte			ModelVersion;
 
+byte			RenderStyle;
 float			Alpha;
 int				Translation;
 
@@ -187,8 +195,8 @@ replication
 {
 	reliable if (Role == ROLE_Authority)
 		Origin, Angles, FloorClip, State, StateTime, SpriteType, ModelSkin,
-		ModelVersion, Alpha, Translation, bFly, bHidden, bFullBright,
-		bFixedModel, bNetLocalPlayer, NetID;
+		ModelVersion, RenderStyle, Alpha, Translation, bFly, bHidden,
+		bFullBright, bFixedModel, bNetLocalPlayer, NetID;
 
 	reliable if (Role == ROLE_Authority && bFixedModel)
 		FixedModelName;
@@ -563,6 +571,7 @@ TVec GetCentre()
 
 defaultproperties
 {
+	RenderStyle = STYLE_Translucent;//	Temporary, untill all alpha value changes are updated.
 	Alpha = 1.0;
 	bColideWithThings = true;
 	bColideWithWorld = true;

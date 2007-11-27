@@ -776,12 +776,6 @@ void VRenderLevel::RenderThing(VEntity* mobj)
 		return;
 	}
 
-	if (!mobj->Alpha)
-	{
-		// Never make a vissprite when MF2_DONTDRAW is flagged.
-		return;
-	}
-
 	if (mobj->EntityFlags & VEntity::EF_Hidden)
 	{
 		return;
@@ -789,6 +783,25 @@ void VRenderLevel::RenderThing(VEntity* mobj)
 
 	if (mobj->SubSector->VisFrame != r_visframecount)
 	{
+		return;
+	}
+
+	int RendStyle = mobj->RenderStyle;
+	float Alpha = mobj->Alpha;
+	bool Additive = false;
+	switch (RendStyle)
+	{
+	case STYLE_None:
+		return;
+
+	case STYLE_Normal:
+		Alpha = 1.0;
+		break;
+	}
+
+	if (!Alpha)
+	{
+		// Never make a vissprite when MF2_DONTDRAW is flagged.
 		return;
 	}
 
@@ -804,8 +817,6 @@ void VRenderLevel::RenderThing(VEntity* mobj)
 		light = LightPoint(mobj->Origin);
 	}
 	vuint32 Fade = GetFade(mobj->SubSector);
-	float Alpha = mobj->Alpha;
-	bool Additive = false;
 
 	//	Try to draw a model. If it's a script and it doesn't
 	// specify model for this frame, draw sprite instead.

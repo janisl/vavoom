@@ -81,6 +81,13 @@ struct tztrace_t;
 struct tmtrace_t;
 struct avoiddropoff_t;
 
+enum
+{
+	STYLE_None,					// Do not draw
+	STYLE_Normal,				// Normal; just copy the image to the screen
+	STYLE_Translucent = 64,		// Draw translucent
+};
+
 class VEntity : public VThinker
 {
 	DECLARE_CLASS(VEntity, VThinker, 0)
@@ -103,6 +110,7 @@ class VEntity : public VThinker
 	VStr			ModelSkin;
 	vuint8			ModelVersion;
 
+	vuint8			RenderStyle;
 	float			Alpha;
 	int				Translation;
 
