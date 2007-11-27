@@ -37,6 +37,7 @@ Ice:
 defaultproperties
 {
 	GibsHealth = 0;
+	RenderStyle = STYLE_Translucent;
 	Alpha = 0.666;
 	bNoBlood = true;
 	bBlasted = true;

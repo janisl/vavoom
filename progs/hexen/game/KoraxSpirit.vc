@@ -190,6 +190,7 @@ defaultproperties
 {
 	LifeTime = 5 * 35 / 5;	// 5 seconds
 	Speed = 280.0;
+	RenderStyle = STYLE_Translucent;
 	Alpha = 0.666;
 	bColideWithWorld = false;
 	bColideWithThings = false;

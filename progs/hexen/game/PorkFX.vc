@@ -73,6 +73,7 @@ final bool MorphMonster(Actor victim)
 	monster = Spawn(Pig, victim.Origin);
 	monster.SpecialCID = class<Actor>(victim.Class);
 	monster.Special1 = ftoi(MORPHTIME * 35.0) + P_Random();
+	monster.RenderStyle = victim.RenderStyle;
 	monster.Alpha = victim.Alpha;
 	monster.Target = victim.Target;
 	monster.Angles.yaw = victim.Angles.yaw;

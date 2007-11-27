@@ -73,6 +73,7 @@ bool HandlePickup(Inventory Item)
 
 void InitEffect()
 {
+	Owner.RenderStyle = ShadowStage == 0 ? STYLE_Translucent : STYLE_None;
 	Owner.Alpha = ShadowStage == 0 ? 0.25 : 0.0;
 }
 

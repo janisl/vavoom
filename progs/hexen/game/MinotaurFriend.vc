@@ -215,6 +215,7 @@ bool RoughCheckThing(Entity Other)
 
 final void A_MinotaurFade0()
 {
+	RenderStyle = STYLE_Translucent;
 	Alpha = 0.333;
 }
 
@@ -227,6 +228,7 @@ final void A_MinotaurFade0()
 final void A_MinotaurFade1()
 {
 	// Second level of transparency
+	RenderStyle = STYLE_Translucent;
 	Alpha = 0.666;
 }
 
@@ -239,6 +241,7 @@ final void A_MinotaurFade1()
 final void A_MinotaurFade2()
 {
 	// Make fully visible
+	RenderStyle = STYLE_Normal;
 	Alpha = 1.0;
 }
 
@@ -325,6 +328,7 @@ final void A_MinotaurLook()
 
 final void A_MinotaurChase()
 {
+	RenderStyle = STYLE_Normal;
 	Alpha = 1.0;	// In case pain caused him to skip his fade in.
 
 	if (XLevel.Time - StartTime >= MAULATORTIME)
@@ -386,6 +390,7 @@ final void A_MinotaurChase()
 
 final void A_MinotaurRoam()
 {
+	RenderStyle = STYLE_Normal;
 	Alpha = 1.0;	// In case pain caused him to skip his fade in.
 
 	if (XLevel.Time - StartTime >= MAULATORTIME)
@@ -666,6 +671,7 @@ defaultproperties
 	StepSpeed = 16.0;
 	PainChance = 0.09765625;
 	MissileDamage = 7;
+	RenderStyle = STYLE_Translucent;
 	Alpha = 0.333;
 	ChargeSpeed = 805.0;
 	MinotaurLookDist = 16.0 * 54.0;

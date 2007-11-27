@@ -430,7 +430,8 @@ void PlayerExitMap(bool clusterChange)
 	}
 
 	MO.Angles.pitch = 0.0;
-//	MO.Alpha = 1.0;	// cancel invisibility
+	MO.RenderStyle = Entity::STYLE_Normal;
+	MO.Alpha = 1.0;	// cancel invisibility
 	ExtraLight = 0;			// cancel gun flashes
 	FixedColourmap = 0;		// cancel ir gogles
 	DamageFlash = 0.0;		// no palette changes

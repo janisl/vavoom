@@ -33,6 +33,7 @@ class PlayerSpeed : Effect;
 
 final void A_SpeedFade()
 {
+	RenderStyle = STYLE_Translucent;
 	Alpha = 0.333;
 }
 
@@ -59,5 +60,6 @@ Spawn:
 
 defaultproperties
 {
+	RenderStyle = STYLE_Translucent;
 	Alpha = 0.666;
 }

@@ -38,6 +38,7 @@ Melee:
 
 defaultproperties
 {
+	RenderStyle = STYLE_Translucent;
 	Alpha = 0.666;
 	PuffVelZ = 1.0 * 35.0;
 	bNoBlockmap = true;

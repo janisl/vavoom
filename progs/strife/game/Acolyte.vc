@@ -36,6 +36,7 @@ final void A_AcolyteBits()
 {
 	if (bSpawnFlag8)
 	{
+		RenderStyle = STYLE_Translucent;
 		Alpha = 0.333;
 	}
 	if (bSpawnFlag9)
@@ -56,6 +57,7 @@ final void A_AcolyteDeath()
 	Actor Other;
 
 	//	Remove any shadowy effects on the Acolyte.
+	RenderStyle = STYLE_Normal;
 	Alpha = 1.0;
 
 	//	Only the Blue Acolyte does extra stuff on death.

@@ -73,6 +73,7 @@ final bool MorphMonster(Actor victim)
 	chicken = Spawn(Chicken, victim.Origin);
 	chicken.SpecialCID = class<Actor>(victim.Class);
 	chicken.Special1 = ftoi(Player::CHICKENTIME * 35.0) + P_Random();
+	chicken.RenderStyle = victim.RenderStyle;
 	chicken.Alpha = victim.Alpha;
 	chicken.Target = victim.Target;
 	chicken.Angles.yaw = victim.Angles.yaw;

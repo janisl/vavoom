@@ -445,6 +445,7 @@ void PlayerExitMap(bool clusterChange)
 		ChickenTime = 0.0;
 	}
 	MO.Angles.pitch = 0.0;
+	MO.RenderStyle = Entity::STYLE_Translucent;
 	MO.Alpha = 1.0;	// cancel invisibility
 	ExtraLight = 0;	// cancel gun flashes
 	FixedColourmap = 0;	// cancel ir gogles

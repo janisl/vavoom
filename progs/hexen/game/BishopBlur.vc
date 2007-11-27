@@ -33,6 +33,7 @@ class BishopBlur : Effect;
 
 final void A_SetAltShadow()
 {
+	RenderStyle = STYLE_Translucent;
 	Alpha = 0.666;
 }
 
@@ -46,5 +47,6 @@ Spawn:
 
 defaultproperties
 {
+	RenderStyle = STYLE_Translucent;
 	Alpha = 0.333;
 }

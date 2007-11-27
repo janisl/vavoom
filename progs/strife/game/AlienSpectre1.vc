@@ -179,6 +179,7 @@ defaultproperties
 	Mass = 1000.0;
 	StepSpeed = 12.0;
 	PainChance = 0.9765625;
+	RenderStyle = STYLE_Translucent;
 	Alpha = 0.333;
 	bSpecial = true;
 	bNoGravity = true;

@@ -48,6 +48,7 @@ void NoBlockingSet()
 final void A_WizAtk1()
 {
 	A_FaceTarget();
+	RenderStyle = STYLE_Normal;
 	Alpha = 1.0;
 }
 
@@ -60,6 +61,7 @@ final void A_WizAtk1()
 final void A_WizAtk2()
 {
 	A_FaceTarget();
+	RenderStyle = STYLE_Translucent;
 	Alpha = 0.666;
 }
 
@@ -75,6 +77,7 @@ final void A_WizAtk3()
 	float angle;
 	TAVec ang;
 
+	RenderStyle = STYLE_Normal;
 	Alpha = 1.0;
 	if (!Target)
 	{
@@ -106,6 +109,7 @@ final void A_WizAtk3()
 
 final void A_GhostOff()
 {
+	RenderStyle = STYLE_Normal;
 	Alpha = 1.0;
 }
 

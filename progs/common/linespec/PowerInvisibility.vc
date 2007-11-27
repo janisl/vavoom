@@ -33,6 +33,7 @@ class PowerInvisibility : Powerup;
 
 void InitEffect()
 {
+	Owner.RenderStyle = STYLE_Translucent;
 	Owner.Alpha = 0.2;
 }
 
@@ -63,6 +64,7 @@ void EndEffect()
 		return;
 	}
 
+	Owner.RenderStyle = STYLE_Translucent;
 	Owner.Alpha = 1.0;
 	//	If there are other invisibility powers, reinit their effect.
 	Inventory Item;

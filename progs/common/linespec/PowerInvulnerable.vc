@@ -114,18 +114,22 @@ void DoEffect()
 		}
 		if (bDontDraw)
 		{
+			Owner.RenderStyle = STYLE_None;
 			Owner.Alpha = 0.0;
 		}
 		else if (bShadow)
 		{
+			Owner.RenderStyle = STYLE_Translucent;
 			Owner.Alpha = 0.333;
 		}
 		else if (bAltShadow)
 		{
+			Owner.RenderStyle = STYLE_Translucent;
 			Owner.Alpha = 0.666;
 		}
 		else
 		{
+			Owner.RenderStyle = STYLE_Normal;
 			Owner.Alpha = 1.0;
 		}
 	}
@@ -136,10 +140,12 @@ void DoEffect()
 		{
 			if (Owner.Alpha == 0.666)
 			{
+				Owner.RenderStyle = STYLE_Translucent;
 				Owner.Alpha = 0.333;
 			}
 			else
 			{
+				Owner.RenderStyle = STYLE_None;
 				Owner.Alpha = 0.0;
 				EntityEx(Owner).bNonShootable = true;
 			}
@@ -148,11 +154,13 @@ void DoEffect()
 		{
 			if (Owner.Alpha == 0.0)
 			{
+				Owner.RenderStyle = STYLE_Translucent;
 				Owner.Alpha = 0.333;
 				EntityEx(Owner).bNonShootable = false;
 			}
 			else
 			{
+				Owner.RenderStyle = STYLE_Translucent;
 				Owner.Alpha = 0.666;
 			}
 		}
@@ -164,10 +172,12 @@ void DoEffect()
 		{
 			if (Owner.Alpha == 0.666)
 			{
+				Owner.RenderStyle = STYLE_Translucent;
 				Owner.Alpha = 0.333;
 			}
 			else
 			{
+				Owner.RenderStyle = STYLE_None;
 				Owner.Alpha = 0.0;
 			}
 		}
@@ -175,10 +185,12 @@ void DoEffect()
 		{
 			if (Owner.Alpha == 0.0)
 			{
+				Owner.RenderStyle = STYLE_Translucent;
 				Owner.Alpha = 0.333;
 			}
 			else
 			{
+				Owner.RenderStyle = STYLE_Translucent;
 				Owner.Alpha = 0.666;
 			}
 		}
@@ -186,10 +198,12 @@ void DoEffect()
 		{
 			if (Owner.Alpha == 0.666)
 			{
+				Owner.RenderStyle = STYLE_Translucent;
 				Owner.Alpha = 0.333;
 			}
 			else
 			{
+				Owner.RenderStyle = STYLE_Normal;
 				Owner.Alpha = 0.0;
 			}
 		}
@@ -197,10 +211,12 @@ void DoEffect()
 		{
 			if (Owner.Alpha == 0.0)
 			{
+				Owner.RenderStyle = STYLE_Translucent;
 				Owner.Alpha = 0.333;
 			}
 			else
 			{
+				Owner.RenderStyle = STYLE_Translucent;
 				Owner.Alpha = 0.666;
 			}
 		}
@@ -228,10 +244,12 @@ void EndEffect()
 	else if (Mode == 'Ghost')
 	{
 		EntityEx(Owner).bNonShootable = false;
+		Owner.RenderStyle = STYLE_Normal;
 		Owner.Alpha = 1.0;
 	}
 	else if (Mode == 'Initial')
 	{
+		Owner.RenderStyle = STYLE_Normal;
 		Owner.Alpha = 1.0;
 	}
 

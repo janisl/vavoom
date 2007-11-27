@@ -601,6 +601,7 @@ void PlayerExitMap(bool clusterChange)
 		MorphTime = 0.0;
 	}
 	MO.Angles.pitch = 0.0;
+	MO.RenderStyle = Entity::STYLE_Normal;
 	MO.Alpha = 1.0;	// Remove invisibility
 	ExtraLight = 0;	// Remove weapon flashes
 	FixedColourmap = 0;	// Remove torch

@@ -571,7 +571,7 @@ TVec GetCentre()
 
 defaultproperties
 {
-	RenderStyle = STYLE_Translucent;//	Temporary, untill all alpha value changes are updated.
+	RenderStyle = STYLE_Normal;
 	Alpha = 1.0;
 	bColideWithThings = true;
 	bColideWithWorld = true;

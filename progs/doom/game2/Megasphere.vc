@@ -50,6 +50,7 @@ Spawn:
 
 defaultproperties
 {
+	RenderStyle = STYLE_Translucent;
 	Alpha = 0.666;
 	bCountItem = true;
 	PickupMessage = "$gotmsphere";

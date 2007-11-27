@@ -33,6 +33,7 @@ class PowerGhost : PowerInvisibility;
 
 void InitEffect()
 {
+	Owner.RenderStyle = STYLE_Translucent;
 	Owner.Alpha = 0.666;
 }
 

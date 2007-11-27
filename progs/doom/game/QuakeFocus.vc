@@ -107,7 +107,7 @@ Spawn:
 
 defaultproperties
 {
-	Alpha = 0.0;
+	RenderStyle = STYLE_None;
 	bHidden = true;
 	bNoBlockmap = true;
 }

@@ -29,5 +29,6 @@ class KnightGhost : Knight
 
 defaultproperties
 {
+	RenderStyle = STYLE_Translucent;
 	Alpha = 0.666;
 }
