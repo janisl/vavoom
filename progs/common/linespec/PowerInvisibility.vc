@@ -33,7 +33,7 @@ class PowerInvisibility : Powerup;
 
 void InitEffect()
 {
-	Owner.RenderStyle = STYLE_Translucent;
+	Owner.RenderStyle = STYLE_OptFuzzy;
 	Owner.Alpha = 0.2;
 }
 

@@ -122,6 +122,8 @@ static VCvarI			r_view_models("r_view_models", "1", CVAR_Archive);
 static VCvarI			r_sort_sprites("r_sort_sprites", "0");
 static VCvarI			r_fix_sprite_offsets("r_fix_sprite_offsets", "1", CVAR_Archive);
 static VCvarI			r_sprite_fix_delta("r_sprite_fix_delta", "-3", CVAR_Archive);
+static VCvarI			r_drawfuzz("r_drawfuzz", "1", CVAR_Archive);
+static VCvarF			transsouls("transsouls", "1.0", CVAR_Archive);
 static VCvarI			croshair("croshair", "0", CVAR_Archive);
 static VCvarF			croshair_alpha("croshair_alpha", "1", CVAR_Archive);
 
@@ -789,6 +791,17 @@ void VRenderLevel::RenderThing(VEntity* mobj)
 	int RendStyle = mobj->RenderStyle;
 	float Alpha = mobj->Alpha;
 	bool Additive = false;
+
+	if (RendStyle == STYLE_SoulTrans)
+	{
+		RendStyle = STYLE_Translucent;
+		Alpha = transsouls;
+	}
+	else if (RendStyle == STYLE_OptFuzzy)
+	{
+		RendStyle = r_drawfuzz ? STYLE_Fuzzy : STYLE_Translucent;
+	}
+
 	switch (RendStyle)
 	{
 	case STYLE_None:
@@ -806,6 +819,7 @@ void VRenderLevel::RenderThing(VEntity* mobj)
 		Additive = true;
 		break;
 	}
+	Alpha = MID(0.0, Alpha, 1.0);
 
 	if (!Alpha)
 	{

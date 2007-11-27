@@ -100,6 +100,7 @@ defaultproperties
 	StepSpeed = 8.0;
 	PainChance = 1.0;
 	MissileDamage = 3;
+	RenderStyle = STYLE_SoulTrans;
 	bSolid = true;
 	bShootable = true;
 	bMonster = true;
