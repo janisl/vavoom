@@ -181,29 +181,35 @@ final void A_Walk()
 
 //==========================================================================
 //
-//	A_Chase
+//	DoChase
 //
-//  Actor has a melee attack, so it tries to close as fast as possible
+//	Actor has a melee attack, so it tries to close as fast as possible
 //
 //==========================================================================
 
-final void A_Chase()
+void DoChase(bool FastChase, state AMeleeState, state AMissileState,
+	bool NightmareFast, bool PlayActive)
 {
-	float delta;
+	float		delta;
+	float		dist;
+	float		ang;
+	float		oldX;
+	float		oldY;
+	int			oldFloor;
 
 	if (ReactionCount)
 	{
 		ReactionCount--;
 	}
 
-	//  Remove muzzle flash
+	//	Remove muzzle flash.
 	if (bMuzzleFlash)
 	{
 		bMuzzleFlash = false;
 	}
 
 	bInCombat = true;
-	// modify target threshold
+	//	Modify target threshold.
 	if (Threshold)
 	{
 		if (!Target || Target.Health <= 0)
@@ -216,10 +222,9 @@ final void A_Chase()
 		}
 	}
 
-	if (LineSpecialGameInfo(Level.Game).bNightmareFastChase &&
-		Level.Game.fastparm)
+	if (NightmareFast && Level.Game.fastparm)
 	{
-		// Monsters move faster in nightmare mode
+		//	Monsters move faster in nightmare mode.
 		StateTime *= 0.5;
 		if (StateTime < 0.1)
 		{
@@ -227,10 +232,12 @@ final void A_Chase()
 		}
 	}
 
-	// turn towards movement direction if not there yet
+	//	Turn towards movement direction if not there yet.
 	// killough 9/7/98: keep facing towards target if strafing or backing out
 	if (strafecount)
+	{
 		A_FaceTarget();
+	}
 	else
 	{
 		if (MoveDir < 8)
@@ -251,17 +258,18 @@ final void A_Chase()
 
 	if (!Target || !Target.bShootable)
 	{
-		// look for a new target
+		//	Look for a new target.
 		if (LookForPlayers(true))
 		{
-			return;	// got a new target
+			//	Got a new target.
+			return;
 		}
 		SetState(IdleState);
 		bInCombat = false;
 		return;
 	}
 
-	// do not attack twice in a row
+	//	Do not attack twice in a row.
 	if (bJustAttacked)
 	{
 		bJustAttacked = false;
@@ -272,55 +280,125 @@ final void A_Chase()
 		return;
 	}
 
-	// check for melee attack
-	if (MeleeState && CheckMeleeRange())
+	if (FastChase)
+	{
+		//	Strafe
+		if (FastChaseStrafeCount > 0)
+		{
+			FastChaseStrafeCount--;
+		}
+		else
+		{
+			FastChaseStrafeCount = 0;
+			Velocity.x = 0.0;
+			Velocity.y = 0.0;
+			dist = DistTo(Target);
+			if (dist < 640.0)
+			{
+				if (P_Random() < 100)
+				{
+					ang = atan2(Target.Origin.y - Origin.y,
+						Target.Origin.x - Origin.x);
+					if (P_Random() < 128)
+						ang = AngleMod360(ang + 90.0);
+					else
+						ang = AngleMod360(ang - 90.0);
+					Velocity.x = 13.0 * cos(ang) * 35.0;
+					Velocity.y = 13.0 * sin(ang) * 35.0;
+					FastChaseStrafeCount = 3;	// strafe time
+				}
+			}
+		}
+	}
+
+	//	Check for melee attack.
+	if (AMeleeState && CheckMeleeRange())
 	{
 		if (AttackSound)
 		{
 			PlaySound(AttackSound, CHAN_WEAPON);
 		}
-		SetState(MeleeState);
+		SetState(AMeleeState);
 		return;
 	}
 
-	// check for missile attack
-	if (MissileState)
+	//	Check for missile attack.
+	if (AMissileState)
 	{
 		if (Level.Game.fastparm || !MoveCount)
 		{
 			if (CheckMissileRange())
 			{
-				SetState(MissileState);
+				SetState(AMissileState);
 				bJustAttacked = true;
 				return;
 			}
 		}
 	}
 
-	// possibly choose another target
+	//	Possibly choose another target.
 	if (Level.Game.netgame && !Threshold)
 	{
 		if (!CanSee(Target))
 		{
 			if (LookForPlayers(true))
-				return;	// got a new target
+			{
+				//	Got a new target.
+				return;
+			}
 		}
 	}
 
 	if (strafecount)
-		strafecount--;
-
-	// chase towards player
-	if (--MoveCount < 0 || !StepMove())
 	{
-		NewChaseDir();
+		strafecount--;
 	}
 
-	// make active sound
-	if (P_Random() < 3)
+	//	Chase towards player.
+	if (!FastChase || !FastChaseStrafeCount)
+	{
+		oldX = Origin.x;
+		oldY = Origin.y;
+		oldFloor = Sector->floor.pic;
+		if (--MoveCount < 0 || !StepMove())
+		{
+			NewChaseDir();
+		}
+		if (bCantLeaveFloorpic && Sector->floor.pic != oldFloor)
+		{
+			TryMove(vector(oldX, oldY, Origin.z));
+			NewChaseDir();
+		}
+	}
+
+	//	Make active sound.
+	if (PlayActive && P_Random() < 3)
 	{
 		PlayActiveSound();
 	}
+}
+
+//==========================================================================
+//
+//	A_Chase
+//
+//==========================================================================
+
+final void A_Chase()
+{
+	DoChase(false, MeleeState, MissileState,
+		LineSpecialGameInfo(Level.Game).bNightmareFastChase, true);
+}
+
+//============================================================================
+//
+//  A_FastChase
+//
+//============================================================================
+
+final void A_FastChase()
+{
+	DoChase(true, MeleeState, MissileState, true, true);
 }
 
 //==========================================================================

@@ -220,6 +220,7 @@ int				Threshold;
 int				MoveDir;		// 0-7
 int				MoveCount;		// when 0, select a new dir
 int				strafecount;    // killough 9/8/98: monster strafing
+int				FastChaseStrafeCount;
 
 float			RDFactor;
 
