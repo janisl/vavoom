@@ -797,6 +797,14 @@ void VRenderLevel::RenderThing(VEntity* mobj)
 	case STYLE_Normal:
 		Alpha = 1.0;
 		break;
+
+	case STYLE_Fuzzy:
+		Alpha = 0.1;
+		break;
+
+	case STYLE_Add:
+		Additive = true;
+		break;
 	}
 
 	if (!Alpha)
@@ -807,7 +815,11 @@ void VRenderLevel::RenderThing(VEntity* mobj)
 
 	//	Setup lighting
 	vuint32 light;
-	if ((mobj->State->Frame & FF_FULLBRIGHT) ||
+	if (RendStyle == STYLE_Fuzzy)
+	{
+		light = 0;
+	}
+	else if ((mobj->State->Frame & FF_FULLBRIGHT) ||
 		(mobj->EntityFlags & VEntity::EF_FullBright))
 	{
 		light = 0xffffffff;

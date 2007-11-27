@@ -85,7 +85,9 @@ enum
 {
 	STYLE_None,					// Do not draw
 	STYLE_Normal,				// Normal; just copy the image to the screen
+	STYLE_Fuzzy,				// Draw silhouette using "fuzz" effect
 	STYLE_Translucent = 64,		// Draw translucent
+	STYLE_Add,					// Draw additive
 };
 
 class VEntity : public VThinker

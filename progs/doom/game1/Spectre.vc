@@ -29,7 +29,7 @@ class Spectre : Demon
 
 defaultproperties
 {
-	RenderStyle = STYLE_Translucent;
+	RenderStyle = STYLE_Fuzzy;
 	Alpha = 0.1;
 	SightSound = 'spectre/sight';
 	ActiveSound = 'spectre/active';
