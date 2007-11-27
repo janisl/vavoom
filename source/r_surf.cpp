@@ -1598,6 +1598,11 @@ void VRenderLevel::UpdateDrawSeg(drawseg_t* dseg)
 		else
 		{
 			sp->texinfo.Tex = MTex;
+			if (sidedef->midtexture)
+			{
+				sp->texinfo.Alpha = linedef->alpha;
+				sp->texinfo.Additive = !!(sidedef->Flags & SDF_ADDITIVE);
+			}
 		}
 		if (FASI(sp->textureoffset) != FASI(sidedef->textureoffset))
 		{

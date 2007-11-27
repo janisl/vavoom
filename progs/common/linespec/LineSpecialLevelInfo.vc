@@ -772,6 +772,9 @@ bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 		buttonSuccess = EV_DoPlat(Arg1, Arg2, Arg3, Arg4, Arg5,
 			Platform::PLATEV_PerpetualRaiseLip, Line);
 		break;
+	case LNSPEC_LineTranslucent:
+		buttonSuccess = EV_LineTranslucent(Arg1, Arg2, Arg3, Arg4, Arg5);
+		break;
 	case LNSPEC_SectorSetFade:
 		buttonSuccess = EV_SectorSetFade(Arg1, Arg2, Arg3, Arg4, Arg5);
 		break;
@@ -3969,6 +3972,47 @@ final bool AdjustPusher(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 		{
 			P = Spawn(Pusher);
 			P.Init(Type, NULL, magnitude, angle, none, secnum);
+		}
+	}
+	return true;
+}
+
+//==========================================================================
+//
+//	EV_LineTranslucent
+//
+//==========================================================================
+
+final bool EV_LineTranslucent(int Arg1, int Arg2, int Arg3, int Arg4,
+	int Arg5)
+{
+	int			Searcher;
+	line_t*		Other;
+
+	Searcher = -1;
+	for (Other = FindLine(Arg1, &Searcher); Other;
+		Other = FindLine(Arg1, &Searcher))
+	{
+		Other->alpha = itof(Arg2) / 255.0;
+		if (Arg3 == 0)
+		{
+			XLevel.Sides[Other->sidenum[0]].Flags &= ~SDF_ADDITIVE;
+			if (Other->sidenum[0] >= 0)
+			{
+				XLevel.Sides[Other->sidenum[1]].Flags &= ~SDF_ADDITIVE;
+			}
+		}
+		else if (Arg3 == 1)
+		{
+			XLevel.Sides[Other->sidenum[0]].Flags |= SDF_ADDITIVE;
+			if (Other->sidenum[0] >= 0)
+			{
+				XLevel.Sides[Other->sidenum[1]].Flags |= SDF_ADDITIVE;
+			}
+		}
+		else
+		{
+			print("Invalid line translucency type %d", Arg3);
 		}
 	}
 	return true;

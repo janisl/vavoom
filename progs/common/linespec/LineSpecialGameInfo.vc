@@ -1028,7 +1028,8 @@ void SpawnWorld(Level InLevel)
 			}
 			line->special = 0;
 			break;
-		case 49:
+
+		case LNSPEC_BreakGlass:
 			if (line->arg2 != 255)
 			{
 				line->alpha = itof(line->arg2) / 255.0;
