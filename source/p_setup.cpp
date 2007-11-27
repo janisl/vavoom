@@ -1917,6 +1917,14 @@ void VLevel::LinkNode(int BSPNum, node_t* pParent) const
 void VLevel::CreateRepBase()
 {
 	guard(VLevel::CreateRepBase);
+	BaseLines = new rep_line_t[NumLines];
+	for (int i = 0; i < NumLines; i++)
+	{
+		line_t& L = Lines[i];
+		rep_line_t& B = BaseLines[i];
+		B.alpha = L.alpha;
+	}
+
 	BaseSides = new rep_side_t[NumSides];
 	for (int i = 0; i < NumSides; i++)
 	{
@@ -1927,6 +1935,7 @@ void VLevel::CreateRepBase()
 		B.toptexture = S.toptexture;
 		B.bottomtexture = S.bottomtexture;
 		B.midtexture = S.midtexture;
+		B.Flags = S.Flags;
 	}
 
 	BaseSectors = new rep_sector_t[NumSectors];

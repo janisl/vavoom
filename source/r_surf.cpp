@@ -421,6 +421,7 @@ sec_surface_t* VRenderLevel::CreateSecSurface(subsector_t* sub,
 	ssurf->texinfo.toffs = splane->yoffs;
 	ssurf->texinfo.Tex = Tex;
 	ssurf->texinfo.Alpha = splane->Alpha < 1.0 ? splane->Alpha : 1.1;
+	ssurf->texinfo.Additive = false;
 
 	surf->count = sub->numlines;
 	seg_t *line = &Level->Segs[sub->firstline];
@@ -837,6 +838,7 @@ void VRenderLevel::CreateSegParts(drawseg_t* dseg, seg_t *seg)
 			sidedef->textureoffset * TextureOffsetSScale(MTex);
 		sp->texinfo.Tex = MTex;
 		sp->texinfo.Alpha = 1.1;
+		sp->texinfo.Additive = false;
 
 		hdelta = topz2 - topz1;
 		offshdelta = hdelta * seg->offset / seg->length;
@@ -885,6 +887,7 @@ void VRenderLevel::CreateSegParts(drawseg_t* dseg, seg_t *seg)
 
 			sp->texinfo.Tex = GTextureManager[skyflatnum];
 			sp->texinfo.Alpha = 1.1;
+			sp->texinfo.Additive = false;
 
 			wv[0].x = wv[1].x = seg->v1->x;
 			wv[0].y = wv[1].y = seg->v1->y;
@@ -932,6 +935,7 @@ void VRenderLevel::CreateSegParts(drawseg_t* dseg, seg_t *seg)
 			sidedef->textureoffset * TextureOffsetSScale(TTex);
 		sp->texinfo.Tex = TTex;
 		sp->texinfo.Alpha = 1.1;
+		sp->texinfo.Additive = false;
 
 		hdelta = topz2 - topz1;
 		offshdelta = hdelta * seg->offset / seg->length;
@@ -977,6 +981,7 @@ void VRenderLevel::CreateSegParts(drawseg_t* dseg, seg_t *seg)
 
 			sp->texinfo.Tex = GTextureManager[skyflatnum];
 			sp->texinfo.Alpha = 1.1;
+			sp->texinfo.Additive = false;
 
 			wv[0].x = wv[1].x = seg->v1->x;
 			wv[0].y = wv[1].y = seg->v1->y;
@@ -1004,6 +1009,7 @@ void VRenderLevel::CreateSegParts(drawseg_t* dseg, seg_t *seg)
 			sidedef->textureoffset * TextureOffsetSScale(BTex);
 		sp->texinfo.Tex = BTex;
 		sp->texinfo.Alpha = 1.1;
+		sp->texinfo.Additive = false;
 
 		hdelta = back_botz2 - back_botz1;
 		offshdelta = hdelta * seg->offset / seg->length;
@@ -1066,6 +1072,7 @@ void VRenderLevel::CreateSegParts(drawseg_t* dseg, seg_t *seg)
 				seg->offset * TextureSScale(MTex) +
 				sidedef->textureoffset * TextureOffsetSScale(MTex);
 			sp->texinfo.Alpha = linedef->alpha;
+			sp->texinfo.Additive = !!(sidedef->Flags & SDF_ADDITIVE);
 
 			if (linedef->flags & ML_DONTPEGBOTTOM)
 			{
@@ -1134,6 +1141,7 @@ void VRenderLevel::CreateSegParts(drawseg_t* dseg, seg_t *seg)
 			sp->texinfo.Tex = MTex;
 			sp->texinfo.Alpha = reg->prev->extraline->alpha < 1.0 ?
 				reg->prev->extraline->alpha : 1.1;
+			sp->texinfo.Additive = !!(extraside->Flags & SDF_ADDITIVE);
 
 			wv[0].x = wv[1].x = seg->v1->x;
 			wv[0].y = wv[1].y = seg->v1->y;
@@ -1545,6 +1553,7 @@ void VRenderLevel::UpdateDrawSeg(drawseg_t* dseg)
 					seg->offset * TextureSScale(MTex) +
 					sidedef->textureoffset * TextureOffsetSScale(MTex);
 				sp->texinfo.Alpha = linedef->alpha;
+				sp->texinfo.Additive = !!(sidedef->Flags & SDF_ADDITIVE);
 
 				if (linedef->flags & ML_DONTPEGBOTTOM)
 				{
@@ -1577,6 +1586,7 @@ void VRenderLevel::UpdateDrawSeg(drawseg_t* dseg)
 			else
 			{
 				sp->texinfo.Alpha = 1.1;
+				sp->texinfo.Additive = false;
 			}
 
 			sp->frontTopDist = r_ceiling->dist;

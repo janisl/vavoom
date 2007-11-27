@@ -171,7 +171,8 @@ void VLevel::Serialise(VStream& Strm)
 			<< li->arg3
 			<< li->arg4
 			<< li->arg5
-			<< li->LineTag;
+			<< li->LineTag
+			<< li->alpha;
 		for (j = 0; j < 2; j++)
 		{
 			if (li->sidenum[j] == -1)
@@ -183,7 +184,8 @@ void VLevel::Serialise(VStream& Strm)
 				<< si->rowoffset
 				<< si->toptexture
 				<< si->bottomtexture
-				<< si->midtexture;
+				<< si->midtexture
+				<< si->Flags;
 		}
 	}
 	unguard;
@@ -365,6 +367,7 @@ void VLevel::Destroy()
 	delete[] RejectMatrix;
 	delete[] Things;
 
+	delete[] BaseLines;
 	delete[] BaseSides;
 	delete[] BaseSectors;
 	delete[] BasePolyObjs;

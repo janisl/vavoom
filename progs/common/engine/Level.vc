@@ -102,6 +102,7 @@ native readonly private void*	Acs;
 native readonly private void*	RenderData;
 native readonly private void*	NetContext;
 
+native readonly private void*	BaseLines;
 native readonly private void*	BaseSides;
 native readonly private void*	BaseSectors;
 native readonly private void*	BasePolyObjs;

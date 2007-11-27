@@ -1001,12 +1001,30 @@ void SpawnWorld(Level InLevel)
 					if (InLevel.Lines[j].LineTag == line->arg1)
 					{
 						InLevel.Lines[j].alpha = alpha;
+						if (line->arg3 == 1)
+						{
+							InLevel.Sides[InLevel.Lines[j].sidenum[
+								0]].Flags |= SDF_ADDITIVE;
+							if (InLevel.Lines[j].sidenum[0] >= 0)
+							{
+								InLevel.Sides[InLevel.Lines[j].sidenum[
+									1]].Flags |= SDF_ADDITIVE;
+							}
+						}
 					}
 				}
 			}
 			else
 			{
 				line->alpha = alpha;
+				if (line->arg3 == 1)
+				{
+					InLevel.Sides[line->sidenum[0]].Flags |= SDF_ADDITIVE;
+					if (line->sidenum[1] >= 0)
+					{
+						InLevel.Sides[line->sidenum[1]].Flags |= SDF_ADDITIVE;
+					}
+				}
 			}
 			line->special = 0;
 			break;

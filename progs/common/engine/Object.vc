@@ -211,6 +211,14 @@ enum
 	SPF_NOBLOCKSHOOT	= 4
 };
 
+//
+//	Sidedef flags.
+//
+enum
+{
+	SDF_ADDITIVE		= 0x0001	//	Additive translucency.
+};
+
 const int MAX_TID_COUNT		= 200;
 
 const float ATTN_NONE		= 0.0;
@@ -709,6 +717,8 @@ struct side_t
 
 	// Sector the SideDef is facing.
 	sector_t *sector;
+
+	int			Flags;
 };
 
 struct sec_plane_t : TPlane

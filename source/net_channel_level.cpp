@@ -42,6 +42,7 @@ enum
 	CMD_StaticLight,
 	CMD_NewLevel,
 	CMD_PreRender,
+	CMD_Line,
 
 	CMD_MAX
 };
@@ -70,6 +71,7 @@ VLevelChannel::VLevelChannel(VNetConnection* AConnection, vint32 AIndex,
 	vuint8 AOpenedLocally)
 : VChannel(AConnection, CHANNEL_Player, AIndex, AOpenedLocally)
 , Level(NULL)
+, Lines(NULL)
 , Sides(NULL)
 , Sectors(NULL)
 {
@@ -97,9 +99,11 @@ void VLevelChannel::SetLevel(VLevel* ALevel)
 	guard(VLevelChannel::SetLevel);
 	if (Level)
 	{
+		delete[] Lines;
 		delete[] Sides;
 		delete[] Sectors;
 		delete[] PolyObjs;
+		Lines = NULL;
 		Sides = NULL;
 		Sectors = NULL;
 		PolyObjs = NULL;
@@ -109,6 +113,8 @@ void VLevelChannel::SetLevel(VLevel* ALevel)
 
 	if (Level)
 	{
+		Lines = new rep_line_t[Level->NumLines];
+		memcpy(Lines, Level->BaseLines, sizeof(rep_line_t) * Level->NumLines);
 		Sides = new rep_side_t[Level->NumSides];
 		memcpy(Sides, Level->BaseSides, sizeof(rep_side_t) * Level->NumSides);
 		Sectors = new rep_sector_t[Level->NumSectors];
@@ -164,6 +170,26 @@ void VLevelChannel::Update()
 	VMessageOut Msg(this);
 	Msg.bReliable = true;
 
+	for (int i = 0; i < Level->NumLines; i++)
+	{
+		line_t* Line = &Level->Lines[i];
+		//if (!Connection->SecCheckFatPVS(Line->sector))
+		//	continue;
+
+		rep_line_t* RepLine = &Lines[i];
+		if (Line->alpha == RepLine->alpha)
+			continue;
+
+		Msg.WriteInt(CMD_Line, CMD_MAX);
+		Msg.WriteInt(i, Level->NumLines);
+		Msg.WriteBit(Line->alpha != RepLine->alpha);
+		if (Line->alpha != RepLine->alpha)
+		{
+			Msg << Line->alpha;
+			RepLine->alpha = Line->alpha;
+		}
+	}
+
 	for (int i = 0; i < Level->NumSides; i++)
 	{
 		side_t* Side = &Level->Sides[i];
@@ -209,6 +235,12 @@ void VLevelChannel::Update()
 		{
 			Msg << Side->rowoffset;
 			RepSide->rowoffset = Side->rowoffset;
+		}
+		Msg.WriteBit(Side->Flags != RepSide->Flags);
+		if (Side->Flags != RepSide->Flags)
+		{
+			Msg.WriteInt(Side->Flags, 0x000f);
+			RepSide->Flags = Side->Flags;
 		}
 	}
 
@@ -384,6 +416,8 @@ void VLevelChannel::ParsePacket(VMessageIn& Msg)
 					Msg << Side->textureoffset;
 				if (Msg.ReadBit())
 					Msg << Side->rowoffset;
+				if (Msg.ReadBit())
+					Side->Flags = Msg.ReadInt(0x000f);
 			}
 			break;
 

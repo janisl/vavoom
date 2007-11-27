@@ -206,6 +206,7 @@ class VLevelChannel : public VChannel
 {
 public:
 	VLevel*			Level;
+	rep_line_t*		Lines;
 	rep_side_t*		Sides;
 	rep_sector_t*	Sectors;
 	rep_polyobj_t*	PolyObjs;

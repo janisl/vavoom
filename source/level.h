@@ -144,6 +144,11 @@ struct line_t : public TPlane
 	int			LineTag;
 };
 
+enum
+{
+	SDF_ADDITIVE		= 0x0001,	//	Additive translucency.
+};
+
 //
 // The SideDef.
 //
@@ -163,6 +168,8 @@ struct side_t
 
 	// Sector the SideDef is facing.
 	sector_t	*sector;
+
+	vuint32		Flags;
 };
 
 struct subsector_t;
@@ -489,6 +496,11 @@ struct linetrace_t
 //
 //==========================================================================
 
+struct rep_line_t
+{
+	float		alpha;
+};
+
 struct rep_side_t
 {
 	float		textureoffset;
@@ -496,6 +508,7 @@ struct rep_side_t
 	int			toptexture;
 	int			bottomtexture;
 	int			midtexture;
+	vuint32		Flags;
 };
 
 struct rep_sector_t
@@ -641,6 +654,7 @@ class VLevel : public VObject
 	VRenderLevelPublic*	RenderData;
 	VNetContext*		NetContext;
 
+	rep_line_t*			BaseLines;
 	rep_side_t*			BaseSides;
 	rep_sector_t*		BaseSectors;
 	rep_polyobj_t*		BasePolyObjs;

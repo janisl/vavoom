@@ -60,6 +60,7 @@ struct texinfo_t
 	//	1.1 for solid surfaces
 	// Alpha for masked surfaces
 	float			Alpha;
+	bool			Additive;
 };
 
 struct surface_t
