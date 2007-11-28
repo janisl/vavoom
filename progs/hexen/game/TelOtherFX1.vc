@@ -226,6 +226,7 @@ defaultproperties
 	Radius = 16.0;
 	Speed = 700.0;
 	MissileDamage = 10001;
+	RenderStyle = STYLE_Add;
 	bActivateImpact = false;
 	bActivatePCross = false;
 	bBloodlessImpact = true;

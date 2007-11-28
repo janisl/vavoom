@@ -81,6 +81,7 @@ defaultproperties
 	Height = 10.0;
 	Speed = 770.0;
 	MissileDamage = 5;
+	RenderStyle = STYLE_Add;
 	DeathSound = 'ClericCStaffExplode';
 	bDynamicLight = true;
 	DLightColour = RGB(3, 234, 3);

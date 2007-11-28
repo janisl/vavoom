@@ -87,6 +87,7 @@ defaultproperties
 {
 	Radius = 6.0;
 	MissileDamage = 2;
+	RenderStyle = STYLE_Add;
 	DamageType = 'Fire';
 	bActivateImpact = false;
 	bActivatePCross = false;

@@ -75,6 +75,7 @@ defaultproperties
 	Height = 10.0;
 	Speed = 525.0;
 	MissileDamage = 4;
+	RenderStyle = STYLE_Add;
 	bActivateImpact = false;
 	bActivatePCross = false;
 	DeathSound = 'SerpentFXHit';

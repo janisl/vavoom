@@ -34,6 +34,7 @@ Spawn:
 
 defaultproperties
 {
+	RenderStyle = STYLE_Add;
 	bNoTeleport = true;
 	bCannotPush = true;
 }

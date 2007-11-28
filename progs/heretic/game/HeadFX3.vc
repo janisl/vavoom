@@ -73,6 +73,7 @@ defaultproperties
 	Height = 12.0;
 	Speed = 350.0;
 	MissileDamage = 5;
+	RenderStyle = STYLE_Add;
 	bWindThrust = true;
 	bDynamicLight = true;
 	DLightColour = RGB(255, 95, 0);

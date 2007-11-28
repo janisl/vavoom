@@ -35,6 +35,7 @@ Spawn:
 
 defaultproperties
 {
+	RenderStyle = STYLE_Add;
 	bPuffOnActors = true;
 	ExplodeEffect = RGB(80, 164, 252);
 	DLightRadius = 86.0;

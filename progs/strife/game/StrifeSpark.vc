@@ -37,4 +37,5 @@ Crash:
 
 defaultproperties
 {
+	RenderStyle = STYLE_Add;
 }

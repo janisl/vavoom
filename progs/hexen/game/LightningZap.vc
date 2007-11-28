@@ -148,6 +148,7 @@ defaultproperties
 	Radius = 15.0;
 	Height = 35.0;
 	MissileDamage = 2;
+	RenderStyle = STYLE_Add;
 	bNoTeleport = false;
 	bActivateImpact = false;
 	bActivatePCross = false;

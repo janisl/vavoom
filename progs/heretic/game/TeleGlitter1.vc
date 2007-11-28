@@ -53,6 +53,7 @@ Spawn:
 
 defaultproperties
 {
+	RenderStyle = STYLE_Add;
 	Radius = 20.0;
 	Height = 16.0;
 	bMissile = true;

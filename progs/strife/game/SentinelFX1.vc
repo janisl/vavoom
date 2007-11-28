@@ -39,6 +39,7 @@ Death:
 
 defaultproperties
 {
+	RenderStyle = STYLE_Add;
 	Radius = 10.0;
 	Height = 8.0;
 	Speed = 1400.0;

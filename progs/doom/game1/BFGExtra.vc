@@ -34,7 +34,7 @@ Spawn:
 
 defaultproperties
 {
-	RenderStyle = STYLE_Translucent;
+	RenderStyle = STYLE_Add;
 	Alpha = 0.666;
 	bNoBlockmap = true;
 	bNoGravity = true;

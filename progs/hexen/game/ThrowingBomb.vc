@@ -65,7 +65,7 @@ Landed:
 	Wait
 Death:
 	CFCF Q 4 Bright A_NoGravity
-	CFCF R 3 Bright A_Scream
+	CFCF R 3 Bright { A_Scream(); 	RenderStyle = STYLE_Add; }
 	CFCF S 4 Bright A_Explode
 	CFCF T 3 Bright
 	CFCF U 4 Bright

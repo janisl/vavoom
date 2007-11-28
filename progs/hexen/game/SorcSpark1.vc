@@ -34,6 +34,7 @@ Spawn:
 
 defaultproperties
 {
+	RenderStyle = STYLE_Add;
 	Radius = 5.0;
 	Height = 5.0;
 	Gravity = 0.125;

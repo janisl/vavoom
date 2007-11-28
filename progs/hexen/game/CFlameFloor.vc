@@ -36,4 +36,5 @@ Spawn:
 
 defaultproperties
 {
+	RenderStyle = STYLE_Add;
 }

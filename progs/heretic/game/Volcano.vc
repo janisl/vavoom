@@ -83,7 +83,7 @@ final void A_Particles()
 			continue;
 		if (!Level.Game.Players[i].bSpawned)
 			continue;
-		PlayerEx(Level.Game.Players[i]).ParticleEffect(10, LineSpecialLevelInfo::pt_static, 0, vector(Origin.x, Origin.y, Origin.z + Height), 0.0,
+		PlayerEx(Level.Game.Players[i]).ParticleEffect(10, LineSpecialLevelInfo::pt_static, LineSpecialLevelInfo::pt_explode2, vector(Origin.x, Origin.y, Origin.z + Height), 0.0,
 				vector(256.0, 256.0, 256.0), 0.3, 20.0, 85.0, RGB(255, 128, 0), 1.0, 2.0);
 	}
 }

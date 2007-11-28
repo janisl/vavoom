@@ -68,6 +68,7 @@ Spawn:
 
 defaultproperties
 {
+	RenderStyle = STYLE_Add;
 	bNoTeleport = true;
 	bDynamicLight = true;
 	DLightColour = RGB(91, 94, 211);

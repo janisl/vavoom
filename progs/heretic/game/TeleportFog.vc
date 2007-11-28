@@ -36,6 +36,7 @@ Spawn:
 
 defaultproperties
 {
+	RenderStyle = STYLE_Add;
 	bDynamicLight = true;
 	DLightColour = RGB(105, 88, 183);
 	DLightRadius = 200.0;

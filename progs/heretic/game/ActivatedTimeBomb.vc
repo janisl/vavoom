@@ -35,7 +35,7 @@ void PreExplode()
 {
 	// Time Bombs
 	Origin.z += 32.0;
-	RenderStyle = STYLE_Normal;
+	RenderStyle = STYLE_Add;
 	Alpha = 1.0;
 }
 

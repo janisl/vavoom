@@ -59,6 +59,7 @@ Death:
 defaultproperties
 {
 	MissileDamage = 4;
+	RenderStyle = STYLE_Add;
 	DamageType = 'Fire';
 	bActivateImpact = false;
 	bActivatePCross = false;

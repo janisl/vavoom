@@ -39,5 +39,6 @@ defaultproperties
 	Height = 8.0;
 	Speed = 350.0;
 	MissileDamage = 2;
+	RenderStyle = STYLE_Add;
 	bDropOff = false;
 }

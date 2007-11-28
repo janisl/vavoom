@@ -42,6 +42,7 @@ defaultproperties
 	Height = 8.0;
 	Speed = 1050.0;
 	MissileDamage = 10;
+	RenderStyle = STYLE_Add;
 	bActivateImpact = true;
 	SightSound = 'weapons/bowshoot';
 	DeathSound = 'weapons/bowhit';

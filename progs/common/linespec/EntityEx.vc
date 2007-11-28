@@ -3179,13 +3179,14 @@ final void NewChaseDir()
 			// use different dropoff movement logic in TryMove
 			bAvoidingDropoff = true;
 			DO_NewChaseDir(a.deltax, a.deltay);
-			bAvoidingDropoff = false;
 
 			// If moving away from dropoff, set movecount to 1 so that
 			// small steps are taken to get monster away from dropoff.
 			MoveCount = 1;
 			return;
 		}
+		else
+			bAvoidingDropoff = false;
 	}
 	else
 	{

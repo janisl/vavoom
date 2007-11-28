@@ -34,6 +34,7 @@ Spawn:
 
 defaultproperties
 {
+	RenderStyle = STYLE_Add;
 	bNoGravity = false;
 	bColideWithThings = false;
 	bColideWithWorld = false;

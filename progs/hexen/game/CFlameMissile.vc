@@ -179,6 +179,7 @@ defaultproperties
 	Height = 8.0;
 	Speed = 7000.0;
 	MissileDamage = 8;
+	RenderStyle = STYLE_Add;
 	bHidden = true;
 	DamageType = 'Fire';
 	bBlaster = true;

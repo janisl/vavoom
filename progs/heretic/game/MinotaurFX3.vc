@@ -65,6 +65,7 @@ defaultproperties
 	Radius = 8.0;
 	Height = 16.0;
 	MissileDamage = 4;
+	RenderStyle = STYLE_Add;
 	DamageType = 'Fire';
 	DeathSound = 'minotaur/fx3hit';
 	bIgnoreFloorStep = true;

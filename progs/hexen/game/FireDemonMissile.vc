@@ -42,6 +42,7 @@ defaultproperties
 	Mass = 15.0;
 	Speed = 350.0;
 	MissileDamage = 1;
+	RenderStyle = STYLE_Add;
 	bFloorClip = true;
 	DamageType = 'Fire';
 	DeathSound = 'FireDemonMissileHit';

@@ -93,6 +93,7 @@ defaultproperties
 	Height = 8.0;
 	Speed = 1050.0;
 	MissileDamage = 8;
+	RenderStyle = STYLE_Add;
 	bExtremeDeath = true;
 	bDynamicLight = true;
 	DeathSound = 'FighterSwordExplode';

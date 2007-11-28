@@ -35,6 +35,7 @@ Spawn:
 
 defaultproperties
 {
+	RenderStyle = STYLE_Add;
 	bPuffOnActors = true;
 	bAxeBlood = true;
 	bDynamicLight = true;

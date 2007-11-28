@@ -92,6 +92,7 @@ defaultproperties
 	Height = 6.0;
 	Speed = 350.0;
 	MissileDamage = 1;
+	RenderStyle = STYLE_Add;
 	bSeekerMissile = true;
 	bActivateImpact = false;
 	bActivatePCross = false;

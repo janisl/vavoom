@@ -78,6 +78,7 @@ Spawn:
 
 defaultproperties
 {
+	RenderStyle = STYLE_Add;
 	Radius = 15.0;
 	Height = 35.0;
 	LifeTime = 3;

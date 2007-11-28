@@ -81,6 +81,7 @@ defaultproperties
 	Height = 6.0;
 	Speed = 455.0;
 	MissileDamage = 1;
+	RenderStyle = STYLE_Add;
 	bThruGhost = true;
 	bDynamicLight = true;
 	DLightColour = RGB(6, 9, 159);

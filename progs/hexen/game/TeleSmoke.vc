@@ -60,4 +60,6 @@ Spawn:
 
 defaultproperties
 {
+	RenderStyle = STYLE_Add;
+	Alpha = 0.666;
 }

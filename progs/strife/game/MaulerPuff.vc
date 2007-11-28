@@ -35,5 +35,6 @@ Spawn:
 
 defaultproperties
 {
+	RenderStyle = STYLE_Add;
 	PuffVelZ = 1.0 * 35.0;
 }

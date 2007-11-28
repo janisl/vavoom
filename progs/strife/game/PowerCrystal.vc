@@ -43,6 +43,8 @@ final void A_Unknown112()
 	{
 		Target.Player.ExtraLight = 5;
 	}
+	
+	RenderStyle = STYLE_Add;
 }
 
 //==========================================================================

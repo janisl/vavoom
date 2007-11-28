@@ -71,6 +71,7 @@ bool Deactivate()
 
 defaultproperties
 {
+	RenderStyle = STYLE_Add;
 	bHidden = true;
 	bNoTeleport = true;
 	bStaticLight = true;

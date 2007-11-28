@@ -44,6 +44,7 @@ defaultproperties
 	Height = 8.0;
 	Speed = 770.0;
 	MissileDamage = 3;
+	RenderStyle = STYLE_Add;
 	bWindThrust = true;
 	bActivateImpact = true;
 	SightSound = 'weapons/hornrodshoot';

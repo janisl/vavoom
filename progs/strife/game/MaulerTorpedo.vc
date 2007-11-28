@@ -72,6 +72,7 @@ defaultproperties
 	Speed = 700.0;
 	MaxStepHeight = 4.0;
 	MissileDamage = 1;
+	RenderStyle = STYLE_Add;
 	bActivateImpact = true;
 	bDynamicLight = true;
 	DamageType = 'Disintegrate';

@@ -54,6 +54,7 @@ Spawn:
 
 defaultproperties
 {
+	RenderStyle = STYLE_Add;
 	Radius = 1.0;
 	Height = 1.0;
 	SightSound = 'ClericFlameExplode';

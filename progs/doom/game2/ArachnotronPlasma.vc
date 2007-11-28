@@ -64,7 +64,7 @@ defaultproperties
 	Height = 8.0;
 	Speed = 875.0;
 	MissileDamage = 5;
-	RenderStyle = STYLE_Translucent;
+	RenderStyle = STYLE_Add;
 	Alpha = 0.666;
 	bMissile = true;
 	bNoBlockmap = true;

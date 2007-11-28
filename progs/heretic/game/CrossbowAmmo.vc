@@ -36,6 +36,7 @@ Spawn:
 
 defaultproperties
 {
+	RenderStyle = STYLE_Add;
 	Amount = 5;
 	MaxAmount = 50;
 	BackpackAmount = 5;

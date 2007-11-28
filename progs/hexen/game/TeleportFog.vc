@@ -36,5 +36,6 @@ Spawn:
 
 defaultproperties
 {
+	RenderStyle = STYLE_Add;
 	DLightColour = RGB(202, 0, 0);
 }

@@ -50,4 +50,5 @@ Death:
 
 defaultproperties
 {
+	RenderStyle = STYLE_Add;
 }

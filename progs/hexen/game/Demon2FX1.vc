@@ -42,6 +42,7 @@ defaultproperties
 	Height = 6.0;
 	Speed = 525.0;
 	MissileDamage = 5;
+	RenderStyle = STYLE_Add;
 	DamageType = 'Fire';
 	DeathSound = 'DemonMissileExplode';
 	bDynamicLight = true;
