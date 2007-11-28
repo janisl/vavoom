@@ -547,6 +547,13 @@ struct VSndSeqInfo
 	TArray<VName>	Choices;
 };
 
+struct VCameraTextureInfo
+{
+	VEntity*		Camera;
+	int				TexNum;
+	int				FOV;
+};
+
 //==========================================================================
 //
 //									LEVEL
@@ -664,6 +671,8 @@ class VLevel : public VObject
 
 	TArray<VSndSeqInfo>	ActiveSequences;
 
+	TArray<VCameraTextureInfo>	CameraTextures;
+
 	float				Time;
 	int					TicTime;
 
@@ -697,6 +706,8 @@ class VLevel : public VObject
 	bool TraceLine(linetrace_t&, const TVec&, const TVec&, int) const;
 
 	void ClampOffsets();
+
+	void SetCameraToTexture(VEntity*, VName, int);
 
 	bool IsForServer() const
 	{

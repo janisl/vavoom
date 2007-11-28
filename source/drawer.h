@@ -50,6 +50,7 @@ struct refdef_t
 	float		fovx;
 	float		fovy;
 	bool		drawworld;
+	bool		DrawCamera;
 };
 
 struct VModel;
@@ -78,6 +79,7 @@ public:
 	virtual void EndDirectUpdate() = 0;
 	virtual void Shutdown() = 0;
 	virtual void* ReadScreen(int*, bool*) = 0;
+	virtual void ReadBackScreen(int, int, rgba_t*) = 0;
 	virtual void FreeSurfCache(surfcache_t*) = 0;
 
 	//	Rendring stuff

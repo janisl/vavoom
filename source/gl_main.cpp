@@ -347,7 +347,7 @@ void VOpenGLDrawer::SetupView(VRenderLevelDrawer* ARLev, const refdef_t *rd)
 	guard(VOpenGLDrawer::SetupView);
 	RendLev = ARLev;
 
-	if (rd->drawworld && rd->width != ScreenWidth)
+	if (!rd->DrawCamera && rd->drawworld && rd->width != ScreenWidth)
 	{
 		// 	Draws the border around the view for different size windows
 		R_DrawViewBorder();
@@ -461,6 +461,30 @@ void *VOpenGLDrawer::ReadScreen(int *bpp, bool *bot2top)
 	*bpp = 24;
 	*bot2top = true;
 	return dst;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VOpenGLDrawer::ReadBackScreen
+//
+//==========================================================================
+
+void VOpenGLDrawer::ReadBackScreen(int Width, int Height, rgba_t* Dest)
+{
+	guard(VOpenGLDrawer::ReadBackScreen);
+	glReadBuffer(GL_BACK);
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+	glReadPixels(0, ScreenHeight - Height, Width, Height, GL_RGBA, GL_UNSIGNED_BYTE, Dest);
+	rgba_t* Temp = new rgba_t[Width];
+	for (int i = 0; i < Height / 2; i++)
+	{
+		memcpy(Temp, Dest + i * Width, Width * sizeof(rgba_t));
+		memcpy(Dest + i * Width, Dest + (Height - 1 - i) * Width,
+			Width * sizeof(rgba_t));
+		memcpy(Dest + (Height - 1 - i) * Width, Temp,
+			Width * sizeof(rgba_t));
+	}
 	unguard;
 }
 

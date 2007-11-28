@@ -122,6 +122,7 @@ public:
 	void BeginDirectUpdate();
 	void EndDirectUpdate();
 	void* ReadScreen(int*, bool*);
+	void ReadBackScreen(int, int, rgba_t*);
 	void FreeSurfCache(surfcache_t*);
 
 	//	Rendering stuff

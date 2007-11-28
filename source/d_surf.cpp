@@ -179,6 +179,7 @@ surfcache_t *VSoftwareDrawer::CacheSurface(surface_t *surface, int miplevel)
 	if (Tex->CheckModified())
 	{
 		SCInvalidateTexture(Tex);
+		GenerateTexture(Tex);
 	}
 	
 	//

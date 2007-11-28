@@ -54,12 +54,15 @@
 
 VCameraTexture::VCameraTexture(VName AName, int AWidth, int AHeight)
 : Pixels(0)
+, bNeedsUpdate(true)
+, bUpdated(false)
 {
 	Name = AName;
 	Type = TEXTYPE_Wall;
-	Format = TEXFMT_8;
+	Format = TEXFMT_RGBA;
 	Width = AWidth;
 	Height = AHeight;
+	bIsCameraTexture = true;
 }
 
 //==========================================================================
@@ -80,6 +83,24 @@ VCameraTexture::~VCameraTexture()
 
 //==========================================================================
 //
+//	VCameraTexture::CheckModified
+//
+//==========================================================================
+
+bool VCameraTexture::CheckModified()
+{
+	guard(VCameraTexture::CheckModified);
+	if (bUpdated)
+	{
+		bUpdated = false;
+		return true;
+	}
+	return false;
+	unguard;
+}
+
+//==========================================================================
+//
 //	VCameraTexture::GetPixels
 //
 //==========================================================================
@@ -87,6 +108,7 @@ VCameraTexture::~VCameraTexture()
 vuint8* VCameraTexture::GetPixels()
 {
 	guard(VCameraTexture::GetPixels);
+	bNeedsUpdate = true;
 	//	If already got pixels, then just return them.
 	if (Pixels)
 	{
@@ -94,12 +116,29 @@ vuint8* VCameraTexture::GetPixels()
 	}
 
 	//	Allocate image data.
-	Pixels = new vuint8[Width * Height];
+	Pixels = new vuint8[Width * Height * 4];
 
+	rgba_t* pDst = (rgba_t*)Pixels;
 	for (int i = 0; i < Height; i++)
 	{
-		memset(Pixels + i * Width, r_black_colour, Width / 2);
-		memset(Pixels + i * Width + Width / 2, 255, Width / 2);
+		for (int j = 0; j < Width; j++)
+		{
+			if (j < Width / 2)
+			{
+				pDst->r = 0;
+				pDst->g = 0;
+				pDst->b = 0;
+				pDst->a = 255;
+			}
+			else
+			{
+				pDst->r = 255;
+				pDst->g = 255;
+				pDst->b = 255;
+				pDst->a = 255;
+			}
+			pDst++;
+		}
 	}
 
 	return Pixels;
@@ -121,4 +160,38 @@ void VCameraTexture::Unload()
 		Pixels = NULL;
 	}
 	unguard;
+}
+
+//==========================================================================
+//
+//	VCameraTexture::CopyImage
+//
+//==========================================================================
+
+#ifdef CLIENT
+void VCameraTexture::CopyImage()
+{
+	guard(VCameraTexture::CopyImage);
+	if (!Pixels)
+	{
+		Pixels = new vuint8[Width * Height * 4];
+	}
+
+	Drawer->ReadBackScreen(Width, Height, (rgba_t*)Pixels);
+	bNeedsUpdate = false;
+	bUpdated = true;
+	Pixels8BitValid = false;
+	unguard;
+}
+#endif
+
+//==========================================================================
+//
+//	VCameraTexture::GetHighResolutionTexture
+//
+//==========================================================================
+
+VTexture* VCameraTexture::GetHighResolutionTexture()
+{
+	return NULL;
 }

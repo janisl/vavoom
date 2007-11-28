@@ -82,6 +82,25 @@ struct surface_t
 	TVec			verts[1];
 };
 
+//
+//	Camera texture.
+//
+class VCameraTexture : public VTexture
+{
+public:
+	vuint8*		Pixels;
+	bool		bNeedsUpdate;
+	bool		bUpdated;
+
+	VCameraTexture(VName, int, int);
+	~VCameraTexture();
+	bool CheckModified();
+	vuint8* GetPixels();
+	void Unload();
+	void CopyImage();
+	VTexture* GetHighResolutionTexture();
+};
+
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 void R_DrawViewBorder();

@@ -457,6 +457,7 @@ void VRenderLevel::SetupFrame()
 		ExecuteSetViewSize();
 	}
 
+	ViewEnt = NULL;
 	viewangles = cl->ViewAngles;
 	if (r_chasecam && r_chase_front)
 	{
@@ -505,6 +506,61 @@ void VRenderLevel::SetupFrame()
 	r_viewleaf = Level->PointInSubsector(cl->ViewOrg);
 
 	Drawer->SetupView(this, &refdef);
+	unguard;
+}
+
+//==========================================================================
+//
+//	VRenderLevel::SetupCameraFrame
+//
+//==========================================================================
+
+void VRenderLevel::SetupCameraFrame(VEntity* Camera, VTexture* Tex, int FOV,
+	refdef_t* rd)
+{
+	guard(VRenderLevel::SetupCameraFrame);
+	rd->width = Tex->GetWidth();
+	rd->height = Tex->GetHeight();
+	rd->y = 0;
+	rd->x = 0;
+
+	if (old_aspect)
+		PixelAspect = ((float)rd->height * 320.0) / ((float)rd->width * 200.0);
+	else
+		PixelAspect = ((float)rd->height * 4.0) / ((float)rd->width * 3.0);
+
+	rd->fovx = tan(DEG2RAD(FOV) / 2);
+	rd->fovy = rd->fovx * rd->height / rd->width / PixelAspect;
+
+	// left side clip
+	clip_base[0] = Normalise(TVec(1, 1.0 / rd->fovx, 0));
+	
+	// right side clip
+	clip_base[1] = Normalise(TVec(1, -1.0 / rd->fovx, 0));
+	
+	// top side clip
+	clip_base[2] = Normalise(TVec(1, 0, -1.0 / rd->fovy));
+	
+	// bottom side clip
+	clip_base[3] = Normalise(TVec(1, 0, 1.0 / rd->fovy));
+
+	rd->drawworld = true;
+
+	ViewEnt = Camera;
+	viewangles = Camera->Angles;
+	AngleVectors(viewangles, viewforward, viewright, viewup);
+
+	vieworg = Camera->Origin;
+
+	TransformFrustum();
+
+	extralight = 0;
+	fixedlight = 0;
+
+	r_viewleaf = Level->PointInSubsector(vieworg);
+
+	Drawer->SetupView(this, rd);
+	set_resolutioon_needed = true;
 	unguard;
 }
 
@@ -716,6 +772,13 @@ void VRenderLevel::RenderPlayerView()
 
 	UpdateParticles(host_frametime);
 
+	//	Update camera textures that were visible in last frame.
+	for (int i = 0; i < Level->CameraTextures.Num(); i++)
+	{
+		UpdateCameraTexture(Level->CameraTextures[i].Camera,
+			Level->CameraTextures[i].TexNum, Level->CameraTextures[i].FOV);
+	}
+
 	SetupFrame();
 
 	MarkLeaves();
@@ -724,7 +787,7 @@ void VRenderLevel::RenderPlayerView()
 
 	UpdateWorld();
 
-	RenderWorld();
+	RenderWorld(&refdef);
 
 	RenderMobjs();
 
@@ -742,6 +805,55 @@ void VRenderLevel::RenderPlayerView()
 
 	// Draw croshair
 	DrawCroshair();
+	unguard;
+}
+
+//==========================================================================
+//
+//	VRenderLevel::UpdateCameraTexture
+//
+//==========================================================================
+
+void VRenderLevel::UpdateCameraTexture(VEntity* Camera, int TexNum, int FOV)
+{
+	guard(VRenderLevel::UpdateCameraTexture);
+	if (!Camera)
+	{
+		return;
+	}
+
+	if (!GTextureManager[TexNum]->bIsCameraTexture)
+	{
+		return;
+	}
+	VCameraTexture* Tex = (VCameraTexture*)GTextureManager[TexNum];
+	if (!Tex->bNeedsUpdate)
+	{
+		return;
+	}
+
+	refdef_t		CameraRefDef;
+	CameraRefDef.DrawCamera = true;
+
+	SetupCameraFrame(Camera, Tex, FOV, &CameraRefDef);
+
+	MarkLeaves();
+
+	PushDlights();
+
+	UpdateWorld();
+
+	RenderWorld(&CameraRefDef);
+
+	RenderMobjs();
+
+	DrawParticles();
+
+	DrawTranslucentPolys();
+
+	Drawer->EndView();
+
+	Tex->CopyImage();
 	unguard;
 }
 

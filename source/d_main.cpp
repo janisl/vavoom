@@ -446,15 +446,18 @@ void VSoftwareDrawer::SetupView(VRenderLevelDrawer* ARLev, const refdef_t* rd)
 	d_particle_right = viewwidth - d_pix_max;
 	d_particle_top = viewheight - (d_pix_max << d_y_aspect_shift);
 
-	// draw the border
-	if (rd->width * rd->height != viewarea)
+	if (!rd->DrawCamera)
 	{
-		InitViewBorder(rd);
-		viewarea = rd->width * rd->height;
-	}
-	else if (rd->width != ScreenWidth)
-	{
-		EraseViewBorder(rd);
+		// draw the border
+		if (rd->width * rd->height != viewarea)
+		{
+			InitViewBorder(rd);
+			viewarea = rd->width * rd->height;
+		}
+		else if (rd->width != ScreenWidth)
+		{
+			EraseViewBorder(rd);
+		}
 	}
 
 #if USE_ASM_I386
@@ -574,6 +577,66 @@ void* VSoftwareDrawer::ReadScreen(int* bpp, bool* bot2top)
 	}
 	*bot2top = false;
 	return dst;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VSoftwareDrawer::ReadBackScreen
+//
+//==========================================================================
+
+void VSoftwareDrawer::ReadBackScreen(int Width, int Height, rgba_t* Dest)
+{
+	guard(VSoftwareDrawer::ReadBackScreen);
+	if (ScreenBPP == 8)
+	{
+		rgba_t* pDst = Dest;
+		for (int i = 0; i < Height; i++)
+		{
+			vuint8* pSrc = scrn + i + ScreenWidth;
+			for (int j = 0; j < Width; j++)
+			{
+				*pDst++ = r_palette[*pSrc++];
+			}
+		}
+	}
+	else if (PixelBytes == 2)
+	{
+		word *psrc = (word*)scrn;
+		rgba_t *pdst = Dest;
+		for (int i = 0; i < Height; i++)
+		{
+			for (int j = 0; j < Width; j++)
+			{
+				pdst->r = GetColR(*psrc);
+				pdst->g = GetColG(*psrc);
+				pdst->b = GetColB(*psrc);
+				pdst->a = 255;
+				psrc++;
+				pdst++;
+			}
+			psrc += ScreenWidth - Width;
+		}
+	}
+	else
+	{
+		vuint32* psrc = (vuint32*)scrn;
+		rgba_t *pdst = Dest;
+		for (int i = 0; i < Height; i++)
+		{
+			for (int j = 0; j < Width; j++)
+			{
+				pdst->r = GetColR(*psrc);
+				pdst->g = GetColG(*psrc);
+				pdst->b = GetColB(*psrc);
+				pdst->a = 255;
+				psrc++;
+				pdst++;
+			}
+			psrc += ScreenWidth - Width;
+		}
+	}
 	unguard;
 }
 

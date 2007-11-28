@@ -3945,10 +3945,8 @@ int VAcs::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_SetCameraToTexture)
-			STUB(PCD_SetCameraToTexture)
-			//sp[-3] - TID
-			//sp[-2] - Texture
-			//sp[-1] - FOV
+			XLevel->SetCameraToTexture(EntityFromTID(sp[-3], Activator),
+				VName(GetStr(sp[-2]), VName::AddLower8), sp[-1]);
 			sp -= 3;
 			ACSVM_BREAK;
 

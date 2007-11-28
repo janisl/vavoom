@@ -249,6 +249,24 @@ void VLevel::Serialise(VStream& Strm)
 	guard(ACS);
 	Acs->Serialise(Strm);
 	unguard;
+
+	//
+	//	Camera textures
+	//
+	guard(CameraTextures);
+	int NumCamTex = CameraTextures.Num();
+	Strm << STRM_INDEX(NumCamTex);
+	if (Strm.IsLoading())
+	{
+		CameraTextures.SetNum(NumCamTex);
+	}
+	for (i = 0; i < NumCamTex; i++)
+	{
+		Strm << CameraTextures[i].Camera
+			<< CameraTextures[i].TexNum
+			<< CameraTextures[i].FOV;
+	}
+	unguard;
 	unguard;
 }
 
@@ -280,6 +298,11 @@ void VLevel::ClearReferences()
 	{
 		if (PolyObjs[i].SpecialData && PolyObjs[i].SpecialData->GetFlags() & _OF_CleanupRef)
 			PolyObjs[i].SpecialData = NULL;
+	}
+	for (int i = 0; i < CameraTextures.Num(); i++)
+	{
+		if (CameraTextures[i].Camera && CameraTextures[i].Camera->GetFlags() & _OF_CleanupRef)
+			CameraTextures[i].Camera = NULL;
 	}
 	unguard;
 }
@@ -444,6 +467,46 @@ void VLevel::ClampOffsets()
 			Sectors[i].ceiling.yoffs = 0;
 		}
 	}
+	unguard;
+}
+
+//==========================================================================
+//
+//  VLevel::SetCameraToTexture
+//
+//==========================================================================
+
+void VLevel::SetCameraToTexture(VEntity* Ent, VName TexName, int FOV)
+{
+	guard(VLevel::SetCameraToTexture);
+	if (!Ent)
+	{
+		return;
+	}
+
+	//	Get texture index.
+	int TexNum = GTextureManager.CheckNumForName(TexName, TEXTYPE_Wall,
+		true, false);
+	if (TexNum < 0)
+	{
+		GCon->Logf("SetCameraToTexture: %s is not a valid texture",
+			*TexName);
+		return;
+	}
+
+	for (int i = 0; i < CameraTextures.Num(); i++)
+	{
+		if (CameraTextures[i].TexNum == TexNum)
+		{
+			CameraTextures[i].Camera = Ent;
+			CameraTextures[i].FOV = FOV;
+			return;
+		}
+	}
+	VCameraTextureInfo& C = CameraTextures.Alloc();
+	C.Camera = Ent;
+	C.TexNum = TexNum;
+	C.FOV = FOV;
 	unguard;
 }
 

@@ -207,13 +207,17 @@ private:
 
 	trans_sprite_t	trans_sprites[MAX_TRANS_SPRITES];
 
+	VEntity*		ViewEnt;
+
 	//	General
 	void PrecacheLevel();
 	void ExecuteSetViewSize();
 	void TransformFrustum();
 	void SetupFrame();
+	void SetupCameraFrame(VEntity*, VTexture*, int, refdef_t*);
 	void MarkLeaves();
 	vuint32 GetFade(subsector_t*);
+	void UpdateCameraTexture(VEntity*, int, int);
 
 	//	Surf methods
 	void SetupSky();
@@ -234,6 +238,7 @@ private:
 	void UpdateSubRegion(subregion_t*);
 	void UpdateSubsector(int, float*);
 	void UpdateBSPNode(int, float*);
+	void UpdateWorld();
 	bool CopyPlaneIfValid(sec_plane_t*, const sec_plane_t*,
 		const sec_plane_t*);
 	void UpdateFakeFlats(sector_t*);
@@ -272,7 +277,7 @@ private:
 	void RenderSubRegion(subregion_t*, int);
 	void RenderSubsector(int, int);
 	void RenderBSPNode(int, float*, int);
-	void RenderWorld();
+	void RenderWorld(const refdef_t*);
 
 	//	Things
 	void DrawTranslucentPoly(surface_t*, TVec*, int, int, float, bool, int,
@@ -306,7 +311,6 @@ public:
 
 	void PreRender();
 	void SegMoved(seg_t*);
-	void UpdateWorld();
 	void SetupFakeFloors(sector_t*);
 
 	void ForceLightning();

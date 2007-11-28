@@ -846,7 +846,7 @@ void VDirect3DDrawer::SetupView(VRenderLevelDrawer* ARLev, const refdef_t *rd)
 	guard(VDirect3DDrawer::SetupView);
 	RendLev = ARLev;
 
-	if (rd->drawworld && rd->width != ScreenWidth)
+	if (!rd->DrawCamera && rd->drawworld && rd->width != ScreenWidth)
 	{
 		R_DrawViewBorder();
 	}
@@ -1199,6 +1199,133 @@ void *VDirect3DDrawer::ReadScreen(int *bpp, bool *bot2top)
 	*bpp = 24;
 	*bot2top = false;
 	return dst;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VDirect3DDrawer::ReadBackScreen
+//
+//==========================================================================
+
+void VDirect3DDrawer::ReadBackScreen(int Width, int Height, rgba_t* Dest)
+{
+	guard(VDirect3DDrawer::ReadBackScreen);
+#if DIRECT3D_VERSION >= 0x0800
+#if DIRECT3D_VERSION >= 0x0900
+	LPDIRECT3DSURFACE9 surf;
+	RenderDevice->GetRenderTarget(0, &surf);
+#else
+	LPDIRECT3DSURFACE8 surf;
+	RenderDevice->GetRenderTarget(&surf);
+#endif
+
+	D3DSURFACE_DESC desc;
+	surf->GetDesc(&desc);
+
+	//	Decode pixel format
+	int scr_rbits;
+	int scr_rshift;
+	int scr_gbits;
+	int scr_gshift;
+	int scr_bbits;
+	int scr_bshift;
+	int scr_pixbytes;
+	if (desc.Format == D3DFMT_X1R5G5B5)
+	{
+		scr_rbits = 5;
+		scr_rshift = 10;
+		scr_gbits = 5;
+		scr_gshift = 5;
+		scr_bbits = 5;
+		scr_bshift = 0;
+		scr_pixbytes = 2;
+	}
+	else if (desc.Format == D3DFMT_R5G6B5)
+	{
+		scr_rbits = 5;
+		scr_rshift = 11;
+		scr_gbits = 6;
+		scr_gshift = 5;
+		scr_bbits = 5;
+		scr_bshift = 0;
+		scr_pixbytes = 2;
+	}
+	else if (desc.Format == D3DFMT_X8R8G8B8 || desc.Format == D3DFMT_A8R8G8B8)
+	{
+		scr_rbits = 8;
+		scr_rshift = 16;
+		scr_gbits = 8;
+		scr_gshift = 8;
+		scr_bbits = 8;
+		scr_bshift = 0;
+		scr_pixbytes = 4;
+	}
+	else
+	{
+		GCon->Log(NAME_Init, "Invalid pixel format");
+		Z_Free(dst);
+		return NULL;
+	}
+
+	D3DLOCKED_RECT lrect;
+	if (FAILED(surf->LockRect(&lrect, NULL, D3DLOCK_READONLY)))
+	{
+		Sys_Error("ReadScreen: Failed to lock screen");
+	}
+
+	rgba_t *pdst = Dest;
+	for (int j = 0; j < Height; j++)
+	{
+		byte *psrc = (byte*)lrect.pBits + j * lrect.Pitch;
+		for (int i = 0; i < Width; i++)
+		{
+			pdst->r = byte((*(vuint32*)psrc >> scr_rshift) << (8 - scr_rbits));
+			pdst->g = byte((*(vuint32*)psrc >> scr_gshift) << (8 - scr_gbits));
+			pdst->b = byte((*(vuint32*)psrc >> scr_bshift) << (8 - scr_bbits));
+			pdst->a = 255;
+			psrc += scr_pixbytes;
+			pdst++;
+		}
+	}
+
+	surf->UnlockRect();
+	surf->Release();
+#else
+	DDSURFACEDESC2	ddsd;
+
+	//	Lock surface
+	memset(&ddsd, 0, sizeof(ddsd));
+	ddsd.dwSize = sizeof(ddsd);
+	ddsd.dwFlags = DDSD_LPSURFACE | DDSD_PITCH | DDSD_PIXELFORMAT;
+	if (RenderSurface->Lock(NULL, &ddsd, DDLOCK_WAIT, NULL) != DD_OK)
+		Sys_Error("ReadScreen: Failed to lock screen");
+
+	//	Decode pixel format
+	int scr_rbits = GetBits(ddsd.ddpfPixelFormat.dwRBitMask);
+	int scr_rshift = GetShift(ddsd.ddpfPixelFormat.dwRBitMask);
+	int scr_gbits = GetBits(ddsd.ddpfPixelFormat.dwGBitMask);
+	int scr_gshift = GetShift(ddsd.ddpfPixelFormat.dwGBitMask);
+	int scr_bbits = GetBits(ddsd.ddpfPixelFormat.dwBBitMask);
+	int scr_bshift = GetShift(ddsd.ddpfPixelFormat.dwBBitMask);
+
+	rgba_t *pdst = Dest;
+	for (int j = 0; j < Height; j++)
+	{
+		byte *psrc = (byte*)ddsd.lpSurface + j * ddsd.lPitch;
+		for (int i = 0; i < Width; i++)
+		{
+			pdst->r = byte((*(vuint32*)psrc >> scr_rshift) << (8 - scr_rbits));
+			pdst->g = byte((*(vuint32*)psrc >> scr_gshift) << (8 - scr_gbits));
+			pdst->b = byte((*(vuint32*)psrc >> scr_bshift) << (8 - scr_bbits));
+			pdst->a = 255;
+			psrc += PixelBytes;
+			pdst++;
+		}
+	}
+
+	RenderSurface->Unlock(NULL);
+#endif
 	unguard;
 }
 

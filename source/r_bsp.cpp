@@ -413,7 +413,7 @@ void VRenderLevel::RenderBSPNode(int bspnum, float* bbox, int AClipflags)
 //
 //==========================================================================
 
-void VRenderLevel::RenderWorld()
+void VRenderLevel::RenderWorld(const refdef_t* rd)
 {
 	guard(VRenderLevel::RenderWorld);
 	float	dummy_bbox[6] = {-99999, -99999, -99999, 99999, 9999, 99999};
@@ -421,7 +421,7 @@ void VRenderLevel::RenderWorld()
 	SetUpFrustumIndexes();
 	ViewClip.ClearClipNodes(vieworg, Level);
 	ViewClip.ClipInitFrustrumRange(viewangles, viewforward, viewright, viewup,
-		refdef.fovx, refdef.fovy);
+		rd->fovx, rd->fovy);
 
 	SkyIsVisible = false;
 
