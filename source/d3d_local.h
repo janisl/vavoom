@@ -382,7 +382,7 @@ private:
 	LPDIRECTDRAWSURFACE7		*trsprdata;
 	LPDIRECTDRAWSURFACE7		particle_texture;
 #endif
-	int							trspr_tex[MAX_TRANSLATED_SPRITES];
+	VTexture*					trspr_tex[MAX_TRANSLATED_SPRITES];
 	int							trsprtnum[MAX_TRANSLATED_SPRITES];
 	int							tscount;
 
