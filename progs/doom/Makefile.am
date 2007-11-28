@@ -170,6 +170,12 @@ EXTRA_DIST = compile.bat \
 	game1/Spectre.vc \
 	game1/SpiderMastermind.vc \
 	game1/Stalagtite.vc \
+	game1/StealthBaron.vc \
+	game1/StealthCacodemon.vc \
+	game1/StealthDemon.vc \
+	game1/StealthDoomImp.vc \
+	game1/StealthShotgunGuy.vc \
+	game1/StealthZombieMan.vc \
 	game1/Stimpack.vc \
 	game1/TallGreenColumn.vc \
 	game1/TallRedColumn.vc \
@@ -203,6 +209,12 @@ EXTRA_DIST = compile.bat \
 	game2/RevenantTracerSmoke.vc \
 	game2/SpawnFire.vc \
 	game2/SpawnShot.vc \
+	game2/StealthArachnotron.vc \
+	game2/StealthArchvile.vc \
+	game2/StealthChaingunGuy.vc \
+	game2/StealthHellKnight.vc \
+	game2/StealthFatso.vc \
+	game2/StealthRevenant.vc \
 	game2/SuperShotgun.vc \
 	game2/WolfensteinSS.vc
 

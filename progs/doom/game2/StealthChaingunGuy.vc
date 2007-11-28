@@ -23,33 +23,13 @@
 //**
 //**************************************************************************
 
-#include "Megasphere.vc"
-#include "MegasphereHealth.vc"
-#include "SuperShotgun.vc"
+class StealthChaingunGuy : ChaingunGuy
+	__mobjinfo__(9054)
+	__scriptid__(120);
 
-#include "ChaingunGuy.vc"
-#include "WolfensteinSS.vc"
-#include "HellKnight.vc"
-#include "ArachnotronPlasma.vc"
-#include "Arachnotron.vc"
-#include "PainElemental.vc"
-#include "RevenantTracerSmoke.vc"
-#include "RevenantTracer.vc"
-#include "Revenant.vc"
-#include "FatShot.vc"
-#include "Fatso.vc"
-#include "ArchvileFire.vc"
-#include "Archvile.vc"
-#include "BossTarget.vc"
-#include "SpawnFire.vc"
-#include "SpawnShot.vc"
-#include "BossBrain.vc"
-#include "BossEye.vc"
-#include "BrainState.vc"
-#include "CommanderKeen.vc"
-#include "StealthArachnotron.vc"
-#include "StealthArchvile.vc"
-#include "StealthChaingunGuy.vc"
-#include "StealthHellKnight.vc"
-#include "StealthFatso.vc"
-#include "StealthRevenant.vc"
+defaultproperties
+{
+	bStealth = true;
+	RenderStyle = STYLE_Translucent;
+	Alpha = 0.0;
+}

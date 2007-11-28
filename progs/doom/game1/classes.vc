@@ -150,3 +150,10 @@
 #include "DeadShotgunGuy.vc"
 #include "GibbedMarine.vc"
 #include "GibbedMarineExtra.vc"
+
+#include "StealthBaron.vc"
+#include "StealthCacodemon.vc"
+#include "StealthDemon.vc"
+#include "StealthDoomImp.vc"
+#include "StealthShotgunGuy.vc"
+#include "StealthZombieMan.vc"

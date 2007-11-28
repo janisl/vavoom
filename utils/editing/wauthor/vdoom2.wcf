@@ -210,6 +210,18 @@ LightingInc=0
 0xbbc   3       40      possa1          Former human
 0xbbd   3       62      heada1          Cacodemon
 0xbbe   3       32      skula1          Lost soul
+0x235a  3       128     bspih1          Stealth arachnotron
+0x235b  3       40      vilek1          Stealth arch-vile
+0x235c  3       48      bossg1          Stealth baron of hell
+0x235d  3       62      headd1          Stealth cacodemon
+0x235e  3       40      cposf1          Stealth chaingunner
+0x235f  3       60      sargh1          Stealth demon
+0x2360  3       48      bos2g1          Stealth hell knight
+0x2361  3       40      troog1          Stealth imp
+0x2362  3       96      fatth1          Stealth mancubus
+0x2363  3       40      skelj1          Stealth revenant
+0x2364  3       40      sposf1          Stealth shotgunner
+0x2365  3       40      possf1          Stealth pistol guy
 0x2454  13      20      ifoga0          Polyobject anchor
 0x2455  13      20      ifoga0          Start spot
 0x2456  13      20      ifoga0          Start spot w/crush
