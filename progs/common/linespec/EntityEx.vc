@@ -178,6 +178,7 @@ bool bDehackedSpecial;	// Old style special handling
 bool bUnknown2;			//8000000
 bool bPuffParticles;	// Puff spawns particles
 bool bExplodeParticles;	// Use particle explosion
+bool bStealth;			// Andy Baker's Stealth monsters
 
 //  Params
 float			Speed;
@@ -221,6 +222,8 @@ int				MoveDir;		// 0-7
 int				MoveCount;		// when 0, select a new dir
 int				strafecount;    // killough 9/8/98: monster strafing
 int				FastChaseStrafeCount;
+
+int				VisDir;
 
 float			RDFactor;
 
@@ -3818,6 +3821,13 @@ final void Damage(EntityEx inflictor, EntityEx source, int damage,
 		}
 	}
 
+	//	Andy Baker's Stealth monsters
+	if (bStealth)
+	{
+		Alpha = 1.0;
+		VisDir = -1;
+	}
+
 	if (bSkullFly)
 	{
 		if (bSkullFlyInvulnerable)
@@ -5042,6 +5052,29 @@ void Tick(float deltaTime)
 	for (Item = Inventory; Item && Item.Owner == self; Item = Item.Inventory)
 	{
 		Item.DoEffect();
+	}
+
+	if (bStealth)
+	{
+		//	Fade a stealth monster in and out of visibility
+		if (VisDir > 0)
+		{
+			Alpha += 2.0 * deltaTime;
+			if (Alpha > 1.0)
+			{
+				Alpha = 1.0;
+				VisDir = 0;
+			}
+		}
+		else if (VisDir < 0)
+		{
+			Alpha -= 3.0 * deltaTime / 2.0;
+			if (Alpha < 0.0)
+			{
+				Alpha = 0.0;
+				VisDir = 0;
+			}
+		}
 	}
 
 	if (!Physics(deltaTime))

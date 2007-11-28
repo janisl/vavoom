@@ -46,6 +46,12 @@ final void A_Look()
 	Threshold = 0;	// any shot will wake up
 	targ = EntityEx(Sector->SoundTarget);
 
+	//	Andy Baker's stealth monsters
+	if (bStealth)
+	{
+		VisDir = -1;
+	}
+
 	if (targ && targ.bShootable)
 	{
 		Target = targ;
@@ -196,6 +202,12 @@ void DoChase(bool FastChase, state AMeleeState, state AMissileState,
 	float		oldX;
 	float		oldY;
 	int			oldFloor;
+
+	//	Andy Baker's stealth monsters
+	if (bStealth)
+	{
+		VisDir = -1;
+	}
 
 	if (ReactionCount)
 	{
@@ -412,6 +424,12 @@ final void A_FaceTarget()
 	if (!Target)
 		return;
 
+	//	Andy Baker's stealth monsters
+	if (bStealth)
+	{
+		VisDir = 1;
+	}
+
 	bAmbush = false;
 
 	Angles.yaw = atan2(Target.Origin.y - Origin.y,
@@ -556,6 +574,13 @@ final void A_NoBlocking()
 	if (bMuzzleFlash)
 	{
 		bMuzzleFlash = false;
+	}
+
+	//	Andy Baker's stealth monsters
+	if (bStealth)
+	{
+		Alpha = 1.0;
+		VisDir = 0;
 	}
 
 	// actor is on ground, it can be walked over

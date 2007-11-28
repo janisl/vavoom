@@ -71,6 +71,13 @@ final void A_FreezeDeath()
 	Translation = 0;	//no translation
 	bIceCorpse = true;
 
+	//	Andy Baker's stealth monsters
+	if (bStealth)
+	{
+		Alpha = 1.0;
+		VisDir = 0;
+	}
+
 	if (bIsPlayer)
 	{
 		Player(Player).DamageFlash = 0.0;
