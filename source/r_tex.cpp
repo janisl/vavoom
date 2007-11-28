@@ -1389,6 +1389,59 @@ static void ParseWarp(VScriptParser* sc, int Type)
 
 //==========================================================================
 //
+//	ParseCameraTexture
+//
+//==========================================================================
+
+static void ParseCameraTexture(VScriptParser* sc)
+{
+	guard(ParseCameraTexture);
+	//	Name
+	sc->ExpectName8();
+	VName Name = sc->Name8;
+	//	Dimensions
+	sc->ExpectNumber();
+	int Width = sc->Number;
+	sc->ExpectNumber();
+	int Height = sc->Number;
+	int FitWidth = Width;
+	int FitHeight = Height;
+
+	//	Check for replacing an existing texture
+	VCameraTexture* Tex = new VCameraTexture(Name, Width, Height);
+	int TexNum = GTextureManager.CheckNumForName(Name, TEXTYPE_Flat, true,
+		true);
+	if (TexNum != -1)
+	{
+		//	By default camera texture will fit in old texture.
+		VTexture* OldTex = GTextureManager[TexNum];
+		FitWidth = OldTex->GetScaledWidth();
+		FitHeight = OldTex->GetScaledHeight();
+		Tex->Type = OldTex->Type;
+		Tex->TextureTranslation = OldTex->TextureTranslation;
+		GTextureManager.Textures[TexNum] = Tex;
+		delete OldTex;
+	}
+	else
+	{
+		GTextureManager.AddTexture(Tex);
+	}
+
+	//	Optionally specify desired scaled size.
+	if (sc->Check("fit"))
+	{
+		sc->ExpectNumber();
+		FitWidth = sc->Number;
+		sc->ExpectNumber();
+		FitHeight = sc->Number;
+	}
+	Tex->SScale = (float)Width / (float)FitWidth;
+	Tex->TScale = (float)Height / (float)FitHeight;
+	unguard;
+}
+
+//==========================================================================
+//
 //	ParseFTAnims
 //
 //	Initialise flat and texture animation lists.
@@ -1426,15 +1479,7 @@ static void ParseFTAnims(VScriptParser* sc)
 		}
 		else if (sc->Check("cameratexture"))
 		{
-			//	Just skip it for now.
-			sc->ExpectString();
-			sc->ExpectNumber();
-			sc->ExpectNumber();
-			if (sc->Check("fit"))
-			{
-				sc->ExpectNumber();
-				sc->ExpectNumber();
-			}
+			ParseCameraTexture(sc);
 		}
 		else
 		{

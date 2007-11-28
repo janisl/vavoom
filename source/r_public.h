@@ -137,6 +137,7 @@ public:
 	int			TOffset;
 	bool		bNoRemap0;
 	bool		bWorldPanning;
+	bool		bIsCameraTexture;
 	vuint8		WarpType;
 	float		SScale;				//	Scaling
 	float		TScale;

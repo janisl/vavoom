@@ -1491,6 +1491,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\source\r_tex_camera.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\source\r_tex_flat.cpp"
 					>
 				</File>

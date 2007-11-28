@@ -182,6 +182,7 @@ _____MAIN_EXE__SOURCES = \
 	r_tex.h \
 	r_tex_automap.cpp \
 	r_tex_base.cpp \
+	r_tex_camera.cpp \
 	r_tex_flat.cpp \
 	r_tex_imgz.cpp \
 	r_tex_jpeg.cpp \
@@ -487,6 +488,7 @@ _____SERVER_EXE__SOURCES = \
 	r_tex.cpp \
 	r_tex_automap.cpp \
 	r_tex_base.cpp \
+	r_tex_camera.cpp \
 	r_tex_flat.cpp \
 	r_tex_imgz.cpp \
 	r_tex_jpeg.cpp \

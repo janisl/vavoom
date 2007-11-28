@@ -278,6 +278,21 @@ public:
 	vuint8* GetPixels();
 };
 
+//
+//	Camera texture.
+//
+class VCameraTexture : public VTexture
+{
+private:
+	vuint8*		Pixels;
+
+public:
+	VCameraTexture(VName, int, int);
+	~VCameraTexture();
+	vuint8* GetPixels();
+	void Unload();
+};
+
 extern VCvarI			r_hirestex;
 
 #endif
