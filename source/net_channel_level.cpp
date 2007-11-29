@@ -379,7 +379,6 @@ void VLevelChannel::Update()
 		VEntity* CamEnt = Cam.Camera;
 		if (CamEnt && !Connection->ObjMap->CanSerialiseObject(CamEnt))
 		{
-dprintf("Can't serialise\n");
 			CamEnt = NULL;
 		}
 		if (CamEnt == RepCam.Camera && Cam.TexNum == RepCam.TexNum &&
@@ -388,7 +387,6 @@ dprintf("Can't serialise\n");
 			continue;
 		}
 
-dprintf("Camera %d %p\n", i, CamEnt);
 		//	Send message
 		Msg.WriteInt(CMD_CamTex, CMD_MAX);
 		Msg.WriteInt(i, 0xff);
@@ -564,7 +562,6 @@ void VLevelChannel::ParsePacket(VMessageIn& Msg)
 				Connection->ObjMap->SerialiseObject(Msg, *(VObject**)&Cam.Camera);
 				Cam.TexNum = Msg.ReadInt(0xffff);
 				Cam.FOV = Msg.ReadInt(360);
-dprintf("Received camera %d %p\n", i, Cam.Camera);
 			}
 		}
 	}
