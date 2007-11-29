@@ -2562,3 +2562,122 @@
 ******************************************************************************
                             VERSION 1.25
 ******************************************************************************
+
+17.10.2007
+  I created a Widget class, moved child links to it.
+18.10.2007
+  In Widget class I added position, size parameters and handling of child
+ widgets.
+19.10.2007
+  I moved drawing methods from GC class to Widget, removed it from draw event
+ arguments.
+20.10.2007
+  I got rid of GC class, added scaling parameters to Widget class.
+21.10.2007
+  Firebrand did some improvements to dynamic lights and particles.
+25.10.2007
+  I implemented handling of clipping rectangles of widgets and implemented
+ drawing of pics in widget with proper clipping.
+26.10.2007
+  I got rid of old clipping rectangle.
+29.10.2007
+  I moved many drawing methods to Widget class.
+30.10.2007
+  In Widget class I added methods for setting position, size and scaling of a
+ widget.
+31.10.2007
+  I added delegates to some menu choice classes and started to convert menus
+ not to use subclassing for every menu choice.
+  I added clamping of scolling offsets for cases where values grow too big.
+01.11.2007
+  I continued to convert menus, mostly options.
+02.11.2007
+  I converted multiplayer menus.
+03.11.2007
+  I converted most of the remaining menus.
+04.11.2007
+  I finished with the menu conversion.
+05.11.2007
+  I cleaned up some text drawing methods.
+06.11.2007
+  I moved some text drawing methods to Widget class.
+07.11.2007
+  I moved visibility and enable flags to Widget class together with related
+ methods.
+08.11.2007
+  I moved remaining stuff from Window class to Widget that allowed me to got
+ rid of Window and ModalWindow classes. I Renamed RootWindow to RootWidget.
+09.11.2007
+  Firebrand did some improvements to the particle effects and fixed some bugs
+ with monsters avoiding dropoffs.
+  I added focus and keyboard input handling in Widget class, got rid of the
+ MenuObject class.
+10.11.2007
+  I added mouse input support to the Widget class, created a simple graphic for
+ mouse cursor.
+12.11.2007
+  I fixed crashes when sky plane is moving.
+13.11.2007
+  I moved all text drawing methods and data to Widget class.
+  I fixed a crash when calling ACS function from different module.
+14.11.2007
+  I changed render device API to have textures passes as pointers to texture
+ objects instead of the indexes, made texture base class global.
+  I changed font structure into a class.
+15.11.2007
+  I greatly changed the way fonts are loaded, font characters are handled,
+ added some helper methods to the font class, changed fonts to be identified by
+ name.
+16.11.2007
+  I created a texture class for font character, started to implement support
+ for coloured font characters.
+17.11.2007
+  Fully implemented support for drawing coloured text, text colours and custom
+ fonts scripts, text colour escape character. I changed some menu coice classes
+ to use them.
+18.11.2007
+  I implemented building of GL nodes with glBSP if level doesn't have them by
+ creating a temporary WAD file and then calling glBSP. After that I change it
+ to retrieve built nodes directly from internal structures of glBSP so there's
+ no need to write the GWA file anymore. This allows maps from PK3 files to be
+ loaded without problems.
+  I fixed a crash when trying to play an empty music file.
+19.11.2007
+  In node builder I changed map data to be set up from already loaded level, so
+ there's no more need for a temporary WAD file.
+  I fixed some bugs that caused TITLEMAP of KDIZD to crash.
+  I created a progs package for common UI elelents, added base classes for menu
+ choice, menu screen, status bar and shared client game.
+20.11.2007
+  Firebrand is playing with text colours.
+  I merged several of the common menu widget classes.
+21.11.2007
+  I merged more of the menu widget classes and common menus.
+  I moved drawing of notify and centre messages to progs.
+22.11.2007
+  In font class I added method that splits text into lines wrapping at given
+ width.
+  I fixed some bugs with dynamic arrays in progs.
+23.11.2007
+  I started to implement support for ACS HUD messages, basic functionality for
+ plain HUD messages is done.
+24.11.2007
+  I implemented support for HUD messages with custom virtual screen size and
+ font. I started to implement support for FON1 format fonts.
+25.11.2007
+  I implemented support for FON1 and FON2 format fonts and possibility to use
+ any texture as a font.
+  I implemented support for all HUD message types. The CREDITS map of KDIZD now
+ works fine.
+  I added support for Vorbis and MP3 format sound samples, now opening sound
+ of TITLEMAP of KDIZD works.
+  I started to add renderer support for additive translucency.
+26.11.2007
+  Fully implemented additive translucency, added possibility to change line
+ translucency during game.
+27.11.2007
+  I implemented support for different render styles of the entities.
+  I implemented support for stealth monsters.
+28.11.2007
+  I added stealth Doom monster types.
+  I implemented support for camera textures.
