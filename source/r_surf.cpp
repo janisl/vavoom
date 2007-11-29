@@ -1765,7 +1765,13 @@ void VRenderLevel::PreRender()
 			}
 			if (sub->poly)
 			{
-				spcount += 2 * sub->poly->numsegs;
+				int polyCount = sub->poly->numsegs;
+				seg_t **polySeg = sub->poly->segs;
+				while (polyCount--)
+				{
+					spcount += CountSegParts(*polySeg);
+					polySeg++;
+				}
 			}
 		}
 	}
