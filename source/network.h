@@ -210,6 +210,7 @@ public:
 	rep_side_t*		Sides;
 	rep_sector_t*	Sectors;
 	rep_polyobj_t*	PolyObjs;
+	TArray<VCameraTextureInfo>	CameraTextures;
 
 	VLevelChannel(VNetConnection*, vint32, vuint8 = true);
 	~VLevelChannel();

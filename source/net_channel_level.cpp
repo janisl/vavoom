@@ -43,6 +43,7 @@ enum
 	CMD_NewLevel,
 	CMD_PreRender,
 	CMD_Line,
+	CMD_CamTex,
 
 	CMD_MAX
 };
@@ -107,6 +108,7 @@ void VLevelChannel::SetLevel(VLevel* ALevel)
 		Sides = NULL;
 		Sectors = NULL;
 		PolyObjs = NULL;
+		CameraTextures.Clear();
 	}
 
 	Level = ALevel;
@@ -361,6 +363,45 @@ void VLevelChannel::Update()
 		RepPo->angle = Po->angle;
 	}
 
+	for (int i = 0; i < Level->CameraTextures.Num(); i++)
+	{
+		//	Grow replication array if needed.
+		if (CameraTextures.Num() == i)
+		{
+			VCameraTextureInfo& C = CameraTextures.Alloc();
+			C.Camera = NULL;
+			C.TexNum = -1;
+			C.FOV = 0;
+		}
+
+		VCameraTextureInfo& Cam = Level->CameraTextures[i];
+		VCameraTextureInfo& RepCam = CameraTextures[i];
+		VEntity* CamEnt = Cam.Camera;
+		if (CamEnt && !Connection->ObjMap->CanSerialiseObject(CamEnt))
+		{
+dprintf("Can't serialise\n");
+			CamEnt = NULL;
+		}
+		if (CamEnt == RepCam.Camera && Cam.TexNum == RepCam.TexNum &&
+			Cam.FOV == RepCam.FOV)
+		{
+			continue;
+		}
+
+dprintf("Camera %d %p\n", i, CamEnt);
+		//	Send message
+		Msg.WriteInt(CMD_CamTex, CMD_MAX);
+		Msg.WriteInt(i, 0xff);
+		Connection->ObjMap->SerialiseObject(Msg, *(VObject**)&CamEnt);
+		Msg.WriteInt(Cam.TexNum, 0xffff);
+		Msg.WriteInt(Cam.FOV, 360);
+
+		//	Update replication info.
+		RepCam.Camera = CamEnt;
+		RepCam.TexNum = Cam.TexNum;
+		RepCam.FOV = Cam.FOV;
+	}
+
 	if (Msg.GetNumBits())
 	{
 		SendMessage(&Msg);
@@ -508,6 +549,23 @@ void VLevelChannel::ParsePacket(VMessageIn& Msg)
 			CL_SignonReply();
 #endif
 			break;
+
+		case CMD_CamTex:
+			{
+				int i = Msg.ReadInt(0xff);
+				while (Level->CameraTextures.Num() <= i)
+				{
+					VCameraTextureInfo& C = Level->CameraTextures.Alloc();
+					C.Camera = NULL;
+					C.TexNum = -1;
+					C.FOV = 0;
+				}
+				VCameraTextureInfo& Cam = Level->CameraTextures[i];
+				Connection->ObjMap->SerialiseObject(Msg, *(VObject**)&Cam.Camera);
+				Cam.TexNum = Msg.ReadInt(0xffff);
+				Cam.FOV = Msg.ReadInt(360);
+dprintf("Received camera %d %p\n", i, Cam.Camera);
+			}
 		}
 	}
 	unguard;

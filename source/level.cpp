@@ -494,6 +494,9 @@ void VLevel::SetCameraToTexture(VEntity* Ent, VName TexName, int FOV)
 		return;
 	}
 
+	//	Make camera to be always relevant
+	Ent->ThinkerFlags |= VEntity::TF_AlwaysRelevant;
+
 	for (int i = 0; i < CameraTextures.Num(); i++)
 	{
 		if (CameraTextures[i].TexNum == TexNum)
