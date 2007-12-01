@@ -76,6 +76,13 @@ struct RGB_MAP
 	vuint8		data[32][32][32];
 };
 
+struct fot1_header_t
+{
+	char		Id[4];
+	vuint16		Width;
+	vuint16		Height;
+};
+
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -718,6 +725,111 @@ void GrabPic15()
 
 //==========================================================================
 //
+//	CompressChar
+//
+//==========================================================================
+
+vint8* CompressChar(vuint8* Src, vint8* Dst, int Size)
+{
+	vuint8* SrcEnd = Src + Size;
+	do
+	{
+		if (SrcEnd - Src < 2)
+		{
+			//	Write last pixel
+			*Dst++ = 0;
+			*Dst++ = *Src++;
+		}
+		else if (Src[0] != Src[1] && (SrcEnd - Src < 2 || Src[0] != Src[2]))
+		{
+			//	Write different pixels.
+			int Len = 2;
+			while (Len < 128 && Len < SrcEnd - Src && (Len + 2 > SrcEnd - Src ||
+				(Src[Len - 1] != Src[Len] && Src[Len - 1] != Src[Len + 1])))
+			{
+				Len++;
+			}
+			*Dst++ = Len - 1;
+			for (int i = 0; i < Len; i++)
+			{
+				*Dst++ = *Src++;
+			}
+		}
+		else
+		{
+			//	Write equal pixels.
+			int Len = 2;
+			while (Len < 128 && Len < SrcEnd - Src && Src[Len - 1] == Src[Len])
+			{
+				Len++;
+			}
+			*Dst++ = -Len + 1;
+			*Dst++ = *Src;
+			Src += Len;
+		}
+	}
+	while (Src < SrcEnd);
+	return Dst;
+}
+
+//==========================================================================
+//
+//	GrabFon1
+//
+//	lumpname FON1
+//
+//==========================================================================
+
+void GrabFon1()
+{
+	//	Dimensions of a character.
+	int CharW = ImgWidth / 16;
+	int CharH = ImgHeight / 16;
+	//	Calculate maximum size needed for a single character.
+	int MaxCharBytes = CharW * CharH + (CharW * CharH + 127) / 128;
+
+	//	Allocate memory and fill in header.
+	fot1_header_t* Font = (fot1_header_t*)Malloc(sizeof(fot1_header_t) +
+		MaxCharBytes * 256);
+	Font->Id[0] = 'F';
+	Font->Id[1] = 'O';
+	Font->Id[2] = 'N';
+	Font->Id[3] = '1';
+	Font->Width = LittleShort(CharW);
+	Font->Height = LittleShort(CharH);
+
+	//	Process characters.
+	vuint8* CharBuf = (vuint8*)Malloc(CharW * CharH);
+	vint8* pDst = (vint8*)(Font + 1);
+	for (int i = 0; i < 256; i++)
+	{
+		int StartX = (i % 16) * CharW;
+		int StartY = (i / 16) * CharH;
+		for (int ch = 0; ch < CharH; ch++)
+		{
+			for (int cw = 0; cw < CharW; cw++)
+			{
+				CharBuf[ch * CharW + cw] = GetPixel(StartX + cw, StartY + ch);
+			}
+		}
+		pDst = CompressChar(CharBuf, pDst, CharW * CharH);
+	}
+
+	//	Write lump and free memory.
+	if (Zip)
+	{
+		AddToZip(lumpname, Font, pDst - (vint8*)Font);
+	}
+	else
+	{
+		outwad.AddLump(lumpname, Font, pDst - (vint8*)Font);
+	}
+	Free(Font);
+	Free(CharBuf);
+}
+
+//==========================================================================
+//
 //	ParseScript
 //
 //==========================================================================
@@ -860,6 +972,10 @@ void ParseScript(const char *name)
 			else if (SC_Compare("pic15"))
 			{
 				GrabPic15();
+			}
+			else if (SC_Compare("fon1"))
+			{
+				GrabFon1();
 			}
 			else
 			{
