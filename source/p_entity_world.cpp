@@ -413,7 +413,7 @@ bool VEntity::PIT_CheckThing(void* arg, VEntity *Other)
 	cptrace_t cptrace = *(cptrace_t*)arg;
 
 	// can't hit thing
-	if (!(cptrace.Thing->EntityFlags & VEntity::EF_Solid))
+	if (!(Other->EntityFlags & VEntity::EF_Solid))
 		return true;
 
 	blockdist = Other->Radius + cptrace.Thing->Radius;
