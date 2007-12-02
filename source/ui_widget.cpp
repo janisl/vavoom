@@ -1129,54 +1129,6 @@ void VWidget::DrawCursorAt(int x, int y)
 
 //==========================================================================
 //
-//	VWidget::DrawString8
-//
-//	Write a string using the font with fixed width 8.
-//
-//==========================================================================
-
-void VWidget::DrawString8(int x, int y, const VStr& String)
-{
-	guard(VWidget::DrawString8);
-	if (!String)
-		return;
-
-	int cx = x;
-	int cy = y;
-	int Colour = CR_UNTRANSLATED;
-
-	if (HAlign == hcentre)
-		cx -= Font->StringWidth(String) / 2;
-	if (HAlign == hright)
-		cx -= Font->StringWidth(String);
-
-	for (const char* SPtr = *String; *SPtr;)
-	{
-		int c = VStr::GetChar(SPtr);
-
-		//	Check for colour escape.
-		if (c == TEXT_COLOUR_ESCAPE)
-		{
-			Colour = VFont::ParseColourEscape(SPtr, CR_UNTRANSLATED,
-				CR_YELLOW);
-			continue;
-		}
-
-		int w;
-		VTexture* Tex = Font->GetChar(c, &w, Colour);
-		if (Tex)
-		{
-			DrawPic(cx + (8 - w) / 2, cy, Tex);
-		}
-		cx += 8;
-	}
-	LastX = cx;
-	LastY = cy;
-	unguard;
-}
-
-//==========================================================================
-//
 //	Natives
 //
 //==========================================================================

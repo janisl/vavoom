@@ -81,7 +81,6 @@ void T_Shutdown();
 void T_SetFont(VFont*);
 void T_SetAlign(halign_e, valign_e);
 
-void T_DrawString8(int, int, const VStr&);
 void T_DrawText(int, int, const VStr&, int);
 
 void T_DrawCursor();

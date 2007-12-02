@@ -264,7 +264,6 @@ public:
 	void DrawText(int, int, const VStr&, int, int, float);
 	void DrawCursor();
 	void DrawCursorAt(int, int);
-	void DrawString8(int, int, const VStr&);
 
 	static VWidget *CreateNewWidget(VClass*, VWidget*);
 

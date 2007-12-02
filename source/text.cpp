@@ -123,16 +123,3 @@ void T_DrawCursorAt(int x, int y)
 {
 	GRoot->DrawCursorAt(x, y);
 }
-
-//==========================================================================
-//
-//	T_DrawString8
-//
-//	Write a string using the font with fixed width 8.
-//
-//==========================================================================
-
-void T_DrawString8(int x, int y, const VStr& String)
-{
-	GRoot->DrawString8(x, y, String);
-}
