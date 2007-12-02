@@ -740,12 +740,12 @@ vint8* CompressChar(vuint8* Src, vint8* Dst, int Size)
 			*Dst++ = 0;
 			*Dst++ = *Src++;
 		}
-		else if (Src[0] != Src[1] && (SrcEnd - Src < 2 || Src[0] != Src[2]))
+		else if (Src[0] != Src[1])
 		{
 			//	Write different pixels.
-			int Len = 2;
-			while (Len < 128 && Len < SrcEnd - Src && (Len + 2 > SrcEnd - Src ||
-				(Src[Len - 1] != Src[Len] && Src[Len - 1] != Src[Len + 1])))
+			int Len = 1;
+			while (Len < 128 && Len < SrcEnd - Src && (Len + 3 > SrcEnd - Src ||
+				(Src[Len] != Src[Len + 1] && Src[Len] != Src[Len + 2])))
 			{
 				Len++;
 			}
