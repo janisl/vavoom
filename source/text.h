@@ -88,3 +88,4 @@ void T_DrawCursor();
 void T_DrawCursorAt(int, int);
 
 extern VFont*			SmallFont;
+extern VFont*			ConFont;

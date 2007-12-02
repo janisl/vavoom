@@ -255,16 +255,16 @@ void C_Drawer()
 	// Backbround
 	Drawer->DrawConsoleBackground((int)(fScaleY * cons_h));
 
-	T_SetFont(SmallFont);
+	T_SetFont(ConFont);
 	T_SetAlign(hleft, vtop);
 
 	// Input line
 	y = (int)cons_h - 10;
-	T_DrawString8(4, y, ">");
+	T_DrawText(4, y, ">", CR_UNTRANSLATED);
 	i = VStr::Length(c_iline.Data) - 37;
 	if (i < 0)
 		i = 0;
-	T_DrawString8(12, y, c_iline.Data + i);
+	T_DrawText(12, y, c_iline.Data + i, CR_UNTRANSLATED);
 	T_DrawCursor();
 	y -= 10;
 
@@ -272,7 +272,8 @@ void C_Drawer()
 	i = last_line;
 	while ((y + 9 > 0) && i--)
 	{
-		T_DrawString8(4, y, clines[(i + first_line) % MAX_LINES]);
+		T_DrawText(4, y, clines[(i + first_line) % MAX_LINES],
+			CR_UNTRANSLATED);
 		y -= 9;
 	}
 }

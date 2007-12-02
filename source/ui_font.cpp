@@ -153,6 +153,7 @@ public:
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
 VFont*								SmallFont;
+VFont*								ConFont;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -194,6 +195,8 @@ void VFont::StaticInit()
 	}
 	//	Big font.
 	new VFont(NAME_bigfont, "fontb%02d", 33, 95, 1);
+	//	Console font
+	ConFont = GetFont(NAME_consolefont, NAME_confont);
 
 	//	Load custom fonts.
 	ParseFontDefs();
@@ -571,7 +574,7 @@ VFont* VFont::FindFont(VName AName)
 //
 //==========================================================================
 
-VFont* VFont::GetFont(VName AName)
+VFont* VFont::GetFont(VName AName, VName LumpName)
 {
 	guard(VFont::GetFont);
 	VFont* F = FindFont(AName);
@@ -581,7 +584,7 @@ VFont* VFont::GetFont(VName AName)
 	}
 
 	//	Check for wad lump.
-	int Lump = W_CheckNumForName(AName);
+	int Lump = W_CheckNumForName(LumpName);
 	if (Lump >= 0)
 	{
 		//	Read header.
@@ -603,10 +606,10 @@ VFont* VFont::GetFont(VName AName)
 		}
 	}
 
-	int TexNum = GTextureManager.CheckNumForName(AName, TEXTYPE_Any);
+	int TexNum = GTextureManager.CheckNumForName(LumpName, TEXTYPE_Any);
 	if (TexNum <= 0)
 	{
-		TexNum = GTextureManager.AddPatch(AName, TEXTYPE_Pic);
+		TexNum = GTextureManager.AddPatch(LumpName, TEXTYPE_Pic);
 	}
 	if (TexNum > 0)
 	{

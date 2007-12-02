@@ -268,6 +268,7 @@ REGISTER_NAME(smallfont)
 REGISTER_NAME(smallfont2)
 REGISTER_NAME(bigfont)
 REGISTER_NAME(consolefont)
+REGISTER_NAME(confont)
 
 // Closing -----------------------------------------------------------------
 

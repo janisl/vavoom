@@ -105,7 +105,7 @@ public:
 	static void StaticInit();
 	static void StaticShutdown();
 	static VFont* FindFont(VName);
-	static VFont* GetFont(VName);
+	static VFont* GetFont(VName, VName);
 	static int ParseColourEscape(const char*&, int, int);
 	static int FindTextColour(VName);
 };

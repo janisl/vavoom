@@ -968,7 +968,7 @@ void VWidget::SetFont(VFont* AFont)
 void VWidget::SetFont(VName FontName)
 {
 	guard(VWidget::SetFont);
-	VFont* F = VFont::GetFont(FontName);
+	VFont* F = VFont::GetFont(FontName, FontName);
 	if (F)
 	{
 		Font = F;
