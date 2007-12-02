@@ -28,3 +28,7 @@ language.en				@srcdir@/language.en
 terrain.txt				@srcdir@/terrain.txt
 lockdefs.txt			@srcdir@/lockdefs.txt
 textcolo.txt			@srcdir@/textcolo.txt
+
+//	Console font
+$load @srcdir@/confont.pcx
+confont.lmp				fon1
