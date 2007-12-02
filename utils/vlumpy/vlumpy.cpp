@@ -76,11 +76,32 @@ struct RGB_MAP
 	vuint8		data[32][32][32];
 };
 
-struct fot1_header_t
+struct fon1_header_t
 {
 	char		Id[4];
 	vuint16		Width;
 	vuint16		Height;
+};
+
+struct fon2_header_t
+{
+	char		Id[4];
+	vuint16		Height;
+	vuint8		FirstChar;
+	vuint8		LastChar;
+	vuint8		FixedWidth;
+	vuint8		RescalePalette;
+	vuint8		ActiveColours;
+	vuint8		KerningFlag;
+};
+
+struct fon2_char_t
+{
+	int				Width;
+	int				Height;
+	vuint8*			Data;
+	vint8*			ComprData;
+	int				ComprDataSize;
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -105,6 +126,8 @@ bool			rgb_table_created;
 
 char			lumpname[256];
 char			destfile[1024];
+
+bool			Fon2ColoursUsed[256];
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -745,7 +768,7 @@ vint8* CompressChar(vuint8* Src, vint8* Dst, int Size)
 			//	Write different pixels.
 			int Len = 1;
 			while (Len < 128 && Len < SrcEnd - Src && (Len + 3 > SrcEnd - Src ||
-				(Src[Len] != Src[Len + 1] && Src[Len] != Src[Len + 2])))
+				Src[Len] != Src[Len + 1] || Src[Len] != Src[Len + 2]))
 			{
 				Len++;
 			}
@@ -789,7 +812,7 @@ void GrabFon1()
 	int MaxCharBytes = CharW * CharH + (CharW * CharH + 127) / 128;
 
 	//	Allocate memory and fill in header.
-	fot1_header_t* Font = (fot1_header_t*)Malloc(sizeof(fot1_header_t) +
+	fon1_header_t* Font = (fon1_header_t*)Malloc(sizeof(fon1_header_t) +
 		MaxCharBytes * 256);
 	Font->Id[0] = 'F';
 	Font->Id[1] = 'O';
@@ -826,6 +849,254 @@ void GrabFon1()
 	}
 	Free(Font);
 	Free(CharBuf);
+}
+
+//==========================================================================
+//
+//	Fon2PalCmp
+//
+//==========================================================================
+
+int Fon2PalCmp(const void* v1, const void* v2)
+{
+	int Idx1 = *(int*)v1;
+	int Idx2 = *(int*)v2;
+	//	Move unused colours to the end.
+	if (!Fon2ColoursUsed[Idx1])
+	{
+		return 1;
+	}
+	if (!Fon2ColoursUsed[Idx2])
+	{
+		return -1;
+	}
+	float Lum1 = ImgPal[Idx1].r * 0.299 + ImgPal[Idx1].g * 0.587 +
+		ImgPal[Idx1].b * 0.114;
+	float Lum2 = ImgPal[Idx2].r * 0.299 + ImgPal[Idx2].g * 0.587 +
+		ImgPal[Idx2].b * 0.114;
+	if (Lum1 < Lum2)
+	{
+		return -1;
+	}
+	if (Lum1 > Lum2)
+	{
+		return 1;
+	}
+	return 0;
+}
+
+//==========================================================================
+//
+//	GrabFon2
+//
+//	lumpname FON2
+//
+//==========================================================================
+
+void GrabFon2()
+{
+	//	Process characters.
+	fon2_char_t* Chars[256];
+	memset(Chars, 0, sizeof(Chars));
+	memset(Fon2ColoursUsed, 0, sizeof(Fon2ColoursUsed));
+	Fon2ColoursUsed[0] = true;
+	int CharNum = ' ';
+	for (int StartY = 1; StartY < ImgHeight;)
+	{
+		//	Find bottom line.
+		int EndY = StartY + 1;
+		while (EndY < ImgHeight && GetPixel(1, EndY) != 255)
+		{
+			EndY++;
+		}
+		if (EndY >= ImgHeight)
+		{
+			//	Reached end of the image.
+			break;
+		}
+
+		for (int StartX = 1; StartX < ImgWidth;)
+		{
+			//	Find right line.
+			int EndX = StartX;
+			while (EndX < ImgWidth && GetPixel(EndX, StartY) != 255)
+			{
+				EndX++;
+			}
+			if (EndX >= ImgWidth)
+			{
+				//	Reached end of the image.
+				break;
+			}
+
+			if (EndX != StartX)
+			{
+				fon2_char_t* Chr = new fon2_char_t;
+				Chars[CharNum] = Chr;
+				Chr->Width = EndX - StartX;
+				Chr->Height = EndY - StartY;
+				Chr->Data = (vuint8*)Malloc(Chr->Width * Chr->Height);
+				vuint8* pData = Chr->Data;
+				for (int ch = StartY; ch < EndY; ch++)
+				{
+					for (int cw = StartX; cw < EndX; cw++)
+					{
+						*pData = GetPixel(cw, ch);
+						Fon2ColoursUsed[*pData] = true;
+						pData++;
+					}
+				}
+			}
+
+			CharNum++;
+			StartX = EndX + 1;
+		}
+		StartY = EndY + 1;
+	}
+
+	//	Sort colours by their luminosity.
+	int SortIdx[256];
+	for (int i = 0; i < 256; i++)
+	{
+		SortIdx[i] = i;
+	}
+	qsort(SortIdx + 1, 255, sizeof(int), Fon2PalCmp);
+
+	//	Build palette containing only used colours.
+	rgb_t Pal[256];
+	vuint8 Remap[256];
+	int NumColours = 0;
+	for (int i = 0; i < 256; i++)
+	{
+		int Idx = SortIdx[i];
+		if (Fon2ColoursUsed[Idx])
+		{
+			Pal[NumColours] = ImgPal[Idx];
+			Remap[Idx] = NumColours;
+			NumColours++;
+		}
+	}
+
+	//	Remap image data to new palette.
+	for (int i = 0; i < 256; i++)
+	{
+		fon2_char_t* Chr = Chars[i];
+		if (!Chr)
+		{
+			continue;
+		}
+		for (int j = 0; j < Chr->Width * Chr->Height; j++)
+		{
+			Chr->Data[j] = Remap[Chr->Data[j]];
+		}
+	}
+
+	//	Find maximal height of a character.
+	int FontHeight = 0;
+	for (int i = 0; i < 256; i++)
+	{
+		fon2_char_t* Chr = Chars[i];
+		if (Chr && Chr->Height > FontHeight)
+		{
+			FontHeight = Chr->Height;
+		}
+	}
+
+	//	Add extra transparent pixels for characters that are shorter
+	for (int i = 0; i < 256; i++)
+	{
+		fon2_char_t* Chr = Chars[i];
+		if (!Chr || Chr->Height == FontHeight)
+		{
+			continue;
+		}
+		vuint8* NewData = (vuint8*)Malloc(Chr->Width * FontHeight);
+		memset(NewData, 0, Chr->Width * (FontHeight - Chr->Height));
+		memcpy(NewData + Chr->Width * (FontHeight - Chr->Height),
+			Chr->Data, Chr->Width * Chr->Height);
+		Free(Chr->Data);
+		Chr->Data = NewData;
+		Chr->Height = FontHeight;
+	}
+
+	//	Compress character data.
+	int DataSize = 0;
+	for (int i = 0; i < 256; i++)
+	{
+		fon2_char_t* Chr = Chars[i];
+		if (!Chr)
+		{
+			continue;
+		}
+		Chr->ComprData = (vint8*)Malloc(Chr->Width * Chr->Height +
+			(Chr->Width * Chr->Height + 127) / 128);
+		vint8* pEnd = CompressChar(Chr->Data, Chr->ComprData,
+			Chr->Width * Chr->Height);
+		Chr->ComprDataSize = pEnd - Chr->ComprData;
+		DataSize += Chr->ComprDataSize;
+	}
+
+	//	Allocate memory and fill in header.
+	int NumChars = CharNum - ' ';
+	fon2_header_t* Font = (fon2_header_t*)Malloc(sizeof(fon2_header_t) +
+		NumColours * 3 + NumChars * 2 + DataSize);
+	Font->Id[0] = 'F';
+	Font->Id[1] = 'O';
+	Font->Id[2] = 'N';
+	Font->Id[3] = '2';
+	Font->Height = LittleShort(FontHeight);
+	Font->FirstChar = ' ';
+	Font->LastChar = CharNum - 1;
+	Font->FixedWidth = 0;
+	Font->RescalePalette = 1;
+	Font->ActiveColours = NumColours - 1;
+	Font->KerningFlag = 0;
+
+	//	Write widths
+	vuint16* Widths = (vuint16*)(Font + 1);
+	for (int i = ' '; i < CharNum; i++)
+	{
+		fon2_char_t* Chr = Chars[i];
+		Widths[i - ' '] = LittleShort(Chr ? Chr->Width : 0);
+	}
+
+	//	Write palette
+	rgb_t* pPal = (rgb_t*)(Widths + NumChars);
+	memcpy(pPal, Pal, NumColours * 3);
+
+	//	Write data
+	vint8* pDst = (vint8*)(pPal + NumColours);
+	for (int i = ' '; i < CharNum; i++)
+	{
+		fon2_char_t* Chr = Chars[i];
+		if (Chr)
+		{
+			memcpy(pDst, Chr->ComprData, Chr->ComprDataSize);
+			pDst += Chr->ComprDataSize;
+		}
+	}
+
+	//	Write lump and free memory.
+	if (Zip)
+	{
+		AddToZip(lumpname, Font, pDst - (vint8*)Font);
+	}
+	else
+	{
+		outwad.AddLump(lumpname, Font, pDst - (vint8*)Font);
+	}
+
+	Free(Font);
+	for (int i = ' '; i < CharNum; i++)
+	{
+		fon2_char_t* Chr = Chars[i];
+		if (Chr)
+		{
+			Free(Chr->Data);
+			Free(Chr->ComprData);
+			delete Chr;
+		}
+	}
 }
 
 //==========================================================================
@@ -976,6 +1247,10 @@ void ParseScript(const char *name)
 			else if (SC_Compare("fon1"))
 			{
 				GrabFon1();
+			}
+			else if (SC_Compare("fon2"))
+			{
+				GrabFon2();
 			}
 			else
 			{
