@@ -1034,11 +1034,14 @@ void SV_SpawnServer(const char *mapname, bool spawn_thinkers)
 	}
 	GLevelInfo->LevelInfoFlags |= VLevelInfo::LIF_BegunPlay;
 
-	P_Ticker();
-	P_Ticker();
+	if (!host_standalone)
+	{
+		P_Ticker();
+		P_Ticker();
 
-	//	Start open scripts.
-	GLevel->Acs->StartTypedACScripts(SCRIPT_Open);
+		//	Start open scripts.
+		GLevel->Acs->StartTypedACScripts(SCRIPT_Open);
+	}
 
 	GCon->Log(NAME_Dev, "Server spawned");
 	unguard;
@@ -1108,6 +1111,12 @@ COMMAND(Spawn)
 	if (!netgame)
 	{
 		SV_SaveGame(SV_GetRebornSlot(), REBORN_DESCRIPTION);
+	}
+
+	if (host_standalone)
+	{
+		//	Start open scripts.
+		GLevel->Acs->StartTypedACScripts(SCRIPT_Open);
 	}
 	unguard;
 }
