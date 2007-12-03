@@ -110,6 +110,7 @@ EXTRA_DIST = \
 	linespec/TeleportDest3.vc \
 	linespec/TextureChangeDoor.vc \
 	linespec/VerticalDoor.vc \
+	linespec/WaterZone.vc \
 	linespec/Weapon.vc \
 	uibase/classes.vc \
 	uibase/ClientGameShared.vc \

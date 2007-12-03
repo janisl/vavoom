@@ -103,6 +103,7 @@ enum
 #include "MapSpotGravity.vc"
 #include "PointPusher.vc"
 #include "PointPuller.vc"
+#include "WaterZone.vc"
 
 #include "SwitchableDecoration.vc"
 #include "SwitchingDecoration.vc"
