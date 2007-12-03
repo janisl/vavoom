@@ -1,0 +1,158 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class AmbientSound : ScriptedEntity
+	__mobjinfo__(14065);
+
+float			Timer;
+bool			bActive;
+
+//==========================================================================
+//
+//	BeginPlay
+//
+//==========================================================================
+
+void BeginPlay()
+{
+	::BeginPlay();
+	Activate();
+}
+
+//==========================================================================
+//
+//	Activate
+//
+//==========================================================================
+
+bool Activate()
+{
+	::Activate();
+
+	FAmbientSound* Amb = GetAmbientSound(Args[0]);
+	if (!Amb || !Amb->Sound)
+	{
+		Destroy();
+		return false;
+	}
+
+	if (!bActive)
+	{
+		SetTimer(Amb);
+		bActive = true;
+	}
+	return true;
+}
+
+//==========================================================================
+//
+//	Deactivate
+//
+//==========================================================================
+
+bool Deactivate()
+{
+	::Deactivate();
+	if (bActive)
+	{
+		bActive = false;
+		FAmbientSound* Amb = GetAmbientSound(Args[0]);
+		if ((Amb->Type & SNDTYPE_PlaybackMask) == SNDTYPE_Continuous)
+		{
+			StopSound(CHAN_AUTO);
+		}
+	}
+	return true;
+}
+
+//==========================================================================
+//
+//	Tick
+//
+//==========================================================================
+
+void Tick(float DeltaTime)
+{
+	::Tick(DeltaTime);
+
+	Timer -= DeltaTime;
+	if (Timer < 0.0)
+	{
+		Timer = 0.0;
+	}
+
+	if (!bActive || Timer)
+	{
+		return;
+	}
+
+	FAmbientSound* Amb = GetAmbientSound(Args[0]);
+	if (!Amb || !Amb->Sound)
+	{
+		Destroy();
+		return;
+	}
+
+	if ((Amb->Type & SNDTYPE_PlaybackMask) == SNDTYPE_Continuous)
+	{
+		if (GetSoundPlayingInfo(self, GetSoundID(Amb->Sound)))
+		{
+			return;
+		}
+	}
+
+	PlaySound(Amb->Sound, CHAN_BODY, Amb->Volume, Amb->Attenuation);
+	SetTimer(Amb);
+}
+
+//==========================================================================
+//
+//	SetTimer
+//
+//==========================================================================
+
+void SetTimer(FAmbientSound* Amb)
+{
+	switch (Amb->Type & SNDTYPE_PlaybackMask)
+	{
+	case SNDTYPE_Continuous:
+		Timer += 0.03;
+		break;
+
+	case SNDTYPE_Random:
+		Timer += Amb->PeriodMin + Random() * (Amb->PeriodMax - Amb->PeriodMin);
+		break;
+
+	case SNDTYPE_Periodic:
+		Timer += Amb->PeriodMin;
+		break;
+	}
+}
+
+defaultproperties
+{
+	bHidden = true;
+	bNoBlockmap = true;
+}

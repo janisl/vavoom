@@ -33,6 +33,27 @@ enum seqtype_t
 struct sfxinfo_t;
 struct seq_info_t;
 
+enum ESoundType
+{
+	SNDTYPE_World = 0,
+	SNDTYPE_Point = 1,
+	SNDTYPE_Surround =2,
+
+	SNDTYPE_Continuous = 4,
+	SNDTYPE_Random = 8,
+	SNDTYPE_Periodic = 12,
+};
+
+struct FAmbientSound
+{
+	vuint32		Type;		// type of ambient sound
+	float		PeriodMin;	// # of tics between repeats
+	float		PeriodMax;	// max # of tics for random ambients
+	float		Volume;		// relative volume of sound
+	float		Attenuation;
+	VName		Sound;		// Logical name of sound to play
+};
+
 //
 //	VSoundManager
 //
@@ -55,6 +76,7 @@ public:
 	bool LoadSound(int);
 	void DoneWithLump(int);
 	float GetMusicVolume(VName);
+	FAmbientSound* GetAmbientSound(int);
 
 	void SetSeqTrans(VName, int, int);
 	VName GetSeqTrans(int, int);
@@ -71,27 +93,6 @@ private:
 		int		GenderId;
 		int		RefId;
 		int		SoundId;
-	};
-
-	enum ESoundType
-	{
-		SNDTYPE_World = 0,
-		SNDTYPE_Point = 1,
-		SNDTYPE_Surround =2,
-
-		SNDTYPE_Continuous = 4,
-		SNDTYPE_Random = 8,
-		SNDTYPE_Periodic = 12,
-	};
-
-	struct FAmbientSound
-	{
-		vuint32		Type;		// type of ambient sound
-		float		PeriodMin;	// # of tics between repeats
-		float		PeriodMax;	// max # of tics for random ambients
-		float		Volume;		// relative volume of sound
-		float		Attenuation;
-		VName		Sound;		// Logical name of sound to play
 	};
 
 	enum { NUM_AMBIENT_SOUNDS = 256 };

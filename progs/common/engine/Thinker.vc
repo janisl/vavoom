@@ -34,6 +34,29 @@ enum
 	ROLE_Authority
 };
 
+enum
+{
+	SNDTYPE_World,
+	SNDTYPE_Point,
+	SNDTYPE_Surround,
+	SNDTYPE_OriginMask = 0x03,
+
+	SNDTYPE_Continuous = 4,
+	SNDTYPE_Random = 8,
+	SNDTYPE_Periodic = 12,
+	SNDTYPE_PlaybackMask = 0x0c
+};
+
+struct FAmbientSound
+{
+	int			Type;		// type of ambient sound
+	float		PeriodMin;	// # of tics between repeats
+	float		PeriodMax;	// max # of tics for random ambients
+	float		Volume;		// relative volume of sound
+	float		Attenuation;
+	name		Sound;		// Logical name of sound to play
+};
+
 readonly Level			XLevel;		//	Level object.
 readonly LevelInfo		Level;		//	Level info object.
 
@@ -62,6 +85,7 @@ native final void bprint(string format, ...);
 
 native final dlight_t *AllocDlight(Thinker Owner);
 native final particle_t *NewParticle();
+native static final FAmbientSound* GetAmbientSound(int Idx);
 
 native final iterator AllThinkers(class<Thinker> Class, out Thinker Thinker);
 native final iterator AllActivePlayers(out BasePlayer Player);

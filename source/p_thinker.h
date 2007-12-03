@@ -89,6 +89,7 @@ class VThinker : public VObject
 
 	DECLARE_FUNCTION(AllocDlight)
 	DECLARE_FUNCTION(NewParticle)
+	DECLARE_FUNCTION(GetAmbientSound)
 
 	//	Iterators
 	DECLARE_FUNCTION(AllThinkers)

@@ -29,6 +29,7 @@ EXTRA_DIST = \
 	engine/Widget.vc \
 	engine/WorldInfo.vc \
 	linespec/classes.vc \
+	linespec/AmbientSound.vc \
 	linespec/Ammo.vc \
 	linespec/Armor.vc \
 	linespec/BackpackItem.vc \

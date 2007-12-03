@@ -4276,11 +4276,39 @@ final void SpawnMapThing(mthing_t* mthing)
 		return;
 	}
 
+	//	Sector's sound sequence types.
 	if (mthing->type >= 1400 && mthing->type < 1410)
 	{
 		XLevel.PointInSector(vector(mthing->x,
 			mthing->y, 0.0))->seqType = mthing->type - 1400;
 		return;
+	}
+	if (mthing->type == 1411)
+	{
+		int			SeqType;
+
+		if (mthing->arg1 == 255)
+			SeqType = -1;
+		else
+			SeqType = mthing->arg1;
+
+		if (SeqType > 63)
+		{
+			print("Sound sequence %d out of range", SeqType);
+		}
+		else
+		{
+			XLevel.PointInSector(vector(mthing->x,
+				mthing->y, 0.0))->seqType = SeqType;
+		}
+		return;
+	}
+
+	//	Remap old ambient sound types to the generic one.
+	if (mthing->type >= 14001 && mthing->type <= 14064)
+	{
+		mthing->arg1 = mthing->type - 14000;
+		mthing->type = 14065;
 	}
 
 	// Check current game type with spawn flags

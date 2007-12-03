@@ -135,3 +135,4 @@ enum
 #include "Scroller.vc"
 #include "PlaneWatcher.vc"
 #include "Pusher.vc"
+#include "AmbientSound.vc"

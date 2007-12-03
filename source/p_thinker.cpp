@@ -486,6 +486,12 @@ IMPLEMENT_FUNCTION(VThinker, NewParticle)
 	RET_PTR(Self->XLevel->RenderData->NewParticle());
 }
 
+IMPLEMENT_FUNCTION(VThinker, GetAmbientSound)
+{
+	P_GET_INT(Idx);
+	RET_PTR(GSoundManager->GetAmbientSound(Idx));
+}
+
 IMPLEMENT_FUNCTION(VThinker, AllThinkers)
 {
 	P_GET_PTR(VThinker*, Thinker);

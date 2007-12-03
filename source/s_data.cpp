@@ -914,6 +914,23 @@ float VSoundManager::GetMusicVolume(VName SongName)
 
 //==========================================================================
 //
+//	VSoundManager::GetAmbientSound
+//
+//==========================================================================
+
+FAmbientSound* VSoundManager::GetAmbientSound(int Idx)
+{
+	guardSlow(VSoundManager::GetAmbientSound);
+	if (Idx < 0 || Idx >= NUM_AMBIENT_SOUNDS)
+	{
+		return NULL;
+	}
+	return AmbientSounds[Idx];
+	unguardSlow;
+}
+
+//==========================================================================
+//
 //	VSoundManager::ParseSequenceScript
 //
 //==========================================================================
