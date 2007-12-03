@@ -1356,8 +1356,7 @@ void VRawSampleLoader::Load(sfxinfo_t& Sfx, VStream& Strm)
 	Strm << Unknown
 		<< SampleRate
 		<< DataSize;
-	if ((SampleRate != 11025 && SampleRate != 22050 && SampleRate != 44100) ||
-		(vint32)DataSize != Strm.TotalSize() - 8)
+	if (Unknown != 3 || (vint32)DataSize != Strm.TotalSize() - 8)
 	{
 		return;
 	}
