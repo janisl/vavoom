@@ -1034,11 +1034,11 @@ void SV_SpawnServer(const char *mapname, bool spawn_thinkers)
 	}
 	GLevelInfo->LevelInfoFlags |= VLevelInfo::LIF_BegunPlay;
 
+	P_Ticker();
+	P_Ticker();
+
 	//	Start open scripts.
 	GLevel->Acs->StartTypedACScripts(SCRIPT_Open);
-
-	P_Ticker();
-	P_Ticker();
 
 	GCon->Log(NAME_Dev, "Server spawned");
 	unguard;

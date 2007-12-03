@@ -1564,7 +1564,7 @@ VAcs* VAcsLevel::SpawnScript(VAcsInfo* Info, VAcsObject* Object,
 	if (Delayed)
 	{
 		//	World objects are allotted 1 second for initialization.
-		script->DelayTime = 1.0;
+		//script->DelayTime = 1.0;
 	}
 	if (!Always)
 	{
