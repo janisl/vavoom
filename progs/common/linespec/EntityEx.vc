@@ -1714,6 +1714,11 @@ final EntityEx AimLineAttack(out TVec OutDir, TAVec angles, float distance)
 			// A two sided line will restrict
 			// the possible target ranges.
 			dist = aim_range * in->frac;
+			if (dist < 0.01)
+			{
+				//	Shooter is on the line.
+				continue;
+			}
 			hit_point = Origin + dist * aim_dir;
 			open = LineOpenings(li, hit_point);
 			open = FindOpening(open, hit_point.z, hit_point.z);
@@ -1766,6 +1771,11 @@ final EntityEx AimLineAttack(out TVec OutDir, TAVec angles, float distance)
 
 		// check angles to see if the thing can be aimed at
 		dist = aim_range2d * in->frac;
+		if (dist < 0.01)
+		{
+			//	Too close, must be above or below.
+			continue;
+		}
 		thingtopslope = (th.Origin.z + th.Height - aim_z) / dist;
 
 		if (thingtopslope < aim_bottomslope)
