@@ -29,6 +29,8 @@ EXTRA_DIST = \
 	engine/Widget.vc \
 	engine/WorldInfo.vc \
 	linespec/classes.vc \
+	linespec/ActorMover.vc \
+	linespec/AimingCamera.vc \
 	linespec/AmbientSound.vc \
 	linespec/Ammo.vc \
 	linespec/Armor.vc \
@@ -47,6 +49,8 @@ EXTRA_DIST = \
 	linespec/Health.vc \
 	linespec/HealthPickup.vc \
 	linespec/HexenArmor.vc \
+	linespec/InterpolationPoint.vc \
+	linespec/InterpolationSpecial.vc \
 	linespec/Inventory.vc \
 	linespec/ItemFog.vc \
 	linespec/Key.vc \
@@ -55,9 +59,11 @@ EXTRA_DIST = \
 	linespec/LightEffect.vc \
 	linespec/LineSpecialGameInfo.vc \
 	linespec/LineSpecialLevelInfo.vc \
+	linespec/LookAtCamera.vc \
 	linespec/MapRevealer.vc \
 	linespec/MapSpot.vc \
 	linespec/MapSpotGravity.vc \
+	linespec/PathFollower.vc \
 	linespec/PhasedLight.vc \
 	linespec/PickupFlash.vc \
 	linespec/Pillar.vc \
@@ -92,6 +98,7 @@ EXTRA_DIST = \
 	linespec/Scroller.vc \
 	linespec/SectorMover.vc \
 	linespec/SectorThinker.vc \
+	linespec/SecurityCamera.vc \
 	linespec/SoundSequence.vc \
 	linespec/SoundSequenceSlot.vc \
 	linespec/StairStepMover.vc \

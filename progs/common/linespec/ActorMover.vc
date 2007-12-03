@@ -1,0 +1,181 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+//**
+//**	Based on code from ZDoom with following notice:
+//**
+//** Copyright 1998-2006 Randy Heit
+//** All rights reserved.
+//**
+//** Redistribution and use in source and binary forms, with or without
+//** modification, are permitted provided that the following conditions
+//** are met:
+//**
+//** 1. Redistributions of source code must retain the above copyright
+//**    notice, this list of conditions and the following disclaimer.
+//** 2. Redistributions in binary form must reproduce the above copyright
+//**    notice, this list of conditions and the following disclaimer in the
+//**    documentation and/or other materials provided with the distribution.
+//** 3. The name of the author may not be used to endorse or promote products
+//**    derived from this software without specific prior written permission.
+//**
+//** THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
+//** IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+//** OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+//** IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
+//** INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+//** NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+//** DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+//** THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+//** (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+//** THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+//**
+//**************************************************************************
+//**
+//**	ActorMover: Moves any actor along a camera path
+//**
+//**	Same as PathFollower, except
+//**	args[2], bit 7: make nonsolid
+//**	args[3] = tid of thing to move
+//**
+//**************************************************************************
+
+class ActorMover : PathFollower
+	__mobjinfo__(9074);
+
+bool bSavedNoGravity;
+bool bSavedNoBlockmap;
+bool bSavedSolid;
+bool bSavedDormant;
+
+//==========================================================================
+//
+//	BeginPlay
+//
+//==========================================================================
+
+void BeginPlay()
+{
+	EntityEx A;
+
+	::BeginPlay();
+
+	foreach AllThinkers(EntityEx, A)
+	{
+		if (A.TID == Args[3])
+		{
+			Target = A;
+			break;
+		}
+	}
+
+	if (Target == none)
+	{
+		print("ActorMover %d: Can't find target %d", TID, Args[3]);
+	}
+}
+
+//==========================================================================
+//
+//	Interpolate
+//
+//==========================================================================
+
+bool Interpolate()
+{
+	if (Target == none)
+		return true;
+
+	if (::Interpolate())
+	{
+		if (!Target.TryMove(Origin))
+		{
+			return false;
+		}
+
+		if (Args[2] & 2)
+			Target.Angles.yaw = Angles.yaw;
+		if (Args[2] & 4)
+			Target.Angles.pitch = Angles.pitch;
+
+		return true;
+	}
+	return false;
+}
+
+//==========================================================================
+//
+//	Activate
+//
+//==========================================================================
+
+bool Activate()
+{
+	if (Target == none || bActive)
+		return false;
+
+	::Activate();
+	bSavedNoGravity = Target.bNoGravity;
+	bSavedNoBlockmap = Target.bNoBlockmap;
+	bSavedSolid = Target.bSolid;
+	bSavedDormant = Target.bDormant;
+	Target.bNoGravity = true;
+	if (Args[2] & 128)
+	{
+		Target.UnlinkFromWorld();
+		Target.bNoBlockmap = true;
+		Target.bSolid = false;
+		Target.LinkToWorld();
+	}
+	if (Target.bMonster)
+	{
+		Target.bDormant = true;
+	}
+	return true;
+}
+
+//==========================================================================
+//
+//	Deactivate
+//
+//==========================================================================
+
+bool Deactivate()
+{
+	::Deactivate();
+	if (Target != none)
+	{
+		Target.bSolid = bSavedSolid;
+		Target.bNoGravity = bSavedNoGravity;
+		Target.UnlinkFromWorld();
+		Target.bNoBlockmap = bSavedNoBlockmap;
+		Target.LinkToWorld();
+		Target.bDormant = bSavedDormant;
+	}
+	return true;
+}
+
+defaultproperties
+{
+}

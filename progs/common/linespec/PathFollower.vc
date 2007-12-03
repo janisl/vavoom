@@ -1,0 +1,429 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+//**
+//**	Based on code from ZDoom with following notice:
+//**
+//** Copyright 1998-2006 Randy Heit
+//** All rights reserved.
+//**
+//** Redistribution and use in source and binary forms, with or without
+//** modification, are permitted provided that the following conditions
+//** are met:
+//**
+//** 1. Redistributions of source code must retain the above copyright
+//**    notice, this list of conditions and the following disclaimer.
+//** 2. Redistributions in binary form must reproduce the above copyright
+//**    notice, this list of conditions and the following disclaimer in the
+//**    documentation and/or other materials provided with the distribution.
+//** 3. The name of the author may not be used to endorse or promote products
+//**    derived from this software without specific prior written permission.
+//**
+//** THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
+//** IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+//** OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+//** IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
+//** INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+//** NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+//** DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+//** THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+//** (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+//** THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+//**
+//**************************************************************************
+//**
+//**	PathFollower: something that follows a camera path
+//**	Base class for some moving cameras
+//**
+//**	args[0] = low byte of first node in path's tid
+//**	args[1] = high byte of first node's tid
+//**	args[2] = bit 0 = follow a linear path (rather than curved)
+//**			  bit 1 = adjust angle
+//**			  bit 2 = adjust pitch
+//**			  bit 3 = aim in direction of motion
+//**
+//**************************************************************************
+
+class PathFollower : ScriptedEntity
+	__mobjinfo__(9071);
+
+bool bActive;
+bool bJustStepped;
+InterpolationPoint StartPrevNode;
+InterpolationPoint StartCurrNode;
+InterpolationPoint PrevNode;
+InterpolationPoint CurrNode;
+float Time;		// Runs from 0.0 to 1.0 between CurrNode and CurrNode->NextPoint
+float HoldTime;
+
+//==========================================================================
+//
+//	SLerp
+//
+//	Interpolate between p2 and p3 along a Catmull-Rom spline.
+//	http://research.microsoft.com/~hollasch/cgindex/curves/catmull-rom.html
+//
+//==========================================================================
+
+float SLerp(float p1, float p2, float p3, float p4)
+{
+	float t = Time;
+	float res = 2.0 * p2;
+	res += (p3 - p1) * Time;
+	t *= Time;
+	res += (2.0 * p1 - 5.0 * p2 + 4.0 * p3 - p4) * t;
+	t *= Time;
+	res += (3.0 * p2 - 3.0 * p3 + p4 - p1) * t;
+	return 0.5 * res;
+}
+
+//==========================================================================
+//
+//	Lerp
+//
+//	Linearly interpolate between p1 and p2.
+//
+//==========================================================================
+
+float Lerp(float p1, float p2)
+{
+	return p2 * Time + p1 * (1.0 - Time);
+}
+
+//==========================================================================
+//
+//	BeginPlay
+//
+//==========================================================================
+
+void BeginPlay()
+{
+	InterpolationPoint A;
+	InterpolationPoint node;
+	InterpolationPoint prevnode;
+
+	::BeginPlay();
+
+	// Find first node of path
+	foreach AllThinkers(InterpolationPoint, A)
+	{
+		if (A.TID == Args[0] + 256 * Args[1])
+		{
+			node = A;
+			break;
+		}
+	}
+
+	StartCurrNode = node;
+
+	if (node == none)
+	{
+		print("PathFollower %d: Can't find interpolation pt %d",
+			TID, Args[0] + 256 * Args[1]);
+		return;
+	}
+
+	// Verify the path has enough nodes
+	node.FormChain();
+	if (Args[2] & 1)
+	{
+		// linear path; need 2 nodes
+		if (node.NextPoint == none)
+		{
+			print("PathFollower %d: Path needs at least 2 nodes", TID);
+			return;
+		}
+		StartPrevNode = none;
+	}
+	else
+	{
+		// spline path; need 4 nodes
+		if (node.NextPoint == none ||
+			node.NextPoint.NextPoint == none ||
+			node.NextPoint.NextPoint.NextPoint == none)
+		{
+			print("PathFollower %d: Path needs at least 4 nodes", TID);
+			return;
+		}
+		// If the first node is in a loop, we can start there.
+		// Otherwise, we need to start at the second node in the path.
+		prevnode = node.ScanForLoop();
+		if (prevnode == none || prevnode.NextPoint != node)
+		{
+			StartPrevNode = node;
+			StartCurrNode = node.NextPoint;
+		}
+		else
+		{
+			StartPrevNode = prevnode;
+		}
+	}
+}
+
+//==========================================================================
+//
+//	Deactivate
+//
+//==========================================================================
+
+bool Deactivate()
+{
+	bActive = false;
+	return true;
+}
+
+//==========================================================================
+//
+//	Activate
+//
+//==========================================================================
+
+bool Activate()
+{
+	if (!bActive)
+	{
+		CurrNode = StartCurrNode;
+		PrevNode = StartPrevNode;
+
+		if (CurrNode != none)
+		{
+			NewNode();
+			SetOrigin(CurrNode.Origin);
+			Time = 0.0;
+			HoldTime = 0.0;
+			bJustStepped = true;
+			bActive = true;
+		}
+		return true;
+	}
+	return false;
+}
+
+//==========================================================================
+//
+//	Tick
+//
+//==========================================================================
+
+void Tick(float DeltaTime)
+{
+	::Tick(DeltaTime);
+	if (!bActive)
+		return;
+
+	if (bJustStepped)
+	{
+		bJustStepped = false;
+		if (CurrNode.Args[2])
+		{
+			HoldTime = XLevel.Time + itof(CurrNode.Args[2]) * 4.0 / 35.0;
+			Origin = CurrNode.Origin;
+		}
+	}
+
+	if (HoldTime > XLevel.Time)
+		return;
+
+	if (CurrNode.NextPoint == none)
+	{
+		bActive = false;
+		return;
+	}
+
+	if (Interpolate())
+	{
+		Time += 8.0 / itof(CurrNode.Args[1]) * DeltaTime;
+		if (Time > 1.0)
+		{
+			Time -= 1.0;
+			bJustStepped = true;
+			PrevNode = CurrNode;
+			CurrNode = CurrNode.NextPoint;
+			if (CurrNode != none)
+				NewNode();
+			if (CurrNode == none || CurrNode.NextPoint == none)
+				Deactivate();
+			if ((Args[2] & 1) == 0 && CurrNode.NextPoint.NextPoint == none)
+				Deactivate();
+		}
+	}
+}
+
+//==========================================================================
+//
+//	NewNode
+//
+//==========================================================================
+
+void NewNode()
+{
+	InterpolationSpecial S;
+
+	foreach AllThinkers(InterpolationSpecial, S)
+	{
+		if (S.TID == CurrNode.TID)
+		{
+			Level.ExecuteActionSpecial(S.Special, S.Args[0], S.Args[1],
+				S.Args[2], S.Args[3], S.Args[4], NULL, 0, none);
+		}
+	}
+}
+
+//==========================================================================
+//
+//	Interpolate
+//
+//==========================================================================
+
+bool Interpolate()
+{
+	TVec TempOrg;
+	TAVec TempAng;
+
+	if ((Args[2] & 8) && Time > 0.0)
+	{
+		TempOrg = Origin;
+	}
+
+	UnlinkFromWorld();
+	if (Args[2] & 1)
+	{
+		// linear
+		Origin.x = Lerp(CurrNode.Origin.x, CurrNode.NextPoint.Origin.x);
+		Origin.y = Lerp(CurrNode.Origin.y, CurrNode.NextPoint.Origin.y);
+		Origin.z = Lerp(CurrNode.Origin.z, CurrNode.NextPoint.Origin.z);
+	}
+	else
+	{
+		// spline
+		Origin.x = SLerp(PrevNode.Origin.x, CurrNode.Origin.x,
+			CurrNode.NextPoint.Origin.x, CurrNode.NextPoint.NextPoint.Origin.x);
+		Origin.y = SLerp(PrevNode.Origin.y, CurrNode.Origin.y,
+			CurrNode.NextPoint.Origin.y, CurrNode.NextPoint.NextPoint.Origin.y);
+		Origin.z = SLerp(PrevNode.Origin.z, CurrNode.Origin.z,
+			CurrNode.NextPoint.Origin.z, CurrNode.NextPoint.NextPoint.Origin.z);
+	}
+	LinkToWorld();
+
+	if (Args[2] & 6)
+	{
+		if (Args[2] & 8)
+		{
+			if (Args[2] & 1)
+			{
+				// linear
+				TempOrg = CurrNode.NextPoint.Origin - CurrNode.Origin;
+			}
+			else if (Time > 0.0)
+			{
+				// spline
+				TempOrg = Origin - TempOrg;
+			}
+			else
+			{
+				int realarg = Args[2];
+				Args[2] &= ~(2 | 4 | 8);
+				Time += 0.1;
+				TempOrg = Origin;
+				Interpolate();
+				Time -= 0.1;
+				Args[2] = realarg;
+				TempOrg = Origin - TempOrg;
+				Origin -= TempOrg;
+			}
+			VectorAngles(&TempOrg, &TempAng);
+			if (Args[2] & 2)
+			{
+				// adjust yaw
+				Angles.yaw = TempAng.yaw;
+			}
+			if (Args[2] & 4)
+			{
+				// adjust pitch
+				Angles.pitch = TempAng.pitch;
+			}
+		}
+		else
+		{
+			if (Args[2] & 2)
+			{
+				// interpolate angle
+				float angle1 = CurrNode.Angles.yaw;
+				float angle2 = CurrNode.NextPoint.Angles.yaw;
+				if (angle2 - angle1 <= -180.0)
+				{
+					float lerped = Lerp(angle1, angle2 + 360.0);
+					if (lerped >= 360.0)
+					{
+						Angles.yaw = lerped - 360.0;
+					}
+					else
+					{
+						Angles.yaw = lerped;
+					}
+				}
+				else if (angle2 - angle1 >= 180.0)
+				{
+					float lerped = Lerp(angle1, angle2 - 360.0);
+					if (lerped < 0.0)
+					{
+						Angles.yaw = lerped + 360.0;
+					}
+					else
+					{
+						Angles.yaw = lerped;
+					}
+				}
+				else
+				{
+					Angles.yaw = Lerp(angle1, angle2);
+				}
+			}
+			if (Args[2] & 4)
+			{
+				// interpolate pitch
+				if (Args[2] & 1)
+				{
+					// linear
+					Angles.pitch = Lerp(CurrNode.Angles.pitch, CurrNode.NextPoint.Angles.pitch);
+				}
+				else
+				{
+					// spline
+					Angles.pitch = SLerp(PrevNode.Angles.pitch, CurrNode.Angles.pitch,
+						CurrNode.NextPoint.Angles.pitch, CurrNode.NextPoint.NextPoint.Angles.pitch);
+				}
+			}
+		}
+	}
+
+	return true;
+}
+
+defaultproperties
+{
+	bNoBlockmap = true;
+	bHidden = true;
+	bNoGravity = true;
+}

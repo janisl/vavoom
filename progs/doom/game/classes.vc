@@ -44,4 +44,3 @@
 #include "QuakeFocus.vc"
 #include "StaticLightSource.vc"
 #include "StaticRGBLightSource.vc"
-#include "SecurityCamera.vc"

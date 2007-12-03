@@ -49,7 +49,6 @@ EXTRA_DIST = compile.bat \
 	game/MainGameInfo.vc \
 	game/Player.vc \
 	game/QuakeFocus.vc \
-	game/SecurityCamera.vc \
 	game/SlimeChunk.vc \
 	game/SlimeSplash.vc \
 	game/SludgeChunk.vc \

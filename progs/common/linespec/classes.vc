@@ -111,6 +111,14 @@ enum
 #include "SoundSequence.vc"
 #include "SoundSequenceSlot.vc"
 
+#include "SecurityCamera.vc"
+#include "AimingCamera.vc"
+#include "InterpolationPoint.vc"
+#include "InterpolationSpecial.vc"
+#include "PathFollower.vc"
+#include "ActorMover.vc"
+#include "LookAtCamera.vc"
+
 #include "LineSpecialLevelInfo.vc"
 #include "LineSpecialGameInfo.vc"
 #include "SectorThinker.vc"

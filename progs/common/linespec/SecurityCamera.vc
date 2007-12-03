@@ -1,0 +1,130 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+//**
+//**	Based on code from ZDoom with following notice:
+//**
+//** Copyright 1998-2006 Randy Heit
+//** All rights reserved.
+//**
+//** Redistribution and use in source and binary forms, with or without
+//** modification, are permitted provided that the following conditions
+//** are met:
+//**
+//** 1. Redistributions of source code must retain the above copyright
+//**    notice, this list of conditions and the following disclaimer.
+//** 2. Redistributions in binary form must reproduce the above copyright
+//**    notice, this list of conditions and the following disclaimer in the
+//**    documentation and/or other materials provided with the distribution.
+//** 3. The name of the author may not be used to endorse or promote products
+//**    derived from this software without specific prior written permission.
+//**
+//** THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
+//** IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+//** OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+//** IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
+//** INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+//** NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+//** DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+//** THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+//** (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+//** THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+//**
+//**************************************************************************
+//**
+//**	SecurityCamera
+//**
+//**	args[0] = pitch
+//**	args[1] = amount camera turns to either side of its initial position
+//**			  (in degrees)
+//**	args[2] = octics to complete one cycle
+//**
+//**************************************************************************
+
+class SecurityCamera : ScriptedEntity
+	__mobjinfo__(9025);
+
+float Centre;
+float Acc;
+float Delta;
+float Range;
+
+//==========================================================================
+//
+//	BeginPlay
+//
+//==========================================================================
+
+void BeginPlay()
+{
+	::BeginPlay();
+	Centre = Angles.yaw;
+	if (Args[2])
+		Delta = 360.0 / (itof(Args[2]) / 8.0);
+	else
+		Delta = 0.0;
+	if (Args[1])
+		Delta /= 2.0;
+	Acc = 0.0;
+	Angles.pitch = itof(Args[0]);
+	if (Angles.pitch <= -90.0)
+		Angles.pitch = -89.0;
+	else if (Angles.pitch >= 90.0)
+		Angles.pitch = 89.0;
+	Range = itof(Args[1]);
+}
+
+//==========================================================================
+//
+//	Tick
+//
+//==========================================================================
+
+void Tick(float DeltaTime)
+{
+	::Tick(DeltaTime);
+	TickCamera(DeltaTime);
+}
+
+//==========================================================================
+//
+//	TickCamera
+//
+//==========================================================================
+
+void TickCamera(float DeltaTime)
+{
+	Acc += Delta * DeltaTime;
+	if (Range)
+		Angles.yaw = Centre + Range * sin(Acc);
+	else if (Delta)
+		Angles.yaw = Acc;
+}
+
+defaultproperties
+{
+	bNoBlockmap = true;
+	bNoGravity = true;
+	bHidden = true;
+}
