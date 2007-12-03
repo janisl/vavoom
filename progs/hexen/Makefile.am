@@ -332,8 +332,6 @@ EXTRA_DIST = compile.bat \
 	game/SorcFX3Explosion.vc \
 	game/SorcFX4.vc \
 	game/SorcSpark1.vc \
-	game/SoundSequence.vc \
-	game/SoundSequenceSlot.vc \
 	game/SoundWaterfall.vc \
 	game/SoundWindHexen.vc \
 	game/StaticLightSource.vc \

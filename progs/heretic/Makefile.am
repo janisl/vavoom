@@ -211,8 +211,6 @@ EXTRA_DIST = compile.bat \
 	game/Sorcerer2FXSpark.vc \
 	game/Sorcerer2Telefade.vc \
 	game/SorcererFX1.vc \
-	game/SoundSequence.vc \
-	game/SoundSequenceSlot.vc \
 	game/SoundWaterfall.vc \
 	game/SoundWind.vc \
 	game/Staff.vc \

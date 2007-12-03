@@ -342,8 +342,6 @@ EXTRA_DIST = compile.bat \
 	game/SludgeSplash.vc \
 	game/SmallTorchLit.vc \
 	game/SmallTorchUnlit.vc \
-	game/SoundSequence.vc \
-	game/SoundSequenceSlot.vc \
 	game/SpectralLightningBall1.vc \
 	game/SpectralLightningBall2.vc \
 	game/SpectralLightningBase.vc \

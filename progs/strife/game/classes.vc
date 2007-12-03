@@ -62,9 +62,6 @@
 #include "ForceFieldGuard.vc"
 #include "ZombieSpawner.vc"
 
-#include "SoundSequence.vc"
-#include "SoundSequenceSlot.vc"
-
 #include "PunchDagger.vc"
 #include "StrifeZap1.vc"
 #include "ElectricBolt.vc"

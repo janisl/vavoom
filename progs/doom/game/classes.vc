@@ -45,6 +45,3 @@
 #include "StaticLightSource.vc"
 #include "StaticRGBLightSource.vc"
 #include "SecurityCamera.vc"
-
-#include "SoundSequence.vc"
-#include "SoundSequenceSlot.vc"

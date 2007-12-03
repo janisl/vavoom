@@ -54,8 +54,6 @@ EXTRA_DIST = compile.bat \
 	game/SlimeSplash.vc \
 	game/SludgeChunk.vc \
 	game/SludgeSplash.vc \
-	game/SoundSequence.vc \
-	game/SoundSequenceSlot.vc \
 	game/StaticLightSource.vc \
 	game/StaticRGBLightSource.vc \
 	game/WaterSplash.vc \

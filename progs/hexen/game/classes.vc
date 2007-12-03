@@ -45,9 +45,6 @@
 #include "StaticLightSource.vc"
 #include "StaticRGBLightSource.vc"
 
-#include "SoundSequence.vc"
-#include "SoundSequenceSlot.vc"
-
 #include "CrystalVial.vc"
 #include "ArtiHealth.vc"
 #include "ArtiFly.vc"

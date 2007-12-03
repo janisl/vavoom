@@ -107,6 +107,10 @@ enum
 #include "SwitchableDecoration.vc"
 #include "SwitchingDecoration.vc"
 
+#include "AmbientSound.vc"
+#include "SoundSequence.vc"
+#include "SoundSequenceSlot.vc"
+
 #include "LineSpecialLevelInfo.vc"
 #include "LineSpecialGameInfo.vc"
 #include "SectorThinker.vc"
@@ -135,4 +139,3 @@ enum
 #include "Scroller.vc"
 #include "PlaneWatcher.vc"
 #include "Pusher.vc"
-#include "AmbientSound.vc"

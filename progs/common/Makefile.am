@@ -92,6 +92,8 @@ EXTRA_DIST = \
 	linespec/Scroller.vc \
 	linespec/SectorMover.vc \
 	linespec/SectorThinker.vc \
+	linespec/SoundSequence.vc \
+	linespec/SoundSequenceSlot.vc \
 	linespec/StairStepMover.vc \
 	linespec/Strobe.vc \
 	linespec/SwitchableDecoration.vc \

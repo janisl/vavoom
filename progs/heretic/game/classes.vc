@@ -42,8 +42,6 @@
 #include "StaticLightSource.vc"
 #include "StaticRGBLightSource.vc"
 
-#include "SoundSequence.vc"
-#include "SoundSequenceSlot.vc"
 #include "AmbientSoundSequence.vc"
 #include "HereticSoundSequence1.vc"
 #include "HereticSoundSequence2.vc"
