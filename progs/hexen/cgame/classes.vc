@@ -36,6 +36,7 @@
 #include "MenuScreenPlayerSetup.vc"
 #include "MenuScreenOptions.vc"
 #include "MenuScreenControls2.vc"
+#include "MenuScreenGameplayOptions.vc"
 #include "MenuScreenHelp.vc"
 #include "TitleScreen.vc"
 #include "StatusBarScreen.vc"
