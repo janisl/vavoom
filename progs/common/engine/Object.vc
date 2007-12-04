@@ -568,8 +568,8 @@ enum
 	LNSPEC_TransferHeights,
 	LNSPEC_TransferFloorLight,// 210
 	LNSPEC_TransferCeilingLight,
-
-	LNSPEC_SectorSetFade = 213,
+	LNSPEC_SectorSetColour,
+	LNSPEC_SectorSetFade,
 	LNSPEC_SectorSetDamage,
 	LNSPEC_TeleportLine,
 	LNSPEC_SectorSetGravity,

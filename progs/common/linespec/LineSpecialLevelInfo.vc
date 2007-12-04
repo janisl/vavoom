@@ -313,6 +313,7 @@ final bool ActivateLine(line_t* Line, EntityEx A, int Side,
 bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 	int Arg4, int Arg5, line_t* Line, int Side, Entity E)
 {
+print("Line spec %d", Special);
 	EntityEx A = EntityEx(E);
 	bool buttonSuccess = false;
 	switch (Special)
@@ -774,6 +775,9 @@ bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 		break;
 	case LNSPEC_LineTranslucent:
 		buttonSuccess = EV_LineTranslucent(Arg1, Arg2, Arg3, Arg4, Arg5);
+		break;
+	case LNSPEC_SectorSetColour:
+		buttonSuccess = EV_SectorSetColour(Arg1, Arg2, Arg3, Arg4, Arg5);
 		break;
 	case LNSPEC_SectorSetFade:
 		buttonSuccess = EV_SectorSetFade(Arg1, Arg2, Arg3, Arg4, Arg5);
@@ -2780,6 +2784,26 @@ final bool EV_SectorSoundChange(int Arg1, int Arg2, int Arg3, int Arg4,
 		rtn = true;
 	}
 	return rtn;
+}
+
+//=========================================================================
+//
+//	EV_SectorSetColour
+//
+//=========================================================================
+
+final bool EV_SectorSetColour(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
+{
+	int		SecNum;
+	int		Col;
+
+	Col = RGBA(Arg2, Arg3, Arg4, 0);
+	for (SecNum = XLevel.FindSectorFromTag(Arg1, -1); SecNum >= 0;
+		SecNum = XLevel.FindSectorFromTag(Arg1, SecNum))
+	{
+		XLevel.Sectors[SecNum].params.LightColour = Col;
+	}
+	return true;
 }
 
 //=========================================================================
