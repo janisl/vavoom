@@ -880,15 +880,14 @@ void VRenderLevel::CreateSegParts(drawseg_t* dseg, seg_t *seg)
 		sp->textureoffset = sidedef->textureoffset;
 		sp->rowoffset = sidedef->rowoffset;
 
+		//	Sky above line.
 		dseg->topsky = pspart++;
+		sp = dseg->topsky;
+		sp->texinfo.Tex = GTextureManager[skyflatnum];
+		sp->texinfo.Alpha = 1.1;
+		sp->texinfo.Additive = false;
 		if (r_ceiling->pic == skyflatnum)
 		{
-			sp = dseg->topsky;
-
-			sp->texinfo.Tex = GTextureManager[skyflatnum];
-			sp->texinfo.Alpha = 1.1;
-			sp->texinfo.Additive = false;
-
 			wv[0].x = wv[1].x = seg->v1->x;
 			wv[0].y = wv[1].y = seg->v1->y;
 			wv[2].x = wv[3].x = seg->v2->x;
