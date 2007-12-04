@@ -32,37 +32,6 @@ int bodyqueslot;
 
 //==========================================================================
 //
-//  ExecuteActionSpecial
-//
-//==========================================================================
-
-bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
-	int Arg4, int Arg5, line_t* Line, int Side, Entity E)
-{
-	bool buttonSuccess;
-
-	buttonSuccess = false;
-	switch (Special)
-	{
-	case LNSPEC_QuakeTremor:
-		buttonSuccess = A_LocalQuake(Arg1, Arg2, Arg3, Arg4, Arg5);
-		break;
-/*	case LNSPEC_UsePuzzleItem:
-		buttonSuccess = EV_LineSearchForPuzzleItem(Arg1, Arg2, Arg3, Arg4,
-			Arg5, A);
-		break;*/
-
-	// Inert Line specials
-	default:
-		buttonSuccess = ::ExecuteActionSpecial(Special, Arg1, Arg2, Arg3,
-			Arg4, Arg5, Line, Side, E);
-		break;
-	}
-	return buttonSuccess;
-}
-
-//==========================================================================
-//
 //  CheckActivation
 //
 //==========================================================================
@@ -141,63 +110,6 @@ bool CheckActivation(int activationType, line_t * line, EntityEx A)
 			return false;
 	}
 	return true;
-}
-
-//==========================================================================
-//==========================================================================
-//
-//                              EVENTS
-//
-//  Events are operations triggered by using, crossing, or shooting special
-// lines, or by timed thinkers
-//
-//==========================================================================
-//==========================================================================
-
-//===========================================================================
-// Quake variables
-//
-//      Arg1     Intensity on richter scale (2..9)
-//      Arg2     Duration in tics
-//      Arg3     Radius for damage, in tile units (64 pixels)
-//      Arg4     Radius for tremor in tile units (64 pixels)
-//      Arg5     TID of map thing for focus of quake
-//
-//===========================================================================
-
-//===========================================================================
-//
-//	A_LocalQuake
-//
-//===========================================================================
-
-bool A_LocalQuake(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
-{
-	QuakeFocus focus;
-	EntityEx target;
-	int lastfound = 0;
-	int success = false;
-
-	// Find all quake foci
-	do
-	{
-		target = EntityEx(FindMobjFromTID(Arg5, &lastfound));
-		if (target)
-		{
-			focus = QuakeFocus(Spawn(QuakeFocus, target.Origin));
-			if (focus)
-			{
-				focus.Richters = Arg1;
-				focus.QuakeDuration = Arg2 >> 1;	// decremented every 2 tics
-				focus.DamageRadius = itof(Arg3) * 64.0;
-				focus.TremorRadius = itof(Arg4) * 64.0;
-				success = true;
-			}
-		}
-	}
-	while (target);
-
-	return success;
 }
 
 //==========================================================================

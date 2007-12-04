@@ -221,7 +221,6 @@
 #include "FogSpawner.vc"
 #include "BridgeBall.vc"
 #include "Bridge.vc"
-#include "QuakeFocus.vc"
 #include "Bat.vc"
 #include "BatSpawner.vc"
 

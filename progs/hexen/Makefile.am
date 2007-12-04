@@ -293,7 +293,6 @@ EXTRA_DIST = compile.bat \
 	game/PuzzMWeapon.vc \
 	game/PuzzSkull.vc \
 	game/PuzzGear4.vc \
-	game/QuakeFocus.vc \
 	game/RipperBall.vc \
 	game/Rock1.vc \
 	game/Rock2.vc \

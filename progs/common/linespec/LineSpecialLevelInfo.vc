@@ -313,7 +313,6 @@ final bool ActivateLine(line_t* Line, EntityEx A, int Side,
 bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 	int Arg4, int Arg5, line_t* Line, int Side, Entity E)
 {
-print("Line spec %d", Special);
 	EntityEx A = EntityEx(E);
 	bool buttonSuccess = false;
 	switch (Special)
@@ -668,7 +667,9 @@ print("Line spec %d", Special);
 	case LNSPEC_LightStop:
 		buttonSuccess = EV_LightStop(Arg1);
 		break;
-//LNSPEC_QuakeTremor:
+	case LNSPEC_QuakeTremor:
+		buttonSuccess = A_LocalQuake(Arg1, Arg2, Arg3, Arg4, Arg5);
+		break;
 	case LNSPEC_UsePuzzleItem:
 		buttonSuccess = EV_LineSearchForPuzzleItem(Arg1, Arg2, Arg3, Arg4,
 			Arg5, A);
@@ -925,10 +926,6 @@ print("Line spec %d", Special);
 	// LNSPEC_ScrollCeiling:
 	// LNSPEC_ScrollTextureOffsets:
 	// LNSPEC_PointPushSetForce:
-
-	//	These are implemented in game-specific progs.
-	case LNSPEC_QuakeTremor:
-		break;
 
 	default:
 		//	Log everything else to know what needs to be implemented.
@@ -4040,6 +4037,52 @@ final bool EV_LineTranslucent(int Arg1, int Arg2, int Arg3, int Arg4,
 		}
 	}
 	return true;
+}
+
+//===========================================================================
+// Quake variables
+//
+//      Arg1     Intensity on richter scale (2..9)
+//      Arg2     Duration in tics
+//      Arg3     Radius for damage, in tile units (64 pixels)
+//      Arg4     Radius for tremor in tile units (64 pixels)
+//      Arg5     TID of map thing for focus of quake
+//
+//===========================================================================
+
+//===========================================================================
+//
+//	A_LocalQuake
+//
+//===========================================================================
+
+final bool A_LocalQuake(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
+{
+	QuakeFocus focus;
+	EntityEx target;
+	int lastfound = 0;
+	int success = false;
+
+	// Find all quake foci
+	do
+	{
+		target = EntityEx(FindMobjFromTID(Arg5, &lastfound));
+		if (target)
+		{
+			focus = Spawn(QuakeFocus, target.Origin);
+			if (focus)
+			{
+				focus.Richters = Arg1;
+				focus.QuakeDuration = Arg2 >> 1;	// decremented every 2 tics
+				focus.DamageRadius = itof(Arg3) * 64.0;
+				focus.TremorRadius = itof(Arg4) * 64.0;
+				success = true;
+			}
+		}
+	}
+	while (target);
+
+	return success;
 }
 
 //==========================================================================

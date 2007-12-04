@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class QuakeFocus : Actor;
+class QuakeFocus : ScriptedEntity;
 
 //
 // Quake variables
@@ -41,21 +41,21 @@ float TremorRadius;	// Radius for tremor
 
 final void A_Quake()
 {
-	float an;
-	Player pl;
-	Actor victim;
-	int playnum;
-	float dist;
+	float		an;
+	PlayerEx	pl;
+	EntityEx	victim;
+	int			playnum;
+	float		dist;
 
 	if (QuakeDuration-- > 0)
 	{
 		for (playnum = 0; playnum < MAXPLAYERS; playnum++)
 		{
-			pl = Player(Level.Game.Players[playnum]);
+			pl = PlayerEx(Level.Game.Players[playnum]);
 			if (!pl || !pl.bSpawned)
 				continue;
 
-			victim = Actor(pl.MO);
+			victim = EntityEx(pl.MO);
 			dist = DistTo(victim);
 			if (dist < TremorRadius)	// In tremor radius
 			{
@@ -79,7 +79,9 @@ final void A_Quake()
 		for (playnum = 0; playnum < MAXPLAYERS; playnum++)
 		{
 			if (Level.Game.Players[playnum])
-				Player(Level.Game.Players[playnum]).LocalQuakeHappening = 0;
+			{
+				PlayerEx(Level.Game.Players[playnum]).LocalQuakeHappening = 0;
+			}
 		}
 		SetState(none);
 	}
@@ -93,7 +95,7 @@ final void A_Quake()
 
 final void A_ContMobjSound()
 {
-	PlaySound('Earthquake', CHAN_VOICE);
+	PlaySound('world/quake', CHAN_VOICE);
 }
 
 states
@@ -107,7 +109,6 @@ Spawn:
 
 defaultproperties
 {
-	RenderStyle = STYLE_None;
 	bHidden = true;
 	bNoBlockmap = true;
 }

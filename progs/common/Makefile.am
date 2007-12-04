@@ -94,6 +94,7 @@ EXTRA_DIST = \
 	linespec/PowerWeaponLevel2.vc \
 	linespec/Pusher.vc \
 	linespec/PuzzleItem.vc \
+	linespec/QuakeFocus.vc \
 	linespec/ScriptedEntity.vc \
 	linespec/Scroller.vc \
 	linespec/SectorMover.vc \

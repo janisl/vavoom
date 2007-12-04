@@ -41,6 +41,5 @@
 #include "BloodSplashBase.vc"
 #include "SlimeChunk.vc"
 #include "SlimeSplash.vc"
-#include "QuakeFocus.vc"
 #include "StaticLightSource.vc"
 #include "StaticRGBLightSource.vc"

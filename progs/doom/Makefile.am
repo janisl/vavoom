@@ -48,7 +48,6 @@ EXTRA_DIST = compile.bat \
 	game/LavaSplash.vc \
 	game/MainGameInfo.vc \
 	game/Player.vc \
-	game/QuakeFocus.vc \
 	game/SlimeChunk.vc \
 	game/SlimeSplash.vc \
 	game/SludgeChunk.vc \

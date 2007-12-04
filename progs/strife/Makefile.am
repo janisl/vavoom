@@ -262,7 +262,6 @@ EXTRA_DIST = compile.bat \
 	game/ProgrammerBase.vc \
 	game/Projectile.vc \
 	game/PunchDagger.vc \
-	game/QuakeFocus.vc \
 	game/QuestItem.vc \
 	game/QuestItem1.vc \
 	game/QuestItem2.vc \

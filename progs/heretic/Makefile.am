@@ -179,7 +179,6 @@ EXTRA_DIST = compile.bat \
 	game/PodGoo.vc \
 	game/Projectile.vc \
 	game/Puffy.vc \
-	game/QuakeFocus.vc \
 	game/RainPillar.vc \
 	game/RainPlayer2.vc \
 	game/RainPlayer3.vc \
