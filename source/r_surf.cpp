@@ -146,6 +146,7 @@ void VRenderLevel::SetupSky()
 	skyheight += 256;
 	sky_plane.Set(TVec(0, 0, -1), -skyheight);
 	sky_plane.pic = skyflatnum;
+	sky_plane.Alpha = 1.1;
 	unguard;
 }
 
