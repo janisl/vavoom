@@ -993,6 +993,7 @@ int VStr::GetChar(const char*& S)
 		if ((*S & 0xc0) != 0x80)
 			Sys_Error("Not a valid UTF-8");
 		Val = (Val << 6) | (*S & 0x3f);
+		S++;
 	}
 	while (--Cnt);
 	return Val;
