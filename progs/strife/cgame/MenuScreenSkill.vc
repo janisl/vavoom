@@ -41,22 +41,22 @@ void CreateChoices()
 	Btn.Activated = ActivateBaby;
 
 	Btn = MenuTextButton(NewChild(MenuBigTextButton));
-	Btn.SetPos(ChoicesStartX, ChoicesStartY + 18);
+	Btn.SetPos(ChoicesStartX, ChoicesStartY + 23);
 	Btn.Text = "rookie";
 	Btn.Activated = ActivateEasy;
 
 	Btn = MenuTextButton(NewChild(MenuBigTextButton));
-	Btn.SetPos(ChoicesStartX, ChoicesStartY + 2 * 18);
+	Btn.SetPos(ChoicesStartX, ChoicesStartY + 2 * 23);
 	Btn.Text = "veteran";
 	Btn.Activated = ActivateNormal;
 
 	Btn = MenuTextButton(NewChild(MenuBigTextButton));
-	Btn.SetPos(ChoicesStartX, ChoicesStartY + 3 * 18);
+	Btn.SetPos(ChoicesStartX, ChoicesStartY + 3 * 23);
 	Btn.Text = "elite";
 	Btn.Activated = ActivateHard;
 
 	Btn = MenuTextButton(NewChild(MenuBigTextButton));
-	Btn.SetPos(ChoicesStartX, ChoicesStartY + 4 * 18);
+	Btn.SetPos(ChoicesStartX, ChoicesStartY + 4 * 23);
 	Btn.Text = "bloodbath";
 	Btn.Activated = ActivateNightmare;
 }

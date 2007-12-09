@@ -1767,7 +1767,7 @@ vuint8* VFontChar2::GetPixels()
 	vuint8* pDst = Pixels;
 	do
 	{
-		vint8 Code = Streamer<vint8>(*Strm);
+		vint32 Code = Streamer<vint8>(*Strm);
 		if (Code >= 0)
 		{
 			Count -= Code + 1;

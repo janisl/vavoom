@@ -30,5 +30,5 @@ defaultproperties
 	TextFont = 'bigfont';
 	TextHAlign = hleft;
 	TextVAlign = vtop;
-	Height = 18;
+	Height = 23;
 }
