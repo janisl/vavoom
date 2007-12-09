@@ -194,7 +194,14 @@ void VFont::StaticInit()
 		new VFont(NAME_smallfont2, "stbfn%03d", 33, 95, 33);
 	}
 	//	Big font.
-	new VFont(NAME_bigfont, "fontb%02d", 33, 95, 1);
+	if (W_CheckNumForName(NAME_bigfont) >= 0)
+	{
+		GetFont(NAME_bigfont, NAME_bigfont);
+	}
+	else
+	{
+		new VFont(NAME_bigfont, "fontb%02d", 33, 95, 1);
+	}
 	//	Console font
 	ConFont = GetFont(NAME_consolefont, NAME_confont);
 

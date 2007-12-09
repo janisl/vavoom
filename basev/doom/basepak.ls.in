@@ -8,103 +8,6 @@ graphics/croshai1.lmp	@srcdir@/graphics/croshai1.lmp
 graphics/croshai2.lmp	@srcdir@/graphics/croshai2.lmp
 graphics/croshai3.lmp	@srcdir@/graphics/croshai3.lmp
 
-//	Big font
-graphics/fontb01.lmp	@srcdir@/graphics/fontb01.lmp
-graphics/fontb02.lmp	@srcdir@/graphics/fontb02.lmp
-graphics/fontb03.lmp	@srcdir@/graphics/fontb03.lmp
-graphics/fontb04.lmp	@srcdir@/graphics/fontb04.lmp
-graphics/fontb05.lmp	@srcdir@/graphics/fontb05.lmp
-graphics/fontb06.lmp	@srcdir@/graphics/fontb06.lmp
-graphics/fontb07.lmp	@srcdir@/graphics/fontb07.lmp
-graphics/fontb08.lmp	@srcdir@/graphics/fontb08.lmp
-graphics/fontb09.lmp	@srcdir@/graphics/fontb09.lmp
-graphics/fontb10.lmp	@srcdir@/graphics/fontb10.lmp
-graphics/fontb11.lmp	@srcdir@/graphics/fontb11.lmp
-graphics/fontb12.lmp	@srcdir@/graphics/fontb12.lmp
-graphics/fontb13.lmp	@srcdir@/graphics/fontb13.lmp
-graphics/fontb14.lmp	@srcdir@/graphics/fontb14.lmp
-graphics/fontb15.lmp	@srcdir@/graphics/fontb15.lmp
-graphics/fontb16.lmp	@srcdir@/graphics/fontb16.lmp
-graphics/fontb17.lmp	@srcdir@/graphics/fontb17.lmp
-graphics/fontb18.lmp	@srcdir@/graphics/fontb18.lmp
-graphics/fontb19.lmp	@srcdir@/graphics/fontb19.lmp
-graphics/fontb20.lmp	@srcdir@/graphics/fontb20.lmp
-graphics/fontb21.lmp	@srcdir@/graphics/fontb21.lmp
-graphics/fontb22.lmp	@srcdir@/graphics/fontb22.lmp
-graphics/fontb23.lmp	@srcdir@/graphics/fontb23.lmp
-graphics/fontb24.lmp	@srcdir@/graphics/fontb24.lmp
-graphics/fontb25.lmp	@srcdir@/graphics/fontb25.lmp
-graphics/fontb26.lmp	@srcdir@/graphics/fontb26.lmp
-graphics/fontb27.lmp	@srcdir@/graphics/fontb27.lmp
-graphics/fontb28.lmp	@srcdir@/graphics/fontb28.lmp
-graphics/fontb29.lmp	@srcdir@/graphics/fontb29.lmp
-graphics/fontb30.lmp	@srcdir@/graphics/fontb30.lmp
-graphics/fontb31.lmp	@srcdir@/graphics/fontb31.lmp
-graphics/fontb32.lmp	@srcdir@/graphics/fontb32.lmp
-graphics/fontb33.lmp	@srcdir@/graphics/fontb33.lmp
-graphics/fontb34.lmp	@srcdir@/graphics/fontb34.lmp
-graphics/fontb35.lmp	@srcdir@/graphics/fontb35.lmp
-graphics/fontb36.lmp	@srcdir@/graphics/fontb36.lmp
-graphics/fontb37.lmp	@srcdir@/graphics/fontb37.lmp
-graphics/fontb38.lmp	@srcdir@/graphics/fontb38.lmp
-graphics/fontb39.lmp	@srcdir@/graphics/fontb39.lmp
-graphics/fontb40.lmp	@srcdir@/graphics/fontb40.lmp
-graphics/fontb41.lmp	@srcdir@/graphics/fontb41.lmp
-graphics/fontb42.lmp	@srcdir@/graphics/fontb42.lmp
-graphics/fontb43.lmp	@srcdir@/graphics/fontb43.lmp
-graphics/fontb44.lmp	@srcdir@/graphics/fontb44.lmp
-graphics/fontb45.lmp	@srcdir@/graphics/fontb45.lmp
-graphics/fontb46.lmp	@srcdir@/graphics/fontb46.lmp
-graphics/fontb47.lmp	@srcdir@/graphics/fontb47.lmp
-graphics/fontb48.lmp	@srcdir@/graphics/fontb48.lmp
-graphics/fontb49.lmp	@srcdir@/graphics/fontb49.lmp
-graphics/fontb50.lmp	@srcdir@/graphics/fontb50.lmp
-graphics/fontb51.lmp	@srcdir@/graphics/fontb51.lmp
-graphics/fontb52.lmp	@srcdir@/graphics/fontb52.lmp
-graphics/fontb53.lmp	@srcdir@/graphics/fontb53.lmp
-graphics/fontb54.lmp	@srcdir@/graphics/fontb54.lmp
-graphics/fontb55.lmp	@srcdir@/graphics/fontb55.lmp
-graphics/fontb56.lmp	@srcdir@/graphics/fontb56.lmp
-graphics/fontb57.lmp	@srcdir@/graphics/fontb57.lmp
-graphics/fontb58.lmp	@srcdir@/graphics/fontb58.lmp
-graphics/fontb59.lmp	@srcdir@/graphics/fontb59.lmp
-graphics/fontb60.lmp	@srcdir@/graphics/fontb60.lmp
-graphics/fontb61.lmp	@srcdir@/graphics/fontb61.lmp
-graphics/fontb62.lmp	@srcdir@/graphics/fontb62.lmp
-graphics/fontb63.lmp	@srcdir@/graphics/fontb63.lmp
-graphics/fontb64.lmp	@srcdir@/graphics/fontb64.lmp
-graphics/fontb65.lmp	@srcdir@/graphics/fontb65.lmp
-graphics/fontb66.lmp	@srcdir@/graphics/fontb66.lmp
-graphics/fontb67.lmp	@srcdir@/graphics/fontb67.lmp
-graphics/fontb68.lmp	@srcdir@/graphics/fontb68.lmp
-graphics/fontb69.lmp	@srcdir@/graphics/fontb69.lmp
-graphics/fontb70.lmp	@srcdir@/graphics/fontb70.lmp
-graphics/fontb71.lmp	@srcdir@/graphics/fontb71.lmp
-graphics/fontb72.lmp	@srcdir@/graphics/fontb72.lmp
-graphics/fontb73.lmp	@srcdir@/graphics/fontb73.lmp
-graphics/fontb74.lmp	@srcdir@/graphics/fontb74.lmp
-graphics/fontb75.lmp	@srcdir@/graphics/fontb75.lmp
-graphics/fontb76.lmp	@srcdir@/graphics/fontb76.lmp
-graphics/fontb77.lmp	@srcdir@/graphics/fontb77.lmp
-graphics/fontb78.lmp	@srcdir@/graphics/fontb78.lmp
-graphics/fontb79.lmp	@srcdir@/graphics/fontb79.lmp
-graphics/fontb80.lmp	@srcdir@/graphics/fontb80.lmp
-graphics/fontb81.lmp	@srcdir@/graphics/fontb81.lmp
-graphics/fontb82.lmp	@srcdir@/graphics/fontb82.lmp
-graphics/fontb83.lmp	@srcdir@/graphics/fontb83.lmp
-graphics/fontb84.lmp	@srcdir@/graphics/fontb84.lmp
-graphics/fontb85.lmp	@srcdir@/graphics/fontb85.lmp
-graphics/fontb86.lmp	@srcdir@/graphics/fontb86.lmp
-graphics/fontb87.lmp	@srcdir@/graphics/fontb87.lmp
-graphics/fontb88.lmp	@srcdir@/graphics/fontb88.lmp
-graphics/fontb89.lmp	@srcdir@/graphics/fontb89.lmp
-graphics/fontb90.lmp	@srcdir@/graphics/fontb90.lmp
-graphics/fontb91.lmp	@srcdir@/graphics/fontb91.lmp
-graphics/fontb92.lmp	@srcdir@/graphics/fontb92.lmp
-graphics/fontb93.lmp	@srcdir@/graphics/fontb93.lmp
-graphics/fontb94.lmp	@srcdir@/graphics/fontb94.lmp
-graphics/fontb95.lmp	@srcdir@/graphics/fontb95.lmp
-
 //	Binary data lumps
 animated.lmp			@srcdir@/animated.lmp
 
@@ -115,6 +18,10 @@ lockdefs.txt			@srcdir@/lockdefs.txt
 sndinfo.txt				@srcdir@/sndinfo.txt
 sndseq.txt				@srcdir@/sndseq.txt
 skyboxes.txt			@srcdir@/skyboxes.txt
+
+//	Big font
+$load @srcdir@/bigfont.pcx
+bigfont.lmp				fon2
 
 //	Generated data
 $load @srcdir@/palette.pcx
