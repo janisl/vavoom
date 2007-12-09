@@ -3206,7 +3206,7 @@ final void NewChaseDir()
 
 		if (Target.Health > 0)
 	    {   // Live enemy target
-			if (/*monster_backing &&*/ MissileState &&
+			if (GetCvar('monster_backing') && MissileState &&
 				/*actor->type != MT_SKULL &&*/
 				((!Target.MissileState && dist < MELEERANGE * 2.0) ||
 				(Target.Player && PlayerEx(Target.Player).ReadyWeapon.bBotMelee &&
