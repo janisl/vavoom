@@ -416,7 +416,8 @@ private:
 
 public:
 	VActivePlayersIterator(VThinker* ASelf, VBasePlayer** AOut)
-	: Out(AOut)
+	: Self(ASelf)
+	, Out(AOut)
 	, Index(0)
 	{}
 	bool GetNext()

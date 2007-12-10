@@ -134,6 +134,7 @@ final bool MorphPlayer(Actor victim)
 	chicken.Health = Player::MAXCHICKENHEALTH;
 	victim.Player.Health = chicken.Health;
 	victim.Player.MO = chicken;
+	victim.Player.Camera = chicken;
 	BasicArmor Armor = BasicArmor(victim.FindInventory(BasicArmor));
 	Armor.Amount = 0;
 	Armor.SavePercent = 0.0;

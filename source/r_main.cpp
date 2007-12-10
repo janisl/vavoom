@@ -457,7 +457,7 @@ void VRenderLevel::SetupFrame()
 		ExecuteSetViewSize();
 	}
 
-	ViewEnt = NULL;
+	ViewEnt = cl->Camera;
 	viewangles = cl->ViewAngles;
 	if (r_chasecam && r_chase_front)
 	{
@@ -467,18 +467,9 @@ void VRenderLevel::SetupFrame()
 	}
 	AngleVectors(viewangles, viewforward, viewright, viewup);
 
-	if (r_chasecam)
+	if (r_chasecam && cl->MO == cl->Camera)
 	{
-		VEntity* ViewEnt = NULL;
-		for (TThinkerIterator<VEntity> Ent(Level); Ent; ++Ent)
-		{
-			if (Ent->EntityFlags & VEntity::EF_NetLocalPlayer)
-			{
-				ViewEnt = *Ent;
-				break;
-			}
-		}
-		vieworg = ViewEnt->Origin + TVec(0.0, 0.0, 32.0)
+		vieworg = cl->MO->Origin + TVec(0.0, 0.0, 32.0)
 			- r_chase_dist * viewforward + r_chase_up * viewup
 			+ r_chase_right * viewright;
 	}
@@ -796,7 +787,7 @@ void VRenderLevel::RenderPlayerView()
 	DrawTranslucentPolys();
 
 	// draw the psprites on top of everything
-	if (fov <= 90.0)
+	if (fov <= 90.0 && cl->MO == cl->Camera)
 	{
 		DrawPlayerSprites();
 	}

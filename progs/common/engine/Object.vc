@@ -593,8 +593,8 @@ enum
 	LNSPEC_LightMaxNeighbor,
 	LNSPEC_FloorTransferTrigger,
 	LNSPEC_FloorTransferNumeric,
-
-	LNSPEC_FloorRaiseToLowestCeiling = 238,
+	LNSPEC_ChangeCamera,
+	LNSPEC_FloorRaiseToLowestCeiling,
 	LNSPEC_FloorRaiseByValueChange,
 	LNSPEC_FloorRaiseByTexture,// 240
 	LNSPEC_FloorLowerToLowestChange,

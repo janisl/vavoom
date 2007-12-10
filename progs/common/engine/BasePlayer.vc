@@ -70,6 +70,7 @@ byte					Buttons;	// fire, use
 byte					Impulse;	// weapon changes, inventory, etc
 
 Entity					MO;
+Entity					Camera;
 int						PlayerState;
 
 // Determine POV,
@@ -121,7 +122,7 @@ replication
 	reliable if (!bIsClient)
 		Health, Frags, Deaths, ExtraLight, FixedColourmap, CShifts,
 		PSpriteSY, KillCount, ItemCount, SecretCount, ViewStates, ViewEnt,
-		ViewEntAlpha, ClientNum, WorldTimer, MO, bAutomapRevealed,
+		ViewEntAlpha, ClientNum, WorldTimer, MO, Camera, bAutomapRevealed,
 		bAutomapShowThings;
 
 	unreliable if (!bIsClient)

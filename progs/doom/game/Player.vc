@@ -347,6 +347,7 @@ void SpawnPlayer(mthing_t * mthing)
 	PP.Health = Health;
 
 	MO = PP;
+	Camera = PP;
 	PlayerState = PST_LIVE;
 	Refire = 0;
 	DamageFlash = 0.0;
@@ -742,7 +743,10 @@ void PlayerTick(float deltaTime)
 	}
 
 	// Copy view angles
-	MO.Angles = ViewAngles;
+	if (MO == Camera)
+	{
+		MO.Angles = ViewAngles;
+	}
 
 	if (JumpTime)
 	{
@@ -1117,21 +1121,35 @@ void UpdateFaceWidget(float FrameTime)
 
 void SetViewPos()
 {
-	ViewOrg.x = MO.Origin.x;
-	ViewOrg.y = MO.Origin.y;
-
-	if (LocalQuakeHappening)
+	//	Just in a case camera entity has been destroyed
+	if (!Camera)
 	{
-		float intensity;
-
-		intensity = itof(LocalQuakeHappening);
-		ViewOrg.x += (Random() - 0.5) * (intensity * 4.0);
-		ViewOrg.y += (Random() - 0.5) * (intensity * 4.0);
+		Camera = MO;
 	}
 
-	if (PlayerState != PST_DEAD)
+	if (MO != Camera)
 	{
-		ViewAngles = MO.Angles;
+		ViewOrg = Camera.Origin;
+		ViewAngles = Camera.Angles;
+	}
+	else
+	{
+		ViewOrg.x = MO.Origin.x;
+		ViewOrg.y = MO.Origin.y;
+
+		if (LocalQuakeHappening)
+		{
+			float intensity;
+
+			intensity = itof(LocalQuakeHappening);
+			ViewOrg.x += (Random() - 0.5) * (intensity * 4.0);
+			ViewOrg.y += (Random() - 0.5) * (intensity * 4.0);
+		}
+
+		if (PlayerState != PST_DEAD)
+		{
+			ViewAngles = MO.Angles;
+		}
 	}
 
 	PaletteFlash();

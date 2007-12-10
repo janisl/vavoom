@@ -130,6 +130,7 @@ final bool MorphPlayer(Actor victim)
 	beastMo.Health = Player::MAXMORPHHEALTH;
 	victim.Player.Health = beastMo.Health;
 	victim.Player.MO = beastMo;
+	victim.Player.Camera = beastMo;
 	HexenArmor HArmor = HexenArmor(victim.FindInventory(HexenArmor));
 	for (i = 0; i < 4; i++)
 	{

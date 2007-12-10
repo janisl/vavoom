@@ -86,6 +86,8 @@ int				ArtifactFlash;
 Inventory		SavedInventory;
 
 bool			onground;
+//	Revert camera if player moves.
+bool			bRevertCamera;
 
 int				NoRunHealth;
 
@@ -262,6 +264,12 @@ final void MovePlayer(float deltaTime)
 	if (forward || side)
 	{
 		SetPlayerRunState();
+
+		if (bRevertCamera)
+		{
+			Camera = MO;
+			bRevertCamera = false;
+		}
 	}
 
 	fly = FlyMove / 16.0;

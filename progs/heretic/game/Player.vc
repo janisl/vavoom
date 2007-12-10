@@ -293,6 +293,7 @@ void SpawnPlayer(mthing_t * mthing)
 	A.bIsPlayer = true;
 	A.Health = Health;
 	MO = A;
+	Camera = A;
 	PlayerState = PST_LIVE;
 	Refire = 0;
 	DamageFlash = 0.0;
@@ -863,6 +864,7 @@ bool UndoPlayerChicken()
 
 	MO.SetState(MO.FindState('FreeTargMobj'));
 	MO = A;
+	Camera = A;
 
 	return true;
 }
@@ -989,7 +991,10 @@ void PlayerTick(float deltaTime)
 	}
 
 	// Copy view angles
-	MO.Angles = ViewAngles;
+	if (MO == Camera)
+	{
+		MO.Angles = ViewAngles;
+	}
 
 	// fixme: do this in the cheat code
 	if (Cheats & CF_NOCLIP)
@@ -1201,25 +1206,39 @@ void PaletteFlash()
 
 void SetViewPos()
 {
-	ViewOrg.x = MO.Origin.x;
-	ViewOrg.y = MO.Origin.y;
-
-	if (LocalQuakeHappening)
+	//	Just in a case camera entity has been destroyed
+	if (!Camera)
 	{
-		float intensity;
-
-		intensity = itof(LocalQuakeHappening);
-		ViewOrg.x += (Random() - 0.5) * (intensity * 4.0);
-		ViewOrg.y += (Random() - 0.5) * (intensity * 4.0);
+		Camera = MO;
 	}
 
-	ViewAngles = MO.Angles;
-
-	if (ChickenTime && ChickenPeck)
+	if (MO != Camera)
 	{
-		// Set chicken attack view position
-		ViewOrg.x += itof(ChickenPeck) * cos(MO.Angles.yaw);
-		ViewOrg.y += itof(ChickenPeck) * sin(MO.Angles.yaw);
+		ViewOrg = Camera.Origin;
+		ViewAngles = Camera.Angles;
+	}
+	else
+	{
+		ViewOrg.x = MO.Origin.x;
+		ViewOrg.y = MO.Origin.y;
+
+		if (LocalQuakeHappening)
+		{
+			float intensity;
+
+			intensity = itof(LocalQuakeHappening);
+			ViewOrg.x += (Random() - 0.5) * (intensity * 4.0);
+			ViewOrg.y += (Random() - 0.5) * (intensity * 4.0);
+		}
+
+		ViewAngles = MO.Angles;
+
+		if (ChickenTime && ChickenPeck)
+		{
+			// Set chicken attack view position
+			ViewOrg.x += itof(ChickenPeck) * cos(MO.Angles.yaw);
+			ViewOrg.y += itof(ChickenPeck) * sin(MO.Angles.yaw);
+		}
 	}
 
 	PaletteFlash();

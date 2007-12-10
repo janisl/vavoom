@@ -55,6 +55,7 @@ final void A_SkullPop()
 	A.Health = Health;
 	A.Angles.yaw = Angles.yaw;
 	A.Player.MO = A;
+	A.Player.Camera = A;
 	Player(A.Player).DamageFlash = 1.0;
 }
 

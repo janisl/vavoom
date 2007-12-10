@@ -434,6 +434,7 @@ void SpawnPlayer(mthing_t * mthing)
 	pp.bIsPlayer = true;
 	pp.Health = Health;
 	MO = pp;
+	Camera = pp;
 	PlayerState = PST_LIVE;
 	Refire = 0;
 	DamageFlash = 0.0;
@@ -1055,6 +1056,7 @@ bool UndoPlayerMorph()
 
 	MO.SetState(MO.FindState('FreeTargMobj'));
 	MO = A;
+	Camera = A;
 	return true;
 }
 
@@ -1215,7 +1217,10 @@ void PlayerTick(float deltaTime)
 	}
 
 	// Copy view angles
-	MO.Angles = ViewAngles;
+	if (MO == Camera)
+	{
+		MO.Angles = ViewAngles;
+	}
 
 	// fixme: do this in the cheat code
 	if (Cheats & CF_NOCLIP)
@@ -1505,19 +1510,33 @@ void SetViewPos()
 {
 	int		i;
 
-	ViewOrg.x = MO.Origin.x;
-	ViewOrg.y = MO.Origin.y;
-
-	if (LocalQuakeHappening)
+	//	Just in a case camera entity has been destroyed
+	if (!Camera)
 	{
-		float intensity;
-
-		intensity = itof(LocalQuakeHappening);
-		ViewOrg.x += (Random() - 0.5) * (intensity * 4.0);
-		ViewOrg.y += (Random() - 0.5) * (intensity * 4.0);
+		Camera = MO;
 	}
 
-	ViewAngles = MO.Angles;
+	if (MO != Camera)
+	{
+		ViewOrg = Camera.Origin;
+		ViewAngles = Camera.Angles;
+	}
+	else
+	{
+		ViewOrg.x = MO.Origin.x;
+		ViewOrg.y = MO.Origin.y;
+
+		if (LocalQuakeHappening)
+		{
+			float intensity;
+
+			intensity = itof(LocalQuakeHappening);
+			ViewOrg.x += (Random() - 0.5) * (intensity * 4.0);
+			ViewOrg.y += (Random() - 0.5) * (intensity * 4.0);
+		}
+
+		ViewAngles = MO.Angles;
+	}
 
 	PaletteFlash();
 

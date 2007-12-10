@@ -253,6 +253,7 @@ LightingInc=0
 ;       description
 
 [Specials.Types]
+
 ; Special
 0x021	1	ForceField( -, -, -, -, - )
 0x022	1	ClearForceField( tag, -, -, -, - )
@@ -268,6 +269,7 @@ LightingInc=0
 0x0d1	1	Transfer_Heights( tag, flags, -, -, - )
 0x0d2	1	Transfer_FloorLight( tag, -, -, -, - )
 0x0d3	1	Transfer_CeilingLight( tag, -, -, -, - )
+0x0d4	1	Sector_SetColor( tag, red, green, blue, - )
 0x0d5	1	Sector_SetFade( tag, red, green, blue, - )
 0x0d6	1	Sector_SetDamage( tag, damage, mod, -, - )
 0x0d8   1	Sector_SetGravity( tag, int, frac, -, - )
@@ -275,6 +277,8 @@ LightingInc=0
 0x0db	1	Sector_SetFriction( tag, amount, -, -, - )
 0x0de	1	Sector_SetCurrent( tag, strength, angle, line_vector, - )
 0x0de	1	PointPush_SetForce( tag, tid, strength, line_vector, - )
+0x0ed	1	ChangeCamera( tag, who, revert, -, - )
+
 ; Door
 0x00a	2	Door_Close( tag, speed, light_tag, -, - )
 0x00b	2	Door_Open( tag, speed, light_tag, -, - )
@@ -282,6 +286,7 @@ LightingInc=0
 0x00d	2	Door_LockedRaise( tag, speed, delay, lock, light_tag )
 0x0f9	2	Door_CloseWaitOpen( tag, speed, delay, light_tag, - )
 0x0ca	2	Generic_Door( tag, speed, kind, delay, lock )
+
 ; Ceiling
 0x026	3	Ceiling_Waggle( tag, height, freq, offset, duration )
 0x028	3	Ceiling_LowerByValue( tag, speed, height, -, - )
@@ -305,6 +310,7 @@ LightingInc=0
 0x0fd	3	Ceiling_LowerToLowest( tag, speed, -, -, - )
 0x0fe	3	Ceiling_LowerToFloor( tag, speed, -, -, - )
 0x0ff	3	Ceiling_CrushRaiseAndStaySilentA( tag, dnspeed, upspeed, damage, - )
+
 ; Lift
 0x03c	4	Plat_PerpetualRaise( tag, speed, delay, -, - )
 0x03d	4	Plat_Stop( tag, -, -, -, - )
@@ -319,6 +325,7 @@ LightingInc=0
 0x0e4	4	Plat_RaiseAndStayTx0( tag, speed, -, -, - )
 0x0e6	4	Plat_UpByValueStayTx( tag, speed, height, -, - )
 0x0e7	4	Plat_ToggleCeiling( tag, -, -, -, - )
+
 ; Floor
 0x014	5	Floor_LowerByValue( tag, speed, height, -, - )
 0x015	5	Floor_LowerToLowest( tag, speed, -, -, - )
@@ -343,10 +350,12 @@ LightingInc=0
 0x0fa	5	Floor_Donut( tag, pillarspeed, slimespeed, -, - )
 0x0eb	5	Floor_TransferTrigger( tag, -, -, -, - )
 0x0ec	5	Floor_TransferNumeric( tag, -, -, -, - )
+
 ; Pillar
 0x01d	6	Pillar_Build( tag, speed, height, -, - )
 0x01e	6	Pillar_Open( tag, speed, f_height, c_height, - )
 0x05e	6	Pillar_BuildAndCrush( tag, speed, height, crush, - )
+
 ; Stair
 0x01a	7	Stairs_BuildDown( tag, speed, height, delay, reset )
 0x01b	7	Stairs_BuildUp( tag, speed, height, delay, reset )
@@ -354,6 +363,7 @@ LightingInc=0
 0x020	7	Stairs_BuildUpSync( tag, speed, height, reset, - )
 0x0cc	7	Generic_Stairs (tag, speed, step, dir/idntext, reset )
 0x0d9	7	Stairs_BuildUpDoom( tag, speed, height, delay, reset )
+
 ; ACS
 0x050	8	ACS_Execute( script, map, sArg0, sArg1, sArg2 )
 0x051	8	ACS_Suspend( script, map, -, -, - )
@@ -361,6 +371,7 @@ LightingInc=0
 0x053	8	ACS_LockedExecute( script, map, sArg0, sArg1, lock )
 0x054	8	ACS_ExecuteWithResult( script, map, sArg0, sArg1, sArg2 )
 0x0e2	8	ACS_ExecuteAlways( script, map, sArg0, sArg1, sArg2 )
+
 ; Scroll
 0x064	9	Scroll_Texture_Left( speed, -, -, -, - )
 0x065	9	Scroll_Texture_Right( speed, -, -, -, - )
@@ -371,6 +382,7 @@ LightingInc=0
 0x0df	9	Scroll_Floor( tag, bits, method, xspeed, yspeed )
 0x0e0	9	Scroll_Ceiling( tag, bits, method, xspeed, yspeed )
 0x0e1	9	Scroll_Texture_Offsets( -, -, -, -, - )
+
 ; Thing
 0x048	10	ThrustThing( angle, distance, -, -, - )
 0x049	10	DamageThing( damage, -, -, -, - )
@@ -382,8 +394,10 @@ LightingInc=0
 0x087	10	Thing_Spawn( tag, spawntype, angle, -, - )
 0x088	10	Thing_ProjectileGravity( tag, type, angle, speed, vspeed )
 0x089	10	Thing_SpawnNoFog( tag, spawntype, angle, -, - )
+
 ;0x0e5   10      Thing_SetGoal( tag, goal, delay, -, - )
 ;0x0f8   10      HealThing( amount, -, -, -, - )
+
 ; Teleport
 0x027	11	Teleport_ZombieChanger( tag, sector_tag, no_src_fog, -, - )
 0x046	11	Teleport( tag, sector_tag, no_src_fog, -, - )
@@ -394,6 +408,7 @@ LightingInc=0
 0x04d	11	TeleportGroup( group_tid, source_tid, dest_tid, moveSource, fog )
 0x04e	11	TeleportInSector( tag, source_tid, dest_tid, fog, group_tid )
 0x0d7	11	Teleport_Line( thisline, destline, reverse, -, - )
+
 ; Lighting
 0x06d	12	Light_ForceLightning( tag, -, -, -, - )
 0x06e	12	Light_RaiseByValue( tag, value, -, -, - )
@@ -407,6 +422,7 @@ LightingInc=0
 0x0e8	12	Light_StrobeDoom( tag, u-tics, l-tics, sync, - )
 0x0e9	12	Light_MinNeighbor( tag, -, -, -, - )
 0x0ea	12	Light_MaxNeighbor( tag, -, -, -, - )
+
 ; Polyobject
 0x001	13	Polyobj_StartLine( po, mirror, sound, -, - )
 0x002	13	Polyobj_RotateLeft( po, speed, angle, -, - )
@@ -420,9 +436,11 @@ LightingInc=0
 0x05b	13	Polyobj_OR_RotateRight( po, speed, angle, -, - )
 0x05c	13	Polyobj_OR_Move( po, speed, angle, distance, - )
 0x05d	13	Polyobj_OR_MoveTimes8( po, speed, angle, distance, - )
+
 ; Exit
 0x0f3	14	Exit_Normal( position, -, -, -, - )
 0x0f4	14	Exit_Secret( position, -, -, -, - )
+
 ; Floor and ceiling
 0x05f	15	FloorAndCeiling_LowerByValue( tag, speed, height, -, - )
 0x060	15	FloorAndCeiling_RaiseByValue( tag, speed, height, -, - )

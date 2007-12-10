@@ -111,6 +111,7 @@ class VBasePlayer : public VObject
 	vuint8			Impulse;		// weapon changes, inventory, etc
 
 	VEntity*		MO;
+	VEntity*		Camera;
 	vint32			PlayerState;
 
 	// Determine POV,

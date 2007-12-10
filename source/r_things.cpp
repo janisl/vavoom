@@ -772,20 +772,10 @@ bool VRenderLevel::RenderAliasModel(VEntity* mobj, vuint32 light,
 void VRenderLevel::RenderThing(VEntity* mobj)
 {
 	guard(VRenderLevel::RenderThing);
-	if (ViewEnt)
+	if (mobj == ViewEnt && (!r_chasecam || ViewEnt != cl->MO))
 	{
-		if (mobj == ViewEnt)
-		{
-			return;
-		}
-	}
-	else
-	{
-		if (!r_chasecam && (mobj->EntityFlags & VEntity::EF_NetLocalPlayer))
-		{
-			//	Don't draw client's mobj
-			return;
-		}
+		//	Don't draw camera actor.
+		return;
 	}
 
 	if (mobj->EntityFlags & VEntity::EF_Hidden)

@@ -839,6 +839,9 @@ bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 	case LNSPEC_FloorTransferNumeric:
 		buttonSuccess = EV_FloorTransferNumeric(Arg1, Arg2, Arg3, Arg4, Arg5);
 		break;
+	case LNSPEC_ChangeCamera:
+		buttonSuccess = EV_ChangeCamera(Arg1, Arg2, Arg3, Arg4, Arg5, A);
+		break;
 	case LNSPEC_FloorRaiseToLowestCeiling:
 		buttonSuccess = EV_DoFloor(Arg1, Arg2, Arg3, Arg4, Arg5,
 			FloorMover::FLOOREV_RaiseToLowestCeiling, Line);
@@ -3189,6 +3192,61 @@ final bool EV_ThingDestroy(int tid)
 		}
 	}
 	return success;
+}
+
+//===========================================================================
+//
+//	EV_ChangeCamera
+//
+//===========================================================================
+
+final bool EV_ChangeCamera(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
+	EntityEx A)
+{
+	Entity Camera = none;
+	if (Arg1)
+	{
+		int Searcher = -1;
+		Camera = FindMobjFromTID(Arg1, &Searcher);
+	}
+
+	if (!A || !A.Player || Arg2)
+	{
+		BasePlayer P;
+		foreach AllActivePlayers(P)
+		{
+			if (Camera)
+			{
+				P.Camera = Camera;
+				if (Arg3)
+				{
+					PlayerEx(P).bRevertCamera = true;
+				}
+			}
+			else
+			{
+				P.Camera = P.MO;
+				PlayerEx(P).bRevertCamera = false;
+			}
+		}
+	}
+	else
+	{
+		if (Camera)
+		{
+			A.Player.Camera = Camera;
+			if (Arg3)
+			{
+				PlayerEx(A.Player).bRevertCamera = true;
+			}
+		}
+		else
+		{
+			A.Player.Camera = A;
+			PlayerEx(A.Player).bRevertCamera = false;
+		}
+	}
+	return true;
 }
 
 //**************************************************************************
