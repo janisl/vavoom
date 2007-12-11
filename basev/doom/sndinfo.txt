@@ -299,6 +299,9 @@ switches/exitbutn				dsswtchx
 //  Teleport
 misc/teleport					dstelept
 
+//  Earthquake
+world/quake						dsquake
+
 //  Pickups
 misc/spawn						dsitmbk
 misc/i_pkup						dsitemup

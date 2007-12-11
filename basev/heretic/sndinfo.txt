@@ -252,6 +252,9 @@ $limit world/podexplode 0
 $limit world/wind 1
 $limit misc/spawn 1
 
+//  Earthquake
+world/quake						dsquake
+
 //  Ambient sounds
 world/amb1						amb1
 world/amb2						amb2

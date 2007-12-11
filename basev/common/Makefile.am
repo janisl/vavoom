@@ -4,6 +4,7 @@ nobase_common_DATA = basepak.pk3
 
 EXTRA_DIST = \
 	basepak.ls.in \
+	confont.pcx \
 	default.cfg \
 	language.en \
 	lockdefs.txt \
@@ -13,6 +14,7 @@ EXTRA_DIST = \
 	x11r6rgb.txt \
 	graphics/mc_arrow.png \
 	sounds/dsempty.lmp \
+	sounds/dsquake.flac \
 	sprites/tnt1a0.lmp \
 	textures/-noflat-.png
 

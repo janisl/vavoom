@@ -358,6 +358,9 @@ plats/pt1_strt					dspstart
 plats/pt1_stop					dspstop
 plats/pt1_mid					dsstnmov
 
+//  Earthquake
+world/quake						dsquake
+
 //==========================================================================
 //
 //  Misc sounds
