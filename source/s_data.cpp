@@ -554,7 +554,7 @@ int VSoundManager::FindSound(VName TagName)
 	guard(VSoundManager::FindSound);
 	for (int i = 0; i < S_sfx.Num(); i++)
 	{
-		if (S_sfx[i].TagName == TagName)
+		if (!VStr::ICmp(*S_sfx[i].TagName, *TagName))
 		{
 			return i;
 		}
@@ -726,7 +726,7 @@ int VSoundManager::GetSoundID(VName Name)
 	guard(VSoundManager::GetSoundID);
 	for (int i = 0; i < S_sfx.Num(); i++)
 	{
-		if (S_sfx[i].TagName == Name)
+		if (!VStr::ICmp(*S_sfx[i].TagName, *Name))
 		{
 			return i;
 		}
@@ -747,7 +747,7 @@ int VSoundManager::GetSoundID(const char *name)
 	guard(VSoundManager::GetSoundID);
 	for (int i = 0; i < S_sfx.Num(); i++)
 	{
-		if (S_sfx[i].TagName == name)
+		if (!VStr::ICmp(*S_sfx[i].TagName, name))
 		{
 			return i;
 		}
