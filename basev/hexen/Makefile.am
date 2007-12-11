@@ -19,7 +19,7 @@ EXTRA_DIST = \
 
 VLUMPY = ../../utils/bin/vlumpy$(EXEEXT)
 
-basepak.pk3: basepak.ls $(VLUMPY) \
+basepak.pk3: basepak.ls $(VLUMPY) $(EXTRA_DIST) \
 		progs/shared.dat progs/clprogs.dat progs/svprogs.dat
 	$(VLUMPY) $<
 

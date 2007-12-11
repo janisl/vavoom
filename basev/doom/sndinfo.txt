@@ -320,6 +320,8 @@ $alias misc/keytry				*usefail
 //  Unused
 misc/unused						dsskldth
 
+misc/ripslop					dsempty
+
 //==========================================================================
 //
 //  User interface sounds

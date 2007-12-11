@@ -12,6 +12,7 @@ EXTRA_DIST = \
 	textcolo.txt \
 	x11r6rgb.txt \
 	graphics/mc_arrow.png \
+	sounds/dsempty.lmp \
 	sprites/tnt1a0.lmp \
 	textures/-noflat-.png
 

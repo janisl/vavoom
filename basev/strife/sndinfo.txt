@@ -391,6 +391,8 @@ $alias misc/health_pkup			misc/i_pkup
 $alias misc/armor_pkup			misc/i_pkup
 $alias misc/ammo_pkup			misc/i_pkup
 
+misc/ripslop					dsempty
+
 //==========================================================================
 //
 //  Menu
