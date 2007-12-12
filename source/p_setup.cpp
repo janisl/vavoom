@@ -460,6 +460,9 @@ void VLevel::LoadSectors(int Lump)
 		ss->floor.pic = TexNumForName(floorpic, TEXTYPE_Flat);
 		ss->floor.xoffs = 0;
 		ss->floor.yoffs = 0;
+		ss->floor.XScale = 1.0;
+		ss->floor.YScale = 1.0;
+		ss->floor.Angle = 0.0;
 		ss->floor.minz = floorheight;
 		ss->floor.maxz = floorheight;
 		ss->floor.Alpha = 1.0;
@@ -470,6 +473,9 @@ void VLevel::LoadSectors(int Lump)
 		ss->ceiling.pic = TexNumForName(ceilingpic, TEXTYPE_Flat);
 		ss->ceiling.xoffs = 0;
 		ss->ceiling.yoffs = 0;
+		ss->ceiling.XScale = 1.0;
+		ss->ceiling.YScale = 1.0;
+		ss->ceiling.Angle = 0.0;
 		ss->ceiling.minz = ceilingheight;
 		ss->ceiling.maxz = ceilingheight;
 		ss->ceiling.Alpha = 1.0;
@@ -1947,10 +1953,16 @@ void VLevel::CreateRepBase()
 		B.floor_dist = S.floor.dist;
 		B.floor_xoffs = S.floor.xoffs;
 		B.floor_yoffs = S.floor.yoffs;
+		B.floor_XScale = S.floor.XScale;
+		B.floor_YScale = S.floor.YScale;
+		B.floor_Angle = S.floor.Angle;
 		B.ceil_pic = S.ceiling.pic;
 		B.ceil_dist = S.ceiling.dist;
 		B.ceil_xoffs = S.ceiling.xoffs;
 		B.ceil_yoffs = S.ceiling.yoffs;
+		B.ceil_XScale = S.ceiling.XScale;
+		B.ceil_YScale = S.ceiling.YScale;
+		B.ceil_Angle = S.ceiling.Angle;
 		B.lightlevel = S.params.lightlevel;
 		B.Fade = S.params.Fade;
 	}

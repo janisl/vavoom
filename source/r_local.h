@@ -65,6 +65,9 @@ struct sec_surface_t
 	sec_plane_t		*secplane;
 	texinfo_t		texinfo;
 	float			dist;
+	float			XScale;
+	float			YScale;
+	float			Angle;
 	surface_t		*surfs;
 };
 

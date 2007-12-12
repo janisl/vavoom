@@ -723,18 +723,23 @@ struct side_t
 
 struct sec_plane_t : TPlane
 {
-	float minz;
-	float maxz;
+	float		minz;
+	float		maxz;
 
-	int pic;
+	int			pic;
 
-	float xoffs;
-	float yoffs;
+	float		xoffs;
+	float		yoffs;
 
-	int flags;
-	float Alpha;
+	float		XScale;
+	float		YScale;
 
-	int LightSourceSector;
+	float		Angle;
+
+	int			flags;
+	float		Alpha;
+
+	int			LightSourceSector;
 };
 
 struct sec_params_t

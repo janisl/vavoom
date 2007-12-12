@@ -215,6 +215,11 @@ struct sec_plane_t : public TPlane
 	float		xoffs;
 	float		yoffs;
 
+	float		XScale;
+	float		YScale;
+
+	float		Angle;
+
 	int			flags;
 	float		Alpha;
 
@@ -517,10 +522,16 @@ struct rep_sector_t
 	float		floor_dist;
 	float		floor_xoffs;
 	float		floor_yoffs;
+	float		floor_XScale;
+	float		floor_YScale;
+	float		floor_Angle;
 	int			ceil_pic;
 	float		ceil_dist;
 	float		ceil_xoffs;
 	float		ceil_yoffs;
+	float		ceil_XScale;
+	float		ceil_YScale;
+	float		ceil_Angle;
 	int			lightlevel;
 	int			Fade;
 };

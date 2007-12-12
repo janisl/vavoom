@@ -257,10 +257,16 @@ void VLevelChannel::Update()
 		rep_sector_t* RepSec = &Sectors[i];
 		bool FloorChanged = RepSec->floor_dist != Sec->floor.dist ||
 			mround(RepSec->floor_xoffs) != mround(Sec->floor.xoffs) ||
-			mround(RepSec->floor_yoffs) != mround(Sec->floor.yoffs);
+			mround(RepSec->floor_yoffs) != mround(Sec->floor.yoffs) ||
+			RepSec->floor_XScale != Sec->floor.XScale ||
+			RepSec->floor_YScale != Sec->floor.YScale ||
+			mround(RepSec->floor_Angle) != mround(Sec->floor.Angle);
 		bool CeilChanged = RepSec->ceil_dist != Sec->ceiling.dist ||
 			mround(RepSec->ceil_xoffs) != mround(Sec->ceiling.xoffs) ||
-			mround(RepSec->ceil_yoffs) != mround(Sec->ceiling.yoffs);
+			mround(RepSec->ceil_yoffs) != mround(Sec->ceiling.yoffs) ||
+			RepSec->ceil_XScale != Sec->ceiling.XScale ||
+			RepSec->ceil_YScale != Sec->ceiling.YScale ||
+			mround(RepSec->ceil_Angle) != mround(Sec->ceiling.Angle);
 		bool LightChanged = abs(RepSec->lightlevel - Sec->params.lightlevel) >= 4;
 		bool FadeChanged = RepSec->Fade != Sec->params.Fade;
 		if (RepSec->floor_pic == Sec->floor.pic &&
@@ -292,6 +298,15 @@ void VLevelChannel::Update()
 			Msg.WriteBit(mround(RepSec->floor_yoffs) != mround(Sec->floor.yoffs));
 			if (mround(RepSec->floor_yoffs) != mround(Sec->floor.yoffs))
 				Msg.WriteInt(mround(Sec->floor.yoffs) & 63, 64);
+			Msg.WriteBit(RepSec->floor_XScale != Sec->floor.XScale);
+			if (RepSec->floor_XScale != Sec->floor.XScale)
+				Msg << Sec->floor.XScale;
+			Msg.WriteBit(RepSec->floor_YScale != Sec->floor.YScale);
+			if (RepSec->floor_YScale != Sec->floor.YScale)
+				Msg << Sec->floor.YScale;
+			Msg.WriteBit(mround(RepSec->floor_Angle) != mround(Sec->floor.Angle));
+			if (mround(RepSec->floor_Angle) != mround(Sec->floor.Angle))
+				Msg.WriteInt((int)AngleMod(Sec->floor.Angle), 360);
 		}
 		Msg.WriteBit(CeilChanged);
 		if (CeilChanged)
@@ -305,6 +320,15 @@ void VLevelChannel::Update()
 			Msg.WriteBit(mround(RepSec->ceil_yoffs) != mround(Sec->ceiling.yoffs));
 			if (mround(RepSec->ceil_yoffs) != mround(Sec->ceiling.yoffs))
 				Msg.WriteInt(mround(Sec->ceiling.yoffs) & 63, 64);
+			Msg.WriteBit(RepSec->ceil_XScale != Sec->ceiling.XScale);
+			if (RepSec->ceil_XScale != Sec->ceiling.XScale)
+				Msg << Sec->ceiling.XScale;
+			Msg.WriteBit(RepSec->ceil_YScale != Sec->ceiling.YScale);
+			if (RepSec->ceil_YScale != Sec->ceiling.YScale)
+				Msg << Sec->ceiling.YScale;
+			Msg.WriteBit(mround(RepSec->ceil_Angle) != mround(Sec->ceiling.Angle));
+			if (mround(RepSec->ceil_Angle) != mround(Sec->ceiling.Angle))
+				Msg.WriteInt((int)AngleMod(Sec->ceiling.Angle), 360);
 		}
 		Msg.WriteBit(LightChanged);
 		if (LightChanged)
@@ -321,10 +345,16 @@ void VLevelChannel::Update()
 		RepSec->floor_dist = Sec->floor.dist;
 		RepSec->floor_xoffs = Sec->floor.xoffs;
 		RepSec->floor_yoffs = Sec->floor.yoffs;
+		RepSec->floor_XScale = Sec->floor.XScale;
+		RepSec->floor_YScale = Sec->floor.YScale;
+		RepSec->floor_Angle = Sec->floor.Angle;
 		RepSec->ceil_pic = Sec->ceiling.pic;
 		RepSec->ceil_dist = Sec->ceiling.dist;
 		RepSec->ceil_xoffs = Sec->ceiling.xoffs;
 		RepSec->ceil_yoffs = Sec->ceiling.yoffs;
+		RepSec->ceil_XScale = Sec->ceiling.XScale;
+		RepSec->ceil_YScale = Sec->ceiling.YScale;
+		RepSec->ceil_Angle = Sec->ceiling.Angle;
 		RepSec->lightlevel = Sec->params.lightlevel;
 		RepSec->Fade = Sec->params.Fade;
 	}

@@ -409,13 +409,15 @@ sec_surface_t* VRenderLevel::CreateSecSurface(subsector_t* sub,
 	VTexture* Tex = GTextureManager(splane->pic);
 	if (fabs(splane->normal.z) > 0.7)
 	{
-		ssurf->texinfo.saxis = TVec(1, 0, 0) * TextureSScale(Tex);
-		ssurf->texinfo.taxis = TVec(0, -1, 0) * TextureTScale(Tex);
+		ssurf->texinfo.saxis = TVec(mcos(splane->Angle),
+			msin(splane->Angle), 0) * TextureSScale(Tex) * splane->XScale;
+		ssurf->texinfo.taxis = TVec(-msin(splane->Angle),
+			-mcos(splane->Angle), 0) * TextureTScale(Tex) * splane->YScale;
 	}
 	else
 	{
 		ssurf->texinfo.taxis = TVec(0, 0, -1) * TextureTScale(Tex);
-		ssurf->texinfo.saxis = Normalise(CrossProduct(splane->normal, 
+		ssurf->texinfo.saxis = Normalise(CrossProduct(splane->normal,
 			ssurf->texinfo.taxis)) * TextureSScale(Tex);
 	}
 	ssurf->texinfo.soffs = splane->xoffs;
@@ -423,6 +425,9 @@ sec_surface_t* VRenderLevel::CreateSecSurface(subsector_t* sub,
 	ssurf->texinfo.Tex = Tex;
 	ssurf->texinfo.Alpha = splane->Alpha < 1.0 ? splane->Alpha : 1.1;
 	ssurf->texinfo.Additive = false;
+	ssurf->XScale = splane->XScale;
+	ssurf->YScale = splane->YScale;
+	ssurf->Angle = splane->Angle;
 
 	surf->count = sub->numlines;
 	seg_t *line = &Level->Segs[sub->firstline];
@@ -491,6 +496,10 @@ void VRenderLevel::UpdateSecSurface(sec_surface_t *ssurf,
 		}
 	}
 
+	if (ssurf->texinfo.Tex != GTextureManager(plane->pic))
+	{
+		ssurf->texinfo.Tex = GTextureManager(plane->pic);
+	}
 	if (FASI(ssurf->dist) != FASI(plane->dist))
 	{
 		ssurf->dist = plane->dist;
@@ -507,7 +516,48 @@ void VRenderLevel::UpdateSecSurface(sec_surface_t *ssurf,
 			InitSurfs(ssurf->surfs, &ssurf->texinfo, NULL, sub);
 		}
 	}
-	if (FASI(ssurf->texinfo.soffs) != FASI(plane->xoffs) ||
+	if (FASI(ssurf->XScale) != FASI(plane->XScale) ||
+		FASI(ssurf->YScale) != FASI(plane->YScale) ||
+		FASI(ssurf->Angle) != FASI(plane->Angle))
+	{
+		ssurf->texinfo.soffs = plane->xoffs;
+		ssurf->texinfo.toffs = plane->yoffs;
+		ssurf->XScale = plane->XScale;
+		ssurf->YScale = plane->YScale;
+		ssurf->Angle = plane->Angle;
+		if (fabs(plane->normal.z) > 0.7)
+		{
+			ssurf->texinfo.saxis = TVec(mcos(plane->Angle),
+				msin(plane->Angle), 0) * TextureSScale(ssurf->texinfo.Tex) *
+				plane->XScale;
+			ssurf->texinfo.taxis = TVec(mcos(plane->Angle - 90),
+				msin(plane->Angle - 90), 0) * TextureTScale(ssurf->texinfo.Tex) *
+				plane->YScale;
+//			ssurf->texinfo.taxis = TVec(-msin(plane->Angle),
+//				-mcos(plane->Angle), 0) * TextureTScale(ssurf->texinfo.Tex) *
+//				plane->YScale;
+		}
+		if (plane->pic != skyflatnum)
+		{
+			FreeSurfaces(ssurf->surfs);
+			surface_t* surf = (surface_t*)Z_Calloc(sizeof(surface_t) +
+				(sub->numlines - 1) * sizeof(TVec));
+			surf->count = sub->numlines;
+			seg_t* line = &Level->Segs[sub->firstline];
+			int vlindex = (plane->normal.z < 0);
+			for (int i = 0; i < surf->count; i++)
+			{
+				TVec &v = *line[vlindex ? surf->count - i - 1 : i].v1;
+				TVec &dst = surf->verts[i];
+				dst = v;
+				dst.z = plane->GetPointZ(dst);
+			}
+			ssurf->surfs = SubdivideFace(surf, ssurf->texinfo.saxis,
+				&ssurf->texinfo.taxis);
+			InitSurfs(ssurf->surfs, &ssurf->texinfo, plane, sub);
+		}
+	}
+	else if (FASI(ssurf->texinfo.soffs) != FASI(plane->xoffs) ||
 		FASI(ssurf->texinfo.toffs) != FASI(plane->yoffs))
 	{
 		ssurf->texinfo.soffs = plane->xoffs;
@@ -517,10 +567,6 @@ void VRenderLevel::UpdateSecSurface(sec_surface_t *ssurf,
 			FlushSurfCaches(ssurf->surfs);
 			InitSurfs(ssurf->surfs, &ssurf->texinfo, NULL, sub);
 		}
-	}
-	if (ssurf->texinfo.Tex != GTextureManager(plane->pic))
-	{
-		ssurf->texinfo.Tex = GTextureManager(plane->pic);
 	}
 	unguard;
 }
