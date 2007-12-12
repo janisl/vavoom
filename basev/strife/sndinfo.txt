@@ -10,17 +10,6 @@
 //
 //==========================================================================
 
-$playerreserve					*grunt
-$playerreserve					*land
-$playerreserve					*usefail
-$playerreserve					*pain100
-$playerreserve					*pain75
-$playerreserve					*pain50
-$playerreserve					*pain25
-$playerreserve					*death
-$playerreserve					*xdeath
-$playerreserve					*gibbed
-
 $playersound	player	male	*grunt		dsoof
 $playersounddup	player	male	*land		*grunt
 $playersound	player	male	*usefail	dsnoway

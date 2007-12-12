@@ -12,23 +12,6 @@ $pitchshiftrange 3
 //
 //==========================================================================
 
-$playerreserve					*usefail
-$playerreserve					*puzzfail
-$playerreserve					*grunt
-$playerreserve					*land
-$playerreserve					*falling
-$playerreserve					*poison
-$playerreserve					*pain100
-$playerreserve					*pain75
-$playerreserve					*pain50
-$playerreserve					*pain25
-$playerreserve					*death
-$playerreserve					*crazydeath
-$playerreserve					*xdeath
-$playerreserve					*splat
-$playerreserve					*burndeath
-$playerreserve					*fistgrunt
-
 $random PlayerFighterExtremeDeathPicker	{ PlayerFighterExtreme1Death
 										  PlayerFighterExtreme2Death
 										  PlayerFighterExtreme3Death }

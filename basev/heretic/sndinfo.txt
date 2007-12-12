@@ -12,20 +12,6 @@ $pitchshiftrange 2
 //
 //==========================================================================
 
-$playerreserve					*grunt
-$playerreserve					*usefail
-$playerreserve					*land
-$playerreserve					*pain100
-$playerreserve					*pain75
-$playerreserve					*pain50
-$playerreserve					*pain25
-$playerreserve					*death
-$playerreserve					*wimpydeath
-$playerreserve					*crazydeath
-$playerreserve					*gibbed
-$playerreserve					*evillaugh
-$playerreserve					*weaponlaugh
-
 $playersound	player	male	*grunt			plroof
 $playersounddup	player	male	*usefail		*grunt
 $playersounddup	player	male	*land			*grunt

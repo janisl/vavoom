@@ -277,14 +277,6 @@ void VSoundManager::ParseSndinfo(VScriptParser* sc)
 				S_sfx[id].bRandomHeader = true;
 			}
 		}
-		else if (sc->Check("$playerreserve"))
-		{
-			// $playerreserve <logical name>
-			sc->ExpectString();
-			int id = AddSound(*sc->String, -1);
-			S_sfx[id].Link = NumPlayerReserves++;
-			S_sfx[id].bPlayerReserve = true;
-		}
 		else if (sc->Check("$playersound"))
 		{
 			// $playersound <player class> <gender> <logical name> <lump name>
@@ -315,7 +307,13 @@ void VSoundManager::ParseSndinfo(VScriptParser* sc)
 
 			ParsePlayerSoundCommon(sc, PClass, Gender, RefId);
 			TargId = FindSound(*sc->String);
-			if (!S_sfx[TargId].bPlayerReserve)
+			if (!TargId)
+			{
+				TargId = AddSound(*sc->String, -1);
+				S_sfx[TargId].Link = NumPlayerReserves++;
+				S_sfx[TargId].bPlayerReserve = true;
+			}
+			else if (!S_sfx[TargId].bPlayerReserve)
 			{
 				sc->Error(va("%s is not a player sound", *sc->String));
 			}
@@ -596,7 +594,13 @@ void VSoundManager::ParsePlayerSoundCommon(VScriptParser* sc, int& PClass,
 	Gender = AddPlayerGender(*sc->String);
 	sc->ExpectString();
 	RefId = FindSound(*sc->String);
-	if (!S_sfx[RefId].bPlayerReserve)
+	if (!RefId)
+	{
+		RefId = AddSound(*sc->String, -1);
+		S_sfx[RefId].Link = NumPlayerReserves++;
+		S_sfx[RefId].bPlayerReserve = true;
+	}
+	else if (!S_sfx[RefId].bPlayerReserve)
 	{
 		sc->Error(va("%s has not been reserved for a player sound",
 			*sc->String));

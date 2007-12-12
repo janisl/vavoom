@@ -12,19 +12,6 @@ $pitchshiftrange 4
 //
 //==========================================================================
 
-$playerreserve					*pain100
-$playerreserve					*pain75
-$playerreserve					*pain50
-$playerreserve					*pain25
-$playerreserve					*death
-$playerreserve					*xdeath
-$playerreserve					*gibbed
-$playerreserve					*grunt
-$playerreserve					*land
-$playerreserve					*jump
-$playerreserve					*fist
-$playerreserve					*usefail
-
 $playersound	player	male	*pain100	dsplpain
 $playersounddup	player	male	*pain75		*pain100
 $playersounddup	player	male	*pain50		*pain100
