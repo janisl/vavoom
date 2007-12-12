@@ -543,13 +543,18 @@ enum
 	LNSPEC_3DFloor = 160,// 160
 	LNSPEC_Contents,
 
-	LNSPEC_PlaneUpNearestWaitDownStay = 172,
+	LNSPEC_SectorSetCeilingScale2 = 170,// 170
+	LNSPEC_SectorSetFloorScale2,
+	LNSPEC_PlaneUpNearestWaitDownStay,
 	LNSPEC_NoiseAlert,
 
 	LNSPEC_PlaneAlign = 181,
 
-	LNSPEC_SectorSetCeilingOffset = 186,
-	LNSPEC_SectorSetFloorOffset,
+	LNSPEC_SectorSetRotation = 185,
+	LNSPEC_SectorSetCeilingPanning,
+	LNSPEC_SectorSetFloorPanning,
+	LNSPEC_SectorSetCeilingScale,
+	LNSPEC_SectorSetFloorScale,
 
 	LNSPEC_CeilingLowerToHighestFloor = 192,
 	LNSPEC_CeilingLowerInstant,

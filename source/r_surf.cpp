@@ -407,18 +407,19 @@ sec_surface_t* VRenderLevel::CreateSecSurface(subsector_t* sub,
 	ssurf->dist = splane->dist;
 
 	VTexture* Tex = GTextureManager(splane->pic);
-	if (fabs(splane->normal.z) > 0.7)
+	if (fabs(splane->normal.z) > 0.1)
 	{
-		ssurf->texinfo.saxis = TVec(mcos(splane->Angle),
-			msin(splane->Angle), 0) * TextureSScale(Tex) * splane->XScale;
-		ssurf->texinfo.taxis = TVec(msin(splane->Angle),
-			-mcos(splane->Angle), 0) * TextureTScale(Tex) * splane->YScale;
+		ssurf->texinfo.saxis = TVec(mcos(-splane->Angle),
+			msin(-splane->Angle), 0) * TextureSScale(Tex) * splane->XScale;
+		ssurf->texinfo.taxis = TVec(msin(-splane->Angle),
+			-mcos(-splane->Angle), 0) * TextureTScale(Tex) * splane->YScale;
 	}
 	else
 	{
-		ssurf->texinfo.taxis = TVec(0, 0, -1) * TextureTScale(Tex);
+		ssurf->texinfo.taxis = TVec(0, 0, -1) * TextureTScale(Tex) *
+			splane->YScale;
 		ssurf->texinfo.saxis = Normalise(CrossProduct(splane->normal,
-			ssurf->texinfo.taxis)) * TextureSScale(Tex);
+			ssurf->texinfo.taxis)) * TextureSScale(Tex) * splane->XScale;
 	}
 	ssurf->texinfo.soffs = splane->xoffs;
 	ssurf->texinfo.toffs = splane->yoffs;
@@ -520,20 +521,28 @@ void VRenderLevel::UpdateSecSurface(sec_surface_t *ssurf,
 		FASI(ssurf->YScale) != FASI(plane->YScale) ||
 		FASI(ssurf->Angle) != FASI(plane->Angle))
 	{
+		if (fabs(plane->normal.z) > 0.1)
+		{
+			ssurf->texinfo.saxis = TVec(mcos(-plane->Angle),
+				msin(-plane->Angle), 0) * TextureSScale(ssurf->texinfo.Tex) *
+				plane->XScale;
+			ssurf->texinfo.taxis = TVec(msin(-plane->Angle),
+				-mcos(-plane->Angle), 0) * TextureTScale(ssurf->texinfo.Tex) *
+				plane->YScale;
+		}
+		else
+		{
+			ssurf->texinfo.taxis = TVec(0, 0, -1) *
+				TextureTScale(ssurf->texinfo.Tex) * plane->YScale;
+			ssurf->texinfo.saxis = Normalise(CrossProduct(plane->normal,
+				ssurf->texinfo.taxis)) * TextureSScale(ssurf->texinfo.Tex) *
+				plane->XScale;
+		}
 		ssurf->texinfo.soffs = plane->xoffs;
 		ssurf->texinfo.toffs = plane->yoffs;
 		ssurf->XScale = plane->XScale;
 		ssurf->YScale = plane->YScale;
 		ssurf->Angle = plane->Angle;
-		if (fabs(plane->normal.z) > 0.7)
-		{
-			ssurf->texinfo.saxis = TVec(mcos(plane->Angle),
-				msin(plane->Angle), 0) * TextureSScale(ssurf->texinfo.Tex) *
-				plane->XScale;
-			ssurf->texinfo.taxis = TVec(msin(plane->Angle),
-				-mcos(plane->Angle), 0) * TextureTScale(ssurf->texinfo.Tex) *
-				plane->YScale;
-		}
 		if (plane->pic != skyflatnum)
 		{
 			FreeSurfaces(ssurf->surfs);
