@@ -411,7 +411,7 @@ sec_surface_t* VRenderLevel::CreateSecSurface(subsector_t* sub,
 	{
 		ssurf->texinfo.saxis = TVec(mcos(splane->Angle),
 			msin(splane->Angle), 0) * TextureSScale(Tex) * splane->XScale;
-		ssurf->texinfo.taxis = TVec(-msin(splane->Angle),
+		ssurf->texinfo.taxis = TVec(msin(splane->Angle),
 			-mcos(splane->Angle), 0) * TextureTScale(Tex) * splane->YScale;
 	}
 	else
@@ -530,12 +530,9 @@ void VRenderLevel::UpdateSecSurface(sec_surface_t *ssurf,
 			ssurf->texinfo.saxis = TVec(mcos(plane->Angle),
 				msin(plane->Angle), 0) * TextureSScale(ssurf->texinfo.Tex) *
 				plane->XScale;
-			ssurf->texinfo.taxis = TVec(mcos(plane->Angle - 90),
-				msin(plane->Angle - 90), 0) * TextureTScale(ssurf->texinfo.Tex) *
+			ssurf->texinfo.taxis = TVec(msin(plane->Angle),
+				-mcos(plane->Angle), 0) * TextureTScale(ssurf->texinfo.Tex) *
 				plane->YScale;
-//			ssurf->texinfo.taxis = TVec(-msin(plane->Angle),
-//				-mcos(plane->Angle), 0) * TextureTScale(ssurf->texinfo.Tex) *
-//				plane->YScale;
 		}
 		if (plane->pic != skyflatnum)
 		{

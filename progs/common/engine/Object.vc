@@ -548,6 +548,9 @@ enum
 
 	LNSPEC_PlaneAlign = 181,
 
+	LNSPEC_SectorSetCeilingOffset = 186,
+	LNSPEC_SectorSetFloorOffset,
+
 	LNSPEC_CeilingLowerToHighestFloor = 192,
 	LNSPEC_CeilingLowerInstant,
 	LNSPEC_CeilingRaiseInstant,

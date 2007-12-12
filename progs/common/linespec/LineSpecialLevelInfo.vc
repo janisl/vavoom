@@ -711,6 +711,14 @@ bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 	case LNSPEC_NoiseAlert:
 		buttonSuccess = EV_NoiseAlert(A, Arg1, Arg2, Arg3, Arg4, Arg5);
 		break;
+	case LNSPEC_SectorSetCeilingOffset:
+		buttonSuccess = EV_SectorSetCeilingOffset(Arg1, Arg2, Arg3, Arg4,
+			Arg5);
+		break;
+	case LNSPEC_SectorSetFloorOffset:
+		buttonSuccess = EV_SectorSetFloorOffset(Arg1, Arg2, Arg3, Arg4,
+			Arg5);
+		break;
 	case LNSPEC_CeilingLowerToHighestFloor:
 		buttonSuccess = EV_DoCeiling(Arg1, Arg2, Arg3, Arg4, Arg5,
 			CeilingMover::CEILEV_LowerToHighestFloor, Line);
@@ -921,7 +929,6 @@ bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 	// LNSPEC_3DFloor:
 	// LNSPEC_Contents:
 	// LNSPEC_PlaneAlign:
-	// LNSPEC_LineTranslucent:
 	// LNSPEC_TransferHeights:
 	// LNSPEC_ScrollTextureBoth:
 	// LNSPEC_ScrollTextureModel:
@@ -2954,6 +2961,48 @@ final bool EV_SectorSetFriction(int Arg1, int Arg2, int Arg3, int Arg4,
 		Ret = true;
 	}
 	return Ret;
+}
+
+//==========================================================================
+//
+//  EV_SectorSetFloorOffset
+//
+//==========================================================================
+
+final bool EV_SectorSetFloorOffset(int Arg1, int Arg2, int Arg3, int Arg4,
+	int Arg5)
+{
+	int s;
+	float XOffs = itof(Arg2) + itof(Arg3) / 100.0;
+	float YOffs = itof(Arg4) + itof(Arg5) / 100.0;
+	for (s = XLevel.FindSectorFromTag(Arg1, -1); s >= 0;
+		s = XLevel.FindSectorFromTag(Arg1, s))
+	{
+		XLevel.Sectors[s].floor.xoffs = XOffs;
+		XLevel.Sectors[s].floor.yoffs = YOffs;
+	}
+	return true;
+}
+
+//==========================================================================
+//
+//  EV_SectorSetCeilingOffset
+//
+//==========================================================================
+
+final bool EV_SectorSetCeilingOffset(int Arg1, int Arg2, int Arg3, int Arg4,
+	int Arg5)
+{
+	int s;
+	float XOffs = itof(Arg2) + itof(Arg3) / 100.0;
+	float YOffs = itof(Arg4) + itof(Arg5) / 100.0;
+	for (s = XLevel.FindSectorFromTag(Arg1, -1); s >= 0;
+		s = XLevel.FindSectorFromTag(Arg1, s))
+	{
+		XLevel.Sectors[s].ceiling.xoffs = XOffs;
+		XLevel.Sectors[s].ceiling.yoffs = YOffs;
+	}
+	return true;
 }
 
 //**************************************************************************
