@@ -783,7 +783,9 @@ void VRenderLevel::RenderThing(VEntity* mobj)
 		return;
 	}
 
-	if (mobj->SubSector->VisFrame != r_visframecount)
+	//	Skip things in subsectors that are not visible.
+	int SubIdx = mobj->SubSector - Level->Subsectors;
+	if (!(BspVis[SubIdx >> 3] & (1 << (SubIdx & 7))))
 	{
 		return;
 	}

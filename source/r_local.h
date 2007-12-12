@@ -202,6 +202,8 @@ private:
 
 	//	World render variables
 	VViewClipper	ViewClip;
+	int				VisSize;
+	vuint8*			BspVis;
 	int				FrustumIndexes[4][6];
 	bool			SkyIsVisible;
 

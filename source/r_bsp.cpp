@@ -313,6 +313,8 @@ void VRenderLevel::RenderSubsector(int num, int clipflags)
 		return;
 	}
 
+	BspVis[num >> 3] |= 1 << (num & 7);
+
 	RenderSubRegion(Sub->regions, clipflags);
 
 	ViewClip.ClipAddSubsectorSegs(Sub);
@@ -422,6 +424,7 @@ void VRenderLevel::RenderWorld(const refdef_t* rd)
 	ViewClip.ClearClipNodes(vieworg, Level);
 	ViewClip.ClipInitFrustrumRange(viewangles, viewforward, viewright, viewup,
 		rd->fovx, rd->fovy);
+	memset(BspVis, 0, VisSize);
 
 	SkyIsVisible = false;
 

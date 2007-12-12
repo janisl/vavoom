@@ -198,6 +198,9 @@ VRenderLevel::VRenderLevel(VLevel* ALevel)
 	memset(DLights, 0, sizeof(DLights));
 	memset(trans_sprites, 0, sizeof(trans_sprites));
 
+	VisSize = (Level->NumSubsectors + 7) >> 3;
+	BspVis = new vuint8[VisSize];
+
 	InitParticles();
 	ClearParticles();
 
@@ -275,6 +278,7 @@ VRenderLevel::~VRenderLevel()
 	}
 
 	delete[] Particles;
+	delete[] BspVis;
 	unguard;
 }
 
