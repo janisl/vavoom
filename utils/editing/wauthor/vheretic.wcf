@@ -63,16 +63,21 @@ LightingInc=0
 0x003   0x0000  255     255     0       Key
 0x004   0x0000  0       192     0       Armor
 0x005   0x0000  128     128     0       Weapon
-0x006   0x0000  128     128     000     Ammo
+0x006   0x0000  192     192     0	    Ammo
 0x007   0x0000  0       255     255     Powerup
 0x008   0x0000  192     192     192     Scenery
 0x009   0x0000  96      96      96      Sounds
 0x00a   0x0001  255     0       255     Teleport
 0x00b   0x0000  0       0       255     Healing
 0x00c   0x0000  192     0       0       Hazard
-0x00d   0x0001  255     0       255     Special
+0x00d   0x0001  0       128     255     Special
+0x00e   0x0000  96      96      96      Sound sequences
+0x00f   0x0000  128     255     128     Particle effects
+0x010	0x0001	128		128		255		Cameras
+0x011	0x0000	255		128		128		Slopes
+0x012	0x0000	255		255		255		Static/Dynamic Lights
 
-;       ID                              used to uniquely identify things in a map
+;       ID                      used to uniquely identify things in a map
 ;       Class                   classification (defined above)
 ;       Size                    approximate thing size (in map units)
 ;       Sprite                  name of the sprite to use for display purposes
@@ -83,128 +88,139 @@ LightingInc=0
 0x002   1       32      playa1          Player 2 *( number, -, -, -, - )
 0x003   1       32      playa1          Player 3 *( number, -, -, -, - )
 0x004   1       32      playa1          Player 4 *( number, -, -, -, - )
-0x005   2       40      impxa1      Gargoyle leader
-0x006   2       64      heada1      Ironlich
-0x007   2       40      srcra1      D'Sparil
-0x008   6       20      bagha0      Bag of holding
-0x009   2       80      mntrv1      Maulotaur
-0x00a   6       20      amg1a0      Wand crystal (10)
-0x00b   1       32      playf1      Deathmatch
-0x00c   6       20      amg2a0      Wand crystal (50)
-0x00d   6       20      amm1a0      Mace spheres (20)
-0x00e   10      20      teleg0      Destination
-0x00f   2       40      wzrda1      Disciple of D'Sparil
-0x010   6       20      amm2a0      Mace spheres (100)
-0x011   8       20      skh1a0      Skull hang (70)
-0x012   6       20      amc1a0      Crossbow bolts (5)
-0x013   6       20      amc2a0      Crossbow quiver (20)
-0x014   6       20      ams1a0      Hellstaff lesser runes (20)
-0x015   6       20      ams2a0      Hellstaff greater runes (100)
-0x016   6       20      amp1a0      Phoenix orb (1)
-0x017   6       20      amp2a0      Phoenix orb (10)
-0x018   8       20      skh2a0      Skull hang (60)
-0x019   8       20      skh3a0      Skull hang (45)
-0x01a   8       20      skh4a0      Skull hang (35)
-0x01b   8       20      srtca0      Serpent torch
-0x01c   8       20      chdlb0      Chandelier
-0x01d   8       20      smpla0      Small pillar
-0x01e   7       20      eggca0      Morph ovum
-0x01f   4       20      shd2a0      Enchanted shield
+0x005   2       40      impxa1      	Gargoyle leader
+0x006   2       64      heada1      	Ironlich
+0x007   2       40      srcra1      	D'Sparil
+0x008   6       20      bagha0      	Bag of holding
+0x009   2       80      mntrv1      	Maulotaur
+0x00a   6       20      amg1a0      	Wand crystal (10)
+0x00b   1       32      playf1      	Deathmatch
+0x00c   6       20      amg2a0     		Wand crystal (50)
+0x00d   6       20      amm1a0      	Mace spheres (20)
+0x00e   10      20      teleg0      	Destination
+0x00f   2       40      wzrda1      	Disciple of D'Sparil
+0x010   6       20      amm2a0      	Mace spheres (100)
+0x011   8       20      skh1a0      	Skull hang (70)
+0x012   6       20      amc1a0      	Crossbow bolts (5)
+0x013   6       20      amc2a0      	Crossbow quiver (20)
+0x014   6       20      ams1a0      	Hellstaff lesser runes (20)
+0x015   6       20      ams2a0      	Hellstaff greater runes (100)
+0x016   6       20      amp1a0      	Phoenix orb (1)
+0x017   6       20      amp2a0      	Phoenix orb (10)
+0x018   8       20      skh2a0      	Skull hang (60)
+0x019   8       20      skh3a0      	Skull hang (45)
+0x01a   8       20      skh4a0      	Skull hang (35)
+0x01b   8       20      srtca0      	Serpent torch
+0x01c   8       20      chdlb0      	Chandelier
+0x01d   8       20      smpla0      	Small pillar
+0x01e   7       20      eggca0      	Morph ovum
+0x01f   4       20      shd2a0      	Enchanted shield
 0x020   7       20      artisphl        Mystic urn
 0x021   7       20      artitrch        Torch
 0x022   7       20      artifbmb        Time bomb of the ancients
-0x023   7       20      spmpa0      Map scroll
+0x023   7       20      spmpa0      	Map scroll
 0x024   7       20      artiatlp        Chaos device
-0x025   8       20      stgsa0      Stalagmite (small)
-0x026   8       20      stgla0      Stalagmite (large)
-0x027   8       20      stcsa0      Stalactite (small)
-0x028   8       20      stcla0      Stalactite (large)
-0x029   9       20      telea0      Waterfall (continuous)
-0x02a   9       20      telea0      Wind (continuous)
-0x02b   12      20      ppodk0      Pod spawner
-0x02c   12      20      barla0      Barrel
-0x02d   2       40      mummy1      Nitrogolem
-0x02e   2       40      mummy5      Nitrogolem ghost
-0x02f   8       20      brpla0      Brown pillar
-0x030   8       20      mos1a0      Moss (three)
-0x031   8       20      mos2a0      Moss (one)
-0x032   8       20      wtrhc0      Wall torch
-0x033   8       20      hcora0      Hanging corpse
-0x034   8       20      tgltg0      Blue glitter
-0x035   5       20      wblsa0      Dragon claw
-0x036   6       20      amb1a0      Energy orb (10)
-0x037   6       20      amb2a0      Energy orb (25)
-0x038   2       20      sor2i0      D'Sparil teleport spot
-0x040   2       32      kniga1      Undead warrior
-0x041   2       32      kniga5      Undead warrior ghost
-0x042   2       40  impxb1          Gargoyle
-0x044   2       40      mumme1      Golem
-0x045   2       40      mumme5      Golem ghost
-0x046   2       50      beasa1      Weredragon
-0x049   3       20      akyya0      Green key
-0x04a   8       20      tgltb0      Red glitter
+0x025   8       20      stgsa0      	Stalagmite (small)
+0x026   8       20      stgla0      	Stalagmite (large)
+0x027   8       20      stcsa0      	Stalactite (small)
+0x028   8       20      stcla0      	Stalactite (large)
+0x029   9       20      telea0      	Waterfall (continuous)
+0x02a   9       20      telea0      	Wind (continuous)
+0x02b   12      20      ppodk0      	Pod spawner
+0x02c   12      20      barla0      	Barrel
+0x02d   2       40      mummy1      	Nitrogolem
+0x02e   2       40      mummy5      	Nitrogolem ghost
+0x02f   8       20      brpla0      	Brown pillar
+0x030   8       20      mos1a0      	Moss (three)
+0x031   8       20      mos2a0      	Moss (one)
+0x032   8       20      wtrhc0      	Wall torch
+0x033   8       20      hcora0      	Hanging corpse
+0x034   8       20      tgltg0      	Blue glitter
+0x035   5       20      wblsa0      	Dragon claw
+0x036   6       20      amb1a0      	Energy orb (10)
+0x037   6       20      amb2a0      	Energy orb (25)
+0x038   2       20      sor2i0      	D'Sparil teleport spot
+0x040   2       32      kniga1      	Undead warrior
+0x041   2       32      kniga5      	Undead warrior ghost
+0x042   2       40  	impxb1         	Gargoyle
+0x044   2       40      mumme1      	Golem
+0x045   2       40      mumme5      	Golem ghost
+0x046   2       50      beasa1      	Weredragon
+0x049   3       20      akyya0      	Green key
+0x04a   8       20      tgltb0      	Red glitter
 0x04b   7       20      artiinvs        Invisibility
-0x04c   8       20      kfr1a0      Fire brazier
-0x04f   3       20      bkyya0      Blue key
-0x050   3       20      ckyya0      Yellow key
-0x051   11      20      ptn1a0      Crystal vial (10)
+0x04c   8       20      kfr1a0      	Fire brazier
+0x04f   3       20      bkyya0      	Blue key
+0x050   3       20      ckyya0      	Yellow key
+0x051   11      20      ptn1a0      	Crystal vial (10)
 0x052   11      20      artiptn2        Quartz flask (25)
 0x053   7       20      artisoar        Wings of wrath
 0x054   7       20      artiinvu        Ring of invulnerability
-0x055   4       20      shlda0      Silver shield
+0x055   4       20      shlda0      	Silver shield
 0x056   7       20      artipwbk        Tome of power
-0x057   8       20      vlcoe0      Volcano
-0x05a   2       20      clnka1      Sabreclaw
-0x05c   2       40      snkea1      Ophidian
-0x05e   8       20      kgzba0      Blue orb
-0x05f   8       20      kgzga0      Green orb
-0x060   8       20      kgzya0      Yellow orb
-0x4b0   9       20      telea0      Scream
-0x4b1   9       20      telea0      Squish
-0x4b2   9       20      telea0      Water drops
-0x4b3   9       20      telea0      Slow footsteps
-0x4b4   9       20      telea0      Heartbeat
-0x4b5   9       20      telea0      Bells
-0x4b6   9       20      telea0      Growl
-0x4b7   9       20      telea0      Magic
-0x4b8   9       20      telea0      Laughter
-0x4b9   9       20      telea0      Running footsteps
-0x578   9       20      telea0      Sector sound sequence 0
-0x579   9       20      telea0      Sector sound sequence 1
-0x57a   9       20      telea0      Sector sound sequence 2
-0x57b   9       20      telea0      Sector sound sequence 3
-0x57c   9       20      telea0      Sector sound sequence 4
-0x57d   9       20      telea0      Sector sound sequence 5
-0x57e   9       20      telea0      Sector sound sequence 6
-0x57f   9       20      telea0      Sector sound sequence 7
-0x580   9       20      telea0      Sector sound sequence 8
-0x581   9       20      telea0      Sector sound sequence 9
-0x582   9       20      telea0      Sector sound sequence 10
-0x5dc   13      20      puf2a0      Floor slope
-0x5dd   13      20      puf2a0      Ceiling slope
-0x5de   13      20      puf2a0      Static light *( radius, -, -, -, - )
-0x5df   13      20      puf2a0      Static colored light *( radius, r, g, b, - )
-0x5e0   13      20      puf2a0      Vertex floor height
-0x5e1   13      20      puf2a0      Vertex ceiling height
-0x7d1   5       20      wbowa0      Crossbow
-0x7d2   5       20      wmcea0      Mace
-0x7d3   5       20      wphxa0      Phoenix rod
-0x7d4   5       20      wskla0      Hellstaff
-0x7d5   5       20      wgnta0      Gauntlets
-0x7f3   12      20      ppoda0      Pod
-0xbb8   13      20      telea0      Polyobject anchor
-0xbb9   13      20      telea0      Start spot
-0xbba   13      20      telea0      Start spot w/crush
-0x2454  13      20      telea0      Polyobject anchor
-0x2455  13      20      telea0      Start spot
-0x2456  13      20      telea0      Start spot w/crush
-0x36f2  9       20      telea0      Sound sequence *( number, mode, -, -, - )
+0x057   8       20      vlcoe0     		Volcano
+0x05a   2       20      clnka1      	Sabreclaw
+0x05c   2       40      snkea1      	Ophidian
+0x05e   8       20      kgzba0      	Blue orb
+0x05f   8       20      kgzga0      	Green orb
+0x060   8       20      kgzya0      	Yellow orb
+0x4b0   9       20      telea0      	Scream
+0x4b1   9       20      telea0      	Squish
+0x4b2   9       20      telea0      	Water drops
+0x4b3   9       20      telea0      	Slow footsteps
+0x4b4   9       20      telea0      	Heartbeat
+0x4b5   9       20      telea0      	Bells
+0x4b6   9       20      telea0      	Growl
+0x4b7   9       20      telea0      	Magic
+0x4b8   9       20      telea0      	Laughter
+0x4b9   9       20      telea0      	Running footsteps
+0x578   14      20      teleh0          Sector sound sequence 0
+0x579   14      20      teleh0          Sector sound sequence 1
+0x57a   14      20      teleh0          Sector sound sequence 2
+0x57b   14      20      teleh0          Sector sound sequence 3
+0x57c   14      20      teleh0          Sector sound sequence 4
+0x57d   14      20      teleh0          Sector sound sequence 5
+0x57e   14      20      teleh0          Sector sound sequence 6
+0x57f   14      20      teleh0          Sector sound sequence 7
+0x580   14      20      teleh0          Sector sound sequence 8
+0x581   14      20      teleh0          Sector sound sequence 9
+0x582   14      20      teleh0          Sector sound sequence 10
+0x5dc   17      20      puf4b0          Floor slope
+0x5dd   17      20      puf4b0          Ceiling slope
+0x5de   18      20      fx01e0          Static light *( radius, -, -, -, - )
+0x5df   18      20      fx01e0          Static colored light *( radius, r, g, b, - )
+0x5e0   17      20      puf4b0          Vertex floor height
+0x5e1   17      20      puf4b0          Vertex ceiling height
+0x7d1   5       20      wbowa0      	Crossbow
+0x7d2   5       20      wmcea0      	Mace
+0x7d3   5       20      wphxa0      	Phoenix rod
+0x7d4   5       20      wskla0      	Hellstaff
+0x7d5   5       20      wgnta0      	Gauntlets
+0x7f3   12      20      ppoda0      	Pod
+0x2341  16      16      fx17b0          Security Camera *( pitch, angles, speed, -, - )
+0x2343  15      20      fx18q0          Fountain (red)
+0x2344  15      20      fx18q0          Fountain (green)
+0x2345  15      20      fx18q0          Fountain (blue)
+0x2346  15      20      fx18q0          Fountain (yellow)
+0x2347  15      20      fx18q0          Fountain (purple)
+0x2348  15      20      fx18q0          Fountain (black)
+0x2349  15      20      fx18q0          Fountain (white)
+0x236e	16		16		fx17b0			Interp pt *( pitch, traveltime, holdtime, next, hinext )
+0x236f	16		16		fx17b0			Path follower *( pt, hipt, bLinear, -, - )
+0x2370	16		16		fx17b0			Moving camera *( pt, hipt, bLinear, lookat, - )
+0x2371	16		16		fx17b0			Aiming camera *( pitch, maxang, maxpitch, tid, - )
+0x2372	16		16		aclob0			Actor mover *( pt, hipt, bLinear, tid, - )
+0x2373	16		16		aclod0			Interp special
+0x2454  13      20      telea0      	Polyobject anchor
+0x2455  13      20      telea0      	Start spot
+0x2456  13      20      telea0      	Start spot w/crush
+0x36f2  9       20      telea0      	Sound sequence *( number, mode, -, -, - )
 
-;       ID                              used to classify linedefs
-;       Name                    textual description of class
+;	ID				used to classify linedefs
+;	Name			textual description of class
 ;
-;       Note:   When converting a sector to a door, the linedef types
-;                       available are those in class number two.
+;	Note:	When converting a sector to a door, the linedef types
+;			available are those in class number two.
 
 [Specials.Classes]
 0x001   Special
@@ -421,7 +437,7 @@ LightingInc=0
 0x0f3	14	Exit_Normal( position, -, -, -, - )
 0x0f4	14	Exit_Secret( position, -, -, -, - )
 
-; Floor and ceiling
+; Elevator
 0x05f	15	FloorAndCeiling_LowerByValue( tag, speed, height, -, - )
 0x060	15	FloorAndCeiling_RaiseByValue( tag, speed, height, -, - )
 0x0f5	15	Elevator_RaiseToNearest( tag, speed, -, -, - )

@@ -97,7 +97,7 @@ void CreateChoices()
 
 	Enum = MenuChoiceEnum(NewChild(MenuChoice_OnOff));
 	Enum.SetOrigin(ChoicesStartX, currentY);
-	Enum.Text = "Fuzzy Effect";
+	Enum.Text = "Optional Fuzzy Effect";
 	Enum.SetInitialValue(GetCvar('r_drawfuzz'));
 	Enum.ValueChanging = ChangeFuzz;
 	currentY += Enum.Height;

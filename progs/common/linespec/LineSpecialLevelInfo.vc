@@ -51,7 +51,8 @@ enum
 {
 	pt_static,
 	pt_explode,
-	pt_explode2
+	pt_explode2,
+	pt_fountain
 };
 
 name			DefaultDoorSound;
@@ -5024,6 +5025,16 @@ void UpdateParticle(particle_t * p, float DeltaTime)
 		p->vel.z -= p->vel.z * DeltaTime;
 		p->vel += p->accel * DeltaTime;
 		p->vel.z -= grav;
+		break;
+	case pt_fountain:
+		float rad = 5.0 * Random() * 8.0 / 2.0;
+
+		if (rad < 5.0 / 8.0)
+			p->vel.z += (10.0 / 3.0) * Random();
+		else
+			p->vel.z += 3.0 * Random();
+
+		p->accel.z -= (1.0 / 11.0) * Random();
 		break;
 	}
 }

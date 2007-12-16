@@ -1,4 +1,3 @@
-
 ; Defines general parameters of the game for which wadfiles are intended.
 ;
 ;       Name            textual name for internal use
@@ -12,7 +11,7 @@ Name=Vavoom for Strife
 IWAD=xstrife1.wad
 NewMap=MAP01
 Directory=d:\Vavoom
-Run=doom.exe -file $_Wadfile -warp $_Wadmap
+Run=vavoom.exe -strife -progs progs/strife/ -file $_Wadfile +map MAP$_Wadmap
 
 ; Defines parameters of the default sector motif created when no motif
 ; file can be located at startup.
@@ -52,14 +51,14 @@ LightingInc=0
 ;                                               0x0001 - indicate thing facing angle
 ;       Red                             red value for drawing things of said class
 ;       Green                   green value for drawing things of said class
-;   Blue                        blue value for drawing things of said class
+;       Blue                    blue value for drawing things of said class
 ;       Name                    textual description of class
 
 [Things.Classes]
 0x001   0x0001  255     255     255     Start
 0x002   0x0000  128     128     0       Weapon
 0x003   0x0001  255     0       0       Enemy
-0x004   0x0000  128     128     0       Ammo
+0x004   0x0000  192     192     0       Ammo
 0x005   0x0000  0       255     255     Powerup
 0x006   0x0000  255     255     0       Key
 0x007   0x0000  192     192     192     Scenery
@@ -67,9 +66,19 @@ LightingInc=0
 0x009   0x0000  192     0       0       Hazard
 0x00a   0x0000  0       192     0       Armor
 0x00b   0x0000  0       0       255     Healing
-0x00d   0x0000  0       0       255     Special
+0x00d   0x0000  0       128     255     Special
+0x00e   0x0000  96      96      96      Sound sequences
+0x00f   0x0000  128     255     128     Particle effects
+0x010	0x0001	128		128		255		Cameras
+0x011	0x0000	255		128		128		Slopes
+0x012	0x0000	255		255		255		Static/Dynamic Lights
+0x013	0x0000	119		135		91		Quests
+0x014	0x0001	167		103		0		Rebels
+0x015	0x0001	143		167		219		Peasants
+0x016	0x0001	203		203		203		NPCs
+0x017	0x0000	103		83		75		Hint Labels
 
-;       ID                              used to uniquely identify things in a map
+;       ID                      used to uniquely identify things in a map
 ;       Class                   classification (defined above)
 ;       Size                    approximate thing size (in map units)
 ;       Sprite                  name of the sprite to use for display purposes
@@ -80,64 +89,231 @@ LightingInc=0
 0x002   1       32      playa1          Player 2 *( number, -, -, -, - )
 0x003   1       32      playa1          Player 3 *( number, -, -, -, - )
 0x004   1       32      playa1          Player 4 *( number, -, -, -, - )
-0x005   6       20      bkeya0          Blue card
-0x006   6       20      ykeya0          Yellow card
-0x007   3       256     spida1d1        Spider demon
-0x008   4       20      bpaka0          Backpack
-0x009   3       40      sposa1          Former sergeant
-0x00a   7       20      sposu0          Body of sergeant (shredded)
-0x00b   1       32      playf1          Deathmatch
-0x00c   7       20      troou0          Body of imp (shredded)
-0x00d   6       20      rkeya0          Red card
-0x00e   8       20      bfe2b0          Destination
-0x00f   7       20      playm0          Body of player
-0x010   3       80      cybra1          Cyberdemon
-0x011   4       20      celpa0          Bulk cell (100)
-0x012   7       20      possl0          Body of former human
-0x013   7       20      sposl0          Body of former sergeant
-0x014   7       20      troom0          Body of imp
-0x015   7       20      sargn0          Body of demon
-0x016   7       20      headl0          Body of cacodemon
-0x018   7       20      pol5a0          Body of lost soul (blood)
-0x019   7       20      pol6a0          Pole w/dead player
-0x01a   7       20      pol6a0          Pole w/dying player
-0x01b   7       20      treda0          Pole w/head
-0x01c   7       20      pol2a0          Pole w/heads
-0x01d   7       20      pol3a0          Skulls and candles
-0x01e   7       20      col1a0          Column (tall/green)
-0x01f   7       20      col2a0          Column (short/green)
-0x020   7       20      col3a0          Column (tall/red)
-0x021   7       20      col4a0          Column (short/red)
-0x022   7       20      canda0          Candle
-0x023   7       20      cbraa0          Candelabra
-0x024   7       20      col5a0          Column w/heart
-0x025   7       20      col6a0          Column w/skull
-0x026   6       20      rskua0          Red skull
-0x027   6       20      yskua0          Yellow skull
-0x028   6       20      bskua0          Blue skull
-0x029   7       20      ceyea0          Eye
-0x02a   7       20      fskua0          Floating skull
-0x02b   7       20      tre1a0          Tree (short)
-0x02c   7       20      tblua0          Torch (tall/blue)
-0x02d   7       20      tgrna0          Torch (tall/green)
-0x02e   7       20      treda0          Torch (tall/red)
-0x02f   7       20      smita0          Tree (thorny)
-0x030   7       20      eleca0          Column (electric)
-0x031   7       20      gor1a0          Chain w/dying player hung by neck (block player)
-0x032   7       20      gor2a0          Chain w/player hung by ankles (block player)
-0x033   7       20      gor3a0          Chain w/one legged player hung by ankle (block player)
-0x034   7       20      gor4a0          Chain w/half player torso and legs (block player)
-0x035   7       20      gor5a0          Chain w/player leg (block player)
-0x036   7       20      tre2a0          Tree (large)
-0x037   7       20      smbta0          Torch (short/blue)
-0x038   7       20      smgta0          Torch (short/green)
-0x039   7       20      smrta0          Torch (short/red)
-0x03a   3       60      sarga5          Spectre
-0x03b   7   20  gor2a0          Chain w/player hung by ankles (no block)
-0x03c   7       20  gor4a0      Chain w/half player torso and legs (no block)
-0x03d   7       20      gor3a0          Chain w/one legged player hung by ankle (no block)
-0x03e   7       20      gor5a0          Chain w/half player torso and one leg (no block)
-0x03f   7       20      gor1a0          Chain w/dying player hung by neck (no block)
+;0x005   6       20      bkeya0          Blue card
+;0x006   6       20      ykeya0          Yellow card
+;0x007   3       256     spida1d1        Spider demon
+;0x008   4       20      bpaka0          Backpack
+0x009   20		20		hmn1a1			Rebel 1 (summoned by beacon)
+0x00a   2		16		beaca0			Teleport Beacon
+0x00b   1       32      playf1          Deathmatch Start
+0x00c   3       15		prsta1			Loremaster
+0x00d   6       20      crd1a0			Gold ID Badge
+0x00e   8       20      tfoga0          Teleport Destination
+0x00f   7       20      playp0			Dead Player, disappears
+0x010   3       40		rob3a1			Inquisitor
+0x011   4       20      cpaca0			Energy Pack
+0x012   7       20      peasn0			Dead Peasant, disappears
+0x013   7       20      hmn1n0			Dead Rebel
+0x014   7       20      rob1r0			Dead Reaver
+0x015   7       20      agrdn0			Dead Acolyte, disappears
+0x016   7       20      rob2p0			Dead Crusader
+0x017	8		20		telpa0			Teleport Swirl
+0x018   7       20      klaxa0			Klaxon Warning Light
+0x019   7       2		tokna0			Force Field Guard - use ore
+0x01a   3		84		nesta1			Entity Nest
+0x01b   3       20		turta1			Ceiling Turret
+0x01c   7       20      cagea0			Cage Light
+0x01d   7       20      rub1a0			Rubble 1
+0x01e   7       20      rub2a0			Rubble 2
+0x01f   7       20      rub3a0			Rubble 3
+0x020   7       20      rub4a0			Rubble 4
+0x021   7       15      tre1a0			Tree Stub
+0x022   7       20      cndla0			Candle
+0x023   7       20      clbra0			Candelabra
+0x024   7       20      rub5a0			Rubble 5
+0x025   7       20      rub6a0			Rubble 6
+0x026   6       20      ky2sa0			Silver Key
+0x027   6       20      ky3ba0			Brass Key
+0x028   6       20      ky1ga0			Gold Key
+0x029   7       20      rub7a0			Rubble 7
+0x02a   7       20      rub8a0			Rubble 8
+0x02b   7       3		lampa0			Outside Lamp
+0x02c   7       20      dstaa0			Ruined Statue
+0x02d   18		20		pstna0			Gates (Piston)
+0x02e   7       3		lanta0			Pole Lantern
+0x02f   7       10		lmpca0			Large Torch
+0x030   7       20      monia0			Techno Pillar
+;0x031   7       20      gor1a0          Chain w/dying player hung by neck (block player)
+0x032   7       10		logsa0			Huge Torch
+0x033   7       15      treea0			Palm Tree
+0x034   18		20		ofica0			Officer Uniform - No Alarm
+0x035   7       20      cdrpc0			Ceiling Water Drip
+0x036   7       16		stela0			Aztec Pillar
+0x037   7       16		stlaa0			Damaged Aztec Pillar
+0x038   7       16      stlea0			Ruined Aztec Pillar
+0x039   7       24      hugea0			Huge Tech Pillar
+0x03a   3       24		agrda5			Acolyte Shadow
+0x03b   9   	16  	xprka0			Degnin Ore - for FFG
+0x03c   7       15  	busha0			Short Bush
+0x03d   6		20		oraca0			Oracle Key
+0x03e   7       20      shrba0			Tall Bush
+0x03f   7       20      staka0			Chimneystack
+0x040	20		20		leada1			Macil 1 Invincible (Map03,34)
+0x041	21		20		peasa1			Peasant Red 1 (2,33 Harris/23 Tevick)
+0x042	21		20		peasb1			Peasant Gray 1 (4 Ketrick/5 Warden/17 Medic)
+0x043	21		20		peasc1			Peasant Rust 1 (2 Rowan)
+0x044	7		24		traya0			Tray
+0x045	7		16		bar1a0			Barricade Column
+0x046	7		16		barla0			Burning Barrel
+0x047	3		45		prgre0			Programmer
+0x048	22		20		mrsta0			Bar Keep 1 Gold (Map02,23,33)
+0x049	22		20		mrbda0			Armorer 2 Bright Green (Map02,23,33/10)
+0x04a	22		20		mrysa0			Medic 3 Blue (Map02,23,33/03,10/17)
+0x04b	3		24		aln1b0			Specter B
+0x04c	3		24		aln1c0			Specter C - Put with Oracle
+0x04d	2		20		zot1a0			Sigil A lightning strike
+0x04e	2		20		zot3a0			Sigil B rail lightning shot
+0x04f	2		20		zap7a0			Sigil C spread shot
+0x050	2		20		zot2a0			Sigil D column shot
+0x051	2		20		zap63c7			Sigil E big blast
+0x052	7		10		barwb0			Wooden Barrel
+0x053	11		20		fulla0			Surgery Kit
+0x054	2		20		grn1a0			Gas Grenade (demo exe only)
+0x055	7		10		ratta1			Rat
+0x056	6		20		fubra0			Order Key
+0x05a	18		20		unifa0			Guard Uniform - Give Token
+0x05b	6		20		handa0			Severed Hand
+0x05e	9		20		crysa0			PowerCrystal-LowSect128Lt0
+0x05d	18		20		coina0			Gold Coin
+0x05e	9		10		barta0			Explosive Barrel
+0x05f	7		4		litsa0			Silver Flourescent Light
+0x060	7		4		litba0			Brass Flourescent Light
+0x061	7		4		litga0			Gold Flourescent Light
+0x062	7		20		stlga0			Stalactite
+0x063	7		20		rok1a0			Rock 1
+0x064	7		20		rok2a0			Rock 2
+0x065	7		20		rok3a0			Rock 3
+0x066	7		20		rok4a0			Rock 4
+0x067	7		20		dripc0			Floor Water Drip
+0x068	7		20		splha0			Waterfall Splash
+0x069	7		16		bowla0			Burning Bowl
+0x06a	7		10		braza0			Burning Brazier
+0x06b	7		3		trcha0			Small Burning Torch
+0x06c	7		3		trhoa0			Small Unlit Torch
+0x06d	7		20		chana0			Ceiling Chain
+0x06e	7		20		stata0			Statue
+0x06f	7		4		ltrha0			Medium Torch
+0x070	7		20		wtfta0			Fountain
+0x071	7		20		herta0			Hearts in Tank
+0x072	4		20		xqrla0			Electric Bolts
+0x073	4		20		pqrla0			Poison Arrows
+0x074	22		20		mrgta0			Weapon Smith 4 Tan (Map02,23,33/03,10)
+0x075	7		20		craba0			Surgery Crab
+0x076	8		20		tfogb0			Teleport New Map Spot 1
+0x077	8		20		tfogb0			Teleport New Map Spot 2
+0x078	8		20		tfogb0			Teleport New Map Spot 3
+0x079	8		20		tfogb0			Teleport New Map Spot 4
+0x07a	8		20		tfogb0			Teleport New Map Spot 5
+0x07b	8		20		tfogb0			Teleport New Map Spot 6
+0x07c	8		20		tfogb0			Teleport New Map Spot 7
+0x07d	8		20		tfogb0			Teleport New Map Spot 8
+0x07e	8		20		tfogb0			Teleport New Map Spot 9
+0x07f	8		20		tfogb0			Teleport New Map Spot 10
+0x080	3		130		mnala0			Entity
+0x081	3		64		aln1a0			Specter A
+0x082	21		20		peasd1			Peasant Tan 2
+0x083	21		20		peasd1			Peasant Tan 3
+0x084	21		20		peasa1			Peasant Red 2 (4 Derwin/33 Harris)
+0x085	21		20		peasa1			Peasant Red 3 (4 Worner)
+0x086	21		20		peasb1			Peasant Gray 2 (4 Sammis/5 Judge)
+0x087	21		20		peasb1			Peasant Gray 3 (1 Beldin)
+0x08a	18		20		creda0			10 Gold
+0x08b	18		20		sacka0			25 Gold
+0x08c	18		20		chsta0			50 Gold
+0x08d	22		20		begra1			Beggar 1 (Map01 MacGuffin/32 Prisoner)
+0x08e	3		24		agrdb1			Acolyte 2 Red
+0x08f	3		24		agrdc1			Acolyte 3 Rust
+0x090	20		20		hmn1b1			Rebel 2
+0x091	20		20		hmn1c1			Rebel 3
+0x092	3		24		agrdd1			Acolyte 4 Gray
+0x093	3		24		agrda2			Acolyte 5 Dark Green
+0x094	3		24		agrdb2			Acolyte 6 Gold
+0x095	20		20		hmn1d1			Rebel 4
+0x096	20		20		hmn1a2			Rebel 5
+0x097	20		20		hmn1b2			Rebel 6
+0x098	2		20		grn1a0			HE Grenades
+0x099	2		20		grn2a0			Phosphorous Grenades
+0x09a	2		20		grnda0			Grenade Launcher
+0x09b	22		20		begrb1			Beggar 2
+0x09c	22		20		begrc1			Beggar 3
+0x09d	22		20		begrd1			Beggar 4
+0x09e	22		20		begra2			Beggar 5
+0x09f	7		20		stlgd0			Cave Pillar Top
+0x0a0	7		20		stlgb0			Stalacmite
+0x0a2	7		20		stlge0			Cave Pillar Bottom
+0x0a3	7		20		stlgf0			Stalacmite Small
+0x0a4	7		20		mugga0			Mug
+0x0a5	7		12		vasea0			Pot
+0x0a6	6		20		warea0			Warehouse Key
+0x0a7	3		24		aln1d0			Specter D
+0x0a8	3		24		aln1e0			Specter E
+0x0a9	22		20		peasf1			Zombie
+0x0aa	22		20		ubama0			Zombie Spawner
+0x0ac	21		20		peasc2			Peasant DGreen 1 (2 Irale/23 Richter)
+0x0ad	21		20		peasc2			Peasant DGreen 2 (6 Weran the Rat King)
+0x0ae	21		20		peasc2			Peasant DGreen 3 (4 Computer Tech)
+0x0af	21		20		peasd2			Peasant BGreen 1 (7 False Programmer)
+0x0b0	21		20		peasd2			Peasant BGreen 2
+0x0b1	21		20		peasd2			Peasant BGreen 3
+0x0b2	21		20		peasa3			Peasant Gold 1 (11 Key Master/31 False Prg)
+0x0b3	21		20		peasa3			Peasant Gold 2
+0x0b4	21		20		peasa3			Peasant Gold 3
+0x0b5	21		20		peasb3			Peasant Blue (2,33 Governor/8 False Prgr)
+0x0b6	26		20		secra0			Computer
+0x0b7	4		20		bkpka0			Ammo Satchel
+0x0b8	6		20		crd1a0			Blue ID Card
+0x0b9	6		20		tpasa0			Travel Passcard
+0x0ba	3		31		spida1			Stalker
+0x0bb	3		40		mldra1			Bishop
+0x0bc	7		12		vaseb0			Pitcher
+0x0bd	7		6		stola0			Stool
+0x0be	7		20		pot1a0			Metal Pot
+0x0bf	7		20		tub1a0			Tub
+0x0c0	6		20		rcrya0			Red Crystal Key
+0x0c1	6		20		bcrya0			Blue Crystal Key
+0x0c2	7		16		anvla0			Anvil
+0x0c3	6		20		chapa0			Chapel Key
+0x0c4	7		11		tlmpa0			Silver Tech Lamp
+0x0c5	7		11		tlmpb0			Brass Tech Lamp
+0x0c6	3		25		podda0			Entity Pod
+0x0c7	22		15		orcla0			Oracle (Map12)
+0x0c8	20		20		leadb0			Macil 2 S (Map10)
+0x0c9	22		20		armra0			Becoming Acolyte
+0x0ca	7		15		treeb0			Big Tree
+0x0cb	7		15		treec0			Potted Tree
+0x0cc	22		6		neala0			Kneeling Guy
+0x0cd	18		20		relca0			Offering Chalice
+0x0ce	18		20		comma0			Communicator
+0x0cf	5		20		targa0			Targeter
+0x0d0	7		10		hogna0			Practice Target
+0x0d1	7		20		tnk1a0			Huge Tank 1 has skeleton
+0x0d2	7		20		tnk2a0			Huge Tank 2
+0x0d3	7		20		tnk3a0			Huge Tank 3
+0x0d4	7		20		sacra0			Sacrificed Guy
+0x0d5	7		20		tnk4a0			Tank 4 spine with organs
+0x0d6	7		20		tnk5a0			Tank 5 Stumpy the Acolyte
+0x0d7	7		20		logga0			Stick in Water
+0x0d8	7		24		sbana0			Sigil Banner
+0x0d9	7		20		botra0			Rebel Boots
+0x0da	7		20		hatra0			Rebel Helmet
+0x0db	7		20		topra0			Rebel Shirt
+0x0dc	18		17		coupa0			Power Coupling (Only 1)
+0x0dd	7		16		bubba0			Alien Bubble Column
+0x0de	7		16		bubfa0			Alien Floor Bubble
+0x0df	7		16		bubca0			Alien Ceiling Bubble
+0x0e0	7		16		aspra0			Alien Asp Climber
+0x0e1	7		32		spdla0			Alien Spider Light
+0x0e2	18		16		coupc0			Broken Power Coupling (Only 1)
+0x0e3	7		24		apowa0			Huge Alien Pillar
+0x0e4	7		12		afeda0			Ammo Filler
+0x0e5	7		20		tnk6a0			Tank 6 Specter
+0x0e6	6		20		fusla0			Base Key (Front)
+0x0e7	3		24		agrdd2			Acolyte 8 Blue
+0x0e8	3		24		agrdc2			Acolyte 7 Bright Green
+0x0e9	6		20		bltka0			Mauler Key
+0x0f0	6		20		proca0			Factory Key
+0x0f1	6		20		minea0			Mine Key
+0x0f2	6		20		goida0			Core Key
 0x578   9       20      ifogd0          Sector sound sequence 0
 0x579   9       20      ifogd0          Sector sound sequence 1
 0x57a   9       20      ifogd0          Sector sound sequence 2
@@ -149,56 +325,77 @@ LightingInc=0
 0x580   9       20      ifogd0          Sector sound sequence 8
 0x581   9       20      ifogd0          Sector sound sequence 9
 0x582   9       20      ifogd0          Sector sound sequence 10
-0x5dc   13      20      ifogd0          Floor slope
-0x5dd   13      20      ifogd0          Ceiling slope
-0x5de   13      20      ifogd0          Static light *( radius, -, -, -, - )
-0x5df   13      20      ifogd0          Static colored light *( radius, r, g, b, - )
-0x5e0   13      20      ifogd0          Vertex floor height
-0x5e1   13      20      ifogd0          Vertex ceiling height
-0x7d1   2       20      shota0          Shotgun
-0x7d2   2       20      mguna0          Chaingun
-0x7d3   2       20      launa0          Rocket launcher
-0x7d4   2       20      plasa0          Plasma rifle
-0x7d5   2       20      csawa0          Chainsaw
-0x7d6   2       20      bfuga0          BFG 9000
-0x7d7   4       20      clipa0          Ammo clip (4)
-0x7d8   4       20      shela0          Shotgun shells (4)
-0x7da   4       20      rocka0          Rocket
-0x7db   11      20      stima0          Stimpak (10)
-0x7dc   11      20      media0          Medipak (25)
-0x7dd   5       20      soula0          Soul sphere
-0x7de   11      20      bon1a0          Potion (1)
-0x7df   10      20      bon2a0          Helmet (1)
-0x7e2   10      20      arm1a0          Green (100)
-0x7e3   10      20      arm2a0          Blue (200)
-0x7e6   5       20      pinva0          Invunerability
-0x7e7   5       20      pstra0          Berserk
-0x7e8   5       20      pinsa0          Invisibility
-0x7e9   5       20      suita0          Radiation suit
-0x7ea   5       20      pmapa0          Computer map
-0x7ec   7       20      colua0          Electric lamp
-0x7f3   9       20      bar1a0          Barrel
-0x7fd   5       20      pvisa0          Light amplification goggles
-0x7fe   4       20      broka0          Box of rockets (8)
-0x7ff   4       20      cella0          Energy cell (20)
-0x800   4       20      ammoa0          Box of bullets (50)
-0x801   4       20      sboxa0          Box of shells (24)
-0xbb9   3       40      trooa1          Imp
-0xbba   3       60      sarga1          Demon
-0xbbb   3       48      bossa1          Baron of hell
-0xbbc   3       40      possa1          Former human
-0xbbd   3       62      heada1          Cacodemon
-0xbbe   3       32      skula1          Lost soul
+0x5dc   17      20      ifogd0          Floor slope
+0x5dd   17      20      ifogd0          Ceiling slope
+0x5de   18      20      ifogd0          Static light *( radius, -, -, -, - )
+0x5df   18      20      ifogd0          Static colored light *( radius, r, g, b, - )
+0x5e0   17      20      ifogd0          Vertex floor height
+0x5e1   17      20      ifogd0          Vertex ceiling height
+0x7d1   2       20      cbowa0			Crossbow
+0x7d2   2       20      rifla0			Assault Gun
+0x7d3   2       20      mmsla0			Mini-Missile Launcher
+0x7d4   2       20      trpda0			Mauler
+0x7d5   2       20      flama0			Flame Thrower
+0x7d6   2       20      riflb0			Assault Gun Standing
+0x7d7   4       20      blita0			Bullet Clip
+;0x7d8   4       20      shela0          Shotgun shells (4)
+0x7da   4       20      mssla0			Missiles
+0x7db   11      20      stmpa0			Med Patch
+0x7dc   11      20      mdkta0			Medikit
+;0x7dd   5       20      soula0          Soul sphere
+0x7de   7       20      watra0			Water Bottle
+;0x7df   10      20      bon2a0          Helmet (1)
+0x7e2   10      20      arm2a0			Leather Armor
+0x7e3   10      20      arm1a0			Metal Armor
+;0x7e6   5       20      pinva0          Invunerability
+;0x7e7   5       20      pstra0          Berserk
+0x7e8   5       20      shd1a0			Shadow Armor
+0x7e9   5       20      maska0			Environmental Suit
+0x7ea   5       20      pmapa0			Map
+0x7eb   5       20      pmupa0			Scanner/Map Radar
+0x7ec	7		16		litea0			Globe Light
+;0x7f3   9       20      bar1a0          Barrel
+;0x7fd   5       20      pvisa0          Light amplification goggles
+0x7fe   4       20      rofta0			Crate of Missiles
+0x7ff   4       20      bry1a0			Energy Pod
+0x800   4       20      bboxa0			Box of Bullets
+;0x801   4       20      sboxa0          Box of shells (24)
+0xbb9   3       20		rob1a1			Reaver
+0xbba   3       24      agrda1	        Acolyte 1 Tan
+0xbbb   3       20		pgrda1			Templar
+0xbbc   21      20      peasa1			Peasant Tan 1
+0xbbd   3       40		rob2a0			Crusader
+0xbbe   3       23		sewra1			Sentinel
+0x2329	23		20		balld0			Label Hint 1
+0x2330	23		20		balld0			Label Hint 2
+0x2331	23		20		balld0			Label Hint 3
+0x2332	23		20		balld0			Label Hint 4
+0x2333	23		20		balld0			Label Hint 5
+0x2334	23		20		balld0			Label Hint 6
+0x2341  16      16      misla0          Security Camera *( pitch, angles, speed, -, - )
+0x2343  15      20      bal1a0          Fountain (red)
+0x2344  15      20      bal1a0          Fountain (green)
+0x2345  15      20      bal1a0          Fountain (blue)
+0x2346  15      20      bal1a0          Fountain (yellow)
+0x2347  15      20      bal1a0          Fountain (purple)
+0x2348  15      20      bal1a0          Fountain (black)
+0x2349  15      20      bal1a0          Fountain (white)
+0x236e	16		16		ifogf0			Interp pt *( pitch, traveltime, holdtime, next, hinext )
+0x236f	16		16		ifogd0			Path follower *( pt, hipt, bLinear, -, - )
+0x2370	16		16		ifogd0			Moving camera *( pt, hipt, bLinear, lookat, - )
+0x2371	16		16		misla0			Aiming camera *( pitch, maxang, maxpitch, tid, - )
+0x2372	16		16		ifogd0			Actor mover *( pt, hipt, bLinear, tid, - )
+0x2373	16		16		tfogf0			Interp special
 0x2454  13      20      ifoga0          Polyobject anchor
 0x2455  13      20      ifoga0          Start spot
 0x2456  13      20      ifoga0          Start spot w/crush
 0x36f2  9       20      ifogd0          Sound sequence *( number, mode, -, -, - )
 
-;       ID                              used to classify linedefs
-;       Name                    textual description of class
+;	ID				used to classify linedefs
+;	Name			textual description of class
 ;
-;       Note:   When converting a sector to a door, the linedef types
-;                       available are those in class number two.
+;	Note:	When converting a sector to a door, the linedef types
+;			available are those in class number two.
 
 [Specials.Classes]
 0x001   Special
@@ -415,7 +612,7 @@ LightingInc=0
 0x0f3	14	Exit_Normal( position, -, -, -, - )
 0x0f4	14	Exit_Secret( position, -, -, -, - )
 
-; Floor and ceiling
+; Elevator
 0x05f	15	FloorAndCeiling_LowerByValue( tag, speed, height, -, - )
 0x060	15	FloorAndCeiling_RaiseByValue( tag, speed, height, -, - )
 0x0f5	15	Elevator_RaiseToNearest( tag, speed, -, -, - )
