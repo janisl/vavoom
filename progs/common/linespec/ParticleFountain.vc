@@ -9,7 +9,7 @@
 //**
 //**    $Id: ParticleFountain.vc 1583 2006-06-27 19:05:42Z dj_jl $
 //**
-//**    Copyright (C) 1999-2006 Janis Legzdinš
+//**    Copyright (C) 1999-2006 Janis Legzdinï¿½
 //**
 //**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -55,9 +55,10 @@
 
 class ParticleFountain : ScriptedEntity;
 
-int	EffectColour;
-int EffectColour2;
-bool bFountain;
+int			EffectColour;
+int			EffectColour2;
+bool		bFountain;
+float		GenDelay;
 
 //==========================================================================
 //
@@ -67,7 +68,12 @@ bool bFountain;
 
 bool Activate()
 {
-	bFountain = true;
+	if (::Activate())
+	{
+		bFountain = true;
+		return true;
+	}
+	return false;
 }
 
 //==========================================================================
@@ -78,7 +84,12 @@ bool Activate()
 
 bool Deactivate()
 {
-	bFountain = false;
+	if (::Deactivate())
+	{
+		bFountain = false;
+		return true;
+	}
+	return false;
 }
 
 //==========================================================================
@@ -89,8 +100,11 @@ bool Deactivate()
 
 void BeginPlay()
 {
-	if(!bDormant)
+	::BeginPlay();
+	if (!bDormant)
+	{
 		bFountain = true;
+	}
 }
 
 //==========================================================================
@@ -101,42 +115,59 @@ void BeginPlay()
 
 void ClientTick(float deltaTime)
 {
-	if(bFountain)
+	::ClientTick(deltaTime);
+	if (bFountain)
 	{
+		GenDelay -= deltaTime;
+		if (GenDelay > 0.0)
+		{
+			return;
+		}
+		GenDelay += 2.0 / 35.0;
+
 		particle_t *p = Level.NewParticle();
 
 		if (p)
 		{
-			float an = itof(P_Random()) * 24.0 / 2.0;
-			float val;
-			int i;
+			float An = Random() * 360.0;
+			float Out = Radius * Random();
 
-			p->org.x = Origin.x + (Radius * Random() * 8.0 / 2.0) * cos(an);
-			p->org.y = Origin.y + (Radius * Random() * 8.0 / 2.0) * sin(an);
+			p->org.x = Origin.x + Out * cos(An);
+			p->org.y = Origin.y + Out * sin(An);
 			p->org.z = Origin.z + Height + 1.0;
 
 			if (P_Random() < 30)
 			{
+				p->Size = 1.0;
 				p->colour = EffectColour2;
 			}
 			else
 			{
+				p->Size = 1.5;
 				p->colour = EffectColour;
 			}
 
 			// Set initial velocities
-			for (i = 3; i; i--, val + 1.0)
-				val = (1.0 / 4096.0) * (itof(P_Random()) - 128.0);
-
-			p->vel.x = val;
+			p->vel.x = (1.0 / 4096.0) * (itof(P_Random()) - 128.0) * 35.0;
+			p->vel.y = (1.0 / 4096.0) * (itof(P_Random()) - 128.0) * 35.0;
+			p->vel.z = (1.0 / 4096.0) * (itof(P_Random()) - 128.0) * 35.0;
 
 			// Set initial accelerations
-			for (i = 3; i; i--, val + 1.0)
-				val = (1.0 / 16384.0) * (itof(P_Random()) - 128.0);
+			p->accel.x = (1.0 / 16384.0) * (itof(P_Random()) - 128.0) * 35.0 * 35.0;
+			p->accel.y = (1.0 / 16384.0) * (itof(P_Random()) - 128.0) * 35.0 * 35.0;
+			p->accel.z = (1.0 / 16384.0) * (itof(P_Random()) - 128.0) * 35.0 * 35.0;
 
-			p->accel = vector(val, val, val);
+			if (Out < Radius / 8.0)
+			{
+				p->vel.z += 10.0 / 3.0 * 35.0;
+			}
+			else
+			{
+				p->vel.z += 3.0 * 35.0;
+			}
+			p->accel.z -= 1.0 / 11.0 * 35.0 * 35.0;
 
-			p->die = Level.XLevel.Time + 1.0 * Random();
+			p->die = Level.XLevel.Time + 51.0 / 35.0;
 			// FIXME Add translucency for particles here
 			//p->trans = 1.0 / 255.0;
 			p->type = LineSpecialLevelInfo::pt_fountain;
@@ -146,7 +177,6 @@ void ClientTick(float deltaTime)
 
 defaultproperties
 {
-	Radius = 2.5;
 	Height = 0.0;
 	bNoBlockmap = true;
 	bHidden = true;

@@ -1451,6 +1451,7 @@ void ClientParticleExplosion(int colour, float rad, TVec org)
 			return;
 		p->die = Level.XLevel.Time + 5.0;
 		p->colour = LineSpecialGameInfo.default.ramp1[0];
+		p->Size = 1.0;
 		p->ramp = Random() * 4.0;
 		if (i & 1)
 		{

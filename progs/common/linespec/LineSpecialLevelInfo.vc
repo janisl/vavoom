@@ -4716,7 +4716,7 @@ final void SpawnMapThing(mthing_t* mthing)
 		// Can't find thing type
 		dprint("SpawnMapThing: Unknown type %d at (%f, %f)",
 			mthing->type, mthing->x, mthing->y);
-		return;
+		moClass = Unknown;
 	}
 
 	if (!CheckShareware(moClass))
@@ -4925,6 +4925,7 @@ void ParticleEffect(int count, int type1, int type2, TVec origin, float ornd,
 
 		p->die = Level.XLevel.Time + duration * Random();
 		p->colour = colour;
+		p->Size = 1.0;
 		if(ramp)
 			p->ramp = Random() * ramp;
 
@@ -4991,9 +4992,7 @@ void UpdateParticle(particle_t * p, float DeltaTime)
 	time3 = DeltaTime * 15.0;
 	dvel = 4.0 * DeltaTime;
 	grav = DeltaTime * p->gravity /*sv_gravity.value * 0.05*/;
-	p->accel.x -= grav;
-	p->accel.y -= grav;
-	p->accel.z -= grav;
+	p->vel.z -= grav;
 
 	switch (p->type)
 	{
@@ -5026,15 +5025,11 @@ void UpdateParticle(particle_t * p, float DeltaTime)
 		p->vel += p->accel * DeltaTime;
 		p->vel.z -= grav;
 		break;
+
 	case pt_fountain:
-		float rad = 5.0 * Random() * 8.0 / 2.0;
-
-		if (rad < 5.0 / 8.0)
-			p->vel.z += (10.0 / 3.0) * Random();
-		else
-			p->vel.z += 3.0 * Random();
-
-		p->accel.z -= (1.0 / 11.0) * Random();
+		p->vel += p->accel * DeltaTime;
+		p->colour = (p->colour & 0x00ffffff) | (ftoi(
+			itof(p->colour >> 24) - 255.0 / 51.0 * 35.0 * DeltaTime) << 24);
 		break;
 	}
 }
