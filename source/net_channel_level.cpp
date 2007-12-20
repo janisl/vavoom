@@ -260,13 +260,17 @@ void VLevelChannel::Update()
 			mround(RepSec->floor_yoffs) != mround(Sec->floor.yoffs) ||
 			RepSec->floor_XScale != Sec->floor.XScale ||
 			RepSec->floor_YScale != Sec->floor.YScale ||
-			mround(RepSec->floor_Angle) != mround(Sec->floor.Angle);
+			mround(RepSec->floor_Angle) != mround(Sec->floor.Angle) ||
+			mround(RepSec->floor_BaseAngle) != mround(Sec->floor.BaseAngle) ||
+			mround(RepSec->floor_BaseYOffs) != mround(Sec->floor.BaseYOffs);
 		bool CeilChanged = RepSec->ceil_dist != Sec->ceiling.dist ||
 			mround(RepSec->ceil_xoffs) != mround(Sec->ceiling.xoffs) ||
 			mround(RepSec->ceil_yoffs) != mround(Sec->ceiling.yoffs) ||
 			RepSec->ceil_XScale != Sec->ceiling.XScale ||
 			RepSec->ceil_YScale != Sec->ceiling.YScale ||
-			mround(RepSec->ceil_Angle) != mround(Sec->ceiling.Angle);
+			mround(RepSec->ceil_Angle) != mround(Sec->ceiling.Angle) ||
+			mround(RepSec->ceil_BaseAngle) != mround(Sec->ceiling.BaseAngle) ||
+			mround(RepSec->ceil_BaseYOffs) != mround(Sec->ceiling.BaseYOffs);
 		bool LightChanged = abs(RepSec->lightlevel - Sec->params.lightlevel) >= 4;
 		bool FadeChanged = RepSec->Fade != Sec->params.Fade;
 		if (RepSec->floor_pic == Sec->floor.pic &&
@@ -307,6 +311,12 @@ void VLevelChannel::Update()
 			Msg.WriteBit(mround(RepSec->floor_Angle) != mround(Sec->floor.Angle));
 			if (mround(RepSec->floor_Angle) != mround(Sec->floor.Angle))
 				Msg.WriteInt((int)AngleMod(Sec->floor.Angle), 360);
+			Msg.WriteBit(mround(RepSec->floor_BaseAngle) != mround(Sec->floor.BaseAngle));
+			if (mround(RepSec->floor_BaseAngle) != mround(Sec->floor.BaseAngle))
+				Msg.WriteInt((int)AngleMod(Sec->floor.BaseAngle), 360);
+			Msg.WriteBit(mround(RepSec->floor_BaseYOffs) != mround(Sec->floor.BaseYOffs));
+			if (mround(RepSec->floor_BaseYOffs) != mround(Sec->floor.BaseYOffs))
+				Msg.WriteInt(mround(Sec->floor.BaseYOffs) & 63, 64);
 		}
 		Msg.WriteBit(CeilChanged);
 		if (CeilChanged)
@@ -329,6 +339,12 @@ void VLevelChannel::Update()
 			Msg.WriteBit(mround(RepSec->ceil_Angle) != mround(Sec->ceiling.Angle));
 			if (mround(RepSec->ceil_Angle) != mround(Sec->ceiling.Angle))
 				Msg.WriteInt((int)AngleMod(Sec->ceiling.Angle), 360);
+			Msg.WriteBit(mround(RepSec->ceil_BaseAngle) != mround(Sec->ceiling.BaseAngle));
+			if (mround(RepSec->ceil_BaseAngle) != mround(Sec->ceiling.BaseAngle))
+				Msg.WriteInt((int)AngleMod(Sec->ceiling.BaseAngle), 360);
+			Msg.WriteBit(mround(RepSec->ceil_BaseYOffs) != mround(Sec->ceiling.BaseYOffs));
+			if (mround(RepSec->ceil_BaseYOffs) != mround(Sec->ceiling.BaseYOffs))
+				Msg.WriteInt(mround(Sec->ceiling.BaseYOffs) & 63, 64);
 		}
 		Msg.WriteBit(LightChanged);
 		if (LightChanged)
@@ -348,6 +364,8 @@ void VLevelChannel::Update()
 		RepSec->floor_XScale = Sec->floor.XScale;
 		RepSec->floor_YScale = Sec->floor.YScale;
 		RepSec->floor_Angle = Sec->floor.Angle;
+		RepSec->floor_BaseAngle = Sec->floor.BaseAngle;
+		RepSec->floor_BaseYOffs = Sec->floor.BaseYOffs;
 		RepSec->ceil_pic = Sec->ceiling.pic;
 		RepSec->ceil_dist = Sec->ceiling.dist;
 		RepSec->ceil_xoffs = Sec->ceiling.xoffs;
@@ -355,6 +373,8 @@ void VLevelChannel::Update()
 		RepSec->ceil_XScale = Sec->ceiling.XScale;
 		RepSec->ceil_YScale = Sec->ceiling.YScale;
 		RepSec->ceil_Angle = Sec->ceiling.Angle;
+		RepSec->ceil_BaseAngle = Sec->ceiling.BaseAngle;
+		RepSec->ceil_BaseYOffs = Sec->ceiling.BaseYOffs;
 		RepSec->lightlevel = Sec->params.lightlevel;
 		RepSec->Fade = Sec->params.Fade;
 	}
@@ -507,6 +527,16 @@ void VLevelChannel::ParsePacket(VMessageIn& Msg)
 						Sec->floor.xoffs = Msg.ReadInt(64);
 					if (Msg.ReadBit())
 						Sec->floor.yoffs = Msg.ReadInt(64);
+					if (Msg.ReadBit())
+						Msg << Sec->floor.XScale;
+					if (Msg.ReadBit())
+						Msg << Sec->floor.YScale;
+					if (Msg.ReadBit())
+						Sec->floor.Angle = Msg.ReadInt(360);
+					if (Msg.ReadBit())
+						Sec->floor.BaseAngle = Msg.ReadInt(360);
+					if (Msg.ReadBit())
+						Sec->floor.BaseYOffs = Msg.ReadInt(64);
 				}
 				if (Msg.ReadBit())
 				{
@@ -516,6 +546,16 @@ void VLevelChannel::ParsePacket(VMessageIn& Msg)
 						Sec->ceiling.xoffs = Msg.ReadInt(64);
 					if (Msg.ReadBit())
 						Sec->ceiling.yoffs = Msg.ReadInt(64);
+					if (Msg.ReadBit())
+						Msg << Sec->ceiling.XScale;
+					if (Msg.ReadBit())
+						Msg << Sec->ceiling.YScale;
+					if (Msg.ReadBit())
+						Sec->ceiling.Angle = Msg.ReadInt(360);
+					if (Msg.ReadBit())
+						Sec->ceiling.BaseAngle = Msg.ReadInt(360);
+					if (Msg.ReadBit())
+						Sec->ceiling.BaseYOffs = Msg.ReadInt(64);
 				}
 				if (Msg.ReadBit())
 				{

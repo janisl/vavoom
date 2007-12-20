@@ -409,10 +409,12 @@ sec_surface_t* VRenderLevel::CreateSecSurface(subsector_t* sub,
 	VTexture* Tex = GTextureManager(splane->pic);
 	if (fabs(splane->normal.z) > 0.1)
 	{
-		ssurf->texinfo.saxis = TVec(mcos(-splane->Angle),
-			msin(-splane->Angle), 0) * TextureSScale(Tex) * splane->XScale;
-		ssurf->texinfo.taxis = TVec(msin(-splane->Angle),
-			-mcos(-splane->Angle), 0) * TextureTScale(Tex) * splane->YScale;
+		ssurf->texinfo.saxis = TVec(mcos(splane->BaseAngle - splane->Angle),
+			msin(splane->BaseAngle - splane->Angle), 0) * TextureSScale(Tex) *
+			splane->XScale;
+		ssurf->texinfo.taxis = TVec(msin(splane->BaseAngle - splane->Angle),
+			-mcos(splane->BaseAngle - splane->Angle), 0) * TextureTScale(Tex) *
+			splane->YScale;
 	}
 	else
 	{
@@ -422,7 +424,7 @@ sec_surface_t* VRenderLevel::CreateSecSurface(subsector_t* sub,
 			ssurf->texinfo.taxis)) * TextureSScale(Tex) * splane->XScale;
 	}
 	ssurf->texinfo.soffs = splane->xoffs;
-	ssurf->texinfo.toffs = splane->yoffs;
+	ssurf->texinfo.toffs = splane->yoffs + splane->BaseYOffs;
 	ssurf->texinfo.Tex = Tex;
 	ssurf->texinfo.Alpha = splane->Alpha < 1.0 ? splane->Alpha : 1.1;
 	ssurf->texinfo.Additive = false;
@@ -523,12 +525,12 @@ void VRenderLevel::UpdateSecSurface(sec_surface_t *ssurf,
 	{
 		if (fabs(plane->normal.z) > 0.1)
 		{
-			ssurf->texinfo.saxis = TVec(mcos(-plane->Angle),
-				msin(-plane->Angle), 0) * TextureSScale(ssurf->texinfo.Tex) *
-				plane->XScale;
-			ssurf->texinfo.taxis = TVec(msin(-plane->Angle),
-				-mcos(-plane->Angle), 0) * TextureTScale(ssurf->texinfo.Tex) *
-				plane->YScale;
+			ssurf->texinfo.saxis = TVec(mcos(plane->BaseAngle - plane->Angle),
+				msin(plane->BaseAngle - plane->Angle), 0) *
+				TextureSScale(ssurf->texinfo.Tex) * plane->XScale;
+			ssurf->texinfo.taxis = TVec(msin(plane->BaseAngle - plane->Angle),
+				-mcos(plane->BaseAngle - plane->Angle), 0) *
+				TextureTScale(ssurf->texinfo.Tex) * plane->YScale;
 		}
 		else
 		{
@@ -539,7 +541,7 @@ void VRenderLevel::UpdateSecSurface(sec_surface_t *ssurf,
 				plane->XScale;
 		}
 		ssurf->texinfo.soffs = plane->xoffs;
-		ssurf->texinfo.toffs = plane->yoffs;
+		ssurf->texinfo.toffs = plane->yoffs + plane->BaseYOffs;
 		ssurf->XScale = plane->XScale;
 		ssurf->YScale = plane->YScale;
 		ssurf->Angle = plane->Angle;
@@ -564,10 +566,10 @@ void VRenderLevel::UpdateSecSurface(sec_surface_t *ssurf,
 		}
 	}
 	else if (FASI(ssurf->texinfo.soffs) != FASI(plane->xoffs) ||
-		FASI(ssurf->texinfo.toffs) != FASI(plane->yoffs))
+		ssurf->texinfo.toffs != plane->yoffs + plane->BaseYOffs)
 	{
 		ssurf->texinfo.soffs = plane->xoffs;
-		ssurf->texinfo.toffs = plane->yoffs;
+		ssurf->texinfo.toffs = plane->yoffs + plane->BaseYOffs;
 		if (plane->pic != skyflatnum)
 		{
 			FlushSurfCaches(ssurf->surfs);
@@ -2204,11 +2206,11 @@ void VRenderLevel::UpdateFakeFlats(sector_t* sec)
 		ff->floorplane.pic			= diffTex ? sec->floor.pic : s->floor.pic;
 		ff->floorplane.xoffs		= s->floor.xoffs;
 		ff->floorplane.yoffs		= s->floor.yoffs;
-//		tempsec->floor_xscale		= s->floor_xscale;
-//		tempsec->floor_yscale		= s->floor_yscale;
-//		tempsec->floor_angle		= s->floor_angle;
-//		tempsec->base_floor_angle	= s->base_floor_angle;
-//		tempsec->base_floor_yoffs	= s->base_floor_yoffs;
+		ff->floorplane.XScale		= s->floor.XScale;
+		ff->floorplane.YScale		= s->floor.YScale;
+		ff->floorplane.Angle		= s->floor.Angle;
+		ff->floorplane.BaseAngle	= s->floor.BaseAngle;
+		ff->floorplane.BaseYOffs	= s->floor.BaseYOffs;
 
 		ff->ceilplane.normal		= -s->floor.normal;
 		ff->ceilplane.dist			= -s->floor.dist/* + 1*/;
@@ -2219,22 +2221,22 @@ void VRenderLevel::UpdateFakeFlats(sector_t* sec)
 			ff->ceilplane.pic		= ff->floorplane.pic;
 			ff->ceilplane.xoffs		= ff->floorplane.xoffs;
 			ff->ceilplane.yoffs		= ff->floorplane.yoffs;
-//			ff->ceilplane.xscale	= ff->floorplane.xscale;
-//			ff->ceilplane.yscale	= ff->floorplane.yscale;
-//			ff->ceilplane.angle		= ff->floorplane.angle;
-//			ff->base_ceiling_angle	= ff->base_floor_angle;
-//			ff->base_ceiling_yoffs	= ff->base_floor_yoffs;
+			ff->ceilplane.XScale	= ff->floorplane.XScale;
+			ff->ceilplane.YScale	= ff->floorplane.YScale;
+			ff->ceilplane.Angle		= ff->floorplane.Angle;
+			ff->ceilplane.BaseAngle	= ff->floorplane.BaseAngle;
+			ff->ceilplane.BaseYOffs	= ff->floorplane.BaseYOffs;
 		}
 		else
 		{
 			ff->ceilplane.pic		= diffTex ? s->floor.pic : s->ceiling.pic;
 			ff->ceilplane.xoffs		= s->ceiling.xoffs;
 			ff->ceilplane.yoffs		= s->ceiling.yoffs;
-//			ff->ceilplane.xscale	= s->ceiling.xscale;
-//			ff->ceilplane.yscale	= s->ceiling.yscale;
-//			ff->ceilplane.angle		= s->ceiling.angle;
-//			ff->base_ceiling_angle	= s->base_ceiling_angle;
-//			ff->base_ceiling_yoffs	= s->base_ceiling_yoffs;
+			ff->ceilplane.XScale	= s->ceiling.XScale;
+			ff->ceilplane.YScale	= s->ceiling.YScale;
+			ff->ceilplane.Angle		= s->ceiling.Angle;
+			ff->ceilplane.BaseAngle	= s->ceiling.BaseAngle;
+			ff->ceilplane.BaseYOffs	= s->ceiling.BaseYOffs;
 		}
 
 		if (!(s->SectorFlags & sector_t::SF_NoFakeLight))
@@ -2267,11 +2269,11 @@ void VRenderLevel::UpdateFakeFlats(sector_t* sec)
 		ff->floorplane.pic									= s->ceiling.pic;
 		ff->floorplane.xoffs	= ff->ceilplane.xoffs		= s->ceiling.xoffs;
 		ff->floorplane.yoffs	= ff->ceilplane.yoffs		= s->ceiling.yoffs;
-//		ff->floorplane.xscale	= ff->ceilplane.xscale		= s->ceiling.xscale;
-//		ff->floorplane.yscale	= ff->ceilplane.yscale		= s->ceiling.yscale;
-//		ff->floorplane.angle	= ff->ceilplane.angle		= s->ceiling.angle;
-//		ff->base_floor_angle	= ff->base_ceiling_angle	= s->base_ceiling_angle;
-//		ff->base_floor_yoffs	= ff->base_ceiling_yoffs	= s->base_ceiling_yoffs;
+		ff->floorplane.XScale	= ff->ceilplane.XScale		= s->ceiling.XScale;
+		ff->floorplane.YScale	= ff->ceilplane.YScale		= s->ceiling.YScale;
+		ff->floorplane.Angle	= ff->ceilplane.Angle		= s->ceiling.Angle;
+		ff->floorplane.BaseAngle	= ff->ceilplane.BaseAngle	= s->ceiling.BaseAngle;
+		ff->floorplane.BaseYOffs	= ff->ceilplane.BaseYOffs	= s->ceiling.BaseYOffs;
 
 		if (s->floor.pic != skyflatnum)
 		{
@@ -2280,9 +2282,9 @@ void VRenderLevel::UpdateFakeFlats(sector_t* sec)
 			ff->floorplane.pic		= s->floor.pic;
 			ff->floorplane.xoffs	= s->floor.xoffs;
 			ff->floorplane.yoffs	= s->floor.yoffs;
-//			ff->floorplane.xscale	= s->floor.xscale;
-//			ff->floorplane.yscale	= s->floor.yscale;
-//			ff->floorplane.angle	= s->floor.angle;
+			ff->floorplane.XScale	= s->floor.XScale;
+			ff->floorplane.YScale	= s->floor.YScale;
+			ff->floorplane.Angle	= s->floor.Angle;
 		}
 
 		if (!(s->SectorFlags & sector_t::SF_NoFakeLight))

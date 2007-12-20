@@ -131,6 +131,20 @@ void VLevel::Serialise(VStream& Strm)
 			<< sec->ceiling.dist
 			<< sec->floor.pic
 			<< sec->ceiling.pic
+			<< sec->floor.xoffs
+			<< sec->floor.yoffs
+			<< sec->floor.XScale
+			<< sec->floor.YScale
+			<< sec->floor.Angle
+			<< sec->floor.BaseAngle
+			<< sec->floor.BaseYOffs
+			<< sec->ceiling.xoffs
+			<< sec->ceiling.yoffs
+			<< sec->ceiling.XScale
+			<< sec->ceiling.YScale
+			<< sec->ceiling.Angle
+			<< sec->ceiling.BaseAngle
+			<< sec->ceiling.BaseYOffs
 			<< sec->params.lightlevel
 			<< sec->special
 			<< sec->tag
