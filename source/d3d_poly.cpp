@@ -1313,10 +1313,10 @@ void VDirect3DDrawer::DrawParticle(particle_t *p)
 {
 	guard(VDirect3DDrawer::DrawParticle);
 	MyD3DVertex out[4];
-	out[0] = MyD3DVertex(p->org - viewright + viewup, p->colour, 0, 0);
-	out[1] = MyD3DVertex(p->org + viewright + viewup, p->colour, 1, 0);
-	out[2] = MyD3DVertex(p->org + viewright - viewup, p->colour, 1, 1);
-	out[3] = MyD3DVertex(p->org - viewright - viewup, p->colour, 0, 1);
+	out[0] = MyD3DVertex(p->org - viewright * p->Size + viewup * p->Size, p->colour, 0, 0);
+	out[1] = MyD3DVertex(p->org + viewright * p->Size + viewup * p->Size, p->colour, 1, 0);
+	out[2] = MyD3DVertex(p->org + viewright * p->Size - viewup * p->Size, p->colour, 1, 1);
+	out[3] = MyD3DVertex(p->org - viewright * p->Size - viewup * p->Size, p->colour, 0, 1);
 #if DIRECT3D_VERSION >= 0x0800
 	RenderDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, out, sizeof(MyD3DVertex));
 #else

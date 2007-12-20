@@ -1149,10 +1149,10 @@ void VOpenGLDrawer::DrawParticle(particle_t *p)
 	}
 	else
 	{
-		glTexCoord2f(0, 0); glVertex(p->org - viewright + viewup);
-		glTexCoord2f(1, 0); glVertex(p->org + viewright + viewup);
-		glTexCoord2f(1, 1); glVertex(p->org + viewright - viewup);
-		glTexCoord2f(0, 1); glVertex(p->org - viewright - viewup);
+		glTexCoord2f(0, 0); glVertex(p->org - viewright * p->Size + viewup * p->Size);
+		glTexCoord2f(1, 0); glVertex(p->org + viewright * p->Size + viewup * p->Size);
+		glTexCoord2f(1, 1); glVertex(p->org + viewright * p->Size - viewup * p->Size);
+		glTexCoord2f(0, 1); glVertex(p->org - viewright * p->Size - viewup * p->Size);
 	}
 	unguard;
 }

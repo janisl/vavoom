@@ -745,8 +745,10 @@ void VSoftwareDrawer::StartParticles()
 void VSoftwareDrawer::DrawParticle(particle_t *pparticle)
 {
 	guard(VSoftwareDrawer::DrawParticle);
-	if (pparticle->colour > 0x7fffffff)
+	if (pparticle->colour > 0x3fffffff)
 	{
+		r_pright = viewright * xscaleshrink * pparticle->Size;
+		r_pup = viewup * yscaleshrink * pparticle->Size;
 		D_DrawParticle(pparticle);
 	}
 	unguard;

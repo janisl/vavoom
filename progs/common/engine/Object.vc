@@ -744,6 +744,9 @@ struct sec_plane_t : TPlane
 
 	float		Angle;
 
+	float		BaseAngle;
+	float		BaseYOffs;
+
 	int			flags;
 	float		Alpha;
 
@@ -1135,6 +1138,7 @@ struct particle_t
 {
 	TVec org;
 	int colour;
+	float Size;
 	particle_t *next;
 	TVec vel;
 	TVec accel;
