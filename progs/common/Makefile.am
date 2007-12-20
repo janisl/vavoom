@@ -110,6 +110,7 @@ EXTRA_DIST = \
 	linespec/TeleportDest2.vc \
 	linespec/TeleportDest3.vc \
 	linespec/TextureChangeDoor.vc \
+	linespec/Unknown.vc \
 	linespec/VerticalDoor.vc \
 	linespec/WaterZone.vc \
 	linespec/Weapon.vc \

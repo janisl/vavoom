@@ -149,6 +149,9 @@ enum
 #include "PlaneWatcher.vc"
 #include "Pusher.vc"
 #include "QuakeFocus.vc"
+
+#include "Unknown.vc"
+
 #include "ParticleFountain.vc"
 #include "RedParticleFountain.vc"
 #include "GreenParticleFountain.vc"

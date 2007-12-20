@@ -17,6 +17,7 @@ textures/-noflat-.png	@srcdir@/textures/-noflat-.png
 
 //	Common sprites
 sprites/tnt1a0.lmp		@srcdir@/sprites/tnt1a0.lmp
+sprites/unkna0.png		@srcdir@/sprites/unkna0.png
 
 //	Sounds
 sounds/dsempty.lmp		@srcdir@/sounds/dsempty.lmp

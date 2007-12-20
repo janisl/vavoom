@@ -16,6 +16,7 @@ EXTRA_DIST = \
 	sounds/dsempty.lmp \
 	sounds/dsquake.flac \
 	sprites/tnt1a0.lmp \
+	sprites/unkna0.png \
 	textures/-noflat-.png
 
 VLUMPY = ../../utils/bin/vlumpy$(EXEEXT)
