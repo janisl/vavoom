@@ -430,7 +430,7 @@ sec_surface_t* VRenderLevel::CreateSecSurface(subsector_t* sub,
 	ssurf->texinfo.Additive = false;
 	ssurf->XScale = splane->XScale;
 	ssurf->YScale = splane->YScale;
-	ssurf->Angle = splane->Angle;
+	ssurf->Angle = splane->BaseAngle - splane->Angle;
 
 	surf->count = sub->numlines;
 	seg_t *line = &Level->Segs[sub->firstline];
@@ -521,7 +521,7 @@ void VRenderLevel::UpdateSecSurface(sec_surface_t *ssurf,
 	}
 	if (FASI(ssurf->XScale) != FASI(plane->XScale) ||
 		FASI(ssurf->YScale) != FASI(plane->YScale) ||
-		FASI(ssurf->Angle) != FASI(plane->Angle))
+		ssurf->Angle != plane->BaseAngle - plane->Angle)
 	{
 		if (fabs(plane->normal.z) > 0.1)
 		{
@@ -544,7 +544,7 @@ void VRenderLevel::UpdateSecSurface(sec_surface_t *ssurf,
 		ssurf->texinfo.toffs = plane->yoffs + plane->BaseYOffs;
 		ssurf->XScale = plane->XScale;
 		ssurf->YScale = plane->YScale;
-		ssurf->Angle = plane->Angle;
+		ssurf->Angle = plane->BaseAngle - plane->Angle;
 		if (plane->pic != skyflatnum)
 		{
 			FreeSurfaces(ssurf->surfs);
