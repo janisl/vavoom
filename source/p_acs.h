@@ -359,6 +359,12 @@ enum EPCD
 	DECLARE_PCD(ChangeLevel),
 	DECLARE_PCD(SectorDamage),
 	DECLARE_PCD(ReplaceTextures),
+	DECLARE_PCD(NegateBinary),//330
+	DECLARE_PCD(GetActorPitch),
+	DECLARE_PCD(SetActorPitch),
+	DECLARE_PCD(PrintBind),
+	DECLARE_PCD(SetActorState),
+	DECLARE_PCD(ThingDamage2),
 
 #ifdef DECLARING_PCD_ENUM
 	PCODE_COMMAND_COUNT

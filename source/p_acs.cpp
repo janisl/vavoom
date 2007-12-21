@@ -4468,6 +4468,57 @@ int VAcs::RunScript(float DeltaTime)
 			sp -= 3;
 			ACSVM_BREAK;
 
+		ACSVM_CASE(PCD_NegateBinary)
+			sp[-1] = ~sp[-1];
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_GetActorPitch)
+			{
+				VEntity* Ent = EntityFromTID(sp[-1], Activator);
+				sp[-1] = Ent ? vint32(Ent->Angles.pitch * 0x10000 / 360) &
+					0xffff : 0;
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_SetActorPitch)
+			{
+				int searcher = -1;
+				for (VEntity* Ent = Level->eventFindMobjFromTID(sp[-2], &searcher);
+					Ent; Ent = Level->eventFindMobjFromTID(sp[-2], &searcher))
+				{
+					Ent->Angles.pitch = AngleMod180(
+						(float)(sp[-1] & 0xffff) * 360.0 / (float)0x10000);
+				}
+				sp -= 2;
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_PrintBind)
+			STUB(PCD_PrintBind)
+			//sp[-1] - command (string)
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_SetActorState)
+			STUB(PCD_SetActorState)
+			//sp[-3] - TID, 0 - activator
+			//sp[-2] - State name (stirng)
+			//sp[-1] - Exact match
+			//returns success
+			sp[-3] = 0;
+			sp -= 2;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_ThingDamage2)
+			STUB(PCD_ThingDamage2)
+			//sp[-3] - TID
+			//sp[-2] - Amount
+			//sp[-1] - Damage type
+			//returns success.
+			sp[-3] = 0;
+			sp -= 2;
+			ACSVM_BREAK;
+
 		//	These p-codes are not supported. They will terminate script.
 		ACSVM_CASE(PCD_PlayerBlueSkull)
 		ACSVM_CASE(PCD_PlayerRedSkull)
