@@ -720,6 +720,12 @@ bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 	case LNSPEC_NoiseAlert:
 		buttonSuccess = EV_NoiseAlert(A, Arg1, Arg2, Arg3, Arg4, Arg5);
 		break;
+	case LNSPEC_LineAlignCeiling:
+		buttonSuccess = EV_LineAlignCeiling(Arg1, Arg2, Arg3, Arg4, Arg5);
+		break;
+	case LNSPEC_LineAlignFloor:
+		buttonSuccess = EV_LineAlignFloor(Arg1, Arg2, Arg3, Arg4, Arg5);
+		break;
 	case LNSPEC_SectorSetRotation:
 		buttonSuccess = EV_SectorSetRotation(Arg1, Arg2, Arg3, Arg4, Arg5);
 		break;
@@ -3182,6 +3188,112 @@ final bool EV_SectorSetCeilingScale2(int Arg1, int Arg2, int Arg3, int Arg4,
 		}
 	}
 	return true;
+}
+
+//==========================================================================
+//
+//  EV_LineAlignFloor
+//
+//==========================================================================
+
+final bool EV_LineAlignFloor(int Arg1, int Arg2, int Arg3, int Arg4,
+	int Arg5)
+{
+	int			Searcher;
+	line_t*		Line;
+	bool		Ret;
+	sector_t*	Sec;
+
+	Searcher = -1;
+	Ret = false;
+	for (Line = FindLine(Arg1, &Searcher); Line;
+		Line = FindLine(Arg1, &Searcher))
+	{
+		Sec = Arg2 ? Line->backsector : Line->frontsector;
+		if (!Sec)
+		{
+			continue;
+		}
+
+		TVec v1 = *Line->v1;
+
+		float Angle = atan2(Line->v2->y - v1.y, Line->v2->x - v1.x);
+		float Norm = Angle - 90.0;
+
+		float Dist = -(cos(Norm) * v1.x + sin(Norm) * v1.y);
+
+		if (Arg2)
+		{
+			Angle = AngleMod360(Angle + 180.0);
+			Dist = -Dist;
+		}
+
+		Sec->floor.BaseAngle = Angle;
+		while (Dist < 0.0)
+		{
+			Dist += 256.0;
+		}
+		while (Dist >= 256.0)
+		{
+			Dist -= 256.0;
+		}
+		Sec->floor.BaseYOffs = Dist;
+		Ret = true;
+	}
+	return Ret;
+}
+
+//==========================================================================
+//
+//  EV_LineAlignCeiling
+//
+//==========================================================================
+
+final bool EV_LineAlignCeiling(int Arg1, int Arg2, int Arg3, int Arg4,
+	int Arg5)
+{
+	int			Searcher;
+	line_t*		Line;
+	bool		Ret;
+	sector_t*	Sec;
+
+	Searcher = -1;
+	Ret = false;
+	for (Line = FindLine(Arg1, &Searcher); Line;
+		Line = FindLine(Arg1, &Searcher))
+	{
+		Sec = Arg2 ? Line->backsector : Line->frontsector;
+		if (!Sec)
+		{
+			continue;
+		}
+
+		TVec v1 = *Line->v1;
+
+		float Angle = atan2(Line->v2->y - v1.y, Line->v2->x - v1.x);
+		float Norm = Angle - 90.0;
+
+		float Dist = -(cos(Norm) * v1.x + sin(Norm) * v1.y);
+
+		if (Arg2)
+		{
+			Angle = AngleMod360(Angle + 180.0);
+			Dist = -Dist;
+		}
+
+		Sec->ceiling.BaseAngle = Angle;
+		while (Dist < 0.0)
+		{
+			Dist += 256.0;
+		}
+		while (Dist >= 256.0)
+		{
+			Dist -= 256.0;
+		}
+		Sec->ceiling.BaseYOffs = Dist;
+		Ret = true;
+	}
+	return Ret;
 }
 
 //**************************************************************************

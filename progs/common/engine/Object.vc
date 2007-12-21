@@ -550,7 +550,9 @@ enum
 
 	LNSPEC_PlaneAlign = 181,
 
-	LNSPEC_SectorSetRotation = 185,
+	LNSPEC_LineAlignCeiling = 183,
+	LNSPEC_LineAlignFloor,
+	LNSPEC_SectorSetRotation,
 	LNSPEC_SectorSetCeilingPanning,
 	LNSPEC_SectorSetFloorPanning,
 	LNSPEC_SectorSetCeilingScale,
@@ -810,6 +812,9 @@ struct sector_t
 	// list of subsectors in sector
 	// used to check if client can see this sector (it needs to be updated)
 	void* __subsectors;
+
+	//	List of things in sector.
+	Entity		ThingList;
 
 	int linecount;
 	line_t **lines;	// [linecount] size

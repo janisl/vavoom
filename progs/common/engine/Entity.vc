@@ -121,6 +121,10 @@ native readonly sector_t*		Sector;
 native readonly private Entity	BlockMapNext;
 native readonly private Entity	BlockMapPrev;
 
+// Links in sector (if needed).
+native readonly Entity			SNext;
+native readonly Entity			SPrev;
+
 // The closest interval over all contacted Sectors.
 native float	FloorZ;
 native float	CeilingZ;
