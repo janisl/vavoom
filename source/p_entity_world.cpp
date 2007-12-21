@@ -159,6 +159,26 @@ void VEntity::UnlinkFromWorld()
 		return;
 	}
 
+	if (!(EntityFlags & EF_Hidden))
+	{
+		// invisible things don't need to be in sector list
+		// unlink from subsector
+		if (SNext)
+		{
+			SNext->SPrev = SPrev;
+		}
+		if (SPrev)
+		{
+			SPrev->SNext = SNext;
+		}
+		else
+		{
+			Sector->ThingList = SNext;
+		}
+		SNext = NULL;
+		SPrev = NULL;
+	}
+
 	if (!(EntityFlags & EF_NoBlockmap))
 	{
 		//	Inert things don't need to be in blockmap
@@ -226,6 +246,20 @@ void VEntity::LinkToWorld()
 	Ceiling = r->ceiling;
 	CeilingZ = r->ceiling->GetPointZ(Origin);
 
+	// link into sector
+	if (!(EntityFlags & EF_Hidden))
+	{
+		// invisible things don't go into the sector links
+		VEntity** Link = &Sector->ThingList;
+		SPrev = NULL;
+		SNext = *Link;
+		if (*Link)
+		{
+			(*Link)->SPrev = this;
+		}
+		*Link = this;
+	}
+
 	// link into blockmap
 	if (!(EntityFlags & EF_NoBlockmap))
 	{
@@ -241,7 +275,9 @@ void VEntity::LinkToWorld()
 			BlockMapPrev = NULL;
 			BlockMapNext = *link;
 			if (*link)
+			{
 				(*link)->BlockMapPrev = this;
+			}
 
 			*link = this;
 		}

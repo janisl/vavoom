@@ -128,6 +128,10 @@ class VEntity : public VThinker
 	VEntity*		BlockMapNext;
 	VEntity*		BlockMapPrev;
 
+	// Links in sector (if needed).
+	VEntity*		SNext;
+	VEntity*		SPrev;
+
 	// The closest interval over all contacted Sectors.
 	float			FloorZ;
 	float			CeilingZ;

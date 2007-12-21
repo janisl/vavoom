@@ -161,6 +161,7 @@ void VLevel::Serialise(VStream& Strm)
 		if (Strm.IsLoading())
 		{
 			CalcSecMinMaxs(sec);
+			sec->ThingList = NULL;
 		}
 	}
 	unguard;

@@ -288,6 +288,9 @@ struct sector_t
 	// used to check if client can see this sector (it needs to be updated)
 	subsector_t	*subsectors;
 
+	//	List of things in sector.
+	VEntity*	ThingList;
+
 	int			linecount;
 	line_t		**lines;  // [linecount] size
 
