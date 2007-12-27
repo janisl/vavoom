@@ -326,7 +326,7 @@ public:
 	DECLARE_FUNCTION(GetStatePlus)
 	DECLARE_FUNCTION(FindClassState)
 	DECLARE_FUNCTION(TextColourString)
-
+	DECLARE_FUNCTION(StartTitleMap)
 
 #ifdef CLIENT
 	DECLARE_FUNCTION(P_GetMapName)

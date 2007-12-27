@@ -791,7 +791,7 @@ void VRenderLevel::RenderPlayerView()
 	DrawTranslucentPolys();
 
 	// draw the psprites on top of everything
-	if (fov <= 90.0 && cl->MO == cl->Camera)
+	if (fov <= 90.0 && cl->MO == cl->Camera && !host_titlemap)
 	{
 		DrawPlayerSprites();
 	}
@@ -799,7 +799,10 @@ void VRenderLevel::RenderPlayerView()
 	Drawer->EndView();
 
 	// Draw croshair
-	DrawCroshair();
+	if (cl->MO == cl->Camera && !host_titlemap)
+	{
+		DrawCroshair();
+	}
 	unguard;
 }
 
@@ -1087,6 +1090,11 @@ COMMAND(TimeRefresh)
 	int			i;
 	double		start, stop, time, RenderTime, UpdateTime;
 	float		startangle;
+
+	if (!cl)
+	{
+		return;
+	}
 
 	startangle = cl->ViewAngles.yaw;
 

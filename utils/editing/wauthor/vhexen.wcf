@@ -287,14 +287,6 @@ LightingInc=0
 0x2137  8       20      tst4a0          Candle (short)
 0x2138  8       20      tst5a0          Candle (tall)
 0x2139  8       20      tst6a0          Goblet (spilled)
-0x2341  17      16      aplsa0          Security Camera *( pitch, angles, speed, -, - )
-0x2343  16      20      bal1a0          Fountain (red)
-0x2344  16      20      bal1a0          Fountain (green)
-0x2345  16      20      bal1a0          Fountain (blue)
-0x2346  16      20      bal1a0          Fountain (yellow)
-0x2347  16      20      bal1a0          Fountain (purple)
-0x2348  16      20      bal1a0          Fountain (black)
-0x2349  16      20      bal1a0          Fountain (white)
 0x213a  8       20      tst7a0          Goblet (tall)
 0x213b  8       20      tst8a0          Goblet (short)
 0x213c  8       20      tst9a0          Goblet w/silver bands
@@ -320,6 +312,16 @@ LightingInc=0
 0x233b  14      20      artiger2        Clock gear (bronze)
 0x233c  14      20      artiger3        Clock gear (bronze hub)
 0x233d  14      20      artiger4        Clock gear (bronze ring)
+0x2340  13      10      aplsa0          Patrol pt *( next, delay, -, -, - )
+0x2341  17      16      aplsa0          Security Camera *( pitch, angles, speed, -, - )
+0x2343  16      20      bal1a0          Fountain (red)
+0x2344  16      20      bal1a0          Fountain (green)
+0x2345  16      20      bal1a0          Fountain (blue)
+0x2346  16      20      bal1a0          Fountain (yellow)
+0x2347  16      20      bal1a0          Fountain (purple)
+0x2348  16      20      bal1a0          Fountain (black)
+0x2349  16      20      bal1a0          Fountain (white)
+0x2357  13      10      aplsa0          Patrol special
 0x2454  13      20      icprd0          Polyobject anchor
 0x2455  13      20      sbfxh0          Start spot
 0x2456  13      20      sbfxc0          Start spot w/crush
@@ -523,9 +525,8 @@ LightingInc=0
 0x087	10	Thing_Spawn( tag, spawntype, angle, -, - )
 0x088	10	Thing_ProjectileGravity( tag, type, angle, speed, vspeed )
 0x089	10	Thing_SpawnNoFog( tag, spawntype, angle, -, - )
-
-;0x0e5   10      Thing_SetGoal( tag, goal, delay, -, - )
-;0x0f8   10      HealThing( amount, -, -, -, - )
+0x0e5	10	Thing_SetGoal( tag, goal, delay, chasegoal, - )
+0x0f8	10	HealThing( amount, max, -, -, - )
 
 ; Teleport
 0x027	11	Teleport_ZombieChanger( tag, sector_tag, no_src_fog, -, - )

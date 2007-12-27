@@ -125,6 +125,8 @@ native readonly private Entity	BlockMapPrev;
 native readonly Entity			SNext;
 native readonly Entity			SPrev;
 
+native readonly msecnode_t*		TouchingSectorList;
+
 // The closest interval over all contacted Sectors.
 native float	FloorZ;
 native float	CeilingZ;

@@ -97,7 +97,8 @@ replication
 		Cheats, ReadyWeapon, InvFirst, InvPtr, InventoryTime, ArtifactFlash;
 
 	unreliable if (!bIsClient)
-		ParticleEffect, ClientExplosion, ClientParticleExplosion;
+		ParticleEffect, ClientExplosion, ClientParticleExplosion,
+		ClientSparkParticles;
 }
 
 //==========================================================================
@@ -1477,6 +1478,45 @@ void ClientParticleExplosion(int colour, float rad, TVec org)
 	dl->colour = colour;
 	dl->die = Level.XLevel.Time + 0.5;
 	dl->decay = 300.0;
+}
+
+//==========================================================================
+//
+//	ClientSparkParticles
+//
+//==========================================================================
+
+void ClientSparkParticles(int Count, TVec Org, float Angle)
+{
+	int			i;
+
+	for (i = 0; i < Count; i++)
+	{
+		particle_t *p = Level.NewParticle();
+		if (!p)
+		{
+			break;
+		}
+
+		p->type = LineSpecialLevelInfo::pt_spark;
+		p->Size = 0.5;
+		p->colour = Random() < 0.5 ? RGBA(255, 120, 0, 255) :
+			RGBA(255, 170, 0, 255);
+		p->die = Level.XLevel.Time + 10.0 / 35.0;
+
+		float an = Angle + Random() * 45.0;
+		p->org.x = Org.x + (Random () * 15.0) * cos(an);
+		p->org.y = Org.y + (Random () * 15.0) * sin(an);
+		p->org.z = Org.z - Random () * 4.0;
+
+		p->vel.x = (Random() - 0.5) * 2.0;
+		p->vel.y = (Random() - 0.5) * 2.0;
+		p->vel.z = (Random() - 0.5) * 2.0 - Random () * 70.0;
+
+		p->accel.x = (Random() - 0.5) * 16.0 + (Random () - 0.5) * 35.0;
+		p->accel.y = (Random() - 0.5) * 16.0 + (Random () - 0.5) * 35.0;
+		p->accel.z = (Random() - 0.5) * 16.0 - 140.0;
+	}
 }
 
 //==========================================================================

@@ -151,6 +151,8 @@ enum
 #include "QuakeFocus.vc"
 
 #include "Unknown.vc"
+#include "PatrolPoint.vc"
+#include "PatrolSpecial.vc"
 
 #include "ParticleFountain.vc"
 #include "RedParticleFountain.vc"
@@ -160,3 +162,4 @@ enum
 #include "PurpleParticleFountain.vc"
 #include "BlackParticleFountain.vc"
 #include "WhiteParticleFountain.vc"
+#include "Spark.vc"

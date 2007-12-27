@@ -541,6 +541,41 @@ void VStr::Split(char C, TArray<VStr>& A) const
 
 //==========================================================================
 //
+//	VStr::Split
+//
+//==========================================================================
+
+void VStr::Split(const char* Chars, TArray<VStr>& A) const
+{
+	guard(VStr::Split);
+	A.Clear();
+	if (!Str)
+	{
+		return;
+	}
+	int Start = 0;
+	int Len = Length();
+	for (int i = 0; i <= Len; i++)
+	{
+		bool DoSplit = i == Len;
+		for (const char* pChar = Chars; !DoSplit && *pChar; pChar++)
+		{
+			DoSplit = Str[i] == *pChar;
+		}
+		if (DoSplit)
+		{
+			if (Start != i)
+			{
+				A.Append(VStr(*this, Start, i - Start));
+			}
+			Start = i + 1;
+		}
+	}
+	unguard;
+}
+
+//==========================================================================
+//
 //	VStr::IsValidUtf8
 //
 //==========================================================================

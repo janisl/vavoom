@@ -252,6 +252,33 @@ struct sec_region_t
 };
 
 //
+// phares 3/14/98
+//
+// Sector list node showing all sectors an object appears in.
+//
+// There are two threads that flow through these nodes. The first thread
+// starts at TouchingThingList in a sector_t and flows through the SNext
+// links to find all mobjs that are entirely or partially in the sector.
+// The second thread starts at TouchingSectorList in a VEntity and flows
+// through the TNext links to find all sectors a thing touches. This is
+// useful when applying friction or push effects to sectors. These effects
+// can be done as thinkers that act upon all objects touching their sectors.
+// As an mobj moves through the world, these nodes are created and
+// destroyed, with the links changed appropriately.
+//
+// For the links, NULL means top or end of list.
+//
+struct msecnode_t
+{
+	sector_t*		Sector;	// a sector containing this object
+	VEntity*		Thing;	// this object
+	msecnode_t*		TPrev;	// prev msecnode_t for this thing
+	msecnode_t*		TNext;	// next msecnode_t for this thing
+	msecnode_t*		SPrev;	// prev msecnode_t for this sector
+	msecnode_t*		SNext;	// next msecnode_t for this sector
+};
+
+//
 //	The SECTORS record, at runtime.
 //	Stores things/mobjs.
 //
@@ -290,6 +317,7 @@ struct sector_t
 
 	//	List of things in sector.
 	VEntity*	ThingList;
+	msecnode_t*	TouchingThingList;
 
 	int			linecount;
 	line_t		**lines;  // [linecount] size
@@ -697,6 +725,12 @@ class VLevel : public VObject
 	float				Time;
 	int					TicTime;
 
+	msecnode_t*			SectorList;
+	// phares 3/21/98
+	//
+	// Maintain a freelist of msecnode_t's to reduce memory allocs and frees.
+	msecnode_t*			HeadSecNode;
+
 	void Serialise(VStream& Strm);
 	void ClearReferences();
 	void Destroy();
@@ -729,6 +763,10 @@ class VLevel : public VObject
 	void ClampOffsets();
 
 	void SetCameraToTexture(VEntity*, VName, int);
+
+	msecnode_t* AddSecnode(sector_t*, VEntity*, msecnode_t*);
+	msecnode_t* DelSecnode(msecnode_t*);
+	void DelSectorList();
 
 	bool IsForServer() const
 	{

@@ -720,7 +720,7 @@ static void SV_LoadMap(VName MapName, int slot)
 {
 	guard(SV_LoadMap);
 	// Load a base level
-	SV_SpawnServer(*MapName, false);
+	SV_SpawnServer(*MapName, false, false);
 
 	// Load the file
 	Loader = new VSaveLoaderStream(FL_OpenFileRead(SAVE_MAP_NAME(slot,
@@ -956,11 +956,13 @@ void SV_MapTeleport(VName mapname)
 	for (VThinker* Th = GLevel->ThinkerHead; Th; Th = Th->Next)
 	{
 		VEntity *vent = Cast<VEntity>(Th);
-		if (vent && vent->Owner && (vent->Owner->EntityFlags & VEntity::EF_IsPlayer))
+		if (vent && (//(vent->EntityFlags & VEntity::EF_IsPlayer) ||
+			(vent->Owner && (vent->Owner->EntityFlags & VEntity::EF_IsPlayer))))
 		{
 			TravelObjs.Append(vent);
 			GLevel->RemoveThinker(vent);
 			vent->UnlinkFromWorld();
+			GLevel->DelSectorList();
 			vent->StopSound(0);
 		}
 		if (Th->IsA(VPlayerReplicationInfo::StaticClass()))
@@ -996,7 +998,7 @@ void SV_MapTeleport(VName mapname)
 	else
 	{
 		// New map
-		SV_SpawnServer(*mapname, true);
+		SV_SpawnServer(*mapname, true, false);
 	}
 
 	//	Add traveling thinkers to the new level.

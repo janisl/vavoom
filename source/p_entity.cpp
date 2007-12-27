@@ -137,6 +137,7 @@ void VEntity::DestroyThinker()
 
 	// unlink from sector and block lists
 	UnlinkFromWorld();
+	XLevel->DelSectorList();
 
 	Super::DestroyThinker();
 	unguard;

@@ -437,25 +437,28 @@ void SB_DrawFullscreenStats()
 	}
 
 	// ready weapon ammo with icon
-	if (cl.ReadyWeapon.Ammo1)
+	if (cl.ReadyWeapon)
 	{
-		SB_DrawTallNum(ST_TDAMMOX, ST_TDAMMOY, cl.ReadyWeapon.Ammo1.Amount, 0.6, false);
-	}
-	if (cl.ReadyWeapon.AmmoType1 == Clip)
-	{
-		DrawPic(ST_TDAMMOX - 60, ST_TDAMMOY + 15, pic_ammoicon[0], 0.6);
-	}
-	else if (cl.ReadyWeapon.AmmoType1 == Shell)
-	{
-		DrawPic(ST_TDAMMOX - 60, ST_TDAMMOY + 15, pic_ammoicon[1], 0.6);
-	}
-	else if (cl.ReadyWeapon.AmmoType1 == Cell)
-	{
-		DrawPic(ST_TDAMMOX - 60, ST_TDAMMOY + 15, pic_ammoicon[2], 0.6);
-	}
-	else if (cl.ReadyWeapon.AmmoType1 == RocketAmmo)
-	{
-		DrawPic(ST_TDAMMOX - 60, ST_TDAMMOY + 15, pic_ammoicon[3], 0.6);
+		if (cl.ReadyWeapon.Ammo1)
+		{
+			SB_DrawTallNum(ST_TDAMMOX, ST_TDAMMOY, cl.ReadyWeapon.Ammo1.Amount, 0.6, false);
+		}
+		if (cl.ReadyWeapon.AmmoType1 == Clip)
+		{
+			DrawPic(ST_TDAMMOX - 60, ST_TDAMMOY + 15, pic_ammoicon[0], 0.6);
+		}
+		else if (cl.ReadyWeapon.AmmoType1 == Shell)
+		{
+			DrawPic(ST_TDAMMOX - 60, ST_TDAMMOY + 15, pic_ammoicon[1], 0.6);
+		}
+		else if (cl.ReadyWeapon.AmmoType1 == Cell)
+		{
+			DrawPic(ST_TDAMMOX - 60, ST_TDAMMOY + 15, pic_ammoicon[2], 0.6);
+		}
+		else if (cl.ReadyWeapon.AmmoType1 == RocketAmmo)
+		{
+			DrawPic(ST_TDAMMOX - 60, ST_TDAMMOY + 15, pic_ammoicon[3], 0.6);
+		}
 	}
 
 	// keys

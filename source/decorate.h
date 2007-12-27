@@ -7,7 +7,7 @@
 //**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
 //**	   #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id$
+//**	$Id: dehacked.cpp 1962 2007-01-11 23:29:44Z dj_jl $
 //**
 //**	Copyright (C) 1999-2006 Jānis Legzdiņš
 //**
@@ -23,35 +23,14 @@
 //**
 //**************************************************************************
 
-// HEADER FILES ------------------------------------------------------------
+enum
+{
+	GAME_Doom				= 0x01,
+	GAME_Heretic			= 0x02,
+	GAME_Hexen				= 0x04,
+	GAME_Strife				= 0x08,
+	GAME_Raven				= GAME_Heretic | GAME_Hexen,
+	GAME_Any				= 0x0f,
+};
 
-// MACROS ------------------------------------------------------------------
-
-// TYPES -------------------------------------------------------------------
-
-// PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
-
-void Host_Init(void);
-void Host_Shutdown(void);
-void Host_Frame(void);
-void __attribute__((noreturn, format(printf, 1, 2))) __declspec(noreturn)
-	Host_EndGame(const char *message, ...);
-void __attribute__((noreturn, format(printf, 1, 2))) __declspec(noreturn)
-	Host_Error(const char *error, ...);
-const char *Host_GetCoreDump(void);
-bool Host_StartTitleMap();
-
-// PUBLIC DATA DECLARATIONS ------------------------------------------------
-
-extern VCvarI		developer;
-
-extern bool			host_initialised;
-extern bool			host_request_exit;
-
-extern int			host_frametics;
-extern double		host_frametime;
-extern double		host_time;
-extern double		realtime;
-extern int			host_framecount;
-extern bool			host_standalone;
-extern bool			host_titlemap;
+void ProcessDecorateScripts();

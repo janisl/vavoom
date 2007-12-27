@@ -1117,3 +1117,8 @@ IMPLEMENT_FUNCTION(VObject, TextColourString)
 		(char)(Colour + 'A');
 	RET_STR(Ret);
 }
+
+IMPLEMENT_FUNCTION(VObject, StartTitleMap)
+{
+	RET_BOOL(Host_StartTitleMap());
+}

@@ -197,6 +197,7 @@ LightingInc=0
 0x7d4   5       20      wskla0      	Hellstaff
 0x7d5   5       20      wgnta0      	Gauntlets
 0x7f3   12      20      ppoda0      	Pod
+0x2340  13      10      fx17b0          Patrol pt *( next, delay, -, -, - )
 0x2341  16      16      fx17b0          Security Camera *( pitch, angles, speed, -, - )
 0x2343  15      20      fx18q0          Fountain (red)
 0x2344  15      20      fx18q0          Fountain (green)
@@ -205,6 +206,7 @@ LightingInc=0
 0x2347  15      20      fx18q0          Fountain (purple)
 0x2348  15      20      fx18q0          Fountain (black)
 0x2349  15      20      fx18q0          Fountain (white)
+0x2357  13      10      fx17b0          Patrol special
 0x236e	16		16		fx17b0			Interp pt *( pitch, traveltime, holdtime, next, hinext )
 0x236f	16		16		fx17b0			Path follower *( pt, hipt, bLinear, -, - )
 0x2370	16		16		fx17b0			Moving camera *( pt, hipt, bLinear, lookat, - )
@@ -392,9 +394,8 @@ LightingInc=0
 0x087	10	Thing_Spawn( tag, spawntype, angle, -, - )
 0x088	10	Thing_ProjectileGravity( tag, type, angle, speed, vspeed )
 0x089	10	Thing_SpawnNoFog( tag, spawntype, angle, -, - )
-
-;0x0e5   10      Thing_SetGoal( tag, goal, delay, -, - )
-;0x0f8   10      HealThing( amount, -, -, -, - )
+0x0e5	10	Thing_SetGoal( tag, goal, delay, chasegoal, - )
+0x0f8	10	HealThing( amount, max, -, -, - )
 
 ; Teleport
 0x027	11	Teleport_ZombieChanger( tag, sector_tag, no_src_fog, -, - )

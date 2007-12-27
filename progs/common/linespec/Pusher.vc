@@ -167,6 +167,7 @@ void Tick(float DeltaTime)
 	int				xspeed, yspeed;
 	float			ht;
 	sec_plane_t*	floor;
+	msecnode_t*		Node;
 
 //	if (!var_pushers)
 //		return;
@@ -240,10 +241,9 @@ void Tick(float DeltaTime)
 	// constant pushers p_wind and p_current
 
 	// things touching this sector
-	foreach AllThinkers(EntityEx, thing)
+	for (Node = sec->TouchingThingList; Node; Node = Node->SNext)
 	{
-		if (thing.Sector != sec)
-			continue;
+		thing = EntityEx(Node->Thing);
 		if (!thing.bWindThrust || !thing.bColideWithWorld)
 			continue;
 		if (Type == PUSHER_Wind)

@@ -43,6 +43,11 @@ int page_pic;
 
 void AdvanceDemo()
 {
+	if (StartTitleMap())
+	{
+		return;
+	}
+
 	demosequence++;
 #ifndef DOOM2
 	if (WadLumpPresent('e4m1'))

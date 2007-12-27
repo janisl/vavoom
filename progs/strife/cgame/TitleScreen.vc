@@ -43,6 +43,11 @@ int page_pic;
 
 void AdvanceDemo()
 {
+	if (StartTitleMap())
+	{
+		return;
+	}
+
 	demosequence++;
 	demosequence %= 10;
 

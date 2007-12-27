@@ -261,7 +261,9 @@ REGISTER_NAME(textcolo)
 REGISTER_NAME(fontdefs)
 REGISTER_NAME(clprogs)
 REGISTER_NAME(svprogs)
+REGISTER_NAME(decorate)
 REGISTER_NAME(language)
+REGISTER_NAME(titlemap)
 
 //	Standard font names
 REGISTER_NAME(smallfont)

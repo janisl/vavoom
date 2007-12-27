@@ -81,6 +81,8 @@ _____MAIN_EXE__SOURCES = \
 	d_tex.cpp \
 	debug.cpp \
 	debug.h \
+	decorate.cpp \
+	decorate.h \
 	dehacked.cpp \
 	dehacked.h \
 	drawer.h \
@@ -442,6 +444,7 @@ _____SERVER_EXE__SOURCES = \
 	crc.cpp \
 	cvar.cpp \
 	debug.cpp \
+	decorate.cpp \
 	dehacked.cpp \
 	files.cpp \
 	fs_dir.cpp \

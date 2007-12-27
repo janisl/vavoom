@@ -177,6 +177,23 @@ void VEntity::UnlinkFromWorld()
 		}
 		SNext = NULL;
 		SPrev = NULL;
+
+		// phares 3/14/98
+		//
+		//	Save the sector list pointed to by TouchingSectorList. In
+		// LinkToWorld, we'll keep any nodes that represent sectors the Thing
+		// still touches. We'll add new ones then, and delete any nodes for
+		// sectors the Thing has vacated. Then we'll put it back into
+		// TouchingSectorList. It's done this way to avoid a lot of
+		// deleting/creating for nodes, when most of the time you just get
+		// back what you deleted anyway.
+		//
+		//	If this Thing is being removed entirely, then the calling routine
+		// will clear out the nodes in sector_list.
+		//
+		XLevel->DelSectorList();
+		XLevel->SectorList = TouchingSectorList;
+		TouchingSectorList = NULL; //to be restored by LinkToWorld
 	}
 
 	if (!(EntityFlags & EF_NoBlockmap))
@@ -258,6 +275,26 @@ void VEntity::LinkToWorld()
 			(*Link)->SPrev = this;
 		}
 		*Link = this;
+
+		// phares 3/16/98
+		//
+		// If sector_list isn't NULL, it has a collection of sector
+		// nodes that were just removed from this Thing.
+		//
+		// Collect the sectors the object will live in by looking at
+		// the existing sector_list and adding new nodes and deleting
+		// obsolete ones.
+		//
+		// When a node is deleted, its sector links (the links starting
+		// at sector_t->touching_thinglist) are broken. When a node is
+		// added, new sector links are created.
+		CreateSecNodeList();
+		TouchingSectorList = XLevel->SectorList;	// Attach to thing
+		XLevel->SectorList = NULL;		// clear for next time
+	}
+	else
+	{
+		XLevel->DelSectorList();
 	}
 
 	// link into blockmap
@@ -285,6 +322,122 @@ void VEntity::LinkToWorld()
 		{
 			// thing is off the map
 			BlockMapNext = BlockMapPrev = NULL;
+		}
+	}
+	unguard;
+}
+
+//=============================================================================
+//
+//	VEntity::CreateSecNodeList
+//
+// phares 3/14/98
+//
+//	Alters/creates the sector_list that shows what sectors the object resides in
+//
+//=============================================================================
+
+void VEntity::CreateSecNodeList()
+{
+	guard(VEntity::CreateSecNodeList);
+	int xl, xh, yl, yh, bx, by;
+	msecnode_t* Node;
+
+	// First, clear out the existing Thing fields. As each node is
+	// added or verified as needed, Thing will be set properly. When
+	// finished, delete all nodes where Thing is still NULL. These
+	// represent the sectors the Thing has vacated.
+
+	Node = XLevel->SectorList;
+	while (Node)
+	{
+		Node->Thing = NULL;
+		Node = Node->TNext;
+	}
+
+	float tmbbox[4];
+	tmbbox[BOXTOP] = Origin.y + Radius;
+	tmbbox[BOXBOTTOM] = Origin.y - Radius;
+	tmbbox[BOXRIGHT] = Origin.x + Radius;
+	tmbbox[BOXLEFT] = Origin.x - Radius;
+
+	validcount++; // used to make sure we only process a line once
+
+	xl = MapBlock(tmbbox[BOXLEFT] - XLevel->BlockMapOrgX);
+	xh = MapBlock(tmbbox[BOXRIGHT] - XLevel->BlockMapOrgX);
+	yl = MapBlock(tmbbox[BOXBOTTOM] - XLevel->BlockMapOrgY);
+	yh = MapBlock(tmbbox[BOXTOP] - XLevel->BlockMapOrgY);
+
+	for (bx = xl; bx <= xh; bx++)
+	{
+		for (by = yl; by <= yh; by++)
+		{
+			line_t* ld;
+			for (VBlockLinesIterator It(this, bx, by, &ld); It.GetNext(); )
+			{
+				//	Locates all the sectors the object is in by looking at
+				// the lines that cross through it. You have already decided
+				// that the object is allowed at this location, so don't
+				// bother with checking impassable or blocking lines.
+				if (tmbbox[BOXRIGHT] <= ld->bbox[BOXLEFT] ||
+					tmbbox[BOXLEFT] >= ld->bbox[BOXRIGHT] ||
+					tmbbox[BOXTOP] <= ld->bbox[BOXBOTTOM] ||
+					tmbbox[BOXBOTTOM] >= ld->bbox[BOXTOP])
+				{
+					continue;
+				}
+
+				if (P_BoxOnLineSide(tmbbox, ld) != -1)
+				{
+					continue;
+				}
+
+				// This line crosses through the object.
+
+				// Collect the sector(s) from the line and add to the
+				// SectorList you're examining. If the Thing ends up being
+				// allowed to move to this position, then the sector_list will
+				// be attached to the Thing's VEntity at TouchingSectorList.
+
+				XLevel->SectorList = XLevel->AddSecnode(ld->frontsector,
+					this, XLevel->SectorList);
+
+				// Don't assume all lines are 2-sided, since some Things like
+				// MT_TFOG are allowed regardless of whether their radius
+				// takes them beyond an impassable linedef.
+
+				// killough 3/27/98, 4/4/98:
+				// Use sidedefs instead of 2s flag to determine two-sidedness.
+
+				if (ld->backsector)
+				{
+					XLevel->SectorList = XLevel->AddSecnode(ld->backsector,
+						this, XLevel->SectorList);
+				}
+			}
+		}
+	}
+
+	// Add the sector of the (x,y) point to sector_list.
+	XLevel->SectorList = XLevel->AddSecnode(Sector, this, XLevel->SectorList);
+
+	// Now delete any nodes that won't be used. These are the ones where
+	// Thing is still NULL.
+
+	Node = XLevel->SectorList;
+	while (Node)
+	{
+		if (Node->Thing == NULL)
+		{
+			if (Node == XLevel->SectorList)
+			{
+				XLevel->SectorList = Node->TNext;
+			}
+			Node = XLevel->DelSecnode(Node);
+		}
+		else
+		{
+			Node = Node->TNext;
 		}
 	}
 	unguard;

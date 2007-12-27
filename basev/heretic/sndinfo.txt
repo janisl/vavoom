@@ -267,6 +267,12 @@ $limit world/amb9 1
 $limit world/amb10 1
 $limit world/amb11 1
 
+//	Sparks
+world/spark1					spark1
+world/spark2					spark2
+world/spark3					spark3
+$random world/spark				{ world/spark1  world/spark2  world/spark3 }
+
 //==========================================================================
 //
 //  Misc sounds

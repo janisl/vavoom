@@ -63,6 +63,8 @@ EXTRA_DIST = \
 	linespec/MapRevealer.vc \
 	linespec/MapSpot.vc \
 	linespec/MapSpotGravity.vc \
+	linespec/PatrolPoint.vc \
+	linespec/PatrolSpecial.vc \
 	linespec/PathFollower.vc \
 	linespec/PhasedLight.vc \
 	linespec/PickupFlash.vc \
@@ -102,6 +104,7 @@ EXTRA_DIST = \
 	linespec/SecurityCamera.vc \
 	linespec/SoundSequence.vc \
 	linespec/SoundSequenceSlot.vc \
+	linespec/Spark.vc \
 	linespec/StairStepMover.vc \
 	linespec/Strobe.vc \
 	linespec/SwitchableDecoration.vc \

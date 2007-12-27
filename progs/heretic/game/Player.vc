@@ -455,6 +455,7 @@ void PlayerExitMap(bool clusterChange)
 	Rain1 = none;
 	Rain2 = none;
 	SavedInventory = EntityEx(MO).Inventory;
+	EntityEx(MO).Inventory = none;
 }
 
 //==========================================================================

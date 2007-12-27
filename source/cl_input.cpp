@@ -605,7 +605,7 @@ void CL_SendMove()
 		return;
 	}
 
-	if (cls.demoplayback)
+	if (cls.demoplayback || host_titlemap)
 	{
 		return;
 	}
@@ -639,6 +639,11 @@ void CL_SendMove()
 bool CL_Responder(event_t* ev)
 {
 	guard(CL_Responder);
+	if (host_titlemap)
+	{
+		return false;
+	}
+
 	switch (ev->type) 
 	{
 	case ev_mouse:

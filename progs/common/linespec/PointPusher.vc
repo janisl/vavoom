@@ -26,8 +26,15 @@
 class PointPusher : ScriptedEntity
 	__mobjinfo__(5001);
 
+states
+{
+Spawn:
+	TNT1 A -1
+	Stop
+}
+
 defaultproperties
 {
-	bHidden = true;
+	RenderStyle = STYLE_None;
 	bNoBlockmap = true;
 }

@@ -15,6 +15,9 @@ EXTRA_DIST = \
 	graphics/mc_arrow.png \
 	sounds/dsempty.lmp \
 	sounds/dsquake.flac \
+	sounds/spark1.flac \
+	sounds/spark2.flac \
+	sounds/spark3.flac \
 	sprites/tnt1a0.lmp \
 	sprites/unkna0.png \
 	textures/-noflat-.png

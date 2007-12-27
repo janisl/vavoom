@@ -44,6 +44,11 @@ int advisor_pic;
 
 void AdvanceDemo()
 {
+	if (StartTitleMap())
+	{
+		return;
+	}
+
 	demosequence++;
 	demosequence %= 6;
 

@@ -61,6 +61,7 @@
 #include "wad.h"		//	WAD file I/O routines
 #include "scripts.h"	//	Script parsing
 #include "xml.h"		//	XML file parsing
+#include "decorate.h"	//	Decorate scripts
 #include "dehacked.h"	//	DeHackEd support
 #include "progs.h"		//	Progs
 #include "vclass.h"

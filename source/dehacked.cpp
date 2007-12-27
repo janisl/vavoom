@@ -119,6 +119,12 @@ static bool GetLine()
 		{
 			String++;
 		}
+		char* End = String + VStr::Length(String);
+		while (End > String && End[-1] <= ' ')
+		{
+			End[-1] = 0;
+			End--;
+		}
 	} while (!*String);
 
 	return true;

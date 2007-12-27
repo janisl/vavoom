@@ -7,7 +7,7 @@
 //**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
 //**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**    $Id$
+//**    $Id: InterpolationSpecial.vc 2932 2007-12-03 21:42:43Z dj_jl $
 //**
 //**    Copyright (C) 1999-2006 Jānis Legzdiņš
 //**
@@ -23,18 +23,16 @@
 //**
 //**************************************************************************
 
-class PointPuller : ScriptedEntity
-	__mobjinfo__(5002);
-
-states
-{
-Spawn:
-	TNT1 A -1
-	Stop
-}
+class PatrolPoint : ScriptedEntity
+	__mobjinfo__(9024);
 
 defaultproperties
 {
-	RenderStyle = STYLE_None;
+	Radius  = 8.0;
+	Height = 8.0;
+	Mass = 10.0;
+	bNoGravity = true;
 	bNoBlockmap = true;
+	bNoSplash = true;
+	RenderStyle = STYLE_None;
 }

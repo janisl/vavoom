@@ -78,7 +78,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 	case STAIRSEV_DownNormal:
 	case STAIRSEV_UpNormal:
 		QueueInit(InSector,
-			0,
+			(InSector->special & SECSPEC_BASE_MASK) == SECSPEC_StairsSpecial1,
 			Height,
 			InStairsType,
 			itof(Dir * Arg3),
@@ -92,7 +92,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 	case STAIRSEV_DownSync:
 	case STAIRSEV_UpSync:
 		QueueInit(InSector,
-			0,
+			(InSector->special & SECSPEC_BASE_MASK) == SECSPEC_StairsSpecial1,
 			Height,
 			InStairsType,
 			itof(Dir * Arg3),

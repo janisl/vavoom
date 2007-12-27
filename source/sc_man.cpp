@@ -216,6 +216,7 @@ bool VScriptParser::GetString()
 				}
 				ScriptPtr++;
 			}
+			ScriptPtr += 2;
 		}
 		else
 		{

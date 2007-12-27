@@ -179,6 +179,7 @@ bool bUnknown2;			//8000000
 bool bPuffParticles;	// Puff spawns particles
 bool bExplodeParticles;	// Use particle explosion
 bool bStealth;			// Andy Baker's Stealth monsters
+bool bChaseGoal;		// Walks to goal instead of target if a valid goal is set.
 
 //  Params
 float			Speed;
@@ -198,7 +199,11 @@ float			BounceFactor;
 // Thing being chased/attacked (or NULL).
 // Also the originator for missiles.
 EntityEx		Target;
+// Last known enemy -- killogh 2/15/98
+EntityEx		LastEnemy;
 EntityEx		Tracer;
+// Monster's goal if not chasing anything
+EntityEx		Goal;
 
 // Player number last looked for.
 int				LastLook;
@@ -2517,6 +2522,12 @@ bool CheckMeleeRange()
 		return false;
 	}
 
+	//	If moving toward goal, then we've reached it.
+	if (Target == Goal)
+	{
+		return true;
+	}
+
 	// Don't melee things too far above or below actor.
 	if (Target.Origin.z > Origin.z + Height)
 	{
@@ -2740,6 +2751,20 @@ final bool LookForMonsters2(bool allaround)
 		Target = mo;
 		return true;
 	}
+
+	//	Use goal as target
+	if (Goal)
+	{
+		Target = Goal;
+		return true;
+	}
+	// Use last known enemy if no players sighted -- killough 2/15/98:
+	if (LastEnemy && LastEnemy.Health > 0)
+	{
+		Target = LastEnemy;
+		LastEnemy = none;
+		return true;
+	}
 	return false;
 }
 
@@ -2777,21 +2802,32 @@ final bool LookForPlayers(bool allaround)
 
 	for (;; LastLook = (LastLook + 1) & (MAXPLAYERS - 1))
 	{
-		if (LastLook == stop)
+		P = Level.Game.Players[LastLook];
+		if (!P && LastLook != stop)
 		{
-			// done looking
-			return false;
+			continue;
 		}
 
-		P = Level.Game.Players[LastLook];
-
-		if (!P)
-			continue;
-
-		if (c++ == 2)
+		if (LastLook == stop || c++ == 2)
 		{
 			// done looking
-			return false;
+			if (!Target)
+			{
+				//	Use goal as target
+				if (Goal)
+				{
+					Target = Goal;
+					return true;
+				}
+				// Use last known enemy if no players sighted -- killough 2/15/98:
+				if (LastEnemy && LastEnemy.Health > 0)
+				{
+					Target = LastEnemy;
+					LastEnemy = none;
+					return true;
+				}
+			}
+			return Target == Goal && Goal;
 		}
 
 		if (!P.bSpawned || !P.MO)
@@ -2835,6 +2871,13 @@ final bool LookForPlayers(bool allaround)
 		if (IsMaster(EntityEx(P.MO)))
 		{
 			continue;	// Don't target master
+		}
+
+		//	Need to be sure the reactiontime is 0 if the monster is leaving
+		// its goal to go after a player.
+		if (Goal && Target == Goal)
+		{
+			ReactionTime = 0.0;
 		}
 
 		Target = EntityEx(P.MO);
@@ -3159,11 +3202,20 @@ final void NewChaseDir()
 	float deltax;
 	float deltay;
 
-	if (!Target)
-		Error("NewChaseDir: called with no Target");
-
-	deltax = Target.Origin.x - Origin.x;
-	deltay = Target.Origin.y - Origin.y;
+	if ((bChaseGoal || Goal == Target) && Goal)
+	{
+		deltax = Goal.Origin.x - Origin.x;
+		deltay = Goal.Origin.y - Origin.y;
+	}
+	else
+	{
+		if (!Target)
+		{
+			Error("NewChaseDir: called with no Target");
+		}
+		deltax = Target.Origin.x - Origin.x;
+		deltay = Target.Origin.y - Origin.y;
+	}
 
 	// killough 8/8/98: sometimes move away from target, keeping distance
 	// Take advantage over an enemy without missiles, by keeping distance
@@ -4070,6 +4122,14 @@ final void Damage(EntityEx inflictor, EntityEx source, int damage,
 		{
 			// Target actor is not intent on another actor,
 			// so make him chase after source
+
+			// killough 2/15/98: remember last enemy, to prevent
+			// sleeping early; 2/21/98: Place priority on players
+
+			if (!LastEnemy || !LastEnemy.bIsPlayer || LastEnemy.Health <= 0)
+			{
+				LastEnemy = Target; // remember last enemy - killough
+			}
 			Target = source;
 			Threshold = BASETHRESHOLD;
 			if (State == IdleState && SeeState)

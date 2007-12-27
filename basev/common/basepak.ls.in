@@ -22,6 +22,9 @@ sprites/unkna0.png		@srcdir@/sprites/unkna0.png
 //	Sounds
 sounds/dsempty.lmp		@srcdir@/sounds/dsempty.lmp
 sounds/dsquake.flac		@srcdir@/sounds/dsquake.flac
+sounds/spark1.flac		@srcdir@/sounds/spark1.flac
+sounds/spark2.flac		@srcdir@/sounds/spark2.flac
+sounds/spark3.flac		@srcdir@/sounds/spark3.flac
 
 //	Colour names
 x11r6rgb.txt			@srcdir@/x11r6rgb.txt

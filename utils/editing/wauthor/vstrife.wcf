@@ -89,10 +89,6 @@ LightingInc=0
 0x002   1       32      playa1          Player 2 *( number, -, -, -, - )
 0x003   1       32      playa1          Player 3 *( number, -, -, -, - )
 0x004   1       32      playa1          Player 4 *( number, -, -, -, - )
-;0x005   6       20      bkeya0          Blue card
-;0x006   6       20      ykeya0          Yellow card
-;0x007   3       256     spida1d1        Spider demon
-;0x008   4       20      bpaka0          Backpack
 0x009   20		20		hmn1a1			Rebel 1 (summoned by beacon)
 0x00a   2		16		beaca0			Teleport Beacon
 0x00b   1       32      playf1          Deathmatch Start
@@ -133,7 +129,6 @@ LightingInc=0
 0x02e   7       3		lanta0			Pole Lantern
 0x02f   7       10		lmpca0			Large Torch
 0x030   7       20      monia0			Techno Pillar
-;0x031   7       20      gor1a0          Chain w/dying player hung by neck (block player)
 0x032   7       10		logsa0			Huge Torch
 0x033   7       15      treea0			Palm Tree
 0x034   18		20		ofica0			Officer Uniform - No Alarm
@@ -338,28 +333,20 @@ LightingInc=0
 0x7d5   2       20      flama0			Flame Thrower
 0x7d6   2       20      riflb0			Assault Gun Standing
 0x7d7   4       20      blita0			Bullet Clip
-;0x7d8   4       20      shela0          Shotgun shells (4)
 0x7da   4       20      mssla0			Missiles
 0x7db   11      20      stmpa0			Med Patch
 0x7dc   11      20      mdkta0			Medikit
-;0x7dd   5       20      soula0          Soul sphere
 0x7de   7       20      watra0			Water Bottle
-;0x7df   10      20      bon2a0          Helmet (1)
 0x7e2   10      20      arm2a0			Leather Armor
 0x7e3   10      20      arm1a0			Metal Armor
-;0x7e6   5       20      pinva0          Invunerability
-;0x7e7   5       20      pstra0          Berserk
 0x7e8   5       20      shd1a0			Shadow Armor
 0x7e9   5       20      maska0			Environmental Suit
 0x7ea   5       20      pmapa0			Map
 0x7eb   5       20      pmupa0			Scanner/Map Radar
 0x7ec	7		16		litea0			Globe Light
-;0x7f3   9       20      bar1a0          Barrel
-;0x7fd   5       20      pvisa0          Light amplification goggles
 0x7fe   4       20      rofta0			Crate of Missiles
 0x7ff   4       20      bry1a0			Energy Pod
 0x800   4       20      bboxa0			Box of Bullets
-;0x801   4       20      sboxa0          Box of shells (24)
 0xbb9   3       20		rob1a1			Reaver
 0xbba   3       24      agrda1	        Acolyte 1 Tan
 0xbbb   3       20		pgrda1			Templar
@@ -372,6 +359,7 @@ LightingInc=0
 0x2332	23		20		balld0			Label Hint 4
 0x2333	23		20		balld0			Label Hint 5
 0x2334	23		20		balld0			Label Hint 6
+0x2340  13      10      misla0          Patrol pt *( next, delay, -, -, - )
 0x2341  16      16      misla0          Security Camera *( pitch, angles, speed, -, - )
 0x2343  15      20      bal1a0          Fountain (red)
 0x2344  15      20      bal1a0          Fountain (green)
@@ -380,6 +368,7 @@ LightingInc=0
 0x2347  15      20      bal1a0          Fountain (purple)
 0x2348  15      20      bal1a0          Fountain (black)
 0x2349  15      20      bal1a0          Fountain (white)
+0x2357  13      10      misla0          Patrol special
 0x236e	16		16		ifogf0			Interp pt *( pitch, traveltime, holdtime, next, hinext )
 0x236f	16		16		ifogd0			Path follower *( pt, hipt, bLinear, -, - )
 0x2370	16		16		ifogd0			Moving camera *( pt, hipt, bLinear, lookat, - )
@@ -567,9 +556,8 @@ LightingInc=0
 0x087	10	Thing_Spawn( tag, spawntype, angle, -, - )
 0x088	10	Thing_ProjectileGravity( tag, type, angle, speed, vspeed )
 0x089	10	Thing_SpawnNoFog( tag, spawntype, angle, -, - )
-
-;0x0e5   10      Thing_SetGoal( tag, goal, delay, -, - )
-;0x0f8   10      HealThing( amount, -, -, -, - )
+0x0e5	10	Thing_SetGoal( tag, goal, delay, chasegoal, - )
+0x0f8	10	HealThing( amount, max, -, -, - )
 
 ; Teleport
 0x027	11	Teleport_ZombieChanger( tag, sector_tag, no_src_fog, -, - )

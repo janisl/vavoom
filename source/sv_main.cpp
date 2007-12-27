@@ -87,6 +87,7 @@ bool			completed;
 static int		RebornPosition;	// Position indicator for cooperative net-play reborn
 
 static bool		mapteleport_issued;
+static bool		run_open_scripts;
 
 static VCvarI	TimeLimit("TimeLimit", "0");
 static VCvarI	DeathMatch("DeathMatch", "0", CVAR_ServerInfo);
@@ -116,6 +117,8 @@ void SV_Init()
 	svs.max_clients = 1;
 
 	VMemberBase::StaticLoadPackage(NAME_svprogs);
+
+	ProcessDecorateScripts();
 
 	ProcessDehackedFiles();
 
@@ -586,9 +589,10 @@ void SV_Ticker()
 		{
 			// pause if in menu or console
 #ifdef CLIENT
-			if (!paused && (netgame || !(MN_Active() || C_Active())))
+			if (host_titlemap || (!paused && (netgame || !(MN_Active() ||
+				C_Active()))))
 #else
-			if (!paused)
+			if (host_titlemap || !paused)
 #endif
 			{
 				//	LEVEL TIMER
@@ -686,16 +690,25 @@ static void G_DoCompleted()
 	const mapInfo_t& old_info = P_GetMapInfo(GLevel->MapName);
 	const mapInfo_t& new_info = P_GetMapInfo(GLevelInfo->NextMap);
 	const VClusterDef* ClusterD = P_GetClusterDef(old_info.Cluster);
+	bool HubChange = !old_info.Cluster || !(ClusterD->Flags & CLUSTERF_Hub) ||
+		old_info.Cluster != new_info.Cluster;
 
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
 		if (GGameInfo->Players[i])
 		{
-			GGameInfo->Players[i]->eventPlayerExitMap(!old_info.Cluster ||
-				!(ClusterD->Flags & CLUSTERF_Hub) ||
-				old_info.Cluster != new_info.Cluster);
-			GGameInfo->Players[i]->eventClientIntermission(GLevelInfo->NextMap);
+			GGameInfo->Players[i]->eventPlayerExitMap(HubChange);
+			if (deathmatch || HubChange)
+			{
+				GGameInfo->Players[i]->eventClientIntermission(
+					GLevelInfo->NextMap);
+			}
 		}
+	}
+
+	if (!deathmatch && !HubChange)
+	{
+		GCmdBuf << "TeleportNewMap\n";
 	}
 }
 
@@ -910,7 +923,7 @@ void SV_SendServerInfoToClients()
 //
 //==========================================================================
 
-void SV_SpawnServer(const char *mapname, bool spawn_thinkers)
+void SV_SpawnServer(const char *mapname, bool spawn_thinkers, bool titlemap)
 {
 	guard(SV_SpawnServer);
 	int			i;
@@ -918,6 +931,7 @@ void SV_SpawnServer(const char *mapname, bool spawn_thinkers)
 	GCon->Logf(NAME_Dev, "Spawning server %s", mapname);
 	paused = false;
 	mapteleport_issued = false;
+	run_open_scripts = spawn_thinkers;
 
 	if (sv.active)
 	{
@@ -944,7 +958,9 @@ void SV_SpawnServer(const char *mapname, bool spawn_thinkers)
 		//	New game
 		GWorldInfo = GGameInfo->eventCreateWorldInfo();
 
-		host_standalone = svs.max_clients == 1 && use_standalone;
+		host_titlemap = titlemap;
+		host_standalone = (svs.max_clients == 1 && use_standalone) ||
+			host_titlemap;
 	}
 
 	SV_Clear();
@@ -1100,23 +1116,23 @@ COMMAND(Spawn)
 	Player->eventClientSetAngles(Player->ViewAngles);
 	Player->PlayerFlags &= ~VBasePlayer::PF_FixAngle;
 
+	Player->PlayerFlags |= VBasePlayer::PF_Spawned;
+
+	if (host_standalone && run_open_scripts)
+	{
+		//	Start open scripts.
+		GLevel->Acs->StartTypedACScripts(SCRIPT_Open);
+	}
+
 	if (!netgame || svs.num_connected == sv_load_num_players)
 	{
 		sv_loading = false;
 	}
 
-	Player->PlayerFlags |= VBasePlayer::PF_Spawned;
-
 	// For single play, save immediately into the reborn slot
 	if (!netgame)
 	{
 		SV_SaveGame(SV_GetRebornSlot(), REBORN_DESCRIPTION);
-	}
-
-	if (host_standalone)
-	{
-		//	Start open scripts.
-		GLevel->Acs->StartTypedACScripts(SCRIPT_Open);
 	}
 	unguard;
 }
@@ -1238,7 +1254,7 @@ COMMAND(Restart)
 	else
 	{
 		// reload the level from scratch
-		SV_SpawnServer(*GLevel->MapName, true);
+		SV_SpawnServer(*GLevel->MapName, true, false);
 	}
 	unguard;
 }
@@ -1467,11 +1483,42 @@ COMMAND(Map)
 	GGameInfo->netgame = svs.max_clients > 1;
 	GGameInfo->eventInitNewGame(gameskill);
 
-	SV_SpawnServer(*mapname, true);
+	SV_SpawnServer(*mapname, true, false);
 #ifdef CLIENT
 	if (cls.state != ca_dedicated)
 		GCmdBuf << "Connect local\n";
 #endif
+	unguard;
+}
+
+//==========================================================================
+//
+//	Host_StartTitleMap
+//
+//==========================================================================
+
+bool Host_StartTitleMap()
+{
+	guard(Host_StartTitleMap);
+	if (!FL_FileExists("maps/titlemap.wad") &&
+		W_CheckNumForName(NAME_titlemap) < 0)
+	{
+		return false;
+	}
+
+	// Default the player start spot group to 0
+	RebornPosition = 0;
+	GGameInfo->RebornPosition = RebornPosition;
+	gameskill = sk_medium;
+	GGameInfo->netgame = false;
+	GGameInfo->eventInitNewGame(gameskill);
+
+	SV_SpawnServer("titlemap", true, true);
+#ifdef CLIENT
+	if (cls.state != ca_dedicated)
+		GCmdBuf << "Connect local\n";
+#endif
+	return true;
 	unguard;
 }
 

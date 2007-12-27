@@ -35,13 +35,34 @@ class ScriptedEntity : EntityEx
 //
 //	A_Look
 //
-//  Stay in state until a player is sighted
+//	Stay in state until a player is sighted or has a goal.
 //
 //==========================================================================
 
 final void A_Look()
 {
 	EntityEx	targ;
+	Entity		Ent;
+
+	//	Set goal now if appropriate.
+	if (Special == LNSPEC_ThingSetGoal && Args[0] == 0)
+	{
+		int Searcher = -1;
+		Goal = none;
+		for (Ent = Level.FindMobjFromTID(Args[1], &Searcher); Ent;
+			Ent = Level.FindMobjFromTID(Args[1], &Searcher))
+		{
+			if (!PatrolPoint(Ent))
+			{
+				continue;
+			}
+			Goal = PatrolPoint(Ent);
+			break;
+		}
+		Special = 0;
+		ReactionTime = itof(Args[2]) + XLevel.Time;
+		bChaseGoal = !!Args[3];
+	}
 
 	Threshold = 0;	// any shot will wake up
 	targ = EntityEx(Sector->SoundTarget);
@@ -71,8 +92,16 @@ final void A_Look()
 			return;
 	}
 
-	// go into chase state
-	if (SightSound)
+	//	Go into chase state
+	//	Don't start chasing after a goal if it isn't time yet.
+	if (Target == Goal)
+	{
+		if (ReactionTime > XLevel.Time)
+		{
+			Target = none;
+		}
+	}
+	else if (SightSound)
 	{
 		if (bBoss)
 		{
@@ -85,7 +114,10 @@ final void A_Look()
 		}
 	}
 
-	SetState(SeeState);
+	if (Target)
+	{
+		SetState(SeeState);
+	}
 }
 
 //==========================================================================
@@ -268,17 +300,26 @@ void DoChase(bool FastChase, state AMeleeState, state AMissileState,
 		}
 	}
 
+	//	If the target is dead and not a goal, stop chasing it.
+	if (Target && Target != Goal && Target.Health <= 0)
+	{
+		Target = none;
+	}
+
 	if (!Target || !Target.bShootable)
 	{
 		//	Look for a new target.
-		if (LookForPlayers(true))
+		if (LookForPlayers(true) && Target != Goal)
 		{
 			//	Got a new target.
 			return;
 		}
-		SetState(IdleState);
-		bInCombat = false;
-		return;
+		if (!Target)
+		{
+			SetState(IdleState);
+			bInCombat = false;
+			return;
+		}
 	}
 
 	//	Do not attack twice in a row.
@@ -292,58 +333,129 @@ void DoChase(bool FastChase, state AMeleeState, state AMissileState,
 		return;
 	}
 
-	if (FastChase)
+	//	Don't attack if just moving toward goal
+	if (Target == Goal || (bChaseGoal && Goal))
 	{
-		//	Strafe
-		if (FastChaseStrafeCount > 0)
+		EntityEx SavedTarget = Target;
+		Target = Goal;
+		bool Result = CheckMeleeRange();
+		Target = SavedTarget;
+
+		if (Result)
 		{
-			FastChaseStrafeCount--;
-		}
-		else
-		{
-			FastChaseStrafeCount = 0;
-			Velocity.x = 0.0;
-			Velocity.y = 0.0;
-			dist = DistTo(Target);
-			if (dist < 640.0)
+			// reached the goal
+
+			// Execute the specials of any PatrolSpecials with the same TID
+			// as the goal.
+			Entity Ent;
+			int Searcher = -1;
+			for (Ent = Level.FindMobjFromTID(Goal.TID, &Searcher); Ent;
+				Ent = Level.FindMobjFromTID(Goal.TID, &Searcher))
 			{
-				if (P_Random() < 100)
+				if (!PatrolSpecial(Ent))
 				{
-					ang = atan2(Target.Origin.y - Origin.y,
-						Target.Origin.x - Origin.x);
-					if (P_Random() < 128)
-						ang = AngleMod360(ang + 90.0);
-					else
-						ang = AngleMod360(ang - 90.0);
-					Velocity.x = 13.0 * cos(ang) * 35.0;
-					Velocity.y = 13.0 * sin(ang) * 35.0;
-					FastChaseStrafeCount = 3;	// strafe time
+					continue;
+				}
+				Level.ExecuteActionSpecial(Ent.Special, Ent.Args[0],
+					Ent.Args[1], Ent.Args[2], Ent.Args[3], Ent.Args[4],
+					NULL, 0, self);
+			}
+
+			float LastGoalAng = Goal.Angles.yaw;
+			int Delay;
+			EntityEx NewGoal = none;
+			Searcher = -1;
+			for (Ent = Level.FindMobjFromTID(Goal.Args[0], &Searcher); Ent;
+				Ent = Level.FindMobjFromTID(Goal.Args[0], &Searcher))
+			{
+				if (!PatrolPoint(Ent))
+				{
+					continue;
+				}
+				NewGoal = PatrolPoint(Ent);
+				break;
+			}
+			if (NewGoal && Goal == Target)
+			{
+				Delay = NewGoal.Args[1];
+				ReactionTime = itof(Delay) + XLevel.Time;
+			}
+			else
+			{
+				Delay = 0;
+				ReactionTime = default.ReactionTime;
+				Angles.yaw = LastGoalAng;		// Look in direction of last goal
+			}
+			if (Target == Goal)
+			{
+				Target = none;
+			}
+			bJustAttacked = true;
+			if (NewGoal && Delay != 0)
+			{
+				bInCombat = true;
+				SetState(IdleState);
+			}
+			Goal = NewGoal;
+			return;
+		}
+	}
+
+	if (Goal != Target)
+	{
+		if (FastChase)
+		{
+			//	Strafe
+			if (FastChaseStrafeCount > 0)
+			{
+				FastChaseStrafeCount--;
+			}
+			else
+			{
+				FastChaseStrafeCount = 0;
+				Velocity.x = 0.0;
+				Velocity.y = 0.0;
+				dist = DistTo(Target);
+				if (dist < 640.0)
+				{
+					if (P_Random() < 100)
+					{
+						ang = atan2(Target.Origin.y - Origin.y,
+							Target.Origin.x - Origin.x);
+						if (P_Random() < 128)
+							ang = AngleMod360(ang + 90.0);
+						else
+							ang = AngleMod360(ang - 90.0);
+						Velocity.x = 13.0 * cos(ang) * 35.0;
+						Velocity.y = 13.0 * sin(ang) * 35.0;
+						FastChaseStrafeCount = 3;	// strafe time
+					}
 				}
 			}
 		}
-	}
 
-	//	Check for melee attack.
-	if (AMeleeState && CheckMeleeRange())
-	{
-		if (AttackSound)
+		//	Check for melee attack.
+		if (AMeleeState && CheckMeleeRange())
 		{
-			PlaySound(AttackSound, CHAN_WEAPON);
-		}
-		SetState(AMeleeState);
-		return;
-	}
-
-	//	Check for missile attack.
-	if (AMissileState)
-	{
-		if (Level.Game.fastparm || !MoveCount)
-		{
-			if (CheckMissileRange())
+			if (AttackSound)
 			{
-				SetState(AMissileState);
-				bJustAttacked = true;
-				return;
+				PlaySound(AttackSound, CHAN_WEAPON);
+			}
+			SetState(AMeleeState);
+			return;
+		}
+
+		//	Check for missile attack.
+		if (AMissileState)
+		{
+			if (Level.Game.fastparm || !MoveCount)
+			{
+				if (CheckMissileRange())
+				{
+					SetState(AMissileState);
+					bJustAttacked = true;
+					return;
+				}
 			}
 		}
 	}
@@ -620,6 +732,20 @@ final void A_NoBlocking()
 
 final void A_Fall()
 {
+	A_NoBlocking();
+}
+
+//==========================================================================
+//
+//	A_ScreamAndUnblock
+//
+//	For breakable DECORATE decorations that have only one death state.
+//
+//==========================================================================
+
+final void A_ScreamAndUnblock()
+{
+	A_Scream();
 	A_NoBlocking();
 }
 
@@ -935,6 +1061,34 @@ final void A_HideThing()
 final void A_UnHideThing()
 {
 	bHidden = false;
+}
+
+//==========================================================================
+//
+//	A_ActiveSound
+//
+//==========================================================================
+
+final void A_ActiveSound()
+{
+	if (ActiveSound && !GetSoundPlayingInfo(self, GetSoundID(ActiveSound)))
+	{
+		PlaySound(ActiveSound, CHAN_VOICE);
+	}
+}
+
+//==========================================================================
+//
+//	A_ActiveAndUnblock
+//
+//	For breakable DECORATE decorations that have only one death state.
+//
+//==========================================================================
+
+final void A_ActiveAndUnblock()
+{
+	A_ActiveSound();
+	A_NoBlocking();
 }
 
 states

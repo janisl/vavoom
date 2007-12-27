@@ -438,6 +438,7 @@ void PlayerExitMap(bool clusterChange)
 	DamageFlash = 0.0;		// no palette changes
 	BonusFlash = 0.0;
 	SavedInventory = EntityEx(MO).Inventory;
+	EntityEx(MO).Inventory = none;
 }
 
 //==========================================================================

@@ -109,6 +109,7 @@ final void A_VileChase()
 			CorpseHit.bCorpse = false;
 			CorpseHit.Health = CorpseHit.default.Health;
 			CorpseHit.Target = none;
+			CorpseHit.LastEnemy = none;
 			return;
 		}
 	}

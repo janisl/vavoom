@@ -52,7 +52,8 @@ enum
 	pt_static,
 	pt_explode,
 	pt_explode2,
-	pt_fountain
+	pt_fountain,
+	pt_spark
 };
 
 name			DefaultDoorSound;
@@ -527,14 +528,14 @@ bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 				false);
 		}
 		break;
-	case LNSPEC_ThingThrust:
+	case LNSPEC_ThrustThing:
 		if (!Side) // Only thrust on side 0
 		{
 			A.Thrust(itof(Arg1) * (90.0 / 64.0), itof(Arg2));
 			buttonSuccess = 1;
 		}
 		break;
-	case LNSPEC_ThingDamage:
+	case LNSPEC_DamageThing:
 		if (Arg1)
 		{
 			A.Damage(none, none, Arg1, ModToDamageType(Arg2));
@@ -849,6 +850,9 @@ bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 		buttonSuccess = EV_DoFloor(Arg1, Arg2, Arg3, Arg4, Arg5,
 			FloorMover::FLOOREV_RaiseToNearestChange, Line);
 		break;
+	case LNSPEC_ThingSetGoal:
+		buttonSuccess = EV_ThingSetGoal(Arg1, Arg2, Arg3, Arg4, Arg5);
+		break;
 	case LNSPEC_FloorRaiseByValueChangeTex:
 		buttonSuccess = EV_DoFloor(Arg1, Arg2, Arg3, Arg4, Arg5,
 			FloorMover::FLOOREV_RaiseByValueChange2, Line);
@@ -915,6 +919,9 @@ bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 	case LNSPEC_ElevatorLowerToNearest:
 		buttonSuccess = EV_DoElevator(Arg1, Arg2, Arg3, Arg4, Arg5,
 			Elevator::ELEVEV_Down, Line);
+		break;
+	case LNSPEC_HealThing:
+		buttonSuccess = EV_HealThing(Arg1, Arg2, Arg3, Arg4, Arg5, A);
 		break;
 	case LNSPEC_DoorCloseWaitOpen:
 		buttonSuccess = EV_DoDoor(Arg1, Arg2, Arg3, Arg4, Arg5,
@@ -3536,6 +3543,91 @@ final bool EV_ThingDestroy(int tid)
 
 //===========================================================================
 //
+//	EV_HealThing
+//
+//===========================================================================
+
+final bool EV_HealThing(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
+	EntityEx A)
+{
+	if (A)
+	{
+		int Max = Arg2;
+
+		if (Max == 0 || !A.bIsPlayer)
+		{
+			A.GiveBody(Arg1);
+			return true;
+		}
+		else if (Max == 1)
+		{
+			Max = 200;
+			class<Health> SClass = class<Health>(FindClass('Soulsphere'));
+			if (SClass)
+			{
+				Max = SClass.default.MaxAmount;
+			}
+		}
+
+		//	If health is already above max, do nothing
+		if (A.Health < Max)
+		{
+			A.Health += Arg1;
+			if (A.Health > Max && Max > 0)
+			{
+				A.Health = Max;
+			}
+			A.Player.Health = A.Health;
+		}
+	}
+
+	return !!A;
+}
+
+//===========================================================================
+//
+//	EV_ThingSetGoal
+//
+//===========================================================================
+
+final bool EV_ThingSetGoal(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
+{
+	Entity Ent;
+	EntityEx NewGoal = none;
+	int Searcher = -1;
+	for (Ent = Level.FindMobjFromTID(Arg2, &Searcher); Ent;
+		Ent = Level.FindMobjFromTID(Arg2, &Searcher))
+	{
+		if (!PatrolPoint(Ent))
+		{
+			continue;
+		}
+		NewGoal = PatrolPoint(Ent);
+		break;
+	}
+
+	bool Ret = false;
+	Searcher = -1;
+	for (Ent = Level.FindMobjFromTID(Arg1, &Searcher); Ent;
+		Ent = Level.FindMobjFromTID(Arg1, &Searcher))
+	{
+		EntityEx E = EntityEx(Ent);
+		Ret = true;
+		if (E.bShootable)
+		{
+			E.Goal = NewGoal;
+			E.bChaseGoal = !!Arg4;
+			if (!E.Target)
+			{
+				E.ReactionTime = itof(Arg3);
+			}
+		}
+	}
+	return Ret;
+}
+
+//===========================================================================
+//
 //	EV_ChangeCamera
 //
 //===========================================================================
@@ -3960,14 +4052,18 @@ final bool EV_TeleportSector(int tag, int source_tid, int dest_tid, bool fog,
 	{
 		sec = &XLevel.Sectors[secnum];
 
-		foreach AllThinkers(EntityEx, A)
+		msecnode_t*Node = sec->TouchingThingList;
+		while (Node)
 		{
+			A = EntityEx(Node->Thing);
+			msecnode_t*Next = Node->SNext;
 			// possibly limit actors by group
 			if (A.Sector == sec && (group_tid == 0 || A.TID == group_tid))
 			{
 				didSomething |= DoGroupForOne(A, sourceOrigin, destOrigin,
 					floorz, fog);
 			}
+			Node = Next;
 		}
 	}
 	return didSomething;
@@ -4242,15 +4338,15 @@ final bool EV_LineSearchForPuzzleItem(int Arg1, int Arg2, int Arg3, int Arg4,
 
 final EntityEx GetPushThing(int s)
 {
-	EntityEx	thing;
+	Entity		thing;
 	sector_t*	sec;
 
 	sec = &XLevel.Sectors[s];
-	foreach AllThinkers(EntityEx, thing)
+	for (thing = sec->ThingList; thing; thing = thing.SNext)
 	{
 		if (PointPusher(thing) || PointPuller(thing))
 		{
-			return thing;
+			return EntityEx(thing);
 		}
 	}
 	return none;
@@ -4648,6 +4744,11 @@ final int ThingCount(int type, int tid)
 		for (Ent = EntityEx(FindMobjFromTID(tid, &searcher)); Ent != none;
 			Ent = EntityEx(FindMobjFromTID(tid, &searcher)))
 		{
+			if (Inventory(Ent) && Ent.Owner)
+			{
+				//	Don't count things in somebody's inventory
+				continue;
+			}
 			if (type == 0)
 			{
 				// Just count TIDs
@@ -4677,6 +4778,11 @@ final int ThingCount(int type, int tid)
 			if (Ent.bMonster && Ent.Health <= 0)
 			{
 				// Don't count dead monsters
+				continue;
+			}
+			if (Inventory(Ent) && Ent.Owner)
+			{
+				//	Don't count things in somebody's inventory
 				continue;
 			}
 			count++;
@@ -5142,6 +5248,12 @@ void UpdateParticle(particle_t * p, float DeltaTime)
 		p->vel += p->accel * DeltaTime;
 		p->colour = (p->colour & 0x00ffffff) | (ftoi(
 			itof(p->colour >> 24) - 255.0 / 51.0 * 35.0 * DeltaTime) << 24);
+		break;
+
+	case pt_spark:
+		p->vel += p->accel * DeltaTime;
+		p->colour = (p->colour & 0x00ffffff) | (ftoi(
+			itof(p->colour >> 24) - 255.0 / 10.0 * 35.0 * DeltaTime) << 24);
 		break;
 	}
 }

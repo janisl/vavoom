@@ -3543,6 +3543,23 @@ void VClass::DestructObject(VObject* Obj)
 
 //==========================================================================
 //
+//	VClass::CreateDerivedClass
+//
+//==========================================================================
+
+VClass* VClass::CreateDerivedClass(VName AName)
+{
+	guard(VClass::CreateDerivedClass);
+	VClass* NewClass = new VClass(AName);
+	NewClass->ParentClass = this;
+	NewClass->PostLoad();
+	NewClass->CreateDefaults();
+	return NewClass;
+	unguard;
+}
+
+//==========================================================================
+//
 //	VScriptArray::Clear
 //
 //==========================================================================

@@ -478,8 +478,11 @@ void SCR_Update()
 			{
 				R_RenderPlayerView();
 			}
-			CT_Drawer();
-			SB_Drawer();
+			if (!host_titlemap)
+			{
+				CT_Drawer();
+				SB_Drawer();
+			}
 			break;
 		}
 	}

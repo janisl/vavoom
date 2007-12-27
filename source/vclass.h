@@ -485,6 +485,7 @@ public:
 	void SerialiseObject(VStream&, VObject*);
 	void CleanObject(VObject*);
 	void DestructObject(VObject*);
+	VClass* CreateDerivedClass(VName);
 
 	void Serialise(VStream&);
 	void PostLoad();

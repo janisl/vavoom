@@ -128,9 +128,7 @@ void VLevel::Serialise(VStream& Strm)
 	for (i = 0, sec = Sectors; i < NumSectors; i++, sec++)
 	{
 		Strm << sec->floor.dist
-			<< sec->ceiling.dist
 			<< sec->floor.pic
-			<< sec->ceiling.pic
 			<< sec->floor.xoffs
 			<< sec->floor.yoffs
 			<< sec->floor.XScale
@@ -138,6 +136,11 @@ void VLevel::Serialise(VStream& Strm)
 			<< sec->floor.Angle
 			<< sec->floor.BaseAngle
 			<< sec->floor.BaseYOffs
+			<< sec->floor.flags
+			<< sec->floor.Alpha
+			<< sec->floor.LightSourceSector
+			<< sec->ceiling.dist
+			<< sec->ceiling.pic
 			<< sec->ceiling.xoffs
 			<< sec->ceiling.yoffs
 			<< sec->ceiling.XScale
@@ -145,7 +148,13 @@ void VLevel::Serialise(VStream& Strm)
 			<< sec->ceiling.Angle
 			<< sec->ceiling.BaseAngle
 			<< sec->ceiling.BaseYOffs
+			<< sec->ceiling.flags
+			<< sec->ceiling.Alpha
+			<< sec->ceiling.LightSourceSector
 			<< sec->params.lightlevel
+			<< sec->params.LightColour
+			<< sec->params.Fade
+			<< sec->params.contents
 			<< sec->special
 			<< sec->tag
 			<< sec->seqType
@@ -333,6 +342,13 @@ void VLevel::Destroy()
 	guard(VLevel::Destroy);
 	//	Destroy all thinkers.
 	DestroyAllThinkers();
+
+	while (HeadSecNode)
+	{
+		msecnode_t* Node = HeadSecNode;
+		HeadSecNode = Node->SNext;
+		delete Node;
+	}
 
 	//	Free level data.
 	if (RenderData)
@@ -525,6 +541,164 @@ void VLevel::SetCameraToTexture(VEntity* Ent, VName TexName, int FOV)
 	C.Camera = Ent;
 	C.TexNum = TexNum;
 	C.FOV = FOV;
+	unguard;
+}
+
+//=============================================================================
+//
+//	VLevel::AddSecnode
+//
+// phares 3/16/98
+//
+// Searches the current list to see if this sector is
+// already there. If not, it adds a sector node at the head of the list of
+// sectors this object appears in. This is called when creating a list of
+// nodes that will get linked in later. Returns a pointer to the new node.
+//
+//=============================================================================
+
+msecnode_t* VLevel::AddSecnode(sector_t* Sec, VEntity* Thing,
+	msecnode_t* NextNode)
+{
+	guard(VLevel::AddSecnode);
+	msecnode_t* Node;
+
+	if (!Sec)
+	{
+		Sys_Error("AddSecnode of 0 for %s\n", Thing->GetClass()->GetName());
+	}
+
+	Node = NextNode;
+	while (Node)
+	{
+		if (Node->Sector == Sec)	// Already have a node for this sector?
+		{
+			Node->Thing = Thing;	// Yes. Setting m_thing says 'keep it'.
+			return NextNode;
+		}
+		Node = Node->TNext;
+	}
+
+	// Couldn't find an existing node for this sector. Add one at the head
+	// of the list.
+
+	// Retrieve a node from the freelist.
+	if (HeadSecNode)
+	{
+		Node = HeadSecNode;
+		HeadSecNode = HeadSecNode->SNext;
+	}
+	else
+	{
+		Node = new msecnode_t;
+	}
+
+	// killough 4/4/98, 4/7/98: mark new nodes unvisited.
+	//node->visited = 0;
+
+	Node->Sector = Sec; 		// sector
+	Node->Thing = Thing; 		// mobj
+	Node->TPrev = NULL;			// prev node on Thing thread
+	Node->TNext = NextNode;		// next node on Thing thread
+	if (NextNode)
+	{
+		NextNode->TPrev = Node;	// set back link on Thing
+	}
+
+	// Add new node at head of sector thread starting at Sec->TouchingThingList
+
+	Node->SPrev = NULL;			// prev node on sector thread
+	Node->SNext = Sec->TouchingThingList; // next node on sector thread
+	if (Sec->TouchingThingList)
+	{
+		Node->SNext->SPrev = Node;
+	}
+	Sec->TouchingThingList = Node;
+	return Node;
+	unguard;
+}
+
+//=============================================================================
+//
+//	VLevel::DelSecnode
+//
+//	Deletes a sector node from the list of sectors this object appears in.
+// Returns a pointer to the next node on the linked list, or NULL.
+//
+//=============================================================================
+
+msecnode_t* VLevel::DelSecnode(msecnode_t* Node)
+{
+	guard(VLevel::DelSecnode);
+	msecnode_t*		tp;  // prev node on thing thread
+	msecnode_t*		tn;  // next node on thing thread
+	msecnode_t*		sp;  // prev node on sector thread
+	msecnode_t*		sn;  // next node on sector thread
+
+	if (Node)
+	{
+		// Unlink from the Thing thread. The Thing thread begins at
+		// sector_list and not from VEntiy->TouchingSectorList.
+
+		tp = Node->TPrev;
+		tn = Node->TNext;
+		if (tp)
+		{
+			tp->TNext = tn;
+		}
+		if (tn)
+		{
+			tn->TPrev = tp;
+		}
+
+		// Unlink from the sector thread. This thread begins at
+		// sector_t->TouchingThingList.
+
+		sp = Node->SPrev;
+		sn = Node->SNext;
+		if (sp)
+		{
+			sp->SNext = sn;
+		}
+		else
+		{
+			Node->Sector->TouchingThingList = sn;
+		}
+		if (sn)
+		{
+			sn->SPrev = sp;
+		}
+
+		// Return this node to the freelist
+
+		Node->SNext = HeadSecNode;
+		HeadSecNode = Node;
+		return tn;
+	}
+	return NULL;
+	unguard;
+} 														// phares 3/13/98
+
+//=============================================================================
+//
+//	VLevel::DelSectorList
+//
+//	Deletes the sector_list and NULLs it.
+//
+//=============================================================================
+
+void VLevel::DelSectorList()
+{
+	guard(VLevel::DelSectorList);
+	if (SectorList)
+	{
+		msecnode_t* Node = SectorList;
+		while (Node)
+		{
+			Node = DelSecnode(Node);
+		}
+		SectorList = NULL;
+	}
 	unguard;
 }
 

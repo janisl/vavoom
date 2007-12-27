@@ -117,8 +117,9 @@ void FormChain()
 InterpolationPoint ScanForLoop()
 {
 	InterpolationPoint node = self;
-	while (node.NextPoint && node.NextPoint != self)
+	while (node.NextPoint && node.NextPoint != self && node.Special1 == 0)
 	{
+		node.Special1 = 1;
 		node = node.NextPoint;
 	}
 	return node.NextPoint ? node : none;

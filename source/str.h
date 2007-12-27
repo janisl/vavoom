@@ -335,6 +335,7 @@ public:
 	VStr Utf8Substring(int, int) const;
 
 	void Split(char, TArray<VStr>&) const;
+	void Split(const char*, TArray<VStr>&) const;
 
 	bool IsValidUtf8() const;
 

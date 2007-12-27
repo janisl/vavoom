@@ -132,6 +132,8 @@ class VEntity : public VThinker
 	VEntity*		SNext;
 	VEntity*		SPrev;
 
+	msecnode_t*		TouchingSectorList;
+
 	// The closest interval over all contacted Sectors.
 	float			FloorZ;
 	float			CeilingZ;
@@ -384,6 +386,8 @@ private:
 	static void SlidePathTraverse(VLevel*, struct slidetrace_t&, float, float);
 	static bool PTR_BounceTraverse(void*, intercept_t*);
 	static bool PIT_CheckOnmobjZ(void*, VEntity*);
+
+	void CreateSecNodeList();
 
 public:
 	void LinkToWorld();

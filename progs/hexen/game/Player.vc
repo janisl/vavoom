@@ -610,6 +610,7 @@ void PlayerExitMap(bool clusterChange)
 	BonusFlash = 0.0;
 	PoisonCount = 0;
 	SavedInventory = EntityEx(MO).Inventory;
+	EntityEx(MO).Inventory = none;
 }
 
 //==========================================================================

@@ -485,6 +485,7 @@ void VOpenGLDrawer::ReadBackScreen(int Width, int Height, rgba_t* Dest)
 		memcpy(Dest + (Height - 1 - i) * Width, Temp,
 			Width * sizeof(rgba_t));
 	}
+	delete[] Temp;
 	unguard;
 }
 

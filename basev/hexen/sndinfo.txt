@@ -157,6 +157,12 @@ $random PigActive				{ PigActive1 PigActive2 }
 
 misc/ripslop					dsempty
 
+//	Sparks
+world/spark1					spark1
+world/spark2					spark2
+world/spark3					spark3
+$random world/spark				{ world/spark1  world/spark2  world/spark3 }
+
 //==========================================================================
 //
 //  Menu sounds

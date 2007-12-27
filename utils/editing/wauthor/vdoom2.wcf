@@ -219,6 +219,7 @@ LightingInc=0
 0xbbc   3       40      possa1          Former human
 0xbbd   3       62      heada1          Cacodemon
 0xbbe   3       32      skula1          Lost soul
+0x2340  13      10      ifogd0          Patrol pt *( next, delay, -, -, - )
 0x2341  16      16      aplsa0          Security Camera *( pitch, angles, speed, -, - )
 0x2343  15      20      bal1a0          Fountain (red)
 0x2344  15      20      bal1a0          Fountain (green)
@@ -227,6 +228,7 @@ LightingInc=0
 0x2347  15      20      bal1a0          Fountain (purple)
 0x2348  15      20      bal1a0          Fountain (black)
 0x2349  15      20      bal1a0          Fountain (white)
+0x2357  13      10      ifogd0          Patrol special
 0x235a  3       128     bspih1          Stealth arachnotron
 0x235b  3       40      vilek1          Stealth arch-vile
 0x235c  3       48      bossg1          Stealth baron of hell
@@ -426,9 +428,8 @@ LightingInc=0
 0x087	10	Thing_Spawn( tag, spawntype, angle, -, - )
 0x088	10	Thing_ProjectileGravity( tag, type, angle, speed, vspeed )
 0x089	10	Thing_SpawnNoFog( tag, spawntype, angle, -, - )
-
-;0x0e5   10      Thing_SetGoal( tag, goal, delay, -, - )
-;0x0f8   10      HealThing( amount, -, -, -, - )
+0x0e5	10	Thing_SetGoal( tag, goal, delay, chasegoal, - )
+0x0f8	10	HealThing( amount, max, -, -, - )
 
 ; Teleport
 0x027	11	Teleport_ZombieChanger( tag, sector_tag, no_src_fog, -, - )

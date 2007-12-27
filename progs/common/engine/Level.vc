@@ -117,6 +117,9 @@ native readonly private array<int>	CameraTextures;
 native readonly float			Time;
 native readonly int				TicTime;
 
+native readonly private void*	SectorList;
+native readonly private void*	HeadSecNode;
+
 //
 //	Natives
 //

@@ -132,6 +132,7 @@ special
 	220:Sector_SetCurrent(4),
 	226:ACS_ExecuteAlways(2, 5),
 	228:Plat_RaiseAndStayTx0(2),
+	229:Thing_SetGoal(3, 4),
 	230:Plat_UpByValueStayTx(3),
 	231:Plat_ToggleCeiling(1),
 	232:Light_StrobeDoom(3, 4),
@@ -150,6 +151,7 @@ special
 	245:Elevator_RaiseToNearest(2),
 	246:Elevator_MoveToFloor(2),
 	247:Elevator_LowerToNearest(2),
+	248:HealThing(1,2),
 	249:Door_CloseWaitOpen(3, 4),
 	250:Floor_Donut(3),
 	251:FloorAndCeiling_LowerRaise(3),
@@ -182,6 +184,4 @@ special
 	221:Scroll_Texture_Both(5),
 	223:Scroll_Floor(4),
 	224:Scroll_Ceiling(4),
-	229:Thing_SetGoal(3),
-	248:HealThing(1,2),
 */
