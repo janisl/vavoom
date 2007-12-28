@@ -81,7 +81,7 @@ public:
 
 	VAcsObject* LoadObject(int Lump);
 	VAcsInfo* FindScript(int Number, VAcsObject*& Object);
-	const char* GetString(int Index);
+	VStr GetString(int Index);
 	VAcsObject* GetObject(int Index);
 	void StartTypedACScripts(int Type);
 	void Serialise(VStream& Strm);
