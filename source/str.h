@@ -338,6 +338,7 @@ public:
 	void Split(const char*, TArray<VStr>&) const;
 
 	bool IsValidUtf8() const;
+	VStr Latin1ToUtf8() const;
 
 	//	Serialisation operator.
 	friend VStream& operator<<(VStream& Strm, VStr& S)

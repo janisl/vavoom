@@ -186,9 +186,14 @@ public:
 	{
 		return Scripts[i];
 	}
-	const char* GetString(int i) const
+	VStr GetString(int i) const
 	{
-		return Strings[i];
+		VStr Ret = Strings[i];
+		if (!Ret.IsValidUtf8())
+		{
+			Ret = Ret.Latin1ToUtf8();
+		}
+		return Ret;
 	}
 	int GetLibraryID() const
 	{
@@ -317,9 +322,18 @@ private:
 		HUDMSG_COLORSTRING	= 0x40000000,
 	};
 
-	const char* GetStr(int Index)
+	VStr GetStr(int Index)
 	{
 		return ActiveObject->Level->GetString(Index);
+	}
+	VName GetName(int Index)
+	{
+		return *ActiveObject->Level->GetString(Index);
+	}
+	VName GetName8(int Index)
+	{
+		return VName(*ActiveObject->Level->GetString(Index),
+			VName::AddLower8);
 	}
 
 	VEntity* EntityFromTID(int TID, VEntity* Default)
@@ -335,9 +349,9 @@ private:
 		}
 	}
 	int FindSectorFromTag(int, int);
-	void GiveInventory(VEntity*, const char*, int);
-	void TakeInventory(VEntity*, const char*, int);
-	int CheckInventory(VEntity*, const char*);
+	void GiveInventory(VEntity*, VName, int);
+	void TakeInventory(VEntity*, VName, int);
+	int CheckInventory(VEntity*, VName);
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -1257,13 +1271,13 @@ VAcsInfo* VAcsLevel::FindScript(int Number, VAcsObject*& Object)
 //
 //==========================================================================
 
-const char* VAcsLevel::GetString(int Index)
+VStr VAcsLevel::GetString(int Index)
 {
 	guard(VAcsLevel::GetString);
 	int ObjIdx = Index >> 16;
 	if (ObjIdx >= LoadedObjects.Num())
 	{
-		return NULL;
+		return "";
 	}
 	return LoadedObjects[ObjIdx]->GetString(Index & 0xffff);
 	unguard;
@@ -2324,8 +2338,8 @@ int VAcs::RunScript(float DeltaTime)
 
 		ACSVM_CASE(PCD_ChangeFloor)
 			{
-				int Flat = GTextureManager.NumForName(VName(GetStr(sp[-1]),
-					VName::AddLower8), TEXTYPE_Flat, true, true);
+				int Flat = GTextureManager.NumForName(GetName8(sp[-1]),
+					TEXTYPE_Flat, true, true);
 				for  (int Idx = FindSectorFromTag(sp[-2], -1); Idx >= 0;
 					Idx = FindSectorFromTag(sp[-2], Idx))
 				{
@@ -2338,9 +2352,8 @@ int VAcs::RunScript(float DeltaTime)
 		ACSVM_CASE(PCD_ChangeFloorDirect)
 			{
 				int Tag = READ_INT32(ip);
-				int Flat = GTextureManager.NumForName(VName(GetStr(
-					READ_INT32(ip + 4)), VName::AddLower8), TEXTYPE_Flat,
-					true, true);
+				int Flat = GTextureManager.NumForName(GetName8(
+					READ_INT32(ip + 4)), TEXTYPE_Flat, true, true);
 				ip += 8;
 				for (int Idx = FindSectorFromTag(Tag, -1); Idx >= 0;
 					Idx = FindSectorFromTag(Tag, Idx))
@@ -2352,8 +2365,8 @@ int VAcs::RunScript(float DeltaTime)
 
 		ACSVM_CASE(PCD_ChangeCeiling)
 			{
-				int Flat = GTextureManager.NumForName(VName(GetStr(sp[-1]),
-					VName::AddLower8), TEXTYPE_Flat, true, true);
+				int Flat = GTextureManager.NumForName(GetName8(sp[-1]),
+					TEXTYPE_Flat, true, true);
 				for  (int Idx = FindSectorFromTag(sp[-2], -1); Idx >= 0;
 					Idx = FindSectorFromTag(sp[-2], Idx))
 				{
@@ -2366,9 +2379,8 @@ int VAcs::RunScript(float DeltaTime)
 		ACSVM_CASE(PCD_ChangeCeilingDirect)
 			{
 				int Tag = READ_INT32(ip);
-				int Flat = GTextureManager.NumForName(VName(GetStr(
-					READ_INT32(ip + 4)), VName::AddLower8), TEXTYPE_Flat,
-					true, true);
+				int Flat = GTextureManager.NumForName(GetName8(
+					READ_INT32(ip + 4)), TEXTYPE_Flat, true, true);
 				ip += 8;
 				for (int Idx = FindSectorFromTag(Tag, -1); Idx >= 0;
 					Idx = FindSectorFromTag(Tag, Idx))
@@ -2560,27 +2572,27 @@ int VAcs::RunScript(float DeltaTime)
 
 		ACSVM_CASE(PCD_SectorSound)
 			Level->SectorStartSound(line ? line->frontsector : NULL,
-				GSoundManager->GetSoundID(GetStr(sp[-2])), 0, sp[-1] / 127.0,
+				GSoundManager->GetSoundID(GetName(sp[-2])), 0, sp[-1] / 127.0,
 				1.0);
 			sp -= 2;
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_AmbientSound)
 			StartSound(TVec(0, 0, 0), 0, GSoundManager->GetSoundID(
-				GetStr(sp[-2])), 0, sp[-1] / 127.0, 0.0);
+				GetName(sp[-2])), 0, sp[-1] / 127.0, 0.0);
 			sp -= 2;
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_SoundSequence)
 			Level->SectorStartSequence(line ? line->frontsector : NULL,
-				GetStr(sp[-1]), 0);
+				GetName(sp[-1]), 0);
 			sp--;
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_SetLineTexture)
 			{
-				int Tex = GTextureManager.NumForName(VName(GetStr(sp[-1]),
-					VName::AddLower8), TEXTYPE_Wall, true, true);
+				int Tex = GTextureManager.NumForName(GetName8(sp[-1]),
+					TEXTYPE_Wall, true, true);
 				int searcher = -1;
 				for (line_t *line = Level->eventFindLine(sp[-4], &searcher);
 					line != NULL; line = Level->eventFindLine(sp[-4], &searcher))
@@ -2652,7 +2664,7 @@ int VAcs::RunScript(float DeltaTime)
 
 		ACSVM_CASE(PCD_ThingSound)
 			{
-				VName sound = GetStr(sp[-2]);
+				VName sound = GetName(sp[-2]);
 				int searcher = -1;
 				for (VEntity* mobj = Level->eventFindMobjFromTID(sp[-3], &searcher);
 					mobj != NULL; mobj = Level->eventFindMobjFromTID(sp[-3], &searcher))
@@ -2673,12 +2685,12 @@ int VAcs::RunScript(float DeltaTime)
 		ACSVM_CASE(PCD_ActivatorSound)
 			if (Activator)
 			{
-				Activator->StartSound(GetStr(sp[-2]), 0, sp[-1] / 127.0, 1.0);
+				Activator->StartSound(GetName(sp[-2]), 0, sp[-1] / 127.0, 1.0);
 			}
 			else
 			{
 				StartSound(TVec(0, 0, 0), 0, GSoundManager->GetSoundID(
-					GetStr(sp[-2])), 0, sp[-1] / 127.0, 1.0);
+					GetName(sp[-2])), 0, sp[-1] / 127.0, 1.0);
 			}
 			sp -= 2;
 			ACSVM_BREAK;
@@ -2686,7 +2698,7 @@ int VAcs::RunScript(float DeltaTime)
 		ACSVM_CASE(PCD_LocalAmbientSound)
 			if (Activator)
 			{
-				Activator->StartLocalSound(GetStr(sp[-2]), 0, sp[-1] / 127.0,
+				Activator->StartLocalSound(GetName(sp[-2]), 0, sp[-1] / 127.0,
 					1.0);
 			}
 			sp -= 2;
@@ -2777,7 +2789,7 @@ int VAcs::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_MusicChange)
-			SV_ChangeMusic(GetStr(sp[-2]));
+			SV_ChangeMusic(*GetStr(sp[-2]));
 			sp -= 2;
 			ACSVM_BREAK;
 
@@ -2838,38 +2850,38 @@ int VAcs::RunScript(float DeltaTime)
 
 		ACSVM_CASE(PCD_GiveInventory)
 			STUB(PCD_GiveInventory)
-			GiveInventory(Activator, GetStr(sp[-2]), sp[-1]);
+			GiveInventory(Activator, GetName(sp[-2]), sp[-1]);
 			sp -= 2;
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_GiveInventoryDirect)
 			STUB(PCD_GiveInventoryDirect)
-			GiveInventory(Activator, GetStr(READ_INT32(ip)),
+			GiveInventory(Activator, GetName(READ_INT32(ip)),
 				READ_INT32(ip + 4));
 			ip += 8;
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_TakeInventory)
 			STUB(PCD_TakeInventory)
-			TakeInventory(Activator, GetStr(sp[-2]), sp[-1]);
+			TakeInventory(Activator, GetName(sp[-2]), sp[-1]);
 			sp -= 2;
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_TakeInventoryDirect)
 			STUB(PCD_TakeInventoryDirect)
-			TakeInventory(Activator, GetStr(READ_INT32(ip)),
+			TakeInventory(Activator, GetName(READ_INT32(ip)),
 				READ_INT32(ip + 4));
 			ip += 8;
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_CheckInventory)
 			STUB(PCD_CheckInventory)
-			sp[-1] = CheckInventory(Activator, GetStr(sp[-1]));
+			sp[-1] = CheckInventory(Activator, GetName(sp[-1]));
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_CheckInventoryDirect)
 			STUB(PCD_CheckInventoryDirect)
-			*sp = CheckInventory(Activator, GetStr(READ_INT32(ip)));
+			*sp = CheckInventory(Activator, GetName(READ_INT32(ip)));
 			ip += 4;
 			ACSVM_BREAK;
 
@@ -2926,19 +2938,19 @@ int VAcs::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_SetMusic)
-			SV_ChangeMusic(GetStr(sp[-3]));
+			SV_ChangeMusic(*GetStr(sp[-3]));
 			sp -= 3;
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_SetMusicDirect)
-			SV_ChangeMusic(GetStr(READ_INT32(ip)));
+			SV_ChangeMusic(*GetStr(READ_INT32(ip)));
 			ip += 12;
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_LocalSetMusic)
 			if (Activator && Activator->EntityFlags & VEntity::EF_IsPlayer)
 			{
-				SV_ChangeLocalMusic(Activator->Player, GetStr(sp[-3]));
+				SV_ChangeLocalMusic(Activator->Player, *GetStr(sp[-3]));
 			}
 			sp -= 3;
 			ACSVM_BREAK;
@@ -2946,7 +2958,7 @@ int VAcs::RunScript(float DeltaTime)
 		ACSVM_CASE(PCD_LocalSetMusicDirect)
 			if (Activator && Activator->EntityFlags & VEntity::EF_IsPlayer)
 			{
-				SV_ChangeLocalMusic(Activator->Player, GetStr(READ_INT32(ip)));
+				SV_ChangeLocalMusic(Activator->Player, *GetStr(READ_INT32(ip)));
 			}
 			ip += 12;
 			ACSVM_BREAK;
@@ -2957,7 +2969,7 @@ int VAcs::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_PrintLocalised)
-			PrintStr += GLanguage[GetStr(sp[-1])];
+			PrintStr += GLanguage[GetName(sp[-1])];
 			sp--;
 			ACSVM_BREAK;
 
@@ -3037,7 +3049,7 @@ int VAcs::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_SetFont)
-			Font = *VStr(GetStr(sp[-1])).ToLower();
+			Font = *GetStr(sp[-1]).ToLower();
 			sp--;
 			ACSVM_BREAK;
 
@@ -3777,7 +3789,7 @@ int VAcs::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_StrLen)
-			sp[-1] = VStr::Utf8Length(GetStr(sp[-1]));
+			sp[-1] = GetStr(sp[-1]).Utf8Length();
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_SetHudSize)
@@ -3791,7 +3803,7 @@ int VAcs::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_GetCvar)
-			sp[-1] = VCvar::GetInt(GetStr(sp[-1]));
+			sp[-1] = VCvar::GetInt(*GetStr(sp[-1]));
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_CaseGotoSorted)
@@ -3926,7 +3938,7 @@ int VAcs::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_ChangeSky)
-			SV_ChangeSky(GetStr(sp[-2]), GetStr(sp[-1]));
+			SV_ChangeSky(*GetStr(sp[-2]), *GetStr(sp[-1]));
 			sp -= 2;
 			ACSVM_BREAK;
 
@@ -3946,7 +3958,7 @@ int VAcs::RunScript(float DeltaTime)
 
 		ACSVM_CASE(PCD_SetCameraToTexture)
 			XLevel->SetCameraToTexture(EntityFromTID(sp[-3], Activator),
-				VName(GetStr(sp[-2]), VName::AddLower8), sp[-1]);
+				GetName8(sp[-2]), sp[-1]);
 			sp -= 3;
 			ACSVM_BREAK;
 
@@ -4069,7 +4081,7 @@ int VAcs::RunScript(float DeltaTime)
 			//sp[-3] - TID
 			//sp[-2] - Item name
 			//sp[-1] - Count
-			GiveInventory(EntityFromTID(sp[-3], NULL), GetStr(sp[-2]), sp[-1]);
+			GiveInventory(EntityFromTID(sp[-3], NULL), GetName(sp[-2]), sp[-1]);
 			sp -= 3;
 			ACSVM_BREAK;
 
@@ -4078,7 +4090,7 @@ int VAcs::RunScript(float DeltaTime)
 			//sp[-3] - TID
 			//sp[-2] - Item name
 			//sp[-1] - Count
-			TakeInventory(EntityFromTID(sp[-3], NULL), GetStr(sp[-2]), sp[-1]);
+			TakeInventory(EntityFromTID(sp[-3], NULL), GetName(sp[-2]), sp[-1]);
 			sp -= 3;
 			ACSVM_BREAK;
 
@@ -4086,7 +4098,7 @@ int VAcs::RunScript(float DeltaTime)
 			STUB(PCD_CheckActorInventory)
 			//sp[-2] - TID
 			//sp[-1] - Item name
-			sp[-2] = CheckInventory(EntityFromTID(sp[-2], NULL), GetStr(sp[-1]));
+			sp[-2] = CheckInventory(EntityFromTID(sp[-2], NULL), GetName(sp[-1]));
 			sp--;
 			ACSVM_BREAK;
 
@@ -4422,10 +4434,10 @@ int VAcs::RunScript(float DeltaTime)
 		ACSVM_CASE(PCD_ReplaceTextures)
 			if (~sp[-1] & (NOT_TOP | NOT_MIDDLE | NOT_BOTTOM))
 			{
-				int FromTex = GTextureManager.NumForName(VName(GetStr(sp[-3]),
-					VName::AddLower8), TEXTYPE_Wall, true);
-				int ToTex = GTextureManager.NumForName(VName(GetStr(sp[-2]),
-					VName::AddLower8), TEXTYPE_Wall, true);
+				int FromTex = GTextureManager.NumForName(GetName8(sp[-3]),
+					TEXTYPE_Wall, true);
+				int ToTex = GTextureManager.NumForName(GetName8(sp[-2]),
+					TEXTYPE_Wall, true);
 				for (int i = 0; i < XLevel->NumSides; i++)
 				{
 					if (!(sp[-1] & NOT_TOP) &&
@@ -4447,10 +4459,10 @@ int VAcs::RunScript(float DeltaTime)
 			}
 			if (~sp[-1] & (NOT_FLOOR | NOT_CEILING))
 			{
-				int FromTex = GTextureManager.NumForName(VName(GetStr(sp[-3]),
-					VName::AddLower8), TEXTYPE_Flat, true);
-				int ToTex = GTextureManager.NumForName(VName(GetStr(sp[-2]),
-					VName::AddLower8), TEXTYPE_Flat, true);
+				int FromTex = GTextureManager.NumForName(GetName8(sp[-3]),
+					TEXTYPE_Flat, true);
+				int ToTex = GTextureManager.NumForName(GetName8(sp[-2]),
+					TEXTYPE_Flat, true);
 				for (int i = 0; i < XLevel->NumSectors; i++)
 				{
 					if (!(sp[-1] & NOT_FLOOR) &&
@@ -4600,15 +4612,15 @@ int VAcs::FindSectorFromTag(int tag, int start)
 //
 //============================================================================
 
-void VAcs::GiveInventory(VEntity* Activator, const char* AType, int Amount)
+void VAcs::GiveInventory(VEntity* Activator, VName AType, int Amount)
 {
 	guard(VAcs::GiveInventory);
 	if (Amount <= 0)
 	{
 		return;
 	}
-	const char* Type = AType;
-	if (VStr::Cmp(Type, "Armor") == 0)
+	VName Type = AType;
+	if (VStr::ICmp(*Type, "Armor") == 0)
 	{
 		Type = "BasicArmor";
 	}
@@ -4635,15 +4647,15 @@ void VAcs::GiveInventory(VEntity* Activator, const char* AType, int Amount)
 //
 //============================================================================
 
-void VAcs::TakeInventory(VEntity* Activator, const char* AType, int Amount)
+void VAcs::TakeInventory(VEntity* Activator, VName AType, int Amount)
 {
 	guard(VAcs::TakeInventory);
 	if (Amount <= 0)
 	{
 		return;
 	}
-	const char* Type = AType;
-	if (VStr::Cmp(Type, "Armor") == 0)
+	VName Type = AType;
+	if (VStr::ICmp(*Type, "Armor") == 0)
 	{
 		Type = "BasicArmor";
 	}
@@ -4669,18 +4681,18 @@ void VAcs::TakeInventory(VEntity* Activator, const char* AType, int Amount)
 //
 //============================================================================
 
-int VAcs::CheckInventory(VEntity* Activator, const char* AType)
+int VAcs::CheckInventory(VEntity* Activator, VName AType)
 {
 	guard(VAcs::CheckInventory);
 	if (!Activator)
 		return 0;
 
-	const char* Type = AType;
-	if (VStr::Cmp(Type, "Armor") == 0)
+	VName Type = AType;
+	if (VStr::ICmp(*Type, "Armor") == 0)
 	{
 		Type = "BasicArmor";
 	}
-	else if (!VStr::Cmp(Type, "Health"))
+	else if (!VStr::ICmp(*Type, "Health"))
 	{
 		return Activator->Health;
 	}

@@ -87,7 +87,7 @@ void VStr::Resize(int NewLen)
 {
 	guard(VStr::Resize);
 	check(NewLen >= 0);
-	if (NewLen == Length())
+	if ((size_t)NewLen == Length())
 	{
 		//	Same length, use existing buffer.
 		return;
@@ -624,6 +624,24 @@ bool VStr::IsValidUtf8() const
 		}
 	}
 	return true;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VStr::Latin1ToUtf8
+//
+//==========================================================================
+
+VStr VStr::Latin1ToUtf8() const
+{
+	guard(VStr::Latin1ToUtf8);
+	VStr Ret;
+	for (size_t i = 0; i < Length(); i++)
+	{
+		Ret += FromChar((vuint8)Str[i]);
+	}
+	return Ret;
 	unguard;
 }
 
