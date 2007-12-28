@@ -180,6 +180,7 @@ bool bPuffParticles;	// Puff spawns particles
 bool bExplodeParticles;	// Use particle explosion
 bool bStealth;			// Andy Baker's Stealth monsters
 bool bChaseGoal;		// Walks to goal instead of target if a valid goal is set.
+bool bExplosionDontHurtSelf;// For A_Explodearms
 
 //  Params
 float			Speed;
@@ -267,6 +268,10 @@ Inventory		Inventory;
 float			FloatBobPhase;
 
 float			PuffVelZ;
+
+//	For A_ExplodeParms
+int				ExplosionDamage;
+int				ExplosionRadius;
 
 replication
 {

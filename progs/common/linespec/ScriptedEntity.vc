@@ -881,6 +881,61 @@ final void A_ExplodeAndAlert()
 
 //==========================================================================
 //
+//  A_ExplodeParms
+//
+//==========================================================================
+
+final void A_ExplodeParms()
+{
+	int			damage;
+	float		distance;
+	byte		damageSelf;
+	int			i;
+
+	damage = ExplosionDamage;
+	distance = itof(ExplosionRadius);
+	damageSelf = !bExplosionDontHurtSelf;
+
+	if (!damage)
+	{
+		damage = 128;
+	}
+	if (!distance)
+	{
+		distance = itof(damage);
+	}
+
+	RadiusAttack(Target, damage, distance, damageSelf);
+	if (Origin.z <= FloorZ + distance)
+	{
+		HitFloorType();
+	}
+
+	if (bExplodeParticles)
+	{
+		//  Spawn explosion effects - dynamic light and particles
+		for (i = 0; i < MAXPLAYERS; i++)
+		{
+			if (!Level.Game.Players[i])
+				continue;
+			if (!Level.Game.Players[i].bSpawned)
+				continue;
+			PlayerEx(Level.Game.Players[i]).ClientParticleExplosion(
+				DLightColour, DLightRadius, Origin + vector(0.0, 0.0, Height * 0.5));
+		}
+	}
+	else if (ExplodeEffect)
+	{
+		SendExplosion(ExplodeEffect, DLightRadius, Origin);
+	}
+
+	//  Clear old dynamic light and trail effects
+	bDynamicLight = false;
+	bLeaveTrail = false;
+}
+
+//==========================================================================
+//
 //  A_BossDeath
 //
 //  Possibly trigger special effects if on first boss level

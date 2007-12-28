@@ -35,6 +35,16 @@ enum
 {
 	OLDDEC_Decoration,
 	OLDDEC_Breakable,
+	OLDDEC_Projectile,
+	OLDDEC_Pickup,
+};
+
+enum
+{
+	BOUNCE_None,
+	BOUNCE_Doom,
+	BOUNCE_Heretic,
+	BOUNCE_Hexen
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -51,11 +61,14 @@ enum
 
 static VPackage*		DecPkg;
 static VClass*			ActorClass;
+static VClass*			ScriptedEntityClass;
+static VClass*			FakeInventoryClass;
 static VMethod*			FuncA_Scream;
 static VMethod*			FuncA_NoBlocking;
 static VMethod*			FuncA_ScreamAndUnblock;
 static VMethod*			FuncA_ActiveSound;
 static VMethod*			FuncA_ActiveAndUnblock;
+static VMethod*			FuncA_ExplodeParms;
 
 // CODE --------------------------------------------------------------------
 
@@ -158,6 +171,22 @@ static void SetClassFieldName(VClass* Class, const char* FieldName,
 
 //==========================================================================
 //
+//	SetClassFieldStr
+//
+//==========================================================================
+
+static void SetClassFieldStr(VClass* Class, const char* FieldName,
+	const VStr& Value)
+{
+	guard(SetClassFieldStr);
+	VField* F = Class->FindFieldChecked(FieldName);
+	VStr* Ptr = (VStr*)(Class->Defaults + F->Ofs);
+	*Ptr = Value;
+	unguard;
+}
+
+//==========================================================================
+//
 //	SkipBlock
 //
 //==========================================================================
@@ -239,6 +268,37 @@ static void ParseEnum(VScriptParser* sc)
 
 //==========================================================================
 //
+//	ParseFlag
+//
+//==========================================================================
+
+static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value)
+{
+	guard(ParseFlag);
+	if (sc->Check("NoGravity"))
+	{
+		SetClassFieldBool(Class, "bNoGravity", Value);
+	}
+	else if (sc->Check("FloorClip"))
+	{
+		SetClassFieldBool(Class, "bFloorClip", Value);
+	}
+	else
+	{
+		sc->ExpectString();
+		GCon->Logf("Unknown flag %s", *sc->String);
+		sc->SetEscape(false);
+		SkipBlock(sc, 1);
+		sc->SetEscape(true);
+		sc->SetCMode(false);
+		return false;
+	}
+	return true;
+	unguard;
+}
+
+//==========================================================================
+//
 //	ParseActor
 //
 //==========================================================================
@@ -246,59 +306,232 @@ static void ParseEnum(VScriptParser* sc)
 static void ParseActor(VScriptParser* sc)
 {
 	guard(ParseActor);
+	//	Parse actor name. In order to allow dots in actor names, this is done
+	// in non-C mode, so we have to do a little bit more complex parsing.
 	sc->ExpectString();
-	GCon->Logf("Actor %s", *sc->String);
-	sc->SetCMode(true);
-	sc->SetEscape(false);
-	if (sc->Check(":"))
+	VStr NameStr;
+	VStr ParentStr;
+	int ColonPos = sc->String.IndexOf(':');
+	if (ColonPos >= 0)
+	{
+		//	There's a colon inside, so plit up the string.
+		NameStr = VStr(sc->String, 0, ColonPos);
+		ParentStr = VStr(sc->String, ColonPos + 1, sc->String.Length() -
+			ColonPos - 1);
+	}
+	else
+	{
+		NameStr = sc->String;
+	}
+
+	if (VClass::FindClass(*sc->String))
+	{
+		sc->Error(va("Redeclared class %s", *sc->String));
+	}
+
+	if (ColonPos < 0)
+	{
+		//	There's no colon, check if next string starts with it.
+		sc->ExpectString();
+		if (sc->String[0] == ':')
+		{
+			ColonPos = 0;
+			ParentStr = VStr(sc->String, 1, sc->String.Length() - 1);
+		}
+		else
+		{
+			sc->UnGet();
+		}
+	}
+
+	//	If we got colon but no parent class name, then get it.
+	if (ColonPos >= 0 && !ParentStr)
 	{
 		sc->ExpectString();
+		ParentStr = sc->String;
 	}
+
+	GCon->Logf("Actor %s of %s", *NameStr, *ParentStr);
+
+	VClass* ParentClass = ActorClass;
+	if (ParentStr)
+	{
+		ParentClass = VClass::FindClass(*ParentStr);
+		if (!ParentClass)
+		{
+			//	Temporarely don't make it fatal error.
+			GCon->Logf("Parent class %s not found", *ParentStr);
+			if (sc->Check("replaces"))
+			{
+				sc->ExpectString();
+			}
+			sc->SetCMode(true);
+			sc->SetEscape(false);
+			sc->CheckNumber();
+			sc->Expect("{");
+			SkipBlock(sc, 1);
+			sc->SetEscape(true);
+			sc->SetCMode(false);
+			return;
+		}
+		if (!ParentClass->IsChildOf(ScriptedEntityClass))
+		{
+			//	Temporarely don't make it fatal error.
+			GCon->Logf("Parent class %s is not an actor class", *ParentStr);
+			if (sc->Check("replaces"))
+			{
+				sc->ExpectString();
+			}
+			sc->SetCMode(true);
+			sc->SetEscape(false);
+			sc->CheckNumber();
+			sc->Expect("{");
+			SkipBlock(sc, 1);
+			sc->SetEscape(true);
+			sc->SetCMode(false);
+			return;
+		}
+	}
+
+	VClass* Class = ParentClass->CreateDerivedClass(*NameStr);
+	Class->Outer = DecPkg;
+	SetClassFieldBool(Class, "bNoPassMobj", true);
+
 	if (sc->Check("replaces"))
 	{
 		sc->ExpectString();
+		VClass* ReplaceeClass = VClass::FindClass(*sc->String);
+		if (!ReplaceeClass)
+		{
+			//	Temporarely don't make it fatal error.
+			GCon->Logf("Replaced class %s not found", *sc->String);
+			sc->SetCMode(true);
+			sc->SetEscape(false);
+			sc->CheckNumber();
+			sc->Expect("{");
+			SkipBlock(sc, 1);
+			sc->SetEscape(true);
+			sc->SetCMode(false);
+			return;
+		}
+		if (!ReplaceeClass->IsChildOf(ScriptedEntityClass))
+		{
+			//	Temporarely don't make it fatal error.
+			GCon->Logf("Replaced class %s is not an actor class", *sc->String);
+			sc->SetCMode(true);
+			sc->SetEscape(false);
+			sc->CheckNumber();
+			sc->Expect("{");
+			SkipBlock(sc, 1);
+			sc->SetEscape(true);
+			sc->SetCMode(false);
+			return;
+		}
+		GCon->Logf("%s replaces %s", *NameStr, *sc->String);
 	}
-	sc->CheckNumber();
-	while (!sc->Check("{"))
+
+	//	Time to switch to the C mode.
+	sc->SetCMode(true);
+
+	int GameFilter = 0;
+	int DoomEdNum = -1;
+	if (sc->CheckNumber())
 	{
-		sc->ExpectString();
-		GCon->Logf("Unknown token %s", *sc->String);
+		if (sc->Number < -1 || sc->Number > 32767)
+		{
+			sc->Error("DoomEdNum is out of range [-1, 32767]");
+		}
+		DoomEdNum = sc->Number;
 	}
-	SkipBlock(sc, 1);
-	sc->SetEscape(true);
-	sc->SetCMode(false);
-	unguard;
-}
 
-//==========================================================================
-//
-//	ParsePickup
-//
-//==========================================================================
-
-static void ParsePickup(VScriptParser* sc)
-{
-	guard(ParsePickup);
-	sc->ExpectString();
-	GCon->Logf("Pickup %s", *sc->String);
 	sc->Expect("{");
-	SkipBlock(sc, 1);
-	unguard;
-}
+	while (!sc->Check("}"))
+	{
+		if (sc->Check("Radius"))
+		{
+			sc->ExpectFloat();
+			SetClassFieldFloat(Class, "Radius", sc->Float);
+		}
+		else if (sc->Check("Height"))
+		{
+			sc->ExpectFloat();
+			SetClassFieldFloat(Class, "Height", sc->Float);
+		}
+		else if (sc->Check("RenderStyle"))
+		{
+			int RenderStyle = 0;
+			if (sc->Check("None"))
+			{
+				RenderStyle = STYLE_None;
+			}
+			else if (sc->Check("Normal"))
+			{
+				RenderStyle = STYLE_Normal;
+			}
+			else if (sc->Check("Fuzzy"))
+			{
+				RenderStyle = STYLE_Fuzzy;
+			}
+			else if (sc->Check("SoulTrans"))
+			{
+				RenderStyle = STYLE_SoulTrans;
+			}
+			else if (sc->Check("OptFuzzy"))
+			{
+				RenderStyle = STYLE_OptFuzzy;
+			}
+			else if (sc->Check("Translucent"))
+			{
+				RenderStyle = STYLE_Translucent;
+			}
+			else if (sc->Check("Add"))
+			{
+				RenderStyle = STYLE_Add;
+			}
+			else
+			{
+				sc->Error("Bad render style");
+			}
+			SetClassFieldByte(Class, "RenderStyle", RenderStyle);
+		}
+		else if (sc->Check("Scale"))
+		{
+			sc->ExpectFloat();
+			SetClassFieldFloat(Class, "ScaleX", sc->Float);
+			SetClassFieldFloat(Class, "ScaleY", sc->Float);
+		}
+		else if (sc->Check("+"))
+		{
+			if (!ParseFlag(sc, Class, true))
+			{
+				return;
+			}
+		}
+		else if (sc->Check("-"))
+		{
+			if (!ParseFlag(sc, Class, false))
+			{
+				return;
+			}
+		}
+		else
+		{
+			GCon->Logf("Unknown property %s", *sc->String);
+			sc->SetEscape(false);
+			SkipBlock(sc, 1);
+			sc->SetEscape(true);
+			sc->SetCMode(false);
+			return;
+		}
+	}
 
-//==========================================================================
-//
-//	ParseProjectile
-//
-//==========================================================================
-
-static void ParseProjectile(VScriptParser* sc)
-{
-	guard(ParseProjectile);
-	sc->ExpectString();
-	GCon->Logf("Projectile %s", *sc->String);
-	sc->Expect("{");
-	SkipBlock(sc, 1);
+	if (DoomEdNum > 0)
+	{
+		mobjinfo_t& MI = VClass::GMobjInfos.Alloc();
+		MI.class_id = Class;
+		MI.doomednum = DoomEdNum;
+		MI.GameFilter = GameFilter;
+	}
 	unguard;
 }
 
@@ -371,18 +604,21 @@ static void ParseOldDecoration(VScriptParser* sc, int Type)
 	//	Get name of the class.
 	sc->ExpectString();
 	VName ClassName = *sc->String;
-	if (Type == OLDDEC_Breakable)
-	{
-		GCon->Logf("Breakable %s", *ClassName);
-	}
 
 	//	Create class.
-	VClass* Class = ActorClass->CreateDerivedClass(ClassName);
+	VClass* Class = Type == OLDDEC_Pickup ?
+		FakeInventoryClass->CreateDerivedClass(ClassName) :
+		ActorClass->CreateDerivedClass(ClassName);
 	Class->Outer = DecPkg;
 	SetClassFieldBool(Class, "bNoPassMobj", true);
 	if (Type == OLDDEC_Breakable)
 	{
 		SetClassFieldBool(Class, "bShootable", true);
+	}
+	if (Type == OLDDEC_Projectile)
+	{
+		SetClassFieldBool(Class, "bMissile", true);
+		SetClassFieldBool(Class, "bDropOff", true);
 	}
 
 	//	Parse game filters.
@@ -443,6 +679,7 @@ static void ParseOldDecoration(VScriptParser* sc, int Type)
 	int IceStart = 0;
 	int IceEnd = 0;
 	bool GenericIceDeath = false;
+	bool Explosive = false;
 
 	while (!sc->Check("}"))
 	{
@@ -484,7 +721,8 @@ static void ParseOldDecoration(VScriptParser* sc, int Type)
 		}
 
 		//	Death states
-		else if (Type == OLDDEC_Breakable && sc->Check("DeathSprite"))
+		else if ((Type == OLDDEC_Breakable || Type == OLDDEC_Projectile) &&
+			sc->Check("DeathSprite"))
 		{
 			sc->ExpectString();
 			if (sc->String.Length() != 4)
@@ -493,7 +731,8 @@ static void ParseOldDecoration(VScriptParser* sc, int Type)
 			}
 			DeathSprite = *sc->String.ToLower();
 		}
-		else if (Type == OLDDEC_Breakable && sc->Check("DeathFrames"))
+		else if ((Type == OLDDEC_Breakable || Type == OLDDEC_Projectile) &&
+			sc->Check("DeathFrames"))
 		{
 			sc->ExpectString();
 			DeathStart = States.Num();
@@ -554,12 +793,13 @@ static void ParseOldDecoration(VScriptParser* sc, int Type)
 		else if (sc->Check("Scale"))
 		{
 			sc->ExpectFloat();
-			GCon->Logf("Decorate property Scale is not yet supported");
+			SetClassFieldFloat(Class, "ScaleX", sc->Float);
+			SetClassFieldFloat(Class, "ScaleY", sc->Float);
 		}
 		else if (sc->Check("Alpha"))
 		{
 			sc->ExpectFloat();
-			SetClassFieldFloat(Class, "Alpha", sc->Float);
+			SetClassFieldFloat(Class, "Alpha", MID(0.0, sc->Float, 1.0));
 		}
 		else if (sc->Check("RenderStyle"))
 		{
@@ -641,7 +881,8 @@ static void ParseOldDecoration(VScriptParser* sc, int Type)
 		{
 			SolidOnBurn = true;
 		}
-		else if (Type == OLDDEC_Breakable && sc->Check("DeathSound"))
+		else if ((Type == OLDDEC_Breakable || Type == OLDDEC_Projectile) &&
+			sc->Check("DeathSound"))
 		{
 			sc->ExpectString();
 			SetClassFieldName(Class, "DeathSound", *sc->String);
@@ -650,6 +891,79 @@ static void ParseOldDecoration(VScriptParser* sc, int Type)
 		{
 			sc->ExpectString();
 			SetClassFieldName(Class, "ActiveSound", *sc->String);
+		}
+
+		//	Projectile properties
+		else if (Type == OLDDEC_Projectile && sc->Check("Speed"))
+		{
+			sc->ExpectFloat();
+			SetClassFieldFloat(Class, "Speed", sc->Float);
+		}
+		else if (Type == OLDDEC_Projectile && sc->Check("Damage"))
+		{
+			sc->ExpectNumber();
+			SetClassFieldFloat(Class, "MissileDamage", sc->Number);
+		}
+		else if (Type == OLDDEC_Projectile && sc->Check("DamageType"))
+		{
+			if (sc->Check("Normal"))
+			{
+				SetClassFieldName(Class, "DamageType", NAME_None);
+			}
+			else
+			{
+				sc->ExpectString();
+				SetClassFieldName(Class, "DamageType", *sc->String);
+			}
+		}
+		else if (Type == OLDDEC_Projectile && sc->Check("SpawnSound"))
+		{
+			sc->ExpectString();
+			SetClassFieldName(Class, "SightSound", *sc->String);
+		}
+		else if (Type == OLDDEC_Projectile && sc->Check("ExplosionRadius"))
+		{
+			sc->ExpectNumber();
+			SetClassFieldFloat(Class, "ExplosionRadius", sc->Number);
+			Explosive = true;
+		}
+		else if (Type == OLDDEC_Projectile && sc->Check("ExplosionDamage"))
+		{
+			sc->ExpectNumber();
+			SetClassFieldFloat(Class, "ExplosionDamage", sc->Number);
+			Explosive = true;
+		}
+		else if (Type == OLDDEC_Projectile && sc->Check("DoNotHurtShooter"))
+		{
+			SetClassFieldBool(Class, "bExplosionDontHurtSelf", true);
+		}
+		else if (Type == OLDDEC_Projectile && sc->Check("DoomBounce"))
+		{
+			SetClassFieldByte(Class, "BounceType", BOUNCE_Doom);
+		}
+		else if (Type == OLDDEC_Projectile && sc->Check("HereticBounce"))
+		{
+			SetClassFieldByte(Class, "BounceType", BOUNCE_Heretic);
+		}
+		else if (Type == OLDDEC_Projectile && sc->Check("HexenBounce"))
+		{
+			SetClassFieldByte(Class, "BounceType", BOUNCE_Hexen);
+		}
+
+		//	Pickup properties
+		else if (Type == OLDDEC_Pickup && sc->Check("PickupMessage"))
+		{
+			sc->ExpectString();
+			SetClassFieldStr(Class, "PickupMessage", sc->String);
+		}
+		else if (Type == OLDDEC_Pickup && sc->Check("PickupSound"))
+		{
+			sc->ExpectString();
+			SetClassFieldName(Class, "PickupSound", *sc->String);
+		}
+		else if (Type == OLDDEC_Pickup && sc->Check("Respawns"))
+		{
+			SetClassFieldBool(Class, "bRespawns", true);
 		}
 
 		//	Compatibility flags
@@ -779,6 +1093,12 @@ static void ParseOldDecoration(VScriptParser* sc, int Type)
 		{
 			SetClassFieldBool(Class, "bNoSplash", true);
 		}
+		else if (Type == OLDDEC_Pickup)
+		{
+			GCon->Logf("Unknown property %s", *sc->String);
+			SkipBlock(sc, 1);
+			break;
+		}
 		else
 		{
 			Sys_Error("Unknown property %s", *sc->String);
@@ -860,30 +1180,40 @@ static void ParseOldDecoration(VScriptParser* sc, int Type)
 		{
 			States[i]->NextState = States[i + 1];
 		}
-		if (!DiesAway)
+		if (!DiesAway && Type != OLDDEC_Projectile)
 		{
 			States[DeathEnd - 1]->Time = -1.0;
 		}
-		//	First death state plays death sound, second makes it
-		// non-blocking unless it should stay solid.
-		States[DeathStart]->Function = FuncA_Scream;
-		if (!SolidOnDeath)
+		if (Type == OLDDEC_Projectile)
 		{
-			if (DeathEnd - DeathStart > 1)
+			if (Explosive)
 			{
-				States[DeathStart + 1]->Function = FuncA_NoBlocking;
-			}
-			else
-			{
-				States[DeathStart]->Function = FuncA_ScreamAndUnblock;
+				States[DeathStart]->Function = FuncA_ExplodeParms;
 			}
 		}
+		else
+		{
+			//	First death state plays death sound, second makes it
+			// non-blocking unless it should stay solid.
+			States[DeathStart]->Function = FuncA_Scream;
+			if (!SolidOnDeath)
+			{
+				if (DeathEnd - DeathStart > 1)
+				{
+					States[DeathStart + 1]->Function = FuncA_NoBlocking;
+				}
+				else
+				{
+					States[DeathStart]->Function = FuncA_ScreamAndUnblock;
+				}
+			}
 
-		if (!DeathHeight)
-		{
-			DeathHeight = GetClassFieldFloat(Class, "Height");
+			if (!DeathHeight)
+			{
+				DeathHeight = GetClassFieldFloat(Class, "Height");
+			}
+			SetClassFieldFloat(Class, "DeathHeight", DeathHeight);
 		}
-		SetClassFieldFloat(Class, "DeathHeight", DeathHeight);
 
 		Class->SetStateLabel("Death", States[DeathStart]);
 	}
@@ -998,11 +1328,11 @@ static void ParseDecorate(VScriptParser* sc)
 		}
 		else if (sc->Check("pickup"))
 		{
-			ParsePickup(sc);
+			ParseOldDecoration(sc, OLDDEC_Pickup);
 		}
 		else if (sc->Check("projectile"))
 		{
-			ParseProjectile(sc);
+			ParseOldDecoration(sc, OLDDEC_Projectile);
 		}
 		else
 		{
@@ -1024,11 +1354,14 @@ void ProcessDecorateScripts()
 	guard(ProcessDecorateScripts);
 	DecPkg = new VPackage(NAME_decorate);
 	ActorClass = VClass::FindClass("Actor");
+	ScriptedEntityClass = VClass::FindClass("ScriptedEntity");
+	FakeInventoryClass = VClass::FindClass("FakeInventory");
 	FuncA_Scream = ActorClass->FindFunctionChecked("A_Scream");
 	FuncA_NoBlocking = ActorClass->FindFunctionChecked("A_NoBlocking");
 	FuncA_ScreamAndUnblock = ActorClass->FindFunctionChecked("A_ScreamAndUnblock");
 	FuncA_ActiveSound = ActorClass->FindFunctionChecked("A_ActiveSound");
 	FuncA_ActiveAndUnblock = ActorClass->FindFunctionChecked("A_ActiveAndUnblock");
+	FuncA_ExplodeParms = ActorClass->FindFunctionChecked("A_ExplodeParms");
 
 	for (int Lump = W_IterateNS(-1, WADNS_Global); Lump >= 0;
 		Lump = W_IterateNS(Lump, WADNS_Global))

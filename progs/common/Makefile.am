@@ -42,6 +42,7 @@ EXTRA_DIST = \
 	linespec/CeilingWaggle.vc \
 	linespec/Elevator.vc \
 	linespec/EntityEx.vc \
+	linespec/FakeInventory.vc \
 	linespec/FireFlicker.vc \
 	linespec/FloorMover.vc \
 	linespec/FloorWaggle.vc \
