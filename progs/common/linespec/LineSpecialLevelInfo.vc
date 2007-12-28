@@ -4976,7 +4976,7 @@ final bool CheckLock(Entity user, int lock, bool door)
 		}
 		else
 		{
-			user.Player.centreprint("That doesn't seam to work");
+			user.Player.centreprint("That doesn't seem to work");
 		}
 		user.PlaySound('misc/keytry', CHAN_VOICE);
 		return false;
@@ -5261,5 +5261,5 @@ void UpdateParticle(particle_t * p, float DeltaTime)
 defaultproperties
 {
 	ExtPlayersBase = 4001;
-	Lock103Message = "That doesn't seam to work";
+	Lock103Message = "That doesn't seem to work";
 }
