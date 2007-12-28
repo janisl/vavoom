@@ -621,16 +621,16 @@ void VRenderLevel::RenderSprite(VEntity* thing, vuint32 light, vuint32 Fade,
 
 	TVec	sv[4];
 
-	TVec start = -TexSOffset * sprright;
-	TVec end = (TexWidth - TexSOffset) * sprright;
+	TVec start = -TexSOffset * sprright * thing->ScaleX;
+	TVec end = (TexWidth - TexSOffset) * sprright * thing->ScaleX;
 
 	if (r_fix_sprite_offsets && TexTOffset < TexHeight &&
 		2 * TexTOffset + r_sprite_fix_delta >= TexHeight)
 	{
 		TexTOffset = TexHeight;
 	}
-	TVec topdelta = TexTOffset * sprup;
-	TVec botdelta = (TexTOffset - TexHeight) * sprup;
+	TVec topdelta = TexTOffset * sprup * thing->ScaleY;
+	TVec botdelta = (TexTOffset - TexHeight) * sprup * thing->ScaleY;
 
 	sv[0] = sprorigin + start + botdelta;
 	sv[1] = sprorigin + start + topdelta;
@@ -641,15 +641,16 @@ void VRenderLevel::RenderSprite(VEntity* thing, vuint32 light, vuint32 Fade,
 	{
 		DrawTranslucentPoly(NULL, sv, 4, lump, Alpha, Additive,
 			thing->Translation, true, light, Fade, -sprforward, DotProduct(
-			sprorigin, -sprforward), flip ? -sprright : sprright, -sprup,
-			flip ? sv[2] : sv[1]);
+			sprorigin, -sprforward), (flip ? -sprright : sprright) /
+			thing->ScaleX, -sprup / thing->ScaleY, flip ? sv[2] : sv[1]);
 	}
 	else
 	{
 		Drawer->DrawSpritePolygon(sv, GTextureManager[lump], Alpha,
 			Additive, thing->Translation, light, Fade, -sprforward,
-			DotProduct(sprorigin, -sprforward), flip ? -sprright : sprright,
-			-sprup, flip ? sv[2] : sv[1]);
+			DotProduct(sprorigin, -sprforward), (flip ? -sprright :
+			sprright) / thing->ScaleX, -sprup / thing->ScaleY,
+			flip ? sv[2] : sv[1]);
 	}
 	unguard;
 }
@@ -1049,7 +1050,7 @@ bool VRenderLevel::RenderViewModel(VViewState* VSt, vuint32 light,
 		TimeFrac = MID(0.0, TimeFrac, 1.0);
 	}
 
-	return DrawAliasModel(origin, cl->ViewAngles, VSt->State,
+	return DrawAliasModel(origin, cl->ViewAngles, 1.0, 1.0, VSt->State,
 		NULL, 0, light, Fade, Alpha, Additive, true, TimeFrac);
 	unguard;
 }

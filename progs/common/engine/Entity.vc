@@ -113,6 +113,10 @@ int				Translation;
 
 float			FloorClip;	// value to use for floor clipping
 
+//	Scaling.
+float			ScaleX;
+float			ScaleY;
+
 native readonly subsector_t*	SubSector;
 native readonly sector_t*		Sector;
 
@@ -205,8 +209,9 @@ replication
 {
 	reliable if (Role == ROLE_Authority)
 		Origin, Angles, FloorClip, State, StateTime, SpriteType, ModelSkin,
-		ModelVersion, RenderStyle, Alpha, Translation, bFly, bHidden,
-		bFullBright, bFixedModel, bNetLocalPlayer, NetID;
+		ModelVersion, RenderStyle, Alpha, Translation, ScaleX, ScaleY, bFly,
+		bHidden, bFullBright, bFixedModel, bNetLocalPlayer, NetID;
+
 
 	reliable if (Role == ROLE_Authority && bFixedModel)
 		FixedModelName;
@@ -583,6 +588,8 @@ defaultproperties
 {
 	RenderStyle = STYLE_Normal;
 	Alpha = 1.0;
+	ScaleX = 1.0;
+	ScaleY = 1.0;
 	bColideWithThings = true;
 	bColideWithWorld = true;
 	MaxDropoffHeight = 24.0;

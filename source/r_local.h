@@ -301,10 +301,10 @@ private:
 	void DrawCroshair();
 
 	//	Models
-	bool DrawAliasModel(const TVec&, const TAVec&, VModel*, int, const char*,
-		int, vuint32, vuint32, float, bool, bool, float);
-	bool DrawAliasModel(const TVec&, const TAVec&, VState*, const char*,
-		int, vuint32, vuint32, float, bool, bool, float);
+	bool DrawAliasModel(const TVec&, const TAVec&, float, float, VModel*,
+		int, const char*, int, vuint32, vuint32, float, bool, bool, float);
+	bool DrawAliasModel(const TVec&, const TAVec&, float, float, VState*,
+		const char*, int, vuint32, vuint32, float, bool, bool, float);
 	bool DrawEntityModel(VEntity*, vuint32, vuint32, float, bool, float);
 	bool CheckAliasModelFrame(VEntity*, float);
 
