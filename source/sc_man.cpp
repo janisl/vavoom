@@ -159,7 +159,7 @@ bool VScriptParser::GetString()
 	while (foundToken == false)
 	{
 		//	Skip whitespace.
-		while ((vuint8)*ScriptPtr <= 32)
+		while (*ScriptPtr <= 32)
 		{
 			if (ScriptPtr >= ScriptEndPtr)
 			{
@@ -312,7 +312,7 @@ bool VScriptParser::GetString()
 		else
 		{
 			//	Normal string
-			while ((vuint8)*ScriptPtr > 32 &&
+			while (*ScriptPtr > 32 &&
 				!strchr("`~!@#$%^&*(){}[]/=\\?-+|;:<>,\".", *ScriptPtr))
 			{
 				String += *ScriptPtr++;
@@ -333,7 +333,7 @@ bool VScriptParser::GetString()
 		else
 		{
 			//	Normal string
-			while ((vuint8)*ScriptPtr > 32 && !strchr("{}|=;\"", *ScriptPtr) &&
+			while (*ScriptPtr > 32 && !strchr("{}|=;\"", *ScriptPtr) &&
 				(ScriptPtr[0] != '/' || ScriptPtr[1] != '/') &&
 				(ScriptPtr[0] != '/' || ScriptPtr[1] != '*'))
 			{
