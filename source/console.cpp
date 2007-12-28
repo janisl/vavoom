@@ -577,7 +577,13 @@ void FConsoleDevice::Serialise(const char* V, EName Event)
 
 void C_NotifyMessage(const char* AStr)
 {
+	guard(C_NotifyMessage);
 	VStr Str(AStr);
+
+	if (!Str)
+	{
+		return;
+	}
 
 	if (Str[0] == '$')
 	{
@@ -590,6 +596,7 @@ void C_NotifyMessage(const char* AStr)
 	}
 
 	GClGame->eventAddNotifyMessage(Str);
+	unguard;
 }
 
 //==========================================================================
@@ -600,7 +607,13 @@ void C_NotifyMessage(const char* AStr)
 
 void C_CentreMessage(const char* AMsg)
 {
+	guard(C_CentreMessage);
 	VStr Msg(AMsg);
+
+	if (!Msg)
+	{
+		return;
+	}
 
 	if (Msg[0] == '$')
 	{
@@ -615,4 +628,5 @@ void C_CentreMessage(const char* AMsg)
 	}
 
 	GClGame->eventAddCentreMessage(Msg);
+	unguard;
 }
