@@ -54,6 +54,7 @@ defaultproperties
 	bActivatePushWall = false;
 	bNoGravity = false;
 	bFloat = false;
+	bNoPassMobj = true;
 	SightSound = '';
 	ActiveSound = '';
 	PainSound = '';

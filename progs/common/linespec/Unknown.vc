@@ -39,4 +39,5 @@ defaultproperties
 	bNoGravity = true;
 	bNoBlockmap = true;
 	bNoSplash = true;
+	bNoPassMobj = true;
 }

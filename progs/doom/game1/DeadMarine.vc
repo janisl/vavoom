@@ -55,6 +55,7 @@ defaultproperties
 	bWindThrust = false;
 	bDropOff = false;
 	bPickUp = false;
+	bNoPassMobj = true;
 	PainSound = '';
 	DeathSound = '';
 
