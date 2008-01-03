@@ -77,8 +77,6 @@ class VClientGameBase : public VObject
 
 	int					intermission;
 
-	vuint32				prev_cshifts[NUM_CSHIFTS];	// powerups and content types
-
 	VClientGameBase()
 	: serverinfo(E_NoInit)
 	{}
@@ -242,7 +240,8 @@ void CL_SignonReply();
 void CL_ParseServerInfo(class VMessageIn& msg);
 
 void R_InstallSprite(const char*, int);
-void R_DrawModelFrame(const TVec&, float, VModel*, int, const char*, float);
+void R_DrawModelFrame(const TVec&, float, VModel*, int, const char*, int,
+	int, int, float);
 
 VModel* Mod_FindName(const VStr&);
 bool R_GetModelSkinInfo(VModel*, int, VName&, VStr&);

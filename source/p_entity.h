@@ -92,6 +92,27 @@ enum
 	STYLE_Add,					// Draw additive
 };
 
+//	Colour tralslation types.
+enum
+{
+	//	No translation.
+	TRANSL_None,
+	//	Game's standard translations.
+	TRANSL_Standard,
+	//	Per-player translations.
+	TRANSL_Player,
+	//	ACS translations.
+	TRANSL_Level,
+	//	Translations of dead players.
+	TRANSL_BodyQueue,
+	//	Translations defined in DECORATE.
+	TRANSL_Decorate,
+
+	TRANSL_Max,
+
+	TRANSL_TYPE_SHIFT = 16
+};
+
 class VEntity : public VThinker
 {
 	DECLARE_CLASS(VEntity, VThinker, 0)
@@ -110,6 +131,7 @@ class VEntity : public VThinker
 
 	//More drawing info.
 	vuint8			SpriteType;		//  How to draw sprite
+	VName			FixedSpriteName;
 	VStr			FixedModelName;
 	VStr			ModelSkin;
 	vuint8			ModelVersion;
@@ -317,6 +339,11 @@ class VEntity : public VThinker
 		P_PASS_REF(Other);
 		EV_RET_BOOL_IDX(FIndex_RoughCheckThing);
 	}
+	void eventClearInventory()
+	{
+		P_PASS_SELF;
+		EV_RET_VOID(NAME_ClearInventory);
+	}
 	void eventGiveInventory(VName ItemName, int Amount)
 	{
 		P_PASS_SELF;
@@ -342,6 +369,36 @@ class VEntity : public VThinker
 		P_PASS_SELF;
 		EV_RET_INT_IDX(FIndex_GetSigilPieces);
 	}
+	int eventGetArmorPoints()
+	{
+		P_PASS_SELF;
+		EV_RET_INT(NAME_GetArmorPoints);
+	}
+	int eventCheckNamedWeapon(VName Name)
+	{
+		P_PASS_SELF;
+		P_PASS_NAME(Name);
+		EV_RET_INT(NAME_CheckNamedWeapon);
+	}
+	int eventSetNamedWeapon(VName Name)
+	{
+		P_PASS_SELF;
+		P_PASS_NAME(Name);
+		EV_RET_INT(NAME_SetNamedWeapon);
+	}
+	int eventGetAmmoCapacity(VName Name)
+	{
+		P_PASS_SELF;
+		P_PASS_NAME(Name);
+		EV_RET_INT(NAME_GetAmmoCapacity);
+	}
+	void eventSetAmmoCapacity(VName Name, int Amount)
+	{
+		P_PASS_SELF;
+		P_PASS_NAME(Name);
+		P_PASS_INT(Amount);
+		EV_RET_VOID(NAME_SetAmmoCapacity);
+	}
 	bool eventMoveThing(TVec Pos, bool Fog)
 	{
 		P_PASS_SELF;
@@ -355,6 +412,20 @@ class VEntity : public VThinker
 		P_PASS_PTR(State);
 		P_PASS_FLOAT(StateTime);
 		EV_RET_FLOAT_IDX(FIndex_GetStateTime);
+	}
+	void eventSetActorProperty(int Prop, int IntVal, VStr StrVal)
+	{
+		P_PASS_SELF;
+		P_PASS_INT(Prop);
+		P_PASS_INT(IntVal);
+		P_PASS_STR(StrVal);
+		EV_RET_VOID(NAME_SetActorProperty);
+	}
+	int eventGetActorProperty(int Prop)
+	{
+		P_PASS_SELF;
+		P_PASS_INT(Prop);
+		EV_RET_INT(NAME_GetActorProperty);
 	}
 
 	bool SetState(VState*);

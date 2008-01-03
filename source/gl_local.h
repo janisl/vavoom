@@ -43,8 +43,6 @@
 
 // MACROS ------------------------------------------------------------------
 
-#define MAX_TRANSLATED_SPRITES		256
-
 #define BLOCK_WIDTH					128
 #define BLOCK_HEIGHT				128
 #define NUM_BLOCK_SURFS				32
@@ -141,10 +139,12 @@ public:
 	void DrawSkyPolygon(surface_t*, bool, VTexture*, float, VTexture*, float);
 	void EndSky();
 	void DrawMaskedPolygon(surface_t*, float, bool);
-	void DrawSpritePolygon(TVec*, VTexture*, float, bool, int, vuint32,
-		vuint32, const TVec&, float, const TVec&, const TVec&, const TVec&);
+	void DrawSpritePolygon(TVec*, VTexture*, float, bool, VTextureTranslation*,
+		vuint32, vuint32, const TVec&, float, const TVec&, const TVec&,
+		const TVec&);
 	void DrawAliasModel(const TVec&, const TAVec&, const TVec&, const TVec&,
-		mmdl_t*, int, VTexture*, vuint32, vuint32, float, bool, bool);
+		mmdl_t*, int, VTexture*, VTextureTranslation*, vuint32, vuint32,
+		float, bool, bool);
 
 	//	Particles
 	void StartParticles();
@@ -153,7 +153,7 @@ public:
 
 	//	Drawing
 	void DrawPic(float, float, float, float, float, float, float, float,
-		VTexture*, float);
+		VTexture*, VTextureTranslation*, float);
 	void DrawPicShadow(float, float, float, float, float, float, float,
 		float, VTexture*, float);
 	void FillRectWithFlat(float, float, float, float, float, float, float,
@@ -161,7 +161,8 @@ public:
 	void FillRect(float, float, float, float, vuint32);
 	void ShadeRect(int, int, int, int, float);
 	void DrawConsoleBackground(int);
-	void DrawSpriteLump(float, float, float, float, VTexture*, int, bool);
+	void DrawSpriteLump(float, float, float, float, VTexture*,
+		VTextureTranslation*, bool);
 
 	//	Automap
 	void StartAutomap();
@@ -171,11 +172,6 @@ public:
 protected:
 	GLint		maxTexSize;
 	bool		texturesGenerated;
-
-	GLuint		trspr_id[MAX_TRANSLATED_SPRITES];
-	bool		trspr_sent[MAX_TRANSLATED_SPRITES];
-	VTexture*	trspr_tex[MAX_TRANSLATED_SPRITES];
-	int			trspr_tnum[MAX_TRANSLATED_SPRITES];
 
 	GLuint		particle_texture;
 
@@ -242,15 +238,15 @@ protected:
 	void GenerateTextures();
 	void FlushTextures();
 	void DeleteTextures();
-	void SetSpriteLump(VTexture*, int);
-	void SetPic(VTexture*);
-	void GenerateTexture(VTexture*);
-	void GenerateTranslatedSprite(VTexture*, int, int);
+	void FlushTexture(VTexture*);
+	void SetSpriteLump(VTexture*, VTextureTranslation*);
+	void SetPic(VTexture*, VTextureTranslation*);
+	void GenerateTexture(VTexture*, GLuint*, VTextureTranslation*);
 	void AdjustGamma(rgba_t *, int);
 	void ResampleTexture(int, int, const byte*, int, int, byte*);
 	void MipMap(int, int, byte*);
-	void UploadTexture8(int, int, byte*, rgba_t*);
-	void UploadTexture(int, int, rgba_t*);
+	void UploadTexture8(int, int, const vuint8*, const rgba_t*);
+	void UploadTexture(int, int, const rgba_t*);
 
 	bool				mtexable;
 	MultiTexCoord2f_t	p_MultiTexCoord2f;

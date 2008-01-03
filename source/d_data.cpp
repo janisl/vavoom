@@ -73,6 +73,8 @@ vuint32			CurrentFade;
 
 static rgb_t	CurrentPal[256];
 
+static vuint32	prev_cshift;	// powerups and content types
+
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
@@ -396,7 +398,7 @@ void VSoftwareDrawer::InitData()
 void VSoftwareDrawer::UpdatePalette()
 {
 	guard(VSoftwareDrawer::UpdatePalette);
-	int		i, j;
+	int		i;
 	bool	newshifts;
 	int		r,g,b;
 	int		dstr, dstg, dstb, perc;
@@ -404,14 +406,11 @@ void VSoftwareDrawer::UpdatePalette()
 	newshifts = ForcePaletteUpdate;
 	ForcePaletteUpdate = false;
 
-	for (i = 0; i < NUM_CSHIFTS; i++)
+	vuint32 Val = cl ? cl->CShift : 0;
+	if (Val != prev_cshift)
 	{
-		vuint32 Val = cl ? cl->CShifts[i] : 0;
-		if (Val != GClGame->prev_cshifts[i])
-		{
-			newshifts = true;
-			GClGame->prev_cshifts[i] = Val;
-		}
+		newshifts = true;
+		prev_cshift = Val;
 	}
 
 	if (!newshifts)
@@ -429,17 +428,14 @@ void VSoftwareDrawer::UpdatePalette()
 		b = basepal->b;
 		basepal++;
 	
-		for (j = 0; j < NUM_CSHIFTS; j++)
-		{
-			vuint32 Val = cl ? cl->CShifts[j] : 0;
-			perc = (Val >> 24) & 0xff;
-			dstr = (Val >> 16) & 0xff;
-			dstg = (Val >> 8) & 0xff;
-			dstb = Val & 0xff;
-			r += (perc * (dstr - r)) >> 8;
-			g += (perc * (dstg - g)) >> 8;
-			b += (perc * (dstb - b)) >> 8;
-		}
+		Val = cl ? cl->CShift : 0;
+		perc = (Val >> 24) & 0xff;
+		dstr = (Val >> 16) & 0xff;
+		dstg = (Val >> 8) & 0xff;
+		dstb = Val & 0xff;
+		r += (perc * (dstr - r)) >> 8;
+		g += (perc * (dstg - g)) >> 8;
+		b += (perc * (dstb - b)) >> 8;
 		
 		newpal->r = r;
 		newpal->g = g;

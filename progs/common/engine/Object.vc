@@ -51,8 +51,6 @@ const int TICRATE				= 35;
 
 const int MAXPLAYERS			= 8;
 
-const int NUM_CSHIFTS			= 8;
-
 // Difficulty/skill settings/filters.
 enum
 {
@@ -500,6 +498,7 @@ enum
 	LNSPEC_ACSTerminate,
 	LNSPEC_ACSLockedExecute,
 	LNSPEC_ACSExecuteWithResult,
+	LNSPEC_ACSLockedExecuteDoor,
 
 	LNSPEC_PolyRotateLeftOverride = 90,// 90
 	LNSPEC_PolyRotateRightOverride,
@@ -524,7 +523,8 @@ enum
 	LNSPEC_LightStrobe,
 	LNSPEC_LightStop,
 
-	LNSPEC_QuakeTremor = 120,// 120
+	LNSPEC_ThingDamage = 119,
+	LNSPEC_QuakeTremor,// 120
 	LNSPEC_LineSetIdentification,
 
 	LNSPEC_UsePuzzleItem = 129,
@@ -537,8 +537,8 @@ enum
 	LNSPEC_ThingProjectileGravity,
 	LNSPEC_ThingSpawnNoFog,
 	LNSPEC_FloorWaggle,
-
-	LNSPEC_SectorSoundChange = 140,// 140
+	LNSPEC_ThingSpawnFacing,
+	LNSPEC_SectorSoundChange,// 140
 
 	LNSPEC_3DFloor = 160,// 160
 	LNSPEC_Contents,
@@ -548,7 +548,10 @@ enum
 	LNSPEC_PlaneUpNearestWaitDownStay,
 	LNSPEC_NoiseAlert,
 
-	LNSPEC_PlaneAlign = 181,
+	LNSPEC_ThingHate = 177,
+
+	LNSPEC_ThingSetTranslation = 180,// 180
+	LNSPEC_PlaneAlign,
 
 	LNSPEC_LineAlignCeiling = 183,
 	LNSPEC_LineAlignFloor,
@@ -1008,8 +1011,6 @@ struct intercept_t
 	line_t *line;
 };
 
-const int MAXSPECIALCROSS	= 32;
-
 struct tmtrace_t
 {
 	Entity Thing;
@@ -1033,8 +1034,7 @@ struct tmtrace_t
 
 	// keep track of special lines as they are hit,
 	// but don't process them until the move is proven valid
-	line_t *SpecHit[MAXSPECIALCROSS];
-	int NumSpecHit;
+	array<line_t*> SpecHit;
 
 	Entity BlockingMobj;
 };
@@ -1568,6 +1568,7 @@ native static final LockDef* GetLockDef(int Lock);
 native static final state GetStatePlus(state S, int Offset,
 	optional bool IgnoreJump);
 native static final state FindClassState(class C, name StateName);
+native static final int ParseColour(string Name);
 native static final string TextColourString(int Colour);
 native static final bool StartTitleMap();
 
@@ -1593,16 +1594,17 @@ native static final void R_DrawPic(int x, int y, int handle);
 //  Installs a sprite model
 native static final void R_InstallSprite(string Name, int index);
 //  Draws a sprite
-native static final void R_DrawSpritePatch(int x, int y, int sprite, int frame, int rot,
-	int translation);
+native static final void R_DrawSpritePatch(int x, int y, int sprite,
+	int frame, int rot, int TranslStart, int TranslEnd, int Colour);
 //  Installs model
 native static final void* InstallModel(string Name);
 //  Returns name and description of a skin
 native static final bool GetModelSkinInfo(void* Model, int Index,
 	out name SkinName, out string SkinDesc);
 //  Draws a model
-native static final void R_DrawModelFrame(TVec origin, float angle, void* model,
-	int frame, string skin);
+native static final void R_DrawModelFrame(TVec origin, float angle,
+	void* model, int frame, string skin, int TranslStart, int TranslEnd,
+	int Colour);
 //  Draws a coloured rectangle
 native static final void R_FillRect(int x, int y, int w, int h, int colour);
 

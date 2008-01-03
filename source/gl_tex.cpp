@@ -89,12 +89,9 @@ void VOpenGLDrawer::GenerateTextures()
 	int			i, j;
 	rgba_t		pbuf[8][8];
 
-	glGenTextures(MAX_TRANSLATED_SPRITES, trspr_id);
 	glGenTextures(NUM_BLOCK_SURFS, lmap_id);
 	glGenTextures(NUM_BLOCK_SURFS, addmap_id);
 	glGenTextures(1, &particle_texture);
-
-	memset(trspr_sent, 0, MAX_TRANSLATED_SPRITES);
 
 	for (j = 0; j < 8; j++)
 	{
@@ -124,13 +121,8 @@ void VOpenGLDrawer::FlushTextures()
 	guard(VOpenGLDrawer::FlushTextures);
 	for (int i = 0; i < GTextureManager.Textures.Num(); i++)
 	{
-		if (GTextureManager.Textures[i]->DriverHandle)
-		{
-			glDeleteTextures(1, (GLuint*)&GTextureManager.Textures[i]->DriverHandle);
-			GTextureManager.Textures[i]->DriverHandle = 0;
-		}
+		FlushTexture(GTextureManager[i]);
 	}
-	memset(trspr_sent, 0, MAX_TRANSLATED_SPRITES);
 	unguard;
 }
 
@@ -145,20 +137,34 @@ void VOpenGLDrawer::DeleteTextures()
 	guard(VOpenGLDrawer::DeleteTextures);
 	if (texturesGenerated)
 	{
-		for (int i = 0; i < GTextureManager.Textures.Num(); i++)
-		{
-			if (GTextureManager.Textures[i]->DriverHandle)
-			{
-				glDeleteTextures(1, (GLuint*)&GTextureManager.Textures[i]->DriverHandle);
-				GTextureManager.Textures[i]->DriverHandle = 0;
-			}
-		}
-		glDeleteTextures(MAX_TRANSLATED_SPRITES, trspr_id);
+		FlushTextures();
 		glDeleteTextures(NUM_BLOCK_SURFS, lmap_id);
 		glDeleteTextures(NUM_BLOCK_SURFS, addmap_id);
 		glDeleteTextures(1, &particle_texture);
 		texturesGenerated = false;
 	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VOpenGLDrawer::FlushTexture
+//
+//==========================================================================
+
+void VOpenGLDrawer::FlushTexture(VTexture* Tex)
+{
+	guard(VOpenGLDrawer::FlushTexture);
+	if (Tex->DriverHandle)
+	{
+		glDeleteTextures(1, (GLuint*)&Tex->DriverHandle);
+		Tex->DriverHandle = 0;
+	}
+	for (int j = 0; j < Tex->DriverTranslated.Num(); j++)
+	{
+		glDeleteTextures(1, (GLuint*)&Tex->DriverTranslated[j].Handle);
+	}
+	Tex->DriverTranslated.Clear();
 	unguard;
 }
 
@@ -187,7 +193,7 @@ void VOpenGLDrawer::SetTexture(VTexture* Tex)
 	guard(VOpenGLDrawer::SetTexture);
 	if (!Tex->DriverHandle || Tex->CheckModified())
 	{
-		GenerateTexture(Tex);
+		GenerateTexture(Tex, &Tex->DriverHandle, NULL);
 	}
 	else
 	{
@@ -206,64 +212,44 @@ void VOpenGLDrawer::SetTexture(VTexture* Tex)
 //
 //==========================================================================
 
-void VOpenGLDrawer::SetSpriteLump(VTexture* Tex, int translation)
+void VOpenGLDrawer::SetSpriteLump(VTexture* Tex, VTextureTranslation* Translation)
 {
 	guard(VOpenGLDrawer::SetSpriteLump);
-	if (translation)
+	if (Tex->CheckModified())
 	{
-		int i;
-		int avail = -1;
-		for (i = 0; i <	MAX_TRANSLATED_SPRITES; i++)
+		FlushTexture(Tex);
+	}
+	if (Translation)
+	{
+		VTexture::VTransData* TData = Tex->FindDriverTrans(Translation);
+		if (TData)
 		{
-			if (trspr_sent[i])
-			{
-				if (trspr_tex[i] == Tex && trspr_tnum[i] == translation)
-				{
-					if (Tex->CheckModified())
-					{
-						avail = i;
-						break;
-					}
-					glBindTexture(GL_TEXTURE_2D, trspr_id[i]);
-					glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, maxfilter);
-					glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mipfilter);
-					tex_iw = 1.0 / Tex->GetWidth();
-					tex_ih = 1.0 / Tex->GetHeight();
-					return;
-				}
-			}
-			else
-			{
-				if (avail < 0)
-					avail = i;
-			}
+			glBindTexture(GL_TEXTURE_2D, TData->Handle);
 		}
-		if (avail < 0)
+		else
 		{
-			avail = 0;
+			TData = &Tex->DriverTranslated.Alloc();
+			TData->Handle = 0;
+			TData->Trans = Translation;
+			GenerateTexture(Tex, (GLuint*)&TData->Handle, Translation);
 		}
-		glBindTexture(GL_TEXTURE_2D, trspr_id[avail]);
-		GenerateTranslatedSprite(Tex, avail, translation);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, maxfilter);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mipfilter);
-		tex_iw = 1.0 / Tex->GetWidth();
-		tex_ih = 1.0 / Tex->GetHeight();
 	}
 	else
 	{
-		if (!Tex->DriverHandle || Tex->CheckModified())
+		if (!Tex->DriverHandle)
 		{
-			GenerateTexture(Tex);
+			GenerateTexture(Tex, &Tex->DriverHandle, NULL);
 		}
 		else
 		{
 			glBindTexture(GL_TEXTURE_2D, Tex->DriverHandle);
 		}
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, maxfilter);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mipfilter);
-		tex_iw = 1.0 / Tex->GetWidth();
-		tex_ih = 1.0 / Tex->GetHeight();
 	}
+
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, maxfilter);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mipfilter);
+	tex_iw = 1.0 / Tex->GetWidth();
+	tex_ih = 1.0 / Tex->GetHeight();
 	unguard;
 }
 
@@ -273,23 +259,10 @@ void VOpenGLDrawer::SetSpriteLump(VTexture* Tex, int translation)
 //
 //==========================================================================
 
-void VOpenGLDrawer::SetPic(VTexture* Tex)
+void VOpenGLDrawer::SetPic(VTexture* Tex, VTextureTranslation* Trans)
 {
 	guard(VOpenGLDrawer::SetPic);
-	if (!Tex->DriverHandle || Tex->CheckModified())
-	{
-		GenerateTexture(Tex);
-	}
-	else
-	{
-		glBindTexture(GL_TEXTURE_2D, Tex->DriverHandle);
-	}
-
-	tex_iw = 1.0 / Tex->GetWidth();
-	tex_ih = 1.0 / Tex->GetHeight();
-
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, maxfilter);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mipfilter);
+	SetSpriteLump(Tex, Trans);
 	unguard;
 }
 
@@ -299,14 +272,15 @@ void VOpenGLDrawer::SetPic(VTexture* Tex)
 //
 //==========================================================================
 
-void VOpenGLDrawer::GenerateTexture(VTexture* Tex)
+void VOpenGLDrawer::GenerateTexture(VTexture* Tex, GLuint* pHandle,
+	VTextureTranslation* Translation)
 {
 	guard(VOpenGLDrawer::GenerateTexture);
-	if (!Tex->DriverHandle)
+	if (!*pHandle)
 	{
-		glGenTextures(1, (GLuint*)&Tex->DriverHandle);
+		glGenTextures(1, pHandle);
 	}
-	glBindTexture(GL_TEXTURE_2D, Tex->DriverHandle);
+	glBindTexture(GL_TEXTURE_2D, *pHandle);
 
 	//	Try to load high resolution version.
 	VTexture* SrcTex = Tex->GetHighResolutionTexture();
@@ -316,15 +290,24 @@ void VOpenGLDrawer::GenerateTexture(VTexture* Tex)
 	}
 
 	//	Upload data.
-	vuint8* block = SrcTex->GetPixels();
-	if (SrcTex->Format == TEXFMT_8 || SrcTex->Format == TEXFMT_8Pal)
+	if (Translation)
 	{
-		UploadTexture8(SrcTex->GetWidth(), SrcTex->GetHeight(), block,
-			SrcTex->GetPalette());
+		UploadTexture8(SrcTex->GetWidth(), SrcTex->GetHeight(),
+			SrcTex->GetPixels8(), Translation->GetPalette());
 	}
 	else
 	{
-		UploadTexture(SrcTex->GetWidth(), SrcTex->GetHeight(), (rgba_t*)block);
+		vuint8* block = SrcTex->GetPixels();
+		if (SrcTex->Format == TEXFMT_8 || SrcTex->Format == TEXFMT_8Pal)
+		{
+			UploadTexture8(SrcTex->GetWidth(), SrcTex->GetHeight(), block,
+				SrcTex->GetPalette());
+		}
+		else
+		{
+			UploadTexture(SrcTex->GetWidth(), SrcTex->GetHeight(),
+				(rgba_t*)block);
+		}
 	}
 
 	//	Set up texture wrapping.
@@ -344,42 +327,6 @@ void VOpenGLDrawer::GenerateTexture(VTexture* Tex)
 	{
 		glTexParameterf(GL_TEXTURE_2D, GLenum(GL_TEXTURE_MAX_ANISOTROPY_EXT), max_anisotropy);
 	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	VOpenGLDrawer::GenerateTranslatedSprite
-//
-//==========================================================================
-
-void VOpenGLDrawer::GenerateTranslatedSprite(VTexture* Tex, int slot, int translation)
-{
-	guard(VOpenGLDrawer::GenerateTranslatedSprite);
-	trspr_tex[slot] = Tex;
-	trspr_tnum[slot] = translation;
-	trspr_sent[slot] = true;
-
-	// Generate The Texture
-	vuint8* Pixels = Tex->GetPixels8();
-	vuint8* block = (vuint8*)Z_Malloc(Tex->GetWidth() * Tex->GetHeight());
-	vuint8* trtab = translationtables + translation * 256;
-	for (int i = 0; i < Tex->GetWidth() * Tex->GetHeight(); i++)
-	{
-		block[i] = trtab[Pixels[i]];
-	}
-
-	UploadTexture8(Tex->GetWidth(), Tex->GetHeight(), block,
-		Tex->GetPalette());
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, ClampToEdge);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, ClampToEdge);
-	//	Set up texture anisotropic filtering.
-	if (max_anisotropy > 1.0)
-	{
-		glTexParameterf(GL_TEXTURE_2D, GLenum(GL_TEXTURE_MAX_ANISOTROPY_EXT), max_anisotropy);
-	}
-
-	Z_Free(block);
 	unguard;
 }
 
@@ -579,8 +526,8 @@ void VOpenGLDrawer::MipMap(int width, int height, vuint8* InIn)
 //
 //==========================================================================
 
-void VOpenGLDrawer::UploadTexture8(int Width, int Height, vuint8* Data,
-	rgba_t* Pal)
+void VOpenGLDrawer::UploadTexture8(int Width, int Height, const vuint8* Data,
+	const rgba_t* Pal)
 {
 	rgba_t* NewData = (rgba_t*)Z_Calloc(Width * Height * 4);
 	for (int i = 0; i < Width * Height; i++)
@@ -598,7 +545,7 @@ void VOpenGLDrawer::UploadTexture8(int Width, int Height, vuint8* Data,
 //
 //==========================================================================
 
-void VOpenGLDrawer::UploadTexture(int width, int height, rgba_t *data)
+void VOpenGLDrawer::UploadTexture(int width, int height, const rgba_t* data)
 {
 	guard(VOpenGLDrawer::UploadTexture);
 	int		w, h;

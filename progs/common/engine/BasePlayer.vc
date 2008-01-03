@@ -58,6 +58,8 @@ string					UserInfo;
 string					PlayerName;
 byte					BaseClass;
 byte					PClass;	// player class type
+byte					TranslStart;
+byte					TranslEnd;
 int						Colour;
 
 // Copied from cmd, needed for PROGS, which supports only 4 byte ints
@@ -100,7 +102,7 @@ byte					ExtraLight;
 byte					FixedColourmap;
 
 //  Colour shifts for damage, powerups and content types
-int						CShifts[NUM_CSHIFTS];
+int						CShift;
 
 // Overlay view sprites (gun, etc).
 VViewState				ViewStates[NUMPSPRITES];
@@ -120,7 +122,7 @@ PlayerReplicationInfo	PlayerReplicationInfo;
 replication
 {
 	reliable if (!bIsClient)
-		Health, Frags, Deaths, ExtraLight, FixedColourmap, CShifts,
+		Health, Frags, Deaths, ExtraLight, FixedColourmap, CShift,
 		PSpriteSY, KillCount, ItemCount, SecretCount, ViewStates, ViewEnt,
 		ViewEntAlpha, ClientNum, WorldTimer, MO, Camera, bAutomapRevealed,
 		bAutomapShowThings;

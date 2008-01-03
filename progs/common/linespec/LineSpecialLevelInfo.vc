@@ -56,6 +56,12 @@ enum
 	pt_spark
 };
 
+//	Flags for SectorDamage
+const int DAMAGE_PLAYERS			= 1;
+const int DAMAGE_NONPLAYERS			= 2;
+const int DAMAGE_IN_AIR				= 4;
+const int DAMAGE_SUBCLASSES_PROTECT	= 8;
+
 name			DefaultDoorSound;
 name			DefaultCeilingSound;
 name			DefaultSilentCeilingSound;
@@ -312,11 +318,11 @@ final bool ActivateLine(line_t* Line, EntityEx A, int Side,
 //
 //==========================================================================
 
-bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
+int ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 	int Arg4, int Arg5, line_t* Line, int Side, Entity E)
 {
 	EntityEx A = EntityEx(E);
-	bool buttonSuccess = false;
+	int buttonSuccess = false;
 	switch (Special)
 	{
 	case LNSPEC_PolyStartLine:
@@ -610,6 +616,13 @@ bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 		buttonSuccess = XLevel.StartACS(Arg1, 0, Arg2, Arg3, Arg4, A, Line,
 			Side, true, true);
 		break;
+	case LNSPEC_ACSLockedExecuteDoor:
+		if (CheckLock(A, Arg5, true))
+		{
+			buttonSuccess = XLevel.StartACS(Arg1, Arg2, Arg3, Arg4, 0, A,
+				Line, Side, false, false);
+		}
+		break;
 	case LNSPEC_PolyRotateLeftOverride:
 		buttonSuccess = EV_RotatePoly(Line, Arg1, Arg2, Arg3, Arg4, Arg5, 1,
 			true);
@@ -669,6 +682,9 @@ bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 	case LNSPEC_LightStop:
 		buttonSuccess = EV_LightStop(Arg1);
 		break;
+	case LNSPEC_ThingDamage:
+		buttonSuccess = EV_ThingDamage(Arg1, Arg2, Arg3, Arg4, Arg5, A);
+		break;
 	case LNSPEC_QuakeTremor:
 		buttonSuccess = A_LocalQuake(Arg1, Arg2, Arg3, Arg4, Arg5);
 		break;
@@ -689,19 +705,27 @@ bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 		buttonSuccess = EV_ThingDestroy(Arg1);
 		break;
 	case LNSPEC_ThingProjectile:
-		buttonSuccess = EV_ThingProjectile(Arg1, Arg2, Arg3, Arg4, Arg5, 0, 0);
+		buttonSuccess = EV_ThingProjectile(Arg1, Arg2, Arg3, Arg4, Arg5, 0,
+			0, '', A);
 		break;
 	case LNSPEC_ThingSpawn:
-		buttonSuccess = EV_ThingSpawn(Arg1, Arg2, Arg3, Arg4, Arg5, 1);
+		buttonSuccess = EV_ThingSpawn(Arg1, Arg2, Arg3, Arg4, Arg5, true,
+			false, A);
 		break;
 	case LNSPEC_ThingProjectileGravity:
-		buttonSuccess = EV_ThingProjectile(Arg1, Arg2, Arg3, Arg4, Arg5, 1, 0);
+		buttonSuccess = EV_ThingProjectile(Arg1, Arg2, Arg3, Arg4, Arg5, 1,
+			0, '', A);
 		break;
 	case LNSPEC_ThingSpawnNoFog:
-		buttonSuccess = EV_ThingSpawn(Arg1, Arg2, Arg3, Arg4, Arg5, 0);
+		buttonSuccess = EV_ThingSpawn(Arg1, Arg2, Arg3, Arg4, Arg5, false,
+			false, A);
 		break;
 	case LNSPEC_FloorWaggle:
 		buttonSuccess = EV_StartFloorWaggle(Arg1, Arg2, Arg3, Arg4, Arg5);
+		break;
+	case LNSPEC_ThingSpawnFacing:
+		buttonSuccess = EV_ThingSpawn(Arg1, Arg2, 0, Arg4, Arg5, !Arg3,
+			true, A);
 		break;
 	case LNSPEC_SectorSoundChange:
 		buttonSuccess = EV_SectorSoundChange(Arg1, Arg2, Arg3, Arg4, Arg5);
@@ -720,6 +744,13 @@ bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 		break;
 	case LNSPEC_NoiseAlert:
 		buttonSuccess = EV_NoiseAlert(A, Arg1, Arg2, Arg3, Arg4, Arg5);
+		break;
+	case LNSPEC_ThingHate:
+		buttonSuccess = EV_ThingHate(Arg1, Arg2, Arg3, Arg4, Arg5, A);
+		break;
+	case LNSPEC_ThingSetTranslation:
+		buttonSuccess = EV_ThingSetTranslation(Arg1, Arg2, Arg3, Arg4, Arg5,
+			A);
 		break;
 	case LNSPEC_LineAlignCeiling:
 		buttonSuccess = EV_LineAlignCeiling(Arg1, Arg2, Arg3, Arg4, Arg5);
@@ -3316,7 +3347,7 @@ final bool EV_LineAlignCeiling(int Arg1, int Arg2, int Arg3, int Arg4,
 //==========================================================================
 
 final bool EV_ThingProjectile(int Arg1, int Arg2, int Arg3, int Arg4,
-	int Arg5, bool gravity, int newtid)
+	int Arg5, bool gravity, int newtid, name TypeName, Entity Activator)
 {
 	int			tid;
 	float		angle;
@@ -3331,8 +3362,15 @@ final bool EV_ThingProjectile(int Arg1, int Arg2, int Arg3, int Arg4,
 	success = false;
 	searcher = -1;
 	tid = Arg1;
-	moType = class<EntityEx>(FindClassFromScriptId(Arg2,
-		LineSpecialGameInfo(Game).GameFilterFlag));
+	if (TypeName)
+	{
+		moType = class<EntityEx>(FindClass(TypeName));
+	}
+	else
+	{
+		moType = class<EntityEx>(FindClassFromScriptId(Arg2,
+			LineSpecialGameInfo(Game).GameFilterFlag));
+	}
 	if (!moType)
 	{
 		return false;
@@ -3344,7 +3382,7 @@ final bool EV_ThingProjectile(int Arg1, int Arg2, int Arg3, int Arg4,
 	angle = itof(Arg3) * (360.0 / 256.0);
 	speed = itof(Arg4) / 8.0;
 	vspeed = itof(Arg5) / 8.0;
-	for (A = FindMobjFromTID(tid, &searcher); A;
+	for (A = tid ? FindMobjFromTID(tid, &searcher) : Activator; A;
 		A = FindMobjFromTID(tid, &searcher))
 	{
 		newA = Spawn(moType, A.Origin);
@@ -3369,6 +3407,10 @@ final bool EV_ThingProjectile(int Arg1, int Arg2, int Arg3, int Arg4,
 		{
 			success = true;
 		}
+		if (!tid)
+		{
+			break;
+		}
 	}
 	return success;
 }
@@ -3380,7 +3422,7 @@ final bool EV_ThingProjectile(int Arg1, int Arg2, int Arg3, int Arg4,
 //==========================================================================
 
 final bool EV_ThingSpawn(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
-	bool fog)
+	bool fog, bool Facing, Entity Activator)
 {
 	int				tid;
 	float			angle;
@@ -3405,7 +3447,7 @@ final bool EV_ThingSpawn(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 		return false;
 	}
 	angle = itof(Arg3) * 360.0 / 256.0;
-	for (A = FindMobjFromTID(tid, &searcher); A;
+	for (A = tid ? FindMobjFromTID(tid, &searcher) : Activator; A;
 		A = FindMobjFromTID(tid, &searcher))
 	{
 		newAct = Spawn(moType, A.Origin);
@@ -3421,7 +3463,7 @@ final bool EV_ThingSpawn(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 		}
 		else
 		{
-			newAct.Angles.yaw = angle;
+			newAct.Angles.yaw = Facing ? A.Angles.yaw : angle;
 			if (Arg4)
 				newAct.InsertIntoTIDList(Arg4);
 			if (fog == true)
@@ -3438,8 +3480,91 @@ final bool EV_ThingSpawn(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 			}
 			success = true;
 		}
+		if (!tid)
+		{
+			break;
+		}
 	}
 	return success;
+}
+
+//==========================================================================
+//
+//  AcsSpawnThing
+//
+//==========================================================================
+
+final int AcsSpawnThing(name Name, TVec Org, int Tid, float Angle)
+{
+	class EClass = FindClass(Name);
+	if (!EClass)
+	{
+		print("No such class %n", Name);
+		return false;
+	}
+	class<EntityEx> EntClass = class<EntityEx>(EClass);
+	if (!EntClass)
+	{
+		print("%n is not an actor class", Name);
+		return false;
+	}
+
+	EntityEx NewAct = Spawn(EntClass, Org);
+	bool PrevPassMobj = NewAct.bNoPassMobj;
+	NewAct.bNoPassMobj = false;
+	if (NewAct.TestLocation() == false)
+	{
+		// Didn't fit
+		NewAct.Destroy();
+		return false;
+	}
+	NewAct.bNoPassMobj = PrevPassMobj;
+
+	NewAct.Angles.yaw = Angle;
+	if (Tid)
+	{
+		NewAct.InsertIntoTIDList(Tid);
+	}
+	NewAct.bDropped = true;	// Don't respawn
+	return true;
+}
+
+//==========================================================================
+//
+//  AcsSpawnSpot
+//
+//==========================================================================
+
+final int AcsSpawnSpot(name Name, int SpotTid, int Tid, float Angle)
+{
+	int NumSpawned = 0;
+	int Searcher = -1;
+	Entity A;
+	for (A = FindMobjFromTID(SpotTid, &Searcher); A;
+		A = FindMobjFromTID(SpotTid, &Searcher))
+	{
+		NumSpawned += AcsSpawnThing(Name, A.Origin, Tid, Angle);
+	}
+	return NumSpawned;
+}
+
+//==========================================================================
+//
+//  AcsSpawnSpotFacing
+//
+//==========================================================================
+
+final int AcsSpawnSpotFacing(name Name, int SpotTid, int Tid)
+{
+	int NumSpawned = 0;
+	int Searcher = -1;
+	Entity A;
+	for (A = FindMobjFromTID(SpotTid, &Searcher); A;
+		A = FindMobjFromTID(SpotTid, &Searcher))
+	{
+		NumSpawned += AcsSpawnThing(Name, A.Origin, Tid, A.Angles.yaw);
+	}
+	return NumSpawned;
 }
 
 //==========================================================================
@@ -3584,6 +3709,64 @@ final bool EV_HealThing(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 	return !!A;
 }
 
+//==========================================================================
+//
+//	EV_ThingDamage
+//
+//==========================================================================
+
+final int EV_ThingDamage(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
+	Entity Activator)
+{
+	return DoThingDamage(Arg1, Arg2, ModToDamageType(Arg3), Activator);
+}
+
+//==========================================================================
+//
+//	DoThingDamage
+//
+//==========================================================================
+
+final int DoThingDamage(int Tid, int Amount, name DmgType, Entity Activator)
+{
+	Entity	A;
+	int		Searcher;
+	int		NumDamaged;
+
+	NumDamaged = 0;
+	Searcher = -1;
+	for (A = Tid ? FindMobjFromTID(Tid, &Searcher) : Activator; A;
+		A = FindMobjFromTID(Tid, &Searcher))
+	{
+		if (EntityEx(A).bShootable)
+		{
+			if (Amount > 0)
+			{
+				EntityEx(A).Damage(none, EntityEx(Activator), Amount, DmgType);
+			}
+			else if (A.Health < A.default.Health)
+			{
+				//	Negative amount heals thing.
+				A.Health -= Amount;
+				if (A.Health > A.default.Health)
+				{
+					A.Health = A.default.Health;
+				}
+				if (A.bIsPlayer)
+				{
+					A.Player.Health = A.Health;
+				}
+			}
+			NumDamaged++;
+		}
+		if (!Tid)
+		{
+			break;
+		}
+	}
+	return NumDamaged;
+}
+
 //===========================================================================
 //
 //	EV_ThingSetGoal
@@ -3595,8 +3778,8 @@ final bool EV_ThingSetGoal(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
 	Entity Ent;
 	EntityEx NewGoal = none;
 	int Searcher = -1;
-	for (Ent = Level.FindMobjFromTID(Arg2, &Searcher); Ent;
-		Ent = Level.FindMobjFromTID(Arg2, &Searcher))
+	for (Ent = FindMobjFromTID(Arg2, &Searcher); Ent;
+		Ent = FindMobjFromTID(Arg2, &Searcher))
 	{
 		if (!PatrolPoint(Ent))
 		{
@@ -3608,8 +3791,8 @@ final bool EV_ThingSetGoal(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
 
 	bool Ret = false;
 	Searcher = -1;
-	for (Ent = Level.FindMobjFromTID(Arg1, &Searcher); Ent;
-		Ent = Level.FindMobjFromTID(Arg1, &Searcher))
+	for (Ent = FindMobjFromTID(Arg1, &Searcher); Ent;
+		Ent = FindMobjFromTID(Arg1, &Searcher))
 	{
 		EntityEx E = EntityEx(Ent);
 		Ret = true;
@@ -3676,6 +3859,203 @@ final bool EV_ChangeCamera(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 		{
 			A.Player.Camera = A;
 			PlayerEx(A.Player).bRevertCamera = false;
+		}
+	}
+	return true;
+}
+
+//===========================================================================
+//
+//	EV_ThingSetTranslation
+//
+//===========================================================================
+
+final bool EV_ThingSetTranslation(int Arg1, int Arg2, int Arg3, int Arg4,
+	int Arg5, EntityEx A)
+{
+	int Trans;
+	if (Arg2 == -1 && A)
+	{
+		Trans = A.Translation;
+	}
+	else if (Arg2 >= 1 && Arg2 < Level::MAX_LEVEL_TRANSLATIONS)
+	{
+		Trans = (Entity::TRANSL_Level << Entity::TRANSL_TYPE_SHIFT) +
+			Arg2 - 1;
+	}
+	else
+	{
+		Trans = 0;
+	}
+
+	Entity Ent;
+	int Searcher = -1;
+	bool Ret = false;
+	for (Ent = FindMobjFromTID(Arg1, &Searcher); Ent;
+		Ent = FindMobjFromTID(Arg1, &Searcher))
+	{
+		Ret = true;
+		Ent.Translation = Trans ? Trans : Ent.default.Translation;
+	}
+	return Ret;
+}
+
+//===========================================================================
+//
+//	EV_ThingHate
+//
+//===========================================================================
+
+final bool EV_ThingHate(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
+	EntityEx A)
+{
+	EntityEx Hatee = none;
+	bool NothingToHate = false;
+	int HateeSearcher = -1;
+	if (Arg2)
+	{
+		for (Hatee = EntityEx(FindMobjFromTID(Arg2, &HateeSearcher)); Hatee;
+			Hatee = EntityEx(FindMobjFromTID(Arg2, &HateeSearcher)))
+		{
+			if (Hatee.bShootable &&	// can't hate nonshootable things
+				Hatee.Health > 0 &&	// can't hate dead things
+				!Hatee.bDormant)	// can't target dormant things
+			{
+				break;
+			}
+		}
+		if (!Hatee)
+		{
+			// Nothing to hate
+			NothingToHate = true;
+		}
+	}
+
+	EntityEx Hater;
+	int HaterSearcher = -1;
+	if (Arg1 == 0)
+	{
+		if (A && A.bIsPlayer)
+		{
+			// Players cannot have their attitudes set
+			return false;
+		}
+		else
+		{
+			Hater = A;
+		}
+	}
+	else
+	{
+		for (Hater = EntityEx(FindMobjFromTID(Arg1, &HaterSearcher)); Hater;
+			Hater = EntityEx(FindMobjFromTID(Arg1, &HaterSearcher)))
+		{
+			if (Hater.Health > 0 && Hater.bShootable)
+			{
+				break;
+			}
+		}
+	}
+
+	while (Hater)
+	{
+		// Can't hate if can't attack.
+		if (Hater.SeeState)
+		{
+			// If hating a group of things, record the TID and NULL
+			// the target (if its TID doesn't match). A_Look will
+			// find an appropriate thing to go chase after.
+			if (Arg3)
+			{
+				Hater.TIDToHate = Arg2;
+				Hater.LastLookActor = -1;
+
+				// If the TID to hate is 0, then don't forget the target and
+				// lastenemy fields.
+				if (Arg2)
+				{
+					if (Hater.Target && Hater.Target.TID != Arg2)
+					{
+						Hater.Target = none;
+					}
+					if (Hater.LastEnemy && Hater.LastEnemy.TID != Arg2)
+					{
+						Hater.LastEnemy = none;
+					}
+				}
+			}
+			// Hate types for Arg3:
+			//
+			// 0 - Just hate one specific actor
+			// 1 - Hate actors with given TID and attack players when shot
+			// 2 - Same as 1, but will go after enemies without seeing them first
+			// 3 - Hunt actors with given TID and also players
+			// 4 - Same as 3, but will go after monsters without seeing them first
+			// 5 - Hate actors with given TID and ignore player attacks
+			// 6 - Same as 5, but will go after enemies without seeing them first
+
+			// Note here: If you use Thing_Hate (tid, 0, 2), you can make
+			// a monster go after a player without seeing him first.
+			Hater.bNoSightCheck = Arg3 == 2 || Arg3 == 4 || Arg3 == 6;
+			Hater.bHuntPlayers = Arg3 == 3 || Arg3 == 4;
+			Hater.bNoHatePlayers = Arg3 == 5 || Arg3 == 6;
+
+			if (Arg2 == 0)
+			{
+				Hatee = A;
+			}
+			else if (NothingToHate)
+			{
+				Hatee = none;
+			}
+			else if (Arg3)
+			{
+				do
+				{
+					Hatee = EntityEx(FindMobjFromTID(Arg2, &HateeSearcher));
+					if (!Hatee)
+					{
+						HateeSearcher = -1;
+					}
+				}
+				while (!Hatee ||
+					Hatee == Hater ||		// can't hate self
+					!Hatee.bShootable ||	// can't hate nonshootable things
+					Hatee.Health <= 0 ||	// can't hate dead things
+					Hatee.bDormant);
+			}
+
+			if (Hatee && Hatee != Hater && (Arg3 == 0 || (Hater.Goal && Hater.Target != Hater.Goal)))
+			{
+				if (Hater.Target)
+				{
+					Hater.LastEnemy = Hater.Target;
+				}
+print("%n hates %n", GetClassName(Hater.Class), GetClassName(Hatee.Class));
+				Hater.Target = Hatee;
+				if (!Hater.bDormant)
+				{
+					if (Hater.Health > 0)
+					{
+						Hater.SetState(Hater.SeeState);
+					}
+				}
+			}
+		}
+		if (Arg1)
+		{
+			for (Hater = EntityEx(FindMobjFromTID(Arg1, &HaterSearcher)); Hater;
+				Hater = EntityEx(FindMobjFromTID(Arg1, &HaterSearcher)))
+			{
+				if (Hater.Health > 0 && Hater.bShootable)
+				{
+					break;
+				}
+			}
+		}
+		else
+		{
+			Hater = none;
 		}
 	}
 	return true;
@@ -4722,20 +5102,31 @@ final bool PolyBusy(int polyobj)
 //
 //==========================================================================
 
-final int ThingCount(int type, int tid)
+final int ThingCount(int type, name TypeName, int tid)
 {
 	int					count;
 	int					searcher;
 	EntityEx			Ent;
 	class<EntityEx>		moType;
 
-	if (!(type + tid))
+	if (!(type + tid) && !TypeName)
 	{
 		// Nothing to count
 		return 0;
 	}
-	moType = class<EntityEx>(FindClassFromScriptId(type,
-		LineSpecialGameInfo(Game).GameFilterFlag));
+	if (TypeName)
+	{
+		moType = class<EntityEx>(FindClass(TypeName));
+		if (!moType)
+		{
+			return 0;
+		}
+	}
+	else
+	{
+		moType = class<EntityEx>(FindClassFromScriptId(type,
+			LineSpecialGameInfo(Game).GameFilterFlag));
+	}
 	count = 0;
 	searcher = -1;
 	if (tid)
@@ -4749,7 +5140,7 @@ final int ThingCount(int type, int tid)
 				//	Don't count things in somebody's inventory
 				continue;
 			}
-			if (type == 0)
+			if (!moType)
 			{
 				// Just count TIDs
 				count++;
@@ -4789,6 +5180,80 @@ final int ThingCount(int type, int tid)
 		}
 	}
 	return count;
+}
+
+//==========================================================================
+//
+//  SectorDamage
+//
+//==========================================================================
+
+final void SectorDamage(int Tag, int Amount, name DamageType,
+	name ProtectionType, int Flags)
+{
+	class<Inventory> ProtectClass = class<Inventory>(FindClass(ProtectionType));
+
+	int SecNum = -1;
+	for (SecNum = XLevel.FindSectorFromTag(Tag, -1); SecNum >= 0;
+		SecNum = XLevel.FindSectorFromTag(Tag, SecNum))
+	{
+		sector_t* Sec = &XLevel.Sectors[SecNum];
+		Entity Ent;
+		Entity Next;
+
+		for (Ent = Sec->ThingList; Ent; Ent = Next)
+		{
+			Next = Ent.SNext;
+
+			if (!EntityEx(Ent).bShootable)
+			{
+				continue;
+			}
+			if (!(Flags & DAMAGE_NONPLAYERS) && !Ent.bIsPlayer)
+			{
+				continue;
+			}
+			if (!(Flags & DAMAGE_PLAYERS) && Ent.bIsPlayer)
+			{
+				continue;
+			}
+
+			if (!(Flags & DAMAGE_IN_AIR) && Ent.Origin.z !=
+				GetPlanePointZ(&Sec->floor, Ent.Origin) && !Ent.WaterLevel)
+			{
+				continue;
+			}
+
+			if (ProtectClass)
+			{
+				if (!(Flags & DAMAGE_SUBCLASSES_PROTECT))
+				{
+					if (EntityEx(Ent).FindInventory(ProtectClass))
+					{
+						continue;
+					}
+				}
+				else
+				{
+					Inventory Item;
+
+					for (Item = EntityEx(Ent).Inventory; Item; Item = Item.Inventory)
+					{
+						if (Item.IsA(ProtectionType))
+						{
+							break;
+						}
+					}
+					if (Item)
+					{
+						continue;
+					}
+				}
+			}
+
+			EntityEx(Ent).Damage(none, none, Amount, DamageType);
+		}
+	}
 }
 
 //==========================================================================

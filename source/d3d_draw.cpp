@@ -56,13 +56,14 @@
 //==========================================================================
 
 void VDirect3DDrawer::DrawPic(float x1, float y1, float x2, float y2,
-	float s1, float t1, float s2, float t2, VTexture* Tex, float Alpha)
+	float s1, float t1, float s2, float t2, VTexture* Tex,
+	VTextureTranslation* Trans, float Alpha)
 {
 	guard(VDirect3DDrawer::DrawPic);
 	MyD3DVertex	dv[4];
 	int l = ((int)(Alpha * 255) << 24) | 0xffffff;
 
-	SetPic(Tex);
+	SetPic(Tex, Trans);
 
 	dv[0] = MyD3DVertex(x1, y1, l, s1 * tex_iw, t1 * tex_ih);
 	dv[1] = MyD3DVertex(x2, y1, l, s2 * tex_iw, t1 * tex_ih);
@@ -102,7 +103,7 @@ void VDirect3DDrawer::DrawPicShadow(float x1, float y1, float x2, float y2,
 	MyD3DVertex	dv[4];
 	int l = (int)(shade * 255) << 24;
 
-	SetPic(Tex);
+	SetPic(Tex, NULL);
 
 	dv[0] = MyD3DVertex(x1, y1, l, s1 * tex_iw, t1 * tex_ih);
 	dv[1] = MyD3DVertex(x2, y1, l, s2 * tex_iw, t1 * tex_ih);
@@ -258,10 +259,10 @@ void VDirect3DDrawer::DrawConsoleBackground(int h)
 //==========================================================================
 
 void VDirect3DDrawer::DrawSpriteLump(float x1, float y1, float x2, float y2,
-	VTexture* Tex, int translation, bool flip)
+	VTexture* Tex, VTextureTranslation* Translation, bool flip)
 {
 	guard(VDirect3DDrawer::DrawSpriteLump);
-	SetSpriteLump(Tex, translation);
+	SetSpriteLump(Tex, Translation);
 
 	float s1, s2;
 	if (flip)

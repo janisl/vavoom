@@ -400,8 +400,9 @@ void VRenderLevel::DrawTranslucentPoly(surface_t* surf, TVec* sv, int count,
 		else if (spr.type)
 		{
 			Drawer->DrawSpritePolygon(spr.Verts, GTextureManager[spr.lump],
-				spr.Alpha, spr.Additive, spr.translation, spr.light, spr.Fade,
-				spr.normal, spr.pdist, spr.saxis, spr.taxis, spr.texorg);
+				spr.Alpha, spr.Additive, GetTranslation(spr.translation),
+				spr.light, spr.Fade, spr.normal, spr.pdist, spr.saxis,
+				spr.taxis, spr.texorg);
 		}
 		else
 		{
@@ -429,8 +430,8 @@ void VRenderLevel::DrawTranslucentPoly(surface_t* surf, TVec* sv, int count,
 	if (type)
 	{
 		Drawer->DrawSpritePolygon(sv, GTextureManager[lump], Alpha,
-			Additive, translation, light, Fade, normal, pdist, saxis,
-			taxis, texorg);
+			Additive, GetTranslation(translation), light, Fade, normal,
+			pdist, saxis, taxis, texorg);
 	}
 	else
 	{
@@ -565,21 +566,26 @@ void VRenderLevel::RenderSprite(VEntity* thing, vuint32 light, vuint32 Fade,
 	spritedef_t*	sprdef;
 	spriteframe_t*	sprframe;
 
+	int SpriteIndex = thing->State->SpriteIndex;
+	if (thing->FixedSpriteName != NAME_None)
+	{
+		SpriteIndex = VClass::FindSprite(thing->FixedSpriteName);
+	}
+
 	// decide which patch to use for sprite relative to player
-	if ((unsigned)thing->State->SpriteIndex >= MAX_SPRITE_MODELS)
+	if ((unsigned)SpriteIndex >= MAX_SPRITE_MODELS)
 	{
 #ifdef PARANOID
-		GCon->Logf(NAME_Dev, "Invalid sprite number %d",
-			thing->State->SpriteIndex);
+		GCon->Logf(NAME_Dev, "Invalid sprite number %d", SpriteIndex);
 #endif
 		return;
 	}
-	sprdef = &sprites[thing->State->SpriteIndex];
+	sprdef = &sprites[SpriteIndex];
 	if ((thing->State->Frame & FF_FRAMEMASK) >= sprdef->numframes)
 	{
 #ifdef PARANOID
 		GCon->Logf(NAME_Dev, "Invalid sprite frame %d : %d",
-			thing->State->SpriteIndex, thing->State->Frame);
+			SpriteIndex, thing->State->Frame);
 #endif
 		return;
 	}
@@ -647,10 +653,10 @@ void VRenderLevel::RenderSprite(VEntity* thing, vuint32 light, vuint32 Fade,
 	else
 	{
 		Drawer->DrawSpritePolygon(sv, GTextureManager[lump], Alpha,
-			Additive, thing->Translation, light, Fade, -sprforward,
-			DotProduct(sprorigin, -sprforward), (flip ? -sprright :
-			sprright) / thing->ScaleX, -sprup / thing->ScaleY,
-			flip ? sv[2] : sv[1]);
+			Additive, GetTranslation(thing->Translation), light, Fade,
+			-sprforward, DotProduct(sprorigin, -sprforward),
+			(flip ? -sprright : sprright) / thing->ScaleX,
+			-sprup / thing->ScaleY, flip ? sv[2] : sv[1]);
 	}
 	unguard;
 }
@@ -703,8 +709,9 @@ void VRenderLevel::RenderTranslucentAliasModel(VEntity* mobj, vuint32 light,
 		else if (spr.type)
 		{
 			Drawer->DrawSpritePolygon(spr.Verts, GTextureManager[spr.lump],
-				spr.Alpha, spr.Additive, spr.translation, spr.light, spr.Fade,
-				spr.normal, spr.pdist, spr.saxis, spr.taxis, spr.texorg);
+				spr.Alpha, spr.Additive, GetTranslation(spr.translation),
+				spr.light, spr.Fade, spr.normal, spr.pdist, spr.saxis,
+				spr.taxis, spr.texorg);
 		}
 		else
 		{
@@ -915,9 +922,9 @@ void VRenderLevel::DrawTranslucentPolys()
 			else if (spr.type)
 			{
 				Drawer->DrawSpritePolygon(spr.Verts, GTextureManager[spr.lump],
-					spr.Alpha, spr.Additive, spr.translation, spr.light,
-					spr.Fade, spr.normal, spr.pdist, spr.saxis, spr.taxis,
-					spr.texorg);
+					spr.Alpha, spr.Additive, GetTranslation(spr.translation),
+					spr.light, spr.Fade, spr.normal, spr.pdist, spr.saxis,
+					spr.taxis, spr.texorg);
 			}
 			else
 			{
@@ -1051,7 +1058,7 @@ bool VRenderLevel::RenderViewModel(VViewState* VSt, vuint32 light,
 	}
 
 	return DrawAliasModel(origin, cl->ViewAngles, 1.0, 1.0, VSt->State,
-		NULL, 0, light, Fade, Alpha, Additive, true, TimeFrac);
+		NULL, NULL, 0, light, Fade, Alpha, Additive, true, TimeFrac);
 	unguard;
 }
 
@@ -1132,7 +1139,8 @@ void VRenderLevel::DrawCroshair()
 //
 //==========================================================================
 
-void R_DrawSpritePatch(int x, int y, int sprite, int frame, int rot, int translation)
+void R_DrawSpritePatch(int x, int y, int sprite, int frame, int rot,
+	int TranslStart, int TranslEnd, int Colour)
 {
 	guard(R_DrawSpritePatch);
 	bool			flip;
@@ -1155,6 +1163,7 @@ void R_DrawSpritePatch(int x, int y, int sprite, int frame, int rot, int transla
 	x2 *= fScaleX;
 	y2 *= fScaleY;
 
-	Drawer->DrawSpriteLump(x1, y1, x2, y2, Tex, translation, flip);
+	Drawer->DrawSpriteLump(x1, y1, x2, y2, Tex, R_GetCachedTranslation(
+		R_SetMenuPlayerTrans(TranslStart, TranslEnd, Colour), NULL), flip);
 	unguard;
 }

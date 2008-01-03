@@ -205,12 +205,21 @@ public:
 class VLevelChannel : public VChannel
 {
 public:
+	struct VBodyQueueTrInfo
+	{
+		vuint8		TranslStart;
+		vuint8		TranslEnd;
+		vint32		Colour;
+	};
+
 	VLevel*			Level;
 	rep_line_t*		Lines;
 	rep_side_t*		Sides;
 	rep_sector_t*	Sectors;
 	rep_polyobj_t*	PolyObjs;
-	TArray<VCameraTextureInfo>	CameraTextures;
+	TArray<VCameraTextureInfo>						CameraTextures;
+	TArray<TArray<VTextureTranslation::VTransCmd> >	Translations;
+	TArray<VBodyQueueTrInfo>						BodyQueueTrans;
 
 	VLevelChannel(VNetConnection*, vint32, vuint8 = true);
 	~VLevelChannel();

@@ -30,5 +30,5 @@ defaultproperties
 {
 	ConversationID = 22;
 	StepSpeed = 8.0;
-	Translation = 6;
+	Translation = (TRANSL_Standard << TRANSL_TYPE_SHIFT) + 5;
 }

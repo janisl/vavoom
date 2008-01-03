@@ -935,23 +935,18 @@ void VDirect3DDrawer::EndView()
 	guard(VDirect3DDrawer::EndView);
 	Setup2D();
 
-	for (int i = 0; i < NUM_CSHIFTS; i++)
+	if (cl && cl->CShift)
 	{
-		if (!cl || !cl->CShifts[i])
-		{
-			continue;
-		}
-
 		MyD3DVertex	dv[4];
 
 		RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_DISABLE);
 		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, TRUE);
 		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, FALSE);
 
-		dv[0] = MyD3DVertex(0, 0, cl->CShifts[i], 0, 0);
-		dv[1] = MyD3DVertex(ScreenWidth, 0, cl->CShifts[i], 0, 0);
-		dv[2] = MyD3DVertex(ScreenWidth, ScreenHeight, cl->CShifts[i], 0, 0);
-		dv[3] = MyD3DVertex(0, ScreenHeight, cl->CShifts[i], 0, 0);
+		dv[0] = MyD3DVertex(0, 0, cl->CShift, 0, 0);
+		dv[1] = MyD3DVertex(ScreenWidth, 0, cl->CShift, 0, 0);
+		dv[2] = MyD3DVertex(ScreenWidth, ScreenHeight, cl->CShift, 0, 0);
+		dv[3] = MyD3DVertex(0, ScreenHeight, cl->CShift, 0, 0);
 
 #if DIRECT3D_VERSION >= 0x0800
 		RenderDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, dv, sizeof(MyD3DVertex));

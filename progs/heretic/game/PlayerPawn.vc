@@ -120,6 +120,9 @@ final void A_AddPlayerCorpse()
 		HereticLevelInfo(Level).bodyque[HereticLevelInfo(Level).bodyqueslot % HereticLevelInfo::BODYQUESIZE].Destroy();
 	}
 	HereticLevelInfo(Level).bodyque[HereticLevelInfo(Level).bodyqueslot % HereticLevelInfo::BODYQUESIZE] = self;
+	Translation = XLevel.SetBodyQueueTrans(
+		HereticLevelInfo(Level).bodyqueslot % HereticLevelInfo::BODYQUESIZE,
+		Translation);
 	HereticLevelInfo(Level).bodyqueslot++;
 }
 

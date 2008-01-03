@@ -27,9 +27,10 @@ class MenuScreenPlayerSetup : MenuScreen;
 
 MenuSpriteAnim		Anim;
 MenuInputLine		PName;
-MenuChoiceEnum		EColour;
+MenuChoiceSlider	ColR;
+MenuChoiceSlider	ColG;
+MenuChoiceSlider	ColB;
 MenuChoiceEnum		EPClass;
-int					Colour;
 int					PClass;
 
 //==========================================================================
@@ -46,41 +47,19 @@ void CreateChoices()
 	R_InstallSprite("CLER", 501);
 	R_InstallSprite("MAGE", 502);
 
-	Anim = MenuSpriteAnim(NewChild(MenuSpriteAnim));
-	Anim.SetPos(260, 120);
-	Anim.SprDef = 500;
-	Anim.Speed = 8;
-	Anim.NumFrames = 4;
-
 	currentY = ChoicesStartY;
 
 	PName = MenuInputLine(NewChild(MenuInputLine));
-	PName.SetPos(ChoicesStartX, currentY);
+	PName.SetOrigin(ChoicesStartX + 10, ChoicesStartY);
+	PName.CursorXOffs = -10;
 	PName.Text = "Name";
 	PName.Value = GetCvarS('Name');
 	PName.ValueChanged = ChangeName;
 	currentY += PName.Height;
 
-	EColour = MenuChoiceEnum(NewChild(MenuChoiceEnum));
-	EColour.SetPos(ChoicesStartX, currentY);
-	EColour.Text = "Colour";
-	EColour.bLeftAlign = true;
-	EColour.AddItem("blue");
-	EColour.AddItem("red");
-	EColour.AddItem("gold");
-	EColour.AddItem("light green");
-	EColour.AddItem("green");
-	EColour.AddItem("gray");
-	EColour.AddItem("brown");
-	EColour.AddItem("magenta");
-	EColour.SetInitialValue(GetCvar('colour'));
-	EColour.ValueChanging = ChangeColour;
-	currentY += EColour.Height;
-
 	EPClass = MenuChoiceEnum(NewChild(MenuChoiceEnum));
-	EPClass.SetPos(ChoicesStartX, currentY);
+	EPClass.SetOrigin(ChoicesStartX, currentY);
 	EPClass.Text = "Class";
-	EPClass.bLeftAlign = true;
 	EPClass.AddItem("fighter");
 	EPClass.AddItem("cleric");
 	EPClass.AddItem("mage");
@@ -88,9 +67,41 @@ void CreateChoices()
 	EPClass.ValueChanging = ChangeClass;
 	currentY += EPClass.Height;
 
-	Colour = EColour.Value;
+	int Col = ParseColour(GetCvarS('colour'));
+
+	ColR = NewChild(MenuChoiceSlider);
+	ColR.SetOrigin(ChoicesStartX, currentY);
+	ColR.Text = "Red";
+	ColR.ValueDelta = 0.1;
+	ColR.SetInitialValue(itof((Col >> 16) & 0xff) / 255.0);
+	ColR.ValueChanging = ChangeColour;
+	currentY += ColR.Height;
+
+	ColG = NewChild(MenuChoiceSlider);
+	ColG.SetOrigin(ChoicesStartX, currentY);
+	ColG.Text = "Green";
+	ColG.ValueDelta = 0.1;
+	ColG.SetInitialValue(itof((Col >> 8) & 0xff) / 255.0);
+	ColG.ValueChanging = ChangeColour;
+	currentY += ColG.Height;
+
+	ColB = NewChild(MenuChoiceSlider);
+	ColB.SetOrigin(ChoicesStartX, currentY);
+	ColB.Text = "Blue";
+	ColB.ValueDelta = 0.1;
+	ColB.SetInitialValue(itof(Col & 0xff) / 255.0);
+	ColB.ValueChanging = ChangeColour;
+	currentY += ColB.Height;
+
+	Anim = MenuSpriteAnim(NewChild(MenuSpriteAnim));
+	Anim.SetPos(260, 140);
+	Anim.SprDef = 500;
+	Anim.Speed = 8;
+	Anim.NumFrames = 4;
+	Anim.Colour = Col;
+
 	PClass = EPClass.Value;
-	SetColour();
+	SetPClass();
 }
 
 //==========================================================================
@@ -110,11 +121,16 @@ void ChangeName(Object Sender)
 //
 //==========================================================================
 
-bool ChangeColour(Object Sender, int newValue)
+bool ChangeColour(Object Sender, float newValue)
 {
-	SetCvar('colour', newValue);
-	Colour = newValue;
-	SetColour();
+	float r = Sender == ColR ? newValue : ColR.Value;
+	float g = Sender == ColG ? newValue : ColG.Value;
+	float b = Sender == ColB ? newValue : ColB.Value;
+	int Col = RGBA(ftoi(r * 255.0), ftoi(g * 255.0), ftoi(b * 255.0), 255);
+
+	SetCvarS('colour', va("%x %x %x", ftoi(r * 255.0), ftoi(g * 255.0),
+		ftoi(b * 255.0)));
+	Anim.Colour = Col;
 	return true;
 }
 
@@ -128,38 +144,35 @@ bool ChangeClass(Object Sender, int newValue)
 {
 	SetCvar('class', newValue);
 	PClass = newValue;
-	SetColour();
+	SetPClass();
 	return true;
 }
 
 //==========================================================================
 //
-//	SetColour
+//	SetPClass
 //
 //==========================================================================
 
-void SetColour()
+void SetPClass()
 {
 	Anim.SprDef = 500 + PClass;
-	Anim.Translation = 0;
 	if (PClass == HexenDefs::PCLASS_FIGHTER)
 	{
-		if (Colour == 0)
-			Anim.Translation = 2;
-	else if (Colour != 2)
-			Anim.Translation = Colour;
+		Anim.TranslStart = 246;
+		Anim.TranslEnd = 254;
 	}
 	else
 	{
-		if (Colour)
-			Anim.Translation = PClass * (MAXPLAYERS - 1) + Colour;
+		Anim.TranslStart = 146;
+		Anim.TranslEnd = 163;
 	}
 }
 
 defaultproperties
 {
-	ChoicesStartX = 16;
+	ChoicesStartX = 64;
 	ChoicesStartY = 40;
-	SelectorType = MenuSelector_SmallLeft;
+	SelectorType = MenuSelector_SmallRight;
 	Title = "PLAYER SETUP";
 }

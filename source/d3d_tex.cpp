@@ -229,12 +229,11 @@ void VDirect3DDrawer::InitTextures()
 void VDirect3DDrawer::FlushTextures()
 {
 	guard(VDirect3DDrawer::FlushTextures);
-	int i;
-	for (i = 0; i < GTextureManager.Textures.Num(); i++)
+	for (int i = 0; i < GTextureManager.Textures.Num(); i++)
 	{
-		SAFE_RELEASE_TEXTURE(GTextureManager.Textures[i]->DriverData);
+		FlushTexture(GTextureManager[i]);
 	}
-	for (i = 0; i < MAX_TRANSLATED_SPRITES; i++)
+	for (int i = 0; i < MAX_TRANSLATED_SPRITES; i++)
 	{
 		SAFE_RELEASE(trsprdata[i]);
 	}
@@ -250,21 +249,31 @@ void VDirect3DDrawer::FlushTextures()
 void VDirect3DDrawer::ReleaseTextures()
 {
 	guard(VDirect3DDrawer::ReleaseTextures);
-	int i;
-	for (i = 0; i < GTextureManager.Textures.Num(); i++)
-	{
-		SAFE_RELEASE_TEXTURE(GTextureManager.Textures[i]->DriverData);
-	}
-	for (i = 0; i < MAX_TRANSLATED_SPRITES; i++)
-	{
-		SAFE_RELEASE(trsprdata[i]);
-	}
-	for (i = 0; i < NUM_BLOCK_SURFS; i++)
+	FlushTextures();
+	for (int i = 0; i < NUM_BLOCK_SURFS; i++)
 	{
 		SAFE_RELEASE(light_surf[i]);
 		SAFE_RELEASE(add_surf[i]);
 	}
 	SAFE_RELEASE(particle_texture);
+	unguard;
+}
+
+//==========================================================================
+//
+//	VDirect3DDrawer::FlushTexture
+//
+//==========================================================================
+
+void VDirect3DDrawer::FlushTexture(VTexture* Tex)
+{
+	guard(VDirect3DDrawer::FlushTexture);
+	SAFE_RELEASE_TEXTURE(Tex->DriverData);
+	for (int j = 0; j < Tex->DriverTranslated.Num(); j++)
+	{
+		SAFE_RELEASE_TEXTURE(Tex->DriverTranslated[j].Data);
+	}
+	Tex->DriverTranslated.Clear();
 	unguard;
 }
 
@@ -284,7 +293,7 @@ void VDirect3DDrawer::SetTexture(VTexture* Tex)
 
 	if (!Tex->DriverData || Tex->CheckModified())
 	{
-		GenerateTexture(Tex);
+		GenerateTexture(Tex, &Tex->DriverData, NULL);
 	}
 
 #if DIRECT3D_VERSION >= 0x0900
@@ -327,86 +336,61 @@ void VDirect3DDrawer::SetTexture(VTexture* Tex)
 //
 //==========================================================================
 
-void VDirect3DDrawer::SetSpriteLump(VTexture* Tex, int translation)
+void VDirect3DDrawer::SetSpriteLump(VTexture* Tex, VTextureTranslation* Translation)
 {
 	guard(VDirect3DDrawer::SetSpriteLump);
 	if (!RenderDevice)
-		return;
-
-	if (translation)
 	{
-		int i;
-		int avail = -1;
-		for (i = 0; i <	MAX_TRANSLATED_SPRITES; i++)
+		return;
+	}
+
+	if (Tex->CheckModified())
+	{
+		FlushTexture(Tex);
+	}
+
+	if (Translation)
+	{
+		VTexture::VTransData* TData = Tex->FindDriverTrans(Translation);
+		if (!TData)
 		{
-			if (trsprdata[i])
-			{
-				if (trspr_tex[i] == Tex && trsprtnum[i] == translation)
-				{
-					if (Tex->CheckModified())
-					{
-						SAFE_RELEASE(trsprdata[i]);
-						avail = i;
-						break;
-					}
-					RenderDevice->SetTexture(0, trsprdata[i]);
-#if DIRECT3D_VERSION >= 0x0900
-					RenderDevice->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
-					RenderDevice->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
-#else
-					RenderDevice->SetTextureStageState(0, D3DTSS_ADDRESSU, D3DTADDRESS_CLAMP);
-					RenderDevice->SetTextureStageState(0, D3DTSS_ADDRESSV, D3DTADDRESS_CLAMP);
-#endif
-					tex_iw = 1.0 / Tex->GetWidth();
-					tex_ih = 1.0 / Tex->GetHeight();
-					return;
-				}
-			}
-			else
-			{
-				if (avail < 0)
-					avail = i;
-			}
+			TData = &Tex->DriverTranslated.Alloc();
+			TData->Data = NULL;
+			TData->Trans = Translation;
+			GenerateTexture(Tex, &TData->Data, Translation);
 		}
-		if (avail < 0)
-		{
-			SAFE_RELEASE(trsprdata[0]);
-			avail = 0;
-		}
-		GenerateTranslatedSprite(Tex, avail, translation);
-		RenderDevice->SetTexture(0, trsprdata[avail]);
 #if DIRECT3D_VERSION >= 0x0900
-		RenderDevice->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
-		RenderDevice->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
+		RenderDevice->SetTexture(0, (LPDIRECT3DTEXTURE9)TData->Data);
+#elif DIRECT3D_VERSION >= 0x0800
+		RenderDevice->SetTexture(0, (LPDIRECT3DTEXTURE8)TData->Data);
 #else
-		RenderDevice->SetTextureStageState(0, D3DTSS_ADDRESSU, D3DTADDRESS_CLAMP);
-		RenderDevice->SetTextureStageState(0, D3DTSS_ADDRESSV, D3DTADDRESS_CLAMP);
+		RenderDevice->SetTexture(0, (LPDIRECT3DTEXTURE7)TData->Data);
 #endif
-		tex_iw = 1.0 / Tex->GetWidth();
-		tex_ih = 1.0 / Tex->GetHeight();
 	}
 	else
 	{
-		if (!Tex->DriverData || Tex->CheckModified())
+		if (!Tex->DriverData)
 		{
-			GenerateTexture(Tex);
+			GenerateTexture(Tex, &Tex->DriverData, NULL);
 		}
 #if DIRECT3D_VERSION >= 0x0900
 		RenderDevice->SetTexture(0, (LPDIRECT3DTEXTURE9)Tex->DriverData);
-		RenderDevice->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
-		RenderDevice->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
 #elif DIRECT3D_VERSION >= 0x0800
 		RenderDevice->SetTexture(0, (LPDIRECT3DTEXTURE8)Tex->DriverData);
-		RenderDevice->SetTextureStageState(0, D3DTSS_ADDRESSU, D3DTADDRESS_CLAMP);
-		RenderDevice->SetTextureStageState(0, D3DTSS_ADDRESSV, D3DTADDRESS_CLAMP);
 #else
 		RenderDevice->SetTexture(0, (LPDIRECTDRAWSURFACE7)Tex->DriverData);
-		RenderDevice->SetTextureStageState(0, D3DTSS_ADDRESSU, D3DTADDRESS_CLAMP);
-		RenderDevice->SetTextureStageState(0, D3DTSS_ADDRESSV, D3DTADDRESS_CLAMP);
 #endif
-		tex_iw = 1.0 / Tex->GetWidth();
-		tex_ih = 1.0 / Tex->GetHeight();
 	}
+
+#if DIRECT3D_VERSION >= 0x0900
+	RenderDevice->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
+	RenderDevice->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
+#else
+	RenderDevice->SetTextureStageState(0, D3DTSS_ADDRESSU, D3DTADDRESS_CLAMP);
+	RenderDevice->SetTextureStageState(0, D3DTSS_ADDRESSV, D3DTADDRESS_CLAMP);
+#endif
+	tex_iw = 1.0 / Tex->GetWidth();
+	tex_ih = 1.0 / Tex->GetHeight();
 	unguard;
 }
 
@@ -416,34 +400,10 @@ void VDirect3DDrawer::SetSpriteLump(VTexture* Tex, int translation)
 //
 //==========================================================================
 
-void VDirect3DDrawer::SetPic(VTexture* Tex)
+void VDirect3DDrawer::SetPic(VTexture* Tex, VTextureTranslation* Trans)
 {
 	guard(VDirect3DDrawer::SetPic);
-	if (!RenderDevice)
-	{
-		return;
-	}
-
-	if (!Tex->DriverData || Tex->CheckModified())
-	{
-		GenerateTexture(Tex);
-	}
-
-#if DIRECT3D_VERSION >= 0x0900
-	RenderDevice->SetTexture(TexStage, (LPDIRECT3DTEXTURE9)Tex->DriverData);
-	RenderDevice->SetSamplerState(TexStage, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
-	RenderDevice->SetSamplerState(TexStage, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
-#elif DIRECT3D_VERSION >= 0x0800
-	RenderDevice->SetTexture(TexStage, (LPDIRECT3DTEXTURE8)Tex->DriverData);
-	RenderDevice->SetTextureStageState(TexStage, D3DTSS_ADDRESSU, D3DTADDRESS_CLAMP);
-	RenderDevice->SetTextureStageState(TexStage, D3DTSS_ADDRESSV, D3DTADDRESS_CLAMP);
-#else
-	RenderDevice->SetTexture(TexStage, (LPDIRECTDRAWSURFACE7)Tex->DriverData);
-	RenderDevice->SetTextureStageState(TexStage, D3DTSS_ADDRESSU, D3DTADDRESS_CLAMP);
-	RenderDevice->SetTextureStageState(TexStage, D3DTSS_ADDRESSV, D3DTADDRESS_CLAMP);
-#endif
-	tex_iw = 1.0 / Tex->GetWidth();
-	tex_ih = 1.0 / Tex->GetHeight();
+	SetSpriteLump(Tex, Trans);
 	unguard;
 }
 
@@ -453,54 +413,37 @@ void VDirect3DDrawer::SetPic(VTexture* Tex)
 //
 //==========================================================================
 
-void VDirect3DDrawer::GenerateTexture(VTexture* Tex)
+void VDirect3DDrawer::GenerateTexture(VTexture* Tex, void** Data,
+	VTextureTranslation* Translation)
 {
 	guard(VDirect3DDrawer::GenerateTexture);
+	//	Try to load high resolution version.
 	VTexture* SrcTex = Tex->GetHighResolutionTexture();
 	if (!SrcTex)
 	{
 		SrcTex = Tex;
 	}
 
-	SAFE_RELEASE_TEXTURE(Tex->DriverData);
-	byte* block = SrcTex->GetPixels();
-	if (SrcTex->Format == TEXFMT_8 || SrcTex->Format == TEXFMT_8Pal)
+	SAFE_RELEASE_TEXTURE(*Data);
+	if (Translation)
 	{
-		Tex->DriverData = UploadTexture8(SrcTex->GetWidth(),
-			SrcTex->GetHeight(), block, SrcTex->GetPalette());
+		*Data = UploadTexture8(SrcTex->GetWidth(), SrcTex->GetHeight(),
+			SrcTex->GetPixels8(), Translation->GetPalette());
 	}
 	else
 	{
-		Tex->DriverData = UploadTexture(SrcTex->GetWidth(),
-			SrcTex->GetHeight(), (rgba_t*)block);
+		byte* block = SrcTex->GetPixels();
+		if (SrcTex->Format == TEXFMT_8 || SrcTex->Format == TEXFMT_8Pal)
+		{
+			*Data = UploadTexture8(SrcTex->GetWidth(),
+				SrcTex->GetHeight(), block, SrcTex->GetPalette());
+		}
+		else
+		{
+			*Data = UploadTexture(SrcTex->GetWidth(),
+				SrcTex->GetHeight(), (rgba_t*)block);
+		}
 	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	VDirect3DDrawer::GenerateTranslatedSprite
-//
-//==========================================================================
-
-void VDirect3DDrawer::GenerateTranslatedSprite(VTexture* Tex, int slot,
-	int translation)
-{
-	guard(VDirect3DDrawer::GenerateTranslatedSprite);
-	trspr_tex[slot] = Tex;
-	trsprtnum[slot] = translation;
-
-	byte* Pixels = Tex->GetPixels8();
-	byte* block = (byte*)Z_Malloc(Tex->GetWidth() * Tex->GetHeight());
-	byte *trtab = translationtables + translation * 256;
-	for (int i = 0; i < Tex->GetWidth() * Tex->GetHeight(); i++)
-	{
-		block[i] = trtab[Pixels[i]];
-	}
-
-	trsprdata[slot] = UploadTexture8(Tex->GetWidth(), Tex->GetHeight(),
-		block, Tex->GetPalette());
-	Z_Free(block);
 	unguard;
 }
 
@@ -513,10 +456,10 @@ void VDirect3DDrawer::GenerateTranslatedSprite(VTexture* Tex, int slot,
 #if DIRECT3D_VERSION >= 0x0800
 #if DIRECT3D_VERSION >= 0x0900
 void VDirect3DDrawer::UploadTextureImage(LPDIRECT3DTEXTURE9 tex, int level,
-	int width, int height, rgba_t *data)
+	int width, int height, const rgba_t* data)
 #else
 void VDirect3DDrawer::UploadTextureImage(LPDIRECT3DTEXTURE8 tex, int level,
-	int width, int height, rgba_t *data)
+	int width, int height, const rgba_t* data)
 #endif
 {
 	guard(VDirect3DDrawer::UploadTextureImage);
@@ -560,7 +503,7 @@ void VDirect3DDrawer::UploadTextureImage(LPDIRECT3DTEXTURE8 tex, int level,
 }
 #else
 void VDirect3DDrawer::UploadTextureImage(LPDIRECTDRAWSURFACE7 surf,
-	int width, int height, rgba_t *data)
+	int width, int height, const rgba_t *data)
 {
 	guard(VDirect3DDrawer::UploadTextureImage);
 	DDSURFACEDESC2 ddsd;
@@ -797,13 +740,13 @@ void VDirect3DDrawer::MipMap(int width, int height, byte *in)
 
 #if DIRECT3D_VERSION >= 0x0900
 LPDIRECT3DTEXTURE9 VDirect3DDrawer::UploadTexture8(int Width, int Height,
-	byte* Data, rgba_t* Pal)
+	const byte* Data, const rgba_t* Pal)
 #elif DIRECT3D_VERSION >= 0x0800
 LPDIRECT3DTEXTURE8 VDirect3DDrawer::UploadTexture8(int Width, int Height,
-	byte* Data, rgba_t* Pal)
+	const byte* Data, const rgba_t* Pal)
 #else
 LPDIRECTDRAWSURFACE7 VDirect3DDrawer::UploadTexture8(int Width, int Height,
-	byte* Data, rgba_t* Pal)
+	const byte* Data, const rgba_t* Pal)
 #endif
 {
 	rgba_t* NewData = (rgba_t*)Z_Calloc(Width * Height * 4);
@@ -831,11 +774,11 @@ LPDIRECTDRAWSURFACE7 VDirect3DDrawer::UploadTexture8(int Width, int Height,
 //==========================================================================
 
 #if DIRECT3D_VERSION >= 0x0900
-LPDIRECT3DTEXTURE9 VDirect3DDrawer::UploadTexture(int width, int height, rgba_t *data)
+LPDIRECT3DTEXTURE9 VDirect3DDrawer::UploadTexture(int width, int height, const rgba_t *data)
 #elif DIRECT3D_VERSION >= 0x0800
-LPDIRECT3DTEXTURE8 VDirect3DDrawer::UploadTexture(int width, int height, rgba_t *data)
+LPDIRECT3DTEXTURE8 VDirect3DDrawer::UploadTexture(int width, int height, const rgba_t *data)
 #else
-LPDIRECTDRAWSURFACE7 VDirect3DDrawer::UploadTexture(int width, int height, rgba_t *data)
+LPDIRECTDRAWSURFACE7 VDirect3DDrawer::UploadTexture(int width, int height, const rgba_t *data)
 #endif
 {
 	guard(VDirect3DDrawer::UploadTexture);

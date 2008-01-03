@@ -404,6 +404,7 @@ LightingInc=0
 0x052	8	ACS_Terminate( script, map, -, -, - )
 0x053	8	ACS_LockedExecute( script, map, sArg0, sArg1, lock )
 0x054	8	ACS_ExecuteWithResult( script, map, sArg0, sArg1, sArg2 )
+0x055	8	ACS_LockedExecuteDoor( script, map, sArg0, sArg1, lock )
 0x0e2	8	ACS_ExecuteAlways( script, map, sArg0, sArg1, sArg2 )
 
 ; Scroll
@@ -420,14 +421,17 @@ LightingInc=0
 ; Thing
 0x048	10	ThrustThing( angle, distance, -, -, - )
 0x049	10	DamageThing( damage, -, -, -, - )
+0x077	10	Thing_Damage( tag, damage, mod, -, - )
 0x082	10	Thing_Activate( tag, -, -, -, - )
 0x083	10	Thing_Deactivate( tag, -, -, -, - )
 0x084	10	Thing_Remove( tag, -, -, -, - )
 0x085	10	Thing_Destroy( tag, -, -, -, - )
 0x086	10	Thing_Projectile( tag, type, angle, speed, vspeed )
-0x087	10	Thing_Spawn( tag, spawntype, angle, -, - )
+0x087	10	Thing_Spawn( tag, spawntype, angle, NewTid, - )
 0x088	10	Thing_ProjectileGravity( tag, type, angle, speed, vspeed )
-0x089	10	Thing_SpawnNoFog( tag, spawntype, angle, -, - )
+0x089	10	Thing_SpawnNoFog( tag, spawntype, angle, NewTid, - )
+0x08b	10	Thing_SpawnFacing( tag, spawntype, NoFog, NewTid, - )
+0x0ae	10	Thing_SetTranslation( tag, range, -, -, - )
 0x0e5	10	Thing_SetGoal( tag, goal, delay, chasegoal, - )
 0x0f8	10	HealThing( amount, max, -, -, - )
 

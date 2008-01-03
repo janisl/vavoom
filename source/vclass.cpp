@@ -1996,6 +1996,8 @@ VState::VState(VName AName)
 , InClassIndex(-1)
 , NetId(-1)
 , NetNext(0)
+, GotoLabel(NAME_None)
+, GotoOffset(0)
 {
 }
 
@@ -2545,6 +2547,8 @@ VClass::VClass(VName AName)
 , NetId(-1)
 , NetStates(0)
 , NumNetFields(0)
+, Replacement(NULL)
+, Replacee(NULL)
 {
 	guard(VClass::VClass);
 	LinkNext = GClasses;
@@ -2581,6 +2585,8 @@ VClass::VClass(ENativeConstructor, size_t ASize, vuint32 AClassFlags,
 , NetId(-1)
 , NetStates(0)
 , NumNetFields(0)
+, Replacement(NULL)
+, Replacee(NULL)
 {
 	guard(native VClass::VClass);
 	LinkNext = GClasses;
@@ -3555,6 +3561,50 @@ VClass* VClass::CreateDerivedClass(VName AName)
 	NewClass->PostLoad();
 	NewClass->CreateDefaults();
 	return NewClass;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VClass::GetReplacement
+//
+//==========================================================================
+
+VClass* VClass::GetReplacement()
+{
+	guard(VClass::GetReplacement);
+	if (!Replacement)
+	{
+		return this;
+	}
+	//	Avoid looping recursion by temporarely NULL-ing the field
+	VClass* Temp = Replacement;
+	Replacement = NULL;
+	VClass* Ret = Temp->GetReplacement();
+	Replacement = Temp;
+	return Ret;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VClass::GetReplacee
+//
+//==========================================================================
+
+VClass* VClass::GetReplacee()
+{
+	guard(VClass::GetReplacee);
+	if (!Replacee)
+	{
+		return this;
+	}
+	//	Avoid looping recursion by temporarely NULL-ing the field
+	VClass* Temp = Replacee;
+	Replacee = NULL;
+	VClass* Ret = Temp->GetReplacee();
+	Replacee = Temp;
+	return Ret;
 	unguard;
 }
 

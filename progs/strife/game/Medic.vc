@@ -30,6 +30,6 @@ defaultproperties
 {
 	ConversationID = 5;
 	ClassName = 'Medic';
-	Translation = 10;
+	Translation = (TRANSL_Standard << TRANSL_TYPE_SHIFT) + 9;
 	PainSound = 'medic/pain';
 }

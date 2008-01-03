@@ -223,6 +223,8 @@ private:
 	void MarkLeaves();
 	vuint32 GetFade(subsector_t*);
 	void UpdateCameraTexture(VEntity*, int, int);
+	VTextureTranslation* GetTranslation(int);
+	void BuildPlayerTranslations();
 
 	//	Surf methods
 	void SetupSky();
@@ -302,9 +304,11 @@ private:
 
 	//	Models
 	bool DrawAliasModel(const TVec&, const TAVec&, float, float, VModel*,
-		int, const char*, int, vuint32, vuint32, float, bool, bool, float);
+		int, const char*, VTextureTranslation*, int, vuint32, vuint32, float,
+		bool, bool, float);
 	bool DrawAliasModel(const TVec&, const TAVec&, float, float, VState*,
-		const char*, int, vuint32, vuint32, float, bool, bool, float);
+		const char*, VTextureTranslation*, int, vuint32, vuint32, float, bool,
+		bool, float);
 	bool DrawEntityModel(VEntity*, vuint32, vuint32, float, bool, float);
 	bool CheckAliasModelFrame(VEntity*, float);
 
@@ -348,6 +352,8 @@ void R_InitSkyBoxes();
 void R_InitModels();
 void R_FreeModels();
 
+int R_SetMenuPlayerTrans(int, int, int);
+
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
 //
@@ -363,5 +369,9 @@ extern VCvarI			r_darken;
 extern refdef_t			refdef;
 
 extern VCvarI			old_aspect;
+
+extern VTextureTranslation**		TranslationTables;
+extern int							NumTranslationTables;
+extern TArray<VTextureTranslation*>	DecorateTranslations;
 
 #endif

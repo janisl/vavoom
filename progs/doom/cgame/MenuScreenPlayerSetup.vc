@@ -28,9 +28,10 @@ class MenuScreenPlayerSetup : MenuScreen;
 array<name>			SkinNames;
 
 MenuInputLine		PlayerName;
-MenuChoiceEnum		Colour;
+MenuChoiceSlider	ColR;
+MenuChoiceSlider	ColG;
+MenuChoiceSlider	ColB;
 MenuSpriteAnim		Anim;
-MenuChoiceEnum		Skin;
 MenuModel			Mdl;
 
 //==========================================================================
@@ -47,65 +48,62 @@ void CreateChoices()
 	int			i;
 
 	PlayerName = MenuInputLine(NewChild(MenuInputLine));
-	PlayerName.SetPos(ChoicesStartX, ChoicesStartY);
+	PlayerName.SetOrigin(ChoicesStartX + 10, ChoicesStartY);
+	PlayerName.CursorXOffs = -10;
 	PlayerName.Text = "Name";
 	PlayerName.Value = GetCvarS('Name');
 	PlayerName.ValueChanged = ChangeName;
 	ChoicesStartY += PlayerName.Height;
 
-	Colour = MenuChoiceEnum(NewChild(MenuChoiceEnum));
-	Colour.SetPos(ChoicesStartX, ChoicesStartY);
-	Colour.Text = "Colour";
-	Colour.bLeftAlign = true;
-	Colour.AddItem("green");
-	Colour.AddItem("gray");
-	Colour.AddItem("brown");
-	Colour.AddItem("red");
-	Colour.AddItem("light red");
-	Colour.AddItem("blue");
-	Colour.AddItem("rose");
-	Colour.AddItem("light brown");
-	Colour.SetInitialValue(GetCvar('colour'));
-	Colour.ValueChanging = ChangeColour;
-	ChoicesStartY += Colour.Height;
+	int Col = ParseColour(GetCvarS('colour'));
+
+	ColR = NewChild(MenuChoiceSlider);
+	ColR.SetOrigin(ChoicesStartX, ChoicesStartY);
+	ColR.Text = "Red";
+	ColR.ValueDelta = 0.1;
+	ColR.SetInitialValue(itof((Col >> 16) & 0xff) / 255.0);
+	ColR.ValueChanging = ChangeColour;
+	ChoicesStartY += ColR.Height;
+
+	ColG = NewChild(MenuChoiceSlider);
+	ColG.SetOrigin(ChoicesStartX, ChoicesStartY);
+	ColG.Text = "Green";
+	ColG.ValueDelta = 0.1;
+	ColG.SetInitialValue(itof((Col >> 8) & 0xff) / 255.0);
+	ColG.ValueChanging = ChangeColour;
+	ChoicesStartY += ColG.Height;
+
+	ColB = NewChild(MenuChoiceSlider);
+	ColB.SetOrigin(ChoicesStartX, ChoicesStartY);
+	ColB.Text = "Blue";
+	ColB.ValueDelta = 0.1;
+	ColB.SetInitialValue(itof(Col & 0xff) / 255.0);
+	ColB.ValueChanging = ChangeColour;
+	ChoicesStartY += ColB.Height;
 
 	R_InstallSprite("PLAY", 500);
 
 	Anim = MenuSpriteAnim(NewChild(MenuSpriteAnim));
-	Anim.SetPos(100, 160);
+	Anim.SetPos(220, 150);
 	Anim.SprDef = 500;
 	Anim.Speed = 8;
 	Anim.NumFrames = 4;
-	Anim.Translation = Colour.Value;
+	Anim.TranslStart = 112;
+	Anim.TranslEnd = 127;
+	Anim.Colour = Col;
 
 	model = InstallModel("models/players/doomguy/player.xml");
 	if (model)
 	{
 		SetCvarS('model', "doomguy");
 
-		Skin = MenuChoiceEnum(NewChild(MenuChoiceEnum));
-		Skin.SetPos(ChoicesStartX, ChoicesStartY);
-		Skin.Text = "Skin";
-		Skin.bLeftAlign = true;
-		for (i = 0; i < 32; i++)
-		{
-			if (!GetModelSkinInfo(model, i, SkinName, SkinDesc))
-			{
-				break;
-			}
-			SkinNames.Num = i + 1;
-			SkinNames[i] = SkinName;
-			Skin.AddItem(SkinDesc);
-		}
-		Skin.SetInitialValue(GetSkinValue());
-		Skin.ValueChanging = ChangeSkin;
-		ChoicesStartY += Skin.Height;
-
 		Mdl = MenuModel(NewChild(MenuModel));
-		Mdl.Origin = vector(-64.0, 32.0, -32.0);
+		Mdl.Origin = vector(-128.0, 64.0, -32.0);
 		Mdl.Angle = 345.0;
 		Mdl.Model = model;
-		Mdl.Skin = va("%n", SkinNames[Skin.Value]);
+		Mdl.TranslStart = 112;
+		Mdl.TranslEnd = 127;
+		Mdl.Colour = Col;
 	}
 }
 
@@ -126,57 +124,24 @@ void ChangeName(Object Sender)
 //
 //==========================================================================
 
-bool ChangeColour(Object Sender, int newValue)
+bool ChangeColour(Object Sender, float newValue)
 {
-	SetCvar('colour', newValue);
-	Anim.Translation = newValue;
-	return true;
-}
+	float r = Sender == ColR ? newValue : ColR.Value;
+	float g = Sender == ColG ? newValue : ColG.Value;
+	float b = Sender == ColB ? newValue : ColB.Value;
+	int Col = RGBA(ftoi(r * 255.0), ftoi(g * 255.0), ftoi(b * 255.0), 255);
 
-//==========================================================================
-//
-//	GetSkinValue
-//
-//==========================================================================
-
-int GetSkinValue()
-{
-	int i;
-	string curskin;
-
-	curskin = GetCvarS('skin');
-	for (i = 0; i < Skin.MaxValue; i++)
-	{
-		if (!stricmp(curskin, va("%n", SkinNames[i])))
-		{
-			break;
-		}
-	}
-	if (i == Skin.MaxValue)
-	{
-		i = 0;
-		SetCvarS('skin', va("%n", SkinNames[0]));
-	}
-	return i;
-}
-
-//==========================================================================
-//
-//	ChangeSkin
-//
-//==========================================================================
-
-bool ChangeSkin(Object Sender, int newValue)
-{
-	SetCvarS('skin', va("%n", SkinNames[newValue]));
-	Mdl.Skin = va("%n", SkinNames[newValue]);
+	SetCvarS('colour', va("%x %x %x", ftoi(r * 255.0), ftoi(g * 255.0),
+		ftoi(b * 255.0)));
+	Anim.Colour = Col;
+	Mdl.Colour = Col;
 	return true;
 }
 
 defaultproperties
 {
-	ChoicesStartX = 16;
+	ChoicesStartX = 64;
 	ChoicesStartY = 40;
-	SelectorType = MenuSelector_SmallLeft;
+	SelectorType = MenuSelector_SmallRight;
 	Title = "PLAYER SETUP";
 }

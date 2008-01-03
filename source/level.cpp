@@ -291,6 +291,70 @@ void VLevel::Serialise(VStream& Strm)
 			<< CameraTextures[i].FOV;
 	}
 	unguard;
+
+	//
+	//	Translation tables
+	//
+	guard(Translations);
+	int NumTrans = Translations.Num();
+	Strm << STRM_INDEX(NumTrans);
+	if (Strm.IsLoading())
+	{
+		Translations.SetNum(NumTrans);
+	}
+	for (i = 0; i < NumTrans; i++)
+	{
+		vuint8 Present = !!Translations[i];
+		Strm << Present;
+		if (Strm.IsLoading())
+		{
+			if (Present)
+			{
+				Translations[i] = new VTextureTranslation;
+			}
+			else
+			{
+				Translations[i] = NULL;
+			}
+		}
+		if (Present)
+		{
+			Translations[i]->Serialise(Strm);
+		}
+	}
+	unguard;
+
+	//
+	//	Body queue translation tables
+	//
+	guard(BoduQueueTranslations);
+	int NumTrans = BodyQueueTrans.Num();
+	Strm << STRM_INDEX(NumTrans);
+	if (Strm.IsLoading())
+	{
+		BodyQueueTrans.SetNum(NumTrans);
+	}
+	for (i = 0; i < NumTrans; i++)
+	{
+		vuint8 Present = !!BodyQueueTrans[i];
+		Strm << Present;
+		if (Strm.IsLoading())
+		{
+			if (Present)
+			{
+				BodyQueueTrans[i] = new VTextureTranslation;
+			}
+			else
+			{
+				BodyQueueTrans[i] = NULL;
+			}
+		}
+		if (Present)
+		{
+			BodyQueueTrans[i]->Serialise(Strm);
+		}
+	}
+	unguard;
 	unguard;
 }
 
@@ -444,6 +508,23 @@ void VLevel::Destroy()
 	}
 
 	ActiveSequences.Clear();
+
+	for (int i = 0; i < Translations.Num(); i++)
+	{
+		if (Translations[i])
+		{
+			delete Translations[i];
+		}
+	}
+	Translations.Clear();
+	for (int i = 0; i < BodyQueueTrans.Num(); i++)
+	{
+		if (BodyQueueTrans[i])
+		{
+			delete BodyQueueTrans[i];
+		}
+	}
+	BodyQueueTrans.Clear();
 
 	//	Call parent class's Destroy method.
 	Super::Destroy();
@@ -699,6 +780,45 @@ void VLevel::DelSectorList()
 		}
 		SectorList = NULL;
 	}
+	unguard;
+}
+
+//==========================================================================
+//
+//  VLevel::SetBodyQueueTrans
+//
+//==========================================================================
+
+int VLevel::SetBodyQueueTrans(int Slot, int Trans)
+{
+	guard(VLevel::SetBodyQueueTrans);
+	int Type = Trans >> TRANSL_TYPE_SHIFT;
+	int Index = Trans & ((1 << TRANSL_TYPE_SHIFT) - 1);
+	if (Type != TRANSL_Player)
+	{
+		return Trans;
+	}
+	if (Slot < 0 || Slot > MAX_BODY_QUEUE_TRANSLATIONS || Index < 0 ||
+		Index >= MAXPLAYERS || !LevelInfo->Game->Players[Index])
+	{
+		return Trans;
+	}
+
+	//	Add it.
+	while (BodyQueueTrans.Num() <= Slot)
+	{
+		BodyQueueTrans.Append(NULL);
+	}
+	VTextureTranslation* Tr = BodyQueueTrans[Slot];
+	if (!Tr)
+	{
+		Tr = new VTextureTranslation;
+		BodyQueueTrans[Slot] = Tr;
+	}
+	Tr->Clear();
+	VBasePlayer* P = LevelInfo->Game->Players[Index];
+	Tr->BuildPlayerTrans(P->TranslStart, P->TranslEnd, P->Colour);
+	return (TRANSL_BodyQueue << TRANSL_TYPE_SHIFT) + Slot;
 	unguard;
 }
 
@@ -1053,4 +1173,12 @@ IMPLEMENT_FUNCTION(VLevel, FindSectorFromTag)
 			break;
 		}
 	RET_INT(Ret);
+}
+
+IMPLEMENT_FUNCTION(VLevel, SetBodyQueueTrans)
+{
+	P_GET_INT(Trans);
+	P_GET_INT(Slot);
+	P_GET_SELF;
+	RET_INT(Self->SetBodyQueueTrans(Slot, Trans));
 }

@@ -139,7 +139,6 @@ void InitMapList()
 	{
 		Level.EnumNames[i] = P_GetMapName(i);
 	}
-	Level.MaxValue = 32;
 #endif
 	Level.Value = 0;
 }

@@ -57,6 +57,7 @@
 //==========================================================================
 
 class VRenderLevelPublic;
+class VTextureTranslation;
 class VAcsLevel;
 class VNetContext;
 
@@ -609,8 +610,14 @@ struct VCameraTextureInfo
 //
 //==========================================================================
 
-#define MAXDEATHMATCHSTARTS		16
-#define MAX_PLAYER_STARTS 		16
+enum
+{
+	MAXDEATHMATCHSTARTS		= 16,
+	MAX_PLAYER_STARTS 		= 16,
+
+	MAX_LEVEL_TRANSLATIONS	= 0xffff,
+	MAX_BODY_QUEUE_TRANSLATIONS = 0xff,
+};
 
 class VLevel : public VObject
 {
@@ -731,6 +738,10 @@ class VLevel : public VObject
 	// Maintain a freelist of msecnode_t's to reduce memory allocs and frees.
 	msecnode_t*			HeadSecNode;
 
+	//	Translations controlled by ACS scripts.
+	TArray<VTextureTranslation*>	Translations;
+	TArray<VTextureTranslation*>	BodyQueueTrans;
+
 	void Serialise(VStream& Strm);
 	void ClearReferences();
 	void Destroy();
@@ -829,6 +840,8 @@ private:
 	bool CrossSubsector(linetrace_t&, int) const;
 	bool CrossBSPNode(linetrace_t&, int) const;
 
+	int SetBodyQueueTrans(int, int);
+
 	DECLARE_FUNCTION(PointInSector)
 	DECLARE_FUNCTION(TraceLine)
 	DECLARE_FUNCTION(ChangeSector)
@@ -857,6 +870,8 @@ private:
 	DECLARE_FUNCTION(StartACS)
 	DECLARE_FUNCTION(SuspendACS)
 	DECLARE_FUNCTION(TerminateACS)
+
+	DECLARE_FUNCTION(SetBodyQueueTrans)
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------

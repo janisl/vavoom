@@ -83,6 +83,9 @@ bool UpdateChicken(int tics)
 	A.Args[3] = oldArgs[3];
 	A.Args[4] = oldArgs[4];
 	A.InsertIntoTIDList(oldTID);
+	A.bNoSightCheck = bNoSightCheck;
+	A.bHuntPlayers = bHuntPlayers;
+	A.bNoHatePlayers = bNoHatePlayers;
 	fog = Spawn(TeleportFog, A.Origin + vector(0.0, 0.0, TELEFOGHEIGHT));
 	fog.PlaySound('misc/teleport', CHAN_VOICE);
 	return true;

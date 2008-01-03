@@ -56,10 +56,11 @@
 //==========================================================================
 
 void VOpenGLDrawer::DrawPic(float x1, float y1, float x2, float y2,
-	float s1, float t1, float s2, float t2, VTexture* Tex, float Alpha)
+	float s1, float t1, float s2, float t2, VTexture* Tex,
+	VTextureTranslation* Trans, float Alpha)
 {
 	guard(VOpenGLDrawer::DrawPic);
-	SetPic(Tex);
+	SetPic(Tex, Trans);
 	if (Alpha < 1.0)
 	{
 		glDisable(GL_ALPHA_TEST);
@@ -98,7 +99,7 @@ void VOpenGLDrawer::DrawPicShadow(float x1, float y1, float x2, float y2,
 	float s1, float t1, float s2, float t2, VTexture* Tex, float shade)
 {
 	guard(VOpenGLDrawer::DrawPicShadow);
-	SetPic(Tex);
+	SetPic(Tex, NULL);
 	glDisable(GL_ALPHA_TEST);
 	glEnable(GL_BLEND);
 	glColor4f(0, 0, 0, shade);
@@ -233,10 +234,10 @@ void VOpenGLDrawer::DrawConsoleBackground(int h)
 //==========================================================================
 
 void VOpenGLDrawer::DrawSpriteLump(float x1, float y1, float x2, float y2,
-	VTexture* Tex, int translation, bool flip)
+	VTexture* Tex, VTextureTranslation* Translation, bool flip)
 {
 	guard(VOpenGLDrawer::DrawSpriteLump);
-	SetSpriteLump(Tex, translation);
+	SetSpriteLump(Tex, Translation);
 
 	float s1, s2;
 	if (flip)

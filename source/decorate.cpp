@@ -275,24 +275,454 @@ static void ParseEnum(VScriptParser* sc)
 static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value)
 {
 	guard(ParseFlag);
-	if (sc->Check("NoGravity"))
+	sc->ExpectIdentifier();
+	VStr Flag = sc->String;
+	while (sc->Check("."))
+	{
+		sc->ExpectIdentifier();
+		Flag += ".";
+		Flag += sc->String;
+	}
+	if (!Flag.ICmp("NoGravity"))
 	{
 		SetClassFieldBool(Class, "bNoGravity", Value);
 	}
-	else if (sc->Check("FloorClip"))
+	else if (!Flag.ICmp("FloorClip"))
 	{
 		SetClassFieldBool(Class, "bFloorClip", Value);
+	}
+	else if (!Flag.ICmp("NoBlockmap"))
+	{
+		SetClassFieldBool(Class, "bNoBlockmap", Value);
+	}
+	else if (!Flag.ICmp("Missile"))
+	{
+		SetClassFieldBool(Class, "bMissile", Value);
+	}
+	else if (!Flag.ICmp("DropOff"))
+	{
+		SetClassFieldBool(Class, "bDropOff", Value);
+	}
+	else if (!Flag.ICmp("DontSplash"))
+	{
+		SetClassFieldBool(Class, "bNoSplash", Value);
+	}
+	else if (!Flag.ICmp("CountItem"))
+	{
+		SetClassFieldBool(Class, "bCountItem", Value);
+	}
+	else if (!Flag.ICmp("SpawnCeiling"))
+	{
+		SetClassFieldBool(Class, "bSpawnCeiling", Value);
+	}
+	else if (!Flag.ICmp("Solid"))
+	{
+		SetClassFieldBool(Class, "bSolid", Value);
+	}
+	else if (!Flag.ICmp("FloatBob"))
+	{
+		SetClassFieldBool(Class, "bFloatBob", Value);
+	}
+	else if (!Flag.ICmp("NoTeleport"))
+	{
+		SetClassFieldBool(Class, "bNoTeleport", Value);
+	}
+	else if (!Flag.ICmp("CannotPush"))
+	{
+		SetClassFieldBool(Class, "bCannotPush", Value);
+	}
+	else if (!Flag.ICmp("SeekerMissile"))
+	{
+		SetClassFieldBool(Class, "bSeekerMissile", Value);
+	}
+	else if (!Flag.ICmp("NoBlood"))
+	{
+		SetClassFieldBool(Class, "bNoBlood", Value);
+	}
+	else if (!Flag.ICmp("NoRadiusDmg"))
+	{
+		SetClassFieldBool(Class, "bNoRadiusDamage", Value);
+	}
+	else if (!Flag.ICmp("Randomize"))
+	{
+		SetClassFieldBool(Class, "bRandomise", Value);
+	}
+	else if (!Flag.ICmp("Stealth"))
+	{
+		SetClassFieldBool(Class, "bStealth", Value);
+	}
+	else if (!Flag.ICmp("NoTarget"))
+	{
+		SetClassFieldBool(Class, "bNeverTarget", Value);
+	}
+	else if (!Flag.ICmp("DontMorph"))
+	{
+		SetClassFieldBool(Class, "bNoMorph", Value);
+	}
+	else if (!Flag.ICmp("NonShootable"))
+	{
+		SetClassFieldBool(Class, "bNonShootable", Value);
+	}
+	else if (!Flag.ICmp("Inventory.AutoActivate"))
+	{
+		SetClassFieldBool(Class, "bAutoActivate", Value);
+	}
+	else if (!Flag.ICmp("Inventory.AlwaysPickup"))
+	{
+		SetClassFieldBool(Class, "bAlwaysPickup", Value);
+	}
+	else if (!Flag.ICmp("Inventory.BigPowerup"))
+	{
+		SetClassFieldBool(Class, "bBigPowerup", Value);
+	}
+
+	else if (!Flag.ICmp("NoClip"))
+	{
+		SetClassFieldBool(Class, "bColideWithThings", !Value);
+		SetClassFieldBool(Class, "bColideWithWorld", !Value);
+	}
+	else if (!Flag.ICmp("LowGravity"))
+	{
+		SetClassFieldFloat(Class, "Gravity", 0.125);
+	}
+	else if (!Flag.ICmp("DoomBounce"))
+	{
+		SetClassFieldByte(Class, "BounceType", Value ? BOUNCE_Doom : BOUNCE_None);
+	}
+	else if (!Flag.ICmp("HereticBounce"))
+	{
+		SetClassFieldByte(Class, "BounceType", Value ? BOUNCE_Heretic : BOUNCE_None);
+	}
+	else if (!Flag.ICmp("HexenBounce"))
+	{
+		SetClassFieldByte(Class, "BounceType", Value ? BOUNCE_Hexen : BOUNCE_None);
+	}
+
+	else if (!Flag.ICmp("NoLiftDrop"))
+	{
+		GCon->Logf("Unsupported flag NoLiftDrop");
+	}
+	else if (!Flag.ICmp("DontSquash"))
+	{
+		GCon->Logf("Unsupported flag DontSquash");
+	}
+	else if (!Flag.ICmp("NoTeleOther"))
+	{
+		GCon->Logf("Unsupported flag NoTeleOther");
 	}
 	else
 	{
 		sc->ExpectString();
-		GCon->Logf("Unknown flag %s", *sc->String);
+		GCon->Logf("Unknown flag %s", *Flag);
 		sc->SetEscape(false);
 		SkipBlock(sc, 1);
 		sc->SetEscape(true);
 		sc->SetCMode(false);
 		return false;
 	}
+	return true;
+	unguard;
+}
+
+//==========================================================================
+//
+//	ParseStateString
+//
+//==========================================================================
+
+static VStr ParseStateString(VScriptParser* sc)
+{
+	guard(ParseStateString);
+	VStr		StateStr;
+
+	sc->ExpectIdentifier();
+	StateStr = sc->String;
+
+	if (sc->Check("::"))
+	{
+		sc->ExpectIdentifier();
+		StateStr += "::";
+		StateStr += sc->String;
+	}
+
+	if (sc->Check("."))
+	{
+		sc->ExpectIdentifier();
+		StateStr += ".";
+		StateStr += sc->String;
+	}
+
+	return StateStr;
+	unguard;
+}
+
+//==========================================================================
+//
+//	ResolveStateLabel
+//
+//==========================================================================
+
+static VState* ResolveStateLabel(VScriptParser* sc, VClass* Class,
+	VName LabelName, int Offset)
+{
+	guard(ResolveStateLabel);
+	VClass* CheckClass = Class;
+	VName CheckName = LabelName;
+
+	const char* DCol = strstr(*LabelName, "::");
+	if (DCol)
+	{
+		char ClassNameBuf[NAME_SIZE];
+		strcpy(ClassNameBuf, *LabelName);
+		ClassNameBuf[DCol - *LabelName] = 0;
+		VName ClassName(ClassNameBuf);
+		if (ClassName == "Super")
+		{
+			CheckClass = Class->GetSuperClass();
+		}
+		else
+		{
+			CheckClass = VClass::FindClass(*ClassName);
+			if (!CheckClass)
+			{
+				sc->Error(va("No such class %s", *ClassName));
+			}
+		}
+		CheckName = DCol + 2;
+	}
+
+	VState* State = CheckClass->FindStateLabelChecked(CheckName/*, false*/);
+	int Count = Offset;
+	while (Count--)
+	{
+		if (!State || !State->Next)
+		{
+			sc->Error("Bad jump offset");
+		}
+		State = State->Next;
+	}
+	return State;
+	unguard;
+}
+
+//==========================================================================
+//
+//	ParseStates
+//
+//==========================================================================
+
+static bool ParseStates(VScriptParser* sc, VClass* Class,
+	TArray<VState*>& States)
+{
+	guard(ParseStates);
+	VState* PrevState = NULL;
+	VState* LoopStart = NULL;
+	int NewLabelsStart = Class->StateLabels.Num();
+
+	sc->Expect("{");
+	//	Disable escape sequences in states.
+	sc->SetEscape(false);
+	while (!sc->Check("}"))
+	{
+		VStr TmpName = ParseStateString(sc);
+
+		//	Goto command.
+		if (!TmpName.ICmp("Goto"))
+		{
+			VName GotoLabel = *ParseStateString(sc);
+			int GotoOffset = 0;
+			if (sc->Check("+"))
+			{
+				sc->ExpectNumber();
+				GotoOffset = sc->Number;
+			}
+
+			if (!PrevState && NewLabelsStart == Class->StateLabels.Num())
+			{
+				sc->Error("Goto before first state");
+			}
+			if (PrevState)
+			{
+				PrevState->GotoLabel = GotoLabel;
+				PrevState->GotoOffset = GotoOffset;
+			}
+			for (int i = NewLabelsStart; i < Class->StateLabels.Num(); i++)
+			{
+				Class->StateLabels[i].GotoLabel = GotoLabel;
+				Class->StateLabels[i].GotoOffset = GotoOffset;
+			}
+			NewLabelsStart = Class->StateLabels.Num();
+			PrevState = NULL;
+			continue;
+		}
+
+		//	Stop command.
+		if (!TmpName.ICmp("Stop"))
+		{
+			if (!PrevState && NewLabelsStart == Class->StateLabels.Num())
+			{
+				sc->Error("Stop before first state");
+				continue;
+			}
+			if (PrevState)
+			{
+				PrevState->NextState = NULL;
+			}
+			for (int i = NewLabelsStart; i < Class->StateLabels.Num(); i++)
+			{
+				Class->StateLabels[i].State = NULL;
+			}
+			NewLabelsStart = Class->StateLabels.Num();
+			PrevState = NULL;
+			continue;
+		}
+
+		//	Wait command.
+		if (!TmpName.ICmp("Wait") || !TmpName.ICmp("Fail"))
+		{
+			if (!PrevState)
+			{
+				sc->Error(va("%s before first state", *TmpName));
+				continue;
+			}
+			PrevState->NextState = PrevState;
+			PrevState = NULL;
+			continue;
+		}
+
+		//	Loop command.
+		if (!TmpName.ICmp("Loop"))
+		{
+			if (!PrevState)
+			{
+				sc->Error("Loop before first state");
+				continue;
+			}
+			PrevState->NextState = LoopStart;
+			PrevState = NULL;
+			continue;
+		}
+
+		//	Check for label.
+		if (sc->Check(":"))
+		{
+			VStateLabel& Lbl = Class->StateLabels.Alloc();
+			Lbl.Name = *TmpName;
+			//FIXME add constructor.
+			Lbl.State = NULL;
+			Lbl.GotoLabel = NAME_None;
+			Lbl.GotoOffset = 0;
+			continue;
+		}
+
+		VState* State = new VState(va("S_%d", States.Num()));
+		States.Append(State);
+		State->Outer = Class;
+		State->InClassIndex = States.Num() - 1;
+
+		//	Sprite name
+		if (TmpName.Length() != 4)
+		{
+			sc->Error("Invalid sprite name");
+		}
+		State->SpriteName = *TmpName.ToLower();
+
+		//  Frame
+		sc->ExpectString();
+		char FChar = VStr::ToUpper(sc->String[0]);
+		if (FChar < 'A' || FChar > ']')
+		{
+			sc->Error("Frames must be A-Z, [, \\ or ]");
+		}
+		State->Frame = FChar - 'A';
+		VStr FramesString = sc->String;
+
+		//  Tics
+		bool Neg = sc->Check("-");
+		sc->ExpectNumber();
+		if (Neg)
+		{
+			State->Time = -sc->Number;
+		}
+		else
+		{
+			State->Time = float(sc->Number) / 35.0;
+		}
+
+		while (sc->GetString() && !sc->Crossed)
+		{
+			//	Check for bright parameter.
+			if (!sc->String.ICmp("Bright"))
+			{
+				State->Frame |= FF_FULLBRIGHT;
+				continue;
+			}
+
+			//	Check for offsets.
+			if (!sc->String.ICmp("Offset"))
+			{
+				sc->Expect("(");
+				Neg = sc->Check("-");
+				sc->ExpectNumber();
+				State->Misc1 = sc->Number * (Neg ? -1 : 1);
+				sc->Expect(",");
+				Neg = sc->Check("-");
+				sc->ExpectNumber();
+				State->Misc2 = sc->Number * (Neg ? -1 : 1);
+				sc->Expect(")");
+				continue;
+			}
+
+			GCon->Logf("State action %s", *sc->String);
+			SkipBlock(sc, 2);
+			sc->SetEscape(true);
+			sc->SetCMode(false);
+			return false;
+		}
+		sc->UnGet();
+
+		//	Link previous state.
+		if (PrevState)
+		{
+			PrevState->NextState = State;
+		}
+
+		//	Assign state to the labels.
+		for (int i = NewLabelsStart; i < Class->StateLabels.Num(); i++)
+		{
+			Class->StateLabels[i].State = State;
+			LoopStart = State;
+		}
+		NewLabelsStart = Class->StateLabels.Num();
+		PrevState = State;
+
+		for (size_t i = 1; i < FramesString.Length(); i++)
+		{
+			char FChar = VStr::ToUpper(FramesString[i]);
+			if (FChar < 'A' || FChar > ']')
+			{
+				sc->Error("Frames must be A-Z, [, \\ or ]");
+			}
+
+			//	Create a new state.
+			VState* s2 = new VState(va("S_%d", States.Num()));
+			States.Append(s2);
+			s2->Outer = Class;
+			s2->InClassIndex = States.Num() - 1;
+			s2->SpriteName = State->SpriteName;
+			s2->Frame = (State->Frame & FF_FULLBRIGHT) | (FChar - 'A');
+			s2->Time = State->Time;
+			s2->Misc1 = State->Misc1;
+			s2->Misc2 = State->Misc2;
+			//s2->FunctionName = State->FunctionName;
+
+			//	Link previous state.
+			PrevState->NextState = s2;
+			PrevState = s2;
+		}
+	}
+	//	Re-enable escape sequences.
+	sc->SetEscape(true);
 	return true;
 	unguard;
 }
@@ -397,10 +827,11 @@ static void ParseActor(VScriptParser* sc)
 	Class->Outer = DecPkg;
 	SetClassFieldBool(Class, "bNoPassMobj", true);
 
+	VClass* ReplaceeClass = NULL;
 	if (sc->Check("replaces"))
 	{
 		sc->ExpectString();
-		VClass* ReplaceeClass = VClass::FindClass(*sc->String);
+		ReplaceeClass = VClass::FindClass(*sc->String);
 		if (!ReplaceeClass)
 		{
 			//	Temporarely don't make it fatal error.
@@ -435,6 +866,8 @@ static void ParseActor(VScriptParser* sc)
 
 	int GameFilter = 0;
 	int DoomEdNum = -1;
+	TArray<VState*> States;
+
 	if (sc->CheckNumber())
 	{
 		if (sc->Number < -1 || sc->Number > 32767)
@@ -447,17 +880,42 @@ static void ParseActor(VScriptParser* sc)
 	sc->Expect("{");
 	while (!sc->Check("}"))
 	{
-		if (sc->Check("Radius"))
+		if (sc->Check("+"))
+		{
+			if (!ParseFlag(sc, Class, true))
+			{
+				return;
+			}
+			continue;
+		}
+		if (sc->Check("-"))
+		{
+			if (!ParseFlag(sc, Class, false))
+			{
+				return;
+			}
+			continue;
+		}
+
+		sc->ExpectIdentifier();
+		VStr Prop = sc->String;
+		while (sc->Check("."))
+		{
+			sc->ExpectIdentifier();
+			Prop += ".";
+			Prop += sc->String;
+		}
+		if (!Prop.ICmp("Radius"))
 		{
 			sc->ExpectFloat();
 			SetClassFieldFloat(Class, "Radius", sc->Float);
 		}
-		else if (sc->Check("Height"))
+		else if (!Prop.ICmp("Height"))
 		{
 			sc->ExpectFloat();
 			SetClassFieldFloat(Class, "Height", sc->Float);
 		}
-		else if (sc->Check("RenderStyle"))
+		else if (!Prop.ICmp("RenderStyle"))
 		{
 			int RenderStyle = 0;
 			if (sc->Check("None"))
@@ -494,34 +952,179 @@ static void ParseActor(VScriptParser* sc)
 			}
 			SetClassFieldByte(Class, "RenderStyle", RenderStyle);
 		}
-		else if (sc->Check("Scale"))
+		else if (!Prop.ICmp("Alpha"))
+		{
+			sc->ExpectFloat();
+			SetClassFieldFloat(Class, "Alpha", MID(0.0, sc->Float, 1.0));
+		}
+		else if (!Prop.ICmp("Scale"))
 		{
 			sc->ExpectFloat();
 			SetClassFieldFloat(Class, "ScaleX", sc->Float);
 			SetClassFieldFloat(Class, "ScaleY", sc->Float);
 		}
-		else if (sc->Check("+"))
+		else if (!Prop.ICmp("Health"))
 		{
-			if (!ParseFlag(sc, Class, true))
+			sc->ExpectNumber();
+			SetClassFieldInt(Class, "Health", sc->Number);
+		}
+		else if (!Prop.ICmp("Mass"))
+		{
+			sc->ExpectFloat();
+			SetClassFieldFloat(Class, "Mass", sc->Float);
+		}
+		else if (!Prop.ICmp("Speed"))
+		{
+			sc->ExpectFloat();
+			SetClassFieldFloat(Class, "Speed", sc->Float * 35.0);
+			SetClassFieldFloat(Class, "StepSpeed", sc->Float);
+		}
+		else if (!Prop.ICmp("PainChance"))
+		{
+			sc->ExpectNumber();
+			SetClassFieldFloat(Class, "PainChance", float(sc->Number) / 256.0);
+		}
+		else if (!Prop.ICmp("Damage"))
+		{
+			if (sc->Check("("))
 			{
+				GCon->Logf("Damage expression");
+				sc->SetEscape(false);
+				SkipBlock(sc, 1);
+				sc->SetEscape(true);
+				sc->SetCMode(false);
 				return;
 			}
+			sc->ExpectNumber();
+			SetClassFieldFloat(Class, "MissileDamage", sc->Number);
 		}
-		else if (sc->Check("-"))
+		else if (!Prop.ICmp("Monster"))
 		{
-			if (!ParseFlag(sc, Class, false))
+			SetClassFieldBool(Class, "bShootable", true);
+			SetClassFieldBool(Class, "bCountKill", true);
+			SetClassFieldBool(Class, "bSolid", true);
+			SetClassFieldBool(Class, "bActivatePushWall", true);
+			SetClassFieldBool(Class, "bActivateMCross", true);
+			SetClassFieldBool(Class, "bNoPassMobj", false);
+			SetClassFieldBool(Class, "bMonster", true);
+		}
+		else if (!Prop.ICmp("Projectile"))
+		{
+			SetClassFieldBool(Class, "bNoBlockmap", true);
+			SetClassFieldBool(Class, "bNoGravity", true);
+			SetClassFieldBool(Class, "bDropOff", true);
+			SetClassFieldBool(Class, "bMissile", true);
+			SetClassFieldBool(Class, "bActivateImpact", true);
+			SetClassFieldBool(Class, "bActivatePCross", true);
+			SetClassFieldBool(Class, "bNoTeleport", true);
+		}
+		else if (!Prop.ICmp("SeeSound"))
+		{
+			sc->ExpectString();
+			SetClassFieldName(Class, "SightSound", *sc->String);
+		}
+		else if (!Prop.ICmp("ActiveSound"))
+		{
+			sc->ExpectString();
+			SetClassFieldName(Class, "ActiveSound", *sc->String);
+		}
+		else if (!Prop.ICmp("AttackSound"))
+		{
+			sc->ExpectString();
+			SetClassFieldName(Class, "AttackSound", *sc->String);
+		}
+		else if (!Prop.ICmp("PainSound"))
+		{
+			sc->ExpectString();
+			SetClassFieldName(Class, "PainSound", *sc->String);
+		}
+		else if (!Prop.ICmp("DeathSound"))
+		{
+			sc->ExpectString();
+			SetClassFieldName(Class, "DeathSound", *sc->String);
+		}
+		else if (!Prop.ICmp("BounceFactor"))
+		{
+			sc->ExpectFloat();
+			SetClassFieldFloat(Class, "BounceFactor", sc->Float);
+		}
+		else if (!Prop.ICmp("Translation"))
+		{
+			SetClassFieldInt(Class, "Translation",
+				R_ParseDecorateTranslation(sc));
+		}
+		else if (!Prop.ICmp("Inventory.PickupMessage"))
+		{
+			sc->ExpectString();
+			SetClassFieldStr(Class, "PickupMessage", sc->String);
+		}
+		else if (!Prop.ICmp("Inventory.Amount"))
+		{
+			sc->ExpectNumber();
+			SetClassFieldInt(Class, "Amount", sc->Number);
+		}
+		else if (!Prop.ICmp("Inventory.MaxAmount"))
+		{
+			sc->ExpectNumber();
+			SetClassFieldInt(Class, "MaxAmount", sc->Number);
+		}
+		else if (!Prop.ICmp("Obituary"))
+		{
+			sc->ExpectString();
+			GCon->Logf("Property Obituary is not yet supported");
+		}
+		else if (!Prop.ICmp("Decal"))
+		{
+			sc->ExpectString();
+			GCon->Logf("Property Decal is not yet supported");
+		}
+		else if (!Prop.ICmp("States"))
+		{
+			if (!ParseStates(sc, Class, States))
 			{
 				return;
 			}
 		}
 		else
 		{
-			GCon->Logf("Unknown property %s", *sc->String);
+			GCon->Logf("Unknown property %s", *Prop);
 			sc->SetEscape(false);
 			SkipBlock(sc, 1);
 			sc->SetEscape(true);
 			sc->SetCMode(false);
 			return;
+		}
+	}
+
+	//	Set up linked list of states.
+	if (States.Num())
+	{
+		Class->States = States[0];
+		Class->NetStates = States[0];
+		for (int i = 0; i < States.Num() - 1; i++)
+		{
+			States[i]->Next = States[i + 1];
+			States[i]->NetNext = States[i + 1];
+		}
+
+		for (int i = 0; i < States.Num(); i++)
+		{
+			States[i]->SpriteIndex = VClass::FindSprite(States[i]->SpriteName);
+			if (States[i]->GotoLabel != NAME_None)
+			{
+				States[i]->NextState = ResolveStateLabel(sc, Class,
+					States[i]->GotoLabel, States[i]->GotoOffset);
+			}
+		}
+	}
+
+	for (int i = 0; i < Class->StateLabels.Num(); i++)
+	{
+		VStateLabel& Lbl = Class->StateLabels[i];
+		if (Lbl.GotoLabel != NAME_None)
+		{
+			Lbl.State = ResolveStateLabel(sc, Class, Lbl.GotoLabel,
+				Lbl.GotoOffset);
 		}
 	}
 
@@ -531,6 +1134,12 @@ static void ParseActor(VScriptParser* sc)
 		MI.class_id = Class;
 		MI.doomednum = DoomEdNum;
 		MI.GameFilter = GameFilter;
+	}
+
+	if (ReplaceeClass)
+	{
+		ReplaceeClass->Replacement = Class;
+		Class->Replacee = ReplaceeClass;
 	}
 	unguard;
 }
@@ -845,16 +1454,19 @@ static void ParseOldDecoration(VScriptParser* sc, int Type)
 			{
 				sc->Error("Translation1 is out of range [0, 2]");
 			}
-			SetClassFieldInt(Class, "Translation", sc->Number);
+			SetClassFieldInt(Class, "Translation", (TRANSL_Standard <<
+				TRANSL_TYPE_SHIFT) + sc->Number);
 		}
 		else if (sc->Check("Translation2"))
 		{
 			sc->ExpectNumber();
-			if (sc->Number < 0 || sc->Number > 255)
+			if (sc->Number < 0 || sc->Number > MAX_LEVEL_TRANSLATIONS)
 			{
-				sc->Error("Translation2 is out of range [0, 255]");
+				sc->Error(va("Translation2 is out of range [0, %d]",
+					MAX_LEVEL_TRANSLATIONS));
 			}
-			GCon->Logf("Translatioin2 is not yet supported");
+			SetClassFieldInt(Class, "Translation", (TRANSL_Level <<
+				TRANSL_TYPE_SHIFT) + sc->Number);
 		}
 
 		//	Breakable decoration properties.
@@ -897,7 +1509,7 @@ static void ParseOldDecoration(VScriptParser* sc, int Type)
 		else if (Type == OLDDEC_Projectile && sc->Check("Speed"))
 		{
 			sc->ExpectFloat();
-			SetClassFieldFloat(Class, "Speed", sc->Float);
+			SetClassFieldFloat(Class, "Speed", sc->Float * 35.0);
 		}
 		else if (Type == OLDDEC_Projectile && sc->Check("Damage"))
 		{

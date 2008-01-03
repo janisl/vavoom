@@ -262,7 +262,7 @@
 #define T_BLOODPOOL2			148
 #define T_FLAMINGBARREL			149
 #define T_BRAINS				150
-//#define T_SCRIPTEDMARINE		151
+#define T_SCRIPTEDMARINE		151
 #define T_HEALTHBONUS			152
 #define T_MANCUBUSSHOT			153
 #define T_BARONBALL				154
@@ -389,34 +389,71 @@
 // instead of one of the CR_ constants.
 #define HUDMSG_COLORSTRING		0x40000000
 
-/*
-
 // Means-of-death for Sector_SetDamage --------------------------------------
 
-#define MOD_UNKNOWN             0
-#define MOD_ROCKET              5
-#define MOD_R_SPLASH            6
-#define MOD_PLASMARIFLE         7
-#define MOD_BFG_BOOM            8
-#define MOD_BFG_SPLASH          9
-#define MOD_CHAINSAW            10
-#define MOD_SSHOTGUN            11
-#define MOD_WATER               12
-#define MOD_SLIME               13
-#define MOD_LAVA                14
-#define MOD_CRUSH               15
-#define MOD_TELEFRAG            16
-#define MOD_FALLING             17
-#define MOD_SUICIDE             18
-#define MOD_BARREL              19
-#define MOD_EXIT                20
-#define MOD_SPLASH              21
-#define MOD_HIT                 22
-#define MOD_RAILGUN		23
-#define MOD_ICE			24
+#define MOD_UNKNOWN			0
+#define MOD_ROCKET			5
+#define MOD_R_SPLASH		6
+#define MOD_PLASMARIFLE		7
+#define MOD_BFG_BOOM		8
+#define MOD_BFG_SPLASH		9
+#define MOD_CHAINSAW		10
+#define MOD_SSHOTGUN		11
+#define MOD_WATER			12
+#define MOD_SLIME			13
+#define MOD_LAVA			14
+#define MOD_CRUSH			15
+#define MOD_TELEFRAG		16
+#define MOD_FALLING			17
+#define MOD_SUICIDE			18
+#define MOD_BARREL			19
+#define MOD_EXIT			20
+#define MOD_SPLASH			21
+#define MOD_HIT				22
+#define MOD_RAILGUN			23
+#define MOD_ICE				24
 #define MOD_DISINTEGRATE	25
-#define MOD_POISON		26
+#define MOD_POISON			26
 #define MOD_ELECTRIC		27
+
+// Actor properties you can get/set -----------------------------------------
+
+#define APROP_Health		0
+#define APROP_Speed			1
+#define APROP_Damage		2
+#define APROP_Alpha			3
+#define APROP_RenderStyle	4
+#define APROP_Ambush		10
+#define APROP_Invulnerable	11
+#define APROP_JumpZ			12
+#define APROP_ChaseGoal		13
+#define APROP_Frightened	14
+#define APROP_Gravity		15
+#define APROP_Friendly		16
+#define APROP_SeeSound		5	// Sounds can only be set, not gotten
+#define APROP_AttackSound	6
+#define APROP_PainSound		7
+#define APROP_DeathSound	8
+#define APROP_ActiveSound	9
+
+// Render Styles ------------------------------------------------------------
+
+#define STYLE_None			0	// Do not draw
+#define STYLE_Normal		1	// Normal; just copy the image to the screen
+#define STYLE_Fuzzy			2	// Draw silhouette using "fuzz" effect
+#define STYLE_SoulTrans		3	// Draw translucent with amount in r_transsouls
+#define STYLE_OptFuzzy		4	// Draw as fuzzy or translucent, based on user preference
+#define STYLE_Translucent	64	// Draw translucent
+#define STYLE_Add			65	// Draw additive
+
+// Flags for SectorDamage ---------------------------------------------------
+
+#define DAMAGE_PLAYERS				1
+#define DAMAGE_NONPLAYERS			2
+#define DAMAGE_IN_AIR				4
+#define DAMAGE_SUBCLASSES_PROTECT	8
+
+/*
 
 // Return values for PlayMovie ----------------------------------------------
 
@@ -460,34 +497,6 @@
 #define MARINEWEAPON_Railgun		10
 #define MARINEWEAPON_BFG		11
 
-// Actor properties you can get/set -----------------------------------------
-
-#define APROP_Health		0
-#define APROP_Speed		1
-#define APROP_Damage		2
-#define APROP_Alpha		3
-#define APROP_RenderStyle	4
-#define APROP_Ambush		10
-#define APROP_Invulnerable	11
-#define APROP_JumpZ			12
-#define APROP_ChaseGoal		13
-#define APROP_Frightened	14
-#define APROP_SeeSound		5	// Sounds can only be set, not gotten
-#define APROP_AttackSound	6
-#define APROP_PainSound		7
-#define APROP_DeathSound	8
-#define APROP_ActiveSound	9
-
-// Render Styles ------------------------------------------------------------
-
-#define STYLE_None		0	// Do not draw
-#define STYLE_Normal		1	// Normal; just copy the image to the screen
-#define STYLE_Fuzzy		2	// Draw silhouette using "fuzz" effect
-#define STYLE_SoulTrans		3	// Draw translucent with amount in r_transsouls
-#define STYLE_OptFuzzy		4	// Draw as fuzzy or translucent, based on user preference
-#define STYLE_Translucent	64	// Draw translucent
-#define STYLE_Add		65	// Draw additive
-
 // Properties you can use with GetPlayerInfo() ------------------------------
 
 #define PLAYERINFO_TEAM			0
@@ -498,13 +507,6 @@
 #define PLAYERINFO_MOVEBOB		5
 #define PLAYERINFO_STILLBOB		6
 #define PLAYERINFO_PLAYERCLASS	7
-
-// Flags for SectorDamage ---------------------------------------------------
-
-#define DAMAGE_PLAYERS				1
-#define DAMAGE_NONPLAYERS			2
-#define DAMAGE_IN_AIR				4
-#define DAMAGE_SUBCLASSES_PROTECT	8
 
 // Events when you have input grabbed
 

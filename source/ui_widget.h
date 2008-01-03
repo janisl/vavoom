@@ -250,8 +250,8 @@ public:
 	bool IsFocus(bool Recurse = true) const;
 	void SetFocus();
 
-	void DrawPic(int, int, int, float = 1.0);
-	void DrawPic(int, int, VTexture*, float = 1.0);
+	void DrawPic(int, int, int, float = 1.0, int = 0);
+	void DrawPic(int, int, VTexture*, float = 1.0, int = 0);
 	void DrawShadowedPic(int, int, int);
 	void DrawShadowedPic(int, int, VTexture*);
 	void FillRectWithFlat(int, int, int, int, VName);

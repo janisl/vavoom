@@ -411,6 +411,9 @@ final void A_AddPlayerCorpse()
 		HexenLevelInfo(Level).bodyque[HexenLevelInfo(Level).bodyqueslot % HexenLevelInfo::BODYQUESIZE].Destroy();
 	}
 	HexenLevelInfo(Level).bodyque[HexenLevelInfo(Level).bodyqueslot % HexenLevelInfo::BODYQUESIZE] = self;
+	Translation = XLevel.SetBodyQueueTrans(
+		HexenLevelInfo(Level).bodyqueslot % HexenLevelInfo::BODYQUESIZE,
+		Translation);
 	HexenLevelInfo(Level).bodyqueslot++;
 }
 

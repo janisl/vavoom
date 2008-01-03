@@ -26,6 +26,9 @@
 class Level : Object
 	native;
 
+const int MAX_LEVEL_TRANSLATIONS = 0xffff;
+const int MAX_BODY_QUEUE_TRANSLATIONS = 0xff;
+
 native readonly name			MapName;
 
 //	Flags.
@@ -120,6 +123,9 @@ native readonly int				TicTime;
 native readonly private void*	SectorList;
 native readonly private void*	HeadSecNode;
 
+native readonly private array<int>	Translations;
+native readonly private array<int>	BodyQueueTransl;
+
 //
 //	Natives
 //
@@ -159,6 +165,8 @@ native final bool StartACS(int number, int map, int arg1, int arg2, int arg3,
 	Entity activator, line_t* line, int side, bool Always, bool WantResult);
 native final bool SuspendACS(int number, int map);
 native final bool TerminateACS(int number, int map);
+
+native final int SetBodyQueueTrans(int Slot, int Transl);
 
 defaultproperties
 {

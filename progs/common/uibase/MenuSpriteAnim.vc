@@ -25,11 +25,13 @@
 
 class MenuSpriteAnim : Widget;
 
-int SprDef;
-int Speed;
-int NumFrames;
-int Translation;
-float Time;
+int		SprDef;
+int		Speed;
+int		NumFrames;
+int		TranslStart;
+int		TranslEnd;
+int		Colour;
+float	Time;
 
 void OnCreate()
 {
@@ -47,7 +49,8 @@ void OnDraw()
 {
 	int frame = ftoi(Time * itof(Speed)) % NumFrames;
 
-	R_DrawSpritePatch(OldOriginX, OldOriginY, SprDef, frame, 0, Translation);
+	R_DrawSpritePatch(OldOriginX, OldOriginY, SprDef, frame, 0, TranslStart,
+		TranslEnd, Colour);
 }
 
 defaultproperties

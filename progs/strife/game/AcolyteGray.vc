@@ -29,5 +29,5 @@ class AcolyteGray : Acolyte
 defaultproperties
 {
 	ConversationID = 56;
-	Translation = 3;
+	Translation = (TRANSL_Standard << TRANSL_TYPE_SHIFT) + 2;
 }

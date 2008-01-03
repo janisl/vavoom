@@ -25,6 +25,7 @@ EXTRA_DIST = \
 	engine/Object.vc \
 	engine/PlayerReplicationInfo.vc \
 	engine/RootWidget.vc \
+	engine/ScriptsParser.vc \
 	engine/Thinker.vc \
 	engine/Widget.vc \
 	engine/WorldInfo.vc \
@@ -40,6 +41,7 @@ EXTRA_DIST = \
 	linespec/BasicArmorPickup.vc \
 	linespec/CeilingMover.vc \
 	linespec/CeilingWaggle.vc \
+	linespec/DoomBuilderCamera.vc \
 	linespec/Elevator.vc \
 	linespec/EntityEx.vc \
 	linespec/FakeInventory.vc \

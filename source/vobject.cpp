@@ -1108,6 +1108,12 @@ IMPLEMENT_FUNCTION(VObject, FindClassState)
 	RET_PTR(Cls->FindStateLabel(StateName));
 }
 
+IMPLEMENT_FUNCTION(VObject, ParseColour)
+{
+	P_GET_STR(Name);
+	RET_INT(M_ParseColour(Name));
+}
+
 IMPLEMENT_FUNCTION(VObject, TextColourString)
 {
 	P_GET_INT(Colour);

@@ -31,5 +31,5 @@ defaultproperties
 	ConversationID = 60;
 	Health = 60;
 	GibsHealth = -30;
-	Translation = 7;
+	Translation = (TRANSL_Standard << TRANSL_TYPE_SHIFT) + 6;
 }

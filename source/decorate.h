@@ -33,4 +33,6 @@ enum
 	GAME_Any				= 0x0f,
 };
 
+enum { MAX_DECORATE_TRANSLATIONS = 0xffff };
+
 void ProcessDecorateScripts();

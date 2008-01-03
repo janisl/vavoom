@@ -417,20 +417,16 @@ void VOpenGLDrawer::EndView()
 	guard(VOpenGLDrawer::EndView);
 	Setup2D();
 
-	for (int i = 0; i < NUM_CSHIFTS; i++)
+	if (cl && cl->CShift)
 	{
-		if (!cl || !cl->CShifts[i])
-		{
-			continue;
-		}
 		glDisable(GL_ALPHA_TEST);
 		glDisable(GL_TEXTURE_2D);
 		glEnable(GL_BLEND);
 
-		glColor4f((float)((cl->CShifts[i] >> 16) & 0xff) / 255.0,
-				(float)((cl->CShifts[i] >> 8) & 0xff) / 255.0,
-				(float)(cl->CShifts[i] & 0xff) / 255.0,
-				(float)((cl->CShifts[i] >> 24) & 0xff) / 255.0);
+		glColor4f((float)((cl->CShift >> 16) & 0xff) / 255.0,
+				(float)((cl->CShift >> 8) & 0xff) / 255.0,
+				(float)(cl->CShift & 0xff) / 255.0,
+				(float)((cl->CShift >> 24) & 0xff) / 255.0);
 		glBegin(GL_QUADS);
 		glVertex2f(0, 0);
 		glVertex2f(ScreenWidth, 0);

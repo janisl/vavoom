@@ -325,6 +325,7 @@ public:
 	DECLARE_FUNCTION(GetLockDef)
 	DECLARE_FUNCTION(GetStatePlus)
 	DECLARE_FUNCTION(FindClassState)
+	DECLARE_FUNCTION(ParseColour)
 	DECLARE_FUNCTION(TextColourString)
 	DECLARE_FUNCTION(StartTitleMap)
 

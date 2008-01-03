@@ -130,6 +130,17 @@ EXTRA_DIST = compile.bat \
 	game1/InvulnerabilitySphere.vc \
 	game1/LiveStick.vc \
 	game1/LostSoul.vc \
+	game1/MarineBerserk.vc \
+	game1/MarineBFG.vc \
+	game1/MarineChaingun.vc \
+	game1/MarineChainsaw.vc \
+	game1/MarineFist.vc \
+	game1/MarinePistol.vc \
+	game1/MarinePlasma.vc \
+	game1/MarineRailgun.vc \
+	game1/MarineRocket.vc \
+	game1/MarineShotgun.vc \
+	game1/MarineSSG.vc \
 	game1/Meat2.vc \
 	game1/Meat3.vc \
 	game1/Meat4.vc \
@@ -151,6 +162,7 @@ EXTRA_DIST = compile.bat \
 	game1/RocketAmmo.vc \
 	game1/RocketBox.vc \
 	game1/RocketLauncher.vc \
+	game1/ScriptedMarine.vc \
 	game1/Shell.vc \
 	game1/ShellBox.vc \
 	game1/ShortBlueTorch.vc \

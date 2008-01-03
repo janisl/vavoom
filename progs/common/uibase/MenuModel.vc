@@ -25,11 +25,14 @@
 
 class MenuModel : Widget;
 
-TVec Origin;
-float Angle;
-void* Model;
-int Frame;
-string Skin;
+TVec	Origin;
+float	Angle;
+void*	Model;
+int		Frame;
+string	Skin;
+int		TranslStart;
+int		TranslEnd;
+int		Colour;
 
 void OnCreate()
 {
@@ -39,7 +42,8 @@ void OnCreate()
 
 void OnDraw()
 {
-	R_DrawModelFrame(Origin, Angle, Model, Frame, Skin);
+	R_DrawModelFrame(Origin, Angle, Model, Frame, Skin, TranslStart,
+		TranslEnd, Colour);
 }
 
 defaultproperties

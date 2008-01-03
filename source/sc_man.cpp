@@ -31,6 +31,34 @@
 
 // TYPES -------------------------------------------------------------------
 
+class VScriptsParser : public VObject
+{
+	DECLARE_CLASS(VScriptsParser, VObject, 0)
+	NO_DEFAULT_CONSTRUCTOR(VScriptsParser)
+
+	VScriptParser*		Int;
+
+	void Destroy();
+	void CheckInt();
+
+	DECLARE_FUNCTION(OpenLumpName)
+	DECLARE_FUNCTION(get_String)
+	DECLARE_FUNCTION(get_Number)
+	DECLARE_FUNCTION(get_Float)
+	DECLARE_FUNCTION(SetCMode)
+	DECLARE_FUNCTION(AtEnd)
+	DECLARE_FUNCTION(GetString)
+	DECLARE_FUNCTION(ExpectString)
+	DECLARE_FUNCTION(Check)
+	DECLARE_FUNCTION(Expect)
+	DECLARE_FUNCTION(CheckNumber)
+	DECLARE_FUNCTION(ExpectNumber)
+	DECLARE_FUNCTION(CheckFloat)
+	DECLARE_FUNCTION(ExpectFloat)
+	DECLARE_FUNCTION(UnGet)
+	DECLARE_FUNCTION(ScriptError)
+};
+
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -42,6 +70,8 @@
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
+
+IMPLEMENT_CLASS(V, ScriptsParser)
 
 // CODE --------------------------------------------------------------------
 
@@ -55,6 +85,7 @@ VScriptParser::VScriptParser(const VStr& name, VStream* Strm)
 : Line(1)
 , End(false)
 , Crossed(false)
+, QuotedString(false)
 , ScriptName(name)
 , AlreadyGot(false)
 , CMode(false)
@@ -155,6 +186,7 @@ bool VScriptParser::GetString()
 	}
 
 	Crossed = false;
+	QuotedString = false;
 	bool foundToken = false;
 	while (foundToken == false)
 	{
@@ -229,6 +261,7 @@ bool VScriptParser::GetString()
 	if (*ScriptPtr == '\"')
 	{
 		//	Quoted string
+		QuotedString = true;
 		ScriptPtr++;
 		while (ScriptPtr < ScriptEndPtr && *ScriptPtr != '\"')
 		{
@@ -269,7 +302,8 @@ bool VScriptParser::GetString()
 			(ScriptPtr[0] == '=' && ScriptPtr[1] == '=') ||
 			(ScriptPtr[0] == '|' && ScriptPtr[1] == '|') ||
 			(ScriptPtr[0] == '<' && ScriptPtr[1] == '<') ||
-			(ScriptPtr[0] == '>' && ScriptPtr[1] == '>'))
+			(ScriptPtr[0] == '>' && ScriptPtr[1] == '>') ||
+			(ScriptPtr[0] == ':' && ScriptPtr[1] == ':'))
 		{
 			//	Special double-character token
 			String += *ScriptPtr++;
@@ -291,15 +325,11 @@ bool VScriptParser::GetString()
 				}
 			}
 		}
-		else if (strchr("`~!@#$%^&*(){}[]/=\\?-+|;:<>,.", *ScriptPtr))
-		{
-			//	Special single-character token
-			String += *ScriptPtr++;
-		}
-		else if (ScriptPtr[0] >= '0' && ScriptPtr[0] <= '9')
+		else if ((ScriptPtr[0] >= '0' && ScriptPtr[0] <= '9') ||
+			(ScriptPtr[0] == '.' && ScriptPtr[1] >= '0' && ScriptPtr[1] <= '9'))
 		{
 			//	Number
-			while ((vuint8)*ScriptPtr > 32 &&
+			while (*ScriptPtr > 32 &&
 				!strchr("`~!@#$%^&*(){}[]/=\\?-+|;:<>,\"", *ScriptPtr))
 			{
 				String += *ScriptPtr++;
@@ -308,6 +338,11 @@ bool VScriptParser::GetString()
 					break;
 				}
 			}
+		}
+		else if (strchr("`~!@#$%^&*(){}[]/=\\?-+|;:<>,.", *ScriptPtr))
+		{
+			//	Special single-character token
+			String += *ScriptPtr++;
 		}
 		else
 		{
@@ -417,6 +452,62 @@ void VScriptParser::Expect(const char* name)
 	if (String.ICmp(name))
 	{
 		Error(va("Bad syntax, %s expected", name));
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VScriptParser::CheckIdentifier
+//
+//==========================================================================
+
+bool VScriptParser::CheckIdentifier()
+{
+	guard(VScriptParser::CheckIdentifier);
+	//	Quted strings are not valid identifiers.
+	if (GetString() && !QuotedString)
+	{
+		if (String.Length() < 1)
+		{
+			return false;
+		}
+
+		//	Identifier must start with a letter or underscore.
+		char c = String[0];
+		if (!((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_'))
+		{
+			return false;
+		}
+
+		//	It must be followed by letters, numbers and underscores.
+		for (size_t i = 1; i < String.Length(); i++)
+		{
+			c = String[i];
+			if (!((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') ||
+				(c >= '0' && c <= '9') || c == '_'))
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+	return false;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VScriptParser::ExpectIdentifier
+//
+//==========================================================================
+
+void VScriptParser::ExpectIdentifier()
+{
+	guard(VScriptParser::ExpectIdentifier);
+	if (!CheckIdentifier())
+	{
+		Error(va("Identifier expected, got '%s'", *String));
 	}
 	unguard;
 }
@@ -544,4 +635,165 @@ void VScriptParser::Error(const char* message)
 	const char* Msg = message ? message : "Bad syntax.";
 	Sys_Error("Script error, \"%s\" line %d: %s", *ScriptName, Line, Msg);
 	unguard;
+}
+
+//==========================================================================
+//
+//	VScriptsParser::Destroy
+//
+//==========================================================================
+
+void VScriptsParser::Destroy()
+{
+	guard(VScriptsParser::Destroy);
+	if (Int)
+	{
+		delete Int;
+		Int = NULL;
+	}
+	Super::Destroy();
+	unguard;
+}
+
+//==========================================================================
+//
+//	VScriptsParser::CheckInt
+//
+//==========================================================================
+
+void VScriptsParser::CheckInt()
+{
+	guard(VScriptsParser::CheckInt);
+	if (!Int)
+	{
+		Sys_Error("No script currently open");
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VScriptsParser natives
+//
+//==========================================================================
+
+IMPLEMENT_FUNCTION(VScriptsParser, OpenLumpName)
+{
+	P_GET_NAME(Name);
+	P_GET_SELF;
+	if (Self->Int)
+	{
+		delete Self->Int;
+		Self->Int = NULL;
+	}
+	Self->Int = new VScriptParser(*Name, W_CreateLumpReaderName(Name));
+}
+
+IMPLEMENT_FUNCTION(VScriptsParser, get_String)
+{
+	P_GET_SELF;
+	Self->CheckInt();
+	RET_STR(Self->Int->String);
+}
+
+IMPLEMENT_FUNCTION(VScriptsParser, get_Number)
+{
+	P_GET_SELF;
+	Self->CheckInt();
+	RET_INT(Self->Int->Number);
+}
+
+IMPLEMENT_FUNCTION(VScriptsParser, get_Float)
+{
+	P_GET_SELF;
+	Self->CheckInt();
+	RET_FLOAT(Self->Int->Float);
+}
+
+IMPLEMENT_FUNCTION(VScriptsParser, SetCMode)
+{
+	P_GET_BOOL(On);
+	P_GET_SELF;
+	Self->CheckInt();
+	Self->Int->SetCMode(On);
+}
+
+IMPLEMENT_FUNCTION(VScriptsParser, AtEnd)
+{
+	P_GET_SELF;
+	Self->CheckInt();
+	RET_BOOL(Self->Int->AtEnd());
+}
+
+IMPLEMENT_FUNCTION(VScriptsParser, GetString)
+{
+	P_GET_SELF;
+	Self->CheckInt();
+	RET_BOOL(Self->Int->GetString());
+}
+
+IMPLEMENT_FUNCTION(VScriptsParser, ExpectString)
+{
+	P_GET_SELF;
+	Self->CheckInt();
+	Self->Int->ExpectString();
+}
+
+IMPLEMENT_FUNCTION(VScriptsParser, Check)
+{
+	P_GET_STR(Text);
+	P_GET_SELF;
+	Self->CheckInt();
+	RET_BOOL(Self->Int->Check(*Text));
+}
+
+IMPLEMENT_FUNCTION(VScriptsParser, Expect)
+{
+	P_GET_STR(Text);
+	P_GET_SELF;
+	Self->CheckInt();
+	Self->Int->Expect(*Text);
+}
+
+IMPLEMENT_FUNCTION(VScriptsParser, CheckNumber)
+{
+	P_GET_SELF;
+	Self->CheckInt();
+	RET_BOOL(Self->Int->CheckNumber());
+}
+
+IMPLEMENT_FUNCTION(VScriptsParser, ExpectNumber)
+{
+	P_GET_SELF;
+	Self->CheckInt();
+	Self->Int->ExpectNumber();
+}
+
+IMPLEMENT_FUNCTION(VScriptsParser, CheckFloat)
+{
+	P_GET_SELF;
+	Self->CheckInt();
+	RET_BOOL(Self->Int->CheckFloat());
+}
+
+IMPLEMENT_FUNCTION(VScriptsParser, ExpectFloat)
+{
+	P_GET_SELF;
+	Self->CheckInt();
+	Self->Int->ExpectFloat();
+}
+
+IMPLEMENT_FUNCTION(VScriptsParser, UnGet)
+{
+	P_GET_SELF;
+	Self->CheckInt();
+	Self->Int->UnGet();
+}
+
+IMPLEMENT_FUNCTION(VScriptsParser, ScriptError)
+{
+	VStr Msg = PF_FormatString();
+	P_GET_SELF;
+	Self->CheckInt();
+	Self->Int->Error(*Msg);
 }

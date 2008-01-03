@@ -124,8 +124,8 @@ static aedge_t aedges[12] =
 
 void VSoftwareDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	const TVec& Offset, const TVec& Scale, mmdl_t* Apmdl, int frame,
-	VTexture* Skin, vuint32 light, vuint32 Fade, float Alpha, bool Additive,
-	bool is_view_model)
+	VTexture* Skin, VTextureTranslation* Trans, vuint32 light, vuint32 Fade,
+	float Alpha, bool Additive, bool is_view_model)
 {
 	guard(VSoftwareDrawer::DrawAliasModel);
 	modelorg = vieworg - origin;
@@ -134,7 +134,7 @@ void VSoftwareDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 
 	// see if the bounding box lets us trivially reject, also sets
 	// trivial accept status
-	if (!AliasCheckBBox(pmdl, angles, Offset, Scale, frame))
+	if (!AliasCheckBBox(angles, Offset, Scale, frame))
 	{
 		return;
 	}
@@ -154,7 +154,7 @@ void VSoftwareDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 			(((long)&finalstverts[0] + CACHE_SIZE - 1) & ~(CACHE_SIZE - 1));
 	pauxverts = &auxverts[0];
 
-	AliasSetupSkin(Skin);
+	AliasSetupSkin(Skin, Trans);
 	AliasSetUpTransform(angles, Offset, Scale, frame, a_trivial_accept);
 	AliasSetupLighting(light);
 	AliasSetupFrame(frame);
@@ -182,8 +182,8 @@ void VSoftwareDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 //
 //==========================================================================
 
-bool VSoftwareDrawer::AliasCheckBBox(mmdl_t* pmdl, const TAVec &angles,
-	const TVec& Offset, const TVec& Scale, int frame)
+bool VSoftwareDrawer::AliasCheckBBox(const TAVec &angles, const TVec& Offset,
+	const TVec& Scale, int frame)
 {
 	int					i, flags, numv;
 	float				zi, basepts[8][3], v0, v1, frac;
@@ -423,9 +423,10 @@ void VSoftwareDrawer::AliasSetUpTransform(const TAVec &angles,
 //
 //==========================================================================
 
-void VSoftwareDrawer::AliasSetupSkin(VTexture* Skin)
+void VSoftwareDrawer::AliasSetupSkin(VTexture* Skin,
+	VTextureTranslation* Trans)
 {
-	d_affinetridesc.pskin = SetPic(Skin);
+	d_affinetridesc.pskin = SetPic(Skin, Trans);
 	d_affinetridesc.skinwidth = pmdl->skinwidth;
 	d_affinetridesc.skinheight = pmdl->skinheight;
 }

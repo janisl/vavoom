@@ -172,6 +172,7 @@ _____MAIN_EXE__SOURCES = \
 	progdefs.h \
 	progs.h \
 	r_bsp.cpp \
+	r_data.cpp \
 	r_light.cpp \
 	r_local.h \
 	r_main.cpp \
@@ -488,6 +489,7 @@ _____SERVER_EXE__SOURCES = \
 	p_worldinfo.cpp \
 	pr_cmds.cpp \
 	pr_exec.cpp \
+	r_data.cpp \
 	r_tex.cpp \
 	r_tex_automap.cpp \
 	r_tex_base.cpp \

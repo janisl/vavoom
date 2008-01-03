@@ -26,7 +26,9 @@
 class MenuScreenPlayerSetup : MenuScreen;
 
 MenuInputLine		PlayerName;
-MenuChoiceEnum		Colour;
+MenuChoiceSlider	ColR;
+MenuChoiceSlider	ColG;
+MenuChoiceSlider	ColB;
 MenuSpriteAnim		Anim;
 
 //==========================================================================
@@ -38,36 +40,49 @@ MenuSpriteAnim		Anim;
 void CreateChoices()
 {
 	PlayerName = MenuInputLine(NewChild(MenuInputLine));
-	PlayerName.SetPos(ChoicesStartX, ChoicesStartY);
+	PlayerName.SetOrigin(ChoicesStartX + 10, ChoicesStartY);
+	PlayerName.CursorXOffs = -10;
 	PlayerName.Text = "Name";
 	PlayerName.Value = GetCvarS('Name');
 	PlayerName.ValueChanged = ChangePlayerName;
 	ChoicesStartY += PlayerName.Height;
 
-	Colour = MenuChoiceEnum(NewChild(MenuChoiceEnum));
-	Colour.SetPos(ChoicesStartX, ChoicesStartY);
-	Colour.Text = "Colour";
-	Colour.bLeftAlign = true;
-	Colour.AddItem("brown");
-	Colour.AddItem("red");
-	Colour.AddItem("dark brown");
-	Colour.AddItem("gray");
-	Colour.AddItem("green");
-	Colour.AddItem("yellow");
-	Colour.AddItem("light green");
-	Colour.AddItem("cyan");
-	Colour.SetInitialValue(GetCvar('colour'));
-	Colour.ValueChanging = ChangeColour;
-	ChoicesStartY += Colour.Height;
+	int Col = ParseColour(GetCvarS('colour'));
+
+	ColR = NewChild(MenuChoiceSlider);
+	ColR.SetOrigin(ChoicesStartX, ChoicesStartY);
+	ColR.Text = "Red";
+	ColR.ValueDelta = 0.1;
+	ColR.SetInitialValue(itof((Col >> 16) & 0xff) / 255.0);
+	ColR.ValueChanging = ChangeColour;
+	ChoicesStartY += ColR.Height;
+
+	ColG = NewChild(MenuChoiceSlider);
+	ColG.SetOrigin(ChoicesStartX, ChoicesStartY);
+	ColG.Text = "Green";
+	ColG.ValueDelta = 0.1;
+	ColG.SetInitialValue(itof((Col >> 8) & 0xff) / 255.0);
+	ColG.ValueChanging = ChangeColour;
+	ChoicesStartY += ColG.Height;
+
+	ColB = NewChild(MenuChoiceSlider);
+	ColB.SetOrigin(ChoicesStartX, ChoicesStartY);
+	ColB.Text = "Blue";
+	ColB.ValueDelta = 0.1;
+	ColB.SetInitialValue(itof(Col & 0xff) / 255.0);
+	ColB.ValueChanging = ChangeColour;
+	ChoicesStartY += ColB.Height;
 
 	R_InstallSprite("PLAY", 500);
 
 	Anim = MenuSpriteAnim(NewChild(MenuSpriteAnim));
-	Anim.SetPos(200, 120);
+	Anim.SetPos(250, 140);
 	Anim.SprDef = 500;
 	Anim.Speed = 8;
 	Anim.NumFrames = 4;
-	Anim.Translation = Colour.Value;
+	Anim.TranslStart = 128;
+	Anim.TranslEnd = 143;
+	Anim.Colour = Col;
 }
 
 //==========================================================================
@@ -87,17 +102,23 @@ void ChangePlayerName(Object Sender)
 //
 //==========================================================================
 
-bool ChangeColour(Object Sender, int newValue)
+bool ChangeColour(Object Sender, float newValue)
 {
-	SetCvar('colour', newValue);
-	Anim.Translation = newValue;
+	float r = Sender == ColR ? newValue : ColR.Value;
+	float g = Sender == ColG ? newValue : ColG.Value;
+	float b = Sender == ColB ? newValue : ColB.Value;
+	int Col = RGBA(ftoi(r * 255.0), ftoi(g * 255.0), ftoi(b * 255.0), 255);
+
+	SetCvarS('colour', va("%x %x %x", ftoi(r * 255.0), ftoi(g * 255.0),
+		ftoi(b * 255.0)));
+	Anim.Colour = Col;
 	return true;
 }
 
 defaultproperties
 {
-	ChoicesStartX = 16;
+	ChoicesStartX = 64;
 	ChoicesStartY = 40;
-	SelectorType = MenuSelector_SmallLeft;
+	SelectorType = MenuSelector_SmallRight;
 	Title = "PLAYER SETUP";
 }

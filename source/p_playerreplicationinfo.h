@@ -35,6 +35,10 @@ class VPlayerReplicationInfo : public VThinker
 	VStr				PlayerName;
 	VStr				UserInfo;
 
+	vuint8				TranslStart;
+	vuint8				TranslEnd;
+	vint32				Colour;
+
 	vint32				Frags;
 	vint32				Deaths;
 	vint32				KillCount;

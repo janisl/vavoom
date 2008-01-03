@@ -112,6 +112,10 @@ VNetConnection::~VNetConnection()
 	{
 		delete[] UpdatePvs;
 	}
+	if (ObjMap)
+	{
+		delete ObjMap;
+	}
 	unguard;
 }
 

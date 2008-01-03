@@ -91,6 +91,10 @@ bool			bRevertCamera;
 
 int				NoRunHealth;
 
+int				PoisonCount;	// screen flash for poison damage
+
+int				WeaponCShift;
+
 replication
 {
 	reliable if (!bIsClient)
@@ -1517,6 +1521,162 @@ void ClientSparkParticles(int Count, TVec Org, float Angle)
 		p->accel.y = (Random() - 0.5) * 16.0 + (Random () - 0.5) * 35.0;
 		p->accel.z = (Random() - 0.5) * 16.0 - 140.0;
 	}
+}
+
+//==========================================================================
+//
+//	AddBlend
+//
+//==========================================================================
+
+final void AddBlend(out float r, out float g, out float b, out float a,
+	int Col)
+{
+	if (!(Col & 0xff000000))
+	{
+		//	No alpha
+		return;
+	}
+	float r1 = itof((Col >> 16) & 0xff) / 255.0;
+	float g1 = itof((Col >> 8) & 0xff) / 255.0;
+	float b1 = itof(Col & 0xff) / 255.0;
+	float a1 = itof((Col >> 24) & 0xff) / 255.0;
+	float TmpA = 1.0 - (1.0 - a) * (1.0 - a1);
+	if (!TmpA)
+	{
+		return;
+	}
+	r = (r * a * (1.0 - a1) + r1 * a1) / TmpA;
+	g = (g * a * (1.0 - a1) + g1 * a1) / TmpA;
+	b = (b * a * (1.0 - a1) + b1 * a1) / TmpA;
+	a = TmpA;
+}
+
+//==========================================================================
+//
+//  PaletteFlash
+//
+//  Sets the new palette colour shift based upon the current values of
+// Player.DamageFlash and Player.BonusFlash, contents and other inventory
+// items.
+//
+//==========================================================================
+
+void PaletteFlash()
+{
+	float r = 0.0;
+	float g = 0.0;
+	float b = 0.0;
+	float a = 0.0;
+
+	if (MO.WaterLevel == 3)
+	{
+		switch (MO.WaterType)
+		{
+		case CONTENTS_WATER:
+			AddBlend(r, g, b, a, RGBA(130, 80, 50, 128));
+			break;
+
+		case CONTENTS_LAVA:
+			AddBlend(r, g, b, a, RGBA(255, 80, 0, 150));
+			break;
+
+		case CONTENTS_NUKAGE:
+			AddBlend(r, g, b, a, RGBA(50, 255, 50, 150));
+			break;
+
+		case CONTENTS_SLIME:
+			AddBlend(r, g, b, a, RGBA(0, 25, 5, 150));
+			break;
+
+		case CONTENTS_HELLSLIME:
+			AddBlend(r, g, b, a, RGBA(255, 80, 0, 150));
+			break;
+
+		case CONTENTS_BLOOD:
+			AddBlend(r, g, b, a, RGBA(160, 16, 16, 150));
+			break;
+
+		case CONTENTS_SLUDGE:
+			AddBlend(r, g, b, a, RGBA(128, 160, 128, 150));
+			break;
+
+		case CONTENTS_HAZARD:
+			AddBlend(r, g, b, a, RGBA(128, 160, 128, 128));
+			break;
+		}
+	}
+
+	if (EntityEx(MO).DamageType == 'Ice')
+	{
+		// Frozen player
+		AddBlend(r, g, b, a, RGBA(2, 2, 255, 113));
+	}
+	else
+	{
+		if (DamageFlash)
+		{
+			int Amount = ftoi(114.0 * DamageFlash);
+			if (Amount >= 228)
+			{
+				Amount = 228;
+			}
+			AddBlend(r, g, b, a, RGBA(255, 0, 0, Amount));
+		}
+
+		if (BonusFlash)
+		{
+			int Amount = ftoi(256.0 * BonusFlash);
+			if (Amount >= 128)
+			{
+				Amount = 128;
+			}
+			AddBlend(r, g, b, a, RGBA(215, 186, 68, Amount));
+		}
+
+		if (PoisonCount)
+		{
+			int Amount = PoisonCount * 160 / 32;
+			if (Amount >= 160)
+			{
+				Amount = 160;
+			}
+			AddBlend(r, g, b, a, RGBA(56, 118, 46, Amount));
+		}
+
+		//FIXME add hazard flash.
+		if (HazardTime > 16.0 || ftoi(4.0 * HazardTime) & 1)
+		{
+			AddBlend(r, g, b, a, RGBA(0, 255, 0, 32));
+		}
+
+		AddBlend(r, g, b, a, WeaponCShift);
+	}
+
+	Inventory Item;
+	for (Item = EntityEx(MO).Inventory; Item; Item = Item.Inventory)
+	{
+		int Blend = Item.GetBlend();
+		if (Blend)
+		{
+			AddBlend(r, g, b, a, Blend);
+		}
+	}
+
+	if (r > 1.0)
+	{
+		r = 1.0;
+	}
+	if (g > 1.0)
+	{
+		g = 1.0;
+	}
+	if (b > 1.0)
+	{
+		b = 1.0;
+	}
+	CShift = RGBA(ftoi(r * 255.0), ftoi(g * 255.0), ftoi(b * 255.0),
+		ftoi(a * 255.0));
 }
 
 //==========================================================================

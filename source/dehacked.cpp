@@ -495,7 +495,8 @@ static void ReadThing(int num)
 			SetClassFieldBool(Ent, "bNoDeathmatch", value & 0x02000000);
 			SetClassFieldBool(Ent, "bNoPassMobj", num != 1 && !(value & 0x00400000) && !(value & 0x00010000));
 			//	Translation
-			SetClassFieldInt(Ent, "Translation", (value & 0x0c000000) >> 26);
+			SetClassFieldInt(Ent, "Translation", value & 0x0c000000 ?
+				(TRANSL_Standard << TRANSL_TYPE_SHIFT) + ((value & 0x0c000000) >> 26) - 1 : 0);
 			//	Alpha
 			SetClassFieldFloat(Ent, "Alpha", (value & 0x00040000) ? 0.1 : (value & 0x80000000) ? 0.5 : 1.0);
 			//	The following fields were not used

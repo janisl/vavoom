@@ -32,6 +32,7 @@ public:
 	int 		Line;
 	bool		End;
 	bool		Crossed;
+	bool		QuotedString;
 	VStr		String;
 	VName		Name8;
 	int 		Number;
@@ -43,8 +44,10 @@ public:
 	bool GetString();
 	void ExpectString();
 	void ExpectName8();
+	void ExpectIdentifier();
 	bool Check(const char*);
 	void Expect(const char*);
+	bool CheckIdentifier();
 	bool CheckNumber();
 	void ExpectNumber();
 	bool CheckFloat();

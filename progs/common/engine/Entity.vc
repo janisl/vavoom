@@ -90,6 +90,27 @@ enum
 	STYLE_Add					// Draw additive
 };
 
+//	Colour tralslation types.
+enum
+{
+	//	No translation.
+	TRANSL_None,
+	//	Game's standard translations.
+	TRANSL_Standard,
+	//	Per-player translations.
+	TRANSL_Player,
+	//	ACS translations.
+	TRANSL_Level,
+	//	Translations of dead players.
+	TRANSL_BodyQueue,
+	//	Translations defined in DECORATE.
+	TRANSL_Decorate,
+
+	TRANSL_Max
+};
+
+const int TRANSL_TYPE_SHIFT = 16;
+
 // Info for drawing: position.
 TVec			Origin;
 
@@ -103,6 +124,7 @@ float			StateTime;			// state tic counter
 
 //More drawing info.
 byte			SpriteType;				//  How to draw sprite
+name			FixedSpriteName;
 string			FixedModelName;
 string			ModelSkin;
 byte			ModelVersion;
@@ -208,9 +230,10 @@ Entity			Owner;
 replication
 {
 	reliable if (Role == ROLE_Authority)
-		Origin, Angles, FloorClip, State, StateTime, SpriteType, ModelSkin,
-		ModelVersion, RenderStyle, Alpha, Translation, ScaleX, ScaleY, bFly,
-		bHidden, bFullBright, bFixedModel, bNetLocalPlayer, NetID;
+		Origin, Angles, FloorClip, State, StateTime, SpriteType,
+		FixedSpriteName, ModelSkin, ModelVersion, RenderStyle, Alpha,
+		Translation, ScaleX, ScaleY, bFly, bHidden, bFullBright, bFixedModel,
+		bNetLocalPlayer, NetID;
 
 
 	reliable if (Role == ROLE_Authority && bFixedModel)
@@ -382,6 +405,16 @@ bool RoughCheckThing(Entity Other)
 
 //===========================================================================
 //
+//  ClearInventory
+//
+//===========================================================================
+
+void ClearInventory()
+{
+}
+
+//===========================================================================
+//
 //  GiveInventory
 //
 //===========================================================================
@@ -424,6 +457,60 @@ int GetSigilPieces()
 
 //===========================================================================
 //
+//  GetArmorPoints
+//
+//===========================================================================
+
+int GetArmorPoints()
+{
+	return 0;
+}
+
+//===========================================================================
+//
+//  CheckNamedWeapon
+//
+//===========================================================================
+
+int CheckNamedWeapon(name Name)
+{
+	return 0;
+}
+
+//===========================================================================
+//
+//  SetNamedWeapon
+//
+//===========================================================================
+
+int SetNamedWeapon(name Name)
+{
+	return 0;
+}
+
+//===========================================================================
+//
+//  GetAmmoCapacity
+//
+//===========================================================================
+
+int GetAmmoCapacity(name Name)
+{
+	return 0;
+}
+
+//===========================================================================
+//
+//  SetAmmoCapacity
+//
+//===========================================================================
+
+void SetAmmoCapacity(name Name, int Amount)
+{
+}
+
+//===========================================================================
+//
 //  MoveThing
 //
 //===========================================================================
@@ -442,6 +529,27 @@ bool MoveThing(TVec Pos, bool Fog)
 float GetStateTime(state AState, float AStateTime)
 {
 	return AStateTime;
+}
+
+//==========================================================================
+//
+//	SetActorProperty
+//
+//==========================================================================
+
+void SetActorProperty(int Prop, int IntVal, string StrVal)
+{
+}
+
+//==========================================================================
+//
+//	GetActorProperty
+//
+//==========================================================================
+
+int GetActorProperty(int Prop)
+{
+	return 0;
 }
 
 //==========================================================================

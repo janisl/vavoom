@@ -52,6 +52,6 @@ defaultproperties
 	Height = 56.0;
 	Mass = 100.0;
 	MaxStepHeight = 16.0;
-	Translation = 1;
+	Translation = (TRANSL_Standard << TRANSL_TYPE_SHIFT) + 0;
 	DeathSound = 'zombie/death';
 }

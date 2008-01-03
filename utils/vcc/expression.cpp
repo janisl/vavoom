@@ -1639,7 +1639,7 @@ VExpression* VDotField::IntResolve(VEmitContext& ec, bool AssignTarget)
 			return NULL;
 		}
 	}
-	ParseError(Loc, "Reference, struct or vector expected on left side of .");
+	ParseError(Loc, "Reference, struct or vector expected on left side of . %d", op->Type.Type);
 	delete this;
 	return NULL;
 }

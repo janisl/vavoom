@@ -1039,13 +1039,14 @@ void VDirect3DDrawer::DrawMaskedPolygon(surface_t* surf, float Alpha,
 //==========================================================================
 
 void VDirect3DDrawer::DrawSpritePolygon(TVec *cv, VTexture* Tex, float Alpha,
-	bool Additive, int translation, vuint32 light, vuint32 Fade, const TVec&,
-	float, const TVec& saxis, const TVec& taxis, const TVec& texorg)
+	bool Additive, VTextureTranslation* Translation, vuint32 light,
+	vuint32 Fade, const TVec&, float, const TVec& saxis, const TVec& taxis,
+	const TVec& texorg)
 {
 	guard(VDirect3DDrawer::DrawSpritePolygon);
 	MyD3DVertex		out[4];
 
-	SetSpriteLump(Tex, translation);
+	SetSpriteLump(Tex, Translation);
 
 	int l = ((int)(Alpha * 255) << 24) | (light & 0x00ffffff);
 	for (int i = 0; i < 4; i++)
@@ -1095,8 +1096,8 @@ void VDirect3DDrawer::DrawSpritePolygon(TVec *cv, VTexture* Tex, float Alpha,
 
 void VDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	const TVec& Offset, const TVec& Scale, mmdl_t* pmdl, int frame,
-	VTexture* Skin, vuint32 light, vuint32 Fade, float Alpha, bool Additive,
-	bool is_view_model)
+	VTexture* Skin, VTextureTranslation* Trans, vuint32 light, vuint32 Fade,
+	float Alpha, bool Additive, bool is_view_model)
 {
 	guard(VDirect3DDrawer::DrawAliasModel);
 	mframe_t			*pframedesc;
@@ -1179,7 +1180,7 @@ void VDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 
 	RenderDevice->SetTransform(D3DTRANSFORMSTATE_WORLD, &matWorld);
 
-	SetPic(Skin);
+	SetPic(Skin, Trans);
 
 	RenderDevice->SetRenderState(D3DRENDERSTATE_SHADEMODE, D3DSHADE_GOURAUD);
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, TRUE);

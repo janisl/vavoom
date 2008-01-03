@@ -125,6 +125,52 @@ public:
 	virtual particle_t* NewParticle() = 0;
 };
 
+class VTextureTranslation
+{
+public:
+	vuint8		Table[256];
+	rgba_t		Palette[256];
+
+	vuint16		Crc;
+
+	//	Used to detect changed player translations.
+	vuint8		TranslStart;
+	vuint8		TranslEnd;
+	vint32		Colour;
+
+	//	Used to replicate translation tables in more efficient way.
+	struct VTransCmd
+	{
+		vuint8	Type;
+		vuint8	Start;
+		vuint8	End;
+		vuint8	R1;
+		vuint8	G1;
+		vuint8	B1;
+		vuint8	R2;
+		vuint8	G2;
+		vuint8	B2;
+	};
+	TArray<VTransCmd>	Commands;
+
+	VTextureTranslation();
+	void Clear();
+	void CalcCrc();
+	void Serialise(VStream&);
+	void BuildPlayerTrans(int, int, int);
+	void MapToRange(int, int, int, int);
+	void MapToColours(int, int, int, int, int, int, int, int);
+
+	const vuint8* GetTable() const
+	{
+		return Table;
+	}
+	const rgba_t* GetPalette() const
+	{
+		return Palette;
+	}
+};
+
 class VTexture
 {
 public:
@@ -142,11 +188,25 @@ public:
 	float		SScale;				//	Scaling
 	float		TScale;
 	int			TextureTranslation;	// Animation
+
+	//	Driver data.
+	struct VTransData
+	{
+		union
+		{
+			vuint32				Handle;
+			void*				Data;
+		};
+		VTextureTranslation*	Trans;
+	};
+
 	union
 	{
-		vuint32	DriverHandle;
-		void*	DriverData;
+		vuint32					DriverHandle;
+		void*					DriverData;
 	};
+	TArray<VTransData>			DriverTranslated;
+
 protected:
 	vuint8*		Pixels8Bit;
 	VTexture*	HiResTexture;
@@ -174,6 +234,7 @@ public:
 	virtual rgba_t* GetPalette();
 	virtual void Unload() = 0;
 	virtual VTexture* GetHighResolutionTexture();
+	VTransData* FindDriverTrans(VTextureTranslation*);
 
 protected:
 	void FixupPalette(vuint8* Pixels, rgba_t* Palette);
@@ -230,11 +291,17 @@ private:
 	void AddHiResTextures();
 };
 
+// r_data
+void R_InitData();
+void R_ShutdownData();
+int R_ParseDecorateTranslation(VScriptParser*);
+
 // r_main
 void R_Init(); // Called by startup code.
 void R_Start(VLevel*);
 void R_SetViewSize(int blocks);
 void R_RenderPlayerView();
+VTextureTranslation* R_GetCachedTranslation(int, VLevel*);
 
 // r_tex
 void R_InitTexture();
@@ -243,7 +310,7 @@ VAnimDoorDef* R_FindAnimDoor(vint32);
 void R_AnimateSurfaces();
 
 // r_things
-void R_DrawSpritePatch(int x, int y, int sprite, int frame, int rot, int = 0);
+void R_DrawSpritePatch(int, int, int, int, int, int = 0, int = 0, int = 0);
 void R_InitSprites();
 
 //	2D graphics

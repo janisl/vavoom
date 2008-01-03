@@ -279,7 +279,11 @@ final void A_SerpentMeleeAttack()
 
 final void A_SerpentHeadPop()
 {
-	Spawn(SerpentHead, Origin + vector(0.0, 0.0, 45.0));
+	Actor A = Spawn(SerpentHead, Origin + vector(0.0, 0.0, 45.0));
+	if (A)
+	{
+		A.Translation = Translation;
+	}
 }
 
 //==========================================================================
@@ -299,6 +303,7 @@ final void A_SerpentSpawnGibs()
 		A.Velocity.x = (Random() - 0.5) / 4.0 * 35.0;
 		A.Velocity.y = (Random() - 0.5) / 4.0 * 35.0;
 		A.FloorClip = 6.0;
+		A.Translation = Translation;
 	}
 	A = Spawn(SerpentGib2, vector(Origin.x + (Random() - 0.5) * 16.0,
 		Origin.y + (Random() - 0.5) * 16.0, FloorZ + 1.0));
@@ -307,6 +312,7 @@ final void A_SerpentSpawnGibs()
 		A.Velocity.x = (Random() - 0.5) / 4.0 * 35.0;
 		A.Velocity.y = (Random() - 0.5) / 4.0 * 35.0;
 		A.FloorClip = 6.0;
+		A.Translation = Translation;
 	}
 	A = Spawn(SerpentGib3, vector(Origin.x + (Random() - 0.5) * 16.0,
 		Origin.y + (Random() - 0.5) * 16.0, FloorZ + 1.0));
@@ -315,6 +321,7 @@ final void A_SerpentSpawnGibs()
 		A.Velocity.x = (Random() - 0.5) / 4.0 * 35.0;
 		A.Velocity.y = (Random() - 0.5) / 4.0 * 35.0;
 		A.FloorClip = 6.0;
+		A.Translation = Translation;
 	}
 }
 

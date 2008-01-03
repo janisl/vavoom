@@ -486,13 +486,16 @@ IMPLEMENT_FUNCTION(VObject, R_InstallSprite)
 
 IMPLEMENT_FUNCTION(VObject, R_DrawSpritePatch)
 {
-	P_GET_INT(translation);
+	P_GET_INT(Colour);
+	P_GET_INT(TranslEnd);
+	P_GET_INT(TranslStart);
 	P_GET_INT(rot);
 	P_GET_INT(frame);
 	P_GET_INT(sprite);
 	P_GET_INT(y);
 	P_GET_INT(x);
-	R_DrawSpritePatch(x, y, sprite, frame, rot, translation);
+	R_DrawSpritePatch(x, y, sprite, frame, rot, TranslStart, TranslEnd,
+		Colour);
 }
 
 //==========================================================================
@@ -537,12 +540,16 @@ IMPLEMENT_FUNCTION(VObject, GetModelSkinInfo)
 
 IMPLEMENT_FUNCTION(VObject, R_DrawModelFrame)
 {
+	P_GET_INT(Colour);
+	P_GET_INT(TranslEnd);
+	P_GET_INT(TranslStart);
 	P_GET_STR(skin);
 	P_GET_INT(frame);
 	P_GET_PTR(VModel, model);
 	P_GET_FLOAT(angle);
 	P_GET_VEC(origin);
-	R_DrawModelFrame(origin, angle, model, frame, *skin, 0);
+	R_DrawModelFrame(origin, angle, model, frame, *skin, TranslStart,
+		TranslEnd, Colour, 0);
 }
 
 //==========================================================================

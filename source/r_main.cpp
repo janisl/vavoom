@@ -39,7 +39,6 @@
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
-void R_InitData();
 void R_FreeSkyboxData();
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -85,11 +84,6 @@ refdef_t				refdef;
 
 float					PixelAspect;
 
-//
-//	Translation tables
-//
-vuint8*					translationtables;
-
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static FDrawerDesc		*DrawerList[DRAWER_MAX];
@@ -107,6 +101,12 @@ static TVec				clip_base[4];
 
 subsector_t				*r_viewleaf;
 subsector_t				*r_oldviewleaf;
+
+//
+//	Translation tables
+//
+static VTextureTranslation*			PlayerTranslations[MAXPLAYERS + 1];
+static TArray<VTextureTranslation*>	CachedTranslations;
 
 // if true, load all graphics at start
 static VCvarI			precache("precache", "1", CVAR_Archive);
@@ -143,7 +143,6 @@ void R_Init()
 {
 	guard(R_Init);
 	R_InitSkyBoxes();
-	R_InitData();
 	R_InitModels();
 	Drawer->InitTextures();
 	Drawer->InitData();
@@ -763,6 +762,8 @@ void VRenderLevel::RenderPlayerView()
 
 	GTextureManager.Time = Level->Time;
 
+	BuildPlayerTranslations();
+
 	AnimateSky(host_frametime);
 
 	UpdateParticles(host_frametime);
@@ -908,7 +909,7 @@ void R_DrawPic(int x, int y, int handle, float Alpha)
 	y -= Tex->GetScaledTOffset();
 	Drawer->DrawPic(fScaleX * x, fScaleY * y,
 		fScaleX * (x + Tex->GetScaledWidth()), fScaleY * (y + Tex->GetScaledHeight()),
-		0, 0, Tex->GetWidth(), Tex->GetHeight(), Tex, Alpha);
+		0, 0, Tex->GetWidth(), Tex->GetHeight(), Tex, NULL, Alpha);
 	unguard;
 }
 
@@ -965,114 +966,177 @@ void VRenderLevel::PrecacheLevel()
 
 //==========================================================================
 //
-//	InitTranslationTables
+//	VRenderLevel::GetTranslation
 //
 //==========================================================================
 
-static void InitTranslationTables()
+VTextureTranslation* VRenderLevel::GetTranslation(int TransNum)
 {
-	guard(InitTranslationTables);
-	VStream* Strm = W_CreateLumpReaderName(NAME_translat);
-	int TabLen = Strm->TotalSize();
-	translationtables = new vuint8[TabLen];
-	Strm->Serialise(translationtables, TabLen);
-	delete Strm;
-	for (int i = 0; i < TabLen; i++)
+	guard(VRenderLevel::GetTranslation);
+	return R_GetCachedTranslation(TransNum, Level);
+	unguard;
+}
+
+//==========================================================================
+//
+//	VRenderLevel::BuildPlayerTranslations
+//
+//==========================================================================
+
+void VRenderLevel::BuildPlayerTranslations()
+{
+	guard(VRenderLevel::BuildPlayerTranslations);
+	for (TThinkerIterator<VPlayerReplicationInfo> It(Level); It; ++It)
 	{
-		if ((i & 0xff) == 0)
+		if (It->PlayerNum < 0 || It->PlayerNum >= MAXPLAYERS)
 		{
-			//	Make sure that 0 always maps to 0.
-			translationtables[i] = 0;
+			//	Should not happen.
+			continue;
 		}
-		else
+		if (!It->TranslStart || !It->TranslEnd)
 		{
-			//	Make sure that normal colours doesn't map to colour 0.
-			if (translationtables[i] == 0)
-				translationtables[i] = r_black_colour;
+			continue;
 		}
+
+		VTextureTranslation* Tr = PlayerTranslations[It->PlayerNum];
+		if (Tr && Tr->TranslStart == It->TranslStart &&
+			Tr->TranslEnd == It->TranslEnd && Tr->Colour == It->Colour)
+		{
+			continue;
+		}
+
+		if (!Tr)
+		{
+			Tr = new VTextureTranslation;
+			PlayerTranslations[It->PlayerNum] = Tr;
+		}
+		//	Don't waste time clearing if it's the same range.
+		if (Tr->TranslStart != It->TranslStart ||
+			Tr->TranslEnd != It->TranslEnd)
+		{
+			Tr->Clear();
+		}
+		Tr->BuildPlayerTrans(It->TranslStart, It->TranslEnd, It->Colour);
 	}
 	unguard;
 }
 
 //==========================================================================
 //
-//	R_InitData
+//	R_SetMenuPlayerTrans
 //
 //==========================================================================
 
-void R_InitData()
+int R_SetMenuPlayerTrans(int Start, int End, int Col)
 {
-	guard(R_InitData);
-	//	We use colour 0 as transparent colour, so we must find an alternate
-	// index for black colour. In Doom, Heretic and Strife there is another
-	// black colour, in Hexen it's almost black.
-	//	I think that originaly Doom uses colour 255 as transparent colour,
-	// but utilites created by others uses the alternate black colour and
-	// these graphics can contain pixels of colour 255.
-	//	Heretic and Hexen also uses colour 255 as transparent, even more - in
-	// colourmaps it's maped to colour 0. Posibly this can cause problems
-	// with modified graphics.
-	//	Strife uses colour 0 as transparent. I already had problems with fact
-	// that colour 255 is normal colour, now there shouldn't be any problems.
-	VStream* Strm = W_CreateLumpReaderName(NAME_playpal);
-	check(Strm);
-	rgba_t* pal = r_palette;
-	int best_dist = 0x10000;
-	for (int i = 0; i < 256; i++)
+	guard(R_SetMenuPlayerTrans);
+	if (!Start || !End)
 	{
-		*Strm << pal[i].r
-			<< pal[i].g
-			<< pal[i].b;
-		if (i == 0)
-		{
-			pal[i].a = 0;
-		}
-		else
-		{
-			pal[i].a = 255;
-			int dist = pal[i].r * pal[i].r + pal[i].g * pal[i].g +
-				pal[i].b * pal[i].b;
-			if (dist < best_dist)
-			{
-				r_black_colour = i;
-				best_dist = dist;
-			}
-		}
+		return 0;
 	}
-	delete Strm;
 
-	//	Calculate RGB table.
-	for (int ir = 0; ir < 32; ir++)
+	VTextureTranslation* Tr = PlayerTranslations[MAXPLAYERS];
+	if (Tr && Tr->TranslStart == Start && Tr->TranslEnd == End &&
+		Tr->Colour == Col)
 	{
-		for (int ig = 0; ig < 32; ig++)
-		{
-			for (int ib = 0; ib < 32; ib++)
-			{
-				int r = (int)(ir * 255.0 / 31.0 + 0.5);
-				int g = (int)(ig * 255.0 / 31.0 + 0.5);
-				int b = (int)(ib * 255.0 / 31.0 + 0.5);
-				int best_colour = 0;
-				int best_dist = 0x1000000;
-				for (int i = 1; i < 256; i++)
-				{
-					int dist = (r_palette[i].r - r) * (r_palette[i].r - r) +
-						(r_palette[i].g - g) * (r_palette[i].g - g) +
-						(r_palette[i].b - b) * (r_palette[i].b - b);
-					if (dist < best_dist)
-					{
-						best_colour = i;
-						best_dist = dist;
-						if (!dist)
-							break;
-					}
-				}
-				r_rgbtable[(ir << 10) + (ig << 5) + ib] = best_colour;
-			}
-		}
+		return (TRANSL_Player << TRANSL_TYPE_SHIFT) + MAXPLAYERS;
 	}
-	r_rgbtable[32 * 32 * 32] = 0;
 
-	InitTranslationTables();
+	if (!Tr)
+	{
+		Tr = new VTextureTranslation;
+		PlayerTranslations[MAXPLAYERS] = Tr;
+	}
+	if (Tr->TranslStart != Start || Tr->TranslEnd == End)
+	{
+		Tr->Clear();
+	}
+	Tr->BuildPlayerTrans(Start, End, Col);
+	return (TRANSL_Player << TRANSL_TYPE_SHIFT) + MAXPLAYERS;
+	unguard;
+}
+
+//==========================================================================
+//
+//	R_GetCachedTranslation
+//
+//==========================================================================
+
+VTextureTranslation* R_GetCachedTranslation(int TransNum, VLevel* Level)
+{
+	guard(R_GetCachedTranslation);
+	int Type = TransNum >> TRANSL_TYPE_SHIFT;
+	int Index = TransNum & ((1 << TRANSL_TYPE_SHIFT) - 1);
+	VTextureTranslation* Tr;
+	switch (Type)
+	{
+	case TRANSL_Standard:
+		if (Index < 0 || Index >= NumTranslationTables - 1)
+		{
+			return NULL;
+		}
+		Tr = TranslationTables[Index + 1];
+		break;
+
+	case TRANSL_Player:
+		if (Index < 0 || Index >= MAXPLAYERS + 1)
+		{
+			return NULL;
+		}
+		Tr = PlayerTranslations[Index];
+		break;
+
+	case TRANSL_Level:
+		if (!Level || Index < 0 || Index >= Level->Translations.Num())
+		{
+			return NULL;
+		}
+		Tr = Level->Translations[Index];
+		break;
+
+	case TRANSL_BodyQueue:
+		if (!Level || Index < 0 || Index >= Level->BodyQueueTrans.Num())
+		{
+			return NULL;
+		}
+		Tr = Level->BodyQueueTrans[Index];
+		break;
+
+	case TRANSL_Decorate:
+		if (Index < 0 || Index >= DecorateTranslations.Num())
+		{
+			return NULL;
+		}
+		Tr = DecorateTranslations[Index];
+		break;
+
+	default:
+		return NULL;
+	}
+
+	if (!Tr)
+	{
+		return NULL;
+	}
+
+	for (int i = 0; i < CachedTranslations.Num(); i++)
+	{
+		VTextureTranslation* Check = CachedTranslations[i];
+		if (Check->Crc != Tr->Crc)
+		{
+			continue;
+		}
+		if (memcmp(Check->Palette, Tr->Palette, sizeof(Tr->Palette)))
+		{
+			continue;
+		}
+		return Check;
+	}
+
+	VTextureTranslation* Copy = new VTextureTranslation;
+	*Copy = *Tr;
+	CachedTranslations.Append(Copy);
+	return Copy;
 	unguard;
 }
 
@@ -1172,10 +1236,19 @@ void V_Shutdown()
 	}
 	R_FreeSpriteData();
 	R_FreeModels();
-	if (translationtables)
+	for (int i = 0; i < MAXPLAYERS + 1; i++)
 	{
-		Z_Free(translationtables);
+		if (PlayerTranslations[i])
+		{
+			delete PlayerTranslations[i];
+			PlayerTranslations[i] = NULL;
+		}
 	}
+	for (int i = 0; i < CachedTranslations.Num(); i++)
+	{
+		delete CachedTranslations[i];
+	}
+	CachedTranslations.Clear();
 	R_FreeSkyboxData();
 	unguard;
 }

@@ -27,8 +27,6 @@
 
 // MACROS ------------------------------------------------------------------
 
-#define NUM_CSHIFTS		8
-
 // TYPES -------------------------------------------------------------------
 
 class VNetConnection;
@@ -99,6 +97,8 @@ class VBasePlayer : public VObject
 	VStr			PlayerName;
 	vuint8			BaseClass;
 	vuint8			PClass;			// player class type
+	vuint8			TranslStart;
+	vuint8			TranslEnd;
 	vint32			Colour;
 
 	// Copied from cmd, needed for PROGS, which supports only 4 byte ints
@@ -141,7 +141,7 @@ class VBasePlayer : public VObject
 	vuint8			FixedColourmap;
 
 	// Colour shifts for damage, powerups and content types
-	vuint32			CShifts[NUM_CSHIFTS];
+	vuint32			CShift;
 
 	// Overlay view sprites (gun, etc).
 	VViewState		ViewStates[NUMPSPRITES];

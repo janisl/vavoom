@@ -36,3 +36,4 @@
 #include "RootWidget.vc"
 #include "ActorDisplayWindow.vc"
 #include "ClientGameBase.vc"
+#include "ScriptsParser.vc"

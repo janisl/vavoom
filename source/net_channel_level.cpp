@@ -44,6 +44,8 @@ enum
 	CMD_PreRender,
 	CMD_Line,
 	CMD_CamTex,
+	CMD_LevelTrans,
+	CMD_BodyQueueTrans,
 
 	CMD_MAX
 };
@@ -109,6 +111,8 @@ void VLevelChannel::SetLevel(VLevel* ALevel)
 		Sectors = NULL;
 		PolyObjs = NULL;
 		CameraTextures.Clear();
+		Translations.Clear();
+		BodyQueueTrans.Clear();
 	}
 
 	Level = ALevel;
@@ -450,6 +454,91 @@ void VLevelChannel::Update()
 		RepCam.FOV = Cam.FOV;
 	}
 
+	for (int i = 0; i < Level->Translations.Num(); i++)
+	{
+		//	Grow replication array if needed.
+		if (Translations.Num() == i)
+		{
+			Translations.Alloc();
+		}
+		if (!Level->Translations[i])
+		{
+			continue;
+		}
+		VTextureTranslation* Tr = Level->Translations[i];
+		TArray<VTextureTranslation::VTransCmd>& Rep = Translations[i];
+		bool Eq = Tr->Commands.Num() == Rep.Num();
+		if (Eq)
+		{
+			for (int j = 0; j < Rep.Num(); j++)
+			{
+				if (memcmp(&Tr->Commands[j], &Rep[j], sizeof(Rep[j])))
+				{
+					Eq = false;
+					break;
+				}
+			}
+		}
+		if (Eq)
+		{
+			continue;
+		}
+
+		//	Send message
+		Msg.WriteInt(CMD_LevelTrans, CMD_MAX);
+		Msg.WriteInt(i, MAX_LEVEL_TRANSLATIONS);
+		Msg.WriteInt(Tr->Commands.Num(), 0xff);
+		Rep.SetNum(Tr->Commands.Num());
+		for (int j = 0; j < Tr->Commands.Num(); j++)
+		{
+			VTextureTranslation::VTransCmd& C = Tr->Commands[j];
+			Msg.WriteInt(C.Type, 2);
+			if (C.Type == 0)
+			{
+				Msg << C.Start << C.End << C.R1 << C.R2;
+			}
+			else if (C.Type == 1)
+			{
+				Msg << C.Start << C.End << C.R1 << C.G1 << C.B1 << C.R2 <<
+					C.G2 << C.B2;
+			}
+			Rep[j] = C;
+		}
+	}
+
+	for (int i = 0; i < Level->BodyQueueTrans.Num(); i++)
+	{
+		//	Grow replication array if needed.
+		if (BodyQueueTrans.Num() == i)
+		{
+			BodyQueueTrans.Alloc().TranslStart = 0;
+		}
+		if (!Level->BodyQueueTrans[i])
+		{
+			continue;
+		}
+		VTextureTranslation* Tr = Level->BodyQueueTrans[i];
+		if (!Tr->TranslStart)
+		{
+			continue;
+		}
+		VBodyQueueTrInfo& Rep = BodyQueueTrans[i];
+		if (Tr->TranslStart == Rep.TranslStart &&
+			Tr->TranslEnd == Rep.TranslEnd && Tr->Colour == Rep.Colour)
+		{
+			continue;
+		}
+
+		//	Send message
+		Msg.WriteInt(CMD_BodyQueueTrans, CMD_MAX);
+		Msg.WriteInt(i, MAX_BODY_QUEUE_TRANSLATIONS);
+		Msg << Tr->TranslStart << Tr->TranslEnd;
+		Msg.WriteInt(Tr->Colour, 0x00ffffff);
+		Rep.TranslStart = Tr->TranslStart;
+		Rep.TranslEnd = Tr->TranslEnd;
+		Rep.Colour = Tr->Colour;
+	}
+
 	if (Msg.GetNumBits())
 	{
 		SendMessage(&Msg);
@@ -633,6 +722,73 @@ void VLevelChannel::ParsePacket(VMessageIn& Msg)
 				Cam.TexNum = Msg.ReadInt(0xffff);
 				Cam.FOV = Msg.ReadInt(360);
 			}
+			break;
+
+		case CMD_LevelTrans:
+			{
+				int i = Msg.ReadInt(MAX_LEVEL_TRANSLATIONS);
+				while (Level->Translations.Num() <= i)
+				{
+					Level->Translations.Append(NULL);
+				}
+				VTextureTranslation* Tr = Level->Translations[i];
+				if (!Tr)
+				{
+					Tr = new VTextureTranslation;
+					Level->Translations[i] = Tr;
+				}
+				Tr->Clear();
+				int Count = Msg.ReadInt(0xff);
+				for (int j = 0; j < Count; j++)
+				{
+					vuint8 Type = Msg.ReadInt(2);
+					if (Type == 0)
+					{
+						vuint8 Start;
+						vuint8 End;
+						vuint8 SrcStart;
+						vuint8 SrcEnd;
+						Msg << Start << End << SrcStart << SrcEnd;
+						Tr->MapToRange(Start, End, SrcStart, SrcEnd);
+					}
+					else if (Type == 1)
+					{
+						vuint8 Start;
+						vuint8 End;
+						vuint8 R1;
+						vuint8 G1;
+						vuint8 B1;
+						vuint8 R2;
+						vuint8 G2;
+						vuint8 B2;
+						Msg << Start << End << R1 << G1 << B1 << R2 << G2 << B2;
+						Tr->MapToColours(Start, End, R1, G1, B1, R2, G2, B2);
+					}
+				}
+			}
+			break;
+
+		case CMD_BodyQueueTrans:
+			{
+				int i = Msg.ReadInt(MAX_BODY_QUEUE_TRANSLATIONS);
+				while (Level->BodyQueueTrans.Num() <= i)
+				{
+					Level->BodyQueueTrans.Append(NULL);
+				}
+				VTextureTranslation* Tr = Level->BodyQueueTrans[i];
+				if (!Tr)
+				{
+					Tr = new VTextureTranslation;
+					Level->BodyQueueTrans[i] = Tr;
+				}
+				Tr->Clear();
+				vuint8 TrStart;
+				vuint8 TrEnd;
+				Msg << TrStart << TrEnd;
+				vint32 Col = Msg.ReadInt(0x00ffffff);
+				Tr->BuildPlayerTrans(TrStart, TrEnd, Col);
+			}
+			break;
 		}
 	}
 	unguard;

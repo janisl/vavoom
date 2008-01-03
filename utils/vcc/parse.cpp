@@ -1220,6 +1220,10 @@ VExpression* VParser::ParseType()
 		{
 			ParseError(Lex.Location, "Inner type declaration expected");
 		}
+		while (Lex.Check(TK_Asterisk))
+		{
+			Inner = new VPointerType(Inner, Lex.Location);
+		}
 		Lex.Expect(TK_Greater);
 		return new VDynamicArrayType(Inner, l);
 	}

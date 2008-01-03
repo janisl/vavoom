@@ -369,7 +369,7 @@ IMPLEMENT_FUNCTION(VBasePlayer, ClearPlayer)
 	Self->PlayerFlags &= ~VBasePlayer::PF_AutomapShowThings;
 	Self->ExtraLight = 0;
 	Self->FixedColourmap = 0;
-	memset(Self->CShifts, 0, sizeof(Self->CShifts));
+	Self->CShift = 0;
 	Self->PSpriteSY = 0;
 
 	vuint8* Def = Self->GetClass()->Defaults;

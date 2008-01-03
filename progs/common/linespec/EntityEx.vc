@@ -65,6 +65,27 @@ enum
 	BOUNCE_Hexen
 };
 
+enum
+{
+	APROP_Health		= 0,
+	APROP_Speed			= 1,
+	APROP_Damage		= 2,
+	APROP_Alpha			= 3,
+	APROP_RenderStyle	= 4,
+	APROP_Ambush		= 10,
+	APROP_Invulnerable	= 11,
+	APROP_JumpZ			= 12,
+	APROP_ChaseGoal		= 13,
+	APROP_Frightened	= 14,
+	APROP_Gravity		= 15,
+	APROP_Friendly		= 16,
+	APROP_SeeSound		= 5,	// Sounds can only be set, not gotten
+	APROP_AttackSound	= 6,
+	APROP_PainSound		= 7,
+	APROP_DeathSound	= 8,
+	APROP_ActiveSound	= 9
+};
+
 //  States
 state			IdleState;
 state			SeeState;
@@ -150,7 +171,7 @@ bool bExtremeDeath;		// Always gibs enemies.
 bool bLightning;		//	Electrocutes victims
 bool bHowlVictims;		//	Make victims play howl sound when damaged
 bool bNoGrudge;
-bool bNeverTarget;		//	Neve switch target to this actor
+bool bNeverTarget;		//	Never switch target to this actor
 bool bNoTargetSwitch;	//	Never switches target until current one is dead
 bool bNoGravKill;		//	Doesn't set NoGravity to false when killed
 bool bFaster;
@@ -181,6 +202,9 @@ bool bExplodeParticles;	// Use particle explosion
 bool bStealth;			// Andy Baker's Stealth monsters
 bool bChaseGoal;		// Walks to goal instead of target if a valid goal is set.
 bool bExplosionDontHurtSelf;// For A_Explodearms
+bool bNoSightCheck;		// Go after target without checking sight.
+bool bHuntPlayers;		// With TIDToHate, hate players too.
+bool bNoHatePlayers;	// Ignore player attacks.
 
 //  Params
 float			Speed;
@@ -208,6 +232,11 @@ EntityEx		Goal;
 
 // Player number last looked for.
 int				LastLook;
+//	The same for actor.
+int				LastLookActor;
+
+//	TID of things to hate, 0 if none.
+int				TIDToHate;
 
 int				MissileDamage;	// For missiles
 
@@ -2790,7 +2819,18 @@ final bool LookForPlayers(bool allaround)
 	float		an;
 	float		dist;
 
-	if (bFriendly)
+	if (TIDToHate != 0)
+	{
+		if (LookForTID(allaround))
+		{
+			return true;
+		}
+		if (!bHuntPlayers)
+		{
+			return false;
+		}
+	}
+	else if (bFriendly)
 	{
 		return LookForMonsters2(allaround);
 	}
@@ -2887,6 +2927,182 @@ final bool LookForPlayers(bool allaround)
 
 		Target = EntityEx(P.MO);
 		return true;
+	}
+	return false;
+}
+
+//============================================================================
+//
+//	LookForTID
+//
+//	Selects a live monster with the given TID
+//
+//============================================================================
+
+final bool LookForTID(bool AllAround)
+{
+	Entity		Tmp;
+
+	foreach RadiusThings(Tmp, Origin, 64.0)
+	{
+		if (!EntityEx(Tmp).bShootable)
+		{
+			//	Not shootable
+			continue;
+		}
+
+		if (Tmp == self)
+		{
+			continue;
+		}
+
+		if (Tmp.Health <= 0)
+		{
+			//	Dead
+			continue;
+		}
+
+		if (EntityEx(Tmp).bDormant)
+		{
+			//	Skip dormant things.
+			continue;
+		}
+
+		EntityEx Other;
+		if (Tmp.TID == TIDToHate)
+		{
+			//	Good one.
+			Other = EntityEx(Tmp);
+		}
+		else if (EntityEx(Tmp).Target && EntityEx(Tmp).Target.TID == TIDToHate)
+		{
+			//	If it attacks something with given TID, hate it too.
+			Other = EntityEx(Tmp).Target;
+			if (!Other.bShootable || Other.Health <= 0 || Other.bDormant)
+			{
+				continue;
+			}
+		}
+		else
+		{
+			continue;
+		}
+
+		if (!bNoSightCheck && !CanSee(Other))
+		{
+			continue;			// out of sight
+		}
+
+		if (Goal && Target == Goal)
+		{
+			ReactionTime = 0.0;
+		}
+
+		Target = Other;
+		LastLookActor = -1;
+		return true;
+	}
+
+	bool ReachedEnd = false;
+	// Look for between 7 and 38 hatees at a time
+	int Cnt = (P_Random() & 31) + 7;
+	int Searcher = LastLookActor;
+	for (Tmp = Level.FindMobjFromTID(TIDToHate, &Searcher);
+		Searcher != LastLookActor;
+		Tmp = Level.FindMobjFromTID(TIDToHate, &Searcher))
+	{
+		if (!Tmp)
+		{
+			if (ReachedEnd)
+			{
+				// we have cycled through the entire list at least once
+				// so let's abort because even if we continue nothing can
+				// be found.
+				break;
+			}
+			ReachedEnd = true;
+			Searcher = -1;
+			continue;
+		}
+		EntityEx Other = EntityEx(Tmp);
+
+		if (!Other.bShootable)
+		{
+			//	Not a shotable
+			continue;
+		}
+
+		if (Other == self)
+		{
+			//	Don't hate self.
+			continue;
+		}
+
+		if (Other.Health <= 0)
+		{
+			//	Dead
+			continue;
+		}
+
+		if (Other.bDormant)
+		{
+			//	Skip dormant things.
+			continue;
+		}
+
+		if (--Cnt == 0)
+		{
+			break;
+		}
+
+		if (!bNoSightCheck)
+		{
+			if (!CanSee(Other))
+			{
+				continue;			// out of sight
+			}
+
+			if (!AllAround)
+			{
+				float an = AngleMod360(atan2(Other.Origin.y - Origin.y,
+					Other.Origin.x - Origin.x) - Angles.yaw);
+				if (an > 90.0 && an < 270.0)
+				{
+					float dist = DistTo(Other);
+					// if real close, react anyway
+					if (dist > MELEERANGE)
+						continue;	// behind back
+				}
+			}
+		}
+
+		//	Need to be sure the reactiontime is 0 if the monster is leaving
+		// its goal to go after something else.
+		if (Goal && Target == Goal)
+		{
+			ReactionTime = 0.0;
+		}
+
+		Target = Other;
+		LastLookActor = Searcher;
+		return true;
+	}
+	LastLookActor = Searcher;
+	if (!Target)
+	{
+		//	Use goal as target
+		if (Goal)
+		{
+			Target = Goal;
+			return true;
+		}
+		//	Use last known enemy if no hatee sighted -- killough 2/15/98:
+		if (LastEnemy && LastEnemy.Health > 0)
+		{
+			Target = LastEnemy;
+			LastEnemy = none;
+			return true;
+		}
 	}
 	return false;
 }
@@ -3002,7 +3218,7 @@ final bool StepMove()
 			}
 		}
 
-		if (!tmtrace.NumSpecHit)
+		if (!tmtrace.SpecHit.Num)
 			return false;
 
 		MoveDir = DI_NODIR;
@@ -3024,9 +3240,10 @@ final bool StepMove()
 		// back out when they shouldn't, and creates secondary stickiness).
 
 		good = 0;
-		while (tmtrace.NumSpecHit--)
+		while (tmtrace.SpecHit.Num)
 		{
-			ld = tmtrace.SpecHit[tmtrace.NumSpecHit];
+			ld = tmtrace.SpecHit[tmtrace.SpecHit.Num - 1];
+			tmtrace.SpecHit.Num = tmtrace.SpecHit.Num - 1;
 			// if the special is not a door
 			// that can be opened,
 			// return false
@@ -4131,7 +4348,8 @@ final void Damage(EntityEx inflictor, EntityEx source, int damage,
 			// killough 2/15/98: remember last enemy, to prevent
 			// sleeping early; 2/21/98: Place priority on players
 
-			if (!LastEnemy || !LastEnemy.bIsPlayer || LastEnemy.Health <= 0)
+			if (!LastEnemy || (!LastEnemy.bIsPlayer && !TIDToHate) ||
+				LastEnemy.Health <= 0)
 			{
 				LastEnemy = Target; // remember last enemy - killough
 			}
@@ -4176,7 +4394,7 @@ int TakeSpecialDamage(EntityEx inflictor, EntityEx source, int damage)
 bool OkayToSwitchTarget(EntityEx source)
 {
 	return (!Threshold || bNoGrudge) && !source.bNeverTarget &&
-		!bNoTargetSwitch;
+		!bNoTargetSwitch && (!source.bIsPlayer || !bNoHatePlayers);
 }
 
 //==========================================================================
@@ -4399,6 +4617,9 @@ final void NightmareRespawn()
 		A.bStanding = true;
 
 	A.ReactionCount = 18;
+
+	//	Copy custom translation
+	A.Translation = Translation;
 
 	// remove the old monster
 	Destroy();
@@ -4681,7 +4902,7 @@ final void PushLine(tmtrace_t* tmtrace)
 		{
 			Damage(none, none, ftoi(Mass) >> 5);
 		}
-		numSpecHitTemp = tmtrace->NumSpecHit;
+		numSpecHitTemp = tmtrace->SpecHit.Num;
 		while (numSpecHitTemp > 0)
 		{
 			numSpecHitTemp--;
@@ -4809,12 +5030,6 @@ final void FaceMovementDirection()
 
 void OnMapSpawn(mthing_t* mthing)
 {
-	if (bNoDeathmatch && Level.Game.deathmatch)
-	{
-		Destroy();
-		return;
-	}
-
 	if (Level.Game.gameskill == sk_nightmare)
 	{
 		ReactionCount = 0;
@@ -4860,6 +5075,12 @@ void OnMapSpawn(mthing_t* mthing)
 		float x;
 		float y;
 		float z;
+
+		if (bNoDeathmatch && Level.Game.deathmatch)
+		{
+			Destroy();
+			return;
+		}
 
 		Level.CopyMThing(mthing, &SpawnPoint);
 
@@ -5471,24 +5692,151 @@ void ObtainInventory(EntityEx Other)
 
 //===========================================================================
 //
+//  ClearInventory
+//
+//===========================================================================
+
+final void ClearInventory()
+{
+	Inventory Item = Inventory;
+	while (Item)
+	{
+		Inventory Next = Item.Inventory;
+		if (!Item.bUndroppable)
+		{
+			//	IMHO any item that should be kept should not be dropped,
+			// not just ammo.
+			if (Item.bKeepDepleted)
+			{
+				Item.Amount = 0;
+			}
+			else
+			{
+				Item.Destroy();
+			}
+		}
+		else if (HexenArmor(Item))
+		{
+			HexenArmor A = HexenArmor(Item);
+			A.Slots[0] = 0.0;
+			A.Slots[1] = 0.0;
+			A.Slots[2] = 0.0;
+			A.Slots[3] = 0.0;
+		}
+		Item = Next;
+	}
+
+	if (bIsPlayer)
+	{
+		PlayerEx(Player).ReadyWeapon = none;
+		PlayerEx(Player).PendingWeapon = none;
+		Player.SetViewState(ps_weapon, none);
+		Player.SetViewState(ps_flash, none);
+	}
+}
+
+//===========================================================================
+//
 //  GiveInventory
 //
 //===========================================================================
 
-void GiveInventory(name ItemName, int Amount)
+final void GiveInventory(name ItemName, int Amount)
 {
-	if (!bIsPlayer)
+	if (Amount <= 0)
+	{
+		return;
+	}
+	if (!stricmp(va("%n", ItemName), "Armor"))
+	{
+		ItemName = 'BasicArmor';
+	}
+
+	//	Get class of the item.
+	class EClass = FindClass(ItemName);
+	if (!EClass)
+	{
+		print("Unknown item type %n", ItemName);
+		return;
+	}
+	class<Inventory> ItemClass = class<Inventory>(EClass);
+	if (!ItemClass)
+	{
+		print("%n is not an inventory class", ItemName);
+		return;
+	}
+
+	Weapon SavedPendingWeapon = none;
+	bool HadWeapon = true;
+	if (bIsPlayer)
+	{
+		SavedPendingWeapon = PlayerEx(Player).PendingWeapon;
+		HadWeapon = !!PlayerEx(Player).ReadyWeapon;
+	}
+
+	Inventory Item = Spawn(ItemClass);
+	if (BasicArmorPickup(Item))
+	{
+		BasicArmorPickup(Item).SaveAmount *= Amount;
+	}
+	else if (BasicArmorBonus(Item))
+	{
+		BasicArmorBonus(Item).SaveAmount *= Amount;
+	}
+	else
+	{
+		Item.Amount = Amount;
+	}
+
+	if (!Item.TryPickup(self))
+	{
+		Item.Destroy();
+	}
+	//	Don't automatically bring up weapon.
+	if (bIsPlayer && HadWeapon)
+	{
+		PlayerEx(Player).PendingWeapon = SavedPendingWeapon;
+	}
+}
+
+//===========================================================================
+//
+//  TakeInventory
+//
+//===========================================================================
+
+final void TakeInventory(name ItemName, int Amount)
+{
+	if (Amount <= 0)
+	{
+		return;
+	}
+	if (!stricmp(va("%n", ItemName), "Armor"))
+	{
+		ItemName = 'BasicArmor';
+	}
+
+	//	Get class of the item.
+	class<Inventory> ItemClass = class<Inventory>(FindClass(ItemName));
+	if (!ItemClass)
 	{
 		return;
 	}
 
-	//	Stamina upgrade.
-	class<Inventory> ItemClass = class<Inventory>(FindClass(ItemName));
-	if (ItemClass)
+	Inventory Item = FindInventory(ItemClass);
+	if (!Item)
 	{
-		Inventory Item = Spawn(ItemClass);
-		Item.Amount = Amount;
-		if (Item.TryPickup(self))
+		return;
+	}
+
+	Item.Amount -= Amount;
+	if (Item.Amount <= 0)
+	{
+		if (Item.bKeepDepleted)
+		{
+			Item.Amount = 0;
+		}
+		else
 		{
 			Item.Destroy();
 		}
@@ -5501,12 +5849,15 @@ void GiveInventory(name ItemName, int Amount)
 //
 //===========================================================================
 
-int CheckInventory(name ItemName)
+final int CheckInventory(name ItemName)
 {
-	//	Check if it's a player.
-	if (!bIsPlayer)
+	if (!stricmp(va("%n", ItemName), "Armor"))
 	{
-		return 0;
+		ItemName = 'BasicArmor';
+	}
+	else if (!stricmp(va("%n", ItemName), "Health"))
+	{
+		return Health;
 	}
 
 	class<Inventory> ItemClass = class<Inventory>(FindClass(ItemName));
@@ -5516,6 +5867,139 @@ int CheckInventory(name ItemName)
 		return Item ? Item.Amount : 0;
 	}
 	return 0;
+}
+
+//===========================================================================
+//
+//  GetArmorPoints
+//
+//===========================================================================
+
+final int GetArmorPoints()
+{
+	Inventory A = FindInventory(BasicArmor);
+	return A ? A.Amount : 0;
+}
+
+//===========================================================================
+//
+//  CheckNamedWeapon
+//
+//===========================================================================
+
+final int CheckNamedWeapon(name Name)
+{
+	if (!bIsPlayer || !PlayerEx(Player).ReadyWeapon)
+	{
+		return false;
+	}
+	return !stricmp(va("%n", Name), va("%n", GetClassName(
+		PlayerEx(Player).ReadyWeapon.Class)));
+}
+
+//===========================================================================
+//
+//  SetNamedWeapon
+//
+//===========================================================================
+
+final int SetNamedWeapon(name Name)
+{
+	if (!bIsPlayer)
+	{
+		return false;
+	}
+
+	Weapon Wpn = Weapon(FindInventory(class<Inventory>(FindClass(Name))));
+	if (!Wpn)
+	{
+		return false;
+	}
+	//	Check if it's already active.
+	if (PlayerEx(Player).ReadyWeapon == Wpn)
+	{
+		//	Make sure player doesn't switch away from it.
+		PlayerEx(Player).PendingWeapon = none;
+		return true;
+	}
+	//	Check if weapon has enough ammo.
+	if (!Wpn.CheckAmmo(false))
+	{
+		return false;
+	}
+	PlayerEx(Player).PendingWeapon = Wpn;
+	return true;
+}
+
+//===========================================================================
+//
+//  GetAmmoCapacity
+//
+//===========================================================================
+
+final int GetAmmoCapacity(name Name)
+{
+	class<Ammo> AmmoType = class<Ammo>(FindClass(Name));
+	if (!AmmoType)
+	{
+		return 0;
+	}
+	//	Only direct descendants of Ammo class.
+	if (GetClassParent(AmmoType) != Ammo)
+	{
+		return 0;
+	}
+	//	If we have this ammo, return current max amount, otherwise return
+	// default for this ammo type.
+	Inventory Item = FindInventory(AmmoType);
+	if (Item)
+	{
+		return Item.MaxAmount;
+	}
+	else
+	{
+		return AmmoType.default.MaxAmount;
+	}
+}
+
+//===========================================================================
+//
+//  SetAmmoCapacity
+//
+//===========================================================================
+
+final void SetAmmoCapacity(name Name, int Amount)
+{
+	class<Ammo> AmmoType = class<Ammo>(FindClass(Name));
+	if (!AmmoType)
+	{
+		return;
+	}
+	//	Only direct descendants of Ammo class.
+	if (GetClassParent(AmmoType) != Ammo)
+	{
+		return;
+	}
+
+	//	Make sure new ammo capacity is not negative.
+	if (Amount < 0)
+	{
+		Amount = 0;
+	}
+
+	Inventory Item = FindInventory(AmmoType);
+	if (!Item)
+	{
+		Item = GiveInventoryType(AmmoType);
+		Item.Amount = 0;
+	}
+	Item.MaxAmount = Amount;
+	//	We also should make sure that the current amount doesn't exceed the
+	// new limit.
+	if (Item.Amount > Item.MaxAmount)
+	{
+		Item.Amount = Item.MaxAmount;
+	}
 }
 
 //==========================================================================
@@ -6032,6 +6516,140 @@ final EntityEx TossUpObject(class<EntityEx> type)
 	return A;
 }
 
+//==========================================================================
+//
+//	SetActorProperty
+//
+//==========================================================================
+
+final void SetActorProperty(int Prop, int IntVal, string StrVal)
+{
+	switch (Prop)
+	{
+	case APROP_Health:
+		Health = IntVal;
+		if (bIsPlayer)
+		{
+			Player.Health = IntVal;
+		}
+		break;
+
+	case APROP_Speed:
+		Speed = itof(IntVal) / 65536.0 * 35.0;
+		StepSpeed = itof(IntVal >> 16);
+		break;
+
+	case APROP_Damage:
+		MissileDamage = IntVal;
+		break;
+
+	case APROP_Alpha:
+		Alpha = itof(IntVal) / 65536.0;
+		break;
+
+	case APROP_RenderStyle:
+		RenderStyle = IntVal;
+		break;
+
+	case APROP_Ambush:
+		bAmbush = !!IntVal;
+		break;
+
+	case APROP_Invulnerable:
+		bInvulnerable = !!IntVal;
+		break;
+
+	case APROP_JumpZ:
+		print("JumpZ property is not implemented");
+		break;
+
+	case APROP_ChaseGoal:
+		bChaseGoal = !!IntVal;
+		break;
+
+	case APROP_Frightened:
+		print("Frightened property is not implemented");
+		break;
+
+	case APROP_Gravity:
+		Gravity = itof(IntVal) / 65536.0;
+		break;
+
+	case APROP_Friendly:
+		bFriendly = !!IntVal;
+		break;
+
+	case APROP_SeeSound:
+		SightSound = StrToName(StrVal);
+		break;
+
+	case APROP_AttackSound:
+		AttackSound = StrToName(StrVal);
+		break;
+
+	case APROP_PainSound:
+		PainSound = StrToName(StrVal);
+		break;
+
+	case APROP_DeathSound:
+		DeathSound = StrToName(StrVal);
+		break;
+
+	case APROP_ActiveSound:
+		ActiveSound = StrToName(StrVal);
+		break;
+	}
+}
+
+//==========================================================================
+//
+//	GetActorProperty
+//
+//==========================================================================
+
+final int GetActorProperty(int Prop)
+{
+	switch (Prop)
+	{
+	case APROP_Health:
+		return Health;
+
+	case APROP_Speed:
+		return Speed ? ftoi(Speed / 35.0 * 65536.0) : ftoi(StepSpeed);
+
+	case APROP_Damage:
+		return MissileDamage;
+
+	case APROP_Alpha:
+		return ftoi(Alpha * 65536.0);
+
+	case APROP_RenderStyle:
+		return RenderStyle;
+
+	case APROP_Ambush:
+		return bAmbush;
+
+	case APROP_Invulnerable:
+		return bInvulnerable;
+
+	case APROP_JumpZ:
+		return 0;
+
+	case APROP_ChaseGoal:
+		return bChaseGoal;
+
+	case APROP_Frightened:
+		return 0;
+
+	case APROP_Gravity:
+		return ftoi(Gravity * 65536.0);
+
+	case APROP_Friendly:
+		return bFriendly;
+	}
+	return 0;
+}
+
 float GetBaseViewHeight()
 {
 	return 0.0;
@@ -6117,4 +6735,5 @@ defaultproperties
 	BounceFactor = 0.7;
 	RDFactor = 1.0;
 	MeleeRange = 44.0;	//	MELEERANGE(64.0) - 20.0
+	LastLookActor = -1;
 }

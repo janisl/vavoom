@@ -35,10 +35,10 @@
 
 struct sprite_cache_t
 {
-	void*		data;
-	vuint32		light;
-	VTexture*	Tex;
-	int			tnum;
+	void*					data;
+	vuint32					light;
+	VTexture*				Tex;
+	VTextureTranslation*	tnum;
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -104,6 +104,28 @@ void VSoftwareDrawer::FlushTextureCaches()
 
 //==========================================================================
 //
+//	VSoftwareDrawer::FlushTexture
+//
+//==========================================================================
+
+void VSoftwareDrawer::FlushTexture(VTexture* Tex)
+{
+	guard(VSoftwareDrawer::FlushTexture);
+	if (Tex->DriverData)
+	{
+		Z_Free(Tex->DriverData);
+		Tex->DriverData = NULL;
+	}
+	for (int j = 0; j < Tex->DriverTranslated.Num(); j++)
+	{
+		Z_Free(Tex->DriverTranslated[j].Data);
+	}
+	Tex->DriverTranslated.Clear();
+	unguard;
+}
+
+//==========================================================================
+//
 // 	VSoftwareDrawer::SetTexture
 //
 //==========================================================================
@@ -117,7 +139,7 @@ void VSoftwareDrawer::SetTexture(VTexture* Tex)
 		{
 			LoadSkyMap(Tex);
 		}
-		cacheblock = (byte*)Tex->DriverData;
+		cacheblock = (vuint8*)Tex->DriverData;
 		cachewidth = Tex->GetWidth();
 		return;
 	}
@@ -128,7 +150,7 @@ void VSoftwareDrawer::SetTexture(VTexture* Tex)
 	}
 
 	miptexture = (miptexture_t*)Tex->DriverData;
-	cacheblock = (byte*)miptexture + miptexture->offsets[0];
+	cacheblock = (vuint8*)miptexture + miptexture->offsets[0];
 	unguard;
 }
 
@@ -138,7 +160,8 @@ void VSoftwareDrawer::SetTexture(VTexture* Tex)
 //
 //==========================================================================
 
-void VSoftwareDrawer::SetSpriteLump(VTexture* Tex, vuint32 light, int translation)
+void VSoftwareDrawer::SetSpriteLump(VTexture* Tex, vuint32 light,
+	VTextureTranslation* Translation)
 {
 	guard(VSoftwareDrawer::SetSpriteLump);
 	light &= 0xf8f8f8f8;
@@ -163,9 +186,9 @@ void VSoftwareDrawer::SetSpriteLump(VTexture* Tex, vuint32 light, int translatio
 		{
 			if (sprite_cache[i].Tex == Tex &&
 				sprite_cache[i].light == light &&
-				sprite_cache[i].tnum == translation)
+				sprite_cache[i].tnum == Translation)
 			{
-				cacheblock = (byte*)sprite_cache[i].data;
+				cacheblock = (vuint8*)sprite_cache[i].data;
 				cachewidth = Tex->GetWidth();
 				return;
 			}
@@ -184,8 +207,8 @@ void VSoftwareDrawer::SetSpriteLump(VTexture* Tex, vuint32 light, int translatio
 		sprite_cache_count = (sprite_cache_count + 1) % SPRITE_CACHE_SIZE;
 	}
 
-	GenerateSprite(Tex, avail, light, translation);
-	cacheblock = (byte*)sprite_cache[avail].data;
+	GenerateSprite(Tex, avail, light, Translation);
+	cacheblock = (vuint8*)sprite_cache[avail].data;
 	cachewidth = Tex->GetWidth();
 	unguard;
 }
@@ -196,15 +219,35 @@ void VSoftwareDrawer::SetSpriteLump(VTexture* Tex, vuint32 light, int translatio
 //
 //==========================================================================
 
-byte* VSoftwareDrawer::SetPic(VTexture* Tex)
+vuint8* VSoftwareDrawer::SetPic(VTexture* Tex, VTextureTranslation* Trans)
 {
 	guard(VSoftwareDrawer::SetPic);
-	if (!Tex->DriverData || Tex->CheckModified())
+	if (Tex->CheckModified())
 	{
-		GeneratePic(Tex);
+		FlushTexture(Tex);
 	}
-	cachewidth = Tex->GetWidth();
-	return (byte*)Tex->DriverData;
+	if (Trans)
+	{
+		VTexture::VTransData* TData = Tex->FindDriverTrans(Trans);
+		if (!TData)
+		{
+			TData = &Tex->DriverTranslated.Alloc();
+			TData->Data = NULL;
+			TData->Trans = Trans;
+			GeneratePic(Tex, &TData->Data, Trans);
+		}
+		cachewidth = Tex->GetWidth();
+		return (vuint8*)TData->Data;
+	}
+	else
+	{
+		if (!Tex->DriverData)
+		{
+			GeneratePic(Tex, &Tex->DriverData, Trans);
+		}
+		cachewidth = Tex->GetWidth();
+		return (vuint8*)Tex->DriverData;
+	}
 	unguard;
 }
 
@@ -217,7 +260,7 @@ byte* VSoftwareDrawer::SetPic(VTexture* Tex)
 void VSoftwareDrawer::GenerateTexture(VTexture* Tex)
 {
 	guard(VSoftwareDrawer::GenerateTexture);
-	byte* block = Tex->GetPixels8();
+	vuint8* block = Tex->GetPixels8();
 
 	int mipw = (Tex->GetWidth() + 15) & ~15;
 	int miph = (Tex->GetHeight() + 15) & ~15;
@@ -230,8 +273,8 @@ void VSoftwareDrawer::GenerateTexture(VTexture* Tex)
 	memset(mip, 0, sizeof(miptexture_t) + mipw * miph / 64 * 85);
 	mip->width = mipw;
 	mip->height = miph;
-	byte* pSrc = block;
-	byte* pDst = (byte*)mip + sizeof(miptexture_t);
+	vuint8* pSrc = block;
+	vuint8* pDst = (vuint8*)mip + sizeof(miptexture_t);
 	for (int y = 0; y < miph; y++)
 	{
 		for (int x = 0; x < mipw; x++)
@@ -265,8 +308,8 @@ void VSoftwareDrawer::MakeMips(miptexture_t *mip)
 		int mipw = mip->width >> miplevel;
  		int miph = mip->height >> miplevel;
 		int srcrow = mip->width >> (miplevel - 1);
-		byte* psrc = (byte*)mip + mip->offsets[miplevel - 1];
-		byte* pdst = (byte*)mip + mip->offsets[miplevel];
+		vuint8* psrc = (vuint8*)mip + mip->offsets[miplevel - 1];
+		vuint8* pdst = (vuint8*)mip + mip->offsets[miplevel];
 		for (int i = 0; i < miph; i++)
 		{
 			for (int j = 0; j < mipw; j++)
@@ -356,7 +399,7 @@ void VSoftwareDrawer::LoadSkyMap(VTexture* Tex)
 	guard(VSoftwareDrawer::LoadSkyMap);
 	int j;
 
-	byte* Pixels = Tex->GetPixels();
+	vuint8* Pixels = Tex->GetPixels();
 	int NumPixels = Tex->GetWidth() * Tex->GetHeight();
 	if (!Tex->DriverData)
 	{
@@ -368,15 +411,15 @@ void VSoftwareDrawer::LoadSkyMap(VTexture* Tex)
 		rgba_t* Pal = Tex->GetPalette();
 		if (ScreenBPP == 8)
 		{
-			byte remap[256];
+			vuint8 remap[256];
 
 			for (j = 0; j < 256; j++)
 			{
 				remap[j] = MakeCol8(Pal[j].r, Pal[j].g, Pal[j].b);
 			}
 
-			byte *psrc = (byte*)Pixels;
-			byte *pdst = (byte*)Tex->DriverData;
+			vuint8 *psrc = (vuint8*)Pixels;
+			vuint8 *pdst = (vuint8*)Tex->DriverData;
 			for (j = 0; j < NumPixels; j++, psrc++, pdst++)
 			{
 				*pdst = remap[*psrc];
@@ -391,7 +434,7 @@ void VSoftwareDrawer::LoadSkyMap(VTexture* Tex)
 				remap[j] = MakeCol16(Pal[j].r, Pal[j].g, Pal[j].b);
 			}
 
-			byte *psrc = (byte*)Pixels;
+			vuint8 *psrc = (vuint8*)Pixels;
 			word *pdst = (word*)Tex->DriverData;
 			for (j = 0; j < NumPixels; j++, psrc++, pdst++)
 			{
@@ -407,7 +450,7 @@ void VSoftwareDrawer::LoadSkyMap(VTexture* Tex)
 				remap[j] = MakeCol32(Pal[j].r, Pal[j].g, Pal[j].b);
 			}
 
-			byte *psrc = (byte *)Pixels;
+			vuint8 *psrc = (vuint8 *)Pixels;
 			vuint32* pdst = (vuint32*)Tex->DriverData;
 			for (j = 0; j < NumPixels; j++, psrc++, pdst++)
 			{
@@ -420,7 +463,7 @@ void VSoftwareDrawer::LoadSkyMap(VTexture* Tex)
 		if (ScreenBPP == 8)
 		{
 			rgba_t *src = (rgba_t*)Pixels;
-			byte *dst = (byte*)Tex->DriverData;
+			vuint8 *dst = (vuint8*)Tex->DriverData;
 			for (j = 0; j < NumPixels; j++, src++, dst++)
 			{
 				*dst = MakeCol8(src->r, src->g, src->b);
@@ -455,19 +498,19 @@ void VSoftwareDrawer::LoadSkyMap(VTexture* Tex)
 //==========================================================================
 
 void VSoftwareDrawer::GenerateSprite(VTexture* Tex, int slot, vuint32 light,
-	int translation)
+	VTextureTranslation* Translation)
 {
 	guard(VSoftwareDrawer::GenerateSprite);
 	int w = Tex->GetWidth();
 	int h = Tex->GetHeight();
 
-	byte* SrcBlock = Tex->GetPixels8();
+	vuint8* SrcBlock = Tex->GetPixels8();
 
-	void *block = (byte*)Z_Calloc(w * h * PixelBytes);
+	void *block = (vuint8*)Z_Calloc(w * h * PixelBytes);
 	sprite_cache[slot].data = block;
 	sprite_cache[slot].light = light;
 	sprite_cache[slot].Tex = Tex;
-	sprite_cache[slot].tnum = translation;
+	sprite_cache[slot].tnum = Translation;
 
 	int lightr = (light >> 19) & 0x1f;
 	int lightg = (light >> 11) & 0x1f;
@@ -501,18 +544,18 @@ void VSoftwareDrawer::GenerateSprite(VTexture* Tex, int slot, vuint32 light,
 		cmapb = d_fadetable32b + (31 - lightb) * 256;
 	}
 
-	byte *trtab = translationtables + translation * 256;
+	const vuint8* trtab = Translation ? Translation->GetTable() : NULL;
 
 	int count =  w * h;
-	byte* source = SrcBlock;
+	vuint8* source = SrcBlock;
 	if (ScreenBPP == 8 && coloured)
 	{
-		byte* dest = (byte*)block;
+		vuint8* dest = (vuint8*)block;
 		while (count--)
 		{
 			if (*source)
 			{
-				int itmp = trtab[*source];
+				int itmp = trtab ? trtab[*source] : *source;
 				*dest = r_rgbtable[(((word*)cmapr)[itmp]) |
 					(((word*)cmapg)[itmp]) | (((word*)cmapb)[itmp])];
 			}
@@ -522,11 +565,11 @@ void VSoftwareDrawer::GenerateSprite(VTexture* Tex, int slot, vuint32 light,
 	}
 	else if (ScreenBPP == 8)
 	{
-		byte* dest = (byte*)block;
+		vuint8* dest = (vuint8*)block;
 		while (count--)
 		{
 			if (*source)
-				*dest = ((byte*)cmap)[trtab[*source]];
+				*dest = ((vuint8*)cmap)[trtab ? trtab[*source] : *source];
 			source++;
 			dest++;
 		}
@@ -538,7 +581,7 @@ void VSoftwareDrawer::GenerateSprite(VTexture* Tex, int slot, vuint32 light,
 		{
 			if (*source)
 			{
-				int itmp = trtab[*source];
+				int itmp = trtab ? trtab[*source] : *source;
 				*dest = (((word*)cmapr)[itmp]) |
 					(((word*)cmapg)[itmp]) | (((word*)cmapb)[itmp]);
 				if (!*dest)
@@ -554,7 +597,7 @@ void VSoftwareDrawer::GenerateSprite(VTexture* Tex, int slot, vuint32 light,
 		while (count--)
 		{
 			if (*source)
-				*dest = ((word*)cmap)[trtab[*source]];
+				*dest = ((word*)cmap)[trtab ? trtab[*source] : *source];
 			source++;
 			dest++;
 		}
@@ -566,9 +609,9 @@ void VSoftwareDrawer::GenerateSprite(VTexture* Tex, int slot, vuint32 light,
 		{
 			if (*source)
 			{
-				int itmp = trtab[*source];
-				*dest = MakeCol32(((byte*)cmapr)[itmp],
-					((byte*)cmapg)[itmp], ((byte*)cmapb)[itmp]);
+				int itmp = trtab ? trtab[*source] : *source;
+				*dest = MakeCol32(((vuint8*)cmapr)[itmp],
+					((vuint8*)cmapg)[itmp], ((vuint8*)cmapb)[itmp]);
 				if (!*dest)
 					*dest = 1;
 			}
@@ -582,7 +625,7 @@ void VSoftwareDrawer::GenerateSprite(VTexture* Tex, int slot, vuint32 light,
 		while (count--)
 		{
 			if (*source)
-				*dest = ((vuint32*)cmap)[trtab[*source]];
+				*dest = ((vuint32*)cmap)[trtab ? trtab[*source] : *source];
 			source++;
 			dest++;
 		}
@@ -596,15 +639,25 @@ void VSoftwareDrawer::GenerateSprite(VTexture* Tex, int slot, vuint32 light,
 //
 //==========================================================================
 
-void VSoftwareDrawer::GeneratePic(VTexture* Tex)
+void VSoftwareDrawer::GeneratePic(VTexture* Tex, void** pData,
+	VTextureTranslation* Trans)
 {
 	guard(GeneratePic);
-	byte* Pixels = Tex->GetPixels8();
+	vuint8* Pixels = Tex->GetPixels8();
 	int NumPixels = Tex->GetWidth() * Tex->GetHeight();
-	if (!Tex->DriverData)
+	if (!*pData)
 	{
-		Tex->DriverData = (byte*)Z_Malloc(NumPixels);
+		*pData = (vuint8*)Z_Malloc(NumPixels);
 	}
-	memcpy(Tex->DriverData, Pixels, NumPixels);
+	memcpy(*pData, Pixels, NumPixels);
+	if (Trans)
+	{
+		const vuint8* TrTab = Trans->GetTable();
+		vuint8* pPix = (vuint8*)*pData;
+		for (int i = 0; i < NumPixels; i++, pPix++)
+		{
+			*pPix = TrTab[*pPix];
+		}
+	}
 	unguard;
 }

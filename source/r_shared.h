@@ -109,8 +109,6 @@ void *Mod_Extradata(VModel* mod);	// handles caching
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
-extern vuint8*			translationtables;
-
 //
 // POV related.
 //

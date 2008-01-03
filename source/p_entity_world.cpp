@@ -97,9 +97,7 @@ struct tmtrace_t
 
 	// keep track of special lines as they are hit,
 	// but don't process them until the move is proven valid
-	enum { MAXSPECIALCROSS = 32 };
-	line_t *SpecHit[MAXSPECIALCROSS];
-	int NumSpecHit;
+	TArray<line_t*>		SpecHit;
 
 	VEntity *BlockingMobj;
 };
@@ -234,7 +232,7 @@ void VEntity::UnlinkFromWorld()
 
 void VEntity::LinkToWorld()
 {
-	guard(SV_LinkToWorld);
+	guard(VEntity::LinkToWorld);
 	subsector_t*	ss;
 	sec_region_t*	reg;
 	sec_region_t*	r;
@@ -1152,15 +1150,7 @@ bool VEntity::PIT_CheckRelLine(void* arg, line_t * ld)
 	// if contacted a special line, add it to the list
 	if (ld->special)
 	{
-		if (tmtrace.NumSpecHit >= tmtrace_t::MAXSPECIALCROSS)
-		{
-			//GCon->Log(NAME_Dev, "Spechit overflow");
-		}
-		else
-		{
-			tmtrace.SpecHit[tmtrace.NumSpecHit] = ld;
-			tmtrace.NumSpecHit++;
-		}
+		tmtrace.SpecHit.Append(ld);
 	}
 
 	return true;
@@ -1239,7 +1229,7 @@ bool VEntity::CheckRelPosition(tmtrace_t& tmtrace, TVec Pos)
 	tmtrace.CeilingZ = reg->ceiling->GetPointZ(tmtrace.End);
 
 	validcount++;
-	tmtrace.NumSpecHit = 0;
+	tmtrace.SpecHit.Clear();
 
 	tmtrace.BlockingMobj = NULL;
 
@@ -1474,11 +1464,11 @@ bool VEntity::TryMove(tmtrace_t& tmtrace, TVec newPos)
 	//
 	if (EntityFlags & EF_ColideWithWorld)
 	{
-		while (tmtrace.NumSpecHit > 0)
+		while (tmtrace.SpecHit.Num() > 0)
 		{
-			tmtrace.NumSpecHit--;
 			// see if the line was crossed
-			ld = tmtrace.SpecHit[tmtrace.NumSpecHit];
+			ld = tmtrace.SpecHit[tmtrace.SpecHit.Num() - 1];
+			tmtrace.SpecHit.SetNum(tmtrace.SpecHit.Num() - 1);
 			side = ld->PointOnSide(Origin);
 			oldside = ld->PointOnSide(oldorg);
 			if (side != oldside)

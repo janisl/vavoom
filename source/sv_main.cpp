@@ -203,10 +203,11 @@ void SV_Clear()
 //
 //==========================================================================
 
-VThinker* VLevel::SpawnThinker(VClass* Class, const TVec& AOrigin,
+VThinker* VLevel::SpawnThinker(VClass* AClass, const TVec& AOrigin,
 	const TAVec& AAngles, mthing_t* mthing)
 {
 	guard(VLevel::SpawnThinker);
+	VClass* Class = AClass->GetReplacement();
 	VThinker* Ret = (VThinker*)StaticSpawnObject(Class);
 	AddThinker(Ret);
 
@@ -350,6 +351,9 @@ void SV_SendClientMessages()
 		VPlayerReplicationInfo* RepInfo = Player->PlayerReplicationInfo;
 		RepInfo->PlayerName = Player->PlayerName;
 		RepInfo->UserInfo = Player->UserInfo;
+		RepInfo->TranslStart = Player->TranslStart;
+		RepInfo->TranslEnd = Player->TranslEnd;
+		RepInfo->Colour = Player->Colour;
 		RepInfo->Frags = Player->Frags;
 		RepInfo->Deaths = Player->Deaths;
 		RepInfo->KillCount = Player->KillCount;

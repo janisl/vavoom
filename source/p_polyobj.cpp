@@ -295,10 +295,7 @@ void VLevel::InitPolyobjs()
 		}
 	}
 
-	if (IsForServer())
-	{
-		InitPolyBlockMap();
-	}
+	InitPolyBlockMap();
 	unguard;
 }
 

@@ -162,6 +162,7 @@ void Host_Init()
 
 	GSoundManager = new VSoundManager;
 	GSoundManager->Init();
+	R_InitData();
 	R_InitTexture();
 
 	GNet = VNetworkPublic::Create();
@@ -754,6 +755,7 @@ void Host_Shutdown()
 		GSoundManager = NULL;
 	}
 	SAFE_SHUTDOWN(R_ShutdownTexture, ())
+	SAFE_SHUTDOWN(R_ShutdownData, ())
 	SAFE_SHUTDOWN(VCommand::Shutdown, ())
 	SAFE_SHUTDOWN(VCvar::Shutdown, ())
 	SAFE_SHUTDOWN(ShutdownMapInfo, ())

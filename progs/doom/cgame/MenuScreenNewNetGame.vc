@@ -141,7 +141,6 @@ void InitMapList(int epi)
 	{
 		Level.EnumNames[i] = P_GetMapName(epi * 9 + i);
 	}
-	Level.MaxValue = 9;
 	Level.Value = 0;
 }
 
@@ -174,7 +173,6 @@ void InitMapList()
 	{
 		Level.EnumNames[i] = P_GetMapName(i);
 	}
-	Level.MaxValue = 32;
 #endif
 	Level.Value = 0;
 }

@@ -227,7 +227,7 @@ bool PolyBusy(int polyobj)
 //
 //==========================================================================
 
-int ThingCount(int type, int tid)
+int ThingCount(int type, name TypeName, int tid)
 {
 	return 0;
 }
@@ -260,7 +260,7 @@ Entity FindMobjFromTID(int tid, int *searchPosition)
 //
 //==========================================================================
 
-bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
+int ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 	int Arg4, int Arg5, line_t* line, int side, Entity A)
 {
 	return false;
@@ -273,7 +273,7 @@ bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 //==========================================================================
 
 bool EV_ThingProjectile(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
-	bool gravity, int newtid)
+	bool gravity, int newtid, name TypeName, Entity Activator)
 {
 	return false;
 }
@@ -1086,6 +1086,81 @@ void ParticleEffect(int count, int type1, int type2, TVec origin, float ornd,
 //==========================================================================
 
 void UpdateParticle(particle_t* p, float DeltaTime)
+{
+}
+
+//==========================================================================
+//
+//  AcsSpawnThing
+//
+//==========================================================================
+
+int AcsSpawnThing(name Name, TVec Org, int Tid, float Angle)
+{
+	return false;
+}
+
+//==========================================================================
+//
+//  AcsSpawnSpot
+//
+//==========================================================================
+
+int AcsSpawnSpot(name Name, int SpotTid, int Tid, float Angle)
+{
+	return false;
+}
+
+//==========================================================================
+//
+//  AcsSpawnSpotFacing
+//
+//==========================================================================
+
+int AcsSpawnSpotFacing(name Name, int SpotTid, int Tid)
+{
+	return false;
+}
+
+//==========================================================================
+//
+//  SectorDamage
+//
+//==========================================================================
+
+void SectorDamage(int Tag, int Amount, name DamageType, name ProtectionType,
+	int Flags)
+{
+}
+
+//==========================================================================
+//
+//	DoThingDamage
+//
+//==========================================================================
+
+int DoThingDamage(int Tid, int Amount, name DmgType, Entity Activator)
+{
+	return 0;
+}
+
+//==========================================================================
+//
+//	SetMarineWeapon
+//
+//==========================================================================
+
+void SetMarineWeapon(int Tid, int Weapon, Entity Activator)
+{
+}
+
+//==========================================================================
+//
+//	SetMarineSprite
+//
+//==========================================================================
+
+void SetMarineSprite(int Tid, name SrcClassName, Entity Activator)
 {
 }
 

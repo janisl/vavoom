@@ -29,5 +29,5 @@ class AcolyteRust : Acolyte
 defaultproperties
 {
 	ConversationID = 55;
-	Translation = 2;
+	Translation = (TRANSL_Standard << TRANSL_TYPE_SHIFT) + 1;
 }

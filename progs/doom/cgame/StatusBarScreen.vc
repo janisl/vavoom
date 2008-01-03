@@ -147,7 +147,7 @@ void StartMap()
 	pic_minus = R_RegisterPic('sttminus');
 	pic_percent = R_RegisterPic('sttprcnt');
 
-	pic_faceback = R_RegisterPic(StrToName(va("stfb%d", cl.ClientNum)));
+	pic_faceback = R_RegisterPic('stfb0');
 
 	for (i = 0; i < 6; i++)
 	{
@@ -341,7 +341,7 @@ void SB_DrawMainBar()
 	// faces
 	if (ClGame.maxclients > 1)
 	{
-		DrawPic(ST_FACESX, ST_FACESY, pic_faceback);
+		DrawPic(ST_FACESX, ST_FACESY, pic_faceback,, cl.MO.Translation);
 	}
 	DrawPic(ST_FACESX, ST_FACESY, pic_faces[cl.sb_faceindex]);
 

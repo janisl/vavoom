@@ -813,10 +813,10 @@ bool VWidget::TransferAndClipRect(float& X1, float& Y1, float& X2, float& Y2,
 //
 //==========================================================================
 
-void VWidget::DrawPic(int X, int Y, int Handle, float Alpha)
+void VWidget::DrawPic(int X, int Y, int Handle, float Alpha, int Trans)
 {
 	guard(VWidget::DrawPic);
-	DrawPic(X, Y, GTextureManager(Handle), Alpha);
+	DrawPic(X, Y, GTextureManager(Handle), Alpha, Trans);
 	unguard;
 }
 
@@ -826,7 +826,7 @@ void VWidget::DrawPic(int X, int Y, int Handle, float Alpha)
 //
 //==========================================================================
 
-void VWidget::DrawPic(int X, int Y, VTexture* Tex, float Alpha)
+void VWidget::DrawPic(int X, int Y, VTexture* Tex, float Alpha, int Trans)
 {
 	guard(VWidget::DrawPic);
 	if (!Tex)
@@ -846,7 +846,8 @@ void VWidget::DrawPic(int X, int Y, VTexture* Tex, float Alpha)
 	float T2 = Tex->GetHeight();
 	if (TransferAndClipRect(X1, Y1, X2, Y2, S1, T1, S2, T2))
 	{
-		Drawer->DrawPic(X1, Y1, X2, Y2, S1, T1, S2, T2, Tex, Alpha);
+		Drawer->DrawPic(X1, Y1, X2, Y2, S1, T1, S2, T2, Tex,
+			R_GetCachedTranslation(Trans, NULL), Alpha);
 	}
 	unguard;
 }
@@ -1342,12 +1343,13 @@ IMPLEMENT_FUNCTION(VWidget, SetFocus)
 
 IMPLEMENT_FUNCTION(VWidget, DrawPic)
 {
+	P_GET_INT_OPT(Translation, 0);
 	P_GET_FLOAT_OPT(Alpha, 1.0);
 	P_GET_INT(Handle);
 	P_GET_INT(Y);
 	P_GET_INT(X);
 	P_GET_SELF;
-	Self->DrawPic(X, Y, Handle, Alpha);
+	Self->DrawPic(X, Y, Handle, Alpha, Translation);
 }
 
 IMPLEMENT_FUNCTION(VWidget, DrawShadowedPic)

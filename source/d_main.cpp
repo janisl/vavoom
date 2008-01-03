@@ -652,11 +652,7 @@ void VSoftwareDrawer::FreeAllMemory()
 	FreeMemory();
 	for (int i = 0; i < GTextureManager.Textures.Num(); i++)
 	{
-		if (GTextureManager.Textures[i]->DriverData)
-		{
-			Z_Free(GTextureManager.Textures[i]->DriverData);
-			GTextureManager.Textures[i]->DriverData = NULL;
-		}
+		FlushTexture(GTextureManager[i]);
 	}
 
 	Z_Free(colourmaps);

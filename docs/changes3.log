@@ -2681,3 +2681,136 @@
 28.11.2007
   I added stealth Doom monster types.
   I implemented support for camera textures.
+29.11.2007
+  I added network replication for camera textures.
+  I fixed crash when polyobj contains two sided segs.
+30.11.2007
+  I fixed absolute position check.
+01.12.2007
+  In vlumpy I added FON1 format font builder, as a test I added console font
+ that comes with imagetool.
+02.12.2007
+  I changed console to use the console font.
+  In vlumpy I implemented building of simple font in FON2 format.
+  I started to implemented support for ambient sounds defined in SNDINFO
+ using $ambient command.
+03.12.2007
+  I finished implementation of the ambient sounds.
+  I implemented support for Sector_SetColor line special.
+  I moved cameras to the linespec package.
+  I added support for swimable Boom water.
+  Firebrand implemented gameplay option menus.
+  I changed open ACS scripts to execute imediatelly.
+04.12.2007
+  I moved earthquake line special to linespec.
+05.12.2007
+  I fixed missing Boom water ceiling texture when sector itself has a sky
+ ceiling texture.
+06.12.2007
+  I found source graphics for the big Doom font and started changing it to
+ FON2 format.
+08.12.2007
+  I finished converting big Doom font.
+09.12.2007
+  I converted big Strife font to FON2 format.
+  I implemented support for switching player's view to a camera.
+  I mage monster backing CVAR configurable.
+10.12.2007
+  I implemented revert camera option to the camera switch special.
+  I changed sound lookup to be case in-sensitive.
+11.12.2007
+  I added an empty sound and the default earthquake sound.
+  I removed $playerreserve SNDINFO command.
+12.12.2007
+  I implemented support for padding, scaling and rotating sector floors and
+ ceilings.
+14.12.2007
+  Firebrand implemented ZDoom's particle fountains.
+19.12.2007
+  I implemented support for sizeable particles.
+  I fixed particle fountains to work as expected.
+  I added a thing that gets placed in places of unknown things in the map.
+20.12.2007
+  I implemented line specials that align sector's floor and ceiling to a line.
+  I put back building list of things in a sector.
+  I added support and stubs for recently added ACS p-codes.
+21.12.2007
+  I implemented building of touching things/touching sectors lists, like in
+ Boom.
+22.12.2007
+  I did some final sectors list fixes.
+23.12.2007
+  I moved methods that deal with sector lists to Level and Entity classes.
+24.12.2007
+  I changed push/pull and Teleport_Sector specials to use touching thing lists.
+  I implemented Boom's remembering of the last enemy.
+  I implemented HealThing special.
+  I fixed building of the stairs when starting sector has stair sector special
+ assigned.
+  I fixed traveling between maps in the same hub showing intermission screen.
+  I implemented support monsters walking to the patrol points or any other goal
+ that can be set using Thing_SetGoal special.
+  I fixed open ACS scripts running every time you return to the level.
+  I fixed endless loop in InterpolationPoint.ScanForLoop when starting point
+ is not part of the loop.
+  I added support for TITLEMAP.
+25.12.2007
+  I implemented support for spark thing types.
+  I fixed a memory leak in OpenGL driver with camera textures.
+  I started work on DECORATE parser. In first stage it just skips all of the
+ declarations. Then I started to implement old style decorations and got first
+ results.
+26.12.2007
+  I finished implementing support for old style decorations. After that I also
+ implemented parsing of breakables.
+27.12.2007
+  I implemented scaling of the things.
+  I fixed a crash when printing empty notify and centre messages.
+  I added no-pass mobj flag to some decorations. Probably I'll have to make it
+ off by default.
+  I implemented parsing of old style DECORATION projectiles and pickups and
+ started to implement parsing of actor definitions.
+  In ACS I now check if strings are valid UTF-8 strings, if not I assume that
+ it's in the Latin1 encoding and do a proper conversion.
+28.12.2007
+  I started to implement parsing of DECORATE actors. Having states parser in
+ vcc helped a lot. Many simple decorations already work.
+29.12.2007
+  I continued work on actor DECORATE definitions, added support for many more
+ properties. I added very simple support for actor class replacements.
+  I removed MAXSPECIALCROSS limit.
+  I changed calculation of palette colour shifts to calculate combined shift
+ value on the server.
+  I created a class for colour translations, use it to pass translation to the
+ renderer.
+30.12.2007
+  In texture class I added array of hardware texture handles for different
+ translations tahat replaces translated sprite caching in OpenGL and Direct3D
+ drivers. I added support for drawing translated 2D graphics and models. Then
+ I added support for different translation types, changed old ones to be
+ standard translations. I implemented per-player translations to support any
+ colour you want. I removed support for choosing model skin and changed model
+ to use the same translation as sprite. Then I implemented support for ACS
+ translations.
+31.12.2007
+  I added network replication of level translations. Then I added body queue
+ translations so that dead players keep their colours. It's also needed for
+ Hexen where fighter uses different colour range.
+  I added transfer of the translation in nightmage respawn and when spawning
+ Hexen's demon and serpent gibs.
+  I implemented parsing of DECORATE actor translations.
+  Items that should not spawned in deathmatch were always destroyed. They
+ should be destroyed only while placing on map and not in other cases, such as
+ adding to the inventory of the player.
+  I implemented script parser class for use in progs.
+  I changed menu enum to use dynamic array.
+  I properly implemented ACS commands to clear, give, take and check inventory.
+01.01.2008
+  I implemented most of the missing ACS p-codes.
+  I implemented Thing_SpawnFacing, Thing_Damage, ACS_LockedExecuteDoor specials.
+  I changed execution of line specials to return integer instead of bool.
+  I impemented scripted marines.
+02.01.2008
+  I implemented scripted marine related ACS p-codes.
+  I added a dummy class for DoomBuilder's 3d view camera.
+  I implemented Thing_Hate special.

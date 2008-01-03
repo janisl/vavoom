@@ -349,9 +349,6 @@ private:
 		}
 	}
 	int FindSectorFromTag(int, int);
-	void GiveInventory(VEntity*, VName, int);
-	void TakeInventory(VEntity*, VName, int);
-	int CheckInventory(VEntity*, VName);
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -1887,6 +1884,7 @@ int VAcs::RunScript(float DeltaTime)
 	int action = SCRIPT_Continue;
 	vuint8* ip = InstructionPointer;
 	vint32* sp = stack;
+	VTextureTranslation* Translation = NULL;
 	do
 	{
 		vint32 cmd;
@@ -2298,12 +2296,13 @@ int VAcs::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_ThingCount)
-			sp[-2] = Level->eventThingCount(sp[-2], sp[-1]);
+			sp[-2] = Level->eventThingCount(sp[-2], NAME_None, sp[-1]);
 			sp--;
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_ThingCountDirect)
-			*sp = Level->eventThingCount(READ_INT32(ip), READ_INT32(ip + 4));
+			*sp = Level->eventThingCount(READ_INT32(ip), NAME_None,
+				READ_INT32(ip + 4));
 			ip += 8;
 			sp++;
 			ACSVM_BREAK;
@@ -2732,11 +2731,9 @@ int VAcs::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_PlayerArmorPoints)
-			STUB(PCD_PlayerArmorPoints)
-			//FIXME implement this
-			if (Activator && Activator->Player)
+			if (Activator)
 			{
-				*sp = 0;
+				*sp = Activator->eventGetArmorPoints();
 			}
 			else
 			{
@@ -2835,105 +2832,153 @@ int VAcs::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_ClearInventory)
-			STUB(PCD_ClearInventory)
-			//FIXME implement this
 			if (Activator)
 			{
+				Activator->eventClearInventory();
 			}
 			else
 			{
 				for (int i = 0; i < MAXPLAYERS; i++)
 				{
+					if (Level->Game->Players[i] &&
+						Level->Game->Players[i]->PlayerFlags & VBasePlayer::PF_Spawned)
+					{
+						Level->Game->Players[i]->MO->eventClearInventory();
+					}
 				}
 			}
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_GiveInventory)
-			STUB(PCD_GiveInventory)
-			GiveInventory(Activator, GetName(sp[-2]), sp[-1]);
+			if (Activator)
+			{
+				Activator->eventGiveInventory(GetName(sp[-2]), sp[-1]);
+			}
+			else
+			{
+				for (int i = 0; i < MAXPLAYERS; i++)
+				{
+					if (Level->Game->Players[i] &&
+						Level->Game->Players[i]->PlayerFlags & VBasePlayer::PF_Spawned)
+					{
+						Level->Game->Players[i]->MO->eventGiveInventory(
+							GetName(sp[-2]), sp[-1]);
+					}
+				}
+			}
 			sp -= 2;
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_GiveInventoryDirect)
-			STUB(PCD_GiveInventoryDirect)
-			GiveInventory(Activator, GetName(READ_INT32(ip)),
-				READ_INT32(ip + 4));
+			if (Activator)
+			{
+				Activator->eventGiveInventory(GetName(READ_INT32(ip)),
+					READ_INT32(ip + 4));
+			}
+			else
+			{
+				for (int i = 0; i < MAXPLAYERS; i++)
+				{
+					if (Level->Game->Players[i] &&
+						Level->Game->Players[i]->PlayerFlags & VBasePlayer::PF_Spawned)
+						Level->Game->Players[i]->MO->eventGiveInventory(
+							GetName(READ_INT32(ip)), READ_INT32(ip + 4));
+				}
+			}
 			ip += 8;
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_TakeInventory)
-			STUB(PCD_TakeInventory)
-			TakeInventory(Activator, GetName(sp[-2]), sp[-1]);
+			if (Activator)
+			{
+				Activator->eventTakeInventory(GetName(sp[-2]), sp[-1]);
+			}
+			else
+			{
+				for (int i = 0; i < MAXPLAYERS; i++)
+				{
+					if (Level->Game->Players[i] &&
+						Level->Game->Players[i]->PlayerFlags & VBasePlayer::PF_Spawned)
+					{
+						Level->Game->Players[i]->MO->eventTakeInventory(
+							GetName(sp[-2]), sp[-1]);
+					}
+				}
+			}
 			sp -= 2;
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_TakeInventoryDirect)
-			STUB(PCD_TakeInventoryDirect)
-			TakeInventory(Activator, GetName(READ_INT32(ip)),
-				READ_INT32(ip + 4));
+			if (Activator)
+			{
+				Activator->eventTakeInventory(GetName(READ_INT32(ip)),
+					READ_INT32(ip + 4));
+			}
+			else
+			{
+				for (int i = 0; i < MAXPLAYERS; i++)
+				{
+					if (Level->Game->Players[i] &&
+						Level->Game->Players[i]->PlayerFlags & VBasePlayer::PF_Spawned)
+						Level->Game->Players[i]->MO->eventTakeInventory(
+							GetName(READ_INT32(ip)), READ_INT32(ip + 4));
+				}
+			}
 			ip += 8;
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_CheckInventory)
-			STUB(PCD_CheckInventory)
-			sp[-1] = CheckInventory(Activator, GetName(sp[-1]));
+			if (!Activator)
+			{
+				sp[-1] = 0;
+			}
+			else
+			{
+				sp[-1] = Activator->eventCheckInventory(GetName(sp[-1]));
+			}
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_CheckInventoryDirect)
-			STUB(PCD_CheckInventoryDirect)
-			*sp = CheckInventory(Activator, GetName(READ_INT32(ip)));
+			if (!Activator)
+			{
+				*sp = 0;
+			}
+			else
+			{
+				*sp = Activator->eventCheckInventory(GetName(READ_INT32(ip)));
+			}
+			sp++;
 			ip += 4;
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_Spawn)
-			STUB(PCD_Spawn)
-			//FIXME implement this
-			//sp[-6] - type name, string
-			//sp[-5] - x, fixed point
-			//sp[-4] - y, fixed point
-			//sp[-3] - z, fixed point
-			//sp[-2] - TID
-			//sp[-1] - angle, 256 as full circle
-			//Pushes result.
-			sp[-6] = 0;
+			sp[-6] = Level->eventAcsSpawnThing(GetName(sp[-6]), TVec(
+				float(sp[-5]) / float(0x10000),
+				float(sp[-4]) / float(0x10000),
+				float(sp[-3]) / float(0x10000)),
+				sp[-2], float(sp[-1]) * 45.0 / 32.0);
 			sp -= 5;
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_SpawnDirect)
-			STUB(PCD_SpawnDirect)
-			//FIXME implement this
-			//READ_INT32(ip) - type name, string
-			//READ_INT32(ip + 4) - x, fixed point
-			//READ_INT32(ip + 8) - y, fixed point
-			//READ_INT32(ip + 12) - z, fixed point
-			//READ_INT32(ip + 16) - TID
-			//READ_INT32(ip + 20) - angle, 256 as full circle
-			//Pushes result
-			*sp = 0;
+			*sp = Level->eventAcsSpawnThing(GetName(READ_INT32(ip)), TVec(
+				float(READ_INT32(ip + 4)) / float(0x10000),
+				float(READ_INT32(ip + 8)) / float(0x10000),
+				float(READ_INT32(ip + 12)) / float(0x10000)),
+				READ_INT32(ip + 16), float(READ_INT32(ip + 20)) * 45.0 / 32.0);
 			sp++;
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_SpawnSpot)
-			STUB(PCD_SpawnSpot)
-			//FIXME implement this
-			//sp[-4] - type name, string
-			//sp[-3] - TID of the spot
-			//sp[-2] - TID
-			//sp[-1] - angle, 256 as full circle
-			//Pushes result
-			sp[-4] = 0;
+			sp[-4] = Level->eventAcsSpawnSpot(GetName(sp[-4]), sp[-3], sp[-2],
+				float(sp[-1]) * 45.0 / 32.0);
 			sp -= 3;
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_SpawnSpotDirect)
-			STUB(PCD_SpawnSpotDirect)
-			//FIXME implement this
-			//READ_INT32(ip) - type name, string.
-			//READ_INT32(ip + 4) - TID of the spot
-			//READ_INT32(ip + 8) - TID
-			//READ_INT32(ip + 12) - angle, 256 as full circle
-			//Pushes result
-			*sp = 0;
+			*sp = Level->eventAcsSpawnSpot(GetName(READ_INT32(ip)),
+				READ_INT32(ip + 4), READ_INT32(ip + 8),
+				float(READ_INT32(ip + 12)) * 45.0 / 32.0);
 			sp++;
 			ACSVM_BREAK;
 
@@ -3312,39 +3357,45 @@ int VAcs::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_StartTranslation)
-			STUB(PCD_StartTranslation)
-			//FIXME implement this
-			//sp[-1] - index
+			if (sp[-1] >= 1 && sp[-1] <= MAX_LEVEL_TRANSLATIONS)
+			{
+				while (XLevel->Translations.Num() < sp[-1])
+				{
+					XLevel->Translations.Append(NULL);
+				}
+				Translation = XLevel->Translations[sp[-1] - 1];
+				if (!Translation)
+				{
+					Translation = new VTextureTranslation;
+					XLevel->Translations[sp[-1] - 1] = Translation;
+				}
+				else
+				{
+					Translation->Clear();
+				}
+			}
 			sp--;
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_TranslationRange1)
-			STUB(PCD_TranslationRange1)
-			//FIXME implement this
-			//sp[-4] - start
-			//sp[-3] - end
-			//sp[-2] - pal1
-			//sp[-1] - pal2
+			if (Translation)
+			{
+				Translation->MapToRange(sp[-4], sp[-3], sp[-2], sp[-1]);
+			}
 			sp -= 4;
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_TranslationRange2)
-			STUB(PCD_TranslationRange2)
-			//FIXME implement this
-			//sp[-8] - start
-			//sp[-7] - end
-			//sp[-6] - r1
-			//sp[-5] - g1
-			//sp[-4] - b1
-			//sp[-3] - r2
-			//sp[-2] - g2
-			//sp[-1] - b2
+			if (Translation)
+			{
+				Translation->MapToColours(sp[-8], sp[-7], sp[-6], sp[-5],
+					sp[-4], sp[-3], sp[-2], sp[-1]);
+			}
 			sp -= 8;
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_EndTranslation)
-			STUB(PCD_EndTranslation)
-			//FIXME implement this
+			//	Nothing to do here.
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_Call)
@@ -3545,19 +3596,25 @@ int VAcs::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_CheckWeapon)
-			STUB(PCD_CheckWeapon)
-			//FIXME implement this
-			//sp[-1] - weapon name, string
-			//Pushes result
-			sp[-1] = 0;
+			if (Activator)
+			{
+				sp[-1] = Activator->eventCheckNamedWeapon(GetName(sp[-1]));
+			}
+			else
+			{
+				sp[-1] = 0;
+			}
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_SetWeapon)
-			STUB(PCD_SetWeapon)
-			//FIXME implement this
-			//sp[-1] - weapon name, string
-			//Pushes result
-			sp[-1] = 0;
+			if (Activator)
+			{
+				sp[-1] = Activator->eventSetNamedWeapon(GetName(sp[-1]));
+			}
+			else
+			{
+				sp[-1] = 0;
+			}
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_TagString)
@@ -3727,29 +3784,42 @@ int VAcs::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_SetMarineWeapon)
-			STUB(PCD_SetMarineWeapon)
-			//FIXME implement this
-			//sp[-2] - TID
-			//sp[-1] - weapon name, string
+			Level->eventSetMarineWeapon(sp[-2], sp[-1], Activator);
 			sp -= 2;
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_SetActorProperty)
-			STUB(PCD_SetActorProperty)
-			//FIXME implement this
-			//sp[-3] - TID
-			//sp[-2] - property
-			//sp[-1] - value
+			if (!sp[-3])
+			{
+				if (Activator)
+				{
+					Activator->eventSetActorProperty(sp[-2], sp[-1], GetStr(sp[-1]));
+				}
+			}
+			else
+			{
+				int searcher = -1;
+				for (VEntity* Ent = Level->eventFindMobjFromTID(sp[-3], &searcher);
+					Ent; Ent = Level->eventFindMobjFromTID(sp[-3], &searcher))
+				{
+					Ent->eventSetActorProperty(sp[-2], sp[-1], GetStr(sp[-1]));
+				}
+			}
 			sp -= 3;
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_GetActorProperty)
-			STUB(PCD_GetActorProperty)
-			//FIXME implement this
-			//sp[-2] - TID
-			//sp[-1] - property
-			//Pushes result
-			sp[-2] = 0;
+			{
+				VEntity* Ent = EntityFromTID(sp[-2], NULL);
+				if (!Ent)
+				{
+					sp[-2] = 0;
+				}
+				else
+				{
+					sp[-2] = Ent->eventGetActorProperty(sp[-1]);
+				}
+			}
 			sp -= 1;
 			ACSVM_BREAK;
 
@@ -3765,10 +3835,7 @@ int VAcs::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_SetMarineSprite)
-			STUB(PCD_SetMarineSprite)
-			//FIXME implement this
-			//sp[-2] - TID
-			//sp[-1] - class name, string
+			Level->eventSetMarineSprite(sp[-2], GetName(sp[-1]), Activator);
 			sp -= 2;
 			ACSVM_BREAK;
 
@@ -3784,7 +3851,7 @@ int VAcs::RunScript(float DeltaTime)
 
 		ACSVM_CASE(PCD_ThingProjectile2)
 			Level->eventEV_ThingProjectile(sp[-7], sp[-6], sp[-5], sp[-4],
-				sp[-3], sp[-2], sp[-1]);
+				sp[-3], sp[-2], sp[-1], NAME_None, Activator);
 			sp -= 7;
 			ACSVM_BREAK;
 
@@ -3968,16 +4035,21 @@ int VAcs::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_GetAmmoCapacity)
-			STUB(PCD_GetAmmoCapacity)
-			//sp[-1] - Type name
-			//Pushes result
-			sp[-1] = 0;
+			if (Activator)
+			{
+				sp[-1] = Activator->eventGetAmmoCapacity(GetName(sp[-1]));
+			}
+			else
+			{
+				sp[-1] = 0;
+			}
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_SetAmmoCapacity)
-			STUB(PCD_SetAmmoCapacity)
-			//sp[-2] - Type name
-			//sp[-1] - Amount
+			if (Activator)
+			{
+				Activator->eventSetAmmoCapacity(GetName(sp[-2]), sp[-1]);
+			}
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_PrintMapCharArray)
@@ -4023,6 +4095,14 @@ int VAcs::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_SetActorAngle)
+			if (!sp[-2])
+			{
+				if (Activator)
+				{
+					Activator->Angles.yaw = (float)(sp[-1] & 0xffff) * 360.0 / (float)0x10000;
+				}
+			}
+			else
 			{
 				int searcher = -1;
 				for (VEntity* Ent = Level->eventFindMobjFromTID(sp[-2], &searcher);
@@ -4030,19 +4110,14 @@ int VAcs::RunScript(float DeltaTime)
 				{
 					Ent->Angles.yaw = (float)(sp[-1] & 0xffff) * 360.0 / (float)0x10000;
 				}
-				sp -= 2;
 			}
+			sp -= 2;
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_SpawnProjectile)
-			STUB(PCD_SpawnProjectile)
-			//sp[-7] - TID
-			//sp[-6] - Type name
-			//sp[-5] - angle
-			//sp[-4] - speed
-			//sp[-3] - vspeed
-			//sp[-2] - Gravity
-			//sp[-1] - New TID
+			Level->eventEV_ThingProjectile(sp[-7], 0, sp[-5], sp[-4], sp[-3],
+				sp[-2], sp[-1], GetName(sp[-6]), Activator);
+			sp -= 7;
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_GetSectorLightLevel)
@@ -4071,53 +4146,64 @@ int VAcs::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_ClearActorInventory)
-			STUB(PCD_ClearActorInventory)
-			//sp[-1] - TID
+			{
+				int searcher = -1;
+				for (VEntity* mobj = Level->eventFindMobjFromTID(sp[-1], &searcher);
+					mobj; mobj = Level->eventFindMobjFromTID(sp[-1], &searcher))
+				{
+					mobj->eventClearInventory();
+				}
+			}
 			sp--;
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_GiveActorInventory)
-			STUB(PCD_GiveActorInventory)
-			//sp[-3] - TID
-			//sp[-2] - Item name
-			//sp[-1] - Count
-			GiveInventory(EntityFromTID(sp[-3], NULL), GetName(sp[-2]), sp[-1]);
+			{
+				int searcher = -1;
+				for (VEntity* mobj = Level->eventFindMobjFromTID(sp[-3], &searcher);
+					mobj; mobj = Level->eventFindMobjFromTID(sp[-3], &searcher))
+				{
+					mobj->eventGiveInventory(GetName(sp[-2]), sp[-1]);
+				}
+			}
 			sp -= 3;
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_TakeActorInventory)
-			STUB(PCD_TakeActorInventory)
-			//sp[-3] - TID
-			//sp[-2] - Item name
-			//sp[-1] - Count
-			TakeInventory(EntityFromTID(sp[-3], NULL), GetName(sp[-2]), sp[-1]);
+			{
+				int searcher = -1;
+				for (VEntity* mobj = Level->eventFindMobjFromTID(sp[-3], &searcher);
+					mobj; mobj = Level->eventFindMobjFromTID(sp[-3], &searcher))
+				{
+					mobj->eventTakeInventory(GetName(sp[-2]), sp[-1]);
+				}
+			}
 			sp -= 3;
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_CheckActorInventory)
-			STUB(PCD_CheckActorInventory)
-			//sp[-2] - TID
-			//sp[-1] - Item name
-			sp[-2] = CheckInventory(EntityFromTID(sp[-2], NULL), GetName(sp[-1]));
+			{
+				VEntity* Ent = EntityFromTID(sp[-2], NULL);
+				if (!Ent)
+				{
+					sp[-2] = 0;
+				}
+				else
+				{
+					sp[-2] = Ent->eventCheckInventory(GetName(sp[-1]));
+				}
+			}
 			sp--;
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_ThingCountName)
-			STUB(PCD_ThingCountName)
-			//sp[-2] - Type name
-			//sp[-1] - TID
-			//Pushes result.
-			sp[-2] = 0;
+			sp[-2] = Level->eventThingCount(0, GetName(sp[-2]), sp[-1]);
 			sp--;
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_SpawnSpotFacing)
-			STUB(PCD_SpawnSpotFacing)
-			//sp[-3] - Type name
-			//sp[-2] - Spot TID
-			//sp[-1] - New TID
-			//Pushes result.
-			sp[-3] = 0;
+			sp[-3] = Level->eventAcsSpawnSpotFacing(GetName(sp[-3]), sp[-2],
+				sp[-1]);
 			sp -= 2;
 			ACSVM_BREAK;
 
@@ -4422,12 +4508,8 @@ int VAcs::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_SectorDamage)
-			STUB(PCD_SectorDamage)
-			//sp[-5] - Tag
-			//sp[-4] - Amount
-			//sp[-3] - Damage type
-			//sp[-2] - Protection inventory class name
-			//sp[-1] - Flags
+			Level->eventSectorDamage(sp[-5], sp[-4], GetName(sp[-3]),
+				GetName(sp[-2]), sp[-1]);
 			sp -= 5;
 			ACSVM_BREAK;
 
@@ -4493,6 +4575,15 @@ int VAcs::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_SetActorPitch)
+			if (!sp[-2])
+			{
+				if (Activator)
+				{
+					Activator->Angles.pitch = AngleMod180(
+						(float)(sp[-1] & 0xffff) * 360.0 / (float)0x10000);
+				}
+			}
+			else
 			{
 				int searcher = -1;
 				for (VEntity* Ent = Level->eventFindMobjFromTID(sp[-2], &searcher);
@@ -4501,8 +4592,8 @@ int VAcs::RunScript(float DeltaTime)
 					Ent->Angles.pitch = AngleMod180(
 						(float)(sp[-1] & 0xffff) * 360.0 / (float)0x10000);
 				}
-				sp -= 2;
 			}
+			sp -= 2;
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_PrintBind)
@@ -4522,12 +4613,8 @@ int VAcs::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_ThingDamage2)
-			STUB(PCD_ThingDamage2)
-			//sp[-3] - TID
-			//sp[-2] - Amount
-			//sp[-1] - Damage type
-			//returns success.
-			sp[-3] = 0;
+			sp[-3] = Level->eventDoThingDamage(sp[-3], sp[-2],
+				GetName(sp[-1]), Activator);
 			sp -= 2;
 			ACSVM_BREAK;
 
@@ -4603,100 +4690,6 @@ int VAcs::FindSectorFromTag(int tag, int start)
 		if (XLevel->Sectors[i].tag == tag)
 			return i;
 	return -1;
-	unguard;
-}
-
-//============================================================================
-//
-//	VAcs::GiveInventory
-//
-//============================================================================
-
-void VAcs::GiveInventory(VEntity* Activator, VName AType, int Amount)
-{
-	guard(VAcs::GiveInventory);
-	if (Amount <= 0)
-	{
-		return;
-	}
-	VName Type = AType;
-	if (VStr::ICmp(*Type, "Armor") == 0)
-	{
-		Type = "BasicArmor";
-	}
-	if (Activator)
-	{
-		Activator->eventGiveInventory(Type, Amount);
-	}
-	else
-	{
-		for (int i = 0; i < MAXPLAYERS; i++)
-		{
-			if (Level->Game->Players[i] &&
-				Level->Game->Players[i]->PlayerFlags & VBasePlayer::PF_Spawned)
-				Level->Game->Players[i]->MO->eventGiveInventory(Type, Amount);
-		}
-	}
-	return;
-	unguard;
-}
-
-//============================================================================
-//
-//	VAcs::TakeInventory
-//
-//============================================================================
-
-void VAcs::TakeInventory(VEntity* Activator, VName AType, int Amount)
-{
-	guard(VAcs::TakeInventory);
-	if (Amount <= 0)
-	{
-		return;
-	}
-	VName Type = AType;
-	if (VStr::ICmp(*Type, "Armor") == 0)
-	{
-		Type = "BasicArmor";
-	}
-	if (Activator)
-	{
-		Activator->eventTakeInventory(Type, Amount);
-	}
-	else
-	{
-		for (int i = 0; i < MAXPLAYERS; i++)
-		{
-			if (Level->Game->Players[i] &&
-				Level->Game->Players[i]->PlayerFlags & VBasePlayer::PF_Spawned)
-				Level->Game->Players[i]->MO->eventTakeInventory(Type, Amount);
-		}
-	}
-	unguard;
-}
-
-//============================================================================
-//
-//	VAcs::CheckInventory
-//
-//============================================================================
-
-int VAcs::CheckInventory(VEntity* Activator, VName AType)
-{
-	guard(VAcs::CheckInventory);
-	if (!Activator)
-		return 0;
-
-	VName Type = AType;
-	if (VStr::ICmp(*Type, "Armor") == 0)
-	{
-		Type = "BasicArmor";
-	}
-	else if (!VStr::ICmp(*Type, "Health"))
-	{
-		return Activator->Health;
-	}
-	return Activator->eventCheckInventory(Type);
 	unguard;
 }
 

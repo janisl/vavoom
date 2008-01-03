@@ -93,8 +93,8 @@ struct chatinfo_t
 	chatline_t		special[20];
 } chatinfo_t;*/
 
-enum { NUMTOTALBOTS = 30 };
-enum { NUMBOTTYPES = 30 };
+enum { NUMTOTALBOTS = 12 };
+enum { NUMBOTTYPES = 12 };
 
 // The things the bot knows about their enemy
 //struct enemyinfo_t

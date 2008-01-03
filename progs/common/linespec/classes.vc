@@ -49,17 +49,6 @@ enum
 	CONTENTS_SOLID = -1
 };
 
-enum
-{
-	CSHIFT_Contents,
-	CSHIFT_Damage,
-	CSHIFT_Bonus,
-	CSHIFT_Poison,
-	CSHIFT_Weapon,
-	CSHIFT_Hazard,
-	CSHIFT_Power
-};
-
 #include "EntityEx.vc"
 #include "ScriptedEntity.vc"
 #include "Inventory.vc"
@@ -154,6 +143,7 @@ enum
 #include "Unknown.vc"
 #include "PatrolPoint.vc"
 #include "PatrolSpecial.vc"
+#include "DoomBuilderCamera.vc"
 
 #include "ParticleFountain.vc"
 #include "RedParticleFountain.vc"

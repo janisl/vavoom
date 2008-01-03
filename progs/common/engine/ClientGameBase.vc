@@ -50,8 +50,6 @@ string serverinfo;
 
 int intermission;
 
-int prev_cshifts[NUM_CSHIFTS];	// powerups and content types
-
 //==========================================================================
 //
 //  RootWindowCreated

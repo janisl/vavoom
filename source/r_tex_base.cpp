@@ -352,6 +352,26 @@ void VTexture::FixupPalette(vuint8* Pixels, rgba_t* Palette)
 
 //==========================================================================
 //
+//	VTexture::FindDriverTrans
+//
+//==========================================================================
+
+VTexture::VTransData* VTexture::FindDriverTrans(VTextureTranslation* TransTab)
+{
+	guard(VTexture::FindDriverTrans);
+	for (int i = 0; i < DriverTranslated.Num(); i++)
+	{
+		if (DriverTranslated[i].Trans == TransTab)
+		{
+			return &DriverTranslated[i];
+		}
+	}
+	return NULL;
+	unguard;
+}
+
+//==========================================================================
+//
 //	VDummyTexture::VDummyTexture
 //
 //==========================================================================

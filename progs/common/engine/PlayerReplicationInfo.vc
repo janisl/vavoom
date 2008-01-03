@@ -32,6 +32,10 @@ int				PlayerNum;
 string			PlayerName;
 string			UserInfo;
 
+byte			TranslStart;
+byte			TranslEnd;
+int				Colour;
+
 int				Frags;
 int				Deaths;
 int				KillCount;
@@ -41,8 +45,8 @@ int				SecretCount;
 replication
 {
 	reliable if (Role == ROLE_Authority)
-		PlayerNum, PlayerName, UserInfo, Frags, Deaths, KillCount,
-		ItemCount, SecretCount;
+		PlayerNum, PlayerName, UserInfo, TranslStart, TranslEnd, Colour,
+		Frags, Deaths, KillCount, ItemCount, SecretCount;
 }
 
 defaultproperties

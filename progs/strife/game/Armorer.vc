@@ -30,6 +30,6 @@ defaultproperties
 {
 	ConversationID = 4;
 	ClassName = 'Armorer';
-	Translation = 9;
+	Translation = (TRANSL_Standard << TRANSL_TYPE_SHIFT) + 8;
 	PainSound = 'armorer/pain';
 }

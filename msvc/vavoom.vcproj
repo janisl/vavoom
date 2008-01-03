@@ -580,6 +580,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\r_data.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\source\r_light.cpp"
 				>
 			</File>

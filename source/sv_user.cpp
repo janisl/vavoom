@@ -61,7 +61,7 @@ void SV_ReadFromUserInfo(VBasePlayer* Player)
 		Player->BaseClass = atoi(*Info_ValueForKey(Player->UserInfo, "class"));
 	}
 	Player->PlayerName = Info_ValueForKey(Player->UserInfo, "name");
-	Player->Colour = atoi(*Info_ValueForKey(Player->UserInfo, "colour"));
+	Player->Colour = M_ParseColour(Info_ValueForKey(Player->UserInfo, "colour"));
 	Player->eventUserinfoChanged();
 	unguard;
 }

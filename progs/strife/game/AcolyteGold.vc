@@ -29,5 +29,5 @@ class AcolyteGold : Acolyte
 defaultproperties
 {
 	ConversationID = 58;
-	Translation = 5;
+	Translation = (TRANSL_Standard << TRANSL_TYPE_SHIFT) + 4;
 }

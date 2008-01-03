@@ -189,10 +189,11 @@ class VLevelInfo : public VThinker
 		P_PASS_INT(polyobj);
 		EV_RET_BOOL(NAME_PolyBusy);
 	}
-	int eventThingCount(int type, int tid)
+	int eventThingCount(int type, VName TypeName, int tid)
 	{
 		P_PASS_SELF;
 		P_PASS_INT(type);
+		P_PASS_NAME(TypeName);
 		P_PASS_INT(tid);
 		EV_RET_INT(NAME_ThingCount);
 	}
@@ -203,7 +204,7 @@ class VLevelInfo : public VThinker
 		P_PASS_PTR(searchPosition);
 		EV_RET_REF(VEntity, NAME_FindMobjFromTID);
 	}
-	bool eventExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
+	int eventExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 		int Arg4, int Arg5, line_t* Line, int Side, VEntity* A)
 	{
 		P_PASS_SELF;
@@ -216,10 +217,10 @@ class VLevelInfo : public VThinker
 		P_PASS_PTR(Line);
 		P_PASS_INT(Side);
 		P_PASS_REF(A);
-		EV_RET_BOOL(NAME_ExecuteActionSpecial);
+		EV_RET_INT(NAME_ExecuteActionSpecial);
 	}
 	int eventEV_ThingProjectile(int tid, int type, int angle, int speed,
-		int vspeed, int gravity, int newtid)
+		int vspeed, int gravity, int newtid, VName TypeName, VEntity* Activator)
 	{
 		P_PASS_SELF;
 		P_PASS_INT(tid);
@@ -229,6 +230,8 @@ class VLevelInfo : public VThinker
 		P_PASS_INT(vspeed);
 		P_PASS_INT(gravity);
 		P_PASS_INT(newtid);
+		P_PASS_NAME(TypeName);
+		P_PASS_REF(Activator);
 		EV_RET_INT(NAME_EV_ThingProjectile);
 	}
 	void eventStartPlaneWatcher(VEntity* it, line_t* line, int lineSide,
@@ -262,5 +265,65 @@ class VLevelInfo : public VThinker
 		P_PASS_PTR(p);
 		P_PASS_FLOAT(DeltaTime);
 		EV_RET_VOID(NAME_UpdateParticle);
+	}
+	int eventAcsSpawnThing(VName Name, TVec Org, int Tid, float Angle)
+	{
+		P_PASS_SELF;
+		P_PASS_NAME(Name);
+		P_PASS_VEC(Org);
+		P_PASS_INT(Tid);
+		P_PASS_FLOAT(Angle);
+		EV_RET_INT(NAME_AcsSpawnThing);
+	}
+	int eventAcsSpawnSpot(VName Name, int SpotTid, int Tid, float Angle)
+	{
+		P_PASS_SELF;
+		P_PASS_NAME(Name);
+		P_PASS_INT(SpotTid);
+		P_PASS_INT(Tid);
+		P_PASS_FLOAT(Angle);
+		EV_RET_INT(NAME_AcsSpawnSpot);
+	}
+	int eventAcsSpawnSpotFacing(VName Name, int SpotTid, int Tid)
+	{
+		P_PASS_SELF;
+		P_PASS_NAME(Name);
+		P_PASS_INT(SpotTid);
+		P_PASS_INT(Tid);
+		EV_RET_INT(NAME_AcsSpawnSpotFacing);
+	}
+	void eventSectorDamage(int Tag, int Amount, VName DamageType,
+		VName ProtectionType, int Flags)
+	{
+		P_PASS_SELF;
+		P_PASS_INT(Tag);
+		P_PASS_INT(Amount);
+		P_PASS_NAME(DamageType);
+		P_PASS_NAME(ProtectionType);
+		P_PASS_INT(Flags);
+		EV_RET_VOID(NAME_SectorDamage);
+	}
+	int eventDoThingDamage(int Tid, int Amount, VName DmgType, VEntity* Activator)
+	{
+		P_PASS_SELF;
+		P_PASS_INT(Tid);
+		P_PASS_INT(Amount);
+		P_PASS_NAME(DmgType);
+		P_PASS_REF(Activator);
+		EV_RET_INT(NAME_DoThingDamage);
+	}
+	void eventSetMarineWeapon(int Tid, int Weapon, VEntity* Activator)
+	{
+		P_PASS_INT(Tid);
+		P_PASS_INT(Weapon);
+		P_PASS_REF(Activator);
+		EV_RET_VOID(NAME_SetMarineWeapon);
+	}
+	void eventSetMarineSprite(int Tid, VName SrcClass, VEntity* Activator)
+	{
+		P_PASS_INT(Tid);
+		P_PASS_NAME(SrcClass);
+		P_PASS_REF(Activator);
+		EV_RET_VOID(NAME_SetMarineSprite);
 	}
 };

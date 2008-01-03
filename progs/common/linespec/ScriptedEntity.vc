@@ -65,7 +65,14 @@ final void A_Look()
 	}
 
 	Threshold = 0;	// any shot will wake up
-	targ = EntityEx(Sector->SoundTarget);
+	if (TIDToHate)
+	{
+		targ = Target;
+	}
+	else
+	{
+		targ = EntityEx(Sector->SoundTarget);
+	}
 
 	//	Andy Baker's stealth monsters
 	if (bStealth)
@@ -461,11 +468,15 @@ void DoChase(bool FastChase, state AMeleeState, state AMissileState,
 	}
 
 	//	Possibly choose another target.
-	if (Level.Game.netgame && !Threshold)
+	if ((Level.Game.netgame || TIDToHate) && !Threshold)
 	{
 		if (!CanSee(Target))
 		{
-			if (LookForPlayers(true))
+			bool PrevNoSightCheck = bNoSightCheck;
+			bNoSightCheck = false;
+			bool GotNew = LookForPlayers(true);
+			bNoSightCheck = PrevNoSightCheck;
+			if (GotNew)
 			{
 				//	Got a new target.
 				return;

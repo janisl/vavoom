@@ -269,6 +269,10 @@ public:
 	vint32		NetId;
 	VState*		NetNext;
 
+	//	Compile time variables
+	VName		GotoLabel;
+	vint32		GotoOffset;
+
 	VState(VName);
 
 	void Serialise(VStream&);
@@ -291,6 +295,9 @@ struct VStateLabel
 {
 	VName		Name;
 	VState*		State;
+
+	VName		GotoLabel;
+	vint32		GotoOffset;
 
 	friend VStream& operator<<(VStream& Strm, VStateLabel& Lbl)
 	{
@@ -422,6 +429,9 @@ public:
 	TArray<VRepInfo>	RepInfos;
 	TArray<VStateLabel>	StateLabels;
 
+	VClass*			Replacement;
+	VClass*			Replacee;
+
 	static TArray<mobjinfo_t>	GMobjInfos;
 	static TArray<mobjinfo_t>	GScriptIds;
 	static TArray<VName>		GSpriteNames;
@@ -486,6 +496,8 @@ public:
 	void CleanObject(VObject*);
 	void DestructObject(VObject*);
 	VClass* CreateDerivedClass(VName);
+	VClass* GetReplacement();
+	VClass* GetReplacee();
 
 	void Serialise(VStream&);
 	void PostLoad();

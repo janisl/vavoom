@@ -921,13 +921,14 @@ void VOpenGLDrawer::DrawMaskedPolygon(surface_t* surf, float Alpha,
 //==========================================================================
 
 void VOpenGLDrawer::DrawSpritePolygon(TVec *cv, VTexture* Tex, float Alpha,
-	bool Additive, int translation, vuint32 light, vuint32 Fade, const TVec&,
-	float, const TVec& saxis, const TVec& taxis, const TVec& texorg)
+	bool Additive, VTextureTranslation* Translation, vuint32 light,
+	vuint32 Fade, const TVec&, float, const TVec& saxis, const TVec& taxis,
+	const TVec& texorg)
 {
 	guard(VOpenGLDrawer::DrawSpritePolygon);
 	TVec	texpt;
 
-	SetSpriteLump(Tex, translation);
+	SetSpriteLump(Tex, Translation);
 
 	if (blend_sprites || Additive || Alpha < 1.0)
 	{
@@ -989,8 +990,8 @@ void VOpenGLDrawer::DrawSpritePolygon(TVec *cv, VTexture* Tex, float Alpha,
 
 void VOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	const TVec& Offset, const TVec& Scale, mmdl_t* pmdl, int frame,
-	VTexture* Skin, vuint32 light, vuint32 Fade, float Alpha, bool Additive,
-	bool is_view_model)
+	VTexture* Skin, VTextureTranslation* Trans, vuint32 light, vuint32 Fade,
+	float Alpha, bool Additive, bool is_view_model)
 {
 	guard(VOpenGLDrawer::DrawAliasModel);
 	mframe_t	*framedesc;
@@ -1042,7 +1043,7 @@ void VOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	glTranslatef(framedesc->scale_origin[0], framedesc->scale_origin[1], framedesc->scale_origin[2]);
 	glScalef(framedesc->scale[0], framedesc->scale[1], framedesc->scale[2]);
 
-	SetPic(Skin);
+	SetPic(Skin, Trans);
 
 	glShadeModel(GL_SMOOTH);
 	glEnable(GL_BLEND);
