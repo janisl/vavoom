@@ -2814,3 +2814,8 @@
   I implemented scripted marine related ACS p-codes.
   I added a dummy class for DoomBuilder's 3d view camera.
   I implemented Thing_Hate special.
+03.01.2008
+  Spawning of slopes using vertex heights didn't clear their thing types and
+ they showed up as unknown objects.
+  In find lowest/highest floor/ceiling checks I added check for lines that have
+ the same sector on both sides.
