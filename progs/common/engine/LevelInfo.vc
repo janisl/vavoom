@@ -336,10 +336,18 @@ void CreateTIDList()
 sector_t *getNextSector(line_t * line, sector_t * sec)
 {
 	if (!(line->flags & ML_TWOSIDED))
+	{
 		return NULL;
+	}
 
 	if (line->frontsector == sec)
+	{
+		if (line->backsector == sec)
+		{
+			return NULL;
+		}
 		return line->backsector;
+	}
 
 	return line->frontsector;
 }
