@@ -363,6 +363,7 @@ bool SetVertexHeights(Level InLevel, int ThingID)
 					ret = true;
 				}
 			}
+			mthing->type = 0;
 		}
 	}
 	return ret;
