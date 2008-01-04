@@ -4031,7 +4031,6 @@ final bool EV_ThingHate(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 				{
 					Hater.LastEnemy = Hater.Target;
 				}
-print("%n hates %n", GetClassName(Hater.Class), GetClassName(Hatee.Class));
 				Hater.Target = Hatee;
 				if (!Hater.bDormant)
 				{
