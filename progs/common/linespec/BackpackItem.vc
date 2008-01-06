@@ -114,7 +114,7 @@ Inventory CreateCopy(EntityEx Toucher)
 		Ammo AmmoItem = Ammo(Toucher.FindInventory(Cls));
 		if (!AmmoItem)
 		{
-			AmmoItem = Spawn(Cls);
+			AmmoItem = Spawn(Cls,,,, false);
 			AmmoItem.AttachToOwner(Toucher);
 			AmmoItem.Amount = 0;
 		}

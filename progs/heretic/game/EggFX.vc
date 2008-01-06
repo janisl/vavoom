@@ -70,7 +70,7 @@ final bool MorphMonster(Actor victim)
 		TELEFOGHEIGHT));
 	fog.PlaySound('misc/teleport', CHAN_VOICE);
 
-	chicken = Spawn(Chicken, victim.Origin);
+	chicken = Spawn(Chicken, victim.Origin,,, false);
 	chicken.SpecialCID = class<Actor>(victim.Class);
 	chicken.Special1 = ftoi(Player::CHICKENTIME * 35.0) + P_Random();
 	chicken.RenderStyle = victim.RenderStyle;
@@ -126,7 +126,7 @@ final bool MorphPlayer(Actor victim)
 		TELEFOGHEIGHT));
 	fog.PlaySound('misc/teleport', CHAN_VOICE);
 
-	chicken = Spawn(ChickenPlayer, victim.Origin);
+	chicken = Spawn(ChickenPlayer, victim.Origin,,, false);
 	chicken.Tracer = Player(victim.Player).ReadyWeapon;
 	chicken.Angles.yaw = victim.Angles.yaw;
 	chicken.Player = victim.Player;

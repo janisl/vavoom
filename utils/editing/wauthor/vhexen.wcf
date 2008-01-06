@@ -516,9 +516,13 @@ LightingInc=0
 0x0e1	9	Scroll_Texture_Offsets( -, -, -, -, - )
 
 ; Thing
+0x013	10	Thing_Stop( tag, -, -, -, - )
 0x048	10	ThrustThing( angle, distance, -, -, - )
 0x049	10	DamageThing( damage, -, -, -, - )
 0x077	10	Thing_Damage( tag, damage, mod, -, - )
+0x07d	10	Thing_Move( tid, mapspot, -, -, - )
+0x07f	10	Thing_SetSpecial( tid, special, arg1, arg2, arg3 )
+0x080	10	ThrustThingZ( tid, zthrust, d/u, set, - )
 0x082	10	Thing_Activate( tag, -, -, -, - )
 0x083	10	Thing_Deactivate( tag, -, -, -, - )
 0x084	10	Thing_Remove( tag, -, -, -, - )
@@ -528,7 +532,9 @@ LightingInc=0
 0x088	10	Thing_ProjectileGravity( tag, type, angle, speed, vspeed )
 0x089	10	Thing_SpawnNoFog( tag, spawntype, angle, NewTid, - )
 0x08b	10	Thing_SpawnFacing( tag, spawntype, NoFog, NewTid, - )
-0x0ae	10	Thing_SetTranslation( tag, range, -, -, - )
+0x0b0	10	Thing_ChangeTID( oldtid, newtid, -, -, - )
+0x0b1	10	Thing_Hate( hater, hatee, flags, -, - )
+0x0b4	10	Thing_SetTranslation( tag, range, -, -, - )
 0x0e5	10	Thing_SetGoal( tag, goal, delay, chasegoal, - )
 0x0f8	10	HealThing( amount, max, -, -, - )
 

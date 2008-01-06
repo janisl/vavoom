@@ -92,8 +92,6 @@ int				diags[4];
 float			xspeed[8];
 float			yspeed[8];
 
-float			air_control;
-
 float			TeleFogHeight;
 class<EntityEx>	TeleportFogClass;
 
@@ -1151,7 +1149,6 @@ defaultproperties
 	ramp2[8] = 0x7fbf772f; ramp2[9] = 0x6faf632f; ramp2[10] = 0x5f8f4333; ramp2[11] = 0x4f733723;
 	ramp2[12] = 0x3fbf772f; ramp2[13] = 0x2faf632f; ramp2[14] = 0x1f8f4333; ramp2[15] = 0x0f733723;
 
-	air_control = 1.0 / 256.0;
 	NonMonsterAngleIncrements = 45;
 	bNightmareExtraAmmo = true;
 	InvDefaultMaxAmount = 25;

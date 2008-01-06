@@ -378,13 +378,13 @@ void SpawnPlayer(mthing_t * mthing)
 	switch (PClass)
 	{
 	case HexenDefs::PCLASS_FIGHTER:
-		pp = PlayerPawn(HexenLevelInfo(Level).Spawn(FighterPlayer, vector(x, y, z)));
+		pp = PlayerPawn(HexenLevelInfo(Level).Spawn(FighterPlayer, vector(x, y, z),,, false));
 		break;
 	case HexenDefs::PCLASS_CLERIC:
-		pp = PlayerPawn(HexenLevelInfo(Level).Spawn(ClericPlayer, vector(x, y, z)));
+		pp = PlayerPawn(HexenLevelInfo(Level).Spawn(ClericPlayer, vector(x, y, z),,, false));
 		break;
 	case HexenDefs::PCLASS_MAGE:
-		pp = PlayerPawn(HexenLevelInfo(Level).Spawn(MagePlayer, vector(x, y, z)));
+		pp = PlayerPawn(HexenLevelInfo(Level).Spawn(MagePlayer, vector(x, y, z),,, false));
 		break;
 	default:
 		Error("P_SpawnPlayer: Unknown class type");
@@ -426,7 +426,7 @@ void SpawnPlayer(mthing_t * mthing)
 			pp.Inventory.Destroy();
 		}
 
-		HexenArmor HArmor = Level.Spawn(HexenArmor);
+		HexenArmor HArmor = Level.Spawn(HexenArmor,,,, false);
 		HArmor.AttachToOwner(pp);
 		HArmor.Slots[4] = pp.HexenArmor[0];
 		HArmor.SlotsIncrement[0] = pp.HexenArmor[1];
@@ -434,13 +434,13 @@ void SpawnPlayer(mthing_t * mthing)
 		HArmor.SlotsIncrement[2] = pp.HexenArmor[3];
 		HArmor.SlotsIncrement[3] = pp.HexenArmor[4];
 
-		BasicArmor BArmor = Level.Spawn(BasicArmor);
+		BasicArmor BArmor = Level.Spawn(BasicArmor,,,, false);
 		BArmor.Amount = 0;
 		BArmor.AttachToOwner(pp);
 
 		for (i = 0; i < pp.InitialInventory.Num; i++)
 		{
-			Item = Level.Spawn(pp.InitialInventory[i].Type);
+			Item = Level.Spawn(pp.InitialInventory[i].Type,,,, false);
 			Item.bIgnoreSkill = true;
 			Item.Amount = pp.InitialInventory[i].Amount;
 			if (Weapon(Item))
@@ -608,7 +608,7 @@ bool GiveMana(class<Ammo> ammo, int count)
 	Ammo AmmoItem = Ammo(EntityEx(MO).FindInventory(ammo));
 	if (!AmmoItem)
 	{
-		AmmoItem = Level.Spawn(ammo);
+		AmmoItem = Level.Spawn(ammo,,,, false);
 		AmmoItem.AttachToOwner(EntityEx(MO));
 		AmmoItem.Amount = 0;
 	}
@@ -1162,7 +1162,6 @@ void DeathPlayerTick(float deltaTime)
 
 	if (Buttons & BT_USE)
 	{
-		WeaponCShift = 0;
 		InvPtr = none;
 		InvFirst = none;
 		PlayerState = PST_REBORN;
@@ -1712,7 +1711,7 @@ void Cheat_Gimme()
 				//	Abstract class.
 				continue;
 			}
-			Weapon Wpn = Level.Spawn(WpnCls);
+			Weapon Wpn = Level.Spawn(WpnCls,,,, false);
 			Wpn.AmmoGive1 = 0;
 			Wpn.AmmoGive2 = 0;
 			if (!Wpn.TryPickup(EntityEx(MO)))
@@ -1730,7 +1729,7 @@ void Cheat_Gimme()
 			Inventory AmmoItem = EntityEx(MO).FindInventory(Cls);
 			if (!AmmoItem)
 			{
-				AmmoItem = Level.Spawn(Cls);
+				AmmoItem = Level.Spawn(Cls,,,, false);
 				if (!AmmoItem.TryPickup(EntityEx(MO)))
 				{
 					AmmoItem.Destroy();
@@ -1758,7 +1757,7 @@ void Cheat_Gimme()
 				EntityEx(MO).FindInventory(FourthWeaponHolder));
 			if (!Hold)
 			{
-				Hold = Level.Spawn(FourthWeaponHolder);
+				Hold = Level.Spawn(FourthWeaponHolder,,,, false);
 				Hold.AttachToOwner(EntityEx(MO));
 			}
 			Hold.PieceMask = 7;
@@ -1813,7 +1812,7 @@ void Cheat_Gimme()
 				//	Not puzzle items.
 				continue;
 			}
-			Inv = Level.Spawn(Cls);
+			Inv = Level.Spawn(Cls,,,, false);
 			Inv.Amount = Inv.MaxAmount;
 			if (!Inv.TryPickup(EntityEx(MO)))
 			{

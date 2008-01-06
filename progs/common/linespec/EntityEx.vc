@@ -4607,7 +4607,7 @@ final void NightmareRespawn()
 		z = ONFLOORZ;
 
 	// inherit attributes from deceased one
-	A = Spawn(class<EntityEx>(Class), vector(x, y, z));
+	A = Spawn(class<EntityEx>(Class), vector(x, y, z),,, false);
 	Level.CopyMThing(&SpawnPoint, &A.SpawnPoint);
 	A.Angles.yaw = itof(45 * (SpawnPoint.angle / 45));
 
@@ -5612,7 +5612,7 @@ final Inventory FindInventory(class<Inventory> ItemClass)
 
 final Inventory GiveInventoryType(class<Inventory> Type)
 {
-	Inventory Item = Spawn(Type);
+	Inventory Item = Spawn(Type,,,, false);
 	Item.bDropped = true;
 	if (!Item.TryPickup(self))
 	{
@@ -5774,7 +5774,7 @@ final void GiveInventory(name ItemName, int Amount)
 		HadWeapon = !!PlayerEx(Player).ReadyWeapon;
 	}
 
-	Inventory Item = Spawn(ItemClass);
+	Inventory Item = Spawn(ItemClass,,,, false);
 	if (BasicArmorPickup(Item))
 	{
 		BasicArmorPickup(Item).SaveAmount *= Amount;
@@ -6027,7 +6027,7 @@ final void TouchDehackedSpecial(EntityEx Toucher)
 	{
 		return;
 	}
-	Inventory Item = Spawn(ItemType);
+	Inventory Item = Spawn(ItemType,,,, false);
 	Item.bDropped = bDropped;
 	if (bDropped)
 	{

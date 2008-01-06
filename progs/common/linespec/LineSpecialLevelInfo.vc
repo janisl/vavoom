@@ -376,6 +376,9 @@ int ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 		buttonSuccess = EV_TextureChangeDoor(Arg1, Arg2, Arg3, Arg4, Arg5,
 			Line, A);
 		break;
+	case LNSPEC_ThingStop:
+		buttonSuccess = EV_ThingStop(Arg1, Arg2, Arg3, Arg4, Arg5, A);
+		break;
 	case LNSPEC_FloorLowerByValue:
 		buttonSuccess = EV_DoFloor(Arg1, Arg2, Arg3, Arg4, Arg5,
 			FloorMover::FLOOREV_LowerByValue, Line);
@@ -688,6 +691,15 @@ int ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 	case LNSPEC_QuakeTremor:
 		buttonSuccess = A_LocalQuake(Arg1, Arg2, Arg3, Arg4, Arg5);
 		break;
+	case LNSPEC_ThingMove:
+		buttonSuccess = EV_ThingMove(Arg1, Arg2, Arg3, Arg4, Arg5, A);
+		break;
+	case LNSPEC_ThingSetSpecial:
+		buttonSuccess = EV_ThingSetSpecial(Arg1, Arg2, Arg3, Arg4, Arg5);
+		break;
+	case LNSPEC_ThrustThingZ:
+		buttonSuccess = EV_ThrustThingZ(Arg1, Arg2, Arg3, Arg4, Arg5, A);
+		break;
 	case LNSPEC_UsePuzzleItem:
 		buttonSuccess = EV_LineSearchForPuzzleItem(Arg1, Arg2, Arg3, Arg4,
 			Arg5, A);
@@ -744,6 +756,9 @@ int ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 		break;
 	case LNSPEC_NoiseAlert:
 		buttonSuccess = EV_NoiseAlert(A, Arg1, Arg2, Arg3, Arg4, Arg5);
+		break;
+	case LNSPEC_ThingChangeTID:
+		buttonSuccess = EV_ThingChangeTID(Arg1, Arg2, Arg3, Arg4, Arg5, A);
 		break;
 	case LNSPEC_ThingHate:
 		buttonSuccess = EV_ThingHate(Arg1, Arg2, Arg3, Arg4, Arg5, A);
@@ -3375,6 +3390,7 @@ final bool EV_ThingProjectile(int Arg1, int Arg2, int Arg3, int Arg4,
 	{
 		return false;
 	}
+	moType = class<EntityEx>(GetClassReplacement(moType));
 	if (Level.Game.nomonsters && moType.default.bMonster)
 	{
 		return false;
@@ -3442,6 +3458,7 @@ final bool EV_ThingSpawn(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 	{
 		return false;
 	}
+	moType = class<EntityEx>(GetClassReplacement(moType));
 	if (Level.Game.nomonsters && moType.default.bMonster)
 	{
 		return false;
@@ -4058,6 +4075,196 @@ final bool EV_ThingHate(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 		}
 	}
 	return true;
+}
+
+//===========================================================================
+//
+//	EV_ThingMove
+//
+//===========================================================================
+
+final bool EV_ThingMove(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
+	EntityEx A)
+{
+	int			Searcher;
+
+	if (Arg1)
+	{
+		Searcher = -1;
+		A = EntityEx(FindMobjFromTID(Arg1, &Searcher));
+	}
+
+	Searcher = -1;
+	EntityEx Dest = EntityEx(FindMobjFromTID(Arg2, &Searcher));
+
+	if (A && Dest)
+	{
+		TVec OldOrg = A.Origin;
+		A.SetOrigin(Dest.Origin);
+		if (A.TestLocation())
+		{
+			if (Arg3)
+			{
+				Entity FogAct = Spawn(LineSpecialGameInfo(Game).TeleportFogClass,
+					OldOrg + vector(0.0, 0.0,
+					LineSpecialGameInfo(Game).TeleFogHeight));
+				FogAct.PlaySound('misc/teleport', CHAN_VOICE);
+				FogAct = Spawn(LineSpecialGameInfo(Game).TeleportFogClass,
+					A.Origin + vector(0.0, 0.0,
+					LineSpecialGameInfo(Game).TeleFogHeight));
+				FogAct.PlaySound('misc/teleport', CHAN_VOICE);
+			}
+			return true;
+		}
+		else
+		{
+			A.SetOrigin(OldOrg);
+			return false;
+		}
+	}
+	return false;
+}
+
+//===========================================================================
+//
+//	EV_ThingSetSpecial
+//
+//	It's recomended to use SetThingSpecial ACS command that can set all 5
+// arguments.
+//
+//===========================================================================
+
+final bool EV_ThingSetSpecial(int Arg1, int Arg2, int Arg3, int Arg4,
+	int Arg5)
+{
+	Entity Ent;
+	int Searcher = -1;
+	for (Ent = FindMobjFromTID(Arg1, &Searcher); Ent;
+		Ent = FindMobjFromTID(Arg1, &Searcher))
+	{
+		Ent.Special = Arg2;
+		Ent.Args[0] = Arg3;
+		Ent.Args[1] = Arg4;
+		Ent.Args[2] = Arg5;
+	}
+	return true;
+}
+
+//===========================================================================
+//
+//	EV_ThrustThingZ
+//
+//===========================================================================
+
+final bool EV_ThrustThingZ(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
+	EntityEx A)
+{
+	float Force = itof(Arg2) * 35.0 / 4.0;
+	if (Arg3)
+	{
+		Force = -Force;
+	}
+
+	if (Arg1)
+	{
+		Entity Ent;
+		int Searcher = -1;
+		for (Ent = FindMobjFromTID(Arg1, &Searcher); Ent;
+			Ent = FindMobjFromTID(Arg1, &Searcher))
+		{
+			if (!Arg4)
+			{
+				Ent.Velocity.z = Force;
+			}
+			else
+			{
+				Ent.Velocity.z += Force;
+			}
+		}
+		return true;
+	}
+	if (A)
+	{
+		if (!Arg4)
+		{
+			A.Velocity.z = Force;
+		}
+		else
+		{
+			A.Velocity.z += Force;
+		}
+		return true;
+	}
+	return false;
+}
+
+//===========================================================================
+//
+//	EV_ThingChangeTID
+//
+//===========================================================================
+
+final bool EV_ThingChangeTID(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
+	EntityEx A)
+{
+	if (!Arg1)
+	{
+		if (A)
+		{
+			A.RemoveFromTIDList();
+			if (Arg2)
+			{
+				A.InsertIntoTIDList(Arg2);
+			}
+		}
+	}
+	else
+	{
+		Entity Ent;
+		int Searcher = -1;
+		for (Ent = FindMobjFromTID(Arg1, &Searcher); Ent;
+			Ent = FindMobjFromTID(Arg1, &Searcher))
+		{
+			Ent.RemoveFromTIDList();
+			if (Arg2)
+			{
+				Ent.InsertIntoTIDList(Arg2);
+			}
+		}
+	}
+	return true;
+}
+
+//===========================================================================
+//
+//	EV_ThingStop
+//
+//===========================================================================
+
+final bool EV_ThingStop(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
+	EntityEx A)
+{
+	bool Ret = false;
+	if (!Arg1)
+	{
+		if (A)
+		{
+			A.Velocity = vector(0.0, 0.0, 0.0);
+			Ret = true;
+		}
+	}
+	else
+	{
+		Entity Ent;
+		int Searcher = -1;
+		for (Ent = FindMobjFromTID(Arg1, &Searcher); Ent;
+			Ent = FindMobjFromTID(Arg1, &Searcher))
+		{
+			Ent.Velocity = vector(0.0, 0.0, 0.0);
+			Ret = true;
+		}
+	}
+	return Ret;
 }
 
 //**************************************************************************
@@ -5266,7 +5473,6 @@ final void SectorDamage(int Tag, int Amount, name DamageType,
 final void SpawnMapThing(mthing_t* mthing)
 {
 	int				spawnMask;
-	EntityEx		A;
 	class<EntityEx>	moClass;
 
 	if (mthing->type <= 0)
@@ -5400,6 +5606,10 @@ final void SpawnMapThing(mthing_t* mthing)
 			mthing->type, mthing->x, mthing->y);
 		moClass = Unknown;
 	}
+	else
+	{
+		moClass = class<EntityEx>(GetClassReplacement(moClass));
+	}
 
 	if (!CheckShareware(moClass))
 	{
@@ -5412,7 +5622,7 @@ final void SpawnMapThing(mthing_t* mthing)
 	}
 
 	// spawn it
-	A = Spawn(moClass,,, mthing);
+	Spawn(moClass,,, mthing, false);
 }
 
 //==========================================================================

@@ -2818,16 +2818,12 @@ int VAcs::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_SetAirControl)
-			STUB(PCD_SetAirControl)
-			//FIXME implement this
-			//sp[-1] - air control, fixed point
+			Level->AirControl = float(sp[-1]) / 65536.0;
 			sp--;
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_SetAirControlDirect)
-			STUB(PCD_SetAirControlDirect)
-			//FIXME implement this
-			//READ_INT32(ip) - air control, fixed point
+			Level->AirControl = float(READ_INT32(ip)) / 65535.0;
 			ip += 4;
 			ACSVM_BREAK;
 

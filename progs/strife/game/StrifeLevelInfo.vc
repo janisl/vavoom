@@ -612,7 +612,7 @@ void ConChoiceImpulse(int ChoiceNum)
 		ItemType = GetClassFromID(Choice->GiveItem);
 		if (ItemType)
 		{
-			Item = Inventory(Spawn(ItemType));
+			Item = Inventory(Spawn(ItemType,,,, false));
 			GaveItem = Item.TryPickup(CurrentSpeakingTo);
 			if (!GaveItem)
 			{

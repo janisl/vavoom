@@ -98,7 +98,7 @@ final void A_BrainExplode()
 	org.x = Origin.x + (Random() - Random()) * 8.0;
 	org.y = Origin.y;
 	org.z = 1.0 / 512.0 + Random() * 512.0;
-	A = Spawn(Rocket, org);
+	A = Spawn(Rocket, org,,, false);
 	A.Velocity.z = Random() * 2.0 * 35.0;
 
 	A.SetState(FindClassState(BossBrain, 'BrainExplode'));

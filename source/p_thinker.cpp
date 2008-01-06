@@ -444,6 +444,7 @@ public:
 
 IMPLEMENT_FUNCTION(VThinker, Spawn)
 {
+	P_GET_BOOL_OPT(AllowReplace, true);
 	P_GET_PTR_OPT(mthing_t, mthing, NULL);
 	P_GET_AVEC_OPT(AAngles, TAVec(0, 0, 0));
 	P_GET_VEC_OPT(AOrigin, TVec(0, 0, 0));
@@ -458,7 +459,8 @@ IMPLEMENT_FUNCTION(VThinker, Spawn)
 		if (!specified_AAngles)
 			AAngles = SelfEnt->Angles;
 	}
-	RET_REF(Self->XLevel->SpawnThinker(Class, AOrigin, AAngles, mthing));
+	RET_REF(Self->XLevel->SpawnThinker(Class, AOrigin, AAngles, mthing,
+		AllowReplace));
 }
 
 IMPLEMENT_FUNCTION(VThinker, Destroy)

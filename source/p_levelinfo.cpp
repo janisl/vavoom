@@ -46,6 +46,9 @@
 
 IMPLEMENT_CLASS(V, LevelInfo)
 
+static VCvarF	sv_gravity("sv_gravity", "800.0", CVAR_ServerInfo);
+static VCvarF	sv_aircontrol("sv_aircontrol", "0.00390625", CVAR_ServerInfo);
+
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
@@ -92,6 +95,24 @@ void VLevelInfo::SetMapInfo(const mapInfo_t& Info)
 
 	SongLump = Info.SongLump;
 	CDTrack = Info.CDTrack;
+
+	if (Info.Gravity)
+	{
+		Gravity = Info.Gravity * DEFAULT_GRAVITY / 800.0;
+	}
+	else
+	{
+		Gravity = sv_gravity * DEFAULT_GRAVITY / 800.0;
+	}
+
+	if (Info.AirControl)
+	{
+		AirControl = Info.AirControl;
+	}
+	else
+	{
+		AirControl = sv_aircontrol;
+	}
 
 	//	Copy flags from mapinfo.
 	if (Info.Flags & MAPINFOF_DoubleSky)

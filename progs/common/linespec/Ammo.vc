@@ -134,7 +134,7 @@ Inventory CreateCopy(EntityEx Toucher)
 	}
 	else
 	{
-		Copy = Spawn(GetParentAmmo());
+		Copy = Spawn(GetParentAmmo(),,,, false);
 		GoAwayAndDie();
 	}
 	Copy.Amount = NewAmount;

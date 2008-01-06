@@ -93,8 +93,6 @@ int				NoRunHealth;
 
 int				PoisonCount;	// screen flash for poison damage
 
-int				WeaponCShift;
-
 replication
 {
 	reliable if (!bIsClient)
@@ -253,8 +251,8 @@ final void MovePlayer(float deltaTime)
 	if (!(onground || MO.bFly))
 	{
 		//  not on ground, so little effect on velocity
-		forward *= LineSpecialGameInfo(Level.Game).air_control;
-		side *= LineSpecialGameInfo(Level.Game).air_control;
+		forward *= Level.AirControl;
+		side *= Level.AirControl;
 	}
 
 	if (forward)
@@ -1649,8 +1647,6 @@ void PaletteFlash()
 		{
 			AddBlend(r, g, b, a, RGBA(0, 255, 0, 32));
 		}
-
-		AddBlend(r, g, b, a, WeaponCShift);
 	}
 
 	Inventory Item;

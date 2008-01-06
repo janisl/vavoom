@@ -102,6 +102,7 @@ class VLevelInfo : public VThinker
 	VEntity*		TIDMobj[MAX_TID_COUNT];
 
 	float			Gravity;								// Level Gravity
+	float			AirControl;
 
 	VLevelInfo();
 

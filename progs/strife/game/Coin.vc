@@ -69,7 +69,7 @@ Inventory CreateCopy(EntityEx Toucher)
 	}
 	else
 	{
-		Inventory Copy = Spawn(Coin);
+		Inventory Copy = Spawn(Coin,,,, false);
 		Copy.Amount = Amount;
 		GoAwayAndDie();
 		return Copy;
@@ -93,22 +93,22 @@ Inventory CreateTossable()
 	//	Gold is dropped with maximal throwable amount.
 	if (Amount >= 50)
 	{
-		Copy = Spawn(Gold50);
+		Copy = Spawn(Gold50,,,, false);
 		Amount -= 50;
 	}
 	else if (Amount >= 25)
 	{
-		Copy = Spawn(Gold25);
+		Copy = Spawn(Gold25,,,, false);
 		Amount -= 25;
 	}
 	else if (Amount >= 10)
 	{
-		Copy = Spawn(Gold10);
+		Copy = Spawn(Gold10,,,, false);
 		Amount -= 10;
 	}
 	else if (Amount > 1 || bKeepDepleted)
 	{
-		Copy = Spawn(Coin);
+		Copy = Spawn(Coin,,,, false);
 		Amount -= 1;
 	}
 	else

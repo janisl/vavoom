@@ -41,7 +41,7 @@ bool Use(bool Pickup)
 	BasicArmor Armor = BasicArmor(EntityEx(Owner).FindInventory(BasicArmor));
 	if (!Armor)
 	{
-		Armor = Spawn(BasicArmor);
+		Armor = Spawn(BasicArmor,,,, false);
 		Armor.Amount = 0;
 		Armor.AttachToOwner(EntityEx(Owner));
 	}

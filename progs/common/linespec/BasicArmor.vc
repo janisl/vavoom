@@ -37,7 +37,7 @@ Inventory CreateCopy(EntityEx Toucher)
 {
 	//	I don't see why we need this, but for compatibility purposes it's
 	// here.
-	BasicArmor Copy = Spawn(BasicArmor);
+	BasicArmor Copy = Spawn(BasicArmor,,,, false);
 	Copy.Amount = Amount;
 	Copy.MaxAmount = MaxAmount;
 	Copy.SavePercent = SavePercent ? SavePercent : 1.0 / 3.0;

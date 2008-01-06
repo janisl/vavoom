@@ -277,7 +277,7 @@ void SpawnPlayer(mthing_t * mthing)
 	y = mthing->y;
 
 	z = Actor::ONFLOORZ;
-	A = HereticLevelInfo(Level).Spawn(HereticPlayer, vector(x, y, z));
+	A = HereticLevelInfo(Level).Spawn(HereticPlayer, vector(x, y, z),,, false);
 	A.Origin.z += mthing->height;
 	A.LinkToWorld();
 	// set colour translations for player sprites
@@ -320,13 +320,13 @@ void SpawnPlayer(mthing_t * mthing)
 			A.Inventory.Destroy();
 		}
 
-		BasicArmor BArmor = Level.Spawn(BasicArmor);
+		BasicArmor BArmor = Level.Spawn(BasicArmor,,,, false);
 		BArmor.Amount = 0;
 		BArmor.AttachToOwner(A);
 
 		for (i = 0; i < A.InitialInventory.Num; i++)
 		{
-			Item = Level.Spawn(A.InitialInventory[i].Type);
+			Item = Level.Spawn(A.InitialInventory[i].Type,,,, false);
 			Item.bIgnoreSkill = true;
 			Item.Amount = A.InitialInventory[i].Amount;
 			if (Weapon(Item))
@@ -476,7 +476,7 @@ bool GiveAmmo(class<Ammo> ammo, int count)
 	Ammo AmmoItem = Ammo(EntityEx(MO).FindInventory(ammo));
 	if (!AmmoItem)
 	{
-		AmmoItem = Level.Spawn(ammo);
+		AmmoItem = Level.Spawn(ammo,,,, false);
 		AmmoItem.AttachToOwner(EntityEx(MO));
 		AmmoItem.Amount = 0;
 	}
@@ -1422,7 +1422,7 @@ void Cheat_Gimme()
 			Inventory AmmoItem = EntityEx(MO).FindInventory(Cls);
 			if (!AmmoItem)
 			{
-				AmmoItem = Level.Spawn(Cls);
+				AmmoItem = Level.Spawn(Cls,,,, false);
 				if (!AmmoItem.TryPickup(EntityEx(MO)))
 				{
 					AmmoItem.Destroy();
@@ -1450,7 +1450,7 @@ void Cheat_Gimme()
 			{
 				continue;
 			}
-			Weapon Wpn = Level.Spawn(WpnCls);
+			Weapon Wpn = Level.Spawn(WpnCls,,,, false);
 			Wpn.AmmoGive1 = 0;
 			Wpn.AmmoGive2 = 0;
 			if (!Wpn.TryPickup(EntityEx(MO)))
@@ -1523,7 +1523,7 @@ void Cheat_Gimme()
 			{
 				continue;
 			}
-			Inventory Item = Level.Spawn(Cls);
+			Inventory Item = Level.Spawn(Cls,,,, false);
 			Item.Amount = Item.MaxAmount;
 			if (!Item.TryPickup(EntityEx(MO)))
 			{

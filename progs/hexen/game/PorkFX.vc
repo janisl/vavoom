@@ -70,7 +70,7 @@ final bool MorphMonster(Actor victim)
 		TELEFOGHEIGHT));
 	fog.PlaySound('Teleport', CHAN_VOICE);
 
-	monster = Spawn(Pig, victim.Origin);
+	monster = Spawn(Pig, victim.Origin,,, false);
 	monster.SpecialCID = class<Actor>(victim.Class);
 	monster.Special1 = ftoi(MORPHTIME * 35.0) + P_Random();
 	monster.RenderStyle = victim.RenderStyle;
@@ -122,7 +122,7 @@ final bool MorphPlayer(Actor victim)
 		TELEFOGHEIGHT));
 	fog.PlaySound('Teleport', CHAN_VOICE);
 
-	beastMo = Spawn(PigPlayer, victim.Origin);
+	beastMo = Spawn(PigPlayer, victim.Origin,,, false);
 	beastMo.Tracer = Player(victim.Player).ReadyWeapon;
 	beastMo.Angles = victim.Angles;
 	beastMo.Player = victim.Player;

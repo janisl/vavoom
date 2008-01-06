@@ -26,6 +26,23 @@
 class AssaultGunStanding : AssaultGun
 	__mobjinfo__(2006);
 
+//============================================================================
+//
+//	CreateCopy
+//
+//	Give regular AssaultGun instead, not this.
+//
+//============================================================================
+
+Inventory CreateCopy(EntityEx Other)
+{
+	AssaultGun Copy = Spawn(AssaultGun,,,, false);
+	Copy.AmmoGive1 = AmmoGive1;
+	Copy.AmmoGive2 = AmmoGive2;
+	GoAwayAndDie();
+	return Copy;
+}
+
 states
 {
 Spawn:

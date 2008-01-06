@@ -40,7 +40,7 @@ bool Use(bool Pickup)
 	for (i = 0; i < 4; i++)
 	{
 		// 1 point per armor type
-		HexenArmor Armor = Spawn(HexenArmor);
+		HexenArmor Armor = Spawn(HexenArmor,,,, false);
 		Armor.Health = i;
 		Armor.Amount = 1;
 		if (Armor.TryPickup(EntityEx(Owner)))

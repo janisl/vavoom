@@ -443,7 +443,8 @@ enum
 	LNSPEC_DoorLockedRaise,
 	LNSPEC_DoorAnimated,
 
-	LNSPEC_FloorLowerByValue = 20,// 20
+	LNSPEC_ThingStop = 19,
+	LNSPEC_FloorLowerByValue,// 20
 	LNSPEC_FloorLowerToLowest,
 	LNSPEC_FloorLowerToNearest,
 	LNSPEC_FloorRaiseByValue,
@@ -527,6 +528,11 @@ enum
 	LNSPEC_QuakeTremor,// 120
 	LNSPEC_LineSetIdentification,
 
+	LNSPEC_ThingMove = 125,
+
+	LNSPEC_ThingSetSpecial = 127,
+	LNSPEC_ThrustThingZ,
+
 	LNSPEC_UsePuzzleItem = 129,
 	LNSPEC_ThingActivate,// 130
 	LNSPEC_ThingDeactivate,
@@ -548,7 +554,8 @@ enum
 	LNSPEC_PlaneUpNearestWaitDownStay,
 	LNSPEC_NoiseAlert,
 
-	LNSPEC_ThingHate = 177,
+	LNSPEC_ThingChangeTID = 176,
+	LNSPEC_ThingHate,
 
 	LNSPEC_ThingSetTranslation = 180,// 180
 	LNSPEC_PlaneAlign,
@@ -1564,6 +1571,7 @@ native static final int RGBA(byte r, byte g, byte b, byte a);
 native static final bool ClassIsChildOf(class SomeClass, class BaseClass);
 native static final name GetClassName(class C);
 native static final class GetClassParent(class C);
+native static final class GetClassReplacement(class C);
 native static final LockDef* GetLockDef(int Lock);
 native static final state GetStatePlus(state S, int Offset,
 	optional bool IgnoreJump);

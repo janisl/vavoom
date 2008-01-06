@@ -342,7 +342,7 @@ Inventory CreateCopy(EntityEx Toucher)
 	if (GoAway())
 	{
 		//	Must create a copy
-		Copy = Spawn(class<Inventory>(Class));
+		Copy = Spawn(class<Inventory>(Class),,,, false);
 		Copy.Amount = Amount;
 		Copy.MaxAmount = MaxAmount;
 	}
@@ -384,7 +384,7 @@ Inventory CreateTossable()
 		return self;
 	}
 
-	Inventory Copy = Spawn(class<Inventory>(Class));
+	Inventory Copy = Spawn(class<Inventory>(Class),,,, false);
 	Copy.Amount = 1;
 	Copy.MaxAmount = MaxAmount;
 	Copy.DropTime = 1.0;

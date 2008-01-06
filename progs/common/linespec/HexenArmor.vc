@@ -60,7 +60,7 @@ bool HandlePickup(Inventory Item)
 
 Inventory CreateCopy(EntityEx Toucher)
 {
-	HexenArmor Copy = Spawn(HexenArmor);
+	HexenArmor Copy = Spawn(HexenArmor,,,, false);
 	Copy.AddArmorToSlot(Toucher, Health, Amount);
 	GoAwayAndDie();
 	return Copy;

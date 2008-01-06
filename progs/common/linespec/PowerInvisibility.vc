@@ -64,13 +64,13 @@ void EndEffect()
 		return;
 	}
 
-	Owner.RenderStyle = STYLE_Translucent;
+	Owner.RenderStyle = STYLE_Normal;
 	Owner.Alpha = 1.0;
 	//	If there are other invisibility powers, reinit their effect.
 	Inventory Item;
 	for (Item = EntityEx(Owner).Inventory; Item; Item = Item.Inventory)
 	{
-		if (PowerInvisibility(Item))
+		if (PowerInvisibility(Item) && Item != self)
 		{
 			PowerInvisibility(Item).InitEffect();
 		}

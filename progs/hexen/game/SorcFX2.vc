@@ -46,7 +46,7 @@ final void A_SorcFX2Split()
 {
 	Actor A;
 
-	A = Spawn(SorcFX2, Origin);
+	A = Spawn(SorcFX2, Origin,,, false);
 	if (A)
 	{
 		A.Target = Target;
@@ -54,7 +54,7 @@ final void A_SorcFX2Split()
 		A.Special1f = Angles.yaw;	// Set angle
 		A.SetState(A.FindState('Orbit'));
 	}
-	A = Spawn(SorcFX2, Origin);
+	A = Spawn(SorcFX2, Origin,,, false);
 	if (A)
 	{
 		A.Target = Target;

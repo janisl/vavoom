@@ -322,6 +322,7 @@ public:
 	DECLARE_FUNCTION(ClassIsChildOf)
 	DECLARE_FUNCTION(GetClassName)
 	DECLARE_FUNCTION(GetClassParent)
+	DECLARE_FUNCTION(GetClassReplacement)
 	DECLARE_FUNCTION(GetLockDef)
 	DECLARE_FUNCTION(GetStatePlus)
 	DECLARE_FUNCTION(FindClassState)

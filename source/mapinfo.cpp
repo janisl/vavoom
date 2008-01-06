@@ -226,6 +226,7 @@ static void ParseMap(VScriptParser* sc, bool IsDefault, bool& HexenMode)
 		info->Fade = 0;
 		info->OutsideFog = 0;
 		info->Gravity = 0;
+		info->AirControl = 0;
 		info->Flags = 0;
 		info->TitlePatch = NAME_None;
 		info->ParTime = 0;
@@ -283,6 +284,7 @@ static void ParseMap(VScriptParser* sc, bool IsDefault, bool& HexenMode)
 		info->Fade = DefaultMap.Fade;
 		info->OutsideFog = DefaultMap.OutsideFog;
 		info->Gravity = DefaultMap.Gravity;
+		info->AirControl = DefaultMap.AirControl;
 		info->Flags = DefaultMap.Flags;
 		info->TitlePatch = DefaultMap.TitlePatch;
 		info->ParTime = DefaultMap.ParTime;
@@ -441,6 +443,11 @@ static void ParseMap(VScriptParser* sc, bool IsDefault, bool& HexenMode)
 		{
 			sc->ExpectNumber();
 			info->Gravity = (float)sc->Number;
+		}
+		else if (sc->Check("aircontrol"))
+		{
+			sc->ExpectFloat();
+			info->AirControl = sc->Float;
 		}
 		else if (sc->Check("map07special"))
 		{
@@ -628,11 +635,6 @@ static void ParseMap(VScriptParser* sc, bool IsDefault, bool& HexenMode)
 		else if (sc->Check("horizwallshade"))
 		{
 			GCon->Logf("Unimplemented MAPINFO comand horizwallshade");
-			sc->ExpectFloat();
-		}
-		else if (sc->Check("aircontrol"))
-		{
-			GCon->Logf("Unimplemented MAPINFO comand aircontrol");
 			sc->ExpectFloat();
 		}
 		else if (sc->Check("filterstarts"))
@@ -1105,6 +1107,7 @@ static void ParseMapInfo(VScriptParser* sc)
 	info->Fade = 0;
 	info->OutsideFog = 0;
 	info->Gravity = 0.0;
+	info->AirControl = 0.0;
 	info->Flags = 0;
 	info->TitlePatch = NAME_None;
 	info->ParTime = 0;

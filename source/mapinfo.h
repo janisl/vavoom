@@ -69,6 +69,7 @@ struct mapInfo_t
 	vuint32		Fade;
 	vuint32		OutsideFog;
 	float		Gravity;		// Map gravity
+	float		AirControl;		// Air control in this map.
 	vuint32		Flags;
 	VName		TitlePatch;
 	vint32		ParTime;

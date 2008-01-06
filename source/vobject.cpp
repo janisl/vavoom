@@ -1087,6 +1087,12 @@ IMPLEMENT_FUNCTION(VObject, GetClassParent)
 	RET_PTR(SomeClass->ParentClass);
 }
 
+IMPLEMENT_FUNCTION(VObject, GetClassReplacement)
+{
+	P_GET_PTR(VClass, SomeClass);
+	RET_PTR(SomeClass->GetReplacement());
+}
+
 IMPLEMENT_FUNCTION(VObject, GetLockDef)
 {
 	P_GET_INT(Lock);

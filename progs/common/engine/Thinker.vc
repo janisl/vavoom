@@ -77,7 +77,8 @@ replication
 }
 
 native final spawner Thinker Spawn(class<Thinker> Type, optional TVec AOrigin,
-	optional TAVec AAngles, optional mthing_t* mthing);
+	optional TAVec AAngles, optional mthing_t* mthing,
+	optional bool AllowReplace);
 native void Destroy();
 
 //  Broadcast message (print to all clients)

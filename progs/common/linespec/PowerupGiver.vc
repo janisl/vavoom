@@ -44,7 +44,7 @@ name			Mode;
 
 bool Use(bool Pickup)
 {
-	Powerup Pw = Spawn(PowerupType);
+	Powerup Pw = Spawn(PowerupType,,,, false);
 	if (EffectTime)
 	{
 		Pw.EffectTime = EffectTime;

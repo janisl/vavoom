@@ -343,18 +343,9 @@ bool CrushStop(int InTag)
 {
 	if (Tag == InTag && Direction != 0)
 	{
-		//	Only types that will be resumed go into stasis.
-		if (Type == CEILEV_CrushAndRaiseA ||
-			Type == CEILEV_CrushAndRaiseSilA)
-		{
-			OldDirection = Direction;
-			Direction = 0;	// in-stasis
-		}
-		else
-		{
-			SectorStopSequence(Sector);
-			Finished();
-		}
+		SectorStopSequence(Sector);
+		OldDirection = Direction;
+		Direction = 0;	// in-stasis
 		return true;
 	}
 	return false;
@@ -373,6 +364,7 @@ void ActivateInStasis(int InTag)
 	if (Tag == InTag && Direction == 0)
 	{
 		Direction = OldDirection;
+		StartCeilingSound();
 	}
 }
 

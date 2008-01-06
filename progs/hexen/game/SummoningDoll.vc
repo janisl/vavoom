@@ -55,7 +55,7 @@ final void A_Summon()
 		{
 			//	Master isn't dead
 			A.Tracer = Target;	// Pointer to master
-			Powerup Power = Spawn(PowerMinotaur);
+			Powerup Power = Spawn(PowerMinotaur,,,, false);
 			Power.EffectTime = MAULATORTIME;
 			Power.bAlwaysPickup = true;
 			if (!Power.TryPickup(Target))

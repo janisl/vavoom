@@ -36,7 +36,7 @@ bool TryPickup(EntityEx Toucher)
 	if (::TryPickup(Toucher))
 	{
 		Toucher.GiveInventoryType(GunTraining);
-		Inventory Item = Spawn(Coin);
+		Inventory Item = Spawn(Coin,,,, false);
 		Item.Amount = Player(Toucher.Player).Accuracy * 5 + 300;
 		if (!Item.TryPickup(Toucher))
 		{

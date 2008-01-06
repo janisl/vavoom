@@ -41,7 +41,7 @@ final void A_SkullPop()
 		return;
 	}
 	bSolid = false;
-	A = Spawn(BloodySkull, Origin + vector(0.0, 0.0, 48.0));
+	A = Spawn(BloodySkull, Origin + vector(0.0, 0.0, 48.0),,, false);
 	A.Velocity.x = (Random() - Random()) * 2.0 * 35.0;
 	A.Velocity.y = (Random() - Random()) * 2.0 * 35.0;
 	A.Velocity.z = (2.0 + Random() / 4.0) * 35.0;

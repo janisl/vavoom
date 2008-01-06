@@ -95,7 +95,6 @@ static VCvarI  	NoMonsters("NoMonsters", "0");
 static VCvarI	Skill("Skill", "2");
 static VCvarI	sv_cheats("sv_cheats", "0", CVAR_ServerInfo | CVAR_Latch);
 static VCvarI	split_frame("split_frame", "1", CVAR_Archive);
-static VCvarF	sv_gravity("sv_gravity", "800.0", CVAR_ServerInfo);
 static VCvarI	sv_maxmove("sv_maxmove", "400", CVAR_Archive);
 static VCvarI	use_standalone("use_standalone", "1", CVAR_Archive);
 
@@ -204,10 +203,10 @@ void SV_Clear()
 //==========================================================================
 
 VThinker* VLevel::SpawnThinker(VClass* AClass, const TVec& AOrigin,
-	const TAVec& AAngles, mthing_t* mthing)
+	const TAVec& AAngles, mthing_t* mthing, bool AllowReplace)
 {
 	guard(VLevel::SpawnThinker);
-	VClass* Class = AClass->GetReplacement();
+	VClass* Class = AllowReplace ? AClass->GetReplacement() : AClass;
 	VThinker* Ret = (VThinker*)StaticSpawnObject(Class);
 	AddThinker(Ret);
 
@@ -997,10 +996,6 @@ void SV_SpawnServer(const char *mapname, bool spawn_thinkers, bool titlemap)
 		GLevelInfo->Game = GGameInfo;
 		GLevelInfo->World = GWorldInfo;
 		GLevel->LevelInfo = GLevelInfo;
-		if (info.Gravity)
-			GLevelInfo->Gravity = info.Gravity * DEFAULT_GRAVITY / 800.0;
-		else
-			GLevelInfo->Gravity = sv_gravity * DEFAULT_GRAVITY / 800.0;
 		GLevelInfo->SetMapInfo(info);
 
 		//	Spawn things.
