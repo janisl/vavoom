@@ -150,7 +150,7 @@ enum
 };
 
 const int MAXDEATHMATCHSTARTS	= 16;
-const int MAX_PLAYER_STARTS		= 16;
+const int MAX_PLAYER_STARTS		= 32;
 
 const float MAXRADIUS			= 32.0;
 
@@ -216,8 +216,6 @@ enum
 {
 	SDF_ADDITIVE		= 0x0001	//	Additive translucency.
 };
-
-const int MAX_TID_COUNT		= 200;
 
 const float ATTN_NONE		= 0.0;
 const float ATTN_NORMAL		= 1.0;
