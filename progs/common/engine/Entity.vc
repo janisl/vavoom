@@ -575,7 +575,7 @@ void InsertIntoTIDList(int tid)
 	int index;
 
 	index = -1;
-	for (i = 0; Level.TIDList[i] != 0; i++)
+	for (i = 0; i < Level.TIDList.Num; i++)
 	{
 		if (Level.TIDList[i] == -1)
 		{
@@ -587,12 +587,7 @@ void InsertIntoTIDList(int tid)
 	if (index == -1)
 	{
 		// Append required
-		if (i == MAX_TID_COUNT)
-		{
-			Error("P_InsertMobjIntoTIDList: MAX_TID_COUNT exceeded.");
-		}
 		index = i;
-		Level.TIDList[index + 1] = 0;
 	}
 	TID = tid;
 	Level.TIDList[index] = tid;
@@ -609,7 +604,7 @@ void RemoveFromTIDList()
 {
 	int i;
 
-	for (i = 0; Level.TIDList[i] != 0; i++)
+	for (i = 0; i < Level.TIDList.Num; i++)
 	{
 		if (Level.TIDMobj[i] == self)
 		{

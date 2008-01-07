@@ -27,8 +27,6 @@ class VLevelInfo : public VThinker
 {
 	DECLARE_CLASS(VLevelInfo, VThinker, 0)
 
-	enum { MAX_TID_COUNT = 200 };
-
 	VGameInfo*		Game;
 	VWorldInfo*		World;
 
@@ -98,8 +96,8 @@ class VLevelInfo : public VThinker
 	int				NumDeathmatchStarts;
 	mthing_t		PlayerStarts[MAX_PLAYER_STARTS * MAXPLAYERS];// Player spawn spots.
 
-	int				TIDList[MAX_TID_COUNT + 1];	// +1 for termination marker
-	VEntity*		TIDMobj[MAX_TID_COUNT];
+	TArray<int>			TIDList;	// +1 for termination marker
+	TArray<VEntity*>	TIDMobj;
 
 	float			Gravity;								// Level Gravity
 	float			AirControl;

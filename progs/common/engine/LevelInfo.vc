@@ -81,7 +81,7 @@ readonly bool	bBegunPlay;
 
 int				TotalKills;
 int				TotalItems;
-int				TotalSecret;    // for intermission
+int				TotalSecret;		// for intermission
 int				CurrentKills;
 int				CurrentItems;
 int				CurrentSecret;
@@ -93,10 +93,10 @@ mthing_t		DeathmatchStarts[MAXDEATHMATCHSTARTS];	// Player spawn spots for death
 int				NumDeathmatchStarts;
 mthing_t		PlayerStarts[MAX_PLAYER_STARTS * MAXPLAYERS];	// Player spawn spots.
 
-int				TIDList[MAX_TID_COUNT + 1];	// +1 for termination marker
-Entity			TIDMobj[MAX_TID_COUNT];
+array<int>		TIDList;			// +1 for termination marker
+array<Entity>	TIDMobj;
 
-float			Gravity;				// Level Gravity
+float			Gravity;			// Level Gravity
 float			AirControl;
 
 replication
@@ -243,7 +243,7 @@ Entity FindMobjFromTID(int tid, int *searchPosition)
 {
 	int i;
 
-	for (i = *searchPosition + 1; TIDList[i] != 0; i++)
+	for (i = *searchPosition + 1; i < TIDList.Num; i++)
 	{
 		if (TIDList[i] == tid)
 		{
@@ -302,22 +302,18 @@ void CreateTIDList()
 	int i;
 	Entity mobj;
 
+	TIDList.Num = 0;
+	TIDMobj.Num = 0;
 	i = 0;
 	foreach AllThinkers(Entity, mobj)
 	{
 		if (mobj.TID != 0)
 		{
 			//	Add to list
-			if (i == MAX_TID_COUNT)
-			{
-				Error("P_CreateTIDList: MAX_TID_COUNT exceeded.");
-			}
 			TIDList[i] = mobj.TID;
 			TIDMobj[i++] = mobj;
 		}
 	}
-	//	Add termination marker
-	TIDList[i] = 0;
 }
 
 //**************************************************************************
