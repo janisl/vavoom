@@ -2819,3 +2819,16 @@
  they showed up as unknown objects.
   In find lowest/highest floor/ceiling checks I added check for lines that have
  the same sector on both sides.
+05.01.2008
+  I implemented customiseable air control.
+  I added a parameter to the Spawn method that tells wether replacement classes
+ are allowed or not.
+  I implemented Thing_Move, Thing_SetSpecial, ThrustThingZ, Thing_ChangeTID and
+ Thing_Stop specials.
+06.01.2008
+  Stopping ceiling crusher didn't stop the sound.
+  I fixed invisibility powerup reinitialising itself when ending the effect.
+  I changed Hexen's wepon blending to be handled by weapons themselves.
+  I increased player start limit to 32.
+  I added pointer checks in DamageThing and ThrustThing specials.
+  I removed TID list limit.
