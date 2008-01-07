@@ -538,21 +538,24 @@ int ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 		}
 		break;
 	case LNSPEC_ThrustThing:
-		if (!Side) // Only thrust on side 0
+		if (A && !Side) // Only thrust on side 0
 		{
 			A.Thrust(itof(Arg1) * (90.0 / 64.0), itof(Arg2));
 			buttonSuccess = 1;
 		}
 		break;
 	case LNSPEC_DamageThing:
-		if (Arg1)
+		if (A)
 		{
-			A.Damage(none, none, Arg1, ModToDamageType(Arg2));
-		}
-		else
-		{
-			// If arg1 is zero, then guarantee a kill
-			A.Damage(none, none, 10000, ModToDamageType(Arg2));
+			if (Arg1)
+			{
+				A.Damage(none, none, Arg1, ModToDamageType(Arg2));
+			}
+			else
+			{
+				// If arg1 is zero, then guarantee a kill
+				A.Damage(none, none, 10000, ModToDamageType(Arg2));
+			}
 		}
 		buttonSuccess = 1;
 		break;
@@ -5502,6 +5505,10 @@ final void SpawnMapThing(mthing_t* mthing)
 	if (mthing->type <= 4)
 	{
 		// save spots for respawning in network games
+		if (mthing->arg1 >= MAX_PLAYER_STARTS)
+		{
+			Error("Bad player start index %d", mthing->arg1);
+		}
 		CopyMThing(mthing, &PlayerStarts[mthing->arg1 * MAXPLAYERS +
 			mthing->type - 1]);
 		return;
