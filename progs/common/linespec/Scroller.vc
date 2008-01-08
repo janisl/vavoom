@@ -44,6 +44,7 @@ int				Control;
 float			LastHeight;
 float			CarryScrollX;
 float			CarryScrollY;
+line_t*			AffecteeSrcLine;
 
 //==========================================================================
 //
@@ -79,6 +80,7 @@ void InitWall(line_t* Line, int XDir, int YDir)
 {
 	Sector = Line->frontsector;
 	Type = SCROLLEV_Side;
+	AffecteeSrcLine = Line;
 	Affectee = Line->sidenum[0];
 	XSpeed = itof(XDir * Line->arg1) * 35.0 / 64.0;
 	YSpeed = itof(YDir * Line->arg1) * 35.0 / 64.0;
@@ -94,6 +96,7 @@ void InitWallOffsets(line_t* Line)
 {
 	Sector = Line->frontsector;
 	Type = SCROLLEV_Side;
+	AffecteeSrcLine = Line;
 	Affectee = Line->sidenum[0];
 	XSpeed = -XLevel.Sides[Affectee].textureoffset * 35.0;
 	YSpeed = XLevel.Sides[Affectee].rowoffset * 35.0;
@@ -105,13 +108,27 @@ void InitWallOffsets(line_t* Line)
 //
 //==========================================================================
 
-void InitTextureBoth(line_t* Line)
+void InitTextureBoth(line_t* Line, int Arg2, int Arg3, int Arg4, int Arg5,
+	int WhichSide)
 {
 	Sector = Line->frontsector;
 	Type = SCROLLEV_Side;
-	Affectee = Line->sidenum[0];
-	XSpeed = itof(Line->arg2 - Line->arg3) * 35.0 / 64.0;
-	YSpeed = itof(Line->arg5 - Line->arg4) * 35.0 / 64.0;
+	AffecteeSrcLine = Line;
+	Affectee = Line->sidenum[WhichSide];
+	XSpeed = itof(Arg2 - Arg3) * 35.0 / 64.0;
+	YSpeed = itof(Arg5 - Arg4) * 35.0 / 64.0;
+}
+
+//==========================================================================
+//
+//  AdjustTextureBoth
+//
+//==========================================================================
+
+void AdjustTextureBoth(int Arg2, int Arg3, int Arg4, int Arg5)
+{
+	XSpeed = itof(Arg2 - Arg3) * 35.0 / 64.0;
+	YSpeed = itof(Arg5 - Arg4) * 35.0 / 64.0;
 }
 
 //==========================================================================
@@ -160,6 +177,7 @@ void InitTextureModel(line_t* Line, line_t* SrcLine)
 	y = -(dx * ldy - dy * ldx) / d;
 
 	Type = SCROLLEV_Side;
+	AffecteeSrcLine = Line;
 	Affectee = Line->sidenum[0];
 	XSpeed = x * 35.0;
 	YSpeed = y * 35.0;
@@ -264,6 +282,55 @@ void InitGen(int InType, line_t* SrcLine, int InAffectee)
 			XLevel.Sectors[Control].soundorg) +
 			GetPlanePointZ(&XLevel.Sectors[Control].ceiling,
 			XLevel.Sectors[Control].soundorg);
+	}
+}
+
+//==========================================================================
+//
+//	InitScripted
+//
+//	Add a scroller to the thinker list.
+//
+//==========================================================================
+
+void InitScripted(int InType, int Arg2, int Arg3, int InAffectee)
+{
+	Type = InType;
+	Affectee = InAffectee;
+	Sector = &XLevel.Sectors[Affectee];
+	//	The speed and direction are parameters to the special.
+	XSpeed = itof(Arg2) * 32.0 * 35.0;
+	YSpeed = itof(Arg3) * 32.0 * 35.0;
+
+	if (Type == SCROLLEV_Carry)
+	{
+		AddAffector();
+		//XSpeed *= CARRYFACTOR;
+		//YSpeed *= CARRYFACTOR;
+	}
+	else
+	{
+		XSpeed = -XSpeed;
+	}
+}
+
+//==========================================================================
+//
+//	SetSpeed
+//
+//	Adjusts an existing scroller.
+//
+//==========================================================================
+
+void SetSpeed(int Arg2, int Arg3)
+{
+	//	The speed and direction are parameters to the special.
+	XSpeed = itof(Arg2) * 32.0 * 35.0;
+	YSpeed = itof(Arg3) * 32.0 * 35.0;
+
+	if (Type != SCROLLEV_Carry)
+	{
+		XSpeed = -XSpeed;
 	}
 }
 

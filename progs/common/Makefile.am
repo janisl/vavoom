@@ -48,6 +48,7 @@ EXTRA_DIST = \
 	linespec/FireFlicker.vc \
 	linespec/FloorMover.vc \
 	linespec/FloorWaggle.vc \
+	linespec/GlassJunk.vc \
 	linespec/GlowingLight.vc \
 	linespec/Health.vc \
 	linespec/HealthPickup.vc \

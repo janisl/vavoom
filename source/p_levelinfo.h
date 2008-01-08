@@ -117,7 +117,7 @@ class VLevelInfo : public VThinker
 	void SecretExitLevel(int Position);
 	void Completed(int Map, int Position, int SaveAngle);
 
-	void ChangeSwitchTexture(line_t*, bool, VName);
+	bool ChangeSwitchTexture(int, bool, VName, bool&);
 	bool StartButton(int, vuint8, int, VName, bool);
 
 	void ForceLightning();

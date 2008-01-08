@@ -154,3 +154,5 @@ enum
 #include "BlackParticleFountain.vc"
 #include "WhiteParticleFountain.vc"
 #include "Spark.vc"
+
+#include "GlassJunk.vc"

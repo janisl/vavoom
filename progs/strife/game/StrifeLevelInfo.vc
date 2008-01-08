@@ -46,10 +46,6 @@ int ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 	buttonSuccess = false;
 	switch (Special)
 	{
-	case LNSPEC_BreakGlass:
-		buttonSuccess = EV_BreakGlass(Arg1, Arg2, Arg3, Arg4, Arg5,
-			Line, A);
-		break;
 	case 174:	//	SendToCommunicator.
 		buttonSuccess = EV_SendToCommunicator(A, Arg1, Arg2, Arg3, Arg4,
 			Arg5, Side);
@@ -177,95 +173,6 @@ bool EV_SendToCommunicator(EntityEx A, int Arg1, int Arg2, int Arg3, int Arg4,
 		}
 		return true;
 	}
-	return false;
-}
-
-//==========================================================================
-//
-//  EV_BreakGlass
-//
-//==========================================================================
-
-bool EV_BreakGlass(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
-	line_t* Line, EntityEx A)
-{
-	bool	switched;
-	bool	quest1;
-	bool	quest2;
-	float	x;
-	float	y;
-	int		i;
-	EntityEx	glass;
-	float	an;
-	float	speed;
-
-	if (Line->flags & ML_TWOSIDED)
-	{
-		Line->flags &= ~(ML_BLOCKING | ML_BLOCKEVERYTHING);
-	}
-	quest1 = false;
-	if (XLevel.Sides[Line->sidenum[0]].midtexture == TextureNumForName('brnscn01'))
-		quest1 = true;
-	ChangeSwitchTexture(Line, false, 'switches/normbutn');
-	switched = true;
-	Line->special = 0;
-	if (Line->sidenum[1] != -1)
-	{
-		//switched |= P_ChangeSwitchTexture(&sides[ln->sidenum[1]], false, 0, &quest2);
-		XLevel.Sides[Line->sidenum[1]].midtexture = XLevel.Sides[Line->sidenum[0]].midtexture;
-		quest2 = quest1;
-	}
-	else
-	{
-		quest2 = quest1;
-	}
-	if (switched)
-	{
-		// Break some glass
-		x = Line->v1->x + (Line->v2->x - Line->v1->x) / 2.0;
-		y = Line->v1->y + (Line->v2->y - Line->v1->y) / 2.0;
-		x += (Line->frontsector->soundorg.x - x) / 5.0;
-		y += (Line->frontsector->soundorg.y - y) / 5.0;
-
-		for (i = 0; i < 7; i++)
-		{
-			glass = Spawn(Blood, vector(x, y, EntityEx::ONFLOORZ));
-			glass.bColideWithThings = false;
-			glass.bColideWithWorld = false;
-			glass.Origin.z += 24.0;
-			glass.SetState(GetStatePlus(glass.FindState('Shard'),
-				P_Random() % 6, true));
-			an = Random() * 360.0;
-			glass.Angles.yaw = an;
-			speed = Random() * 4.0 * 35.0;
-			glass.Velocity.x = cos(an) * speed;
-			glass.Velocity.y = sin(an) * speed;
-			glass.Velocity.z = Random() * 8.0 * 35.0;
-		}
-		if (quest1 || quest2)
-		{
-			// Up stats and signal this mission is complete
-			if (!A)
-			{
-				for (i = 0; i < MAXPLAYERS; ++i)
-				{
-					if (Game.Players[i] && Game.Players[i].bSpawned)
-					{
-						A = EntityEx(Game.Players[i].MO);
-						break;
-					}
-				}
-			}
-			if (A && A.bIsPlayer)
-			{
-				A.GiveInventoryType(QuestItem29);
-				A.GiveInventoryType(UpgradeAccuracy);
-				A.GiveInventoryType(UpgradeStamina);
-			}
-		}
-	}
-	//	We already changed the switch texture, so don't make the main code
-	// switch it back.
 	return false;
 }
 

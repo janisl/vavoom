@@ -470,11 +470,16 @@ IMPLEMENT_FUNCTION(VLevelInfo, Completed)
 
 IMPLEMENT_FUNCTION(VLevelInfo, ChangeSwitchTexture)
 {
+	P_GET_PTR(vuint8, pQuest);
 	P_GET_NAME(DefaultSound);
 	P_GET_BOOL(useAgain);
-	P_GET_PTR(line_t, line);
+	P_GET_INT(SideNum);
 	P_GET_SELF;
-	Self->ChangeSwitchTexture(line, useAgain, DefaultSound);
+	bool Quest;
+	bool Ret = Self->ChangeSwitchTexture(SideNum, useAgain, DefaultSound,
+		Quest);
+	*pQuest = Quest;
+	RET_BOOL(Ret);
 }
 
 IMPLEMENT_FUNCTION(VLevelInfo, ForceLightning)

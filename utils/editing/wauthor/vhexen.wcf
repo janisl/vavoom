@@ -381,6 +381,7 @@ LightingInc=0
 ; Special
 0x021	1	ForceField( -, -, -, -, - )
 0x022	1	ClearForceField( tag, -, -, -, - )
+0x031	1	GlassBreak( noJunk, alpha, -, -, - )
 0x078	1	Earthquake( intensity, duration, damrad, tremrad, tag )
 0x079	1	Line_SetIdentification( line, -, -, -, - )
 0x081	1	UsePuzzleItem( item, script, sArg0, sArg1, sArg2 )

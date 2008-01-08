@@ -2832,3 +2832,9 @@
   I increased player start limit to 32.
   I added pointer checks in DamageThing and ThrustThing specials.
   I removed TID list limit.
+07.01.2008
+  I created a separate class for Strife's glass junk, made GlassBreak special
+ available in all games, changed it to properly use quest flag of the switch.
+  I made Scroll_TextureBoth, Scroll_Floor and Scroll_Ceiling useable from ACS
+ scripts.
+  I fixed Plat_Toggle.

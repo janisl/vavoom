@@ -287,17 +287,18 @@ final bool ActivateLine(line_t* Line, EntityEx A, int Side,
 	repeat = Line->flags & ML_REPEAT_SPECIAL;
 	buttonSuccess = ExecuteActionSpecial(Line->special, Line->arg1,
 		Line->arg2, Line->arg3, Line->arg4, Line->arg5, Line, Side, A);
-	changeBack = Line->special == LNSPEC_BreakGlass &&
+	changeBack = Line->special == LNSPEC_GlassBreak &&
 		(Line->flags & ML_TWOSIDED) && buttonSuccess;
 	if ((lineActivation == SPAC_USE || lineActivation == SPAC_IMPACT ||
 		lineActivation == SPAC_USETHROUGH) && buttonSuccess)
 	{
-		ChangeSwitchTexture(Line, repeat,
+		byte Quest;
+		ChangeSwitchTexture(Line->sidenum[0], repeat,
 			Line->special == LNSPEC_ExitNormal ||
 			Line->special == LNSPEC_ExitSecret ||
 			Line->special == LNSPEC_TeleportNewMap ||
 			Line->special == LNSPEC_TeleportEndGame
-			? 'switches/exitbutn' : 'switches/normbutn');
+			? 'switches/exitbutn' : 'switches/normbutn', Quest);
 	}
 	if (changeBack)
 	{
@@ -481,6 +482,9 @@ int ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 		break;
 	case LNSPEC_FloorCrushStop:
 		buttonSuccess = EV_FloorCrushStop(Arg1, Arg2, Arg3, Arg4, Arg5);
+		break;
+	case LNSPEC_GlassBreak:
+		buttonSuccess = EV_GlassBreak(Arg1, Arg2, Arg3, Arg4, Arg5, Line, A);
 		break;
 	case LNSPEC_PlatPerpetualRaise:
 		buttonSuccess = EV_DoPlat(Arg1, Arg2, Arg3, Arg4, Arg5,
@@ -873,6 +877,9 @@ int ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 	case LNSPEC_TeleportLine:
 		buttonSuccess = EV_SilentLineTeleport(Line, Side, A, Arg2, Arg3);
 		break;
+	case LNSPEC_SectorSetGravity:
+		buttonSuccess = EV_SectorSetGravity(Arg1, Arg2, Arg3, Arg4, Arg5);
+		break;
 	case LNSPEC_StairsBuildUpDoom:
 		buttonSuccess = EV_BuildStairsOld(Arg1, Arg2, Arg3, Arg4, Arg5,
 			false, Line);
@@ -888,8 +895,14 @@ int ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 		buttonSuccess = AdjustPusher(Arg1, Arg2, Arg3, Arg4, Arg5, Line,
 			Pusher::PUSHER_Current);
 		break;
-	case LNSPEC_SectorSetGravity:
-		buttonSuccess = EV_SectorSetGravity(Arg1, Arg2, Arg3, Arg4, Arg5);
+	case LNSPEC_ScrollTextureBoth:
+		buttonSuccess = EV_ScrollTextureBoth(Arg1, Arg2, Arg3, Arg4, Arg5);
+		break;
+	case LNSPEC_ScrollFloor:
+		buttonSuccess = EV_ScrollFloor(Arg1, Arg2, Arg3, Arg4, Arg5);
+		break;
+	case LNSPEC_ScrollCeiling:
+		buttonSuccess = EV_ScrollCeiling(Arg1, Arg2, Arg3, Arg4, Arg5);
 		break;
 	case LNSPEC_ACSExecuteAlways:
 		buttonSuccess = XLevel.StartACS(Arg1, Arg2, Arg3, Arg4, Arg5, A,
@@ -1012,10 +1025,7 @@ int ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 	// LNSPEC_Contents:
 	// LNSPEC_PlaneAlign:
 	// LNSPEC_TransferHeights:
-	// LNSPEC_ScrollTextureBoth:
 	// LNSPEC_ScrollTextureModel:
-	// LNSPEC_ScrollFloor:
-	// LNSPEC_ScrollCeiling:
 	// LNSPEC_ScrollTextureOffsets:
 	// LNSPEC_PointPushSetForce:
 
@@ -2694,7 +2704,8 @@ final void SpawnTextureBothScroller(line_t* Line)
 	Scroller	Scroll;
 
 	Scroll = Spawn(Scroller);
-	Scroll.InitTextureBoth(Line);
+	Scroll.InitTextureBoth(Line, Line->arg2, Line->arg3, Line->arg4,
+		Line->arg5, 0);
 }
 
 //==========================================================================
@@ -2770,6 +2781,189 @@ final void SpawnScrollTextureModel(line_t* Line)
 			Scroll = Spawn(Scroller);
 			Scroll.InitTextureModel(Other, Line);
 		}
+	}
+}
+
+//==========================================================================
+//
+//  EV_ScrollTextureBoth
+//
+//==========================================================================
+
+final bool EV_ScrollTextureBoth(int Arg1, int Arg2, int Arg3, int Arg4,
+	int Arg5)
+{
+	if (!Arg1)
+	{
+		//	No lines to adjust.
+		return false;
+	}
+
+	int WhichSide = 0;
+	if (Arg1 < 0)
+	{
+		WhichSide = 1;
+		Arg1 = -Arg1;
+	}
+
+	Scroller	Scroll;
+	int			i;
+
+	if (Arg2 - Arg3 == 0 && Arg5 - Arg4 == 0)
+	{
+		//	As a special case with no deltas remove any texture scrolers.
+		foreach AllThinkers(Scroller, Scroll)
+		{
+			if (Scroll.Type != Scroller::SCROLLEV_Side)
+			{
+				continue;
+			}
+			//	Check if line has a correct tag.
+			if (Scroll.AffecteeSrcLine->LineTag != Arg1)
+			{
+				continue;
+			}
+			//	Check if it's the correct side.
+			if (Scroll.AffecteeSrcLine->sidenum[WhichSide] != Scroll.Affectee)
+			{
+				continue;
+			}
+			//	OK, destroy the thinker.
+			Scroll.Destroy();
+		}
+	}
+	else
+	{
+		array<Scroller>		FoundScrollers;
+
+		foreach AllThinkers(Scroller, Scroll)
+		{
+			if (Scroll.Type != Scroller::SCROLLEV_Side)
+			{
+				continue;
+			}
+			//	Check if line has a correct tag.
+			if (Scroll.AffecteeSrcLine->LineTag != Arg1)
+			{
+				continue;
+			}
+			//	Check if it's the correct side.
+			if (Scroll.AffecteeSrcLine->sidenum[WhichSide] != Scroll.Affectee)
+			{
+				continue;
+			}
+			//	Found it.
+			Scroll.AdjustTextureBoth(Arg2, Arg3, Arg4, Arg5);
+			FoundScrollers[FoundScrollers.Num] = Scroll;
+		}
+
+		int			Searcher;
+		line_t*		Other;
+
+		Searcher = -1;
+		for (Other = FindLine(Arg1, &Searcher); Other;
+			Other = FindLine(Arg1, &Searcher))
+		{
+			//	Check if this line already has scroller.
+			for (i = 0; i < FoundScrollers.Num; i++)
+			{
+				if (FoundScrollers[i].Affectee == Other->sidenum[WhichSide])
+				{
+					break;
+				}
+			}
+			if (i == FoundScrollers.Num)
+			{
+				//	Start a new scroller.
+				Scroll = Spawn(Scroller);
+				Scroll.InitTextureBoth(Other, Arg2, Arg3, Arg4, Arg5,
+					WhichSide);
+			}
+		}
+	}
+	return true;
+}
+
+//==========================================================================
+//
+//  EV_ScrollFloor
+//
+//==========================================================================
+
+final bool EV_ScrollFloor(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
+{
+	//	Set floor scrolling
+	if (Arg4 == 0 || Arg4 == 2)
+	{
+		SetScroller(Scroller::SCROLLEV_Floor, Arg1, Arg2, Arg3);
+	}
+	else
+	{
+		SetScroller(Scroller::SCROLLEV_Floor, Arg1, 0, 0);
+	}
+
+	//	Set carrying of items.
+	if (Arg4 > 0)
+	{
+		SetScroller(Scroller::SCROLLEV_Carry, Arg1, Arg2, Arg3);
+	}
+	else
+	{
+		SetScroller(Scroller::SCROLLEV_Carry, Arg1, 0, 0);
+	}
+	return true;
+}
+
+//==========================================================================
+//
+//  EV_ScrollCeiling
+//
+//==========================================================================
+
+final bool EV_ScrollCeiling(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
+{
+	SetScroller(Scroller::SCROLLEV_Ceiling, Arg1, Arg2, Arg3);
+	return true;
+}
+
+//==========================================================================
+//
+//  SetScroller
+//
+//==========================================================================
+
+final void SetScroller(int Type, int Arg1, int Arg2, int Arg3)
+{
+	//	Adjust existing scrollers. If there is any, it means that all
+	// tagged sectors have them and there's no need to spawn new ones.
+	Scroller Sc;
+	bool Found = false;
+	foreach AllThinkers(Scroller, Sc)
+	{
+		if (Sc.Type == Type && Sc.Sector->tag == Arg1)
+		{
+			Sc.SetSpeed(Arg2, Arg3);
+			Found = true;
+		}
+	}
+
+	if (Found)
+	{
+		return;
+	}
+	//	Don't spawn scrollers if both speeds are 0.
+	if (!Arg2 && !Arg3)
+	{
+		return;
+	}
+
+	int			SecNum;
+
+	for (SecNum = XLevel.FindSectorFromTag(Arg1, -1); SecNum >= 0;
+		SecNum = XLevel.FindSectorFromTag(Arg1, SecNum))
+	{
+		Sc = Spawn(Scroller);
+		Sc.InitScripted(Type, Arg2, Arg3, SecNum);
 	}
 }
 
@@ -5120,6 +5314,98 @@ final bool EV_LineTranslucent(int Arg1, int Arg2, int Arg3, int Arg4,
 		}
 	}
 	return true;
+}
+
+//==========================================================================
+//
+//  EV_GlassBreak
+//
+//==========================================================================
+
+final bool EV_GlassBreak(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
+	line_t* Line, EntityEx A)
+{
+	bool		switched;
+	byte		Quest1;
+	byte		Quest2;
+	float		x;
+	float		y;
+	int			i;
+	EntityEx	glass;
+	float		an;
+	float		speed;
+
+	if (!Line)
+	{
+		return false;
+	}
+	if (Line->flags & ML_TWOSIDED)
+	{
+		Line->flags &= ~(ML_BLOCKING | ML_BLOCKEVERYTHING);
+	}
+	switched = ChangeSwitchTexture(Line->sidenum[0], false,
+		'switches/normbutn', Quest1);
+	Line->special = 0;
+	if (Line->sidenum[1] != -1)
+	{
+		if (ChangeSwitchTexture(Line->sidenum[1], false, 'switches/normbutn',
+			Quest2))
+		{
+			switched = true;
+		}
+	}
+	else
+	{
+		Quest2 = Quest1;
+	}
+	if (switched)
+	{
+		if (!Arg1)
+		{
+			// Break some glass
+			x = Line->v1->x + (Line->v2->x - Line->v1->x) / 2.0;
+			y = Line->v1->y + (Line->v2->y - Line->v1->y) / 2.0;
+			x += (Line->frontsector->soundorg.x - x) / 5.0;
+			y += (Line->frontsector->soundorg.y - y) / 5.0;
+
+			for (i = 0; i < 7; i++)
+			{
+				glass = Spawn(GlassJunk, vector(x, y, EntityEx::ONFLOORZ));
+				glass.Origin.z += 24.0;
+				glass.SetState(GetStatePlus(glass.IdleState, P_Random() % 6, true));
+				an = Random() * 360.0;
+				glass.Angles.yaw = an;
+				speed = Random() * 4.0 * 35.0;
+				glass.Velocity.x = cos(an) * speed;
+				glass.Velocity.y = sin(an) * speed;
+				glass.Velocity.z = Random() * 8.0 * 35.0;
+			}
+		}
+		if (Quest1 || Quest2)
+		{
+			// Up stats and signal this mission is complete
+			if (!A)
+			{
+				for (i = 0; i < MAXPLAYERS; ++i)
+				{
+					if (Game.Players[i] && Game.Players[i].bSpawned)
+					{
+						A = EntityEx(Game.Players[i].MO);
+						break;
+					}
+				}
+			}
+			if (A && A.bIsPlayer)
+			{
+				A.GiveInventoryType(class<Inventory>(FindClass('QuestItem29')));
+				A.GiveInventoryType(class<Inventory>(FindClass('UpgradeAccuracy')));
+				A.GiveInventoryType(class<Inventory>(FindClass('UpgradeStamina')));
+			}
+		}
+	}
+	//	We already changed the switch texture, so don't make the main code
+	// switch it back.
+	return false;
 }
 
 //===========================================================================

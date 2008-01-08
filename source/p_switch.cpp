@@ -93,11 +93,10 @@ IMPLEMENT_CLASS(V, Button)
 //
 //==========================================================================
 
-void VLevelInfo::ChangeSwitchTexture(line_t* line, bool useAgain,
-	VName DefaultSound)
+bool VLevelInfo::ChangeSwitchTexture(int sidenum, bool useAgain,
+	VName DefaultSound, bool& Quest)
 {
 	guard(VLevelInfo::ChangeSwitchTexture);
-	int sidenum = line->sidenum[0];
 	int texTop = XLevel->Sides[sidenum].toptexture;
 	int texMid = XLevel->Sides[sidenum].midtexture;
 	int texBot = XLevel->Sides[sidenum].bottomtexture;
@@ -143,8 +142,10 @@ void VLevelInfo::ChangeSwitchTexture(line_t* line, bool useAgain,
 			SectorStartSound(XLevel->Sides[sidenum].sector, sw->Sound ?
 				sw->Sound : GSoundManager->GetSoundID(DefaultSound), 0, 1, 1);
 		}
-		return;
+		Quest = sw->Quest;
+		return true;
 	}
+	return false;
 	unguard;
 }
 

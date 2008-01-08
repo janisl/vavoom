@@ -414,19 +414,6 @@ states
 Crunch:
 	DIE1 A -1
 	Stop
-Shard:
-	SHRD A 128
-	Stop
-	SHRD B 128
-	Stop
-	SHRD C 128
-	Stop
-	SHRD D 128
-	Stop
-	SHRD E 128
-	Stop
-	SHRD F 128
-	Stop
 }
 
 defaultproperties
