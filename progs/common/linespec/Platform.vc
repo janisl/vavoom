@@ -297,7 +297,7 @@ void Tick(float deltaTime)
 	switch (Status)
 	{
 	case PLAT_Up:
-		res = MovePlane(Sector, Speed * deltaTime, High, false, Crush, 1,
+		res = MovePlane(Sector, Speed * deltaTime, High, Crush, false, 1,
 			false);
 		if (res == RES_CRUSHED && Crush == 0)
 		{
@@ -334,7 +334,7 @@ void Tick(float deltaTime)
 		break;
 
 	case PLAT_Down:
-		res = MovePlane(Sector, Speed * deltaTime, Low, false, Crush, -1,
+		res = MovePlane(Sector, Speed * deltaTime, Low, Crush, false, -1,
 			false);
 		if (res == RES_PASTDEST)
 		{
