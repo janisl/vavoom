@@ -56,6 +56,11 @@ final void A_FatAttack1()
 {
 	EntityEx A;
 
+	if (!Target)
+	{
+		return;
+	}
+
 	A_FaceTarget();
 	// Change direction  to ...
 	Angles.yaw = AngleMod360(Angles.yaw + SpreadAngle);
@@ -81,6 +86,11 @@ final void A_FatAttack2()
 {
 	EntityEx A;
 
+	if (!Target)
+	{
+		return;
+	}
+
 	A_FaceTarget();
 	// Now here choose opposite deviation.
 	Angles.yaw = AngleMod360(Angles.yaw - SpreadAngle);
@@ -105,6 +115,11 @@ final void A_FatAttack2()
 final void A_FatAttack3()
 {
 	EntityEx A;
+
+	if (!Target)
+	{
+		return;
+	}
 
 	A_FaceTarget();
 

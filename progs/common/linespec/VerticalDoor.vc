@@ -212,9 +212,13 @@ void Tick(float deltaTime)
 
 	if (Sector->floor.dist != OldFloorDist)
 	{
-		OldFloorDist = Sector->floor.dist;
-		BotDist = DotProduct(Sector->ceiling.normal, vector(BotSpot.x,
-			BotSpot.y, GetPlanePointZ(&Sector->floor, BotSpot)));
+		if (!Sector->FloorData || !Platform(Sector->FloorData) ||
+			!Platform(Sector->FloorData).IsLift())
+		{
+			OldFloorDist = Sector->floor.dist;
+			BotDist = DotProduct(Sector->ceiling.normal, vector(BotSpot.x,
+				BotSpot.y, GetPlanePointZ(&Sector->floor, BotSpot)));
+		}
 	}
 
 	switch (Direction)

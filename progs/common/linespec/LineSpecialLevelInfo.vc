@@ -2013,6 +2013,10 @@ final bool EV_RotatePoly(line_t* line, int Arg1, int Arg2, int Arg3,
 		mirror = XLevel.GetPolyobjMirror(polyNum))
 	{
 		poly = XLevel.GetPolyobj(mirror);
+		if (!poly)
+		{
+			Error("EV_RotatePoly:  Invalid polyobj num");	//: %d\n", polyNum);
+		}
 		if (poly && poly->SpecialData && !overRide)
 		{	// mirroring poly is already in motion
 			break;
@@ -2034,15 +2038,6 @@ final bool EV_RotatePoly(line_t* line, int Arg1, int Arg2, int Arg3,
 		else
 		{
 			pe.dist = 360.0;
-		}
-		poly = XLevel.GetPolyobj(polyNum);
-		if (poly)
-		{
-			poly->SpecialData = pe;
-		}
-		else
-		{
-			Error("EV_RotatePoly:  Invalid polyobj num");	//: %d\n", polyNum);
 		}
 		direction = -direction;
 		pe.speed = AngleMod180(32.0 * itof(Arg2) * itof(direction) * 90.0 / 64.0 / 8.0);

@@ -48,4 +48,5 @@ defaultproperties
 	bActivatePCross = true;
 	bWindThrust = true;
 	bCannotPush = true;
+	bNoSplash = true;
 }

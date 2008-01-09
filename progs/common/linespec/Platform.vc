@@ -400,6 +400,17 @@ void StartPlatSound()
 	}
 }
 
+//==========================================================================
+//
+//	IsLift
+//
+//==========================================================================
+
+bool IsLift()
+{
+	return Type == PLATEV_DownWaitUpStay || Type == PLATEV_DownWaitUpStayLip;
+}
+
 defaultproperties
 {
 }
