@@ -10,7 +10,7 @@
             ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
              #    ##    ##    #      ####     ####   ##       ##
 
-                                                    Version 1.25
+                                                    Version 1.26
 
 Contents:
     0. Disclaimer
@@ -1057,6 +1057,36 @@ Version 1.25
 * Added support for LOCKDEFS script.
 * Updated glBSP to the latest version.
 * Fixed many bugs, other improvements.
+
+==============================================================================
+Version 1.26
+==============================================================================
+
+* Rewrote most of the menu system, added very basic support for mouse.
+* Implemented support for FON1 and FON2 format fonts, coloured text, FONTDEFS
+ and TEXTCOLO scripts.
+* Use glBSP to build nodes internally (if needed). Building of GWA files is
+ now optional.
+* Implemented support for ACS HUD messages.
+* Added support for additive translucency.
+* Added stealth Doom monsters.
+* Implemented support for camera textures.
+* Implemented support for ambient sounds defined in SNDINFO using $ambient
+ command.
+* Added support for swimable Boom water.
+* Implemented support for padding, scaling, rotating and aligning sector floors
+ and ceilings.
+* Implemented particle fountains and sparks.
+* Implemented support for monster patrol points.
+* Added support for TITLEMAP.
+* Initial DECORATE support. Old style decorations, projectiles and pickups
+ work fine, support for actor definitions is very limited, many simple objects
+ will work but anything more complex won't.
+* Implemented support for custom player colours.
+* Implemented support for many (around 25) line specials.
+* Implemented most of the missing ACS commands.
+* Impemented scripted marines.
+* Fixed many bugs, other small things.
 
 *****************************************************************************
 8. Licensing

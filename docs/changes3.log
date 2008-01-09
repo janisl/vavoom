@@ -2838,3 +2838,10 @@
   I made Scroll_TextureBoth, Scroll_Floor and Scroll_Ceiling useable from ACS
  scripts.
   I fixed Plat_Toggle.
+08.01.2008
+  I changed door not to adjust bottom distance if floor thinker is a lift.
+  I added target checks in A_FatAttack* methods.
+  I fixed original Hexen bug in EV_RotatePoly.
+09.01.2008
+  I reversed search order for editor and script IDs so that later progs and
+ DECORATE can override them.
