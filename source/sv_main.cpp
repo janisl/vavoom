@@ -1615,7 +1615,7 @@ void ServerFrame(int realtics)
 VClass* SV_FindClassFromEditorId(int Id, int GameFilter)
 {
 	guard(SV_FindClassFromEditorId);
-	for (int i = 0; i < VClass::GMobjInfos.Num(); i++)
+	for (int i = VClass::GMobjInfos.Num() - 1; i >= 0; i--)
 	{
 		if ((!VClass::GMobjInfos[i].GameFilter ||
 			(VClass::GMobjInfos[i].GameFilter & GameFilter)) &&
@@ -1637,7 +1637,7 @@ VClass* SV_FindClassFromEditorId(int Id, int GameFilter)
 VClass* SV_FindClassFromScriptId(int Id, int GameFilter)
 {
 	guard(SV_FindClassFromScriptId);
-	for (int i = 0; i < VClass::GScriptIds.Num(); i++)
+	for (int i = VClass::GScriptIds.Num() - 1; i >= 0; i--)
 	{
 		if ((!VClass::GScriptIds[i].GameFilter ||
 			(VClass::GScriptIds[i].GameFilter & GameFilter)) &&
