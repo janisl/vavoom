@@ -180,6 +180,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\doom\game\DoomWeapon.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\doom\game\DoomWorldInfo.vc"
 				>
 			</File>
@@ -196,31 +200,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\doom\game\MapSpot.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game\MapSpotGravity.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\doom\game\Player.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game\PointPuller.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game\PointPusher.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game\QuakeFocus.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game\SecurityCamera.vc"
 				>
 			</File>
 			<File
@@ -237,14 +217,6 @@
 			</File>
 			<File
 				RelativePath="..\progs\doom\game\SludgeSplash.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game\SoundSequence.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game\SoundSequenceSlot.vc"
 				>
 			</File>
 			<File
@@ -265,10 +237,6 @@
 			</File>
 			<File
 				RelativePath="..\progs\doom\game\WaterSplashBase.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game\Weapon.vc"
 				>
 			</File>
 		</Filter>
@@ -296,419 +264,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\doom\cgame\MenuBigTextButton.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_AddLights.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_AdvancedVideoOptions.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_ApplyVidMode.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_AspectRatio.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_BitDepth.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_Brightness.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_CDMusic.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_ClipLights.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_Colour.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_ColouredLights.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_Controls.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_Controls2.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_Croshair.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_CroshairTrans.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_D3DBlendSprites.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_D3DDither.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_D3DModelLights.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_D3DSpecular.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_D3DTextureFilter.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_Darkening.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_DarkenLights.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_DeathMatch.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_DrawFPS.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_DynamicLights.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_EndGame.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_Episode1.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_Episode2.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_Episode3.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_Episode4.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_ExternalMusic.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_ExtraSamples.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_GLBlendSprites.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_GLModelLights.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_GLSpecular.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_GLTextureFilter.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_GoToConsole.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_Help.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_HiResTextures.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_InvertMouse.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_JoinAt.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_JoinGame.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_LoadGame.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_LoadSlot.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_Lookspring.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_LookStrafe.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_Models.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_Monsters.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_MouseLook.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_MouseOptions.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_MouseXSensitivity.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_MouseYSensitivity.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_MPEpisode.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_MPLevel.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_MPSkill.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_Multiplayer.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_MusicVolume.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_NewGame.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_NewNetGame.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_OnOff.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_Options.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_PlayerName.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_Players.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_PlayerSetup.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_QuitGame.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_SaveGame.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_SaveSlot.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_ScreenResolution.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_ScreenSize.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_Search.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_SinglePlayer.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_SkillBaby.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_SkillEasy.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_SkillHard.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_SkillNightmare.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_SkillNormal.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_Skin.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_SoundSettings.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_SoundVolume.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_SpanDrawing.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_SpecularLevel.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_SpriteDelta.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_SpriteOffset.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_StartGame.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_SwapStereo.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_TimeLimit.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_VideoMode.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_VideoOptions.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_ViewModels.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoice_Windowed.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoiceEnum.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\doom\cgame\MenuChoiceEpisode.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuChoiceSlider.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuControlKey.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuHelpPage.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuInputLine.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuMainTitleImage.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuModel.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuObject.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuSaveSlot.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuScreen.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuScreenAdvancedVideoOptions.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuScreenControls.vc"
 				>
 			</File>
 			<File
@@ -720,23 +276,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\doom\cgame\MenuScreenGameplayOptions.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\doom\cgame\MenuScreenHelp.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\doom\cgame\MenuScreenJoinGame.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuScreenLoadGame.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\doom\cgame\MenuScreenMain.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuScreenMouseOptions.vc"
 				>
 			</File>
 			<File
@@ -756,71 +304,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\doom\cgame\MenuScreenSaveGame.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuScreenScreenResolution.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\doom\cgame\MenuScreenSinglePlayer.vc"
 				>
 			</File>
 			<File
 				RelativePath="..\progs\doom\cgame\MenuScreenSkill.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuScreenSList.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuScreenSoundOptions.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuScreenVideoOptions.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuSelector_Skull.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuSelector_SmallLeft.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuSelector_SmallRight.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuSList.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuSmallTextButton.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuSpriteAnim.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuStaticAnim.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuStaticBitmap.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuTextButton.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuTitleText.vc"
 				>
 			</File>
 			<File
@@ -840,15 +328,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\doom\game1\AmmoPickup.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\doom\game1\ArmorBonus.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game1\ArmorPickup.vc"
 				>
 			</File>
 			<File
@@ -1024,6 +504,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\doom\game1\DoomKey.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\doom\game1\DoomPlayer.vc"
 				>
 			</File>
@@ -1037,6 +521,10 @@
 			</File>
 			<File
 				RelativePath="..\progs\doom\game1\ExplosiveBarrel.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game1\Fist.vc"
 				>
 			</File>
 			<File
@@ -1112,10 +600,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\doom\game1\HealthPickup.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\doom\game1\HeartColumn.vc"
 				>
 			</File>
@@ -1128,19 +612,55 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\doom\game1\ItemFog.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game1\KeyPickup.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\doom\game1\LiveStick.vc"
 				>
 			</File>
 			<File
 				RelativePath="..\progs\doom\game1\LostSoul.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game1\MarineBerserk.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game1\MarineBFG.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game1\MarineChaingun.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game1\MarineChainsaw.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game1\MarineFist.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game1\MarinePistol.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game1\MarinePlasma.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game1\MarineRailgun.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game1\MarineRocket.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game1\MarineShotgun.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game1\MarineSSG.vc"
 				>
 			</File>
 			<File
@@ -1184,15 +704,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\doom\game1\Pistol.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\doom\game1\PlasmaBall.vc"
 				>
 			</File>
 			<File
 				RelativePath="..\progs\doom\game1\PlasmaRifle.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game1\PowerupPickup.vc"
 				>
 			</File>
 			<File
@@ -1225,6 +745,10 @@
 			</File>
 			<File
 				RelativePath="..\progs\doom\game1\RocketLauncher.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game1\ScriptedMarine.vc"
 				>
 			</File>
 			<File
@@ -1288,6 +812,30 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\doom\game1\StealthBaron.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game1\StealthCacodemon.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game1\StealthDemon.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game1\StealthDoomImp.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game1\StealthShotgunGuy.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game1\StealthZombieMan.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\doom\game1\Stimpack.vc"
 				>
 			</File>
@@ -1312,63 +860,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\doom\game1\TeleportDest.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game1\TeleportDest2.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game1\TeleportDest3.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\doom\game1\TeleportFog.vc"
 				>
 			</File>
 			<File
 				RelativePath="..\progs\doom\game1\TorchTree.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game1\WeaponBFG.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game1\WeaponChaingun.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game1\WeaponChainsaw.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game1\WeaponFist.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game1\WeaponGrenade.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game1\WeaponMissile.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game1\WeaponPickup.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game1\WeaponPistol.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game1\WeaponPlasma.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game1\WeaponShotgun.vc"
 				>
 			</File>
 			<File
@@ -1416,6 +912,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\doom\game2\BrainState.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\doom\game2\ChaingunGuy.vc"
 				>
 			</File>
@@ -1444,6 +944,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\doom\game2\MegasphereHealth.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\doom\game2\PainElemental.vc"
 				>
 			</File>
@@ -1468,11 +972,31 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\doom\game2\SuperShotgun.vc"
+				RelativePath="..\progs\doom\game2\StealthArachnotron.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\doom\game2\WeaponSuperShotgun.vc"
+				RelativePath="..\progs\doom\game2\StealthArchvile.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game2\StealthChaingunGuy.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game2\StealthFatso.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game2\StealthHellKnight.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game2\StealthRevenant.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\doom\game2\SuperShotgun.vc"
 				>
 			</File>
 			<File

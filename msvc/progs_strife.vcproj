@@ -145,14 +145,6 @@
 	</References>
 	<Files>
 		<Filter
-			Name="shared"
-			>
-			<File
-				RelativePath="..\progs\strife\strfdefs.vc"
-				>
-			</File>
-		</Filter>
-		<Filter
 			Name="cgame"
 			>
 			<File
@@ -192,375 +184,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\cgame\MenuBigTextButton.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_AddLights.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_AdvancedVideoOptions.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_ApplyVidMode.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_AspectRatio.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_BitDepth.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_Brightness.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_CDMusic.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_ClipLights.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_Colour.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_ColouredLights.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_Controls.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_Controls2.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_Croshair.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_CroshairTrans.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_D3DBlendSprites.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_D3DDither.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_D3DModelLights.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_D3DSpecular.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_D3DTextureFilter.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_Darkening.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_DarkenLights.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_DeathMatch.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_DrawFPS.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_DynamicLights.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_EndGame.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_ExternalMusic.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_ExtraSamples.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_GLBlendSprites.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_GLModelLights.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_GLSpecular.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_GLTextureFilter.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_GoToConsole.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_Help.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_HiResTextures.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_InvertMouse.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_JoinAt.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_JoinGame.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_Level.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_LoadGame.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_LoadSlot.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_Lookspring.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_LookStrafe.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_Models.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_Monsters.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_MouseLook.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_MouseOptions.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_MouseXSensitivity.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_MouseYSensitivity.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_MPSkill.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_Multiplayer.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_MusicVolume.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_NewGame.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_NewNetGame.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_OnOff.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_Options.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_PlayerName.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_Players.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_PlayerSetup.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_QuitGame.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_SaveGame.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_SaveSlot.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_ScreenResolution.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_ScreenSize.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_Search.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_SinglePlayer.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_Skill.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_SoundSettings.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_SoundVolume.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_SpanDrawing.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_SpecularLevel.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_SpriteDelta.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_SpriteOffset.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_StartGame.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_SwapStereo.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_TimeLimit.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_VideoMode.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_VideoOptions.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_ViewModels.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoice_Windowed.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoiceEnum.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\strife\cgame\MenuChoiceEpisode.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuChoiceSlider.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuControlKey.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuHelpPage.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuInputLine.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuMainTitleImage.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuObject.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuSaveSlot.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuScreen.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuScreenAdvancedVideoOptions.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuScreenControls.vc"
 				>
 			</File>
 			<File
@@ -572,23 +196,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\strife\cgame\MenuScreenGameplayOptions.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\strife\cgame\MenuScreenHelp.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\cgame\MenuScreenJoinGame.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuScreenLoadGame.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\strife\cgame\MenuScreenMain.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuScreenMouseOptions.vc"
 				>
 			</File>
 			<File
@@ -612,71 +228,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\cgame\MenuScreenSaveGame.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuScreenScreenResolution.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\strife\cgame\MenuScreenSinglePlayer.vc"
 				>
 			</File>
 			<File
 				RelativePath="..\progs\strife\cgame\MenuScreenSkill.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuScreenSList.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuScreenSoundOptions.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuScreenVideoOptions.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuSelector_SmallLeft.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuSelector_SmallRight.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuSelector_Spinner.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuSList.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuSmallTextButton.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuSpriteAnim.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuStaticAnim.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuStaticBitmap.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuTextButton.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\cgame\MenuTitleText.vc"
 				>
 			</File>
 			<File
@@ -796,10 +352,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\AmmoPickup.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\strife\game\AmmoSatchel.vc"
 				>
 			</File>
@@ -817,6 +369,10 @@
 			</File>
 			<File
 				RelativePath="..\progs\strife\game\AssaultGunStanding.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\Bang4Cloud.vc"
 				>
 			</File>
 			<File
@@ -1016,6 +572,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\strife\game\DummyStrifeItem.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\strife\game\Ear.vc"
 				>
 			</File>
@@ -1176,19 +736,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\InventoryItem.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\ItemFog.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\strife\game\Junk.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\KeyPickup.vc"
 				>
 			</File>
 			<File
@@ -1256,15 +804,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\MapSpot.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\MapSpotGravity.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\strife\game\Mauler.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\Mauler2.vc"
 				>
 			</File>
 			<File
@@ -1333,10 +877,6 @@
 			</File>
 			<File
 				RelativePath="..\progs\strife\game\MiniMissiles.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\MoneyPickup.vc"
 				>
 			</File>
 			<File
@@ -1500,10 +1040,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Pickup.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\strife\game\PileOfGuts.vc"
 				>
 			</File>
@@ -1545,14 +1081,6 @@
 			</File>
 			<File
 				RelativePath="..\progs\strife\game\PlayerPawn.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\PointPuller.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\PointPusher.vc"
 				>
 			</File>
 			<File
@@ -1616,7 +1144,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\QuakeFocus.vc"
+				RelativePath="..\progs\strife\game\PunchDagger.vc"
 				>
 			</File>
 			<File
@@ -1876,6 +1404,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\strife\game\Sigil.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\strife\game\Sigil1.vc"
 				>
 			</File>
@@ -1932,19 +1464,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\SoundSequence.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\SoundSequenceSlot.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\strife\game\SpectralLightningBall1.vc"
 				>
 			</File>
 			<File
 				RelativePath="..\progs\strife\game\SpectralLightningBall2.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\SpectralLightningBase.vc"
 				>
 			</File>
 			<File
@@ -2068,11 +1596,23 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\strife\game\StrifeCrossbow2.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\strife\game\StrifeGrenadeLauncher.vc"
 				>
 			</File>
 			<File
+				RelativePath="..\progs\strife\game\StrifeGrenadeLauncher2.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\strife\game\StrifeHumanoid.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\StrifeKey.vc"
 				>
 			</File>
 			<File
@@ -2096,7 +1636,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\strife\game\StrifeWeapon.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\strife\game\StrifeWorldInfo.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\game\StrifeZap1.vc"
 				>
 			</File>
 			<File
@@ -2153,18 +1701,6 @@
 			</File>
 			<File
 				RelativePath="..\progs\strife\game\TechLampSilver.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\TeleportDest.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\TeleportDest2.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\TeleportDest3.vc"
 				>
 			</File>
 			<File
@@ -2233,46 +1769,6 @@
 			</File>
 			<File
 				RelativePath="..\progs\strife\game\WaterSplashBase.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\Weapon.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\WeaponAssaultGun.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\WeaponCrossbow.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\WeaponFlamethrower.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\WeaponGrenadeLauncher.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\WeaponMauler.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\WeaponMissileLauncher.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\WeaponPickup.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\WeaponPunch.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\WeaponSigil.vc"
 				>
 			</File>
 			<File

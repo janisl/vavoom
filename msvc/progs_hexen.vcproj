@@ -176,415 +176,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\hexen\cgame\MenuBigTextButton.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_AddLights.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_AdvancedVideoOptions.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_ApplyVidMode.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_AspectRatio.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_BitDepth.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_Brightness.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_CDMusic.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_Cleric.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_ClipLights.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_Colour.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_ColouredLights.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_Controls.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_Controls2.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_Croshair.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_CroshairTrans.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_D3DBlendSprites.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_D3DDither.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_D3DModelLights.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_D3DSpecular.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_D3DTextureFilter.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_Darkening.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_DarkenLights.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_DeathMatch.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_DrawFPS.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_DynamicLights.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_EndGame.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_ExternalMusic.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_ExtraSamples.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_Fighter.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_GLBlendSprites.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_GLModelLights.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_GLSpecular.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_GLTextureFilter.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_GoToConsole.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_Help.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_HiResTextures.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_InvertMouse.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_JoinAt.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_JoinGame.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_Level.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_LoadGame.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_LoadSlot.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_Lookspring.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_LookStrafe.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_Mage.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_Models.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_Monsters.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_MouseLook.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_MouseOptions.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_MouseXSensitivity.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_MouseYSensitivity.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_MPSkill.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_Multiplayer.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_MusicVolume.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_NewGame.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_NewNetGame.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_OnOff.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_Options.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_PClass.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_PlayerName.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_Players.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_PlayerSetup.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_QuitGame.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_SaveGame.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_SaveSlot.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_ScreenResolution.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_ScreenSize.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_Search.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_SinglePlayer.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_Skill.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_SoundSettings.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_SoundVolume.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_SpanDrawing.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_SpecularLevel.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_SpriteDelta.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_SpriteOffset.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_StartGame.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_SwapStereo.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_TimeLimit.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_VideoMode.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_VideoOptions.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_ViewModels.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoice_Windowed.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoiceEnum.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\hexen\cgame\MenuChoiceEpisode.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuChoiceSlider.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuClericBox.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuClericWalk.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuControlKey.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuFighterBox.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuFighterWalk.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuHelpPage.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuInputLine.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuMageBox.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuMageWalk.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuMainAnim.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuMainTitleImage.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuObject.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuSaveSlot.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuScreen.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuScreenAdvancedVideoOptions.vc"
 				>
 			</File>
 			<File
@@ -593,10 +185,6 @@
 			</File>
 			<File
 				RelativePath="..\progs\hexen\cgame\MenuScreenClericSkill.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuScreenControls.vc"
 				>
 			</File>
 			<File
@@ -612,15 +200,11 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\hexen\cgame\MenuScreenGameplayOptions.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\hexen\cgame\MenuScreenHelp.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuScreenJoinGame.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuScreenLoadGame.vc"
 				>
 			</File>
 			<File
@@ -629,10 +213,6 @@
 			</File>
 			<File
 				RelativePath="..\progs\hexen\cgame\MenuScreenMain.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuScreenMouseOptions.vc"
 				>
 			</File>
 			<File
@@ -652,67 +232,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\hexen\cgame\MenuScreenSaveGame.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuScreenScreenResolution.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\hexen\cgame\MenuScreenSinglePlayer.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuScreenSList.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuScreenSoundOptions.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuScreenVideoOptions.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuSelector_BigArrow.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuSelector_SmallLeft.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuSelector_SmallRight.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuSList.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuSmallTextButton.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuSpriteAnim.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuStaticAnim.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuStaticBitmap.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuTextButton.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\cgame\MenuTitleText.vc"
 				>
 			</File>
 			<File
@@ -736,10 +256,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\hexen\game\Armor.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\hexen\game\Arrow.vc"
 				>
 			</File>
@@ -757,10 +273,6 @@
 			</File>
 			<File
 				RelativePath="..\progs\hexen\game\ArtiDarkServant.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\Artifact.vc"
 				>
 			</File>
 			<File
@@ -952,6 +464,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\hexen\game\ClericWeapon.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\hexen\game\ClericWeaponPiece.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\hexen\game\CorpseBit.vc"
 				>
 			</File>
@@ -976,6 +496,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\hexen\game\CWeapMace.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\hexen\game\CWeaponPiece1.vc"
 				>
 			</File>
@@ -989,6 +513,10 @@
 			</File>
 			<File
 				RelativePath="..\progs\hexen\game\CWeapStaff.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\hexen\game\CWeapWraithverge.vc"
 				>
 			</File>
 			<File
@@ -1132,6 +660,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\hexen\game\FighterWeapon.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\hexen\game\FighterWeaponPiece.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\hexen\game\FireBall.vc"
 				>
 			</File>
@@ -1184,6 +720,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\hexen\game\FlameLarge2.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\hexen\game\FlameLargeTemp.vc"
 				>
 			</File>
@@ -1197,6 +737,10 @@
 			</File>
 			<File
 				RelativePath="..\progs\hexen\game\FlameSmall.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\hexen\game\FlameSmall2.vc"
 				>
 			</File>
 			<File
@@ -1224,6 +768,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\hexen\game\FourthWeaponHolder.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\hexen\game\FourthWeaponPiece.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\hexen\game\Fragment.vc"
 				>
 			</File>
@@ -1244,6 +796,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\hexen\game\FWeapFist.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\hexen\game\FWeapHammer.vc"
 				>
 			</File>
@@ -1257,6 +813,10 @@
 			</File>
 			<File
 				RelativePath="..\progs\hexen\game\FWeaponPiece3.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\hexen\game\FWeapQuietus.vc"
 				>
 			</File>
 			<File
@@ -1280,7 +840,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\hexen\game\HexenKey.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\hexen\game\HexenLevelInfo.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\hexen\game\HexenWeapon.vc"
 				>
 			</File>
 			<File
@@ -1352,10 +920,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\hexen\game\Key.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\hexen\game\KeyAxe.vc"
 				>
 			</File>
@@ -1409,10 +973,6 @@
 			</File>
 			<File
 				RelativePath="..\progs\hexen\game\KoraxSpirit.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\LavaInflictor.vc"
 				>
 			</File>
 			<File
@@ -1480,11 +1040,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\hexen\game\MainGameInfo.vc"
+				RelativePath="..\progs\hexen\game\MageWeapon.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\hexen\game\Mana.vc"
+				RelativePath="..\progs\hexen\game\MageWeaponPiece.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\hexen\game\MainGameInfo.vc"
 				>
 			</File>
 			<File
@@ -1497,14 +1061,6 @@
 			</File>
 			<File
 				RelativePath="..\progs\hexen\game\Mana3.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\MapSpot.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\MapSpotGravity.vc"
 				>
 			</File>
 			<File
@@ -1540,6 +1096,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\hexen\game\MWeapBloodscourge.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\hexen\game\MWeapFrost.vc"
 				>
 			</File>
@@ -1560,11 +1120,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\hexen\game\Pawn.vc"
+				RelativePath="..\progs\hexen\game\MWeapWand.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\hexen\game\Pickup.vc"
+				RelativePath="..\progs\hexen\game\Pawn.vc"
 				>
 			</File>
 			<File
@@ -1589,14 +1149,6 @@
 			</File>
 			<File
 				RelativePath="..\progs\hexen\game\PlayerSpeed.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\PointPuller.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\PointPusher.vc"
 				>
 			</File>
 			<File
@@ -1704,19 +1256,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\hexen\game\PuzzleItem.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\hexen\game\PuzzMWeapon.vc"
 				>
 			</File>
 			<File
 				RelativePath="..\progs\hexen\game\PuzzSkull.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\QuakeFocus.vc"
 				>
 			</File>
 			<File
@@ -1820,6 +1364,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\hexen\game\Snout.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\hexen\game\SnoutPuff.vc"
 				>
 			</File>
@@ -1865,14 +1413,6 @@
 			</File>
 			<File
 				RelativePath="..\progs\hexen\game\SorcSpark1.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\SoundSequence.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\SoundSequenceSlot.vc"
 				>
 			</File>
 			<File
@@ -1940,18 +1480,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\hexen\game\TeleportDest.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\TeleportDest2.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\TeleportDest3.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\hexen\game\TeleportFog.vc"
 				>
 			</File>
@@ -2001,70 +1529,6 @@
 			</File>
 			<File
 				RelativePath="..\progs\hexen\game\WaterSplashBase.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\Weapon.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\WeaponClericFire.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\WeaponClericHoly.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\WeaponClericMace.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\WeaponClericStaff.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\WeaponFighterAxe.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\WeaponFighterHammer.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\WeaponFighterPunch.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\WeaponFighterSword.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\WeaponMageCone.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\WeaponMageLightning.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\WeaponMageStaff.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\WeaponMageWand.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\WeaponPickup.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\WeaponPiece.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\WeaponPigSnout.vc"
 				>
 			</File>
 			<File

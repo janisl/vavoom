@@ -25,8 +25,8 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
-				CommandLine="$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/common/engine/classes.vc ../basev/common/progs/engine.dat&#x0D;&#x0A;$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/common/linespec/classes.vc ../basev/common/progs/linespec.dat -P../basev/common/progs&#x0D;&#x0A;"
-				Outputs="../basev/common/progs/engine.dat;../basev/common/progs/linespec.dat"
+				CommandLine="$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/common/engine/classes.vc ../basev/common/progs/engine.dat&#x0D;&#x0A;$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/common/linespec/classes.vc ../basev/common/progs/linespec.dat -P../basev/common/progs&#x0D;&#x0A;$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/common/uibase/classes.vc ../basev/common/progs/uibase.dat -P../basev/common/progs"
+				Outputs="../basev/common/progs/engine.dat;../basev/common/progs/linespec.dat;../basev/common/progs/uibase.dat"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -88,8 +88,8 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
-				CommandLine="$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/common/engine/classes.vc ../basev/common/progs/engine.dat&#x0D;&#x0A;$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/common/linespec/classes.vc ../basev/common/progs/linespec.dat -P../basev/common/progs&#x0D;&#x0A;"
-				Outputs="../basev/common/progs/engine.dat;../basev/common/progs/linespec.dat"
+				CommandLine="$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/common/engine/classes.vc ../basev/common/progs/engine.dat&#x0D;&#x0A;$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/common/linespec/classes.vc ../basev/common/progs/linespec.dat -P../basev/common/progs&#x0D;&#x0A;$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/common/uibase/classes.vc ../basev/common/progs/uibase.dat -P../basev/common/progs"
+				Outputs="../basev/common/progs/engine.dat;../basev/common/progs/linespec.dat;../basev/common/progs/uibase.dat"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -148,6 +148,10 @@
 			Name="engine"
 			>
 			<File
+				RelativePath="..\progs\common\engine\ActorDisplayWindow.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\common\engine\BasePlayer.vc"
 				>
 			</File>
@@ -188,6 +192,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\common\engine\ScriptsParser.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\common\engine\Thinker.vc"
 				>
 			</File>
@@ -204,6 +212,50 @@
 			Name="linespec"
 			>
 			<File
+				RelativePath="..\progs\common\linespec\ActorMover.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\AimingCamera.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\AmbientSound.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\Ammo.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\Armor.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\BackpackItem.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\BasicArmor.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\BasicArmorBonus.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\BasicArmorPickup.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\BlackParticleFountain.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\BlueParticleFountain.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\common\linespec\CeilingMover.vc"
 				>
 			</File>
@@ -216,11 +268,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\common\linespec\DoomBuilderCamera.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\common\linespec\Elevator.vc"
 				>
 			</File>
 			<File
 				RelativePath="..\progs\common\linespec\EntityEx.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\FakeInventory.vc"
 				>
 			</File>
 			<File
@@ -236,7 +296,47 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\common\linespec\GlassJunk.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\common\linespec\GlowingLight.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\GreenParticleFountain.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\Health.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\HealthPickup.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\HexenArmor.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\InterpolationPoint.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\InterpolationSpecial.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\Inventory.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\ItemFog.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\Key.vc"
 				>
 			</File>
 			<File
@@ -260,7 +360,43 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\common\linespec\LookAtCamera.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\MapRevealer.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\MapSpot.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\MapSpotGravity.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\ParticleFountain.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\PathFollower.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\PatrolPoint.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\PatrolSpecial.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\common\linespec\PhasedLight.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\PickupFlash.vc"
 				>
 			</File>
 			<File
@@ -280,6 +416,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\common\linespec\PointPuller.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\PointPusher.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\common\linespec\PolyobjDoor.vc"
 				>
 			</File>
@@ -296,7 +440,91 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\common\linespec\PowerFlight.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\PowerGhost.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\PowerInvisibility.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\PowerInvulnerable.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\PowerIronFeet.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\PowerLightAmp.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\PowerMask.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\PowerMinotaur.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\PowerScanner.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\PowerShadow.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\PowerSpeed.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\PowerStrength.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\PowerTorch.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\Powerup.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\PowerupGiver.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\PowerWeaponLevel2.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\PurpleParticleFountain.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\common\linespec\Pusher.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\PuzzleItem.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\QuakeFocus.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\RedParticleFountain.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\ScriptedEntity.vc"
 				>
 			</File>
 			<File
@@ -312,6 +540,22 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\common\linespec\SecurityCamera.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\SoundSequence.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\SoundSequenceSlot.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\Spark.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\common\linespec\StairStepMover.vc"
 				>
 			</File>
@@ -320,11 +564,215 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\common\linespec\SwitchableDecoration.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\SwitchingDecoration.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\TeleportDest.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\TeleportDest2.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\TeleportDest3.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\common\linespec\TextureChangeDoor.vc"
 				>
 			</File>
 			<File
+				RelativePath="..\progs\common\linespec\Unknown.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\common\linespec\VerticalDoor.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\WaterZone.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\Weapon.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\WhiteParticleFountain.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\YellowParticleFountain.vc"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="uibase"
+			>
+			<File
+				RelativePath="..\progs\common\uibase\classes.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\uibase\ClientGameShared.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\uibase\HUDMessage.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\uibase\HUDMessageFadeInOut.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\uibase\HUDMessageFadeOut.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\uibase\HUDMessageTypeOnFadeOut.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\uibase\MenuBigTextButton.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\uibase\MenuChoice.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\uibase\MenuChoice_LoadSlot.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\uibase\MenuChoice_OnOff.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\uibase\MenuChoice_SaveSlot.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\uibase\MenuChoiceEnum.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\uibase\MenuChoiceSlider.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\uibase\MenuChoiceSlot.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\uibase\MenuControlKey.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\uibase\MenuInputLine.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\uibase\MenuModel.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\uibase\MenuSaveSlot.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\uibase\MenuScreen.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\uibase\MenuScreenAdvancedVideoOptions.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\uibase\MenuScreenControls.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\uibase\MenuScreenJoinGame.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\uibase\MenuScreenLoadGame.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\uibase\MenuScreenMouseOptions.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\uibase\MenuScreenSaveGame.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\uibase\MenuScreenScreenResolution.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\uibase\MenuScreenSList.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\uibase\MenuScreenSoundOptions.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\uibase\MenuScreenVideoOptions.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\uibase\MenuSelector_Big.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\uibase\MenuSelector_SmallLeft.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\uibase\MenuSelector_SmallRight.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\uibase\MenuSList.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\uibase\MenuSmallTextButton.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\uibase\MenuSpriteAnim.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\uibase\MenuStaticAnim.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\uibase\MenuStaticBitmap.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\uibase\MenuTextButton.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\uibase\MenuTitleText.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\uibase\StatusBarShared.vc"
 				>
 			</File>
 		</Filter>
