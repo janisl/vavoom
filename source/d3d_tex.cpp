@@ -155,27 +155,16 @@ LPDIRECTDRAWSURFACE7 VDirect3DDrawer::CreateSurface(int w, int h, int bpp, bool 
 		}
 
 		tscount++;
-		for (i = 0; i < GTextureManager.Textures.Num() + MAX_TRANSLATED_SPRITES; i++)
+		for (i = 0; i < GTextureManager.Textures.Num(); i++)
 		{
-			int index = (i + tscount) % (GTextureManager.Textures.Num() + MAX_TRANSLATED_SPRITES);
-			if (index < GTextureManager.Textures.Num())
+			int index = (i + tscount) % GTextureManager.Textures.Num();
+			if (GTextureManager.Textures[index]->DriverData)
 			{
-				if (GTextureManager.Textures[index]->DriverData)
-				{
-					SAFE_RELEASE_TEXTURE(GTextureManager.Textures[index]->DriverData);
-					break;
-				}
-			}
-			else
-			{
-				if (trsprdata[index - GTextureManager.Textures.Num()])
-				{
-					SAFE_RELEASE(trsprdata[index - GTextureManager.Textures.Num()]);
-					break;
-				}
+				FlushTexture(GTextureManager[index]);
+				break;
 			}
 		}
-	} while (i < GTextureManager.Textures.Num() + MAX_TRANSLATED_SPRITES);
+	} while (i < GTextureManager.Textures.Num());
 
 	Sys_Error("Failed to create surface");
 	return NULL;
@@ -193,25 +182,16 @@ void VDirect3DDrawer::InitTextures()
 {
 	guard(VDirect3DDrawer::InitTextures);
 #if DIRECT3D_VERSION >= 0x0900
-	//	Sprite lumps
-	trsprdata = (LPDIRECT3DTEXTURE9*)Z_Calloc(MAX_TRANSLATED_SPRITES * 4);
-
 	//	Lightmaps, seperate from other surfaces so CreateSurface doesn't
 	// release them
 	light_surf = (LPDIRECT3DTEXTURE9*)Z_Calloc(NUM_BLOCK_SURFS * 4);
 	add_surf = (LPDIRECT3DTEXTURE9*)Z_Calloc(NUM_BLOCK_SURFS * 4);
 #elif DIRECT3D_VERSION >= 0x0800
-	//	Sprite lumps
-	trsprdata = (LPDIRECT3DTEXTURE8*)Z_Calloc(MAX_TRANSLATED_SPRITES * 4);
-
 	//	Lightmaps, seperate from other surfaces so CreateSurface doesn't
 	// release them
 	light_surf = (LPDIRECT3DTEXTURE8*)Z_Calloc(NUM_BLOCK_SURFS * 4);
 	add_surf = (LPDIRECT3DTEXTURE8*)Z_Calloc(NUM_BLOCK_SURFS * 4);
 #else
-	//	Sprite lumps
-	trsprdata = (LPDIRECTDRAWSURFACE7*)Z_Calloc(MAX_TRANSLATED_SPRITES * 4);
-
 	//	Lightmaps, seperate from other surfaces so CreateSurface doesn't
 	// release them
 	light_surf = (LPDIRECTDRAWSURFACE7*)Z_Calloc(NUM_BLOCK_SURFS * 4);
@@ -232,10 +212,6 @@ void VDirect3DDrawer::FlushTextures()
 	for (int i = 0; i < GTextureManager.Textures.Num(); i++)
 	{
 		FlushTexture(GTextureManager[i]);
-	}
-	for (int i = 0; i < MAX_TRANSLATED_SPRITES; i++)
-	{
-		SAFE_RELEASE(trsprdata[i]);
 	}
 	unguard;
 }
@@ -364,7 +340,7 @@ void VDirect3DDrawer::SetSpriteLump(VTexture* Tex, VTextureTranslation* Translat
 #elif DIRECT3D_VERSION >= 0x0800
 		RenderDevice->SetTexture(0, (LPDIRECT3DTEXTURE8)TData->Data);
 #else
-		RenderDevice->SetTexture(0, (LPDIRECT3DTEXTURE7)TData->Data);
+		RenderDevice->SetTexture(0, (LPDIRECTDRAWSURFACE7)TData->Data);
 #endif
 	}
 	else
@@ -515,7 +491,7 @@ void VDirect3DDrawer::UploadTextureImage(LPDIRECTDRAWSURFACE7 surf,
 		GCon->Logf(NAME_Dev, "Failed to lock surface");
 		return;
 	}
-	rgba_t *in = data;
+	const rgba_t *in = data;
 	if (ddsd.ddpfPixelFormat.dwRGBBitCount == 16)
 	{
 		for (int y = 0; y < height; y++)
@@ -798,8 +774,6 @@ LPDIRECTDRAWSURFACE7 VDirect3DDrawer::UploadTexture(int width, int height, const
 	HRESULT					ddres;
 #endif
 
-	AdjustGamma(data, width * height);
-
 	w = ToPowerOf2(width);
 	if (w > maxTexSize)
 	{
@@ -832,6 +806,7 @@ LPDIRECTDRAWSURFACE7 VDirect3DDrawer::UploadTexture(int width, int height, const
 	{
 		memcpy(image, data, w * h * 4);
 	}
+	AdjustGamma((rgba_t*)image, w * h);
 	surf = CreateSurface(w, h, 16, true);
 #if DIRECT3D_VERSION >= 0x0800
 	UploadTextureImage(surf, 0, w, h, (rgba_t*)image);

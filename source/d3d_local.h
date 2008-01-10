@@ -381,6 +381,7 @@ private:
 #else
 	LPDIRECTDRAWSURFACE7		particle_texture;
 #endif
+    int                         tscount;
 
 	VRenderLevelDrawer*			RendLev;
 

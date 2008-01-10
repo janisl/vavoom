@@ -84,24 +84,10 @@ VDirect3DDrawer::VDirect3DDrawer()
 , TexStage(0)
 , lastgamma(0)
 , CurrentFade(0)
-#if DIRECT3D_VERSION >= 0x0800
-, trsprdata(0)
 , particle_texture(0)
-#else
-, trsprdata(0)
-, particle_texture(0)
-#endif
 , tscount(0)
-#if DIRECT3D_VERSION >= 0x0800
 , light_surf(0)
-#else
-, light_surf(0)
-#endif
-#if DIRECT3D_VERSION >= 0x0800
 , add_surf(0)
-#else
-, add_surf(0)
-#endif
 , freeblocks(0)
 , cacheframecount(0)
 {
