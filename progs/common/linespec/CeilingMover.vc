@@ -38,6 +38,7 @@ enum
 	CEILEV_RaiseByValueTimes8,
 	CEILEV_LowerTimes8Instant,
 	CEILEV_RaiseTimes8Instant,
+	CEILEV_MoveToValue,
 	CEILEV_MoveToValueTimes8,
 	CEILEV_LowerAndCrush,
 	CEILEV_CrushAndRaise,
@@ -171,8 +172,13 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		Speed = 35.0 * 2000.0;
 		break;
 
+	case CEILEV_MoveToValue:
 	case CEILEV_MoveToValueTimes8:
-		DestHeight = itof(Arg3) * 8.0;
+		DestHeight = itof(Arg3);
+		if (Type == CEILEV_MoveToValueTimes8)
+		{
+			DestHeight *= 8.0;
+		}
 		if (Arg4)
 		{
 			DestHeight = -DestHeight;

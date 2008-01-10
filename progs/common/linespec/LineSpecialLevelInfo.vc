@@ -444,6 +444,10 @@ int ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 		buttonSuccess = EV_DoFloor(Arg1, Arg2, Arg3, Arg4, Arg5,
 			FloorMover::FLOOREV_LowerByValueTimes8, Line);
 		break;
+	case LNSPEC_FloorMoveToValue:
+		buttonSuccess = EV_DoFloor(Arg1, Arg2, Arg3, Arg4, Arg5,
+			FloorMover::FLOOREV_MoveToValue, Line);
+		break;
 	case LNSPEC_CeilingWaggle:
 		buttonSuccess = EV_StartCeilingWaggle(Arg1, Arg2, Arg3, Arg4, Arg5);
 		break;
@@ -482,6 +486,10 @@ int ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 		break;
 	case LNSPEC_FloorCrushStop:
 		buttonSuccess = EV_FloorCrushStop(Arg1, Arg2, Arg3, Arg4, Arg5);
+		break;
+	case LNSPEC_CeilingMoveToValue:
+		buttonSuccess = EV_DoCeiling(Arg1, Arg2, Arg3, Arg4, Arg5,
+			CeilingMover::CEILEV_MoveToValue, Line);
 		break;
 	case LNSPEC_GlassBreak:
 		buttonSuccess = EV_GlassBreak(Arg1, Arg2, Arg3, Arg4, Arg5, Line, A);
@@ -769,6 +777,10 @@ int ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 		break;
 	case LNSPEC_ThingHate:
 		buttonSuccess = EV_ThingHate(Arg1, Arg2, Arg3, Arg4, Arg5, A);
+		break;
+	case LNSPEC_ThingProjectileAimed:
+		buttonSuccess = EV_ThingProjectileAimed(Arg1, Arg2, Arg3, Arg4, Arg5,
+			A);
 		break;
 	case LNSPEC_ThingSetTranslation:
 		buttonSuccess = EV_ThingSetTranslation(Arg1, Arg2, Arg3, Arg4, Arg5,
@@ -3556,7 +3568,33 @@ final bool EV_LineAlignCeiling(int Arg1, int Arg2, int Arg3, int Arg4,
 final bool EV_ThingProjectile(int Arg1, int Arg2, int Arg3, int Arg4,
 	int Arg5, bool gravity, int newtid, name TypeName, Entity Activator)
 {
-	int			tid;
+	return DoThingProjectile(Arg1, Arg2, Arg3, Arg4, Arg5, gravity, newtid,
+		TypeName, Activator, 0, none);
+}
+
+//==========================================================================
+//
+//	EV_ThingProjectileAimed
+//
+//==========================================================================
+
+final bool EV_ThingProjectileAimed(int Arg1, int Arg2, int Arg3, int Arg4,
+	int Arg5, Entity Activator)
+{
+	return DoThingProjectile(Arg1, Arg2, 0, Arg3, 0, 0, Arg5, '', Activator,
+		Arg4, Activator);
+}
+
+//==========================================================================
+//
+//	DoThingProjectile
+//
+//==========================================================================
+
+final bool DoThingProjectile(int tid, int TypeID, int AAngle, int ASpeed,
+	int AVSpeed, bool gravity, int newtid, name TypeName, Entity Activator,
+	int DestTID, Entity ForceDest)
+{
 	float		angle;
 	float		speed;
 	float		vspeed;
@@ -3568,14 +3606,13 @@ final bool EV_ThingProjectile(int Arg1, int Arg2, int Arg3, int Arg4,
 
 	success = false;
 	searcher = -1;
-	tid = Arg1;
 	if (TypeName)
 	{
 		moType = class<EntityEx>(FindClass(TypeName));
 	}
 	else
 	{
-		moType = class<EntityEx>(FindClassFromScriptId(Arg2,
+		moType = class<EntityEx>(FindClassFromScriptId(TypeID,
 			LineSpecialGameInfo(Game).GameFilterFlag));
 	}
 	if (!moType)
@@ -3587,22 +3624,43 @@ final bool EV_ThingProjectile(int Arg1, int Arg2, int Arg3, int Arg4,
 	{
 		return false;
 	}
-	angle = itof(Arg3) * (360.0 / 256.0);
-	speed = itof(Arg4) / 8.0;
-	vspeed = itof(Arg5) / 8.0;
+	angle = itof(AAngle) * (360.0 / 256.0);
+	speed = itof(ASpeed) / 8.0;
+	vspeed = itof(AVSpeed) / 8.0;
 	for (A = tid ? FindMobjFromTID(tid, &searcher) : Activator; A;
 		A = FindMobjFromTID(tid, &searcher))
 	{
+		Entity Targ = ForceDest;
+		if (DestTID)
+		{
+			int TempSearcher;
+			Targ = FindMobjFromTID(DestTID, &TempSearcher);
+			if (!Targ)
+			{
+				continue;
+			}
+		}
+
 		newA = Spawn(moType, A.Origin);
 		if (newA.SightSound)
 		{
 			newA.PlaySound(newA.SightSound, CHAN_VOICE);
 		}
 		newA.Target = EntityEx(A);	// Originator
-		newA.Angles.yaw = angle;
-		newA.Velocity.x = speed * cos(angle) * 35.0;
-		newA.Velocity.y = speed * sin(angle) * 35.0;
-		newA.Velocity.z = vspeed * 35.0;
+		if (Targ)
+		{
+			TVec TargOrg = Targ.Origin + vector(0.0, 0.0, Targ.Height / 2.0);
+			TVec Delta = TargOrg - newA.Origin;
+			newA.Angles.yaw = atan2(Delta.y, Delta.x);
+			newA.Velocity = Normalise(Delta) * speed * 35.0;
+		}
+		else
+		{
+			newA.Angles.yaw = angle;
+			newA.Velocity.x = speed * cos(angle) * 35.0;
+			newA.Velocity.y = speed * sin(angle) * 35.0;
+			newA.Velocity.z = vspeed * 35.0;
+		}
 		newA.bDropped = true;	// Don't respawn
 		if (gravity)
 		{
@@ -3610,7 +3668,9 @@ final bool EV_ThingProjectile(int Arg1, int Arg2, int Arg3, int Arg4,
 			newA.Gravity = 0.125;
 		}
 		if (newtid)
+		{
 			newA.InsertIntoTIDList(newtid);
+		}
 		if (newA.CheckMissileSpawn())
 		{
 			success = true;

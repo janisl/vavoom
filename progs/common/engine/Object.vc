@@ -459,8 +459,8 @@ enum
 	LNSPEC_ClearForceField,
 	LNSPEC_FloorRaiseByValueTimes8,
 	LNSPEC_FloorLowerByValueTimes8,
-
-	LNSPEC_CeilingWaggle = 38,
+	LNSPEC_FloorMoveToValue,
+	LNSPEC_CeilingWaggle,
 	LNSPEC_TeleportZombieChanger,
 	LNSPEC_CeilingLowerByValue,// 40
 	LNSPEC_CeilingRaiseByValue,
@@ -469,6 +469,7 @@ enum
 	LNSPEC_CeilingCrushStop,
 	LNSPEC_CeilingCrushRaiseAndStay,
 	LNSPEC_FloorCrushStop,
+	LNSPEC_CeilingMoveToValue,
 
 	LNSPEC_GlassBreak = 49,
 
@@ -554,6 +555,7 @@ enum
 
 	LNSPEC_ThingChangeTID = 176,
 	LNSPEC_ThingHate,
+	LNSPEC_ThingProjectileAimed,
 
 	LNSPEC_ThingSetTranslation = 180,// 180
 	LNSPEC_PlaneAlign,

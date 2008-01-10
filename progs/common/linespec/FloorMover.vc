@@ -39,6 +39,7 @@ enum
 	FLOOREV_RaiseByValueTimes8,
 	FLOOREV_LowerTimes8Instant,
 	FLOOREV_RaiseTimes8Instant,
+	FLOOREV_MoveToValue,
 	FLOOREV_MoveToValueTimes8,
 	FLOOREV_RaiseByTexture,
 	FLOOREV_LowerToLowestChange,
@@ -149,9 +150,14 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		FloorDestDist = DotProduct(Sector->floor.normal, Spot);
 		break;
 
+	case FLOOREV_MoveToValue:
 	case FLOOREV_MoveToValueTimes8:
 		Level.FindHighestFloorPoint(Sector, &Spot);
-		DestHeight = itof(Arg3) * 8.0;
+		DestHeight = itof(Arg3);
+		if (Type == FLOOREV_MoveToValueTimes8)
+		{
+			DestHeight *= 8.0;
+		}
 		if (Arg4)
 		{
 			DestHeight = -DestHeight;
