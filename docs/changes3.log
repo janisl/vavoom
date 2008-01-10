@@ -2845,3 +2845,8 @@
 09.01.2008
   I reversed search order for editor and script IDs so that later progs and
  DECORATE can override them.
+  I changed default ID for lines to be -1 so that ID 0 can be used like it was
+ in Hexen.
+  I changed missing patches in multipatch textures from fatal error to just a
+ warning message.
+  I implemented Floor_MoveToValue and Ceiling_MoveToValue specials.
