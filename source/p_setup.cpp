@@ -715,6 +715,7 @@ void VLevel::LoadLineDefs2(int Lump, int NumBaseVerts)
 void VLevel::SetupLineSides(line_t* ld) const
 {
 	ld->alpha = 1.0;
+	ld->LineTag = -1;
 
 	CalcLine(ld);
 	if (ld->sidenum[0] == -1)
