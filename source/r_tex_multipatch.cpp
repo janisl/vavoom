@@ -122,7 +122,10 @@ VMultiPatchTexture::VMultiPatchTexture(VStream& Strm, int DirectoryIndex,
 		patch->Tex = PatchLookup[PatchIdx];
 		if (!patch->Tex)
 		{
-			Sys_Error("InitTextures: Missing patch in texture %s", *Name);
+			GCon->Logf("InitTextures: Missing patch in texture %s", *Name);
+			i--;
+			PatchCount--;
+			patch--;
 		}
 
 		//	Skip unused values.
