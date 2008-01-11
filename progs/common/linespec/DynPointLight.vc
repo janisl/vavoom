@@ -1,0 +1,281 @@
+﻿//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id: template.vc 1583 2006-06-27 19:05:42Z dj_jl $
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+//**
+//**	Based on code from GZDoom with following notice:
+//**
+//** Copyright 2003 Timothy Stump
+//** Copyright 2005 Christoph Oelckers
+//** All rights reserved.
+//**
+//** Redistribution and use in source and binary forms, with or without
+//** modification, are permitted provided that the following conditions
+//** are met:
+//**
+//** 1. Redistributions of source code must retain the above copyright
+//**    notice, this list of conditions and the following disclaimer.
+//** 2. Redistributions in binary form must reproduce the above copyright
+//**    notice, this list of conditions and the following disclaimer in the
+//**    documentation and/or other materials provided with the distribution.
+//** 3. The name of the author may not be used to endorse or promote products
+//**    derived from this software without specific prior written permission.
+//**
+//** THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
+//** IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+//** OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+//** IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
+//** INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+//** NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+//** DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+//** THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+//** (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+//** THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+//**************************************************************************
+
+class DynPointLight : ScriptedEntity
+	__mobjinfo__(9800);
+
+dlight_t*	dl;
+int SetUp;
+float LastUpdate;
+float Intensity;
+bool bPointLight;
+
+enum
+{
+   CYCLE_Linear,
+   CYCLE_Sin,
+   CYCLE_Cos,
+   CYCLE_SawTooth,
+   CYCLE_Square
+};
+
+struct Cycler
+{
+	float m_start;
+	float m_end;
+	float m_current;
+	float m_time;
+	float m_cycle;
+	bool bIncrement;
+	bool bCycle;
+	int CycleType;
+};
+Cycler l_cycler;
+
+//==========================================================================
+//
+//	SetParams
+//
+//==========================================================================
+
+void SetParams(float start, float end, float cycle)
+{
+	l_cycler.m_cycle = cycle;
+	l_cycler.m_time = 0.0;
+	l_cycler.m_start = start;
+	l_cycler.m_current = start;
+	l_cycler.m_end = end;
+	l_cycler.bIncrement = true;
+}
+
+//==========================================================================
+//
+//	Update
+//
+//==========================================================================
+
+void Update(float diff)
+{
+	float mult, angle;
+	float step = l_cycler.m_end - l_cycler.m_start;
+	
+	if (!l_cycler.bCycle)
+	{
+		return;
+	}
+	
+	l_cycler.m_time += diff;
+	if (l_cycler.m_time >= l_cycler.m_cycle)
+	{
+		l_cycler.m_time = l_cycler.m_cycle;
+	}
+	
+	mult = l_cycler.m_time / l_cycler.m_cycle;
+	
+	switch (l_cycler.CycleType)
+	{
+	case CYCLE_Linear:
+		if (l_cycler.bIncrement)
+		{
+			l_cycler.m_current = l_cycler.m_start + (step * mult);
+		}
+		else
+		{
+			l_cycler.m_current = l_cycler.m_end - (step * mult);
+		}
+		break;
+	case CYCLE_Sin:
+		angle = PI * 2.0 * mult;
+		mult = sin(angle);
+		mult = (mult + 1.0) / 2.0;
+		l_cycler.m_current = l_cycler.m_start + (step * mult);
+		break;
+	case CYCLE_Cos:
+		angle = PI * 2.0 * mult;
+		mult = cos(angle);
+		mult = (mult + 1.0) / 2.0;
+		l_cycler.m_current = l_cycler.m_start + (step * mult);
+		break;
+	case CYCLE_SawTooth:
+		l_cycler.m_current = l_cycler.m_start + (step * mult);
+		break;
+	case CYCLE_Square:
+		if (l_cycler.bIncrement)
+		{
+			l_cycler.m_current = l_cycler.m_start;
+		}
+		else
+		{
+			l_cycler.m_current = l_cycler.m_end;
+		}
+		break;
+	}
+	
+	if (l_cycler.m_time == l_cycler.m_cycle)
+	{
+		l_cycler.m_time = 0.0;
+		l_cycler.bIncrement = !l_cycler.bIncrement;
+	}
+}
+
+//==========================================================================
+//
+//	SetCycleType
+//
+//==========================================================================
+
+void SetCycleType(int ct)
+{
+	l_cycler.CycleType = ct;
+}
+
+//==========================================================================
+//
+//	ShouldCycle
+//
+//==========================================================================
+
+void ShouldCycle(bool sc)
+{
+	l_cycler.bCycle = sc;
+}
+
+//==========================================================================
+//
+//	GetVal
+//
+//==========================================================================
+
+float GetVal()
+{
+	return l_cycler.m_current;
+}
+
+// ** ---------------------------------------------------------------------------------------------------
+
+//==========================================================================
+//
+//	Activate
+//
+//==========================================================================
+
+bool Activate()
+{
+	if (::Activate())
+	{
+		bPointLight = true;
+		return true;
+	}
+	return false;
+}
+
+//==========================================================================
+//
+//	Deactivate
+//
+//==========================================================================
+
+bool Deactivate()
+{
+	if (::Deactivate())
+	{
+		bPointLight = false;
+		return true;
+	}
+	return false;
+}
+
+//==========================================================================
+//
+//	BeginPlay
+//
+//==========================================================================
+
+void BeginPlay()
+{
+	::BeginPlay();
+
+	if (!bDormant)
+	{
+		bPointLight = true;
+	}
+}
+
+//==========================================================================
+//
+//	ClientTick
+//
+//==========================================================================
+
+void ClientTick(float deltaTime)
+{
+	::ClientTick(deltaTime);
+
+	if(bPointLight)
+	{
+		dl = AllocDlight(self);
+		dl->origin = Origin;
+		dl->radius = itof(Args[3]);
+		dl->colour = RGB(Args[0], Args[1], Args[2]);
+		dl->die = XLevel.Time + 0.1;
+	}
+}
+
+defaultproperties
+{
+	bNoBlockmap = true;
+	bHidden = true;
+	bNoGravity = true;
+}

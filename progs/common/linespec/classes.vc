@@ -156,3 +156,11 @@ enum
 #include "Spark.vc"
 
 #include "GlassJunk.vc"
+
+#include "StaticLightSource.vc"
+#include "StaticRGBLightSource.vc"
+#include "DynPointLight.vc"
+#include "DynPulseLight.vc"
+#include "DynFlickerLight.vc"
+#include "DynFlickerRandomLight.vc"
+#include "DynSectorLight.vc"
