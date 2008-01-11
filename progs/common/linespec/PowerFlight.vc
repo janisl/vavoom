@@ -72,17 +72,20 @@ void InitEffect()
 
 void EndEffect()
 {
-	if (!Owner)
+	if (!Owner || !Owner.Player)
 	{
 		return;
 	}
 
-	if (Owner.Origin.z != Owner.FloorZ)
+	if (!(Owner.Player.Cheats & BasePlayer::CF_FLY))
 	{
+		if (Owner.Origin.z != Owner.FloorZ)
+		{
 //FIXME		player->centreing = true;
+		}
+		Owner.bFly = false;
+		Owner.bNoGravity = false;
 	}
-	Owner.bFly = false;
-	Owner.bNoGravity = false;
 }
 
 defaultproperties
