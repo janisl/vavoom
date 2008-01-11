@@ -56,6 +56,44 @@ enum
 	pt_spark
 };
 
+enum
+{
+	PowerInvulnerable,
+	PowerStrength,
+	PowerInvisibility,
+	PowerIronFeet,
+	MapRevealer,
+	PowerLightAmp,
+	PowerWeaponLevel2,
+	PowerFlight,
+/*	none,
+	none,*/
+	PowerSpeed,
+	NUMPOWERS
+};
+
+enum
+{
+	PROP_FROZEN,
+	PROP_NOTARGET,
+	PROP_INSTANTWEAPONSWITCH,
+	PROP_FLY,
+	PROP_TOTALLYFROZEN,
+
+	PROP_INVULNERABILITY,
+	PROP_STRENGTH,
+	PROP_INVISIBILITY,
+	PROP_RADIATIONSUIT,
+	PROP_ALLMAP,
+	PROP_INFRARED,
+	PROP_WEAPONLEVEL2,
+	PROP_FLIGHT,
+	PROP_UNUSED1,
+	PROP_UNUSED2,
+	PROP_SPEED
+};
+
+
 //	Flags for SectorDamage
 const int DAMAGE_PLAYERS			= 1;
 const int DAMAGE_NONPLAYERS			= 2;
@@ -810,6 +848,9 @@ int ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 	case LNSPEC_SectorSetFloorScale:
 		buttonSuccess = EV_SectorSetFloorScale(Arg1, Arg2, Arg3, Arg4,
 			Arg5);
+		break;
+	case LNSPEC_SetPlayerProperty:
+		buttonSuccess = EV_SetPlayerProperty(Arg1, Arg2, Arg3, Arg4, Arg5, A);
 		break;
 	case LNSPEC_CeilingLowerToHighestFloor:
 		buttonSuccess = EV_DoCeiling(Arg1, Arg2, Arg3, Arg4, Arg5,
@@ -4135,6 +4176,186 @@ final bool EV_ChangeCamera(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 
 //===========================================================================
 //
+//	SetPlayerProperty (who, set, which)
+//
+//===========================================================================
+
+final bool EV_SetPlayerProperty(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
+	EntityEx A)
+{
+	int mask = 0;
+
+	if ((!A || !A.Player) && !Arg1)
+		return false;
+
+	// Add or remove a power
+	if (Arg3 >= PROP_INVULNERABILITY && Arg3 <= PROP_SPEED)
+	{
+		class<Inventory> powers[NUMPOWERS];
+		int power = Arg3 - PROP_INVULNERABILITY;
+
+		if (power > 4 && !powers[power])
+		{
+			return false;
+		}
+
+		if (Arg1 == 0)
+		{
+			if (Arg2)
+			{ // Give power to activator
+				if (power)
+				{
+					A.GiveInventoryType(powers[power]);
+				}
+			}
+			else
+			{ // Take power from activator
+				if (power)
+				{
+					Inventory item = A.FindInventory(powers[power]);
+					if (!item)
+					{
+						item.Destroy();
+					}
+				}
+			}
+		}
+		else
+		{
+			int i;
+
+			for (i = 0; i < MAXPLAYERS; i++)
+			{
+				if (!Level.Game.Players[i] || !Level.Game.Players[i].MO)
+					continue;
+
+				if (Arg1)
+				{ // Give power
+					if (power)
+					{
+						EntityEx(Level.Game.Players[i].MO).GiveInventoryType(powers[power]);
+					}
+				}
+				else
+				{ // Take power
+					if (power)
+					{
+						Inventory item = EntityEx(Level.Game.Players[i].MO).FindInventory(powers[power]);
+						if (!item)
+						{
+							item.Destroy();
+						}
+					}
+				}
+			}
+		}
+		return true;
+	}
+
+	// Set or clear a flag
+	switch (Arg3)
+	{
+	case PROP_FROZEN:
+		mask = BasePlayer::CF_FROZEN;
+		break;
+	case PROP_NOTARGET:
+		mask = BasePlayer::CF_NOTARGET;
+		break;
+	case PROP_INSTANTWEAPONSWITCH:
+		mask = BasePlayer::CF_INSTANTWEAPSWITCH;
+		break;
+	case PROP_FLY:
+		mask = BasePlayer::CF_FLY;
+		break;
+	case PROP_TOTALLYFROZEN:
+		mask = BasePlayer::CF_TOTALLYFROZEN;
+		break;
+	}
+
+	if (Arg1 == 0)
+	{
+		if (Arg2)
+		{
+			A.Player.Cheats |= mask;
+			if (Arg3 == PROP_FLY)
+			{
+				A.bFly = true;
+				A.bNoGravity = true;
+				if (A.Origin.z <= A.FloorZ)
+				{
+					// thrust the player in the air a bit
+					PlayerEx(A.Player).FlyHeight = 10.0;
+				}
+				if (A.Velocity.z <= -35.0 * 35.0)
+				{
+					// stop falling scream
+					A.StopSound(CHAN_VOICE);
+				}
+			}
+		}
+		else
+		{
+			A.Player.Cheats &= ~mask;
+			if (Arg3 == PROP_FLY)
+			{
+				if (A.Origin.z != A.FloorZ)
+				{
+//FIXME				player->centreing = true;
+				}
+				A.bFly = false;
+				A.bNoGravity = false;
+			}
+		}
+	}
+	else
+	{
+		int i;
+
+		for (i = 0; i < MAXPLAYERS; i++)
+		{
+			if (!Level.Game.Players[i])
+				continue;
+
+			if (Arg2)
+			{
+				Level.Game.Players[i].Cheats |= mask;
+				if (Arg3 == PROP_FLY)
+				{
+					EntityEx(Level.Game.Players[i].MO).bFly = true;
+					EntityEx(Level.Game.Players[i].MO).bNoGravity = true;
+					if (Level.Game.Players[i].MO.Origin.z <= A.FloorZ)
+					{
+						// thrust the player in the air a bit
+						PlayerEx(Level.Game.Players[i]).FlyHeight = 10.0;
+					}
+					if (Level.Game.Players[i].MO.Velocity.z <= -35.0 * 35.0)
+					{
+						// stop falling scream
+						Level.Game.Players[i].MO.StopSound(CHAN_VOICE);
+					}
+				}
+			}
+			else
+			{
+				Level.Game.Players[i].Cheats &= ~mask;
+				if (Arg3 == PROP_FLY)
+				{
+					if (Level.Game.Players[i].MO.Origin.z != A.FloorZ)
+					{
+//FIXME				player->centreing = true;
+					}
+					Level.Game.Players[i].MO.bFly = false;
+					Level.Game.Players[i].MO.bNoGravity = false;
+				}
+			}
+		}
+	}
+
+	return !!mask;
+}
+
+//===========================================================================
+//
 //	EV_ThingSetTranslation
 //
 //===========================================================================
@@ -5084,6 +5305,10 @@ final void RecursiveSound(sector_t* sec, int soundblocks, Entity soundtarget)
 final void NoiseAlert(Entity target, Entity emmiter)
 {
 	if (!emmiter)
+		return;
+
+	if (!target || (target.Player && target.Player.Cheats &
+		BasePlayer::CF_NOTARGET))
 		return;
 
 	(*Game.validcount)++;

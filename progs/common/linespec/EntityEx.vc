@@ -2878,6 +2878,9 @@ final bool LookForPlayers(bool allaround)
 		if (!P.bSpawned || !P.MO)
 			continue;	//  not spawned yet
 
+		if (P.Cheats & BasePlayer::CF_NOTARGET)
+			continue;	// no target
+
 		if (P.Health <= 0)
 			continue;	// dead
 
@@ -4176,6 +4179,17 @@ final void Damage(EntityEx inflictor, EntityEx source, int damage,
 			{
 				thrust = 10.0;
 			}
+			// make fall forwards sometimes
+			if ((damage < 40) && (damage > Health)
+				 && (Origin.z - inflictor.Origin.z > 64.0)
+				 && (P_Random() & 1)
+				 // [RH] But only if not too fast and not flying
+				 && thrust < 10.0
+				 && !(bNoGravity))
+			{
+				Angles.yaw += 180.0;
+				thrust *= 4.0;
+			}
 			dir = GetCentre() - inflictor.GetCentre();
 			if (Length(dir) < 0.001)
 			{
@@ -4214,7 +4228,7 @@ final void Damage(EntityEx inflictor, EntityEx source, int damage,
 
 		// Below certain threshold, ignore damage in GOD mode, or with INVUL power.
 		if (damage < 1000 && (bInvulnerable ||
-			(PlayerEx(Player).Cheats & PlayerEx::CF_GODMODE)))
+			(Player.Cheats & BasePlayer::CF_GODMODE)))
 		{
 			return;
 		}
