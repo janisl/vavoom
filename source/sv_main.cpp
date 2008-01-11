@@ -423,7 +423,8 @@ static void CheckForSkip()
 		player = GGameInfo->Players[i];
 		if (player)
 		{
-			if (player->Buttons & BT_ATTACK)
+			if (player->Buttons & BT_ATTACK && (!(player->Cheats &
+				VBasePlayer::CF_FROZEN) || !(player->Cheats & VBasePlayer::CF_TOTALLYFROZEN)))
 			{
 				if (!(player->PlayerFlags & VBasePlayer::PF_AttackDown))
 				{

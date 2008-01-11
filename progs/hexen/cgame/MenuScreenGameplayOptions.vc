@@ -97,6 +97,13 @@ void CreateChoices()
 
 	Enum = MenuChoiceEnum(NewChild(MenuChoice_OnOff));
 	Enum.SetOrigin(ChoicesStartX, currentY);
+	Enum.Text = "Monsters Backing Off";
+	Enum.SetInitialValue(GetCvar('monster_backing'));
+	Enum.ValueChanging = ChangeMonstersBacking;
+	currentY += Enum.Height;
+
+	Enum = MenuChoiceEnum(NewChild(MenuChoice_OnOff));
+	Enum.SetOrigin(ChoicesStartX, currentY);
 	Enum.Text = "Optional Fuzzy Effect";
 	Enum.SetInitialValue(GetCvar('r_drawfuzz'));
 	Enum.ValueChanging = ChangeFuzz;
@@ -108,7 +115,7 @@ void CreateChoices()
 	Slider.ValueDelta = 0.05;
 	Slider.SetInitialValue(GetCvarF('transsouls'));
 	Slider.ValueChanging = ChangeTrans;
-	currentY += Slider.Height;
+	currentY += Slider.Height;	
 }
 
 //==========================================================================
@@ -132,6 +139,18 @@ bool ChangeFontColour(Object Sender, int newValue)
 bool ChangeFontColour2(Object Sender, int newValue)
 {
 	SetCvar('font_colour2', newValue);
+	return true;
+}
+
+//==========================================================================
+//
+//	ChangeMonstersBacking
+//
+//==========================================================================
+
+bool ChangeMonstersBacking(Object Sender, int newValue)
+{
+	SetCvar('monsters_backing', newValue);
 	return true;
 }
 

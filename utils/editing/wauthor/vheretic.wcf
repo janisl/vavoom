@@ -216,6 +216,11 @@ LightingInc=0
 0x2454  13      20      telea0      	Polyobject anchor
 0x2455  13      20      telea0      	Start spot
 0x2456  13      20      telea0      	Start spot w/crush
+0x2648	18	10	fx01e0		Point Light *( red, green, blue, radius, - ) 
+0x2649	18	10	fx01e0		Pulse Light *( red, green, blue, minradius, maxradius ) 
+0x2650	18	10	fx01e0		Flickering Light *( red, green, blue, minradius, maxradius ) 
+0x2651	18	10	fx01e0		Sector Light *( red, green, blue, radius, scale ) 
+0x2652	18	10	fx01e0		Randomly flickering Light *( red, green, blue,  minradius, maxradius ) 
 0x36f2  9       20      telea0      	Sound sequence *( number, mode, -, -, - )
 
 ;	ID				used to classify linedefs

@@ -991,7 +991,7 @@ void UpdateFaceWidget(float FrameTime)
 	if (sb_face_priority < 6)
 	{
 		// rapid firing
-		if (bAttackDown)
+		if (bAttackDown && !(Cheats & (CF_FROZEN | CF_TOTALLYFROZEN)))
 		{
 			if (sb_face_lastattackdown == -1.0)
 				sb_face_lastattackdown = ST_RAMPAGEDELAY;
@@ -1215,6 +1215,58 @@ void Cheat_NoClip()
 		cprint("No Clipping Mode ON");
 	else
 		cprint("No Clipping Mode OFF");
+}
+
+//==========================================================================
+//
+//  Cheat_Fly
+//
+//==========================================================================
+
+void Cheat_Fly()
+{
+	Cheats ^= CF_FLY;
+	if (Cheats & CF_FLY)
+	{
+		MO.bFly = true;
+		MO.bNoGravity = true;
+		if (MO.Origin.z <= MO.FloorZ)
+		{
+			// thrust the player in the air a bit
+			PlayerEx(self).FlyHeight = 10.0;
+		}
+		if (MO.Velocity.z <= -35.0 * 35.0)
+		{
+			// stop falling scream
+			MO.StopSound(CHAN_VOICE);
+		}
+		cprint("You feel lighter");
+	}
+	else
+	{
+		if (MO.Origin.z != MO.FloorZ)
+		{
+//FIXME		player->centreing = true;
+		}
+		MO.bFly = false;
+		MO.bNoGravity = false;
+		cprint("Gravity weights you down");
+	}
+}
+
+//==========================================================================
+//
+//  Cheat_NoTarget
+//
+//==========================================================================
+
+void Cheat_NoTarget()
+{
+	Cheats ^= CF_NOTARGET;
+	if (Cheats & CF_NOTARGET)
+		cprint("No Target Mode ON");
+	else
+		cprint("No Target Mode OFF");
 }
 
 //==========================================================================

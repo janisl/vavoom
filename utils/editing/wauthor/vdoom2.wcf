@@ -241,15 +241,20 @@ LightingInc=0
 0x2363  3       40      skelj1          Stealth revenant
 0x2364  3       40      sposf1          Stealth shotgunner
 0x2365  3       40      possf1          Stealth pistol guy
-0x236e	16		16		tfogi0			Interp pt *( pitch, traveltime, holdtime, next, hinext )
-0x236f	16		16		ifogd0			Path follower *( pt, hipt, bLinear, -, - )
-0x2370	16		16		ifogd0			Moving camera *( pt, hipt, bLinear, lookat, - )
-0x2371	16		16		aplsa0			Aiming camera *( pitch, maxang, maxpitch, tid, - )
-0x2372	16		16		ifogd0			Actor mover *( pt, hipt, bLinear, tid, - )
-0x2373	16		16		tfogf0			Interp special
+0x236e	16	16	tfogi0		Interp pt *( pitch, traveltime, holdtime, next, hinext )
+0x236f	16	16	ifogd0		Path follower *( pt, hipt, bLinear, -, - )
+0x2370	16	16	ifogd0		Moving camera *( pt, hipt, bLinear, lookat, - )
+0x2371	16	16	aplsa0		Aiming camera *( pitch, maxang, maxpitch, tid, - )
+0x2372	16	16	ifogd0		Actor mover *( pt, hipt, bLinear, tid, - )
+0x2373	16	16	tfogf0		Interp special
 0x2454  13      20      ifoga0          Polyobject anchor
 0x2455  13      20      ifoga0          Start spot
 0x2456  13      20      ifoga0          Start spot w/crush
+0x2648	18	10	ifogd0		Point Light *( red, green, blue, radius, - ) 
+0x2649	18	10	ifogd0		Pulse Light *( red, green, blue, minradius, maxradius ) 
+0x2650	18	10	ifogd0		Flickering Light *( red, green, blue, minradius, maxradius ) 
+0x2651	18	10	ifogd0		Sector Light *( red, green, blue, radius, scale ) 
+0x2652	18	10	ifogd0		Randomly flickering Light *( red, green, blue,  minradius, maxradius ) 
 0x36f2  14      20      tfogj0          Sound sequence *( number, mode, -, -, - )
 
 ;	ID				used to classify linedefs

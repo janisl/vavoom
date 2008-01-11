@@ -322,9 +322,20 @@ LightingInc=0
 0x2348  16      20      bal1a0          Fountain (black)
 0x2349  16      20      bal1a0          Fountain (white)
 0x2357  13      10      aplsa0          Patrol special
+0x236e	17		16		fx17b0			Interp pt *( pitch, traveltime, holdtime, next, hinext )
+0x236f	17		16		fx17b0			Path follower *( pt, hipt, bLinear, -, - )
+0x2370	17		16		fx17b0			Moving camera *( pt, hipt, bLinear, lookat, - )
+0x2371	17		16		fx17b0			Aiming camera *( pitch, maxang, maxpitch, tid, - )
+0x2372	17		16		aclob0			Actor mover *( pt, hipt, bLinear, tid, - )
+0x2373	17		16		aclod0			Interp special
 0x2454  13      20      icprd0          Polyobject anchor
 0x2455  13      20      sbfxh0          Start spot
 0x2456  13      20      sbfxc0          Start spot w/crush
+0x2648	18	10	icprd0		Point Light *( red, green, blue, radius, - ) 
+0x2649	18	10	icprd0		Pulse Light *( red, green, blue, minradius, maxradius ) 
+0x2650	18	10	icprd0		Flickering Light *( red, green, blue, minradius, maxradius ) 
+0x2651	18	10	icprd0		Sector Light *( red, green, blue, radius, scale ) 
+0x2652	18	10	icprd0		Randomly flickering Light *( red, green, blue,  minradius, maxradius ) 
 0x2710  13      20      spirk0          Spawn fog *( speed, angle, freq., duration, - )
 0x2711  8       20      fogsa0          Fog (small) *( speed, -, -, duration, move )
 0x2712  8       20      fogma0          Fog (medium) *( speed, -, -, duration, move )

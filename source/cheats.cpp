@@ -226,3 +226,31 @@ COMMAND(MyPos)
 			GGameInfo->Players[0]->MO->Angles.yaw, GGameInfo->Players[0]->MO->Angles.pitch);
 	}
 }
+
+//==========================================================================
+//
+//  Fly_f
+//
+//==========================================================================
+
+COMMAND(Fly)
+{
+	if (CheatAllowed())
+    {
+		GGameInfo->Players[0]->eventCheat_Fly();
+	}
+}
+
+//==========================================================================
+//
+//  NoTaget_f
+//
+//==========================================================================
+
+COMMAND(NoTarget)
+{
+	if (CheatAllowed())
+    {
+		GGameInfo->Players[0]->eventCheat_NoTarget();
+	}
+}
