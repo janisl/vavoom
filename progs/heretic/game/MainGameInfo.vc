@@ -60,6 +60,7 @@ void Init()
 	shareware = !WadLumpPresent('e2m1');
 	InitTranslationTables();
 	InitBotTypes();
+	CreateCvar('monster_backing', "0", CVAR_ARCHIVE);
 }
 
 //==========================================================================

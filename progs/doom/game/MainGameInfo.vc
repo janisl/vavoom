@@ -65,6 +65,7 @@ void Init()
 #endif
 	InitTranslationTables();
 	InitBotTypes();
+	CreateCvar('monster_backing', "0", CVAR_ARCHIVE);
 }
 
 //==========================================================================

@@ -150,7 +150,7 @@ bool ChangeFontColour2(Object Sender, int newValue)
 
 bool ChangeMonstersBacking(Object Sender, int newValue)
 {
-	SetCvar('monsters_backing', newValue);
+	SetCvar('monster_backing', newValue);
 	return true;
 }
 

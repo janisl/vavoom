@@ -50,6 +50,7 @@ spec_trans_t spec_trans_tab[NUM_SPECIALS];
 void Init()
 {
 	InitTranslationTables();
+	CreateCvar('monster_backing', "0", CVAR_ARCHIVE);
 }
 
 //==========================================================================

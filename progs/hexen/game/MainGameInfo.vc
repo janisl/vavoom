@@ -68,6 +68,7 @@ void Init()
 	SetSeqTrans('Wind', 0, SEQ_Environment);
 
 	InitBotTypes();
+	CreateCvar('monster_backing', "0", CVAR_ARCHIVE);
 }
 
 //==========================================================================
