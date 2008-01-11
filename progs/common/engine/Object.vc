@@ -44,7 +44,6 @@ enum
 	CVAR_MODIFIED		= 128	//	Set each time the cvar is changed
 };
 
-const float PI					= 3.14159265358979323846;	// matches value in gcc v2 math.h
 const int MININT				= 0x80000000;
 const int MAXINT				= 0x7fffffff;
 
@@ -570,7 +569,7 @@ enum
 	LNSPEC_SectorSetFloorScale,
 
 	LNSPEC_SetPlayerProperty = 191,
-	LNSPEC_CeilingLowerToHighestFloor, // 192
+	LNSPEC_CeilingLowerToHighestFloor,
 	LNSPEC_CeilingLowerInstant,
 	LNSPEC_CeilingRaiseInstant,
 	LNSPEC_CeilingCrushRaiseAndStayA,
