@@ -44,6 +44,7 @@ enum
 	CVAR_MODIFIED		= 128	//	Set each time the cvar is changed
 };
 
+const float PI					= 3.14159265358979323846;	// matches value in gcc v2 math.h
 const int MININT				= 0x80000000;
 const int MAXINT				= 0x7fffffff;
 
@@ -568,7 +569,8 @@ enum
 	LNSPEC_SectorSetCeilingScale,
 	LNSPEC_SectorSetFloorScale,
 
-	LNSPEC_CeilingLowerToHighestFloor = 192,
+	LNSPEC_SetPlayerProperty = 191,
+	LNSPEC_CeilingLowerToHighestFloor, // 192
 	LNSPEC_CeilingLowerInstant,
 	LNSPEC_CeilingRaiseInstant,
 	LNSPEC_CeilingCrushRaiseAndStayA,
@@ -638,7 +640,7 @@ enum
 
 //==========================================================================
 //
-//  3D math - vectors and panes
+//  3D math - vectors and planes
 //
 //==========================================================================
 
@@ -1367,9 +1369,9 @@ enum
 struct event_t
 {
 	int type;	// event type
-	int data1;	// keys / mouse/joystick buttons
-	int data2;	// mouse/joystick x move
-	int data3;	// mouse/joystick y move
+	int data1;	// keys / mouse / joystick buttons
+	int data2;	// mouse / joystick x move
+	int data3;	// mouse / joystick y move
 };
 
 native readonly private void* CxxVTable;
