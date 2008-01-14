@@ -26,6 +26,12 @@
 class PlayerEx : BasePlayer
 	abstract;
 
+//
+// Player internal flags, for cheats and debug.
+//
+const int CF_NOCLIP			= 1;	// No clipping, walk through barriers.
+const int CF_GODMODE		= 2;	// No damage, no health loss.
+
 const float USERANGE		= 64.0;
 const float USETHINGRANGE	= 128.0;
 
@@ -58,6 +64,10 @@ float			LastSectorDamageTime;
 float			HazardTime;
 float			LastHazardTime;
 
+// Bit flags, for cheats and debug.
+// See cheat_t, above.
+int				Cheats;
+
 Weapon			ReadyWeapon;
 Weapon			PendingWeapon;	// Is none if not changing.
 
@@ -86,7 +96,7 @@ int				PoisonCount;	// screen flash for poison damage
 replication
 {
 	reliable if (!bIsClient)
-		ReadyWeapon, InvFirst, InvPtr, InventoryTime, ArtifactFlash;
+		Cheats, ReadyWeapon, InvFirst, InvPtr, InventoryTime, ArtifactFlash;
 
 	unreliable if (!bIsClient)
 		ParticleEffect, ClientExplosion, ClientParticleExplosion,
@@ -200,10 +210,6 @@ final void MovePlayer(float deltaTime)
 	float side;
 	float fly;
 
-	// Don't move if frozen
-	if (Cheats & (CF_FROZEN | CF_TOTALLYFROZEN))
-		return;
-
 	// Do not let the player control movement
 	//  if not onground.
 	onground = MO.Origin.z <= MO.FloorZ || EntityEx(MO).bOnMobj;
@@ -270,8 +276,7 @@ final void MovePlayer(float deltaTime)
 	}
 
 	fly = FlyMove / 16.0;
-	if (fly && (EntityEx(MO).FindInventory(PowerFlight) || 
-		Cheats & BasePlayer::CF_FLY))
+	if (fly && EntityEx(MO).FindInventory(PowerFlight))
 	{
 		if (FlyMove != TOCENTRE)
 		{
@@ -372,10 +377,6 @@ final void WaterMove(float deltaTime)
 	TVec vright;
 	TVec vup;
 	TVec wishvel;
-
-	// Don't move if frozen
-	if (Cheats & (CF_FROZEN | CF_TOTALLYFROZEN))
-		return;
 
 	// Do not let the player control movement
 	//  if not onground.
@@ -874,8 +875,7 @@ final void BringUpWeapon()
 	}
 
 	PendingWeapon = none;
-	ViewStates[ps_weapon].SY = Cheats & BasePlayer::CF_INSTANTWEAPSWITCH ?
-			Weapon::WEAPONTOP : Weapon::WEAPONBOTTOM;
+	ViewStates[ps_weapon].SY = Weapon::WEAPONBOTTOM;
 	SetViewState(ps_weapon, ReadyWeapon.GetUpState());
 	MO.ModelVersion = ReadyWeapon.PlayerModelVersion;
 }

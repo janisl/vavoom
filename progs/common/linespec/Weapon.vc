@@ -576,9 +576,7 @@ final void A_WeaponReady()
 	}
 
 	// Check for fire.
-	if (Owner.Player.Buttons & BT_ATTACK && (!(Owner.Player.Cheats &
-		BasePlayer::CF_FROZEN) || !(Owner.Player.Cheats &
-		BasePlayer::CF_TOTALLYFROZEN)))
+	if (Owner.Player.Buttons & BT_ATTACK)
 	{
 		if (!Owner.Player.bAttackDown ||
 			!PlayerEx(Owner.Player).ReadyWeapon.bNoAutoFire)
@@ -618,8 +616,7 @@ final void A_WeaponReady()
 
 final void A_Lower()
 {
-	if (EntityEx(Owner.Player.MO).PlayerIsMorphed() ||
-		(Owner.Player.Cheats & BasePlayer::CF_INSTANTWEAPSWITCH))
+	if (EntityEx(Owner.Player.MO).PlayerIsMorphed())
 	{
 		Owner.Player.ViewStates[ps_weapon].SY = WEAPONBOTTOM;
 	}
@@ -672,9 +669,6 @@ final void A_Lower()
 
 final void A_Raise()
 {
-	if (!Owner || !Owner.Player)
-		return;
-
 	//	FIXME!!
 	if (Level.Game.frametime < 1.0 / 35.0)
 		Owner.Player.ViewStates[ps_weapon].SY -= RAISESPEED;

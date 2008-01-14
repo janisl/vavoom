@@ -38,6 +38,9 @@
 #include "Effect.vc"
 #include "Decoration.vc"
 
+#include "StaticLightSource.vc"
+#include "StaticRGBLightSource.vc"
+
 #include "AmbientSoundSequence.vc"
 #include "HereticSoundSequence1.vc"
 #include "HereticSoundSequence2.vc"

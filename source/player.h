@@ -74,46 +74,17 @@ class VBasePlayer : public VObject
 
 	VLevelInfo*		Level;
 
-//
-// Player internal flags, for cheats and debug.
-//
 	enum
 	{
-		CF_NOCLIP				= 1,		// No clipping, walk through barriers.
-		CF_GODMODE				= 2,		// No damage, no health loss.
-		CF_NOMOMENTUM			= 4,		// Not really a cheat, just a debug aid.
-		CF_NOTARGET				= 8,		// [RH] Monsters don't target
-		CF_FLY					= 16,		// [RH] Flying player
-		CF_CHASECAM				= 32,		// [RH] Put camera behind player
-		CF_FROZEN				= 64,		// [RH] Don't let the player move
-		CF_REVERTPLEASE			= 128,		// [RH] Stick camera in player's head if (s)he moves
-		CF_STEPLEFT				= 512,		// [RH] Play left footstep sound next time
-		CF_FRIGHTENING			= 1024,		// [RH] Scare monsters away
-		CF_INSTANTWEAPSWITCH	= 2048,		// [RH] Switch weapons instantly
-		CF_TOTALLYFROZEN		= 4096,		// [RH] All players can do is press +use
-		CF_PREDICTING			= 8192,		// [RH] Player movement is being predicted
-		CF_WEAPONREADY			= 16384,	// [RH] Weapon is in the ready state, so bob it when walking
-		CF_TIMEFREEZE			= 32768,	// Player has an active time freezer
-		CF_DRAIN				= 65536,	// Player owns a drain powerup
-		CF_REGENERATION			= 0x20000,	// Player owns a regeneration artifact
-		CF_HIGHJUMP				= 0x40000,	// more Skulltag flags. Implemetation not guaranteed though. ;)
-		CF_REFLECTION			= 0x80000,
-		CF_PROSPERITY			= 0x100000,
-		CF_DOUBLEFIRINGSPEED	= 0x200000,
-	};
-	vuint32			Cheats;
-
-	enum
-	{
-		PF_Active				= 0x0001,
-		PF_Spawned				= 0x0002,
-		PF_IsBot				= 0x0004,
-		PF_FixAngle				= 0x0008,
-		PF_AttackDown			= 0x0010,	// True if button down last tic.
-		PF_UseDown				= 0x0020,
-		PF_DidSecret			= 0x0040,	// True if secret level has been done.
-		PF_Centreing			= 0x0080,
-		PF_IsClient				= 0x0100,	// Player on client side
+		PF_Active		= 0x0001,
+		PF_Spawned		= 0x0002,
+		PF_IsBot		= 0x0004,
+		PF_FixAngle		= 0x0008,
+		PF_AttackDown	= 0x0010,	// True if button down last tic.
+		PF_UseDown		= 0x0020,
+		PF_DidSecret	= 0x0040,	// True if secret level has been done.
+		PF_Centreing	= 0x0080,
+		PF_IsClient		= 0x0100,	// Player on client side
 		PF_AutomapRevealed		= 0x0200,
 		PF_AutomapShowThings	= 0x0400,
 	};

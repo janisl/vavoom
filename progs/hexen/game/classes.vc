@@ -42,6 +42,9 @@
 #include "Carcas.vc"
 #include "Decoration.vc"
 
+#include "StaticLightSource.vc"
+#include "StaticRGBLightSource.vc"
+
 #include "CrystalVial.vc"
 #include "ArtiHealth.vc"
 #include "ArtiFly.vc"

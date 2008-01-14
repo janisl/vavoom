@@ -74,12 +74,6 @@ final void A_Look()
 		targ = EntityEx(Sector->SoundTarget);
 	}
 
-	// No target
-	if (targ && targ.Player && (targ.Player.Cheats & BasePlayer::CF_NOTARGET))
-	{
-		return;
-	}
-
 	//	Andy Baker's stealth monsters
 	if (bStealth)
 	{

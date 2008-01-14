@@ -47,6 +47,8 @@
 #include "BloodSplashBase.vc"
 #include "SlimeChunk.vc"
 #include "SlimeSplash.vc"
+#include "StaticLightSource.vc"
+#include "StaticRGBLightSource.vc"
 
 #include "RocketTrail.vc"
 #include "StrifePuff.vc"
