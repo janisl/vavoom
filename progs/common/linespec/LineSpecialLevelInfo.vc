@@ -811,6 +811,9 @@ int ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 		buttonSuccess = EV_SectorSetFloorScale(Arg1, Arg2, Arg3, Arg4,
 			Arg5);
 		break;
+	case LNSPEC_SetPlayerProperty:
+		buttonSuccess = EV_SetPlayerProperty(Arg1, Arg2, Arg3, Arg4, Arg5, A);
+		break;
 	case LNSPEC_CeilingLowerToHighestFloor:
 		buttonSuccess = EV_DoCeiling(Arg1, Arg2, Arg3, Arg4, Arg5,
 			CeilingMover::CEILEV_LowerToHighestFloor, Line);
@@ -4519,6 +4522,42 @@ final bool EV_ThingStop(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 	return Ret;
 }
 
+//===========================================================================
+//
+//	EV_SetPlayerProperty
+//
+//===========================================================================
+
+final bool EV_SetPlayerProperty(int Arg1, int Arg2, int Arg3, int Arg4,
+	int Arg5, EntityEx A)
+{
+	if (!Arg1)
+	{
+		if (!A || !A.bIsPlayer)
+		{
+			return false;
+		}
+		return A.SetPlayerProperty(Arg3, Arg2);
+	}
+	else
+	{
+		bool Ret = false;
+		int i;
+		for (i = 0; i < MAXPLAYERS; i++)
+		{
+			if (!Game.Players[i] || !Game.Players[i].bSpawned)
+			{
+				continue;
+			}
+			if (EntityEx(Game.Players[i].MO).SetPlayerProperty(Arg3, Arg2))
+			{
+				Ret = true;
+			}
+		}
+		return Ret;
+	}
+}
+
 //**************************************************************************
 //
 //	Force field
@@ -5084,7 +5123,14 @@ final void RecursiveSound(sector_t* sec, int soundblocks, Entity soundtarget)
 final void NoiseAlert(Entity target, Entity emmiter)
 {
 	if (!emmiter)
+	{
 		return;
+	}
+
+	if (target && target.bIsPlayer && PlayerEx(target.Player).bNoTarget)
+	{
+		return;
+	}
 
 	(*Game.validcount)++;
 	RecursiveSound(emmiter.Sector, 0, target);

@@ -86,6 +86,24 @@ enum
 	APROP_ActiveSound	= 9
 };
 
+enum
+{
+	PROP_FROZEN					= 0,
+	PROP_NOTARGET				= 1,
+	PROP_INSTANTWEAPONSWITCH	= 2,
+	PROP_FLY					= 3,
+	PROP_TOTALLYFROZEN			= 4,
+	PROP_INVULNERABILITY		= 5,
+	PROP_STRENGTH				= 6,
+	PROP_INVISIBILITY			= 7,
+	PROP_RADIATIONSUIT			= 8,
+	PROP_ALLMAP					= 9,
+	PROP_INFRARED				= 10,
+	PROP_WEAPONLEVEL2			= 11,
+	PROP_FLIGHT					= 12,
+	PROP_SPEED					= 15
+};
+
 //  States
 state			IdleState;
 state			SeeState;
@@ -2877,6 +2895,12 @@ final bool LookForPlayers(bool allaround)
 
 		if (!P.bSpawned || !P.MO)
 			continue;	//  not spawned yet
+
+		if (PlayerEx(P).bNoTarget)
+		{
+			//	Don't target.
+			continue;
+		}
 
 		if (P.Health <= 0)
 			continue;	// dead
@@ -6659,6 +6683,101 @@ final int GetActorProperty(int Prop)
 		return bFriendly;
 	}
 	return 0;
+}
+
+//==========================================================================
+//
+//	SetPlayerProperty
+//
+//==========================================================================
+
+final bool SetPlayerProperty(int Prop, int Set)
+{
+	class<Inventory> InvClass = none;
+	switch (Prop)
+	{
+	case PROP_FROZEN:
+		PlayerEx(Player).bFrozen = !!Set;
+		return true;
+
+	case PROP_NOTARGET:
+		PlayerEx(Player).bNoTarget = !!Set;
+		return true;
+
+	case PROP_INSTANTWEAPONSWITCH:
+		PlayerEx(Player).bInstantWeaponSwitch = !!Set;
+		return true;
+
+	case PROP_FLY:
+		PlayerEx(Player).bFly = !!Set;
+		bFly = !!Set;
+		bNoGravity = !!Set;
+		return true;
+
+	case PROP_TOTALLYFROZEN:
+		PlayerEx(Player).bTotallyFrozen = !!Set;
+		return true;
+
+	case PROP_INVULNERABILITY:
+		InvClass = PowerInvulnerable;
+		break;
+
+	case PROP_STRENGTH:
+		InvClass = PowerStrength;
+		break;
+
+	case PROP_INVISIBILITY:
+		InvClass = PowerInvisibility;
+		break;
+
+	case PROP_RADIATIONSUIT:
+		InvClass = PowerIronFeet;
+		break;
+
+	case PROP_ALLMAP:
+		if (Set)
+		{
+			PlayerEx(Player).AddRevealedMap();
+		}
+		else
+		{
+			PlayerEx(Player).RemoveRevealedMap();
+		}
+		return true;
+
+	case PROP_INFRARED:
+		InvClass = PowerLightAmp;
+		break;
+
+	case PROP_WEAPONLEVEL2:
+		InvClass = PowerWeaponLevel2;
+		break;
+
+	case PROP_FLIGHT:
+		InvClass = PowerFlight;
+		break;
+
+	case PROP_SPEED:
+		InvClass = PowerSpeed;
+		break;
+
+	default:
+		return false;
+	}
+
+	if (Set)
+	{
+		GiveInventoryType(InvClass);
+	}
+	else
+	{
+		Inventory Item = FindInventory(InvClass);
+		if (Item)
+		{
+			Item.Destroy();
+		}
+	}
+	return true;
 }
 
 float GetBaseViewHeight()

@@ -92,6 +92,11 @@ void RemoveInventory(Inventory Item)
 
 bool UseInventory(Inventory Item)
 {
+	//	Can't use anything while totally frozen
+	if (Player(Player).bTotallyFrozen)
+	{
+		return false;
+	}
 	if (!::UseInventory(Item))
 	{
 		return false;

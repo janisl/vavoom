@@ -616,7 +616,8 @@ final void A_WeaponReady()
 
 final void A_Lower()
 {
-	if (EntityEx(Owner.Player.MO).PlayerIsMorphed())
+	if (EntityEx(Owner.Player.MO).PlayerIsMorphed() ||
+		PlayerEx(Owner.Player).bInstantWeaponSwitch)
 	{
 		Owner.Player.ViewStates[ps_weapon].SY = WEAPONBOTTOM;
 	}

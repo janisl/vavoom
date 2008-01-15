@@ -741,6 +741,23 @@ void PlayerTick(float deltaTime)
 		Actor(MO).bJustAttacked = false;
 	}
 
+	//	You can only press use while totally frozen
+	if (bTotallyFrozen)
+	{
+		Buttons &= BT_USE;
+		Impulse = 0;
+		ViewAngles = MO.Angles;
+		ForwardMove = 0.0;
+		SideMove = 0.0;
+		FlyMove = 0.0;
+	}
+	else if (bFrozen)
+	{
+		ForwardMove = 0.0;
+		SideMove = 0.0;
+		FlyMove = 0.0;
+	}
+
 	if (PlayerState == PST_DEAD)
 	{
 		DeathPlayerTick(deltaTime);
@@ -991,7 +1008,7 @@ void UpdateFaceWidget(float FrameTime)
 	if (sb_face_priority < 6)
 	{
 		// rapid firing
-		if (bAttackDown)
+		if (bAttackDown && !bFrozen && !bTotallyFrozen)
 		{
 			if (sb_face_lastattackdown == -1.0)
 				sb_face_lastattackdown = ST_RAMPAGEDELAY;

@@ -88,12 +88,17 @@ void RemoveInventory(Inventory Item)
 
 //==========================================================================
 //
-//  PlayerUseArtifact
+//  UseInventory
 //
 //==========================================================================
 
 bool UseInventory(Inventory Item)
 {
+	//	Can't use anything while totally frozen
+	if (Player(Player).bTotallyFrozen)
+	{
+		return false;
+	}
 	// Found match - try to use
 	if (!::UseInventory(Item))
 	{

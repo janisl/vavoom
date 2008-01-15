@@ -77,12 +77,15 @@ void EndEffect()
 		return;
 	}
 
-	if (Owner.Origin.z != Owner.FloorZ)
+	if (!Owner.bIsPlayer || !PlayerEx(Owner.Player).bFly)
 	{
+		if (Owner.Origin.z != Owner.FloorZ)
+		{
 //FIXME		player->centreing = true;
+		}
+		Owner.bFly = false;
+		Owner.bNoGravity = false;
 	}
-	Owner.bFly = false;
-	Owner.bNoGravity = false;
 }
 
 defaultproperties

@@ -72,6 +72,15 @@ final void A_Look()
 	else
 	{
 		targ = EntityEx(Sector->SoundTarget);
+		//	If it's dead, don't chase it.
+		if (targ && targ.Health <= 0)
+		{
+			targ = none;
+		}
+		if (targ && targ.bIsPlayer && PlayerEx(targ.Player).bNoTarget)
+		{
+			return;
+		}
 	}
 
 	//	Andy Baker's stealth monsters

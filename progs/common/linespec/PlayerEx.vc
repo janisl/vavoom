@@ -88,6 +88,16 @@ Inventory		SavedInventory;
 bool			onground;
 //	Revert camera if player moves.
 bool			bRevertCamera;
+//	Player cannot move.
+bool			bFrozen;
+//	Player cannot do anything except press use.
+bool			bTotallyFrozen;
+//	Monster don't target
+bool			bNoTarget;
+//	Switch weapons instantly.
+bool			bInstantWeaponSwitch;
+//	Player is flying
+bool			bFly;
 
 int				NoRunHealth;
 
@@ -875,7 +885,8 @@ final void BringUpWeapon()
 	}
 
 	PendingWeapon = none;
-	ViewStates[ps_weapon].SY = Weapon::WEAPONBOTTOM;
+	ViewStates[ps_weapon].SY = bInstantWeaponSwitch ? Weapon::WEAPONTOP :
+		Weapon::WEAPONBOTTOM;
 	SetViewState(ps_weapon, ReadyWeapon.GetUpState());
 	MO.ModelVersion = ReadyWeapon.PlayerModelVersion;
 }

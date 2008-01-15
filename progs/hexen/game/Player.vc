@@ -1217,6 +1217,22 @@ void PlayerTick(float deltaTime)
 		Actor(MO).bJustAttacked = false;
 	}
 
+	if (bTotallyFrozen)
+	{
+		Buttons &= BT_USE;
+		Impulse = 0;
+		ViewAngles = MO.Angles;
+		ForwardMove = 0.0;
+		SideMove = 0.0;
+		FlyMove = 0.0;
+	}
+	else if (bFrozen)
+	{
+		ForwardMove = 0.0;
+		SideMove = 0.0;
+		FlyMove = 0.0;
+	}
+
 	WorldTimer += deltaTime;
 	InventoryTick(deltaTime);
 
