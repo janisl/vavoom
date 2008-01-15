@@ -76,15 +76,15 @@ class VBasePlayer : public VObject
 
 	enum
 	{
-		PF_Active		= 0x0001,
-		PF_Spawned		= 0x0002,
-		PF_IsBot		= 0x0004,
-		PF_FixAngle		= 0x0008,
-		PF_AttackDown	= 0x0010,	// True if button down last tic.
-		PF_UseDown		= 0x0020,
-		PF_DidSecret	= 0x0040,	// True if secret level has been done.
-		PF_Centreing	= 0x0080,
-		PF_IsClient		= 0x0100,	// Player on client side
+		PF_Active				= 0x0001,
+		PF_Spawned				= 0x0002,
+		PF_IsBot				= 0x0004,
+		PF_FixAngle				= 0x0008,
+		PF_AttackDown			= 0x0010,	// True if button down last tic.
+		PF_UseDown				= 0x0020,
+		PF_DidSecret			= 0x0040,	// True if secret level has been done.
+		PF_Centreing			= 0x0080,
+		PF_IsClient				= 0x0100,	// Player on client side
 		PF_AutomapRevealed		= 0x0200,
 		PF_AutomapShowThings	= 0x0400,
 	};
