@@ -137,13 +137,13 @@ void Update(float diff)
 		}
 		break;
 	case CYCLE_Sin:
-		angle = 360.0 * 2.0 * mult;
+		angle = 360.0 * mult;
 		mult = sin(angle);
 		mult = (mult + 1.0) / 2.0;
 		l_cycler.m_current = l_cycler.m_start + (step * mult);
 		break;
 	case CYCLE_Cos:
-		angle = 360.0 * 2.0 * mult;
+		angle = 360.0 * mult;
 		mult = cos(angle);
 		mult = (mult + 1.0) / 2.0;
 		l_cycler.m_current = l_cycler.m_start + (step * mult);
