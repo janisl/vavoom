@@ -436,6 +436,25 @@
 #define APROP_DeathSound	8
 #define APROP_ActiveSound	9
 
+// Player properties --------------------------------------------------------
+
+#define PROP_FROZEN					0
+#define PROP_NOTARGET				1
+#define PROP_INSTANTWEAPONSWITCH	2
+#define PROP_FLY					3
+#define PROP_TOTALLYFROZEN			4
+
+// The following properties correspond to powers given by certain items
+#define PROP_INVULNERABILITY		5
+#define PROP_STRENGTH				6
+#define PROP_INVISIBILITY			7
+#define PROP_RADIATIONSUIT			8
+#define PROP_ALLMAP					9
+#define PROP_INFRARED				10
+#define PROP_WEAPONLEVEL2			11
+#define PROP_FLIGHT					12
+#define PROP_SPEED					15
+
 // Render Styles ------------------------------------------------------------
 
 #define STYLE_None			0	// Do not draw
@@ -453,6 +472,21 @@
 #define DAMAGE_IN_AIR				4
 #define DAMAGE_SUBCLASSES_PROTECT	8
 
+// "Scripted" Marine weapon types -------------------------------------------
+
+#define MARINEWEAPON_Dummy			0
+#define MARINEWEAPON_Fist			1
+#define MARINEWEAPON_BerserkFist	2
+#define MARINEWEAPON_Chainsaw		3
+#define MARINEWEAPON_Pistol			4
+#define MARINEWEAPON_Shotgun		5
+#define MARINEWEAPON_SuperShotgun	6
+#define MARINEWEAPON_Chaingun		7
+#define MARINEWEAPON_RocketLauncher	8
+#define MARINEWEAPON_PlasmaRifle	9
+#define MARINEWEAPON_Railgun		10
+#define MARINEWEAPON_BFG			11
+
 /*
 
 // Return values for PlayMovie ----------------------------------------------
@@ -462,40 +496,6 @@
 #define MOVIE_Played_Aborted    2
 #define MOVIE_Failed           -1
 
-
-// Player properties --------------------------------------------------------
-
-#define PROP_FROZEN                     0
-#define PROP_NOTARGET                   1
-#define PROP_INSTANTWEAPONSWITCH        2
-#define PROP_FLY			3
-#define PROP_TOTALLYFROZEN		4
-
-// The following properties correspond to powers given by certain items
-#define PROP_INVULNERABILITY		5
-#define PROP_STRENGTH			6
-#define PROP_INVISIBILITY		7
-#define PROP_RADIATIONSUIT		8
-#define PROP_ALLMAP			9
-#define PROP_INFRARED			10
-#define PROP_WEAPONLEVEL2		11
-#define PROP_FLIGHT			12
-#define PROP_SPEED			15
-
-// "Scripted" Marine weapon types -------------------------------------------
-
-#define MARINEWEAPON_Dummy		0
-#define MARINEWEAPON_Fist		1
-#define MARINEWEAPON_BerserkFist	2
-#define MARINEWEAPON_Chainsaw		3
-#define MARINEWEAPON_Pistol		4
-#define MARINEWEAPON_Shotgun		5
-#define MARINEWEAPON_SuperShotgun	6
-#define MARINEWEAPON_Chaingun		7
-#define MARINEWEAPON_RocketLauncher	8
-#define MARINEWEAPON_PlasmaRifle	9
-#define MARINEWEAPON_Railgun		10
-#define MARINEWEAPON_BFG		11
 
 // Properties you can use with GetPlayerInfo() ------------------------------
 

@@ -118,6 +118,7 @@ special
 	187:Sector_SetFloorPanning(5),
 	188:Sector_SetCeilingScale(5),
 	189:Sector_SetFloorScale(5),
+	191:SetPlayerProperty(3),
 	192:Ceiling_LowerToHighestFloor(2),
 	193:Ceiling_LowerInstant(3),
 	194:Ceiling_RaiseInstant(3),
@@ -186,5 +187,4 @@ special
 	174:SendToCommunicator(4),
 	175:Thing_ProjectileIntercept(5),
 	179:ChangeSkill(1),
-	191:SetPlayerProperty(3),
 */
