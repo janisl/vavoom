@@ -364,8 +364,6 @@ EXTRA_DIST = compile.bat \
 	game/SStalagmiteBig.vc \
 	game/SStalagmiteSmall.vc \
 	game/Stalker.vc \
-	game/StaticLightSource.vc \
-	game/StaticRGBLightSource.vc \
 	game/Statue.vc \
 	game/StatueRuined.vc \
 	game/StickInWater.vc \

@@ -333,8 +333,6 @@ EXTRA_DIST = compile.bat \
 	game/SorcSpark1.vc \
 	game/SoundWaterfall.vc \
 	game/SoundWindHexen.vc \
-	game/StaticLightSource.vc \
-	game/StaticRGBLightSource.vc \
 	game/SummoningDoll.vc \
 	game/TableShit1.vc \
 	game/TableShit2.vc \

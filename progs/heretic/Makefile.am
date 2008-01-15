@@ -220,8 +220,6 @@ EXTRA_DIST = compile.bat \
 	game/StalactiteSmall.vc \
 	game/StalagmiteLarge.vc \
 	game/StalagmiteSmall.vc \
-	game/StaticLightSource.vc \
-	game/StaticRGBLightSource.vc \
 	game/SuperMap.vc \
 	game/TeleGlitter1.vc \
 	game/TeleGlitter2.vc \
