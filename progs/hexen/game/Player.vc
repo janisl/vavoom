@@ -584,8 +584,6 @@ void PlayerExitMap(bool clusterChange)
 	DamageFlash = 0.0;	// No palette changes
 	BonusFlash = 0.0;
 	PoisonCount = 0;
-	SavedInventory = EntityEx(MO).Inventory;
-	EntityEx(MO).Inventory = none;
 }
 
 //==========================================================================

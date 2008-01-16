@@ -452,8 +452,6 @@ void PlayerExitMap(bool clusterChange)
 	BonusFlash = 0.0;
 	Rain1 = none;
 	Rain2 = none;
-	SavedInventory = EntityEx(MO).Inventory;
-	EntityEx(MO).Inventory = none;
 }
 
 //==========================================================================

@@ -952,6 +952,16 @@ void SV_MapTeleport(VName mapname)
 	guard(SV_MapTeleport);
 	TArray<VThinker*>		TravelObjs;
 
+	//	Call PreTravel event
+	for (int i = 0; i < MAXPLAYERS; i++)
+	{
+		if (!GGameInfo->Players[i])
+		{
+			continue;
+		}
+		GGameInfo->Players[i]->eventPreTravel();
+	}
+
 	//	Coolect list of thinkers that will go to the new level.
 	for (VThinker* Th = GLevel->ThinkerHead; Th; Th = Th->Next)
 	{

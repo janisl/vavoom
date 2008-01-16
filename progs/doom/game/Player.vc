@@ -513,8 +513,6 @@ void PlayerExitMap(bool clusterChange)
 	FixedColourmap = 0;		// cancel ir gogles
 	DamageFlash = 0.0;		// no palette changes
 	BonusFlash = 0.0;
-	SavedInventory = EntityEx(MO).Inventory;
-	EntityEx(MO).Inventory = none;
 }
 
 //==========================================================================

@@ -213,6 +213,10 @@ void SetViewPos()
 {
 }
 
+void PreTravel()
+{
+}
+
 void Cheat_God()
 {
 }

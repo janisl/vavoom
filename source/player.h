@@ -241,6 +241,11 @@ class VBasePlayer : public VObject
 		P_PASS_SELF;
 		EV_RET_VOID(NAME_SetViewPos);
 	}
+	void eventPreTravel()
+	{
+		P_PASS_SELF;
+		EV_RET_VOID(NAME_PreTravel);
+	}
 
 	void eventCheat_God()
 	{
