@@ -42,6 +42,11 @@ EXTRA_DIST = \
 	linespec/CeilingMover.vc \
 	linespec/CeilingWaggle.vc \
 	linespec/DoomBuilderCamera.vc \
+	linespec/DynFlickerLight.vc \
+	linespec/DynFlickerRandomLight.vc \
+	linespec/DynPointLight.vc \
+	linespec/DynPulseLight.vc \
+	linespec/DynSectorLight.vc \
 	linespec/Elevator.vc \
 	linespec/EntityEx.vc \
 	linespec/FakeInventory.vc \
@@ -110,6 +115,8 @@ EXTRA_DIST = \
 	linespec/SoundSequenceSlot.vc \
 	linespec/Spark.vc \
 	linespec/StairStepMover.vc \
+	linespec/StaticLightSource.vc \
+	linespec/StaticRGBLightSource.vc \
 	linespec/Strobe.vc \
 	linespec/SwitchableDecoration.vc \
 	linespec/SwitchingDecoration.vc \
