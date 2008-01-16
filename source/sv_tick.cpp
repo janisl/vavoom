@@ -169,8 +169,16 @@ void VLevel::DestroyAllThinkers()
 	guard(VLevel::DestroyAllThinkers);
 	for (VThinker* Th = ThinkerHead; Th; Th = Th->Next)
 	{
-		Th->DestroyThinker();
+		if (!(Th->GetFlags() & _OF_DelayedDestroy))
+		{
+			Th->DestroyThinker();
+		}
+	}
+	for (VThinker* Th = ThinkerHead; Th;)
+	{
+		VThinker* Next = Th->Next;
 		Th->ConditionalDestroy();
+		Th = Next;
 	}
 	ThinkerHead = NULL;
 	ThinkerTail = NULL;
