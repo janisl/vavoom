@@ -241,6 +241,14 @@ void Cheat_Class()
 {
 }
 
+void Cheat_Fly()
+{
+}
+
+void Cheat_NoTarget()
+{
+}
+
 void ServerImpulse(int AImpulse)
 {
 	Impulse = AImpulse;
