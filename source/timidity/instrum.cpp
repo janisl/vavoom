@@ -689,8 +689,8 @@ static InstrumentLayer *load_instrument(char *name, int font_type, int percussio
         {
 	  goto fail;
 	}
-      sp->data = (sample_t*)safe_malloc(sp->data_length + 1);
-      lp->size += sp->data_length + 1;
+      sp->data = (sample_t*)safe_malloc(sp->data_length + 2);
+      lp->size += sp->data_length + 2;
 
       if (1 != fread(sp->data, sp->data_length, 1, fp))
 	goto fail;
