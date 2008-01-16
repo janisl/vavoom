@@ -4428,6 +4428,12 @@ int TakeSpecialDamage(EntityEx inflictor, EntityEx source, int damage)
 
 bool OkayToSwitchTarget(EntityEx source)
 {
+	if (source == self)
+	{
+		//	Don't hate self.
+		return false;
+	}
+
 	return (!Threshold || bNoGrudge) && !source.bNeverTarget &&
 		!bNoTargetSwitch && (!source.bIsPlayer || !bNoHatePlayers);
 }
