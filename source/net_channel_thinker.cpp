@@ -442,6 +442,11 @@ void VThinkerChannel::ParsePacket(VMessageIn& Msg)
 				default:
 					Sys_Error("Bad method argument type %d", Func->ParamTypes[i].Type);
 				}
+				if (Func->ParamFlags[i] & FPARM_Optional)
+				{
+					pr_stackPtr->i = Msg.ReadBit();
+					pr_stackPtr++;
+				}
 			}
 			//	Execute it
 			VObject::ExecuteFunction(Func);

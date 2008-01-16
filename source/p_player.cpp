@@ -129,6 +129,11 @@ bool VBasePlayer::ExecuteNetMethod(VMethod* Func)
 			default:
 				Sys_Error("Bad method argument type %d", Func->ParamTypes[i].Type);
 			}
+			if (Func->ParamFlags[i] & FPARM_Optional)
+			{
+				Msg.WriteBit(!!Param->i);
+				Param++;
+			}
 		}
 		unguard;
 
@@ -163,6 +168,10 @@ bool VBasePlayer::ExecuteNetMethod(VMethod* Func)
 			break;
 		default:
 			Sys_Error("Bad method argument type %d", Func->ParamTypes[i].Type);
+		}
+		if (Func->ParamFlags[i] & FPARM_Optional)
+		{
+			Param++;
 		}
 	}
 	pr_stackPtr -= Func->ParamsSize;
