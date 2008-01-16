@@ -41,6 +41,13 @@ struct VCodePtrInfo
 	VMethod*	Method;
 };
 
+struct VDehFlag
+{
+	int				Which;
+	const char*		Name;
+	int				Mask;
+};
+
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -71,13 +78,92 @@ static TArray<VName>			Sounds;
 
 static VClass*					GameInfoClass;
 static VClass*					BfgClass;
+static VClass*					HealthBonusClass;
 static VClass*					SoulsphereClass;
 static VClass*					MegaHealthClass;
+static VClass*					GreenArmorClass;
+static VClass*					BlueArmorClass;
+static VClass*					ArmorBonusClass;
 
 static TArray<FReplacedString>	SfxNames;
 static TArray<FReplacedString>	MusicNames;
 static TArray<FReplacedString>	SpriteNames;
 static VLanguage*				EngStrings;
+
+static const VDehFlag DehFlags[] =
+{
+	{ 0, "SPECIAL", 0x00000001 },
+	{ 0, "SOLID", 0x00000002 },
+	{ 0, "SHOOTABLE", 0x00000004 },
+	{ 0, "NOSECTOR", 0x00000008 },
+	{ 0, "NOBLOCKMAP", 0x00000010 },
+	{ 0, "AMBUSH", 0x00000020 },
+	{ 0, "JUSTHIT", 0x00000040 },
+	{ 0, "JUSTATTACKED", 0x00000080 },
+	{ 0, "SPAWNCEILING", 0x00000100 },
+	{ 0, "NOGRAVITY", 0x00000200 },
+	{ 0, "DROPOFF", 0x00000400 },
+	{ 0, "PICKUP", 0x00000800 },
+	{ 0, "NOCLIP", 0x00001000 },
+	{ 0, "FLOAT", 0x00004000 },
+	{ 0, "TELEPORT", 0x00008000 },
+	{ 0, "MISSILE", 0x00010000 },
+	{ 0, "DROPPED", 0x00020000 },
+	{ 0, "SHADOW", 0x00040000 },
+	{ 0, "NOBLOOD", 0x00080000 },
+	{ 0, "CORPSE", 0x00100000 },
+	{ 0, "INFLOAT", 0x00200000 },
+	{ 0, "COUNTKILL", 0x00400000 },
+	{ 0, "COUNTITEM", 0x00800000 },
+	{ 0, "SKULLFLY", 0x01000000 },
+	{ 0, "NOTDMATCH", 0x02000000 },
+	{ 0, "TRANSLATION1", 0x04000000 },
+	{ 0, "TRANSLATION", 0x04000000 },
+	{ 0, "TRANSLATION2", 0x08000000 },
+	{ 0, "UNUSED1", 0x08000000 },
+	{ 0, "TRANSLUC25", 0x10000000 },
+	{ 0, "TRANSLUC75", 0x20000000 },
+	{ 0, "STEALTH", 0x40000000 },
+	{ 0, "UNUSED4", 0x40000000 },
+	{ 0, "TRANSLUCENT", 0x80000000 },
+	{ 0, "TRANSLUC50", 0x80000000 },
+	{ 1, "LOGRAV", 0x00000001 },
+	{ 1, "WINDTHRUST", 0x00000002 },
+	{ 1, "FLOORBOUNCE", 0x00000004 },
+	{ 1, "BLASTED", 0x00000008 },
+	{ 1, "FLY", 0x00000010 },
+	{ 1, "FLOORCLIP", 0x00000020 },
+	{ 1, "SPAWNFLOAT", 0x00000040 },
+	{ 1, "NOTELEPORT", 0x00000080 },
+	{ 1, "RIP", 0x00000100 },
+	{ 1, "PUSHABLE", 0x00000200 },
+	{ 1, "CANSLIDE", 0x00000400 },
+	{ 1, "ONMOBJ", 0x00000800 },
+	{ 1, "PASSMOBJ", 0x00001000 },
+	{ 1, "CANNOTPUSH", 0x00002000 },
+	{ 1, "THRUGHOST", 0x00004000 },
+	{ 1, "BOSS", 0x00008000 },
+	{ 1, "FIREDAMAGE", 0x00010000 },
+	{ 1, "NODMGTHRUST", 0x00020000 },
+	{ 1, "TELESTOMP", 0x00040000 },
+	{ 1, "DONTDRAW", 0x00080000 },
+	{ 1, "FLOATBOB", 0x00100000 },
+	{ 1, "IMPACT", 0x00200000 },
+	{ 1, "PUSHWALL", 0x00400000 },
+	{ 1, "MCROSS", 0x00800000 },
+	{ 1, "PCROSS", 0x01000000 },
+	{ 1, "CANTLEAVEFLOORPIC", 0x02000000 },
+	{ 1, "NONSHOOTABLE", 0x04000000 },
+	{ 1, "INVULNERABLE", 0x08000000 },
+	{ 1, "DORMANT", 0x10000000 },
+	{ 1, "ICEDAMAGE", 0x20000000 },
+	{ 1, "SEEKERMISSILE", 0x40000000 },
+	{ 1, "REFLECTIVE", 0x80000000 },
+	//	Ignored flags
+	{ 0, "SLIDE", 0 },
+	{ 0, "UNUSED2", 0 },
+	{ 0, "UNUSED3", 0 },
+};
 
 // CODE --------------------------------------------------------------------
 
@@ -94,6 +180,7 @@ static bool GetLine()
 	{
 		if (!*PatchPtr)
 		{
+			String = NULL;
 			return false;
 		}
 
@@ -220,6 +307,22 @@ static void SetClassFieldInt(VClass* Class, const char* FieldName,
 
 //==========================================================================
 //
+//	SetClassFieldByte
+//
+//==========================================================================
+
+static void SetClassFieldByte(VClass* Class, const char* FieldName,
+	vuint8 Value)
+{
+	guard(SetClassFieldByte);
+	VField* F = Class->FindFieldChecked(FieldName);
+	vuint8* Ptr = Class->Defaults + F->Ofs;
+	*Ptr = Value;
+	unguard;
+}
+
+//==========================================================================
+//
 //	SetClassFieldFloat
 //
 //==========================================================================
@@ -286,89 +389,79 @@ static void SetClassFieldBool(VClass* Class, const char* FieldName, int Value)
 
 //==========================================================================
 //
-//	ParseFlags
+//	ParseFlag
 //
 //==========================================================================
 
-static int ParseFlags()
+static void ParseFlag(const VStr& FlagName, int* Values, bool* Changed)
 {
 	guard(ParseFlags);
-	VStr FlagsStr = VStr(ValueString).Replace(" ", "");
-	TArray<VStr> FlagsArray;
-	FlagsStr.Split('+', FlagsArray);
-	int Flags = 0;
-	for (int i = 0; i < FlagsArray.Num(); i++)
+	if (FlagName.Length() == 0)
 	{
-		VStr Flag(FlagsArray[i].ToUpper());
-		if (Flag == "SPECIAL")
-			Flags |= 0x00000001;
-		else if (Flag == "SOLID")
-			Flags |= 0x00000002;
-		else if (Flag == "SHOOTABLE")
-			Flags |= 0x00000004;
-		else if (Flag == "NOSECTOR")
-			Flags |= 0x00000008;
-		else if (Flag == "NOBLOCKMAP")
-			Flags |= 0x00000010;
-		else if (Flag == "AMBUSH")
-			Flags |= 0x00000020;
-		else if (Flag == "JUSTHIT")
-			Flags |= 0x00000040;
-		else if (Flag == "JUSTATTACKED")
-			Flags |= 0x00000080;
-		else if (Flag == "SPAWNCEILING")
-			Flags |= 0x00000100;
-		else if (Flag == "NOGRAVITY")
-			Flags |= 0x00000200;
-		else if (Flag == "DROPOFF")
-			Flags |= 0x00000400;
-		else if (Flag == "PICKUP")
-			Flags |= 0x00000800;
-		else if (Flag == "NOCLIP")
-			Flags |= 0x00001000;
-		else if (Flag == "SLIDE")
-			Flags |= 0x00002000;
-		else if (Flag == "FLOAT")
-			Flags |= 0x00004000;
-		else if (Flag == "TELEPORT")
-			Flags |= 0x00008000;
-		else if (Flag == "MISSILE")
-			Flags |= 0x00010000;
-		else if (Flag == "DROPPED")
-			Flags |= 0x00020000;
-		else if (Flag == "SHADOW")
-			Flags |= 0x00040000;
-		else if (Flag == "NOBLOOD")
-			Flags |= 0x00080000;
-		else if (Flag == "CORPSE")
-			Flags |= 0x00100000;
-		else if (Flag == "INFLOAT")
-			Flags |= 0x00200000;
-		else if (Flag == "COUNTKILL")
-			Flags |= 0x00400000;
-		else if (Flag == "COUNTITEM")
-			Flags |= 0x00800000;
-		else if (Flag == "SKULLFLY")
-			Flags |= 0x01000000;
-		else if (Flag == "NOTDMATCH")
-			Flags |= 0x02000000;
-		else if (Flag == "TRANSLATION1" || Flag == "TRANSLATION")
-			Flags |= 0x04000000;
-		else if (Flag == "TRANSLATION2" || Flag == "UNUSED1")
-			Flags |= 0x08000000;
-		else if (Flag == "UNUSED2")
-			Flags |= 0x10000000;
-		else if (Flag == "UNUSED3")
-			Flags |= 0x20000000;
-		else if (Flag == "UNUSED4")
-			Flags |= 0x40000000;
-		else if (Flag == "TRANSLUCENT")
-			Flags |= 0x80000000;
-		else
-			dprintf("WARINIG! Unknown flag %s\n", *Flag);
+		return;
 	}
-	return Flags;
+	if (FlagName[0] >= '0' && FlagName[0] <= '9')
+	{
+		//	Clear flags that were not used by Doom engine as well as SLIDE
+		// flag which desn't exist anymore.
+		Values[0] = atoi(*FlagName) & 0x0fffdfff;
+		Changed[0] = true;
+		return;
+	}
+	for (size_t i = 0; i < ARRAY_COUNT(DehFlags); i++)
+	{
+		if (FlagName == DehFlags[i].Name)
+		{
+			Values[DehFlags[i].Which] |= DehFlags[i].Mask;
+			Changed[DehFlags[i].Which] = true;
+			return;
+		}
+	}
+	GCon->Logf("WARINIG! Unknown flag %s", *FlagName);
 	unguard;
+}
+
+//==========================================================================
+//
+//	DoThingState
+//
+//==========================================================================
+
+static void DoThingState(VClass* Ent, const char* StateLabel)
+{
+	guard();
+	if (value < 0 || value >= States.Num())
+	{
+		GCon->Logf("WARNING! Bad thing state %d", value);
+	}
+	else
+	{
+		Ent->SetStateLabel(StateLabel, States[value]);
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	DoThingSound
+//
+//==========================================================================
+
+static void DoThingSound(VClass* Ent, const char* FieldName)
+{
+	//	If it's not a number, treat it like a sound defined in SNDINFO
+	if (ValueString[0] < '0' || ValueString[0] > '9')
+	{
+		SetClassFieldName(Ent, FieldName, ValueString);
+	}
+	else if (value < 0 || value >= Sounds.Num())
+	{
+		GCon->Logf("WARNING! Bad sound index %d", value);
+	}
+	else
+	{
+		SetClassFieldName(Ent, FieldName, Sounds[value]);
+	}
 }
 
 //==========================================================================
@@ -382,7 +475,7 @@ static void ReadThing(int num)
 	guard(ReadThing);
 	if (num < 1 || num > EntClasses.Num())
 	{
-		dprintf("WARNING! Invalid thing num %d\n", num);
+		GCon->Logf("WARNING! Invalid thing num %d", num);
 		while (ParseParam());
 		return;
 	}
@@ -457,205 +550,234 @@ static void ReadThing(int num)
 		{
 			SetClassFieldFloat(Ent, "PainChance", value / 256.0);
 		}
+		else if (!VStr::ICmp(String, "Translucency"))
+		{
+			SetClassFieldFloat(Ent, "Alpha", value / 65536.0);
+			SetClassFieldByte(Ent, "RenderStyle", STYLE_Translucent);
+		}
+		else if (!VStr::ICmp(String, "Alpha"))
+		{
+			SetClassFieldFloat(Ent, "Alpha", atof(ValueString));
+		}
+		else if (!VStr::ICmp(String, "Render Style"))
+		{
+			int RenderStyle = STYLE_Normal;
+			if (!VStr::ICmp(ValueString, "STYLE_None"))
+			{
+				RenderStyle = STYLE_None;
+			}
+			else if (!VStr::ICmp(ValueString, "STYLE_Normal"))
+			{
+				RenderStyle = STYLE_Normal;
+			}
+			else if (!VStr::ICmp(ValueString, "STYLE_Fuzzy"))
+			{
+				RenderStyle = STYLE_Fuzzy;
+			}
+			else if (!VStr::ICmp(ValueString, "STYLE_SoulTrans"))
+			{
+				RenderStyle = STYLE_SoulTrans;
+			}
+			else if (!VStr::ICmp(ValueString, "STYLE_OptFuzzy"))
+			{
+				RenderStyle = STYLE_OptFuzzy;
+			}
+			else if (!VStr::ICmp(ValueString, "STYLE_Translucent"))
+			{
+				RenderStyle = STYLE_Translucent;
+			}
+			else if (!VStr::ICmp(ValueString, "STYLE_Add"))
+			{
+				RenderStyle = STYLE_Add;
+			}
+			else
+			{
+				GCon->Logf("Bad render style %s", ValueString);
+			}
+			SetClassFieldByte(Ent, "RenderStyle", RenderStyle);
+		}
+		else if (!VStr::ICmp(String, "Scale"))
+		{
+			float Scale = atof(ValueString);
+			Scale = MID(0.0001, Scale, 256.0);
+			SetClassFieldFloat(Ent, "ScaleX", Scale);
+			SetClassFieldFloat(Ent, "ScaleY", Scale);
+		}
 		else if (!VStr::ICmp(String, "Bits"))
 		{
-			if (*ValueString < '0' || *ValueString > '9')
+			TArray<VStr> Flags;
+			VStr Tmp(ValueString);
+			Tmp.Split(" ,+|\t\f\r", Flags);
+			int Values[2] = { 0, 0 };
+			bool Changed[2] = { false, false };
+			for (int i = 0; i < Flags.Num(); i++)
 			{
-				value = ParseFlags();
+				ParseFlag(Flags[i].ToUpper(), Values, Changed);
 			}
-			SetClassFieldBool(Ent, "bSpecial", value & 0x00000001);
-			SetClassFieldBool(Ent, "bSolid", value & 0x00000002);
-			SetClassFieldBool(Ent, "bShootable", value & 0x00000004);
-			SetClassFieldBool(Ent, "bHidden", value & 0x00000008);
-			SetClassFieldBool(Ent, "bNoBlockmap", value & 0x00000010);
-			SetClassFieldBool(Ent, "bAmbush", value & 0x00000020);
-			SetClassFieldBool(Ent, "bJustHit", value & 0x00000040);
-			SetClassFieldBool(Ent, "bJustAttacked", value & 0x00000080);
-			SetClassFieldBool(Ent, "bSpawnCeiling", value & 0x00000100);
-			SetClassFieldBool(Ent, "bNoGravity", value & 0x00000200);
-			SetClassFieldBool(Ent, "bDropOff", value & 0x00000400);
-			SetClassFieldBool(Ent, "bPickUp", value & 0x00000800);
-			SetClassFieldBool(Ent, "bColideWithThings", !(value & 0x00001000));
-			SetClassFieldBool(Ent, "bColideWithWorld", !(value & 0x00001000));
-			SetClassFieldBool(Ent, "bFloat", value & 0x00004000);
-			SetClassFieldBool(Ent, "bTeleport", value & 0x00008000);
-			SetClassFieldBool(Ent, "bMissile", value & 0x00010000);
-			SetClassFieldBool(Ent, "bActivatePCross", value & 0x00010000);
-			SetClassFieldBool(Ent, "bNoTeleport", value & 0x00010000);
-			SetClassFieldBool(Ent, "bDropped", value & 0x00020000);
-			SetClassFieldBool(Ent, "bNoBlood", value & 0x00080000);
-			SetClassFieldBool(Ent, "bCorpse", value & 0x00100000);
-			SetClassFieldBool(Ent, "bInFloat", value & 0x00200000);
-			SetClassFieldBool(Ent, "bCountKill", value & 0x00400000);
-			SetClassFieldBool(Ent, "bMonster", value & 0x00400000);
-			SetClassFieldBool(Ent, "bActivateMCross", value & 0x00400000);
-			SetClassFieldBool(Ent, "bActivatePushWall", (value & 0x00400000) || num == 1);
-			SetClassFieldBool(Ent, "bCountItem", value & 0x00800000);
-			SetClassFieldBool(Ent, "bSkullFly", value & 0x01000000);
-			SetClassFieldBool(Ent, "bNoDeathmatch", value & 0x02000000);
-			SetClassFieldBool(Ent, "bNoPassMobj", num != 1 && !(value & 0x00400000) && !(value & 0x00010000));
-			//	Translation
-			SetClassFieldInt(Ent, "Translation", value & 0x0c000000 ?
-				(TRANSL_Standard << TRANSL_TYPE_SHIFT) + ((value & 0x0c000000) >> 26) - 1 : 0);
-			//	Alpha
-			SetClassFieldFloat(Ent, "Alpha", (value & 0x00040000) ? 0.1 : (value & 0x80000000) ? 0.5 : 1.0);
-			//	The following fields were not used
-			//value & 0x10000000);
-			//value & 0x20000000);
-			//value & 0x40000000);
+			if (Changed[0])
+			{
+				SetClassFieldBool(Ent, "bSpecial", Values[0] & 0x00000001);
+				SetClassFieldBool(Ent, "bSolid", Values[0] & 0x00000002);
+				SetClassFieldBool(Ent, "bShootable", Values[0] & 0x00000004);
+				SetClassFieldBool(Ent, "bHidden", Values[0] & 0x00000008);
+				SetClassFieldBool(Ent, "bNoBlockmap", Values[0] & 0x00000010);
+				SetClassFieldBool(Ent, "bAmbush", Values[0] & 0x00000020);
+				SetClassFieldBool(Ent, "bJustHit", Values[0] & 0x00000040);
+				SetClassFieldBool(Ent, "bJustAttacked", Values[0] & 0x00000080);
+				SetClassFieldBool(Ent, "bSpawnCeiling", Values[0] & 0x00000100);
+				SetClassFieldBool(Ent, "bNoGravity", Values[0] & 0x00000200);
+				SetClassFieldBool(Ent, "bDropOff", Values[0] & 0x00000400);
+				SetClassFieldBool(Ent, "bPickUp", Values[0] & 0x00000800);
+				SetClassFieldBool(Ent, "bColideWithThings", !(Values[0] & 0x00001000));
+				SetClassFieldBool(Ent, "bColideWithWorld", !(Values[0] & 0x00001000));
+				SetClassFieldBool(Ent, "bFloat", Values[0] & 0x00004000);
+				SetClassFieldBool(Ent, "bTeleport", Values[0] & 0x00008000);
+				SetClassFieldBool(Ent, "bMissile", Values[0] & 0x00010000);
+				SetClassFieldBool(Ent, "bDropped", Values[0] & 0x00020000);
+				SetClassFieldBool(Ent, "bNoBlood", Values[0] & 0x00080000);
+				SetClassFieldBool(Ent, "bCorpse", Values[0] & 0x00100000);
+				SetClassFieldBool(Ent, "bInFloat", Values[0] & 0x00200000);
+				SetClassFieldBool(Ent, "bCountKill", Values[0] & 0x00400000);
+				SetClassFieldBool(Ent, "bCountItem", Values[0] & 0x00800000);
+				SetClassFieldBool(Ent, "bSkullFly", Values[0] & 0x01000000);
+				SetClassFieldBool(Ent, "bNoDeathmatch", Values[0] & 0x02000000);
+				SetClassFieldBool(Ent, "bStealth", Values[0] & 0x40000000);
+
+				//	Set additional flags for missiles.
+				SetClassFieldBool(Ent, "bActivatePCross", Values[0] & 0x00010000);
+				SetClassFieldBool(Ent, "bNoTeleport", Values[0] & 0x00010000);
+
+				//	Set additional flags for monsters.
+				SetClassFieldBool(Ent, "bMonster", Values[0] & 0x00400000);
+				SetClassFieldBool(Ent, "bActivateMCross", Values[0] & 0x00400000);
+				//	Set push wall for both monsters and the player.
+				SetClassFieldBool(Ent, "bActivatePushWall", (Values[0] & 0x00400000) || num == 1);
+				//	Also set no pass mobj flag.
+				SetClassFieldBool(Ent, "bNoPassMobj", num != 1 &&
+					!(Values[0] & 0x00400000) && !(Values[0] & 0x00010000));
+
+				//	Translation
+				SetClassFieldInt(Ent, "Translation", Values[0] & 0x0c000000 ?
+					(TRANSL_Standard << TRANSL_TYPE_SHIFT) + ((Values[0] & 0x0c000000) >> 26) - 1 : 0);
+
+				//	Alpha and render style.
+				SetClassFieldFloat(Ent, "Alpha", (Values[0] & 0x00040000) ? 0.1 :
+					(Values[0] & 0x80000000) ? 0.5 :
+					(Values[0] & 0x10000000) ? 0.25 :
+					(Values[0] & 0x20000000) ? 0.75 : 1.0);
+				SetClassFieldByte(Ent, "RenderStyle", (Values[0] & 0x00040000) ?
+					STYLE_OptFuzzy : (Values[0] & 0xb0000000) ? STYLE_Translucent : STYLE_Normal);
+			}
+			if (Changed[1])
+			{
+				SetClassFieldBool(Ent, "bWindThrust", Values[1] & 0x00000002);
+				SetClassFieldBool(Ent, "bBlasted", Values[1] & 0x00000008);
+				SetClassFieldBool(Ent, "bFly", Values[1] & 0x00000010);
+				SetClassFieldBool(Ent, "bFloorClip", Values[1] & 0x00000020);
+				SetClassFieldBool(Ent, "bSpawnFloat", Values[1] & 0x00000040);
+				SetClassFieldBool(Ent, "bNoTeleport", Values[1] & 0x00000080);
+				SetClassFieldBool(Ent, "bRip", Values[1] & 0x00000100);
+				SetClassFieldBool(Ent, "bPushable", Values[1] & 0x00000200);
+				SetClassFieldBool(Ent, "bSlide", Values[1] & 0x00000400);
+				SetClassFieldBool(Ent, "bOnMobj", Values[1] & 0x00000800);
+				SetClassFieldBool(Ent, "bNoPassMobj", !(Values[1] & 0x00001000));
+				SetClassFieldBool(Ent, "bCannotPush", Values[1] & 0x00002000);
+				SetClassFieldBool(Ent, "bThruGhost", Values[1] & 0x00004000);
+				SetClassFieldBool(Ent, "bBoss", Values[1] & 0x00008000);
+				SetClassFieldBool(Ent, "bNoDamageThrust", Values[1] & 0x00020000);
+				SetClassFieldBool(Ent, "bTelestomp", Values[1] & 0x00040000);
+				SetClassFieldBool(Ent, "bHidden", Values[1] & 0x00080000);
+				SetClassFieldBool(Ent, "bFloatBob", Values[1] & 0x00100000);
+				SetClassFieldBool(Ent, "bActivateImpact", Values[1] & 0x00200000);
+				SetClassFieldBool(Ent, "bActivatePushWall", Values[1] & 0x00400000);
+				SetClassFieldBool(Ent, "bActivateMCross", Values[1] & 0x00800000);
+				SetClassFieldBool(Ent, "bActivatePCross", Values[1] & 0x01000000);
+				SetClassFieldBool(Ent, "bCantLeaveFloorpic", Values[1] & 0x02000000);
+				SetClassFieldBool(Ent, "bNonShootable", Values[1] & 0x04000000);
+				SetClassFieldBool(Ent, "bInvulnerable", Values[1] & 0x08000000);
+				SetClassFieldBool(Ent, "bDormant", Values[1] & 0x10000000);
+				SetClassFieldBool(Ent, "bSeekerMissile", Values[1] & 0x40000000);
+				SetClassFieldBool(Ent, "bReflective", Values[1] & 0x80000000);
+				//	Things that used to be flags before.
+				if (Values[1] & 0x00000001)
+					SetClassFieldFloat(Ent, "Gravity", 0.125);
+				if (Values[1] & 0x00010000)
+					SetClassFieldName(Ent, "DamageType", "Fire");
+				else if (Values[1] & 0x20000000)
+					SetClassFieldName(Ent, "DamageType", "Ice");
+				if (Values[1] & 0x00000004)
+					SetClassFieldByte(Ent, "BounceType", 1);
+			}
 		}
 		//
 		//	States
 		//
 		else if (!VStr::ICmp(String, "Initial frame"))
 		{
-			if (value < 0 || value >= States.Num())
-			{
-				dprintf("WARNING! Bad thing state %d\n", value);
-			}
-			else
-			{
-				Ent->SetStateLabel("Spawn", States[value]);
-			}
+			DoThingState(Ent, "Spawn");
 		}
 		else if (!VStr::ICmp(String, "First moving frame"))
 		{
-			if (value < 0 || value >= States.Num())
-			{
-				dprintf("WARNING! Bad thing state %d\n", value);
-			}
-			else
-			{
-				Ent->SetStateLabel("See", States[value]);
-			}
+			DoThingState(Ent, "See");
 		}
 		else if (!VStr::ICmp(String, "Close attack frame"))
 		{
-			if (value < 0 || value >= States.Num())
+			//	Don't change melee state for players
+			if (num != 1)
 			{
-				dprintf("WARNING! Bad thing state %d\n", value);
-			}
-			else
-			{
-				Ent->SetStateLabel("Melee", States[value]);
+				DoThingState(Ent, "Melee");
 			}
 		}
 		else if (!VStr::ICmp(String, "Far attack frame"))
 		{
-			if (value < 0 || value >= States.Num())
+			//	Don't change missile state for players
+			if (num != 1)
 			{
-				dprintf("WARNING! Bad thing state %d\n", value);
-			}
-			else
-			{
-				Ent->SetStateLabel("Missile", States[value]);
+				DoThingState(Ent, "Missile");
 			}
 		}
 		else if (!VStr::ICmp(String, "Injury frame"))
 		{
-			if (value < 0 || value >= States.Num())
-			{
-				dprintf("WARNING! Bad thing state %d\n", value);
-			}
-			else
-			{
-				Ent->SetStateLabel("Pain", States[value]);
-			}
+			DoThingState(Ent, "Pain");
 		}
 		else if (!VStr::ICmp(String, "Death frame"))
 		{
-			if (value < 0 || value >= States.Num())
-			{
-				dprintf("WARNING! Bad thing state %d\n", value);
-			}
-			else
-			{
-				Ent->SetStateLabel("Death", States[value]);
-			}
+			DoThingState(Ent, "Death");
 		}
 		else if (!VStr::ICmp(String, "Exploding frame"))
 		{
-			if (value < 0 || value >= States.Num())
-			{
-				dprintf("WARNING! Bad thing state %d\n", value);
-			}
-			else
-			{
-				Ent->SetStateLabel("XDeath", States[value]);
-			}
+			DoThingState(Ent, "XDeath");
 		}
 		else if (!VStr::ICmp(String, "Respawn frame"))
 		{
-			if (value < 0 || value >= States.Num())
-			{
-				dprintf("WARNING! Bad thing state %d\n", value);
-			}
-			else
-			{
-				Ent->SetStateLabel("Raise", States[value]);
-			}
+			DoThingState(Ent, "Raise");
 		}
 		//
 		//	Sounds
 		//
 		else if (!VStr::ICmp(String, "Alert sound"))
 		{
-			if (value < 0 || value >= Sounds.Num())
-			{
-				dprintf("WARNING! Bad sound index %d\n", value);
-			}
-			else
-			{
-				SetClassFieldName(Ent, "SightSound", Sounds[value]);
-			}
+			DoThingSound(Ent, "SightSound");
 		}
 		else if (!VStr::ICmp(String, "Action sound"))
 		{
-			if (value < 0 || value >= Sounds.Num())
-			{
-				dprintf("WARNING! Bad sound index %d\n", value);
-			}
-			else
-			{
-				SetClassFieldName(Ent, "ActiveSound", Sounds[value]);
-			}
+			DoThingSound(Ent, "ActiveSound");
 		}
 		else if (!VStr::ICmp(String, "Attack sound"))
 		{
-			if (value < 0 || value >= Sounds.Num())
-			{
-				dprintf("WARNING! Bad sound index %d\n", value);
-			}
-			else
-			{
-				SetClassFieldName(Ent, "AttackSound", Sounds[value]);
-			}
+			DoThingSound(Ent, "AttackSound");
 		}
 		else if (!VStr::ICmp(String, "Pain sound"))
 		{
-			if (value < 0 || value >= Sounds.Num())
-			{
-				dprintf("WARNING! Bad sound index %d\n", value);
-			}
-			else
-			{
-				SetClassFieldName(Ent, "PainSound", Sounds[value]);
-			}
+			DoThingSound(Ent, "PainSound");
 		}
 		else if (!VStr::ICmp(String, "Death sound"))
 		{
-			if (value < 0 || value >= Sounds.Num())
-			{
-				dprintf("WARNING! Bad sound index %d\n", value);
-			}
-			else
-			{
-				SetClassFieldName(Ent, "DeathSound", Sounds[value]);
-			}
+			DoThingSound(Ent, "DeathSound");
 		}
 		else
 		{
-			dprintf("WARNING! Invalid mobj param %s\n", String);
+			GCon->Logf("WARNING! Invalid mobj param %s", String);
 		}
 	}
 	unguard;
@@ -681,7 +803,7 @@ static void ReadSound(int)
 		else if (!VStr::ICmp(String, "Zero 4"));		//Link - removed
 		else if (!VStr::ICmp(String, "Neg. One 1"));	//Link pitch - removed
 		else if (!VStr::ICmp(String, "Neg. One 2"));	//Link volume - removed
-		else dprintf("WARNING! Invalid sound param %s\n", String);
+		else GCon->Logf("WARNING! Invalid sound param %s", String);
 	}
 	unguard;
 }
@@ -698,7 +820,7 @@ static void ReadState(int num)
 	//	Check index.
 	if (num >= States.Num() || num < 0)
 	{
-		dprintf("WARNING! Invalid state num %d\n", num);
+		GCon->Logf("WARNING! Invalid state num %d", num);
 		while (ParseParam());
 		return;
 	}
@@ -716,7 +838,7 @@ static void ReadState(int num)
 		{
 			if (value < 0 || value >= Sprites.Num())
 			{
-				dprintf("WARNING! Bad sprite index %d\n", value);
+				GCon->Logf("WARNING! Bad sprite index %d", value);
 			}
 			else
 			{
@@ -741,7 +863,7 @@ static void ReadState(int num)
 		{
 			if (value >= States.Num() || value < 0)
 			{
-				dprintf("WARNING! Invalid next state %d\n", value);
+				GCon->Logf("WARNING! Invalid next state %d", value);
 			}
 			else
 			{
@@ -758,11 +880,11 @@ static void ReadState(int num)
 		}
 		else if (!VStr::ICmp(String, "Action pointer"))
 		{
-			dprintf("WARNING! Tried to set action pointer.\n");
+			GCon->Logf("WARNING! Tried to set action pointer.");
 		}
 		else
 		{
-			dprintf("WARNING! Invalid state param %s\n", String);
+			GCon->Logf("WARNING! Invalid state param %s", String);
 		}
 	}
 	unguard;
@@ -780,7 +902,7 @@ static void ReadSpriteName(int)
 	while (ParseParam())
 	{
 		if (!VStr::ICmp(String, "Offset"));	//	Can't handle
-		else dprintf("WARNING! Invalid sprite name param %s\n", String);
+		else GCon->Logf("WARNING! Invalid sprite name param %s", String);
 	}
 	unguard;
 }
@@ -797,7 +919,7 @@ static void ReadAmmo(int num)
 	//	Check index.
 	if (num >= AmmoClasses.Num() || num < 0)
 	{
-		dprintf("WARNING! Invalid ammo num %d\n", num);
+		GCon->Logf("WARNING! Invalid ammo num %d", num);
 		while (ParseParam());
 		return;
 	}
@@ -817,7 +939,7 @@ static void ReadAmmo(int num)
 		}
 		else
 		{
-			dprintf("WARNING! Invalid ammo param %s\n", String);
+			GCon->Logf("WARNING! Invalid ammo param %s", String);
 		}
 	}
 
@@ -856,6 +978,26 @@ static void ReadAmmo(int num)
 
 //==========================================================================
 //
+//	DoWeaponState
+//
+//==========================================================================
+
+static void DoWeaponState(VClass* Weapon, const char* StateLabel)
+{
+	guard(DoWeaponState);
+	if (value < 0 || value >= States.Num())
+	{
+		GCon->Logf("WARNING! Invalid weapon state %d", value);
+	}
+	else
+	{
+		Weapon->SetStateLabel(StateLabel, States[value]);
+	}
+	unguard;
+}
+
+//==========================================================================
+//
 //	ReadWeapon
 //
 //==========================================================================
@@ -866,7 +1008,7 @@ static void ReadWeapon(int num)
 	//	Check index.
 	if (num < 0 || num >= WeaponClasses.Num())
 	{
-		dprintf("WARNING! Invalid weapon num %d\n", num);
+		GCon->Logf("WARNING! Invalid weapon num %d", num);
 		while (ParseParam());
 		return;
 	}
@@ -891,64 +1033,34 @@ static void ReadWeapon(int num)
 				SetClassFieldClass(Weapon, "AmmoType1", NULL);
 			}
 		}
+		else if (!VStr::ICmp(String, "Ammo use") ||
+			!VStr::ICmp(String, "Ammo per shot"))
+		{
+			SetClassFieldInt(Weapon, "AmmoUse1", value);
+		}
 		else if (!VStr::ICmp(String, "Deselect frame"))
 		{
-			if (value < 0 || value >= States.Num())
-			{
-				dprintf("WARNING! Invalid weapon state %d\n", value);
-			}
-			else
-			{
-				Weapon->SetStateLabel("Select", States[value]);
-			}
+			DoWeaponState(Weapon, "Select");
 		}
 		else if (!VStr::ICmp(String, "Select frame"))
 		{
-			if (value < 0 || value >= States.Num())
-			{
-				dprintf("WARNING! Invalid weapon state %d\n", value);
-			}
-			else
-			{
-				Weapon->SetStateLabel("Deselect", States[value]);
-			}
+			DoWeaponState(Weapon, "Deselect");
 		}
 		else if (!VStr::ICmp(String, "Bobbing frame"))
 		{
-			if (value < 0 || value >= States.Num())
-			{
-				dprintf("WARNING! Invalid weapon state %d\n", value);
-			}
-			else
-			{
-				Weapon->SetStateLabel("Ready", States[value]);
-			}
+			DoWeaponState(Weapon, "Ready");
 		}
 		else if (!VStr::ICmp(String, "Shooting frame"))
 		{
-			if (value < 0 || value >= States.Num())
-			{
-				dprintf("WARNING! Invalid weapon state %d\n", value);
-			}
-			else
-			{
-				Weapon->SetStateLabel("Fire", States[value]);
-			}
+			DoWeaponState(Weapon, "Fire");
 		}
 		else if (!VStr::ICmp(String, "Firing frame"))
 		{
-			if (value < 0 || value >= States.Num())
-			{
-				dprintf("WARNING! Invalid weapon state %d\n", value);
-			}
-			else
-			{
-				Weapon->SetStateLabel("Flash", States[value]);
-			}
+			DoWeaponState(Weapon, "Flash");
 		}
 		else
 		{
-			dprintf("WARNING! Invalid weapon param %s\n", String);
+			GCon->Logf("WARNING! Invalid weapon param %s", String);
 		}
 	}
 	unguard;
@@ -965,7 +1077,7 @@ static void ReadPointer(int num)
 	guard(ReadPointer);
 	if (num < 0 || num >= CodePtrStates.Num())
 	{
-		dprintf("WARNING! Invalid pointer\n");
+		GCon->Logf("WARNING! Invalid pointer");
 		while (ParseParam());
 		return;
 	}
@@ -976,7 +1088,7 @@ static void ReadPointer(int num)
 		{
 			if (value < 0 || value >= States.Num())
 			{
-				dprintf("WARNING! Invalid source state %d\n", value);
+				GCon->Logf("WARNING! Invalid source state %d", value);
 			}
 			else
 			{
@@ -985,7 +1097,7 @@ static void ReadPointer(int num)
 		}
 		else
 		{
-			dprintf("WARNING! Invalid pointer param %s\n", String);
+			GCon->Logf("WARNING! Invalid pointer param %s", String);
 		}
 	}
 	unguard;
@@ -1007,7 +1119,7 @@ static void ReadCodePtr(int)
 			int Index = atoi(String + 5);
 			if (Index < 0 || Index >= States.Num())
 			{
-				dprintf("Bad frame index %d", Index);
+				GCon->Logf("Bad frame index %d", Index);
 				continue;
 			}
 			VState* State = States[Index];
@@ -1030,12 +1142,12 @@ static void ReadCodePtr(int)
 			}
 			if (!Found)
 			{
-				dprintf("WARNING! Invalid code pointer %s\n", ValueString);
+				GCon->Logf("WARNING! Invalid code pointer %s", ValueString);
 			}
 		}
 		else
 		{
-			dprintf("WARNING! Invalid code pointer param %s\n", String);
+			GCon->Logf("WARNING! Invalid code pointer param %s", String);
 		}
 	}
 	unguard;
@@ -1052,6 +1164,38 @@ static void ReadCheats(int)
 	guard(ReadCheats);
 	//	Old cheat handling is removed
 	while (ParseParam());
+	unguard;
+}
+
+//==========================================================================
+//
+//	DoPowerupColour
+//
+//==========================================================================
+
+static void DoPowerupColour(const char* ClassName)
+{
+	guard(DoPowerupColour);
+	VClass* Power = VClass::FindClass(ClassName);
+	if (!Power)
+	{
+		GCon->Logf("Can't find powerup class %s", ClassName);
+		return;
+	}
+
+	int r, g, b;
+	float a;
+	if (sscanf(ValueString, "%d %d %d %f", &r, &g, &b, &a) != 4)
+	{
+		GCon->Logf("Bad powerup colour %s", ValueString);
+		return;
+	}
+	r = MID(0, r, 255);
+	g = MID(0, g, 255);
+	b = MID(0, b, 255);
+	a = MID(0.0, a, 1.0);
+	SetClassFieldInt(Power, "BlendColour", (r << 16) | (g << 8) | b |
+		int(a * 255) << 24);
 	unguard;
 }
 
@@ -1074,10 +1218,24 @@ static void ReadMisc(int)
 		{
 			SetClassFieldInt(GameInfoClass, "INITIAL_AMMO", value);
 		}
-		else if (!VStr::ICmp(String, "Max Health"));
-		else if (!VStr::ICmp(String, "Max Armor"));
-		else if (!VStr::ICmp(String, "Green Armor Class"));
-		else if (!VStr::ICmp(String, "Blue Armor Class"));
+		else if (!VStr::ICmp(String, "Max Health"))
+		{
+			SetClassFieldInt(HealthBonusClass, "MaxAmount", 2 * value);
+		}
+		else if (!VStr::ICmp(String, "Max Armor"))
+		{
+			SetClassFieldInt(ArmorBonusClass, "MaxSaveAmount", value);
+		}
+		else if (!VStr::ICmp(String, "Green Armor Class"))
+		{
+			SetClassFieldInt(GreenArmorClass, "SaveAmount", 100 * value);
+			SetClassFieldFloat(GreenArmorClass, "SavePercent", value == 1 ? 1.0 / 3.0 : 1.0 / 2.0);
+		}
+		else if (!VStr::ICmp(String, "Blue Armor Class"))
+		{
+			SetClassFieldInt(BlueArmorClass, "SaveAmount", 100 * value);
+			SetClassFieldFloat(BlueArmorClass, "SavePercent", value == 1 ? 1.0 / 3.0 : 1.0 / 2.0);
+		}
 		else if (!VStr::ICmp(String, "Max Soulsphere"))
 		{
 			SetClassFieldInt(SoulsphereClass, "MaxAmount", value);
@@ -1104,7 +1262,43 @@ static void ReadMisc(int)
 			SetClassFieldInt(BfgClass, "AmmoUse1", value);
 		}
 		else if (!VStr::ICmp(String, "Monsters Infight"));	//	What's that?
-		else dprintf("WARNING! Invalid misc %s\n", String);
+		else if (!VStr::ICmp(String, "Powerup Color Invulnerability"))
+		{
+			DoPowerupColour("PowerInvulnerable");
+		}
+		else if (!VStr::ICmp(String, "Powerup Color Berserk"))
+		{
+			DoPowerupColour("PowerStrength");
+		}
+		else if (!VStr::ICmp(String, "Powerup Color Invisibility"))
+		{
+			DoPowerupColour("PowerInvisibility");
+		}
+		else if (!VStr::ICmp(String, "Powerup Color Radiation Suit"))
+		{
+			DoPowerupColour("PowerIronFeet");
+		}
+		else if (!VStr::ICmp(String, "Powerup Color Infrared"))
+		{
+			DoPowerupColour("PowerLightAmp");
+		}
+		else if (!VStr::ICmp(String, "Powerup Color Tome of Power"))
+		{
+			DoPowerupColour("PowerWeaponLevel2");
+		}
+		else if (!VStr::ICmp(String, "Powerup Color Wings of Wrath"))
+		{
+			DoPowerupColour("PowerFlight");
+		}
+		else if (!VStr::ICmp(String, "Powerup Color Speed"))
+		{
+			DoPowerupColour("PowerSpeed");
+		}
+		else if (!VStr::ICmp(String, "Powerup Color Minotaur"))
+		{
+			DoPowerupColour("PowerMinotaur");
+		}
+		else GCon->Logf("WARNING! Invalid misc %s", String);
 	}
 	unguard;
 }
@@ -1122,7 +1316,7 @@ static void ReadPars(int)
 	{
 		if (strchr(String, '='))
 		{
-			dprintf("WARNING! Unknown key in Pars section.\n");
+			GCon->Logf("WARNING! Unknown key in Pars section.");
 			continue;
 		}
 		if (VStr::NICmp(String, "par", 3) || (vuint8)String[3] > ' ')
@@ -1135,7 +1329,7 @@ static void ReadPars(int)
 		char* Num3 = strtok(NULL, " ");
 		if (!Num1 || !Num2)
 		{
-			dprintf("WARNING! Bad par time\n");
+			GCon->Logf("WARNING! Bad par time");
 			continue;
 		}
 		VName MapName;
@@ -1216,7 +1410,7 @@ static void FindString(const char* oldStr, const char* newStr)
 		return;
 	}
 
-	dprintf("Not found old \"%s\" new \"%s\"\n", oldStr, newStr);
+	GCon->Logf("Not found old \"%s\" new \"%s\"", oldStr, newStr);
 	unguard;
 }
 
@@ -1434,12 +1628,50 @@ static void LoadDehackedFile(VStream* Strm)
 	delete Strm;
 	PatchPtr = Patch;
 
-	GetLine();
-	while (*PatchPtr)
+	if (!VStr::NCmp(Patch, "Patch File for DeHackEd v", 25))
+	{
+		if (Patch[25] < '3')
+		{
+			delete[] Patch;
+			GCon->Logf("DeHackEd patch is too old");
+			return;
+		}
+		GetLine();
+		int DVer = -1;
+		int PFmt = -1;
+		while (ParseParam())
+		{
+			if (!VStr::ICmp(String, "Doom version"))
+			{
+				DVer = value;
+			}
+			else if (!VStr::ICmp(String, "Patch format"))
+			{
+				PFmt = value;
+			}
+			else GCon->Logf("Unknown parameter %s", String);
+		}
+		if (!String || DVer == -1 || PFmt == -1)
+		{
+			delete[] Patch;
+			GCon->Logf("Not a DeHackEd patch file");
+			return;
+		}
+	}
+	else
+	{
+		GCon->Logf("Missing DeHackEd header, assuming BEX file");
+		GetLine();
+	}
+
+	while (String)
 	{
 		char* Section = strtok(String, " ");
 		if (!Section)
+		{
+			GetLine();
 			continue;
+		}
 
 		char* numStr = strtok(NULL, " ");
 		int i = 0;
@@ -1502,7 +1734,7 @@ static void LoadDehackedFile(VStream* Strm)
 		}
 		else
 		{
-			dprintf("Don't know how to handle \"%s\"\n", String);
+			GCon->Logf("Don't know how to handle \"%s\"", String);
 			GetLine();
 		}
 	}
@@ -1611,7 +1843,6 @@ void ProcessDehackedFiles()
 			S = S->Next;
 		}
 	}
-	dprintf("%d states\n", States.Num());
 
 	//	Read code pointer state mapping.
 	sc->Expect("code_pointer_states");
@@ -1738,8 +1969,12 @@ void ProcessDehackedFiles()
 
 	GameInfoClass = VClass::FindClass("MainGameInfo");
 	BfgClass = VClass::FindClass("BFG9000");
+	HealthBonusClass = VClass::FindClass("HealthBonus");
 	SoulsphereClass = VClass::FindClass("Soulsphere");
 	MegaHealthClass = VClass::FindClass("MegasphereHealth");
+	GreenArmorClass = VClass::FindClass("GreenArmor");
+	BlueArmorClass = VClass::FindClass("BlueArmor");
+	ArmorBonusClass = VClass::FindClass("ArmorBonus");
 
 	delete sc;
 
