@@ -26,6 +26,7 @@
 // HEADER FILES ------------------------------------------------------------
 
 #include "gamedefs.h"
+#include "progdefs.h"
 
 // MACROS ------------------------------------------------------------------
 
@@ -363,6 +364,42 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value)
 	{
 		SetClassFieldBool(Class, "bNonShootable", Value);
 	}
+	else if (!Flag.ICmp("Shootable"))
+	{
+		SetClassFieldBool(Class, "bShootable", Value);
+	}
+	else if (!Flag.ICmp("CountKill"))
+	{
+		SetClassFieldBool(Class, "bCountKill", Value);
+	}
+	else if (!Flag.ICmp("CanPushWalls"))
+	{
+		SetClassFieldBool(Class, "bActivatePushWall", Value);
+	}
+	else if (!Flag.ICmp("ActivateMCross"))
+	{
+		SetClassFieldBool(Class, "bActivateMCross", Value);
+	}
+	else if (!Flag.ICmp("CanPass"))
+	{
+		SetClassFieldBool(Class, "bNoPassMobj", !Value);
+	}
+	else if (!Flag.ICmp("IsMonster"))
+	{
+		SetClassFieldBool(Class, "bMonster", !Value);
+	}
+	else if (!Flag.ICmp("Boss"))
+	{
+		SetClassFieldBool(Class, "bBoss", !Value);
+	}
+	else if (!Flag.ICmp("Float"))
+	{
+		SetClassFieldBool(Class, "bFloat", !Value);
+	}
+	else if (!Flag.ICmp("Ripper"))
+	{
+		SetClassFieldBool(Class, "bRip", !Value);
+	}
 	else if (!Flag.ICmp("Inventory.AutoActivate"))
 	{
 		SetClassFieldBool(Class, "bAutoActivate", Value);
@@ -409,6 +446,10 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value)
 	else if (!Flag.ICmp("NoTeleOther"))
 	{
 		GCon->Logf("Unsupported flag NoTeleOther");
+	}
+	else if (!Flag.ICmp("DontBlast"))
+	{
+		GCon->Logf("Unsupported flag DontBlast");
 	}
 	else
 	{
@@ -649,6 +690,7 @@ static bool ParseStates(VScriptParser* sc, VClass* Class,
 			State->Time = float(sc->Number) / 35.0;
 		}
 
+		bool NeedsUnget = true;
 		while (sc->GetString() && !sc->Crossed)
 		{
 			//	Check for bright parameter.
@@ -673,13 +715,48 @@ static bool ParseStates(VScriptParser* sc, VClass* Class,
 				continue;
 			}
 
-			GCon->Logf("State action %s", *sc->String);
-			SkipBlock(sc, 2);
-			sc->SetEscape(true);
-			sc->SetCMode(false);
-			return false;
+			VStr FuncName = sc->String;
+			if (sc->Check("("))
+			{
+				GCon->Logf("State action %s with arguments", *FuncName);
+				SkipBlock(sc, 2);
+				sc->SetEscape(true);
+				sc->SetCMode(false);
+				return false;
+			}
+			VMethod* Func = Class->FindFunction(*FuncName);
+			if (!Func)
+			{
+				GCon->Logf("Unknown state action %s", *FuncName);
+				SkipBlock(sc, 2);
+				sc->SetEscape(true);
+				sc->SetCMode(false);
+				return false;
+			}
+			if (Func->NumParams)
+			{
+				GCon->Logf("State action %s takes parameters", *FuncName);
+				SkipBlock(sc, 2);
+				sc->SetEscape(true);
+				sc->SetCMode(false);
+				return false;
+			}
+			if (Func->ReturnType.Type != TYPE_Void)
+			{
+				GCon->Logf("State action %s desn't return void", *FuncName);
+				SkipBlock(sc, 2);
+				sc->SetEscape(true);
+				sc->SetCMode(false);
+				return false;
+			}
+			State->Function = Func;
+			NeedsUnget = false;
+			break;
 		}
-		sc->UnGet();
+		if (NeedsUnget)
+		{
+			sc->UnGet();
+		}
 
 		//	Link previous state.
 		if (PrevState)
@@ -714,7 +791,7 @@ static bool ParseStates(VScriptParser* sc, VClass* Class,
 			s2->Time = State->Time;
 			s2->Misc1 = State->Misc1;
 			s2->Misc2 = State->Misc2;
-			//s2->FunctionName = State->FunctionName;
+			s2->Function = State->Function;
 
 			//	Link previous state.
 			PrevState->NextState = s2;
@@ -866,6 +943,7 @@ static void ParseActor(VScriptParser* sc)
 
 	int GameFilter = 0;
 	int DoomEdNum = -1;
+	int SpawnNum = -1;
 	TArray<VState*> States;
 
 	if (sc->CheckNumber())
@@ -905,7 +983,12 @@ static void ParseActor(VScriptParser* sc)
 			Prop += ".";
 			Prop += sc->String;
 		}
-		if (!Prop.ICmp("Radius"))
+		if (!Prop.ICmp("SpawnID"))
+		{
+			sc->ExpectNumber();
+			SpawnNum = sc->Number;
+		}
+		else if (!Prop.ICmp("Radius"))
 		{
 			sc->ExpectFloat();
 			SetClassFieldFloat(Class, "Radius", sc->Float);
@@ -1134,6 +1217,13 @@ static void ParseActor(VScriptParser* sc)
 		MI.class_id = Class;
 		MI.doomednum = DoomEdNum;
 		MI.GameFilter = GameFilter;
+	}
+	if (SpawnNum > 0)
+	{
+		mobjinfo_t& SI = VClass::GScriptIds.Alloc();
+		SI.class_id = Class;
+		SI.doomednum = SpawnNum;
+		SI.GameFilter = GameFilter;
 	}
 
 	if (ReplaceeClass)
