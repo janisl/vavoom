@@ -1057,8 +1057,9 @@ void R_DrawModelFrame(const TVec& Origin, float Angle, VModel* Model,
 	rd.width = ScreenWidth;
 	rd.height = ScreenHeight;
 	rd.fovx = tan(DEG2RAD(90) / 2);
-	rd.fovy = rd.fovx * rd.height / rd.width / PixelAspect;
+	rd.fovy = rd.fovx * 3.0 / 4.0;
 	rd.drawworld = false;
+	rd.DrawCamera = false;
 
 	Drawer->SetupView(NULL, &rd);
 
@@ -1118,6 +1119,7 @@ bool R_DrawStateModelFrame(VState* State, float Inter, const TVec& Origin,
 	rd.fovx = tan(DEG2RAD(90) / 2);
 	rd.fovy = rd.fovx * rd.height / rd.width / PixelAspect;
 	rd.drawworld = false;
+	rd.DrawCamera = false;
 
 	Drawer->SetupView(NULL, &rd);
 
