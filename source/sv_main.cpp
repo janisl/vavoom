@@ -1203,6 +1203,12 @@ void SV_ShutdownServer(bool crash)
 	//
 	// clear structures
 	//
+#ifdef CLIENT
+	if (GClLevel == GLevel)
+	{
+		GClLevel = NULL;
+	}
+#endif
 	if (GLevel)
 	{
 		delete GLevel;

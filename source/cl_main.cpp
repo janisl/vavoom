@@ -331,6 +331,11 @@ void CL_Disconnect()
 		cl->ConditionalDestroy();
 		cl = NULL;
 	}
+	if (GClLevel && GClLevel != GLevel)
+	{
+		delete GClLevel;
+	}
+	GClLevel = NULL;
 
 	cls.demoplayback = false;
 	cls.timedemo = false;
