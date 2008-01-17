@@ -23,15 +23,16 @@
 //**
 //**************************************************************************
 
-class SlimeChunk : Actor;
+class BloodSplash : ScriptedEntity;
 
 states
 {
 Spawn:
-	SLIM ABCD 8
+	BSPH ABC 8
+	BSPH D 16
 	Stop
 Death:
-	SLIM D 6
+	BSPH D 10
 	Stop
 }
 
@@ -44,7 +45,6 @@ defaultproperties
 	bNoBlockmap = true;
 	bDropOff = true;
 	bNoTeleport = true;
-	bActivatePCross = true;
 	bCannotPush = true;
 	bNoSplash = true;
 }

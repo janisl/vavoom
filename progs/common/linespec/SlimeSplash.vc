@@ -23,20 +23,17 @@
 //**
 //**************************************************************************
 
-class LavaSmoke : Actor;
+class SlimeSplash : ScriptedEntity;
 
 states
 {
 Spawn:
-	LVAS GHIJK 5 Bright
+	SLIM EFGH 5
 	Stop
 }
 
 defaultproperties
 {
-	RenderStyle = STYLE_Translucent;
-	Alpha = 0.333;
 	bNoBlockmap = true;
-	bNoGravity = true;
 	bNoPassMobj = true;
 }

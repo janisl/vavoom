@@ -23,20 +23,27 @@
 //**
 //**************************************************************************
 
-class LavaSmoke : Actor;
+class SludgeChunk : ScriptedEntity;
 
 states
 {
 Spawn:
-	LVAS GHIJK 5 Bright
+	SLDG ABCD 8
+	Stop
+Death:
+	SLDG D 6
 	Stop
 }
 
 defaultproperties
 {
-	RenderStyle = STYLE_Translucent;
-	Alpha = 0.666;
+	Radius = 2.0;
+	Height = 4.0;
+	Gravity = 0.125;
+	bMissile = true;
 	bNoBlockmap = true;
-	bNoGravity = true;
-	bNoPassMobj = true;
+	bDropOff = true;
+	bNoTeleport = true;
+	bCannotPush = true;
+	bNoSplash = true;
 }

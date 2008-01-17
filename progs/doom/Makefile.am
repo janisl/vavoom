@@ -38,22 +38,12 @@ EXTRA_DIST = compile.bat \
 	cgame/TitleScreen.vc \
 	game/classes.vc \
 	game/Actor.vc \
-	game/BloodSplash.vc \
-	game/BloodSplashBase.vc \
 	game/BotPlayer.vc \
 	game/DoomLevelInfo.vc \
 	game/DoomWeapon.vc \
 	game/DoomWorldInfo.vc \
-	game/LavaSmoke.vc \
-	game/LavaSplash.vc \
 	game/MainGameInfo.vc \
 	game/Player.vc \
-	game/SlimeChunk.vc \
-	game/SlimeSplash.vc \
-	game/SludgeChunk.vc \
-	game/SludgeSplash.vc \
-	game/WaterSplash.vc \
-	game/WaterSplashBase.vc \
 	game1/classes.vc \
 	game1/Allmap.vc \
 	game1/ArmorBonus.vc \

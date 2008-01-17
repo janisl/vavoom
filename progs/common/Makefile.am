@@ -39,6 +39,8 @@ EXTRA_DIST = \
 	linespec/BasicArmor.vc \
 	linespec/BasicArmorBonus.vc \
 	linespec/BasicArmorPickup.vc \
+	linespec/BloodSplash.vc \
+	linespec/BloodSplashBase.vc \
 	linespec/CeilingMover.vc \
 	linespec/CeilingWaggle.vc \
 	linespec/DoomBuilderCamera.vc \
@@ -63,6 +65,8 @@ EXTRA_DIST = \
 	linespec/Inventory.vc \
 	linespec/ItemFog.vc \
 	linespec/Key.vc \
+	linespec/LavaSmoke.vc \
+	linespec/LavaSplash.vc \
 	linespec/LightFlash.vc \
 	linespec/Lighting.vc \
 	linespec/LightEffect.vc \
@@ -111,6 +115,10 @@ EXTRA_DIST = \
 	linespec/SectorMover.vc \
 	linespec/SectorThinker.vc \
 	linespec/SecurityCamera.vc \
+	linespec/SlimeChunk.vc \
+	linespec/SlimeSplash.vc \
+	linespec/SludgeChunk.vc \
+	linespec/SludgeSplash.vc \
 	linespec/SoundSequence.vc \
 	linespec/SoundSequenceSlot.vc \
 	linespec/Spark.vc \
@@ -126,6 +134,8 @@ EXTRA_DIST = \
 	linespec/TextureChangeDoor.vc \
 	linespec/Unknown.vc \
 	linespec/VerticalDoor.vc \
+	linespec/WaterSplash.vc \
+	linespec/WaterSplashBase.vc \
 	linespec/WaterZone.vc \
 	linespec/Weapon.vc \
 	uibase/classes.vc \

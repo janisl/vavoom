@@ -23,15 +23,15 @@
 //**
 //**************************************************************************
 
-class SludgeChunk : Actor;
+class SlimeChunk : ScriptedEntity;
 
 states
 {
 Spawn:
-	SLDG ABCD 8
+	SLIM ABCD 8
 	Stop
 Death:
-	SLDG D 6
+	SLIM D 6
 	Stop
 }
 
@@ -44,6 +44,7 @@ defaultproperties
 	bNoBlockmap = true;
 	bDropOff = true;
 	bNoTeleport = true;
+	bActivatePCross = true;
 	bCannotPush = true;
 	bNoSplash = true;
 }

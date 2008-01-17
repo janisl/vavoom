@@ -60,8 +60,6 @@ EXTRA_DIST = compile.bat \
 	game/BlasterPuff.vc \
 	game/BlasterSmoke.vc \
 	game/Blood.vc \
-	game/BloodSplash.vc \
-	game/BloodSplashBase.vc \
 	game/BloodSplatter.vc \
 	game/BloodySkull.vc \
 	game/BossSpot.vc \
@@ -140,8 +138,6 @@ EXTRA_DIST = compile.bat \
 	game/Knight.vc \
 	game/KnightAxe.vc \
 	game/KnightGhost.vc \
-	game/LavaSmoke.vc \
-	game/LavaSplash.vc \
 	game/Mace.vc \
 	game/MaceAmmo.vc \
 	game/MaceFX1.vc \
@@ -195,10 +191,6 @@ EXTRA_DIST = compile.bat \
 	game/SkullRodAmmo.vc \
 	game/SkullRodHefty.vc \
 	game/SkullRodPowered.vc \
-	game/SlimeChunk.vc \
-	game/SlimeSplash.vc \
-	game/SludgeChunk.vc \
-	game/SludgeSplash.vc \
 	game/SmallPillar.vc \
 	game/Snake.vc \
 	game/SnakeProjA.vc \
@@ -230,8 +222,6 @@ EXTRA_DIST = compile.bat \
 	game/VolcanoBlast.vc \
 	game/VolcanoTBlast.vc \
 	game/WallTorch.vc \
-	game/WaterSplash.vc \
-	game/WaterSplashBase.vc \
 	game/Whirlwind.vc \
 	game/Wizard.vc \
 	game/WizardFX1.vc

@@ -82,8 +82,6 @@ EXTRA_DIST = compile.bat \
 	game/BigTree2.vc \
 	game/BishopMissile.vc \
 	game/Blood.vc \
-	game/BloodSplash.vc \
-	game/BloodSplashBase.vc \
 	game/BlueCrystalKey.vc \
 	game/BoxOfBullets.vc \
 	game/BrassKey.vc \
@@ -163,8 +161,6 @@ EXTRA_DIST = compile.bat \
 	game/KlaxonWarningLight.vc \
 	game/KneelingGyu.vc \
 	game/LargeTorch.vc \
-	game/LavaSmoke.vc \
-	game/LavaSplash.vc \
 	game/LeatherArmor.vc \
 	game/LightBrownFluorescent.vc \
 	game/LightGlobe.vc \
@@ -335,10 +331,6 @@ EXTRA_DIST = compile.bat \
 	game/SigilBanner.vc \
 	game/SilverKey.vc \
 	game/SlideshowStarter.vc \
-	game/SlimeChunk.vc \
-	game/SlimeSplash.vc \
-	game/SludgeChunk.vc \
-	game/SludgeSplash.vc \
 	game/SmallTorchLit.vc \
 	game/SmallTorchUnlit.vc \
 	game/SpectralLightningBall1.vc \
@@ -413,8 +405,6 @@ EXTRA_DIST = compile.bat \
 	game/WaterDropOnFloor.vc \
 	game/WaterfallSplash.vc \
 	game/WaterFountain.vc \
-	game/WaterSplash.vc \
-	game/WaterSplashBase.vc \
 	game/WeaponSmith.vc \
 	game/WoodenBarrel.vc \
 	game/Zombie.vc \

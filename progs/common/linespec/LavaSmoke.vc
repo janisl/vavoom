@@ -23,28 +23,20 @@
 //**
 //**************************************************************************
 
-class SlimeChunk : Actor;
+class LavaSmoke : ScriptedEntity;
 
 states
 {
 Spawn:
-	SLIM ABCD 8
-	Stop
-Death:
-	SLIM D 6
+	LVAS GHIJK 5 Bright
 	Stop
 }
 
 defaultproperties
 {
-	Radius = 2.0;
-	Height = 4.0;
-	Gravity = 0.125;
-	bMissile = true;
+	RenderStyle = STYLE_Translucent;
+	Alpha = 0.666;//0.333 in Hexen
 	bNoBlockmap = true;
-	bDropOff = true;
-	bNoTeleport = true;
-	bActivatePCross = true;
-	bCannotPush = true;
-	bNoSplash = true;
+	bNoGravity = true;
+	bNoPassMobj = true;
 }

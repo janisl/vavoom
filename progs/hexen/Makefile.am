@@ -70,8 +70,6 @@ EXTRA_DIST = compile.bat \
 	game/BlastEffect.vc \
 	game/Blood.vc \
 	game/BloodPool.vc \
-	game/BloodSplash.vc \
-	game/BloodSplashBase.vc \
 	game/BloodSplatter.vc \
 	game/BloodySkull.vc \
 	game/BotPlayer.vc \
@@ -221,8 +219,6 @@ EXTRA_DIST = compile.bat \
 	game/Korax.vc \
 	game/KoraxBolt.vc \
 	game/KoraxSpirit.vc \
-	game/LavaSmoke.vc \
-	game/LavaSplash.vc \
 	game/Leaf1.vc \
 	game/Leaf2.vc \
 	game/LeafSpawner.vc \
@@ -314,10 +310,6 @@ EXTRA_DIST = compile.bat \
 	game/SGShard7.vc \
 	game/SGShard8.vc \
 	game/SGShard9.vc \
-	game/SlimeChunk.vc \
-	game/SlimeSplash.vc \
-	game/SludgeChunk.vc \
-	game/SludgeSplash.vc \
 	game/Snout.vc \
 	game/SnoutPuff.vc \
 	game/SorcBall.vc \
@@ -355,8 +347,6 @@ EXTRA_DIST = compile.bat \
 	game/ThrustFloorDown.vc \
 	game/ThrustFloorUp.vc \
 	game/TreeDestructible.vc \
-	game/WaterSplash.vc \
-	game/WaterSplashBase.vc \
 	game/Wraith.vc \
 	game/WraithBuried.vc \
 	game/WraithFX1.vc \
