@@ -1467,7 +1467,7 @@ final bool HitFloorType()
 	{
 		if (SInfo->BaseClass)
 		{
-			Spawn(class<EntityEx>(SInfo->BaseClass), org);
+			A = Spawn(class<EntityEx>(SInfo->BaseClass), org);
 			if (SInfo->Sound && !SInfo->ChunkClass)
 			{
 				A.PlaySound(SInfo->Sound, CHAN_VOICE);
