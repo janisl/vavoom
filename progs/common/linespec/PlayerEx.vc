@@ -286,7 +286,7 @@ final void MovePlayer(float deltaTime)
 	}
 
 	fly = FlyMove / 16.0;
-	if (fly && EntityEx(MO).FindInventory(PowerFlight))
+	if (fly && (EntityEx(MO).FindInventory(PowerFlight) || bFly))
 	{
 		if (FlyMove != TOCENTRE)
 		{

@@ -1344,10 +1344,6 @@ bool VEntity::TryMove(tmtrace_t& tmtrace, TVec newPos)
 		}
 		if (EntityFlags & EF_Fly)
 		{
-			if (Origin.z + Height > tmtrace.CeilingZ)
-				eventPushLine(&tmtrace);
-				return false;
-/*
 			// When flying, slide up or down blocking lines until the actor
 			// is not blocked.
 			if (Origin.z + Height > tmtrace.CeilingZ)
@@ -1374,7 +1370,7 @@ bool VEntity::TryMove(tmtrace_t& tmtrace, TVec newPos)
 				}
 				eventPushLine(&tmtrace);
 				return false;
-			}*/
+			}
 		}
 		if (!(EntityFlags & EF_IgnoreFloorStep))
 		{
