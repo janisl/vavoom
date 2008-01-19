@@ -2849,4 +2849,38 @@
  in Hexen.
   I changed missing patches in multipatch textures from fatal error to just a
  warning message.
-  I implemented Floor_MoveToValue and Ceiling_MoveToValue specials.
+  I implemented Floor_MoveToValue, Ceiling_MoveToValue, Thing_ProjectileAimed
+ specials.
+10.01.2008
+  I added render style and scale dehacked properties.
+  I implemented most of the properties of the SetPlayerProperty special.
+11.01.2008
+  I implemented the rest of the properties of the SetPlayerProperty special.
+12.01.2008
+  I fixed player's model not being drawn in player setup menu before starting
+ a game.
+  I fixed a buffer overrun in Timidity library.
+  Client side level was not freed when disconnecting. In standalone game this
+ could end up it pointing to already freed server level.
+  I added a check against self when switching target.
+13.01.2008
+  I implemented several extensions to the DeHackEd.
+  I added some more DECORATE actor properties, added support for using state
+ methods that have no parameters.
+14.01.2008
+  Firebrand added GZDoom's dynamic light types, merged static light classes
+ and implemented SetPlayerProeprty. His implementation of SetPlayerProeprty
+ had some bugs in it, so I decided to revert it and use my version.
+16.01.2008
+  I put back fly and no-target cheats.
+  In player class I added PreTravel event that gets called before actual map
+ travel happens and moved saving of the player's inventory to this method. This
+ fixes a crash when you want to start a new game or load a savegame while in
+ intermission or finale.
+  I fixed network replication of methods with optional arguments.
+17.01.2008
+  I fixed use of uninitialised reference in EntityEx.HitFloorType.
+  I fixed flight powerup.
+  I moved classes of splashes to linespec.
+19.01.2008
+  On request I added LoadBinaryLump method in progs.
