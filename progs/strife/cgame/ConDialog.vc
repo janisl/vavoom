@@ -116,7 +116,7 @@ void SetSpeech(int SpeechNum)
 		case 62:
 			SpeakerName = "Templar";
 			break;
-		}				
+		}
 
 		if (!SpeakerName)
 			SpeakerName = "Person";

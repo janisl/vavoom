@@ -329,6 +329,7 @@ public:
 	DECLARE_FUNCTION(ParseColour)
 	DECLARE_FUNCTION(TextColourString)
 	DECLARE_FUNCTION(StartTitleMap)
+	DECLARE_FUNCTION(LoadBinaryLump)
 
 #ifdef CLIENT
 	DECLARE_FUNCTION(P_GetMapName)

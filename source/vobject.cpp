@@ -1134,3 +1134,10 @@ IMPLEMENT_FUNCTION(VObject, StartTitleMap)
 {
 	RET_BOOL(Host_StartTitleMap());
 }
+
+IMPLEMENT_FUNCTION(VObject, LoadBinaryLump)
+{
+	P_GET_PTR(TArray<vuint8>, Array);
+	P_GET_INT(Lump);
+	W_LoadLumpIntoArray(Lump, *Array);
+}

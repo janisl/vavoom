@@ -503,6 +503,21 @@ int W_FindLumpByFileNameWithExts(VStr BaseName, const char** Exts)
 
 //==========================================================================
 //
+//  W_CreateLumpReaderNum
+//
+//==========================================================================
+
+void W_LoadLumpIntoArray(int Lump, TArray<vuint8>& Array)
+{
+	VStream* Strm = W_CreateLumpReaderNum(Lump);
+	check(Strm);
+	Array.SetNum(Strm->TotalSize());
+	Strm->Serialise(Array.Ptr(), Strm->TotalSize());
+	delete Strm;
+}
+
+//==========================================================================
+//
 //  W_Profile
 //
 //==========================================================================

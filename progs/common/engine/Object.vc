@@ -1580,6 +1580,7 @@ native static final state FindClassState(class C, name StateName);
 native static final int ParseColour(string Name);
 native static final string TextColourString(int Colour);
 native static final bool StartTitleMap();
+native static final void LoadBinaryLump(int Lump, out array<byte> Array);
 
 //==========================================================================
 //
