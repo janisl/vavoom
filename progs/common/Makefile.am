@@ -39,8 +39,10 @@ EXTRA_DIST = \
 	linespec/BasicArmor.vc \
 	linespec/BasicArmorBonus.vc \
 	linespec/BasicArmorPickup.vc \
+	linespec/BlackParticleFountain.vc \
 	linespec/BloodSplash.vc \
 	linespec/BloodSplashBase.vc \
+	linespec/BlueParticleFountain.vc \
 	linespec/CeilingMover.vc \
 	linespec/CeilingWaggle.vc \
 	linespec/DoomBuilderCamera.vc \
@@ -57,6 +59,7 @@ EXTRA_DIST = \
 	linespec/FloorWaggle.vc \
 	linespec/GlassJunk.vc \
 	linespec/GlowingLight.vc \
+	linespec/GreenParticleFountain.vc \
 	linespec/Health.vc \
 	linespec/HealthPickup.vc \
 	linespec/HexenArmor.vc \
@@ -76,6 +79,7 @@ EXTRA_DIST = \
 	linespec/MapRevealer.vc \
 	linespec/MapSpot.vc \
 	linespec/MapSpotGravity.vc \
+	linespec/ParticleFountain.vc \
 	linespec/PatrolPoint.vc \
 	linespec/PatrolSpecial.vc \
 	linespec/PathFollower.vc \
@@ -107,9 +111,11 @@ EXTRA_DIST = \
 	linespec/Powerup.vc \
 	linespec/PowerupGiver.vc \
 	linespec/PowerWeaponLevel2.vc \
+	linespec/PurpleParticleFountain.vc \
 	linespec/Pusher.vc \
 	linespec/PuzzleItem.vc \
 	linespec/QuakeFocus.vc \
+	linespec/RedParticleFountain.vc \
 	linespec/ScriptedEntity.vc \
 	linespec/Scroller.vc \
 	linespec/SectorMover.vc \
@@ -138,6 +144,8 @@ EXTRA_DIST = \
 	linespec/WaterSplashBase.vc \
 	linespec/WaterZone.vc \
 	linespec/Weapon.vc \
+	linespec/WhiteParticleFountain.vc \
+	linespec/YellowParticleFountain.vc \
 	uibase/classes.vc \
 	uibase/ClientGameShared.vc \
 	uibase/HUDMessage.vc \

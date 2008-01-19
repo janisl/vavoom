@@ -29,6 +29,7 @@ EXTRA_DIST = compile.bat \
 	cgame/MenuScreenControls2.vc \
 	cgame/MenuScreenEpisode.vc \
 	cgame/MenuScreenFighterSkill.vc \
+	cgame/MenuScreenGameplayOptions.vc \
 	cgame/MenuScreenHelp.vc \
 	cgame/MenuScreenMageSkill.vc \
 	cgame/MenuScreenMain.vc \
