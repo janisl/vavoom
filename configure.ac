@@ -77,34 +77,6 @@ dnl
 AC_CHECK_HEADER([inttypes.h], [CPPFLAGS="$CPPFLAGS -DHAVE_INTTYPES_H=1"])
 
 dnl
-dnl  **** FixMD2 variables ****
-dnl
-
-FIXMD2_CXXFLAGS=${CXXFLAGS}
-FIXMD2_CPPFLAGS=${CPPFLAGS}
-FIXMD2_LDFLAGS=${LDFLAGS}
-FIXMD2_LIBS=${LIBS}
-
-AC_SUBST([FIXMD2_CXXFLAGS])
-AC_SUBST([FIXMD2_CPPFLAGS])
-AC_SUBST([FIXMD2_LDFLAGS])
-AC_SUBST([FIXMD2_LIBS])
-
-dnl
-dnl  **** VCC variables ****
-dnl
-
-VCC_CXXFLAGS=${CXXFLAGS}
-VCC_CPPFLAGS=${CPPFLAGS}
-VCC_LDFLAGS=${LDFLAGS}
-VCC_LIBS=${LIBS}
-
-AC_SUBST([VCC_CXXFLAGS])
-AC_SUBST([VCC_CPPFLAGS])
-AC_SUBST([VCC_LDFLAGS])
-AC_SUBST([VCC_LIBS])
-
-dnl
 dnl  **** Timidity variables ****
 dnl
 
@@ -169,53 +141,11 @@ dnl
 AC_SEARCH_LIBS([sin], [m], [], [AC_ERROR([Library containing sin not found])])
 
 dnl
-dnl  **** glVIS variables ****
-dnl
-
-GLVIS_CXXFLAGS=${CXXFLAGS}
-GLVIS_CPPFLAGS=${CPPFLAGS}
-GLVIS_LDFLAGS=${LDFLAGS}
-GLVIS_LIBS=${LIBS}
-
-AC_SUBST([GLVIS_CXXFLAGS])
-AC_SUBST([GLVIS_CPPFLAGS])
-AC_SUBST([GLVIS_LDFLAGS])
-AC_SUBST([GLVIS_LIBS])
-
-dnl
 dnl  **** Check for zlib ****
 dnl
 
 AC_CHECK_HEADER([zlib.h], [], AC_MSG_ERROR(['Vavoom requires zlib to compile']))
 AC_CHECK_LIB([z], [deflate], [], AC_MSG_ERROR(['Vavoom requires zlib to compile']))
-
-dnl
-dnl  **** glBSP variables ****
-dnl
-
-GLBSP_CFLAGS=${CFLAGS}
-GLBSP_CPPFLAGS=${CPPFLAGS}
-GLBSP_LDFLAGS=${LDFLAGS}
-GLBSP_LIBS=${LIBS}
-
-AC_SUBST([GLBSP_CFLAGS])
-AC_SUBST([GLBSP_CPPFLAGS])
-AC_SUBST([GLBSP_LDFLAGS])
-AC_SUBST([GLBSP_LIBS])
-
-dnl
-dnl  **** VLumpy variables ****
-dnl
-
-VLUMPY_CXXFLAGS=${CXXFLAGS}
-VLUMPY_CPPFLAGS=${CPPFLAGS}
-VLUMPY_LDFLAGS=${LDFLAGS}
-VLUMPY_LIBS=${LIBS}
-
-AC_SUBST([VLUMPY_CXXFLAGS])
-AC_SUBST([VLUMPY_CPPFLAGS])
-AC_SUBST([VLUMPY_LDFLAGS])
-AC_SUBST([VLUMPY_LIBS])
 
 dnl
 dnl  **** Test for prefix prepended by compiler to global symbols ****
@@ -607,6 +537,21 @@ AC_SUBST([EXTRA_SUBDIRS])
 mkdir -p utils/acc
 cd utils/acc && cmake ../../${ac_confdir}/utils/acc && cd ../..
 
+mkdir -p utils/fixmd2
+cd utils/fixmd2 && cmake ../../${ac_confdir}/utils/fixmd2 && cd ../..
+
+mkdir -p utils/glbsp
+cd utils/glbsp && cmake ../../${ac_confdir}/utils/glbsp && cd ../..
+
+mkdir -p utils/glvis
+cd utils/glvis && cmake ../../${ac_confdir}/utils/glvis && cd ../..
+
+mkdir -p utils/vcc
+cd utils/vcc && cmake ../../${ac_confdir}/utils/vcc && cd ../..
+
+mkdir -p utils/vlumpy
+cd utils/vlumpy && cmake ../../${ac_confdir}/utils/vlumpy && cd ../..
+
 AC_OUTPUT([
 	Makefile
 	basev/Makefile
@@ -638,9 +583,4 @@ AC_OUTPUT([
 	source/Makefile
 	source/timidity/Makefile
 	utils/Makefile
-	utils/fixmd2/Makefile
-	utils/glbsp/Makefile
-	utils/glvis/Makefile
-	utils/vcc/Makefile
-	utils/vlaunch/Makefile
-	utils/vlumpy/Makefile])
+	utils/vlaunch/Makefile])
