@@ -46,6 +46,9 @@ public:
 
 	vuint32			myAddr;
 
+	int				winsock_initialised;
+	WSADATA			winsockdata;
+
 	static double	blocktime;
 
 	VWinSockDriver();
@@ -84,11 +87,6 @@ public:
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-//	These are shared with IPX driver to make sure we intialise and shut
-// down WinSock only once.
-int			winsock_initialised = 0;
-WSADATA		winsockdata;
-
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 double		VWinSockDriver::blocktime;
@@ -109,6 +107,7 @@ VWinSockDriver::VWinSockDriver()
 , net_controlsocket(0)
 , net_broadcastsocket(0)
 , myAddr(0)
+, winsock_initialised(0)
 {
 	memset(&broadcastaddr, 0, sizeof(broadcastaddr));
 }

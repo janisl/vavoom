@@ -57,8 +57,6 @@ public:
 	wxCheckBox*		CheckBoxNoCDAudio;
 	wxCheckBox*		CheckBoxUseOpenAL;
 	wxCheckBox*		CheckBoxNoLan;
-	wxCheckBox*		CheckBoxNoUDP;
-	wxCheckBox*		CheckBoxNoIPX;
 	wxTextCtrl*		EditIPAddress;
 	wxTextCtrl*		EditPort;
 	wxCheckBox*		CheckBoxNoMouse;
@@ -215,15 +213,9 @@ VMain::VMain()
 	page = new wxPanel(nbook);
 	nbook->AddPage(page, wxT("Network"));
 	gsizer = new wxFlexGridSizer(2);
-	CheckBoxNoLan = new wxCheckBox(page, -1, wxT("Disable all LAN drivers"));
+	CheckBoxNoLan = new wxCheckBox(page, -1, wxT("Disable network driver"));
 	gsizer->AddSpacer(1);
 	gsizer->Add(CheckBoxNoLan, 0, wxALL, 4);
-	CheckBoxNoUDP = new wxCheckBox(page, -1, wxT("Disable TCP/IP driver"));
-	gsizer->AddSpacer(1);
-	gsizer->Add(CheckBoxNoUDP, 0, wxALL, 4);
-	CheckBoxNoIPX = new wxCheckBox(page, -1, wxT("Disable IPX driver"));
-	gsizer->AddSpacer(1);
-	gsizer->Add(CheckBoxNoIPX, 0, wxALL, 4);
 	gsizer->Add(new wxStaticText(page, -1, wxT("IP address:")), 0, wxALL, 4);
 	EditIPAddress = new wxTextCtrl(page, -1, wxT(""), wxDefaultPosition, wxSize(128, -1));
 	gsizer->Add(EditIPAddress, 0, wxALL, 4);
@@ -251,8 +243,6 @@ VMain::VMain()
 	CheckBoxNoCDAudio->SetValue(!!Conf->Read(wxT("NoCDAudio"), 0l));
 	CheckBoxUseOpenAL->SetValue(!!Conf->Read(wxT("UseOpenAL"), 0l));
 	CheckBoxNoLan->SetValue(!!Conf->Read(wxT("NoLAN"), 0l));
-	CheckBoxNoUDP->SetValue(!!Conf->Read(wxT("NoUDP"), 0l));
-	CheckBoxNoIPX->SetValue(!!Conf->Read(wxT("NoIPX"), 0l));
 	EditIPAddress->SetValue(Conf->Read(wxT("IPAddress"), wxT("")));
 	EditPort->SetValue(Conf->Read(wxT("Port"), wxT("")));
 	CheckBoxNoMouse->SetValue(!!Conf->Read(wxT("NoMouse"), 0l));
@@ -283,8 +273,6 @@ VMain::~VMain()
 	Conf->Write(wxT("NoCDAudio"), CheckBoxNoCDAudio->IsChecked());
 	Conf->Write(wxT("UseOpenAL"), CheckBoxUseOpenAL->IsChecked());
 	Conf->Write(wxT("NoLAN"), CheckBoxNoLan->IsChecked());
-	Conf->Write(wxT("NoUDP"), CheckBoxNoUDP->IsChecked());
-	Conf->Write(wxT("NoIPX"), CheckBoxNoIPX->IsChecked());
 	Conf->Write(wxT("IPAddress"), EditIPAddress->GetValue());
 	Conf->Write(wxT("Port"), EditPort->GetValue());
 	Conf->Write(wxT("NoMouse"), CheckBoxNoMouse->IsChecked());
@@ -359,10 +347,6 @@ void VMain::OnRun(wxCommandEvent&)
 	// Network
 	if (CheckBoxNoLan->IsChecked())
 		CmdLine += wxT(" -nolan");
-	if (CheckBoxNoUDP->IsChecked())
-		CmdLine += wxT(" -noudp");
-	if (CheckBoxNoIPX->IsChecked())
-		CmdLine += wxT(" -noipx");
 	if (EditIPAddress->GetValue().Length())
 		CmdLine += wxT(" -ip ") + EditIPAddress->GetValue();
 	if (EditPort->GetValue().Length())

@@ -374,7 +374,6 @@ _____MAIN_EXE__SOURCES += \
 	eax.h \
 	in_win32.cpp \
 	net_wins.cpp \
-	net_wipx.cpp \
 	s_win32.cpp \
 	s_win32m.cpp \
 	sys_win.cpp \
@@ -507,7 +506,6 @@ endif
 if SERVER_PLATFORM_WIN32
 _____SERVER_EXE__SOURCES += \
 	net_wins.cpp \
-	net_wipx.cpp \
 	sys_wind.cpp \
 	vavoom.rc
 endif

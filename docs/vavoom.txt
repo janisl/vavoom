@@ -322,9 +322,6 @@ Network
 -IP specifies IP address, Windows version only
 -ip <address>
 
--NOIPX disables IPX driver
--noipx
-
 -PORT sets default LAN port
 -port <port>
 
