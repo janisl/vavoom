@@ -1,0 +1,18 @@
+add_executable(../bin/acc
+	acc.c
+	common.h
+	error.c
+	error.h
+	misc.c
+	misc.h
+	parse.c
+	parse.h
+	pcode.c
+	pcode.h
+	strlist.c
+	strlist.h
+	symbol.c
+	symbol.h
+	token.c
+	token.h
+)

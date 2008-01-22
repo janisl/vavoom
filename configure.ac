@@ -77,20 +77,6 @@ dnl
 AC_CHECK_HEADER([inttypes.h], [CPPFLAGS="$CPPFLAGS -DHAVE_INTTYPES_H=1"])
 
 dnl
-dnl  **** ACC variables ****
-dnl
-
-ACC_CFLAGS=${CFLAGS}
-ACC_CPPFLAGS=${CPPFLAGS}
-ACC_LDFLAGS=${LDFLAGS}
-ACC_LIBS=${LIBS}
-
-AC_SUBST([ACC_CFLAGS])
-AC_SUBST([ACC_CPPFLAGS])
-AC_SUBST([ACC_LDFLAGS])
-AC_SUBST([ACC_LIBS])
-
-dnl
 dnl  **** FixMD2 variables ****
 dnl
 
@@ -618,6 +604,9 @@ dnl part of distribution.
 dnl
 AC_SUBST([EXTRA_SUBDIRS])
 
+mkdir -p utils/acc
+cd utils/acc && cmake ../../${ac_confdir}/utils/acc && cd ../..
+
 AC_OUTPUT([
 	Makefile
 	basev/Makefile
@@ -649,7 +638,6 @@ AC_OUTPUT([
 	source/Makefile
 	source/timidity/Makefile
 	utils/Makefile
-	utils/acc/Makefile
 	utils/fixmd2/Makefile
 	utils/glbsp/Makefile
 	utils/glvis/Makefile
