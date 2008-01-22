@@ -39,7 +39,7 @@ Contents:
 *****************************************************************************
 
     Vavoom is a source port based on the sources of Doom, Heretic, Hexen and
-  "a little bit" from Quake. Supported platforms are DOS, Windows and LINUX.
+  "a little bit" from Quake. Supported platforms are Windows and LINUX.
   A dedicated server also can be compiled on OpenBSD and possibly on other
   UNIX systems, but this may require some changes.
     If you find any bugs, feel free to report them.
@@ -79,7 +79,7 @@ game. Hexen requires a wad file from version 1.1.
 *****************************************************************************
 
 ==============================================================================
-3.1 Installing DOS/Windows binaries
+3.1 Installing Windows binaries
 ==============================================================================
 
   First choose a directory, where you will place Vavoom - an existing Doom,
@@ -172,17 +172,6 @@ card, save the changes and then copy allegro.cfg into Vavoom directory.
 ==============================================================================
 3.3 Other source code compiling information for developers
 ==============================================================================
-
-For DOS you need
-  Compiler and tools:
-      * DJGPP (http://www.delorie.com/djgpp) with gcc, make and bash
-  Libraries:
-      * zlib (http://www.zlib.net)
-      * libpng (http://www.libpng.org)
-      * libjpeg (http://www.ijg.org)
-      * Allegro 4.0 (http://alleg.sourceforge.net) and later.
-      * OpenGL version: MESA (http://www.mesa3d.org) and Allegro driver for
-    MESA (http://www.geocities.com/SiliconValley/7259/)
 
 For Windows you need:
   Compiler and tools:
@@ -336,9 +325,6 @@ Network
 -NOIPX disables IPX driver
 -noipx
 
--MPATH enables MPATH TCP/IP driver, DOS version only
--mpath
-
 -PORT sets default LAN port
 -port <port>
 
@@ -392,8 +378,7 @@ Debugging
 dedicated servers
 -starttime <time>
 
--RHIDE prints debug file to stderr, in the DOS version Sys_Error exits with
-call frame traceback
+-RHIDE prints debug file to stderr
 -rhide
 
 *****************************************************************************

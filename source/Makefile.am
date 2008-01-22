@@ -320,28 +320,6 @@ _____MAIN_EXE__SOURCES += \
 	s_flac.cpp
 endif
 
-#-- DOS --
-if MAIN_PLATFORM_DJGPP
-_____MAIN_EXE__SOURCES += \
-	cd_dos.cpp \
-	d_alleg.cpp \
-	in_dos.cpp \
-	mpdosock.h \
-	mplib.c \
-	mplpc.c \
-	net_bw.cpp \
-	net_ipx.cpp \
-	net_mp.cpp \
-	npxsetup.c \
-	s_alleg.cpp \
-	s_allegm.cpp \
-	sys_dos.cpp
-endif
-if MAIN_OPENGL_DJGPP
-_____MAIN_EXE__SOURCES += \
-	gl_alleg.cpp
-endif
-
 #-- Linux with Allegro --
 if MAIN_PLATFORM_UNIX_ALLEGRO
 _____MAIN_EXE__SOURCES += \
@@ -519,17 +497,6 @@ _____SERVER_EXE__SOURCES = \
 	xml.cpp \
 	zipstream.cpp \
 	zone.cpp
-
-if SERVER_PLATFORM_DJGPP
-_____SERVER_EXE__SOURCES += \
-	mplib.c \
-	mplpc.c \
-	net_bw.cpp \
-	net_ipx.cpp \
-	net_mp.cpp \
-	npxsetup.c \
-	sys_bsd.cpp
-endif
 
 if SERVER_PLATFORM_UNIX
 _____SERVER_EXE__SOURCES += \

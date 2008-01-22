@@ -296,11 +296,6 @@ dnl  **** Server variables ****
 dnl
 
 case $host in
-*-*-msdos* | *-*-go32*)
-	SERVER_EXE='VavoomSV'
-	SERVER_PLATFORM=DJGPP
-	;;
-
 *-*-mingw32* | *-*-cygwin* | *-*-windows*)
 	SERVER_EXE='Vavm95SV'
 	SERVER_PLATFORM=WIN32
@@ -311,7 +306,6 @@ case $host in
 	SERVER_PLATFORM=UNIX
 	;;
 esac
-AM_CONDITIONAL(SERVER_PLATFORM_DJGPP, test x$SERVER_PLATFORM = xDJGPP)
 AM_CONDITIONAL(SERVER_PLATFORM_WIN32, test x$SERVER_PLATFORM = xWIN32)
 AM_CONDITIONAL(SERVER_PLATFORM_UNIX, test x$SERVER_PLATFORM = xUNIX)
 
@@ -333,23 +327,6 @@ dnl
 if test "x$enable_client" != "xno"; then
 
 case $host in
-dnl ---------------- DJGPP ----------------
-*-*-msdos* | *-*-go32*)
-	MAIN_EXE='Vavoom'
-	MAIN_PLATFORM='DJGPP'
-
-	AC_CHECK_HEADER([allegro.h], [], AC_MSG_ERROR(['Vavoom requires Allegro to compile']))
-	AC_CHECK_LIB([alleg], [allegro_exit], [], AC_MSG_ERROR(['Vavoom requires Allegro to compile']))
-
-	if test "x$with_opengl" != "xno"; then
-		AC_CHECK_HEADER([GL/gl.h], [
-			MAIN_OPENGL=TRUE
-			MAIN_OPENGL_DJGPP=TRUE
-			LIBS="-lGL $LIBS"
-		])
-	fi
-	;;
-
 dnl ---------------- Windows ----------------
 *-*-mingw32* | *-*-cygwin* | *-*-windows*)
 	MAIN_EXE='Vavoom95'
@@ -595,13 +572,11 @@ AC_SUBST([MAIN_LIBS])
 
 fi  dnl if enabled client
 
-AM_CONDITIONAL(MAIN_PLATFORM_DJGPP, test x$MAIN_PLATFORM = xDJGPP)
 AM_CONDITIONAL(MAIN_PLATFORM_WIN32, test x$MAIN_PLATFORM = xWIN32)
 AM_CONDITIONAL(MAIN_PLATFORM_UNIX_ALLEGRO, test x$MAIN_PLATFORM = xUNIX_ALLEGRO)
 AM_CONDITIONAL(MAIN_PLATFORM_UNIX_SDL, test x$MAIN_PLATFORM = xUNIX_SDL)
 AM_CONDITIONAL(MAIN_ASM_I386, test x$MAIN_ASM_I386 = xTRUE)
 AM_CONDITIONAL(MAIN_OPENGL, test x$MAIN_OPENGL = xTRUE)
-AM_CONDITIONAL(MAIN_OPENGL_DJGPP, test x$MAIN_OPENGL_DJGPP = xTRUE)
 AM_CONDITIONAL(MAIN_OPENGL_WIN32, test x$MAIN_OPENGL_WIN32 = xTRUE)
 AM_CONDITIONAL(MAIN_OPENGL_UNIX_ALLEGRO, test x$MAIN_OPENGL_UNIX_ALLEGRO = xTRUE)
 AM_CONDITIONAL(MAIN_OPENGL_UNIX_SDL, test x$MAIN_OPENGL_UNIX_SDL = xTRUE)

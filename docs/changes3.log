@@ -2884,3 +2884,11 @@
   I moved classes of splashes to linespec.
 19.01.2008
   On request I added LoadBinaryLump method in progs.
+
+******************************************************************************
+                            VERSION 1.26
+******************************************************************************
+
+22.01.2008
+  I decided not to support DOS anymore, so I removed all DOS specific source
+ files.
