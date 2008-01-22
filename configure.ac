@@ -455,7 +455,6 @@ AM_CONDITIONAL(MAIN_VORBIS, test x$MAIN_VORBIS = xTRUE)
 AM_CONDITIONAL(MAIN_MP3, test x$MAIN_MP3 = xTRUE)
 AM_CONDITIONAL(MAIN_MIKMOD, test x$MAIN_MIKMOD = xTRUE)
 AM_CONDITIONAL(MAIN_FLAC, test x$MAIN_FLAC = xTRUE)
-AM_CONDITIONAL(LAUNCHER, test "x$enable_launcher" != "xno")
 
 dnl
 dnl  **** Build and instalation targets ****
@@ -486,26 +485,9 @@ dnl part of distribution.
 dnl
 AC_SUBST([EXTRA_SUBDIRS])
 
-mkdir -p utils/acc
-cd utils/acc && cmake ../../${ac_confdir}/utils/acc && cd ../..
-
-mkdir -p utils/fixmd2
-cd utils/fixmd2 && cmake ../../${ac_confdir}/utils/fixmd2 && cd ../..
-
-mkdir -p utils/glbsp
-cd utils/glbsp && cmake ../../${ac_confdir}/utils/glbsp && cd ../..
-
-mkdir -p utils/glvis
-cd utils/glvis && cmake ../../${ac_confdir}/utils/glvis && cd ../..
-
-mkdir -p utils/vcc
-cd utils/vcc && cmake ../../${ac_confdir}/utils/vcc && cd ../..
-
-mkdir -p utils/vlaunch
-cd utils/vlaunch && cmake ../../${ac_confdir}/utils/vlaunch && cd ../..
-
-mkdir -p utils/vlumpy
-cd utils/vlumpy && cmake ../../${ac_confdir}/utils/vlumpy && cd ../..
+mkdir -p utils
+mkdir -p utils/bin
+cd utils && cmake ../${ac_confdir}/utils && cd ..
 
 AC_OUTPUT([
 	Makefile
@@ -536,5 +518,4 @@ AC_OUTPUT([
 	progs/hexen/Makefile
 	progs/strife/Makefile
 	source/Makefile
-	source/timidity/Makefile
-	utils/Makefile])
+	source/timidity/Makefile])

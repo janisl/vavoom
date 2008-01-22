@@ -1,5 +1,3 @@
-find_package(ZLIB REQUIRED)
-
 include_directories(../common ${ZLIB_INCLUDE_DIR})
 
 add_executable(../bin/vlumpy

@@ -1,5 +1,3 @@
-find_package(ZLIB REQUIRED)
-
 include_directories(${ZLIB_INCLUDE_DIR})
 add_definitions(-DGLBSP_PLUGIN -DUNIX -DINLINE_G=inline)
 
