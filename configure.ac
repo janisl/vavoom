@@ -297,7 +297,7 @@ dnl
 
 case $host in
 *-*-mingw32* | *-*-cygwin* | *-*-windows*)
-	SERVER_EXE='Vavm95SV'
+	SERVER_EXE='vavoom-dedicated'
 	SERVER_PLATFORM=WIN32
 	;;
 
@@ -329,7 +329,7 @@ if test "x$enable_client" != "xno"; then
 case $host in
 dnl ---------------- Windows ----------------
 *-*-mingw32* | *-*-cygwin* | *-*-windows*)
-	MAIN_EXE='Vavoom95'
+	MAIN_EXE='vavoom'
 	MAIN_PLATFORM='WIN32'
 	LIBS="-lgdi32 -lole32 -lwinmm $LIBS"
 

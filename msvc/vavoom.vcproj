@@ -42,7 +42,7 @@
 				MkTypLibCompatible="true"
 				SuppressStartupBanner="true"
 				TargetEnvironment="1"
-				TypeLibraryName=".\Release/Vavoom95.tlb"
+				TypeLibraryName=".\Release/vavoom.tlb"
 				HeaderFileName=""
 			/>
 			<Tool
@@ -71,7 +71,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="winmm.lib opengl32.lib openal32.lib wsock32.lib libpng.lib libjpeg.lib zlib.lib libmad.lib vorbis_static.lib ogg_static.lib mikmod.lib libFLAC_static.lib libFLAC++_static.lib"
-				OutputFile="$(OutDir)/Vavoom95.exe"
+				OutputFile="$(OutDir)/vavoom.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				SubSystem="2"
@@ -131,7 +131,7 @@
 				MkTypLibCompatible="true"
 				SuppressStartupBanner="true"
 				TargetEnvironment="1"
-				TypeLibraryName=".\Debug/Vavoom95.tlb"
+				TypeLibraryName=".\Debug/vavoom.tlb"
 				HeaderFileName=""
 			/>
 			<Tool
@@ -160,7 +160,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="winmm.lib opengl32.lib openal32.lib wsock32.lib libpngd.lib libjpeg_d.lib zlibd.lib libmad_d.lib vorbis_static_d.lib ogg_static_d.lib mikmod_d.lib libFLAC_static_d.lib libFLAC++_static_d.lib"
-				OutputFile="$(OutDir)/Vavoom95.exe"
+				OutputFile="$(OutDir)/vavoom.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
 				GenerateDebugInformation="true"

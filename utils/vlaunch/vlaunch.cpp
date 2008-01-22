@@ -305,11 +305,7 @@ VMain::~VMain()
 void VMain::OnRun(wxCommandEvent&)
 {
 	//	Create command line
-#ifdef _WIN32
-	wxString CmdLine = wxT("Vavoom95");
-#else
 	wxString CmdLine = wxT("vavoom");
-#endif
 
 	switch (Game->GetSelection())
 	{
