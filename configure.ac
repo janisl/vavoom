@@ -87,54 +87,6 @@ AC_SUBST([TIMIDITY_CXXFLAGS])
 AC_SUBST([TIMIDITY_CPPFLAGS])
 
 dnl
-dnl  **** Check for wxWidgets if launcher is enabled ****
-dnl
-
-if test "x$enable_launcher" != "xno"; then
-
-WXCONFIG=wx-config
-AC_ARG_WITH(wx-config,
-[[  --with-wx-config=FILE     Use the given path to wx-config when determining
-                            wxWidgets configuration; defaults to "wx-config"]],
-[
-    if test "$withval" != "yes" -a "$withval" != ""; then
-        WXCONFIG=$withval
-    fi
-])
-
-wxversion=0
-
-AC_MSG_CHECKING([wxWidgets version])
-if wxversion=`$WXCONFIG --version`; then
-	AC_MSG_RESULT([$wxversion])
-else
-	AC_MSG_RESULT([not found])
-	AC_MSG_ERROR([wxWidgets is required. Try --with-wx-config or --disable-launcher.])
-fi
-
-# Verify minimus requires
-vers=`echo $wxversion | $AWK 'BEGIN { FS = "."; } { printf "% d", ($1 * 1000 + $2) * 1000 + $3;}'`
-if test -n "$vers" && test "$vers" -ge 2003003; then
-	WX_CPPFLAGS="`$WXCONFIG --cppflags`"
-	WX_CXXFLAGS="`$WXCONFIG --cxxflags | sed -e 's/-fno-exceptions//'`"
-	WX_LIBS="`$WXCONFIG --libs`"
-else
-	AC_MSG_ERROR([wxWidgets 2.3.3 or newer is required])
-fi
-
-LAUNCHER_CXXFLAGS="$CXXFLAGS $WX_CPPFLAGS"
-LAUNCHER_CPPFLAGS="$CPPFLAGS $WX_CPPFLAGS"
-LAUNCHER_LDFLAGS=${LDFLAGS}
-LAUNCHER_LIBS="$LIBS $WX_LIBS"
-
-AC_SUBST([LAUNCHER_CXXFLAGS])
-AC_SUBST([LAUNCHER_CPPFLAGS])
-AC_SUBST([LAUNCHER_LDFLAGS])
-AC_SUBST([LAUNCHER_LIBS])
-
-fi
-
-dnl
 dnl  **** Check wehter we need to use libm ****
 dnl
 
@@ -549,6 +501,9 @@ cd utils/glvis && cmake ../../${ac_confdir}/utils/glvis && cd ../..
 mkdir -p utils/vcc
 cd utils/vcc && cmake ../../${ac_confdir}/utils/vcc && cd ../..
 
+mkdir -p utils/vlaunch
+cd utils/vlaunch && cmake ../../${ac_confdir}/utils/vlaunch && cd ../..
+
 mkdir -p utils/vlumpy
 cd utils/vlumpy && cmake ../../${ac_confdir}/utils/vlumpy && cd ../..
 
@@ -582,5 +537,4 @@ AC_OUTPUT([
 	progs/strife/Makefile
 	source/Makefile
 	source/timidity/Makefile
-	utils/Makefile
-	utils/vlaunch/Makefile])
+	utils/Makefile])
