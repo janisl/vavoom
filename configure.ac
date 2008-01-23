@@ -149,29 +149,6 @@ case $host in
 	;;
 esac
 
-dnl
-dnl  **** Server variables ****
-dnl
-
-case $host in
-*-*-mingw32* | *-*-cygwin* | *-*-windows*)
-	SERVER_EXE='vavoom-dedicated'
-	SERVER_PLATFORM=WIN32
-	;;
-
-*)
-	SERVER_EXE="vavoom-dedicated.$host_cpu"
-	SERVER_PLATFORM=UNIX
-	;;
-esac
-AM_CONDITIONAL(SERVER_PLATFORM_WIN32, test x$SERVER_PLATFORM = xWIN32)
-AM_CONDITIONAL(SERVER_PLATFORM_UNIX, test x$SERVER_PLATFORM = xUNIX)
-
-SV_CXXFLAGS=${CXXFLAGS}
-SV_CPPFLAGS=${CPPFLAGS}
-SV_LDFLAGS=${LDFLAGS}
-SV_LIBS="../utils/glbsp/libglbsp.a ${LIBS}"
-
 AC_SUBST([SERVER_EXE])
 AC_SUBST([SV_CXXFLAGS])
 AC_SUBST([SV_CPPFLAGS])
@@ -478,8 +455,8 @@ AC_SUBST([EXTRA_SUBDIRS])
 mkdir -p utils
 mkdir -p utils/bin
 cd utils && cmake ../${ac_confdir}/utils && cd ..
-mkdir -p source/timidity
-cd source/timidity && cmake ../../${ac_confdir}/source/timidity && cd ../..
+mkdir -p source
+cd source && cmake ../${ac_confdir}/source && cd ..
 
 AC_OUTPUT([
 	Makefile
@@ -508,5 +485,4 @@ AC_OUTPUT([
 	progs/doom2/Makefile
 	progs/heretic/Makefile
 	progs/hexen/Makefile
-	progs/strife/Makefile
-	source/Makefile])
+	progs/strife/Makefile])
