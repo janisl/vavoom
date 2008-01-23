@@ -1,4 +1,4 @@
-add_library(glvislib STATIC
+add_library(libglvis STATIC
 	cmdlib.cpp
 	cmdlib.h
 	fmapdefs.h
@@ -11,11 +11,12 @@ add_library(glvislib STATIC
 	level.cpp
 	vector.h
 )
+set_target_properties(libglvis PROPERTIES OUTPUT_NAME glvis)
 
 add_executable(glvis
 	glvis.cpp
 )
-add_dependencies(glvis glvislib)
-target_link_libraries(glvis glvislib)
+add_dependencies(glvis libglvis)
+target_link_libraries(glvis libglvis)
 
 #EXTRA_DIST = glvis.txt
