@@ -77,16 +77,6 @@ dnl
 AC_CHECK_HEADER([inttypes.h], [CPPFLAGS="$CPPFLAGS -DHAVE_INTTYPES_H=1"])
 
 dnl
-dnl  **** Timidity variables ****
-dnl
-
-TIMIDITY_CXXFLAGS=${CXXFLAGS}
-TIMIDITY_CPPFLAGS=${CPPFLAGS}
-
-AC_SUBST([TIMIDITY_CXXFLAGS])
-AC_SUBST([TIMIDITY_CPPFLAGS])
-
-dnl
 dnl  **** Check wehter we need to use libm ****
 dnl
 
@@ -488,6 +478,8 @@ AC_SUBST([EXTRA_SUBDIRS])
 mkdir -p utils
 mkdir -p utils/bin
 cd utils && cmake ../${ac_confdir}/utils && cd ..
+mkdir -p source/timidity
+cd source/timidity && cmake ../../${ac_confdir}/source/timidity && cd ../..
 
 AC_OUTPUT([
 	Makefile
@@ -517,5 +509,4 @@ AC_OUTPUT([
 	progs/heretic/Makefile
 	progs/hexen/Makefile
 	progs/strife/Makefile
-	source/Makefile
-	source/timidity/Makefile])
+	source/Makefile])
