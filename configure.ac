@@ -17,11 +17,6 @@ AC_ARG_WITH([opengl], AS_HELP_STRING([--with-opengl], [use OpenGL library]))
 AC_ARG_WITH([openal], AS_HELP_STRING([--with-openal], [use OpenAL library]))
 AC_ARG_WITH([openal-config], AS_HELP_STRING([--with-openal-config], [Set OpenAL config script]))
 AC_ARG_WITH([external-glbsp], AS_HELP_STRING([--with-external-glbsp], [use external glBSP library]))
-AC_ARG_WITH([vorbis], AS_HELP_STRING([--with-vorbis], [Enable Vorbis support]))
-AC_ARG_WITH([libmad], AS_HELP_STRING([--with-libmad], [Enable MP3 support]))
-AC_ARG_WITH([mikmod], AS_HELP_STRING([--with-mikmod], [Enable MikMod support]))
-AC_ARG_WITH([mikmod-config], AS_HELP_STRING([--with-mikmod-config], [Set MikMod config script]))
-AC_ARG_WITH([flac], AS_HELP_STRING([--with-flac], [Enable FLAC support]))
 AC_ARG_WITH([iwaddir], AS_HELP_STRING([--with-iwaddir], [Specify IWAD directories]))
 
 dnl
@@ -81,13 +76,6 @@ dnl  **** Check wehter we need to use libm ****
 dnl
 
 AC_SEARCH_LIBS([sin], [m], [], [AC_ERROR([Library containing sin not found])])
-
-dnl
-dnl  **** Check for zlib ****
-dnl
-
-AC_CHECK_HEADER([zlib.h], [], AC_MSG_ERROR(['Vavoom requires zlib to compile']))
-AC_CHECK_LIB([z], [deflate], [], AC_MSG_ERROR(['Vavoom requires zlib to compile']))
 
 dnl
 dnl  **** Test for prefix prepended by compiler to global symbols ****
@@ -296,20 +284,6 @@ if test "x$enable_asm" != "xno"; then
 fi
 
 dnl
-dnl  **** Check for libpng ****
-dnl
-
-AC_CHECK_HEADER([png.h], [], AC_MSG_ERROR(['Vavoom requires libpng to compile']))
-AC_CHECK_LIB([png], [png_read_image], [], AC_MSG_ERROR(['Vavoom requires libpng to compile']))
-
-dnl
-dnl  **** Check for libjpeg ****
-dnl
-
-AC_CHECK_HEADER([jpeglib.h], [], AC_MSG_ERROR(['Vavoom requires libjpeg to compile']))
-AC_CHECK_LIB([jpeg], [jpeg_read_header], [], AC_MSG_ERROR(['Vavoom requires libjpeg to compile']))
-
-dnl
 dnl  **** Check wether using external glBSP ****
 dnl
 
@@ -323,70 +297,6 @@ if test "x$with_external_glbsp" != "x" -a "x$with_external_glbsp" != "xno"; then
 	LIBS="-lglbsp $LIBS"
 else
 	LIB_FILES="$LIB_FILES ../utils/glbsp/libglbsp.a"
-fi
-
-dnl
-dnl  **** Check for Vorbis ****
-dnl
-
-if test "x$with_vorbis" != "xno"; then
-	AC_CHECK_HEADER([ogg/ogg.h], [], [with_vorbis=no])
-fi
-if test "x$with_vorbis" != "xno"; then
-	AC_CHECK_HEADER([vorbis/codec.h], [], [with_vorbis=no])
-fi
-if test "x$with_vorbis" != "xno"; then
-	AC_CHECK_LIB([ogg], [ogg_sync_init], [], [with_vorbis=no])
-fi
-if test "x$with_vorbis" != "xno"; then
-	AC_CHECK_LIB([vorbis], [vorbis_info_init], [], [with_vorbis=no])
-fi
-if test "x$with_vorbis" != "xno"; then
-	MAIN_VORBIS=TRUE
-fi
-
-dnl
-dnl  **** Check for libmad ****
-dnl
-
-if test "x$with_libmad" != "xno"; then
-	AC_CHECK_HEADER([mad.h], [], [with_libmad=no])
-fi
-if test "x$with_libmad" != "xno"; then
-	AC_CHECK_LIB([mad], [mad_stream_init], [], [with_libmad=no])
-fi
-if test "x$with_libmad" != "xno"; then
-	MAIN_MP3=TRUE
-fi
-
-dnl
-dnl  **** Check for MikMod ****
-dnl
-
-if test "x$with_mikmod" != "xno"; then
-	if test "x$with_mikmod_config" = "x"; then
-		AC_PATH_PROG([LIBMIKMOD_CONFIG], [libmikmod-config])
-	else
-		mikmod_config=$with_mikmod_config
-	fi
-	if test "x$LIBMIKMOD_CONFIG" != "x"; then
-		MAIN_MIKMOD=TRUE
-		CXXFLAGS="$CXXFLAGS `$LIBMIKMOD_CONFIG --cflags`"
-		LDFLAGS="$LDFLAGS `$LIBMIKMOD_CONFIG --ldadd`"
-		LIBS="`$LIBMIKMOD_CONFIG --libs` $LIBS"
-	fi
-fi
-
-dnl
-dnl  **** Check for FLAC ****
-dnl
-
-if test "x$with_flac" != "xno"; then
-	AC_CHECK_HEADER([FLAC++/decoder.h], [], [with_flac=no])
-fi
-if test "x$with_flac" != "xno"; then
-	MAIN_FLAC=TRUE
-	LIBS="-lFLAC++ -lFLAC $LIBS"
 fi
 
 dnl
@@ -418,10 +328,6 @@ AM_CONDITIONAL(MAIN_OPENGL_UNIX_SDL, test x$MAIN_OPENGL_UNIX_SDL = xTRUE)
 AM_CONDITIONAL(MAIN_CDAUDIO_LINUX, test x$MAIN_CDAUDIO_LINUX = xTRUE)
 AM_CONDITIONAL(MAIN_CDAUDIO_BSD, test x$MAIN_CDAUDIO_BSD = xTRUE)
 AM_CONDITIONAL(MAIN_OPENAL, test x$MAIN_OPENAL = xTRUE)
-AM_CONDITIONAL(MAIN_VORBIS, test x$MAIN_VORBIS = xTRUE)
-AM_CONDITIONAL(MAIN_MP3, test x$MAIN_MP3 = xTRUE)
-AM_CONDITIONAL(MAIN_MIKMOD, test x$MAIN_MIKMOD = xTRUE)
-AM_CONDITIONAL(MAIN_FLAC, test x$MAIN_FLAC = xTRUE)
 
 dnl
 dnl  **** Build and instalation targets ****

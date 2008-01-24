@@ -485,7 +485,157 @@ set(SERVER_WIN32_SOURCES
 # _____MAIN_EXE__DEFS =
 # _____MAIN_EXE__LDFLAGS = @MAIN_LDFLAGS@
 # _____MAIN_EXE__LDADD = @LIB_FILES@ @MAIN_LIBS@
-# 
+
+find_package(SDL REQUIRED)
+find_package(SDL_mixer REQUIRED)
+include_directories(${SDL_INCLUDE_DIR})
+
+set(MAIN_SOURCES
+	${MAIN_COMMON_SOURCES}
+	${MAIN_UNIX_SDL_SOURCES}
+	${MAIN_OPENGL_SOURCES}
+	${MAIN_OPENGL_UNIX_SDL_SOURCES}
+)
+set(MAIN_LIBS ${JPEG_LIBRARY}
+	${SDLMIXER_LIBRARY} ${SDL_LIBRARY} GL
+	glbsp glvis timidity ${ZLIB_LIBRARY})
+
+#
+#  **** Check for libpng ****
+#
+
+find_package(PNG REQUIRED)
+include_directories(${SDL_INCLUDE_DIR})
+set(MAIN_LIBS ${PNG_LIBRARY} ${MAIN_LIBS})
+
+#
+#  **** Check for libjpeg ****
+#
+
+find_package(JPEG REQUIRED)
+include_directories(${JPEG_INCLUDE_DIR})
+set(MAIN_LIBS ${JPEG_LIBRARY} ${MAIN_LIBS})
+
+#
+#  **** Check for Vorbis ****
+#
+
+if(NOT DEFINED WITH_VORBIS)
+	set(WITH_VORBIS TRUE)
+endif(NOT DEFINED WITH_VORBIS)
+if(WITH_VORBIS)
+	find_path(OGG_INCLUDE_DIR ogg/ogg.h)
+	find_path(VORBIS_INCLUDE_DIR vorbis/codec.h)
+	find_library(OGG_LIBRARY NAMES ogg)
+	find_library(VORBIS_LIBRARY NAMES vorbis)
+	if (OGG_INCLUDE_DIR AND VORBIS_INCLUDE_DIR AND OGG_LIBRARY AND VORBIS_LIBRARY)
+		message(STATUS "Found OggVorbis: ${OGG_LIBRARY} ${VORBIS_LIBRARY}")
+		include_directories(${OGG_INCLUDE_DIR})
+		include_directories(${VORBIS_INCLUDE_DIR})
+		set(MAIN_SOURCES ${MAIN_SOURCES} ${MAIN_VORBIS_SOURCES})
+		set(MAIN_LIBS ${VORBIS_LIBRARY} ${OGG_LIBRARY} ${MAIN_LIBS})
+	else (OGG_INCLUDE_DIR AND VORBIS_INCLUDE_DIR AND OGG_LIBRARY AND VORBIS_LIBRARY)
+		message(STATUS "Could NOT find OggVorbis libraries")
+	endif (OGG_INCLUDE_DIR AND VORBIS_INCLUDE_DIR AND OGG_LIBRARY AND VORBIS_LIBRARY)
+endif(WITH_VORBIS)
+
+#
+#  **** Check for libmad ****
+#
+
+if(NOT DEFINED WITH_LIBMAD)
+	set(WITH_LIBMAD TRUE)
+endif(NOT DEFINED WITH_LIBMAD)
+if(WITH_LIBMAD)
+	find_path(MAD_INCLUDE_DIR mad.h)
+	find_library(MAD_LIBRARY NAMES mad)
+	if(MAD_INCLUDE_DIR AND MAD_LIBRARY)
+		message(STATUS "Found LibMAD: ${MAD_LIBRARY}")
+		include_directories(${MAD_INCLUDE_DIR})
+		set(MAIN_SOURCES ${MAIN_SOURCES} ${MAIN_MP3_SOURCES})
+		set(MAIN_LIBS ${MAD_LIBRARY} ${MAIN_LIBS})
+	else(MAD_INCLUDE_DIR AND MAD_LIBRARY)
+		message(STATUS "Could NOT find LibMAD libraries")
+	endif(MAD_INCLUDE_DIR AND MAD_LIBRARY)
+endif(WITH_LIBMAD)
+
+#
+#  **** Check for MikMod ****
+#
+
+if(NOT DEFINED WITH_MIKMOD)
+	set(WITH_MIKMOD TRUE)
+endif(NOT DEFINED WITH_MIKMOD)
+if(WITH_MIKMOD)
+	# Find libmikmod-config script
+	if(NOT DEFINED LIBMIKMOD_CONFIG)
+		set(LIBMIKMOD_CONFIG libmikmod-config)
+	endif(NOT DEFINED LIBMIKMOD_CONFIG)
+	find_program(LIBMIKMOD_CONFIG_EXECUTABLE ${LIBMIKMOD_CONFIG})
+	if(LIBMIKMOD_CONFIG_EXECUTABLE)
+		# run the libmikmod-config program to get cxxflags
+		exec_program(sh
+			ARGS "${LIBMIKMOD_CONFIG_EXECUTABLE} --cflags"
+			OUTPUT_VARIABLE MIKMOD_CXX_FLAGS
+			RETURN_VALUE RET)
+		if(RET EQUAL 0)
+			# parse definitions from cxxflags
+			string(REGEX MATCHALL "-D.*[^ ;]+" MIKMOD_DEFINITIONS ${MIKMOD_CXX_FLAGS})
+			# drop -D* from CXXFLAGS
+			string(REGEX REPLACE "-D[^ ;]*" "" MIKMOD_CXX_FLAGS ${MIKMOD_CXX_FLAGS})
+			# parse incdirs from cxxflags, drop -I prefix
+			string(REGEX MATCHALL "-I.*[^ ;]+" MIKMOD_INCLUDE_DIRS ${MIKMOD_CXX_FLAGS})
+			string(REGEX REPLACE "-I" "" MIKMOD_INCLUDE_DIRS "${MIKMOD_CXX_FLAGS}")
+			# convert space to semicolons for list
+			string(REGEX REPLACE " " ";" MIKMOD_INCLUDE_DIRS "${MIKMOD_INCLUDE_DIRS}")
+		endif(RET EQUAL 0)
+
+		# run the libmikmod-config program to get the libs
+		exec_program(sh
+			ARGS "${LIBMIKMOD_CONFIG_EXECUTABLE} --libs"
+			OUTPUT_VARIABLE MIKMOD_LIBRARIES
+			RETURN_VALUE RET)
+		if(RET EQUAL 0)
+			string(REGEX REPLACE " " ";" MIKMOD_LIBRARIES "${MIKMOD_LIBRARIES}")
+			# extract linkdirs (-L) for rpath (i.e., LINK_DIRECTORIES)
+			string(REGEX MATCHALL "-L[^ ;]+" MIKMOD_LIBRARY_DIRS "${MIKMOD_LIBRARIES}")
+			string(REGEX REPLACE "-L" "" MIKMOD_LIBRARY_DIRS "${MIKMOD_LIBRARY_DIRS}")
+			# convert space to semicolons for list
+			STRING(REGEX REPLACE " " ";" MIKMOD_LIBRARY_DIRS "${MIKMOD_LIBRARY_DIRS}")
+		endif(RET EQUAL 0)
+
+		if(MIKMOD_INCLUDE_DIRS AND MIKMOD_LIBRARIES)
+			message(STATUS "Found MIKMOD: ${MIKMOD_LIBRARIES}")
+			include_directories(${MIKMOD_INCLUDE_DIRS})
+			set(MAIN_SOURCES ${MAIN_SOURCES} ${MAIN_MIKMOD_SOURCES})
+			set(MAIN_LIBS ${MIKMOD_LIBRARIES} ${MAIN_LIBS})
+		else(MIKMOD_INCLUDE_DIRS AND MIKMOD_LIBRARIES)
+			message(STATUS "Could NOT find MIKMOD libraries")
+		endif(MIKMOD_INCLUDE_DIRS AND MIKMOD_LIBRARIES)
+	endif(LIBMIKMOD_CONFIG_EXECUTABLE)
+endif(WITH_MIKMOD)
+
+#
+#  **** Check for FLAC ****
+#
+
+if(NOT DEFINED WITH_FLAC)
+	set(WITH_FLAC TRUE)
+endif(NOT DEFINED WITH_FLAC)
+if(WITH_FLAC)
+	find_path(FLAC_INCLUDE_DIR FLAC++/decoder.h)
+	find_library(FLAC_LIBRARY NAMES FLAC)
+	find_library(FLACPP_LIBRARY NAMES FLAC++)
+	if(FLAC_INCLUDE_DIR AND FLAC_LIBRARY AND FLACPP_LIBRARY)
+		message(STATUS "Found FLAC: ${FLAC_LIBRARY} ${FLACPP_LIBRARY}")
+		include_directories(${FLAC_INCLUDE_DIR})
+		set(MAIN_SOURCES ${MAIN_SOURCES} ${MAIN_FLAC_SOURCES})
+		set(MAIN_LIBS ${FLACPP_LIBRARY} ${FLAC_LIBRARY} ${MAIN_LIBS})
+	else(FLAC_INCLUDE_DIR AND FLAC_LIBRARY AND FLACPP_LIBRARY)
+		message(STATUS "Could NOT find FLAC libraries")
+	endif(FLAC_INCLUDE_DIR AND FLAC_LIBRARY AND FLACPP_LIBRARY)
+endif(WITH_FLAC)
+
 # #-- i386 assembler files --
 # if MAIN_ASM_I386
 # _____MAIN_EXE__SOURCES += \
@@ -516,44 +666,10 @@ set(SERVER_WIN32_SOURCES
 # 	sys_i386.s
 # endif
 # 
-# #-- Common OpenGL files --
-# if MAIN_OPENGL
-# _____MAIN_EXE__SOURCES += \
-# 	gl_draw.cpp \
-# 	gl_local.h \
-# 	gl_main.cpp \
-# 	gl_poly.cpp \
-# 	gl_tex.cpp
-# endif
-# 
 # #-- OpenAL files --
 # if MAIN_OPENAL
 # _____MAIN_EXE__SOURCES += \
 # 	s_al.cpp
-# endif
-# 
-# #-- Vorbis files --
-# if MAIN_VORBIS
-# _____MAIN_EXE__SOURCES += \
-# 	s_vorbis.cpp
-# endif
-# 
-# #-- MP3 files --
-# if MAIN_MP3
-# _____MAIN_EXE__SOURCES += \
-# 	s_mp3.cpp
-# endif
-# 
-# #-- MikMod files --
-# if MAIN_MIKMOD
-# _____MAIN_EXE__SOURCES += \
-# 	s_mikmod.cpp
-# endif
-# 
-# #-- FLAC files --
-# if MAIN_FLAC
-# _____MAIN_EXE__SOURCES += \
-# 	s_flac.cpp
 # endif
 # 
 # #-- Linux with Allegro --
@@ -624,26 +740,11 @@ set(SERVER_WIN32_SOURCES
 # 	gl_win32.cpp
 # endif
 
-find_package(PNG REQUIRED)
-find_package(JPEG REQUIRED)
-find_package(SDL REQUIRED)
-find_package(SDL_mixer REQUIRED)
-include_directories(${SDL_INCLUDE_DIR})
-
-set(MAIN_SOURCES
-	${MAIN_COMMON_SOURCES}
-	${MAIN_UNIX_SDL_SOURCES}
-	${MAIN_OPENGL_SOURCES}
-	${MAIN_OPENGL_UNIX_SDL_SOURCES}
-)
-
 add_executable(vavoom ${MAIN_SOURCES})
 if(UNIX)
 set_target_properties(vavoom PROPERTIES OUTPUT_NAME vavoom.i686)
 endif(UNIX)
-target_link_libraries(vavoom ${JPEG_LIBRARY} ${PNG_LIBRARY}
-	${SDLMIXER_LIBRARY} ${SDL_LIBRARY} GL
-	glbsp glvis timidity ${ZLIB_LIBRARY})
+target_link_libraries(vavoom ${MAIN_LIBS})
 
 # vavoom: Makefile
 # 	echo "#!/bin/sh" > $@
