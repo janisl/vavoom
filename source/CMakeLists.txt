@@ -453,52 +453,188 @@ set(SERVER_WIN32_SOURCES
 	vavoom.rc
 )
 
-# CPPFLAGS =
-# CXXFLAGS =
-# DEFS =
-# LDFLAGS =
-# LIBS =
-# 
+#---------------------------------------
+#
+#	Common checks
+#
+#---------------------------------------
+
 # CCASFLAGS = -x assembler-with-cpp $(ASMFLAGS)
-# 
-# bin_PROGRAMS =
-# bin_SCRIPTS =
-# 
-# #---------------------------------------
-# #
-# #	Main executable
-# #
-# #---------------------------------------
-# 
-# if ENABLE_CLIENT
-# bin_PROGRAMS += ../$(MAIN_EXE)
-# if MAIN_PLATFORM_UNIX_ALLEGRO
-# bin_SCRIPTS += vavoom
-# endif
-# if MAIN_PLATFORM_UNIX_SDL
-# bin_SCRIPTS += vavoom
-# endif
-# endif
-# 
-# _____MAIN_EXE__CPPFLAGS = @MAIN_CPPFLAGS@
-# _____MAIN_EXE__CXXFLAGS = @MAIN_CXXFLAGS@
-# _____MAIN_EXE__DEFS =
-# _____MAIN_EXE__LDFLAGS = @MAIN_LDFLAGS@
-# _____MAIN_EXE__LDADD = @LIB_FILES@ @MAIN_LIBS@
 
-find_package(SDL REQUIRED)
-find_package(SDL_mixer REQUIRED)
-include_directories(${SDL_INCLUDE_DIR})
+#
+#  **** Check for newtwork libraries ****
+#
 
-set(MAIN_SOURCES
-	${MAIN_COMMON_SOURCES}
-	${MAIN_UNIX_SDL_SOURCES}
-	${MAIN_OPENGL_SOURCES}
-	${MAIN_OPENGL_UNIX_SDL_SOURCES}
-)
-set(MAIN_LIBS ${JPEG_LIBRARY}
-	${SDLMIXER_LIBRARY} ${SDL_LIBRARY} GL
-	glbsp glvis timidity ${ZLIB_LIBRARY})
+if(WIN32)
+	set(NET_LIBRARIES wsock32)
+else(WIN32)
+	set(NET_LIBRARIES "")
+#FIXME we need this on Solaris
+#	AC_SEARCH_LIBS([recvfrom], [socket], [], [AC_ERROR([Library containing recvfrom not found])])
+#	AC_SEARCH_LIBS([gethostbyname], [nsl], [], [AC_ERROR([Library containing gethostbyname not found])])
+endif(WIN32)
+
+#
+#  **** Add debug / development flags ****
+#
+
+if(ENABLE_ZONE_DEBUG)
+	add_definitions(-DZONE_DEBUG=1)
+endif(ENABLE_ZONE_DEBUG)
+
+#---------------------------------------
+#
+#	Main executable
+#
+#---------------------------------------
+
+if(NOT DEFINED ENABLE_CLIENT)
+	set(ENABLE_CLIENT TRUE)
+endif(NOT DEFINED ENABLE_CLIENT)
+if(ENABLE_CLIENT)
+
+set(MAIN_SOURCES ${MAIN_COMMON_SOURCES})
+set(MAIN_LIBS glbsp glvis timidity ${ZLIB_LIBRARY} ${NET_LIBRARIES})
+
+if(NOT DEFINED WITH_OPENGL)
+	set(WITH_OPENGL TRUE)
+endif(NOT DEFINED WITH_OPENGL)
+if(NOT DEFINED WITH_OPENAL)
+	set(WITH_OPENAL TRUE)
+endif(NOT DEFINED WITH_OPENAL)
+
+if(WIN32)
+	# ---------------- Windows ----------------
+	set(MAIN_SOURCES ${MAIN_SOURCES} ${MAIN_WIN32_SOURCES})
+	set(MAIN_LIBS gdi32 ole32 winmm ${MAIN_LIBS})
+
+	if(WITH_OPENGL)
+		set(MAIN_SOURCES ${MAIN_SOURCES} ${MAIN_OPENGL_SOURCES} ${MAIN_OPENGL_WIN32_SOURCES})
+		set(MAIN_LIBS opengl32 ${MAIN_LIBS})
+	endif(WITH_OPENGL)
+
+	if(WITH_OPENAL)
+		find_path(OPENALAL_INCLUDE_DIR AL/al.h)
+		set(MAIN_SOURCES ${MAIN_SOURCES} ${MAIN_OPENAL_SOURCES})
+		set(MAIN_LIBS OpenAL32 ${MAIN_LIBS})
+	endif(WITH_OPENAL)
+else(WIN32)
+	# ---------------- Other *NIX platforms ----------------
+	if(NOT DEFINED ALLEGRO_CONFIG)
+		set(ALLEGRO_CONFIG allegro-config)
+	endif(NOT DEFINED ALLEGRO_CONFIG)
+
+	if(WITH_ALLEGRO)
+		find_program(ALLEGRO_CONFIG_EXECUTABLE ${ALLEGRO_CONFIG})
+		if(NOT ALLEGRO_CONFIG_EXECUTABLE)
+			message(FATAL_ERROR "Cannot find Allegro instalation")
+		endif(NOT ALLEGRO_CONFIG_EXECUTABLE)
+		set(ALLEGRO_FOUND TRUE)
+	elseif(WITH_SDL)
+		find_package(SDL REQUIRED)
+	else(WITH_ALLEGRO)
+		find_package(SDL)
+		if(NOT SDL_FOUND)
+			find_program(ALLEGRO_CONFIG_EXECUTABLE ${ALLEGRO_CONFIG})
+			if(ALLEGRO_CONFIG_EXECUTABLE)
+				set(ALLEGRO_FOUND TRUE)
+			endif(ALLEGRO_CONFIG_EXECUTABLE)
+		endif(NOT SDL_FOUND)
+	endif(WITH_ALLEGRO)
+
+	if(ALLEGRO_FOUND)
+		message(STATUS "Using Allegro")
+		# run the allegro-config program to get cxxflags
+		exec_program(sh
+			ARGS "${LIBALLEGRO_CONFIG_EXECUTABLE} --cflags"
+			OUTPUT_VARIABLE ALLEGRO_CXX_FLAGS
+			RETURN_VALUE RET)
+		if(RET EQUAL 0)
+			# parse definitions from cxxflags
+			string(REGEX MATCHALL "-D.*[^ ;]+" ALLEGRO_DEFINITIONS ${ALLEGRO_CXX_FLAGS})
+			# drop -D* from CXXFLAGS
+			string(REGEX REPLACE "-D[^ ;]*" "" ALLEGRO_CXX_FLAGS ${ALLEGRO_CXX_FLAGS})
+			# parse incdirs from cxxflags, drop -I prefix
+			string(REGEX MATCHALL "-I.*[^ ;]+" ALLEGRO_INCLUDE_DIRS ${ALLEGRO_CXX_FLAGS})
+			string(REGEX REPLACE "-I" "" ALLEGRO_INCLUDE_DIRS "${ALLEGRO_CXX_FLAGS}")
+			# convert space to semicolons for list
+			string(REGEX REPLACE " " ";" ALLEGRO_INCLUDE_DIRS "${ALLEGRO_INCLUDE_DIRS}")
+		endif(RET EQUAL 0)
+
+		# run the allegro-config program to get the libs
+		exec_program(sh
+			ARGS "${LIBALLEGRO_CONFIG_EXECUTABLE} --libs"
+			OUTPUT_VARIABLE ALLEGRO_LIBRARIES
+			RETURN_VALUE RET)
+		if(RET EQUAL 0)
+			string(REGEX REPLACE " " ";" ALLEGRO_LIBRARIES "${ALLEGRO_LIBRARIES}")
+			# extract linkdirs (-L) for rpath (i.e., LINK_DIRECTORIES)
+			string(REGEX MATCHALL "-L[^ ;]+" ALLEGRO_LIBRARY_DIRS "${ALLEGRO_LIBRARIES}")
+			string(REGEX REPLACE "-L" "" ALLEGRO_LIBRARY_DIRS "${ALLEGRO_LIBRARY_DIRS}")
+			# convert space to semicolons for list
+			STRING(REGEX REPLACE " " ";" ALLEGRO_LIBRARY_DIRS "${ALLEGRO_LIBRARY_DIRS}")
+		endif(RET EQUAL 0)
+
+		include_directories(${ALLEGRO_INCLUDE_DIRS})
+		set(MAIN_SOURCES ${MAIN_SOURCES} ${MAIN_UNIX_ALLEGRO_SOURCES})
+		set(MAIN_LIBS ${ALLEGRO_LIBRARIES} ${MAIN_LIBS})
+	elseif(SDL_FOUND)
+		message(STATUS "Using SDL")
+		find_package(SDL_mixer REQUIRED)
+		include_directories(${SDL_INCLUDE_DIR})
+		set(MAIN_SOURCES ${MAIN_SOURCES} ${MAIN_UNIX_SDL_SOURCES})
+		set(MAIN_LIBS ${SDLMIXER_LIBRARY} ${SDL_LIBRARY} ${MAIN_LIBS})
+	else(ALLEGRO_FOUND)
+		mesage(FATAL_ERROR "Vavoom requires Allegro or SDL to compile")
+	endif(ALLEGRO_FOUND)
+
+	find_path(LINUX_CDROM_INCLUDE_DIR linux/cdrom.h)
+	if(LINUX_CDROM_INCLUDE_DIR)
+		message(STATUS "Using LINUX CD-ROM API")
+		set(MAIN_SOURCES ${MAIN_SOURCES} ${MAIN_CDAUDIO_LINUX_SOURCES})
+	else(LINUX_CDROM_INCLUDE_DIR)
+		find_path(BSD_CDIO_INCLUDE_DIR sys/cdio.h)
+		if(BSD_CDIO_INCLUDE_DIR)
+			message(STATUS "Using BSD CD-ROM API")
+			set(MAIN_SOURCES ${MAIN_SOURCES} ${MAIN_CDAUDIO_BSD_SOURCES})
+		endif(BSD_CDIO_INCLUDE_DIR)
+	endif(LINUX_CDROM_INCLUDE_DIR)
+
+	if(WITH_OPENGL)
+		find_package(OpenGL)
+		if(OPENGL_FOUND)
+			message(STATUS "Found OpenGL")
+			include_directories(${OPENGL_INCLUDE_DIR})
+			set(MAIN_SOURCES ${MAIN_SOURCES} ${MAIN_OPENGL_SOURCES})
+			set(MAIN_LIBS ${OPENGL_gl_LIBRARY} ${MAIN_LIBS})
+
+			if(ALLEGRO_FOUND)
+				find_path(ALLEGGL_INCLUDE_DIR alleggl.h)
+				if(NOT ALLEGGL_INCLUDE_DIR)
+					message(FATAL_ERROR "Vavoom requires AllegroGL to use OpenGL")
+				endif(NOT ALLEGGL_INCLUDE_DIR)
+				find_library(AGL_LIBRARY NAMES agl)
+				if(NOT AGL_LIBRARY)
+					message(FATAL_ERROR "Vavoom requires AllegroGL to use OpenGL")
+				endif(NOT AGL_LIBRARY)
+				set(MAIN_SOURCES ${MAIN_SOURCES} ${MAIN_OPENGL_UNIX_ALLEGRO_SOURCES})
+				set(MAIN_LIBS ${AGL_LIBRARY} ${OPENGL_glu_LIBRARY} ${MAIN_LIBS})
+			else(ALLEGRO_FOUND)
+				set(MAIN_SOURCES ${MAIN_SOURCES} ${MAIN_OPENGL_UNIX_SDL_SOURCES})
+			endif(ALLEGRO_FOUND)
+		endif(OPENGL_FOUND)
+	endif(WITH_OPENGL)
+
+	if(WITH_OPENAL)
+		find_package(OpenAL)
+		if(OPENAL_FOUND)
+			message(STATUS "Found OpenAL")
+			include_directories(${OPENAL_INCLUDE_DIR})
+			set(MAIN_SOURCES ${MAIN_SOURCES} ${MAIN_OPENAL_SOURCES})
+			set(MAIN_LIBS ${OPENAL_LIBRARY} ${MAIN_LIBS})
+		endif(OPENAL_FOUND)
+	endif(WITH_OPENAL)
+endif(WIN32)
 
 #
 #  **** Check for libpng ****
@@ -665,86 +801,19 @@ endif(WITH_FLAC)
 # 	d_surf_32_i386.s \
 # 	sys_i386.s
 # endif
-# 
-# #-- OpenAL files --
-# if MAIN_OPENAL
-# _____MAIN_EXE__SOURCES += \
-# 	s_al.cpp
-# endif
-# 
-# #-- Linux with Allegro --
-# if MAIN_PLATFORM_UNIX_ALLEGRO
-# _____MAIN_EXE__SOURCES += \
-# 	d_alleg.cpp \
-# 	in_alleg.cpp \
-# 	net_udp.cpp \
-# 	s_alleg.cpp \
-# 	s_allegm.cpp \
-# 	sys_lin.cpp
-# endif
-# if MAIN_OPENGL_UNIX_ALLEGRO
-# _____MAIN_EXE__SOURCES += \
-# 	gl_agl.cpp
-# endif
-# 
-# #-- Linux with SDL --
-# if MAIN_PLATFORM_UNIX_SDL
-# _____MAIN_EXE__SOURCES += \
-# 	d_sdl.cpp \
-# 	in_sdl.cpp \
-# 	net_udp.cpp \
-# 	s_sdl.cpp \
-# 	s_sdlm.cpp \
-# 	sys_sdl.cpp
-# endif
-# if MAIN_OPENGL_UNIX_SDL
-# _____MAIN_EXE__SOURCES += \
-# 	gl_sdl.cpp
-# endif
-# 
-# #-- CD audio drivers for various UNIX platforms --
-# if MAIN_CDAUDIO_LINUX
-# _____MAIN_EXE__SOURCES += \
-# 	cd_linux.cpp
-# endif
-# if MAIN_CDAUDIO_BSD
-# _____MAIN_EXE__SOURCES += \
-# 	cd_bsd.cpp
-# endif
-# 
-# #-- Windows --
-# if MAIN_PLATFORM_WIN32
-# _____MAIN_EXE__SOURCES += \
-# 	cd_win32.cpp \
-# 	d_win32.cpp \
-# 	d3d_draw.cpp \
-# 	d3d_info.cpp \
-# 	d3d_local.h \
-# 	d3d_main.cpp \
-# 	d3d_poly.cpp \
-# 	d3d_tex.cpp \
-# 	eax.h \
-# 	in_win32.cpp \
-# 	net_wins.cpp \
-# 	s_win32.cpp \
-# 	s_win32m.cpp \
-# 	sys_win.cpp \
-# 	vavoom.ico \
-# 	vavoom_2.ico \
-# 	vavoom_3.ico \
-# 	vavoom.rc \
-# 	winlocal.h
-# endif
-# if MAIN_OPENGL_WIN32
-# _____MAIN_EXE__SOURCES += \
-# 	gl_win32.cpp
-# endif
 
 add_executable(vavoom ${MAIN_SOURCES})
 if(UNIX)
 set_target_properties(vavoom PROPERTIES OUTPUT_NAME vavoom.i686)
 endif(UNIX)
 target_link_libraries(vavoom ${MAIN_LIBS})
+
+# if MAIN_PLATFORM_UNIX_ALLEGRO
+# bin_SCRIPTS += vavoom
+# endif
+# if MAIN_PLATFORM_UNIX_SDL
+# bin_SCRIPTS += vavoom
+# endif
 
 # vavoom: Makefile
 # 	echo "#!/bin/sh" > $@
@@ -753,6 +822,7 @@ target_link_libraries(vavoom ${MAIN_LIBS})
 # 	echo "cd \"$(datadir)/vavoom\"" >> $@
 # 	echo "\"$(bindir)/$(MAIN_EXE)\" \$$* $(IWADDIR_PARM)" >> $@
 # 	echo "exit \$$?" >> $@
+endif(ENABLE_CLIENT)
 
 #---------------------------------------
 #
@@ -760,13 +830,11 @@ target_link_libraries(vavoom ${MAIN_LIBS})
 #
 #---------------------------------------
 
-# if ENABLE_SERVER
-# bin_PROGRAMS += ../$(SERVER_EXE)
-# if SERVER_PLATFORM_UNIX
-# bin_SCRIPTS += vavoom-dedicated
-# endif
-# endif
-# 
+if(NOT DEFINED ENABLE_SERVER)
+	set(ENABLE_SERVER TRUE)
+endif(NOT DEFINED ENABLE_SERVER)
+if(ENABLE_SERVER)
+
 if(WIN32)
 set(SERVER_SOURCES ${SERVER_COMMON_SOURCES} ${SERVER_WIN32_SOURCES})
 else(WIN32)
@@ -778,7 +846,11 @@ if(UNIX)
 set_target_properties(vavoom-dedicated PROPERTIES OUTPUT_NAME vavoom-dedicated.i686)
 endif(UNIX)
 set_target_properties(vavoom-dedicated PROPERTIES COMPILE_FLAGS -DSERVER)
-target_link_libraries(vavoom-dedicated glbsp ${ZLIB_LIBRARY})
+target_link_libraries(vavoom-dedicated glbsp ${ZLIB_LIBRARY} ${NET_LIBRARIES})
+
+# if SERVER_PLATFORM_UNIX
+# bin_SCRIPTS += vavoom-dedicated
+# endif
 
 # vavoom-dedicated: Makefile
 # 	echo "#!/bin/sh" > $@
@@ -787,7 +859,9 @@ target_link_libraries(vavoom-dedicated glbsp ${ZLIB_LIBRARY})
 # 	echo "cd \"$(datadir)/vavoom\"" >> $@
 # 	echo "\"$(bindir)/$(SERVER_EXE)\" \$$* $(IWADDIR_PARM)" >> $@
 # 	echo "exit \$$?" >> $@
-# 
+
+endif(ENABLE_SERVER)
+
 # # ---------------------------------------
 # #
 # #	Compilation of Windows resources
