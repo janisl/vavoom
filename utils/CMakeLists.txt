@@ -1,5 +1,14 @@
 find_package(ZLIB REQUIRED)
 
+#
+#  **** Check for inttypes.h ****
+#
+
+find_path(INTTYPES_INCLUDE_DIR inttypes.h)
+if(INTTYPES_INCLUDE_DIR)
+	add_definitions(-DHAVE_INTTYPES_H=1)
+endif(INTTYPES_INCLUDE_DIR)
+
 add_subdirectory(acc)
 add_subdirectory(fixmd2)
 add_subdirectory(glbsp)

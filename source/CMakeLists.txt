@@ -3,6 +3,15 @@ add_subdirectory(timidity)
 find_package(ZLIB REQUIRED)
 include_directories(${ZLIB_INCLUDE_DIR})
 
+#
+#  **** Check for inttypes.h ****
+#
+
+find_path(INTTYPES_INCLUDE_DIR inttypes.h)
+if(INTTYPES_INCLUDE_DIR)
+	add_definitions(-DHAVE_INTTYPES_H=1)
+endif(INTTYPES_INCLUDE_DIR)
+
 link_directories(../utils/glbsp)
 link_directories(../utils/glvis)
 
@@ -883,7 +892,6 @@ endif(ENABLE_SERVER)
 # # ---------------------------------------
 # 
 # EXTRA_DIST = \
-# 	gas2tasm.c \
 # 	gl_x.cpp \
 # 	template.cpp \
 # 	template.h

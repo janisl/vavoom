@@ -29,10 +29,8 @@ AC_LANG_CPLUSPLUS
 AC_PROG_CC
 AC_PROG_CXX
 AC_PROG_CPP
-AC_PROG_RANLIB
 AC_PROG_INSTALL
 AM_PROG_AS
-AC_PROG_AWK
 
 if test "x$AR" = "x"; then
 	AR="ar"
@@ -52,12 +50,6 @@ case $host in
 	LDFLAGS="-mno-cygwin $LDFLAGS"
 	;;
 esac
-
-dnl
-dnl  **** Check for inttypes.h ****
-dnl
-
-AC_CHECK_HEADER([inttypes.h], [CPPFLAGS="$CPPFLAGS -DHAVE_INTTYPES_H=1"])
 
 dnl
 dnl  **** Check wehter we need to use libm ****
