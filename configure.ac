@@ -16,7 +16,6 @@ dnl  **** Supported --enable arguments ****
 dnl
 
 AC_ARG_ENABLE([debug], AS_HELP_STRING([--enable-debug], [Enable debuging]))
-AC_ARG_ENABLE([asm], AS_HELP_STRING([--disable-asm], [Disable assembly-language code]))
 
 dnl
 dnl  **** Basic checks ****
@@ -53,55 +52,6 @@ dnl
 AC_SEARCH_LIBS([sin], [m], [], [AC_ERROR([Library containing sin not found])])
 
 dnl
-dnl  **** Test for prefix prepended by compiler to global symbols ****
-dnl
-
-AC_MSG_CHECKING([for asm prefix before symbols])
-AC_CACHE_VAL(vavoom_cv_asm_prefix,
-[
-	AC_TRY_LINK([#ifdef __cplusplus
-		extern "C"
-		#endif
-		int test_for_underscore();
-		asm (".globl _test_for_underscore\n"
-		"_test_for_underscore:");], [test_for_underscore ();],
-		vavoom_cv_asm_prefix=_,
-		vavoom_cv_asm_prefix=no)
-	if test "$vavoom_cv_asm_prefix" = no; then
-		AC_TRY_LINK([#ifdef __cplusplus
-			extern "C"
-			#endif
-			int test_for_underscore();
-			asm (".globl test_for_undercore\n"
-			"test_for_underscore:");], [test_for_underscore ();],
-			vavoom_cv_asm_prefix=,
-			vavoom_cv_asm_prefix=no)
-	fi
-	if test "$vavoom_cv_asm_prefix" = no; then
-		vavoom_cv_asm_prefix=
-	fi
-])
-AC_MSG_RESULT(\"$vavoom_cv_asm_prefix\")
-if test "$vavoom_cv_asm_prefix" != ""; then
-	ASMFLAGS="-DASM_PREFIX=$vavoom_cv_asm_prefix"
-fi
-
-dnl
-dnl  **** Assembly-language files ****
-dnl
-
-if test "x$enable_asm" != "xno"; then
-	case $host in
-	i?86-*-*)
-		MAIN_ASM_I386=TRUE
-		CPPFLAGS="$CPPFLAGS -DUSE_ASM_I386=1"
-		;;
-	esac
-fi
-
-AM_CONDITIONAL(MAIN_ASM_I386, test x$MAIN_ASM_I386 = xTRUE)
-
-dnl
 dnl  **** IWAD directory option ****
 dnl
 
@@ -110,12 +60,6 @@ if test "x$with_iwaddir" != "x"; then
 fi
 
 AC_SUBST([IWADDIR_PARM])
-
-dnl
-dnl  **** Output ****
-dnl
-
-AC_SUBST([ASMFLAGS])
 
 dnl
 dnl  Possibility to add additional subdirs to the build process that are not

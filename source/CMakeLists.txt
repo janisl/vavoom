@@ -12,6 +12,7 @@ option(WITH_FLAC "Enable FLAC support" ON)
 option(ENABLE_ZONE_DEBUG "Enable memory allocation debuging")
 option(ENABLE_CLIENT "Build client executable" ON)
 option(ENABLE_SERVER "Build dedicated server executable" ON)
+option(ENABLE_ASM "Enable assembly-language code" ON)
 
 find_package(ZLIB REQUIRED)
 include_directories(${ZLIB_INCLUDE_DIR})
@@ -481,8 +482,6 @@ set(SERVER_WIN32_SOURCES
 #
 #---------------------------------------
 
-# CCASFLAGS = -x assembler-with-cpp $(ASMFLAGS)
-
 #
 #  **** Check for newtwork libraries ****
 #
@@ -514,6 +513,93 @@ if(ENABLE_CLIENT)
 
 set(MAIN_SOURCES ${MAIN_COMMON_SOURCES})
 set(MAIN_LIBS glbsp glvis timidity ${ZLIB_LIBRARY} ${NET_LIBRARIES})
+set(MAIN_COMPILE_FLAGS "")
+
+#
+#  **** Test for prefix prepended by compiler to global symbols ****
+#
+
+file(WRITE ${CMAKE_BINARY_DIR}/CMakeFiles/CMakeTmp/temp.c
+	"#ifdef __cplusplus
+	extern \"C\"
+	#endif
+	int test_for_underscore();
+	asm (\".globl _test_for_underscore\\n\"
+	\"_test_for_underscore:\");
+	
+	int main()
+	{
+		test_for_underscore();
+		return 0;
+	}
+	")
+try_compile(RES ${CMAKE_BINARY_DIR} ${CMAKE_BINARY_DIR}/CMakeFiles/CMakeTmp/temp.c)
+if(RES)
+	set(ASM_PREFIX "_")
+else(RES)
+	file(WRITE ${CMAKE_BINARY_DIR}/CMakeFiles/CMakeTmp/temp.c
+		"#ifdef __cplusplus
+		extern \"C\"
+		#endif
+		int test_for_underscore();
+		asm (\".globl test_for_underscore\\n\"
+		\"test_for_underscore:\");
+		
+		int main()
+		{
+			test_for_underscore();
+			return 0;
+		}
+		")
+	try_compile(RES ${CMAKE_BINARY_DIR} ${CMAKE_BINARY_DIR}/CMakeFiles/CMakeTmp/temp.c)
+	if(RES)
+		set(ASM_PREFIX "")
+	else(RES)
+		message(STATUS "Unknown ASM prefix")
+		set(ASM_PREFIX "")
+	endif(RES)
+endif(RES)
+message(STATUS "ASM prefix: ${ASM_PREFIX}")
+
+if(NOT ${ASM_PREFIX} EQUAL "")
+	set(ASMFLAGS "-DASM_PREFIX=${ASM_PREFIX}")
+endif(NOT ${ASM_PREFIX} EQUAL "")
+
+#
+#  **** Assembly-language files ****
+#
+
+if(ENABLE_ASM)
+	file(WRITE ${CMAKE_BINARY_DIR}/CMakeFiles/CMakeTmp/temp.c
+		"#if !defined(__i386__)
+		#error Not i386
+		#endif
+		int main() { return 0; }
+		")
+	try_compile(IS_I386 ${CMAKE_BINARY_DIR} ${CMAKE_BINARY_DIR}/CMakeFiles/CMakeTmp/temp.c)
+	if (IS_I386)
+		message(STATUS "Using i386 assembly files")
+		set(MAIN_SOURCES ${MAIN_SOURCES} ${MAIN_ASM_I386_SOURCES})
+		set(MAIN_COMPILE_FLAGS ${MAIN_COMPILE_FLAGS} -DUSE_ASM_I386=1)
+		#  CMake doesn't support automatic building of assembly files so
+		# we must add a custom command and add object files to the list
+		# of source files
+		foreach(SRC ${MAIN_ASM_I386_SOURCES})
+			get_filename_component(FILE_BASE ${SRC} NAME_WE)
+			set(OBJ ${CMAKE_BINARY_DIR}/${FILE_BASE}.o)
+			add_custom_command(OUTPUT ${OBJ}
+				DEPENDS ${SRC} ${CMAKE_SOURCE_DIR}/asm_i386.h
+				COMMAND ${CMAKE_C_COMPILER} -x assembler-with-cpp ${ASMFLAGS}
+					-c ${CMAKE_SOURCE_DIR}/${SRC} -o ${OBJ}
+			)
+			set(MAIN_SOURCES ${MAIN_SOURCES} ${OBJ})
+		endforeach(SRC)
+	endif (IS_I386)
+endif(ENABLE_ASM)
+
+#
+#  **** Platform specific library checks ****
+#
 
 if(WIN32)
 	# ---------------- Windows ----------------
@@ -772,40 +858,11 @@ if(WITH_FLAC)
 	endif(FLAC_INCLUDE_DIR AND FLAC_LIBRARY AND FLACPP_LIBRARY)
 endif(WITH_FLAC)
 
-# #-- i386 assembler files --
-# if MAIN_ASM_I386
-# _____MAIN_EXE__SOURCES += \
-# 	d_aclip_i386.s \
-# 	d_alias_i386.s \
-# 	d_edge_i386.s \
-# 	d_polyset_i386.s \
-# 	d_vars_i386.s \
-# 	d_zspan_i386.s \
-# 	d_part_8_i386.s \
-# 	d_polyset_8_i386.s \
-# 	d_span16_8_i386.s \
-# 	d_span_8_i386.s \
-# 	d_sprite_8_i386.s \
-# 	d_surf_8_i386.s \
-# 	d_part_16_i386.s \
-# 	d_polyset_16_i386.s \
-# 	d_span16_16_i386.s \
-# 	d_span_16_i386.s \
-# 	d_sprite_16_i386.s \
-# 	d_surf_16_i386.s \
-# 	d_part_32_i386.s \
-# 	d_polyset_32_i386.s \
-# 	d_span16_32_i386.s \
-# 	d_span_32_i386.s \
-# 	d_sprite_32_i386.s \
-# 	d_surf_32_i386.s \
-# 	sys_i386.s
-# endif
-
 add_executable(vavoom ${MAIN_SOURCES})
 if(UNIX)
 set_target_properties(vavoom PROPERTIES OUTPUT_NAME vavoom.i686)
 endif(UNIX)
+set_target_properties(vavoom PROPERTIES COMPILE_FLAGS ${MAIN_COMPILE_FLAGS})
 target_link_libraries(vavoom ${MAIN_LIBS})
 
 # if MAIN_PLATFORM_UNIX_ALLEGRO
