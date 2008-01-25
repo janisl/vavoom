@@ -1,5 +1,18 @@
 add_subdirectory(timidity)
 
+option(WITH_ALLEGRO "Use Allegro library")
+option(WITH_SDL "Use SDL library")
+option(WITH_OPENGL "Use OpenGL library" ON)
+option(WITH_OPENAL "Use OpenAL library" ON)
+option(WITH_VORBIS "Enable Vorbis support" ON)
+option(WITH_LIBMAD "Enable MP3 support" ON)
+option(WITH_MIKMOD "Enable MikMod support" ON)
+option(WITH_FLAC "Enable FLAC support" ON)
+
+option(ENABLE_ZONE_DEBUG "Enable memory allocation debuging")
+option(ENABLE_CLIENT "Build client executable" ON)
+option(ENABLE_SERVER "Build dedicated server executable" ON)
+
 find_package(ZLIB REQUIRED)
 include_directories(${ZLIB_INCLUDE_DIR})
 
@@ -497,20 +510,10 @@ endif(ENABLE_ZONE_DEBUG)
 #
 #---------------------------------------
 
-if(NOT DEFINED ENABLE_CLIENT)
-	set(ENABLE_CLIENT TRUE)
-endif(NOT DEFINED ENABLE_CLIENT)
 if(ENABLE_CLIENT)
 
 set(MAIN_SOURCES ${MAIN_COMMON_SOURCES})
 set(MAIN_LIBS glbsp glvis timidity ${ZLIB_LIBRARY} ${NET_LIBRARIES})
-
-if(NOT DEFINED WITH_OPENGL)
-	set(WITH_OPENGL TRUE)
-endif(NOT DEFINED WITH_OPENGL)
-if(NOT DEFINED WITH_OPENAL)
-	set(WITH_OPENAL TRUE)
-endif(NOT DEFINED WITH_OPENAL)
 
 if(WIN32)
 	# ---------------- Windows ----------------
@@ -665,9 +668,6 @@ set(MAIN_LIBS ${JPEG_LIBRARY} ${MAIN_LIBS})
 #  **** Check for Vorbis ****
 #
 
-if(NOT DEFINED WITH_VORBIS)
-	set(WITH_VORBIS TRUE)
-endif(NOT DEFINED WITH_VORBIS)
 if(WITH_VORBIS)
 	find_path(OGG_INCLUDE_DIR ogg/ogg.h)
 	find_path(VORBIS_INCLUDE_DIR vorbis/codec.h)
@@ -688,9 +688,6 @@ endif(WITH_VORBIS)
 #  **** Check for libmad ****
 #
 
-if(NOT DEFINED WITH_LIBMAD)
-	set(WITH_LIBMAD TRUE)
-endif(NOT DEFINED WITH_LIBMAD)
 if(WITH_LIBMAD)
 	find_path(MAD_INCLUDE_DIR mad.h)
 	find_library(MAD_LIBRARY NAMES mad)
@@ -708,9 +705,6 @@ endif(WITH_LIBMAD)
 #  **** Check for MikMod ****
 #
 
-if(NOT DEFINED WITH_MIKMOD)
-	set(WITH_MIKMOD TRUE)
-endif(NOT DEFINED WITH_MIKMOD)
 if(WITH_MIKMOD)
 	# Find libmikmod-config script
 	if(NOT DEFINED LIBMIKMOD_CONFIG)
@@ -764,9 +758,6 @@ endif(WITH_MIKMOD)
 #  **** Check for FLAC ****
 #
 
-if(NOT DEFINED WITH_FLAC)
-	set(WITH_FLAC TRUE)
-endif(NOT DEFINED WITH_FLAC)
 if(WITH_FLAC)
 	find_path(FLAC_INCLUDE_DIR FLAC++/decoder.h)
 	find_library(FLAC_LIBRARY NAMES FLAC)
@@ -839,9 +830,6 @@ endif(ENABLE_CLIENT)
 #
 #---------------------------------------
 
-if(NOT DEFINED ENABLE_SERVER)
-	set(ENABLE_SERVER TRUE)
-endif(NOT DEFINED ENABLE_SERVER)
 if(ENABLE_SERVER)
 
 if(WIN32)

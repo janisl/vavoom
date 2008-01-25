@@ -32,11 +32,6 @@ AC_PROG_CPP
 AC_PROG_INSTALL
 AM_PROG_AS
 
-if test "x$AR" = "x"; then
-	AR="ar"
-fi
-AC_SUBST([AR])
-
 if test "x$enable_debug" = "xyes"; then
 	CFLAGS="$CFLAGS -W -Wall"
 	CXXFLAGS="$CXXFLAGS -W -Wall"

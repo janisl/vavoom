@@ -1,5 +1,7 @@
 find_package(ZLIB REQUIRED)
 
+option(ENABLE_LAUNCHER "Build launcher" ON)
+
 #
 #  **** Check for inttypes.h ****
 #
