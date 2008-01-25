@@ -1,6 +1,6 @@
 include_directories(../common ${ZLIB_INCLUDE_DIR})
 
-add_executable(../bin/vlumpy
+add_executable(vlumpy
 	../common/cmdlib.cpp
 	../common/cmdlib.h
 	../common/ftexdefs.h
@@ -17,4 +17,5 @@ add_executable(../bin/vlumpy
 	zip.cpp
 	zip.h
 )
-target_link_libraries(../bin/vlumpy ${ZLIB_LIBRARY})
+target_link_libraries(vlumpy ${ZLIB_LIBRARY})
+set_target_properties(vlumpy PROPERTIES OUTPUT_NAME ../bin/vlumpy)

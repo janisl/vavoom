@@ -1,4 +1,4 @@
-add_executable(../bin/acc
+add_executable(acc
 	acc.c
 	common.h
 	error.c
@@ -16,3 +16,4 @@ add_executable(../bin/acc
 	token.c
 	token.h
 )
+set_target_properties(acc PROPERTIES OUTPUT_NAME ../bin/acc)

@@ -15,10 +15,11 @@ add_library(libglvis STATIC
 )
 set_target_properties(libglvis PROPERTIES OUTPUT_NAME glvis)
 
-add_executable(../bin/glvis
+add_executable(glvis
 	glvis.cpp
 )
-add_dependencies(../bin/glvis libglvis)
-target_link_libraries(../bin/glvis libglvis)
+add_dependencies(glvis libglvis)
+target_link_libraries(glvis libglvis)
+set_target_properties(glvis PROPERTIES OUTPUT_NAME ../bin/glvis)
 
 #EXTRA_DIST = glvis.txt

@@ -1,6 +1,6 @@
 include_directories(../common)
 
-add_executable(../bin/vcc
+add_executable(vcc
 	../common/array.h
 	../common/cmdlib.cpp
 	../common/cmdlib.h
@@ -23,5 +23,6 @@ add_executable(../bin/vcc
 	vcc.cpp
 	vcc.h
 )
+set_target_properties(vcc PROPERTIES OUTPUT_NAME ../bin/vcc)
 
 #EXTRA_DIST = vcc.txt

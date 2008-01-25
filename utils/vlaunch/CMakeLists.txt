@@ -4,10 +4,11 @@ if(ENABLE_LAUNCHER)
 	add_definitions(${wxWidgets_DEFINITIONS})
 	include_directories(${wxWidgets_INCLUDE_DIRS})
 
-	add_executable(../bin/vlaunch
+	add_executable(vlaunch
 		vlaunch.cpp
 	)
-	target_link_libraries(../bin/vlaunch ${wxWidgets_LIBRARIES})
+	target_link_libraries(vlaunch ${wxWidgets_LIBRARIES})
+	set_target_properties(vlaunch PROPERTIES OUTPUT_NAME ../bin/vlaunch)
 
 #EXTRA_DIST = \
 #	vavoom.xpm \
