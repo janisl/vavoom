@@ -1,13 +1,16 @@
-#FIXME needs enable flag, minimal wxWidgets version check
+if(NOT DEFINED ENABLE_LAUNCHER)
+	set(ENABLE_LAUNCHER TRUE)
+endif(NOT DEFINED ENABLE_LAUNCHER)
+if(ENABLE_LAUNCHER)
 
-find_package(wxWidgets REQUIRED)
-add_definitions(${wxWidgets_DEFINITIONS})
-include_directories(${wxWidgets_INCLUDE_DIRS})
+	find_package(wxWidgets REQUIRED)
+	add_definitions(${wxWidgets_DEFINITIONS})
+	include_directories(${wxWidgets_INCLUDE_DIRS})
 
-add_executable(../bin/vlaunch
-	vlaunch.cpp
-)
-target_link_libraries(../bin/vlaunch ${wxWidgets_LIBRARIES})
+	add_executable(../bin/vlaunch
+		vlaunch.cpp
+	)
+	target_link_libraries(../bin/vlaunch ${wxWidgets_LIBRARIES})
 
 #EXTRA_DIST = \
 #	vavoom.xpm \
@@ -16,3 +19,5 @@ target_link_libraries(../bin/vlaunch ${wxWidgets_LIBRARIES})
 #	vlaunch.sln \
 #	vlaunch.vcproj \
 #	vlaunch.xpm
+
+endif(ENABLE_LAUNCHER)

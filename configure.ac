@@ -17,7 +17,6 @@ dnl
 
 AC_ARG_ENABLE([debug], AS_HELP_STRING([--enable-debug], [Enable debuging]))
 AC_ARG_ENABLE([asm], AS_HELP_STRING([--disable-asm], [Disable assembly-language code]))
-AC_ARG_ENABLE([launcher], AS_HELP_STRING([--disable-launcher], [Don't build launcher]))
 
 dnl
 dnl  **** Basic checks ****
