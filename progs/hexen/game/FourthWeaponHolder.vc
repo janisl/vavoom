@@ -40,6 +40,6 @@ replication
 defaultproperties
 {
 	bNoBlockmap = true;
-	bHidden = true;
+	bNoSector = true;
 	bUndroppable = true;
 }

@@ -5539,7 +5539,7 @@ void ClientTick(float DeltaTime)
 	TVec		fv;
 	int			i, c;
 
-	if (bHidden)
+	if (bInvisible)
 	{
 		return;
 	}
@@ -6109,7 +6109,7 @@ final void TouchDehackedSpecial(EntityEx Toucher)
 	{
 		if (Item.ShouldRespawn())
 		{
-			bHidden = true;
+			bInvisible = true;
 			bSpecial = false;
 			SetState(FindState('DehackedDormantPickup'));
 		}
@@ -6841,7 +6841,7 @@ DehackedDormantPickup:
 	{
 		EntityEx	A;
 
-		bHidden = false;
+		bInvisible = false;
 		bSpecial = true;
 		SetState(IdleState);
 

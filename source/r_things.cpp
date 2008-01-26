@@ -786,7 +786,8 @@ void VRenderLevel::RenderThing(VEntity* mobj)
 		return;
 	}
 
-	if (mobj->EntityFlags & VEntity::EF_Hidden)
+	if ((mobj->EntityFlags & VEntity::EF_NoSector) ||
+		(mobj->EntityFlags & VEntity::EF_Invisible))
 	{
 		return;
 	}

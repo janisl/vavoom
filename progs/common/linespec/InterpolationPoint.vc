@@ -129,5 +129,6 @@ defaultproperties
 {
 	bNoBlockmap = true;
 	bNoGravity = true;
-	bHidden = true;
+	bNoSplash = true;
+	RenderStyle = STYLE_None;
 }

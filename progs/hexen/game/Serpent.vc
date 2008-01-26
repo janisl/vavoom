@@ -97,7 +97,7 @@ final void A_SerpentHumpDecide()
 
 final void A_SerpentUnHide()
 {
-	bHidden = false;
+	bInvisible = false;
 	FloorClip = 24.0;
 }
 
@@ -133,7 +133,7 @@ final void A_SerpentLowerHump()
 
 final void A_SerpentHide()
 {
-	bHidden = true;
+	bInvisible = true;
 	FloorClip = 0.0;
 }
 
@@ -397,7 +397,7 @@ defaultproperties
 	Mass = 99999.0;
 	StepSpeed = 12.0;
 	PainChance = 0.375;
-	bHidden = true;
+	bInvisible = true;
 	bNoBlood = true;
 	bShootable = false;
 	bFloorClip = false;

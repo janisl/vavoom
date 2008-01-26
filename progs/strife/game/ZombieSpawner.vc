@@ -48,6 +48,6 @@ defaultproperties
 {
 	Health = 20;
 	bShootable = true;
-	bHidden = true;
+	bNoSector = true;
 	ActiveSound = 'zombie/spawner';
 }

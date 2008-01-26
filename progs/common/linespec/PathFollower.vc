@@ -424,6 +424,7 @@ bool Interpolate()
 defaultproperties
 {
 	bNoBlockmap = true;
-	bHidden = true;
+	bNoSector = true;
 	bNoGravity = true;
+	bNoSplash = true;
 }

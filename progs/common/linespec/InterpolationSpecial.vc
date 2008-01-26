@@ -64,5 +64,6 @@ class InterpolationSpecial : ScriptedEntity
 defaultproperties
 {
 	bNoBlockmap = true;
-	bHidden = true;
+	bNoSector = true;
+	bNoSplash = true;
 }

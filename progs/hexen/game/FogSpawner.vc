@@ -95,7 +95,7 @@ Spawn:
 
 defaultproperties
 {
-	bHidden = true;
+	bNoSector = true;
 	bNoBlockmap = true;
 	bNoPassMobj = true;
 	bFloatBob = true;

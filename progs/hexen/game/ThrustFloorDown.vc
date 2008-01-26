@@ -63,7 +63,7 @@ final void A_ThrustInitDn()
 	bRaised = false;	// Mark as down
 	FloorClip = Height;
 	bSolid = false;
-	bHidden = true;
+	bInvisible = true;
 	SpawnedDirt = Spawn(DirtClump, Origin);
 }
 
@@ -231,7 +231,7 @@ bool Activate()
 	if (!bRaised)
 	{
 		PlaySound('ThrustSpikeLower', CHAN_VOICE);
-		bHidden = false;
+		bInvisible = false;
 		if (bBloody)
 			SetState(FindState('BloodyRaise'));
 		else
@@ -265,5 +265,5 @@ defaultproperties
 	Height = 128.0;
 	bFloorClip = true;
 	bNoTeleport = true;
-	bHidden = true;
+	bInvisible = true;
 }

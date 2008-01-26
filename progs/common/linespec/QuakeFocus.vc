@@ -109,6 +109,6 @@ Spawn:
 
 defaultproperties
 {
-	bHidden = true;
+	bNoSector = true;
 	bNoBlockmap = true;
 }

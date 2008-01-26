@@ -29,6 +29,6 @@ class BossTarget : Actor
 defaultproperties
 {
 	Height = 32.0;
-	bHidden = true;
+	bNoSector = true;
 	bNoBlockmap = true;
 }

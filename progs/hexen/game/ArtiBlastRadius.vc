@@ -73,7 +73,7 @@ bool Use(bool Pickup)
 		{
 			continue;	// no dormant creatures
 		}
-		if ((mo.Class == WraithBuried) && mo.bHidden)
+		if ((mo.Class == WraithBuried) && mo.bInvisible)
 		{
 			continue;	// no underground wraiths
 		}

@@ -1124,7 +1124,7 @@ final void A_UnSetInvulnerable()
 
 final void A_HideThing()
 {
-	bHidden = true;
+	bInvisible = true;
 }
 
 //==========================================================================
@@ -1135,7 +1135,7 @@ final void A_HideThing()
 
 final void A_UnHideThing()
 {
-	bHidden = false;
+	bInvisible = false;
 }
 
 //==========================================================================

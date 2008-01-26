@@ -29,6 +29,6 @@ name			SeqName;
 
 defaultproperties
 {
-	bHidden = true;
+	bNoSector = true;
 	bNoBlockmap = true;
 }

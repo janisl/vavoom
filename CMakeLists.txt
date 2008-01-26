@@ -22,7 +22,9 @@ add_subdirectory(utils)
 add_subdirectory(source)
 add_subdirectory(progs)
 add_subdirectory(basev)
-# $(EXTRA_SUBDIRS)
+foreach(DIR ${EXTRA_SUBDIRS})
+	add_subdirectory(${DIR})
+endforeach(DIR)
 
 # EXTRA_DIST = \
 # 	autogen.sh \

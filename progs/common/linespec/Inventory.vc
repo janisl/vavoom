@@ -151,7 +151,7 @@ void Tick(float DeltaTime)
 final void BecomeItem()
 {
 	UnlinkFromWorld();
-	bHidden = true;
+	bNoSector = true;
 	bNoBlockmap = true;
 	LinkToWorld();
 	SetState(FindState('Held'));
@@ -170,7 +170,7 @@ final void BecomePickup()
 		EntityEx(Owner).RemoveInventory(self);
 	}
 	UnlinkFromWorld();
-	bHidden = false;
+	bNoSector = false;
 	bNoBlockmap = false;
 	LinkToWorld();
 	SetState(IdleState);
@@ -484,7 +484,7 @@ final void GoAwayAndDie()
 final void Hide()
 {
 	bSpecial = false;
-	bHidden = true;
+	bInvisible = true;
 	if (LineSpecialGameInfo(Level.Game).bRavenStylePickupRespawn)
 	{
 		SetState(FindState('HideSpecial'));
@@ -708,7 +708,7 @@ float GetSpeedFactor()
 
 final void A_RestoreSpecialThing1()
 {
-	bHidden = false;
+	bInvisible = false;
 	if (DoRespawn())
 	{
 		PlaySound('misc/spawn', CHAN_VOICE);
@@ -736,7 +736,7 @@ DormantPickup:
 	{
 		EntityEx	A;
 
-		bHidden = false;
+		bInvisible = false;
 		bSpecial = true;
 		SetState(IdleState);
 

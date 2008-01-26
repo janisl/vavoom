@@ -43,6 +43,6 @@ defaultproperties
 	Height = 1.0;
 	Mass = 10000.0;
 	bShootable = true;
-	bHidden = true;
+	bNoSector = true;
 	bInCombat = true;
 }

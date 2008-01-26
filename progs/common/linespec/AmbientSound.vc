@@ -153,6 +153,6 @@ void SetTimer(FAmbientSound* Amb)
 
 defaultproperties
 {
-	bHidden = true;
+	bNoSector = true;
 	bNoBlockmap = true;
 }

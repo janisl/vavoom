@@ -273,7 +273,7 @@ void VEntity::UnlinkFromWorld()
 		return;
 	}
 
-	if (!(EntityFlags & EF_Hidden))
+	if (!(EntityFlags & EF_NoSector))
 	{
 		// invisible things don't need to be in sector list
 		// unlink from subsector
@@ -378,7 +378,7 @@ void VEntity::LinkToWorld()
 	CeilingZ = r->ceiling->GetPointZ(Origin);
 
 	// link into sector
-	if (!(EntityFlags & EF_Hidden))
+	if (!(EntityFlags & EF_NoSector))
 	{
 		// invisible things don't go into the sector links
 		VEntity** Link = &Sector->ThingList;

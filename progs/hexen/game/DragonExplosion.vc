@@ -59,7 +59,7 @@ defaultproperties
 	RenderStyle = STYLE_Add;
 	Radius = 8.0;
 	Height = 8.0;
-	bHidden = true;
+	bInvisible = true;
 	bNoTeleport = true;
 	DamageType = 'Fire';
 	bNoGravity = false;

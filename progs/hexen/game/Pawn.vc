@@ -173,7 +173,7 @@ final void A_FreezeDeathChunks()
 	}
 	RemoveFromTIDList();
 	SetState(FindState('FreeTargMobj'));
-	bHidden = true;
+	bInvisible = true;
 }
 
 defaultproperties

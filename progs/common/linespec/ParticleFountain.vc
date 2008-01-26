@@ -177,6 +177,6 @@ defaultproperties
 {
 	Height = 0.0;
 	bNoBlockmap = true;
-	bHidden = true;
+	bInvisible = true;
 	bNoGravity = true;
 }

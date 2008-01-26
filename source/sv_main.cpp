@@ -261,7 +261,9 @@ static bool IsRelevant(VThinker* Th, VNetConnection* Connection)
 		return false;
 	if (Ent->GetTopOwner() == Connection->Owner->MO)
 		return true;
-	if (Ent->EntityFlags & VEntity::EF_Hidden)
+	if (Ent->EntityFlags & VEntity::EF_NoSector)
+		return false;
+	if (Ent->EntityFlags & VEntity::EF_Invisible)
 		return false;
 	if (!Connection->CheckFatPVS(Ent->SubSector))
 		return false;

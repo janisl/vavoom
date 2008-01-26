@@ -1685,7 +1685,7 @@ static void ParseOldDecoration(VScriptParser* sc, int Type)
 		}
 		else if (sc->Check("NoSector"))
 		{
-			SetClassFieldBool(Class, "bHidden", true);
+			SetClassFieldBool(Class, "bNoSector", true);
 		}
 		else if (sc->Check("NoBlockmap"))
 		{

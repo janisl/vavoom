@@ -36,5 +36,5 @@ Spawn:
 defaultproperties
 {
 	bSolid = true;
-	bHidden = false;
+	bInvisible = false;
 }

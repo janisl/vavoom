@@ -46,5 +46,5 @@ void BeginPlay()
 defaultproperties
 {
 	bNoBlockmap = true;
-	bHidden = true;
+	bNoSector = true;
 }

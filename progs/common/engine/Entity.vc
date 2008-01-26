@@ -167,7 +167,7 @@ int				ValidCount;
 
 //	Flags
 bool bSolid;			// Blocks.
-bool bHidden;			// don't update to clients (invisible but touchable)
+bool bNoSector;			// don't use the sector links (invisible but touchable)
 bool bNoBlockmap;		// don't use the BlockLinks (inert but displayable)
 bool bIsPlayer;			// PLayer or player-bot
 bool bFixedModel;
@@ -193,6 +193,7 @@ bool bOnMobj;			// mobj is resting on top of another mobj
 bool bCorpse;			// don't stop moving halfway off a step
 bool bFullBright;		// make current state full bright
 native readonly bool bNetLocalPlayer;	// Mobj of player currently being updated
+bool bInvisible;		// Don't draw this actor
 
 int				Health;
 
@@ -232,8 +233,8 @@ replication
 	reliable if (Role == ROLE_Authority)
 		Origin, Angles, FloorClip, State, StateTime, SpriteType,
 		FixedSpriteName, ModelSkin, ModelVersion, RenderStyle, Alpha,
-		Translation, ScaleX, ScaleY, bFly, bHidden, bFullBright, bFixedModel,
-		bNetLocalPlayer, NetID;
+		Translation, ScaleX, ScaleY, bFly, bNoSector, bInvisible, bFullBright,
+		bFixedModel, bNetLocalPlayer, NetID;
 
 
 	reliable if (Role == ROLE_Authority && bFixedModel)

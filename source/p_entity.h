@@ -176,7 +176,7 @@ class VEntity : public VThinker
 	enum
 	{
 		EF_Solid				= 0x00000001,	// Blocks.
-		EF_Hidden				= 0x00000002,	// don't update to clients
+		EF_NoSector				= 0x00000002,	// don't use the sector links
 												// (invisible but touchable)
 		EF_NoBlockmap			= 0x00000004,	// don't use the blocklinks
 												// (inert but displayable)
@@ -203,6 +203,7 @@ class VEntity : public VThinker
 		EF_Corpse				= 0x00200000,	// don't stop moving halfway off a step
 		EF_FullBright			= 0x00400000,	// make current state full bright
 		EF_NetLocalPlayer		= 0x00800000,	// Mobj of player currently being updated
+		EF_Invisible			= 0x01000000,	// Don't draw this actor
 	};
 	vuint32			EntityFlags;
 

@@ -121,7 +121,7 @@ bool Deactivate()
 
 defaultproperties
 {
-	bHidden = true;
+	bNoSector = true;
 	bNoBlockmap = true;
 	bNoGravity = true;
 	bNoPassMobj = true;

@@ -619,7 +619,7 @@ static void ReadThing(int num)
 				SetClassFieldBool(Ent, "bSpecial", Values[0] & 0x00000001);
 				SetClassFieldBool(Ent, "bSolid", Values[0] & 0x00000002);
 				SetClassFieldBool(Ent, "bShootable", Values[0] & 0x00000004);
-				SetClassFieldBool(Ent, "bHidden", Values[0] & 0x00000008);
+				SetClassFieldBool(Ent, "bNoSector", Values[0] & 0x00000008);
 				SetClassFieldBool(Ent, "bNoBlockmap", Values[0] & 0x00000010);
 				SetClassFieldBool(Ent, "bAmbush", Values[0] & 0x00000020);
 				SetClassFieldBool(Ent, "bJustHit", Values[0] & 0x00000040);
@@ -686,7 +686,7 @@ static void ReadThing(int num)
 				SetClassFieldBool(Ent, "bBoss", Values[1] & 0x00008000);
 				SetClassFieldBool(Ent, "bNoDamageThrust", Values[1] & 0x00020000);
 				SetClassFieldBool(Ent, "bTelestomp", Values[1] & 0x00040000);
-				SetClassFieldBool(Ent, "bHidden", Values[1] & 0x00080000);
+				SetClassFieldBool(Ent, "bInvisible", Values[1] & 0x00080000);
 				SetClassFieldBool(Ent, "bFloatBob", Values[1] & 0x00100000);
 				SetClassFieldBool(Ent, "bActivateImpact", Values[1] & 0x00200000);
 				SetClassFieldBool(Ent, "bActivatePushWall", Values[1] & 0x00400000);
