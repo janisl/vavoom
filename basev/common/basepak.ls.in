@@ -1,8 +1,8 @@
 $dest basepak.pk3
 
 //	Default config files
-default.cfg				@srcdir@/default.cfg
-startup.vs				@srcdir@/startup.vs
+default.cfg				@CMAKE_CURRENT_SOURCE_DIR@/default.cfg
+startup.vs				@CMAKE_CURRENT_SOURCE_DIR@/startup.vs
 
 //	Common progs
 progs/engine.dat		progs/engine.dat
@@ -10,33 +10,33 @@ progs/linespec.dat		progs/linespec.dat
 progs/uibase.dat		progs/uibase.dat
 
 //	Graphics
-graphics/mc_arrow.png	@srcdir@/graphics/mc_arrow.png
+graphics/mc_arrow.png	@CMAKE_CURRENT_SOURCE_DIR@/graphics/mc_arrow.png
 
 //	Default texture
-textures/-noflat-.png	@srcdir@/textures/-noflat-.png
+textures/-noflat-.png	@CMAKE_CURRENT_SOURCE_DIR@/textures/-noflat-.png
 
 //	Common sprites
-sprites/tnt1a0.lmp		@srcdir@/sprites/tnt1a0.lmp
-sprites/unkna0.png		@srcdir@/sprites/unkna0.png
+sprites/tnt1a0.lmp		@CMAKE_CURRENT_SOURCE_DIR@/sprites/tnt1a0.lmp
+sprites/unkna0.png		@CMAKE_CURRENT_SOURCE_DIR@/sprites/unkna0.png
 
 //	Sounds
-sounds/dsempty.lmp		@srcdir@/sounds/dsempty.lmp
-sounds/dsquake.flac		@srcdir@/sounds/dsquake.flac
-sounds/spark1.flac		@srcdir@/sounds/spark1.flac
-sounds/spark2.flac		@srcdir@/sounds/spark2.flac
-sounds/spark3.flac		@srcdir@/sounds/spark3.flac
+sounds/dsempty.lmp		@CMAKE_CURRENT_SOURCE_DIR@/sounds/dsempty.lmp
+sounds/dsquake.flac		@CMAKE_CURRENT_SOURCE_DIR@/sounds/dsquake.flac
+sounds/spark1.flac		@CMAKE_CURRENT_SOURCE_DIR@/sounds/spark1.flac
+sounds/spark2.flac		@CMAKE_CURRENT_SOURCE_DIR@/sounds/spark2.flac
+sounds/spark3.flac		@CMAKE_CURRENT_SOURCE_DIR@/sounds/spark3.flac
 
 //	Colour names
-x11r6rgb.txt			@srcdir@/x11r6rgb.txt
+x11r6rgb.txt			@CMAKE_CURRENT_SOURCE_DIR@/x11r6rgb.txt
 
 //	Language strings
-language.en				@srcdir@/language.en
+language.en				@CMAKE_CURRENT_SOURCE_DIR@/language.en
 
 //	Base scripts
-terrain.txt				@srcdir@/terrain.txt
-lockdefs.txt			@srcdir@/lockdefs.txt
-textcolo.txt			@srcdir@/textcolo.txt
+terrain.txt				@CMAKE_CURRENT_SOURCE_DIR@/terrain.txt
+lockdefs.txt			@CMAKE_CURRENT_SOURCE_DIR@/lockdefs.txt
+textcolo.txt			@CMAKE_CURRENT_SOURCE_DIR@/textcolo.txt
 
 //	Console font
-$load @srcdir@/confont.pcx
+$load @CMAKE_CURRENT_SOURCE_DIR@/confont.pcx
 confont.lmp				fon1

@@ -1,28 +1,28 @@
 $dest basepak.pk3
 
 //	Automap background
-graphics/autopage.lmp	@srcdir@/graphics/autopage.lmp
+graphics/autopage.lmp	@CMAKE_CURRENT_SOURCE_DIR@/graphics/autopage.lmp
 
 //	Crosshairs
-graphics/croshai1.lmp	@srcdir@/graphics/croshai1.lmp
-graphics/croshai2.lmp	@srcdir@/graphics/croshai2.lmp
-graphics/croshai3.lmp	@srcdir@/graphics/croshai3.lmp
+graphics/croshai1.lmp	@CMAKE_CURRENT_SOURCE_DIR@/graphics/croshai1.lmp
+graphics/croshai2.lmp	@CMAKE_CURRENT_SOURCE_DIR@/graphics/croshai2.lmp
+graphics/croshai3.lmp	@CMAKE_CURRENT_SOURCE_DIR@/graphics/croshai3.lmp
 
 //	Binary data lumps
-animated.lmp			@srcdir@/animated.lmp
+animated.lmp			@CMAKE_CURRENT_SOURCE_DIR@/animated.lmp
 
 //	Scripts
-animdefs.txt			@srcdir@/animdefs.txt
-dehinfo.txt				@srcdir@/dehinfo.txt
-lockdefs.txt			@srcdir@/lockdefs.txt
-sndinfo.txt				@srcdir@/sndinfo.txt
-sndseq.txt				@srcdir@/sndseq.txt
-skyboxes.txt			@srcdir@/skyboxes.txt
+animdefs.txt			@CMAKE_CURRENT_SOURCE_DIR@/animdefs.txt
+dehinfo.txt				@CMAKE_CURRENT_SOURCE_DIR@/dehinfo.txt
+lockdefs.txt			@CMAKE_CURRENT_SOURCE_DIR@/lockdefs.txt
+sndinfo.txt				@CMAKE_CURRENT_SOURCE_DIR@/sndinfo.txt
+sndseq.txt				@CMAKE_CURRENT_SOURCE_DIR@/sndseq.txt
+skyboxes.txt			@CMAKE_CURRENT_SOURCE_DIR@/skyboxes.txt
 
 //	Big font
-$load @srcdir@/bigfont.pcx
+$load @CMAKE_CURRENT_SOURCE_DIR@/bigfont.pcx
 bigfont.lmp				fon2
 
 //	Generated data
-$load @srcdir@/palette.pcx
+$load @CMAKE_CURRENT_SOURCE_DIR@/palette.pcx
 translat.dat			raw 0 0 256 8

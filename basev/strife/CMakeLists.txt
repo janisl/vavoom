@@ -1,5 +1,7 @@
+configure_file(basepak.ls.in ${CMAKE_CURRENT_BINARY_DIR}/basepak.ls)
+
 add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/strfhelp.o
-	COMMAND ${ACC} ARGS ${CMAKE_SOURCE_DIR}/../../utils/editing/acs/strfhelp.acs strfhelp.o
+	COMMAND ${ACC} ARGS ${CMAKE_CURRENT_SOURCE_DIR}/../../utils/editing/acs/strfhelp.acs strfhelp.o
 	DEPENDS ../../utils/editing/acs/*.acs ${ACC}
 	)
 add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/basepak.pk3

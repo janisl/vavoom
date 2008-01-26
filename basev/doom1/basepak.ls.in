@@ -6,5 +6,5 @@ progs/clprogs.dat		progs/clprogs.dat
 progs/svprogs.dat		progs/svprogs.dat
 
 //	Scripts
-mapinfo.txt				@srcdir@/mapinfo.txt
-sndinfo.txt				@srcdir@/sndinfo.txt
+mapinfo.txt				@CMAKE_CURRENT_SOURCE_DIR@/mapinfo.txt
+sndinfo.txt				@CMAKE_CURRENT_SOURCE_DIR@/sndinfo.txt

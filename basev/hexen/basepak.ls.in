@@ -1,13 +1,13 @@
 $dest basepak.pk3
 
 //	Crosshairs
-graphics/croshai1.lmp	@srcdir@/graphics/croshai1.lmp
-graphics/croshai2.lmp	@srcdir@/graphics/croshai2.lmp
-graphics/croshai3.lmp	@srcdir@/graphics/croshai3.lmp
+graphics/croshai1.lmp	@CMAKE_CURRENT_SOURCE_DIR@/graphics/croshai1.lmp
+graphics/croshai2.lmp	@CMAKE_CURRENT_SOURCE_DIR@/graphics/croshai2.lmp
+graphics/croshai3.lmp	@CMAKE_CURRENT_SOURCE_DIR@/graphics/croshai3.lmp
 
 //	Some missing characters in small font
-graphics/fonta30.lmp	@srcdir@/graphics/fonta30.lmp
-graphics/fonta63.lmp	@srcdir@/graphics/fonta63.lmp
+graphics/fonta30.lmp	@CMAKE_CURRENT_SOURCE_DIR@/graphics/fonta30.lmp
+graphics/fonta63.lmp	@CMAKE_CURRENT_SOURCE_DIR@/graphics/fonta63.lmp
 
 //	Progs
 progs/shared.dat		progs/shared.dat
@@ -15,12 +15,12 @@ progs/clprogs.dat		progs/clprogs.dat
 progs/svprogs.dat		progs/svprogs.dat
 
 //	Scripts
-animdefs.txt			@srcdir@/animdefs.txt
-lockdefs.txt			@srcdir@/lockdefs.txt
-mapinfo.txt				@srcdir@/mapinfo.txt
-sndinfo.txt				@srcdir@/sndinfo.txt
-skyboxes.txt			@srcdir@/skyboxes.txt
-terrain.txt				@srcdir@/terrain.txt
+animdefs.txt			@CMAKE_CURRENT_SOURCE_DIR@/animdefs.txt
+lockdefs.txt			@CMAKE_CURRENT_SOURCE_DIR@/lockdefs.txt
+mapinfo.txt				@CMAKE_CURRENT_SOURCE_DIR@/mapinfo.txt
+sndinfo.txt				@CMAKE_CURRENT_SOURCE_DIR@/sndinfo.txt
+skyboxes.txt			@CMAKE_CURRENT_SOURCE_DIR@/skyboxes.txt
+terrain.txt				@CMAKE_CURRENT_SOURCE_DIR@/terrain.txt
 
-$load @srcdir@/palette.pcx
+$load @CMAKE_CURRENT_SOURCE_DIR@/palette.pcx
 translat.dat			raw 0 0 256 22

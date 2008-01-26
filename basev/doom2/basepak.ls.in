@@ -6,4 +6,4 @@ progs/clprogs.dat		progs/clprogs.dat
 progs/svprogs.dat		progs/svprogs.dat
 
 //	Scrpts
-mapinfo.txt				@srcdir@/mapinfo.txt
+mapinfo.txt				@CMAKE_CURRENT_SOURCE_DIR@/mapinfo.txt
