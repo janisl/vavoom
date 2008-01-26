@@ -11,4 +11,4 @@ add_subdirectory(plutonia)
 add_subdirectory(strife)
 add_subdirectory(tnt)
 
-#nobase_dist_basev_DATA = games.txt
+install(FILES games.txt DESTINATION ${DATADIR}/basev)

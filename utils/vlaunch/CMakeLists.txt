@@ -8,7 +8,8 @@ if(ENABLE_LAUNCHER)
 		vlaunch.cpp
 	)
 	target_link_libraries(vlaunch ${wxWidgets_LIBRARIES})
-	set_target_properties(vlaunch PROPERTIES OUTPUT_NAME ../bin/vlaunch)
+
+	install(TARGETS vlaunch DESTINATION bin)
 
 #EXTRA_DIST = \
 #	vavoom.xpm \

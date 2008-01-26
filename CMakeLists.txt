@@ -16,6 +16,8 @@ if(INTTYPES_INCLUDE_DIR)
 	add_definitions(-DHAVE_INTTYPES_H=1)
 endif(INTTYPES_INCLUDE_DIR)
 
+set(DATADIR share/vavoom)
+
 add_subdirectory(utils)
 add_subdirectory(source)
 add_subdirectory(progs)

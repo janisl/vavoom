@@ -845,11 +845,17 @@ endif(WITH_FLAC)
 
 add_executable(vavoom ${MAIN_SOURCES})
 if(UNIX)
-set_target_properties(vavoom PROPERTIES OUTPUT_NAME vavoom.i686)
+set_target_properties(vavoom PROPERTIES OUTPUT_NAME ../vavoom.i686)
+else(UNIX)
+set_target_properties(vavoom PROPERTIES OUTPUT_NAME ../vavoom)
 endif(UNIX)
 set_target_properties(vavoom PROPERTIES COMPILE_FLAGS ${MAIN_COMPILE_FLAGS})
 target_link_libraries(vavoom ${MAIN_LIBS})
 add_dependencies(vavoom timidity glbsp libglvis)
+
+install(TARGETS vavoom DESTINATION bin)
+
+install(FILES vavoom.png DESTINATION ${DATADIR})
 
 # if MAIN_PLATFORM_UNIX_ALLEGRO
 # bin_SCRIPTS += vavoom
@@ -883,11 +889,15 @@ endif(WIN32)
 
 add_executable(vavoom-dedicated ${SERVER_SOURCES})
 if(UNIX)
-set_target_properties(vavoom-dedicated PROPERTIES OUTPUT_NAME vavoom-dedicated.i686)
+set_target_properties(vavoom-dedicated PROPERTIES OUTPUT_NAME ../vavoom-dedicated.i686)
+else(UNIX)
+set_target_properties(vavoom-dedicated PROPERTIES OUTPUT_NAME ../vavoom-dedicated)
 endif(UNIX)
 set_target_properties(vavoom-dedicated PROPERTIES COMPILE_FLAGS -DSERVER)
 target_link_libraries(vavoom-dedicated glbsp ${ZLIB_LIBRARY} ${NET_LIBRARIES})
 add_dependencies(vavoom-dedicated glbsp)
+
+install(TARGETS vavoom-dedicated DESTINATION bin)
 
 # if SERVER_PLATFORM_UNIX
 # bin_SCRIPTS += vavoom-dedicated

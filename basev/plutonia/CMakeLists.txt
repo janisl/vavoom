@@ -8,4 +8,5 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/basepak.pk3
 	)
 add_custom_target(plutonia_basepak ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/basepak.pk3)
 
-#nobase_dist_plutonia_DATA = base.txt
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/basepak.pk3 base.txt
+	DESTINATION ${DATADIR}/basev/plutonia)

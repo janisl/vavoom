@@ -21,3 +21,6 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/basepak.pk3
 		${CMAKE_CURRENT_BINARY_DIR}/progs/svprogs.dat
 	)
 add_custom_target(heretic_basepak ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/basepak.pk3)
+
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/basepak.pk3
+	DESTINATION ${DATADIR}/basev/heretic)
