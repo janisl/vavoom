@@ -14,21 +14,6 @@ option(ENABLE_CLIENT "Build client executable" ON)
 option(ENABLE_SERVER "Build dedicated server executable" ON)
 option(ENABLE_ASM "Enable assembly-language code" ON)
 
-find_package(ZLIB REQUIRED)
-include_directories(${ZLIB_INCLUDE_DIR})
-
-#
-#  **** Check for inttypes.h ****
-#
-
-find_path(INTTYPES_INCLUDE_DIR inttypes.h)
-if(INTTYPES_INCLUDE_DIR)
-	add_definitions(-DHAVE_INTTYPES_H=1)
-endif(INTTYPES_INCLUDE_DIR)
-
-link_directories(../utils/glbsp)
-link_directories(../utils/glvis)
-
 #---------------------------------------
 #
 #	Main executable sources
@@ -512,7 +497,7 @@ endif(ENABLE_ZONE_DEBUG)
 if(ENABLE_CLIENT)
 
 set(MAIN_SOURCES ${MAIN_COMMON_SOURCES})
-set(MAIN_LIBS glbsp glvis timidity ${ZLIB_LIBRARY} ${NET_LIBRARIES})
+set(MAIN_LIBS glbsp libglvis timidity ${ZLIB_LIBRARY} ${NET_LIBRARIES})
 set(MAIN_COMPILE_FLAGS "")
 
 #
@@ -586,11 +571,11 @@ if(ENABLE_ASM)
 		# of source files
 		foreach(SRC ${MAIN_ASM_I386_SOURCES})
 			get_filename_component(FILE_BASE ${SRC} NAME_WE)
-			set(OBJ ${CMAKE_BINARY_DIR}/${FILE_BASE}.o)
+			set(OBJ ${CMAKE_CURRENT_BINARY_DIR}/${FILE_BASE}.o)
 			add_custom_command(OUTPUT ${OBJ}
-				DEPENDS ${SRC} ${CMAKE_SOURCE_DIR}/asm_i386.h
+				DEPENDS ${SRC} ${CMAKE_CURRENT_SOURCE_DIR}/asm_i386.h
 				COMMAND ${CMAKE_C_COMPILER} -x assembler-with-cpp ${ASMFLAGS}
-					-c ${CMAKE_SOURCE_DIR}/${SRC} -o ${OBJ}
+					-c ${CMAKE_CURRENT_SOURCE_DIR}/${SRC} -o ${OBJ}
 			)
 			set(MAIN_SOURCES ${MAIN_SOURCES} ${OBJ})
 		endforeach(SRC)
@@ -864,6 +849,7 @@ set_target_properties(vavoom PROPERTIES OUTPUT_NAME vavoom.i686)
 endif(UNIX)
 set_target_properties(vavoom PROPERTIES COMPILE_FLAGS ${MAIN_COMPILE_FLAGS})
 target_link_libraries(vavoom ${MAIN_LIBS})
+add_dependencies(vavoom timidity glbsp libglvis)
 
 # if MAIN_PLATFORM_UNIX_ALLEGRO
 # bin_SCRIPTS += vavoom
@@ -901,6 +887,7 @@ set_target_properties(vavoom-dedicated PROPERTIES OUTPUT_NAME vavoom-dedicated.i
 endif(UNIX)
 set_target_properties(vavoom-dedicated PROPERTIES COMPILE_FLAGS -DSERVER)
 target_link_libraries(vavoom-dedicated glbsp ${ZLIB_LIBRARY} ${NET_LIBRARIES})
+add_dependencies(vavoom-dedicated glbsp)
 
 # if SERVER_PLATFORM_UNIX
 # bin_SCRIPTS += vavoom-dedicated

@@ -1,5 +1,5 @@
-set(VLUMPY ${CMAKE_BINARY_DIR}/../utils/bin/vlumpy)
-set(ACC ${CMAKE_BINARY_DIR}/../utils/bin/acc)
+set(VLUMPY ${CMAKE_BINARY_DIR}/utils/bin/vlumpy)
+set(ACC ${CMAKE_BINARY_DIR}/utils/bin/acc)
 
 add_subdirectory(common)
 add_subdirectory(doom)

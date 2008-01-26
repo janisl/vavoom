@@ -1,6 +1,5 @@
-set(VCC ${CMAKE_BINARY_DIR}/../utils/bin/vcc)
-set(OUTDIR ${CMAKE_BINARY_DIR}/../basev/strife/progs)
-set(COMMON_PROGS_DIR ${CMAKE_BINARY_DIR}/../basev/common/progs)
+set(OUTDIR ${CMAKE_BINARY_DIR}/basev/strife/progs)
+set(COMMON_PROGS_DIR ${CMAKE_BINARY_DIR}/basev/common/progs)
 
 add_custom_command(OUTPUT ${OUTDIR}/svprogs.dat
 	COMMAND mkdir ARGS -p ${OUTDIR}
