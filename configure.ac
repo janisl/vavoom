@@ -72,6 +72,8 @@ mkdir -p utils/bin
 cd utils && cmake ../${ac_confdir}/utils && cd ..
 mkdir -p source
 cd source && cmake ../${ac_confdir}/source && cd ..
+mkdir -p progs
+cd progs && cmake ../${ac_confdir}/progs && cd ..
 
 AC_OUTPUT([
 	Makefile
@@ -93,11 +95,4 @@ AC_OUTPUT([
 	basev/strife/Makefile
 	basev/strife/basepak.ls
 	basev/tnt/Makefile
-	basev/tnt/basepak.ls
-	progs/Makefile
-	progs/common/Makefile
-	progs/doom/Makefile
-	progs/doom2/Makefile
-	progs/heretic/Makefile
-	progs/hexen/Makefile
-	progs/strife/Makefile])
+	basev/tnt/basepak.ls])
