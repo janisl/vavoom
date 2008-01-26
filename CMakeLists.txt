@@ -52,12 +52,6 @@ add_subdirectory(basev)
 # [1.26])
 # 
 # dnl
-# dnl  **** Supported --with arguments ****
-# dnl
-# 
-# AC_ARG_WITH([iwaddir], AS_HELP_STRING([--with-iwaddir], [Specify IWAD directories]))
-# 
-# dnl
 # dnl  **** Supported --enable arguments ****
 # dnl
 # 
@@ -86,13 +80,3 @@ add_subdirectory(basev)
 # dnl
 # 
 # AC_SEARCH_LIBS([sin], [m], [], [AC_ERROR([Library containing sin not found])])
-# 
-# dnl
-# dnl  **** IWAD directory option ****
-# dnl
-# 
-# if test "x$with_iwaddir" != "x"; then
-# 	IWADDIR_PARM="-iwaddir $with_iwaddir"
-# fi
-# 
-# AC_SUBST([IWADDIR_PARM])

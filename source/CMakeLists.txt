@@ -857,20 +857,18 @@ install(TARGETS vavoom DESTINATION bin)
 
 install(FILES vavoom.png DESTINATION ${DATADIR})
 
-# if MAIN_PLATFORM_UNIX_ALLEGRO
-# bin_SCRIPTS += vavoom
-# endif
-# if MAIN_PLATFORM_UNIX_SDL
-# bin_SCRIPTS += vavoom
-# endif
+if(UNIX)
+	file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/vavoom
+"#!/bin/sh
+# Needed to make symlinks/shortcuts work.
+# the binaries must run with correct working directory
+cd \"${CMAKE_INSTALL_PREFIX}/${DATADIR}\"
+\"${CMAKE_INSTALL_PREFIX}/bin/vavoom.i686\" $* ${IWADDIR}
+exit $?
+")
+	install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/vavoom DESTINATION bin)
+endif(UNIX)
 
-# vavoom: Makefile
-# 	echo "#!/bin/sh" > $@
-# 	echo "# Needed to make symlinks/shortcuts work." >> $@
-# 	echo "# the binaries must run with correct working directory" >> $@
-# 	echo "cd \"$(datadir)/vavoom\"" >> $@
-# 	echo "\"$(bindir)/$(MAIN_EXE)\" \$$* $(IWADDIR_PARM)" >> $@
-# 	echo "exit \$$?" >> $@
 endif(ENABLE_CLIENT)
 
 #---------------------------------------
@@ -899,17 +897,17 @@ add_dependencies(vavoom-dedicated glbsp)
 
 install(TARGETS vavoom-dedicated DESTINATION bin)
 
-# if SERVER_PLATFORM_UNIX
-# bin_SCRIPTS += vavoom-dedicated
-# endif
-
-# vavoom-dedicated: Makefile
-# 	echo "#!/bin/sh" > $@
-# 	echo "# Needed to make symlinks/shortcuts work." >> $@
-# 	echo "# the binaries must run with correct working directory" >> $@
-# 	echo "cd \"$(datadir)/vavoom\"" >> $@
-# 	echo "\"$(bindir)/$(SERVER_EXE)\" \$$* $(IWADDIR_PARM)" >> $@
-# 	echo "exit \$$?" >> $@
+if(UNIX)
+	file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/vavoom-dedicated
+"#!/bin/sh
+# Needed to make symlinks/shortcuts work.
+# the binaries must run with correct working directory
+cd \"${CMAKE_INSTALL_PREFIX}/${DATADIR}\"
+\"${CMAKE_INSTALL_PREFIX}/bin/vavoom-dedicated.i686\" $* ${IWADDIR}
+exit $?
+")
+	install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/vavoom-dedicated DESTINATION bin)
+endif(UNIX)
 
 endif(ENABLE_SERVER)
 
