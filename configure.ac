@@ -74,25 +74,17 @@ mkdir -p source
 cd source && cmake ../${ac_confdir}/source && cd ..
 mkdir -p progs
 cd progs && cmake ../${ac_confdir}/progs && cd ..
+mkdir -p basev
+cd basev && cmake ../${ac_confdir}/basev && cd ..
 
 AC_OUTPUT([
 	Makefile
-	basev/Makefile
-	basev/common/Makefile
 	basev/common/basepak.ls
-	basev/doom/Makefile
 	basev/doom/basepak.ls
-	basev/doom1/Makefile
 	basev/doom1/basepak.ls
-	basev/doom2/Makefile
 	basev/doom2/basepak.ls
-	basev/heretic/Makefile
 	basev/heretic/basepak.ls
-	basev/hexen/Makefile
 	basev/hexen/basepak.ls
-	basev/plutonia/Makefile
 	basev/plutonia/basepak.ls
-	basev/strife/Makefile
 	basev/strife/basepak.ls
-	basev/tnt/Makefile
 	basev/tnt/basepak.ls])
