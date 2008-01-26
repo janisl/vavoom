@@ -1,4 +1,4 @@
-set(VCC ${CMAKE_BINARY_DIR}/utils/bin/vcc)
+get_target_property(VCC vcc LOCATION)
 
 add_subdirectory(common)
 add_subdirectory(doom)
