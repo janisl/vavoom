@@ -56,7 +56,6 @@ defaultproperties
 	Radius = 20.0;
 	Height = 80.0;
 	bSolid = true;
-	bPassMobj = false;
 	bStaticLight = true;
 	LightColour = RGB(255, 255, 0);
 	LightOffset = vector(0.0, 0.0, 72.0);

@@ -62,5 +62,4 @@ bool Deactivate()
 
 defaultproperties
 {
-	bPassMobj = true;
 }
