@@ -902,7 +902,6 @@ static void ParseActor(VScriptParser* sc)
 
 	VClass* Class = ParentClass->CreateDerivedClass(*NameStr);
 	Class->Outer = DecPkg;
-	SetClassFieldBool(Class, "bPassMobj", false);
 
 	VClass* ReplaceeClass = NULL;
 	if (sc->Check("replaces"))
@@ -1309,7 +1308,6 @@ static void ParseOldDecoration(VScriptParser* sc, int Type)
 		FakeInventoryClass->CreateDerivedClass(ClassName) :
 		ActorClass->CreateDerivedClass(ClassName);
 	Class->Outer = DecPkg;
-	SetClassFieldBool(Class, "bPassMobj", false);
 	if (Type == OLDDEC_Breakable)
 	{
 		SetClassFieldBool(Class, "bShootable", true);
