@@ -170,6 +170,7 @@ defaultproperties
 	bActivatePushWall = true;
 	bNoGravity = true;
 	bFloat = true;
+	bPassMobj = true;
 	DLightColour = RGB(195, 79, 0);
 	DLightRadius = 126.0;
 	SightSound = 'pain/sight';

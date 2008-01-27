@@ -110,6 +110,7 @@ defaultproperties
 	bActivateMCross = true;
 	bActivatePushWall = true;
 	bFloorClip = true;
+	bPassMobj = true;
 	SightSound = 'imp/sight';
 	ActiveSound = 'imp/active';
 	PainSound = 'imp/pain';

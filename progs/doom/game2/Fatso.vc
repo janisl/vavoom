@@ -186,6 +186,7 @@ defaultproperties
 	bActivateMCross = true;
 	bActivatePushWall = true;
 	bFloorClip = true;
+	bPassMobj = true;
 	SightSound = 'fatso/sight';
 	ActiveSound = 'fatso/active';
 	PainSound = 'fatso/pain';

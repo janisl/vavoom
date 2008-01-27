@@ -99,6 +99,7 @@ defaultproperties
 	bActivateMCross = true;
 	bActivatePushWall = true;
 	bFloorClip = true;
+	bPassMobj = true;
 	SightSound = 'baron/sight';
 	ActiveSound = 'baron/active';
 	PainSound = 'baron/pain';

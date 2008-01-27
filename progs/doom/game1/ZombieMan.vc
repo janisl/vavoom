@@ -120,6 +120,7 @@ defaultproperties
 	bActivateMCross = true;
 	bActivatePushWall = true;
 	bFloorClip = true;
+	bPassMobj = true;
 	DLightColour = RGB(195, 79, 0);
 	DLightRadius = 118.0;
 	SightSound = 'grunt/sight';

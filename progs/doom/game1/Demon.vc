@@ -94,6 +94,7 @@ defaultproperties
 	bActivateMCross = true;
 	bActivatePushWall = true;
 	bFloorClip = true;
+	bPassMobj = true;
 	SightSound = 'demon/sight';
 	ActiveSound = 'demon/active';
 	AttackSound = 'demon/melee';

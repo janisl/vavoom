@@ -58,6 +58,7 @@ defaultproperties
 	bActivatePCross = true;
 	bNoTeleport = true;
 	bRandomise = true;
+	bPassMobj = true;
 	SightSound = 'caco/attack';
 	DeathSound = 'caco/shotx';
 	bDynamicLight = true;

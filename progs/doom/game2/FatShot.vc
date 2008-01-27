@@ -53,6 +53,7 @@ defaultproperties
 	bActivatePCross = true;
 	bNoTeleport = true;
 	bRandomise = true;
+	bPassMobj = true;
 	SightSound = 'fatso/attack';
 	DeathSound = 'fatso/shotx';
 	bDynamicLight = true;

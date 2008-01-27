@@ -110,6 +110,7 @@ defaultproperties
 	bTriggerHappy = true;
 	bFloorClip = true;
 	bNoRadiusDamage = true;
+	bPassMobj = true;
 	SightSound = 'cyber/sight';
 	ActiveSound = 'cyber/active';
 	PainSound = 'cyber/pain';

@@ -111,6 +111,7 @@ defaultproperties
 	bFloorClip = true;
 	bSlide = true;
 	bNoBlockMonst = true;
+	bPassMobj = true;
 	PainSound = '*pain100';
 	DeathSound = '*death';
 

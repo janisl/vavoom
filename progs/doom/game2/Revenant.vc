@@ -149,6 +149,7 @@ defaultproperties
 	bActivatePushWall = true;
 	bTriggerHappy = true;
 	bFloorClip = true;
+	bPassMobj = true;
 	SightSound = 'skeleton/sight';
 	ActiveSound = 'skeleton/active';
 	PainSound = 'skeleton/pain';

@@ -121,6 +121,7 @@ defaultproperties
 	bActivateImpact = true;
 	bNoTeleport = true;
 	bRandomise = true;
+	bPassMobj = true;
 	DeathSound = 'weapons/bfgx';
 	bDynamicLight = true;
 	DLightColour = RGB(95, 207, 87);

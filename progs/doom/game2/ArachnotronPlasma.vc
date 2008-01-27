@@ -73,6 +73,7 @@ defaultproperties
 	bActivatePCross = true;
 	bNoTeleport = true;
 	bRandomise = true;
+	bPassMobj = true;
 	SightSound = 'baby/attack';
 	DeathSound = 'baby/shotx';
 	bDynamicLight = true;

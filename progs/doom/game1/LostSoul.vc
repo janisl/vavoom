@@ -111,6 +111,7 @@ defaultproperties
 	bTriggerHappy = true;
 	bNoGravKill = true;
 	bFloorClip = true;
+	bPassMobj = true;
 	ActiveSound = 'skull/active';
 	AttackSound = 'skull/melee';
 	PainSound = 'skull/pain';

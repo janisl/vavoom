@@ -124,6 +124,7 @@ defaultproperties
 	bColideWithThings = false;
 	bColideWithWorld = false;
 	bRandomise = true;
+	bPassMobj = true;
 	SightSound = 'brain/spit';
 	DeathSound = 'brain/cubeboom';
 }

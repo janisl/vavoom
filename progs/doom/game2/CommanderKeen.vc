@@ -86,6 +86,7 @@ defaultproperties
 	bActivatePushWall = true;
 	bSpawnCeiling = true;
 	bNoGravity = true;
+	bPassMobj = true;
 	PainSound = 'keen/pain';
 	DeathSound = 'keen/death';
 }

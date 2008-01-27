@@ -59,6 +59,7 @@ defaultproperties
 	bNoTeleport = true;
 	bRandomise = true;
 	bDynamicLight = true;
+	bPassMobj = true;
 	SightSound = 'baron/attack';
 	DeathSound = 'baron/shotx';
 	bDynamicLight = true;
