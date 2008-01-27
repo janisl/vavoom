@@ -366,14 +366,18 @@ void VEntity::LinkToWorld()
 	Sector = ss->sector;
 
 	r = reg;
-	while (r->floor->flags)
+	while (r->floor->flags && r->prev)
+	{
 		r = r->prev;
+	}
 	Floor = r->floor;
 	FloorZ = r->floor->GetPointZ(Origin);
 
 	r = reg;
-	while (r->ceiling->flags)
+	while (r->ceiling->flags && r->next)
+	{
 		r = r->next;
+	}
 	Ceiling = r->ceiling;
 	CeilingZ = r->ceiling->GetPointZ(Origin);
 
@@ -616,7 +620,8 @@ bool VEntity::PIT_CheckThing(void* arg, VEntity *Other)
 	if (Other == cptrace.Thing)
 		return true;
 
-	if (!(cptrace.Thing->EntityFlags & VEntity::EF_NoPassMobj))
+	if ((cptrace.Thing->EntityFlags & VEntity::EF_Missile) ||
+		(cptrace.Thing->EntityFlags & VEntity::EF_PassMobj))
 	{
 		// check if a mobj passed over/under another object
 /*!		if ((cptrace.Thing.Class == Imp || cptrace.Thing.Class == Wizard) &&
