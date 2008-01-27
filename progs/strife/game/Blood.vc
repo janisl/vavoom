@@ -40,6 +40,5 @@ Spray:
 defaultproperties
 {
 	bNoBlockmap = true;
-	bPassMobj = false;
 	bSmallSplash = true;
 }
