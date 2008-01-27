@@ -46,4 +46,5 @@ defaultproperties
 	bNoTeleport = true;
 	bActivatePCross = true;
 	bCannotPush = true;
+	bPassMobj = true;
 }

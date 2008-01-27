@@ -35,4 +35,5 @@ defaultproperties
 	bFloorClip = true;
 	bActivateMCross = true;
 	bActivatePushWall = true;
+	bPassMobj = true;
 }

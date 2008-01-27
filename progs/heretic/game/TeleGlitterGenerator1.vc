@@ -53,5 +53,4 @@ defaultproperties
 	bNoSector = true;
 	bNoBlockmap = true;
 	bNoGravity = true;
-	bPassMobj = false;
 }

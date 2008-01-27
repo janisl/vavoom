@@ -125,6 +125,7 @@ defaultproperties
 	bOnmobjCopyVel = true;
 	bCantAutoAim = true;
 	bNoBlockMonst = true;
+	bPassMobj = true;
 	DeathSound = 'world/podexplode';
 	ExplodeEffect = RGB(103, 223, 95);
 }
