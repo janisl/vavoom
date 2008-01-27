@@ -38,5 +38,5 @@ defaultproperties
 	Alpha = 0.666;//0.333 in Hexen
 	bNoBlockmap = true;
 	bNoGravity = true;
-	bNoPassMobj = true;
+	bPassMobj = false;
 }

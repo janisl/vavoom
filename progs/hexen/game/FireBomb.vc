@@ -56,7 +56,7 @@ defaultproperties
 	RenderStyle = STYLE_Translucent;
 	Alpha = 0.666;
 	bNoGravity = true;
-	bNoPassMobj = true;
+	bPassMobj = false;
 	DamageType = 'Fire';
 	bDamageInvulnerable = true;
 	ExplodeEffect = RGB(255, 128, 0);

@@ -79,7 +79,7 @@ defaultproperties
 	bWindThrust = false;
 	bSlide = false;
 	bNoBlockmap = true;
-	bNoPassMobj = true;
+	bPassMobj = false;
 	bCannotPush = true;
 	bBounceSky = true;
 }

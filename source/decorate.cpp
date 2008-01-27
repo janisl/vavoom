@@ -382,7 +382,7 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value)
 	}
 	else if (!Flag.ICmp("CanPass"))
 	{
-		SetClassFieldBool(Class, "bNoPassMobj", !Value);
+		SetClassFieldBool(Class, "bPassMobj", Value);
 	}
 	else if (!Flag.ICmp("IsMonster"))
 	{
@@ -902,7 +902,7 @@ static void ParseActor(VScriptParser* sc)
 
 	VClass* Class = ParentClass->CreateDerivedClass(*NameStr);
 	Class->Outer = DecPkg;
-	SetClassFieldBool(Class, "bNoPassMobj", true);
+	SetClassFieldBool(Class, "bPassMobj", false);
 
 	VClass* ReplaceeClass = NULL;
 	if (sc->Check("replaces"))
@@ -1088,7 +1088,7 @@ static void ParseActor(VScriptParser* sc)
 			SetClassFieldBool(Class, "bSolid", true);
 			SetClassFieldBool(Class, "bActivatePushWall", true);
 			SetClassFieldBool(Class, "bActivateMCross", true);
-			SetClassFieldBool(Class, "bNoPassMobj", false);
+			SetClassFieldBool(Class, "bPassMobj", true);
 			SetClassFieldBool(Class, "bMonster", true);
 		}
 		else if (!Prop.ICmp("Projectile"))
@@ -1309,7 +1309,7 @@ static void ParseOldDecoration(VScriptParser* sc, int Type)
 		FakeInventoryClass->CreateDerivedClass(ClassName) :
 		ActorClass->CreateDerivedClass(ClassName);
 	Class->Outer = DecPkg;
-	SetClassFieldBool(Class, "bNoPassMobj", true);
+	SetClassFieldBool(Class, "bPassMobj", false);
 	if (Type == OLDDEC_Breakable)
 	{
 		SetClassFieldBool(Class, "bShootable", true);
@@ -1741,7 +1741,7 @@ static void ParseOldDecoration(VScriptParser* sc, int Type)
 		}
 		else if (sc->Check("CanPass"))
 		{
-			SetClassFieldBool(Class, "bNoPassMobj", false);
+			SetClassFieldBool(Class, "bPassMobj", true);
 		}
 		else if (sc->Check("CannotPush"))
 		{

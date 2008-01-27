@@ -96,7 +96,7 @@ defaultproperties
 	Alpha = 0.666;
 	bNoBlockmap = true;
 	bNoGravity = true;
-	bNoPassMobj = true;
+	bPassMobj = false;
 	bDynamicLight = true;
 	DLightColour = RGB(195, 155, 47);
 	DLightRadius = 134.0;

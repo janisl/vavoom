@@ -42,5 +42,5 @@ defaultproperties
 	bNoBlood = true;
 	bBlasted = true;
 	bTelestomp = false;
-	bNoPassMobj = false;
+	bPassMobj = true;
 }

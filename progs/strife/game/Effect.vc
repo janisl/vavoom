@@ -29,5 +29,5 @@ defaultproperties
 {
 	bNoBlockmap = true;
 	bNoGravity = true;
-	bNoPassMobj = true;
+	bPassMobj = false;
 }

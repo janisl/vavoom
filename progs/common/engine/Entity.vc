@@ -173,9 +173,9 @@ bool bIsPlayer;			// PLayer or player-bot
 bool bFixedModel;
 
 bool bNoGravity;		// don't apply gravity every tic
-bool bNoPassMobj;		// Disable z block checking.  If on,
-						// this flag will prevent the mobj
-						// from passing over/under other mobjs.
+bool bPassMobj;			// Enable z block checking.  If on,
+						// this flag will allow the mobj
+						// to pass over/under other mobjs.
 bool bColideWithThings;
 bool bColideWithWorld;
 bool bCheckLineBlocking;

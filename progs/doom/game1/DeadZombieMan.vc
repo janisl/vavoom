@@ -64,7 +64,7 @@ defaultproperties
 	bMonster = false;
 	bActivateMCross = false;
 	bActivatePushWall = false;
-	bNoPassMobj = true;
+	bPassMobj = false;
 	SightSound = '';
 	ActiveSound = '';
 	AttackSound = '';

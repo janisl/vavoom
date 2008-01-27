@@ -41,5 +41,5 @@ defaultproperties
 	Radius = 10.0;
 	Height = 62.0;
 	bSolid = true;
-	bNoPassMobj = true;
+	bPassMobj = false;
 }

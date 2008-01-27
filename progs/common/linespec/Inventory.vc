@@ -770,7 +770,7 @@ defaultproperties
 	Amount = 1;
 	MaxAmount = 1;
 	bSpecial = true;
-	bNoPassMobj = true;
+	bPassMobj = false;
 	PickupMessage = "You got a pickup";
 	PickupSound = 'misc/i_pkup';
 	UseSound = 'misc/invuse';

@@ -73,5 +73,5 @@ defaultproperties
 {
 	bNoSector = true;
 	bNoBlockmap = true;
-	bNoPassMobj = true;
+	bPassMobj = false;
 }

@@ -89,7 +89,7 @@ defaultproperties
 	Alpha = 0.333;
 	bNoBlockmap = true;
 	bNoGravity = true;
-	bNoPassMobj = true;
+	bPassMobj = false;
 	bNoGravity = false;
 	bNoBlockMonst = true;
 }

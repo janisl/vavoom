@@ -183,9 +183,9 @@ class VEntity : public VThinker
 		EF_IsPlayer				= 0x00000008,	// Player or player-bot
 		EF_FixedModel			= 0x00000010,
 		EF_NoGravity			= 0x00000020,	// don't apply gravity every tic
-		EF_NoPassMobj			= 0x00000040,	// Disable z block checking.  If on,
-												// this flag will prevent the mobj
-												// from passing over/under other mobjs.
+		EF_PassMobj				= 0x00000040,	// Enable z block checking.  If on,
+												// this flag will allow the mobj
+												// to pass over/under other mobjs.
 		EF_ColideWithThings		= 0x00000080,
 		EF_ColideWithWorld		= 0x00000100,
 		EF_CheckLineBlocking	= 0x00000200,

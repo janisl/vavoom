@@ -3782,15 +3782,15 @@ final int AcsSpawnThing(name Name, TVec Org, int Tid, float Angle)
 	}
 
 	EntityEx NewAct = Spawn(EntClass, Org);
-	bool PrevPassMobj = NewAct.bNoPassMobj;
-	NewAct.bNoPassMobj = false;
+	bool PrevPassMobj = NewAct.bPassMobj;
+	NewAct.bPassMobj = true;
 	if (NewAct.TestLocation() == false)
 	{
 		// Didn't fit
 		NewAct.Destroy();
 		return false;
 	}
-	NewAct.bNoPassMobj = PrevPassMobj;
+	NewAct.bPassMobj = PrevPassMobj;
 
 	NewAct.Angles.yaw = Angle;
 	if (Tid)

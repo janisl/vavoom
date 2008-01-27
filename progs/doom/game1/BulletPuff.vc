@@ -43,6 +43,6 @@ defaultproperties
 	PuffVelZ = 1.0 * 35.0;
 	bNoBlockmap = true;
 	bNoGravity = true;
-	bNoPassMobj = true;
+	bPassMobj = false;
 	bPuffParticles = true;
 }

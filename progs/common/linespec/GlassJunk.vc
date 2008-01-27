@@ -45,7 +45,7 @@ Spawn:
 defaultproperties
 {
 	bNoBlockmap = true;
-	bNoPassMobj = true;
+	bPassMobj = false;
 	bSmallSplash = true;
 	bColideWithThings = false;
 	bColideWithWorld = false;

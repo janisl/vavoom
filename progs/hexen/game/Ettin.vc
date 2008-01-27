@@ -108,7 +108,7 @@ defaultproperties
 	Mass = 175.0;
 	StepSpeed = 13.0;
 	PainChance = 0.234375;
-	bNoPassMobj = true;
+	bPassMobj = false;
 	SightSound = 'EttinSight';
 	ActiveSound = 'EttinActive';
 	AttackSound = 'EttinAttack';

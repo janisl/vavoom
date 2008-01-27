@@ -95,5 +95,5 @@ defaultproperties
 	bPushable = true;
 	bSlide = true;
 	bTelestomp = true;
-	bNoPassMobj = false;
+	bPassMobj = true;
 }

@@ -94,5 +94,5 @@ defaultproperties
 	Alpha = 0.0;
 	bSolid = true;
 	bNoGravity = true;
-	bNoPassMobj = true;
+	bPassMobj = false;
 }

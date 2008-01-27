@@ -63,6 +63,6 @@ defaultproperties
 	bSlide = false;
 	DamageType = 'Ice';	// used to force blue palette
 	bNoBlockmap = true;
-	bNoPassMobj = true;
+	bPassMobj = false;
 	bCannotPush = true;
 }

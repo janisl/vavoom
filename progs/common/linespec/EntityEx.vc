@@ -516,7 +516,7 @@ bool Physics(float DeltaTime)
 		Origin.z = FloorZ + Special1f +
 			Level.Game.FloatBobOffsets[ftoi(FloatBobPhase * 35.0) & 63];
 	}
-	else if (!bNoPassMobj && !bMissile)
+	else if (bPassMobj && !bMissile)
 	{
 		// Handle Z momentum and gravity
 		onmo = EntityEx(CheckOnmobj());
@@ -4491,7 +4491,7 @@ void Died(EntityEx source, EntityEx inflictor)
 	}
 	bDropOff = true;
 	bCorpse = true;
-	bNoPassMobj = true;
+	bPassMobj = false;
 
 	float NewHeight = 0.0;
 	if (DamageType == 'Fire')
@@ -6872,4 +6872,5 @@ defaultproperties
 	RDFactor = 1.0;
 	MeleeRange = 44.0;	//	MELEERANGE(64.0) - 20.0
 	LastLookActor = -1;
+	bPassMobj = true;
 }

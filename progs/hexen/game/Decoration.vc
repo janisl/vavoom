@@ -28,5 +28,5 @@ class Decoration : Actor
 
 defaultproperties
 {
-	bNoPassMobj = true;
+	bPassMobj = false;
 }

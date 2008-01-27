@@ -494,7 +494,7 @@ defaultproperties
 	Arm6Height = 53.0;
 	CommandHeight = 120.0;
 	CommandOffset = 27.0;
-	bNoPassMobj = true;
+	bPassMobj = false;
 	bBoss = true;
 	bNeverTarget = true;
 	bFullVolActive = true;

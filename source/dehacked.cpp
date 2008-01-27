@@ -652,9 +652,9 @@ static void ReadThing(int num)
 				SetClassFieldBool(Ent, "bActivateMCross", Values[0] & 0x00400000);
 				//	Set push wall for both monsters and the player.
 				SetClassFieldBool(Ent, "bActivatePushWall", (Values[0] & 0x00400000) || num == 1);
-				//	Also set no pass mobj flag.
-				SetClassFieldBool(Ent, "bNoPassMobj", num != 1 &&
-					!(Values[0] & 0x00400000) && !(Values[0] & 0x00010000));
+				//	Also set pass mobj flag.
+				SetClassFieldBool(Ent, "bPassMobj", num == 1 ||
+					(Values[0] & 0x00400000) || (Values[0] & 0x00010000));
 
 				//	Translation
 				SetClassFieldInt(Ent, "Translation", Values[0] & 0x0c000000 ?
@@ -680,7 +680,7 @@ static void ReadThing(int num)
 				SetClassFieldBool(Ent, "bPushable", Values[1] & 0x00000200);
 				SetClassFieldBool(Ent, "bSlide", Values[1] & 0x00000400);
 				SetClassFieldBool(Ent, "bOnMobj", Values[1] & 0x00000800);
-				SetClassFieldBool(Ent, "bNoPassMobj", !(Values[1] & 0x00001000));
+				SetClassFieldBool(Ent, "bPassMobj", Values[1] & 0x00001000);
 				SetClassFieldBool(Ent, "bCannotPush", Values[1] & 0x00002000);
 				SetClassFieldBool(Ent, "bThruGhost", Values[1] & 0x00004000);
 				SetClassFieldBool(Ent, "bBoss", Values[1] & 0x00008000);
