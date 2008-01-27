@@ -126,4 +126,5 @@ Crunch:
 
 defaultproperties
 {
+	bPassMobj = true;
 }

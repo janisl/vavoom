@@ -35,5 +35,4 @@ Spawn:
 defaultproperties
 {
 	bNoBlockmap = true;
-	bPassMobj = false;
 }

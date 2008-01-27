@@ -36,5 +36,4 @@ Spawn:
 defaultproperties
 {
 	bNoSector = true;
-	bPassMobj = false;
 }

@@ -261,4 +261,5 @@ final void A_Feathers()
 
 defaultproperties
 {
+	bPassMobj = true;
 }

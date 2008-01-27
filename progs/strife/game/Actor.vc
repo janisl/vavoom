@@ -420,4 +420,5 @@ defaultproperties
 {
 	MaxDropoffHeight = 32.0;
 	FloatSpeed = 175.0;
+	bPassMobj = true;
 }
