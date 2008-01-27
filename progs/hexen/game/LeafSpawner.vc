@@ -62,6 +62,5 @@ defaultproperties
 {
 	bNoSector = true;
 	bNoBlockmap = true;
-	bPassMobj = false;
 	bDynamicLight = false;
 }

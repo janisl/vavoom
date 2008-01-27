@@ -186,4 +186,5 @@ defaultproperties
 	bTelestomp = true;
 	bActivatePushWall = true;
 	bActivateMCross = true;
+	bPassMobj = true;
 }

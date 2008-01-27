@@ -31,6 +31,5 @@ defaultproperties
 	bCorpse = true;
 	bDropOff = true;
 	bNoTeleport = true;
-	bPassMobj = false;
 	bFloorClip = true;
 }
