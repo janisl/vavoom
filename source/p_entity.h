@@ -204,6 +204,7 @@ class VEntity : public VThinker
 		EF_FullBright			= 0x00400000,	// make current state full bright
 		EF_NetLocalPlayer		= 0x00800000,	// Mobj of player currently being updated
 		EF_Invisible			= 0x01000000,	// Don't draw this actor
+		EF_Missile				= 0x02000000,	// don't hit same species, explode on block
 	};
 	vuint32			EntityFlags;
 

@@ -194,6 +194,7 @@ bool bCorpse;			// don't stop moving halfway off a step
 bool bFullBright;		// make current state full bright
 native readonly bool bNetLocalPlayer;	// Mobj of player currently being updated
 bool bInvisible;		// Don't draw this actor
+bool bMissile;			// don't hit same species, explode on block
 
 int				Health;
 

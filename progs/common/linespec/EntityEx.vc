@@ -128,7 +128,6 @@ bool bJustAttacked;		// take at least one step before attacking
 bool bSpawnCeiling;		// hang from ceiling instead of floor
 // movement flags
 bool bPickUp;			// for players to pick up items
-bool bMissile;			// don't hit same species, explode on block
 bool bDropped;			// dropped by a demon, not level spawned
 bool bNoBlood;			// don't bleed when shot (use puff)
 bool bInFloat;			// floating to a height for a move, don't
