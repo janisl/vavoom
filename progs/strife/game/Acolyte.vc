@@ -148,7 +148,7 @@ defaultproperties
 	Radius = 24.0;
 	Height = 64.0;
 	Mass = 400.0;
-	StepSpeed = 7.0;
+	Speed = 7.0 * 35.0;
 	PainChance = 0.5859375;
 	SightSound = 'acolyte/sight';
 	ActiveSound = 'acolyte/active';

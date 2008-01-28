@@ -166,7 +166,7 @@ defaultproperties
 	Radius = 22.0;
 	Height = 75.0;
 	Mass = 150.0;
-	StepSpeed = 14.0;
+	Speed = 14.0 * 35.0;
 	PainChance = 0.5625;
 	bNoBlood = true;
 	DamageType = 'Ice';

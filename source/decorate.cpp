@@ -1059,7 +1059,6 @@ static void ParseActor(VScriptParser* sc)
 		{
 			sc->ExpectFloat();
 			SetClassFieldFloat(Class, "Speed", sc->Float * 35.0);
-			SetClassFieldFloat(Class, "StepSpeed", sc->Float);
 		}
 		else if (!Prop.ICmp("PainChance"))
 		{

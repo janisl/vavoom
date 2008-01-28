@@ -57,6 +57,6 @@ defaultproperties
 {
 	Health = 250;
 	GibsHealth = -125;
-	StepSpeed = 10.0;
+	Speed = 10.0 * 35.0;
 	PainChance = 0.375;
 }

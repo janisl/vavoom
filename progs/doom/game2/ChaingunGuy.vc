@@ -136,7 +136,7 @@ defaultproperties
 	Radius = 20.0;
 	Height = 56.0;
 	Mass = 100.0;
-	StepSpeed = 8.0;
+	Speed = 8.0 * 35.0;
 	PainChance = 0.6640625;
 	bSolid = true;
 	bShootable = true;

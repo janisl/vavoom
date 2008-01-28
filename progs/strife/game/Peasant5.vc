@@ -29,6 +29,6 @@ class Peasant5:Peasant
 defaultproperties
 {
 	ConversationID = 10;
-	StepSpeed = 7.0;
+	Speed = 7.0 * 35.0;
 	Translation = (TRANSL_Standard << TRANSL_TYPE_SHIFT) + 0;
 }

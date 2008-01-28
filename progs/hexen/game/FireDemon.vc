@@ -293,7 +293,7 @@ defaultproperties
 	Radius = 20.0;
 	Height = 68.0;
 	Mass = 75.0;
-	StepSpeed = 13.0;
+	Speed = 13.0 * 35.0;
 	PainChance = 0.00390625;
 	AttackRange	 = 512.0;
 	MissileDamage = 1;

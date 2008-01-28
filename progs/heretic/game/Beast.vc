@@ -102,7 +102,7 @@ defaultproperties
 	Radius = 32.0;
 	Height = 74.0;
 	Mass = 200.0;
-	StepSpeed = 14.0;
+	Speed = 14.0 * 35.0;
 	PainChance = 0.390625;
 	SightSound = 'beast/sight';
 	ActiveSound = 'beast/active';

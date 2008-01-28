@@ -537,13 +537,11 @@ static void ReadThing(int num)
 		{
 			if (value < 100)
 			{
-				SetClassFieldFloat(Ent, "Speed", 0.0);
-				SetClassFieldFloat(Ent, "StepSpeed", value);
+				SetClassFieldFloat(Ent, "Speed", 35.0 * value);
 			}
 			else
 			{
 				SetClassFieldFloat(Ent, "Speed", 35.0 * value / 65536.0);
-				SetClassFieldFloat(Ent, "StepSpeed", 0.0);
 			}
 		}
 		else if (!VStr::ICmp(String, "Pain chance"))

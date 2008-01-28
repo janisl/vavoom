@@ -74,7 +74,7 @@ Disintegrate:
 defaultproperties
 {
 	ClassName = '';
-	StepSpeed = 0.0;
+	Speed = 0.0;
 	SightSound = '';
 	ActiveSound = '';
 	AttackSound = '';

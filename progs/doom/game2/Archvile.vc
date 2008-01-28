@@ -44,8 +44,8 @@ final void A_VileChase()
 	if (MoveDir != DI_NODIR)
 	{
 		// check for corpses to raise
-		viletryx = Origin.x + StepSpeed * MainGameInfo(Level.Game).xspeed[MoveDir];
-		viletryy = Origin.y + StepSpeed * MainGameInfo(Level.Game).yspeed[MoveDir];
+		viletryx = Origin.x + Speed / 35.0 * MainGameInfo(Level.Game).xspeed[MoveDir];
+		viletryy = Origin.y + Speed / 35.0 * MainGameInfo(Level.Game).yspeed[MoveDir];
 
 		//	For all things in radius check whether object is a corpse
 		// that can be raised.
@@ -233,7 +233,7 @@ defaultproperties
 	Radius = 20.0;
 	Height = 56.0;
 	Mass = 500.0;
-	StepSpeed = 15.0;
+	Speed = 15.0 * 35.0;
 	PainChance = 0.0390625;
 	MissileMaxRange = 14.0 * 64.0;
 	bSolid = true;

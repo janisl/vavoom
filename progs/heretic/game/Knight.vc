@@ -105,7 +105,7 @@ defaultproperties
 	Radius = 24.0;
 	Height = 78.0;
 	Mass = 150.0;
-	StepSpeed = 12.0;
+	Speed = 12.0 * 35.0;
 	PainChance = 0.390625;
 	SightSound = 'hknight/sight';
 	ActiveSound = 'hknight/active';

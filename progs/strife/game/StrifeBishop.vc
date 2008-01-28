@@ -126,7 +126,7 @@ defaultproperties
 	Radius = 40.0;
 	Height = 56.0;
 	Mass = 500.0;
-	StepSpeed = 8.0;
+	Speed = 8.0 * 35.0;
 	PainChance = 0.5;
 	bInCombat = true;
 	bNoBlood = true;

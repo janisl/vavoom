@@ -29,5 +29,5 @@ class Peasant3:Peasant
 defaultproperties
 {
 	ConversationID = 8;
-	StepSpeed = 5.0;
+	Speed = 5.0 * 35.0;
 }

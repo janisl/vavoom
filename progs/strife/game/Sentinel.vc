@@ -106,7 +106,7 @@ defaultproperties
 	Radius = 23.0;
 	Height = 53.0;
 	Mass = 300.0;
-	StepSpeed = 7.0;
+	Speed = 7.0 * 35.0;
 	PainChance = 1.0;
 	bSpawnCeiling = true;
 	bNoGravity = true;

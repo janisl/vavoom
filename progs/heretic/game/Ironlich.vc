@@ -162,7 +162,7 @@ defaultproperties
 	Radius = 40.0;
 	Height = 72.0;
 	Mass = 325.0;
-	StepSpeed = 6.0;
+	Speed = 6.0 * 35.0;
 	PainChance = 0.125;
 	bNoBlood = true;
 	bFloorClip = false;

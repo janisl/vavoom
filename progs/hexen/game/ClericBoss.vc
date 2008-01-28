@@ -131,7 +131,7 @@ defaultproperties
 	Radius = 16.0;
 	Height = 64.0;
 	Mass = 100.0;
-	StepSpeed = 25.0;
+	Speed = 25.0 * 35.0;
 	PainChance = 0.1953125;
 	PainSound = 'PlayerClericPain';
 	DeathSound = 'PlayerClericCrazyDeath';

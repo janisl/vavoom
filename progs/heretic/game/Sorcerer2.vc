@@ -351,7 +351,7 @@ defaultproperties
 	Radius = 16.0;
 	Height = 70.0;
 	Mass = 300.0;
-	StepSpeed = 14.0;
+	Speed = 14.0 * 35.0;
 	PainChance = 0.125;
 	bDropOff = true;
 	bBoss = true;

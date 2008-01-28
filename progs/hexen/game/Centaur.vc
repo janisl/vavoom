@@ -214,7 +214,7 @@ defaultproperties
 	Radius = 20.0;
 	Height = 64.0;
 	Mass = 120.0;
-	StepSpeed = 13.0;
+	Speed = 13.0 * 35.0;
 	PainChance = 0.52734375;
 	SightSound = 'CentaurSight';
 	ActiveSound = 'CentaurActive';

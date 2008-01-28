@@ -878,7 +878,7 @@ defaultproperties
 	Height = 56.0;
 	Mass = 100.0;
 	PainChance = 0.625;
-	StepSpeed = 8.0;
+	Speed = 8.0 * 35.0;
 	Translation = (TRANSL_Standard << TRANSL_TYPE_SHIFT) + 0;
 	//	Marines are very deadly missiles.
 	MissileDamage = 100;

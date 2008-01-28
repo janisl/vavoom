@@ -191,7 +191,7 @@ defaultproperties
 	Radius = 9.0;
 	Height = 22.0;
 	Mass = 40.0;
-	StepSpeed = 4.0;
+	Speed = 4.0 * 35.0;
 	PainChance = 0.78125;
 	bDropOff = true;
 	bWindThrust = true;

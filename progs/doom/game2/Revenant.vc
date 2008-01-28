@@ -138,7 +138,7 @@ defaultproperties
 	Radius = 20.0;
 	Height = 56.0;
 	Mass = 500.0;
-	StepSpeed = 10.0;
+	Speed = 10.0 * 35.0;
 	PainChance = 0.390625;
 	MissileMinRange = 196.0;
 	bSolid = true;

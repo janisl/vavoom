@@ -116,7 +116,7 @@ defaultproperties
 	Radius = 130.0;
 	Height = 8.0;
 	Mass = 1000.0;
-	StepSpeed = 13.0;
+	Speed = 13.0 * 35.0;
 	PainChance = 1.0;
 	RenderStyle = STYLE_Translucent;
 	Alpha = 0.333;

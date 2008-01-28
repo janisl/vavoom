@@ -225,7 +225,6 @@ bool bNoHatePlayers;	// Ignore player attacks.
 
 //  Params
 float			Speed;
-float			StepSpeed;
 float			FloatSpeed;
 float			PainChance;
 int				GibsHealth;
@@ -3178,8 +3177,8 @@ final bool StepMove()
 
 	origx = Origin.x;
 	origy = Origin.y;
-	deltax = StepSpeed * LineSpecialGameInfo(Level.Game).xspeed[MoveDir];
-	deltay = StepSpeed * LineSpecialGameInfo(Level.Game).yspeed[MoveDir];
+	deltax = Speed / 35.0 * LineSpecialGameInfo(Level.Game).xspeed[MoveDir];
+	deltay = Speed / 35.0 * LineSpecialGameInfo(Level.Game).yspeed[MoveDir];
 	tryx = origx + deltax;
 	tryy = origy + deltay;
 
@@ -6576,7 +6575,6 @@ final void SetActorProperty(int Prop, int IntVal, string StrVal)
 
 	case APROP_Speed:
 		Speed = itof(IntVal) / 65536.0 * 35.0;
-		StepSpeed = itof(IntVal >> 16);
 		break;
 
 	case APROP_Damage:
@@ -6655,7 +6653,7 @@ final int GetActorProperty(int Prop)
 		return Health;
 
 	case APROP_Speed:
-		return Speed ? ftoi(Speed / 35.0 * 65536.0) : ftoi(StepSpeed);
+		return ftoi(Speed / 35.0 * 65536.0);
 
 	case APROP_Damage:
 		return MissileDamage;

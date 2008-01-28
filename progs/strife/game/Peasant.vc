@@ -81,7 +81,7 @@ defaultproperties
 	Radius = 20.0;
 	Height = 56.0;
 	Mass = 100.0;
-	StepSpeed = 4.0;
+	Speed = 4.0 * 35.0;
 	PainChance = 0.78125;
 	MaxStepHeight = 16.0;
 	bNeutral = true;
