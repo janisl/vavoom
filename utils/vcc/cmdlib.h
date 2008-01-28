@@ -23,9 +23,6 @@
 //**
 //**************************************************************************
 
-#ifndef CMDLIB_H
-#define CMDLIB_H
-
 // HEADER FILES ------------------------------------------------------------
 
 //	C headers
@@ -118,9 +115,46 @@ void DefaultExtension(char *path, const char *extension);
 void StripExtension(char *path);
 void FixFileSlashes(char *path);
 
-// PUBLIC DATA DECLARATIONS ------------------------------------------------
-
 void* Malloc(size_t size);
 void Free(void* ptr);
 
-#endif
+//==========================================================================
+//
+//	Basic templates
+//
+//==========================================================================
+
+template<class T> T Min(T val1, T val2)
+{
+	return val1 < val2 ? val1 : val2;
+}
+
+template<class T> T Max(T val1, T val2)
+{
+	return val1 > val2 ? val1 : val2;
+}
+
+template<class T> T Clamp(T val, T low, T high)
+{
+	return val < low ? low : val > high ? high : val;
+}
+
+// PUBLIC DATA DECLARATIONS ------------------------------------------------
+
+//	For compatibility with engine files.
+#define guard(f)
+#define guardSlow(f)
+#define unguard
+#define unguardSlow
+#define check(e)
+#define Z_Malloc	Malloc
+#define Z_Free		Free
+#define Sys_Error	FatalError
+
+class VName;
+
+class VMemberBase;
+class VStruct;
+class VObject;
+
+enum ENoInit			{E_NoInit};

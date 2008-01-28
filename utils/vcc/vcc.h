@@ -28,28 +28,12 @@
 
 // HEADER FILES ------------------------------------------------------------
 
-//	For compatibility with engine files.
-#define guard(f)
-#define guardSlow(f)
-#define unguard
-#define unguardSlow
-#define check(e)
-#define Z_Malloc	Malloc
-#define Z_Free		Free
-
-class VName;
-
-class VMemberBase;
-class VStruct;
-class VObject;
-
-enum ENoInit			{E_NoInit};
-
 #include "cmdlib.h"
 #include "../../source/array.h"
 #include "../../source/stream.h"
 #include "../../source/names.h"
 #include "../../source/name.h"
+#include "../../source/str.h"
 #include "../../source/progdefs.h"
 
 // MACROS ------------------------------------------------------------------

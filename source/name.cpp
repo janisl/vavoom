@@ -82,11 +82,7 @@ VStream& operator<<(VStream& Strm, VNameEntry& E)
 	vuint8 Size;
 	if (Strm.IsSaving())
 	{
-#ifdef IN_VCC
-		Size = strlen(E.Name) + 1;
-#else
 		Size = VStr::Length(E.Name) + 1;
-#endif
 	}
 	Strm << Size;
 	Strm.Serialise(E.Name, Size);
@@ -104,18 +100,10 @@ VNameEntry* AllocateNameEntry(const char* Name, vint32 Index,
 	VNameEntry* HashNext)
 {
 	guard(AllocateNameEntry);
-#ifdef IN_VCC
-	int Size = sizeof(VNameEntry) - NAME_SIZE + strlen(Name) + 1;
-#else
 	int Size = sizeof(VNameEntry) - NAME_SIZE + VStr::Length(Name) + 1;
-#endif
 	VNameEntry* E = (VNameEntry*)Z_Malloc(Size);
 	memset(E, 0, Size);
-#ifdef IN_VCC
-	strcpy(E->Name, Name);
-#else
 	VStr::Cpy(E->Name, Name);
-#endif
 	E->Index = Index;
 	E->HashNext = HashNext;
 	return E;
@@ -145,21 +133,13 @@ VName::VName(const char* Name, ENameFindType FindType)
 	{
 		for (int i = 0; i < 8; i++)
 		{
-#ifdef IN_VCC
-			NameBuf[i] = tolower(Name[i]);
-#else
 			NameBuf[i] = VStr::ToLower(Name[i]);
-#endif
 		}
 		NameBuf[8] = 0;
 	}
 	else
 	{
-#ifdef IN_VCC
-		strncpy(NameBuf, Name, NAME_SIZE);
-#else
 		VStr::NCpy(NameBuf, Name, NAME_SIZE);
-#endif
 		NameBuf[NAME_SIZE - 1] = 0;
 	}
 
@@ -168,11 +148,7 @@ VName::VName(const char* Name, ENameFindType FindType)
 	VNameEntry* TempHash = HashTable[HashIndex];
 	while (TempHash)
 	{
-#ifdef IN_VCC
-		if (!strcmp(NameBuf, TempHash->Name))
-#else
 		if (!VStr::Cmp(NameBuf, TempHash->Name))
-#endif
 		{
 			Index = TempHash->Index;
 			break;

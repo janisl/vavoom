@@ -15,6 +15,8 @@ add_executable(vcc
 	pcode.cpp
 	statement.cpp
 	statement.h
+	../../source/str.cpp
+	../../source/str.h
 	../../source/stream.cpp
 	../../source/stream.h
 	types.cpp
