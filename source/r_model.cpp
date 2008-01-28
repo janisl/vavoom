@@ -148,24 +148,25 @@ static TArray<VClassModelScript*>	ClassModels;
 void R_InitModels()
 {
 	guard(R_InitModels);
-	VStream* Strm = FL_OpenFileRead("models/models.xml");
-	if (!Strm)
+	for (int Lump = W_IterateFile(-1, "models/models.xml"); Lump != -1;
+		Lump = W_IterateFile(Lump, "models/models.xml"))
 	{
-		return;
+		VStream* Strm = W_CreateLumpReaderNum(Lump);
+		check(Strm);
+
+		//	Parse the file.
+		VXmlDocument* Doc = new VXmlDocument();
+		Doc->Parse(*Strm, "models/models.xml");
+		delete Strm;
+
+		for (VXmlNode* N = Doc->Root.FindChild("include"); N; N = N->FindNext())
+		{
+			VModel* Mdl = Mod_FindName(N->GetAttribute("file"));
+			Mod_Extradata(Mdl);
+		}
+
+		delete Doc;
 	}
-
-	//	Parse the file.
-	VXmlDocument* Doc = new VXmlDocument();
-	Doc->Parse(*Strm, "models/models.xml");
-	delete Strm;
-
-	for (VXmlNode* N = Doc->Root.FindChild("include"); N; N = N->FindNext())
-	{
-		VModel* Mdl = Mod_FindName(N->GetAttribute("file"));
-		Mod_Extradata(Mdl);
-	}
-
-	delete Doc;
 	unguard;
 }
 

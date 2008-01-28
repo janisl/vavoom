@@ -473,6 +473,27 @@ int W_IterateNS(int Prev, EWadNamespace NS)
 
 //==========================================================================
 //
+//  W_IterateFile
+//
+//==========================================================================
+
+int W_IterateFile(int Prev, const VStr& Name)
+{
+	guard(W_IterateFile);
+	for (int wi = FILE_INDEX((Prev + 1)) + 1; wi < SearchPaths.Num(); wi++)
+	{
+		int li = SearchPaths[wi]->CheckNumForFileName(Name);
+		if (li != -1)
+		{
+			return MAKE_HANDLE(wi, li);
+		}
+	}
+	return -1;
+	unguard;
+}
+
+//==========================================================================
+//
 //  W_FindLumpByFileNameWithExts
 //
 //==========================================================================
