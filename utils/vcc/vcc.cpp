@@ -355,3 +355,59 @@ static void PC_DumpAsm(char* name)
 	}
 	dprintf("Dump ASM: %s not found!\n", name);
 }
+
+//==========================================================================
+//
+//	Malloc
+//
+//==========================================================================
+
+void* Malloc(size_t size)
+{
+	if (!size)
+	{
+		return NULL;
+	}
+
+	void *ptr = malloc(size);
+	if (!ptr)
+	{
+		FatalError("Couldn't alloc %d bytes", (int)size);
+	}
+	memset(ptr, 0, size);
+	return ptr;
+}
+
+//==========================================================================
+//
+//	Free
+//
+//==========================================================================
+
+void Free(void* ptr)
+{
+	if (ptr)
+	{
+		free(ptr);
+	}
+}
+
+//==========================================================================
+//
+//	va
+//
+//	Very usefull function from QUAKE
+//
+//==========================================================================
+
+char *va(const char *text, ...)
+{
+	va_list		args;
+	static char	va_buffer[1024];
+
+	va_start(args, text);
+	vsprintf(va_buffer, text, args);
+	va_end(args);
+
+	return va_buffer;
+}

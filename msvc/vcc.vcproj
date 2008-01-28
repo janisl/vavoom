@@ -190,10 +190,6 @@
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
-				RelativePath="..\utils\vcc\cmdlib.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\utils\vcc\error.cpp"
 				>
 			</File>
