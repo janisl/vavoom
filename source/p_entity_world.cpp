@@ -620,7 +620,8 @@ bool VEntity::PIT_CheckThing(void* arg, VEntity *Other)
 	if (Other == cptrace.Thing)
 		return true;
 
-	if (cptrace.Thing->EntityFlags & VEntity::EF_PassMobj)
+	if ((cptrace.Thing->EntityFlags & VEntity::EF_PassMobj) ||
+		(cptrace.Thing->EntityFlags & VEntity::EF_Missile))
 	{
 		// check if a mobj passed over/under another object
 /*!		if ((cptrace.Thing.Class == Imp || cptrace.Thing.Class == Wizard) &&
@@ -1009,7 +1010,8 @@ bool VEntity::PIT_CheckRelThing(void* arg, VEntity *Other)
 		return true;
 
 	//if (!(tmtrace.Thing->EntityFlags & VEntity::EF_NoPassMobj) || Actor(Other).bSpecial)
-	if (tmtrace.Thing->EntityFlags & VEntity::EF_PassMobj)
+	if ((tmtrace.Thing->EntityFlags & VEntity::EF_PassMobj) ||
+		(tmtrace.Thing->EntityFlags & VEntity::EF_Missile))
 	{
 		// check if a mobj passed over/under another object
 /*		if ((tmtrace.Thing.Class == Imp || tmtrace.Thing.Class == Wizard)
