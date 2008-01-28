@@ -33,15 +33,21 @@ using namespace VavoomUtils;
 
 //	For compatibility with engine files.
 #define guard(f)
+#define guardSlow(f)
 #define unguard
+#define unguardSlow
 #define check(e)
 #define Z_Malloc	Malloc
 #define Z_Free		Free
 
+class VName;
+
 class VMemberBase;
+class VStruct;
+class VObject;
 
 #include "array.h"
-#include "stream.h"
+#include "../../source/stream.h"
 #include "../../source/names.h"
 #include "../../source/name.h"
 #include "../../source/progdefs.h"
@@ -703,6 +709,8 @@ void BailOut() __attribute__((noreturn));
 int dprintf(const char *text, ...);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
+
+extern bool						GBigEndian;
 
 extern int						NumErrors;
 

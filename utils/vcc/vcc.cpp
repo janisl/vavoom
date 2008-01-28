@@ -56,6 +56,8 @@ static char		ObjectFileName[MAX_FILE_NAME_LENGTH];
 
 VPackage*		CurrentPackage;
 
+bool			GBigEndian;
+
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static int		num_dump_asm;
@@ -77,6 +79,8 @@ int main(int argc, char **argv)
 {
 	int starttime;
 	int endtime;
+
+	GBigEndian = LittleLong(1) != 1;
 
 	signal(SIGSEGV, SignalHandler);
 

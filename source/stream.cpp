@@ -25,7 +25,11 @@
 
 // HEADER FILES ------------------------------------------------------------
 
+#ifdef IN_VCC
+#include "../utils/vcc/vcc.h"
+#else
 #include "gamedefs.h"
+#endif
 
 // MACROS ------------------------------------------------------------------
 
@@ -218,7 +222,7 @@ void VStream::SerialiseLittleEndian(void* Val, int Len)
 	{
 		//	Swap byte order.
 		for (int i = Len - 1; i >= 0; i--)
-			Serialise((byte*)Val + i, 1);
+			Serialise((vuint8*)Val + i, 1);
 	}
 	else
 	{
@@ -241,7 +245,7 @@ void VStream::SerialiseBigEndian(void* Val, int Len)
 	{
 		//	Swap byte order.
 		for (int i = Len - 1; i >= 0; i--)
-			Serialise((byte*)Val + i, 1);
+			Serialise((vuint8*)Val + i, 1);
 	}
 	else
 	{

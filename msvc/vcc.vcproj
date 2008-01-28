@@ -226,7 +226,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\utils\vcc\stream.cpp"
+				RelativePath="..\source\stream.cpp"
 				>
 			</File>
 			<File
@@ -271,7 +271,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\utils\vcc\stream.h"
+				RelativePath="..\source\stream.h"
 				>
 			</File>
 			<File

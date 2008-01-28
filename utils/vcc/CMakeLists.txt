@@ -17,8 +17,8 @@ add_executable(vcc
 	pcode.cpp
 	statement.cpp
 	statement.h
-	stream.cpp
-	stream.h
+	../../source/stream.cpp
+	../../source/stream.h
 	types.cpp
 	vcc.cpp
 	vcc.h
