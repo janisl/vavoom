@@ -106,7 +106,7 @@ void ParseError(TLocation l, ECompileError error)
 {
 	NumErrors++;
 
-	fprintf(stderr, "%s:%d: ", l.GetSource(), l.GetLine());
+	fprintf(stderr, "%s:%d: ", *l.GetSource(), l.GetLine());
 	if (error != ERR_NONE)
 	{
 		fprintf(stderr, "Error #%d - %s", error, ErrorNames[error]);
@@ -131,7 +131,7 @@ void ParseError(TLocation l, ECompileError error, const char *text, ...)
 
 	NumErrors++;
 
-	fprintf(stderr, "%s:%d: ", l.GetSource(), l.GetLine());
+	fprintf(stderr, "%s:%d: ", *l.GetSource(), l.GetLine());
 	if (error != ERR_NONE)
 	{
 		fprintf(stderr, "Error #%d - %s", error, ErrorNames[error]);
@@ -159,7 +159,7 @@ void ParseError(TLocation l, const char *text, ...)
 
 	NumErrors++;
 
-	fprintf(stderr, "%s:%d: ", l.GetSource(), l.GetLine());
+	fprintf(stderr, "%s:%d: ", *l.GetSource(), l.GetLine());
 	va_start(argPtr, text);
 	vfprintf(stderr, text, argPtr);
 	va_end(argPtr);
@@ -181,7 +181,7 @@ void ParseWarning(TLocation l, const char *text, ...)
 {
 	va_list	argPtr;
 
-	fprintf(stderr, "%s:%d: warning: ", l.GetSource(), l.GetLine());
+	fprintf(stderr, "%s:%d: warning: ", *l.GetSource(), l.GetLine());
 	va_start(argPtr, text);
 	vfprintf(stderr, text, argPtr);
 	va_end(argPtr);

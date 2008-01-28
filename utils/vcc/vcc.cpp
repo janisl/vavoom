@@ -42,7 +42,7 @@
 static void SignalHandler(int s);
 static void Init();
 static void ProcessArgs(int ArgCount, char **ArgVector);
-static void OpenDebugFile(char *name);
+static void OpenDebugFile(const VStr& name);
 static void DumpAsm();
 static void PC_Init();
 static void PC_DumpAsm(char*);
@@ -51,8 +51,8 @@ static void PC_DumpAsm(char*);
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-char			SourceFileName[MAX_FILE_NAME_LENGTH];
-static char		ObjectFileName[MAX_FILE_NAME_LENGTH];
+static VStr		SourceFileName;
+static VStr		ObjectFileName;
 
 VPackage*		CurrentPackage;
 
@@ -80,7 +80,10 @@ int main(int argc, char **argv)
 	int starttime;
 	int endtime;
 
-	GBigEndian = LittleLong(1) != 1;
+	vuint8 swaptest[2] = {1, 0};
+
+	// set the byte swapping variables in a portable manner
+	GBigEndian = *(short*)swaptest != 1;
 
 	signal(SIGSEGV, SignalHandler);
 
@@ -98,7 +101,7 @@ int main(int argc, char **argv)
 	int compiletime = time(0);
 	dprintf("Compiled in %02d:%02d\n",
 		(compiletime - parsetime) / 60, (compiletime - parsetime) % 60);
-	CurrentPackage->WriteObject(ObjectFileName);
+	CurrentPackage->WriteObject(*ObjectFileName);
 	DumpAsm();
 	VName::StaticExit();
 	endtime = time(0);
@@ -122,7 +125,7 @@ static void SignalHandler(int s)
 	switch (s)
 	{
 	case SIGSEGV:
-		FatalError("%s:%d Segmentation Violation", Lex.Location.GetSource(),
+		FatalError("%s:%d Segmentation Violation", *Lex.Location.GetSource(),
 			Lex.Location.GetLine());
 	}
 }
@@ -222,12 +225,10 @@ static void ProcessArgs(int ArgCount, char **ArgVector)
 		switch(count)
 		{
 		case 1:
-			strcpy(SourceFileName, text);
-			DefaultExtension(SourceFileName, ".vc");
+			SourceFileName = VStr(text).DefaultExtension(".vc");
 			break;
 		case 2:
-			strcpy(ObjectFileName, text);
-			DefaultExtension(ObjectFileName, ".dat");
+			ObjectFileName = VStr(text).DefaultExtension(".dat");
 			break;
 		default:
 			DisplayUsage();
@@ -240,23 +241,19 @@ static void ProcessArgs(int ArgCount, char **ArgVector)
 	}
 	if (count == 1)
 	{
-		strcpy(ObjectFileName, SourceFileName);
-		StripExtension(ObjectFileName);
-		DefaultExtension(ObjectFileName, ".dat");
+		ObjectFileName = SourceFileName.StripExtension() + ".dat";
 	}
 	if (!DebugFile)
 	{
-		char DbgFileName[MAX_FILE_NAME_LENGTH];
-		strcpy(DbgFileName, ObjectFileName);
-		StripExtension(DbgFileName);
-		DefaultExtension(DbgFileName, ".txt");
+		VStr DbgFileName;
+		DbgFileName = ObjectFileName.StripExtension() + ".txt";
 		OpenDebugFile(DbgFileName);
 		DebugMode = true;
 	}
-	FixFileSlashes(SourceFileName);
-	FixFileSlashes(ObjectFileName);
-	dprintf("Main source file: %s\n", SourceFileName);
-	dprintf("  Resulting file: %s\n", ObjectFileName);
+	SourceFileName = SourceFileName.FixFileSlashes();
+	ObjectFileName = ObjectFileName.FixFileSlashes();
+	dprintf("Main source file: %s\n", *SourceFileName);
+	dprintf("  Resulting file: %s\n", *ObjectFileName);
 }
 
 //==========================================================================
@@ -265,12 +262,12 @@ static void ProcessArgs(int ArgCount, char **ArgVector)
 //
 //==========================================================================
 
-static void OpenDebugFile(char *name)
+static void OpenDebugFile(const VStr& name)
 {
-	DebugFile = fopen(name, "w");
+	DebugFile = fopen(*name, "w");
 	if (!DebugFile)
 	{
-		FatalError("Can\'t open debug file \"%s\".", name);
+		FatalError("Can\'t open debug file \"%s\".", *name);
 	}
 }
 
@@ -334,7 +331,7 @@ static void PC_DumpAsm(char* name)
 	char	*cname;
 	char	*fname;
 
-	strcpy(buf, name);
+	VStr::Cpy(buf, name);
 	if (strstr(buf, "."))
 	{
 		cname = buf;
@@ -349,8 +346,8 @@ static void PC_DumpAsm(char* name)
 	for (i = 0; i < VMemberBase::GMembers.Num(); i++)
 	{
 		if (VMemberBase::GMembers[i]->MemberType == MEMBER_Method &&
-			!strcmp(cname, *VMemberBase::GMembers[i]->Outer->Name) &&
-			!strcmp(fname, *VMemberBase::GMembers[i]->Name))
+			!VStr::Cmp(cname, *VMemberBase::GMembers[i]->Outer->Name) &&
+			!VStr::Cmp(fname, *VMemberBase::GMembers[i]->Name))
 		{
 			((VMethod*)VMemberBase::GMembers[i])->DumpAsm();
 			return;

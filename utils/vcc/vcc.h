@@ -165,7 +165,7 @@ public:
 	int GetSize() const;
 	void CheckPassable(TLocation) const;
 	void CheckMatch(TLocation, const TType&) const;
-	void GetName(char*) const;
+	VStr GetName() const;
 };
 
 class VLabel

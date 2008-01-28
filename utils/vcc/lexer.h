@@ -160,7 +160,7 @@ class TLocation
 private:
 	int		Loc;
 
-	static TArray<char*>	SourceFiles;
+	static TArray<VStr>		SourceFiles;
 
 	friend class VLexer;
 
@@ -175,7 +175,7 @@ public:
 	{
 		return Loc & 0xffff;
 	}
-	const char* GetSource() const;
+	VStr GetSource() const;
 };
 
 //==========================================================================
@@ -215,8 +215,8 @@ private:
 	struct VSourceFile
 	{
 		VSourceFile*	Next;	//	Nesting stack
-		char*			FileName;
-		char*			Path;
+		VStr			FileName;
+		VStr			Path;
 		char*			FileStart;
 		char*			FilePtr;
 		char*			FileEnd;
@@ -235,8 +235,8 @@ private:
 	char			TokenStringBuffer[MAX_QUOTED_LENGTH];
 	bool			SourceOpen;
 	char			Chr;
-	TArray<char*>	Defines;
-	TArray<char*>	IncludePath;
+	TArray<VStr>	Defines;
+	TArray<VStr>	IncludePath;
 	VSourceFile*	Src;
 
 	void NextChr();
@@ -247,7 +247,7 @@ private:
 	void ProcessElse();
 	void ProcessEndIf();
 	void ProcessInclude();
-	void PushSource(TLocation&, const char*);
+	void PushSource(TLocation&, const VStr&);
 	void PopSource();
 	void ProcessNumberToken();
 	void ProcessChar();
@@ -256,7 +256,7 @@ private:
 	void ProcessLetterToken(bool);
 	void ProcessSpecialToken();
 	void ProcessFileName();
-	int AddSourceFile(const char*);
+	int AddSourceFile(const VStr&);
 
 public:
 	EToken				Token;
@@ -271,9 +271,9 @@ public:
 
 	VLexer();
 	~VLexer();
-	void AddDefine(const char*);
-	void AddIncludePath(const char*);
-	void OpenSource(const char*);
+	void AddDefine(const VStr&);
+	void AddIncludePath(const VStr&);
+	void OpenSource(const VStr&);
 
 	void NextToken();
 	bool Check(EToken);

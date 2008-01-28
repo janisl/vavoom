@@ -1,4 +1,4 @@
-//**************************************************************************
+// //**************************************************************************
 //**
 //**	##   ##    ##    ##   ##   ####     ####   ###     ###
 //**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
@@ -41,7 +41,7 @@
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-TArray<char*>		TLocation::SourceFiles;
+TArray<VStr>		TLocation::SourceFiles;
 
 const char*			VLexer::TokenNames[] =
 {
@@ -219,7 +219,7 @@ VLexer::VLexer()
 //
 //==========================================================================
 
-void VLexer::OpenSource(const char* FileName)
+void VLexer::OpenSource(const VStr& FileName)
 {
 	//	Read file and prepare for compilation.
 	PushSource(Location, FileName);
@@ -250,12 +250,12 @@ VLexer::~VLexer()
 //
 //==========================================================================
 
-void VLexer::PushSource(TLocation& Loc, const char* FileName)
+void VLexer::PushSource(TLocation& Loc, const VStr& FileName)
 {
-	FILE* F = fopen(FileName, "rb");
+	FILE* F = fopen(*FileName, "rb");
 	if (!F)
 	{
-		FatalError("Couldn't open %s", FileName);
+		FatalError("Couldn't open %s", *FileName);
 		return;
 	}
 
@@ -264,21 +264,17 @@ void VLexer::PushSource(TLocation& Loc, const char* FileName)
 	Src = NewSrc;
 
 	//	Copy file name
-	NewSrc->FileName = new char[strlen(FileName) + 1];
-	strcpy(NewSrc->FileName, FileName);
+	NewSrc->FileName = FileName;
 
 	//	Extract path to the file.
-	const char* PathEnd = FileName + strlen(FileName) - 1;
-	while (PathEnd >= FileName && *PathEnd != '/' && *PathEnd != '\\')
+	const char* PathEnd = *FileName + FileName.Length() - 1;
+	while (PathEnd >= *FileName && *PathEnd != '/' && *PathEnd != '\\')
 	{
 		PathEnd--;
 	}
-	NewSrc->Path = NULL;
-	if (PathEnd >= FileName)
+	if (PathEnd >= *FileName)
 	{
-		NewSrc->Path = new char[(PathEnd - FileName) + 2];
-		strncpy(NewSrc->Path, FileName, (PathEnd - FileName) + 1);
-		NewSrc->Path[(PathEnd - FileName) + 1] = 0;
+		NewSrc->Path = VStr(FileName, 0, (PathEnd - *FileName) + 1);
 	}
 
 	//	Read the file
@@ -332,11 +328,6 @@ void VLexer::PopSource()
 	}
 
 	VSourceFile* Tmp = Src;
-	delete[] Tmp->FileName;
-	if (Tmp->Path)
-	{
-		delete[] Tmp->Path;
-	}
 	delete[] Tmp->FileStart;
 	Src = Tmp->Next;
 	Chr = Tmp->Chr;
@@ -505,7 +496,7 @@ void VLexer::ProcessPreprocessor()
 	}
 
 	ProcessLetterToken(false);
-	if (!strcmp(TokenStringBuffer, "line"))
+	if (!VStr::Cmp(TokenStringBuffer, "line"))
 	{
 		//	Read line number
 		SkipWhitespaceAndComments();
@@ -532,27 +523,27 @@ void VLexer::ProcessPreprocessor()
 			NextChr();
 		}
 	}
-	else if (!strcmp(TokenStringBuffer, "define"))
+	else if (!VStr::Cmp(TokenStringBuffer, "define"))
 	{
 		ProcessDefine();
 	}
-	else if (!strcmp(TokenStringBuffer, "ifdef"))
+	else if (!VStr::Cmp(TokenStringBuffer, "ifdef"))
 	{
 		ProcessIf(true);
 	}
-	else if (!strcmp(TokenStringBuffer, "ifndef"))
+	else if (!VStr::Cmp(TokenStringBuffer, "ifndef"))
 	{
 		ProcessIf(false);
 	}
-	else if (!strcmp(TokenStringBuffer, "else"))
+	else if (!VStr::Cmp(TokenStringBuffer, "else"))
 	{
 		ProcessElse();
 	}
-	else if (!strcmp(TokenStringBuffer, "endif"))
+	else if (!VStr::Cmp(TokenStringBuffer, "endif"))
 	{
 		ProcessEndIf();
 	}
-	else if (!strcmp(TokenStringBuffer, "include"))
+	else if (!VStr::Cmp(TokenStringBuffer, "include"))
 	{
 		ProcessInclude();
 		return;
@@ -611,13 +602,13 @@ void VLexer::ProcessDefine()
 //
 //==========================================================================
 
-void VLexer::AddDefine(const char* CondName)
+void VLexer::AddDefine(const VStr& CondName)
 {
 	//	Check for redefined names.
 	bool Found = false;
 	for (int i = 0; i < Defines.Num(); i++)
 	{
-		if (!strcmp(Defines[i], CondName))
+		if (Defines[i] == CondName)
 		{
 			ParseWarning(Location, "Redefined conditional");
 			Found = true;
@@ -627,9 +618,7 @@ void VLexer::AddDefine(const char* CondName)
 	if (!Found)
 	{
 		//	Add it.
-		char* Copy = new char[strlen(CondName) + 1];
-		strcpy(Copy, CondName);
-		Defines.Append(Copy);
+		Defines.Append(CondName);
 	}
 }
 
@@ -668,7 +657,7 @@ void VLexer::ProcessIf(bool OnTrue)
 		bool Found = false;
 		for (int i = 0; i < Defines.Num(); i++)
 		{
-			if (!strcmp(Defines[i], TokenStringBuffer))
+			if (Defines[i] == TokenStringBuffer)
 			{
 				Found = true;
 				break;
@@ -803,36 +792,26 @@ void VLexer::ProcessInclude()
 		//	First try relative to the current source file.
 		if (Src->Path)
 		{
-			char* FileName = new char[strlen(Src->Path) +
-				strlen(TokenStringBuffer) + 1];
-			strcpy(FileName, Src->Path);
-			strcat(FileName, TokenStringBuffer);
-			FILE* F = fopen(FileName, "r");
+			VStr FileName = Src->Path + VStr(TokenStringBuffer);
+			FILE* F = fopen(*FileName, "r");
 			if (F)
 			{
 				fclose(F);
 				PushSource(Loc, FileName);
-				delete[] FileName;
 				return;
 			}
-			delete[] FileName;
 		}
 
 		for (int i = IncludePath.Num() - 1; i >= 0; i--)
 		{
-			char* FileName = new char[strlen(IncludePath[i]) +
-				strlen(TokenStringBuffer) + 1];
-			strcpy(FileName, IncludePath[i]);
-			strcat(FileName, TokenStringBuffer);
-			FILE* F = fopen(FileName, "r");
+			VStr FileName = IncludePath[i] + VStr(TokenStringBuffer);
+			FILE* F = fopen(*FileName, "r");
 			if (F)
 			{
 				fclose(F);
 				PushSource(Loc, FileName);
-				delete[] FileName;
 				return;
 			}
-			delete[] FileName;
 		}
 	}
 
@@ -846,16 +825,13 @@ void VLexer::ProcessInclude()
 //
 //==========================================================================
 
-void VLexer::AddIncludePath(const char* DirName)
+void VLexer::AddIncludePath(const VStr& DirName)
 {
-	int Len = strlen(DirName);
-	char* Copy = new char[Len + 2];
-	strcpy(Copy, DirName);
+	VStr Copy = DirName;
 	//	Append trailing slash if needed.
-	if (Copy[Len - 1] != '/' && Copy[Len - 1] != '\\')
+	if (!Copy.EndsWith("/") && !Copy.EndsWith("\\"))
 	{
-		Copy[Len] = '/';
-		Copy[Len + 1] = 0;
+		Copy += '/';
 	}
 	IncludePath.Append(Copy);
 }
@@ -919,7 +895,7 @@ void VLexer::ProcessNumberToken()
 		Number = 0;
 		do
 		{
-			digit = toupper(Chr);
+			digit = VStr::ToUpper(Chr);
 			if (digit < '0' || (digit > '9' && digit < 'A') || digit > 'Z')
 			{
 				digit = -1;
@@ -1767,17 +1743,15 @@ void VLexer::ProcessFileName()
 //
 //==========================================================================
 
-int VLexer::AddSourceFile(const char* SName)
+int VLexer::AddSourceFile(const VStr& SName)
 {
 	//	Find it.
 	for (int i = 0; i < TLocation::SourceFiles.Num(); i++)
-		if (!strcmp(SName, TLocation::SourceFiles[i]))
+		if (SName == TLocation::SourceFiles[i])
 			return i;
 
 	//	Not found, add it.
-	char* NewName = new char[strlen(SName) + 1];
-	strcpy(NewName, SName);
-	return TLocation::SourceFiles.Append(NewName);
+	return TLocation::SourceFiles.Append(SName);
 }
 
 //==========================================================================
@@ -1840,7 +1814,7 @@ void VLexer::Expect(EToken tk, ECompileError error)
 //
 //==========================================================================
 
-const char* TLocation::GetSource() const
+VStr TLocation::GetSource() const
 {
 	if (!Loc)
 		return "(external)";

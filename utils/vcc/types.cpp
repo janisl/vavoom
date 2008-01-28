@@ -276,9 +276,7 @@ void TType::CheckPassable(TLocation l) const
 {
 	if (GetSize() != 4 && Type != TYPE_Vector && Type != TYPE_Delegate)
 	{
-		char Name[256];
-		GetName(Name);
-		ParseError(l, "Type %s is not passable", Name);
+		ParseError(l, "Type %s is not passable", *GetName());
 	}
 }
 
@@ -412,12 +410,8 @@ void TType::CheckMatch(TLocation l, const TType& Other) const
 			}
 		return;
 	}
-	char Name1[256];
-	char Name2[256];
-	GetName(Name1);
-	Other.GetName(Name2);
 	ParseError(l, "Type mistmatch, types %s and %s are not compatible %d %d",
-		Name1, Name2, Type, Other.Type);
+		*GetName(), *Other.GetName(), Type, Other.Type);
 }
 
 //==========================================================================
@@ -426,28 +420,56 @@ void TType::CheckMatch(TLocation l, const TType& Other) const
 //
 //==========================================================================
 
-void TType::GetName(char* Dest) const
+VStr TType::GetName() const
 {
 	switch (Type)
 	{
-	case TYPE_Int:			strcpy(Dest, "int"); break;
-	case TYPE_Byte:			strcpy(Dest, "byte"); break;
-	case TYPE_Bool:			strcpy(Dest, "bool"); break;
-	case TYPE_Float:		strcpy(Dest, "float"); break;
-	case TYPE_Name:			strcpy(Dest, "name"); break;
-	case TYPE_String:		strcpy(Dest, "string"); break;
-	case TYPE_Pointer:	GetPointerInnerType().GetName(Dest); 
-		for (int i = 0; i < PtrLevel; i++) strcat(Dest, "*"); break;
-	case TYPE_Reference:	strcpy(Dest, Class ? *Class->Name : "none"); break;
-	case TYPE_Class:		strcpy(Dest, "class"); if (Class) { strcat(Dest, "<");
-		strcat(Dest, *Class->Name); strcat(Dest, ">"); } break;
-	case TYPE_State:		strcpy(Dest, "state"); break;
-	case TYPE_Struct:		strcpy(Dest, *Struct->Name); break;
-	case TYPE_Vector:		strcpy(Dest, "vector"); break;
-	case TYPE_Array:		GetArrayInnerType().GetName(Dest); strcat(Dest, "[]"); break;
-	case TYPE_DynamicArray:	strcpy(Dest, "array<");
-		GetArrayInnerType().GetName(Dest + 6); strcat(Dest, ">"); break;
-	default:			strcpy(Dest, "unknown"); break;
+	case TYPE_Int:
+		return "int";
+	case TYPE_Byte:
+		return "byte";
+	case TYPE_Bool:
+		return "bool";
+	case TYPE_Float:
+		return "float";
+	case TYPE_Name:
+		return "name";
+	case TYPE_String:
+		return "string";
+	case TYPE_Pointer:
+	{
+		VStr Ret = GetPointerInnerType().GetName();
+		for (int i = 0; i < PtrLevel; i++)
+		{
+			Ret += "*";
+		}
+		return Ret;
+	}
+	case TYPE_Reference:
+		return Class ? *Class->Name : "none";
+	case TYPE_Class:
+	{
+		VStr Ret("class");
+		if (Class)
+		{
+			Ret += "<";
+			Ret += *Class->Name;
+			Ret += ">";
+		}
+		return Ret;
+	}
+	case TYPE_State:
+		return "state";
+	case TYPE_Struct:
+		return *Struct->Name;
+	case TYPE_Vector:
+		return "vector";
+	case TYPE_Array:
+		return GetArrayInnerType().GetName() + "[]";
+	case TYPE_DynamicArray:
+		return VStr("array<") + GetArrayInnerType().GetName() + ">";
+	default:
+		return "unknown";
 	}
 }
 
@@ -885,7 +907,7 @@ VPackage* VMemberBase::LoadPackage(VName InName, TLocation l)
 		*Reader << ((int*)&Progs)[i];
 	}
 
-	if (strncmp(Progs.magic, PROG_MAGIC, 4))
+	if (VStr::NCmp(Progs.magic, PROG_MAGIC, 4))
 	{
 		ParseError(l, "Package %s has wrong file ID", *InName);
 		BailOut();
@@ -1727,9 +1749,7 @@ void VMethod::DumpAsm()
 		case OPCARGS_TypeSize:
 		case OPCARGS_Type:
 			{
-				char Tmp[256];
-				Instructions[s].TypeArg.GetName(Tmp);
-				dprintf(" %s", Tmp);
+				dprintf(" %s", *Instructions[s].TypeArg.GetName());
 			}
 			break;
 		}
@@ -2739,7 +2759,7 @@ VState* VClass::ResolveStateLabel(TLocation Loc, VName LabelName, int Offset)
 	if (DCol)
 	{
 		char ClassNameBuf[NAME_SIZE];
-		strcpy(ClassNameBuf, *LabelName);
+		VStr::Cpy(ClassNameBuf, *LabelName);
 		ClassNameBuf[DCol - *LabelName] = 0;
 		VName ClassName(ClassNameBuf);
 		if (ClassName == NAME_Super)
@@ -2849,7 +2869,7 @@ int VPackage::FindString(const char *str)
 	int hash = StringHashFunc(str);
 	for (int i = StringLookup[hash]; i; i = StringInfo[i].Next)
 	{
-		if (!strcmp(&Strings[StringInfo[i].Offs], str))
+		if (!VStr::Cmp(&Strings[StringInfo[i].Offs], str))
 		{
 			return StringInfo[i].Offs;
 		}
@@ -2857,14 +2877,14 @@ int VPackage::FindString(const char *str)
 
 	//  Add new string
 	TStringInfo& SI = StringInfo.Alloc();
-	int AddLen = (strlen(str) + 4) & ~3;
+	int AddLen = (VStr::Length(str) + 4) & ~3;
 	int Ofs = Strings.Num();
 	Strings.SetNum(Strings.Num() + AddLen);
 	memset(&Strings[Ofs], 0, AddLen);
 	SI.Offs = Ofs;
 	SI.Next = StringLookup[hash];
 	StringLookup[hash] = StringInfo.Num() - 1;
-	strcpy(&Strings[Ofs], str);
+	VStr::Cpy(&Strings[Ofs], str);
 	return SI.Offs;
 }
 

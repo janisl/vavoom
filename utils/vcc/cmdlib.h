@@ -30,7 +30,6 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <string.h>
-#include <ctype.h>
 
 #ifdef _MSC_VER
 // Disable some unwanted warnings
@@ -57,13 +56,6 @@
 
 #ifndef __GNUC__
 #define __attribute__(whatever)
-#endif
-
-#if !defined _WIN32 && !defined DJGPP
-#undef stricmp	//	Allegro defines them
-#undef strnicmp
-#define stricmp		strcasecmp
-#define strnicmp	strncasecmp
 #endif
 
 // MACROS ------------------------------------------------------------------
@@ -107,13 +99,6 @@ typedef unsigned int		vuint32;
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 char *va(const char *text, ...) __attribute__ ((format(printf, 1, 2)));
-
-short LittleShort(short val);
-int LittleLong(int val);
-
-void DefaultExtension(char *path, const char *extension);
-void StripExtension(char *path);
-void FixFileSlashes(char *path);
 
 void* Malloc(size_t size);
 void Free(void* ptr);

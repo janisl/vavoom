@@ -604,7 +604,6 @@ public:
 class VTypeExpr : public VExpression
 {
 public:
-	char		Name[128];
 	VName		MetaClassName;
 
 	VTypeExpr(TType, const TLocation&);
@@ -612,7 +611,7 @@ public:
 	VExpression* DoResolve(VEmitContext&);
 	VTypeExpr* ResolveAsType(VEmitContext&);
 	void Emit(VEmitContext&);
-	const char* GetName();
+	VStr GetName() const;
 	VExpression* CreateTypeExprCopy();
 };
 

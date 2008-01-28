@@ -5088,7 +5088,6 @@ VTypeExpr::VTypeExpr(TType AType, const TLocation& ALoc)
 , MetaClassName(NAME_None)
 {
 	Type = AType;
-	Name[0] = 0;
 }
 
 //==========================================================================
@@ -5102,7 +5101,6 @@ VTypeExpr::VTypeExpr(TType AType, const TLocation& ALoc, VName AMetaClassName)
 , MetaClassName(AMetaClassName)
 {
 	Type = AType;
-	Name[0] = 0;
 }
 
 //==========================================================================
@@ -5161,11 +5159,9 @@ void VTypeExpr::Emit(VEmitContext&)
 //
 //==========================================================================
 
-const char* VTypeExpr::GetName()
+VStr VTypeExpr::GetName() const
 {
-	if (!Name[0])
-		Type.GetName(Name);
-	return Name;
+	return Type.GetName();
 }
 
 //==========================================================================

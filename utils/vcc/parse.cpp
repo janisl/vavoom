@@ -1487,7 +1487,7 @@ VName VParser::ParseStateString()
 		ParseError(Lex.Location, "Identifier expected");
 		return NAME_None;
 	}
-	strcpy(StateStr, *Lex.Name);
+	VStr::Cpy(StateStr, *Lex.Name);
 	Lex.NextToken();
 
 	if (Lex.Check(TK_DColon))
@@ -1635,16 +1635,16 @@ void VParser::ParseStates(VClass* InClass)
 		//	Sprite name
 		char SprName[8];
 		SprName[0] = 0;
-		if (strlen(*TmpName) != 4)
+		if (VStr::Length(*TmpName) != 4)
 		{
 			ParseError(Lex.Location, "Invalid sprite name");
 		}
 		else
 		{
-			SprName[0] = tolower((*TmpName)[0]);
-			SprName[1] = tolower((*TmpName)[1]);
-			SprName[2] = tolower((*TmpName)[2]);
-			SprName[3] = tolower((*TmpName)[3]);
+			SprName[0] = VStr::ToLower((*TmpName)[0]);
+			SprName[1] = VStr::ToLower((*TmpName)[1]);
+			SprName[2] = VStr::ToLower((*TmpName)[2]);
+			SprName[3] = VStr::ToLower((*TmpName)[3]);
 			SprName[4] = 0;
 		}
 		s->SpriteName = SprName;
@@ -1656,7 +1656,7 @@ void VParser::ParseStates(VClass* InClass)
 		{
 			ParseError(Lex.Location, "Identifier expected");
 		}
-		char FChar = toupper(Lex.String[0]);
+		char FChar = VStr::ToUpper(Lex.String[0]);
 		if (FChar < 'A' || FChar > ']')
 		{
 			ParseError(Lex.Location, "Frames must be A-Z, [, \\ or ]");
@@ -1733,7 +1733,7 @@ void VParser::ParseStates(VClass* InClass)
 		//	Code
 		if (Lex.Check(TK_LBrace))
 		{
-			if (strlen(*FramesString) > 1)
+			if (VStr::Length(*FramesString) > 1)
 			{
 				ParseError(Lex.Location, "Only states with single frame can have code block");
 			}
@@ -1771,9 +1771,9 @@ void VParser::ParseStates(VClass* InClass)
 		PrevState = s;
 		StateIdx++;
 
-		for (size_t i = 1; i < strlen(*FramesString); i++)
+		for (size_t i = 1; i < VStr::Length(*FramesString); i++)
 		{
-			char FChar = toupper((*FramesString)[i]);
+			char FChar = VStr::ToUpper((*FramesString)[i]);
 			if (FChar < 'A' || FChar > ']')
 			{
 				ParseError(Lex.Location, "Frames must be A-Z, [, \\ or ]");
