@@ -604,7 +604,7 @@ bool VEntity::PIT_CheckThing(void* arg, VEntity *Other)
 	cptrace_t cptrace = *(cptrace_t*)arg;
 
 	// can't hit thing
-	if (!(Other->EntityFlags & VEntity::EF_Solid))
+	if (!(Other->EntityFlags & EF_Solid))
 		return true;
 
 	blockdist = Other->Radius + cptrace.Thing->Radius;
@@ -620,21 +620,15 @@ bool VEntity::PIT_CheckThing(void* arg, VEntity *Other)
 	if (Other == cptrace.Thing)
 		return true;
 
-	if ((cptrace.Thing->EntityFlags & VEntity::EF_PassMobj) ||
-		(cptrace.Thing->EntityFlags & VEntity::EF_Missile))
+	if ((cptrace.Thing->EntityFlags & EF_PassMobj) ||
+		(cptrace.Thing->EntityFlags & EF_Missile))
 	{
+		//	Prevent some objects from overlapping
+		if (cptrace.Thing->EntityFlags & Other->EntityFlags & EF_DontOverlap)
+		{
+			return false;
+		}
 		// check if a mobj passed over/under another object
-/*!		if ((cptrace.Thing.Class == Imp || cptrace.Thing.Class == Wizard) &&
-			(Other.Class == Imp || Other.Class == Wizard))
-		{
-			// don't let imps/wizards fly over other imps/wizards
-			return false;
-		}*/
-/*!		if (cptrace.Thing.Class == Bishop && Other.Class == Bishop)
-		{
-			// don't let bishops fly over other bishops
-			return false;
-		}*/
 		if (cptrace.Pos.z >= Other->Origin.z + Other->Height)
 		{
 			return true;
@@ -1010,21 +1004,15 @@ bool VEntity::PIT_CheckRelThing(void* arg, VEntity *Other)
 		return true;
 
 	//if (!(tmtrace.Thing->EntityFlags & VEntity::EF_NoPassMobj) || Actor(Other).bSpecial)
-	if ((tmtrace.Thing->EntityFlags & VEntity::EF_PassMobj) ||
-		(tmtrace.Thing->EntityFlags & VEntity::EF_Missile))
+	if ((tmtrace.Thing->EntityFlags & EF_PassMobj) ||
+		(tmtrace.Thing->EntityFlags & EF_Missile))
 	{
+		//	Prevent some objects from overlapping
+		if (tmtrace.Thing->EntityFlags & Other->EntityFlags & EF_DontOverlap)
+		{
+			return false;
+		}
 		// check if a mobj passed over/under another object
-/*		if ((tmtrace.Thing.Class == Imp || tmtrace.Thing.Class == Wizard)
-			&& (Other.Class == Imp || Other.Class == Wizard))
-		{
-			// don't let imps/wizards fly over other imps/wizards
-			return false;
-		}*/
-/*		if (tmtrace.Thing.Class == Bishop && Other.Class == Bishop)
-		{
-			// don't let bishops fly over other bishops
-			return false;
-		}*/
 		if (tmtrace.End.z >= Other->Origin.z + Other->Height)
 		{
 			return true;	// overhead

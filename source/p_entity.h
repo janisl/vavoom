@@ -205,6 +205,7 @@ class VEntity : public VThinker
 		EF_NetLocalPlayer		= 0x00800000,	// Mobj of player currently being updated
 		EF_Invisible			= 0x01000000,	// Don't draw this actor
 		EF_Missile				= 0x02000000,	// don't hit same species, explode on block
+		EF_DontOverlap			= 0x04000000,	// Prevent some things from overlapping.
 	};
 	vuint32			EntityFlags;
 

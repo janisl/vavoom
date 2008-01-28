@@ -177,6 +177,7 @@ defaultproperties
 	bNoGravity = true;
 	bFloat = true;
 	bFloorClip = false;
+	bDontOverlap = true;
 	SightSound = 'wizard/sight';
 	ActiveSound = 'wizard/active';
 	AttackSound = 'wizard/attack';

@@ -194,6 +194,7 @@ defaultproperties
 	bSpawnFloat = true;
 	bFloorClip = false;
 	bTriggerHappy = true;
+	bDontOverlap = true;
 	SightSound = 'himp/sight';
 	ActiveSound = 'himp/active';
 	AttackSound = 'himp/attack';
