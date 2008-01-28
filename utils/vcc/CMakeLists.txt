@@ -1,7 +1,7 @@
 include_directories(../common)
 
 add_executable(vcc
-	../common/array.h
+	../../source/array.h
 	../common/cmdlib.cpp
 	../common/cmdlib.h
 	error.cpp
