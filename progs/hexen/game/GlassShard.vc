@@ -63,6 +63,5 @@ defaultproperties
 	bDropOff = true;
 	bNoGravity = true;
 	bNoTeleport = true;
-	bPassMobj = true;
 	BounceType = BOUNCE_Hexen;
 }

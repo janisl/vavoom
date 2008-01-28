@@ -74,7 +74,6 @@ defaultproperties
 	bActivateImpact = true;
 	bNoTeleport = true;
 	bRandomise = true;
-	bPassMobj = true;
 	SightSound = 'weapons/plasmaf';
 	DeathSound = 'weapons/plasmax';
 	bDynamicLight = true;

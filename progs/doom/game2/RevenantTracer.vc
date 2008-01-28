@@ -101,7 +101,6 @@ defaultproperties
 	bRandomise = true;
 	bDynamicLight = true;
 	bLeaveTrail = true;
-	bPassMobj = true;
 	SightSound = 'skeleton/attack';
 	DeathSound = 'skeleton/tracex';
 	DLightColour = RGB(155, 51, 51);

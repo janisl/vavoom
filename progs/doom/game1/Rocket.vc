@@ -67,7 +67,6 @@ defaultproperties
 	bExplodeParticles = true;
 	bDynamicLight = true;
 	bLeaveTrail = true;
-	bPassMobj = true;
 	SightSound = 'weapons/rocklf';
 	DeathSound = 'weapons/rocklx';
 	DLightColour = RGB(195, 79, 0);

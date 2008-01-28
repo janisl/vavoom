@@ -49,5 +49,4 @@ defaultproperties
 	bWindThrust = true;
 	bCannotPush = true;
 	bNoSplash = true;
-	bPassMobj = true;
 }
