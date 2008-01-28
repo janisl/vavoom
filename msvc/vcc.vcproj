@@ -45,7 +45,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="../utils/common"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_DEPRECATE"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_DEPRECATE;IN_VCC"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
@@ -130,7 +130,7 @@
 				Optimization="3"
 				InlineFunctionExpansion="1"
 				AdditionalIncludeDirectories="../utils/common"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_DEPRECATE"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_DEPRECATE;IN_VCC"
 				StringPooling="true"
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
@@ -210,7 +210,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\utils\vcc\name.cpp"
+				RelativePath="..\source\name.cpp"
 				>
 			</File>
 			<File
@@ -259,11 +259,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\utils\vcc\name.h"
+				RelativePath="..\source\name.h"
 				>
 			</File>
 			<File
-				RelativePath="..\utils\vcc\names.h"
+				RelativePath="..\source\names.h"
 				>
 			</File>
 			<File

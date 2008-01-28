@@ -291,6 +291,19 @@ REGISTER_NAME(bigfont)
 REGISTER_NAME(consolefont)
 REGISTER_NAME(confont)
 
+//	Compiler names
+REGISTER_NAME(Num)
+REGISTER_NAME(Insert)
+REGISTER_NAME(Remove)
+REGISTER_NAME(Goto)
+REGISTER_NAME(Stop)
+REGISTER_NAME(Wait)
+REGISTER_NAME(Fail)
+REGISTER_NAME(Loop)
+REGISTER_NAME(Super)
+REGISTER_NAME(Bright)
+REGISTER_NAME(Offset)
+
 // Closing -----------------------------------------------------------------
 
 #ifdef REGISTERING_ENUM

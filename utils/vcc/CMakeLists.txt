@@ -10,9 +10,9 @@ add_executable(vcc
 	lexer.cpp
 	lexer.h
 	modifiers.cpp
-	name.cpp
-	name.h
-	names.h
+	../../source/name.cpp
+	../../source/name.h
+	../../source/names.h
 	parse.cpp
 	pcode.cpp
 	statement.cpp
@@ -24,5 +24,6 @@ add_executable(vcc
 	vcc.h
 )
 set_target_properties(vcc PROPERTIES OUTPUT_NAME ../bin/vcc)
+set_target_properties(vcc PROPERTIES COMPILE_FLAGS -DIN_VCC)
 
 #EXTRA_DIST = vcc.txt

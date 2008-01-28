@@ -31,8 +31,6 @@
 #include "cmdlib.h"
 using namespace VavoomUtils;
 
-#include "../../source/progdefs.h"
-
 //	For compatibility with engine files.
 #define guard(f)
 #define unguard
@@ -44,8 +42,9 @@ class VMemberBase;
 
 #include "array.h"
 #include "stream.h"
-#include "names.h"
-#include "name.h"
+#include "../../source/names.h"
+#include "../../source/name.h"
+#include "../../source/progdefs.h"
 
 // MACROS ------------------------------------------------------------------
 
