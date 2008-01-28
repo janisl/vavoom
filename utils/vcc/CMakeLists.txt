@@ -1,9 +1,7 @@
-include_directories(../common)
-
 add_executable(vcc
 	../../source/array.h
-	../common/cmdlib.cpp
-	../common/cmdlib.h
+	cmdlib.cpp
+	cmdlib.h
 	error.cpp
 	expression.cpp
 	expression.h

@@ -28,9 +28,6 @@
 
 // HEADER FILES ------------------------------------------------------------
 
-#include "cmdlib.h"
-using namespace VavoomUtils;
-
 //	For compatibility with engine files.
 #define guard(f)
 #define guardSlow(f)
@@ -48,6 +45,7 @@ class VObject;
 
 enum ENoInit			{E_NoInit};
 
+#include "cmdlib.h"
 #include "../../source/array.h"
 #include "../../source/stream.h"
 #include "../../source/names.h"

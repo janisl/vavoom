@@ -190,7 +190,7 @@
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
-				RelativePath="..\utils\common\cmdlib.cpp"
+				RelativePath="..\utils\vcc\cmdlib.cpp"
 				>
 			</File>
 			<File
@@ -247,7 +247,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\utils\common\cmdlib.h"
+				RelativePath="..\utils\vcc\cmdlib.h"
 				>
 			</File>
 			<File
