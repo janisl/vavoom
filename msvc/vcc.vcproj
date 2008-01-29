@@ -247,7 +247,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\utils\vcc\cmdlib.h"
+				RelativePath="..\source\common.h"
 				>
 			</File>
 			<File

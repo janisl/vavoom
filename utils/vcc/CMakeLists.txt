@@ -1,6 +1,6 @@
 add_executable(vcc
 	../../source/array.h
-	cmdlib.h
+	../../source/common.h
 	error.cpp
 	expression.cpp
 	expression.h

@@ -28,7 +28,22 @@
 
 // HEADER FILES ------------------------------------------------------------
 
-#include "cmdlib.h"
+//	C headers
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdarg.h>
+#include <string.h>
+
+#include "../../source/common.h"
+
+void* Malloc(size_t size);
+void Free(void* ptr);
+
+//	For compatibility with engine files.
+#define Z_Malloc	Malloc
+#define Z_Free		Free
+#define Sys_Error	FatalError
+
 #include "../../source/array.h"
 #include "../../source/stream.h"
 #include "../../source/names.h"
@@ -39,9 +54,6 @@
 // MACROS ------------------------------------------------------------------
 
 #define OPCODE_STATS
-
-//	Number of elements in an array.
-#define ARRAY_COUNT(array)				((int)(sizeof(array) / sizeof((array)[0])))
 
 #define MAX_FILE_NAME_LENGTH	512
 #define MAX_QUOTED_LENGTH		256
@@ -691,6 +703,8 @@ void ParseWarning(TLocation, const char *text, ...) __attribute__ ((format(print
 void BailOut() __attribute__((noreturn));
 
 int dprintf(const char *text, ...);
+
+char *va(const char *text, ...) __attribute__ ((format(printf, 1, 2)));
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 

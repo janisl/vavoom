@@ -123,7 +123,7 @@ typedef unsigned int		vuint32;
 
 //	Turn on usage of context in guard macros on platforms where it's not
 // safe to throw an exception in signal handler.
-#ifdef __linux__
+#if DO_GUARD && defined(__linux__)
 #define USE_GUARD_SIGNAL_CONTEXT
 #endif
 
