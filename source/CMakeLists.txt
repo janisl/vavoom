@@ -629,7 +629,7 @@ else(WIN32)
 		message(STATUS "Using Allegro")
 		# run the allegro-config program to get cxxflags
 		exec_program(sh
-			ARGS "${LIBALLEGRO_CONFIG_EXECUTABLE} --cflags"
+			ARGS "${ALLEGRO_CONFIG_EXECUTABLE} --cflags"
 			OUTPUT_VARIABLE ALLEGRO_CXX_FLAGS
 			RETURN_VALUE RET)
 		if(RET EQUAL 0)
@@ -646,7 +646,7 @@ else(WIN32)
 
 		# run the allegro-config program to get the libs
 		exec_program(sh
-			ARGS "${LIBALLEGRO_CONFIG_EXECUTABLE} --libs"
+			ARGS "${ALLEGRO_CONFIG_EXECUTABLE} --libs"
 			OUTPUT_VARIABLE ALLEGRO_LIBRARIES
 			RETURN_VALUE RET)
 		if(RET EQUAL 0)
