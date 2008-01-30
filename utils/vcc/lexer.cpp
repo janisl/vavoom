@@ -300,7 +300,7 @@ void VLexer::PushSource(TLocation& Loc, const VStr& FileName)
 	NewSrc->Chr = Chr;
 	NewSrc->Loc = Location;
 
-	NewSrc->SourceIdx = AddSourceFile(FileName);
+	NewSrc->SourceIdx = TLocation::AddSourceFile(FileName);
 	NewSrc->Line = 1;
 	NewSrc->IncLineNumber = false;
 	NewSrc->NewLine = true;
@@ -514,7 +514,7 @@ void VLexer::ProcessPreprocessor()
 			ParseError(Location, "Bad directive.");
 		}
 		ProcessFileName();
-		Src->SourceIdx = AddSourceFile(String);
+		Src->SourceIdx = TLocation::AddSourceFile(String);
 		Location = TLocation(Src->SourceIdx, Src->Line);
 
 		//	Ignore flags
@@ -1739,23 +1739,6 @@ void VLexer::ProcessFileName()
 
 //==========================================================================
 //
-//	VLexer::AddSourceFile
-//
-//==========================================================================
-
-int VLexer::AddSourceFile(const VStr& SName)
-{
-	//	Find it.
-	for (int i = 0; i < TLocation::SourceFiles.Num(); i++)
-		if (SName == TLocation::SourceFiles[i])
-			return i;
-
-	//	Not found, add it.
-	return TLocation::SourceFiles.Append(SName);
-}
-
-//==========================================================================
-//
 //	VLexer::Check
 //
 //==========================================================================
@@ -1810,6 +1793,23 @@ void VLexer::Expect(EToken tk, ECompileError error)
 
 //==========================================================================
 //
+//	TLocation::AddSourceFile
+//
+//==========================================================================
+
+int TLocation::AddSourceFile(const VStr& SName)
+{
+	//	Find it.
+	for (int i = 0; i < SourceFiles.Num(); i++)
+		if (SName == SourceFiles[i])
+			return i;
+
+	//	Not found, add it.
+	return SourceFiles.Append(SName);
+}
+
+//==========================================================================
+//
 //	TLocation::GetSource
 //
 //==========================================================================
@@ -1819,4 +1819,15 @@ VStr TLocation::GetSource() const
 	if (!Loc)
 		return "(external)";
 	return SourceFiles[Loc >> 16];
+}
+
+//==========================================================================
+//
+//	TLocation::ClearSourceFiles
+//
+//==========================================================================
+
+void TLocation::ClearSourceFiles()
+{
+	SourceFiles.Clear();
 }

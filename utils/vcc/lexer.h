@@ -162,8 +162,6 @@ private:
 
 	static TArray<VStr>		SourceFiles;
 
-	friend class VLexer;
-
 public:
 	TLocation()
 	: Loc(0)
@@ -176,6 +174,9 @@ public:
 		return Loc & 0xffff;
 	}
 	VStr GetSource() const;
+
+	static int AddSourceFile(const VStr&);
+	static void ClearSourceFiles();
 };
 
 //==========================================================================
@@ -256,7 +257,6 @@ private:
 	void ProcessLetterToken(bool);
 	void ProcessSpecialToken();
 	void ProcessFileName();
-	int AddSourceFile(const VStr&);
 
 public:
 	EToken				Token;
