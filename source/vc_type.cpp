@@ -25,7 +25,13 @@
 
 // HEADER FILES ------------------------------------------------------------
 
-#include "vcc.h"
+#ifdef IN_VCC
+#include "../utils/vcc/vcc.h"
+#else
+#include "gamedefs.h"
+#include "progdefs.h"
+#include "network.h"
+#endif
 
 // MACROS ------------------------------------------------------------------
 
@@ -45,40 +51,15 @@
 
 // CODE --------------------------------------------------------------------
 
-//BEGIN TType
-
 //==========================================================================
 //
-//	TType::TType
+//	operator VStream << FType
 //
 //==========================================================================
 
-TType::TType(VClass* InClass) :
-	Type(TYPE_Reference), InnerType(TYPE_Void), ArrayInnerType(TYPE_Void),
-	PtrLevel(0), ArrayDim(0), Class(InClass)
+VStream& operator<<(VStream& Strm, VFieldType& T)
 {
-}
-
-//==========================================================================
-//
-//	TType::TType
-//
-//==========================================================================
-
-TType::TType(VStruct* InStruct) :
-	Type(InStruct->IsVector ? TYPE_Vector : TYPE_Struct), InnerType(TYPE_Void),
-	ArrayInnerType(TYPE_Void), PtrLevel(0), ArrayDim(0), Struct(InStruct)
-{
-}
-
-//==========================================================================
-//
-//	operator VStream << TType
-//
-//==========================================================================
-
-VStream& operator<<(VStream& Strm, TType& T)
-{
+	guard(operator VStream << VFieldType);
 	Strm << T.Type;
 	vuint8 RealType = T.Type;
 	if (RealType == TYPE_Array)
@@ -107,15 +88,42 @@ VStream& operator<<(VStream& Strm, TType& T)
 	else if (RealType == TYPE_Bool)
 		Strm << T.BitMask;
 	return Strm;
+	unguard;
+}
+
+#ifdef IN_VCC
+
+//==========================================================================
+//
+//	VFieldType::VFieldType
+//
+//==========================================================================
+
+VFieldType::VFieldType(VClass* InClass) :
+	Type(TYPE_Reference), InnerType(TYPE_Void), ArrayInnerType(TYPE_Void),
+	PtrLevel(0), ArrayDim(0), Class(InClass)
+{
 }
 
 //==========================================================================
 //
-//	TType::Equals
+//	VFieldType::VFieldType
 //
 //==========================================================================
 
-bool TType::Equals(const TType& Other) const
+VFieldType::VFieldType(VStruct* InStruct) :
+	Type(InStruct->IsVector ? TYPE_Vector : TYPE_Struct), InnerType(TYPE_Void),
+	ArrayInnerType(TYPE_Void), PtrLevel(0), ArrayDim(0), Struct(InStruct)
+{
+}
+
+//==========================================================================
+//
+//	VFieldType::Equals
+//
+//==========================================================================
+
+bool VFieldType::Equals(const VFieldType& Other) const
 {
 	if (Type != Other.Type ||
 		InnerType != Other.InnerType ||
@@ -129,13 +137,13 @@ bool TType::Equals(const TType& Other) const
 
 //==========================================================================
 //
-//	TType::MakePointerType
+//	VFieldType::MakePointerType
 //
 //==========================================================================
 
-TType TType::MakePointerType() const
+VFieldType VFieldType::MakePointerType() const
 {
-	TType pointer = *this;
+	VFieldType pointer = *this;
 	if (pointer.Type == TYPE_Pointer)
 	{
 		pointer.PtrLevel++;
@@ -151,18 +159,18 @@ TType TType::MakePointerType() const
 
 //==========================================================================
 //
-//	TType::GetPointerInnerType
+//	VFieldType::GetPointerInnerType
 //
 //==========================================================================
 
-TType TType::GetPointerInnerType() const
+VFieldType VFieldType::GetPointerInnerType() const
 {
 	if (Type != TYPE_Pointer)
 	{
 		FatalError("Not a pointer type");
 		return *this;
 	}
-	TType ret = *this;
+	VFieldType ret = *this;
 	ret.PtrLevel--;
 	if (ret.PtrLevel <= 0)
 	{
@@ -174,17 +182,17 @@ TType TType::GetPointerInnerType() const
 
 //==========================================================================
 //
-//	TType::MakeArrayType
+//	VFieldType::MakeArrayType
 //
 //==========================================================================
 
-TType TType::MakeArrayType(int elcount, TLocation l) const
+VFieldType VFieldType::MakeArrayType(int elcount, TLocation l) const
 {
 	if (Type == TYPE_Array || Type == TYPE_DynamicArray)
 	{
 		ParseError(l, "Can't have multi-dimensional arrays");
 	}
-	TType array = *this;
+	VFieldType array = *this;
 	array.ArrayInnerType = Type;
 	array.Type = TYPE_Array;
 	array.ArrayDim = elcount;
@@ -193,17 +201,17 @@ TType TType::MakeArrayType(int elcount, TLocation l) const
 
 //==========================================================================
 //
-//	TType::MakeDynamicArrayType
+//	VFieldType::MakeDynamicArrayType
 //
 //==========================================================================
 
-TType TType::MakeDynamicArrayType(TLocation l) const
+VFieldType VFieldType::MakeDynamicArrayType(TLocation l) const
 {
 	if (Type == TYPE_Array || Type == TYPE_DynamicArray)
 	{
 		ParseError(l, "Can't have multi-dimensional arrays");
 	}
-	TType array = *this;
+	VFieldType array = *this;
 	array.ArrayInnerType = Type;
 	array.Type = TYPE_DynamicArray;
 	return array;
@@ -211,18 +219,18 @@ TType TType::MakeDynamicArrayType(TLocation l) const
 
 //==========================================================================
 //
-//	TType::GetArrayInnerType
+//	VFieldType::GetArrayInnerType
 //
 //==========================================================================
 
-TType TType::GetArrayInnerType() const
+VFieldType VFieldType::GetArrayInnerType() const
 {
 	if (Type != TYPE_Array && Type != TYPE_DynamicArray)
 	{
 		FatalError("Not an array type");
 		return *this;
 	}
-	TType ret = *this;
+	VFieldType ret = *this;
 	ret.Type = ArrayInnerType;
 	ret.ArrayInnerType = TYPE_Void;
 	ret.ArrayDim = 0;
@@ -231,11 +239,11 @@ TType TType::GetArrayInnerType() const
 
 //==========================================================================
 //
-//	TType::GetSize
+//	VFieldType::GetSize
 //
 //==========================================================================
 
-int TType::GetSize() const
+int VFieldType::GetSize() const
 {
 	switch (Type)
 	{
@@ -260,13 +268,13 @@ int TType::GetSize() const
 
 //==========================================================================
 //
-//	TType::CheckPassable
+//	VFieldType::CheckPassable
 //
 //	Check, if type can be pushed into the stack
 //
 //==========================================================================
 
-void TType::CheckPassable(TLocation l) const
+void VFieldType::CheckPassable(TLocation l) const
 {
 	if (GetSize() != 4 && Type != TYPE_Vector && Type != TYPE_Delegate)
 	{
@@ -276,7 +284,7 @@ void TType::CheckPassable(TLocation l) const
 
 //==========================================================================
 //
-//	TType::CheckMatch
+//	VFieldType::CheckMatch
 //
 //	Check, if types are compatible
 //
@@ -285,7 +293,7 @@ void TType::CheckPassable(TLocation l) const
 //
 //==========================================================================
 
-void TType::CheckMatch(TLocation l, const TType& Other) const
+void VFieldType::CheckMatch(TLocation l, const VFieldType& Other) const
 {
 	CheckPassable(l);
 	Other.CheckPassable(l);
@@ -299,8 +307,8 @@ void TType::CheckMatch(TLocation l, const TType& Other) const
 	}
 	if (Type == TYPE_Pointer && Other.Type == TYPE_Pointer)
 	{
-		TType it1 = GetPointerInnerType();
-		TType it2 = Other.GetPointerInnerType();
+		VFieldType it1 = GetPointerInnerType();
+		VFieldType it2 = Other.GetPointerInnerType();
 		if (it1.Equals(it2))
 		{
 			return;
@@ -410,11 +418,11 @@ void TType::CheckMatch(TLocation l, const TType& Other) const
 
 //==========================================================================
 //
-//	TType::GetName
+//	VFieldType::GetName
 //
 //==========================================================================
 
-VStr TType::GetName() const
+VStr VFieldType::GetName() const
 {
 	switch (Type)
 	{
@@ -467,35 +475,248 @@ VStr TType::GetName() const
 	}
 }
 
-//END
-
-//BEGIN Import / export helper classes
+#else
 
 //==========================================================================
 //
-//	VProgsImport::VProgsImport
+//	VFieldType::GetSize
 //
 //==========================================================================
 
-VProgsImport::VProgsImport(VMemberBase* InObj, vint32 InOuterIndex)
-: Type(InObj->MemberType)
-, Name(InObj->Name)
-, OuterIndex(InOuterIndex)
-, Obj(InObj)
+int VFieldType::GetSize() const
 {
+	guard(VFieldType::GetSize);
+	switch (Type)
+	{
+	case TYPE_Int:			return sizeof(vint32);
+	case TYPE_Byte:			return sizeof(vuint8);
+	case TYPE_Bool:			return sizeof(vuint32);
+	case TYPE_Float:		return sizeof(float);
+	case TYPE_Name:			return sizeof(VName);
+	case TYPE_String:		return sizeof(VStr);
+	case TYPE_Pointer:		return sizeof(void*);
+	case TYPE_Reference:	return sizeof(VObject*);
+	case TYPE_Class:		return sizeof(VClass*);
+	case TYPE_State:		return sizeof(VState*);
+	case TYPE_Delegate:		return sizeof(VObjectDelegate);
+	case TYPE_Struct:		return (Struct->Size + 3) & ~3;
+	case TYPE_Vector:		return sizeof(TVec);
+	case TYPE_Array:		return ArrayDim * GetArrayInnerType().GetSize();
+	case TYPE_DynamicArray:	return sizeof(VScriptArray);
+	}
+	return 0;
+	unguard;
+}
+
+//==========================================================================
+ //
+//	VFieldType::GetAlignment
+//
+//==========================================================================
+
+int VFieldType::GetAlignment() const
+{
+	guard(VFieldType::GetAlignment);
+	switch (Type)
+	{
+	case TYPE_Int:			return sizeof(vint32);
+	case TYPE_Byte:			return sizeof(vuint8);
+	case TYPE_Bool:			return sizeof(vuint32);
+	case TYPE_Float:		return sizeof(float);
+	case TYPE_Name:			return sizeof(VName);
+	case TYPE_String:		return sizeof(char*);
+	case TYPE_Pointer:		return sizeof(void*);
+	case TYPE_Reference:	return sizeof(VObject*);
+	case TYPE_Class:		return sizeof(VClass*);
+	case TYPE_State:		return sizeof(VState*);
+	case TYPE_Delegate:		return sizeof(VObject*);
+	case TYPE_Struct:		return Struct->Alignment;
+	case TYPE_Vector:		return sizeof(float);
+	case TYPE_Array:		return GetArrayInnerType().GetAlignment();
+	case TYPE_DynamicArray:	return sizeof(void*);
+	}
+	return 0;
+	unguard;
 }
 
 //==========================================================================
 //
-//	VProgsExport::VProgsExport
+//	VFieldType::GetArrayInnerType
 //
 //==========================================================================
 
-VProgsExport::VProgsExport(VMemberBase* InObj)
-: Type(InObj->MemberType)
-, Name(InObj->Name)
-, Obj(InObj)
+VFieldType VFieldType::GetArrayInnerType() const
 {
+	guard(VFieldType::GetArrayInnerType);
+	if (Type != TYPE_Array && Type != TYPE_DynamicArray)
+	{
+		Sys_Error("Not an array type");
+		return *this;
+	}
+	VFieldType ret = *this;
+	ret.Type = ArrayInnerType;
+	ret.ArrayInnerType = TYPE_Void;
+	ret.ArrayDim = 0;
+	return ret;
+	unguard;
 }
 
-//END
+//==========================================================================
+//
+//	VScriptArray::Clear
+//
+//==========================================================================
+
+void VScriptArray::Clear(VFieldType& Type)
+{
+	guard(VScriptArray::Clear);
+	if (ArrData)
+	{
+		int InnerSize = Type.GetSize();
+		for (int i = 0; i < ArrSize; i++)
+		{
+			VField::DestructField(ArrData + i * InnerSize, Type);
+		}
+		delete[] ArrData;
+	}
+	ArrData = NULL;
+	ArrNum = 0;
+	ArrSize = 0;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VScriptArray::Resize
+//
+//==========================================================================
+
+void VScriptArray::Resize(int NewSize, VFieldType& Type)
+{
+	guard(VScriptArray::Resize);
+	check(NewSize >= 0);
+
+	if (NewSize <= 0)
+	{
+		Clear(Type);
+		return;
+	}
+
+	if (NewSize == ArrSize)
+	{
+		return;
+	}
+	vuint8* OldData = ArrData;
+	vint32 OldSize = ArrSize;
+	ArrSize = NewSize;
+	if (ArrNum > NewSize)
+	{
+		ArrNum = NewSize;
+	}
+
+	int InnerSize = Type.GetSize();
+	ArrData = new vuint8[ArrSize * InnerSize];
+	memset(ArrData, 0, ArrSize * InnerSize);
+	for (int i = 0; i < ArrNum; i++)
+	{
+		VField::CopyFieldValue(OldData + i * InnerSize,
+			ArrData + i * InnerSize, Type);
+	}
+
+	if (OldData)
+	{
+		for (int i = 0; i < OldSize; i++)
+		{
+			VField::DestructField(OldData + i * InnerSize, Type);
+		}
+		delete[] OldData;
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VScriptArray::SetNum
+//
+//==========================================================================
+
+void VScriptArray::SetNum(int NewNum, VFieldType& Type)
+{
+	guard(VScriptArray::SetNum);
+	check(NewNum >= 0);
+	if (NewNum == 0)
+	{
+		//	As a special case setting size to 0 should clear the array.
+		Clear(Type);
+	}
+	else if (NewNum > ArrSize)
+	{
+		Resize(NewNum + NewNum * 3 / 8 + 32, Type);
+	}
+	ArrNum = NewNum;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VScriptArray
+//
+//==========================================================================
+
+void VScriptArray::Insert(int Index, int Count, VFieldType& Type)
+{
+	guard(VScriptArray::Insert);
+	check(ArrData != NULL);
+	check(Index >= 0);
+	check(Index <= ArrNum);
+
+	SetNum(ArrNum + Count, Type);
+	int InnerSize = Type.GetSize();
+	//	Move value to new location.
+	for (int i = ArrNum - 1; i >= Index + Count; i--)
+	{
+		VField::CopyFieldValue(ArrData + (i - Count) * InnerSize,
+			ArrData + i * InnerSize, Type);
+	}
+	//	Clean inserted elements
+	for (int i = Index; i < Index + Count; i++)
+	{
+		VField::DestructField(ArrData + i * InnerSize, Type);
+	}
+	memset(ArrData + Index * InnerSize, 0, Count * InnerSize);
+	unguard;
+}
+
+//==========================================================================
+//
+//	VScriptArray::Remove
+//
+//==========================================================================
+
+void VScriptArray::Remove(int Index, int Count, VFieldType& Type)
+{
+	guard(VScriptArray::Remove);
+	check(ArrData != NULL);
+	check(Index >= 0);
+	check(Index + Count <= ArrNum);
+
+	ArrNum -= Count;
+	if (ArrNum == 0)
+	{
+		//	Array is empty, so just clear it.
+		Clear(Type);
+	}
+	else
+	{
+		//	Move elements that are after removed ones.
+		int InnerSize = Type.GetSize();
+		for (int i = Index; i < ArrNum; i++)
+		{
+			VField::CopyFieldValue(ArrData + (i + Count) * InnerSize,
+				ArrData + i * InnerSize, Type);
+		}
+	}
+	unguard;
+}
+
+#endif

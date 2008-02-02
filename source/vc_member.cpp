@@ -290,6 +290,52 @@ TArray<VClass*>			VMemberBase::GNetClassLookup;
 
 // CODE --------------------------------------------------------------------
 
+#ifdef IN_VCC
+
+//==========================================================================
+//
+//	VProgsImport::VProgsImport
+//
+//==========================================================================
+
+VProgsImport::VProgsImport(VMemberBase* InObj, vint32 InOuterIndex)
+: Type(InObj->MemberType)
+, Name(InObj->Name)
+, OuterIndex(InOuterIndex)
+, Obj(InObj)
+{
+}
+
+//==========================================================================
+//
+//	VProgsExport::VProgsExport
+//
+//==========================================================================
+
+VProgsExport::VProgsExport(VMemberBase* InObj)
+: Type(InObj->MemberType)
+, Name(InObj->Name)
+, Obj(InObj)
+{
+}
+
+#else
+
+//==========================================================================
+//
+//	operator VStream << mobjinfo_t
+//
+//==========================================================================
+
+VStream& operator<<(VStream& Strm, mobjinfo_t& MI)
+{
+	return Strm << STRM_INDEX(MI.doomednum)
+		<< STRM_INDEX(MI.GameFilter)
+		<< MI.class_id;
+}
+
+#endif
+
 //==========================================================================
 //
 //	VMemberBase::VMemberBase
@@ -532,29 +578,29 @@ VMemberBase* VMemberBase::StaticFindMember(VName InName,
 //
 //==========================================================================
 
-TType VMemberBase::CheckForType(VClass* InClass, VName Name)
+VFieldType VMemberBase::CheckForType(VClass* InClass, VName Name)
 {
 	if (Name == NAME_None)
 	{
-		return TType(TYPE_Unknown);
+		return VFieldType(TYPE_Unknown);
 	}
 
 	VMemberBase* m = StaticFindMember(Name, ANY_PACKAGE, MEMBER_Class);
 	if (m)
 	{
-		return TType((VClass*)m);
+		return VFieldType((VClass*)m);
 	}
 	m = StaticFindMember(Name, InClass ? (VMemberBase*)InClass :
 		(VMemberBase*)ANY_PACKAGE, MEMBER_Struct);
 	if (m)
 	{
-		return TType((VStruct*)m);
+		return VFieldType((VStruct*)m);
 	}
 	if (InClass)
 	{
 		return CheckForType(InClass->ParentClass, Name);
 	}
-	return TType(TYPE_Unknown);
+	return VFieldType(TYPE_Unknown);
 }
 
 //==========================================================================

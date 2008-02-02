@@ -38,8 +38,6 @@
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
-void PF_Fixme();
-
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
@@ -132,6 +130,19 @@ VMethod::~VMethod()
 #endif
 	unguard;
 }
+
+//==========================================================================
+//
+//  PF_Fixme
+//
+//==========================================================================
+
+#ifndef IN_VCC
+static void PF_Fixme()
+{
+	Sys_Error("unimplemented bulitin");
+}
+#endif
 
 //==========================================================================
 //
@@ -313,7 +324,7 @@ bool VMethod::Define()
 	}
 	if (ReturnTypeExpr)
 	{
-		TType t = ReturnTypeExpr->Type;
+		VFieldType t = ReturnTypeExpr->Type;
 		if (t.Type != TYPE_Void)
 		{
 			//	Function's return type must be void, vector or with size 4
@@ -341,7 +352,7 @@ bool VMethod::Define()
 			Ret = false;
 			continue;
 		}
-		TType type = P.TypeExpr->Type;
+		VFieldType type = P.TypeExpr->Type;
 
 		if (type.Type == TYPE_Void)
 		{

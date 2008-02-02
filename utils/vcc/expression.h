@@ -34,8 +34,8 @@ class VTypeExpr;
 class VExpression
 {
 public:
-	TType		Type;
-	TType		RealType;
+	VFieldType		Type;
+	VFieldType		RealType;
 	int			Flags;
 	TLocation	Loc;
 
@@ -50,7 +50,7 @@ public:
 	virtual void RequestAddressOf();
 	virtual void Emit(VEmitContext&) = 0;
 	virtual void EmitBranchable(VEmitContext&, VLabel, bool);
-	void EmitPushPointedCode(TType, VEmitContext&);
+	void EmitPushPointedCode(VFieldType, VEmitContext&);
 	virtual bool IsValidTypeExpression();
 	virtual bool IsIntConst() const;
 	virtual bool IsFloatConst() const;
@@ -606,8 +606,8 @@ class VTypeExpr : public VExpression
 public:
 	VName		MetaClassName;
 
-	VTypeExpr(TType, const TLocation&);
-	VTypeExpr(TType, const TLocation&, VName);
+	VTypeExpr(VFieldType, const TLocation&);
+	VTypeExpr(VFieldType, const TLocation&, VName);
 	VExpression* DoResolve(VEmitContext&);
 	VTypeExpr* ResolveAsType(VEmitContext&);
 	void Emit(VEmitContext&);

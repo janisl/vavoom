@@ -480,7 +480,7 @@ void VExpression::EmitBranchable(VEmitContext& ec, VLabel Lbl, bool OnTrue)
 //
 //==========================================================================
 
-void VExpression::EmitPushPointedCode(TType type, VEmitContext& ec)
+void VExpression::EmitPushPointedCode(VFieldType type, VEmitContext& ec)
 {
 	switch (type.Type)
 	{
@@ -877,7 +877,7 @@ VExpression* VSelf::DoResolve(VEmitContext& ec)
 		delete this;
 		return NULL;
 	}
-	Type = TType(ec.SelfClass);
+	Type = VFieldType(ec.SelfClass);
 	return this;
 }
 
@@ -905,7 +905,7 @@ void VSelf::Emit(VEmitContext& ec)
 VNoneLiteral::VNoneLiteral(const TLocation& ALoc)
 : VExpression(ALoc)
 {
-	Type = TType((VClass*)NULL);
+	Type = VFieldType((VClass*)NULL);
 }
 
 //==========================================================================
@@ -943,7 +943,7 @@ void VNoneLiteral::Emit(VEmitContext& ec)
 VNullLiteral::VNullLiteral(const TLocation& ALoc)
 : VExpression(ALoc)
 {
-	Type = TType(TYPE_Void).MakePointerType();
+	Type = VFieldType(TYPE_Void).MakePointerType();
 }
 
 //==========================================================================
@@ -1441,7 +1441,7 @@ VExpression* VPointerField::DoResolve(VEmitContext& ec)
 		delete this;
 		return NULL;
 	}
-	TType type = op->Type.GetPointerInnerType();
+	VFieldType type = op->Type.GetPointerInnerType();
 	if (!type.Struct)
 	{
 		ParseError(Loc, "Not a structure type");
@@ -1594,7 +1594,7 @@ VExpression* VDotField::IntResolve(VEmitContext& ec, bool AssignTarget)
 	}
 	else if (op->Type.Type == TYPE_Struct || op->Type.Type == TYPE_Vector)
 	{
-		TType type = op->Type;
+		VFieldType type = op->Type;
 		int Flags = op->Flags;
 		op->Flags &= ~FIELD_ReadOnly;
 		op->RequestAddressOf();
@@ -1612,7 +1612,7 @@ VExpression* VDotField::IntResolve(VEmitContext& ec, bool AssignTarget)
 	}
 	else if (op->Type.Type == TYPE_DynamicArray)
 	{
-		TType type = op->Type;
+		VFieldType type = op->Type;
 		op->Flags &= ~FIELD_ReadOnly;
 		op->RequestAddressOf();
 		if (FieldName == NAME_Num)
@@ -1734,7 +1734,7 @@ VExpression* VDefaultObject::DoResolve(VEmitContext& ec)
 			delete this;
 			return NULL;
 		}
-		Type = TType(op->Type.Class);
+		Type = VFieldType(op->Type.Class);
 		return this;
 	}
 
@@ -1857,7 +1857,7 @@ VExpression* VArrayElement::DoResolve(VEmitContext& ec)
 	RealType = Type;
 	if (Type.Type == TYPE_Byte || Type.Type == TYPE_Bool)
 	{
-		Type = TType(TYPE_Int);
+		Type = VFieldType(TYPE_Int);
 	}
 	return this;
 }
@@ -2731,7 +2731,7 @@ VExpression* VPushPointed::DoResolve(VEmitContext& ec)
 	RealType = Type;
 	if (Type.Type == TYPE_Byte || Type.Type == TYPE_Bool)
 	{
-		Type = TType(TYPE_Int);
+		Type = VFieldType(TYPE_Int);
 	}
 	return this;
 }
@@ -3632,7 +3632,7 @@ VExpression* VAssignment::DoResolve(VEmitContext& ec)
 			delete this;
 			return NULL;
 		}
-		op2->Type.CheckMatch(Loc, TType(TYPE_Int));
+		op2->Type.CheckMatch(Loc, VFieldType(TYPE_Int));
 		VDynArraySetNum* e = (VDynArraySetNum*)op1;
 		e->NumExpr = op2;
 		op1 = NULL;
@@ -4099,7 +4099,7 @@ VExpression* VDynamicCast::DoResolve(VEmitContext& ec)
 		delete this;
 		return NULL;
 	}
-	Type = TType(Class);
+	Type = VFieldType(Class);
 	return this;
 }
 
@@ -4221,7 +4221,7 @@ VExpression* VLocalVar::DoResolve(VEmitContext& ec)
 	RealType = ec.LocalDefs[num].Type;
 	if (Type.Type == TYPE_Byte || Type.Type == TYPE_Bool)
 	{
-		Type = TType(TYPE_Int);
+		Type = VFieldType(TYPE_Int);
 	}
 	PushOutParam = !!(ec.LocalDefs[num].ParamFlags & FPARM_Out);
 	return this;
@@ -4392,7 +4392,7 @@ VExpression* VFieldAccess::DoResolve(VEmitContext&)
 	RealType = field->Type;
 	if (Type.Type == TYPE_Byte || Type.Type == TYPE_Bool)
 	{
-		Type = TType(TYPE_Int);
+		Type = VFieldType(TYPE_Int);
 	}
 	return this;
 }
@@ -4602,7 +4602,7 @@ VExpression* VInvocation::DoResolve(VEmitContext& ec)
 
 	Type  = Func->ReturnType;
 	if (Type.Type == TYPE_Byte || Type.Type == TYPE_Bool)
-		Type = TType(TYPE_Int);
+		Type = VFieldType(TYPE_Int);
 	if (Func->Flags & FUNC_Spawner)
 		Type.Class = Args[0]->Type.Class;
 	return this;
@@ -5083,7 +5083,7 @@ void VDropResult::Emit(VEmitContext& ec)
 //
 //==========================================================================
 
-VTypeExpr::VTypeExpr(TType AType, const TLocation& ALoc)
+VTypeExpr::VTypeExpr(VFieldType AType, const TLocation& ALoc)
 : VExpression(ALoc)
 , MetaClassName(NAME_None)
 {
@@ -5096,7 +5096,7 @@ VTypeExpr::VTypeExpr(TType AType, const TLocation& ALoc)
 //
 //==========================================================================
 
-VTypeExpr::VTypeExpr(TType AType, const TLocation& ALoc, VName AMetaClassName)
+VTypeExpr::VTypeExpr(VFieldType AType, const TLocation& ALoc, VName AMetaClassName)
 : VExpression(ALoc)
 , MetaClassName(AMetaClassName)
 {
@@ -5414,7 +5414,7 @@ VDynArrayGetNum::~VDynArrayGetNum()
 
 VExpression* VDynArrayGetNum::DoResolve(VEmitContext&)
 {
-	Type = TType(TYPE_Int);
+	Type = VFieldType(TYPE_Int);
 	return this;
 }
 
@@ -5446,7 +5446,7 @@ VDynArraySetNum::VDynArraySetNum(VExpression* AArrayExpr,
 , ArrayExpr(AArrayExpr)
 , NumExpr(ANumExpr)
 {
-	Type = TType(TYPE_Void);
+	Type = VFieldType(TYPE_Void);
 }
 
 //==========================================================================
@@ -5572,7 +5572,7 @@ VExpression* VDynArrayInsert::DoResolve(VEmitContext& ec)
 		return NULL;
 	}
 
-	Type = TType(TYPE_Void);
+	Type = VFieldType(TYPE_Void);
 	return this;
 }
 
@@ -5664,7 +5664,7 @@ VExpression* VDynArrayRemove::DoResolve(VEmitContext& ec)
 		return NULL;
 	}
 
-	Type = TType(TYPE_Void);
+	Type = VFieldType(TYPE_Void);
 	return this;
 }
 
@@ -5763,7 +5763,7 @@ void VLocalDecl::Declare(VEmitContext& ec)
 		{
 			continue;
 		}
-		TType Type = e.TypeExpr->Type;
+		VFieldType Type = e.TypeExpr->Type;
 		if (Type.Type == TYPE_Void)
 		{
 			ParseError(e.TypeExpr->Loc, "Bad variable type");

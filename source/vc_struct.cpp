@@ -181,7 +181,7 @@ bool VStruct::Define()
 {
 	if (ParentStructName != NAME_None)
 	{
-		TType type = CheckForType(Outer->MemberType == MEMBER_Class ?
+		VFieldType type = CheckForType(Outer->MemberType == MEMBER_Class ?
 			(VClass*)Outer : NULL, ParentStructName);
 		if (type.Type != TYPE_Struct)
 		{

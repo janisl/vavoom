@@ -139,19 +139,19 @@ class VMethod;
 class VEmitContext;
 class VPackage;
 
-class TType
+class VFieldType
 {
 public:
-	TType() :
+	VFieldType() :
 		Type(TYPE_Void), InnerType(TYPE_Void), ArrayInnerType(TYPE_Void),
 		PtrLevel(0), ArrayDim(0), Class(0)
 	{}
-	TType(EType Atype) :
+	VFieldType(EType Atype) :
 		Type(Atype), InnerType(TYPE_Void), ArrayInnerType(TYPE_Void),
 		PtrLevel(0), ArrayDim(0), Class(0)
 	{}
-	explicit TType(VClass* InClass);
-	explicit TType(VStruct* InStruct);
+	explicit VFieldType(VClass* InClass);
+	explicit VFieldType(VStruct* InStruct);
 
 	vuint8		Type;
 	vuint8		InnerType;		//	For pointers
@@ -166,17 +166,17 @@ public:
 		VMethod*	Function;		//  Function of the delegate type.
 	};
 
-	friend VStream& operator<<(VStream&, TType&);
+	friend VStream& operator<<(VStream&, VFieldType&);
 
-	bool Equals(const TType&) const;
-	TType MakePointerType() const;
-	TType GetPointerInnerType() const;
-	TType MakeArrayType(int, TLocation) const;
-	TType MakeDynamicArrayType(TLocation) const;
-	TType GetArrayInnerType() const;
+	bool Equals(const VFieldType&) const;
+	VFieldType MakePointerType() const;
+	VFieldType GetPointerInnerType() const;
+	VFieldType MakeArrayType(int, TLocation) const;
+	VFieldType MakeDynamicArrayType(TLocation) const;
+	VFieldType GetArrayInnerType() const;
 	int GetSize() const;
 	void CheckPassable(TLocation) const;
-	void CheckMatch(TLocation, const TType&) const;
+	void CheckMatch(TLocation, const VFieldType&) const;
 	VStr GetName() const;
 };
 
@@ -235,7 +235,7 @@ public:
 	static VMemberBase* StaticFindMember(VName, VMemberBase*, vuint8);
 
 	//FIXME This looks ugly.
-	static TType CheckForType(VClass*, VName);
+	static VFieldType CheckForType(VClass*, VName);
 	static VClass* CheckForClass(VName);
 };
 
@@ -246,7 +246,7 @@ public:
 		TModifiers::ReadOnly | TModifiers::Transient };
 
 	VField*			Next;
-	TType			Type;
+	VFieldType		Type;
 	VExpression*	TypeExpr;
 	VMethod*		Func;	// Method's function
 	vuint32 		Modifiers;
@@ -269,7 +269,7 @@ class VProperty : public VMemberBase
 public:
 	enum { AllowedModifiers = TModifiers::Native | TModifiers::Final };
 
-	TType			Type;
+	VFieldType		Type;
 	VMethod*		GetFunc;
 	VMethod*		SetFunc;
 	VField*			DefaultField;
@@ -297,7 +297,7 @@ struct FInstruction
 	vint32			Arg2;
 	VMemberBase*	Member;
 	VName			NameArg;
-	TType			TypeArg;
+	VFieldType		TypeArg;
 };
 
 class VMethodParam
@@ -326,7 +326,7 @@ public:
 	VName			Name;
 	TLocation		Loc;
 	int				Offset;
-	TType			Type;
+	VFieldType		Type;
 	bool			Visible;
 	vuint8			ParamFlags;
 
@@ -343,10 +343,10 @@ public:
 
 	int						NumLocals;
 	int						Flags;
-	TType					ReturnType;
+	VFieldType				ReturnType;
 	int						NumParams;
 	int						ParamsSize;
-	TType					ParamTypes[MAX_PARAMS];
+	VFieldType				ParamTypes[MAX_PARAMS];
 	vuint8					ParamFlags[MAX_PARAMS];
 	TArray<FInstruction>	Instructions;
 	VMethod*				SuperMethod;
@@ -654,7 +654,7 @@ public:
 	VClass*					SelfClass;
 	VPackage*				Package;
 
-	TType					FuncRetType;
+	VFieldType				FuncRetType;
 
 	TArray<VLocalVarDef>	LocalDefs;
 	int						localsofs;
@@ -678,7 +678,7 @@ public:
 	void AddStatement(int, VName);
 	void AddStatement(int, VMemberBase*);
 	void AddStatement(int, VMemberBase*, int);
-	void AddStatement(int, const TType&);
+	void AddStatement(int, const VFieldType&);
 	void AddStatement(int, VLabel);
 	void AddStatement(int, int, VLabel);
 	void EmitPushNumber(int);

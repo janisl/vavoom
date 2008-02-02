@@ -230,10 +230,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\utils\vcc\types.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\source\vc_class.cpp"
 				>
 			</File>
@@ -267,6 +263,10 @@
 			</File>
 			<File
 				RelativePath="..\source\vc_struct.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\source\vc_type.cpp"
 				>
 			</File>
 			<File

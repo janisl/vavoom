@@ -249,7 +249,7 @@ void VThinkerChannel::Update()
 		}
 		if (F->Type.Type == TYPE_Array)
 		{
-			VField::FType IntType = F->Type;
+			VFieldType IntType = F->Type;
 			IntType.Type = F->Type.ArrayInnerType;
 			int InnerSize = IntType.GetSize();
 			for (int i = 0; i < F->Type.ArrayDim; i++)
@@ -370,7 +370,7 @@ void VThinkerChannel::ParsePacket(VMessageIn& Msg)
 			if (F->Type.Type == TYPE_Array)
 			{
 				int Idx = Msg.ReadInt(F->Type.ArrayDim);
-				VField::FType IntType = F->Type;
+				VFieldType IntType = F->Type;
 				IntType.Type = F->Type.ArrayInnerType;
 				VField::NetSerialiseValue(Msg, Connection->ObjMap,
 					(vuint8*)Thinker + F->Ofs + Idx * IntType.GetSize(),

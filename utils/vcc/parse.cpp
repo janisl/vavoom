@@ -1152,7 +1152,7 @@ VExpression* VParser::ParseType()
 	case TK_Bool:
 	{
 		Lex.NextToken();
-		TType ret(TYPE_Bool);
+		VFieldType ret(TYPE_Bool);
 		ret.BitMask = 1;
 		return new VTypeExpr(ret, l);
 	}
@@ -1349,7 +1349,7 @@ void VParser::ParseDelegate(VExpression* RetType, VField* Delegate)
 	Lex.Expect(TK_Semicolon, ERR_MISSING_SEMICOLON);
 
 	Delegate->Func = Func;
-	Delegate->Type = TType(TYPE_Delegate);
+	Delegate->Type = VFieldType(TYPE_Delegate);
 	Delegate->Type.Function = Func;
 }
 
@@ -1363,7 +1363,7 @@ void VParser::ParseDefaultProperties(VClass* InClass)
 {
 	VMethod* Func = new VMethod(NAME_None, InClass, Lex.Location);
 	Func->ReturnTypeExpr = new VTypeExpr(TYPE_Void, Lex.Location);
-	Func->ReturnType = TType(TYPE_Void);
+	Func->ReturnType = VFieldType(TYPE_Void);
 	InClass->DefaultProperties = Func;
 
 	Lex.Expect(TK_LBrace, ERR_MISSING_LBRACE);
@@ -1739,7 +1739,7 @@ void VParser::ParseStates(VClass* InClass)
 			}
 			s->Function = new VMethod(NAME_None, s, s->Loc);
 			s->Function->ReturnTypeExpr = new VTypeExpr(TYPE_Void, Lex.Location);
-			s->Function->ReturnType = TType(TYPE_Void);
+			s->Function->ReturnType = VFieldType(TYPE_Void);
 			s->Function->Statement = ParseCompoundStatement();
 		}
 		else if (!Lex.NewLine)
@@ -1837,7 +1837,7 @@ void VParser::ParseReplication(VClass* Class)
 
 		//	Replication condition.
 		RI.Cond = new VMethod(NAME_None, Class, Lex.Location);
-		RI.Cond->ReturnType = TType(TYPE_Bool);
+		RI.Cond->ReturnType = VFieldType(TYPE_Bool);
 		RI.Cond->ReturnType.BitMask = 1;
 		RI.Cond->ReturnTypeExpr = new VTypeExpr(RI.Cond->ReturnType,
 			Lex.Location);
@@ -2135,7 +2135,7 @@ void VParser::ParseClass()
 			TLocation FieldLoc = Lex.Location;
 			Lex.NextToken();
 			Lex.Expect(TK_LParen, ERR_MISSING_LPAREN);
-			ParseMethodDef(new VTypeExpr(TType(TYPE_Void).MakePointerType(),
+			ParseMethodDef(new VTypeExpr(VFieldType(TYPE_Void).MakePointerType(),
 				Lex.Location), FieldName, FieldLoc, Class, Modifiers, true);
 			continue;
 		}

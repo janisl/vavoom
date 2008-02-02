@@ -1759,7 +1759,7 @@ func_loop:
 
 		PR_VM_CASE(OPC_DynArrayElementGrow)
 			{
-				VField::FType Type;
+				VFieldType Type;
 				ReadType(Type, ip + 1);
 				ip += 9 + sizeof(VClass*);
 				if (sp[-1].i < 0)
@@ -1783,7 +1783,7 @@ func_loop:
 
 		PR_VM_CASE(OPC_DynArraySetNum)
 			{
-				VField::FType Type;
+				VFieldType Type;
 				ReadType(Type, ip + 1);
 				ip += 9 + sizeof(VClass*);
 				((VScriptArray*)sp[-2].p)->SetNum(sp[-1].i, Type);
@@ -1793,7 +1793,7 @@ func_loop:
 
 		PR_VM_CASE(OPC_DynArrayInsert)
 			{
-				VField::FType Type;
+				VFieldType Type;
 				ReadType(Type, ip + 1);
 				ip += 9 + sizeof(VClass*);
 				((VScriptArray*)sp[-3].p)->Insert(sp[-2].i, sp[-1].i, Type);
@@ -1803,7 +1803,7 @@ func_loop:
 
 		PR_VM_CASE(OPC_DynArrayRemove)
 			{
-				VField::FType Type;
+				VFieldType Type;
 				ReadType(Type, ip + 1);
 				ip += 9 + sizeof(VClass*);
 				((VScriptArray*)sp[-3].p)->Remove(sp[-2].i, sp[-1].i, Type);

@@ -230,7 +230,7 @@ set(MAIN_COMMON_SOURCES
 	vc_property.cpp
 	vc_state.cpp
 	vc_struct.cpp
-	vclass.cpp
+	vc_type.cpp
 	vclass.h
 	vector.h
 	video.h
@@ -460,7 +460,7 @@ set(SERVER_COMMON_SOURCES
 	vc_property.cpp
 	vc_state.cpp
 	vc_struct.cpp
-	vclass.cpp
+	vc_type.cpp
 	vobject.cpp
 	wad.cpp
 	xml.cpp

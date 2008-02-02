@@ -42,6 +42,35 @@ struct VObjectDelegate
 
 //==========================================================================
 //
+//	VFieldType
+//
+//==========================================================================
+
+class VFieldType
+{
+public:
+	vuint8		Type;
+	vuint8		InnerType;		//	For pointers
+	vuint8		ArrayInnerType;	//	For arrays
+	vuint8		PtrLevel;
+	vint32		ArrayDim;
+	union
+	{
+		vuint32		BitMask;
+		VClass*		Class;			//  Class of the reference
+		VStruct*	Struct;			//  Struct data.
+		VMethod*	Function;		//  Function of the delegate type.
+	};
+
+	friend VStream& operator<<(VStream&, VFieldType&);
+
+	int GetSize() const;
+	int GetAlignment() const;
+	VFieldType GetArrayInnerType() const;
+};
+
+//==========================================================================
+//
 //	VMemberBase
 //
 //==========================================================================
@@ -118,34 +147,12 @@ public:
 class VField : public VMemberBase
 {
 public:
-	struct FType
-	{
-		vuint8		Type;
-		vuint8		InnerType;		//	For pointers
-		vuint8		ArrayInnerType;	//	For arrays
-		vuint8		PtrLevel;
-		vint32		ArrayDim;
-		union
-		{
-			vuint32		BitMask;
-			VClass*		Class;			//  Class of the reference
-			VStruct*	Struct;			//  Struct data.
-			VMethod*	Function;		//  Function of the delegate type.
-		};
-
-		friend VStream& operator<<(VStream&, FType&);
-
-		int GetSize() const;
-		int GetAlignment() const;
-		FType GetArrayInnerType() const;
-	};
-
 	VField*		Next;
 	VField*		NextReference;	//	Linked list of reference fields.
 	VField*		DestructorLink;
 	VField*		NextNetField;
 	vint32		Ofs;
-	FType		Type;
+	VFieldType	Type;
 	VMethod*	Func;
 	vint32		Flags;
 	vint32		NetIndex;
@@ -155,12 +162,12 @@ public:
 
 	void Serialise(VStream&);
 
-	static void CopyFieldValue(const vuint8*, vuint8*, const FType&);
-	static void SerialiseFieldValue(VStream&, vuint8*, const FType&);
-	static void CleanField(vuint8*, const FType&);
-	static void DestructField(vuint8*, const FType&);
-	static bool IdenticalValue(const vuint8*, const vuint8*, const FType&);
-	static bool NetSerialiseValue(VStream&, VNetObjectsMap*, vuint8*, const FType&);
+	static void CopyFieldValue(const vuint8*, vuint8*, const VFieldType&);
+	static void SerialiseFieldValue(VStream&, vuint8*, const VFieldType&);
+	static void CleanField(vuint8*, const VFieldType&);
+	static void DestructField(vuint8*, const VFieldType&);
+	static bool IdenticalValue(const vuint8*, const vuint8*, const VFieldType&);
+	static bool NetSerialiseValue(VStream&, VNetObjectsMap*, vuint8*, const VFieldType&);
 
 	friend inline VStream& operator<<(VStream& Strm, VField*& Obj)
 	{ return Strm << *(VMemberBase**)&Obj; }
@@ -175,7 +182,7 @@ public:
 class VProperty : public VMemberBase
 {
 public:
-	VField::FType	Type;
+	VFieldType		Type;
 	VMethod*		GetFunc;
 	VMethod*		SetFunc;
 	VField*			DefaultField;
@@ -203,7 +210,7 @@ struct FInstruction
 	vint32			Arg2;
 	VMemberBase*	Member;
 	VName			NameArg;
-	VField::FType	TypeArg;
+	VFieldType		TypeArg;
 };
 
 class VMethod : public VMemberBase
@@ -214,10 +221,10 @@ public:
 
 	vint32			NumLocals;
 	vint32			Flags;
-	VField::FType	ReturnType;
+	VFieldType		ReturnType;
 	vint32			NumParams;
 	vint32			ParamsSize;
-	VField::FType	ParamTypes[MAX_PARAMS];
+	VFieldType		ParamTypes[MAX_PARAMS];
 	vuint8			ParamFlags[MAX_PARAMS];
 	vint32			NumInstructions;
 	FInstruction*	Instructions;
@@ -534,11 +541,11 @@ public:
 	{
 		return ArrData;
 	}
-	void Clear(VField::FType& Type);
-	void Resize(int NewSize, VField::FType& Type);
-	void SetNum(int NewNum, VField::FType& Type);
-	void Insert(int Index, int Count, VField::FType& Type);
-	void Remove(int Index, int Count, VField::FType& Type);
+	void Clear(VFieldType& Type);
+	void Resize(int NewSize, VFieldType& Type);
+	void SetNum(int NewNum, VFieldType& Type);
+	void Insert(int Index, int Count, VFieldType& Type);
+	void Remove(int Index, int Count, VFieldType& Type);
 
 private:
 	int ArrNum;

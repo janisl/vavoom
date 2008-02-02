@@ -186,10 +186,10 @@ bool VField::Define()
 //==========================================================================
 
 void VField::CopyFieldValue(const vuint8* Src, vuint8* Dst,
-	const VField::FType& Type)
+	const VFieldType& Type)
 {
 	guard(VField::CopyFieldValue);
-	VField::FType IntType;
+	VFieldType IntType;
 	int InnerSize;
 	switch (Type.Type)
 	{
@@ -283,10 +283,10 @@ void VField::CopyFieldValue(const vuint8* Src, vuint8* Dst,
 //
 //==========================================================================
 
-void VField::SerialiseFieldValue(VStream& Strm, vuint8* Data, const VField::FType& Type)
+void VField::SerialiseFieldValue(VStream& Strm, vuint8* Data, const VFieldType& Type)
 {
 	guard(VField::SerialiseFieldValue);
-	VField::FType IntType;
+	VFieldType IntType;
 	int InnerSize;
 	switch (Type.Type)
 	{
@@ -458,10 +458,10 @@ void VField::SerialiseFieldValue(VStream& Strm, vuint8* Data, const VField::FTyp
 //
 //==========================================================================
 
-void VField::CleanField(vuint8* Data, const VField::FType& Type)
+void VField::CleanField(vuint8* Data, const VFieldType& Type)
 {
 	guard(CleanField);
-	VField::FType IntType;
+	VFieldType IntType;
 	int InnerSize;
 	switch (Type.Type)
 	{
@@ -516,10 +516,10 @@ void VField::CleanField(vuint8* Data, const VField::FType& Type)
 //
 //==========================================================================
 
-void VField::DestructField(vuint8* Data, const VField::FType& Type)
+void VField::DestructField(vuint8* Data, const VFieldType& Type)
 {
 	guard(DestructField);
-	VField::FType IntType;
+	VFieldType IntType;
 	int InnerSize;
 	switch (Type.Type)
 	{
@@ -559,10 +559,10 @@ void VField::DestructField(vuint8* Data, const VField::FType& Type)
 //==========================================================================
 
 bool VField::IdenticalValue(const vuint8* Val1, const vuint8* Val2,
-	const VField::FType& Type)
+	const VFieldType& Type)
 {
 	guard(VField::IdenticalValue);
-	VField::FType IntType;
+	VFieldType IntType;
 	int InnerSize;
 	switch (Type.Type)
 	{
@@ -655,10 +655,10 @@ bool VField::IdenticalValue(const vuint8* Val1, const vuint8* Val2,
 //==========================================================================
 
 bool VField::NetSerialiseValue(VStream& Strm, VNetObjectsMap* Map,
-	vuint8* Data, const VField::FType& Type)
+	vuint8* Data, const VFieldType& Type)
 {
 	guard(VField::NetSerialiseValue);
-	VField::FType IntType;
+	VFieldType IntType;
 	int InnerSize;
 	bool Ret = true;
 	switch (Type.Type)

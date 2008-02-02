@@ -306,7 +306,7 @@ void VEmitContext::AddStatement(int statement, VMemberBase* Member, int Arg)
 //
 //==========================================================================
 
-void VEmitContext::AddStatement(int statement, const TType& TypeArg)
+void VEmitContext::AddStatement(int statement, const VFieldType& TypeArg)
 {
 	if (StatementInfo[statement].Args != OPCARGS_TypeSize &&
 		StatementInfo[statement].Args != OPCARGS_Type)
