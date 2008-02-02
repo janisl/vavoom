@@ -330,6 +330,42 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\source\vc_class.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\source\vc_constant.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\source\vc_field.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\source\vc_member.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\source\vc_method.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\source\vc_package.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\source\vc_property.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\source\vc_state.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\source\vc_struct.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\source\vclass.cpp"
 				>
 			</File>

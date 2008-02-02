@@ -433,4 +433,62 @@ struct dprograms_t
 	int		num_imports;
 };
 
+//==========================================================================
+//
+//	VProgsImport
+//
+//==========================================================================
+
+struct VProgsImport
+{
+	vuint8			Type;
+	VName			Name;
+	vint32			OuterIndex;
+
+	VMemberBase*	Obj;
+
+	VProgsImport()
+	: Type(0)
+	, Name(NAME_None)
+	, OuterIndex(0)
+	, Obj(0)
+	{}
+#ifdef IN_VCC
+	VProgsImport(VMemberBase* InObj, vint32 InOuterIndex);
+#endif
+
+	friend VStream& operator<<(VStream& Strm, VProgsImport& I)
+	{
+		return Strm << I.Type << I.Name << STRM_INDEX(I.OuterIndex);
+	}
+};
+
+//==========================================================================
+//
+//	VProgsExport
+//
+//==========================================================================
+
+struct VProgsExport
+{
+	vuint8			Type;
+	VName			Name;
+
+	VMemberBase*	Obj;
+
+	VProgsExport()
+	: Type(0)
+	, Name(NAME_None)
+	, Obj(0)
+	{}
+#ifdef IN_VCC
+	VProgsExport(VMemberBase* InObj);
+#endif
+
+	friend VStream& operator<<(VStream& Strm, VProgsExport& E)
+	{
+		return Strm << E.Type << E.Name;
+	}
+};
+
 #endif

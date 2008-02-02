@@ -19,6 +19,15 @@ add_executable(vcc
 	../../source/stream.cpp
 	../../source/stream.h
 	types.cpp
+	../../source/vc_class.cpp
+	../../source/vc_constant.cpp
+	../../source/vc_field.cpp
+	../../source/vc_member.cpp
+	../../source/vc_method.cpp
+	../../source/vc_package.cpp
+	../../source/vc_property.cpp
+	../../source/vc_state.cpp
+	../../source/vc_struct.cpp
 	vcc.cpp
 	vcc.h
 )

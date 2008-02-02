@@ -221,6 +221,15 @@ set(MAIN_COMMON_SOURCES
 	ui_root.h
 	ui_widget.cpp
 	ui_widget.h
+	vc_class.cpp
+	vc_constant.cpp
+	vc_field.cpp
+	vc_member.cpp
+	vc_method.cpp
+	vc_package.cpp
+	vc_property.cpp
+	vc_state.cpp
+	vc_struct.cpp
 	vclass.cpp
 	vclass.h
 	vector.h
@@ -442,6 +451,15 @@ set(SERVER_COMMON_SOURCES
 	sv_tick.cpp
 	sv_user.cpp
 	sv_world.cpp
+	vc_class.cpp
+	vc_constant.cpp
+	vc_field.cpp
+	vc_member.cpp
+	vc_method.cpp
+	vc_package.cpp
+	vc_property.cpp
+	vc_state.cpp
+	vc_struct.cpp
 	vclass.cpp
 	vobject.cpp
 	wad.cpp
