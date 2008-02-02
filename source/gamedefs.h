@@ -64,6 +64,7 @@
 #include "decorate.h"	//	Decorate scripts
 #include "dehacked.h"	//	DeHackEd support
 #include "progs.h"		//	Progs
+#include "vc_location.h"
 #include "vclass.h"
 #include "vobject.h"
 #include "input.h"		//	Input from keyboard, mouse and joystick

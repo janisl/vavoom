@@ -41,8 +41,6 @@
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-TArray<VStr>		TLocation::SourceFiles;
-
 const char*			VLexer::TokenNames[] =
 {
 	"",
@@ -1789,45 +1787,4 @@ void VLexer::Expect(EToken tk, ECompileError error)
 			TokenNames[Token]);
 	}
 	NextToken();
-}
-
-//==========================================================================
-//
-//	TLocation::AddSourceFile
-//
-//==========================================================================
-
-int TLocation::AddSourceFile(const VStr& SName)
-{
-	//	Find it.
-	for (int i = 0; i < SourceFiles.Num(); i++)
-		if (SName == SourceFiles[i])
-			return i;
-
-	//	Not found, add it.
-	return SourceFiles.Append(SName);
-}
-
-//==========================================================================
-//
-//	TLocation::GetSource
-//
-//==========================================================================
-
-VStr TLocation::GetSource() const
-{
-	if (!Loc)
-		return "(external)";
-	return SourceFiles[Loc >> 16];
-}
-
-//==========================================================================
-//
-//	TLocation::ClearSourceFiles
-//
-//==========================================================================
-
-void TLocation::ClearSourceFiles()
-{
-	SourceFiles.Clear();
 }

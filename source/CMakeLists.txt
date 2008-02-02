@@ -224,6 +224,8 @@ set(MAIN_COMMON_SOURCES
 	vc_class.cpp
 	vc_constant.cpp
 	vc_field.cpp
+	vc_location.cpp
+	vc_location.h
 	vc_member.cpp
 	vc_method.cpp
 	vc_package.cpp
@@ -454,6 +456,8 @@ set(SERVER_COMMON_SOURCES
 	vc_class.cpp
 	vc_constant.cpp
 	vc_field.cpp
+	vc_location.cpp
+	vc_location.h
 	vc_member.cpp
 	vc_method.cpp
 	vc_package.cpp

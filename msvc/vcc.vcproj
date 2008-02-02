@@ -242,6 +242,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\vc_location.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\source\vc_member.cpp"
 				>
 			</File>
@@ -312,6 +316,10 @@
 			</File>
 			<File
 				RelativePath="..\source\stream.h"
+				>
+			</File>
+			<File
+				RelativePath="..\source\vc_location.h"
 				>
 			</File>
 			<File

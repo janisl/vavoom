@@ -50,6 +50,7 @@ void Free(void* ptr);
 #include "../../source/name.h"
 #include "../../source/str.h"
 #include "../../source/progdefs.h"
+#include "../../source/vc_location.h"
 
 // MACROS ------------------------------------------------------------------
 

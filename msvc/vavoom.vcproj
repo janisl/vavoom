@@ -342,6 +342,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\vc_location.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\source\vc_member.cpp"
 				>
 			</File>
@@ -532,6 +536,10 @@
 			</File>
 			<File
 				RelativePath="..\source\template.h"
+				>
+			</File>
+			<File
+				RelativePath="..\source\vc_location.h"
 				>
 			</File>
 			<File

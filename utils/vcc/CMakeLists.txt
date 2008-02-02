@@ -21,6 +21,8 @@ add_executable(vcc
 	../../source/vc_class.cpp
 	../../source/vc_constant.cpp
 	../../source/vc_field.cpp
+	../../source/vc_location.cpp
+	../../source/vc_location.h
 	../../source/vc_member.cpp
 	../../source/vc_method.cpp
 	../../source/vc_package.cpp
