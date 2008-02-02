@@ -16,7 +16,12 @@ if(INTTYPES_INCLUDE_DIR)
 	add_definitions(-DHAVE_INTTYPES_H=1)
 endif(INTTYPES_INCLUDE_DIR)
 
-set(DATADIR share/vavoom)
+if(NOT DEFINED DATADIR)
+	set(DATADIR share/vavoom)
+endif(NOT DEFINED DATADIR)
+if(NOT DEFINED BINDIR)
+	set(BINDIR bin)
+endif(NOT DEFINED BINDIR)
 
 add_subdirectory(utils)
 add_subdirectory(source)

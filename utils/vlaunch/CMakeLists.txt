@@ -9,7 +9,7 @@ if(ENABLE_LAUNCHER)
 	)
 	target_link_libraries(vlaunch ${wxWidgets_LIBRARIES})
 
-	install(TARGETS vlaunch DESTINATION bin)
+	install(TARGETS vlaunch DESTINATION ${BINDIR})
 
 #EXTRA_DIST = \
 #	vavoom.xpm \

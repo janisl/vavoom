@@ -855,7 +855,7 @@ endif (MAIN_COMPILE_FLAGS)
 target_link_libraries(vavoom ${MAIN_LIBS})
 add_dependencies(vavoom timidity glbsp libglvis)
 
-install(TARGETS vavoom DESTINATION bin)
+install(TARGETS vavoom DESTINATION ${BINDIR})
 
 install(FILES vavoom.png DESTINATION ${DATADIR})
 
@@ -865,10 +865,10 @@ if(UNIX)
 # Needed to make symlinks/shortcuts work.
 # the binaries must run with correct working directory
 cd \"${CMAKE_INSTALL_PREFIX}/${DATADIR}\"
-\"${CMAKE_INSTALL_PREFIX}/bin/vavoom.i686\" $* ${IWADDIR}
+\"${CMAKE_INSTALL_PREFIX}/${BINDIR}/vavoom.i686\" $* ${IWADDIR}
 exit $?
 ")
-	install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/vavoom DESTINATION bin)
+	install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/vavoom DESTINATION ${BINDIR})
 endif(UNIX)
 
 endif(ENABLE_CLIENT)
@@ -897,7 +897,7 @@ set_target_properties(vavoom-dedicated PROPERTIES COMPILE_FLAGS -DSERVER)
 target_link_libraries(vavoom-dedicated glbsp ${ZLIB_LIBRARY} ${NET_LIBRARIES})
 add_dependencies(vavoom-dedicated glbsp)
 
-install(TARGETS vavoom-dedicated DESTINATION bin)
+install(TARGETS vavoom-dedicated DESTINATION ${BINDIR})
 
 if(UNIX)
 	file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/vavoom-dedicated
@@ -905,10 +905,10 @@ if(UNIX)
 # Needed to make symlinks/shortcuts work.
 # the binaries must run with correct working directory
 cd \"${CMAKE_INSTALL_PREFIX}/${DATADIR}\"
-\"${CMAKE_INSTALL_PREFIX}/bin/vavoom-dedicated.i686\" $* ${IWADDIR}
+\"${CMAKE_INSTALL_PREFIX}/${BINDIR}/vavoom-dedicated.i686\" $* ${IWADDIR}
 exit $?
 ")
-	install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/vavoom-dedicated DESTINATION bin)
+	install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/vavoom-dedicated DESTINATION ${BINDIR})
 endif(UNIX)
 
 endif(ENABLE_SERVER)
