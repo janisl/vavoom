@@ -220,25 +220,24 @@ public:
 	//FIXME avoid copying
 	enum { MAX_PARAMS		= 16 };
 
-	vint32			NumLocals;
-	vint32			Flags;
-	VFieldType		ReturnType;
-	vint32			NumParams;
-	vint32			ParamsSize;
-	VFieldType		ParamTypes[MAX_PARAMS];
-	vuint8			ParamFlags[MAX_PARAMS];
-	vint32			NumInstructions;
-	FInstruction*	Instructions;
-	VMethod*		SuperMethod;
-	VMethod*		ReplCond;
+	vint32					NumLocals;
+	vint32					Flags;
+	VFieldType				ReturnType;
+	vint32					NumParams;
+	vint32					ParamsSize;
+	VFieldType				ParamTypes[MAX_PARAMS];
+	vuint8					ParamFlags[MAX_PARAMS];
+	TArray<FInstruction>	Instructions;
+	VMethod*				SuperMethod;
+	VMethod*				ReplCond;
 
-	vuint32			Profile1;
-	vuint32			Profile2;
-	TArray<vuint8>	Statements;
-	builtin_t		NativeFunc;
-	vint16			VTableIndex;
-	vint32			NetIndex;
-	VMethod*		NextNetMethod;
+	vuint32					Profile1;
+	vuint32					Profile2;
+	TArray<vuint8>			Statements;
+	builtin_t				NativeFunc;
+	vint16					VTableIndex;
+	vint32					NetIndex;
+	VMethod*				NextNetMethod;
 
 	VMethod(VName, VMemberBase*, TLocation);
 	~VMethod();

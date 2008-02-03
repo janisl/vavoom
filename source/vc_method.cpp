@@ -76,10 +76,6 @@ VMethod::VMethod(VName AName, VMemberBase* AOuter, TLocation ALoc)
 , Flags(0)
 , NumParams(0)
 , ParamsSize(0)
-#ifndef IN_VCC
-, NumInstructions(0)
-, Instructions(0)
-#endif
 , SuperMethod(NULL)
 , ReplCond(NULL)
 #ifndef IN_VCC
@@ -108,12 +104,7 @@ VMethod::VMethod(VName AName, VMemberBase* AOuter, TLocation ALoc)
 VMethod::~VMethod()
 {
 	guard(VMethod::~VMethod);
-#ifndef IN_VCC
-	if (Instructions)
-	{
-		delete[] Instructions;
-	}
-#else
+#ifdef IN_VCC
 	if (ReturnTypeExpr)
 	{
 		delete ReturnTypeExpr;
@@ -198,11 +189,6 @@ void VMethod::Serialise(VStream& Strm)
 	//
 	//	Instructions
 	//
-#ifndef IN_VCC
-	Strm << STRM_INDEX(NumInstructions);
-	Instructions = new FInstruction[NumInstructions];
-	for (int i = 0; i < NumInstructions; i++)
-#else
 	if (Strm.IsLoading())
 	{
 		int NumInstructions;
@@ -215,7 +201,6 @@ void VMethod::Serialise(VStream& Strm)
 		Strm << STRM_INDEX(NumInstructions);
 	}
 	for (int i = 0; i < Instructions.Num(); i++)
-#endif
 	{
 		vuint8 Opc;
 		if (Strm.IsLoading())
@@ -682,14 +667,14 @@ void VMethod::CompileCode()
 {
 	guard(VMethod::CompileCode);
 	Statements.Clear();
-	if (!NumInstructions)
+	if (!Instructions.Num())
 	{
 		return;
 	}
 
 	OptimiseInstructions();
 
-	for (int i = 0; i < NumInstructions - 1; i++)
+	for (int i = 0; i < Instructions.Num() - 1; i++)
 	{
 		Instructions[i].Address = Statements.Num();
 		Statements.Append(Instructions[i].Opcode);
@@ -814,9 +799,9 @@ void VMethod::CompileCode()
 			break;
 		}
 	}
-	Instructions[NumInstructions - 1].Address = Statements.Num();
+	Instructions[Instructions.Num() - 1].Address = Statements.Num();
 
-	for (int i = 0; i < NumInstructions - 1; i++)
+	for (int i = 0; i < Instructions.Num() - 1; i++)
 	{
 		switch (OpcodeInfo[Instructions[i].Opcode].Args)
 		{
@@ -859,8 +844,7 @@ void VMethod::CompileCode()
 	}
 
 	//	We don't need instructions anymore.
-	delete[] Instructions;
-	Instructions = NULL;
+	Instructions.Clear();
 	unguard;
 }
 
@@ -874,7 +858,7 @@ void VMethod::OptimiseInstructions()
 {
 	guard(VMethod::OptimiseInstructions);
 	int Addr = 0;
-	for (int i = 0; i < NumInstructions - 1; i++)
+	for (int i = 0; i < Instructions.Num() - 1; i++)
 	{
 		switch (Instructions[i].Opcode)
 		{
@@ -1011,7 +995,7 @@ void VMethod::OptimiseInstructions()
 
 	//	Now do jump instructions.
 	vint32 Offs;
-	for (int i = 0; i < NumInstructions - 1; i++)
+	for (int i = 0; i < Instructions.Num() - 1; i++)
 	{
 		switch (OpcodeInfo[Instructions[i].Opcode].Args)
 		{
@@ -1033,7 +1017,7 @@ void VMethod::OptimiseInstructions()
 			break;
 		}
 	}
-	Instructions[NumInstructions - 1].Address = Addr;
+	Instructions[Instructions.Num() - 1].Address = Addr;
 	unguard;
 }
 
