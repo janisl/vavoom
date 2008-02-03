@@ -46,6 +46,29 @@ struct VObjectDelegate
 //
 //==========================================================================
 
+enum EType
+{
+	TYPE_Void,
+	TYPE_Int,
+	TYPE_Byte,
+	TYPE_Bool,
+	TYPE_Float,
+	TYPE_Name,
+	TYPE_String,
+	TYPE_Pointer,
+	TYPE_Reference,
+	TYPE_Class,
+	TYPE_State,
+	TYPE_Delegate,
+	TYPE_Struct,
+	TYPE_Vector,
+	TYPE_Array,
+	TYPE_DynamicArray,
+	TYPE_Unknown,
+
+	NUM_BASIC_TYPES
+};
+
 class VFieldType
 {
 public:
@@ -63,6 +86,11 @@ public:
 	};
 
 	friend VStream& operator<<(VStream&, VFieldType&);
+
+	VFieldType();
+	VFieldType(EType Atype);
+	explicit VFieldType(VClass* InClass);
+	explicit VFieldType(VStruct* InStruct);
 
 	int GetSize() const;
 	int GetAlignment() const;
@@ -162,6 +190,8 @@ public:
 	VField(VName, VMemberBase*, TLocation);
 
 	void Serialise(VStream&);
+
+	bool NeedsDestructor() const;
 
 	static void CopyFieldValue(const vuint8*, vuint8*, const VFieldType&);
 	static void SerialiseFieldValue(VStream&, vuint8*, const VFieldType&);
@@ -359,6 +389,7 @@ public:
 	void Serialise(VStream&);
 	void PostLoad();
 
+	bool NeedsDestructor() const;
 	void CalcFieldOffsets();
 	void InitReferences();
 	void InitDestructorFields();

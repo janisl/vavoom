@@ -53,6 +53,70 @@
 
 //==========================================================================
 //
+//	VFieldType::VFieldType
+//
+//==========================================================================
+
+VFieldType::VFieldType()
+: Type(TYPE_Void)
+, InnerType(TYPE_Void)
+, ArrayInnerType(TYPE_Void)
+, PtrLevel(0)
+, ArrayDim(0)
+, Class(0)
+{
+}
+
+//==========================================================================
+//
+//	VFieldType::VFieldType
+//
+//==========================================================================
+
+VFieldType::VFieldType(EType Atype)
+: Type(Atype)
+, InnerType(TYPE_Void)
+, ArrayInnerType(TYPE_Void)
+, PtrLevel(0)
+, ArrayDim(0)
+, Class(0)
+{
+}
+
+//==========================================================================
+//
+//	VFieldType::VFieldType
+//
+//==========================================================================
+
+VFieldType::VFieldType(VClass* InClass)
+: Type(TYPE_Reference)
+, InnerType(TYPE_Void)
+, ArrayInnerType(TYPE_Void)
+, PtrLevel(0)
+, ArrayDim(0)
+, Class(InClass)
+{
+}
+
+//==========================================================================
+//
+//	VFieldType::VFieldType
+//
+//==========================================================================
+
+VFieldType::VFieldType(VStruct* InStruct)
+: Type(InStruct->IsVector ? TYPE_Vector : TYPE_Struct)
+, InnerType(TYPE_Void)
+, ArrayInnerType(TYPE_Void)
+, PtrLevel(0)
+, ArrayDim(0)
+, Struct(InStruct)
+{
+}
+
+//==========================================================================
+//
 //	operator VStream << FType
 //
 //==========================================================================
@@ -92,30 +156,6 @@ VStream& operator<<(VStream& Strm, VFieldType& T)
 }
 
 #ifdef IN_VCC
-
-//==========================================================================
-//
-//	VFieldType::VFieldType
-//
-//==========================================================================
-
-VFieldType::VFieldType(VClass* InClass) :
-	Type(TYPE_Reference), InnerType(TYPE_Void), ArrayInnerType(TYPE_Void),
-	PtrLevel(0), ArrayDim(0), Class(InClass)
-{
-}
-
-//==========================================================================
-//
-//	VFieldType::VFieldType
-//
-//==========================================================================
-
-VFieldType::VFieldType(VStruct* InStruct) :
-	Type(InStruct->IsVector ? TYPE_Vector : TYPE_Struct), InnerType(TYPE_Void),
-	ArrayInnerType(TYPE_Void), PtrLevel(0), ArrayDim(0), Struct(InStruct)
-{
-}
 
 //==========================================================================
 //

@@ -101,20 +101,6 @@ void VField::Serialise(VStream& Strm)
 	unguard;
 }
 
-#ifdef IN_VCC
-
-//==========================================================================
-//
-//	VField::~VField
-//
-//==========================================================================
-
-VField::~VField()
-{
-	if (TypeExpr)
-		delete TypeExpr;
-}
-
 //==========================================================================
 //
 //	VField::NeedsDestructor
@@ -137,6 +123,20 @@ bool VField::NeedsDestructor() const
 	if (Type.Type == TYPE_Struct)
 		return Type.Struct->NeedsDestructor();
 	return false;
+}
+
+#ifdef IN_VCC
+
+//==========================================================================
+//
+//	VField::~VField
+//
+//==========================================================================
+
+VField::~VField()
+{
+	if (TypeExpr)
+		delete TypeExpr;
 }
 
 //==========================================================================

@@ -30,29 +30,6 @@
 
 enum { MAX_PARAMS		= 16 };
 
-enum EType
-{
-	TYPE_Void,
-	TYPE_Int,
-	TYPE_Byte,
-	TYPE_Bool,
-	TYPE_Float,
-	TYPE_Name,
-	TYPE_String,
-	TYPE_Pointer,
-	TYPE_Reference,
-	TYPE_Class,
-	TYPE_State,
-	TYPE_Delegate,
-	TYPE_Struct,
-	TYPE_Vector,
-	TYPE_Array,
-	TYPE_DynamicArray,
-	TYPE_Unknown,
-
-	NUM_BASIC_TYPES
-};
-
 enum
 {
 	FIELD_Native	= 0x0001,	//	Native serialisation

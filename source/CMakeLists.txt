@@ -223,6 +223,8 @@ set(MAIN_COMMON_SOURCES
 	ui_widget.h
 	vc_class.cpp
 	vc_constant.cpp
+	vc_emit_context.cpp
+	vc_emit_context.h
 	vc_field.cpp
 	vc_location.cpp
 	vc_location.h
@@ -455,6 +457,7 @@ set(SERVER_COMMON_SOURCES
 	sv_world.cpp
 	vc_class.cpp
 	vc_constant.cpp
+	vc_emit_context.cpp
 	vc_field.cpp
 	vc_location.cpp
 	vc_location.h

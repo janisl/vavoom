@@ -23,24 +23,61 @@
 //**
 //**************************************************************************
 
-// HEADER FILES ------------------------------------------------------------
+class VEmitContext
+{
+private:
+	struct VLabelFixup
+	{
+		int					Pos;
+		int					LabelIdx;
+		int					Arg;
+	};
 
-#include "vcc.h"
+	TArray<int>				Labels;
+	TArray<VLabelFixup>		Fixups;
 
-// MACROS ------------------------------------------------------------------
+public:
+	VMethod*				CurrentFunc;
+	VClass*					SelfClass;
+	VPackage*				Package;
 
-// TYPES -------------------------------------------------------------------
+	VFieldType				FuncRetType;
 
-// EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
+	TArray<VLocalVarDef>	LocalDefs;
+	int						localsofs;
 
-// PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
+	VLabel					LoopStart;
+	VLabel					LoopEnd;
 
-// PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
+	bool					InDefaultProperties;
 
-// EXTERNAL DATA DECLARATIONS ----------------------------------------------
+	VEmitContext(VMemberBase*);
+	void EndCode();
 
-// PUBLIC DATA DEFINITIONS -------------------------------------------------
+	int CheckForLocalVar(VName);
 
-// PRIVATE DATA DEFINITIONS ------------------------------------------------
+	VLabel DefineLabel();
+	void MarkLabel(VLabel);
 
-// CODE --------------------------------------------------------------------
+	void AddStatement(int);
+	void AddStatement(int, int);
+	void AddStatement(int, float);
+	void AddStatement(int, VName);
+	void AddStatement(int, VMemberBase*);
+	void AddStatement(int, VMemberBase*, int);
+	void AddStatement(int, const VFieldType&);
+	void AddStatement(int, VLabel);
+	void AddStatement(int, int, VLabel);
+	void EmitPushNumber(int);
+	void EmitLocalAddress(int);
+	void EmitClearStrings(int, int);
+};
+
+struct VStatementInfo
+{
+	const char*		name;
+	int				Args;
+	int				usecount;
+};
+
+extern VStatementInfo			StatementInfo[NUM_OPCODES];

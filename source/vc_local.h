@@ -23,24 +23,49 @@
 //**
 //**************************************************************************
 
-// HEADER FILES ------------------------------------------------------------
+#ifndef __vc_local_h__
+#define __vc_local_h__
 
-#include "vcc.h"
+#include "gamedefs.h"
+#include "progdefs.h"
 
-// MACROS ------------------------------------------------------------------
+class VLabel
+{
+private:
+	friend class VEmitContext;
 
-// TYPES -------------------------------------------------------------------
+	int			Index;
 
-// EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
+	VLabel(int AIndex)
+	: Index(AIndex)
+	{}
 
-// PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
+public:
+	VLabel()
+	: Index(-1)
+	{}
+	bool IsDefined() const
+	{
+		return Index != -1;
+	}
+};
 
-// PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
+class VLocalVarDef
+{
+public:
+	VName			Name;
+	TLocation		Loc;
+	int				Offset;
+	VFieldType		Type;
+	bool			Visible;
+	vuint8			ParamFlags;
 
-// EXTERNAL DATA DECLARATIONS ----------------------------------------------
+	VLocalVarDef()
+	{}
+};
 
-// PUBLIC DATA DEFINITIONS -------------------------------------------------
+#define FatalError	Sys_Error
 
-// PRIVATE DATA DEFINITIONS ------------------------------------------------
+#include "vc_emit_context.h"
 
-// CODE --------------------------------------------------------------------
+#endif

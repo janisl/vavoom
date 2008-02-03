@@ -140,20 +140,32 @@ class VMethod;
 class VEmitContext;
 class VPackage;
 
+enum EType
+{
+	TYPE_Void,
+	TYPE_Int,
+	TYPE_Byte,
+	TYPE_Bool,
+	TYPE_Float,
+	TYPE_Name,
+	TYPE_String,
+	TYPE_Pointer,
+	TYPE_Reference,
+	TYPE_Class,
+	TYPE_State,
+	TYPE_Delegate,
+	TYPE_Struct,
+	TYPE_Vector,
+	TYPE_Array,
+	TYPE_DynamicArray,
+	TYPE_Unknown,
+
+	NUM_BASIC_TYPES
+};
+
 class VFieldType
 {
 public:
-	VFieldType() :
-		Type(TYPE_Void), InnerType(TYPE_Void), ArrayInnerType(TYPE_Void),
-		PtrLevel(0), ArrayDim(0), Class(0)
-	{}
-	VFieldType(EType Atype) :
-		Type(Atype), InnerType(TYPE_Void), ArrayInnerType(TYPE_Void),
-		PtrLevel(0), ArrayDim(0), Class(0)
-	{}
-	explicit VFieldType(VClass* InClass);
-	explicit VFieldType(VStruct* InStruct);
-
 	vuint8		Type;
 	vuint8		InnerType;		//	For pointers
 	vuint8		ArrayInnerType;	//	For arrays
@@ -168,6 +180,11 @@ public:
 	};
 
 	friend VStream& operator<<(VStream&, VFieldType&);
+
+	VFieldType();
+	VFieldType(EType Atype);
+	explicit VFieldType(VClass* InClass);
+	explicit VFieldType(VStruct* InStruct);
 
 	bool Equals(const VFieldType&) const;
 	VFieldType MakePointerType() const;
@@ -637,62 +654,7 @@ public:
 	void Parse();
 };
 
-class VEmitContext
-{
-private:
-	struct VLabelFixup
-	{
-		int					Pos;
-		int					LabelIdx;
-		int					Arg;
-	};
-
-	TArray<int>				Labels;
-	TArray<VLabelFixup>		Fixups;
-
-public:
-	VMethod*				CurrentFunc;
-	VClass*					SelfClass;
-	VPackage*				Package;
-
-	VFieldType				FuncRetType;
-
-	TArray<VLocalVarDef>	LocalDefs;
-	int						localsofs;
-
-	VLabel					LoopStart;
-	VLabel					LoopEnd;
-
-	bool					InDefaultProperties;
-
-	VEmitContext(VMemberBase*);
-	void EndCode();
-
-	int CheckForLocalVar(VName);
-
-	VLabel DefineLabel();
-	void MarkLabel(VLabel);
-
-	void AddStatement(int);
-	void AddStatement(int, int);
-	void AddStatement(int, float);
-	void AddStatement(int, VName);
-	void AddStatement(int, VMemberBase*);
-	void AddStatement(int, VMemberBase*, int);
-	void AddStatement(int, const VFieldType&);
-	void AddStatement(int, VLabel);
-	void AddStatement(int, int, VLabel);
-	void EmitPushNumber(int);
-	void EmitLocalAddress(int);
-	void EmitClearStrings(int, int);
-};
-
-struct VStatementInfo
-{
-	const char*		name;
-	int				Args;
-	int				usecount;
-};
+#include "../../source/vc_emit_context.h"
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
@@ -712,7 +674,5 @@ char *va(const char *text, ...) __attribute__ ((format(printf, 1, 2)));
 extern bool						GBigEndian;
 
 extern int						NumErrors;
-
-extern VStatementInfo			StatementInfo[NUM_OPCODES];
 
 #endif

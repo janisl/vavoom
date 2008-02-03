@@ -338,6 +338,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\vc_emit_context.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\source\vc_field.cpp"
 				>
 			</File>
@@ -536,6 +540,10 @@
 			</File>
 			<File
 				RelativePath="..\source\template.h"
+				>
+			</File>
+			<File
+				RelativePath="..\source\vc_emit_context.cpp"
 				>
 			</File>
 			<File

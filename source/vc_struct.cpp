@@ -100,6 +100,22 @@ void VStruct::Serialise(VStream& Strm)
 	unguard;
 }
 
+//==========================================================================
+//
+//	VStruct::NeedsDestructor
+//
+//==========================================================================
+
+bool VStruct::NeedsDestructor() const
+{
+	for (VField* F = Fields; F; F = F->Next)
+		if (F->NeedsDestructor())
+			return true;
+	if (ParentStruct)
+		return ParentStruct->NeedsDestructor();
+	return false;
+}
+
 #ifdef IN_VCC
 
 //==========================================================================
@@ -151,22 +167,6 @@ VField* VStruct::CheckForField(VName FieldName)
 		return ParentStruct->CheckForField(FieldName);
 	}
 	return NULL;
-}
-
-//==========================================================================
-//
-//	VStruct::NeedsDestructor
-//
-//==========================================================================
-
-bool VStruct::NeedsDestructor() const
-{
-	for (VField* F = Fields; F; F = F->Next)
-		if (F->NeedsDestructor())
-			return true;
-	if (ParentStruct)
-		return ParentStruct->NeedsDestructor();
-	return false;
 }
 
 //==========================================================================
