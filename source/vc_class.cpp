@@ -78,9 +78,9 @@ TArray<VName>			VClass::GSpriteNames;
 //
 //==========================================================================
 
+VClass::VClass(VName AName, VMemberBase* AOuter, TLocation ALoc)
+: VMemberBase(MEMBER_Class, AName, AOuter, ALoc)
 #ifndef IN_VCC
-VClass::VClass(VName AName)
-: VMemberBase(MEMBER_Class, AName)
 , ObjectFlags(0)
 , LinkNext(0)
 , ParentClass(0)
@@ -110,8 +110,6 @@ VClass::VClass(VName AName)
 	unguard;
 }
 #else
-VClass::VClass(VName InName, VMemberBase* InOuter, TLocation InLoc)
-: VMemberBase(MEMBER_Class, InName, InOuter, InLoc)
 , ParentClass(NULL)
 , Fields(NULL)
 , States(NULL)
@@ -135,7 +133,7 @@ VClass::VClass(VName InName, VMemberBase* InOuter, TLocation InLoc)
 #ifndef IN_VCC
 VClass::VClass(ENativeConstructor, size_t ASize, vuint32 AClassFlags, 
 	VClass *AParent, EName AName, void(*ACtor)())
-: VMemberBase(MEMBER_Class, AName)
+: VMemberBase(MEMBER_Class, AName, NULL, TLocation())
 , ObjectFlags(CLASSOF_Native)
 , LinkNext(0)
 , ParentClass(AParent)
@@ -1682,10 +1680,11 @@ void VClass::DestructObject(VObject* Obj)
 //
 //==========================================================================
 
-VClass* VClass::CreateDerivedClass(VName AName)
+VClass* VClass::CreateDerivedClass(VName AName, VMemberBase* AOuter,
+	TLocation ALoc)
 {
 	guard(VClass::CreateDerivedClass);
-	VClass* NewClass = new VClass(AName);
+	VClass* NewClass = new VClass(AName, AOuter, ALoc);
 	NewClass->ParentClass = this;
 	NewClass->PostLoad();
 	NewClass->CreateDefaults();

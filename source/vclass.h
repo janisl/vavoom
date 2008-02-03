@@ -80,8 +80,9 @@ class VMemberBase
 public:
 	//	Internal variables.
 	vuint8			MemberType;
-	VMemberBase*	Outer;
 	VName			Name;
+	VMemberBase*	Outer;
+	TLocation		Loc;
 
 	static bool						GObjInitialised;
 	static VClass*					GClasses;	// Linked list of all classes.
@@ -90,7 +91,7 @@ public:
 	static TArray<VClass*>			GNetClassLookup;
 
 	//	Srtuctors.
-	VMemberBase(vuint8, VName);
+	VMemberBase(vuint8, VName, VMemberBase*, TLocation);
 	virtual ~VMemberBase();
 
 	//	Accessors.
@@ -158,7 +159,7 @@ public:
 	vint32		NetIndex;
 	VMethod*	ReplCond;
 
-	VField(VName);
+	VField(VName, VMemberBase*, TLocation);
 
 	void Serialise(VStream&);
 
@@ -188,7 +189,7 @@ public:
 	VField*			DefaultField;
 	vuint32			Flags;
 
-	VProperty(VName);
+	VProperty(VName, VMemberBase*, TLocation);
 
 	void Serialise(VStream&);
 
@@ -239,7 +240,7 @@ public:
 	vint32			NetIndex;
 	VMethod*		NextNetMethod;
 
-	VMethod(VName);
+	VMethod(VName, VMemberBase*, TLocation);
 	~VMethod();
 
 	void Serialise(VStream&);
@@ -280,7 +281,7 @@ public:
 	VName		GotoLabel;
 	vint32		GotoOffset;
 
-	VState(VName);
+	VState(VName, VMemberBase*, TLocation);
 
 	void Serialise(VStream&);
 
@@ -328,7 +329,7 @@ public:
 		float	FloatValue;
 	};
 
-	VConstant(VName);
+	VConstant(VName, VMemberBase*, TLocation);
 
 	void Serialise(VStream&);
 
@@ -354,7 +355,7 @@ public:
 	VField*			ReferenceFields;
 	VField*			DestructorFields;
 
-	VStruct(VName);
+	VStruct(VName, VMemberBase*, TLocation);
 
 	void Serialise(VStream&);
 	void PostLoad();
@@ -444,7 +445,7 @@ public:
 	static TArray<VName>		GSpriteNames;
 
 	// Constructors.
-	VClass(VName AName);
+	VClass(VName, VMemberBase*, TLocation);
 	VClass(ENativeConstructor, size_t ASize, vuint32 AClassFlags,
 		VClass *AParent, EName AName, void(*ACtor)());
 
@@ -502,7 +503,7 @@ public:
 	void SerialiseObject(VStream&, VObject*);
 	void CleanObject(VObject*);
 	void DestructObject(VObject*);
-	VClass* CreateDerivedClass(VName);
+	VClass* CreateDerivedClass(VName, VMemberBase*, TLocation);
 	VClass* GetReplacement();
 	VClass* GetReplacee();
 

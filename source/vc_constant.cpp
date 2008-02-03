@@ -56,13 +56,8 @@
 //
 //==========================================================================
 
-#ifndef IN_VCC
-VConstant::VConstant(VName AName)
-: VMemberBase(MEMBER_Const, AName)
-#else
-VConstant::VConstant(VName InName, VMemberBase* InOuter, TLocation InLoc)
-: VMemberBase(MEMBER_Const, InName, InOuter, InLoc)
-#endif
+VConstant::VConstant(VName AName, VMemberBase* AOuter, TLocation ALoc)
+: VMemberBase(MEMBER_Const, AName, AOuter, ALoc)
 , Type(TYPE_Unknown)
 , Value(0)
 #ifdef IN_VCC

@@ -56,29 +56,22 @@
 //
 //==========================================================================
 
-#ifndef IN_VCC
-VProperty::VProperty(VName AName)
-: VMemberBase(MEMBER_Property, AName)
-, GetFunc(NULL)
-, SetFunc(NULL)
-, DefaultField(NULL)
-, Flags(0)
-{
-}
-#else
 VProperty::VProperty(VName AName, VMemberBase* AOuter, TLocation ALoc)
 : VMemberBase(MEMBER_Property, AName, AOuter, ALoc)
+#ifdef IN_VCC
 , Type(TYPE_Void)
+#endif
 , GetFunc(NULL)
 , SetFunc(NULL)
 , DefaultField(NULL)
 , Flags(0)
+#ifdef IN_VCC
 , Modifiers(0)
 , TypeExpr(NULL)
 , DefaultFieldName(NAME_None)
+#endif
 {
 }
-#endif
 
 //==========================================================================
 //

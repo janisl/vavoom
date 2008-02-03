@@ -70,13 +70,8 @@ static struct
 //
 //==========================================================================
 
-#ifndef IN_VCC
-VMethod::VMethod(VName AName)
-: VMemberBase(MEMBER_Method, AName)
-#else
-VMethod::VMethod(VName InName, VMemberBase* InOuter, TLocation InLoc)
-: VMemberBase(MEMBER_Method, InName, InOuter, InLoc)
-#endif
+VMethod::VMethod(VName AName, VMemberBase* AOuter, TLocation ALoc)
+: VMemberBase(MEMBER_Method, AName, AOuter, ALoc)
 , NumLocals(0)
 , Flags(0)
 , NumParams(0)

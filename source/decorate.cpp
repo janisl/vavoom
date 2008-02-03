@@ -552,7 +552,7 @@ static VState* ResolveStateLabel(VScriptParser* sc, VClass* Class,
 //
 //==========================================================================
 
-static bool ParseStates(VScriptParser* sc, VClass* Class,
+static bool ParseStates(VScriptParser* sc, VClass* Class, int SrcIndex,
 	TArray<VState*>& States)
 {
 	guard(ParseStates);
@@ -656,9 +656,9 @@ static bool ParseStates(VScriptParser* sc, VClass* Class,
 			continue;
 		}
 
-		VState* State = new VState(va("S_%d", States.Num()));
+		VState* State = new VState(va("S_%d", States.Num()), Class,
+			TLocation(SrcIndex, sc->Line));
 		States.Append(State);
-		State->Outer = Class;
 		State->InClassIndex = States.Num() - 1;
 
 		//	Sprite name
@@ -782,9 +782,9 @@ static bool ParseStates(VScriptParser* sc, VClass* Class,
 			}
 
 			//	Create a new state.
-			VState* s2 = new VState(va("S_%d", States.Num()));
+			VState* s2 = new VState(va("S_%d", States.Num()), Class,
+				TLocation(SrcIndex, sc->Line));
 			States.Append(s2);
-			s2->Outer = Class;
 			s2->InClassIndex = States.Num() - 1;
 			s2->SpriteName = State->SpriteName;
 			s2->Frame = (State->Frame & FF_FULLBRIGHT) | (FChar - 'A');
@@ -810,7 +810,7 @@ static bool ParseStates(VScriptParser* sc, VClass* Class,
 //
 //==========================================================================
 
-static void ParseActor(VScriptParser* sc)
+static void ParseActor(VScriptParser* sc, int SrcIndex)
 {
 	guard(ParseActor);
 	//	Parse actor name. In order to allow dots in actor names, this is done
@@ -900,8 +900,8 @@ static void ParseActor(VScriptParser* sc)
 		}
 	}
 
-	VClass* Class = ParentClass->CreateDerivedClass(*NameStr);
-	Class->Outer = DecPkg;
+	VClass* Class = ParentClass->CreateDerivedClass(*NameStr, DecPkg,
+		TLocation(SrcIndex, sc->Line));
 
 	VClass* ReplaceeClass = NULL;
 	if (sc->Check("replaces"))
@@ -1161,7 +1161,7 @@ static void ParseActor(VScriptParser* sc)
 		}
 		else if (!Prop.ICmp("States"))
 		{
-			if (!ParseStates(sc, Class, States))
+			if (!ParseStates(sc, Class, SrcIndex, States))
 			{
 				return;
 			}
@@ -1239,7 +1239,7 @@ static void ParseActor(VScriptParser* sc)
 //==========================================================================
 
 static void ParseOldDecStates(VScriptParser* sc, TArray<VState*>& States,
-	VClass* Class)
+	VClass* Class, int SrcIndex)
 {
 	guard(ParseOldDecStates);
 	TArray<VStr> Tokens;
@@ -1276,9 +1276,9 @@ static void ParseOldDecStates(VScriptParser* sc, TArray<VState*>& States,
 			else
 			{
 				GotState = true;
-				VState* State = new VState(va("S_%d", States.Num()));
+				VState* State = new VState(va("S_%d", States.Num()), Class,
+					TLocation(SrcIndex, sc->Line));
 				States.Append(State);
-				State->Outer = Class;
 				State->InClassIndex = States.Num() - 1;
 				State->Frame = *pFrame - 'A';
 				State->Time = Duration >= 0 ? float(Duration) / 35.0 : -1.0;
@@ -1295,7 +1295,7 @@ static void ParseOldDecStates(VScriptParser* sc, TArray<VState*>& States,
 //
 //==========================================================================
 
-static void ParseOldDecoration(VScriptParser* sc, int Type)
+static void ParseOldDecoration(VScriptParser* sc, int Type, int SrcIndex)
 {
 	guard(ParseOldDecoration);
 	//	Get name of the class.
@@ -1304,9 +1304,10 @@ static void ParseOldDecoration(VScriptParser* sc, int Type)
 
 	//	Create class.
 	VClass* Class = Type == OLDDEC_Pickup ?
-		FakeInventoryClass->CreateDerivedClass(ClassName) :
-		ActorClass->CreateDerivedClass(ClassName);
-	Class->Outer = DecPkg;
+		FakeInventoryClass->CreateDerivedClass(ClassName, DecPkg,
+		TLocation(SrcIndex, sc->Line)) :
+		ActorClass->CreateDerivedClass(ClassName, DecPkg,
+		TLocation(SrcIndex, sc->Line));
 	if (Type == OLDDEC_Breakable)
 	{
 		SetClassFieldBool(Class, "bShootable", true);
@@ -1412,7 +1413,7 @@ static void ParseOldDecoration(VScriptParser* sc, int Type)
 		{
 			sc->ExpectString();
 			SpawnStart = States.Num();
-			ParseOldDecStates(sc, States, Class);
+			ParseOldDecStates(sc, States, Class, SrcIndex);
 			SpawnEnd = States.Num();
 		}
 
@@ -1432,7 +1433,7 @@ static void ParseOldDecoration(VScriptParser* sc, int Type)
 		{
 			sc->ExpectString();
 			DeathStart = States.Num();
-			ParseOldDecStates(sc, States, Class);
+			ParseOldDecStates(sc, States, Class, SrcIndex);
 			DeathEnd = States.Num();
 		}
 		else if (Type == OLDDEC_Breakable && sc->Check("DiesAway"))
@@ -1443,7 +1444,7 @@ static void ParseOldDecoration(VScriptParser* sc, int Type)
 		{
 			sc->ExpectString();
 			BurnStart = States.Num();
-			ParseOldDecStates(sc, States, Class);
+			ParseOldDecStates(sc, States, Class, SrcIndex);
 			BurnEnd = States.Num();
 		}
 		else if (Type == OLDDEC_Breakable && sc->Check("BurnsAway"))
@@ -1454,12 +1455,12 @@ static void ParseOldDecoration(VScriptParser* sc, int Type)
 		{
 			sc->ExpectString();
 			IceStart = States.Num();
-			ParseOldDecStates(sc, States, Class);
+			ParseOldDecStates(sc, States, Class, SrcIndex);
 
 			//	Make a copy of the last state for A_FreezeDeathChunks
-			VState* State = new VState(va("S_%d", States.Num()));
+			VState* State = new VState(va("S_%d", States.Num()), Class,
+				TLocation(SrcIndex, sc->Line));
 			States.Append(State);
-			State->Outer = Class;
 			State->InClassIndex = States.Num() - 1;
 			State->Frame = States[States.Num() - 2]->Frame;
 
@@ -1982,7 +1983,7 @@ static void ParseOldDecoration(VScriptParser* sc, int Type)
 //
 //==========================================================================
 
-static void ParseDecorate(VScriptParser* sc)
+static void ParseDecorate(VScriptParser* sc, int SrcIndex)
 {
 	guard(ParseDecorate);
 	while (!sc->AtEnd())
@@ -2003,7 +2004,7 @@ static void ParseDecorate(VScriptParser* sc)
 				sc->Error(va("Lump %s not found", *sc->String));
 			}
 			ParseDecorate(new VScriptParser(sc->String,
-				W_CreateLumpReaderNum(Lump)));
+				W_CreateLumpReaderNum(Lump)), TLocation::AddSourceFile(sc->String));
 		}
 		else if (sc->Check("const"))
 		{
@@ -2019,23 +2020,23 @@ static void ParseDecorate(VScriptParser* sc)
 		}
 		else if (sc->Check("actor"))
 		{
-			ParseActor(sc);
+			ParseActor(sc, SrcIndex);
 		}
 		else if (sc->Check("breakable"))
 		{
-			ParseOldDecoration(sc, OLDDEC_Breakable);
+			ParseOldDecoration(sc, OLDDEC_Breakable, SrcIndex);
 		}
 		else if (sc->Check("pickup"))
 		{
-			ParseOldDecoration(sc, OLDDEC_Pickup);
+			ParseOldDecoration(sc, OLDDEC_Pickup, SrcIndex);
 		}
 		else if (sc->Check("projectile"))
 		{
-			ParseOldDecoration(sc, OLDDEC_Projectile);
+			ParseOldDecoration(sc, OLDDEC_Projectile, SrcIndex);
 		}
 		else
 		{
-			ParseOldDecoration(sc, OLDDEC_Decoration);
+			ParseOldDecoration(sc, OLDDEC_Decoration, SrcIndex);
 		}
 	}
 	delete sc;
@@ -2068,7 +2069,7 @@ void ProcessDecorateScripts()
 		if (W_LumpName(Lump) == NAME_decorate)
 		{
 			ParseDecorate(new VScriptParser(*W_LumpName(Lump),
-				W_CreateLumpReaderNum(Lump)));
+				W_CreateLumpReaderNum(Lump)), TLocation::AddSourceFile(*W_LumpName(Lump)));
 		}
 	}
 

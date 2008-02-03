@@ -56,13 +56,11 @@
 //
 //==========================================================================
 
+VStruct::VStruct(VName AName, VMemberBase* AOuter, TLocation ALoc)
+: VMemberBase(MEMBER_Struct, AName, AOuter, ALoc)
 #ifndef IN_VCC
-VStruct::VStruct(VName AName)
-: VMemberBase(MEMBER_Struct, AName)
 , ObjectFlags(0)
 #else
-VStruct::VStruct(VName InName, VMemberBase* InOuter, TLocation InLoc)
-: VMemberBase(MEMBER_Struct, InName, InOuter, InLoc)
 #endif
 , ParentStruct(0)
 #ifndef IN_VCC

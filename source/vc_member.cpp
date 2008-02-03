@@ -342,31 +342,25 @@ VStream& operator<<(VStream& Strm, mobjinfo_t& MI)
 //
 //==========================================================================
 
-#ifndef IN_VCC
-VMemberBase::VMemberBase(vuint8 AMemberType, VName AName)
-: MemberType(AMemberType)
-, Outer(0)
-, Name(AName)
-{
-	if (GObjInitialised)
-	{
-		GMembers.Append(this);
-	}
-}
-#else
-VMemberBase::VMemberBase(vuint8 AType, VName AName, VMemberBase* AOuter,
+VMemberBase::VMemberBase(vuint8 AMemberType, VName AName, VMemberBase* AOuter,
 	TLocation ALoc)
-: MemberType(AType)
+: MemberType(AMemberType)
 , Name(AName)
 , Outer(AOuter)
 , Loc(ALoc)
 {
+#ifndef IN_VCC
+	if (GObjInitialised)
+	{
+		GMembers.Append(this);
+	}
+#else
 	MemberIndex = GMembers.Append(this);
 	int HashIndex = Name.GetIndex() & 4095;
 	HashNext = GMembersHash[HashIndex];
 	GMembersHash[HashIndex] = this;
-}
 #endif
+}
 
 //==========================================================================
 //
@@ -807,28 +801,28 @@ VPackage* VMemberBase::StaticLoadPackage(VName InName)
 			Exports[i].Obj = new VPackage(Exports[i].Name);
 			break;
 		case MEMBER_Field:
-			Exports[i].Obj = new VField(Exports[i].Name);
+			Exports[i].Obj = new VField(Exports[i].Name, NULL, TLocation());
 			break;
 		case MEMBER_Property:
-			Exports[i].Obj = new VProperty(Exports[i].Name);
+			Exports[i].Obj = new VProperty(Exports[i].Name, NULL, TLocation());
 			break;
 		case MEMBER_Method:
-			Exports[i].Obj = new VMethod(Exports[i].Name);
+			Exports[i].Obj = new VMethod(Exports[i].Name, NULL, TLocation());
 			break;
 		case MEMBER_State:
-			Exports[i].Obj = new VState(Exports[i].Name);
+			Exports[i].Obj = new VState(Exports[i].Name, NULL, TLocation());
 			break;
 		case MEMBER_Const:
-			Exports[i].Obj = new VConstant(Exports[i].Name);
+			Exports[i].Obj = new VConstant(Exports[i].Name, NULL, TLocation());
 			break;
 		case MEMBER_Struct:
-			Exports[i].Obj = new VStruct(Exports[i].Name);
+			Exports[i].Obj = new VStruct(Exports[i].Name, NULL, TLocation());
 			break;
 		case MEMBER_Class:
 			Exports[i].Obj = VClass::FindClass(*Exports[i].Name);
 			if (!Exports[i].Obj)
 			{
-				Exports[i].Obj = new VClass(Exports[i].Name);
+				Exports[i].Obj = new VClass(Exports[i].Name, NULL, TLocation());
 			}
 			break;
 		}

@@ -214,15 +214,14 @@ VPackage::VPackage()
 //==========================================================================
 
 VPackage::VPackage(VName AName)
+: VMemberBase(MEMBER_Package, AName, NULL, TLocation())
 #ifndef IN_VCC
-: VMemberBase(MEMBER_Package, AName)
 , Checksum(0)
 , Strings(0)
 , Reader(0)
 {
 }
 #else
-: VMemberBase(MEMBER_Package, AName, NULL, TLocation())
 {
 	//	Strings
 	memset(StringLookup, 0, 256 * 4);

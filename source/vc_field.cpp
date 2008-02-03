@@ -57,10 +57,10 @@
 //
 //==========================================================================
 
+VField::VField(VName AName, VMemberBase* AOuter, TLocation ALoc)
+: VMemberBase(MEMBER_Field, AName, AOuter, ALoc)
+, Next(NULL)
 #ifndef IN_VCC
-VField::VField(VName AName)
-: VMemberBase(MEMBER_Field, AName)
-, Next(0)
 , NextReference(0)
 , DestructorLink(0)
 , NextNetField(0)
@@ -73,9 +73,6 @@ VField::VField(VName AName)
 	memset(&Type, 0, sizeof(Type));
 }
 #else
-VField::VField(VName InName, VMemberBase* InOuter, TLocation InLoc)
-: VMemberBase(MEMBER_Field, InName, InOuter, InLoc)
-, Next(NULL)
 , Type(TYPE_Void)
 , TypeExpr(NULL)
 , Func(NULL)

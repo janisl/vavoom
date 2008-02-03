@@ -56,13 +56,8 @@
 //
 //==========================================================================
 
-#ifndef IN_VCC
-VState::VState(VName AName)
-: VMemberBase(MEMBER_State, AName)
-#else
-VState::VState(VName InName, VMemberBase* InOuter, TLocation InLoc)
-: VMemberBase(MEMBER_State, InName, InOuter, InLoc)
-#endif
+VState::VState(VName AName, VMemberBase* AOuter, TLocation ALoc)
+: VMemberBase(MEMBER_State, AName, AOuter, ALoc)
 , SpriteName(NAME_None)
 #ifndef IN_VCC
 , SpriteIndex(0)
