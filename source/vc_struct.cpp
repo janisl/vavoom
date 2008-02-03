@@ -231,7 +231,7 @@ bool VStruct::DefineMembers()
 		}
 		else
 		{
-			size += fi->Type.GetSize();
+			size += fi->Type.GetStackSize();
 		}
 		PrevBool = fi->Type.Type == TYPE_Bool ? fi : NULL;
 	}

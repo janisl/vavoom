@@ -4739,7 +4739,7 @@ void VInvocation::CheckParams()
 				{
 					ParseError(Loc, "Bad expresion");
 				}
-				argsize += Func->ParamTypes[i].GetSize();
+				argsize += Func->ParamTypes[i].GetStackSize();
 			}
 			else
 			{
@@ -4757,7 +4757,7 @@ void VInvocation::CheckParams()
 				{
 					Args[i]->Type.CheckMatch(Args[i]->Loc, Func->ParamTypes[i]);
 				}
-				argsize += Args[i]->Type.GetSize();
+				argsize += Args[i]->Type.GetStackSize();
 			}
 		}
 		else if (!Args[i])
@@ -4766,7 +4766,7 @@ void VInvocation::CheckParams()
 		}
 		else
 		{
-			argsize += Args[i]->Type.GetSize();
+			argsize += Args[i]->Type.GetStackSize();
 		}
 	}
 	if (NumArgs > max_params)
@@ -5030,7 +5030,7 @@ VExpression* VDropResult::DoResolve(VEmitContext& ec)
 		return NULL;
 	}
 
-	if (op->Type.Type != TYPE_String && op->Type.GetSize() != 4 &&
+	if (op->Type.Type != TYPE_String && op->Type.GetStackSize() != 4 &&
 		op->Type.Type != TYPE_Vector && op->Type.Type != TYPE_Void)
 	{
 		ParseError(Loc, "Expression's result type cannot be dropped");
@@ -5067,7 +5067,7 @@ void VDropResult::Emit(VEmitContext& ec)
 	{
 		ec.AddStatement(OPC_VDrop);
 	}
-	else if (op->Type.GetSize() == 4)
+	else if (op->Type.GetStackSize() == 4)
 	{
 		ec.AddStatement(OPC_Drop);
 	}
@@ -5786,7 +5786,7 @@ void VLocalDecl::Declare(VEmitContext& ec)
 
 		L.Visible = true;
 
-		ec.localsofs += Type.GetSize() / 4;
+		ec.localsofs += Type.GetStackSize() / 4;
 		if (ec.localsofs > 1024)
 		{
 			ParseWarning(e.Loc, "Local vars > 1k");

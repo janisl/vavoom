@@ -551,6 +551,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\vc_type.h"
+				>
+			</File>
+			<File
 				RelativePath="..\source\vclass.h"
 				>
 			</File>

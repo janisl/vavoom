@@ -235,6 +235,7 @@ set(MAIN_COMMON_SOURCES
 	vc_state.cpp
 	vc_struct.cpp
 	vc_type.cpp
+	vc_type.h
 	vclass.h
 	vector.h
 	video.h

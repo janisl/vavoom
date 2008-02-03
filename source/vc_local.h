@@ -68,4 +68,8 @@ public:
 
 #include "vc_emit_context.h"
 
+void ParseError(TLocation, const char *text, ...) __attribute__ ((format(printf, 2, 3)));
+void ParseWarning(TLocation, const char *text, ...) __attribute__ ((format(printf, 2, 3)));
+void BailOut() __attribute__((noreturn));
+
 #endif

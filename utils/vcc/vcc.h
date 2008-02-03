@@ -51,6 +51,7 @@ void Free(void* ptr);
 #include "../../source/str.h"
 #include "../../source/progdefs.h"
 #include "../../source/vc_location.h"
+#include "../../source/vc_type.h"
 
 // MACROS ------------------------------------------------------------------
 
@@ -139,64 +140,6 @@ class VStruct;
 class VMethod;
 class VEmitContext;
 class VPackage;
-
-enum EType
-{
-	TYPE_Void,
-	TYPE_Int,
-	TYPE_Byte,
-	TYPE_Bool,
-	TYPE_Float,
-	TYPE_Name,
-	TYPE_String,
-	TYPE_Pointer,
-	TYPE_Reference,
-	TYPE_Class,
-	TYPE_State,
-	TYPE_Delegate,
-	TYPE_Struct,
-	TYPE_Vector,
-	TYPE_Array,
-	TYPE_DynamicArray,
-	TYPE_Unknown,
-
-	NUM_BASIC_TYPES
-};
-
-class VFieldType
-{
-public:
-	vuint8		Type;
-	vuint8		InnerType;		//	For pointers
-	vuint8		ArrayInnerType;	//	For arrays
-	vuint8		PtrLevel;
-	int			ArrayDim;
-	union
-	{
-		vuint32		BitMask;
-		VClass*		Class;			//  Class of the reference
-		VStruct*	Struct;			//  Struct data.
-		VMethod*	Function;		//  Function of the delegate type.
-	};
-
-	friend VStream& operator<<(VStream&, VFieldType&);
-
-	VFieldType();
-	VFieldType(EType Atype);
-	explicit VFieldType(VClass* InClass);
-	explicit VFieldType(VStruct* InStruct);
-
-	bool Equals(const VFieldType&) const;
-	VFieldType MakePointerType() const;
-	VFieldType GetPointerInnerType() const;
-	VFieldType MakeArrayType(int, TLocation) const;
-	VFieldType MakeDynamicArrayType(TLocation) const;
-	VFieldType GetArrayInnerType() const;
-	int GetSize() const;
-	void CheckPassable(TLocation) const;
-	void CheckMatch(TLocation, const VFieldType&) const;
-	VStr GetName() const;
-};
 
 class VLabel
 {
@@ -411,6 +354,8 @@ class VStruct : public VMemberBase
 {
 public:
 	VStruct*		ParentStruct;
+	vint32			Size;
+	vuint8			Alignment;
 	vuint8			IsVector;
 	//	Size in stack units when used as local variable.
 	vint32			StackSize;

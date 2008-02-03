@@ -11,7 +11,6 @@ add_executable(vcc
 	../../source/name.h
 	../../source/names.h
 	parse.cpp
-	pcode.cpp
 	statement.cpp
 	statement.h
 	../../source/str.cpp
@@ -31,6 +30,7 @@ add_executable(vcc
 	../../source/vc_state.cpp
 	../../source/vc_struct.cpp
 	../../source/vc_type.cpp
+	../../source/vc_type.h
 	vcc.cpp
 	vcc.h
 )

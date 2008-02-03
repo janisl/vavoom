@@ -1015,7 +1015,7 @@ void VReturn::DoEmit(VEmitContext& ec)
 	{
 		Expr->Emit(ec);
 		ec.EmitClearStrings(0, NumLocalsToClear);
-		if (Expr->Type.GetSize() == 4)
+		if (Expr->Type.GetStackSize() == 4)
 		{
 			ec.AddStatement(OPC_ReturnL);
 		}

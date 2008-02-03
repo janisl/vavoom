@@ -356,7 +356,7 @@ bool VMethod::Define()
 		else
 		{
 			type.CheckPassable(P.TypeExpr->Loc);
-			ParamsSize += type.GetSize() / 4;
+			ParamsSize += type.GetStackSize() / 4;
 		}
 		if (ParamFlags[i] & FPARM_Optional)
 		{
@@ -496,7 +496,7 @@ void VMethod::Emit()
 		}
 		else
 		{
-			ec.localsofs += ParamTypes[i].GetSize() / 4;
+			ec.localsofs += ParamTypes[i].GetStackSize() / 4;
 		}
 		if (ParamFlags[i] & FPARM_Optional)
 		{

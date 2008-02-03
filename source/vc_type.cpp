@@ -27,10 +27,10 @@
 
 #ifdef IN_VCC
 #include "../utils/vcc/vcc.h"
+#include <math.h>
+#include "vector.h"
 #else
-#include "gamedefs.h"
-#include "progdefs.h"
-#include "network.h"
+#include "vc_local.h"
 #endif
 
 // MACROS ------------------------------------------------------------------
@@ -155,8 +155,6 @@ VStream& operator<<(VStream& Strm, VFieldType& T)
 	unguard;
 }
 
-#ifdef IN_VCC
-
 //==========================================================================
 //
 //	VFieldType::Equals
@@ -165,6 +163,7 @@ VStream& operator<<(VStream& Strm, VFieldType& T)
 
 bool VFieldType::Equals(const VFieldType& Other) const
 {
+	guardSlow(VFieldType::Equals);
 	if (Type != Other.Type ||
 		InnerType != Other.InnerType ||
 		ArrayInnerType != Other.ArrayInnerType ||
@@ -173,6 +172,7 @@ bool VFieldType::Equals(const VFieldType& Other) const
 		Class != Other.Class)
 		return false;
 	return true;
+	unguardSlow;
 }
 
 //==========================================================================
@@ -183,6 +183,7 @@ bool VFieldType::Equals(const VFieldType& Other) const
 
 VFieldType VFieldType::MakePointerType() const
 {
+	guard(VFieldType::MakePointerType);
 	VFieldType pointer = *this;
 	if (pointer.Type == TYPE_Pointer)
 	{
@@ -195,6 +196,7 @@ VFieldType VFieldType::MakePointerType() const
 		pointer.PtrLevel = 1;
 	}
 	return pointer;
+	unguard;
 }
 
 //==========================================================================
@@ -205,6 +207,7 @@ VFieldType VFieldType::MakePointerType() const
 
 VFieldType VFieldType::GetPointerInnerType() const
 {
+	guard(VFieldType::GetPointerInnerType);
 	if (Type != TYPE_Pointer)
 	{
 		FatalError("Not a pointer type");
@@ -218,6 +221,7 @@ VFieldType VFieldType::GetPointerInnerType() const
 		ret.InnerType = TYPE_Void;
 	}
 	return ret;
+	unguard;
 }
 
 //==========================================================================
@@ -228,6 +232,7 @@ VFieldType VFieldType::GetPointerInnerType() const
 
 VFieldType VFieldType::MakeArrayType(int elcount, TLocation l) const
 {
+	guard(VFieldType::MakeArrayType);
 	if (Type == TYPE_Array || Type == TYPE_DynamicArray)
 	{
 		ParseError(l, "Can't have multi-dimensional arrays");
@@ -237,6 +242,7 @@ VFieldType VFieldType::MakeArrayType(int elcount, TLocation l) const
 	array.Type = TYPE_Array;
 	array.ArrayDim = elcount;
 	return array;
+	unguard;
 }
 
 //==========================================================================
@@ -247,6 +253,7 @@ VFieldType VFieldType::MakeArrayType(int elcount, TLocation l) const
 
 VFieldType VFieldType::MakeDynamicArrayType(TLocation l) const
 {
+	guard(VFieldType::MakeDynamicArrayType);
 	if (Type == TYPE_Array || Type == TYPE_DynamicArray)
 	{
 		ParseError(l, "Can't have multi-dimensional arrays");
@@ -255,6 +262,7 @@ VFieldType VFieldType::MakeDynamicArrayType(TLocation l) const
 	array.ArrayInnerType = Type;
 	array.Type = TYPE_DynamicArray;
 	return array;
+	unguard;
 }
 
 //==========================================================================
@@ -265,6 +273,7 @@ VFieldType VFieldType::MakeDynamicArrayType(TLocation l) const
 
 VFieldType VFieldType::GetArrayInnerType() const
 {
+	guard(VFieldType::GetArrayInnerType);
 	if (Type != TYPE_Array && Type != TYPE_DynamicArray)
 	{
 		FatalError("Not an array type");
@@ -275,16 +284,18 @@ VFieldType VFieldType::GetArrayInnerType() const
 	ret.ArrayInnerType = TYPE_Void;
 	ret.ArrayDim = 0;
 	return ret;
+	unguard;
 }
 
 //==========================================================================
 //
-//	VFieldType::GetSize
+//	VFieldType::GetStackSize
 //
 //==========================================================================
 
-int VFieldType::GetSize() const
+int VFieldType::GetStackSize() const
 {
+	guard(VFieldType::GetStackSize);
 	switch (Type)
 	{
 	case TYPE_Int:			return 4;
@@ -300,10 +311,73 @@ int VFieldType::GetSize() const
 	case TYPE_Delegate:		return 8;
 	case TYPE_Struct:		return Struct->StackSize * 4;
 	case TYPE_Vector:		return 12;
-	case TYPE_Array:		return ArrayDim * GetArrayInnerType().GetSize();
+	case TYPE_Array:		return ArrayDim * GetArrayInnerType().GetStackSize();
 	case TYPE_DynamicArray:	return 12;
 	}
 	return 0;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VFieldType::GetSize
+//
+//==========================================================================
+
+int VFieldType::GetSize() const
+{
+	guard(VFieldType::GetSize);
+	switch (Type)
+	{
+	case TYPE_Int:			return sizeof(vint32);
+	case TYPE_Byte:			return sizeof(vuint8);
+	case TYPE_Bool:			return sizeof(vuint32);
+	case TYPE_Float:		return sizeof(float);
+	case TYPE_Name:			return sizeof(VName);
+	case TYPE_String:		return sizeof(VStr);
+	case TYPE_Pointer:		return sizeof(void*);
+	case TYPE_Reference:	return sizeof(VObject*);
+	case TYPE_Class:		return sizeof(VClass*);
+	case TYPE_State:		return sizeof(VState*);
+	case TYPE_Delegate:		return sizeof(VObjectDelegate);
+	case TYPE_Struct:		return (Struct->Size + 3) & ~3;
+	case TYPE_Vector:		return sizeof(TVec);
+	case TYPE_Array:		return ArrayDim * GetArrayInnerType().GetSize();
+	case TYPE_DynamicArray:	return sizeof(VScriptArray);
+	}
+	return 0;
+	unguard;
+}
+
+//==========================================================================
+ //
+//	VFieldType::GetAlignment
+//
+//==========================================================================
+
+int VFieldType::GetAlignment() const
+{
+	guard(VFieldType::GetAlignment);
+	switch (Type)
+	{
+	case TYPE_Int:			return sizeof(vint32);
+	case TYPE_Byte:			return sizeof(vuint8);
+	case TYPE_Bool:			return sizeof(vuint32);
+	case TYPE_Float:		return sizeof(float);
+	case TYPE_Name:			return sizeof(VName);
+	case TYPE_String:		return sizeof(char*);
+	case TYPE_Pointer:		return sizeof(void*);
+	case TYPE_Reference:	return sizeof(VObject*);
+	case TYPE_Class:		return sizeof(VClass*);
+	case TYPE_State:		return sizeof(VState*);
+	case TYPE_Delegate:		return sizeof(VObject*);
+	case TYPE_Struct:		return Struct->Alignment;
+	case TYPE_Vector:		return sizeof(float);
+	case TYPE_Array:		return GetArrayInnerType().GetAlignment();
+	case TYPE_DynamicArray:	return sizeof(void*);
+	}
+	return 0;
+	unguard;
 }
 
 //==========================================================================
@@ -316,10 +390,12 @@ int VFieldType::GetSize() const
 
 void VFieldType::CheckPassable(TLocation l) const
 {
-	if (GetSize() != 4 && Type != TYPE_Vector && Type != TYPE_Delegate)
+	guardSlow(VFieldType::CheckPassable);
+	if (GetStackSize() != 4 && Type != TYPE_Vector && Type != TYPE_Delegate)
 	{
 		ParseError(l, "Type %s is not passable", *GetName());
 	}
+	unguardSlow;
 }
 
 //==========================================================================
@@ -335,6 +411,7 @@ void VFieldType::CheckPassable(TLocation l) const
 
 void VFieldType::CheckMatch(TLocation l, const VFieldType& Other) const
 {
+	guard(VFieldType::CheckMatch);
 	CheckPassable(l);
 	Other.CheckPassable(l);
 	if (Equals(Other))
@@ -454,6 +531,7 @@ void VFieldType::CheckMatch(TLocation l, const VFieldType& Other) const
 	}
 	ParseError(l, "Type mistmatch, types %s and %s are not compatible %d %d",
 		*GetName(), *Other.GetName(), Type, Other.Type);
+	unguard;
 }
 
 //==========================================================================
@@ -464,6 +542,7 @@ void VFieldType::CheckMatch(TLocation l, const VFieldType& Other) const
 
 VStr VFieldType::GetName() const
 {
+	guard(VFieldType::GetName);
 	switch (Type)
 	{
 	case TYPE_Int:
@@ -513,93 +592,10 @@ VStr VFieldType::GetName() const
 	default:
 		return "unknown";
 	}
-}
-
-#else
-
-//==========================================================================
-//
-//	VFieldType::GetSize
-//
-//==========================================================================
-
-int VFieldType::GetSize() const
-{
-	guard(VFieldType::GetSize);
-	switch (Type)
-	{
-	case TYPE_Int:			return sizeof(vint32);
-	case TYPE_Byte:			return sizeof(vuint8);
-	case TYPE_Bool:			return sizeof(vuint32);
-	case TYPE_Float:		return sizeof(float);
-	case TYPE_Name:			return sizeof(VName);
-	case TYPE_String:		return sizeof(VStr);
-	case TYPE_Pointer:		return sizeof(void*);
-	case TYPE_Reference:	return sizeof(VObject*);
-	case TYPE_Class:		return sizeof(VClass*);
-	case TYPE_State:		return sizeof(VState*);
-	case TYPE_Delegate:		return sizeof(VObjectDelegate);
-	case TYPE_Struct:		return (Struct->Size + 3) & ~3;
-	case TYPE_Vector:		return sizeof(TVec);
-	case TYPE_Array:		return ArrayDim * GetArrayInnerType().GetSize();
-	case TYPE_DynamicArray:	return sizeof(VScriptArray);
-	}
-	return 0;
 	unguard;
 }
 
-//==========================================================================
- //
-//	VFieldType::GetAlignment
-//
-//==========================================================================
-
-int VFieldType::GetAlignment() const
-{
-	guard(VFieldType::GetAlignment);
-	switch (Type)
-	{
-	case TYPE_Int:			return sizeof(vint32);
-	case TYPE_Byte:			return sizeof(vuint8);
-	case TYPE_Bool:			return sizeof(vuint32);
-	case TYPE_Float:		return sizeof(float);
-	case TYPE_Name:			return sizeof(VName);
-	case TYPE_String:		return sizeof(char*);
-	case TYPE_Pointer:		return sizeof(void*);
-	case TYPE_Reference:	return sizeof(VObject*);
-	case TYPE_Class:		return sizeof(VClass*);
-	case TYPE_State:		return sizeof(VState*);
-	case TYPE_Delegate:		return sizeof(VObject*);
-	case TYPE_Struct:		return Struct->Alignment;
-	case TYPE_Vector:		return sizeof(float);
-	case TYPE_Array:		return GetArrayInnerType().GetAlignment();
-	case TYPE_DynamicArray:	return sizeof(void*);
-	}
-	return 0;
-	unguard;
-}
-
-//==========================================================================
-//
-//	VFieldType::GetArrayInnerType
-//
-//==========================================================================
-
-VFieldType VFieldType::GetArrayInnerType() const
-{
-	guard(VFieldType::GetArrayInnerType);
-	if (Type != TYPE_Array && Type != TYPE_DynamicArray)
-	{
-		Sys_Error("Not an array type");
-		return *this;
-	}
-	VFieldType ret = *this;
-	ret.Type = ArrayInnerType;
-	ret.ArrayInnerType = TYPE_Void;
-	ret.ArrayDim = 0;
-	return ret;
-	unguard;
-}
+#ifndef IN_VCC
 
 //==========================================================================
 //
@@ -757,6 +753,60 @@ void VScriptArray::Remove(int Index, int Count, VFieldType& Type)
 		}
 	}
 	unguard;
+}
+
+int				NumErrors;
+
+//==========================================================================
+//
+//	ParseError
+//
+//==========================================================================
+
+void ParseError(TLocation l, const char *text, ...)
+{
+	char		Buffer[2048];
+	va_list		argPtr;
+
+	NumErrors++;
+
+	va_start(argPtr, text);
+	vsprintf(Buffer, text, argPtr);
+	va_end(argPtr);
+	GCon->Logf("%s:%d: %s", *l.GetSource(), l.GetLine(), Buffer);
+
+	if (NumErrors >= 64)
+	{
+		Sys_Error("Too many errors");
+	}
+}
+
+//==========================================================================
+//
+//	ParseWarning
+//
+//==========================================================================
+
+void ParseWarning(TLocation l, const char *text, ...)
+{
+	char		Buffer[2048];
+	va_list	argPtr;
+
+	va_start(argPtr, text);
+	vsprintf(Buffer, text, argPtr);
+	va_end(argPtr);
+	GCon->Logf("%s:%d: warning: %s", *l.GetSource(), l.GetLine(), Buffer);
+}
+
+//==========================================================================
+//
+//	BailOut
+//
+//==========================================================================
+
+void BailOut()
+{
+	Sys_Error("Confused by previous errors, bailing out\n");
 }
 
 #endif
