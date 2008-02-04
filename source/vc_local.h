@@ -67,6 +67,7 @@ public:
 #define FatalError	Sys_Error
 
 #include "vc_emit_context.h"
+#include "vc_expr_base.h"
 
 void ParseError(TLocation, const char *text, ...) __attribute__ ((format(printf, 2, 3)));
 void ParseWarning(TLocation, const char *text, ...) __attribute__ ((format(printf, 2, 3)));

@@ -162,6 +162,8 @@ public:
 	}
 };
 
+#include "../../source/vc_expr_base.h"
+
 #include "expression.h"
 #include "statement.h"
 

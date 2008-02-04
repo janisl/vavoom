@@ -23,46 +23,6 @@
 //**
 //**************************************************************************
 
-class VTypeExpr;
-
-//==========================================================================
-//
-//	VExpression
-//
-//==========================================================================
-
-class VExpression
-{
-public:
-	VFieldType		Type;
-	VFieldType		RealType;
-	int			Flags;
-	TLocation	Loc;
-
-	VExpression(const TLocation&);
-	virtual ~VExpression();
-	virtual VExpression* DoResolve(VEmitContext&) = 0;
-	VExpression* Resolve(VEmitContext&);
-	VExpression* ResolveBoolean(VEmitContext&);
-	virtual VTypeExpr* ResolveAsType(VEmitContext&);
-	virtual VExpression* ResolveAssignmentTarget(VEmitContext&);
-	virtual VExpression* ResolveIterator(VEmitContext&);
-	virtual void RequestAddressOf();
-	virtual void Emit(VEmitContext&) = 0;
-	virtual void EmitBranchable(VEmitContext&, VLabel, bool);
-	void EmitPushPointedCode(VFieldType, VEmitContext&);
-	virtual bool IsValidTypeExpression();
-	virtual bool IsIntConst() const;
-	virtual bool IsFloatConst() const;
-	virtual vint32 GetIntConst() const;
-	virtual float GetFloatConst() const;
-	virtual bool IsDefaultObject() const;
-	virtual bool IsPropertyAssign() const;
-	virtual bool IsDynArraySetNum() const;
-	virtual VExpression* CreateTypeExprCopy();
-	virtual bool AddDropResult();
-};
-
 //==========================================================================
 //
 //	VIntLiteral
@@ -664,6 +624,57 @@ public:
 	~VDynamicArrayType();
 	VTypeExpr* ResolveAsType(VEmitContext&);
 	VExpression* CreateTypeExprCopy();
+};
+
+//==========================================================================
+//
+//	VDelegateToBool
+//
+//==========================================================================
+
+class VDelegateToBool : public VExpression
+{
+public:
+	VExpression*		op;
+
+	VDelegateToBool(VExpression* AOp);
+	~VDelegateToBool();
+	VExpression* DoResolve(VEmitContext&);
+	void Emit(VEmitContext&);
+};
+
+//==========================================================================
+//
+//	VStringToBool
+//
+//==========================================================================
+
+class VStringToBool : public VExpression
+{
+public:
+	VExpression*		op;
+
+	VStringToBool(VExpression* AOp);
+	~VStringToBool();
+	VExpression* DoResolve(VEmitContext&);
+	void Emit(VEmitContext&);
+};
+
+//==========================================================================
+//
+//	VPointerToBool
+//
+//==========================================================================
+
+class VPointerToBool : public VExpression
+{
+public:
+	VExpression*		op;
+
+	VPointerToBool(VExpression* AOp);
+	~VPointerToBool();
+	VExpression* DoResolve(VEmitContext&);
+	void Emit(VEmitContext&);
 };
 
 //==========================================================================

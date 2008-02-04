@@ -225,6 +225,8 @@ set(MAIN_COMMON_SOURCES
 	vc_constant.cpp
 	vc_emit_context.cpp
 	vc_emit_context.h
+	vc_expr_base.cpp
+	vc_expr_base.h
 	vc_field.cpp
 	vc_location.cpp
 	vc_location.h
@@ -459,6 +461,7 @@ set(SERVER_COMMON_SOURCES
 	vc_class.cpp
 	vc_constant.cpp
 	vc_emit_context.cpp
+	vc_expr_base.cpp
 	vc_field.cpp
 	vc_location.cpp
 	vc_location.h
