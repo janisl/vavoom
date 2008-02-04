@@ -22,6 +22,12 @@ add_executable(vcc
 	../../source/vc_emit_context.cpp
 	../../source/vc_expr_base.cpp
 	../../source/vc_expr_base.h
+	../../source/vc_expr_cast.cpp
+	../../source/vc_expr_cast.h
+	../../source/vc_expr_literal.cpp
+	../../source/vc_expr_literal.h
+	../../source/vc_expr_unary_binary.cpp
+	../../source/vc_expr_unary_binary.h
 	../../source/vc_field.cpp
 	../../source/vc_location.cpp
 	../../source/vc_location.h

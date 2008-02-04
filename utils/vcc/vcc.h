@@ -54,6 +54,9 @@ void Free(void* ptr);
 #include "../../source/vc_type.h"
 #include "../../source/vc_emit_context.h"
 #include "../../source/vc_expr_base.h"
+#include "../../source/vc_expr_literal.h"
+#include "../../source/vc_expr_unary_binary.h"
+#include "../../source/vc_expr_cast.h"
 
 // MACROS ------------------------------------------------------------------
 

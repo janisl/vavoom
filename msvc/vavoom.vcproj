@@ -346,6 +346,18 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\vc_expr_cast.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\source\vc_expr_literal.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\source\vc_expr_unary_binary.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\source\vc_field.cpp"
 				>
 			</File>
@@ -552,6 +564,18 @@
 			</File>
 			<File
 				RelativePath="..\source\vc_expr_base.h"
+				>
+			</File>
+			<File
+				RelativePath="..\source\vc_expr_cast.h"
+				>
+			</File>
+			<File
+				RelativePath="..\source\vc_expr_literal.h"
+				>
+			</File>
+			<File
+				RelativePath="..\source\vc_expr_unary_binary.h"
 				>
 			</File>
 			<File

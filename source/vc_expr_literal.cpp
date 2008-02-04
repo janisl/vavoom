@@ -51,319 +51,298 @@
 
 //==========================================================================
 //
-//	VExpression::VExpression
+//	VIntLiteral::VIntLiteral
 //
 //==========================================================================
 
-VExpression::VExpression(const TLocation& ALoc)
-: Type(TYPE_Void)
-, RealType(TYPE_Void)
-, Flags(0)
-, Loc(ALoc)
+VIntLiteral::VIntLiteral(vint32 AValue, const TLocation& ALoc)
+: VExpression(ALoc)
+, Value(AValue)
+{
+	Type = TYPE_Int;
+}
+
+//==========================================================================
+//
+//	VIntLiteral::DoResolve
+//
+//==========================================================================
+
+VExpression* VIntLiteral::DoResolve(VEmitContext&)
+{
+	return this;
+}
+
+//==========================================================================
+//
+//	VIntLiteral::Emit
+//
+//==========================================================================
+
+void VIntLiteral::Emit(VEmitContext& ec)
+{
+	ec.EmitPushNumber(Value);
+}
+
+//==========================================================================
+//
+//	VIntLiteral::GetIntConst
+//
+//==========================================================================
+
+vint32 VIntLiteral::GetIntConst() const
+{
+	return Value;
+}
+
+//==========================================================================
+//
+//	VIntLiteral::IsIntConst
+//
+//==========================================================================
+
+bool VIntLiteral::IsIntConst() const
+{
+	return true;
+}
+
+//==========================================================================
+//
+//	VFloatLiteral::VFloatLiteral
+//
+//==========================================================================
+
+VFloatLiteral::VFloatLiteral(float AValue, const TLocation& ALoc)
+: VExpression(ALoc)
+, Value(AValue)
+{
+	Type = TYPE_Float;
+}
+
+//==========================================================================
+//
+//	VFloatLiteral::DoResolve
+//
+//==========================================================================
+
+VExpression* VFloatLiteral::DoResolve(VEmitContext&)
+{
+	return this;
+}
+
+//==========================================================================
+//
+//	VFloatLiteral::Emit
+//
+//==========================================================================
+
+void VFloatLiteral::Emit(VEmitContext& ec)
+{
+	ec.AddStatement(OPC_PushNumber, Value);
+}
+
+//==========================================================================
+//
+//	VFloatLiteral::IsFloatConst
+//
+//==========================================================================
+
+bool VFloatLiteral::IsFloatConst() const
+{
+	return true;
+}
+
+//==========================================================================
+//
+//	VFloatLiteral::GetFloatConst
+//
+//==========================================================================
+
+float VFloatLiteral::GetFloatConst() const
+{
+	return Value;
+}
+
+//==========================================================================
+//
+//	VNameLiteral::VNameLiteral
+//
+//==========================================================================
+
+VNameLiteral::VNameLiteral(VName AValue, const TLocation& ALoc)
+: VExpression(ALoc)
+, Value(AValue)
+{
+	Type = TYPE_Name;
+}
+
+//==========================================================================
+//
+//	VNameLiteral::DoResolve
+//
+//==========================================================================
+
+VExpression* VNameLiteral::DoResolve(VEmitContext&)
+{
+	return this;
+}
+
+//==========================================================================
+//
+//	VNameLiteral::Emit
+//
+//==========================================================================
+
+void VNameLiteral::Emit(VEmitContext& ec)
+{
+	ec.AddStatement(OPC_PushName, Value);
+}
+
+//==========================================================================
+//
+//	VStringLiteral::VStringLiteral
+//
+//==========================================================================
+
+VStringLiteral::VStringLiteral(vint32 AValue, const TLocation& ALoc)
+: VExpression(ALoc)
+, Value(AValue)
+{
+	Type = TYPE_String;
+}
+
+//==========================================================================
+//
+//	VStringLiteral::DoResolve
+//
+//==========================================================================
+
+VExpression* VStringLiteral::DoResolve(VEmitContext&)
+{
+	return this;
+}
+
+//==========================================================================
+//
+//	VStringLiteral::Emit
+//
+//==========================================================================
+
+void VStringLiteral::Emit(VEmitContext& ec)
+{
+	ec.AddStatement(OPC_PushString, Value);
+}
+
+//==========================================================================
+//
+//	VSelf::VSelf
+//
+//==========================================================================
+
+VSelf::VSelf(const TLocation& ALoc)
+: VExpression(ALoc)
 {
 }
 
 //==========================================================================
 //
-//	VExpression::~VExpression
+//	VSelf::DoResolve
 //
 //==========================================================================
 
-VExpression::~VExpression()
+VExpression* VSelf::DoResolve(VEmitContext& ec)
 {
-}
-
-//==========================================================================
-//
-//	VExpression::Resolve
-//
-//==========================================================================
-
-VExpression* VExpression::Resolve(VEmitContext& ec)
-{
-	VExpression* e = DoResolve(ec);
-	return e;
-}
-
-//==========================================================================
-//
-//	VExpression::ResolveBoolean
-//
-//==========================================================================
-
-VExpression* VExpression::ResolveBoolean(VEmitContext& ec)
-{
-	VExpression* e = Resolve(ec);
-	if (!e)
+	if (!ec.SelfClass)
 	{
+		ParseError(Loc, "self used outside member function\n");
+		delete this;
 		return NULL;
 	}
-
-	switch (e->Type.Type)
+	if (ec.CurrentFunc->Flags & FUNC_Static)
 	{
-	case TYPE_Int:
-	case TYPE_Byte:
-	case TYPE_Bool:
-	case TYPE_Float:
-	case TYPE_Name:
-		break;
-
-	case TYPE_Pointer:
-	case TYPE_Reference:
-	case TYPE_Class:
-	case TYPE_State:
-		e = new VPointerToBool(e);
-		break;
-
-	case TYPE_String:
-		e = new VStringToBool(e);
-		break;
-
-	case TYPE_Delegate:
-		e = new VDelegateToBool(e);
-		break;
-
-	default:
-		ParseError(Loc, "Expression type mistmatch, boolean expression expected");
-		delete e;
+		ParseError(Loc, "self used in a static method\n");
+		delete this;
 		return NULL;
 	}
-	return e;
+	Type = VFieldType(ec.SelfClass);
+	return this;
 }
 
 //==========================================================================
 //
-//	VExpression::ResolveAsType
+//	VSelf::Emit
 //
 //==========================================================================
 
-VTypeExpr* VExpression::ResolveAsType(VEmitContext&)
+void VSelf::Emit(VEmitContext& ec)
 {
-	ParseError(Loc, "Invalid type expression");
-	delete this;
-	return NULL;
+	ec.AddStatement(OPC_LocalValue0);
 }
 
 //==========================================================================
 //
-//	VExpression::ResolveAssignmentTarget
+//	VNoneLiteral::VNoneLiteral
 //
 //==========================================================================
 
-VExpression* VExpression::ResolveAssignmentTarget(VEmitContext& ec)
+VNoneLiteral::VNoneLiteral(const TLocation& ALoc)
+: VExpression(ALoc)
 {
-	return Resolve(ec);
+	Type = VFieldType((VClass*)NULL);
 }
 
 //==========================================================================
 //
-//	VExpression::ResolveIterator
+//	VNoneLiteral::DoResolve
 //
 //==========================================================================
 
-VExpression* VExpression::ResolveIterator(VEmitContext&)
+VExpression* VNoneLiteral::DoResolve(VEmitContext&)
 {
-	ParseError(Loc, "Iterator method expected");
-	delete this;
-	return NULL;
+	return this;
 }
 
 //==========================================================================
 //
-//	VExpression::RequestAddressOf
+//	VNoneLiteral::Emit
 //
 //==========================================================================
 
-void VExpression::RequestAddressOf()
+void VNoneLiteral::Emit(VEmitContext& ec)
 {
-	ParseError(Loc, "Bad address operation");
+	ec.AddStatement(OPC_PushNull);
 }
 
 //==========================================================================
 //
-//	VExpression::EmitBranchable
+//	VNullLiteral::VNullLiteral
 //
 //==========================================================================
 
-void VExpression::EmitBranchable(VEmitContext& ec, VLabel Lbl, bool OnTrue)
+VNullLiteral::VNullLiteral(const TLocation& ALoc)
+: VExpression(ALoc)
 {
-	Emit(ec);
-	if (OnTrue)
-	{
-		ec.AddStatement(OPC_IfGoto, Lbl);
-	}
-	else
-	{
-		ec.AddStatement(OPC_IfNotGoto, Lbl);
-	}
+	Type = VFieldType(TYPE_Void).MakePointerType();
 }
 
 //==========================================================================
 //
-//	VExpression::EmitPushPointedCode
+//	VNullLiteral::DoResolve
 //
 //==========================================================================
 
-void VExpression::EmitPushPointedCode(VFieldType type, VEmitContext& ec)
+VExpression* VNullLiteral::DoResolve(VEmitContext&)
 {
-	switch (type.Type)
-	{
-	case TYPE_Int:
-	case TYPE_Float:
-	case TYPE_Name:
-		ec.AddStatement(OPC_PushPointed);
-		break;
-
-	case TYPE_Byte:
-		ec.AddStatement(OPC_PushPointedByte);
-		break;
-
-	case TYPE_Bool:
-		if (type.BitMask & 0x000000ff)
-			ec.AddStatement(OPC_PushBool0, (int)(type.BitMask));
-		else if (type.BitMask & 0x0000ff00)
-			ec.AddStatement(OPC_PushBool1, (int)(type.BitMask >> 8));
-		else if (type.BitMask & 0x00ff0000)
-			ec.AddStatement(OPC_PushBool2, (int)(type.BitMask >> 16));
-		else
-			ec.AddStatement(OPC_PushBool3, (int)(type.BitMask >> 24));
-		break;
-
-	case TYPE_Pointer:
-	case TYPE_Reference:
-	case TYPE_Class:
-	case TYPE_State:
-		ec.AddStatement(OPC_PushPointedPtr);
-		break;
-
-	case TYPE_Vector:
-		ec.AddStatement(OPC_VPushPointed);
-		break;
-
-	case TYPE_String:
-		ec.AddStatement(OPC_PushPointedStr);
-		break;
-
-	case TYPE_Delegate:
-		ec.AddStatement(OPC_PushPointedDelegate);
-		break;
-
-	default:
-		ParseError(Loc, "Bad push pointed");
-	}
+	return this;
 }
 
 //==========================================================================
 //
-//	VExpression::IsValidTypeExpression
+//	VNullLiteral::Emit
 //
 //==========================================================================
 
-bool VExpression::IsValidTypeExpression()
+void VNullLiteral::Emit(VEmitContext& ec)
 {
-	return false;
-}
-
-//==========================================================================
-//
-//	VExpression::IsIntConst
-//
-//==========================================================================
-
-bool VExpression::IsIntConst() const
-{
-	return false;
-}
-
-//==========================================================================
-//
-//	VExpression::IsFloatConst
-//
-//==========================================================================
-
-bool VExpression::IsFloatConst() const
-{
-	return false;
-}
-
-//==========================================================================
-//
-//	VExpression::GetIntConst
-//
-//==========================================================================
-
-vint32 VExpression::GetIntConst() const
-{
-	ParseError(Loc, "Integer constant expected");
-	return 0;
-}
-
-//==========================================================================
-//
-//	VExpression::GetFloatConst
-//
-//==========================================================================
-
-float VExpression::GetFloatConst() const
-{
-	ParseError(Loc, "Float constant expected");
-	return 0.0;
-}
-
-//==========================================================================
-//
-//	VExpression::IsDefaultObject
-//
-//==========================================================================
-
-bool VExpression::IsDefaultObject() const
-{
-	return false;
-}
-
-//==========================================================================
-//
-//	VExpression::IsPropertyAssign
-//
-//==========================================================================
-
-bool VExpression::IsPropertyAssign() const
-{
-	return false;
-}
-
-//==========================================================================
-//
-//	VExpression::IsDynArraySetNum
-//
-//==========================================================================
-
-bool VExpression::IsDynArraySetNum() const
-{
-	return false;
-}
-
-//==========================================================================
-//
-//	VExpression::CreateTypeExprCopy
-//
-//==========================================================================
-
-VExpression* VExpression::CreateTypeExprCopy()
-{
-	ParseError(Loc, "Not a type");
-#ifdef IN_VCC
-	return new VTypeExpr(TYPE_Unknown, Loc);
-#endif
-}
-
-//==========================================================================
-//
-//	VExpression::AddDropResult
-//
-//==========================================================================
-
-bool VExpression::AddDropResult()
-{
-	return false;
+	ec.AddStatement(OPC_PushNull);
 }

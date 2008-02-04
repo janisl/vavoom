@@ -51,319 +51,285 @@
 
 //==========================================================================
 //
-//	VExpression::VExpression
+//	VDelegateToBool::VDelegateToBool
 //
 //==========================================================================
 
-VExpression::VExpression(const TLocation& ALoc)
-: Type(TYPE_Void)
-, RealType(TYPE_Void)
-, Flags(0)
-, Loc(ALoc)
+VDelegateToBool::VDelegateToBool(VExpression* AOp)
+: VExpression(AOp->Loc)
+, op(AOp)
+{
+	Type = TYPE_Int;
+	op->RequestAddressOf();
+}
+
+//==========================================================================
+//
+//	VDelegateToBool::~VDelegateToBool
+//
+//==========================================================================
+
+VDelegateToBool::~VDelegateToBool()
+{
+	if (op)
+		delete op;
+}
+
+//==========================================================================
+//
+//	VDelegateToBool::DoResolve
+//
+//==========================================================================
+
+VExpression* VDelegateToBool::DoResolve(VEmitContext&)
+{
+	return this;
+}
+
+//==========================================================================
+//
+//	VDelegateToBool::Emit
+//
+//==========================================================================
+
+void VDelegateToBool::Emit(VEmitContext& ec)
+{
+	op->Emit(ec);
+	ec.AddStatement(OPC_PushPointedPtr);
+	ec.AddStatement(OPC_PtrToBool);
+}
+
+//==========================================================================
+//
+//	VStringToBool::VStringToBool
+//
+//==========================================================================
+
+VStringToBool::VStringToBool(VExpression* AOp)
+: VExpression(AOp->Loc)
+, op(AOp)
+{
+	Type = TYPE_Int;
+}
+
+//==========================================================================
+//
+//	VStringToBool::~VStringToBool
+//
+//==========================================================================
+
+VStringToBool::~VStringToBool()
+{
+	if (op)
+		delete op;
+}
+
+//==========================================================================
+//
+//	VStringToBool::DoResolve
+//
+//==========================================================================
+
+VExpression* VStringToBool::DoResolve(VEmitContext&)
+{
+	return this;
+}
+
+//==========================================================================
+//
+//	VStringToBool::Emit
+//
+//==========================================================================
+
+void VStringToBool::Emit(VEmitContext& ec)
+{
+	op->Emit(ec);
+	ec.AddStatement(OPC_StrToBool);
+}
+
+//==========================================================================
+//
+//	VPointerToBool::VPointerToBool
+//
+//==========================================================================
+
+VPointerToBool::VPointerToBool(VExpression* AOp)
+: VExpression(AOp->Loc)
+, op(AOp)
+{
+	Type = TYPE_Int;
+}
+
+//==========================================================================
+//
+//	VPointerToBool::~VPointerToBool
+//
+//==========================================================================
+
+VPointerToBool::~VPointerToBool()
+{
+	if (op)
+		delete op;
+}
+
+//==========================================================================
+//
+//	VPointerToBool::DoResolve
+//
+//==========================================================================
+
+VExpression* VPointerToBool::DoResolve(VEmitContext&)
+{
+	return this;
+}
+
+//==========================================================================
+//
+//	VPointerToBool::Emit
+//
+//==========================================================================
+
+void VPointerToBool::Emit(VEmitContext& ec)
+{
+	op->Emit(ec);
+	ec.AddStatement(OPC_PtrToBool);
+}
+
+//==========================================================================
+//
+//	VDynamicCast::VDynamicCast
+//
+//==========================================================================
+
+VDynamicCast::VDynamicCast(VClass* AClass, VExpression* AOp, const TLocation& ALoc)
+: VExpression(ALoc)
+, Class(AClass)
+, op(AOp)
 {
 }
 
 //==========================================================================
 //
-//	VExpression::~VExpression
+//	VDynamicCast::~VDynamicCast
 //
 //==========================================================================
 
-VExpression::~VExpression()
+VDynamicCast::~VDynamicCast()
 {
+	if (op)
+		delete op;
 }
 
 //==========================================================================
 //
-//	VExpression::Resolve
+//	VDynamicCast::DoResolve
 //
 //==========================================================================
 
-VExpression* VExpression::Resolve(VEmitContext& ec)
+VExpression* VDynamicCast::DoResolve(VEmitContext& ec)
 {
-	VExpression* e = DoResolve(ec);
-	return e;
-}
-
-//==========================================================================
-//
-//	VExpression::ResolveBoolean
-//
-//==========================================================================
-
-VExpression* VExpression::ResolveBoolean(VEmitContext& ec)
-{
-	VExpression* e = Resolve(ec);
-	if (!e)
+	if (op)
+		op = op->Resolve(ec);
+	if (!op)
 	{
+		delete this;
 		return NULL;
 	}
 
-	switch (e->Type.Type)
+	if (op->Type.Type != TYPE_Reference)
 	{
-	case TYPE_Int:
-	case TYPE_Byte:
-	case TYPE_Bool:
-	case TYPE_Float:
-	case TYPE_Name:
-		break;
-
-	case TYPE_Pointer:
-	case TYPE_Reference:
-	case TYPE_Class:
-	case TYPE_State:
-		e = new VPointerToBool(e);
-		break;
-
-	case TYPE_String:
-		e = new VStringToBool(e);
-		break;
-
-	case TYPE_Delegate:
-		e = new VDelegateToBool(e);
-		break;
-
-	default:
-		ParseError(Loc, "Expression type mistmatch, boolean expression expected");
-		delete e;
+		ParseError(Loc, "Bad expression, class reference required");
+		delete this;
 		return NULL;
 	}
-	return e;
+	Type = VFieldType(Class);
+	return this;
 }
 
 //==========================================================================
 //
-//	VExpression::ResolveAsType
+//	VDynamicCast::Emit
 //
 //==========================================================================
 
-VTypeExpr* VExpression::ResolveAsType(VEmitContext&)
+void VDynamicCast::Emit(VEmitContext& ec)
 {
-	ParseError(Loc, "Invalid type expression");
-	delete this;
-	return NULL;
+	op->Emit(ec);
+	ec.AddStatement(OPC_DynamicCast, Class);
 }
 
 //==========================================================================
 //
-//	VExpression::ResolveAssignmentTarget
+//	VDynamicClassCast::VDynamicClassCast
 //
 //==========================================================================
 
-VExpression* VExpression::ResolveAssignmentTarget(VEmitContext& ec)
+VDynamicClassCast::VDynamicClassCast(VName AClassName, VExpression* AOp,
+	const TLocation& ALoc)
+: VExpression(ALoc)
+, ClassName(AClassName)
+, op(AOp)
 {
-	return Resolve(ec);
 }
 
 //==========================================================================
 //
-//	VExpression::ResolveIterator
+//	VDynamicClassCast::~VDynamicClassCast
 //
 //==========================================================================
 
-VExpression* VExpression::ResolveIterator(VEmitContext&)
+VDynamicClassCast::~VDynamicClassCast()
 {
-	ParseError(Loc, "Iterator method expected");
-	delete this;
-	return NULL;
+	if (op)
+		delete op;
 }
 
 //==========================================================================
 //
-//	VExpression::RequestAddressOf
+//	VDynamicClassCast::DoResolve
 //
 //==========================================================================
 
-void VExpression::RequestAddressOf()
+VExpression* VDynamicClassCast::DoResolve(VEmitContext& ec)
 {
-	ParseError(Loc, "Bad address operation");
-}
-
-//==========================================================================
-//
-//	VExpression::EmitBranchable
-//
-//==========================================================================
-
-void VExpression::EmitBranchable(VEmitContext& ec, VLabel Lbl, bool OnTrue)
-{
-	Emit(ec);
-	if (OnTrue)
+	if (op)
+		op = op->Resolve(ec);
+	if (!op)
 	{
-		ec.AddStatement(OPC_IfGoto, Lbl);
+		delete this;
+		return NULL;
 	}
-	else
+
+	if (op->Type.Type != TYPE_Class)
 	{
-		ec.AddStatement(OPC_IfNotGoto, Lbl);
+		ParseError(Loc, "Bad expression, class type required");
+		delete this;
+		return NULL;
 	}
-}
 
-//==========================================================================
-//
-//	VExpression::EmitPushPointedCode
-//
-//==========================================================================
-
-void VExpression::EmitPushPointedCode(VFieldType type, VEmitContext& ec)
-{
-	switch (type.Type)
-	{
-	case TYPE_Int:
-	case TYPE_Float:
-	case TYPE_Name:
-		ec.AddStatement(OPC_PushPointed);
-		break;
-
-	case TYPE_Byte:
-		ec.AddStatement(OPC_PushPointedByte);
-		break;
-
-	case TYPE_Bool:
-		if (type.BitMask & 0x000000ff)
-			ec.AddStatement(OPC_PushBool0, (int)(type.BitMask));
-		else if (type.BitMask & 0x0000ff00)
-			ec.AddStatement(OPC_PushBool1, (int)(type.BitMask >> 8));
-		else if (type.BitMask & 0x00ff0000)
-			ec.AddStatement(OPC_PushBool2, (int)(type.BitMask >> 16));
-		else
-			ec.AddStatement(OPC_PushBool3, (int)(type.BitMask >> 24));
-		break;
-
-	case TYPE_Pointer:
-	case TYPE_Reference:
-	case TYPE_Class:
-	case TYPE_State:
-		ec.AddStatement(OPC_PushPointedPtr);
-		break;
-
-	case TYPE_Vector:
-		ec.AddStatement(OPC_VPushPointed);
-		break;
-
-	case TYPE_String:
-		ec.AddStatement(OPC_PushPointedStr);
-		break;
-
-	case TYPE_Delegate:
-		ec.AddStatement(OPC_PushPointedDelegate);
-		break;
-
-	default:
-		ParseError(Loc, "Bad push pointed");
-	}
-}
-
-//==========================================================================
-//
-//	VExpression::IsValidTypeExpression
-//
-//==========================================================================
-
-bool VExpression::IsValidTypeExpression()
-{
-	return false;
-}
-
-//==========================================================================
-//
-//	VExpression::IsIntConst
-//
-//==========================================================================
-
-bool VExpression::IsIntConst() const
-{
-	return false;
-}
-
-//==========================================================================
-//
-//	VExpression::IsFloatConst
-//
-//==========================================================================
-
-bool VExpression::IsFloatConst() const
-{
-	return false;
-}
-
-//==========================================================================
-//
-//	VExpression::GetIntConst
-//
-//==========================================================================
-
-vint32 VExpression::GetIntConst() const
-{
-	ParseError(Loc, "Integer constant expected");
-	return 0;
-}
-
-//==========================================================================
-//
-//	VExpression::GetFloatConst
-//
-//==========================================================================
-
-float VExpression::GetFloatConst() const
-{
-	ParseError(Loc, "Float constant expected");
-	return 0.0;
-}
-
-//==========================================================================
-//
-//	VExpression::IsDefaultObject
-//
-//==========================================================================
-
-bool VExpression::IsDefaultObject() const
-{
-	return false;
-}
-
-//==========================================================================
-//
-//	VExpression::IsPropertyAssign
-//
-//==========================================================================
-
-bool VExpression::IsPropertyAssign() const
-{
-	return false;
-}
-
-//==========================================================================
-//
-//	VExpression::IsDynArraySetNum
-//
-//==========================================================================
-
-bool VExpression::IsDynArraySetNum() const
-{
-	return false;
-}
-
-//==========================================================================
-//
-//	VExpression::CreateTypeExprCopy
-//
-//==========================================================================
-
-VExpression* VExpression::CreateTypeExprCopy()
-{
-	ParseError(Loc, "Not a type");
+	Type = TYPE_Class;
 #ifdef IN_VCC
-	return new VTypeExpr(TYPE_Unknown, Loc);
+	Type.Class = VMemberBase::CheckForClass(ClassName);
+#else
+	Type.Class = VClass::FindClass(*ClassName);
 #endif
+	if (!Type.Class)
+	{
+		ParseError(Loc, "No such class %s", *ClassName);
+		delete this;
+		return NULL;
+	}
+	return this;
 }
 
 //==========================================================================
 //
-//	VExpression::AddDropResult
+//	VDynamicClassCast::Emit
 //
 //==========================================================================
 
-bool VExpression::AddDropResult()
+void VDynamicClassCast::Emit(VEmitContext& ec)
 {
-	return false;
+	op->Emit(ec);
+	ec.AddStatement(OPC_DynamicClassCast, Type.Class);
 }

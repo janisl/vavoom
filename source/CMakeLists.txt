@@ -227,6 +227,12 @@ set(MAIN_COMMON_SOURCES
 	vc_emit_context.h
 	vc_expr_base.cpp
 	vc_expr_base.h
+	vc_expr_cast.cpp
+	vc_expr_cast.h
+	vc_expr_literal.cpp
+	vc_expr_literal.h
+	vc_expr_unary_binary.cpp
+	vc_expr_unary_binary.h
 	vc_field.cpp
 	vc_location.cpp
 	vc_location.h
@@ -462,6 +468,9 @@ set(SERVER_COMMON_SOURCES
 	vc_constant.cpp
 	vc_emit_context.cpp
 	vc_expr_base.cpp
+	vc_expr_cast.cpp
+	vc_expr_literal.cpp
+	vc_expr_unary_binary.cpp
 	vc_field.cpp
 	vc_location.cpp
 	vc_location.h
