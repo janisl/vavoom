@@ -250,6 +250,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\vc_expr_type.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\source\vc_expr_unary_binary.cpp"
 				>
 			</File>
@@ -348,6 +352,10 @@
 			</File>
 			<File
 				RelativePath="..\source\vc_expr_literal.h"
+				>
+			</File>
+			<File
+				RelativePath="..\source\vc_expr_type.h"
 				>
 			</File>
 			<File

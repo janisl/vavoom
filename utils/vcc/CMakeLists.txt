@@ -26,6 +26,8 @@ add_executable(vcc
 	../../source/vc_expr_cast.h
 	../../source/vc_expr_literal.cpp
 	../../source/vc_expr_literal.h
+	../../source/vc_expr_type.cpp
+	../../source/vc_expr_type.h
 	../../source/vc_expr_unary_binary.cpp
 	../../source/vc_expr_unary_binary.h
 	../../source/vc_field.cpp
