@@ -115,7 +115,7 @@ void SV_Init()
 
 	svs.max_clients = 1;
 
-	VMemberBase::StaticLoadPackage(NAME_svprogs);
+	VMemberBase::StaticLoadPackage(NAME_svprogs, TLocation());
 
 	ProcessDecorateScripts();
 
@@ -1031,7 +1031,7 @@ void SV_SpawnServer(const char *mapname, bool spawn_thinkers, bool titlemap)
 		GLevelInfo->eventSpawnSpecials();
 	}
 
-	VMemberBase::SetUpNetClasses();
+	VMemberBase::StaticSetUpNetClasses();
 
 	if (!spawn_thinkers)
 	{

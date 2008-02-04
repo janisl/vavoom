@@ -311,7 +311,7 @@ void VPackage::Emit()
 
 	for (int i = 0; i < PackagesToLoad.Num(); i++)
 	{
-		PackagesToLoad[i].Pkg = LoadPackage(PackagesToLoad[i].Name,
+		PackagesToLoad[i].Pkg = StaticLoadPackage(PackagesToLoad[i].Name,
 			PackagesToLoad[i].Loc);
 	}
 

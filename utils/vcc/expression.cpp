@@ -468,7 +468,7 @@ VExpression* VSingleName::IntResolve(VEmitContext& ec, bool AssignTarget)
 		return e->Resolve(ec);
 	}
 
-	VClass* Class = VMemberBase::CheckForClass(Name);
+	VClass* Class = VMemberBase::StaticFindClass(Name);
 	if (Class)
 	{
 		VExpression* e = new VClassConstant(Class, Loc);
@@ -520,7 +520,7 @@ VExpression* VSingleName::ResolveAssignmentTarget(VEmitContext& ec)
 
 VTypeExpr* VSingleName::ResolveAsType(VEmitContext& ec)
 {
-	Type = VMemberBase::CheckForType(ec.SelfClass, Name);
+	Type = VMemberBase::StaticFindType(ec.SelfClass, Name);
 	if (Type.Type == TYPE_Unknown)
 	{
 		ParseError(Loc, "Invalid identifier, bad type name %s", *Name);
@@ -591,7 +591,7 @@ VDoubleName::VDoubleName(VName AName1, VName AName2, const TLocation& ALoc)
 
 VExpression* VDoubleName::DoResolve(VEmitContext& ec)
 {
-	VClass* Class = VMemberBase::CheckForClass(Name1);
+	VClass* Class = VMemberBase::StaticFindClass(Name1);
 	if (!Class)
 	{
 		ParseError(Loc, "No such class %s", *Name1);
@@ -620,7 +620,7 @@ VExpression* VDoubleName::DoResolve(VEmitContext& ec)
 
 VTypeExpr* VDoubleName::ResolveAsType(VEmitContext&)
 {
-	VClass* Class = VMemberBase::CheckForClass(Name1);
+	VClass* Class = VMemberBase::StaticFindClass(Name1);
 	if (!Class)
 	{
 		ParseError(Loc, "No such class %s", *Name1);
@@ -628,7 +628,7 @@ VTypeExpr* VDoubleName::ResolveAsType(VEmitContext&)
 		return NULL;
 	}
 
-	Type = VMemberBase::CheckForType(Class, Name2);
+	Type = VMemberBase::StaticFindType(Class, Name2);
 	if (Type.Type == TYPE_Unknown)
 	{
 		ParseError(Loc, "Invalid identifier, bad type name %s::%s", *Name1, *Name2);
@@ -1319,7 +1319,7 @@ VCastOrInvocation::~VCastOrInvocation()
 
 VExpression* VCastOrInvocation::DoResolve(VEmitContext& ec)
 {
-	VClass* Class = VMemberBase::CheckForClass(Name);
+	VClass* Class = VMemberBase::StaticFindClass(Name);
 	if (Class)
 	{
 		if (NumArgs != 1 || !Args[0])

@@ -88,7 +88,7 @@ static int					CurrentCDTrack;
 void CL_Init()
 {
 	guard(CL_Init);
-	VMemberBase::StaticLoadPackage(NAME_clprogs);
+	VMemberBase::StaticLoadPackage(NAME_clprogs, TLocation());
 
 	ClientNetContext = new VClientNetContext();
 	GClGame = (VClientGameBase*)VObject::StaticSpawnObject(
@@ -373,7 +373,7 @@ void CL_EstablishConnection(const char* host)
 		SV_ConnectClient(Player);
 		svs.num_connected++;
 
-		VMemberBase::SetUpNetClasses();
+		VMemberBase::StaticSetUpNetClasses();
 
 		cl = Player;
 		cl->ClGame = GClGame;

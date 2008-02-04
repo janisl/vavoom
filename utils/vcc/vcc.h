@@ -52,6 +52,7 @@ void Free(void* ptr);
 #include "../../source/progdefs.h"
 #include "../../source/vc_location.h"
 #include "../../source/vc_type.h"
+#include "../../source/vc_member.h"
 #include "../../source/vc_emit_context.h"
 #include "../../source/vc_expr_base.h"
 #include "../../source/vc_expr_literal.h"
@@ -66,9 +67,6 @@ void Free(void* ptr);
 #define MAX_FILE_NAME_LENGTH	512
 #define MAX_QUOTED_LENGTH		256
 #define MAX_IDENTIFIER_LENGTH	64
-
-#define ANY_PACKAGE				((VPackage*)-1)
-#define ANY_MEMBER				255
 
 #define TEXT_COLOUR_ESCAPE		'\034'
 
@@ -149,41 +147,6 @@ class VPackage;
 
 #include "expression.h"
 #include "../../source/vc_statement.h"
-
-//
-// The base class of all objects.
-//
-class VMemberBase
-{
-public:
-	vuint8			MemberType;
-	vint32			MemberIndex;
-	VName			Name;
-	VMemberBase*	Outer;
-	TLocation		Loc;
-	VMemberBase*	HashNext;
-
-	static TArray<VMemberBase*>		GMembers;
-	static VMemberBase*				GMembersHash[4096];
-
-	static TArray<const char*>		PackagePath;
-	static TArray<VPackage*>		LoadedPackages;
-
-	VMemberBase(vuint8, VName, VMemberBase*, TLocation);
-	virtual ~VMemberBase();
-
-	bool IsIn(VMemberBase*) const;
-
-	virtual void Serialise(VStream&);
-
-	static void AddPackagePath(const char*);
-	static VPackage* LoadPackage(VName, TLocation);
-	static VMemberBase* StaticFindMember(VName, VMemberBase*, vuint8);
-
-	//FIXME This looks ugly.
-	static VFieldType CheckForType(VClass*, VName);
-	static VClass* CheckForClass(VName);
-};
 
 class VField : public VMemberBase
 {

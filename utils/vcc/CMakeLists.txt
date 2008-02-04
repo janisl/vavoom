@@ -32,6 +32,7 @@ add_executable(vcc
 	../../source/vc_location.cpp
 	../../source/vc_location.h
 	../../source/vc_member.cpp
+	../../source/vc_member.h
 	../../source/vc_method.cpp
 	../../source/vc_package.cpp
 	../../source/vc_property.cpp

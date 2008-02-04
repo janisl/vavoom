@@ -1884,7 +1884,7 @@ void VParser::ParseClass()
 	{
 		ParseError(Lex.Location, "Class name expected");
 	}
-	else if (VMemberBase::CheckForClass(Lex.Name))
+	else if (VMemberBase::StaticFindClass(Lex.Name))
 	{
 		ParseError(Lex.Location, "Class %s already has been declared",
 			*Lex.Name);

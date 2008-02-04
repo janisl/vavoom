@@ -66,6 +66,7 @@
 #include "progs.h"		//	Progs
 #include "vc_location.h"
 #include "vc_type.h"
+#include "vc_member.h"
 #include "vclass.h"
 #include "vobject.h"
 #include "input.h"		//	Input from keyboard, mouse and joystick

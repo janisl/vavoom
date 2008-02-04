@@ -67,18 +67,6 @@ enum
 
 enum
 {
-	MEMBER_Package,
-	MEMBER_Field,
-	MEMBER_Property,
-	MEMBER_Method,
-	MEMBER_State,
-	MEMBER_Const,
-	MEMBER_Struct,
-	MEMBER_Class,
-};
-
-enum
-{
 	OPCARGS_None,
 	OPCARGS_Member,
 	OPCARGS_BranchTargetB,
@@ -430,9 +418,7 @@ struct VProgsImport
 	, OuterIndex(0)
 	, Obj(0)
 	{}
-#ifdef IN_VCC
 	VProgsImport(VMemberBase* InObj, vint32 InOuterIndex);
-#endif
 
 	friend VStream& operator<<(VStream& Strm, VProgsImport& I)
 	{
@@ -458,9 +444,7 @@ struct VProgsExport
 	, Name(NAME_None)
 	, Obj(0)
 	{}
-#ifdef IN_VCC
 	VProgsExport(VMemberBase* InObj);
-#endif
 
 	friend VStream& operator<<(VStream& Strm, VProgsExport& E)
 	{

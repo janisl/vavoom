@@ -497,7 +497,7 @@ bool VClass::Define()
 
 	if (ParentClassName != NAME_None)
 	{
-		ParentClass = CheckForClass(ParentClassName);
+		ParentClass = StaticFindClass(ParentClassName);
 		if (!ParentClass)
 		{
 			ParseError(ParentClassLoc, "No such class %s", *ParentClassName);
@@ -795,7 +795,7 @@ VState* VClass::ResolveStateLabel(TLocation Loc, VName LabelName, int Offset)
 		}
 		else
 		{
-			CheckClass = CheckForClass(ClassName);
+			CheckClass = StaticFindClass(ClassName);
 			if (!CheckClass)
 			{
 				ParseError(Loc, "No such class %s", *ClassName);

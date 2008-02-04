@@ -371,6 +371,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\vc_member.h"
+				>
+			</File>
+			<File
 				RelativePath="..\source\vc_statement.h"
 				>
 			</File>

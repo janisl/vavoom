@@ -179,7 +179,7 @@ bool VStruct::Define()
 {
 	if (ParentStructName != NAME_None)
 	{
-		VFieldType type = CheckForType(Outer->MemberType == MEMBER_Class ?
+		VFieldType type = StaticFindType(Outer->MemberType == MEMBER_Class ?
 			(VClass*)Outer : NULL, ParentStructName);
 		if (type.Type != TYPE_Struct)
 		{

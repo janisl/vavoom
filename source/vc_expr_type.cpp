@@ -103,11 +103,7 @@ VTypeExpr* VTypeExpr::ResolveAsType(VEmitContext&)
 
 	if (Type.Type == TYPE_Class && MetaClassName != NAME_None)
 	{
-#ifdef IN_VCC
-		Type.Class = VMemberBase::CheckForClass(MetaClassName);
-#else
-		Type.Class = VClass::FindClass(*MetaClassName);
-#endif
+		Type.Class = VMemberBase::StaticFindClass(MetaClassName);
 		if (!Type.Class)
 		{
 			ParseError(Loc, "No such class %s", *MetaClassName);

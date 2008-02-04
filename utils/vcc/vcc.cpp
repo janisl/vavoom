@@ -84,6 +84,7 @@ int main(int argc, char **argv)
 
 	// set the byte swapping variables in a portable manner
 	GBigEndian = *(short*)swaptest != 1;
+	VMemberBase::StaticInit();
 
 	signal(SIGSEGV, SignalHandler);
 
@@ -109,6 +110,7 @@ int main(int argc, char **argv)
 		(endtime - compiletime) / 60, (endtime - compiletime) % 60);
 	dprintf("Time elapsed: %02d:%02d\n",
 		(endtime - starttime) / 60, (endtime - starttime) % 60);
+	VMemberBase::StaticExit();
 	return 0;
 }
 
@@ -213,7 +215,7 @@ static void ProcessArgs(int ArgCount, char **ArgVector)
 				Lex.AddDefine(text);
 				break;
 			case 'P':
-				VMemberBase::AddPackagePath(text);
+				VMemberBase::StaticAddPackagePath(text);
 				break;
 			default:
 				DisplayUsage();

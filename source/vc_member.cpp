@@ -28,8 +28,7 @@
 #ifdef IN_VCC
 #include "../utils/vcc/vcc.h"
 #else
-#include "gamedefs.h"
-#include "progdefs.h"
+#include "vc_local.h"
 #endif
 
 // MACROS ------------------------------------------------------------------
@@ -143,7 +142,7 @@ public:
 		if (!I.Obj)
 		{
 			if (I.Type == MEMBER_Package)
-				I.Obj = VMemberBase::LoadPackage(I.Name, TLocation());
+				I.Obj = VMemberBase::StaticLoadPackage(I.Name, TLocation());
 			else
 				I.Obj = VMemberBase::StaticFindMember(I.Name,
 					GetImport(-I.OuterIndex - 1), I.Type);
@@ -247,7 +246,7 @@ public:
 		if (!I.Obj)
 		{
 			if (I.Type == MEMBER_Package)
-				I.Obj = VMemberBase::StaticLoadPackage(I.Name);
+				I.Obj = VMemberBase::StaticLoadPackage(I.Name, TLocation());
 			else
 				I.Obj = VMemberBase::StaticFindMember(I.Name,
 					GetImport(-I.OuterIndex - 1), I.Type);
@@ -272,25 +271,19 @@ public:
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-#ifdef IN_VCC
+bool					VMemberBase::GObjInitialised;
 TArray<VMemberBase*>	VMemberBase::GMembers;
 VMemberBase*			VMemberBase::GMembersHash[4096];
 
-TArray<const char*>		VMemberBase::PackagePath;
-TArray<VPackage*>		VMemberBase::LoadedPackages;
-#else
-bool					VMemberBase::GObjInitialised;
-VClass*					VMemberBase::GClasses;
-TArray<VMemberBase*>	VMemberBase::GMembers;
+TArray<VStr>			VMemberBase::GPackagePath;
 TArray<VPackage*>		VMemberBase::GLoadedPackages;
+
+VClass*					VMemberBase::GClasses;
 TArray<VClass*>			VMemberBase::GNetClassLookup;
-#endif
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 // CODE --------------------------------------------------------------------
-
-#ifdef IN_VCC
 
 //==========================================================================
 //
@@ -319,7 +312,7 @@ VProgsExport::VProgsExport(VMemberBase* InObj)
 {
 }
 
-#else
+#ifndef IN_VCC
 
 //==========================================================================
 //
@@ -349,17 +342,13 @@ VMemberBase::VMemberBase(vuint8 AMemberType, VName AName, VMemberBase* AOuter,
 , Outer(AOuter)
 , Loc(ALoc)
 {
-#ifndef IN_VCC
 	if (GObjInitialised)
 	{
-		GMembers.Append(this);
+		MemberIndex = GMembers.Append(this);
+		int HashIndex = Name.GetIndex() & 4095;
+		HashNext = GMembersHash[HashIndex];
+		GMembersHash[HashIndex] = this;
 	}
-#else
-	MemberIndex = GMembers.Append(this);
-	int HashIndex = Name.GetIndex() & 4095;
-	HashNext = GMembersHash[HashIndex];
-	GMembersHash[HashIndex] = this;
-#endif
 }
 
 //==========================================================================
@@ -374,258 +363,17 @@ VMemberBase::~VMemberBase()
 
 //==========================================================================
 //
-//	VMemberBase::Serialise
-//
-//==========================================================================
-
-void VMemberBase::Serialise(VStream& Strm)
-{
-	Strm << Outer;
-}
-
-#ifdef IN_VCC
-
-//==========================================================================
-//
-//	VMemberBase::IsIn
-//
-//==========================================================================
-
-bool VMemberBase::IsIn(VMemberBase* SomeOuter) const
-{
-	for (VMemberBase* Tst = Outer; Tst; Tst = Tst->Outer)
-		if (Tst == SomeOuter)
-			return true;
-	return !SomeOuter;
-}
-
-//==========================================================================
-//
-//	VMemberBase::AddPackagePath
-//
-//==========================================================================
-
-void VMemberBase::AddPackagePath(const char* Path)
-{
-	PackagePath.Append(Path);
-}
-
-//==========================================================================
-//
-//	VMemberBase::LoadPackage
-//
-//==========================================================================
-
-VPackage* VMemberBase::LoadPackage(VName InName, TLocation l)
-{
-	int				i;
-	VName*			NameRemap;
-	dprograms_t		Progs;
-	VProgsReader*	Reader;
-
-	//	Check if already loaded.
-	for (i = 0; i < LoadedPackages.Num(); i++)
-		if (LoadedPackages[i]->Name == InName)
-			return LoadedPackages[i];
-
-	dprintf("Loading package %s\n", *InName);
-
-	//	Load PROGS from a specified file
-	FILE* f = fopen(va("%s.dat", *InName), "rb");
-	if (!f)
-	{
-		for (i = 0; i < PackagePath.Num(); i++)
-		{
-			f = fopen(va("%s/%s.dat", PackagePath[i], *InName), "rb");
-			if (f)
-				break;
-		}
-	}
-	if (!f)
-	{
-		ParseError(l, "Can't find package %s", *InName);
-		return NULL;
-	}
-	Reader = new VProgsReader(f);
-
-	// byte swap the header
-	Reader->Seek(0);
-	Reader->Serialise(Progs.magic, 4);
-	for (i = 1; i < (int)sizeof(Progs) / 4; i++)
-	{
-		*Reader << ((int*)&Progs)[i];
-	}
-
-	if (VStr::NCmp(Progs.magic, PROG_MAGIC, 4))
-	{
-		ParseError(l, "Package %s has wrong file ID", *InName);
-		BailOut();
-	}
-	if (Progs.version != PROG_VERSION)
-	{
-		ParseError(l, "Package %s has wrong version number (%i should be %i)",
-			*InName, Progs.version, PROG_VERSION);
-		BailOut();
-	}
-
-	// Read names
-	NameRemap = new VName[Progs.num_names];
-	Reader->Seek(Progs.ofs_names);
-	for (i = 0; i < Progs.num_names; i++)
-	{
-		VNameEntry E;
-		*Reader << E;
-		NameRemap[i] = E.Name;
-	}
-	Reader->NameRemap = NameRemap;
-
-	Reader->Imports = new VProgsImport[Progs.num_imports];
-	Reader->NumImports = Progs.num_imports;
-	Reader->Seek(Progs.ofs_imports);
-	for (i = 0; i < Progs.num_imports; i++)
-	{
-		*Reader << Reader->Imports[i];
-	}
-	Reader->ResolveImports();
-
-	VProgsExport* Exports = new VProgsExport[Progs.num_exports];
-	Reader->Exports = Exports;
-	Reader->NumExports = Progs.num_exports;
-
-	VPackage* Pkg = new VPackage(InName);
-	LoadedPackages.Append(Pkg);
-
-	//	Create objects
-	Reader->Seek(Progs.ofs_exportinfo);
-	for (i = 0; i < Progs.num_exports; i++)
-	{
-		*Reader << Exports[i];
-		switch (Exports[i].Type)
-		{
-		case MEMBER_Package:
-			Exports[i].Obj = new VPackage(Exports[i].Name);
-			break;
-		case MEMBER_Field:
-			Exports[i].Obj = new VField(Exports[i].Name, NULL, TLocation());
-			break;
-		case MEMBER_Property:
-			Exports[i].Obj = new VProperty(Exports[i].Name, NULL, TLocation());
-			break;
-		case MEMBER_Method:
-			Exports[i].Obj = new VMethod(Exports[i].Name, NULL, TLocation());
-			break;
-		case MEMBER_State:
-			Exports[i].Obj = new VState(Exports[i].Name, NULL, TLocation());
-			break;
-		case MEMBER_Const:
-			Exports[i].Obj = new VConstant(Exports[i].Name, NULL, TLocation());
-			break;
-		case MEMBER_Struct:
-			Exports[i].Obj = new VStruct(Exports[i].Name, NULL, TLocation());
-			break;
-		case MEMBER_Class:
-			Exports[i].Obj = new VClass(Exports[i].Name, NULL, TLocation());
-			break;
-		}
-	}
-
-	//	Serialise objects.
-	Reader->Seek(Progs.ofs_exportdata);
-	for (i = 0; i < Progs.num_exports; i++)
-	{
-		Exports[i].Obj->Serialise(*Reader);
-		if (!Exports[i].Obj->Outer)
-			Exports[i].Obj->Outer = Pkg;
-	}
-
-	delete[] NameRemap;
-	delete[] Exports;
-	delete Reader;
-	return Pkg;
-}
-
-//==========================================================================
-//
-//	VMemberBase::StaticFindMember
-//
-//==========================================================================
-
-VMemberBase* VMemberBase::StaticFindMember(VName InName,
-	VMemberBase* InOuter, vuint8 InType)
-{
-	int HashIndex = InName.GetIndex() & 4095;
-	for (VMemberBase* m = GMembersHash[HashIndex]; m; m = m->HashNext)
-	{
-		if (m->Name == InName && (m->Outer == InOuter ||
-			(InOuter == ANY_PACKAGE && m->Outer->MemberType == MEMBER_Package)) &&
-			(InType == ANY_MEMBER || m->MemberType == InType))
-		{
-			return m;
-		}
-	}
-	return NULL;
-}
-
-//==========================================================================
-//
-//	VMemberBase::CheckForType
-//
-//==========================================================================
-
-VFieldType VMemberBase::CheckForType(VClass* InClass, VName Name)
-{
-	if (Name == NAME_None)
-	{
-		return VFieldType(TYPE_Unknown);
-	}
-
-	VMemberBase* m = StaticFindMember(Name, ANY_PACKAGE, MEMBER_Class);
-	if (m)
-	{
-		return VFieldType((VClass*)m);
-	}
-	m = StaticFindMember(Name, InClass ? (VMemberBase*)InClass :
-		(VMemberBase*)ANY_PACKAGE, MEMBER_Struct);
-	if (m)
-	{
-		return VFieldType((VStruct*)m);
-	}
-	if (InClass)
-	{
-		return CheckForType(InClass->ParentClass, Name);
-	}
-	return VFieldType(TYPE_Unknown);
-}
-
-//==========================================================================
-//
-//	VMemberBase::CheckForClass
-//
-//==========================================================================
-
-VClass* VMemberBase::CheckForClass(VName Name)
-{
-	VMemberBase* m = StaticFindMember(Name, ANY_PACKAGE, MEMBER_Class);
-	if (m)
-	{
-		return (VClass*)m;
-	}
-	return NULL;
-}
-
-#else
-
-//==========================================================================
-//
 //	VMemberBase::GetFullName
 //
 //==========================================================================
 
 VStr VMemberBase::GetFullName() const
 {
+	guardSlow(VMemberBase::GetFullName);
 	if (Outer)
 		return Outer->GetFullName() + "." + Name;
 	return VStr(Name);
+	unguardSlow;
 }
 
 //==========================================================================
@@ -643,6 +391,33 @@ VPackage* VMemberBase::GetPackage() const
 	Sys_Error("Member object %s not in a package", *GetFullName());
 	return NULL;
 	unguard;
+}
+
+//==========================================================================
+//
+//	VMemberBase::IsIn
+//
+//==========================================================================
+
+bool VMemberBase::IsIn(VMemberBase* SomeOuter) const
+{
+	guardSlow(VMemberBase::IsIn);
+	for (VMemberBase* Tst = Outer; Tst; Tst = Tst->Outer)
+		if (Tst == SomeOuter)
+			return true;
+	return !SomeOuter;
+	unguardSlow;
+}
+
+//==========================================================================
+//
+//	VMemberBase::Serialise
+//
+//==========================================================================
+
+void VMemberBase::Serialise(VStream& Strm)
+{
+	Strm << Outer;
 }
 
 //==========================================================================
@@ -674,8 +449,15 @@ void VMemberBase::Shutdown()
 void VMemberBase::StaticInit()
 {
 	guard(VMemberBase::StaticInit);
+#ifndef IN_VCC
 	for (VClass* C = GClasses; C; C = C->LinkNext)
-		GMembers.Append(C);
+	{
+		C->MemberIndex = GMembers.Append(C);
+		int HashIndex = C->Name.GetIndex() & 4095;
+		C->HashNext = GMembersHash[HashIndex];
+		GMembersHash[HashIndex] = C;
+	}
+#endif
 	GObjInitialised = true;
 	unguard;
 }
@@ -690,23 +472,40 @@ void VMemberBase::StaticExit()
 {
 	for (int i = 0; i < GMembers.Num(); i++)
 	{
+#ifndef IN_VCC
 		if (GMembers[i]->MemberType != MEMBER_Class ||
 			!(((VClass*)GMembers[i])->ObjectFlags & CLASSOF_Native))
+#endif
 		{
 			delete GMembers[i];
 		}
+#ifndef IN_VCC
 		else
 		{
 			GMembers[i]->Shutdown();
 		}
+#endif
 	}
 	GMembers.Clear();
 	GLoadedPackages.Clear();
 	GNetClassLookup.Clear();
+#ifndef IN_VCC
 	VClass::GMobjInfos.Clear();
 	VClass::GScriptIds.Clear();
 	VClass::GSpriteNames.Clear();
+#endif
 	GObjInitialised = false;
+}
+
+//==========================================================================
+//
+//	VMemberBase::StaticAddPackagePath
+//
+//==========================================================================
+
+void VMemberBase::StaticAddPackagePath(const char* Path)
+{
+	GPackagePath.Append(Path);
 }
 
 //==========================================================================
@@ -715,29 +514,56 @@ void VMemberBase::StaticExit()
 //
 //==========================================================================
 
-VPackage* VMemberBase::StaticLoadPackage(VName InName)
+VPackage* VMemberBase::StaticLoadPackage(VName AName, TLocation l)
 {
 	guard(VMemberBase::StaticLoadPackage);
 	int				i;
 	VName*			NameRemap;
 	dprograms_t		Progs;
+#ifndef IN_VCC
 	TCRC			crc;
+#endif
 	VProgsReader*	Reader;
 
 	//	Check if already loaded.
 	for (i = 0; i < GLoadedPackages.Num(); i++)
-		if (GLoadedPackages[i]->Name == InName)
+	{
+		if (GLoadedPackages[i]->Name == AName)
+		{
 			return GLoadedPackages[i];
+		}
+	}
 
-	if (fl_devmode && FL_FileExists(va("progs/%s.dat", *InName)))
+#ifdef IN_VCC
+	dprintf("Loading package %s\n", *AName);
+
+	//	Load PROGS from a specified file
+	FILE* f = fopen(va("%s.dat", *AName), "rb");
+	if (!f)
+	{
+		for (i = 0; i < GPackagePath.Num(); i++)
+		{
+			f = fopen(*(GPackagePath[i] + "/" + AName + ".dat"), "rb");
+			if (f)
+				break;
+		}
+	}
+	if (!f)
+	{
+		ParseError(l, "Can't find package %s", *AName);
+		return NULL;
+	}
+	Reader = new VProgsReader(f);
+#else
+	if (fl_devmode && FL_FileExists(va("progs/%s.dat", *AName)))
 	{
 		//	Load PROGS from a specified file
-		Reader = new VProgsReader(FL_OpenFileRead(va("progs/%s.dat", *InName)));
+		Reader = new VProgsReader(FL_OpenFileRead(va("progs/%s.dat", *AName)));
 	}
 	else
 	{
 		//	Load PROGS from wad file
-		Reader = new VProgsReader(W_CreateLumpReaderName(InName, WADNS_Progs));
+		Reader = new VProgsReader(W_CreateLumpReaderName(AName, WADNS_Progs));
 	}
 
 	//	Calcutate CRC
@@ -746,6 +572,7 @@ VPackage* VMemberBase::StaticLoadPackage(VName InName)
 	{
 		crc + Streamer<vuint8>(*Reader);
 	}
+#endif
 
 	// Read the header
 	Reader->Seek(0);
@@ -756,10 +583,16 @@ VPackage* VMemberBase::StaticLoadPackage(VName InName)
 	}
 
 	if (VStr::NCmp(Progs.magic, PROG_MAGIC, 4))
-		Sys_Error("Progs has wrong file ID, possibly older version");
+	{
+		ParseError(l, "Package %s has wrong file ID", *AName);
+		BailOut();
+	}
 	if (Progs.version != PROG_VERSION)
-		Sys_Error("Progs has wrong version number (%i should be %i)",
-			Progs.version, PROG_VERSION);
+	{
+		ParseError(l, "Package %s has wrong version number (%i should be %i)",
+			*AName, Progs.version, PROG_VERSION);
+		BailOut();
+	}
 
 	// Read names
 	NameRemap = new VName[Progs.num_names];
@@ -785,10 +618,12 @@ VPackage* VMemberBase::StaticLoadPackage(VName InName)
 	Reader->Exports = Exports;
 	Reader->NumExports = Progs.num_exports;
 
-	VPackage* Pkg = new VPackage(InName);
+	VPackage* Pkg = new VPackage(AName);
 	GLoadedPackages.Append(Pkg);
+#ifndef IN_VCC
 	Pkg->Checksum = crc;
 	Pkg->Reader = Reader;
+#endif
 
 	//	Create objects
 	Reader->Seek(Progs.ofs_exportinfo);
@@ -819,8 +654,10 @@ VPackage* VMemberBase::StaticLoadPackage(VName InName)
 			Exports[i].Obj = new VStruct(Exports[i].Name, NULL, TLocation());
 			break;
 		case MEMBER_Class:
+#ifndef IN_VCC
 			Exports[i].Obj = VClass::FindClass(*Exports[i].Name);
 			if (!Exports[i].Obj)
+#endif
 			{
 				Exports[i].Obj = new VClass(Exports[i].Name, NULL, TLocation());
 			}
@@ -828,10 +665,12 @@ VPackage* VMemberBase::StaticLoadPackage(VName InName)
 		}
 	}
 
+#ifndef IN_VCC
 	//	Read strings.
 	Pkg->Strings = new char[Progs.num_strings];
 	Reader->Seek(Progs.ofs_strings);
 	Reader->Serialise(Pkg->Strings, Progs.num_strings);
+#endif
 
 	//	Serialise objects.
 	Reader->Seek(Progs.ofs_exportdata);
@@ -842,6 +681,11 @@ VPackage* VMemberBase::StaticLoadPackage(VName InName)
 			Exports[i].Obj->Outer = Pkg;
 	}
 
+#ifdef IN_VCC
+	delete[] NameRemap;
+	delete[] Exports;
+	delete Reader;
+#else
 	//	Set up info tables.
 	Reader->Seek(Progs.ofs_mobjinfo);
 	for (i = 0; i < Progs.num_mobjinfo; i++)
@@ -868,7 +712,7 @@ VPackage* VMemberBase::StaticLoadPackage(VName InName)
 		}
 	}
 
-	if (InName == "engine")
+	if (AName == "engine")
 	{
 		for (VClass* Cls = GClasses; Cls; Cls = Cls->LinkNext)
 		{
@@ -883,6 +727,7 @@ VPackage* VMemberBase::StaticLoadPackage(VName InName)
 
 	delete Reader;
 	Pkg->Reader = NULL;
+#endif
 	return Pkg;
 	unguard;
 }
@@ -893,27 +738,85 @@ VPackage* VMemberBase::StaticLoadPackage(VName InName)
 //
 //==========================================================================
 
-VMemberBase* VMemberBase::StaticFindMember(VName InName,
-	VMemberBase* InOuter, vuint8 InType)
+VMemberBase* VMemberBase::StaticFindMember(VName AName, VMemberBase* AOuter,
+	vuint8 AType)
 {
 	guard(VMemberBase::StaticFindMember);
-	for (int i = 0; i < GMembers.Num(); i++)
-		if (GMembers[i]->MemberType == InType &&
-			GMembers[i]->Name == InName && GMembers[i]->Outer == InOuter)
-			return GMembers[i];
+	int HashIndex = AName.GetIndex() & 4095;
+	for (VMemberBase* m = GMembersHash[HashIndex]; m; m = m->HashNext)
+	{
+		if (m->Name == AName && (m->Outer == AOuter ||
+			(AOuter == ANY_PACKAGE && m->Outer->MemberType == MEMBER_Package)) &&
+			(AType == ANY_MEMBER || m->MemberType == AType))
+		{
+			return m;
+		}
+	}
 	return NULL;
 	unguard;
 }
 
 //==========================================================================
 //
-//	VMemberBase::SetUpNetClasses
+//	VMemberBase::StaticFindType
 //
 //==========================================================================
 
-void VMemberBase::SetUpNetClasses()
+VFieldType VMemberBase::StaticFindType(VClass* AClass, VName Name)
 {
-	guard(VMemberBase::SetUpNetClasses);
+	guard(VMemberBase::StaticFindType);
+	if (Name == NAME_None)
+	{
+		return VFieldType(TYPE_Unknown);
+	}
+
+	VMemberBase* m = StaticFindMember(Name, ANY_PACKAGE, MEMBER_Class);
+	if (m)
+	{
+		return VFieldType((VClass*)m);
+	}
+	m = StaticFindMember(Name, AClass ? (VMemberBase*)AClass :
+		(VMemberBase*)ANY_PACKAGE, MEMBER_Struct);
+	if (m)
+	{
+		return VFieldType((VStruct*)m);
+	}
+	if (AClass)
+	{
+		return StaticFindType(AClass->ParentClass, Name);
+	}
+	return VFieldType(TYPE_Unknown);
+	unguard;
+}
+
+//==========================================================================
+//
+//	VMemberBase::StaticFindClass
+//
+//==========================================================================
+
+VClass* VMemberBase::StaticFindClass(VName Name)
+{
+	guard(VMemberBase::StaticFindClass);
+	VMemberBase* m = StaticFindMember(Name, ANY_PACKAGE, MEMBER_Class);
+	if (m)
+	{
+		return (VClass*)m;
+	}
+	return NULL;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VMemberBase::StaticSetUpNetClasses
+//
+//==========================================================================
+
+void VMemberBase::StaticSetUpNetClasses()
+{
+#ifndef IN_VCC
+	guard(VMemberBase::StaticSetUpNetClasses);
 	GNetClassLookup.Clear();
 	GNetClassLookup.Append(NULL);
 	for (int i = 0; i < GMembers.Num(); i++)
@@ -929,6 +832,5 @@ void VMemberBase::SetUpNetClasses()
 		}
 	}
 	unguard;
-}
-
 #endif
+}

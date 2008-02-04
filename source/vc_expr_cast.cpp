@@ -308,11 +308,7 @@ VExpression* VDynamicClassCast::DoResolve(VEmitContext& ec)
 	}
 
 	Type = TYPE_Class;
-#ifdef IN_VCC
-	Type.Class = VMemberBase::CheckForClass(ClassName);
-#else
-	Type.Class = VClass::FindClass(*ClassName);
-#endif
+	Type.Class = VMemberBase::StaticFindClass(ClassName);
 	if (!Type.Class)
 	{
 		ParseError(Loc, "No such class %s", *ClassName);

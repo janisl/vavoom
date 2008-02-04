@@ -239,6 +239,7 @@ set(MAIN_COMMON_SOURCES
 	vc_location.cpp
 	vc_location.h
 	vc_member.cpp
+	vc_member.h
 	vc_method.cpp
 	vc_package.cpp
 	vc_property.cpp

@@ -36,54 +36,6 @@ enum ENativeConstructor		{EC_NativeConstructor};
 
 //==========================================================================
 //
-//	VMemberBase
-//
-//==========================================================================
-
-class VMemberBase
-{
-public:
-	//	Internal variables.
-	vuint8			MemberType;
-	VName			Name;
-	VMemberBase*	Outer;
-	TLocation		Loc;
-
-	static bool						GObjInitialised;
-	static VClass*					GClasses;	// Linked list of all classes.
-	static TArray<VMemberBase*>		GMembers;
-	static TArray<VPackage*>		GLoadedPackages;
-	static TArray<VClass*>			GNetClassLookup;
-
-	//	Srtuctors.
-	VMemberBase(vuint8, VName, VMemberBase*, TLocation);
-	virtual ~VMemberBase();
-
-	//	Accessors.
-	const char *GetName() const
-	{
-		return *Name;
-	}
-	const VName GetVName() const
-	{
-		return Name;
-	}
-	VStr GetFullName() const;
-	VPackage* GetPackage() const;
-
-	virtual void Serialise(VStream&);
-	virtual void PostLoad();
-	virtual void Shutdown();
-
-	static void StaticInit();
-	static void StaticExit();
-	static VPackage* StaticLoadPackage(VName);
-	static VMemberBase* StaticFindMember(VName, VMemberBase*, vuint8);
-	static void SetUpNetClasses();
-};
-
-//==========================================================================
-//
 //	VPackage
 //
 //==========================================================================
