@@ -41,121 +41,6 @@
 //
 //==========================================================================
 
-#ifdef IN_VCC
-class VProgsReader : public VStream
-{
-private:
-	FILE*				File;
-
-public:
-	VName*				NameRemap;
-	int					NumImports;
-	VProgsImport*		Imports;
-	int					NumExports;
-	VProgsExport*		Exports;
-
-	VProgsReader(FILE* InFile)
-	: File(InFile)
-	, NameRemap(0)
-	, NumExports(0)
-	, Exports(0)
-	{
-		bLoading = true;
-	}
-	~VProgsReader()
-	{
-		fclose(File);
-	}
-
-	//	Stream interface.
-	void Serialise(void* V, int Length)
-	{
-		if (fread(V, Length, 1, File) != 1)
-		{
-			bError = true;
-		}
-	}
-	void Seek(int InPos)
-	{
-		if (fseek(File, InPos, SEEK_SET))
-		{
-			bError = true;
-		}
-	}
-	int Tell()
-	{
-		return ftell(File);
-	}
-	int TotalSize()
-	{
-		int CurPos = ftell(File);
-		fseek(File, 0, SEEK_END);
-		int Size = ftell(File);
-		fseek(File, CurPos, SEEK_SET);
-		return Size;
-	}
-	bool AtEnd()
-	{
-		return !!feof(File);
-	}
-	void Flush()
-	{
-		if (fflush(File))
-		{
-			bError = true;
-		}
-	}
-	bool Close()
-	{
-		return !bError;
-	}
-
-	VStream& operator<<(VName& Name)
-	{
-		int NameIndex;
-		*this << STRM_INDEX(NameIndex);
-		Name = NameRemap[NameIndex];
-		return *this;
-	}
-	VStream& operator<<(VMemberBase*& Ref)
-	{
-		int ObjIndex;
-		*this << STRM_INDEX(ObjIndex);
-		if (ObjIndex > 0)
-		{
-			Ref = Exports[ObjIndex - 1].Obj;
-		}
-		else if (ObjIndex < 0)
-		{
-			Ref = Imports[-ObjIndex - 1].Obj;
-		}
-		else
-		{
-			Ref = NULL;
-		}
-		return *this;
-	}
-
-	VMemberBase* GetImport(int Index)
-	{
-		VProgsImport& I = Imports[Index];
-		if (!I.Obj)
-		{
-			if (I.Type == MEMBER_Package)
-				I.Obj = VMemberBase::StaticLoadPackage(I.Name, TLocation());
-			else
-				I.Obj = VMemberBase::StaticFindMember(I.Name,
-					GetImport(-I.OuterIndex - 1), I.Type);
-		}
-		return I.Obj;
-	}
-	void ResolveImports()
-	{
-		for (int i = 0; i < NumImports; i++)
-			GetImport(i);
-	}
-};
-#else
 class VProgsReader : public VStream
 {
 private:
@@ -171,6 +56,9 @@ public:
 	VProgsReader(VStream* InStream)
 	: Stream(InStream)
 	, NameRemap(0)
+	, NumImports(0)
+	, NumExports(0)
+	, Exports(0)
 	{
 		bLoading = true;
 	}
@@ -259,7 +147,6 @@ public:
 			GetImport(i);
 	}
 };
-#endif
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
@@ -538,12 +425,12 @@ VPackage* VMemberBase::StaticLoadPackage(VName AName, TLocation l)
 	dprintf("Loading package %s\n", *AName);
 
 	//	Load PROGS from a specified file
-	FILE* f = fopen(va("%s.dat", *AName), "rb");
+	VStream* f = OpenFile(va("%s.dat", *AName));
 	if (!f)
 	{
 		for (i = 0; i < GPackagePath.Num(); i++)
 		{
-			f = fopen(*(GPackagePath[i] + "/" + AName + ".dat"), "rb");
+			f = OpenFile(GPackagePath[i] + "/" + AName + ".dat");
 			if (f)
 				break;
 		}
@@ -681,11 +568,7 @@ VPackage* VMemberBase::StaticLoadPackage(VName AName, TLocation l)
 			Exports[i].Obj->Outer = Pkg;
 	}
 
-#ifdef IN_VCC
-	delete[] NameRemap;
-	delete[] Exports;
-	delete Reader;
-#else
+#ifndef IN_VCC
 	//	Set up info tables.
 	Reader->Seek(Progs.ofs_mobjinfo);
 	for (i = 0; i < Progs.num_mobjinfo; i++)
@@ -724,8 +607,10 @@ VPackage* VMemberBase::StaticLoadPackage(VName AName, TLocation l)
 			}
 		}
 	}
+#endif
 
 	delete Reader;
+#ifndef IN_VCC
 	Pkg->Reader = NULL;
 #endif
 	return Pkg;

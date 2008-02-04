@@ -413,3 +413,86 @@ char *va(const char *text, ...)
 
 	return va_buffer;
 }
+
+//==========================================================================
+//
+//	VFileReader
+//
+//==========================================================================
+
+class VFileReader : public VStream
+{
+private:
+	FILE*				File;
+
+public:
+	VFileReader(FILE* InFile)
+	: File(InFile)
+	{
+		bLoading = true;
+	}
+	~VFileReader()
+	{
+		fclose(File);
+	}
+
+	//	Stream interface.
+	void Serialise(void* V, int Length)
+	{
+		if (fread(V, Length, 1, File) != 1)
+		{
+			bError = true;
+		}
+	}
+	void Seek(int InPos)
+	{
+		if (fseek(File, InPos, SEEK_SET))
+		{
+			bError = true;
+		}
+	}
+	int Tell()
+	{
+		return ftell(File);
+	}
+	int TotalSize()
+	{
+		int CurPos = ftell(File);
+		fseek(File, 0, SEEK_END);
+		int Size = ftell(File);
+		fseek(File, CurPos, SEEK_SET);
+		return Size;
+	}
+	bool AtEnd()
+	{
+		return !!feof(File);
+	}
+	void Flush()
+	{
+		if (fflush(File))
+		{
+			bError = true;
+		}
+	}
+	bool Close()
+	{
+		return !bError;
+	}
+};
+
+
+//==========================================================================
+//
+//	OpenFile
+//
+//==========================================================================
+
+VStream* OpenFile(const VStr& Name)
+{
+	FILE* File = fopen(*Name, "rb");
+	if (!File)
+	{
+		return NULL;
+	}
+	return new VFileReader(File);
+}

@@ -546,6 +546,8 @@ int dprintf(const char *text, ...);
 
 char *va(const char *text, ...) __attribute__ ((format(printf, 1, 2)));
 
+VStream* OpenFile(const VStr& Name);
+
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
 extern bool						GBigEndian;
