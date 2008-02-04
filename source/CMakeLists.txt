@@ -243,6 +243,8 @@ set(MAIN_COMMON_SOURCES
 	vc_package.cpp
 	vc_property.cpp
 	vc_state.cpp
+	vc_statement.cpp
+	vc_statement.h
 	vc_struct.cpp
 	vc_type.cpp
 	vc_type.h
@@ -482,6 +484,7 @@ set(SERVER_COMMON_SOURCES
 	vc_package.cpp
 	vc_property.cpp
 	vc_state.cpp
+	vc_statement.cpp
 	vc_struct.cpp
 	vc_type.cpp
 	vobject.cpp

@@ -148,8 +148,7 @@ class VEmitContext;
 class VPackage;
 
 #include "expression.h"
-#include "statement.h"
-
+#include "../../source/vc_statement.h"
 
 //
 // The base class of all objects.

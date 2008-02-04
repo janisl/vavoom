@@ -390,6 +390,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\vc_statement.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\source\vc_struct.cpp"
 				>
 			</File>
@@ -588,6 +592,10 @@
 			</File>
 			<File
 				RelativePath="..\source\vc_location.h"
+				>
+			</File>
+			<File
+				RelativePath="..\source\vc_statement.h"
 				>
 			</File>
 			<File

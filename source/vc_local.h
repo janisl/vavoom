@@ -35,6 +35,7 @@
 #include "vc_expr_unary_binary.h"
 #include "vc_expr_cast.h"
 #include "vc_expr_type.h"
+#include "vc_statement.h"
 
 #define FatalError	Sys_Error
 

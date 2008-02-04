@@ -25,7 +25,11 @@
 
 // HEADER FILES ------------------------------------------------------------
 
-#include "vcc.h"
+#ifdef IN_VCC
+#include "../utils/vcc/vcc.h"
+#else
+#include "vc_local.h"
+#endif
 
 // MACROS ------------------------------------------------------------------
 
@@ -44,8 +48,6 @@
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 // CODE --------------------------------------------------------------------
-
-//BEGIN VStatement
 
 //==========================================================================
 //
@@ -77,10 +79,6 @@ void VStatement::Emit(VEmitContext& ec)
 	DoEmit(ec);
 }
 
-//END
-
-//BEGIN VEmptyStatement
-
 //==========================================================================
 //
 //	VEmptyStatement::VEmptyStatement
@@ -111,10 +109,6 @@ bool VEmptyStatement::Resolve(VEmitContext&)
 void VEmptyStatement::DoEmit(VEmitContext&)
 {
 }
-
-//END
-
-//BEGIN VIf
 
 //==========================================================================
 //
@@ -222,10 +216,6 @@ void VIf::DoEmit(VEmitContext& ec)
 	}
 }
 
-//END
-
-//BEGIN VWhile
-
 //==========================================================================
 //
 //	VWhile::VWhile
@@ -306,10 +296,6 @@ void VWhile::DoEmit(VEmitContext& ec)
 	ec.LoopEnd = OldEnd;
 }
 
-//END
-
-//BEGIN VDo
-
 //==========================================================================
 //
 //	VDo::VDo
@@ -388,10 +374,6 @@ void VDo::DoEmit(VEmitContext& ec)
 	ec.LoopStart = OldStart;
 	ec.LoopEnd = OldEnd;
 }
-
-//END
-
-//BEGIN VFor
 
 //==========================================================================
 //
@@ -531,10 +513,6 @@ void VFor::DoEmit(VEmitContext& ec)
 	ec.LoopEnd = OldEnd;
 }
 
-//END
-
-//BEGIN VForeach
-
 //==========================================================================
 //
 //	VForeach::VForeach
@@ -620,10 +598,6 @@ void VForeach::DoEmit(VEmitContext& ec)
 	ec.LoopStart = OldStart;
 	ec.LoopEnd = OldEnd;
 }
-
-//END
-
-//BEGIN VSwitch
 
 //==========================================================================
 //
@@ -742,10 +716,6 @@ void VSwitch::DoEmit(VEmitContext& ec)
 	ec.LoopEnd = OldEnd;
 }
 
-//END
-
-//BEGIN VSwitchCase
-
 //==========================================================================
 //
 //	VSwitchCase::VSwitchCase
@@ -808,10 +778,6 @@ void VSwitchCase::DoEmit(VEmitContext& ec)
 	ec.MarkLabel(Switch->CaseInfo[Index].Address);
 }
 
-//END
-
-//BEGIN VSwitchDefault
-
 //==========================================================================
 //
 //	VSwitchDefault::VSwitchDefault
@@ -850,10 +816,6 @@ void VSwitchDefault::DoEmit(VEmitContext& ec)
 {
 	ec.MarkLabel(Switch->DefaultAddress);
 }
-
-//END
-
-//BEGIN VBreak
 
 //==========================================================================
 //
@@ -894,10 +856,6 @@ void VBreak::DoEmit(VEmitContext& ec)
 	ec.AddStatement(OPC_Goto, ec.LoopEnd);
 }
 
-//END
-
-//BEGIN VContinue
-
 //==========================================================================
 //
 //	VContinue::VContinue
@@ -936,10 +894,6 @@ void VContinue::DoEmit(VEmitContext& ec)
 
 	ec.AddStatement(OPC_Goto, ec.LoopStart);
 }
-
-//END
-
-//BEGIN VReturn
 
 //==========================================================================
 //
@@ -1035,10 +989,6 @@ void VReturn::DoEmit(VEmitContext& ec)
 	}
 }
 
-//END
-
-//BEGIN VExpressionStatement
-
 //==========================================================================
 //
 //	VExpressionStatement::VExpressionStatement
@@ -1090,9 +1040,7 @@ void VExpressionStatement::DoEmit(VEmitContext& ec)
 	Expr->Emit(ec);
 }
 
-//END
-
-//BEGIN VLocalVarStatement
+#ifdef IN_VCC
 
 //==========================================================================
 //
@@ -1142,9 +1090,7 @@ void VLocalVarStatement::DoEmit(VEmitContext& ec)
 	Decl->EmitInitialisations(ec);
 }
 
-//END
-
-//BEGIN VCompound
+#endif
 
 //==========================================================================
 //
@@ -1207,5 +1153,3 @@ void VCompound::DoEmit(VEmitContext& ec)
 		Statements[i]->Emit(ec);
 	}
 }
-
-//END
