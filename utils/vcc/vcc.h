@@ -52,6 +52,8 @@ void Free(void* ptr);
 #include "../../source/progdefs.h"
 #include "../../source/vc_location.h"
 #include "../../source/vc_type.h"
+#include "../../source/vc_emit_context.h"
+#include "../../source/vc_expr_base.h"
 
 // MACROS ------------------------------------------------------------------
 
@@ -141,31 +143,9 @@ class VMethod;
 class VEmitContext;
 class VPackage;
 
-class VLabel
-{
-private:
-	friend class VEmitContext;
-
-	int			Index;
-
-	VLabel(int AIndex)
-	: Index(AIndex)
-	{}
-
-public:
-	VLabel()
-	: Index(-1)
-	{}
-	bool IsDefined() const
-	{
-		return Index != -1;
-	}
-};
-
-#include "../../source/vc_expr_base.h"
-
 #include "expression.h"
 #include "statement.h"
+
 
 //
 // The base class of all objects.
@@ -281,20 +261,6 @@ public:
 		if (TypeExpr)
 			delete TypeExpr;
 	}
-};
-
-class VLocalVarDef
-{
-public:
-	VName			Name;
-	TLocation		Loc;
-	int				Offset;
-	VFieldType		Type;
-	bool			Visible;
-	vuint8			ParamFlags;
-
-	VLocalVarDef()
-	{}
 };
 
 class VMethod : public VMemberBase
@@ -600,8 +566,6 @@ public:
 	{}
 	void Parse();
 };
-
-#include "../../source/vc_emit_context.h"
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 

@@ -29,45 +29,10 @@
 #include "gamedefs.h"
 #include "progdefs.h"
 
-class VLabel
-{
-private:
-	friend class VEmitContext;
-
-	int			Index;
-
-	VLabel(int AIndex)
-	: Index(AIndex)
-	{}
-
-public:
-	VLabel()
-	: Index(-1)
-	{}
-	bool IsDefined() const
-	{
-		return Index != -1;
-	}
-};
-
-class VLocalVarDef
-{
-public:
-	VName			Name;
-	TLocation		Loc;
-	int				Offset;
-	VFieldType		Type;
-	bool			Visible;
-	vuint8			ParamFlags;
-
-	VLocalVarDef()
-	{}
-};
-
-#define FatalError	Sys_Error
-
 #include "vc_emit_context.h"
 #include "vc_expr_base.h"
+
+#define FatalError	Sys_Error
 
 void ParseError(TLocation, const char *text, ...) __attribute__ ((format(printf, 2, 3)));
 void ParseWarning(TLocation, const char *text, ...) __attribute__ ((format(printf, 2, 3)));
