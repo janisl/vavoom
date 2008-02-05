@@ -192,10 +192,10 @@ void AttachToOwner(EntityEx NewOwner)
 	if (Owner.Player)
 	{
 		//	Doom and Strife always switch to a new weapon, Heretic and Hexen
-		// only switch to more powerful weapons.
-		if (LineSpecialGameInfo(Level.Game).bAlwaysSwitchNewWeapon ||
+		// only switch to more powerful weapons, always check for ammo.
+		if (CheckAmmo(false) && (LineSpecialGameInfo(Level.Game).bAlwaysSwitchNewWeapon ||
 			!PlayerEx(Owner.Player).ReadyWeapon ||
-			Slot > PlayerEx(Owner.Player).ReadyWeapon.Slot ||
+			Slot > PlayerEx(Owner.Player).ReadyWeapon.Slot) ||
 			(Slot == PlayerEx(Owner.Player).ReadyWeapon.Slot &&
 			SelectionOrder < PlayerEx(Owner.Player).ReadyWeapon.SelectionOrder))
 		{
@@ -303,7 +303,7 @@ final bool AddExistingAmmo(Ammo AmmoItem, int count)
 
 //==========================================================================
 //
-//	AttachToOwner
+//	AddWeapon
 //
 //==========================================================================
 
