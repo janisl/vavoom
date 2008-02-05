@@ -28,8 +28,7 @@
 #ifdef IN_VCC
 #include "../utils/vcc/vcc.h"
 #else
-#include "gamedefs.h"
-#include "progdefs.h"
+#include "vc_local.h"
 #endif
 
 // MACROS ------------------------------------------------------------------
@@ -60,11 +59,23 @@ VConstant::VConstant(VName AName, VMemberBase* AOuter, TLocation ALoc)
 : VMemberBase(MEMBER_Const, AName, AOuter, ALoc)
 , Type(TYPE_Unknown)
 , Value(0)
-#ifdef IN_VCC
 , ValueExpr(NULL)
 , PrevEnumValue(NULL)
-#endif
 {
+}
+
+//==========================================================================
+//
+//	VConstant::~VConstant
+//
+//==========================================================================
+
+VConstant::~VConstant()
+{
+	if (ValueExpr)
+	{
+		delete ValueExpr;
+	}
 }
 
 //==========================================================================
@@ -95,20 +106,6 @@ void VConstant::Serialise(VStream& Strm)
 	unguard;
 }
 
-#ifdef IN_VCC
-
-//==========================================================================
-//
-//	VConstant::~VConstant
-//
-//==========================================================================
-
-VConstant::~VConstant()
-{
-	if (ValueExpr)
-		delete ValueExpr;
-}
-
 //==========================================================================
 //
 //	VConstant::Define
@@ -117,6 +114,7 @@ VConstant::~VConstant()
 
 bool VConstant::Define()
 {
+	guard(VConstant::Define);
 	if (PrevEnumValue)
 	{
 		Value = PrevEnumValue->Value + 1;
@@ -158,6 +156,5 @@ bool VConstant::Define()
 		return false;
 	}
 	return true;
+	unguard;
 }
-
-#endif

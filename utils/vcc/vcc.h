@@ -57,6 +57,7 @@ void Free(void* ptr);
 #include "../../source/vc_property.h"
 typedef void (*builtin_t)();
 #include "../../source/vc_method.h"
+#include "../../source/vc_constant.h"
 #include "../../source/vc_emit_context.h"
 #include "../../source/vc_expr_base.h"
 #include "../../source/vc_expr_literal.h"
@@ -151,26 +152,6 @@ class VPackage;
 
 #include "expression.h"
 #include "../../source/vc_statement.h"
-
-class VConstant : public VMemberBase
-{
-public:
-	vuint8			Type;
-	union
-	{
-		vint32		Value;
-		float		FloatValue;
-	};
-
-	VExpression*	ValueExpr;
-	VConstant*		PrevEnumValue;
-
-	VConstant(VName, VMemberBase*, TLocation);
-	~VConstant();
-
-	void Serialise(VStream&);
-	bool Define();
-};
 
 class VStruct : public VMemberBase
 {

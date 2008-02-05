@@ -567,6 +567,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\vc_constant.h"
+				>
+			</File>
+			<File
 				RelativePath="..\source\vc_emit_context.h"
 				>
 			</File>

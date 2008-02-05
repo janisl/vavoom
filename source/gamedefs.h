@@ -70,6 +70,7 @@
 #include "vc_field.h"
 #include "vc_property.h"
 #include "vc_method.h"
+#include "vc_constant.h"
 #include "vclass.h"
 #include "vobject.h"
 #include "input.h"		//	Input from keyboard, mouse and joystick

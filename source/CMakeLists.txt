@@ -223,6 +223,7 @@ set(MAIN_COMMON_SOURCES
 	ui_widget.h
 	vc_class.cpp
 	vc_constant.cpp
+	vc_constant.h
 	vc_emit_context.cpp
 	vc_emit_context.h
 	vc_expr_base.cpp

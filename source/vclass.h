@@ -117,30 +117,6 @@ struct VStateLabel
 
 //==========================================================================
 //
-//	VConstant
-//
-//==========================================================================
-
-class VConstant : public VMemberBase
-{
-public:
-	vuint8		Type;
-	union
-	{
-		vint32	Value;
-		float	FloatValue;
-	};
-
-	VConstant(VName, VMemberBase*, TLocation);
-
-	void Serialise(VStream&);
-
-	friend inline VStream& operator<<(VStream& Strm, VConstant*& Obj)
-	{ return Strm << *(VMemberBase**)&Obj; }
-};
-
-//==========================================================================
-//
 //	VStruct
 //
 //==========================================================================
