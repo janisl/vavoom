@@ -53,6 +53,8 @@ void Free(void* ptr);
 #include "../../source/vc_location.h"
 #include "../../source/vc_type.h"
 #include "../../source/vc_member.h"
+#include "../../source/vc_field.h"
+#include "../../source/vc_property.h"
 #include "../../source/vc_emit_context.h"
 #include "../../source/vc_expr_base.h"
 #include "../../source/vc_expr_literal.h"
@@ -145,35 +147,8 @@ class VMethod;
 class VEmitContext;
 class VPackage;
 
-#include "../../source/vc_field.h"
-
 #include "expression.h"
 #include "../../source/vc_statement.h"
-
-class VProperty : public VMemberBase
-{
-public:
-	enum { AllowedModifiers = TModifiers::Native | TModifiers::Final };
-
-	VFieldType		Type;
-	VMethod*		GetFunc;
-	VMethod*		SetFunc;
-	VField*			DefaultField;
-	vuint32			Flags;
-
-	vuint32 		Modifiers;
-	VExpression*	TypeExpr;
-	VName			DefaultFieldName;
-
-	VProperty(VName, VMemberBase*, TLocation);
-	~VProperty();
-
-	void Serialise(VStream&);
-	bool Define();
-
-	friend VStream& operator<<(VStream& Strm, VProperty*& Obj)
-	{ return Strm << *(VMemberBase**)&Obj; }
-};
 
 struct FInstruction
 {

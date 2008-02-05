@@ -2179,7 +2179,8 @@ void VParser::ParseClass()
 			{
 				VProperty* Prop = new VProperty(FieldName, Class, FieldLoc);
 				Prop->TypeExpr = FieldType;
-				Prop->Modifiers = Modifiers;
+				Prop->Flags = TModifiers::PropAttr(TModifiers::Check(Modifiers,
+					TModifiers::Native | TModifiers::Final, FieldLoc));
 				do
 				{
 					if (Lex.Check(TK_Get))

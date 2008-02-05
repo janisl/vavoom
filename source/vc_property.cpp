@@ -28,8 +28,7 @@
 #ifdef IN_VCC
 #include "../utils/vcc/vcc.h"
 #else
-#include "gamedefs.h"
-#include "progdefs.h"
+#include "vc_local.h"
 #endif
 
 // MACROS ------------------------------------------------------------------
@@ -58,19 +57,28 @@
 
 VProperty::VProperty(VName AName, VMemberBase* AOuter, TLocation ALoc)
 : VMemberBase(MEMBER_Property, AName, AOuter, ALoc)
-#ifdef IN_VCC
 , Type(TYPE_Void)
-#endif
 , GetFunc(NULL)
 , SetFunc(NULL)
 , DefaultField(NULL)
 , Flags(0)
-#ifdef IN_VCC
-, Modifiers(0)
 , TypeExpr(NULL)
 , DefaultFieldName(NAME_None)
-#endif
 {
+}
+
+//==========================================================================
+//
+//	VProperty::~VProperty
+//
+//==========================================================================
+
+VProperty::~VProperty()
+{
+	if (TypeExpr)
+	{
+		delete TypeExpr;
+	}
 }
 
 //==========================================================================
@@ -85,20 +93,6 @@ void VProperty::Serialise(VStream& Strm)
 	VMemberBase::Serialise(Strm);
 	Strm << Type << GetFunc << SetFunc << DefaultField << Flags;
 	unguard;
-}
-
-#ifdef IN_VCC
-
-//==========================================================================
-//
-//	VProperty::~VProperty
-//
-//==========================================================================
-
-VProperty::~VProperty()
-{
-	if (TypeExpr)
-		delete TypeExpr;
 }
 
 //==========================================================================
@@ -126,13 +120,14 @@ bool VProperty::Define()
 	}
 	Type = TypeExpr->Type;
 
-	Modifiers = TModifiers::Check(Modifiers, AllowedModifiers, Loc);
-	Flags = TModifiers::PropAttr(Modifiers);
-
 	if (DefaultFieldName != NAME_None)
 	{
+#ifdef IN_VCC
 		DefaultField = ((VClass*)Outer)->CheckForField(Loc, DefaultFieldName,
 			(VClass*)Outer, true);
+#else
+		DefaultField = ((VClass*)Outer)->FindField(DefaultFieldName);
+#endif
 		if (!DefaultField)
 		{
 			ParseError(Loc, "No such field %s", *DefaultFieldName);
@@ -143,7 +138,9 @@ bool VProperty::Define()
 	VProperty* BaseProp = NULL;
 	if (((VClass*)Outer)->ParentClass)
 	{
+#ifdef IN_VCC
 		BaseProp = ((VClass*)Outer)->ParentClass->CheckForProperty(Name);
+#endif
 	}
 	if (BaseProp)
 	{
@@ -158,5 +155,3 @@ bool VProperty::Define()
 	}
 	return true;
 }
-
-#endif
