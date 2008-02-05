@@ -117,46 +117,6 @@ struct VStateLabel
 
 //==========================================================================
 //
-//	VStruct
-//
-//==========================================================================
-
-class VStruct : public VMemberBase
-{
-public:
-	vint32			ObjectFlags;
-	VStruct*		ParentStruct;
-	vint32			Size;
-	vuint8			Alignment;
-	vuint8			IsVector;
-	//	Size in stack units when used as local variable.
-	vint32			StackSize;
-	VField*			Fields;
-	VField*			ReferenceFields;
-	VField*			DestructorFields;
-
-	VStruct(VName, VMemberBase*, TLocation);
-
-	void Serialise(VStream&);
-	void PostLoad();
-
-	bool NeedsDestructor() const;
-	void CalcFieldOffsets();
-	void InitReferences();
-	void InitDestructorFields();
-	void CopyObject(const vuint8*, vuint8*);
-	void SerialiseObject(VStream&, vuint8*);
-	void CleanObject(vuint8*);
-	void DestructObject(vuint8*);
-	bool IdenticalObject(const vuint8*, const vuint8*);
-	bool NetSerialiseObject(VStream&, VNetObjectsMap*, vuint8*);
-
-	friend inline VStream& operator<<(VStream& Strm, VStruct*& Obj)
-	{ return Strm << *(VMemberBase**)&Obj; }
-};
-
-//==========================================================================
-//
 //	mobjinfo_t
 //
 //==========================================================================

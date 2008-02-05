@@ -619,6 +619,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\vc_struct.h"
+				>
+			</File>
+			<File
 				RelativePath="..\source\vc_type.h"
 				>
 			</File>

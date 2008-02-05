@@ -58,6 +58,7 @@ void Free(void* ptr);
 typedef void (*builtin_t)();
 #include "../../source/vc_method.h"
 #include "../../source/vc_constant.h"
+#include "../../source/vc_struct.h"
 #include "../../source/vc_emit_context.h"
 #include "../../source/vc_expr_base.h"
 #include "../../source/vc_expr_literal.h"
@@ -152,36 +153,6 @@ class VPackage;
 
 #include "expression.h"
 #include "../../source/vc_statement.h"
-
-class VStruct : public VMemberBase
-{
-public:
-	VStruct*		ParentStruct;
-	vint32			Size;
-	vuint8			Alignment;
-	vuint8			IsVector;
-	//	Size in stack units when used as local variable.
-	vint32			StackSize;
-	//	Structure fields
-	VField*			Fields;
-
-	VName			ParentStructName;
-	TLocation		ParentStructLoc;
-	bool			Defined;
-
-	VStruct(VName, VMemberBase*, TLocation);
-
-	void Serialise(VStream&);
-
-	void AddField(VField* f);
-	VField* CheckForField(VName);
-	bool NeedsDestructor() const;
-	bool Define();
-	bool DefineMembers();
-
-	friend VStream& operator<<(VStream& Strm, VStruct*& Obj)
-	{ return Strm << *(VMemberBase**)&Obj; }
-};
 
 class VState : public VMemberBase
 {

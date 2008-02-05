@@ -251,6 +251,7 @@ set(MAIN_COMMON_SOURCES
 	vc_statement.cpp
 	vc_statement.h
 	vc_struct.cpp
+	vc_struct.h
 	vc_type.cpp
 	vc_type.h
 	vclass.h

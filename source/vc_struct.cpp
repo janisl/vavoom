@@ -28,8 +28,7 @@
 #ifdef IN_VCC
 #include "../utils/vcc/vcc.h"
 #else
-#include "gamedefs.h"
-#include "progdefs.h"
+#include "vc_local.h"
 #endif
 
 // MACROS ------------------------------------------------------------------
@@ -58,25 +57,17 @@
 
 VStruct::VStruct(VName AName, VMemberBase* AOuter, TLocation ALoc)
 : VMemberBase(MEMBER_Struct, AName, AOuter, ALoc)
-#ifndef IN_VCC
-, ObjectFlags(0)
-#else
-#endif
 , ParentStruct(0)
-#ifndef IN_VCC
-, Size(0)
-, Alignment(0)
-#endif
 , IsVector(false)
-, Fields(0)
-#ifndef IN_VCC
-, ReferenceFields(0)
-, DestructorFields(0)
-#else
 , StackSize(0)
+, Fields(0)
 , ParentStructName(NAME_None)
 , Defined(true)
-#endif
+, PostLoaded(false)
+, Size(0)
+, Alignment(0)
+, ReferenceFields(0)
+, DestructorFields(0)
 {
 }
 
@@ -89,9 +80,6 @@ VStruct::VStruct(VName AName, VMemberBase* AOuter, TLocation ALoc)
 void VStruct::Serialise(VStream& Strm)
 {
 	guard(VStruct::Serialise);
-#ifndef IN_VCC
-	vint32 StackSize;
-#endif
 	VMemberBase::Serialise(Strm);
 	Strm << ParentStruct
 		<< IsVector
@@ -102,30 +90,13 @@ void VStruct::Serialise(VStream& Strm)
 
 //==========================================================================
 //
-//	VStruct::NeedsDestructor
-//
-//==========================================================================
-
-bool VStruct::NeedsDestructor() const
-{
-	for (VField* F = Fields; F; F = F->Next)
-		if (F->NeedsDestructor())
-			return true;
-	if (ParentStruct)
-		return ParentStruct->NeedsDestructor();
-	return false;
-}
-
-#ifdef IN_VCC
-
-//==========================================================================
-//
 //	VStruct::AddField
 //
 //==========================================================================
 
 void VStruct::AddField(VField* f)
 {
+	guard(VStruct::AddField);
 	for (VField* Check = Fields; Check; Check = Check->Next)
 	{
 		if (f->Name == Check->Name)
@@ -145,6 +116,7 @@ void VStruct::AddField(VField* f)
 		Prev->Next = f;
 	}
 	f->Next = NULL;
+	unguard;
 }
 
 //==========================================================================
@@ -155,6 +127,7 @@ void VStruct::AddField(VField* f)
 
 VField* VStruct::CheckForField(VName FieldName)
 {
+	guard(VStruct::CheckForField);
 	for (VField* fi = Fields; fi; fi = fi->Next)
 	{
 		if (fi->Name == FieldName)
@@ -167,6 +140,31 @@ VField* VStruct::CheckForField(VName FieldName)
 		return ParentStruct->CheckForField(FieldName);
 	}
 	return NULL;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VStruct::NeedsDestructor
+//
+//==========================================================================
+
+bool VStruct::NeedsDestructor() const
+{
+	guard(VStruct::NeedsDestructor);
+	for (VField* F = Fields; F; F = F->Next)
+	{
+		if (F->NeedsDestructor())
+		{
+			return true;
+		}
+	}
+	if (ParentStruct)
+	{
+		return ParentStruct->NeedsDestructor();
+	}
+	return false;
+	unguard;
 }
 
 //==========================================================================
@@ -177,6 +175,7 @@ VField* VStruct::CheckForField(VName FieldName)
 
 bool VStruct::Define()
 {
+	guard(VStruct::Define);
 	if (ParentStructName != NAME_None)
 	{
 		VFieldType type = StaticFindType(Outer->MemberType == MEMBER_Class ?
@@ -200,6 +199,7 @@ bool VStruct::Define()
 
 	Defined = true;
 	return true;
+	unguard;
 }
 
 //==========================================================================
@@ -210,6 +210,7 @@ bool VStruct::Define()
 
 bool VStruct::DefineMembers()
 {
+	guard(VStruct::DefineMembers);
 	bool Ret = true;
 
 	//	Define fields.
@@ -258,9 +259,8 @@ bool VStruct::DefineMembers()
 
 	StackSize = (size + 3) / 4;
 	return Ret;
+	unguard;
 }
-
-#else
 
 //==========================================================================
 //
@@ -270,7 +270,8 @@ bool VStruct::DefineMembers()
 
 void VStruct::PostLoad()
 {
-	if (ObjectFlags & CLASSOF_PostLoaded)
+	guard(VStruct::PostLoad);
+	if (PostLoaded)
 	{
 		//	Already done.
 		return;
@@ -291,7 +292,8 @@ void VStruct::PostLoad()
 	//	Set up list of destructor fields.
 	InitDestructorFields();
 
-	ObjectFlags |= CLASSOF_PostLoaded;
+	PostLoaded = true;
+	unguard;
 }
 
 //==========================================================================
@@ -457,6 +459,8 @@ void VStruct::InitDestructorFields()
 	}
 	unguard;
 }
+
+#ifndef IN_VCC
 
 //==========================================================================
 //
