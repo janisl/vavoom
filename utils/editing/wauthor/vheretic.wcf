@@ -199,6 +199,7 @@ LightingInc=0
 0x7f3   12      20      ppoda0      	Pod
 0x2340  13      10      fx17b0          Patrol pt *( next, delay, -, -, - )
 0x2341  16      16      fx17b0          Security Camera *( pitch, angles, speed, -, - )
+0x2342  15      20      fx18q0          Sparks *( amount, -, -, -, - )
 0x2343  15      20      fx18q0          Fountain (red)
 0x2344  15      20      fx18q0          Fountain (green)
 0x2345  15      20      fx18q0          Fountain (blue)

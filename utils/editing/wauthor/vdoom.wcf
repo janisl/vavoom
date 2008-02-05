@@ -195,6 +195,7 @@ LightingInc=0
 0xbbe   3       32      skula1          Lost soul
 0x2340  13      10      ifogd0          Patrol pt *( next, delay, -, -, - )
 0x2341  16      16      aplsa0          Security Camera *( pitch, angles, speed, -, - )
+0x2342  15      20      bal1a0          Sparks *( amount, -, -, -, - )
 0x2343  15      20      bal1a0          Fountain (red)
 0x2344  15      20      bal1a0          Fountain (green)
 0x2345  15      20      bal1a0          Fountain (blue)

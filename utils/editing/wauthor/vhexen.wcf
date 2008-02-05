@@ -314,6 +314,7 @@ LightingInc=0
 0x233d  14      20      artiger4        Clock gear (bronze ring)
 0x2340  13      10      aplsa0          Patrol pt *( next, delay, -, -, - )
 0x2341  17      16      aplsa0          Security Camera *( pitch, angles, speed, -, - )
+0x2342  16      20      bal1a0          Sparks *( amount, -, -, -, - )
 0x2343  16      20      bal1a0          Fountain (red)
 0x2344  16      20      bal1a0          Fountain (green)
 0x2345  16      20      bal1a0          Fountain (blue)
