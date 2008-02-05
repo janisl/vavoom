@@ -247,9 +247,10 @@ final void A_FiredSplotch()
 states
 {
 Spawn:
-	FDMN X 5 Bright
+	FDMN X 4
+	FDMN X 1 Bright { bDynamicLight = true; }
 	FDMN EFG 10 Bright A_Look
-	Goto Spawn+1
+	Goto Spawn+2
 See:
 	FDMN E 8 Bright
 	FDMN F 6 Bright
@@ -301,7 +302,6 @@ defaultproperties
 	bDropOff = true;
 	bFloat = true;
 	bInvulnerable = true;
-	bDynamicLight = true;
 	SightSound = 'FireDemonSpawn';
 	ActiveSound = 'FireDemonActive';
 	PainSound = 'FireDemonPain';
