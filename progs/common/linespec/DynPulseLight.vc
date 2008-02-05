@@ -66,12 +66,8 @@ bool bPulseLight;
 
 bool Activate()
 {
-	if (::Activate())
-	{
-		bPulseLight = true;
-		return true;
-	}
-	return false;
+	bPulseLight = true;
+	return true;
 }
 
 //==========================================================================
@@ -82,13 +78,9 @@ bool Activate()
 
 bool Deactivate()
 {
-	if (::Deactivate())
-	{
-		SetUp = false;
-		bPulseLight = false;
-		return true;
-	}
-	return false;
+	SetUp = false;
+	bPulseLight = false;
+	return true;
 }
 
 //==========================================================================

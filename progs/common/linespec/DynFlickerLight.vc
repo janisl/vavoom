@@ -66,12 +66,8 @@ bool bFlickerLight;
 
 bool Activate()
 {
-	if (::Activate())
-	{
-		bFlickerLight = true;
-		return true;
-	}
-	return false;
+	bFlickerLight = true;
+	return true;
 }
 
 //==========================================================================
@@ -82,13 +78,9 @@ bool Activate()
 
 bool Deactivate()
 {
-	if (::Deactivate())
-	{
-		SetUp = false;
-		bFlickerLight = false;
-		return true;
-	}
-	return false;
+	SetUp = false;
+	bFlickerLight = false;
+	return true;
 }
 
 //==========================================================================

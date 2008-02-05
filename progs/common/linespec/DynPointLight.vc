@@ -137,13 +137,13 @@ void Update(float diff)
 		}
 		break;
 	case CYCLE_Sin:
-		angle = 360.0 * mult;
+		angle = 10.0 * mult;
 		mult = sin(angle);
 		mult = (mult + 1.0) / 2.0;
 		l_cycler.m_current = l_cycler.m_start + (step * mult);
 		break;
 	case CYCLE_Cos:
-		angle = 360.0 * mult;
+		angle = 10.0 * mult;
 		mult = cos(angle);
 		mult = (mult + 1.0) / 2.0;
 		l_cycler.m_current = l_cycler.m_start + (step * mult);
@@ -207,18 +207,41 @@ float GetVal()
 
 //==========================================================================
 //
+//	OnMapSpawn
+//
+//==========================================================================
+
+void OnMapSpawn(mthing_t* mthing)
+{
+	::OnMapSpawn(mthing);
+
+	if (bPointLight && mthing)
+	{
+		if (!TID)
+		{
+			if (RGB(mthing->arg1, mthing->arg2, mthing->arg3) == 0xffffffff)
+			{
+				Level.AddStaticLight(Origin, itof(mthing->arg4) * 8.0);
+			}
+			else
+			{
+				Level.AddStaticLightRGB(Origin, itof(mthing->arg4) * 8.0,
+					RGB(mthing->arg1, mthing->arg2, mthing->arg3));
+			}
+		}
+	}
+}
+
+//==========================================================================
+//
 //	Activate
 //
 //==========================================================================
 
 bool Activate()
 {
-	if (::Activate())
-	{
-		bPointLight = true;
-		return true;
-	}
-	return false;
+	bPointLight = true;
+	return true;
 }
 
 //==========================================================================
@@ -229,12 +252,8 @@ bool Activate()
 
 bool Deactivate()
 {
-	if (::Deactivate())
-	{
-		bPointLight = false;
-		return true;
-	}
-	return false;
+	bPointLight = false;
+	return true;
 }
 
 //==========================================================================
@@ -267,7 +286,7 @@ void ClientTick(float deltaTime)
 	{
 		dl = AllocDlight(self);
 		dl->origin = Origin;
-		dl->radius = itof(Args[3]);
+		dl->radius = itof(Args[3]) < 16.0 ? itof(Args[3]) * 8.0 : itof(Args[3]);
 		dl->colour = RGB(Args[0], Args[1], Args[2]);
 		dl->die = XLevel.Time + 0.1;
 	}

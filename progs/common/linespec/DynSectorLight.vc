@@ -66,12 +66,8 @@ bool bScaleLight;
 
 bool Activate()
 {
-	if (::Activate())
-	{
-		bScaleLight = true;
-		return true;
-	}
-	return false;
+	bScaleLight = true;
+	return true;
 }
 
 //==========================================================================
@@ -82,13 +78,9 @@ bool Activate()
 
 bool Deactivate()
 {
-	if (::Deactivate())
-	{
-		SetUp = false;
-		bScaleLight = false;
-		return true;
-	}
-	return false;
+	SetUp = false;
+	bScaleLight = false;
+	return true;
 }
 
 //==========================================================================
@@ -150,7 +142,7 @@ void ClientTick(float deltaTime)
 		rad = Clamp(rad, 0.0, 255.0);
 		
 		Intensity = rad;
-		dl->radius = Intensity;
+		dl->radius = Intensity < 16.0 ? Intensity * 8.0 : Intensity;
 	}
 }
 

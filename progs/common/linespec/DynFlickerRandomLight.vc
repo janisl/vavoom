@@ -67,12 +67,8 @@ int TickCount;
 
 bool Activate()
 {
-	if (::Activate())
-	{
-		bFlickerRandLight = true;
-		return true;
-	}
-	return false;
+	bFlickerRandLight = true;
+	return true;
 }
 
 //==========================================================================
@@ -83,13 +79,9 @@ bool Activate()
 
 bool Deactivate()
 {
-	if (::Deactivate())
-	{
-		SetUp = false;
-		bFlickerRandLight = false;
-		return true;
-	}
-	return false;
+	SetUp = false;
+	bFlickerRandLight = false;
+	return true;
 }
 
 //==========================================================================
