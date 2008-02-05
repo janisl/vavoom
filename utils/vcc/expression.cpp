@@ -139,7 +139,7 @@ public:
 	bool			HaveSelf;
 	bool			BaseCall;
 	int				NumArgs;
-	VExpression*	Args[MAX_PARAMS + 1];
+	VExpression*	Args[VMethod::MAX_PARAMS + 1];
 
 	VInvocation(VExpression* ASelfExpr, VMethod* AFunc, VField* ADelegateField,
 		bool AHaveSelf, bool ABaseCall, const TLocation& ALoc, int ANumArgs,
@@ -2821,7 +2821,7 @@ void VInvocation::CheckParams()
 	int num_needed_params = Func->NumParams;
 	if (Func->Flags & FUNC_VarArgs)
 	{
-		max_params = MAX_PARAMS - 1;
+		max_params = VMethod::MAX_PARAMS - 1;
 	}
 	else
 	{

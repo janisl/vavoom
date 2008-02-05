@@ -242,8 +242,10 @@ set(MAIN_COMMON_SOURCES
 	vc_member.cpp
 	vc_member.h
 	vc_method.cpp
+	vc_method.h
 	vc_package.cpp
 	vc_property.cpp
+	vc_property.h
 	vc_state.cpp
 	vc_statement.cpp
 	vc_statement.h

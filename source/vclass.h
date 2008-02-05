@@ -58,62 +58,6 @@ public:
 
 //==========================================================================
 //
-//	VMethod
-//
-//==========================================================================
-
-struct FInstruction
-{
-	vint32			Address;
-	vint32			Opcode;
-	vint32			Arg1;
-	vint32			Arg2;
-	VMemberBase*	Member;
-	VName			NameArg;
-	VFieldType		TypeArg;
-};
-
-class VMethod : public VMemberBase
-{
-public:
-	//FIXME avoid copying
-	enum { MAX_PARAMS		= 16 };
-
-	vint32					NumLocals;
-	vint32					Flags;
-	VFieldType				ReturnType;
-	vint32					NumParams;
-	vint32					ParamsSize;
-	VFieldType				ParamTypes[MAX_PARAMS];
-	vuint8					ParamFlags[MAX_PARAMS];
-	TArray<FInstruction>	Instructions;
-	VMethod*				SuperMethod;
-	VMethod*				ReplCond;
-
-	vuint32					Profile1;
-	vuint32					Profile2;
-	TArray<vuint8>			Statements;
-	builtin_t				NativeFunc;
-	vint16					VTableIndex;
-	vint32					NetIndex;
-	VMethod*				NextNetMethod;
-
-	VMethod(VName, VMemberBase*, TLocation);
-	~VMethod();
-
-	void Serialise(VStream&);
-	void PostLoad();
-
-	friend inline VStream& operator<<(VStream& Strm, VMethod*& Obj)
-	{ return Strm << *(VMemberBase**)&Obj; }
-
-private:
-	void CompileCode();
-	void OptimiseInstructions();
-};
-
-//==========================================================================
-//
 //	VState
 //
 //==========================================================================

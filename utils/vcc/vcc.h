@@ -55,6 +55,8 @@ void Free(void* ptr);
 #include "../../source/vc_member.h"
 #include "../../source/vc_field.h"
 #include "../../source/vc_property.h"
+typedef void (*builtin_t)();
+#include "../../source/vc_method.h"
 #include "../../source/vc_emit_context.h"
 #include "../../source/vc_expr_base.h"
 #include "../../source/vc_expr_literal.h"
@@ -149,72 +151,6 @@ class VPackage;
 
 #include "expression.h"
 #include "../../source/vc_statement.h"
-
-struct FInstruction
-{
-	vint32			Address;
-	vint32			Opcode;
-	vint32			Arg1;
-	vint32			Arg2;
-	VMemberBase*	Member;
-	VName			NameArg;
-	VFieldType		TypeArg;
-};
-
-class VMethodParam
-{
-public:
-	VExpression*	TypeExpr;
-	VName			Name;
-	TLocation		Loc;
-	int				Modifiers;
-
-	VMethodParam()
-	: TypeExpr(NULL)
-	, Name(NAME_None)
-	, Modifiers(0)
-	{}
-	~VMethodParam()
-	{
-		if (TypeExpr)
-			delete TypeExpr;
-	}
-};
-
-class VMethod : public VMemberBase
-{
-public:
-	enum { AllowedModifiers = TModifiers::Native | TModifiers::Static |
-		TModifiers::Final | TModifiers::Spawner };
-	enum { AllowedParmModifiers = TModifiers::Optional  | TModifiers::Out };
-
-	int						NumLocals;
-	int						Flags;
-	VFieldType				ReturnType;
-	int						NumParams;
-	int						ParamsSize;
-	VFieldType				ParamTypes[MAX_PARAMS];
-	vuint8					ParamFlags[MAX_PARAMS];
-	TArray<FInstruction>	Instructions;
-	VMethod*				SuperMethod;
-	VMethod*				ReplCond;
-
-	vint32					Modifiers;
-	VExpression*			ReturnTypeExpr;
-	VMethodParam			Params[MAX_PARAMS];
-	VStatement*				Statement;
-
-	VMethod(VName, VMemberBase*, TLocation);
-	~VMethod();
-
-	void Serialise(VStream&);
-	bool Define();
-	void Emit();
-	void DumpAsm();
-
-	friend VStream& operator<<(VStream& Strm, VMethod*& Obj)
-	{ return Strm << *(VMemberBase**)&Obj; }
-};
 
 class VConstant : public VMemberBase
 {

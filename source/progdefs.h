@@ -28,8 +28,6 @@
 #define PROG_MAGIC		"VPRG"
 #define PROG_VERSION	26
 
-enum { MAX_PARAMS		= 16 };
-
 enum
 {
 	FIELD_Native	= 0x0001,	//	Native serialisation

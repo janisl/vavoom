@@ -54,14 +54,14 @@
 VExpression* VParser::ParseDotMethodCall(VExpression* SelfExpr,
 	VName MethodName, TLocation Loc)
 {
-	VExpression* Args[MAX_PARAMS + 1];
+	VExpression* Args[VMethod::MAX_PARAMS + 1];
 	int NumArgs = 0;
 	if (!Lex.Check(TK_RParen))
 	{
 		do
 		{
 			Args[NumArgs] = ParseExpressionPriority13();
-			if (NumArgs == MAX_PARAMS)
+			if (NumArgs == VMethod::MAX_PARAMS)
 				ParseError(Lex.Location, "Too many arguments");
 			else
 				NumArgs++;
@@ -79,14 +79,14 @@ VExpression* VParser::ParseDotMethodCall(VExpression* SelfExpr,
 
 VExpression* VParser::ParseBaseMethodCall(VName Name, TLocation Loc)
 {
-	VExpression* Args[MAX_PARAMS + 1];
+	VExpression* Args[VMethod::MAX_PARAMS + 1];
 	int NumArgs = 0;
 	if (!Lex.Check(TK_RParen))
 	{
 		do
 		{
 			Args[NumArgs] = ParseExpressionPriority13();
-			if (NumArgs == MAX_PARAMS)
+			if (NumArgs == VMethod::MAX_PARAMS)
 				ParseError(Lex.Location, "Too many arguments");
 			else
 				NumArgs++;
@@ -104,14 +104,14 @@ VExpression* VParser::ParseBaseMethodCall(VName Name, TLocation Loc)
 
 VExpression* VParser::ParseMethodCallOrCast(VName Name, TLocation Loc)
 {
-	VExpression* Args[MAX_PARAMS + 1];
+	VExpression* Args[VMethod::MAX_PARAMS + 1];
 	int NumArgs = 0;
 	if (!Lex.Check(TK_RParen))
 	{
 		do
 		{
 			Args[NumArgs] = ParseExpressionPriority13();
-			if (NumArgs == MAX_PARAMS)
+			if (NumArgs == VMethod::MAX_PARAMS)
 				ParseError(Lex.Location, "Too many arguments");
 			else
 				NumArgs++;
@@ -1248,7 +1248,9 @@ void VParser::ParseMethodDef(VExpression* RetType, VName MName,
 	}
 
 	VMethod* Func = new VMethod(MName, InClass, MethodLoc);
-	Func->Modifiers = Modifiers;
+	Func->Flags = TModifiers::MethodAttr(TModifiers::Check(Modifiers,
+		TModifiers::Native | TModifiers::Static | TModifiers::Final |
+		TModifiers::Spawner, MethodLoc));
 	Func->ReturnTypeExpr = RetType;
 	if (Iterator)
 	{
@@ -1266,7 +1268,10 @@ void VParser::ParseMethodDef(VExpression* RetType, VName MName,
 
 		VMethodParam& P = Func->Params[Func->NumParams];
 
-		P.Modifiers = TModifiers::Parse(Lex);
+		int ParmModifiers = TModifiers::Parse(Lex);
+		Func->ParamFlags[Func->NumParams] = TModifiers::ParmAttr(
+			TModifiers::Check(ParmModifiers, TModifiers::Optional |
+			TModifiers::Out, Lex.Location));
 
 		P.TypeExpr = ParseType();
 		if (!P.TypeExpr && Func->NumParams == 0)
@@ -1285,7 +1290,7 @@ void VParser::ParseMethodDef(VExpression* RetType, VName MName,
 			P.Loc = Lex.Location;
 			Lex.NextToken();
 		}
-		if (Func->NumParams == MAX_PARAMS)
+		if (Func->NumParams == VMethod::MAX_PARAMS)
 		{
 			ParseError(Lex.Location, "Method parameters overflow");
 			continue;
@@ -1338,7 +1343,7 @@ void VParser::ParseDelegate(VExpression* RetType, VField* Delegate)
 			P.Loc = Lex.Location;
 			Lex.NextToken();
 		}
-		if (Func->NumParams == MAX_PARAMS)
+		if (Func->NumParams == VMethod::MAX_PARAMS)
 		{
 			ParseError(Lex.Location, "Method parameters overflow");
 			continue;
@@ -2177,10 +2182,11 @@ void VParser::ParseClass()
 
 			if (Lex.Check(TK_LBrace))
 			{
+				Modifiers = TModifiers::Check(Modifiers,
+					TModifiers::Native | TModifiers::Final, FieldLoc);
 				VProperty* Prop = new VProperty(FieldName, Class, FieldLoc);
 				Prop->TypeExpr = FieldType;
-				Prop->Flags = TModifiers::PropAttr(TModifiers::Check(Modifiers,
-					TModifiers::Native | TModifiers::Final, FieldLoc));
+				Prop->Flags = TModifiers::PropAttr(Modifiers);
 				do
 				{
 					if (Lex.Check(TK_Get))
@@ -2188,7 +2194,7 @@ void VParser::ParseClass()
 						char TmpName[NAME_SIZE];
 						sprintf(TmpName, "get_%s", *FieldName);
 						VMethod* Func = new VMethod(TmpName, Class, Lex.Location);
-						Func->Modifiers = Modifiers;
+						Func->Flags = TModifiers::MethodAttr(Modifiers);
 						Func->ReturnTypeExpr = FieldType->CreateTypeExprCopy();
 
 						if (Modifiers & TModifiers::Native)
@@ -2215,14 +2221,14 @@ void VParser::ParseClass()
 						char TmpName[NAME_SIZE];
 						sprintf(TmpName, "set_%s", *FieldName);
 						VMethod* Func = new VMethod(TmpName, Class, Lex.Location);
-						Func->Modifiers = Modifiers;
+						Func->Flags = TModifiers::MethodAttr(Modifiers);
 						Func->ReturnTypeExpr = new VTypeExpr(TYPE_Void, Lex.Location);
 
 						VMethodParam& P = Func->Params[Func->NumParams];
-						P.Modifiers = 0;
 						P.TypeExpr = FieldType->CreateTypeExprCopy();
 						P.Name = "value";
 						P.Loc = Lex.Location;
+						Func->ParamFlags[Func->NumParams] = 0;
 						Func->NumParams++;
 
 						if (Modifiers & TModifiers::Native)

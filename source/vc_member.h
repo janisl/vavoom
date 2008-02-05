@@ -24,6 +24,7 @@
 //**************************************************************************
 
 class VExpression;
+class VStatement;
 
 #define ANY_PACKAGE				((VPackage*)-1)
 #define ANY_MEMBER				255

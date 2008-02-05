@@ -172,7 +172,7 @@ class VBaseInvocation : public VExpression
 public:
 	VName			Name;
 	int				NumArgs;
-	VExpression*	Args[MAX_PARAMS + 1];
+	VExpression*	Args[VMethod::MAX_PARAMS + 1];
 
 	VBaseInvocation(VName, int, VExpression**, const TLocation&);
 	~VBaseInvocation();
@@ -191,7 +191,7 @@ class VCastOrInvocation : public VExpression
 public:
 	VName			Name;
 	int				NumArgs;
-	VExpression*	Args[MAX_PARAMS + 1];
+	VExpression*	Args[VMethod::MAX_PARAMS + 1];
 
 	VCastOrInvocation(VName, const TLocation&, int, VExpression**);
 	~VCastOrInvocation();
@@ -212,7 +212,7 @@ public:
 	VExpression*	SelfExpr;
 	VName			MethodName;
 	int				NumArgs;
-	VExpression*	Args[MAX_PARAMS + 1];
+	VExpression*	Args[VMethod::MAX_PARAMS + 1];
 
 	VDotInvocation(VExpression*, VName, const TLocation&, int, VExpression**);
 	~VDotInvocation();

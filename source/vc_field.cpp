@@ -134,12 +134,10 @@ bool VField::NeedsDestructor() const
 
 bool VField::Define()
 {
-#ifdef IN_VCC
 	if (Type.Type == TYPE_Delegate)
 	{
 		return Func->Define();
 	}
-#endif
 
 	if (TypeExpr)
 	{

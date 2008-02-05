@@ -49,6 +49,6 @@ public:
 	void Serialise(VStream&);
 	bool Define();
 
-	friend VStream& operator<<(VStream& Strm, VProperty*& Obj)
+	friend inline VStream& operator<<(VStream& Strm, VProperty*& Obj)
 	{ return Strm << *(VMemberBase**)&Obj; }
 };

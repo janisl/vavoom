@@ -28,8 +28,7 @@
 #ifdef IN_VCC
 #include "../utils/vcc/vcc.h"
 #else
-#include "gamedefs.h"
-#include "progdefs.h"
+#include "vc_local.h"
 #endif
 
 // MACROS ------------------------------------------------------------------
@@ -48,21 +47,35 @@
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-#ifndef IN_VCC
-
-#define DECLARE_OPC(name, args)		{ OPCARGS_##args }
-#define OPCODE_INFO
-static struct
-{
-	int		Args;
-} OpcodeInfo[NUM_OPCODES] =
-{
-#include "progdefs.h"
-};
-
-#endif
-
 // CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//	VMethodParam::VMethodParam
+//
+//==========================================================================
+
+VMethodParam::VMethodParam()
+: TypeExpr(NULL)
+, Name(NAME_None)
+{
+}
+
+//==========================================================================
+//
+//	VMethodParam::~VMethodParam
+//
+//==========================================================================
+
+VMethodParam::~VMethodParam()
+{
+	guard(VMethodParam::~VMethodParam);
+	if (TypeExpr)
+	{
+		delete TypeExpr;
+	}
+	unguard;
+}
 
 //==========================================================================
 //
@@ -74,23 +87,19 @@ VMethod::VMethod(VName AName, VMemberBase* AOuter, TLocation ALoc)
 : VMemberBase(MEMBER_Method, AName, AOuter, ALoc)
 , NumLocals(0)
 , Flags(0)
+, ReturnType(TYPE_Void)
 , NumParams(0)
 , ParamsSize(0)
 , SuperMethod(NULL)
 , ReplCond(NULL)
-#ifndef IN_VCC
+, ReturnTypeExpr(NULL)
+, Statement(NULL)
 , Profile1(0)
 , Profile2(0)
 , NativeFunc(0)
 , VTableIndex(0)
 , NetIndex(0)
 , NextNetMethod(0)
-#else
-, ReturnType(TYPE_Void)
-, Modifiers(0)
-, ReturnTypeExpr(NULL)
-, Statement(NULL)
-#endif
 {
 	memset(ParamFlags, 0, sizeof(ParamFlags));
 }
@@ -104,7 +113,6 @@ VMethod::VMethod(VName AName, VMemberBase* AOuter, TLocation ALoc)
 VMethod::~VMethod()
 {
 	guard(VMethod::~VMethod);
-#ifdef IN_VCC
 	if (ReturnTypeExpr)
 	{
 		delete ReturnTypeExpr;
@@ -113,7 +121,6 @@ VMethod::~VMethod()
 	{
 		delete Statement;
 	}
-#endif
 	unguard;
 }
 
@@ -213,11 +220,7 @@ void VMethod::Serialise(VStream& Strm)
 			Opc = Instructions[i].Opcode;
 			Strm << Opc;
 		}
-#ifndef IN_VCC
-		switch (OpcodeInfo[Opc].Args)
-#else
 		switch (StatementInfo[Opc].Args)
-#endif
 		{
 		case OPCARGS_None:
 			break;
@@ -260,8 +263,6 @@ void VMethod::Serialise(VStream& Strm)
 	unguard;
 }
 
-#ifdef IN_VCC
-
 //==========================================================================
 //
 //	VMethod::Define
@@ -270,10 +271,8 @@ void VMethod::Serialise(VStream& Strm)
 
 bool VMethod::Define()
 {
+	guard(VMethod::Define);
 	bool Ret = true;
-
-	Modifiers = TModifiers::Check(Modifiers, AllowedModifiers, Loc);
-	Flags |= TModifiers::MethodAttr(Modifiers);
 
 	if (Flags & FUNC_Static)
 	{
@@ -341,10 +340,7 @@ bool VMethod::Define()
 			continue;
 		}
 
-		TModifiers::Check(P.Modifiers, AllowedParmModifiers, P.Loc);
-
 		ParamTypes[i] = type;
-		ParamFlags[i] = TModifiers::ParmAttr(P.Modifiers);
 		if ((ParamFlags[i] & FPARM_Optional) && (ParamFlags[i] & FPARM_Out))
 		{
 			ParseError(P.Loc, "Modifiers optional and out are mutually exclusive");
@@ -370,7 +366,11 @@ bool VMethod::Define()
 	if (Outer->MemberType == MEMBER_Class && Name != NAME_None &&
 		((VClass*)Outer)->ParentClass)
 	{
+#ifdef IN_VCC
 		SuperMethod = ((VClass*)Outer)->ParentClass->CheckForMethod(Name);
+#else
+		SuperMethod = ((VClass*)Outer)->ParentClass->FindFunction(Name);
+#endif
 	}
 	if (SuperMethod)
 	{
@@ -433,6 +433,7 @@ bool VMethod::Define()
 	}
 
 	return Ret;
+	unguard;
 }
 
 //==========================================================================
@@ -443,6 +444,7 @@ bool VMethod::Define()
 
 void VMethod::Emit()
 {
+	guard(VMethod::Emit);
 	if (Flags & FUNC_Native)
 	{
 		if (Statement)
@@ -536,6 +538,7 @@ void VMethod::Emit()
 	}
 	NumLocals = ec.localsofs;
 	ec.EndCode();
+	unguard;
 }
 
 //==========================================================================
@@ -548,6 +551,7 @@ void VMethod::Emit()
 
 void VMethod::DumpAsm()
 {
+	guard(VMethod::DumpAsm);
 	VMemberBase* PM = Outer;
 	while (PM->MemberType != MEMBER_Package)
 	{
@@ -617,9 +621,8 @@ void VMethod::DumpAsm()
 		}
 		dprintf("\n");
 	}
+	unguard;
 }
-
-#else
 
 //==========================================================================
 //
@@ -678,7 +681,7 @@ void VMethod::CompileCode()
 	{
 		Instructions[i].Address = Statements.Num();
 		Statements.Append(Instructions[i].Opcode);
-		switch (OpcodeInfo[Instructions[i].Opcode].Args)
+		switch (StatementInfo[Instructions[i].Opcode].Args)
 		{
 		case OPCARGS_None:
 			break;
@@ -728,7 +731,11 @@ void VMethod::CompileCode()
 			WriteUInt8(Instructions[i].NameArg.GetIndex());
 			break;
 		case OPCARGS_String:
+#ifdef IN_VCC
+			WritePtr(&GetPackage()->Strings[Instructions[i].Arg1]);
+#else
 			WritePtr(GetPackage()->Strings + Instructions[i].Arg1);
+#endif
 			break;
 		case OPCARGS_FieldOffset:
 			//	Make sure struct / class field offsets have been calculated.
@@ -803,7 +810,7 @@ void VMethod::CompileCode()
 
 	for (int i = 0; i < Instructions.Num() - 1; i++)
 	{
-		switch (OpcodeInfo[Instructions[i].Opcode].Args)
+		switch (StatementInfo[Instructions[i].Opcode].Args)
 		{
 		case OPCARGS_BranchTargetB:
 			Statements[Instructions[i].Address + 1] =
@@ -940,7 +947,7 @@ void VMethod::OptimiseInstructions()
 
 		//	Calculate approximate addresses for jump instructions.
 		Instructions[i].Address = Addr;
-		switch (OpcodeInfo[Instructions[i].Opcode].Args)
+		switch (StatementInfo[Instructions[i].Opcode].Args)
 		{
 		case OPCARGS_None:
 			Addr++;
@@ -997,7 +1004,7 @@ void VMethod::OptimiseInstructions()
 	vint32 Offs;
 	for (int i = 0; i < Instructions.Num() - 1; i++)
 	{
-		switch (OpcodeInfo[Instructions[i].Opcode].Args)
+		switch (StatementInfo[Instructions[i].Opcode].Args)
 		{
 		case OPCARGS_BranchTarget:
 			Offs = Instructions[Instructions[i].Arg1].Address -
@@ -1020,5 +1027,3 @@ void VMethod::OptimiseInstructions()
 	Instructions[Instructions.Num() - 1].Address = Addr;
 	unguard;
 }
-
-#endif
