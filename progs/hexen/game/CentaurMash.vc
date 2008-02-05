@@ -26,6 +26,17 @@
 class CentaurMash : Centaur
 	__scriptid__(103);
 
+//==========================================================================
+//
+//	GetSpecies
+//
+//==========================================================================
+
+class<EntityEx> GetSpecies()
+{
+	return Centaur;
+}
+
 states
 {
 Death:
