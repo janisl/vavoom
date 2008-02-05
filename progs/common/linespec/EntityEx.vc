@@ -4561,7 +4561,7 @@ void Died(EntityEx source, EntityEx inflictor)
 		// Flame death
 		SetState(FindState('Burn'));
 	}
-	else if (DamageType && FindState(DamageType))
+	else if (DamageType && DamageType != 'Melee' && FindState(DamageType))
 	{
 		// Specialised death state for this damage type (ice, etc).
 		SetState(FindState(DamageType));
@@ -5537,7 +5537,7 @@ void ClientTick(float DeltaTime)
 	TVec		fv;
 	int			i, c;
 
-	if (bInvisible)
+	if (bInvisible || bNoSector)
 	{
 		return;
 	}
