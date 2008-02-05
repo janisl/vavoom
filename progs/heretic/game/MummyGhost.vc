@@ -27,6 +27,17 @@ class MummyGhost : Mummy
 	__mobjinfo__(69)
 	__scriptid__(8);
 
+//==========================================================================
+//
+//	GetSpecies
+//
+//==========================================================================
+
+class<EntityEx> GetSpecies()
+{
+	return Mummy;
+}
+
 defaultproperties
 {
 	RenderStyle = STYLE_Translucent;

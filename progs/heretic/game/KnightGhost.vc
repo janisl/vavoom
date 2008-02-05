@@ -27,6 +27,18 @@ class KnightGhost : Knight
 	__mobjinfo__(65)
 	__scriptid__(129);
 
+//==========================================================================
+//
+//	GetSpecies
+//
+//==========================================================================
+
+class<EntityEx> GetSpecies()
+{
+	return Knight;
+}
+
+
 defaultproperties
 {
 	RenderStyle = STYLE_Translucent;
