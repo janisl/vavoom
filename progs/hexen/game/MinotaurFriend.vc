@@ -23,8 +23,7 @@
 //**
 //**************************************************************************
 
-class MinotaurFriend : Pawn
-	__mobjinfo__(9);
+class MinotaurFriend : Pawn;
 
 //
 // Minotaur variables
