@@ -429,7 +429,7 @@ static void ParseFlag(const VStr& FlagName, int* Values, bool* Changed)
 
 static void DoThingState(VClass* Ent, const char* StateLabel)
 {
-	guard();
+	guard(DoThingState);
 	if (value < 0 || value >= States.Num())
 	{
 		GCon->Logf("WARNING! Bad thing state %d", value);
