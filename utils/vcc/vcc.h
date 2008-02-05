@@ -59,6 +59,7 @@ typedef void (*builtin_t)();
 #include "../../source/vc_method.h"
 #include "../../source/vc_constant.h"
 #include "../../source/vc_struct.h"
+#include "../../source/vc_state.h"
 #include "../../source/vc_emit_context.h"
 #include "../../source/vc_expr_base.h"
 #include "../../source/vc_expr_literal.h"
@@ -153,39 +154,6 @@ class VPackage;
 
 #include "expression.h"
 #include "../../source/vc_statement.h"
-
-class VState : public VMemberBase
-{
-public:
-	enum { FF_FULLBRIGHT	= 0x80 };	// flag in Frame
-
-	//	State info
-	VName			SpriteName;
-	vint32			Frame;
-	float			Time;
-	vint32			Misc1;
-	vint32			Misc2;
-	VState*			NextState;
-	VMethod*		Function;
-
-	//	Linked list of states
-	VState*			Next;
-
-	//	Compile time variables
-	VName			GotoLabel;
-	vint32			GotoOffset;
-	VName			FunctionName;
-
-	VState(VName, VMemberBase*, TLocation);
-	~VState();
-
-	void Serialise(VStream&);
-	bool Define();
-	void Emit();
-
-	friend VStream& operator<<(VStream& Strm, VState*& Obj)
-	{ return Strm << *(VMemberBase**)&Obj; }
-};
 
 struct mobjinfo_t
 {

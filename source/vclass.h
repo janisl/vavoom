@@ -58,45 +58,6 @@ public:
 
 //==========================================================================
 //
-//	VState
-//
-//==========================================================================
-
-class VState : public VMemberBase
-{
-public:
-	VName		SpriteName;
-	vint32		SpriteIndex;
-	vint32		Frame;
-	float		Time;
-	vint32		Misc1;
-	vint32		Misc2;
-	VState*		NextState;
-	VMethod*	Function;
-	VState*		Next;
-
-	vint32		InClassIndex;
-	vint32		NetId;
-	VState*		NetNext;
-
-	//	Compile time variables
-	VName		GotoLabel;
-	vint32		GotoOffset;
-
-	VState(VName, VMemberBase*, TLocation);
-
-	void Serialise(VStream&);
-
-	bool IsInRange(VState*, VState*, int);
-	bool IsInSequence(VState*);
-	VState* GetPlus(int, bool);
-
-	friend inline VStream& operator<<(VStream& Strm, VState*& Obj)
-	{ return Strm << *(VMemberBase**)&Obj; }
-};
-
-//==========================================================================
-//
 //	VStateLabel
 //
 //==========================================================================

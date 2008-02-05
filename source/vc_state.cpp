@@ -28,8 +28,7 @@
 #ifdef IN_VCC
 #include "../utils/vcc/vcc.h"
 #else
-#include "gamedefs.h"
-#include "progdefs.h"
+#include "vc_local.h"
 #endif
 
 // MACROS ------------------------------------------------------------------
@@ -59,9 +58,6 @@
 VState::VState(VName AName, VMemberBase* AOuter, TLocation ALoc)
 : VMemberBase(MEMBER_State, AName, AOuter, ALoc)
 , SpriteName(NAME_None)
-#ifndef IN_VCC
-, SpriteIndex(0)
-#endif
 , Frame(0)
 , Time(0)
 , Misc1(0)
@@ -69,16 +65,23 @@ VState::VState(VName AName, VMemberBase* AOuter, TLocation ALoc)
 , NextState(0)
 , Function(0)
 , Next(0)
-#ifndef IN_VCC
+, GotoLabel(NAME_None)
+, GotoOffset(0)
+, FunctionName(NAME_None)
+, SpriteIndex(0)
 , InClassIndex(-1)
 , NetId(-1)
 , NetNext(0)
-#endif
-, GotoLabel(NAME_None)
-, GotoOffset(0)
-#ifdef IN_VCC
-, FunctionName(NAME_None)
-#endif
+{
+}
+
+//==========================================================================
+//
+//	VState::~VState
+//
+//==========================================================================
+
+VState::~VState()
 {
 }
 
@@ -100,26 +103,14 @@ void VState::Serialise(VStream& Strm)
 		<< NextState
 		<< Function
 		<< Next;
-#ifndef IN_VCC
 	if (Strm.IsLoading())
 	{
+#ifndef IN_VCC
 		SpriteIndex = VClass::FindSprite(SpriteName);
+#endif
 		NetNext = Next;
 	}
-#endif
 	unguard;
-}
-
-#ifdef IN_VCC
-
-//==========================================================================
-//
-//	VState::~VState
-//
-//==========================================================================
-
-VState::~VState()
-{
 }
 
 //==========================================================================
@@ -130,6 +121,7 @@ VState::~VState()
 
 bool VState::Define()
 {
+	guard(VState::Define);
 	bool Ret = true;
 
 	if (Function && !Function->Define())
@@ -138,6 +130,7 @@ bool VState::Define()
 	}
 
 	return Ret;
+	unguard;
 }
 
 //==========================================================================
@@ -148,11 +141,14 @@ bool VState::Define()
 
 void VState::Emit()
 {
+	guard(VState::Emit);
 	VEmitContext ec(this);
 	if (GotoLabel != NAME_None)
 	{
+#ifdef IN_VCC
 		NextState = ((VClass*)Outer)->ResolveStateLabel(Loc, GotoLabel,
 			GotoOffset);
+#endif
 	}
 
 	if (Function)
@@ -161,7 +157,11 @@ void VState::Emit()
 	}
 	else if (FunctionName != NAME_None)
 	{
+#ifdef IN_VCC
 		Function = ((VClass*)Outer)->CheckForMethod(FunctionName);
+#else
+		Function = ((VClass*)Outer)->FindFunction(FunctionName);
+#endif
 		if (!Function)
 		{
 			ParseError(Loc, "No such method %s", *FunctionName);
@@ -190,9 +190,8 @@ void VState::Emit()
 			}
 		}
 	}
+	unguard;
 }
-
-#else
 
 //==========================================================================
 //
@@ -262,5 +261,3 @@ VState* VState::GetPlus(int Offset, bool IgnoreJump)
 	return S;
 	unguard;
 }
-
-#endif

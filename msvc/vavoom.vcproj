@@ -615,6 +615,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\vc_state.h"
+				>
+			</File>
+			<File
 				RelativePath="..\source\vc_statement.h"
 				>
 			</File>

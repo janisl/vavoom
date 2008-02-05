@@ -248,6 +248,7 @@ set(MAIN_COMMON_SOURCES
 	vc_property.cpp
 	vc_property.h
 	vc_state.cpp
+	vc_state.h
 	vc_statement.cpp
 	vc_statement.h
 	vc_struct.cpp
