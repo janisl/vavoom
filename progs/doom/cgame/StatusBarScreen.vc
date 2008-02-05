@@ -120,8 +120,7 @@ int pic_pause;
 //For Icons in Fullscreen HUD
 int pic_ammoicon[4];
 int pic_health;
-int pic_armor;
-int pic_armor2;
+int pic_armor[2];
 
 //==========================================================================
 //
@@ -184,8 +183,8 @@ void StartMap()
 	pic_ammoicon[2] = R_RegisterPic('cella0');
 	pic_ammoicon[3] = R_RegisterPic('rocka0');
 	pic_health = R_RegisterPic('stima0');
-	pic_armor = R_RegisterPic('arm1a0');
-	pic_armor2 = R_RegisterPic('arm2a0');
+	pic_armor[0] = R_RegisterPic('arm1a0');
+	pic_armor[1] = R_RegisterPic('arm2a0');
 }
 
 //==========================================================================
@@ -424,16 +423,9 @@ void SB_DrawFullscreenStats()
 	BasicArmor Armor = BasicArmor(EntityEx(cl.MO).FindInventory(BasicArmor));
 	if (Armor && Armor.Amount)
 	{
+		int i = Armor.Amount > 100 ? 1 : 0;
 		SB_DrawTallNum(ST_TDARMORX, ST_TDARMORY, Armor.Amount, 0.6, false);
-
-		if (Armor.Amount > 100)
-		{
-			DrawPic(ST_TDARMORX - 60, ST_TDARMORY + 15, pic_armor2, 0.6);
-		}
-		else
-		{
-			DrawPic(ST_TDARMORX - 60, ST_TDARMORY + 15, pic_armor, 0.6);
-		}
+		DrawPic(ST_TDARMORX - 60, ST_TDARMORY + 15, pic_armor[i], 0.6);
 	}
 
 	// ready weapon ammo with icon

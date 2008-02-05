@@ -67,7 +67,7 @@ int pic_invgemr[2];
 int pic_paused;
 // For the Fullscreen stuff
 int pic_health;
-int pic_armor2;
+int pic_armor[2];
 
 //==========================================================================
 //
@@ -144,7 +144,8 @@ void StartMap()
 
 	//  FULLSCREEN ICONS FOR HEALTH AND ARMOR
 	pic_health = R_RegisterPic('ptn1a0');
-	pic_armor2 = R_RegisterPic('shd2a0');
+	pic_armor[0] = R_RegisterPic('shlda0');
+	pic_armor[1] = R_RegisterPic('shd2a0');
 }
 
 //==========================================================================
@@ -397,13 +398,17 @@ void SB_DrawFullscreenStats()
 	}
 
 	//  Health
-	SB_DrawNumber12(50, 450, cl.Health);
-	DrawShadowedPic(30, 494, pic_health);
+	SB_DrawNumber9(50, 456, cl.Health);
+	DrawPic(30, 494, pic_health, 0.6);
 
 	//  Armorpoints
 	BasicArmor Armor = BasicArmor(EntityEx(cl.MO).FindInventory(BasicArmor));
-	SB_DrawNumber12(140, 450, Armor ? Armor.Amount : 0);
-	DrawShadowedPic(120, 490, pic_armor2);
+	if (Armor && Armor.Amount)
+	{
+		i = Armor.Amount > 100 ? 1 : 0;
+		SB_DrawNumber9(140, 456, Armor.Amount);
+		DrawPic(120, 490, pic_armor[i], 0.6);
+	}
 
 	//  Frags
 	if (ClGame.deathmatch)
@@ -415,21 +420,21 @@ void SB_DrawFullscreenStats()
 	if (cl.ReadyWeapon && cl.ReadyWeapon.Ammo1)
 	{
 		SB_DrawNumber9(610, 456, cl.ReadyWeapon.Ammo1.Amount);
-		DrawShadowedPic(590, 454, R_RegisterPic(cl.ReadyWeapon.Ammo1.IconName));
+		DrawPic(590, 454, R_RegisterPic(cl.ReadyWeapon.Ammo1.IconName), 0.6);
 	}
 
 	//  Keys
 	if (EntityEx(cl.MO).FindInventory(KeyYellow))
 	{
-		DrawShadowedPic(580, 444, pic_ykey);
+		DrawPic(580, 444, pic_ykey, 0.6);
 	}
 	if (EntityEx(cl.MO).FindInventory(KeyGreen))
 	{
-		DrawShadowedPic(580, 452, pic_gkey);
+		DrawPic(580, 452, pic_gkey, 0.6);
 	}
 	if (EntityEx(cl.MO).FindInventory(KeyBlue))
 	{
-		DrawShadowedPic(580, 460, pic_bkey);
+		DrawPic(580, 460, pic_bkey, 0.6);
 	}
 
 	if (cl.InventoryTime)

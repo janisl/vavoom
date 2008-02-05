@@ -80,7 +80,7 @@ int pic_paused;
 
 // For the Fullscreen stuff
 int pic_health;
-int pic_armor2;
+int pic_armor2[4];
 
 //==========================================================================
 //
@@ -249,7 +249,10 @@ void StartMap()
 
 	//  FULLSCREEN ICONS FOR HEALTH AND ARMOR
 	pic_health = R_RegisterPic('ptn1a0');
-	pic_armor2 = R_RegisterPic('arm1a0');
+	pic_armor2[0] = R_RegisterPic('arm1a0');
+	pic_armor2[1] = R_RegisterPic('arm2a0');
+	pic_armor2[2] = R_RegisterPic('arm3a0');
+	pic_armor2[3] = R_RegisterPic('arm4a0');
 }
 
 //==========================================================================
@@ -286,7 +289,7 @@ void SB_DrawBackground()
 //
 //==========================================================================
 
-void SB_DrawNumber9(int x, int y, int num, int colour)
+void SB_DrawNumber9(int x, int y, int num, int colour, optional float alpha)
 {
 	int w = 9;
 	int neg = num < 0;
@@ -301,47 +304,21 @@ void SB_DrawNumber9(int x, int y, int num, int colour)
 	// in the special case of 0, you draw 0
 	if (!num)
 	{
-		DrawPic(x - w, y, pic_innum[colour * 10]);
+		DrawPic(x - w, y, pic_innum[colour * 10], alpha ? alpha : 1.0);
 	}
 
 	// draw the new number
 	while (num)
 	{
 		x -= w;
-		DrawPic(x, y, pic_innum[colour * 10 + num % 10]);
+		DrawPic(x, y, pic_innum[colour * 10 + num % 10], alpha ? alpha : 1.0);
 		num /= 10;
 	}
 
 	// draw a minus sign if necessary
 	if (neg)
 	{
-		DrawPic(x - 8, y, pic_minus);
-	}
-}
-
-//==========================================================================
-//
-//	SB_DrawNumber12
-//
-//==========================================================================
-
-void SB_DrawNumber12(int x, int y, int num)
-{
-	x = x + 36;
-
-	// in the special case of 0, you draw 0
-	if (!num)
-	{
-		DrawShadowedPic(x - bignumwidth[0], y, pic_bignum[0]);
-	}
-
-	// draw the new number
-	while (num)
-	{
-		x -= bignumwidth[num % 10];
-		DrawShadowedPic(x, y, pic_bignum[num % 10]);
-		num /= 10;
-		x -= 3;
+		DrawPic(x - 8, y, pic_minus, alpha ? alpha : 1.0);
 	}
 }
 
@@ -627,8 +604,15 @@ void SB_DrawFullscreenStats()
 	int readyweapon;
 
 	//  Health
-	SB_DrawNumber12(50, 450, cl.Health);
-	DrawPic(30, 494, pic_health);
+	if (cl.Health >= 25)
+	{
+		SB_DrawNumber9(50, 450, cl.Health, 0);
+	}
+	else
+	{
+		SB_DrawNumber9(50, 450, cl.Health, 1);
+	}
+	DrawPic(30, 490, pic_health, 0.6);
 
 	// Armor
 	HexenArmor HArmor = HexenArmor(EntityEx(cl.MO).FindInventory(
@@ -636,8 +620,28 @@ void SB_DrawFullscreenStats()
 	int TotalArmorPoints = !HArmor ? 0 :
 		ftoi((HArmor.Slots[0] + HArmor.Slots[1] + HArmor.Slots[2] +
 		HArmor.Slots[3] + HArmor.Slots[4]) / 5.0);
-	SB_DrawNumber12(140, 450, TotalArmorPoints);
-	DrawShadowedPic(120, 490, pic_armor2);
+	for (i = 0; i < 4; i++)
+	{
+		float ArmorPerc;
+		if (!HArmor || !HArmor.Slots[i])
+		{
+			continue;
+		}
+		else if (HArmor.Slots[i] <= (HArmor.SlotsIncrement[i] / 4.0))
+		{
+			ArmorPerc = 0.1998;
+		}
+		else if (HArmor.Slots[i] <= (HArmor.SlotsIncrement[i] / 2.0))
+		{
+			ArmorPerc = 0.3996;
+		}
+		else
+		{
+			ArmorPerc = 0.6;
+		}
+		DrawPic(120 + 31 * i, 490, pic_armor2[i], ArmorPerc);
+	}
+	SB_DrawNumber9(100 + 31 * i, 450, TotalArmorPoints, 0);
 
 	//  Frags
 	if (ClGame.deathmatch)
@@ -713,10 +717,16 @@ void SB_DrawFullscreenStats()
 		sb_mana2 = 0;
 	}
 
-	SB_DrawMNumber(600, 446, ManaItem1 ? ManaItem1.Amount : 0);
-	SB_DrawMNumber(600, 462, ManaItem2 ? ManaItem2.Amount : 0);
-	DrawShadowedPic(584, 440, pic_manadim1[sb_mana1]);
-	DrawShadowedPic(584, 456, pic_manadim2[sb_mana2]);
+	if (ManaItem1 && ManaItem1.Amount)
+	{
+		DrawPic(581, 442, pic_manadim1[sb_mana1], sb_mana1 ? 1.0 : 0.6);
+		SB_DrawNumber9(600, 442, ManaItem1.Amount, ManaItem1.Amount >= 25 ? 0 : 1, sb_mana1 ? 1.0 : 0.6);
+	}
+	if (ManaItem2 && ManaItem2.Amount)
+	{
+		DrawPic(581, 456, pic_manadim2[sb_mana2], sb_mana2 ? 1.0 : 0.6);
+		SB_DrawNumber9(600, 456, ManaItem2.Amount, ManaItem2.Amount >= 25 ? 0 : 1, sb_mana2 ? 1.0 : 0.6);
+	}
 }
 
 //==========================================================================
@@ -809,8 +819,6 @@ void SB_DrawPause()
 
 void SB_Drawer(int sb_view)
 {
-	int i;
-
 	if (sb_view == SB_VIEW_FULLSCREEN)
 	{
 		SB_DrawFullscreenStats();

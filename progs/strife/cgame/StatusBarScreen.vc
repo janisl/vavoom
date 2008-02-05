@@ -56,8 +56,7 @@ int pic_backpack;
 //For Icons in Fullscreen HUD
 int pic_tallnum[10];
 int pic_medpack;
-int pic_armor1;
-int pic_armor2;
+int pic_armor[2];
 
 int LoadedLog;
 string LogText;
@@ -104,8 +103,8 @@ void StartMap()
 	pic_backpack = R_RegisterPic('i_bkpk');
 	//For Icons in Fullscreen HUD
 	pic_medpack = R_RegisterPic('mdkta0');
-	pic_armor1 = R_RegisterPic('arm2a0');
-	pic_armor2 = R_RegisterPic('arm1a0');
+	pic_armor[0] = R_RegisterPic('arm1a0');
+	pic_armor[1] = R_RegisterPic('arm2a0');
 
 	pic_pause = R_RegisterPic('m_pause');
 
@@ -397,19 +396,12 @@ void SB_DrawFullscreenStats()
 
 	// armor
 	BasicArmor Armor = BasicArmor(EntityEx(cl.MO).FindInventory(BasicArmor));
-	if (Armor.Amount > 0)
+	if (Armor && Armor.Amount)
 	{
-		SB_DrawTallNum(164, 450, Armor.Amount, 0.7);
-
 		// armor type
-		if (Armor.SavePercent == 0.5)
-		{
-			DrawPic(110, 465, pic_armor2, 0.7);
-		}
-		else
-		{
-			DrawPic(110, 465, pic_armor1, 0.7);
-		}
+		i = Armor.SavePercent == 0.5 ? 0 : 1;
+		SB_DrawTallNum(164, 450, Armor.Amount, 0.7);
+		DrawPic(110, 465, pic_armor[i], 0.7);
 	}
 
 	// ready weapon ammo with icon
