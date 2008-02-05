@@ -29,6 +29,7 @@ add_executable(vcc
 	../../source/vc_expr_unary_binary.cpp
 	../../source/vc_expr_unary_binary.h
 	../../source/vc_field.cpp
+	../../source/vc_field.h
 	../../source/vc_location.cpp
 	../../source/vc_location.h
 	../../source/vc_member.cpp

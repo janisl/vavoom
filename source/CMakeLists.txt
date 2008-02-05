@@ -236,6 +236,7 @@ set(MAIN_COMMON_SOURCES
 	vc_expr_unary_binary.cpp
 	vc_expr_unary_binary.h
 	vc_field.cpp
+	vc_field.h
 	vc_location.cpp
 	vc_location.h
 	vc_member.cpp

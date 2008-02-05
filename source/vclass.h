@@ -58,43 +58,6 @@ public:
 
 //==========================================================================
 //
-//	VField
-//
-//==========================================================================
-
-class VField : public VMemberBase
-{
-public:
-	VField*		Next;
-	VField*		NextReference;	//	Linked list of reference fields.
-	VField*		DestructorLink;
-	VField*		NextNetField;
-	vint32		Ofs;
-	VFieldType	Type;
-	VMethod*	Func;
-	vint32		Flags;
-	vint32		NetIndex;
-	VMethod*	ReplCond;
-
-	VField(VName, VMemberBase*, TLocation);
-
-	void Serialise(VStream&);
-
-	bool NeedsDestructor() const;
-
-	static void CopyFieldValue(const vuint8*, vuint8*, const VFieldType&);
-	static void SerialiseFieldValue(VStream&, vuint8*, const VFieldType&);
-	static void CleanField(vuint8*, const VFieldType&);
-	static void DestructField(vuint8*, const VFieldType&);
-	static bool IdenticalValue(const vuint8*, const vuint8*, const VFieldType&);
-	static bool NetSerialiseValue(VStream&, VNetObjectsMap*, vuint8*, const VFieldType&);
-
-	friend inline VStream& operator<<(VStream& Strm, VField*& Obj)
-	{ return Strm << *(VMemberBase**)&Obj; }
-};
-
-//==========================================================================
-//
 //	VProperty
 //
 //==========================================================================

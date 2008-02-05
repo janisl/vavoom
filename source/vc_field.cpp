@@ -28,8 +28,7 @@
 #ifdef IN_VCC
 #include "../utils/vcc/vcc.h"
 #else
-#include "gamedefs.h"
-#include "progdefs.h"
+#include "vc_local.h"
 #include "network.h"
 #endif
 
@@ -60,28 +59,30 @@
 VField::VField(VName AName, VMemberBase* AOuter, TLocation ALoc)
 : VMemberBase(MEMBER_Field, AName, AOuter, ALoc)
 , Next(NULL)
-#ifndef IN_VCC
+, Type(TYPE_Void)
+, Func(NULL)
+, Flags(0)
+, ReplCond(NULL)
+, TypeExpr(NULL)
 , NextReference(0)
 , DestructorLink(0)
 , NextNetField(0)
 , Ofs(0)
-, Func(0)
-, Flags(0)
 , NetIndex(-1)
-, ReplCond(NULL)
-{
-	memset(&Type, 0, sizeof(Type));
-}
-#else
-, Type(TYPE_Void)
-, TypeExpr(NULL)
-, Func(NULL)
-, Modifiers(0)
-, Flags(0)
-, ReplCond(NULL)
 {
 }
-#endif
+
+//==========================================================================
+//
+//	VField::~VField
+//
+//==========================================================================
+
+VField::~VField()
+{
+	if (TypeExpr)
+		delete TypeExpr;
+}
 
 //==========================================================================
 //
@@ -125,20 +126,6 @@ bool VField::NeedsDestructor() const
 	return false;
 }
 
-#ifdef IN_VCC
-
-//==========================================================================
-//
-//	VField::~VField
-//
-//==========================================================================
-
-VField::~VField()
-{
-	if (TypeExpr)
-		delete TypeExpr;
-}
-
 //==========================================================================
 //
 //	VField::Define
@@ -147,10 +134,12 @@ VField::~VField()
 
 bool VField::Define()
 {
+#ifdef IN_VCC
 	if (Type.Type == TYPE_Delegate)
 	{
 		return Func->Define();
 	}
+#endif
 
 	if (TypeExpr)
 	{
@@ -168,13 +157,10 @@ bool VField::Define()
 		return false;
 	}
 	Type = TypeExpr->Type;
-
-	Modifiers = TModifiers::Check(Modifiers, AllowedModifiers, Loc);
-	Flags = TModifiers::FieldAttr(Modifiers);
 	return true;
 }
 
-#else
+#ifndef IN_VCC
 
 //==========================================================================
 //

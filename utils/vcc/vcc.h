@@ -145,33 +145,10 @@ class VMethod;
 class VEmitContext;
 class VPackage;
 
+#include "../../source/vc_field.h"
+
 #include "expression.h"
 #include "../../source/vc_statement.h"
-
-class VField : public VMemberBase
-{
-public:
-	enum { AllowedModifiers = TModifiers::Native | TModifiers::Private |
-		TModifiers::ReadOnly | TModifiers::Transient };
-
-	VField*			Next;
-	VFieldType		Type;
-	VExpression*	TypeExpr;
-	VMethod*		Func;	// Method's function
-	vuint32 		Modifiers;
-	vuint32			Flags;
-	VMethod*		ReplCond;
-
-	VField(VName, VMemberBase*, TLocation);
-	~VField();
-
-	void Serialise(VStream&);
-	bool NeedsDestructor() const;
-	bool Define();
-
-	friend VStream& operator<<(VStream& Strm, VField*& Obj)
-	{ return Strm << *(VMemberBase**)&Obj; }
-};
 
 class VProperty : public VMemberBase
 {

@@ -23,6 +23,8 @@
 //**
 //**************************************************************************
 
+class VExpression;
+
 #define ANY_PACKAGE				((VPackage*)-1)
 #define ANY_MEMBER				255
 

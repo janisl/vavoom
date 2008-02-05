@@ -214,10 +214,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\utils\vcc\statement.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\source\str.cpp"
 				>
 			</File>
@@ -331,10 +327,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\utils\vcc\statement.h"
-				>
-			</File>
-			<File
 				RelativePath="..\source\str.h"
 				>
 			</File>
@@ -364,6 +356,10 @@
 			</File>
 			<File
 				RelativePath="..\source\vc_expr_unary_binary.h"
+				>
+			</File>
+			<File
+				RelativePath="..\source\vc_field.h"
 				>
 			</File>
 			<File

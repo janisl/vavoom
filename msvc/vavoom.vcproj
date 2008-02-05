@@ -591,6 +591,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\vc_field.h"
+				>
+			</File>
+			<File
 				RelativePath="..\source\vc_location.h"
 				>
 			</File>
