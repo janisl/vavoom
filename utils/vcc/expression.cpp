@@ -460,7 +460,7 @@ VExpression* VSingleName::IntResolve(VEmitContext& ec, bool AssignTarget)
 		}
 	}
 
-	VConstant* Const = ec.Package->CheckForConstant(Name);
+	VConstant* Const = ec.Package->FindConstant(Name);
 	if (Const)
 	{
 		VExpression* e = new VConstantValue(Const, Loc);

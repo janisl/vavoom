@@ -29,7 +29,6 @@
 
 // TYPES -------------------------------------------------------------------
 
-class VProgsReader;
 struct dprograms_t;
 
 typedef void (*builtin_t)();

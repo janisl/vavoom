@@ -61,6 +61,7 @@ typedef void (*builtin_t)();
 #include "../../source/vc_struct.h"
 #include "../../source/vc_state.h"
 #include "../../source/vc_class.h"
+#include "../../source/vc_package.h"
 #include "../../source/vc_emit_context.h"
 #include "../../source/vc_expr_base.h"
 #include "../../source/vc_expr_literal.h"
@@ -155,59 +156,6 @@ class VPackage;
 
 #include "expression.h"
 #include "../../source/vc_statement.h"
-
-struct mobjinfo_t
-{
-	int			DoomEdNum;
-	int			GameFilter;
-	VClass*		Class;
-};
-
-struct VImportedPackage
-{
-	VName		Name;
-	TLocation	Loc;
-	VPackage*	Pkg;
-};
-
-class VPackage : public VMemberBase
-{
-private:
-	struct TStringInfo
-	{
-		int		Offs;
-		int		Next;
-	};
-
-	TArray<TStringInfo>			StringInfo;
-	int							StringLookup[256];
-
-	static int StringHashFunc(const char*);
-
-public:
-	TArray<VImportedPackage>	PackagesToLoad;
-
-	TArray<char>				Strings;
-
-	TArray<mobjinfo_t>			MobjInfo;
-	TArray<mobjinfo_t>			ScriptIds;
-
-	TArray<VConstant*>			ParsedConstants;
-	TArray<VStruct*>			ParsedStructs;
-	TArray<VClass*>				ParsedClasses;
-
-	int							NumBuiltins;
-
-	VPackage();
-	VPackage(VName InName);
-
-	int FindString(const char*);
-
-	VConstant* CheckForConstant(VName);
-
-	void Emit();
-	void WriteObject(const char*);
-};
 
 class VParser
 {

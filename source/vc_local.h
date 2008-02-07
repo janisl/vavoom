@@ -43,4 +43,6 @@ void ParseError(TLocation, const char *text, ...) __attribute__ ((format(printf,
 void ParseWarning(TLocation, const char *text, ...) __attribute__ ((format(printf, 2, 3)));
 void BailOut() __attribute__((noreturn));
 
+extern int				NumErrors;
+
 #endif

@@ -1212,15 +1212,15 @@ static void ParseActor(VScriptParser* sc, int SrcIndex)
 	if (DoomEdNum > 0)
 	{
 		mobjinfo_t& MI = VClass::GMobjInfos.Alloc();
-		MI.class_id = Class;
-		MI.doomednum = DoomEdNum;
+		MI.Class = Class;
+		MI.DoomEdNum = DoomEdNum;
 		MI.GameFilter = GameFilter;
 	}
 	if (SpawnNum > 0)
 	{
 		mobjinfo_t& SI = VClass::GScriptIds.Alloc();
-		SI.class_id = Class;
-		SI.doomednum = SpawnNum;
+		SI.Class = Class;
+		SI.DoomEdNum = SpawnNum;
 		SI.GameFilter = GameFilter;
 	}
 
@@ -1821,15 +1821,15 @@ static void ParseOldDecoration(VScriptParser* sc, int Type, int SrcIndex)
 	if (DoomEdNum > 0)
 	{
 		mobjinfo_t& MI = VClass::GMobjInfos.Alloc();
-		MI.class_id = Class;
-		MI.doomednum = DoomEdNum;
+		MI.Class = Class;
+		MI.DoomEdNum = DoomEdNum;
 		MI.GameFilter = GameFilter;
 	}
 	if (SpawnNum > 0)
 	{
 		mobjinfo_t& SI = VClass::GScriptIds.Alloc();
-		SI.class_id = Class;
-		SI.doomednum = SpawnNum;
+		SI.Class = Class;
+		SI.DoomEdNum = SpawnNum;
 		SI.GameFilter = GameFilter;
 	}
 

@@ -105,9 +105,7 @@ void VState::Serialise(VStream& Strm)
 		<< Next;
 	if (Strm.IsLoading())
 	{
-#ifndef IN_VCC
 		SpriteIndex = VClass::FindSprite(SpriteName);
-#endif
 		NetNext = Next;
 	}
 	unguard;
@@ -145,10 +143,8 @@ void VState::Emit()
 	VEmitContext ec(this);
 	if (GotoLabel != NAME_None)
 	{
-#ifdef IN_VCC
 		NextState = ((VClass*)Outer)->ResolveStateLabel(Loc, GotoLabel,
 			GotoOffset);
-#endif
 	}
 
 	if (Function)

@@ -1627,9 +1627,9 @@ VClass* SV_FindClassFromEditorId(int Id, int GameFilter)
 	{
 		if ((!VClass::GMobjInfos[i].GameFilter ||
 			(VClass::GMobjInfos[i].GameFilter & GameFilter)) &&
-			Id == VClass::GMobjInfos[i].doomednum)
+			Id == VClass::GMobjInfos[i].DoomEdNum)
 		{
-			return VClass::GMobjInfos[i].class_id;
+			return VClass::GMobjInfos[i].Class;
 		}
 	}
 	return NULL;
@@ -1649,9 +1649,9 @@ VClass* SV_FindClassFromScriptId(int Id, int GameFilter)
 	{
 		if ((!VClass::GScriptIds[i].GameFilter ||
 			(VClass::GScriptIds[i].GameFilter & GameFilter)) &&
-			Id == VClass::GScriptIds[i].doomednum)
+			Id == VClass::GScriptIds[i].DoomEdNum)
 		{
-			return VClass::GScriptIds[i].class_id;
+			return VClass::GScriptIds[i].Class;
 		}
 	}
 	return NULL;

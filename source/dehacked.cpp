@@ -488,7 +488,7 @@ static void ReadThing(int num)
 			int Idx = -1;
 			for (int i = 0; i < VClass::GMobjInfos.Num(); i++)
 			{
-				if (VClass::GMobjInfos[i].class_id == Ent)
+				if (VClass::GMobjInfos[i].Class == Ent)
 				{
 					Idx = i;
 					break;
@@ -499,9 +499,10 @@ static void ReadThing(int num)
 				if (Idx < 0)
 				{
 					Idx = VClass::GMobjInfos.Num();
-					VClass::GMobjInfos.Alloc().class_id = Ent;
+					VClass::GMobjInfos.Alloc().Class = Ent;
+					VClass::GMobjInfos[Idx].GameFilter = 0;
 				}
-				VClass::GMobjInfos[Idx].doomednum = value;
+				VClass::GMobjInfos[Idx].DoomEdNum = value;
 			}
 			else if (Idx)
 			{

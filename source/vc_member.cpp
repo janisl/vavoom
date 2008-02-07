@@ -199,23 +199,6 @@ VProgsExport::VProgsExport(VMemberBase* InObj)
 {
 }
 
-#ifndef IN_VCC
-
-//==========================================================================
-//
-//	operator VStream << mobjinfo_t
-//
-//==========================================================================
-
-VStream& operator<<(VStream& Strm, mobjinfo_t& MI)
-{
-	return Strm << STRM_INDEX(MI.doomednum)
-		<< STRM_INDEX(MI.GameFilter)
-		<< MI.class_id;
-}
-
-#endif
-
 //==========================================================================
 //
 //	VMemberBase::VMemberBase
@@ -336,7 +319,6 @@ void VMemberBase::Shutdown()
 void VMemberBase::StaticInit()
 {
 	guard(VMemberBase::StaticInit);
-#ifndef IN_VCC
 	for (VClass* C = GClasses; C; C = C->LinkNext)
 	{
 		C->MemberIndex = GMembers.Append(C);
@@ -344,7 +326,6 @@ void VMemberBase::StaticInit()
 		C->HashNext = GMembersHash[HashIndex];
 		GMembersHash[HashIndex] = C;
 	}
-#endif
 	GObjInitialised = true;
 	unguard;
 }
@@ -359,28 +340,22 @@ void VMemberBase::StaticExit()
 {
 	for (int i = 0; i < GMembers.Num(); i++)
 	{
-#ifndef IN_VCC
 		if (GMembers[i]->MemberType != MEMBER_Class ||
 			!(((VClass*)GMembers[i])->ObjectFlags & CLASSOF_Native))
-#endif
 		{
 			delete GMembers[i];
 		}
-#ifndef IN_VCC
 		else
 		{
 			GMembers[i]->Shutdown();
 		}
-#endif
 	}
 	GMembers.Clear();
 	GLoadedPackages.Clear();
 	GNetClassLookup.Clear();
-#ifndef IN_VCC
 	VClass::GMobjInfos.Clear();
 	VClass::GScriptIds.Clear();
 	VClass::GSpriteNames.Clear();
-#endif
 	GObjInitialised = false;
 }
 
@@ -552,12 +527,10 @@ VPackage* VMemberBase::StaticLoadPackage(VName AName, TLocation l)
 		}
 	}
 
-#ifndef IN_VCC
 	//	Read strings.
-	Pkg->Strings = new char[Progs.num_strings];
+	Pkg->Strings.SetNum(Progs.num_strings);
 	Reader->Seek(Progs.ofs_strings);
-	Reader->Serialise(Pkg->Strings, Progs.num_strings);
-#endif
+	Reader->Serialise(Pkg->Strings.Ptr(), Progs.num_strings);
 
 	//	Serialise objects.
 	Reader->Seek(Progs.ofs_exportdata);
@@ -610,9 +583,7 @@ VPackage* VMemberBase::StaticLoadPackage(VName AName, TLocation l)
 #endif
 
 	delete Reader;
-#ifndef IN_VCC
 	Pkg->Reader = NULL;
-#endif
 	return Pkg;
 	unguard;
 }

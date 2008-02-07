@@ -383,6 +383,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\vc_package.h"
+				>
+			</File>
+			<File
 				RelativePath="..\source\vc_property.h"
 				>
 			</File>

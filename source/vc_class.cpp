@@ -835,12 +835,10 @@ bool VClass::Define()
 			ParseError(MobjInfoExpr->Loc, "Integer constant expected");
 			return false;
 		}
-#ifdef IN_VCC
 		mobjinfo_t& mi = ec.Package->MobjInfo.Alloc();
 		mi.DoomEdNum = MobjInfoExpr->GetIntConst();
 		mi.GameFilter = GameFilter;
 		mi.Class = this;
-#endif
 	}
 
 	if (ScriptIdExpr)
@@ -856,12 +854,10 @@ bool VClass::Define()
 			ParseError(ScriptIdExpr->Loc, "Integer constant expected");
 			return false;
 		}
-#ifdef IN_VCC
 		mobjinfo_t& mi = ec.Package->ScriptIds.Alloc();
 		mi.DoomEdNum = ScriptIdExpr->GetIntConst();
 		mi.GameFilter = GameFilter;
 		mi.Class = this;
-#endif
 	}
 
 	Defined = true;

@@ -727,11 +727,7 @@ void VMethod::CompileCode()
 			WriteUInt8(Instructions[i].NameArg.GetIndex());
 			break;
 		case OPCARGS_String:
-#ifdef IN_VCC
 			WritePtr(&GetPackage()->Strings[Instructions[i].Arg1]);
-#else
-			WritePtr(GetPackage()->Strings + Instructions[i].Arg1);
-#endif
 			break;
 		case OPCARGS_FieldOffset:
 			//	Make sure struct / class field offsets have been calculated.

@@ -74,7 +74,7 @@
 #include "vc_struct.h"
 #include "vc_state.h"
 #include "vc_class.h"
-#include "vclass.h"
+#include "vc_package.h"
 #include "vobject.h"
 #include "input.h"		//	Input from keyboard, mouse and joystick
 #include "waddefs.h"    // 	External data types

@@ -246,6 +246,7 @@ set(MAIN_COMMON_SOURCES
 	vc_method.cpp
 	vc_method.h
 	vc_package.cpp
+	vc_package.h
 	vc_property.cpp
 	vc_property.h
 	vc_state.cpp
@@ -256,7 +257,6 @@ set(MAIN_COMMON_SOURCES
 	vc_struct.h
 	vc_type.cpp
 	vc_type.h
-	vclass.h
 	vector.h
 	video.h
 	vobject.cpp

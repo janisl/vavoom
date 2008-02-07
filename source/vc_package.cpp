@@ -28,15 +28,13 @@
 #ifdef IN_VCC
 #include "../utils/vcc/vcc.h"
 #else
-#include "gamedefs.h"
-#include "progdefs.h"
+#include "vc_local.h"
 #endif
 
 // MACROS ------------------------------------------------------------------
 
 // TYPES -------------------------------------------------------------------
 
-#ifdef IN_VCC
 //==========================================================================
 //
 //	VProgsWriter
@@ -170,7 +168,6 @@ public:
 		return *this;
 	}
 };
-#endif
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
@@ -188,13 +185,28 @@ public:
 
 //==========================================================================
 //
+//	operator VStream << mobjinfo_t
+//
+//==========================================================================
+
+VStream& operator<<(VStream& Strm, mobjinfo_t& MI)
+{
+	return Strm << STRM_INDEX(MI.DoomEdNum)
+		<< STRM_INDEX(MI.GameFilter)
+		<< MI.Class;
+}
+
+//==========================================================================
+//
 //	VPackage::VPackage
 //
 //==========================================================================
 
-#ifdef IN_VCC
 VPackage::VPackage()
 : VMemberBase(MEMBER_Package, NAME_None, NULL, TLocation())
+, NumBuiltins(0)
+, Checksum(0)
+, Reader(NULL)
 {
 	//	Strings
 	memset(StringLookup, 0, 256 * 4);
@@ -205,7 +217,6 @@ VPackage::VPackage()
 	Strings.SetNum(4);
 	memset(Strings.Ptr(), 0, 4);
 }
-#endif
 
 //==========================================================================
 //
@@ -215,13 +226,9 @@ VPackage::VPackage()
 
 VPackage::VPackage(VName AName)
 : VMemberBase(MEMBER_Package, AName, NULL, TLocation())
-#ifndef IN_VCC
+, NumBuiltins(0)
 , Checksum(0)
-, Strings(0)
-, Reader(0)
-{
-}
-#else
+, Reader(NULL)
 {
 	//	Strings
 	memset(StringLookup, 0, 256 * 4);
@@ -232,9 +239,29 @@ VPackage::VPackage(VName AName)
 	Strings.SetNum(4);
 	memset(Strings.Ptr(), 0, 4);
 }
-#endif
 
-#ifdef IN_VCC
+//==========================================================================
+//
+//	VPackage::~VPackage
+//
+//==========================================================================
+
+VPackage::~VPackage()
+{
+}
+
+//==========================================================================
+//
+//	VPackage::Serialise
+//
+//==========================================================================
+
+void VPackage::Serialise(VStream& Strm)
+{
+	guard(VPackage::Serialise);
+	VMemberBase::Serialise(Strm);
+	unguard;
+}
 
 //==========================================================================
 //
@@ -257,6 +284,7 @@ int VPackage::StringHashFunc(const char *str)
 
 int VPackage::FindString(const char *str)
 {
+	guard(VPackage::FindString);
 	if (!*str)
 	{
 		return 0;
@@ -281,22 +309,25 @@ int VPackage::FindString(const char *str)
 	StringLookup[hash] = StringInfo.Num() - 1;
 	VStr::Cpy(&Strings[Ofs], str);
 	return SI.Offs;
+	unguard;
 }
 
 //==========================================================================
 //
-//	VPackage::CheckForConstant
+//	VPackage::FindConstant
 //
 //==========================================================================
 
-VConstant* VPackage::CheckForConstant(VName Name)
+VConstant* VPackage::FindConstant(VName Name)
 {
+	guard(VPackage::FindConstant);
 	VMemberBase* m = StaticFindMember(Name, this, MEMBER_Const);
 	if (m)
 	{
 		return (VConstant*)m;
 	}
 	return NULL;
+	unguard;
 }
 
 //==========================================================================
@@ -307,6 +338,7 @@ VConstant* VPackage::CheckForConstant(VName Name)
 
 void VPackage::Emit()
 {
+	guard(VPackage::Emit);
 	dprintf("Importing packages\n");
 
 	for (int i = 0; i < PackagesToLoad.Num(); i++)
@@ -376,6 +408,7 @@ void VPackage::Emit()
 	{
 		BailOut();
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -384,18 +417,19 @@ void VPackage::Emit()
 //
 //==========================================================================
 
-void VPackage::WriteObject(const char *name)
+void VPackage::WriteObject(const VStr& name)
 {
+	guard(VPackage::WriteObject);
 	FILE*			f;
 	int				i;
 	dprograms_t		progs;
 
 	dprintf("Writing object\n");
 
-	f = fopen(name, "wb");
+	f = fopen(*name, "wb");
 	if (!f)
 	{
-		FatalError("Can't open file \"%s\".", name);
+		FatalError("Can't open file \"%s\".", *name);
 	}
 
 	VProgsWriter Writer(f);
@@ -445,18 +479,14 @@ void VPackage::WriteObject(const char *name)
 	progs.num_mobjinfo = MobjInfo.Num();
 	for (i = 0; i < MobjInfo.Num(); i++)
 	{
-		Writer << STRM_INDEX(MobjInfo[i].DoomEdNum)
-			<< STRM_INDEX(MobjInfo[i].GameFilter)
-			<< MobjInfo[i].Class;
+		Writer << MobjInfo[i];
 	}
 
 	progs.ofs_scriptids = Writer.Tell();
 	progs.num_scriptids = ScriptIds.Num();
 	for (i = 0; i < ScriptIds.Num(); i++)
 	{
-		Writer << STRM_INDEX(ScriptIds[i].DoomEdNum)
-			<< STRM_INDEX(ScriptIds[i].GameFilter)
-			<< ScriptIds[i].Class;
+		Writer << ScriptIds[i];
 	}
 
 	//	Serialise imports.
@@ -516,35 +546,5 @@ void VPackage::WriteObject(const char *name)
 	}
 	dprintf("%d opcodes\n", NUM_OPCODES);
 #endif
-}
-
-#else
-
-//==========================================================================
-//
-//	VPackage::~VPackage
-//
-//==========================================================================
-
-VPackage::~VPackage()
-{
-	guard(VPackage::~VPackage);
-	if (Strings)
-		delete[] Strings;
 	unguard;
 }
-
-//==========================================================================
-//
-//	VPackage::Serialise
-//
-//==========================================================================
-
-void VPackage::Serialise(VStream& Strm)
-{
-	guard(VPackage::Serialise);
-	VMemberBase::Serialise(Strm);
-	unguard;
-}
-
-#endif

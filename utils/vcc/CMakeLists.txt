@@ -40,6 +40,7 @@ add_executable(vcc
 	../../source/vc_method.cpp
 	../../source/vc_method.h
 	../../source/vc_package.cpp
+	../../source/vc_package.h
 	../../source/vc_property.cpp
 	../../source/vc_property.h
 	../../source/vc_state.cpp

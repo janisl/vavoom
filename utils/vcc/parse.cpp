@@ -2363,7 +2363,7 @@ void VParser::Parse()
 				{
 					ParseError(Lex.Location, "Expected IDENTIFIER");
 				}
-				if (Package->CheckForConstant(Lex.Name))
+				if (Package->FindConstant(Lex.Name))
 				{
 					ParseError(Lex.Location, "Redefined identifier %s", *Lex.Name);
 				}

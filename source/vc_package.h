@@ -23,27 +23,7 @@
 //**
 //**************************************************************************
 
-//==========================================================================
-//
-//	VPackage
-//
-//==========================================================================
-
-class VPackage : public VMemberBase
-{
-public:
-	VPackage(VName);
-	~VPackage();
-
-	vuint16			Checksum;
-	char*			Strings;
-	VProgsReader*	Reader;
-
-	void Serialise(VStream&);
-
-	friend inline VStream& operator<<(VStream& Strm, VPackage*& Obj)
-	{ return Strm << *(VMemberBase**)&Obj; }
-};
+class VProgsReader;
 
 //==========================================================================
 //
@@ -53,9 +33,78 @@ public:
 
 struct mobjinfo_t
 {
-	vint32		doomednum;
+	int			DoomEdNum;
 	vint32		GameFilter;
-	VClass*		class_id;
+	VClass*		Class;
 
 	friend VStream& operator<<(VStream&, mobjinfo_t&);
+};
+
+//==========================================================================
+//
+//	VImportedPackage
+//
+//==========================================================================
+
+struct VImportedPackage
+{
+	VName		Name;
+	TLocation	Loc;
+	VPackage*	Pkg;
+};
+
+//==========================================================================
+//
+//	VPackage
+//
+//==========================================================================
+
+class VPackage : public VMemberBase
+{
+private:
+	struct TStringInfo
+	{
+		int		Offs;
+		int		Next;
+	};
+
+	TArray<TStringInfo>			StringInfo;
+	int							StringLookup[256];
+
+	static int StringHashFunc(const char*);
+
+public:
+	//	Shared fields
+	TArray<char>				Strings;
+
+	//	Compiler fields
+	TArray<VImportedPackage>	PackagesToLoad;
+
+	TArray<mobjinfo_t>			MobjInfo;
+	TArray<mobjinfo_t>			ScriptIds;
+
+	TArray<VConstant*>			ParsedConstants;
+	TArray<VStruct*>			ParsedStructs;
+	TArray<VClass*>				ParsedClasses;
+
+	int							NumBuiltins;
+
+	//	Run-time fields
+	vuint16						Checksum;
+	VProgsReader*				Reader;
+
+	VPackage();
+	VPackage(VName InName);
+	~VPackage();
+
+	void Serialise(VStream&);
+
+	int FindString(const char*);
+	VConstant* FindConstant(VName);
+
+	void Emit();
+	void WriteObject(const VStr&);
+
+	friend inline VStream& operator<<(VStream& Strm, VPackage*& Obj)
+	{ return Strm << *(VMemberBase**)&Obj; }
 };
